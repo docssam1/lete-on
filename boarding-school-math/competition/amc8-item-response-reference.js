@@ -418,6 +418,35 @@
 23,B,11.10,23.60,20.34,15.07,13.07,16.39,0.42
 24,B,13.18,18.49,20.83,19.05,10.62,17.65,0.18
 25,C,12.44,20.17,20.20,19.05,11.24,16.78,0.12`.trim();
+  // 2020 MAA-labelled overall item-difficulty table reproduced as an image by TestDaily.
+  // Apple Vision OCR was checked visually against the source image; all 25 starred answers
+  // were independently matched to LIVE's 2020 AMC 8 answer key. Population n=52,517.
+  const raw2020 = `
+1,E,2.90,1.21,7.27,1.25,85.98,1.39,0.00
+2,C,1.97,26.47,59.14,4.46,7.30,0.66,0.00
+3,D,2.36,2.88,4.05,89.00,0.88,0.84,0.01
+4,B,11.03,55.16,10.58,18.77,3.07,1.40,0.01
+5,C,3.65,3.05,77.62,12.45,2.06,1.16,0.00
+6,A,71.08,4.16,5.32,1.78,16.44,1.20,0.02
+7,C,5.67,8.76,46.56,21.15,13.72,4.12,0.01
+8,C,4.97,7.95,65.25,11.77,7.02,3.04,0.02
+9,D,12.02,30.62,4.85,29.35,21.71,1.42,0.03
+10,C,14.13,23.15,44.62,12.57,3.86,1.67,0.00
+11,E,5.74,9.54,8.83,18.71,54.12,3.05,0.01
+12,A,43.29,12.73,14.58,12.86,11.42,5.09,0.03
+13,B,19.73,45.34,13.46,9.09,8.48,3.88,0.02
+14,D,6.57,7.75,19.66,52.94,9.10,3.97,0.01
+15,C,8.71,12.04,49.22,21.68,3.49,4.85,0.02
+16,E,4.64,15.40,23.77,23.36,23.92,8.89,0.02
+17,B,17.69,21.59,23.30,16.15,13.37,7.86,0.04
+18,A,17.95,11.43,39.38,12.59,10.56,8.05,0.03
+19,B,18.76,24.22,20.01,19.25,8.37,9.37,0.03
+20,B,14.44,29.89,20.24,16.85,7.78,10.77,0.03
+21,A,20.77,17.31,26.19,14.17,10.18,11.35,0.03
+22,E,11.66,21.05,21.22,20.29,12.14,13.61,0.02
+23,B,20.29,26.22,20.70,12.95,7.41,12.38,0.04
+24,A,10.58,15.47,23.60,18.83,15.87,15.61,0.03
+25,A,12.55,17.08,23.37,17.77,12.77,16.44,0.02`.trim();
   // MAA-generated school report, Mathematics Ed Clinic, 2013 AMC 8.
   // Preserve the report's two exact-grade cohorts separately; these are not national norms.
   const raw2013Grade7 = `
@@ -511,6 +540,7 @@
     2017: Object.freeze({ raw: raw2017, respondentCount: 81386, population: "2017 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20180324183042id_/http://www.99cef.org.tw/userfiles/2017AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2018: Object.freeze({ raw: raw2018, respondentCount: 98389, population: "2018 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121195421id_/https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2019: Object.freeze({ raw: raw2019, respondentCount: 94634, population: "2019 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121214419id_/https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
+    2020: Object.freeze({ raw: raw2020, respondentCount: 52517, population: "2020 AMC 8 overall item-response cohort reported in MAA-labelled table", sourceUrl: "https://www.testdaily.cn/52247/", sourceStatus: "TestDaily reproduction of an MAA-labelled 2020 Item Difficulty table; Apple Vision OCR checked visually against image; all 25 marked answers cross-checked with LIVE; distinct from the separately reported score-summary and grade-table populations" }),
     2013: Object.freeze({ raw: raw2013, respondentCount: 149709, population: "2013 AMC 8 global participant response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; Global response cohort", schoolCohorts: Object.freeze({
       7: Object.freeze({ raw: raw2013Grade7, respondentCount: 63, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 7 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" }),
       8: Object.freeze({ raw: raw2013Grade8, respondentCount: 55, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 8 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" })

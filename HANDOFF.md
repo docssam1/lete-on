@@ -1,3 +1,10 @@
+### 2026-11-04 · 2020 AMC 8 item-response data recovered from web image
+
+- Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. Starting HEAD `18e04c13a`; current edits are local and uncommitted. Preserve untracked user file `raw_youtube.txt`; do not stage or remove it. No push/deploy/Drive sync.
+- Web source: TestDaily article https://www.testdaily.cn/52247/ reproduces a 2020 MAA-labelled overall item difficulty image (n=52,517) and a Contest Score Report image (n=56,136, scope not stated). Apple Vision OCR was visually checked; all 25 answer markers match LIVE's key https://live.poshenloh.com/past-contests/amc8/2020/answers. A separate existing grade image uses n=56,099; preserve each population separately.
+- Added `competition/historical-amc-grade/amc8-2020-overall-item-response.csv` and connected 2020 into `competition/amc8-item-response-reference.js`, so the existing AMC8 review panel can show historical correct/distractor/omission rates for wrong or blank items. Added a distinct 2020 whole-cohort summary row and connected visible award cutoff / mean / SD / n summary to `competition/amc-score-distribution-reference.js`. Do not calculate an individual percentile: no exact score-frequency table was recovered.
+- Updated source README and research evidence. Current unfinished next step: continue web search by year for exact AMC8 score-frequency and item-response reports, starting with the unresolved 2016 chart/distribution; then inspect year coverage gaps and reconcile source scopes. Run focused data QA and `git diff --check` after data edits. No tests were added or run.
+
 ### 2026-11-04 · 현재 AMC8 원점수 통계 작업 상태
 
 - 저장소: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, 브랜치 `codex/boarding-g7-nsa-mac-20261017`. 로컬 커밋 `89f7d3a4f`(2012), `becb223ab`(2013–2015), `ead2ca673`(2017–2022), `9543a55bd`(보고서 페이지 정정). 원격 push/배포/Drive 동기화 없음.
