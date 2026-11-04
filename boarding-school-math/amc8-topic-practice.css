@@ -27,6 +27,8 @@
 .topic-workspace .feedback { min-height:24px; }
 .topic-workspace .worked-solution { font-family:var(--sans); }
 .topic-workspace .worked-solution summary { color:var(--blue); }
+.topic-workspace .solution-steps { display:grid; gap:.45rem; margin:.65rem 0 0; padding-left:1.35rem; }
+.topic-workspace .solution-steps li { padding-left:.2rem; line-height:1.65; }
 .topic-workspace .topic-data-table { width:max-content; max-width:100%; margin:10px 0 16px; border-collapse:collapse; background:#fff; text-align:center; }
 .topic-workspace .topic-data-table caption { padding:6px; font-weight:800; }
 .topic-workspace .topic-data-table th, .topic-workspace .topic-data-table td { padding:7px 12px; border:1px solid var(--control); }

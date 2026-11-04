@@ -153,7 +153,10 @@
       }
       const solution = document.createElement("details"); solution.className = "worked-solution";
       const summary = document.createElement("summary"); summary.textContent = "정답과 풀이 보기";
-      const explanation = document.createElement("p"); explanation.append(mathNode(item.solution));
+      const explanation = document.createElement("ol"); explanation.className = "solution-steps";
+      (Array.isArray(item.solution) ? item.solution : [item.solution]).forEach(function (step) {
+        const line = document.createElement("li"); line.append(mathNode(step)); explanation.append(line);
+      });
       solution.append(summary, explanation);
       card.append(meta, title, prompt); appendTable(card, item.dataTable); card.append(choices, feedback, solution); host.append(card);
     });
