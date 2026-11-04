@@ -2050,3 +2050,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - MAA 작성 2010 결과집 Table IX(pp.195–196)의 전체 공식 응시자 선택지별 응답률을 검색 가능한 본문에서 전사해 `amc10-12-2010b-item-response.csv`와 기존 복습 진단 lookup에 연결했다. AMC10B/12B 각각 n=40,750이며, LIVE 정답표와 25개 키를 모두 대조했다. AIME 진출자 표와 혼동하지 않았다.
 - 응답률 합계가 99.91%·99.92%·99.88%인 10B 8·17번과 12B 3번은 원문 값은 보존하되 비교 UI에서 제외했다. 자료는 3자 호스팅 MAA 보고서의 web-indexed text 전사이며 페이지 이미지 OCR은 아니다. 출력용 원시험지·답안·해설 링크는 기존 year/form catalog를 사용한다.
 - 현재 HEAD에는 앞서 커밋한 2005 출처 조사 기록 `73459532e`가 있다. 사용자 파일 `raw_youtube.txt`는 수정/stage 금지. 이번 2010 데이터 변경은 아직 미커밋이며, 다음은 25행·키·합계·coverage 및 lookup 연결을 확인하고 커밋한다.
+
+### 2026-11-05 · 2011 AMC 10/12 B형 문항 응답표 검색
+
+- 웹에서 MAA 2011 Grand Statistics 보존 PDF를 확인했다. 전체 참가 수·평균·기록 학년 평균/인원은 제공하지만, 회수 가능한 2쪽 보고서에는 25문항 선택지 응답률이 없다. 기존 2011A 응답표(Global n=70,919/74,665)는 99CEF 자료로 이미 연결돼 있고, B형 행은 coverage에서 `not-found`로 유지한다.
+- 2012 MAA 교사용 안내서는 2011 결과 요약이 온라인에 있다고 안내한다. 동시대 연구 논문은 옛 MAA 통계 페이지를 인용하며 10B #13 및 12B #14 등 네 문항의 정답률/무응답률을 수록한다. 하지만 전체 선택지 분포·응답 인원·오답 선택지를 제공하지 않으므로 진단 표에 옮기지 않았다.
+- 연구자 AMC archive는 2011–2022 디지털 결과를 모았다고 설명하지만, 페이지의 유일한 Full Text 링크는 1968년 파일을 연다. 다음은 전체 2011 Results Summary 또는 `11-HS-StateStats.shtml` 자산을 읽을 수 있는 공개 경로로 찾고, 모든 정답 표시와 분모를 LIVE 형식별 정답키·MAA Grand Statistics와 대조하는 일이다.
+- 근거/검색 범위: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. 수치 데이터 변경 없음; `raw_youtube.txt` 보존; 로컬 문서만, push·배포·Drive 동기화 없음.
