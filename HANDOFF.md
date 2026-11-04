@@ -2113,3 +2113,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 웹 대조에서 LIVE의 2016 AMC 10B 인쇄용 정답 PDF는 18번을 B로 표시하지만, LIVE 공개 정답 페이지·전문 풀이와 MAA 저작 2016 AMC 10B 해설 미러는 E로 표시하는 충돌을 확인했다. 문제의 양의 연속 정수 표현도 7개라 E가 맞다. GFIELD 자동 채점 참조는 이미 E였다.
 - 문제 복습 화면에서 2016 AMC 10B를 선택하면 인쇄용 PDF의 18번 오기를 알리는 안내를 보이게 했고 스크립트 캐시 버전을 갱신했다. 브라우저에서 A형 화면에서 B형으로 바꿀 때 안내가 갱신되지 않는 점을 찾아 `formSelect.onchange`에도 안내 갱신을 연결했다. 수정 후 새로고침한 화면 검수는 남았다.
 - 2016 AMC 10B/12B 공개 지역 결과 n=27/7은 전국 규준·문항응답 자료로 섞지 않았다. 연도 검색에서도 2008/2017 전국 문항응답 비율은 확보하지 못했다. 2010 AMC 10/12 응답표와 2008 AMC 12 평균/컷오프는 이미 기존 자료에 들어 있어 중복 추가하지 않았다. 근거와 직접 링크는 연구 노트의 “2016 AMC 10B key erratum and cohort boundary”, “annual summary search”. `raw_youtube.txt` 보존, push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 2007 AMC 10/12 원 보고서 원문 대조
+
+- Internet Archive에서 MAA 58th Annual High School Results and Awards 보고서 PDF를 회수했다. Apple Vision OCR과 인쇄 p.257 Table VII 페이지 이미지로 2007 AMC 10/12 A/B의 학년별 평균·인원수를 재확인했고, 기존 네 폼 CSV와 런타임 출처를 원 보고서로 바꿨다.
+- 원문 대조 수정: AMC 10A ≤8/unknown 인원 3,659/8,207로 정정; AMC 10B 11학년 n=2, 평균 39.8 행 추가 및 grade coverage 업데이트; AMC 12B 9학년 평균을 인쇄값 76.9로 정리. 네 폼 학년 집단 n 합계가 공식 인원과 맞고 가중 평균이 폼 평균(67.9, 61.5, 66.8, 73.1)에 반올림 일치함을 확인했다.
+- 보고서 인쇄 pp.262–265에 네 폼 전체 응시자 문항응답표가 있어 원문을 회수했다. 100개 문항 비율 전사와 LIVE 키 교차검증은 다음 단계이며 아직 runtime/csv에 넣지 않았고 response coverage는 계속 0/25다. 근거: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 2007 section.
+- `git diff --check` 통과, CSV/런타임 JSON의 2007 표본수·평균·원문 출처를 대조했다. `raw_youtube.txt`는 사용자 미추적 파일로 보존. 로컬 변경만, push·배포·Drive 동기화 없음.

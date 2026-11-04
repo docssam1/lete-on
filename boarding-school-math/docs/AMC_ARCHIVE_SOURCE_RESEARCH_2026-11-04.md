@@ -408,3 +408,13 @@ Rechecked the [MAA-authored 2008 High School Results and Awards Summary mirror](
 The [2010 MAA results-summary mirror](https://www.scribd.com/doc/58090065/2010-AMC-HS-Summary) exposes 2010 item-response tables in indexed text, but the corresponding AMC 10/12 rows are already recorded in `amc10-12-item-response-reference.js` and the paper-coverage manifest. Search queries for 2017 returned year/form keys and solutions, plus nonmatching cohort material, but no 2017 all-official item-response percentages. No new 2008 or 2017 response values were entered; keep those gaps visible rather than using local school samples as national comparisons.
 
 Browser review found that the 2016 AMC 10B #18 warning did not refresh when the user switched forms in the already-open screen. Updated the form-change handler to refresh the note as well as the initial route render. A fresh render after this code change remains to be confirmed.
+
+## 2026-11-05 · 2007 AMC 10/12 MAA 연례 보고서 회수
+
+Internet Archive 보존본에서 MAA의 *58th Annual Summary of High School Results and Awards* PDF를 실제로 회수했다: [2007 MAA report PDF](https://web.archive.org/web/20161019223837id_/https://www.maa.org/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2006-7pub/2007-1012Summary.pdf). Apple Vision으로 표를 읽고 페이지 이미지를 눈으로 대조했다. 인쇄 p.257의 Table VII에서 2007 AMC 10/12 A/B의 공식 응시 인원·학년별 평균을 확인했다. 기존 GFIELD의 네 폼 학년 평균을 이 원 보고서 링크로 갱신했고, 모든 집단 인원 합계가 공식 응시자 수와 맞으며 가중 평균도 폼 전체 평균(10A 67.9, 10B 61.5, 12A 66.8, 12B 73.1)에 반올림 일치한다.
+
+원 보고서 대조로 기존 일부 전사도 바로잡았다: AMC 10A의 Grade 8 이하/학년 미기재 인원은 각각 3,659/8,207 (이전 2010 요약 비교표의 3,658/8,208과 1명씩 다름); AMC 10B에는 11학년 응시자 2명, 평균 39.8이 따로 있으며 기존 표에서 빠져 있었다; AMC 12B 9학년 평균은 원문 인쇄값 76.9로 기록했다. 따라서 AMC 10B coverage의 exact-grade 목록에 11학년을 포함했다. 모집단은 보고서의 U.S. National Statistics 표이며, 당시 집단 기술값이지 현재 규준이나 개인 배치·경시 자격 예측이 아니다.
+
+같은 보고서의 인쇄 pp.262–265 Table IX는 AMC 12A/B·AMC 10A/B 전체 공식 응시자에 대한 25문항 A–E 선택률과 공란률을 제공한다. 원문 스캔과 LIVE의 2007 연도·폼 키를 확보했으며, 비율은 아직 응답 CSV/runtime에 전사하지 않았다. 다음은 네 표 100행을 전사한 뒤 각 행의 합계를 반올림 오차 범위에서 확인하고, 별표 키를 LIVE 키와 대조해 문항응답 coverage를 갱신하는 작업이다. 그 전까지 이 네 폼의 item-response coverage는 기존대로 0/25로 유지한다.
+
+다른 원본 연결: LIVE의 2007 AMC 10A/B 키 [10A](https://live.poshenloh.com/past-contests/amc10/2007A/answers), [10B](https://live.poshenloh.com/past-contests/amc10/2007B/answers), AMC 12A 문제/해설 묶음은 [LIVE 12A](https://live.poshenloh.com/past-contests/amc12/2007A), AMC 12B 키는 [LIVE 12B](https://live.poshenloh.com/past-contests/amc12/2007B/answers), MAA 해설 팸플릿 사본은 [2007 AMC 12A solutions](https://f.hubspotusercontent30.net/hubfs/981338/Math%20Competition%20Problems_PDFS/2007AMC12-Asolutions.pdf)에서 확인했다. 기존 연도·폼별 인쇄/정답/해설 링크 카탈로그는 유지한다.
