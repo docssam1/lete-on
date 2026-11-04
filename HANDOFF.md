@@ -1254,3 +1254,9 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 웹 검색으로 당시 MAA 결과 요약 보존본, 전국 `Grade_and_Gender_Average.pdf` 경로를 인용한 동시대 게시물, 2011 참가 규모를 제시한 Connecticut 교육 자료를 확인했다. 보고서의 전체 전국 학년표/PDF는 회수되지 않았다. 검색 색인상의 초기 25·24점 학년 건수는 잠정 부분 집계이므로 규준으로 추가하지 않았다.
 - 추가한 것은 커버리지 표의 직접 보고서 경로·회수 상태와 증거 문서의 출처·분모 주의사항이다. 한국 2011 학년 평균 n=899는 기존 별도 한국 모집단 CSV에 이미 있으며 전국 통계와 섞지 않는다. CT 자료의 총원 153,485와 99CEF 최종 전체 요약의 152,745가 달라 전국 학년 평균을 역산하지 않는다.
 - 변경 파일: `boarding-school-math/competition/historical-amc-grade/amc-grade-reference-coverage-by-paper.csv`, `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. 다음은 2016·2020 및 MAA legacy report body의 공개 원자료 검색을 이어간다. `raw_youtube.txt` 미추적 원본은 보존·제외.
+
+### 2026-11-04 · AMC 8 2016·2020 보고 경로 재검증
+
+- 웹에서 AMC Summary of Results and Awards 인쇄 아카이브의 2010 종점과 MAA Historical Statistics 온라인 ID 63/87을 교차 확인했다. 상세 `Contest Score Grade Report with Percentile`을 선택할 수 있었으나 2022년 보존본에는 실제 보고 표가 없다.
+- 2016·2020 전국 학년별 점수표는 미회수 상태로 유지했다. MAA 지역 뉴스레터의 2016 평균도 확인했으나 참가수 108,295가 99CEF 분석의 108,227과 달라 별도 보고값으로 보존한다. 2020 Wisconsin 보고는 미국 전체 평균 10.01만 제공하고 학년/분모는 없다.
+- 자료 상태 및 경로를 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 기록. 다음은 ID 63/87 report body 복구를 계속하거나, 학년별 점수표가 실제 공개된 다른 회차/지역 보고서의 모집단을 분리 추가한다. `raw_youtube.txt`는 제외.

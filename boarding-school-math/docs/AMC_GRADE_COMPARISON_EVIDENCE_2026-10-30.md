@@ -431,6 +431,13 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - MAA의 과거 AMC 보고 메뉴 캡처는 2010–2021 연도별 보고서 선택 ID와 날짜를 보존하지만 본문 데이터가 아니라 메뉴만 담고 있다. 해당 ID를 학년 통계로 해석하지 않는다. 현재 검색에서 2012–2020 한국 참가집단 Grade 5–8 빈도표 원문은 추가로 회수하지 못했다. 이 상태는 ‘미발견’이며 자료가 존재하지 않는다는 뜻은 아니다.
 - 공개된 현대 점수 보고와 과거 학년표를 구분한다. 2022년 이후 MAA 공개 요약 통계만으로 학년별 백분위·평균을 채우지 않는다. 과거 상세 breakdown이 더는 공개되지 않는다고 말하는 사용자 보고는 있으나, 보존된 MAA report body가 확보되기 전에는 이를 공식 정책 문구로 단정하지 않는다.
 
+## 2026-11-04 · AMC 8 2016·2020 연례 보고서 경로 교차 확인
+
+- 검색 결과에서 독립 연구자가 모은 [MAA Summary of Results and Awards 아카이브](https://sites.google.com/view/ian-calaway/amc-archive)를 확인했다. 이 연례 소책자는 2010년까지 발행·배포됐고, 2011년부터는 온라인 인식 및 보고 흐름으로 이동했다는 설명이다. 따라서 2016·2020 학년표는 인쇄 연례 소책자 검색보다 MAA Historical Statistics의 web report ID/body 복구가 맞는 경로다.
+- 이미 보존한 MAA Historical Statistics 목록은 2016 AMC 8 ID 63과 2020 AMC 8 ID 87을 남기며, `Contest Score Grade Report with Percentile` 선택 항목을 안내한다. 보존본에는 메뉴만 있고 선택 후 생성되는 표 본문은 없다. 2016·2020 전국 학년별 점수표는 이번 검색에서도 회수되지 않았다.
+- 2016 전체집단 수치(n=108,227, 평균 9.36)는 99CEF 분석 보고서와 MAA Michigan Section 뉴스레터(n=108,295, 평균 9.36)의 서로 다른 모집단 수를 병기한다. 어느 한쪽으로 임의 통일하지 않는다. [Michigan Section–MAA Spring 2017](https://sections.maa.org/michigan/newsletters/Vol43no2_Spring_2017.pdf). 2020은 Wisconsin Section이 미국 평균 10.01을 보고하나 표본 수와 학년 분포가 없다. [Wisconsin Section–MAA Fall 2021](https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf).
+- 결과: 새 점수 행은 추가하지 않았다. coverage의 `no-grade-table-recovered` 상태를 유지하고, 다음 검색은 두 ID의 MAA 원본 report body 및 외부에 남은 비식별 집계 보고서로 한정한다. 지역 행사·학교·준비반 결과는 전국 학년 비교에 넣지 않는다.
+
 ## 2026-11-04 · AMC 8 2011 전국 학년표 및 참가집단 재검색
 
 - MAA의 [2011 AMC 8 결과 요약 페이지 보존본](https://web.archive.org/web/20111125032909/http://amc.maa.org/amc8/2011/stats/2011-amc8stats.shtml)은 11월 23일 현재 수치를 매일 갱신 중이라고 명시하고 Summary Report 이미지를 포함한다. 동시대 포럼 글은 MAA의 `Grade_and_Gender_Average.pdf` 전국 보고서 경로를 직접 인용하고, 검색 색인에는 25점과 24점의 학년별 건수가 남아 있다. 다만 원 PDF/전체 표 본문은 확인한 Wayback 및 검색 결과에서 회수되지 않았다. 해당 초기 행은 일부 점수만의 잠정 건수여서 완결된 분포·평균이나 최종 국가 규준으로 사용하지 않는다. [동시대 포럼의 원래 경로 인용](https://giftedissues.davidsongifted.org/bb/ubbthreads.php/topics/117085/3.html).
