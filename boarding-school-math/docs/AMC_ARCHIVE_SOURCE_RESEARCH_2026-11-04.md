@@ -438,3 +438,10 @@ Recovered the MAA-authored 57th annual report PDF from Internet Archive: [2006 H
 The MAA report's 10B item-response table is explicitly for 2005, despite appearing in the 2006 annual report; it is not assigned to 2006. 10A Q9's printed shares total 90.98%, and 12B Q18 totals 109.00%; both are preserved as printed in the raw CSV and excluded from runtime response comparisons. 12A has 25 usable items; 10A and 12B have 24 each. The report has no separate unreadable-response rate. These are whole-form official-student cohorts, not grade-specific norms or individual mastery labels.
 
 The 2006 response rows and manifest are now populated. Continue searching year-by-year for readable MAA/national 2009 tables and complete early-year form cohorts. Do not use school samples or the 2005 10B table as substitutes.
+
+
+## 2026-11-05 search follow-up: 2009 response tables and retrospective grade data
+
+Web-indexed copies of the MAA-authored 2010 AMC 10/12 Results Summary expose the 2009 form totals and recorded-grade statistics in four-year comparison tables. Those 2009 grade means are already present in `amc10-12-grade-means-2002-2011.csv`. The report's printed Table IX (pp.195–196), however, is explicitly the 2010 AMC 10/12 item-response distribution, not the prior-year contest. Search results for local 2009B reports remain school/venue cohorts, not the MAA full-cohort table. Keep 2009 item-response coverage as `not-found`; do not backfill from 2010 or local cohorts.
+
+This search also recovered the 2006 MAA annual report scan and populated the verified 2006 A/12A/12B tables, as documented above. Earlier notes in this file that say no 2006 response rows were added describe the search state before recovery and are superseded by the dated 2006 recovery entry.
