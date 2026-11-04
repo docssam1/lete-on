@@ -152,5 +152,51 @@
       return entry.program === selectedProgram && entry.year === selectedYear && entry.form === selectedForm && entry.grade === selectedGrade;
     }) || null;
   }
-  return Object.freeze({ entries: allEntries, referenceFor: referenceFor });
+  function comparisonFor(program, year, form, grade) {
+    const selected = referenceFor(program, year, form, grade);
+    if (!selected) return null;
+    const selectedProgram = String(program || "").toLowerCase();
+    const selectedYear = Number(year);
+    const selectedForm = selectedProgram === "amc8" ? "" : String(form || "").toUpperCase();
+    const cohortScope = function (population) { return String(population || "").replace(/;\s*(?:Grade|Grades)\b.*$/i, ""); };
+    const selectedScope = cohortScope(selected.population);
+    const rows = allEntries.filter(function (entry) {
+      return entry.program === selectedProgram && entry.year === selectedYear && entry.form === selectedForm &&
+        entry.sourceStatus === selected.sourceStatus && entry.sourceUrl === selected.sourceUrl &&
+        cohortScope(entry.population) === selectedScope && entry.gradeGroup !== "unknown";
+    }).slice().sort(function (left, right) {
+      const order = function (entry) {
+        const group = String(entry.gradeGroup);
+        if (/^(?:<=|≤)/.test(group)) return Number(group.replace(/^(?:<=|≤)\s*/, "")) - 0.5;
+        if (/^\d+-\d+$/.test(group)) return Number(group.split("-")[0]);
+        return Number.isFinite(entry.grade) ? entry.grade : 99;
+      };
+      return order(left) - order(right) || String(left.gradeGroup).localeCompare(String(right.gradeGroup));
+    }).map(function (entry) {
+      let gradeLabel = Number.isFinite(entry.grade) ? `Grade ${entry.grade}` : String(entry.gradeGroup);
+      if (/^(?:<=|≤)/.test(String(entry.gradeGroup))) gradeLabel = `Grade ${String(entry.gradeGroup).replace(/^(?:<=|≤)\s*/, "")} and below`;
+      else if (/^\d+-\d+$/.test(String(entry.gradeGroup))) gradeLabel = `Grades ${String(entry.gradeGroup).replace("-", "–")}`;
+      return Object.freeze({
+        grade: entry.grade,
+        gradeGroup: entry.gradeGroup,
+        gradeLabel: gradeLabel,
+        selected: entry.grade === Number(grade),
+        participants: entry.participants,
+        mean: entry.mean,
+        max: entry.max,
+        population: entry.population,
+        sourceStatus: entry.sourceStatus,
+        sourceUrl: entry.sourceUrl
+      });
+    });
+    return Object.freeze({
+      program: selectedProgram,
+      year: selectedYear,
+      form: selectedForm,
+      population: selectedScope,
+      sourceUrl: selected.sourceUrl,
+      rows: Object.freeze(rows)
+    });
+  }
+  return Object.freeze({ entries: allEntries, referenceFor: referenceFor, comparisonFor: comparisonFor });
 });

@@ -40,6 +40,9 @@ test("complete same-year AMC 8 result shows the exact historical grade mean", as
   assert.equal(await page.locator("#amc-grade-reference").isVisible(), true);
   assert.match(await page.locator("#amc-grade-reference-summary").innerText(), /Grade 7 · 2009 AMC 8 · 기록된 학년 참가자 50,218명/);
   assert.match(await page.locator("#amc-grade-reference-plot").innerText(), /이번 원본\s+10 \/ 25\s+해당 학년 평균\s+10\.08 \/ 25/);
+  assert.equal(await page.locator("#amc-grade-comparison-wrap").isVisible(), true);
+  assert.match(await page.locator("#amc-grade-comparison-body").innerText(), /Grade 6\s+9\.17 \/ 25\s+20,688명/);
+  assert.match(await page.locator("#amc-grade-comparison-body").innerText(), /Grade 7 · 선택 그룹\s+10\.08 \/ 25\s+50,218명/);
   assert.match(await page.locator("#amc-grade-reference-delta").innerText(), /평균보다 0\.08점 아래/);
   assert.equal(await page.locator("#amc8-korea-percentile-reference").isVisible(), true);
   assert.match(await page.locator("#amc8-korea-percentile-summary").innerText(), /2009 AMC 8 · Grade 7학년 · 10\/25점 · 점수 16명 · 학년 표본 262명/);
@@ -102,6 +105,8 @@ test("grade comparison stays hidden for grouped grades and unavailable years", a
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-grade-reference").isVisible(), true);
   assert.match(await page.locator("#amc-grade-reference-summary").innerText(), /Grade 9 · 2011 AMC 10 A · 기록된 학년 참가자 24,410명/);
+  assert.match(await page.locator("#amc-grade-comparison-body").innerText(), /Grade 8 and below\s+81\.30 \/ 150\s+5,018명/);
+  assert.match(await page.locator("#amc-grade-comparison-body").innerText(), /Grade 10\s+70\.50 \/ 150\s+35,727명/);
   await page.locator("#archive-year").selectOption("2022");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-grade-reference").isHidden(), true);

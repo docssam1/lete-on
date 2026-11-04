@@ -41,3 +41,14 @@ test("grouped and unknown grades never masquerade as exact-grade references", fu
   assert.equal(unknown.grade, null);
   assert.equal(reference.referenceFor("amc10", 2011, "A", 8), null);
 });
+
+test("cross-grade mean comparison stays within the same year, form, source and population", function () {
+  const comparison = reference.comparisonFor("amc10", 2011, "A", 9);
+  assert.deepEqual(comparison.rows.map((entry) => entry.gradeLabel), ["Grade 8 and below", "Grade 9", "Grade 10"]);
+  assert.deepEqual(comparison.rows.map((entry) => entry.selected), [false, true, false]);
+  assert.deepEqual(comparison.rows.map((entry) => entry.participants), [5018, 24410, 35727]);
+  assert.equal(comparison.rows.some((entry) => entry.gradeGroup === "unknown"), false);
+  assert.equal(reference.comparisonFor("amc10", 2011, "B", 9).form, "B");
+  assert.equal(reference.comparisonFor("amc10", 2011, "A", 8), null);
+  assert.equal(reference.comparisonFor("amc10", 2022, "A", 9), null);
+});

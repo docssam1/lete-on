@@ -1592,3 +1592,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 구현: `competition/amc8-global-grade-score-reference.js`에 동일 연도별 `comparisonFor` 추가, `competition-paper-review.html/js/css` 결과 영역에 학년 그룹별 점수 이하 비율·표본 수 표 추가. 선택한 학년 행에는 “입력 학년”을 텍스트로 표시한다. 2009의 4–5학년, 2019/2022의 5학년 이하 원자료 그룹은 분리하지 않는다. 학년 미상 행은 비교하지 않는다. 공식 percentile이나 현재 실력 등급으로 표현하지 않는다.
 - 검수: node_repl에서 9개 데이터 assertion 통과. 시스템 쉘에 Node가 없어 `node --test`를 실행하지 못했다. CUA 브라우저 탭 접근이 URL 정책에서 차단되어 실제 화면 수동 QA는 보류다. HTML 구조·JS 연결·CSS overflow fallback·캐시 버전·`git diff --check`를 검사한다.
 - 현재 작업 브랜치 `codex/boarding-g7-nsa-mac-20261017`, head 당시 `4421e9ab4`. `raw_youtube.txt`는 미추적 사용자 파일로 그대로 두고, 이번 커밋에는 프로젝트 파일만 포함한다. 로컬 수정만; push·배포·Drive 동기화 없음.
+
+## 2026-11-04 · AMC 8/10/12 학년 평균 교차 비교
+
+- 기존에 근거 등록한 학년 평균 데이터 238개 정확 학년 레코드에, 같은 회차의 보고 학년 그룹 평균을 결과표로 연결했다. 새 점수 통계는 추가하지 않았다.
+- `amc-historical-grade-reference.js`의 비교 API는 프로그램·연도·시험형·선택 기록의 source URL/status와 모집단 범위를 맞춰 그룹만 반환한다. `<=8`, `4–5` 등의 원자료 그룹을 그대로 표시하고 unknown을 제외한다. 결과 화면은 점수 평균과 표본 수를 비교표에 넣고, 기존 응시 점수 대 해당 학년 평균을 유지한다.
+- 확인: Node REPL에서 238개 정확 학년 레코드 provenance/group assertions 통과. 로컬 브라우저에서 2009 AMC 8과 2011 AMC 10A 결과표 행을 실제 렌더링해 확인. `node --test`는 쉘 Node 없음으로 미실행. 브라우저 자동 테스트 사양에 2009 AMC 8·2011 AMC 10A 표를 추가했다.
+- 이전 커밋 `46156641b`; 이번 변경은 별도 로컬 커밋 예정. `raw_youtube.txt` untouched. No push/deployment/Drive sync.

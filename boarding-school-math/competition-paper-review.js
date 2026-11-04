@@ -780,7 +780,14 @@
     const gradeReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && historicalGradeReference
       ? historicalGradeReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade)
       : null;
+    const gradeComparison = gradeReference && historicalGradeReference && typeof historicalGradeReference.comparisonFor === "function"
+      ? historicalGradeReference.comparisonFor(selectedFormat().id, selectedYear, selectedForm, grade)
+      : null;
     gradeReferenceSection.hidden = !gradeReference;
+    const gradeComparisonWrap = $("amc-grade-comparison-wrap");
+    const gradeComparisonBody = $("amc-grade-comparison-body");
+    gradeComparisonWrap.hidden = !gradeComparison || gradeComparison.rows.length === 0;
+    gradeComparisonBody.replaceChildren();
     if (gradeReference) {
       const formatLabel = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
       const isUsForumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
@@ -804,6 +811,18 @@
         const fill = document.createElement("span"); fill.style.width = `${Math.max(0, Math.min(100, datum.value / gradeReference.max * 100))}%`;
         track.append(fill); row.append(label, value, track); plot.append(row);
       });
+      if (gradeComparison) {
+        gradeComparison.rows.forEach(function (datum) {
+          const row = document.createElement("tr");
+          if (datum.selected) row.className = "is-current";
+          const gradeCell = document.createElement("th"); gradeCell.scope = "row";
+          gradeCell.textContent = datum.selected ? `${datum.gradeLabel} · 선택 그룹` : datum.gradeLabel;
+          const meanCell = document.createElement("td"); meanCell.textContent = `${datum.mean.toFixed(2)} / ${datum.max}`;
+          const countCell = document.createElement("td"); countCell.textContent = `${datum.participants.toLocaleString("en-US")}명`;
+          row.append(gradeCell, meanCell, countCell);
+          gradeComparisonBody.append(row);
+        });
+      }
       const difference = result.scoreEstimate.points - gradeReference.mean;
       const differenceLabel = difference === 0 ? "평균과 같은 점수" : `${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "위" : "아래"}`;
       setText("amc-grade-reference-delta", `해당 회차 평균보다 ${differenceLabel}`);
