@@ -8,3 +8,7 @@
 .p30original-question .source52-p30e43-diagram .source52-p30e43-dimension,
 .p30original-question .source52-p30e43-diagram .source52-p30e43-given-angle { font-size:26px; font-weight:700; }
 .p30original-question .source52-p30e43-diagram .source52-p30e43-target-label { font-size:25px; }
+
+/* 원문의 꼭짓점과 각도 표기는 2단 인쇄에서도 읽을 수 있어야 한다. */
+.p30original-question .p30e4-diagram .p30e4-label,
+.p30original-question .p30e4-diagram .p30e4-target-label { font-size:22px; }
