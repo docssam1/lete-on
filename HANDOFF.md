@@ -2,7 +2,7 @@
 
 GEMT annual AMC10B/AMC12B report text indexed by web search contained the AMC12B Global grade tables (printed p.13 in 2013 and p.12 in 2014). Added `amc12b-grade-means-2013-2014.csv`, exact-grade runtime lookup, and annual coverage rows. The PDF was not downloaded/rendered locally, so the data status and result-panel note explicitly identify it as web-indexed text, distinct from visually verified PDF tables. Taiwan values remain excluded. The 2014 Grade 11 count indexed as `17.303` was normalized to 17,303 after category counts reconciled with total n=33,247. 2013 group counts reconcile to total n=30,249, while the count-weighted subgroup mean 64.56 differs from printed overall mean 64.08; both are preserved and the mismatch appears in the result source note.
 
-Grade 7/12 year/form-matched lookups are available; these are historical cohort means, not current level or percentile judgments. Focused runtime and browser validation passed for both 2013 and 2014 AMC12B Grade 11 result panels (2013 n=15,365; mean 63.47; 2014 n=17,303; mean 67.92 /150); 2013 source discrepancy is logged. Evidence is in `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. Local commit `b31451b73`; no push, deployment, or Drive sync. Further 2012 AMC12B grade-report discovery remains in progress. Preserve the untracked user file `raw_youtube.txt`.
+Grade 7/12 year/form-matched lookups are available; these are historical cohort means, not current level or percentile judgments. Focused runtime and browser validation passed for both 2013 and 2014 AMC12B Grade 11 result panels (2013 n=15,365; mean 63.47; 2014 n=17,303; mean 67.92 /150); 2013 source discrepancy is logged. Evidence is in `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. Local commit `b31451b73`; no push, deployment, or Drive sync. Web search now confirms the 2012 AMC12B original exam and MAA solutions are available, but has not recovered a national grade-mean table; see the latest search note in the evidence file. Preserve the untracked user file `raw_youtube.txt`.
 
 ### 2026-11-04 공식 웹 검색으로 연도별 AMC 원본 아카이브 재대조
 
@@ -1333,3 +1333,20 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 정확 학년 평균 7–13(2016은 14 포함)을 paper review lookup에 등록했다. `<=6`, unknown은 원 CSV에만 그룹으로 남겨 특정 학년에 매칭하지 않는다. 학년 수와 평균은 같은 AMC12A 연도에만 비교한다. report-level overall 평균과 2014 weighted subgroup mean 차이(64.00 vs 64.02)는 원문 값을 유지하고 기록했다.
 - 변경: `amc12a-grade-means-2012-2018.csv`, `amc-historical-grade-reference.js`, grade coverage manifest, README 및 `AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. JavaScriptCore에서 2012–2018 매칭 표본을 확인하고 CSV의 참가자 수 합계와 `git diff --check`를 점검했다.
 - 다음: 연도별 원본 시험 문제·정답·해설 워크플로는 LIVE 자료 인벤토리에 이미 연결되어 있다. 추가 학년 비교표는 AMC12 B형, AMC10 2017/2019 및 2017/2019 AMC12A의 연도별 원문을 계속 검색한다. 과거 평균은 학년 등급 예측으로 쓰지 않는다. `raw_youtube.txt`는 제외했고 원격 push/배포/Drive 동기화 없음.
+
+
+### 2026-11-04 · AMC12B 2012 및 후속 연도 통계 웹 검색
+
+사용자가 연도별 실제 AMC 자료를 웹 검색으로 확보하도록 요청해 2012 AMC12B 원시험지, MAA 해설지, 학년별 통계 보고서를 각각 검색했다. LIVE의 2012B 원본 페이지는 인쇄 PDF·정답·전문 풀이를 제공하며 MAA의 교육용 재사용 허가를 명시한다. MAA 작성 2012 해설지 사본도 검색됐고 해설지 자체에 시험문항/해설의 교육용 복제 허가 문구가 포함되어 있다. 기존 원본 카탈로그는 2012B 인쇄/답/풀이 링크를 이미 갖고 있어 중복 항목을 만들지 않았다.
+
+2012B grade 통계로 검색된 결과는 전체 평균 70.08, AIME cutoff 99, DHR 114 등 전체집단 값뿐이다. College Confidential의 당시 글은 MAA 2012B 통계 메뉴로 이어지는 경로와 상위 5% 미포함 당시 상태를 언급하지만 학년별 표를 제공하지 않는다. MAA 보존 메뉴에는 `AMC 10/12 B 02/22/2012` 결과 항목이 남아 있으나 ReportViewer 본문은 보존되지 않은 상태다. Grade 11/12 등 전국 학년 평균 숫자는 새로 만들지 않았다. 2015–2017 검색에서는 2015–2017 Bard Math Circle 행사 소표본만 확인되어 전국 수치에서 제외했고, MAA 2016 교사 매뉴얼은 2015 요약 자료가 당시 게시됐다고만 확인해 준다.
+
+출처: [LIVE 2012 AMC12B 원시험지·정답·풀이](https://live.poshenloh.com/past-contests/amc12/2012B), [MAA 2012 AMC12B 해설지 사본](https://www.isinj.com/mt-amc12/2012AMC12-Bsolutions.pdf), [당시 MAA 통계 페이지를 가리키는 2012 대회 토론](https://talk.collegeconfidential.com/t/official-amc-12-2012-discussion-thread/1242057?page=14), [2012B 전체 평균 등 2차 연도 통계표](https://mathgoldmedalist.com/competitions/amc-12), [2016 MAA 교사 매뉴얼 검색본](https://studylib.net/doc/8764350/amc-10-12-teachers--manual---mathematical-association-of-...). 연도별 학년표 발견과 전체 평균 발견을 서로 다른 데이터 상태로 유지한다.
+
+### 2026-11-04 · 2014 AMC10B 학년 평균 웹 검색·연도 조회 연결
+
+GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 추가 확인했다. Grade 7 (n=1,511, mean 77.36), 8 (3,178, 79.36), 9 (12,551, 64.14), 10 (22,389, 73.76)을 기존 exact-year/form/grade 결과 참조에 넣었다. `<=6` 및 미기재 학년은 집계 파일에 보존하되 개인 학년 조회와는 매칭하지 않는다. Taiwan 행은 제외했다.
+
+출처 내부 집계가 일치하지 않는다. 학년 행 인원 합은 41,675이며, 보고서 p.3 요약표는 전체 n=42,032, p.4 점수 구간표는 n=41,682다. 하위행의 인원 가중 평균은 71.38, p.3 인쇄 전체 평균은 71.45다. 어떤 숫자도 보정하지 않았고 이 차이를 각 행의 주석과 coverage manifest에 남겼다. 자료는 웹 인덱스 텍스트에서 전사했으며 로컬 PDF 페이지 렌더는 확인하지 않았다.
+
+검증은 CSV 행·연도별 그룹합과 런타임 lookup을 대조한다. 출처와 제한은 [AMC 학년 비교 근거](boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md) 및 [GEMT 2014 보고서](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf)에 기록했다. `raw_youtube.txt`는 수정하지 않는다. Local only; no push, deployment, or Drive sync.

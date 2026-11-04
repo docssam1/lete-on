@@ -517,3 +517,20 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 2014 AMC12B Global: 전체 n=33,247, 평균 68.08. Grade 13 (73, 64.23), 12 (11,234, 66.52), 11 (17,303, 67.92), 10 (2,847, 71.75), 9 (828, 71.31), 8 (162, 78.96), 7 (63, 77.81), <=6 (40, 73.76), unknown (697, 74.96). 색인에 11학년 n이 `17.303`으로 표시돼 있어 전체 인원 합산에 맞춰 `17,303`으로 정규화했다. 모든 행 인원 합은 33,247이며 보고서 전체 평균과 가중 행 평균도 반올림 범위에서 일치한다. Taiwan 표는 제외했다.
 - 두 연도의 Grade 7·12 값을 exact-year/form/grade reference로 연결했다. 결과 패널은 Global 모집단과 웹 색인 전사·PDF 이미지 미대조 상태를 명시하며 과거 평균을 현재 능력 등급·백분위로 부르지 않는다. 2013 결과 요약에도 인원 가중 하위집단 평균과 인쇄 전체 평균의 불일치를 노출한다.
 - 출처: [2013 GEMT AMC10B/AMC12B 보고서](https://www.gemt.org.tw/wp-content/uploads/2012/11/2013AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0411.pdf), [2014 GEMT AMC10B/AMC12B 보고서](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf). 2014 보고서 색인에는 AMC12B 전체집단·grade 행이 포함된다.
+
+
+## 2026-11-04 웹 검색: AMC12B 2012 및 후속 연도 학년표 추가 확인
+
+- 2012 AMC12B의 원본 시험지/정답/전문 풀이 경로는 LIVE 아카이브에 이미 연결되어 있고, LIVE 페이지는 MAA 교육용 재사용 허가를 명시한다. 2012 MAA solutions pamphlet 사본도 검색했다. 원시험 자료는 기존 카탈로그에 이미 있어 중복 레코드는 만들지 않았다.
+- 학년별 평균표를 찾기 위해 `2012 AMC 12B grade statistics`, `Average score for grade 12`, MAA 2012B 결과 경로 및 2015–2017 연례 summary 표현을 검색했다. 2012에서 회수한 값은 전체 평균 70.08/AIME cutoff 99/DHR 114뿐이며, 출처는 독립 검증을 모두 마치지 않았다고 밝힌 2차 연도표다. 당시 게시글은 MAA legacy statistics 페이지가 존재했음을 보이지만 grade table의 숫자를 보존하지 않는다. 아카이브된 MAA 메뉴 항목은 확인되나 개별 ReportViewer 본문은 보존되지 않았다.
+- 2015–2017 Bard Math Circle 검색 결과는 행사 표본(2015 AMC12B n=6, 2017 n=3)이다. 국가 또는 글로벌 학년 평균으로 바꾸지 않았다. 2016 MAA 교사 매뉴얼은 2015 요약 자료 링크의 존재를 말하지만 검색으로 해당 grade table을 회수하지 못했다.
+- 따라서 2012 AMC12B의 `no-grade-table-recovered` 상태를 유지한다. 전체 평균/컷오프가 있다는 사실은 학년 평균표 발견으로 계산하지 않는다.
+- 출처: [LIVE 2012 AMC12B](https://live.poshenloh.com/past-contests/amc12/2012B), [MAA 2012 AMC12B solutions pamphlet](https://www.isinj.com/mt-amc12/2012AMC12-Bsolutions.pdf), [2012 당시 MAA 결과 경로를 가리키는 토론](https://talk.collegeconfidential.com/t/official-amc-12-2012-discussion-thread/1242057?page=14), [AMC12 연도별 전체집단 수치(2차 출처)](https://mathgoldmedalist.com/competitions/amc-12), [2016 교사 매뉴얼의 2015 summary 언급](https://studylib.net/doc/8764350/amc-10-12-teachers--manual---mathematical-association-of-...).
+
+## 2026-11-04 GEMT 연례 보고서에서 2014 AMC10B 학년표 추가
+
+- 동일한 GEMT 2014 AMC10B/12B 보고서 p.3에 AMC10B Global grade 평균표가 있어 7–10학년을 exact-grade reference로 추가하고, `<=6`·미기재 학년은 비교에서 제외했다. Taiwan 집단은 포함하지 않았다.
+- AMC10B 2014 Global: Grade 10 n=22,389 평균 73.76; Grade 9 n=12,551 평균 64.14; Grade 8 n=3,178 평균 79.36; Grade 7 n=1,511 평균 77.36; `<=6` n=643 평균 70.04; unknown n=1,403 평균 74.35. 총계 행은 n=42,032, 평균 71.45라고 인쇄되어 있다.
+- 보고서 p.4의 점수 구간 표는 전체 n=41,682를 보고한다. 학년 하위행 인원 합은 41,675이고, 인원 가중 하위행 평균은 71.38이다. 따라서 전체 수·하위집단 수·전체 평균 사이 불일치를 임의로 보정하지 않고 데이터 주석과 화면에 드러낸다. 표는 검색 인덱스에서 회수했으며 로컬 PDF 렌더 확인은 하지 않았다.
+- `amc10b-grade-means-2014.csv`, 런타임 exact-grade lookup, 266회 coverage manifest, 자료 README에 반영했다. 2014 AMC10B 점수 기록은 2014 AMC12B 또는 다른 연도와 혼합하지 않는다.
+- 출처: [GEMT 2014 AMC10B/AMC12B report](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf).
