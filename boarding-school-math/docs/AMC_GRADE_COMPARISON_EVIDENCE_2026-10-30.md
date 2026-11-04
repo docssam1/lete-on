@@ -630,5 +630,5 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 
 - 2004 AMC 8의 실제 시험지, 답안, 문항별 professional solutions는 MAA 사용 허가를 밝힌 [LIVE 2004 AMC 8 페이지](https://live.poshenloh.com/past-contests/amc8/2004)에서 연도별로 확인할 수 있다. 페이지에는 인쇄용 시험지와 정답·풀이가 연결되어 있다.
 - 별도 [2004 AMC 8 Results and Statistics 표 사본](https://www.scribd.com/doc/57421446/2004AMC8stats)은 154,590명 코호트의 학년별 평균표와 25문항 A–E 선택·미응답·판독불가 비율표를 싣는다. 같은 표의 전국 통계 및 Grade 4–5/6/7/8 평균은 MAA 작성 56th Annual AMC 요약의 [검색 가능한 사본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)으로 교차 확인했다. 이 2004 학년 평균은 기존 `amc8-grade-means-2001-2009.csv`에 이미 있으므로 중복하지 않는다.
-- 응답표는 스캔 이미지다. 웹 색인과 뷰어의 텍스트 추출은 열 순서가 섞이고 행 경계가 불분명한 구간이 있어, 이번 확인에서는 응답률을 CSV나 런타임에 전사하지 않았다. 숫자 후보는 원본 이미지의 A–E/OMITS/? 열을 Apple Vision으로 판독한 뒤 LIVE 정답 25개와 대조하고, 각 행 합계 검증을 통과해야 추가한다.
-- 따라서 현재 완료 상태는 “연도별 시험지·정답·풀이 링크 확인”과 “2004 전국 통계표 존재 확인”까지다. 2004 응답률의 원본 이미지 기반 전사·검증은 미완료이며, 화면에 보이는 연구 자료를 전국 학년 규준이나 개인 진단으로 바꾸지 않는다.
+- 응답표는 스캔 이미지다. 광고 시청 후 공개된 뷰어에서 표의 A–E/OMITS/? 열을 화면 이미지로 행별 직접 확인해 전사했다. Apple Vision OCR은 사용하지 않았다. 25개 별표 답을 [LIVE 2004 답안 키](https://live.poshenloh.com/past-contests/amc8/2004/answers)와 모두 대조했다. Q1은 인쇄값 합계가 99.74%여서 원값을 유지하고 런타임 비교에서 숨겼다. 나머지 24행은 0.15%p 허용오차 내 합계를 통과했다.
+- 25행을 `amc8-2004-item-response-percent.csv`와 AMC 8 응답 조회 레지스트리에 저장했다. 조회 캐시를 갱신했고 기존 응답표 테스트에 2004 답안 25개·분모·행 합계·Q1 억제를 추가했다. 이 전체 응시 코호트 표는 학년별 응답률이나 개인의 오개념 진단이 아니다. 원본 연도별 시험·정답·풀이 링크는 별도 LIVE 경로를 유지한다.

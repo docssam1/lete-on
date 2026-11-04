@@ -75,6 +75,23 @@ test("AIME integer answer key comparison accepts only 0–999 integer entries", 
   await page.close();
 });
 
+test("2004 AMC 8 historical response reference skips the bad first row and shows its cohort size", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(`${url}?grade=7&program=amc8&year=2004`, { waitUntil: "networkidle" });
+  await page.locator('[data-question="2"][data-field="answer"]').selectOption("A");
+  await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-review-items-note").innerText(), /MAA 보고서 응답 집단 154,590명/);
+  assert.match(await page.locator("#report-review-items-note").innerText(), /학년별 비교나 현재 기준은 아닙니다/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /2번 · 오답 · 내 답 A · 정답 B/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /2004 응답 집계 · 전체 응답 154,590명 · 정답률 44\.49% · A 선택 6\.20%/);
+  assert.equal(await page.locator("#report-review-items-list .report-review-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2004/problem/2");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("yearly AMC originals expose print, answer entry, and local self-marking", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];

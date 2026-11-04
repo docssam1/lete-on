@@ -5,6 +5,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
+  // 2004 was transcribed visually from the available scan and its marked answers were
+  // cross-checked with LIVE. Q1 is kept as printed but suppressed because its shares total 99.74%.
   // 2010 was transcribed from an MAA table scan using Apple Vision and checked against
   // the image. 2009 and 2011 are HTML tables in AMC Study's republication of MAA reports.
   // The 2009 response table marks D and E correct for item 12, while LIVE's key lists D.
@@ -40,6 +42,35 @@
 23,C,10.54,19.38,25.30,24.90,10.99,8.63,
 24,C,25.77,19.73,22.79,12.35,10.36,8.84,
 25,A,21.38,16.66,18.18,15.49,19.13,9.04,`.trim();
+  // 2004 AMC 8 response table, 154,590 students. The scanned page is a Scribd-hosted
+  // copy of a tabulation attributed to the MAA contest report. Column order and all
+  // starred keys were checked against the visible table and LIVE's 2004 answer key.
+  const raw2004 = `
+1,B,1.55,90.53,3.90,1.23,2.00,0.52,0.01
+2,B,6.20,44.49,37.88,9.79,0.88,0.70,0.05
+3,A,72.69,14.59,6.81,2.83,1.81,1.21,0.07
+4,B,3.00,51.14,20.95,12.47,11.36,0.99,0.09
+5,D,11.06,2.78,18.75,59.14,7.67,0.52,0.08
+6,C,19.45,16.44,51.62,6.57,4.48,1.38,0.06
+7,B,2.34,46.05,5.63,41.36,3.78,0.70,0.14
+8,B,25.02,51.00,10.38,4.70,7.09,1.68,0.14
+9,D,9.86,13.53,14.28,38.66,21.01,2.58,0.09
+10,E,3.37,6.38,5.09,23.85,60.21,0.96,0.14
+11,C,6.14,19.75,60.74,7.24,4.44,1.62,0.07
+12,B,24.80,21.74,15.25,24.83,10.90,2.38,0.09
+13,E,33.94,7.61,14.17,17.67,24.43,1.99,0.18
+14,C,13.11,27.26,37.25,14.97,4.05,3.27,0.10
+15,C,14.81,15.04,36.74,15.51,15.62,2.17,0.12
+16,C,5.55,9.50,20.25,7.06,54.29,3.20,0.15
+17,D,5.57,21.54,25.79,23.72,19.86,3.35,0.17
+18,A,41.93,6.80,18.67,20.98,6.47,4.97,0.18
+19,B,21.00,36.62,17.42,9.51,8.29,7.03,0.13
+20,D,12.33,21.12,26.08,24.29,9.38,6.67,0.13
+21,D,11.18,18.48,19.22,25.22,18.69,7.00,0.20
+22,B,10.06,16.20,13.30,9.92,42.22,7.95,0.35
+23,D,38.60,9.04,8.91,21.48,13.69,7.97,0.31
+24,C,15.15,20.06,24.99,15.70,12.38,11.57,0.14
+25,D,15.87,24.33,15.87,13.12,19.33,11.34,0.14`.trim();
   // MAA 2007 annual report Table 5, national response cohort n=150,618.
   const raw2007 = `
 1,D,4.22,4.19,3.67,84.11,3.30,0.48,
@@ -469,6 +500,7 @@
 24,B,10.00,50.00,0.00,20.00,0.00,20.00,0.00
 25,C,60.00,10.00,10.00,0.00,0.00,20.00,0.00`.trim();
   const sources = Object.freeze({
+    2004: Object.freeze({ raw: raw2004, respondentCount: 154590, population: "2004 AMC 8 MAA-reported student response cohort", sourceUrl: "https://www.scribd.com/doc/57421446/2004AMC8stats", sourceStatus: "MAA-attributed response table in secondary-hosted scan; manually checked against the visible table and LIVE key; Q1 source shares total 99.74% and are suppressed" }),
     2008: Object.freeze({ raw: raw2008, respondentCount: 148731, population: "2008 AMC 8 MAA-reported national response cohort", sourceUrl: "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america", sourceStatus: "MAA-authored annual report Table 5 in secondary-hosted copy; extracted D/E block verified against LIVE key and source stars" }),
     2007: Object.freeze({ raw: raw2007, respondentCount: 150618, population: "2007 AMC 8 MAA-reported national response cohort", sourceUrl: "https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards", sourceStatus: "MAA-authored annual report Table 5 in secondary-hosted copy; answer key cross-checked with LIVE" }),
     2006: Object.freeze({ raw: raw2006, respondentCount: 147210, population: "2006 AMC 8 reported MAA response cohort", sourceUrl: "https://www.judymlevine.com/uploads/5/4/6/7/5467082/2006_amc_8_ws-25.pdf", sourceStatus: "MAA-authored item-response table in secondary-hosted report; non-reconciling rows suppressed; rows 18–19 have multiple marked keys", excludedQuestions: Object.freeze([18, 19]) }),

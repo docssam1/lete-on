@@ -1,7 +1,23 @@
 const assert = require("node:assert/strict");
 const reference = require("../competition/amc8-item-response-reference.js");
 
-for (const year of [2009, 2010, 2011]) assert.equal(reference.questionsByYear[year].length, 25);
+for (const year of [2004, 2009, 2010, 2011]) assert.equal(reference.questionsByYear[year].length, 25);
+const official2004Key = ["B", "B", "A", "B", "D", "C", "B", "B", "D", "E", "C", "B", "E", "C", "C", "C", "D", "A", "B", "D", "D", "B", "D", "C", "D"];
+for (let question = 1; question <= 25; question++) {
+  const item = reference.questionsByYear[2004][question - 1];
+  assert.equal(item.correctAnswer, official2004Key[question - 1]);
+  assert.equal(item.respondentCount, 154590);
+  const row = reference.responseFor(2004, question, "");
+  if (question === 1) {
+    assert.equal(row, null, "2004 question 1 source percentages total 99.74% and stay suppressed");
+    continue;
+  }
+  assert.ok(row, `2004 question ${question} should have a reconciled cohort reference`);
+  const total = Object.values(row.responsePercent).reduce((sum, value) => sum + value, row.omittedPercent + row.unreadablePercent);
+  assert.ok(Math.abs(total - 100) < 0.15, `2004 question ${question} sums to ${total}`);
+}
+assert.equal(reference.responseFor(2004, 8, "E").correctResponsePercent, 51);
+assert.equal(reference.responseFor(2004, 8, "E").selectedResponsePercent, 7.09);
 const official2007Key = ["D", "E", "C", "D", "B", "E", "D", "B", "B", "D", "D", "A", "C", "C", "A", "A", "C", "D", "C", "A", "D", "C", "B", "C", "B"];
 assert.equal(reference.questionsByYear[2007].length, 25);
 for (let question = 1; question <= 25; question++) {
