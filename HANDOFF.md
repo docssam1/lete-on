@@ -1319,3 +1319,11 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - TestDaily에 재게시된 MAA `Grade and Gender Average AMC 8 2020 · Location: Overall` 이미지를 웹에서 직접 회수했다. Apple Vision OCR과 이미지 셀 대조로 Grade 5–8 응시 인원/평균을 확인하고 연도별 자료 CSV·비교 lookup·coverage에 등록했다. `<=4`와 `UNK`는 그룹 상태로 보존한다.
 - MAA 보고 이미지의 `All`은 n=56,099·평균 10.00이다. MAA Wisconsin Section의 미국 평균 10.01과 모집단/보고값이 달라 합치지 않는다. 2016 Grade Report는 아직 미회수. 근거: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
 - `raw_youtube.txt`는 미추적 사용자 파일로 보존·제외.
+
+
+### 2026-11-04 · AMC12A 연도별 학년 평균 보고서 회수
+
+- 웹 검색으로 99CEF AMC12A 연례 분석 보고서의 2012, 2013, 2014, 2015, 2016, 2018 A형 학년별 인원·평균표를 회수했다. Global 모집단(2012–2016)과 미국·캐나다(2018)를 분리하고 Taiwan 통계는 혼합하지 않았다. PDFKit 텍스트 및 렌더한 표 페이지 이미지로 확인했다.
+- 정확 학년 평균 7–13(2016은 14 포함)을 paper review lookup에 등록했다. `<=6`, unknown은 원 CSV에만 그룹으로 남겨 특정 학년에 매칭하지 않는다. 학년 수와 평균은 같은 AMC12A 연도에만 비교한다. report-level overall 평균과 2014 weighted subgroup mean 차이(64.00 vs 64.02)는 원문 값을 유지하고 기록했다.
+- 변경: `amc12a-grade-means-2012-2018.csv`, `amc-historical-grade-reference.js`, grade coverage manifest, README 및 `AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. JavaScriptCore에서 2012–2018 매칭 표본을 확인하고 CSV의 참가자 수 합계와 `git diff --check`를 점검했다.
+- 다음: 연도별 원본 시험 문제·정답·해설 워크플로는 LIVE 자료 인벤토리에 이미 연결되어 있다. 추가 학년 비교표는 AMC12 B형, AMC10 2017/2019 및 2017/2019 AMC12A의 연도별 원문을 계속 검색한다. 과거 평균은 학년 등급 예측으로 쓰지 않는다. `raw_youtube.txt`는 제외했고 원격 push/배포/Drive 동기화 없음.
