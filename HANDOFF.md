@@ -1,3 +1,9 @@
+### 2026-11-04 AMC 8 연도별 학년 통계 웹 검색 추가 확인
+
+AMC 8 2012–2016의 전국 학년별 평균을 검색했다. 2014·2015·2016 결과로 보이는 Bard Math Circle 게시물은 해당 행사/연계 프로그램 응시자 평균(예: 2016 n=35)으로 확인되어 국가·글로벌 학년 기준에 넣지 않았다. 2015 SchoolReport PDF 검색 결과도 개별 싱가포르 학교 보고서라 제외한다. MAA Michigan Section 뉴스레터는 2015(전체 평균 8.55, 참가자 149,277)와 2016(전체 평균 9.36, 참가자 108,295)의 전체 응시 요약을 싣지만 학년별 평균은 없다. 기존 99CEF 연도표의 참가자 수(2015 149,844; 2016 108,227)와 차이가 있어 각 출처 숫자는 해당 출처의 값으로 보존하고 임의로 합치지 않는다.
+
+검색 출처: [Bard 2014](https://www.bardmathcircle.org/p/2014-amc-8), [Bard 2015](https://www.bardmathcircle.org/p/2015-amc-8), [Bard 2016](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in), [MAA Michigan 2015 report](https://sections.maa.org/michigan/newsletters/Vol42no2_Spring_2016.pdf), [MAA Michigan 2016 report](https://sections.maa.org/michigan/newsletters/Vol43no2_Spring_2017.pdf). 개별 학교/행사 표본과 전체 참가자 요약은 전국 학년별 비교에 대용하지 않는다. 이 조사에서 2011–2016 AMC 8 전체 학년별 국가 평균표는 회수되지 않았다. 원본 시험지의 연도별 카탈로그와 학년 기준 데이터 범위는 기존 상태를 유지하며, 새 통계 행은 추가하지 않았다. `raw_youtube.txt` 보존; 로컬 변경만, 외부 동기화 없음.
+
 ### 2026-11-04 AMC 8 2011 MAA 보고서 경로 재검색
 
 재검색한 MAA 보존 페이지 제목은 `2011 General Statistics`이며, report/location 선택 메뉴에 Overall, Grade and Gender Average, Contest Score Grade Report with Percentile가 있었다. 다만 Internet Archive CDX에서 2011 `statestatistics` 산출물 경로를 전체 검색한 결과, 보존된 Overall 파일은 Achievement Roll과 School Honor Roll뿐이었고 Grade and Gender Average 및 score-by-grade-percentile PDF는 회수되지 않았다. 그래서 AMC 8 2011 전국/글로벌 평균이나 학년 percentile을 만들지 않고 coverage 상태 `no-grade-table-recovered`를 유지한다. 검색에 나타난 개별 학교 성적표는 n=50 등 학교 표본이라 전체 학년 비교에 합치지 않는다. 메뉴의 navigation text에는 `2010 Statistics`도 남아 있으나 본문 `2011 General Statistics`와 구별한다.
