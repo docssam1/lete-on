@@ -6,3 +6,7 @@
 .p25m5-figure { display:block; width:100%; max-width:240px; height:auto; margin:.2em auto; }
 .p25m5-choices { display:grid; grid-template-columns:1fr 1fr; gap:.1em .3em; }
 @media print { #problemView .print-page--four-up .question-prompt svg.p25m5-figure { width:auto !important; max-height:33mm; } }
+
+.p25m6-figure { display:block; width:100%; max-width:230px; height:auto; margin:.2em auto; }
+.p25m6-choices { display:grid; grid-template-columns:1fr 1fr; gap:.1em .3em; }
+@media print { #problemView .print-page--four-up .question-prompt svg.p25m6-figure { width:auto !important; max-height:40mm; } }
