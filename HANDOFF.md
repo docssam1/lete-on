@@ -1486,3 +1486,10 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - AMC 8 2016 비교자료 검색에서 [99CEF 2018 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf)의 2016 미국·캐나다 전체 평균 9.36점(n=108,227)과 Taiwan 전체 평균 14.60점(n=7,115)을 재확인했다. 이 보고서는 2016 학년별 평균을 싣지 않는다. 학교·학원 결과는 전국 학년 통계에서 제외하고 기존 모집단 구분을 유지했다.
 - [MAA 점수분포 화면](https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561)은 전체 응시자 통계이며 이번 조회에서 학년표를 제공하지 않았다. 2016 MAA grade-report 이미지 경로는 서명 만료로 열리지 않았다. 기존 2016 전체 평균 외의 새 Grade 7/학년 점수는 임의 보충하지 않고 미회수 상태로 두었다. 검색 근거는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다.
 - 대상 파일: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`, 본 인수인계. `git diff --check` 후 로컬 커밋 예정. `raw_youtube.txt`는 미추적 원본으로 제외한다. Push·배포·Drive 동기화 없음.
+
+## 2026-11-04 후속 웹 검색: AMC 8 최근 회차 점수분포
+
+- 2023–2025 AMC 8 학년별 수치를 웹에서 추가 검색했으나, 검색으로 재확인한 MAA 공개 score distribution은 전체 응시자 데이터이고 새로 검수 가능한 학년표는 찾지 못했다. 최근 수상 기준선을 또래 학년 비교로 오인해 표시하지 않는다.
+- 2025: 보고서 사본은 Top 1%=23, Top 5%=19, 평균 11.74를 기록한다. 참가자 수는 사본 79,511과 별도 MAA표 재게시 79,524가 13명 차이다. 2024도 컷오프/평균은 같지만 참가자 수가 한 출처는 80,685, 다른 출처는 80,725로 차이 난다. 차이를 해결하지 못해 신규 CSV나 공식 기록에 넣지 않았다.
+- 공개 MAA EduView는 전체 cohort 통계만 노출한다. 연도별 학년 benchmark를 보강하려면 과거 회차 보고서 식별자와 정확 학년 원표 회수가 남았다. 상세 검색 기록과 직접 출처는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다.
+- 이번 작업은 문서만 수정했으며 데이터·앱 로직은 변경하지 않았다. `raw_youtube.txt` untouched; local only; no push, deployment, or Drive sync.
