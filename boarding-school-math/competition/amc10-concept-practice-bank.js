@@ -409,6 +409,22 @@
       hint: "1km는 1000m, 1시간은 3600초입니다.",
       solution: ["72km/h는 72,000m를 3,600초 동안 간다는 뜻입니다.", "72,000÷3,600=20입니다.", "따라서 속력은 20m/s입니다."],
       connection: "시속 90km를 초속으로 바꾸면 몇 m/s인가요?"
+    },
+    {
+      id: "amc10-gap-coordinate-reflection-translation-01", domain: "기하", sourceConcepts: ["transformation", "coordinate-geometry"], stage: "연결", title: "반사한 점을 평행이동하기",
+      prompt: "점 P=(-2, 5)를 x축에 대하여 반사한 뒤, 벡터 (3, -1)만큼 평행이동합니다. 최종 좌표는 무엇인가요?",
+      choices: ["(1, -6)", "(1, 4)", "(-5, -6)", "(5, -4)", "(-1, 6)"], answer: 0,
+      hint: "x축 반사는 x좌표를 유지하고 y좌표의 부호를 바꿉니다.",
+      solution: ["P=(-2, 5)를 x축에 반사하면 (-2, -5)입니다.", "벡터 (3, -1)을 더하면 (-2+3, -5-1)=(1, -6)입니다."],
+      connection: "반사와 평행이동을 반대 순서로 하면 최종 좌표가 같을까요? 직접 계산해 보세요."
+    },
+    {
+      id: "amc10-gap-parallel-corresponding-angles-01", domain: "기하", sourceConcepts: ["angle-chasing", "parallel-lines"], stage: "유형", title: "평행선의 동위각으로 식 풀기",
+      prompt: "한 직선이 두 평행선을 가로지를 때, 서로 동위 위치에 있는 각의 크기가 각각 (3x+15)°와 (5x−25)°입니다. x의 값은 얼마인가요?",
+      choices: ["10", "15", "20", "25", "30"], answer: 2,
+      hint: "평행선에서 동위각의 크기는 서로 같습니다.",
+      solution: ["동위각이므로 3x+15=5x−25입니다.", "양변에서 3x를 빼고 25를 더하면 40=2x입니다.", "따라서 x=20입니다."],
+      connection: "두 직선이 평행하지 않다면 동위각의 크기가 같다고 결론 내릴 수 있나요?"
     }
   ];
 
