@@ -100,6 +100,15 @@
         $("archive-solutions-link").href = paperLibrary.solutionsRoute(format.id, year, form);
         $("archive-solutions-link").textContent = `${label} · 전문 풀이 ↗`;
       };
+      const syncArchiveRouteNote = function () {
+        const year = Number(yearSelect.value);
+        const archiveNote = $("archive-route-note");
+        if (format.id === "amc10" && year === 2016 && formSelect.value === "B") {
+          archiveNote.textContent = "정답표 확인: LIVE 인쇄용 답안 PDF의 18번은 B로 잘못 표기되어 있어요. LIVE 공개 정답표와 전문 풀이, MAA 해설 자료는 E가 정답임을 확인합니다. 아래 자동 채점도 E를 기준으로 합니다.";
+        } else {
+          archiveNote.textContent = `LIVE 연도별 색인 ${paperLibrary.contestCount(format.id)}회 중 선택한 원본이에요. 시험지 PDF·정답표·전문 풀이를 열고, 아래 문항별 링크에서 개념과 해설을 확인하세요.`;
+        }
+      };
       const renderArchiveRoute = function () {
         const year = Number(yearSelect.value);
         responsePopulationField.hidden = !(format.id === "amc8" && year === 2009);
@@ -109,7 +118,7 @@
         forms.forEach(function (form) { formSelect.append(option(form, paperLibrary.formLabel(format.id, year, form))); });
         formSelect.value = forms.includes(params.get("form")) ? params.get("form") : forms[0];
         syncArchiveActions();
-        $("archive-route-note").textContent = `LIVE 연도별 색인 ${paperLibrary.contestCount(format.id)}회 중 선택한 원본이에요. 시험지 PDF·정답표·전문 풀이를 열고, 아래 문항별 링크에서 개념과 해설을 확인하세요.`;
+        syncArchiveRouteNote();
         syncArchivePaperLabel();
         updateReviewSourceNote(format);
         updateUrl();
@@ -120,6 +129,7 @@
       };
       formSelect.onchange = function () {
         syncArchiveActions();
+        syncArchiveRouteNote();
         syncArchivePaperLabel();
         updateUrl();
         renderMarks();
