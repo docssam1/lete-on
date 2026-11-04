@@ -1367,3 +1367,7 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 ### 2026-11-04 2013 AMC10A/12A 글로벌 문항응답 자료 추가
 
 웹 검색으로 99CEF 2013 AMC10A/12A 보고서를 찾아 Internet Archive 2015-09-08 보존 PDF로 내려받았다. PDFKit으로 AMC10A p.11과 AMC12A p.24를 추출하고 LIVE answer key와 각각 25개 정답을 대조했다. AMC12A 전체 n=66,525는 점수분포 누계와 일치한다. AMC10A 요약표 전체 n=69,653과 점수분포 누계 69,392는 서로 다르므로 수치를 조정하지 않고 두 수치의 차이를 README/CSV/runtime 메모에 남겼다. 2013 A형 CSV 2개, lookup 등록, 캐시 버전 및 README가 갱신됐다. CSV·JS 레지스트리 50개 문항·정답을 대조하고 전체 응답률 검산, 런타임 lookup 및 `git diff --check`를 통과했다. 로컬 커밋 완료. `raw_youtube.txt`는 staging 대상에서 제외한다.
+
+### 2026-11-04 2012 AMC10A/12A 글로벌 문항응답 자료 추가
+
+웹 검색으로 99CEF 2012 AMC10A/12A 전체 분석 보고서를 찾아 Internet Archive의 2014-10-05 보존본에서 내려받았다. PDFKit으로 AMC10A p.10 및 AMC12A p.22 Global 표를 추출했다. 총인원 73,703 / 72,238은 각각 점수분포 합계와 일치한다. 10A 키는 LIVE와, 12A 키는 원본 보고서 정답 표시 및 AoPS 키와 확인했다. 2012 A형 CSV 2개, runtime 조회, 캐시 버전, README를 갱신했다. CSV·레지스트리 50문항 행을 정확히 일치시키고 응답률 합계, 50개 정답, 런타임 lookup을 검수했으며 `git diff --check`도 통과했다. 로컬 커밋 완료. `raw_youtube.txt`는 staging 대상에서 제외한다.
