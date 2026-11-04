@@ -1,0 +1,3 @@
+.p27original-choices p { margin:.12em 0; }
+.p27original-values { text-align:center; margin:.8em 0; }
+@media print { .p27original-question,.p27original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } }
