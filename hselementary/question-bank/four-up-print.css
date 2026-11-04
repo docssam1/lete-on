@@ -5,6 +5,7 @@
   #problemView .print-page.print-page--four-up:has(.question-item .graph-figure + .graph-figure) .question-grid { display:grid; }
   #problemView .print-page.print-page--four-up:has(.question-item .graph-figure + .graph-figure) .question-item+.question-item { break-before:auto; page-break-before:auto; }
   .print-page.print-page--four-up .question-item { min-height:0; padding:8px 0; }
+  #problemView .print-page.print-page--four-up .question-prompt { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView [data-source-item-id="5-2-u1-practice-8-bus-range-similar"],
   #solutionView [data-source-answer="5-2-u1-practice-8-bus-range-similar"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView [data-source-item-id="5-2-u1-practice-37-packing-time-similar"],
