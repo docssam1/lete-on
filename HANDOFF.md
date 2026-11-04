@@ -1,3 +1,9 @@
+### 2026-11-04 2015 AMC10A/12A 글로벌 문항응답 자료 추가
+
+웹 검색으로 99CEF의 2015 AMC10A/12A 분석 보고서를 찾고, 현행 원본 URL이 2016 보고서로 잘못 연결되는 문제를 확인했다. Internet Archive의 2016-04-06 보존 PDF를 회수해 macOS PDFKit으로 표를 추출했다. AMC10A p.11, AMC12A p.24의 글로벌 A–E 선택·미응답·판독불가율 25문항씩을 연도별 CSV와 조회 데이터에 반영했다. 같은 보고서의 점수분포 섹션에서 글로벌 표본 수 66,591 / 55,432를 대조하고, 정답 50개는 LIVE A형 키와 확인했다. 99CEF 원본 및 보존 URL, 검증 한계는 데이터 README에 기록했다.
+
+`competition-paper-review.html`의 응답 데이터 캐시 버전을 올렸다. 변경 파일: `amc10-12-item-response-reference.js`, 2015 AMC10A/12A CSV 2개, `competition-paper-review.html`, 역사자료 README 및 이 인수인계. 양식별 25행·표본 수·응답률 합계를 확인하고 CSV 50행을 런타임 레지스트리 값과 대조했다. Node REPL에서 두 폼의 25개 조회·정답·정답 응답률을 검증했고 모두 통과했다. `git diff --check`도 통과. 로컬 커밋 완료. `raw_youtube.txt`는 건드리지 않는다. push·배포·Drive 동기화 없음.
+
 ### 2026-11-04 AMC12B 2013/2014 grade comparison added
 
 GEMT annual AMC10B/AMC12B report text indexed by web search contained the AMC12B Global grade tables (printed p.13 in 2013 and p.12 in 2014). Added `amc12b-grade-means-2013-2014.csv`, exact-grade runtime lookup, and annual coverage rows. The PDF was not downloaded/rendered locally, so the data status and result-panel note explicitly identify it as web-indexed text, distinct from visually verified PDF tables. Taiwan values remain excluded. The 2014 Grade 11 count indexed as `17.303` was normalized to 17,303 after category counts reconciled with total n=33,247. 2013 group counts reconcile to total n=30,249, while the count-weighted subgroup mean 64.56 differs from printed overall mean 64.08; both are preserved and the mismatch appears in the result source note.
