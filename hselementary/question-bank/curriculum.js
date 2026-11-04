@@ -3306,6 +3306,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-exploration",sourceItemLabel:"개념탐구 7 구조 연습",sourceSection:"exploration",sourcePdfPage:32,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 칸 수별 연결·점대칭 모양과 회전·뒤집기 중복을 독립 열거했습니다.",generatorKey:"source52PointPolyominoSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e1-exploration-original")) {
+    const id="5-2-u3-e1-exploration-original",name="삼각형이 한 가지로 정해지는 조건 · 원문";
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e1-exploration",sourceItemLabel:"개념탐구 1 원문",sourceSection:"exploration",sourcePdfPage:20,alternateSourcePdfPage:19,sourcePrintedPage:24,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page24OriginalExploration",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원본 여섯 조건과 삼각형의 유일성 및 두 작도 해를 독립 검증했습니다. 공식 답안은 미확인입니다."});
+  }
   if (source52CongruenceFirst) {
     const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");
     if (index >= 0) {
