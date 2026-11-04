@@ -325,6 +325,13 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - `amc-score-distribution-reference.js`에 두 해를 연결했다. 동일 연도 원본을 끝까지 입력했을 때 기록된 경계만 나란히 표시한다. Grade 7은 학생이 입력한 학년 맥락일 뿐, 점수 기준은 전체 보고 표본 기준이며 학년별 순위·등급으로 표시하지 않는다.
 - 대조 근거: [2018 MAA PDF 재게시본](https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf), [2019 MAA 보고서 재게시](https://www.ivytrack.com/forum.php?mod=viewthread&tid=19238), [2019 점수 요약 교차 확인](https://bj.xdf.cn/zixun/beimei/97334.html). 2019의 교차 확인 페이지 또한 MAA 보고 이미지를 재인용한다.
 
+## 2026-11-04 웹 검색 추가: 연도별 AMC 8/10 현지 보고서 구분
+
+- 연도별 검색에서 [Bard Math Circle 2013 AMC 8 결과](https://www.bardmathcircle.org/p/2013-amc-8), [2014 AMC 8 결과](https://www.bardmathcircle.org/p/2014-amc-8), [2016 AMC 8 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in)를 찾았다. 각 페이지는 Bard 행사에 온 학생과 연계 프로그램 참가자의 학년별 평균을 싣지만, 전국 참가자 표가 아니다. 공개된 학년 평균은 해당 지역/행사 집단 결과로만 남기고 전국 학년 비교 데이터에는 넣지 않는다.
+- [2015 AMC 8 싱가포르 학교 보고서](https://asiamathsalliance.com/2015/amc8/05150F.pdf)는 Grade 7 다섯 명의 학교 평균을 싣는다. [2015 AMC 10/12B Bard 결과](https://www.bardmathcircle.org/p/2015-amc-10-12b), [2016 AMC 10/12B Bard 결과](https://www.bardmathcircle.org/p/2016-amc-10-12b), [2017 AMC 10/12B Bard 결과](https://www.bardmathcircle.org/p/2017-amc-1012b-results), [2019 AMC 10/12B Bard 결과](https://www.bardmathcircle.org/p/2019-amc-10-12b-results), [2021 AMC 10/12B Bard 결과](https://www.bardmathcircle.org/p/2021-amc-10-12b-results), [2022 AMC 10/12 결과](https://www.bardmathcircle.org/p/2022-amc-10-12-ab-results)도 확인했다. 이것들은 행사/학교 참가자들의 해당 연도 결과이며 AMC 전국 Grade Report를 대신하지 않는다. 개별 성취 사례나 소규모 집단 평균은 전국 비교에 합치지 않는다.
+- [2011 AMC 8 한국 결과표 재게시](https://www.amcstudy.net/79)는 보고된 899명 집단의 학년별 평균표, 학년별 점수 빈도·누적 백분위 표, 문항 응답 선택 비율을 제공한다. 해당 값은 이미 `amc8-korea-grade-means-2009-2011.csv`, `amc8-2011-korea-grade-percentile.csv`, `amc8-2010-item-response-percent.csv`에 기록되어 있어 중복 행을 추가하지 않았다. 이 페이지는 개인 수상자 목록도 싣지만 그 명단은 수집하지 않는다.
+- 이번 연도별 검색에서 새로 회수된 AMC 전국 학년 점수표는 없었다. 전체 응시자 평균·수상 경계와 현지 행사 성적을 학년별 전국 비교로 바꾸지 않는다. 다음 검색 범위는 coverage manifest에서 실제 Grade Report 본문이 비어 있는 MAA 메뉴 ID를 중심으로 유지한다.
+
 ### 2026-11-04 · AMC 10A Grade 7 과거 평균 웹 자료 추가
 
 - [Archimedean Schools의 2019 AMC 10A 게시물](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/)은 AMC 10A에 응시한 Grade 7 참가자 1,982명의 평균을 59.72점으로 보고한다. 페이지에는 MAA 작성 원자료 파일이 연결되어 있지 않아, 학교가 공개한 전국 학년 통계의 2차 보고로 분류했다.

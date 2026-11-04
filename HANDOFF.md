@@ -1192,3 +1192,10 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 266행 coverage CSV에 보존 메뉴 ID·레이블·캡처 URL·본문 회수 상태 열을 추가했다. 67개 AMC8/10/12 원본 항목에 ID가 대응하지만 Internet Archive의 ReportViewer 본문은 보존되지 않았다. 이 ID 매핑은 연도별 원자료 회수 인덱스이며 통계값은 아니다. 2013 AMC 10A 미국 위치 Grade 7–10 표와 2019 AMC 10A Grade 7 전국 학년 평균 외에 새 수치는 추가하지 않았다.
 - 검증: coverage 행 266개 유지, CSV 파싱 overflow 0, MAA 메뉴 ID 39개 고유, 2021 A/B vs C/D가 각각 88/89 및 93/94로 정확히 분리됨. 다음 단계는 이 보고서 ID로 원본/동시대 사본의 실제 본문·점수표를 회수하는 것이다.
 - 현재 브랜치 `codex/boarding-g7-nsa-mac-20261017`; 이전 데이터/UI 커밋 `beb6e8b4`, 검색·인수인계 커밋 `82d8c517`; 이번 메뉴 인덱스 작업은 아직 미커밋. `raw_youtube.txt`는 미추적 사용자 파일로 보존한다. push·배포·Drive 동기화 없음.
+
+### 2026-11-04 · AMC 연도별 학년 자료 웹 검색 후 모집단 재분류
+
+- 연도별 검색에서 AMC 8 2013/2014/2016, AMC 10/12B 2015–2022의 Bard Math Circle 행사 보고와 2015 싱가포르 학교 성적 PDF를 확인했다. 모두 해당 행사·학교 응시자 집단 결과여서 전국 Grade Report 값으로 합치지 않는다. 2019 AMC 10A 전국 Grade 7 평균(59.72, 1,982명)처럼 전국 집단과 회차·학년이 일치하는 기존 행만 비교 자료로 유지한다.
+- 2011 AMC 8 한국 MAA 결과 재게시에는 학년 평균, 점수별 학년 빈도/백분위, 문항별 응답률이 함께 있다. 이 자료는 기존 한국 집단 CSV에 이미 전사되어 있어 중복 수치를 추가하지 않았고, 개인 수상자 명단은 가져오지 않았다.
+- 검색 근거·범위는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`의 `연도별 AMC 8/10 현지 보고서 구분` 절에 기록했다. 새로운 전국 학년 행은 없으며 MAA 메뉴 ID에 대응하는 원 보고서 본문 확보를 다음 검색 작업으로 유지한다.
+- `git diff --check` 완료 후 이 문서 기록을 별도 로컬 커밋으로 보관한다. `raw_youtube.txt` 미추적 원본은 건드리지 않았다. push·배포·Drive 동기화 없음.
