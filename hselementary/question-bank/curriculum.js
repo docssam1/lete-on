@@ -3475,6 +3475,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-39-original",sourceItemLabel:"확인학습 39번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:84,alternateSourcePdfPage:84,sourcePrintedPage:89,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 사다리꼴 높이와 빗변 수치가 충돌하여 보류합니다. 별도 유사문항은 3-4-5 직각삼각형을 이용한 일관된 수치와 겹침 둘레를 독립 검산했습니다.",generatorKey:"source52U3P89Q39ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-practice-16-clarified-similar")) {
+    const id="5-2-u3-practice-16-clarified-similar",name="볼록 사각형의 합동을 보장하는 조건 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-16-original",sourceItemLabel:"확인학습 16번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:81,alternateSourcePdfPage:81,sourcePrintedPage:86,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 볼록성과 항상 보장하는 조건인지가 명시되지 않아 보류합니다. 유사문항에서 이를 명시하고 가능한 조건과 반례를 독립 검산했습니다.",generatorKey:"source52U3P86Q16ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52CongruenceFirst) for (const [n,name] of [[2,"자와 컴퍼스로 삼각형 옮겨 그리기 · 원문 그림 재구성"],[3,"자와 컴퍼스로 사각형 옮겨 그리기 · 원문 그림 재구성"]]) {
     const id=`5-2-u3-e1-mission-${n}-original`;
     if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
