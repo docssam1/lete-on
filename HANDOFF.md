@@ -1976,3 +1976,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 은행은 AMC 8 63, AMC 10 58, AMC 12 67, AIME 63문항이다. 원본 태그 교집합은 AMC 8 1,009/1,025 (98.4%), AMC 10 1,253/1,300 (96.4%), AMC 12 2,769/3,110 (89.0%), AIME 1,040/1,065 (97.7%)이다. 새 태그 존재와 ID 중복을 확인했다.
 - 다음 빈도 상위 공백은 AMC 8 floor/ceiling·중점·평행사변형·피타고라스 삼쌍; AMC 10 추정·극값·바닥 함수·진법·치환; AMC 12 삼각형 중선·고도·포물선·중점·변환; AIME 여집합 세기·근호·각 이등분선·조건부 확률·헤론 공식이다.
 - 새 답/풀이를 직접 검산하고 정적 집계 및 git diff --check를 수행했다. 테스트는 추가하거나 실행하지 않았다. raw_youtube.txt 보존; 커밋 가능 범위는 로컬이며 원격 반영·배포·Drive 동기화 없음.
+
+### 2026-11-05 · AIME 학년별 원자료 표 목록 확인
+
+- 웹 검색으로 2008 MAA High School Results and Awards Summary의 목차를 확인했다. AIME I의 학년별 점수분포는 인쇄 261쪽, AIME II는 262쪽에 있다고 나와 있다. 공개 StudyLib 미러의 실제 본문은 그 표 페이지 전에서 끝나므로 행별 수치를 읽거나 재검산할 수 없다.
+- 보고서 본문에서 두 시험 합계 공식 응시자 8,584명, I 평균 4.77, II 평균 5.27은 확인했다. 이 값은 학년별 점수 빈도표를 대신하지 않으므로 2008 AIME 비교 진단에는 연결하지 않는다.
+- 2008 AIME I/II의 범위표 상태를 `aime-grade-table-located-not-transcribed`로 바꿔 “아직 조사하지 않음”과 “표 위치는 확인했으나 표 본문을 못 구함”을 구분하고, 두 회차 행에 출처 URL과 제한사항을 기록했다. 2010 AIME 학년별 분포는 기존 검증 데이터로 유지한다.
+- 출처: [2008 MAA 보고서 공개 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions), [LIVE 연도별 AIME 원본](https://live.poshenloh.com/past-contests). 다음 단계는 MAA 보고서의 261–262쪽 원본을 확보해 표 행·학년합계·전체 평균을 서로 대조하는 것이다.
