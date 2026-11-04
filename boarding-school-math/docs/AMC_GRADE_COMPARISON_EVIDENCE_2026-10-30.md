@@ -708,3 +708,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - AMC10B Grade 7: n=1,342, mean 75.93; Grade 8: 2,593, 81.63; Grade 9: 11,239, 67.23; Grade 10: 17,726, 73.74. 전체 Global n=34,740, mean 72.34. 표의 학년 그룹 전체 합은 34,738로 총계보다 2명 적다. 원문 차이를 보정하지 않았다. Taiwan 열은 별도 유지했다.
 - 2013 AMC12B 인쇄 p.13도 같은 PDF에서 다시 확인해 기존 색인 전사와 평균 차이를 대조했다. 2014 AMC12B는 여전히 웹 색인 텍스트만 확보된 상태다.
 - CSV `amc10b-grade-means-2013-global.csv`, `amc12b-grade-means-2013-2014.csv`, 런타임 조회 JS와 coverage manifest를 갱신했다. PDF와 페이지 PNG는 검수가 끝난 뒤 임시 폴더에서 제거했다.
+
+### 2026-11-04 · 2012 AMC 8 전체 점수 분포 연결
+
+- 99CEF의 [2012 AMC 8 연례 분석 보고서](https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf)에서 28th AMC 8 Global·Taiwan의 점수별 인원과 누적표(pp.7–8)를 웹 문서 뷰어의 표 텍스트로 회수했다. 원문은 Global 151,117명, Taiwan 12,550명이며, 각 모집단의 0–25점 26개 빈도 합계가 해당 표본 수와 일치한다. 가중평균은 Global 10.6448→10.64, Taiwan 15.4662→보고서 반올림 15.5로 일치한다.
+- Global 연도별 점수 빈도는 `competition/historical-amc-grade/amc8-2012-global-taiwan-score-counts.csv`에 보존했다. 결과 화면의 전체 코호트 비교는 2012년 이 자료를 사용해 입력 점수보다 낮은 점수의 비율을 계산한다. 동점자를 제외한 보고서 빈도 기반 역사 비율이지, 공식 백분위·학년 순위·현재 규준·실력 등급이 아니다. Taiwan 빈도는 별도 모집단으로 기록하고 현재 화면에서 Global과 합치지 않는다.
+- 2012년 당시 상세 보고서는 Global 평균 10.64, n=151,117을 보고하지만, 99CEF 2019년 회고표는 10.66, n=150,360을 기록한다. 모집단/집계 차이 원인은 공개 자료만으로 확인하지 못해 소스별 값을 유지했다. 2012 비교기는 당해 상세 보고서를 표시하고 화면에 차이를 설명한다.
+- `amc8-overall-cohort-reference.js`, 결과 안내, 캐시 버전과 연구 README를 갱신했다. 학년별 점수 빈도표는 회수하지 않았으므로 같은 해 Grade 7 점수 분포는 계속 미연결 상태다. Grade 7 평균 자료와 전체 Global 점수 분포는 별도 비교 층으로 남는다.

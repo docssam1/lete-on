@@ -1677,3 +1677,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - [99CEF AMC 공식 안내/FAQ](https://www.99cef.org.tw/maa-amc/)는 참가자 개인 성적표에 Taiwan 응시자 기준 평균 및 점수 구간이 있다고 안내한다. 이는 대만 지역 코호트의 참고치이며 전체 참가자 또는 미국·캐나다 학년 규준과 분리해야 한다. GFIELD에는 실제 연도별 성적표 값이 확보될 때 별도 지역 출처로 다룬다.
 - MAA 보고서와 99CEF 2023/2024 자료 검색에서 공개 전국 Grade 7 분포/평균을 추가 회수하지 못했다. no-grade-table-recovered는 이번 검색의 회수 상태다. 출처에 자료가 존재하지 않는다는 뜻은 아니다.
 - 근거는 boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md에도 기록했다. 다음은 공개 MAA historical reports/AMC 10·12 결과 통계를 연도·폼 단위로 계속 검색한다.
+
+## 2026-11-04 · 2012 AMC 8 전체 코호트 점수 분포 연결
+
+- 99CEF의 2012 AMC 8 상세 보고서에서 Global·Taiwan 각 점수(0–25) 빈도를 웹 검색 결과의 표 전사로 확보해 `amc8-2012-global-taiwan-score-counts.csv`에 기록했다. Global n=151,117, 평균 10.64; Taiwan n=12,550, 빈도 가중 평균 15.4662(보고서 반올림 15.5). 26개 빈도 합과 가중평균이 보고서와 일치한다.
+- 결과 화면의 2012 전체 코호트 참고에 Global 점수보다 낮은 응시자 비율을 연결했다. 동점 제외 빈도 계산이며, 공식 percentile이나 Grade 7 등급은 아니다. 2012 당해 보고서와 99CEF 2019 회고표의 Global n/mean 차이(151,117/10.64 대 150,360/10.66)를 보존하고 화면에서 고지한다.
+- `competition-paper-review.html/js`, `competition/amc8-overall-cohort-reference.js`, 데이터 CSV, README 및 근거 문서를 수정했다. `raw_youtube.txt`는 미추적 원본 상태로 보존. no push/deploy/Drive sync. 다음: 원문 표 이미지 확인 가능 여부 조사 후 출처 상태를 보강하고, AMC 연도·폼별 점수/학년 통계 원자료를 계속 검색한다.

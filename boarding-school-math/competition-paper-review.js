@@ -858,7 +858,12 @@
         : `${populationLabel} ${overallCohort.participants.toLocaleString("en-US")}명 · 평균 ${overallCohort.meanScore.toFixed(2)}점 · 만점 ${overallCohort.perfectScores.toLocaleString("en-US")}명 · 20점 이상 ${overallCohort.scoreAtLeast20.toLocaleString("en-US")}명`;
       setText("amc8-overall-cohort-summary", `${overallCohort.year} AMC 8 · 입력 점수 ${overallCohort.learnerScore}/25점 · ${cohortDetails}`);
       const difference = overallCohort.differenceFromMean;
-      setText("amc8-overall-cohort-result", difference === 0 ? "전체 응시자 평균과 같은 점수" : `전체 응시자 평균보다 ${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "높아요" : "낮아요"}`);
+      const meanComparison = difference === 0 ? "전체 응시자 평균과 같은 점수" : `전체 응시자 평균보다 ${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "높아요" : "낮아요"}`;
+      const scorePosition = overallCohort.strictlyLowerShare === null ? "" : ` · 당시 세계 응시자 중 이 점수보다 낮은 점수 ${overallCohort.strictlyLowerShare.toFixed(2)}% (동점 제외, 보고서 빈도로 계산)`;
+      setText("amc8-overall-cohort-result", `${meanComparison}${scorePosition}`);
+      if (overallCohort.year === 2012) {
+        setText("amc8-overall-cohort-note", "2012년은 99CEF의 당시 상세 보고서(세계 151,117명, 평균 10.64점)와 점수별 빈도를 사용합니다. 99CEF의 2019년 회고표에는 150,360명·평균 10.66점이 기재되어 있어 이 보고서와 수치가 다릅니다. 서로 섞거나 조정하지 않고, 이 비교는 연결된 2012년 보고서 값 그대로 표시합니다. 점수보다 낮은 응시자 비율은 표의 점수 빈도로 계산한 역사적 위치이며, 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. ");
+      }
       $("amc8-overall-cohort-source").href = overallCohort.sourceUrl;
     }
     const koreaPercentileReference = window.GFIELDAMC8KoreaPercentileReference;
