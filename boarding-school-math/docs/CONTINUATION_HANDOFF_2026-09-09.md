@@ -1006,3 +1006,9 @@ AMC 10 원본 결과에서 오답·미응답 문항의 LIVE 개념 태그를 뽑
 MAA 역사 통계의 2022 Internet Archive 화면은 2009–2021별 Grade Report 메뉴를 보여 주지만, 선택 후 보고서 표는 캡처에 없어 회수되지 않았다. 현재 원본 호스트는 521 오류를 반환했다. 2010 MAA 보고서 재게시본에는 2007–2010의 Grade 10/9/8 이하 평균이 있으나 Grade 7을 따로 나누지 않으며 기존 CSV 행과 중복된다. 2021 Grade 7 성적 수치는 포럼 재인용만 찾았으므로 제품 데이터로 옮기지 않았다. 상세 출처와 제한은 `docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`의 2026-11-04 절에 기록했다.
 
 변경은 근거·인수인계 문서만이다. 새 통계 행은 추가하지 않았다. `git diff --check` 통과. 외부 변경, Claude API 호출, push, 배포, Drive 동기화 없음. 다음에는 보존된 MAA Grade Report 본문 또는 원본 학년별 집계를 연도·폼별로 회수해 기존 기준선과 중복 여부를 대조한다.
+
+### 2026-11-05 AMC 10/12 학년표 재검색
+
+MAA 56th Annual report의 [Doczz 검색 가능 보관본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)에서 2002–2005 recorded grade별 참여·평균 Table II와 Table I의 전체 폼 참가 수·평균이 함께 있음을 확인했다. 오래된 UNL PDF의 [Archive-It 보존 주소](https://wayback.archive-it.org/all/20081031153754/http://www.unl.edu/amc/d-publication/d1-pubarchive/2004-5pub/2005-HSsummary.pdf)도 찾았으나 직접 열기는 세션 확인에서 멈췄다. Doczz HTML 텍스트는 다단 표 열 순서를 섞으므로 2003/04 수치를 추정하지 않았다. MAA 작성 2010 High School Summary의 Scribd 사본은 2007–2010 폼별 학년 인원/평균을 제공하지만 현재 데이터와 중복된다. 근거와 제한을 `docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 상세 기록했다.
+
+다음 작업: 56th report의 인쇄 8쪽을 시각적으로 읽을 수 있는 허용된 사본을 더 찾거나, 원표 이미지 확보 후 Apple Vision OCR과 육안 확인을 병행한다. 행·열을 확인하고 grade-count 합계 및 weighted-mean 대조가 완료될 때까지 2003/04 grade baseline은 만들지 않는다. Branch `codex/boarding-g7-nsa-mac-20261017`; latest before this entry `03102e5f7`. Changed files are documentation only. `raw_youtube.txt` stays untracked and untouched. No remote, Drive, Claude API, paid call, test, or deployment.
