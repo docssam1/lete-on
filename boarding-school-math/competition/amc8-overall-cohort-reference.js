@@ -11,7 +11,7 @@
     2005: ["Global", 143428, 77, 2548, 9.835, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"], 2006: ["Global", 147210, 289, 4428, 10.14],
     2007: ["Global", 150618, 129, 3593, 9.87, "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america"],
     2008: ["Global", 148731, 334, 8575, 11.45, "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america"],
-    2009: ["Global", 150733, 163, 3450, 10.28], 2010: ["Global", 153211, 499, 5849, 9.98],
+    2009: ["Global", 150733, 163, 3452, 10.28, "https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html"], 2010: ["Global", 153211, 499, 5849, 9.98],
     2011: ["Global", 152745, 284, 6709, 10.76], 2012: ["Global", 151117, 213, 6445, 10.64],
     2013: ["Global", 149709, 369, 6531, 10.70], 2014: ["Global", 144737, 256, 6950, 11.44],
     2015: ["Global", 149844, 94, 2669, 8.55],
@@ -30,6 +30,17 @@
   const amc8_2007_score_counts = Object.freeze([445,556,1509,3309,5830,8507,11387,13619,15047,15643,14906,13338,11020,8849,6870,5061,3969,3068,2371,1721,1263,967,618,391,225,129]);
   const amc8_2008_score_counts = Object.freeze([261,89,369,1050,2517,4829,7642,10532,12816,14285,14783,14132,12473,10608,8749,7291,5824,4729,3964,3213,2581,2068,1612,1253,727,334]);
   const amc8_2007_2008_source_url = "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america";
+  // MAA's 2009 report Table 5 records 0^ (some items attempted) and 0$ (none attempted) separately.
+  // Sum these only for score-position lookup; retain both source rows in the CSV transcription.
+  const amc8_2009_score_counts = Object.freeze([239,143,637,1718,3785,6819,10372,13730,15885,16691,16350,14457,12244,9719,7560,5782,4428,3269,2424,1663,1231,792,603,392,271,163]);
+  const amc8_2009_source_url = "https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html";
+  // The 99CEF 2010 report's Global score frequencies reconcile to its 153,211 / 9.98 summary.
+  // Its printed 20+ cumulative total is nine higher than the sum of the six displayed score rows.
+  const amc8_2010_global_score_counts = Object.freeze([338,180,778,2367,5039,8937,12682,16006,17669,16806,15033,12543,10057,7435,5768,4557,3723,3011,2423,2019,1570,1315,1020,832,604,499]);
+  const amc8_2010_source_url = "https://www.99cef.org.tw/userfiles/2010_AMC8_Report.pdf";
+  // 99CEF's 2011 Global score table reconciles to its annual summary totals and mean.
+  const amc8_2011_global_score_counts = Object.freeze([286,198,791,2119,4366,7255,10196,12755,14166,14510,13964,12984,11386,9863,8361,6771,5632,4364,3418,2651,2086,1619,1249,984,487,284]);
+  const amc8_2011_source_url = "https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf";
   // The contemporary 99CEF 2012 report includes a complete Global score-count table.
   // Keep its distinct source population/results instead of blending in the later retrospective table.
   const amc8_2012_global_score_counts = Object.freeze([335,203,729,1876,3925,6726,10132,13235,15288,15435,14904,13459,11043,8924,7432,6012,4866,4075,3302,2771,2136,1674,1148,760,514,213]);
@@ -61,6 +72,9 @@
     const scoreCountData = selectedYear === 2005 ? amc8_2005_score_counts
       : selectedYear === 2007 ? amc8_2007_score_counts
       : selectedYear === 2008 ? amc8_2008_score_counts
+      : selectedYear === 2009 ? amc8_2009_score_counts
+      : selectedYear === 2010 ? amc8_2010_global_score_counts
+      : selectedYear === 2011 ? amc8_2011_global_score_counts
       : selectedYear === 2012 ? amc8_2012_global_score_counts
       : selectedYear === 2013 ? amc8_2013_global_score_counts
       : selectedYear === 2014 ? amc8_2014_global_score_counts
@@ -78,6 +92,9 @@
       strictlyLowerShare: strictlyLowerShare, distributionParticipants: distributionParticipants, scoreAtLearner: scoreCountData ? scoreCountData[points] : null,
       sourceUrl: selectedYear === 2005 ? amc8_2005_source_url
         : selectedYear === 2007 || selectedYear === 2008 ? amc8_2007_2008_source_url
+        : selectedYear === 2009 ? amc8_2009_source_url
+        : selectedYear === 2010 ? amc8_2010_source_url
+        : selectedYear === 2011 ? amc8_2011_source_url
         : selectedYear === 2012 ? amc8_2012_source_url
         : selectedYear === 2013 ? amc8_2013_source_url
         : selectedYear === 2014 ? amc8_2014_source_url

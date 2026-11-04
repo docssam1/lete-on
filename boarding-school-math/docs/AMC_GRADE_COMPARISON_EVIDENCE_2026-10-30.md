@@ -764,3 +764,25 @@ Sources: [preserved MAA report PDF](https://web.archive.org/web/20081031153754id
 - 빈도 가중평균 9.8451은 Table 1/2의 보고 평균 9.835보다 0.0101점 높다. 임의로 셀을 고치지 않고 빈도표와 보고 평균을 따로 연결했다. 점수 위치는 빈도표 분모를, 평균 비교는 MAA 보고 평균을 사용하며 paper-review 결과에 출처 차이를 고지한다. 표의 image scan을 확보하지 못해 Apple Vision OCR 시각 검수는 하지 않았으며, 데이터 상태는 web-indexed text transcription이다.
 - 새 `amc8-2005-overall-score-counts.csv`와 연동 로직은 전체 응시 코호트 비교만 지원한다. Table 6에는 학년별 점수 빈도가 없으므로 이를 기존 2005 recorded-grade means와 합치지 않는다. MAA 보고서는 AMC 8에 확립된 규준이 없다고 설명하므로, 해당 표시도 공식 percentile·학년 등급이 아니다.
 - 출처: [2006 MAA report, Scribd](https://www.scribd.com/document/618492772/2006-Amc-8-Summary), [대체 검색 텍스트, StudyLib](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary), [MAA Wisconsin Section newsletter](https://sections.maa.org/wisconsin/news/MAAWINewsFall06.pdf).
+
+
+## 2026-11-05 웹 검색: 2009 AMC 8 전체 점수 빈도표 연결
+
+- MAA 작성 2009 AMC 8 연례 요약의 Table 5(인쇄 p.155)에서 0–25점 빈도표를 회수했다. 원표의 0점은 `0^` 일부 문항을 푼 학생 27명과 `0$` 한 문제도 시도하지 않은 212명으로 나뉘어 있어 CSV에는 별도 행으로 보존하고, 점수 비교 lookup에서만 0점으로 합산했다. 빈도는 n=151,367, 가중평균 10.2769(10.28로 반올림), 20점 이상 3,452, 만점 163이다.
+- 같은 MAA 보고서 Table 1은 답안지 150,733장·평균 10.28을 적지만 Table 5와 문항 응답 Table 8은 151,367명을 적는다. p.155 요약 블록은 다시 150,733명·평균 10.25라고 표기하고, 99CEF 요약의 20점 이상 수는 MAA 빈도 합보다 2명 적다. 결과 화면에서는 점수 위치를 빈도표 분모로, 평균을 Table 1 값으로 분리해 설명한다. 수치를 조정해 일치시키지 않는다.
+- `amc8-2009-overall-score-counts.csv`와 `amc8-overall-cohort-reference.js`에 원표 빈도를 연결했고, 결과 주석·README·캐시 버전을 갱신했다. MAA report copy는 웹 색인 텍스트로 확인했으며 PDF 페이지 이미지/Apple Vision 확인은 아직 하지 않았다. 점수 위치는 공식 percentile·학년 규준·능력 등급이 아니다.
+- 출처: [MAA 2009 AMC 8 Annual Summary copy, Table 1, Table 5, Table 8](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html), [MAA-authored 2009 exam PDF copy](https://www.stemivy.com/2009%20AMC8.pdf). Table 2의 MAA 4–5, 6, 7, 8학년별 표본/평균과 기존 학년별 빈도 파일도 확인했으며, 해당 비교는 이미 화면에 연결되어 있다.
+
+
+## 2026-11-05 웹 검색: 2010 AMC 8 세계 점수 분포 연결
+
+- 99CEF의 [2010 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2010_AMC8_Report.pdf)에서 세계·대만 점수별 빈도표(pp.6)를 찾았다. direct PDF 다운로드는 웹 접근 차단 페이지로 응답해 Internet Archive 보존본을 회수했다. 인쇄 p.6을 렌더링해 Apple Vision OCR과 이미지 육안 대조로 점수 및 빈도를 확인했다. 대만 코호트는 별도 열로 보존하고 앱의 세계 비교와 합치지 않았다.
+- 세계 0–25점 빈도 26개 합은 153,211명이며 가중평균 9.9827→9.98, 만점 499명으로 요약표와 맞는다. 다만 20–25 각 점수 빈도를 합한 5,840명은 같은 보고서 누적표 및 연도 요약의 5,849명보다 9명 적다. 점수별 인쇄 행은 수정하지 않고, UI에서 분포 계산과 요약값의 차이를 표시한다.
+- `amc8-2010-overall-score-counts.csv`와 조회 모듈에 연결하고, 2010 결과 문구 및 연구 문서를 갱신했다. score-location은 해당 연도 Global 분포에서 동점 제외 낮은 점수 비율이며 공식 percentile·학년 순위·현재 규준·실력 등급이 아니다.
+
+
+## 2026-11-05 웹 검색: 2011 AMC 8 세계 점수 분포 연결
+
+- 99CEF의 [2011 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf)에서 27회 대회의 세계·대만 점수 분포표를 찾았다. Internet Archive 보존 PDF의 인쇄 p.6을 렌더링해 Apple Vision OCR과 육안으로 숫자를 대조했다.
+- 세계 점수별 26개 빈도 합은 152,745명, 가중평균 10.7565→10.76, 20점 이상 6,709명, 만점 284명으로 보고서 요약과 모두 맞는다. 대만 빈도는 별도 모집단으로 두고 GFIELD 세계 응시자 비교에는 연결하지 않았다.
+- `amc8-2011-overall-score-counts.csv`와 전체코호트 lookup/결과 안내를 갱신했다. 결과의 점수 위치는 점수보다 낮은 세계 응시자의 과거 비율이며 공식 percentile·학년 순위·현재 규준·능력 등급이 아니다.
