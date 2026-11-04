@@ -1881,7 +1881,8 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 ### 2026-11-05 · AMC 8 연도별 문제·학년통계 커버리지 연결
 
-- 웹에서 [LIVE AMC archive](https://live.poshenloh.com/past-contests)를 확인했다. MAA 사용 허가를 명시하고, 1985–2026 AMC 8 시험지 41개를 연도별로 제공하며 각 시험의 인쇄용 PDF·정답표·풀이를 제공한다. 2021 AMC 8은 시행되지 않아 목록에 없다. [MAA 2023 원본](https://maa.org/wp-content/uploads/2024/08/2023-Problems-AMC8-PDF.pdf)과 [MAA AMC 개요](https://maa.org/student-programs/amc/)도 시험 형식과 연례 운영을 대조했다.
+- 웹에서 [LIVE AMC archive](https://live.poshenloh.com/past-contests)를 확인했다. MAA 사용 허가를 명시하고 AMC 8/10/12 및 AIME 원본을 연도·폼별로 제공한다. 현재 목록은 총 266회차(AMC 8 41, AMC 10 52, AMC 12 102, AIME 71)이고, 실제 시험지 PDF·정답표·전문 풀이 링크를 제공한다. 2021 AMC 8은 시행되지 않아 목록에 없다. [MAA 2023 원본](https://maa.org/wp-content/uploads/2024/08/2023-Problems-AMC8-PDF.pdf)과 [MAA AMC 개요](https://maa.org/student-programs/amc/)도 시험 형식과 연례 운영을 대조했다.
 - `amc-grade-reference-coverage-by-paper.csv`에 AMC 8 2004–2026 연도별 행 22개를 더했다. 기존 `amc8-grade-means-*.csv`의 보고서 링크·정확 학년·묶음 학년을 연결한 해는 2004–2015, 2017–2020, 2022다. 묶음 학년은 개별 학년 평균으로 간주하지 않는다.
 - 2016 및 2023–2026은 전체 응시자 점수 요약만 확인되어 학년별 평균은 미회수 상태로 유지했다. 2017–2019는 미국·캐나다 응시자 표이므로 US-only라고 표시하지 않는다. 관련 근거는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록.
-- 다음에는 AMC 10/12 원본 시험지의 연도·A/B 형과 문항별 응답률 자료를 대조해 학년별 진단에 연결할 후보를 정리한다. `raw_youtube.txt` 보존; 푸시·배포·Drive 동기화 없음.
+- 원본 자료 페이지는 시험지 인쇄본·답 입력용 정답표·전문 풀이뿐 아니라 개별 문항 링크, 개념 태그, 난도 평정, 힌트도 제공한다. 예: [2004 AMC 8](https://live.poshenloh.com/past-contests/amc8/2004), [2003 AMC 10A](https://live.poshenloh.com/past-contests/amc10/2003A). 저장소의 연도·폼별 원본 카탈로그와 답안/개념 색인은 이미 이 266회차를 연결한다. 전체 회차의 개념 태그 교차율은 README에 적힌 대로 AMC 8 89.5%, AMC 10 90.2%, AMC 12 80.0%, AIME 90.2%이며, 미매칭 원본 문항은 지필드 자체 유사문항 뱅크의 범위 보완 대상으로 남긴다. 원문과 전문 풀이는 복제하지 않고 출처로 연결하며, 지필드가 만든 진단 결과·학습 추천·유사문항은 별도 레이어로 유지한다.
+- 다음에는 AMC 10/12/AIME 문항별 응답률과 역사적 학년 기준을 교차 확인해 원본 개념 태그에서 지필드 진단·유사문항으로 이어지는 미매칭 항목을 줄인다. `raw_youtube.txt` 보존; 푸시·배포·Drive 동기화 없음.
