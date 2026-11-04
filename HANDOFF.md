@@ -1,3 +1,13 @@
+### 2026-11-04 MAA AMC 문제 세트 원문 검색·학습 연결 자원 목록
+
+사용자 요청에 따라 웹에서 MAA Math Club Resource Hub를 검색해 AMC 8 전략별 문제 세트 8종을 찾았다: Work Backwards, Casework, Find a Pattern, Guess and Check, Make an Ordered List, Solve a Simpler Problem, Use Symmetry, Write an Equation. 각 MAA 항목은 문제 세트 PDF와 별도 해설 PDF가 첨부된 것으로 표시한다. 개별 공식 라이브러리 항목 URL을 `boarding-school-math/competition/amc-maa-strategy-resource-index.csv`에 저장했다. MAA 자료실의 AMC 10/12는 Algebra, Geometry, Probability, Functions, Number Sense & Theory 내용별 세트도 함께 안내한다.
+
+이 자료는 연도별 공식 시험지 목록과 구분한다. 실제 AMC 기출은 기존 `amc-original-source-catalog.csv`의 연도·폼·인쇄 PDF·정답·전문 풀이 인덱스를 계속 사용한다. 새 MAA 전략 자료는 오답 진단 뒤 전략 연습을 연결할 후보이며, 특정 과거 문항의 공식 태그/정답 근거로 보지 않는다. MAA 라이브러리에서 첨부파일 다운로드 전에 저작권 약관 동의를 요구하므로 이번에는 파일을 복사하지 않고 공식 항목 링크만 보관했다.
+
+추가 웹 검색에서 AMC 8 2023–2026 전체 참가자 평균·컷은 확인되지만 최근 학년별 전국 평균표는 공개 검색으로 회수되지 않았다. 2024년 중국 지역 성적 자료는 별도 응시집단이고, 지역별 평균 또는 시험학원 표본을 미국 MAA 학년 기준으로 전환하지 않는다. 2022 `Location: Overall` 학년표와 오래된 연례 보고서의 기록 학년군 자료는 기존 모집단·연도 주의를 유지한다. MAA의 현행 AMC 설명은 AMC 8이 25문항·40분이며 비례 추론, 기하, 확률/조합, 그래프와 표 등 중학교 수학 범위라고 설명한다.
+
+확인 출처: [MAA AMC 8 전략 자료실](https://connect.maa.org/viewdocument/amc-8?CommunityKey=23b1e210-33fb-4cc6-b294-019eb20eba58&tab=librarydocuments), [MAA AMC 문제 세트 색인](https://connect.maa.org/viewdocument/problem-sets?CommunityKey=23b1e210-33fb-4cc6-b294-019eb20eba58&tab=librarydocuments), [MAA AMC 8 공식 범위·형식](https://maa.org/student-programs/amc/), [연도별 실제 시험지 원본 아카이브 안내](https://live.poshenloh.com/past-contests). 웹에서 링크/첨부 표시를 수동 대조했고 `git diff --check`를 수행할 예정. 로컬 자료 목록만 추가, 원본 PDF 미복사; push·배포·Drive 동기화 없음.
+
 ### 2026-11-04 AMC 8 2022 MAA 학년 평균 이미지 회수·연도별 비교 연결
 
 2022년 `Grade and Gender Average AMC 8 2022`의 `Location: Overall` 표 이미지를 川观新闻/南方窗 재게시 기사에서 회수했다. Apple Vision OCR 전사와 이미지 픽셀을 대조했다. Grade 5–8의 평균은 8.98 (n=3,231), 8.78 (n=14,258), 9.57 (n=22,493), 10.38 (n=29,236). `<=4` 및 `UNK`를 포함한 6개 표본 합계 71,017, 가중 평균은 9.69097로 보고서 전체 평균 9.69와 반올림 일치한다. 이미지가 `Overall`로만 범위를 표시하고 지리적 범위를 정의하지 않아 현재 미국·캐나다 규준이라고 하지 않는다. 불완전한 성별 합계는 사용하지 않는다.
