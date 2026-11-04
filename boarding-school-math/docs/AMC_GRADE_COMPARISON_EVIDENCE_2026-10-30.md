@@ -547,6 +547,13 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 웹에서 99CEF의 [2016 AMC10A/12A 분석 보고서](https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf)를 찾아 Global 모집단 답변표를 회수했다. AMC10A는 인쇄 p.11, AMC12A는 p.22에 A–E 선택·무응답·판독불가 비율이 있다. Global 총 인원은 각각 65,999명과 55,279명이다. Taiwan 표는 혼합하지 않았다.
 - 25개 정답 별표는 [LIVE 2016 AMC10A](https://live.poshenloh.com/past-contests/amc10/2016A) 및 [LIVE 2016 AMC12A](https://live.poshenloh.com/past-contests/amc12/2016A)와 대조했다. 마지막 판독불가 비율은 검색 텍스트에서 행이 복제·깨져 보여 이어진 깨끗한 중복 값(AMC10A Q25 0.01%, AMC12A Q25 0.02%)을 CSV에 기록하고 전사 주석을 붙였다.
 - CSV 2개와 기존 AMC10/12 응답 lookup에 반영했다. 이는 과거 전체 Global 응답률이며 Grade 7 비교 기준, 현재 규준, 개인의 오개념 판정이 아니다. PDF는 검색 인덱스 텍스트에서 전사했으며 로컬 렌더·Vision 대조는 아직 하지 않았다.
+## 2026-11-04 웹 회수: 2018 AMC 10A·12A 미국·캐나다 문항응답표
+
+- 99CEF의 2018 AMC10A/12A 분석 보고서 색인과 LIVE의 원본·답안 키를 웹 검색으로 확인했다. 99CEF 현재 파일 URL은 실제로 2016 보고서로 이동해, Internet Archive 2025-03-17 보존본을 회수했다. PDFKit에서 선택 가능한 텍스트를 읽고 인쇄 p.11(AMC10A), p.22(AMC12A)의 25행 응답표를 이미지로 눈으로 대조했다. OCR은 필요하지 않았다.
+- 보고서의 미국·캐나다 코호트는 AMC10A n=40,839, AMC12A n=32,795다. A–E 선택·미응답·판독불가율 50문항을 CSV 및 문항 조회 레지스트리에 저장했다. 정답은 LIVE 2018 A형 키와 교차 확인했으며 AMC10A Q18만 보고서의 정답 별표가 없어 LIVE 정답 D를 적용했다.
+- 행별 백분율은 원문 수치 그대로 보존한다. 합계가 100%가 아닌 AMC10A Q22–25 및 AMC12A Q1, Q22–25는 비교 조회에서 숨긴다. 이 집단은 문항별 응답 참고자료일 뿐 학년 규준·개인 백분위·오개념 판정이 아니다.
+- 출처: [보존된 99CEF 2018 분석 보고서 PDF](https://web.archive.org/web/20250317215027id_/http://www.99cef.org.tw/userfiles/2018AMC10A12AReport.pdf), [LIVE AMC 10A 2018 정답](https://live.poshenloh.com/past-contests/amc10/2018A/answers), [LIVE AMC 12A 2018 정답](https://live.poshenloh.com/past-contests/amc12/2018A/answers), [LIVE 연도별 실제 시험지 아카이브](https://live.poshenloh.com/past-contests).
+
 ## 2026-11-04 웹 검색: 2019 AMC 10B·12B 전체 점수보고서 보강
 
 - mathcontest.org에 재게시된 MAA 형식의 2019 AMC 10B·12B Contest Score Report 1페이지 PDF를 찾아 점수 경계, 평균, 표준편차, 전체 응시자 수와 학교 수를 기존 동일 연도·폼 조회 자료에 연결했다.
