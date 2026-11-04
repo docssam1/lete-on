@@ -1505,3 +1505,13 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - MAA Wayback `generalreports.aspx`에서 2017 AMC10/12 A·B 메뉴 ID 64/65는 확인되지만 ReportViewer의 저장 HTML은 `ReportAreaContent.None`으로 비어 있다. 구형 MAA 호스트는 HTTP 404/521이라 동적 보고서 선택을 다시 요청할 수 없었다. 이는 보존된 메뉴가 수치 데이터 본문을 보존하지 않았다는 확인이며, 보고서 부재를 뜻하지 않는다.
 - 이번 검색에 다시 나온 99CEF 2020 A형 미국·캐나다 학년별 표는 기존 CSV/화면에 이미 수록되어 중복 추가하지 않았다. 전체 cohort 점수분포와 학년 표본은 계속 별도 표시한다.
 - 다음 검색은 원문 PDF가 남아 있는 운영기관 연도별 분석 자료 중심으로 이어간다. `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 상세 근거를 추가했다. `git diff --check` 통과; 로컬 문서 수정만, no push/deploy/Drive sync. `raw_youtube.txt` untouched.
+
+### 2026-11-04 · AMC 8 2023–2024 웹 검색 근거 보강
+
+사용자 요청 “웹 검색으로 가져와”에 따라 연도별 AMC 8 점수 자료의 학년 범위를 확인했다. MAA Wisconsin Spring 2023 뉴스레터는 2023 AMC 8 직후 일반 데이터가 당시 아직 공개되지 않았다고 기록한다. Spring 2024도 당시 개인정보 제약과 일반 통계 미공개를 언급하며, Fall 2024는 MAA Historical Statistics에 2023–24 자료가 없었고 AMC 8 참가 약 81,000명이라는 전체 수만 제공한다. 이후 수치 공유는 학생/보호자 동의를 조건으로 한다는 설명도 있다. 이 발행 당시 상태를 현재에도 보고서가 없다는 말로 일반화하지 않는다.
+
+2023 AMC 8 점수 보고서의 재게시 사본은 전체 응시자 분포 요약만 보이고 학년 breakdown이 없다. 이를 학년 평균이나 Grade 7 수준으로 추정하지 않았다. `amc-grade-reference-coverage-by-paper.csv`의 2023·2024 행에는 출처와 시점 한계를 기록하고 상태 `no-grade-table-recovered`를 유지했다. 상세 근거: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
+
+검증: coverage CSV를 266개 회차로 파싱했고, 행별 14개 필드·2023/2024 출처 연결을 확인했다. `git diff --check` 통과. 이번 변경은 근거 문서/출처 인벤토리만이며 결과 비교 로직과 원본 시험 콘텐츠는 바꾸지 않았다. `raw_youtube.txt` 보존·제외. 로컬 전용, push·배포·Drive 동기화 없음.
+
+출처: [MAA-WI Spring 2023](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2023-01-Spring.pdf), [MAA-WI Spring 2024](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2024-01-Spring.pdf), [MAA-WI Fall 2024](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2024-02-Fall.pdf), [2023 AMC 8 whole-cohort report repost](https://www.scribd.com/document/853921825/Contest-Score-Report-2023-AMC8).

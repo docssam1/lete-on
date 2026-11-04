@@ -2,6 +2,13 @@
 
 확인일: 2026-10-30 (KST)
 
+## 2026-11-04 웹 검색: AMC 8 2023–2024 공개 통계 범위
+
+- MAA Wisconsin Spring 2023 뉴스레터는 AMC 8이 2023-01-17–23에 시행됐고, 당시 더 빠른 점수 보고 체계로 바뀌었지만 일반 AMC 데이터는 아직 제공되지 않았다고 기록한다. [MAA-WI Spring 2023 Contests Report](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2023-01-Spring.pdf). 이는 해당 발행 시점의 상황이다.
+- MAA Wisconsin Spring 2024 뉴스레터는 2024-01-18–24 AMC 8 일정과 함께, 당시 일반 데이터가 아직 공개되지 않았고 학생 개인정보가 보고 범위를 제한한다고 기록한다. Fall 2024 뉴스레터는 MAA Historical Statistics에 2023–24 경기 데이터가 실리지 않았다고 적고, AMC 8 참가자가 약 81,000명이었다는 전체 수만 언급한다. 이후 자료 공유도 학생/보호자의 동의를 조건으로 약속받았다고 기록한다. [MAA-WI Spring 2024](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2024-01-Spring.pdf) · [MAA-WI Fall 2024](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2024-02-Fall.pdf). 이 2023–24는 학년도 표현이며 AMC 8 2024 회차에 해당한다.
+- 검색에서 확인한 [2023 AMC 8 점수 요약 재게시](https://www.scribd.com/document/853921825/Contest-Score-Report-2023-AMC8)는 전체 응시자 통계(평균·표준편차·응시자/학교 수 및 전체 점수 구간)만 보여 준다. 학년별 표가 아니므로 기존 MAA 전체 코호트 점수 기준과 분리하고, 학년별 진단값으로 추가하지 않는다.
+- 따라서 2023·2024 AMC 8 행의 상태는 `no-grade-table-recovered`로 유지했다. 당시 통계 공개 상황을 현시점에도 데이터가 없다는 주장으로 일반화하지 않으며, 학교별 결과나 전체 평균에서 학년 평균을 추정하지 않는다. 실제 연도별 원본 시험·답·풀이 경로는 별도 카탈로그에서 계속 제공한다.
+
 ## 2026-11-04 웹 재검색: AMC 8 2016 보고서와 2022 부분 학년 자료
 
 - 2016 MAA General Reports 보존본에서 AMC 8 보고서 항목(ID 63)은 확인했지만, Internet Archive 캡처의 ReportViewer 본문은 로드되지 않는다. 99CEF의 2019 AMC 8 연도 요약과 MAA Michigan Section 2016 뉴스레터는 전체 응시 평균만 제공하고 학년 행은 싣지 않는다. 두 출처의 전체 응시자 수(108,227 / 108,295)도 다르므로 별도 유지한다. Bard Math Circle의 2016 학년 평균은 행사 표본(n=35)이라 제외한다. 따라서 2016은 현재도 `no-grade-table-recovered`이며, 보고서 항목이 있었다는 사실을 본문 회수로 간주하지 않는다.
