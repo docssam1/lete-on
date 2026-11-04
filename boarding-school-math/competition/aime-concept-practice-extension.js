@@ -126,7 +126,7 @@
       connection: "마지막 항을 n(n + 1)로 바꾸면 합을 n에 대한 식으로 쓸 수 있나요?"
     },
     {
-      id: "aime-gap-vector-dot-product-01", sourceConcepts: ["vector", "dot-product", "algebraic-manipulation"], domain: "기하", stage: "연결", title: "벡터의 길이로 내적 구하기",
+      id: "aime-gap-vector-dot-product-01", sourceConcepts: ["vector", "algebraic-manipulation"], domain: "기하", stage: "연결", title: "벡터의 길이로 내적 구하기",
       prompt: "두 벡터 u, v에 대하여 |u| = 5, |v| = 13, |u + v| = 16입니다. |2u − v|²의 값을 구하세요.", answer: 145,
       hint: "|u + v|²을 전개하면 u·v를 구할 수 있어요.",
       solution: ["|u + v|² = |u|² + 2u·v + |v|²이므로 256 = 25 + 2u·v + 169입니다. 따라서 u·v = 31입니다.", "|2u − v|² = 4|u|² − 4u·v + |v|²입니다.", "값은 4 × 25 − 4 × 31 + 169 = 145입니다."],
@@ -138,6 +138,20 @@
       hint: "C와 D를 하나의 묶음으로 세고, A가 첫 자리이거나 B가 마지막 자리인 경우를 포함·배제로 빼요.",
       solution: ["C와 D의 묶음은 CD 또는 DC 두 가지입니다. 묶음, A, B, E, F 다섯 대상을 배열하는 방법은 2 × 5! = 240입니다.", "A가 첫 자리인 배열은 2 × 4! = 48개이고, B가 마지막 자리인 배열도 48개입니다.", "두 조건을 모두 어기는 배열은 2 × 3! = 12개이므로 포함·배제로 240 − 48 − 48 + 12 = 156개입니다."],
       connection: "A가 첫 자리이고 B가 마지막 자리인 배열을 두 번 더한 셈이므로 한 번 다시 더하는 이유는 무엇인가요?"
+    },
+    {
+      id: "aime-gap-floor-sum-01", sourceConcepts: ["floor-and-ceiling-functions", "bounding-to-limit-cases", "counting-integers-in-a-range"], domain: "정수론", stage: "연결", title: "바닥 함수 합의 가능한 정수 범위 좁히기",
+      prompt: "양의 정수 n 중 ⌊n/2⌋ + ⌊n/3⌋ = 100을 만족하는 n은 몇 개인가요?", answer: 2,
+      hint: "각 바닥 함수는 안의 수 이하이고 1보다 큰 수만큼 작지는 않으므로 n의 범위를 먼저 좁혀요.",
+      solution: ["100 ≤ n/2 + n/3 = 5n/6이므로 n ≥ 120입니다.", "또 ⌊n/2⌋ + ⌊n/3⌋ > 5n/6 − 2입니다. 합이 100이므로 n < 122.4이고, 따라서 n ≤ 122입니다.", "n은 120, 121, 122만 확인하면 됩니다. 두 바닥 함수의 합은 각각 100, 100, 101이므로 가능한 n은 2개입니다."],
+      connection: "바닥 함수 두 개 대신 천장 함수가 들어가면 같은 방식의 위·아래 경계가 어떻게 바뀌나요?"
+    },
+    {
+      id: "aime-gap-square-divisibility-01", sourceConcepts: ["perfect-square", "prime-factorization", "divisibility", "factor-counting"], domain: "정수론", stage: "유형", title: "제곱수의 약수 조건으로 배수 세기",
+      prompt: "1보다 크고 10,000보다 작은 양의 정수 n 중 n²이 360으로 나누어떨어지는 n은 모두 몇 개인가요?", answer: 166,
+      hint: "360을 소인수분해하고, n²에 필요한 각 소인수 지수가 되려면 n이 무엇의 배수여야 하는지 구해요.",
+      solution: ["360 = 2³ × 3² × 5입니다.", "n²이 360으로 나누어떨어지려면 n에는 2², 3, 5가 각각 적어도 한 번씩 있어야 하므로 n은 60의 배수여야 합니다.", "1 ≤ n < 10,000인 60의 배수 개수는 ⌊9999/60⌋ = 166개입니다."],
+      connection: "360 대신 720으로 나누어떨어져야 하면 n의 소인수 조건 중 무엇이 달라지나요?"
     }
   ];
 

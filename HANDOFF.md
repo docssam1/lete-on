@@ -1892,3 +1892,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 6,500개 원본 문항의 공개 개념 태그와 지필드 후속 연습 은행을 다시 대조했다. 최소 한 태그가 연결되는 문항은 AMC 8 971/1,025 (94.7%), AMC 10 1,179/1,300 (90.7%), AMC 12 2,514/3,110 (80.8%), AIME 972/1,065 (91.3%)다. 이는 태그 교집합 수치이며 같은 난도·같은 문항 구조나 학년 수준을 보증하지 않는다.
 - 원본에서 자주 나타나면서 후속 은행에는 없던 개념에 대해 각 대회별 창작 문항 2개를 추가했다: AMC 8 최소공배수·제한된 자리수 세기, AMC 10 이차 부등식의 정수 범위·부채꼴 넓이, AMC 12 점화식·도형 넓이 분해, AIME 벡터 내적·제약 배열. 각 문항에 힌트, 풀이 단계, 다음 사고 연결 질문을 넣었다. AMC 8 25문항 시간제 모의고사는 별도이며 후속 은행 카운트에 포함하지 않는다.
 - 수정: `amc8-concept-practice-extension.js`, `competition/amc10-concept-practice-bank.js`, `competition/amc12-concept-practice-bank.js`, `competition/aime-concept-practice-extension.js`, `competition/historical-amc-grade/README.md`. 원본 문제·선택지·정답·해설은 복사하지 않았다. 확인: 원본 인벤토리 6,500행 재집계와 태그 교집합 산출, 여섯 문제의 답·산술을 직접 검산. 테스트는 실행하지 않는다. 이어서 남은 원본 개념 태그 중 빈도가 높은 항목과 각 연도별 진단표본을 계속 보완한다. `raw_youtube.txt` 보호; push·배포·Drive 동기화 없음.
+
+### 후속: 다음 빈도 태그 묶음
+
+- AMC 8에 자릿값을 이용한 연립식, 정삼각형의 높이·넓이 문항을 추가했다. AMC 10에는 표 가격 연립식과 두 원의 공통 외접선, AMC 12에는 합이 고정된 정수 곱 최적화와 보트 왕복 속력, AIME에는 바닥 함수 합의 범위 좁히기와 제곱의 나눗셈 조건 문항을 추가했다. 모두 지필드 창작이며 힌트·풀이·연결 질문을 포함한다.
+- 갱신된 태그 교집합은 AMC 8 976/1,025 (95.2%), AMC 10 1,186/1,300 (91.2%), AMC 12 2,552/3,110 (82.1%), AIME 978/1,065 (91.8%)다. 후속 은행의 창작 문항 수는 각각 43, 37, 43, 38개다. 해당 백분율은 단일 태그 공유 여부만 센다.
+- 수정: 위 네 대회 practice bank 파일, 각 연습 페이지의 캐시 키, `competition/historical-amc-grade/README.md`, 이 인수인계. 수치·개수는 6,500행 원본 인벤토리와 현행 연습 bank 태그를 재집계했다. 문제 풀이를 손으로 대조하고 `git diff --check`만 실행; tests 미실행. 다음 상위 공백은 AMC 8 net/3D geometry·tiling, AMC 10 regular polygon/rectangle, AMC 12 difference of squares/place value/angle chasing, AIME number base/tangent-circle geometry다. 계속 진행한다. `raw_youtube.txt` 보호; push·배포·Drive 동기화 없음.
