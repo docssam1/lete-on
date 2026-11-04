@@ -107,3 +107,9 @@ Added `historical-amc-grade/amc8-2019-99cef-global-taiwan-score-counts.csv`; the
 AMC 10/12도 연도·폼마다 9–46개 행으로 수가 달랐고, 해당 데이터 카드의 난도 정의만으로 국가·학년별 응답분포가 확인되지 않는다. AIME I는 2012–2022 각 15문항, AIME II는 2012–2019에 2013년 14문항을 제외하고 15문항씩 실려 있지만, 이를 공식 응시자 응답률이나 점수분포로 해석할 근거는 없다. 이 공개 데이터는 논문상 연구용 벤치마크로 소개되므로, 향후 쓰더라도 출처·라이선스·원자료 모집단을 별도로 검토해야 한다.
 
 결론: 이 검색은 연도별 문제 선정 인벤토리와 공식 원본·인쇄본·답안·풀이 링크를 대체하지 않는다. 현재 앱의 266개 회차 카탈로그는 실제 시험지를 연도와 폼별로 연결한다. 진단용 비교 통계는 시험 전체 또는 정확히 정의된 모집단의 자료만 추가하고, 불완전한 표를 전체 응시자 기준처럼 보여주지 않는다. 출처: [Hugging Face dataset card](https://huggingface.co/datasets/furonghuang-lab/Easy2Hard-Bench), [NeurIPS 2024 paper](https://papers.neurips.cc/paper_files/paper/2024/file/4e6f22305275966513990f53cec908e0-Paper-Datasets_and_Benchmarks_Track.pdf).
+
+## AMC 8 최근 연도 수상 기준 웹 재확인 및 paper review 연결 (2026-11-05)
+
+검색으로 [MAA의 AMC 8 2018 Contest Score Report](https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf), [MAA K-12 EduView 점수 분포 보고서](https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561), 그리고 해당 연도 결과를 요약한 [AMC 8 결과표](https://www.vsonlinemathtutoring.com/post/how-to-prepare-for-amc-8)를 대조했다. MAA EduView의 기존 보고서 연결에서 2023–2026의 전체 응시자 기준 Honor Roll 상위 5%와 Distinguished Honor Roll 상위 1% 경계가 각각 17/21, 18/22, 19/23, 21/24로 확인된다. 이를 `amc8-historical-award-reference.js`에 연도별로 연결했다. 원본 AMC 8 시험 전체를 채점한 뒤 당시 기준과 비교해 보여주며, 입력한 학년은 표본을 학년별로 바꾸지 않으므로 화면 표현은 전체 응시자 기준으로 유지된다.
+
+2025년의 재게시된 점수보고서 요약에는 참가자 수 79,511로, MAA EduView의 79,524와 다른 숫자가 있다. 2026년에도 검색 결과의 재인용 집계 80,977은 MAA 보고서의 80,983과 다르다. 코드에는 MAA 보고서의 수치만 사용하고, 재게시물의 다른 모집단 수치를 섞지 않았다. MAA의 공개 histogram은 점수별 정확한 빈도를 표로 제공하지 않으므로 이 검색으로 개인 점수의 정확한 백분위나 전국 문항별 정답률을 새로 추정하지 않았다.
