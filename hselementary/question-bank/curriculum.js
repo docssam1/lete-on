@@ -2253,6 +2253,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
+  if (source52CuboidViewPractice && !source52CuboidViewPractice.types.some(t=>t.id==="5-2-u5-practice-44-clarified-similar")) {
+    const id="5-2-u5-practice-44-clarified-similar",name="오른쪽 면을 밝힌 정육면체 무늬 · 유사문항";
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CuboidViewPractice.types.push({id,number:source52CuboidViewPractice.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u5-practice-44-original",sourceItemLabel:"확인학습 44번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:107,alternateSourcePdfPage:108,sourcePrintedPage:113,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 윗면만으로 앞면이 유일하지 않아 보류합니다. 유사문항은 오른쪽 면을 명시하고 정육면체 회전을 독립 검증했습니다.",generatorKey:"source52U5P113Q44ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52CuboidViewPractice) for (const [n,name] of [[45,"직육면체 표면의 선을 전개도로 옮기기 · 확인학습 원문"],[47,"무늬와 띠 방향이 주어진 상자의 전개도 · 확인학습 원문"],[48,"무늬가 있는 전개도를 접은 모양 고르기 · 확인학습 원문"],[41,"두 전개도의 대응 면을 이용한 세 수의 곱 · 확인학습 원문"],[42,"한 꼭짓점에 만나는 세 면의 수의 합 최댓값 · 확인학습 원문"],[43,"전개도의 화살표를 겨냥도에 옮기기 · 확인학습 원문"],[46,"한 꼭짓점에서 만나는 세 면의 수의 곱 최댓값 · 확인학습 원문"],[36,"기울인 물그릇에서 물이 닿는 부분 · 확인학습 원문"],[38,"전개도의 테이프 자리를 겨냥도로 옮기기 · 확인학습 원문"],[37,"정육면체 세 면의 선을 전개도로 옮기기 · 확인학습 원문"],[39,"직육면체 표면의 선을 전개도로 옮기기 · 확인학습 원문"],[33,"겨냥도와 전개도의 꼭짓점 대응 · 확인학습 원문"],[34,"직육면체 전개도에서 맞닿는 선분 · 확인학습 원문"],[35,"정육면체의 선을 전개도로 옮기기 · 확인학습 원문"]]) {
     const id=`5-2-u5-practice-${n}-original`;
     if (source52CuboidViewPractice.types.some(type=>type.id===id)) continue;
