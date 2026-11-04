@@ -82,6 +82,48 @@
       id: "aime-core-geometric-sequence-01", sourceConcepts: ["geometric-sequence", "exponent"], domain: "대수", stage: "유형", title: "등비수열의 유한합 계산하기",
       prompt: "2 + 6 + 18 + 54 + 162의 값은 얼마인가요?", answer: 242,
       hint: "항을 차례로 더하거나 등비수열의 공비를 확인해요.", solution: ["첫 항은 2이고 공비는 3입니다.", "2 + 6 + 18 + 54 + 162 = 242입니다."], connection: "항을 하나 더 추가하면 합이 얼마나 증가하나요?"
+    },
+    {
+      id: "aime-gap-recursive-counting-01", sourceConcepts: ["recursive-counting", "subsets", "combinations"], domain: "경우의 수", stage: "연결", title: "점화식으로 이웃하지 않는 부분집합 세기",
+      prompt: "집합 {1, 2, …, 8}의 부분집합 중 연속한 두 정수를 함께 포함하지 않는 것은 몇 개인가요? 빈 집합도 셉니다.", answer: 55,
+      hint: "8을 포함하는 경우와 포함하지 않는 경우를 나누어 n개의 수에 대한 점화식을 세워요.",
+      solution: ["aₙ을 {1, …, n}에서 연속한 두 수를 함께 고르지 않는 부분집합 수라고 해요.", "n을 고르지 않으면 aₙ₋₁가지, n을 고르면 n−1은 고를 수 없어 aₙ₋₂가지이므로 aₙ = aₙ₋₁ + aₙ₋₂입니다.", "a₀ = 1, a₁ = 2에서 차례로 계산하면 a₂ = 3, a₃ = 5, …, a₈ = 55입니다."],
+      connection: "연속한 세 수를 함께 고르지 않는 조건으로 바꾸면 어떤 이전 항들이 필요할까요?"
+    },
+    {
+      id: "aime-gap-integer-range-01", sourceConcepts: ["counting-integers-in-a-range", "divisibility", "prime-factorization"], domain: "정수론", stage: "유형", title: "제곱이 12의 배수인 정수 개수 세기",
+      prompt: "1 이상 1000 이하의 정수 n 중 n²이 12의 배수인 것은 몇 개인가요?", answer: 166,
+      hint: "12 = 2² × 3으로 소인수분해하고 n에 필요한 인수 조건을 구해요.",
+      solution: ["12 = 2² × 3입니다. n²이 2²의 배수이려면 n은 짝수이고, n²이 3의 배수이려면 n은 3의 배수여야 합니다.", "따라서 조건은 6의 배수인 n을 세는 것과 같습니다.", "1부터 1000까지 6의 배수는 ⌊1000/6⌋ = 166개입니다."],
+      connection: "n²이 72의 배수가 되도록 조건을 바꾸면 n은 어떤 수의 배수여야 하나요?"
+    },
+    {
+      id: "aime-gap-difference-squares-01", sourceConcepts: ["difference-of-squares", "factorization", "counting-integers-in-a-range"], domain: "정수론", stage: "유형", title: "두 제곱수의 차를 인수쌍으로 바꾸기",
+      prompt: "양의 정수 x > y가 x² − y² = 45를 만족합니다. 가능한 순서쌍 (x, y)는 몇 개인가요?", answer: 3,
+      hint: "x² − y²를 두 인수의 곱으로 나타내고 45의 인수쌍을 찾아요.",
+      solution: ["(x − y)(x + y) = 45입니다. 두 인수는 홀수이고 첫 인수가 둘째 인수보다 작습니다.", "가능한 양의 홀수 인수쌍은 (1,45), (3,15), (5,9)입니다.", "각 쌍에서 x와 y는 양의 정수로 정해지므로 가능한 순서쌍은 3개입니다."],
+      connection: "45가 짝수였다면 x − y와 x + y의 홀짝 관계는 어떻게 달라질까요?"
+    },
+    {
+      id: "aime-gap-parity-subsets-01", sourceConcepts: ["parity", "subsets", "casework"], domain: "경우의 수", stage: "개념 연결", title: "부분집합 합의 홀짝 균형 세기",
+      prompt: "집합 {1, 2, …, 8}의 부분집합 중 원소의 합이 홀수인 것은 몇 개인가요?", answer: 128,
+      hint: "홀수 1을 포함하거나 빼는 짝짓기가 합의 홀짝을 어떻게 바꾸는지 살펴봐요.",
+      solution: ["모든 부분집합은 1을 포함한 쌍과 1을 포함하지 않은 쌍으로 짝지을 수 있습니다.", "한 쌍에서는 1을 넣고 빼는 차이만 있으므로 두 부분집합의 합 홀짝이 서로 다릅니다.", "전체 2⁸ = 256개 중 정확히 절반인 128개가 홀수 합입니다."],
+      connection: "집합에 홀수가 하나 이상 있다는 조건이 절반씩 나뉘는 이유에 꼭 필요한가요?"
+    },
+    {
+      id: "aime-gap-small-subsets-01", sourceConcepts: ["subsets", "combinations", "basic-counting"], domain: "경우의 수", stage: "개념", title: "크기가 작은 부분집합 세기",
+      prompt: "원소가 8개인 집합에서 크기가 2 이하인 부분집합은 모두 몇 개인가요?", answer: 37,
+      hint: "크기가 0, 1, 2인 경우를 각각 세어 더해요.",
+      solution: ["크기 0인 부분집합은 1개입니다.", "크기 1은 8개이고 크기 2는 8개 중 2개를 고르는 C(8,2) = 28개입니다.", "모두 1 + 8 + 28 = 37개입니다."],
+      connection: "크기가 3 이하로 바뀌면 어떤 항을 더해야 하나요?"
+    },
+    {
+      id: "aime-gap-summation-01", sourceConcepts: ["summation", "arithmetic-sequence", "polynomial"], domain: "대수", stage: "연결", title: "곱의 합을 제곱합 공식으로 계산하기",
+      prompt: "1×2 + 2×3 + 3×4 + ··· + 10×11의 값은 얼마인가요?", answer: 440,
+      hint: "k(k + 1)을 k² + k로 나누어 제곱합과 등차수열의 합을 사용해요.",
+      solution: ["합은 Σ(k² + k), k = 1부터 10까지입니다.", "제곱합은 10×11×21/6 = 385이고, 1부터 10까지의 합은 55입니다.", "따라서 전체 합은 385 + 55 = 440입니다."],
+      connection: "마지막 항을 n(n + 1)로 바꾸면 합을 n에 대한 식으로 쓸 수 있나요?"
     }
   ];
 
