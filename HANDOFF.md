@@ -1461,3 +1461,11 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - [2015 99CEF AMC 8 보고서](https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf)는 Global 학년 행과 Global 전체 연도별 표를 포함한다. 학년 행은 이미 `amc8-grade-means-2015-99cef.csv`에 연결되어 있다. [2019 보고서](https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf)의 US/Canada 학년 점수빈도와 문항 응답 자료도 기존 참조 CSV/화면에 있어 중복 추가하지 않는다.
 - 2009–2018 참가자의 성별·상위권 분포를 분석한 논문 검색 결과는 학년별 평균·등급표가 아니므로 개인 학년 비교 기준으로 쓸 수 없다. 2015·2016 정확한 MAA grade table은 공개 검색으로 새 자료를 확보하지 못했다. MAA 과거 ReportViewer의 본문 보존본을 찾아야 다음 진전을 기대할 수 있다.
 - 이 검색은 새 수치 입력을 만들지 않았다. 공식 전국 학년 자료와 특정 학교 표본을 구분하는 근거만 기록한다. 현재 데이터 커버리지 표와 정확 학년 연결 정책을 유지한다.
+
+## 2026-11-04 웹 검색: AMC 회차 자료와 현행 일정 재확인
+
+- 사용자가 요청한 대로 AMC 원본 자료를 연도·폼 기준으로 웹에서 확인했다. 기존 카탈로그/CSV는 이미 AMC 8 1985–2026(2021 제외), AMC 10 2000–2025, AMC 12/AHSME 1950–2025, AIME 1983–2026의 266 회차에 실제 시험지·정답·풀이 경로를 둔다. 2024 AMC 8 페이지에서 25문항·40분, 인쇄 PDF·답·풀이·문항별 연결과 MAA 허가 표시를 재확인했다. 원문을 저장소로 복제하지 않는다.
+- MAA 현행 페이지의 2026–27 날짜: AMC 10A/12A 2026-11-05, AMC 10B/12B 2026-11-13, AMC 8 2027-01-21–27. 시험 전에 2026 AMC 10/12 문제 레코드를 만들지 않고, LIVE 공개 후 실제 공개된 회차에만 추가한다. 일정과 범위 요약은 `boarding-school-math/docs/AMC_YEARLY_SOURCE_CATALOG.md`에 반영했다.
+- MAA 공개 점수분포 페이지는 대회 전체 통계(점수 구간, 평균·표준편차, 전체 학생·학교 수)를 보여준다. 이번 검색에서 새로 확인된 페이지는 2026 AIME II였고, 학년별 평균표는 제공하지 않았다. 따라서 이를 학년 등급이나 AMC8 20점 수준의 학년 비교에 섞지 않는다.
+- 링크: [MAA AMC 연도·범위 및 일정](https://maa.org/student-programs/amc/), [MAA 현행 등록 일정](https://maa.org/amcreg/), [MAA 공개 점수분포 보고서](https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561), [2024 AMC 8 원본과 허가 표기](https://live.poshenloh.com/past-contests/amc8/2024).
+- 로컬 변경: `boarding-school-math/docs/AMC_YEARLY_SOURCE_CATALOG.md`, 본 인수인계. 원본 문항·답·풀이는 추가 복사하지 않았고 점수 레퍼런스 숫자도 새로 넣지 않았다. `raw_youtube.txt`는 보존·제외한다. Local only; no push, deployment, or Drive sync.
