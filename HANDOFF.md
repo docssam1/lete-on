@@ -1608,3 +1608,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 확인: 266개 행과 필수 링크 4종, 14개 AJHSME 제목, JS syntax 경로와 `git diff --check`. `raw_youtube.txt` 보존·제외. 로컬 변경만; push·배포·Drive 동기화 없음.
 
 출처: [MAA FOCUS 1999 명칭 전환](https://old.maa.org/sites/default/files/pdf/pubs/focus/past_issues/FOCUS_19_6.pdf), [MAA FOCUS 2004 AHSME 개편](https://old.maa.org/sites/default/files/pdf/pubs/mar04.pdf), [LIVE 연도별 공식 허가 아카이브](https://live.poshenloh.com/past-contests), [MAA 2024 AMC 8 풀이 PDF의 이용 안내](https://981338.fs1.hubspotusercontent-na1.net/hubfs/981338/Blogs/AMC%208%20Problems%20and%20Solutions/AMC%208%20Solutions%202024.pdf).
+
+## 2026-11-04 · AMC 8 원본 개념과 지필드 창작 연습 연결 확장
+
+- 웹 검색 결과에서 “2024 AMC Performance Report” PDF를 검토했지만, 본문은 Australian Mathematics Competition 보고서이며 MAA AMC 8 자료가 아니어서 사용하지 않았다.
+- LIVE AMC 8 원본 인벤토리 1,025문항의 개념 태그를 지필드의 AMC 8 timed mock 및 창작 연습 은행과 대조했다. 직접 태그가 하나 이상 이어지는 원본 문항은 979/1,025 (95.5%)다. 태그 발생 수 기준 겹침은 1,579/1,921 (82.2%)다. 이는 검색·선별용 편집 crosswalk 범위이며 진단 타당도나 학습 효과를 뜻하지 않는다.
+- `amc8-concept-practice-extension.js`에 12개 독립 창작 문항을 추가해 연산 순서, 소수·자릿값, 부피·단위변환, 날짜와 나머지, 새 연산 기호, 여집합 세기, 각도 추론, 극단 원리, 등비수열, 좌표 거리, 닮음비·넓이비, 사다리꼴 넓이를 연결했다. 총 창작 개념 연습은 39문항이다. 기존 원본 문항이나 풀이를 복사하지 않는다.
+- 검수: JavaScriptCore로 파일을 실행해 extension 22개 전체를 읽었고, 선택지 배열/정답 인덱스/source tag 검사에서 오류 0개. `git diff --check` 통과. 새 항목의 산술 풀이를 직접 재검산했다. Node 런타임이 이 Mac shell PATH에 없어 자동 테스트는 실행하지 않았다.
+- 수정: extension bank, 해당 HTML cache key, README. 로컬만; `raw_youtube.txt` 미수정. push·배포·Drive 동기화 없음.

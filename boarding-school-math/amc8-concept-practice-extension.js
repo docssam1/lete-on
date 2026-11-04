@@ -82,6 +82,102 @@
       hint: "처음과 끝, 두 번째와 끝에서 두 번째를 짝지어 보세요.",
       solution: ["짝수는 2부터 100까지 50개입니다.", "첫째 수와 마지막 수의 합은 102이고, 각 쌍의 합이 같습니다.", "합은 50 × 102 ÷ 2 = 2550입니다."],
       connection: "1부터 100까지 모두 더할 때 같은 짝짓기 방법을 쓰면 합은 얼마인가요?"
+    },
+    {
+      id: "amc8-g7-practice-order-operations-01", domain: "algebra", sourceConcepts: ["order-of-operations", "exponent", "fraction"], standard: "대수·규칙", focus: "거듭제곱과 나눗셈의 순서", stage: "개념 연결",
+      prompt: "식 3² + 24 ÷ 6 × 2의 값은 얼마인가요?",
+      choices: ["11", "13", "15", "17", "25"], answer: 3,
+      hint: "거듭제곱을 먼저 계산한 뒤, 나눗셈과 곱셈은 왼쪽부터 차례로 해요.",
+      solution: ["3² = 9입니다.", "24 ÷ 6 × 2는 왼쪽부터 계산해 4 × 2 = 8입니다.", "9 + 8 = 17입니다."],
+      connection: "괄호를 24 ÷ (6 × 2)로 바꾸면 값이 어떻게 달라지는지 설명해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-prime-units-01", domain: "number", sourceConcepts: ["prime", "factor", "units-digit", "divisibility"], standard: "수 감각·비율", focus: "소수의 배수에서 일의 자리 찾기", stage: "유형",
+      prompt: "소수 13의 양의 배수 중 100보다 작은 수는 모두 몇 개이며, 그중 일의 자리가 9인 수는 몇 개인가요?",
+      choices: ["7개와 1개", "7개와 2개", "8개와 1개", "8개와 2개", "9개와 2개"], answer: 1,
+      hint: "13의 배수를 차례로 적고, 100을 넘기기 직전에서 멈춰요.",
+      solution: ["13의 1배부터 7배까지는 13, 26, 39, 52, 65, 78, 91입니다. 13 × 8 = 104이므로 100보다 작은 배수는 7개입니다.", "일의 자리가 9인 수는 39와 91, 두 개입니다."],
+      connection: "13 대신 다른 소수를 곱할 때 일의 자리의 반복 주기를 어떻게 확인할 수 있을까요?"
+    },
+    {
+      id: "amc8-g7-practice-volume-01", domain: "geometry", sourceConcepts: ["volume", "rectangular-prism", "unit-conversion"], standard: "기하·공간", focus: "직육면체의 부피와 단위 변환", stage: "개념 연결",
+      prompt: "가로 30cm, 세로 20cm, 높이 15cm인 상자의 부피는 몇 리터인가요? (1L = 1000cm³)",
+      choices: ["6L", "9L", "12L", "15L", "90L"], answer: 1,
+      hint: "먼저 세 길이를 곱해 cm³로 구한 다음 1000으로 나누세요.",
+      solution: ["상자의 부피는 30 × 20 × 15 = 9000cm³입니다.", "1000cm³가 1L이므로 9000cm³ = 9L입니다."],
+      connection: "세 길이를 모두 2배로 늘리면 부피가 몇 배가 되는지 곱셈으로 설명해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-date-time-01", domain: "data", sourceConcepts: ["date-and-time", "modular-arithmetic", "elapsed-time"], standard: "수 감각·비율", focus: "경과한 날짜의 요일 구하기", stage: "유형",
+      prompt: "어느 달의 1일이 월요일입니다. 100일 뒤는 무슨 요일인가요?",
+      choices: ["월요일", "화요일", "수요일", "목요일", "금요일"], answer: 2,
+      hint: "한 주가 7일마다 반복되므로 100을 7로 나눈 나머지를 살펴보세요.",
+      solution: ["100 = 7 × 14 + 2이므로 100일은 14주와 2일입니다.", "월요일에서 이틀 뒤는 수요일입니다."],
+      connection: "‘100일 뒤’가 아니라 ‘100일째’를 세는 상황이라면 시작일을 포함해야 하는지 먼저 따져 보세요."
+    },
+    {
+      id: "amc8-g7-practice-custom-operation-01", domain: "algebra", sourceConcepts: ["custom-operation", "order-of-operations", "substitution"], standard: "대수·규칙", focus: "새 연산 기호를 식에 대입하기", stage: "개념 연결",
+      prompt: "실수 a, b에 대해 a ★ b = 2a − b로 정합니다. (4 ★ 3) ★ 2의 값은 얼마인가요?",
+      choices: ["3", "5", "6", "8", "10"], answer: 3,
+      hint: "괄호 안의 4 ★ 3부터 정의에 따라 계산해요.",
+      solution: ["4 ★ 3 = 2 × 4 − 3 = 5입니다.", "따라서 (4 ★ 3) ★ 2 = 5 ★ 2 = 2 × 5 − 2 = 8입니다."],
+      connection: "★의 정의에서 2a − b 대신 a − 2b를 쓰면 같은 식의 값은 어떻게 바뀌나요?"
+    },
+    {
+      id: "amc8-g7-practice-complement-counting-01", domain: "counting", sourceConcepts: ["complementary-counting", "divisibility", "inclusion-exclusion"], standard: "경우의 수·확률", focus: "배수의 여집합을 세고 겹침 조정하기", stage: "연결",
+      prompt: "1부터 100까지의 정수 중 3의 배수도 5의 배수도 아닌 수는 몇 개인가요?",
+      choices: ["47", "50", "53", "57", "60"], answer: 2,
+      hint: "전체 100개에서 3의 배수와 5의 배수를 빼고, 두 번 뺀 공배수는 한 번 더해요.",
+      solution: ["3의 배수는 ⌊100 ÷ 3⌋ = 33개, 5의 배수는 20개입니다.", "두 번 센 15의 배수 6개를 한 번 더해, 3 또는 5의 배수는 33 + 20 − 6 = 47개입니다.", "둘 다 아닌 수는 100 − 47 = 53개입니다."],
+      connection: "‘3이나 5 중 하나만 나누는 수’를 세려면 공배수를 어떻게 다뤄야 할까요?"
+    },
+    {
+      id: "amc8-g7-practice-angle-chasing-01", domain: "geometry", sourceConcepts: ["angle-chasing", "isosceles-triangle", "angle-sum"], standard: "기하·공간", focus: "이등변삼각형에서 바깥각으로 밑각 구하기", stage: "유형",
+      prompt: "이등변삼각형의 꼭짓점에서 한 변을 연장했더니 바깥각이 128°입니다. 두 밑각은 각각 몇 도인가요?",
+      choices: ["24°", "26°", "52°", "64°", "76°"], answer: 3,
+      hint: "먼저 바깥각과 꼭짓점 안쪽 각이 일직선의 각임을 이용해요.",
+      solution: ["꼭짓점 안쪽 각은 180° − 128° = 52°입니다.", "삼각형의 나머지 두 각의 합은 180° − 52° = 128°입니다.", "이등변삼각형의 밑각은 같으므로 각 밑각은 128° ÷ 2 = 64°입니다."],
+      connection: "바깥각을 바꾸어도 두 밑각이 같은 이유를 이등변삼각형의 성질로 설명해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-extremal-01", domain: "counting", sourceConcepts: ["extremal-argument", "pigeonhole-principle", "casework"], standard: "경우의 수·확률", focus: "연속한 두 수를 반드시 고르는 최소 개수", stage: "연결",
+      prompt: "1부터 12까지의 정수 중 몇 개를 골라야 연속한 두 정수를 반드시 포함한다고 보장할 수 있나요?",
+      choices: ["5개", "6개", "7개", "8개", "12개"], answer: 2,
+      hint: "연속한 수끼리 (1,2), (3,4), …처럼 짝지어 보세요.",
+      solution: ["짝은 (1,2), (3,4), (5,6), (7,8), (9,10), (11,12)의 6개입니다.", "각 짝에서 하나씩만 고르면 6개를 골라도 연속한 두 수를 피할 수 있습니다.", "7개를 고르면 어떤 짝에서는 두 수를 모두 골라야 하므로 연속한 두 수가 반드시 있습니다."],
+      connection: "1부터 20까지라면 연속한 두 수를 보장하려면 최소 몇 개를 골라야 할까요?"
+    },
+    {
+      id: "amc8-g7-practice-geometric-sequence-01", domain: "algebra", sourceConcepts: ["geometric-sequence", "exponent", "pattern-recognition"], standard: "대수·규칙", focus: "공비가 일정한 수열의 항 구하기", stage: "유형",
+      prompt: "수열 2, 6, 18, 54, …에서 7번째 항은 얼마인가요?",
+      choices: ["486", "729", "1458", "2187", "4374"], answer: 2,
+      hint: "각 항에 같은 수를 곱해 다음 항을 만들어요.",
+      solution: ["공비는 3이므로 각 항은 앞 항의 3배입니다.", "7번째 항은 2 × 3⁶ = 2 × 729 = 1458입니다."],
+      connection: "이 수열의 n번째 항을 2와 3을 사용해 나타내 보세요."
+    },
+    {
+      id: "amc8-g7-practice-coordinate-distance-01", domain: "geometry", sourceConcepts: ["coordinate-geometry", "distance-formula", "pythagorean-theorem"], standard: "기하·공간", focus: "좌표 차이로 두 점 사이 거리 구하기", stage: "연결",
+      prompt: "좌표평면의 두 점 A(−3, 2), B(5, 2) 사이의 거리는 얼마인가요?",
+      choices: ["6", "8", "10", "12", "14"], answer: 1,
+      hint: "두 점의 y좌표가 같으므로 가로 방향 차이만 계산하면 돼요.",
+      solution: ["두 점은 같은 수평선 위에 있습니다.", "가로 좌표의 차이는 5 − (−3) = 8이므로 거리는 8입니다."],
+      connection: "두 점의 y좌표가 다르면 수평·수직 이동을 직각삼각형으로 어떻게 나타낼 수 있나요?"
+    },
+    {
+      id: "amc8-g7-practice-similarity-scale-01", domain: "geometry", sourceConcepts: ["similarity", "ratio-and-proportion", "area-ratio"], standard: "기하·공간", focus: "닮음비와 넓이비 연결하기", stage: "개념 연결",
+      prompt: "닮은 두 삼각형의 대응하는 변의 길이비가 작은 삼각형 대 큰 삼각형 = 2:3입니다. 작은 삼각형의 넓이가 20cm²라면 큰 삼각형의 넓이는 얼마인가요?",
+      choices: ["30cm²", "40cm²", "45cm²", "60cm²", "80cm²"], answer: 2,
+      hint: "넓이는 길이비가 아니라 길이비의 제곱에 따라 변해요.",
+      solution: ["닮음비는 2:3이므로 넓이비는 2²:3² = 4:9입니다.", "작은 넓이 20cm²는 넓이비의 4에 해당하므로 한 몫은 5cm²입니다.", "큰 삼각형의 넓이는 9 × 5 = 45cm²입니다."],
+      connection: "대응하는 길이가 3배가 되면 넓이가 몇 배가 되는지 그림으로 설명해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-trapezoid-01", domain: "geometry", sourceConcepts: ["trapezoid", "area", "unit-conversion"], standard: "기하·공간", focus: "평행한 두 변을 이용해 사다리꼴 넓이 구하기", stage: "유형",
+      prompt: "평행한 두 변의 길이가 8cm와 14cm이고 높이가 5cm인 사다리꼴의 넓이는 얼마인가요?",
+      choices: ["45cm²", "50cm²", "55cm²", "60cm²", "70cm²"], answer: 2,
+      hint: "평행한 두 변의 평균 길이에 높이를 곱해요.",
+      solution: ["사다리꼴 넓이는 (평행한 두 변의 합) × 높이 ÷ 2입니다.", "(8 + 14) × 5 ÷ 2 = 22 × 2.5 = 55cm²입니다."],
+      connection: "두 평행한 변의 길이가 같아지면 어떤 도형의 넓이 공식으로 이어지나요?"
     }
   ];
 
