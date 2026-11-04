@@ -1,0 +1,10 @@
+.p30circle { display:block; width:100%; max-width:300px; height:auto; margin:.3em auto; }
+.p30circle-outline,.p30circle-edge { fill:none; stroke:#191511; stroke-width:2; }
+.p30circle-radius { stroke:#777; stroke-width:1.4; stroke-dasharray:4 3; }
+.p30circle-arc { fill:none; stroke:#2f6b4a; stroke-width:2; }
+.p30circle text { fill:#191511; font-family:serif; font-size:24px; }
+@media print { .p30original-question,.p30original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } #problemView .print-page--four-up .p30original-question svg { width:auto !important; max-width:100%; max-height:50mm; } }
+
+.p30original-question .source52-p30e43-diagram .source52-p30e43-dimension,
+.p30original-question .source52-p30e43-diagram .source52-p30e43-given-angle { font-size:26px; font-weight:700; }
+.p30original-question .source52-p30e43-diagram .source52-p30e43-target-label { font-size:25px; }
