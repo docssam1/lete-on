@@ -44,6 +44,14 @@ Evidence and source scope: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDE
 
 웹에서 AMC Study의 2010 AMC 8 난도표 게시물을 확인했다. 표가 MAA 공개 자료라고 명시하고 153,211명 응답의 A–E 선택·공란·판독불가·정답률을 제시한다. Apple Vision OCR 후 원본 이미지와 대조하고 LIVE 공개 정답 키의 25개 답을 교차 검증했다. `amc8-2010-item-response-percent.csv`와 `amc8-item-response-reference.js`를 추가했으며, 2010 AMC 8에서만 복습 목록의 오답/미응답 옆에 해당 집단 정답률과 학생이 입력한 오답 선택지의 집단 비율 또는 최다 오답을 표시한다. 표의 빨간 예측 표시와 사교육 기관의 적중 주장 데이터는 가져오지 않았다. 출처는 MAA 원본이 아닌 제3자 재게시이며, 전체 응시자 문항 통계이지 학년별 비교·현재 규준·학생 등급이 아니다. 연구 근거와 제한: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. 검수: 번들 Node REPL에서 25개 CSV/lookup 행 일치, 응답 비율 합계(반올림 오차 ±0.12% 이내), 2010 외 연도·26번 경계 거부, Q3의 오답 B 20.97% 및 정답률 64.41%를 확인했다. 로컬 브라우저에서 실제 Q3 답 B·오답 처리 후 결과 화면에 집계와 원본 풀이 링크가 함께 뜨는 것을 확인했고, 테스트 입력은 새로고침해 지웠다. `git diff --check` 통과. 전체 Playwright suite는 이 작업에서 실행하지 않았다. Local only; no push, deployment, or Drive sync.
 
+### 2026-11-04 한국 AMC 8 학년 평균 결과 화면 연결
+
+- 앞선 웹 검색의 [2009 한국 AMC 8 결과](https://www.amcstudy.net/43), [2011 한국 AMC 8 결과](https://www.amcstudy.net/79) 표를 연도별로 재확인했다. Grade 5–8의 평균·응시 인원은 해당 페이지가 보고한 한국 응시집단으로만 보존한다. MAA 2009 연례 보고서의 국제 범위가 혼합된 보고학교 집계와 섞지 않는다.
+- `competition/amc8-korea-grade-mean-reference.js`를 추가하고 원본 시험 결과에 같은 연도·학년 한국 평균과 점수 차이를 표시한다. 2009/2011 외 연도와 Grade 4 이하는 매칭하지 않는다. 전체 741/899명과 학년표 737/894명의 차이 4/5명은 화면에 명시한다. 비교는 과거 집단 평균이며 능력 등급이나 현재 규준이 아니다.
+- `competition-paper-review.html/js`에서 출처 링크 및 패널을 연결했다. 브라우저에서 2011 AMC 8 Grade 7 Q1의 답 E를 넣고 공개 정답표와 대조한 뒤 결과 화면에서 한국 Grade 7 평균 13.92, 표본 315, 입력 점수와 차이, 미기재 5명과 출처 링크를 확인했다. 이후 페이지를 새로고침해 테스트 답을 초기화했으며 복습 요약을 저장하지 않았다.
+- 추가 웹 검색은 MAA 2009 25주년 보고서 사본의 Table 2가 2003–2009 기록 학년군 평균표임을 재확인했다. 이는 기존 `amc8-grade-means-2001-2009.csv`에 이미 반영된 별도 MAA 보고학교 집계이고, 첫 그룹은 4–5학년 묶음이다. 2009 결과표는 분포 인원이 연례 보고서와 교차 확인되지만 한국 결과는 별도 코호트다. 이 조사로 신규 전국 행을 추가하지 않았다.
+- `git diff --check` 및 결과 UI의 실제 답안 대조·렌더 검수 완료. `raw_youtube.txt`는 사용자 파일로 보존한다. 로컬만 수정; push/배포/Drive 동기화 없음.
+
 # Current handoff — 2026-11-04
 
 ### 2026-11-04 web-recovered 2009 AMC 8 global grade score distribution
