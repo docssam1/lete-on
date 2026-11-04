@@ -2134,3 +2134,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - MAA 59th annual report의 Table IX(pp.252–255)에서 2008 AMC 10A/B·AMC 12A/B 전 문항 선택률과 공란률을 전사해 `amc10-12-2008-item-response.csv`에 저장했다. 100개 별표 정답을 LIVE 키와 대조했고 runtime 및 year/form coverage를 네 폼 각각 25/25로 갱신했다.
 - MAA 공식 응시자 수와 맞춘 분모: AMC10A 68,101; AMC10B 34,803; AMC12A 78,560; AMC12B 41,609. 인쇄 비율은 그대로 유지하고 별도 미판독률은 보고서에 없어 비웠다. 이 자료는 폼 전체의 역사적 응답 경향이며 학년별 규준은 아니다.
 - manifest의 2007·2008 네 폼이 각각 중복 없이 한 행씩 있고 연도순으로 들어가는지, runtime/CSV의 2008 100행과 문항 순서를 확인한다. 기존 `raw_youtube.txt`는 그대로 둔다. 다음은 MAA 연례보고서에서 2009 이후 연도를 이어 찾는다.
+
+
+### 2026-11-05 · 2009 AMC 10/12 item-response source search
+
+- MAA annual-summary search confirms the 2010 report contains 2009 AMC 10/12 grade/score summary rows, but its Table IX item-response distributions are for 2010. Found 2009B response tables embedded in school-result reports for Temasek and Barker College; their local cohorts are not interchangeable with the national official-student cohort. Did not import them or label them national. Research note has sources and search boundary.
+- Next: search for a 2009 form-level all-official response table or a well-documented regional report whose population can be labeled honestly; keep AMC original exam, answer, solution, and item-diagnostic sources attached by year/form.
