@@ -1821,3 +1821,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 - 99CEF 2017 분석 보고서의 연도별 표는 2016 AMC 8에 대해 North America/US-Canada 모집단 n=108,227, 평균 9.36, 만점 268, 20점 이상 3,104만 제공합니다. 0–25점별 인원표는 검색 가능한 해당 표와 MAA Michigan Section 2017 뉴스레터에서 찾지 못했다. 따라서 summary 값만 유지하고 점수별 누적비율이나 학생의 위치는 계산하지 않는다. 출처: [99CEF 2017 report](https://www.99cef.org.tw/userfiles/2017AMC8Report.pdf), [MAA Michigan 2017 newsletter](https://sections.maa.org/michigan/newsletters/Vol43no2_Spring_2017.pdf).
 - 2020의 전체점수 빈도도 아직 회수되지 않았다. 기존 기록에 있는 2020 MAA-labelled item response와 별도 score/grade report는 서로 다른 분모로 보존한다. 다음 조사는 2020 exact score frequency와 2023–2026 공개 분포 원표에 한정하며, award cutoffs는 점수 구간 빈도로 재구성하지 않는다.
+
+### 2026-11-05 웹 검색 후속 · 2016 AMC 8 연도 혼동 제거
+
+- 검색 결과에 나온 BEAM의 2016-01-29 “AMC 8 Results” 게시물은 본문상 11월에 치른 시험 결과만 말하며 2016 대회를 특정하지 않는다. MAA 과거 보고서 선택 목록은 2016 AMC 8을 2016-11-15로 표기하고, 2015 Teacher Manual은 직전 대회일을 2015-11-17로 확인한다. BEAM의 149,277명/중앙값 8/상위 25% 경계 11/만점 90은 2016 대회 기준으로 사용하지 않고, 일치하는 원자료를 확인하기 전까지 2015에도 옮겨 넣지 않는다. 이 때문에 조사 문서의 종전 2016 통계 단락을 바로잡았다.
+- LIVE의 [2016 AMC 8 원본 페이지](https://live.poshenloh.com/past-contests/amc8/2016)를 열어 25문항·40분, 인쇄 PDF·정답표·전문 풀이, 문항별 개념·힌트·풀이, MAA 허가 고지를 확인했다. 이는 연도별 학습 자료 출처이며 학년 규준 자료는 아니다.
+- 2016 결과를 다룬 Ivy League Education Center 글은 2016-11-15 대회를 명시하지만 208,137 worldwide / 196,019 USA, 평균 9.35를 보고해 99CEF 108,227 및 MAA Michigan 108,295와 크게 다르다. 표본 범위를 설명할 원본 MAA 표를 회수하지 못해 이 secondary claim은 충돌 메모에만 남기고 런타임 비교 수치로 쓰지 않았다.
+- 검색 확인 범위와 정정은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다. 정확한 2016 점수 빈도와 전국 Grade 7 norm은 아직 미회수이며, 출처 충돌이 해소될 때까지 기존 2016 전체 요약도 소스별로 구분한다. `raw_youtube.txt`는 보호하고, 변경은 로컬 전용이다.
+- 2016 결과 화면에는 99CEF·MAA Michigan·Ivy의 참가자/평균 수치를 하나의 norm처럼 합치지 않는 출처 충돌 주석을 추가했다. 결과 렌더링 중 주석의 `textContent`가 내부 출처 링크를 제거하던 DOM 구조도 바로잡았다. 로컬 화면에서 25개 답 대조 후 25/25 결과, Grade 7 전국 기준 미확인 문구, 해당 연도 통계 원문 링크가 함께 보이는 것을 확인했다. `git diff --check` 통과; 테스트 실행·push·배포·Drive 동기화 없음.

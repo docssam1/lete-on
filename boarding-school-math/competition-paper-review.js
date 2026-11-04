@@ -903,6 +903,8 @@
         setText("amc8-overall-cohort-note", `2014년 보고서의 점수별 빈도 합계는 ${overallCohort.distributionParticipants.toLocaleString("en-US")}명으로, 같은 보고서의 전체 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명보다 560명 적습니다. 빈도표 가중평균은 11.46점, 보고서 요약 평균은 11.44점입니다. 점수보다 낮은 비율은 빈도표의 인원 합계를 분모로 계산했으며, 전체 평균·만점·20점 이상 통계는 보고서 요약 값을 그대로 따로 표시합니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. `);
       } else if (overallCohort.year === 2015) {
         setText("amc8-overall-cohort-note", "2015년은 99CEF 연례 보고서의 Global 점수 빈도표(n=149,844)를 사용합니다. 점수별 인원 합은 전체 참가자 수와 일치하며, 점수보다 낮은 비율은 동점을 제외해 직접 계산한 역사적 위치입니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. ");
+      } else if (overallCohort.year === 2016) {
+        setText("amc8-overall-cohort-note", "2016년 99CEF 회고표는 미국·캐나다 108,227명, 평균 9.36으로 기록하고 MAA Michigan 뉴스레터는 108,295명, 평균 9.36으로 기록합니다. 반면 Ivy League Education Center의 2016년 결과 글은 미국 196,019명·평균 9.35를 보고합니다. 집계 범위가 확인되지 않아 이 화면은 연결된 99CEF 값을 출처별 참고치로 보여 주며, 공식 전국 순위나 학년 규준으로 해석하지 않습니다. 정확한 0–25점 빈도와 전국 Grade 7 평균은 확인되지 않았습니다. ");
       } else if (overallCohort.year === 2017) {
         setText("amc8-overall-cohort-note", "2017년은 99CEF 보고서의 美加(Global North America) 점수 빈도표(n=81,386)를 연결했습니다. 분포표의 가중평균은 9.064점(반올림 9.06)이며, 같은 보고서 요약에는 9.05점으로 적혀 있습니다. 둘을 합치지 않고 평균은 요약값, 점수 위치는 원빈도표로 계산합니다. 이 비율은 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 응시자는 별도 코호트입니다. ");
       } else if (overallCohort.year === 2018) {
