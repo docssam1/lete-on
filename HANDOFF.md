@@ -1983,3 +1983,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 보고서 본문에서 두 시험 합계 공식 응시자 8,584명, I 평균 4.77, II 평균 5.27은 확인했다. 이 값은 학년별 점수 빈도표를 대신하지 않으므로 2008 AIME 비교 진단에는 연결하지 않는다.
 - 2008 AIME I/II의 범위표 상태를 `aime-grade-table-located-not-transcribed`로 바꿔 “아직 조사하지 않음”과 “표 위치는 확인했으나 표 본문을 못 구함”을 구분하고, 두 회차 행에 출처 URL과 제한사항을 기록했다. 2010 AIME 학년별 분포는 기존 검증 데이터로 유지한다.
 - 출처: [2008 MAA 보고서 공개 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions), [LIVE 연도별 AIME 원본](https://live.poshenloh.com/past-contests). 다음 단계는 MAA 보고서의 261–262쪽 원본을 확보해 표 행·학년합계·전체 평균을 서로 대조하는 것이다.
+
+### 2026-11-05 · 웹 검색으로 AIME 학년별 비교표 재대조
+
+- 요청에 따라 웹에서 연도별 AMC/AIME 원본과 결과 자료를 다시 찾았다. LIVE의 MAA 허가 아카이브는 실제 회차 266개(AMC 8 41, AMC 10 52, AMC 12 102, AIME 71)를 연도·형식별로 제공하고 시험지 인쇄 PDF·정답표·전문 풀이·문항별 개념/힌트/풀이를 연결한다. 이 경로는 `amc-original-source-catalog.csv`에 이미 들어 있다.
+- 2010 MAA *AMC 10/12 Summary of Results and Awards*의 Scribd 공개 미러에서 AIME I/II 학년별 점수표(인쇄 pp.201–202)를 찾아 기존 전사를 다시 집계했다. I는 3,618명, 가중 평균 4.1235(보고서 4.12); II는 2,904명, 가중 평균 5.9098(보고서 5.91)로 일치한다. 정확한 학년 8–13에만 진단 비교를 제공하며 `unknown`과 `<=7`은 묶음 범주로 유지한다.
+- 2008 AIME 학년별 표는 다른 검색에서도 목차와 수치만 노출되고 인쇄 pp.261–262의 행은 회수되지 않았다. College Sidekick 결과는 3쪽짜리 일부 미리보기라 표가 없고, 이를 2008 점수분포 원자료로 취급하지 않는다. 상태와 기존 데이터는 바꾸지 않는다.
+- 갱신: `boarding-school-math/competition/historical-amc-grade/README.md`. 원본 기출은 출처 링크로 남기며 문항·풀이를 복제하지 않는다. 화면도 확인했고 7학년 지도에서 펼친 학년 선택 영역이 비어 있음을 다시 확인했으나, 실행 중인 localhost는 lete-on 작업본을 가리키고 그 작업본에는 광범위한 사용자 미커밋 변경이 있어 이 분기에서는 수정하지 않았다. 다음은 사용자 변경 보존 범위를 확인한 뒤 해당 화면의 학년 선택 렌더링을 바로잡는 것이다.
+- 출처: [LIVE 연도별 원본](https://live.poshenloh.com/past-contests), [MAA 2010 결과 요약 공개 미러](https://www.scribd.com/document/51428451/2010-HS-summary), [2008 MAA 보고서 공개 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions). `raw_youtube.txt` 보존; push·배포·Drive 동기화 없음.
