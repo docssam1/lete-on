@@ -60,11 +60,11 @@ window.GFIELD_MATH_BOOKS.push(...[
    "middle"
   ],
   "track": "curriculum",
-  "band": 3,
+  "band": 4,
   "publisher": "영재교육방송",
   "character": "구판 대수·기하 심화와 증명 연습",
   "use": "학년별 대수·기하를 나누어, 여러 학년의 개념을 연결하는 심화 교재로 살펴봅니다.",
-  "ready": "현재 풀려는 단원의 교과 개념과 중등 심화 풀이가 준비되어 있는지 봅니다.",
+  "ready": "해당 주제의 일반 중등 심화를 혼자 풀고 풀이 근거까지 설명할 수 있는지 먼저 봅니다. 현재 풀려는 단원의 교과 개념과 중등 심화 풀이가 준비되어 있는지 봅니다.",
   "next": "소장한 권에서 필요한 주제만 골라 서술·증명을 연습합니다. 경시를 준비한다면 별도의 정수·조합 이론과 구분합니다.",
   "edition": "라인업 대수·기하",
   "source": "https://www.joongang.co.kr/article/10984901",
@@ -83,7 +83,8 @@ window.GFIELD_MATH_BOOKS.push(...[
   ],
   "sourceLabel": "당시 교재 구성·전문가 설명",
   "statusLabel": "구판 · 절판 안내",
-  "availability": "out-of-print"
+  "availability": "out-of-print",
+  "levelLabel": "극상위 · 중등 심화 이후"
  },
  {
   "id": "insight-middle",
@@ -92,11 +93,11 @@ window.GFIELD_MATH_BOOKS.push(...[
    "middle"
   ],
   "track": "curriculum",
-  "band": 3,
+  "band": 4,
   "publisher": "홀짝",
-  "character": "상위권을 위한 깊은 개념 설명",
+  "character": "극상위 사고를 위한 깊은 개념·비교과 연결",
   "use": "교과 내용을 비교과 개념과 연결해 읽는 심화 개념서입니다.",
-  "ready": "현재 학년의 개념을 스스로 설명하고 기본 유형을 풀 수 있는지 확인합니다.",
+  "ready": "해당 주제의 일반 중등 심화를 혼자 풀고 풀이 근거까지 설명할 수 있는지 먼저 봅니다. 현재 학년의 개념을 스스로 설명하고 기본 유형을 풀 수 있는지 확인합니다.",
   "next": "문제 수를 늘리기보다 필요한 개념을 읽고 증명과 적용을 설명해 보세요. 현행 교과 단원과 대조해 골라 씁니다.",
   "edition": "인사이트 수학 중2-하 (2010년)",
   "source": "https://www.yes24.com/product/goods/4041465",
@@ -108,7 +109,8 @@ window.GFIELD_MATH_BOOKS.push(...[
   "identityStatus": "verified",
   "statusLabel": "구판 · 현재 판매 확인 필요",
   "availability": "legacy",
-  "imageSource": "https://image.yes24.com/goods/4041465/L"
+  "imageSource": "https://image.yes24.com/goods/4041465/L",
+  "levelLabel": "극상위 · 중등 심화 이후"
  },
  {
   "id": "hyper-middle-old",
@@ -117,11 +119,11 @@ window.GFIELD_MATH_BOOKS.push(...[
    "middle"
   ],
   "track": "curriculum",
-  "band": 3,
+  "band": 4,
   "publisher": "이투스북",
   "character": "고난도 복합 유형과 경시 도전",
   "use": "고난도 유형과 복합 문제를 풀고 유사 문제로 다시 적용하는 심화 학습서입니다.",
-  "ready": "해당 학기의 개념·유형과 일반 심화 문제를 풀이 과정까지 정리할 수 있는지 봅니다.",
+  "ready": "해당 주제의 일반 중등 심화를 혼자 풀고 풀이 근거까지 설명할 수 있는지 먼저 봅니다. 해당 학기의 개념·유형과 일반 심화 문제를 풀이 과정까지 정리할 수 있는지 봅니다.",
   "next": "소장본에서 필요한 복합 유형을 골라 생각하는 시간을 확보합니다. 다른 심화서를 전부 끝내는 필수 순서로 잡지 않습니다.",
   "edition": "최상위를 뛰어넘는 하이퍼 최고난도 수학 중학 1-1 (2023년용)",
   "source": "https://www.yes24.com/product/goods/40968595",
@@ -140,7 +142,8 @@ window.GFIELD_MATH_BOOKS.push(...[
   ],
   "statusLabel": "구판 · 절판 안내",
   "availability": "out-of-print",
-  "imageSource": "https://image.yes24.com/goods/40968595/L"
+  "imageSource": "https://image.yes24.com/goods/40968595/L",
+  "levelLabel": "극상위 · 중등 심화 이후"
  },
  {
   "id": "aclass-limited",
@@ -149,11 +152,11 @@ window.GFIELD_MATH_BOOKS.push(...[
    "middle"
   ],
   "track": "curriculum",
-  "band": 3,
+  "band": 4,
   "publisher": "에이급출판사",
   "character": "고난도 실전 모의고사와 구술형 접근",
   "use": "EBS가 소개한 실전 모의고사 12회 구성의 고난도 문제집입니다. 일반 에이급 수학과 별도로 구분합니다.",
-  "ready": "중등 전 범위 심화와 풀이를 논리적으로 쓰는 준비를 먼저 확인합니다.",
+  "ready": "해당 주제의 일반 중등 심화를 혼자 풀고 풀이 근거까지 설명할 수 있는지 먼저 봅니다. 중등 전 범위 심화와 풀이를 논리적으로 쓰는 준비를 먼저 확인합니다.",
   "next": "필요한 회차를 풀고 접근 방법·서술을 되짚습니다. 경시 기본 이론을 배우기 위한 첫 교재로 바로 쓰지 않습니다.",
   "edition": "에이급수학 리미티드 에디션",
   "source": "https://mid.ebs.co.kr/customer/eventCompleteRecomment?bnnrMngId=13165",
@@ -173,7 +176,8 @@ window.GFIELD_MATH_BOOKS.push(...[
   ],
   "sourceLabel": "EBS 교재·강좌 소개",
   "statusLabel": "구판 · 절판 안내",
-  "availability": "out-of-print"
+  "availability": "out-of-print",
+  "levelLabel": "극상위 · 중등 심화 이후"
  },
  {
   "id": "mathgod-middle-old",
@@ -182,11 +186,11 @@ window.GFIELD_MATH_BOOKS.push(...[
    "middle"
   ],
   "track": "curriculum",
-  "band": 3,
+  "band": 4,
   "publisher": "비상교육",
   "character": "2009 개정 중등 심화 교재",
   "use": "소장한 구판의 심화 문제를 현재 단원과 맞춰 선택하는 자료입니다.",
-  "ready": "교과 기본과 유형이 안정적인지, 소장본의 단원이 지금 공부와 맞는지 확인합니다.",
+  "ready": "해당 주제의 일반 중등 심화를 혼자 풀고 풀이 근거까지 설명할 수 있는지 먼저 봅니다. 교과 기본과 유형이 안정적인지, 소장본의 단원이 지금 공부와 맞는지 확인합니다.",
   "next": "현재 내신 준비는 해당 교육과정 교재와 기출을 중심으로 잡고 구판은 필요한 심화 주제에 보완합니다.",
   "edition": "최고수준 완성 수학의 신 중등수학 2-2 (2017년용)",
   "source": "https://www.yes24.com/product/goods/13143848",
@@ -201,7 +205,8 @@ window.GFIELD_MATH_BOOKS.push(...[
   ],
   "statusLabel": "절판 · 2009 개정 구판",
   "availability": "out-of-print",
-  "imageSource": "https://image.yes24.com/goods/13143848/L"
+  "imageSource": "https://image.yes24.com/goods/13143848/L",
+  "levelLabel": "극상위 · 중등 심화 이후"
  },
  {
   "id": "mathgod-middle-new",
@@ -237,11 +242,11 @@ window.GFIELD_MATH_BOOKS.push(...[
    "middle"
   ],
   "track": "curriculum",
-  "band": 3,
+  "band": 4,
   "publisher": "출판사·판권 확인 전",
   "character": "특목고·구술·경시·올림피아드 유형별 심화",
   "use": "개념을 정리한 뒤 특목고, 구술·면접, 시·도 경시, 올림피아드 문제로 확장하는 중등 구판입니다.",
-  "ready": "집합·수와 식·함수·도형 등 소장본의 주제와 현재 교과 범위를 먼저 대조합니다.",
+  "ready": "해당 주제의 일반 중등 심화를 혼자 풀고 풀이 근거까지 설명할 수 있는지 먼저 봅니다. 집합·수와 식·함수·도형 등 소장본의 주제와 현재 교과 범위를 먼저 대조합니다.",
   "next": "이미 배운 단원의 심화·구술 연습에 골라 활용합니다. 구판의 집합·통계 등 단원 배치를 지금 중1 내신 범위로 그대로 적용하지 않습니다.",
   "edition": "SUPERMATH 중1 수학 · 소장 구판",
   "source": "",
@@ -263,7 +268,8 @@ window.GFIELD_MATH_BOOKS.push(...[
   "availability": "out-of-print",
   "alsoTracks": [
    "competition"
-  ]
+  ],
+  "levelLabel": "극상위 · 중등 심화 이후"
  },
  {
   "id": "ne-upper-algebra",
