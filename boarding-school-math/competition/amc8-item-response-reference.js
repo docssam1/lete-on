@@ -89,6 +89,33 @@
 23,D,13.57,21.25,23.03,19.69,16.24,6.23,0.00
 24,A,29.81,16.91,16.69,22.02,8.34,6.23,0.00
 25,A,40.04,12.90,17.69,13.90,9.79,5.67,0.00`.trim();
+  // 2017 99CEF analysis report table explicitly labels the response cohort 美加 (US and Canada).
+  const raw2017 = `
+1,A,66.95,0.41,2.12,28.68,1.57,0.25,0.03
+2,E,0.75,4.23,4.82,10.79,78.30,1.01,0.11
+3,C,5.84,25.29,38.13,18.77,9.72,2.20,0.06
+4,D,5.57,14.86,10.80,50.41,16.88,1.42,0.07
+5,B,7.07,66.97,13.94,5.20,5.40,1.36,0.06
+6,D,3.36,17.09,9.31,55.43,12.87,1.88,0.06
+7,A,33.76,14.15,20.76,19.65,8.94,2.55,0.19
+8,D,12.59,8.03,16.54,42.26,17.98,2.29,0.30
+9,D,16.98,16.74,25.72,30.93,6.61,2.95,0.07
+10,C,11.52,29.38,24.36,24.18,7.59,2.91,0.06
+11,C,17.73,19.52,26.62,10.66,20.89,4.47,0.12
+12,D,19.89,16.62,11.84,34.47,12.78,4.31,0.08
+13,B,3.64,27.52,14.03,48.13,4.30,2.29,0.09
+14,C,9.21,9.62,27.47,12.66,36.90,3.97,0.16
+15,D,5.73,6.67,20.17,56.37,7.36,3.62,0.08
+16,D,11.55,16.95,17.36,27.14,18.40,8.53,0.08
+17,C,8.04,21.97,39.64,16.83,7.03,6.36,0.15
+18,B,7.07,27.63,18.44,19.07,18.98,8.59,0.21
+19,D,16.30,18.17,24.33,16.41,13.45,11.14,0.19
+20,B,14.80,23.38,19.97,15.87,13.66,12.19,0.15
+21,A,20.09,17.00,17.03,17.92,16.00,11.55,0.41
+22,D,12.58,19.97,18.46,22.30,13.59,12.87,0.24
+23,C,9.34,15.86,26.67,21.22,12.41,14.29,0.21
+24,D,15.51,19.80,22.67,17.37,9.91,14.59,0.14
+25,B,12.43,24.12,13.61,18.86,13.08,17.82,0.08`.trim();
   // MAA-generated school report, Mathematics Ed Clinic, 2013 AMC 8.
   // Preserve the report's two exact-grade cohorts separately; these are not national norms.
   const raw2013Grade7 = `
@@ -174,6 +201,7 @@
     2009: Object.freeze({ raw: raw2009, respondentCount: 741, population: "2009 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/43", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
     2010: Object.freeze({ raw: raw2010, respondentCount: 153211, population: "2010 AMC 8 MAA-reported student response cohort", sourceUrl: "https://www.amcstudy.net/71", sourceStatus: "secondary-image-transcription-apple-vision-reviewed" }),
     2011: Object.freeze({ raw: raw2011, respondentCount: 899, population: "2011 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/79", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
+    2017: Object.freeze({ raw: raw2017, respondentCount: 81386, population: "2017 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20180324183042id_/http://www.99cef.org.tw/userfiles/2017AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2013: Object.freeze({ byGrade: Object.freeze({
       7: Object.freeze({ raw: raw2013Grade7, respondentCount: 63, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 7 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" }),
       8: Object.freeze({ raw: raw2013Grade8, respondentCount: 55, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 8 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" })

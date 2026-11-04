@@ -361,6 +361,14 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - PDF의 메타데이터 제목은 오래된 AMC 8 템플릿 문자열을 포함하지만, 렌더링한 6쪽 표 자체에 `2013 年 AMC10A`, `全球`와 Grade 7–10 행이 명시되어 있다. 현재 원호스트 URL은 404이고, Internet Archive 보존 PDF를 근거로 삼았다.
 - 점검: PDF 6쪽 렌더링을 표와 대조하고 아카이브 캡처 HTTP 200, 그룹 행 합계 및 UI의 정확 학년 연결을 확인했다. 자동화 테스트는 실행하지 않았다.
 
+### 2026-11-04 웹 검색 추가: 2017 AMC 8 미·캐나다 학년 평균 및 문항 응답표
+
+- [99CEF 2017 AMC 8 분석 보고서의 Internet Archive PDF 보존본](https://web.archive.org/web/20180324183042id_/http://www.99cef.org.tw/userfiles/2017AMC8Report.pdf) 2쪽의 종합 통계표에는 `美加`와 대만이 별도 열로 나온다. 미·캐나다 Grade 7은 25,215명·평균 9.09/25, Grade 6은 15,907명·8.10, Grade 8은 35,541명·9.61이다. 앱에는 exact Grade 5–8만 연결하고 `4학년 및 이하`는 묶음 그대로 보존한다. 대만 수치는 별도 행이며 미·캐나다 참가자 평균에 합치지 않는다.
+- 보고서 총원 81,386명에서 표의 기록 학년 인원 합 79,875명을 빼면 1,511명이다. 보고서 주석은 학년 인원과 전체 응시 인원 차이를 학년 미기록자로 설명한다. 이 수를 특정 학년이나 평균 점수에 나누어 넣지 않았다.
+- PDF 7쪽 `美加答對率`에는 각 문항의 A–E 선택률, 무응답률, 판독 불명 비율이 있다. 전체 25문항을 [`amc8-2017-uscan-item-response.csv`](../competition/historical-amc-grade/amc8-2017-uscan-item-response.csv)에 옮기고, 기존 답안 입력 화면의 오답·미응답 문항에 81,386명 미·캐나다 응답 집단의 당시 분포를 참고로 연결했다. 학년별 응답률은 아니며 학생 능력 등급·현재 규준으로 쓰지 않는다. PDF의 별표 정답은 LIVE/MAA answer key와 25문항 모두 일치했다.
+- 학년별 전체 지역 표는 [`amc8-grade-means-2017.csv`](../competition/historical-amc-grade/amc8-grade-means-2017.csv)에 보존하고, 원 PDF 원호스트가 현재 404라 보존 URL을 사용했다. PDF에서 텍스트 추출이 가능해 OCR은 쓰지 않았고, 통계표와 응답률표를 각각 렌더링해 시각 대조했다.
+- 점검: PDF 표의 Grade 5–8 값과 문항별 별표/선택률, 공식 답안 키를 대조했고, CSV 행 수·평균·합계 및 아카이브 URL HTTP 200을 확인했다. 자동화 테스트는 실행하지 않았다.
+
 ### 2026-11-04 · MAA 연도별 통계 메뉴 ID 목록 회수
 
 - [MAA Historical Statistics 페이지의 2022-02-04 Internet Archive 보존본](https://web.archive.org/web/20220204191809/http://amc-reg.maa.org/reports/generalreports.aspx)에서 정적 HTML 원문을 회수했다. 선택 목록에는 39개의 AMC 8 및 AMC 10/12 항목이 남아 있다: AMC 8 2010–2020, AMC 10/12 A/B 2009–2020, 2021년 2월 A/B 및 11월 A/B. 2021년 2월은 ID 88/89, 11월은 ID 93/94로 구분된다.
