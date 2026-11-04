@@ -189,3 +189,5 @@
 }
 
 @media print { #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-example-1-original"] svg { max-height:190px; } }
+
+@media print { #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-example-2-original"] svg { max-height:180px; } }
