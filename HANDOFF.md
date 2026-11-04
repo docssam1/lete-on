@@ -1564,3 +1564,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 보고서 PDF viewer는 손상/유효하지 않은 PDF 오류로 열리지 않았다. Apple Vision OCR 시각 대조는 진행할 수 없었으므로 추출 셀 배열이 깨진 3, 4, 9, 12, 17번을 제품 조회에서 제외했다. 나머지 20문항을 `amc8-2009-maa-national-item-response-percent.csv`에 기록하고 LIVE 2009 답안표와 대조했다.
 - 런타임은 `responseFor(2009, question, answer, grade, "maa-national")`로 이 MAA 전국 코호트를 명시적으로 선택할 수 있다. 기존 2009 기본 조회는 한국 n=741 그대로다. 2009 AMC 8 원본 선택 화면에 한국 741명 / MAA Table 8 모집단 선택을 연결했다. MAA 전국 표본 선택 시 결과 영역에 보고서 내부 숫자 차와 제외 문항 수를 함께 알린다.
 - 검수: 20개 CSV 행의 퍼센트 합계(0.15%p 허용), 정답 비율, 연도별 25개 질문 인덱스, 제외 문항 null 응답, 한국 기본값 보존을 확인했다. 기존 전체 CJS 테스트 실행기는 이 쉘에 없어서 전체 contract 파일 실행은 못했고, 핵심 lookup 검증은 node_repl에서 별도로 돌렸다. `git diff --check` 통과.
+
+### 2026-11-04 웹 검색 대조: AMC 8 2011 한국 응답 코호트
+
+- 사용자의 “웹 검색으로 가져와” 요청에 따라 2011 AMC 8 자료를 다시 원출처와 대조했다. AMC Study의 MAA 결과 재게시에는 한국 응시자 899명과 문항 1–25의 선택지별 응답률이 있으며, 25개 정답이 LIVE의 MAA 허가 답안표와 전부 일치한다.
+- 해당 25개 행은 이미 `amc8-2010-item-response-percent.csv`와 AMC 8 문항 복습 조회에 반영돼 있었다. 한국 표본으로 정확히 표시되어 있어 중복 행이나 별도 선택지를 추가하지 않았다. MAA Wayback 통계 디렉터리도 확인했으나 회수된 문항 난도 PDF는 California 표본이었고, 이 디렉터리 경로에서는 전체/미국 문항 응답표를 찾지 못했다. 이를 한국 응답률과 합치지 않는다.
+- 검색 기록·범위는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다. AMC 시험지/답/전문 풀이는 이미 연도별 LIVE 원본 카탈로그에서 인쇄/학습으로 연결되어 있으므로 복사해 저장하지 않는다.
+- 검증: `amc8-item-response-reference.test.cjs` 전체 contract를 node_repl에서 실행해 통과. `git diff --check` 확인 후 로컬 문서 변경만 커밋 예정. `raw_youtube.txt` untouched; no push, deployment, or Drive sync.

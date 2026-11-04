@@ -618,3 +618,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 이 확인은 보고서가 당시 없었다는 뜻이 아니다. 보존된 메뉴만으로는 점수×학년 표를 회수할 수 없다는 한계를 구체화한다. 따라서 2017 ID 64/65는 출처 탐색 경로로만 남기고 학년 수치로 전사하지 않는다.
 - 새로 검색된 [99CEF 2020 AMC10A/12A 분석 보고서](https://www.99cef.org.tw/userfiles/2020AMC10A12AReport.pdf)의 미국·캐나다 학년별 표는 기존 `amc10-12-grade-means-2020-99cef.csv`와 화면 연결에 이미 반영되어 있어 중복 행을 추가하지 않았다. [MAA EduView 현재 점수분포](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561)는 전체 코호트 표로, 2017의 학년표를 대신하지 않는다.
 - 다음 검색은 MAA 동적 ReportViewer 경로 반복 대신 원문 PDF를 실제로 제공하는 연도·폼별 시험 운영기관 분석 자료에 집중한다. 운영기관 표의 모집단(미국·캐나다, Taiwan, global 등)은 반드시 분리하고, 학교·학원 표본을 전국 기준으로 쓰지 않는다.
+
+## 2026-11-04 웹 검색 대조: 2011 AMC 8 한국 문항 응답표
+
+- [AMC Study의 2011 결과 재게시](https://www.amcstudy.net/79)는 MAA 통계 결과로 소개하며, AMC 8 응시 한국 학생 899명을 명시한다. 이 페이지의 `Item Difficulty by Contest` 표는 1–25번 선택지별 응답률·무응답·판독 불가 비율과 정답 표시를 제공한다. 표는 한국 코호트이며 미국/전체 국제 cohort로 해석하지 않는다.
+- 25개 정답 표시를 [LIVE의 MAA 허가 2011 AMC 8 정답표](https://live.poshenloh.com/past-contests/amc8/2011/answers)와 하나씩 대조했다. 기존 `amc8-2010-item-response-percent.csv`에 저장된 2011년 25행과 Q4 등 대표 셀, n=899가 페이지 수치와 일치하며, CSV의 `South Korea reported cohort` 표기도 맞다. 이 행들은 이미 런타임 조회에 연결되어 있으므로 중복 데이터는 추가하지 않았다.
+- MAA 공식 사이트의 [2011 AMC 8 보존 통계 페이지](https://web.archive.org/web/20130204052822id_/http://amc.maa.org/amc8/2011/stats/2011-amc8stats.shtml)도 CDX 보존 인덱스에서 확인했다. 현재 보존된 디렉터리에서 Item Difficulty PDF로 검색되는 파일은 California 위치 보고서였고, `Overall` 또는 United States 문항 응답 PDF는 이 경로에서 회수하지 못했다. 따라서 AMC Study의 899명 한국 표본을 MAA 전체 응시자 표처럼 대체하거나 표기하지 않는다. 이는 해당 MAA 자료가 다른 경로에 없다는 뜻은 아니다.
+- 같은 2011년 화면에서 한국 점수·학년 백분위 표는 별도 historical cohort reference로 유지한다. 문항별 응답 분포, 학년별 점수 위치, 공식 답안·풀이의 출처와 목적은 각각 다르므로 한 수치로 합치지 않는다.
