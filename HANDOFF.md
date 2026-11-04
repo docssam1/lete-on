@@ -1454,3 +1454,10 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 기존 카탈로그는 네 시험지를 모두 보유하지만 화면에 단순히 “A형/B형/C형/D형”으로만 표시했다. `formLabel`을 추가해 봄/가을의 실제 시험 이름과 LIVE 자료 코드를 함께 표시하고, 링크 제목에도 동일한 이름을 넣었다. 원본 문항·PDF는 계속 LIVE 제공처에서 연다.
 - 검증: JS 런타임에서 2021 AMC 10 네 선택지 표기, AMC 12 가을 D 연결, 다른 연도의 기존 폼 표기, 단일 AMC 8 표기를 확인했다. 전체 연도별 경로 개수 266, review 스크립트 문법, `git diff --check` 통과. localhost는 현재 연결되지 않아 화면 브라우저 검수는 못 했다.
 - 관련 파일: `boarding-school-math/competition/amc-original-paper-library.js`, `boarding-school-math/competition-paper-review.js`, 해당 라이브러리 테스트. `raw_youtube.txt`는 사용자 원자료로 제외한다. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 AMC 8 학년 비교 자료 추가 검색
+
+- 빠진 2015–2016 AMC 8 전국 학년 비교표를 찾기 위해 MAA 통계, 99CEF 연례 보고서, 학년별 평균 검색을 다시 확인했다. 검색된 2015·2016 Bard Math Circle 값은 해당 시험장 45명·35명 참가자의 학년별 평균이고 전국 코호트가 아니다 ([2015](https://www.bardmathcircle.org/p/2015-amc-8), [2016](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in)). 이 값은 전국 학년 비교나 보딩 로드맵 수준 판단에 추가하지 않는다.
+- [2015 99CEF AMC 8 보고서](https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf)는 Global 학년 행과 Global 전체 연도별 표를 포함한다. 학년 행은 이미 `amc8-grade-means-2015-99cef.csv`에 연결되어 있다. [2019 보고서](https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf)의 US/Canada 학년 점수빈도와 문항 응답 자료도 기존 참조 CSV/화면에 있어 중복 추가하지 않는다.
+- 2009–2018 참가자의 성별·상위권 분포를 분석한 논문 검색 결과는 학년별 평균·등급표가 아니므로 개인 학년 비교 기준으로 쓸 수 없다. 2015·2016 정확한 MAA grade table은 공개 검색으로 새 자료를 확보하지 못했다. MAA 과거 ReportViewer의 본문 보존본을 찾아야 다음 진전을 기대할 수 있다.
+- 이 검색은 새 수치 입력을 만들지 않았다. 공식 전국 학년 자료와 특정 학교 표본을 구분하는 근거만 기록한다. 현재 데이터 커버리지 표와 정확 학년 연결 정책을 유지한다.
