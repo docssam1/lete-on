@@ -3306,6 +3306,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-exploration",sourceItemLabel:"개념탐구 7 구조 연습",sourceSection:"exploration",sourcePdfPage:32,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 칸 수별 연결·점대칭 모양과 회전·뒤집기 중복을 독립 열거했습니다.",generatorKey:"source52PointPolyominoSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
+  if (source52CongruenceFirst) for (const [n,name] of [[2,"자와 컴퍼스로 삼각형 옮겨 그리기 · 원문 그림 재구성"],[3,"자와 컴퍼스로 사각형 옮겨 그리기 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e1-mission-${n}-original`;
+    if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e1-mission-${n}`,sourceItemLabel:`Mission ${n} 원문 그림 재구성`,sourceSection:"mission",sourcePdfPage:21,alternateSourcePdfPage:20,sourcePrintedPage:25,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page25OriginalCopyMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원본 도형의 외곽을 재구성하고 문제와 답 그림의 합동 및 작도 과정을 검증했습니다. 공식 답안은 미확인입니다."});
+  }
   if (source52CongruenceFirst) for (const [n,name] of [[1,"두 변과 사이각이 주어진 삼각형의 작도 순서 · 원문"],[4,"한 변과 각이 주어진 마름모 작도 · 원문"]]) {
     const id=`5-2-u3-e1-mission-${n}-original`;
     if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
