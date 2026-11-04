@@ -81,3 +81,10 @@
     max-height: 60mm !important;
   }
 }
+
+.u3p99-color113{max-width:420px}
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-113-original"] svg.u3p99-color113 {
+    width: 85mm !important; max-width: 100% !important; height: auto !important; max-height: 50mm !important;
+  }
+}
