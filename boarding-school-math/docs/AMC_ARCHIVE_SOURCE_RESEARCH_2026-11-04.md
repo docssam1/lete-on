@@ -289,3 +289,15 @@ Fetched the 900×646 MAA-labeled “Contest Score Report - AMC 8 2020, Data as o
 Web search confirmed that [LIVE's AMC archive](https://live.poshenloh.com/past-contests) has 41 AMC 8 papers for 1985–2026, explicitly says MAA authorized the hosted problems, and provides printable PDFs, answer keys, and written/video solutions. The list skips 2021; MAA describes AMC 8 as an annual January contest. The [official 2023 MAA paper](https://maa.org/wp-content/uploads/2024/08/2023-Problems-AMC8-PDF.pdf) confirms the original test format and copyright. Use these year/form records as the source of original practice exams; keep the paper source linked rather than duplicating the full paper text in project data.
 
 Reconciled the AMC 8 section of `amc-grade-reference-coverage-by-paper.csv` against `amc-item-response-coverage-by-paper.csv` and all staged `amc8-grade-means-*.csv` files. Added annual paper rows for 2004–2026, excluding 2021 because AMC 8 was not administered that year. Exact-year grade means are linked for 2004–2015, 2017–2020, and 2022. 2016 and 2023–2026 remain without a recovered year-specific grade mean; the 2016 and MAA EduView 2023–2026 whole-cohort score reports cannot substitute for grade tables. Buckets such as `4-5` and `<=4` stay grouped and are not presented as exact-grade references. The 2017–2019 tables selected in the manifest cover United States and Canada, not the US alone. Historical means are context for each year's recorded-grade contest cohort, not current norms, placement grades, or ability labels.
+## 2026-11-05 follow-up: verify 2008 AMC 10/12 grade cohort table
+
+Web search found the 2008 MAA-authored *High School Results & Awards Summary* text mirror and confirmed its Table I/II and printed placement of the item-difficulty tables. The 2008 report-wide values cross-check the grade rows already transcribed from the 2010 MAA report's four-year comparison:
+
+| Form | Official participants | Published overall mean | Grade-row count sum | Weighted grade mean (rounded) |
+|---|---:|---:|---:|---:|
+| AMC 10A | 68,101 | 58.1 | 68,101 | 58.1 |
+| AMC 10B | 34,803 | 66.6 | 34,803 | 66.6 |
+| AMC 12A | 78,560 | 65.6 | 78,560 | 65.6 |
+| AMC 12B | 41,609 | 68.9 | 41,609 | 68.9 |
+
+No grade values were re-imported because these are an independent check of existing rows. The public 2008 report mirror's item-difficulty tables are listed at printed pp. 252–255, but the indexed text does not expose their answer-choice percentages. StudyLib's page showed Cloudflare verification in the browser. Do not bypass that check or manufacture values from the answer key. Keep 2008 AMC 10/12 item-response coverage as `not-found` until a readable lawful public copy/page image is located. The exact form-level counts/means are also exposed by the 2008 comparison columns in the [MAA-authored 2010 report mirror](https://www.scribd.com/document/51428451/2010-HS-summary); the [2008 report mirror](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions) is the direct year report.
