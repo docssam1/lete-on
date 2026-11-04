@@ -1,3 +1,9 @@
+### 2026-11-05 · Recent AMC 8 MAA score distributions fetched directly
+
+- Retrieved the official MAA K-12 EduView score distribution pages for AMC 8 2023–2026 and saved the full visible summary rows (percentile boundaries, mean, SD, student/school counts) in `boarding-school-math/competition/historical-amc-grade/amc8-score-distribution-2023-2026-maa.csv`. Direct report URLs and the data are documented in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md` and the data README.
+- The direct MAA values confirm 2025 average 11.74 / n=79,524 and 2026 n=80,983; search snippets and secondary tables disagree slightly. Keep MAA report values separate from other cohorts and use only as whole-cohort score-report references.
+- `raw_youtube.txt` remains untouched and unstaged. No tests, push, deployment, or Drive sync. Next: keep recovering year/form data from annual MAA reports, especially missing AMC8 score-frequency years and AMC10/12 recorded-grade comparisons; do not infer score distributions from summary averages.
+
 ### 2026-11-05 · 2003–2004 AMC 10/12 grade tables located on the web
 
 - Web search found the MAA-authored [56th Annual AMC report copy](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions). Its printed Table II provides recorded-grade participant counts and average scores for AMC 10/12 A/B across 2002–2005, so 2003–2004 grade comparison data exist in a source report.

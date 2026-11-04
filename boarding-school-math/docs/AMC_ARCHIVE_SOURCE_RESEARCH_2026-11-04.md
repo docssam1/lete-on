@@ -217,3 +217,17 @@ MAA's 2006 annual report Table 4 (printed p. 155 / PDF p. 157) lists score count
 - 같은 보고서 Table 7 (printed p.153)의 2007 학년별 0–25점 빈도와 Table 8 (printed p.155)의 2005–2007 전체 빈도는 현재 원자료 CSV와 이미 연결돼 있음을 확인했다. 0점의 attempted/no-attempt 두 행을 분리한 원문도 기존 데이터의 처리와 일치한다. 새 수치는 중복 추가하지 않았다.
 - 보고서의 해설은 당시 AMC 8 결과가 학교 내 비교를 돕지만 확립된 norm은 아니며 교과 성취나 배치고사와 비교할 수 없다고 명시한다. 앱의 역사 코호트는 대회 내 같은 해·같은 보고 그룹 설명에 한정한다.
 - 검색으로 2002–2004 개별 점수 빈도표는 새로 회수하지 못했다. 보고서의 요약 평균과 등록 학년 평균이 있다고 점수 분포까지 있다고 가정하지 않는다. 아카이브 컬렉션 설명에 적힌 연도 범위와 실제 접근 가능한 보고서 본문 범위도 구분해 기록한다.
+
+
+## 2023–2026 AMC 8 score-report tables fetched directly from MAA (2026-11-05)
+
+Fetched the four year-matched MAA K-12 EduView `Score Distribution` reports directly. The page table provides the Top 1%, 2.5%, 5%, 10%, 25%, 50%, and 75% score cut lines, high score, average, standard deviation, total students, and total schools. Saved the rendered table values with per-year report URLs in `competition/historical-amc-grade/amc8-score-distribution-2023-2026-maa.csv`; all four rows were independently fetched and the table header/data row were checked.
+
+| Contest | Top 1% / 2.5% / 5% | Average ± SD | Students | Schools |
+|---|---:|---:|---:|---:|
+| 2023 AMC 8 | 21 / 19 / 17 | 10.26 ± 3.92 | 74,380 | 1,909 |
+| 2024 AMC 8 | 22 / 20 / 18 | 10.75 ± 4.13 | 80,725 | 2,053 |
+| 2025 AMC 8 | 23 / 21 / 19 | 11.74 ± 4.29 | 79,524 | 2,027 |
+| 2026 AMC 8 | 24 / 23 / 21 | 12.42 ± 4.72 | 80,983 | 2,129 |
+
+The MAA 2025 report says 11.74 rather than 11.75 in some secondary summaries. The MAA 2026 report page returns 80,983 students; other search-result reproductions show nearby but different totals, so they are not merged. These statistics are whole-report cohort cutoffs and summaries, not grade norms or individual percentiles. The live MAA portal is the source; it does not provide a static historic PDF from these report pages.
