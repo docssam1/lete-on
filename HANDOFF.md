@@ -2089,3 +2089,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2005 AMC 10A/B 및 AMC 12A/B의 전체 100개 문항 응답 분포를 Internet Archive 보존 원본 MAA PDF에서 회수했다. Apple Vision OCR을 페이지 이미지와 대조했고 모든 정답 표식을 LIVE 키와 교차 확인했다.
 - CSV, 런타임 참조, 연도별 coverage, 조사 노트, 데이터 README를 갱신했다. 원본 퍼센트 정밀도와 분모를 유지했고 학년별 성취도/백분위로 환산하지 않았다.
 - 검수 완료: 4폼×25문항이 각 LIVE 정답표와 전부 일치하고, 런타임 조회 100개·코호트 분모·coverage 25/25·원문 반올림 편차(최대 0.05%p)·미제공 unreadable=null을 확인했다. 중복 말미 행으로 빠져 있던 2010B의 23/25·24/25 coverage를 해당 연도 폼 행에 합쳐 매니페스트도 런타임과 맞췄다. 로컬 변경만; `raw_youtube.txt` 미추적 파일은 보존한다.
+
+### 2026-11-05 · 추가 검색: 2008/2006 AMC 10/12 문항 응답표
+
+- 2008 MAA 고교 결과집의 검색 가능한 목차는 전체 응시자 응답표 위치(pp. 252–255)를 확인해 주지만, 표의 A–E/공란 수치는 노출하지 않는다. StudyLib 직접 회수는 HTTP 403으로 끝났으며 우회하지 않았다.
+- Ian Calaway 공개 아카이브의 “Full Text Available Here”는 2008 책자가 아닌 1968 샘플로 연결된다. MAA 2010 보고서의 2008 값은 과거 점수·학년 요약이며, 같은 보고서의 문항응답 Table IX는 2010 시험이므로 섞지 않는다. 2006년으로 추정한 Internet Archive URL은 404, CDX 정확 URL 검색은 빈 결과였다.
+- 2006/2008 통계값은 추가하지 않았고 coverage는 `not-found` 유지. 다음에는 실제 페이지 스캔을 공개하는 다른 저장소/문서 ID를 찾은 후 정답 키와 분모를 확인한다. 상세 근거는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 추가했다.
