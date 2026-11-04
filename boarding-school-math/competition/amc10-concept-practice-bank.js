@@ -196,11 +196,75 @@
     },
     {
       id: "amc10-core-fraction-01", domain: "대수", sourceConcepts: ["fraction", "ratio-and-proportion", "linear-equation"], stage: "개념 연결", title: "분수 조건을 식으로 바꾸기",
-      prompt: "어떤 수의 2/3에서 4를 뺐더니 그 수의 1/2과 같았습니다. 그 수는 얼마인가요?",
+      prompt: "어떤 수의 ⅔에서 4를 뺐더니 그 수의 ½과 같았습니다. 그 수는 얼마인가요?",
       choices: ["12", "24", "18", "30", "36"], answer: 1,
-      hint: "수를 x라 두고 2x/3 − 4 = x/2를 세워요.",
-      solution: ["식을 세우면 2x/3 − 4 = x/2입니다.", "양변에 6을 곱하면 4x − 24 = 3x입니다.", "따라서 x = 24입니다."],
+      hint: "수를 x라 두고 ⅔x − 4 = ½x를 세워요.",
+      solution: ["식을 세우면 ⅔x − 4 = ½x입니다.", "양변에 6을 곱하면 4x − 24 = 3x입니다.", "따라서 x = 24입니다."],
       connection: "양변에 6을 곱해도 등식이 유지되는 이유를 설명해 보세요."
+    },
+    {
+      id: "amc10-gap-pattern-01", domain: "대수", sourceConcepts: ["pattern-recognition", "arithmetic-sequence", "quadratic"], stage: "유형", title: "차이의 규칙으로 다음 항 찾기",
+      prompt: "수열 3, 8, 15, 24, 35, …에서 다음 항은 무엇인가요?",
+      choices: [46, 47, 48, 49, 50], answer: 2,
+      hint: "연속한 항의 차이를 먼저 적어 보세요.",
+      solution: ["연속한 항의 차이는 5, 7, 9, 11로 홀수들이 2씩 커집니다.", "다음 차이는 13입니다.", "따라서 다음 항은 35 + 13 = 48입니다."],
+      connection: "각 항을 n으로 나타내는 식을 찾아 같은 답을 확인해 보세요."
+    },
+    {
+      id: "amc10-gap-integer-range-01", domain: "대수", sourceConcepts: ["counting-integers-in-a-range", "casework"], stage: "개념", title: "부등식 범위 안의 정수 개수 세기",
+      prompt: "정수 n이 −7 < 2n + 1 ≤ 13을 만족합니다. 가능한 n은 몇 개인가요?",
+      choices: [8, 9, 10, 11, 12], answer: 2,
+      hint: "부등식의 세 부분에서 같은 수를 빼고, 양수를 나누어 정수 범위를 구해요.",
+      solution: ["모든 부분에서 1을 빼면 −8 < 2n ≤ 12입니다.", "2로 나누면 −4 < n ≤ 6입니다.", "가능한 정수는 −3부터 6까지이므로 10개입니다."],
+      connection: "왼쪽 끝이 −4 이하라면 세지 않는 이유는 무엇인가요?"
+    },
+    {
+      id: "amc10-gap-rate-01", domain: "대수", sourceConcepts: ["distance-rate-and-time", "rate", "ratio-and-proportion"], stage: "유형", title: "왕복 속력으로 전체 시간 구하기",
+      prompt: "두 도시 사이의 거리는 180km입니다. 한 방향은 시속 60km, 돌아오는 길은 시속 45km로 이동했습니다. 왕복에 걸린 시간은 몇 시간인가요?",
+      choices: [6, 6.5, 7, 7.5, 8], answer: 2,
+      hint: "각 방향에서 시간 = 거리 ÷ 속력으로 계산해 더해요.",
+      solution: ["갈 때 걸린 시간은 180 ÷ 60 = 3시간입니다.", "돌아올 때 걸린 시간은 180 ÷ 45 = 4시간입니다.", "왕복 시간은 3 + 4 = 7시간입니다."],
+      connection: "평균 속력을 두 속력의 산술평균으로 구할 수 없는 이유를 설명해 보세요."
+    },
+    {
+      id: "amc10-gap-square-01", domain: "정수론", sourceConcepts: ["perfect-square", "prime-factorization", "divisibility"], stage: "개념 연결", title: "완전제곱수가 되도록 곱할 수 찾기",
+      prompt: "540에 곱하여 완전제곱수를 만들 수 있는 가장 작은 양의 정수는 무엇인가요?",
+      choices: [6, 10, 12, 15, 30], answer: 3,
+      hint: "540을 소인수의 거듭제곱 곱으로 나타내고 지수가 홀수인 소인수를 살펴봐요.",
+      solution: ["540 = 2² × 3³ × 5입니다.", "완전제곱수가 되려면 모든 소인수의 지수가 짝수여야 합니다.", "3과 5를 곱하면 540 × 15 = 2² × 3⁴ × 5² = 90²이므로 가장 작은 수는 15입니다."],
+      connection: "소인수 지수 중 홀수인 항목만 골라 곱하는 이유는 무엇인가요?"
+    },
+    {
+      id: "amc10-gap-logic-01", domain: "경우의 수", sourceConcepts: ["logical-deduction", "casework"], stage: "연결", title: "진실인 문장 수로 색 정하기",
+      prompt: "상자 안 공은 빨강 또는 파랑입니다. A는 ‘빨강이다’, B는 ‘파랑이다’, C는 ‘빨강이다’라고 말했습니다. 세 문장 중 정확히 하나만 참일 때 공은 무슨 색인가요?",
+      choices: ["빨강", "파랑", "두 색 모두 가능", "조건을 만족할 수 없음", "초록"], answer: 1,
+      hint: "색이 빨강인 경우와 파랑인 경우를 나누어 참인 문장 수를 세어요.",
+      solution: ["빨강이라고 가정하면 A와 C가 참이어서 참인 문장이 두 개입니다.", "파랑이라고 가정하면 B만 참이어서 참인 문장이 정확히 하나입니다.", "따라서 공은 파랑입니다."],
+      connection: "두 문장이 같은 주장을 하는 점이 경우 나누기에 어떤 영향을 주나요?"
+    },
+    {
+      id: "amc10-gap-absolute-value-01", domain: "대수", sourceConcepts: ["absolute-value", "casework"], stage: "유형", title: "거리의 합이 일정한 점 찾기",
+      prompt: "수직선에서 |x − 2| + |x − 8| = 10을 만족하는 실수 x는 몇 개 있나요?",
+      choices: [0, 1, 2, 3, 4], answer: 2,
+      hint: "x가 2보다 작은 경우, 2와 8 사이인 경우, 8보다 큰 경우를 나누어요.",
+      solution: ["2 ≤ x ≤ 8이면 두 거리의 합은 항상 6이므로 해가 없습니다.", "x < 2이면 10 − 2x = 10이므로 x = 0입니다.", "x > 8이면 2x − 10 = 10이므로 x = 10입니다. 해는 두 개입니다."],
+      connection: "두 기준점 사이의 거리보다 큰 합을 만들 수 있는 위치가 어디인지 수직선으로 설명해 보세요."
+    },
+    {
+      id: "amc10-gap-custom-operation-01", domain: "대수", sourceConcepts: ["custom-operation", "algebraic-manipulation"], stage: "유형", title: "새 연산의 정의를 순서대로 적용하기",
+      prompt: "연산 a ★ b = a + 2b로 정의합니다. (3 ★ 4) ★ 2의 값은 얼마인가요?",
+      choices: [13, 14, 15, 16, 17], answer: 2,
+      hint: "괄호 안의 3 ★ 4를 먼저 계산해요.",
+      solution: ["3 ★ 4 = 3 + 2 × 4 = 11입니다.", "따라서 (3 ★ 4) ★ 2 = 11 ★ 2입니다.", "11 ★ 2 = 11 + 2 × 2 = 15입니다."],
+      connection: "★가 일반적인 곱셈 기호와 다른 점을 정의로 설명해 보세요."
+    },
+    {
+      id: "amc10-gap-summation-01", domain: "경우의 수", sourceConcepts: ["summation", "arithmetic-sequence", "pairing-and-grouping"], stage: "연결", title: "등차수열의 합을 짝지어 계산하기",
+      prompt: "2 + 4 + 6 + ··· + 40의 값은 얼마인가요?",
+      choices: [380, 400, 410, 420, 440], answer: 3,
+      hint: "첫 항과 끝 항, 두 번째 항과 끝에서 두 번째 항을 짝지어 보세요.",
+      solution: ["짝수 항은 2부터 40까지 20개입니다.", "첫 항과 끝 항의 합은 42이고, 같은 방식으로 짝지으면 10쌍이 생깁니다.", "합은 10 × 42 = 420입니다."],
+      connection: "첫 항과 마지막 항을 짝지으면 각 쌍의 합이 같은 이유를 설명해 보세요."
     }
   ];
 
