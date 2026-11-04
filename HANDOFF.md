@@ -1835,3 +1835,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2017 AMC 10/12B 검색에서 Bard Math Circle의 지역 결과만 찾았다: Grade 7 n=3 평균 64.5, Grade 8 n=5 평균 82.2. 표본이 작고 단일 지역 행사이므로 전국 Grade 7 규준·등급 비교에 쓰지 않는다.
 - MAA Wisconsin Section의 2021 가을 뉴스레터는 2017년 Wisconsin 전체 응시자 수(AMC 10 n=540, AMC 12 n=690)와 별도 주 전체 평균(10B 55.32, 12B 61.59)을 제공하지만 학년별 값은 없다. 지역 전체 평균으로만 구분한다.
 - 조사 근거를 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 추가했다. 2017 B형 전국 학년 표는 여전히 미회수이며, 런타임에는 소표본 지역값을 넣지 않았다. 다음: 공개 MAA/지역별 원자료를 연도·폼·모집단 기준으로 계속 조사하고 확인된 범위만 기능에 연결한다. `raw_youtube.txt` 보호; push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · AMC 원본 통계 결과집 아카이브 경로 및 2001–2007 대조
+
+- 웹에서 [Ian Calaway AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive)를 확인했다. 설명상 중등 결과집 디지털 아카이브는 1985–2022, 고등 결과집은 1980–2010 전체와 2011–2022 디지털 결과다. 이는 결과집 회수 경로이지 모든 해의 점수 분포표가 확보됐다는 뜻은 아니다.
+- [MAA 작성 2007 AMC 8 결과집 사본](https://www.scribd.com/document/618492777/2007-AMC-8-Summary-of-Results-and-Awards-PDFDrive)의 기록 학년별 인원·평균(2001–2007)과 2007 학년별 점수 빈도, 2005–2007 전체 점수 비교를 기존 데이터와 대조해 일치함을 확인했다. 중복 행은 추가하지 않았다.
+- 이 보고서는 당시 AMC 8 성적에 확립된 norm이 없으며 수업·배치고사와 비교할 수 없다고 밝힌다. 진단 화면은 같은 해의 대회 참가 코호트 참고로 제한한다.
+- 2002–2004 점수별 빈도표는 이번 검색에서도 새로 확인되지 않았다. 상세 근거와 다음 검색 범위는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 “연도별 MAA 결과집 아카이브 경로 확인”에 남겼다.

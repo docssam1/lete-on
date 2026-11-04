@@ -209,3 +209,11 @@ These are year-specific whole-cohort score positions derived from historical rep
 ## 2006 AMC 8 overall score distribution recovered
 
 MAA's 2006 annual report Table 4 (printed p. 155 / PDF p. 157) lists score counts 0–25 for 147,210 students. The count rows sum to 147,210, the 20–25 rows sum to 4,428, score 25 has 289 students, and the weighted mean is 10.1428 (rounds to the report's 10.14). Score 0 is split into `0(@)` attempted-some (23) and `0($)` attempted-none (299); both source rows are preserved in `historical-amc-grade/amc8-2006-overall-score-counts.csv`, while the runtime aggregates them only for the score-position lookup. This adds a same-year whole-cohort score position; it does not create an official percentile, grade rank, or current level. The report copy was searchable on StudyLib and was not visually/OCR verified: https://studylib.net/doc/28486602/618492772-2006-amc-8-summary .
+
+## 연도별 MAA 결과집 아카이브 경로 확인 (2026-11-05)
+
+- [Ian Calaway의 AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive)는 중등 결과집 디지털 아카이브를 1985–2022년으로, 고등 결과집을 1980–2010년 전체와 2011–2022년 디지털 결과로 설명한다. 중등 시험은 1999년까지 AJHSME라는 옛 이름을 썼다. 이 페이지는 서지·회수 경로이며, 모든 연도에 점수 도수표나 학년별 표가 있다는 뜻은 아니다. 사이트도 일부 고등 결과집(1950–1967, 1969–1979)이 빠져 있다고 밝힌다.
+- [MAA 작성 2007 AMC 8 Results and Awards Summary의 검색 가능한 사본](https://www.scribd.com/document/618492777/2007-AMC-8-Summary-of-Results-and-Awards-PDFDrive)에서 2001–2007 기록 학년별 인원과 평균(printed pp.4–5)을 대조했다. Grade 7은 2001–2007 순으로 n=58,271/53,804/53,170/51,679/48,418/48,479/49,594, 평균 9.49/10.59/9.77/9.55/9.37/9.82/9.51이다. 값은 기존 `amc8-grade-means-2001-2009.csv`와 일치한다.
+- 같은 보고서 Table 7 (printed p.153)의 2007 학년별 0–25점 빈도와 Table 8 (printed p.155)의 2005–2007 전체 빈도는 현재 원자료 CSV와 이미 연결돼 있음을 확인했다. 0점의 attempted/no-attempt 두 행을 분리한 원문도 기존 데이터의 처리와 일치한다. 새 수치는 중복 추가하지 않았다.
+- 보고서의 해설은 당시 AMC 8 결과가 학교 내 비교를 돕지만 확립된 norm은 아니며 교과 성취나 배치고사와 비교할 수 없다고 명시한다. 앱의 역사 코호트는 대회 내 같은 해·같은 보고 그룹 설명에 한정한다.
+- 검색으로 2002–2004 개별 점수 빈도표는 새로 회수하지 못했다. 보고서의 요약 평균과 등록 학년 평균이 있다고 점수 분포까지 있다고 가정하지 않는다. 아카이브 컬렉션 설명에 적힌 연도 범위와 실제 접근 가능한 보고서 본문 범위도 구분해 기록한다.
