@@ -1536,6 +1536,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2007은 MAA 연례 보고서 Table 5의 전국 응답률 25문항을 `amc8-2007-item-response-percent.csv`와 lookup에 추가했다. n=150,618. 25개 키는 LIVE와 대조했다. 15, 19–23번은 선택률+무응답 합계가 런타임 0.15%p 허용치와 맞지 않아 결과 비교에서 숨긴다. 학년 평균·표본 수는 기존 2001–2009 MAA 표를 계속 사용한다.
 - 2008은 MAA 연례 보고서 Table 5에 전국 응답표가 있다. 재게시본의 D/E 선택지 값 묶음을 분리해 정답 별표와 LIVE 정답 25개에 대조했고, 5개 불일치 합계 문항(18,19,22–24)은 런타임에서 숨겼다. 보고서는 Q12 accepted answers를 C/D/E로 집계하고 LIVE key는 C로 표기하므로 accepted set과 공식 표시 정답을 별도 보존한다. 다음은 2009 MAA 전국 표를 웹에서 찾되 기존 2009 한국 응시단 자료와 구분한다.
 
+### 2026-11-04 웹 검색: 2009 AMC 8 전국표 자료 충돌 메모
+
+- MAA 작성 2009 AMC 8 연례 보고서 사본의 Table 8은 문항 응답 표본을 151,367명으로 적지만, 같은 보고서의 Table 1/score summary는 answer forms received / number of participants를 150,733명으로 적는다. [PDFCoffee 재게시본의 Table 8](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html)과 [MAA 통계 재인용](https://www.scribd.com/doc/58090065/2010-AMC-HS-Summary)을 찾았다.
+- 기존 2009 AMC Study 표본은 한국 참가자 741명이며 또 다른 모집단이다. 세 수치/표를 서로 대체하거나 합치지 않는다. 전국 Table 8의 모집단 차이와 추출된 몇몇 셀의 분리·소수점 표기를 원본 표 페이지 이미지로 확인하기 전에는 새 전국 응답률을 제품 자료에 넣지 않는다.
+
 ### 2026-11-04 웹 검색: AMC 8 2007 전국 문항 응답률 추가
 
 - MAA 작성 2007 AMC 8 Results and Awards Summary의 Table 5에서 전국 응답 분포를 회수했다: 150,618명, 25문항, A–E 선택률과 무응답률. 표는 MAA 원문 보고서의 재게시본에서 읽었다.
