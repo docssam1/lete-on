@@ -2012,3 +2012,8 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - MAA 작성 2008 고교 결과집의 목차는 AIME I/II 학년별 점수 분포가 인쇄 pp.261–262에 있다고 확인하지만, 공개 검색 미러에서 해당 표 행은 노출되지 않는다. 보고서 본문이 확인해 주는 것은 두 회차 합계 8,584명 및 I 평균 4.77, II 평균 5.27이다.
 - 검색 결과의 상세 학년표(총 3,618/2,904명, 평균 4.12/5.91)는 2010 AIME이며 기존 데이터와 일치한다. 2008로 잘못 옮기지 않았고, coverage 상태는 `aime-grade-table-located-not-transcribed`로 유지한다. 상세 검색 기록은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 있다.
 - 출처: [2008 MAA 고교 결과집 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions), [2010 MAA 고교 결과집 미러](https://www.scribd.com/document/51428451/2010-HS-summary), [연구자 AMC archive](https://sites.google.com/view/ian-calaway/amc-archive/).
+### 2026-11-05 · MAA EduView recent AMC 8 values rechecked
+
+- Reopened MAA's public score-distribution report for AMC 8 school years 2022/23–2025/26. All 12 values per year (percentile cut scores, maximum, mean, standard deviation, student count, and school count) match `boarding-school-math/competition/historical-amc-grade/amc8-score-distribution-2023-2026-maa.csv`; the report's `.00` integer formatting was normalized for numeric comparison.
+- Confirmed this public report is overall-cohort only: it has no grade-by-grade or item-response rows. Keep these as year-specific overall comparisons, not grade ranks, placement, or skill levels. Evidence and exact links are in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`.
+- `git diff --check` to be run. Preserve `raw_youtube.txt`; no push, deployment, or Drive sync.

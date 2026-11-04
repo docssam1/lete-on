@@ -1,5 +1,11 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2026-11-05 · MAA EduView 최근 AMC 8 코호트 값 재대조
+
+MAA 공개 EduView의 `Score Distribution` 보고서를 열어 AMC 8 학년도 2022/23–2025/26을 회차별로 다시 확인했다. 표에는 상위 1%, 2.5%, 5%, 10%, 25%, 50%, 75% 점수선, 최고점, 평균, 표준편차, 점수 보고 학생 수, 학교 수가 나온다. 각 학년도의 12개 값은 [`amc8-score-distribution-2023-2026-maa.csv`](../competition/historical-amc-grade/amc8-score-distribution-2023-2026-maa.csv)와 모두 일치한다(보고 화면의 정수 점수 표기 `.00`은 숫자로 비교). 회차별 보고서 주소는 CSV에 보존했다.
+
+이 표는 전체 점수 보고 코호트로, 학년별 행이나 문항별 응답률을 제공하지 않는다. 따라서 확인된 점수선은 해당 회차의 전체 참가자에 대한 역사적 비교값으로만 취급하며, 학년 순위·수학 실력 등급·배치 판단 근거로 쓰지 않는다. 확인일 현재 공개 선택 목록은 2022/23–2025/26이었다. [MAA EduView Score Distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561) · [MAA AMC 프로그램 안내](https://maa.org/student-programs/amc/).
+
 ## 연도별 원본 자료
 
 `competition/amc-original-source-catalog.csv`는 공개 경시 원본 자료의 연도·형식별 경로와 인쇄 문제지, 답, 풀이 링크를 보관한다. 이번 웹 확인 시 총 266개 기록에 필요한 네 종류 링크가 모두 채워져 있었다. 원문 문항을 복제하지 않고 출처의 공개 페이지와 PDF 경로를 연결한다.
