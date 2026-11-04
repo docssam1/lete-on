@@ -1,0 +1,2 @@
+.p28exp-scope-question .p28exp-diagram .given { font-size:22px; }
+@media print { .p28exp-scope-question,.p28exp-scope-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } #problemView .print-page--four-up .p28exp-scope-question svg { width:auto !important; max-width:100%; max-height:53mm; } }
