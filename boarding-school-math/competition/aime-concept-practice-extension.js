@@ -124,6 +124,20 @@
       hint: "k(k + 1)을 k² + k로 나누어 제곱합과 등차수열의 합을 사용해요.",
       solution: ["합은 Σ(k² + k), k = 1부터 10까지입니다.", "제곱합은 10×11×21/6 = 385이고, 1부터 10까지의 합은 55입니다.", "따라서 전체 합은 385 + 55 = 440입니다."],
       connection: "마지막 항을 n(n + 1)로 바꾸면 합을 n에 대한 식으로 쓸 수 있나요?"
+    },
+    {
+      id: "aime-gap-vector-dot-product-01", sourceConcepts: ["vector", "dot-product", "algebraic-manipulation"], domain: "기하", stage: "연결", title: "벡터의 길이로 내적 구하기",
+      prompt: "두 벡터 u, v에 대하여 |u| = 5, |v| = 13, |u + v| = 16입니다. |2u − v|²의 값을 구하세요.", answer: 145,
+      hint: "|u + v|²을 전개하면 u·v를 구할 수 있어요.",
+      solution: ["|u + v|² = |u|² + 2u·v + |v|²이므로 256 = 25 + 2u·v + 169입니다. 따라서 u·v = 31입니다.", "|2u − v|² = 4|u|² − 4u·v + |v|²입니다.", "값은 4 × 25 − 4 × 31 + 169 = 145입니다."],
+      connection: "u와 v가 이루는 각의 코사인을 구하려면 내적에 어떤 관계식을 더 적용하면 되나요?"
+    },
+    {
+      id: "aime-gap-restricted-arrangements-01", sourceConcepts: ["arrangements-with-restrictions", "multiplication-principle", "inclusion-exclusion"], domain: "경우의 수", stage: "유형", title: "서로 붙고 끝자리를 피하는 배열 세기",
+      prompt: "서로 다른 여섯 글자 A, B, C, D, E, F를 한 줄로 배열합니다. C와 D는 이웃해야 하고, A는 첫 자리에, B는 마지막 자리에 오면 안 됩니다. 가능한 배열은 몇 개인가요?", answer: 156,
+      hint: "C와 D를 하나의 묶음으로 세고, A가 첫 자리이거나 B가 마지막 자리인 경우를 포함·배제로 빼요.",
+      solution: ["C와 D의 묶음은 CD 또는 DC 두 가지입니다. 묶음, A, B, E, F 다섯 대상을 배열하는 방법은 2 × 5! = 240입니다.", "A가 첫 자리인 배열은 2 × 4! = 48개이고, B가 마지막 자리인 배열도 48개입니다.", "두 조건을 모두 어기는 배열은 2 × 3! = 12개이므로 포함·배제로 240 − 48 − 48 + 12 = 156개입니다."],
+      connection: "A가 첫 자리이고 B가 마지막 자리인 배열을 두 번 더한 셈이므로 한 번 다시 더하는 이유는 무엇인가요?"
     }
   ];
 
