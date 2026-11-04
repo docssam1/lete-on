@@ -18,6 +18,8 @@
   }
   const bank = window.GFIELDAimeConceptPractice;
   if (!bank) return;
+  const extension = window.GFIELDAimeConceptPracticeExtension;
+  const practiceItems = bank.items.concat(extension && Array.isArray(extension.items) ? extension.items : []);
   const list = document.getElementById("aime-items");
   const domainFilters = document.getElementById("domain-filters");
   const stageFilters = document.getElementById("stage-filters");
@@ -30,16 +32,17 @@
   let activeStage = "전체";
   const requestedConcepts = Array.from(new Set((query.get("sourceConcepts") || "").split(",").filter(function (id) { return /^[a-z0-9-]{1,64}$/.test(id); })));
   const conceptLabels = { "vietas-formulas": "근과 계수의 관계", "algebraic-manipulation": "대수식 정리", modular: "나머지", "modular-arithmetic": "나머지", "chinese-remainder-theorem": "중국인의 나머지 정리", polynomial: "다항식", factoring: "인수분해", "triangle-area": "삼각형의 넓이", "heron-formula": "헤론의 공식", divisibility: "배수와 약수", "prime-factorization": "소인수분해", "divisor-count": "약수의 개수", digits: "숫자와 자릿수", casework: "경우 나누기", "stars-and-bars": "별과 막대", combinations: "조합", factorial: "계승", exponent: "거듭제곱", "modular-exponentiation": "거듭제곱의 나머지", "inclusion-exclusion": "포함·배제", "absolute-value": "절댓값", "square-geometry": "정사각형", "area-decomposition": "넓이 분할" };
+  Object.assign(conceptLabels, { "coordinate-geometry": "좌표기하", "system-of-equations": "연립방정식", substitution: "대입과 치환", "trigonometric-identity": "삼각함수 항등식", trigonometry: "삼각함수", optimization: "최댓값·최솟값", inequality: "부등식", "complex-number": "복소수", logarithm: "로그", quadratic: "이차방정식", similarity: "닮음", "area-ratio": "넓이의 비", "diophantine-equation": "정수해", recursion: "점화식", symmetry: "대칭", "law-of-cosines": "코사인 법칙", "3d-geometry": "입체도형", "pythagorean-theorem": "피타고라스 정리", "arithmetic-sequence": "등차수열", sequence: "수열", "geometric-sequence": "등비수열", "basic-probability": "기본 확률" });
 
   function matchesActiveDomain(item) {
     return activeDomain === "전체" || (activeDomain === "원본 영역"
       ? domainIds.has(Object.keys(domainNamesById).find(function (id) { return domainNamesById[id] === item.domain; }))
       : item.domain === activeDomain);
   }
-  const sourceConceptItems = bank.items.filter(function (item) { return matchesActiveDomain(item) && requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }); });
+  const sourceConceptItems = practiceItems.filter(function (item) { return matchesActiveDomain(item) && requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }); });
   const hasSourceConceptMatches = sourceConceptItems.length > 0;
   function visibleItems() {
-    return bank.items.filter(function (item) {
+    return practiceItems.filter(function (item) {
       return matchesActiveDomain(item) && (activeStage === "전체" || item.stage === activeStage)
         && (!hasSourceConceptMatches || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }));
     });
@@ -114,7 +117,7 @@
       meta.append(tag, label);
 
       const heading = document.createElement("h3");
-      heading.textContent = `${String(bank.items.indexOf(item) + 1).padStart(2, "0")} · ${item.title}`;
+      heading.textContent = `${String(practiceItems.indexOf(item) + 1).padStart(2, "0")} · ${item.title}`;
       const prompt = document.createElement("p");
       prompt.className = "problem-prompt";
       appendText(prompt, item.prompt);

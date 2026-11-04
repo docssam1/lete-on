@@ -1424,3 +1424,11 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 태그 교차표에서 연습 은행과 연결되는 AMC12 원본은 3,110개 중 1,460개에서 2,325개로 증가했다. 이는 태그 교집합 참고치이고 문항 분류 검증·진단 성능·수준 판정이 아니다.
 - localhost AMC 12 화면에 신규 14문항 전체를 렌더링해 태그 요약·힌트·풀이·선택지를 확인했다. 분수는 쌓은 분수 형태로 표시된다. 문제은행에 실제 AMC 원문은 복사하지 않았다.
 - 변경: `boarding-school-math/competition/amc12-concept-practice-bank.js`, `boarding-school-math/amc12-practice.js`, `boarding-school-math/amc12-practice.html`, 본 인수인계. `raw_youtube.txt`는 수정·스테이징하지 않는다. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 AIME 원본 개념 태그 후속 창작 연습
+
+- 기존 정수 입력 AIME형 연습 12문항은 유지하고 별도 확장 은행에 GFIELD 창작 문항 16개를 추가해 총 28개를 연결했다. 좌표기하·연립식·삼각함수 항등식·최적화·복소수·로그·확률·닮음·디오판토스 방정식·이차식·점화식·대칭·코사인 법칙·입체기하·등차/등비수열을 다룬다.
+- 신규 항목 16개는 원본 AIME 개념 태그 사전에 모두 연결되고, ID가 중복되지 않으며, 정답은 입력 허용 범위 0–999 안이다. 필수 문항/힌트/풀이/연결 문구도 모두 확인했다. AIME 원본 문제나 풀이를 복제하지 않는다.
+- 개념 태그가 하나라도 일치하는 원본은 1,065개 중 528개에서 906개로 늘었다(85.1%). 이 교차표 수치는 검색·후속연습 연결 범위이지 진단 정확도나 수학적 분류 검증이 아니다.
+- 브라우저에서 2025 I 원본 복습 조건을 넣고 기존 영역 필터와 함께 확인했다. 태그에 맞는 창작 문항이 선택 영역에 따라 필터링되고, 0–999 정수 입력과 힌트·풀이가 표시된다. 분수는 세로 분수 형태로 렌더링된다.
+- 변경: `boarding-school-math/competition/aime-concept-practice-extension.js`, `boarding-school-math/aime-practice.js`, `boarding-school-math/aime-practice.html`, 본 인수인계. `raw_youtube.txt`는 수정·스테이징하지 않는다. Local only; no push, deployment, or Drive sync.
