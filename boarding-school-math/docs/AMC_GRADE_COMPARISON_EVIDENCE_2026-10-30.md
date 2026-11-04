@@ -565,3 +565,11 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - AMC 12B: 상위 1% 123, 상위 5% 94.5, 상위 25/50/75% 66/52.5/42, 평균 56.73, 표준편차 21.32, n=19,116, 학교 1,459.
 - 두 자료 모두 전체 응시 집단 통계이며 학년별 점수 분포나 Grade 7 기준을 제공하지 않는다. AMC 10A의 Grade 7 평균 59.72 (n=1,982)는 별도 학교 게시 자료를 근거로 유지하고, 두 자료를 전국 Grade 7 규준 또는 개인 백분위로 합치지 않았다.
 - 출처: [MAA 형식 2019 AMC 10B score report 사본](https://mathcontest.org/sites/default/files/AMC10B-2019-Score-Distribution.pdf), [MAA 형식 2019 AMC 12B score report 사본](https://mathcontest.org/sites/default/files/AMC12B-2019-Score-Distribution.pdf). 이전 연도 요약 출처는 각 항목의 교차 확인 링크로 보존했다.
+
+## 2026-11-04 웹 검색: 2016 AMC 8 학년별 표와 연도 통계 구분
+
+- [99CEF 2018 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf)는 2018 회차의 Global·Taiwan 학년별 평균과 인원, 2005–2018 전체 집단 비교표를 함께 제공한다. 2016 행은 미국·캐나다 전체 평균 9.36, n=108,227 및 Taiwan 전체 평균 14.60, n=7,115이며, 해당 연도 학년별 수치는 싣지 않았다. 2016 전체 행은 `amc8-overall-cohort-summary-2005-2020.csv`에 이미 모집단을 분리해 기록되어 있어 중복 행을 만들지 않았다.
+- [MAA 현행 점수분포 화면](https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561)는 선택한 대회의 전체 점수 구간·평균·표준편차·학생·학교 수를 보여 준다. 이번 조회에 열린 기본 보고서는 2026 AIME II이며, AMC 8 학년별 평균표는 아니다. [MAA AMC 공식 페이지](https://maa.org/student-programs/amc/)에서 AMC 8이 8학년 이하 25문항·40분 대회이고 중학교 수학 주제를 다룬다는 현재 범위도 대조했다.
+- 2016 “Contest Score Grade Report”를 가리키는 Think Matrix 페이지는 보고서 이미지가 서명된 임시 Shimo URL로 빠져 만료 상태였고, 2016 MAA 성적관리 원문도 검색 가능한 정적 표로 회수되지 않았다. [Bard Math Circle 2016 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in)는 해당 시험장 35명 성적만, [Ivy League Education Center 2016 게시물](https://ivyleaguecenter.org/2016/12/01/2016-amc-8-winners-for-the-u-s-ivy-league-education-center/)은 자기 수강생·수상자와 전체 평균 요약만 제공한다. 이 표본은 전국 학년별 비교에 넣지 않았다.
+- 따라서 2016 AMC 8의 전국 학년별 평균·점수분포는 이 검색에서 회수하지 못했다. 이는 해당 자료가 존재하지 않는다는 뜻은 아니다. 2016 기존 전체집단 평균, 다른 해의 학년 평균, 학교 표본을 서로 대체하지 않고 `grade-report-image-unavailable`/`no-grade-table-recovered` 구분을 유지한다.
+- 별도 연도별 원본 시험지는 이미 [LIVE의 MAA 허가 AMC/AIME 전체 아카이브](https://live.poshenloh.com/past-contests)에서 회차별로 제공되며, 각 연도의 인쇄 PDF·정답·풀이가 `amc-original-source-catalog.csv`에 연결되어 있다. 이 검색은 그 원문을 복사하지 않고 공개 출처 링크를 확인하는 작업이다.

@@ -1479,3 +1479,10 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 
 - Internet Archive CDX에 2016 AMC8 stats/report로 추정되는 네 URL 패턴을 조회했으나 일치 캡처가 없었다. 이 경로들에서 못 찾았다는 범위로만 기록하며 다른 경로 자료까지 없다고 단정하지 않는다. 학년 평균 값은 새로 추가하지 않았고 `no-grade-table-recovered`를 유지했다.
 - 세부 검색 패턴과 자료 상태는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`의 같은 날짜 항목에 남겼다.
+
+## 2026-11-04 · 사용 요청에 따른 AMC 자료 웹 재검색
+
+- 사용자가 “웹 검색으로 가져와”라고 요청해 AMC 원본과 학년 비교 자료를 직접 검색·대조했다. LIVE의 MAA 허가 아카이브에는 AMC 8/10/12 및 AIME가 연도·폼별로 실제 시험지 PDF, 정답표, 전문 풀이로 정리되어 있다. 기존 CSV에 있는 266개 회차/6,500문항 메타데이터 링크를 확인했고, 원문 문항은 저장소에 복사하지 않았다.
+- AMC 8 2016 비교자료 검색에서 [99CEF 2018 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf)의 2016 미국·캐나다 전체 평균 9.36점(n=108,227)과 Taiwan 전체 평균 14.60점(n=7,115)을 재확인했다. 이 보고서는 2016 학년별 평균을 싣지 않는다. 학교·학원 결과는 전국 학년 통계에서 제외하고 기존 모집단 구분을 유지했다.
+- [MAA 점수분포 화면](https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561)은 전체 응시자 통계이며 이번 조회에서 학년표를 제공하지 않았다. 2016 MAA grade-report 이미지 경로는 서명 만료로 열리지 않았다. 기존 2016 전체 평균 외의 새 Grade 7/학년 점수는 임의 보충하지 않고 미회수 상태로 두었다. 검색 근거는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다.
+- 대상 파일: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`, 본 인수인계. `git diff --check` 후 로컬 커밋 예정. `raw_youtube.txt`는 미추적 원본으로 제외한다. Push·배포·Drive 동기화 없음.
