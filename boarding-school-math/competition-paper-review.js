@@ -774,7 +774,8 @@
       const formatLabel = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
       const isUsForumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
       const globalReport = gradeReference.sourceStatus === "secondary-international-administrator-report";
-      setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명${isUsForumTranscription ? " · 미국 위치 기준" : globalReport ? " · 세계 참가자 보고서 기준" : ""}${gradeReference.note ? ` · ${gradeReference.note}` : ""}`);
+      const reportPopulation = globalReport && gradeReference.population.indexOf("United States and Canada") === 0 ? "미국·캐나다 참가자" : globalReport ? "세계 참가자" : "";
+      setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명${isUsForumTranscription ? " · 미국 위치 기준" : reportPopulation ? ` · ${reportPopulation} 보고서` : ""}${gradeReference.note ? ` · ${gradeReference.note}` : ""}`);
       const plot = $("amc-grade-reference-plot");
       plot.replaceChildren();
       plot.setAttribute("aria-label", `응시 점수 ${result.scoreEstimate.points}점과 해당 학년 평균 ${gradeReference.mean}점 비교`);
@@ -800,7 +801,9 @@
       setText("amc-grade-reference-source-note", secondarySource
         ? "학교가 공개한 전국 학년별 통계의 재인용입니다. MAA 원본 보고서 파일을 확보하지 못했습니다. 이 표본 평균은 현재 기준점·백분위·능력 등급이 아닙니다. "
           : globalReport
-          ? "99CEF 국제 AMC 프로그램 보고서에 실린 세계 참가자 집계이며 미국 단독 모집단은 아닙니다. 해당 연도·시험형·기록 학년의 과거 평균만 비교합니다. 백분위·현재 규준·능력 등급이 아닙니다. "
+          ? gradeReference.population.indexOf("United States and Canada") === 0
+            ? "99CEF 분석 보고서의 미국·캐나다 참가자 집계입니다. 세계 참가자 통계와 서로 다른 모집단이므로 연도별 추세로 직접 비교하지 않습니다. 해당 회차·기록 학년의 과거 평균일 뿐 백분위·현재 규준·능력 등급이 아닙니다. "
+            : "99CEF 분석 보고서의 세계 참가자 집계이며 미국 단독 모집단은 아닙니다. 해당 연도·시험형·기록 학년의 과거 평균만 비교합니다. 백분위·현재 규준·능력 등급이 아닙니다. "
           : forumTranscription
           ? "포럼에 전사된 MAA 학년 평균표입니다. 표의 Location은 United States이며 MAA 원본 보고서는 회수하지 못했습니다. 미국 응시집단의 당시 평균 비교이며 전국 전체·백분위·현재 능력 등급이 아닙니다. "
           : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
