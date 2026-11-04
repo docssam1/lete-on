@@ -1,3 +1,9 @@
+### 2026-11-05 · 2003–2004 AMC 10/12 grade tables located on the web
+
+- Web search found the MAA-authored [56th Annual AMC report copy](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions). Its printed Table II provides recorded-grade participant counts and average scores for AMC 10/12 A/B across 2002–2005, so 2003–2004 grade comparison data exist in a source report.
+- The web-indexed text extraction scrambles multi-column cells; the report-viewer page triggered a Cloudflare check, and the web screenshot API cannot render this HTML copy as a PDF. I recorded the source and transcription blocker in the coverage manifest/evidence note, but deliberately did not import ambiguous figures. The exact 2003/2004 AMC 10/12 comparison is still unfinished until the printed page 8 is readable and its grade counts/weighted means reconcile to form totals.
+- Next: locate an accessible report PDF or mirror/page image; transcribe 2003 and 2004 A/B grade tables, then continue year-by-year historical source recovery. Preserve `raw_youtube.txt`; no push/deployment/Drive sync.
+
 ### 2026-11-05 · 2005 AMC 10/12 grade means recovered from annual report comparison tables
 
 - Web search located a MAA-authored 2008 High School Summary copy with four-year comparison tables that reproduce the 2005 AMC 10A/B and AMC 12A/B recorded-grade participant counts and means. Transcribed 22 grade-group rows into `boarding-school-math/competition/historical-amc-grade/amc10-12-grade-means-2005-2011.csv` and connected them to `amc-historical-grade-reference.js` for exact year/form/grade matching. The grade-group counts sum to each form's official-participant total, and weighted rounded averages reconcile to the published form-wide means (10A 74.7; 10B 77.9; 12A 78.7; 12B 83.4). Updated the 2005 and 2006 AMC 10/12 paper rows in the grade coverage manifest and the source evidence note.
