@@ -377,6 +377,22 @@
       hint: "끝자리 0 하나마다 2와 5가 한 쌍씩 필요하지만, 계승에서는 2보다 5가 더 드물어요.",
       solution: ["1부터 125까지의 수에 포함된 5의 인수 개수를 세면 됩니다.", "5의 배수에서 25개, 25의 배수에서 추가로 5개, 125에서 추가로 1개가 나옵니다.", "따라서 끝의 0은 25+5+1=31개입니다."],
       connection: "125!에서 2의 인수 개수는 왜 끝자리 0의 개수를 제한하지 않나요?"
+    },
+    {
+      id: "amc10-gap-isosceles-area-01", domain: "기하", sourceConcepts: ["isosceles-triangle", "triangle-area", "pythagorean-theorem"], stage: "유형", title: "이등변삼각형의 높이와 넓이 구하기",
+      prompt: "두 같은 변이 각각 10cm이고 밑변이 12cm인 이등변삼각형의 넓이는 몇 cm²인가요?",
+      choices: [36, 42, 48, 54, 60], answer: 2,
+      hint: "꼭짓점에서 내린 높이는 밑변을 6cm씩 나눕니다.",
+      solution: ["높이 h는 h²+6²=10²을 만족하므로 h²=64, h=8cm입니다.", "삼각형 넓이는 밑변×높이÷2입니다.", "따라서 넓이는 12×8÷2=48cm²입니다."],
+      connection: "밑변을 16cm로 늘리고 같은 두 변의 길이를 10cm로 두면 삼각형을 만들 수 있는지 먼저 판단해 보세요."
+    },
+    {
+      id: "amc10-gap-radical-simplify-01", domain: "대수", sourceConcepts: ["radical", "perfect-square", "algebraic-manipulation"], stage: "개념 연결", title: "제곱인수를 꺼내 근호식 정리하기",
+      prompt: "√50 + √8을 간단히 하면 무엇인가요?",
+      choices: ["5√2", "6√2", "7√2", "8√2", "9√2"], answer: 2,
+      hint: "각 근호 안에서 가장 큰 완전제곱인수를 찾아 꺼내요.",
+      solution: ["√50=√(25×2)=5√2입니다.", "√8=√(4×2)=2√2입니다.", "동류 근호를 더하면 5√2+2√2=7√2입니다."],
+      connection: "√18+√32도 같은 근호끼리 모아 정리해 보세요."
     }
   ];
 

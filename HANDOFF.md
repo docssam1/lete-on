@@ -1940,3 +1940,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 최신 태그 교집합: AMC 8 992/1,025 (96.8%), AMC 10 1,231/1,300 (94.7%), AMC 12 2,695/3,110 (86.7%), AIME 1,014/1,065 (95.2%). 은행은 53/47/54/48문항. 추가된 출처 태그는 각 대회 원본 인벤토리에 있음을 확인했다.
 - 다음 상위 공백: AMC 8 길이·넓이·부피 배율 및 중복 세기; AMC 10 이등변삼각형·근호·기하확률; AMC 12 코사인 법칙·정다각형·접원; AIME 극값 논증·변환·순열·사인 법칙. 이어서 보완한다.
 - 수정: AMC 8/10/12/AIME bank, 연습 페이지 캐시 키, historical AMC README, 인수인계. 새 풀이를 직접 검산했고 `git diff --check`와 태그 중첩 집계를 실행했다. 별도 테스트는 실행하지 않는다. `raw_youtube.txt` 보존; 로컬 커밋만, push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 도형 비율·조합·극값 연습 추가
+
+- AMC 8에는 정육면체 부피 배율과 악수 중복 세기, AMC 10에는 이등변삼각형 넓이와 근호 정리, AMC 12에는 코사인 법칙과 정다각형 대각선, AIME에는 최대값 하한과 제한 배열을 다룬 지필드 문항을 추가했다.
+- 최신 은행 크기는 AMC 8 55, AMC 10 49, AMC 12 56, AIME 50문항. 하나 이상의 원본 개념 태그가 대응된 회차 문항은 각각 995/1,025 (97.1%), 1,237/1,300 (95.2%), 2,715/3,110 (87.3%), 1,018/1,065 (95.6%)다. 새 태그는 원본 인벤토리와 대조했다.
+- 다음 잔여 공백 상위는 AMC 8 complementary-probability·mode·summation; AMC 10 geometric-probability·unit-conversion·transformation; AMC 12 tangent-circles·triangle-inequality·pattern-recognition; AIME transformation·law-of-sines·pattern-recognition·trapezoid다.
+- 수정: 네 연습 bank, 페이지 캐시 키, historical AMC README, 인수인계. 문항 계산을 직접 점검하고 `git diff --check` 및 태그 중첩 집계를 실행했다. 별도 테스트 미실행. `raw_youtube.txt` 보존; 로컬 커밋만, push·배포·Drive 동기화 없음.
