@@ -843,7 +843,7 @@
       setText("amc8-korea-grade-mean-summary", `${koreaGradeMean.year} AMC 8 · 한국 보고 응시집단 · Grade ${grade} · 학년 평균 ${koreaGradeMean.mean.toFixed(2)}점 · 학년 표본 ${koreaGradeMean.participants.toLocaleString("en-US")}명`);
       const difference = koreaGradeMean.differenceFromMean;
       setText("amc8-korea-grade-mean-result", difference === 0 ? "한국 해당 학년 평균과 같은 점수" : `입력 점수 ${difference > 0 ? "+" : "−"}${Math.abs(difference).toFixed(2)}점 · 한국 해당 학년 평균보다 ${difference > 0 ? "높아요" : "낮아요"}`);
-      setText("amc8-korea-grade-mean-note", `한국 응시집단의 과거 결과표를 옮긴 값입니다. 보고된 전체 ${koreaGradeMean.total.toLocaleString("en-US")}명 중 학년 표에 ${koreaGradeMean.gradeListed.toLocaleString("en-US")}명이 기재되어 ${koreaGradeMean.unlistedGradeCount}명은 학년 집계에 포함되지 않았습니다. 현재 규준이나 다른 지역 응시자 비교가 아닙니다.`);
+      setText("amc8-korea-grade-mean-note", `${koreaGradeMean.year === 2010 ? "Internet Archive에 보존된 MAA 한국 결과 원문" : "한국 응시집단의 과거 결과표"} 값입니다. 보고된 전체 ${koreaGradeMean.total.toLocaleString("en-US")}명 중 학년 표에 ${koreaGradeMean.gradeListed.toLocaleString("en-US")}명이 기재되어 ${koreaGradeMean.unlistedGradeCount}명은 학년 집계에 포함되지 않았습니다. 현재 규준이나 다른 지역 응시자 비교가 아닙니다.`);
       $("amc8-korea-grade-mean-source").href = koreaGradeMean.sourceUrl;
     }
     const globalGradeScoreReference = window.GFIELDAMC8GlobalGradeScoreReference;

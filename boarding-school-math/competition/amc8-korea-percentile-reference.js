@@ -28,21 +28,31 @@
     "8": Object.freeze([0, 0, 0, 0, 1, 3, 6, 14, 18, 10, 24, 14, 14, 23, 19, 16, 16, 20, 7, 12, 5, 7, 4, 6, 5, 3])
   });
   const korea2009Participants = Object.freeze({ "5": 70, "6": 158, "7": 262, "8": 247 });
+  const korea2010Counts = Object.freeze({
+    "5": Object.freeze([0, 0, 0, 0, 1, 3, 3, 5, 7, 4, 5, 4, 3, 5, 2, 0, 3, 0, 1, 2, 1, 0, 0, 0, 0, 0]),
+    "6": Object.freeze([1, 0, 1, 0, 3, 10, 8, 14, 17, 14, 20, 16, 15, 14, 11, 12, 6, 7, 7, 1, 4, 2, 1, 2, 2, 1]),
+    "7": Object.freeze([0, 0, 0, 0, 5, 4, 12, 14, 16, 19, 23, 14, 16, 13, 12, 14, 16, 7, 13, 9, 8, 11, 10, 8, 1, 2]),
+    "8": Object.freeze([0, 0, 0, 0, 0, 1, 4, 11, 14, 22, 18, 18, 20, 9, 19, 28, 14, 18, 11, 16, 3, 6, 9, 7, 6, 3])
+  });
+  const korea2010Participants = Object.freeze({ "5": 49, "6": 189, "7": 247, "8": 257 });
+  const korea2010SourceUrl = "https://web.archive.org/web/20110625112502id_/http://amc.maa.org/amc8/2010/stats/statestatistics/KOREA.HTML";
 
   function referenceFor(year, grade, score) {
     const selectedYear = Number(year);
-    if (selectedYear !== 2009 && selectedYear !== 2011) return null;
+    if (selectedYear !== 2009 && selectedYear !== 2010 && selectedYear !== 2011) return null;
     const selectedScore = Number(score);
     const sourceGrade = grades[String(Number(grade))];
     const sourceKey = sourceGrade === "<=5" ? "5" : sourceGrade;
-    if (selectedYear === 2009) {
-      const counts = korea2009Counts[String(Number(grade))];
-      const total = korea2009Participants[String(Number(grade))];
+    if (selectedYear === 2009 || selectedYear === 2010) {
+      const sourceCounts = selectedYear === 2009 ? korea2009Counts : korea2010Counts;
+      const sourceParticipants = selectedYear === 2009 ? korea2009Participants : korea2010Participants;
+      const counts = sourceCounts[String(Number(grade))];
+      const total = sourceParticipants[String(Number(grade))];
       if (!counts || !Number.isInteger(selectedScore) || selectedScore < 0 || selectedScore > 25) return null;
       const count = counts[selectedScore];
       const strictlyLowerCount = counts.slice(0, selectedScore).reduce(function (sum, value) { return sum + value; }, 0);
       return Object.freeze({
-        year: 2009,
+        year: selectedYear,
         grade: Number(grade),
         sourceGrade: String(Number(grade)),
         sourceGradeLabel: `${Number(grade)}학년`,
@@ -52,9 +62,9 @@
         reportedPercentile: strictlyLowerCount / total * 100,
         percentileType: "calculated-from-grade-score-counts",
         percentileMethod: `${strictlyLowerCount}/${total}명: 해당 점수보다 낮은 점수를 받은 응시자 비율`,
-        population: "2009 AMC 8 South Korea reported participant cohort",
-        sourceStatus: "secondary-transcription-no-percentile",
-        sourceUrl: "https://www.amcstudy.net/43"
+        population: `${selectedYear} AMC 8 South Korea reported participant cohort`,
+        sourceStatus: selectedYear === 2010 ? "MAA-primary-report-Internet-Archive-copy; percentile-calculated-from-grade-score-counts" : "secondary-transcription-no-percentile",
+        sourceUrl: selectedYear === 2010 ? korea2010SourceUrl : "https://www.amcstudy.net/43"
       });
     }
     const row = sourceKey && scoreRows[sourceKey] && scoreRows[sourceKey][selectedScore];
