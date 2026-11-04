@@ -28,7 +28,7 @@
     const m=model(index), [w,h,d]=m.dimensions, [a,b,c]=m.factors;
     const ways = n => Array.from({length:n}, (_, i) => n-i).join("+");
     return {
-      prompt:`<div data-source-item-id="${id}" data-pool-index="${index}"><p>그림의 격자선을 경계로 만들 수 있는 크고 작은 직육면체는 모두 몇 개인가요? (자르지 않은 전체 모양도 한 개로 셉니다.)</p>${diagram(m.dimensions)}</div>`,
+      prompt:`<div data-source-item-id="${id}" data-pool-index="${index}"><p>그림에서 격자선을 경계로 찾을 수 있는 직육면체는 모두 몇 개인가요? 같은 크기도 위치가 다르면 각각 세고, 겹치는 경우와 자르지 않은 전체도 셉니다.</p>${diagram(m.dimensions)}</div>`,
       answer:`${m.answer}개`,
       solution:`<div data-source-answer="${id}"><p>각 방향에서 직육면체의 양쪽 경계가 될 격자면 두 개를 고릅니다. 가로의 두 경계는 ${ways(w)}=${a}가지로 고릅니다. 같은 방법으로 높이는 ${ways(h)}=${b}가지, 깊이는 ${ways(d)}=${c}가지입니다.</p><p>각 방향의 선택을 곱하면 ${a}×${b}×${c}=<strong>${m.answer}개</strong>입니다. 각 방향의 맨 바깥 경계를 고르는 경우에 전체 모양도 포함됩니다.</p></div>`,
       answerVisual:"",answerVisualRequired:false,answerVisualStatus:"not-required",answerModel:m,sourceValuesExcluded:true

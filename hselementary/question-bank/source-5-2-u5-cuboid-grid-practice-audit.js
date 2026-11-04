@@ -13,7 +13,8 @@ for (let i=0;i<4;i++) {
   assert.equal(count,expected[i]);
   assert.equal(q.answer,`${count}개`);
   assert(q.solution.includes(`${count}개`));
-  assert(q.prompt.includes("전체 모양도 한 개로"));
+  assert.match(q.prompt,/위치가 다르면 각각/);
+  assert.match(q.prompt,/겹치는 경우와 자르지 않은 전체/);
   assert(!seen.has([...q.answerModel.dimensions].sort().join(",")));
   seen.add([...q.answerModel.dimensions].sort().join(","));
   for(const [role,n] of [["front-vertical",w-1],["top-width",w-1],["front-horizontal",h-1],["side-height",h-1],["top-depth",d-1],["side-depth",d-1]])
