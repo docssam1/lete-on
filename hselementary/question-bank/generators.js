@@ -4421,6 +4421,14 @@
     const sheetBox = sheet ? `<rect class="crease" x="${left - sheet.marginX * scale}" y="${top - sheet.marginY * scale}" width="${sheet.width * scale}" height="${sheet.height * scale}"/><text x="${left + 8}" y="18">종이 ${sheet.width}cm × ${sheet.height}cm</text>` : "";
     return `<svg class="geometry-diagram cuboid-net" viewBox="0 0 260 190" data-cuboid-net-bounds="${layout.width},${layout.height}" aria-label="${title}, 가로 ${layout.width}cm 세로 ${layout.height}cm">${sheetBox}${faces}<text x="55" y="176">전개도 가로 ${layout.width}cm</text><text x="174" y="92">세로 ${layout.height}cm</text></svg>`;
   };
+  const paperFitCuboidNetSvg = ({ a, b, c }) => {
+    const layout = cuboidNetLayout({ a, b, c });
+    const scale = Math.min(150 / layout.width, 112 / layout.height);
+    const left = 20 + (150 - layout.width * scale) / 2, top = 10;
+    const right = left + layout.width * scale, bottom = top + layout.height * scale;
+    const faces = layout.faces.map(face => `<rect x="${left + face.x * scale}" y="${top + face.y * scale}" width="${face.w * scale}" height="${face.h * scale}" fill="white" stroke="#222" stroke-width="1.5"/>`).join("");
+    return `<svg class="geometry-diagram cuboid-paper-fit" style="display:block;width:min(300px,100%);height:auto;margin:8px auto" viewBox="0 0 270 160" data-cuboid-net-bounds="${layout.width},${layout.height}" role="img" aria-label="직육면체 전개도, 가로 ${layout.width}cm, 세로 ${layout.height}cm">${faces}<g fill="none" stroke="#444" stroke-width="1"><path d="M${left} ${bottom + 7}v5 M${left} ${bottom + 10}H${right} M${right} ${bottom + 7}v5"/><path d="M${right + 7} ${top}h5 M${right + 10} ${top}V${bottom} M${right + 7} ${bottom}h5"/></g><g fill="#222" font-size="13" font-family="sans-serif"><text x="${(left + right) / 2}" y="${bottom + 27}" text-anchor="middle">${layout.width}cm</text><text x="${right + 18}" y="${(top + bottom) / 2}" dominant-baseline="middle" style="text-anchor:start">${layout.height}cm</text></g></svg>`;
+  };
   const cuboidGridSvg = ({ a, b, c, cuts = [] }) => {
     const cell = Math.min(22, 166 / (a + b * .58), 82 / (c + b * .34));
     const depthX = cell * .58, depthY = -cell * .34;
@@ -15371,7 +15379,7 @@
         const a = int(rng, 5, 8 + level), b = int(rng, 3, 5 + level), c = int(rng, 2, 4 + level);
         const layout = cuboidNetLayout({ a, b, c });
         const answer = layout.width * layout.height;
-        return result(`그림과 똑같은 전개도를 한 장의 직사각형 도화지에 빈틈없이 그립니다. 이 전개도를 담는 가장 작은 직사각형 도화지의 넓이를 구하세요.${measuredCuboidNetSvg({ a, b, c })}${cuboidEvidence("minimum-cuboid-net-paper", [a, b, c, layout.width, layout.height])}`, answer, `그림의 가로는 ${layout.width}cm, 세로는 ${layout.height}cm이므로 필요한 도화지의 넓이는 ${layout.width}×${layout.height}=${answer}cm²입니다.`);
+        return result(`그림의 전개도를 도화지의 변과 전개도의 가로·세로가 나란하게 들어가도록 한 장의 직사각형 도화지에 그립니다. 전개도를 담을 수 있는 가장 작은 도화지의 넓이를 구하세요.${paperFitCuboidNetSvg({ a, b, c })}${cuboidEvidence("minimum-cuboid-net-paper", [a, b, c, layout.width, layout.height])}`, answer, `전개도의 가로는 ${layout.width}cm, 세로는 ${layout.height}cm입니다. 도화지의 변이 전개도의 가로·세로와 나란하므로 각각 이 길이 이상이어야 합니다. 가장 작은 도화지의 넓이는 ${layout.width}×${layout.height}=${answer}cm²입니다.`);
       }
       if (kind === 3) {
         const a = int(rng, 4, 7 + level), b = int(rng, 3, 5 + level), c = int(rng, 2, 4 + level);
