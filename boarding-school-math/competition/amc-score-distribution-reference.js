@@ -6,7 +6,7 @@
   "use strict";
 
   // The 2010–2011 rows come from MAA original-host captures in the Internet Archive;
-  // 2022+ rows use MAA's public K-12 EduView reports. Other older rows are partial
+  // 2023+ rows use MAA's public K-12 EduView reports. Other older rows are partial
   // year/form summaries reproduced by secondary sources.
   // Thresholds are whole-cohort references, not grade norms.
   const base = "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561";

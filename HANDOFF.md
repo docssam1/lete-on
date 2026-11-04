@@ -1708,3 +1708,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 99CEF의 2012 AMC 8 상세 보고서에서 Global·Taiwan 각 점수(0–25) 빈도를 웹 검색 결과의 표 전사로 확보해 `amc8-2012-global-taiwan-score-counts.csv`에 기록했다. Global n=151,117, 평균 10.64; Taiwan n=12,550, 빈도 가중 평균 15.4662(보고서 반올림 15.5). 26개 빈도 합과 가중평균이 보고서와 일치한다.
 - 결과 화면의 2012 전체 코호트 참고에 Global 점수보다 낮은 응시자 비율을 연결했다. 동점 제외 빈도 계산이며, 공식 percentile이나 Grade 7 등급은 아니다. 2012 당해 보고서와 99CEF 2019 회고표의 Global n/mean 차이(151,117/10.64 대 150,360/10.66)를 보존하고 화면에서 고지한다.
 - `competition-paper-review.html/js`, `competition/amc8-overall-cohort-reference.js`, 데이터 CSV, README 및 근거 문서를 수정했다. `raw_youtube.txt`는 미추적 원본 상태로 보존. no push/deploy/Drive sync. 다음: 원문 표 이미지 확인 가능 여부 조사 후 출처 상태를 보강하고, AMC 연도·폼별 점수/학년 통계 원자료를 계속 검색한다.
+
+### 2026-11-04 · MAA 웹 원문 재확인: 2020 및 2023–2026 AMC 8 통계
+
+- MAA Wisconsin Section 2021 가을 보고서에서 2020 AMC 8 미국 평균 10.01을 재확인했다. 전국 인원과 점수별 정확한 인원표는 없다. 제3자 페이지의 2020 참가자 합계는 MAA 원문과 대조되지 않아 런타임에 추가하지 않았다.
+- MAA K-12 EduView의 2023–2026 연도별 Score Distribution을 열어 기존 요약값(참가자 수, 평균, 학교 수, 백분위 컷)을 확인했다. 페이지의 0–25 그래프는 막대 높이만 공개하고 정확한 점수별 인원표는 제공하지 않아, 해당 연도는 전체 요약까지만 비교한다.
+- 2022 보고서 n=71,143과 학년 그룹 빈도 합 n=71,017의 차이는 해소되지 않았다. 두 출처를 분리해 유지한다.
+- 원문 링크와 회수 범위는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 “2020 and recent MAA AMC 8 score statistics checked from the web”에 추가했다. `raw_youtube.txt`는 보존, push·배포·Drive 동기화 없음.
