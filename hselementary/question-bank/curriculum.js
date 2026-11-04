@@ -3566,6 +3566,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Unit2 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u2");
   const source52Unit2First = source52Unit2?.subunits.find(subunit => subunit.name === "분수와 자연수의 곱셈");
 
+  if (source52Unit2First) for (const [n,name] of [[1,"피아노를 칠 수 있는 학생 수 · 원문"],[2,"같은 방향 두 자동차 사이의 거리 · 원문"],[3,"빠른 시계와 느린 시계의 시각 차 · 원문"],[4,"기약분수 조건을 만족하는 자연수의 합 · 원문"]]) {
+    const id=`5-2-u2-e1-example-${n}-original`;
+    if (source52Unit2First.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e1-example-${n}`,sourceItemLabel:`예제 1-${n} 원문`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:10,alternateSourcePdfPage:9,sourcePrintedPage:14,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page14OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n===1||n===4,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2First) for (const [n,name] of [[2,"놀이 기구를 타지 않은 여학생 수 · 원문"],[3,"느린 시계가 가리키는 시각 · 원문"],[5,"두 진분수의 곱이 자연수가 되는 수 · 원문"],[6,"분수 부등식에 알맞은 자연수의 합 · 원문"]]) {
     const id=`5-2-u2-e1-mission-${n}-original`;
     if (source52Unit2First.types.some(type=>type.id===id)) continue;
