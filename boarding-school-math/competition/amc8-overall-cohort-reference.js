@@ -8,6 +8,9 @@
   // Whole-cohort comparison only. Population labels follow the cited source.
   const sourceUrl = "https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf";
   const rows = Object.freeze({
+    2002: ["Global", 157778, 126, null, 11.09, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
+    2003: ["Global", 158309, 92, null, 10.27, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
+    2004: ["Global", 154590, 501, null, 9.94, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
     2005: ["Global", 143428, 77, 2548, 9.835, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"], 2006: ["Global", 147210, 289, 4428, 10.14],
     2007: ["Global", 150618, 129, 3593, 9.87, "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america"],
     2008: ["Global", 148731, 334, 8575, 11.45, "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america"],

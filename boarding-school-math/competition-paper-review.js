@@ -868,15 +868,20 @@
     overallCohortSection.hidden = !overallCohort;
     if (overallCohort) {
       const populationLabel = overallCohort.population === "Global" ? "세계 응시자" : overallCohort.population === "United States" ? "미국 응시자" : overallCohort.population === "MAA Overall reported-grade cohort" ? "MAA 전체 보고서 표본" : "미국·캐나다 응시자";
-      const cohortDetails = overallCohort.participants === null
-        ? `${populationLabel} 평균 ${overallCohort.meanScore.toFixed(2)}점`
-        : `${populationLabel} ${overallCohort.participants.toLocaleString("en-US")}명 · 평균 ${overallCohort.meanScore.toFixed(2)}점 · 만점 ${overallCohort.perfectScores.toLocaleString("en-US")}명 · 20점 이상 ${overallCohort.scoreAtLeast20.toLocaleString("en-US")}명`;
+      const cohortFacts = [];
+      if (overallCohort.participants !== null) cohortFacts.push(`${overallCohort.participants.toLocaleString("en-US")}명`);
+      cohortFacts.push(`평균 ${overallCohort.meanScore.toFixed(2)}점`);
+      if (overallCohort.perfectScores !== null) cohortFacts.push(`만점 ${overallCohort.perfectScores.toLocaleString("en-US")}명`);
+      if (overallCohort.scoreAtLeast20 !== null) cohortFacts.push(`20점 이상 ${overallCohort.scoreAtLeast20.toLocaleString("en-US")}명`);
+      const cohortDetails = `${populationLabel} ${cohortFacts.join(" · ")}`;
       setText("amc8-overall-cohort-summary", `${overallCohort.year} AMC 8 · 입력 점수 ${overallCohort.learnerScore}/25점 · ${cohortDetails}`);
       const difference = overallCohort.differenceFromMean;
       const meanComparison = difference === 0 ? "전체 응시자 평균과 같은 점수" : `전체 응시자 평균보다 ${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "높아요" : "낮아요"}`;
       const scorePosition = overallCohort.strictlyLowerShare === null ? "" : ` · 당시 ${overallCohort.population === "Global" ? "세계" : "해당 모집단"} 응시자 중 이 점수보다 낮은 점수 ${overallCohort.strictlyLowerShare.toFixed(2)}% (동점 제외, 보고서 빈도로 계산)`;
       setText("amc8-overall-cohort-result", `${meanComparison}${scorePosition}`);
-      if (overallCohort.year === 2005) {
+      if (overallCohort.year >= 2002 && overallCohort.year <= 2004) {
+        setText("amc8-overall-cohort-note", `${overallCohort.year}년 자료는 MAA 2006 연례 보고서 Table 1의 전체 응시 인원·평균·만점자 수입니다. 해당 표에는 전체 점수별 빈도표가 없어 백분위나 점수 위치는 계산하지 않습니다. MAA는 이 시험에 확립된 규준이 없으며 학교 수업·배치시험과 비교할 수 없다고 안내합니다. 따라서 이 값은 같은 해 전체 응시 집단 평균과의 참고 비교이며 현재 능력 등급이나 학년 배치가 아닙니다. `);
+      } else if (overallCohort.year === 2005) {
         setText("amc8-overall-cohort-note", `2005년은 MAA 2006 연례 보고서 Table 6의 점수별 빈도표를 연결했습니다. 빈도 합계는 Table 1 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명과 일치합니다. 다만 이 빈도로 계산한 평균은 9.845점이고, Table 1에 적힌 평균은 9.835점으로 약 0.01점 차이가 있습니다. 그래서 점수 위치는 표의 빈도 합계 기준으로, 평균 비교는 보고서 기재 평균 기준으로 따로 표시합니다. 역사적 전체 응시자 비교이며 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. `);
       } else if (overallCohort.year === 2007) {
         setText("amc8-overall-cohort-note", "2007년은 MAA 2008 연례 보고서 Table 8의 점수별 빈도표를 사용합니다. 26개 점수 빈도의 합과 가중평균이 Table 1의 참가자 수·평균에 맞습니다. 전체 응시 코호트의 과거 점수 위치이며 공식 percentile·학년 순위·현재 규준·실력 등급은 아닙니다. ");

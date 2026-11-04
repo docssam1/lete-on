@@ -31,7 +31,7 @@
 
 99CEF의 [2019 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf) 안에 2005–2019 연도 비교표가 있어 전체 참가자 수, 만점 수, 20점 이상 수, 평균 점수를 회차별로 정리했다. 2005–2015 행은 원문의 “Global”, 2016–2019 행은 “United States and Canada” 열이다. 지역 집계가 바뀌는 2016년 경계에서 두 묶음을 하나의 연속 추세로 비교하지 않는다.
 
-[`amc8-overall-cohort-summary-2005-2020.csv`](../competition/historical-amc-grade/amc8-overall-cohort-summary-2005-2020.csv)가 수치 전사본이고, [`amc8-overall-cohort-reference.js`](../competition/amc8-overall-cohort-reference.js)는 완성된 AMC 8 원본 답안 점수와 동일 연도 전체 평균을 대조한다. 이 전체 응시 평균은 학년 평균·백분위·실력 등급이 아니며, 이미 있는 정확한 학년 평균 비교와 별도 표시한다. 2016은 99CEF의 미국·캐나다 108,227명·평균 9.36이며, 별도의 MAA Michigan Section 통계는 108,295명을 보고해 응시자 수가 일치하지 않는다. 두 출처의 수치를 합치거나 임의로 하나로 조정하지 않았다. 2020은 MAA Wisconsin Section 보고서의 미국 평균 10.01만 확인됐고, 표본 수와 학년별 분포는 확보하지 못했다. 99CEF PDF 자체는 MAA 호스팅이 아니므로 출처 상태를 그대로 밝힌다. 해당 보고서 표의 별도 모집단·보고값은 각 열 그대로 보존했고, MAA의 2019 점수별 학년 분포(94,620행) 및 별도 재게시 요약(94,675명)과 결합하지 않았다.
+[`amc8-overall-cohort-summary-2002-2020.csv`](../competition/historical-amc-grade/amc8-overall-cohort-summary-2002-2020.csv)가 수치 전사본이고, [`amc8-overall-cohort-reference.js`](../competition/amc8-overall-cohort-reference.js)는 완성된 AMC 8 원본 답안 점수와 동일 연도 전체 평균을 대조한다. 이 전체 응시 평균은 학년 평균·백분위·실력 등급이 아니며, 이미 있는 정확한 학년 평균 비교와 별도 표시한다. 2016은 99CEF의 미국·캐나다 108,227명·평균 9.36이며, 별도의 MAA Michigan Section 통계는 108,295명을 보고해 응시자 수가 일치하지 않는다. 두 출처의 수치를 합치거나 임의로 하나로 조정하지 않았다. 2020은 MAA Wisconsin Section 보고서의 미국 평균 10.01만 확인됐고, 표본 수와 학년별 분포는 확보하지 못했다. 99CEF PDF 자체는 MAA 호스팅이 아니므로 출처 상태를 그대로 밝힌다. 해당 보고서 표의 별도 모집단·보고값은 각 열 그대로 보존했고, MAA의 2019 점수별 학년 분포(94,620행) 및 별도 재게시 요약(94,675명)과 결합하지 않았다.
 
 ## 원본 문항 개념 출처 연결 (2026-11-04)
 
@@ -596,7 +596,7 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 
 ## 2026-11-04 웹 검색: 2016 AMC 8 학년별 표와 연도 통계 구분
 
-- [99CEF 2018 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf)는 2018 회차의 Global·Taiwan 학년별 평균과 인원, 2005–2018 전체 집단 비교표를 함께 제공한다. 2016 행은 미국·캐나다 전체 평균 9.36, n=108,227 및 Taiwan 전체 평균 14.60, n=7,115이며, 해당 연도 학년별 수치는 싣지 않았다. 2016 전체 행은 `amc8-overall-cohort-summary-2005-2020.csv`에 이미 모집단을 분리해 기록되어 있어 중복 행을 만들지 않았다.
+- [99CEF 2018 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf)는 2018 회차의 Global·Taiwan 학년별 평균과 인원, 2005–2018 전체 집단 비교표를 함께 제공한다. 2016 행은 미국·캐나다 전체 평균 9.36, n=108,227 및 Taiwan 전체 평균 14.60, n=7,115이며, 해당 연도 학년별 수치는 싣지 않았다. 2016 전체 행은 `amc8-overall-cohort-summary-2002-2020.csv`에 이미 모집단을 분리해 기록되어 있어 중복 행을 만들지 않았다.
 - [MAA 현행 점수분포 화면](https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561)는 선택한 대회의 전체 점수 구간·평균·표준편차·학생·학교 수를 보여 준다. 이번 조회에 열린 기본 보고서는 2026 AIME II이며, AMC 8 학년별 평균표는 아니다. [MAA AMC 공식 페이지](https://maa.org/student-programs/amc/)에서 AMC 8이 8학년 이하 25문항·40분 대회이고 중학교 수학 주제를 다룬다는 현재 범위도 대조했다.
 - 2016 “Contest Score Grade Report”를 가리키는 Think Matrix 페이지는 보고서 이미지가 서명된 임시 Shimo URL로 빠져 만료 상태였고, 2016 MAA 성적관리 원문도 검색 가능한 정적 표로 회수되지 않았다. [Bard Math Circle 2016 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in)는 해당 시험장 35명 성적만, [Ivy League Education Center 2016 게시물](https://ivyleaguecenter.org/2016/12/01/2016-amc-8-winners-for-the-u-s-ivy-league-education-center/)은 자기 수강생·수상자와 전체 평균 요약만 제공한다. 이 표본은 전국 학년별 비교에 넣지 않았다.
 - 따라서 2016 AMC 8의 전국 학년별 평균·점수분포는 이 검색에서 회수하지 못했다. 이는 해당 자료가 존재하지 않는다는 뜻은 아니다. 2016 기존 전체집단 평균, 다른 해의 학년 평균, 학교 표본을 서로 대체하지 않고 `grade-report-image-unavailable`/`no-grade-table-recovered` 구분을 유지한다.
