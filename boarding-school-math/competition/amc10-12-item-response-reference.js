@@ -111,6 +111,58 @@
 23,C,5.68,7.14,7.34,6.73,5.26,67.82,0.02
 24,B,3.83,6.23,4.18,4.69,2.66,78.39,0.02
 25,E,2.12,3.13,4.68,6.29,4.97,78.79,0.02`.trim(), respondentCount: 55279, population: "2016 AMC 12A global response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf", sourceStatus: "99CEF 2016 analysis report; printed p.22 Global item-response table recovered from indexed PDF text; correct answers cross-checked with LIVE" }),
+    "amc10-2014-A": Object.freeze({ raw: `
+1,C,0.96,16.45,65.54,1.26,8.35,7.43,0.01
+2,C,5.10,11.93,56.29,14.53,8.37,3.75,0.02
+3,E,1.52,2.94,3.77,3.02,84.97,3.72,0.05
+4,B,16.63,65.88,8.21,1.82,4.48,2.95,0.02
+5,C,3.35,7.21,53.91,4.69,8.71,22.09,0.03
+6,A,36.59,5.03,8.31,3.04,18.87,28.11,0.05
+7,B,3.97,32.68,38.22,15.18,4.22,5.69,0.02
+8,D,3.26,10.14,4.76,26.37,2.54,52.86,0.06
+9,C,1.44,6.78,33.93,10.08,5.83,41.89,0.05
+10,B,6.14,54.05,13.82,3.77,1.83,20.38,0.01
+11,C,9.60,5.16,45.32,6.01,11.57,22.25,0.09
+12,C,4.66,5.26,47.47,3.90,3.91,34.77,0.03
+13,C,9.75,3.61,29.29,13.73,3.97,39.62,0.03
+14,D,2.80,13.52,5.34,17.76,4.49,56.04,0.04
+15,C,8.01,13.18,29.62,5.38,2.39,41.39,0.02
+16,E,3.72,3.53,4.34,9.30,19.03,60.04,0.03
+17,D,7.97,11.32,11.28,18.57,5.70,45.12,0.04
+18,B,20.47,21.98,13.80,3.06,1.52,39.14,0.02
+19,A,15.80,3.99,9.71,2.82,5.47,62.17,0.04
+20,D,5.89,4.32,4.39,19.50,4.89,60.98,0.02
+21,E,2.30,4.48,6.45,4.47,8.14,74.13,0.02
+22,E,7.34,9.81,5.72,5.16,6.54,65.40,0.03
+23,C,14.21,7.60,14.51,4.16,2.52,56.94,0.03
+24,A,4.16,4.91,5.05,4.74,3.03,78.09,0.02
+25,B,2.62,4.25,4.75,4.59,2.69,81.09,0.02`.trim(), respondentCount: 61325, population: "2014 AMC 10A global response cohort", sourceUrl: "https://web.archive.org/web/20150908065139id_/http://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf", sourceStatus: "99CEF 2014 analysis report; printed p.11 Global item-response table extracted from archived original PDF with macOS PDFKit; correct answers cross-checked with LIVE" }),
+    "amc12-2014-A": Object.freeze({ raw: `
+1,C,0.40,6.74,83.56,0.62,6.33,2.34,0.01
+2,B,2.85,87.17,1.67,1.90,1.59,4.82,0.01
+3,B,13.57,72.18,6.62,1.45,4.29,1.86,0.02
+4,A,52.99,3.52,8.59,2.64,13.86,18.36,0.03
+5,C,2.65,5.85,68.23,3.61,7.28,12.37,0.02
+6,D,2.65,5.30,5.10,52.42,5.57,28.92,0.03
+7,A,30.03,2.35,2.48,36.89,17.37,10.82,0.05
+8,C,6.99,4.32,60.93,4.70,8.12,14.88,0.04
+9,B,4.79,65.37,9.55,3.28,1.82,15.16,0.02
+10,B,5.44,44.90,3.83,6.27,9.56,29.96,0.04
+11,C,7.15,12.62,42.42,4.97,2.58,30.24,0.02
+12,D,16.55,4.62,4.25,14.00,22.97,37.58,0.03
+13,B,3.46,10.77,6.97,14.81,9.24,54.70,0.05
+14,C,8.21,11.98,17.82,8.40,2.78,50.76,0.03
+15,B,14.52,8.58,6.04,6.30,10.20,54.33,0.03
+16,D,4.44,3.95,4.34,28.22,4.38,54.64,0.03
+17,A,14.66,10.20,14.98,3.91,1.97,54.25,0.02
+18,C,2.96,5.05,6.71,3.30,1.89,80.07,0.02
+19,E,8.13,11.52,7.10,4.27,2.84,66.10,0.03
+20,D,5.13,3.30,5.03,3.89,4.87,77.77,0.02
+21,A,3.88,3.35,7.13,2.48,1.90,81.25,0.01
+22,B,2.16,4.73,3.97,3.93,2.00,83.18,0.02
+23,B,2.11,3.60,3.90,6.10,2.05,82.21,0.02
+24,C,3.11,3.99,5.40,2.91,1.76,82.81,0.02
+25,B,2.83,3.71,5.74,3.63,2.58,8.49,0.01`.trim(), respondentCount: 55400, population: "2014 AMC 12A global response cohort", sourceUrl: "https://web.archive.org/web/20150908065139id_/http://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf", sourceStatus: "99CEF 2014 analysis report; printed p.24 Global table; Q25 is transcribed as printed but the source values sum to 26.99%, so its item-response comparison is suppressed; correct answers cross-checked with LIVE", excludedQuestions: Object.freeze([25]) }),
     "amc10-2014-B": Object.freeze({ raw: `
 1,C,1.11,2.40,82.05,1.69,7.93,4.79,0.01
 2,E,5.33,1.35,12.19,1.53,72.73,6.85,0.02
@@ -196,6 +248,7 @@
     const selectedForm = String(form || "").toUpperCase();
     const source = sources[selectedProgram + "-" + selectedYear + "-" + selectedForm];
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > 25) return null;
+    if (source.excludedQuestions && source.excludedQuestions.includes(Number(question))) return null;
     const values = source.raw.split("\n")[Number(question) - 1].split(",");
     const responsePercent = Object.freeze(Object.fromEntries(letters.map(function (letter, index) { return [letter, Number(values[index + 2])]; })));
     const correctAnswer = values[1];
