@@ -51,6 +51,10 @@ const ids = ["5-2-u3-e8-mission-1-double-point-synthetic", "5-2-u3-e8-mission-2-
       });
       await page.locator("#solutionTab").click();
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+      await page.emulateMedia({ media: "print" });
+      const solutionFonts=await page.locator('#solutionView .solution-item').evaluateAll(items=>items.map(item=>{const text=item.querySelector('[data-source-answer] p')||item.querySelector('[data-source-answer]')||item.querySelector('p');return text&&{family:getComputedStyle(text).fontFamily,weight:getComputedStyle(text).fontWeight}}));
+      assert.equal(solutionFonts.length,12);for(const [i,font] of solutionFonts.entries()){assert.match(font?.family||'',/Noto Serif KR/,`solution ${i+1} uses print serif`);assert.equal(font.weight,'400');}
+      await page.emulateMedia({ media: null });
       if (width === 1280 && process.env.MAC_CHECK_OUTPUT) {
         for (const mode of ["problem", "solution"]) {
           await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
@@ -67,5 +71,5 @@ const ids = ["5-2-u3-e8-mission-1-double-point-synthetic", "5-2-u3-e8-mission-2-
       await context.close();
     }
   } finally { await browser.close(); }
-  console.log("PASS: 12 page 39 problems match their solutions on desktop and mobile");
+  console.log("PASS: 12 page 39 questions and solutions use print serif and match on desktop and mobile");
 })().catch(error => { console.error(error); process.exitCode = 1; });
