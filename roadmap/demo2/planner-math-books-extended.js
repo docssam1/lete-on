@@ -243,13 +243,13 @@ window.GFIELD_MATH_BOOKS.push(...[
   "use": "개념을 정리한 뒤 특목고, 구술·면접, 시·도 경시, 올림피아드 문제로 확장하는 중등 구판입니다.",
   "ready": "집합·수와 식·함수·도형 등 소장본의 주제와 현재 교과 범위를 먼저 대조합니다.",
   "next": "이미 배운 단원의 심화·구술 연습에 골라 활용합니다. 구판의 집합·통계 등 단원 배치를 지금 중1 내신 범위로 그대로 적용하지 않습니다.",
-  "edition": "사용자 제공 2018 SUPERMATH 중1 수학 본문 스캔",
+  "edition": "SUPERMATH 중1 수학 · 소장 구판",
   "source": "",
   "isbn": "",
   "cover": "",
   "checkedOn": "2026-11-04",
   "official": "",
-  "notes": "제공 파일의 목차와 개념 정리·단계별 문제 구성을 직접 확인했습니다. 파일명의 2018을 출판 연도로 확정하지 않으며 판권·ISBN·정확한 저자·표지는 미확인입니다. PDF·문항·풀이·외장디스크 경로는 공개하지 않습니다.",
+  "notes": "목차와 개념 정리·단계별 문제 구성을 확인했습니다. 구판의 단원 배열과 명칭을 현재 내신 범위와 대조해 사용합니다. 정확한 발행 연도·판권·ISBN·저자·표지는 확인 전입니다.",
   "identityStatus": "document-checked",
   "aliases": [
    "슈퍼매쓰",
@@ -258,7 +258,7 @@ window.GFIELD_MATH_BOOKS.push(...[
    "SUPERMATH"
   ],
   "statusLabel": "절판 소장본 · 목차·구성 확인",
-  "sourceLabel": "사용자 제공 본문 스캔의 목차·초반 구성 확인",
+  "sourceLabel": "소장 구판의 목차·초반 구성 확인",
   "sourceKind": "provided-document",
   "availability": "out-of-print",
   "alsoTracks": [
@@ -346,7 +346,7 @@ window.GFIELD_MATH_BOOKS.push(...[
   "cover": "assets/reference/book-bible-elementary-3.jpg",
   "checkedOn": "2026-11-04",
   "official": "",
-  "notes": "제공한 3단계 상권 스캔의 목차와 초반 구성을 직접 확인했습니다. 3·4단계를 중심으로 쓰는 것은 독쌤의 운영 기준입니다. KMO BIBLE 중등 정수·대수·기하·조합 4권과 다른 시리즈입니다. 원문·문항·스캔 PDF는 공개하지 않습니다.",
+  "notes": "3단계 상권의 목차와 초반 구성을 확인했습니다. 3·4단계를 중심으로 쓰는 것은 독쌤의 운영 기준입니다. KMO BIBLE 중등 정수·대수·기하·조합 4권과 다른 시리즈입니다.",
   "identityStatus": "verified",
   "alsoTracks": [
    "competition"
@@ -379,7 +379,7 @@ window.GFIELD_MATH_BOOKS.push(...[
   "cover": "assets/reference/book-bible-elementary-4.jpg",
   "checkedOn": "2026-11-04",
   "official": "",
-  "notes": "출판사 제공 목차 기준입니다. 상·하권을 구분해 사용하며 제공된 3단계 PDF를 4단계 원문 검수 근거로 삼지 않았습니다.",
+  "notes": "출판사 제공 목차 기준입니다. 상·하권을 구분해 사용하며 3단계와 4단계의 구성을 구분합니다.",
   "identityStatus": "verified",
   "alsoTracks": [
    "competition"
@@ -502,7 +502,7 @@ window.GFIELD_MATH_BOOKS.push(...[
   "cover": "assets/reference/book-anssam-algebra.jpg",
   "checkedOn": "2026-11-04",
   "official": "https://anssamedu.com/",
-  "notes": "학생용 대표 판본입니다. 교사용 답안·문항은 공개하지 않으며, 특정 학원 입학이나 경시 수상을 보장하는 과정으로 표시하지 않습니다.",
+  "notes": "학생용 대표 판본입니다. 특정 학원 입학이나 경시 수상을 보장하는 과정은 아닙니다.",
   "identityStatus": "verified",
   "alsoTracks": [
    "competition"
@@ -533,7 +533,7 @@ window.GFIELD_MATH_BOOKS.push(...[
   "cover": "assets/reference/book-anssam-problem.jpg",
   "checkedOn": "2026-11-04",
   "official": "https://anssamedu.com/",
-  "notes": "학생용 대표 판본입니다. 교사용 답안·문항은 공개하지 않으며, 특정 학원 입학이나 경시 수상을 보장하는 과정으로 표시하지 않습니다.",
+  "notes": "학생용 대표 판본입니다. 특정 학원 입학이나 경시 수상을 보장하는 과정은 아닙니다.",
   "identityStatus": "verified",
   "alsoTracks": [
    "competition"
@@ -564,7 +564,7 @@ window.GFIELD_MATH_BOOKS.push(...[
   "cover": "assets/reference/book-anssam-geometry.jpg",
   "checkedOn": "2026-11-04",
   "official": "https://anssamedu.com/",
-  "notes": "학생용 대표 판본입니다. 교사용 답안·문항은 공개하지 않으며, 특정 학원 입학이나 경시 수상을 보장하는 과정으로 표시하지 않습니다.",
+  "notes": "학생용 대표 판본입니다. 특정 학원 입학이나 경시 수상을 보장하는 과정은 아닙니다.",
   "identityStatus": "verified",
   "alsoTracks": [
    "competition"
