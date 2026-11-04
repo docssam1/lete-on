@@ -1,9 +1,9 @@
-### 2026-11-05 · 2004 AMC 8 grade data independently cross-checked
+### 2026-11-05 · AMC 8 grade data cross-checked against annual reports
 
 - Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, local HEAD `05f260a0e` (`Cross-check 2004 AMC 8 grade reference`). No push/deploy/Drive sync. Preserve the untracked user file `raw_youtube.txt` unchanged and unstaged.
-- Web search found the MAA-authored 56th annual AMC report in a third-party hosted copy. Its 2004 AMC 8 recorded-grade counts and means independently match the existing grade reference: ≤5 1,496/8.15; Grade 6 15,248/8.51; Grade 7 51,679/9.55; Grade 8 84,399/10.48. Coverage manifest and source research note now record the second source and scope caveat; no runtime values changed.
+- Web search found MAA-authored 56th and 57th annual AMC report copies. The 56th report independently confirms the existing 2004 AMC 8 recorded-grade counts and means: ≤5 1,496/8.15; Grade 6 15,248/8.51; Grade 7 51,679/9.55; Grade 8 84,399/10.48. The 57th report confirms the same 2004 row and the existing 2005 row: Grades 4–5 2,014/8.05; Grade 6 14,268/8.16; Grade 7 48,418/9.37; Grade 8 76,877/10.52. Coverage manifest and source research note now record the added checks and cohort caveat; no runtime values changed.
 - The same report lists 2005 AMC 10/12 grade averages and whole-cohort item-difficulty tables, but web text extraction interleaves the table cells. Do not import those numbers without readable pages and row-by-row verification. Search did not surface a readable PDF; next step is to locate page images or another scan, then transcribe only clearly verified cells. The 2004 AMC 8 response table remains 24/25 usable rows; Q1 is suppressed because its published shares sum to 99.74%.
-- `git diff --check` passed before the source-note commit. No tests were added or run. Current changes are committed; no further files were changed in this pass.
+- The 56th report lists 2005 AMC 10/12 recorded-grade averages and item-difficulty tables, but its web text extraction interleaves columns. No readable report PDF was surfaced; do not add figures until they can be transcribed from readable pages. `git diff --check` passed before the source-note commits. No tests were added or run. Latest commits: `05f260a0e` (grade-source cross-check), `008127446` (handoff), with one new source-documentation commit pending.
 
 ### 2026-11-04 · 2020 AMC 8 item-response data recovered from web image
 
