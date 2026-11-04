@@ -2932,6 +2932,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-51-original",sourceItemLabel:"확인학습 51번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:116,alternateSourcePdfPage:117,sourcePrintedPage:122,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 선택 방식은 미확인입니다. 별도 유사문항은 두 대표를 공평하게 추첨하도록 명시하고 독립 열거했습니다.",generatorKey:"source52U6P122Q51ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
+  if (source52Probability && !source52Probability.types.some(t=>t.id==="5-2-u6-practice-56-clarified-similar")) {
+    const id="5-2-u6-practice-56-clarified-similar",name="키가 작은 순서대로 설 가능성 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-56-original",sourceItemLabel:"확인학습 56번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:116,alternateSourcePdfPage:117,sourcePrintedPage:122,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 키 순서 방향은 미확인입니다. 별도 유사문항은 작은 순서와 균등 배열을 명시하고 독립 열거했습니다.",generatorKey:"source52U6P122Q56ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
   if (source52Probability) for (const [n,name] of [[49,"숫자 카드가 범위에 속할 가능성 · 확인학습 원문"],[50,"동전 네 개 중 앞면이 적어도 하나일 가능성 · 확인학습 원문"],[52,"서로 다른 동전 네 개가 모두 앞면일 가능성 · 확인학습 원문"],[53,"주사위 세 개가 모두 짝수일 가능성 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52Probability.types.some(type=>type.id===id)) continue;
