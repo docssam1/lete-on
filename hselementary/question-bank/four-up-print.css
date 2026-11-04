@@ -12,6 +12,8 @@
   #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .question-prompt { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .equation:not(:has(br)) { white-space:normal; overflow:visible; background:transparent; border-color:#888; }
   .print-page.print-page--four-up .question-prompt svg { width:auto !important; max-width:100%; max-height:150px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-mission-1-original"] svg,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-mission-3-original"] svg { max-height:190px; }
   #problemView .print-page--four-up .question-graph-pair { display:flex; gap:14px; margin-top:8px; padding:0 8px 0 12px; }
   #problemView .print-page--four-up .question-graph-pair .graph-figure { flex:1; min-width:0; margin:0; }
   #problemView .print-page--four-up .question-graph-pair .graph-scale-note { min-height:36px; margin:0 0 4px; font-size:9px; line-height:12px; }
