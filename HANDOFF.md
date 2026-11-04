@@ -1469,3 +1469,8 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - MAA 공개 점수분포 페이지는 대회 전체 통계(점수 구간, 평균·표준편차, 전체 학생·학교 수)를 보여준다. 이번 검색에서 새로 확인된 페이지는 2026 AIME II였고, 학년별 평균표는 제공하지 않았다. 따라서 이를 학년 등급이나 AMC8 20점 수준의 학년 비교에 섞지 않는다.
 - 링크: [MAA AMC 연도·범위 및 일정](https://maa.org/student-programs/amc/), [MAA 현행 등록 일정](https://maa.org/amcreg/), [MAA 공개 점수분포 보고서](https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561), [2024 AMC 8 원본과 허가 표기](https://live.poshenloh.com/past-contests/amc8/2024).
 - 로컬 변경: `boarding-school-math/docs/AMC_YEARLY_SOURCE_CATALOG.md`, 본 인수인계. 원본 문항·답·풀이는 추가 복사하지 않았고 점수 레퍼런스 숫자도 새로 넣지 않았다. `raw_youtube.txt`는 보존·제외한다. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 AMC 연도별 링크 전수 접근 확인
+
+- 연도별 출처 CSV 266행에서 온라인 회차, 인쇄 PDF, 정답표, 전문 풀이 URL 총 1,064개를 HEAD로 확인했다. 모두 HTTP 2xx: AMC 8 164개, AMC 10 208개, AMC 12/AHSME 408개, AIME 284개. 따라서 저장된 연도·폼 라우트의 공개 접근은 현 시점 전부 확인됐다.
+- 이는 접근 가능 여부 검사이며 PDF를 내려받거나 인쇄 레이아웃을 266개 모두 시각 검수한 것은 아니다. 연도별 카탈로그 문서에 동일한 범위/한계를 기록했다. `raw_youtube.txt` untouched. Local only; no push, deployment, or Drive sync.
