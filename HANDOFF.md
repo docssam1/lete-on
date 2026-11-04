@@ -4,6 +4,8 @@
 
 Grade 5–8을 [`amc8-grade-means-2022-maa-overall.csv`](boarding-school-math/competition/historical-amc-grade/amc8-grade-means-2022-maa-overall.csv)와 `amc-historical-grade-reference.js`에 추가하고, 2022 AMC 8 coverage를 갱신했다. 결과 화면 cache key도 올렸다. 근거·OCR 원본 링크: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. `raw_youtube.txt`는 보존한다.
 
+브라우저에서 2022 AMC 8 Grade 7을 열고 Q1에 임시 정답 A를 넣은 뒤 공개 정답표와 대조했다. 결과 화면에 응시 점수 1/25, 학년 평균 9.57점·참가자 22,493명, `Location: Overall` 범위, 재게시 출처와 모집단 주의가 함께 표시되는 것을 확인했다. 미응답 24문항은 복습 대상에 각 원본 문항·정답·개념 링크가 붙었고, 3문항 미만 영역 비율은 보류됐다. 이 입력은 브라우저 화면 임시 상태이며 저장하지 않았다. 연도별 시험지·정답·전문 풀이 링크도 선택 화면에서 확인했다. `git diff --check` 통과; 실제 문항 분석·브라우저 클릭 검수 외 테스트 suite는 실행하지 않았다.
+
 ### 2026-11-04 AMC 8 2016 보고서 본문·2022 학년 자료 재검색
 
 2016 MAA 통계 메뉴의 AMC 8 보고서 ID 63은 확인했지만, 보존 페이지의 ReportViewer 본문은 복구되지 않았다. 99CEF 연도 요약 PDF와 MAA Michigan Section 뉴스레터는 전체 평균만 싣고 학년별 행은 제공하지 않는다. 이 두 출처의 2016 응시자 수(108,227 / 108,295)가 달라 그대로 분리한다. Bard Math Circle 2016 결과는 지역 행사 n=35라 전국 학년 비교에서 제외한다.
