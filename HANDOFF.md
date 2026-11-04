@@ -1,3 +1,10 @@
+### 2026-11-05 · 2004 AMC 8 grade data independently cross-checked
+
+- Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, local HEAD `05f260a0e` (`Cross-check 2004 AMC 8 grade reference`). No push/deploy/Drive sync. Preserve the untracked user file `raw_youtube.txt` unchanged and unstaged.
+- Web search found the MAA-authored 56th annual AMC report in a third-party hosted copy. Its 2004 AMC 8 recorded-grade counts and means independently match the existing grade reference: ≤5 1,496/8.15; Grade 6 15,248/8.51; Grade 7 51,679/9.55; Grade 8 84,399/10.48. Coverage manifest and source research note now record the second source and scope caveat; no runtime values changed.
+- The same report lists 2005 AMC 10/12 grade averages and whole-cohort item-difficulty tables, but web text extraction interleaves the table cells. Do not import those numbers without readable pages and row-by-row verification. Search did not surface a readable PDF; next step is to locate page images or another scan, then transcribe only clearly verified cells. The 2004 AMC 8 response table remains 24/25 usable rows; Q1 is suppressed because its published shares sum to 99.74%.
+- `git diff --check` passed before the source-note commit. No tests were added or run. Current changes are committed; no further files were changed in this pass.
+
 ### 2026-11-04 · 2020 AMC 8 item-response data recovered from web image
 
 - Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, local HEAD `d319388d` (`Add 2020 AMC 8 item response diagnostics`). The 2020 work is committed; the only untracked file is user-owned `raw_youtube.txt`, which must not be staged or removed. No push/deploy/Drive sync.
