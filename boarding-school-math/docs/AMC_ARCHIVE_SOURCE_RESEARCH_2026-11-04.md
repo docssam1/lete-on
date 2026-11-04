@@ -1,5 +1,11 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2026-11-05 · MAA EduView AMC 10/12 연도·회차 점수분포 원문 재확인
+
+MAA K–12 EduView의 공개 `Score Distribution` 화면에서 2022–2025 AMC 10 A/B와 AMC 12 A/B, 총 16개 연도·회차 보고 행을 다시 확인했다. 상위 1%, 2.5%, 5%, 10%, 25%, 50%, 75% 점수 경계, 최고점, 평균, 표준편차, 보고 학생 수와 학교 수를 [`amc10-12-score-distribution-2022-2025-maa.csv`](../competition/historical-amc-grade/amc10-12-score-distribution-2022-2025-maa.csv)에 보존했다. CSV에는 회차별 MAA 보고 URL이 들어 있다. 이 16행은 `amc-score-distribution-reference.js`의 기존 값과 모두 일치해 새 점수나 새 진단 규칙을 추가하지 않는다.
+
+MAA 공개 요약표는 각 시험의 전체 점수 보고 코호트를 대상으로 하며 이 자료에 Grade별 점수분포는 없다. 따라서 점수 경계는 해당 연도·회차의 전체 응시자 역사 비교에만 쓴다. 이를 학년 등급, 학년 순위, 개인 percentile, 배치 결과로 바꾸어 표시하지 않는다. [MAA 2025–26 AMC 10A report](https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561&schoolyear=2026&amccomp=81054&viewClicked=true) · [MAA 2025–26 AMC 12A report](https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81057&viewClicked=true) · [MAA public report selector](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561).
+
 ## 2026-11-05 · 연도별 AMC 10/12 문항 성과 연구와 MAA 점수 보고서 경로
 
 웹에서 Josaphat A. Uvah와 Kuiyuan Li의 연구 *An Assessment of Math Proficiency Among High School Students in Northwest Florida*를 확인했다. 이 연구는 2007–2011년 University of West Florida 시험센터의 AMC 응시자 970명을 다루며, AMC 10 응시자 487명은 9–10학년, AMC 12 응시자 483명은 11–12학년이라고 명시한다. AMC 10/12 각 회차의 문항 정답 비율 도표와 몇 문항의 주제·정답 비율을 싣고 있다. 모집단은 미국 전국 코호트가 아니며, 학년은 두 학년씩 묶여 있고, 도표의 웹 텍스트 추출은 열 정렬과 소수점 일부가 손상돼 모든 25문항 수치를 안전하게 옮길 수 없다. 그러므로 이 연구는 주제 탐색용으로만 기록하고 전국 성취도 비교·개인 진단·runtime 문항 통계에는 넣지 않는다. [연구 PDF](https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf) · [AMS 초록](https://www.jointmathematicsmeetings.org/amsmtgs/2141_abstracts/1086-va-1198.pdf).

@@ -1,3 +1,9 @@
+### 2026-11-05 · MAA AMC 10/12 점수분포 연도별 원문 교차확인
+
+- 웹 검색 후 MAA K–12 EduView 공개 보고서에서 2022–2025 AMC 10/12 A/B 16개 회차의 점수분포 행을 확인했다. 전체 점수선, 평균·표준편차, 학생/학교 수와 회차별 원문 URL을 `boarding-school-math/competition/historical-amc-grade/amc10-12-score-distribution-2022-2025-maa.csv`에 정리했다.
+- 이 데이터는 `amc-score-distribution-reference.js`에 이미 쓰이는 수치와 일치하므로 기존 화면 값의 출처 추적성을 보강한다. 전체 응시 코호트 비교자료이며 Grade별 분포가 아니므로 학년 등급이나 배치 예측으로 해석하지 않는다. 2022/23–2025/26 AMC 8 CSV와도 서로의 모집단/시험을 합치지 않는다.
+- README와 출처 연구 기록에 범위와 제한을 적었다. CSV 16행의 11개 런타임 공통 필드, 연도·회차 키, MAA 보고 URL 매개변수를 대조했고 `git diff --check`를 통과했다. 별도 테스트는 실행하지 않았다. `raw_youtube.txt`는 그대로 보존한다. 로컬 변경만 커밋 가능하며 push·배포·Drive 동기화는 하지 않는다.
+
 ### 2026-11-05 · 연도별 AMC 10/12 성과 연구 및 MAA 보고 경로 추가 확인
 
 - 웹 검색으로 2007–2011 AMC 10/12 문항 정답률을 다룬 UWF 고교생 연구와 현재 MAA EduView 연도·회차별 전체 점수분포 화면을 확인했다. 연구 표본은 Northwest Florida 시험센터 970명(AMC 10 응시 Grade 9–10 n=487, AMC 12 응시 Grade 11–12 n=483)이며 전국 자료가 아니다. 웹 PDF 도표 텍스트가 열/소수점 일부를 손상시켜 모든 문항 수치를 전사하지 않았다.
