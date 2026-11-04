@@ -393,6 +393,22 @@
       hint: "각 근호 안에서 가장 큰 완전제곱인수를 찾아 꺼내요.",
       solution: ["√50=√(25×2)=5√2입니다.", "√8=√(4×2)=2√2입니다.", "동류 근호를 더하면 5√2+2√2=7√2입니다."],
       connection: "√18+√32도 같은 근호끼리 모아 정리해 보세요."
+    },
+    {
+      id: "amc10-gap-geometric-probability-circle-01", domain: "확률", sourceConcepts: ["geometric-probability", "circle-area", "area"], stage: "연결", title: "정사각형 안에서 원에 들어갈 확률 구하기",
+      prompt: "한 변이 10인 정사각형 안에 꼭 맞게 들어가는 원이 있습니다. 정사각형 안에서 임의의 점을 고를 때 그 점이 원 안에 있을 확률은 얼마인가요?",
+      choices: ["1/8 π", "1/4 π", "1/2", "3/4 π", "π"], answer: 1,
+      hint: "확률은 원의 넓이를 정사각형의 넓이로 나눈 값이에요.",
+      solution: ["정사각형의 넓이는 10²=100입니다.", "내접원의 반지름은 5이므로 넓이는 25π입니다.", "원 안에 있을 확률은 넓이의 비 (25/100)π=(1/4)π입니다."],
+      connection: "정사각형 한 변의 길이를 20으로 키우고 원을 계속 꼭 맞게 넣으면 확률은 변하나요?"
+    },
+    {
+      id: "amc10-gap-speed-unit-conversion-01", domain: "수 감각", sourceConcepts: ["unit-conversion", "ratio-and-proportion", "rate"], stage: "유형", title: "시속 킬로미터를 초속 미터로 바꾸기",
+      prompt: "시속 72km는 초속 몇 m인가요?",
+      choices: ["10", "15", "18", "20", "25"], answer: 3,
+      hint: "1km는 1000m, 1시간은 3600초입니다.",
+      solution: ["72km/h는 72,000m를 3,600초 동안 간다는 뜻입니다.", "72,000÷3,600=20입니다.", "따라서 속력은 20m/s입니다."],
+      connection: "시속 90km를 초속으로 바꾸면 몇 m/s인가요?"
     }
   ];
 

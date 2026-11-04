@@ -1947,3 +1947,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 최신 은행 크기는 AMC 8 55, AMC 10 49, AMC 12 56, AIME 50문항. 하나 이상의 원본 개념 태그가 대응된 회차 문항은 각각 995/1,025 (97.1%), 1,237/1,300 (95.2%), 2,715/3,110 (87.3%), 1,018/1,065 (95.6%)다. 새 태그는 원본 인벤토리와 대조했다.
 - 다음 잔여 공백 상위는 AMC 8 complementary-probability·mode·summation; AMC 10 geometric-probability·unit-conversion·transformation; AMC 12 tangent-circles·triangle-inequality·pattern-recognition; AIME transformation·law-of-sines·pattern-recognition·trapezoid다.
 - 수정: 네 연습 bank, 페이지 캐시 키, historical AMC README, 인수인계. 문항 계산을 직접 점검하고 `git diff --check` 및 태그 중첩 집계를 실행했다. 별도 테스트 미실행. `raw_youtube.txt` 보존; 로컬 커밋만, push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 확률·변환·삼각법 연습 연결
+
+- AMC 8 여사건 확률·최빈값, AMC 10 원 안의 기하확률·속력 단위 변환, AMC 12 공통 내접선·정수 삼각형 부등식, AIME 사인 법칙으로 구한 외접원 반지름·이등변사다리꼴 넓이 문항을 추가했다.
+- 갱신된 은행은 AMC 8 57, AMC 10 51, AMC 12 58, AIME 52문항이다. 태그 하나 이상이 원본과 겹치는 문항은 AMC 8 997/1,025 (97.3%), AMC 10 1,242/1,300 (95.5%), AMC 12 2,729/3,110 (87.7%), AIME 1,026/1,065 (96.3%)다. 모든 은행 태그가 해당 대회 원본 인벤토리에 있는지 확인했다.
+- 다음 우선 공백은 AMC 8 합계·시계·평행사변형; AMC 10 변환·각 추적·중앙값; AMC 12 패턴 찾기·기울기·진법; AIME 변환·패턴 찾기·순서쌍 세기·이항정리다.
+- 수정: AMC 8/10/12/AIME bank, 연습 페이지 캐시 키, historical AMC README, 인수인계. 풀이를 직접 점검했고 태그 중첩을 다시 집계했다. `git diff --check`를 실행하고 별도 테스트는 실행하지 않았다. `raw_youtube.txt` 보존; 로컬 커밋만, push·배포·Drive 동기화 없음.
