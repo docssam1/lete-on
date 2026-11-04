@@ -1773,3 +1773,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - MAA 작성 2006 AMC 8 Summary의 Table 6(인쇄 p.160)을 searchable report text에서 회수했다. 2005년 0–25점 26개 빈도를 새 `boarding-school-math/competition/historical-amc-grade/amc8-2005-overall-score-counts.csv`에 기록했다. 합계 143,428명, 점수 20+ 2,548명, 만점 77명으로 Table 1과 일치한다. 빈도 가중평균 9.8451은 Table 1의 9.835와 0.0101점 다르므로 숫자를 수정하지 않고 화면에 분리 고지한다. 점수 위치는 빈도표로, 평균은 보고서 요약으로 표시한다.
 - `amc8-overall-cohort-reference.js`, paper review 결과 문구, 전체 코호트 README와 조사 노트를 갱신했다. source status는 MAA 원보고서의 제3자 rehost에서 온 web-indexed transcription이며 인쇄 이미지 Apple Vision 대조는 아직 안 됐다. 2005 학년별 점수분포는 복구된 것이 아니며 기존 grade mean과 별개다.
 - 검색 출처: [Scribd의 MAA 2006 보고서 본문](https://www.scribd.com/document/618492772/2006-Amc-8-Summary), [StudyLib 대체 본문](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary). 수동 합계·가중평균 계산과 브라우저 로직의 샘플 조회를 확인하고 `git diff --check`를 실행한다. `raw_youtube.txt`는 보존. Push·배포·Drive 동기화 없음.
+
+### 이어서 검색: 2007–2008 AMC 8 분포
+
+- MAA 2008 AMC 8 연례 보고서 Table 8(인쇄 p.226)에서 2007·2008 점수 0–25 빈도를 확인했다. 2007은 n=150,618, 평균 9.8736→9.87, 20+ 3,593, 만점 129로 요약과 맞는다.
+- 2008 Table 8 빈도 합은 148,478이고, 보고서는 문제를 하나도 풀지 않은 253명을 별도 기재한다. 이 253명을 0점에 포함하면 n=148,731, 평균 11.4480→11.45, 20+ 8,575, 만점 334로 Table 1과 맞아 이 계산 근거를 UI에 밝혔다.
+- `amc8-2007/2008-overall-score-counts.csv`, 전체코호트 조회, paper review 결과 안내, 통계 README와 조사 기록을 갱신했다. 출처는 MAA 작성 보고서의 third-party rehost이며 인쇄 이미지 OCR은 하지 않았다. 웹 검색 원문: [2008 AMC 8 report](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america). 이 변경도 diff 검수 후 별도 커밋한다.
