@@ -3446,6 +3446,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationOne = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ①");
+  if (source52CongruenceApplicationOne) for (const [n,name] of [[1,"합동인 이등변삼각형의 각 · 원문 조건 명시"],[4,"직사각형을 두 번 접은 각 · 원문 접는 선 명시"]]) {
+    const id=`5-2-u3-e3-mission-${n}-scope`;
+    if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-mission-${n}`,sourceItemLabel:n===1?"Mission 1 원문 조건 명시":"Mission 4 원문 접는 선 명시",sourceSection:"mission",sourcePdfPage:25,alternateSourcePdfPage:24,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page29ExplicitMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:n===1?"원문에 같은 변의 위치가 표시되지 않아 그림에 맞는 조건을 명시한 별도 문항입니다. 공식 답안은 미확인입니다.":"원문 그림의 접는 선과 점의 대응을 지문에 명시한 별도 문항입니다. 공식 답안은 미확인입니다."});
+  }
+
+
   if (source52CongruenceApplicationOne) for (const [n,name] of [[2,"두 정사각형이 겹친 넓이 · 원문 그림 재구성"],[3,"이등변삼각형을 회전한 뒤의 각 · 원문 그림 재구성"],[5,"정삼각형의 같은 거리와 안쪽 각 · 원문 그림 재구성"],[6,"정삼각형에서 두 선이 만나는 각 · 원문 그림 재구성"]]) {
     const id=`5-2-u3-e3-mission-${n}-original`;
     if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
