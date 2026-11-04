@@ -407,3 +407,10 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 `competition/amc8-korea-grade-mean-reference.js` 및 결과 패널은 2009·2011 AMC 8과 선택한 Grade 5–8이 정확히 일치할 때만 평균·표본·점수 차이를 보여 준다. 원본 답안 입력·공개 정답표 채점 후 2011 Grade 7에서 평균 13.92, n=315 및 미기재 5명을 확인했다. 새로고침으로 검수 답을 초기화했고 복습 저장 기능은 사용하지 않았다. 이 역사 평균은 현재 기준·능력 등급이 아니다.
 
 같은 검색에서 [MAA 2009 AMC 8 연례 보고서 사본](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html)의 Table 2에 2003–2009 기록 학년군 평균과 표본 수가 있음을 확인했다. 이는 기존 `amc8-grade-means-2001-2009.csv`와 MAA 보고학교 코호트 기록을 재확인한 것이지 새 전국 비교 행은 아니다. 보고서가 해외 학교 참가도 언급하므로 이 표를 미국 단독 규준으로 부르지 않으며 4–5학년 묶음을 Grade 4/5로 나누지 않는다.
+
+## 2026-11-04 웹 검색 추가: 연도별 원본 시험·정답·해설 아카이브 확인
+
+- [LIVE의 AMC 과거 대회 아카이브](https://live.poshenloh.com/past-contests)는 MAA가 법적으로 사용을 허가한 실제 AMC 문항을 연도별로 제공한다고 명시한다. AMC 8 항목은 1985–2020년, 2022–2026년 총 41개 시행 회차이며 2021년은 빠져 있다. 각 회차에 온라인 시험, 인쇄용 시험 PDF, 정답표, 전문 해설 링크가 있는지 기존 [`amc-original-source-catalog.csv`](../competition/amc-original-source-catalog.csv) 266행을 대조했다. AMC 8 41회 전부에서 네 링크가 채워져 있다.
+- AMC 10은 2000–2025년 52개 폼, AMC 12는 1950–2025년 102개 폼, AIME는 1983–2026년 71개 회차로 카탈로그에 정리돼 있다. 등록된 총 266행 모두 온라인 시험·인쇄용 PDF·정답·해설의 링크가 있다. 이 카탈로그는 문제를 재배포하지 않고 허가된 원문 페이지로 연결한다.
+- 2011 AMC 8 회차 페이지는 [LIVE 원본](https://live.poshenloh.com/past-contests/amc8/2011)에서 시험·정답·해설을 연도별로 연결하고 MAA의 공식 사용 허가를 명시한다. 별도로 검색된 [MAA 2011 공식 Solutions Pamphlet 사본](https://www.profved.com/wp-content/uploads/AMC8/2011-AMC8-Solutions.pdf)은 당시 시험일과 MAA 저작권 표기를 확인하는 교차 근거로만 기록했다. 개별 문항·해설 원문은 프로젝트 파일로 복사하지 않는다.
+- 조회·인쇄·채점 기능은 이 원본 카탈로그를 바탕으로 이어 붙일 수 있다. 통계 비교는 시험 원본 목록과 별도 데이터다. 실제 연도·폼·학년·모집단을 확인한 점수 분포가 없는 경우에는 연도 통계가 있는 것처럼 만들지 않는다.
