@@ -2,6 +2,8 @@
   "use strict";
   const bank = window.GFIELDGrade7UnitMock;
   if (!bank) return;
+  const authoredPractice = window.GFIELDAMC8ConceptPractice;
+  const practiceItems = bank.items.concat(authoredPractice && Array.isArray(authoredPractice.items) ? authoredPractice.items : []);
   const params = new URLSearchParams(location.search);
   const requestedGrade = Number(params.get("grade"));
   const grade = Number.isInteger(requestedGrade) && requestedGrade >= 6 && requestedGrade <= 8 ? requestedGrade : 7;
@@ -26,6 +28,7 @@
   const $ = function (id) { return document.getElementById(id); };
 
   function itemDomain(item) {
+    if (domains.has(item.domain)) return item.domain;
     if (item.standard === "대수·규칙") return "algebra";
     if (item.standard === "기하·공간") return "geometry";
     if (item.standard === "경우의 수·확률") return "counting";
@@ -33,11 +36,11 @@
     if (item.standard === "정수·자료 해석") return /나머지|배수|최소공배수/.test(item.focus) ? "number" : "data";
     return "number";
   }
-  const sourceConceptItems = bank.items.filter(function (item) {
+  const sourceConceptItems = practiceItems.filter(function (item) {
     return (state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)))
       && requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); });
   });
-  const mockConceptItems = bank.items.filter(function (item) {
+  const mockConceptItems = practiceItems.filter(function (item) {
     return (state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)))
       && requestedMockConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); });
   });
@@ -76,7 +79,7 @@
     table.append(body); host.append(table);
   }
   function visibleItems() {
-    return bank.items.filter(function (item) {
+    return practiceItems.filter(function (item) {
       return (state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)))
         && (!hasPracticeConceptMatches || practiceConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }));
     });

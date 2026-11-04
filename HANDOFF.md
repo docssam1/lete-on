@@ -1401,3 +1401,11 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 관련 한계와 출처는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md` 및 historical-amc-grade README에 기록.
 - 런타임에서 두 연도·폼 lookup의 score boundary, 평균, 표준편차, 인원수, 학교수, 출처 URL을 직접 확인했고 `git diff --check` 통과.
 - `raw_youtube.txt` untouched. Local-only; no push, deployment, Drive sync. Next: find more year/form official score-report copies and pursue missing primary grade-level tables without mixing overall and grade cohorts.
+
+## 2026-11-04 AMC 8 오답 개념 연결용 창작 연습 추가
+
+- 기존 AMC 8 개념 교차표에서 자주 출현하지만 GFIELD 자체 연습 문항과 겹치지 않던 분수, 경우 나누기, 최적화, 자릿값, 속력, 논리 추론, 홀짝성, 삼각형·원의 넓이 개념에 창작 문항 9개를 추가했다. 고정된 25문항 시간제 모의고사와 데이터는 유지하고, 별도 개념 연습 은행으로 연결했다.
+- 원본 개념 교차표 기준으로 연결되는 AMC 8 문항은 1,025개 중 601개에서 843개로 늘었다. 이는 태그가 하나라도 겹치는 수를 센 것이다. 교차표가 제안하는 개념 라벨을 사용한 연결 범위이며, 문항 분류의 독립 검증이나 진단 정확도·성취 수준을 뜻하지 않는다.
+- 각 창작 문항의 고유 ID, 보기·정답 인덱스, 풀이, 개념 태그 존재를 확인했다. 로컬 브라우저의 원본 복습 진입 경로에서 연습 후보가 필터링되고, 분수는 쌓은 분수꼴로 표시되는 것을 확인했다. 새 은행 9개 중 선택된 오답 개념 조건에서 7개가 표시됐다.
+- 추가 웹 검색에서 LIVE가 2025·2026 AMC 8 인쇄용 원본 시험지, 답안, 풀이 링크를 현재 제공하고 MAA 공식 사용 허가를 명시하는 것을 재확인했다. 연도별 카탈로그에 두 연도 자료가 이미 있어 중복 레코드는 만들지 않았다. [2025 AMC 8](https://live.poshenloh.com/past-contests/amc8/2025), [2026 AMC 8](https://live.poshenloh.com/past-contests/amc8/2026), [전체 LIVE 과거 시험 아카이브](https://live.poshenloh.com/past-contests).
+- 변경: `boarding-school-math/amc8-concept-practice-bank.js`, `boarding-school-math/amc8-topic-practice.js`, `boarding-school-math/amc8-topic-practice.html`. `raw_youtube.txt`는 사용자 파일로 보존·제외. Local only; no push, deployment, or Drive sync.
