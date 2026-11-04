@@ -12,6 +12,34 @@
   // AMC Study's own red prediction marks are intentionally excluded.
   // MAA-authored 2006 response table. Rows that do not reconcile to 100%, including
   // items 18–19 with multiple correct-response markers, are suppressed at lookup.
+  // MAA 2008 annual report Table 5, national response cohort n=148,731.
+  // The extracted D/E block order is checked against all LIVE keys and report stars.
+  const raw2008 = `
+1,B,1.70,90.39,5.19,2.45,0.06,0.20,
+2,A,60.89,12.74,6.11,14.59,4.52,1.10,
+3,A,77.13,6.22,2.12,2.77,11.44,0.26,
+4,C,5.10,12.89,67.09,10.04,3.43,1.39,
+5,E,4.92,9.59,7.91,13.48,62.33,1.68,
+6,D,25.39,12.30,2.04,58.73,1.13,0.37,
+7,E,4.38,4.57,6.14,15.31,68.37,1.14,
+8,D,5.32,2.80,7.44,81.84,2.14,0.41,
+9,D,5.26,2.62,3.14,28.94,59.17,0.74,
+10,D,40.80,6.12,9.01,38.64,4.36,1.04,
+11,A,75.93,11.51,6.14,2.10,3.28,0.96,
+12,CDE,10.97,23.94,32.91,17.87,12.90,1.32,
+13,C,4.54,8.98,45.91,10.06,27.38,3.00,
+14,C,23.88,20.70,25.56,6.65,21.82,1.27,
+15,B,15.32,38.65,20.67,13.70,7.30,4.30,
+16,D,16.10,17.22,15.75,40.35,7.68,2.80,
+17,D,19.45,22.98,17.10,28.69,7.07,4.61,
+18,E,20.98,16.76,17.72,12.81,27.33,4.20,
+19,B,33.93,22.81,10.81,19.21,8.75,4.34,
+20,B,17.09,25.34,30.59,10.95,9.81,6.08,
+21,C,36.05,18.23,22.79,12.94,3.53,6.34,
+22,A,24.08,20.31,18.61,18.02,11.16,7.56,
+23,C,10.54,19.38,25.30,24.90,10.99,8.63,
+24,C,25.77,19.73,22.79,12.35,10.36,8.84,
+25,A,21.38,16.66,18.18,15.49,19.13,9.04,`.trim();
   // MAA 2007 annual report Table 5, national response cohort n=150,618.
   const raw2007 = `
 1,D,4.22,4.19,3.67,84.11,3.30,0.48,
@@ -415,6 +443,7 @@
 24,B,10.00,50.00,0.00,20.00,0.00,20.00,0.00
 25,C,60.00,10.00,10.00,0.00,0.00,20.00,0.00`.trim();
   const sources = Object.freeze({
+    2008: Object.freeze({ raw: raw2008, respondentCount: 148731, population: "2008 AMC 8 MAA-reported national response cohort", sourceUrl: "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america", sourceStatus: "MAA-authored annual report Table 5 in secondary-hosted copy; extracted D/E block verified against LIVE key and source stars" }),
     2007: Object.freeze({ raw: raw2007, respondentCount: 150618, population: "2007 AMC 8 MAA-reported national response cohort", sourceUrl: "https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards", sourceStatus: "MAA-authored annual report Table 5 in secondary-hosted copy; answer key cross-checked with LIVE" }),
     2006: Object.freeze({ raw: raw2006, respondentCount: 147210, population: "2006 AMC 8 reported MAA response cohort", sourceUrl: "https://www.judymlevine.com/uploads/5/4/6/7/5467082/2006_amc_8_ws-25.pdf", sourceStatus: "MAA-authored item-response table in secondary-hosted report; non-reconciling rows suppressed; rows 18–19 have multiple marked keys", excludedQuestions: Object.freeze([18, 19]) }),
     2009: Object.freeze({ raw: raw2009, respondentCount: 741, population: "2009 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/43", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),

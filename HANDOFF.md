@@ -1534,7 +1534,7 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 - 2007·2008 MAA AMC 8 Summary of Results and Awards 재게시본에 전체 cohort `Item Difficulty` 표가 있고, grade mean/count 표도 있다. 보고된 item cohorts: 2007 n=150,618; 2008 n=148,731. 참고: [2007 report copy](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [2008 report copy](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america).
 - 2007은 MAA 연례 보고서 Table 5의 전국 응답률 25문항을 `amc8-2007-item-response-percent.csv`와 lookup에 추가했다. n=150,618. 25개 키는 LIVE와 대조했다. 15, 19–23번은 선택률+무응답 합계가 런타임 0.15%p 허용치와 맞지 않아 결과 비교에서 숨긴다. 학년 평균·표본 수는 기존 2001–2009 MAA 표를 계속 사용한다.
-- 다음은 2008 MAA 연례 보고서 Table 5에서 전국 문항 응답률을 확보한다. MAA 학교 보고 재게시본은 일부 학교/학년 코호트 자료이며 전국 표본으로 혼용하지 않는다. 해당 학교 보고서는 Q12에 C, D, E를 accepted answers로 표시한다. LIVE 2008 key는 C 하나를 보여주므로 원 MAA cohort report의 accepted-key 표기와 구별할 것.
+- 2008은 MAA 연례 보고서 Table 5에 전국 응답표가 있다. 재게시본의 D/E 선택지 값 묶음을 분리해 정답 별표와 LIVE 정답 25개에 대조했고, 5개 불일치 합계 문항(18,19,22–24)은 런타임에서 숨겼다. 보고서는 Q12 accepted answers를 C/D/E로 집계하고 LIVE key는 C로 표기하므로 accepted set과 공식 표시 정답을 별도 보존한다. 다음은 2009 MAA 전국 표를 웹에서 찾되 기존 2009 한국 응시단 자료와 구분한다.
 
 ### 2026-11-04 웹 검색: AMC 8 2007 전국 문항 응답률 추가
 
@@ -1542,5 +1542,13 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - LIVE 2007 정답표와 25개 정답 문자를 대조했다. 선택률+무응답률이 런타임 허용치에 들지 않는 6개 문항(15, 19–23)은 자동으로 결과 비교에서 제외한다. unreadable 열은 보고서가 제공하지 않아 비워 두었다.
 - `amc8-item-response-reference.js`와 연도별 CSV에 2007을 연결했고, 문제 복습 화면의 데이터 캐시 버전을 갱신했다. MAA 학년 평균/counts는 별도 출처의 기록 학년 통계로만 유지한다. 2007 응답률은 전국 참가자 전체의 역사적 분포이며 학생 개인의 오개념이나 현재 기준으로 해석하지 않는다.
 - 검수: 25문항·25개 정답 대조·응답률 합계 및 대표 문항 오답 선택률 테스트, 기존 item response contract, `git diff --check`. 원문 문제를 복사하지 않는다. `raw_youtube.txt`는 보존/제외. 로컬 변경만, push·배포·Drive sync 없음.
+
+### 2026-11-04 웹 검색: AMC 8 2008 전국 문항 응답률 추가
+
+- MAA 작성 2008 AMC 8 Results and Awards Summary Table 5에서 전국 응답률을 가져왔다: n=148,731. D/E columns are combined by the text extractor; the 25 D values followed by 25 E values were separated and the resulting correct-answer markers were verified against all 25 LIVE keys. The annual report's accepted answers for item 12 are C/D/E; the app keeps that set for historical response shares while LIVE's answer key remains C.
+- 25문항을 CSV와 response lookup에 추가했다. 합계가 허용 범위를 벗어난 5개 문항(18, 19, 22–24)은 사용자 비교에서 제외한다. unreadable 비율은 별도 열로 보고되지 않아 빈칸이다. grade means/counts는 이미 확보한 MAA 2008 기록 학년 통계와 별개 자료로 유지한다.
+- 검수: 공식 LIVE 정답 25개·Q12 accepted set·대표 응답률·5개 suppression assertions, response contract, CSV row count and reconciliation, `git diff --check`. 원문 시험 문항은 복사하지 않는다. 로컬 변경만; push·배포·Drive sync 없음.
+
+출처: [MAA 2008 연례 보고서 Table 5 재게시본](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america), [LIVE 2008 정답표](https://live.poshenloh.com/past-contests/amc8/2008/answers), [LIVE 2008 시험지·해설](https://live.poshenloh.com/past-contests/amc8/2008).
 
 출처: [MAA 2007 연례 보고서 Table 5 재게시본](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [LIVE 2007 정답표](https://live.poshenloh.com/past-contests/amc8/2007/answers), [LIVE 2007 시험지·해설](https://live.poshenloh.com/past-contests/amc8/2007).

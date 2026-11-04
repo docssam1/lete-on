@@ -18,6 +18,18 @@ for (let question = 1; question <= 25; question++) {
 }
 assert.equal(reference.responseFor(2007, 10, "C").correctResponsePercent, 22.12);
 assert.equal(reference.responseFor(2007, 10, "C").selectedResponsePercent, 31.59);
+const official2008Key = ["B", "A", "A", "C", "E", "D", "E", "D", "D", "D", "A", "C", "C", "C", "B", "D", "D", "E", "B", "B", "C", "A", "C", "C", "A"];
+assert.equal(reference.questionsByYear[2008].length, 25);
+for (let question = 1; question <= 25; question++) {
+  const item = reference.questionsByYear[2008][question - 1];
+  assert.equal(item.correctAnswer, official2008Key[question - 1]);
+  assert.equal(item.respondentCount, 148731);
+  if ([12].includes(question)) assert.deepEqual(item.acceptedAnswers, ["C", "D", "E"]);
+}
+for (const question of [18, 19, 22, 23, 24]) assert.equal(reference.responseFor(2008, question, ""), null);
+assert.equal(reference.responseFor(2008, 12, "D").correctAnswer, "C");
+assert.equal(reference.responseFor(2008, 12, "D").correctResponsePercent, 63.68);
+assert.equal(reference.responseFor(2008, 12, "D").selectedResponsePercent, 17.87);
 for (const year of [2012, 2013, 2014, 2015]) {
   assert.equal(reference.questionsByYear[year].length, 25);
   for (let question = 1; question <= 25; question++) {
@@ -59,7 +71,8 @@ assert.equal(reference.responseFor(2015, 8, "C", 7).correctResponsePercent, 26.4
 assert.equal(reference.responseFor(2015, 8, "C", 7).selectedResponsePercent, 25.75);
 assert.equal(reference.responseFor(2015, 8, "", 6).respondentCount, 149844);
 assert.equal(reference.responseFor(2015, 8, "", 8).respondentCount, 149844);
-assert.equal(reference.responseFor(2008, 3, "B"), null);
+assert.equal(reference.responseFor(2008, 3, "B").correctAnswer, "A");
+assert.equal(reference.responseFor(2008, 3, "B").selectedResponsePercent, 6.22);
 assert.equal(reference.responseFor(2010, 26, "B"), null);
 assert.equal(reference.responseFor(2010, 3, "B").correctAnswer, "C");
 assert.equal(reference.responseFor(2010, 3, "B").selectedResponsePercent, 20.97);
