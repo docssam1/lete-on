@@ -1,0 +1,94 @@
+"use strict";
+const assert = require("node:assert/strict");
+const path = require("node:path");
+const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
+const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:45752";
+const ids = ["5-2-u3-e1-mission-1-original", "5-2-u3-e1-mission-2-original", "5-2-u3-e1-mission-3-original", "5-2-u3-e1-mission-4-original"];
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    for (const width of [1280, 375]) {
+      const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
+      await context.route("**/*", route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
+      await context.addInitScript(() => { window.print = () => {}; });
+      const page = await context.newPage(), errors = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await page.goto(`${origin}/hselementary/question-bank/`);
+      await page.waitForFunction(() => window.HSE_GENERATORS && window.HSE_SOURCE52_U3_P25_COPY_ORIGINALS);
+      await page.locator("#gradeFilter [data-grade='5']").click();
+      await page.locator("#termFilter [data-term='2']").click();
+      await page.locator("#unitFilter").selectOption("5-2-u3");
+      for (const id of ids) await page.locator(`#typeList input[data-type-id='${id}']`).check();
+      await page.locator("#questionCountInput").fill("4");
+      await page.locator("#difficultyFilter [data-difficulty='0']").click();
+      await page.locator("#generateButton").click();
+      await page.waitForFunction(() => !document.querySelector("#worksheet").hidden);
+      const data = await page.evaluate(ids => {
+        const types = window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types)));
+        const problems = [...document.querySelectorAll("#problemView .question-item")].map(item => {
+          const marker = item.querySelector("[data-source-item-id][data-pool-index]");
+          const id = marker?.dataset.sourceItemId, variant = Number(marker?.dataset.poolIndex);
+          return { id, variant, answer: window.HSE_GENERATORS.generate(types.find(t => t.id === id), 0, 0, 0, variant).answer, automaticGrading: window.HSE_GENERATORS.generate(types.find(t => t.id === id), 0, 0, 0, variant).automaticGrading, figures: item.querySelectorAll("svg").length };
+        });
+        return { problems, solutions: [...document.querySelectorAll("#solutionView .solution-item")].map(e => ({ text: e.innerText, figures: e.querySelectorAll("svg").length })) };
+      }, ids);
+      assert.equal(data.problems.length, 4);
+      assert.equal(data.solutions.length, 4);
+      assert.deepEqual(await page.locator('#problemView .print-page').evaluateAll(pages => pages.map(page => page.querySelectorAll('.question-item').length)), [4], 'four questions per page, except the final remainder');
+      assert.equal(await page.locator('#problemView [data-source-answer]').count(), 0, 'answers stay out of problems');
+      assert.doesNotMatch(await page.locator('#problemView').innerText(), /도움말|힌트|풀이할 때/);
+      const compact = s => s.normalize("NFKC").replace(/[\s/]/g, "");
+      data.problems.forEach((p, i) => {
+        assert(p.answer && compact(data.solutions[i].text).includes(compact(p.answer)), `answer ${i + 1} matches ${p.id}`);
+      });
+      assert.equal(await page.locator("#solutionView .p25copy-answer-figure").count(), 2, "copy solutions contain congruent figures");
+      assert.equal(await page.locator("#problemView .p25copy-figure").count(), 2, "both source outlines are visible");
+      await page.emulateMedia({ media: "print" });
+      for (const id of ids.slice(0, 1)) {
+        const family = await page.locator(`[data-source-item-id="${id}"]`).first().evaluate(el => getComputedStyle(el).fontFamily);
+        assert.match(family, /Noto Serif KR/);
+      }
+      await page.emulateMedia({ media: null });
+      await page.locator("#solutionTab").click();
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+      if (width === 1280 && process.env.MAC_CHECK_OUTPUT) {
+        const scales = {};
+        for (const mode of ["problem", "solution"]) {
+          await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
+          await page.locator("#printMenuButton").click();
+          await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
+          await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
+          if (mode === "problem") {
+            await page.emulateMedia({media:"print"});
+            await page.setViewportSize({width:794,height:1123});
+            const boxes = await page.locator("#problemView .question-item").evaluateAll(items => items.map(item => {
+              const box = item.getBoundingClientRect(), prompt = item.querySelector(".question-prompt").getBoundingClientRect(), answer = item.querySelector(".answer-line").getBoundingClientRect();
+              return { bottom:box.bottom, promptBottom:prompt.bottom, answerTop:answer.top, answerBottom:answer.bottom };
+            }));
+            for (const box of boxes) assert(box.promptBottom <= box.answerTop + 1 && box.answerBottom <= box.bottom + 1, "problem, answer and cell must not overlap");
+            await page.emulateMedia({media:null});
+          }
+          await page.emulateMedia({media:"print"});
+          scales[mode] = await page.evaluate(mode => [...document.querySelectorAll(mode === "problem" ? "#problemView .question-item" : "#solutionView .solution-item")].flatMap(item => {
+            const marker=item.querySelector(mode === "problem" ? "[data-source-item-id]" : "[data-source-answer]");
+            const id=mode === "problem" ? marker?.dataset.sourceItemId : marker?.dataset.sourceAnswer;
+            const svg=item.querySelector(mode === "problem" ? "svg.p25copy-figure" : "svg.p25copy-answer-figure");
+            return svg && id ? [{id,scale:svg.getBoundingClientRect().width / svg.viewBox.baseVal.width}] : [];
+          }),mode);
+          await page.emulateMedia({media:null});
+          const pdf = await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          if (mode === "problem") assert.equal((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length, 1, "four selected problems must fit one physical A4 page");
+          await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+        }
+        assert.equal(scales.problem.length,2); assert.equal(scales.solution.length,2);
+        for (const q of scales.problem) {
+          const solved=scales.solution.find(a=>a.id===q.id);
+          assert(solved && q.scale > 0 && solved.scale > 0 && Math.abs(q.scale-solved.scale)<0.002, `${q.id}: problem and solution print the same physical size`);
+        }
+      }
+      assert.deepEqual(errors, []);
+      await context.close();
+    }
+  } finally { await browser.close(); }
+  console.log("PASS: reconstructed copy problems, congruent print sizes, and mixed four-up layout on desktop and mobile");
+})().catch(error => { console.error(error); process.exitCode = 1; });
