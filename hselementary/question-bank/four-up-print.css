@@ -142,3 +142,8 @@
   #problemView .source52-e44-graph .female-point, #problemView .source52-e44-graph .male-point,
   #solutionView .source52-e44-graph .female-point, #solutionView .source52-e44-graph .male-point { fill:#191511; }
 }
+
+@media print {
+  #problemView [data-source-item-id="5-2-u1-e4-mission-1-rounded-count-original"],
+  #problemView [data-source-item-id="5-2-u1-e4-mission-1-rounded-count"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+}
