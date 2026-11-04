@@ -257,10 +257,10 @@
     const options = [{ id: "sasmo", title: "SASMO", itemCount: 25 }];
     const kangarooBandStart = grade % 2 === 1 ? grade : grade - 1;
     options.push({ id: "kangaroo", title: "Math Kangaroo", itemCount: grade <= 4 ? 24 : 30, paperBandId: `grades-${kangarooBandStart}-${kangarooBandStart + 1}` });
-    if (grade >= 6 && grade <= 8) options.push({ id: "amc8", title: "AMC 8", itemCount: 25 });
+    if (grade >= 3 && grade <= 8) options.push({ id: "amc8", title: "AMC 8", itemCount: 25 });
     if (grade >= 7 && grade <= 10) options.push({ id: "amc10", title: "AMC 10", itemCount: 25, optional: true });
-    if (grade >= 8) options.push({ id: "amc12", title: "AMC 12", itemCount: 25, optional: true });
-    if (grade >= 8) options.push({ id: "aime", title: "AIME 문항 복습", itemCount: 15, optional: true });
+    if (grade >= 7 && grade <= 12) options.push({ id: "amc12", title: "AMC 12", itemCount: 25, optional: true });
+    if (grade >= 7) options.push({ id: "aime", title: "AIME 문항 복습", itemCount: 15, optional: true });
     return options;
   }
 

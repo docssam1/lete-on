@@ -816,8 +816,18 @@
   }
   function render(historyMode) {
     const entry = data.getGrade(grade);
-    const paperReviewProgram = data.competitionOptions(grade).some(function (item) { return item.id === competition; }) ? competition : "amc8";
+    const competitionChoices = data.competitionOptions(grade);
+    const selectedCompetition = competitionChoices.find(function (item) { return item.id === competition; });
+    const defaultArchiveProgram = grade <= 8 ? "amc8" : grade <= 10 ? "amc10" : "amc12";
+    const paperReviewProgram = selectedCompetition ? competition : competitionChoices.some(function (item) { return item.id === defaultArchiveProgram; }) ? defaultArchiveProgram : "amc8";
     $("competition-paper-review-route").href = `./competition-paper-review.html?grade=${grade}&program=${encodeURIComponent(paperReviewProgram)}`;
+    $("competition-paper-review-route").textContent = selectedCompetition && selectedCompetition.id === "kangaroo" ? "Math Kangaroo 결과 입력 · 학년 비교" : "원본 답안 입력 · 결과 확인";
+    const amcArchiveRoute = $("competition-amc-original-route");
+    amcArchiveRoute.href = `./competition-paper-review.html?grade=${grade}&program=${encodeURIComponent(defaultArchiveProgram)}`;
+    const kangarooBandStart = grade % 2 === 1 ? grade : grade - 1;
+    const kangarooArchiveRoute = $("competition-kangaroo-original-route");
+    kangarooArchiveRoute.href = `https://mathkangaroo.org/mks/practice/grades-${kangarooBandStart}-${kangarooBandStart + 1}/`;
+    kangarooArchiveRoute.querySelector("span").textContent = `Math Kangaroo · Grade ${kangarooBandStart}–${kangarooBandStart + 1}`;
     const planHref = grade === 7 ? "./learning-plan.html?goal=school-g7-nsa" : "./learning-plan.html";
     $("boarding-learning-plan-link").href = planHref;
     $("boarding-learning-plan-link").textContent = grade === 7 ? "7학년 학습 계획" : "학습 계획";
