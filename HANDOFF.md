@@ -1409,3 +1409,10 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 각 창작 문항의 고유 ID, 보기·정답 인덱스, 풀이, 개념 태그 존재를 확인했다. 로컬 브라우저의 원본 복습 진입 경로에서 연습 후보가 필터링되고, 분수는 쌓은 분수꼴로 표시되는 것을 확인했다. 새 은행 9개 중 선택된 오답 개념 조건에서 7개가 표시됐다.
 - 추가 웹 검색에서 LIVE가 2025·2026 AMC 8 인쇄용 원본 시험지, 답안, 풀이 링크를 현재 제공하고 MAA 공식 사용 허가를 명시하는 것을 재확인했다. 연도별 카탈로그에 두 연도 자료가 이미 있어 중복 레코드는 만들지 않았다. [2025 AMC 8](https://live.poshenloh.com/past-contests/amc8/2025), [2026 AMC 8](https://live.poshenloh.com/past-contests/amc8/2026), [전체 LIVE 과거 시험 아카이브](https://live.poshenloh.com/past-contests).
 - 변경: `boarding-school-math/amc8-concept-practice-bank.js`, `boarding-school-math/amc8-topic-practice.js`, `boarding-school-math/amc8-topic-practice.html`. `raw_youtube.txt`는 사용자 파일로 보존·제외. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 AMC 10 원본 개념 태그 후속 창작 연습
+
+- 기존 AMC 10 창작 문항 은행 12개에 새 문항 13개를 추가했다. 주제는 비와 비례, 좌표거리, 평균, 백분율 변화, 홀짝·배수, 등차수열, 이차식, 원의 넓이, 부피, 정수 최적화, 정수해, 정삼각형 넓이, 분수식이다. 25문항 모두 GFIELD 자체 연습이며 AMC 원문이나 공식 모의고사가 아니다.
+- 새 문항 13개가 사용하는 `sourceConcepts`는 원본 아카이브의 AMC 10 태그 목록과 모두 일치한다. 옵션 중복·누락 필드가 없고, 25문항 전체 정답 위치가 A–E 각 5개로 분포한다. 각 문항의 계산을 직접 점검했다. 연도별 원본 태그와 하나라도 겹치는 원본 문항은 1,300개 중 788개에서 1,073개로 늘었다. 이 수는 교차표 태그 범위일 뿐 분류 정확도나 진단 성능을 보증하지 않는다.
+- localhost 학습 화면에서 쿼리의 13개 개념을 연결한 결과, 신규 13문항이 실제로 모두 렌더링되고 표기된 태그 라벨·힌트·풀이 접기·선택지가 표시된다. 숫자 분수는 위아래 분수꼴로 보인다. 정답표 제출, 원본 카탈로그는 변경하지 않았다.
+- 변경: `boarding-school-math/competition/amc10-concept-practice-bank.js`, `boarding-school-math/amc10-practice.js`, `boarding-school-math/amc10-practice.html`, 본 인수인계. `raw_youtube.txt`는 수정·스테이징하지 않는다. Local only; no push, deployment, or Drive sync.
