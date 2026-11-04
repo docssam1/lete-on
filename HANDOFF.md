@@ -1350,3 +1350,5 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 출처 내부 집계가 일치하지 않는다. 학년 행 인원 합은 41,675이며, 보고서 p.3 요약표는 전체 n=42,032, p.4 점수 구간표는 n=41,682다. 하위행의 인원 가중 평균은 71.38, p.3 인쇄 전체 평균은 71.45다. 어떤 숫자도 보정하지 않았고 이 차이를 각 행의 주석과 coverage manifest에 남겼다. 자료는 웹 인덱스 텍스트에서 전사했으며 로컬 PDF 페이지 렌더는 확인하지 않았다.
 
 검증은 CSV 행·연도별 그룹합과 런타임 lookup을 대조한다. 출처와 제한은 [AMC 학년 비교 근거](boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md) 및 [GEMT 2014 보고서](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf)에 기록했다. `raw_youtube.txt`는 수정하지 않는다. Local only; no push, deployment, or Drive sync.
+
+같은 보고서 p.8의 AMC10B 문항별 Global 응답표 A–E/무응답/판독불가 비율 25행도 연도·폼 정확히 묶어 item-response reference에 연결했다. LIVE answer key와 25개 정답을 교차 확인했다. 사용 화면은 학생이 선택한 오답 비율 또는 최다 오답 비율을 과거 집단 맥락으로만 보여주며, 개별 오개념 판정이나 학년 기준은 아니다. CSV `amc10b-2014-item-response-percent.csv`와 증거 문서에 출처·n 및 p.3 전체 인원(42,032) 대 p.4 response denominator (41,682) 차이를 남겼다. PDF는 웹 인덱스 텍스트로 전사했고 로컬 페이지 이미지 검수는 하지 않았다.

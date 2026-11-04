@@ -534,3 +534,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 보고서 p.4의 점수 구간 표는 전체 n=41,682를 보고한다. 학년 하위행 인원 합은 41,675이고, 인원 가중 하위행 평균은 71.38이다. 따라서 전체 수·하위집단 수·전체 평균 사이 불일치를 임의로 보정하지 않고 데이터 주석과 화면에 드러낸다. 표는 검색 인덱스에서 회수했으며 로컬 PDF 렌더 확인은 하지 않았다.
 - `amc10b-grade-means-2014.csv`, 런타임 exact-grade lookup, 266회 coverage manifest, 자료 README에 반영했다. 2014 AMC10B 점수 기록은 2014 AMC12B 또는 다른 연도와 혼합하지 않는다.
 - 출처: [GEMT 2014 AMC10B/AMC12B report](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf).
+
+## 2026-11-04 2014 AMC10B 문항별 글로벌 응답 분포 추가
+
+- 같은 GEMT 보고서의 2014 AMC10B global response table (printed p.8)에서 25개 문항의 A–E 선택, 무응답, 판독불가 비율을 전사했다. 문제별 정답표와 선택지별 응답은 LIVE 2014 AMC10B Answer Key와 대조했다. Taiwan response table은 사용하지 않았다.
+- 각 문항 집단 응답 분모는 보고서 p.4 점수 분포 총계 41,682로 기록했다. 보고서 p.3 요약 통계의 전체인원 42,032와는 차이가 있어 grade mean 데이터와 마찬가지로 수치를 보정하지 않았다. 백분율은 각 질문별 반올림 값이므로 100%와 약간 다를 수 있다.
+- 기존 AMC10/12 item response lookup에 2014 AMC10B Global 행을 추가했다. 결과 화면은 자기 오답 선택 비율 또는 가장 많이 선택된 오답 비율을 그 과거 집단 응답과 함께 보여 준다. 이는 정답률/선택 분포 맥락이며 학생의 오개념을 판정하거나 학년·백분위·현재 규준을 뜻하지 않는다. 원본 문항 해설 링크와 함께 사용한다.
+- 데이터: [`amc10b-2014-item-response-percent.csv`](../competition/historical-amc-grade/amc10b-2014-item-response-percent.csv). 출처: [GEMT 2014 report](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf), [LIVE 2014 AMC10B answer key](https://live.poshenloh.com/past-contests/amc10/2014B/answers).
