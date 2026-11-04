@@ -7,6 +7,6 @@
 .p52e33-cube .cube-lines,.p52e33-net .net-lines{stroke-width:2.6}
 .p52e33-cube .hidden{stroke-dasharray:4 3}
 .p52e33-net .net-squares{fill:#fff;stroke:#191511;stroke-width:1.5}
-.p52e33-net .net-labels,.p52e33-cube .cube-labels{font:15px 'Noto Serif KR',serif;fill:#191511}
+.p52e33-net .net-labels text,.p52e33-cube .cube-labels text{font:19px 'Noto Serif KR',serif;fill:#191511;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}
 @media(max-width:480px){.p52e33-figures{grid-template-columns:1fr;max-width:245px;gap:3px}}
 @media print{.p52e33-question,.p52e33-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p52e33-figures{margin:1mm auto;max-height:75mm}.p52e33-figures svg{max-height:75mm}.p52e33-answer-figure svg{max-height:65mm}}
