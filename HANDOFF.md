@@ -1,3 +1,9 @@
+### 2026-11-05 · 2016 AMC 8 whole-cohort summary extended
+
+- Web search recovered the correct BEAM result post dated 2017-02-25, which identifies the prior November contest as 2016 and reports n=108,295, median 9, and top-quartile boundary 12. These align in population with the MAA Michigan Section Spring 2017 newsletter, which reports 108,295, 1,875 schools, mean 9.36, and top-1% boundary 22.
+- Added median/top-25 markers and precise source provenance to the AMC score reference and README/research note. Kept the alternate 99CEF U.S./Canada n=108,227 row separate. This still is not a 0–25 frequency table, and it does not provide Grade 7 national averages.
+- `git diff --check` passed and the 2016 reference entry was reviewed against the two cited posts; fields added (`top25`, `top50`) already exist in the reference schema. The system has no `node` executable, so no runtime/test command was run. Preserve `raw_youtube.txt`; do not infer full frequencies or substitute the Bard local sample for national grade data.
+
 ### 2026-11-05 · AMC 8 2002–2004 frequency-table search
 
 - Searched web archives for 2002/2003 national AMC 8 score frequencies and inspected the MAA-authored 56th annual report's 2004 AMC 8 section. The accessible 2004 section prints cohort totals, perfect score count, overall/grade means and award recipients, but no 0–25 frequency table was found there. A 2002 result search returned an MAA-branded problems/solutions pamphlet, not statistics.
