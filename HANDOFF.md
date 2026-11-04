@@ -2017,3 +2017,8 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Reopened MAA's public score-distribution report for AMC 8 school years 2022/23–2025/26. All 12 values per year (percentile cut scores, maximum, mean, standard deviation, student count, and school count) match `boarding-school-math/competition/historical-amc-grade/amc8-score-distribution-2023-2026-maa.csv`; the report's `.00` integer formatting was normalized for numeric comparison.
 - Confirmed this public report is overall-cohort only: it has no grade-by-grade or item-response rows. Keep these as year-specific overall comparisons, not grade ranks, placement, or skill levels. Evidence and exact links are in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`.
 - `git diff --check` to be run. Preserve `raw_youtube.txt`; no push, deployment, or Drive sync.
+
+### 2026-11-05 · 2008 AMC 10/12 item-statistics table located
+
+- The MAA 2008 high-school results report table of contents locates all-official-student item-difficulty tables for AMC 12A/12B and AMC 10A/10B on printed pages 252–255. The accessible web text does not expose the table cells, so no response percentages were entered; those four manifest rows remain `not-found` pending a readable scan/page image.
+- Evidence and source link recorded in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. Preserve `raw_youtube.txt`; no push, deployment, or Drive sync.

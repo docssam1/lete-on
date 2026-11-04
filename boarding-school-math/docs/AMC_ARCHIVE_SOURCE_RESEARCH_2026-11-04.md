@@ -6,6 +6,10 @@ MAA 공개 EduView의 `Score Distribution` 보고서를 열어 AMC 8 학년도 2
 
 이 표는 전체 점수 보고 코호트로, 학년별 행이나 문항별 응답률을 제공하지 않는다. 따라서 확인된 점수선은 해당 회차의 전체 참가자에 대한 역사적 비교값으로만 취급하며, 학년 순위·수학 실력 등급·배치 판단 근거로 쓰지 않는다. 확인일 현재 공개 선택 목록은 2022/23–2025/26이었다. [MAA EduView Score Distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561) · [MAA AMC 프로그램 안내](https://maa.org/student-programs/amc/).
 
+## 2026-11-05 · 2008 AMC 10/12 문항 통계표 원문 위치 확인
+
+MAA의 2008 High School Results and Awards Summary 공개 미러 목차에서 전체 공식 응시자의 문항 난이도 표를 확인했다. AMC 12A/B와 AMC 10A/B 표는 인쇄본 pp.252–255에 각각 배치돼 있다. 다만 공개 텍스트 추출은 목차와 주변 본문까지만 읽히고 표의 선택지별 값은 확보되지 않았다. 따라서 `amc-item-response-coverage-by-paper.csv`의 2008 네 형식은 계속 `not-found`로 두며 점수를 입력하지 않았다. 다음 회수는 이 보고서의 해당 페이지가 실제로 읽히는 사본/페이지 이미지 확보 후 시행한다. [2008 MAA High School Results & Awards Summary](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions).
+
 ## 연도별 원본 자료
 
 `competition/amc-original-source-catalog.csv`는 공개 경시 원본 자료의 연도·형식별 경로와 인쇄 문제지, 답, 풀이 링크를 보관한다. 이번 웹 확인 시 총 266개 기록에 필요한 네 종류 링크가 모두 채워져 있었다. 원문 문항을 복제하지 않고 출처의 공개 페이지와 PDF 경로를 연결한다.
