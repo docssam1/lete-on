@@ -1854,6 +1854,13 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - MAA Wisconsin Section의 2021 가을 뉴스레터는 2017년 Wisconsin 전체 응시자 수(AMC 10 n=540, AMC 12 n=690)와 별도 주 전체 평균(10B 55.32, 12B 61.59)을 제공하지만 학년별 값은 없다. 지역 전체 평균으로만 구분한다.
 - 조사 근거를 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 추가했다. 2017 B형 전국 학년 표는 여전히 미회수이며, 런타임에는 소표본 지역값을 넣지 않았다. 다음: 공개 MAA/지역별 원자료를 연도·폼·모집단 기준으로 계속 조사하고 확인된 범위만 기능에 연결한다. `raw_youtube.txt` 보호; push·배포·Drive 동기화 없음.
 
+### 2026-11-05 웹 검색 · 2017 AMC 10/12 연도별 전체 코호트
+
+- 2017 A/B의 전체 참가자 수와 평균은 Think Matrix 역사표에서 확인했다: AMC 10A/B n=53,169/25,919, 평균 59.33/66.56; AMC 12A/B n=44,915/23,439, 평균 56.99/58.35. 이는 학년별 평균이 아니다.
+- AIME 초청 경계는 10A/B 112.5/120, 12A/B 96/100.5. 전 연도 경계표와 A형 당해 공지를 대조했다. 개인의 학년 등급이나 국가 내 학년 percentile로 해석하지 않는다.
+- MAA report 메뉴 캡처에는 2017 A/B 보고서 항목이 있지만 생성 보고서 본문은 보존되지 않았다. 2017 B형에서 검색된 Bard의 Grade 7 n=3, Grade 8 n=5 수치는 지역 표본이므로 국가 학년 비교에 제외했다. MIT 연구의 1999–2007 9개년 학년별 평균 역시 2017 연도/폼 값을 복원하지 못하므로 연도별 기준으로 쓰지 않는다.
+- 조사 상세를 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다. 런타임 학년 진단 자료는 추가하지 않았고, 미회수 표를 계속 웹 검색한다. 출처: [Think Matrix](https://www.think-matrix.com/math_planet/awards_setting_and_historical_result/), [AIME 경계표](https://ivyleaguecenter.org/2016/01/23/1487/), [MIT-hosted study](https://economics.mit.edu/sites/default/files/publications/08.2018_dynamics_of_the_gender_gap_in_high_math_ac.pdf).
+
 ### 2026-11-05 · AMC 원본 통계 결과집 아카이브 경로 및 2001–2007 대조
 
 - 웹에서 [Ian Calaway AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive)를 확인했다. 설명상 중등 결과집 디지털 아카이브는 1985–2022, 고등 결과집은 1980–2010 전체와 2011–2022 디지털 결과다. 이는 결과집 회수 경로이지 모든 해의 점수 분포표가 확보됐다는 뜻은 아니다.
