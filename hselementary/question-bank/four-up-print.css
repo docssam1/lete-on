@@ -152,3 +152,7 @@
   /* 두 원의 대칭축을 학생이 모눈에 직접 그릴 수 있도록 크기를 확보한다. */
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-4-original"] svg { max-height:220px; }
 }
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-1-original"] svg { max-height:220px; }
+}
