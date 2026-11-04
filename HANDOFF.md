@@ -1867,3 +1867,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - [MAA 작성 2007 AMC 8 결과집 사본](https://www.scribd.com/document/618492777/2007-AMC-8-Summary-of-Results-and-Awards-PDFDrive)의 기록 학년별 인원·평균(2001–2007)과 2007 학년별 점수 빈도, 2005–2007 전체 점수 비교를 기존 데이터와 대조해 일치함을 확인했다. 중복 행은 추가하지 않았다.
 - 이 보고서는 당시 AMC 8 성적에 확립된 norm이 없으며 수업·배치고사와 비교할 수 없다고 밝힌다. 진단 화면은 같은 해의 대회 참가 코호트 참고로 제한한다.
 - 2002–2004 점수별 빈도표는 이번 검색에서도 새로 확인되지 않았다. 상세 근거와 다음 검색 범위는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 “연도별 MAA 결과집 아카이브 경로 확인”에 남겼다.
+
+### 2026-11-05 · 2016 AMC 8 MAA 점수 보고서 이미지 회수
+
+- Rootmaths 기사에 포함된 “Contest Score Report - AMC 8 2016” 이미지를 찾아 Apple Vision OCR과 시각 대조를 마쳤다. Top 1/5/25/50/75% 경계 22/18/12/9/6, 최고점 25, 만점자 268명, 평균 9.36을 확인해 점수 요약 조회에 연결했다. MAA Michigan 뉴스레터의 참가자·학교 수와 BEAM의 중앙값도 별도 출처로 대조했다.
+- 이미지의 점수별 그래프는 막대만 표시해 정확한 0–25 빈도는 복원할 수 없다. 워터마크로 가려진 표준편차·전체 인원·학교 수는 미기록이다. 전국 Grade 7 norm도 미확인으로 유지한다. 결과 화면에서 기사, MAA 교차 확인 자료, 점수 보고서 이미지를 각각 열 수 있다. 조사 기록: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 “2016 AMC 8 MAA score-report image recovered”.
+- 다음은 2020 AMC 8의 MAA 점수 보고서와 2016 이미지처럼 막대만 있는 통계자료를 대상으로 정확한 점수 도수표 또는 학년별 표가 별도로 있는지 계속 검색한다. 보호된 `raw_youtube.txt`는 건드리지 않는다.

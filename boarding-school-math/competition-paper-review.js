@@ -737,6 +737,14 @@
         corroboratingLink.textContent = "교차 확인 자료 ↗";
         sourceNote.append(corroboratingLink);
       }
+      if (amcCohort.scoreReportImageUrl) {
+        const reportImageLink = document.createElement("a");
+        reportImageLink.href = amcCohort.scoreReportImageUrl;
+        reportImageLink.target = "_blank";
+        reportImageLink.rel = "noopener noreferrer";
+        reportImageLink.textContent = "점수 보고서 이미지 ↗";
+        sourceNote.append(reportImageLink);
+      }
       sourceLink.href = amcCohort.sourceUrl;
       sourceLink.textContent = amcCohort.sourceLabel || (amcCohort.sourceNote ? `${selectedYear} MAA 보고서 재게시 출처 ↗` : "MAA 공개 점수 분포 ↗");
     }
