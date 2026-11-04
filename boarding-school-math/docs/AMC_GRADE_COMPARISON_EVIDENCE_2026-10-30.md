@@ -632,3 +632,19 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 별도 [2004 AMC 8 Results and Statistics 표 사본](https://www.scribd.com/doc/57421446/2004AMC8stats)은 154,590명 코호트의 학년별 평균표와 25문항 A–E 선택·미응답·판독불가 비율표를 싣는다. 같은 표의 전국 통계 및 Grade 4–5/6/7/8 평균은 MAA 작성 56th Annual AMC 요약의 [검색 가능한 사본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)으로 교차 확인했다. 이 2004 학년 평균은 기존 `amc8-grade-means-2001-2009.csv`에 이미 있으므로 중복하지 않는다.
 - 응답표는 스캔 이미지다. 광고 시청 후 공개된 뷰어에서 표의 A–E/OMITS/? 열을 화면 이미지로 행별 직접 확인해 전사했다. Apple Vision OCR은 사용하지 않았다. 25개 별표 답을 [LIVE 2004 답안 키](https://live.poshenloh.com/past-contests/amc8/2004/answers)와 모두 대조했다. Q1은 인쇄값 합계가 99.74%여서 원값을 유지하고 런타임 비교에서 숨겼다. 나머지 24행은 0.15%p 허용오차 내 합계를 통과했다.
 - 25행을 `amc8-2004-item-response-percent.csv`와 AMC 8 응답 조회 레지스트리에 저장했다. 조회 캐시를 갱신했고 기존 응답표 테스트에 2004 답안 25개·분모·행 합계·Q1 억제를 추가했다. 이 전체 응시 코호트 표는 학년별 응답률이나 개인의 오개념 진단이 아니다. 원본 연도별 시험·정답·풀이 링크는 별도 LIVE 경로를 유지한다.
+
+
+## 2026-11-04 웹 검색: AMC 8 2005 문항 통계와 학년 평균 분리
+
+- [LIVE AMC 8 2005 아카이브](https://live.poshenloh.com/past-contests/amc8/2005)는 실제 문제·인쇄용 시험지·정답·풀이 페이지를 제공한다.
+- [MAA 2006 AMC 8 결과·수상 보고서 사본](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary)은 2006년 Item Difficulty 표를 싣고, 2005와 2006 전체 평균을 비교한다. 표 목차와 본문 표기는 응답률이 2006 회차 대상임을 확인한다.
+- [MAA 2007 AMC 8 보고서 사본](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards)의 Table 2는 2001–2007년 Grade 4–5, 6, 7, 8 참가자 수와 평균을 제공한다. 2005 값은 이미 `amc8-grade-means-2001-2009.csv`에 들어 있어 중복하지 않는다. MAA 문서에는 AMC 8은 확립된 norm이 아니며 수업 배치 시험과 비교할 수 없다고도 적혀 있다.
+- “2005 AMC 8 item difficulty / percent answering each problem” 검색에서는 MAA 보고서의 2005 A–E 선택률 전체 표를 회수하지 못했다. 공개된 학교/지역 결과는 해당 모집단의 표본이므로 전국 기준으로 간주하지 않는다. 따라서 2005 grade means는 과거 학년 평균 비교에만, 문항 선택률은 별도 검증된 연도에만 사용한다.
+- 이 확인은 문항 응답표가 존재하지 않는다는 결론이 아니라, 이번 검색에서 검수 가능한 출처를 찾지 못했다는 상태 기록이다.
+
+
+## 2026-11-04 웹 검색: AMC 8 2016 학년·문항 통계 재확인
+
+- 2016 AMC 8 national grade mean/score table과 national item-response report를 연도명·보고서 제목·`Item Difficulty` 문구로 검색했지만, 이번 검색에서 검수 가능한 MAA 전국 원표를 회수하지 못했다. [LIVE의 2016 원본 회차 페이지](https://live.poshenloh.com/past-contests/amc8/2016)는 실제 문제 풀이 자료이며 응시자 답안 분포표의 대체물이 아니다.
+- [MAA 2015 AMC 8 Teacher Manual 사본](https://www.scribd.com/document/435100141/2015-AMC8-TeacherManual)은 응시 학교별 결과 보고서에 `Tables of Item Difficulty for the participants in your school`가 포함됨을 설명한다. 이는 학교 단위 결과 기능의 증거이지, 2016년 전국 코호트 응답 자료가 공개되었다는 증거는 아니다.
+- 기존 2016 전국 학년 통계는 `no-grade-table-recovered`로 둔다. 학교별 결과가 새로 확보되더라도 전국 수치와 별도로 보관하고 학년 비교 기준으로 합치지 않는다.
