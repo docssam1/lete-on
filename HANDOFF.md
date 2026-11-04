@@ -1529,3 +1529,8 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 갱신 파일: response lookup JS, lookup script cache version, item-response CSV, coverage CSV, historical-data README, evidence doc, this handoff. `raw_youtube.txt` 보존/제외. 검증은 CSV row/value reconciliation, lookup test, `git diff --check` 후 local commit 예정. 원본 AMC 문항·풀이 복사는 없음. No push/deploy/Drive sync.
 
 출처: [2006 response table](https://www.judymlevine.com/uploads/5/4/6/7/5467082/2006_amc_8_ws-25.pdf), [LIVE 2006 answer key and solutions](https://live.poshenloh.com/past-contests/amc8/2006/answers), [MAA 2006 annual report copy](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary).
+
+### 다음 연도 웹 자료 조사 포인터
+
+- 2007·2008 MAA AMC 8 Summary of Results and Awards 재게시본에 전체 cohort `Item Difficulty` 표가 있고, grade mean/count 표도 있다. 보고된 item cohorts: 2007 n=150,618; 2008 n=148,731. 참고: [2007 report copy](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [2008 report copy](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america).
+- 온라인으로 추출된 2007 표는 D/E/OMITS 구간의 열·행 순서가 불분명해 수치 전사·제품 반영을 보류한다. 2008 MAA 학교 보고 재게시본은 일부 학교/학년 코호트 자료이며 전국 표본으로 혼용하지 않는다. 해당 학교 보고서는 Q12에 C, D, E를 accepted answers로 표시한다. LIVE 2008 key는 C 하나를 보여주므로 원 MAA cohort report의 accepted-key 표기와 구별할 것.
