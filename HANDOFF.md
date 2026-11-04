@@ -1742,3 +1742,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 - 2021-02-04 저장된 [MAA AMC Historical Statistics 포털](https://web.archive.org/web/20210204011131/http://amc-reg.maa.org/reports/GeneralReports.aspx)을 확인했다. 선택 목록에 2020 AMC 8(ID 87), 2016 AMC 8(ID 63)이 있고, 페이지 설명은 score-distribution, 학년·성별 평균, 문항 난도 보고서 종류를 안내한다. 시스템 이전 중 최신 연도만 공개한다고도 적혀 있다.
 - 보존된 화면은 시험 선택 전이라 해당 표의 데이터는 포함하지 않는다. 구 포털 현재 주소는 404이며, 보존 폼 제출은 Internet Archive HTTP 429로 결과표를 받지 못했다. 이 인덱스를 통계값 증거로 사용하지 않고, 후속 검색은 보존된 ReportViewer 응답/PDF 또는 재게시된 MAA 표를 대상으로 한다.
+
+## 2026-11-05 · AMC 2025 공식 컷의 별도 기관 교차 확인
+
+- 99CEF의 2025 AMC10/12 award notice에서 AMC 10A의 DHR 136.5, Top 5% 112.5, Top 10% 94.5, Top 25% 69, AIME 105를 확인했다. 나머지 10B/12A/12B 컷도 MAA K–12 EduView에 표시된 분포 컷 또는 별도 AIME threshold와 대조했다. 이는 2025 시험 전체의 수상·분포 확인이며 학년별 norm은 아니다.
+- 99CEF 안내는 해당 기관이 발급하는 중국어 성적표에 Taiwan 지역 평균·점수 구간이 포함된다고 설명한다. 지역 모집단 자료는 전체/global 및 미국·캐나다 표와 구분해야 한다. 새 웹 검색에서도 2021–2025 AMC10/12 공개 학년별 global 표는 회수하지 못해 coverage CSV의 `no-grade-table-recovered` 상태를 유지했다.
+- 근거: [99CEF 2025 award notice](https://www.99cef.org.tw/12784/), [99CEF score report scope FAQ](https://www.99cef.org.tw/maa-amc/). 기존 런타임 점수값 변경은 없으며, 최신 AMC 10A 컷은 앞선 커밋 `469bdc709`에서 MAA 원문과 일치하도록 수정됐다.
