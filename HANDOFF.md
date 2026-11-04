@@ -1533,4 +1533,14 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 ### 다음 연도 웹 자료 조사 포인터
 
 - 2007·2008 MAA AMC 8 Summary of Results and Awards 재게시본에 전체 cohort `Item Difficulty` 표가 있고, grade mean/count 표도 있다. 보고된 item cohorts: 2007 n=150,618; 2008 n=148,731. 참고: [2007 report copy](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [2008 report copy](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america).
-- 온라인으로 추출된 2007 표는 D/E/OMITS 구간의 열·행 순서가 불분명해 수치 전사·제품 반영을 보류한다. 2008 MAA 학교 보고 재게시본은 일부 학교/학년 코호트 자료이며 전국 표본으로 혼용하지 않는다. 해당 학교 보고서는 Q12에 C, D, E를 accepted answers로 표시한다. LIVE 2008 key는 C 하나를 보여주므로 원 MAA cohort report의 accepted-key 표기와 구별할 것.
+- 2007은 MAA 연례 보고서 Table 5의 전국 응답률 25문항을 `amc8-2007-item-response-percent.csv`와 lookup에 추가했다. n=150,618. 25개 키는 LIVE와 대조했다. 15, 19–23번은 선택률+무응답 합계가 런타임 0.15%p 허용치와 맞지 않아 결과 비교에서 숨긴다. 학년 평균·표본 수는 기존 2001–2009 MAA 표를 계속 사용한다.
+- 다음은 2008 MAA 연례 보고서 Table 5에서 전국 문항 응답률을 확보한다. MAA 학교 보고 재게시본은 일부 학교/학년 코호트 자료이며 전국 표본으로 혼용하지 않는다. 해당 학교 보고서는 Q12에 C, D, E를 accepted answers로 표시한다. LIVE 2008 key는 C 하나를 보여주므로 원 MAA cohort report의 accepted-key 표기와 구별할 것.
+
+### 2026-11-04 웹 검색: AMC 8 2007 전국 문항 응답률 추가
+
+- MAA 작성 2007 AMC 8 Results and Awards Summary의 Table 5에서 전국 응답 분포를 회수했다: 150,618명, 25문항, A–E 선택률과 무응답률. 표는 MAA 원문 보고서의 재게시본에서 읽었다.
+- LIVE 2007 정답표와 25개 정답 문자를 대조했다. 선택률+무응답률이 런타임 허용치에 들지 않는 6개 문항(15, 19–23)은 자동으로 결과 비교에서 제외한다. unreadable 열은 보고서가 제공하지 않아 비워 두었다.
+- `amc8-item-response-reference.js`와 연도별 CSV에 2007을 연결했고, 문제 복습 화면의 데이터 캐시 버전을 갱신했다. MAA 학년 평균/counts는 별도 출처의 기록 학년 통계로만 유지한다. 2007 응답률은 전국 참가자 전체의 역사적 분포이며 학생 개인의 오개념이나 현재 기준으로 해석하지 않는다.
+- 검수: 25문항·25개 정답 대조·응답률 합계 및 대표 문항 오답 선택률 테스트, 기존 item response contract, `git diff --check`. 원문 문제를 복사하지 않는다. `raw_youtube.txt`는 보존/제외. 로컬 변경만, push·배포·Drive sync 없음.
+
+출처: [MAA 2007 연례 보고서 Table 5 재게시본](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [LIVE 2007 정답표](https://live.poshenloh.com/past-contests/amc8/2007/answers), [LIVE 2007 시험지·해설](https://live.poshenloh.com/past-contests/amc8/2007).

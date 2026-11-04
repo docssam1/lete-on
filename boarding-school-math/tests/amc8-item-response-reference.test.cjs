@@ -2,6 +2,22 @@ const assert = require("node:assert/strict");
 const reference = require("../competition/amc8-item-response-reference.js");
 
 for (const year of [2009, 2010, 2011]) assert.equal(reference.questionsByYear[year].length, 25);
+const official2007Key = ["D", "E", "C", "D", "B", "E", "D", "B", "B", "D", "D", "A", "C", "C", "A", "A", "C", "D", "C", "A", "D", "C", "B", "C", "B"];
+assert.equal(reference.questionsByYear[2007].length, 25);
+for (let question = 1; question <= 25; question++) {
+  const row = reference.responseFor(2007, question, "", 7);
+  assert.equal(reference.questionsByYear[2007][question - 1].correctAnswer, official2007Key[question - 1]);
+  if ([15, 19, 20, 21, 22, 23].includes(question)) {
+    assert.equal(row, null, `2007 question ${question} source percentages do not reconcile within tolerance`);
+    continue;
+  }
+  assert.ok(row, `2007 question ${question} should have a reconciled national reference`);
+  assert.equal(row.respondentCount, 150618);
+  const total = Object.values(row.responsePercent).reduce((sum, value) => sum + value, row.omittedPercent);
+  assert.ok(Math.abs(total - 100) < 0.15, `2007 question ${question} sums to ${total}`);
+}
+assert.equal(reference.responseFor(2007, 10, "C").correctResponsePercent, 22.12);
+assert.equal(reference.responseFor(2007, 10, "C").selectedResponsePercent, 31.59);
 for (const year of [2012, 2013, 2014, 2015]) {
   assert.equal(reference.questionsByYear[year].length, 25);
   for (let question = 1; question <= 25; question++) {
