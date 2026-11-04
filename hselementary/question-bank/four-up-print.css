@@ -156,3 +156,7 @@
 @media print {
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-1-original"] svg { max-height:220px; }
 }
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-2-original"] svg { max-height:210px; }
+}
