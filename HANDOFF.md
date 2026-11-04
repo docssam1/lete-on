@@ -1991,3 +1991,12 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2008 AIME 학년별 표는 다른 검색에서도 목차와 수치만 노출되고 인쇄 pp.261–262의 행은 회수되지 않았다. College Sidekick 결과는 3쪽짜리 일부 미리보기라 표가 없고, 이를 2008 점수분포 원자료로 취급하지 않는다. 상태와 기존 데이터는 바꾸지 않는다.
 - 갱신: `boarding-school-math/competition/historical-amc-grade/README.md`. 원본 기출은 출처 링크로 남기며 문항·풀이를 복제하지 않는다. 화면도 확인했고 7학년 지도에서 펼친 학년 선택 영역이 비어 있음을 다시 확인했으나, 실행 중인 localhost는 lete-on 작업본을 가리키고 그 작업본에는 광범위한 사용자 미커밋 변경이 있어 이 분기에서는 수정하지 않았다. 다음은 사용자 변경 보존 범위를 확인한 뒤 해당 화면의 학년 선택 렌더링을 바로잡는 것이다.
 - 출처: [LIVE 연도별 원본](https://live.poshenloh.com/past-contests), [MAA 2010 결과 요약 공개 미러](https://www.scribd.com/document/51428451/2010-HS-summary), [2008 MAA 보고서 공개 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions). `raw_youtube.txt` 보존; push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 브라우저 연도별 진단 흐름 확인 및 인수인계 정정
+
+- 앞 항목의 localhost 경로에 관한 설명을 정정한다. 개발 서버 PID 41588의 작업 디렉터리는 `/Users/docssam/Developer/GFIELD/continuations/boarding-school`이며, `:8765`는 이 continuation 작업본의 `boarding-school-math`를 제공한다. 빈 학년 선택 영역은 코드 누락이 아니라 이전 브라우저 문서/스크립트 캐시였다. 현재판으로 다시 불러오자 10개 학년 선택지가 렌더링됐다. 따라서 lete-on의 미커밋 변경과 충돌해 수정하지 못했다는 앞 설명은 부정확하며, 해당 파일은 수정하지 않았다.
+- 현재 브라우저에서 AMC 8, 2008을 열어 확인했다: 연도별 PDF 인쇄·정답표·전문 풀이·문항별 출처 링크, 답 입력, 공개 정답표 자동 대조, 결과 진단까지 작동한다. 화면의 25문항에 임시로 A를 입력해 흐름만 확인한 뒤 결과를 저장하지 않았다. 이 임시 5/25는 실제 학습자 점수나 예시 진단으로 사용하지 않는다.
+- 결과 화면은 문항 번호 구간, 과거 MAA 전체 응시자 수상 기준선, 2008 기록 학년별 분포(Grade 7 포함), 전체 응시자 점수 분포, 문항별 개념/응답 자료, 오답 이유 입력, 지필드 후속 연습 링크를 보여 줬다. 기준선은 그 시험의 과거 모집단 자료이며 공식 percentile·현재 규준·능력 등급 또는 학년별 수상 판정이 아니라고 화면에 구분되어 있다. 답·이름은 복습 기록에 저장되지 않는다.
+- 2008 AIME 분포 재검색에서는 결과·수상 보고서 디지털화 컬렉션을 만든 연구자의 AMC archive를 찾았다. 본인 페이지는 1980–2010 고교 요약집을 모두 수집했다고 설명하지만, 공개된 “Full Text” 링크는 1968 자료만 열어준다. StudyLib의 2008 보고서 본문도 전체 추출 텍스트가 통계부 인쇄 p.261–262에 닿기 전에 끝난다. 따라서 2008 AIME I/II 행별 표는 여전히 확인 불가이며 데이터는 추가하지 않았다.
+- 이 점검으로 문서만 갱신했다. `git diff --check`를 수행했고 테스트는 실행하지 않았다. `raw_youtube.txt` 보존; 로컬 커밋만 가능하며 push·배포·Drive 동기화 없음. 다음은 기존 연도 색인의 회차별 커버리지와 공식 통계가 있는 해/폼만 비교 지표가 표시되는지 계속 감사하고, 누락된 실제 원자료를 검색한다.
+- 출처: [LIVE 연도별 공식 AMC/AIME 시험지·답안·풀이 아카이브](https://live.poshenloh.com/past-contests), [2008 MAA AMC 8 결과 보고서 공개 사본](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america), [AMC 통계 보고서 디지털 아카이브 설명](https://sites.google.com/view/ian-calaway/amc-archive/), [2008 고교 요약집 공개 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions).
