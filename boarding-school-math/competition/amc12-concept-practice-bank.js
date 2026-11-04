@@ -230,10 +230,90 @@
     {
       id: "amc12-core-fraction-01", sourceConcepts: ["fraction", "linear-equation", "algebraic-manipulation"], domain: "대수", stage: "개념", title: "분수 계수의 일차방정식 정리하기",
       prompt: "(5/6)x − 1/4 = 3/4를 만족하는 x는 얼마인가요?",
-      choices: [1, "6/5", "5/6", "3/2", 2], answer: 3,
+      choices: [1, "6/5", "5/6", "3/2", 2], answer: 1,
       hint: "먼저 양변에 1/4을 더한 뒤, 5/6을 나누어요.",
       solution: ["양변에 1/4을 더하면 (5/6)x = 1입니다.", "양변에 6/5를 곱하면 x = 6/5입니다.", "따라서 해는 6/5입니다."],
       connection: "방정식의 분모를 없애려고 양변에 12를 곱해도 해가 바뀌지 않는 이유는 무엇인가요?"
+    },
+    {
+      id: "amc12-gap-summation-01", sourceConcepts: ["summation", "factorization"], domain: "대수", stage: "유형", title: "부분분수로 유한합을 간단히 계산하기",
+      prompt: "1/(1·2) + 1/(2·3) + 1/(3·4) + ⋯ + 1/(8·9)의 값은 얼마인가요?",
+      choices: ["7/8", "8/9", "9/10", "1", "5/6"], answer: 1,
+      hint: "각 항을 1/k − 1/(k+1)로 바꾸어 보세요.",
+      solution: ["1/(k(k+1)) = 1/k − 1/(k+1)이므로 합은 (1−1/2)+(1/2−1/3)+⋯+(1/8−1/9)입니다.", "중간 항이 서로 지워져 1−1/9만 남습니다.", "따라서 합은 8/9입니다."],
+      connection: "마지막 분모가 20이면 같은 합은 얼마가 되나요?"
+    },
+    {
+      id: "amc12-gap-geometric-sequence-01", sourceConcepts: ["geometric-sequence"], domain: "대수", stage: "개념", title: "등비수열에서 공비와 항 찾기",
+      prompt: "공비가 양수인 등비수열에서 둘째 항은 6, 넷째 항은 54입니다. 다섯째 항은 얼마인가요?",
+      choices: [54, 108, 162, 486, 18], answer: 2,
+      hint: "넷째 항을 둘째 항으로 나누면 공비의 제곱이 됩니다.",
+      solution: ["넷째 항 ÷ 둘째 항 = r² = 54/6 = 9입니다.", "공비가 양수이므로 r=3이고, 셋째 항은 18입니다.", "다섯째 항은 54×3=162입니다."],
+      connection: "공비가 음수일 수도 있다고 하면 다섯째 항이 달라지는지 살펴보세요."
+    },
+    {
+      id: "amc12-gap-symmetry-01", sourceConcepts: ["symmetry", "polynomial", "vietas-formulas"], domain: "대수", stage: "연결", title: "근의 대칭식으로 세제곱 합 구하기",
+      prompt: "x² − 5x + 6 = 0의 두 근을 a, b라 할 때 a³ + b³의 값은 얼마인가요?",
+      choices: [25, 35, 29, 31, 45], answer: 1,
+      hint: "a³+b³=(a+b)³−3ab(a+b)를 이용해요.",
+      solution: ["비에타 정리에서 a+b=5, ab=6입니다.", "a³+b³=(a+b)³−3ab(a+b)=5³−3×6×5입니다.", "따라서 값은 125−90=35입니다."],
+      connection: "두 근의 합과 곱만으로 a⁴+b⁴도 구할 수 있나요?"
+    },
+    {
+      id: "amc12-gap-mean-01", sourceConcepts: ["mean"], domain: "대수", stage: "개념", title: "평균에서 빠진 자료 복원하기",
+      prompt: "6개의 실수의 평균은 12입니다. 그중 다섯 수가 8, 9, 11, 14, 15라면 나머지 수는 얼마인가요?",
+      choices: [12, 14, 15, 16, 18], answer: 2,
+      hint: "평균에 자료 개수를 곱하면 전체 합이 됩니다.",
+      solution: ["여섯 수의 합은 6×12=72입니다.", "알려진 다섯 수의 합은 8+9+11+14+15=57입니다.", "빠진 수는 72−57=15입니다."],
+      connection: "자료 하나를 15에서 21로 바꾸면 평균은 얼마만큼 커지나요?"
+    },
+    {
+      id: "amc12-gap-trigonometric-identity-01", sourceConcepts: ["trigonometric-identity", "trigonometry"], domain: "함수·삼각함수", stage: "유형", title: "배각 공식으로 삼각비 계산하기",
+      prompt: "θ가 예각이고 sin θ = 5/13일 때 cos(2θ)는 얼마인가요?",
+      choices: ["119/169", "25/169", "144/169", "12/13", "1/2"], answer: 0,
+      hint: "cos(2θ)=1−2sin²θ를 사용해요.",
+      solution: ["배각 공식 cos(2θ)=1−2sin²θ를 적용합니다.", "sin²θ=25/169이므로 cos(2θ)=1−50/169입니다.", "따라서 cos(2θ)=119/169입니다."],
+      connection: "sin θ가 12/13이라면 cos(2θ)는 어떻게 달라지나요?"
+    },
+    {
+      id: "amc12-gap-rational-equation-01", sourceConcepts: ["rational-equation", "algebraic-manipulation"], domain: "대수", stage: "유형", title: "유리방정식의 해와 정의역 확인하기",
+      prompt: "(2x − 1)/(x + 3) = 3/5를 만족하는 x는 얼마인가요?",
+      choices: [-2, 1, 2, 3, -3], answer: 2,
+      hint: "먼저 x=−3은 제외하고, 양변에 5(x+3)을 곱해요.",
+      solution: ["정의역에서 x≠−3입니다.", "양변에 5(x+3)을 곱하면 5(2x−1)=3(x+3)입니다.", "10x−5=3x+9이므로 7x=14, x=2입니다. 이 값은 제외 조건을 만족합니다."],
+      connection: "방정식의 해를 원래 식에 대입해 확인하는 절차가 왜 필요한가요?"
+    },
+    {
+      id: "amc12-gap-function-01", sourceConcepts: ["function", "polynomial"], domain: "함수·삼각함수", stage: "연결", title: "함숫값의 차에서 변화 구조 찾기",
+      prompt: "f(x)=x²−3x+1일 때 f(x+1)−f(x)는 무엇인가요?",
+      choices: ["2x−2", "2x+2", "x−2", "x²−2x", "2x−1"], answer: 0,
+      hint: "f(x+1)을 먼저 전개한 뒤 f(x)를 빼요.",
+      solution: ["f(x+1)=(x+1)²−3(x+1)+1=x²−x−1입니다.", "f(x+1)−f(x)=(x²−x−1)−(x²−3x+1)입니다.", "동류항을 정리하면 2x−2입니다."],
+      connection: "이차함수 f에서 f(x+1)−f(x)가 일차식이 되는 이유를 전개로 설명해 보세요."
+    },
+    {
+      id: "amc12-gap-area-01", sourceConcepts: ["area", "optimization"], domain: "기하", stage: "연결", title: "둘레가 고정된 직사각형의 최대 넓이",
+      prompt: "둘레가 28인 직사각형 가운데 넓이가 가장 큰 직사각형의 넓이는 얼마인가요?",
+      choices: [45, 48, 49, 50, 56], answer: 2,
+      hint: "가로와 세로의 합은 14이고, 두 수의 곱은 두 수가 같을 때 가장 커요.",
+      solution: ["가로를 x라 하면 세로는 14−x이고 넓이는 x(14−x)입니다.", "x(14−x)=49−(x−7)²이므로 최댓값은 x=7일 때입니다.", "최대 넓이는 7×7=49입니다."],
+      connection: "둘레가 40으로 바뀌면 최대 넓이는 몇이 되나요?"
+    },
+    {
+      id: "amc12-gap-diophantine-01", sourceConcepts: ["diophantine-equation", "casework"], domain: "정수론", stage: "유형", title: "양의 정수해를 나머지 조건으로 세기",
+      prompt: "2x+3y=17을 만족하는 양의 정수 순서쌍 (x,y)는 몇 개 있나요?",
+      choices: [2, 3, 4, 5, 6], answer: 1,
+      hint: "2x가 짝수이므로 y의 홀짝부터 확인해요.",
+      solution: ["2x=17−3y가 짝수여야 하므로 y는 홀수입니다.", "양의 정수 y는 1, 3, 5이고, 각각 x=7, 4, 1을 줍니다.", "따라서 순서쌍은 3개입니다."],
+      connection: "오른쪽이 18이면 가능한 양의 정수해는 몇 개일까요?"
+    },
+    {
+      id: "amc12-gap-absolute-value-01", sourceConcepts: ["absolute-value", "casework", "symmetry"], domain: "대수", stage: "유형", title: "절댓값 거리 합의 해 나누어 찾기",
+      prompt: "|x−2|+|x+4|=10을 만족하는 실수 x들의 곱은 얼마인가요?",
+      choices: [-24, -12, 0, 12, 24], answer: 0,
+      hint: "수직선에서 −4와 2를 기준으로 세 구간을 나누어요.",
+      solution: ["x≤−4이면 좌변은 −2x−2이므로 x=−6입니다.", "−4≤x≤2에서는 두 거리의 합이 6이어서 해가 없습니다.", "x≥2이면 좌변은 2x+2이므로 x=4입니다. 두 해의 곱은 −24입니다."],
+      connection: "우변이 6이면 해가 구간 전체에 걸쳐 생기는 이유를 설명해 보세요."
     }
   ];
 
