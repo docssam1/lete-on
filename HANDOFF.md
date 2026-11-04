@@ -2127,3 +2127,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - MAA의 58th annual report Table IX(pp.262–265)에서 AMC 10A/B·12A/B 네 폼의 문항별 A–E 선택률과 공란률을 연도·폼별로 전사했다: `boarding-school-math/competition/historical-amc-grade/amc10-12-2007-item-response.csv` (100행). Runtime reference와 paper coverage manifest를 연결해 네 폼 모두 25/25로 표시한다.
 - 100개 별표 정답을 LIVE 해당 연도·폼 answer key와 대조했다. A–E 및 공란 비율은 원문 그대로 보존했으며 합계는 인쇄 반올림에 따라 99.93–100.07%다. 보고서에 별도 unreadable 비율은 없어 빈 값으로 둔다. 공식 응시자 cohort n: AMC12A 93,179; AMC12B 33,489; AMC10A 73,769; AMC10B 24,008. 이 응답률은 폼 전체의 과거 선택 경향이지 학년별 규준이나 단독 개인 진단 판정이 아니다.
 - README와 출처 연구 기록을 갱신했다. `raw_youtube.txt`는 손대지 않는다. 다음 연도는 MAA 연례 원문을 계속 검색해 year/form coverage에 추가하고, 원문 응시분포와 답안 키가 일치할 때만 진단 자료로 연결한다.
+
+
+### 2026-11-05 · 2008 AMC 10/12 문항별 응답분포 추가
+
+- MAA 59th annual report의 Table IX(pp.252–255)에서 2008 AMC 10A/B·AMC 12A/B 전 문항 선택률과 공란률을 전사해 `amc10-12-2008-item-response.csv`에 저장했다. 100개 별표 정답을 LIVE 키와 대조했고 runtime 및 year/form coverage를 네 폼 각각 25/25로 갱신했다.
+- MAA 공식 응시자 수와 맞춘 분모: AMC10A 68,101; AMC10B 34,803; AMC12A 78,560; AMC12B 41,609. 인쇄 비율은 그대로 유지하고 별도 미판독률은 보고서에 없어 비웠다. 이 자료는 폼 전체의 역사적 응답 경향이며 학년별 규준은 아니다.
+- manifest의 2007·2008 네 폼이 각각 중복 없이 한 행씩 있고 연도순으로 들어가는지, runtime/CSV의 2008 100행과 문항 순서를 확인한다. 기존 `raw_youtube.txt`는 그대로 둔다. 다음은 MAA 연례보고서에서 2009 이후 연도를 이어 찾는다.

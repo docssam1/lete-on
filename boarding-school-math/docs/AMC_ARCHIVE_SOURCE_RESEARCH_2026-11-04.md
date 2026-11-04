@@ -418,3 +418,10 @@ Internet Archive 보존본에서 MAA의 *58th Annual Summary of High School Resu
 같은 보고서의 인쇄 pp.262–265 Table IX는 AMC 12A/B·AMC 10A/B 전체 공식 응시자에 대한 25문항 A–E 선택률과 공란률을 제공한다. 100행을 `amc10-12-2007-item-response.csv`와 runtime reference에 전사하고, 페이지 이미지 및 LIVE 연도·폼 키와 대조했다. 네 폼 모두 item-response coverage를 25/25로 갱신했다. 응답 인원은 각각 AMC 12A 93,179, 12B 33,489, AMC 10A 73,769, 10B 24,008이다. 인쇄 비율 합계는 99.93–100.07% 범위여서 원문값을 보정하지 않고 그대로 보존했다. 별도 unreadable 비율은 보고서에 없어 비워뒀다. 이 표는 학년별 norm이 아닌 해당 폼 공식 응시자 전체의 과거 응답분포다.
 
 다른 원본 연결: LIVE의 2007 AMC 10A/B 키 [10A](https://live.poshenloh.com/past-contests/amc10/2007A/answers), [10B](https://live.poshenloh.com/past-contests/amc10/2007B/answers), AMC 12A 문제/해설 묶음은 [LIVE 12A](https://live.poshenloh.com/past-contests/amc12/2007A), AMC 12B 키는 [LIVE 12B](https://live.poshenloh.com/past-contests/amc12/2007B/answers), MAA 해설 팸플릿 사본은 [2007 AMC 12A solutions](https://f.hubspotusercontent30.net/hubfs/981338/Math%20Competition%20Problems_PDFS/2007AMC12-Asolutions.pdf)에서 확인했다. 기존 연도·폼별 인쇄/정답/해설 링크 카탈로그는 유지한다.
+
+
+## 2026-11-05 follow-up: 2008 AMC 10/12 item-response tables
+
+Located the MAA-authored [59th Annual High School Results and Awards report](https://web.archive.org/web/20240107095913id_/https://maa.org/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2007-8pub/Summary,2008HS.pdf) in the Internet Archive. PDFKit text extraction identifies Table IX, printed pp.252–255, with all four 2008 AMC 10/12 forms. I transcribed the 100 rows to `amc10-12-2008-item-response.csv`, cross-checked every marked key against LIVE, and registered each form as 25/25 in the coverage manifest/runtime reference. Official-student cohorts: AMC12A 78,560; AMC12B 41,609; AMC10A 68,101; AMC10B 34,803 (MAA Tables I/II, p.9). The source prints answer-choice shares and omissions but no unreadable column. Exact values remain as printed.
+
+LIVE's 2008 AMC 10A/10B and AMC 12A/12B archive pages provide the year/form original print PDFs, answer keys, and solution sets; each explicitly says the problems are used with MAA's official legal permission.
