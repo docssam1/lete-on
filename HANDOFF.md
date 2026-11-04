@@ -1416,3 +1416,11 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 새 문항 13개가 사용하는 `sourceConcepts`는 원본 아카이브의 AMC 10 태그 목록과 모두 일치한다. 옵션 중복·누락 필드가 없고, 25문항 전체 정답 위치가 A–E 각 5개로 분포한다. 각 문항의 계산을 직접 점검했다. 연도별 원본 태그와 하나라도 겹치는 원본 문항은 1,300개 중 788개에서 1,073개로 늘었다. 이 수는 교차표 태그 범위일 뿐 분류 정확도나 진단 성능을 보증하지 않는다.
 - localhost 학습 화면에서 쿼리의 13개 개념을 연결한 결과, 신규 13문항이 실제로 모두 렌더링되고 표기된 태그 라벨·힌트·풀이 접기·선택지가 표시된다. 숫자 분수는 위아래 분수꼴로 보인다. 정답표 제출, 원본 카탈로그는 변경하지 않았다.
 - 변경: `boarding-school-math/competition/amc10-concept-practice-bank.js`, `boarding-school-math/amc10-practice.js`, `boarding-school-math/amc10-practice.html`, 본 인수인계. `raw_youtube.txt`는 수정·스테이징하지 않는다. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 AMC 12 원본 개념 태그 후속 창작 연습
+
+- 기존 AMC 12 창작 개념 은행 15문항에 신규 14문항을 더해 29개로 확장했다. 좌표기하, 정수 경우 나누기, 닮음과 넓이비, 로그 정의역, 부등식, 대칭식 치환, 나머지 조건, 직각삼각형, 등차수열, 연속 증가율, 복소수, 근호, 정삼각형, 분수 계수 일차방정식을 추가했다. 모두 GFIELD 창작 연습이다.
+- MAA 공식 안내는 AMC 12가 고등학교 수학 전체 범위를 포함하고 삼각함수·고급 대수·기하를 다루며 미적분은 제외한다고 명시한다: https://maa.org/student-programs/amc/. 문항별 sourceConcept 태그는 기존 AMC12 원본 아카이브의 태그 목록에 모두 존재한다. 정답과 풀이, 선택지 중복, 필수 필드 및 정답 인덱스를 확인했고, 정답 위치는 A–E에 6/6/6/6/5개다.
+- 태그 교차표에서 연습 은행과 연결되는 AMC12 원본은 3,110개 중 1,460개에서 2,325개로 증가했다. 이는 태그 교집합 참고치이고 문항 분류 검증·진단 성능·수준 판정이 아니다.
+- localhost AMC 12 화면에 신규 14문항 전체를 렌더링해 태그 요약·힌트·풀이·선택지를 확인했다. 분수는 쌓은 분수 형태로 표시된다. 문제은행에 실제 AMC 원문은 복사하지 않았다.
+- 변경: `boarding-school-math/competition/amc12-concept-practice-bank.js`, `boarding-school-math/amc12-practice.js`, `boarding-school-math/amc12-practice.html`, 본 인수인계. `raw_youtube.txt`는 수정·스테이징하지 않는다. Local only; no push, deployment, or Drive sync.

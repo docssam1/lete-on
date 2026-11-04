@@ -122,6 +122,118 @@
       hint: "합이 7인 순서쌍과 곱이 12인 순서쌍을 각각 세고 겹치는 경우를 한 번 빼요.",
       solution: ["합이 7인 순서쌍은 6개입니다. 곱이 12인 순서쌍은 (2,6),(6,2),(3,4),(4,3)의 4개입니다.", "두 조건을 모두 만족하는 경우는 (3,4),(4,3)의 2개입니다.", "포함·배제로 6 + 4 − 2 = 8개이므로 확률은 8/36 = 2/9입니다."],
       connection: "합이 7인 결과와 곱이 12인 결과가 겹치는 경우를 직접 확인해 보세요."
+    },
+    {
+      id: "amc12-core-coordinate-01", sourceConcepts: ["coordinate-geometry", "pythagorean-theorem"], domain: "기하", stage: "개념 연결", title: "좌표의 가로·세로 차이로 거리 구하기",
+      prompt: "좌표평면에서 A(1, 2), B(5, 5)입니다. 선분 AB의 길이는 얼마인가요?",
+      choices: [5, 3, "√34", 6, 7], answer: 0,
+      hint: "두 점 사이를 가로와 세로로 나누면 직각삼각형이 생겨요.",
+      solution: ["가로 차이는 5 − 1 = 4, 세로 차이는 5 − 2 = 3입니다.", "선분 AB는 직각삼각형의 빗변이므로 길이의 제곱은 4² + 3²입니다.", "AB = √25 = 5입니다."],
+      connection: "두 점 사이의 거리가 5일 때 가능한 정수 가로·세로 차이는 어떤 조합이 있나요?"
+    },
+    {
+      id: "amc12-core-casework-01", sourceConcepts: ["casework", "combinations", "counting-integers-in-a-range"], domain: "경우의 수", stage: "유형", title: "조건을 만족하는 정수 분할 세기",
+      prompt: "x < y < z인 양의 정수이고 x + y + z = 10입니다. 가능한 순서쌍 (x, y, z)는 몇 개 있나요?",
+      choices: [3, 4, 5, 6, 7], answer: 1,
+      hint: "가장 작은 수 x부터 가능한 값을 나누어 보고, y와 z의 합을 확인해요.",
+      solution: ["x = 1이면 y + z = 9이고 1 < y < z를 만족하는 쌍은 (2,7), (3,6), (4,5)입니다.", "x = 2이면 y + z = 8이고 2 < y < z를 만족하는 쌍은 (3,5)입니다.", "x ≥ 3이면 합이 10이 되도록 서로 다른 더 큰 y, z를 고를 수 없습니다. 모두 4개입니다."],
+      connection: "합이 11로 바뀌면 x의 가능한 값이 어떻게 달라지는지 같은 방식으로 나누어 보세요."
+    },
+    {
+      id: "amc12-core-similarity-01", sourceConcepts: ["ratio-and-proportion", "similarity", "area-ratio"], domain: "기하", stage: "연결", title: "닮음비에서 두 넓이의 차 구하기",
+      prompt: "서로 닮은 두 삼각형의 대응변 길이의 비가 작은 삼각형 대 큰 삼각형으로 2:3입니다. 두 삼각형 넓이의 차가 45cm²일 때 작은 삼각형의 넓이는 얼마인가요?",
+      choices: ["27cm²", "45cm²", "36cm²", "54cm²", "81cm²"], answer: 2,
+      hint: "넓이의 비는 대응변 비의 제곱입니다.",
+      solution: ["넓이의 비는 2²:3², 즉 4:9입니다.", "두 넓이는 4k와 9k로 둘 수 있습니다. 차 5k가 45이므로 k = 9입니다.", "작은 삼각형의 넓이는 4k = 36cm²입니다."],
+      connection: "두 도형의 대응변 비가 m:n일 때 넓이 비를 제곱으로 바꾸는 이유를 설명해 보세요."
+    },
+    {
+      id: "amc12-core-logarithm-01", sourceConcepts: ["logarithm", "quadratic", "factoring"], domain: "함수·삼각함수", stage: "유형", title: "로그의 정의역과 곱의 성질 함께 쓰기",
+      prompt: "log₂(x − 1) + log₂(x − 3) = 3을 만족하는 실수 x는 얼마인가요?",
+      choices: [4, 3, -1, 5, 6], answer: 3,
+      hint: "먼저 두 로그의 진수가 모두 양수여야 한다는 조건을 적어요.",
+      solution: ["정의역에서 x > 3입니다.", "로그의 합을 곱으로 합치면 log₂((x − 1)(x − 3)) = 3이므로 (x − 1)(x − 3) = 8입니다.", "x² − 4x − 5 = 0의 근은 5와 −1입니다. 정의역 x > 3을 만족하는 해는 5입니다."],
+      connection: "로그 방정식에서 대수적으로 구한 해를 정의역에 다시 대입해야 하는 이유는 무엇인가요?"
+    },
+    {
+      id: "amc12-core-inequality-01", sourceConcepts: ["inequality", "optimization", "fraction"], domain: "대수", stage: "개념 연결", title: "양수의 역수 항이 만드는 최솟값",
+      prompt: "x가 양수일 때 x + 9/x의 최솟값은 얼마인가요?",
+      choices: [3, 5, 9, 12, 6], answer: 4,
+      hint: "두 양수의 산술평균과 기하평균의 관계를 적용해요.",
+      solution: ["x > 0이므로 x와 9/x는 모두 양수입니다.", "x + 9/x ≥ 2√(x · 9/x) = 2√9 = 6입니다.", "x = 3일 때 등호가 성립하므로 최솟값은 6입니다."],
+      connection: "x + a/x에서 a가 양수일 때 등호가 성립하는 x를 찾아 최솟값을 일반화해 보세요."
+    },
+    {
+      id: "amc12-core-substitution-01", sourceConcepts: ["substitution", "system-of-equations", "algebraic-manipulation"], domain: "대수", stage: "연결", title: "대칭식으로 곱을 바로 구하기",
+      prompt: "실수 x, y가 x + y = 7, x² + y² = 29를 만족합니다. xy는 얼마인가요?",
+      choices: [10, 8, 9, 12, 14], answer: 0,
+      hint: "(x + y)²을 전개해 x² + y²와 비교해요.",
+      solution: ["(x + y)² = x² + 2xy + y²입니다.", "49 = 29 + 2xy이므로 2xy = 20입니다.", "따라서 xy = 10입니다."],
+      connection: "x와 y를 각각 구하지 않아도 대칭식의 값을 알 수 있는 이유는 무엇인가요?"
+    },
+    {
+      id: "amc12-core-divisibility-01", sourceConcepts: ["divisibility", "chinese-remainder-theorem", "modular-arithmetic"], domain: "정수론", stage: "유형", title: "두 나머지 조건을 차례로 만족하기",
+      prompt: "n을 5로 나누면 나머지가 1이고, 7로 나누면 나머지가 2입니다. 이 조건을 만족하는 가장 작은 양의 정수 n은 무엇인가요?",
+      choices: [15, 16, 21, 30, 36], answer: 1,
+      hint: "1에 5의 배수를 더한 수를 작은 것부터 확인해요.",
+      solution: ["5로 나누어 나머지가 1인 수는 1, 6, 11, 16, …입니다.", "이 가운데 7로 나누어 나머지가 2인 첫 수는 16입니다.", "따라서 가장 작은 양의 정수는 16입니다."],
+      connection: "두 나누는 수가 서로소일 때 이런 조건의 해는 어떤 간격으로 되풀이되나요?"
+    },
+    {
+      id: "amc12-core-pythagorean-01", sourceConcepts: ["pythagorean-theorem", "right-triangle", "triangle-area"], domain: "기하", stage: "개념 연결", title: "직각삼각형의 길이와 넓이 연결하기",
+      prompt: "직각삼각형의 두 직각변 길이가 9cm와 12cm입니다. 이 삼각형의 넓이는 얼마인가요?",
+      choices: ["36cm²", "45cm²", "54cm²", "60cm²", "72cm²"], answer: 2,
+      hint: "넓이를 구할 때는 서로 직각인 두 변을 밑변과 높이로 사용할 수 있어요.",
+      solution: ["두 직각변이 서로 수직이므로 한 변을 밑변, 다른 변을 높이로 둡니다.", "삼각형의 넓이는 1/2 × 9 × 12입니다.", "넓이는 54cm²입니다."],
+      connection: "빗변 길이도 구해 피타고라스 정리가 성립하는지 확인해 보세요."
+    },
+    {
+      id: "amc12-core-sequence-01", sourceConcepts: ["arithmetic-sequence", "linear-equation"], domain: "대수", stage: "연결", title: "서로 떨어진 두 항으로 등차수열의 합 구하기",
+      prompt: "등차수열의 셋째 항은 11이고 여덟째 항은 31입니다. 처음 12개 항의 합은 얼마인가요?",
+      choices: [240, 288, 312, 300, 360], answer: 3,
+      hint: "두 항 사이의 공차 횟수를 세어 공차와 첫째 항을 구해요.",
+      solution: ["셋째 항에서 여덟째 항까지 공차가 5번 더해져 31 − 11 = 20입니다. 공차는 4입니다.", "첫째 항은 11 − 2 × 4 = 3이고, 열둘째 항은 3 + 11 × 4 = 47입니다.", "처음 12개 항의 합은 12(3 + 47)/2 = 300입니다."],
+      connection: "처음과 끝 항을 짝지으면 왜 각 쌍의 합이 모두 같아지나요?"
+    },
+    {
+      id: "amc12-core-percentage-01", sourceConcepts: ["percentage", "exponent", "multiplication-principle"], domain: "대수", stage: "개념 연결", title: "연속 증가율을 곱셈으로 나타내기",
+      prompt: "가격이 해마다 10%씩 두 해 연속 올랐습니다. 처음 가격과 비교한 전체 증가율은 얼마인가요?",
+      choices: ["10%", "20%", "22%", "100%", "21%"], answer: 4,
+      hint: "처음 가격을 100으로 놓고 매해 1.1을 곱해요.",
+      solution: ["처음 가격을 100으로 두면 첫해 뒤에는 110입니다.", "다음 해에는 110의 10%만큼 올라 121이 됩니다.", "처음 100에서 121이 되었으므로 전체 증가율은 21%입니다."],
+      connection: "매년 10%씩 내릴 때 두 해 뒤 변화율도 단순히 20% 감소가 아닌 이유를 설명해 보세요."
+    },
+    {
+      id: "amc12-core-complex-01", sourceConcepts: ["complex-number", "exponent"], domain: "대수", stage: "유형", title: "복소수 거듭제곱의 반복 주기 찾기",
+      prompt: "(1 + i)⁸의 값은 무엇인가요? 단, i² = −1입니다.",
+      choices: [16, 4, -4, 8, 32], answer: 0,
+      hint: "먼저 (1 + i)²을 계산한 뒤 제곱을 거듭해요.",
+      solution: ["(1 + i)² = 1 + 2i + i² = 2i입니다.", "따라서 (1 + i)⁴ = (2i)² = −4입니다.", "그러므로 (1 + i)⁸ = (−4)² = 16입니다."],
+      connection: "(1 + i)의 거듭제곱에서 실수부와 허수부가 어떤 주기로 반복되나요?"
+    },
+    {
+      id: "amc12-core-radical-01", sourceConcepts: ["radical", "algebraic-manipulation"], domain: "대수", stage: "연결", title: "제곱해 근호 안의 구조 찾기",
+      prompt: "√(3 + 2√2)를 간단히 나타내면 무엇인가요?",
+      choices: ["√2 − 1", "1 + √2", "2 + √2", "√3 + √2", "3"], answer: 1,
+      hint: "(a + b√2)²을 전개해 근호 안의 항과 비교해요.",
+      solution: ["(1 + √2)² = 1 + 2√2 + 2입니다.", "정리하면 3 + 2√2입니다.", "1 + √2는 양수이므로 √(3 + 2√2) = 1 + √2입니다."],
+      connection: "근호를 간단히 한 뒤 양수 조건이 필요한 이유는 무엇인가요?"
+    },
+    {
+      id: "amc12-core-equilateral-01", sourceConcepts: ["equilateral-triangle", "special-right-triangle", "triangle-area"], domain: "기하", stage: "연결", title: "정삼각형의 변에서 높이와 넓이 구하기",
+      prompt: "한 변의 길이가 12cm인 정삼각형의 넓이는 얼마인가요?",
+      choices: ["12√3cm²", "24√3cm²", "36√3cm²", "48√3cm²", "72cm²"], answer: 2,
+      hint: "높이를 그으면 밑변이 6cm씩 나뉘는 직각삼각형이 됩니다.",
+      solution: ["높이는 √(12² − 6²) = √108 = 6√3cm입니다.", "넓이는 1/2 × 12 × 6√3입니다.", "따라서 넓이는 36√3cm²입니다."],
+      connection: "정삼각형의 변을 2배로 하면 넓이는 몇 배가 되는지 닮음비로 설명해 보세요."
+    },
+    {
+      id: "amc12-core-fraction-01", sourceConcepts: ["fraction", "linear-equation", "algebraic-manipulation"], domain: "대수", stage: "개념", title: "분수 계수의 일차방정식 정리하기",
+      prompt: "(5/6)x − 1/4 = 3/4를 만족하는 x는 얼마인가요?",
+      choices: [1, "6/5", "5/6", "3/2", 2], answer: 3,
+      hint: "먼저 양변에 1/4을 더한 뒤, 5/6을 나누어요.",
+      solution: ["양변에 1/4을 더하면 (5/6)x = 1입니다.", "양변에 6/5를 곱하면 x = 6/5입니다.", "따라서 해는 6/5입니다."],
+      connection: "방정식의 분모를 없애려고 양변에 12를 곱해도 해가 바뀌지 않는 이유는 무엇인가요?"
     }
   ];
 
