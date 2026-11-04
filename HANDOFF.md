@@ -3,7 +3,9 @@
 - Added MAA 57th annual report item-response tables for 2006 AMC 10A, 12A, and 12B to the runtime reference, raw CSV, and year/form coverage manifest. Source PDF is the Internet Archive copy of the MAA-authored annual report; all 75 answer markers were cross-checked against LIVE keys.
 - 10A Q9 and 12B Q18 response shares do not sum to 100% (90.98% and 109.00%); retained source values but excluded those questions from response comparison. 12B respondent count is printed `xxx,xxx` in Table X; manifest/runtime use 50,147 from Table VI. The 10B table in this report is explicitly 2005 and remains unassigned to 2006.
 - Static validation still required before commit: check the CSV/runtime values, exclusions, response counts, manifest uniqueness and `git diff --check`. `raw_youtube.txt` is user-owned and remains unstaged. No tests, push, deployment, or Drive sync.
-- Follow-up web search found 2009 grade means already stored in the MAA 2010 four-year comparison tables, but Table IX pp.195–196 is for 2010 item responses; 2009 local B-form PDFs are school/venue samples. Keep 2009 response coverage `not-found`. Continue year-by-year searches for other response-table gaps; never reassign years or populations.
+- Follow-up web search found 2009 grade means already stored in the MAA 2010 four-year comparison tables, but Table IX pp.195–196 is for 2010 item responses; 2009 local B-form PDFs are school/venue samples. Keep 2009 response coverage `not-found`.
+- A separate 2006 AMC 10B AIME-qualifier Table IX (printed p.309) was found in the MAA report, but its answer stars repeatedly conflict with LIVE and an independent key (first three MAA marks A/D/D vs C/A/A) and the displayed response rates do not fit an AIME-qualifier cohort. Do not import; keep 2006 10B item-response coverage `not-found` until a corrected, verifiable table is found. This is distinct from the all-official Table X 2005 10B table.
+- Continue year-by-year searches for other response-table gaps; never reassign years or populations.
 
 ### 2026-11-05 · MAA AMC 10/12 점수분포 연도별 원문 교차확인
 
