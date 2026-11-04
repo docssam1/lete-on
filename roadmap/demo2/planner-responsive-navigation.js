@@ -23,7 +23,7 @@ function restoreTools(){
  for(const tools of root.querySelectorAll('.prn-tools')){const body=tools.querySelector('.prn-tools-body');tools.replaceWith(...body.childNodes);}
 }
 function globalControls(){
- if(globalMenu)return;
+ if(globalMenu){const body=globalMenu.querySelector('.prn-global-body');for(const selector of ['.member-account-link','.cloud-status','.docssam-contact-link'])move(top.querySelector(selector),body);return;}
  globalMenu=doc.createElement('details');globalMenu.className='prn-global';
  const summary=doc.createElement('summary');summary.textContent='메뉴';summary.setAttribute('aria-label','학원가 이야기·선배 로드맵·인쇄 메뉴');
  const body=doc.createElement('div');body.className='prn-global-body';globalMenu.append(summary,body);top.append(globalMenu);
@@ -31,6 +31,7 @@ function globalControls(){
  // Keep the account link reachable without adding another row to the compact rail.
  const account=top.querySelector('.member-account-link');if(account)move(account,body);
  const contact=top.querySelector('.docssam-contact-link');if(contact)move(contact,body);
+ const save=top.querySelector('.cloud-status');if(save)move(save,body);
  const current=doc.createElement('button');current.type='button';current.dataset.prnCurrent='true';current.textContent='현재 공부 확인';body.append(current);
  const panes=doc.querySelector('.mobile-workspace-nav');move(panes,top);
  for(const button of panes?.querySelectorAll('button')||[]){
@@ -54,6 +55,7 @@ function toolsFor(results){
 function syncOrientation(){
  const vertical=doc.body.dataset.responsiveWorkspace==='landscape'&&!doc.body.classList.contains('atlas-is-fullscreen');
  root.querySelector('.workspace-tabs')?.setAttribute('aria-orientation',vertical?'vertical':'horizontal');
+ if(vertical&&globalMenu)doc.body.style.setProperty('--prn-tabs-start',Math.ceil(globalMenu.getBoundingClientRect().bottom+8)+'px');else doc.body.style.removeProperty('--prn-tabs-start');
 }
 function sync(){
  frame=0;
@@ -84,6 +86,7 @@ doc.addEventListener('keydown',e=>{
  e.preventDefault();menu.open=false;menu.querySelector('summary').focus();
 });
 new MutationObserver(schedule).observe(root,{childList:true});
+new MutationObserver(schedule).observe(top,{childList:true});
 new MutationObserver(schedule).observe(doc.body,{attributes:true,attributeFilter:['class','data-plan-mode','data-reference-flow','data-language-flow','data-workspace-pane']});
 compact.addEventListener('change',schedule);landscape.addEventListener('change',schedule);g.addEventListener('resize',schedule);
 g.addEventListener('beforeprint',()=>{printing=true;sync();});g.addEventListener('afterprint',()=>{printing=false;schedule();});

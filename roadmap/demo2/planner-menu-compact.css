@@ -15,4 +15,5 @@
  body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools-body :is(.plan-travel,.history-travel,.pco-travel,.workspace-summary,.standard-summary){padding:6px;margin:0;border:0;background:#fff}
  body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools-body :is(.plan-travel-top,.plan-travel-steps){display:flex;align-items:center;flex-wrap:wrap;gap:6px}
  body.roadmap-studio.integrated-planner .prn-tools-body button{min-height:44px}
+ body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .workspace-tabs{top:var(--prn-tabs-start,160px)!important}
 }
