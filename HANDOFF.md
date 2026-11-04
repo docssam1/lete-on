@@ -1,3 +1,9 @@
+### 2026-11-04 · AMC10B 2013 글로벌 학년표 회수 및 AMC12B 출처 검수
+
+Internet Archive에서 2013 GEMT AMC10B/AMC12B 보고서 PDF를 회수했다. 현재 게시 URL은 2014년 파일로 이동하므로 2013 보존본을 출처로 쓴다. Apple Vision OCR과 시각 대조로 AMC10B p.4 및 AMC12B p.13 표를 확인했다. 신규 AMC10B Grade 7/8/9/10: n=1,342/2,593/11,239/17,726, 평균 75.93/81.63/67.23/73.74. 학년 그룹 합은 34,738, 보고서 전체는 34,740으로 차이 2명을 그대로 기록한다. 대만 자료는 분리했다.
+
+`amc10b-grade-means-2013-global.csv`, `amc12b-grade-means-2013-2014.csv`, `amc-historical-grade-reference.js`, coverage manifest, README와 evidence를 갱신했다. 다음: 2013 AMC10B Grade 7–10 조회 매칭과 CSV/manifest 검수 후 로컬 커밋. `raw_youtube.txt`는 계속 보존한다.
+
 ### 2026-11-04 · 2012 AMC10A Global Grade Means
 
 웹 검색에서 99CEF 2012 AMC10A/12A 분석 보고서의 전체(Global) 학년별 점수와 표본 수를 회수했다. Grade 7 1,810명/78.83, Grade 8 3,948명/81.72, Grade 9 25,498명/69.16, Grade 10 36,206명/74.25. 전체 Global 학년 묶음은 73,703명으로 보고서 참가자 수와 일치한다. 대만 열은 별도 모집단이고 `<=6`, unknown은 exact grade 비교에 사용하지 않는다.

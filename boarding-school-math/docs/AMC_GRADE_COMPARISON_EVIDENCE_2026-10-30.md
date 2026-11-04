@@ -538,11 +538,11 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 
 ## 2026-11-04 웹 검색 회수: AMC12B 2013·2014 Global 학년 평균
 
-- GEMT의 AMC10B/AMC12B 연례 분석 보고서 검색 색인에서 AMC12B Global 통계표를 확인했다. 2013 표는 인쇄 p.13, 2014 표는 p.12다. 웹 도구가 제공한 PDF 검색 본문에서 전체 평균과 grade별 n/평균을 전사했으며, 이 환경에서 PDF 페이지 이미지 다운로드·렌더링은 하지 않았다. 따라서 데이터를 `web-indexed-text` 상태로 기록해 시각 검수된 앞선 AMC12A 표와 구별한다.
-- 2013 AMC12B Global: 전체 n=30,249, 평균 64.08. Grade 13 (81, 67.00), 12 (10,856, 65.98), 11 (15,365, 63.47), 10 (2,147, 63.63), 9 (793, 68.12), 8 (234, 67.73), 7 (90, 62.44), <=6 (39, 68.60), unknown (644, 64.00). 모든 행 인원 합은 30,249지만, 행 평균을 인원 가중하면 64.56으로 인쇄된 전체 평균 64.08과 다르다. 표의 하위행이나 전체행을 임의 수정하지 않고 차이를 기록한다.
+- GEMT의 AMC10B/AMC12B 연례 분석 보고서에서 AMC12B Global 통계표를 확인했다. 2013 표 p.13은 Internet Archive 저장본 PDF를 내려받아 Apple Vision OCR과 시각 대조를 마쳤다. 현재 GEMT의 2013 파일 URL은 2014 PDF로 이동한다. 2014 표 p.12는 검색 색인 본문만 확보해 웹 텍스트 전사 상태로 남긴다.
+- 2013 AMC12B Global: 전체 n=30,249, 평균 64.08. 보존 PDF 페이지를 렌더링해 기존 색인 전사와 대조했고, 출처 상태를 PDF 시각 검수 완료로 갱신했다. Grade 13 (81, 67.00), 12 (10,856, 65.98), 11 (15,365, 63.47), 10 (2,147, 63.63), 9 (793, 68.12), 8 (234, 67.73), 7 (90, 62.44), <=6 (39, 68.60), unknown (644, 64.00). 모든 행 인원 합은 30,249지만, 행 평균을 인원 가중하면 64.56으로 인쇄된 전체 평균 64.08과 다르다. 표의 하위행이나 전체행을 임의 수정하지 않고 차이를 기록한다.
 - 2014 AMC12B Global: 전체 n=33,247, 평균 68.08. Grade 13 (73, 64.23), 12 (11,234, 66.52), 11 (17,303, 67.92), 10 (2,847, 71.75), 9 (828, 71.31), 8 (162, 78.96), 7 (63, 77.81), <=6 (40, 73.76), unknown (697, 74.96). 색인에 11학년 n이 `17.303`으로 표시돼 있어 전체 인원 합산에 맞춰 `17,303`으로 정규화했다. 모든 행 인원 합은 33,247이며 보고서 전체 평균과 가중 행 평균도 반올림 범위에서 일치한다. Taiwan 표는 제외했다.
-- 두 연도의 Grade 7·12 값을 exact-year/form/grade reference로 연결했다. 결과 패널은 Global 모집단과 웹 색인 전사·PDF 이미지 미대조 상태를 명시하며 과거 평균을 현재 능력 등급·백분위로 부르지 않는다. 2013 결과 요약에도 인원 가중 하위집단 평균과 인쇄 전체 평균의 불일치를 노출한다.
-- 출처: [2013 GEMT AMC10B/AMC12B 보고서](https://www.gemt.org.tw/wp-content/uploads/2012/11/2013AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0411.pdf), [2014 GEMT AMC10B/AMC12B 보고서](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf). 2014 보고서 색인에는 AMC12B 전체집단·grade 행이 포함된다.
+- 두 연도의 Grade 7·12 값을 exact-year/form/grade reference로 연결했다. 결과 패널은 Global 모집단과 연도별 검수 상태를 명시하며 과거 평균을 현재 능력 등급·백분위로 부르지 않는다. 2013 결과 요약에도 인원 가중 하위집단 평균과 인쇄 전체 평균의 불일치를 노출한다.
+- 출처: [2013 GEMT AMC10B/AMC12B 보존 보고서](https://web.archive.org/web/20130919114514id_/http://www.gemt.org.tw:80/wp-content/uploads/2012/11/2013AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0411.pdf), [2014 GEMT AMC10B/AMC12B 보고서](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf). 2014 보고서 색인에는 AMC12B 전체집단·grade 행이 포함된다.
 
 
 ## 2026-11-04 웹 검색: AMC12B 2012 및 후속 연도 학년표 추가 확인
@@ -701,3 +701,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 보고서 p.5의 AMC10A Global 학년별 값은 Grade 10 36,206명/74.25점, Grade 9 25,498명/69.16점, Grade 8 3,948명/81.72점, Grade 7 1,810명/78.83점이다. 원문 그룹 합계는 전체 73,703명과 일치한다. `<=6`(978명/74.90점)과 학년 미기재(5,263명/67.21점)도 CSV에 보존하되 학년별 화면 비교에서는 제외했다.
 - 같은 표의 Taiwan 행은 Global 집계와 별도다. 앱은 Global Grade 7–10 값만 같은 연도·폼·학년이 일치할 때 표시한다. 이를 백분위, 현재 학년 등급, 대회 진출 가능성으로 해석하지 않는다.
 - 원자료는 `competition/historical-amc-grade/amc10a-grade-means-2012-global.csv`, 화면 참조는 `competition/amc-historical-grade-reference.js`, 회차 범위는 coverage manifest에 반영했다. MAA의 2012 ReportViewer 본문은 보존 캡처에서 열리지 않았고 99CEF 보고서는 국제 주최기관의 별도 집계이므로, 출처 유형과 모집단을 데이터에 남긴다.
+
+## 2026-11-04 · 2013 AMC10B Global Grade Means PDF 검수
+
+- [2013 GEMT AMC10B/AMC12B 보고서 보존본](https://web.archive.org/web/20130919114514id_/http://www.gemt.org.tw:80/wp-content/uploads/2012/11/2013AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0411.pdf)을 내려받았다. 현재 GEMT URL은 2014 보고서로 이동하므로 보존 PDF를 출처로 쓴다. 인쇄 p.4의 Global 열을 Apple Vision으로 OCR하고 PDF 페이지 이미지와 대조했다.
+- AMC10B Grade 7: n=1,342, mean 75.93; Grade 8: 2,593, 81.63; Grade 9: 11,239, 67.23; Grade 10: 17,726, 73.74. 전체 Global n=34,740, mean 72.34. 표의 학년 그룹 전체 합은 34,738로 총계보다 2명 적다. 원문 차이를 보정하지 않았다. Taiwan 열은 별도 유지했다.
+- 2013 AMC12B 인쇄 p.13도 같은 PDF에서 다시 확인해 기존 색인 전사와 평균 차이를 대조했다. 2014 AMC12B는 여전히 웹 색인 텍스트만 확보된 상태다.
+- CSV `amc10b-grade-means-2013-global.csv`, `amc12b-grade-means-2013-2014.csv`, 런타임 조회 JS와 coverage manifest를 갱신했다. PDF와 페이지 PNG는 검수가 끝난 뒤 임시 폴더에서 제거했다.
