@@ -72,4 +72,26 @@ for (let sourceIndex = 0; sourceIndex < ids.length; sourceIndex++) {
   }
 }
 assert.equal(ids.filter(id => window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).some(type => type.id === id)).length, ids.length);
+const originalIds = ["5-2-u1-e4-exploration-rounded-range-original", "5-2-u1-e4-example-1-original"];
+const types = window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(g=>g.types)));
+const ceil = (n, unit) => Math.ceil(n/unit)*unit;
+const floor = (n, unit) => Math.floor(n/unit)*unit;
+const round = (n, unit) => Math.floor(n/unit+0.5)*unit;
+const candidates = Array.from({length:1001},(_,i)=>4000+i).filter(n=>ceil(n,100)===4500 && floor(n,100)===4400 && round(n,100)===4500);
+assert.equal(candidates.length,50);
+assert.deepEqual([candidates[0],candidates.at(-1)],[4450,4499]);
+const minima = Array.from({length:2001},(_,i)=>6000+i).filter(n=>round(n,1000)===7000 && floor(n,100)===round(n,100) && ceil(n,10)===round(n,10));
+assert.equal(minima[0],6500);
+for (const [index,id] of originalIds.entries()) {
+  const type=types.find(t=>t.id===id);
+  assert(type && type.sourceVerified && !type.reviewLocked);
+  assert.equal(type.publisherKeyVerified,false);
+  for (const difficulty of [-1,0,1]) {
+    const q=window.HSE_GENERATORS.generate(type,1,difficulty,1,0);
+    assert.equal(q.answer,index===0?"50개":"6,500");
+    assert.equal(q.verifiedVariantCount,1);
+    assert.equal(q.difficultyOffset,0);
+  }
+  assert.equal(generator.getQuestion(id,1,0),null);
+}
 console.log(JSON.stringify({ status: "passed", sourceItemIds: ids, sourcePdfPage: 8, sourcePrintedPage: 10, sourceNumbersReused: false, sourceIllustrationRequired: false, checkedConfigurations: observations.length, answers: observations }, null, 2));
