@@ -1657,3 +1657,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2012 AMC 10/12 학년 평균 검색은 등록/교사용 매뉴얼과 시험 자료만 회수했고, 국가 단위 학년별 성적 표는 회수하지 못했다. 2016 AMC 8 Bard 결과는 지역 학원 35명 표본이며 학년별 n도 없어 전국 비교에서 제외했다.
 - 확인: 연도별 출처 카탈로그 266행 유지, 2023 AMC 8 다섯 링크 HTTPS 확인, CSV 파싱, diff whitespace 검사(카탈로그는 저장소의 CRLF 형식 예외 확인). raw_youtube.txt 그대로 미추적 보존; push·배포·Drive 동기화 없음.
 - 다음: 아직 미회수인 2012 이후 AMC 8 학년표와 AMC 10/12 연도별 통계를 출처별로 계속 검색한다. 평균만 발견되면 평균 지표에만, 학년 그룹의 표본과 모집단이 명시된 경우에만 학년 비교에 연결한다.
+
+## 2026-11-04 웹 검색: 2016 AMC 8 및 지역 성적표 통계
+
+- 2016 AMC 8 검색에서 99CEF의 연례 회고 표에 기반한 US/Canada 평균 9.36 (n=108,227)과 Michigan Section–MAA 뉴스레터 수치 9.36 (n=108,295)를 재확인했다. 두 참여자 수는 서로 다르므로 별개의 출처 기록으로 유지한다.
+- [Bard Math Circle 2016 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in)는 전체 현장 응시자 35명의 Grade 4–8 평균만 제공한다. 지역 현장 표본이고 학년별 표본 수를 명시하지 않아 전국 학년 비교 데이터로 쓰지 않는다.
+- [99CEF AMC 공식 안내/FAQ](https://www.99cef.org.tw/maa-amc/)는 참가자 개인 성적표에 Taiwan 응시자 기준 평균 및 점수 구간이 있다고 안내한다. 이는 대만 지역 코호트의 참고치이며 전체 참가자 또는 미국·캐나다 학년 규준과 분리해야 한다. GFIELD에는 실제 연도별 성적표 값이 확보될 때 별도 지역 출처로 다룬다.
+- MAA 보고서와 99CEF 2023/2024 자료 검색에서 공개 전국 Grade 7 분포/평균을 추가 회수하지 못했다. no-grade-table-recovered는 이번 검색의 회수 상태다. 출처에 자료가 존재하지 않는다는 뜻은 아니다.
+- 근거는 boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md에도 기록했다. 다음은 공개 MAA historical reports/AMC 10·12 결과 통계를 연도·폼 단위로 계속 검색한다.
