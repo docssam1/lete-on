@@ -487,6 +487,8 @@
     // These compact fraction prompts fit a half-page cell despite having three
     // or more fraction elements. Keep the wide fallback for longer equations.
     if (["5-2-u2-e1-example-4-synthetic", "5-2-u2-e4-mission-2-synthetic"].includes(question.sourceItemId)) return 1;
+    // Verified page 17 fraction missions fit the standard four-up cell.
+    if (/^5-2-u2-e2-mission-[1-5]-original$/.test(question.sourceItemId || "")) return 1;
     // The four short equations stack within a half-page column in print.
     if (["5-2-u2-practice-71-original", "5-2-u2-practice-71-count-similar"].includes(question.sourceItemId)) return 1; // Four short inline fractions fit the standard column.
     if (question.sourceItemId === "5-2-u2-practice-74-original") return 1; // The three short symbolic fractions fit the standard column.
