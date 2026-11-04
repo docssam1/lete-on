@@ -3206,6 +3206,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 6-3 구조 연습",sourceSection:"example",sourcePdfPage:30,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 범위의 대칭수를 전수 검사했습니다.",generatorKey:"source52PalindromeSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
   const source52PointApplication = source52CongruenceUnit?.subunits.find(s => s.name === "점대칭의 활용");
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-practice-111-clarified-similar")) {
+    const id="5-2-u3-practice-111-clarified-similar",name="크기를 밝힌 직사각형의 점대칭 사각형 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-111-original",sourceItemLabel:"확인학습 111번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:94,alternateSourcePdfPage:94,sourcePrintedPage:99,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 직사각형 비율이 명확하지 않아 보류합니다. 유사문항은 6cm와 4cm로 고정하고 점대칭 사각형과 합동을 독립 열거했습니다.",generatorKey:"source52U3P99Q111ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-practice-98-clarified-similar")) {
     const id="5-2-u3-practice-98-clarified-similar",name="중심과 연결선을 밝힌 점대칭 넓이 · 유사문항";
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
