@@ -1643,3 +1643,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2025 제3자 점수 요약은 평균 11.74, 다른 제3자 요약은 11.75를 기재한다. 차이를 조정해 단일값으로 만들지 않고, 학년 분포나 백분위도 추론하지 않는다. `amc-grade-reference-coverage-by-paper.csv`의 2025·2026 출처/coverage note를 갱신했고, 두 연도는 계속 `no-grade-table-recovered`로 관리한다. 이는 현재 검색에서 표를 회수하지 못했다는 상태지, 다른 곳에도 없다는 단정이 아니다.
 - 완료된 AMC 결과에서 정확히 같은 연도·시험형·학년의 비교 데이터가 연결되지 않으면 설명 문구를 결과 패널에 표시한다. 브라우저에서 2026 AMC 8 Grade 7에 25/25 입력 후 문구 표시를 확인했고, 2022 AMC 8의 기존 Grade 7 평균 비교가 나타날 때는 문구가 숨겨지는 것을 확인했다. 레이아웃은 1280px 폭에서 가로 넘침 없이 표시됐다.
 - `git diff --check` 통과. 자동 Playwright 테스트는 Node CLI 부재로 돌리지 않았다. CUA 브라우저 검수로 두 데이터 경로를 수동 확인했다. 기존 untracked `raw_youtube.txt`는 그대로 두며 stage하지 않는다.
+
+## 2026-11-04 웹 검색: 2011 AMC 8 세계 학년 평균 추가
+
+- 99CEF의 [2011 AMC 8 Summary PDF](https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf)에서 `27th AMC8 2011` 세계 표를 회수했다: <=4 n=938 / 8.31, Grade 5 n=3,456 / 9.30, Grade 6 n=22,879 / 9.33, Grade 7 n=50,176 / 10.66, Grade 8 n=72,230 / 11.45. 이는 MAA 호스팅 원본이 아닌 국제 주관자 보고서로, 현재는 웹 색인의 PDF 표 텍스트에서 전사했다.
+- 등재 학년 표본은 149,679명, 전체 152,745명보다 3,066명 적다. 누락 학년을 보정하지 않았다. 전체 cohort 평균 10.76과 비교 가능한 과거 Grade 7 평균은 표시하되, 이를 학년별 점수 분포·백분위라고 부르지 않는다. 한국 AMC Study n=899 자료는 별도 모집단이다.
+- `amc8-grade-means-2011-99cef.csv`, `amc-historical-grade-reference.js`, 연도별 coverage CSV, README와 근거 문서를 갱신했다. Grade 4 이하 그룹은 그룹 그대로 두고 개별 학년 조회에 쓰지 않는다. 다음은 2012 이후의 빠진 공개 학년표 추적이다.

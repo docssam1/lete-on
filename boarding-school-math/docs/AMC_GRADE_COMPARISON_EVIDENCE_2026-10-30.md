@@ -688,3 +688,9 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 2025 점수 요약의 제3자 재게시본은 평균 11.74를 기재하지만, 다른 제3자 요약은 11.75로 표기한다. 두 값의 차이를 임의 조정하지 않고, 회차 전체 통계와 학년별 비교를 별도로 유지한다. [2025 AMC 8 점수 요약 재게시본](https://www.scribd.com/document/853921775/Contest-Score-Report-2025-AMC8) · [2022–2026 요약표](https://beyondgradestem.com/competitions/amc-8/scores/)
 - 2025·2026 행은 `no-grade-table-recovered`로 두고, 이 상태를 자료 부재의 증명으로 읽지 않도록 범위를 명시했다. 학생 본인 성적표, MAA 공개 전체 응시자 기준점, 공개된 과거 학년 표본 비교는 각각 다른 레이어다. 전체 기준점은 학년별 등급이나 전국 동학년 순위로 바꾸지 않는다.
 - 앱에서 완성된 AMC 8/10/12 결과에 같은 회차·학년의 참고자료가 연결되지 않은 경우, `amc-grade-comparison-unavailable` 문구를 보여 주도록 했다. 자료가 있는 2022 AMC 8에서는 기존 평균 비교가 표시되고 안내 문구는 숨겨진다.
+
+## 2026-11-04 · 2011 AMC 8 세계 학년 평균 회수
+
+- [99CEF 2011 AMC 8 summary PDF](https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf)의 `27th AMC8 2011` 세계 통계표에서 <=4학년 n=938, 평균 8.31; 5학년 3,456, 9.30; 6학년 22,879, 9.33; 7학년 50,176, 10.66; 8학년 72,230, 11.45를 확인했다. 이 보고서는 MAA 원본 호스트가 아닌 99CEF 국제 주관자/분석기관의 PDF이며 데이터 상태는 web-indexed PDF table text로 표시했다.
+- 학년이 기재된 다섯 그룹은 149,679명으로 보고서 전체 152,745명보다 3,066명 적다. 이 차이를 특정 학년에 배분하지 않았다. 전체 평균 10.76과 학년별 평균은 모집단 범위가 각각 보존된 별도 보고값이며, 학년별 점수 빈도표/백분위는 이 자료에서 회수하지 않았다. 한국 2011 응시집단(n=899) 결과와도 합치지 않는다.
+- CSV `competition/historical-amc-grade/amc8-grade-means-2011-99cef.csv`와 `amc-historical-grade-reference.js`에 5–8학년 평균을 추가했다. <=4 그룹은 정확 Grade에 자동 연결하지 않는다. AMC 8 2011 Grade 7 입력은 같은 연도 Grade 7 평균 및 표본을 보여 줄 수 있다.

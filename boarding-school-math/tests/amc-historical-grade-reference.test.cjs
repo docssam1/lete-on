@@ -21,6 +21,13 @@ test("AMC 8 returns only the matching recorded grade and exact contest year", fu
   assert.equal(reference.referenceFor("amc8", 2010, "", 4), null);
   assert.equal(reference.referenceFor("amc8", 2010, "", 9), null);
   assert.equal(reference.referenceFor("amc8", 2009, "", 5), null);
+  const recovered2011 = [5, 6, 7, 8].map((grade) => reference.referenceFor("amc8", 2011, "", grade));
+  assert.deepEqual(recovered2011.map((entry) => [entry.participants, entry.mean]), [[3456, 9.3], [22879, 9.33], [50176, 10.66], [72230, 11.45]]);
+  assert.equal(recovered2011.reduce((sum, entry) => sum + entry.participants, 0), 149679);
+  assert.ok(recovered2011.every((entry) => entry.sourceStatus === "secondary-international-administrator-report-web-indexed-text"));
+  assert.match(recovered2011[2].note, /3,066 participants have no recorded grade/);
+  assert.equal(reference.referenceFor("amc8", 2011, "", 4), null);
+  assert.equal(reference.comparisonFor("amc8", 2011, "", 7).rows.find((entry) => entry.selected).mean, 10.66);
 });
 
 test("AMC 10 and AMC 12 references require exact year, form, and grade", function () {
