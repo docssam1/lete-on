@@ -1630,3 +1630,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 데이터: `boarding-school-math/competition/historical-amc-grade/amc8-2006-global-grade-score-counts.csv`; 조회 모듈: `boarding-school-math/competition/amc8-global-grade-score-reference.js`; UI note/cache/test도 연결했다.
 - 출처: [2006 MAA 보고서 사본, Table 5](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary). 제3자 보관 사본이며 현재 규준/공식 percentile/능력 등급이 아니다.
 - 검수: CSV 104개 행, 네 그룹 모두 표본 합계와 가중 평균 일치, 비교 함수의 2006년 교차 그룹 결과를 node_repl contract assertion으로 확인했고 `git diff --check` 통과. CUA는 `file:` URL 정책으로 막혀 브라우저 화면 검수는 하지 않았다(정책상 우회 금지). `raw_youtube.txt` untouched; no push/deployment/Drive sync.
+
+### 2026-11-04 웹 검색: 2005 AMC 8 원본·학년 통계 범위 확인
+
+- LIVE의 MAA 허가 페이지에서 2005 실제 시험 25문항, 인쇄 PDF, 답안, 전문 풀이를 확인했다. 연도별 원본 카탈로그에 이미 등록된 자료와 일치한다.
+- MAA 2007 요약 보고서 Table 1–2는 2005년 전체 평균과 4–5, 6, 7, 8학년별 참가자 수/평균을 제공하지만, 해당 보고서에서 0–25 학년별 점수 빈도는 확인되지 않았다. 평균을 점수 분포나 percentile로 만들어내지 않고 기존 평균 비교 레이어에만 둔다.
+- 출처: [LIVE 2005 AMC 8 시험·출력·정답·전문 풀이](https://live.poshenloh.com/past-contests/amc8/2005), [MAA 2007 보고서의 2005 요약표](https://www.scribd.com/document/618492777/2007-AMC-8-Summary-of-Results-and-Awards-PDFDrive). 상세 검색 결론은 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 기록했다. `raw_youtube.txt` 보존; push·배포·Drive 동기화 없음.
