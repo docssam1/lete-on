@@ -3446,10 +3446,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationOne = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ①");
-  if (source52CongruenceApplicationOne) for (const [n,name] of [[1,"겹친 정사각형의 넓이 · 원문 그림 재구성"],[2,"겹친 정사각형에서 선분의 길이 · 원문 그림 재구성"]]) {
+  if (source52CongruenceApplicationOne) for (const [n,name] of [[1,"겹친 정사각형의 넓이 · 원문 그림 재구성"],[2,"겹친 정사각형에서 선분의 길이 · 원문 그림 재구성"],[3,"직각삼각형을 돌린 뒤의 각 · 원문 그림 재구성"],[4,"직사각형을 두 번 접은 각 · 원문 그림 재구성"]]) {
     const id=`5-2-u3-e3-example-${n}-original`;
     if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
-    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-example-${n}`,sourceItemLabel:`예제 3-${n} 원문 그림 재구성`,sourceSection:"example",sourcePdfPage:24,alternateSourcePdfPage:23,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page28OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 정사각형 그림과 수치를 대조하고 넓이 및 정삼각형을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-example-${n}`,sourceItemLabel:`예제 3-${n} 원문 그림 재구성`,sourceSection:"example",sourcePdfPage:24,alternateSourcePdfPage:23,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page28OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 도형과 표시를 대조하고 대응과 각도, 넓이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
   }
 
 
