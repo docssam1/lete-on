@@ -169,6 +169,8 @@
     $("report-follow-up").hidden = true;
     setText("report-follow-up-copy", "");
     $("report-follow-up-link").removeAttribute("href");
+    $("amc8-strategy-resources").hidden = true;
+    $("amc8-strategy-resource-list").replaceChildren();
     $("report-metrics").replaceChildren();
     $("report-domains").replaceChildren();
     $("report-review-items-list").replaceChildren();
@@ -1069,6 +1071,23 @@
       $("report-follow-up-link").href = followUpConfig.href;
       $("report-follow-up-link").textContent = `${followUpConfig.title} →`;
     }
+    const strategyResources = window.GFIELDAMCMAAStrategyResources;
+    const approachReasonSelected = result.reasons.some(function (reason) { return reason.id === "approach"; });
+    const officialStrategyResources = strategyResources ? strategyResources.forContest(selectedFormat().id) : [];
+    const strategySection = $("amc8-strategy-resources");
+    const strategyList = $("amc8-strategy-resource-list");
+    strategyList.replaceChildren();
+    strategySection.hidden = !approachReasonSelected || officialStrategyResources.length === 0;
+    if (!strategySection.hidden) officialStrategyResources.forEach(function (resource) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = resource.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = resource.title;
+      item.append(link);
+      strategyList.append(item);
+    });
     $("save-diagnostic").hidden = !localRecords;
     if (!$("save-diagnostic").disabled) $("diagnostic-save-status").textContent = "";
     document.querySelector(".review-report").hidden = false;
