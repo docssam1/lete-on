@@ -89,7 +89,7 @@
       examNature: "중1 시작반은 초5·초6 누적, 예비고1은 공통수학 연결형 입반 테스트",
       preparation: ["단원별 풀이보다 개념 사이 연결을 설명", "함수 그래프와 부등식 조건을 함께 해석", "한 문제 안에서 여러 경우를 끝까지 검토"],
       courses: [
-        { id: "middle1", label: "중1 시작반", scope: "초5·초6 누적 · 각 30문항 · 1회 180분 · 2회 150분", status: "guide" },
+        { id: "middle1", label: "중1 시작반", scope: "초5·초6 누적 · 각 30문항 · 70분", status: "guide" },
         { id: "level-entry", label: "레벨 입학", scope: "중3 심화·공통수학 연결", status: "guide" },
         { id: "pre-high1", label: "예비고1 입학", scope: "공통수학1·공통수학2 도형의 방정식", status: "guide" }
       ],
