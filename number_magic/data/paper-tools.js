@@ -32,45 +32,55 @@ function svg(w, h, body){
 function rect(x, y, w, h, style){ return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" style="' + style + '"/>'; }
 function label(x, y, t){ return '<text x="' + x + '" y="' + y + '" style="' + TXT + '">' + t + '</text>'; }
 
-/* 1. 십틀 — 5칸씩 두 줄. 10을 "채워야 할 자리"로 보게 한다. */
-function tenFrame(){
-  var c = 15, ox = 6, oy = 8, b = '';
+/* 10칸 수판은 2×5의 빈 칸, 십막대는 낱개 10개를 한 줄로 묶은 수 모형이다.
+   인쇄 치수: 수판 한 칸 19mm, 원 조각 지름 17mm. 칸과 조각을 같은 배율로 인쇄한다. */
+function words(lang, ko, en, zh){ return lang === 'en' ? en : lang === 'zh' ? zh : ko; }
+function tenFrame(lang){
+  var c = 19, x = 3, b = '';
   for(var f = 0; f < 2; f++){
-    var y0 = oy + f * (c * 2 + 14);
-    b += label(ox, y0 - 2, f === 0 ? '십틀 1' : '십틀 2');
-    b += rect(ox, y0, c * 5, c * 2, CUT);
-    for(var i = 1; i < 5; i++) b += '<line x1="' + (ox + c * i) + '" y1="' + y0 + '" x2="' + (ox + c * i) + '" y2="' + (y0 + c * 2) + '" style="' + LINE + '"/>';
-    b += '<line x1="' + ox + '" y1="' + (y0 + c) + '" x2="' + (ox + c * 5) + '" y2="' + (y0 + c) + '" style="' + LINE + '"/>';
+    var y = 15 + f * 62;
+    b += label(x, y - 6, words(lang, '10칸 수판 ' + (f + 1), 'Ten-frame ' + (f + 1), '十格框 ' + (f + 1)));
+    // 바깥 점선만 자르면 칸 전체가 한 장의 놀이판으로 남는다.
+    b += '<rect data-part="frame" x=".5" y="' + (y - 2.5) + '" width="100" height="43" rx="2" style="' + CUT + '"/>';
+    b += rect(x, y, c * 5, c * 2, 'fill:#f3f8f7;stroke:#245b60;stroke-width:.65');
+    b += rect(x, y, c * 5, c, 'fill:#e5f0ed;stroke:none');
+    for(var i = 1; i < 5; i++) b += '<line x1="' + (x + c * i) + '" y1="' + y + '" x2="' + (x + c * i) + '" y2="' + (y + c * 2) + '" style="' + LINE + '"/>';
+    b += '<line x1="' + x + '" y1="' + (y + c) + '" x2="' + (x + c * 5) + '" y2="' + (y + c) + '" style="stroke:#245b60;stroke-width:.65"/>';
   }
-  /* 동그라미 20개 — 오려서 칸에 올린다 */
-  var sy = oy + (c * 2 + 14) * 2 - 2;
-  b += label(ox, sy - 2, '동그라미 20개 — 오려서 칸에 올려요');
-  for(var r = 0; r < 2; r++) for(var k = 0; k < 10; k++){
-    b += '<circle cx="' + (ox + 6 + k * 13) + '" cy="' + (sy + 6 + r * 13) + '" r="5.5" style="' + CUT_S + '"/>';
+  b += label(105, 9, words(lang, '동그라미 20개', '20 counters', '20个圆片'));
+  for(var k = 0; k < 20; k++){
+    var cx = 113.5 + (k % 4) * 18.5, cy = 24 + Math.floor(k / 4) * 22;
+    var first = k < 10;
+    b += '<circle data-part="counter" cx="' + cx + '" cy="' + cy + '" r="8.5" style="fill:' + (first ? '#deeeea' : '#fff1d1') + ';stroke:#20343b;stroke-width:.45;stroke-dasharray:1.5 1"/>';
+    // 색을 볼 수 없어도 가운데 점/고리로 두 묶음을 구별한다.
+    b += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (first ? 2.2 : 3.4) + '" style="fill:' + (first ? '#245b60' : 'none') + ';stroke:' + (first ? '#245b60' : '#765614') + ';stroke-width:.65"/>';
   }
-  return svg(180, sy + 26, b);
+  b += label(3, 133, words(lang, '한 칸에 하나씩 놓아요. 한 줄은 5개, 두 줄은 10개예요.', 'One counter per box. One row holds 5; two rows hold 10.', '每格放一个。一行5个，两行10个。'));
+  return svg(180, 140, b);
 }
 
-/* 2. 십진 묶음 — 100판 1개 · 10막대 8개 · 낱개 20개. 열 개를 묶는 행위가 자릿값이다. */
-function placeValue(){
-  var b = '', ox = 6, oy = 10, u = 6;
-  b += label(ox, oy - 3, '백 판 (10 × 10)');
-  b += rect(ox, oy, u * 10, u * 10, CUT);
+/* 백 모형·십 모형·일 모형은 같은 단위 길이(8mm)를 공유한다. */
+function placeValue(lang){
+  var b = '', ox = 3, oy = 14, u = 8;
+  b += label(ox, oy - 5, words(lang, '백 모형 1개', '1 hundred flat', '1个百板'));
+  b += rect(ox, oy, u * 10, u * 10, 'fill:#eef4f2;stroke:#1A2233;stroke-width:.5;stroke-dasharray:2.5 1.6');
   for(var i = 1; i < 10; i++){
-    b += '<line x1="' + (ox + u * i) + '" y1="' + oy + '" x2="' + (ox + u * i) + '" y2="' + (oy + u * 10) + '" style="' + THIN + '"/>';
-    b += '<line x1="' + ox + '" y1="' + (oy + u * i) + '" x2="' + (ox + u * 10) + '" y2="' + (oy + u * i) + '" style="' + THIN + '"/>';
+    b += '<line x1="' + (ox + u * i) + '" y1="' + oy + '" x2="' + (ox + u * i) + '" y2="' + (oy + u * 10) + '" style="' + (i === 5 ? LINE : THIN) + '"/>';
+    b += '<line x1="' + ox + '" y1="' + (oy + u * i) + '" x2="' + (ox + u * 10) + '" y2="' + (oy + u * i) + '" style="' + (i === 5 ? LINE : THIN) + '"/>';
   }
-  var bx = ox + u * 10 + 14;
-  b += label(bx, oy - 3, '십 막대 8개');
+  var bx = 92;
+  b += label(bx, oy - 5, words(lang, '십막대 8개', '8 ten rods', '8根十条'));
   for(var m = 0; m < 8; m++){
-    var x = bx + m * (u + 5);
-    b += rect(x, oy, u, u * 10, CUT);
-    for(var j = 1; j < 10; j++) b += '<line x1="' + x + '" y1="' + (oy + u * j) + '" x2="' + (x + u) + '" y2="' + (oy + u * j) + '" style="' + THIN + '"/>';
+    var x = bx + m * 11;
+    b += '<rect data-part="rod" x="' + x + '" y="' + oy + '" width="' + u + '" height="' + (u * 10) + '" style="fill:#e1eeeb;stroke:#1A2233;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
+    for(var j = 1; j < 10; j++) b += '<line x1="' + x + '" y1="' + (oy + u * j) + '" x2="' + (x + u) + '" y2="' + (oy + u * j) + '" style="' + (j === 5 ? LINE : THIN) + '"/>';
   }
-  var sy = oy + u * 10 + 12;
-  b += label(ox, sy - 3, '낱개 20개');
-  for(var r = 0; r < 2; r++) for(var k = 0; k < 10; k++) b += rect(ox + k * (u + 4), sy + r * (u + 4), u, u, CUT_S);
-  return svg(180, sy + (u + 4) * 2 + 8, b);
+  var sy = 108;
+  b += label(ox, sy - 5, words(lang, '일 모형 20개 (낱개)', '20 ones', '20个个位方块'));
+  for(var r = 0; r < 2; r++) for(var k = 0; k < 10; k++)
+    b += '<rect data-part="one" x="' + (ox + k * 12) + '" y="' + (sy + r * 12) + '" width="' + u + '" height="' + u + '" style="fill:#fff1d1;stroke:#1A2233;stroke-width:.45;stroke-dasharray:1.2 .9"/>';
+  b += label(3, 140, words(lang, '낱개 10개를 모으면 십막대 1개와 같아요.', 'Ten ones have the same value as one ten rod.', '10个一与1根十条表示的数一样大。'));
+  return svg(180, 146, b);
 }
 
 /* 3. 수직선 띠 — 0~20 두 개(뛰어세기·덧뺄), 0~100 한 개(십의 자리로 건너뛰기). */
@@ -142,18 +152,25 @@ function balanceMat(){
 }
 
 /* 5. 분수 원판 — 1 · 1/2 · 1/3 · 1/4 · 1/6 · 1/8. 겹쳐서 크기를 비교한다. */
-function fractionDisc(){
+function fractionDisc(lang){
   var b = '', R = 26, parts = [1, 2, 3, 4, 6, 8], cols = 3;
   parts.forEach(function(n, i){
-    var cx = 32 + (i % cols) * 58, cy = 34 + Math.floor(i / cols) * 62;
+    var cx = 32 + (i % cols) * 58, cy = 34 + Math.floor(i / cols) * 68;
     b += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" style="' + CUT + '"/>';
     for(var k = 0; k < n && n > 1; k++){
       var a = (Math.PI * 2 * k) / n - Math.PI / 2;
       b += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + R * Math.cos(a)).toFixed(2) + '" y2="' + (cy + R * Math.sin(a)).toFixed(2) + '" style="' + LINE + '"/>';
     }
-    b += '<text x="' + cx + '" y="' + (cy + R + 7) + '" text-anchor="middle" style="' + TXT + '">' + (n === 1 ? '1 (전체)' : '1/' + n + ' 조각 ' + n + '개') + '</text>';
+    var fy = cy + R + 7;
+    if(n === 1) b += '<text x="' + cx + '" y="' + fy + '" text-anchor="middle" style="' + TXT + '">' + words(lang, '1 (전체)', '1 (whole)', '1（整体）') + '</text>';
+    else {
+      b += '<g data-part="fraction-label"><text x="' + (cx - 15) + '" y="' + (fy - 2) + '" text-anchor="middle" style="' + TXT + '">1</text>';
+      b += '<line x1="' + (cx - 18) + '" y1="' + fy + '" x2="' + (cx - 12) + '" y2="' + fy + '" style="' + LINE + '"/>';
+      b += '<text x="' + (cx - 15) + '" y="' + (fy + 4) + '" text-anchor="middle" style="' + TXT + '">' + n + '</text>';
+      b += '<text x="' + (cx - 8) + '" y="' + (fy + 1) + '" style="' + TXT + '">' + words(lang, '조각 ' + n + '개', n + ' pieces', n + '块') + '</text></g>';
+    }
   });
-  return svg(180, 34 + 62 * 2 + 12, b);
+  return svg(180, 148, b);
 }
 
 /* 6. 소수 모눈 — 1을 100칸으로. 0.1 띠는 **판의 한 줄과 정확히 같은 크기**여야 덮어 볼 수 있다
@@ -186,22 +203,22 @@ function decimalGrid(){
    조각 경계만 자르는 선이고 안쪽 칸 금은 얇은 선이다(칸마다 자르면 조각이 부서진다). */
 function pentomino(){
   var S = {
-    F:[[1,0],[2,0],[0,1],[1,1],[1,2]], I:[[0,0],[0,1],[0,2],[0,3],[0,4]],
+    F:[[1,0],[2,0],[0,1],[1,1],[1,2]], I:[[0,0],[1,0],[2,0],[3,0],[4,0]],
     L:[[0,0],[0,1],[0,2],[0,3],[1,3]], N:[[1,0],[1,1],[0,1],[0,2],[0,3]],
     P:[[0,0],[1,0],[0,1],[1,1],[0,2]], T:[[0,0],[1,0],[2,0],[1,1],[1,2]],
     U:[[0,0],[2,0],[0,1],[1,1],[2,1]], V:[[0,0],[0,1],[0,2],[1,2],[2,2]],
     W:[[0,0],[0,1],[1,1],[1,2],[2,2]], X:[[1,0],[0,1],[1,1],[2,1],[1,2]],
     Y:[[1,0],[1,1],[0,1],[1,2],[1,3]], Z:[[0,0],[1,0],[1,1],[1,2],[2,2]]
   };
-  var u = 6, b = '', keys = Object.keys(S), ox = 6, oy = 14;
+  var u = 8, b = '', keys = Object.keys(S), ox = 3, oy = 18;
   b += label(ox, oy - 4, '6 × 10 판');
-  b += rect(ox, oy, u * 6, u * 10, LINE);
+  b += rect(ox, oy, u * 6, u * 10, CUT);
   for(var i = 1; i < 6; i++) b += '<line x1="' + (ox + u * i) + '" y1="' + oy + '" x2="' + (ox + u * i) + '" y2="' + (oy + u * 10) + '" style="' + THIN + '"/>';
   for(var j = 1; j < 10; j++) b += '<line x1="' + ox + '" y1="' + (oy + u * j) + '" x2="' + (ox + u * 6) + '" y2="' + (oy + u * j) + '" style="' + THIN + '"/>';
-  var px = ox + u * 6 + 12, py = oy - 4, colw = 26, rowh = 32;
-  b += label(px, py, '조각 12개 — 굵은 점선만 오려요 (안쪽 얇은 금은 그냥 둡니다)');
+  var px = 54, py = oy - 4, colw = 42, rowh = 40;
+  b += label(px, py, '조각 12개 — 바깥 점선만 오려요');
   keys.forEach(function(k, n){
-    var gx = px + (n % 5) * colw, gy = py + 4 + Math.floor(n / 5) * rowh;
+    var gx = px + (n % 3) * colw, gy = py + 4 + Math.floor(n / 3) * rowh;
     var cells = S[k], has = {};
     cells.forEach(function(c){ has[c[0] + ',' + c[1]] = 1; });
     cells.forEach(function(c){
@@ -215,7 +232,8 @@ function pentomino(){
     });
     b += '<text x="' + gx + '" y="' + (gy - 1.5) + '" style="' + TXT + '">' + k + '</text>';
   });
-  return svg(180, oy + u * 10 + 10, b);
+  b += label(3, 112, '한 조각은 5칸이에요.');
+  return svg(180, 174, b);
 }
 
 /* 8. 정수 수직선 — 0 을 가운데 두고 양쪽으로. 음수는 "작은 수"가 아니라 반대 방향이다(과정 29~31). */
@@ -322,34 +340,37 @@ function unitCircle(){
 
 window.NM_PAPER_TOOLS = [
   { key:'tenframe', courses:{from:1,to:2}, build:tenFrame,
-    name:{ko:'십틀과 동그라미',en:'Ten-frame and counters',zh:'十格框与圆片'},
-    why:{ko:'10을 "채워야 할 자리"로 보게 합니다. 8 + 7에서 7에서 2를 빌려 오는 그 습관이 여기서 생깁니다.',
-      en:'It makes 10 a place to be filled. The habit of borrowing 2 from the 7 in 8 + 7 starts here.',
-      zh:'把10看成"要填满的位置"。8＋7时从7里借2的习惯从这里开始。'},
-    steps:{ko:['점선을 따라 십틀 두 장과 동그라미 20개를 오립니다.',
-      '한쪽 십틀에 8개를 놓고 "몇 칸 남았지?"를 먼저 묻습니다.',
-      '남은 2칸을 7에서 가져와 채우고, 남은 5개는 옆 십틀에 놓습니다.'],
-      en:['Cut out the two frames and 20 counters along the dotted lines.',
-        'Put 8 counters on one frame and ask "how many spaces are left?" first.',
-        'Fill those 2 from the 7, and put the remaining 5 on the second frame.'],
-      zh:['沿虚线剪下两张十格框和20个圆片。','在一张框里放8个，先问"还剩几格？"。','从7里拿2个填满，剩下的5个放到另一张框。']},
-    buy:{ name:{ko:"멀티큐브 100개",en:"Snap cubes, 100",zh:"多连方块100个"}, why:{ko:"붙였다 떼며 10을 만듭니다. 8에 2를 붙여 열 칸짜리 막대를 완성하는 그 손동작이 곧 보수입니다.",en:"Snap and unsnap to make ten. Completing a ten-stick by adding 2 to 8 is the complement, in the hand.",zh:"拼上再拆开来凑十。给8接上2凑成一条十，就是补数。"}, pick:{ko:"100개 이상, 한 손에 잡히는 2cm 안팎. 색이 여러 가지인 것.",en:"100 or more, about 2cm, several colours.",zh:"100个以上，约2厘米，多种颜色。"}, key:"cubes" },
-    make:{ name:{ko:"종이 십틀과 병뚜껑",en:"Paper ten-frame and bottle caps",zh:"纸十格框和瓶盖"}, how:{ko:"위 십틀 두 장과 동그라미를 오립니다. 동그라미 대신 병뚜껑, 단추, 콩을 써도 똑같이 됩니다.",en:"Cut out the two frames above. Bottle caps, buttons or beans work just as well as the paper counters.",zh:"剪下上面两张十格框。用瓶盖、纽扣或豆子代替纸圆片一样好用。"} } },
+    name:{ko:'10칸 수판과 수 조각',en:'Ten-frame and counters',zh:'十格框与圆片'},
+    why:{ko:'10칸 수판(십틀)은 동그라미를 놓는 빈 칸이에요. 낱개 10개를 한 줄로 묶은 십막대와는 달라요.',
+      en:'A ten-frame has ten spaces for counters. A ten rod is different: ten units joined in a row.',
+      zh:'十格框是放圆片的十个空格。十条则是把十个单位连成一行，两者不同。'},
+    steps:{ko:['첫 수판에 8개, 둘째 수판에 7개를 놓아요.',
+      '둘째 수판에서 2개를 옮겨 첫 수판의 빈 칸을 채워요.',
+      '꽉 찬 10개와 남은 5개! 모두 15개인지 세어 봐요.'],
+      en:['Place 8 counters on the first frame and 7 on the second.',
+        'Move 2 from the second frame to fill the first frame.',
+        'A full ten and 5 more! Count to check that there are 15.'],
+      zh:['第一张放8个，第二张放7个。','从第二张移2个，把第一张填满。','满满的10个和剩下的5个！数一数，共15个。']},
+    buy:{ name:{ko:'연결 큐브',en:'Linking cubes',zh:'连接积木'},
+      why:{ko:'수판 대신 큐브를 10개씩 연결해도 10 만들기를 할 수 있어요.',en:'As an alternative to frames, join cubes in groups of ten.',zh:'也可以不用框，把积木每10个连成一条来凑十。'},
+      pick:{ko:'아이 손으로 쉽게 붙이고 뗄 수 있는 크기.',en:'Easy for small hands to join and separate.',zh:'选择孩子容易拼接和拆开的大小。'},key:'cubes'},
+    make:{ name:{ko:'이 종이 교구로 충분해요',en:'Use this paper set',zh:'用这套纸教具就够了'},
+      how:{ko:'바깥 점선을 따라 수판 2장과 동그라미를 오려요. 수판 안쪽 선은 자르지 않아요. 가위는 보호자와 함께 써요.',en:'Cut out both frames and the counters along the dashed outlines. Keep the grid lines intact. An adult helps with scissors.',zh:'沿外侧虚线剪下两张框和圆片，框内的实线不要剪。请大人协助使用剪刀。'}} },
 
   { key:'place', courses:{from:3,to:4}, build:placeValue,
-    name:{ko:'백 판 · 십 막대 · 낱개',en:'Hundred board, ten rods, ones',zh:'百板·十条·个'},
-    why:{ko:'열 개를 하나로 묶는 행위가 곧 자릿값입니다. 받아올림은 낱개 열 개를 십 막대 하나로 바꾸는 일입니다.',
+    name:{ko:'수 모형: 백 모형·십막대·낱개',en:'Hundred board, ten rods, ones',zh:'百板·十条·个'},
+    why:{ko:'작은 정사각형 1개는 1, 십막대 1개는 10, 큰 정사각형 1개는 100을 나타내요. 낱개 10개를 십막대 1개와 바꾸며 수를 만들어요.',
       en:'Bundling ten into one is place value itself. Carrying is trading ten ones for one rod.',
       zh:'把十个捆成一个，就是位值本身。进位就是用十个"个"换一根"十条"。'},
-    steps:{ko:['백 판 1장, 십 막대 8개, 낱개 20개를 오립니다.',
-      '37을 십 막대 3개와 낱개 7개로 놓아 봅니다.',
-      '낱개가 10개가 되면 반드시 십 막대 하나로 바꿉니다 — 이것이 받아올림입니다.'],
+    steps:{ko:['백 모형 1장, 십막대 8개, 낱개 20개를 오립니다.',
+      '37을 십막대 3개와 낱개 7개로 놓아 봅니다.',
+      '낱개가 10개가 되면 반드시 십막대 하나로 바꿉니다 — 이것이 받아올림입니다.'],
       en:['Cut out one hundred board, eight ten-rods and twenty ones.',
         'Lay out 37 as three rods and seven ones.',
         'Whenever ten ones gather, trade them for one rod — that is carrying.'],
       zh:['剪下1张百板、8根十条、20个个位方块。','用3根十条和7个方块摆出37。','个位满十就换成一根十条——这就是进位。']},
-    buy:{ name:{ko:"십진 블록 세트",en:"Base-ten blocks",zh:"十进制积木"}, why:{ko:"낱개 열 개와 십 막대 하나가 손에서 같은 무게로 느껴집니다. 받아올림이 머리가 아니라 손에서 일어납니다.",en:"Ten ones and one rod feel the same in the hand, so carrying happens in the hand, not the head.",zh:"十个个位块和一根十条在手里一样重，进位发生在手上而不是脑子里。"}, pick:{ko:"낱개 100개, 십 막대 20개 이상. 백 판이 들어 있으면 더 좋습니다.",en:"100 ones and 20 rods at least; a hundred flat is a plus.",zh:"至少100个个位块和20根十条，有百板更好。"}, key:"baseten" },
-    make:{ name:{ko:"빨대와 고무줄",en:"Straws and rubber bands",zh:"吸管与橡皮筋"}, how:{ko:"빨대 열 개를 고무줄로 묶어 십 막대를 만듭니다. 묶었다 푸는 그 동작이 곧 받아올림이라, 이미 묶여 있는 완제품보다 낫습니다.",en:"Bundle ten straws with a band. The bundling and unbundling is the carrying itself, which a pre-made block cannot show.",zh:"用橡皮筋把十根吸管捆成一条。捆和解的动作就是进位，现成的积木反而看不到这一步。"} } },
+    buy:{ name:{ko:"십진 블록 세트",en:"Base-ten blocks",zh:"十进制积木"}, why:{ko:"낱개 10개와 십막대 1개를 바꾸며 자릿값을 살펴봐요.",en:"Trade ten unit blocks for one ten rod to explore place value.",zh:"把10个个位块换成1根十条，观察位值。"}, pick:{ko:"낱개 100개, 십막대 20개 이상. 백 모형이 들어 있으면 더 좋습니다.",en:"100 ones and 20 rods at least; a hundred flat is a plus.",zh:"至少100个个位块和20根十条，有百板更好。"}, key:"baseten" },
+    make:{ name:{ko:"빨대와 고무줄",en:"Straws and rubber bands",zh:"吸管与橡皮筋"}, how:{ko:"빨대 10개를 고무줄로 묶어 10을 나타내요. 묶음 하나와 낱개 10개를 바꾸어 보세요.",en:"Bundle ten straws with a band. The bundling and unbundling is the carrying itself, which a pre-made block cannot show.",zh:"用橡皮筋把十根吸管捆成一条。捆和解的动作就是进位，现成的积木反而看不到这一步。"} } },
 
   { key:'numberline', courses:{from:5,to:6}, build:numberLine,
     name:{ko:'수직선 띠',en:'Number line strips',zh:'数轴纸条'},
@@ -383,11 +404,11 @@ window.NM_PAPER_TOOLS = [
 
   { key:'balance', courses:{from:11,to:12}, build:balanceMat,
     name:{ko:'등식 저울판과 수 카드',en:'Balance mat and number cards',zh:'等式天平板与数字卡'},
-    why:{ko:"등호는 답이 나온다는 신호가 아니라 양쪽이 같다는 뜻입니다. 저울이 평평해지는 순간 아이는 그것을 처음으로 눈으로 봅니다.",en:"The equals sign is not a signal that an answer follows; it means both sides are the same, and a level beam shows that for the first time.",zh:"等号不是答案要来了的信号，而是两边一样。天平放平的那一刻，孩子第一次看见。"},
-    steps:{ko:['저울판과 수 카드를 오립니다.','왼쪽 접시에 7과 + 와 5를, 오른쪽에 12를 놓고 평평한지 봅니다.','오른쪽에 네모를 놓고 양쪽이 같아지려면 얼마여야 하는지 찾습니다.'],
-      en:['Cut out the mat and the number cards.','Put 7 + 5 on the left pan and 12 on the right, and see whether it balances.','Put the empty box on the right and find what makes both sides the same.'],
-      zh:['剪下天平板和数字卡。','左盘放7加5，右盘放12，看是否平衡。','右盘放方框，找出放多少两边才一样。']},
-    buy:{ name:{ko:"양팔 저울",en:"Balance scale",zh:"天平"}, why:{ko:"등호는 답이 나온다는 신호가 아니라 양쪽이 같다는 뜻입니다. 저울이 평평해지는 순간 아이는 그것을 처음으로 눈으로 봅니다. 중학교의 방정식이 여기서 시작합니다.",en:"The equals sign is not a signal that an answer follows; it means both sides are the same. A level beam shows that for the first time, and equations start here.",zh:"等号不是答案要来了的信号，而是两边一样。天平放平的那一刻孩子第一次看见，初中的方程也从这里开始。"}, pick:{ko:"접시가 크고 추가 함께 오는 것. 플라스틱이면 충분합니다.",en:"Large pans with a set of weights; plastic is fine.",zh:"托盘大、带砝码的即可，塑料的就够。"}, key:"balance" },
+    why:{ko:"등호는 양쪽의 값이 같다는 뜻이에요. 종이 저울은 실제로 기울지 않으니, 양쪽 카드의 값을 구해서 비교해요.",en:"The equals sign means both sides have the same value. This paper mat does not tilt: calculate and compare the cards on each side.",zh:"等号表示两边的值相同。纸天平不会真的倾斜，要算出两边卡片的值来比较。"},
+    steps:{ko:['저울판과 수 카드를 오립니다.','왼쪽에 7, +, 5를 놓아요. 오른쪽에는 1과 2 카드를 나란히 놓아 12를 만들어요.','오른쪽에 네모를 놓고 양쪽이 같아지려면 얼마여야 하는지 찾습니다.'],
+      en:['Cut out the mat and the number cards.','Place 7, + and 5 on the left. Put the 1 and 2 cards side by side on the right to make 12.','Put the empty box on the right and find what makes both sides the same.'],
+      zh:['剪下天平板和数字卡。','左边放7、+、5。右边把1和2并排放，组成12。','右盘放方框，找出放多少两边才一样。']},
+    buy:{ name:{ko:"양팔 저울",en:"Balance scale",zh:"天平"}, why:{ko:"등호는 양쪽의 값이 같다는 뜻이에요. 종이 저울은 실제로 기울지 않으니, 양쪽 카드의 값을 구해서 비교해요. 중학교의 방정식이 여기서 시작합니다.",en:"The equals sign is not a signal that an answer follows; it means both sides are the same. A level beam shows that for the first time, and equations start here.",zh:"等号不是答案要来了的信号，而是两边一样。天平放平的那一刻孩子第一次看见，初中的方程也从这里开始。"}, pick:{ko:"접시가 크고 추가 함께 오는 것. 플라스틱이면 충분합니다.",en:"Large pans with a set of weights; plastic is fine.",zh:"托盘大、带砝码的即可，塑料的就够。"}, key:"balance" },
     make:{ name:{ko:"옷걸이와 종이컵 저울",en:"A coat-hanger and paper-cup balance",zh:"衣架和纸杯做的天平"}, how:{ko:"옷걸이 양 끝에 실로 종이컵 두 개를 매답니다. 문고리에 걸면 저울이 됩니다. 양쪽에 동전을 같은 수만큼 넣어 평평해지는 것을 봅니다.",en:"Hang two paper cups from a coat-hanger with string and hook it on a door handle. Put the same number of coins in each and watch it level out.",zh:"用绳子在衣架两端各挂一个纸杯，挂在门把手上。两边放一样多的硬币，看它变平。"} } },
   { key:'fraction', courses:{from:13,to:16}, build:fractionDisc,
     name:{ko:'분수 원판',en:'Fraction discs',zh:'分数圆盘'},
@@ -421,7 +442,7 @@ window.NM_PAPER_TOOLS = [
   { key:'pentomino', courses:{from:26,to:28}, build:pentomino,
     name:{ko:"펜토미노 12조각과 6×10 판",en:"Twelve pentominoes and a 6×10 board",zh:"十二块五格骨牌与6×10板"},
     why:{ko:"다섯 칸짜리 조각 열둘로 판을 빈틈없이 채웁니다. 돌리고 뒤집어 보는 그 손놀림이 경시 문제의 공간 사고 그 자체입니다.",en:"Twelve five-cell pieces fill the board exactly. Turning and flipping them is the spatial thinking olympiad problems ask for.",zh:"用十二块五格骨牌把板铺满。转一转、翻一翻，就是竞赛题要的空间思维。"},
-    steps:{ko:["판과 조각 열두 개를 오립니다. 굵은 점선만 자르고 안쪽 얇은 금은 그냥 둡니다.","먼저 큰 조각부터 놓고 모서리를 채웁니다.","다 채우면 다른 방법으로 또 채워 봅니다. 답은 하나가 아닙니다."],en:["Cut out the board and the twelve pieces, following the bold dotted lines only.","Place the big pieces first and work into the corners.","When it is full, fill it a second way — there is more than one answer."],zh:["剪下板和十二块骨牌，只沿粗虚线剪。","先放大块，再补角落。","铺满之后换一种方法再铺一次——答案不止一个。"]},
+    steps:{ko:["판과 조각 열두 개를 오립니다. 굵은 점선만 자르고 안쪽 얇은 금은 그냥 둡니다.","모든 조각은 5칸이에요. 모서리부터 맞춰 보세요.","다 채우면 다른 방법으로 또 채워 봅니다. 답은 하나가 아닙니다."],en:["Cut out the board and the twelve pieces, following the bold dotted lines only.","Every piece has five cells. Try filling a corner first.","When it is full, fill it a second way — there is more than one answer."],zh:["剪下板和十二块骨牌，只沿粗虚线剪。","每块都有5格。试着从角落开始拼。","铺满之后换一种方法再铺一次——答案不止一个。"]},
     buy:{ name:{ko:"펜토미노 세트",en:"Pentomino set",zh:"五格骨牌套装"}, why:{ko:"조각이 두꺼워 잘 밀리지 않고, 색이 달라 어느 조각을 썼는지 한눈에 보입니다.",en:"Thick pieces do not slide, and the colours show at a glance which piece went where.",zh:"块厚不易滑动，颜色不同一眼看出用了哪块。"}, pick:{ko:"12조각이 다 있는 것. 판이 함께 오면 더 좋습니다.",en:"All twelve pieces; a board included is better.",zh:"要12块齐全，附板更好。"}, key:"pentomino" },
     make:{ name:{ko:"종이 조각과 두꺼운 종이",en:"Paper pieces on card",zh:"纸块与厚纸"}, how:{ko:"위 조각을 오립니다. 우유갑이나 택배 상자에 붙여 오리면 두꺼워져 훨씬 잘 다뤄집니다.",en:"Cut out the pieces above. Glue them to a milk carton or cardboard first and they handle far better.",zh:"剪下上面的骨牌。先贴在牛奶盒或纸箱上再剪，会好用得多。"} } },
   { key:'intline', courses:{from:29,to:31}, build:intLine,

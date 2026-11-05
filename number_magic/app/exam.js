@@ -458,39 +458,46 @@
     padding-top:4mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-print-plan tr.nm-pp-stage span { font-weight:700; color:#6b6257; margin-left:6px; font-size:.88em; }
 
-  /* 종이 교구 지면 (w2PaperToolPageHtml, 2026-09-08) */
-  .nm-pt-page { gap:0; }
-  .nm-pt-why { flex:0 0 auto; margin:4mm 0 0; font-size:11.5px; line-height:1.6; color:#333; }
+  /* 오려 쓰는 교구: 실제 조각이 중심, 놀이 순서와 보호자 준비 안내는 아래에 분리. */
+  .nm-pt-page { gap:0; scroll-margin-top:80px; }
+  .nm-pt-primary .nm-hist-head b { font-size:20px; }
+  .nm-pt-intro { display:flex; align-items:center; gap:3mm; flex:0 0 auto; }
+  .nm-pt-intro img { width:14mm; height:14mm; object-fit:contain; flex:none; }
+  .nm-pt-why { margin:2mm 0; font-size:12px; line-height:1.6; color:#20343b; }
+  .nm-pt-primary .nm-pt-why { font-size:14px; font-weight:600; }
+  .nm-pt-legend { display:flex; gap:6mm; margin:2mm 0 0; font-size:11px; color:#39494d; }
+  .nm-pt-legend span { display:flex; align-items:center; gap:2mm; }
+  .nm-pt-legend i { width:8mm; border-top:1.5px dashed #20343b; }
+  .nm-pt-legend .nm-pt-solid { border-top-style:solid; }
   .nm-pt-art { flex:1 1 auto; min-height:0; display:block; margin:3mm 0; overflow:hidden; }
-  /* 종이 교구는 크게 인쇄돼야 오리기 쉽다 — 남는 세로 공간까지 채운다(비율은 유지).
-     한 지면 안의 조각들은 같은 배율로 커지므로 서로 맞물리는 크기 관계는 그대로다. */
-  /* viewBox + preserveAspectRatio 기본값이라 비율을 지키며 상자에 꽉 맞는다. */
   .nm-pt-art svg { width:100%; height:100%; display:block; }
-  .nm-pt-steps { flex:0 0 auto; list-style:none; margin:0; padding:0; display:grid;
-    grid-template-columns:repeat(3,1fr); gap:3mm; }
-  .nm-pt-steps li { font-size:10.5px; line-height:1.55; color:#333; padding-left:6mm; position:relative; }
+  /* 유아용은 위에서부터 배치하고, 폭을 기준으로 조각의 실제 크기를 지킨다. */
+  .nm-pt-primary .nm-pt-art { flex:0 0 auto; }
+  .nm-pt-primary .nm-pt-art svg { height:auto; }
+  .nm-pt-play { flex:0 0 auto; border-top:1.2px solid #245b60; padding-top:2.5mm; }
+  .nm-pt-play > b { display:block; font-size:12px; color:#245b60; margin-bottom:2mm; }
+  .nm-pt-steps { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; }
+  .nm-pt-steps li { font-size:11px; line-height:1.55; color:#20343b; padding-left:6mm; position:relative; }
+  .nm-pt-primary .nm-pt-steps li { font-size:14px; }
   .nm-pt-steps b { position:absolute; left:0; top:0; width:4.4mm; height:4.4mm; border-radius:50%;
-    background:#0E2C57; color:#fff; font-size:8px; display:flex; align-items:center; justify-content:center;
+    background:#245b60; color:#fff; font-size:9px; display:flex; align-items:center; justify-content:center;
     -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .nm-pt-choose { flex:0 0 auto; margin-top:4mm; padding-top:3mm; border-top:1px solid #C9A063;
+  .nm-pt-choose { flex:0 0 auto; margin-top:4mm; padding-top:3mm; border-top:1px solid #c9d6d3;
     display:grid; grid-template-columns:1fr auto 1fr; gap:3mm; align-items:stretch; }
-  .nm-pt-opt { display:flex; gap:3mm; text-decoration:none; color:inherit; border:1px solid #ccc;
-    border-radius:2mm; padding:3mm 3.5mm; }
+  .nm-pt-primary .nm-pt-choose { margin-top:auto; }
+  .nm-pt-opt { display:flex; gap:3mm; text-decoration:none; color:inherit; padding:1mm 0; }
   .nm-pt-opt-txt { min-width:0; }
-  /* QR — 인쇄물이라 링크는 못 누른다. 18mm 는 폰이 넉넉히 읽는 크기(실험실 QR 26mm 보다 작지만
-     주소가 짧아 모듈이 굵다). 여백(quiet zone)을 흰 테두리로 남긴다. */
-  .nm-pt-qr { flex:0 0 24mm; text-align:center; }
-  .nm-pt-qr svg { width:24mm; height:24mm; display:block; background:#fff; padding:1mm; box-sizing:border-box; }
-  .nm-pt-qr span { display:block; font-size:7.5px; color:#777; margin-top:.8mm; }
-  .nm-pt-opt-buy { border-color:#0E2C57; }
-  .nm-pt-opt-make { border-style:dashed; }
-  .nm-pt-tag { display:inline-block; font-size:8.5px; font-weight:800; letter-spacing:.04em;
-    color:#0E2C57; background:#EFEDE7; border-radius:1.5mm; padding:.7mm 2mm; margin-bottom:1.5mm;
-    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .nm-pt-opt b { display:block; font-size:11.5px; }
-  .nm-pt-opt p { margin:1mm 0 0; font-size:9.5px; line-height:1.55; color:#444; }
-  .nm-pt-opt i { display:block; font-size:8.5px; font-style:normal; color:#777; margin-top:1.5mm; }
-  .nm-pt-or { align-self:center; font-size:10px; font-weight:800; color:#8a92a3; }
+  .nm-pt-qr { flex:0 0 22mm; text-align:center; }
+  .nm-pt-qr svg { width:22mm; height:22mm; display:block; background:#fff; padding:1mm; box-sizing:border-box; }
+  .nm-pt-qr span { display:block; font-size:8px; color:#555; margin-top:.8mm; }
+  .nm-pt-tag { display:block; font-size:9px; font-weight:700; color:#536564; margin-bottom:1mm; }
+  .nm-pt-opt b { display:block; font-size:12px; color:#20343b; }
+  .nm-pt-opt p { margin:1mm 0 0; font-size:10.5px; line-height:1.5; color:#39494d; }
+  .nm-pt-opt i { display:block; font-size:9px; font-style:normal; color:#536564; margin-top:1mm; }
+  .nm-pt-or { align-self:center; font-size:10px; color:#536564; }
+  .nm-pt-frac { display:inline-grid; grid-template-rows:1fr 1fr; text-align:center; vertical-align:-.45em; line-height:1.08; font-size:.9em; margin:0 .15em; min-width:.8em; }
+  .nm-pt-frac > span:last-child { border-top:1px solid currentColor; padding-top:.08em; }
+  .nm-pt-page svg { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 
   /* 수학사 지면 + 실험실 QR (w2HistoryPageHtml, 2026-09-06) */
   .nm-hist-page { gap:0; }
@@ -2674,15 +2681,24 @@ function coverPageHtml(items, code, totalCount){
    매주 인쇄물이 간다는 우리 강점 위에 그대로 얹힌다. 정말 사야 하는 셋(바둑돌·빨대·주사위)만
    맨 아래에 검색 기준으로 적는다 — 상품 번호·가격은 박지 않는다(가격은 매일 바뀐다).
    courseNum 이 없거나 그 과정에 맞는 교구가 없으면 빈 문자열이라 지면이 안 생긴다. */
+// Numeric fractions are set vertically in tool instructions as well as diagrams.
+// Escape first; only digit/digit tokens become markup, never arbitrary HTML.
+function paperToolText(text){
+  return esc(text).replace(/\b(\d+)\/(\d+)\b/g, (_, n, d) =>
+    `<span class="nm-pt-frac" role="math" aria-label="${lk(`${d}분의 ${n}`,`${n} over ${d}`,`${d}分之${n}`)}"><span>${n}</span><span>${d}</span></span>`);
+}
 function w2PaperToolPageHtml(courseNum, code){
   const pick = window.NM_PAPER_TOOL_OF_COURSE;
   const tool = (pick && courseNum) ? pick(courseNum) : null;
   if(!tool || typeof tool.build !== 'function') return '';
   let art = '';
-  try{ art = tool.build(); }catch(e){ return ''; }
+  try{ art = tool.build(examLang()); }catch(e){ return ''; }
   if(!art) return '';
+  const source = document.querySelector('script[src*="data/paper-tools.js"]');
+  const portrait = source ? new URL('../assets/characters/numi-0-happy.png', source.src).href : '';
+  const primary = tool.key === 'tenframe' || tool.key === 'place';
   const steps = (pickL(tool.steps) || []).map((t, i) =>
-    `<li><b>${i + 1}</b>${esc(t)}</li>`).join('');
+    `<li><b>${i + 1}</b>${paperToolText(t)}</li>`).join('');
   /* 둘 중 하나를 고른다(2026-09-08, 원장 "금액은 내지만 구입하는 거 양팔 저울처럼, 아니면
      주변에 있는 것으로 만들기, 둘 중 선택하도록"). 사는 쪽은 네이버 **검색 링크** — 상품 번호와
      가격은 박지 않는다(가격은 매일 바뀌고 링크는 죽는다). */
@@ -2696,30 +2712,31 @@ function w2PaperToolPageHtml(courseNum, code){
     <a class="nm-pt-opt nm-pt-opt-buy" href="${esc(buyUrl)}">
       <div class="nm-pt-qr">${qrSvg(buyUrl)}<span>${esc(lk('QR 찍기','Scan','扫码'))}</span></div>
       <div class="nm-pt-opt-txt">
-        <span class="nm-pt-tag">A ${esc(lk('구매하여 사용하기','Buy and use','买来使用'))}</span>
+        <span class="nm-pt-tag">${esc(lk('다른 교구를 쓰려면','Optional alternative','也可选用'))}</span>
         <b>${esc(pickL(buy.name))}</b>
-        <p>${esc(pickL(buy.why))}</p>
-        <i>${esc(lk('살 때 보는 것','What to check','挑选要点'))} — ${esc(pickL(buy.pick))}</i>
+        <p>${paperToolText(pickL(buy.why))}</p>
+        <i>${esc(lk('살 때 보는 것','What to check','挑选要点'))} — ${paperToolText(pickL(buy.pick))}</i>
       </div>
     </a>
     <div class="nm-pt-or">${esc(lk('또는','or','或'))}</div>
     <div class="nm-pt-opt nm-pt-opt-make">
       <div class="nm-pt-opt-txt">
-        <span class="nm-pt-tag">B ${esc(lk('주변에 있는 것으로 만들기','Make it from what you have','用身边的东西做'))}</span>
+        <span class="nm-pt-tag">${esc(lk('집에서 준비하기','Prepare at home','在家准备'))}</span>
         <b>${esc(pickL(make.name))}</b>
-        <p>${esc(pickL(make.how))}</p>
-        <i>${esc(lk('돈이 들지 않습니다. 위 그림을 오려 쓰세요.','No cost — cut out the sheet above.','不花钱，把上面的图剪下来用。'))}</i>
+        <p>${paperToolText(pickL(make.how))}</p>
+        <i>${esc(lk('위 종이 교구를 그대로 사용할 수 있어요.','You can use the paper tools above.','可以直接使用上面的纸教具。'))}</i>
       </div>
     </div>
   </div>` : '';
-  return `<div class="nm-w2-page nm-pt-page">
+  return `<div id="nm-paper-tool" class="nm-w2-page nm-pt-page${primary ? ' nm-pt-primary' : ''}" data-tool="${esc(tool.key)}">
   <div class="nm-hist-head">
-    <span class="nm-hist-kicker">${esc(lk('이번 주 종이 교구','This Week\'s Paper Tool','本周纸教具'))}</span>
+    <span class="nm-hist-kicker">${esc(lk('오려 쓰는 교구','Cut-out tools','剪纸教具'))}</span>
     <b>${esc(pickL(tool.name))}</b>
   </div>
-  <p class="nm-pt-why">${esc(pickL(tool.why))}</p>
+  <div class="nm-pt-intro">${primary && portrait ? `<img src="${esc(portrait)}" alt="" width="54" height="54">` : ''}<p class="nm-pt-why">${paperToolText(pickL(tool.why))}</p></div>
+  ${primary ? `<div class="nm-pt-legend"><span><i></i>${esc(lk('점선은 잘라요','Cut dashed outlines','沿虚线剪'))}</span><span><i class="nm-pt-solid"></i>${esc(lk('안쪽 실선은 그대로 두어요','Keep inner grid lines','内侧实线不要剪'))}</span></div>` : ''}
   <div class="nm-pt-art">${art}</div>
-  <ol class="nm-pt-steps">${steps}</ol>
+  <div class="nm-pt-play"><b>${esc(lk('이렇게 해 봐요','Try it together','一起试一试'))}</b><ol class="nm-pt-steps">${steps}</ol></div>
   ${choices}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
 </div>`;

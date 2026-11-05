@@ -190,7 +190,7 @@
     },
     "membershipAfterLogin": "trial",
     "linkedStudentsAfterLogin": 1,
-    "next": "Awaiting recipient confirmation of phone receipt/link; PDF save and all-24-page A4 checks are complete. Physical paper output not performed.",
+    "next": "Recipient confirmed phone receipt and link. All-24-page native A4 PDF checks complete; physical paper output not performed. User moved on to paper-manipulative design review; do not resend SMS.",
     "provider": {
       "httpStatus": 200,
       "resultCode": 1,
@@ -200,7 +200,7 @@
       "reconciledOk": true,
       "requestId": 1568
     },
-    "receiptUserConfirmed": false,
+    "receiptUserConfirmed": true,
     "learnerLink": "User created/linked a learner during the app check; stale create-test-learner prompt was superseded by visible linked state",
     "agentProgressWrites": 0,
     "agentLearningSettingsWrites": 1,
@@ -213,7 +213,9 @@
       "startDate": "2026-11-06",
       "grade": "left unknown; no invented birth year"
     },
-    "newAuthAccountsCreated": 0
+    "newAuthAccountsCreated": 0,
+    "phoneLinkOpenedUserConfirmed": true,
+    "recipientConfirmation": "User confirmed SMS receipt and that the link opens on 2026-11-06 KST"
   },
   "remainingWarning": "auth_leaked_password_protection",
   "note": "User retained Free; secure password change and minimum length do not replace leaked-password detection. User entered OTP/new password directly. Actual provider acknowledged one LMS; no resend. A linked learner appeared before the stale create-test-learner choice returned, so no additional learner was made by the agent.",
