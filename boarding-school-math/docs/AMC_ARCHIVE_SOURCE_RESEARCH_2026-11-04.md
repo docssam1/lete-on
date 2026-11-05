@@ -1,5 +1,13 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2011 AMC 10B·12B 공식 문항 응답 분포 복구 · 2026-11-05
+
+웹 검색으로 MAA의 2011 AMC 통계 페이지가 Internet Archive에 남아 있는 것을 찾았다. 해당 MAA 페이지가 가리키는 [공식 Item Difficulty PDF](https://web.archive.org/web/20110815223203id_/http://amc.maa.org:80/amc1012/2011/stats/11AMC1012-itemdiff.pdf)는 1쪽에 AMC 10A·10B, 2쪽에 AMC 12A·12B의 전 문항 정답 보기와 A–E·무응답·판독 불가 비율을 싣는다. 10B와 12B 각 25문항을 Apple Vision OCR로 옮긴 뒤 페이지 이미지와 대조했다. 별도 [LIVE 10B 답안](https://live.poshenloh.com/past-contests/amc10/2011B/answers) 및 [LIVE 12B 답안](https://live.poshenloh.com/past-contests/amc12/2011B/answers)과 25개 정답이 모두 일치한다. 각 보기·무응답·판독 불가 비율 합계는 반올림 오차 0.02% 이내다.
+
+별도 MAA Grand Statistics에는 공식 학생 수 10B 33,723명, 12B 30,846명이 있지만, Item Difficulty 표 자체는 “all Participants”라고만 쓰고 분모를 밝히지 않는다. 따라서 이 공식 학생 수를 문항 응답 분포의 표본 수로 간주하지 않고 응답 통계 자료와 분리했다. 보기 비율로 재구성한 당시 채점 평균은 각각 72.21점과 64.94점으로, [MAA 2011 결과표에 인용된 전국 평균 72.2·64.9](https://www.marksnavely.us/maa/maaarchives/2011-04-contest.pdf)와 반올림 범위에서 일치한다. 원자료를 [`amc10-12-2011B-item-response.csv`](../competition/historical-amc-grade/amc10-12-2011B-item-response.csv)에 50행으로 보존하고, 문제별 선택 통계 API와 연도별 coverage manifest에도 연결했다. 결과 화면은 지원하는 해당 시험형에서 오답·미응답 문항만 보여 주며, 선택 비율은 전체 응시자 통계이지 개인의 풀이 원인이나 개념 등급 판정이 아니다.
+
+같은 PDF의 2011 A형 표는 별도로 복구해 둔 99CEF 표본과 답·분포를 교차 확인하는 출처로만 사용했다. 이미 반영된 A형 원자료의 모집단 정의와 출처를 바꾸지 않았다.
+
 ## 2026-11-05 · 2007–2010 AMC 10 학년 비교 원자료와 2009 B형 표본 검증
 
 웹에서 MAA 작성 *2010 AMC 10/12 Results Summary*의 표 I–II를 대조했다. AMC 10 표 II에는 2007–2010 A/B 각 회차의 공식 응시 인원, 전체 평균, Grade 8·9·10 평균과 표본 수, AIME 컷이 한데 실려 있다. 2009 AMC 10B 예를 들면 Grade 9 평균 68.0점(n=10,416), Grade 10 평균 74.8점(n=14,368), Grade 8 평균 85.4점(n=1,430)이다. 2010 AMC 10B는 각각 64.2점(n=12,880), 69.2점(n=18,231), 78.1점(n=3,124)이다. 이 값은 기존 `amc10-12-grade-means-2002-2011.csv` 행과 일치한다. 원문은 현재 Scribd가 보존한 MAA 작성 연례 보고서 사본으로 검색·열람했다. 해당 연도 비교 자료로 사용하되, 학년 평균을 개인 등급이나 현재 기준으로 해석하지 않는다. [MAA 2010 연례 보고서 사본](https://www.scribd.com/document/51428451/2010-HS-summary), [연례 AMC 보고서 디지털 아카이브 설명](https://sites.google.com/view/ian-calaway/amc-archive).

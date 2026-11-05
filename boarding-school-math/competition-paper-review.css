@@ -88,6 +88,11 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .paper-question-band span { color: var(--review-accent-strong); font-size: .9rem; font-weight: 850; }
 .paper-question-band small { color: #566274; font-size: .68rem; }
 .paper-performance .paper-performance-note { margin-top: 10px; font-size: .72rem; }
+.item-response-table-wrap { margin-top: 12px; overflow-x: auto; }
+.item-response-table { width: 100%; min-width: 520px; border-collapse: collapse; font-size: .74rem; text-align: left; }
+.item-response-table th, .item-response-table td { padding: 8px 9px; border-bottom: 1px solid #d8dee8; white-space: nowrap; }
+.item-response-table th { color: #566274; font-size: .68rem; font-weight: 800; }
+.item-response-table td { color: #283247; }
 .report-domains, .report-reasons { margin-top: 23px; }
 .report-domains h3, .report-reasons h3 { margin: 0 0 10px; font-size: 1rem; }
 .report-domain-row { padding: 11px 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 8px; border-top: 1px solid #d8dee8; font-size: .83rem; }

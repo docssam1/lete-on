@@ -182,6 +182,10 @@
     $("paper-performance").hidden = true;
     setText("paper-performance-summary", "");
     $("paper-question-bands").replaceChildren();
+    $("item-response-reference").hidden = true;
+    setText("item-response-summary", "");
+    $("item-response-rows").replaceChildren();
+    $("item-response-source").removeAttribute("href");
     $("report-follow-up").hidden = true;
     setText("report-follow-up-copy", "");
     $("report-follow-up-link").removeAttribute("href");
@@ -1050,6 +1054,33 @@
         const details = document.createElement("small"); details.textContent = `오답 ${band.wrong} · 미응답 ${band.blank}`;
         item.append(label, score, details); bands.append(item);
       });
+    }
+    const itemResponseReference = window.GFIELDAMC10_12ItemResponseReference;
+    const itemResponseSection = $("item-response-reference");
+    const itemResponseProgram = selectedFormat().id;
+    const itemResponseForm = $("archive-form").value || params.get("form") || "";
+    const cohortItemResponses = result.complete && ["amc10", "amc12"].includes(itemResponseProgram) && itemResponseReference
+      ? result.reviewItems.map(function (reviewItem) {
+        return { reviewItem: reviewItem, reference: itemResponseReference.responseFor(itemResponseProgram, selectedYear, itemResponseForm, reviewItem.number, reviewItem.answer) };
+      }).filter(function (item) { return Boolean(item.reference); })
+      : [];
+    itemResponseSection.hidden = cohortItemResponses.length === 0;
+    if (cohortItemResponses.length) {
+      const cohort = cohortItemResponses[0].reference;
+      setText("item-response-summary", `${selectedYear} AMC ${itemResponseProgram === "amc10" ? "10" : "12"}${itemResponseForm} · MAA 전체 응답 분포 · 오답·미응답 문항의 보기 선택을 나란히 표시합니다.`);
+      const rows = $("item-response-rows");
+      rows.replaceChildren();
+      cohortItemResponses.forEach(function ({ reviewItem, reference }) {
+        const row = document.createElement("tr");
+        const addCell = function (value) { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); };
+        addCell(String(reviewItem.number));
+        addCell(reviewItem.status === "blank" ? "미응답" : reviewItem.answer);
+        addCell(reviewItem.status === "blank" || !reviewItem.answer ? "—" : `${reviewItem.answer} · ${reference.selectedResponsePercent.toFixed(1)}%`);
+        addCell(`${reference.mostCommonDistractor.answer} · ${reference.mostCommonDistractor.percent.toFixed(1)}%`);
+        addCell(`${reference.correctAnswer} · ${reference.correctResponsePercent.toFixed(1)}%`);
+        rows.append(row);
+      });
+      $("item-response-source").href = cohort.sourceUrl;
     }
     const scoreNote = $("score-estimate-note");
     const isAmcRawReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id);

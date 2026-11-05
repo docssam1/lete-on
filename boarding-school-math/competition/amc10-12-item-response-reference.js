@@ -371,6 +371,58 @@
 23,C,2.78,3.80,4.75,2.88,2.07,83.68,0.03
 24,C,4.25,6.07,6.56,3.71,6.16,73.22,0.03
 25,D,4.54,5.11,4.35,3.14,9.94,72.88,0.03`.trim(), respondentCount: 74665, population: "2011 AMC 12A global response cohort", sourceUrl: "https://web.archive.org/web/20141005125043if_/http://www.99cef.org.tw/AMC/2011AMC10%2612Report.pdf", sourceStatus: "99CEF 2011 analysis report; printed p.22 Global item-response table extracted from Internet Archive original PDF with macOS PDFKit and visually checked; report labels contest without form suffix; population count and all 25 keys match 2011 AMC 12A reference; answer key cross-checked with LIVE" }),
+    "amc10-2011-B": Object.freeze({ raw: `
+1,C,5.63,1.12,90.80,0.85,0.21,1.39,0.00
+2,E,12.27,2.58,3.59,3.59,75.74,2.21,0.02
+3,A,77.23,5.90,3.90,4.59,1.68,6.70,0.01
+4,C,5.79,5.14,65.07,22.12,0.19,1.68,0.01
+5,E,6.52,4.26,2.54,4.48,57.23,24.94,0.04
+6,A,78.61,3.04,3.75,5.49,2.06,7.04,0.01
+7,B,29.67,49.80,5.36,2.59,4.64,7.92,0.01
+8,B,24.70,67.46,1.32,1.17,3.19,2.13,0.04
+9,D,11.80,2.65,4.52,45.03,3.23,32.75,0.02
+10,B,10.68,43.38,12.72,7.89,6.72,18.58,0.01
+11,D,6.61,3.03,49.19,27.20,3.45,10.50,0.02
+12,A,40.04,8.86,2.29,5.37,1.93,41.46,0.04
+13,D,10.23,21.23,7.11,26.56,8.05,26.80,0.01
+14,C,6.67,6.89,44.52,5.35,5.05,31.48,0.03
+15,E,6.21,8.21,7.78,8.80,50.59,18.34,0.06
+16,A,30.32,10.76,9.85,5.35,2.30,41.40,0.01
+17,C,5.10,4.18,35.11,9.66,11.15,34.77,0.02
+18,E,1.77,5.34,18.68,20.52,27.08,26.60,0.02
+19,A,27.24,10.46,3.70,7.27,11.25,40.02,0.06
+20,C,4.27,16.96,16.53,4.10,3.46,54.67,0.02
+21,B,11.37,13.25,6.21,5.31,3.06,60.78,0.03
+22,A,6.96,7.00,7.58,4.16,3.88,70.39,0.03
+23,D,31.84,6.36,5.73,9.64,4.08,42.29,0.05
+24,B,7.94,4.98,8.71,8.30,4.25,65.81,0.03
+25,D,2.39,4.21,6.36,6.47,4.42,76.15,0.01`.trim(), population: "2011 AMC 10B MAA All Participants response table; exact denominator not stated", sourceUrl: "https://web.archive.org/web/20110815223203id_/http://amc.maa.org:80/amc1012/2011/stats/11AMC1012-itemdiff.pdf", sourceStatus: "MAA 2011 AMC 10/12 official item-difficulty report preserved by Internet Archive; printed p.1, AMC 10B All Participants response table; transcribed with Apple Vision OCR and checked against the rendered page; all 25 answers cross-checked against LIVE; item-response denominator not stated; response-share score 72.21 matches MAA Grand Statistics mean 72.2" }),
+    "amc12-2011-B": Object.freeze({ raw: `
+1,C,2.50,0.82,95.12,0.61,0.12,0.82,0.01
+2,E,7.42,1.43,2.60,2.82,84.47,1.23,0.03
+3,C,3.89,5.06,73.42,16.49,0.10,1.02,0.02
+4,E,4.22,3.16,1.64,3.76,69.35,17.80,0.06
+5,A,48.44,2.61,1.87,27.06,12.12,7.87,0.03
+6,C,1.76,5.47,48.33,5.16,10.02,29.18,0.07
+7,B,8.12,60.76,3.15,9.53,2.52,15.89,0.02
+8,A,49.94,7.83,2.92,5.13,1.64,32.48,0.06
+9,D,9.74,14.76,6.77,44.25,6.92,17.53,0.03
+10,E,2.02,5.51,19.28,22.18,33.62,17.33,0.06
+11,B,9.63,32.70,10.14,14.59,5.16,27.73,0.05
+12,A,40.95,8.56,11.06,5.57,2.17,31.65,0.03
+13,B,10.96,18.85,6.52,5.79,2.75,55.12,0.02
+14,D,2.40,6.44,4.01,10.93,8.69,67.48,0.05
+15,D,11.09,13.08,9.05,14.42,4.35,47.96,0.04
+16,C,4.38,20.24,20.88,4.36,2.92,47.19,0.03
+17,B,2.73,14.60,8.51,5.38,6.82,61.92,0.04
+18,A,10.94,5.85,8.41,4.38,4.43,65.96,0.04
+19,B,8.58,6.38,8.93,8.90,3.39,63.78,0.03
+20,C,3.49,4.95,6.28,4.97,3.21,77.05,0.05
+21,D,3.94,5.54,6.83,7.42,1.49,74.75,0.03
+22,D,2.18,3.73,5.06,5.14,3.04,80.81,0.05
+23,C,4.57,6.25,9.75,5.83,3.53,70.01,0.06
+24,B,3.38,3.22,4.38,4.20,3.41,81.37,0.04
+25,D,3.41,5.66,4.67,3.83,2.98,79.43,0.02`.trim(), population: "2011 AMC 12B MAA All Participants response table; exact denominator not stated", sourceUrl: "https://web.archive.org/web/20110815223203id_/http://amc.maa.org:80/amc1012/2011/stats/11AMC1012-itemdiff.pdf", sourceStatus: "MAA 2011 AMC 10/12 official item-difficulty report preserved by Internet Archive; printed p.2, AMC 12B All Participants response table; transcribed with Apple Vision OCR and checked against the rendered page; all 25 answers cross-checked against LIVE; item-response denominator not stated; response-share score 64.94 matches MAA Grand Statistics mean 64.9" }),
     "amc10-2015-A": Object.freeze({ raw: `
 1,C,5.51,5.18,79.66,5.48,1.80,2.36,0.01
 2,D,3.28,1.52,3.12,84.96,2.00,5.12,0.01
