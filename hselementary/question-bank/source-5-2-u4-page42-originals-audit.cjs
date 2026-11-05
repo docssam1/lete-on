@@ -1,0 +1,14 @@
+'use strict';
+const assert = require('node:assert/strict');
+const api = require('./source-5-2-u4-page42-originals.js');
+assert.equal(314 * 14, 4396);
+assert.equal(64 * 2019 / (8 * 4 * 2), 2019);
+assert.equal(54 * 19 - 72 * 9 + 18 * 39 - 36 * 29, 36);
+assert.equal(314325 / (127 * 99), 25);
+const candidates=[];
+for(let tenths=450;tenths<460;tenths++) if(tenths>=455 && ((tenths*168)%100)===76) candidates.push(tenths/10);
+assert.deepEqual(candidates,[45.7]);
+assert.equal((45900 * 12 / 10) / (180 * 85 / 100),360);
+assert.deepEqual(api.defs.map((_,i)=>api.makeQuestion(i).answer),['43.96','(1) 2019 (2) 0.36','25','45.7','360원']);
+assert(api.defs.every((_,i)=>api.makeQuestion(i).publisherKeyVerified===false));
+console.log('PASS: page 42 source arithmetic and all answers');

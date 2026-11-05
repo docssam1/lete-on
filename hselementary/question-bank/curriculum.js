@@ -3002,6 +3002,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52DecimalUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u4");
   const source52DecimalSubunit = source52DecimalUnit?.subunits.find(s => s.name === "소수와 자연수의 곱셈");
+  if (source52DecimalSubunit) for (const [id,name,key,section] of [
+    ["5-2-u4-e1-exploration-original","3.14를 14번 더하기 · 원문","source52U4P42ExplorationOriginal","exploration"],
+    ["5-2-u4-e1-example-1-original","두 곱셈식 계산 · 원문","source52U4P42Example11Original","example"],
+    ["5-2-u4-e1-example-2-original","소수점을 빼먹은 곱 · 원문","source52U4P42Example12Original","example"],
+    ["5-2-u4-e1-example-3-original","어림과 소수 둘째 자리 · 원문","source52U4P42Example13Original","example"],
+    ["5-2-u4-e1-example-4-original","상한 감귤과 판매 가격 · 원문","source52U4P42Example14Original","example"]
+  ]) if (!source52DecimalSubunit.types.some(t=>t.id===id)) source52DecimalSubunit.types.push({id,number:source52DecimalSubunit.types.length+1,name,label:name,sourceItemId:id,sourceSection:section,sourcePrintedPage:42,sourcePdfPage:38,alternateSourcePdfPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치와 조건을 대조하고 소수 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false});
   if (source52DecimalSubunit) {
     const index = source52DecimalSubunit.types.findIndex(t => t.id === "5-2-u4-t1");
     if (index >= 0) {
