@@ -21,6 +21,15 @@ export function playCover(root) {
   if (start) tl.add(start, { scale: [0.9, 1], opacity: [0, 1], duration: 520, ease: "outElastic(1, .6)" }, "-=200");
 }
 
+// 스스로 공부 첫 화면(start.html, 원장 2026-11-04 「스스로 공부 첫 화면에도 넣어줘」): 제목이 글자째 올라오고 교재 목록이 하나씩 들어온다
+export function playIntro(title, items) {
+  if (still() || !title) return;
+  const { chars } = splitText(title, { chars: true });
+  const tl = createTimeline({ defaults: { ease: "out(3)" } });
+  tl.add(chars, { opacity: [0, 1], y: ["60%", "0%"], duration: 520, delay: stagger(30) }, 0);
+  if (items?.length) tl.add(items, { opacity: [0, 1], x: [-18, 0], duration: 420, delay: stagger(55) }, 220);
+}
+
 // 도착: 메달의 체크가 그려지고, 오늘 한 공부의 수가 0부터 올라가고, 점수 고리가 차오른다
 export function playEnd(root) {
   if (!root) return;
@@ -49,13 +58,13 @@ export function enterSlide(el, dir) {
   motion.animate(el, { opacity: [0, 1], x: [dir * 28, 0] }, { duration: 0.32, ease: [0.2, 0.7, 0.2, 1] });
 }
 
-// 단추를 누르면 쏙 들어갔다가 튀어나온다
+// 단추를 누르면 쏙 들어갔다가 튀어나온다(덱 기본 · 다른 화면은 고를 것을 넘긴다)
 let pressBound = false;
-export function bindPress() {
+export function bindPress(selector = ".sd-btn, .sd-step, .sd-skip, .sd-number, .sd-plan li") {
   const motion = M();
   if (pressBound || still() || !motion) return;
   pressBound = true;
-  motion.press(".sd-btn, .sd-step, .sd-skip, .sd-number, .sd-plan li", (el) => {
+  motion.press(selector, (el) => {
     motion.animate(el, { scale: 0.94 }, { type: "spring", stiffness: 700, damping: 30 });
     return () => motion.animate(el, { scale: 1 }, { type: "spring", stiffness: 500, damping: 14 });
   });

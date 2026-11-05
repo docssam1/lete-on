@@ -2,7 +2,7 @@ import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261103d";
 import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261103d";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
-import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261104a";
+import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
