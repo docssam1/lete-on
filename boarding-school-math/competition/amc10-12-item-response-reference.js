@@ -238,9 +238,9 @@
 20,D,10.23,7.85,8.32,18.15,3.22,52.21,0.02
 21,A,10.38,6.04,5.47,4.41,1.32,72.37,0.03
 22,A,10.08,15.85,4.48,8.19,3.51,57.86,0.04
-23,A,6.17,5.32,5.81,4.82,3.52,74.52,0.04
+23,A,6.17,5.32,5.81,4.82,3.32,74.52,0.04
 24,A,8.15,5.53,7.35,3.99,3.99,70.97,0.03
-25,B,8.36,7.55,6.82,10.15,7.17,59.92,0.04`.trim(), respondentCount: 62254, population: "2010 AMC 10A global response cohort", excludedQuestions: [23], sourceUrl: "https://www.99cef.org.tw/2010AMC1012/2010AMC10%2612%20Summary.pdf", sourceStatus: "99CEF 2010 analysis report; printed p.10 Global item-response table transcribed from indexed PDF text (direct PDF download currently returns 404); report omits form suffix; response cohort total and answer key match the 2010 AMC 10A reference; key cross-checked with LIVE; Q23 percentages sum to 100.20 as printed and are preserved in CSV but omitted from comparison" }),
+25,B,8.36,7.55,6.82,10.15,7.17,59.92,0.04`.trim(), respondentCount: 62254, population: "2010 AMC 10A global response cohort", sourceUrl: "https://pdfcoffee.com/2010hssummary-pdf-free.html", sourceStatus: "MAA-authored 61st Annual AMC 10/12 Results Summary; printed p.196, Table IX; global official-student responses transcribed from accessible indexed mirror; all 25 starred keys checked against LIVE; Q23 corrected to the report's 3.32% for E (not 3.52% in the earlier secondary transcription); five option, omission, and unreadable rates total 100.00%" }),
     "amc12-2010-A": Object.freeze({ raw: `
 1,C,0.66,4.83,90.54,1.61,1.01,1.34,0.01
 2,A,94.35,2.51,0.37,1.12,0.35,1.28,0.02
@@ -266,7 +266,7 @@
 22,A,5.25,4.38,6.26,4.31,3.66,76.10,0.03
 23,A,8.53,5.64,7.00,3.93,3.81,71.04,0.05
 24,B,3.40,4.19,4.01,3.04,1.96,83.37,0.03
-25,C,2.56,5.68,6.02,3.71,1.68,80.32,0.03`.trim(), respondentCount: 67155, population: "2010 AMC 12A global response cohort", sourceUrl: "https://www.99cef.org.tw/2010AMC1012/2010AMC10%2612%20Summary.pdf", sourceStatus: "99CEF 2010 analysis report; printed p.22 Global item-response table transcribed from indexed PDF text (direct PDF download currently returns 404); report omits form suffix; response cohort total and answer key match the 2010 AMC 12AA reference; key cross-checked with LIVE" }),
+25,C,2.56,5.68,6.02,3.71,1.68,80.32,0.03`.trim(), respondentCount: 67155, population: "2010 AMC 12A global response cohort", sourceUrl: "https://pdfcoffee.com/2010hssummary-pdf-free.html", sourceStatus: "MAA-authored 61st Annual AMC 10/12 Results Summary; printed p.195, Table IX; global official-student responses transcribed from accessible indexed mirror; all 25 starred keys checked against LIVE" }),
     "amc10-2010-B": Object.freeze({ raw: `
 1,C,0.47,1.11,89.79,0.32,6.63,1.68,0.00
 2,C,5.55,5.00,82.18,3.08,1.74,2.44,0.01
@@ -292,7 +292,7 @@
 22,C,3.85,5.50,14.37,4.95,3.74,67.57,0.02
 23,D,10.07,9.52,10.95,5.28,2.70,61.44,0.04
 24,E,3.48,5.23,7.86,5.70,4.73,72.98,0.02
-25,B,4.78,5.56,3.39,6.78,5.05,74.43,0.01`.trim(), respondentCount: 40750, excludedQuestions: [8, 17], population: "2010 AMC10B Global official-student response cohort", sourceUrl: "https://pdfcoffee.com/2010hssummary-pdf-free.html", sourceStatus: "MAA-authored 2010 AMC 10/12 Results Summary; printed p.196, Table IX; transcribed from web-indexed text and independently matched against an accessible alternate mirror; all 25 keys checked against LIVE; cohort n=40750; Q8/Q17 response shares total 99.91%/99.92%, retained in source and excluded from comparison" }),
+25,B,4.78,5.56,3.39,6.78,5.05,74.43,0.01`.trim(), respondentCount: 40750, excludedQuestions: [8, 17], population: "2010 AMC10B Global official-student response cohort", sourceUrl: "https://pdfcoffee.com/2010hssummary-pdf-free.html", sourceStatus: "MAA-authored 61st Annual AMC 10/12 Results Summary; printed p.196, Table IX; global official-student responses transcribed from accessible indexed mirror; all 25 keys checked against LIVE; Q8/Q17 response shares total 99.91%/99.92%, retained in source and excluded from comparison" }),
     "amc12-2010-B": Object.freeze({ raw: `
 1,C,4.47,4.48,85.48,2.78,1.67,1.12,0.00
 2,A,88.09,2.30,8.31,0.44,0.31,0.54,0.01
@@ -318,7 +318,7 @@
 22,D,2.73,4.05,5.20,4.95,2.53,80.53,0.01
 23,A,2.07,7.51,5.32,4.62,2.76,77.70,0.02
 24,C,3.45,5.12,5.93,2.91,1.78,80.80,0.01
-25,D,2.52,3.81,4.73,4.30,2.65,81.98,0.01`.trim(), respondentCount: 40750, excludedQuestions: [3], population: "2010 AMC12B Global official-student response cohort", sourceUrl: "https://www.scribd.com/doc/58090065/2010-AMC-HS-Summary", sourceStatus: "MAA-authored 2010 AMC 10/12 Results Summary; printed p.195, Table IX; transcribed from web-indexed text; all 25 keys checked against LIVE; cohort n=40750; Q3 response shares total 99.88%, retained in source and excluded from comparison" }),
+25,D,2.52,3.81,4.73,4.30,2.65,81.98,0.01`.trim(), respondentCount: 40750, excludedQuestions: [3], population: "2010 AMC12B Global official-student response cohort", sourceUrl: "https://pdfcoffee.com/2010hssummary-pdf-free.html", sourceStatus: "MAA-authored 61st Annual AMC 10/12 Results Summary; printed p.195, Table IX; global official-student responses transcribed from accessible indexed mirror; all 25 keys checked against LIVE; Q3 response shares total 99.88%, retained in source and excluded from comparison" }),
     "amc10-2011-A": Object.freeze({ raw: `
 1,D,0.43,0.61,11.48,84.97,1.67,0.84,0.01
 2,E,0.36,0.69,1.03,10.35,87.13,0.41,0.03

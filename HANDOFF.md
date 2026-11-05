@@ -1,3 +1,17 @@
+### 2026-11-05 · 웹에서 2010 AMC 10/12 문항 응답표 확인 및 전사 정정
+
+- MAA-authored 61st Annual AMC 10/12 Results Summary의 Table IX를 웹 검색으로 찾아 네 폼 응답표와 LIVE 정답 키를 대조했다. AMC 12A/B는 인쇄 p.195, AMC 10A/B는 p.196. 검색 가능한 제3자 미러를 사용했으며 출처 호스트는 MAA가 아니다.
+- 2010 AMC 10A 23번 E 선택 비율을 3.52%에서 원표의 3.32%로 바로잡았다. 다섯 선택지·공란·판독불가 비율 합이 100.00%가 되어 coverage가 24/25에서 25/25로 바뀌었다. 10B 8·17번, 12B 3번은 원표 합계가 각각 99.91%, 99.92%, 99.88%여서 비교에서 제외한 상태를 유지한다.
+- 갱신: 런타임 참조, 2010 원자료 CSV, 연도/폼 coverage manifest, 연구 노트, `historical-amc-grade/README.md`. 2009 전국 문항 응답표는 이번 검색에서도 못 찾았다. 학교별 보고서는 학교 표본으로 남기며 전국·학년 비교에 합치지 않는다.
+- 확인: CSV 열 수, 10A 2010 Q23 정정값, coverage 상태를 정적으로 대조하고 `git diff --check`를 진행한다. 별도 테스트는 실행하지 않는다. `raw_youtube.txt`는 사용자 파일로 유지한다.
+
+### 2026-11-05 · 연도별 응답자료 coverage 재대조 및 2009 출처 검색 갱신
+
+- 현재 `amc-item-response-coverage-by-paper.csv`를 다시 집계했다. 2008 AMC 10A/B·12A/B는 각각 25/25, 2006은 AMC 10A 24/25, 10B 25/25, AMC 12A 25/25, 12B 24/25다. 2006 AMC 10B의 25행은 57th Annual Report의 잘못 표시된 AIME-qualifier 표가 아니라 MAA 발행 *Contest Problem Book VIII* p.170에서 회수한 별도 응답 패턴이며, 응시자 수/지역 범위 미공개이므로 전국 norm으로 해석하지 않는다.
+- 2009 AMC 10/12 A/B의 MAA 전국 문항 응답표는 이번 웹 검색에서도 찾지 못했다. 2009B 학교별 결과 PDF 3건(Temasek n=89, Anglo-Chinese 10B n=31/12B n=1, Changkat Changi n=10)을 찾았으나 학교 코호트라 국가·등급 비교에 합치지 않았다. 2009 연도별 grade mean은 MAA 2010 report의 retrospective table에 이미 연결돼 있다.
+- 연구 노트의 앞선 2006/2008 `not-found` 문장은 회수 전 시점 기록임을 명시하도록 고쳤다. 다음은 다른 미회수 연도·폼의 MAA 연례보고서/공개 원자료를 계속 찾아, 응답 분포와 grade comparison의 모집단을 분리해 채운다.
+- 검수는 coverage CSV의 연도·폼 행과 기존 README/연구노트 서술을 대조하는 정적 확인으로 진행한다. `raw_youtube.txt` 사용자 파일은 그대로 둔다. 로컬 커밋 가능, push·배포·Drive 동기화 없음.
+
 ### 2026-11-05 · 2006 AMC 10/12 response tables recovered
 
 - Added MAA 57th annual report item-response tables for 2006 AMC 10A, 12A, and 12B to the runtime reference, raw CSV, and year/form coverage manifest. Source PDF is the Internet Archive copy of the MAA-authored annual report; all 75 answer markers were cross-checked against LIVE keys.
