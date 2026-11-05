@@ -1,3 +1,4 @@
+import{withBodyReadableWorkbook}from'./c22-s51-u04.editorial.js?v=20261106-body-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import{withObservationLanguage}from'./observation-language.js';
 import{withBodyEditorial,withBodyUpperProgression}from'./c22-s51-u04.editorial.js?v=20261105-body-upper-progression';
@@ -9232,4 +9233,5 @@ const baseWorkbook = {
 export const observationPriorWorkbook=withBodyEditorial(baseWorkbook);
 export const learnerPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const bodyUpperPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
-export const workbook=withBodyUpperProgression(bodyUpperPriorWorkbook);
+export const bodyReadablePriorWorkbook=withBodyUpperProgression(bodyUpperPriorWorkbook);
+export const workbook=withBodyReadableWorkbook(bodyReadablePriorWorkbook);
