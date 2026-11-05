@@ -1,6 +1,6 @@
 ---
 name: edu-open-apis
-description: 교육 공공 API 세 가지 — NEIS(교육정보 개방 포털: 학교·학사일정·급식·시간표·학원교습소), KCI(한국학술지인용색인 논문), OpenAlex(세계 논문) — 를 `scripts/edu-api.mjs` 한 명령으로 부르는 법. 학교 방학·재량휴업일(학습 진도표), 동네 학교·학원 정보, 영재·수학교육 논문 근거를 찾을 때 먼저 읽는다.
+description: 교육 공공 API 세 가지 — NEIS(교육정보 개방 포털: 학교·학사일정·급식·시간표·학원교습소), KCI(한국학술지인용색인 논문), OpenAlex(세계 논문) — 를 `scripts/edu-api.mjs` 한 명령으로 부르는 법. 동네 학교·학원 정보, 영재·수학교육 논문 근거를 찾을 때 먼저 읽는다.
 ---
 
 # 교육 공공 API — NEIS · KCI · OpenAlex
@@ -53,7 +53,7 @@ select status_code, content from net._http_response where id = <위 id>;
 - 응답 꼴: 정상이면 `{서비스:[{head:[{list_total_count},{RESULT}]},{row:[…]}]}`, 자료 없음·오류면 `{RESULT:{CODE,MESSAGE}}` 하나(`INFO-200` 자료 없음, `ERROR-300` 필수 값 빠짐). 스크립트는 둘 다 `{code,message,total,rows}`로 맞춘다. 한 번에 100줄, `pIndex`로 넘긴다.
 - 교육청코드 `ATPT_OFCDC_SC_CODE`: B10 서울 · C10 부산 · D10 대구 · E10 인천 · F10 광주 · G10 대전 · H10 울산 · I10 세종 · J10 경기 · K10 강원 · M10 충북 · N10 충남 · P10 전북 · Q10 전남 · R10 경북 · S10 경남 · T10 제주(2026-11-05 열일곱 개 모두 NEIS에 물어 확인 — F10·Q10은 이름이 「전남광주통합특별시교육청(광주)·(전남)」으로 바뀌어 있다). 헷갈리면 `schoolInfo`로 학교 하나를 찾아 그 줄의 값을 쓴다.
 - 학사일정의 `SBTR_DD_SC_NM`이 「휴업일」인 날이 학교가 쉬는 날이다(토요휴업일 포함 — `neis-off`는 토요휴업일을 뺀다).
-- **쓸 곳**: 학습 진도표(`plan.html`, `study-plan.js` `HOLIDAYS`)는 지금 설·추석만 뺀다. 아이 학교의 방학·재량휴업일을 넣고 싶으면 `neis-off`로 날짜를 받아 확인한 뒤 넣는다(화면이 직접 NEIS를 부르게 하려면 열쇠를 숨길 서버 함수가 따로 필요하다 — 아직 없음).
+- **학교 방학은 학습 진도표에 넣지 않는다**(원장 2026-11-05 「방학을 쓸 필요는 없어」). 진도표(`plan.html`·`study-plan.js` `HOLIDAYS`)는 지금처럼 설·추석 연휴만 뺀다. `neis-off`는 도구에 남아 있지만 진도표용이 아니다 — 쓸 일이 생기면 그때 원장에게 묻는다.
 - 학원교습소정보에는 교습비(`PSNBY_THCC_CNTNT`)·정원·주소가 있다. 공개 자료지만 다른 학원 정보를 화면에 싣지는 않는다(조사·참고용).
 
 ## KCI · OpenAlex 메모
