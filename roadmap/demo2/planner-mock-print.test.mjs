@@ -16,7 +16,7 @@ test('a complete 30-question selection prints two consistent pages with actual n
 });
 test('the handout links the official question PDF separately and never embeds original text, answers, solutions or answer files',()=>{
  const {P}=setup(),html=P.document(options({paper:{...paper,question:'SECRET QUESTION',answer:'SECRET ANSWER',solution:'SECRET SOLUTION'},answers:{1:'correct',2:'helped',3:'SECRET ANSWER'}}));
- assert.match(html,/공식 문제 PDF 열기 · 별도 인쇄/);assert.ok(html.includes(paper.files.problem));assert.ok(!html.includes(paper.files.explanation));assert.doesNotMatch(html,/SECRET QUESTION|SECRET ANSWER|SECRET SOLUTION|<iframe|<object|<embed|<img/i);assert.match(html,/문제 원문이 없습니다/);assert.match(html,/class="mp-check" aria-hidden="true">✓/);
+ assert.match(html,/공식 문제 PDF 열기 · 별도 인쇄/);assert.ok(html.includes(paper.files.problem));assert.ok(!html.includes(paper.files.explanation));assert.doesNotMatch(html,/SECRET QUESTION|SECRET ANSWER|SECRET SOLUTION|<iframe|<object|<embed|<img/i);assert.match(html,/선택 문항 학습지 또는 공식 시험지/);assert.match(html,/class="mp-check" aria-hidden="true">✓/);
 });
 test('selected, unlearned, other and unmapped groups remain distinct and no excluded number gains a result row',()=>{
  const {P}=setup(),s=selected(2,{selected:[1,6],excludedUnlearned:[2,3],excludedOther:[4],unmapped:[5],mode:'remedial'}),html=P.document(options({selection:s}));assert.equal((html.match(/data-question-number=/g)||[]).length,2);assert.match(html,/미학습 제외/);assert.match(html,/2, 3번/);assert.match(html,/보완 대상 외/);assert.match(html,/단원 검수 대기/);assert.doesNotMatch(html,/data-question-number="[2345]"/);
