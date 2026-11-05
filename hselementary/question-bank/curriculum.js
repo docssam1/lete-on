@@ -4273,13 +4273,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u2-t4-2","5-2-u2-practice-71-similar","5-2-u2-practice-71-original","source52U2CoprimeFractionPairsSimilar",true,79,83],
     ["5-2-u2-t3","5-2-u2-practice-54-similar","5-2-u2-practice-54-original","source52U2FindOriginalAmountSimilar",false,77,81],
     ["5-2-u2-t3-2","5-2-u2-practice-19-similar","5-2-u2-practice-19-original","source52U2TwoDistancesSimilar",true,73,77],
-    ["5-2-u2-t3-3","5-2-u2-practice-45-similar","5-2-u2-practice-45-original","source52U2FractionDifferenceTotalSimilar",false,76,80],
+    ["5-2-u2-t3-3","5-2-u2-practice-45-similar","5-2-u2-practice-45-original","source52U2FractionDifferenceFemaleSimilar",false,76,80],
     ["5-2-u2-t1","5-2-u2-practice-10-similar","5-2-u2-practice-10-original","source52U2RemainingFractionsSimilar",false,72,76],
     ["5-2-u2-t1-3","5-2-u2-practice-20-similar","5-2-u2-practice-20-original","source52U2FractionMultipleCountSimilar",false,73,77],
     ["5-2-u2-t2","5-2-u2-practice-24-similar","5-2-u2-practice-24-original","source52U2TelescopingFractionsSimilar",true,74,78]
   ]) {
     const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id===id);
-    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:id==="5-2-u2-t2-3"?74:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:["5-2-u2-t3","5-2-u2-t3-2"].includes(id)?4:1,verifiedVariantTarget:["5-2-u2-t3","5-2-u2-t3-2"].includes(id)?4:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:id==="5-2-u2-t2-3"?74:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:id==="5-2-u2-t3-3"?9:["5-2-u2-t3","5-2-u2-t3-2"].includes(id)?4:1,verifiedVariantTarget:id==="5-2-u2-t3-3"?9:["5-2-u2-t3","5-2-u2-t3-2"].includes(id)?4:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
+  if (source52Unit2) {
+    const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u2-t3-3");
+    if (type) Object.assign(type,{name:"남학생 비율과 인원 차이로 여학생 수 구하기 · 유사문항",label:"남학생 비율과 인원 차이로 여학생 수 구하기 · 유사문항",alternateSourcePdfPage:75,reviewReason:"80쪽 45번 원문의 남학생 비율·남녀 인원 차와 여학생 수를 묻는 구조를 대조하고 9문항을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
 
   if (source52Unit2First && !source52Unit2First.types.some(type=>type.id==="5-2-u2-practice-17-three-groups-similar")) {
@@ -4322,7 +4327,6 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u2-t4-2","연결한 83쪽 71번 원문은 식의 개수를 묻지만 현재 유형은 순서쌍을 모두 묻습니다. 같은 답 계약의 원문을 확인할 때까지 검수 대기합니다."],
     ["5-2-u2-t1-3","연결한 77쪽 20번 원문은 주어진 분수의 자연수배를 묻지만 현재 유형은 곱의 결과가 자연수인 수를 묻습니다. 해당 유형에 맞는 원문을 확인할 때까지 검수 대기합니다."],
     ["5-2-u2-t1-2","연결한 75쪽 6번 원문은 이동 거리를 묻지만 현재 연습은 시간만 묻습니다. 같은 유형의 원문과 답 계약을 다시 확인할 때까지 검수 대기합니다."],
-    ["5-2-u2-t3-3","연결한 80쪽 45번 원문은 여학생 수를 묻지만 현재 유형은 전체 인원을 묻습니다. 유형과 원문 답 계약을 다시 확인할 때까지 검수 대기합니다."]
   ]) {
     const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id===id);
     if (type) Object.assign(type,{sourceVerified:false,reviewLocked:true,generationMode:"review-locked",implementationStatus:"review-locked",verifiedVariantCount:0,verifiedVariantTarget:0,reviewReason:reason});
