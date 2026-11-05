@@ -13,3 +13,5 @@
 .mp-question{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:2mm;row-gap:1mm;min-height:10.3mm}
 .mp-result-states{align-self:center;margin:0;gap:2.5mm}
 .mp-note{grid-column:1/-1;margin-top:0}
+
+.mp-analysis p{font-size:10.5pt;line-height:1.65;padding:3mm 0;margin:0;border-bottom:1px solid #ddd}.mp-analysis h2{font-size:18pt;margin:3mm 0 6mm}
