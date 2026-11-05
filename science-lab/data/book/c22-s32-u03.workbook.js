@@ -1,3 +1,4 @@
+import{withSoundPhotoLanguage}from'./c22-s32-u03.rail-notes.js?v=20261105-sound-motion-photo-language';
 import{withSoundUpperScience}from'./c22-s32-u03.rail-notes.js?v=20261105-sound-upper-science';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
@@ -7749,4 +7750,5 @@ const baseWorkbook = {
 
 export const learnerPriorWorkbook=withStudentOpeningLanguage(withSoundRails(baseWorkbook));
 export const soundUpperPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
-export const workbook=withSoundUpperScience(soundUpperPriorWorkbook);
+export const soundPhotoPriorWorkbook=withSoundUpperScience(soundUpperPriorWorkbook);
+export const workbook=withSoundPhotoLanguage(soundPhotoPriorWorkbook);

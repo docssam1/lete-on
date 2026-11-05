@@ -1,6 +1,6 @@
 import{findLifeItem}from'./book-life.js';
 import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
-import{workbook}from'../data/book/c22-s61-u02.workbook.js?v=20261104-motion-book';
+import{workbook}from'../data/book/c22-s61-u02.workbook.js?v=20261105-sound-motion-photo-language';
 import{motionCase}from'./motion-compare-model.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const p=s=>`<p>${esc(s)}</p>`;

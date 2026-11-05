@@ -88,3 +88,29 @@ export function withSoundUpperScience(workbook){
  const pages=rows=>rows.map(page=>page.kind==='duplex-blank'?page:{...page,rail:page.rail.map(note=>note.title==='더 알아보기'&&edits.has(note.text)?{...note,text:edits.get(note.text)}:note)});
  return {...workbook,pages:pages(workbook.pages),...(workbook.teacherStudentPages?{teacherStudentPages:pages(workbook.teacherStudentPages)}:{})};
 }
+
+export const SOUND_PHOTO_VERSION='20261105-sound-motion-photo-language';
+const withSoundPhotoLanguageCaptions={
+ "opener": [
+  "떨림 관찰의 준비 모습을 소개해요. 정지 사진은 종잇조각이 움직였다는 실험 증거가 아니에요.",
+  "북 위에 놓은 종잇조각을 살펴보아요. 북을 두드릴 때 북의 표면과 종잇조각이 어떻게 움직이는지 관찰해 보아요."
+ ],
+ "ruler": [
+  "비교 배치를 소개하는 설명 이미지예요. 사진에서 길이나 진동수·소리 크기를 측정하지 않아요.",
+  "책상 밖으로 자의 일부가 나와 있어요. 같은 자를 내민 길이만 바꾸어 튕기며 떨림과 소리의 높낮이를 비교해 보아요."
+ ],
+ "chair": [
+  "소음 줄이기 방법의 예예요. 사진만으로 실제 감소 효과가 확인된 것은 아니에요.",
+  "의자 다리 아래의 부드러운 덮개를 살펴보아요. 덮개를 대기 전과 후에 의자를 움직일 때 나는 소리를 비교해 보아요."
+ ]
+};
+export function withSoundPhotoLanguage(workbook){
+ if(workbook.unit!=='c22-s32-u03')return workbook;
+ const figures={...workbook.figures};
+ for(const [key,[before,after]]of Object.entries(withSoundPhotoLanguageCaptions)){
+  const html=figures[key];
+  if(typeof html!=='string'||html.split(before).length!==2)throw Error('사진 설명이 다릅니다: '+key);
+  figures[key]=html.replace(before,after);
+ }
+ return {...workbook,figures};
+}

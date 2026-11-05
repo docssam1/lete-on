@@ -543,3 +543,21 @@ export function withMotionEditorial(base){
  for(const key of Object.keys(w.figures)){w.figures[key]=w.figures[key].replaceAll('#2456c4','#2f6b4a').replaceAll('#2563eb','#2f6b4a').replaceAll('#dbeafe','#e9f0e7').replaceAll('#eff6ff','#f7f2e7').replaceAll('#ccd5e2','#c9bda2').replaceAll('#173d77','#2f6b4a').replaceAll('#33465f','#2a241c').replaceAll('#22334b','#2a241c');if(key.startsWith('motion-quick-'))for(const[no,old,ans]of[[115,'4장','4m/s'],[120,'아직 받은 의견이 없음','속력'],[121,'2개','2m/s']])w.figures[key]=w.figures[key].replace('<th scope="row">'+no+'</th><td>'+({115:'단답',120:'빈칸',121:'단답'}[no])+'</td><td>'+old+'</td>','<th scope="row">'+no+'</th><td>'+({115:'단답',120:'빈칸',121:'단답'}[no])+'</td><td>'+ans+'</td>');}
  return{...w,theme:'#2f6b4a'};
 }
+
+export const MOTION_PHOTO_VERSION='20261105-sound-motion-photo-language';
+const withMotionPhotoLanguageCaptions={
+ "motion-plane": [
+  "높이가 낮아지는 방향과 빨라짐·느려짐은 다른 정보예요. 사진 한 장에서 빠르기 변화를 확정하지 않아요.",
+  "활주로 가까이에 있는 비행기예요. 같은 시간 동안 이동한 거리를 비교하여 빠르기가 어떻게 달라지는지 알아보아요."
+ ]
+};
+export function withMotionPhotoLanguage(workbook){
+ if(workbook.unit!=='c22-s61-u02')return workbook;
+ const figures={...workbook.figures};
+ for(const [key,[before,after]]of Object.entries(withMotionPhotoLanguageCaptions)){
+  const html=figures[key];
+  if(typeof html!=='string'||html.split(before).length!==2)throw Error('사진 설명이 다릅니다: '+key);
+  figures[key]=html.replace(before,after);
+ }
+ return {...workbook,figures};
+}

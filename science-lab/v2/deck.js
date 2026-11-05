@@ -4,7 +4,7 @@ import{buildCombustionThinkingSlides}from'./deck-combustion-thinking.js?v=202611
 import{buildSeasonThinkingSlides}from'./deck-season-thinking.js?v=20261104-season-class';
 import{buildEarthMotionThinkingSlides}from'./deck-earth-motion-thinking.js?v=20261104-earth-motion-class';
 import{buildPlantStructureThinkingSlides}from'./deck-plant-structure-thinking.js?v=20261104-plant-structure-class';
-import{buildMotionThinkingSlides}from'./deck-motion-thinking.js?v=20261104-motion-class';
+import{buildMotionThinkingSlides}from'./deck-motion-thinking.js?v=20261105-sound-motion-photo-language';
 import{buildAcidThinkingSlides}from'./deck-acid-thinking.js?v=20261104-acid-class';
 // GFIELD 실험 과학 영재 — 화면 수업 자료(교안). 교재와 같은 chapter 데이터를 16:9 슬라이드로 보여 준다.
 //  teach(가르치기·강사용): 클릭/→/스페이스로 빈칸 답이 차례로 열리고, N으로 강사 발문 노트, F로 전체 화면.
@@ -38,7 +38,7 @@ import { buildSolutionThinkingSlides } from './deck-solution-thinking.js?v=20261
 import { buildSkyThinkingSlides } from './deck-sky-thinking.js?v=20261103-sky-class';
 import { buildClimateThinkingSlides } from './deck-climate-thinking.js?v=20261103-climate-class';
 import { buildInfectionThinkingSlides } from './deck-infection-thinking.js?v=20261103-infection-class';
-import { buildSoundThinkingSlides } from './deck-sound-thinking.js?v=20261102-sound-class';
+import { buildSoundThinkingSlides } from './deck-sound-thinking.js?v=20261105-sound-motion-photo-language';
 import { buildMaterialThinkingSlides } from './deck-material-thinking.js?v=20261102-material';
 import { buildLifeThinkingSlides } from './deck-life-thinking.js?v=20261102-state';
 import {buildInquirySlides} from './deck-inquiry.js';
