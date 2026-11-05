@@ -21,7 +21,7 @@ function lane(id,a,c){const axis=c.axes.find(x=>x.id===(id==='thinking'?'comp':i
 function clipped(title,start,end,id,kind,extra={},horizon=LIMIT){
  const s=Math.max(0,start),e=Math.min(horizon,end);
  if(!Number.isFinite(s)||!Number.isFinite(e)||e<=s)return null;
- return{id,title:D.shortText(title),start:rounded(s),end:rounded(e),kind,current:start<=0&&end>0,...extra};
+ return{...(end>horizon?{endClipped:true}:{}),id,title:D.shortText(title),start:rounded(s),end:rounded(e),kind,current:start<=0&&end>0,...extra};
 }
 function fromSource(rows,anchor,id,axis,options={}){
  return rows.flatMap((b,index)=>{
@@ -102,6 +102,7 @@ function model(answers={},fields={},options={}){
  const schoolParallel=pattern==='thinking'||independentDepth;
  let profile=null;try{profile=I.profile(a,{...fields,band:fields.band||'B'});}catch{}
  fillIndependent(school,a,c,source,profile);
+ if(!fields.internationalCalendar&&I.highBook(a.schoolBook)&&global.PlannerCurriculum){const actual=global.PlannerCurriculum.actual(a,'school',fields);if(actual&&!actual.done&&!school.blocks.length){const full=global.PlannerCurriculum.defaults(fields).highMonths,end=rounded(full*(1-actual.fraction));school.blocks=[{id:'school-current-high',stage:actual.stage,title:actual.stage+' '+a.schoolBook,start:0,end,current:true,reported:true,kind:'school',source:'reported-high-course'}];school.note='현재 고등 과목은 입력한 완료 분량으로 남은 기간을 잡습니다. 전체 6개월은 조정 가능한 계획 기준이며, 이후 과목은 별도로 선택합니다.';}}
  const calcPlan=calculationPlan(a,fields,options.calcDaysPerWeek);calc.blocks=calcPlan.blocks;calc.source=calcPlan.supported?'publisher-workload':null;calc.anchor=calcPlan.blocks[0]?.stage;calc.note=calcPlan.note;if(calcPlan.supported&&calcPlan.hasElementary)calc.current='기적의 계산법 · '+calc.current;
  if(schoolParallel&&detail?.elementaryMode?.id==='application-then-depth'&&school.anchor!==null)school.blocks=withoutDepthSlots(fromSource(source.school,school.anchor,'school','school',{horizon:Infinity}),detail.schoolGaps||[],school.anchor);
  fillIndependent(thinking,a,c,thinkingSource(c),profile);
