@@ -687,6 +687,12 @@ MAA 작성 56th Annual 보고서 사본에서 같은 Table II를 다시 찾았�
 인쇄 9–10쪽은 세계와 Taiwan의 25개 문항별 선택지 비율, 공란, 판독 불가 비율을 각각 싣는다. 기존 세계 집단과 합치지 않고 대만 자료 25문항을 별도 cohort로 런타임 및 원자료에 추가했다. 원본 풀이에서 학생 오답 선택지와 해당 cohort의 보기 선택률을 비교할 수 있도록 회차 화면에 `응답 집단` 선택 항목을 표시한다. 정답 키 25개는 LIVE 원본 답안과 보고서의 별표 정답을 대조했다. PDF에서 OCR은 필요하지 않았다.
 
 같은 검색에서 AMC 12B 지역별 표도 찾았다. 이 단계에서는 AMC10B 및 Grade 7–9 로드맵과 직접 관련된 10B 표만 반영했으며, 12B의 Taiwan 표는 후속 연도별 자료 작업 대상으로 남긴다.
+
+## 2026-11-05 웹 재검색: 2009 AMC 10/12 전국 문항 응답표
+
+검색으로 찾은 MAA 작성 2010 AMC 10/12 Results Summary의 Table II에는 2009 AMC 10/12 A/B 전체 평균과 학년별 기록이 포함되지만, 해당 표는 문항별 보기 응답률을 싣지 않는다. 같은 보고서의 Table IX 문항별 응답표는 2010 회차로 명시돼 있다. 따라서 2009 grade-mean 데이터는 그대로 두고, 2009 AMC 10/12 A/B 문항 응답 coverage는 `not-found`로 유지한다. 이 검색에서 추가로 나온 2009 개별 학교 결과도 모집단이 전국과 달라 합치지 않는다. Sources: [MAA-authored 2010 report searchable mirror](https://www.scribd.com/document/58090065/2010-AMC-HS-Summary), [2010 report search text](https://www.pdfcoffee.com/2010hssummary-pdf-free.html).
+
+AMC 8 2001–2002의 문항별 응답표도 연도·문항 키워드로 재검색했으나, 해당 두 회차의 실제 시험지·풀이·정답 자료만 나왔고 전국 보기 선택률 표는 확인하지 못했다. AMC 8의 전체 문항 응답 coverage는 별도 회차 manifest를 따른다. Sources: [LIVE 2001 AMC 8 solutions](https://live.poshenloh.com/past-contests/amc8/2001/solutions), [MAA-authored 2004 AMC 8 statistics report copy](https://www.scribd.com/doc/57421446/2004AMC8stats).
 ## 2015 AMC 10B — 원본과 통계 출처를 분리
 
 2015 AMC 10B의 [LIVE 회차 페이지](https://live.poshenloh.com/past-contests/amc10/2015B)에서 25문항 원본, 인쇄용 PDF, 정답표, 전문 풀이, 문항별 개념·힌트·풀이를 확인했다. 원본 자료는 연도·형식 선택 메뉴에서 바로 접근할 수 있다.
