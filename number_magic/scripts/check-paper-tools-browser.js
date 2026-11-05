@@ -21,7 +21,14 @@ try{for(const tool of tools)for(const lang of ['ko','en','zh']){
  await ctx.route('**/data/paper-tools.js*',r=>r.fulfill({contentType:'text/javascript',body:source+'\nwindow.NM_PAPER_TOOL_OF_COURSE=function(){return window.NM_PAPER_TOOLS.find(t=>t.key==='+JSON.stringify(tool.key)+');};'}));
  const p=await ctx.newPage();p.on('pageerror',e=>report.errors.push(e.message));
  await p.goto(base+'/ws.html?c=C1&r=1&w=2026-W45&auto=0&l='+lang+'#nm-paper-tool');await p.waitForFunction(()=>window.NM_WS_READY===true);
- if(tool.key==='tenframe'&&lang==='ko')assert(await p.locator('#nm-paper-tool').evaluate(e=>Math.abs(e.getBoundingClientRect().top)<100),'tool deep link did not scroll');
+ if(tool.key==='tenframe'&&lang==='ko'){
+  for(const width of [1100,390]){
+   await p.setViewportSize({width,height:900});await p.reload();await p.waitForFunction(()=>window.NM_WS_READY===true);
+   const a=await p.evaluate(()=>({top:document.getElementById('nm-paper-tool').getBoundingClientRect().top,bar:document.getElementById('wsBar').getBoundingClientRect().bottom}));
+   assert(a.top>=a.bar+8&&a.top<a.bar+18,'tool heading hidden by menu at '+width+'px');
+  }
+  await p.setViewportSize({width:1100,height:1200});
+ }
  await p.emulateMedia({media:'print'});
  await p.addStyleTag({content:'html,body,.nm-print-sheet{width:190mm!important}'});await p.evaluate(()=>document.fonts.ready);
  const d=await p.evaluate(()=>{

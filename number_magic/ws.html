@@ -298,7 +298,15 @@
   var fontsReady = window.NM_LAST_PRINT_READY || ((document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve());
   var timeout = new Promise(function(r){ setTimeout(r, 8000); });
   Promise.race([fontsReady, timeout]).then(function(){ setTimeout(function(){ window.NM_WS_READY = true;
-    if(location.hash === '#nm-paper-tool'){ var tool = document.getElementById('nm-paper-tool'); if(tool) tool.scrollIntoView({block:'start'}); }
+    if(location.hash === '#nm-paper-tool'){
+      var tool = document.getElementById('nm-paper-tool');
+      if(tool){
+        // zoom으로 줄인 종이의 scroll-margin도 작아진다. 화면 메뉴 높이는 실제 px로 뺀다.
+        var bar = document.getElementById('wsBar');
+        var offset = (bar ? bar.getBoundingClientRect().height : 0) + 12;
+        window.scrollTo(0, window.scrollY + tool.getBoundingClientRect().top - offset);
+      }
+    }
   }, 300); });
   }
 })();
