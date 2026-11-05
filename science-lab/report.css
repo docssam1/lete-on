@@ -86,6 +86,9 @@
 .rp-tools::after { content: ''; position: absolute; left: 14px; top: 100%; border: 6px solid transparent; border-top-color: #1f2a37; }
 
 /* 결과 표·그래프·사진 */
+/* 날짜 칸이 많은 표(강낭콩 자람 등)는 폰에서 표 안에서만 옆으로 밀어 본다 — 페이지 전체가 옆으로 밀리지 않게 */
+.rp-table-wrap { max-width: 100%; overflow-x: auto; }
+@media print { .rp-table-wrap { overflow: visible; } }
 .rp-table { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
 .rp-table th, .rp-table td { border: 1px solid var(--line); padding: 5px 8px; min-width: 56px; }
 .rp-table th { background: var(--paper-2); font-weight: 700; text-align: center; }
