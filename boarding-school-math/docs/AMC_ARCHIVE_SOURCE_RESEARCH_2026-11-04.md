@@ -630,3 +630,11 @@ Internet Archive의 CDX 색인에는 과거 MAA `generalreports.aspx` 페이지�
 웹 검색으로 [MAA 작성 59th Annual 2008 High School Results & Awards Summary 사본](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions)을 열어 표 I–II의 AMC 10A/10B·AMC 12A/12B 학년별 참가자 수와 평균을 기존 `amc10-12-grade-means-2002-2011.csv`와 대조했다. 2008년 4개 폼의 22개 학년/그룹 행이 모두 일치하므로 수치를 중복 추가하지 않고 기존 CSV와 런타임 참조의 해당 행을 2008 연례보고서 사본으로 출처 갱신했다. 사본은 제3자 호스팅이라 MAA 원본 호스팅은 확인되지 않았다. 보고서에는 국제 참여 결과도 별도 수록되어 있어, 표의 명시 범위를 넘어 이를 보편적인 개인 학년 규준으로 일반화하지 않는다.
 
 보고서 목차에는 AIME I/II의 학년별 점수 분포가 실려 있지만, 검색 가능한 텍스트에서는 표 셀을 확인할 수 없었다. 해당 표를 grade norm이나 백분위로 재구성하지 않았다. [보고서](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions).
+
+## 2026-11-05 · 연도별 학년 기준자료 재검색 및 2003–2004 표 검토
+
+검색 결과에서 `2024AMCresults.pdf`라는 파일명이 붙은 AMC 10 통계 문서가 다시 확인됐다. 문서 검색 결과는 Grade 5/6·7/8 묶음, 문항별 평균과 응시자 수(5/6 n=10,296, 7/8 n=12,897)를 제시하지만 업로드 출처가 불명확하다. 별도 검색 결과에서 같은 문항명은 Waterloo CEMC의 Beaver Computing Challenge 문항과 연결되어, 미국 MAA AMC10 통계로 검증할 근거가 없다. 따라서 64.55 같은 수치를 AMC 학년 비교나 진단 기준에 가져오지 않는다. [검색된 문서 사본](https://www.collegesidekick.com/study-docs/22512391) · [CEMC 공식 BCC 자료](https://cemc.uwaterloo.ca/sites/default/files/documents/2024/2023BCCContest7_8.html).
+
+대만 AMC 운영기관인 99CEF의 공식 AMC 페이지에서는 2024년 대만 응시자 대상 AMC10A/10B 수상 기준과 8학년 이하 Certificate of Achievement 기준(90점)을 확인했다. 이는 MAA AMC 시험의 대만 지역 운영·수상 기준이며 미국 전국 학년 평균, 개인 백분위 또는 능력 등급이 아니다. 기존 미국 전국 비교나 다른 지역 코호트와 합치지 않는다. [99CEF AMC 공식 안내](https://www.99cef.org.tw/maa-amc/).
+
+MAA 작성 56th Annual 보고서 사본의 목차와 본문 텍스트에서 2002–2005 AMC10/12 `Participation and Average Score by Recorded Grade Levels` Table II가 존재함을 확인했다. 다만 공개 텍스트 변환에서 연도·폼·학년 열이 어긋나 있어 2003–2004 셀을 정확히 대응하지 못했다. 숫자를 추정해 추가하지 않았다. 파일 다운로드는 제3자 호스트에서 403으로 거부됐고, 뷰어 이미지 경로도 만료되어 이번에는 Apple Vision으로 원표를 검수할 이미지 사본을 확보하지 못했다. 다음에는 같은 보고서의 읽을 수 있는 PDF/페이지 이미지를 찾아 표를 복구한다. [56th Annual 보고서 사본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions).
