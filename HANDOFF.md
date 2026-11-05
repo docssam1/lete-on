@@ -2156,4 +2156,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Search notes and provenance distinctions are recorded in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md` and the historical AMC README.
 - Validation performed: direct row/count/weighted-mean checks and `git diff --check`. No tests or browser review were run in this pass. No external sync or publishing was performed.
 - Next: continue web search for primary national response tables in missing AMC years/forms (especially 2002–2004 AMC 10/12 and 2009), keep local/school cohorts separate, and add exact source/reconciliation notes before importing any found values.
+
+### 2026-11-05 · 2004 AMC 10/12 response data from web archive
+
+- Recovered the MAA-authored 56th annual report from Internet Archive. Added all 25 U.S. official-student response rows for AMC 12A (n=103,237, published mean 73.9) and AMC 10A (n=81,122, mean 69.1); OCR/page-image checks, LIVE key matches, response row sums, and implied means were reconciled.
+- Found but rejected nearby bad source tables: AMC 10B's option shares total about 10% per row and fail the annual mean cross-check; a report table titled “2003 AMC 12B” has answer-key conflicts. Both are recorded as source-found-rejected in coverage. 2009 local school PDFs are not national cohorts; do not import them as whole-contest diagnostics.
+- Search/evidence details in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. Static data validation and local commit remain. Preserve untracked user file `raw_youtube.txt`; no push, deployment, or Drive sync. Continue year-by-year web search, especially early 2000s and 2009.
 - New search lead: MAA's published AMC 10 Volume VIII and AMC 12 Volume IX cover 2000–2007 and include submitted-answer frequency tables (MAA review/catalog confirms this). These are copyrighted works; no third-party book scan was used. Obtain an authorized copy or continue seeking equivalent public annual-report tables before transcribing those years.
