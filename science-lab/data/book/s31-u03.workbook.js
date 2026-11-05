@@ -1,4 +1,4 @@
-import{withLearnerExplanations}from'./learner-explanations.js';
+import{withLearnerExplanations,withPlantObservationQuestions}from'./learner-explanations.js?v=20261105-plant-observation-questions';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 식물의 생활 A4. scripts/gen-science-workbook-s31u03.mjs가 생성.
 const baseWorkbook = {
@@ -5826,4 +5826,5 @@ const baseWorkbook = {
 };
 
 export const learnerPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
-export const workbook=withLearnerExplanations(learnerPriorWorkbook);
+export const plantObservationPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
+export const workbook=withPlantObservationQuestions(plantObservationPriorWorkbook);

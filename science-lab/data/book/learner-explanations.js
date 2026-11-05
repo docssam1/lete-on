@@ -237,3 +237,61 @@ export function withAnimalQuestionLanguage(workbook){
  figures['water-life']=figures['water-life'].replace('자료의 생활','생활 모습').replace('모든 물 동물의 특징','물에서 사는 모든 동물의 특징');
  return{...workbook,figures,questions:workbook.questions.map(q=>animalQuestionPatches[q.no]?{...q,...animalQuestionPatches[q.no]}:q)};
 }
+
+// Current leaf observation tasks; preserve previous examples and source fields.
+export const PLANT_QUESTION_VERSION='20261105-plant-observation-questions';
+const plantQuestionPatches={
+  "5": {
+    "prompt": "들이나 산에 사는 나무만 묶은 것을 고르세요."
+  },
+  "7": {
+    "choices": [
+      "꽃의 색깔이 모두 노란색이다.",
+      "뿌리, 줄기, 잎을 구분할 수 있다.",
+      "키가 모두 사람보다 훨씬 크다.",
+      "땅에 뿌리를 내리지 않고 물에 떠서 산다.",
+      "잎의 모양과 크기가 모두 같다."
+    ]
+  },
+  "18": {
+    "prompt": "보기에서 주로 높은 산에 사는 식물만 묶은 것을 고르세요."
+  },
+  "37": {
+    "topic": "잎의 겉모습 비교",
+    "prompt": "두 식물의 잎 관찰 기록을 읽고, 공통적인 겉모습을 두 가지 쓰세요. 전체 모양과 끝 모양을 각각 살펴보아요.",
+    "given": [
+      "잎의 겉모습을 살펴본 관찰 기록 예예요.",
+      "강아지풀: 잎 전체가 좁고 길며, 끝이 뾰족하다.",
+      "소나무: 잎 전체가 바늘처럼 좁고 길며, 끝이 뾰족하다."
+    ],
+    "answer": "잎 전체가 좁고 길다. 잎 끝이 뾰족하다.",
+    "explanation": "두 기록에서 잎 전체의 모양은 모두 좁고 길고, 끝 모양은 모두 뾰족해요. 전체 모양과 끝 모양의 공통점을 하나씩 쓰면 돼요.",
+    "misconception": "잎 전체의 모양과 잎 끝의 모양을 나누어 살펴보아요.",
+    "criteria": "제시한 두 관찰 기록에 공통으로 나타난 전체 모양과 끝 모양을 각각 설명했는지 확인해요. 같은 뜻의 다른 표현도 인정해요.",
+    "standard": "4과03-01",
+    "answerContract": {
+      "type": "written-explanation",
+      "sample": "잎 전체가 좁고 길다. 잎 끝이 뾰족하다.",
+      "rubric": {
+        "required": [
+          "잎 전체가 좁고 길다",
+          "잎 끝이 뾰족하다"
+        ],
+        "pass": "관찰 기록의 전체 모양과 끝 모양에서 공통점을 하나씩 설명한다."
+      }
+    }
+  },
+  "58": {
+    "choices": [
+      "딸기와 벚나무는 톱니 기준에 해당한다",
+      "네 식물의 실제 길이가 모두 같다는 뜻이다",
+      "길이 판단에는 실제 측정 같은 자료가 필요하다",
+      "자료가 더 필요한 잎은 모두 같은 종류의 식물이다",
+      "기준에 따라 필요한 자료가 달라질 수 있다"
+    ]
+  }
+};
+export function withPlantObservationQuestions(workbook){
+ if(workbook.unit!=='s31-u03')return workbook;
+ return{...workbook,questions:workbook.questions.map(q=>plantQuestionPatches[q.no]?{...q,...plantQuestionPatches[q.no]}:q)};
+}
