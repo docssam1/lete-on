@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const bank = require("./source-5-2-u5-page108-practice.js");
 const q = bank.build(48);
 assert.equal(q.answer, "③");
+assert.match(q.solution, /③/, "풀이에도 정답 보기가 있어야 합니다.");
 assert.match(q.prompt, /점선을 따라/);
 const fold = q.prompt.match(/<path data-fold-lines="true"[^>]*>/)?.[0];
 const outline = q.prompt.match(/<path data-net-outline="true"[^>]*>/)?.[0];
