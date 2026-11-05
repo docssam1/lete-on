@@ -35,9 +35,10 @@ async function renderUntilBoth(page,seedPrefix){
     browser=await chromium.launch(process.env.NM_CHROMIUM?{executablePath:process.env.NM_CHROMIUM}:{});
     const page=await browser.newPage({viewport:{width:1100,height:1100}}),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
-    await page.addInitScript(()=>{window.NM_NO_AUTOPRINT=true;localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'검수용',avatar:{kind:'boy'},cloudLinked:false,progress:{}}));});
+    await page.addInitScript(()=>{window.NM_NO_AUTOPRINT=true;localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'검수용',avatar:{kind:'boy'},cloudLinked:false,progress:{}}));});
     const base='http://127.0.0.1:'+server.address().port;
-    await page.goto(base+'/drill.html',{waitUntil:'networkidle'});
+    await require('./lib/preview-fixture')(page);
+ await page.goto(base+'/drill.html',{waitUntil:'networkidle'});
     await page.emulateMedia({media:'print'});
     await page.addStyleTag({content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}'});
     for(const level of [1,2,3]){

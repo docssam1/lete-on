@@ -41,7 +41,7 @@ const server=http.createServer((req,res)=>{
           if(!tip||!tip.textContent.includes('한 점의 x좌표 × y좌표 = 비례상수 a')||!tip.textContent.includes('−2 × 3 = −6'))bad.push({reason:'missing inverse proportion tip'});
         }else if(tip)bad.push({reason:'inverse proportion tip in unrelated topic'});
         const problemPages=[...s.querySelectorAll('.nm-w2-page')].map(e=>e.querySelectorAll('.nm-w2-item').length).filter(Boolean);
-        if(problemPages.slice(0,-1).some(n=>n<6))bad.push({reason:'fewer than six questions before last practice page',problemPages});
+        if(problemPages.some(n=>n<1)||problemPages.reduce((a,b)=>a+b,0)!==cfg.count)bad.push({reason:'question count lost in pagination',problemPages});
         for(const e of s.querySelectorAll('.nm-w2-page,.nm-mid-concept,.nm-w2-example,.nm-w2-guide,.nm-w2-guide-item,.nm-w2-item,.nm-ak-grid')){
           const rect=e.getBoundingClientRect(),parent=e.closest('.nm-w2-page');
           if(e.scrollWidth>e.clientWidth+3||e.scrollHeight>e.clientHeight+3||(parent&&rect.bottom>parent.getBoundingClientRect().bottom+3))bad.push({cls:e.className,w:e.clientWidth,sw:e.scrollWidth,h:e.clientHeight,sh:e.scrollHeight});
@@ -71,10 +71,10 @@ const server=http.createServer((req,res)=>{
     });
     // Do not add Korean material to the existing English/Chinese routes.
     for(const lang of ['en','zh']){
-      await page.evaluate(lang=>{window.S={...(window.S||{}),lang};localStorage.setItem('nm_state_v1',JSON.stringify({lang}));NM_EXAM.renderPrint({thread:'MD69',level:1,count:10,seed:'lang'});},lang);
+      await page.evaluate(lang=>{window.S={...(window.S||{}),lang};localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang}));NM_EXAM.renderPrint({thread:'MD69',level:1,count:10,seed:'lang'});},lang);
       assert.equal(await page.locator('[data-middle-concept]').count(),0,lang+' must retain its own language');
     }
-    await page.evaluate(()=>{window.S={...(window.S||{}),lang:'ko'};localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko'}));});
+    await page.evaluate(()=>{window.S={...(window.S||{}),lang:'ko'};localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:'ko'}));});
     await geometryStyle.evaluate(e=>e.remove());
     if(out && process.argv.includes('--pdf')){
       for(const [thread,level] of [['MD2',2],['MD9',4],['MD63',3],['MD69',2],['MD74',4],['MD78',1],['MD83',5]]){
@@ -84,8 +84,8 @@ const server=http.createServer((req,res)=>{
       await page.emulateMedia({media:'screen'});
       for(const width of [1440,390]){
         await page.setViewportSize({width,height:1050});
-        await page.evaluate(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'검수용',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'}})));
-        await page.goto(url+'/index.html?enter=1');
+        await page.evaluate(()=>localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'검수용',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'}})));
+        await require('./lib/preview-fixture')(page);await page.goto(url+'/index.html?enter=1');
         // 앱 공용 미리보기 편집기를 열고 실제 옵션/레벨 UI를 조작한다.
         await page.evaluate(()=>NM_EXAM.openPrintEditor([{thread:'MD69',level:2,seed:'mobile-concept'}],'중등 개념 확인',{count:10}));
         await page.waitForSelector('#nm-pe-overlay');

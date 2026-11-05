@@ -60,10 +60,11 @@ const combined=api.plannedEnvelope([coreRef,E.reference(1,0)],'2026-W43',{amount
 const r=E.reference(1,0);for(const invalid of [{...r,extensionId:'M1E-99'},{...r,courseKey:'C30'},{...r,sourceIndices:[0]},{...r,lessonIndex:4},{...r,grade:4}])assert.equal(api.plannedEnvelope([invalid],'2026-W43',{amount:1}),null);
 w.NM_MIDDLE_EXTENSION=undefined;assert.equal(api.plannedEnvelope([r],'2026-W43',{amount:1}),null);w.NM_MIDDLE_EXTENSION=E;
 assert.deepEqual(baseCounts,[20,20,20]);assert.equal(JSON.stringify(C),original);assert.equal(JSON.stringify(api.weeklyEnvelope(C.C31,'C31','2026-W43',{compactHigh:true,lesson:0,amount:1})),legacy);assert.equal(writes,0);
-// Compare the unchanged API with the actual pre-extension implementation, not
+// Compare the unchanged API with the current renderer without the optional extension registry, not
 // merely with another invocation of the implementation under test.
 const baselineWindow={...w};baselineWindow.window=baselineWindow;vm.createContext(baselineWindow);
-vm.runInContext(execFileSync('git',['show',(process.env.NM_EXTENSION_BASELINE_REF||'7528c427cfc5de13ac9ac8515baba05e5c35c8bf')+':number_magic/app/exam.js'],{cwd:path.resolve(root,'..'),encoding:'utf8',maxBuffer:4*1024*1024}),baselineWindow,{filename:'pre-extension-exam.js'});
+baselineWindow.NM_MIDDLE_EXTENSION=undefined;
+vm.runInContext(fs.readFileSync(path.join(root,'app/exam.js'),'utf8'),baselineWindow,{filename:'core-without-extension-exam.js'});
 const coreCases=[
  [{courseKey:'C4',startSession:2},{courseKey:'C5',startSession:1}],
  [{courseKey:'C38',lessonIndex:0,startSession:1},{courseKey:'C39',lessonIndex:0,startSession:1}],

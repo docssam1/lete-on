@@ -242,6 +242,7 @@ server.listen(0, async () => {
           const r = byCode.get(code) || { role:p.getAttribute('data-cre'), cells:[], pairPages:0, pairLegends:0 };
           p.querySelectorAll('.nm-w2-item-train').forEach(e => {
             const tex = [...e.querySelectorAll('[data-tex]')].map(x => x.getAttribute('data-tex')).join(' ');
+            if(!r.source){const c=NM_EXAM.parseWorksheetCode(code),I=NM_EXAM.processInternals;r.source=c?NM_EXAM.buildProblems(c.thread,c.level,c.count,NM_RNG.hashSeed(c.seed)).map(q=>({tex:q.tex,expr:I.cpExprLine(q),chain:I.cpSourceLines(q).map(x=>{let n=0;return x.tex.replace(/\\square/g,()=>String(Array.isArray(x.blank)?x.blank[n++]:x.blank));})})):[];}
             r.cells.push({
             num:+((e.querySelector('.nm-w2-num') || {}).textContent || '0').replace(/\D/g, ''),
             process:e.classList.contains('nm-w2-item-process'), form:e.getAttribute('data-process'),
@@ -268,8 +269,9 @@ server.listen(0, async () => {
         const th = code.replace(/^#/, '').split('-L')[0], lv = +((code.match(/-L(\d+)x/) || [])[1]);
         if(proc.length !== want){
           const g = gaps.get(`${th}@${lv}x${n}`);
-          if(!(proc.length < want && g)) fail.push(`B · ${tag}: 과정 빈칸 칸 ${proc.length}/${want}`);
-          else notes.push(`${tag}: 과정 빈칸 ${proc.length}/${want} — ${th}@${lv} 생성기에 과정 줄 없음(A 에서 확인)`);
+          const noCandidate=r.source?.length===n&&r.source.every(q=>!anyCandidate(q));
+          if(!(proc.length < want && (g||noCandidate))) fail.push(`B · ${tag}: 과정 빈칸 칸 ${proc.length}/${want}`);
+          else notes.push(`${tag}: 과정 빈칸 ${proc.length}/${want} — ${th}@${lv} 생성기에 사용 가능한 과정 줄 없음(A 및 해당 시드 독립 대조)`);
         }
         proc.forEach(x => { if(x.writeSlots !== 1) fail.push(`B · ${tag} (${x.num}): 과정 빈칸 칸의 쓰기 자리 ${x.writeSlots}개`);
           if(!x.ask.trim()) fail.push(`B · ${tag} (${x.num}): 과정 빈칸 지시문이 없다`); });

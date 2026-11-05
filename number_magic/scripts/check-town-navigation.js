@@ -28,7 +28,7 @@ async function checkViewport(browser,port,width){
   page.on('pageerror',e=>errors.push(e.message));
   page.on('dialog',d=>d.accept());
   await page.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());
-  await page.addInitScript(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'동선 검사',view:'town',avatar:{id:'nav-kid',name:'숲 마법사',look:'forest-boy',kind:'boy',outfit:'royal'},character_unlocked:{outfit_royal:true},character:{number:3,color:'gold'},cloudLinked:false,progress:{},coins:0,account:{status:'active'},r0BannerSeen:true,attend:{last:new Date().toISOString().slice(0,10),days:1}})));
+  await page.addInitScript(()=>localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'동선 검사',view:'town',avatar:{id:'nav-kid',name:'숲 마법사',look:'forest-boy',kind:'boy',outfit:'royal'},character_unlocked:{outfit_royal:true},character:{number:3,color:'gold'},cloudLinked:false,progress:{},coins:0,account:{status:'active'},r0BannerSeen:true,attend:{last:new Date().toISOString().slice(0,10),days:1}})));
   const snap=()=>page.evaluate(()=>window.__navTown.snapshot());
   const waitTown=async count=>{
     await page.waitForSelector('#townVp.is-3d',{timeout:60000});
@@ -36,7 +36,7 @@ async function checkViewport(browser,port,width){
     assert.equal(await page.locator('#townWorld').evaluate(e=>getComputedStyle(e).display),'none','완료된 3D 뒤에 옛 2D 지도를 표시하지 않음');
   };
   const checkContextRecovery=async()=>{
-    const scoredBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return {progress:s.progress,coins:s.coins};});
+    const scoredBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_preview_state_v1'));return {progress:s.progress,coins:s.coins};});
     await shot('context-before');
     await page.locator('.t3d-cv').focus();
     await page.keyboard.down('ArrowRight');
@@ -72,13 +72,14 @@ async function checkViewport(browser,port,width){
       for(const key of ['x','z','d'])assert.equal(recovered.camera[key],frozen.camera[key]);
       assert.equal(playerOf(recovered).x,playerOf(frozen).x);assert.equal(playerOf(recovered).z,playerOf(frozen).z);
       assert.equal(await page.locator('.t3d-cv').count(),1,'recovery keeps one canvas');
-      assert.deepEqual(await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return {progress:s.progress,coins:s.coins};}),scoredBefore,'graphics recovery must not award or remove progress/coins');
+      assert.deepEqual(await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_preview_state_v1'));return {progress:s.progress,coins:s.coins};}),scoredBefore,'graphics recovery must not award or remove progress/coins');
       await shot('context-restored');
       result.contextRecovery={lossSource:width===390?'external-gl':'renderer',heldInputReleased:true,inputBlockedWhileLost:true,positionPreserved:true,real3dRetained:true,canvasCount:1,scoringUnchanged:true,boundedRetry:width===390,menuOverlap:false};
     }catch(error){await shot('context-failure');throw error;}
   };
   try{
-    await page.goto(`http://127.0.0.1:${port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
+    await require('./lib/preview-fixture')(page);
+ await page.goto(`http://127.0.0.1:${port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
     await page.locator('.nm-title3d [data-id="game"]').click({timeout:60000});
     await waitTown(1);
     if(RECOVERY_ONLY){await checkContextRecovery();assert.deepEqual(errors,[]);return result;}
@@ -187,6 +188,8 @@ async function checkViewport(browser,port,width){
   }finally{await ctx.close();}
 }
 (async()=>{
+  if(!process.argv.includes('--legacy-3d')){require('node:child_process').execFileSync(process.execPath,[path.join(__dirname,'check-navigation-targets-browser.js')],{stdio:'inherit',env:process.env});console.log('CURRENT_2D_GATE: replaced retired default-3D expectations; --legacy-3d retains the historical check');return;}
+
   if(OUT)fs.mkdirSync(OUT,{recursive:true});
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
   let browser;

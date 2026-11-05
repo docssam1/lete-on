@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-06 KST",
+  "model": "GPT-6.1 Sol",
+  "environment": "Mac mini / Codex",
+  "project": "fgahqumaldheqettmvqg",
+  "weeklyNotify": {
+    "version": 26,
+    "status": "ACTIVE",
+    "verify_jwt": true,
+    "files": [
+      {
+        "name": "index.ts",
+        "identical": true
+      },
+      {
+        "name": "deno.json",
+        "identical": true
+      },
+      {
+        "name": "delivery-runtime.mjs",
+        "identical": true
+      }
+    ],
+    "packageSha": "58e3c63f007ffa7b3e6d159f6b60cb7d3e63dd503d9b8e1272b9905898b80d8b"
+  },
+  "membership": {
+    "version": 8,
+    "status": "ACTIVE",
+    "sourceVerification": "2026-11-05 exact source, version and updated_at unchanged on 2026-11-06"
+  },
+  "database": {
+    "function": "nm_private.canonical_delivery_plan(jsonb)",
+    "definitionMd5": "a0dc011a70680a81e2e0f54ef1240049",
+    "cases": 4440,
+    "passed": 4440,
+    "studentWrites": 0
+  },
+  "advisories": [
+    {
+      "level": "INFO",
+      "name": "rls_enabled_no_policy",
+      "count": 59,
+      "note": "Private/server-only tables intentionally deny direct client access; no schema/policy changes in this audit",
+      "url": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+    },
+    {
+      "level": "WARN",
+      "name": "auth_leaked_password_protection",
+      "count": 1,
+      "note": "Existing shared-project setting is disabled; not silently changed",
+      "url": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    }
+  ],
+  "smsSent": 0,
+  "emailSent": 0
+}

@@ -29,7 +29,7 @@ const server = http.createServer((req, res) => {
       return u.hostname === '127.0.0.1' ? route.continue() : route.abort();
     });
     await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/ws.html?w=2026-W42&c=C4`, {waitUntil:'networkidle'});
-    await page.evaluate(() => document.fonts.ready);
+    await page.emulateMedia({media:'print'});await page.addStyleTag({content:'html,body,.nm-print-sheet{width:190mm!important}'});await page.evaluate(() => document.fonts.ready);
     const result = await page.evaluate(() => {
       const sheet = document.querySelector('.nm-print-sheet');
       const lines = [...sheet.querySelectorAll('svg.nm-jump-nl')];
@@ -65,10 +65,13 @@ const server = http.createServer((req, res) => {
         magicCount:magic.length,
         magicTextPx:magic[0] ? parseFloat(getComputedStyle(magic[0].querySelector('.nm-mn-desc')).fontSize) : 0,
         pageOverflow, footerOverlap, trainOverlap, teachingOverlap,
+        teachingDetail:[...sheet.querySelectorAll('.nm-w2-teaching-page')].map(p=>({text:p.textContent.slice(0,100),bottom:p.querySelector('.nm-w2-lesson-body > :last-child')?.getBoundingClientRect().bottom,footer:p.querySelector('.nm-w2-foot')?.getBoundingClientRect().top})),
+        overflowDetail:[...sheet.querySelectorAll('.nm-w2-page')].filter(p=>p.scrollHeight>p.clientHeight+2).map(p=>({classes:p.className,text:p.textContent.slice(0,100),height:p.clientHeight,scroll:p.scrollHeight})),
         questions:sheet.querySelectorAll('.nm-w2-item').length,
         keys:sheet.querySelectorAll('.nm-ak-item').length
       };
     });
+    if(process.env.NM_C4_ARTIFACTS){fs.mkdirSync(process.env.NM_C4_ARTIFACTS,{recursive:true});fs.writeFileSync(path.join(process.env.NM_C4_ARTIFACTS,'layout.json'),JSON.stringify(result,null,2));await page.locator('.nm-w2-teaching-page').first().screenshot({path:path.join(process.env.NM_C4_ARTIFACTS,'teaching.png')});}
     assert.ok(result.lineCount > 10, 'C4 must contain repeated number lines');
     assert.equal(result.badLines, 0, 'number lines need a visible axis, ticks and open curves');
     assert.equal(result.oldTerm, false);

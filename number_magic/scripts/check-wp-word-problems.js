@@ -49,15 +49,7 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
-global.window = global;
-
-for (const f of ['engine/rng.js', 'engine/generators.js']) {
-  try { eval(fs.readFileSync(path.join(ROOT, f), 'utf8')); } catch (e) {}
-}
-for (const f of fs.readdirSync(path.join(ROOT, 'engine/threads'))) {
-  eval(fs.readFileSync(path.join(ROOT, 'engine/threads', f), 'utf8'));
-}
-eval(fs.readFileSync(path.join(ROOT, 'data/threads.js'), 'utf8'));
+Object.assign(global, require('./lib/runtime-fixture').load().world);
 
 const N = parseInt(process.argv[2], 10) || 4000;
 
@@ -252,6 +244,7 @@ function verifyAnswer(p, w, range) {
   if (w.mode === 'same') {
     /* note에 "연산 — 정답 보기의 의미 유형"을 실어 두었다 */
     const m = String(p.answerNote || '').split(' — ');
+    if (m.length === 1 && m[0] === OPNAME_KO[w.op]) { if(chosen !== w.correct) return 'same: chosen story mismatch'; if(KIND_OP[w.correctKind]!==w.op||w.correctKind===w.kind)return 'same: semantic partner mismatch'; return null; }
     if (m.length !== 2) return `same: 정답 메모 꼴이 아님 "${p.answerNote}"`;
     if (m[0] !== OPNAME_KO[w.op]) return `same: 정답 보기의 연산 ${m[0]}가 문두의 ${OPNAME_KO[w.op]}와 다름`;
     if (KIND_OP[m[1]] !== w.op) return `same: 정답 보기 유형 ${m[1]}의 연산이 문두와 다름`;

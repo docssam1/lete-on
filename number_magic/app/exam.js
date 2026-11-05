@@ -1457,7 +1457,7 @@
 .nm-w2-editorial-study-aside p { font-size:12px; line-height:1.5; }
 .nm-w2-editorial-study-aside cite { display:block; margin-top:2mm; color:#627076; font-size:10px; font-style:normal; }
 /* 수직선 개념 뒤의 예시·따라풀기 세 문항이 A4 바닥글 위에서 끝나게 한다. */
-.nm-w2-course-c4 .nm-w2-teaching-page:has(.nm-w2-editorial-study) .nm-w2-lesson-body { gap:2mm; }
+.nm-w2-course-c4 .nm-w2-teaching-page:has(.nm-w2-editorial-study) .nm-w2-lesson-body { gap:1mm; }
 .nm-w2-course-c4 .nm-w2-teaching-page:has(.nm-jump-nl) .nm-w2-editorial-study-main,
 .nm-w2-course-c4 .nm-w2-teaching-page:has(.nm-jump-nl) .nm-w2-editorial-study-aside { padding:2mm 3mm; }
 .nm-w2-course-c4 .nm-w2-editorial-study .nm-jump-nl { width:68mm; margin:1mm auto 0; }
@@ -1477,8 +1477,8 @@
   font-size:15px; font-weight:850; color:#20343b; }
 .nm-w2-place-row small { font-size:10px; color:#43575c; font-weight:700; }
 .nm-w2-place-row.result { border-top:2px solid #20343b; }
-.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-example { margin:0; padding:4mm 5mm; border:0; border-left:1mm solid #b25b3f; background:#fcf8f4; }
-.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-guide { margin:0; padding:4mm 5mm; border:1px solid #cedbd8; background:#fff; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-example { margin:0; padding:1mm 5mm; border:0; border-left:1mm solid #b25b3f; background:#fcf8f4; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-guide { margin:0; padding:1.5mm 5mm; border:1px solid #cedbd8; background:#fff; }
 .nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-foot { margin-top:3mm; }
 .nm-w2-concept-badge { display:block; font-size:calc(18px * var(--ws-fs, 1)); font-weight:750; color:#20343b; letter-spacing:-.2px;
   padding-bottom:4px; margin-bottom:6px; }
@@ -4041,7 +4041,7 @@ const NL_PRINT_WORDS = [
   ['点一点放进篮子，再', ''], ['跳着数，选出', '跳着数，写出'], ['选出', '写出'], ['点一点，', '']
 ];
 function nlPrintAsk(p){
-  if(p.widget==='pyramid'&&examLang()==='ko')return '바로 옆 두 돌의 수를 더해 빈 돌에 써 보세요.';
+  if(p.widget==='pyramid'&&examLang()==='ko')return p.dir==='down'?'위에서 나란히 있는 두 돌의 수를 더해 아래 빈 돌에 써 보세요.':'바로 옆 두 돌의 수를 더해 위의 빈 돌에 써 보세요.';
   if(p.widget==='dotToDot'||p.widget==='g13Dots'){
     const order=p.order==='down'?lk('가장 큰 수부터 작은 수 순서대로 점을 이어요.','Join the dots from the largest number down.','从最大的数开始，按从大到小的顺序连点。'):lk('1부터 차례대로 점을 이어요.','Join the dots in order from 1.','从1开始按顺序连点。');
     return order+' '+lk('어떤 그림이 나타날지 상상해 보세요! 점은 모두 몇 개일까요?','Imagine what picture will appear! How many dots are there?','想象会出现什么图画！一共有几个点？');
@@ -4682,6 +4682,18 @@ function hasNumberedBlanks(p){
   const tx = String((p && p.tex) || '');
   return /\\[dt]?frac/.test(tx) && (tx.match(/\\square/g) || []).length >= 2;
 }
+/* A single answer inside a fraction also needs clearance; numbering is a
+   separate decision. Read balanced arguments so nested radicals are covered. */
+function fractionContainsBlank(tex){
+  const re=/\\[dt]?frac/g;let m;
+  while((m=re.exec(tex))){let at=re.lastIndex;
+    for(let arg=0;arg<2;arg++){while(/\s/.test(tex[at]||'')&&at<tex.length)at++;if(tex[at]!=='{')break;
+      const start=at;let depth=0;do{if(tex[at]==='{')depth++;else if(tex[at]==='}')depth--;at++;}while(depth&&at<tex.length);
+      if(/\\square/.test(tex.slice(start,at)))return true;
+    }
+  }
+  return false;
+}
 function texDisplay(tex){
   /* 표기 다듬기(2026-09-20) — `1x`·`+ 0x^2`·`x--59` 를 그리기 직전에 정리한다.
      생성기 191개를 따로 고치는 대신 여기 한 곳에서(engine/tex-tidy.js 주석 참조). */
@@ -4689,9 +4701,9 @@ function texDisplay(tex){
   const src = wrapHangul(tidy);
   /* 분수이면서 빈칸이 둘 이상일 때만 손댄다 — 가로로 늘어선 빈칸은 읽는 순서가
      이미 분명하고, 상자를 키우면 줄 높이만 늘어 인쇄 배치가 흔들린다. */
-  const isFrac = hasNumberedBlanks({ tex: src });
+  const isFrac = hasNumberedBlanks({ tex: src }),innerBlank=fractionContainsBlank(src);
   let k = 0;
-  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : WRITE_BOX);
+  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : innerBlank ? WRITE_BOX_ROOM : WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
@@ -5601,7 +5613,7 @@ function w2StrategyBandHtml(threadId, level){
 /* Keep prose in its reading font; typeset powers, indices and log bases as math. */
 function prosePowersHtml(raw,escapeText){
   const input=String(raw==null?'':raw), encode=escapeText||esc;
-  const re=/log_\(\d+\/\d+\)[A-Za-z]?|\(\d+\/\d+\)[ˣⁿᵃ]?|(?:[A-Za-z0-9]+|\([^()\n]+\))(?:[_^](?:\{[^{}\n]+\}|\([^()\n]+\)|[A-Za-z0-9−-]+))+|\b\d+\/\d+\b/g;
+  const re=/log_\(\d+\/\d+\)[A-Za-z]?|\(\d+\/\d+\)[ˣⁿᵃ]?|log_[A-Za-z0-9]+\s+[A-Za-z][A-Za-z0-9]*|(?:[A-Za-z0-9]+|\([^()\n]+\))(?:[_^](?:\{[^{}\n]+\}|\([^()\n]+\)|[A-Za-z0-9−-]+))+|\b\d+\/\d+\b/g;
   let out='',last=0,m;
   while((m=re.exec(input))){
     out+=encode(input.slice(last,m.index));
@@ -5891,12 +5903,12 @@ function w2NeighborExampleHtml(p){
   if(p.widget==='pyramid'&&Array.isArray(p.rows)){
     const rows=p.rows.map(r=>r.slice()),missing=[];
     rows.forEach((r,ri)=>r.forEach((v,ci)=>{if(v===null)missing.push([ri,ci]);}));
-    if(missing.length!==1||rows.length!==3)throw new Error('Invalid neighboring-sum example');
-    const [r,c]=missing[0],children=rows[r+1];
-    if(!children||!Number.isFinite(children[c])||!Number.isFinite(children[c+1])||children[c]+children[c+1]!==p.answer)throw new Error('Neighboring-sum example answer mismatch');
+    if(missing.length!==1)throw new Error('Invalid neighboring-sum example');
+    const [r,c]=missing[0],down=p.dir==='down',children=rows[down?r-1:r+1],ci=down?c-1:c;
+    if(!children||!Number.isFinite(children[ci])||!Number.isFinite(children[ci+1])||children[ci]+children[ci+1]!==p.answer)throw new Error('Neighboring-sum example answer mismatch');
     const solved=rows.map(v=>v.slice());solved[r][c]=p.answer;
     const tree=(data,answer)=>`<div class="nm-neighbor-pyramid">${data.map((row,ri)=>`<div class="nm-neighbor-row">${row.map((v,ci)=>`<span class="nm-neighbor-stone${ri===r&&ci===c?' nm-neighbor-target':''}${answer&&ri===r&&ci===c?' nm-neighbor-solved':''}">${v===null?'□':esc(v)}</span>`).join('')}</div>`).join('')}</div>`;
-    return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="pyramid"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(lk('바로 옆 두 돌을 먼저 찾아요. 두 수를 더한 뒤 위의 빈 돌에 써요.','Find the two stones side by side. Add them and write the sum in the empty stone above.','先找并排的两块石头，相加后写在上面的空石头里。'))}</p><div class="nm-neighbor-example-pair">${tree(rows,false)}<span class="nm-neighbor-arrow" aria-hidden="true">→</span>${tree(solved,true)}</div><div class="nm-neighbor-sum"><span>${children[c]}</span> + <span>${children[c+1]}</span> = <b>${p.answer}</b></div><p>${esc(lk(`빈 돌에 쓰는 수는 ${p.answer}!`,`Write ${p.answer} in the empty stone.`,`在空石头里写${p.answer}。`))}</p></div>`;
+    return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="pyramid"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(lk(down?'위에서 나란히 있는 두 돌의 수를 더해 아래 빈 돌에 써요.':'바로 옆 두 돌을 먼저 찾아요. 두 수를 더한 뒤 위의 빈 돌에 써요.',down?'Add the two neighboring stones above and write the sum in the empty stone below.':'Find the two stones side by side. Add them and write the sum in the empty stone above.',down?'把上面相邻两块石头的数相加，写在下面的空石头里。':'先找并排的两块石头，相加后写在上面的空石头里。'))}</p><div class="nm-neighbor-example-pair">${tree(rows,false)}<span class="nm-neighbor-arrow" aria-hidden="true">→</span>${tree(solved,true)}</div><div class="nm-neighbor-sum"><span>${children[ci]}</span> + <span>${children[ci+1]}</span> = <b>${p.answer}</b></div><p>${esc(lk(`빈 돌에 쓰는 수는 ${p.answer}!`,`Write ${p.answer} in the empty stone.`,`在空石头里写${p.answer}。`))}</p></div>`;
   }
   if(p.widget==='numberMachine'){
     const delta=p.mmode==='guess'?p.examples[0][1]-p.examples[0][0]:Number(p.rule),input=p.mmode==='guess'?p.target:p.input;

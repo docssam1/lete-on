@@ -2647,7 +2647,7 @@ MD38:{ name:{ko:'로그의 성질',en:'Properties of Logarithms',zh:'对数的�
              en:'log_b N counts how many times you multiply the base b to reach N — six 6s make 46656, so log_6 46656 = 6.',
              zh:'log_b N 就是数底数b要乘几次才得到N——6乘六次是46656，所以log_6 46656 = 6。'}},
           {id:4,offLadder:true,label:{ko:'밑변환으로 로그의 곱 구하기',en:'Products using change of base',zh:'用换底公式求对数的积'},params:{mode:'changeBaseProduct'},
-           concept:{ko:'밑변환 공식 log_b N = log_a N ÷ log_a b를 이용해 서로 다른 밑을 연결해요(a,b>0, a,b≠1, N>0). log_2 3 × log_3 8 = log_2 3 × (log_2 8 ÷ log_2 3) = log_2 8 = 3이에요.',
+           concept:{ko:'밑변환 공식 log_b N = log_a N ÷ log_a b를 이용해 서로 다른 밑을 연결합니다(a,b>0, a,b≠1, N>0). log_2 3 × log_3 8 = log_2 3 × (log_2 8 ÷ log_2 3) = log_2 8 = 3입니다.',
              en:'Change base using log_b N = log_a N / log_a b (a,b>0; a,b≠1; N>0). Thus log_2 3 × log_3 8 = log_2 3 × (log_2 8 / log_2 3) = log_2 8 = 3.',
              zh:'利用换底公式log_b N = log_a N ÷ log_a b（a,b>0，a,b≠1，N>0）。所以log_2 3 × log_3 8 = log_2 3 × (log_2 8 ÷ log_2 3) = log_2 8 = 3。'}}] },
 
@@ -2752,11 +2752,11 @@ MD44:{ name:{ko:'미분계수와 도함수',en:'Derivatives',zh:'导数与导函
              en:'Differentiate first, then put the x value in: f(x)=−6x²+5x has f′(x)=−12x+5, so f′(2)=−24+5=−19.',
              zh:'先求导函数再代入该点的x值：f(x)=−6x²+5x的导函数是−12x+5，所以f′(2)=−24+5=−19。'}},
           {id:4,offLadder:true,label:{ko:'평균변화율과 할선의 기울기',en:'Average rate of change and secant slope',zh:'平均变化率与割线斜率'},params:{mode:'averageRate'},
-           concept:{ko:'x가 u에서 v로 변할 때 평균변화율은 [f(v)−f(u)]÷(v−u)예요(u≠v). 그래프의 두 점을 잇는 할선의 기울기와 같아요. f(x)=x²에서 1부터 3까지는 (9−1)÷(3−1)=4예요.',
+           concept:{ko:'x가 u에서 v로 변할 때 평균변화율은 [f(v)−f(u)]÷(v−u)입니다(u≠v). 그래프의 두 점을 잇는 할선의 기울기와 같습니다. f(x)=x²에서 1부터 3까지는 (9−1)÷(3−1)=4입니다.',
              en:'From x=u to x=v, the average rate is [f(v)−f(u)]/(v−u), with u≠v. It is the slope of the secant through the two graph points. For f(x)=x² from 1 to 3, it is (9−1)/(3−1)=4.',
              zh:'x从u变到v时，平均变化率为[f(v)−f(u)]÷(v−u)，其中u≠v，也是连接图上两点的割线斜率。f(x)=x²从1到3的平均变化率为(9−1)÷(3−1)=4。'}},
           {id:5,offLadder:true,label:{ko:'미분계수의 정의와 극한',en:'Derivative from the limit definition',zh:'用极限定义求导数值'},params:{mode:'definitionLimit'},
-           concept:{ko:'미분계수 f′(a)는 평균변화율 [f(a+h)−f(a)]÷h의 h→0일 때 극한이에요. h≠0일 때 식을 정리한 뒤 극한을 구해요. 할선의 기울기가 접선의 기울기에 가까워지는 뜻이에요. f(x)=x²이면 몫은 2a+h이므로 f′(a)=2a예요.',
+           concept:{ko:'미분계수 f′(a)는 평균변화율 [f(a+h)−f(a)]÷h의 h→0일 때 극한입니다. h≠0일 때 식을 정리한 뒤 극한을 구합니다. 할선의 기울기가 접선의 기울기에 가까워지는 뜻입니다. f(x)=x²이면 몫은 2a+h이므로 f′(a)=2a입니다.',
              en:'The derivative f′(a) is the limit of [f(a+h)−f(a)]/h as h→0. Simplify for h≠0 before taking the limit: secant slopes approach the tangent slope. For f(x)=x², the quotient is 2a+h, so f′(a)=2a.',
              zh:'f′(a)是平均变化率[f(a+h)−f(a)]÷h在h→0时的极限。先在h≠0时化简，再求极限：割线斜率趋近切线斜率。f(x)=x²时，商为2a+h，所以f′(a)=2a。'}}] },
 

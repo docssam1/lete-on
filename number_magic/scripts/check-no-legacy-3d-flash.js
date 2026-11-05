@@ -46,6 +46,8 @@ async function pageFor(browser,port,success){
 }
 
 (async()=>{
+  if(!process.argv.includes('--legacy-3d')){require('node:child_process').execFileSync(process.execPath,[path.join(__dirname,'check-illustrated-town-browser.js')],{stdio:'inherit',env:process.env});console.log('CURRENT_2D_GATE: replaced retired default-3D expectations; --legacy-3d retains the historical check');return;}
+
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
   let browser;
   try{

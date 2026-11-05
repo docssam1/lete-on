@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {execFileSync}=require('node:child_process'),{chromium}=require('./lib/playwright');
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_VIEWPORT_ARTIFACTS&&path.resolve(process.env.NM_VIEWPORT_ARTIFACTS);
 const LIVE=process.env.NM_JOURNEY_BASE,baseline=process.argv.find(a=>a.startsWith('--baseline='))?.split('=')[1];
-if(OUT&&!/^[EG]:[\\/]/i.test(OUT))throw Error('Artifacts must be on E: or G:');
+
 if(LIVE&&new URL(LIVE).origin!=='https://lete-on.gfieldacademy.net')throw Error('Unexpected production origin');
 const old=new Map(),files=['index.html','app/main.js','app/living-lesson.js','app/living-lesson.css','app/activity-journey.js','app/journey-stage.js'];
 if(baseline)for(const f of files)old.set('number_magic/'+f,execFileSync('git',['show',baseline+':number_magic/'+f],{cwd:ROOT,encoding:'utf8',maxBuffer:8e6}));
@@ -14,14 +14,15 @@ const seed=lang=>({lang,onboarded:true,name:'배치 검수',view:'unit',unit:'A-
 async function check(browser,base,width,height,motion='reduce',lang='ko',large=false){
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1,reducedMotion:motion,hasTouch:width<600}),page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',r=>{const u=new URL(r.request().url());return u.origin===new URL(base).origin&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort();});
- await page.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));},seed(lang));
+ await page.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));},seed(lang));
  const host=page.locator('#livingLesson'),prefix=`${width}-${height}-${motion}-${lang}${large?'-large':''}`;
  const shot=async tag=>{if(OUT)await page.screenshot({path:path.join(OUT,prefix+'-'+tag+'.png')});};
  const stable=()=>page.waitForFunction(()=>document.querySelector('#livingLesson')?.dataset.saved==='true'&&document.querySelector('#livingLesson').dataset.moving!=='true');
  const press=async(action,value='')=>{await host.locator(`[data-action="${action}"][data-value="${value}"]`).click();await stable();};
  const geometry=()=>host.evaluate(e=>{const bounds=n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,height:r.height};};return {screen:bounds(e.closest('#screen')),stage:bounds(e.querySelector('.nm-live-stage')),question:bounds(e.querySelector('.nm-live-question')),controls:bounds(e.querySelector('.nm-journey-controls')),scroll:e.closest('#screen').scrollTop};});
  try{
-  await page.goto(base+'/number_magic/index.html?enter=1',{waitUntil:'domcontentloaded'});await page.locator('[data-id="continue"]:visible,#ttContinue:visible').first().click();
+  await require('./lib/preview-fixture')(page);
+ await page.goto(base+'/number_magic/index.html?enter=1',{waitUntil:'domcontentloaded'});await page.locator('[data-id="continue"]:visible,#ttContinue:visible').first().click();await page.evaluate(()=>__NM_AUDIT_OPEN('A-02'));
   await page.waitForFunction(()=>document.querySelector('#livingLesson')?.__livingLesson&&document.querySelector('#livingLesson .nm-live-stage')?.dataset.renderer==='webgl');await stable();
   for(let i=0;i<30;i++){const close=page.locator('#nmUnlockOverlayClose,#nmSymClose');if(!await close.count())break;await close.last().click();}
   await page.locator('.nm-confetti').first().waitFor({state:'detached',timeout:10000});
@@ -30,7 +31,7 @@ async function check(browser,base,width,height,motion='reduce',lang='ko',large=f
   const fit=height>=800&&!large;let g=await geometry();
   if(fit){assert(g.stage.top>=g.screen.top-1,'whole manipulative remains above the fold after begin');assert(g.stage.bottom<=g.screen.bottom+1,'whole manipulative fits');assert(g.controls.bottom<=g.screen.bottom+1,'primary controls fit with the manipulative');assert(g.question.top>=g.screen.top-1);}
   assert(g.stage.height>=240,'do not make the manipulative unreadably small');await shot('select');
-  const scoring=()=>page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return {progress:s.progress,coins:s.coins};}),beforeScore=await scoring();
+  const scoring=()=>page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_preview_state_v1'));return {progress:s.progress,coins:s.coins};}),beforeScore=await scoring();
   const token=host.locator('[data-action="select"][data-value="R03"]');await token.focus();await page.keyboard.press('Space');await stable();assert.equal(await token.getAttribute('aria-pressed'),'true');assert.equal(await token.evaluate(b=>b===document.activeElement),true,'replace controls without losing keyboard focus');
   await press('select','R04');
   const originalIds=await host.evaluate(e=>e.__livingLesson.getVisualState().objects.map(o=>o.id).sort());assert.equal(originalIds.length,15);

@@ -89,7 +89,7 @@
       note: text('점수만으로 학습시간이나 횟수를 늘리지 않습니다. 관찰 기록이 없으면 목표 도달일은 아직 계산하지 않습니다.', 'Scores alone do not increase study time or frequency. Without observation records, no target arrival date is calculated.', '不会只凭分数增加学习时间或次数。没有观察记录，暂不计算目标到达日期。') };
   }
   // Existing grade-entry anchors, not semester mastery or admission standards.
-  const gradeStarts = { e1:'c1', e2:'c3', e3:'c8', e4:'c13', e5:'c19', e6:'c22', m1:'c29', m2:'c32', m3:'c35', h1:'c38', h2:'c41', h3:'c45' };
+  const gradeStarts = { e1:'c1', e2:'c3', e3:'c5', e4:'c12', e5:'c17', e6:'c22', m1:'c29', m2:'c32', m3:'c35', h1:'c38', h2:'c41', h3:'c45' };
   function startingPoint(selection) {
     const s = selection || {};
     if (s.route === 'unlearned') return 'f-count5';

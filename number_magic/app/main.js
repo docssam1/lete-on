@@ -2997,8 +2997,9 @@ function roadTotals(from, to, cadence, mult, speed){
     const n=courseLessonCount(x.c);hasHigh=hasHigh||!!x.c.studyPlan;
     sessions+=n; weeks+=x.c.studyPlan?NM_HIGH_PACING.durationUnits(x.c)/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1):courseWeeks(n,cadence)*(mult||1); courses++;
   });
+  const continuousWeeks=hasHigh?weeks:Math.round(weeks);
   weeks=hasHigh?Math.ceil(weeks-1e-9):Math.round(weeks);
-  return {sessions, weeks, courses, months: Math.round(weeks/4)};
+  return {sessions, weeks, continuousWeeks, courses, months: Math.round(weeks/4)};
 }
 
 /* ── 정복 현황 ──────────────────────────────────────────────
@@ -3926,7 +3927,7 @@ function paceWeeksToFn(curNum, curFrac, cad, pace, speed){
   const curW=cur?coursePaceWeeks(cur.c,cad,mult,speed):0;
   return target=>{
     if(target<=curNum) return 0;
-    return Math.max(0, roadTotals(curNum,target-1,cad,mult,speed).weeks - curFrac*curW);
+    return Math.max(0, roadTotals(curNum,target-1,cad,mult,speed).continuousWeeks - curFrac*curW);
   };
 }
 /* For an explicit plan, map labels use the same dated milestones as the
@@ -4449,7 +4450,7 @@ function screenCourseRoad(){
   /* 3D 지도가 처음 비출 과정 — draw(false)가 S._roadFocus 를 지우기 전에 잡아 둔다 */
   const heroFocus=S._roadFocus||null;
   const hero3dLikely=!!heroEl && road3dLikely();
-  const openEx={};          /* 펼친 과정 설명(다시 그려도 유지) */
+  const openEx=S._roadExpanded||(S._roadExpanded={}); /* 같은 학생의 계획 변경·재렌더에서도 펼친 설명 유지 */
   let road3dCtl=null;       /* 3D 지도 — 설정이 바뀌면 시작 달 이름표를 다시 쓴다 */
   let road3dStarted=false;
   function syncRoad3dTimes(){ if(road3dCtl&&road3dCtl.setTimes) road3dCtl.setTimes(roadStartLabels()); }
@@ -5104,9 +5105,9 @@ const PLACEMENT_AGES=[
    | 유아(5~6세) | tier level0 (stages.js 수의 나라 "유아 5~7세")                         | 0   |
    | 초1         | milestone K = 수 감각 끝 → 과정 1 (§9 1·2권 초1 자연수 덧뺄)            | 1   |
    | 초2         | milestone G2 = 한 자리 덧뺄 끝 → 과정 3 (§9 3·4권 초2 덧뺄 고급·구구단)   | 3   |
-   | 초3         | milestone G4 = 구구단 끝 → 과정 8 (§9 5·6권 초3 곱셈·나눗셈)             | 8   |
-   | 초4         | milestone G6 = "초3 연산 끝" → 과정 13 (§9 7·8권 초4 곱나눗 고급·분수)   | 13  |
-   | 초5         | §9 9권 "약수배수·약분통분·이분모 분수(초5)" = 과정 19 「약수와 배수…」    | 19  |
+   | 초3         | milestone G4 = 과정 5 (초3 세 자리 덧뺄셈부터 시작)                    | 5   |
+   | 초4         | 과정 12 (초4 두 자리 수로 나누기·큰 곱셈)                             | 12  |
+   | 초5         | §9 9권 "약수배수·약분통분·이분모 분수(초5)" = 과정 17 「약수와 배수」     | 17  |
    | 초6         | §9 11권 "분수·소수 나눗셈(초6)" = 과정 22 「분수 나눗셈」                 | 22  |
    | 중1·중2·중3 | tier middle1·middle2·middle3 첫 과정                                 | 29·32·35 |
    | 고등        | tier highmath1 첫 과정(공통수학1 — 공통수학2 는 그 뒤 40)               | 38  |
@@ -5117,8 +5118,8 @@ const PLACEMENT_GRADES=[
   {key:'e1',  milestone:'K',     label:{ko:'초1',en:'Grade 1',zh:'小1'}},
   {key:'e2',  milestone:'G2',    label:{ko:'초2',en:'Grade 2',zh:'小2'}},
   {key:'e3',  milestone:'G4',    label:{ko:'초3',en:'Grade 3',zh:'小3'}},
-  {key:'e4',  milestone:'G6',    label:{ko:'초4',en:'Grade 4',zh:'小4'}},
-  {key:'e5',  course:19,         label:{ko:'초5',en:'Grade 5',zh:'小5'}},
+  {key:'e4',  course:12,    label:{ko:'초4',en:'Grade 4',zh:'小4'}},
+  {key:'e5',  course:17,         label:{ko:'초5',en:'Grade 5',zh:'小5'}},
   {key:'e6',  course:22,         label:{ko:'초6',en:'Grade 6',zh:'小6'}},
   {key:'m1',  tier:'middle1',    label:{ko:'중1',en:'Grade 7',zh:'初1'}},
   {key:'m2',  tier:'middle2',    label:{ko:'중2',en:'Grade 8',zh:'初2'}},

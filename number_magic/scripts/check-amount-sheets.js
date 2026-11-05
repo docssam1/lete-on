@@ -27,6 +27,7 @@ const server = http.createServer((req, res) => {
 server.listen(0, async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
+  await page.route('**/*',r=>new URL(r.request().url()).hostname==='localhost'?r.continue():r.abort());
   await page.goto(`http://localhost:${server.address().port}/ws.html?w=2026-W39&c=C1&n=check&k=1&auto=0`);
   await page.waitForFunction(() => window.__nmSheet && window.NM_COURSES, null, { timeout:20000 });
   const courses = only.length ? only : Array.from({ length:(require('fs').readFileSync(require('path').join(__dirname,'../data/courses.js'),'utf8').match(/^\s*\{id:\d+,/gm)||[]).length }, (_, i) => 'C' + i);
@@ -43,6 +44,7 @@ server.listen(0, async () => {
           const items = [...R.school, ...R.strategy, ...R.application, ...R.stretch];
           if(amt > 1) out.grew += R.school.filter(it => it.count > ((s.school.find(d => d.t === it.thread && d.lv === it.level) || {}).count || 0)).length;
           out.sheets++;
+          document.querySelectorAll('.nm-print-sheet').forEach(e=>e.remove());
           try { __nmSheet.renderMixedSheet(items, c + '-S' + (si + 1), {}); }
           catch(e){ out.bad.push({ amt, at:c + '-S' + (si + 1), code:e.code || '', thread:e.thread, level:e.level, msg:String(e.message).slice(0, 80) }); }
         });

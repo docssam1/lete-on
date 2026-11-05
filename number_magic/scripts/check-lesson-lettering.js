@@ -21,7 +21,7 @@ async function run(){
    const ctx=await browser.newContext({viewport:{width,height:960},serviceWorkers:'block'});
    await ctx.route('**/*',r=>!r.request().url().startsWith(base)||!['GET','HEAD'].includes(r.request().method())?r.abort():r.continue());
    if(version==='before')await ctx.route('**/app/learning-stage.css*',r=>r.fulfill({contentType:'text/css',body:previous}));
-   await ctx.addInitScript(({unit,lang})=>localStorage.setItem('nm_state_v1',JSON.stringify({
+   await ctx.addInitScript(({unit,lang})=>localStorage.setItem('nm_preview_state_v1',JSON.stringify({
     lang,name:'글꼴검수',onboarded:true,view:'unit',unit,step:'discover',avatar:{kind:'boy'},
     placement:{course:'C0',self:true},account:{status:'active'},
     symbolDex:{'+':{},'-':{},'−':{},'×':{},'÷':{},'=':{},'□':{}},
@@ -29,7 +29,8 @@ async function run(){
    })),{unit,lang});
    const page=await ctx.newPage(),errors=[];
    page.on('pageerror',e=>errors.push(e.message));
-   await page.goto(base+'/number_magic/index.html?enter=1',{waitUntil:'domcontentloaded'});
+   await require('./lib/preview-fixture')(page);
+ await page.goto(base+'/number_magic/index.html?enter=1',{waitUntil:'domcontentloaded'});
    await page.locator('[data-id="continue"]:visible,#ttContinue:visible').first().click({timeout:40000});
    await page.locator('.nm-unit-view').waitFor();
    for(let i=0;i<20;i++){

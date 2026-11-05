@@ -32,7 +32,8 @@ const server = http.createServer((req, res) => {
     await page.route('**/*', route => !['GET','HEAD'].includes(route.request().method()) ? route.abort() : route.continue());
     await page.addInitScript(() => { window.NM_NO_AUTOPRINT = true; });
     const url = `http://127.0.0.1:${server.address().port}`;
-    await page.goto(url + '/drill.html', {waitUntil:'networkidle'});
+    await require('./lib/preview-fixture')(page);
+ await page.goto(url + '/drill.html', {waitUntil:'networkidle'});
     await page.emulateMedia({media:'print'});
     await page.addStyleTag({content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}'});
 
@@ -72,7 +73,7 @@ const server = http.createServer((req, res) => {
     await page.setViewportSize({width:390,height:900});
     await page.goto(url + '/index.html?enter=1', {waitUntil:'networkidle'});
     await page.evaluate(() => {
-      localStorage.setItem('nm_state_v1', JSON.stringify({lang:'ko',onboarded:true,name:'검수용',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'}}));
+      localStorage.setItem('nm_preview_state_v1', JSON.stringify({lang:'ko',onboarded:true,name:'검수용',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'}}));
       NM_EXAM.openPrintEditor([{thread:'MD13',level:6,count:24,seed:'md13-mobile'}], 'MD13 나눗셈 검수', {count:24});
     });
     await page.waitForSelector('#nm-pe-overlay [data-middle-concept="MD13"]');

@@ -38,7 +38,8 @@ const week = i => varyWeek ? isoWeek(new Date(Date.UTC(2026, 9, 19 + 7 * i))) : 
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const base = 'http://127.0.0.1:' + server.address().port;
   const browser = await chromium.launch({ headless: true });
-  const p0 = await browser.newPage();
+  const context=await browser.newContext();await context.route('**/*',r=>r.request().url().startsWith(base+'/')?r.continue():r.abort());
+  const p0 = await context.newPage();
   await p0.goto(base + '/number_magic/ws.html?c=C0&w=2026-W43&n=x&auto=0&p=1&s=1');
   await p0.waitForFunction(() => window.NM_WS_READY === true, null, { timeout: 90000 });
   const jobs = await p0.evaluate(() => {
@@ -72,7 +73,7 @@ const week = i => varyWeek ? isoWeek(new Date(Date.UTC(2026, 9, 19 + 7 * i))) : 
   const worker = async () => {
     while (k < todo.length) {
       const j = todo[k++], name = j.id + '-r' + String(j.r).padStart(2, '0');
-      const page = await browser.newPage({ viewport: { width: 1000, height: 1400 } });
+      const page = await context.newPage({ viewport: { width: 1000, height: 1400 } });
       try {
         await page.goto(urlOf(j));
         await page.waitForFunction(() => window.NM_WS_READY === true || window.NM_WS_READY === 'error', null, { timeout: 90000 });
@@ -96,7 +97,7 @@ const week = i => varyWeek ? isoWeek(new Date(Date.UTC(2026, 9, 19 + 7 * i))) : 
       await page.close();
     }
   };
-  await Promise.all(Array.from({ length: 8 }, worker));
+  await Promise.all(Array.from({ length: Number(process.env.NM_TEXT_WORKERS)||4 }, worker));
   await browser.close(); server.close();
   console.log(`WORKSHEET_TEXT rounds=${todo.length} failed=${fail} out=${OUT}`);
   process.exit(fail ? 1 : 0);

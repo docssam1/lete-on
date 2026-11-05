@@ -29,12 +29,7 @@ vm.createContext(w);
 function load(file) {
   vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), w, { filename:file });
 }
-load('engine/rng.js');
-load('engine/threads/mid10.js');
-load('data/threads.js');
-load('data/middle-concepts.js');
-load('data/middle-pacing.js');
-load('data/courses.js');
+Object.assign(w,require('./lib/runtime-fixture').load().world);w.window=w;
 load('app/exam.js');
 
 const plain = value => JSON.parse(JSON.stringify(value));

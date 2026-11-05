@@ -28,7 +28,7 @@ assert(mapped>0&&pending>0);assert.equal(books.resolve('unknown','unknown','comp
 assert.deepEqual(Array.from(automaticSteps).sort(),['miracle/pre-2023-v1-order','miracle/pre-2023-v3-ten']);
 assert.equal(books.resolve('miracle','pre-2023-v1-order','').baselineId,'f-order10');
 assert.equal(books.resolve('miracle','pre-2023-v1-order','unknown').baselineId,null);
-assert.equal(world.NM_PLACEMENT_PATHS.startingPoint({route:'school',grade:'e3',age:''}),'c8');
+assert.equal(world.NM_PLACEMENT_PATHS.startingPoint({route:'school',grade:'e3',age:''}),'c5');
 assert.equal(world.NM_PLACEMENT_PATHS.startingPoint({route:'school',grade:'',age:''}),null);
 assert.equal(world.NM_PLACEMENT_PATHS.startingPoint({route:'book',completedBooks:[
   {series:'miracle',step:'pre-2023-v1-order'}, {series:'soma-p',step:'v1'}]}),null);

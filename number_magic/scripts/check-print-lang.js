@@ -20,7 +20,7 @@
    전부 @media print 안에 있고, 화면 미디어에서는 시트가 display:none이라 칸
    너비가 0으로 잡힌다 — 그 상태로 재면 칸 넘침은 영영 걸리지 않는다.
 
-   언어는 앱이 쓰는 저장 키(nm_state_v1)로 넣는다. exam.js의 examLang()이
+   언어는 앱이 쓰는 저장 키(nm_preview_state_v1)로 넣는다. exam.js의 examLang()이
    S.lang → 이 키 → 한국어 순으로 떨어지고, drill.html엔 S가 없기 때문이다.
 
    쓰는 법:
@@ -86,7 +86,7 @@ function serve(){
       window.print = () => {};
       /* 표지·개념장까지 켜고 본다 — 그쪽에도 하드코딩 한국어가 있었다 */
       try{
-        localStorage.setItem('nm_state_v1', JSON.stringify({ lang: l }));
+        localStorage.setItem('nm_preview_state_v1', JSON.stringify({ lang: l }));
         localStorage.setItem('nm_ws_concept_page', '1');
         localStorage.setItem('nm_ws_cover', '1');
       }catch(e){}
@@ -117,7 +117,7 @@ function serve(){
         const res = { err:null, cards:0, keys:0, empty:[], overflow:0, prose:'', wp:null };
         document.querySelectorAll('.nm-print-sheet').forEach(e => e.remove());
         try { NM_EXAM.renderPrint({ thread:id, level:lv, count:COUNT, seed:'lang1' }); }
-        catch(e){ res.err = 'throw: ' + e.message; return res; }
+        catch(e){ if(e.code==='NM_UNIQUE_POOL_EXHAUSTED'){res.skipPool=true;return res;}res.err = 'throw: ' + e.message; return res; }
         await new Promise(r => setTimeout(r, 30));
 
         const sheet = document.querySelector('.nm-print-sheet');
@@ -143,7 +143,7 @@ function serve(){
 
         /* 문장제 — 본문·물음이 있어야 인쇄물만 보고 풀 수 있다(WP 스레드의 계약) */
         const words = [...sheet.querySelectorAll('.nm-print-word')];
-        if(words.length){
+        if(words.length&&/^WP/.test(id)){
           res.wp = { n: words.length, noBody: 0, noAsk: 0, fewChoices: 0, sample: '' };
           words.forEach(w => {
             const card = w.closest('.nm-print-item');
@@ -158,6 +158,7 @@ function serve(){
         return res;
       }, { id: t.id, lv: t.lv });
 
+      if(r.skipPool){console.log('SKIP_POOL '+lang+' '+t.id+'@'+t.lv+' requested 12 unique items');continue;}
       const tag = `[${lang}] ${t.id}L${t.lv} ${t.name}`;
       if(r.err){ fails.push(`${tag} — 인쇄 실패: ${r.err}`); }
       else {

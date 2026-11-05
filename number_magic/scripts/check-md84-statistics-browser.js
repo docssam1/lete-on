@@ -30,7 +30,7 @@ const server=http.createServer((req,res)=>{
     const integrated=await page.evaluate(()=>({
       generators:[typeof NM_TGEN.md88_countingCases,typeof NM_TGEN.md85_dispersion,typeof NM_TGEN.md84_center],
       threads:[!!NM_THREADS.MD88,!!NM_THREADS.MD85,!!NM_THREADS.MD84],
-      scripts:['mid11.js','mid12.js','mid13.js'].map(name=>[...document.scripts].filter(s=>s.src.endsWith('/engine/threads/'+name)).length)
+      scripts:['mid11.js','mid12.js','mid13.js'].map(name=>[...document.scripts].filter(s=>new URL(s.src,location.href).pathname.endsWith('/engine/threads/'+name)).length)
     }));
     assert.deepEqual(integrated.generators,['function','function','function'],'mid11/mid12/mid13 generator runtime load');
     assert.deepEqual(integrated.threads,[true,true,true],'MD88/MD85/MD84 thread runtime load');

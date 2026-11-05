@@ -7,27 +7,17 @@
 const { spawn } = require('child_process');
 const path = require('path'), http = require('http'), fs = require('fs');
 const ROOT = path.resolve(__dirname, '..');
-const PORT = process.env.NM_CHECK_PORT || 8795;
+let PORT = Number(process.env.NM_CHECK_PORT)||0;
 const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
 const SHOTS = process.env.NM_SHOTS || '';
 const { chromium } = require('./lib/playwright');
 
-function serve() {
-  return new Promise((resolve, reject) => {
-    const py = spawn(process.platform === 'win32' ? 'python' : 'python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
-    py.on('error', reject);
-    const t0 = Date.now();
-    (function ping() {
-      http.get(`http://localhost:${PORT}/index.html`, res => { res.resume(); resolve(py); })
-        .on('error', () => { if (Date.now() - t0 > 8000) return reject(new Error('서버 기동 실패')); setTimeout(ping, 150); });
-    })();
-  });
-}
+function serve(){return new Promise(resolve=>{const server=http.createServer((req,res)=>{const f=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));if(!f.startsWith(ROOT+path.sep)||!fs.existsSync(f)||!fs.statSync(f).isFile()){res.writeHead(404);return res.end();}res.setHeader('Content-Type',({'.js':'application/javascript','.html':'text/html','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2'})[path.extname(f)]||'application/octet-stream');let data=fs.readFileSync(f);if(/app[\\/]g1[\\/].*\.widgets\.js$/.test(f))data=data.toString().replace(/\bsetTimeout\(/g,'window.__gTestLater(');res.end(data);});server.listen(PORT,'127.0.0.1',()=>{PORT=server.address().port;server.kill=()=>server.close();resolve(server);});});}
 
 /* 페이지 안에서 도는 풀이기 — 위젯 DOM 을 사람처럼 누른다 */
 const PAGE_FN = `
 window.__g1315 = async function (p, c, mode) {
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const sleep = ms => new Promise(r => window.__gTestLater(r,ms));
   const tap = el => { if (!el) throw new Error('누를 대상 없음'); el.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, cancelable: true })); };
   const $ = s => c.querySelector(s), $$ = s => [...c.querySelectorAll(s)];
   const choice = v => $$('.nm-g1315-choices button').find(b => b.dataset.v === String(v));
@@ -120,7 +110,10 @@ window.__g1315 = async function (p, c, mode) {
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource|net::ERR|favicon|supabase/i.test(m.text())) errors.push('console: ' + m.text()); });
   await page.route(/supabase|googleapis|gstatic/, r => r.abort());
-  await page.goto(`http://localhost:${PORT}/index.html?enter=1`, { waitUntil: 'load' });
+  // Accelerate callback delays only in locally served widget responses. Geometry/timing have separate browser gates.
+  await page.addInitScript(()=>{window.__gTestLater=(fn,ms,...args)=>setTimeout(fn,Math.min(Number(ms)||0,1),...args);});
+  await require('./lib/preview-fixture')(page);
+ await page.goto(`http://127.0.0.1:${PORT}/index.html?enter=1`, { waitUntil: 'load' });
   await page.waitForFunction(() => window.NM_WIDGETS && window.NM_THREADS && window.NM_THREADS.NL57 && window.NM_WIDGET_EXT && window.NM_WIDGET_EXT.overlapSum, null, { timeout: 15000 });
   await page.evaluate(PAGE_FN);
   await page.evaluate(() => {
@@ -156,7 +149,7 @@ window.__g1315 = async function (p, c, mode) {
             if (!host.firstChild || !host.innerHTML.trim()) return { err: '빈 화면' };
             await new Promise(r => setTimeout(r, 30));
             try { const x = await window.__g1315(p, host, mode); if (mode === 'wrong' && x === null) { out.wrong = 'skip'; continue; } } catch (e) { return { err: mode + ' 풀이 예외: ' + e.message }; }
-            await new Promise(r => setTimeout(r, 700));
+            await new Promise(r => setTimeout(r, 40));
             out[mode] = calls.slice();
             out.answer = p.answer; out.widget = p.widget;
           }
@@ -181,7 +174,7 @@ window.__g1315 = async function (p, c, mode) {
           document.getElementById('__bubble').textContent = p.prompt.ko;
           NM_WIDGETS.render(p, host, () => {});
           await new Promise(r => setTimeout(r, 50));
-          if (stage === 'solved') { try { await window.__g1315(p, host, 'right'); } catch (e) {} await new Promise(r => setTimeout(r, 700)); }
+          if (stage === 'solved') { try { await window.__g1315(p, host, 'right'); } catch (e) {} await new Promise(r => setTimeout(r, 40)); }
         }, { id: t.id, lv: t.lv, stage });
         await page.screenshot({ path: path.join(SHOTS, `${t.id}L${t.lv}-${stage}.png`) });
       }

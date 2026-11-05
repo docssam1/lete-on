@@ -62,7 +62,7 @@ server.listen(0, async () => {
       if(!allowedDefinition) bad.push(`${where} [gcd·lcm] ${visibleText.slice(0, 100)}`);
     }
 
-    const skipKeys = new Set(['generator','params','id','tier','level','order','timeLimit','coins','prereq','edu']);
+    const skipKeys = new Set(['generator','params','wp','id','tier','level','order','timeLimit','coins','prereq','edu']);
     function collectKorean(value, path, concept, out, includePlain = true){
       if(value == null) return;
       if(typeof value === 'string'){ if(includePlain) out.push({ path, text:value, concept }); return; }

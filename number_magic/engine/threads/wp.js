@@ -683,7 +683,7 @@
         t1: s.t1 != null ? s.t1 : String(s.n1), t2: s.t2 != null ? s.t2 : String(s.n2),
         objKo: s.o.ko.n, actorA: s.A ? s.A.ko : null, actorB: s.B ? s.B.ko : null,
         noise: meta.noiseValue == null ? null : meta.noiseValue,
-        correct: meta.correctText || null
+        correct: meta.correctText || null, correctKind:meta.correctKind||null
       }
     };
     /* 정답지에 붙는 짧은 설명. 보기 문장이 긴 모드(same)는 연산 이름만 싣는다 —
@@ -852,7 +852,7 @@
                   en:'Which problem needs the same operation as the one above? Write the number.',
                   zh:'下面哪道题和上面用同样的运算？请写出序号。' };
     return assemble(s, ask, choices, answer,
-      { story, mode:'same', correctText: opts[0].ko,
+      { story, mode:'same', correctText: opts[0].ko, correctKind:okKind,
         note: { ko: OPNAME[s.op].ko,
                 en: OPNAME[s.op].en,
                 zh: OPNAME[s.op].zh } });
@@ -1536,8 +1536,8 @@
     ['ko','en','zh'].forEach(lang => { prompt[lang] = word[lang] + ' ' + wordAsk[lang]; });
     return {
       prompt, word, wordAsk, answer, answerType:'number', widget:'numpad',
-      tex:(cut ? '\\gcd' : '\\operatorname{lcm}') + '(' + a + ',' + b + ')=\\square',
-      solution:[{tex:(cut ? '\\gcd' : '\\operatorname{lcm}') + '(' + a + ',' + b + ')=\\square',blank:answer}],
+      tex:String(a) + ',\\; ' + b + '\\quad\\longrightarrow\\quad\\square',
+      solution:[{tex:String(a) + ',\\; ' + b + '\\quad\\longrightarrow\\quad\\square',blank:answer}],
       answerNote:{ko:(cut?'최대공약수':'최소공배수')+' = '+answer,
         en:(cut?'GCF':'LCM')+' = '+answer,zh:(cut?'最大公因数':'最小公倍数')+' = '+answer},
       wp:{kind:cut?'factor':'multiple',mode:cut?'gcd':'lcm',n1:a,n2:b,range:'factors',correct:answer}

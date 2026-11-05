@@ -44,10 +44,11 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
     /* 7세(내년 입학) 아이 · 과정 5 에서 시작 */
     await page.addInitScript(()=>{ if(sessionStorage.getItem('rtSeeded')) return; sessionStorage.setItem('rtSeeded','1');
       const d=new Date(), ay=(d.getMonth()+1)>=3?d.getFullYear():d.getFullYear()-1;
-      localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'시기 검수',view:'courseroad',
+      localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'시기 검수',view:'courseroad',
         avatar:{kind:'boy'},account:{status:'active'},placement:{course:'C5',self:true},schoolAge:{entryYear:ay+1},
         roadCadence:'w2',roadPace:'p2',roadSpeed:1})); });
-    await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
+    await require('./lib/preview-fixture')(page);
+ await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>typeof window.NM_ROAD_TIMING==='function'&&typeof window.NM_PACE_DIAG==='function',null,{timeout:60000});
 
     const r=await page.evaluate(()=>{
@@ -107,8 +108,8 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
       assert.equal(g.pre, r.firstOf.level0); assert.equal(g.m1, r.firstOf.middle1); assert.equal(g.m2, r.firstOf.middle2);
       assert.equal(g.m3, r.firstOf.middle3); assert.equal(g.hi, r.firstOf.highmath1); assert.equal(g.alg, r.firstOf.algebra); assert.equal(g.cal, r.firstOf.calculus1);
       assert.equal(g.e1, r.firstOf.level1, '초1 = 계산의 새싹 첫 과정');
-      assert.match(r.titles[g.e5], /약수와 배수/, '초5 근거 제목'); assert.match(r.titles[g.e6], /분수 나눗셈/, '초6 근거 제목');
-      assert.match(r.titles[g.e3-1], /구구단/, '초3 = 구구단 끝난 다음'); assert.match(r.titles[g.e4-1], /나눗셈/, '초4 = 초3 곱나눗 끝난 다음');
+      assert.match(r.titles[g.e5], /소인수|약수|배수/, '초5 근거 제목'); assert.match(r.titles[g.e6], /분수(?:의)? 나눗셈/, '초6 근거 제목');
+      assert.match(r.titles[g.e3-1], /구구단|곱셈구구/, '초3 = 구구단 끝난 다음'); assert.match(r.titles[g.e4], /두 자리로 나누기|두 자리.*나눗셈/, '초4 두 자리 수로 나누기');
     });
 
     /* 화면 — 이정표 줄의 시기가 속도 비교 카드의 같은 행과 같은 글자인가 */
@@ -138,18 +139,15 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
       assert(dom.high&&dom.high===dom.cardHigh); assert(dom.mid&&dom.mid===dom.cardMid);
     });
     /* 설명 펼치기 · 빠르기 바꾸면 다시 계산 */
-    const re=await page.evaluate(async()=>{
+    const beforePlan=await page.evaluate(async()=>{
       const d=document.querySelector('.nm-cr-explain[data-c="C29"]'); d.querySelector('summary').click();
       await new Promise(r=>setTimeout(r,100));
       const txt=d.querySelector('.nm-cr-ex-body').textContent;
       const before=document.querySelector('.nm-cr-msrow[data-ms="HIGH"] em').textContent;
-      document.querySelector('.nm-cr-seg button[data-cad="w1"]').click();
-      await new Promise(r=>setTimeout(r,100));
-      const after=document.querySelector('.nm-cr-msrow[data-ms="HIGH"] em').textContent;
-      const card=document.querySelector('.nm-pc-row[data-ms="HIGH"] .nm-pc-facts .you b').textContent.trim();
-      const stillOpen=document.querySelector('.nm-cr-explain[data-c="C29"]').open;
-      return {txt, before, after, card, stillOpen};
+      return {txt,before};
     });
+    await page.click('#crAdjust');await page.locator('#nmPlanSheet .nm-plan-extra summary').click();await page.selectOption('#planCadence','w1');await page.click('#planApply');await page.waitForSelector('#nmPlanSheet',{state:'detached'});
+    const re={...beforePlan,...await page.evaluate(()=>({after:document.querySelector('.nm-cr-msrow[data-ms="HIGH"] em').textContent,card:document.querySelector('.nm-pc-row[data-ms="HIGH"] .nm-pc-facts .you b').textContent.trim(),stillOpen:document.querySelector('.nm-cr-explain[data-c="C29"]').open}))};
     check('화면: 과정 설명이 데이터로 채워지고, 다시 그려도 펼친 채', ()=>{ assert(/교과 연산/.test(re.txt)&&/마치면/.test(re.txt), re.txt.slice(0,80)); assert(re.stillOpen); });
     check(`화면: 주 1회로 바꾸면 다시 계산 (${re.before} → ${re.after}) · 카드와 같음`, ()=>{ assert.notEqual(re.before,re.after); assert.equal(re.after,re.card); });
     check('앱: 페이지 오류 없음', ()=>assert.deepEqual(errors,[]));

@@ -410,7 +410,7 @@ const CSS = `
 .t3d-bub::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:#fff}
 .t3d-lab{position:fixed!important;width:1px;height:1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;transform:none!important}
 .t3d-lab:focus-visible{clip-path:none;position:absolute!important;left:20px;top:112px;width:auto;height:auto;min-height:48px;padding:12px;font-size:22px;z-index:20}
-.t3d-destination{position:absolute;top:106px;left:50%;transform:translateX(-50%);max-width:calc(100% - 40px);padding:10px 18px;min-height:48px;background:#fffdf5;color:#23394b;border:2px solid #56645b;border-radius:8px;font:700 22px/1.3 system-ui;cursor:pointer;z-index:5}
+.t3d-destination{pointer-events:auto;position:absolute;top:106px;left:50%;transform:translateX(-50%);max-width:calc(100% - 40px);padding:10px 18px;min-height:48px;background:#fffdf5;color:#23394b;border:2px solid #56645b;border-radius:8px;font:700 22px/1.3 system-ui;cursor:pointer;z-index:5}
 .t3d-destination[hidden]{display:none}
 .t3d-guide{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:8px 20px;background:rgba(255,253,245,.97);color:#293c32;border-radius:8px;pointer-events:none;font:700 24px/1.3 system-ui;max-width:calc(100% - 32px);box-sizing:border-box;white-space:nowrap}
 .t3d-guide img{height:64px;width:56px;object-fit:contain}.t3d-guide small{display:block;font-size:20px;color:#795b30}
@@ -506,7 +506,7 @@ export async function mountTown3D(container, opts){
   const placeTitle=(id,s)=>id==='numberland'?L({ko:'수의 나라',en:'Number Land',zh:'数字王国'},lang):id==='_closet'?L({ko:'마법사 옷장',en:"Wizard’s Closet",zh:'魔法师衣橱'},lang):L(s?.label,lang).replace(/^[^\p{L}\p{N}]+/u,'');
   const destination=document.createElement('button');destination.className='t3d-destination';destination.hidden=true;ov.appendChild(destination);
   const guide=document.createElement('div');guide.className='t3d-guide';guide.setAttribute('aria-label',L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang));
-  guide.innerHTML=`<img src="assets/characters/elder.png" alt=""><span><small>${L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang)}</small>${L({ko:'어디로 가 볼까?',en:'Where shall we go?',zh:'想去哪里？'},lang)}</span>`;ov.appendChild(guide);
+  guide.innerHTML=`<img src="${new URL('../../assets/characters/elder.png',import.meta.url).href}" alt=""><span><small>${L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang)}</small>${L({ko:'어디로 가 볼까?',en:'Where shall we go?',zh:'想去哪里？'},lang)}</span>`;ov.appendChild(guide);
   function choosePlace(kind,id,open=false,byUser=true){
     selectedPlace={kind,id};selectedByUser=byUser;const s=kind==='gate'?gateDefs[id]:spotState[id];
     destination.textContent=kind==='gate'?L(s?.name,lang):placeTitle(id,s);destination.hidden=!s;
@@ -1055,7 +1055,12 @@ export async function mountTown3D(container, opts){
     snapshot(){return {townId:'numbers-magic',version:TOWN_VERSION,selectedPlace,selectedByUser,camera:{x:cam.x,z:cam.z,d:cam.d,position:camera.position.toArray(),rotation:camera.rotation.toArray()},follow,
       characters:chars.map(ch=>({id:ch.def.id,x:ch.x,z:ch.z,dir:ch.dir,
         facing:ch.obj?ch.obj.rotation.y:0}))};},
-    setLang(l){ lang = l || 'ko'; canvas.setAttribute('aria-label', L({ ko:'마을 지도 3D', en:'Village map (3D)', zh:'村庄地图 3D' }, lang)); paintLabels(); dirty = true; wake(); },
+    setLang(l){ lang = l || 'ko';
+      const guideName=L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang),small=document.createElement('small');small.textContent=guideName;
+      guide.setAttribute('aria-label',guideName);guide.querySelector('span').replaceChildren(small,document.createTextNode(L({ko:'어디로 가 볼까?',en:'Where shall we go?',zh:'想去哪里？'},lang)));
+      joystick.setAttribute('aria-label',L({ko:'이동 조이스틱. 방향키로도 이동할 수 있습니다.',en:'Movement joystick. Arrow keys also move.',zh:'移动摇杆，也可使用方向键。'},lang));
+      if(selectedPlace)choosePlace(selectedPlace.kind,selectedPlace.id,false,selectedByUser);
+      canvas.setAttribute('aria-label', L({ ko:'마을 지도 3D', en:'Village map (3D)', zh:'村庄地图 3D' }, lang)); paintLabels(); dirty = true; wake(); },
     refresh(spots){ (spots || []).forEach(s => { spotState[s.id] = Object.assign(spotState[s.id] || {}, s); }); paintLabels(); applyLocks(); wake(); },
     zoomIn(){ if(contextUnavailable)return;cam.d /= 1.25; placeCam(); wake(); },
     zoomOut(){ if(contextUnavailable)return;cam.d *= 1.25; placeCam(); wake(); },

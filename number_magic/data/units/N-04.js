@@ -49,7 +49,7 @@ window.NM_UNITS['N-04'] = {
   voice:{
     correct:[ {ko:'딩동! 딱 맞는 수! 🖍️',en:'Ding! The right amount!',zh:'叮！数量正好！'}, {ko:'묶음이 완벽해요! ✨',en:'Perfect bundling!',zh:'捆得真完美！'}, {ko:'연결 성공! 🔗',en:'Great matching!',zh:'连对啦！'} ],
     wrong:[ {ko:'음~ 막대를 하나씩 세어 볼까요?',en:'Hmm, count the strokes one by one?',zh:'嗯，一笔一笔数数看？'}, {ko:'다섯 개마다 사선으로 묶여요',en:'Every five strokes get bundled with a diagonal',zh:'每五笔就用斜线捆一下'} ],
-    finish:{ ko:'훌륭해요! 🌟', en:'Clap clap! A Number Artist is born!', zh:'鼓掌！数字表达魔法师诞生了！' }
+    finish:{ ko:'훌륭해요! 🌟', en:'Clap clap! A Little Counting Wizard is born!', zh:'鼓掌！数数小魔法师诞生了！' }
   }
 };
 
