@@ -24,7 +24,13 @@ assert.equal(api.build(root,api.cases.length),null);
     await page.locator("#questionCountInput").fill("9");await page.locator("#difficultyFilter [data-difficulty='0']").click();await page.locator("#generateButton").click();await page.waitForFunction(()=>!document.querySelector("#worksheet").hidden);
     const prompts=page.locator(`#problemView [data-source-item-id='${api.source}']`);assert.equal(await prompts.count(),9);
     assert.deepEqual((await prompts.evaluateAll(nodes=>nodes.map(n=>Number(n.dataset.poolIndex)))).sort(),[0,1,2,3,4,5,6,7,8]);assert.equal(await prompts.locator("svg").count(),9);
-    assert.equal(await page.locator("#problemView [data-source-answer]").count(),0);await page.locator("#solutionTab").click();assert.equal(await page.locator(`#solutionView [data-source-answer='${api.source}']`).count(),9);
+    assert.equal(await page.locator("#problemView [data-source-answer]").count(),0);await page.locator("#solutionTab").click();
+    const solutions=page.locator(`#solutionView [data-source-answer='${api.source}']`);
+    assert.equal(await solutions.count(),9);
+    for(let i=0;i<api.cases.length;i++) {
+      const answer=`${api.cases[i][2]}cm`;
+      assert((await solutions.nth(i).innerText()).includes(answer), `화면 풀이 ${i+1}번 높이`);
+    }
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
     if(width===1280&&process.env.MAC_CHECK_OUTPUT)for(const mode of ["problem","solution"]){
       await page.locator(mode==="problem"?"#problemTab":"#solutionTab").click();await page.locator("#printMenuButton").click();await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();await page.waitForFunction(mode=>document.body.dataset.printMode===mode,mode);
