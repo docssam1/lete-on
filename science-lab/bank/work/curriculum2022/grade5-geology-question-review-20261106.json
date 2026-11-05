@@ -1,0 +1,538 @@
+{
+  "phase": 301,
+  "date": "2026-11-06",
+  "unit": "c22-s51-u01",
+  "scope": "Elementary question readability and exact answer display; prior grading, versions and saved work preserved",
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 80,
+    "reviewedCurrentClassroomContexts": 16,
+    "changedWorkbookQuestions": 63,
+    "changedQuestionFields": 82,
+    "changedExplanations": 63,
+    "unchangedOtherAnswerLabels": 3072,
+    "currentAnswerChanges": [
+      {
+        "unit": "c22-s51-u01",
+        "no": 15,
+        "before": "④ 보이는 층의 경계와 상대 두께",
+        "after": "④ 보이는 층의 경계와 어느 층이 더 두꺼운지"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "no": 16,
+        "before": "① 층 경계의 수평·휘어짐·어긋남",
+        "after": "① 층의 경계가 수평으로 놓이거나 휘거나 어긋난 모습"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "no": 21,
+        "before": "사진의 보이는 위치에서 두께가 다르게 보인다고 기록한다. 배율·보는 방향이 없으면 실제 두께cm나 퇴적 기간을 정하지 않고 축척·다른 방향 사진 등 추가 자료를 확인한다.",
+        "after": "사진에서 위쪽 층이 더 두껍게 보인다고 적는다. 실제 두께나 쌓이는 데 걸린 시간은 이 사진만으로 알 수 없다. 실제 크기를 알려 주는 표시나 다른 방향에서 찍은 사진을 더 살펴본다."
+      },
+      {
+        "unit": "c22-s51-u01",
+        "no": 31,
+        "before": "④ 확대 도구를 쓰고 보이지 않는 부분은 남긴다.",
+        "after": "④ 돋보기 등으로 살펴보고, 보이지 않는 부분은 더 관찰할 점으로 적는다."
+      },
+      {
+        "unit": "c22-s51-u01",
+        "no": 49,
+        "before": "색만으로 확정한 첫 근거는 부족하다. 두 번째처럼 구성 알갱이 크기를 같은 기준으로 관찰하고 표본·도구·배율과 실제 보인 알갱이를 다시 확인한다. 불분명하면 분류를 보류한다.",
+        "after": "붉은색이라는 것만으로 사암이라고 할 수 없다. 모래 크기의 알갱이를 관찰한 모둠의 설명이 분류 기준에 맞는다. 같은 표본을 돋보기 등으로 다시 살피고, 잘 보이지 않으면 아직 분류하지 않고 더 관찰한다."
+      },
+      {
+        "unit": "c22-s51-u01",
+        "no": 66,
+        "before": "몸의 일부나 잎·껍데기 같은 모양뿐 아니라 생물이 살아서 남긴 발자국 등 활동 흔적도 보존될 수 있다. 표본의 보이는 생물 특징과 출처·보존 맥락을 확인하고 오늘 무늬·유물·모형과 구별한다.",
+        "after": "몸의 일부나 잎·껍데기의 모양, 발자국 같은 활동 흔적도 화석으로 남을 수 있다. 화석에서 실제로 보이는 생물의 특징을 살피고, 어디에서 발견된 것인지 알아본다. 오늘 남긴 무늬나 사람이 만든 모형과는 구별한다."
+      },
+      {
+        "unit": "c22-s51-u01",
+        "no": 67,
+        "before": "화석의 보이는 특징·생물 생활 자료와 발견 지층·출처를 연결한다. 그 지층이 생길 무렵 바다와 관련된 환경이었을 가능성을 추리하되 지금도 바다라는 결론이나 정확한 기온·연도를 하나의 화석으로 확정하지 않는다.",
+        "after": "그 생물이 바다에 살았다는 자료와 화석이 나온 지층을 함께 살펴본다. 그 지층이 만들어질 때 바다와 관련된 환경이었을 수 있다. 지금도 바다인지, 당시 기온이나 정확한 연도는 화석 하나만으로 알 수 없다."
+      },
+      {
+        "unit": "c22-s51-u01",
+        "no": 77,
+        "before": "지층에 보존된 화석이라는 발견 맥락과 A가 바다에서 살았다는 생활 자료를 연결해 그 지층이 형성될 무렵 바다와 관련된 환경이었을 가능성을 추리한다. 지금도 바다라는 결론이나 정확한 수온·연도는 확정하지 않는다.",
+        "after": "A는 바다에 살았고, 그 화석이 옮겨온 돌이 아니라 이 지층에 남아 있다는 두 자료를 연결한다. 그 지층이 만들어질 무렵 바다와 관련된 환경이었을 수 있다. 지금도 바다인지, 당시 수온과 정확한 연도는 이 자료만으로 알 수 없다."
+      }
+    ],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": [
+      {
+        "unit": "c22-s51-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "mode": "answers"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s51-u01-b001",
+      "c22-s51-u01-b002",
+      "c22-s51-u01-b008",
+      "c22-s51-u01-b009",
+      "c22-s51-u01-b010",
+      "c22-s51-u01-b014",
+      "c22-s51-u01-b017",
+      "c22-s51-u01-b020",
+      "c22-s51-u01-b024",
+      "c22-s51-u01-b025",
+      "c22-s51-u01-b026",
+      "c22-s51-u01-b034",
+      "c22-s51-u01-b038",
+      "c22-s51-u01-b040",
+      "c22-s51-u01-b041",
+      "c22-s51-u01-b042",
+      "c22-s51-u01-b047",
+      "c22-s51-u01-b054",
+      "c22-s51-u01-b055",
+      "c22-s51-u01-b056",
+      "c22-s51-u01-b072",
+      "c22-s51-u01-b075",
+      "c22-s51-u01-b078",
+      "c22-s51-u01-b080",
+      "c22-s51-u01-b081",
+      "c22-s51-u01-b088",
+      "c22-s51-u01-b092",
+      "c22-s51-u01-b096"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s51-u01-b008",
+      "c22-s51-u01-b024",
+      "c22-s51-u01-b040",
+      "c22-s51-u01-b056",
+      "c22-s51-u01-b072",
+      "c22-s51-u01-b075",
+      "c22-s51-u01-b080",
+      "c22-s51-u01-b081",
+      "c22-s51-u01-b088",
+      "c22-s51-u01-b096",
+      "c22-s51-u01-b001",
+      "c22-s51-u01-b017"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [],
+    "all71PagesRailsFiguresAndQuickTablesUnchanged": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorEditorialBytePrefixPreserved": true,
+    "choiceResponsesChecked": 38,
+    "explanationHtmlOccurrencesVerified": 126,
+    "syntaxFiles": 6,
+    "browserVerified": false
+  },
+  "tests": {
+    "exitCode": 0,
+    "testFiles": 216,
+    "seconds": 7.08
+  },
+  "testCounts": {
+    "total": 1242,
+    "passed": 1240,
+    "failed": 0,
+    "skipped": 2
+  },
+  "evidence": {
+    "curriculum": {
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase301/../curriculum-standards/science-curriculum.txt",
+      "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "lines": [
+        720,
+        734
+      ],
+      "standards": [
+        "6과01-01",
+        "6과01-02",
+        "6과01-03"
+      ],
+      "scope": "지층 관찰·형성 모형, 이암/사암/역암의 알갱이 크기 분류, 동식물 특징이 분명한 화석·생성 모형·과거 생물과 환경 추리·가치. 휘거나 끊어진 지층의 생성 원리는 다루지 않음."
+    },
+    "sources": [
+      {
+        "title": "NPS How Fossils Form",
+        "url": "https://www.nps.gov/subjects/fossils/how-fossils-form.htm",
+        "updated": "2024-10-23",
+        "readRanges": [
+          [
+            27,
+            54
+          ],
+          [
+            63,
+            69
+          ]
+        ],
+        "verified": "빠른 묻힘과 단단한 부분은 보존 가능성을 높일 수 있지만 화석화가 보장되는 것은 아님. 몸 일부와 살아 있을 때 남긴 활동 흔적을 포함함."
+      },
+      {
+        "title": "NPS What is a Fossil?",
+        "url": "https://www.nps.gov/subjects/fossils/what-is-a-fossil.htm",
+        "updated": "2024-11-01",
+        "readRanges": [
+          [
+            27,
+            44
+          ],
+          [
+            48,
+            54
+          ],
+          [
+            76,
+            102
+          ]
+        ],
+        "verified": "과거 생물의 몸·흔적과 발견된 지층 등 자료를 함께 살핌. 모든 화석이 몸 전체이거나 돌이 되어야 하는 것은 아님. 오늘의 신발 자국, 물결무늬와 구별."
+      }
+    ],
+    "readOn": "2026-11-06",
+    "imagesDownloaded": 0,
+    "new3d": 0
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1360,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 28,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideSeventeenUnitPass": {
+      "units": 15,
+      "questions": 1720,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To301": 618
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase301",
+  "releaseGatesUnchanged": true,
+  "mainMerged": false,
+  "deployed": false
+}

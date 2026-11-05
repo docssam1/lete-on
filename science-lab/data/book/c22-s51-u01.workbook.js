@@ -1,3 +1,4 @@
+import{withGeologyReadableWorkbook}from'./c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook';
 import{withGeologyStudentLanguage}from'./geology-student-language.js';
 import{withGeologyEditorial}from'./c22-s51-u01.editorial.js';
 // 지층과 화석80문항. scripts/gen-science-workbook-c22s51u01.mjs가 생성.
@@ -7729,4 +7730,5 @@ const baseWorkbook = {
  ]
 };
 
-export const workbook=withGeologyStudentLanguage(withGeologyEditorial(baseWorkbook));
+export const geologyReadablePriorWorkbook=withGeologyStudentLanguage(withGeologyEditorial(baseWorkbook));
+export const workbook=withGeologyReadableWorkbook(geologyReadablePriorWorkbook);
