@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const window={},ctx=vm.createContext({window});
-for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
+for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
 const {PlannerMockEvidence:M,PlannerLearningEvidence:E,PlannerCurriculum:C,PlannerGoalCurriculum:G}=window;
 const plain=v=>JSON.parse(JSON.stringify(v));
 const input=(extra={})=>({exam:'2026년 3월 학평',level:'1',date:'2026-11-05',scope:'중등 함수',attempt:'first',timing:'untimed',minutes:'25',limit:'',total:'10',unlearned:'2',correct:'6',helped:'1',cause:'strategy',review:'planned',startMonth:'2026-12',months:'1',...extra});

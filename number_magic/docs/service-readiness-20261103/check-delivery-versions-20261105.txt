@@ -1,0 +1,1 @@
+DELIVERY_VERSIONS_OK checks=355 legacyCourses=74 legacySources=551 v1PlacementFrozen=true v2Current=true historicalGenerators=false networkWrites=0

@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const window={},ctx=vm.createContext({window});
-for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-mock-schedule.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
+for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-mock-schedule.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
 const {PlannerMockSchedule:S,PlannerMockEvidence:E,PlannerLearningEvidence:L,PlannerCurriculum:C,PlannerGoalCurriculum:G,PlannerStandard:T,PlannerIntake:I}=window;
 const fields={grade:'7',year:'2026',mon:'11',band:'B',speed:'2'};
 const a=(stage='中')=>({grade:'7',gradeInput:'current',thinkingExperience:'none',schoolCourse:stage==='中'?'mid':'high',schoolBook:stage==='中'?'원리해설':'개념원리 고등',schoolExact:'16',schoolHigh:stage==='中'?undefined:stage,schoolStatus:'progress',deepCourse:'mid',deepBook:'A급',deepStage:'15',deepStatus:'progress',calc:'none'});
@@ -26,8 +26,8 @@ test('slow and fast learners start from actual course, not age, and middle test 
 });
 test('book completion fraction changes finish dates without fabricating unit mastery',()=>{
  const answers=a('공통수학1');answers.schoolProgress={course:I.progressCourse(answers,'schoolStatus'),unit:'session',done:3,total:4};
- const m=plan(answers);assert.equal(row(m,'h1-06').ready,2);assert.notEqual(row(m,'h1-06').start,0);
- const next=plan(answers,S.update(null,input({boundary:'c1-equations'}),answers).state);assert.equal(row(next,'h1-06').start,0);assert.equal(row(next,'h1-09').ready,2);
+ const m=plan(answers);assert.equal(row(m,'h1-06').ready,6);assert.notEqual(row(m,'h1-06').start,0);
+ const next=plan(answers,S.update(null,input({boundary:'c1-equations'}),answers).state);assert.equal(row(next,'h1-06').start,0);assert.equal(row(next,'h1-09').ready,6);
  const old=S.update(null,input({boundary:'c1-all'}),answers).state,changed=plan(a('공통수학2'),old);
  assert.equal(changed.mockCheckPlan.boundary,null,'old unit evidence is tied to its exact current course');
 });
@@ -37,10 +37,10 @@ test('explicit trigonometry and limit readiness select higher grade papers immed
  assert.equal(row(m,'h2-09').start,0);assert.ok(row(m,'h2-10').start>=6);assert.equal(row(m,'h2-03').start,null);
  assert.ok(S.update(c,input({boundary:'alg-trig'}),calc).errors.length);
 });
-test('standard high-school current course receives its own actual remaining calendar; unavailable or clipped endings stay undated',()=>{
+test('standard high-school current and following courses are scheduled; unavailable or clipped-only endings stay undated',()=>{
  const answers=a('공통수학1'),standard=T.model(answers,fields),current=standard.lanes.find(l=>l.id==='school').blocks[0];assert.equal(current.stage,'공통수학1');assert.equal(current.end,6);
  const m=S.attach({year:2026,month:11,lanes:standard.lanes,horizon:24,warnings:[]},answers,fields);
- assert.equal(row(m,'h1-06').ready,6);assert.equal(row(m,'h1-10').ready,null);
+ assert.equal(row(m,'h1-06').ready,6);assert.equal(row(m,'h1-10').ready,12);
  const clipped=S.attach({year:2026,month:11,lanes:[{id:'school',blocks:[{stage:'공통수학1',start:0,end:24,endClipped:true}]}],horizon:24,warnings:[]},answers,fields);assert.equal(row(clipped,'h1-06').ready,null);
  const unknown=plan({...answers,schoolBook:'unknown'});assert.ok(unknown.mockCheckPlan.rows.every(p=>p.start===null));
 });
