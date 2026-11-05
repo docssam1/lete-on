@@ -192,3 +192,48 @@ export function withLifeLearnerExplanations(workbook){
  if(workbook.unit!=='s31-u04')return workbook;
  return{...workbook,questions:workbook.questions.map(q=>{const patch=lifeLearnerPatches[q.no];return patch?{...q,...patch}:q;})};
 }
+
+// Current animal questions; retain the earlier workbook and source banks.
+export const ANIMAL_QUESTION_VERSION='20261105-animal-question-language';
+const animalQuestionPatches={
+  "44": {
+    "prompt": "붕어와 수달의 이동 방법을 정리한 표에서 공통점과 차이점을 바르게 설명한 것은 무엇인가요?"
+  },
+  "45": {
+    "prompt": "오리 발의 넓은 막을 참고해, 수영할 때 손에 끼고 물을 미는 도구를 설계해요. 이 특징을 이용한 설명을 고르세요.",
+    "explanation": "오리 발가락 사이의 넓은 막처럼 도구에서 물을 미는 면을 넓히겠다는 넷째 설명이 알맞아요. 완성한 도구는 같은 조건에서 비교하여 도움이 되는지 확인해요."
+  },
+  "59": {
+    "choices": [
+      "동물이 같아도 기준에 따라 결과가 달라진다",
+      "날개가 있는 동물은 모두 깃털이 있다",
+      "박쥐는 두 기준에서 다른 모둠에 놓인다",
+      "기준이 달라도 동물은 언제나 같은 모둠에 놓인다",
+      "비둘기는 두 기준에 모두 해당한다"
+    ]
+  },
+  "60": {
+    "prompt": "붕어와 수달의 이동 방법을 정리한 표에서 알 수 있는 것을 모두 고르세요.",
+    "choices": [
+      "붕어는 지느러미로 헤엄친다",
+      "물에서 사는 동물은 모두 지느러미만 쓴다",
+      "수달은 물갈퀴가 있는 발을 쓴다",
+      "표에 모든 동물의 호흡 방법이 있다",
+      "두 동물의 움직일 때 쓰는 부분이 다르다"
+    ]
+  },
+  "68": {
+    "given": [
+      "〈보기〉 ㄱ. 물에서 사는 동물도 이동할 때 쓰는 부분이 다를 수 있음  ㄴ. 다른 방향의 사진이나 설명 자료가 더 필요함  ㄷ. 날 수 있어도 땅에서 생활할 수 있음"
+    ]
+  },
+  "75": {
+    "prompt": "동물 사진에서 하나를 골라 관찰 그림을 그려요. 직접 확인한 부분에 이름표를 붙이고, 더 확인할 부분은 다른 표시로 구별해요."
+  }
+};
+export function withAnimalQuestionLanguage(workbook){
+ if(workbook.unit!=='s31-u02')return workbook;
+ const figures={...workbook.figures};
+ figures['water-life']=figures['water-life'].replace('자료의 생활','생활 모습').replace('모든 물 동물의 특징','물에서 사는 모든 동물의 특징');
+ return{...workbook,figures,questions:workbook.questions.map(q=>animalQuestionPatches[q.no]?{...q,...animalQuestionPatches[q.no]}:q)};
+}

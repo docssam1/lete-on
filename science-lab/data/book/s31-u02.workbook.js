@@ -1,4 +1,4 @@
-import{withLearnerExplanations}from'./learner-explanations.js';
+import{withLearnerExplanations,withAnimalQuestionLanguage}from'./learner-explanations.js?v=20261105-animal-question-language';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 동물의 생활 A4. scripts/gen-science-workbook-s31u02.mjs가 생성.
 const baseWorkbook = {
@@ -5246,4 +5246,5 @@ const baseWorkbook = {
 };
 
 export const learnerPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
-export const workbook=withLearnerExplanations(learnerPriorWorkbook);
+export const animalLanguagePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
+export const workbook=withAnimalQuestionLanguage(animalLanguagePriorWorkbook);
