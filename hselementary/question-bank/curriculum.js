@@ -2921,6 +2921,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
+  if (source52Count) for (const [n,name] of [[1,"두 주사위 눈의 합이 3의 배수"],[2,"ㄷ을 지나는 격자 최단 경로"],[3,"네 지점 사이의 여러 갈래 길"],[4,"남학생 세 명이 이웃하는 줄 세우기"]]) {
+    const id=`5-2-u6-e3-example-${n}-original`,label=`${name} · 원문`,key=`source52U6P62Example${n}Original`;
+    if (!source52Count.types.some(t=>t.id===id)) { const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1; source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name:label,label,sourceItemId:id,sourceSection:"example",sourcePrintedPage:62,sourcePdfPage:58,alternateSourcePdfPage:57,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치와 그림을 대조하고 경우의 수를 독립 열거했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false}); }
+  }
   if (source52Count && !source52Count.types.some(t=>t.id==="5-2-u6-practice-37-clarified-similar")) {
     const id="5-2-u6-practice-37-clarified-similar",name="도시를 다시 지나지 않는 경로 수 · 유사문항";
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
