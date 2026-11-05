@@ -69,10 +69,10 @@ function fraction(status,done,total){return status==='done'?1:Number.isFinite(do
 function model(answers,fields,value,goal,curriculumState,options={}){
  const s=restore(value),r=s.goals[goal]||s.goals.medicine,base=C.model(answers,fields,{...C.restore(curriculumState),periods:{...C.restore(curriculumState).periods,...r.mathPeriods}}),medical=goal==='medicine';
  const m={...base,goal,goalTitle:GOALS[goal]||'진학',goalPhase:r.phase,kind:'goal',state:{...base.state,goalRoute:goal},lanes:base.lanes.filter(l=>l.id!=='kmo'||r.includeContest),warnings:[...base.warnings.filter(t=>r.includeContest||!/(KMO|기초반|입문반)/.test(t))],entry:null,introEntry:null,complete:false};
- if(medical&&!r.extendedMath)m.lanes=m.lanes.map(l=>l.id==='school'?{...l,blocks:l.blocks.filter(b=>!['미적분Ⅱ','기하'].includes(b.stage)||b.current)}:l);
+ if(medical&&!r.extendedMath)m.lanes=m.lanes.map(l=>['school','deep'].includes(l.id)?{...l,blocks:l.blocks.filter(b=>!['미적분Ⅱ','기하'].includes(b.stage)||b.current)}:l);
  for(const l of m.lanes)if(l.id==='deep'&&l.current?.includes('KMO')){l.current='현재 교과에서 필요한 심화를 선택';m.depthReady=null;if(!r.includeContest)m.warnings.push('별도 심화가 없다면 현재 교과에서 스스로 풀 수 있는 범위를 확인하고 심화 과정을 선택해 주세요.');}
  const math=m.lanes.find(l=>l.id==='school')?.blocks||[],a=I.effective(answers),actual=C.actual(a,'school',fields);
- const readyAt=stage=>{const b=math.find(b=>b.stage===stage);if(b)return b.end;const ranks=['1-1','1-2','2-1','2-2','3-1','3-2','4-1','4-2','5-1','5-2','6-1','6-2','초등 계통 대수심화',...g.Planner.MID,...I.highSubjects],rank=ranks.indexOf(stage);return actual&&actual.index>rank||actual&&actual.stage===stage&&actual.done?0:null;};
+ const readyAt=stage=>{if(Object.hasOwn(m.highReadyAt||{},stage))return m.highReadyAt[stage];const b=math.find(b=>b.stage===stage);if(b)return b.end;const ranks=['1-1','1-2','2-1','2-2','3-1','3-2','4-1','4-2','5-1','5-2','6-1','6-2','초등 계통 대수심화',...g.Planner.MID,...I.highSubjects],rank=ranks.indexOf(stage);return actual&&actual.index>rank||actual&&actual.stage===stage&&actual.done?0:null;};
  const science={id:'scienceCore',title:'과학 핵심',current:SCIENCE.find(x=>x.id===s.science)?.title|| (s.science==='complete'?'현재 선택 범위 완료':'현재 과학 확인 필요'),blocks:[]};
  let cursor=0,basicReady=null,highReady=null;
  const scienceIndex=SCIENCE.findIndex(x=>x.id===s.science);

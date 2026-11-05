@@ -102,7 +102,7 @@ function model(answers={},fields={},options={}){
  const schoolParallel=pattern==='thinking'||independentDepth;
  let profile=null;try{profile=I.profile(a,{...fields,band:fields.band||'B'});}catch{}
  fillIndependent(school,a,c,source,profile);
- if(!fields.internationalCalendar&&I.highBook(a.schoolBook)&&global.PlannerCurriculum){const actual=global.PlannerCurriculum.actual(a,'school',fields);if(actual&&!actual.done&&!school.blocks.length){const full=global.PlannerCurriculum.defaults(fields).highMonths,end=rounded(full*(1-actual.fraction));school.blocks=[{id:'school-current-high',stage:actual.stage,title:actual.stage+' '+a.schoolBook,start:0,end,current:true,reported:true,kind:'school',source:'reported-high-course'}];school.note='현재 고등 과목은 입력한 완료 분량으로 남은 기간을 잡습니다. 전체 6개월은 조정 가능한 계획 기준이며, 이후 과목은 별도로 선택합니다.';}}
+
  const calcPlan=calculationPlan(a,fields,options.calcDaysPerWeek);calc.blocks=calcPlan.blocks;calc.source=calcPlan.supported?'publisher-workload':null;calc.anchor=calcPlan.blocks[0]?.stage;calc.note=calcPlan.note;if(calcPlan.supported&&calcPlan.hasElementary)calc.current='기적의 계산법 · '+calc.current;
  if(schoolParallel&&detail?.elementaryMode?.id==='application-then-depth'&&school.anchor!==null)school.blocks=withoutDepthSlots(fromSource(source.school,school.anchor,'school','school',{horizon:Infinity}),detail.schoolGaps||[],school.anchor);
  fillIndependent(thinking,a,c,thinkingSource(c),profile);
@@ -134,6 +134,15 @@ function model(answers={},fields={},options={}){
  const actualSchool=c.axes.find(x=>x.id==='school');
  // Keep the reported current book visible, even when its name differs from the standard example.
  if(actualSchool?.ready&&!actualSchool.done&&a.schoolBook&&!I.special(a.schoolBook))school.blocks=school.blocks.map(block=>block.current&&block.stage===actualSchool.stage?{...block,title:actualSchool.stage+' '+a.schoolBook,reported:true}:block);
+ let highReadyAt={},highWarnings=[];
+ if(!fields.internationalCalendar&&global.PlannerHighStudy&&global.PlannerCurriculum){
+  const actual=global.PlannerCurriculum.actual(a,'school',fields),actualDeep=global.PlannerCurriculum.actual(a,'deep',fields),middle=school.blocks.find(b=>b.stage==='중3-2'&&!b.continues&&!b.endClipped);
+  const highStart=actual&&(I.highSubjects.includes(actual.stage)||actual.stage==='중3-2'&&actual.done)?0:middle?.end??null;
+  const h=global.PlannerHighStudy.apply({schoolLane:school,deepLane:deep,actualSchool:actual,actualDeep,subjects:I.highSubjects,highStart,months:options.highMonths||6,state:options.highStudy,limit:LIMIT});
+  Object.assign(school,h.schoolLane);Object.assign(deep,h.deepLane);highReadyAt=h.readyAt;highWarnings=h.warnings;
+  if(school.blocks.some(b=>b.highPhase)){school.note='고등은 같은 과목의 개념과 쎈을 함께 공부한 뒤, 다음 과목의 선행과 앞 과목의 심화를 병행합니다. 유형 수행은 개념 교재와 따로 기록하며 기간은 조정할 수 있습니다.';school.status='known';}
+  if(deep.blocks.some(b=>b.highPhase)&&deep.status!=='known')deep.status='proposed';
+ }
  const lanes=[school,thinking,deep,calc];for(const row of lanes)row.blocks.sort((x,y)=>x.start-y.start||x.end-y.end);
  const ready=!!I.gradeChoice(a,fields)&&school.blocks.length>0,months=ready?Array.from({length:LIMIT},(_,i)=>({...monthAt(fields,i),grade:Number.isFinite(c.now)?I.labelMonth(c.now+i).replace(/\s+\d+월$/,''):''})):[];
  // L is a curriculum reference, not evidence of Soma attendance or topic coverage.
@@ -161,14 +170,15 @@ function model(answers={},fields={},options={}){
  if(sequential)assumptions.push('응용 3개월 다음에 같은 학기의 심화 2개월을 공부합니다. 교과선이 평평한 두 달은 심화에 집중하는 기간입니다.');
  else if(detail?.elementaryMode?.id==='application-then-depth')assumptions.push(independentDepth?'이미 별도로 진행 중인 심화가 있어 교과 뒤에 표준 심화 2개월을 추가하지 않습니다. 현재 심화의 범위·기간과 사고력·연산은 각각 별도로 이어갑니다.':'교과·사고력 중심 구성에서는 교과 뒤의 별도 심화 2개월을 배정하지 않고 다음 교과를 잇습니다. 다른 영역의 현재 출발점은 그대로 유지합니다.');
  if(band==='C')assumptions.push('중등 교과는 개념원리·RPM으로 개념과 유형을 공부합니다. A급 등 심화 교재는 현재 풀이를 보고 따로 선택합니다.');
+ if(Object.keys(highReadyAt).length)assumptions.push('고등 개념·쎈 병행 → 다음 과목 선행 + 앞 과목 심화. 기본정석의 완료를 쎈 완료로 간주하지 않습니다.',...highWarnings);
  assumptions.push(calcPlan.note);
  if(supplementEligible)assumptions.push('초1·2 문장제·도형 보충은 현재 수업에서 부족한 부분이 있을 때 추가합니다. 문제해결의 길잡이·소마 도형 중 수업과 겹치지 않는 내용을 골라 주세요.');
  if(supplementEnabled)assumptions.push('문제해결의 길잡이와 소마 도형 중 수업과 겹치지 않는 내용을 꾸준히 병행합니다. 표시 범위는 병행할 시기이며 한 권의 이수 기간이 아닙니다. 현재 단계와 풀이를 보고 조정합니다.');
- const composition=['교과',...(thinking.status==='known'||pattern==='thinking'?['사고력']:[]),...(independentDepth||pattern==='deep'?['심화']:[]),'연산'].join(' · ');
- return{ready,pattern,composition,independentDepth,scienceAnchor,level:c.best||null,levelLabel:c.best?G.levelLabel(c,c.best):'현재 학습에서 시작',band,lanes,months,stages,now:c.now,horizon:LIMIT,sequential,calcPlan,supplementEligible,supplementChoice,supplementEnabled,supplements,assumptions,partial:lanes.some(l=>!l.blocks.length),reason:ready?'':school.note||'현재 교과와 진도를 선택하면 표준 계획을 먼저 보여드립니다.'};
+ const composition=['교과',...(thinking.status==='known'||pattern==='thinking'?['사고력']:[]),...(independentDepth||pattern==='deep'||deep.blocks.some(b=>b.highPhase)?['심화']:[]),'연산'].join(' · ');
+ return{ready,pattern,composition,highReadyAt,highWarnings,independentDepth,scienceAnchor,level:c.best||null,levelLabel:c.best?G.levelLabel(c,c.best):'현재 학습에서 시작',band,lanes,months,stages,now:c.now,horizon:LIMIT,sequential,calcPlan,supplementEligible,supplementChoice,supplementEnabled,supplements,assumptions,partial:lanes.some(l=>!l.blocks.length),reason:ready?'':school.note||'현재 교과와 진도를 선택하면 표준 계획을 먼저 보여드립니다.'};
 }
 function period(m,b){const start=monthAt({year:m.months[0]?.year,mon:m.months[0]?.month},Math.floor(b.start)),end=monthAt({year:m.months[0]?.year,mon:m.months[0]?.month},Math.max(0,Math.ceil(b.end)-1));return start.label+(start.label===end.label?'':' – '+(start.year===end.year?end.month+'월':end.label));}
-function renderSummary(m){return`<div class="standard-summary"><div><small>현재 공부에서 이어지는 표준 계획</small><strong>${esc(m.composition)}</strong></div><span>${esc(m.levelLabel)}</span></div>`;}
+function renderSummary(m){return`<div class="standard-summary"><div><small>현재 공부에서 이어지는 표준 계획</small><strong>${esc(m.composition)}</strong></div><span>${esc(m.levelLabel)}</span>${Object.keys(m.highReadyAt||{}).length?'<button type="button" data-high-study-open>고등 개념·쎈·심화</button>':''}</div>`;}
 function supplementFaq(m){return (m.supplementEligible?[m.supplementEnabled?{question:'보충학습은 소마 수업과 어떻게 나누면 좋을까요?',answer:'소마 등 현재 수업에서 이미 다루는 내용은 반복해서 배정하지 않고, 부족한 문장제·도형부터 골라 꾸준히 보완합니다. 문제해결의 길잡이는 조건을 그림·식으로 연결하는지, 소마 도형은 관찰하고 비교하며 설명하는지 살펴봅니다. 가로 막대는 병행할 시기이며 한 권의 이수 기간이 아닙니다.'}:m.supplementChoice==='covered'?{question:'수업·부교재에서 이미 배우는데 보충 교재를 더 해야 하나요?',answer:'현재 수업·부교재에서 문장제·도형을 이미 배우므로 같은 내용을 별도 보충으로 더하지 않습니다. 수업 내용을 혼자 해결하고 풀이를 설명하는지 살펴보세요. 특정 내용이 계속 어렵다면 그 부분만 담당 선생님과 확인한 뒤 보완합니다.'}:{question:'문장제·도형 보충이 필요한지는 어떻게 확인하나요?',answer:'현재 수업이 있다면 다루는 범위와 혼자 해결하는 모습을 먼저 확인합니다. 현재 수업·부교재에서 이미 배우는 내용은 중복 배정하지 않습니다. 초1·2에서 수업 외 보완이 필요한 경우 문제해결의 길잡이·소마 도형 중 부족한 내용을 꾸준히 이어갑니다.'}]:[]);}
 function faq(m){return[
  ...supplementFaq(m),

@@ -45,8 +45,9 @@ function model(m,a={},fields={},value){
  const lane=m.lanes.find(l=>l.id==='school'),warnings=[];
  const endAt=(stage,step=0)=>{
   if(!actual)return null;
-  if(rank(actual.stage)>rank(stage)||actual.stage===stage&&actual.done)return 0;
   if(actual.stage===stage&&step&&boundary&&boundary.step>=step)return 0;
+  if(Object.hasOwn(m.highReadyAt||{},stage))return m.highReadyAt[stage];
+  if(rank(actual.stage)>rank(stage)||actual.stage===stage&&actual.done)return 0;
   const b=lane?.blocks.find(b=>b.stage===stage&&!b.endClipped&&!b.continues);
   return b&&Number.isFinite(b.end)?Math.max(0,b.end):null;
  };

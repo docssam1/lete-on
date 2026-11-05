@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const c={window:{},console,URL};vm.createContext(c);
-for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard.js','planner-academy-data.js','planner-direct-links.js','planner-counselling-updates.js','planner-report.js','planner-classroom-example.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),c);
+for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-high-study.js','planner-standard.js','planner-academy-data.js','planner-direct-links.js','planner-counselling-updates.js','planner-report.js','planner-classroom-example.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),c);
 const V=c.window.PlannerClassroomExample,plain=v=>JSON.parse(JSON.stringify(v));
 test('confirmed units, completed upper book and completed calculation do not become half-progress defaults',()=>{
  const m=V.model();assert.equal(m.facts.schoolFraction,1/3);assert.match(m.facts.school,/2단원 완료/);assert.equal(m.facts.thinking,'필즈 베이직 상권 완료');assert.equal(m.lanes[1].blocks[0].initialFraction,1/3);assert.equal(m.lanes.find(l=>l.id==='calc').blocks[0].title,'기적의 계산법 4권');assert.equal(m.lanes.find(l=>l.id==='calc').blocks[0].studyDays,50);assert.equal(m.lanes.find(l=>l.id==='calc').blocks[0].weeks,10);assert.equal(m.facts.english,'SR GE 3점대 초반');

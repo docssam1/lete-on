@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const context={window:{},console};vm.createContext(context);
-for(const f of ['planner.js','demo-content.js','planner-intake.js','planner-curriculum.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),context);
+for(const f of ['planner.js','demo-content.js','planner-intake.js','planner-high-study.js','planner-curriculum.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),context);
 const {Planner:P,PlannerIntake:I,DemoContent:D}=context.window;
 const fields={grade:'2',mon:'10',band:'B',speed:'2'};
 const answer={age:'9',thinkingExperience:'yes',thinking:'1031 초급',thinkingStatus:'done',schoolCourse:'elem',schoolBook:'디딤돌 응용',school:'2-1',schoolStatus:'progress',deepCourse:'elem',deepBook:'최상위 S',deepStage:'1-2',deepStatus:'progress',calc:'기적의 계산법 4권',calcStatus:'done',hw:'0',gifted:'0'};
