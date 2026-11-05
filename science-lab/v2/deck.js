@@ -33,13 +33,13 @@ import { buildGasThinkingSlides } from './deck-gas-thinking.js?v=20261104-gas-cl
 import { buildMagnetThinkingSlides } from './deck-magnet-thinking.js?v=20261104-magnet-class';
 import { buildBiologyThinkingSlides } from './deck-biology-thinking.js?v=20261104-biology-language';
 import { buildGroundThinkingSlides } from './deck-ground-thinking.js?v=20261105-land-photo-language';
-import { buildWaterThinkingSlides } from './deck-water-thinking.js?v=20261103-water-class';
+import { buildWaterThinkingSlides } from './deck-water-thinking.js?v=20261105-material-water-photo-language';
 import { buildSolutionThinkingSlides } from './deck-solution-thinking.js?v=20261103-solution-class';
 import { buildSkyThinkingSlides } from './deck-sky-thinking.js?v=20261103-sky-class';
 import { buildClimateThinkingSlides } from './deck-climate-thinking.js?v=20261103-climate-class';
 import { buildInfectionThinkingSlides } from './deck-infection-thinking.js?v=20261103-infection-class';
 import { buildSoundThinkingSlides } from './deck-sound-thinking.js?v=20261105-sound-motion-photo-language';
-import { buildMaterialThinkingSlides } from './deck-material-thinking.js?v=20261102-material';
+import { buildMaterialThinkingSlides } from './deck-material-thinking.js?v=20261105-material-water-photo-language';
 import { buildLifeThinkingSlides } from './deck-life-thinking.js?v=20261102-state';
 import {buildInquirySlides} from './deck-inquiry.js';
 import { buildAnimalSlides } from './deck-animal.js';

@@ -113,3 +113,21 @@ export function withWaterUpperScience(workbook){
  const pages=rows=>rows.map(page=>page.kind==='duplex-blank'?page:{...page,rail:page.rail.map(note=>note.title==='더 알아보기'&&edits.has(note.text)?{...note,text:edits.get(note.text)}:note)});
  return {...workbook,pages:pages(workbook.pages),...(workbook.teacherStudentPages?{teacherStudentPages:pages(workbook.teacherStudentPages)}:{})};
 }
+
+export const WATER_PHOTO_VERSION='20261105-material-water-photo-language';
+const withWaterPhotoLanguageCaptions={
+ "cups": [
+  "비교를 떠올리는 준비 장면이에요. 이 사진에서 실험 조건·물방울의 출처·수치를 읽었다고 하지 않아요.",
+  "물만 담긴 컵과 얼음을 넣은 컵의 바깥쪽을 비교해 보아요. 차가운 컵에 맺힌 물방울이 어디에서 왔는지 알아보아요."
+ ]
+};
+export function withWaterPhotoLanguage(workbook){
+ if(workbook.unit!=='s41-u02')return workbook;
+ const figures={...workbook.figures};
+ for(const [key,[before,after]]of Object.entries(withWaterPhotoLanguageCaptions)){
+  const html=figures[key];
+  if(typeof html!=='string'||html.split(before).length!==2)throw Error('사진 설명이 다릅니다: '+key);
+  figures[key]=html.replace(before,after);
+ }
+ return {...workbook,figures};
+}

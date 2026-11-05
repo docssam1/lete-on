@@ -1,3 +1,4 @@
+import{withWaterPhotoLanguage}from'./s41-u02.editorial.js?v=20261105-material-water-photo-language';
 import{withWaterUpperScience}from'./s41-u02.editorial.js?v=20261105-water-upper-science';
 import{withStudentGuideLanguage}from'./student-opening-language.js?v=20261105-student-guide';
 import{withObservationLanguage}from'./observation-language.js';
@@ -7222,4 +7223,5 @@ const baseWorkbook = {
 export const observationPriorWorkbook=withStudentOpeningLanguage(withWaterEditorial(baseWorkbook));
 export const studentGuidePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const waterUpperPriorWorkbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
-export const workbook=withWaterUpperScience(waterUpperPriorWorkbook);
+export const waterPhotoPriorWorkbook=withWaterUpperScience(waterUpperPriorWorkbook);
+export const workbook=withWaterPhotoLanguage(waterPhotoPriorWorkbook);

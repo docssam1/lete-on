@@ -1,5 +1,5 @@
 import{findLifeItem}from'./book-life.js';import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
-import{workbook}from'../data/book/s41-u02.workbook.js';import{art as bookArt}from'../data/book/s41-u02.workbook-art.js';
+import{workbook}from'../data/book/s41-u02.workbook.js?v=20261105-material-water-photo-language';import{art as bookArt}from'../data/book/s41-u02.workbook-art.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
 const figure=key=>{const f=workbook.figures[key]||bookArt[key];if(!f)throw Error(`물 교재 자료 없음 ${key}`);return f;};
@@ -23,7 +23,7 @@ export function buildWaterThinkingSlides(ch,art,plan,pool,mode,ix){
  add('common','experiment','증발과 끓음은 어떤 점이 같을까요?',p('증발에서는 물 표면을,끓음에서는 물속의 계속 올라오는 기포와 표면의 변화를 관찰했어요.')+peek('둘 다 액체인 물이 기체인 수증기로 변해요. 관찰 모습의 차이와 물→수증기라는 공통 상태 변화를 나누어 설명해요.'),{kind:'think',standards:['4과10-02']});
  add('firstclose','experiment','세 상태와 얼기·녹기·증발·끓음을 돌아봐요',p('주변에서 찾은 물의 상태·세 단계 높이/전체 무게·증발과 끓음의 공통점 중 하나를 근거와 함께 설명해요. 모형 자료와 직접 관찰의 날짜·조건·값을 구별해요.')+'<button type="button" class="btn" data-a2="cont">응결과 물 얻는 장치로 이어 가기</button>',{kind:'break',standards:['4과10-01','4과10-02']});
  ses=2;
- add('recall','experiment','차가운 병 바깥 물방울은 어디에서 왔을까요?',figure('cups')+p('사진은 비교를 떠올리는 설명 장면이에요. 사진만으로 물방울의 출처·실험 조건·수치를 읽었다고 하지 않아요. 주변 공기와 차가운 면,누수·흘림이 있었는지 생각해요.'),{kind:'recall',standards:['4과10-02']});
+ add('recall','experiment','차가운 병 바깥 물방울은 어디에서 왔을까요?',figure('cups')+p('컵의 바깥 면을 닦은 뒤 잠시 두고 새로 생기는 물방울을 살펴보아요. 컵 안의 물이 새거나 흘러내린 것은 아닌지 확인하고, 공기 중 수증기와 차가운 컵의 관계를 생각해 보아요.'),{kind:'recall',standards:['4과10-02']});
  add('condenseobserve','experiment','같은 두 병으로 바깥면을 직접 비교해요',p('교사가 준비한 같은 재질·크기의 새지 않는 닫힌 병 두 개에 같은 양의 물을 담아요. 한 병은 차가운 물,다른 병은 실온 물로 준비하고 처음 두 병의 겉 물기를 닦아요.')+p('물을 흘리지 않고 같은 장소에서 같은 시간 동안 바깥면을 관찰해요. 처음과 나중의 물방울 위치·겉 물기·누수나 흘림 여부를 남겨요. 물방울이 보이지 않거나 불분명한 결과도 그대로 적고 온도·시간·주변 조건을 다시 살펴요.'),{kind:'activity',standards:['4과10-02']});
  add('condensation','experiment','처음 겉을 닦고 안의 물 온도만 바꾸었어요',figure('condensationData')+peek('이 자료는 같은 닫힌 병·물 양·장소·시간,처음 겉 물기 제거·누수/흘림 없음이라는 조건이에요. 차가운 병 표면의 물방울을 주변 공기의 수증기가 물로 변한 응결로 설명해요. 모든 날의 양이 같다고 정하지 않아요.'),{kind:'think',standards:['4과10-02']});
  add('boundary','concept','물의 상태와 측정 범위를 함께 살펴요',table(['비교','확인할 경계'],[['얼기·녹기의 전체 무게','같은 물·용기·마개,출입/흘림과 겉 물기'],['열린 접시의 액체 감소','수증기가 공기 중으로 나갈 수 있음'],['차가운 병 바깥 물방울','병 안의 물과 바깥 공기의 수증기']])+p('보이지 않는 물이 없다고 단정하거나,다른 범위를 잰 값을 같은 무게라고 비교하지 않아요. 자료에서 확인한 조건과 아직 모르는 것을 나누어요.'),{standards:['4과10-02']});

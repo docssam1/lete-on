@@ -58,3 +58,29 @@ export function withMaterialsRails(workbook){
  if(workbook.unit!=='c22-s32-u01'||workbook.pages.length!==51||MATERIAL_RAIL_NOTES.length!==51)throw Error('물체와 물질 교재와 오른쪽 원고의 쪽 수가 다릅니다.');
  return withMatchedWorkbookRails(workbook,MATERIAL_RAIL_NOTES);
 }
+
+export const MATERIAL_PHOTO_VERSION='20261105-material-water-photo-language';
+const withMaterialPhotoLanguageCaptions={
+ "opener": [
+  "주변 물체를 살펴보는 설명 이미지예요. 사진만으로 모든 재료의 성질을 확정하지 않아요.",
+  "나무토막, 숟가락, 통, 지우개를 살펴보아요. 각 물체를 만드는 물질과 그 물질의 성질을 알아보아요."
+ ],
+ "states": [
+  "사진에서 제시한 나무·물·공기를 생각하며 세 상태를 비교해요. 사진의 크기로 실제 양을 재지 않아요.",
+  "나무토막은 고체, 컵에 담긴 물은 액체, 봉지에 담긴 공기는 기체의 예예요. 담는 그릇을 바꾸었을 때 각각의 모양과 부피가 어떻게 되는지 비교해 보아요."
+ ],
+ "materialSand": [
+  "알갱이 생김새를 살펴보는 학습용 사진이에요. 실제 쏟기 실험이나 양을 측정한 기록은 아니에요.",
+  "모래를 이루는 작은 알갱이의 모양을 살펴보아요. 모래를 다른 그릇에 옮겨 담을 때 알갱이 하나의 모양도 달라지는지 관찰해 보아요."
+ ]
+};
+export function withMaterialPhotoLanguage(workbook){
+ if(workbook.unit!=='c22-s32-u01')return workbook;
+ const figures={...workbook.figures};
+ for(const [key,[before,after]]of Object.entries(withMaterialPhotoLanguageCaptions)){
+  const html=figures[key];
+  if(typeof html!=='string'||html.split(before).length!==2)throw Error('사진 설명이 다릅니다: '+key);
+  figures[key]=html.replace(before,after);
+ }
+ return {...workbook,figures};
+}
