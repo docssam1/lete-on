@@ -1,4 +1,4 @@
-import{withMaterialPhotoLanguage}from'./c22-s32-u01.rail-notes.js?v=20261105-material-water-photo-language';
+import{withMaterialPhotoLanguage,withMaterialLearnerReasoning}from'./c22-s32-u01.rail-notes.js?v=20261105-material-learner-reasoning';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withMaterialEarthStudentLanguage} from './material-earth-student-language.js';
 import {withMaterialsBodyLanguage} from './material-earth-body-language.js';
@@ -7989,4 +7989,5 @@ const baseWorkbook = {
 };
 
 export const materialPhotoPriorWorkbook=withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withMaterialsBodyLanguage(withStudentOpeningLanguage(withMaterialsRails(baseWorkbook)))));
-export const workbook=withMaterialPhotoLanguage(materialPhotoPriorWorkbook);
+export const materialReasoningPriorWorkbook=withMaterialPhotoLanguage(materialPhotoPriorWorkbook);
+export const workbook=withMaterialLearnerReasoning(materialReasoningPriorWorkbook);
