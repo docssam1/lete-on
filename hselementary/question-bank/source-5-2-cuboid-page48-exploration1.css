@@ -1,8 +1,8 @@
 .p48ex1-question,.p48ex1-solution{font-family:inherit;color:#191511;line-height:1.5}
 .p48ex1-question>p,.p48ex1-solution>p{margin:0 0 .45em}
-.p48ex1-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-items:center;gap:8px}
+.p48ex1-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;gap:8px}
 .p48ex1-layout ol{padding-left:1.5em;margin:.2em 0}.p48ex1-layout li{margin:0 0 .2em}
 .p48ex1-face{white-space:nowrap}
 .p48ex1-diagram{display:block;width:100%;height:auto;max-width:220px;margin:auto}
 @media(max-width:480px){.p48ex1-layout{grid-template-columns:1fr}.p48ex1-diagram{max-width:180px}}
-@media print{.p48ex1-question,.p48ex1-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p48ex1-layout{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}.p48ex1-diagram{max-height:45mm}}
+@media print{.p48ex1-question,.p48ex1-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p48ex1-layout{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}.p48ex1-diagram{max-height:45mm}}
