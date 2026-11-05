@@ -2461,8 +2461,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         name, label:name, difficultyBand:0, sourceItemId:gridPracticeId, sourceParentItemId:"5-2-u5-e1-mission-1",
         sourceItemLabel:"Mission 1 유사문항", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:45, sourcePrintedPage:49,
         sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52U5CuboidGridPractice",
-        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:4, verifiedVariantCount:4,
-        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"전체 포함을 명시한 다른 크기의 격자 네 문항을 경계면 선택과 전수 세기로 검산했습니다."});
+        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:9, verifiedVariantCount:9,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"전체 포함을 명시한 다른 크기의 격자 아홉 문항을 경계면 선택과 전수 세기로 검산했습니다."});
     }
     const practiceId = "5-2-u5-e1-example-1-4-synthetic";
     if (!source52CuboidProperties.types.some(type => type.id === practiceId)) {

@@ -21,20 +21,20 @@ const id = "5-2-u5-e1-mission-1-grid-synthetic";
       const input=page.locator(`#typeList input[data-type-id='${id}']`);
       assert.equal(await input.isDisabled(),false);
       await input.check();
-      await page.locator("#questionCountInput").fill("4");
+      await page.locator("#questionCountInput").fill("9");
       await page.locator("#generateButton").click();
       await page.waitForSelector(`#problemView [data-source-item-id='${id}']`);
       const questions=page.locator(`#problemView [data-source-item-id='${id}']`);
-      assert.equal(await questions.count(),4);
-      assert.deepEqual(await questions.evaluateAll(xs=>xs.map(x=>x.dataset.poolIndex)),["0","1","2","3"]);
-      assert.equal(await questions.locator("svg[role='img']").count(),4);
+      assert.equal(await questions.count(),9);
+      assert.deepEqual(await questions.evaluateAll(xs=>xs.map(x=>x.dataset.poolIndex)),["0","1","2","3","4","5","6","7","8"]);
+      assert.equal(await questions.locator("svg[role='img']").count(),9);
       assert.equal(await page.locator("#problemView [data-source-answer]").count(),0);
-      assert.deepEqual(await page.locator("#problemView .print-page").evaluateAll(xs=>xs.map(x=>x.querySelectorAll(".question-item").length)),[4]);
+      assert.deepEqual(await page.locator("#problemView .print-page").evaluateAll(xs=>xs.map(x=>x.querySelectorAll(".question-item").length)),[4,4,1]);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
       await page.locator("#solutionTab").click();
       const solutions=page.locator(`#solutionView [data-source-answer='${id}']`);
-      assert.equal(await solutions.count(),4);
-      for(let i=0;i<4;i++) assert((await solutions.nth(i).innerText()).includes(["180개","135개","270개","450개"][i]));
+      assert.equal(await solutions.count(),9);
+      for(let i=0;i<9;i++) assert((await solutions.nth(i).innerText()).includes(["180개","135개","270개","450개","54개","90개","360개","600개","675개"][i]));
       if(width===1280 && process.env.MAC_CHECK_OUTPUT) {
         for(const mode of ["problem","solution"]) {
           await page.locator(mode==="problem"?"#problemTab":"#solutionTab").click();
@@ -42,7 +42,7 @@ const id = "5-2-u5-e1-mission-1-grid-synthetic";
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode=>document.body.dataset.printMode===mode,mode);
           const pdf=await page.pdf({path:path.join(process.env.MAC_CHECK_OUTPUT,`grid-${mode}.pdf`),format:"A4",printBackground:true,preferCSSPageSize:true});
-          assert.equal((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length,mode==="problem"?1:2,`${mode}: expected A4 pages`);
+          assert.equal((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length,3,`${mode}: expected A4 pages`);
           await page.evaluate(()=>window.dispatchEvent(new Event("afterprint")));
         }
       }
@@ -50,5 +50,5 @@ const id = "5-2-u5-e1-mission-1-grid-synthetic";
       await context.close();
     }
   } finally { await browser.close(); }
-  console.log("PASS: four grid exercises and matching solutions on desktop and mobile; four-up A4 problems and two solution pages");
+  console.log("PASS: nine grid exercises and matching solutions on desktop and mobile; four-up A4 problems and solution pages");
 })().catch(error=>{console.error(error);process.exitCode=1;});
