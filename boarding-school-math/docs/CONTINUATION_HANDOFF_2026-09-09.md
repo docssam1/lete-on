@@ -1018,3 +1018,11 @@ MAA 56th Annual report의 [Doczz 검색 가능 보관본](https://doczz.net/doc/
 [Ian Calaway의 AMC archive 안내](https://sites.google.com/view/ian-calaway/amc-archive/)는 1980–2010 고교 연례보고서의 디지털 아카이브 보유를 밝히지만, 웹 페이지에서 공개 연결된 파일은 1968년 보고서와 1990년 서문 발췌뿐이다. 검색에 나타난 연도별 `Yearbooks` Drive 폴더의 2004.pdf는 Apple Vision으로 앞부분을 확인한 결과 지역 학교 연감이었다. AMC 자료가 아니므로 제외했다. 저자의 [논문](https://icalaway.github.io/job-market-paper/Calaway_JMP.pdf)은 1980–2010을 종이 보고서에서 수집했고 상위 점수자 명단에 학년이 포함된다고 설명하지만, 이 명단이나 개인 데이터는 공개 재사용 가능한 학년 규준이 아니다. 2003/04 학년 셀은 시각 검수 가능한 연례보고서 표가 확보될 때까지 비워둔다. 상세 내용은 `docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가.
 
 이번 확인에서 `/tmp/AMC_Annual_Summary_2004_Calaway.pdf`는 검색 결과와 무관한 지역 고등학교 연감으로 확인되어 제품 데이터에 사용하지 않았다. PDF 검수 SKILL은 읽고 사용했으며 별도 산출 PDF는 만들지 않았다. Repo에는 두 인수인계 문서만 추가 편집한다. Branch `codex/boarding-g7-nsa-mac-20261017`, previous commit `1bf430aba`. `raw_youtube.txt`는 그대로 둔다.
+
+
+### 2026-11-05 · 2014 AMC 12A Taiwan 문항응답 표 추가
+
+- 웹에서 99CEF 2014 AMC10A/12A 분석보고서의 인쇄 25쪽 Taiwan AMC12A 응답표를 회수해 Apple Vision OCR 후 렌더 이미지와 대조했다. 대만 코호트 n=4,829, 보고서 평균 80.30이며, 25개 선택률·공란·판독불가 행과 LIVE 정답키를 모두 확인했다. 데이터 CSV와 AMC 응답 런타임에 별도 집단으로 추가했다.
+- 2014 AMC12A 세계 표 Q25는 26.99% 합계인 원문 인쇄 오류라 그대로 억제된다. 새 Taiwan cohort는 별도 원표이므로 그 오류를 추정 보정하지 않고 완전한 25문항 지역 비교로 표시한다. 집단 선택 UI는 각 source의 응시자 수를 동적으로 보여준다.
+- 검수: CSV와 런타임 25행 일치, LIVE 키 25개 대조, 응답률 행 합계 최대 오차 0.01%p, 채점 규칙으로 계산한 평균 80.30/150으로 보고서와 일치, Global Q25 억제 유지, `git diff --check` 통과. 브라우저 테스트는 Mac 잠금과 이 실행 셸의 Node 미설치로 실행하지 못했다. `raw_youtube.txt` 미수정. 변경은 로컬 전용; push·배포·Drive 동기화 없음.
+- 근거와 제한은 `docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`와 historical AMC README에 기록.

@@ -761,6 +761,32 @@
 23,B,2.11,3.60,3.90,6.10,2.05,82.21,0.02
 24,C,3.11,3.99,5.40,2.91,1.76,82.81,0.02
 25,B,2.83,3.71,5.74,3.63,2.58,8.49,0.01`.trim(), respondentCount: 55400, population: "2014 AMC 12A global response cohort", sourceUrl: "https://web.archive.org/web/20150908065139id_/http://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf", sourceStatus: "99CEF 2014 analysis report; printed p.24 Global table; Q25 is transcribed as printed but the source values sum to 26.99%, so its item-response comparison is suppressed; correct answers cross-checked with LIVE", excludedQuestions: Object.freeze([25]) }),
+    "amc12-2014-A-taiwan": Object.freeze({ raw: `
+1,C,0.06,3.33,95.53,0.27,0.31,0.48,0.02
+2,B,1.14,96.60,0.33,1.30,0.29,0.33,0.00
+3,B,8.55,73.80,6.36,1.62,8.29,1.22,0.17
+4,A,86.70,1.30,2.46,1.16,4.60,3.71,0.06
+5,C,1.10,4.23,86.68,2.28,2.82,2.80,0.10
+6,D,1.39,3.15,2.75,79.58,4.39,8.70,0.04
+7,A,59.13,1.20,3.71,17.52,12.53,5.82,0.08
+8,C,3.60,3.04,73.61,3.94,10.63,5.10,0.08
+9,B,2.75,87.63,4.95,2.36,0.91,1.37,0.02
+10,B,2.55,82.37,1.70,3.04,4.00,6.26,0.08
+11,C,4.18,11.04,70.26,3.40,2.15,8.91,0.06
+12,D,8.41,5.32,8.24,35.89,27.65,14.42,0.06
+13,B,3.67,24.48,7.25,27.09,6.71,30.68,0.12
+14,C,15.58,20.57,31.73,8.66,3.27,20.03,0.17
+15,B,12.20,10.40,8.26,8.45,19.70,40.91,0.08
+16,D,2.96,4.16,3.56,59.69,2.86,26.70,0.06
+17,A,36.83,10.48,15.72,1.66,1.68,33.49,0.14
+18,C,3.73,8.33,12.34,4.41,3.69,67.38,0.12
+19,E,9.11,24.57,11.85,4.93,5.26,44.18,0.10
+20,D,6.26,5.53,5.84,4.74,7.13,70.48,0.02
+21,A,5.55,4.45,8.55,5.63,1.76,73.99,0.06
+22,B,2.63,6.90,4.99,6.01,2.65,76.74,0.08
+23,B,3.04,5.45,6.40,9.40,2.57,73.12,0.02
+24,C,3.21,4.29,10.73,4.23,2.53,75.02,0.00
+25,B,3.65,4.81,9.30,4.27,3.23,74.73,0.02`.trim(), respondentCount: 4829, population: "2014 AMC 12A Taiwan response cohort; 99CEF reports 4,829 participants and mean 80.30", sourceUrl: "https://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf", sourceStatus: "99CEF 2014 analysis report; printed p.25 Taiwan item-response table; rendered PDF page and Apple Vision OCR checked visually; all 25 starred answers match LIVE. Taiwan regional cohort is separate from the Global table and is not a U.S. grade norm." }),
     "amc10-2014-B": Object.freeze({ raw: `
 1,C,1.11,2.40,82.05,1.69,7.93,4.79,0.01
 2,E,5.33,1.35,12.19,1.53,72.73,6.85,0.02
@@ -1619,7 +1645,7 @@
     const baseKey = selectedProgram + "-" + Number(year) + "-" + String(form || "").toUpperCase();
     return Object.freeze(Object.keys(sources).filter(function (key) { return key === baseKey || key.indexOf(baseKey + "-") === 0; }).map(function (key) {
       const source = sources[key];
-      return Object.freeze({ id: key === baseKey ? "global" : key.slice(baseKey.length + 1), label: source.population, sourceUrl: source.sourceUrl });
+      return Object.freeze({ id: key === baseKey ? "global" : key.slice(baseKey.length + 1), label: source.population, respondentCount: source.respondentCount || null, sourceUrl: source.sourceUrl });
     }));
   }
   return Object.freeze({ sources: sources, responseFor: responseFor, populationsFor: populationsFor });

@@ -109,7 +109,9 @@
         if (["amc10", "amc12"].includes(format.id) && populations.length > 1) {
           responsePopulationSelect.replaceChildren();
           populations.forEach(function (population) {
-            const label = population.id === "taiwan" ? "대만 응시자 표본 · 1,632명" : population.id === "global" ? "세계 응시자 표본 · 41,682명" : population.label;
+            const count = Number(population.respondentCount);
+            const countLabel = Number.isFinite(count) && count > 0 ? ` · ${count.toLocaleString("ko-KR")}명` : "";
+            const label = population.id === "taiwan" ? `대만 응시자 표본${countLabel}` : population.id === "global" ? `세계 응시자 표본${countLabel}` : population.label;
             responsePopulationSelect.append(option(population.id, label));
           });
           responsePopulationSelect.value = populations.some(function (population) { return population.id === params.get("population"); }) ? params.get("population") : "global";

@@ -706,3 +706,10 @@ AMC 8 2001–2002의 문항별 응답표도 연도·문항 키워드로 재검�
 [Bard Math Circle의 2015B 결과](https://www.bardmathcircle.org/p/2015-amc-10-12b)는 AMC 10B 24명, 7학년 2명 등 시험장 표본 평균을 공개한다. 이는 지역 시험장 자료이고 학년별 표본이 작으므로 전국 응시자 비교에 합치지 않는다. 학년 평균 coverage에는 작은 지역 표본과 전국 기준을 혼동하지 않도록 이 한계를 기록했다.
 
 같은 보고서의 AMC 12B 결과는 총 6명으로 11학년과 12학년이 각각 3명이다. 이 수치도 국가 기준으로 확장하지 않았고 AMC12B의 문항별 응답 통계는 확인하지 못했다. 인쇄 원본, 키, 풀이와 문항별 설명은 [2015 AMC12B LIVE 자료](https://live.poshenloh.com/past-contests/amc12/2015B)에서 별도로 접근 가능하다.
+
+
+## 2026-11-05 · 2014 AMC 12A 대만 응답표 웹 원문 회수
+
+99CEF의 [2014 AMC10A/AMC12A 분석보고서](https://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf)에서 세계 표 다음에 실린 Taiwan AMC 12A 문항별 응답표(인쇄 p.25)를 별도 코호트로 확보했다. 보고서 검색 색인은 Taiwan 전체 응시자 4,829명, 평균 80.30점을 명시한다. Apple Vision으로 페이지를 OCR하고 표 이미지를 직접 대조했다. 25개 정답 별표가 LIVE 키와 일치하고 각 행 응답률 합은 반올림 오차 이내 100%다. 원응답표에서 계산한 평균은 80.30점으로 보고서 전체 평균과 일치한다.
+
+`amc12a-2014-taiwan-item-response-percent.csv`와 런타임 lookup에 추가했다. 2014 AMC 12A 세계 응답표 Q25는 원문 수치 합이 26.99%인 인쇄 오류로 계속 억제한다. Taiwan 표는 이 행을 추정 보정한 것이 아니라 별도 모집단 원표라서 25문항 비교가 가능하다. UI의 집단 선택은 모집단별 응시자 수를 자료에서 표시하도록 일반화했다. Taiwan은 대만 지역 참여자 표본이며 미국 학년 규준, 세계 전체 결과, 개인 숙련도 판정과 동일시하지 않는다. Sources: [99CEF 2014 AMC 10A/12A analysis report](https://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf), [LIVE 2014 AMC 12A answer key](https://live.poshenloh.com/past-contests/amc12/2014A/answers).
