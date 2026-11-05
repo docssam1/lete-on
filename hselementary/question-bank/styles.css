@@ -1681,4 +1681,8 @@ button{
 @page bank-answer { size: A4; margin: 12mm 0; }
 @media print {
   :where(.answer-pages) > .answer-page { page: bank-answer; padding-top: 0; padding-bottom: 0; }
+  /* Let overflow from one answer group share a physical page with the next. */
+  .answer-pages > .answer-page { break-after: auto; page-break-after: auto; overflow: visible; }
+  .answer-pages > .answer-page:not(:first-child) > .page-label { display: none; }
+  .answer-pages > .answer-page:not(:first-child) .solution-list { margin-top: 10px; }
 }
