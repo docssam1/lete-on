@@ -57,7 +57,7 @@ git clone --depth 1 https://github.com/Nutlope/hallmark <임시>/hallmark   # 20
 node <임시>/hallmark/skills/hallmark/scripts/sloplint.mjs fields-classic/question-bank/home.html --genre playful
 ```
 
-결과 대부분은 우리 결정과 부딪혀 **버린다**: 4px 단위 여백(24b), 모든 색을 토큰으로(48), 가운뎃점 묶음(63 — 우리 화면 글에 많이 씀), 「다음 →」 화살표(63). **볼 것만 골라 본다**: 글씨 대비 4.5:1 미만(40), 단추 글의 이모지(30a), 영어 대문자 꼬리표(54·67 — 「WELCOME TO」), `:focus-visible`·움직임 줄이기 빠짐. 2026-11-05에 처음 돌렸을 때 걸린 진짜는 home.html 세 번째 카드 작은 글 대비 3.22:1, start.html `.st-step.is-empty`·`.st-lock-tag` 4.42:1, study.html·home.html 소리 단추의 🔊·⏸·🔇 이모지였다→ 2026-11-05 원장 「대비랑 이모지 단추 고쳐」로 고쳤다(아래 「AI 티 지우기」).
+결과 대부분은 우리 결정과 부딪혀 **버린다**: 4px 단위 여백(24b), 모든 색을 토큰으로(48), 가운뎃점 묶음(63 — 우리 화면 글에 많이 씀), 「다음 →」 화살표(63). **볼 것만 골라 본다**: 글씨 대비 4.5:1 미만(40), 단추 글의 이모지(30a), 영어 대문자 꼬리표(54·67 — 단, 첫 화면 「WELCOME TO」는 **원장이 영어 그대로 두기로 함**(2026-11-05 「WELCOME TO 는 영어가 좋아」), 검사기가 잡아도 고치지 않는다), `:focus-visible`·움직임 줄이기 빠짐. 2026-11-05에 처음 돌렸을 때 걸린 진짜는 home.html 세 번째 카드 작은 글 대비 3.22:1, start.html `.st-step.is-empty`·`.st-lock-tag` 4.42:1, study.html·home.html 소리 단추의 🔊·⏸·🔇 이모지였다→ 2026-11-05 원장 「대비랑 이모지 단추 고쳐」로 고쳤다(아래 「AI 티 지우기」).
 
 ## 새 라이브러리가 또 오면
 
