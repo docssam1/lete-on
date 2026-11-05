@@ -608,3 +608,11 @@ MAA 작성 2010 연례 보고서는 Table II에서 2009 AMC 10/12 회차별 전�
 ## 2026-11-05 · 2017 AMC 10B 학년별 결과 검색 및 모집단 확인
 
 2017 AMC 10B의 국가 단위 학년별 평균·백분위 보고서를 다시 검색했지만, 검색에서 열린 학년별 평균은 [Bard College 주최 시험장의 결과](https://www.bardmathcircle.org/p/2017-amc-1012b-results)뿐이었다. 해당 행사는 총 19명(AMC 10B 16명, AMC 12B 3명)이며, AMC 10B Grade 7 평균은 64.5점(n=3), Grade 8은 82.2점(n=5), Grade 9은 78.3점(n=6), Grade 10은 78.0점(n=2)이다. 다학교 시험장 표본으로도 전국 학년 규준을 대표하지 않으므로 해당 숫자는 비교 API에 추가하지 않았다. 검색 결과에서 MAA의 `Contest Score Grade Report with Percentile` 보고서 메뉴를 가리키는 과거 안내는 확인했으나, 2017 원보고서 자체는 회수하지 못했다. 그러므로 2017 B형 국가 학년 비교는 계속 공백으로 표시한다. 2017 A/B 전체 응시자 평균과 컷오프는 기존 전체 응시자 참고표에 별도로 보존돼 있으며 학년 수치로 대체하지 않는다.
+
+## 2026-11-05 · MAA 보고 포털 및 과거 학년표 재검색
+
+MAA의 현재 [K–12 EduView Score Distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561)에서 확인되는 필터는 School Year와 Competition이며, 공개된 표는 전체 보고 코호트의 백분위 경계·평균·표준편차·학생 수·학교 수다. 학년별 결과는 이 화면에 없다. 이 수치는 기존 `amc10-12-score-distribution-2022-2025-maa.csv`에 2022–2025 A/B 16개 회차로 이미 저장되어 있으므로 학년 비교에 대신 쓰지 않는다.
+
+Internet Archive의 CDX 색인에는 과거 MAA `generalreports.aspx` 페이지가 2012–2025년에 캡처된 기록이 있고, 2011년 AMC 10/12 `grandstats` PDF도 2013-01-24 원본 캡처로 기록돼 있다. PDF 직접 링크는 이미 `amc10-12-grade-means-2002-2011.csv`의 2011 자료 출처로 보존되어 있다. 이번 확인에서는 아카이브 색인으로 캡처 존재만 확인했고 페이지/PDF 본문은 회수하지 못했다. 따라서 이를 새 학년 자료로 세지 않는다. [Internet Archive CDX: 과거 MAA 보고서 페이지 캡처 목록](https://web.archive.org/cdx/search/cdx?url=amc-reg.maa.org%2Freports%2Fgeneralreports.aspx&output=json&filter=statuscode%3A200&filter=mimetype%3Atext%2Fhtml&collapse=timestamp%3A4) · [2011 MAA `grandstats` PDF 캡처 색인](https://web.archive.org/cdx/search/cdx?url=amc.maa.org%2Famc1012%2F2011%2Fstats%2F11AMC1012-grandstats.pdf&output=json&filter=statuscode%3A200).
+
+검색에서 `2024AMCresults.pdf`라는 이름의 학년별 결과 문서도 나왔지만, 문항명과 Grade 5/6·7/8·9/10 구분은 Waterloo CEMC의 Beaver Computing Challenge (BCC) 자료와 일치한다. 파일명이 비슷하다는 이유로 미국 AMC 10/12 규준에 섞지 않는다. [CEMC 공식 BCC Grade 7/8 시험 자료](https://cemc.uwaterloo.ca/sites/default/files/documents/2024/2023BCCContest7_8.html) · [CEMC 공식 BCC 2023 결과 PDF](https://cemc.uwaterloo.ca/sites/default/files/documents/2023/2023BCCResults.pdf). 현재 검색에서 2022–2025 미국 AMC 10/12 국가 단위 학년별 원표는 새로 확보하지 못했다.
