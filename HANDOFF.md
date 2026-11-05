@@ -2192,3 +2192,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - MAA *Contest Problem Book IX* 인쇄 p.125의 올바르게 제목 붙은 2004 AMC 12B 표를 찾아 25문항 원응답률을 별도 `amc12b-2004-bookIX-item-response.csv`와 런타임에 저장했다. 앞서 2004 연례보고서에서 거부한 잘못된 “2003 AMC 12B” 표와 다른 자료다. 이전 표는 계속 rejected; 이번 표는 LIVE 키 25개가 맞는다.
 - 응답률 합계는 100% 이내 반올림 오차, 분포에서 나온 평균 84.451과 MAA 기록 학년평균 가중값 84.495는 0.05점 차이다. 책에 응답자 수/지역 범위가 없어 미공개 처리했다. Coverage 2004 12B를 25/25 complete로 갱신하고 provenance/주의 문구를 보강했다.
 - 다음은 같은 책의 2005–2007 AMC12 A/B 원표를 웹에서 회수한다. `git diff --check`만 실행했으며 테스트 스위트 미실행. `raw_youtube.txt`는 보존한다.
+
+### 2026-11-05 · 2005 AMC 12A/B 응답분포 추가
+
+- MAA *Contest Problem Book IX* p.134/144에서 2005 AMC 12A/B 문항별 응답률 50행을 찾아 `amc12-bookIX-item-response-2002-2007.csv`, lookup, coverage manifest에 추가했다. 표본 분모와 지리 범위는 미공개다. 정답키 50개가 LIVE와 일치하고 비율합은 반올림 범위에서 100%다.
+- 문항률 점수 평균 78.800/83.390, MAA 기록 학년별 가중 평균 78.720/83.382로 거의 일치한다. 이 대조는 신뢰도 보조 확인이며 동일 표본이라는 뜻은 아니다.
+- README/연구 기록 추가. 2006–2008은 더 나은 MAA 연례보고서 원자료가 있어 book 중복은 추가하지 않는다. 계속 2002–2009의 남은 AMC10/12 폼을 검색한다. 테스트 미실행, `git diff --check` 예정, `raw_youtube.txt` 보존.
