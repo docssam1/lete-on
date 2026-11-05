@@ -693,6 +693,10 @@ MAA 작성 56th Annual 보고서 사본에서 같은 Table II를 다시 찾았�
 검색으로 찾은 MAA 작성 2010 AMC 10/12 Results Summary의 Table II에는 2009 AMC 10/12 A/B 전체 평균과 학년별 기록이 포함되지만, 해당 표는 문항별 보기 응답률을 싣지 않는다. 같은 보고서의 Table IX 문항별 응답표는 2010 회차로 명시돼 있다. 따라서 2009 grade-mean 데이터는 그대로 두고, 2009 AMC 10/12 A/B 문항 응답 coverage는 `not-found`로 유지한다. 이 검색에서 추가로 나온 2009 개별 학교 결과도 모집단이 전국과 달라 합치지 않는다. Sources: [MAA-authored 2010 report searchable mirror](https://www.scribd.com/document/58090065/2010-AMC-HS-Summary), [2010 report search text](https://www.pdfcoffee.com/2010hssummary-pdf-free.html).
 
 AMC 8 2001–2002의 문항별 응답표도 연도·문항 키워드로 재검색했으나, 해당 두 회차의 실제 시험지·풀이·정답 자료만 나왔고 전국 보기 선택률 표는 확인하지 못했다. AMC 8의 전체 문항 응답 coverage는 별도 회차 manifest를 따른다. Sources: [LIVE 2001 AMC 8 solutions](https://live.poshenloh.com/past-contests/amc8/2001/solutions), [MAA-authored 2004 AMC 8 statistics report copy](https://www.scribd.com/doc/57421446/2004AMC8stats).
+
+## 2026-11-05 웹 재검색: 2021 AMC 10/12 문항 응답표
+
+2021 AMC 10A/B, AMC 12A/B 문항별 응답률과 `item difficulty` 보고서를 검색했다. 확인 가능한 결과는 시험·해설, AIME 진출선, 점수분포 링크이며 전국 참가자의 A–E 보기 선택 비율표는 회수하지 못했다. 해설·답안이나 총점 분포를 문항별 오답률로 바꾸어 쓰지 않는다. 따라서 네 폼은 모두 원본 카탈로그에서 실제 시험지 학습이 가능하지만, 문항별 집단 응답 비교는 현재 공개 자료 근거가 없어 별도 미회수 상태로 유지한다. Sources: [2021 AMC 10A official solutions copy](https://amc10prep.com/wp-content/uploads/2025/05/2021-AMC-10A-Solutionsspring.pdf), [2021 Fall AIME qualification notice with MAA score-distribution links](https://ivyleaguecenter.org/2022/01/01/2021-fall-aime-qualification-scores-2/).
 ## 2015 AMC 10B — 원본과 통계 출처를 분리
 
 2015 AMC 10B의 [LIVE 회차 페이지](https://live.poshenloh.com/past-contests/amc10/2015B)에서 25문항 원본, 인쇄용 PDF, 정답표, 전문 풀이, 문항별 개념·힌트·풀이를 확인했다. 원본 자료는 연도·형식 선택 메뉴에서 바로 접근할 수 있다.
