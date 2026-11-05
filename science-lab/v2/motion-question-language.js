@@ -5,7 +5,7 @@ export const MOTION_QUESTION_VERSION='20261104-motion-class';
 export const MOTION_CHANGED_NUMBERS=Object.freeze(workbook.questions.filter((q,i)=>JSON.stringify(q)!==JSON.stringify(original[i])).map(q=>q.no));
 const clone=x=>JSON.parse(JSON.stringify(x)),typeFor={116:'T13',117:'T08',122:'T09',123:'T09'},diagnosticFor={115:'M05',120:'M06',121:'M07',117:'M08',122:'M09',123:'M09',128:'M08'};
 export function motionCurrentItems(rows){return rows.map(q=>{
- if(q.contentVersion===MOTION_QUESTION_VERSION)return q;
+ if(q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==1)return q;
  const w=workbook.questions.find(w=>w.id===q.bookQuestionId);if(!w||!MOTION_CHANGED_NUMBERS.includes(w.no))return q;
  const type=typeFor[w.no]||w.type,t=taxonomy.types.find(t=>t.id===type),ac={...clone(q.answerContract),motionContract:clone(w.responseContract)};
  if(ac.type==='short-text'){ac.answer=w.answer;ac.accepted=[...new Set([w.answer,...w.accepted||[]])];}

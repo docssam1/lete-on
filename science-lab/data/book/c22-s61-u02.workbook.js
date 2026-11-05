@@ -1,3 +1,4 @@
+import{withMotionReadableWorkbook}from'./c22-s61-u02.editorial.js?v=20261106-motion-readable-workbook';
 import{withMotionPhotoLanguage}from'./c22-s61-u02.editorial.js?v=20261105-sound-motion-photo-language';
 import{withObservationLanguage}from'./observation-language.js';
 // 물체의 운동128문항. scripts/gen-science-workbook-c22s61u02.mjs가 생성.
@@ -15440,4 +15441,5 @@ const baseWorkbook = {
 
 export const observationPriorWorkbook=withMotionEditorial(baseWorkbook);
 export const motionPhotoPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
-export const workbook=withMotionPhotoLanguage(motionPhotoPriorWorkbook);
+export const motionReadablePriorWorkbook=withMotionPhotoLanguage(motionPhotoPriorWorkbook);
+export const workbook=withMotionReadableWorkbook(motionReadablePriorWorkbook);
