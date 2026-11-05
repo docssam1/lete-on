@@ -1,4 +1,4 @@
-import{GROUND_CASE_IDS,groundCase,groundCompareRecord,validGroundCompareRow,groundCompareValues,groundComparisonProgress}from'./ground-compare-model.js';
+import{GROUND_CASE_IDS,groundCaseForDisplay as groundCase,groundCompareRecord,validGroundCompareRow,groundCompareValues,groundComparisonProgress}from'./ground-compare-model.js?v=20261105-land-learner-reasoning';
 const clone=x=>JSON.parse(JSON.stringify(x)),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const table=(heads,rows)=>`<div class="ground-compare-table"><table><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 let seq=0;

@@ -1,3 +1,4 @@
+import{landReasoningCurrentItems}from'../data/book/s41-u03.editorial.js?v=20261105-land-learner-reasoning';
 import{magnetReasoningCurrentItems}from'../data/book/s41-u01.rail-notes.js?v=20261105-magnet-learner-reasoning';
 import{earthSeaReasoningCurrentItems}from'../data/book/c22-s32-u02.rail-notes.js?v=20261105-earth-sea-learner-reasoning';
 import{termParticleCurrentItems,guidanceParticleCurrentItems}from'../data/book/term-particle-language.js?v=20261105-guidance-particles';
@@ -24,7 +25,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261105-water-learner-reasoning';
+import {revisedTextbook} from './revised-textbook.js?v=20261105-land-learner-reasoning';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';
@@ -50,7 +51,7 @@ import {mountWaterCompare} from './lab-water-compare.js';
 import {waterCompareValues,validWaterCompareRow} from './water-compare-model.js';
 import {mountSolutionCompare} from './lab-solution-compare.js';
 import {solutionCompareValues,validSolutionCompareRow} from './solution-compare-model.js';
-import {mountGroundCompare} from './lab-ground-compare.js';
+import {mountGroundCompare} from './lab-ground-compare.js?v=20261105-land-learner-reasoning';
 import {groundCompareValues,validGroundCompareRow} from './ground-compare-model.js';
 import {mountBiologyCompare} from './lab-biology-compare.js';
 import {biologyCompareValues,validBiologyCompareRow,biologyBreadProgress} from './biology-compare-model.js';
@@ -119,7 +120,7 @@ export async function revisedClassroom(unit, mod) {
  ]);
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
  const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
- return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),classroomLab};
+ return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),classroomLab};
 }
 
 export function classroomQuestions(mod, pool) {

@@ -1,8 +1,8 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261104-season-book';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261105-history-review';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261105-water-learner-reasoning';
-import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261105-water-learner-reasoning';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261105-land-learner-reasoning';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261105-land-learner-reasoning';
 import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
@@ -76,7 +76,7 @@ const UNITS = {
   ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.source.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), misc: await import('../data/units/s41-u02.misc.js') }),
   's41-u04': async()=>{const mod=await withThink('s41-u04', { ...(await import('../data/units/s41-u04.js')), ...(await import('../data/units/s41-u04.lesson.js')), ...(await import('../data/units/s41-u04.similar.js')), ...(await import('../data/units/s41-u04.source.js')), ...(await import('../data/units/s41-u04.taxonomy.js')), misc: await import('../data/units/s41-u04.misc.js') });return {...mod,items:(await import('../data/book/biology-student-language.js?v=20261105-biology-question-language')).biologyCurrentItems(mod.items)};},
   's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
-  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.source.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), misc: await import('../data/units/s41-u03.misc.js') }),
+  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.source.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), items:(await import('../data/book/s41-u03.editorial.js?v=20261105-land-learner-reasoning')).landReasoningCurrentItems((await import('../data/units/s41-u03.js')).items,'s41-u03'), misc: await import('../data/units/s41-u03.misc.js') }),
   's41-u03b': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03b.lesson.js')),
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),

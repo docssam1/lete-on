@@ -17,3 +17,10 @@ export function groundCompareRecord(id,prediction){const material=groundCase(id)
 export function validGroundCompareRow(row){if(row?.kind!=='ground-compare'||!Object.hasOwn(cases,row.case)||!row.material||!Object.hasOwn(cases[row.case].options,row.prediction))return false;return Object.entries(groundCase(row.case)).every(([k,v])=>JSON.stringify(row.material[k])===JSON.stringify(v));}
 export const groundCompareValues=row=>[row.material.label,row.material.options[row.prediction],row.material.reason];
 export function groundComparisonProgress(rows){const done=new Set((Array.isArray(rows)?rows:[]).filter(validGroundCompareRow).map(r=>r.case)).size;return{done,total:GROUND_CASE_IDS.length,complete:done===GROUND_CASE_IDS.length};}
+
+// Display wording only: saved comparison material retains its original schema and labels.
+export function groundCaseForDisplay(id){
+ const data=groundCase(id);
+ if(id==='earthquake')data.rows=data.rows.map(row=>row.map(value=>typeof value==='string'?value.replaceAll('책상 아래에서 몸을 보호하고 다리 잡기','책상 아래에서 몸을 보호하고 책상 다리 잡기'):value));
+ return data;
+}
