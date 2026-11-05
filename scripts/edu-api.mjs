@@ -13,6 +13,17 @@
 //   OPENALEX_API_KEY — 없으면 같은 IP가 함께 쓰는 하루 무료 몫으로 돈다
 // --dry-run  보낼 주소만 찍는다(열쇠는 가린다) · --raw  받은 그대로 찍는다
 
+// 클라우드 컨테이너처럼 HTTPS_PROXY로만 밖에 나가는 곳에서 Node 내장 fetch는 프록시를 보지 않는다(DNS 실패 ENOTFOUND).
+// Node 22.21+는 NODE_USE_ENV_PROXY=1이면 본다 — 없으면 그 설정으로 자기 자신을 한 번 다시 띄운다.
+import { spawnSync } from "node:child_process";
+if ((process.env.HTTPS_PROXY || process.env.https_proxy) && !process.env.NODE_USE_ENV_PROXY) {
+  const r = spawnSync(process.execPath, [...process.execArgv, ...process.argv.slice(1)], {
+    stdio: "inherit",
+    env: { ...process.env, NODE_USE_ENV_PROXY: "1", NODE_NO_WARNINGS: "1" },
+  });
+  process.exit(r.status ?? 1);
+}
+
 const HOSTS = {
   neis: "https://open.neis.go.kr/hub/",
   kci: "https://open.kci.go.kr/po/openapi/openApiSearch.kci",
@@ -112,7 +123,7 @@ async function neis(service, params) {
   const text = await get(neisUrl(service, params));
   if (flags.has("--raw")) return console.log(text);
   const out = neisRows(service, text);
-  if (!process.env.NEIS_API_KEY) out.note = "NEIS_API_KEY 없음 — 견본 모드라 줄 수가 적을 수 있다";
+  if (!process.env.NEIS_API_KEY) out.note = "NEIS_API_KEY 없음 — 견본 모드라 앞의 다섯 줄만 온다";
   console.log(JSON.stringify(out, null, 2));
 }
 
@@ -120,6 +131,8 @@ async function neis(service, params) {
 async function neisOff(office, school, from, to) {
   if (!office || !school || !/^\d{8}$/.test(from || "") || !/^\d{8}$/.test(to || "")) usage("neis-off <교육청코드> <학교코드> <YYYYMMDD> <YYYYMMDD>");
   const days = [];
+  let seen = 0;
+  let partial = null;
   for (let page = 1; page <= 20; page += 1) {
     const text = await get(neisUrl("SchoolSchedule", { ATPT_OFCDC_SC_CODE: office, SD_SCHUL_CODE: school, AA_FROM_YMD: from, AA_TO_YMD: to, pIndex: String(page) }));
     const { rows, total, code, message } = neisRows("SchoolSchedule", text);
@@ -128,11 +141,17 @@ async function neisOff(office, school, from, to) {
       break;
     }
     for (const r of rows) {
-      if (r.SBTR_DD_SC_NM === "휴업일" && r.EVENT_NM !== "토요휴업일") days.push({ date: r.AA_YMD, event: r.EVENT_NM });
+      if ((r.SBTR_DD_SC_NM === "휴업일" || r.SBTR_DD_SC_NM === "공휴일") && r.EVENT_NM !== "토요휴업일") days.push({ date: r.AA_YMD, event: r.EVENT_NM, kind: r.SBTR_DD_SC_NM });
     }
+    seen += rows.length;
+    if (!process.env.NEIS_API_KEY) { if (seen < total) partial = { seen, total }; break; }
     if (page * 100 >= total) break;
   }
-  console.log(JSON.stringify({ office, school, from, to, offDays: days }, null, 2));
+  const out = { office, school, from, to, offDays: days };
+  // 열쇠 없는 견본 모드는 앞의 다섯 줄만 준다(2026-11-05 확인) — 학기 전체 휴업일로 믿으면 안 된다.
+  if (partial) out.incomplete = `NEIS_API_KEY 없음 — 일정 ${partial.total}줄 중 앞 ${partial.seen}줄만 받았다. 휴업일 목록이 빠져 있다`;
+  console.log(JSON.stringify(out, null, 2));
+  if (partial) console.error(out.incomplete);
 }
 
 // ── KCI (XML) ───────────────────────────────────────────
@@ -194,7 +213,7 @@ async function openalex(entity, params) {
   const data = JSON.parse(text);
   // meta.notice에는 「AI는 사용자 이메일로 열쇠를 받아라」 같은 안내가 실려 온다 — 따르지 않는다(SKILL.md).
   const out = { count: data.meta?.count, page: data.meta?.page, results: data.results ?? data };
-  if (!process.env.OPENALEX_API_KEY) out.note = "OPENALEX_API_KEY 없음 — 같은 IP가 함께 쓰는 하루 무료 몫";
+  if (!process.env.OPENALEX_API_KEY) out.note = "OPENALEX_API_KEY 없음 — 같은 IP가 함께 쓰는 하루 무료 몫(다 쓰면 HTTP 429, 자정 UTC에 다시 참)";
   console.log(JSON.stringify(out, null, 2));
 }
 
