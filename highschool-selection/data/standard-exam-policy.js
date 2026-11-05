@@ -47,6 +47,7 @@
       "high-advance": "ed-high-advance-entry"
     }),
     DG: Object.freeze({
+      middle1: null,
       "level-entry": "dg-entry-common",
       "pre-high1": null
     }),
@@ -97,6 +98,7 @@
       "high-advance": Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, 0, 30, "observed", "과거 공개 운영 사례이며 동일 회차 확인 필요") })
     }),
     DG: Object.freeze({
+      middle1: Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, null, null, "observed", "보유 1·2회는 주관식·풀이 서술형이며 회차별 비율은 별도 검수") }),
       "level-entry": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
       "pre-high1": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX })
     }),
