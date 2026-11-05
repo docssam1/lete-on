@@ -1,3 +1,4 @@
+import{withMagnetLearnerReasoning}from'./s41-u01.rail-notes.js?v=20261105-magnet-learner-reasoning';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withMagnetSkyStudentLanguage} from './magnet-sky-student-language.js';
 import {withMagnetBodyLanguage} from './magnet-night-body-language.js';
@@ -6799,4 +6800,5 @@ const baseWorkbook = {
  ]
 };
 
-export const workbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withMagnetBodyLanguage(withStudentOpeningLanguage(withMagnetRails(baseWorkbook)))));
+export const magnetReasoningPriorWorkbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withMagnetBodyLanguage(withStudentOpeningLanguage(withMagnetRails(baseWorkbook)))));
+export const workbook=withMagnetLearnerReasoning(magnetReasoningPriorWorkbook);
