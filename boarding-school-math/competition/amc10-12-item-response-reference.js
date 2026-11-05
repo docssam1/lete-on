@@ -7,6 +7,32 @@
   const letters = Object.freeze(["A", "B", "C", "D", "E"]);
   const defaultSourceUrl = "https://web.archive.org/web/20210121212429id_/https://www.99cef.org.tw/userfiles/2020AMC10A12AReport.pdf";
   const sources = Object.freeze({
+    "amc12-2001-": Object.freeze({ raw: `
+1,E,3.41,0.61,2.23,21.82,66.19,5.72,
+2,E,6.08,3.89,3.04,2.1,48.23,36.64,
+3,B,2.6,29,20.72,2.6,1.18,43.89,
+4,D,1.8,7.46,4.49,45.25,5.67,35.31,
+5,D,3.51,8.52,13.9,14.33,2.61,57.11,
+6,E,15.91,7.52,5.95,2.33,53.18,15.09,
+7,A,9.89,3.71,4.8,6.34,4.44,70.82,
+8,C,10.03,2.98,32.75,3.66,6.47,44.09,
+9,C,1.15,2.43,11.75,3.01,19.06,62.57,
+10,D,15.3,2.25,3.67,56.25,5.17,17.34,
+11,D,12.52,31.85,7.74,10.28,2.58,35.02,
+12,B,13.3,14.17,13.34,4.65,5.11,49.42,
+13,E,2.32,5.03,4.92,3.74,12.78,71.2,
+14,D,2.69,10.28,4.41,2.28,5.78,74.55,
+15,B,6.32,22.91,6.18,2.49,5.99,56.09,
+16,D,9.71,9.17,24.76,7.99,6.17,42.19,
+17,C,19.33,3.56,7.98,5.21,3.44,60.47,
+18,D,7.4,4.62,3.43,4.88,11.06,68.59,
+19,A,1.46,2.26,2.42,3.86,1.69,88.29,
+20,C,5.19,3.75,10.99,8.83,10.54,60.69,
+21,D,2.12,2.76,3.4,6.9,2.17,82.65,
+22,C,1.63,6.14,2.28,3.89,7.88,78.17,
+23,A,2.95,4.44,2.55,2.14,1.73,86.17,
+24,D,4.2,14.14,5.28,10.88,20,45.49,
+25,D,6.57,3.6,3.9,1.93,4.65,79.34,`.trim(), population: "Contestant cohort described in MAA-published book; response denominator and geographic scope not stated", sourceUrl: "https://www.toomates.net/biblioteca2/contestproblembooks/TheContestProblemBook9.pdf", sourceStatus: "MAA-published Contest Problem Book IX; item-response table transcribed from third-party searchable PDF mirror; all option shares checked against source text, key checked against LIVE; denominator and geographic scope not stated; printed page 65" }),
     "amc12-2002-A": Object.freeze({ raw: `
 1,A,37.98,2.74,16.01,23.51,2.08,17.66,
 2,A,93.73,0.36,0.39,0.26,3.75,1.49,
