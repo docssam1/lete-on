@@ -339,11 +339,16 @@ test("short links add hp only for the matching high plan and preserve the stored
     const message = {};
     const config = { courseKey, week: "2026-W43", k: 2, amount: 1.25, cadence: "w2", sessionIndex: 7, highPlanVersion };
     await runInNewContext(code, {
-      URL, URLSearchParams,
+      URL, URLSearchParams, NM_DELIVERY_PLAN: createRequire(import.meta.url)("../../../number_magic/app/delivery-plan.js"),
       location: { search: "?m=" + "e".repeat(32), href: "https://lete-on.gfieldacademy.net/w/", replace: (u) => { redirected = u; } },
       document: { getElementById: () => message },
       fetch: async () => ({ ok: true, json: async () => ({ config }) }),
     });
+    if (hp === null && highPlanVersion !== undefined) {
+      assert.equal(redirected, undefined, "conflicting/unknown versions must not silently fall back");
+      assert.match(message.textContent, /만료|연결하지/);
+      continue;
+    }
     const url = new URL(redirected);
     assert.equal(url.searchParams.get("hp"), hp);
     assert.equal(url.searchParams.get("s"), "7");
@@ -362,7 +367,7 @@ test("short scheduled high links forward the snapshot start and speed; marker-on
     let redirected;
     const config = { courseKey: "C38", week: "2026-W44", k: 1, amount: 1, cadence: "w2", sessionIndex: 1, highPlanVersion: "20261023-high3m", highStartDate, highSpeed };
     await runInNewContext(code, {
-      URL, URLSearchParams,
+      URL, URLSearchParams, NM_DELIVERY_PLAN: createRequire(import.meta.url)("../../../number_magic/app/delivery-plan.js"),
       location: { search: "?m=" + "e".repeat(32), href: "https://lete-on.gfieldacademy.net/w/", replace: (u) => { redirected = u; } },
       document: { getElementById: () => ({}) },
       fetch: async () => ({ ok: true, json: async () => ({ config }) }),
@@ -389,7 +394,7 @@ test("middle snapshot versions match only C29–C37 and old middle links retain 
     assert.deepEqual(config, marked ? source : legacy);
     let redirected;
     await runInNewContext(code, {
-      URL, URLSearchParams,
+      URL, URLSearchParams, NM_DELIVERY_PLAN: createRequire(import.meta.url)("../../../number_magic/app/delivery-plan.js"),
       location: { search: "?m=" + "e".repeat(32), href: "https://lete-on.gfieldacademy.net/w/", replace: (u) => { redirected = u; } },
       document: { getElementById: () => ({}) },
       fetch: async () => ({ ok: true, json: async () => ({ config }) }),
@@ -423,7 +428,7 @@ test("calculus snapshots opt in only for C70–C73; older exact-session links re
     assert.deepEqual(t.calls.rpc.map((call) => call.a), ["resolve_worksheet"]);
     let redirected;
     await runInNewContext(code, {
-      URL, URLSearchParams,
+      URL, URLSearchParams, NM_DELIVERY_PLAN: createRequire(import.meta.url)("../../../number_magic/app/delivery-plan.js"),
       location: { search: "?m=" + "e".repeat(32), href: "https://lete-on.gfieldacademy.net/w/", replace: (u) => { redirected = u; } },
       document: { getElementById: () => ({}) },
       fetch: async () => ({ ok: true, json: async () => ({ config }) }),
@@ -467,7 +472,7 @@ test("PDF URLs and tokens preserve legacy output and distinguish high-plan versi
     }
   }
   const high = worksheetTarget({ ...target, courseKey: "C38", sessionIndex: 7 });
-  assert.equal(high.highPlanVersion, "20261023-high3m");
+  assert.equal(high.highPlanVersion, "20261026-high3m-v2");
   const url = new URL(buildWorksheetUrl("http://127.0.0.1:8767", week, high, 1));
   assert.equal(url.searchParams.get("hp"), "1");
   assert.equal(url.searchParams.get("highPlanVersion"), high.highPlanVersion);
@@ -475,7 +480,7 @@ test("PDF URLs and tokens preserve legacy output and distinguish high-plan versi
   assert.equal(url.searchParams.get("s"), "7");
   assert.notEqual(worksheetToken(key, week, high, 1), worksheetToken(key, week, { ...high, sessionIndex: 8 }, 1));
   assert.notEqual(worksheetToken(key, week, high, 1), worksheetToken(key, week, { ...high, highPlanVersion: undefined }, 1));
-  assert.equal(worksheetTarget({ ...target, courseKey: "C70" }).highPlanVersion, "20261024-calculus3m");
+  assert.equal(worksheetTarget({ ...target, courseKey: "C70" }).highPlanVersion, "20261026-calculus3m-v2");
 });
 
 test("PDF scheduled targets normalize aliases and include date/speed in URLs and token scope", () => {
@@ -500,22 +505,22 @@ test("middle PDF markers isolate version tokens while preserving unmarked and cu
   const { buildWorksheetUrl, worksheetToken, worksheetTarget } = createRequire(import.meta.url)("../../../scripts/nm-weekly-worksheets.cjs");
   const week = "2026-W43", key = "offline", base = { name: "가상검수", courseKey: "C29", amount: 1, cadence: "w1", sessionIndex: 7, startDate: "2026-10-19", speed: 1 };
   const middle = worksheetTarget({ ...base });
-  assert.equal(middle.highPlanVersion, "20261023-middle25");
+  assert.equal(middle.highPlanVersion, "20261026-middle25-v2");
   const url = new URL(buildWorksheetUrl("http://127.0.0.1:8767", week, middle, 1));
-  assert.equal(url.searchParams.get("highPlanVersion"), "20261023-middle25");
+  assert.equal(url.searchParams.get("highPlanVersion"), "20261026-middle25-v2");
   assert.equal(url.searchParams.get("hp"), "1");
   assert.equal(url.searchParams.get("cad"), "w1");
   assert.equal(url.searchParams.get("s"), "7");
-  const source = `${base.name}|${week}|C29|a1|hp20261023-middle25|s7|hs2026-10-19|hv1`;
+  const source = `${base.name}|${week}|C29|a1|hp20261026-middle25-v2|s7|hs2026-10-19|hv1`;
   assert.equal(worksheetToken(key, week, middle, 1), createHmac("sha256", key).update(source).digest("hex").slice(0, 8));
-  for (const [courseKey, version] of [["C28", "20261023-middle25"], ["C38", "20261023-middle25"], ["C29", "20261023-high3m"], ["C29", undefined]]) {
+  for (const [courseKey, version] of [["C28", "20261026-middle25-v2"], ["C38", "20261026-middle25-v2"], ["C29", "20261026-high3m-v2"], ["C29", undefined]]) {
     const invalid = { ...base, courseKey, highPlanVersion: version };
     assert.equal(new URL(buildWorksheetUrl("http://127.0.0.1:8767", week, invalid, 1)).searchParams.get("hp"), null);
     const oldSource = `${base.name}|${week}|${courseKey}|a1`;
     assert.equal(worksheetToken(key, week, invalid, 1), createHmac("sha256", key).update(oldSource).digest("hex").slice(0, 8));
   }
   const high = worksheetTarget({ ...base, courseKey: "C38", cadence: "w2" });
-  const highSource = `${base.name}|${week}|C38|a1|hp20261023-high3m|s7|hs2026-10-19|hv1`;
+  const highSource = `${base.name}|${week}|C38|a1|hp20261026-high3m-v2|s7|hs2026-10-19|hv1`;
   assert.equal(worksheetToken(key, week, high, 1), createHmac("sha256", key).update(highSource).digest("hex").slice(0, 8));
   assert.notEqual(worksheetToken(key, week, high, 1), worksheetToken(key, week, middle, 1));
 });
@@ -525,19 +530,19 @@ test("calculus PDF contracts isolate versions, dates and source-session anchors"
   const base = { name: "미적분 가상검수", cadence: "w2", amount: 1, sessionIndex: 3, startDate: "2026-10-26", speed: 1.25 };
   for (const courseKey of ["C70", "C71", "C72", "C73"]) {
     const target = worksheetTarget({ ...base, courseKey });
-    assert.equal(target.highPlanVersion, "20261024-calculus3m");
+    assert.equal(target.highPlanVersion, "20261026-calculus3m-v2");
     const url = new URL(buildWorksheetUrl("http://127.0.0.1:8767", "2026-W44", target, 1));
     assert.equal(url.searchParams.get("hp"), "1");
     assert.equal(url.searchParams.get("highPlanVersion"), target.highPlanVersion);
     assert.equal(url.searchParams.get("hs"), "2026-10-26");
     assert.equal(url.searchParams.get("hv"), "1.25");
     assert.equal(url.searchParams.get("s"), "3");
-    const source = `${base.name}|2026-W44|${courseKey}|a1|hp20261024-calculus3m|s3|hs2026-10-26|hv1.25`;
+    const source = `${base.name}|2026-W44|${courseKey}|a1|hp20261026-calculus3m-v2|s3|hs2026-10-26|hv1.25`;
     assert.equal(worksheetToken("offline", "2026-W44", target, 1), createHmac("sha256", "offline").update(source).digest("hex").slice(0, 8));
     const old = { ...target, highPlanVersion: undefined };
     assert.equal(new URL(buildWorksheetUrl("http://127.0.0.1:8767", "2026-W44", old, 1)).searchParams.get("hp"), null);
     assert.equal(worksheetToken("offline", "2026-W44", old, 1), createHmac("sha256", "offline").update(`${base.name}|2026-W44|${courseKey}|a1`).digest("hex").slice(0, 8));
-    for (const highPlanVersion of ["20261023-high3m", "20261023-middle25", "future"]) {
+    for (const highPlanVersion of ["20261026-high3m-v2", "20261026-middle25-v2", "future"]) {
       assert.equal(new URL(buildWorksheetUrl("http://127.0.0.1:8767", "2026-W44", { ...target, highPlanVersion }, 1)).searchParams.get("hp"), null);
     }
   }
@@ -546,9 +551,9 @@ test("calculus PDF contracts isolate versions, dates and source-session anchors"
 // ---------- static checks on schema.sql ----------
 const sql = readFileSync(new URL("./schema.sql", import.meta.url), "utf8");
 test("new delivery and preview snapshots add course-specific plan versions without rewriting old snapshots", () => {
-  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261023-high3m',/g) || []).length, 2);
-  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261023-middle25',/g) || []).length, 2);
-  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261024-calculus3m',/g) || []).length, 2);
+  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261026-high3m-v2',/g) || []).length, 2);
+  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261026-middle25-v2',/g) || []).length, 2);
+  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261026-calculus3m-v2',/g) || []).length, 2);
   assert.equal((sql.match(/'highStartDate',ls\.start_date,'highSpeed',ls\.speed/g) || []).length, 6);
   assert.equal((sql.match(/when ls\.course_key ~ '\^C\(3\[89\]\|\[4-6\]\[0-9\]\)\$'/g) || []).length, 2);
   assert.equal((sql.match(/when ls\.course_key ~ '\^C\(29\|3\[0-7\]\)\$'/g) || []).length, 2);
@@ -746,5 +751,33 @@ test("personal plan source bounds and all five settings match the browser decode
     const wrong = { ...plan, sessionIndex: max + 1 };
     const t2 = setup({ rpc: async () => ({ data: { config: personalConfig(wrong) } }) });
     assert.equal((await t2.post({ action: "resolve_worksheet", token: "d".repeat(32) })).status, 404, key);
+  }
+});
+
+test("current personal2 preserves curriculum3 and matches browser bounds for every course", async () => {
+  const dp = createRequire(import.meta.url)("../../../number_magic/app/delivery-plan.js");
+  for (const [courseKey, max] of Object.entries(dp.SOURCE_LIMITS)) {
+    const plan = { courseKey, sessionIndex:max, startDate:"2026-11-05", speed:1, amount:1, cadence:"w1", pace:"p2", curriculumRevision:dp.CURRICULUM_REVISION };
+    const cfg = personalConfig(plan,{deliveryPlanVersion:dp.VERSION});
+    const t=setup({rpc:async()=>({data:{config:cfg}})});
+    const response=await t.post({action:"resolve_worksheet",token:"d".repeat(32)});
+    assert.equal(response.status,200,courseKey);
+    const resolved=(await response.json()).config;
+    assert.deepEqual(dp.fromConfig(resolved),plan,courseKey);
+    for(const patch of [{sessionIndex:max+1},{curriculumRevision:"20261026-curriculum2"},{curriculumRevision:"future"}]) {
+      const bad=personalConfig({...plan,...patch},{deliveryPlanVersion:dp.VERSION});
+      const fixture=setup({rpc:async()=>({data:{config:bad}})});
+      assert.equal((await fixture.post({action:"resolve_worksheet",token:"d".repeat(32)})).status,404,courseKey);
+    }
+    const legacy=setup({rpc:async()=>({data:{config:personalConfig(plan)}})});
+    assert.equal((await legacy.post({action:"resolve_worksheet",token:"d".repeat(32)})).status,404,"legacy cannot reinterpret revised curriculum");
+  }
+});
+
+test("current managed snapshot markers survive resolve for middle high and calculus only", async()=>{
+  for(const [courseKey,version] of [["C29","20261026-middle25-v2"],["C38","20261026-high3m-v2"],["C70","20261026-calculus3m-v2"]]) {
+    const config={courseKey,week:"2026-W45",k:1,amount:1,cadence:"w1",sessionIndex:1,highPlanVersion:version,highStartDate:"2026-11-05",highSpeed:1};
+    const t=setup({rpc:async()=>({data:{config}})});
+    assert.deepEqual((await (await t.post({action:"resolve_worksheet",token:"d".repeat(32)})).json()).config,config);
   }
 });

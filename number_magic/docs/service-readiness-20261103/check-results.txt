@@ -1,3 +1,26 @@
+# 2026-11-05 최신 재검 결과 — 아래 11/03 원본은 역사 기록으로 보존
+# 전체 187개를 오늘 모두 재실행한 결과가 아니다. 11/03 원본은 재시도 포함 234행/187개 고유 검사이며, 오늘 검증한 항목과 11/05 인쇄 검수는 아래 최신 칸이 우선한다.
+# 실행일 | 검사 | 상태 | 범위/근거
+2026-11-05 | nm-membership/handler.test.mjs | PASS 46/46 | 옛 검사 의존성/버전 기대값 갱신, personal2/curriculum3 추가, 보안·연락처·발송 모의 검사
+2026-11-05 | 실제 DB canonical_delivery_plan | PASS 4440/4440 | 74과정×5속도×2횟수×6유효/무효 조건
+2026-11-05 | 실제 nm-membership 배포 | PASS v8 ACTIVE | index.ts·handler.mjs·course-limits.json 모두 배포 원본과 동일
+2026-11-05 | 실제 HTTP 거부 동작 | PASS 3/3 | 미인증 status 401, 잘못된/없는 링크 404 (문자 발송·학생 쓰기 없음)
+2026-11-05 | check-personal-worksheet.js | PASS | 1102선택·5렌더·한도표 일치
+2026-11-05 | check-delivery-versions.js | PASS | 355조건·구버전 74과정 551회차 유지
+2026-11-05 | check-planned-envelope.js | PASS | 8편성 조건
+2026-11-05 | check-plan-control.js | PASS | 14220조건
+2026-11-05 | check-membership-client.js | PASS | 18조건
+2026-11-05 | check-notify-delivery.js | PASS | 발송 모의 검사
+2026-11-05 | build-nm-delivery-runtime --check | PASS | 서버 번들 원본 일치
+2026-11-05 | check-worksheet-series.js | PASS | 444모델·12브라우저·문항/정답 유지 (cover-review-20261103 로그)
+2026-11-05 | check-weekly-sheets.js | PASS | 148/148 (cover-review-20261103 로그)
+2026-11-05 | check-editorial-print.js | PASS | 9유형·PC/휴대폰 (cover-review-20261103 로그)
+2026-11-05 | check-standard-worksheet-browser.js | PASS | 표준 회차·문항 UP·짧은 링크 (cover-review-20261103 로그)
+2026-11-05 | check-print-image-readiness.js | PASS | 이미지 준비·실제 인쇄 호출 (cover-review-20261103 로그)
+2026-11-05 | check-cover-open-points-browser.js | PASS | C45/C70 실제 학습지·A4 PDF (cover-review-20261103 로그)
+# 원본 187개 중 이번에 다시 보지 않은 실패는 해결 판정하지 않는다.
+
+# ----- 아래는 2026-11-03 원본/재시도 기록 -----
 # 전체 검사 결과 2026-11-03 (exit 소요초 파일) — 0=통과
 0 1s check-about-stats.js
 0 41s check-access-book-browser.js

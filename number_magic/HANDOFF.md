@@ -3667,3 +3667,11 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 과거 표지 검사의 오래된 문항 기준을 같은 현행 생성기(표지 장식 적용/해제) 비교로 교체, 인쇄 편집 검사는 실제 체험 진입, 주간 검사는 외부 CDN 대기를 제거. 판정 기준 완화 없음.
 - `check-worksheet-series.js`(444모델·12브라우저·문항/답 유지), `check-weekly-sheets.js`(148/148), `check-editorial-print.js`(9유형·1440/390px), 이미지 준비·표준 학습지·새 빈 점 실제 브라우저/PDF 검사 모두 통과. 기존 표지 검수의 미완료 3검사 상태는 이 기록으로 갱신.
 - 증거·세부 결과: `docs/cover-review-20261103/README.md`의 2026-11-05 절 및 로그/PNG/PDF. 실제 프린터 출력과 실기기 검수는 수행하지 않음.
+
+
+## 2026-11-05 회원 관리 함수·DB 기준 실제 배포 및 결과표 갱신 — Mac Codex / GPT-6.1 Sol
+- 사용자 승인에 따라 nm-membership v8 배포·ACTIVE 확인. 실제 배포 소스 3파일 일치, 미인증 status 401·잘못된/없는 링크 404 검증.
+- canonical_delivery_plan만 curriculum3와 최신 74과정 한도로 적용(migration nm_delivery_curriculum3_bounds). 실제 DB 4440/4440 통과. 기존 public RPC는 이미 personal2 발급이라 교체하지 않고 실제 정의를 schema.sql에 반영.
+- handler personal2/현행 managed v2·curriculum3 보존 및 구버전 분리. 처리기 전체46/46 통과, 배포 문턱도 전체 검사로 전환. 원래7개 검사 실패는 빠진 decoder 의존성/새 PDF 버전 기대값/충돌 버전 거부 계약을 바로잡아 해결. 새 보안 권고0.
+- 개인 학습지1102선택/5렌더·버전355·편성8·진도14220·회원 클라이언트18·발송 모의·번들 검사 통과. 결과표는 11/05 최신 재검과 11/03 역사 기록을 분리해 갱신(187개 전체 재실행 아님).
+- 근거: docs/service-readiness-20261103/README.md·check-results.txt 및 membership-*-20261105 산출물. 실제 학생 쓰기/문자 발송 없음. 실제 보호자 번호 시험 발송 및 미재검 구검사 실패는 별도 남음.

@@ -46,9 +46,7 @@ jobs:
       - name: 배포 전 검사(nm-membership — 회차 한도표가 과정과 같은지 · 처리기 모의 테스트)
         if: inputs.function == 'nm-membership'
         run: |
-          # 처리기 테스트 44건 중 7건(옛 링크 계약 23~26·28·30·31)은 2026-10-31 이전부터 실패 상태라 따로 고쳐야 한다.
-          # 배포 문턱은 이번 배포가 바꾸는 것(회차 한도·개인 계획 검증)만 본다.
-          node --test --test-name-pattern="source bounds|fails closed|personal" supabase/functions/nm-membership/handler.test.mjs
+          node --test supabase/functions/nm-membership/handler.test.mjs
       - uses: supabase/setup-cli@v1
         with:
           version: 2.122.0
