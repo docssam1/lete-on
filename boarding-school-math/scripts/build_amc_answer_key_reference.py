@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1] / "competition"
 SOURCE = ROOT / "amc-item-answer-key-reference.csv"
+ERRATA_SOURCE = ROOT / "amc-answer-key-errata.csv"
 OUTPUT = ROOT / "amc-original-answer-key-reference.js"
 
 
@@ -35,6 +36,21 @@ def main():
         encoded = separator.join(form["answers"])
         form_rows.append([form["program"], form["year"], form["form"], form["sourceUrl"], form["answerFormat"], encoded])
     payload = json.dumps(form_rows, ensure_ascii=False, separators=(",", ":"))
+    with ERRATA_SOURCE.open(encoding="utf-8", newline="") as stream:
+        errata_rows = list(csv.DictReader(stream))
+    errata = {}
+    for row in errata_rows:
+        key = (row["program"], int(row["year"]), row["form"], int(row["question"]))
+        if key in errata:
+            raise ValueError(f"duplicate answer-key erratum: {key}")
+        expected = next((entry for entry in rows if (entry["program"], int(entry["year"]), entry["form"], int(entry["question"])) == key), None)
+        if not expected or expected["correct_answer"] != row["canonical_answer"]:
+            raise ValueError(f"erratum canonical answer differs from public key: {key}")
+        errata["|".join(map(str, key))] = {
+            "acceptedAnswers": [row["canonical_answer"]] + [answer.strip().upper() for answer in row["additionally_accepted_answers"].split("|") if answer.strip()],
+            "reason": row["reason"], "sourceUrl": row["source_url"], "sourceLabel": row["source_label"],
+        }
+    errata_payload = json.dumps(errata, ensure_ascii=False, separators=(",", ":"))
     content = """(function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
@@ -44,6 +60,7 @@ def main():
   // Answers are compact metadata transcribed from public LIVE answer pages.
   // Original question and solution content remains at its source host.
   const sourceLabel = "LIVE by Po-Shen Loh · 공개 답안 페이지";
+  const errata = Object.freeze(__ERRATA__);
   const forms = Object.freeze(__PAYLOAD__.map(function (row) {
     const separator = row[4] === "integer" ? "." : "";
     const answers = Object.freeze(row[5].split(separator));
@@ -57,9 +74,11 @@ def main():
     const source = formReference(program, year, form);
     const number = Number(question);
     const correctAnswer = source && Number.isInteger(number) && number > 0 ? source.answers[number - 1] : null;
+    const correction = correctAnswer === undefined || correctAnswer === null ? null : errata[`${source.program}|${source.year}|${source.form}|${number}`] || null;
     return correctAnswer === undefined || correctAnswer === null ? null : Object.freeze({
       program: source.program, year: source.year, form: source.form, question: number,
-      correctAnswer: correctAnswer, answerFormat: source.answerFormat, sourceUrl: source.sourceUrl, sourceLabel: sourceLabel,
+      correctAnswer: correctAnswer, acceptedAnswers: Object.freeze(correction ? correction.acceptedAnswers : [correctAnswer]),
+      erratum: correction, answerFormat: source.answerFormat, sourceUrl: source.sourceUrl, sourceLabel: sourceLabel,
     });
   }
   function accepts(reference, response) {
@@ -68,7 +87,7 @@ def main():
       const given = String(response).trim();
       return /^\\d{1,3}$/.test(given) && Number(given) === Number(reference.correctAnswer);
     }
-    return String(response).trim().toUpperCase() === reference.correctAnswer;
+    return (reference.acceptedAnswers || [reference.correctAnswer]).includes(String(response).trim().toUpperCase());
   }
   function formFor(program, year, form) {
     const source = formReference(program, year, form);
@@ -76,7 +95,7 @@ def main():
   }
   return Object.freeze({ formCount: forms.length, answerCount: __ANSWER_COUNT__, answerFor: answerFor, accepts: accepts, formFor: formFor });
 });
-""".replace("__PAYLOAD__", payload).replace("__ANSWER_COUNT__", str(answer_count))
+""".replace("__PAYLOAD__", payload).replace("__ERRATA__", errata_payload).replace("__ANSWER_COUNT__", str(answer_count))
     OUTPUT.write_text(content, encoding="utf-8")
     forms = {(row["program"], row["year"], row["form"]) for row in rows}
     print(f"Built {answer_count} answer references across {len(forms)} forms at {OUTPUT}.")

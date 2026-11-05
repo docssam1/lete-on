@@ -2164,3 +2164,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Search/evidence details in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. Static data validation and local commit remain. Preserve untracked user file `raw_youtube.txt`; no push, deployment, or Drive sync. Continue year-by-year web search, especially early 2000s and 2009.
 - New search lead: MAA's published AMC 10 Volume VIII and AMC 12 Volume IX cover 2000–2007 and include submitted-answer frequency tables (MAA review/catalog confirms this). These are copyrighted works; no third-party book scan was used. Obtain an authorized copy or continue seeking equivalent public annual-report tables before transcribing those years.
 - Follow-up source audit: Table XI-B's “2003 AMC 12B” title and its response rates do not produce usable data: only 5/25 marked keys match LIVE, and applying LIVE's actual key produces 48.91 versus MAA Table I's 76.6 mean. The rejected-source note and manifest now record this stronger contradiction; no rates were imported.
+
+### 2026-11-05 · 2002 AMC 12A 인쇄 정답 오류 채점 반영
+
+- MAA/AMS *Contest Problem Book VIII* 웹 원문 후기가 2002 AMC 12A에서 오답 선택지 `N < 1`이 `N > 1`로 인쇄되어 정답이 둘이 됐다고 명시한다. LIVE 키와 MAA/AMS 풀이의 canonical answer는 D지만, 인쇄본에서 A도 참이므로 답안 입력 A/D 모두 정답 처리.
+- 연도·폼·문항 범위의 정오표 CSV를 추가하고 생성기에서 canonical 키 D와 추가 인정 답 A를 따로 저장하도록 했다. 종이 시험 리뷰의 자동채점 및 문항 상세가 A/D 인정과 인쇄 오류 표시를 따른다. 과거 점수 규준/응답률 자료는 수정하지 않았다.
+- 생성기를 실행해 6,500개 답안/266개 폼의 브라우저 참조를 재생성했다. `git diff --check` 통과. 테스트는 요청되지 않아 실행하지 않았다. `raw_youtube.txt` 보존; 변경은 로컬만이며 push·배포·Drive 동기화 없음.
+- 근거: https://www.ams.org/books/prb/019/prb019-endmatter.pdf 및 https://live.poshenloh.com/past-contests/amc12/2002A. 다음: MAA 원 연례보고서의 2009 이후 문항별 응답분포와 2002–2004 누락 폼을 연도·폼 단위로 계속 검색.

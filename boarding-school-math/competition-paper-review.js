@@ -1112,7 +1112,8 @@
       const blankReason = blankReasons.find(function (entry) { return entry.id === item.reason; });
       const selectedForm = $("archive-form").value || params.get("form") || "";
       const answerKey = answerKeyReference ? answerKeyReference.answerFor(selectedFormat().id, selectedYear, selectedForm, item.number) : null;
-      const details = [item.answer ? `내 답 ${item.answer}` : "답 미입력", answerKey ? `정답 ${answerKey.correctAnswer}` : "", item.sourceConceptLabel, domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
+      const answerLabel = answerKey ? `정답 ${answerKey.acceptedAnswers.join("·")}${answerKey.erratum ? " (인쇄 오류 정정 적용)" : ""}` : "";
+      const details = [item.answer ? `내 답 ${item.answer}` : "답 미입력", answerLabel, item.sourceConceptLabel, domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
       const summary = document.createElement("span");
       summary.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
       row.append(summary);

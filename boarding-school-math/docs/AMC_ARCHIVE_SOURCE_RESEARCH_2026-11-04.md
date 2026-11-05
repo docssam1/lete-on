@@ -1,5 +1,11 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2002 AMC 12A 인쇄 시험지 정오표
+
+MAA/AMS의 *The Contest Problem Book VIII* 후기는 2002 AMC 12A에서 오답 선택지 “N < 1”이 “N > 1”로 잘못 인쇄되어 정답 선택지가 두 개가 됐다고 명시한다. LIVE 공개 답안과 MAA/AMS 공식 풀이의 표기 답은 D지만, 실제 인쇄본에서 A(“N > 1”)도 참이다. 따라서 인쇄 시험지를 푼 학생의 14번은 A와 D를 모두 정답 처리해야 한다. `competition/amc-answer-key-errata.csv`에 연도·시험·문항 범위의 수정 근거를 등록했고, 답안 참조 생성기는 표준 키 D와 추가 정답 A를 분리해 보존한다. 채점 화면은 두 응답을 수용하고 인쇄 오류를 표시한다. 이는 개인 문항 진단을 정확하게 하는 정오표이며, 연도별 응답률 통계나 성적 기준을 바꾸지는 않는다.
+
+출처: [MAA/AMS *The Contest Problem Book VIII*](https://www.ams.org/books/prb/019/prb019-endmatter.pdf), [LIVE 2002 AMC 12A 원본·풀이](https://live.poshenloh.com/past-contests/amc12/2002A).
+
 ## 2026-11-05 · MAA EduView AMC 10/12 연도·회차 점수분포 원문 재확인
 
 MAA K–12 EduView의 공개 `Score Distribution` 화면에서 2022–2025 AMC 10 A/B와 AMC 12 A/B, 총 16개 연도·회차 보고 행을 다시 확인했다. 상위 1%, 2.5%, 5%, 10%, 25%, 50%, 75% 점수 경계, 최고점, 평균, 표준편차, 보고 학생 수와 학교 수를 [`amc10-12-score-distribution-2022-2025-maa.csv`](../competition/historical-amc-grade/amc10-12-score-distribution-2022-2025-maa.csv)에 보존했다. CSV에는 회차별 MAA 보고 URL이 들어 있다. 이 16행은 `amc-score-distribution-reference.js`의 기존 값과 모두 일치해 새 점수나 새 진단 규칙을 추가하지 않는다.

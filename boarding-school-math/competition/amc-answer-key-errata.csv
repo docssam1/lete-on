@@ -1,0 +1,2 @@
+program,year,form,question,canonical_answer,additionally_accepted_answers,reason,source_url,source_label
+amc12,2002,A,14,D,A,"The printed option A says N > 1; MAA documents that the distractor should have said N < 1, so both A and D are mathematically correct on the printed paper.",https://www.ams.org/books/prb/019/prb019-endmatter.pdf,"MAA/AMS Contest Problem Book VIII end matter · contest construction notes"
