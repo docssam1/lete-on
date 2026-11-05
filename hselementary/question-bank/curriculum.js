@@ -3006,6 +3006,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id=`5-2-u4-e2-${suffix}-original`,label=`${name} · 원문`;
     if (!source52DecimalDecimalOriginals.types.some(t=>t.id===id)) source52DecimalDecimalOriginals.types.push({id,number:source52DecimalDecimalOriginals.types.length+1,name:label,label,sourceItemId:id,sourceSection:section,sourcePrintedPage:44,sourcePdfPage:40,alternateSourcePdfPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치와 조건을 대조하고 정확한 소수 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false});
   }
+  if (source52DecimalDecimalOriginals) for (const [n,name] of [[1,"네 가지 소수 곱셈식"],[2,"두 곱 사이의 소수 개수"],[3,"나눗셈 실수를 바르게 고치기"],[4,"같은 방향의 두 차량 거리"],[5,"소수점이 빠진 뺄셈과 곱"]]) {
+    const id=`5-2-u4-e2-mission-${n}-original`,label=`${name} · 원문`,key=`source52U4P45Mission${n}Original`;
+    if (!source52DecimalDecimalOriginals.types.some(t=>t.id===id)) source52DecimalDecimalOriginals.types.push({id,number:source52DecimalDecimalOriginals.types.length+1,name:label,label,sourceItemId:id,sourceSection:"mission",sourcePrintedPage:45,sourcePdfPage:41,alternateSourcePdfPage:40,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치와 조건을 대조하고 정확한 소수 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false});
+  }
   const source52DecimalSubunit = source52DecimalUnit?.subunits.find(s => s.name === "소수와 자연수의 곱셈");
   if (source52DecimalSubunit) for (const [id,name,key,section] of [
     ["5-2-u4-e1-exploration-original","3.14를 14번 더하기 · 원문","source52U4P42ExplorationOriginal","exploration"],
