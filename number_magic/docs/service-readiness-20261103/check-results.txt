@@ -3,7 +3,8 @@
 2026-11-06 | nm-membership handler.test.mjs | PASS 46/46 | 처리기 전체, 실제 발송 없음
 2026-11-06 | 실제 이메일 | INBOX RECEIVED 1 | 원장 직접 OTP/비밀번호 설정 완료, 새 가입 검사 아님
 2026-11-06 | 실제 LMS | PROVIDER SUCCESS 1 / ERROR 0 | 원장 실제 수신/휴대폰 링크 확인 대기, 재전송 없음
-2026-11-06 | 실제 문자 링크 인쇄 | A4 PDF 24 pages | 60문항, native Preview 열림; 파일저장/실제종이출력 미완료
+2026-11-06 | 실제 문자 링크 인쇄 | A4 PDF 24 pages | 60문항, native PDF 저장·전체24쪽 렌더·A4·빈쪽0 확인; 실제종이출력 미실행
+2026-11-06 | 운영 관리자 UI | LIVE IDENTICAL 2/2 | main11fce8f93 포함 Pages42115126582 성공
 2026-11-06 | auth_leaked_password_protection | WARN REMAINS | 원장 Free 유지, 별도 보강 secure-password-change ON / minimum 8 적용
 # ----- 아래는 전체187개 최종 재검과 이전 날짜 기록 -----
 # 2026-11-06 최종 재검 — GPT-6.1 Sol / Mac mini

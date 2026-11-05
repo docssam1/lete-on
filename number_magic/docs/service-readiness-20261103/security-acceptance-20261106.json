@@ -40,7 +40,6 @@
     "login": "Email OTP authentication visibly completed in app; user reported password saved",
     "realSmsSent": 1,
     "realEmailSent": 1,
-    "newAccountsCreated": 0,
     "print": {
       "sameSmsLinkOpened": true,
       "course": "C1",
@@ -53,9 +52,126 @@
       "browserHeaders": false,
       "backgroundGraphics": true,
       "nativePdfOpened": true,
-      "nativePdfSaved": "Not saved: user took control of Preview during the save dialog; no further native save actions attempted",
+      "nativePdfSaved": true,
       "physicalPaperPrinted": false,
-      "pdfGenerationVerified": true
+      "pdfGenerationVerified": true,
+      "pdfSavedLocally": true,
+      "pdfQa": {
+        "pages": 24,
+        "pageSizesPt": [
+          [
+            595.276,
+            841.89
+          ]
+        ],
+        "allPagesRenderedAndNonblank": true,
+        "coverImageTextNotExtractable": true,
+        "bodyTextPagesNonblank": 23,
+        "browserHeadersRemoved": true,
+        "sha256": "11c1a42a720c51a5685f85fa263912600f26c82caa175673e609f35d33697c69",
+        "bytes": 1998448,
+        "source": "Native Chrome print -> Preview Save",
+        "file": "output/pdf/nm-acceptance-20261106-C1-r1.pdf",
+        "physicalPaperPrinted": false,
+        "renderedContent": [
+          {
+            "page": 1,
+            "visibleContentPixels": 4935
+          },
+          {
+            "page": 2,
+            "visibleContentPixels": 7218
+          },
+          {
+            "page": 3,
+            "visibleContentPixels": 6290
+          },
+          {
+            "page": 4,
+            "visibleContentPixels": 6031
+          },
+          {
+            "page": 5,
+            "visibleContentPixels": 6463
+          },
+          {
+            "page": 6,
+            "visibleContentPixels": 4680
+          },
+          {
+            "page": 7,
+            "visibleContentPixels": 2978
+          },
+          {
+            "page": 8,
+            "visibleContentPixels": 3837
+          },
+          {
+            "page": 9,
+            "visibleContentPixels": 3629
+          },
+          {
+            "page": 10,
+            "visibleContentPixels": 3611
+          },
+          {
+            "page": 11,
+            "visibleContentPixels": 4220
+          },
+          {
+            "page": 12,
+            "visibleContentPixels": 8530
+          },
+          {
+            "page": 13,
+            "visibleContentPixels": 6059
+          },
+          {
+            "page": 14,
+            "visibleContentPixels": 6032
+          },
+          {
+            "page": 15,
+            "visibleContentPixels": 5020
+          },
+          {
+            "page": 16,
+            "visibleContentPixels": 4835
+          },
+          {
+            "page": 17,
+            "visibleContentPixels": 5389
+          },
+          {
+            "page": 18,
+            "visibleContentPixels": 9095
+          },
+          {
+            "page": 19,
+            "visibleContentPixels": 5358
+          },
+          {
+            "page": 20,
+            "visibleContentPixels": 5085
+          },
+          {
+            "page": 21,
+            "visibleContentPixels": 5871
+          },
+          {
+            "page": 22,
+            "visibleContentPixels": 5188
+          },
+          {
+            "page": 23,
+            "visibleContentPixels": 5569
+          },
+          {
+            "page": 24,
+            "visibleContentPixels": 6634
+          }
+        ]
+      }
     },
     "emailReceipt": {
       "verified": true,
@@ -74,7 +190,7 @@
     },
     "membershipAfterLogin": "trial",
     "linkedStudentsAfterLogin": 1,
-    "next": "Awaiting user receipt/link confirmation; save/verify PDF when Preview handoff ends",
+    "next": "Awaiting recipient confirmation of phone receipt/link; PDF save and all-24-page A4 checks are complete. Physical paper output not performed.",
     "provider": {
       "httpStatus": 200,
       "resultCode": 1,
@@ -96,7 +212,8 @@
       "cadence": "w1",
       "startDate": "2026-11-06",
       "grade": "left unknown; no invented birth year"
-    }
+    },
+    "newAuthAccountsCreated": 0
   },
   "remainingWarning": "auth_leaked_password_protection",
   "note": "User retained Free; secure password change and minimum length do not replace leaked-password detection. User entered OTP/new password directly. Actual provider acknowledged one LMS; no resend. A linked learner appeared before the stale create-test-learner choice returned, so no additional learner was made by the agent.",
@@ -115,7 +232,7 @@
       "membershipHandlerPassed": 46,
       "failed": 0
     },
-    "sourceStatus": "local verified; deployment pending"
+    "sourceStatus": "main 11fce8f933e9e4e734d6f10c390369c2ce7ac004; Pages descendant 9af2a6bebb8e28c53d0480aacc77c1b002a7fded succeeded; live admin HTML/JS byte-identical"
   },
   "quota": {
     "plan": "Free",
@@ -131,5 +248,31 @@
     "overQuotaObserved": false,
     "planChanged": false,
     "spendCapChanged": false
+  },
+  "release": {
+    "runtimeCommit": "11fce8f933e9e4e734d6f10c390369c2ce7ac004",
+    "firstPagesRun": {
+      "id": 42114886145,
+      "conclusion": "cancelled",
+      "reason": "A later main commit deployed the same Number Magic changes"
+    },
+    "deployedCommit": "9af2a6bebb8e28c53d0480aacc77c1b002a7fded",
+    "pagesRun": {
+      "id": 42115126582,
+      "conclusion": "success",
+      "url": "https://github.com/docssam1/lete-on/actions/runs/42115126582"
+    },
+    "liveAssets": [
+      {
+        "path": "admin.html",
+        "identical": true,
+        "sha256": "63304a0614028db20bcfa47b349d649051b077f61231e81b17ea42d8cfb23c89"
+      },
+      {
+        "path": "app/admin.js",
+        "identical": true,
+        "sha256": "d2a570ca790a7b9a2cb76b20f72ee64c2540ead6f6c8546a407494b49182dfa7"
+      }
+    ]
   }
 }
