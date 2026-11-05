@@ -100,6 +100,34 @@
         $("archive-solutions-link").href = paperLibrary.solutionsRoute(format.id, year, form);
         $("archive-solutions-link").textContent = `${label} · 전문 풀이 ↗`;
       };
+      const syncResponsePopulation = function () {
+        const selectedForm = formSelect.value || "";
+        const reference = window.GFIELDAMC10_12ItemResponseReference;
+        const populations = reference && ["amc10", "amc12"].includes(format.id)
+          ? reference.populationsFor(format.id, Number(yearSelect.value), selectedForm)
+          : [];
+        if (["amc10", "amc12"].includes(format.id) && populations.length > 1) {
+          responsePopulationSelect.replaceChildren();
+          populations.forEach(function (population) {
+            const label = population.id === "taiwan" ? "대만 응시자 표본 · 1,632명" : population.id === "global" ? "세계 응시자 표본 · 41,682명" : population.label;
+            responsePopulationSelect.append(option(population.id, label));
+          });
+          responsePopulationSelect.value = populations.some(function (population) { return population.id === params.get("population"); }) ? params.get("population") : "global";
+          responsePopulationField.hidden = false;
+          responsePopulationField.querySelector("small").textContent = "별도 집단의 과거 응답 비율입니다. 학년별 미국 기준이나 현재 규준은 아닙니다.";
+          responsePopulationField.childNodes[0].textContent = "응답 집단";
+        } else {
+          if (format.id === "amc8" && Number(yearSelect.value) === 2009) {
+            responsePopulationSelect.replaceChildren(option("korea", "한국 참가자 표본 · 741명"), option("maa-national", "MAA 보고서 Table 8 · 151,367명"));
+            responsePopulationField.childNodes[0].textContent = "2009 문항 응답 비교 집단";
+            responsePopulationField.querySelector("small").textContent = "MAA Table 8 표본 수는 같은 보고서의 Table 1 수치(150,733명)와 다르게 적혀 있어요.";
+          } else {
+            responsePopulationSelect.replaceChildren(option("global", "세계 응시자 표본"));
+            responsePopulationField.childNodes[0].textContent = "응답 비교 집단";
+          }
+          responsePopulationField.hidden = !(format.id === "amc8" && Number(yearSelect.value) === 2009);
+        }
+      };
       const syncArchiveRouteNote = function () {
         const year = Number(yearSelect.value);
         const archiveNote = $("archive-route-note");
@@ -111,12 +139,12 @@
       };
       const renderArchiveRoute = function () {
         const year = Number(yearSelect.value);
-        responsePopulationField.hidden = !(format.id === "amc8" && year === 2009);
         const forms = paperLibrary.formsFor(format.id, year);
         $("archive-form-field").hidden = format.id === "amc8" || forms.length === 1;
         formSelect.replaceChildren();
         forms.forEach(function (form) { formSelect.append(option(form, paperLibrary.formLabel(format.id, year, form))); });
         formSelect.value = forms.includes(params.get("form")) ? params.get("form") : forms[0];
+        syncResponsePopulation();
         syncArchiveActions();
         syncArchiveRouteNote();
         syncArchivePaperLabel();
@@ -125,9 +153,14 @@
       };
       yearSelect.onchange = function () { renderArchiveRoute(); renderMarks(); };
       responsePopulationSelect.onchange = function () {
+        const url = new URL(location.href);
+        if (responsePopulationField.hidden) url.searchParams.delete("population");
+        else url.searchParams.set("population", responsePopulationSelect.value);
+        history.replaceState(null, "", url);
         if (!document.querySelector(".review-report").hidden) resetReport("응답 비교 집단을 바꿨어요");
       };
       formSelect.onchange = function () {
+        syncResponsePopulation();
         syncArchiveActions();
         syncArchiveRouteNote();
         syncArchivePaperLabel();
@@ -162,7 +195,9 @@
       url.searchParams.set("year", $("archive-year").value);
       if (!$("archive-form-field").hidden && $("archive-form").value) url.searchParams.set("form", $("archive-form").value);
       else url.searchParams.delete("form");
-    } else { url.searchParams.delete("year"); url.searchParams.delete("form"); }
+      if (!$("archive-response-population-field").hidden) url.searchParams.set("population", $("archive-response-population").value);
+      else url.searchParams.delete("population");
+    } else { url.searchParams.delete("year"); url.searchParams.delete("form"); url.searchParams.delete("population"); }
     history.replaceState(null, "", url);
     $("back-to-roadmap").href = `./boarding-roadmap.html?grade=${grade}${programId ? `&program=${encodeURIComponent(programId)}` : ""}`;
   }
@@ -813,12 +848,13 @@
       $("amc-aime-cutoff-source").textContent = aimeCutoff.year === 2025 ? "MAA 공식 발표와 대조한 점수선 ↗" : "연도별 AIME 점수선 자료 ↗";
     }
     const historicalGradeReference = window.GFIELDAMCHistoricalGradeReference;
+    const gradePopulationId = ["amc10", "amc12"].includes(selectedFormat().id) && !$("archive-response-population-field").hidden ? $("archive-response-population").value : undefined;
     const gradeReferenceSection = $("amc-grade-reference");
     const gradeReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && historicalGradeReference
-      ? historicalGradeReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade)
+      ? historicalGradeReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade, gradePopulationId)
       : null;
     const gradeComparison = gradeReference && historicalGradeReference && typeof historicalGradeReference.comparisonFor === "function"
-      ? historicalGradeReference.comparisonFor(selectedFormat().id, selectedYear, selectedForm, grade)
+      ? historicalGradeReference.comparisonFor(selectedFormat().id, selectedYear, selectedForm, grade, gradePopulationId)
       : null;
     gradeReferenceSection.hidden = !gradeReference;
     const gradeComparisonWrap = $("amc-grade-comparison-wrap");
@@ -830,8 +866,9 @@
       const isUsForumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
       const globalReport = gradeReference.sourceStatus === "secondary-international-administrator-report";
       const webIndexedAdministratorReport = gradeReference.sourceStatus === "secondary-international-administrator-report-web-indexed-text";
+      const regionalAdministratorReport = gradeReference.sourceStatus === "secondary-international-administrator-report-printed-table";
       const reproducedMaaImage = gradeReference.sourceStatus === "secondary-reproduction-of-MAA-grade-report-image-apple-vision-and-visual-check";
-      const reportPopulation = (globalReport || webIndexedAdministratorReport) && gradeReference.population.indexOf("United States and Canada") === 0 ? "미국·캐나다 참가자" : (globalReport || webIndexedAdministratorReport) ? "세계 참가자" : "";
+      const reportPopulation = regionalAdministratorReport ? "대만 참가자" : (globalReport || webIndexedAdministratorReport) && gradeReference.population.indexOf("United States and Canada") === 0 ? "미국·캐나다 참가자" : (globalReport || webIndexedAdministratorReport) ? "세계 참가자" : "";
       const maaImageScope = reproducedMaaImage && gradeReference.population.indexOf("MAA report Overall") === 0 ? " · MAA 보고서 Location: Overall" : "";
       setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명${isUsForumTranscription ? " · 미국 위치 기준" : reportPopulation ? ` · ${reportPopulation} 보고서` : maaImageScope}${gradeReference.note ? ` · ${gradeReference.note}` : ""}`);
       const plot = $("amc-grade-reference-plot");
@@ -867,7 +904,7 @@
       gradeReferenceSource.href = gradeReference.sourceUrl;
       const secondarySource = gradeReference.sourceStatus === "secondary-school-publication-reporting-national-grade-statistic";
       const forumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
-      gradeReferenceSource.textContent = secondarySource ? "학교 공개 통계 원문 ↗" : forumTranscription ? "MAA 표 전사 원문 ↗" : globalReport ? "99CEF 통계 보고서 ↗" : webIndexedAdministratorReport ? "GEMT 보고서 검색 원문 ↗" : reproducedMaaImage ? "MAA 통계 이미지 재게시 ↗" : "원자료 보고서 ↗";
+      gradeReferenceSource.textContent = secondarySource ? "학교 공개 통계 원문 ↗" : forumTranscription ? "MAA 표 전사 원문 ↗" : globalReport ? "99CEF 통계 보고서 ↗" : (webIndexedAdministratorReport || regionalAdministratorReport) ? "GEMT 보고서 원문 ↗" : reproducedMaaImage ? "MAA 통계 이미지 재게시 ↗" : "원자료 보고서 ↗";
       setText("amc-grade-reference-source-note", secondarySource
         ? "학교가 공개한 전국 학년별 통계의 재인용입니다. MAA 원본 보고서 파일을 확보하지 못했습니다. 이 표본 평균은 현재 기준점·백분위·능력 등급이 아닙니다. "
           : globalReport
@@ -880,6 +917,8 @@
           ? "재게시된 MAA 학년·성별 평균표 이미지에서 전사한 과거 통계입니다. Location 표기와 지리적 모집단은 원 이미지에 명시된 범위만 적용합니다. 해당 연도·기록 학년의 평균이며 백분위·현재 규준·능력 등급이 아닙니다. "
           : webIndexedAdministratorReport
           ? "GEMT 연례 분석 보고서의 웹 검색 색인 텍스트에서 옮긴 세계 참가자 통계입니다. PDF 페이지 이미지를 직접 대조하지 못했으며 원문 색인 전사 수준으로 표시합니다. 같은 연도·시험형·기록 학년의 과거 평균이며 백분위·현재 규준·능력 등급이 아닙니다. "
+          : regionalAdministratorReport
+          ? "GEMT 보고서에 직접 실린 대만 지역 참가자 통계입니다. Grade 7 표본은 19명으로 작습니다. 세계 또는 미국 학년 기준과 섞지 않으며, 백분위·현재 규준·능력 등급이 아닙니다. "
           : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
     }
     const overallCohortReference = window.GFIELDAMC8OverallCohortReference;
@@ -1055,19 +1094,21 @@
         item.append(label, score, details); bands.append(item);
       });
     }
-    const itemResponseReference = window.GFIELDAMC10_12ItemResponseReference;
+    const amc10And12ResponseReference = window.GFIELDAMC10_12ItemResponseReference;
     const itemResponseSection = $("item-response-reference");
     const itemResponseProgram = selectedFormat().id;
     const itemResponseForm = $("archive-form").value || params.get("form") || "";
-    const cohortItemResponses = result.complete && ["amc10", "amc12"].includes(itemResponseProgram) && itemResponseReference
+    const cohortItemResponses = result.complete && ["amc10", "amc12"].includes(itemResponseProgram) && amc10And12ResponseReference
       ? result.reviewItems.map(function (reviewItem) {
-        return { reviewItem: reviewItem, reference: itemResponseReference.responseFor(itemResponseProgram, selectedYear, itemResponseForm, reviewItem.number, reviewItem.answer) };
+        const populationId = $("archive-response-population-field").hidden ? "global" : $("archive-response-population").value;
+        return { reviewItem: reviewItem, reference: amc10And12ResponseReference.responseFor(itemResponseProgram, selectedYear, itemResponseForm, reviewItem.number, reviewItem.answer, populationId) };
       }).filter(function (item) { return Boolean(item.reference); })
       : [];
     itemResponseSection.hidden = cohortItemResponses.length === 0;
     if (cohortItemResponses.length) {
       const cohort = cohortItemResponses[0].reference;
-      setText("item-response-summary", `${selectedYear} AMC ${itemResponseProgram === "amc10" ? "10" : "12"}${itemResponseForm} · MAA 전체 응답 분포 · 오답·미응답 문항의 보기 선택을 나란히 표시합니다.`);
+      const responsePopulationLabel = cohort.population.includes("Taiwan") ? "대만 응시자 표본" : "세계 응시자 표본";
+      setText("item-response-summary", `${selectedYear} AMC ${itemResponseProgram === "amc10" ? "10" : "12"}${itemResponseForm} · ${responsePopulationLabel} · 오답·미응답 문항의 보기 선택을 나란히 표시합니다.`);
       const rows = $("item-response-rows");
       rows.replaceChildren();
       cohortItemResponses.forEach(function ({ reviewItem, reference }) {
@@ -1123,14 +1164,15 @@
         return itemResponseReference.responseFor(selectedYear, question, answer, grade, populationId);
       }
       if (["amc10", "amc12"].includes(selectedFormat().id) && amc10And12ItemResponseReference) {
-        return amc10And12ItemResponseReference.responseFor(selectedFormat().id, selectedYear, $("archive-form").value || params.get("form") || "", question, answer);
+        const populationId = $("archive-response-population-field").hidden ? "global" : $("archive-response-population").value;
+        return amc10And12ItemResponseReference.responseFor(selectedFormat().id, selectedYear, $("archive-form").value || params.get("form") || "", question, answer, populationId);
       }
       return null;
     };
     const cohortForYear = Array.from({ length: 25 }, function (_, index) { return responseForItem(index + 1, ""); }).find(Boolean) || null;
     const showItemResponses = Boolean(cohortForYear);
     const isSchoolCohort = Boolean(cohortForYear && /school cohort/i.test(cohortForYear.sourceStatus));
-    const responseCohortLabel = cohortForYear && cohortForYear.population.includes("MAA") ? "MAA 보고서 응답 집단" : cohortForYear && cohortForYear.population.includes("South Korea") ? "한국 참가자" : cohortForYear && cohortForYear.population.includes("United States and Canada") ? "미국·캐나다 참가자" : cohortForYear && cohortForYear.population.includes("global") ? "세계 참가자" : "대회 응답 집단";
+    const responseCohortLabel = cohortForYear && cohortForYear.population.includes("MAA") ? "MAA 보고서 응답 집단" : cohortForYear && cohortForYear.population.includes("Taiwan") ? "대만 참가자 표본" : cohortForYear && cohortForYear.population.includes("South Korea") ? "한국 참가자" : cohortForYear && cohortForYear.population.includes("United States and Canada") ? "미국·캐나다 참가자" : cohortForYear && cohortForYear.population.includes("global") ? "세계 참가자" : "대회 응답 집단";
     $("report-review-items-note").textContent = showItemResponses
       ? `직접 표시한 오답과 미응답입니다. ${responseCohortLabel}${cohortForYear.respondentCount == null ? " (응답자 수·지역 범위 미공개)" : ` ${cohortForYear.respondentCount.toLocaleString("en-US")}명`}의 문항별 응답 비율을 참고로 보여 줍니다. ${cohortForYear.availableQuestionCount < 25 ? `공개된 문항별 비율은 25문항 중 ${cohortForYear.availableQuestionCount}문항입니다. ` : ""}${selectedYear === 2009 && cohortForYear.respondentCount === 151367 ? "MAA 보고서 Table 8은 151,367명, 같은 보고서 Table 1은 150,733명으로 서로 다르게 적습니다. 셀 추출이 불완전한 5문항은 표시하지 않습니다." : isSchoolCohort ? "특정 학교 응시집단 표본이며 전국 학년 기준이 아닙니다." : "과거 응답 자료이며 학년별 비교나 현재 기준은 아닙니다."}`
       : `직접 표시한 오답과 미응답입니다. ${["amc8", "amc10", "amc12"].includes(selectedFormat().id) ? "이 연도·시험지의 공개 문항별 응답 통계가 없어 집단 정답률 비교는 표시하지 않습니다. " : ""}각 문항의 원본 개념·힌트·해설을 확인한 뒤 지필드 유사 유형으로 이어갈 수 있어요.`;

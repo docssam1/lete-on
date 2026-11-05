@@ -638,3 +638,13 @@ Internet Archive의 CDX 색인에는 과거 MAA `generalreports.aspx` 페이지�
 대만 AMC 운영기관인 99CEF의 공식 AMC 페이지에서는 2024년 대만 응시자 대상 AMC10A/10B 수상 기준과 8학년 이하 Certificate of Achievement 기준(90점)을 확인했다. 이는 MAA AMC 시험의 대만 지역 운영·수상 기준이며 미국 전국 학년 평균, 개인 백분위 또는 능력 등급이 아니다. 기존 미국 전국 비교나 다른 지역 코호트와 합치지 않는다. [99CEF AMC 공식 안내](https://www.99cef.org.tw/maa-amc/).
 
 MAA 작성 56th Annual 보고서 사본에서 같은 Table II를 다시 찾았다. 이 수치들은 이미 선행 커밋 `4a11f1ee7`에서 Internet Archive가 보존한 MAA/UNL PDF로 검증되어 기존 런타임 CSV에 들어가 있다. 인쇄 8쪽(PDF 10쪽)을 Apple Vision으로 전사하고 원표 시각 검수 및 여덟 시험폼의 가중 평균을 대조한 기록은 바로 위의 `MAA 56th Annual AMC 10/12 grade table recovered and transcribed` 절을 기준으로 한다. 이번 웹 텍스트 열 뒤섞임은 새 전사나 별도 수치 추가 사유가 아니다. [보존된 PDF](https://web.archive.org/web/20081031153754id_/http://www.unl.edu/amc/d-publication/d1-pubarchive/2004-5pub/2005-HSsummary.pdf) · [검색 가능한 보고서 사본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions).
+
+## 2026-11-05 · 2014 AMC 10B 지역별 문항 응답 및 학년 결과 추가
+
+웹 검색에서 Taiwan AMC 운영 보고서인 [2014 AMC10B/AMC12B 분석 보고서](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf)를 열어 본문 표를 직접 대조했다. AMC10B 인쇄 4쪽은 세계 전체 n=42,032, 평균 71.45와 대만 n=1,632, 평균 86.5를 요약하지만, 인쇄 5쪽 점수구간 합계는 세계 n=41,682, 대만 n=1,632다. 기존 세계 문항 응답표는 보고서 점수구간 합계 n=41,682를 쓰므로 유지하고, 서로 다른 표의 모집단 수 차이는 덮어쓰지 않는다.
+
+인쇄 4쪽 학년별 표에서 Taiwan AMC10B Grade 7 n=19, 평균 72.2; Grade 8 n=59, 81.4; Grade 9 n=130, 91.4; Grade 10 n=1,417, 86.4로 확인했다. 이 지역 표본은 미국 또는 세계 Grade norm이 아니다. 값은 [`amc10b-grade-means-2014-taiwan.csv`](../competition/historical-amc-grade/amc10b-grade-means-2014-taiwan.csv)에 따로 보존한다.
+
+인쇄 9–10쪽은 세계와 Taiwan의 25개 문항별 선택지 비율, 공란, 판독 불가 비율을 각각 싣는다. 기존 세계 집단과 합치지 않고 대만 자료 25문항을 별도 cohort로 런타임 및 원자료에 추가했다. 원본 풀이에서 학생 오답 선택지와 해당 cohort의 보기 선택률을 비교할 수 있도록 회차 화면에 `응답 집단` 선택 항목을 표시한다. 정답 키 25개는 LIVE 원본 답안과 보고서의 별표 정답을 대조했다. PDF에서 OCR은 필요하지 않았다.
+
+같은 검색에서 AMC 12B 지역별 표도 찾았다. 이 단계에서는 AMC10B 및 Grade 7–9 로드맵과 직접 관련된 10B 표만 반영했으며, 12B의 Taiwan 표는 후속 연도별 자료 작업 대상으로 남긴다.

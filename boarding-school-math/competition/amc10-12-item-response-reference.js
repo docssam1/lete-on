@@ -786,7 +786,33 @@
 22,B,6.69,28.62,5.92,3.67,2.05,53.01,0.03
 23,E,4.31,6.91,4.66,6.21,10.79,67.09,0.03
 24,B,2.93,6.50,9.46,9.04,5.45,66.59,0.03
-25,C,3.73,6.01,7.88,5.19,8.88,68.28,0.02`.trim(), respondentCount: 41682, population: "2014 AMC 10B global response cohort; report p.4 score-distribution total", sourceUrl: "https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf", sourceStatus: "GEMT 2014 analysis report; printed p.8 global item-response table recovered from indexed PDF text; correct answers cross-checked with LIVE" }),
+25,C,3.73,6.01,7.88,5.19,8.88,68.28,0.02`.trim(), respondentCount: 41682, population: "2014 AMC 10B global response cohort; report p.4 score-distribution total", sourceUrl: "https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf", sourceStatus: "GEMT 2014 analysis report; printed p.9 global item-response table recovered from indexed PDF text; correct answers cross-checked with LIVE" }),
+    "amc10-2014-B-taiwan": Object.freeze({ raw: `
+1,C,0.43,1.04,93.08,0.25,4.66,0.49,0.06
+2,E,1.47,0.55,1.90,0.98,93.26,1.84,0.00
+3,E,1.47,1.16,5.02,1.65,87.62,3.06,0.00
+4,B,1.10,94.85,0.86,0.74,0.67,1.72,0.06
+5,A,75.74,4.29,3.37,4.17,1.41,10.78,0.25
+6,C,3.06,2.63,75.86,3.92,6.25,8.21,0.06
+7,A,62.99,2.02,0.86,10.11,18.08,5.76,0.18
+8,E,0.80,1.29,4.66,4.11,84.68,4.23,0.25
+9,A,66.12,3.55,6.56,2.21,14.95,6.31,0.31
+10,C,6.56,11.52,41.30,9.44,10.60,20.40,0.18
+11,C,7.60,9.44,53.49,8.46,2.14,18.81,0.06
+12,C,15.38,10.91,61.21,6.25,2.14,4.04,0.06
+13,B,3.92,81.86,1.59,2.33,2.21,8.09,0.00
+14,D,6.00,12.50,3.80,47.98,2.33,27.21,0.18
+15,A,65.32,4.04,3.92,5.76,2.33,18.63,0.00
+16,B,29.23,17.71,12.62,11.09,4.96,24.14,0.25
+17,D,30.88,6.50,12.62,12.50,5.02,32.29,0.18
+18,E,9.25,5.27,7.66,35.72,15.07,26.90,0.12
+19,D,4.17,14.09,9.13,20.10,13.11,39.34,0.06
+20,C,15.87,4.90,50.31,11.70,1.53,15.50,0.18
+21,B,7.05,32.17,6.92,7.11,3.19,43.57,0.00
+22,B,4.96,42.59,4.84,4.17,2.76,40.50,0.18
+23,E,3.13,9.31,5.09,9.50,9.74,63.24,0.00
+24,B,3.43,7.17,10.29,9.19,5.64,64.15,0.12
+25,C,4.23,6.92,9.25,5.09,7.72,66.61,0.18`.trim(), respondentCount: 1632, population: "2014 AMC 10B Taiwan response cohort (1,632 participants; regional comparison, not a U.S. grade norm)", sourceUrl: "https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf", sourceStatus: "GEMT printed pp.4, 9–10; global and Taiwan tables are separate. Taiwan option/blank/unreadable percentages transcribed from searchable report; all 25 keys match LIVE and source's starred correct choices." }),
     "amc12-2014-B": Object.freeze({ raw: `
 1,C,0.66,1.51,87.59,0.82,6.44,2.98,0.00
 2,C,2.94,4.87,67.24,4.69,12.04,8.18,0.02
@@ -1569,11 +1595,12 @@
 24,C,1.67,1.47,1.71,1.87,0.96,92.33,
 25,B,1.04,2.19,2.05,2.78,0.96,90.97,`.trim(), excludedQuestions: [18], respondentCount: 50147, population: "2006 AMC 12B U.S. official-student response cohort", sourceUrl: "https://web.archive.org/web/20220201043132id_/https://www.maa.org/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2005-6pub/2006HSsummary.pdf", sourceStatus: "MAA-authored 57th annual report; Table X printed p. 312; original PDF from Internet Archive; page image and Apple Vision OCR checked against PDFKit extraction; all 25 keys cross-checked with LIVE; excluded Q18 because printed response shares do not total 100%; no separate unreadable-response column. Table X respondent-count text is printed as xxx,xxx; denominator taken from Table VI official-student count." }),
   });
-  function responseFor(program, year, form, question, answer) {
+  function responseFor(program, year, form, question, answer, populationId) {
     const selectedProgram = String(program || "").toLowerCase();
     const selectedYear = Number(year);
     const selectedForm = String(form || "").toUpperCase();
-    const source = sources[selectedProgram + "-" + selectedYear + "-" + selectedForm];
+    const sourceKey = selectedProgram + "-" + selectedYear + "-" + selectedForm;
+    const source = sources[sourceKey + (populationId && String(populationId).toLowerCase() !== "global" ? "-" + String(populationId).toLowerCase() : "")] || sources[sourceKey];
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > 25) return null;
     if (source.excludedQuestions && source.excludedQuestions.includes(Number(question))) return null;
     const values = source.raw.split("\n")[Number(question) - 1].split(",");
@@ -1587,5 +1614,13 @@
     const distractor = letters.filter(function (letter) { return !acceptedAnswers.includes(letter); }).map(function (letter) { return { answer: letter, percent: responsePercent[letter] }; }).sort(function (a, b) { return b.percent - a.percent; })[0];
     return Object.freeze({ program: selectedProgram, year: selectedYear, form: selectedForm, question: Number(question), answer: choice, correctAnswer: correctAnswer, acceptedAnswers: Object.freeze(acceptedAnswers.slice()), responsePercent: responsePercent, omittedPercent: Number(values[7]), unreadablePercent: values[8] === "" ? null : Number(values[8]), selectedResponsePercent: choice ? responsePercent[choice] : null, correctResponsePercent: correctResponsePercent, mostCommonDistractor: Object.freeze(distractor), respondentCount: source.respondentCount, availableQuestionCount: source.raw.split("\n").filter(function (row) { return Boolean(row.split(",")[1]); }).length, population: source.population, sourceStatus: source.sourceStatus || "99CEF 2020 analysis report; printed US/Canada item-response table; correct answers checked against LIVE answer key", sourceUrl: values[9] || source.sourceUrl || defaultSourceUrl });
   }
-  return Object.freeze({ sources: sources, responseFor: responseFor });
+  function populationsFor(program, year, form) {
+    const selectedProgram = String(program || "").toLowerCase();
+    const baseKey = selectedProgram + "-" + Number(year) + "-" + String(form || "").toUpperCase();
+    return Object.freeze(Object.keys(sources).filter(function (key) { return key === baseKey || key.indexOf(baseKey + "-") === 0; }).map(function (key) {
+      const source = sources[key];
+      return Object.freeze({ id: key === baseKey ? "global" : key.slice(baseKey.length + 1), label: source.population, sourceUrl: source.sourceUrl });
+    }));
+  }
+  return Object.freeze({ sources: sources, responseFor: responseFor, populationsFor: populationsFor });
 });
