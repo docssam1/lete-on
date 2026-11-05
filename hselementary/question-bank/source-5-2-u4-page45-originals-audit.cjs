@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict');
+const api=require('./source-5-2-u4-page45-originals.js');
+assert.deepEqual([68*15*32,110*314,191*95,378*24*3],[32640,34540,18145,27216]);
+assert.equal(Array.from({length:3120-2756-1},(_,i)=>2757+i).filter(n=>n%10===8).length,37);
+assert.equal((285*61+65)*285,4973250);
+assert.equal((245*4-954)*34,884);
+assert.equal(743*559,415337);
+assert.deepEqual(api.defs.map((_,i)=>api.makeQuestion(i).answer),['(1) 32.64 (2) 3.454 (3) 181.45 (4) 2.7216','37개','4973.25','8.84km','41.5337']);
+console.log('PASS: page 45 exact arithmetic and interval count');
