@@ -70,3 +70,30 @@ export function withForceWorkbookGuidance(workbook){
   return {...question,...patch,...(patch.misconception&&typeof question.mis==='string'?{mis:patch.misconception}:{})};
  })};
 }
+
+// Current observation evidence; prior questions and original banks are preserved above.
+export const FORCE_OBSERVATION_VERSION='20261105-force-life-learner-reasoning';
+const forceObservationPatch={
+  "prompt": "두 수평잡기 기록을 보고 알 수 있는 것을 두 가지 고르세요.",
+  "given": [
+    "설명용 수평잡기 기록이에요. 빈 판자는 수평이고 양쪽 눈금 간격은 같아요. 같은 블록을 왼쪽에는 두 개, 오른쪽에는 한 개 놓았어요.",
+    "㉠ 받침점에서 양쪽 모두 3번에 놓음: 왼쪽이 내려감.",
+    "㉡ 왼쪽 1번·오른쪽 2번으로 옮김: 수평이 됨."
+  ],
+  "choices": [
+    "같은 거리에 놓았을 때 블록 두 개 쪽이 더 무거워요.",
+    "수평이 되었으니 두 쪽의 무게가 같아졌어요.",
+    "무게가 달라도 놓는 위치를 바꾸어 수평을 잡을 수 있어요.",
+    "위치를 옮기면 블록 한 개의 무게도 바뀌어요.",
+    "두 기록은 블록을 놓은 위치가 같아요."
+  ],
+  "explanation": "㉠은 받침점에서 같은 거리에 놓았는데 왼쪽이 내려갔으므로 블록 두 개 쪽이 더 무거워요. ㉡은 블록의 개수는 그대로 두고 위치를 바꾸었더니 수평이 되었어요. 따라서 첫째와 셋째 보기를 골라요.",
+  "misconception": "두 기록에서 달라진 것은 블록의 무게가 아니라 놓인 위치예요.",
+  "criteria": "같은 거리의 무게 비교와 위치를 바꾼 수평잡기를 구별한 첫째·셋째 보기를 모두 고른 경우 인정해요."
+};
+export function withForceObservationData(workbook){
+ if(workbook.unit!=='s31-u01')return workbook;
+ const question=workbook.questions.find(q=>q.id==='s31-u01-w026');
+ if(!question||question.form!=='multi'||JSON.stringify(question.key)!=='[0,2]')throw Error('Unexpected force observation question');
+ return{...workbook,questions:workbook.questions.map(q=>q.id===question.id?{...q,...forceObservationPatch}:q)};
+}

@@ -1,3 +1,4 @@
+import{withLifeLearnerExplanations}from'./learner-explanations.js?v=20261105-force-life-learner-reasoning';
 import{withObservationLanguage}from'./observation-language.js';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 생물의 한살이 A4. scripts/gen-science-workbook-s31u04.mjs가 생성.
@@ -5187,4 +5188,5 @@ const baseWorkbook = {
 };
 
 export const observationPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
-export const workbook=withObservationLanguage(observationPriorWorkbook);
+export const lifeExplanationPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
+export const workbook=withLifeLearnerExplanations(lifeExplanationPriorWorkbook);

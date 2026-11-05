@@ -1,4 +1,4 @@
-import{withForceWorkbookGuidance}from'./force-workbook-guidance.js';
+import{withForceWorkbookGuidance,withForceObservationData}from'./force-workbook-guidance.js?v=20261105-force-life-learner-reasoning';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import {withStudentOpeningLanguage,withActivityGuideLanguage} from './student-opening-language.js?v=20261105-activity-guide';
 // 힘과 우리 생활 A4. scripts/gen-science-workbook-s31u01.mjs가 생성.
@@ -7825,4 +7825,5 @@ const baseWorkbook = {
 export const learnerPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
 export const forceGuidancePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const activityGuidePriorWorkbook=withForceWorkbookGuidance(forceGuidancePriorWorkbook);
-export const workbook=withActivityGuideLanguage(activityGuidePriorWorkbook);
+export const forceObservationPriorWorkbook=withActivityGuideLanguage(activityGuidePriorWorkbook);
+export const workbook=withForceObservationData(forceObservationPriorWorkbook);
