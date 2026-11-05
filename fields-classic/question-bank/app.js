@@ -1,6 +1,7 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261101b";
 import { GENERATORS } from "./generators.js?v=20261101n";
 import { saveRecord } from "./study-progress.js?v=20261029q";
+import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
@@ -1257,7 +1258,7 @@ function editorCardMarkup(question, index) {
   return `${divider}<article class="ed-card${index === editor.focus ? " is-focus" : ""}" data-ed-card="${index}">
     <header><b>${index + 1}</b>${source.number ? `<em class="ed-src">${escapeAttribute(source.number)}</em>` : ""}<span>${escapeAttribute(question.type.label)}</span><small>${escapeAttribute(domain?.label || "")} · ${escapeAttribute(question.type.middle)}</small></header>
     <div class="ed-card-body"><em class="ed-level">${escapeAttribute(levelLabel(question))}</em><div class="ed-q">${editorProblemMarkup(question)}</div>
-      <button type="button" class="ed-del" data-ed="remove" data-i="${index}" aria-label="${index + 1}번 문제 빼기" title="빼기" ${state.questions.length <= 1 ? "disabled" : ""}>🗑</button></div>
+      <button type="button" class="ed-del" data-ed="remove" data-i="${index}" aria-label="${index + 1}번 문제 빼기" title="빼기" ${state.questions.length <= 1 ? "disabled" : ""}>${icon("trash", "18px")}</button></div>
     <footer>${original ? '<span class="ed-note">원문 문항</span>' : `<button type="button" data-ed="twin" data-i="${index}">쌍둥이 · 유사</button>`}</footer>
   </article>`;
 }

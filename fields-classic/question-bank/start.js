@@ -1,9 +1,9 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261101b";
-import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261103d";
+import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261105b";
 import { readRecord, weekRate, loggedIn, checkSession } from "./study-progress.js?v=20261029q";
 import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261103d";
-import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261103d";
+import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261105b";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).

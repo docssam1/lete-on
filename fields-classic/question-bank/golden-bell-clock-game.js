@@ -1,4 +1,5 @@
 import { createSound, confetti, esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
+import { icon } from "./ui-icons.js?v=20261105b";
 import { createDial } from "./golden-bell-clock-dial.js?v=20261023w";
 import { buildLevel, levelSpec, levelResult, checkTurn, checkNumber, checkChoice, missionText, hintText, successText, turnAmountText, opText, landing, landingAfter, starsFor, josa, MAX_FREE_TURNS, MASTER_LEVEL, AMOUNT_NAMES } from "./golden-bell-clock-game-model.js?v=20261024t";
 
@@ -155,7 +156,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, onComp
     const tiles = [];
     for (let level = 1; level <= Math.max(MASTER_LEVEL + 1, progress.unlocked); level++) {
       const spec = levelSpec(level), open = level <= progress.unlocked, stars = progress.stars[level] || 0;
-      tiles.push(`<button type="button" class="cg-tile ${level === saved.level ? "current" : ""} ${spec.endless ? "endless" : ""}" data-clock-pick-level="${level}" ${open ? "" : "disabled"} aria-label="${spec.endless ? spec.title : `레벨 ${level} ${spec.title}`}${open ? "" : " 잠김"}"><b>${spec.endless ? "∞" + (level - MASTER_LEVEL) : level}</b><span>${esc(spec.endless ? `${spec.count}문제` : spec.title)}</span>${open ? starRow(stars) : '<span class="cg-lock" aria-hidden="true">🔒</span>'}</button>`);
+      tiles.push(`<button type="button" class="cg-tile ${level === saved.level ? "current" : ""} ${spec.endless ? "endless" : ""}" data-clock-pick-level="${level}" ${open ? "" : "disabled"} aria-label="${spec.endless ? spec.title : `레벨 ${level} ${spec.title}`}${open ? "" : " 잠김"}"><b>${spec.endless ? "∞" + (level - MASTER_LEVEL) : level}</b><span>${esc(spec.endless ? `${spec.count}문제` : spec.title)}</span>${open ? starRow(stars) : `<span class="cg-lock" aria-hidden="true">${icon("lock", "18px")}</span>`}</button>`);
     }
     overlay.innerHTML = `<div class="cg-banner cg-map" role="dialog" aria-modal="false" aria-labelledby="cg-map-title"><h3 id="cg-map-title">레벨 고르기</h3><p>연습할수록 레벨이 늘어나요. 10을 넘으면 끝없는 도전!</p><div class="cg-tiles">${tiles.join("")}</div><div class="cg-actions"><button type="button" class="cg-secondary" data-clock-close>계속하기</button></div></div>`;
     overlay.hidden = false;

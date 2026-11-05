@@ -5,6 +5,7 @@
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
 import { mathText } from "./math-markup.js?v=20261027p";
+import { icon, setIcon } from "./ui-icons.js?v=20261105b";
 import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261103d";
 
 const NS = "http://www.w3.org/2000/svg";
@@ -79,7 +80,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     <p class="cb-cap" data-cb-cap aria-live="polite"></p>
     <div class="cb-ctl" role="group" aria-label="판서 조절">
       <button type="button" class="cb-btn" data-cb="prev" aria-label="앞 장면">‹</button>
-      <button type="button" class="cb-btn primary" data-cb="toggle" aria-label="멈추기">❚❚</button>
+      <button type="button" class="cb-btn primary" data-cb="toggle" aria-label="멈추기">${icon("pause", "16px")}</button>
       <button type="button" class="cb-btn" data-cb="next" aria-label="다음 장면">›</button>
       <button type="button" class="cb-btn" data-cb="restart" aria-label="처음부터">↺</button>
       <span class="cb-speed" role="group" aria-label="빠르기">${[1, 1.5, 2].map((v) => `<button type="button" data-cb-speed="${v}" aria-pressed="${v === speed}">${v}×</button>`).join("")}</span>
@@ -363,7 +364,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   }
   function paintToggle() {
     const b = root.querySelector('[data-cb="toggle"]');
-    b.textContent = playing ? "❚❚" : "▶"; b.setAttribute("aria-label", playing ? "멈추기" : "이어서 보기");
+    setIcon(b, playing ? "pause" : "play", "16px"); b.setAttribute("aria-label", playing ? "멈추기" : "이어서 보기");
   }
   async function jump(k, { autoplay = true } = {}) {
     k = Math.max(0, Math.min(beats.length, k));
