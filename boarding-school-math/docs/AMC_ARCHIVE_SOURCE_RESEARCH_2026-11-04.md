@@ -624,3 +624,9 @@ Internet Archive의 CDX 색인에는 과거 MAA `generalreports.aspx` 페이지�
 검색에서 [Math Oasis의 2009 AMC 10/12 B 학교별 결과](https://www.mathsoasis.com/2009/temasek1012b09.pdf)가 확인됐다. Temasek Secondary School 보고서는 AMC 10B 학생 89명(9학년 61명, 10학년 28명)의 응답률을 담고 있고, [Madrasah Al-Irsyad 결과](https://www.mathsoasis.com/2009/mai1012b09.pdf)는 AMC 10B 학생 16명의 학교별 점수 요약을 담는다. 이는 국가 전체 응시자 분포가 아니므로 연도별 AMC 규준이나 개인 진단 비교에 넣지 않았다. 2009 A/B 국가 단위 문항응답 coverage는 계속 `not-found`다.
 
 같은 검색에서 [2010 MAA 연례보고서](https://www.scribd.com/document/51428451/2010-HS-summary)의 2009·2008 AMC 10/12 기록 학년별 평균·인원수가 재확인됐으나 기존 자료와 겹쳐 중복 전사하지 않았다. 2008 AIME 학년별 점수분포 표는 보고서 목차에서 확인되지만, 공개 텍스트 검색은 표 셀을 보여 주지 않아 수치는 추가하지 않았다. 이번 검색에서도 2009 AMC 10/12 국가 단위 응답률 표는 찾지 못했다.
+
+## 2026-11-05 · 2008 MAA 연례보고서에서 학년 비교 자료 검증
+
+웹 검색으로 [MAA 작성 59th Annual 2008 High School Results & Awards Summary 사본](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions)을 열어 표 I–II의 AMC 10A/10B·AMC 12A/12B 학년별 참가자 수와 평균을 기존 `amc10-12-grade-means-2002-2011.csv`와 대조했다. 2008년 4개 폼의 22개 학년/그룹 행이 모두 일치하므로 수치를 중복 추가하지 않고 기존 CSV와 런타임 참조의 해당 행을 2008 연례보고서 사본으로 출처 갱신했다. 사본은 제3자 호스팅이라 MAA 원본 호스팅은 확인되지 않았다. 보고서에는 국제 참여 결과도 별도 수록되어 있어, 표의 명시 범위를 넘어 이를 보편적인 개인 학년 규준으로 일반화하지 않는다.
+
+보고서 목차에는 AIME I/II의 학년별 점수 분포가 실려 있지만, 검색 가능한 텍스트에서는 표 셀을 확인할 수 없었다. 해당 표를 grade norm이나 백분위로 재구성하지 않았다. [보고서](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions).
