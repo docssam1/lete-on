@@ -1,6 +1,6 @@
 ---
 name: web-ui-library-picks
-description: 원장이 소개 영상으로 보낸 웹 UI 라이브러리 7개(Anime.js · Motion · Bklit UI · react-three-fiber · liquid-glass-js · shadergradient · liquid-logo)를 지필드 화면에 쓸지 판정한 기록과 쓰는 법. 화면에 움직임·숫자 애니메이션·그래프·3D·유리/그라데이션 효과를 넣자는 말이 나오거나, 새 라이브러리를 들이자는 말이 나올 때 먼저 읽는다.
+description: 원장이 소개 영상으로 보낸 웹 UI 라이브러리 7개(Anime.js · Motion · Bklit UI · react-three-fiber · liquid-glass-js · shadergradient · liquid-logo)와 디자인 스킬 4개(taste-skill · impeccable · hallmark · frontend-design)를 지필드 화면에 쓸지 판정한 기록과 쓰는 법. 화면에 움직임·숫자 애니메이션·그래프·3D·유리/그라데이션 효과를 넣자는 말이 나오거나, 새 라이브러리를 들이자는 말이 나올 때 먼저 읽는다.
 ---
 
 # 웹 UI 라이브러리 7개 — 무엇을 쓰고 무엇을 안 쓰나
@@ -36,6 +36,26 @@ description: 원장이 소개 영상으로 보낸 웹 UI 라이브러리 7개(An
 - 보라 그라데이션 주 단추 → 단색 + 아래 그림자(게임 단추처럼).
 - 똑같은 카드 다섯 개(표지 공부 순서) → 번호 동그라미를 점선으로 잇는 길(차례가 있는 내용이라 번호는 그대로).
 - 반짝 이모지 단추 글은 쓰지 않는다(「🖨 인쇄해서 풀기」 → 「인쇄해서 풀기」).
+
+## 디자인 스킬 4개(2026-11-05 원장 「이것도 사용 가능한지 확인해봐」)
+
+글(Threads)이 꼽은 넷: taste-skill(방향부터 잡음) · impeccable(만든 화면 다듬기·검사) · hallmark(AI 글꼴·보라 그라데이션 막기) · frontend-design. 셋을 내려받아 SKILL.md를 끝까지 읽고, hallmark 검사기는 우리 화면에 돌려 봤다.
+
+| 스킬 | 저장소 · 라이선스 | 판정 | 이유 |
+|---|---|---|---|
+| frontend-design | anthropics/skills · Apache 2.0 | **이미 씀**(2026-11-01) | `.claude/skills/frontend-design` |
+| taste-skill 2.5 | Leonxlnx/taste-skill · MIT | **안 씀** | 회사 홍보 사이트(figma.com·x.ai가 기준)를 짓는 스킬. 「한 화면에 한 구역」·사진 12~20장·「보라 금지」(덱 주 단추가 보라)·자체 견본 40MB와 배정 스크립트로 처음부터 새로 짓는 방식이라 교재·학습 화면과 안 맞는다 |
+| impeccable 4.8 | pbakaus/impeccable · Apache 2.0 | **설치 안 함, 글만 참고** | 첫 실행 때 운영체제별 실행 파일을 내려받아 돌리는 구조(검사합은 맞춰 보지만 저장소에 낯선 실행 파일을 들이지 않는다). `critique`·`audit`·`polish` 안내문(`reference/*.md`)은 글이라 필요할 때 읽어 볼 만하다 |
+| hallmark 2.0 | Nutlope/hallmark · MIT | **짓는 데는 안 씀, 검사기만 가끔** | 테마를 뽑아 새 페이지를 짓는 스킬이라 우리 결을 덮는다(기존 화면엔 이름을 불러야만 쓰라고 스스로 적어 둠). 검사기 `sloplint.mjs`는 Node만으로 돈다 — 아래 |
+
+**hallmark 검사기 돌리는 법**(저장소에 넣지 않는다 — 임시 폴더에 받아서):
+
+```bash
+git clone --depth 1 https://github.com/Nutlope/hallmark <임시>/hallmark   # 2026-11-05 확인 판 407fa68
+node <임시>/hallmark/skills/hallmark/scripts/sloplint.mjs fields-classic/question-bank/home.html --genre playful
+```
+
+결과 대부분은 우리 결정과 부딪혀 **버린다**: 4px 단위 여백(24b), 모든 색을 토큰으로(48), 가운뎃점 묶음(63 — 우리 화면 글에 많이 씀), 「다음 →」 화살표(63). **볼 것만 골라 본다**: 글씨 대비 4.5:1 미만(40), 단추 글의 이모지(30a), 영어 대문자 꼬리표(54·67 — 「WELCOME TO」), `:focus-visible`·움직임 줄이기 빠짐. 2026-11-05에 처음 돌렸을 때 걸린 진짜는 home.html 세 번째 카드 작은 글 대비 3.22:1, start.html `.st-step.is-empty`·`.st-lock-tag` 4.42:1, study.html·home.html 소리 단추의 🔊·⏸·🔇 이모지였다(고치는 건 원장 확인 뒤).
 
 ## 새 라이브러리가 또 오면
 
