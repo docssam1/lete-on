@@ -671,8 +671,8 @@ function showCurriculumDetail(id){
  const m=/^mock-(review|check|repair|retest)-/.test(id)?mockScheduleModel():selectedCoreModel()||LE.attachReviews(CP.model(answers,intakeFields(),curriculumState),learningEvidence),d=CP.detail(roadmapMode==='standard'&&!/^mock-/.test(id)?{...PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths}),kind:'high',year:+intakeFields().year,month:+intakeFields().mon}:m,id);if(!d)return;
  learningStage=id.startsWith('kmo-')?id.slice(4):null;$('courseTitle').textContent=d.title;
  $('courseContent').innerHTML=d.html+(learningStage?LE.render(learningEvidence,{stage:learningStage}):'')+'<button type="button" data-learning-evidence-open="'+(/^mock-(review|check|repair|retest)-/.test(id)?'mock':'work')+'">이 과정의 수행 기록 살펴보기</button>';
- if(id.startsWith('mock-check-')){const paper=MS.PAPERS.find(p=>'mock-check-'+p.id===id);if(paper)$('courseContent').insertAdjacentHTML('beforeend','<p><a href="'+paper.papers+'" target="_blank" rel="noopener noreferrer">기출 찾기 · '+paper.year+'년 고'+paper.level+' '+paper.month+'월 선택 (새 창)</a></p><p><a href="'+MS.SOURCE+'" target="_blank" rel="noopener noreferrer">출제 범위 근거 (새 창)</a></p><button type="button" data-mock-check-record="'+paper.id+'">이 기출을 풀고 결과 기록</button>');}
- if(id.startsWith('mock-retest-'))$('courseContent').insertAdjacentHTML('beforeend','<button type="button" data-mock-feedback-record="'+id.slice(12)+'">재점검 결과 기록</button>');
+ if(id.startsWith('mock-check-')){const paper=MS.PAPERS.find(p=>'mock-check-'+p.id===id);if(paper)$('courseContent').insertAdjacentHTML('beforeend',MS.paperLinks(paper)+'<p><a href="'+MS.SOURCE+'" target="_blank" rel="noopener noreferrer">출제 범위 근거 (새 창)</a></p><button type="button" data-mock-check-record="'+paper.id+'">이 기출을 풀고 결과 기록</button>');}
+ if(id.startsWith('mock-retest-')){const plan=m.mockFeedback?.plans.find(p=>p.id===id.slice(12));$('courseContent').insertAdjacentHTML('beforeend',(plan?MS.paperLinks(plan.paper,{caption:true}):'')+'<button type="button" data-mock-feedback-record="'+id.slice(12)+'">재점검 결과 기록</button>');}
  $('courseContent').dataset.curriculumBlock=id;showCourseDialog();
 }
 function openGoalCurriculum(){
@@ -697,6 +697,12 @@ document.addEventListener('submit',e=>{
  if(r.error){form.querySelector('[data-mock-error]').textContent=r.error;return;}
  updateMock(r.state);$('pathwayCoachContent').querySelector('[data-mock-heading]')?.focus({preventScroll:true});
 });
+function refreshMockPaperLinks(e){
+ const f=e.target.closest('[data-mock-form]');if(!f||!['exam','level'].includes(e.target.name))return;
+ const host=f.querySelector('[data-mock-paper-picker]');if(host)host.innerHTML=MS.paperLinks(Object.fromEntries(new FormData(f)),{caption:true});
+}
+document.addEventListener('input',refreshMockPaperLinks);
+document.addEventListener('change',refreshMockPaperLinks);
 document.addEventListener('input',e=>{
  const f=e.target.closest('[data-mock-form]');if(!f)return;
  const data=Object.fromEntries(new FormData(f)),numbers=['total','unlearned','correct','helped'].map(k=>data[k]),[total,unlearned,correct,helped]=numbers.map(Number),learned=total-unlearned;
