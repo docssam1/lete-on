@@ -4,7 +4,7 @@ import{items as sound}from'../data/units/c22-s32-u03.think.js';import{source as 
 import{ecologySoundCurrentItems,ECOLOGY_SOUND_BANK_VERSION}from'./ecology-sound-question-language.js';import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions}from'./question-revision.js';import{snapshotDailyPaper,resolveDailyPaper,startDailyPaper}from'./daily-paper-state.js';
 const groups=[['c22-s42-u02',ecology,ecologySource,ecologySimilar],['c22-s32-u03',sound,soundSource,soundSimilar]];
 test('실제 두 로더·온라인 문항·인쇄 렌더러는 수업과 같은 맥락을 사용한다',()=>{
- const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/ecology-sound-bank-loaders.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert.deepEqual(result.map(r=>r.changed),[1,1]);assert.deepEqual(result.map(r=>r.items),[92,76]);assert(result.every(r=>r.currentBankAndClassroomAgree&&r.actualItemHtmlAndPrintExecuted));
+ const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/ecology-sound-bank-loaders.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert.deepEqual(result.map(r=>r.changed),[1,1]);assert.deepEqual(result.map(r=>r.items),[92,76]);assert.deepEqual(result.map(r=>r.readabilityRevisions),[20,0]);assert(result.every(r=>r.currentBankAndClassroomAgree&&r.actualItemHtmlAndPrintExecuted));
 });
 test('두 맥락의 응답 계약·빈칸 판정과 이전 은행 문장·저장된 수업 시험지를 보존한다',()=>{
  for(const[unit,items,source,similar]of groups){

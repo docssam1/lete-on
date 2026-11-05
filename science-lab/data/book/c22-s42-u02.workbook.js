@@ -7958,4 +7958,6 @@ const baseWorkbook = {
 
 export const observationPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
 export const ecologyPhotoPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
-export const workbook=withEcologyPhotoLanguage(ecologyPhotoPriorWorkbook);
+export const ecologyReadablePriorWorkbook=withEcologyPhotoLanguage(ecologyPhotoPriorWorkbook);
+export const workbook=withEcologyReadableWorkbook(ecologyReadablePriorWorkbook);
+import{withEcologyReadableWorkbook}from'./c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';

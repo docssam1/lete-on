@@ -1,5 +1,5 @@
 // 검수한 교재 그림의 독립 사본. 기존 수업과 기록 모듈은 가져오지 않는다.
-export const art = {
+export const ecologyReadablePriorArt = {
  "ecoHabitat": "<figure class=\"ed-photo\" data-ecology-photo=\"habitat\"><img src=\"../assets/book/ecology-20261028/habitat.jpg\" alt=\"나무와 풀이 자라고 물과 흙이 함께 보이는 연못가\" width=\"1536\" height=\"1024\" loading=\"eager\" style=\"width:100%;height:auto;max-height:94mm;object-fit:contain\"><figcaption>연못가의 나무·풀·물·흙을 함께 살펴보아요.</figcaption></figure>",
  "ecoRoles": "<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:3mm\"><figure class=\"ed-photo\" data-ecology-photo=\"rice\"><img src=\"../assets/book/ecology-20261028/rice.jpg\" alt=\"긴 잎과 알곡이 달린 가지가 늘어진 벼 이삭\" width=\"1536\" height=\"1024\" loading=\"eager\" style=\"width:100%;height:auto;max-height:94mm;object-fit:contain\"><figcaption>벼의 잎과 알곡이 달린 이삭을 살펴보아요.</figcaption></figure><figure class=\"ed-photo\"><img src=\"../assets/activities/c22-s42-u02/fungus-photo.webp\" alt=\"교재에서 곰팡이로 제시한 확대 사진\"><figcaption>같은 문항의 곰팡이 사진. 배율·색 처리는 미확인이며 학생이 배양한 관찰 결과가 아니에요.</figcaption></figure></div>",
  "ecoRoleCards": "<table class=\"ed-table\"><thead><tr><th scope=\"col\">생물</th><th scope=\"col\">제공된 조사 설명</th></tr></thead><tbody><tr><th scope=\"row\">벼</th><td>빛을 이용해 양분을 스스로 만든다</td></tr><tr><th scope=\"row\">메뚜기</th><td>식물을 먹어 양분을 얻는다</td></tr><tr><th scope=\"row\">곰팡이 A</th><td>죽은 식물의 물질을 분해해 양분을 얻는다</td></tr></tbody></table>",
@@ -41,3 +41,5 @@ export function withEcologyPhotoLanguage(workbook){
  }
  return {...workbook,figures};
 }
+import{ecologyReadableFigures}from'./c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';
+export const art=ecologyReadableFigures(ecologyReadablePriorArt);

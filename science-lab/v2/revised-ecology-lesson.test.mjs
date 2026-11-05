@@ -1,3 +1,4 @@
+import{questionAtVersion}from'./question-revision.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js';import*as original from'../data/book/c22-s42-u02.book.js';import*as records from'../data/book/c22-s42-u02.records-book.js';import{similar}from'../data/units/c22-s42-u02.similar.js';import{items}from'../data/units/c22-s42-u02.js';import{lesson}from'../data/units/c22-s42-u02.lesson.js';import{buildSlides}from'./deck.js';import{renderChapter}from'./book.js';
 import{CHANGES,SPECIES,ecologyMaterial,ecologyCompareRecord,validEcologyCompareRow,ecologyComparisonProgress,ecologyCompareValues}from'./ecology-compare-model.js';
@@ -22,7 +23,7 @@ test('둘째 수업 입구는 처음으로 돌아가지 않고 먹이그물·보
 test('12개 확인의 정답 계약과 기존150문항·10쪽 교재·49쪽 실제 기록을 보존한다',()=>{
  assert.equal(original.chapter.ecologyThinking,undefined);assert.equal(similar.length,70);assert.equal(items.length,80);assert.equal(records.chapter.pages.length,49);assert.equal((renderChapter(original.chapter,original.art,oldPool).match(/class="bk-page/g)||[]).length,10);assert.equal(buildSlides(original.chapter,original.art,original.plan,oldPool,'self').length,22);assert.equal(buildSlides(original.chapter,original.art,original.plan,oldPool,'teach').length,23);
  const selected=new Set(mod.classroomItems.map(q=>q.id));assert.equal(selected.size,12);assert.deepEqual(mod.chapter.check,[...selected]);assert.deepEqual(mod.chapter.formative.items,[]);
- for(const q of pool){const old=oldPool.find(x=>x.id===q.id);assert(old);for(const k of['answerContract','sourceRef','taxonomy'])assert.deepEqual(q[k],old[k]);if(!selected.has(q.id))assert.equal(q,old);}
+ for(const q of pool){const old=oldPool.find(x=>x.id===q.id);assert(old);const restored=questionAtVersion(q,old.contentVersion||1);assert(restored);for(const k of Object.keys(old))assert.deepEqual(restored[k],old[k]);for(const k of Object.keys(q))if(!Object.hasOwn(old,k))assert(['contentVersion','previousVersions'].includes(k));if(!selected.has(q.id))assert.equal(q,old);}
  const daily=[...classroomQuestions(mod,similar),...classroomQuestions(mod,items)];for(const q of mod.classroomItems)assert.equal(daily.find(x=>x.id===q.id),q);
  assert.equal(mod.classroomLab.rowsKey,'ecologyCompareRows');assert.equal(lesson.explore.lab.rowsKey,'meadowRows');assert.equal(lesson.explore.records.rowsKey,'ecologyInquiryRows');
 });
