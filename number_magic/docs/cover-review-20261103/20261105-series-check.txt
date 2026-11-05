@@ -1,0 +1,1 @@
+{"modelChecks":444,"cases":12,"parity":[{"c":"C0","q":60,"a":60},{"c":"C4","q":54,"a":54},{"c":"C38","q":114,"a":114}],"errors":0,"externalWrites":0}

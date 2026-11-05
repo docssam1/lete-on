@@ -55,7 +55,9 @@ const server=http.createServer((req,res)=>{
     for(const width of [1440,390]){
       await page.setViewportSize({width,height:1000});
       await page.evaluate(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'검수용',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'}})));
-      await page.goto(url+'/index.html?enter=1',{waitUntil:'networkidle'});
+      await page.goto(url+'/access.html',{waitUntil:'networkidle'});
+      await page.click('#open-book');await page.click('#preview-link');
+      await page.waitForFunction(()=>!!window.NM_EXAM);
       await page.evaluate(()=>NM_EXAM.openPrintEditor([{thread:'MD69',level:2,seed:'editorial-preview'}],'반비례 개념과 연습',{count:10}));
       await page.waitForSelector('#nm-pe-overlay');
       await page.locator('#nm-pe-count-seg [data-n="12"]').click();
