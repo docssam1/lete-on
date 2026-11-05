@@ -1,0 +1,7 @@
+/* 힘 사고력 수업의 자료 표: 폰에서도 오른쪽 열이 지면 밖에 가려지지 않는다. */
+.dk.force-thinking .dk-tbl{table-layout:fixed;width:100%;max-width:100%}
+.dk.force-thinking .dk-tbl :is(th,td){white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.dk.force-thinking .dk-mylab{max-width:100%;min-width:0}
+.dk.force-thinking .dk-given-list{list-style:none;margin:.5em 0 0;padding:0;display:grid;gap:.4em}
+.dk.force-thinking .force-table-wrap .lab-table{min-width:0;width:100%;table-layout:fixed}
+.dk.force-thinking .force-table-wrap .lab-table :is(th,td){white-space:normal;overflow-wrap:anywhere;word-break:normal}

@@ -1,0 +1,103 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "b5761dcfceb5f7cd0ebdb72529b36750e8c0bf54",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "scope": "v1 bubble scientific explanations and observation conditions; no 2022 grade mapping claimed",
+  "changedUnit": "bubble",
+  "otherUnitsExactlyUnchanged": 14,
+  "preservedQuizChoicesAndCorrectPositions": 3,
+  "sceneBeats": 9,
+  "sceneLabelStringsChanged": 4,
+  "sceneCaptionStringsChanged": 9,
+  "geometryCameraAnimationTimingUnchanged": true,
+  "newMeshes": 0,
+  "factualChanges": [
+    "순수한 물에서도 거품이 잠시 생길 수 있음",
+    "표면장력 감소율을 모든 비눗물의 고정값으로 제시하지 않음",
+    "구 모양과 두 방울 경계면의 조건 명시",
+    "120도는 안정된 세 비누막의 선 접합에 적용",
+    "방울 수명과 막 두께를 고정 수치로 단정하지 않음",
+    "화살표는 경계면이 밀리는 방향을 나타내는 모형임을 설명",
+    "실험에서는 한 번에 한 조건씩 바꿈"
+  ],
+  "sources": [
+    {
+      "title": "2009 초등학교 과학탐구토론 지도자료",
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/c22s52u03/sources/inquiry-guide.pdf",
+      "sha256": "59ea739a62e3c508531692e63ebfdf7a98d1c5ef4d70b47f5bf1af3dcd51f546",
+      "pdfPagesReviewed": [
+        38,
+        40,
+        41,
+        42
+      ],
+      "printedPages": [
+        32,
+        34,
+        35,
+        36
+      ],
+      "readWith": "Apple PDFKit extraction and raster review; original file unchanged"
+    },
+    {
+      "title": "MIT Hatsopoulos Microfluids Laboratory: Soap bubbles and detergents",
+      "url": "https://web.mit.edu/nnf/education/wettability/bubbles.html",
+      "applied": "순수한 물 거품의 짧은 유지, 안정된 같은/다른 크기 방울의 경계면과 압력"
+    },
+    {
+      "title": "Aberystwyth University: Mathematics with Bubbles",
+      "url": "https://users.aber.ac.uk/itd/MATHS-BUBBLES/",
+      "applied": "한 선에서 만나는 세 막의120도와 꼭짓점에서 만나는 선의 각 구별"
+    },
+    {
+      "title": "Exploratorium: Soap",
+      "url": "https://annex.exploratorium.edu/ronh/bubbles/soap.html",
+      "applied": "비누의 역할과 증발·주변 조건에 따른 유지 시간"
+    },
+    {
+      "title": "Science Museum: Your guide to becoming a bubble-ologist",
+      "url": "https://blog.sciencemuseum.org.uk/your-guide-to-becoming-a-bubble-ologist/",
+      "applied": "글리세린이 증발을 늦추어 방울 유지에 도움"
+    }
+  ],
+  "v1": {
+    "tests": 31,
+    "passed": 31,
+    "failed": 0
+  },
+  "v2": {
+    "tests": 810,
+    "passed": 808,
+    "skipped": 2,
+    "failed": 0
+  },
+  "bank": {
+    "tests": 299,
+    "passed": 299,
+    "failed": 0
+  },
+  "totalPassedThisPhase": 1138,
+  "newMirrorTestsAdded": 0,
+  "unchangedWorkbookHtml": 128,
+  "unchangedSlideArrays": 64,
+  "unchangedCareerItems": 128,
+  "unchangedPdfs": 102,
+  "protectedFiles": 6331,
+  "unchangedProtectedFilesBeforeHandoffs": 6329,
+  "changedProtectedFiles": [
+    "science-lab/data/curriculum.js",
+    "science-lab/scenes/bubble.js"
+  ],
+  "reportEditorChanged": false,
+  "actualStudentStorageAccesses": 0,
+  "newPaidApiCalls": 0,
+  "newImagesGenerated": 0,
+  "browserVerified": false,
+  "requiredRuntimeChecks": [
+    "v1 bubble PC/mobile caption and label readability, transcript, audio playback",
+    "mandatory existing 3D gate before main"
+  ],
+  "mainMerged": false,
+  "pushed": false,
+  "deployed": false
+}

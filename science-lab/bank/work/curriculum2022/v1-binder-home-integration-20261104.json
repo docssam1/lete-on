@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "5b215cc345e7fbfdbb769b82f5e6f2fee29893f6",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "scope": "v1 binder home; original experiment, observation, contest and report routes retained",
+  "resources": {
+    "experimentAndReference": 15,
+    "observation": 8,
+    "total": 23
+  },
+  "filters": [
+    "domain",
+    "level",
+    "contest",
+    "kind",
+    "multiword search"
+  ],
+  "navigation": [
+    "pointer selection",
+    "ArrowUp/ArrowDown/Home/End",
+    "Enter opens existing route",
+    "Ctrl/Command+/ search",
+    "skip to preview",
+    "empty-result reset"
+  ],
+  "sourceReference": "authoring binder-home.js/binder.css read only; adapted for current resources and green project accent",
+  "routerStorageAndExperimentTailByteIdentical": true,
+  "reportsAndFieldCodeChanged": false,
+  "selectionWritesProgress": false,
+  "newTests": 6,
+  "v1": {
+    "tests": 25,
+    "passed": 25,
+    "failed": 0
+  },
+  "v2": {
+    "tests": 810,
+    "passed": 808,
+    "skipped": 2,
+    "failed": 0
+  },
+  "bank": {
+    "tests": 299,
+    "passed": 299,
+    "failed": 0
+  },
+  "totalPassedThisPhase": 1132,
+  "unchangedWorkbookHtml": 128,
+  "unchangedSlideArrays": 64,
+  "unchangedCareerItems": 128,
+  "unchangedPdfs": 102,
+  "protectedFiles": 6322,
+  "unchangedProtectedFilesBeforeHandoffs": 6320,
+  "changedProtectedFiles": [
+    "science-lab/app.js",
+    "science-lab/index.html"
+  ],
+  "sparseCheckoutDependencyRestored": "world-explorer/vendor from existing HEAD, no tracked changes",
+  "actualStudentStorageAccesses": 0,
+  "browserVerified": false,
+  "remaining": [
+    "actual desktop/mobile visual, keyboard and audio verification",
+    "v1 experiment-page binder styling and remaining whole-site consistency",
+    "required 3D runtime gate",
+    "latest main integration and authorized publication"
+  ],
+  "mainMerged": false,
+  "pushed": false,
+  "deployed": false
+}

@@ -1,3 +1,4 @@
+import {withSoundChoiceRevisions} from './c22-s32-u03.choice-revisions.js';
 export const unit = {
   "id": "c22-s32-u03",
   "course": "3-2",
@@ -13,7 +14,7 @@ export const unit = {
     "basis": "bank/work/c22s32u03/curriculum.json"
   }
 };
-export const items = [
+const originalItems = [
   {
     "id": "c22-s32-u03-b01",
     "status": "authored",
@@ -3503,3 +3504,5 @@ export const items = [
     }
   }
 ];
+
+export const items = withSoundChoiceRevisions(originalItems);

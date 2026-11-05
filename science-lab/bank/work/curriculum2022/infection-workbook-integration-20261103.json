@@ -1,0 +1,134 @@
+{
+  "phase": 168,
+  "date": "2026-11-03",
+  "unit": "c22-s32-u04",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "c58c94f126bc835de2d8f6d2c1146507cc948319",
+  "workbook": {
+    "student": 54,
+    "teacherFront": 54,
+    "teacher": 78,
+    "answers": 24,
+    "quick": 5,
+    "questions": 80,
+    "forms": {
+      "choice": 18,
+      "short": 8,
+      "multi": 9,
+      "blank": 12,
+      "match": 7,
+      "written": 14,
+      "order": 6,
+      "draw": 6
+    },
+    "standards": {
+      "4과08-01": 8,
+      "4과08-02": 35,
+      "4과08-03": 37
+    },
+    "conceptPages": 17,
+    "structuredExamples": 9,
+    "largeDrawings": 6,
+    "drawingExplanationLines": 3,
+    "uniqueUpperRails": 54
+  },
+  "tests": {
+    "total": 407,
+    "pass": 405,
+    "fail": 0,
+    "preexistingBrowserSkips": 2,
+    "log": "all-v2-tests.txt"
+  },
+  "newImageGeneration": 0,
+  "newPaidApiCalls": 0,
+  "new3D": 0,
+  "push": false,
+  "deploy": false,
+  "browserVerified": false,
+  "goalStatus": "active",
+  "remaining": [
+    "감염병 기본 사고력 수업 연결",
+    "기후변화 등 미연결 학기",
+    "다른 교재의 인쇄 글꼴·배색 단계 적용",
+    "v1/v2 역할·교육과정·원문 요건·최신 main 재대조",
+    "실제 브라우저/CSS/A4·소리·이전 답안 화면 검수"
+  ],
+  "qa": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase168",
+  "unchangedPreviousWorkbookProducts": 44,
+  "unchangedClassroomSlideArrays": 22,
+  "protectedOriginalFiles": 12,
+  "sourceMainBlocksQuestionsAnswersQuickPreserved": true,
+  "changesFromVettedSource": [
+    "학생·교사 전반54쪽의 오른쪽 원고",
+    "짙은 초록 theme"
+  ],
+  "newAssetPhotos": 2,
+  "usedPhotosReviewed": 8,
+  "selfHostedFonts": {
+    "family": "Noto Serif KR",
+    "weights": [
+      400,
+      700
+    ],
+    "license": "OFL-NotoSerifKR.txt"
+  },
+  "actualVisionRuns": [
+    {
+      "kind": "photos",
+      "done": 8,
+      "skipped": 0,
+      "failed": 0
+    },
+    {
+      "kind": "student-final",
+      "done": 8,
+      "skipped": 0,
+      "failed": 0
+    }
+  ],
+  "pdfModes": [
+    {
+      "mode": "student",
+      "pages": 54,
+      "bytes": 7865402,
+      "sha256": "f3c0437d837a77e0bd2cacc06b062e26fd4ecfaf716a9925efa668dd569d1afa",
+      "A4": true,
+      "outsideGlyphs": 0,
+      "observedMinTextSize": 8.0,
+      "minimumAllowedTextSize": 7.8
+    },
+    {
+      "mode": "teacher",
+      "pages": 78,
+      "bytes": 7969954,
+      "sha256": "bb1273765ac102d5ea1da8586184e305873e60d78d1258ba9e1405bdef12a8a5",
+      "A4": true,
+      "outsideGlyphs": 0,
+      "observedMinTextSize": 8.0,
+      "minimumAllowedTextSize": 7.8
+    },
+    {
+      "mode": "answers",
+      "pages": 24,
+      "bytes": 279447,
+      "sha256": "ef2d178052c3ba43c59440bc9f265a121acf707848f193a5b0770178c7cf1a61",
+      "A4": true,
+      "outsideGlyphs": 0,
+      "observedMinTextSize": 8.0,
+      "minimumAllowedTextSize": 7.8
+    },
+    {
+      "mode": "quick",
+      "pages": 5,
+      "bytes": 121957,
+      "sha256": "26764f8fc6eb3eeae959da7887b92c81e9661bedade18ff2cee3c56176bc861f",
+      "A4": true,
+      "outsideGlyphs": 0,
+      "observedMinTextSize": 8.0,
+      "minimumAllowedTextSize": 7.8
+    }
+  ],
+  "all161PdfPagesContactReviewed": true,
+  "enlargedPagesReviewed": 14,
+  "wholeProgramComplete": false
+}

@@ -1,0 +1,771 @@
+{
+  "phase": 181,
+  "date": "2026-11-04",
+  "unit": "s41-u01",
+  "title": "자석의 이용 기본 고리 탑3D를 유지하며 재료·극·나침반 관찰과 생활 장치 설계 연결",
+  "status": "local-candidate-browser-gate-pending",
+  "baselineCommit": "f1790d0174da9cba7bfecaa6af43d3b1d85f768c",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini · Codex desktop · local Node VM/Apple Vision; no model override or API delegation",
+  "skills": [
+    "instructional-design",
+    "ux-writing",
+    "frontend-design",
+    "gfield-textbook-design"
+  ],
+  "rulesRead": [
+    "COMMON_WORKFLOW.md",
+    "CLAUDE.md",
+    "3D-RULES.md"
+  ],
+  "curriculum": {
+    "document": "교육부2022-33 별책9 과학과 교육과정",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "sourceLines": [
+      588,
+      600
+    ],
+    "standards": [
+      "4과09-01",
+      "4과09-02",
+      "4과09-03"
+    ],
+    "basicScope": [
+      "자석과 물체 사이에 작용하는 힘의 특징",
+      "두 자석을 가까이했을 때의 특징을 극과 관련지어 설명",
+      "나침반과 자석을 가까이하는 관찰",
+      "자석을 이용한 생활 장치 설계"
+    ],
+    "physicalMakingNotRequired": true,
+    "magneticFieldsExcludedFromBasic": true,
+    "sourcePlan": "s41-u01.inquiry.book.js · 210min/6phases",
+    "legacy90MinuteBookAndLessonUnchanged": true
+  },
+  "classroom": {
+    "selfSlides": 51,
+    "teacherSlides": 52,
+    "minutes": 210,
+    "legacyChecks": 10,
+    "fullUnitChecks": 16,
+    "totalChecks": 26,
+    "manualAdvanceActivityScreens": 13,
+    "existing3DScene": "ring-tower",
+    "existing3DModel": "ring-tower · lab-ring-tower",
+    "existingDefault3DBeforeOtherActivities": true,
+    "new3D": 0,
+    "comparisonCases": 8,
+    "comparisonCompletionIsNotActualPerformance": true,
+    "storageKeys": {
+      "newComparison": "magnetCompareRows",
+      "existingModel": "labRows",
+      "actualInquiry": "magnetInquiryRows",
+      "actualDetailedInquiry": "sciLab.inquiry.s41-u01"
+    },
+    "originalActualInquiryActivities": 7,
+    "sameFourRingsBothLowestAndHighestValidRecordsRequired": true,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0
+  },
+  "integration": {
+    "magnet": [
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "slides": 51,
+        "checks": 26,
+        "minutes": 210,
+        "manuallyContinuedActivities": 13,
+        "allSelectedQuestionsExactlyPreserved": true,
+        "original3DSceneAndModelIncluded": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "slides": 52,
+        "checks": 26,
+        "minutes": 210,
+        "manuallyContinuedActivities": 13,
+        "allSelectedQuestionsExactlyPreserved": true,
+        "original3DSceneAndModelIncluded": true
+      }
+    ],
+    "otherClassroomSlideArraysUnchanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "slides": 35,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "slides": 41,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "slides": 42,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "slides": 26,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "self",
+        "slides": 37,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teach",
+        "slides": 38,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "self",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teach",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "self",
+        "slides": 54,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teach",
+        "slides": 55,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "slides": 53,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "slides": 54,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "slides": 53,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "slides": 54,
+        "exactlyUnchanged": true
+      }
+    ],
+    "workbookProductsUnchanged": 64,
+    "protectedOriginals": [
+      {
+        "file": "science-lab/data/units/s41-u01.js",
+        "sha256": "e5c44a0fb97df29733f11b30f7b0714dc4f54a51619a1a4fb2fd8f09c2fbba05",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u01.similar.js",
+        "sha256": "ce3645720929cc77edd2c3e66a0c5ceff28ed85d97984101b4f2968f2cfb8812",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u01.lesson.js",
+        "sha256": "b4ca9918376ad44bec31e487b63586a5111a7ee878ee8a31c1def181dc336b7e",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u01.taxonomy.js",
+        "sha256": "962100604900eaf2e11e41096860eef767859da5f029f23158ebc28409d55164",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u01.source.js",
+        "sha256": "98c5a68e5daf9fe58deb35124ca213ef3291066658a11fbfa3fb93f7695ea7d6",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u01.judge.js",
+        "sha256": "a7e0f8caedebb52f10a988b079cedc49662d59386a13211ea71e9852e4baf8ef",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u01.misc.js",
+        "sha256": "316ce91d1e8edc429e93611d9ba3feca310bf1c8a51c46d4e4e034af5c36a3f7",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u01.book.js",
+        "sha256": "3aaddb3112286a7d898e2daa87cfe0d6d1b04184c8234c7616229a117ff1d369",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u01.inquiry.book.js",
+        "sha256": "32c7272408895c32c3ed62d998b9bba70018db9670f2a2d6af360acad0ad6bc1",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u01.interact.js",
+        "sha256": "a9357a5ed6df824e734bdecbd2bd368f3ca06774fb5b7fffd5f2ca6f1f746c4f",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u01.workbook.js",
+        "sha256": "c7d285ffca2189e6004122a09799a2b0170a47887e824c5f77598fc191dcc4e2",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u01.workbook-art.js",
+        "sha256": "73a6f70fd8e25d291b75d57a0c9d989ea5ebfbed304007140026093f8609a68d",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/activities/s41-u01.inquiry.js",
+        "sha256": "0f415c95d8c9395c437645fa0c763539d2e67551d6f2272b3cde0f66efbbb89d",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/ring-tower.js",
+        "sha256": "be2fbc6096d59c3740ae711f19121aba15e3254c5fc6ec5490ae39ada865eebe",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-bread.js",
+        "sha256": "16a5d2d269ca8e0492ac20fdbccc6d01d4641a2f8d4e86762fb6c4171123eb73",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/bread-model.js",
+        "sha256": "4241e9ff1f02ca75c52a838bd14e5ae1a52451a8b452b0e3faaa118761a395d4",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/think-merge.js",
+        "sha256": "5951f886cc74d7331c9c47e1c3de8aefbfbaad406c1d2a89569686b9c468ff16",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/inquiry-records.js",
+        "sha256": "54b01c6d91a9c73a1515e9f38a57050732873c2547f46dd6c1496c7caa6c5638",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-inquiry.js",
+        "sha256": "cbc79ffc0f023a4b3b70223102f4e99e87bed9530e7962ed60ca81c668849630",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily.js",
+        "sha256": "125770f6d7e088259a5a3283577f5d4a66a92d29b731efc9879fce5e323a1bf6",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/check.js",
+        "sha256": "b9afbd688c21970b3d6d52777f79c9d8a643496ff5856edc6afc323c53939898",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily-paper-state.js",
+        "sha256": "a66f3a5d1c6f81971d90cc44fd5279557f8ca40bca618f13453a3c872da13153",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-ring-tower.js",
+        "sha256": "11ca20224791dcd5942848e294d2b8a838fa437f7b71d3fd99d853443a25a21c",
+        "unchanged": true
+      }
+    ],
+    "images": [
+      {
+        "file": "science-lab/assets/book/s41-u01-photo-preparation.webp",
+        "sha256": "80468c2550e20a3a39e7a1d1ebcfafd1e552ea8af9bff9b3a033e41435ef3749",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 181,
+        "actualDirectVisualReviewInPhase": 181
+      },
+      {
+        "file": "science-lab/assets/bank/s41-u01/s3-q01.webp",
+        "sha256": "0460e58811550e28e0dbf66667f355433ce89aec420461f0d670aa37aa870ed3",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 181,
+        "actualDirectVisualReviewInPhase": 181
+      },
+      {
+        "file": "science-lab/assets/bank/s41-u01/s2-q09.webp",
+        "sha256": "05e6cca3205d01b3e27fd930f4753e13692198094ebb4ecc20039b5c30cc3920",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 181,
+        "actualDirectVisualReviewInPhase": 181
+      },
+      {
+        "file": "science-lab/assets/bank/s41-u01/s3-q19.webp",
+        "sha256": "ad64130a92c26c52ddcdfcd9a9a570434d8783c92307c883846ae77c17b5de4b",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 181,
+        "actualDirectVisualReviewInPhase": 181
+      }
+    ],
+    "previousPdfs": [
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-student.pdf",
+        "sha256": "448550e9f71c625bfa30b22067b2cc4b924d4cbcb6dcc7833a29d26ffe1ba77c",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-teacher.pdf",
+        "sha256": "70f64b4bd56a638f6a5c7ce59738e461584272b8a837074f4628d90a94ad544a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-answers.pdf",
+        "sha256": "49f29e808e7961f3462a76b0234cf822d128a32e59d0b617cf43ade1e8dba65a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-quick.pdf",
+        "sha256": "596bf586110e8d6db3c86db06cdb8fbf75b2aaaa16c2a334a710d04d180cb4be",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-student.pdf",
+        "sha256": "f3c0437d837a77e0bd2cacc06b062e26fd4ecfaf716a9925efa668dd569d1afa",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-teacher.pdf",
+        "sha256": "bb1273765ac102d5ea1da8586184e305873e60d78d1258ba9e1405bdef12a8a5",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-answers.pdf",
+        "sha256": "ef2d178052c3ba43c59440bc9f265a121acf707848f193a5b0770178c7cf1a61",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-quick.pdf",
+        "sha256": "26764f8fc6eb3eeae959da7887b92c81e9661bedade18ff2cee3c56176bc861f",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-student.pdf",
+        "sha256": "1ad441160cedc580ac5fb1ef12ac02a5fd3fe6ced7980dc91251898f901ae9da",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-teacher.pdf",
+        "sha256": "b7366112a9e6ce803e87afab57178890731c18ce1e670199e44e01dadfb22c74",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-answers.pdf",
+        "sha256": "c0ca4f56ac3db9cbdee1767efbb725e64bc546fcc3c74801cf6e309d5e80cdbc",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-quick.pdf",
+        "sha256": "5a9f4552312dfe299f5498b96ee046a239413cd1dff077579937d79a9d6e1537",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-student.pdf",
+        "sha256": "7f9cf4e1a4bd91f636f31cbcac2243e58b96d9a1ec5db6460a7d599a97dc7094",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-teacher.pdf",
+        "sha256": "721da084d184397e9d293a79a9569b98a9dde53c6f9220e2eb8c22cd0d7ea2fb",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-answers.pdf",
+        "sha256": "a1c7df1a94f4bae1873b850e4cbd66ee0163fb28504b2254b14a1944c4f351a4",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-quick.pdf",
+        "sha256": "5b3cfe0460b5e35a2a393e47a09205abf0d72c1b4f2f39c3c21a4c2adae70910",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-student.pdf",
+        "sha256": "87315bf2c55ecdad16247ea0811349e8bf48e52c84b19641ffd9eeae00dd7432",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-teacher.pdf",
+        "sha256": "74da526fcbcce4166cc11b23f5e98ff8f0aba00180f188c98a818ba37de82270",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-answers.pdf",
+        "sha256": "4a78698a88ed7f6e78fb214cc6b1e6ef59faddb9bd49b281e5b5d9c13296fa81",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-quick.pdf",
+        "sha256": "67753f2dc719e2e2c690d660d050370a29952e0a8aaeb2d52ab360621fa8ffe9",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-student.pdf",
+        "sha256": "c9ed53acf1e35f0697d7fdfaa9683c86fcad4ca0608bb1cd301deb1d17dfe8e8",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-teacher.pdf",
+        "sha256": "76c9d1e7f9b1caba7fc970fef946921e11dd65b3647d77578ec2d99bd846a652",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-answers.pdf",
+        "sha256": "b62641d0ea663447896e36d80c9a65004c82775d413a6759d25985959dd48358",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-quick.pdf",
+        "sha256": "52e1b704b44b7a28688be8fff408770c622a39cf51d26b81e05eb423767c5123",
+        "unchanged": true
+      }
+    ],
+    "magnetLegacyDailyPaper": {
+      "legacyQuestions": 10,
+      "currentQuestions": 26,
+      "first10ObjectsAndOrderExactlyPreserved": true,
+      "snapshotReadOnly": true,
+      "snapshotReason": "changed",
+      "original10QuestionSnapshotExact": true,
+      "partialReadOnly": true,
+      "partialOnlySavedIds": true,
+      "partialReason": "unbound",
+      "viewStateUnchanged": true,
+      "explicitNewAttemptArchivesOriginalStateIncludingUnknownFields": true,
+      "actualStudentStorageAccessed": false,
+      "legacyIds": [
+        "s41-u01-v001",
+        "s41-u01-v007",
+        "s41-u01-v052",
+        "s41-u01-v013",
+        "s41-u01-v016",
+        "s41-u01-v019",
+        "s41-u01-v008",
+        "s41-u01-v010",
+        "s41-u01-v032",
+        "s41-u01-v080"
+      ],
+      "currentIds": [
+        "s41-u01-v001",
+        "s41-u01-v007",
+        "s41-u01-v052",
+        "s41-u01-v013",
+        "s41-u01-v016",
+        "s41-u01-v019",
+        "s41-u01-v008",
+        "s41-u01-v010",
+        "s41-u01-v032",
+        "s41-u01-v080",
+        "s41-u01-b04",
+        "s41-u01-b14",
+        "s41-u01-b30",
+        "s41-u01-b46",
+        "s41-u01-b02",
+        "s41-u01-b10",
+        "s41-u01-b18",
+        "s41-u01-b26",
+        "s41-u01-b34",
+        "s41-u01-b42",
+        "s41-u01-b50",
+        "s41-u01-b58",
+        "s41-u01-b08",
+        "s41-u01-b24",
+        "s41-u01-b48",
+        "s41-u01-b64"
+      ]
+    },
+    "teacherDeckEvents": {
+      "teacherMounts": 1,
+      "teacherPersonal": false,
+      "staleLegacyBattleIgnored": true,
+      "comparisonClickDoesNotAdvance": true,
+      "outsideClickAdvances": true,
+      "browserVerified": false
+    },
+    "magnetRoutes": {
+      "unit": "s41-u01",
+      "startLinks": true,
+      "actualPageStartLabClassDailyLabBookAndRecords": true,
+      "defaultThinkingClass": true,
+      "checksSharedWithDaily": 26,
+      "legacyDailyQuestions": 10,
+      "teacherStudentReads": 0,
+      "teacherStudentWrites": 0,
+      "comparisonKey": "magnetCompareRows",
+      "existingModelKey": "labRows",
+      "actualInquiryKey": "magnetInquiryRows",
+      "originalRecordsBookExactlyUnchanged": true,
+      "originalReportAndObservationStatePreserved": true,
+      "existing3DReused": true,
+      "modelAnd3DComponentsStubbed": true,
+      "comparisonEventHandlersActuallyExecuted": true,
+      "releaseDisposesMountedActivities": true,
+      "browserVerified": false
+    },
+    "existingOtherRouteUnits": 15,
+    "browserVerified": false,
+    "actualStudentStorageAccessed": false,
+    "newPaidApiCalls": 0,
+    "newVisionImages": 4,
+    "newImageGeneration": 0,
+    "newPdfExports": 0,
+    "new3D": 0
+  },
+  "routes": {
+    "unit": "s41-u01",
+    "startLinks": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 26,
+    "legacyDailyQuestions": 10,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "magnetCompareRows",
+    "existingModelKey": "labRows",
+    "actualInquiryKey": "magnetInquiryRows",
+    "originalRecordsBookExactlyUnchanged": true,
+    "originalReportAndObservationStatePreserved": true,
+    "existing3DReused": true,
+    "modelAnd3DComponentsStubbed": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "browserVerified": false
+  },
+  "teacherDeckEvents": {
+    "teacherMounts": 1,
+    "teacherPersonal": false,
+    "staleLegacyBattleIgnored": true,
+    "comparisonClickDoesNotAdvance": true,
+    "outsideClickAdvances": true,
+    "browserVerified": false
+  },
+  "previousRouteUnits": 15,
+  "tests": {
+    "v2": {
+      "total": 503,
+      "passed": 501,
+      "failed": 0,
+      "skipped": 2,
+      "skipReason": "existing browser-only checks"
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "files": {
+    "science-lab/data/book/s41-u01.thinking-lesson.js": "9713a0caca424eb81917b3fcd2bd5a7cf2c6f2bb0981a075499776a1d957a197",
+    "science-lab/v2/deck-magnet-thinking.js": "e7c9915ef70b792922ce5054bbd123cebfea6a7a7ef0bae65a553902f8f83512",
+    "science-lab/v2/magnet-compare-model.js": "21f792a55410d3ed51e1bcf04997974a0e4c129e5b0a2ed9e0bd71d941f0230c",
+    "science-lab/v2/lab-magnet-compare.js": "d1737538e8b029ca2ca56202ef4b19db19608826365c87791a97b196cb9e30fd",
+    "science-lab/v2/lab-magnet-compare.css": "84a20454ac748de35faaf83af459f8c4400805b9620778a276bd0807b60fbcaa",
+    "science-lab/v2/lab-magnet-compare.test.mjs": "15d0f0ab2ab06052cde38083c8cef6977e3082d351a052abd7d5c223f7e71118",
+    "science-lab/v2/revised-magnet-lesson.test.mjs": "79b836172ef03c8c3c856d6da805ee95dbd99b2fd80b64bc9cb32ac51a5c9c66",
+    "science-lab/v2/tests/magnet-classroom-routes.mjs": "50c9652fdc53aad14124af48c378a31fa0b8b9e1a21f74e6020c9771a261dc68",
+    "science-lab/v2/tests/magnet-deck-events.mjs": "5d20ea27a9bc900cf1fb2009260344ec927eb00a8accd620b463cd2731e737d8",
+    "science-lab/v2/deck.js": "3f85469b76967d393a59f9dc9aece6601e805103e646d3bf9dcdbbb033a283c7",
+    "science-lab/v2/revised-lesson.js": "e7fd33ffa0e04c2b4509154ef4832626c868961cb45f047d09a11eb82461f42a",
+    "science-lab/v2/index.html": "aa4c5c3e75a8da8769ae136e426027670fdbd9db95ef4f222ac9b859a7850b53",
+    "science-lab/v2/v2.js": "93932836304a03130ca8f13bea544d349dc85ee10d128bd917ea74914db2a721"
+  },
+  "vision": {
+    "engine": "Apple Vision · accurate · ko-KR/en-US · language correction false",
+    "images": 4,
+    "recognizedItems": 14,
+    "confidenceBelow08": 12,
+    "failed": 0,
+    "skipped": 0,
+    "inputFormat": "unchanged-source WebP converted to PNG by sips for OCR",
+    "directVisualReview": {
+      "images": 4,
+      "p02Labels": [
+        "나무젓가락",
+        "철 집게",
+        "지우개",
+        "알루미늄 캔",
+        "유리구슬",
+        "철 머리핀"
+      ],
+      "triangleMarkersMisreadByOCR": "스/기호로 읽혔으며 원본 삼각형과 대조함",
+      "p03NS": "Vision detected no words; blue S and red N were directly inspected",
+      "p01Preparation": "photo-like preparation scene; colors and arrangement are not observed pole/material results",
+      "p04Memo": "fridge memo scene; product internal structure not inferred"
+    },
+    "ocrIsNotPhysicsOrCompletionEvidence": true
+  },
+  "images": [
+    {
+      "file": "science-lab/assets/book/s41-u01-photo-preparation.webp",
+      "sha256": "80468c2550e20a3a39e7a1d1ebcfafd1e552ea8af9bff9b3a033e41435ef3749",
+      "bytesUnchanged": true,
+      "actualVisionReviewedInPhase": 181,
+      "actualDirectVisualReviewInPhase": 181
+    },
+    {
+      "file": "science-lab/assets/bank/s41-u01/s3-q01.webp",
+      "sha256": "0460e58811550e28e0dbf66667f355433ce89aec420461f0d670aa37aa870ed3",
+      "bytesUnchanged": true,
+      "actualVisionReviewedInPhase": 181,
+      "actualDirectVisualReviewInPhase": 181
+    },
+    {
+      "file": "science-lab/assets/bank/s41-u01/s2-q09.webp",
+      "sha256": "05e6cca3205d01b3e27fd930f4753e13692198094ebb4ecc20039b5c30cc3920",
+      "bytesUnchanged": true,
+      "actualVisionReviewedInPhase": 181,
+      "actualDirectVisualReviewInPhase": 181
+    },
+    {
+      "file": "science-lab/assets/bank/s41-u01/s3-q19.webp",
+      "sha256": "ad64130a92c26c52ddcdfcd9a9a570434d8783c92307c883846ae77c17b5de4b",
+      "bytesUnchanged": true,
+      "actualVisionReviewedInPhase": 181,
+      "actualDirectVisualReviewInPhase": 181
+    }
+  ],
+  "paidApiCalls": 0,
+  "newImageGeneration": 0,
+  "newPdfExports": 0,
+  "actualStudentStorageAccessed": false,
+  "push": false,
+  "deployment": false,
+  "browserVerified": false,
+  "threeDChecker": {
+    "command": "node scripts/check-science-3d.mjs s41-u01",
+    "run": false,
+    "passed": false,
+    "originalRingTowerCodeAndSceneUnchanged": true,
+    "reason": "Browser target previously denied; no localhost/headless/alternate URL bypass. Main/release gate pending."
+  },
+  "remaining": [
+    "다른 학기 교재·기본 사고력 수업 통합",
+    "v1 실험 학습·v2 교과 연결 사고력 역할과 교육과정/원문 근거 요건 점검",
+    "실제 PC/모바일 브라우저 CSS·A4·3D·소리 검수",
+    "최신 main 대조와 승인 범위의 통합·배포"
+  ]
+}

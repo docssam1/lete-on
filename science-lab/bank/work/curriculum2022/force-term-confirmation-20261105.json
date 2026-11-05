@@ -1,0 +1,73 @@
+{
+  "phase": 260,
+  "date": "2026-11-05",
+  "baseCommit": "6bf929e5f54317dd3dc819595c90da54259459e5",
+  "scope": "Read-only publisher primary-source terminology verification; resolves phase252 pending evidence for 수평대.",
+  "sources": [
+    {
+      "file": "jihak-bingo.pdf",
+      "url": "https://s3.ap-northeast-2.amazonaws.com/tsol.jihak.co.kr/tsol/22tp/e/sci/JIHAKSA_%EA%B3%BC%ED%95%99_%EC%B4%88_3-1_%EB%8B%A8%EC%9B%90%EB%8F%84%EC%9E%85%EB%82%B1%EB%A7%90%EB%B9%99%EA%B3%A0.pdf",
+      "resolvedURL": "https://s3.ap-northeast-2.amazonaws.com/tsol.jihak.co.kr/tsol/22tp/e/sci/JIHAKSA_%EA%B3%BC%ED%95%99_%EC%B4%88_3-1_%EB%8B%A8%EC%9B%90%EB%8F%84%EC%9E%85%EB%82%B1%EB%A7%90%EB%B9%99%EA%B3%A0.pdf",
+      "bytes": 101742,
+      "sha256": "dc7c80022d027230d2fb0f897ef01d3619fb4e9cb4c3c2760c51c17e08cf5f43"
+    },
+    {
+      "file": "jihak-observation.pdf",
+      "url": "https://www.jihak.co.kr/api/v1/file/open-pdf-file?fileName=%EC%8B%A4%ED%97%98%EA%B4%80%EC%B0%B0+3-1+%EB%AF%B8%EB%A6%AC%EB%B3%B4%EA%B8%B0%EC%9A%A9.pdf&url=%2Fpublic%2Ftextbook%2FJyoCTrHtFKNe5hvk%2FVxxTdoGKFFgS1AGa.pdf",
+      "resolvedURL": "https://www.jihak.co.kr/api/v1/file/open-pdf-file?fileName=%EC%8B%A4%ED%97%98%EA%B4%80%EC%B0%B0+3-1+%EB%AF%B8%EB%A6%AC%EB%B3%B4%EA%B8%B0%EC%9A%A9.pdf&url=%2Fpublic%2Ftextbook%2FJyoCTrHtFKNe5hvk%2FVxxTdoGKFFgS1AGa.pdf",
+      "bytes": 7245529,
+      "sha256": "6dffb783aa002d83790651e32a9b1dce2d0d55482662fb9b8af0ebd69441544b"
+    }
+  ],
+  "confirmed": {
+    "textbook": "지학사 22개정 실험관찰3-1",
+    "previewPages": 20,
+    "pdfPages": [
+      10,
+      11
+    ],
+    "printedPages": [
+      8,
+      9
+    ],
+    "scienceTextbookReferences": [
+      24,
+      25,
+      26,
+      27
+    ],
+    "bingoPDFPages": [
+      1,
+      3
+    ],
+    "bingoTextbookReference": 24,
+    "terms": [
+      "수평대",
+      "받침점"
+    ],
+    "visuallyInspectedPages": 3,
+    "appleVisionPages": 2,
+    "appleVisionFailures": 0,
+    "appleVisionTermCounts": [
+      8,
+      3
+    ]
+  },
+  "decision": "Retain 수평대 and 받침점, including s31-u01-w003 vocabulary check. Do not replace valid terminology based on absence from a partial preview. Whole-unit learning remains comparison through balancing; no curriculum-completeness claim.",
+  "verification": {
+    "allTrackedScienceFilesUnchangedBeforeDocumentation": 6412,
+    "productEdits": 0,
+    "sourceSimilarAnswerVersionEdits": 0,
+    "suiteRerun": false,
+    "reason": "No code or product changes; phase259 final1200 native tests remain prior evidence only.",
+    "sourceCopiedToProduct": false,
+    "browserVerified": false
+  },
+  "sourceBoundary": "Web open returned a different4-1 book for a3-1 URL. Used directly downloaded3-1 PDF only, checked via PDFKit text and page images.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase260",
+  "remaining": [
+    "All other terminology/meaning and later-grade rails",
+    "Actual PC/phone/A4/voice/WebGL/mandatory3D gate",
+    "Main WIP reconciliation, integration and deployment"
+  ]
+}

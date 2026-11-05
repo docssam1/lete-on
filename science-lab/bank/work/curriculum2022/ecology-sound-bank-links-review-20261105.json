@@ -1,0 +1,537 @@
+{
+  "phase": 245,
+  "date": "2026-11-05",
+  "baseCommit": "333a080f9e0fa0f866c813bab8d520d189669e51",
+  "units": [
+    "c22-s42-u02",
+    "c22-s32-u03"
+  ],
+  "scope": "Share the reviewed ecology b10/sound t01 classroom context with the current bank; enforce versioned response/teacher-review keys across the current classroom public deck builder.",
+  "changes": [
+    "Ecology no longer assumes an unprovided shared photograph; it asks about the mushroom/rock comparison directly.",
+    "Sound uses the already-reviewed gentle observation of ones own neck and retains the accepted word 떨림.",
+    "Add a new presentation version with complete prior bank snapshots; keep both scoring contracts and all taxonomy/source fields unchanged.",
+    "The common current-classroom deck wrapper annotates revised questions and their input keys. It fixes missing metadata in46 frames and unversioned input keys in9 self-study frames across8 units; legacy classrooms bypass this wrapper."
+  ],
+  "preservation": {
+    "workbooksUnchanged": 32,
+    "allWorkbookQuestionsAndAnswersUnchanged": 3080,
+    "productsUnchanged": 128,
+    "runtimeUnitsExecuted": 32,
+    "currentBankItems": 3179,
+    "currentBankItemsChanged": [
+      "c22-s32-u03-t01",
+      "c22-s42-u02-b10"
+    ],
+    "currentBankItemsUnchanged": 3177,
+    "answerContractsAndTaxonomyUnchanged": true,
+    "originalBankItemsUnchanged": 1512,
+    "similarBankItemsUnchanged": 1512,
+    "classroomContentAndContractsUnchanged": 1635,
+    "classroomVersionMetadataChanged": [
+      "c22-s32-u03-t01",
+      "c22-s42-u02-b10"
+    ],
+    "allSelectedClassroomChecksResolve": 490,
+    "classroomAndBankAuthoredItemsMatch": 1559,
+    "canonicalClassroomItemsWithSameContracts": 76,
+    "remainingRawPoolClassroomOverlays": 33,
+    "remainingOverlaysOnlyCanonical": true,
+    "slideArraysUnchanged": 48,
+    "onlyVersionMetadataAndInputKeysChangedInSlideArrays": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "slideIds": [
+          "test3",
+          "test9",
+          "test10",
+          "test11"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "slideIds": [
+          "test3",
+          "test9",
+          "test10",
+          "test11"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "slideIds": [
+          "test4"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "slideIds": [
+          "test4"
+        ]
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "slideIds": [
+          "test11",
+          "test15"
+        ]
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "slideIds": [
+          "test11",
+          "test15"
+        ]
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "slideIds": [
+          "test3"
+        ]
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "slideIds": [
+          "test3"
+        ]
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "slideIds": [
+          "test3",
+          "test6",
+          "test10",
+          "test13",
+          "test15"
+        ]
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "slideIds": [
+          "test3",
+          "test6",
+          "test10",
+          "test13",
+          "test15"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "self",
+        "slideIds": [
+          "test3"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teach",
+        "slideIds": [
+          "test3"
+        ]
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "self",
+        "slideIds": [
+          "test1"
+        ]
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teach",
+        "slideIds": [
+          "test1"
+        ]
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "slideIds": [
+          "test5",
+          "test9",
+          "test10",
+          "test19",
+          "test20",
+          "test21",
+          "test24",
+          "test25"
+        ]
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "slideIds": [
+          "test5",
+          "test9",
+          "test10",
+          "test19",
+          "test20",
+          "test21",
+          "test24",
+          "test25"
+        ]
+      }
+    ],
+    "newVersionMetadataFrames": 46,
+    "newVersionedInputFrames": 9,
+    "allOldBankPresentationsAndContractsPreserved": true,
+    "careerHistoryUnchanged": true,
+    "structureAndResolvedPoolFindings": 0,
+    "changedExistingFiles": [
+      "science-lab/data/book/c22-s32-u03.thinking-lesson.js",
+      "science-lab/data/book/c22-s42-u02.thinking-lesson.js",
+      "science-lab/v2/deck-answer-state.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "allUnitGuard": {
+    "units": 32,
+    "linkedAuthoredItems": 1559,
+    "canonicalClassroomItems": 76,
+    "canonicalContextChanges": 33,
+    "resolvedChecks": 490,
+    "versionedSlides": 174,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserVerified": false
+  },
+  "runtimeAudit": {
+    "totals": {
+      "items": 3179,
+      "source": 1512,
+      "similar": 1512,
+      "classroomPool": 1635,
+      "currentPoolMatches": 1602,
+      "selectedChecks": 490
+    },
+    "findings": [],
+    "remainingRawPoolOverrides": [
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v004",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v010",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v013",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v001",
+        "sourceType": "similar",
+        "keys": [
+          "choices",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v007",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v009",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v011",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v015",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v017",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v018",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v020",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v003",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "givens",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v004",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v009",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v001",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v005",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v010",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v011",
+        "sourceType": "similar",
+        "keys": [
+          "givens",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v012",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v013",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v019",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v020",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v003",
+        "sourceType": "similar",
+        "keys": [
+          "choices",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v004",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v009",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v001",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v005",
+        "sourceType": "similar",
+        "keys": [
+          "choices",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v010",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v011",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v013",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v017",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v018",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v020",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      }
+    ],
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "tests": {
+    "total": 832,
+    "pass": 830,
+    "fail": 0,
+    "existingBrowserSkips": 2,
+    "newTests": 3,
+    "purpose": "Execute actual two unit loaders and actual itemHtml print/online rendering; same classroom objects and versioned deck record keys; unchanged cloze/written grading, canonical exclusion, prior bank restoration and full saved classroom-paper/restart preservation. Add a32-unit invariant for1559 authored classroom items,76 canonical contracts,490 check aliases and174 versioned frames.",
+    "initialFindings": [
+      "The first coverage-count assertion included43 canonical questions that were already identical to their bank versions. Counts now distinguish1559 authored items and76 canonical classroom items,33 of which use contextual presentation changes. No product change was made to force that count.",
+      "Snapshot verification exposed that several existing builders omitted questionVersion and versioned input keys even when the question carried a revision. A shared public-buildSlides wrapper fixes the current classrooms and preserves the legacy path."
+    ],
+    "threeDRuntimeExecuted": false
+  },
+  "sourceBasis": {
+    "title": "Existing reviewed ecology/sound classroom context",
+    "standards": [
+      "4과14-01",
+      "4과07-01"
+    ],
+    "scope": "No new science content, answer or assessment requirements.",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe"
+  },
+  "historyScope": "Old bank version1 text is kept in previousVersions. Existing saved classroom paper snapshots retain their recorded question text and are archived as known compositions when starting the current version. Records lacking an original paper are not asserted to have a recoverable full presentation; existing daily-paper read-only safeguards remain in place.",
+  "editorialConnection": "The two classroom modules keep their original literal arrays and link the targeted check to the same canonical current adapter used after withThink in actual unit loaders. deck-answer-state.withVersionedQuestionSlides is called only for revisedThinkingClassroom by the public deck builder.",
+  "cacheVersion": "20261105-ecology-sound-bank",
+  "remaining": "Other quality review, actual PC/mobile/A4/audio/WebGL/mandatory3D gate, v1 consistency and main integration/deployment; nine zero-source loader counts remain observed coverage limitations. Prior browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "evidence": "science-question-review/phase245:full32 native-loader/pool audits before/after,32 workbook/128 product exact preservation,64 slide comparisons limited to input keys/version metadata, saved-paper and bank history tests, actual two-loader/item renderer fixture, current-authored-link/slide-key fixture and final test log."
+}

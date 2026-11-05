@@ -1,0 +1,820 @@
+{
+  "phase": 175,
+  "date": "2026-11-03",
+  "unit": "s41-u02",
+  "title": "4-1 물의 상태 변화 교재 통합",
+  "status": "verified-local-candidate",
+  "baselineCommit": "ad4594737f0727f4b4e5737690b6e0cb24564d8f",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini · Codex desktop · local Node VM/ReportLab/Apple Vision",
+  "skills": [
+    "instructional-design",
+    "ux-writing",
+    "frontend-design",
+    "gfield-textbook-design",
+    "pdf"
+  ],
+  "curriculum": {
+    "file": "../curriculum-standards/science-curriculum.hwp",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "basicStandards": [
+      "4과10-01",
+      "4과10-02",
+      "4과10-03"
+    ],
+    "observationalLevelOnlyInBasicBody": true,
+    "upperRailLinks": [
+      "6과06",
+      "6과07",
+      "9과03",
+      "9과04",
+      "9과08"
+    ],
+    "sourceLines": [
+      [
+        602,
+        617
+      ],
+      [
+        796,
+        817
+      ],
+      [
+        1010,
+        1044
+      ],
+      [
+        1100,
+        1112
+      ]
+    ]
+  },
+  "workbook": {
+    "studentPages": 63,
+    "teacherProblemPages": 63,
+    "duplexBlankPages": 1,
+    "teacherTotalPages": 86,
+    "answerPages": 22,
+    "quickPages": 3,
+    "questions": 80,
+    "forms": 8,
+    "drawingQuestions": 6,
+    "originalBodyBlocksRetained": true,
+    "originalQuestionsAnswersContractsSourceRefsTaxonomyPreserved": true,
+    "pageSpecificRails": 63,
+    "workedExamplesBefore": 2,
+    "workedExamplesAfter": 9
+  },
+  "integration": {
+    "workbookUnits": 14,
+    "previousClassroomArraysExactlyUnchanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "slides": 30,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "slides": 30,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "slides": 35,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "slides": 41,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "slides": 42,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "slides": 26,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "self",
+        "slides": 37,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teach",
+        "slides": 38,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "self",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teach",
+        "slides": 33,
+        "exactlyUnchanged": true
+      }
+    ],
+    "previousWorkbookProductsExactlyUnchanged": 52,
+    "newModes": [
+      {
+        "mode": "student",
+        "sha256": "7c77b3222761208e254bd940c5ed2c1745656df7bdd83cbea9d514ab66729c47"
+      },
+      {
+        "mode": "teacher",
+        "sha256": "a635bb8dba7145fe8bf4f7c89f2ae1f2c19eda3a3124d3a370abc7fa8b640b1a"
+      },
+      {
+        "mode": "answers",
+        "sha256": "c7dd94a6056b0d6d7bd93881b3e7f4bb32ef9d3f7cb9d77d4fe0ee92241f5db7"
+      },
+      {
+        "mode": "quick",
+        "sha256": "436be837135f4874d454df55fd8f717fc474955f9b1d3cd361d2739f92a887d4"
+      }
+    ],
+    "questionsAndContractsExactlyMatchVettedSource": true,
+    "answerAndQuickPagesExactlyMatchVettedSource": true,
+    "allOriginalBodyBlocksRetained": true,
+    "newWorkedExamples": 7,
+    "totalWorkedExamples": 9,
+    "originalDrawingQuestions": 6,
+    "uniquePageRails": 63,
+    "newPhotoAssets": 1,
+    "reusedPhotoAssets": 2,
+    "previousPdfs": [
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-student.pdf",
+        "sha256": "448550e9f71c625bfa30b22067b2cc4b924d4cbcb6dcc7833a29d26ffe1ba77c"
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-teacher.pdf",
+        "sha256": "70f64b4bd56a638f6a5c7ce59738e461584272b8a837074f4628d90a94ad544a"
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-answers.pdf",
+        "sha256": "49f29e808e7961f3462a76b0234cf822d128a32e59d0b617cf43ade1e8dba65a"
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-quick.pdf",
+        "sha256": "596bf586110e8d6db3c86db06cdb8fbf75b2aaaa16c2a334a710d04d180cb4be"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-student.pdf",
+        "sha256": "f3c0437d837a77e0bd2cacc06b062e26fd4ecfaf716a9925efa668dd569d1afa"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-teacher.pdf",
+        "sha256": "bb1273765ac102d5ea1da8586184e305873e60d78d1258ba9e1405bdef12a8a5"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-answers.pdf",
+        "sha256": "ef2d178052c3ba43c59440bc9f265a121acf707848f193a5b0770178c7cf1a61"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-quick.pdf",
+        "sha256": "26764f8fc6eb3eeae959da7887b92c81e9661bedade18ff2cee3c56176bc861f"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-student.pdf",
+        "sha256": "1ad441160cedc580ac5fb1ef12ac02a5fd3fe6ced7980dc91251898f901ae9da"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-teacher.pdf",
+        "sha256": "b7366112a9e6ce803e87afab57178890731c18ce1e670199e44e01dadfb22c74"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-answers.pdf",
+        "sha256": "c0ca4f56ac3db9cbdee1767efbb725e64bc546fcc3c74801cf6e309d5e80cdbc"
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-quick.pdf",
+        "sha256": "5a9f4552312dfe299f5498b96ee046a239413cd1dff077579937d79a9d6e1537"
+      }
+    ],
+    "protectedOriginals": [
+      {
+        "file": "science-lab/data/units/s41-u02.js",
+        "sha256": "d3c8ec07fb9db4642de3f44fb01bf324dee57d451493c8ca6fa81124ee2b2265",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u02.similar.js",
+        "sha256": "82dd3283457fa987e29a050823d857460ab397e7a68239f7b420e9a170c48bbf",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u02.lesson.js",
+        "sha256": "57927ea25e2e9348241ae6c8a1c56a02cde844de93425917ec92130d72d6ca58",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u02.source.js",
+        "sha256": "cdb524213320433c4041f7f290e7660d4dd50f0a180b3f0e1a4281a07a6a71ca",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u02.taxonomy.js",
+        "sha256": "593a2e931f3874b332222a74fffc3e0cf6cb2e82f675cd81c09273e9839fe320",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u02.book.js",
+        "sha256": "9480588ec636c8b73eaaa5d99115cc5f170e854ca38441814ff0bf3d9bcbbb05",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u02.interact.js",
+        "sha256": "704026f10e3898620e91303941370c7e239bb9c6b35d9902557aa1f037f45504",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u02.inquiry.book.js",
+        "sha256": "bbbc720e6d84747c9ff9c5a306c61540f2dbe17b22ff3b4aaeddfaf2e6be3802",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/activities/s41-u02.inquiry.js",
+        "sha256": "1724e25dd3c4bf1fe343c5a8da06803cd4472bbe6b12cbc5139004583d2a99a0",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/freeze-bottle.js",
+        "sha256": "b1a859d6b8394d9e7e33562a778ccf58a562188658e3cb5b389ae3de68c2fae7",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-freeze.js",
+        "sha256": "4c2b315e24856ba72999ab3be68a31bbaebfddd7314b4d2881fba2d63b9b9c27",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/inquiry-records.js",
+        "sha256": "54b01c6d91a9c73a1515e9f38a57050732873c2547f46dd6c1496c7caa6c5638",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-inquiry.js",
+        "sha256": "cbc79ffc0f023a4b3b70223102f4e99e87bed9530e7962ed60ca81c668849630",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily.js",
+        "sha256": "125770f6d7e088259a5a3283577f5d4a66a92d29b731efc9879fce5e323a1bf6",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/check.js",
+        "sha256": "b9afbd688c21970b3d6d52777f79c9d8a643496ff5856edc6afc323c53939898",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily-paper-state.js",
+        "sha256": "a66f3a5d1c6f81971d90cc44fd5279557f8ca40bca618f13453a3c872da13153",
+        "unchanged": true
+      }
+    ],
+    "oldWaterClassroomNotReplaced": true,
+    "actualStudentStorageAccessed": false,
+    "browserVerified": false,
+    "newExternalApiConnections": 0
+  },
+  "routes": {
+    "unit": "s41-u02",
+    "actualStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "originalRecordsBookExactlyUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "previousClassroomRouteUnits": 12,
+  "pdfValidation": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 63,
+        "bytes": 2703389,
+        "sha256": "7f9cf4e1a4bd91f636f31cbcac2243e58b96d9a1ec5db6460a7d599a97dc7094",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 86,
+        "bytes": 2782486,
+        "sha256": "721da084d184397e9d293a79a9569b98a9dde53c6f9220e2eb8c22cd0d7ea2fb",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 22,
+        "bytes": 228014,
+        "sha256": "a1c7df1a94f4bae1873b850e4cbd66ee0163fb28504b2254b14a1944c4f351a4",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 3,
+        "bytes": 104537,
+        "sha256": "5b3cfe0460b5e35a2a393e47a09205abf0d72c1b4f2f39c3c21a4c2adae70910",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 160,
+    "solutionExpressions": 160,
+    "teacherAnswerStartsOnRecto": 65
+  },
+  "pdfDetailValidation": {
+    "fullRailTexts": 378,
+    "quickAnswerTableCells": 240,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 58,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 59,
+        "heightMm": 155.32,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 60,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 61,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 62,
+        "heightMm": 160.2,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 63,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 58,
+        "heightMm": 204.94,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 59,
+        "heightMm": 143.46,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 60,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 61,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 62,
+        "heightMm": 148.33,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 63,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "vision": {
+    "photo": {
+      "actualRun": true,
+      "entries": [
+        {
+          "page": "p01.words",
+          "words": 0,
+          "below0_8": 0,
+          "minimumConfidence": null
+        },
+        {
+          "page": "p02.words",
+          "words": 6,
+          "below0_8": 5,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p03.words",
+          "words": 0,
+          "below0_8": 0,
+          "minimumConfidence": null
+        }
+      ],
+      "pages": 3,
+      "words": 6,
+      "below0_8": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pdf": {
+      "actualRun": true,
+      "entries": [
+        {
+          "page": "p01.words",
+          "words": 137,
+          "below0_8": 47,
+          "minimumConfidence": 0.5
+        },
+        {
+          "page": "p02.words",
+          "words": 164,
+          "below0_8": 58,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p04.words",
+          "words": 176,
+          "below0_8": 73,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p05.words",
+          "words": 158,
+          "below0_8": 65,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p06.words",
+          "words": 189,
+          "below0_8": 46,
+          "minimumConfidence": 0.5
+        },
+        {
+          "page": "p07.words",
+          "words": 171,
+          "below0_8": 47,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p08.words",
+          "words": 107,
+          "below0_8": 13,
+          "minimumConfidence": 0.5
+        },
+        {
+          "page": "p09.words",
+          "words": 203,
+          "below0_8": 65,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p10.words",
+          "words": 171,
+          "below0_8": 56,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p11.words",
+          "words": 208,
+          "below0_8": 79,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p35.words",
+          "words": 142,
+          "below0_8": 46,
+          "minimumConfidence": 0.30000001192092896
+        },
+        {
+          "page": "p59.words",
+          "words": 138,
+          "below0_8": 50,
+          "minimumConfidence": 0.30000001192092896
+        }
+      ],
+      "pages": 12,
+      "words": 1964,
+      "below0_8": 645,
+      "failed": 0,
+      "skipped": 0
+    },
+    "manualReview": {
+      "photoImages": 3,
+      "photoLabels": [
+        "눈",
+        "이슬",
+        "수돗물",
+        "고드름"
+      ],
+      "contactSheets": 9,
+      "renderedPdfPages": 174,
+      "zoomPages": [
+        [
+          "student",
+          1
+        ],
+        [
+          "student",
+          2
+        ],
+        [
+          "student",
+          3
+        ],
+        [
+          "student",
+          4
+        ],
+        [
+          "student",
+          5
+        ],
+        [
+          "student",
+          6
+        ],
+        [
+          "student",
+          7
+        ],
+        [
+          "student",
+          8
+        ],
+        [
+          "student",
+          9
+        ],
+        [
+          "student",
+          10
+        ],
+        [
+          "student",
+          11
+        ],
+        [
+          "student",
+          36
+        ],
+        [
+          "student",
+          43
+        ],
+        [
+          "student",
+          58
+        ],
+        [
+          "student",
+          59
+        ],
+        [
+          "student",
+          60
+        ],
+        [
+          "student",
+          61
+        ],
+        [
+          "student",
+          63
+        ],
+        [
+          "teacher",
+          35
+        ],
+        [
+          "teacher",
+          58
+        ],
+        [
+          "teacher",
+          65
+        ],
+        [
+          "answers",
+          22
+        ],
+        [
+          "quick",
+          1
+        ],
+        [
+          "quick",
+          3
+        ]
+      ],
+      "checks": [
+        "명조 제목·본문과 손글씨 메모 제목",
+        "글자·표·사진과 칸의 잘림·겹침",
+        "세 단계4.0/4.4/4.0cm·32.5g",
+        "겉 물기32.5/33.1/32.5g",
+        "열린 접시50/44mL와6mL 차이",
+        "차가운 병/실온 병의 관찰과 누수·흘림 조건",
+        "두 장치40분·0/4mL와응결/수집의 구별",
+        "학생 정답 비노출·교사 예시/인정 기준",
+        "큰 그리기 칸·양면64쪽 blank·해설65쪽 시작·빠른표 두 열"
+      ],
+      "observedLayoutDefects": 0,
+      "ocrAloneUsedAsCorrectnessProof": false,
+      "browserVerified": false
+    }
+  },
+  "tests": {
+    "total": 456,
+    "passed": 454,
+    "failed": 0,
+    "skipped": 2,
+    "skipReason": "existing browser-only checks"
+  },
+  "files": {
+    "science-lab/assets/book/s41-u02-photo-preparation.webp": "960f3cc5b2111808e92c1f0e6f27ec142df4fbec8ddb53ef1d1683dbe7666107",
+    "science-lab/data/book/s41-u02.workbook.js": "0fea29ea322a26cbd017e5bf8aa405f71fb7b237f8a1ea96870b59fdf906cc4b",
+    "science-lab/data/book/s41-u02.workbook-art.js": "10714778ad5f9d42f18420a6120590c038ae048a54023c500a8bff1734b757d4",
+    "science-lab/data/book/s41-u02.editorial.js": "7d86dc290df7ff7431683b497306ca78f1cd31d04715bd402d5a01ecace83153",
+    "science-lab/v2/water-workbook.css": "9997bdcf7175ccbccff357626ba4754f001e69f4cb405ed23579411899d247d1",
+    "science-lab/v2/revised-water-workbook.test.mjs": "ce7e8c3e2278c15c65ab8de813587c3dbd2b07ac486163d985061540ea75bf96",
+    "science-lab/v2/revised-textbook.js": "0b4d503a86a2220a733cb68c2d43f722191718f3d3e36d95420174f0ef64ff2d",
+    "science-lab/v2/revised-learning-book.js": "1abd1b3222d1a5b6cd5defa5eef8e82f845af08216ef424ac205710d444cc1b5",
+    "science-lab/v2/revised-workbook-paper.js": "d383fbe9810aadbfc443ae0fa01d9fc1c7f5a2abd8215dab851f8b4de3805514",
+    "science-lab/v2/revised-book-editorial.js": "218111c6fe80c1cc5086faba7eb5e79a435fddd4d0d2a9982ca04142c3de43c1",
+    "science-lab/v2/revised-lesson.js": "8fcb0f1a0710eedafe59b9e439495c675d7ac259b8e49e82db5dd48dda8d5f63",
+    "science-lab/v2/book.js": "640d1fe35b40129e5384b93f61616fbc466c23a4a479ed54cfd03689cdf7f250",
+    "science-lab/v2/index.html": "1e60ac501d7dcd6536eea1d217e0b6cf5fae1d8ad317e55c4201eae53e4ab2c3",
+    "science-lab/v2/v2.js": "85fc69b2496f3a84085b3ae35dc68aac60416a1397dbe23cc18c3e44babeb43c",
+    "science-lab/v2/workbook-print-ready.js": "3734bb271d6145d3eacad4e99c9b032d7ab8dcb7c214d15a5b15bf36d9a40258",
+    "science-lab/v2/workbook-print-ready.test.mjs": "f4d2c2a55dfb4aa87920cb3c95bbf2d44a30e53e4527dec97863c75fbc28bf96",
+    "science-lab/v2/revised-textbook.test.mjs": "177116a5735be0b889b3d1c6c5f0ed043f1091700dfddf5f2f964183de497a9d"
+  },
+  "paidApiCalls": 0,
+  "new3D": 0,
+  "newGeneratedImages": 0,
+  "actualStudentStorageAccessed": false,
+  "push": false,
+  "deployment": false,
+  "browserVerified": false,
+  "browserLimitation": "Previously denied file browser target; no localhost/headless/alternate URL bypass. Offline PDF/VM evidence does not prove browser CSS/mobile/audio.",
+  "remaining": [
+    "4-1 물의 상태 변화 기본 사고력 수업 전환·실제 활동 기록 보존",
+    "다른 학기 교재·수업 순차 통합",
+    "기존 자석 기본3D 결정 보존/검수",
+    "v1 실험 학습·v2 교과 연결 사고력의 역할 정리",
+    "교육과정·교재/원문 근거 요건 점검",
+    "실제 PC/모바일/브라우저 A4/소리/학생 기록 화면 검수",
+    "최신 main 대조와 승인 범위의 후속 통합·배포"
+  ]
+}

@@ -1,0 +1,37 @@
+import{questionPatches as COMBUSTION_QUESTION_PATCHES,railNotes as COMBUSTION_RAIL_NOTES,pageTitles,fieldTitles}from'./c22-s62-u02.editorial-data.js?v=20261104-combustion-book';
+export{COMBUSTION_QUESTION_PATCHES,COMBUSTION_RAIL_NOTES};
+export const combustionLanguage=v=>typeof v==='string'?[['원인 저감과','원인 줄이기와'],['원인 저감','원인 줄이기'],['원기록','처음 기록'],['초기 상태','처음 상태'],['초기 불꽃','처음 불꽃'],['미관찰 칸','관찰하지 못한 내용 칸'],['미관찰로','관찰하지 못했다고'],['미관찰','관찰하지 못함'],['미실시','아직 하지 않음'],['아직 미공유','아직 설명하기 전'],['미공유','아직 설명하기 전'],['기작','작용']].reduce((s,[a,b])=>s.replaceAll(a,b),v):Array.isArray(v)?v.map(combustionLanguage):v&&typeof v==='object'?Object.fromEntries(Object.entries(v).map(([k,x])=>[k,combustionLanguage(x)])):v;
+const clone=x=>JSON.parse(JSON.stringify(x));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const table=(heads,rows)=>`<table class="ed-table combustion-book-table"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map((v,i)=>`<${i?'td':'th'}${i?'':' scope="row"'}>${esc(v)}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table>`;
+const photo=m=>`<figure class="combustion-book-photo"><img src="${m.src}" alt="${esc(m.alt)}"><figcaption class="combustion-book-photo-caption">${esc(m.caption)}</figcaption></figure>`;
+const conceptChecks={3:'종이를 잘랐을 때 달라진 것과 그대로인 것을 한 가지씩 써요. 초가 타는 변화와는 어떤 차이가 있나요?',16:'식초와 베이킹 소다를 섞은 뒤 어떤 변화를 관찰할 수 있나요? 물에 소금이 녹는 변화와 비교해 설명해요.',34:'양초와 알코올이 탈 때 공통으로 나타나는 현상을 빛과 열로 나누어 설명해요.',50:'탈 물질과 산소가 있어도 바로 타지 않는 까닭을 온도와 관련지어 설명해요.',66:'푸른 염화 코발트 종이의 색 변화로 무엇을 알 수 있나요? 비교 대상의 시험지를 함께 보는 까닭도 써요.',83:'초가 녹아 생긴 액체와 연소 뒤 생긴 물은 같은 물질일까요? 어떤 성질이나 실험 결과로 구별할 수 있나요?',98:'이산화 탄소 증가가 조개껍데기 형성에 영향을 주는 과정을 바닷물의 성질 변화와 연결해 설명해요.',114:'화석 연료 사용을 줄이는 방법과 바닷물 관측·경보는 각각 무엇을 줄이거나 대비하는 방법인가요?'};
+export function withCombustionEditorial(base){
+ if(base.unit!=='c22-s62-u02'||base.pages.length!==133||base.questions.length!==128)throw Error('물질의 연소 교재 원고가 다릅니다.');
+ const questions=base.questions.map(q=>{const next=combustionLanguage({...q,...clone(COMBUSTION_QUESTION_PATCHES[q.no]||{})});if(next.options)next.given=clone(next.options);if(next.slots&&next.responseContract.parts)next.slots=clone(next.responseContract.parts);const c=next.responseContract;if(COMBUSTION_QUESTION_PATCHES[q.no]&&!c.teacherRequired){if(c.kind==='single-choice')next.criteria='조건에 맞는 보기 한 개를 고른다: '+next.answer;else if(c.kind==='multi-choice')next.criteria='빠짐·추가·중복 없이 고른다: '+next.answer+'. 선택한 순서는 관계없다.';else if(c.kind==='ordered-term-parts')next.criteria=c.parts.map(p=>p.label+' '+p.accepted.join(' 또는 ')+(p.unitRequired?' (단위 필요)':'')).join(' / ')+'. 부분별 답의 대응을 유지한다.';}return next;});
+ const figures=Object.fromEntries(Object.entries(base.figures).map(([k,v])=>[k,combustionLanguage(v).replaceAll('#2456c4','#2f6b4a').replaceAll('#f5f7fb','#e9f0e7')]));
+ const figureModels=combustionLanguage(base.figureModels);
+ const captions={'book-preparation':'혼합 전후의 성질을 비교할 때 쓰는 용기와 재료의 모습이에요. 용기 속 액체와 가루의 이름은 준비한 재료의 표시로 확인해요.','candle':'흰 양초의 심지에서 불꽃이 타고 있어요. 빛이 나는 모습과 남아 있는 초의 모습을 살펴보아요.','shells':'조개껍데기의 모습이에요. 바닷물의 성질이 달라지면 조개가 껍데기를 만들고 유지하는 데 어떤 영향이 생길까요?'};
+ for(const[k,caption]of Object.entries(captions)){figureModels[k]={...figureModels[k],caption,credit:''};figures[k]=photo(figureModels[k]);}
+ for(const[k,m]of Object.entries(figureModels))if(m.kind==='table'){m.caption='문제 풀이를 위한 연습 자료';figures[k]=table(m.heads,m.rows);}
+ for(const q of questions)if(q.table&&q.figure){figures[q.figure]=table(q.table.머리,q.table.행);figureModels[q.figure]={kind:'table',heads:q.table.머리,rows:q.table.행,caption:'문제 풀이를 위한 연습 자료'};}
+ figureModels.sources.caption='혼합 전후의 변화와 이산화 탄소가 바다 생태계에 미치는 영향을 알아볼 자료예요. 과학 내용과 실험 안전 안내를 함께 읽어요.';
+ figures.sources='<div class="combustion-book-sources">'+figureModels.sources.links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}</a>`).join('')+`<p>${figureModels.sources.caption}</p></div>`;
+ for(let start=0;start<128;start+=24){const rows=questions.slice(start,start+24),tables=[rows.slice(0,12),rows.slice(12)].filter(r=>r.length).map(r=>r.map(q=>[q.no,q.formLabel,q.responseContract.teacherRequired?'교사 확인':q.answer]));figures['combustion-quick-'+start]='<div class="combustion-quick-grid">'+tables.map(r=>table(['번호','형식','정답'],r)).join('')+'</div>';figureModels['combustion-quick-'+start]={kind:'quick',heads:['번호','형식','정답'],tables};}
+ const revise=(p,i)=>{
+  if(p.kind==='duplex-blank')return p;
+  const[core,upper,self]=COMBUSTION_RAIL_NOTES[i];
+  let blocks=p.blocks.map(b=>{const n=combustionLanguage(b);if(b.type==='field'){n.title=fieldTitles[b.title]||n.title;if(n.title==='워밍업')n.hint='초가 녹을 때와 탈 때에는 어떤 차이가 있을까요? 처음 생각을 자유롭게 적어요.';if(n.title==='궁금한 점')n.hint='물질의 변화나 연소에서 알아보고 싶은 것을 적어요.';if(n.title==='관찰하거나 조사한 내용')n.hint='살펴본 실험이나 조사 자료에서 알게 된 내용을 써요.';}return n;});
+  if(i===0){blocks.unshift({type:'table',heads:['이름','공부한 날'],rows:[['','']]});blocks=blocks.map(b=>b.type==='diagram'?{...b,key:'candle'}:b.type==='text'?{...b,text:'물질을 섞기 전과 후의 성질을 비교해요. 양초와 알코올이 탈 때의 공통 현상과 연소 조건을 알아보고, 연소 뒤 생기는 물질을 확인해요. 이산화 탄소가 생태계에 미치는 영향을 조사하고 해결책을 함께 나누어요.'}:b);}
+  if(i===1){blocks=blocks.map(b=>b.type==='table'?{...b,heads:['배울 내용','해 볼 활동'],rows:[['물질의 성질이 달라지는 변화와 달라지지 않는 변화','변화 전후의 성질 관찰하고 비교하기'],['연소할 때의 현상과 연소 조건','공통 현상을 관찰하고 연소 조건 찾기'],['연소 전과 후의 물질','물과 이산화 탄소를 확인하고 성질 비교하기'],['이산화 탄소로 인한 생태계 피해','피해 사례를 조사하고 해결책 제안하여 나누기']]}:b.type==='text'?{...b,text:'여덟 가지 형식의 128문항을 풀어요. 개념과 예제를 읽고, 표와 그림에서 근거를 찾아 설명해요. 오른쪽 더 알아보기에서는 상위 학년의 과학 개념을 살펴보아요.'}:b);}
+  if(i===2)blocks=[{type:'table',heads:['변화','달라진 것','그대로인 것'],rows:[['종이를 찢음','조각의 크기와 수','종이라는 물질'],['얼음이 녹음','고체에서 액체로 상태가 바뀜','물이라는 물질']]},{type:'text',text:'종이를 찢거나 얼음이 녹으면 모양·크기·상태가 달라져도 다른 물질로 변한 것은 아니에요. 종이가 탈 때처럼 다른 성질의 물질이 생기는 변화와 비교해요.'},{type:'table',heads:['관찰할 변화','비교할 내용'],rows:[['모양이나 상태가 바뀌는 변화','어떤 성질은 그대로인지 살펴요.'],['다른 물질이 생기는 변화','변화 전과 후 물질의 성질이 어떻게 다른지 살펴요.']]},{type:'text',text:'물질이 달라졌는지는 겉모습만으로 정하지 않고 여러 성질을 비교해 알아보아요. 모르는 물질을 맛보거나 임의로 섞지 않아요.'}];
+  if(i===15){const t=blocks.find(b=>b.type==='text');t.text='식초와 베이킹 소다를 섞으면 기체가 생기는 등 섞기 전과 다른 성질을 보이는 변화가 나타나요. 물에 소금이 녹는 변화와 비교하여 색·상태·기포 발생 등 관찰할 항목을 정해요.';}
+  if(i===48){const t=blocks.find(b=>b.type==='text');t.text='보안경을 쓰고 긴 머리와 옷자락을 정리해요. 불연성 받침과 소화 준비를 확인한 뒤 선생님의 시범을 정해진 거리에서 관찰해요. 불꽃·연료·뜨거운 기구는 선생님이 다루며, 불이 붙어 있거나 뜨거운 기구에 알코올을 더 넣지 않아요.';}
+  if(i===82)blocks=blocks.map(b=>b.type==='text'&&b.text.includes('그을음')?{...b,text:'양초와 알코올이 연소하면 타기 전과 성질이 다른 물과 이산화 탄소가 생겨요. 초가 녹아 생긴 촛농과 연소로 생긴 물을 구별해요. 선생님의 시범에서 석회수의 처음과 나중 상태를 비교해요.'}:b);
+  if(i===113){const t=blocks.filter(b=>b.type==='text');t.at(-1).text='화석 연료 사용을 줄이는 방법과 바닷물의 변화를 알아 피해에 대비하는 방법을 함께 생각해요. 조사한 피해 사례와 연결하여 해결책을 그림과 문장으로 나타내고 친구와 의견을 나누어요.';}
+  if(conceptChecks[i+1])blocks.push({type:'field',title:'개념 확인',hint:conceptChecks[i+1],lines:4,draw:false});
+  return{...p,title:pageTitles[i],section:combustionLanguage(p.section).replace('실제 활동','탐구 활동').replace(/ · 6과14-\d+/g,''),blocks,rail:[{title:'핵심 정리',text:core},{title:'더 알아보기',text:upper},{title:'내가 정리할 것',text:self,write:5}]};
+ };
+ const teacherPages=base.teacherPages.map(p=>({...combustionLanguage(p),rail:p.rail.map((r,i)=>i===1?{...r,title:'지도할 때',text:'전후의 성질과 비교 조건을 확인하고, 관찰 결과에서 연소 현상·생성물·생태계 영향으로 설명을 이어 가도록 도와요.'}:combustionLanguage(r))}));
+ return{...base,theme:'#2f6b4a',questions,figures,figureModels,pages:base.pages.map(revise),teacherStudentPages:base.teacherStudentPages.map(revise),teacherPages};
+}

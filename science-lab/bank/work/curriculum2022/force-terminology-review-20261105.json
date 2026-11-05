@@ -1,0 +1,135 @@
+{
+  "phase": 252,
+  "date": "2026-11-05",
+  "baseCommit": "f335085cfc614af9e7410f1f7ffa4c4ae0d95c99",
+  "scope": "Read-only verification of balancing terminology in current 2022-revised elementary publisher previews; no product edits.",
+  "curriculum": {
+    "source": "교육부 고시 제2022-33호 별책9",
+    "sourceSHA256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "standards": [
+      "4과01-02",
+      "4과01-04"
+    ],
+    "interpretation": "수평 잡기로 무게를 비교하며 지레·빗면 사용 시 드는 힘의 차이를 관찰한다. 도구의 원리나 구조적 특성은 다루지 않는다는 제한을 받침점 단어 자체의 금지로 해석하지 않는다."
+  },
+  "primarySources": [
+    {
+      "title": "자습서&평가문제집 초등 과학 3-1 (22개정)",
+      "publisherPage": "https://m.book.visang.com/books/info/5602",
+      "previewPageCount": 34,
+      "textPagesRead": 25,
+      "zeroBasedIndicesRead": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "termPageIndices": {
+        "받침점": [
+          2,
+          3,
+          11,
+          12,
+          13,
+          14,
+          16,
+          20,
+          21,
+          22
+        ],
+        "수평대": []
+      },
+      "printedReference": "평가문제집 2쪽"
+    },
+    {
+      "title": "오투 초등과학 3-1 (22개정)",
+      "publisherPage": "https://m.book.visang.com/books/info/5444",
+      "previewPageCount": 28,
+      "textPagesRead": 28,
+      "zeroBasedIndicesRead": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "termPageIndices": {
+        "받침점": [
+          2,
+          3,
+          14,
+          16,
+          17,
+          20,
+          22,
+          23,
+          24
+        ],
+        "수평대": []
+      },
+      "printedReference": "실전편 2쪽"
+    }
+  ],
+  "decisions": {
+    "받침점": "Verified in both public 2022-revised previews; retain.",
+    "수평대": "Not found in inspected preview pages. This limited absence does not establish invalidity. Keep current question/answer intact pending evidence and review of the device-name recall demand.",
+    "question": "s31-u01-w003",
+    "protectedData": "Raw/source/similar banks and all question/answer/version contracts untouched."
+  },
+  "verification": {
+    "trackedScienceFilesUnchangedBeforeDocumentation": 6398,
+    "sourcePageTilesVisuallyInspected": 1,
+    "appleVisionTiles": 2,
+    "appleVisionFailures": 0,
+    "appleVisionTermConfirmed": "받침점",
+    "browserRuns": 0,
+    "productRuntimeOrLayoutClaim": false,
+    "testSuiteRerun": false,
+    "reason": "Only research metadata and existing handoffs change."
+  },
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase252"
+}

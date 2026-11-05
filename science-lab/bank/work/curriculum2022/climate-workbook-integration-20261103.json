@@ -1,0 +1,400 @@
+{
+  "phase": 171,
+  "date": "2026-11-03",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "f9ef94f2f67a2e17644953c7a1893bad37c246e1",
+  "scope": "4-2 기후변화와 우리 생활 52쪽 교재·상위 학습 오른쪽 칸·모형 실사풍 장면·0기준 그래프 통합",
+  "workbook": {
+    "units": 13,
+    "studentPages": 52,
+    "teacherPages": 76,
+    "answerPages": 24,
+    "quickPages": 5,
+    "questions": 80,
+    "forms": 8,
+    "conceptPages": 15,
+    "structuredExamples": 9,
+    "drawingQuestions": 7,
+    "teacherRequiredQuestions": 20,
+    "uniqueRightRails": 52,
+    "questionContractsPreserved": true
+  },
+  "curriculum": {
+    "source": "교육부2022-33 별책9 과학과 교육과정",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "basicStandards": [
+      "4과16-01",
+      "4과16-02",
+      "4과16-03"
+    ],
+    "upperLearningOnly": [
+      "6과06",
+      "6과08",
+      "9과03",
+      "9과14",
+      "9과17",
+      "9과18",
+      "9과22",
+      "상위 수학 그래프·통계·축척"
+    ],
+    "scientificMechanismsAndMitigationAdaptationClassificationNotAddedAsBasicAssessment": true
+  },
+  "visuals": {
+    "newPhotorealModelImages": 2,
+    "builtInImagegenEdits": 2,
+    "newExternalApiConnections": 0,
+    "new3D": 0,
+    "previous13AssetHashesPreserved": true,
+    "actualPhotosUsed": 9,
+    "oldProceduralSeaTownImagesInRenderedWorkbook": 0,
+    "photoSceneNotNumericMeasurement": true,
+    "temperatureZeroBaseline": [
+      {
+        "mode": "student",
+        "page": 4,
+        "whiteBackground": true,
+        "barHeightsPt": [
+          80.09350781249998,
+          92.90846906249999
+        ],
+        "ratio": 1.16,
+        "zeroBaselineSource": true
+      },
+      {
+        "mode": "teacher",
+        "page": 4,
+        "whiteBackground": true,
+        "barHeightsPt": [
+          80.09350781249998,
+          92.90846906249999
+        ],
+        "ratio": 1.16,
+        "zeroBaselineSource": true
+      }
+    ]
+  },
+  "pdf": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 52,
+        "bytes": 15364995,
+        "sha256": "1ad441160cedc580ac5fb1ef12ac02a5fd3fe6ced7980dc91251898f901ae9da",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 76,
+        "bytes": 15464295,
+        "sha256": "b7366112a9e6ce803e87afab57178890731c18ce1e670199e44e01dadfb22c74",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 24,
+        "bytes": 263027,
+        "sha256": "c0ca4f56ac3db9cbdee1767efbb725e64bc546fcc3c74801cf6e309d5e80cdbc",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 5,
+        "bytes": 119183,
+        "sha256": "5a9f4552312dfe299f5498b96ee046a239413cd1dff077579937d79a9d6e1537",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 160,
+    "solutionExpressions": 160,
+    "teacherAnswerStartsOnRecto": 53
+  },
+  "pdfDetails": {
+    "fullRailTexts": 312,
+    "quickAnswerTableCells": 240,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 24,
+        "heightMm": 157.91,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 29,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 38,
+        "heightMm": 162.66,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 42,
+        "heightMm": 167.9,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 46,
+        "heightMm": 167.9,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 50,
+        "heightMm": 167.9,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 52,
+        "heightMm": 162.66,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 24,
+        "heightMm": 170.05,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 29,
+        "heightMm": 194.08,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 38,
+        "heightMm": 174.79,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 42,
+        "heightMm": 180.03,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 46,
+        "heightMm": 180.03,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 50,
+        "heightMm": 180.03,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 52,
+        "heightMm": 169.36,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Bold",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAB+PretendardVariable-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "finalVisualReview": {
+    "contacts": [
+      {
+        "mode": "student",
+        "from": 1,
+        "to": 24,
+        "file": "contact-sheets/student-001.jpg"
+      },
+      {
+        "mode": "student",
+        "from": 25,
+        "to": 48,
+        "file": "contact-sheets/student-025.jpg"
+      },
+      {
+        "mode": "student",
+        "from": 49,
+        "to": 52,
+        "file": "contact-sheets/student-049.jpg"
+      },
+      {
+        "mode": "teacher",
+        "from": 1,
+        "to": 24,
+        "file": "contact-sheets/teacher-001.jpg"
+      },
+      {
+        "mode": "teacher",
+        "from": 25,
+        "to": 48,
+        "file": "contact-sheets/teacher-025.jpg"
+      },
+      {
+        "mode": "teacher",
+        "from": 49,
+        "to": 72,
+        "file": "contact-sheets/teacher-049.jpg"
+      },
+      {
+        "mode": "teacher",
+        "from": 73,
+        "to": 76,
+        "file": "contact-sheets/teacher-073.jpg"
+      },
+      {
+        "mode": "answers",
+        "from": 1,
+        "to": 24,
+        "file": "contact-sheets/answers-001.jpg"
+      },
+      {
+        "mode": "quick",
+        "from": 1,
+        "to": 5,
+        "file": "contact-sheets/quick-001.jpg"
+      }
+    ],
+    "zooms": [
+      [
+        "student",
+        1
+      ],
+      [
+        "student",
+        4
+      ],
+      [
+        "student",
+        8
+      ],
+      [
+        "student",
+        13
+      ],
+      [
+        "student",
+        15
+      ],
+      [
+        "student",
+        16
+      ],
+      [
+        "student",
+        19
+      ],
+      [
+        "student",
+        24
+      ],
+      [
+        "student",
+        28
+      ],
+      [
+        "student",
+        31
+      ],
+      [
+        "student",
+        35
+      ],
+      [
+        "student",
+        38
+      ],
+      [
+        "student",
+        50
+      ],
+      [
+        "student",
+        52
+      ],
+      [
+        "teacher",
+        53
+      ],
+      [
+        "answers",
+        1
+      ],
+      [
+        "quick",
+        1
+      ]
+    ],
+    "allReviewed": true,
+    "visibleClippingOverlapMissingGlyphDefects": 0,
+    "fixedDuringReview": [
+      "교사7쪽 블록 간격을 원래 웹 지면과 같은2mm로 맞춰 넘침 해소",
+      "오프라인 SVG 변환기의3자리 색 코드 확장으로 흰 바탕 파랑 출력 해소"
+    ],
+    "browserPrintEquivalent": false
+  },
+  "visionEvidence": "vision-review.json",
+  "regressions": {
+    "previousClassroomArraysUnchanged": 24,
+    "previousWorkbookProductsUnchanged": 48,
+    "oldPdfHashesUnchanged": 8,
+    "protectedFilesUnchanged": 17,
+    "actualNineUnitRoutesPassed": true,
+    "climateThinkingClassNotYetReplaced": true,
+    "actualStudentStorageAccessed": false
+  },
+  "tests": {
+    "total": 429,
+    "pass": 427,
+    "fail": 0,
+    "preexistingBrowserSkips": 2,
+    "log": "all-v2-tests.txt"
+  },
+  "push": false,
+  "deploy": false,
+  "goalStatus": "active",
+  "wholeProgramComplete": false,
+  "remaining": [
+    "기후변화 기본 사고력 수업 연결",
+    "다른 학기 교재/수업 보완",
+    "v1/v2 역할·교육과정·원문 요건·최신main 재대조",
+    "실제 브라우저/CSS/A4·소리·기록 복구 화면 검수"
+  ],
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase171",
+  "evidence": [
+    "integration-validation.json",
+    "routes-validation.json",
+    "pdf-validation.json",
+    "pdf-details-validation.json",
+    "pdf-chart-validation.json",
+    "vision-review.json",
+    "all-v2-tests.txt",
+    "review.json"
+  ],
+  "originalAuthoringSourcePreserved": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "localCommit": null
+}

@@ -1,0 +1,282 @@
+{
+  "phase": 274,
+  "date": "2026-11-05",
+  "title": "날씨 그림3개의 관찰 밑표제6문구 정리와 기존 그림13장 시각/OCR 대조",
+  "status": "verified-local-candidate-browser-gates-pending",
+  "baselineCommit": "4c2b51f1e72f1af0af74a965473f25eb3c08d06a",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / native image viewing, Apple Vision OCR and Node/VM fixtures; no AI API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design"
+  ],
+  "curriculum": {
+    "title": "교육부2022-33 별책9",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "extractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "codes": [
+      "6과06-01~02",
+      "6과04-01~03"
+    ],
+    "use": "Weather labels point to observable cloud coverage/fog position and apparatus parts. Existing text still teaches small water droplets/ice grains and distinction between surface condensation and suspended droplets. Body image comparison is limited to the current elementary captions and gross model/action features."
+  },
+  "visualReview": [
+    {
+      "id": "c22-s52-u03-dew",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s52-u03/dew.webp",
+      "sha256": "0b40c5de42b28bd4d6d0638a175804371d4ef91bfb29531af93d8464a4593ef8",
+      "viewedAtFullImage": true,
+      "reviewScope": "Two similar cups; visible droplets on the outside of the ice-water cup, other cup clear; no numerical temperature claim."
+    },
+    {
+      "id": "c22-s52-u03-fog",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s52-u03/fog.webp",
+      "sha256": "02dd682dc08dc894816e1ce9b6a3c7c1e1795099546fb88970dea458aa516b2e",
+      "viewedAtFullImage": true,
+      "reviewScope": "Low suspended white layer near the ground; upper trees and mountains visible above it; no subsequent-weather inference."
+    },
+    {
+      "id": "c22-s52-u03-cloud",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s52-u03/cloud.webp",
+      "sha256": "f17693bbfcf7d96023a1826352b6a88eda6963607025d54e9c0ed30ce2a2dd88",
+      "viewedAtFullImage": true,
+      "reviewScope": "White cloud regions and blue gaps; do not pretend microscopic droplets or ice grains are individually visible."
+    },
+    {
+      "id": "c22-s52-u03-coast-model",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s52-u03/coast-model.webp",
+      "sha256": "c8e2c80c2d5f3228d709031ed4ef7021293a917e7040e9b40d214fd9d8b74271",
+      "viewedAtFullImage": true,
+      "reviewScope": "Similar shallow containers, sand and water, fixed probes; no values visible on the displays."
+    },
+    {
+      "id": "c22-s52-u03-wind",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s52-u03/wind.webp",
+      "sha256": "41d517a9021921cd0b080bc3a8a7e09dd3a24a7c8201483586b3fbc0e9cf0156",
+      "viewedAtFullImage": true,
+      "reviewScope": "Arrow head, larger vane tail and cup-shaped anemometer parts; no rotation speed or geographic bearing inferred."
+    },
+    {
+      "id": "c22-s52-u03-fog-model",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s52-u03/fog-model.webp",
+      "sha256": "817f3b50d6216507a5915cc82ca95a3220d3d26aeeafa3f6eed64c342880da04",
+      "viewedAtFullImage": true,
+      "reviewScope": "Sealed ice bag suspended above bottom water; separate visible objects from any claimed air-fog result."
+    },
+    {
+      "id": "c22-s51-u04-torso-model-photo-v1",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s51-u04/torso-model-photo-v1.webp",
+      "sha256": "3e44ab6dd49c19dbe61189d2baea3ff79937a3069c1e884c5fa69febd5a3d7e5",
+      "viewedAtFullImage": true,
+      "reviewScope": "Basic gross-organ placement and current educational-model caption only; not a detailed anatomical validation."
+    },
+    {
+      "id": "c22-s51-u04-arm-model-photo-v1",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s51-u04/arm-model-photo-v1.webp",
+      "sha256": "142bf91b4054c032070fda324a321dc6c09c5b434799a03bf290348828ee1ada",
+      "viewedAtFullImage": true,
+      "reviewScope": "Extended/flexed model poses and comparative muscle shape; no quantitative muscle measurement."
+    },
+    {
+      "id": "c22-s51-u04-heart-model-photo-v1",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s51-u04/heart-model-photo-v1.webp",
+      "sha256": "33ef0a557bff5caaa46d3299276a0b0fe5f7d279870e926f67238609301bbacb",
+      "viewedAtFullImage": true,
+      "reviewScope": "Outer model appearance and visible vessels agree with the scope of the current caption; full vascular connectivity is outside this review."
+    },
+    {
+      "id": "c22-s51-u04-breathing-model-photo-v1",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s51-u04/breathing-model-photo-v1.webp",
+      "sha256": "65f734b5fcb80544418492fbbcd686eb4c40359e77488fd8039fbbc88b0acb08",
+      "viewedAtFullImage": true,
+      "reviewScope": "Left smaller balloons and flatter lower membrane; right lowered membrane and larger balloons; educational-model comparison."
+    },
+    {
+      "id": "c22-s51-u04-urinary-model-photo-v1",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s51-u04/urinary-model-photo-v1.webp",
+      "sha256": "3736c193a7b70f5682f17ab8017d56ea8eb99fa633f7bbb57a3bc8c73d75477e",
+      "viewedAtFullImage": true,
+      "reviewScope": "Two kidney shapes, descending tubes, one bladder and lower outlet correspond to the caption."
+    },
+    {
+      "id": "c22-s51-u04-pulse-model-photo-v1",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s51-u04/pulse-model-photo-v1.webp",
+      "sha256": "16dde3387322bdc16376d2f4d8351eba0cf6687f57774afad063b751c5c4f5dd",
+      "viewedAtFullImage": true,
+      "reviewScope": "Two fingertips at wrist/thumb-side region and a blank stopwatch display; no pulse value inferred."
+    },
+    {
+      "id": "c22-s51-u04-health-model-photo-v1",
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/activities/c22-s51-u04/health-model-photo-v1.webp",
+      "sha256": "d562eddf47488503da805c21923321f12e5246a7add961541cbed4b3930c089f",
+      "viewedAtFullImage": true,
+      "reviewScope": "Hands, water stream and soap foam; no washing duration or complete step sequence inferred."
+    }
+  ],
+  "labelChanges": {
+    "fog": [
+      [
+        "지표 부근에 떠 있는 모습",
+        "지표 가까이에 떠 있는 안개"
+      ],
+      [
+        "표면에 맺힌 이슬과 비교",
+        "안개 위로 드러난 나무와 산"
+      ]
+    ],
+    "cloud": [
+      [
+        "하늘에 떠 있는 구름",
+        "흰 구름이 있는 곳"
+      ],
+      [
+        "작은 물방울·얼음 알갱이",
+        "구름 사이로 보이는 푸른 하늘"
+      ]
+    ],
+    "fogModel": [
+      [
+        "물과 냉각 주머니를 놓은 위치",
+        "물 위에 매단 얼음주머니"
+      ],
+      [
+        "표면 물방울과 공기 중 흐림을 구별",
+        "병 아래쪽에 담은 물"
+      ]
+    ]
+  },
+  "preservation": {
+    "reviewedExistingImages": 13,
+    "weatherImages": 6,
+    "bodyImages": 7,
+    "appleVision": {
+      "processed": 13,
+      "failed": 0,
+      "recognizedTextObservations": 0
+    },
+    "modifiedFigureKeys": [
+      "fog",
+      "cloud",
+      "fogModel"
+    ],
+    "modifiedLabelStrings": 6,
+    "changedProducts": [
+      {
+        "unit": "c22-s52-u03",
+        "mode": "student",
+        "sha256": "aa2b915f71bcf5ee7ffe9b2986c261c4457ff67f34e0f49118dd8f6e94916715"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teacher",
+        "sha256": "fbb50fb7aaf3c0f03811b111d4377ecfe95a5478e3e3e8fde9a30a2781426187"
+      }
+    ],
+    "changedClassroomCards": [
+      {
+        "unit": "c22-s52-u03",
+        "mode": "self",
+        "id": "fogmeaning",
+        "title": "안개는 지표 가까운 공기 중에 떠 있어요"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "self",
+        "id": "fogdata",
+        "title": "벽의 물방울만 보였다면 무엇을 알 수 있을까요?"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "self",
+        "id": "clouds",
+        "title": "구름은 작은 물방울이나 얼음 알갱이예요"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teach",
+        "id": "fogmeaning",
+        "title": "안개는 지표 가까운 공기 중에 떠 있어요"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teach",
+        "id": "fogdata",
+        "title": "벽의 물방울만 보였다면 무엇을 알 수 있을까요?"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teach",
+        "id": "clouds",
+        "title": "구름은 작은 물방울이나 얼음 알갱이예요"
+      }
+    ],
+    "unchangedWorkbooks": 31,
+    "unchangedQuestions": 3080,
+    "unchangedPaperHtmlProducts": 126,
+    "unchangedSlideArrays": 62,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbookIncludingUndefined": true,
+    "priorEditorialBytesUnchanged": true,
+    "allPageBodiesRailsAndWritingSpaceUnchanged": true,
+    "allNonlabelFigureHtmlAndSourceDimensionsUnchanged": true,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/c22-s52-u03.editorial.js",
+      "science-lab/data/book/c22-s52-u03.workbook.js",
+      "science-lab/v2/deck-weather-thinking.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/observation-language.test.mjs",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false,
+    "rasterImagesEdited": false
+  },
+  "implementation": [
+    "Append withWeatherPhotoLabels while preserving old editorial bytes. Only exact old label nodes in three current figures change.",
+    "weatherPhotoPriorWorkbook exactly reconstructs the previous native workbook including undefined fields.",
+    "Observation-language regression uses the preserved pre-photo stage, keeping its original term-only invariant.",
+    "Update workbook, classroom and entry import versions for the affected current picture labels."
+  ],
+  "validation": {
+    "totalTests": 1207,
+    "passed": 1205,
+    "failed": 0,
+    "skipped": 2,
+    "syntaxFiles": 8,
+    "diffCheck": true,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "nativeQaNetwork": 0,
+    "appleVision": {
+      "source": "Existing phase247 Swift Vision/ImageIO program; hash-checked fresh run on thirteen images",
+      "recognitionLevel": "accurate",
+      "languages": [
+        "ko-KR",
+        "en-US"
+      ],
+      "processed": 13,
+      "failed": 0,
+      "recognizedTextObservations": 0
+    },
+    "scope": "Original bitmap viewing and picture/caption comparison plus exact HTML and data invariants. OCR zero observations is not proof of all visual/scientific correctness, and the HTML label text was checked separately.",
+    "browserVerified": false,
+    "a4RenderingVerified": false,
+    "actual3DVerified": false
+  },
+  "unperformed": [
+    "actual PC/mobile/A4/fonts/overflow/speech/WebGL and mandatory 3D runtime checks",
+    "main WIP integration",
+    "merge",
+    "push",
+    "deployment",
+    "image generation",
+    "paid AI API calls",
+    "cleanup"
+  ],
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase274"
+}

@@ -1,5 +1,10 @@
+import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
+import {withMaterialEarthStudentLanguage} from './material-earth-student-language.js';
+import {withMaterialsBodyLanguage} from './material-earth-body-language.js';
+import {withMaterialsRails} from './c22-s32-u01.rail-notes.js';
+import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 물체와 물질 A4 교재. scripts/gen-science-workbook-c22s32u01.mjs가 생성.
-export const workbook = {
+const baseWorkbook = {
  "unit": "c22-s32-u01",
  "title": "물체와 물질",
  "semester": "3-2",
@@ -7981,3 +7986,5 @@ export const workbook = {
   }
  ]
 };
+
+export const workbook=withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withMaterialsBodyLanguage(withStudentOpeningLanguage(withMaterialsRails(baseWorkbook)))));

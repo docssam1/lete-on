@@ -1,0 +1,210 @@
+{
+  "phase": 238,
+  "date": "2026-11-05",
+  "baseCommit": "7d691190bcfe6ed084dc6d700152448c58ad13ce",
+  "unit": "c22-s51-u03",
+  "scope": "Student-facing workbook question presentation19, current authored bank presentation37 including pre-existing mass/weight wording divergence, and explanatory text of9 figures. Original source75, similar75, raw authored96, answer contracts, accepted responses, criteria and explanations are unchanged.",
+  "changes": [
+    "Replace ambiguous white sugar-water phrasing with white sugar dissolved in water, and professional task-status wording with work already done/next plans.",
+    "Rewrite temperature/amount comparison sequence instructions and residual/input labels while preserving all steps and answer labels.",
+    "Use elementary curriculum weight wording consistently in current online prompts and choices, including the correct Korean particles.",
+    "Keep current bank five-choice order separate from workbook four-choice order. Do not copy workbook choice positions into bank contracts.",
+    "Preserve prior versions for all37 edited online items, and apply the same versions to five of the16 existing classroom check items.",
+    "Make figure labels/captions describe learning actions; image pixels, paths, HTML tags/attributes and numerical values are unchanged."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 31,
+    "questionsWithSameAnswersCriteriaExplanationsAndContracts": 3080,
+    "workbookQuestionPresentationsChanged": 19,
+    "workbookQuestionNumbers": [
+      7,
+      18,
+      20,
+      21,
+      26,
+      39,
+      43,
+      46,
+      47,
+      50,
+      64,
+      74,
+      75,
+      79,
+      82,
+      86,
+      87,
+      91,
+      95
+    ],
+    "runtimePresentationsVersioned": 37,
+    "runtimeQuestionNumbers": [
+      1,
+      7,
+      9,
+      11,
+      13,
+      14,
+      16,
+      18,
+      20,
+      21,
+      25,
+      26,
+      39,
+      42,
+      43,
+      46,
+      47,
+      50,
+      57,
+      60,
+      64,
+      69,
+      70,
+      71,
+      72,
+      74,
+      75,
+      77,
+      79,
+      81,
+      82,
+      86,
+      87,
+      90,
+      91,
+      94,
+      95
+    ],
+    "runtimeContractsUnchanged": 96,
+    "figureTextChanged": [
+      "mixing",
+      "observation",
+      "mass",
+      "temperature",
+      "concentration",
+      "floating",
+      "communication",
+      "sourceMass",
+      "sourceColoredWater"
+    ],
+    "figureTagsAttributesAndNumericValuesUnchanged": true,
+    "allPagesAndWritingSpaceUnchanged": true,
+    "generatedWorkbookBodyByteIdentical": true,
+    "productsChanged": [
+      {
+        "unit": "c22-s51-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "answers"
+      }
+    ],
+    "productsUnchanged": 125,
+    "slideArraysChanged": [
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "slides": 41,
+        "onlyBodyChanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "slides": 42,
+        "onlyBodyChanged": true
+      }
+    ],
+    "slideArraysUnchanged": 62,
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF.md",
+      "science-lab/bank/BANK-HANDOFF.md",
+      "science-lab/data/book/c22-s51-u03.thinking-lesson.js",
+      "science-lab/data/book/c22-s51-u03.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-solution-lesson.test.mjs",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "productionAudit": {
+    "productionUnitLoaderExecuted": true,
+    "currentItems": 96,
+    "versions": 37,
+    "unchangedOriginalItemReferences": 59,
+    "originalSource": 75,
+    "similar": 75,
+    "classroomChecks": 16,
+    "currentClassroomChecks": 5,
+    "poolAndClassroomAgree": true,
+    "actualWorkbookHtmlProducts": 4,
+    "actualBankHtmlProducts": 4,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "htmlChecks": {
+    "papers": [
+      {
+        "mode": "student",
+        "currentWorkbookPromptsMatched": 19,
+        "versionedBankPromptsMatched": 37,
+        "browserAndLayoutVerified": false
+      },
+      {
+        "mode": "teacher",
+        "currentWorkbookPromptsMatched": 19,
+        "versionedBankPromptsMatched": 37,
+        "browserAndLayoutVerified": false
+      }
+    ],
+    "changedFigureTextNodesMatchedInWorkbookOrClassroom": 16,
+    "actualBrowserOrA4Verified": false
+  },
+  "tests": {
+    "v2": {
+      "pass": 817,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "newTests": 2,
+    "purpose": "All96 current grading contracts, every choice position/toggled multi-choice/accepted short answer and open-response review boundary; old-version restore, picked-choice text and restart archiving without input mutation.",
+    "initialFinding": "The initial current-vs-workbook test found pre-existing mass/weight divergence in online prompts/topics. Inspection expanded the current presentation fix, including choices and Korean particles. Initial log is retained.",
+    "existingClassroomRegression": "Use current presentations in the production classroom pool while keeping all plan, storage, comparison and interaction assertions.",
+    "threeDRuntimeExecuted": false
+  },
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+      "localText": "Existing verified curriculum-standards/science-curriculum.txt lines749–764",
+      "scope": "6과03 dissolution terms, the explicitly stated before/after weight comparison, solute/solvent amount and relative concentration, everyday use and sharing. No new elementary assessment theory or procedure introduced."
+    }
+  ],
+  "editorialConnection": "Workbook has one additive outer editor. Runtime unit loader and thinking classroom checks share solutionCurrentItems. The raw bank, source/similar files, original questions and optional report/record implementation are preserved. Regeneration must keep the wrapper/imports.",
+  "cacheVersion": "20261105-solution-student-language",
+  "remaining": "Teacher-facing explanatory/criteria wording, other units and embedded raster text as needed, classroom explanation consistency, actual desktop/mobile/A4/audio/WebGL and mandatory3D gate; v1 consistency and main integration/deployment. Existing browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase238:32 workbook snapshots,128 products,64 slide arrays, original/current96 runtime objects, preservation validator, production unit loader in VM with storage/network guards,8 generated paper fragments and text checks, initial/final tests. Initial literal cloze HTML comparison was corrected to check ordered phrases within each question around actual blank spans, without modifying product data."
+}

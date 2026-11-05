@@ -1,0 +1,34 @@
+import{findLifeItem}from'./book-life.js';
+import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
+import{CLASSIFY_ANIMALS,classifyGroups,CLASSIFY_LABELS}from'./animal-classify.js';
+import{photoCredit}from'../data/activities/s31-u02.animal.js';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const p=s=>`<p>${esc(s)}</p>`;
+const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>`<${i?'td':'th scope="row"'}>${esc(v)}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table>`;
+export function buildAnimalThinkingSlides(ch,art,plan,pool,mode,ix){
+ ix ||=ch.animalInteraction;const teach=mode==='teach',S=[],phases=Object.fromEntries(plan.phases.map(x=>[x.id,x]));let ses=1;
+ const add=(id,phase,title,body,extra={})=>S.push({id,phase,phaseObj:phases[phase],title,body,kind:'read',ses,...extra});
+ const peek=text=>teach?`<div class="dk-ans rv">${esc(text)}</div>`:`<div class="dk-peekw"><button type="button" class="dk-peek">생각한 뒤 설명 보기</button><div class="dk-ans" hidden>${esc(text)}</div></div>`;
+ const photos=()=>`<div class="animal-thinking-photos">${CLASSIFY_ANIMALS.map(a=>`<figure><img src="${a.image}" alt="${esc(a.name)} 관찰 자료"><figcaption>${esc(a.name)}</figcaption></figure>`).join('')}</div><p class="animal-thinking-credit">${esc(photoCredit)}</p>`;
+ add('cover','open',ch.title,photos()+p('같은 동물 사진을 서로 다른 기준으로 나누고, 관찰 근거로 설명해요. 동물의 생활과 특징을 생활용품 설계에 연결해요.'));
+ if(teach)add('plan','open','관찰·기준 비교·설계 수업 계획',`<ol class="dk-plan">${plan.phases.map(x=>`<li><b>${esc(x.name)}</b><span>${x.min}분</span><em>${esc(x.aim)}</em></li>`).join('')}</ol>`);
+ add('photos','open','날개가 있어도 모두 같은 모습일까요?',photos()+p('몸을 덮은 것과 날개를 살펴요. 사진에 가려져 보이지 않는 부분은 없다고 단정하지 않아요.'));
+ const options=ix.predict.options,pick=teach?`<ol class="dk-tally">${options.map((s,j)=>`<li data-j="${j}"><span class="dk-tn">${j+1}</span><span class="dk-tt">${esc(s)}</span><button type="button" data-t="-" aria-label="${j+1}번 한 명 빼기">−</button><b class="dk-tc">0</b><button type="button" data-t="+" aria-label="${j+1}번 한 명 더하기">+</button></li>`).join('')}</ol>`:`<ol class="dk-choices dk-mc predict">${options.map((s,j)=>`<li><button type="button" data-j="${j}"><span>${'①②③'[j]}</span>${esc(s)}</button></li>`).join('')}</ol>`;
+ add('predict','open',ix.predict.q,pick+p('처음 생각은 아직 채점하지 않아요. 두 기준으로 비교한 뒤 다시 설명해요.'),{kind:'predict'});
+ add('design','observe','동물은 그대로, 기준만 바꾸어요',table(['같게 둘 것','바꿀 것','비교할 결과'],[['네 동물과 사진·설명 자료','날개 유무 ↔ 깃털 유무','같은 모둠에 놓이는 동물']])+p('먼저 내 분류를 정해요. 확인하기 어려운 동물은 더 필요한 자료가 있다고 표시한 뒤 설명 자료를 읽어요.'),{standards:['4과02-01']});
+ add('lab','observe','사진 분류 실험 · 기준을 바꾸어 비교',p('날개 기준으로 먼저 나누고 자료를 비교해요. 결과를 남긴 뒤 깃털 기준으로 바꾸어 같은 네 동물을 다시 나누어요.')+'<div data-mount="lab"></div>',{mount:'lab',kind:'lab',layout:'fieldwork'});
+ add('results','result','모둠이 달라진 동물의 근거를 찾아요','<div class="dk-mylab" hidden></div>'+table(['동물','날개 기준','깃털 기준'],CLASSIFY_ANIMALS.map(a=>[a.name,CLASSIFY_LABELS[classifyGroups('wings')[a.id]],CLASSIFY_LABELS[classifyGroups('feathers')[a.id]]]))+peek('박쥐·성충 잠자리는 날개 기준에서는 해당하지만 깃털 기준에서는 해당하지 않아요. 동물이 바뀐 것이 아니라 기준이 바뀌어 모둠이 달라졌어요.'),{kind:'think'});
+ add('conclusion','result','처음 예상과 비교해 설명해요',p(ix.predict.q)+(teach?p('손들기 예상과 두 기준의 자료를 연결해 설명하게 해요.'):'<div class="dk-card"><h3>관찰 전 내 예상</h3><p data-prediction-summary></p></div>')+peek('같은 동물도 기준이 달라지면 모둠이 달라질 수 있어요. 바뀐 동물과 그 동물의 날개·몸을 덮은 것에서 근거를 찾아요.'),{kind:'think'});
+ ses=2;
+ add('recall','concept','좋은 분류 기준은 어떻게 정할까요?',table(['기준','생각할 점'],[['날개가 있는가?','자료로 확인할 수 있는 생김새'],['내가 귀엽다고 느끼는가?','사람마다 달라질 수 있는 느낌'],['크기가 큰가?','무엇보다 큰지 기준 크기를 더 정해야 함']])+peek('한 기준을 일관되게 적용해요. 다른 기준의 분류를 곧 틀렸다고 하지 않으며, 수업의 두 모둠을 생물학적 분류 체계와 같다고 하지 않아요.'),{kind:'think',standards:['4과02-01']});
+ add('more-evidence','concept','사진에 안 보이면 없는 것일까요?',p('비둘기는 사진에서 날개를 접고 있어요. 한 모습만으로 몸의 모든 부분을 확인하기 어려울 수 있어요.')+peek('사진을 확대하거나 다른 방향 사진·설명 자료를 더 찾아요. 지금 보이지 않는다는 관찰과 그 부분이 없다는 결론을 구별해요.'),{kind:'think'});
+ add('own-criterion','concept','내 분류 기준을 만들어 설명해요',photos()+p('앞의 두 기준과 다른 생김새 기준을 하나 정해요. 두 모둠 이름을 붙이고 네 동물을 어디에 놓을지, 어떤 자료가 근거인지 친구에게 말이나 그림으로 설명해요.')+peek('교사의 한 기준과 같아야 하는 것은 아니에요. 한 기준을 일관되게 적용하고, 확인하기 어려운 동물은 필요한 추가 자료를 설명해요. 친구의 다른 기준으로도 비교해 보아요.'),{kind:'think',standards:['4과02-01']});
+ add('habitat','research','환경·몸의 부분·생활을 연결해요',table(['동물','환경과 생활 자료','연결할 특징'],[['붕어','강·호수의 물속에서 헤엄침','지느러미와 헤엄'],['비둘기','땅에서 먹이를 찾고 날아서 이동함','다리·날개와 이동'],['성충 잠자리','물가 주변 등을 날며 먹이를 잡음','날개와 날아다니는 움직임']])+p('사진의 배경 한 장면만 보고 평생 사는 곳을 정하지 않아요. 동물별 자료로 환경과 생김새·생활의 관련을 살펴요.'),{standards:['4과02-02']});
+ add('diversity','research','한 동물의 특징을 모두에게 적용할까요?',p('“물 동물은 모두 같은 부분으로 헤엄친다.” “날아다니는 동물은 공중에서만 산다.” 두 주장에 어떤 자료가 더 필요할까요?')+peek('물 동물도 이동하는 몸의 부분이 다양해요. 날아 이동하는 비둘기도 땅에서 먹이를 찾아요. 어떤 동물·환경·생활 자료를 확인했는지 밝혀요.'),{kind:'think'});
+ add('design-function','extend','특징을 물건의 기능으로 연결해요',table(['필요한 도움','동물에서 얻은 힌트','설계에서 설명할 것'],[['물을 잘 밀며 움직이기','오리 발가락 사이의 넓은 막','넓은 면이 물을 미는 부분'],['물속 바위에서 잘 떨어지지 않기','바위에 붙어 있는 홍합','붙이는 부분과 확인할 방법']])+p('실제 발명 역사가 아니라 설계 아이디어의 예예요. 장식으로 닮게 만드는 것과 기능에 이용하는 것을 구별해요.'),{standards:['4과02-03']});
+ add('critique','extend','도움이 되는지 어떻게 확인할까요?',p('오리 무늬를 그린 손잡이와 물을 미는 면을 넓힌 손잡이를 비교해요. 물을 잘 밀게 한다는 목표에는 어느 설명이 더 필요할까요?')+peek('무늬가 닮았다고 기능이 좋아졌다고 할 수 없어요. 면의 모양·재료·사용 방법과 비슷한 조건에서 비교할 방법을 정해요. 아직 만들지 않았다면 설계 아이디어라고 밝혀요.'),{kind:'think'});
+ add('share','extend','친구의 질문으로 설계를 다듬어요',p('해결할 불편과 이용한 특징을 설명해요. 친구는 “어느 부분이 어떻게 돕나요?” “무엇을 비교하면 알 수 있나요?”를 물어요. 질문을 들은 뒤 바꿀 부분과 이유를 말이나 그림으로 제안해요.')+p('실제로 나누지 않은 친구 의견을 지어 쓰지 않아요. 문제 정답만으로 실제 설계·협력적 소통을 완료했다고 처리하지 않아요.'),{standards:['4과02-03']});
+ [...ch.formative.items,...ch.check].forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`동물 사고력 문항 없음 ${key}`);add(`test${i+1}`,'check',`근거로 확인하기 ${i+1}/11`,thinkingCheckQuestion(q,i+1,teach),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
+ add('end','check','관찰·기준·생활·설계가 연결되었나요?',`<ul>${['생김새 기준과 두 모둠의 근거','보이지 않는 부분과 없는 부분의 구별','동물별 환경·생김새·생활의 관련','특징·제품 기능·확인 방법을 연결한 설계'].map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`+p('실제 관찰과 설계 기록을 더 남기고 싶다면 처음 화면의 선택 기록 기능을 이용해요.')+'<a class="btn" href="#/s31-u02/daily">Daily Test</a>',{kind:'end'});
+ S.forEach((s,i)=>s.n=i+1);return S;
+}

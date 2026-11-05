@@ -1,0 +1,318 @@
+{
+  "phase": 198,
+  "date": "2026-11-04",
+  "unit": "c22-s52-u04",
+  "title": "자원과 에너지",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "e3cc831dbab6aa7b0e229bc73576630ff5dacecb",
+  "status": "local integration candidate; not pushed or deployed",
+  "integratedWorkbooks": 24,
+  "integratedFullClassrooms": 24,
+  "studentSlides": 61,
+  "teacherSlides": 62,
+  "phases": 15,
+  "minutes": 345,
+  "originalPhaseIdsAndMinutesPreserved": true,
+  "manualActivities": [
+    "resourcesurvey",
+    "resourceconnect",
+    "finiteinvestigate",
+    "reusepractice",
+    "renewableresearch",
+    "renewablecompare",
+    "efficiencycompare",
+    "design",
+    "build",
+    "sensor",
+    "coolprepare",
+    "measure",
+    "repeat",
+    "revise",
+    "retest",
+    "practiceplan",
+    "practicecompare",
+    "create",
+    "share",
+    "reviseexplanation"
+  ],
+  "manualActivityCount": 20,
+  "comparisonCases": [
+    "resources",
+    "finite",
+    "reuse",
+    "renewable",
+    "efficiency",
+    "window",
+    "temperature",
+    "practice"
+  ],
+  "standards": [
+    "6과08-01",
+    "6과08-02",
+    "6과08-03"
+  ],
+  "curriculumReferencesReusedFromPhase197": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+      "localDocument": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "lines": [
+        [
+          829,
+          843
+        ]
+      ],
+      "use": "6과08-01~03·집 모형 탐구/해설/고려 사항;물·산림·광물과6재생에너지;재활용이 무한한 자원을 뜻하지 않음"
+    },
+    {
+      "title": "EIA Renewable energy explained",
+      "url": "https://www.eia.gov/energyexplained/renewable-sources/",
+      "use": "자연에서 보충되는 에너지와 공급 조건;과거 통계는 학생 원고에 사용하지 않음"
+    },
+    {
+      "title": "EIA Energy efficiency and conservation",
+      "url": "https://www.eia.gov/energyexplained/use-of-energy/efficiency-and-conservation.php",
+      "use": "기능을 유지하며 사용을 줄이는 효율적 이용과 생활 절약"
+    },
+    {
+      "title": "DOE Residential windows doors and skylights",
+      "url": "https://www.energy.gov/cmei/femp/purchasing-energy-efficient-residential-windows-doors-and-skylights",
+      "use": "열 이동·창 구조·공기층/틈·지역 조건;미국 구매 수치나 기준을 국내 기준으로 쓰지 않음"
+    },
+    {
+      "title": "EPA What you can do",
+      "url": "https://www.epa.gov/recycle/what-you-can-do",
+      "use": "학교의 줄이기·재사용·재활용;지역 배출 기준을 별도 확인"
+    }
+  ],
+  "selectedChecks": 16,
+  "unchangedSelectedChecks": 15,
+  "versionedQuestion": {
+    "id": "c22-s52-u04-b051",
+    "contentVersion": "20261104-energy-class",
+    "originalVersion": 1,
+    "currentElement": "E6",
+    "originalElement": "E8",
+    "oldQuestionAnswerAndDiagnosticsRetained": true,
+    "oldDailyPaperReadOnlyUntilExplicitNewAttempt": true,
+    "oldPaperAndResponseHistoryArchivedBeforeNewAttempt": true
+  },
+  "diagnostics": {
+    "currentTaxonomy": "E6",
+    "originalTaxonomy": "E8",
+    "originalDiagnosticRuleUnmodified": true,
+    "currentQuestionDoesNotInheritOpinionRule": true,
+    "oldVersionUsesOriginalRule": true,
+    "currentCorrectAnswersDoNotResolveOldMisconception": true,
+    "originalCorrectAnswersStillResolveOldMisconception": true,
+    "remedyPoolSeparatesVersions": true,
+    "teacherKeyUsesMatchingVersion": true,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "syntheticProgressEvents": 5
+  },
+  "defaultClassroom": "curriculum-linked thinking with direct investigation,model building and testing,efficient use and sharing",
+  "optionalOriginalActivities": [
+    "resources",
+    "finite",
+    "reuse",
+    "renewable",
+    "efficiency",
+    "design",
+    "build",
+    "test",
+    "revise",
+    "practice",
+    "create",
+    "share"
+  ],
+  "comparisonRowsKey": "energyCompareRows",
+  "originalInquiryRowsKey": "energyInquiryRows",
+  "originalInquiryStorageKey": "sciLab.inquiry.c22-s52-u04",
+  "originalInquiryAndReportUnchanged": true,
+  "protection": {
+    "protectedDataAssetsAndPriorPdfs": 1878,
+    "unchangedOldPdfs": 60,
+    "unchangedWorkbookHtmlProducts": 96,
+    "unchangedOtherClassroomArrays": 46,
+    "changedEnergyClassroomArrays": 2,
+    "studentSlides": 61,
+    "teacherSlides": 62,
+    "sourceBankQuestions": 112,
+    "similarBankQuestions": 11,
+    "selectedChecks": 16,
+    "unchangedSelectedChecks": 15,
+    "versionedSelectedCheck": "c22-s52-u04-b051",
+    "originalQuestionPresentationRetained": true,
+    "phaseIdsAndMinutesPreserved": true,
+    "originalInquiryConfigAndReportPreserved": true,
+    "newImages": 0,
+    "newPdfs": 0,
+    "new3D": 0,
+    "paidApiCalls": 0,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "browserVerified": false
+  },
+  "htmlStructure": {
+    "actualComparisonMountStates": 16,
+    "comparisonTables": 31,
+    "comparisonScopeHeaders": 199,
+    "actualClassroomArrays": 2,
+    "classroomTables": 18,
+    "classroomScopeHeaders": 100,
+    "allCellsBelongToRowsAndTables": true,
+    "allRowsMatchHeaderWidths": true,
+    "allHeadersHaveScope": true,
+    "browserVerified": false
+  },
+  "assetReview": {
+    "images": [
+      {
+        "name": "resources",
+        "path": "science-lab/assets/activities/c22-s52-u04/resources.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "853e38fbcd72a4a9187237ee9f6f906a824cbc81aea4880ecb6613f840863afb"
+      },
+      {
+        "name": "solar",
+        "path": "science-lab/assets/activities/c22-s52-u04/solar.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "36ae82b79dff2359dd3e86b5820276b6b729a71f523a1cb0ce80c374f2515397"
+      },
+      {
+        "name": "wind",
+        "path": "science-lab/assets/activities/c22-s52-u04/wind.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "d95d033fb0de8cf0ddc8404d4e7abb7a6c39dbfc948da5ddf5e11fcbac75e4ee"
+      },
+      {
+        "name": "hydro",
+        "path": "science-lab/assets/activities/c22-s52-u04/hydro.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "0b763f1e23a621acecf9f537e50dc917bef33da8a21a4c1bfd6eb6958412eede"
+      },
+      {
+        "name": "ocean",
+        "path": "science-lab/assets/activities/c22-s52-u04/ocean.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "69283233421ed125ccc1a61560058fbf90d3110c6dfb2b768853a07627d5dee5"
+      },
+      {
+        "name": "house",
+        "path": "science-lab/assets/activities/c22-s52-u04/house.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "6f0ab3cd817dadf5cd864132c792cf0dd78b67cbcd8d2070917c996415b7eeb4"
+      },
+      {
+        "name": "reuse",
+        "path": "science-lab/assets/activities/c22-s52-u04/reuse.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "44e2f6830b9922282a4dbe7f4305862740a9a67ecba28dd20c8f2d4251363d3a"
+      },
+      {
+        "name": "practice",
+        "path": "science-lab/assets/activities/c22-s52-u04/practice.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "562cce0ed077aeb7e8a6f4660adce4770e667898e6d4409dfb4f22e6c41426b6"
+      }
+    ],
+    "newImages": 0,
+    "sourceAssetsExactlyUnchanged": true,
+    "priorNativeVisionRuns": 108,
+    "priorNativeVisionAndDirectInspection": "phase197/vision-review.json and visual-review.json",
+    "nativeVisionRunsThisPhase": 0,
+    "housePictureUse": "Two walls differ. Picture describes apparatus; window-only comparison requires matched wall,size,gaps,sensor position and starting/surrounding temperature.",
+    "browserVerified": false
+  },
+  "routes": {
+    "unit": "c22-s52-u04",
+    "startLinks": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 16,
+    "legacyDailyQuestions": 16,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "energyCompareRows",
+    "actualInquiryKey": "energyInquiryRows",
+    "originalRecordsBookExactlyUnchanged": true,
+    "originalReportAndObservationStatePreserved": true,
+    "noNew3D": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "lateReleasedCallbackCannotWrite": true,
+    "browserVerified": false
+  },
+  "deckEvents": {
+    "teacherMounts": 1,
+    "teacherPersonal": false,
+    "staleLegacyBattleIgnored": true,
+    "comparisonClickDoesNotAdvance": true,
+    "outsideClickAdvances": true,
+    "manualActivities": 20,
+    "noTimerOnActivity": true,
+    "explicitNextWorks": true,
+    "browserVerified": false
+  },
+  "tests": {
+    "v2": {
+      "total": 640,
+      "passed": 638,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "failed": 0
+    },
+    "passedTotal": 937
+  },
+  "newImages": 0,
+  "newPdfs": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "nativeVisionRunsThisPhase": 0,
+  "actualStudentStorageReads": 0,
+  "actualStudentStorageWrites": 0,
+  "cache": "20261104-energy-class",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "frontend-design",
+    "gfield-textbook-design"
+  ],
+  "verificationLimit": "Node VM runs actual route,comparison,deck event and progress logic using synthetic state and DOM/speech substitutes. HTMLParser checks table structure. Actual browser CSS/mobile/audio/WebGL and main-before-3D checker gate remain pending. Previous denied browser target not bypassed.",
+  "next": [
+    "Grade6 remaining curriculum-linked thinking workbooks and classrooms",
+    "Latest main integration and permitted browser/mobile/3D/audio checks",
+    "Publishing within confirmed scope"
+  ],
+  "wholeGoal": "active"
+}

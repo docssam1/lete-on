@@ -1,5 +1,10 @@
+import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
+import {withMagnetSkyStudentLanguage} from './magnet-sky-student-language.js';
+import {withMagnetBodyLanguage} from './magnet-night-body-language.js';
+import {withMagnetRails} from './s41-u01.rail-notes.js';
+import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 자석의 이용 A4. scripts/gen-science-workbook-s41u01.mjs가 생성.
-export const workbook = {
+const baseWorkbook = {
  "unit": "s41-u01",
  "title": "자석의 이용",
  "semester": "4-1",
@@ -6793,3 +6798,5 @@ export const workbook = {
   "b64"
  ]
 };
+
+export const workbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withMagnetBodyLanguage(withStudentOpeningLanguage(withMagnetRails(baseWorkbook)))));

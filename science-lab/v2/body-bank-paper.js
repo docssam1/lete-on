@@ -1,5 +1,5 @@
 // 우리 몸 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
-import {photoFigureHtml} from './photo-figure.js';
+import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 import {sourceCaption,sourceTableHtml} from './source-presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const circ='①②③④⑤';

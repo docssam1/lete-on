@@ -1,0 +1,279 @@
+{
+  "phase": 218,
+  "date": "2026-11-04",
+  "baseCommit": "1e422929c0b54b0532b1a0e50d56232cf844ccd0",
+  "status": "reviewed-local-student-taxonomy",
+  "unit": "c22-s62-u04",
+  "scope": "student subsection and type labels; no question revision",
+  "taxonomyReview": {
+    "reviewed": 24,
+    "changedNames": 21,
+    "changedDescriptions": 23,
+    "changedDefinitions": 23,
+    "rows": [
+      {
+        "kind": "elements",
+        "id": "E1",
+        "oldName": "현재 자료의 출처와 시점을 확인해요",
+        "name": "현재 사회의 문제를 조사해요",
+        "oldDescription": "작성 주체·시점·범위와 근거 위치를 읽어요.",
+        "description": "자료를 만든 곳과 조사한 시기, 조사 대상을 확인해요."
+      },
+      {
+        "kind": "elements",
+        "id": "E2",
+        "oldName": "사실과 예상으로 미래 문제를 살펴요",
+        "name": "현재 자료로 미래 문제를 예상해요",
+        "oldDescription": "확인한 사실과 조건부 예상에서 질문을 찾아요.",
+        "description": "현재 확인한 사실을 바탕으로 미래 사회에 일어날 수 있는 문제를 예상해요."
+      },
+      {
+        "kind": "elements",
+        "id": "E3",
+        "oldName": "과학이 도울 수 있는 작용을 찾아요",
+        "name": "문제 해결에 과학을 이용해요",
+        "oldDescription": "측정·판단·작동을 과학적 작용과 연결해요.",
+        "description": "문제를 해결하는 데 어떤 과학이 도움이 되는지 알아봐요."
+      },
+      {
+        "kind": "elements",
+        "id": "E4",
+        "oldName": "방안의 조건과 한계를 비교해요",
+        "name": "해결 방법과 필요한 조건을 비교해요",
+        "oldDescription": "목표 기능과 여러 제약으로 두 방안을 비교해요.",
+        "description": "두 방법이 어떻게 도움이 되는지, 이용하려면 무엇이 필요한지 비교해요."
+      },
+      {
+        "kind": "elements",
+        "id": "E5",
+        "oldName": "다양한 일과 나의 관심을 탐색해요",
+        "name": "관심 있는 여러 직업을 알아봐요",
+        "oldDescription": "여러 관심과 미정의 질문에서 탐색을 시작해요.",
+        "description": "관심 있는 일을 떠올리고 여러 직업에서 어떤 일을 하는지 알아봐요."
+      },
+      {
+        "kind": "elements",
+        "id": "E6",
+        "oldName": "구체적인 업무를 과학과 연결해요",
+        "name": "직업에서 하는 일과 과학을 연결해요",
+        "oldDescription": "구체적 업무의 관찰·도구·원리를 설명해요.",
+        "description": "일할 때 쓰는 도구와 방법에서 빛, 소리, 물질의 성질과 관련된 과학을 찾아요."
+      },
+      {
+        "kind": "elements",
+        "id": "E7",
+        "oldName": "근거로 설명하고 질문하며 고쳐요",
+        "name": "자료를 바탕으로 설명하고 보충해요",
+        "oldDescription": "자료 근거로 질문에 답하고 설명을 고쳐요.",
+        "description": "자료에서 찾은 과학을 설명하고 친구의 질문을 듣고 설명을 보충해요."
+      },
+      {
+        "kind": "elements",
+        "id": "E8",
+        "oldName": "나의 진로와 과학을 설명해요",
+        "name": "나의 진로와 과학을 설명해요",
+        "oldDescription": "관심 있는 직업에서 하는 일과 과학적 요소를 관련지어 설명해요.",
+        "description": "관심 있는 진로가 과학과 어떻게 관련되는지 자료를 바탕으로 설명해요."
+      },
+      {
+        "kind": "types",
+        "id": "T01",
+        "oldName": "출처·날짜·자료 범위",
+        "name": "자료의 출처와 조사 시기",
+        "oldDescription": "정보의 작성 주체·시점·대상과 확인 위치를 구별한다.",
+        "description": "자료를 만든 곳, 조사한 때와 대상을 찾아요."
+      },
+      {
+        "kind": "types",
+        "id": "T02",
+        "oldName": "자료 비교 가능성과 신뢰 근거",
+        "name": "자료를 비교할 때의 조건",
+        "oldDescription": "대상·방법·단위와 누락 정보로 자료의 쓰임을 검토한다.",
+        "description": "조사 대상, 방법, 단위를 살펴보고 두 자료를 비교할 수 있는지 생각해요."
+      },
+      {
+        "kind": "types",
+        "id": "T03",
+        "oldName": "관측·모형·조건부 예상",
+        "name": "현재의 사실과 미래의 예상",
+        "oldDescription": "확인한 사실과 가정을 둔 미래를 나누어 해석한다.",
+        "description": "관찰한 사실과 모형으로 예상한 미래를 구별해요."
+      },
+      {
+        "kind": "types",
+        "id": "T04",
+        "oldName": "미래 문제의 근거와 추가 질문",
+        "name": "미래 문제와 더 알아볼 것",
+        "oldDescription": "자료의 범위를 지키며 문제와 필요한 정보를 찾는다.",
+        "description": "자료에서 예상할 수 있는 문제와 더 조사해야 할 것을 찾아요."
+      },
+      {
+        "kind": "types",
+        "id": "T05",
+        "oldName": "과학적 작용과 장치 역할",
+        "name": "문제 해결에 쓰이는 과학",
+        "oldDescription": "측정·판단·작동과 물질/정보의 이동을 구별한다.",
+        "description": "장치가 무엇을 측정하고 어떻게 작동하는지 알아봐요."
+      },
+      {
+        "kind": "types",
+        "id": "T06",
+        "oldName": "과학의 기여와 협력·운영",
+        "name": "과학의 도움과 함께 할 일",
+        "oldDescription": "과학적 도움과 사회적 운영·남은 문제를 연결한다.",
+        "description": "과학으로 해결할 수 있는 부분과 사람들이 함께 해야 할 일을 생각해요."
+      },
+      {
+        "kind": "types",
+        "id": "T07",
+        "oldName": "방안의 기능·비용·접근 조건",
+        "name": "해결 방법과 필요한 조건",
+        "oldDescription": "필수 조건을 함께 읽어 선택 이유와 제약을 설명한다.",
+        "description": "도움이 되는 점과 필요한 비용, 이용할 수 있는 장소 등을 비교해요."
+      },
+      {
+        "kind": "types",
+        "id": "T08",
+        "oldName": "공정한 비교와 원인 해석",
+        "name": "조건을 같게 하여 비교하기",
+        "oldDescription": "함께 달라진 조건을 점검해 결론의 한계를 밝힌다.",
+        "description": "무엇을 다르게 하고 무엇을 같게 해야 두 방법을 비교할 수 있는지 생각해요."
+      },
+      {
+        "kind": "types",
+        "id": "T09",
+        "oldName": "관심의 탐색과 진로 미정",
+        "name": "관심 있는 직업 알아보기",
+        "oldDescription": "여러 관심에서 구체적인 업무 질문과 조사 근거를 찾는다.",
+        "description": "관심 있는 일을 여러 가지 떠올리고 그 일에 관해 궁금한 것을 찾아요."
+      },
+      {
+        "kind": "types",
+        "id": "T10",
+        "oldName": "다양한 분야의 과학 연결",
+        "name": "여러 직업에서 과학 찾기",
+        "oldDescription": "직업 이름보다 실제 작업의 관찰·도구·원리를 설명한다.",
+        "description": "여러 직업에서 쓰는 도구와 일하는 방법에 어떤 과학이 관련되는지 찾아요."
+      },
+      {
+        "kind": "types",
+        "id": "T11",
+        "oldName": "업무 속 빛·소리·물질의 작용",
+        "name": "직업 속 빛·소리와 물질의 성질",
+        "oldDescription": "구체적 기구와 업무의 과학적 요소를 자료로 연결한다.",
+        "description": "사진 촬영, 악기 조율, 식물 재배 등에 어떤 과학을 이용하는지 알아봐요."
+      },
+      {
+        "kind": "types",
+        "id": "T12",
+        "oldName": "업무의 측정·단위·반복 기록",
+        "name": "측정값과 단위 비교하기",
+        "oldDescription": "표시한 양과 자료 지위를 지켜 반복값을 해석한다.",
+        "description": "측정한 양과 단위를 확인하고 반복해서 측정한 값을 비교해요. 제공된 연습 자료와 직접 측정한 결과를 구별해요."
+      },
+      {
+        "kind": "types",
+        "id": "T13",
+        "oldName": "주장·근거·과학적 설명",
+        "name": "자료를 바탕으로 설명하기",
+        "oldDescription": "관련 자료와 설명의 범위를 맞추어 근거를 제시한다.",
+        "description": "자료에서 찾은 내용을 근거로 직업과 과학의 관련성을 설명해요."
+      },
+      {
+        "kind": "types",
+        "id": "T14",
+        "oldName": "질문 이해와 근거에 따른 수정",
+        "name": "질문을 듣고 설명 보충하기",
+        "oldDescription": "실제 받은 질문에 맞게 자료를 확인해 설명을 고친다.",
+        "description": "친구의 질문을 듣고 자료를 다시 확인하여 설명을 보충해요."
+      },
+      {
+        "kind": "types",
+        "id": "T15",
+        "oldName": "관심 있는 진로에서 과학 찾기",
+        "name": "관심 있는 진로에서 과학 찾기",
+        "oldDescription": "여러 직업에서 하는 일과 관련된 과학적 요소를 찾아요.",
+        "description": "내가 관심 있는 진로에서 하는 일과 관련된 과학을 찾아요."
+      },
+      {
+        "kind": "types",
+        "id": "T16",
+        "oldName": "나의 진로와 과학 설명하기",
+        "name": "나의 진로와 과학 설명하기",
+        "oldDescription": "관심 있는 진로를 과학과 관련지어 자료와 함께 설명해요.",
+        "description": "관심 있는 진로를 과학과 관련지어 자료와 함께 설명해요."
+      }
+    ]
+  },
+  "officialStandardsSource": {
+    "source": "교육부 고시 제2022-33호 별책9 과학과 교육과정",
+    "localEvidence": "science-question-review/curriculum-standards/science-curriculum.txt:966-977",
+    "hwpSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "exactMatches": 2
+  },
+  "tests": {
+    "v2Total": 794,
+    "v2Pass": 792,
+    "v2ExistingSkip": 2,
+    "bankPass": 299,
+    "totalPass": 1091,
+    "fail": 0,
+    "bankAuditPassed": true,
+    "misconceptionAuditPassed": true
+  },
+  "home": {
+    "actualHomeModuleExecuted": true,
+    "careerSheetClickAndCloseExecuted": true,
+    "studentElementLabels": 8,
+    "subsectionLinks": 8,
+    "focusSet": true,
+    "syntheticStoreReads": 159,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "teacherAudioStubbed": true,
+    "browserVerified": false
+  },
+  "preservation": {
+    "baselineFiles": 6305,
+    "unchangedFiles": 6298,
+    "reviewedExistingChanges": [
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-career-workbook.test.mjs",
+      "science-lab/v2/tests/career-workbook-routes.mjs",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/v2.js"
+    ],
+    "cacheAndDisplayImportOnly": 5,
+    "preservedWorkbookProducts": 128,
+    "preservedClassroomArrays": 64,
+    "preservedCareerQuestionsWithFullVersionHistory": 128,
+    "oldPdfHashesPreserved": 102,
+    "authoringSourceHashesPreserved": 24,
+    "officialStandardsMatchSource": 2,
+    "rawAndPreviousTaxonomiesPreserved": true,
+    "workbooks": 32,
+    "fullClassrooms": 32,
+    "browserVerified": false,
+    "published": false
+  },
+  "questionChanges": 0,
+  "newQuestionVersions": 0,
+  "newPdfs": 0,
+  "newImages": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "actualStudentStorageReads": 0,
+  "actualStudentStorageWrites": 0,
+  "browserVerified": false,
+  "mainIntegrated": false,
+  "published": false,
+  "qa": "science-question-review/phase218",
+  "remaining": [
+    "other student-facing terminology review",
+    "main integration and authorized browser/mobile/audio/WebGL checks",
+    "pre-main 3D gate",
+    "existing v1 scope"
+  ]
+}

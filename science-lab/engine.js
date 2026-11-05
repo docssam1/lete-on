@@ -1,6 +1,6 @@
 // 3D 무대 + 비트 플레이어.
 // 자막이 원본이다: 화면 캡션·대본·음성이 전부 같은 문자열을 쓴다.
-// 비트는 시간(dur) 또는 학습자의 조작으로 넘어가고, 음성이 끝나기를 기다리지 않는다.
+// 비트는 시간 또는 학습자의 조작으로 넘어간다. 음성 완료 콜백을 기다리지 않고 자막 길이에 맞는 최소 표시 시간을 둔다.
 import * as THREE from '../world-explorer/vendor/three.module.js';
 import { PALETTE, ease, fitLabels } from './scenes/_kit.js';
 
@@ -301,7 +301,7 @@ export class Stage {
   }
   dispose() {
     if (!this.running && !Stage.live.has(this)) return;
-    Stage.live.delete(this); this.running = false; this.active = false;
+    Stage.live.delete(this); this.disposed = true; this.running = false; this.active = false;
     if (this._raf) cancelAnimationFrame(this._raf); this._raf = 0;
     this._observer?.disconnect(); this._cleanups.splice(0).forEach((off) => off());
     this.clear(); this._disposeObjects([this.scene]); this._bgTex?.dispose(); this._envTex?.dispose(); this.key?.shadow?.map?.dispose();
@@ -324,6 +324,15 @@ export function watchDetached(host, cleanup) {
   return finish;
 }
 
+// 자막/읽어 주기 시간을 위한 추정치다. 실제 음성 재생 성공이나 완료 판정에 쓰지 않는다.
+export function captionReadSeconds(text, { voice = false, speed = 1 } = {}) {
+  const length = Array.from(String(text ?? '').normalize('NFC').replace(/\s+/g, ' ').trim()).length;
+  if (!length) return 0;
+  const pace = Number.isFinite(speed) && speed > 0 ? speed : 1;
+  const rate = voice ? Math.min(1.4, 0.95 * pace) : pace;
+  return (length / (voice ? 4.5 : 10) + (voice ? 0.8 : 0.6)) / rate;
+}
+
 // 장면 모듈 규약:
 //   { view:{theta,phi,dist,target}, build(kit, world) → {update?}, beats:[{text, show?, hide?, dur?, anim?(p, o, t)}] }
 //   world.add(id, obj) 로 등록한 객체는 처음엔 보이지 않고, 비트의 show에 오르면 나타난다.
@@ -331,16 +340,22 @@ export class Player {
   constructor(stage, ui) {
     this.stage = stage; this.ui = ui; this.objects = new Map(); this.beats = []; this.index = -1;
     this.playing = false; this.speed = 1; this.voice = false; this.p = 0; this.elapsed = 0; this.hold = 0; this.done = false;
-    this.onChange = () => {};
+    this.readElapsed = 0; this._speechForTiming = false; this._resumeSpeech = false; this._utterance = null;
+    this.onChange = () => {}; this._loadEpoch = 0;
   }
   async load(mod) {
-    this.stop(); this.stage.clear(); this.objects.clear(); this.index = -1; this.done = false;
+    this.stop();
+    const epoch = this._loadEpoch, current = () => epoch === this._loadEpoch && !this.stage.disposed && this.stage.canvas?.isConnected !== false;
+    if (!current()) return false;
+    this.stage.clear(); this.objects.clear(); this.index = -1; this.done = false;
     const world = { group: this.stage.root, add: (id, obj) => { obj.visible = false; obj.userData.id = id; this.objects.set(id, obj); this.stage.root.add(obj); return obj; }, get: (id) => this.objects.get(id) };
     const kit = await import('./scenes/_kit.js');
+    if (!current()) return false;
     const built = mod.build(kit, world) || {};
     this.sceneUpdate = built.update || null; this.beats = mod.beats; this.stage.frameHidden = mod.frameHidden !== false; this.stage.setView(mod.view);
     this.stage.update = (dt, t, raw) => this._tick(dt, t, raw);
     this.goto(0, false);
+    return true;
   }
   _o() { const o = {}; for (const [k, v] of this.objects) o[k] = v; return o; }
   _applyFinal(i) { const b = this.beats[i]; if (!b) return; (b.show || []).forEach((id) => { const o = this.objects.get(id); if (o) o.visible = true; }); (b.hide || []).forEach((id) => { const o = this.objects.get(id); if (o) o.visible = false; }); if (b.anim) b.anim(1, this._o(), 0); }
@@ -351,6 +366,7 @@ export class Player {
     if (this.beats[0]?.reset) this.beats[0].reset(this._o());
     for (let k = 0; k < i; k++) this._applyFinal(k);
     this.index = i; this.p = 0; this.elapsed = 0; this.hold = 0; this.done = false;
+    this.readElapsed = 0; this._resumeSpeech = false;
     const b = this.beats[i]; (b.show || []).forEach((id) => { const o = this.objects.get(id); if (o) o.visible = true; }); (b.hide || []).forEach((id) => { const o = this.objects.get(id); if (o) o.visible = false; });
     if (b.view) { const o = this.stage.orbit; if (b.view.theta != null) o.theta = b.view.theta; if (b.view.phi != null) o.phi = b.view.phi; if (b.view.dist != null) o.dist = b.view.dist; if (b.view.target) o.target.set(...b.view.target); }
     if (REDUCED) { this.p = 1; if (b.anim) b.anim(1, this._o(), 0); }
@@ -361,25 +377,39 @@ export class Player {
     const b = this.beats[this.index]; if (!b) return;
     if (this.sceneUpdate) this.sceneUpdate(dt, t);
     const dur = (b.dur ?? 4) / this.speed;
+    if (this.playing) this.readElapsed += raw;
     if (this.playing && !REDUCED && this.p < 1) { this.elapsed += raw; this.p = Math.min(1, this.elapsed / dur); }
     if (b.anim) b.anim(REDUCED ? 1 : ease.io(this.p), this._o(), t);
     if (this.playing && this.p >= 1) {
       this.hold += raw; const wait = REDUCED ? Math.max(2.5, (b.dur ?? 4) * 0.8) / this.speed : 1.1 / this.speed;
-      if (this.hold >= wait) { if (this.index + 1 < this.beats.length) this.goto(this.index + 1, true); else { this.playing = false; this.done = true; this.onChange(); } }
+      const readFor = captionReadSeconds(b.text, { voice: this.voice && this._speechForTiming, speed: this.speed });
+      if (this.hold >= wait && this.readElapsed >= readFor) { if (this.index + 1 < this.beats.length) this.goto(this.index + 1, true); else { this.playing = false; this.done = true; this.onChange(); } }
     }
   }
-  play() { if (this.done || (this.index === this.beats.length - 1 && this.p >= 1)) { this.goto(0, true); return; } this.playing = true; if (this.p >= 1) { this.hold = 0; } this.onChange(); }
-  pause() { this.playing = false; speechSynthesis?.cancel?.(); this.onChange(); }
+  play() { if (this.done) { this.goto(0, true); return; } this.playing = true; if (this._resumeSpeech && this.voice) this._speak(this.beats[this.index]?.text); this._resumeSpeech = false; if (this.p >= 1) { this.hold = 0; } this.onChange(); }
+  pause() { this.playing = false; this._resumeSpeech = this.voice; this._cancelSpeech(); this.onChange(); }
   toggle() { this.playing ? this.pause() : this.play(); }
-  next() { if (this.index + 1 < this.beats.length) this.goto(this.index + 1, this.playing); else { this.p = 1; this.done = true; this.playing = false; this.onChange(); } }
+  next() { if (this.index + 1 < this.beats.length) this.goto(this.index + 1, this.playing); else { this.p = 1; this.done = true; this.playing = false; this._resumeSpeech = false; this._cancelSpeech(); this.onChange(); } }
   prev() { this.goto(Math.max(0, this.index - 1), this.playing); }
   replay() { this.stage.resetView(); this.goto(0, true); }
-  stop() { this.playing = false; try { speechSynthesis.cancel(); } catch (_) { /* no voice */ } }
-  setSpeed(s) { this.speed = s; this.onChange(); }
-  setVoice(on) { this.voice = on; if (!on) { try { speechSynthesis.cancel(); } catch (_) {} } else if (this.beats[this.index]) this._speak(this.beats[this.index].text); this.onChange(); }
+  stop() { this._loadEpoch++; this.playing = false; this._resumeSpeech = false; this._cancelSpeech(); }
+  setSpeed(s) { this.speed = s; if (this.voice && this._utterance) this._speak(this.beats[this.index]?.text); this.onChange(); }
+  setVoice(on) { this.voice = on; this._resumeSpeech = false; if (!on) this._cancelSpeech(); else if (this.beats[this.index]) this._speak(this.beats[this.index].text); this.onChange(); }
+  _cancelSpeech() {
+    const owned = this._utterance; this._utterance = null; this._speechForTiming = false;
+    if (owned) try { globalThis.speechSynthesis?.cancel?.(); } catch (_) { /* no voice */ }
+    return !!owned;
+  }
   _speak(text) {
     // 2단계 음성: Web Speech(ko-KR) → 실패하면 침묵. 자막이 내용을 전부 담으므로 음성은 보조다.
-    if (!this.voice || typeof speechSynthesis === 'undefined') return;
-    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'ko-KR'; u.rate = Math.min(1.4, 0.95 * this.speed); u.pitch = 1.05; speechSynthesis.speak(u); } catch (_) { /* silent */ }
+    const canceledOwn = this._cancelSpeech(); this.readElapsed = 0; this._resumeSpeech = false;
+    if (!this.voice || !text || typeof globalThis.speechSynthesis?.speak !== 'function' || typeof globalThis.SpeechSynthesisUtterance !== 'function') return;
+    try {
+      if (!canceledOwn) globalThis.speechSynthesis.cancel?.();
+      const u = new globalThis.SpeechSynthesisUtterance(text); u.lang = 'ko-KR'; u.rate = Math.min(1.4, 0.95 * this.speed); u.pitch = 1.05;
+      const release = () => { if (this._utterance === u) this._utterance = null; };
+      u.onend = release; u.onerror = release; this._utterance = u; this._speechForTiming = true;
+      globalThis.speechSynthesis.speak(u);
+    } catch (_) { this._utterance = null; this._speechForTiming = false; /* silent */ }
   }
 }

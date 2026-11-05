@@ -1,0 +1,547 @@
+{
+  "phase": 189,
+  "date": "2026-11-04",
+  "unit": "c22-s51-u04",
+  "title": "우리 몸의 구조와 기능78쪽96문항·교육과정 문장·과학 심화·사진/모형 자료·웹/인쇄 통합",
+  "status": "verified-local-candidate-browser-gate-pending",
+  "baselineCommit": "310231a7af82d6f3d34ed523e481260182208e53",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac local Node VM, ReportLab, Apple Vision; no model/API calls or image generation",
+  "skillsReused": [
+    "ux-writing",
+    "instructional-design",
+    "gfield-textbook-design",
+    "pdf"
+  ],
+  "sourceWorkbookSha256": "9fedfc281ede43f97fb7e6b1753976591562321488b449dfdc5f06e2edb8ff06",
+  "curriculumAndPrimaryReferences": {
+    "curriculum": {
+      "document": "교육부2022-33 별책9 과학과 교육과정",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "basicLines": [
+        764,
+        780
+      ],
+      "standards": [
+        "6과04-01",
+        "6과04-02",
+        "6과04-03"
+      ],
+      "upper": [
+        "9과13-01~05",
+        "12생과01-02~05",
+        "12생과02 항상성과 몸의 조절"
+      ],
+      "note": "뼈/근육을 중고등의 별도 단원으로 오인해 쓰지 않는다. 세포/조직/에너지·신경/힘의 연결로 심화한다.",
+      "semesterPlacementReviewPhase": 186
+    },
+    "primaryReferences": [
+      {
+        "title": "NIH NIDDK · Your Digestive System & How it Works",
+        "url": "https://www.niddk.nih.gov/health-information/digestive-diseases/digestive-system-how-it-works",
+        "checked": "소화관의 순서·소화액/효소·간의 쓸개즙·흡수와 혈액/림프 운반"
+      },
+      {
+        "title": "NIH NIDDK · Your Kidneys & How They Work",
+        "url": "https://www.niddk.nih.gov/health-information/kidney-disease/kidneys-how-they-work",
+        "checked": "콩팥·네프론의 여과/재흡수·노폐물/여분의 물·혈액 흐름"
+      },
+      {
+        "title": "NIH NHLBI · How Blood Flows through the Heart",
+        "url": "https://www.nhlbi.nih.gov/health/heart/blood-flow",
+        "checked": "동맥/정맥의 방향 기준·판막·폐와 온몸 순환"
+      },
+      {
+        "title": "NIH NHLBI · The Respiratory System",
+        "url": "https://www.nhlbi.nih.gov/health/lungs/respiratory-system",
+        "checked": "기관/기관지/세기관지/폐포·폐포와 모세 혈관의 기체 교환"
+      },
+      {
+        "title": "질병관리청 · 추석연휴 감염병 예방수칙 안내,2026-09-22수정",
+        "url": "https://www.kdca.go.kr/bbs/kdca/42/312660/artclView.do",
+        "checked": "비누30초 이상 손씻기·기침 예절·식품매개 감염병 예방"
+      }
+    ],
+    "dateChecked": "2026-11-04",
+    "newImageOrMedicalApiCalls": 0
+  },
+  "workbook": {
+    "studentPages": 78,
+    "teacherPages": 110,
+    "answers": 32,
+    "quick": 4,
+    "questions": 96,
+    "forms": 8,
+    "examples": 8,
+    "sourceExampleLanguageRevised": 1,
+    "pageSpecificRails": 78,
+    "railTexts": 234,
+    "largeDrawingAreasPerCopy": 6,
+    "newActivityDrawingFields": 2,
+    "teacherAnswerStartsOnRecto": 79
+  },
+  "changes": [
+    "워밍업·세 성취기준의 학생용 학습 표",
+    "78쪽 핵심/실제 과학 심화/정리 질문234개",
+    "소화 기능 표를 입/식도/위/작은창자/큰창자/항문으로 나누고 배설 표를4기관으로 구별",
+    "날개와 본문의 관찰/건강생활/자료소개 제목·안내를 학생 문장으로 정리",
+    "사진풍 모형/자세 그림7과 원래 팔 모형 사진2를 직접 검수해 같은 바이트 사용",
+    "기관 그림60mm·원사진2장 나란히 보기·큰 그림6개/명조/손글씨/세로 채움"
+  ],
+  "integration": {
+    "previousWorkbookProductsExactlyUnchanged": 76,
+    "previousClassroomArraysExactlyUnchanged": 38,
+    "protectedOriginalFiles": 1833,
+    "previousPdfs": 40,
+    "questionsAndContractsExactlyMatchSource": 96,
+    "originalWorkedExamples": 8,
+    "workedExampleLanguageRevised": 1,
+    "sourceAnswersAndQuickPagesUnchanged": true,
+    "assets": [
+      {
+        "file": "science-lab/assets/activities/c22-s51-u04/arm-model-photo-v1.webp",
+        "sha256": "142bf91b4054c032070fda324a321dc6c09c5b434799a03bf290348828ee1ada"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u04/breathing-model-photo-v1.webp",
+        "sha256": "65f734b5fcb80544418492fbbcd686eb4c40359e77488fd8039fbbc88b0acb08"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u04/health-model-photo-v1.webp",
+        "sha256": "d562eddf47488503da805c21923321f12e5246a7add961541cbed4b3930c089f"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u04/heart-model-photo-v1.webp",
+        "sha256": "33ef0a557bff5caaa46d3299276a0b0fe5f7d279870e926f67238609301bbacb"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u04/pulse-model-photo-v1.webp",
+        "sha256": "16dde3387322bdc16376d2f4d8351eba0cf6687f57774afad063b751c5c4f5dd"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u04/torso-model-photo-v1.webp",
+        "sha256": "3e44ab6dd49c19dbe61189d2baea3ff79937a3069c1e884c5fa69febd5a3d7e5"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u04/urinary-model-photo-v1.webp",
+        "sha256": "3736c193a7b70f5682f17ab8017d56ea8eb99fa633f7bbb57a3bc8c73d75477e"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s51-u04-source-arm-bent.png",
+        "sha256": "a1f0afc22d70fd51eb5d332ef9ba7ad66d49d18d3ab68f3424ca4726b56d8295"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s51-u04-source-arm-straight.png",
+        "sha256": "0d947e0ecc2f7e9d84450c6ac9811b85d2ec32b000bfd31b0303d3924d7edea9"
+      }
+    ],
+    "fullThinkingClassrooms": 19,
+    "workbooks": 20,
+    "bodyClassroomStillOriginal": true,
+    "newPhotoGeneration": 0,
+    "new3D": 0,
+    "actualStudentStorageAccess": 0,
+    "browserVerified": false
+  },
+  "tests": {
+    "v2": {
+      "total": 560,
+      "pass": 558,
+      "fail": 0,
+      "skip": 2
+    },
+    "bank": {
+      "total": 299,
+      "pass": 299,
+      "fail": 0
+    },
+    "routes": {
+      "unit": "c22-s51-u04",
+      "actualStart": true,
+      "actualTeacherWebBook": true,
+      "actualWorkbookRouterBranch": 4,
+      "originalRecordsBookExactlyUnchanged": true,
+      "studentStorageReads": 0,
+      "studentStorageWrites": 0,
+      "browserVerified": false,
+      "printReadinessComponentStubbedInRouter": true
+    },
+    "bodyNotoSerifReadinessAndMissingFacePrintingGate": true
+  },
+  "pdf": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 78,
+        "bytes": 11570773,
+        "sha256": "ce95a3f7fbfa3edaa02b1f27fe44edc872e59f2bf6ec0e736466b1da12544d4e",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 110,
+        "bytes": 11685003,
+        "sha256": "bffb727085eff2b5da02b5fe843f1093133957fa9d5eb008f8d03811fc4b5dfb",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 32,
+        "bytes": 280965,
+        "sha256": "f783a6572245cf3a97002ebac18f0e1b1c975eeaf19f8c6bdf3f433044f56f12",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 4,
+        "bytes": 110845,
+        "sha256": "923d794f05c94a92183ff9748691cec7cbbbb7e4b98789573545ff8a8b10d774",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 192,
+    "solutionExpressions": 192,
+    "teacherAnswerStartsOnRecto": 79
+  },
+  "pdfDetails": {
+    "fullRailTexts": 468,
+    "quickAnswerTableCells": 288,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 46,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 50,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 55,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 69,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 46,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 50,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 55,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 69,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Bold",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAB+PretendardVariable-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "drawingAndLanguage": {
+    "largeDrawingAreas": [
+      {
+        "mode": "student",
+        "page": 7,
+        "heightMm": 161.63
+      },
+      {
+        "mode": "student",
+        "page": 30,
+        "heightMm": 124.16
+      },
+      {
+        "mode": "student",
+        "page": 46,
+        "heightMm": 211.38
+      },
+      {
+        "mode": "student",
+        "page": 50,
+        "heightMm": 211.38
+      },
+      {
+        "mode": "student",
+        "page": 55,
+        "heightMm": 211.38
+      },
+      {
+        "mode": "student",
+        "page": 69,
+        "heightMm": 211.38
+      },
+      {
+        "mode": "teacher",
+        "page": 7,
+        "heightMm": 161.63
+      },
+      {
+        "mode": "teacher",
+        "page": 30,
+        "heightMm": 124.16
+      },
+      {
+        "mode": "teacher",
+        "page": 46,
+        "heightMm": 199.51
+      },
+      {
+        "mode": "teacher",
+        "page": 50,
+        "heightMm": 199.51
+      },
+      {
+        "mode": "teacher",
+        "page": 55,
+        "heightMm": 199.51
+      },
+      {
+        "mode": "teacher",
+        "page": 69,
+        "heightMm": 199.51
+      }
+    ],
+    "finalTextChangedPages": [
+      1,
+      7,
+      8,
+      12,
+      19,
+      25,
+      29,
+      34,
+      35,
+      36,
+      37,
+      41,
+      42,
+      43,
+      46,
+      48,
+      49,
+      51,
+      53,
+      54,
+      55,
+      56,
+      59,
+      71
+    ],
+    "other54StudentPagesTextExactlyUnchanged": true
+  },
+  "appleVision": {
+    "uniquePDFPages": 78,
+    "imageInputs": 9,
+    "totalExecutions": 273,
+    "failed": 0,
+    "skipped": 0,
+    "runs": [
+      {
+        "folder": "photo-vision",
+        "executions": 9
+      },
+      {
+        "folder": "pdf-vision",
+        "executions": 78
+      },
+      {
+        "folder": "pdf-vision-final",
+        "executions": 78
+      },
+      {
+        "folder": "pdf-vision-final-large",
+        "executions": 78
+      },
+      {
+        "folder": "pdf-vision-final-language",
+        "executions": 6
+      },
+      {
+        "folder": "pdf-vision-complete-language",
+        "executions": 24
+      }
+    ],
+    "finalCoverage": {
+      "54UnchangedPages": "pdf-vision-final-large",
+      "24ChangedPages": "pdf-vision-complete-language",
+      "changedPages": [
+        1,
+        7,
+        8,
+        12,
+        19,
+        25,
+        29,
+        34,
+        35,
+        36,
+        37,
+        41,
+        42,
+        43,
+        46,
+        48,
+        49,
+        51,
+        53,
+        54,
+        55,
+        56,
+        59,
+        71
+      ]
+    },
+    "note": "실제 Apple Vision으로 문자 인식. 이미지의 과학적 의미와 주요 지면은 직접 검수했으며 모든 낮은 신뢰도 낱말을 개별 인증한 것은 아니다."
+  },
+  "visual": {
+    "contactSheetsInspected": 12,
+    "finalExpandedPagesInspected": [
+      [
+        "student",
+        1
+      ],
+      [
+        "student",
+        2
+      ],
+      [
+        "student",
+        7
+      ],
+      [
+        "student",
+        8
+      ],
+      [
+        "student",
+        12
+      ],
+      [
+        "student",
+        19
+      ],
+      [
+        "student",
+        24
+      ],
+      [
+        "student",
+        29
+      ],
+      [
+        "student",
+        30
+      ],
+      [
+        "student",
+        35
+      ],
+      [
+        "student",
+        36
+      ],
+      [
+        "student",
+        37
+      ],
+      [
+        "student",
+        41
+      ],
+      [
+        "student",
+        42
+      ],
+      [
+        "student",
+        43
+      ],
+      [
+        "student",
+        69
+      ],
+      [
+        "student",
+        78
+      ],
+      [
+        "teacher",
+        79
+      ],
+      [
+        "quick",
+        4
+      ]
+    ],
+    "zoomFilesRendered": 25,
+    "sourceImagesDirectlyInspected": 9,
+    "minimumTextPt": 8,
+    "outsideGlyphs": 0,
+    "pdfGeneration": "ReportLab fixed page objects, same question/answer/rail text as web; actual browser print is pending",
+    "browserVerified": false
+  },
+  "workbookUnits": 20,
+  "fullThinkingClassroomUnits": 19,
+  "bodyDefaultClassroomStillOriginal": true,
+  "new3D": 0,
+  "newImagesGenerated": 0,
+  "paidApiCalls": 0,
+  "actualStudentStorageAccess": 0,
+  "localCommit": null,
+  "push": false,
+  "deploy": false,
+  "browserVerified": false,
+  "browserDenialBypass": false,
+  "previousGoalTurn": "progress: phase188 committed light full classroom",
+  "goalStatus": "active",
+  "remaining": [
+    "우리 몸의 전체 사고력 수업과 기존 기록/보고서 분리 연결",
+    "나머지 학기 교재와 전체 수업",
+    "최신main 대조·실제 PC/모바일/3D/소리 검수와 승인 범위 배포"
+  ]
+}

@@ -1,0 +1,235 @@
+{
+  "phase": 272,
+  "date": "2026-11-05",
+  "title": "힘 수업 카드별 독쌤 안내14개 연결 및 안내 선택 경로 통합",
+  "status": "verified-local-candidate-browser-audio-gates-pending",
+  "baselineCommit": "b24fe440be32a6646765ba9877f13fbce02d0e77",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / native Node module and actual controller-branch fixtures; no API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design"
+  ],
+  "curriculum": {
+    "title": "교육부2022-33 별책9",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "extractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "lines": [
+      468,
+      483
+    ],
+    "codes": [
+      "4과01-01~04"
+    ],
+    "use": "Force cues use the existing push/pull, balanced comparison, scale and lever/ramp learning sequence. No mass/weight distinction, torque equation, new experiment procedure or model value."
+  },
+  "actualDefect": "s31-u01 had no slideCues, and the main read/think cue predicates omitted forceThinking. Its 14 read/think/scene/lab/end cards therefore lacked their own current guide text. Added the cues and included force in the shared selection rule.",
+  "scopeCorrection": "Synthetic climate break/recall fixtures exposed a nonuniform predicate, but inspecting all 38 actual session-transition cards found they already selected the intended text. Compared the frozen prior controller with current for all 38: outputs are identical. These are preserved behaviors, not 38 fixed live defects. The user-facing commentary was corrected accordingly.",
+  "changes": [
+    "Add 14 force slide cues without changing its old chapter fields, plan, lab or classroom items.",
+    "Use the existing cue selector in think and session-transition branches; pass voice context into runThink.",
+    "Bump only force lesson/controller entry caches.",
+    "Add seven regression tests and a browser-free fixture executing the actual selector/controller source."
+  ],
+  "preservation": {
+    "unchangedWorkbooks": 32,
+    "unchangedQuestions": 3080,
+    "unchangedPaperHtmlProducts": 128,
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "forceChapterOnlyAdds14Cues": true,
+    "forcePlanLabClassroomItemsAndOldFieldsExactlyPreserved": true,
+    "currentNarrationCues": 988,
+    "unitCounts": [
+      {
+        "unit": "c22-s62-u04",
+        "cues": 41
+      },
+      {
+        "unit": "c22-s62-u03",
+        "cues": 41
+      },
+      {
+        "unit": "c22-s62-u02",
+        "cues": 38
+      },
+      {
+        "unit": "c22-s62-u01",
+        "cues": 39
+      },
+      {
+        "unit": "c22-s32-u01",
+        "cues": 13
+      },
+      {
+        "unit": "c22-s32-u02",
+        "cues": 13
+      },
+      {
+        "unit": "s41-u01",
+        "cues": 25
+      },
+      {
+        "unit": "c22-s42-u01",
+        "cues": 22
+      },
+      {
+        "unit": "c22-s51-u03",
+        "cues": 25
+      },
+      {
+        "unit": "s31-u01",
+        "cues": 14
+      },
+      {
+        "unit": "s31-u02",
+        "cues": 11
+      },
+      {
+        "unit": "s31-u03",
+        "cues": 13
+      },
+      {
+        "unit": "s31-u04",
+        "cues": 14
+      },
+      {
+        "unit": "c22-s42-u02",
+        "cues": 37
+      },
+      {
+        "unit": "c22-s32-u03",
+        "cues": 14
+      },
+      {
+        "unit": "c22-s32-u04",
+        "cues": 19
+      },
+      {
+        "unit": "c22-s42-u04",
+        "cues": 20
+      },
+      {
+        "unit": "s41-u02",
+        "cues": 28
+      },
+      {
+        "unit": "s41-u03",
+        "cues": 28
+      },
+      {
+        "unit": "s41-u04",
+        "cues": 28
+      },
+      {
+        "unit": "c22-s42-u03",
+        "cues": 31
+      },
+      {
+        "unit": "c22-s51-u01",
+        "cues": 35
+      },
+      {
+        "unit": "c22-s51-u02",
+        "cues": 36
+      },
+      {
+        "unit": "c22-s51-u04",
+        "cues": 44
+      },
+      {
+        "unit": "c22-s52-u01",
+        "cues": 41
+      },
+      {
+        "unit": "c22-s52-u02",
+        "cues": 44
+      },
+      {
+        "unit": "c22-s52-u03",
+        "cues": 43
+      },
+      {
+        "unit": "c22-s52-u04",
+        "cues": 45
+      },
+      {
+        "unit": "c22-s61-u01",
+        "cues": 50
+      },
+      {
+        "unit": "c22-s61-u02",
+        "cues": 50
+      },
+      {
+        "unit": "c22-s61-u03",
+        "cues": 47
+      },
+      {
+        "unit": "c22-s61-u04",
+        "cues": 39
+      }
+    ],
+    "currentCueTransitions": 60,
+    "legacyFallbackPreservedByRegression": true,
+    "beforeFixRegression": {
+      "total": 7,
+      "pass": 1,
+      "fail": 6
+    },
+    "afterFixRegression": {
+      "total": 7,
+      "pass": 7,
+      "fail": 0
+    },
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/s31-u01.thinking-lesson.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false,
+    "audioPlayed": false,
+    "actualSessionTransitionsComparedWithPrior": 38,
+    "actualSessionTransitionNarrationUnchanged": true,
+    "climateSyntheticCasesAreRegressionBoundaryFixtures": true
+  },
+  "validation": {
+    "tests": 1207,
+    "passed": 1205,
+    "failed": 0,
+    "skipped": 2,
+    "regressionBefore": {
+      "total": 7,
+      "passed": 1,
+      "failed": 6
+    },
+    "regressionAfter": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "syntaxFiles": 6,
+    "diffCheck": true,
+    "nativeSnapshot": "32 workbooks / 128 HTML modes / 64 slide arrays / 32 unit-loader datasets byte-identical; actual student storage read/write and QA network 0",
+    "guideSelectionScope": "988 authored cue entries in 32 current chapters; 60 synthetic transition cases and 38 actual before/after session-transition comparisons. This verifies selection of guide text, not audio playback or UI rendering.",
+    "noVoiceFilesGenerated": true,
+    "browserVerified": false,
+    "audioPlayed": false,
+    "actual3DVerified": false
+  },
+  "unperformed": [
+    "actual PC/mobile/A4/fonts/overflow/speech/WebGL and mandatory 3D runtime checks",
+    "main WIP integration",
+    "merge",
+    "push",
+    "deployment",
+    "paid AI API calls",
+    "cleanup"
+  ],
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase272"
+}

@@ -1,0 +1,247 @@
+{
+  "phase": 196,
+  "date": "2026-11-04",
+  "unit": "c22-s52-u03",
+  "title": "날씨와 우리 생활",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "3096d858938fec71d8f9ec3ca93908e1b0265cdd",
+  "status": "local integration candidate; not pushed or deployed",
+  "integratedWorkbooks": 23,
+  "integratedFullClassrooms": 23,
+  "studentSlides": 59,
+  "teacherSlides": 60,
+  "directActivityScreens": 20,
+  "minutesAcrossMultipleLessons": 295,
+  "originalPhaseIdsAndMinutesPreserved": true,
+  "phaseCount": 13,
+  "checksAndDailyQuestions": 16,
+  "selectedQuestionsExactlyUnchanged": 16,
+  "sourceQuestions": 112,
+  "similarQuestions": 57,
+  "caseIds": [
+    "observe",
+    "humidity",
+    "dew",
+    "fog",
+    "cloud",
+    "pressure",
+    "coast",
+    "forecast"
+  ],
+  "comparisonRowsKey": "weatherCompareRows",
+  "originalInquiryRowsKey": "weatherInquiryRows",
+  "originalInquiryStorageKey": "sciLab.inquiry.c22-s52-u03",
+  "originalActualActivities": [
+    "observe",
+    "dew",
+    "fog",
+    "skywind",
+    "pressure",
+    "coasttemp",
+    "flow",
+    "research",
+    "create",
+    "share"
+  ],
+  "standards": [
+    "6과06-01",
+    "6과06-02",
+    "6과06-03"
+  ],
+  "curriculumAndScientificReferencesReusedFrom": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase195/public-references.json",
+  "scope": "Weather elements and their everyday effects; condensation/locations of dew, fog and clouds; pressure distribution and a land/sea-breeze model. Precipitation formation and adiabatic cloud generation excluded from basic classroom.",
+  "protection": {
+    "protectedDataAndAssetsAndPriorPdfs": 1867,
+    "unchangedOldPdfs": 56,
+    "unchangedWorkbookHtmlProducts": 92,
+    "unchangedOtherClassroomArrays": 44,
+    "intentionalChanges": [
+      {
+        "unit": "c22-s52-u03",
+        "mode": "self",
+        "before": 91,
+        "after": 59
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teach",
+        "before": 92,
+        "after": 60
+      }
+    ],
+    "sourceItems": 112,
+    "similarItems": 57,
+    "selectedQuestionsExactlyUnchanged": 16,
+    "originalPresentationsAndDailyAnswerHistoryPreserved": true,
+    "originalActivities": [
+      "observe",
+      "dew",
+      "fog",
+      "skywind",
+      "pressure",
+      "coasttemp",
+      "flow",
+      "research",
+      "create",
+      "share"
+    ],
+    "originalReportAndInquiryConfigPreserved": true,
+    "displayOnlyChange": "Known generated-image metadata credit is shown as a natural picture label; original source/copyright data unchanged.",
+    "newImages": 0,
+    "newPdfs": 0,
+    "new3D": 0,
+    "newOcr": 0,
+    "actualStudentStorageAccess": 0,
+    "browserVerified": false
+  },
+  "routes": {
+    "unit": "c22-s52-u03",
+    "startLinks": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 16,
+    "legacyDailyQuestions": 16,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "weatherCompareRows",
+    "actualInquiryKey": "weatherInquiryRows",
+    "originalRecordsBookExactlyUnchanged": true,
+    "originalReportAndObservationStatePreserved": true,
+    "noNew3D": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "lateReleasedCallbackCannotWrite": true,
+    "browserVerified": false
+  },
+  "deckEvents": {
+    "teacherMounts": 1,
+    "teacherPersonal": false,
+    "staleLegacyBattleIgnored": true,
+    "comparisonClickDoesNotAdvance": true,
+    "outsideClickAdvances": true,
+    "manualActivities": 20,
+    "noTimerOnActivity": true,
+    "explicitNextWorks": true,
+    "browserVerified": false
+  },
+  "htmlStructure": {
+    "renderedComparisonStates": 16,
+    "validComparisonTables": 31,
+    "scopedTableHeaders": 185,
+    "invalidTags": 0,
+    "labelAssociationsValid": true,
+    "browserVerified": false
+  },
+  "assets": {
+    "assets": [
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/dew.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "0b40c5de42b28bd4d6d0638a175804371d4ef91bfb29531af93d8464a4593ef8",
+        "name": "dew"
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/fog-model.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "817f3b50d6216507a5915cc82ca95a3220d3d26aeeafa3f6eed64c342880da04",
+        "name": "fog-model"
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/station.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "f15dab339a86c6f181f153817572b2315514e3bf3d375398599e6a412e0db776",
+        "name": "station"
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/fog.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "02dd682dc08dc894816e1ce9b6a3c7c1e1795099546fb88970dea458aa516b2e",
+        "name": "fog"
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/cloud.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "f17693bbfcf7d96023a1826352b6a88eda6963607025d54e9c0ed30ce2a2dd88",
+        "name": "cloud"
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/coast-model.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "c8e2c80c2d5f3228d709031ed4ef7021293a917e7040e9b40d214fd9d8b74271",
+        "name": "coast-model"
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/wind.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "41d517a9021921cd0b080bc3a8a7e09dd3a24a7c8201483586b3fbc0e9cf0156",
+        "name": "wind"
+      }
+    ],
+    "sameBytesAsPhase195": true,
+    "reusedScientificAndLayoutReview": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase195/visual-review.json",
+    "reusedNativeAppleVisionReview": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase195/vision-review.json",
+    "priorNativeVisionRuns": 190,
+    "newImages": 0,
+    "newOcr": 0,
+    "new3D": 0,
+    "note": "Same seven installed picture assets and workbook captions; no image-generated readings for temperature, speed or air movement."
+  },
+  "tests": {
+    "v2": {
+      "total": 622,
+      "passed": 620,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "failed": 0
+    },
+    "passedTotal": 919
+  },
+  "cache": "20261104-weather-class",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "frontend-design",
+    "gfield-textbook-design"
+  ],
+  "otherDisplayChange": "Only the known image-production metadata label is rewritten in photoFigureHtml. Source question data and any following photographer/license attribution remain unchanged. Daily and bank-paper callers use the refreshed helper URL.",
+  "actualStudentStorageAccess": 0,
+  "newPdfs": 0,
+  "newImages": 0,
+  "newOcr": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "browserVerified": false,
+  "verificationLimit": "Node VM executes actual route/deck handlers with some DOM/audio/book-view substitutes. HTMLParser checks actual mounted markup. Browser CSS/mobile/audio/WebGL and pre-main 3D-checker gate remain unverified. Prior denied browser target was not bypassed.",
+  "next": [
+    "Resource and energy workbook/classroom and remaining semesters",
+    "Latest main integration",
+    "Permitted browser/mobile/audio/WebGL checks and 3D checker before main",
+    "Publication only within confirmed scope"
+  ],
+  "wholeGoal": "active"
+}

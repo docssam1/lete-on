@@ -12,6 +12,7 @@
 import { readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
+import{auditRevisionDiagnostics}from'./audit-revision-diagnostics.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dir = join(here, '..', 'data', 'units');
@@ -84,6 +85,9 @@ for (const f of readdirSync(dir).filter((x) => /^(?:c22-)?s\d+-(u\d+|mid|fin)\.m
       if (!CE[it.id]) err(`${it.id} 표 채우기인데 cells 없음`); else use(CE[it.id], it.id);
     }
   }
+  const revisionAudit=auditRevisionDiagnostics(misc.revisionItems,byId,M);
+  for(const message of revisionAudit.errors)err(message);
+  for(const[code,n]of revisionAudit.used)used.set(code,used.get(code)+n);
   for (const [chip, v] of Object.entries(misc.bookChips || {})) use(v[1], `bookChips ${chip}`);
   for (const [m, n] of used) if (!n) err(`${m} 근거 문항 없음`);
   const R = misc.remedy || {};

@@ -1,0 +1,131 @@
+{
+  "phase": 202,
+  "protectedFiles": 1943,
+  "unchangedProtectedFiles": 1942,
+  "sharedDailyCacheOnlyChange": true,
+  "unchangedPriorPdfs": 68,
+  "unchangedWorkbookHtmlProducts": 104,
+  "unchangedOtherClassroomArrays": 50,
+  "integratedWorkbooks": 26,
+  "integratedFullClassrooms": 26,
+  "studentSlides": 65,
+  "teacherSlides": 66,
+  "phases": 13,
+  "minutes": 270,
+  "manualActivities": 18,
+  "comparisonCases": 8,
+  "checks": 16,
+  "originalAuthoredItems": 128,
+  "exactOriginalObjects": 90,
+  "versionedQuestions": 38,
+  "exactChecks": 11,
+  "versionedChecks": 5,
+  "changedAcceptedAnswerQuestions": [
+    115,
+    120,
+    121
+  ],
+  "sourceAndPairCounts": [
+    70,
+    70
+  ],
+  "sourceReviewOnly": 7,
+  "newCopiedSourceFiles": 4,
+  "originalQuestionPresentationsRetained": true,
+  "serializedCurrentPresentationsRetainDiagnosticRules": true,
+  "optionalRecords": 13,
+  "originalObservationRowsKey": "motionObservationRows",
+  "comparisonRowsKey": "motionCompareRows",
+  "actualInquiryRowsKey": "motionInquiryRows",
+  "newImages": 0,
+  "new3D": 0,
+  "newPdfs": 0,
+  "newPaidApiCalls": 0,
+  "newNativeVisionRuns": 0,
+  "browserVerified": false,
+  "referencesReusedFrom": "phase201, same unit and same session; no new web/API calls",
+  "htmlStructureReview": {
+    "classroom": {
+      "states": 131,
+      "tables": 20,
+      "scopeHeaders": 90
+    },
+    "comparison": {
+      "states": 16,
+      "tables": 16,
+      "scopeHeaders": 84
+    },
+    "reusedAssets": [
+      {
+        "src": "../assets/bank/c22-s61-u02/s2-q05.webp",
+        "path": "science-lab/assets/bank/c22-s61-u02/s2-q05.webp",
+        "sha256": "51098cd9ac3c5bfacd49f0a9124eb9958e36d1c95ef5faf8b896d2d903cdbb78"
+      },
+      {
+        "src": "../assets/bank/c22-s61-u02/s4-q05.webp",
+        "path": "science-lab/assets/bank/c22-s61-u02/s4-q05.webp",
+        "sha256": "d4548e46dfc0d15e01a755c88f8f968430b3f3145c09208727529a1706bbf5f5"
+      },
+      {
+        "src": "../assets/book/s31-u01-photo-cart.webp",
+        "path": "science-lab/assets/book/s31-u01-photo-cart.webp",
+        "sha256": "d4f7a65d2e963552a9d1ee8f12e8e67a643e7e254f6d7f0e74ef096621ab2ad6"
+      }
+    ]
+  },
+  "motionRoutes": {
+    "unit": "c22-s61-u02",
+    "startLinks": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 16,
+    "legacyDailyQuestions": 4,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "motionCompareRows",
+    "actualInquiryKey": "motionInquiryRows",
+    "noMissingRecordsBookLink": true,
+    "originalReportAndObservationStatePreserved": true,
+    "missingOptionalReportSafelyRedirected": true,
+    "lateOptionalRecordCallbackCannotWrite": true,
+    "lateOptionalRecordHandleDisposed": true,
+    "noNew3D": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "lateReleasedCallbackCannotWrite": true,
+    "browserVerified": false
+  },
+  "questionDiagnostics": {
+    "oldVersionUsesOriginalRule": true,
+    "currentQuestionDoesNotInheritOpinionOrObservationRule": true,
+    "currentCorrectAnswersDoNotResolveOldMisconception": true,
+    "originalCorrectAnswersStillResolveOldMisconception": true,
+    "newSpeedUsesM05M06M07": true,
+    "remedyPoolSeparatesVersions": true,
+    "teacherKeyUsesMatchingVersion": true,
+    "pickedTextsUseMatchingVersion": true,
+    "onlineCoordinateAndUnitsStrict": true,
+    "deckCoordinateAndUnitsStrict": true,
+    "syntheticProgressEvents": 15,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0
+  },
+  "tests": {
+    "v2Total": 678,
+    "v2Pass": 676,
+    "v2Skip": 2,
+    "bankPass": 299,
+    "passTotal": 975,
+    "fail": 0,
+    "bankAudit": true
+  },
+  "status": "local-candidate-reviewed",
+  "push": false,
+  "deployed": false,
+  "remaining": [
+    "남은6개 교재/전체 사고력 수업",
+    "최신 main 통합",
+    "허용된 실제 CSS·PC/모바일·소리·WebGL 확인과 main 전 3D 검사",
+    "승인 범위 배포"
+  ]
+}

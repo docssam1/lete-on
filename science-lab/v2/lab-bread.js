@@ -17,7 +17,7 @@ export async function mountBread(el, opts = {}) {
       : '<div class="bread-2d" role="img" aria-label="부푸는 반죽 2D 관찰"><div class="bd-cup"><i class="bd-dough"></i><b class="bd-mark" style="--ml:200">200</b><b class="bd-mark" style="--ml:400">400</b></div><em class="bd-clock">0분</em></div>'}
       <p class="lab3d-tip" data-tip aria-live="polite">물의 온도를 고르고 「발효시키기」를 눌러요.</p>
       <div class="lab3d-btns"><button type="button" class="btn primary" data-run>발효시키기</button><button type="button" class="btn" data-record disabled>표에 적기</button></div></div>
-    <p class="bd-model-note">밀가루·설탕·효모의 양은 늘 같고, 반죽에 넣는 물의 온도만 달라요. 처음 반죽은 200 mL, 따뜻한 곳에 40분 둬요. 부피는 원본 실험의 결과 순서(따뜻한 물 &gt; 찬물)를 따르는 모형 값이고, 뜨거운 물(70 ℃)은 「효모가 너무 뜨거우면 죽는다」를 보여 주는 덧붙인 조건이에요.</p>
+    <p class="bd-model-note">밀가루·설탕·효모의 양은 늘 같고, 반죽에 넣는 물의 온도만 달라요. 처음 반죽은 200 mL, 따뜻한 곳에 40분 둬요. 부피와 모습은 미리 정해진 모형의 결과예요. 실제로 잰 값이나 모든 효모의 최적 온도를 뜻하지 않아요. 뜨거운 물(70 ℃)은 화면에서만 비교하고 실제로는 사용하지 않아요. 모형 값만으로 실제 효모의 생사를 확인할 수는 없어요.</p>
     <table class="lab-table"><thead><tr><th>반죽에 넣은 물</th><th>40분 뒤 부피</th><th>반죽 모습</th></tr></thead><tbody></tbody></table>`;
   const $ = (q) => el.querySelector(q), tip = (s) => { $('[data-tip]').textContent = s; }, record = $('[data-record]'), run = $('[data-run]');
   let model;
@@ -35,7 +35,7 @@ export async function mountBread(el, opts = {}) {
   function done() {
     running = false; completed = true; run.disabled = false; record.disabled = false; show(MINUTES, t);
     const m = breadModel(WATERS[ci]);
-    tip(ci === 2 ? '40분이 지나도 그대로예요. 물이 너무 뜨거워 효모가 죽었어요. 표에 적어요.' : `40분 뒤 ${m.vol} mL — 처음의 ${m.ratio}배예요. 표에 적고 다른 물과 비교해요.`);
+    tip(ci === 2 ? '이 모형의40분 뒤 부피는200mL예요. 실제 효모의 생사를 확인한 결과는 아니에요. 표에 적어요.' : `40분 뒤 ${m.vol} mL — 처음의 ${m.ratio}배예요. 표에 적고 다른 물과 비교해요.`);
   }
   const step = (dt) => { t += dt; const min = Math.min(MINUTES, t / DUR * MINUTES); show(min, t); if (Math.round(min) % 10 === 0 && min < MINUTES) tip(`발효 중 · ${Math.round(min)}분 지남`); if (t >= DUR) done(); };
   run.onclick = () => {

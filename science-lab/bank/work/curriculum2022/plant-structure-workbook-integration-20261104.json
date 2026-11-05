@@ -1,0 +1,141 @@
+{
+  "phase": 203,
+  "protectedFiles": 1948,
+  "unchangedOldPdfs": 68,
+  "unchangedWorkbookHtmlProducts": 104,
+  "unchangedOtherClassroomArrays": 52,
+  "integratedWorkbooks": 27,
+  "integratedFullClassrooms": 26,
+  "studentPages": 94,
+  "teacherPages": 147,
+  "answerPages": 53,
+  "quickPages": 5,
+  "questions": 128,
+  "questionForms": 8,
+  "workedExamples": 8,
+  "rightNoteSentences": 282,
+  "modifiedQuestionNumbers": [
+    33,
+    42,
+    55,
+    56,
+    108,
+    114,
+    119,
+    120,
+    121,
+    122,
+    125
+  ],
+  "changedShortAnswers": [
+    114,
+    120,
+    121
+  ],
+  "copiedFiles": 30,
+  "adaptedCopiedFiles": [
+    "science-lab/data/book/c22-s61-u03.workbook.js",
+    "science-lab/v2/plant-structure-bank-paper.js",
+    "science-lab/v2/plant-structure-book.css"
+  ],
+  "originalBank": {
+    "source": 75,
+    "similar": 75,
+    "authored": 128,
+    "automaticHolds": 5,
+    "sets": [
+      10,
+      20,
+      20,
+      25
+    ]
+  },
+  "newPhotographs": 2,
+  "reusedPhotoScenes": 3,
+  "retainedExperimentDiagrams": 2,
+  "new3D": 0,
+  "newPaidApiCalls": 0,
+  "browserVerified": false,
+  "fullPlantStructureClassroomPending": true,
+  "v2Tests": {
+    "total": 687,
+    "pass": 685,
+    "skip": 2,
+    "fail": 0
+  },
+  "bankTests": {
+    "pass": 299,
+    "fail": 0
+  },
+  "bankAudit": "pass",
+  "nativeVisionRuns": 219,
+  "recognizedStudentTitles": 94,
+  "offlinePdfPages": 299,
+  "minimumPdfTextPt": 8,
+  "largeDrawingBoxes": 26,
+  "directContactSheets": 15,
+  "directUniqueZooms": [
+    "student-1",
+    "student-2",
+    "student-3",
+    "student-25",
+    "student-47",
+    "student-68",
+    "student-83",
+    "student-92",
+    "teacher-83",
+    "answers-45",
+    "quick-5"
+  ],
+  "pdfValidation": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 94,
+        "bytes": 8605752,
+        "sha256": "5341d2237b05581747fd2469e433febb3f4c8a116cbb8fe7c7ca95801d0e1970",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 147,
+        "bytes": 8811700,
+        "sha256": "ec4245a04c6b6753168a8782340443cc63621902dbd56a6895be24c3e9a7ebd3",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 53,
+        "bytes": 371231,
+        "sha256": "d42d119e5e37396728745d496edd9f4d2fe47564932eb5675b6ce33aec3e1d7c",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 5,
+        "bytes": 114299,
+        "sha256": "04499523a709c961b8e23f7237fd16e516b5dc470415ec38fc4ddf47d986b13f",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 256,
+    "solutionExpressions": 256,
+    "teacherAnswerStartsOnRecto": 95
+  },
+  "fullGoalStatus": "active",
+  "localOnly": true,
+  "pushCount": 0,
+  "deploymentCount": 0
+}

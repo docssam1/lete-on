@@ -1,13 +1,46 @@
+import{buildCareerThinkingSlides}from'./deck-career-thinking.js?v=20261105-career-reading-science';
+import{buildElectricityThinkingSlides}from'./deck-electricity-thinking.js?v=20261104-student-science-language';
+import{buildCombustionThinkingSlides}from'./deck-combustion-thinking.js?v=20261104-combustion-class';
+import{buildSeasonThinkingSlides}from'./deck-season-thinking.js?v=20261104-season-class';
+import{buildEarthMotionThinkingSlides}from'./deck-earth-motion-thinking.js?v=20261104-earth-motion-class';
+import{buildPlantStructureThinkingSlides}from'./deck-plant-structure-thinking.js?v=20261104-plant-structure-class';
+import{buildMotionThinkingSlides}from'./deck-motion-thinking.js?v=20261104-motion-class';
+import{buildAcidThinkingSlides}from'./deck-acid-thinking.js?v=20261104-acid-class';
 // GFIELD 실험 과학 영재 — 화면 수업 자료(교안). 교재와 같은 chapter 데이터를 16:9 슬라이드로 보여 준다.
 //  teach(가르치기·강사용): 클릭/→/스페이스로 빈칸 답이 차례로 열리고, N으로 강사 발문 노트, F로 전체 화면.
 //  self (스스로 공부하기·학생용): 내 생각을 쓰고 '예시 답 보기', 확인 문제는 눌러서 바로 채점.
-import { judgeText, judgeShort } from './judge.js';
+import { judgeText, judgeShort, judgeItem } from './judge.js?v=20261104-season-book';
+import {deckPredictionKey,deckSlideRecordKey,deckQuestionSnapshot,judgeDeckCloze,withVersionedQuestionSlides} from './deck-answer-state.js?v=20261105-ecology-sound-bank';
 import { loadJudge } from './think-merge.js';
 import { mountMagnetBattle } from './magnet-battle.js';
 import { mountLabBattle } from './lab-battle.js';
 import { buildLifeSlides } from './deck-life.js';
 import {contentUnitOfItem} from './content-unit.js';
 import { buildForceSlides } from './deck-force.js';
+import { buildForceThinkingSlides } from './deck-force-thinking.js?v=20261102-state';
+import { buildAnimalThinkingSlides } from './deck-animal-thinking.js?v=20261102-state';
+import { buildPlantThinkingSlides } from './deck-plant-thinking.js?v=20261102-state';
+import { buildEcologyThinkingSlides } from './deck-ecology-thinking.js?v=20261102-state';
+import { buildEarthSeaThinkingSlides } from './deck-earth-sea-thinking.js?v=20261102-earth-sea';
+import { buildMixtureThinkingSlides } from './deck-mixture-thinking.js?v=20261104-mixture-class';
+import { buildEnergyThinkingSlides } from './deck-energy-thinking.js?v=20261104-energy-class';
+import { buildWeatherThinkingSlides } from './deck-weather-thinking.js?v=20261105-weather-photo-labels';
+import { buildHeatThinkingSlides } from './deck-heat-thinking.js?v=20261104-heat-class';
+import { buildBodyThinkingSlides } from './deck-body-thinking.js?v=20261104-body-class';
+import { buildLightThinkingSlides } from './deck-light-thinking.js?v=20261105-light-student-language';
+import { buildGeologyThinkingSlides } from './deck-geology-thinking.js?v=20261105-geology-student-language';
+import { buildGasThinkingSlides } from './deck-gas-thinking.js?v=20261104-gas-class';
+import { buildMagnetThinkingSlides } from './deck-magnet-thinking.js?v=20261104-magnet-class';
+import { buildBiologyThinkingSlides } from './deck-biology-thinking.js?v=20261104-biology-language';
+import { buildGroundThinkingSlides } from './deck-ground-thinking.js?v=20261104-ground-class';
+import { buildWaterThinkingSlides } from './deck-water-thinking.js?v=20261103-water-class';
+import { buildSolutionThinkingSlides } from './deck-solution-thinking.js?v=20261103-solution-class';
+import { buildSkyThinkingSlides } from './deck-sky-thinking.js?v=20261103-sky-class';
+import { buildClimateThinkingSlides } from './deck-climate-thinking.js?v=20261103-climate-class';
+import { buildInfectionThinkingSlides } from './deck-infection-thinking.js?v=20261103-infection-class';
+import { buildSoundThinkingSlides } from './deck-sound-thinking.js?v=20261102-sound-class';
+import { buildMaterialThinkingSlides } from './deck-material-thinking.js?v=20261102-material';
+import { buildLifeThinkingSlides } from './deck-life-thinking.js?v=20261102-state';
 import {buildInquirySlides} from './deck-inquiry.js';
 import { buildAnimalSlides } from './deck-animal.js';
 // 확인 문제 키 = 유사문항의 「세트-번호」(원문 짝) 또는 문항 id(창작 문항). Daily Test(v2.js pageDaily)와 같은 규칙.
@@ -23,7 +56,43 @@ const TABLES = new Map();
 const judgeTable = (u) => { if (!TABLES.has(u)) TABLES.set(u, loadJudge(u)); return TABLES.get(u); };
 const MIC = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
-export function buildSlides(ch, art, plan, similar, mode, ix = null, media = null) {
+export function buildSlides(ch,art,plan,similar,mode,ix=null,media=null){
+  const slides=buildSlideContent(ch,art,plan,similar,mode,ix,media);
+  return ch.revisedThinkingClassroom?withVersionedQuestionSlides(slides,similar):slides;
+}
+function buildSlideContent(ch, art, plan, similar, mode, ix = null, media = null) {
+  if(ch.careerThinking)return buildCareerThinkingSlides(ch,art,plan,similar,mode,ix);
+  if(ch.electricityThinking)return buildElectricityThinkingSlides(ch,art,plan,similar,mode,ix);
+  if(ch.combustionThinking)return buildCombustionThinkingSlides(ch,art,plan,similar,mode,ix);
+  if(ch.seasonThinking)return buildSeasonThinkingSlides(ch,art,plan,similar,mode,ix);
+  if(ch.earthMotionThinking)return buildEarthMotionThinkingSlides(ch,art,plan,similar,mode,ix);
+  if(ch.plantStructureThinking)return buildPlantStructureThinkingSlides(ch,art,plan,similar,mode,ix);
+  if(ch.motionThinking)return buildMotionThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.acidThinking)return buildAcidThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.energyThinking) return buildEnergyThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.weatherThinking) return buildWeatherThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.heatThinking) return buildHeatThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.mixtureThinking) return buildMixtureThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.bodyThinking) return buildBodyThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.lightThinking) return buildLightThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.geologyThinking) return buildGeologyThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.gasThinking) return buildGasThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.magnetThinking) return buildMagnetThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.biologyThinking) return buildBiologyThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.groundThinking) return buildGroundThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.waterThinking) return buildWaterThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.solutionThinking) return buildSolutionThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.skyThinking) return buildSkyThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.climateThinking) return buildClimateThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.infectionThinking) return buildInfectionThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.soundThinking) return buildSoundThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.earthSeaThinking) return buildEarthSeaThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.materialThinking) return buildMaterialThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.forceThinking) return buildForceThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.animalThinking) return buildAnimalThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.plantThinking) return buildPlantThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.ecologyThinking) return buildEcologyThinkingSlides(ch,art,plan,similar,mode,ix);
+  if (ch.lifeThinking) return buildLifeThinkingSlides(ch,art,plan,similar,mode,ix);
   if (ch.inquirywork) return buildInquirySlides(ch,art,plan,similar,mode);
   if (ch.animalwork || ch.plantwork) return buildAnimalSlides(ch, art, plan, similar, mode);
   if (ch.forcework) return buildForceSlides(ch, art, plan, similar, mode);
@@ -191,13 +260,50 @@ function watchLabTips(host, G) {
 let battle = false;   // 가르치기 · 실험 화면: 기본은 한 화면, 켜면 두 팀 배틀
 let recog = null;     // 말로 쓰기(학생이 🎤를 눌렀을 때만)
 
-export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, mountModel, misc, onAnswer, myLab, ix = null, media = null }) {
+export function deckSlideIndex(ch,slides,idx){
+  return idx === 's2' ? Math.max(0, slides.findIndex(x => ch.inquirywork || ch.ecologyThinking ? x.ses === 2 : x.id === 'recall')) : Math.min(slides.length - 1, Math.max(0, (idx || 1) - 1));
+}
+
+export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, mountModel, misc, onAnswer, onView, resolveResume, myLab, ix = null, media = null }) {
+  if(ch.mixtureThinking) ix = ch.mixtureInteraction || ix;
+  if(ch.careerThinking)ix=ch.careerInteraction||ix;
+  if(ch.electricityThinking)ix=ch.electricityInteraction||ix;
+  if(ch.combustionThinking)ix=ch.combustionInteraction||ix;
+  if(ch.seasonThinking)ix=ch.seasonInteraction||ix;
+  if(ch.earthMotionThinking)ix=ch.earthMotionInteraction||ix;
+  if(ch.plantStructureThinking)ix=ch.plantStructureInteraction||ix;
+  if(ch.motionThinking)ix=ch.motionInteraction||ix;
+  if(ch.acidThinking)ix=ch.acidInteraction||ix;
+  if(ch.energyThinking) ix = ch.energyInteraction || ix;
+  if(ch.weatherThinking) ix = ch.weatherInteraction || ix;
+  if(ch.heatThinking) ix = ch.heatInteraction || ix;
+  if(ch.bodyThinking) ix = ch.bodyInteraction || ix;
+  if(ch.lightThinking) ix = ch.lightInteraction || ix;
+  if(ch.geologyThinking) ix = ch.geologyInteraction || ix;
+  if(ch.gasThinking) ix = ch.gasInteraction || ix;
+  if(ch.magnetThinking) ix = ch.magnetInteraction || ix;
+  if(ch.biologyThinking) ix = ch.biologyInteraction || ix;
+  if(ch.groundThinking) ix = ch.groundInteraction || ix;
+  if(ch.waterThinking) ix = ch.waterInteraction || ix;
+  if(ch.solutionThinking) ix = ch.solutionInteraction || ix;
+  if(ch.skyThinking) ix = ch.skyInteraction || ix;
+  if(ch.climateThinking) ix = ch.climateInteraction || ix;
+  if(ch.infectionThinking) ix = ch.infectionInteraction || ix;
+  if(ch.soundThinking) ix = ch.soundInteraction || ix;
+  if(ch.earthSeaThinking) ix = ch.earthSeaInteraction || ix;
+  if(ch.materialThinking) ix = ch.materialInteraction || ix;
+  if(ch.forceThinking) ix ||= ch.forceInteraction;
+  if(ch.animalThinking) ix ||= ch.animalInteraction;
+  if(ch.plantThinking) ix ||= ch.plantInteraction;
+  if(ch.ecologyThinking) ix ||= ch.ecologyInteraction;
+  if(ch.lifeThinking) ix ||= ch.lifeInteraction;
   const teach = mode === 'teach', S = buildSlides(ch, art, plan, similar, mode, ix, media);
-  const i = idx === 's2' ? Math.max(0, S.findIndex((x) => ch.inquirywork ? x.ses === 2 : x.id === 'recall')) : Math.min(S.length - 1, Math.max(0, (idx || 1) - 1)), s = S[i], p = s.phaseObj;
+  const resume = !teach && idx === 'resume' && $app.isConnected !== false ? resolveResume?.(S) : null;
+  const i = Number.isInteger(resume) && resume >= 0 && resume < S.length ? resume : deckSlideIndex(ch,S,idx === 'resume' ? 1 : idx), s = S[i], p = s.phaseObj;
   const go = (k) => { location.hash = `#/${u}/lab-class/${mode}/${k + 1}`; };
   const phases = plan.phases.map((x) => `<span class="${x.id === s.phase ? 'on' : ''}">${esc(x.shortName || x.name)}${teach ? ` ${x.min}′` : ''}</span>`).join('');
   const isLab = s.mount === 'lab', isModel = Boolean(s.modelLab), labForSlide = isModel ? mountModel : mountLab;
-  $app.innerHTML = `<div data-unit="${esc(u)}" class="dk dk-${mode}${ch.plantwork ? ' plant-layout' : ''}${isModel?' inquiry-model':''}${(ch.fieldwork && !isModel) || ch.forcework ? ' fieldwork-layout' : ''}">
+  $app.innerHTML = `<div data-unit="${esc(u)}" class="dk dk-${mode}${ch.forceThinking?' force-thinking':''}${ch.animalThinking?' animal-thinking':''}${ch.plantThinking?' plant-thinking':''}${ch.lifeThinking?' life-thinking':''}${ch.ecologyThinking?' ecology-thinking':''}${ch.materialThinking?' material-thinking':''}${ch.earthSeaThinking?' earth-sea-thinking':''}${ch.soundThinking?' sound-thinking':''}${ch.infectionThinking?' infection-thinking':''}${ch.climateThinking?' climate-thinking':''}${ch.skyThinking?' sky-thinking':''}${ch.solutionThinking?' solution-thinking':''}${ch.waterThinking?' water-thinking':''}${ch.groundThinking?' ground-thinking':''}${ch.biologyThinking?' biology-thinking':''}${ch.magnetThinking?' magnet-thinking':''}${ch.gasThinking?' gas-thinking':''}${ch.geologyThinking?' geology-thinking':''}${ch.lightThinking?' light-thinking':''}${ch.bodyThinking?' body-thinking':''}${ch.mixtureThinking?' mixture-thinking':''}${ch.heatThinking?' heat-thinking':''}${ch.careerThinking?' career-thinking':''}${ch.electricityThinking?' electricity-thinking':''}${ch.combustionThinking?' combustion-thinking':''}${ch.seasonThinking?' season-thinking':''}${ch.earthMotionThinking?' earth-motion-thinking':''}${ch.plantStructureThinking?' plant-structure-thinking':''}${ch.motionThinking?' motion-thinking':''}${ch.acidThinking?' acid-thinking':''}${ch.energyThinking?' energy-thinking':''}${ch.weatherThinking?' weather-thinking':''}${ch.plantwork ? ' plant-layout' : ''}${isModel?' inquiry-model':''}${(ch.fieldwork && !isModel) || ch.forcework ? ' fieldwork-layout' : ''}">
     <div class="dk-top no-print"><a href="#/${u}/start">‹ 처음으로</a><b>${esc(ch.title)}</b><span class="dk-mode">${teach ? '가르치기 · 강사용' : '스스로 공부하기 · 학생용'}</span>
       <nav class="dk-phases">${phases}</nav></div>
     <div class="dk-stage-wrap"><section class="dk-stage ${s.layout || ''}" aria-live="polite">
@@ -206,13 +312,14 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     <div class="dk-bar no-print"><button class="btn" data-a="prev" ${i ? '' : 'disabled'}>‹ 이전</button>
       ${teach ? `<span class="dk-count">${s.n} / ${S.length} · ${esc(p?.name || '')}</span>` : ''}
       <button class="btn primary dk-next" data-a="next"><span class="dk-fill" aria-hidden="true"></span><span class="dk-nt">${i === S.length - 1 ? '처음으로' : '다음 ›'}</span></button>
-      ${teach && isLab && (!ch.fieldwork || isModel) && !ch.forcework ? `<button class="btn" data-a="battle" aria-pressed="${battle}" title="두 팀이 같은 문제를 나란히 실험">⚔ 배틀 ${battle ? '끄기' : ''}</button>` : ''}
+      ${teach && isLab && ch.classroomBattle!==false && (!ch.fieldwork || isModel) && !ch.forcework ? `<button class="btn" data-a="battle" aria-pressed="${battle}" title="두 팀이 같은 문제를 나란히 실험">⚔ 배틀 ${battle ? '끄기' : ''}</button>` : ''}
       ${teach ? `<button class="btn" data-a="notes" aria-pressed="${notesOn}">노트</button>` : ''}<button class="btn" data-a="full">전체 화면</button></div>
     ${teach ? `<aside class="dk-notes no-print" ${notesOn ? '' : 'hidden'}><b>${esc(p?.name)} · ${p?.min}분</b> ${esc(p?.aim)}${s.say && plan.say[s.say] ? `<p>발문 · ${esc(plan.say[s.say])}</p>` : ''}<small>→ / 스페이스 / 화면 클릭: 답 열기·다음 · ← 이전 · N 노트 · F 전체 화면</small></aside>` : ''}
   </div>`;
   const stage = $app.querySelector('.dk-stage'), $next = $app.querySelector('[data-a=next]');
   stage.querySelectorAll('.dk-stepi').forEach((b) => b.addEventListener('click', () => stage.querySelectorAll('.dk-stepi').forEach((x) => x.classList.toggle('on', x === b))));
   const alive = () => stage.isConnected;
+  if (!teach && alive()) onView?.(S, i);
   const film=stage.querySelector('.dk-film video');
   if(film){
   const fail=()=>{stage.querySelector('.dk-film-error').hidden=false;};
@@ -233,7 +340,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   const toggleNotes = () => { notesOn = $notes ? $notes.hidden : !notesOn; if ($notes) $notes.hidden = !notesOn; $app.querySelector('[data-a=notes]')?.setAttribute('aria-pressed', notesOn); };
   $app.querySelector('[data-a=notes]')?.addEventListener('click', toggleNotes);
   $app.querySelector('[data-a=battle]')?.addEventListener('click', () => { battle = !battle; renderDeck($app, arguments[1]); });
-  if (teach) stage.addEventListener('click', (e) => { if (!e.target.closest('button,canvas,video,a,input,textarea,.dk-3d,.dk-battle,.life-notebook,.force-lab')) next(); });
+  if (teach) stage.addEventListener('click', (e) => { if (!e.target.closest('button,canvas,video,a,input,textarea,.dk-3d,.dk-battle,.life-notebook,.force-lab,.sound-compare,.infection-compare,.climate-compare,.sky-compare,.solution-compare,.water-compare,.ground-compare,.biology-compare,.magnet-compare,.gas-compare,.geology-compare,.light-compare,.body-compare,.mixture-compare,.heat-compare,.weather-compare,.energy-compare,.acid-compare,.motion-compare,.plant-structure-compare,.earth-motion-compare,.career-compare,.electricity-compare,.combustion-compare,.season-compare')) next(); });
   const onKey = (e) => {
     if (!alive()) { removeEventListener('keydown', onKey); return; }
     if (e.target.closest?.('textarea,input,select,button,video,.dk-battle,.life-notebook,.force-lab')) return;
@@ -262,7 +369,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (m?.dataset.mount === 'scene') mount3D(m, { autoplay: false, preview: !!m.dataset.preview, from: m.dataset.from || null });
     if (m?.dataset.mount === 'lab') {
       // 교사 화면에는 학생 개인 기록을 섞지 않는다 — 실험 표는 이 화면에서만 쓰고 버린다.
-      if (!battle || (ch.fieldwork && !isModel) || ch.forcework) labForSlide(m, { rows: [], personal: false, tab: s.fieldTab });
+      if (ch.classroomBattle===false || !battle || (ch.fieldwork && !isModel) || ch.forcework) labForSlide(m, { rows: [], personal: false, tab: s.fieldTab });
       else if (u === 's41-u01') {
         m.parentElement.classList.add('is-battle');
         m.outerHTML = '<div class="dk-battle dk-magnet-battle"></div>';
@@ -303,10 +410,11 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     wireMoods(stage, G);
     run(V);
   });
-  const cue = (V, dflt) => V.slides[s.id] || dflt;
+  const cue = (V, dflt) => (ch.forceThinking||ch.animalThinking||ch.plantThinking||ch.lifeThinking||ch.ecologyThinking||ch.materialThinking||ch.earthSeaThinking||ch.soundThinking||ch.infectionThinking||ch.climateThinking||ch.skyThinking||ch.solutionThinking||ch.waterThinking||ch.groundThinking||ch.biologyThinking||ch.magnetThinking||ch.gasThinking||ch.geologyThinking||ch.lightThinking||ch.bodyThinking||ch.mixtureThinking||ch.heatThinking||ch.weatherThinking||ch.energyThinking||ch.acidThinking||ch.motionThinking||ch.plantStructureThinking||ch.earthMotionThinking||ch.seasonThinking||ch.combustionThinking||ch.careerThinking||ch.electricityThinking)&&ch.slideCues?.[s.id] ? {text:ch.slideCues[s.id]} : V.slides[s.id] || dflt;
   const textLen = () => stage.querySelector('.dk-body').innerText.replace(/\s+/g, '').length;
   async function run(V) {
     const k = s.kind || 'read';
+    if (k === 'activity') { prepRes(); wirePeek(() => {}); G.say(cue(V, {text:'직접 활동하거나 다음에 할 일을 정한 뒤 다음 화면으로 가요.'})); return; }
     if (k === 'fieldwork-read') { G.say({ text: ch.fieldworkReadSay || '관찰과 기록은 여러 날 이어져요. 준비되면 다음 화면으로 가요.' }); return; }
     if (k === 'fieldwork') { G.say({ text: ch.fieldworkSay || '직접 본 모습을 글과 그림으로 남겨요. 실제 관찰한 뒤 준비되면 다음을 눌러요.' }); labForSlide(stage.querySelector('[data-mount]'), { personal: true, tab: s.fieldTab }); return; }
     if (k === 'video') {
@@ -327,9 +435,9 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (k === 'lab') { G.say(cue(V, 'dk-lab')); const m = stage.querySelector('[data-mount]'); let done = false;
       m.addEventListener('pointerdown', () => { if (timer) cancelAuto(); }, true);   // 실험을 더 하면 넘기지 않는다
       let recs = 0;   // 조건을 바꿔 두 번 이상 적어야 비교가 된다. 단계가 정해진 실험(시험관)은 실험실이 { complete }로 끝을 알려 주고, 중간 안내는 실험실 도움말이 한다.
-      labForSlide(m, { personal: true, onRecord: async (rows, info) => { if (done) return; recs += 1;
+      labForSlide(m, { personal: true, ...((ch.soundThinking||ch.infectionThinking||ch.climateThinking||ch.skyThinking||ch.solutionThinking||ch.waterThinking||ch.groundThinking||ch.biologyThinking||ch.magnetThinking||ch.gasThinking||ch.geologyThinking||ch.lightThinking||ch.bodyThinking||ch.mixtureThinking||ch.heatThinking||ch.weatherThinking||ch.energyThinking||ch.acidThinking||ch.motionThinking||ch.plantStructureThinking||ch.earthMotionThinking||ch.seasonThinking||ch.combustionThinking||ch.careerThinking||ch.electricityThinking)?{isActive:alive}:{}), onRecord: async (rows, info) => { if (done) return; recs += 1;
         if (info ? !info.complete : recs < 2) { if (!info) G.say('dk-lab-more', { mood: 'encourage' }); return; }
-        done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
+        done = true; await G.say(ch.careerThinking?{text:'미래 문제와 직업 속 과학에 관한 여덟 자료를 비교했어요. 직접 조사하고 관찰하며 알아낸 점도 들어 나의 진로와 과학을 설명해 보아요.'}:ch.electricityThinking?{text:'전기의 이용에 관한 자료 여덟 가지를 비교했어요. 직접 만든 회로와 전자석, 생활 속에서 실천한 방법도 설명해 보아요.'}:ch.combustionThinking?{text:'여덟 물질의 연소 자료를 비교했어요. 직접 관찰·실험한 내용과 생태계 피해 사례, 제안한 해결책도 설명해 보아요.'}:ch.seasonThinking?{text:'여덟 계절 자료를 비교했어요. 직접 측정한 하루의 관계와 모형실험에서 알아낸 계절의 원인도 설명해 보아요.'}:ch.earthMotionThinking?{text:'여덟 지구의 운동 자료를 비교했어요. 직접 관찰한 하늘의 위치 변화와 모형실험에서 알아낸 내용도 설명해 보아요.'}:ch.plantStructureThinking?{text:'여덟 식물 자료를 비교했어요. 직접 관찰하고 실험한 내용으로 기관의 구조와 기능도 설명해 보아요.'}:ch.motionThinking?{text:'여덟 운동 자료를 비교했어요. 직접 관찰한 위치와 측정한 거리, 시간, 속력도 설명해 보아요.'}:ch.acidThinking?{text:'아홉 산과 염기 자료를 비교했어요. 직접 관찰한 지시약과 반응의 변화, 조사한 생활과 환경의 내용도 설명해 보아요.'}:ch.energyThinking?{text:'여덟 자원과 에너지 자료를 비교했어요. 직접 조사하고 집 모형을 시험하며 생활에서 실천한 내용도 설명해 보아요.'}:ch.weatherThinking?{text:'여덟 날씨 자료를 비교했어요. 직접 관측하고 실험한 결과도 설명해 보아요.'}:ch.heatThinking?{text:'여덟 온도와 열 자료를 비교했어요. 직접 잰 온도와 장치를 시험한 결과도 설명해 보아요.'}:ch.mixtureThinking?{text:'여덟 혼합물 자료를 비교했어요. 직접 분리한 물질과 관찰한 결과도 설명해 보아요.'}:ch.bodyThinking?{text:'여덟 우리 몸 자료를 비교했어요. 직접 관찰하고 모형을 만들며 건강한 생활을 실천한 내용도 돌아보아요.'}:ch.lightThinking?{text:'여덟 빛 자료를 비교했어요. 직접 관찰하고 장치를 시험한 결과에서도 알아낸 점을 설명해 보아요.'}:ch.geologyThinking?{text:'여덟 지층과 화석 자료를 비교했어요. 직접 관찰하고 만든 두 모형에서도 알아낸 점을 설명해 보아요.'}:ch.gasThinking?{text:'여덟 기체 자료를 비교했어요. 직접 실험하고 장치를 만든 내용과도 비교해 보아요.'}:ch.magnetThinking?{text:s.modelLab?'같은 네 고리로 가장 낮은 탑과 가장 높은 탑을 비교했어요. 직접 잰 높이와 구별해요.':'여덟 자료를 비교했어요. 직접 관찰하고 생활 속 장치를 설계한 내용과도 비교해요.'}:ch.biologyThinking?{text:s.modelLab?'효모빵 모형의 세 물 조건을 비교했어요. 생명과학 이용 사례를 소개하는 자료로 이어 가요.':'여덟 자료를 비교했어요. 직접 관찰하고 발표하고 자료를 공유하는 활동도 해 보아요.'}:ch.groundThinking?{text:s.modelLab?'언덕 모형 기록을 비교했어요. 직접 관찰과 구별해요.':'여덟 자료에서 생각과 근거를 비교했어요. 실제 관찰·제작·분류·대처 연습 완료와 구별해요.'}:ch.waterThinking?{text:s.modelLab?'물기둥 모형의 세 기록을 비교했어요. 직접 잰 관찰값과 구별해요.':'일곱 자료에서 생각과 근거를 비교했어요. 실제 관찰·장치 제작·시험 완료와 구별해요.'}:'dk-lab-done', { mood: 'praise' }); auto(4000); } });
       watchLabTips(m, G); return; }
     if (k === 'test') return runTest(V);
     if (k === 'predict') return runPredict();
@@ -338,10 +446,10 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (k === 'recallq') return runRecallQ();
     if (k === 'learned') return runLearned();
     if (k === 'order') return runOrder();
-    if (k === 'think') return runThink();
-    if (k === 'break') { fillMine(); G.say('dk-break', { mood: 'praise' });
+    if (k === 'think') return runThink(V);
+    if (k === 'break') { fillMine(); G.say(cue(V, 'dk-break'), { mood: 'praise' });
       stage.querySelector('[data-a2=cont]').onclick = () => next(); return; }                 // 1차시 끝: 저절로 넘기지 않는다
-    if (k === 'recall') { fillMine(); G.say('dk-recall'); auto(Math.min(15000, Math.max(5000, textLen() * 55))); return; }
+    if (k === 'recall') { fillMine(); G.say(cue(V, 'dk-recall')); auto(Math.min(15000, Math.max(5000, textLen() * 55))); return; }
     if (k === 'challenge') { G.say('dk-challenge');
       stage.querySelectorAll('[data-pick]').forEach((b) => { b.onclick = () => {
         stage.querySelectorAll('[data-pane]').forEach((x) => { if (x.dataset.pane !== b.dataset.pick) x.remove(); else x.hidden = false; });
@@ -367,10 +475,10 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   // 결과 예상 고르기: 맞고 틀림을 말하지 않는다 — 고른 것만 기억해 두었다가 실험 뒤에 대조
   function runPredict() {
     G.say('dk-predict');
-    const ol = stage.querySelector('.dk-mc.predict'), had = memo.get(`${u}:predict`);
+    const ol = stage.querySelector('.dk-mc.predict'), had = memo.get(deckPredictionKey(u,ch));
     const mark = (j) => ol.querySelectorAll('button').forEach((b) => b.classList.toggle('pick', +b.dataset.j === j));
     if (had !== '') mark(+had);
-    ol.querySelectorAll('button').forEach((b) => { b.onclick = async () => { const j = +b.dataset.j; memo.set(`${u}:predict`, j); mark(j); cancelAuto(); await G.say('dk-predict-ok', { mood: 'praise' }); auto(1800); }; });
+    ol.querySelectorAll('button').forEach((b) => { b.onclick = async () => { const j = +b.dataset.j; memo.set(deckPredictionKey(u,ch), j); mark(j); cancelAuto(); await G.say('dk-predict-ok', { mood: 'praise' }); auto(1800); }; });
   }
   // 실험 설계 3칸 고르기
   function runDesignPick() {
@@ -381,7 +489,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   }
   // 내 예상과 결과
   function runVs() {
-    const P = ix.predict, had = memo.get(`${u}:predict`), mine = had === '' ? null : +had, same = mine === P.answer;
+    const P = ix.predict, had = memo.get(deckPredictionKey(u,ch)), mine = had === '' ? null : +had, same = mine === P.answer;
     stage.querySelector('.dk-vmine').textContent = mine == null ? '(예상을 고르지 않았어요)' : P.options[mine];
     stage.querySelector('.dk-vsay').textContent = mine == null ? '실험 결과를 한 번 더 읽어 봐요.' : same ? '내 예상이 맞았어요! 왜 그런지는 다음 시간에 알아봐요.' : '예상과 달랐어요. 과학자도 자주 그래요. 왜 그런지는 다음 시간에 알아봐요.';
     stage.querySelector('.dk-vs').classList.add(same ? 'same' : 'diff');
@@ -426,8 +534,10 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     const my = stage.querySelector('.dk-mylab'); if (my) { my.innerHTML = labTable(); my.hidden = !my.innerHTML; }
     stage.querySelectorAll('td[data-cell]').forEach((td) => { const key = `${u}:cell:${td.dataset.cell}`; td.textContent = memo.get(key); td.addEventListener('input', () => memo.set(key, td.textContent)); });
   }
-  function runThink() {
-    prepRes(); G.say('dk-think');
+  function runThink(V) {
+    const prediction=stage.querySelector('[data-prediction-summary]');
+    if(prediction){const saved=memo.get(deckPredictionKey(u,ch)),choice=saved===''?null:Number(saved);prediction.textContent=Number.isInteger(choice)&&ix?.predict?.options[choice]?ix.predict.options[choice]:'아직 고른 예상이 없어요. 관찰 전 어떤 생각을 했는지 떠올려요.';}
+    prepRes(); G.say(cue(V, 'dk-think'));
     if (!wirePeek(() => auto(Math.min(9000, Math.max(3500, textLen() * 45))))) auto(4000);
   }
   // 실험 순서 맞추기: 누른 차례대로 번호가 붙는다(다시 누르면 빠짐). 첫 오답엔 정답을 알려 주지 않고, 두 번 틀리면 순서를 보여 준다.
@@ -456,7 +566,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   }
   function labTable() {
     const L = myLab?.(); if (!L?.rows?.length) return '';
-    return `<div class="dk-card"><h3>내 3D 실험 기록</h3><table class="dk-tbl"><tr>${L.cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr>${L.rows.map((r) => `<tr>${Object.values(r).slice(0, L.cols.length).map((v) => `<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+    return `<div class="dk-card"><h3>${esc(ch.revisedThinkingClassroom&&ch.labRecordTitle||'내 3D 실험 기록')}</h3><table class="dk-tbl"><tr>${L.cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr>${L.rows.map((r) => `<tr>${(L.rowValues?L.rowValues(r):Object.values(r).slice(0,L.cols.length)).map((v) => `<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</table></div>`;
   }
   // 쓰기: 모든 칸을 채우면 '확인' → 기기 안에서 판정(v2/judge.js + data/units/<u>.judge.js). 아이에게 "비슷한가요?"를 묻지 않는다(원장 2026-09-30).
   //  맞음 → 칭찬하고 다음 장 / 빠진 생각·오개념 → 답은 감추고 되묻기, 한 번 더 / 두 번째에도 아니면 예시 답을 보여 주고 다음으로
@@ -464,10 +574,12 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   const J = judgeTable(u);
   function judgeBox(k, text, tries, table, itemTable) {
     if (k === 'hypo' || k === 'wonder' || k === 'concl0') return judgeText(text, table?.[`deck:${k}`], { tries });
-    if (/^test\d/.test(k) && s.item) {
+    if (/^test(?:\d|:item:)/.test(k) && s.item) {
       const it = similar.find((x) => x.id === s.item), ac = it?.answerContract;
+      if(ac?.motionContract||ac?.plantAuthoredContract||ac?.earthAuthoredContract||ac?.earthMotionContract||ac?.seasonContract){const r=judgeItem({text,ac});return{...r,st:r.st==='no'?'miss':r.st};}
+      const cloze=judgeDeckCloze(text,ac,k);if(cloze)return cloze;
       if (ac?.type === 'short-text') { const r = judgeShort(text, ac.accepted?.length ? ac.accepted : [ac.answer]); return { ...r, st: r.st === 'no' ? 'miss' : r.st, short: true, missing: [] }; }
-      if (ac?.type === 'written-explanation') return judgeText(text, itemTable?.[s.item], { tries });   // 문항은 제 단원 판정표에서(화산 단원은 s41-u03 문항을 빌려 쓴다)
+      if (ac?.type === 'written-explanation') return judgeText(text, ac.reviewRequired?null:itemTable?.[s.item], { tries });   // 문항은 제 단원 판정표에서(화산 단원은 s41-u03 문항을 빌려 쓴다)
     }
     return judgeText(text, null, { tries });   // 도전 과제 등 — 선생님 확인
   }
@@ -497,7 +609,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     });
     ready();
     // 선생님 확인(v2/check.js)에서 남긴 판정·한마디가 있으면 아이에게 보여 준다
-    boxes.forEach((b) => { const t = memo.get(`${u}:teacher:${s.id}:${b.dataset.k}`); if (!t?.v) return;
+    boxes.forEach((b) => { const t = memo.get(`${u}:teacher:${deckSlideRecordKey(ch,s)}:${b.dataset.k}`); if (!t?.v) return;
       b.querySelector('.dk-inrow').insertAdjacentHTML('afterend', `<p class="dk-fb dk-tnote ${t.v}"><b>선생님</b> ${t.v === 'ok' ? '맞았어요!' : '한 번 더 고쳐 써 봐요.'}${t.note ? ` ${esc(t.note)}` : ''}</p>`); });
     G.say(cue(V, 'dk-write'));
     let tries = 0;
@@ -513,7 +625,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
         if (r.st === 'ok' || r.st === 'review') b.querySelector('.dk-ans').hidden = false;   // 참고로 예시 답도 보여 준다 — 비교해서 고르라는 게 아니다
       });
       const sts = rs.map((r) => r.st), okAll = sts.every((x) => x === 'ok'), settled = sts.every((x) => x === 'ok' || x === 'review');
-      memo.set(`${u}:grade:${s.id}`, { at: Date.now(), tries, item: s.item || null, boxes: boxes.map((b, j) => ({ k: b.dataset.k, st: rs[j].st, m: rs[j].wrong?.m || null, text: tas[j].value })) });
+      memo.set(`${u}:grade:${deckSlideRecordKey(ch,s)}`, { at: Date.now(), tries, item: s.item || null, ...(s.questionVersion?{question:deckQuestionSnapshot(s,similar)}:{}), boxes: boxes.map((b, j) => ({ k: b.dataset.k, st: rs[j].st, m: rs[j].wrong?.m || null, text: tas[j].value })) });
       if (s.item && tries === 1) onAnswer?.(s.item, okAll, []);
       if (okAll) { await finish('dk-judge-ok', 'praise'); auto(900); return; }
       if (settled) { await finish(rs.some((r) => r.why === 'unsure') ? 'dk-judge-show' : 'dk-judge-review'); auto(1500); return; }

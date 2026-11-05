@@ -19,7 +19,13 @@ for (const u of ['c22-s42-u04', 'c22-s32-u04']) {
     const { wb, paper } = await load(u), s = paper.workbookPaper({ mode: 'student' });
     assert.equal(count(s, /class="ed-key"/g), 0);
     assert.equal(count(s, /class="ed-solution"/g), 0);
-    for (const q of wb.questions.filter((x) => ['written', 'draw', 'short', 'match', 'order'].includes(x.form))) assert.ok(!s.includes(q.answer), `${q.no}번 답이 학생용에 보임`);
+    // 카드 이름·발문에 준 수치는 정답 표시와 구별한다. 답 유출은 해당 문항의 응답 부분에서 확인한다.
+    for (const q of wb.questions.filter((x) => ['written', 'draw', 'short', 'match', 'order'].includes(x.form))) {
+      const start=s.indexOf(`data-question="${q.id}"`),end=s.indexOf('</li>',start);
+      assert.ok(start>=0&&end>start,`${q.no}번 문항 칸이 없음`);
+      const prompt=q.prompt.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      assert.ok(!s.slice(start,end).replace(`<p>${prompt}</p>`,'').includes(q.answer),`${q.no}번 답이 학생 응답 부분에 보임`);
+    }
     assert.ok(!/undefined|\[object Object\]/.test(s));
     assert.equal(count(s, /class="bk-page /g), wb.pages.length);
   });
@@ -55,7 +61,11 @@ for (const u of ['c22-s42-u04', 'c22-s32-u04']) {
     for (const p of [...wb.pages, ...wb.teacherPages, ...wb.quickPages]) assert.ok(p.rail.length, `${p.title} 날개`);
     for (const m of s.matchAll(/src="\.\.\/assets\/book\/([^"]+)"/g)) assert.ok(fs.existsSync(new URL(`../assets/book/${m[1]}`, import.meta.url)), `그림 없음 ${m[1]}`);
     assert.ok(count(s, /class="ed-photo"/g) + count(s, /class="ed-gallery-item"/g) >= 6, '그림(사진·렌더) 6장 이상(사진이 들어오면 늘어난다)');
-    assert.ok(count(s, /class="ed-gallery numbered"/g) >= 1, '실험 과정 ①②③ 사진 줄');
+    if(u==='c22-s42-u04'){
+      const pair=wb.pages.find(p=>p.title==='해안 마을 모형으로 실험해요').blocks.find(b=>b.type==='gallery');
+      assert.deepEqual(pair.items.map(x=>x.src.split('/').at(-1)),['c22-s42-u04-photo-model-no-wall-v2.webp','c22-s42-u04-photo-model-wall-v2.webp']);
+      assert(pair.credit.includes('수치와 비교 결과는 본문 표'));
+    }else assert.ok(count(s, /class="ed-gallery numbered"/g) >= 1, '실험 과정 ①②③ 사진 줄');
     assert.ok(count(s, /class="ed-term"/g) >= 6, '핵심 낱말 강조');
     assert.ok(count(s, /ed-layout-two/g) >= 3, '단원평가·준비 점검 2단');
     assert.ok(!/-(row|over)\.webp/.test(s), '결과가 적힌 그림을 문항 옆에 두지 않는다');

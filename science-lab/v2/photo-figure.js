@@ -2,6 +2,7 @@
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function photoFigureHtml(q){
  if(!q.figure||!q.photoLabels?.length)return '';
+ const credit=(q.photoCredit||'').replace(/^AI 실사형 설명 이미지(?: · 실제 [가-힣/]+ 사진 아님)?(?= ·|$)/,'문항을 설명하는 그림');
  const labels=q.photoLabels,cols=Math.min(5,Math.max(1,labels.length));
- return `<figure class="bank-photo-figure"><img src="../${esc(q.figure)}" alt="${esc(q.figureNote||'실사형 설명 자료')}"><figcaption><div class="bank-photo-labels" style="--bank-photo-cols:${cols}">${labels.map(label=>`<span>${esc(label)}</span>`).join('')}</div><small>${esc(q.photoCredit)}</small></figcaption></figure>`;
+ return `<figure class="bank-photo-figure"><img src="../${esc(q.figure)}" alt="${esc(q.figureNote||'실사형 설명 자료')}"><figcaption><div class="bank-photo-labels" style="--bank-photo-cols:${cols}">${labels.map(label=>`<span>${esc(label)}</span>`).join('')}</div><small>${esc(credit)}</small></figcaption></figure>`;
 }

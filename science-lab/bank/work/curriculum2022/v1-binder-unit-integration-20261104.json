@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "9ce049557498deb87aed5871483beda6180b46cb",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "scope": "v1 experiment pages match binder home with source content preserved",
+  "units": 15,
+  "originalQuizQuestions": 45,
+  "newUi": [
+    "desktop experiment index",
+    "mobile collapsed experiment index",
+    "core terms and original variable conditions",
+    "skip to main concept",
+    "scoped paper and green styling"
+  ],
+  "lessonSectionBodiesIdenticalExceptQuizContainerId": true,
+  "threeDMountCodeByteIdentical": true,
+  "quizCodeIdenticalExceptContainerId": true,
+  "duplicateQuizIdRemoved": true,
+  "observerDisconnectedOnRouteChange": true,
+  "newRegressionTests": 6,
+  "v1": {
+    "tests": 31,
+    "passed": 31,
+    "failed": 0
+  },
+  "v2": {
+    "tests": 810,
+    "passed": 808,
+    "skipped": 2,
+    "failed": 0
+  },
+  "bank": {
+    "tests": 299,
+    "passed": 299,
+    "failed": 0
+  },
+  "totalPassedThisPhase": 1138,
+  "newEventChecksUseSyntheticDom": true,
+  "actualStudentStorageAccesses": 0,
+  "reportObservationContestModulesChanged": false,
+  "unchangedWorkbookHtml": 128,
+  "unchangedSlideArrays": 64,
+  "unchangedCareerItems": 128,
+  "unchangedPdfs": 102,
+  "protectedFiles": 6326,
+  "unchangedProtectedFilesBeforeHandoffs": 6324,
+  "changedProtectedFiles": [
+    "science-lab/app.js",
+    "science-lab/index.html"
+  ],
+  "cssLayoutVerified": false,
+  "browserVerified": false,
+  "mainMerged": false,
+  "pushed": false,
+  "deployed": false
+}

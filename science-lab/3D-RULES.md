@@ -4,12 +4,15 @@
 > 3D 실험(`v2/lab-*.js`)이나 장면(`scenes/*.js`)을 새로 만들거나 고친 사람은 **이 문서를 먼저 읽고, 끝나면 검사기를 돌린다.**
 
 ```bash
-node scripts/check-science-3d.mjs              # 5실험 × 7화면, 실패하면 exit 1
+node scripts/check-science-3d.mjs              # 현행 수업 + 보존된 예전 실험, 실패하면 exit 1
 node scripts/check-science-3d.mjs s41-u03b     # 지정 단원만
 SHOTS=/tmp/3d node scripts/check-science-3d.mjs # 화면마다 캡처도 저장(눈으로 한 번 더)
+node scripts/check-science-3d.mjs --plan       # 서버·브라우저 없이 대상과 경로만 출력
 ```
 
 검사기는 로컬 정적 서버를 직접 띄우므로 따로 서버를 켤 필요가 없다. **실패 0건이 아니면 main에 올리지 않는다.**
+
+`--plan`은 대상 목록 확인이며 실제 화면 검사 통과가 아니다. 일반 실행은 보존된 예전 3D 실험과 현행 32단원의 학생·교사 화면을 함께 본다. 현행 자료 비교 화면은 조작부가 보이고 예기치 않은 3D 무대가 없는지, 장면·3D 모형은 기존 카메라 기준을 검사한다. 현재 수업에서 사용하지 않는 대결은 단추가 노출되지 않는지 검사하며, 기존 실험의 클릭·답 숨기기·2D 대체 검사는 유지한다.
 
 ---
 
@@ -95,12 +98,12 @@ SHOTS=/tmp/3d node scripts/check-science-3d.mjs # 화면마다 캡처도 저장(
 
 ## 6. 새 실험을 추가할 때 체크리스트
 
-1. `v2/home.js`의 `LABS`와 **`scripts/check-science-3d.mjs`의 `ALL`** 둘 다에 단원 id 추가.
+1. 현행 수업은 실제 수업 모듈에서 검사 대상을 읽는다. 새 장면은 `mount: 'scene'`, 별도 모형은 `modelLab`로 표시한다. 새 종류의 3D 조작부는 `scripts/science-3d-plan.mjs`의 분류도 확인한다. 보존할 예전 실험은 그 파일의 `RETAINED_3D_UNITS`에 등록한다. 홈 추천 카드와 검사 대상을 같은 목록으로 취급하지 않는다.
 2. `setView`는 각도 위주로. 움직이는 물체가 있으면 `frame`. 바닥은 `noFrame`.
-3. 덱에 「3D 실험실 · …」 슬라이드가 있어야 검사기가 찾는다(제목이 `3D 실험실`로 시작).
+3. `--plan <id>`에서 실제 학생·교사 화면 ID/번호/종류를 확인한다. 현행 수업은 제목으로 3D 여부를 추측하지 않는다. 아직 전환하지 않은 예전 덱만 `3D 실험실`로 시작하는 제목 검색을 유지한다.
 4. `node scripts/check-science-3d.mjs <id>` → 실패 0.
 5. `SHOTS=…`로 캡처해 **눈으로도** 본다: 주인공이 화면의 중심에 크게, 잘린 곳 없이, 라벨이 겹치지 않게.
-6. `node --test science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs` → 실패 0.
+6. `node --test science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs` → 실패 0. 이 검사도 실제 브라우저 실행과 캡처 검수를 대신하지 않는다.
 7. CSS를 바꿨으면 `v2/index.html`·`intro/index.html`의 `?v=` 올리기.
 
 ## 단추 가림 — 스크롤하지 않은 첫 화면에서 잰다
@@ -128,4 +131,4 @@ SHOTS=/tmp/3d node scripts/check-science-3d.mjs # 화면마다 캡처도 저장(
 | ⑤ | 화산 초기 상태 | 버튼 전에는 높은 곳(y>3.2)에 물체 없음 |
 | ⑥ | 페이지 오류 | `pageerror` 0 |
 
-화면 7종: 덱 실험 슬라이드(1440×900) · 5단계 실험 PC/폰 · 장면 PC/폰 · 전체 화면 PC(1280×760)/폰 가로(844×390).
+보존된 예전 실험은 덱 실험 슬라이드(1440×900) · 5단계 실험 PC/폰 · 장면 PC/폰 · 전체 화면 PC(1280×760)/폰 가로(844×390)를 유지한다. 현행 수업은 실제 학생·교사 장면/모형/자료 비교 화면을 PC(1440×900)·폰(390×844)에서 더 검사한다. 전체 화면 검사는 실제 3D 모형에만 적용하며 자료 비교 화면을 3D로 가정하지 않는다.
