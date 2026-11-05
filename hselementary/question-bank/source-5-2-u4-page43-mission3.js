@@ -8,7 +8,7 @@
   "use strict";
   const id = "5-2-u4-e1-mission-3";
   const key = "source52DecimalDayToTimePage43Mission3";
-  const pools = Object.freeze([6, 9, 13].map(dayHundredths => Object.freeze({ dayHundredths })));
+  const pools = Object.freeze([6, 9, 13, ...Array.from({ length: 41 }, (_, i) => i + 1).filter(n => ![6, 7, 9, 13].includes(n))].map(dayHundredths => Object.freeze({ dayHundredths })));
   const formatDay = hundredths => `0.${String(hundredths).padStart(2, "0")}`;
   const esc = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
 
@@ -27,7 +27,7 @@
   }
 
   function build(poolIndex = 0, difficultyOffset = 0) {
-    if (!Number.isSafeInteger(poolIndex) || poolIndex < 0 || poolIndex >= pools.length) throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if (!Number.isSafeInteger(poolIndex) || poolIndex < 0 || poolIndex >= pools.length) throw new RangeError("확인된 수치 묶음 범위를 벗어났습니다.");
     if (![-1, 0, 1].includes(difficultyOffset)) throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const pool = pools[poolIndex];
     const result = calculate(pool);
