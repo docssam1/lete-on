@@ -1,0 +1,627 @@
+{
+  "phase": 208,
+  "baseCommit": "4f6e3a143ed311cfe19ee27b4d079181988f1616",
+  "previousGoalTurn": "progress",
+  "unit": "c22-s62-u01",
+  "scope": "계절의 변화 교재·현재 독립 연습·응답 판정 연결",
+  "curriculumStandards": [
+    "6과13-01",
+    "6과13-02",
+    "6과13-03"
+  ],
+  "curriculumHwpSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+  "studentPages": 135,
+  "teacherPages": 189,
+  "answerPages": 53,
+  "quickPages": 6,
+  "authoredQuestions": 128,
+  "independentPractice": 70,
+  "currentItems": 198,
+  "autoChecked": 160,
+  "teacherReview": 38,
+  "meaningEditedNumbers": [
+    113,
+    116,
+    119,
+    124,
+    126,
+    128
+  ],
+  "authoredVersioned": 43,
+  "pairedVersioned": 33,
+  "originalItemsUnmodified": true,
+  "currentQuestionVersion": "20261104-season-book",
+  "higherGradeNotes": 135,
+  "reportRequired": false,
+  "new3D": 0,
+  "paidAPI": 0,
+  "fullClassroomPending": true,
+  "realBrowserCSSMobileAudioWebGLVerified": false,
+  "workbooksConnectedLocally": 29,
+  "fullClassroomsConnectedLocally": 28,
+  "remainingWorkbooks": 3,
+  "remainingClassrooms": 4,
+  "published": false,
+  "goalStatus": "active",
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase208",
+  "verificationStatus": "local workbook integration verified; full classroom pending",
+  "curriculumEvidence": {
+    "references": [
+      {
+        "title": "교육부2022-33 별책9 과학과 교육과정",
+        "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&statusYN=W",
+        "use": "로컬 HWP912~925줄 6과13-01~03·탐구·해설·고려 사항"
+      },
+      {
+        "title": "한국천문연구원 생활천문관",
+        "url": "https://astro.kasi.re.kr/kor/life/pageView/9",
+        "use": "KST·위치에 따른 계산 기준; 20261021 원고의 네 날짜 계산값을 동결, 이번에 여덟 URL 결과를 새로 관측한 것은 아님"
+      },
+      {
+        "title": "OpenStax Astronomy2e 계절",
+        "url": "https://openstax.org/books/astronomy-2e/pages/4-2-the-seasons",
+        "use": "축 기울기·위도·계절·반구·백야/극야"
+      },
+      {
+        "title": "OpenStax Astronomy2e 시간",
+        "url": "https://openstax.org/books/astronomy-2e/pages/4-3-keeping-time",
+        "use": "태양시·표준시"
+      },
+      {
+        "title": "OpenStax Physics 열",
+        "url": "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer",
+        "use": "열용량·열전달·열평형의 상위 학습"
+      },
+      {
+        "title": "NOAA 태양 계산",
+        "url": "https://gml.noaa.gov/grad/solcalc/calcdetails.html",
+        "use": "대기 굴절·계산값과 실제 조건"
+      },
+      {
+        "title": "NASA 천왕성 사실",
+        "url": "https://science.nasa.gov/uranus/facts/",
+        "use": "자전축 기울기97.77도와 극단적인 계절"
+      },
+      {
+        "title": "NASA 궤도 주기",
+        "url": "https://science.nasa.gov/science-research/earth-science/milankovitch-orbital-cycles-and-their-role-in-earths-climate/",
+        "use": "기울기 약41000년과 자전축 세차 약25771.5년; 한 해 계절과 구별"
+      }
+    ],
+    "basicAndHigherGradeNotesSeparated": true,
+    "sourceKasiTimestampPreserved": "2026-10-21",
+    "freshKasiEightResultPagesVerified": false
+  },
+  "tests": {
+    "v2": {
+      "total": 730,
+      "pass": 728,
+      "fail": 0,
+      "skip": 2
+    },
+    "bank": {
+      "total": 299,
+      "pass": 299,
+      "fail": 0,
+      "skip": 0
+    },
+    "bankAudit": "pass",
+    "seasonMiscAudit": "pass"
+  },
+  "routes": {
+    "unit": "c22-s62-u01",
+    "actualStart": true,
+    "currentClassroomOffered": false,
+    "defaultRedirectToStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "actualBankPrintRouterBranch": 4,
+    "productionUnitLoaderExecuted": true,
+    "currentQuestionRevisions": 76,
+    "currentGradingContractLoaded": true,
+    "fullClassroomPending": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "questionDiagnostics": {
+    "onlineStates": 7,
+    "deckStates": 5,
+    "oldDiagnosticPreserved": true,
+    "inputHintVisible": true,
+    "syntheticProgressEvents": 5,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0
+  },
+  "pdf": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 135,
+        "bytes": 1171132,
+        "sha256": "282af9a1e74e50f08ef7d9e3f05e497ba7c5bde2588741323d9d7a9b5338d83a",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 189,
+        "bytes": 1360272,
+        "sha256": "cf16c33eb07f48386626d733856643f663535a8fc44ecdecc8eb52d8da8f0f94",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 53,
+        "bytes": 353540,
+        "sha256": "657dbc39443e37907e534449a3bac90e6cbb04205bc9eb383218f1f608496c68",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 6,
+        "bytes": 134852,
+        "sha256": "354c156ce64bdc48660430406fd835342c3275df87d983c1490653d27bdf9fea",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 256,
+    "solutionExpressions": 256,
+    "teacherAnswerStartsOnRecto": 137
+  },
+  "pdfDetails": {
+    "fullRailTexts": 810,
+    "quickAnswerTableCells": 384,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 12,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 13,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 31,
+        "heightMm": 162.66,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 32,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 49,
+        "heightMm": 162.66,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 50,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 51,
+        "heightMm": 140.29,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 67,
+        "heightMm": 157.42,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 68,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 85,
+        "heightMm": 157.42,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 86,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 100,
+        "heightMm": 162.66,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 101,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 102,
+        "heightMm": 156.97,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 113,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 114,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 128,
+        "heightMm": 187.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 129,
+        "heightMm": 181.26,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 130,
+        "heightMm": 203.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 133,
+        "heightMm": 132.29,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 134,
+        "heightMm": 132.29,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 135,
+        "heightMm": 132.29,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 12,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 13,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 31,
+        "heightMm": 174.79,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 32,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 49,
+        "heightMm": 174.79,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 50,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 51,
+        "heightMm": 140.29,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 67,
+        "heightMm": 169.55,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 68,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 85,
+        "heightMm": 169.55,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 86,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 100,
+        "heightMm": 174.79,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 101,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 102,
+        "heightMm": 156.97,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 113,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 114,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 128,
+        "heightMm": 194.08,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 129,
+        "heightMm": 187.96,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 130,
+        "heightMm": 203.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 133,
+        "heightMm": 132.29,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 134,
+        "heightMm": 132.29,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 135,
+        "heightMm": 132.29,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Bold",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "preservation": {
+    "baselineFiles": 6229,
+    "sameBytes": 6211,
+    "reviewedChangedFiles": [
+      "science-lab/bank/audit.test.mjs",
+      "science-lab/bank/audit.mjs",
+      "science-lab/v2/curriculum-2022.js",
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/written-practice.js",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/daily-grade.js",
+      "science-lab/v2/v2.js",
+      "science-lab/v2/revised-textbook.test.mjs",
+      "science-lab/v2/curriculum-2022.test.mjs",
+      "science-lab/v2/daily.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/judge.js",
+      "science-lab/v2/bank-catalog.js"
+    ],
+    "unchangedWorkbookHTMLs": 112,
+    "newWorkbookHTMLs": 4,
+    "unchangedClassroomSlideArrays": 56,
+    "oldPDFsPreserved": 78,
+    "copiedFiles": 14,
+    "copiedFilesChanged": [
+      "science-lab/data/book/c22-s62-u01.workbook.js",
+      "science-lab/v2/season-book.css",
+      "science-lab/bank/season-response.mjs"
+    ],
+    "authoringOriginalFilesPreserved": 14,
+    "underlyingWorkbookBaseUnchanged": true,
+    "cacheOnlyFiles": [
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/revised-lesson.js"
+    ],
+    "firstToFinalPDFRender": {
+      "same": 353,
+      "changed": [
+        "student/page-069.png",
+        "student/page-121.png",
+        "student/page-123.png",
+        "student/page-122.png",
+        "student/page-126.png",
+        "student/page-127.png",
+        "student/page-002.png",
+        "student/page-001.png",
+        "student/page-014.png",
+        "student/page-129.png",
+        "student/page-128.png",
+        "student/page-103.png",
+        "student/page-112.png",
+        "student/page-106.png",
+        "student/page-104.png",
+        "teacher/page-069.png",
+        "teacher/page-121.png",
+        "teacher/page-123.png",
+        "teacher/page-122.png",
+        "teacher/page-126.png",
+        "teacher/page-127.png",
+        "teacher/page-002.png",
+        "teacher/page-001.png",
+        "teacher/page-014.png",
+        "teacher/page-129.png",
+        "teacher/page-128.png",
+        "teacher/page-103.png",
+        "teacher/page-112.png",
+        "teacher/page-106.png",
+        "teacher/page-104.png"
+      ]
+    },
+    "lastEditChangedPages": [
+      "student/page-121.png",
+      "student/page-123.png",
+      "student/page-122.png",
+      "student/page-126.png",
+      "student/page-127.png",
+      "student/page-129.png",
+      "student/page-128.png",
+      "student/page-112.png",
+      "student/page-106.png",
+      "teacher/page-121.png",
+      "teacher/page-123.png",
+      "teacher/page-122.png",
+      "teacher/page-126.png",
+      "teacher/page-127.png",
+      "teacher/page-129.png",
+      "teacher/page-128.png",
+      "teacher/page-112.png",
+      "teacher/page-106.png"
+    ],
+    "pdfLinksOnlyChangedPages": [
+      "student/page-069.png",
+      "teacher/page-069.png"
+    ]
+  },
+  "vision": {
+    "engine": "macOS Apple Vision accurate ko-KR/en-US via PDFKit110dpi",
+    "inputsByRun": {
+      "vision-teacher-links": 1,
+      "vision-teacher-final": 5,
+      "vision-student-final2": 9,
+      "vision-review.json": 0,
+      "vision-student": 135,
+      "vision-student-links": 1,
+      "vision-photo": 1,
+      "vision-teacher-final2": 9,
+      "vision-student-final": 5
+    },
+    "inputRuns": 166,
+    "failed": 0,
+    "skipped": 0,
+    "studentInitialPages": 135,
+    "finalChangedPagesReread": 30,
+    "photoInputs": 1,
+    "photoRecognizedWords": 0,
+    "allLowConfidenceTokensIndividuallyCertified": false,
+    "directVisualReview": {
+      "overviewSheets": 18,
+      "pageOverviewCount": 383,
+      "distinctExpandedPages": 36,
+      "latestTitleCaptionAndSciencePagesRechecked": true,
+      "foundRemainingLayoutDefects": 0
+    },
+    "finalPdfHashes": {
+      "student": "282af9a1e74e50f08ef7d9e3f05e497ba7c5bde2588741323d9d7a9b5338d83a",
+      "teacher": "cf16c33eb07f48386626d733856643f663535a8fc44ecdecc8eb52d8da8f0f94",
+      "answers": "657dbc39443e37907e534449a3bac90e6cbb04205bc9eb383218f1f608496c68",
+      "quick": "354c156ce64bdc48660430406fd835342c3275df87d983c1490653d27bdf9fea"
+    }
+  },
+  "pdfURIs": {
+    "student": [
+      "https://astro.kasi.re.kr/kor/life/pageView/9",
+      "https://astro.kasi.re.kr/kor/life/pageView/10"
+    ],
+    "teacher": [
+      "https://astro.kasi.re.kr/kor/life/pageView/9",
+      "https://astro.kasi.re.kr/kor/life/pageView/10"
+    ],
+    "answers": [],
+    "quick": []
+  },
+  "newNativeDiagrams": 1,
+  "reusedPhotographs": 1,
+  "largeStudentDrawingSpaces": 22,
+  "studentTeacherDrawingRectangles": 44,
+  "workedExamples": 8,
+  "physicalActivityPages": 11,
+  "paperAssessmentPages": 3,
+  "scopedFixes": [
+    "단위/칸 안의 슬래시와 여러 답 구분자를 구별하여91/92의 정답 거부 수정",
+    "입력 번호와 단위 안내를 계절 계약에만 표시",
+    "원자료를 물질의 원자로 오인한 감사 수정",
+    "워밍업·공전 주체·학생용 용어와 사진 설명 개선",
+    "오른쪽 더 알아보기135개를 상위 과학·수학과 연결"
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "phase": 192,
+  "date": "2026-11-04",
+  "unit": "c22-s52-u01",
+  "title": "혼합물 전체 사고력 수업·직접 분리/장치 제작·생활 속 기술 조사와 공유 연결",
+  "status": "verified-local-candidate-browser-gate-pending",
+  "baselineCommit": "dfe6f4ac693984ea4fd07b668655a9b173420647",
+  "localCommit": null,
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini · Codex · local Node VM; no API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "gfield-textbook-design"
+  ],
+  "curriculumEvidenceReusedFromPhase": 191,
+  "curriculum": {
+    "basicStandards": [
+      "6과05-01",
+      "6과05-02",
+      "6과05-03"
+    ],
+    "hwpSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "sourceLines": [
+      781,
+      796
+    ],
+    "upperContentKeptInWorkbookSidebar": true,
+    "whyOilAndWaterDoNotMixNotIntroducedInBasic": true
+  },
+  "classroom": {
+    "studentSlides": 57,
+    "teacherSlides": 58,
+    "manualActivities": [
+      "materialsobserve",
+      "sieveprepare",
+      "sievetest",
+      "sieveretry",
+      "oilobserve",
+      "oilseparate",
+      "oilcheck",
+      "dissolveobserve",
+      "dissolveenough",
+      "filtersetup",
+      "filterobserve",
+      "filterretry",
+      "evaporatestart",
+      "evaporatereturn",
+      "separatorplan",
+      "separatorbuild",
+      "separatortest",
+      "separatorimprove",
+      "technology",
+      "create",
+      "share",
+      "revise"
+    ],
+    "selectedQuestions": 16,
+    "comparisonCases": [
+      "sieve",
+      "oil",
+      "dissolve",
+      "filter",
+      "evaporate",
+      "recovery",
+      "technology",
+      "sharing"
+    ],
+    "comparisonRowsKey": "mixtureCompareRows",
+    "originalInquiryRowsKey": "mixtureInquiryRows",
+    "originalInquiryStorageKey": "sciLab.inquiry.c22-s52-u01",
+    "minutes": 300,
+    "phases": 13,
+    "firstPredictionUngraded": true,
+    "multiDayEvaporationNotReplacedByScreenCompletion": true
+  },
+  "integration": {
+    "protectedDataAndAssetsAndPriorPdfs": 1850,
+    "unchangedOldPdfs": 48,
+    "unchangedWorkbookHtmlProducts": 84,
+    "unchangedOtherClassroomArrays": 40,
+    "intentionalChanges": [
+      {
+        "unit": "c22-s52-u01",
+        "mode": "self",
+        "before": 91,
+        "after": 57
+      },
+      {
+        "unit": "c22-s52-u01",
+        "mode": "teach",
+        "before": 92,
+        "after": 58
+      }
+    ],
+    "sourceItems": 96,
+    "similarItems": 0,
+    "selectedQuestionsExactlyUnchanged": 16,
+    "originalActivities": [
+      "materials",
+      "sieve",
+      "oil",
+      "dissolve",
+      "filter",
+      "evaporate",
+      "separator",
+      "technology",
+      "create",
+      "share"
+    ],
+    "originalReportAndInquiryConfigPreserved": true,
+    "newImages": 0,
+    "newPdfs": 0,
+    "new3D": 0,
+    "newOcr": 0,
+    "actualStudentStorageAccess": 0,
+    "browserVerified": false
+  },
+  "tests": {
+    "v2": {
+      "total": 587,
+      "passed": 585,
+      "skipped": 2,
+      "failed": 0
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "skipped": 0,
+      "failed": 0
+    },
+    "routes": {
+      "unit": "c22-s52-u01",
+      "startLinks": true,
+      "actualPageStartLabClassDailyLabBookAndRecords": true,
+      "defaultThinkingClass": true,
+      "checksSharedWithDaily": 16,
+      "legacyDailyQuestions": 16,
+      "teacherStudentReads": 0,
+      "teacherStudentWrites": 0,
+      "comparisonKey": "mixtureCompareRows",
+      "actualInquiryKey": "mixtureInquiryRows",
+      "originalRecordsBookExactlyUnchanged": true,
+      "originalReportAndObservationStatePreserved": true,
+      "noNew3D": true,
+      "comparisonEventHandlersActuallyExecuted": true,
+      "releaseDisposesMountedActivities": true,
+      "lateReleasedCallbackCannotWrite": true,
+      "browserVerified": false
+    },
+    "deckEvents": {
+      "teacherMounts": 1,
+      "teacherPersonal": false,
+      "staleLegacyBattleIgnored": true,
+      "comparisonClickDoesNotAdvance": true,
+      "outsideClickAdvances": true,
+      "manualActivities": 22,
+      "noTimerOnActivity": true,
+      "explicitNextWorks": true,
+      "browserVerified": false
+    }
+  },
+  "assets": [
+    {
+      "name": "mixture",
+      "path": "science-lab/assets/activities/c22-s52-u01/mixture-photo-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "sha256": "c91d290223014e37aea11e3ca0ede328c35597c8789913f9e1937a580f239e5d",
+      "candidatePresent": true,
+      "sameBytes": true
+    },
+    {
+      "name": "sieve",
+      "path": "science-lab/assets/activities/c22-s52-u01/sieve-photo-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "sha256": "f1e864bb70e0fe0d9b573c35305e7d9df5b69c4f24bdf71a9246fad86b902941",
+      "candidatePresent": true,
+      "sameBytes": true
+    },
+    {
+      "name": "oil",
+      "path": "science-lab/assets/activities/c22-s52-u01/oil-photo-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "sha256": "99b119b19f59eda6a06dc3ca7bc31059db8df076f37abf82bef8d58f579675f2",
+      "candidatePresent": true,
+      "sameBytes": true
+    },
+    {
+      "name": "dissolve",
+      "path": "science-lab/assets/activities/c22-s52-u01/dissolve-photo-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "sha256": "2e9d1e944a35ecdb455abc3544e0ab9d1a1e5065a1da3541171f82d63125b669",
+      "candidatePresent": true,
+      "sameBytes": true
+    },
+    {
+      "name": "filter",
+      "path": "science-lab/assets/activities/c22-s52-u01/filter-photo-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "sha256": "33521293c9fd73aa1b30620b25eab9ca3766e2032b04be4fe1750ac5d62cd2d8",
+      "candidatePresent": true,
+      "sameBytes": true
+    },
+    {
+      "name": "evaporate",
+      "path": "science-lab/assets/activities/c22-s52-u01/evaporate-photo-v1.png",
+      "size": [
+        1447,
+        1087
+      ],
+      "sha256": "127be38ec0a8ab8c60ad975cf4e75dd0d4c89e59529bbf9e531e578420bd61f8",
+      "candidatePresent": true,
+      "sameBytes": true
+    },
+    {
+      "name": "technology",
+      "path": "science-lab/assets/activities/c22-s52-u01/technology-photo-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "sha256": "b28fb1472f809e9c73d983805b79c5bb74521a26ebb1d88f6e0781ec34595198",
+      "candidatePresent": true,
+      "sameBytes": true
+    }
+  ],
+  "imageReviewReused": {
+    "phase": 191,
+    "samePhotoBytes": 7,
+    "priorNativeAppleVisionExecutions": 151,
+    "newOcr": 0
+  },
+  "sharedFix": "Ignore comparison onRecord callbacks after page release; actual route callback explicitly invoked after release and cannot write.",
+  "workbookUnits": 21,
+  "thinkingClassroomUnits": 21,
+  "newImages": 0,
+  "newPDFs": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "actualStudentStorageAccessed": false,
+  "browserVerified": false,
+  "browserLimitation": "Existing denied science-lab/v2 target remains unbypassed; Node VM is not real CSS/mobile/audio/3D verification. 3D checker browser gate before main remains pending.",
+  "push": false,
+  "deployment": false,
+  "goalStatus": "active",
+  "previousGoalTurn": "progress: phase191 integrated and locally committed the mixture workbook with verified artifacts.",
+  "remaining": [
+    "5-2 열/날씨/자원과 에너지 및 나머지 학기 교재·전체 수업 통합",
+    "문항·교육과정 용어·사진과 심화의 단원별 검수",
+    "최신main 통합·실제 브라우저/CSS/모바일/3D/소리 검수와 승인 범위 배포"
+  ]
+}

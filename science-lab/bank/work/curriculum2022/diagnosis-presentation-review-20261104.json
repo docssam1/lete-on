@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "c1737a487e79164807072f70846ce2c59c7c147d",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "scope": "Student-facing learning results, version-correct evidence, current classroom review links",
+  "currentUnitsCheckedStudentAndTeacher": 32,
+  "legacyRemedyStepPreserved": true,
+  "diagnosticRulesAndStorageContractChanged": false,
+  "evidencePromptUsesRecordedVersion": true,
+  "unknownRevisionUsesNoCurrentPrompt": true,
+  "unclassifiedWrongIsNotMastery": true,
+  "teacherReviewOpensTeacherClassroom": true,
+  "emptyRemedyListHidden": true,
+  "newRegressionTests": 5,
+  "v2": {
+    "tests": 810,
+    "passed": 808,
+    "skipped": 2,
+    "failed": 0
+  },
+  "bank": {
+    "tests": 299,
+    "passed": 299,
+    "failed": 0
+  },
+  "totalPassedThisPhase": 1107,
+  "unchangedWorkbookHtml": 128,
+  "unchangedSlideArrays": 64,
+  "unchangedCareerItems": 128,
+  "unchangedPdfs": 102,
+  "protectedFiles": 6320,
+  "unchangedProtectedFilesBeforeHandoffs": 6317,
+  "changedProtectedFiles": [
+    "science-lab/v2/index.html",
+    "science-lab/v2/tests/diagnose-choice-revisions.mjs",
+    "science-lab/v2/v2.js"
+  ],
+  "actualStudentStorageAccesses": 0,
+  "browserVerified": false,
+  "mainMerged": false,
+  "pushed": false,
+  "deployed": false
+}

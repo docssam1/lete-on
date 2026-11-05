@@ -1,0 +1,152 @@
+{
+  "phase": 236,
+  "date": "2026-11-05",
+  "baseCommit": "08f0520221b41b883f306b7ab875e395aa711990",
+  "units": [
+    "c22-s32-u01",
+    "c22-s32-u02"
+  ],
+  "scope": "Shared explanatory/activity body prefix: materials first13 and Earth/ocean first15 pages, applied to both student and teacher. Later questions, embedded figure text and answer appendix remain unchanged.",
+  "changes": [
+    "Name the material making an object, classify by material and connect material properties to use.",
+    "Use shape/volume terms for the three states and distinguish changing a container from force-induced deformation.",
+    "Explain model records as examples; keep comparison conditions and observation limits in natural student sentences.",
+    "Use atmosphere, land/ocean surface, coastal forms, tide levels and tidal-flat value/conservation language aligned with 4과05/06.",
+    "Replace purity/information-scope phrasing in the explanatory body with concrete observations, conclusions and further questions."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 30,
+    "questionsPreserved": 3080,
+    "units": [
+      {
+        "unit": "c22-s32-u01",
+        "studentPages": 51,
+        "teacherPages": 54,
+        "sharedBodyPagesRevised": 13,
+        "questionsPreserved": 80,
+        "teacherPagesAfterEditedPrefixExactlyUnchanged": true,
+        "bodyStringLengthBefore": 6537,
+        "bodyStringLengthAfter": 7024
+      },
+      {
+        "unit": "c22-s32-u02",
+        "studentPages": 52,
+        "teacherPages": 56,
+        "sharedBodyPagesRevised": 15,
+        "questionsPreserved": 80,
+        "teacherPagesAfterEditedPrefixExactlyUnchanged": true,
+        "bodyStringLengthBefore": 7732,
+        "bodyStringLengthAfter": 8169
+      }
+    ],
+    "revisedSharedStudentPages": 28,
+    "revisedSharedTeacherPages": 28,
+    "questionsFiguresRailsWritingSpaceBlockTypesTableShapesAndNumbersPreserved": true,
+    "generatedBodiesByteIdentical": 2,
+    "productsChanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher"
+      }
+    ],
+    "productsUnchanged": 124,
+    "slideArraysUnchanged": 64,
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF.md",
+      "science-lab/bank/BANK-HANDOFF.md",
+      "science-lab/data/book/c22-s32-u01.workbook.js",
+      "science-lab/data/book/c22-s32-u02.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "htmlChecks": [
+    {
+      "unit": "c22-s32-u01",
+      "mode": "student",
+      "matchedEditedStrings": 95,
+      "bodyPages": 51,
+      "actualBrowserOrA4Verified": false
+    },
+    {
+      "unit": "c22-s32-u01",
+      "mode": "teacher",
+      "matchedEditedStrings": 95,
+      "bodyPages": 54,
+      "actualBrowserOrA4Verified": false
+    },
+    {
+      "unit": "c22-s32-u02",
+      "mode": "student",
+      "matchedEditedStrings": 120,
+      "bodyPages": 52,
+      "actualBrowserOrA4Verified": false
+    },
+    {
+      "unit": "c22-s32-u02",
+      "mode": "teacher",
+      "matchedEditedStrings": 120,
+      "bodyPages": 56,
+      "actualBrowserOrA4Verified": false
+    }
+  ],
+  "tests": {
+    "v2": {
+      "pass": 815,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "newMirrorTests": 0,
+    "threeDRuntimeExecuted": false
+  },
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+      "localText": "Existing verified curriculum-standards/science-curriculum.txt lines528–555",
+      "scope": "4과05: compare properties/classify by material; observe solid/liquid/gas shape and volume; design useful objects. 4과06: atmosphere, land/ocean, seawater/land water, coastal forms, tide level changes and tidal-flat conservation. Mechanisms of erosion/transport/deposition and tidal causes do not enter elementary body."
+    },
+    {
+      "title": "USGS Why Is the Ocean Salty",
+      "url": "https://www.usgs.gov/water-science-school/science/why-ocean-salty",
+      "scope": "Dissolved minerals in river and seawater, multiple dissolved substances and qualitative land/ocean coverage. No numerical coverage, salinity, ion names or mechanism added."
+    },
+    {
+      "title": "NOAA What Are Tides",
+      "url": "https://oceanservice.noaa.gov/facts/tides.html",
+      "scope": "Sea level rise and fall. No fixed local tide times or tidal-cause mechanism added."
+    }
+  ],
+  "editorialConnection": "Outer material-earth-body-language.js follows the existing opening and rail editors. The expected unit/count/title/block type are checked. Edited student and teacher prefix pages must be identical before editing; later continuations/duplex blanks are returned unchanged. Regeneration requires preserving the connection and reviewing a changed prefix.",
+  "cacheVersion": "20261105-material-earth-body-language",
+  "remaining": "Magnet and night-sky explanatory body; remaining questions/embedded figure language; actual desktop/mobile/A4/audio/WebGL and mandatory 3D runtime gate; main integration/deployment. Existing browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase236: full32 workbook and128 product snapshots,64 slides, body diffs, numerical/structural preservation checks, four production HTML fragments and edited-string checks, final v2 log. Initial HTML page count incorrectly excluded teacher duplex blanks; final count includes physical body pages and exact blank objects are independently preserved."
+}

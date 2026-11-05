@@ -1,5 +1,5 @@
 // v2의 현행 교재 정체성과 웹/인쇄 지면을 연결한다. 문항·수업·저장 답안은 바꾸지 않는다.
-const CURRENT_UNITS=new Set(["c22-s32-u01", "c22-s32-u02", "s41-u01", "c22-s42-u01", "c22-s51-u03"]);
+const CURRENT_UNITS=new Set(["c22-s32-u01", "c22-s32-u02", "s41-u01", "c22-s42-u01", "c22-s51-u03", "s31-u01", "s31-u02", "s31-u03", "s31-u04", "c22-s42-u02", "c22-s32-u03", "c22-s32-u04", "c22-s42-u04", "s41-u02", "s41-u03", "s41-u04", "c22-s42-u03", "c22-s51-u01", "c22-s51-u02", "c22-s51-u04", "c22-s52-u01", "c22-s52-u02", "c22-s52-u03", "c22-s52-u04", "c22-s61-u01", "c22-s61-u02", "c22-s61-u03", "c22-s61-u04"]);
 export const THINKING_BOOK='지필드 교과 연결 사고력';
 export const isCurrentLearningUnit=id=>CURRENT_UNITS.has(id);
 export const learningBookName=(id,previous)=>isCurrentLearningUnit(id)?THINKING_BOOK:previous||'지필드 실험 과학';
@@ -19,4 +19,4 @@ export function withPrintedWorkbook(mod,wb){
  return {...mod,workbook:wb,quickPages:wb.quickPages,art:{...mod.art,...wb.figures},chapter:{...ch,book:learningBookName(ch.unit,ch.book),title:wb.title||ch.title,semester:wb.semester||ch.semester||ch.vol,theme:wb.theme||ch.theme,editorial:true,verticalFlow:true,inlineAnswers:true,richText:!!wb.richText,pages:wb.pages,teacherStudentPages:teacherProblemPages(wb.pages,wb.teacherStudentPages,ch.unit),teacherPages:wb.teacherPages,questions:wb.questions,webBookDescription:'웹과 인쇄에서 같은 개념·활동·문항을 읽어요.'}};
 }
 
-export const learningRailTitle=(ch,previous,index)=>ch.thinkWorkbook&&isCurrentLearningUnit(ch.unit)?['핵심 정리','더 알아보기','내가 정리할 것'][index]||previous:previous;
+export const learningRailTitle=(ch,previous,index,pageKind='')=>ch.thinkWorkbook&&isCurrentLearningUnit(ch.unit)&&!['answers','quick'].includes(pageKind)?['핵심 정리','더 알아보기','내가 정리할 것'][index]||previous:previous;

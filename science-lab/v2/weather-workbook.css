@@ -1,0 +1,23 @@
+.bk-editorial[data-unit="c22-s52-u03"] .ed-drawing.large{min-height:120mm;height:auto}
+.bk-editorial[data-unit="c22-s52-u03"] .ed-drawing+.ed-lines{margin-top:3mm}
+@media screen and (max-width:700px){.bk-editorial[data-unit="c22-s52-u03"] .ed-drawing.large{min-height:280px}}
+
+.bk-editorial[data-unit="c22-s52-u03"]{--ed-ink:#2a241c;--ed-blue:#2f6b4a;--ed-muted:#7a6f5c;--ed-line:#c9bda2}
+.bk-editorial[data-unit="c22-s52-u03"] .bk-band{background:#2f6b4a}
+.bk-editorial[data-unit="c22-s52-u03"] :is(.ed-note h3,.ed-example h3,.ed-qhead b,.ed-solution h3){color:#2f6b4a;border-color:#2f6b4a}
+.bk-editorial[data-unit="c22-s52-u03"] .ed-example{border-color:#2f6b4a;background:#e9f0e7}
+.bk-editorial[data-unit="c22-s52-u03"] .ed-table th{background:#e9f0e7}
+.bk-editorial[data-unit="c22-s52-u03"] :is(.ed-rail,.ed-example-answer,.ed-question,.ed-given,.ed-blank,.ed-lines i,.ed-response span,.ed-drawing,.ed-table th,.ed-table td,.ed-solution,.ed-photo-labels>div){border-color:#c9bda2}
+@media screen{.bk-editorial[data-unit="c22-s52-u03"] .bk-page{background:#fdfbf5}}
+
+/* 자체 탑재 명조는 인쇄 본문에만 적용한다. 활동·메모 제목의 손글씨는 유지한다. */
+@font-face{font-family:'Noto Serif KR';src:url('../assets/fonts/noto-serif-kr-korean-400-normal.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Noto Serif KR';src:url('../assets/fonts/noto-serif-kr-korean-700-normal.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+@media print{
+ .bk-editorial[data-unit="c22-s52-u03"] :is(.ed-main,.ed-rail){font-family:'Noto Serif KR',Pretendard,serif}
+ .bk-editorial[data-unit="c22-s52-u03"] .ed-main h2{font-family:'Noto Serif KR',Pretendard,serif;font-weight:700}
+ .bk-editorial[data-unit="c22-s52-u03"] :is(.ed-kicker,.ed-qhead,.bk-band,.bk-foot){font-family:Pretendard,sans-serif}
+ .bk-editorial[data-unit="c22-s52-u03"] :is(.ed-note h3,.ed-field h3){font-family:var(--ed-hand);font-weight:700}
+}
+
+.bk-editorial[data-unit="c22-s52-u03"] .ed-photo img{max-height:60mm;object-fit:contain}

@@ -1,0 +1,482 @@
+{
+  "phase": 248,
+  "date": "2026-11-05",
+  "baseCommit": "9d082bedb8e45833f54be029edbc407c4df1c090",
+  "unit": "c22-s51-u02",
+  "scope": "Student language in current light workbook, current bank presentations and selected classroom checks. Preserve original reports, source/similar banks, answer contracts and old response presentations.",
+  "curriculum": {
+    "standard": [
+      "6과02-01",
+      "6과02-02",
+      "6과02-03"
+    ],
+    "source": "교육부 고시2022-33 별책9 과학과 교육과정; locally extracted official text reviewed in science-question-review/curriculum-standards/science-curriculum.txt",
+    "boundary": "Need for light; observe and name straight propagation/reflection/refraction; investigate mirrors/lenses and make a device. Do not add reflection/refraction laws or lens-distance image requirements."
+  },
+  "changes": [
+    "Keep 광원·직진·반사·굴절. Replace compressed topic/procedure labels with student-facing sentences.",
+    "Use 종이에 쓰인 글씨 for the paper observation, and make the incorrect refraction statement unambiguous while preserving its incorrect position.",
+    "Include LED, the three holes and the eye in the aligned arrangement. The workbook correct option remains index0 and the bank remains index3.",
+    "Distinguish example observation data from the learner’s own measured results.",
+    "Explain the slit light source as a device emitting weak LED light through a narrow slit; retain the same materials, safety, data and procedure."
+  ],
+  "version": "20261105-light-student-language",
+  "preservation": {
+    "workbookUnits": 32,
+    "workbookQuestions": 3080,
+    "changedBookQuestions": [
+      {
+        "id": "light-book-04",
+        "no": 4,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-10",
+        "no": 10,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-12",
+        "no": 12,
+        "fields": [
+          "prompt",
+          "choices"
+        ]
+      },
+      {
+        "id": "light-book-14",
+        "no": 14,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-25",
+        "no": 25,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-26",
+        "no": 26,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-34",
+        "no": 34,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-36",
+        "no": 36,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-39",
+        "no": 39,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-40",
+        "no": 40,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-41",
+        "no": 41,
+        "fields": [
+          "prompt",
+          "given"
+        ]
+      },
+      {
+        "id": "light-book-42",
+        "no": 42,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "light-book-44",
+        "no": 44,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-48",
+        "no": 48,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-49",
+        "no": 49,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-50",
+        "no": 50,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-51",
+        "no": 51,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-52",
+        "no": 52,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-54",
+        "no": 54,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-55",
+        "no": 55,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-58",
+        "no": 58,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-60",
+        "no": 60,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-64",
+        "no": 64,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "light-book-66",
+        "no": 66,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-69",
+        "no": 69,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-73",
+        "no": 73,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-74",
+        "no": 74,
+        "fields": [
+          "choices"
+        ]
+      },
+      {
+        "id": "light-book-75",
+        "no": 75,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "light-book-76",
+        "no": 76,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "light-book-79",
+        "no": 79,
+        "fields": [
+          "prompt"
+        ]
+      }
+    ],
+    "changedBookFieldCounts": {
+      "topic": 20,
+      "prompt": 14,
+      "choices": 4,
+      "given": 1
+    },
+    "changedSharedBodyPages": [
+      {
+        "collection": "pages",
+        "page": 6,
+        "title": "조명을 끄고 켜며 물체를 관찰해요"
+      },
+      {
+        "collection": "pages",
+        "page": 10,
+        "title": "같은 물질 안에서는 곧게 나아가요"
+      },
+      {
+        "collection": "pages",
+        "page": 11,
+        "title": "구멍을 맞추고 옮겼다가 다시 맞추어요"
+      },
+      {
+        "collection": "pages",
+        "page": 16,
+        "title": "거울을 돌리면 빛의 방향은 어떻게 될까요?"
+      },
+      {
+        "collection": "pages",
+        "page": 30,
+        "title": "렌즈를 넣으면 빛의 경로가 어떻게 될까요?"
+      },
+      {
+        "collection": "pages",
+        "page": 31,
+        "title": "목적에 맞는 도구를 고르고 시험해요"
+      },
+      {
+        "collection": "pages",
+        "page": 42,
+        "title": "관찰한 현상과 빛의 성질을 정리해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 6,
+        "title": "조명을 끄고 켜며 물체를 관찰해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 10,
+        "title": "같은 물질 안에서는 곧게 나아가요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 11,
+        "title": "구멍을 맞추고 옮겼다가 다시 맞추어요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 16,
+        "title": "거울을 돌리면 빛의 방향은 어떻게 될까요?"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 30,
+        "title": "렌즈를 넣으면 빛의 경로가 어떻게 될까요?"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 31,
+        "title": "목적에 맞는 도구를 고르고 시험해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 42,
+        "title": "관찰한 현상과 빛의 성질을 정리해요"
+      }
+    ],
+    "changedBankItems": [
+      "c22-s51-u02-b004",
+      "c22-s51-u02-b010",
+      "c22-s51-u02-b012",
+      "c22-s51-u02-b014",
+      "c22-s51-u02-b025",
+      "c22-s51-u02-b026",
+      "c22-s51-u02-b034",
+      "c22-s51-u02-b036",
+      "c22-s51-u02-b039",
+      "c22-s51-u02-b040",
+      "c22-s51-u02-b041",
+      "c22-s51-u02-b042",
+      "c22-s51-u02-b044",
+      "c22-s51-u02-b048",
+      "c22-s51-u02-b049",
+      "c22-s51-u02-b050",
+      "c22-s51-u02-b051",
+      "c22-s51-u02-b052",
+      "c22-s51-u02-b054",
+      "c22-s51-u02-b055",
+      "c22-s51-u02-b058",
+      "c22-s51-u02-b060",
+      "c22-s51-u02-b064",
+      "c22-s51-u02-b066",
+      "c22-s51-u02-b069",
+      "c22-s51-u02-b073",
+      "c22-s51-u02-b074",
+      "c22-s51-u02-b075",
+      "c22-s51-u02-b076",
+      "c22-s51-u02-b079"
+    ],
+    "changedClassroomItems": [
+      "c22-s51-u02-b025",
+      "c22-s51-u02-b036",
+      "c22-s51-u02-b010",
+      "c22-s51-u02-b034",
+      "c22-s51-u02-b076",
+      "c22-s51-u02-b012"
+    ],
+    "changedFrames": [
+      {
+        "mode": "self",
+        "slide": "test2",
+        "item": "c22-s51-u02-b025"
+      },
+      {
+        "mode": "self",
+        "slide": "test3",
+        "item": "c22-s51-u02-b036"
+      },
+      {
+        "mode": "self",
+        "slide": "test5",
+        "item": "c22-s51-u02-b010"
+      },
+      {
+        "mode": "self",
+        "slide": "test9",
+        "item": "c22-s51-u02-b034"
+      },
+      {
+        "mode": "self",
+        "slide": "test12",
+        "item": "c22-s51-u02-b076"
+      },
+      {
+        "mode": "self",
+        "slide": "test15",
+        "item": "c22-s51-u02-b012"
+      },
+      {
+        "mode": "teach",
+        "slide": "test2",
+        "item": "c22-s51-u02-b025"
+      },
+      {
+        "mode": "teach",
+        "slide": "test3",
+        "item": "c22-s51-u02-b036"
+      },
+      {
+        "mode": "teach",
+        "slide": "test5",
+        "item": "c22-s51-u02-b010"
+      },
+      {
+        "mode": "teach",
+        "slide": "test9",
+        "item": "c22-s51-u02-b034"
+      },
+      {
+        "mode": "teach",
+        "slide": "test12",
+        "item": "c22-s51-u02-b076"
+      },
+      {
+        "mode": "teach",
+        "slide": "test15",
+        "item": "c22-s51-u02-b012"
+      }
+    ],
+    "htmlQuestionsVerified": 60,
+    "unchangedOtherWorkbooks": 31,
+    "paperProductsUnchanged": 125,
+    "slideArraysUnchanged": 62,
+    "sourceItemsPreserved": 1512,
+    "similarItemsPreserved": 1512,
+    "currentItems": 3179,
+    "classroomItems": 1635,
+    "selectedChecks": 490,
+    "allQuestionContractsAndHistoricalSnapshotsPreserved": true,
+    "allFiguresRailsWritingSpacePreserved": true,
+    "studentStorageAccessed": false,
+    "browserOrA4Verified": false
+  },
+  "nativeBankRenderer": {
+    "unit": "c22-s51-u02",
+    "currentItems": 80,
+    "source": 40,
+    "similar": 40,
+    "changed": 30,
+    "versionedFrames": 12,
+    "actualItemHtmlAndPrintExecuted": true,
+    "actualCurrentClassroomSnapshotMatched": true,
+    "browserVerified": false
+  },
+  "tests": {
+    "total": 838,
+    "passed": 836,
+    "failed": 0,
+    "skipped": 2,
+    "skips": [
+      "lab workspace lifecycle in an isolated browser",
+      "reading video failure and teardown in an isolated browser"
+    ],
+    "newTests": 2,
+    "scope": "Current answer positions and accepted responses/review boundaries; original/similar identity and input immutability; prior presentations, selected-choice readback, restart history and future version guards. Actual32-unit loader/classroom version linkage also passes.",
+    "syntaxCheckedFiles": 10
+  },
+  "existingTestUpdate": "Earlier light tests assumed all16 current questions were still the legacy unversioned presentation. Retain assertions for every original field by resolving version1, preserve ID order/contracts and all9 original activities/report assertions. A legacy saved paper is now read-only changed; a partial legacy response is unbound/read-only; a new current snapshot remains editable. No storage or grading implementation was changed.",
+  "qaCorrections": [
+    "The standalone itemHtml fixture initially omitted its real seasonAnswerHint import for short-text questions; add the actual dependency rather than changing product code.",
+    "Question-node extraction keeps the first full question node rather than overwriting it with the later answer section of the same ID. Answers-only HTML is not claimed to contain prompts. Student/teacher60 changed question nodes were checked."
+  ],
+  "evidence": "science-question-review/phase248: before/after actual32-unit VM/128 paper/64 deck/32 workbook states, preservation-summary, native bank itemHtml online/print60 outputs, final tests and immutable source hashes. HTML verification is not browser or A4 layout evidence.",
+  "unchanged": "All bitmap/SVG/photo bytes and source/similar data; raw authored bank files; generated workbook body except outer import/hook; question answers, criteria, explanations, standards, page structure, rails and writing space; report and 3D implementation.",
+  "status": {
+    "localWrittenAndVerified": true,
+    "browserOrA4Verified": false,
+    "mandatory3DRuntimeVerified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "remaining": "Other unit/teacher/student quality review, actual PC/mobile/A4/audio/WebGL and mandatory3D gates, v1 consistency and main integration/deployment. Prior browser reauthorization has no observed reply; no bypass."
+}

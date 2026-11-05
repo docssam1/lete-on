@@ -1,0 +1,51 @@
+/* 기존 지필드 수업의 종이색·초록·Pretendard 기준을 이 단원에 적용한다. */
+.earth-motion-thinking{--disp:Pretendard,sans-serif;--t:#2f6b4a;--o:#2f6b4a;--n:#2a241c;font-family:Pretendard,sans-serif;background:#f1ece1;color:#2a241c}
+.earth-motion-thinking :is(.dk-top,.dk-top a,.dk-top b,.dk-h){color:#2a241c}
+.earth-motion-thinking :is(.dk-h,.dk-kick,h1,h2,h3,strong,b,button){font-weight:700}
+.earth-motion-thinking .dk-h{border-color:#c9bda2}
+.earth-motion-thinking .dk-phases span{background:#e2d9c6;color:#2a241c}
+.earth-motion-thinking .dk-phases span.on{background:#2f6b4a;color:#fff}
+.earth-motion-thinking .dk-stage{background:#fdfbf5}
+.earth-motion-thinking .dk-stage::before{background:#2f6b4a}
+.earth-motion-thinking .dk-body a{color:#1e4631}
+.earth-motion-thinking :is(.dk-tbl,.ed-table){table-layout:fixed;width:100%;border-collapse:collapse}
+.earth-motion-thinking :is(.dk-tbl,.ed-table) :is(td,th){border:1px solid #c9bda2;padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+.earth-motion-thinking .ps-figure{margin:0 auto 16px;text-align:center}
+.earth-motion-thinking .ps-figure img{max-width:100%;width:auto;height:auto;max-height:240px;object-fit:contain}
+.earth-motion-thinking .ps-figure :is(figcaption,.ps-figure-note,small),.earth-motion-thinking .ed-given{font-size:13px;color:#7a6f5c}
+.earth-motion-thinking .ps-figure-credit{display:block;margin-top:8px}
+.earth-motion-thinking .dk-inrow label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;width:100%}
+.earth-motion-thinking .dk-inrow textarea{min-height:44px}
+.earth-motion-thinking .dk-given-list{list-style:none;margin:.5em 0 0;padding:0;display:grid;gap:.4em}
+.earth-motion-compare{--mc-ink:#2a241c;--mc-accent:#2f6b4a;--mc-line:#c9bda2;font-family:Pretendard,sans-serif;color:var(--mc-ink);padding:12px;line-height:1.65;min-width:0}
+.earth-motion-compare label{display:grid;gap:6px;font-weight:700}
+.earth-motion-compare select{width:100%;min-width:0;min-height:44px;padding:8px;border:1px solid var(--mc-line);border-radius:6px;background:#fdfbf5;color:var(--mc-ink);font:inherit}
+.earth-motion-compare :is(select,button):focus-visible{outline:2px solid var(--mc-accent);outline-offset:3px}
+.earth-motion-compare-notice{padding:12px;background:#e9f0e7;border-left:4px solid var(--mc-accent)}
+.earth-motion-compare-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.earth-motion-compare-actions button{min-height:44px;padding:8px 12px;border:1px solid var(--mc-line);border-radius:6px;font:inherit;background:#fdfbf5;color:var(--mc-ink);cursor:pointer}
+.earth-motion-compare-actions button:disabled{opacity:.5;cursor:default}
+.earth-motion-compare-result{padding:12px;margin-top:12px;background:#e9f0e7;border:1px solid var(--mc-line)}
+.earth-motion-compare [hidden]{display:none!important}
+.earth-motion-compare-table{width:100%;overflow-x:auto}
+.earth-motion-compare table{table-layout:fixed;width:100%;border-collapse:collapse}
+.earth-motion-compare :is(td,th){border:1px solid var(--mc-line);padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:700px){.earth-motion-compare{padding:8px}.earth-motion-compare-result{padding:8px}.earth-motion-thinking .ps-figure img{max-height:210px}}
+
+.earth-motion-thinking .ed-fig{margin:0 auto 16px;text-align:center}
+.earth-motion-thinking .ed-fig svg,.earth-motion-compare svg{display:block;width:100%;height:auto;max-height:260px;margin:auto}
+.earth-motion-compare .ps-figure img{display:block;max-width:100%;width:auto;max-height:240px;height:auto;object-fit:contain;margin:auto}
+.earth-motion-compare .ps-figure{margin:16px auto;text-align:center}
+.earth-motion-compare .ps-figure-credit{font-size:13px}
+
+.earth-motion-thinking .earth-motion-plot,.earth-motion-compare .earth-motion-plot{max-width:340px;max-height:300px;margin:12px auto}
+.earth-motion-thinking .earth-motion-draw-space{min-height:140px;border:1px solid #c9bda2;background:#fdfbf5}
+.earth-motion-compare .ps-figure img{max-width:100%;max-height:220px;object-fit:contain}
+
+.earth-motion-thinking .earth-book-photo img,.earth-motion-compare .earth-book-photo img{display:block;max-width:100%;width:auto;height:auto;max-height:240px;object-fit:contain;margin:auto}
+.earth-motion-thinking .earth-book-photo-caption,.earth-motion-compare .earth-book-photo-caption{font-size:13px;color:#7a6f5c}
+.earth-motion-thinking .earth-book-photo-caption small{display:block}
+.earth-motion-thinking .earth-motion-sky-links{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
+.earth-motion-thinking .earth-motion-sky-links a{display:flex;align-items:center;min-height:44px;padding:8px 12px;border:1px solid #c9bda2;background:#e9f0e7;border-radius:6px;line-height:1.4}
+.earth-motion-thinking .earth-motion-sky-links a:focus-visible{outline:2px solid #2f6b4a;outline-offset:3px}
+.earth-motion-thinking .earth-motion-program-note{font-size:13px;color:#7a6f5c}

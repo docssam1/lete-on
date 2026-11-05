@@ -1,0 +1,178 @@
+{
+  "phase": 232,
+  "date": "2026-11-05",
+  "baseCommit": "c589d91120cae15f885da78a3d2dc7aa398f8e63",
+  "unit": "c22-s42-u01",
+  "title": "밤하늘 관찰",
+  "scope": "All 76 right rails: current-concept summary, related later-grade science, specific learner synthesis. No changes to question content or body blocks.",
+  "reason": "Earlier further-learning rails were mainly safety, source limitations or generic problem-solving instructions, and repeated across many pages.",
+  "pedagogy": {
+    "core": "Current observation and curriculum concepts.",
+    "furtherLearning": "Explicit 5–6 grade or middle-school connections; phase-change mechanisms, rotation/revolution, planetary classes, stellar brightness and distance.",
+    "learnerSynthesis": "Page-specific tasks in existing writing space.",
+    "safety": "Existing practical precautions retained in activity-planning/synthesis notes on pages 5,8,9,15."
+  },
+  "sources": [
+    {
+      "title": "교육부 고시2022-33 별책9",
+      "source": "Existing verified curriculum-standards/science-curriculum.txt",
+      "scope": "Current 4과13 observation; later-grade 6과02/06/12/13, 9과07/08/15. Enrichment examples are applications, not claims that every detail is a mandatory criterion."
+    },
+    {
+      "title": "NASA Moon Phases",
+      "url": "https://science.nasa.gov/moon/moon-phases/",
+      "scope": "Lunar illumination, relative positions and phase sequence."
+    },
+    {
+      "title": "NASA Eclipses and the Moon",
+      "url": "https://science.nasa.gov/moon/eclipses/",
+      "scope": "Ordinary phases versus Earth-shadow lunar eclipses."
+    },
+    {
+      "title": "NASA Top Moon Questions",
+      "url": "https://science.nasa.gov/moon/top-moon-questions/",
+      "scope": "Daytime visibility and orientation from different observing locations."
+    },
+    {
+      "title": "NASA Moon Viewing Tips",
+      "url": "https://science.nasa.gov/moon/viewing-tips/",
+      "scope": "Surface shadows and lunar terrain visibility."
+    },
+    {
+      "title": "NASA Wrinkle Ridge in Mare Crisium",
+      "url": "https://science.nasa.gov/resource/wrinkle-ridge-in-mare-crisium/",
+      "scope": "Lunar maria as basaltic lava plains."
+    },
+    {
+      "title": "NASA About Planets",
+      "url": "https://science.nasa.gov/solar-system/planets/",
+      "scope": "Terrestrial surfaces, outer planets, dwarf planets."
+    },
+    {
+      "title": "NASA Planetary Fact Sheet",
+      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+      "scope": "Planet sizes, densities and orbital periods; no new numerical values introduced."
+    },
+    {
+      "title": "NASA Saturn Facts",
+      "url": "https://science.nasa.gov/saturn/facts/",
+      "scope": "Rings as numerous ice/rock particles; planetary structure."
+    },
+    {
+      "title": "NASA Jupiter Facts",
+      "url": "https://science.nasa.gov/jupiter/jupiter-facts/",
+      "scope": "Cloud bands, gaseous exterior and ring system."
+    },
+    {
+      "title": "NASA Venus Facts",
+      "url": "https://science.nasa.gov/venus/venus-facts/",
+      "scope": "Temperature depends on atmosphere as well as solar distance."
+    },
+    {
+      "title": "NASA Sunspots",
+      "url": "https://science.nasa.gov/sun/sunspots/",
+      "scope": "Sunspots cooler and darker relative to their surroundings."
+    },
+    {
+      "title": "NASA Why Observe the Sun in Different Colors",
+      "url": "https://svs.gsfc.nasa.gov/vis/a010000/a013800/a013859/script_31299_00.html",
+      "scope": "Wavelength-sensitive instruments and assigned display colors."
+    },
+    {
+      "title": "NASA What Is the North Star",
+      "url": "https://science.nasa.gov/solar-system/what-is-the-north-star-and-how-do-you-find-it/",
+      "scope": "Polaris near the northern rotation axis, not the brightest star; pointer-star geometry."
+    },
+    {
+      "title": "NASA What Are Constellations",
+      "url": "https://spaceplace.nasa.gov/constellations/en/",
+      "scope": "Apparent patterns, observing direction and seasonal change."
+    },
+    {
+      "title": "NASA Imagine the Universe: Stars",
+      "url": "https://imagine.gsfc.nasa.gov/ask_astro/stars.html",
+      "scope": "Intrinsic light output, observed brightness and distance."
+    },
+    {
+      "title": "Canadian Space Agency: Star",
+      "url": "https://www.asc-csa.gc.ca/eng/astronomy/fact-sheets/star.asp",
+      "scope": "Stellar color and surface temperature."
+    }
+  ],
+  "preservation": {
+    "units": 32,
+    "unchangedUnits": 31,
+    "changedUnit": "c22-s42-u01",
+    "questionsPreserved": 3080,
+    "nightSkyPages": 76,
+    "uniqueNotesInEachColumn": [
+      76,
+      76,
+      76
+    ],
+    "laterGradeConnections": 76,
+    "onlyRailTextChanged": true,
+    "bodyQuestionsAnswersFiguresVersionsTeacherSolutionsQuickPagesPreserved": true,
+    "railTitlesWritingSpaceAndPageOrderPreserved": true,
+    "existingSafetyPreservedInActivityPlanningNotes": [
+      5,
+      8,
+      9,
+      15
+    ],
+    "generatedWorkbookBodyByteIdentical": true,
+    "productsChanged": [
+      {
+        "unit": "c22-s42-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher"
+      }
+    ],
+    "productsUnchanged": 126,
+    "slideArraysUnchanged": 64,
+    "careerHistoryUnchanged": true,
+    "baselineScienceFiles": 6339,
+    "existingFilesChanged": [
+      "science-lab/data/book/c22-s42-u01.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "beforeHandoffUnchangedTrackedFiles": 6333
+  },
+  "htmlVerification": {
+    "studentMatchedNotes": 228,
+    "teacherMatchedNotes": 228,
+    "actualBrowserOrA4LayoutVerified": false
+  },
+  "tests": {
+    "v2": {
+      "pass": 812,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "threeDPlanOnly": {
+      "pass": 5,
+      "fail": 0,
+      "runtimeVerified": false
+    },
+    "newMirrorTests": 0
+  },
+  "cacheVersion": "20261105-night-sky-rails",
+  "unchanged": "Question/answer/criteria/history/diagnostic modules, reports, photos, diagrams, 3D scenes and engine, styles and student records.",
+  "paidModelOrImageAPICalls": 0,
+  "remaining": "Other initial workbooks (materials, Earth/oceans, magnets, dissolution), broader language review, actual desktop/mobile/A4/audio/WebGL and mandatory 3D gate. Prior browser reauthorization remains unanswered; no bypass.",
+  "status": {
+    "localVerified": true,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase232: full workbook objects, product hashes, slide arrays, validate-final.py, 2 generated HTML products and extracted 228-note text, source checks and test logs."
+}

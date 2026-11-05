@@ -1,0 +1,2 @@
+import{taxonomy as original}from'./c22-s62-u04.taxonomy.js';
+export const taxonomy={...original,elements:original.elements.map(e=>e.id==='E8'?{...e,name:'나의 진로와 과학을 설명해요',desc:'관심 있는 직업에서 하는 일과 과학적 요소를 관련지어 설명해요.'}:e),types:original.types.map(t=>t.id==='T15'?{...t,name:'관심 있는 진로에서 과학 찾기',desc:'여러 직업에서 하는 일과 관련된 과학적 요소를 찾아요.'}:t.id==='T16'?{...t,name:'나의 진로와 과학 설명하기',desc:'관심 있는 진로를 과학과 관련지어 자료와 함께 설명해요.'}:t)};

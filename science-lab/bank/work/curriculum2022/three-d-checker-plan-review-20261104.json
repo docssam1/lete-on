@@ -1,0 +1,100 @@
+{
+  "phase": 222,
+  "date": "2026-11-04",
+  "baseCommit": "cf9023f77ac19f2eb8d8e1a26413eb5e30d7e8ed",
+  "status": "required-checker-targets-aligned-plan-only-validation",
+  "checker": "scripts/check-science-3d.mjs",
+  "planner": "scripts/science-3d-plan.mjs",
+  "units": 44,
+  "currentUnits": 32,
+  "retainedLegacyTargets": 24,
+  "nonCurrentRetainedTargets": 12,
+  "canonicalTypes": {
+    "comparison2d": 62,
+    "scene3d": 10,
+    "lab3d": 10
+  },
+  "plannedSurfaces": {
+    "ordinary": 272,
+    "fullscreen": 65,
+    "legacyDecksNeedBrowserLookup": 12
+  },
+  "classifierUses": "actual mount/modelLab and chapter/comparison metadata; current classroom title is not a type tag",
+  "actualComparisonWidgetsInstantiatedInNode": 31,
+  "unusedBattleAbsenceChecksFor": [
+    "s41-u01",
+    "s41-u02"
+  ],
+  "runtimeCleanup": "all launched main and fallback browsers and static server are closed in finally; failure exitCode1",
+  "checkerPreservation": {
+    "cameraProjectionAndThresholdsUnchanged": true,
+    "fittedWaitUnchanged": true,
+    "clickHitTestingUnchanged": true,
+    "ringStateAndAnswerHidingFlowUnchanged": true,
+    "tubeMeasurementAndClickFlowUnchanged": true,
+    "originalBattleInteractionChecksPreservedWhenApplicable": true,
+    "unusedBattleAbsenceChecksFor": [
+      "s41-u01",
+      "s41-u02"
+    ],
+    "originalLegacy24TargetsPreserved": true,
+    "runtimeBrowserExecuted": false
+  },
+  "tests": {
+    "v2Total": 804,
+    "v2Pass": 802,
+    "v2ExistingBrowserSkip": 2,
+    "bankPass": 299,
+    "planPass": 5,
+    "totalPass": 1106,
+    "fail": 0,
+    "bankAuditPassed": true,
+    "misconceptionAuditPassed": true,
+    "nodeSyntaxCheck": true,
+    "planCliWithUnavailablePlaywrightPassed": true
+  },
+  "preservation": {
+    "baselineFiles": 6317,
+    "unchangedFiles": 6315,
+    "reviewedExistingChanges": [
+      "science-lab/3D-RULES.md",
+      "scripts/check-science-3d.mjs"
+    ],
+    "preservedWorkbookProducts": 128,
+    "preservedClassroomArrays": 64,
+    "preservedCareerQuestionsWithFullVersionHistory": 128,
+    "oldPdfHashesPreserved": 102,
+    "authoringSourceHashesPreserved": 24,
+    "studentAppDataAssetsAndStylesUnchanged": true,
+    "originalLegacyTargets": 24,
+    "runtimeBrowserExecuted": false,
+    "published": false
+  },
+  "runtimeChecksExecuted": 0,
+  "runtimeBrowserStarted": false,
+  "runtimeServerStarted": false,
+  "runtimeScreenshotReview": false,
+  "realAudioPlaybackVerified": false,
+  "actualStudentStorageReads": 0,
+  "actualStudentStorageWrites": 0,
+  "newPdfs": 0,
+  "newImages": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "mainIntegrated": false,
+  "published": false,
+  "browserPermissionQuestion": {
+    "requestedAsynchronously": true,
+    "reason": "prior target-access denial and required actual 3D gate before main",
+    "responseObserved": false,
+    "noResponseIsNotPermission": true,
+    "pendingAction": "wait for explicit user reply before dependent browser work; do not resend the same request"
+  },
+  "qa": "science-question-review/phase222",
+  "remaining": [
+    "explicit user response to browser verification request",
+    "authorized actual PC/mobile/audio/WebGL/print and mandatory3D checks",
+    "then-current remote integration recheck and verified-scope publication",
+    "remaining shared language and original v1 scope"
+  ]
+}

@@ -31,5 +31,5 @@ test('모든 짝은 원문 없이 자체 조건으로 풀며 펌프의1회량/�
 });
 test('네 문항집은 같은212번호와 자료를 쓰며 학생/교사/해설만/빠른표 경계를 지킨다',()=>{
  for(const mode of ['student','teacher','answers','quick']){const h=bankPaper({unit,source,similar,items,mode});assert.equal((h.match(/data-paper-item=/g)||[]).length,212);assert(!h.includes('[object Object]'));assert(h.includes('옛6-2 관련 원문58'));assert(h.includes('원문6개'));assert(!h.includes('용해와 용액'));if(mode==='student')assert(!h.includes('class="solution-key"'));if(mode==='teacher'||mode==='answers'){assert.equal((h.match(/class="solution-key"/g)||[]).length,212);assert.equal((h.match(/인쇄된 공식 답 참고/g)||[]).length,6);}if(mode==='answers'||mode==='quick')assert(!h.includes('<img'));}
- const h=curriculumBankHtml(BANK);assert(h.includes('#/c22-s51-u04/start'));assert(h.includes('#/c22-s51-u04/1'));assert(h.includes('20개 단원의 원문 1298문항'));assert(h.includes('우리 몸의 구조와 기능'));
+ const h=curriculumBankHtml(BANK);assert(h.includes('#/c22-s51-u04/start'));assert(h.includes('#/c22-s51-u04/lab-class/self/1'));assert(!h.includes('href="#/c22-s51-u04/1"'));assert(h.includes('23개 단원의 원문 1512문항'));assert(h.includes('우리 몸의 구조와 기능'));
 });

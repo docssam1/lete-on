@@ -1,0 +1,318 @@
+{
+  "date": "2026-11-02",
+  "base": "ce5de3ad43b92a273c13c48f96edad348c03484b",
+  "branch": "codex/science-workbook-integration-20261102",
+  "unit": "s31-u02",
+  "status": "local integration candidate, no push or deployment",
+  "skills": [
+    "instructional-design (continued)",
+    "ux-writing (continued)"
+  ],
+  "curriculum": [
+    "4과02-01",
+    "4과02-02",
+    "4과02-03"
+  ],
+  "changes": [
+    "학생27/교사28장·80분·11확인문항의 사고력 수업과 Daily 연결",
+    "같은 네 동물의 날개·깃털 기준 비교를 기본 실험으로 연결",
+    "자료 더 필요 판단을 보존하고 두 기준 모두 기록해야 비교 완료 안내",
+    "기존 실제 활동 기록 교재를 선택 경로로 연결",
+    "자료 목록 표시를 공용 helper로 정리하며 힘 수업 HTML은 불변",
+    "animalCompareRows에 비교 결과를 저장하고 원래 labRows·보고서 상태 보존"
+  ],
+  "tests": {
+    "total": 329,
+    "passed": 327,
+    "failed": 0,
+    "skipped": 2,
+    "skipScope": "기존 브라우저 검사2개"
+  },
+  "slides": {
+    "units": [
+      {
+        "unit": "s31-u01",
+        "modes": {
+          "self": {
+            "slides": 26,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 27,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u02",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u03",
+        "modes": {
+          "self": {
+            "slides": 45,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 46,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u04",
+        "modes": {
+          "self": {
+            "slides": 36,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 36,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "s41-u01",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s51-u03",
+        "modes": {
+          "self": {
+            "slides": 86,
+            "checks": 16
+          },
+          "teach": {
+            "slides": 87,
+            "checks": 16
+          }
+        }
+      }
+    ],
+    "otherModesUnchanged": 18,
+    "sourceAnimalMatchesExceptGivenListLayouts": 2
+  },
+  "routes": {
+    "scope": "actual pageStart/pageLabClass/pageDaily/pageLabBook functions in Node vm; captured deck/view/Daily rendering; animal compare component event handlers executed; not browser/layout validation",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "labRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "animalCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      }
+    ]
+  },
+  "componentChecks": [
+    "관찰 전 분류 강제·설명 자료 숨김",
+    "자료 더 필요를 틀림으로 채점하지 않음",
+    "동일 기준 두 번으로 완료되지 않음",
+    "두 기준의 비교 완료 정보 전달",
+    "학생 원본 행·부모 전달 사본 분리",
+    "교사 개인 기록 비접근",
+    "저장된 유효 행만 복구",
+    "pause/resume/isActive/dispose·중복 이름표 방지"
+  ],
+  "images": [
+    {
+      "file": "science-lab/assets/activities/s31-u02/pigeon.webp",
+      "width": 236,
+      "height": 182,
+      "sha256": "95389c2e133130f3addc0d075103db59d353db99c095ae53bb754d7dd40556ad",
+      "ocrPage": 1
+    },
+    {
+      "file": "science-lab/assets/activities/s31-u02/bat.webp",
+      "width": 226,
+      "height": 190,
+      "sha256": "05483c2a9a8a3b99490c77d6830efe1c2a27bdc5947f4d00812d0f2bd56b8f06",
+      "ocrPage": 2
+    },
+    {
+      "file": "science-lab/assets/activities/s31-u02/dragonfly.webp",
+      "width": 228,
+      "height": 188,
+      "sha256": "51962f7f7908c99e9fff233f104d0398a8266e19708a6e5fc750ce59e9d9fe03",
+      "ocrPage": 3
+    },
+    {
+      "file": "science-lab/assets/activities/s31-u02/tiger.webp",
+      "width": 470,
+      "height": 254,
+      "sha256": "36da5198b94176eb24f9132035101cb42429dd8a17ce4b947b7033a6bac86dd1",
+      "ocrPage": 4
+    }
+  ],
+  "appleVision": {
+    "actualImages": 4,
+    "failed": 0,
+    "skipped": 0,
+    "detectedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scope": "기존 비교 사진4장에만 실제 실행. 수업 전체 화면 OCR가 아님."
+  },
+  "preserved": [
+    "원래 동물80similar·lesson·book·활동·보고서 파일",
+    "11문항의 ID·정답·채점 계약·출처·분류",
+    "힘을 포함한 다른9단원18개 수업 원고",
+    "기존 전체 workbook·해설·이미지 원본",
+    "원래 실제 관찰 기록 labRows와 보고서 상태"
+  ],
+  "browserScope": "Node VM에서 실제 경로 함수를 실행하고 UI 연결부를 수집했으며 비교 활동의 이벤트 처리는 실제 실행했다. 브라우저 화면·인쇄 레이아웃 검증은 남아 있음.",
+  "apiCalls": 0,
+  "newImages": 0,
+  "newPdfs": 0,
+  "next": "식물·한살이·생물과 환경 실제 수업과 선택 기록 연결, 최신main 재대조 및 통합 검토. 전체 프로그램 목표 active.",
+  "files": [
+    {
+      "path": "science-lab/v2/deck-force-thinking.js",
+      "sha256": "b777ca95b17dc8f1a7e31c5d71544e2111945b3c2569f8edf9926c2f2c7560aa"
+    },
+    {
+      "path": "science-lab/v2/deck.js",
+      "sha256": "cf713a26b9b5dc92a4d5876717c31179afd41a147ae26ef725f17deca4a98320"
+    },
+    {
+      "path": "science-lab/v2/index.html",
+      "sha256": "eb7c0a3c779a7e7cba6948f1a3535c1e67f3271c99ee821f6c16309646beb03a"
+    },
+    {
+      "path": "science-lab/v2/revised-force-lesson.test.mjs",
+      "sha256": "3b131f3d313c75dc0670a1ec993c1aa41af0748a968d4112d5c4432b6095eaac"
+    },
+    {
+      "path": "science-lab/v2/revised-lesson.js",
+      "sha256": "01af2677470869e5885dc8fbe90e70c029786c26c1e2516d031b9a5c0ca6cc43"
+    },
+    {
+      "path": "science-lab/v2/v2.js",
+      "sha256": "cd6cb54c9fd8039e8b1654fdcfa3b1b0d5ded4eb254ef924743d5d01e12bab46"
+    },
+    {
+      "path": "science-lab/data/book/s31-u02.thinking-lesson.js",
+      "sha256": "e17b66e6a2ff18279147029601f41bce796ab7ed768c8e626de54d1d9507e5e5"
+    },
+    {
+      "path": "science-lab/v2/animal-classify.js",
+      "sha256": "24e7337c77673cefc8aff17123773cb827761dc755bcd5ad704ce2115733e8b9"
+    },
+    {
+      "path": "science-lab/v2/deck-animal-thinking.js",
+      "sha256": "543a7e7371f4d77594d7653d17824cb30f12c365c08664cf815c18a7d5b7ce7f"
+    },
+    {
+      "path": "science-lab/v2/lab-animal-compare.css",
+      "sha256": "966b8294fd82d23815b69bdc040028f8187b4661731d4811599f6ad438264b84"
+    },
+    {
+      "path": "science-lab/v2/lab-animal-compare.js",
+      "sha256": "6b1f681e72e776a84cdbb81d1f122cc12f156956f0ba3c528906732ef3c1905d"
+    },
+    {
+      "path": "science-lab/v2/lab-animal-compare.test.mjs",
+      "sha256": "4bf9193029ab5f279c7c7b68384e69827e6a5eec9ddb9e043230c4accf1a230d"
+    },
+    {
+      "path": "science-lab/v2/revised-animal-lesson.test.mjs",
+      "sha256": "3ef721e3a94abd8bd8cbf8b93ea07843876fce2c6299f8f0c590d346419000fc"
+    },
+    {
+      "path": "science-lab/v2/thinking-check-question.js",
+      "sha256": "8ca990e1d8147b5ef3c6bae2fe7a53c10e09fdb6a7a131f199013c12dd47bff1"
+    }
+  ]
+}

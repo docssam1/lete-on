@@ -1,0 +1,273 @@
+{
+  "phase": 207,
+  "baseCommit": "4fb5bf2da65eacbdaf842f6093a4eaab39560de4",
+  "previousGoalTurn": "progress",
+  "unit": "c22-s61-u04",
+  "scope": "남쪽 하늘 관찰·자전과 낮밤 모형실험·공전과 계절별 별자리 사고력 수업 연결",
+  "curriculumStandards": [
+    "6과12-01",
+    "6과12-02",
+    "6과12-03"
+  ],
+  "curriculumEvidence": {
+    "reviewed": "2026-11-04",
+    "references": [
+      {
+        "title": "교육부 2022-33 별책9 과학과 교육과정",
+        "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&statusYN=W",
+        "use": "로컬 HWP 894~911줄 6과12-01~03·탐구·해설·고려 사항; 상위 6과13/9과07/9과15도 대조"
+      },
+      {
+        "title": "NASA 별자리",
+        "url": "https://spaceplace.nasa.gov/constellations/en/",
+        "use": "공전·관측 위치·겹쳐 보이는 계절과 별자리 정의"
+      },
+      {
+        "title": "NASA 지구 사실",
+        "url": "https://science.nasa.gov/earth/facts/",
+        "use": "자전·공전·축 기울기"
+      },
+      {
+        "title": "OpenStax 하늘",
+        "url": "https://openstax.org/books/astronomy-2e/pages/2-1-the-sky-above",
+        "use": "천정·지평선·위도·하늘의 극·별자리"
+      },
+      {
+        "title": "OpenStax 지구와 하늘",
+        "url": "https://openstax.org/books/astronomy-2e/pages/4-1-earth-and-sky",
+        "use": "경위도·천구 좌표·자전 방향"
+      },
+      {
+        "title": "OpenStax 계절",
+        "url": "https://openstax.org/books/astronomy-2e/pages/4-2-the-seasons",
+        "use": "기울기·위도·백야·극야와 상위 계절 학습"
+      },
+      {
+        "title": "OpenStax 시간",
+        "url": "https://openstax.org/books/astronomy-2e/pages/4-3-keeping-time",
+        "use": "항성일/태양일·표준시·4분 차이"
+      },
+      {
+        "title": "OpenStax 달력",
+        "url": "https://openstax.org/books/astronomy-2e/pages/4-4-the-calendar",
+        "use": "일 년·윤년"
+      },
+      {
+        "title": "OpenStax 별의 밝기",
+        "url": "https://openstax.org/books/astronomy-2e/pages/17-1-the-brightness-of-stars",
+        "use": "겉보기 밝기·거리·등급"
+      },
+      {
+        "title": "OpenStax 별의 색",
+        "url": "https://openstax.org/books/astronomy-2e/pages/17-2-colors-of-stars",
+        "use": "색과 표면 온도"
+      },
+      {
+        "title": "OpenStax 별 거리",
+        "url": "https://openstax.org/books/astronomy-2e/pages/19-2-surveying-the-stars",
+        "use": "연주시차·거리"
+      },
+      {
+        "title": "OpenStax 망원경",
+        "url": "https://openstax.org/books/astronomy-2e/pages/6-1-telescopes",
+        "use": "집광·다른 파장·관측 장치"
+      },
+      {
+        "title": "OpenStax 대기 밖 관측",
+        "url": "https://openstax.org/books/astronomy-2e/pages/6-5-observations-outside-earths-atmosphere",
+        "use": "대기 흔들림·관측 제약"
+      },
+      {
+        "title": "Stellarium 공식 설정 코드",
+        "url": "https://raw.githubusercontent.com/Stellarium/stellarium-web-engine/master/apps/web-frontend/src/App.vue",
+        "use": "119~145줄 setStateFromQueryArgs: ISO date/lng/lat/az/alt/fov, 시작 time_speed=1이므로 일시정지 안내 유지; 실제 WebGL 계산 결과 확인과 구별"
+      }
+    ],
+    "curriculumHwpSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "dayNightUrl": "404; not used",
+    "stellariumPage": "JS application shell only; not evidence of observed star positions",
+    "currentClassroomReview": {
+      "curriculumLines": "894~911",
+      "currentReadURLs": [
+        "https://spaceplace.nasa.gov/constellations/en/",
+        "https://science.nasa.gov/earth/facts/",
+        "https://raw.githubusercontent.com/Stellarium/stellarium-web-engine/master/apps/web-frontend/src/App.vue"
+      ],
+      "programCode": "119~145; time_speed=1; 수동 일시정지와 실제 표시 시각 확인 안내",
+      "programWebGLCalculationObserved": false
+    }
+  },
+  "studentSlides": 54,
+  "teacherSlides": 55,
+  "phases": 13,
+  "minutesAcrossMultipleLessons": 315,
+  "manualActivities": 18,
+  "autoAdvanceOnManualActivities": false,
+  "comparisonCases": 8,
+  "checksAndDaily": 16,
+  "checkResponseForms": 8,
+  "sharedCurrentEditedNumbers": [
+    115,
+    118,
+    119,
+    120,
+    124,
+    126,
+    128
+  ],
+  "editedChecks": 5,
+  "originalChecks": 11,
+  "warmupGraded": false,
+  "programSettings": {
+    "uniqueURLs": 8,
+    "linksPerMode": 9,
+    "manualPauseRequired": true,
+    "timeZone": "Asia/Seoul",
+    "actualWebGLResultObserved": false
+  },
+  "sourceLesson": {
+    "file": "science-lab/data/units/c22-s61-u04.lesson.js",
+    "sha256": "f621380b57ecac461d47bc617edeb875727c19772fc5680e2ca92f915645eef0",
+    "copiedFromAuthoringWithoutChange": true
+  },
+  "dataKeys": {
+    "comparison": "earthMotionCompareRows",
+    "optionalInquiry": "earthMotionInquiryRows",
+    "optionalInquiryStorage": "sciLab.inquiry.c22-s61-u04"
+  },
+  "reportRequired": false,
+  "new3D": 0,
+  "newImages": 0,
+  "newPDFs": 0,
+  "paidAPI": 0,
+  "routes": {
+    "unit": "c22-s61-u04",
+    "startLinks": true,
+    "priorBankOnlyDailyWasUnavailable": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 16,
+    "legacyDailyQuestions": 0,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "earthMotionCompareRows",
+    "actualInquiryKey": "earthMotionInquiryRows",
+    "noMissingRecordsBookLink": true,
+    "originalReportAndObservationStatePreserved": true,
+    "missingOptionalReportSafelyRedirected": true,
+    "lateOptionalRecordCallbackCannotWrite": true,
+    "lateOptionalRecordHandleDisposed": true,
+    "noNew3D": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "lateReleasedCallbackCannotWrite": true,
+    "browserVerified": false
+  },
+  "deckEvents": {
+    "teacherMounts": 1,
+    "teacherPersonal": false,
+    "staleLegacyBattleIgnored": true,
+    "comparisonClickDoesNotAdvance": true,
+    "outsideClickAdvances": true,
+    "manualActivities": 18,
+    "noTimerOnActivity": true,
+    "explicitNextWorks": true,
+    "browserVerified": false
+  },
+  "productionRouter": {
+    "unit": "c22-s61-u04",
+    "actualStart": true,
+    "currentClassroomOffered": true,
+    "defaultRedirectToStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "actualBankPrintRouterBranch": 4,
+    "actualClassroomRouterBranch": 2,
+    "productionUnitLoaderExecuted": true,
+    "currentQuestionRevisions": 7,
+    "currentGradingContractLoaded": true,
+    "fullClassroomPending": false,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "questionDiagnostics": {
+    "onlineStates": 6,
+    "deckStates": 5,
+    "oldDiagnosticPreserved": true,
+    "syntheticProgressEvents": 5,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0
+  },
+  "htmlStructure": {
+    "fullClassroomSlides": 109,
+    "slideTables": 34,
+    "slideScopedHeaders": 112,
+    "comparisonStates": 16,
+    "comparisonTables": 16,
+    "comparisonScopedHeaders": 80,
+    "programLinksAcrossStudentAndTeacher": 18,
+    "photoAssetsPreserved": [
+      "../assets/activities/c22-s61-u04/card-materials.webp",
+      "../assets/activities/c22-s61-u04/model-preparation.webp",
+      "../assets/activities/c22-s61-u04/night-environment.webp"
+    ],
+    "newPhotos": 0,
+    "realBrowserCSSVerified": false
+  },
+  "preservation": {
+    "baselineFiles": 6219,
+    "sameBytes": 6207,
+    "reviewedChangedFiles": [
+      "science-lab/data/book/c22-s61-u04.book.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/curriculum-2022.js",
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-earth-motion-workbook.test.mjs",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/tests/earth-motion-workbook-routes.mjs",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/v2.js"
+    ],
+    "unchangedWorkbookHTMLs": 112,
+    "unchangedClassroomSlideArrays": 54,
+    "newClassroomSlideArrays": 2,
+    "oldPDFsPreserved": 78,
+    "cacheOnlyFiles": [
+      "science-lab/data/book/c22-s61-u04.book.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/curriculum-place.js"
+    ]
+  },
+  "tests": {
+    "v2": {
+      "total": 719,
+      "pass": 717,
+      "skip": 2,
+      "fail": 0
+    },
+    "bank": {
+      "pass": 299,
+      "fail": 0
+    },
+    "bankAudit": "pass",
+    "earthMotionMiscAudit": "pass"
+  },
+  "previousVisionEvidence": [
+    "phase205/vision-review.json",
+    "phase206/review.json"
+  ],
+  "realBrowserCSSMobileAudioWebGLVerified": false,
+  "workbooksConnectedLocally": 28,
+  "fullClassroomsConnectedLocally": 28,
+  "remainingWorkbooks": 4,
+  "remainingClassrooms": 4,
+  "published": false,
+  "goalStatus": "active",
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase207"
+}

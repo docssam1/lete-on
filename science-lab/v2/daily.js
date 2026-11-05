@@ -1,4 +1,5 @@
-import {photoFigureHtml} from './photo-figure.js';
+import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
+import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 // Daily Test — 스스로 공부하기의 마지막 장면(MSG 초·과·심 「Daily Test 01–09 · 채점과 첨삭」을 참고해 이 사이트에 맞게 다시 만듦).
 //  · 왼쪽: 문항을 하나씩 풀고(이전·다음), 문항마다 「말로 답하기」(받아쓴 초안 → 고쳐서 넣기)와 「스스로 체크」(점수와 별개).
 //    답안 사진은 이 기기(IndexedDB)에만 보관 — 선생님께 자동으로 보내지 않는다.
@@ -6,17 +7,34 @@ import {photoFigureHtml} from './photo-figure.js';
 //    틀린 문항은 정답을 먼저 보여 주지 않고 독쌤이 되묻는다(「생각해 봤어요 · 해설 보기」를 눌러야 열림).
 //  · 기록: 문항마다 처음 채점한 답만 진단 기록(progress.js)에 남긴다. 규칙으로 못 가린 쓰기 답은 「선생님 확인」(check.js)에 모인다.
 //  · 아무것도 서버로 보내지 않는다(채점 계약 승인 전 — GRADING-CONTRACT-DRAFT.md).
-import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js';
+import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js?v=20261104-season-book';
 import { sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
+import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261105-history-review';
+import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CIRC = ['①', '②', '③', '④', '⑤'];
 const KEY = 'sciLab.daily', DECK = 'sciLab.deck';
 const loadAll = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
-const saveUnit = (u, v) => { try { const a = loadAll(); a[u] = v; localStorage.setItem(KEY, JSON.stringify(a)); } catch { /* 저장 불가 기기 */ } };
+const saveUnit = (u, v) => { try { const a = loadAll(); a[u] = v; localStorage.setItem(KEY, JSON.stringify(a));return true; } catch { return false; } };
 const deckAll = () => { try { return JSON.parse(localStorage.getItem(DECK)) || {}; } catch { return {}; } };
 const deckPut = (k, v) => { try { const a = deckAll(); if (v == null) delete a[k]; else a[k] = v; localStorage.setItem(DECK, JSON.stringify(a)); } catch { /* */ } };
 const pad = (n) => String(n).padStart(2, '0');
+const savedAnswer=(it,v)=>{if(v==null)return'기록 없음';if(['single-choice','multi-choice'].includes(it.answerContract?.type)&&[].concat(v).every(i=>Number.isInteger(i)&&i>=0))return[].concat(v).map(i=>`${i+1}번 보기`).join(' · ')+' · 당시 보기 문구 확인 필요';return typeof v==='string'?v:JSON.stringify(v);};
+export function revisionHistoryHtml(it,history){
+  if(!Array.isArray(history)||!history.length)return '';
+  const labels={correct:'맞음',wrong:'틀림',review:'확인 필요',blank:'미응답'};
+  const statusOf=value=>typeof value==='string'?value:value?.status;
+  const rows=history.map(attempt=>{
+    const old=questionAtVersion(it,attempt.version);
+    const answer=old?formatAnswer({...old,...attempt.presentation},attempt.answers):'기록한 보기 확인 필요';
+    const status=labels[statusOf(attempt.graded)||statusOf(attempt.first)]||'채점 전';
+    const time=attempt.at==null?'시각 기록 없음':new Date(attempt.at).toLocaleString('ko-KR');
+    return `<li><p>내 답: ${esc(answer)}</p><p>당시 채점: ${esc(status)} · ${esc(time)}</p></li>`;
+  }).join('');
+  return `<details class="dt-revision-history"><summary>이전 보기로 푼 기록 ${history.length}개</summary><ol>${rows}</ol></details>`;
+}
+
 const mic = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>';
 
 // ── 답안 사진: 이 기기에만(IndexedDB) ──
@@ -38,7 +56,7 @@ function fieldsHtml(it, v, misc) {
     const sel = [].concat(v ?? []).map(String);
     return `${ac.type === 'multi-choice' ? `<p class="dt-hint">${ac.answers.length}개를 골라요.</p>` : ''}<div class="dt-choices" role="${ac.type === 'single-choice' ? 'radiogroup' : 'group'}">${it.choices.map((c, i) => `<button type="button" class="dt-choice" data-i="${i}" aria-pressed="${sel.includes(String(i))}"><i>${CIRC[i]}</i><span>${sourceChoiceHtml(it,c,i)}</span></button>`).join('')}</div>`;
   }
-  if (ac.type === 'short-text') return `<input class="dt-in" data-f="text" type="text" autocomplete="off" aria-label="내 답" placeholder="답을 써요" value="${esc(v ?? '')}">`;
+  if (ac.type === 'short-text') return `${seasonAnswerHint(ac)?`<p class="dt-hint">${esc(seasonAnswerHint(ac))}</p>`:''}<input class="dt-in" data-f="text" type="text" autocomplete="off" aria-label="내 답" placeholder="답을 써요" value="${esc(v ?? '')}">`;
   if (ac.type === 'written-explanation') return `<textarea class="dt-in" data-f="text" rows="4" aria-label="내 답" placeholder="까닭까지 써요">${esc(v ?? '')}</textarea>`;
   if (ac.type === 'table-fill') {
     return `<table class="dt-tbl"><thead><tr><th>${esc(ac.rowHead || '')}</th>${ac.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><th>${esc(r.label)}</th>${ac.columns.map((c, ci) => `<td><select data-r="${ri}" data-c="${ci}" aria-label="${esc(r.label)} ${esc(c)}"><option value="">고르기</option>${ac.options[c].map((o) => `<option${v?.[ri]?.[ci] === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -62,6 +80,7 @@ const givensHtml = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) =>
 function formatAnswer(it, v) {
   const ac = it.answerContract;
   if (v == null || (Array.isArray(v) ? !v.flat().some((x) => String(x ?? '').trim()) : !String(v).trim())) return '—';
+  if(it.unavailableOriginal)return typeof v==='string'?v:JSON.stringify(v);
   if (ac.type === 'single-choice') return `${CIRC[+v]} ${it.choices[+v]}`;
   if (ac.type === 'multi-choice') return [].concat(v).map((i) => `${CIRC[+i]} ${it.choices[+i]}`).join(' · ');
   if (ac.type === 'cloze') return [].concat(v).map((x, k) => `${CIRC[k]} ${String(x ?? '').trim() || '—'}`).join(' · ');
@@ -89,28 +108,55 @@ const STEPNAME = ['', '궁금', '실험', '개념', '확장', '점검'];
 // ctx: { $app, u, title, ch, list, pool, misc, judge, record, remedyItems, itemHtml, wireItem, say, back }
 //   단원평가로 쓸 때: store(기기 저장 키) · heading · src · tabs(세트 이동) · stage · twin(틀린 원문 → 짝 유사문항)
 export function mountDaily(ctx) {
-  const { $app, u, list, misc } = ctx, N = list.length, vocab = vocabOf(ctx.pool, misc), KEY_U = ctx.store || u, HEAD = ctx.heading || 'Daily Test';
-  const S = { answers: {}, self: {}, first: {}, graded: null, cur: 0, zoom: 1, ...(loadAll()[KEY_U] || {}) };
-  const save = () => saveUnit(KEY_U, S);
+  const key=ctx.store||ctx.u;
+  let state=loadAll()[key]||{},dispose=()=>{},closed=false;
+  const resolved=()=>resolveDailyPaper(ctx.list,state,{legacyList:ctx.legacyList,pool:ctx.pool});
+  const render=(historyIndex=null)=>{
+    dispose();if(closed)return;
+    const archive=historyIndex===null?null:state.paperHistory?.[historyIndex];
+    if(historyIndex!==null&&!archive)return;
+    const paper=archive?{questions:archive.paper.questions,readOnly:true,reason:archive.originalCompositionKnown?'history':'unbound'}:resolved();
+    dispose=mountDailySession({...ctx,list:paper.questions},{state:archive?.state||state,paper,historyIndex,history:Array.isArray(state.paperHistory)?state.paperHistory:[],
+      save:value=>{if(paper.readOnly)return;state=value;saveUnit(key,state);},
+      start:()=>{if(closed)return;const id=globalThis.crypto?.randomUUID?.()||`paper-${Date.now()}-${Math.random().toString(36).slice(2)}`,next=startDailyPaper(state,resolved(),ctx.list,id);if(!saveUnit(key,next)){const notice=ctx.$app.querySelector('[data-paper-save-status]');if(notice)notice.textContent='이전 답안을 보관하지 못했어요. 답안은 그대로 두었어요. 저장 공간을 확인한 뒤 다시 시도해 주세요.';return;}state=next;render();},
+      view:i=>render(i),back:()=>render()});
+  };
+  render();return()=>{closed=true;dispose();};
+}
+function mountDailySession(ctx,session){
+  const { $app, u, misc } = ctx, currentList=ctx.list, N = currentList.length, vocab = vocabOf(ctx.pool, misc), KEY_U = ctx.store || u, HEAD = ctx.heading || 'Daily Test',paperLocked=session.paper.readOnly,unboundPaper=paperLocked&&['unbound','unavailable'].includes(session.paper.reason);
+  let active=true,S={answers:{},self:{},first:{},graded:null,cur:0,zoom:1,...session.state,cur:Math.max(0,Math.min(N-1,Number.isInteger(session.state.cur)?session.state.cur:0))};
+  let list=restoreDailyQuestions(currentList,S);
+  const previous=it=>isPreviousQuestion(it,currentList.find(q=>q.id===it.id));
+  const save = () => {if(!active||paperLocked)return;S.paper=snapshotDailyPaper(currentList);session.save(S);};
   let photoUrl = null, recog = null;
 
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="${ctx.back}">‹ 처음으로</a><h1>${esc(ctx.title)}</h1>
 </div></header>
+    ${paperLocked||session.history.length?`<section class="dt-paper-tools wrap" aria-label="확인 문제와 이전 답안">
+      ${paperLocked?`<p role="status">${session.paper.reason==='unbound'?'시험지 원고와 순서가 함께 저장되지 않은 답안이에요. 남아 있는 항목을 보관된 원고와 함께 표시하며 전체 문항 수와 당시 순서는 추측하지 않아요.':session.paper.reason==='unavailable'?'저장된 원고를 확인할 수 없어 남아 있는 답안을 표시해요.':'이전에 저장한 원고와 답안이에요.'} 답과 채점 기록은 읽기 전용으로 보관해요.</p>`:''}
+      ${paperLocked&&session.historyIndex===null?'<button type="button" class="btn" data-paper-current>현재 확인 문제 별도로 풀기</button><p data-paper-save-status role="alert"></p>':''}
+      ${session.historyIndex!==null?'<button type="button" class="btn" data-paper-back>현재 답안으로 돌아가기</button>':''}
+      ${session.history.map((h,i)=>`<button type="button" class="btn" data-paper-history="${i}">이전 답안 ${i+1}${h.state?.at!=null?' · '+esc(new Date(h.state.at).toLocaleString('ko-KR')):''}</button>`).join('')}
+    </section>`:''}
     <main class="dt-wrap">
       <section class="dt-left" style="--dt-zoom:${S.zoom}">
-        <div class="dt-lhead"><span class="dt-chip">스스로 공부하기</span><h2>${esc(HEAD)} ${pad(1)}–${pad(N)}</h2>
+        <div class="dt-lhead"><span class="dt-chip">스스로 공부하기</span><h2>${esc(HEAD)} ${unboundPaper?'저장 항목 '+N+'개':pad(1)+'–'+pad(N)}</h2>
           <div class="dt-zoom" role="group" aria-label="글자 크기"><button type="button" data-z="-1">작게 −</button><output>${Math.round(S.zoom * 100)}%</output><button type="button" data-z="1">크게 +</button></div>
-          <span class="dt-src">${esc(ctx.src || `교재 ${ctx.ch.no}장 확인 문제 · 형성평가`)}</span>${ctx.tabs ? `<nav class="dt-tabs" aria-label="${esc(ctx.tabLabel || '세트')}">${ctx.tabs}</nav>` : ''}</div>
+          <span class="dt-src">${esc(unboundPaper?'남아 있는 응답 기록 · 표시 순서는 원래 문항 순서와 다를 수 있어요.':ctx.src || `교재 ${ctx.ch.no}장 확인 문제 · 형성평가`)}</span>${ctx.tabs ? `<nav class="dt-tabs" aria-label="${esc(ctx.tabLabel || '세트')}">${ctx.tabs}</nav>` : ''}</div>
         <div class="dt-q" aria-live="polite"></div>
-        <button type="button" class="dt-grade">${countWord(N)} 문항 채점하기</button>
-        <div class="dt-photo"><p>답안을 찍거나 사진을 골라 이 쪽에 붙여 두세요.</p><div class="dt-photo-box"></div>
-          <label class="btn dt-photo-btn">📷 사진 찍어 첨부<input type="file" accept="image/*" capture="environment" hidden></label>
+        <button type="button" class="dt-grade"${paperLocked?' disabled':''}>${countWord(N)} 문항 채점하기</button>
+        <div class="dt-photo"><p>${paperLocked?'붙여 둔 답안 사진':'답안을 찍거나 사진을 골라 이 쪽에 붙여 두세요.'}</p><div class="dt-photo-box"></div>
+          <label class="btn dt-photo-btn">📷 사진 찍어 첨부<input type="file" accept="image/*" capture="environment" hidden${paperLocked?' disabled':''}></label>
           <small>사진은 이 기기에만 보관돼요. 선생님께 자동 전송되지 않아요.</small></div>
         <nav class="dt-nav" aria-label="문항 이동"><button type="button" class="btn" data-go="-1">이전 문항</button><b class="dt-pos"></b><button type="button" class="btn" data-go="1">다음 문항</button></nav>
         <ol class="dt-dots" aria-label="문항 바로 가기">${list.map((it, i) => `<li><button type="button" data-to="${i}" aria-label="${i + 1}번">${pad(i + 1)}</button></li>`).join('')}</ol>
       </section>
       <section class="dt-right" aria-live="polite"></section>
     </main>`;
+  $app.querySelector('[data-paper-current]')?.addEventListener('click',()=>{if(active)session.start();});
+  $app.querySelector('[data-paper-back]')?.addEventListener('click',()=>{if(active)session.back();});
+  $app.querySelectorAll('[data-paper-history]').forEach(b=>b.addEventListener('click',()=>{if(active)session.view(+b.dataset.paperHistory);}));
   const $L = $app.querySelector('.dt-left'), $q = $app.querySelector('.dt-q'), $R = $app.querySelector('.dt-right');
   // 긴 시험지·큰 글씨에서는 아래 이동 단추까지 페이지와 함께 스크롤한다.
   const fitPanel = () => $L.classList.toggle('dt-fits-screen', $L.getBoundingClientRect().height <= innerHeight - 84);
@@ -123,16 +169,18 @@ export function mountDaily(ctx) {
   const paintDots = () => $app.querySelectorAll('.dt-dots button').forEach((b, i) => { const it = list[i], g = S.graded?.[it.id]; b.dataset.st = g || (answered(it) ? 'done' : ''); b.setAttribute('aria-current', String(i === S.cur)); });
 
   function drawQ() {
-    const it = list[S.cur], ac = it.answerContract, v = S.answers[it.id], speakable = ['single-choice', 'short-text', 'written-explanation'].includes(ac.type);
-    $q.innerHTML = `<article class="dt-qcard" data-type="${ac.type}"><header><span class="dt-num">${pad(S.cur + 1)}</span><p>${promptHtml(it, v, misc)}</p></header>${it.sourceRef?.label ? `<p class="dt-given">${esc(sourceCaption(it.sourceRef))} · ${esc(it.sourceRef.section)}</p>` : ''}${givensHtml(it)}${figHtml(it)}${fieldsHtml(it, v, misc)}
+    const it = list[S.cur], ac = it.answerContract, v = S.answers[it.id], locked=paperLocked||previous(it), speakable = !locked&&['single-choice', 'short-text', 'written-explanation'].includes(ac.type);
+    const unbound=paperLocked&&['unbound','unavailable'].includes(session.paper.reason),prompt=unbound?esc(it.prompt):promptHtml(it,v,misc).replace(locked?/<(input|select)\b/g:/$^/g,'<$1 disabled');
+    $q.innerHTML = `<article class="dt-qcard" data-type="${ac.type}"><header><span class="dt-num">${unboundPaper?'기록 ':''}${pad(S.cur + 1)}</span><p>${prompt}</p></header>${locked&&!paperLocked?'<p class="dt-note">수정 전 보기로 푼 기록이에요. 이전 답과 채점은 그대로 보관해요.</p><button type="button" class="btn" data-current-question>수정된 보기로 다시 풀기</button>':''}${it.sourceRef?.label ? `<p class="dt-given">${esc(sourceCaption(it.sourceRef))} · ${esc(it.sourceRef.section)}</p>` : ''}${givensHtml(it)}${figHtml(it)}${unbound?`<p class="dt-note">당시 원고가 없으므로 보관된 원고는 참고로만 보여요. 보기 문구가 함께 남지 않은 경우 고른 번호만 표시해요.</p><p class="dt-saved-answer">저장된 답: ${esc(savedAnswer(it,v))}</p>`:`${locked?'<fieldset disabled class="dt-revision-frozen">':''}${fieldsHtml(it, v, misc)}${locked?'</fieldset>':''}`}${revisionHistoryHtml(it,S.revisionHistory?.[it.id])}
       <div class="dt-tools">${speakable ? `<button type="button" class="dt-tool dt-speak" aria-expanded="false">${mic}<span>말로 답하기</span></button>` : ''}
-        <div class="dt-self" role="group" aria-label="스스로 체크 · 점수와 별개"><span>스스로 체크</span><button type="button" data-self="sure" aria-pressed="${S.self[it.id] === 'sure'}">○ 자신 있어요</button><button type="button" data-self="unsure" aria-pressed="${S.self[it.id] === 'unsure'}">△ 헷갈려요</button></div></div>
+        <div class="dt-self" role="group" aria-label="스스로 체크 · 점수와 별개"><span>스스로 체크</span><button type="button" data-self="sure"${locked?' disabled':''} aria-pressed="${S.self[it.id] === 'sure'}">○ 자신 있어요</button><button type="button" data-self="unsure"${locked?' disabled':''} aria-pressed="${S.self[it.id] === 'unsure'}">△ 헷갈려요</button></div></div>
       ${speakable ? `<section class="dt-drawer" hidden><div class="dt-row-tools"><button type="button" class="btn dt-mic">${mic}<span>마이크로 말하기</span></button><p class="dt-msg" role="status"></p></div>
         <label>받아쓴 초안을 읽고 고쳐요<textarea class="dt-draft" rows="2" placeholder="마이크로 말하거나 여기에 답을 써 보세요"></textarea></label>
         <button type="button" class="btn primary dt-apply">고친 답을 문제에 넣기</button></section>` : ''}</article>`;
     $app.querySelector('.dt-pos').textContent = `${S.cur + 1} / ${N}`;
     $app.querySelector('[data-go="-1"]').disabled = S.cur === 0; $app.querySelector('[data-go="1"]').disabled = S.cur === N - 1;
-    const set = (val) => { S.answers[it.id] = val; save(); paintDots(); };
+    const set = (val) => { if(!active||locked)return;S.answers[it.id] = val;if(it.previousVersions?.length)S.questionVersions={...(S.questionVersions||{}),[it.id]:questionVersion(it)}; save(); paintDots(); };
+    $q.querySelector('[data-current-question]')?.addEventListener('click',()=>{if(!active||paperLocked)return;const current=currentList[S.cur];S=restartCurrentQuestion(S,current);list[S.cur]=current;save();drawQ();paintDots();intro();});
     $q.querySelectorAll('.dt-choice').forEach((b) => b.addEventListener('click', () => {
       if (ac.type === 'single-choice') { set(+b.dataset.i); $q.querySelectorAll('.dt-choice').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); return; }
       const cur = new Set([].concat(S.answers[it.id] ?? []).map(Number)), i = +b.dataset.i; cur.has(i) ? cur.delete(i) : cur.add(i); b.setAttribute('aria-pressed', String(cur.has(i))); set([...cur].sort());
@@ -140,7 +188,7 @@ export function mountDaily(ctx) {
     $q.querySelectorAll('[data-f=text]').forEach((el) => el.addEventListener('input', () => set(el.value)));
     $q.querySelectorAll('.dt-blank').forEach((el) => el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => { const a = [...(S.answers[it.id] || [])]; a[+el.dataset.k] = el.value; set(a); }));
     $q.querySelectorAll('.dt-tbl select').forEach((el) => el.addEventListener('change', () => { const a = (S.answers[it.id] || ac.rows.map(() => [])).map((r) => [...r]); a[+el.dataset.r][+el.dataset.c] = el.value; set(a); }));
-    $q.querySelectorAll('[data-self]').forEach((b) => b.addEventListener('click', () => { S.self[it.id] = S.self[it.id] === b.dataset.self ? undefined : b.dataset.self; save(); $q.querySelectorAll('[data-self]').forEach((x) => x.setAttribute('aria-pressed', String(S.self[it.id] === x.dataset.self))); }));
+    $q.querySelectorAll('[data-self]').forEach((b) => b.addEventListener('click', () => { if(!active||locked)return;S.self[it.id] = S.self[it.id] === b.dataset.self ? undefined : b.dataset.self; save(); $q.querySelectorAll('[data-self]').forEach((x) => x.setAttribute('aria-pressed', String(S.self[it.id] === x.dataset.self))); }));
     // 말로 답하기: 받아쓴 초안 → 아이가 고친다 → 「넣기」. 고르기 문항은 「2번」·「②」·보기 글로 고른다.
     const drawer = $q.querySelector('.dt-drawer');
     if (drawer) {
@@ -150,7 +198,7 @@ export function mountDaily(ctx) {
       const micBtn = drawer.querySelector('.dt-mic');
       if (!Ctor) { micBtn.disabled = true; msg.textContent = '이 기기에서는 받아쓰기를 쓸 수 없어요. 아래 칸에 직접 써요.'; }
       else micBtn.addEventListener('click', () => {
-        try { recog?.abort(); } catch { /* */ }
+        if(!active||locked)return;try { recog?.abort(); } catch { /* */ }
         recog = new Ctor(); recog.lang = 'ko-KR'; recog.interimResults = true; msg.textContent = '듣고 있어요… 말을 마치면 잠시 기다려요.';
         recog.onresult = (e) => { draft.value = [...e.results].map((r) => r[0].transcript).join(' '); };
         recog.onerror = () => { msg.textContent = '잘 듣지 못했어요. 다시 누르거나 직접 써요.'; };
@@ -158,7 +206,7 @@ export function mountDaily(ctx) {
         recog.start();
       });
       drawer.querySelector('.dt-apply').addEventListener('click', () => {
-        const t = draft.value.trim(); if (!t) { msg.textContent = '먼저 말하거나 써요.'; return; }
+        if(!active||locked)return;const t = draft.value.trim(); if (!t) { msg.textContent = '먼저 말하거나 써요.'; return; }
         if (ac.type === 'single-choice') {
           const m = t.match(/^\s*(?:([1-5])\s*번?|([①②③④⑤]))\s*$/), nt = t.replace(/\s/g, '');
           const i = m ? (m[1] ? +m[1] - 1 : CIRC.indexOf(m[2])) : it.choices.findIndex((c) => c.replace(/\s/g, '') === nt);
@@ -170,47 +218,51 @@ export function mountDaily(ctx) {
     }
     paintDots();
   }
-  $app.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { S.cur = Math.max(0, Math.min(N - 1, S.cur + +b.dataset.go)); save(); drawQ(); }));
-  $app.querySelectorAll('[data-to]').forEach((b) => b.addEventListener('click', () => { S.cur = +b.dataset.to; save(); drawQ(); }));
-  $app.querySelectorAll('[data-z]').forEach((b) => b.addEventListener('click', () => { S.zoom = Math.round(Math.max(0.85, Math.min(1.45, S.zoom + 0.1 * +b.dataset.z)) * 100) / 100; save(); $L.style.setProperty('--dt-zoom', S.zoom); $app.querySelector('.dt-zoom output').textContent = `${Math.round(S.zoom * 100)}%`; }));
+  $app.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { if(!active)return;S.cur = Math.max(0, Math.min(N - 1, S.cur + +b.dataset.go)); save(); drawQ(); }));
+  $app.querySelectorAll('[data-to]').forEach((b) => b.addEventListener('click', () => { if(!active)return;S.cur = +b.dataset.to; save(); drawQ(); }));
+  $app.querySelectorAll('[data-z]').forEach((b) => b.addEventListener('click', () => { if(!active)return;S.zoom = Math.round(Math.max(0.85, Math.min(1.45, S.zoom + 0.1 * +b.dataset.z)) * 100) / 100; save(); $L.style.setProperty('--dt-zoom', S.zoom); $app.querySelector('.dt-zoom output').textContent = `${Math.round(S.zoom * 100)}%`; }));
 
   // 사진(이 기기에만)
-  const $pbox = $app.querySelector('.dt-photo-box'), pkey = `${KEY_U}`;
-  const showPhoto = (blob) => { if (photoUrl) URL.revokeObjectURL(photoUrl); photoUrl = blob ? URL.createObjectURL(blob) : null;
-    $pbox.innerHTML = photoUrl ? `<figure><img src="${photoUrl}" alt="붙여 둔 답안 사진"><button type="button" class="btn" data-del>사진 빼기</button></figure>` : '';
-    $pbox.querySelector('[data-del]')?.addEventListener('click', () => { photoOp('del', pkey).catch(() => {}); showPhoto(null); }); };
+  const $pbox = $app.querySelector('.dt-photo-box'), pkey = dailyPhotoKey(KEY_U,S);
+  const showPhoto = (blob) => { if(!active)return;if (photoUrl) URL.revokeObjectURL(photoUrl); photoUrl = blob ? URL.createObjectURL(blob) : null;
+    $pbox.innerHTML = photoUrl ? `<figure><img src="${photoUrl}" alt="붙여 둔 답안 사진">${paperLocked?'':'<button type="button" class="btn" data-del>사진 빼기</button>'}</figure>` : '';
+    $pbox.querySelector('[data-del]')?.addEventListener('click', () => { if(!active||paperLocked)return;photoOp('del', pkey).catch(() => {}); showPhoto(null); }); };
   photoOp('get', pkey).then((b) => b && showPhoto(b)).catch(() => {});
-  $app.querySelector('.dt-photo input').addEventListener('change', (e) => { const f = e.target.files?.[0]; if (!f) return; if (f.size > 12 * 1024 * 1024) { alert('12MB보다 작은 사진을 골라요.'); return; } photoOp('put', pkey, f).catch(() => {}); showPhoto(f); });
+  $app.querySelector('.dt-photo input').addEventListener('change', (e) => { if(!active||paperLocked)return;const f = e.target.files?.[0]; if (!f) return; if (f.size > 12 * 1024 * 1024) { alert('12MB보다 작은 사진을 골라요.'); return; } save();photoOp('put', pkey, f).catch(() => {}); showPhoto(f); });
 
   // ── 채점 ──
-  function grade() {
-    const rows = list.map((it) => { const g = gradeDaily(it, S.answers[it.id], { misc, judge: ctx.judge, vocab }); return { id: it.id, it, ...g }; });
-    S.graded = {}; S.at = Date.now();
+  function grade({restoring=false}={}) {
+    if(!active||paperLocked&&!restoring)return;
+    const rows = list.map((it) => { const frozen=paperLocked||previous(it), g = frozen?{status:S.graded?.[it.id]||S.first[it.id]?.status||(paperLocked?'ungraded':'review'),detail:{}}:gradeDaily(it, S.answers[it.id], { misc, judge: ctx.judge, vocab }); return { id: it.id, it, ...g,...(restoring&&S.graded?.[it.id]?{status:S.graded[it.id]}:{}),frozen }; });
+    if(!restoring){const at=Date.now();for(const row of rows)if(row.it.previousVersions?.length)S.questionTimes={...(S.questionTimes||{}),[row.id]:row.frozen?(S.questionTimes?.[row.id]??S.at??null):at};S.graded = {}; S.at = at;}
     for (const r of rows) {
-      S.graded[r.id] = r.status;
+      if(!restoring)S.graded[r.id] = r.status;
       // 진단 기록은 문항마다 처음 채점한 답만(맞음·틀림만 — 검토 필요·빈칸은 남기지 않는다)
-      if ((r.status === 'correct' || r.status === 'wrong') && !S.first[r.id]) {
+      if (!restoring&&!r.frozen&&(r.status === 'correct' || r.status === 'wrong') && !S.first[r.id]) {
         const e = ctx.record(r.it, ctx.stage || 'daily', r.status === 'correct', r.detail || {});
         S.first[r.id] = { status: r.status, m: e?.m || [] };
       }
-      r.m = r.status === 'wrong' ? (S.first[r.id]?.m?.length ? S.first[r.id].m : ctx.classify(r.it, r.detail || {})) : [];
+      r.m = r.status === 'wrong' ? (r.frozen?S.first[r.id]?.m||[]:S.first[r.id]?.m?.length ? S.first[r.id].m : ctx.classify(r.it, r.detail || {})) : [];
       // 규칙으로 못 가린 쓰기 답 → 선생님 확인(check.js)
-      if (r.status === 'review' && ['short-text', 'written-explanation', 'cloze'].includes(r.it.answerContract.type)) deckPut(`${u}:grade:daily-${r.id}`, { boxes: [{ k: 'daily', st: 'review', text: formatAnswer(r.it, S.answers[r.id]) }], tries: 1, at: S.at, item: r.id });
+      if (!restoring&&!r.frozen&&r.status === 'review' && ['short-text', 'written-explanation', 'cloze'].includes(r.it.answerContract.type)) deckPut(`${u}:grade:${dailyReviewSlide(r.id,S)}`, { boxes: [{ k: 'daily', st: 'review', text: formatAnswer(r.it, S.answers[r.id]) }], tries: 1, at: S.at, item: r.id, question:JSON.parse(JSON.stringify(r.it)) });
     }
-    save(); paintDots(); report(rows);
+    if(!restoring)save(); paintDots(); report(rows);
   }
   $app.querySelector('.dt-grade').addEventListener('click', () => {
+    if(!active||paperLocked)return;
     const left = list.filter((it) => !answered(it)).length;
     if (left && !confirm(`아직 안 푼 문항이 ${left}개 있어요. 그래도 채점할까요?`)) return;
     grade(); $R.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   function card(r) {
-    const it = r.it, mine = `<div class="dt-row"><span>내 답</span><b>${esc(formatAnswer(it, S.answers[it.id]))}</b></div>`, key = `<div class="dt-row key"><span>정답</span><b>${esc(formatKey(it))}</b></div>`;
+    const it = r.it,unbound=paperLocked&&['unbound','unavailable'].includes(session.paper.reason),mine = `<div class="dt-row"><span>${unbound?'저장된 답':'내 답'}</span><b>${esc(unbound?savedAnswer(it,S.answers[it.id]):formatAnswer(it, S.answers[it.id]))}</b></div>`, key = `<div class="dt-row key"><span>정답</span><b>${esc(formatKey(it))}</b></div>`;
     const self = S.self[it.id] ? `<span class="dt-self-tag" title="스스로 체크 · 점수와 별개">${SELF[S.self[it.id]]}</span>` : '';
-    const teacherSaid = deckAll()[`${u}:teacher:daily-${it.id}:daily`];
+    const teacherSaid = deckAll()[`${u}:teacher:${dailyReviewSlide(it.id,S)}:daily`];
     let body = '';
-    if (r.status === 'correct') body = `${mine}${key}<p class="dt-why">${esc(it.explanation)}</p>`;
+    if(paperLocked)body=`${mine}<p class="dt-note">${r.status==='ungraded'?'이 항목의 채점 기록은 없어요.':'저장된 채점 결과를 그대로 표시해요.'}${teacherSaid?.v?` 선생님 확인: ${teacherSaid.v==='ok'?'맞음':'다시 쓰기'}${teacherSaid.note?' — '+esc(teacherSaid.note):''}`:''}</p><button type="button" class="dt-link soft" data-goto="${list.indexOf(it)}">저장된 답 보기</button>`;
+    else if(r.frozen)body=`${mine}<p class="dt-note">수정 전 보기의 기록이에요. 수정된 보기로 다시 풀어 확인할 수 있어요.</p><button type="button" class="dt-link soft" data-goto="${list.indexOf(it)}">기록한 문제 보기</button>`;
+    else if (r.status === 'correct') body = `${mine}${key}<p class="dt-why">${esc(it.explanation)}</p>`;
     else if (r.status === 'wrong') {
       const M = r.m?.map((m) => misc?.misconceptions?.[m]).filter(Boolean)[0], m = r.m?.[0], step = misc?.remedy?.[m]?.step || 3;
       const related = ctx.related?.(it, m, step) || `#/${u}/${step}`;
@@ -231,8 +283,8 @@ export function mountDaily(ctx) {
     const s = summarize(rows), firstRows = list.map((it) => ({ id: it.id, status: S.first[it.id]?.status, m: S.first[it.id]?.m || [] }));
     const dx = diagnoseDaily(firstRows), perfect = s.confirmed > 0 && s.wrong === 0;
     const sureWrong = rows.filter((r) => r.status === 'wrong' && S.self[r.id] === 'sure').length, unsureRight = rows.filter((r) => r.status === 'correct' && S.self[r.id] === 'unsure').length;
-    const head = !s.confirmed ? '채점할 수 있는 문항이 아직 없어요.' : perfect ? '확인된 문제를 모두 맞혔어요!' : s.correct >= s.wrong ? '잘 해냈어요. 틀린 문제만 다시 살펴봐요.' : '괜찮아요. 하나씩 다시 생각해 봐요.';
-    const time = new Date(S.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const head = paperLocked?'저장된 채점 기록이에요.':!s.confirmed ? '채점할 수 있는 문항이 아직 없어요.' : perfect ? '확인된 문제를 모두 맞혔어요!' : s.correct >= s.wrong ? '잘 해냈어요. 틀린 문제만 다시 살펴봐요.' : '괜찮아요. 하나씩 다시 생각해 봐요.';
+    const time = S.at==null?'시각 기록 없음':new Date(S.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     const name = (m) => misc?.misconceptions?.[m]?.label || m;
     const hot = dx.filter((d) => d.status === 'confirmed');
     $R.innerHTML = `<div class="dt-report">
@@ -240,24 +292,24 @@ export function mountDaily(ctx) {
       <section class="dt-hero"><div class="dt-score">${ring(s.correct, s.confirmed)}<div><b>${s.correct}</b><span>/ ${s.confirmed}</span></div></div>
         <div class="dt-hero-copy"><span class="dt-eyebrow">${esc(ctx.ch.title)} · 채점 결과</span><h3>${head}</h3>
           <div class="dt-meta"><span class="dt-pill ok">○ ${s.correct}</span><span class="dt-pill no">✕ ${s.wrong}</span>${s.review ? `<span class="dt-pill review">${s.review}문항 검토 중 · 점수 제외</span>` : ''}${s.blank ? `<span class="dt-pill blank">안 푼 문항 ${s.blank}</span>` : ''}</div>
-          <small>확인된 정답 ${s.confirmed}문항 기준 · ${esc(time)} 채점</small></div></section>
+          <small>${paperLocked?'저장된 채점이 있는 항목만 집계해요. 원고가 없는 기록의 전체 문항 수는 알 수 없어요.':'확인된 정답 '+s.confirmed+'문항 기준'} · ${esc(time)}</small></div></section>
       <section class="dt-diag"><div><span class="dt-eyebrow">오개념 진단 · 첫 채점 기준</span><h4>${hot.length ? '확정된 오개념이 있어요' : dx.length ? '살펴볼 헷갈림이 있어요' : '헷갈린 개념이 보이지 않아요'}</h4>
         ${dx.length ? `<ul class="dx-list">${dx.map((d) => `<li class="dx-row ${d.status}"><span class="dx-chip ${d.status}">${d.status === 'confirmed' ? '확정' : '의심'}</span><div><b>${esc(name(d.m))}</b><small>${d.items.map((id) => `${pad(list.findIndex((x) => x.id === id) + 1)}번 ✕`).join(' · ')}</small></div></li>`).join('')}</ul>` : ''}
         <p class="dt-meta-note">한 문항 = 의심 · 서로 다른 두 문항 = 확정. 진단은 문항마다 처음 채점한 답으로만 해요.${sureWrong || unsureRight ? ` 스스로 체크와 비교: ${[sureWrong && `자신 있었는데 틀린 문항 ${sureWrong}개`, unsureRight && `헷갈렸지만 맞힌 문항 ${unsureRight}개`].filter(Boolean).join(' · ')}` : ''}</p></div>
-        ${dx.length ? `<div class="dt-recommend${hot.length ? ' hot' : ''}"><span>처방 문제</span><b>${esc(name((hot[0] || dx[0]).m))}</b><small>${hot.length ? '두 문제 이상에서 같은 헷갈림이 보였어요.' : '비슷한 문제로 한 번 더 확인해 봐요.'}</small><button type="button" class="btn primary" data-rx>처방 문제 풀기</button></div>` : ''}</section>
+        ${dx.length&&!paperLocked ? `<div class="dt-recommend${hot.length ? ' hot' : ''}"><span>처방 문제</span><b>${esc(name((hot[0] || dx[0]).m))}</b><small>${hot.length ? '두 문제 이상에서 같은 헷갈림이 보였어요.' : '비슷한 문제로 한 번 더 확인해 봐요.'}</small><button type="button" class="btn primary" data-rx>처방 문제 풀기</button></div>` : ''}</section>
       <div class="dt-rx" hidden></div>
       <section class="dt-items">${rows.map(card).join('')}</section>
       <footer class="dt-foot"><p>스스로 체크(○ 자신 있어요 · △ 헷갈려요)는 채점·진단과 따로 두고 점수에 넣지 않아요. 답안 사진과 쓴 답은 이 기기에만 있어요.</p>
-        <button type="button" class="btn" data-again>문제로 돌아가 다시 풀기</button></footer></div>`;
+        <button type="button" class="btn" data-again>${paperLocked?'저장된 답 살펴보기':'문제로 돌아가 다시 풀기'}</button></footer></div>`;
     $R.querySelectorAll('[data-twin]').forEach((b) => b.addEventListener('click', () => {
-      const it = list.find((x) => x.id === b.dataset.twin), tw = ctx.twin(it), box = $R.querySelector(`.dt-twin[data-for="${CSS.escape(it.id)}"]`);
+      if(!active||paperLocked)return;const it = list.find((x) => x.id === b.dataset.twin), tw = ctx.twin(it), box = $R.querySelector(`.dt-twin[data-for="${CSS.escape(it.id)}"]`);
       box.innerHTML = ctx.itemHtml(tw); b.hidden = true;
       ctx.wireItem(box.querySelector('.item'), tw, null, { u, stage: 'remedy' });
     }));
-    $R.querySelectorAll('[data-goto]').forEach((b) => b.addEventListener('click', () => { S.cur = +b.dataset.goto; save(); drawQ(); $L.scrollIntoView({ behavior: 'smooth' }); }));
-    $R.querySelector('[data-again]').addEventListener('click', () => { S.cur = Math.max(0, rows.findIndex((r) => r.status !== 'correct')); save(); drawQ(); $L.scrollIntoView({ behavior: 'smooth' }); });
+    $R.querySelectorAll('[data-goto]').forEach((b) => b.addEventListener('click', () => { if(!active)return;S.cur = +b.dataset.goto; save(); drawQ(); $L.scrollIntoView({ behavior: 'smooth' }); }));
+    $R.querySelector('[data-again]').addEventListener('click', () => { if(!active)return;S.cur = Math.max(0, rows.findIndex((r) => r.status !== 'correct')); save(); drawQ(); $L.scrollIntoView({ behavior: 'smooth' }); });
     $R.querySelector('[data-rx]')?.addEventListener('click', () => {
-      const box = $R.querySelector('.dt-rx'), ids = new Set(list.map((x) => x.id));
+      if(!active||paperLocked)return;const box = $R.querySelector('.dt-rx'), ids = new Set(list.map((x) => x.id));
       const groups = dx.slice(0, 2).map((d) => ({ d, its: ctx.remedyItems(d.m, 2).filter((x) => !ids.has(x.id)) })).filter((g) => g.its.length);
       box.hidden = false;
       box.innerHTML = groups.length ? `<h3 class="dt-rx-h">처방 문제 · 비슷한 문제로 다시 확인</h3>${groups.map(({ d, its }) => { const M = misc.misconceptions[d.m];
@@ -266,7 +318,7 @@ export function mountDaily(ctx) {
       box.querySelectorAll('.item').forEach((c) => ctx.wireItem(c, I[c.dataset.id], null, { u, stage: 'remedy' }));
       box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-    ctx.say([{ mood: perfect ? 'praise' : s.wrong ? 'encourage' : 'talk', text: perfect ? `확인된 ${countWord(s.confirmed)} 문항을 모두 맞혔어요! 정말 잘했어요.${s.review ? ` 검토 중인 ${countWord(s.review)} 문항은 선생님과 확인해요.` : ''}` : s.wrong ? '틀린 문제는 독쌤 질문을 먼저 읽고, 생각한 뒤에 해설을 열어 봐요.' : '쓴 답은 선생님과 함께 확인해요.' }]);
+    if(!paperLocked)ctx.say([{ mood: perfect ? 'praise' : s.wrong ? 'encourage' : 'talk', text: perfect ? `확인된 ${countWord(s.confirmed)} 문항을 모두 맞혔어요! 정말 잘했어요.${s.review ? ` 검토 중인 ${countWord(s.review)} 문항은 선생님과 확인해요.` : ''}` : s.wrong ? '틀린 문제는 독쌤 질문을 먼저 읽고, 생각한 뒤에 해설을 열어 봐요.' : '쓴 답은 선생님과 함께 확인해요.' }]);
   }
   function intro() {
     $R.innerHTML = `<div class="dt-report"><p class="dt-kick">SCIENCE LAB · 교재 연계 활동</p><h2 class="dt-title">${esc(HEAD)} · 채점과 첨삭</h2>
@@ -276,9 +328,9 @@ export function mountDaily(ctx) {
   }
 
   drawQ();
-  if (S.graded) grade(); else intro();
-  ctx.say([{ mood: 'talk', text: S.graded ? '지난번 채점 결과예요. 고쳐서 다시 채점해도 돼요.' : `오늘 배운 것을 ${countWord(N)} 문항으로 확인해 봐요. 다 풀고 채점하기를 눌러요.` }]);
-  return () => { panelObserver.disconnect(); removeEventListener('resize', fitPanel); try { recog?.abort(); } catch { /* */ } if (photoUrl) URL.revokeObjectURL(photoUrl); };
+  if (S.graded||paperLocked) grade({restoring:true}); else intro();
+  ctx.say([{ mood: 'talk', text: paperLocked?'저장된 답안을 보고 있어요. 현재 확인 문제는 별도로 풀 수 있어요.':S.graded ? '지난번 채점 결과예요. 고쳐서 다시 채점해도 돼요.' : `오늘 배운 것을 ${countWord(N)} 문항으로 확인해 봐요. 다 풀고 채점하기를 눌러요.` }]);
+  return () => { active=false;panelObserver.disconnect(); removeEventListener('resize', fitPanel); try { recog?.abort(); } catch { /* */ } if (photoUrl) URL.revokeObjectURL(photoUrl); };
 }
 
 // 선생님 정답표(인쇄용): 문항 · 정답 · 해설 · 연결된 오개념
@@ -286,7 +338,7 @@ export function teacherKeyHtml({ u, ch, list, misc, heading = 'Daily Test', back
   return `<header class="top no-print"><div class="wrap"><a class="back" href="${back}">‹ ${esc(heading)}</a><h1>${esc(heading)} 정답표</h1><button type="button" class="icon-btn" onclick="print()">인쇄</button></div></header>
   <main class="wrap dt-key"><h2>${ch.no ? `${esc(ch.no)} · ` : ''}${esc(ch.title)} — ${esc(heading)} ${pad(1)}–${pad(list.length)} 정답표</h2>${tabs ? `<nav class="dt-tabs no-print">${tabs}</nav>` : ''}
   <p class="lead">쓰기 문항은 예시 답이에요. 기기 판정에서 「검토 필요」로 남은 답은 <a href="#/${u}/check">선생님 확인</a>에 모여요.</p>
-  <ol class="dt-key-list">${list.map((it, i) => { const ms = new Set([...Object.values(misc?.distractors?.[it.id] || {}), misc?.typed?.[it.id]?.any, misc?.cells?.[it.id], ...[].concat(misc?.cloze?.[it.id]?.wrong || [])].filter(Boolean));
+  <ol class="dt-key-list">${list.map((it, i) => { const diagnostic=questionMisconceptions(it,misc), ms = new Set([...Object.values(diagnostic?.distractors?.[it.id] || {}), diagnostic?.typed?.[it.id]?.any, diagnostic?.cells?.[it.id], ...[].concat(diagnostic?.cloze?.[it.id]?.wrong || [])].filter(Boolean));
     const printed=it.printedAnswerContract,printedValue=printed?.type==='single-choice'?CIRC[printed.answer]:printed?.type==='multi-choice'?printed.answers.map(i=>CIRC[i]).join(', '):printed?.sample??printed?.answer;
     return `<li><p><span class="dt-num">${pad(i + 1)}</span>${esc(it.prompt)}</p><p class="dt-row key"><span>${it.sourceRef?.reviewOnly?'검토 요지':'정답'}</span><b>${esc(formatKey(it))}</b></p>${it.sourceRef?.reviewOnly&&printed?`<p class="dt-printed-key">인쇄된 공식 답 참고: ${esc(printedValue)} · 자동 정오 판정 보류</p>`:''}<p class="dt-why">${esc(it.explanation)}</p>${ms.size ? `<p class="dt-mis">오답이면 살펴볼 오개념: ${[...ms].map((m) => esc(misc.misconceptions[m]?.label || m)).join(' · ')}</p>` : ''}</li>`; }).join('')}</ol></main>`;
 }

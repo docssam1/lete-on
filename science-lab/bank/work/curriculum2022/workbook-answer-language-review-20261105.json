@@ -1,0 +1,285 @@
+{
+  "phase": 243,
+  "date": "2026-11-05",
+  "baseCommit": "02e59dad0c234d84e9ee217e97f8391c8a5ff36c",
+  "units": [
+    "c22-s32-u01",
+    "c22-s32-u02",
+    "s41-u01",
+    "c22-s42-u01",
+    "c22-s51-u03"
+  ],
+  "scope": "Printed teacher explanations, descriptive answer samples, acceptance-guidance wording and misconception guidance in the initial five workbooks. 194 question records/238 text fields, including repeated generic guidance. Remove the obsolete magnet first-page glossary.",
+  "changes": [
+    "Match teacher words to the existing student terms: materials, objects, water, facing poles/center rod, observed/not-yet-confirmed details.",
+    "Replace two opaque variable-mixing statements with the actual water-amount/temperature or solute-kind comparison.",
+    "Keep the same scoring keys, accepted answers, source contracts, historical records and quantitative examples;12 descriptive answer strings change wording only.",
+    "Audit all32 actual chapter cue objects for the malformed suffix pattern fixed in acid; zero additional matches. This is a targeted pattern scan, not a proof of complete grammatical correctness."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 27,
+    "all3080ScoringKeysAcceptedAnswersSourceContractsPromptsChoicesGivensAndReferencesPreserved": true,
+    "teacherQuestionChanges": [
+      {
+        "unit": "c22-s32-u01",
+        "questions": 80,
+        "fields": {
+          "answer": 4,
+          "explanation": 16,
+          "criteria": 2,
+          "misconception": 80
+        }
+      },
+      {
+        "unit": "c22-s32-u02",
+        "questions": 45,
+        "fields": {
+          "answer": 1,
+          "explanation": 5,
+          "criteria": 0,
+          "misconception": 40
+        }
+      },
+      {
+        "unit": "s41-u01",
+        "questions": 60,
+        "fields": {
+          "answer": 6,
+          "explanation": 11,
+          "criteria": 1,
+          "misconception": 60
+        }
+      },
+      {
+        "unit": "c22-s42-u01",
+        "questions": 7,
+        "fields": {
+          "answer": 1,
+          "explanation": 4,
+          "criteria": 5,
+          "misconception": 0
+        }
+      },
+      {
+        "unit": "c22-s51-u03",
+        "questions": 2,
+        "fields": {
+          "answer": 0,
+          "explanation": 1,
+          "criteria": 0,
+          "misconception": 1
+        }
+      }
+    ],
+    "totalEditedQuestions": 194,
+    "totalEditedTextFields": 238,
+    "descriptiveSampleAnswerStringsChanged": 12,
+    "onlyNonTeacherBodyChange": "Remove obsolete sample glossary in magnet first student/teacher page.",
+    "pageDataWritingSpaceFiguresAndOtherTextPreserved": true,
+    "productsChanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "answers"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "answers"
+      }
+    ],
+    "productsUnchanged": 117,
+    "slideArraysUnchanged": 64,
+    "runtimeItemsAndAllPastVersionsUnchanged": 446,
+    "runtimeOriginalItemsUnchanged": 320,
+    "runtimeSimilarItemsUnchanged": 320,
+    "classroomChecksUnchanged": 78,
+    "htmlChecks": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher",
+        "questions": 80,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "answers",
+        "questions": 80,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher",
+        "questions": 45,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "answers",
+        "questions": 45,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher",
+        "questions": 60,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "answers",
+        "questions": 60,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher",
+        "questions": 7,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "answers",
+        "questions": 7,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher",
+        "questions": 2,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "answers",
+        "questions": 2,
+        "allChangedAnswerExplanationCriteriaMisconceptionFieldsMatched": true
+      }
+    ],
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/data/book/c22-s32-u01.workbook.js",
+      "science-lab/data/book/c22-s32-u02.workbook.js",
+      "science-lab/data/book/c22-s42-u01.workbook.js",
+      "science-lab/data/book/c22-s51-u03.workbook.js",
+      "science-lab/data/book/magnet-night-body-language.js",
+      "science-lab/data/book/s41-u01.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "productionAudit": {
+    "units": [
+      {
+        "unit": "c22-s32-u01",
+        "items": 76,
+        "source": 70,
+        "similar": 70,
+        "classroomItems": 12,
+        "poolAndChecksAgree": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "items": 92,
+        "source": 0,
+        "similar": 0,
+        "classroomItems": 12,
+        "poolAndChecksAgree": true
+      },
+      {
+        "unit": "s41-u01",
+        "items": 90,
+        "source": 80,
+        "similar": 80,
+        "classroomItems": 26,
+        "poolAndChecksAgree": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "items": 92,
+        "source": 95,
+        "similar": 95,
+        "classroomItems": 12,
+        "poolAndChecksAgree": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "items": 96,
+        "source": 75,
+        "similar": 75,
+        "classroomItems": 16,
+        "poolAndChecksAgree": true
+      }
+    ],
+    "unchangedFromBaseline": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "tests": {
+    "total": 827,
+    "pass": 825,
+    "fail": 0,
+    "existingBrowserSkips": 2,
+    "newTests": 0,
+    "purpose": "Run existing regressions and independent before/after preservation, production-loader and question-scoped rendered-HTML checks for reversible wording changes.",
+    "threeDRuntimeExecuted": false
+  },
+  "sourceBasis": {
+    "title": "교육부2022-33 별책9 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+    "localText": "Previously verified curriculum-standards/science-curriculum.txt:4과05/06/09/13 and6과03",
+    "scope": "Use the current student vocabulary and actions without adding new content or assessment requirements."
+  },
+  "editorialConnection": "Single outer withWorkbookAnswerLanguage hook per workbook; generated source unchanged after removing that hook/import. Runtime banks do not consume this printed teacher vocabulary adapter.",
+  "cacheVersion": "20261105-workbook-answer-language",
+  "remaining": "Other teacher texts/units, broader content review and bitmap text where needed, actual PC/mobile/A4/audio/WebGL/mandatory3D gate, v1 consistency and main integration/deployment. Prior browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "evidence": "science-question-review/phase243:32 workbook/128 paper/64 deck snapshots, five actual production unit loaders and classroom pools with exact baseline runtime JSON and zero storage/network;20 generated paper fragments and per-solution HTML checks. Audit initially assumed one unit per source line; it now executes the complete actual UNITS object, correctly including the multiline magnet loader."
+}

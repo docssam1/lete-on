@@ -1,5 +1,10 @@
+import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
+import {withMagnetSkyStudentLanguage} from './magnet-sky-student-language.js';
+import {withNightBodyLanguage} from './magnet-night-body-language.js';
+import {withNightSkyRails} from './c22-s42-u01.rail-notes.js';
+import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 밤하늘 관찰 A4. scripts/gen-science-workbook-c22s42u01.mjs가 생성.
-export const workbook = {
+const baseWorkbook = {
  "unit": "c22-s42-u01",
  "title": "밤하늘 관찰",
  "semester": "4-2",
@@ -9182,3 +9187,5 @@ export const workbook = {
   "c22-s42-u01-b75"
  ]
 };
+
+export const workbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withNightBodyLanguage(withStudentOpeningLanguage(withNightSkyRails(baseWorkbook)))));

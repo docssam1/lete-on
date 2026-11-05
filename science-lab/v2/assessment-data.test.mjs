@@ -34,7 +34,7 @@ test('존재하지 않는 원문이나 1:1 짝을 만들지 않고 실제 원문
  assert.equal(assessmentPool({source,items},BANK['s31-mid']),source);
  assert.deepEqual(assessmentPool({source,items:[{status:'verified',sourceRef:{type:'original'}},{status:'authored',sourceRef:{type:'authored-practice'}}]},BANK['s31-fin']),[]);
  for(const q of items){assert.equal(q.sourceRef.type,'authored-assessment');assert(!q.sourceRef.of);}
- const html=curriculumBankHtml(BANK);assert(html.includes('창작 60문항'));assert(html.includes('원문 1298문항'));assert(!html.includes('원문 491문항'));
+ const html=curriculumBankHtml(BANK);assert(html.includes('창작 60문항'));assert(html.includes('원문 1512문항'));assert(!html.includes('원문 491문항'));
 });
 
 test('고르기 정답 위치·길이와 모든 답 형식의 실제 판정을 검증한다',()=>{

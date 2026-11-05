@@ -1,0 +1,132 @@
+{
+  "unit": "c22-s62-u02",
+  "curriculum": "2022-33 별책9",
+  "kind": "full-thinking-classroom",
+  "date": "2026-11-04",
+  "studentSlides": 55,
+  "teacherSlides": 56,
+  "manualActivities": 15,
+  "comparisonCases": 8,
+  "checkQuestions": 16,
+  "checkForms": 8,
+  "checksPerForm": 2,
+  "checksPerStandard": 4,
+  "autoChecks": 12,
+  "teacherReviewChecks": 4,
+  "planMinutes": 225,
+  "multipleSchoolPeriods": true,
+  "optionalRecords": "combustionInquiryRows",
+  "comparisonRecords": "combustionCompareRows",
+  "defaultReport": false,
+  "new3D": 0,
+  "newPaidApiCalls": 0,
+  "newImages": 0,
+  "unchangedWorkbookPages": 133,
+  "currentPublicQuestions": 198,
+  "questionVersion": "20261104-combustion-book",
+  "changedQuestionVersionInThisPhase": false,
+  "questionAutoCount": 158,
+  "questionTeacherReviewCount": 40,
+  "questionVersions": 38,
+  "localWorkbookUnits": 30,
+  "localClassroomUnits": 30,
+  "checks": {
+    "v2": {
+      "total": 755,
+      "pass": 753,
+      "existingSkipped": 2,
+      "fail": 0
+    },
+    "bank": {
+      "total": 299,
+      "pass": 299,
+      "fail": 0
+    },
+    "combinedPass": 1052,
+    "bankAudit": "pass",
+    "miscAudit": "pass"
+  },
+  "preservation": {
+    "protectedBaselineFiles": 6299,
+    "unchangedFiles": 6288,
+    "reviewedSharedChanges": [
+      "science-lab/v2/curriculum-2022.js",
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/revised-combustion-workbook.test.mjs",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/v2.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/tests/combustion-workbook-routes.mjs"
+    ],
+    "oldWorkbookHtmlPreserved": 120,
+    "oldClassroomArraysPreserved": 58,
+    "newClassroomArrays": 2,
+    "oldPdfsBytesPreserved": 86,
+    "authoringSourceHashesPreserved": 14,
+    "classroomSlides": 111,
+    "semanticTables": 46,
+    "scopedHeaders": 138,
+    "reusedPhotos": 3,
+    "new3D": 0,
+    "newPaidApiCalls": 0,
+    "newPdf": 0,
+    "newOcr": 0,
+    "browserVerified": false,
+    "mainIntegrated": false,
+    "published": false
+  },
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&statusYN=W",
+      "localHwp": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "textLines": [
+        926,
+        944
+      ],
+      "standards": [
+        "6과14-01",
+        "6과14-02",
+        "6과14-03",
+        "6과14-04"
+      ],
+      "scope": "성질의 변화·연소 현상과 조건·전후 성질·생태계 피해 사례와 해결책"
+    },
+    {
+      "title": "What is Ocean Acidification?",
+      "url": "https://oceanservice.noaa.gov/facts/acidification.html",
+      "readOn": "2026-11-04",
+      "updated": "2026-09-23",
+      "scope": "화석 연료 연소·이산화 탄소 흡수·바닷물 성질 변화·일부 생물 껍데기/골격 형성"
+    },
+    {
+      "title": "Understanding Ocean Acidification",
+      "url": "https://www.fisheries.noaa.gov/insight/understanding-ocean-acidification",
+      "readOn": "2026-11-04",
+      "lines": [
+        452,
+        453
+      ],
+      "scope": "미국 서해안 조개류 양식 산업의2000년대 중반 사례·관측과 경보/취수 조절"
+    }
+  ],
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase211",
+  "browserVerified": false,
+  "realAudioVerified": false,
+  "webglVerified": false,
+  "mainIntegrated": false,
+  "deployed": false,
+  "next": [
+    "전기의 이용 교재와 전체 수업",
+    "과학과 나의 진로 교재와 전체 수업",
+    "최신main 통합",
+    "허용된 실제 PC/모바일/인쇄/소리/WebGL 검수와 main 전3D 검사",
+    "승인 범위 배포",
+    "기존v1 서류철·평가·소리"
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "phase": 233,
+  "date": "2026-11-05",
+  "baseCommit": "ebc146db30178380ecaa46f81720c4d6c7125c62",
+  "units": [
+    "c22-s32-u01",
+    "s41-u01"
+  ],
+  "scope": "Three right-rail notes per logical student page (51 materials +57 magnets); student and separately paginated teacher editions use matching source content.",
+  "learningBoundary": "State-change/particle explanations and magnetic-field mechanisms remain explicitly later-grade learning; current questions and main body are unchanged.",
+  "teacherPagination": {
+    "materialsStudentPages": 51,
+    "materialsTeacherPages": 54,
+    "magnetsStudentPages": 57,
+    "magnetsTeacherPages": 58,
+    "continuedContentPages": 3,
+    "duplexBlankPreserved": 1,
+    "method": "Question IDs identify a source content group; section/title validate it. Unique nonquestion headings match directly. Unknown, mixed or ambiguous references fail."
+  },
+  "tests": {
+    "v2": {
+      "pass": 815,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "threeDPlanOnly": {
+      "pass": 5,
+      "fail": 0,
+      "runtimeVerified": false
+    },
+    "newRegressionTests": 3,
+    "regressionsCovered": "Different teacher pagination, same-heading question groups, continuation pages, unchanged blanks/input/writing space, actual 160-question order, rejected invalid links."
+  },
+  "preservation": {
+    "reviewedUnits": 32,
+    "changedUnits": [
+      "c22-s32-u01",
+      "s41-u01"
+    ],
+    "fullUnchangedUnits": 30,
+    "questionsPreserved": 3080,
+    "studentPagesRevised": 108,
+    "teacherPagesPreserved": 112,
+    "teacherContinuationsMapped": 3,
+    "duplexBlanksPreserved": 1,
+    "onlyRailTitleAndTextChanged": true,
+    "questionsAnswersFiguresCriteriaHistoryAndBodyPreserved": true,
+    "writingSpacePreserved": true,
+    "generatedBodiesByteIdentical": 2,
+    "productsChanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher"
+      }
+    ],
+    "productsUnchanged": 124,
+    "slideArraysUnchanged": 64,
+    "careerHistoryUnchanged": true,
+    "htmlChecks": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student",
+        "matchedNotes": 153,
+        "pages": 51,
+        "browserOrA4LayoutVerified": false
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher",
+        "matchedNotes": 159,
+        "pages": 54,
+        "browserOrA4LayoutVerified": false
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "student",
+        "matchedNotes": 171,
+        "pages": 57,
+        "browserOrA4LayoutVerified": false
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher",
+        "matchedNotes": 174,
+        "pages": 58,
+        "browserOrA4LayoutVerified": false
+      }
+    ],
+    "baselineScienceFiles": 6341,
+    "changedExistingFilesBeforeHandoff": [
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF.md",
+      "science-lab/bank/BANK-HANDOFF.md",
+      "science-lab/bank/work/curriculum2022/night-sky-rail-review-20261105.json",
+      "science-lab/data/book/c22-s32-u01.workbook.js",
+      "science-lab/data/book/s41-u01.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ]
+  },
+  "priorTechnicalCorrection": {
+    "reason": "Weather is 6과06; heat is 6과07 in the official Annex 9. Previous rail text already referred to the correct grade/topic; the technical scope code alone was wrong.",
+    "before": "6과02/07/12/13",
+    "after": "6과02/06/12/13",
+    "candidateFiles": [
+      "science-lab/HANDOFF.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/bank/BANK-HANDOFF.md",
+      "science-lab/bank/work/curriculum2022/night-sky-rail-review-20261105.json"
+    ],
+    "authoringFiles": [
+      "science-lab/HANDOFF.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/bank/BANK-HANDOFF.md"
+    ]
+  },
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9",
+      "source": "Existing verified curriculum-standards/science-curriculum.txt",
+      "scope": "Current 4과05/09; later 4과10/15, 6과02/03/05/07/08/10/15, 9과04/05/08/14. Examples extend related learning and are not all mandatory criterion wording."
+    },
+    {
+      "title": "NASA Glenn: States of Matter",
+      "url": "https://www.grc.nasa.gov/www/k-12/BGP/state.html",
+      "scope": "Solid/liquid/gas shape and volume, particle descriptions."
+    },
+    {
+      "title": "Purdue Chemistry: States of Matter",
+      "url": "https://www.chem.purdue.edu/gchelp/atoms/states.html",
+      "scope": "Microscopic particle behavior in three states."
+    },
+    {
+      "title": "USGS Water Density",
+      "url": "https://www.usgs.gov/water-science-school/science/water-density",
+      "scope": "Density and water expanding as it freezes; no new numerical values used."
+    },
+    {
+      "title": "USGS Condensation",
+      "url": "https://www.usgs.gov/water-science-school/science/condensation-and-water-cycle",
+      "scope": "Water droplets on a cold container versus leakage."
+    },
+    {
+      "title": "DOE Heat Flow",
+      "url": "https://bsesc.energy.gov/energy-basics/heat-flow",
+      "scope": "Heat transfer and insulation."
+    },
+    {
+      "title": "DOE Insulation Guide",
+      "url": "https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/insulation_guide.pdf",
+      "scope": "Materials resist heat transfer to differing degrees."
+    },
+    {
+      "title": "MagLab Electromagnets",
+      "url": "https://nationalmaglab.org/magnet-academy/plan-a-lesson/electromagnets/",
+      "scope": "Current, coils, core and electromagnet properties; source procedure is not copied into current-grade activities."
+    },
+    {
+      "title": "MagLab Magnetic Domains",
+      "url": "https://nationalmaglab.org/magnet-academy/watch-play/interactive-tutorials/magnetic-domains/",
+      "scope": "Material response and magnetization; no atomic-spin model introduced in the current body."
+    },
+    {
+      "title": "MagLab Permanent Magnet",
+      "url": "https://nationalmaglab.org/about-the-maglab/around-the-lab/maglab-dictionary/permanent-magnet/",
+      "scope": "Permanent magnets and external field direction."
+    },
+    {
+      "title": "USGS How a Compass Works",
+      "url": "https://www.usgs.gov/media/audio/how-does-compass-work",
+      "scope": "Free pivoting needle, Earth field and local interference."
+    },
+    {
+      "title": "NOAA Magnetic Declination",
+      "url": "https://www.ngdc.noaa.gov/geomag/declination.shtml",
+      "scope": "Local field direction differs from geographic north."
+    }
+  ],
+  "safety": "Existing sand/bag/classroom-container and magnet/parts precautions retained in planning notes. No new practical heating/electrical experiment instructions.",
+  "cacheVersion": "20261105-material-magnet-rails",
+  "remaining": "Earth/oceans and dissolution right rails, wider textbook language review, actual browser/mobile/A4/audio/WebGL and mandatory 3D gate; main integration/deployment.",
+  "status": {
+    "localVerified": true,
+    "browserOrA4LayoutVerified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase233 full baseline/current objects, 128 product hashes, 64 slide arrays, teacher-page mappings, 4 HTML products, validate-final.py and test logs. Initial index-assumption failure log is retained separately."
+}

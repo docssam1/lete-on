@@ -1,0 +1,39 @@
+/* 기존 지필드 수업의 종이색·초록·Pretendard 기준을 이 단원에 적용한다. */
+.weather-thinking{--disp:Pretendard,sans-serif;--t:#2f6b4a;--o:#2f6b4a;--n:#2a241c;font-family:Pretendard,sans-serif;background:#f1ece1;color:#2a241c}
+.weather-thinking :is(.dk-top,.dk-top a,.dk-top b,.dk-h){color:#2a241c}
+.weather-thinking :is(.dk-h,.dk-kick,h1,h2,h3,strong,b,button){font-weight:700}
+.weather-thinking .dk-h{border-color:#c9bda2}
+.weather-thinking .dk-phases span{background:#e2d9c6;color:#2a241c}
+.weather-thinking .dk-phases span.on{background:#2f6b4a;color:#fff}
+.weather-thinking .dk-stage{background:#fdfbf5}
+.weather-thinking .dk-stage::before{background:#2f6b4a}
+.weather-thinking .dk-body a{color:#1e4631}
+.weather-thinking :is(.dk-tbl,.ed-table){table-layout:fixed;width:100%;border-collapse:collapse}
+.weather-thinking :is(.dk-tbl,.ed-table) :is(td,th){border:1px solid #c9bda2;padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+.weather-thinking .ed-photo{margin:0 auto 16px;text-align:center}
+.weather-thinking .ed-photo img{max-width:100%;width:auto;height:auto;max-height:240px;object-fit:contain}
+.weather-thinking .ed-photo :is(figcaption,.ed-photo-note,small),.weather-thinking .ed-given{font-size:13px;color:#7a6f5c}
+.weather-thinking .ed-photo-credit{display:block;margin-top:8px}
+.weather-thinking .dk-inrow label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;width:100%}
+.weather-thinking .dk-inrow textarea{min-height:44px}
+.weather-thinking .dk-given-list{list-style:none;margin:.5em 0 0;padding:0;display:grid;gap:.4em}
+.weather-compare{--mc-ink:#2a241c;--mc-accent:#2f6b4a;--mc-line:#c9bda2;font-family:Pretendard,sans-serif;color:var(--mc-ink);padding:12px;line-height:1.65;min-width:0}
+.weather-compare label{display:grid;gap:6px;font-weight:700}
+.weather-compare select{width:100%;min-width:0;min-height:44px;padding:8px;border:1px solid var(--mc-line);border-radius:6px;background:#fdfbf5;color:var(--mc-ink);font:inherit}
+.weather-compare :is(select,button):focus-visible{outline:2px solid var(--mc-accent);outline-offset:3px}
+.weather-compare-notice{padding:12px;background:#e9f0e7;border-left:4px solid var(--mc-accent)}
+.weather-compare-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.weather-compare-actions button{min-height:44px;padding:8px 12px;border:1px solid var(--mc-line);border-radius:6px;font:inherit;background:#fdfbf5;color:var(--mc-ink);cursor:pointer}
+.weather-compare-actions button:disabled{opacity:.5;cursor:default}
+.weather-compare-result{padding:12px;margin-top:12px;background:#e9f0e7;border:1px solid var(--mc-line)}
+.weather-compare [hidden]{display:none!important}
+.weather-compare-table{width:100%;overflow-x:auto}
+.weather-compare table{table-layout:fixed;width:100%;border-collapse:collapse}
+.weather-compare :is(td,th){border:1px solid var(--mc-line);padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:700px){.weather-compare{padding:8px}.weather-compare-result{padding:8px}.weather-thinking .ed-photo img{max-height:210px}}
+
+.weather-thinking .ed-fig{margin:0 auto 16px;text-align:center}
+.weather-thinking .ed-fig svg,.weather-compare svg{display:block;width:100%;height:auto;max-height:260px;margin:auto}
+.weather-compare .ed-photo img{display:block;max-width:100%;width:auto;max-height:240px;height:auto;object-fit:contain;margin:auto}
+.weather-compare .ed-photo{margin:16px auto;text-align:center}
+.weather-compare .ed-photo-credit{font-size:13px}

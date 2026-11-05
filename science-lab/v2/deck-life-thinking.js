@@ -1,0 +1,35 @@
+import{findLifeItem}from'./book-life.js';
+import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
+import{LIFE_EXPERIMENTS,LIFE_DATA_NOTICE,lifeMaterial,germinationCount}from'./life-compare-model.js';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const p=s=>`<p>${esc(s)}</p>`;
+const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>`<${i?'td':'th scope="row"'}>${esc(v)}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table>`;
+const photo=(name,alt,caption)=>`<figure class="life-thinking-photo"><img src="../assets/bank/s31-u04/${name}.webp" alt="${esc(alt)}"><figcaption>${esc(caption)}</figcaption></figure>`;
+export function buildLifeThinkingSlides(ch,art,plan,pool,mode,ix){
+ ix ||=ch.lifeInteraction;const teach=mode==='teach',S=[],phases=Object.fromEntries(plan.phases.map(x=>[x.id,x]));let ses=1;
+ const add=(id,phase,title,body,extra={})=>S.push({id,phase,phaseObj:phases[phase],title,body,kind:'read',ses,...extra});
+ const peek=text=>teach?`<div class="dk-ans rv">${esc(text)}</div>`:`<div class="dk-peekw"><button type="button" class="dk-peek">생각한 뒤 설명 보기</button><div class="dk-ans" hidden>${esc(text)}</div></div>`;
+ add('cover','open',ch.title,photo('s2-q18','꽃에 앉은 배추흰나비','자체 이론편의 원본 사진 · 한 장면으로 모든 한살이를 알 수는 없어요.')+p('여러 날의 생물 변화와 비교 실험의 조건을 자료로 살펴요. 내 예상과 근거를 연결하고 실제 관찰은 따로 이어 가요.'));
+ if(teach)add('plan','open','한살이 자료·조건 비교 수업 계획',`<ol class="dk-plan">${plan.phases.map(x=>`<li><b>${esc(x.name)}</b><span>${x.min}분</span><em>${esc(x.aim)}</em></li>`).join('')}</ol>`);
+ const mixed=lifeMaterial('germ-water','mixed');
+ add('phenomenon','open','싹튼 수가 다르면 까닭도 바로 알까요?',p('아래는 강낭콩 씨앗을 각각 5개 둔 수업용 가상 자료예요. 실제 학생의 실험 결과가 아니에요.')+table(['묶음','물','온도','5일 뒤 가상 싹튼 수'],mixed.conditions.map((r,i)=>[...r,mixed.results[i][1]]))+p('가와 나에서 서로 다른 조건을 모두 찾아요. 이 비교로 물의 영향만 알 수 있을까요?'));
+ const options=ix.predict.options,pick=teach?`<ol class="dk-tally">${options.map((s,j)=>`<li data-j="${j}"><span class="dk-tn">${j+1}</span><span class="dk-tt">${esc(s)}</span><button type="button" data-t="-" aria-label="${j+1}번 한 명 빼기">−</button><b class="dk-tc">0</b><button type="button" data-t="+" aria-label="${j+1}번 한 명 더하기">+</button></li>`).join('')}</ol>`:`<ol class="dk-choices dk-mc predict">${options.map((s,j)=>`<li><button type="button" data-j="${j}"><span>${'①②③'[j]}</span>${esc(s)}</button></li>`).join('')}</ol>`;
+ add('predict','open','물의 영향만 구별할 수 있을까요?',p(ix.predict.q)+pick+p('처음 판단은 아직 채점하지 않아요. 조건과 자료를 비교한 뒤 다시 설명해요.'),{kind:'predict'});
+ add('design','observe','알아볼 조건 하나만 다르게 해요',table(['알아볼 것','다르게 할 것','같게 할 것'],[['싹트기에 물이 미치는 영향','솜에 물을 주는지','씨앗 종류·상태·수, 용기·솜, 온도·기간'],['싹트기에 온도가 미치는 영향','두는 온도','씨앗 종류·상태·수, 용기·솜, 알맞은 물·기간']])+p('같은 종류의 씨앗이어도 모두 같은 날 같은 수로 싹튼다고 정하지 않아요. 조건을 공정하게 준비하고 같은 날짜에 관찰해요.'),{standards:['4과04-02']});
+ add('lab','observe','한살이 조건 비교 · 계획을 바꾸어요',p('싹트기·물에서 두 계획을 비교하고 자료를 열어요. 싹트기·온도와 자람·물/햇빛도 골라 어떤 조건이 달라지는지 살펴요.')+'<div data-mount="lab"></div>',{mount:'lab',kind:'lab',layout:'fieldwork'});
+ add('results','result','조건과 결과를 함께 읽어요','<div class="dk-mylab" hidden></div>'+table(['계획','결과를 설명할 때'],[['알아볼 조건 하나만 다름','이 자료의 차이를 알아볼 조건과 연결해 설명'],['다른 조건도 함께 다름','어떤 조건의 영향인지 따로 구별하기 어려움']])+peek('싹튼 수가 달라졌다는 사실과 물 때문이라고만 설명하는 것은 달라요. 실험 조건을 함께 읽고, 실제 결과가 예상과 달라도 그대로 남겨요.'),{kind:'think'});
+ add('conclusion','result','처음 예상과 비교해 설명해요',(teach?p('손들기 예상과 두 계획의 조건을 연결해 설명하게 해요.'):'<div class="dk-card"><h3>자료 보기 전 내 예상</h3><p data-prediction-summary></p></div>')+peek('물과 온도가 함께 달라진 자료로는 물의 영향만 구별하기 어려워요. 온도를 같게 하고 물 조건만 다르게 한 계획으로 고쳐요. 가상 자료의 수치는 모든 실제 실험에서 보장되는 값이 아니에요.'),{kind:'think'});
+ ses=2;
+ add('recall','concept','싹트기와 싹튼 뒤 자람은 다른 비교예요',table(['알아볼 시기','이 단원에서 비교할 조건'],[['씨앗에서 싹이 틀 때','물, 온도를 각각 한 조건씩 비교'],['싹튼 식물이 자랄 때','물, 햇빛을 각각 한 조건씩 비교']])+p('싹튼 뒤 자람의 자료로 씨앗의 싹트기 조건을 모두 알아냈다고 하지 않아요. 강낭콩의 비교 결과를 모든 씨앗·모든 환경으로 확대하지 않아요.'),{standards:['4과04-02']});
+ add('observations','concept','0개와 미관찰은 같은 뜻일까요?',table(['가상 기록','뜻'],[['같은 날짜에 세어 싹이 안 보였음',germinationCount(0)],['그날 확인하지 못했음',germinationCount(null)]])+peek('0개는 실제로 세어 확인한 결과이고 미관찰은 그날 결과를 모른다는 뜻이에요. 실제 일지는 날짜·같은 개체 표시·본 모습과 행동을 글과 그림으로 남겨요. 생각이나 보지 못한 단계는 따로 밝혀요.'),{kind:'think',standards:['4과04-01']});
+ add('animal-stages','concept','원본 사진의 단계와 보이지 않는 시간을 구별해요',photo('s2-q13','(가) 배추흰나비 번데기와 (나) 애벌레','자체 이론편 원본 사진 자료 · 촬영 날짜/같은 개체 여부는 사진만으로 확정하지 않아요.')+peek('이 자료에서 (나)는 애벌레, (가)는 번데기예요. 배추흰나비는 알→애벌레→번데기→성충으로 이어져요. 성충이 낳은 알은 다음 세대이며 같은 성충이 알로 되돌아가는 것이 아니에요.'),{kind:'think',standards:['4과04-01']});
+ add('insects','concept','모든 곤충이 번데기를 거칠까요?',table(['곤충 자료','한살이 과정'],[['배추흰나비','알 → 애벌레 → 번데기 → 성충'],['메뚜기','알 → 애벌레 → 성충']])+peek('번데기 단계를 거치는지로 두 과정을 비교할 수 있어요. 모든 곤충에게 배추흰나비의 과정을 그대로 적용하지 않아요.'),{kind:'think',standards:['4과04-03']});
+ add('plant-cycle','concept','새 씨앗은 다음 개체로 이어져요',photo('s4-q4','가·나·다·라·마로 표시된 봉숭아 한살이 사진','자체 이론편 원본 자료 · 라(씨앗)→가→다→나→마(열매) 순서로 살펴요.')+p('씨앗에서 싹이 터 자라고 꽃·열매·새 씨앗으로 이어져요. 한해살이는 한 해 안에 한살이를 마치고, 여러해살이는 같은 개체가 여러 해 살아가요. 같은 자리에 새싹이 났다는 사실만으로 같은 개체라고 정할 수 없어요.'),{standards:['4과04-03']});
+ const light=lifeMaterial('grow-light','fair');
+ add('growth-light','concept','줄기가 더 길면 더 튼튼할까요?',p(LIFE_DATA_NOTICE)+p('같은 종류·비슷한 처음 크기의 강낭콩을 가는 밝은 곳, 나는 통풍되는 가리개로 빛을 가린 곳에 두었다고 해요. 온도 20 ℃·알맞은 물·화분과 흙 등은 같게 한 7일 뒤의 가상 자료예요.')+table(light.resultHeads,light.results)+peek(light.summary+' 잎의 색·크기와 줄기의 굵기·길이 등 여러 모습을 함께 비교해요. 이 자료의 길이값을 실제로 잰 값이라고 쓰지 않아요.'),{kind:'think',standards:['4과04-02']});
+ add('care-design','extend','어느 단계에 맞춘 관찰 환경일까요?',photo('s2-q8','배춧잎과 통풍되는 덮개가 있는 사육 상자','자체 이론편의 원본 사육 상자 사진')+p('배추흰나비 애벌레를 관찰할 환경을 말이나 그림으로 제안해요. 알맞은 먹이 잎·통풍·직사광선과 충격을 피할 장소가 왜 필요한지 설명해요. 동물의 먹이를 끊어 실험하지 않아요.'),{standards:['4과04-01']});
+ add('share','extend','소개 자료에 날짜·근거·질문을 담아요',p('내가 실제로 본 날짜와 개체 표시, 글·그림을 골라 한살이 소개 자료를 만들어요. 직접 보지 않은 단계는 참고 자료의 제목·쪽수를 구별해 밝혀요. 친구에게 보여 주며 설명하고 들은 질문으로 보완할 점을 제안해요.')+p('파일 내려받기나 문제 정답을 실제 관찰·실험·자료 만들기·공유의 완료로 처리하지 않아요. 아직 나누지 않았다면 질문/공유 계획이라고 밝혀요.'),{standards:['4과04-03']});
+ [...ch.formative.items,...ch.check].forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`한살이 사고력 문항 없음 ${key}`);add(`test${i+1}`,'check',`자료로 확인하기 ${i+1}/11`,thinkingCheckQuestion(q,i+1,teach),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
+ add('end','check','조건·변화·다음 세대를 근거로 설명했나요?',`<ul>${['알아볼 조건과 같게 할 조건 구별하기','날짜·같은 개체·실제 관찰과 미관찰 구별하기','생물마다 다른 단계와 다음 세대 비교하기','내 기록과 참고 자료를 구별하여 소개하고 질문 나누기'].map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`+p('실제 관찰·실험·그림·소개 기록은 처음 화면의 선택 기록 기능에서 여러 날 이어 갈 수 있어요.')+'<a class="btn" href="#/s31-u04/daily">Daily Test</a>',{kind:'end'});
+ S.forEach((s,i)=>s.n=i+1);return S;
+}

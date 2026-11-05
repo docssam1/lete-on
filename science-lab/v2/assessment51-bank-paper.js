@@ -1,5 +1,5 @@
 // 동일 문항 객체·번호·출처로 실사형 학습 문항집과 A/B형 인쇄를 만든다.
-import{photoFigureHtml}from'./photo-figure.js';import{sourceCaption,sourceTableHtml}from'./source-presentation.js';
+import{photoFigureHtml}from'./photo-figure.js?v=20261104-weather-class';import{sourceCaption,sourceTableHtml}from'./source-presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),circ='①②③④⑤';
 export const assessment51Answer=a=>a.type==='single-choice'?circ[a.answer]:a.type==='multi-choice'?a.answers.map(n=>circ[n]).join(', '):a.sample??a.answer;
 const givenHtml=g=>Object.entries(g||{}).map(([k,v])=>sourceTableHtml(v)||`<div class="a51-given"><b>${esc(k)}</b>${Array.isArray(v)?v.map(t=>`<p>${esc(t)}</p>`).join(''):`<p>${esc(v)}</p>`}</div>`).join('');

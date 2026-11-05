@@ -1,0 +1,342 @@
+{
+ "unit": "c22-s62-u03",
+ "curriculum": "2022 개정",
+ "grade": 6,
+ "semester": 2,
+ "title": "전기의 이용",
+ "area": "운동과 에너지",
+ "standards": [
+  {
+   "code": "6과15-01",
+   "text": "전지·전구·전선을 연결해 불을 켜고 켜지는 회로의 특징을 설명한다.",
+   "verified": true
+  },
+  {
+   "code": "6과15-02",
+   "text": "전지 한 개 회로와 두 개 직렬 회로의 특징을 비교한다.",
+   "verified": true
+  },
+  {
+   "code": "6과15-03",
+   "text": "전자석을 만들어 성질을 탐색하고 사용 예를 조사한다.",
+   "verified": true
+  },
+  {
+   "code": "6과15-04",
+   "text": "전기의 효율적이고 안전한 사용 방법을 조사하여 계획하고 생활에서 실천한다.",
+   "verified": true
+  }
+ ],
+ "standardsSource": "교육부 고시 제2022-33호 별책9 과학과 교육과정",
+ "standardsNote": "요약한 성취기준이다. 전구 직렬·병렬과 자기장 법칙은 제외하며 실제 제작·관찰·조사·실천을 구별한다.",
+ "elements": [
+  {
+   "id": "E1",
+   "name": "전구의 두 접점을 찾아요",
+   "standard": "6과15-01",
+   "desc": "전구의 두 접점을 찾아요의 조건과 근거를 확인해요."
+  },
+  {
+   "id": "E2",
+   "name": "끊기지 않는 연결과 재료를 비교해요",
+   "standard": "6과15-01",
+   "desc": "끊기지 않는 연결과 재료를 비교해요의 조건과 근거를 확인해요."
+  },
+  {
+   "id": "E3",
+   "name": "전지 한 개와 두 개를 연결해요",
+   "standard": "6과15-02",
+   "desc": "전지 한 개와 두 개를 연결해요의 조건과 근거를 확인해요."
+  },
+  {
+   "id": "E4",
+   "name": "같은 조건으로 밝기를 비교해요",
+   "standard": "6과15-02",
+   "desc": "같은 조건으로 밝기를 비교해요의 조건과 근거를 확인해요."
+  },
+  {
+   "id": "E5",
+   "name": "전자석을 만들어 연결 전후를 관찰해요",
+   "standard": "6과15-03",
+   "desc": "전자석을 만들어 연결 전후를 관찰해요의 조건과 근거를 확인해요."
+  },
+  {
+   "id": "E6",
+   "name": "전자석의 세기·극·쓰임을 비교해요",
+   "standard": "6과15-03",
+   "desc": "전자석의 세기·극·쓰임을 비교해요의 조건과 근거를 확인해요."
+  },
+  {
+   "id": "E7",
+   "name": "전기를 안전하게 사용하는 근거를 찾아요",
+   "standard": "6과15-04",
+   "desc": "전기를 안전하게 사용하는 근거를 찾아요의 조건과 근거를 확인해요."
+  },
+  {
+   "id": "E8",
+   "name": "전기를 아끼는 계획을 실천하고 돌아봐요",
+   "standard": "6과15-04",
+   "desc": "전기를 아끼는 계획을 실천하고 돌아봐요의 조건과 근거를 확인해요."
+  }
+ ],
+ "types": [
+  {
+   "id": "T01",
+   "name": "부품과 용어의 역할 구별",
+   "desc": "부품과 용어의 역할 구별",
+   "element": "E1",
+   "elements": [
+    "E1"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 12,
+   "source": []
+  },
+  {
+   "id": "T04",
+   "name": "스위치 조작과 변화 연결",
+   "desc": "스위치 조작과 변화 연결",
+   "element": "E2",
+   "elements": [
+    "E2"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 4,
+   "source": []
+  },
+  {
+   "id": "T02",
+   "name": "접점과 닫힌 연결 판단",
+   "desc": "접점과 닫힌 연결 판단",
+   "element": "E2",
+   "elements": [
+    "E2"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 15,
+   "source": []
+  },
+  {
+   "id": "T05",
+   "name": "전지 한 개와 두 개의 조건 비교",
+   "desc": "전지 한 개와 두 개의 조건 비교",
+   "element": "E4",
+   "elements": [
+    "E4",
+    "E3"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 19,
+   "source": []
+  },
+  {
+   "id": "T13",
+   "name": "전기 안전 계획 판단",
+   "desc": "전기 안전 계획 판단",
+   "element": "E7",
+   "elements": [
+    "E7"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 20,
+   "source": []
+  },
+  {
+   "id": "T14",
+   "name": "효율적 이용과 실천 점검",
+   "desc": "효율적 이용과 실천 점검",
+   "element": "E8",
+   "elements": [
+    "E8"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 9,
+   "source": []
+  },
+  {
+   "id": "T08",
+   "name": "전자석 제작과 접점 준비",
+   "desc": "전자석 제작과 접점 준비",
+   "element": "E5",
+   "elements": [
+    "E5"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 12,
+   "source": []
+  },
+  {
+   "id": "T10",
+   "name": "전자석 세기 비교의 근거",
+   "desc": "전자석 세기 비교의 근거",
+   "element": "E6",
+   "elements": [
+    "E6"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 7,
+   "source": []
+  },
+  {
+   "id": "T09",
+   "name": "전자석과 영구 자석 비교",
+   "desc": "전자석과 영구 자석 비교",
+   "element": "E6",
+   "elements": [
+    "E6",
+    "E5"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 13,
+   "source": []
+  },
+  {
+   "id": "T12",
+   "name": "실제 구조와 용도 연결",
+   "desc": "실제 구조와 용도 연결",
+   "element": "E6",
+   "elements": [
+    "E6"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 6,
+   "source": []
+  },
+  {
+   "id": "T03",
+   "name": "재료의 전도·절연 조건 해석",
+   "desc": "재료의 전도·절연 조건 해석",
+   "element": "E2",
+   "elements": [
+    "E2",
+    "E1"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 14,
+   "source": []
+  },
+  {
+   "id": "T11",
+   "name": "나침반 관찰로 극 판단",
+   "desc": "나침반 관찰로 극 판단",
+   "element": "E6",
+   "elements": [
+    "E6"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 10,
+   "source": []
+  },
+  {
+   "id": "T07",
+   "name": "반복 기록과 수치 해석",
+   "desc": "반복 기록과 수치 해석",
+   "element": "E6",
+   "elements": [
+    "E6",
+    "E4"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 2,
+   "source": []
+  },
+  {
+   "id": "T06",
+   "name": "변인 통제와 결론 한계 판단",
+   "desc": "변인 통제와 결론 한계 판단",
+   "element": "E6",
+   "elements": [
+    "E6",
+    "E4"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 2,
+   "source": []
+  },
+  {
+   "id": "T15",
+   "name": "접점·연결의 표현과 설계",
+   "desc": "겉모양·자료·실제 접속을 구별해 표시한다.",
+   "element": "E1",
+   "elements": [
+    "E1",
+    "E2",
+    "E3"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 9,
+   "source": []
+  },
+  {
+   "id": "T16",
+   "name": "공정한 밝기 비교와 측정 자료",
+   "desc": "통제 조건·반복 수치·관찰 범위로 설명한다.",
+   "element": "E4",
+   "elements": [
+    "E4"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 16,
+   "source": []
+  },
+  {
+   "id": "T17",
+   "name": "자석 작용과 구조·쓰임 연결",
+   "desc": "나침반 관찰과 제어 목적·기기 구조의 근거를 잇는다.",
+   "element": "E6",
+   "elements": [
+    "E6"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 4,
+   "source": []
+  },
+  {
+   "id": "T18",
+   "name": "계획·실행·검토의 증거 설계",
+   "desc": "실제 수행과 확인하지 않은 효과를 구별한다.",
+   "element": "E8",
+   "elements": [
+    "E8"
+   ],
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 12,
+   "source": []
+  }
+ ],
+ "formats": [
+  "객관식",
+  "복수 선택",
+  "단답형",
+  "빈칸 넣기",
+  "순서 배열",
+  "기호 모두 쓰기",
+  "단위와 수치",
+  "까닭 설명",
+  "연결하기",
+  "자료 해석",
+  "그림·설계"
+ ],
+ "formatCounts": {},
+ "sourceTotal": 0,
+ "authoredTotal": 186,
+ "note": "data/units/c22-s62-u03.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. 이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다."
+}

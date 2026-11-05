@@ -82,7 +82,7 @@ test('중간평가는 실제 두 단원 범위와 50쌍을 유지하고 32단원
   for(const q of source) assert.equal(similar.filter((s)=>s.sourceRef.of.set===q.sourceRef.set&&s.sourceRef.of.no===q.sourceRef.no).length,1);
   const html=curriculumBankHtml(BANK);
   assert.equal((html.match(/data-curriculum-unit=/g)||[]).length,32);
-  assert(html.includes('현재 20개 단원의 원문 1298문항'));
+  assert(html.includes('현재 23개 단원의 원문 1512문항'));
   assert(html.includes('data-assessment="s31-mid"'));
   assert(html.includes('#/s31-fin/exam/1'));
   assert(html.includes('창작 60문항'));
@@ -101,5 +101,5 @@ test('새 물체와 물질의 내용 ID는 기존 탐구 단원과 저장 위치
 });
 
 test('지구와 바다의 창작 학습은 원문 보유 단원으로 표시하지 않는다',()=>{
- const b=bankFor2022('s32-u02',BANK),h=curriculumBankHtml(BANK);assert.equal(b.contentId,'c22-s32-u02');assert.equal(b.n,0);assert.equal(b.supplement,80);assert(b.sourcePending);assert.deepEqual(b.sets,[]);assert(!h.includes('#/c22-s32-u02/exam/'));assert(h.includes('창작 80 · 원문 준비 중'));assert(h.includes('20개 단원의 원문 1298문항'));assert(h.includes('별도로 4개 단원의 창작 학습 352문항'));
+ const b=bankFor2022('s32-u02',BANK),h=curriculumBankHtml(BANK);assert.equal(b.contentId,'c22-s32-u02');assert.equal(b.n,0);assert.equal(b.supplement,80);assert(b.sourcePending);assert.deepEqual(b.sets,[]);assert(!h.includes('#/c22-s32-u02/exam/'));assert(h.includes('창작 80 · 원문 준비 중'));assert(h.includes('23개 단원의 원문 1512문항'));assert(h.includes('별도로 9개 단원의 창작 학습 1229문항'));
 });

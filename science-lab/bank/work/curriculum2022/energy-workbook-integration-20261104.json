@@ -1,0 +1,1008 @@
+{
+  "phase": 197,
+  "date": "2026-11-04",
+  "unit": "c22-s52-u04",
+  "title": "자원과 에너지",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "69c0f351ad63afa6c08469b22f767a7444122ff2",
+  "status": "local integration candidate; not pushed or deployed",
+  "integratedWorkbooks": 24,
+  "integratedFullClassrooms": 23,
+  "studentPages": 92,
+  "teacherPages": 128,
+  "answerPages": 36,
+  "quickPages": 4,
+  "teacherAnswersStartRecto": 93,
+  "questions": 112,
+  "forms": {
+    "choice": 20,
+    "blank": 19,
+    "written": 25,
+    "match": 12,
+    "multi": 12,
+    "short": 14,
+    "draw": 8,
+    "order": 2
+  },
+  "workedExamples": 13,
+  "editedWorkedExamples": 12,
+  "newWorkedExamplePage": 40,
+  "uniquePageSpecificRailTexts": 276,
+  "largeDrawingFieldsPerStudentCopy": 10,
+  "largeDrawingFieldsStudentAndTeacher": 20,
+  "sourceWorkbookSha256": "59e12ff0da4414f1e212c063642754efb8142fd358519115920ae3b42e3b98d8",
+  "sourceWorkbookUnmodified": true,
+  "curriculumReferences": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+      "localDocument": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "lines": [
+        [
+          829,
+          843
+        ]
+      ],
+      "use": "6과08-01~03·집 모형 탐구/해설/고려 사항;물·산림·광물과6재생에너지;재활용이 무한한 자원을 뜻하지 않음"
+    },
+    {
+      "title": "EIA Renewable energy explained",
+      "url": "https://www.eia.gov/energyexplained/renewable-sources/",
+      "use": "자연에서 보충되는 에너지와 공급 조건;과거 통계는 학생 원고에 사용하지 않음"
+    },
+    {
+      "title": "EIA Energy efficiency and conservation",
+      "url": "https://www.eia.gov/energyexplained/use-of-energy/efficiency-and-conservation.php",
+      "use": "기능을 유지하며 사용을 줄이는 효율적 이용과 생활 절약"
+    },
+    {
+      "title": "DOE Residential windows doors and skylights",
+      "url": "https://www.energy.gov/cmei/femp/purchasing-energy-efficient-residential-windows-doors-and-skylights",
+      "use": "열 이동·창 구조·공기층/틈·지역 조건;미국 구매 수치나 기준을 국내 기준으로 쓰지 않음"
+    },
+    {
+      "title": "EPA What you can do",
+      "url": "https://www.epa.gov/recycle/what-you-can-do",
+      "use": "학교의 줄이기·재사용·재활용;지역 배출 기준을 별도 확인"
+    }
+  ],
+  "protection": {
+    "protectedDataAssetsAndPriorPdfs": 1869,
+    "unchangedOldPdfs": 56,
+    "unchangedOtherWorkbookHtmlProducts": 92,
+    "unchangedOtherClassroomArrays": 46,
+    "newWorkbookHtmlProducts": 4,
+    "sourceQuestionsExactlyUnchanged": 94,
+    "questionLanguageExceptions": [
+      "c22-s52-u04-w009",
+      "c22-s52-u04-w048",
+      "c22-s52-u04-w049",
+      "c22-s52-u04-w050",
+      "c22-s52-u04-w051",
+      "c22-s52-u04-w052",
+      "c22-s52-u04-w056",
+      "c22-s52-u04-w068",
+      "c22-s52-u04-w077",
+      "c22-s52-u04-w080",
+      "c22-s52-u04-w084",
+      "c22-s52-u04-w097",
+      "c22-s52-u04-w102",
+      "c22-s52-u04-w104",
+      "c22-s52-u04-w105",
+      "c22-s52-u04-w109",
+      "c22-s52-u04-w111",
+      "c22-s52-u04-w112"
+    ],
+    "changedAcceptedAnswerQuestions": [
+      51,
+      56,
+      102
+    ],
+    "questionOrderIdsFormsChoiceKeysOrderAcceptedAndContractsPreserved": true,
+    "editedWorkedExamples": 12,
+    "newWorkedExamplePage": 40,
+    "sourceWorkedExamplePagesAndStepCountsPreserved": true,
+    "sourceAnswerPagesAndQuickPageLayoutsPreserved": true,
+    "quickAnswerValuesUpdated": [
+      51,
+      56,
+      102
+    ],
+    "unreviewedEnergyClassroomUnchanged": true,
+    "newPhotos": 0,
+    "new3D": 0,
+    "newPdfs": 4,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "browserVerified": false
+  },
+  "pdfValidation": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 92,
+        "bytes": 24450702,
+        "sha256": "52d8b01bfc4a3287dd75f1a52b9e153fe8daecc67d8157d42566d39f07cf3a04",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 128,
+        "bytes": 24592289,
+        "sha256": "31d752b666c9ea118f5b59dd840636beb89c3db0b3f10dedadf21f41a715bb3d",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 36,
+        "bytes": 300812,
+        "sha256": "83460d67e67afee3ed28b04e7cc00ea210543453abb527d8f64dc6646dab7a0f",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 4,
+        "bytes": 133605,
+        "sha256": "54769e75aa97f832927f84c0fe61f8d47316c314f2c6a42723d2247362c33b39",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 224,
+    "solutionExpressions": 224,
+    "teacherAnswerStartsOnRecto": 93
+  },
+  "pdfDetailsValidation": {
+    "fullRailTexts": 552,
+    "quickAnswerTableCells": 336,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 6,
+        "heightMm": 149.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 61,
+        "heightMm": 139.3,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 63,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 65,
+        "heightMm": 217.49,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 67,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 69,
+        "heightMm": 217.49,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 78,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 86,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 88,
+        "heightMm": 217.49,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 90,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 6,
+        "heightMm": 149.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 61,
+        "heightMm": 139.3,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 63,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 65,
+        "heightMm": 205.62,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 67,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 69,
+        "heightMm": 205.62,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 78,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 86,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 88,
+        "heightMm": 205.62,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 90,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Bold",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAB+PretendardVariable-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "photoLabelValidation": {
+    "uniqueLabelledFigures": 9,
+    "checkedPhotoLabelExpressions": 62,
+    "allPresent": true,
+    "checks": [
+      {
+        "mode": "student",
+        "page": 1,
+        "figure": "resources",
+        "label": "물 자원"
+      },
+      {
+        "mode": "student",
+        "page": 1,
+        "figure": "resources",
+        "label": "산림 자원"
+      },
+      {
+        "mode": "student",
+        "page": 1,
+        "figure": "resources",
+        "label": "광물 자원"
+      },
+      {
+        "mode": "student",
+        "page": 5,
+        "figure": "resources",
+        "label": "물 자원"
+      },
+      {
+        "mode": "student",
+        "page": 5,
+        "figure": "resources",
+        "label": "산림 자원"
+      },
+      {
+        "mode": "student",
+        "page": 5,
+        "figure": "resources",
+        "label": "광물 자원"
+      },
+      {
+        "mode": "student",
+        "page": 10,
+        "figure": "resources",
+        "label": "물 자원"
+      },
+      {
+        "mode": "student",
+        "page": 10,
+        "figure": "resources",
+        "label": "산림 자원"
+      },
+      {
+        "mode": "student",
+        "page": 10,
+        "figure": "resources",
+        "label": "광물 자원"
+      },
+      {
+        "mode": "student",
+        "page": 15,
+        "figure": "reuse",
+        "label": "사용 줄이기·다시 쓰기"
+      },
+      {
+        "mode": "student",
+        "page": 15,
+        "figure": "reuse",
+        "label": "분리배출은 지역 기준 확인"
+      },
+      {
+        "mode": "student",
+        "page": 16,
+        "figure": "reuse",
+        "label": "사용 줄이기·다시 쓰기"
+      },
+      {
+        "mode": "student",
+        "page": 16,
+        "figure": "reuse",
+        "label": "분리배출은 지역 기준 확인"
+      },
+      {
+        "mode": "student",
+        "page": 20,
+        "figure": "solar",
+        "label": "빛을 받는 장치"
+      },
+      {
+        "mode": "student",
+        "page": 20,
+        "figure": "solar",
+        "label": "설치할 곳의 조건"
+      },
+      {
+        "mode": "student",
+        "page": 21,
+        "figure": "wind",
+        "label": "바람을 이용하는 설비"
+      },
+      {
+        "mode": "student",
+        "page": 21,
+        "figure": "wind",
+        "label": "날개와 주변 환경"
+      },
+      {
+        "mode": "student",
+        "page": 25,
+        "figure": "hydro",
+        "label": "물의 흐름과 높이 차"
+      },
+      {
+        "mode": "student",
+        "page": 25,
+        "figure": "hydro",
+        "label": "설비와 주변 환경"
+      },
+      {
+        "mode": "student",
+        "page": 26,
+        "figure": "hydro",
+        "label": "물의 흐름과 높이 차"
+      },
+      {
+        "mode": "student",
+        "page": 26,
+        "figure": "hydro",
+        "label": "설비와 주변 환경"
+      },
+      {
+        "mode": "student",
+        "page": 27,
+        "figure": "ocean",
+        "label": "파도·밀물과 썰물"
+      },
+      {
+        "mode": "student",
+        "page": 27,
+        "figure": "ocean",
+        "label": "해양 에너지를 생각할 장소"
+      },
+      {
+        "mode": "student",
+        "page": 31,
+        "figure": "house",
+        "label": "벽 재료도 다른 두 모형"
+      },
+      {
+        "mode": "student",
+        "page": 31,
+        "figure": "house",
+        "label": "온도 측정 도구의 배치"
+      },
+      {
+        "mode": "student",
+        "page": 37,
+        "figure": "house",
+        "label": "벽 재료도 다른 두 모형"
+      },
+      {
+        "mode": "student",
+        "page": 37,
+        "figure": "house",
+        "label": "온도 측정 도구의 배치"
+      },
+      {
+        "mode": "student",
+        "page": 46,
+        "figure": "practice",
+        "label": "실천할 방법"
+      },
+      {
+        "mode": "student",
+        "page": 46,
+        "figure": "practice",
+        "label": "절약의 까닭과 효과 비교"
+      },
+      {
+        "mode": "student",
+        "page": 47,
+        "figure": "practice",
+        "label": "실천할 방법"
+      },
+      {
+        "mode": "student",
+        "page": 47,
+        "figure": "practice",
+        "label": "절약의 까닭과 효과 비교"
+      },
+      {
+        "mode": "teacher",
+        "page": 1,
+        "figure": "resources",
+        "label": "물 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 1,
+        "figure": "resources",
+        "label": "산림 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 1,
+        "figure": "resources",
+        "label": "광물 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 5,
+        "figure": "resources",
+        "label": "물 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 5,
+        "figure": "resources",
+        "label": "산림 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 5,
+        "figure": "resources",
+        "label": "광물 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 10,
+        "figure": "resources",
+        "label": "물 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 10,
+        "figure": "resources",
+        "label": "산림 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 10,
+        "figure": "resources",
+        "label": "광물 자원"
+      },
+      {
+        "mode": "teacher",
+        "page": 15,
+        "figure": "reuse",
+        "label": "사용 줄이기·다시 쓰기"
+      },
+      {
+        "mode": "teacher",
+        "page": 15,
+        "figure": "reuse",
+        "label": "분리배출은 지역 기준 확인"
+      },
+      {
+        "mode": "teacher",
+        "page": 16,
+        "figure": "reuse",
+        "label": "사용 줄이기·다시 쓰기"
+      },
+      {
+        "mode": "teacher",
+        "page": 16,
+        "figure": "reuse",
+        "label": "분리배출은 지역 기준 확인"
+      },
+      {
+        "mode": "teacher",
+        "page": 20,
+        "figure": "solar",
+        "label": "빛을 받는 장치"
+      },
+      {
+        "mode": "teacher",
+        "page": 20,
+        "figure": "solar",
+        "label": "설치할 곳의 조건"
+      },
+      {
+        "mode": "teacher",
+        "page": 21,
+        "figure": "wind",
+        "label": "바람을 이용하는 설비"
+      },
+      {
+        "mode": "teacher",
+        "page": 21,
+        "figure": "wind",
+        "label": "날개와 주변 환경"
+      },
+      {
+        "mode": "teacher",
+        "page": 25,
+        "figure": "hydro",
+        "label": "물의 흐름과 높이 차"
+      },
+      {
+        "mode": "teacher",
+        "page": 25,
+        "figure": "hydro",
+        "label": "설비와 주변 환경"
+      },
+      {
+        "mode": "teacher",
+        "page": 26,
+        "figure": "hydro",
+        "label": "물의 흐름과 높이 차"
+      },
+      {
+        "mode": "teacher",
+        "page": 26,
+        "figure": "hydro",
+        "label": "설비와 주변 환경"
+      },
+      {
+        "mode": "teacher",
+        "page": 27,
+        "figure": "ocean",
+        "label": "파도·밀물과 썰물"
+      },
+      {
+        "mode": "teacher",
+        "page": 27,
+        "figure": "ocean",
+        "label": "해양 에너지를 생각할 장소"
+      },
+      {
+        "mode": "teacher",
+        "page": 31,
+        "figure": "house",
+        "label": "벽 재료도 다른 두 모형"
+      },
+      {
+        "mode": "teacher",
+        "page": 31,
+        "figure": "house",
+        "label": "온도 측정 도구의 배치"
+      },
+      {
+        "mode": "teacher",
+        "page": 37,
+        "figure": "house",
+        "label": "벽 재료도 다른 두 모형"
+      },
+      {
+        "mode": "teacher",
+        "page": 37,
+        "figure": "house",
+        "label": "온도 측정 도구의 배치"
+      },
+      {
+        "mode": "teacher",
+        "page": 46,
+        "figure": "practice",
+        "label": "실천할 방법"
+      },
+      {
+        "mode": "teacher",
+        "page": 46,
+        "figure": "practice",
+        "label": "절약의 까닭과 효과 비교"
+      },
+      {
+        "mode": "teacher",
+        "page": 47,
+        "figure": "practice",
+        "label": "실천할 방법"
+      },
+      {
+        "mode": "teacher",
+        "page": 47,
+        "figure": "practice",
+        "label": "절약의 까닭과 효과 비교"
+      }
+    ]
+  },
+  "vision": {
+    "engine": "Apple Vision via local /usr/bin/swift; PDFKit/AppKit 110dpi",
+    "uniqueStudentPages": 92,
+    "nativeAssetRuns": 8,
+    "nativePdfFullRuns": [
+      92
+    ],
+    "nativeFinalHeadingRuns": 6,
+    "nativeFinalTitle52Runs": 1,
+    "nativeFinalQuestion52Runs": 1,
+    "otherFinalPageTextsUnchanged": 84,
+    "totalNativeVisionRuns": 108,
+    "failed": 0,
+    "skipped": 0,
+    "runDetails": [
+      {
+        "directory": "asset-vision",
+        "runs": 8,
+        "words": 0,
+        "lowConfidenceBelowPoint8": 0
+      },
+      {
+        "directory": "pdf-vision",
+        "runs": 92,
+        "words": 11708,
+        "lowConfidenceBelowPoint8": 3866
+      },
+      {
+        "directory": "pdf-vision-final-titles",
+        "runs": 6,
+        "words": 1023,
+        "lowConfidenceBelowPoint8": 333
+      },
+      {
+        "directory": "pdf-vision-final-title52",
+        "runs": 1,
+        "words": 170,
+        "lowConfidenceBelowPoint8": 53
+      },
+      {
+        "directory": "pdf-vision-final-q52",
+        "runs": 1,
+        "words": 105,
+        "lowConfidenceBelowPoint8": 26
+      }
+    ],
+    "finalCoverage": {
+      "pdf-vision-final-titles": [
+        32,
+        36,
+        40,
+        45,
+        46,
+        61
+      ],
+      "pdf-vision-final-title52": [
+        52
+      ],
+      "pdf-vision-final-q52": [
+        51
+      ],
+      "pdf-vision": "other84 unchanged page texts"
+    },
+    "meaningAndLayoutReview": "Direct inspection separately; OCR does not certify every low-confidence token."
+  },
+  "visual": {
+    "finalContactSheetsInspected": [
+      "contact-sheets/student-001.jpg",
+      "contact-sheets/student-025.jpg",
+      "contact-sheets/student-049.jpg",
+      "contact-sheets/student-073.jpg",
+      "contact-sheets/teacher-001.jpg",
+      "contact-sheets/teacher-025.jpg",
+      "contact-sheets/teacher-049.jpg",
+      "contact-sheets/teacher-073.jpg",
+      "contact-sheets/teacher-097.jpg",
+      "contact-sheets/teacher-121.jpg",
+      "contact-sheets/answers-001.jpg",
+      "contact-sheets/answers-025.jpg",
+      "contact-sheets/quick-001.jpg"
+    ],
+    "finalPagesInContactSheets": 260,
+    "selectedUniqueEnlargedPagesInspected": [
+      [
+        "student",
+        2
+      ],
+      [
+        "student",
+        5
+      ],
+      [
+        "student",
+        6
+      ],
+      [
+        "student",
+        10
+      ],
+      [
+        "student",
+        15
+      ],
+      [
+        "student",
+        20
+      ],
+      [
+        "student",
+        25
+      ],
+      [
+        "student",
+        31
+      ],
+      [
+        "student",
+        32
+      ],
+      [
+        "student",
+        36
+      ],
+      [
+        "student",
+        37
+      ],
+      [
+        "student",
+        38
+      ],
+      [
+        "student",
+        39
+      ],
+      [
+        "student",
+        40
+      ],
+      [
+        "student",
+        44
+      ],
+      [
+        "student",
+        45
+      ],
+      [
+        "student",
+        46
+      ],
+      [
+        "student",
+        51
+      ],
+      [
+        "student",
+        52
+      ],
+      [
+        "student",
+        61
+      ],
+      [
+        "student",
+        82
+      ],
+      [
+        "student",
+        90
+      ],
+      [
+        "student",
+        92
+      ],
+      [
+        "teacher",
+        93
+      ],
+      [
+        "quick",
+        4
+      ],
+      [
+        "answers",
+        18
+      ]
+    ],
+    "enlargedInspectionCount": 26,
+    "renderedZoomCount": 36,
+    "assetContactImagesInspected": 8,
+    "fullSizeSourceAssetsInspected": [
+      "house",
+      "reuse",
+      "solar",
+      "hydro"
+    ],
+    "layout": "A4; serif main body, handwritten notes, green headings;10 large drawing fields per student/teacher copy;92 single-line student titles",
+    "scientificInspection": "House wall materials differ; describe apparatus arrangement and prepare matching walls,size,gaps and sensor positions for window-only comparison. Distinguish warming of colder models from cooling of warmer models. Do not infer ore composition,power output or measured energy use from still images.",
+    "browserVerified": false,
+    "rendering": "Offline ReportLab from same fixed workbook page/question objects; not browser print."
+  },
+  "installedPhotoAssets": [
+    {
+      "name": "resources",
+      "path": "science-lab/assets/activities/c22-s52-u04/resources.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "853e38fbcd72a4a9187237ee9f6f906a824cbc81aea4880ecb6613f840863afb"
+    },
+    {
+      "name": "solar",
+      "path": "science-lab/assets/activities/c22-s52-u04/solar.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "36ae82b79dff2359dd3e86b5820276b6b729a71f523a1cb0ce80c374f2515397"
+    },
+    {
+      "name": "wind",
+      "path": "science-lab/assets/activities/c22-s52-u04/wind.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "d95d033fb0de8cf0ddc8404d4e7abb7a6c39dbfc948da5ddf5e11fcbac75e4ee"
+    },
+    {
+      "name": "hydro",
+      "path": "science-lab/assets/activities/c22-s52-u04/hydro.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "0b763f1e23a621acecf9f537e50dc917bef33da8a21a4c1bfd6eb6958412eede"
+    },
+    {
+      "name": "ocean",
+      "path": "science-lab/assets/activities/c22-s52-u04/ocean.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "69283233421ed125ccc1a61560058fbf90d3110c6dfb2b768853a07627d5dee5"
+    },
+    {
+      "name": "house",
+      "path": "science-lab/assets/activities/c22-s52-u04/house.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "6f0ab3cd817dadf5cd864132c792cf0dd78b67cbcd8d2070917c996415b7eeb4"
+    },
+    {
+      "name": "reuse",
+      "path": "science-lab/assets/activities/c22-s52-u04/reuse.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "44e2f6830b9922282a4dbe7f4305862740a9a67ecba28dd20c8f2d4251363d3a"
+    },
+    {
+      "name": "practice",
+      "path": "science-lab/assets/activities/c22-s52-u04/practice.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "562cce0ed077aeb7e8a6f4660adce4770e667898e6d4409dfb4f22e6c41426b6"
+    }
+  ],
+  "newImages": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "tests": {
+    "v2": {
+      "total": 629,
+      "passed": 627,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "failed": 0
+    },
+    "passedTotal": 926
+  },
+  "routes": {
+    "unit": "c22-s52-u04",
+    "actualStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "originalRecordsBookExactlyUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "cache": "20261104-energy-book",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "frontend-design",
+    "gfield-textbook-design",
+    "pdf"
+  ],
+  "verificationLimit": "Node VM routes use DOM/book/print-readiness substitutes; offline ReportLab PDF is not browser print. Actual browser/mobile/audio/WebGL checks pending; previous denied browser target was not bypassed.",
+  "studentDataAccess": {
+    "reads": 0,
+    "writes": 0
+  },
+  "next": [
+    "Resource and energy full curriculum-linked thinking classroom",
+    "Remaining semesters and revised curriculum workbooks/classrooms",
+    "Latest main integration and permitted browser/mobile/3D/audio checks",
+    "Publishing within confirmed scope"
+  ],
+  "wholeGoal": "active"
+}

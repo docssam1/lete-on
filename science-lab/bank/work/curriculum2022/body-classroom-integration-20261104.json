@@ -1,0 +1,190 @@
+{
+  "phase": 190,
+  "date": "2026-11-04",
+  "unit": "c22-s51-u04",
+  "title": "우리 몸 전체 사고력 수업·뼈/근육 모형·기관의 협력·운동 전후 관찰·건강한 생활 연결",
+  "status": "local-candidate-browser-gate-pending",
+  "baselineCommit": "b76789832ffe9907fcc4d9830a025a443e360dd1",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac local Node VM; no model/API delegation, image generation or keychain access",
+  "skillsReused": [
+    "instructional-design",
+    "ux-writing",
+    "frontend-design",
+    "gfield-textbook-design"
+  ],
+  "rulesRead": [
+    "COMMON_WORKFLOW.md",
+    "CLAUDE.md",
+    "3D-RULES.md"
+  ],
+  "previousGoalTurn": "progress: phase189 committed body workbook and verified four PDFs",
+  "curriculumAndPrimaryReferences": {
+    "curriculum": {
+      "document": "교육부2022-33 별책9 과학과 교육과정",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "lines": [
+        764,
+        780
+      ],
+      "standards": [
+        "6과04-01",
+        "6과04-02",
+        "6과04-03"
+      ],
+      "scope": [
+        "뼈와 근육의 관찰·움직임 원리를 설명할 모형 제작",
+        "소화·순환·호흡·배설 기관의 구조와 기능·서로 관련된 점",
+        "운동할 때 몸에서 일어나는 변화 관찰",
+        "관련 질병 조사와 건강한 생활 방식 실천"
+      ],
+      "semesterPlacementReviewPhase": 186
+    },
+    "reusedPrimaryReview": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase189/public-references.json",
+    "additionalPrimaryReferences": [
+      {
+        "title": "AHA · High Blood Pressure in Children and Teens",
+        "url": "https://www.heart.org/en/health-topics/high-blood-pressure/know-your-risk-factors-for-high-blood-pressure/high-blood-pressure-in-children",
+        "scope": "소아의 질병 조사 예시로 고혈압을 순환 기관과 연결. 성인 기준·진단 수치·치료는 수업에 추가하지 않음."
+      },
+      {
+        "title": "NIH NIDDK · Bladder Infection in Children",
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/urinary-tract-infections-in-children",
+        "scope": "배설 기관 관련 질병의 조사 예시. 병명과 기관 연관을 확인하며 약물·치료 실천을 넣지 않음."
+      }
+    ],
+    "dateChecked": "2026-11-04"
+  },
+  "classroom": {
+    "selfSlides": 60,
+    "teacherSlides": 61,
+    "minutes": 300,
+    "phases": 13,
+    "originalPhaseIdsAndMinutesPreserved": true,
+    "studentPhaseNamesRewritten": true,
+    "checks": 16,
+    "manualAdvanceActivityScreens": 21,
+    "comparisonCases": [
+      "movement",
+      "digestion",
+      "circulation",
+      "breathing",
+      "excretion",
+      "exercise",
+      "health",
+      "sharing"
+    ],
+    "rasterImageAssets": 9,
+    "sameWorkbookAssets": true,
+    "warmupUngraded": true,
+    "firstSessionBreakRequiresButton": true,
+    "severalDayPracticeExplicit": true,
+    "noActivityTimerOnEntryOrPauseResume": true,
+    "figureDescriptionsRevealedAfterChoiceInComparison": true,
+    "descriptiveImageAltPreserved": true
+  },
+  "preservation": {
+    "authoredItems": 96,
+    "similarOriginalItems": 58,
+    "selectedDailyQuestionsExactlySameAndSameOrder": 16,
+    "originalInquiryActivities": 10,
+    "actualInquiryRowsKey": "bodyInquiryRows",
+    "actualInquiryStore": "sciLab.inquiry.c22-s51-u04",
+    "comparisonRowsKey": "bodyCompareRows",
+    "rawReportEnabled": true,
+    "defaultOptionalAdapterReportEnabled": false,
+    "reportObjectUnchanged": true,
+    "originalRecordsBookUnchanged": true,
+    "protectedDataAndAssetsAndPdfs": 1842,
+    "unchangedOldPdfs": 44,
+    "unchangedWorkbookHtmlProducts": 80,
+    "unchangedOtherClassroomSlideArrays": 38,
+    "intentionalChanges": [
+      {
+        "unit": "c22-s51-u04",
+        "mode": "self",
+        "before": 91,
+        "after": 60
+      },
+      {
+        "unit": "c22-s51-u04",
+        "mode": "teach",
+        "before": 92,
+        "after": 61
+      }
+    ],
+    "newImageOrPdfOr3D": 0,
+    "actualStudentStorageAccess": 0,
+    "browserVerified": false
+  },
+  "tests": {
+    "v2": {
+      "total": 570,
+      "pass": 568,
+      "skip": 2,
+      "fail": 0
+    },
+    "bank": {
+      "total": 299,
+      "pass": 299,
+      "fail": 0
+    },
+    "routes": {
+      "unit": "c22-s51-u04",
+      "startLinks": true,
+      "actualPageStartLabClassDailyLabBookAndRecords": true,
+      "defaultThinkingClass": true,
+      "checksSharedWithDaily": 16,
+      "legacyDailyQuestions": 16,
+      "teacherStudentReads": 0,
+      "teacherStudentWrites": 0,
+      "comparisonKey": "bodyCompareRows",
+      "actualInquiryKey": "bodyInquiryRows",
+      "originalRecordsBookExactlyUnchanged": true,
+      "originalReportAndObservationStatePreserved": true,
+      "noNew3D": true,
+      "comparisonEventHandlersActuallyExecuted": true,
+      "releaseDisposesMountedActivities": true,
+      "browserVerified": false
+    },
+    "deckEvents": {
+      "teacherMounts": 1,
+      "teacherPersonal": false,
+      "staleLegacyBattleIgnored": true,
+      "comparisonClickDoesNotAdvance": true,
+      "outsideClickAdvances": true,
+      "manualActivities": 21,
+      "noTimerOnActivity": true,
+      "explicitNextWorks": true,
+      "browserVerified": false
+    },
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "actualStudentStorageAccess": 0
+  },
+  "imageAndPdfReview": {
+    "newAssetsOrPdfs": 0,
+    "allPrior44PdfsExactlyUnchanged": true,
+    "same9ImageBytesAsPhase189": true,
+    "priorAppleVisionEvidence": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase189/vision-review.json",
+    "priorDirectVisualReview": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase189/visual-review.json",
+    "freshVisionExecutions": 0,
+    "new3D": 0
+  },
+  "delivery": {
+    "workbookUnits": 20,
+    "fullThinkingClassroomUnits": 20,
+    "localCommit": null,
+    "push": false,
+    "deploy": false,
+    "browserOr3DCheckerExecuted": false,
+    "browserDenialBypass": false,
+    "remaining": [
+      "나머지 학기 교재와 전체 수업",
+      "최신main 대조·실제 PC/모바일/3D/소리 검수와 승인 범위 배포"
+    ]
+  },
+  "goalStatus": "active"
+}

@@ -1,0 +1,225 @@
+{
+  "phase": 256,
+  "date": "2026-11-05",
+  "baseCandidate": "575af0ef23196a452b5e6775dd06a1389b448be8",
+  "scope": "Read-only integration proposals and current-main protection; no program source changes.",
+  "originMainProposal": {
+    "label": "origin-main",
+    "candidate": "575af0ef23196a452b5e6775dd06a1389b448be8",
+    "upstream": "feb08e8c5b51c0e521f4cb1ba12898702a8041e4",
+    "priorUpstreamObserved": "e7d57d3553e5178e2aee04f6ff27c58def00e52f",
+    "upstreamChangedDuringAudit": true,
+    "mergeBase": "c4ad489a388a7635a15307b50b93a752611417a9",
+    "overlappingPaths": [],
+    "mergeTreeExit": 0,
+    "proposedTree": "96fdae5d5752c7fe49f687a299341bbdc68f9eea",
+    "actualMerge": false,
+    "pushed": false,
+    "deployed": false,
+    "changedPaths": 910,
+    "outsideAllowedScope": [],
+    "proposedScienceEqualsCandidate": true
+  },
+  "localMainFullMerge": {
+    "label": "local-main",
+    "candidate": "575af0ef23196a452b5e6775dd06a1389b448be8",
+    "upstream": "d900f93da025f15e4d39c3b5099a43e721868151",
+    "mergeBase": "94a69f4bdda95c1d4e47494d3852f13c409165dc",
+    "overlappingPaths": [
+      ".claude/skills/gfield-textbook-design/SKILL.md"
+    ],
+    "mergeTreeExit": 1,
+    "proposedTree": "8936eb7bde710d027fd125225e417063fae540b1",
+    "actualMerge": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "scopedLocalMainProposal": {
+    "kind": "scoped-tree-overlay-proposal",
+    "candidate": "575af0ef23196a452b5e6775dd06a1389b448be8",
+    "localMain": "d900f93da025f15e4d39c3b5099a43e721868151",
+    "unresolvedFullMergeTree": "8936eb7bde710d027fd125225e417063fae540b1",
+    "fullMergeExit": 1,
+    "conflictPath": ".claude/skills/gfield-textbook-design/SKILL.md",
+    "scopeResolution": "Preserve all local-main paths outside science-lab and the3 approved scripts. Copy only allowed paths from the merge-tree result. No commit, index, branch or worktree changed.",
+    "proposedTree": "1fdbd5d13f923dd1e677cf815a0ea0fd609155c6",
+    "changedPaths": 5322,
+    "outsideAllowedScope": [],
+    "scienceEqualsCandidate": true,
+    "approvedScriptsEqualCandidate": true,
+    "localDesignSkillPreserved": true,
+    "actualMerge": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "mainWipReview": {
+    "scienceWipFilePaths": 1486,
+    "overlappingProposedChanges": 1481,
+    "sameContent": 1399,
+    "differentContent": 82,
+    "rule": "Do not apply the committed-tree proposal over the active dirty main worktree. Current files and index entries require separate preservation/reconciliation. The different content has not been classified as stale or safe to replace.",
+    "optionalHistoryLookup": "A broad optional historical-blob lookup was stopped after more than80 seconds. It was not restarted; no ancestry conclusion or overwrite permission was inferred."
+  },
+  "proposedDependencyAudit": [
+    {
+      "label": "origin-main",
+      "tree": "96fdae5d5752c7fe49f687a299341bbdc68f9eea",
+      "entrySeeds": 67,
+      "visitedLocalPaths": 987,
+      "nonLiteralImportSites": [
+        {
+          "file": "scripts/check-science-3d.mjs",
+          "nonLiteralSites": 1
+        },
+        {
+          "file": "science-lab/app.js",
+          "nonLiteralSites": 1
+        },
+        {
+          "file": "science-lab/v2/v2.js",
+          "nonLiteralSites": 6
+        },
+        {
+          "file": "scripts/science-3d-plan.mjs",
+          "nonLiteralSites": 4
+        },
+        {
+          "file": "science-lab/v2/revised-textbook.js",
+          "nonLiteralSites": 2
+        },
+        {
+          "file": "science-lab/v2/mounts.js",
+          "nonLiteralSites": 1
+        },
+        {
+          "file": "science-lab/v2/think-merge.js",
+          "nonLiteralSites": 5
+        }
+      ],
+      "barePackageOrBuiltinImports": [
+        "node:fs",
+        "node:http",
+        "node:path",
+        "node:url",
+        "playwright"
+      ],
+      "externalReferenceCount": 5,
+      "outsideScienceDependenciesDifferentFromCandidate": [],
+      "scopeLimit": "Static literal JS/CSS/entry resource closure plus all32 workbook/art seeds; nonliteral imports, media beyond CSS URLs, DOM/render/network/package resolution are not verified. Regex candidate extraction includes comments; one false missing usage example was manually excluded after reading the source block.",
+      "browserStarted": false,
+      "runtimeVerified": false,
+      "rawMissingLiteralCandidates": [
+        {
+          "from": "number_magic/app/char3d/char3d.js",
+          "target": "number_magic/app/char3d/char3d/char3d.js"
+        }
+      ],
+      "manualCommentOnlyExclusions": [
+        {
+          "from": "number_magic/app/char3d/char3d.js",
+          "target": "number_magic/app/char3d/char3d/char3d.js",
+          "reason": "Usage example inside the opening block comment; not an executed import."
+        }
+      ],
+      "unresolvedMissingLiteralCandidates": [],
+      "literalReferenceCandidates": 1446,
+      "previousTree": "d1227d084a0ffcd85bc7a550f9f6c1619d79146e",
+      "latestProposalDeltaPaths": [
+        "hselementary/question-bank/index.html",
+        "hselementary/question-bank/source-5-2-cuboid-page52-example32.css"
+      ],
+      "latestDeltaTouchesScienceOrSharedRuntimeDependencies": false,
+      "latestDeltaValidation": "Changed-tree paths are outside science-lab, approved scripts, shared/, world-explorer/vendor/ and number_magic/app/char3d/. Existing literal closure proof is retained for the unchanged runtime subtree; this is not runtime execution."
+    },
+    {
+      "label": "scoped-local-main",
+      "tree": "1fdbd5d13f923dd1e677cf815a0ea0fd609155c6",
+      "entrySeeds": 67,
+      "visitedLocalPaths": 987,
+      "nonLiteralImportSites": [
+        {
+          "file": "scripts/check-science-3d.mjs",
+          "nonLiteralSites": 1
+        },
+        {
+          "file": "science-lab/app.js",
+          "nonLiteralSites": 1
+        },
+        {
+          "file": "science-lab/v2/v2.js",
+          "nonLiteralSites": 6
+        },
+        {
+          "file": "scripts/science-3d-plan.mjs",
+          "nonLiteralSites": 4
+        },
+        {
+          "file": "science-lab/v2/revised-textbook.js",
+          "nonLiteralSites": 2
+        },
+        {
+          "file": "science-lab/v2/mounts.js",
+          "nonLiteralSites": 1
+        },
+        {
+          "file": "science-lab/v2/think-merge.js",
+          "nonLiteralSites": 5
+        }
+      ],
+      "barePackageOrBuiltinImports": [
+        "node:fs",
+        "node:http",
+        "node:path",
+        "node:url",
+        "playwright"
+      ],
+      "externalReferenceCount": 5,
+      "outsideScienceDependenciesDifferentFromCandidate": [],
+      "scopeLimit": "Static literal JS/CSS/entry resource closure plus all32 workbook/art seeds; nonliteral imports, media beyond CSS URLs, DOM/render/network/package resolution are not verified. Regex candidate extraction includes comments; one false missing usage example was manually excluded after reading the source block.",
+      "browserStarted": false,
+      "runtimeVerified": false,
+      "rawMissingLiteralCandidates": [
+        {
+          "from": "number_magic/app/char3d/char3d.js",
+          "target": "number_magic/app/char3d/char3d/char3d.js"
+        }
+      ],
+      "manualCommentOnlyExclusions": [
+        {
+          "from": "number_magic/app/char3d/char3d.js",
+          "target": "number_magic/app/char3d/char3d/char3d.js",
+          "reason": "Usage example inside the opening block comment; not an executed import."
+        }
+      ],
+      "unresolvedMissingLiteralCandidates": [],
+      "literalReferenceCandidates": 1446
+    }
+  ],
+  "required3DGate": {
+    "planCommand": "node scripts/check-science-3d.mjs --plan",
+    "mandatoryRuntimeCommand": "node scripts/check-science-3d.mjs",
+    "mode": "plan-only",
+    "units": 44,
+    "surfaces": {
+      "ordinary": 272,
+      "fullscreen": 65,
+      "legacyDecksNeedBrowserLookup": 12
+    },
+    "browserStarted": false,
+    "serverStarted": false,
+    "runtimeChecks": 0,
+    "runtimeVerified": false,
+    "decision": "Plan-only output is not a passing mandatory runtime check. Existing browser permission restriction remains; no browser/server was started."
+  },
+  "protection": {
+    "headUnchanged": true,
+    "statusUnchanged": true,
+    "checkedScienceFiles": 2958,
+    "changedScienceFiles": [],
+    "actualMainMerge": false,
+    "mainWorktreeOrIndexMutatedByTask": false
+  },
+  "verification": "Candidate tracked science hashes exactly equal baseline before this metadata/handoff edit. Latest845-test result remains the phase255 result; tests were not repeated for read-only Git/tree research. No actual merge, push, deploy, student access, paid API or file cleanup.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase256",
+  "remaining": "Protect/reconcile active main work, actual PC/mobile/A4/voice/WebGL and mandatory3D runtime gates, broader content/meaning and v1 consistency checks, then integration/publication. This audit is not completion proof."
+}
