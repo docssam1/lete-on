@@ -720,3 +720,10 @@ AMC 8 2001–2002의 문항별 응답표도 연도·문항 키워드로 재검�
 Web search recovered the 2015 99CEF report’s summary and item-table text. The report summary identifies the Taiwan AMC12A cohort as n=5,419 with mean 83.17/150; the indexed item table is printed p.25. The live report URL now redirects to the 2016 file, and the 2015 Internet Archive PDF was inaccessible during this run, so this is not described as Apple Vision OCR or visual page verification. Transcribed all 25 option, omission, and unreadable percentages into the separate Taiwan CSV/runtime population. The 25 starred answers match LIVE; row-sum deviation is at most 0.02 percentage points and the score computed from rounded printed rates is 83.16495/150 (83.16 to two decimals), versus the report’s 83.17. Taiwan remains separate from Global and from grade-level norms. Source: [99CEF 2015 AMC10A/12A report](https://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf).
 
 Changes: added `amc12a-2015-taiwan-item-response-percent.csv`, a separate runtime cohort selector entry, and coverage/README notes. `raw_youtube.txt` remains untracked and untouched. The next chronological collection target is 2015 AMC 10A Taiwan response data, followed by 2015 AMC 12B/AIME source coverage.
+
+
+### 2026-11-05 · 2015 AMC 10A Taiwan table discrepancy
+
+The 99CEF search-indexed report exposes the Taiwan 2015 AMC10A item table (printed p.12) and the summary cohort n=5,087, mean 84.52. All 25 starred keys match the LIVE answer key. However, scoring the table’s rounded correct-choice and omission shares yields 81.46035/150, a 3.06-point gap from the reported mean (unlike the analogous 2015 AMC12A table, which reconciles within rounding). The archived PDF remains inaccessible and the current official URL redirects to 2016, so this needs page-level verification before it can be used for diagnosis; no AMC10A Taiwan CSV or runtime cohort was added.
+
+Next: locate a retrievable image/PDF or independent source copy for p.12 and identify the table/summary discrepancy; continue with other annual reports in parallel where the populations and scoring reconcile.
