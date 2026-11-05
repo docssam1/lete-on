@@ -4188,7 +4188,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   if (source52Cuboid) {
     const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t1-2");
-    if (type) Object.assign(type,{name:"가장 큰 정육면체로 자른 개수와 모서리 합 · 유사문항",label:"가장 큰 정육면체로 자른 개수와 모서리 합 · 유사문항",sourceItemId:"5-2-u5-practice-7-cube-cut-similar",sourceParentItemId:"5-2-u5-practice-7-original",sourceItemLabel:"확인학습 7번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:102,alternateSourcePdfPage:103,sourcePrintedPage:108,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5CubeCutSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 직육면체 그림과 남김없이 가장 큰 정육면체로 자르는 조건을 유지하고 각 답을 독립 검산했습니다."});
+    if (type) Object.assign(type,{name:"가장 큰 정육면체로 자른 개수와 모서리 합 · 유사문항",label:"가장 큰 정육면체로 자른 개수와 모서리 합 · 유사문항",sourceItemId:"5-2-u5-practice-7-cube-cut-similar",sourceParentItemId:"5-2-u5-practice-7-original",sourceItemLabel:"확인학습 7번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:102,alternateSourcePdfPage:103,sourcePrintedPage:108,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5CubeCutSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 직육면체 그림과 남김없이 가장 큰 정육면체로 자르는 조건을 유지하고 각 답을 독립 검산했습니다."});
   }
 
   if (source52Cuboid) {
