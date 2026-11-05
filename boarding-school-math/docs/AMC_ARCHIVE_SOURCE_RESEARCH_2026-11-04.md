@@ -576,3 +576,11 @@ Web search and page inspection located the MAA-authored [61st Annual AMC 10/12 R
 Rechecked the existing 100 response rows against Table IX and LIVE answer keys. The report resolves a transcription defect in the existing 2010 AMC 10A Q23 row: option E is printed as 3.32%, not 3.52%. Corrected the runtime reference and raw CSV; its five option, omission, and unreadable rates now total 100.00% after rounding, so 2010 AMC 10A coverage advances from 24/25 to 25/25. The 2010 AMC 10B Q8/Q17 rows (99.91%/99.92%) and AMC 12B Q3 row (99.88%) remain retained as printed but excluded from comparisons; AMC 12A is 25/25. The four coverage rows now point to the same MAA-authored report mirror and identify the printed pages.
 
 The third-party mirror is a searchable copy, not an MAA-controlled host. Item-response rates describe the recorded contest cohorts and do not become grade norms or individual mastery claims. Search did not recover a usable MAA national item-response table for 2009 AMC 10/12 A/B. The previously found 2009 B-form school reports remain local-school samples and are not merged into these references.
+
+## 2009 AMC 10/12 문항 응답표 웹 재검색 · 2026-11-05
+
+2009 AMC 10/12 A/B 전국 문항 응답표를 대상으로 다시 검색했다. 검색에서 확인된 2009B `Table of Item Difficulty`는 MAA 전국 분석표가 아니라 학교별 성적 보고서다. Temasek Secondary 10B는 n=89, Anglo-Chinese 10B는 n=31이며 같은 보고서의 12B 표본은 n=1, Changkat Changi 10B는 n=10이다. 이 학교 표본들은 해당 학교의 성취도 분석으로만 보존하고, 전국 또는 학년 비교 자료로 합산하지 않는다.
+
+MAA 작성 2010 연례 보고서는 Table II에서 2009 AMC 10/12 회차별 전체 평균과 기록 학년별 평균·응시자 수를 회고해 싣고 있다. 해당 연례 보고서의 `Item Difficulty — All Official Students` 표는 2010 AMC 10/12 A/B를 대상으로 한다. 따라서 이 보고서는 2009 학년 평균의 확인 근거는 되지만 2009 문항별 전국 응답표의 근거는 아니다. 기존 2009 학년 평균은 유지하고, 2009 AMC 10/12 전국 문항 응답 coverage는 `not-found`로 둔다.
+
+출처: [MAA 작성 2010 연례 보고서 사본](https://www.scribd.com/document/51428451/2010-HS-summary), 2009B 학교별 보고서 ([Temasek](https://www.mathsoasis.com/2009/temasek1012b09.pdf), [Anglo-Chinese](https://www.mathsoasis.com/2009/acs%28barker%291012b09.pdf), [Changkat Changi](https://www.mathsoasis.com/2009/ccss1012b09.pdf)).
