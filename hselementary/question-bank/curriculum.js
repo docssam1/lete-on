@@ -4183,7 +4183,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   if (source52Cuboid) {
     const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t4-4");
-    if (type) Object.assign(type,{name:"묶음 상자의 높이 역산하기 · 유사문항",label:"묶음 상자의 높이 역산하기 · 유사문항",sourceItemId:"5-2-u5-practice-11-string-height-similar",sourceParentItemId:"5-2-u5-practice-11-original",sourceItemLabel:"확인학습 11번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:103,alternateSourcePdfPage:104,sourcePrintedPage:109,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5StringHeightSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 끈 그림과 매듭 조건을 유지하고 길이를 바꾼 각 문항의 높이를 독립 검산했습니다."});
+    if (type) Object.assign(type,{name:"묶음 상자의 높이 역산하기 · 유사문항",label:"묶음 상자의 높이 역산하기 · 유사문항",sourceItemId:"5-2-u5-practice-11-string-height-similar",sourceParentItemId:"5-2-u5-practice-11-original",sourceItemLabel:"확인학습 11번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:103,alternateSourcePdfPage:104,sourcePrintedPage:109,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5StringHeightSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 끈 그림과 매듭 조건을 유지하고 길이를 바꾼 각 문항의 높이를 독립 검산했습니다."});
   }
 
   if (source52Cuboid) {
