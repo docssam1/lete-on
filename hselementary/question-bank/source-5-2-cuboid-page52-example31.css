@@ -8,6 +8,6 @@
 .p52e31-cube .cube-edges,.p52e31-cube .cube-lines,.p52e31-net .net-lines{fill:none;stroke:#191511;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .p52e31-cube .cube-lines,.p52e31-net .net-lines{stroke-width:2.5}
 .p52e31-cube .hidden{stroke-dasharray:4 3}
-.p52e31-net .net-labels,.p52e31-cube .cube-labels{font:15px 'Noto Serif KR',serif;fill:#191511}
+.p52e31-net .net-labels text,.p52e31-cube .cube-labels text{font:20px 'Noto Serif KR',serif;fill:#191511;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}
 @media(max-width:480px){.p52e31-figures{grid-template-columns:1fr;max-width:245px;gap:3px}}
 @media print{.p52e31-question,.p52e31-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p52e31-figures{margin:1mm auto;max-height:75mm}.p52e31-figures svg{max-height:75mm}.p52e31-answer-figure svg{max-height:65mm}}

@@ -40,7 +40,7 @@ function art(kind,key){
   const R=(x,y,w,h,i=-1,sw=1.4)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" stroke="${ink}" stroke-width="${sw}" ${i<0?'fill="none"':fill(i)}/>`;
   const C=(x,y,r,i=-1,sw=1.4)=>`<circle cx="${x}" cy="${y}" r="${r}" stroke="${ink}" stroke-width="${sw}" ${i<0?'fill="none"':fill(i)}/>`;
   const dot=(x,y,r=4.5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${ink}"/>`;
-  const hole=(x,y,r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${kids?'#fdfbf5':'none'}" stroke="${ink}" stroke-width="1.8"/>`;
+  const hole=(x,y,r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${kids?'#fdfbf5':'var(--series-ground)'}" stroke="${ink}" stroke-width="1.8"/>`;
   /* 분수: 가운데 x, 분수선 y */
   const frac=(x,y,n,d,s=20)=>T(x,y-s*0.3,n,s)+L(x-s*0.55*Math.max(String(n).length,String(d).length)-2,y,x+s*0.55*Math.max(String(n).length,String(d).length)+2,y,1.4)+T(x,y+s*0.95,d,s);
   const sup=(b,e,s=24)=>`${b}<tspan font-size="${Math.round(s*0.62)}" dy="${-Math.round(s*0.42)}">${e}</tspan><tspan dy="${Math.round(s*0.42)}"> </tspan>`;

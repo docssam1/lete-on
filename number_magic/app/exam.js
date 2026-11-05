@@ -1624,6 +1624,8 @@
 .nm-w2-guide-title { font-weight:800; font-size:calc(13px * var(--ws-fs, 1)); color:var(--w2-strong, #0E2C57); margin-bottom:5px; }
 .nm-w2-guide-item { padding:4px 0 calc(4px + 6px * var(--ws-fs, 1)); border-top:1px dashed #e3ded0; }
 .nm-mid-guide .nm-w2-guide-item { padding-bottom:10px; }
+/* Reserve the tall answer boxes without shrinking tangent formulas. */
+.nm-w2-tangent-intro .nm-w2-guide-item { padding-bottom:2px; }
 /* 중등 문제 지면: 그래프와 문장제도 6문항. 개념/예시는 별도 지면으로 유지한다. */
 .nm-mid-six .nm-w2-item .nm-gp { width:auto!important; height:43mm; max-width:100%; }
 .nm-mid-six .nm-w2-item .nm-gp-nl { height:20mm; }
@@ -7104,7 +7106,7 @@ function renderRoundPagesBody(item, opts){
     const editorialC4 = !!(first && headOnly && opts.editorialC4 && conceptHtml && examLang() === 'ko');
     const editorialFeature = editorialC4 && item.thread === 'ML1' && item.level === 1;
     const editorialStudy = editorialC4 && !editorialFeature ? w2C4StudyFeatureHtml(item.thread, item.level) : '';
-    return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}${editorialC4 ? ' nm-w2-teaching-page' : ''}${editorialFeature || editorialStudy ? ' nm-w2-teaching-feature' : ''}"${item.creative ? ` data-cre="${esc(item.role || 'creative')}"` : ''}>
+    return `<div class="nm-w2-page${first && item.thread === 'MD119' ? ' nm-w2-tangent-intro' : ''}${middleSix ? ' nm-mid-six' : ''}${editorialC4 ? ' nm-w2-teaching-page' : ''}${editorialFeature || editorialStudy ? ' nm-w2-teaching-feature' : ''}"${item.creative ? ` data-cre="${esc(item.role || 'creative')}"` : ''}>
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
   ${editorialC4 ? `<div class="nm-w2-lesson-body">${strategyHtml}${conceptHtml}${editorialFeature ? w2C4EditorialFeatureHtml() : editorialStudy}${separateExample?'':exampleHtml}${separateGuide ? '' : guided.html}</div>`

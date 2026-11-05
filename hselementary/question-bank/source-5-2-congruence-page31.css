@@ -199,3 +199,32 @@
   .print-page:has([data-source-item-id^="5-2-u3-e4-mission-"]),
   .answer-page:has([data-source-answer^="5-2-u3-e4-mission-"]) { page:source52Unit3Page31; }
 }
+
+/* Keep the four-up equilateral diagram's angle values legible in print. */
+.source52-p31-equilateral-example text{font-size:23px;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.source52-p31-equilateral-example .source52-angle-label{font-size:23px}
+.source52-p31-equilateral-example .source52-target-label{font-size:23px}
+.source52-p31-equilateral-example text.source52-angle-label:nth-of-type(1){transform:translate(18px,-10px)}
+.source52-p31-equilateral-example text.source52-angle-label:nth-of-type(2){transform:translate(-16px,5px)}
+
+/* Keep vertex and angle labels readable in the four-question A4 layout. */
+.source52-p31-square text,
+.source52-p31-circle text,
+.source52-p31-area text,
+.source52-p31-square-trisection text {
+  font-size: 28px;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.source52-p31-square .source52-angle-label,
+.source52-p31-circle .source52-angle-label,
+.source52-p31-area .source52-length-label,
+.source52-p31-square .source52-target-label {
+  font-size: 25px;
+}
+.source52-p31-square .source52-angle-label:nth-of-type(1) { transform: translate(-14px, -10px); }
+.source52-p31-square .source52-angle-label:nth-of-type(2) { transform: translate(12px, 0); }
+.source52-p31-area .source52-length-label:nth-last-of-type(2) { transform: translate(-24px, 0); }
+.source52-p31-square-trisection text:nth-of-type(6) { transform: translate(-8px, 0); }

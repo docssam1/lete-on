@@ -38,3 +38,53 @@
 .u3p95-fold84{display:block;width:100%;max-width:300px;height:auto;margin:.2em auto}
 #solutionView .u3p95-fold84-answer{display:block;width:min(210px,100%);height:auto;margin:auto}
 @media print { #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-84-original"] svg.u3p95-fold84{max-height:255px} }
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-6-original"] svg.u3p89-figure {
+    width: 75mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 59mm !important;
+  }
+}
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-11-original"] svg.u3p89-figure {
+    width: 75mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 46mm !important;
+  }
+}
+
+[data-source-item-id="5-2-u3-practice-34-original"] svg.u3p89-figure text {
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-34-original"] svg.u3p89-figure {
+    width: 68mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 58mm !important;
+  }
+}
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-106-original"] svg.u3p89-figure,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-107-original"] svg.u3p89-figure {
+    width: 80mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 60mm !important;
+  }
+}
+
+.u3p99-color113{max-width:420px}
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-113-original"] svg.u3p99-color113 {
+    width: 85mm !important; max-width: 100% !important; height: auto !important; max-height: 50mm !important;
+  }
+}

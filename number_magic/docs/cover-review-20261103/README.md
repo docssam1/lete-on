@@ -11,3 +11,11 @@
 | 07 | 휴대폰(390px) 화면 |
 
 찍은 방법: `ws.html`을 연 뒤 실제 CSS 위에서 `NM_WORKSHEET_SERIES.front()`로 과정마다 다시 그려 표지 요소만 캡처. A4는 Chromium 인쇄 PDF를 `pdftoppm`으로 그림(흑백은 `-gray`).
+
+## 2026-11-05 잔여 수정 및 인쇄 검사 완료 — Mac Codex / GPT-6.1 Sol
+
+- C45 제외 끝점·C70 극한의 빈 점 내부를 실제 표지 배경색으로 채워 구간선/곡선을 가림. 배경색별 실제 렌더와 중심 픽셀 대조, A4 PDF로 확인.
+- 전체 주간 인쇄 검사에서 발견한 C51 k1 MD119 첫 쪽의 답칸 5px 넘침은 따라풀기 아래 여백만 조절해 해결(수식 크기·문항·답 유지).
+- 기존 검사 오류 수정: 표지 문항 유지 검사는 10월 초 문항 대신 같은 현행 생성기의 표지 장식 적용/해제 결과를 비교. 인쇄 편집 검사는 실제 둘러보기 진입 후 실행. 전체 주간 검사는 외부 CDN을 차단해 네트워크 대기로 멈추지 않게 함(로컬 표지 글꼴·그림은 실제 로딩).
+- 통과: `check-worksheet-series.js` 444 모델 조건·12 브라우저 조건·문항/정답 유지 C0 60개/C4 54개/C38 114개, `check-weekly-sheets.js` 74과정×2=148장, `check-editorial-print.js` 9유형·1440/390px 편집기·표지 출력, `check-print-image-readiness.js`, `check-standard-worksheet-browser.js`, 신규 `check-cover-open-points-browser.js` 실제 C45/C70.
+- 증거: 08/09는 수정 표지 PNG와 실제 인쇄한 앞 2쪽 PDF, 10은 C51 수정 쪽. `20261105-*-check.txt`에 검사 결과. 자동 검사와 Chromium A4 PDF 검수이며 물리 프린터/실제 휴대폰 검수는 아님.

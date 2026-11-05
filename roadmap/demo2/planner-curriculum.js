@@ -54,7 +54,7 @@ function actual(a,axis,fields){
 }
 function defaults(fields){const b=P.BAND[fields.band]||P.BAND.B;return {elemMonths:b.elemS?3:Number(fields.speed)||2,bridgeMonths:4,midMonths:b.midLen,highMonths:6,deepMonths:b.midLen,...Object.fromEntries(KMO.map(x=>[x.id+'Months',x.months]))};}
 function date(m,offset=0){const n=m.year*12+m.month-1+Math.floor(offset+1e-8);return {year:Math.floor(n/12),month:n%12+1,label:Math.floor(n/12)+'년 '+(n%12+1)+'월'};}
-function period(m,b){const a=date(m,b.start),z=date(m,Math.max(b.start,b.end-.00001));return a.label+(a.label===z.label?'':' – '+(a.year===z.year?z.month+'월':z.label))+(b.continues?'까지 표시 · 이후 계속':'');}
+function period(m,b){if(b.calendarStart&&b.calendarEnd){const fmt=v=>v.replace(/^(\d+)-(\d+)-(\d+)$/,(a,y,m,d)=>y+'년 '+Number(m)+'월 '+Number(d)+'일');return fmt(b.calendarStart)+(b.calendarStart===b.calendarEnd?'':' – '+fmt(b.calendarEnd));}const a=date(m,b.start),z=date(m,Math.max(b.start,b.end-.00001));return a.label+(a.label===z.label?'':' – '+(a.year===z.year?z.month+'월':z.label))+(b.continues?'까지 표시 · 이후 계속':'');}
 function model(answers={},fields={},value){
  const a=I.effective(answers),s=restore(value),durations={...defaults(fields),...s.periods},all=courses(),common=all.findIndex(x=>x.stage==='공통수학2');
  const calendar=s.startMonth?s.startMonth.split('-').map(Number):[+fields.year||new Date().getFullYear(),+fields.mon||new Date().getMonth()+1];
@@ -139,7 +139,7 @@ function detail(m,id){
  const b=m.lanes.flatMap(l=>l.blocks).find(x=>x.id===id);if(!b)return null;
  const materials=b.books?`<h3>이 단계의 교재 후보</h3><ul>${b.books.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p>필요한 역할의 교재를 고릅니다. 위 책을 모두 필수로 더하지 않습니다. 자료에 약자로 적힌 책은 실제 판본을 확인하세요.</p>`:'';
  const topics=b.areas?`<h3>필수 공부 목록</h3>${AREAS.filter(a=>b.areas.includes(a.id)).map(a=>`<details open><summary>${esc(a.title)}</summary>${a.groups.filter(g=>g.tier<=b.tier).map(g=>`<h4>${esc(g.title)}</h4><ul>${g.items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`).join('')}</details>`).join('')}<p>제공하신 영역별 자료를 단계에 맞게 묶은 학습 순서입니다. 배운 범위에서도 새 문제를 풀고 설명하는 모습을 확인합니다.</p>`:'';
- return {title:b.title,guide:b.guide,block:b,html:`<p>${esc(period(m,b))}${b.sustained?' · 꾸준히 병행':` · 남은 ${round(b.end-b.start)}개월`}</p><p>${esc(b.tasks||'개념과 대표 유형을 익히고, 낯선 문제에서 풀이의 이유를 설명합니다. 막힌 단원을 보완한 뒤 다음 과정을 연결합니다.')}</p>${b.fraction?`<p>현재 과정의 완료 ${Math.round(b.fraction*100)}%를 반영했습니다.</p>`:''}${materials}${topics}<button type="button" ${m.kind==='goal'?'data-goal-curriculum-open':'data-curriculum-open'}>현재 단계·기간 조정</button>`};
+ return {title:b.title,guide:b.guide,block:b,html:`<p>${esc(period(m,b))}${b.calendarStart?'':b.sustained?' · 꾸준히 병행':` · 남은 ${round(b.end-b.start)}개월`}</p><p>${esc(b.tasks||'개념과 대표 유형을 익히고, 낯선 문제에서 풀이의 이유를 설명합니다. 막힌 단원을 보완한 뒤 다음 과정을 연결합니다.')}</p>${b.fraction?`<p>현재 과정의 완료 ${Math.round(b.fraction*100)}%를 반영했습니다.</p>`:''}${materials}${topics}<button type="button" ${m.kind==='goal'?'data-goal-curriculum-open':'data-curriculum-open'}>현재 단계·기간 조정</button>`};
 }
 global.PlannerCurriculum=Object.freeze({KMO,AREAS,PERIODS,restore,update,supports,actual,defaults,model,date,period,render,controls,detail});
 })(window);

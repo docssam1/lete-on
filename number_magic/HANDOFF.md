@@ -3659,3 +3659,11 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 검사 187개 전부 실행: 통과 129 / 실패 58, 실패는 전부 10-31 기준에서도 실패(원래 있던 것). 이번 작업이 만든 실패 1건(`check-progress-speed-browser`, `roadCadenceChosen`이 저장 실패 때 안 되돌아감)은 `main.js`에서 고쳐 통과.
 - 학습 핵심 계산 검사(진도·난이도 순서·배차·진단)는 통과. 서비스 전 할 것 ★5: ①`delivery-plan.js SOURCE_LIMITS` C29~C32 실제 회차 수로 정정(리비전 결정) ②실제 번호 시험 발송 ③C33-B06·C0 7주 인쇄 넘침 ④MD87 L1 화면 채점 ⑤과정 끝에서 문자 회차가 멈추는 정책(비회원). 상세·근거는 위 문서와 `check-results.txt`.
 - **2026-11-04 반영(원장 「네 추천으로 진행 · 전화번호 넣도록」)**: ①회차 한도 4곳(delivery-plan·course-limits.json·handler.mjs·schema.sql) 실제 과정 수로 재생성 + 리비전 `20261104-curriculum3` ②weekly-notify v19 과정 끝 → 다음 과정 1회차(번들 `courseTable()`) ③휴대폰 등록 안내 띠(`renderNotifyBanner`, 보호자 패널로) ④check-answerable 산점도 찍기 건너뜀 ⑤C33-B06·C37-B05·C0 7/12/13주 인쇄 넘침. 상세 `docs/service-readiness-20261103/README.md`. **서버 배포(deploy-edge-function.yml weekly-notify·nm-membership)와 DB 함수 한도 상수 적용은 따로**.
+
+
+## 2026-11-05 표지 잔여 2곳·미완료 인쇄 검사 완료 (Mac Codex / GPT-6.1 Sol)
+- C45/C70의 빈 점에 표지 배경색을 채워 내부 선을 가림. 새 실제 학습지/PDF 검사와 이미지 중심 픽셀로 확인. 캐시 꼬리표 갱신.
+- 인쇄 검사 중 발견한 C51 k1 MD119 첫 쪽의 답칸 넘침 5px는 따라풀기 여백 조절로 해결. 문항/정답/진도·발송 계산 변경 없음.
+- 과거 표지 검사의 오래된 문항 기준을 같은 현행 생성기(표지 장식 적용/해제) 비교로 교체, 인쇄 편집 검사는 실제 체험 진입, 주간 검사는 외부 CDN 대기를 제거. 판정 기준 완화 없음.
+- `check-worksheet-series.js`(444모델·12브라우저·문항/답 유지), `check-weekly-sheets.js`(148/148), `check-editorial-print.js`(9유형·1440/390px), 이미지 준비·표준 학습지·새 빈 점 실제 브라우저/PDF 검사 모두 통과. 기존 표지 검수의 미완료 3검사 상태는 이 기록으로 갱신.
+- 증거·세부 결과: `docs/cover-review-20261103/README.md`의 2026-11-05 절 및 로그/PNG/PDF. 실제 프린터 출력과 실기기 검수는 수행하지 않음.

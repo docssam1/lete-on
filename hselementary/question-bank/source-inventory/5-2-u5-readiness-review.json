@@ -86,6 +86,8 @@
           "classification": "서로 다른 크기의 정육면체로 직육면체 채우기",
           "candidate": "면을 나란히 쌓을 때 1cm 정육면체 최소 25개; 공식 정답 미확인",
           "reviewNote": "상자의 면과 정육면체의 면이 나란한 쌓기를 기준으로 한다. 각 방향으로 상자 경계에서 임의의 정육면체까지 직선을 그으면 지나가는 정육면체의 길이가 모두 정수이므로 각 면의 좌표도 정수다. 3cm 정육면체는 둘을 나란히 놓을 공간이 없으므로 최대 한 개다. 정수 좌표 배치를 독립 전수 탐색하면 3cm 정육면체가 없을 때 2cm는 최대 8개, 한 개 있을 때 최대 6개다. 각각 남은 단위 부피가 36, 25이므로 최소는 25개다. 별도 검사 코드에 3cm 1개와 2cm 6개의 실제 좌표도 기록했다. 비평행한 배치를 허용하는지와 출판사 공식 답안은 미확인이다.",
+          "practiceRuntimeId": "5-2-u5-practice-13-aligned-practice",
+          "practiceRelation": "면을 나란히 놓고 세 크기를 사용하는 별도 연습이며 원문 정답 확정과 구분",
           "status": "source-interpretation-answer-key-pending"
         },
         {
@@ -171,7 +173,7 @@
         {"number": 37, "classification": "정육면체의 세 면에 그은 선을 전개도에 옮기기", "candidate": "주어진 가 면의 왼쪽 면과 위쪽 면에 대각선을 각각 한 개씩 추가", "reviewNote": "가 면의 왼쪽 위 꼭짓점이 세 선의 공통점이다. 전개도에서 가의 왼쪽 면은 왼쪽 아래에서 오른쪽 위로, 가의 위쪽 면도 왼쪽 아래에서 오른쪽 위로 선을 그으면 원문 겨냥도의 세 대각선이 만난다.", "runtimeTypeId": "5-2-u5-practice-37-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 38, "classification": "테이프가 표시된 전개도를 겨냥도로 접기", "candidate": "윗면 ㄴㄹ과 앞면의 ㄴ부터 앞오른쪽 아래 꼭짓점, 오른쪽 면의 그 꼭짓점부터 ㄹ까지", "reviewNote": "윗면 대각선 ㄴㄹ은 원문 겨냥도에 이미 그어져 있다. 전개도를 접으면 앞면 대각선은 ㄴ에서 앞오른쪽 아래 꼭짓점으로, 오른쪽 면 대각선은 그 꼭짓점에서 ㄹ로 이어진다. 독립 좌표 모델에서 세 면의 선 끝이 같은 점에 닿는지 확인했다. 보이지 않는 면을 그리는 방식은 표시 지침을 별도로 정해야 한다.", "runtimeTypeId": "5-2-u5-practice-38-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 39, "classification": "직육면체 표면 선을 꼭짓점이 표시된 전개도로 옮기기", "candidate": "원래 그어진 ㄱㄷ 외에 ㄱㅂ, ㅂㅇ, ㄷㅇ 추가", "reviewNote": "원문 겨냥도에서 면마다 그은 선의 끝점을 읽고 전개도의 같은 꼭짓점에 옮겼다. ㄱㄷ은 이미 그어져 있고, 왼쪽 면에 ㄱㅂ, 아랫면에 ㅂㅇ, 오른쪽 면에 ㄷㅇ를 그린다.", "runtimeTypeId": "5-2-u5-practice-39-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
-        {"number": 40, "classification": "전개도의 부분 선을 정육면체 겨냥도로 옮기기", "candidate": "보이는 윗면·앞면·오른쪽 면에 각각 원문 위치의 선분 하나; 뒷면·아랫면·왼쪽 면에도 이어지는 선분", "reviewNote": "원문과 필기 없는 사본의 전개도를 다시 대조했다. 윗면은 앞 변 ㄴㄷ의 중간 부근에서 오른쪽 변 ㄷㄹ의 중간 부근까지, 앞면은 ㄴㄷ의 같은 위치에서 앞왼쪽 세로 모서리의 중간 부근까지 잇는다. 오른쪽 면은 ㄷㄹ의 같은 위치에서 뒤쪽 세로 모서리의 중간 부근까지 잇는다. 나머지 선분도 접으면 뒷면·아랫면·왼쪽 면에 각각 하나씩 있으며, 여섯 면의 선분이 각 모서리에서 이어져 한 바퀴를 이룬다. 이를 확인하기 위해 각 끝점을 해당 모서리의 중점으로 가정한 별도 3차원 좌표 모델에서 여섯 면과 여섯 연결점을 확인했다. 그림은 정확한 중점 조건을 명시하지 않으므로 이 좌표는 연결 관계를 확인하기 위한 가정이다. 비율과 숨은 면을 답 그림에 어떻게 표시할지, 공식 답안은 추가 확인이 필요하다.", "status": "source-interpretation-answer-key-pending"}
+        {"number": 40, "classification": "전개도의 부분 선을 정육면체 겨냥도로 옮기기", "candidate": "보이는 윗면·앞면·오른쪽 면에 각각 원문 위치의 선분 하나; 뒷면·아랫면·왼쪽 면에도 이어지는 선분", "reviewNote": "원문과 필기 없는 사본의 전개도를 다시 대조했다. 윗면은 앞 변 ㄴㄷ의 중간 부근에서 오른쪽 변 ㄷㄹ의 중간 부근까지, 앞면은 ㄴㄷ의 같은 위치에서 앞왼쪽 세로 모서리의 중간 부근까지 잇는다. 오른쪽 면은 ㄷㄹ의 같은 위치에서 뒤쪽 세로 모서리의 중간 부근까지 잇는다. 나머지 선분도 접으면 뒷면·아랫면·왼쪽 면에 각각 하나씩 있으며, 여섯 면의 선분이 각 모서리에서 이어져 한 바퀴를 이룬다. 이를 확인하기 위해 각 끝점을 해당 모서리의 중점으로 가정한 별도 3차원 좌표 모델에서 여섯 면과 여섯 연결점을 확인했다. 그림은 정확한 중점 조건을 명시하지 않으므로 이 좌표는 연결 관계를 확인하기 위한 가정이다. 비율과 숨은 면을 답 그림에 어떻게 표시할지, 공식 답안은 추가 확인이 필요하다.", "practiceRuntimeId": "5-2-u5-practice-40-midpoint-practice", "practiceRelation": "끝점이 모두 중점인 별도 창작 연습으로, 원문 정답 확정과 구분", "status": "source-interpretation-answer-key-pending"}
       ]
     },
     {
@@ -676,7 +678,9 @@
       "visualCheckStatus": "confirmed-source-net-needs-model",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "종이의 최대 크기가 원문에서 제한되지 않으므로 의도한 추가 조건과 공식 답안·공개용 그림을 확인하기 전 원문 잠금을 유지합니다."
+      "lockReason": "종이의 최대 크기가 원문에서 제한되지 않으므로 의도한 추가 조건과 공식 답안·공개용 그림을 확인하기 전 원문 잠금을 유지합니다.",
+      "practiceRuntimeId": "5-2-u5-e2-paper-choice-practice",
+      "practiceRelation": "도화지 후보와 배치 방향을 제한한 별도 창작 연습; 원문 정답 확정과 구분"
     },
     {
       "sourceItemId": "5-2-u5-e2-example-2-1",
