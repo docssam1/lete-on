@@ -438,6 +438,19 @@ The [LIVE 2017 AMC10A solutions page](https://live.poshenloh.com/past-contests/a
 
 The [Bard Math Circle 2017B results](https://www.bardmathcircle.org/p/2017-amc-1012b-results) add a local, explicitly grade-labeled comparison: AMC10B Grade 7 n=3 mean 64.5, Grade 8 n=5 mean 82.2, Grade 9 n=6 mean 78.3, and Grade 10 n=2 mean 78.0 (n=16 overall). AMC12B has Grade 11 n=2 mean 85.5 and Grade 12 n=1 mean 49.5 (n=3 overall). The grade and item-response coverage inventories now describe the available Bard samples but keep national grade tables and item-response coverage unresolved; the local means are not mixed into national comparison or score-reference outputs.
 
+## 2026-11-05 · 2018–2021 AMC B-form grade samples
+
+Reviewed the Bard Math Circle B-form reports from 2018 through 2021. Each is a local test-site cohort, not a national grade norm. Grade means and counts published in those pages are recorded in the grade-coverage inventory with direct source links:
+
+| Year | AMC 10B local grade means | AMC 12B local grade means |
+| --- | --- | --- |
+| 2018 | G6 61.5 (n=1); G8 63.0 (n=2); G9 59.3 (n=10); G10 73.1 (n=4), total 17 | G11 31.5 (n=1) |
+| 2019 | G7 69.0 (n=2); G8 36.0 (n=1); G9 60.6 (n=5); G10 61.5 (n=10), total 18 | G11 67.3 (n=7) |
+| 2020 | G8 85.5 (n=2); G9 58.0 (n=3); G10 52.1 (n=4), total 9 | G9 93.0 (n=2); G11 81.0 (n=1); G12 74.6 (n=4), total 7 |
+| 2021 | G6 48.0 (n=1); G7 38.0 (n=3); G8 66.3 (n=6); G9 68.3 (n=11); G10 71.2 (n=9), total 30 | G9 117.0 (n=2); G11 79.5 (n=4); G12 74.3 (n=4), total 10 |
+
+Sources: [2018](https://www.bardmathcircle.org/p/2018-amc-10-12b), [2019](https://www.bardmathcircle.org/p/2019-amc-10-12b-results), [2020](https://www.bardmathcircle.org/p/2020-amc-10-12b-results), [2021](https://www.bardmathcircle.org/p/2021-amc-10-12b-results). The coverage inventory keeps nationwide grade means marked unavailable. It also records that these local grade score summaries are not item-level response data. Separate 2019 whole-cohort score report copies do not contain grade breakdowns; they do not change the national grade-coverage status.
+
 ## 2026-11-05 follow-up: annual summary search
 
 Rechecked the [MAA-authored 2008 High School Results and Awards Summary mirror](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions). Its indexed contents confirm that the four AMC 10/12 item-difficulty tables are in the report (printed pp. 252–255), but the public text extraction still omits those table cells. The report states that 2008 AMC 12 A/B mean scores were 65.6/68.9 and both AIME qualifying cutoffs were 97.5; the existing GFIELD cutoff reference already contains the form-specific values. The grade-mean coverage manifest already has 2007–2011 AMC 10/12 form records staged, so this search did not add duplicate statistics.
