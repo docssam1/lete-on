@@ -14,7 +14,7 @@
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand lete-on-brand" href="#" aria-label="LETE-ON 첫 화면"><span class="brand-wordmark">LETE-ON</span><small>초중고 입학 테스트를 위한</small></a>
-    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=dg-middle1-70min-20261106">내 시험 입장</a></div>
+    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=official-audit-20261106">내 시험 입장</a></div>
   </nav></header>
   <main id="main">
     <section class="academy-home" id="academy-home" aria-labelledby="home-title">
@@ -23,7 +23,7 @@
         <div class="academy-launcher" id="academy-launcher" aria-label="소개를 볼 학원 선택"></div>
         <p class="independent-note"><strong>고등 및 누테학원 대비를 위한 프로그램입니다.</strong></p>
         <section class="notice-board-section" id="notices" aria-labelledby="notices-title"><div class="small-section-head"><h2 id="notices-title">테스트 일정·설명회</h2><span>대치·분당 · 황소는 대치</span></div><div id="home-notice-board"></div></section>
-        <noscript><p>학원 소개를 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=dg-middle1-70min-20261106">내 시험 입장</a></p></noscript>
+        <noscript><p>학원 소개를 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=official-audit-20261106">내 시험 입장</a></p></noscript>
       </div>
     </section>
     <section class="academy-intro-view" id="academy-intro-view" hidden>
@@ -37,12 +37,13 @@
     </section>
     <section class="learning-path" id="learning-path"><div class="shell"><div class="path-heading"><h2>모의고사 후<br>오답 학습</h2><p>시험 결과를 보고<br>틀린 유형을 다시 공부합니다.</p></div><ol><li><span>01</span><div><h3>모의고사</h3><p>지원 과정의 범위와 모의고사 시간을 확인합니다.</p></div></li><li><span>02</span><div><h3>결과 확인</h3><p>점수와 함께 단원·세부유형별 결과를 살펴봅니다.</p></div></li><li><span>03</span><div><h3>오답 학습</h3><p>승인된 유사문제로 풀이 과정을 점검합니다.</p></div></li></ol></div></section>
   </main>
-  <footer class="footer"><div class="shell"><span>LETE-ON · 중고등과정 대비</span><a href="../login.html?v=dg-middle1-70min-20261106">배정받은 시험 입장</a></div></footer>
-  <script src="../data/public-exam-profiles.js?v=dg-middle1-70min-20261106"></script>
-  <script src="../data/catalog.js?v=dg-middle1-70min-20261106"></script>
-  <script src="../data/academy-engagement.js?v=dg-middle1-70min-20261106"></script>
-  <script src="../data/standard-exam-policy.js?v=dg-middle1-70min-20261106"></script>
-  <script src="../data/available-mocks.js?v=dg-middle1-70min-20261106"></script>
+  <footer class="footer"><div class="shell"><span>LETE-ON · 중고등과정 대비</span><a href="../login.html?v=official-audit-20261106">배정받은 시험 입장</a></div></footer>
+  <script src="../data/public-exam-profiles.js?v=official-audit-20261106"></script>
+  <script src="../data/catalog.js?v=official-audit-20261106"></script>
+  <script src="../data/academy-engagement.js?v=official-audit-20261106"></script>
+  <script src="../data/standard-exam-policy.js?v=official-audit-20261106"></script>
+  <script src="../data/available-mocks.js?v=official-audit-20261106"></script>
+  <script src="../data/official-exam-specs.js?v=official-audit-20261106"></script>
   <script>
     'use strict';
     const data=HIGHSELECT_PUBLIC_PROFILES;
@@ -82,7 +83,7 @@
     const availableExams={SH:{'high-selection':mocks.find(e=>e.id==='sh-selection-r01')},DP:{'common1-basic':mocks.find(e=>e.id==='dp-common1-v14-pilot')},SM:{'common1-basic':mocks.find(e=>e.id==='sm-pre-middle-common1-r01')},WM:{'middle21-basic':mocks.find(e=>e.id==='wm-middle21-basic-mixed-r01')},DG:{'middle1':mocks.find(e=>e.id==='dg-middle1-entry-r01'),'pre-high1':mocks.find(e=>e.id==='dg-pre-high1-r01')},ED:{'high-advance':mocks.find(e=>e.id==='ed-common1-basic-r01'),'common1-basic':mocks.find(e=>e.id==='ed-common1-basic-r01')}};
     const mockTime=e=>e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · 휴식 ${e.breakMinutes}분 별도`:(e.durationMinutes?e.durationMinutes+'분':'');
     const deepthinkMiddle1Ids=['dg-middle1-entry-r01','dg-middle1-entry-r02'];
-    const examHref=e=>'../login.html?v=dg-middle1-70min-20261106&exam='+encodeURIComponent(e.id);
+    const examHref=e=>'../login.html?v=official-audit-20261106&exam='+encodeURIComponent(e.id);
     function mockOptions(exams){return `<div class="course-options">${exams.map(e=>`<a class="course-option" href="${examHref(e)}"><span><b>${esc(e.title)}</b><small>${e.mode==='pilot'?'시범 모의고사 · ':''}${esc(e.scope)} · ${e.questionCount}문항${e.durationMinutes?' · '+mockTime(e):''} · O/X 자가채점</small></span><span class="option-indicator" aria-hidden="true">→</span></a>`).join('')}</div>`;}
     function mockList(program){
       const exams=mocks.filter(e=>e.programId===program.code);
@@ -96,7 +97,7 @@
     }
     function applicationAction(resolved,launch,launches=[]){
       if(launches.length>1)return `<nav class="course-options" aria-label="회차별 응시">${launches.map((e,i)=>`<a class="course-option" href="${examHref(e)}"><span><b>${i+1}회 응시</b><small>${e.questionCount}문항 · ${mockTime(e)}</small></span><span class="option-indicator" aria-hidden="true">→</span></a>`).join('')}</nav>`;
-      if(launch)return `<a class="button accent" href="../login.html?v=dg-middle1-70min-20261106&exam=${encodeURIComponent(launch.id)}">${launch.mode==='pilot'?'시범 응시':'모의고사 응시'}</a>`;
+      if(launch)return `<a class="button accent" href="../login.html?v=official-audit-20261106&exam=${encodeURIComponent(launch.id)}">${launch.mode==='pilot'?'시범 응시':'모의고사 응시'}</a>`;
       if(!resolved.canApply)return '<p class="course-availability"><span class="status-dot"></span>모의고사 준비 중</p>';
       const url=safeUrl(engagement.application.surveyUrl);
       return url?`<a class="button accent" href="${esc(url)}" target="_blank" rel="noopener noreferrer">이 과정 신청하기</a>`:'<p class="course-availability">신청 일정은 추후 안내합니다.</p>';
@@ -108,8 +109,10 @@
       const exam=launch?{questionCount:launch.questionCount,durationMinutes:launch.durationMinutes,durationScope:'our-sale-mock'}:resolved.exam;
       // Only a separately scoped, approved mock duration is shown as our mock time.
       const duration=launches.length>1?(launches.every(e=>e.durationMinutes===launches[0].durationMinutes)?`각 ${mockTime(launches[0])}`:launches.map((e,i)=>`${i+1}회 ${mockTime(e)}`).join(' · ')):launch?.sectionMinutes?mockTime(launch):exam?.durationScope==='our-sale-mock'&&Number.isFinite(exam.durationMinutes)?`${exam.durationMinutes}분`:'과정·회차 확정 후 안내';
+      const official=HIGHSELECT_OFFICIAL_EXAM_SPECS.courses[program.code+':'+course.id];
+      const basis=official?`<p class="scope-note">${esc(official.note)} · <a href="${esc(safeUrl(official.sourceUrl))}" target="_blank" rel="noopener noreferrer">공식 안내</a></p>`:'';
       const count=exam?.questionCount?`${exam.questionCount}문항`:'회차 구성 후 안내';
-      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><p class="section-kicker">모의고사 안내</p><h3 id="selected-course-title" tabindex="-1">${esc(course.label)}</h3><p class="course-scope">${esc(launch?.scope||course.scope)}</p><dl class="course-specs"><div><dt>모의고사 문항</dt><dd>${esc(count)}</dd></div><div><dt>모의고사 시간</dt><dd>${esc(duration)}</dd></div><div><dt>제공 상태</dt><dd>${launch?(launch.mode==='pilot'?'시범 응시 가능':'응시 가능'):(resolved.canApply?'신청 가능':'준비 중')}</dd></div></dl><p class="scope-note">실제 학원의 응시 시간·범위는 지원할 지점과 과정의 해당 회차 공지를 확인해 주세요.</p>${applicationAction(resolved,launch,launches)}</div><aside class="course-package"><span class="draft-label">수업 구성안</span><h4>수업 구성</h4><ol><li><b>모의고사</b><span>과정별 모의고사 풀이</span></li><li><b>진단 분석</b><span>단원·유형별 결과 확인</span></li><li><b>보완 학습</b><span>틀린 유형의 유사문제 풀이</span></li></ol><p>수업 시간·횟수·수강료는 추후 안내합니다.</p></aside></section>`;
+      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><p class="section-kicker">모의고사 안내</p><h3 id="selected-course-title" tabindex="-1">${esc(course.label)}</h3><p class="course-scope">${esc(launch?.scope||course.scope)}</p><dl class="course-specs"><div><dt>모의고사 문항</dt><dd>${esc(count)}</dd></div><div><dt>모의고사 시간</dt><dd>${esc(duration)}</dd></div><div><dt>제공 상태</dt><dd>${launch?(launch.mode==='pilot'?'시범 응시 가능':'응시 가능'):(resolved.canApply?'신청 가능':'준비 중')}</dd></div></dl>${basis}${applicationAction(resolved,launch,launches)}</div><aside class="course-package"><span class="draft-label">수업 구성안</span><h4>수업 구성</h4><ol><li><b>모의고사</b><span>과정별 모의고사 풀이</span></li><li><b>진단 분석</b><span>단원·유형별 결과 확인</span></li><li><b>보완 학습</b><span>틀린 유형의 유사문제 풀이</span></li></ol><p>수업 시간·횟수·수강료는 추후 안내합니다.</p></aside></section>`;
     }
     function render(){
       const params=new URLSearchParams(location.hash.slice(1));
