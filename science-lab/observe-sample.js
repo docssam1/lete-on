@@ -53,14 +53,16 @@ export function sampleArticle(set) {
 // 쪽마다 210×297mm 상자 하나 — 둘째 쪽부터 머리줄(제목·이름), 모든 쪽 아래에 쪽 번호. 칸은 쪽 경계에서 잘리지 않게 통째로 넘기고,
 // 관찰그림 표는 줄 단위로 나눠 다음 쪽에 표 머리를 다시 단다. 쪽보다 큰 칸과 옆으로 넓은 분류 나무는 줄여서(zoom) 맞춘다.
 // 지점이 세트의 일부 칸만 다룰 때(해변 둘로 나눔): 관찰 장소와 대상 + 그 칸만 남기고 번호를 다시 매긴다
-export function secsOnly(root, secs) {
+export function secsOnly(root, secs, obs) {
   const keep = new Set(['target', ...secs]); let n = 0;
+  // 관찰그림 줄도 그 지점의 표본만(연못 둘로 나눔)
+  if (obs) root.querySelectorAll('.rp-obs-row[data-obs]').forEach((r) => { if (!obs.includes(+r.dataset.obs)) r.style.display = 'none'; });
   root.querySelectorAll('section.rp-cell[data-sec]').forEach((el) => { if (!keep.has(el.dataset.sec)) { el.style.display = 'none'; return; } const h = el.querySelector('h3'); if (h?.firstChild?.nodeType === 3) h.firstChild.nodeValue = h.firstChild.nodeValue.replace(/^\d+\./, `${++n}.`); });
 }
-export async function printSampleA4(set, { secs } = {}) {
+export async function printSampleA4(set, { secs, obs } = {}) {
   document.querySelectorAll('.a4-print').forEach((e) => e.remove());
   const html = sampleArticle(set); if (!html) return;
-  const parse = () => { const d = document.createElement('div'); d.innerHTML = html; const a = d.firstElementChild; if (secs) { secsOnly(a, secs); a.querySelectorAll('section.rp-cell[data-sec]').forEach((el) => { if (el.style.display === 'none') el.remove(); }); } return a; };
+  const parse = () => { const d = document.createElement('div'); d.innerHTML = html; const a = d.firstElementChild; if (secs) { secsOnly(a, secs, obs); a.querySelectorAll('section.rp-cell[data-sec], .rp-obs-row').forEach((el) => { if (el.style.display === 'none') el.remove(); }); } return a; };
   const art0 = parse();
   const title = art0.querySelector('.rp-head h1')?.textContent || '', name = art0.querySelector('.rp-who i')?.textContent || '';
   const foot = art0.querySelector('.rp-foot span')?.textContent || '';
