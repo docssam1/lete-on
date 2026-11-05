@@ -1,8 +1,8 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261104-season-book';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261105-history-review';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261105-ecology-photo-language';
-import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261105-ecology-photo-language';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261105-land-photo-language';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261105-land-photo-language';
 import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
@@ -693,7 +693,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
   const bookMod = await BOOKS[u]().then(m=>revisedClassroom(u,m)).catch(() => null);
   if (location.hash !== requestedHash) return;
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js?v=20261105-career-reading-science'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
+  const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js?v=20261105-land-photo-language'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
   if (location.hash !== requestedHash) return;
   const classLab=bookMod.classroomLab || L.explore?.lab || {}, classRowsKey=classLab.rowsKey || 'labRows';
   const mountClassLab=(el,options)=>(classLab.mount || mountLabOf(classLab.kind))(el,options);

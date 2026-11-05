@@ -1,12 +1,12 @@
 import{findLifeItem}from'./book-life.js';import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
-import{workbook}from'../data/book/s41-u03.workbook.js';import{art as bookArt}from'../data/book/s41-u03.workbook-art.js';
+import{workbook}from'../data/book/s41-u03.workbook.js?v=20261105-land-photo-language';import{art as bookArt}from'../data/book/s41-u03.workbook-art.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
 const figure=key=>{const f=workbook.figures[key]||bookArt[key];if(!f)throw Error(`땅 교재 자료 없음 ${key}`);return f;};
 export function buildGroundThinkingSlides(ch,art,plan,pool,mode,ix){
  ix=ch.groundInteraction||ix;const teach=mode==='teach',S=[],phases=Object.fromEntries(plan.phases.map(x=>[x.id,x]));let ses=1;
  const add=(id,phase,title,body,extra={})=>S.push({id,phase,phaseObj:phases[phase],title,body,kind:'read',ses,...extra}),peek=text=>teach?`<div class="dk-ans rv">${esc(text)}</div>`:`<div class="dk-peekw"><button type="button" class="dk-peek">생각한 뒤 설명 보기</button><div class="dk-ans" hidden>${esc(text)}</div></div>`;
- add('cover','open','땅의 변화 · 관찰에서 안전한 실천으로',figure('groundOpener')+p('흐르는 물과 강 지형을 살피고,화산 모형을 만들어요. 현무암·화강암을 관찰해 분류하고 화산·지진의 생활 영향을 조사하며 대처를 실제로 연습해요.')+p('기존 전체 단원225분을 여러 차시에 나누는 계획이에요. 사진·3D 모형·자료 문제와 직접 수행의 근거를 구별해요.'),{standards:['4과11-01','4과11-02','4과11-03','4과11-04']});
+ add('cover','open','땅의 변화 · 관찰에서 안전한 실천으로',figure('groundOpener')+p('흐르는 물과 강 지형을 살피고,화산 모형을 만들어요. 현무암·화강암을 관찰해 분류하고 화산·지진의 생활 영향을 조사하며 대처를 실제로 연습해요.')+p('이 단원은 여러 차시에 나누어 공부해요. 사진과 모형을 살펴보고, 직접 관찰한 내용과 비교해 땅의 변화를 설명해 보아요.'),{standards:['4과11-01','4과11-02','4과11-03','4과11-04']});
  if(teach)add('plan','open','물길 → 화산 모형 → 암석 분류 → 대처 실천',`<ol class="dk-plan">${plan.phases.map(x=>`<li><b>${esc(x.name)}</b><span>${x.min}분</span><em>${esc(x.aim)}</em></li>`).join('')}</ol>`+p(plan.note));
  const pick=teach?`<ol class="dk-tally">${ix.predict.options.map((s,j)=>`<li data-j="${j}"><span class="dk-tn">${j+1}</span><span class="dk-tt">${esc(s)}</span><button type="button" data-t="-" aria-label="${j+1}번 한 명 빼기">−</button><b class="dk-tc">0</b><button type="button" data-t="+" aria-label="${j+1}번 한 명 더하기">+</button></li>`).join('')}</ol>`:`<ol class="dk-choices dk-mc predict">${ix.predict.options.map((s,j)=>`<li><button type="button" data-j="${j}"><span>${'①②③'[j]}</span>${esc(s)}</button></li>`).join('')}</ol>`;
  add('predict','open',ix.predict.q,pick+p('처음 생각은 채점하지 않아요. 어떤 관찰과 비교가 필요한지 말해요.'),{kind:'predict'});

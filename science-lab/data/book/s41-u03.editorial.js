@@ -136,3 +136,29 @@ export function withLandUpperScience(workbook){
  });
  return {...workbook,pages:pages(workbook.pages),...(workbook.teacherStudentPages?{teacherStudentPages:pages(workbook.teacherStudentPages)}:{})};
 }
+
+export const LAND_PHOTO_VERSION='20261105-land-photo-language';
+const landPhotoCaptions={
+ "groundOpener": [
+  "활동을 준비하는 설명 장면이에요. 실제 학생 수행·측정의 근거가 아니며 이 장면만으로 암석의 이름을 정하지 않아요.",
+  "모래 쟁반과 물컵, 두 돌을 준비한 설명 그림이에요. 물을 흘리기 전 모래 언덕의 모습을 살펴보아요."
+ ],
+ "groundRiver": [
+  "단원평가 세트3 4번 사진. 장소와 촬영 시기는 제공되지 않았어요.",
+  "강가에 밝은색 퇴적물이 쌓인 모습이에요. 물가의 모양과 쌓인 곳을 살펴보아요."
+ ],
+ "riverPair": [
+  "세트1 5번 두 사진. 같은 강 여부·유속·촬영 시기는 미확인이에요.",
+  "위 사진은 모래가 쌓인 굽은 강, 아래 사진은 바위 사이로 물이 흐르는 하천이에요. 물가와 바닥의 모습을 비교해 보아요."
+ ]
+};
+export function withLandPhotoLanguage(workbook){
+ if(workbook.unit!=='s41-u03')return workbook;
+ const figures={...workbook.figures};
+ for(const [key,[before,after]]of Object.entries(landPhotoCaptions)){
+  const html=figures[key];
+  if(typeof html!=='string'||html.split(before).length!==2)throw Error('땅의 변화 사진 설명이 다릅니다: '+key);
+  figures[key]=html.replace(before,after);
+ }
+ return {...workbook,figures};
+}

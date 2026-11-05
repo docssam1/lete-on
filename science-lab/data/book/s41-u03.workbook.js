@@ -1,3 +1,4 @@
+import{withLandPhotoLanguage}from'./s41-u03.editorial.js?v=20261105-land-photo-language';
 import{withLandUpperScience}from'./s41-u03.editorial.js?v=20261105-land-upper-science';
 import{withStudentGuideLanguage}from'./student-opening-language.js?v=20261105-student-guide';
 import{withObservationLanguage}from'./observation-language.js';
@@ -7449,4 +7450,5 @@ const baseWorkbook = {
 export const observationPriorWorkbook=withStudentOpeningLanguage(withLandEditorial(baseWorkbook));
 export const studentGuidePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const landUpperPriorWorkbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
-export const workbook=withLandUpperScience(landUpperPriorWorkbook);
+export const landPhotoPriorWorkbook=withLandUpperScience(landUpperPriorWorkbook);
+export const workbook=withLandPhotoLanguage(landPhotoPriorWorkbook);
