@@ -3009,6 +3009,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u4-e1-example-3-original","어림과 소수 둘째 자리 · 원문","source52U4P42Example13Original","example"],
     ["5-2-u4-e1-example-4-original","상한 감귤과 판매 가격 · 원문","source52U4P42Example14Original","example"]
   ]) if (!source52DecimalSubunit.types.some(t=>t.id===id)) source52DecimalSubunit.types.push({id,number:source52DecimalSubunit.types.length+1,name,label:name,sourceItemId:id,sourceSection:section,sourcePrintedPage:42,sourcePdfPage:38,alternateSourcePdfPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치와 조건을 대조하고 소수 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false});
+  if (source52DecimalSubunit) for (const [n,name] of [[1,"소수와 자연수의 곱셈"],[2,"배추밭과 고구마밭의 넓이 차"],[3,"0.07일을 시·분·초로 바꾸기"],[4,"소수 수열의 300번째 수"],[5,"종이테이프로 만든 고리의 길이"],[6,"반올림한 몫으로 자연수 찾기"]]) {
+    const id=`5-2-u4-e1-mission-${n}-original`,label=`${name} · 원문`,key=`source52U4P43Mission${n}Original`;
+    if (!source52DecimalSubunit.types.some(t=>t.id===id)) source52DecimalSubunit.types.push({id,number:source52DecimalSubunit.types.length+1,name:label,label,sourceItemId:id,sourceSection:"mission",sourcePrintedPage:43,sourcePdfPage:39,alternateSourcePdfPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치와 조건을 대조하고 소수 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false});
+  }
   if (source52DecimalSubunit) {
     const index = source52DecimalSubunit.types.findIndex(t => t.id === "5-2-u4-t1");
     if (index >= 0) {
