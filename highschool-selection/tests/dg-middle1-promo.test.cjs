@@ -6,6 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 require("../data/academy-engagement.js");
+require("../data/official-exam-specs.js");
 const engagement = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT;
 const policy = require("../data/standard-exam-policy.js");
 
@@ -28,6 +29,7 @@ function promo(hash = "#academy=DG") {
     HIGHSELECT_STANDARD_EXAM_POLICY: policy,
     HIGHSELECT_CATALOG: { exams: [] },
     HIGHSELECT_AVAILABLE_MOCKS: mocks,
+    HIGHSELECT_OFFICIAL_EXAM_SPECS: globalThis.HIGHSELECT_OFFICIAL_EXAM_SPECS,
     URL, URLSearchParams,
     location: { hash, href: "https://lete-on.gfieldacademy.net/highschool-selection/promo/" + hash },
     document: {

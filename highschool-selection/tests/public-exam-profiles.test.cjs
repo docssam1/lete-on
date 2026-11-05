@@ -57,11 +57,13 @@ test("cutoffs are scoped records and never a global academy number", () => {
 test("WM advertising uses the current middle2-1 cutoff and preserves round changes", () => {
   const wm = data.profiles.find(profile => profile.code === "WM");
   const middleFact = wm.facts.find(fact => fact.label === "중2-1 기본반 현행 구조");
-  assert.equal(middleFact.value, "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외");
-  assert.deepEqual(middleFact.sourceIds, ["WM-M21-JULY-2026"]);
+  assert.equal(middleFact.value, "중1 대수 25 + 중1 기하 25 · 각 70분 · 통계 제외");
+  assert.deepEqual(middleFact.sourceIds, ["WM-M21-OCT-2026-OFFICIAL"]);
   assert.equal(wm.cutline.course, "중2-1 기본반 신입");
-  assert.equal(wm.cutline.display.startsWith("28 / 40문항"), true);
+  assert.equal(wm.cutline.display.startsWith("35 / 50문항"), true);
   assert.deepEqual(wm.roundProfiles.map(round => [round.id, round.questionCount, round.minimum]), [
+    ["WM-M21-BASIC-ENTRY-2026-10", 50, 35],
+    ["WM-CM1-BASIC-ENTRY-2026-12", 50, 35],
     ["WM-CM1-BASIC-ENTRY-2025-09", 50, 35],
     ["WM-M21-BASIC-ENTRY-2026-07", 40, 28],
     ["WM-M22-BASIC-TRANSFER-2026-05", 45, 32],
@@ -70,6 +72,7 @@ test("WM advertising uses the current middle2-1 cutoff and preserves round chang
     ["WM-M32-BASIC-TRANSFER-2026-06", 50, 35]
   ]);
   assert.equal(wm.roundProfiles.at(-1).state, "superseded");
+  assert.equal(wm.roundProfiles.find(round => round.id === "WM-M21-BASIC-ENTRY-2026-07").state, "superseded");
   assert.equal(wm.caveat.includes("중등 심화듀얼과 고등 실력공수 듀얼을 섞지 않고"), true);
 });
 
@@ -84,7 +87,8 @@ test("private scorecards enrich observed formats without replacing scoped public
   const dp = data.profiles.find(profile => profile.code === "DP");
   const wm = data.profiles.find(profile => profile.code === "WM");
   assert.equal(dp.facts.find(fact => fact.label === "예비중1 성적표 사례").value, "공통수학1 기본 · 30문항 · 60점 컷");
-  assert.equal(dp.cutline.course, "공통수학2 기본반 입학");
+  assert.equal(dp.cutline.state, "needs-review");
+  assert.match(dp.cutline.context, /12월.*추후 발표/);
   assert.equal(wm.facts.find(fact => fact.label === "공수1 결과분석 사례").value, "중등대수 30 + 중등 기하·종합 30 · 문항별 유형표");
   assert.equal(wm.cutline.course, "중2-1 기본반 신입");
 });
@@ -95,8 +99,10 @@ test("ED testimonial assessment is not promoted to an admission cutoff", () => {
   assert.equal(reviewRule.value, "총 42점 이상 + 최소 2회 14점 이상");
   assert.equal(reviewRule.state, "observed");
   assert.deepEqual(reviewRule.sourceIds, ["ED-HIGH-REVIEW-YT"]);
-  assert.equal(ed.cutline.state, "needs-review");
-  assert.equal(ed.cutline.display, "확인 필요");
+  assert.equal(ed.cutline.state, "verified");
+  assert.equal(ed.cutline.course, "공통수학1 기본반");
+  assert.match(ed.cutline.display, /21 \/ 30문항/);
+  assert.match(ed.cutline.context, /자동 합격 판정하지 않음/);
   assert.match(ed.caveat, /입학 커트라인이나 현행 공식 규정으로 사용하지 않습니다/);
 });
 
@@ -104,8 +110,9 @@ test("SM common1 entry keeps current public format separate from legacy referenc
   const sm = data.profiles.find(profile => profile.code === "SM");
   assert.equal(sm.facts.find(fact => fact.label === "현재 시험 범위").value, "중2-2 · 중3-1 · 중3-2");
   assert.equal(sm.facts.find(fact => fact.label === "현재 시험 구성").value, "대수 15 + 기하 15 · 총 30문항 · 180분");
-  assert.equal(sm.cutline.display, "20 / 30문항 이상");
-  assert.equal(sm.cutline.course, "중1 공통수학1 기본 입반");
+  assert.equal(sm.cutline.display, "확인 필요");
+  assert.match(sm.cutline.context, /성적순 선발/);
+  assert.deepEqual(sm.cutline.sourceIds, ["SM-CM1-OCT-2026-OFFICIAL"]);
   assert.equal(sm.facts.find(fact => fact.label === "현행 난도 보정").state, "confirmed");
   assert.match(sm.facts.find(fact => fact.label === "현행 난도 보정").value, /사용자 관찰/);
   assert.match(sm.facts.find(fact => fact.label === "구판 참고지 감사").value, /후보 분류/);

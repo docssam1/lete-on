@@ -42,9 +42,9 @@
       id: "DG",
       name: "깊은생각 심화 입학",
       shortName: "깊생",
-      description: "중3-1·공통수학1·공통수학2 도형의 방정식까지",
-      scope: "중3 심화 + 공통수학1·2",
-      levels: ["1레벨", "2레벨", "일반 입테"],
+      description: "대치 2027 예비고1 · 공통수학1·공통수학2 도형의 방정식",
+      scope: "공통수학1·공통수학2 도형의 방정식",
+      levels: ["입학테스트 후 배정"],
       accent: "#8a6730"
     },
     {
@@ -177,7 +177,7 @@
     {
       id: "wm-middle21-basic-entry-r01",
       programId: "WM",
-      title: "원수학 중2-1 기본반 입학 대비 1회",
+      title: "원수학 중2-1 기본반 2026년 7월 구 구성안",
       track: "중2-1 기본반 신입",
       curriculumVersion: "2022-revised",
       scopeLabel: "중1 대수 20 + 중1 기하 20 · 중1 통계 제외",
@@ -210,7 +210,7 @@
       requiredSourceLineup: ["HS_G7", "SW_G7", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "DD_HIGH_G7"],
       sourcePortfolioAcrossFourRounds: ["HS_G7", "SW_G7", "DP_G7", "AG_G7_OOP", "BL_G7_2025", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "LINEUP_GEO_MIDDLE_OOP", "DD_HIGH_G7", "HX_G7_OOP", "INSIGHT_G7_OOP"],
       difficultyMix: { standard: 16, raised: 24, lowered: 0, level: "highest" },
-      note: "최초 공지는 25+25였으나 같은 2026년 1월 신입 전형 시행 전에 공식 변경 공지로 20+20·각 50분으로 정정됐고, 2026년 7월 전형 창도 120분으로 재확인했습니다. 실제 첫 시행이 40문항이었을 가능성은 높지만 성적표·실물 시험지로 최종 확정하기 전까지 합격선과 문항은 공개하지 않습니다. 황소 중등·STARWARS·리미티드·SUPERMATH·수학의 신·최상위수학을 포함해 한 회에 여덟 출처 이상을 섞고, 기준 심화 16문항·올림 24문항으로 구성합니다. 교재 문항을 원수학 기출로 표시하지 않습니다."
+      note: "이 기록은 2026년 7월까지의 구 구성안입니다. 공개 중인 1~4회는 2026년 10월 공식 공지의 50문항·대수70분·기하70분·휴식20분을 따릅니다. 최초 공지는 25+25였으나 같은 2026년 1월 신입 전형 시행 전에 공식 변경 공지로 20+20·각 50분으로 정정됐고, 2026년 7월 전형 창도 120분으로 재확인했습니다. 실제 첫 시행이 40문항이었을 가능성은 높지만 성적표·실물 시험지로 최종 확정하기 전까지 합격선과 문항은 공개하지 않습니다. 황소 중등·STARWARS·리미티드·SUPERMATH·수학의 신·최상위수학을 포함해 한 회에 여덟 출처 이상을 섞고, 기준 심화 16문항·올림 24문항으로 구성합니다. 교재 문항을 원수학 기출로 표시하지 않습니다."
     },
     {
       id: "wm-algebra-geometry-diagnostic",
@@ -282,9 +282,9 @@
       id: "dg-entry-common",
       programId: "DG",
       title: "깊생 입학 진단 대비",
-      track: "1·2레벨 도전",
+      track: "대치 2027 예비고1 입학",
       curriculumVersion: "2022-revised",
-      scopeLabel: "중3-1·공통수학1·공통수학2 도형의 방정식까지",
+      scopeLabel: "대치 2027 예비고1 · 공통수학1·공통수학2 도형의 방정식",
       questionCount: null,
       pageCount: null,
       sourceRole: "internal-variant",
