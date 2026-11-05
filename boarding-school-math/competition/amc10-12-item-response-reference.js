@@ -1359,6 +1359,32 @@
 23,A,4.76,3.57,3.11,1.65,1.36,85.54,
 24,A,2.29,1.94,1.67,1.16,13.78,79.15,
 25,C,2.84,4.05,9.07,2.85,3.34,77.84,`.trim(), respondentCount: 33489, population: "2007 AMC 12B U.S. official-student response cohort", sourceUrl: "https://web.archive.org/web/20161019223837id_/https://www.maa.org/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2006-7pub/2007-1012Summary.pdf", sourceStatus: "MAA-authored 58th annual report; printed p. 263, Table IX; original PDF recovered from Internet Archive; table percentages transcribed from embedded PDF text and checked against the page image; all 25 starred answers cross-checked with LIVE; response shares checked against 100% allowing printed rounding; report does not provide a separate unreadable-response column" }),
+    "amc12-2014-B-taiwan": Object.freeze({ raw: `
+1,C,0.16,0.80,92.79,0.27,5.67,0.27,0.05
+2,C,2.44,2.44,82.08,3.23,4.24,5.30,0.27
+3,E,1.11,0.90,3.23,0.85,92.26,1.48,0.16
+4,B,0.69,95.97,0.53,0.95,0.69,1.11,0.05
+5,A,85.74,2.60,1.33,2.76,1.86,5.62,0.11
+6,D,3.55,12.35,5.57,65.16,1.43,11.72,0.21
+7,D,4.83,4.45,14.85,69.88,3.76,2.17,0.05
+8,C,6.26,8.43,49.63,8.96,9.44,17.23,0.05
+9,B,0.27,97.40,0.42,0.32,0.42,1.17,0.00
+10,D,4.24,10.66,3.92,53.66,3.23,24.07,0.21
+11,E,11.77,4.29,6.57,42.10,20.25,14.85,0.16
+12,B,16.33,24.92,13.52,8.22,13.31,23.44,0.27
+13,C,11.03,6.36,23.33,5.36,3.92,49.84,0.16
+14,D,2.55,10.71,6.47,50.80,5.73,23.65,0.11
+15,C,5.41,6.73,37.80,5.20,2.39,42.36,0.11
+16,E,3.39,3.61,4.93,6.79,64.32,16.86,0.11
+17,E,6.79,9.01,7.21,6.95,12.88,57.16,0.00
+18,B,4.35,9.49,10.39,8.38,5.57,61.72,0.11
+19,E,4.03,9.44,4.88,9.38,9.23,63.04,0.00
+20,B,8.80,19.35,18.35,4.88,24.87,23.59,0.16
+21,C,9.12,5.67,10.18,4.51,4.88,65.64,0.00
+22,C,3.50,9.28,7.10,3.98,7.00,69.03,0.11
+23,C,3.13,6.31,7.53,5.62,5.46,71.95,0.00
+24,D,3.71,6.68,7.64,5.30,1.59,75.03,0.05
+25,D,5.73,4.67,8.27,7.00,1.96,72.38,0.00`.trim(), respondentCount: 1886, population: "2014 AMC 12B Taiwan response cohort; 99CEF reports 1,886 participants and mean 77.7", sourceUrl: "https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf", sourceStatus: "GEMT 2014 analysis report; printed p.19 Taiwan item-response table; all 25 starred answers match LIVE. Taiwan regional cohort is separate from the Global table and is not a U.S. grade norm." }),
     "amc10-2007-A": Object.freeze({ raw: `
 1,C,0.68,2.38,92.36,2.62,1.1,0.86,
 2,A,70.55,2.81,1.07,2.46,2.44,20.66,
