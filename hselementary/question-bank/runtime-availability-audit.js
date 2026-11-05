@@ -379,7 +379,8 @@ for (const type of ready) {
     for (let seed = 1; seed <= 20; seed += 1) {
       let generated;
       try {
-        generated = generatorApi.generate(type, 0, difficulty, seed, type.variant);
+        // Match the worksheet preview: fixed pools start at index 0, regardless of a legacy type.variant.
+        generated = generatorApi.generate(type, 0, difficulty, seed, type.generationMode === "fixed-verified-pool" ? 0 : type.variant);
         generatedCount += 1;
       } catch (error) {
         failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`);
