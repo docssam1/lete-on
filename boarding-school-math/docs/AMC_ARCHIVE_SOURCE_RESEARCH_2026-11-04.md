@@ -598,3 +598,9 @@ MAA 작성 2010 연례 보고서는 Table II에서 2009 AMC 10/12 회차별 전�
 수치는 [`amc10-12-uwf-correct-response-2007-2011.csv`](../competition/historical-amc-grade/amc10-12-uwf-correct-response-2007-2011.csv)에 원문 페이지 범위와 한정 조건을 붙여 보존했다. 이 자료는 정답률만 제공하며 보기별 오답 분포가 없다. 전국/글로벌 응답 비교, 학년별 평균, percentile, 개인의 오개념 판정과 섞지 않는다. 기존 전국형 item-response coverage와 런타임 norm lookup은 수정하지 않았다. 연구가 제시한 강·약점 문제 설명은 선택된 ‘regular strength’ 문제의 표본 분석이지 시험 전체 진단 기준이 아니다.
 
 출처: [UWF 연구 PDF](https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf); [LIVE AMC 10 B 연도별 아카이브](https://live.poshenloh.com/past-contests/amc10/2011B); [LIVE AMC 12 B 연도별 아카이브](https://live.poshenloh.com/past-contests/amc12/2011B).
+
+## 2026-11-05 · 2019 AMC 10B/12B 점수보고서 웹 원문 재확인
+
+이번 웹 검색에서 한 페이지짜리 [2019 AMC 10B 보고서](https://www.mathcontest.org/sites/default/files/AMC10B-2019-Score-Distribution.pdf)와 [2019 AMC 12B 보고서](https://mathcontest.org/sites/default/files/AMC12B-2019-Score-Distribution.pdf)를 직접 열어 표를 대조했다. 두 보고서는 MAA 양식 점수보고서의 사본으로, AMC 10B는 n=23,832, 1,375개 학교, 평균 58.42, 표준편차 23.52이며 상위 1%·2.5%·25%·50%·75% 경계를 싣는다. AMC 12B는 n=19,116, 1,459개 학교, 평균 56.73, 표준편차 21.32이며 상위 1%·5%·25%·50%·75% 경계를 싣는다. 양식마다 인쇄된 백분위 열이 다르므로 없는 열은 공란으로 보존했다. 원문 범위와 링크를 [`amc10-12-score-distribution-2019b-maa-report-copy.csv`](../competition/historical-amc-grade/amc10-12-score-distribution-2019b-maa-report-copy.csv)에 추가했다. 앱에는 같은 전체 응시자 참고값이 이미 있어 중복 진단 규칙은 넣지 않았다. 이 두 보고서는 학년별 분포가 아니므로 Grade 7/8 기준이나 개인의 학년 순위를 뜻하지 않는다.
+
+별도로 [Archimedean Schools의 2019 AMC 10A 기사](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/)는 Grade 7 응시자 n=1,982, 평균 59.72점을 AMC 10A 전체 해당 학년 집단 값으로 보고한다. 이는 학교 웹사이트가 MAA 통계를 인용한 2차 게시 자료이며 원 MAA 등급표 파일은 확보하지 못했다. 따라서 앱의 해당 연도·시험형·Grade 7 정확 일치 비교에만 남기고, 다른 폼이나 학년에 일반화하지 않는다.
