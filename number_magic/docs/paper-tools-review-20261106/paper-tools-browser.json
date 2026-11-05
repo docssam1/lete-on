@@ -722,12 +722,26 @@
     "format": "A4",
     "physicalPrint": false
   },
-  "deployment": "pending",
+  "deployment": {
+    "runtimeCommit": "dfc81ba45593bb973ef25f6db869ed2d429e8ed5",
+    "pagesRun": 42120442716,
+    "conclusion": "success",
+    "liveAssets": 7,
+    "liveCases": 5
+  },
   "before": {
     "tenframeCellMm": 15,
     "counterDiameterMm": 11,
     "placeUnitMm": 6,
     "pentominoViewHeight": 84,
     "pentominoContentBottom": 102
+  },
+  "mobileAnchor": {
+    "viewports": [
+      1100,
+      390
+    ],
+    "headingBelowStickyMenu": true,
+    "verification": "check-paper-tools-browser.js and live actual worksheets"
   }
 }

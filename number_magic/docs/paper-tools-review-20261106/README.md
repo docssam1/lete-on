@@ -28,4 +28,9 @@
 
 수판은 칸 안에 수 조각을 놓는 도구이며, 십진 블록은 낱개10개=막대1개의 관계를 표현한다. 분류 대조 근거: [Math Learning Center Number Frames](https://www.mathlearningcenter.org/apps/number-frames), [EDC Base Ten Blocks](https://elementarymath.edc.org/resources/base-ten-blocks/). 외부 그림을 복사하지 않았다.
 
-운영 반영은 후속 배포 기록으로 확정한다.
+## 운영 반영 완료
+
+- 교구 본체 main `7a7adf34d`, [Pages42119819597](https://github.com/docssam1/lete-on/actions/runs/42119819597) 성공.
+- 휴대폰 교구 제목 가림 보정 main `dfc81ba45`, [Pages42120442716](https://github.com/docssam1/lete-on/actions/runs/42120442716) 성공.
+- 운영 **7파일 바이트 일치**, 실제 C1/C3/C13/C26 및 C1 390px **5조건** HTTP200·자바스크립트 오류0·외부 쓰기0. 교구 제목이 상단 메뉴 아래에 보이며 승인 PNG가 정상 열린다. [운영 근거](live-verification.json).
+- [10칸 수판 바로 보기](https://lete-on.gfieldacademy.net/number_magic/ws.html?c=C1&r=1&l=ko&auto=0#nm-paper-tool), [십막대 수 모형 바로 보기](https://lete-on.gfieldacademy.net/number_magic/ws.html?c=C3&r=1&l=ko&auto=0#nm-paper-tool).
