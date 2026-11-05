@@ -1,3 +1,4 @@
+import{withMixtureReadableWorkbook}from'./c22-s52-u01.editorial.js?v=20261106-mixture-readable-workbook';
 import{withObservationLanguage}from'./observation-language.js';
 import{withMixtureEditorial}from'./c22-s52-u01.editorial.js?v=20261104-mixture-book';
 // 혼합물96문항. scripts/gen-science-workbook-c22s52u01.mjs가 생성.
@@ -8723,4 +8724,5 @@ const baseWorkbook = {
 };
 
 export const observationPriorWorkbook=withMixtureEditorial(baseWorkbook);
-export const workbook=withObservationLanguage(observationPriorWorkbook);
+export const mixtureReadablePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
+export const workbook=withMixtureReadableWorkbook(mixtureReadablePriorWorkbook);
