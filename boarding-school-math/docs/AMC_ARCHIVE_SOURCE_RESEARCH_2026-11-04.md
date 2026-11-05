@@ -584,3 +584,11 @@ The third-party mirror is a searchable copy, not an MAA-controlled host. Item-re
 MAA 작성 2010 연례 보고서는 Table II에서 2009 AMC 10/12 회차별 전체 평균과 기록 학년별 평균·응시자 수를 회고해 싣고 있다. 해당 연례 보고서의 `Item Difficulty — All Official Students` 표는 2010 AMC 10/12 A/B를 대상으로 한다. 따라서 이 보고서는 2009 학년 평균의 확인 근거는 되지만 2009 문항별 전국 응답표의 근거는 아니다. 기존 2009 학년 평균은 유지하고, 2009 AMC 10/12 전국 문항 응답 coverage는 `not-found`로 둔다.
 
 출처: [MAA 작성 2010 연례 보고서 사본](https://www.scribd.com/document/51428451/2010-HS-summary), 2009B 학교별 보고서 ([Temasek](https://www.mathsoasis.com/2009/temasek1012b09.pdf), [Anglo-Chinese](https://www.mathsoasis.com/2009/acs%28barker%291012b09.pdf), [Changkat Changi](https://www.mathsoasis.com/2009/ccss1012b09.pdf)).
+
+## 2026-11-05 · UWF 2007–2011 AMC 10B/12B 문항 정답률 회수
+
+웹 검색으로 Northwest Florida 시험장 AMC 코호트 연구의 원문 PDF를 열고, PDFKit으로 Figure 1과 Figure 3의 텍스트를 추출해 2007–2011 AMC 10/12 문항별 정답률 250개를 전사했다. 논문 Table 1에 연도별 표본 수가 명시돼 있다: AMC 10은 79, 92, 78, 117, 121명; AMC 12는 72, 53, 67, 129, 162명. 연구가 자발적으로 참가한 Northwest Florida 9개 이상 고교 학생을 UWF 시험장에서 모은 지역 표본임을 본문에서 확인했다. 공란은 오답에 포함된다. A/B 표기는 연구에 없어 B형 귀속은 추론으로 남겼다. 2007–2011 AMC 10 각 연도의 연구 내 Q1 주제를 해당 B형과 대조했고, AMC 12는 2007 Q1을 추가 대조했다.
+
+수치는 [`amc10-12-uwf-correct-response-2007-2011.csv`](../competition/historical-amc-grade/amc10-12-uwf-correct-response-2007-2011.csv)에 원문 페이지 범위와 한정 조건을 붙여 보존했다. 이 자료는 정답률만 제공하며 보기별 오답 분포가 없다. 전국/글로벌 응답 비교, 학년별 평균, percentile, 개인의 오개념 판정과 섞지 않는다. 기존 전국형 item-response coverage와 런타임 norm lookup은 수정하지 않았다. 연구가 제시한 강·약점 문제 설명은 선택된 ‘regular strength’ 문제의 표본 분석이지 시험 전체 진단 기준이 아니다.
+
+출처: [UWF 연구 PDF](https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf); [LIVE AMC 10 B 연도별 아카이브](https://live.poshenloh.com/past-contests/amc10/2011B); [LIVE AMC 12 B 연도별 아카이브](https://live.poshenloh.com/past-contests/amc12/2011B).
