@@ -3101,7 +3101,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52DecimalSubunit) {
     const id = "5-2-u4-e1-mission-2", name = "전체와 남은 밭의 넓이 비교";
     const typeNumber = Math.max(0,...source52DecimalUnit.subunits.flatMap(s => s.types.map(t => Number(t.typeNumber) || 0))) + 1;
-    source52DecimalSubunit.types.push({id, number:source52DecimalSubunit.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"Mission 2", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:39, sourcePrintedPage:43, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52FieldCropRemainderAreaDifferencePage43Mission2", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:false, answerVisualStatus:"not-required"});
+    source52DecimalSubunit.types.push({id, number:source52DecimalSubunit.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"Mission 2", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:39, sourcePrintedPage:43, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52FieldCropRemainderAreaDifferencePage43Mission2", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:40, verifiedVariantTarget:40, answerVisualRequired:false, answerVisualStatus:"not-required"});
   }
 
   if (source52DecimalSubunit) {
