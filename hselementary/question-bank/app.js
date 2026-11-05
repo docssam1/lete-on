@@ -342,6 +342,12 @@
     $("selectedQuestionCount").textContent = plannedCount;
     $("selectedTypeSummary").textContent = `${selected.length}개`;
     $("selectedQuestionSummary").textContent = `${plannedCount}문항`;
+    const capacityNotice = $("selectionCapacityNotice");
+    const isShort = selected.length > 0 && plannedCount < state.count;
+    capacityNotice.hidden = !isShort;
+    capacityNotice.textContent = isShort
+      ? `요청한 ${state.count}문항 중 ${plannedCount}문항을 만들 수 있습니다. 유형을 더 선택해 주세요.`
+      : "";
     $("generateButton").disabled = plannedCount === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
       '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + (type.generationMode === "fixed-verified-pool" ? ' · 검증 문항 ' + type.verifiedVariantCount + '개' : '') + '</small></span>' +

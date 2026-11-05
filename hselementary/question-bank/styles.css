@@ -1686,3 +1686,11 @@ button{
   .answer-pages > .answer-page:not(:first-child) > .page-label { display: none; }
   .answer-pages > .answer-page:not(:first-child) .solution-list { margin-top: 10px; }
 }
+
+@media screen {
+  .selection-capacity-notice { flex: 1 1 220px; margin: 0; color: #8b4028; font-size: 12px; line-height: 1.45; }
+  .selection-capacity-notice[hidden] { display: none; }
+}
+@media screen and (max-width: 700px) {
+  .selection-capacity-notice { grid-column: 1 / -1; grid-row: 1; flex: none; text-align: left; }
+}
