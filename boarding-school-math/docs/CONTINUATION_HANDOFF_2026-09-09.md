@@ -1026,3 +1026,10 @@ MAA 56th Annual report의 [Doczz 검색 가능 보관본](https://doczz.net/doc/
 - 2014 AMC12A 세계 표 Q25는 26.99% 합계인 원문 인쇄 오류라 그대로 억제된다. 두 Taiwan cohort는 각 원본의 별도 모집단 표라서 오류가 있는 세계 표 값을 바꾸지 않은 채, 별도 원표의 25문항 지역 응답 비교를 선택할 수 있다. 집단 선택 UI는 각 source의 응시자 수를 동적으로 보여준다.
 - 검수: 각 CSV와 런타임 25행 일치, LIVE 키 25개씩 대조, 응답률 합계 오차 최대 0.01%p(12A)·0.02%p(12B), 점수 평균 80.30·77.65/150(보고된 77.7 반올림) 확인, Global 12A Q25 억제 유지, `git diff --check` 통과. 브라우저 테스트는 Mac 잠금과 이 실행 셸의 Node 미설치로 실행하지 못했다. `raw_youtube.txt` 미수정. 변경은 로컬 전용; push·배포·Drive 동기화 없음.
 - 근거와 제한은 `docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`와 historical AMC README에 기록.
+
+
+### 2026-11-05 · 2015 AMC 12A Taiwan item-response cohort
+
+Added the separate 2015 AMC12A Taiwan table (n=5,419; report mean 83.17/150; printed p.25) to the annual source catalog and runtime selector. Values come from the 99CEF search-indexed report text because the current official report URL redirects to 2016 and the archived PDF was not retrievable; do not describe this transcription as Apple Vision OCR or visually verified. All 25 keys matched LIVE, each row’s printed percentages sum within 0.02 percentage points of 100%, and the score from rounded printed percentages is 83.16495/150 (83.16 to two decimals; report gives 83.17). Keep Taiwan separate from Global and grade-specific populations.
+
+Next: search and capture the 2015 AMC10A Taiwan item-response table, then extend by year/form using distinct source populations. `raw_youtube.txt` stays untouched. No push, deployment, Drive synchronization, or Claude API call.
