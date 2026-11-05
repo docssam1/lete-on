@@ -20,4 +20,16 @@ for (const [number, given, added] of [
   assert(!question.prompt.includes(added), `${number}: 문제 그림에 답을 넣지 않음`);
   assert(question.answerVisual.includes(added), `${number}: 정답 그림의 추가 선`);
 }
-console.log("PASS: p112 q37 and q39 solid given lines, dashed folds, and answer diagrams");
+const tape = bank.build(38);
+const tapeFold = tape.prompt.match(/<path data-net112-folds="38"[^>]*>/)?.[0];
+const tapeOutline = tape.prompt.match(/<path data-net112-outline="38"[^>]*>/)?.[0];
+const tapeMarks = tape.prompt.match(/<path d="M20 65 L65 20[^>]*>/)?.[0];
+assert(tapeFold && tapeOutline && tapeMarks);
+assert.match(tapeFold, /stroke-dasharray="4 2"/);
+assert.doesNotMatch(tapeOutline, /stroke-dasharray/);
+assert.doesNotMatch(tapeMarks, /stroke-dasharray/);
+assert.equal((tapeFold.match(/M\d+ \d+ L\d+ \d+/g) || []).length, 5);
+assert.equal((tapeOutline.match(/M\d+ \d+ L\d+ \d+/g) || []).length, 14);
+assert.equal((tapeMarks.match(/M\d+ \d+ L\d+ \d+/g) || []).length, 6);
+assert(tape.answerVisualRequired && tape.answerVisual.includes("보이는 면"));
+console.log("PASS: p112 q37–39 solid given lines, dashed folds, and answer diagrams");
