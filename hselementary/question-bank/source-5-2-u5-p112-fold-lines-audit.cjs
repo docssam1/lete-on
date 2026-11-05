@@ -20,6 +20,17 @@ for (const [number, given, added] of [
   assert(!question.prompt.includes(added), `${number}: 문제 그림에 답을 넣지 않음`);
   assert(question.answerVisual.includes(added), `${number}: 정답 그림의 추가 선`);
 }
+for (const number of [33, 34, 35]) {
+  const question = bank.build(number);
+  for (const diagram of [question.prompt, ...(question.answerVisual ? [question.answerVisual] : [])]) {
+    const fold = diagram.match(new RegExp(`<path data-net112-folds="${number}"[^>]*>`))?.[0];
+    assert(fold, `${number}: 접는 선`);
+    assert.match(fold, /stroke-dasharray="4 2"/);
+    assert.equal((fold.match(/M\d+ \d+ (?:L\d+ \d+|[HV]\d+)/g) || []).length, 5);
+  }
+}
+assert(!bank.build(35).prompt.includes('M145 20 L170 45'), '35: 문제 그림에 답을 넣지 않음');
+assert(bank.build(35).answerVisual.includes('M145 20 L170 45'), '35: 정답 그림에 선 표시');
 const tape = bank.build(38);
 const tapeFold = tape.prompt.match(/<path data-net112-folds="38"[^>]*>/)?.[0];
 const tapeOutline = tape.prompt.match(/<path data-net112-outline="38"[^>]*>/)?.[0];
@@ -32,4 +43,4 @@ assert.equal((tapeFold.match(/M\d+ \d+ L\d+ \d+/g) || []).length, 5);
 assert.equal((tapeOutline.match(/M\d+ \d+ L\d+ \d+/g) || []).length, 14);
 assert.equal((tapeMarks.match(/M\d+ \d+ L\d+ \d+/g) || []).length, 6);
 assert(tape.answerVisualRequired && tape.answerVisual.includes("보이는 면"));
-console.log("PASS: p112 q37–39 solid given lines, dashed folds, and answer diagrams");
+console.log("PASS: p112 q33–35 and q37–39 solid given lines, dashed folds, and answer diagrams");
