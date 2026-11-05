@@ -20,6 +20,7 @@ require("./source-5-2-cuboid-page52-example31.js");
 require("./source-5-2-cuboid-page52-example32.js");
 require("./source-5-2-u5-page48-example14-practice.js");
 require("./source-5-2-u5-cuboid-grid-practice.js");
+require("./source-5-2-u5-unit-cube-count-practice.js");
 require("./source-5-2-u5-check108-packing-practice.js");
 require("./source-5-2-u5-page108-practice.js");
 require("./source-5-2-u5-three-loop-similar.js");

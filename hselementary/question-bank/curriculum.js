@@ -4177,6 +4177,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52Cuboid) {
+    const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t1");
+    if (type) Object.assign(type,{name:"선을 모두 따라 잘랐을 때 작은 정육면체 수 · 조건 명시 연습",label:"선을 모두 따라 잘랐을 때 작은 정육면체 수 · 조건 명시 연습",sourceItemId:"5-2-u5-e1-example-1-1-unit-cubes-practice",sourceParentItemId:"5-2-u5-e1-example-1-1",sourceItemLabel:"예제 1-1 조건 명시 연습",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:44,sourcePrintedPage:48,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5UnitCubeCountPractice",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세는 대상은 미확정입니다. 별도 연습은 모든 선을 따라 자른 작은 정육면체를 세도록 명시하고 아홉 격자를 검산했습니다."});
+  }
+
+  if (source52Cuboid) {
     const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t4-2");
     if (type) Object.assign(type,{name:"세 방향으로 두른 끈의 전체 길이 · 유사문항",label:"세 방향으로 두른 끈의 전체 길이 · 유사문항",sourceItemId:"5-2-u5-practice-10-three-loop-similar",sourceParentItemId:"5-2-u5-practice-10-original",sourceItemLabel:"확인학습 10번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:103,alternateSourcePdfPage:104,sourcePrintedPage:109,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5ThreeLoopSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세 방향 테이프와 그림 구조를 유지하고 길이만 바꾼 각 문항의 합을 검산했습니다."});
   }
