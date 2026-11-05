@@ -1,7 +1,7 @@
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withMagnetSkyStudentLanguage} from './magnet-sky-student-language.js';
 import {withNightBodyLanguage} from './magnet-night-body-language.js';
-import {withNightSkyRails} from './c22-s42-u01.rail-notes.js';
+import {withNightSkyRails,withSkyReadableWorkbook} from './c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 밤하늘 관찰 A4. scripts/gen-science-workbook-c22s42u01.mjs가 생성.
 const baseWorkbook = {
@@ -9188,4 +9188,5 @@ const baseWorkbook = {
  ]
 };
 
-export const workbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withNightBodyLanguage(withStudentOpeningLanguage(withNightSkyRails(baseWorkbook)))));
+export const skyReadablePriorWorkbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withNightBodyLanguage(withStudentOpeningLanguage(withNightSkyRails(baseWorkbook)))));
+export const workbook=withSkyReadableWorkbook(skyReadablePriorWorkbook);
