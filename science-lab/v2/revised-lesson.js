@@ -120,7 +120,7 @@ export async function revisedClassroom(unit, mod) {
  ]);
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
  const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
- return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab};
+ return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab};
 }
 
 export function classroomQuestions(mod, pool) {
@@ -197,3 +197,4 @@ export function withOptionalClassroomRecords(unit,lesson){
 import{biologyReadableCurrentItems}from'../data/book/s41-u04.editorial.js?v=20261106-biology-readable-workbook';
 import{skyReadableCurrentItems}from'../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook';
 import{ecologyReadableCurrentItems}from'../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';
+import{gasReadableCurrentItems}from'../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook';

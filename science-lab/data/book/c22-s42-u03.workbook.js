@@ -1,4 +1,4 @@
-import{withGasUpperScience}from'./c22-s42-u03.editorial.js?v=20261105-gas-upper-science';
+import{withGasUpperScience,withGasReadableWorkbook}from'./c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import {withGasEditorial} from './c22-s42-u03.editorial.js';
 // 여러 가지 기체 — 편집 교재(문제집형 A4). scripts/gen-science-workbook-c22s42u03.mjs 가 만든다(직접 고치지 말 것).
@@ -8781,4 +8781,5 @@ const baseWorkbook = {
 
 export const learnerPriorWorkbook=withGasEditorial(baseWorkbook);
 export const gasUpperPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
-export const workbook=withGasUpperScience(gasUpperPriorWorkbook);
+export const gasReadablePriorWorkbook=withGasUpperScience(gasUpperPriorWorkbook);
+export const workbook=withGasReadableWorkbook(gasReadablePriorWorkbook);
