@@ -673,8 +673,8 @@ function showCurriculumDetail(id){
  const m=/^mock-(review|check|repair|retest)-/.test(id)?mockScheduleModel():selectedCoreModel()||LE.attachReviews(CP.model(answers,intakeFields(),curriculumState),learningEvidence),d=CP.detail(roadmapMode==='standard'&&!/^mock-/.test(id)?{...PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths}),kind:'high',year:+intakeFields().year,month:+intakeFields().mon}:m,id);if(!d)return;
  learningStage=id.startsWith('kmo-')?id.slice(4):null;$('courseTitle').textContent=d.title;
  $('courseContent').innerHTML=d.html+(learningStage?LE.render(learningEvidence,{stage:learningStage}):'')+'<button type="button" data-learning-evidence-open="'+(/^mock-(review|check|repair|retest)-/.test(id)?'mock':'work')+'">이 과정의 수행 기록 살펴보기</button>';
- if(id.startsWith('mock-check-')){const paper=m.mockCheckPlan?.rows.find(p=>'mock-check-'+p.id===id);if(paper&&!paper.pending)$('courseContent').insertAdjacentHTML('beforeend',MS.paperLinks(paper)+'<p><a href="'+MS.SOURCE+'" target="_blank" rel="noopener noreferrer">출제 범위 근거 (새 창)</a></p><button type="button" data-mock-check-record="'+paper.id+'">이 기출을 풀고 결과 기록</button>');}
- if(id.startsWith('mock-retest-')){const plan=m.mockFeedback?.plans.find(p=>p.id===id.slice(12));if(plan&&!plan.paper.pending)$('courseContent').insertAdjacentHTML('beforeend',MS.paperLinks(plan.paper,{caption:true})+'<button type="button" data-mock-feedback-record="'+id.slice(12)+'">재점검 결과 기록</button>');}
+ if(id.startsWith('mock-check-')){const paper=m.mockCheckPlan?.rows.find(p=>'mock-check-'+p.id===id);if(paper&&!paper.pending)$('courseContent').insertAdjacentHTML('beforeend',MS.paperLinks(paper)+(PlannerMockItems.summary(paper.questionSelection)||'')+'<button type="button" data-mock-print-check="'+paper.id+'">학습 안내지 인쇄</button><p><a href="'+MS.SOURCE+'" target="_blank" rel="noopener noreferrer">출제 범위 근거 (새 창)</a></p><button type="button" data-mock-check-record="'+paper.id+'">이 기출을 풀고 결과 기록</button>');}
+ if(id.startsWith('mock-retest-')){const plan=m.mockFeedback?.plans.find(p=>p.id===id.slice(12));if(plan&&!plan.paper.pending)$('courseContent').insertAdjacentHTML('beforeend',MS.paperLinks(plan.paper,{caption:true})+(PlannerMockItems.summary(plan.paper.questionSelection)||'')+'<button type="button" data-mock-print-feedback="'+plan.id+'">재점검 안내지 인쇄</button><button type="button" data-mock-feedback-record="'+id.slice(12)+'">재점검 결과 기록</button>');}
  $('courseContent').dataset.curriculumBlock=id;showCourseDialog();
 }
 function openGoalCurriculum(){
@@ -706,16 +706,35 @@ document.addEventListener('change',e=>{
  host.outerHTML=PlannerMockLibrary.render(mockLibraryFilter,mockScheduleModel(),learningEvidence.mock);
  $('pathwayCoachContent').querySelector('[data-mock-library-filter="'+key+'"]')?.focus({preventScroll:true});
 });
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-mock-print-check],[data-mock-print-feedback],[data-mock-print-library],[data-mock-print-record],[data-mock-print-form]');if(!b)return;e.preventDefault();
+ const m=mockScheduleModel(),k=m.mockCheckPlan?.knowledge;let opts=null;
+ if(b.hasAttribute('data-mock-print-check')){const p=m.mockCheckPlan?.rows.find(r=>r.id===b.dataset.mockPrintCheck),d=p&&MS.prefill(p.id,m);if(d)opts={paper:MS.resolvePaper(p),selection:d.questionSelection,practiceDate:p.practiceDate};}
+ if(b.hasAttribute('data-mock-print-feedback')){const p=m.mockFeedback?.plans.find(r=>r.id===b.dataset.mockPrintFeedback);if(p&&!p.paper.pending)opts={paper:MS.resolvePaper(p.paper),selection:p.paper.questionSelection,practiceDate:p.recheck,topics:p.topics,bookPlan:p.bookPlan};}
+ if(b.hasAttribute('data-mock-print-library')){const p=PlannerMockLibrary.find(b.dataset.mockPrintLibrary);if(p)opts={paper:p,selection:PlannerMockItems.select(p,k?.learned||[]),practiceDate:MF.localToday()};}
+ if(b.hasAttribute('data-mock-print-record')){const r=learningEvidence.mock.records.find(x=>x.id===b.dataset.mockPrintRecord);if(r)opts={paper:MS.resolvePaper(r),selection:r.questionSelection,practiceDate:r.date,answers:r.answers};}
+ if(b.hasAttribute('data-mock-print-form')){const f=b.closest('[data-mock-form]'),data=Object.fromEntries(new FormData(f));let selection;try{selection=PlannerMockItems.restoreSelection(JSON.parse(data.questionSelection),data);}catch{}if(selection)opts={paper:MS.resolvePaper(data),selection,practiceDate:data.date,answers:Object.fromEntries(selection.selected.map(n=>[n,data['question-'+n]]))};}
+ const result=opts&&PlannerMockPrint.open(opts);if(!result?.ok){let note=b.parentElement.querySelector('[data-print-error]');if(!note){note=document.createElement('p');note.dataset.printError='';note.setAttribute('role','alert');b.after(note);}note.textContent=result?.error||'선택한 기출과 배운 단원을 먼저 확인해 주세요.';}
+});
+document.addEventListener('change',e=>{
+ const f=e.target.closest('[data-mock-schedule-form]');if(!f)return;
+ if(e.target.name.startsWith('learned-unit-')){f.elements.knowledgeEdited.value='on';return;}
+ if(e.target.name==='boundary'){const b=MS.BOUNDARIES.find(x=>x.id===e.target.value),m=mockScheduleModel(),stage=m.mockCheckPlan?.actual?.stage,ids=b?PlannerMockItems.projectedUnits({needs:[[b.stage,b.step]]},{learned:[]}):[];for(const u of PlannerMockItems.UNITS)if(u.course===stage)f.elements['learned-unit-'+u.id].checked=ids.includes(u.id);f.elements.knowledgeEdited.value='on';}
+});
 function refreshMockPaperLinks(e){
  const f=e.target.closest('[data-mock-form]');if(!f||!['exam','level'].includes(e.target.name))return;
- const host=f.querySelector('[data-mock-paper-picker]');if(host)host.innerHTML=MS.paperLinks(Object.fromEntries(new FormData(f)),{caption:true});
+ const data=Object.fromEntries(new FormData(f));
+ const host=f.querySelector('[data-mock-paper-picker]');if(host)host.innerHTML=MS.paperLinks(data,{caption:true});
+ if(f.elements.questionSelection){const current=PlannerMockItems.restoreSelection(JSON.parse(f.elements.questionSelection.value),data);if(!current){f.querySelector('[data-mock-question-fields]')?.remove();for(const key of ['total','unlearned','correct','helped']){f.elements[key].readOnly=false;f.elements[key].value=key==='unlearned'||key==='helped'?'0':'';}f.querySelector('[type=submit]').disabled=false;f.querySelector('[data-mock-error]').textContent='시험이 바뀌어 이전 문항 선택을 해제했습니다. 연도별 기출에서 새 회차를 선택하면 현재 진도로 번호를 다시 고릅니다.';}}
+
 }
 document.addEventListener('input',refreshMockPaperLinks);
 document.addEventListener('change',refreshMockPaperLinks);
 document.addEventListener('input',e=>{
  const f=e.target.closest('[data-mock-form]');if(!f)return;
+ PlannerMockItems.refreshForm(f);
  const data=Object.fromEntries(new FormData(f)),numbers=['total','unlearned','correct','helped'].map(k=>data[k]),[total,unlearned,correct,helped]=numbers.map(Number),learned=total-unlearned;
- f.querySelector('[data-mock-preview]').textContent=numbers.every(v=>v.trim()!==''&&Number.isInteger(+v)&&+v>=0)&&total>0&&learned>=0&&correct+helped<=learned?(learned?'배운 범위 '+learned+'문항 중 혼자 '+correct+'문항 해결 · 실전 수행률 '+Math.round(correct/learned*100)+'%':'배운 범위가 없어 실전 수행률을 계산하지 않습니다.'):'문항 수를 입력하면 배운 범위의 실전 수행률을 확인할 수 있습니다.';
+ f.querySelector('[data-mock-preview]').textContent=numbers.every(v=>String(v??'').trim()!==''&&Number.isInteger(+v)&&+v>=0)&&total>0&&learned>=0&&correct+helped<=learned?(learned?'배운 범위 '+learned+'문항 중 혼자 '+correct+'문항 해결 · 실전 수행률 '+Math.round(correct/learned*100)+'%':'배운 범위가 없어 실전 수행률을 계산하지 않습니다.'):'문항 수를 입력하면 배운 범위의 실전 수행률을 확인할 수 있습니다.';
 });
 document.addEventListener('change',e=>{
  const f=e.target.closest('[data-mock-form]');if(!f||e.target.name!=='timing')return;
@@ -932,7 +951,7 @@ function flowClick(b){
  }
 
  if(b?.hasAttribute('data-mock-library-record')){
-  const prefill=PlannerMockLibrary.prefill(b.dataset.mockLibraryRecord);if(!prefill)return true;
+  const prefill=PlannerMockLibrary.prefill(b.dataset.mockLibraryRecord,mockScheduleModel());if(!prefill)return true;
   mockEditing=null;mockPrefill=prefill;mockNotice=prefill.scope?'선택한 기출의 시험명·학년·범위를 채웠습니다. 실제로 푼 결과를 입력해 주세요.':'선택한 기출의 시험명·학년을 채웠습니다. 당시 문제에서 실제 배운 단원과 푼 범위를 확인해 기록해 주세요.';
   if($('courseDetail').open)$('courseDetail').close();openLearningEvidence('mock');
   const form=$('pathwayCoachContent').querySelector('[data-mock-form]');form?.scrollIntoView({block:'start'});form?.querySelector('[name="'+(prefill.scope?'date':'scope')+'"]')?.focus({preventScroll:true});return true;
