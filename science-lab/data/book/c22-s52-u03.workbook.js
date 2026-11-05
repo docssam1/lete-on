@@ -1,3 +1,4 @@
+import{withWeatherReadableWorkbook}from'./c22-s52-u03.editorial.js?v=20261106-weather-readable-workbook';
 import{withObservationLanguage}from'./observation-language.js';
 import{withWeatherEditorial,withWeatherPhotoLabels}from'./c22-s52-u03.editorial.js?v=20261105-weather-photo-labels';
 // 날씨112문항. scripts/gen-science-workbook-c22s52u03.mjs가 생성.
@@ -11053,4 +11054,5 @@ const baseWorkbook = {
 
 export const observationPriorWorkbook=withWeatherEditorial(baseWorkbook);
 export const weatherPhotoPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
-export const workbook=withWeatherPhotoLabels(weatherPhotoPriorWorkbook);
+export const weatherReadablePriorWorkbook=withWeatherPhotoLabels(weatherPhotoPriorWorkbook);
+export const workbook=withWeatherReadableWorkbook(weatherReadablePriorWorkbook);
