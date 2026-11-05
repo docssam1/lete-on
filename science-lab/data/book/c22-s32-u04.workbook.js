@@ -1,3 +1,4 @@
+import{withInfectionLearnerReasoning}from'./c22-s32-u04.rail-notes.js?v=20261105-infection-learner-reasoning';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 import {withInfectionRails,withInfectionUpperScience} from './c22-s32-u04.rail-notes.js?v=20261105-infection-upper-science';
 // 감염병과 건강한 생활 — 편집 교재(문제집형 A4). scripts/gen-science-workbook-c22s32u04.mjs 가 만든다(직접 고치지 말 것).
@@ -9425,4 +9426,5 @@ const baseWorkbook = {
 };
 
 export const infectionUpperPriorWorkbook=withStudentOpeningLanguage(withInfectionRails(baseWorkbook));
-export const workbook=withInfectionUpperScience(infectionUpperPriorWorkbook);
+export const infectionReasoningPriorWorkbook=withInfectionUpperScience(infectionUpperPriorWorkbook);
+export const workbook=withInfectionLearnerReasoning(infectionReasoningPriorWorkbook);
