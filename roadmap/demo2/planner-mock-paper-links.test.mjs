@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 
 // Use the same module order and learner/record fixture as mock-feedback.test.mjs.
 const window={},ctx=vm.createContext({window});
-for(const file of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-mock-schedule.js','planner-mock-feedback.js','planner-learning-evidence.js','planner-goal-curriculum.js']){
+for(const file of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-mock-schedule.js','planner-mock-library-data.js','planner-mock-library.js','planner-mock-scopes.js','planner-mock-matching.js','planner-mock-feedback.js','planner-learning-evidence.js','planner-goal-curriculum.js']){
  vm.runInContext(readFileSync(new URL(file,import.meta.url),'utf8'),ctx,{filename:file});
 }
 const {PlannerMockEvidence:E,PlannerMockSchedule:S,PlannerMockFeedback:F,PlannerCurriculum:C}=window;
@@ -35,7 +35,7 @@ const verified=[
  ['h2-09','20260902','go2','math_mun_895U99J8.pdf','math_hsj_GTK7Z5PQ.pdf'],
  ['h2-10','20261020','go2','math_mun_2O8F6113.pdf','math_hsj_227HZ894.pdf']
 ].map(([id,date,grade,problem,explanation])=>({id,problem:`https://wdown.ebsi.co.kr/W61001/01exam/${date}/${grade}/${problem}`,explanation:`https://wdown.ebsi.co.kr/W61001/01exam/${date}/${grade}/${explanation}`}));
-const expected=id=>verified.find(p=>p.id===id);
+const expected=id=>verified.find(p=>p.id===id)||window.PlannerMockLibrary.find(id)?.files;
 function assertFiles(html,id){
  const urls=hrefs(html),paper=expected(id);
  assert.ok(urls.includes(paper.problem),`${id} problem URL`);
@@ -59,12 +59,12 @@ test('resolution uses a paper string ID or exact exam and grade, never a record 
   assert.equal(S.resolvePaper({id:'unrelated-record',exam:paper.exam,level:paper.level})?.id,paper.id);
  }
  assert.equal(S.resolvePaper({id:'h2-10',exam:'2026년 6월 학평',level:'1'})?.id,'h1-06');
- for(const value of [null,undefined,'unknown',{id:'h1-06'},{id:'h1-06',exam:'2025년 6월 학평',level:'1'},{exam:'2026년 6월 학평',level:'3'},{exam:'2026년 6월 모의평가',level:'1'}])assert.equal(S.resolvePaper(value),null);
+ for(const value of [null,undefined,'unknown',{id:'h1-06'},{id:'h1-06',exam:'2016년 6월 학평',level:'1'},{exam:'2026년 6월 학평',level:'3'},{exam:'2026년 6월 모의평가',level:'1'}])assert.equal(S.resolvePaper(value),null);
  assert.equal(S.paperLinks('unknown'),'');
 });
 
 test('unverified years and high-three records get only their grade-specific official search link',()=>{
- for(const [value,target] of [[{id:'h1-06',exam:'2025년 6월 학평',level:'1'},'D100'],[{exam:'2025년 9월 학평',level:'2'},'D200'],[{id:'h2-09',exam:'2026년 9월 학평',level:'3'},'D300']]){
+ for(const [value,target] of [[{id:'h1-06',exam:'2016년 6월 학평',level:'1'},'D100'],[{exam:'2016년 9월 학평',level:'2'},'D200'],[{id:'h2-09',exam:'2026년 9월 학평',level:'3'},'D300']]){
   const html=S.paperLinks(value,{caption:true});
   assert.deepEqual(hrefs(html),[`https://www.ebsi.co.kr/ebs/xip/xipc/previousPaperList.ebs?targetCd=${target}`]);
   assert.doesNotMatch(html,/data-mock-paper="|data-mock-paper-file="problem"|wdown\.ebsi/);
@@ -97,30 +97,30 @@ test('schedule map, table and adjustment controls link each displayed paper to i
  }
 });
 
-test('whole-paper June results link the fresh September recheck while keeping the fixed review date',()=>{
+test('whole-paper June results link the same-scope June paper from another year while keeping the fixed review date',()=>{
  const source=record({scope:'공통수학1 · 방정식·부등식까지',rangeMode:'whole',unlearned:0,correct:8,helped:1});
  const before=JSON.stringify(source),m=model([source]),plan=m.mockFeedback.plans[0];
- assert.equal(plan.paper.fresh,true);assert.equal(S.resolvePaper(plan.paper)?.id,'h1-09');
+ assert.equal(plan.paper.fresh,true);assert.equal(S.resolvePaper(plan.paper)?.id,'y2025-h1-06');
  assert.equal(plan.recheck,'2026-11-26');
  for(const view of ['map','table']){
-  const html=F.render(m,view);assertFiles(html,'h1-09');
+  const html=F.render(m,view);assertFiles(html,'y2025-h1-06');
   assert.ok(!hrefs(html).includes(expected('h1-06').problem));
   assert.match(html,/2026년 11월 26일/);
  }
  const block=m.lanes.find(l=>l.id==='mockRetest').blocks[0];
  assert.equal(C.period(m,block),'2026년 11월 26일');
- assert.equal(F.prefill(m,'source').exam,'2026년 9월 학평');
+ assert.equal(F.prefill(m,'source').exam,'2025년 6월 학평');
  assert.equal(JSON.stringify(source),before);
 });
 
-test('partial results keep the original June retry link and saved dates after reopening in a later calendar',()=>{
+test('partial results get another-year June link for selected units and saved dates after reopening in a later calendar',()=>{
  const source=record(),before=JSON.stringify(source),restored=E.restore(state([source]));
  for(const calendar of [fields,{...fields,year:'2027',mon:'2'}]){
   const m=model(restored.records,calendar),plan=m.mockFeedback.plans[0],html=F.render(m);
-  assert.equal(plan.paper.fresh,false);assert.equal(plan.paper.attempt,'retry');
+  assert.equal(plan.paper.fresh,true);assert.equal(plan.paper.attempt,'first');assert.equal(plan.paper.rangeMode,'selected');
   assert.equal(plan.start,'2026-11-05');assert.equal(plan.recheck,'2026-11-26');
-  assertFiles(html,'h1-06');assert.ok(!hrefs(html).includes(expected('h1-09').problem));
-  assert.match(html,/원기출 · 재풀이/);
+  assertFiles(html,'y2025-h1-06');assert.ok(!hrefs(html).includes(expected('h1-06').problem));
+  assert.match(html,/선택|단원/);
  }
  assert.equal(JSON.stringify(source),before);
 });

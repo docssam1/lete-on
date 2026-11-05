@@ -95,7 +95,7 @@ test('loading the archive preserves the original eight-paper schedule, dates and
  assert.deepEqual(plain(scheduled(W)),plain(scheduled(without)));
  for(const p of S.PAPERS){
   assert.deepEqual(plain(L.find(p.id).files),plain(p.files));
-  assert.equal(S.resolvePaper(p),p,'the scheduling source keeps priority over the catalogue copy');
+  assert.equal(S.resolvePaper(p).id,p.id,'the exact paper identity is preserved');
  }
  assert.equal(without.PlannerMockSchedule.resolvePaper('y2017-h2-03-a'),null);
  assert.match(S.render(scheduled(W)),/data-learning-evidence-open="papers"/);
@@ -132,17 +132,16 @@ test('saved A/B results retain their identity, links and independent-performance
  assert.equal(S.resolvePaper(restored.records[0]).id,'y2017-h2-03-a','editing does not mutate the original record');
 });
 
-test('historical remediation keeps the original variant and exact recheck date without auto-selecting a 2026 paper',()=>{
+test('unverified historical scope retains the recheck date without substituting a paper',()=>{
  const source=record(),state={version:1,records:[source]},initial=scheduled(W),before=JSON.stringify(initial);
  const next=F.attach(initial,state),p=next.mockFeedback.plans[0];
  assert.equal(p.start,'2026-11-05');assert.equal(p.end,'2026-11-19');assert.equal(p.recheck,'2026-11-26');
- assert.equal(p.paper.fresh,false);assert.equal(p.paper.attempt,'retry');assert.equal(p.paper.exam,source.exam);
- assert.equal(S.resolvePaper(p.paper).id,'y2017-h2-03-a');
+ assert.equal(p.paper.pending,true);assert.equal(S.resolvePaper(p.paper),null);
  assert.equal(next.lanes.find(l=>l.id==='mockRetest').blocks[0].calendarStart,'2026-11-26');
  assert.deepEqual(plain(next.lanes.filter(l=>!['mockCheck','mockRepair','mockRetest'].includes(l.id))),plain(initial.lanes.filter(l=>l.id!=='mockCheck')));
  assert.equal(JSON.stringify(initial),before);
- const prefill=F.prefill(next,'source');assert.equal(prefill.followupOf,'source');assert.equal(prefill.exam,source.exam);assert.equal(prefill.attempt,'retry');
- const html=F.render(next);assert.ok(html.includes(L.find('y2017-h2-03-a').files.problem));assert.match(html,/2026년 11월 26일/);
+ const prefill=F.prefill(next,'source');assert.equal(prefill,null);
+ const html=F.render(next);assert.ok(!html.includes(L.find('y2017-h2-03-a').files.problem));assert.match(html,/2026년 11월 26일/);
 });
 
 test('manual or unsupported exams use an escaped grade-specific fallback and never supply a wrong direct PDF',()=>{
