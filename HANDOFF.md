@@ -2163,6 +2163,12 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 - MAA annual-summary search confirms the 2010 report contains 2009 AMC 10/12 grade/score summary rows, but its Table IX item-response distributions are for 2010. Found 2009B response tables embedded in school-result reports for Temasek and Barker College; their local cohorts are not interchangeable with the national official-student cohort. Did not import them or label them national. Research note has sources and search boundary.
 - Next: search for a 2009 form-level all-official response table or a well-documented regional report whose population can be labeled honestly; keep AMC original exam, answer, solution, and item-diagnostic sources attached by year/form.
+
+### 2026-11-05 · 2009 AMC 10/12 web-source follow-up
+
+- Web search found multiple 2009 AMC 10/12 B school-result PDFs on Math Oasis. The Temasek AMC 10B table is n=89 (grades 9–10); other opened school reports show n=16 or n=1. These are local school cohorts, not national annual distributions, so no rates were copied into the diagnostic reference.
+- The 2010 MAA annual summary search result again exposed the already-staged recorded-grade means for 2008–2009. No new national table was recovered. The 2009 form-level item-response coverage stays `not-found`; evidence and source links are recorded in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`.
+- Next: continue year/form web search for national published response tables and usable primary scans. Keep school/venue samples separate from national results. Preserve `raw_youtube.txt`; no external sync or publishing.
 # Progress update · 2026-11-05
 
 - Recovered the 57th MAA annual report from the Internet Archive and cross-checked every 2006 AMC 10/12 grade-group count and mean (22 records across 10A/B and 12A/B) against original Tables I–II. Counts sum to each published U.S. National Statistics total, and weighted means reconcile to the printed overall mean. Updated the data and coverage source links to the MAA report.
