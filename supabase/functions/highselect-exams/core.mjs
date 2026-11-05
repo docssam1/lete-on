@@ -1,6 +1,7 @@
 import '../../../highschool-selection/shared/grading.js';
 const grading=globalThis.HIGHSELECT_GRADING;
-export function publicExam(exam){return {id:exam.id,title:exam.title,programId:exam.programId,scope:exam.scope,mode:exam.mode,version:exam.version,questionCount:exam.questions.length,pageCount:exam.pages.length,answerPageCount:exam.answerPages?.length||0,durationMinutes:exam.durationMinutes,responseMode:'self-check'};}
+export function publicExam(exam){return {id:exam.id,title:exam.title,programId:exam.programId,scope:exam.scope,mode:exam.mode,version:exam.version,questionCount:exam.questions.length,pageCount:exam.pages.length,answerPageCount:exam.answerPages?.length||0,analysisPageCount:exam.analysisPages?.length||0,durationMinutes:exam.durationMinutes,sectionMinutes:exam.sectionMinutes||null,breakMinutes:exam.breakMinutes||0,responseMode:'self-check'};}
+export function documentPages(exam,kind){return kind==='paper'?exam.pages:kind==='answers'?exam.answerPages:kind==='analysis'?exam.analysisPages:undefined;}
 export function publicQuestions(exam){return exam.questions.map(q=>({number:q.number,responseType:q.responseType,...(q.fields?{fields:q.fields}:{})}));}
 export function normalizeInput(raw){return String(raw??'').normalize('NFKC').replace(/\\pi\b|\bpi\b/g,'π').replace(/[−–]/g,'-').replace(/\u200b/g,'').trim();}
 function decimalFraction(value){return value.replace(/^(-?\d+)\.(\d{1,6})$/,(_,a,b)=>String(Number(a)*10**b.length+(a.startsWith('-')?-1:1)*Number(b))+'/'+10**b.length);}
