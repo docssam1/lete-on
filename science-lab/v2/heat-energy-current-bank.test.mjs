@@ -3,7 +3,7 @@ import{items as heat}from'../data/units/c22-s52-u02.js';import{source as heatSou
 import{items as energy}from'../data/units/c22-s52-u04.js';import{source as energySource}from'../data/units/c22-s52-u04.source.js';import{similar as energySimilar}from'../data/units/c22-s52-u04.similar.js';
 import{heatEnergyCurrentItems}from'./heat-energy-question-language.js';import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,questionMisconceptions}from'./question-revision.js';import*as energyMisc from'../data/units/c22-s52-u04.misc.js';
 test('실제 두 단원 로더와 문제은행 인쇄는 수업에서 검토한 같은 세 문항을 사용한다',()=>{
- const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/heat-energy-bank-loaders.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert.deepEqual(result.map(r=>r.changed),[2,1]);assert.deepEqual(result.map(r=>r.readableChanged),[36,0]);assert(result.every(r=>r.currentBankAndClassroomAgree&&r.printedCurrentItems));assert.deepEqual(result.map(r=>r.items),[104,112]);
+ const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/heat-energy-bank-loaders.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert.deepEqual(result.map(r=>r.changed),[2,1]);assert.deepEqual(result.map(r=>r.readableChanged),[36,61]);assert(result.every(r=>r.currentBankAndClassroomAgree&&r.printedCurrentItems));assert.deepEqual(result.map(r=>r.items),[104,112]);
 });
 test('은행의 새 답을 채점하고 옛 답과 진단·재시작 이력을 당시 문항으로 보존한다',()=>{
  for(const[unit,rows,source,similar]of[['c22-s52-u02',heat,heatSource,heatSimilar],['c22-s52-u04',energy,energySource,energySimilar]]){

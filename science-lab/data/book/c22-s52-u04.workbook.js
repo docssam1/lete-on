@@ -1,3 +1,4 @@
+import{withEnergyReadableWorkbook}from'./c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook';
 import {withEnergyEditorial} from './c22-s52-u04.editorial.js?v=20261104-energy-book';
 // 자원112문항. scripts/gen-science-workbook-c22s52u04.mjs가 생성.
 const baseWorkbook = {
@@ -11140,4 +11141,5 @@ const baseWorkbook = {
  }
 };
 
-export const workbook=withEnergyEditorial(baseWorkbook);
+export const energyReadablePriorWorkbook=withEnergyEditorial(baseWorkbook);
+export const workbook=withEnergyReadableWorkbook(energyReadablePriorWorkbook);
