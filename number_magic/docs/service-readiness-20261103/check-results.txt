@@ -1,3 +1,11 @@
+# 2026-11-06 무료 보안·실사용 후속 — 아래 기존187개 재검 이후의 영향 검사
+2026-11-06 | check-admin-browser.js | PASS 64 assertions | settings_required 복구 안내·미저장 예시·중복방지·모바일 검증, 실제 문자 없는 mock 검사
+2026-11-06 | nm-membership handler.test.mjs | PASS 46/46 | 처리기 전체, 실제 발송 없음
+2026-11-06 | 실제 이메일 | INBOX RECEIVED 1 | 원장 직접 OTP/비밀번호 설정 완료, 새 가입 검사 아님
+2026-11-06 | 실제 LMS | PROVIDER SUCCESS 1 / ERROR 0 | 원장 실제 수신/휴대폰 링크 확인 대기, 재전송 없음
+2026-11-06 | 실제 문자 링크 인쇄 | A4 PDF 24 pages | 60문항, native Preview 열림; 파일저장/실제종이출력 미완료
+2026-11-06 | auth_leaked_password_protection | WARN REMAINS | 원장 Free 유지, 별도 보강 secure-password-change ON / minimum 8 적용
+# ----- 아래는 전체187개 최종 재검과 이전 날짜 기록 -----
 # 2026-11-06 최종 재검 — GPT-6.1 Sol / Mac mini
 # 187개 고유 검사 전체 재실행 + 수정 영향 항목 재검. 최신 187/187 통과, 실패 0.
 # 기존 기본 3D 전용 2개는 원장 승인한 현재 만화풍(2D) 마을의 검사를 실행한다. --legacy-3d로 역사 검사를 보존.

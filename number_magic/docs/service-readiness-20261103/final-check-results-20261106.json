@@ -1505,5 +1505,12 @@
       "command": "node number_magic/scripts/check-young-split-browser.js",
       "evidence": "latest/check-young-split-browser.js.log"
     }
-  ]
+  ],
+  "followUpAcceptance": {
+    "date": "2026-11-06 KST",
+    "changedGate": "check-admin-browser.js",
+    "passedAssertions": 64,
+    "evidence": "security-acceptance-evidence-20261106.zip",
+    "note": "Full original matrix is preserved; this follow-up reran the affected admin gate and the 46 handler tests after a real settings_required discovery. Actual recipient confirmation pending."
+  }
 }

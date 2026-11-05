@@ -1,0 +1,135 @@
+{
+  "date": "2026-11-06 KST",
+  "model": "GPT-6.1 Sol",
+  "host": "Mac mini / Codex",
+  "project": "fgahqumaldheqettmvqg",
+  "plan": "free",
+  "userDecision": "Keep Free; use the existing account for login/SMS checks; no new test signup",
+  "settings": {
+    "secure_password_change": {
+      "before": false,
+      "after": true,
+      "verification": "Saved in dashboard; reopened Email settings and observed enabled"
+    },
+    "password_min_length": {
+      "before": 6,
+      "after": 8,
+      "verification": "Saved in dashboard; reopened Email settings and visually confirmed 8"
+    },
+    "password_hibp_enabled": {
+      "after": false,
+      "status": "Not available on Free; remains a documented WARN, not resolved",
+      "source": "https://supabase.com/docs/guides/auth/password-security"
+    }
+  },
+  "unchanged": {
+    "emailProvider": true,
+    "confirmEmail": true,
+    "secureEmailChange": true,
+    "emailOtpExpirySeconds": 600,
+    "emailOtpDigits": 8
+  },
+  "noSubscriptionChange": true,
+  "acceptance": {
+    "mode": "existing-account",
+    "emailAuthExists": true,
+    "emailPreviouslyVerified": true,
+    "passwordAlreadySet": true,
+    "membershipBeforeLogin": "none",
+    "linkedStudentsBeforeLogin": 0,
+    "login": "Email OTP authentication visibly completed in app; user reported password saved",
+    "realSmsSent": 1,
+    "realEmailSent": 1,
+    "newAccountsCreated": 0,
+    "print": {
+      "sameSmsLinkOpened": true,
+      "course": "C1",
+      "session": 1,
+      "questions": 60,
+      "pages": 24,
+      "paper": "A4",
+      "scale": "default",
+      "duplexPrinterPreview": true,
+      "browserHeaders": false,
+      "backgroundGraphics": true,
+      "nativePdfOpened": true,
+      "nativePdfSaved": "Not saved: user took control of Preview during the save dialog; no further native save actions attempted",
+      "physicalPaperPrinted": false,
+      "pdfGenerationVerified": true
+    },
+    "emailReceipt": {
+      "verified": true,
+      "destination": "previously authorized existing mailbox",
+      "location": "INBOX",
+      "receivedAt": "2026-11-05T21:21:48+00:00",
+      "senderDomain": "gfieldacademy.net"
+    },
+    "passwordReset": "User completed direct entry and save; agent did not read or enter new password",
+    "oneTimeCodeRead": false,
+    "passwordSaveUserConfirmed": true,
+    "contact": {
+      "registered": true,
+      "smsConsent": true,
+      "phoneMatchesAuthorizedSuffix": true
+    },
+    "membershipAfterLogin": "trial",
+    "linkedStudentsAfterLogin": 1,
+    "next": "Awaiting user receipt/link confirmation; save/verify PDF when Preview handoff ends",
+    "provider": {
+      "httpStatus": 200,
+      "resultCode": 1,
+      "successCount": 1,
+      "errorCount": 0,
+      "timedOut": false,
+      "reconciledOk": true,
+      "requestId": 1568
+    },
+    "receiptUserConfirmed": false,
+    "learnerLink": "User created/linked a learner during the app check; stale create-test-learner prompt was superseded by visible linked state",
+    "agentProgressWrites": 0,
+    "agentLearningSettingsWrites": 1,
+    "learningSettings": {
+      "courseKey": "C1",
+      "sessionIndex": 1,
+      "speed": 1,
+      "amount": 1,
+      "cadence": "w1",
+      "startDate": "2026-11-06",
+      "grade": "left unknown; no invented birth year"
+    }
+  },
+  "remainingWarning": "auth_leaked_password_protection",
+  "note": "User retained Free; secure password change and minimum length do not replace leaked-password detection. User entered OTP/new password directly. Actual provider acknowledged one LMS; no resend. A linked learner appeared before the stale create-test-learner choice returned, so no additional learner was made by the agent.",
+  "agentCredentialsChanged": false,
+  "userCredentialsChanged": true,
+  "followUpFix": {
+    "issue": "Unsaved learning settings returned settings_required but admin UI incorrectly described a student/email conflict",
+    "changes": [
+      "Allowlisted settings_required message explains saving course/session/start date first",
+      "Unsaved default values are labeled as an example",
+      "Saving clears the unsaved label",
+      "Cache version updated for admin script"
+    ],
+    "checks": {
+      "adminBrowserAssertionsPassed": 64,
+      "membershipHandlerPassed": 46,
+      "failed": 0
+    },
+    "sourceStatus": "local verified; deployment pending"
+  },
+  "quota": {
+    "plan": "Free",
+    "cycle": "2026-10-20 through 2026-11-20",
+    "observedStorageGb": 0.736,
+    "storageLimitGb": 1,
+    "observedDatabaseGb": 0.051,
+    "databaseLimitGb": 0.5,
+    "observedEgressGb": 0.154,
+    "egressLimitGb": 5,
+    "observedEdgeInvocations": 6969,
+    "edgeInvocationLimit": 500000,
+    "overQuotaObserved": false,
+    "planChanged": false,
+    "spendCapChanged": false
+  }
+}
