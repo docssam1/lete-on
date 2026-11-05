@@ -1,6 +1,6 @@
 import{withObservationLanguage}from'./observation-language.js';
 import {withBiologyStudentLanguage,withBiologyWorkbookGuidance,withBiologyWorkbookCriteria} from './biology-student-language.js?v=20261105-biology-criteria';
-import {withBiologyEditorial,withBiologyReadableWorkbook} from './s41-u04.editorial.js?v=20261106-biology-readable-workbook';
+import {withBiologyEditorial,withBiologyReadableWorkbook} from './s41-u04.editorial.js?v=20261106-biology-opening-guide';
 // 다양한 생물 A4. scripts/gen-science-workbook-s41u04.mjs가 생성.
 const baseWorkbook = {
  "unit": "s41-u04",

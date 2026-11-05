@@ -120,7 +120,7 @@ export async function revisedClassroom(unit, mod) {
  ]);
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
  const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
- return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:energyReadableCurrentItems(weatherReadableCurrentItems(heatReadableCurrentItems(mixtureReadableCurrentItems(bodyReadableCurrentItems(solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab};
+ return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:acidReadableCurrentItems(energyReadableCurrentItems(weatherReadableCurrentItems(heatReadableCurrentItems(mixtureReadableCurrentItems(bodyReadableCurrentItems(solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab};
 }
 
 export function classroomQuestions(mod, pool) {
@@ -194,7 +194,7 @@ export function withOptionalClassroomRecords(unit,lesson){
  if(unit!=='c22-s51-u03'||!lesson?.explore?.lab||lesson.explore.records)return lesson;
  return {...lesson,explore:{...lesson.explore,records:{...lesson.explore.lab,title:'실제 용액 탐구 기록(선택)',note:'직접 비교·조사·자료 제작·실제 전달과 받은 의견을 따로 남길 때 써요. 예전에 쓴 기록도 그대로 있어요.'}}};
 }
-import{biologyReadableCurrentItems}from'../data/book/s41-u04.editorial.js?v=20261106-biology-readable-workbook';
+import{biologyReadableCurrentItems}from'../data/book/s41-u04.editorial.js?v=20261106-biology-opening-guide';
 import{skyReadableCurrentItems}from'../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook';
 import{ecologyReadableCurrentItems}from'../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';
 import{gasReadableCurrentItems}from'../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook';
@@ -216,3 +216,5 @@ import{heatReadableCurrentItems}from'../data/book/c22-s52-u02.editorial.js?v=202
 import{weatherReadableCurrentItems}from'../data/book/c22-s52-u03.editorial.js?v=20261106-weather-readable-workbook';
 
 import{energyReadableCurrentItems}from'../data/book/c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook';
+
+import{acidReadableCurrentItems}from'../data/book/c22-s61-u01.editorial.js?v=20261106-acid-readable-workbook';
