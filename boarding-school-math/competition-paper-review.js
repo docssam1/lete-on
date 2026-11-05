@@ -1101,7 +1101,7 @@
     const isSchoolCohort = Boolean(cohortForYear && /school cohort/i.test(cohortForYear.sourceStatus));
     const responseCohortLabel = cohortForYear && cohortForYear.population.includes("MAA") ? "MAA 보고서 응답 집단" : cohortForYear && cohortForYear.population.includes("South Korea") ? "한국 참가자" : cohortForYear && cohortForYear.population.includes("United States and Canada") ? "미국·캐나다 참가자" : cohortForYear && cohortForYear.population.includes("global") ? "세계 참가자" : "대회 응답 집단";
     $("report-review-items-note").textContent = showItemResponses
-      ? `직접 표시한 오답과 미응답입니다. ${responseCohortLabel} ${cohortForYear.respondentCount.toLocaleString("en-US")}명의 문항별 응답 비율을 참고로 보여 줍니다. ${cohortForYear.availableQuestionCount < 25 ? `공개된 문항별 비율은 25문항 중 ${cohortForYear.availableQuestionCount}문항입니다. ` : ""}${selectedYear === 2009 && cohortForYear.respondentCount === 151367 ? "MAA 보고서 Table 8은 151,367명, 같은 보고서 Table 1은 150,733명으로 서로 다르게 적습니다. 셀 추출이 불완전한 5문항은 표시하지 않습니다." : isSchoolCohort ? "특정 학교 응시집단 표본이며 전국 학년 기준이 아닙니다." : "과거 응답 자료이며 학년별 비교나 현재 기준은 아닙니다."}`
+      ? `직접 표시한 오답과 미응답입니다. ${responseCohortLabel}${cohortForYear.respondentCount == null ? " (응답자 수·지역 범위 미공개)" : ` ${cohortForYear.respondentCount.toLocaleString("en-US")}명`}의 문항별 응답 비율을 참고로 보여 줍니다. ${cohortForYear.availableQuestionCount < 25 ? `공개된 문항별 비율은 25문항 중 ${cohortForYear.availableQuestionCount}문항입니다. ` : ""}${selectedYear === 2009 && cohortForYear.respondentCount === 151367 ? "MAA 보고서 Table 8은 151,367명, 같은 보고서 Table 1은 150,733명으로 서로 다르게 적습니다. 셀 추출이 불완전한 5문항은 표시하지 않습니다." : isSchoolCohort ? "특정 학교 응시집단 표본이며 전국 학년 기준이 아닙니다." : "과거 응답 자료이며 학년별 비교나 현재 기준은 아닙니다."}`
       : `직접 표시한 오답과 미응답입니다. ${["amc8", "amc10", "amc12"].includes(selectedFormat().id) ? "이 연도·시험지의 공개 문항별 응답 통계가 없어 집단 정답률 비교는 표시하지 않습니다. " : ""}각 문항의 원본 개념·힌트·해설을 확인한 뒤 지필드 유사 유형으로 이어갈 수 있어요.`;
     result.reviewItems.forEach(function (item) {
       const itemReference = showItemResponses ? responseForItem(item.number, item.answer) : null;
@@ -1122,7 +1122,7 @@
         population.className = "report-item-response-reference";
         const commonDistractor = itemReference.mostCommonDistractor;
         const acceptedAnswerNote = itemReference.acceptedAnswers.length > 1 ? ` · 인정 답 ${itemReference.acceptedAnswers.join("·")}` : "";
-        const cohortSize = ` · 전체 응답 ${itemReference.respondentCount.toLocaleString("en-US")}명`;
+        const cohortSize = itemReference.respondentCount == null ? " · 응답자 수 미공개" : ` · 전체 응답 ${itemReference.respondentCount.toLocaleString("en-US")}명`;
         population.textContent = item.answer
             ? `${itemReference.program ? `${selectedYear} ${selectedFormat().title} ${itemReference.form}` : selectedYear} 응답 집계${cohortSize} · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · ${item.answer} 선택 ${itemReference.selectedResponsePercent.toFixed(2)}%${acceptedAnswerNote}`
             : `${itemReference.program ? `${selectedYear} ${selectedFormat().title} ${itemReference.form}` : selectedYear} 응답 집계${cohortSize} · 정답 ${itemReference.acceptedAnswers.join("·")} · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · 최다 오답 ${commonDistractor.answer} ${commonDistractor.percent.toFixed(2)}%${acceptedAnswerNote}`;
