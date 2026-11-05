@@ -1,5 +1,11 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2026-11-05 웹 검색: 연도별 원본·답·풀이 링크 재확인
+
+[LIVE의 AMC 과거 시험 아카이브](https://live.poshenloh.com/past-contests)는 실제 AMC 자료를 MAA의 공식 허가를 받아 호스팅한다고 밝히며, 각 시험의 인쇄용 PDF와 온라인 문항·정답·풀이를 제공한다. 웹 인덱스의 AMC 10 52회(2000–2025, 2021 C/D 포함), AMC 12 102회(1950–2025, 2021 C/D 포함)를 우리 [`amc-original-source-catalog.csv`](../competition/amc-original-source-catalog.csv)와 대조했다. 카탈로그의 AMC 10 52행과 AMC 12 102행 모두 온라인 시험, 인쇄용 PDF, 정답, 풀이 링크가 채워져 있다. 저작권이 있는 시험 문항 원문을 복사해 저장하지 않고 허가된 출처로 연결한다.
+
+[AMC Trainer AMC 10 아카이브](https://amctrainer.org/contests/amc10)는 2000–2022년 목록을, [OlympiadPilot](https://www.olympiadpilot.com/)은 2000–2025년 AMC 10/12 문항별 정답 입력·풀이·주제 분류·브라우저 내 풀이 기록 기능을 제공한다. 이들은 보조 학습 및 기능 비교 출처로 기록하고, 인쇄용 원본과 공식 답·풀이를 연결하는 기준 출처는 LIVE로 둔다. 이번 확인은 연도별 원본 링크의 완전성을 검증했으며 학년별 국가 규준을 새로 추가한 것은 아니다.
+
 ## 고등학교 학년별 장기 AMC 기준자료 · 2026-11-05
 
 웹 검색으로 Ellison·Swanson의 2018년 연구 원문(MIT-hosted PDF)을 확인했다. Table 1은 1999–2007년에 걸친 AMC 10/12 참가자 자료에서 9–12학년 여학생·남학생 각각의 연평균 참가자 수, 조정점수 평균·표준편차, 100점 이상 및 120점 이상 비율을 제시한다. 표의 참가자 수는 9개 연도의 단순합이 아니라 연도별 평균이다. 점수는 각 학교가 먼저 시행한 시험의 점수를 AMC 12A 등가 0–150 척도로 조정했다. 저자들은 이 조정이 서로 다른 연도 점수를 공통 척도로 만드는 목적은 아니며, 연도 간 비교에는 해당 연도 참가자 집단 내 순위를 주로 사용한다고 설명한다. 고득점 집단 분석에 한정한 시험형 난도 환산이므로 연도별 개인 점수 보정, 중학생 수준 판정, 현재 norm으로 사용하지 않는다. Table 1을 [`amc10-12-adjusted-score-grade-summary-1999-2007.csv`](../competition/historical-amc-grade/amc10-12-adjusted-score-grade-summary-1999-2007.csv)에 원문 그대로 구조화했다. 이 보완은 9학년 이상 장기 비교에만 해당하며, AMC 8 또는 7–8학년 비교 자료를 대신하지 않는다. [연구 원문](https://economics.mit.edu/sites/default/files/publications/08.2018_dynamics_of_the_gender_gap_in_high_math_ac.pdf).
@@ -456,6 +462,8 @@ The [Bard 2022 A&B report](https://www.bardmathcircle.org/p/2022-amc-10-12-ab-re
 ## 2026-11-05 · 2023–2025 B-form grade-table search
 
 Targeted web searches for 2023, 2024, and 2025 AMC10B/12B grade-level result tables did not surface a verifiable Bard cohort page or public national grade-mean table. Updated the six grade-coverage rows to record this search result without treating it as proof no such report exists. The six item-response rows retain `not-found`: a whole-cohort score distribution does not provide question-by-question answer rates, and a competition manager's local response report would have a different denominator.
+
+One 2023 Rutgers host page does link student-level score lists for AMC10B and AMC12B. Those are not an aggregate grade table and include individual records, so they were not copied or used to construct a comparison. The grade coverage notes now state this distinction for both 2023 B forms. Source: [host results index](https://www.stemcourses.online/competition-results/amc-20232024-results).
 
 The active score-reference data already has MAA K-12 EduView whole-cohort distributions for the modern forms. This web pass directly reconfirmed the official 2025 AMC10B report: top-1% 133.50, top-2.5% 120, top-5% 105, mean 56.99, n=25,204, and 1,715 schools. The official 2025 AMC12B report shows top-1% 145.50, top-2.5% 139.50, top-5% 127.50, mean 65.96, n=16,432, and 1,699 schools. These are whole-cohort results, not grade-specific comparisons. Sources: [MAA 2025 AMC10B score distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81055&viewClicked=true) · [MAA 2025 AMC12B score distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81058&viewClicked=true).
 
