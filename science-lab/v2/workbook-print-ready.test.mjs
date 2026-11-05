@@ -1,5 +1,5 @@
 import test from'node:test';import assert from'node:assert/strict';
-import{wireWorkbookPrint}from'./workbook-print-ready.js?v=20261104-earth-motion-book';import{revisedTextbookPaper,revisedTextbookUnits}from'./revised-textbook.js';
+import{wireWorkbookPrint}from'./workbook-print-ready.js?v=20261106-readable-type';import{revisedTextbookPaper,revisedTextbookUnits}from'./revised-textbook.js';
 const defer=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return{promise,resolve,reject};},tick=()=>new Promise(resolve=>setImmediate(resolve));
 function image(complete=false,naturalWidth=0){const events=new Map();return{complete,naturalWidth,events,addEventListener:(type,fn)=>events.set(type,fn),removeEventListener:(type,fn)=>{if(events.get(type)===fn)events.delete(type);},emit(type){this.complete=true;this.naturalWidth=type==='load'?100:0;events.get(type)?.();}};}
 function host(images=[]){const events=new Map(),button={disabled:false,addEventListener:(type,fn)=>events.set(type,fn),removeEventListener:(type,fn)=>{if(events.get(type)===fn)events.delete(type);}},status={textContent:'준비 중'};return{isConnected:true,events,button,status,querySelector:s=>s==='[data-workbook-print]'?button:status,querySelectorAll:()=>images,click:()=>events.get('click')?.()};}
@@ -54,4 +54,19 @@ test('다양한 생물도 인쇄 명조가 누락되면 인쇄를 막는다',asy
 for(const [unit,title]of[['c22-s42-u03','기체'],['c22-s51-u01','지층'],['c22-s51-u02','빛'],['c22-s51-u04','우리 몸'],['c22-s52-u01','혼합물'],['c22-s52-u02','열'],['c22-s52-u03','날씨'],['c22-s52-u04','자원'],['c22-s61-u01','산과 염기'],['c22-s61-u02','운동'],['c22-s61-u03','식물 구조'],['c22-s61-u04','지구 운동']])test(`${title}도 명조 준비를 기다리고 누락 시 인쇄를 막는다`,async t=>{
  const wait=defer(),calls=[],config={load:font=>{calls.push(font);return font.includes('Noto Serif KR')?wait.promise:Promise.resolve([{}]);},ready:Promise.resolve()},prints=environment(t,config),h=host();h.dataset={paperUnit:unit};const close=wireWorkbookPrint(h);await tick();assert.equal(calls.length,5);assert.equal(h.button.disabled,true);h.click();assert.equal(prints(),0);wait.resolve([{}]);await tick();assert.equal(h.button.disabled,false);h.click();assert.equal(prints(),1);close();
  config.load=async font=>font==='700 12px "Noto Serif KR"'?[]:[{}];const missing=host();missing.dataset={paperUnit:unit};const dispose=wireWorkbookPrint(missing);await tick();assert.equal(missing.button.disabled,true);missing.click();assert.equal(prints(),1);dispose();
+});
+
+test('현재32교재는 화면과 같은 고딕 두 굵기와 메모 글꼴을 기다리고 사용하지 않는 명조는 요청하지 않는다',async t=>{
+ for(const unit of revisedTextbookUnits){
+  const wait=defer(),calls=[],prints=environment(t,{load:font=>{calls.push(font);if(font.includes('Noto'))throw Error('unused font requested');return font.startsWith('400')?wait.promise:Promise.resolve([{}]);},ready:Promise.resolve()}),h=host([image(true,100)]);h.dataset={paperUnit:unit};h.classList={contains:name=>name==='revised-workbook-print'};
+  const close=wireWorkbookPrint(h);await tick();assert.deepEqual(calls,['400 12px "Pretendard Variable"','700 12px "Pretendard Variable"','700 18px Gaegu']);assert.equal(h.button.disabled,true);h.click();assert.equal(prints(),0);wait.resolve([{}]);await tick();assert.equal(h.button.disabled,false);h.click();assert.equal(prints(),1);close();
+ }
+});
+test('상위앱에서 열린 현재 교재도 실제로 쓰는 글꼴이 누락되거나 실패하면 인쇄하지 않는다',async t=>{
+ const needed=['400 12px "Pretendard Variable"','700 12px "Pretendard Variable"','700 18px Gaegu'];
+ for(const missing of needed)for(const reject of[false,true]){
+  const prints=environment(t,{load:async font=>{if(font===missing){if(reject)throw Error('font unavailable');return[];}return[{}];},ready:Promise.resolve()}),h=host(),oldQuery=h.querySelector;
+  h.querySelector=selector=>selector==='.revised-workbook-print'?{classList:{contains:name=>name==='revised-workbook-print'}}:oldQuery(selector);
+  const close=wireWorkbookPrint(h);await tick();assert.equal(h.button.disabled,true);assert(h.status.textContent.includes('교재를 다시 열어'));h.click();assert.equal(prints(),0);close();
+ }
 });

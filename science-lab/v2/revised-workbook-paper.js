@@ -1,5 +1,5 @@
 import {learningBookName,teacherProblemPages} from './revised-learning-book.js?v=20261104-earth-motion-book';
-import {wireWorkbookPrint} from './workbook-print-ready.js?v=20261104-earth-motion-book';
+import {wireWorkbookPrint} from './workbook-print-ready.js?v=20261106-readable-type';
 // 「교과 연결 사고력」 단원의 편집 교재(문제집형 A4) — #/<단원>/workbook/student|teacher|answers|quick
 // 데이터: data/book/<단원>.workbook.js(scripts/gen-science-workbook-<단원>.mjs) + 수업 교재 그림(data/book/<단원>.book.js art).
 // 학생용에는 정답·해설이 없다. 교사용은 문항 바로 아래 정답 + 뒤쪽 정답·해설, 빠른 정답표는 따로.

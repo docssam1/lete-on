@@ -1,5 +1,6 @@
 // 외부 글꼴 대신 교재에 실린 본문·손글씨 글꼴과 모든 그림을 기다린다.
 const FONTS=['400 12px Pretendard','700 12px Pretendard','700 18px Gaegu'];
+const READING_FONTS=['400 12px "Pretendard Variable"','700 12px "Pretendard Variable"','700 18px Gaegu'];
 export function wireWorkbookPrint(root){
  const button=root.querySelector('[data-workbook-print]'),status=root.querySelector('[data-workbook-status]');
  let active=true;const pending=new Set();button.disabled=true;
@@ -13,7 +14,8 @@ export function wireWorkbookPrint(root){
   });
  };
  const unit=root.querySelector('[data-paper-unit]')?.dataset?.paperUnit||root.dataset?.paperUnit;
- const requiredFonts=['c22-s32-u04','c22-s42-u04','s41-u02','s41-u03','s41-u04','c22-s42-u03','c22-s51-u01','c22-s51-u02','c22-s51-u04','c22-s52-u01','c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02','c22-s61-u03','c22-s61-u04'].includes(unit)?[...FONTS,'400 12px "Noto Serif KR"','700 12px "Noto Serif KR"']:FONTS;
+ const revised=root.classList?.contains('revised-workbook-print')||root.querySelector('.revised-workbook-print')?.classList?.contains('revised-workbook-print');
+ const requiredFonts=revised?READING_FONTS:['c22-s32-u04','c22-s42-u04','s41-u02','s41-u03','s41-u04','c22-s42-u03','c22-s51-u01','c22-s51-u02','c22-s51-u04','c22-s52-u01','c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02','c22-s61-u03','c22-s61-u04'].includes(unit)?[...FONTS,'400 12px "Noto Serif KR"','700 12px "Noto Serif KR"']:FONTS;
  const fontReady=async()=>{
   const loaded=await Promise.all(requiredFonts.map(font=>document.fonts.load(font,'과학 학습 0123456789')));
   if(loaded.some(faces=>!faces.length))throw Error('font');

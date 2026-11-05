@@ -120,7 +120,7 @@ export async function revisedClassroom(unit, mod) {
  ]);
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
  const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
- return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),classroomLab};
+ return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),classroomLab};
 }
 
 export function classroomQuestions(mod, pool) {
@@ -194,3 +194,4 @@ export function withOptionalClassroomRecords(unit,lesson){
  if(unit!=='c22-s51-u03'||!lesson?.explore?.lab||lesson.explore.records)return lesson;
  return {...lesson,explore:{...lesson.explore,records:{...lesson.explore.lab,title:'실제 용액 탐구 기록(선택)',note:'직접 비교·조사·자료 제작·실제 전달과 받은 의견을 따로 남길 때 써요. 예전에 쓴 기록도 그대로 있어요.'}}};
 }
+import{biologyReadableCurrentItems}from'../data/book/s41-u04.editorial.js?v=20261106-biology-readable-workbook';
