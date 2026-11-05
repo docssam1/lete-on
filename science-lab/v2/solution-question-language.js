@@ -4,7 +4,7 @@ const clone=value=>JSON.parse(JSON.stringify(value));
 // The bank has five choices for some four-choice workbook items. Retain its
 // original order/contracts and edit only matching words in each presentation.
 export function solutionCurrentItems(rows){return rows.map(q=>{
- if(!q.id?.startsWith('c22-s51-u03-b')||q.contentVersion===SOLUTION_LANGUAGE_VERSION)return q;
+ if(!q.id?.startsWith('c22-s51-u03-b')||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==1)return q;
  const no=q.workbookRef?.no,patch=SOLUTION_QUESTION_LANGUAGE[no]||{};
  if(!no||q.workbookRef.id!==`solution-book-${String(no).padStart(2,'0')}`)return q;
  let givens=q.givens;

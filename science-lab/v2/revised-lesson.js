@@ -120,7 +120,7 @@ export async function revisedClassroom(unit, mod) {
  ]);
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
  const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
- return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab};
+ return {...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab};
 }
 
 export function classroomQuestions(mod, pool) {
@@ -204,3 +204,5 @@ import{climateReadableCurrentItems}from'../data/book/c22-s42-u04.rail-notes.js?v
 import{geologyReadableCurrentItems}from'../data/book/c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook';
 
 import{lightReadableCurrentItems}from'../data/book/c22-s51-u02.editorial.js?v=20261106-light-readable-workbook';
+
+import{solutionReadableCurrentItems}from'../data/book/c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook';

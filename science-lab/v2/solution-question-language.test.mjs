@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {items} from '../data/units/c22-s51-u03.js';
 import {source} from '../data/units/c22-s51-u03.source.js';
 import {similar} from '../data/units/c22-s51-u03.similar.js';
-import {workbook} from '../data/book/c22-s51-u03.workbook.js';
+import {solutionReadablePriorWorkbook as workbook} from '../data/book/c22-s51-u03.workbook.js';
 import {solutionCurrentItems,SOLUTION_LANGUAGE_VERSION} from './solution-question-language.js';
 import {gradeDaily,vocabOf} from './daily-grade.js';
 import {judge} from '../data/units/c22-s51-u03.judge.js';

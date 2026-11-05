@@ -1,3 +1,4 @@
+import{withSolutionReadableWorkbook}from'./c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withSolutionStudentLanguage} from './solution-student-language.js';
 import {withSolutionBodyLanguage} from './c22-s51-u03.body-language.js';
@@ -8550,4 +8551,5 @@ const baseWorkbook = {
  }
 };
 
-export const workbook=withWorkbookAnswerLanguage(withSolutionStudentLanguage(withSolutionBodyLanguage(withStudentOpeningLanguage(withSolutionRails(baseWorkbook)))));
+export const solutionReadablePriorWorkbook=withWorkbookAnswerLanguage(withSolutionStudentLanguage(withSolutionBodyLanguage(withStudentOpeningLanguage(withSolutionRails(baseWorkbook)))));
+export const workbook=withSolutionReadableWorkbook(solutionReadablePriorWorkbook);
