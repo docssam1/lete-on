@@ -14,6 +14,12 @@
 - 보안 권고: 신규 ERROR 없음. 직접 접근을 차단한 서버 전용 표 등의 정책 없는 RLS INFO 59건, 공용 Supabase 프로젝트의 [유출 비밀번호 차단 설정](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection) 비활성 WARN 1건은 기존 상태다. 다른 서비스도 쓰는 공용 설정은 임의로 바꾸지 않았다. [RLS 권고 설명](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy).
 - 웹의 캐시 버전은 `20261106-release-audit`로 갱신했다. 웹 원격 커밋·Pages 성공·운영 파일 대조는 배포 확인 기록으로 별도 확정한다. 모델 전환·새 에이전트·음성 제작·Drive 업로드 없음.
 
+### 웹 배포 확인 완료
+
+- 실행 코드는 main [`ebedd9065`](https://github.com/docssam1/lete-on/commit/ebedd9065a6c2a2b207bebd40efd081d7c283372), [Pages 42107737361](https://github.com/docssam1/lete-on/actions/runs/42107737361) 성공으로 운영 반영했다. 다른 프로젝트의 동시 main 변경을 병합해 보존했고 강제 푸시하지 않았다.
+- 운영 파일 **24/24 바이트 일치**. 실제 주소에서 로그인, C17 추천→초5 선택→월별 로드맵, C0·C4·C60 학습지 **5조건**을 열어 HTTP 200·자바스크립트/수식 오류 0 확인. 모든 비 GET 요청은 차단했고 실제 발송·학생 기록 쓰기는 없었다. 대표 화면도 직접 확인했다.
+- 배포 뒤 함수 목록에서 회원 **v8**, 발송 **v26** ACTIVE를 다시 확인했다. [운영 검증 24파일·5화면 상세](release-verification-20261106.json). 이 확인 기록은 코드 배포 뒤의 문서 전용 커밋으로 보관한다.
+
 ## 과거 기록 — 아래는 해당 날짜 당시의 상태
 
 

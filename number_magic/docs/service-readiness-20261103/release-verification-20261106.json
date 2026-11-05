@@ -1,0 +1,248 @@
+{
+  "date": "2026-11-06 KST",
+  "model": "GPT-6.1 Sol",
+  "host": "Mac mini / Codex",
+  "runtimeCommit": "ebedd9065a6c2a2b207bebd40efd081d7c283372",
+  "pages": {
+    "id": 42107737361,
+    "conclusion": "success",
+    "url": "https://github.com/docssam1/lete-on/actions/runs/42107737361"
+  },
+  "liveAssets": [
+    {
+      "path": "access.html",
+      "status": 200,
+      "bytes": 6697,
+      "sha256": "0ee4794c13e25c4431de77f1c8eca77a6484c3e7659fc92b765029c55bf801a9",
+      "identical": true
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "bytes": 29715,
+      "sha256": "c4f713d980073b2466a72f52c8baec858af376ef1e57a32774e75a11b1439873",
+      "identical": true
+    },
+    {
+      "path": "ws.html",
+      "status": 200,
+      "bytes": 22935,
+      "sha256": "a53bf02c9161265629a6f3d175e0a1981c724f620e64789bdf7c7a108949748a",
+      "identical": true
+    },
+    {
+      "path": "placement-sheet.html",
+      "status": 200,
+      "bytes": 77013,
+      "sha256": "7ad8dbf15d522398b1d0624ba3a32b568b904a5801d24b73029fc15d6e7de351",
+      "identical": true
+    },
+    {
+      "path": "sw.js",
+      "status": 200,
+      "bytes": 9598,
+      "sha256": "f18f1c5ac946342e5bdae46eca680728cc0d6e9e5a89c017a7db7855924a5b91",
+      "identical": true
+    },
+    {
+      "path": "app/exam.js",
+      "status": 200,
+      "bytes": 734307,
+      "sha256": "226d078a0e8541dedbeca99f53bc2c19d55514b86002d1381f555920d63b20fd",
+      "identical": true
+    },
+    {
+      "path": "app/main.js",
+      "status": 200,
+      "bytes": 609972,
+      "sha256": "e8ce1f452e2c14c82b411f3eed8958aa76d1e4fbb7f0c433798b11e80f7cda73",
+      "identical": true
+    },
+    {
+      "path": "app/learning-stage.css",
+      "status": 200,
+      "bytes": 32649,
+      "sha256": "e23d2c6c38d4ebe416068da479a973e63a52d9bf4c01e2192d6934668a9df7df",
+      "identical": true
+    },
+    {
+      "path": "app/paper-examples.js",
+      "status": 200,
+      "bytes": 39395,
+      "sha256": "7cfa0f82fea144860aa27348126e9bf362738248c8fea0adf2dd75b0e5515d82",
+      "identical": true
+    },
+    {
+      "path": "app/town3d/town3d.js",
+      "status": 200,
+      "bytes": 115176,
+      "sha256": "a3815df2a62b1c8b05344606ff993a3579da3bf27565212bf9941761d49c122b",
+      "identical": true
+    },
+    {
+      "path": "data/placement-paths.js",
+      "status": 200,
+      "bytes": 12579,
+      "sha256": "93ad02252990b01bda8b68834de67633487c1b2daceee487e1b16f4bcce6c264",
+      "identical": true
+    },
+    {
+      "path": "data/print-head.js",
+      "status": 200,
+      "bytes": 175874,
+      "sha256": "9454bf8b1fccc034668c06e8816ca60fec16c50061111ea41ef4724834b35bca",
+      "identical": true
+    },
+    {
+      "path": "data/threads.js",
+      "status": 200,
+      "bytes": 700974,
+      "sha256": "c8acb87b5f73f351ca1a7f40d739705cd71b8414e1a2f5c21f5645df18f80fac",
+      "identical": true
+    },
+    {
+      "path": "data/stages.js",
+      "status": 200,
+      "bytes": 28890,
+      "sha256": "17985181f502a0f340f53027b221b4808e71d1edacced0473f2edf3894a166b2",
+      "identical": true
+    },
+    {
+      "path": "data/units/N-04.js",
+      "status": 200,
+      "bytes": 5212,
+      "sha256": "a2fe5e0faa49ffa41625ac5c34500f5044adb68d9b4df88cdfc7f371989d94ad",
+      "identical": true
+    },
+    {
+      "path": "engine/threads/dv.js",
+      "status": 200,
+      "bytes": 76173,
+      "sha256": "2193237dace1588a958112232fdbd130d570aa5de772ca2f88e776e765fa9047",
+      "identical": true
+    },
+    {
+      "path": "engine/threads/wp.js",
+      "status": 200,
+      "bytes": 123604,
+      "sha256": "2ff668bf5c5c9a97a59d0b5c2605f7fd1d0768aa6926088debee71177facbe08",
+      "identical": true
+    },
+    {
+      "path": "promo/index.html",
+      "status": 200,
+      "bytes": 14351,
+      "sha256": "ab1beb7541aa7649e439dd973076096feccb60faf9e44be945ddfb7215688161",
+      "identical": true
+    },
+    {
+      "path": "promo/book.js",
+      "status": 200,
+      "bytes": 30918,
+      "sha256": "a2482e442c30505c6daef8e258f2349984db12362206f630b55c2fd5bda01b18",
+      "identical": true
+    },
+    {
+      "path": "promo/book.css",
+      "status": 200,
+      "bytes": 35861,
+      "sha256": "42f22f10114c7f0ea013306a4da0a3b829ca5b9c2c2ffb4a4e4e47508131f422",
+      "identical": true
+    },
+    {
+      "path": "promo/village.css",
+      "status": 200,
+      "bytes": 5042,
+      "sha256": "d5f250a9831c03f01acd9e4d1c6655f87add67b0b7f32953062130707597cedb",
+      "identical": true
+    },
+    {
+      "path": "promo/village.js",
+      "status": 200,
+      "bytes": 11385,
+      "sha256": "d23a4f7528d53d9841c3924ab0c428d561bd6d6dba25aa400f68fea542a2897d",
+      "identical": true
+    },
+    {
+      "path": "docs/service-readiness-20261103/check-results.txt",
+      "status": 200,
+      "bytes": 22463,
+      "sha256": "1511f7edda99fe6fcbadd9b704d819300401f49ebf58723cb30b3eb84480b495",
+      "identical": true
+    },
+    {
+      "path": "docs/service-readiness-20261103/final-check-results-20261106.json",
+      "status": 200,
+      "bytes": 50403,
+      "sha256": "f47f61a9574c2720f15307ec622ae590f474dfcce142536b3c6f6ad15888744c",
+      "identical": true
+    }
+  ],
+  "liveBrowser": [
+    {
+      "name": "login",
+      "url": "https://lete-on.gfieldacademy.net/number_magic/access.html?lang=ko",
+      "status": 200,
+      "printPages": 0,
+      "mathErrors": 0,
+      "pageErrors": [],
+      "blockedWrites": 0
+    },
+    {
+      "name": "placement",
+      "url": "https://lete-on.gfieldacademy.net/number_magic/placement-sheet.html?b=c17&seed=release20261106&l=ko&goal=curriculum",
+      "status": 200,
+      "printPages": 1,
+      "mathErrors": 0,
+      "pageErrors": [],
+      "blockedWrites": 0
+    },
+    {
+      "name": "C0",
+      "url": "https://lete-on.gfieldacademy.net/number_magic/ws.html?c=C0&w=2026-W45&l=ko&auto=0&p=1&s=1",
+      "status": 200,
+      "printPages": 1,
+      "mathErrors": 0,
+      "pageErrors": [],
+      "blockedWrites": 0
+    },
+    {
+      "name": "C4",
+      "url": "https://lete-on.gfieldacademy.net/number_magic/ws.html?c=C4&w=2026-W45&l=ko&auto=0&p=1&s=1",
+      "status": 200,
+      "printPages": 1,
+      "mathErrors": 0,
+      "pageErrors": [],
+      "blockedWrites": 0
+    },
+    {
+      "name": "C60",
+      "url": "https://lete-on.gfieldacademy.net/number_magic/ws.html?c=C60&w=2026-W45&l=ko&auto=0&p=1&s=1",
+      "status": 200,
+      "printPages": 1,
+      "mathErrors": 0,
+      "pageErrors": [],
+      "blockedWrites": 0
+    }
+  ],
+  "functions": [
+    {
+      "name": "nm-membership",
+      "version": 8,
+      "status": "ACTIVE"
+    },
+    {
+      "name": "weekly-notify",
+      "version": 26,
+      "status": "ACTIVE"
+    }
+  ],
+  "latestMatrix": {
+    "passed": 187,
+    "failed": 0,
+    "legacy3DReplacedWithCurrent2D": 2
+  },
+  "externalMessagesSent": 0,
+  "studentWrites": 0,
+  "decision": "Technical gates pass; controlled operation is reasonable. Before declaring unrestricted service ready, complete one real guardian signup/email/consent/phone/SMS/link/print acceptance journey. Existing shared-project leaked-password-protection WARN remains documented."
+}
