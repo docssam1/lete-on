@@ -4178,7 +4178,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   if (source52Cuboid) {
     const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t4-2");
-    if (type) Object.assign(type,{name:"세 방향으로 두른 끈의 전체 길이 · 유사문항",label:"세 방향으로 두른 끈의 전체 길이 · 유사문항",sourceItemId:"5-2-u5-practice-10-three-loop-similar",sourceParentItemId:"5-2-u5-practice-10-original",sourceItemLabel:"확인학습 10번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:103,alternateSourcePdfPage:104,sourcePrintedPage:109,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5ThreeLoopSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세 방향 테이프와 그림 구조를 유지하고 길이만 바꾼 각 문항의 합을 검산했습니다."});
+    if (type) Object.assign(type,{name:"세 방향으로 두른 끈의 전체 길이 · 유사문항",label:"세 방향으로 두른 끈의 전체 길이 · 유사문항",sourceItemId:"5-2-u5-practice-10-three-loop-similar",sourceParentItemId:"5-2-u5-practice-10-original",sourceItemLabel:"확인학습 10번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:103,alternateSourcePdfPage:104,sourcePrintedPage:109,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5ThreeLoopSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세 방향 테이프와 그림 구조를 유지하고 길이만 바꾼 각 문항의 합을 검산했습니다."});
   }
 
   if (source52Cuboid) {
