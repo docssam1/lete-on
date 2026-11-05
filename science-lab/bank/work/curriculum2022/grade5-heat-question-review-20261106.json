@@ -1,0 +1,554 @@
+{
+  "phase": 306,
+  "date": "2026-11-06",
+  "unit": "c22-s52-u02",
+  "scope": "Readable heat explanations and learning pages; synchronize insulation comparison and measured-versus-predicted questions; preserve old diagnoses and scoring",
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 104,
+    "reviewedCurrentClassroomContexts": 16,
+    "changedWorkbookQuestions": 33,
+    "changedQuestionFields": 50,
+    "changedExplanations": 32,
+    "unchangedOtherAnswerLabels": 3075,
+    "currentAnswerChanges": [
+      {
+        "unit": "c22-s52-u02",
+        "no": 26,
+        "before": "젓는 힘이 물을 움직여 색소를 퍼뜨릴 수 있다. 저음 여부·처음 넣는 힘을 통제하고 온도와 움직임을 함께 확인해야 한다.",
+        "after": "물을 저은 힘 때문에도 색소가 퍼질 수 있다. 젓는 방법과 색소를 넣는 방법은 같게 하고 온도와 물의 움직임을 함께 비교해야 한다."
+      },
+      {
+        "unit": "c22-s52-u02",
+        "no": 54,
+        "before": "4분은 미관찰/미측정으로 고치고, 41℃는 두 값 사이를 단순하게 예상한 값일 뿐 실제 값이 아니라고 분리한다.",
+        "after": "4분에는 직접 재지 않았다고 고친다. 41℃는 두 값 사이에서 예상한 온도이므로 실제로 잰 값과 나누어 적는다."
+      },
+      {
+        "unit": "c22-s52-u02",
+        "no": 56,
+        "before": "두 결과 범위가 겹치고 순서도 일관되지 않아 B가 언제나 더 좋다고 보기 어렵다. 측정 간격·조건·오차를 확인하며 추가 반복한다.",
+        "after": "1회에는 내려간 정도가 같고, 2회에는 B가, 3회에는 A가 덜 내려갔다. B가 언제나 더 좋다고 할 수 없으며, 같은 조건과 방법으로 다시 비교해야 한다."
+      },
+      {
+        "unit": "c22-s52-u02",
+        "no": 99,
+        "before": "질문을 실제 받은 의견으로 남기고 조건 차이를 한계로 고친다. 처음 온도 등 다른 조건을 같게 재시험하고 수정 자료 버전·실제 재전달/계획을 구별해 적는다.",
+        "after": "친구가 한 질문과 처음 온도가 달랐던 점을 적는다. 다른 조건을 같게 하여 다시 시험하고 고친 자료에 결과를 넣는다. 아직 시험하거나 다시 설명하지 않았다면 앞으로 할 일로 적는다."
+      },
+      {
+        "unit": "c22-s52-u02",
+        "no": 104,
+        "before": "사용한 컵/재료·물의 양·처음 온도·주위·시점을 밝힌다. 한 번의 시험과 측정/통제 한계를 쓰고 같은 조건 반복이나 한 부분 수정/재시험을 제안한다.",
+        "after": "컵과 재료, 물의 양과 처음 온도, 주위 상태와 잰 시각을 적는다. 한 번의 결과로 다른 상황까지 알 수는 없으므로 같은 조건에서 다시 시험하거나 한 부분을 고쳐 비교한다."
+      }
+    ],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": [
+      {
+        "unit": "c22-s52-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "answers"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s52-u02-b003",
+      "c22-s52-u02-b009",
+      "c22-s52-u02-b016",
+      "c22-s52-u02-b020",
+      "c22-s52-u02-b021",
+      "c22-s52-u02-b025",
+      "c22-s52-u02-b026",
+      "c22-s52-u02-b027",
+      "c22-s52-u02-b031",
+      "c22-s52-u02-b036",
+      "c22-s52-u02-b037",
+      "c22-s52-u02-b040",
+      "c22-s52-u02-b045",
+      "c22-s52-u02-b048",
+      "c22-s52-u02-b049",
+      "c22-s52-u02-b051",
+      "c22-s52-u02-b054",
+      "c22-s52-u02-b056",
+      "c22-s52-u02-b057",
+      "c22-s52-u02-b059",
+      "c22-s52-u02-b060",
+      "c22-s52-u02-b064",
+      "c22-s52-u02-b066",
+      "c22-s52-u02-b076",
+      "c22-s52-u02-b081",
+      "c22-s52-u02-b082",
+      "c22-s52-u02-b086",
+      "c22-s52-u02-b087",
+      "c22-s52-u02-b093",
+      "c22-s52-u02-b094",
+      "c22-s52-u02-b095",
+      "c22-s52-u02-b096",
+      "c22-s52-u02-b099",
+      "c22-s52-u02-b101",
+      "c22-s52-u02-b103",
+      "c22-s52-u02-b104"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s52-u02-b009",
+      "c22-s52-u02-b026",
+      "c22-s52-u02-b031",
+      "c22-s52-u02-b060",
+      "c22-s52-u02-b096",
+      "c22-s52-u02-b016"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [
+      {
+        "mode": "pages",
+        "page": 15,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 20,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 21,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 26,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 38,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 51,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 15,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 20,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 21,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 26,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 38,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 51,
+        "fields": [
+          "blocks"
+        ]
+      }
+    ],
+    "all81PageRailsFiguresAndQuickTablesUnchanged": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorEditorialBytePrefixPreserved": true,
+    "choiceResponsesChecked": 29,
+    "explanationHtmlOccurrencesVerified": 64,
+    "syntaxFiles": 10,
+    "browserVerified": false
+  },
+  "validation": {
+    "tests": 1262,
+    "passed": 1260,
+    "failed": 0,
+    "skipped": 2,
+    "exitCode": 0,
+    "testFiles": 221,
+    "snapshot": {
+      "workbooks": 32,
+      "html": 128,
+      "slideArrays": 64,
+      "runtimeUnits": 32,
+      "studentStorageReads": 0,
+      "studentStorageWrites": 0,
+      "network": 0
+    },
+    "actualBrowserVerified": false
+  },
+  "currentBankCorrections": {
+    "95": {
+      "topic": "단열 비교 조건",
+      "answerIndices": [
+        0,
+        1,
+        2
+      ],
+      "oldDiagnosis": "M08",
+      "currentDistractorDiagnosis": "M07"
+    },
+    "103": {
+      "topic": "측정과 예상 구별",
+      "answer": "unchanged matching symbols",
+      "oldTypedDiagnosis": "M08",
+      "currentTypedDiagnosis": null
+    }
+  },
+  "evidence": {
+    "curriculum": {
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.txt",
+      "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "lines": [
+        813,
+        828
+      ],
+      "standards": [
+        "6과07-01",
+        "6과07-02",
+        "6과07-03",
+        "6과07-04"
+      ],
+      "scope": "온도와 온도계·접촉한 두 물체의 온도 변화·전도/대류/복사 관찰·단열 이용과 장치 만들기. 열평형이라는 용어는 쓰지 않음."
+    },
+    "sources": [
+      {
+        "title": "DOE Building Science Education: Heat Flow",
+        "url": "https://bsesc.energy.gov/energy-basics/heat-flow",
+        "readRanges": [
+          [
+            9,
+            22
+          ]
+        ],
+        "verified": "접촉한 두 물체의 온도가 높은 쪽에서 낮은 쪽으로 열 이동, 공기 대류와 복사, 단열의 열 이동 감소를 대조함. 열평형 용어나 새 실험 수치는 추가하지 않음."
+      },
+      {
+        "title": "UCAR Conduction",
+        "url": "https://scied.ucar.edu/learning-zone/earth-system/conduction",
+        "readRanges": [
+          [
+            5,
+            15
+          ]
+        ],
+        "verified": "전도·대류·복사가 함께 작용할 수 있음, 금속에 따른 전달과단열 손잡이의 설명을 대조함. 원자/분자의 충돌과 밀도 설명은 학생 원고에 채택하지 않음."
+      }
+    ],
+    "readOn": "2026-11-06",
+    "new3d": 0,
+    "imagesDownloaded": 0
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "phase": 305,
+        "questions": 96,
+        "currentQuestionSha256": "34761681a0bb79de7752834f0cabb12fc1e67aaf611ede9970a7188d36d245e2"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "phase": 306,
+        "questions": 104,
+        "currentQuestionSha256": "fdd2a62e25e3d0044600bc110cac6e6939b3917125c86744cbd3e8720de8f9cf"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1832,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 36,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideTwentyTwoUnitPass": {
+      "units": 10,
+      "questions": 1248,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To306": 1013
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase306",
+  "releaseGatesUnchanged": true,
+  "mainMerged": false,
+  "deployed": false
+}

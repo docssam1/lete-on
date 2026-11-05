@@ -1,3 +1,4 @@
+import{withHeatReadableWorkbook}from'./c22-s52-u02.editorial.js?v=20261106-heat-readable-workbook';
 import{withActivityGuideLanguage}from'./student-opening-language.js?v=20261105-activity-guide';
 import{withObservationLanguage}from'./observation-language.js';
 import{withHeatEditorial}from'./c22-s52-u02.editorial.js?v=20261104-heat-book';
@@ -10176,4 +10177,5 @@ const baseWorkbook = {
 
 export const observationPriorWorkbook=withHeatEditorial(baseWorkbook);
 export const activityGuidePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
-export const workbook=withActivityGuideLanguage(activityGuidePriorWorkbook);
+export const heatReadablePriorWorkbook=withActivityGuideLanguage(activityGuidePriorWorkbook);
+export const workbook=withHeatReadableWorkbook(heatReadablePriorWorkbook);
