@@ -28,3 +28,16 @@ export const art = {
  "given-c22-s42-u02-b25": "<p class=\"ed-given\"><b>친구의 모형</b> 개구리 → 메뚜기</p><p class=\"ed-given\"><b>조사 자료</b> 개구리가 메뚜기를 먹는다.</p>",
  "given-c22-s42-u02-b35": "<p class=\"ed-given\"><b>친구의 주장</b> 먹이그물에는 다른 길이 있으니 한 먹이가 줄어도 모든 생물이 반드시 살아남아.</p>"
 };
+
+export const ECOLOGY_PHOTO_VERSION='20261105-ecology-photo-language';
+export function withEcologyPhotoLanguage(workbook){
+ if(workbook.unit!=='c22-s42-u02')return workbook;
+ const beforeCaption="같은 문항의 곰팡이 사진. 배율·색 처리는 미확인이며 학생이 배양한 관찰 결과가 아니에요.",afterCaption="곰팡이를 확대한 자료 사진이에요. 가느다란 실처럼 뻗어 가지를 친 부분을 살펴보아요.",beforeAlt="교재에서 곰팡이로 제시한 확대 사진",afterAlt="실처럼 뻗어 가지를 친 부분이 보이는 곰팡이 확대 사진";
+ const figures={...workbook.figures};
+ for(const key of['ecoFungus','ecoRoles']){
+  const html=figures[key];
+  if(typeof html!=='string'||html.split(beforeCaption).length!==2||html.split(beforeAlt).length!==2)throw Error('생태계 곰팡이 그림의 설명이 다릅니다.');
+  figures[key]=html.replace(beforeCaption,afterCaption).replace(beforeAlt,afterAlt);
+ }
+ return {...workbook,figures};
+}

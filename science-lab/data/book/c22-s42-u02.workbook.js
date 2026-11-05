@@ -1,3 +1,4 @@
+import{withEcologyPhotoLanguage}from'./c22-s42-u02.workbook-art.js?v=20261105-ecology-photo-language';
 import{withObservationLanguage}from'./observation-language.js';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 생물과 환경 A4. scripts/gen-science-workbook-c22s42u02.mjs가 생성.
@@ -7956,4 +7957,5 @@ const baseWorkbook = {
 };
 
 export const observationPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
-export const workbook=withObservationLanguage(observationPriorWorkbook);
+export const ecologyPhotoPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
+export const workbook=withEcologyPhotoLanguage(ecologyPhotoPriorWorkbook);
