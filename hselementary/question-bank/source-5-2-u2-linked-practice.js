@@ -70,14 +70,19 @@ const threeGroupExtras=Object.freeze([
 const coprimeCountExtras=Object.freeze([
  coprimeCountCase(4,5,[[5,4],[5,8]]),
  coprimeCountCase(3,4,[[4,3],[4,9],[8,3],[8,9]]),
- coprimeCountCase(5,6,[[6,5]])
+ coprimeCountCase(5,6,[[6,5]]),
+ coprimeCountCase(2,5,[[5,2],[5,4],[5,6],[5,8]]),
+ coprimeCountCase(2,7,[[7,2],[7,4],[7,6],[7,8]]),
+ coprimeCountCase(3,7,[[7,3],[7,6],[7,9]]),
+ coprimeCountCase(4,7,[[7,4],[7,8]]),
+ coprimeCountCase(5,7,[[7,5]])
 ]);
 const segmentRatioExtras=Object.freeze([
  segmentRatioCase(2,3,4,7,60),
  segmentRatioCase(4,5,6,4,48),
  segmentRatioCase(3,5,8,5,75)
 ]);
-function variantCount(q){if(['5-2-u2-t3-3','5-2-u2-practice-20-source-faithful-similar'].includes(q?.id))return 9;return ['5-2-u2-t3','5-2-u2-t3-2','5-2-u2-practice-20-source-faithful-similar','5-2-u2-practice-17-three-groups-similar','5-2-u2-practice-71-count-similar','5-2-u2-practice-59-segment-similar'].includes(q?.id)?4:1;}
+function variantCount(q){if(['5-2-u2-t3-3','5-2-u2-practice-20-source-faithful-similar','5-2-u2-practice-71-count-similar'].includes(q?.id))return 9;return ['5-2-u2-t3','5-2-u2-t3-2','5-2-u2-practice-20-source-faithful-similar','5-2-u2-practice-17-three-groups-similar','5-2-u2-practice-71-count-similar','5-2-u2-practice-59-segment-similar'].includes(q?.id)?4:1;}
 function match(t){return rows.find(q=>t&&(t.id===q.id||t.sourceItemId===q.source||t.generatorKey===q.key));}
 function resolves(t,q){return !!(t&&q&&t.id===q.id&&t.sourceItemId===q.source&&t.generatorKey===q.key&&t.sourceVerified===true&&t.reviewLocked===false);}
 function build(q,index){const v=index===0?q:(q.id==='5-2-u2-t3'?originalAmountExtras:q.id==='5-2-u2-t3-2'?twoDistanceExtras:q.id==='5-2-u2-t3-3'?femaleDifferenceExtras:q.id==='5-2-u2-practice-20-source-faithful-similar'?naturalMultipleExtras:q.id==='5-2-u2-practice-17-three-groups-similar'?threeGroupExtras:q.id==='5-2-u2-practice-71-count-similar'?coprimeCountExtras:segmentRatioExtras)[index-1],count=variantCount(q);return Object.freeze({prompt:`<div class="u2p76practice-question" data-source-item-id="${q.source}" data-pool-index="${index}">${v.prompt}</div>`,solution:`<div class="u2p76practice-solution" data-source-answer="${q.source}">${v.solution}</div>`,answer:v.answer,automaticGrading:!q.manual,resultContract:q.contract,answerVisual:'',answerVisualRequired:false,answerVisualStatus:'not-required',sourceItemId:q.source,sourceParentItemId:q.parent,generator:q.key,variant:index,variantIndex:index,poolIndex:index,verifiedPoolIndex:index,verifiedVariantId:`${q.source}:${index}`,generationMode:'fixed-verified-pool',verifiedVariantCount:count,verifiedVariantTarget:count,difficultyOffset:0,difficultyLevel:2,difficultyRank:2,sourceStructurePreserved:!['5-2-u2-t1-2','5-2-u2-t1-3','5-2-u2-t4-2'].includes(q.id),variantProvenance:'synthetic-explicit-conditions',sourcePdfPage:q.pdf,alternateSourcePdfPage:q.alternate??q.pdf+1,sourcePrintedPage:q.printed,publisherKeyVerified:false,publisherAnswerVerified:false});}
