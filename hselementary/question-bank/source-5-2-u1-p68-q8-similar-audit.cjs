@@ -4,7 +4,7 @@ const api=require('./source-5-2-u1-p68-q8-similar.js');
 const feasible=Array.from({length:250},(_,i)=>i).filter(n=>Math.ceil(n/36)===5);
 assert.equal(feasible.length,36);assert.equal(feasible[0],145);assert.equal(feasible.at(-1),180);
 assert.deepEqual(feasible,Array.from({length:36},(_,i)=>145+i));
-assert.match(api.build(0).answer,/144명 초과 181명 미만/);assert.equal(api.build(1),null);
+assert.match(api.build(0).answer,/144명 초과 181명 미만/);for(const [i,[seats,buses]] of api.cases.entries()){const valid=Array.from({length:seats*buses+2},(_,n)=>n).filter(n=>Math.ceil(n/seats)===buses);const q=api.build(i);assert.equal(q.answer,`${valid[0]-1}명 초과 ${valid.at(-1)+1}명 미만`);assert.match(q.prompt,new RegExp(`${buses}대면 모두 탈 수 있다`));}assert.equal(api.build(9),null);
 const {chromium}=require(process.env.HSE_PLAYWRIGHT_PATH||'playwright');
 const origin=process.env.HSE_AUDIT_ORIGIN||'http://127.0.0.1:45683';
 (async()=>{const browser=await chromium.launch({headless:true});try{for(const width of [1280,375]){
