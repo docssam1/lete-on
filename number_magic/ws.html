@@ -34,6 +34,10 @@
   .ws-bar .ws-sub{color:#6b6257;font-size:13px}
   .ws-bar button{margin-left:auto;padding:10px 16px;border:0;border-radius:10px;background:#2f6f4e;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
   .ws-err{margin:40px auto;max-width:520px;padding:20px;background:#fff;border-radius:12px;color:#7a2e2e;line-height:1.6}
+  .ws-tools{min-height:44px;display:inline-flex;align-items:center;padding:8px;color:#2f6b4a;font-size:14px;text-underline-offset:3px}
+  @media screen{body.ws-tool-page{background:#f1ece1!important}body.ws-tool-page::before,body.ws-tool-page::after{display:none!important}}
+  .ws-tool-embed .ws-bar{display:none}
+  .ws-tool-embed>.nm-print-sheet{margin-top:0}
   .ws-bar .ws-ghost{margin-left:0;background:#fffaf0;color:#2f6f4e;border:1px solid #cfe0d5}
   /* 화면에서도 학습지를 그대로 보여 준다(2026-09-07, 원장 "먼저 html이 나오고 저장 또는 인쇄가
      되어야 하는데 인쇄 페이지가 먼저 뜨고 html은 스크롤이 안 돼"). 예전엔 인쇄 대화상자가 뜬 뒤
@@ -58,6 +62,7 @@
 <div class="ws-bar" id="wsBar">
   <b id="wsTitle">Numbers of Magic · 주간 학습지</b>
   <span class="ws-sub" id="wsSub">불러오는 중…</span>
+  <a id="wsTools" class="ws-tools" href="paper-tools.html">교구 목록</a>
   <button id="wsPrint" type="button">🖨 인쇄 · PDF로 저장</button>
 </div>
 <div id="wsBody"></div>
@@ -130,7 +135,7 @@
 <script src="data/stages.js?v=20261106-release-audit"></script>
 <script src="data/story-comics.js?v=20261026-review1"></script>
 <script src="data/hero3d.js"></script>
-<script src="data/paper-tools.js?v=20261106-paper-tools"></script>
+<script src="data/paper-tools.js?v=20261106-tools-full"></script>
 <script src="data/magazine.js?v=20261025-character2"></script>
 <script src="data/lang-think.js?v=20261026-review1"></script>
 <script src="data/labs.js"></script>
@@ -161,7 +166,7 @@
 <script src="app/paper-examples.js?v=20261106-release-audit"></script>
 <script src="engine/c0-cognitive.js?v=20261026-review5"></script>
 <script src="app/c0-paper.js?v=20261104-blank14"></script>
-<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261106-paper-tools"></script>
+<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261106-tools-full"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -186,6 +191,7 @@
   function text(ko,en,zh){ return lang==='en'?en:lang==='zh'?zh:ko; }
   document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + text('주간 학습지','Weekly worksheet','每周学习单');
   document.getElementById('wsPrint').textContent = text('🖨 인쇄 · PDF로 저장','🖨 Print · Save as PDF','🖨 打印 · 另存为PDF');
+  var toolList=document.getElementById('wsTools');toolList.textContent=text('교구 목록','Paper tools','纸教具目录');toolList.href='paper-tools.html?l='+lang;
   var w = (q.get('w') || isoWeekKey(new Date(Date.now() + 9*3600000))).trim();
   var c = (q.get('c') || '').trim();
   var name = (q.get('n') || '').trim();
@@ -205,6 +211,21 @@
     document.getElementById('wsBody').replaceChildren(error);
     document.getElementById('wsPrint').disabled = true;
     window.NM_WS_READY = 'error';
+  }
+  // Optional standalone paper-tool view; same renderer, no learner state or cloud API.
+  if(q.has('tool')){
+    document.body.classList.add('ws-tool-page');
+    if(q.get('embed')==='1')document.body.classList.add('ws-tool-embed');
+    var toolKey=q.get('tool');
+    if(q.has('dp') || q.has('dv') || !NM_EXAM.renderPaperTool(toolKey,lang)) return fail(text('교구 주소를 확인해 주세요.','Check the tool link.','请检查教具链接。'));
+    var currentTool=NM_PAPER_TOOLS.find(function(t){return t.key===toolKey;});
+    document.getElementById('wsTitle').textContent=text('수의 마법 · 종이 교구','Numbers of Magic · Paper tools','数的魔法 · 纸教具');
+    sub.textContent=currentTool ? (currentTool.name[lang] || currentTool.name.ko) : text('전체 교구 12종','All 12 tools','全部12种教具');
+    document.getElementById('wsPrint').onclick=function(){window.print();};
+    function fitTool(){document.documentElement.style.setProperty('--ws-zoom',Math.min(1,(document.documentElement.clientWidth-16)/794));}
+    fitTool();window.addEventListener('resize',fitTool);
+    Promise.resolve(window.NM_LAST_PRINT_READY).then(function(){window.NM_WS_READY=true;});
+    return;
   }
   var course = window.NM_COURSES && NM_COURSES[c];
   if(!c || !course) return fail(text('학습지 주소가 올바르지 않아요.','The worksheet address is invalid.','学习单地址无效。'));

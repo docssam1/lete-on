@@ -9,7 +9,7 @@
  *  - 인터넷이 없을 때 꼬리표가 다른 주소를 찾으면 꼬리표를 빼고 같은 파일을 찾아 준다.
  * 끄기: 이 파일 맨 위 KILL = true 로 올리면 다음 접속 때 저장본을 모두 지우고 스스로 물러난다. */
 'use strict';
-const VERSION = '20261106-paper-tools';
+const VERSION = '20261106-tools-full';
 const KILL = false;
 const SHELL = 'nm-shell-' + VERSION;      // 첫 화면에 꼭 필요한 것(설치 때 받음)
 const FILES = 'nm-files';                  // 쓰면서 받은 것·「다 받아 두기」로 받은 것(버전과 무관하게 이어 씀)

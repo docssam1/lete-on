@@ -499,6 +499,38 @@
   .nm-pt-frac > span:last-child { border-top:1px solid currentColor; padding-top:.08em; }
   .nm-pt-page svg { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 
+  @font-face { font-family:'NM Tools Sans';src:url('assets/fonts/pretendard-var.woff2') format('woff2');font-weight:100 700;font-display:swap; }
+  .nm-pt-designed { font-family:'NM Tools Sans',Pretendard,sans-serif; color:#191511; }
+  .nm-pt-designed .nm-hist-head { border-color:#2f6b4a; margin-bottom:2mm; }
+  .nm-pt-designed .nm-hist-head b { color:#191511;font-size:18px;font-weight:700; }
+  .nm-pt-designed .nm-hist-kicker { color:#6d5827;letter-spacing:0;font-weight:600; }
+  .nm-pt-designed .nm-pt-why { color:#191511;font-size:13px;font-weight:400;line-height:1.5; }
+  .nm-pt-designed .nm-pt-intro img { width:13mm;height:13mm; }
+  .nm-pt-designed .nm-pt-legend { font-size:10.5px;margin-top:1mm;gap:5mm; }
+  .nm-pt-designed .nm-pt-art { margin:2mm 0; }
+  .nm-pt-designed svg text { font-family:'NM Tools Sans',Pretendard,sans-serif!important; }
+  .nm-pt-example { flex:0 0 auto;display:grid;grid-template-columns:1fr 92mm;align-items:center;gap:3mm;padding:2mm 0;margin:1mm 0 2mm;border-top:1px solid #c9bda2; }
+  .nm-pt-example b { font-size:11px;font-weight:600;color:#2f6b4a; }
+  .nm-pt-example p { font-size:11px;line-height:1.4;margin:1mm 0 0; }
+  .nm-pt-example-math { font-size:15px;margin-top:1mm;color:#191511; }
+  .nm-pt-example-math .katex { font-size:1em; }
+  .nm-pt-demo svg { display:block;width:100%;height:auto; }
+  .nm-pt-designed .nm-pt-play { padding-top:2mm;border-color:#2f6b4a; }
+  .nm-pt-designed .nm-pt-play > b { margin-bottom:1.5mm;color:#2f6b4a;font-weight:600; }
+  .nm-pt-designed .nm-pt-steps li { font-size:12px;line-height:1.45; }
+  .nm-pt-designed .nm-pt-steps b { background:#2f6b4a;font-weight:600; }
+  .nm-pt-designed .nm-pt-choose { margin-top:2mm;padding-top:2mm;gap:2mm;border-color:#c9bda2; }
+  .nm-pt-designed .nm-pt-opt { gap:2mm;padding:0; }
+  .nm-pt-designed .nm-pt-opt b { font-size:11px;line-height:1.3;font-weight:600; }
+  .nm-pt-designed .nm-pt-opt p { font-size:9.5px;line-height:1.4; }
+  .nm-pt-designed .nm-pt-opt i { font-size:8.5px;line-height:1.3; }
+  .nm-pt-designed .nm-pt-qr { flex-basis:22mm; }
+  .nm-pt-secondary .nm-pt-example-math { font-size:13px; }
+  .nm-pt-child .nm-pt-why { font-size:14px; }
+  .nm-pt-child .nm-pt-steps li { font-size:13px; }
+  .nm-pt-primary .nm-pt-steps li { font-size:14px; }
+  .nm-pt-primary .nm-hist-head b { font-size:20px; }
+
   /* 수학사 지면 + 실험실 QR (w2HistoryPageHtml, 2026-09-06) */
   .nm-hist-page { gap:0; }
   .nm-hist-head { flex:0 0 auto; display:flex; align-items:baseline; gap:10px;
@@ -2281,7 +2313,9 @@ function normLang(l){ const v = String(l || '').slice(0, 2); return (v === 'en' 
 /* 저장본 문자열이 그대로면 다시 파싱하지 않는다 — 한 장 찍는 동안 수백 번 불린다.
    (S에는 진도까지 들어 있어 매번 JSON.parse하면 인쇄 한 번에 그 비용을 다 문다.) */
 let _langMemo = { raw: null, val: null };
+let paperToolPreviewLang = null;
 function examLang(){
+  if(paperToolPreviewLang) return paperToolPreviewLang;
   try{
     const raw = localStorage.getItem(window.NM_STATE_KEY||NM_LANG_KEY);
     if(raw){
@@ -2687,16 +2721,19 @@ function paperToolText(text){
   return esc(text).replace(/\b(\d+)\/(\d+)\b/g, (_, n, d) =>
     `<span class="nm-pt-frac" role="math" aria-label="${lk(`${d}분의 ${n}`,`${n} over ${d}`,`${d}分之${n}`)}"><span>${n}</span><span>${d}</span></span>`);
 }
-function w2PaperToolPageHtml(courseNum, code){
+function w2PaperToolPageHtml(courseNum, code, selectedTool){
   const pick = window.NM_PAPER_TOOL_OF_COURSE;
-  const tool = (pick && courseNum) ? pick(courseNum) : null;
+  const tool = selectedTool || ((pick && courseNum) ? pick(courseNum) : null);
   if(!tool || typeof tool.build !== 'function') return '';
   let art = '';
   try{ art = tool.build(examLang()); }catch(e){ return ''; }
   if(!art) return '';
   const source = document.querySelector('script[src*="data/paper-tools.js"]');
-  const portrait = source ? new URL('../assets/characters/numi-0-happy.png', source.src).href : '';
+  const portrait = source && tool.portrait ? new URL('../assets/characters/' + tool.portrait, source.src).href : '';
   const primary = tool.key === 'tenframe' || tool.key === 'place';
+  const child = tool.audience !== 'secondary';
+  const exampleMath = window.katex ? katex.renderToString(tool.exampleTex || '', {throwOnError:false,output:'htmlAndMathml'}) : '';
+  const demo = typeof tool.demo === 'function' ? tool.demo(examLang()) : '';
   const steps = (pickL(tool.steps) || []).map((t, i) =>
     `<li><b>${i + 1}</b>${paperToolText(t)}</li>`).join('');
   /* 둘 중 하나를 고른다(2026-09-08, 원장 "금액은 내지만 구입하는 거 양팔 저울처럼, 아니면
@@ -2728,14 +2765,15 @@ function w2PaperToolPageHtml(courseNum, code){
       </div>
     </div>
   </div>` : '';
-  return `<div id="nm-paper-tool" class="nm-w2-page nm-pt-page${primary ? ' nm-pt-primary' : ''}" data-tool="${esc(tool.key)}">
+  return `<div id="nm-paper-tool" class="nm-w2-page nm-pt-page nm-pt-designed${child ? ' nm-pt-child' : ' nm-pt-secondary'}${primary ? ' nm-pt-primary' : ''}" data-tool="${esc(tool.key)}">
   <div class="nm-hist-head">
     <span class="nm-hist-kicker">${esc(lk('오려 쓰는 교구','Cut-out tools','剪纸教具'))}</span>
     <b>${esc(pickL(tool.name))}</b>
   </div>
-  <div class="nm-pt-intro">${primary && portrait ? `<img src="${esc(portrait)}" alt="" width="54" height="54">` : ''}<p class="nm-pt-why">${paperToolText(pickL(tool.why))}</p></div>
-  ${primary ? `<div class="nm-pt-legend"><span><i></i>${esc(lk('점선은 잘라요','Cut dashed outlines','沿虚线剪'))}</span><span><i class="nm-pt-solid"></i>${esc(lk('안쪽 실선은 그대로 두어요','Keep inner grid lines','内侧实线不要剪'))}</span></div>` : ''}
+  <div class="nm-pt-intro">${child && portrait ? `<img src="${esc(portrait)}" alt="" width="54" height="54">` : ''}<p class="nm-pt-why">${paperToolText(pickL(tool.why))}</p></div>
+  <div class="nm-pt-legend"><span><i></i>${esc(lk('점선만 오려요','Cut dashed outlines only','只剪虚线'))}</span><span><i class="nm-pt-solid"></i>${esc(lk('실선은 그대로 두어요','Keep solid lines intact','保留实线'))}</span></div>
   <div class="nm-pt-art">${art}</div>
+  ${tool.embeddedExample ? '' : `<aside class="nm-pt-example"><div><b>${esc(lk('이렇게 만들었어요','Worked example','完成的例子'))}</b><div class="nm-pt-example-math">${exampleMath}</div><p>${paperToolText(pickL(tool.exampleText) || '')}</p></div><div class="nm-pt-demo">${demo}</div></aside>`}
   <div class="nm-pt-play"><b>${esc(lk('이렇게 해 봐요','Try it together','一起试一试'))}</b><ol class="nm-pt-steps">${steps}</ol></div>
   ${choices}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
@@ -9398,6 +9436,26 @@ ${round.html}
     const schoolTier = SCHOOL_TIER_OF_COURSE[course.tier] || 'elem';
     items.forEach(it => { if(!it.schoolTier) it.schoolTier = schoolTier; });
     return { wsId, session, items, cover, units, k, cad, title, courseSessions: course.sessions.filter(x => !x.test).length };
+  },
+
+  renderPaperTool(key, lang){
+    const catalog=window.NM_PAPER_TOOLS || [];
+    const tools=key==='all'?catalog.slice():catalog.filter(t=>t.key===key);
+    if(!tools.length) return false;
+    const priorLang=paperToolPreviewLang;paperToolPreviewLang=normLang(lang || document.documentElement.lang);
+    try{
+    const old=document.querySelector('.nm-print-sheet');if(old)old.remove();
+    const sheet=document.createElement('div');
+    sheet.className='nm-print-sheet nm-print-school-elem';sheet.lang=examLang();
+    sheet.innerHTML=tools.map(t=>w2PaperToolPageHtml(null,'TOOL-'+t.key,t)).join('');
+    [...sheet.querySelectorAll('.nm-pt-page')].forEach((page,i)=>{
+      if(tools.length>1)page.id='nm-paper-tool-'+tools[i].key;
+      page.querySelector('.nm-w2-foot').insertAdjacentHTML('afterbegin','<span>'+(i+1)+' / '+tools.length+'</span>');
+    });
+    document.body.appendChild(sheet);
+    window.NM_LAST_PRINT_READY=Promise.all([document.fonts.ready,...[...sheet.querySelectorAll('img')].map(i=>i.decode().catch(()=>{}))]);
+    return true;
+    }finally{paperToolPreviewLang=priorLang;}
   },
 
   /* 수학 팁 HTML — 학습지 QR 도우미 화면(main.js)이 같은 팁을 같은 모양으로 쓴다. */
