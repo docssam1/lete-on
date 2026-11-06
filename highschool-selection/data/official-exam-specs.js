@@ -7,10 +7,10 @@
     courses: {
       "SH:high-selection": {
         branch: "대치", cohort: "2026년 고등과정 시작반 편입",
-        scope: "중등 1~3과정", durationMinutes: null, questionCount: null,
-        durationState: "unconfirmed", mockDurationMinutes: 110,
+        scope: "중등 1~3과정", durationMinutes: 110, questionCount: null,
+        durationState: "owner-confirmed", durationConfirmedAt: "2026-11-06", mockDurationMinutes: 110,
         sourceUrl: "https://blog.naver.com/sharpedu/224086447021",
-        note: "대치 공식 범위 · 110분은 모의고사 운영 시간"
+        note: "대치 고등 시작반 · 110분"
       },
       "DP:common1-basic": {
         branch: "대치", cohort: "2026년 12월 개강",
