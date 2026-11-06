@@ -398,9 +398,11 @@
       const typePoolIndices = seenPoolIndicesByType.get(type.id) || new Set();
       let generated;
       let uniquePromptFallback;
-      for (let attempt = 0; attempt < 32; attempt += 1) {
+      const fixedPool = type.generationMode === "fixed-verified-pool";
+      const attemptLimit = fixedPool ? Math.max(32, Number(type.verifiedVariantCount) || 0) : 32;
+      for (let attempt = 0; attempt < attemptLimit; attempt += 1) {
         const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
-        const variant = type.generationMode === "fixed-verified-pool" ? typePoolIndices.size + attempt : index;
+        const variant = fixedPool ? attempt : index;
         const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, variant);
         if (!candidate || seenPrompts.has(candidate.prompt)) continue;
         if (candidate.generationMode === "fixed-verified-pool" && typePoolIndices.has(candidate.verifiedPoolIndex)) continue;
