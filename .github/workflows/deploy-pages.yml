@@ -166,5 +166,5 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
-          # A near-1GB shared site can still be syncing after the default 10 minutes.
-          timeout: 1200000
+          # deploy-pages v4 caps its timeout at 10 minutes, regardless of larger inputs.
+          timeout: 600000
