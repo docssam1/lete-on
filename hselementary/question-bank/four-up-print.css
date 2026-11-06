@@ -7,6 +7,11 @@
   #problemView .print-page--four-up :is(.p28e33-workspace, .p28e34-workspace, .source52-p28e32-workspace, .p30e41-workspace, .source52-p30e43-workspace, .source52-p30e44-workspace) { display:none; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u1-e3-exploration-life-synthetic"] > div[aria-hidden="true"] { height:1.4em !important; margin-bottom:0.15em !important; }
   #problemView .print-page--four-up .question-item[data-type-id="5-2-u3-e1-mission-6"] .u3m6 ol { line-height:1.3; margin:0.2em 0; }
+  #problemView .print-page--four-up .source52-p29m6-workspace { display:none; }
+  #problemView .print-page--four-up :is(.u3m5, .u3e23-pair) ol { line-height:1.35; margin:0.2em 0; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-mission-3-dot-cut-synthetic"] { font-size:10pt; line-height:1.35; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-mission-3-dot-cut-synthetic"] p { margin:0.3em 0; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-mission-3-dot-cut-synthetic"] svg { max-height:100px; }
   .print-page.print-page--four-up { page:hseFourUp; }
   .print-page.print-page--four-up .question-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-flow:column; grid-template-rows:repeat(2,minmax(auto,1fr)); min-height:235mm; }
   #problemView .print-page.print-page--four-up:has(.question-item .graph-figure + .graph-figure) .question-grid { display:grid; }
