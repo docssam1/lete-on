@@ -1,3 +1,4 @@
+import{withCombustionReadableWorkbook}from'./c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import{withCombustionEditorial}from'./c22-s62-u02.editorial.js?v=20261104-combustion-book';
 // 독립128문항 정식 교재. scripts/gen-science-workbook-c22s62u02.mjs가 생성.
@@ -22192,4 +22193,5 @@ const baseWorkbook = {
 };
 
 export const learnerPriorWorkbook=withCombustionEditorial(baseWorkbook);
-export const workbook=withLearnerExplanations(learnerPriorWorkbook);
+export const combustionReadablePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
+export const workbook=withCombustionReadableWorkbook(combustionReadablePriorWorkbook);

@@ -1,4 +1,4 @@
-import{workbook}from'../data/book/c22-s62-u02.workbook.js?v=20261104-combustion-book';
+import{combustionReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u02.workbook.js?v=20261106-combustion-readable-workbook';
 import{questions as originalQuestions}from'../data/book/c22-s62-u02.questions.js';
 import{taxonomy}from'../data/units/c22-s62-u02.taxonomy.js';
 import{combustionLanguage}from'../data/book/c22-s62-u02.editorial.js?v=20261104-combustion-book';
@@ -7,7 +7,7 @@ const clone=x=>JSON.parse(JSON.stringify(x)),byId=new Map(workbook.questions.map
 export const COMBUSTION_CHANGED_NUMBERS=Object.freeze(originalQuestions.filter(old=>{const w=byId.get(old.id);return Object.entries(old).some(([key,value])=>JSON.stringify(value)!==JSON.stringify(w[key]));}).map(q=>q.no));
 export function combustionCurrentItems(rows){return rows.map(q=>{
  if(!q.id?.startsWith('c22-s62-u02-'))return q;
- if(q.contentVersion===COMBUSTION_QUESTION_VERSION)return q;
+ if(q.status!=='authored'||!['authored-supplement','authored-pair'].includes(q.sourceRef?.type)||(q.contentVersion||1)!==1)return q;
  const w=byId.get(q.bookQuestionId);
  if(!w){
   if(q.bookQuestionId)return q;

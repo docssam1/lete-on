@@ -1,7 +1,7 @@
 import{bankBook}from'../data/book/c22-s62-u02.bank-book.js';
 import{items}from'../data/units/c22-s62-u02.js';
-import{workbook}from'../data/book/c22-s62-u02.workbook.js?v=20261104-combustion-book';
-import{combustionCurrentItems,COMBUSTION_CHANGED_NUMBERS}from'./combustion-question-language.js?v=20261104-combustion-book';
+import{combustionReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u02.workbook.js?v=20261106-combustion-readable-workbook';
+import{combustionCurrentItems,COMBUSTION_CHANGED_NUMBERS}from'./combustion-question-language.js?v=20261106-combustion-readable-workbook';
 import{combustionLanguage}from'../data/book/c22-s62-u02.editorial.js?v=20261104-combustion-book';
 import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261104-earth-motion-book';
 const clone=x=>JSON.parse(JSON.stringify(x)),current=new Map(combustionCurrentItems(items).map(q=>[q.id,q])),byId=new Map(workbook.questions.map(q=>[q.id,q]));
