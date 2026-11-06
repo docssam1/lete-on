@@ -1,11 +1,11 @@
-import{workbook}from'../data/book/c22-s61-u03.workbook.js?v=20261104-plant-structure-book';
+import{plantStructureReadablePriorWorkbook as workbook}from'../data/book/c22-s61-u03.workbook.js?v=20261106-plant-structure-readable-workbook';
 import{PLANT_QUESTION_PATCHES}from'../data/book/c22-s61-u03.editorial.js?v=20261104-plant-structure-book';
 import{taxonomy}from'../data/units/c22-s61-u03.taxonomy.js';
 export const PLANT_STRUCTURE_QUESTION_VERSION='20261104-plant-structure-class';
 export const PLANT_STRUCTURE_CHANGED_NUMBERS=Object.freeze(Object.keys(PLANT_QUESTION_PATCHES).map(Number));
 const clone=x=>JSON.parse(JSON.stringify(x)),diagnosticFor={114:'M07',119:'M13',120:'M09',121:'M03',122:'M13',125:'M05'};
 export function plantStructureCurrentItems(rows){return rows.map(q=>{
- if(q.contentVersion===PLANT_STRUCTURE_QUESTION_VERSION)return q;
+ if(q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==1)return q;
  const w=workbook.questions.find(w=>w.id===q.bookQuestionId);if(!w||!PLANT_STRUCTURE_CHANGED_NUMBERS.includes(w.no))return q;
  const t=taxonomy.types.find(t=>t.id===w.type),ac={...clone(q.answerContract),plantAuthoredContract:clone(w.responseContract)};
  if(ac.type==='short-text'){ac.answer=w.answer;ac.accepted=[...new Set([w.answer,...w.accepted||[]])];}
