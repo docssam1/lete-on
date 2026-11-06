@@ -1,4 +1,4 @@
-import{workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261104-season-book';
+import{seasonReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261106-season-readable-workbook';
 import{questions as originalQuestions}from'../data/book/c22-s62-u01.questions.js';
 import{taxonomy}from'../data/units/c22-s62-u01.taxonomy.js';
 import{seasonLanguage}from'../data/book/c22-s62-u01.editorial.js?v=20261104-season-book';
@@ -7,7 +7,7 @@ const clone=x=>JSON.parse(JSON.stringify(x)),byId=new Map(workbook.questions.map
 export const SEASON_CHANGED_NUMBERS=Object.freeze(originalQuestions.filter(old=>{const w=byId.get(old.id);return Object.entries(old).some(([key,value])=>JSON.stringify(value)!==JSON.stringify(w[key]));}).map(q=>q.no));
 export function seasonCurrentItems(rows){return rows.map(q=>{
  if(!q.id?.startsWith('c22-s62-u01-'))return q;
- if(q.contentVersion===SEASON_QUESTION_VERSION)return q;
+ if(q.status!=='authored'||!['authored-supplement','authored-pair'].includes(q.sourceRef?.type)||(q.contentVersion||1)!==1)return q;
  const w=byId.get(q.bookQuestionId);
  if(!w){
   if(q.bookQuestionId)return q;

@@ -1,7 +1,7 @@
 import{bankBook}from'../data/book/c22-s62-u01.bank-book.js';
 import{items}from'../data/units/c22-s62-u01.js';
-import{workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261104-season-book';
-import{seasonCurrentItems,SEASON_CHANGED_NUMBERS}from'./season-question-language.js?v=20261104-season-book';
+import{seasonReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261106-season-readable-workbook';
+import{seasonCurrentItems,SEASON_CHANGED_NUMBERS}from'./season-question-language.js?v=20261106-season-readable-workbook';
 import{seasonLanguage}from'../data/book/c22-s62-u01.editorial.js?v=20261104-season-book';
 import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261104-earth-motion-book';
 const clone=x=>JSON.parse(JSON.stringify(x)),current=new Map(seasonCurrentItems(items).map(q=>[q.id,q])),byId=new Map(workbook.questions.map(q=>[q.id,q]));
