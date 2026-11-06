@@ -253,7 +253,7 @@
         { label: "현행 과목", value: "공통수학1·2 병렬 운영", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL"] },
         { label: "우리 판매용 모의고사", value: "중등 누적 40문항 · 110분", state: "confirmed", sourceIds: [] },
         { label: "대치 고등 시작반 범위", value: "중등 1~3과정", state: "verified", sourceIds: ["SH-DAECHI-2026-OFFICIAL"] },
-        { label: "대치 공식 시험시간", value: "공개 안내에 미기재 · 모의고사는 110분 운영", state: "needs-review", sourceIds: ["SH-DAECHI-2026-OFFICIAL"] },
+        { label: "대치 고등 시작반 시험시간", value: "110분 · 원장 확인", state: "confirmed", sourceIds: [] },
         { label: "개편 전 교재 후기", value: "상·하 본교재 + 홀짝 숙제교재 6권 · 첨삭 미션·보충 프린트", state: "observed", sourceIds: [] },
         { label: "개편 전 퀵테스트 후기", value: "서술형 2문항 · 10점 · 부분점수", state: "observed", sourceIds: [] }
       ],
@@ -263,7 +263,7 @@
         branch: null, course: null, round: null, sourceIds: []
       },
       style: "중등 수·식, 함수·좌표, 평면·입체도형, 경우의 수·확률을 한 회차에 누적 배치합니다.",
-      caveat: "우리 제작·보유 시험지를 기준으로 하며 공식 기출로 표시하지 않습니다. 110분은 우리 판매용 모의고사 운영 설정이고, 대치 공식 안내에서 고등 시작반의 시간·문항 수는 확인되지 않았으며 타 지점 수치를 적용하지 않습니다. 과거 기본정석 교재 6권과 퀵테스트 후기는 2026년 교재 개편 전 자료이므로 현행 교재 안내에 쓰지 않습니다."
+      caveat: "우리 제작·보유 시험지를 기준으로 하며 공식 기출로 표시하지 않습니다. 대치 고등 시작반 시험시간은 원장 확인으로 110분이며 모의고사에도 같은 시간을 적용합니다. 공식 공개 안내의 문항 수와 레벨별 커트라인은 별도 확인합니다. 과거 기본정석 교재 6권과 퀵테스트 후기는 2026년 교재 개편 전 자료이므로 현행 교재 안내에 쓰지 않습니다."
     },
     {
       code: "DP",

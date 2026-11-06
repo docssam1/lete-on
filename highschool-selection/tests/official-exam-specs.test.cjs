@@ -19,6 +19,9 @@ test("every released mock agrees with its own branch/course time and count", () 
     if (s.durationState === "official") {
       assert.equal(e.durationMinutes, s.durationMinutes, e.id);
       assert.equal(e.questionCount, s.questionCount, e.id);
+    } else if (s.durationState === "owner-confirmed") {
+      assert.equal(e.durationMinutes, s.durationMinutes, e.id);
+      assert.equal(s.questionCount, null);
     } else {
       assert.equal(s.durationMinutes, null);
       assert.equal(e.durationMinutes, s.mockDurationMinutes);
@@ -41,8 +44,10 @@ test("Won basic courses retain different ranges and durations after the October 
   assert.equal(policy.courseBlueprints.WM["middle21-basic"].targetQuestionCount, 50);
 });
 
-test("unconfirmed branches and Hwangso time never inherit another campus's numbers", () => {
-  assert.equal(specs.courses["SH:high-selection"].durationState, "unconfirmed");
+test("Hwangso uses the owner-confirmed time while unconfirmed branches stay separate", () => {
+  assert.equal(specs.courses["SH:high-selection"].durationState, "owner-confirmed");
+  assert.equal(specs.courses["SH:high-selection"].durationMinutes, 110);
+  assert.equal(specs.courses["SH:high-selection"].durationConfirmedAt, "2026-11-06");
   const sh = globalThis.HIGHSELECT_PUBLIC_PROFILES.profiles.find(p => p.code === "SH");
   assert.equal(sh.cutline.state, "needs-review");
   assert.ok(!JSON.stringify(sh).match(/SONGPA|WIRYE|위례|송파/));
