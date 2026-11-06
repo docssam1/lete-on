@@ -1,5 +1,5 @@
 import test from'node:test';import assert from'node:assert/strict';import{execFileSync}from'node:child_process';import{fileURLToPath}from'node:url';
-import{items}from'../data/units/c22-s61-u04.js';import{workbook}from'../data/book/c22-s61-u04.workbook.js';import{bankBook}from'../data/book/c22-s61-u04.bank-book.js';
+import{items}from'../data/units/c22-s61-u04.js';import{observationPriorWorkbook as workbook}from'../data/book/c22-s61-u04.workbook.js';import{bankBook}from'../data/book/c22-s61-u04.bank-book.js';
 import{earthMotionCurrentItems,EARTH_MOTION_QUESTION_VERSION}from'./earth-motion-question-language.js';import{earthMotionBankBook,bankPaper}from'./earth-motion-bank-paper.js';
 import{judgeItem}from'./judge.js';import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 const current=earthMotionCurrentItems(items),byNo=n=>current.find(q=>q.bookQuestionId?.endsWith(String(n).padStart(3,'0')));

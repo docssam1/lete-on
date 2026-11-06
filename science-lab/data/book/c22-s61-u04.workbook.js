@@ -1,3 +1,4 @@
+import{withEarthMotionReadableWorkbook}from'./c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook';
 import{withStudentGuideLanguage}from'./student-opening-language.js?v=20261105-student-guide';
 import{withObservationLanguage}from'./observation-language.js';
 import{withEarthMotionEditorial}from'./c22-s61-u04.editorial.js?v=20261104-earth-motion-questions';
@@ -19669,4 +19670,5 @@ const baseWorkbook = {
 
 export const observationPriorWorkbook=withEarthMotionEditorial(baseWorkbook);
 export const studentGuidePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
-export const workbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
+export const earthMotionReadablePriorWorkbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
+export const workbook=withEarthMotionReadableWorkbook(earthMotionReadablePriorWorkbook);

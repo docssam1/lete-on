@@ -10,7 +10,7 @@ const diagnosticFor={115:'M05',118:'M02',119:'M02',120:'M08',124:'M05',126:'M05'
 
 // 원래 문항·저장 답안은 보존하고, 현재 교재에서 편집한 일곱 문항만 연결한다.
 export function earthMotionCurrentItems(rows){return rows.map(q=>{
- if(q.contentVersion===EARTH_MOTION_QUESTION_VERSION)return q;
+ if(q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==1)return q;
  const w=byId.get(q.bookQuestionId);
  if(!w||!EARTH_MOTION_CHANGED_NUMBERS.includes(w.no))return q;
  const t=taxonomy.types.find(t=>t.id===w.type),contract=clone(w.responseContract);
