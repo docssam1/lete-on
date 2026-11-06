@@ -29,6 +29,9 @@ for (const number of [33, 34, 35]) {
     assert.equal((fold.match(/M\d+ \d+ (?:L\d+ \d+|[HV]\d+)/g) || []).length, 5);
   }
 }
+const cube35 = bank.build(35).prompt.match(/<svg[^>]*aria-label="숨은 꼭짓점 ㅇ[^]*?<\/svg>/)?.[0];
+assert(cube35, '35: 원문의 숨은 꼭짓점 ㅇ이 표시된 겨냥도');
+for (const label of ['ㄱ', 'ㄹ', 'ㄷ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ']) assert(cube35.includes(`>${label}</text>`), `35: 꼭짓점 ${label} 표시`);
 assert(!bank.build(35).prompt.includes('M145 20 L170 45'), '35: 문제 그림에 답을 넣지 않음');
 assert(bank.build(35).answerVisual.includes('M145 20 L170 45'), '35: 정답 그림에 선 표시');
 for (const [number, count] of [[36, 4], [45, 5]]) {
