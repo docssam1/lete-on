@@ -6,6 +6,10 @@
 .u3p89-figure.u3p91-fan55{max-width:240px}
 
 .u3p95-fold82{max-width:340px}
+
+/* Keep the angle label inside option ② and the length clear of its side. */
+[data-source-item-id="5-2-u3-practice-11-original"] svg text[x="279"][y="91"] { transform: translateY(14px); }
+[data-source-item-id="5-2-u3-practice-11-original"] svg text[x="232"][y="100"] { transform: translateX(-10px); }
 .u3p95-fold87{display:block;width:100%;max-width:360px;height:auto;margin:.2em auto}
 #solutionView .u3p95-fold87-answers{display:block;width:min(620px,100%);height:auto;max-height:none;margin:auto}
 
