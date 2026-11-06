@@ -3969,5 +3969,6 @@
     ]
   },
   "scope": "Actual public standalone tool route; all 12 tools in 3 languages, all-tool 12-page export, and gallery previous/next at 1440/375px. Local fixtures only for preserved unrelated preview state; no tool-selection mock.",
-  "deployment": "pending"
+  "deployment": "verified",
+  "liveVerification": "live-verification.json"
 }

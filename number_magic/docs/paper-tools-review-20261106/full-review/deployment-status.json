@@ -1,15 +1,15 @@
 {
-  "checkedAt": "2026-11-06T00:46:53Z",
+  "checkedAt": "2026-11-06T00:48:30Z",
   "designAndLocalVerification": "complete",
   "runtimeMainCommit": "34a8643a11e6bad9605ce2d10cf5b227baccc3a9",
-  "deployment": "not_verified",
+  "deployment": "verified",
   "lastFailedRun": 42136851442,
   "lastFailedAttempt": 2,
   "failure": "First attempt reached file synchronization timeout; second attempt reported Deployment cancelled. Runtime checks and artifact upload passed.",
   "currentRun": 42138926046,
   "currentRuntimeHead": "d3d7f32743b7f867715f92e5b3c9417119150e9e",
-  "currentRunStatus": "in_progress at check; do not claim deployed",
-  "liveGalleryHTTP": 404,
+  "currentRunStatus": "completed/success",
+  "liveGalleryHTTP": 200,
   "localGallery": "http://127.0.0.1:8771/number_magic/paper-tools.html?tool=tenframe&l=ko",
   "localPdf": "all-paper-tools.pdf",
   "sharedSiteSizeEstimate": {
@@ -18,5 +18,9 @@
   },
   "sourceFilesRemoved": 0,
   "unrelatedUserFacingAssetsExcluded": 0,
-  "next": "Wait for current Pages run, then require gallery HTTP200 and exact runtime bytes before running the prepared live browser verification. Repeated shared Pages failures need separate hosting/staging diagnosis; preserve existing public URLs and approved assets."
+  "next": "Design implementation and deployment complete. Physical paper print/child handling trial not performed.",
+  "remoteAssetsIdentical": 9,
+  "liveBrowserCases": 34,
+  "liveBrowserErrors": 0,
+  "liveExternalWrites": 0
 }

@@ -42,10 +42,16 @@ Mac mini Codex / GPT-6.1 Sol. 기존 승인 교재형과 PNG 캐릭터를 재사
 
 개념 대조: [Math Learning Center 분수 모형](https://www.mathlearningcenter.org/apps/fractions), [Number Frames](https://www.mathlearningcenter.org/apps/number-frames), [EDC 십진 블록](https://elementarymath.edc.org/resources/base-ten-blocks/), [OpenStax 단위원과 삼각함수](https://openstax.org/books/precalculus-2e/pages/5-3-the-other-trigonometric-functions). 외부 그림을 복사하지 않았으며 펜토미노 완성 예시는 같은12조각의 직접 계산 결과다.
 
-## 원격 반영과 배포 상태
+## 운영 확인 완료 — 2026-11-06 09:48 KST
+
+후속 [Pages42138926046](https://github.com/docssam1/lete-on/actions/runs/42138926046)이 main `d3d7f32743b7f867715f92e5b3c9417119150e9e`로 성공했다. 운영 갤러리 HTTP200, 코드·페이지·전체PDF 등 **9파일 바이트 동일**, PC/휴대폰12종 순서 이동·언어 전환·실제6과정 연결을 합쳐 **34조건 통과·브라우저 오류0·외부쓰기0**. 아래 배포 대기 기록은 이 성공 확인으로 대체한다. 용량 추정은 조사 기록이며 이번 실패 원인으로 확정하지 않았다.
+
+[운영 검증 근거](live-verification.json). 원장님은 위 운영 교구 목록 또는 전체12쪽PDF로 첫 교구부터 순서대로 볼 수 있다. 실제 종이 출력/아동 조작 검증은 아직 하지 않았다.
+
+## 배포 대기 당시 기록 (성공 확인 전)
 
 교구 코드·PDF는 main `34a8643a11e6bad9605ce2d10cf5b227baccc3a9`에 반영했다. 공용 Pages 배포는 파일 동기화 시간 초과와 후속 취소로 운영 반영을 확인하지 못했다. 2026-11-06 09:46 KST 현재 후속 run `42138926046`이 진행 중이고 운영 갤러리는 HTTP404였다. 성공했다고 기록하지 않는다. 재시도 산출물 이름 충돌은 회차별 이름으로 수정했고, timeout은 지원되는 최대 600000ms로 맞춘 최신 main을 병합했다.
 
 로컬 서버 `http://127.0.0.1:8771/number_magic/paper-tools.html?tool=tenframe&l=ko`의 첫 교구를 인앱 창에 열었다. 이 서버는 검수용이며 외부 공유 주소가 아니다. PDF는 위 파일로 바로 검수할 수 있다. 공용 배포 묶음의 파일 합계는 약1,086,549,751바이트(추정)로 용량 위험이 있어 보이지만 배포 실패 원인으로 확정하지 않았다. 원본·운영 자산은 삭제하거나 배포 대상에서 빼지 않았다.
 
-[배포 상태·후속 확인](deployment-status.json). 운영 HTTP200·바이트 대조·실제 브라우저 확인 전에는 `paper-tools-browser.json`의 deployment pending을 유지한다.
+[배포 상태·후속 확인](deployment-status.json). 위 운영 확인 후 `paper-tools-browser.json`의 deployment를 verified로 갱신했다.
