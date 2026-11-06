@@ -1,5 +1,7 @@
 @page hseFourUp { size:A4; margin:8mm 0; }
 @media print {
+  /* Four-up cells already provide writing space above each answer line. */
+  #problemView .print-page--four-up :is(.source52-p29m1-workspace, .source52-p29m2c-workspace, .source52-p29m3-workspace) { display:none; }
   .print-page.print-page--four-up { page:hseFourUp; }
   .print-page.print-page--four-up .question-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-flow:column; grid-template-rows:repeat(2,minmax(auto,1fr)); min-height:235mm; }
   #problemView .print-page.print-page--four-up:has(.question-item .graph-figure + .graph-figure) .question-grid { display:grid; }
