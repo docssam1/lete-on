@@ -1,8 +1,8 @@
 import{withStudentScienceLanguage}from'../data/book/student-science-language.js';
 import{bankBook}from'../data/book/c22-s62-u03.bank-book.js';
 import{items}from'../data/units/c22-s62-u03.js';
-import{workbook}from'../data/book/c22-s62-u03.workbook.js?v=20261104-student-science-language';
-import{electricityCurrentItems,ELECTRICITY_CHANGED_NUMBERS}from'./electricity-question-language.js?v=20261104-student-science-language';
+import{electricityReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u03.workbook.js?v=20261106-electricity-readable-workbook';
+import{electricityCurrentItems,ELECTRICITY_CHANGED_NUMBERS}from'./electricity-question-language.js?v=20261106-electricity-readable-workbook';
 import{electricityLanguage}from'../data/book/c22-s62-u03.editorial.js?v=20261104-electricity-book';
 import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261104-earth-motion-book';
 const clone=x=>JSON.parse(JSON.stringify(x)),current=new Map(electricityCurrentItems(items).map(q=>[q.id,q])),byId=new Map(workbook.questions.map(q=>[q.id,q]));

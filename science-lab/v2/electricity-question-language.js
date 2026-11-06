@@ -8,7 +8,7 @@ const clone=x=>JSON.parse(JSON.stringify(x)),byId=new Map(workbook.questions.map
 export const ELECTRICITY_CHANGED_NUMBERS=Object.freeze(originalQuestions.filter(old=>{const w=byId.get(old.id);return Object.entries(old).some(([key,value])=>JSON.stringify(value)!==JSON.stringify(w[key]));}).map(q=>q.no));
 export function electricityBookItems(rows){return rows.map(q=>{
  if(!q.id?.startsWith('c22-s62-u03-'))return q;
- if(q.contentVersion===ELECTRICITY_QUESTION_VERSION||q.contentVersion===STUDENT_SCIENCE_LANGUAGE_VERSION)return q;
+ if(q.status!=='authored'||!['authored-supplement','authored-pair'].includes(q.sourceRef?.type)||(q.contentVersion||1)!==1)return q;
  const w=byId.get(q.bookQuestionId);
  if(!w){
   if(q.bookQuestionId)return q;
@@ -33,4 +33,4 @@ export function electricityBookItems(rows){return rows.map(q=>{
  return{...q,type:w.type,prompt:w.prompt,choices:w.choices?clone(w.choices):null,givens:Object.keys(givens).length?givens:null,responseContract:clone(c),answerContract:ac,standards:[w.standard],explanation:w.explanation,workbookRef:{id:w.id,no:w.no},verificationModel:w.verificationModel??null,taxonomy:{...q.taxonomy,type:w.type,element:'E'+w.section,standard:w.standard,topic:w.topic,concept:t.name,inquirySkill:t.desc},diagnosticOverride,contentVersion:ELECTRICITY_QUESTION_VERSION,previousVersions:[{...clone(q),version:q.contentVersion||1}]};
 });}
 
-export const electricityCurrentItems=rows=>withStudentScienceQuestionLanguage(electricityBookItems(rows),'c22-s62-u03');
+export const electricityCurrentItems=rows=>rows.map(q=>{if(q.status!=='authored'||!['authored-supplement','authored-pair'].includes(q.sourceRef?.type)||![1,ELECTRICITY_QUESTION_VERSION,STUDENT_SCIENCE_LANGUAGE_VERSION].includes(q.contentVersion||1))return q;return withStudentScienceQuestionLanguage(electricityBookItems([q]),'c22-s62-u03')[0];});
