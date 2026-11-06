@@ -15,4 +15,6 @@ assert.match(outline, /d="M120 8 H150 V38 H210 V68 H180 V98 H150 V68 H90 V38 H12
 const d = fold.match(/d="([^"]+)"/)[1];
 assert.equal(d, "M120 38 V68 M150 38 V68 M180 38 V68 M120 38 H150 M150 68 H180");
 assert.equal((q.prompt.match(/<rect x="(?:90|120|150|180)" y="(?:8|38|68)" width="30" height="30" fill="white" stroke="none"/g) || []).length, 6);
+for (const kind of ['H','V']) assert(q.prompt.includes(`stroke-width="1.2" data-mark-kind="${kind}"`), `48: ${kind} 무늬는 가는 선`);
+assert(bank.build(47).prompt.includes('stroke-width="3" data-mark-kind="H"'), '47: 원문의 굵은 띠 유지');
 console.log("PASS: p113 q48 six faces, solid outline, five dashed fold lines and answer");
