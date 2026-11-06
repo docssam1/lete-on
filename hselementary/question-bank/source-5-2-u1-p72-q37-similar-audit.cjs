@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),path=require('node:path'),os=require('node:os'),{execFileSync}=require('node:child_process');
 const api=require('./source-5-2-u1-p72-q37-similar.js');
 assert.equal(Math.floor(1169/25),46);assert.equal(1169-46*25,19);assert.equal(46*7,322);
-assert.equal(api.build(0).answer,'322분');assert.equal(api.build(1),null);
+assert.equal(api.build(0).answer,'322분');for(const [i,[apples,capacity,minutes]] of api.cases.entries()){const boxCounts=Array.from({length:apples+1},(_,n)=>n).filter(n=>n*capacity<=apples),boxes=boxCounts.at(-1);assert.notEqual(apples%capacity,0);const q=api.build(i);assert.equal(q.answer,`${boxes*minutes}분`);assert(q.solution.includes(`사과 ${apples-boxes*capacity}개는 남습니다`));}assert.equal(api.build(9),null);
 const {chromium}=require(process.env.HSE_PLAYWRIGHT_PATH||'playwright');
 const origin=process.env.HSE_AUDIT_ORIGIN||'http://127.0.0.1:45683';
 (async()=>{const browser=await chromium.launch({headless:true});try{for(const width of [1280,375]){
