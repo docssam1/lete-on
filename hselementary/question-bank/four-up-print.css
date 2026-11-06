@@ -2,6 +2,11 @@
 @media print {
   /* Four-up cells already provide writing space above each answer line. */
   #problemView .print-page--four-up :is(.source52-p29m1-workspace, .source52-p29m2c-workspace, .source52-p29m3-workspace) { display:none; }
+  /* Preserve drawing space while avoiding a second fixed writing area. */
+  #problemView .print-page--four-up :is(.u3ex11-work, .u3ex12-work, .u3m4-work) { min-height: 100px; }
+  #problemView .print-page--four-up :is(.p28e33-workspace, .p28e34-workspace, .source52-p28e32-workspace, .p30e41-workspace, .source52-p30e43-workspace, .source52-p30e44-workspace) { display:none; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u1-e3-exploration-life-synthetic"] > div[aria-hidden="true"] { height:1.4em !important; margin-bottom:0.15em !important; }
+  #problemView .print-page--four-up .question-item[data-type-id="5-2-u3-e1-mission-6"] .u3m6 ol { line-height:1.3; margin:0.2em 0; }
   .print-page.print-page--four-up { page:hseFourUp; }
   .print-page.print-page--four-up .question-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-flow:column; grid-template-rows:repeat(2,minmax(auto,1fr)); min-height:235mm; }
   #problemView .print-page.print-page--four-up:has(.question-item .graph-figure + .graph-figure) .question-grid { display:grid; }
