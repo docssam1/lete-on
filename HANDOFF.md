@@ -2327,3 +2327,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Re-searched the missing 2009 AMC 10A/10B and AMC 12A/12B national item-response tables. The 2010 MAA summary provides prior-year aggregate statistics but its detailed item-response tables are for 2010. The 2008 annual report is for 2008, even though it lists February 2009 as the next contest dates.
 - Search found 2009 B school reports with item tables for cohorts such as Temasek SS (n=89), Madrasah Al-Irsyad (n=16), Anglo-Chinese (n=31), and Changkat Changi (n=10). These are local venue/school samples and are not used as national response distributions. Coverage stays `not-found`; source search and rationale are in `docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`, and manifest notes are updated.
 - `git diff --check` passes. `raw_youtube.txt` remains untracked and untouched; no push, deploy, or Drive sync.
+
+
+### 2026-11-08 · 2014 AMC 12A Q25 원문 불일치의 투명한 처리
+
+- 원본 99CEF PDF의 렌더링 페이지에서 Q25의 인쇄 미응답률 `8.49%`를 재확인했다. A–E 선택률과 판독불가율의 합은 `18.50%`라 행 전체가 `26.99%`만 설명한다.
+- CSV와 런타임은 원문 `8.49%`를 그대로 보존하고 `runtime_inferred_omitted_percent=81.50`을 별도 파생 필드로 저장한다. 이 값은 100%에서 인쇄된 A–E 및 판독불가 비율을 뺀 잔여율이다.
+- 진단 요약은 해당 문항을 표시할 때 원문 값과 계산값을 함께 알린다. 정답 키 B와 다른 응답률은 수정하지 않았다. README와 연구 노트에 계산 방식 및 한계를 기록했다.
+- 검수: Node REPL에서 Q25 정답 B, 원문 8.49%, 계산 미응답 81.50%, 선택률+미응답+판독불가 합 100%, 두 모집단 선택지를 확인했다. CSV는 25행/18열과 원문·파생 필드를 확인했고 `git diff --check`를 통과했다. 브라우저 UI는 요약 문구 정적 대조까지 진행했다. 변경은 로컬에서만 커밋한다. `raw_youtube.txt`는 그대로 둔다.

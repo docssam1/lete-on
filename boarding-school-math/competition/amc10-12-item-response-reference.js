@@ -786,7 +786,7 @@
 22,B,2.16,4.73,3.97,3.93,2.00,83.18,0.02
 23,B,2.11,3.60,3.90,6.10,2.05,82.21,0.02
 24,C,3.11,3.99,5.40,2.91,1.76,82.81,0.02
-25,B,2.83,3.71,5.74,3.63,2.58,8.49,0.01`.trim(), respondentCount: 55400, population: "2014 AMC 12A global response cohort", sourceUrl: "https://web.archive.org/web/20150908065139id_/http://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf", sourceStatus: "99CEF 2014 analysis report; printed p.24 Global table; Q25 is transcribed as printed but the source values sum to 26.99%, so its item-response comparison is suppressed; correct answers cross-checked with LIVE", excludedQuestions: Object.freeze([25]) }),
+25,B,2.83,3.71,5.74,3.63,2.58,8.49,0.01`.trim(), respondentCount: 55400, population: "2014 AMC 12A global response cohort", sourceUrl: "https://web.archive.org/web/20150908065139id_/http://www.99cef.org.tw/userfiles/2014AMC10A12AReport.pdf", sourceStatus: "99CEF 2014 analysis report; printed p.24 Global table. Q25 prints 8.49% omitted, making the row total 26.99%; runtime reconstructs 81.50% as the residual to 100% after printed A-E and unreadable rates. The inferred field is disclosed; correct keys cross-checked with LIVE", inferredOmittedByQuestion: Object.freeze({ 25: 81.50 }) }),
     "amc12-2014-A-taiwan": Object.freeze({ raw: `
 1,C,0.06,3.33,95.53,0.27,0.31,0.48,0.02
 2,B,1.14,96.60,0.33,1.30,0.29,0.33,0.00
@@ -1944,13 +1944,15 @@
     const values = source.raw.split("\n")[Number(question) - 1].split(",");
     if (!values[1] || values.length < 9) return null;
     const responsePercent = Object.freeze(Object.fromEntries(letters.map(function (letter, index) { return [letter, Number(values[index + 2])]; })));
+    const inferredOmittedPercent = source.inferredOmittedByQuestion && source.inferredOmittedByQuestion[Number(question)];
+    const omittedPercent = inferredOmittedPercent == null ? Number(values[7]) : Number(inferredOmittedPercent);
     const correctAnswer = values[1];
     const acceptedAnswers = source.acceptedAnswersByQuestion && source.acceptedAnswersByQuestion[Number(question)] || [correctAnswer];
     const correctResponsePercent = acceptedAnswers.reduce(function (total, letter) { return total + responsePercent[letter]; }, 0);
     const choice = answer == null || answer === "" ? "" : String(answer).toUpperCase();
     if (choice && !letters.includes(choice)) return null;
     const distractor = letters.filter(function (letter) { return !acceptedAnswers.includes(letter); }).map(function (letter) { return { answer: letter, percent: responsePercent[letter] }; }).sort(function (a, b) { return b.percent - a.percent; })[0];
-    return Object.freeze({ program: selectedProgram, year: selectedYear, form: selectedForm, question: Number(question), answer: choice, correctAnswer: correctAnswer, acceptedAnswers: Object.freeze(acceptedAnswers.slice()), responsePercent: responsePercent, omittedPercent: Number(values[7]), unreadablePercent: values[8] === "" ? null : Number(values[8]), selectedResponsePercent: choice ? responsePercent[choice] : null, correctResponsePercent: correctResponsePercent, mostCommonDistractor: Object.freeze(distractor), respondentCount: source.respondentCount, availableQuestionCount: source.raw.split("\n").filter(function (row) { return Boolean(row.split(",")[1]); }).length, population: source.population, sourceStatus: source.sourceStatus || "99CEF 2020 analysis report; printed US/Canada item-response table; correct answers checked against LIVE answer key", sourceUrl: values[9] || source.sourceUrl || defaultSourceUrl });
+    return Object.freeze({ program: selectedProgram, year: selectedYear, form: selectedForm, question: Number(question), answer: choice, correctAnswer: correctAnswer, acceptedAnswers: Object.freeze(acceptedAnswers.slice()), responsePercent: responsePercent, omittedPercent: omittedPercent, sourcePrintedOmittedPercent: inferredOmittedPercent == null ? omittedPercent : Number(values[7]), omittedPercentInferred: inferredOmittedPercent != null, unreadablePercent: values[8] === "" ? null : Number(values[8]), selectedResponsePercent: choice ? responsePercent[choice] : null, correctResponsePercent: correctResponsePercent, mostCommonDistractor: Object.freeze(distractor), respondentCount: source.respondentCount, availableQuestionCount: source.raw.split("\n").filter(function (row) { return Boolean(row.split(",")[1]); }).length, population: source.population, sourceStatus: source.sourceStatus || "99CEF 2020 analysis report; printed US/Canada item-response table; correct answers checked against LIVE answer key", sourceUrl: values[9] || source.sourceUrl || defaultSourceUrl });
   }
   function populationsFor(program, year, form) {
     const selectedProgram = String(program || "").toLowerCase();

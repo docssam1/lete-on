@@ -1158,7 +1158,11 @@
       const cohortSummaryWarning = cohort.sourceStatus.includes("Source reconciliation warning")
         ? " · 원본 평균 불일치: 문항 응답 참고용"
         : "";
-      setText("item-response-summary", `${selectedYear} AMC ${itemResponseProgram === "amc10" ? "10" : "12"}${itemResponseForm} · ${responsePopulationLabel} · 오답·미응답 문항의 보기 선택을 나란히 표시합니다.${cohortSummaryWarning}`);
+      const inferredOmittedNotes = cohortItemResponses.filter(function ({ reference }) { return reference.omittedPercentInferred; }).map(function ({ reference }) {
+        return `Q${reference.question} 미응답률 ${reference.omittedPercent.toFixed(2)}%는 원문 인쇄값 ${reference.sourcePrintedOmittedPercent.toFixed(2)}%가 응답률 합계와 맞지 않아 나머지 비율에서 계산한 값입니다.`;
+      });
+      const inferredOmittedWarning = inferredOmittedNotes.length ? ` ${inferredOmittedNotes.join(" ")}` : "";
+      setText("item-response-summary", `${selectedYear} AMC ${itemResponseProgram === "amc10" ? "10" : "12"}${itemResponseForm} · ${responsePopulationLabel} · 오답·미응답 문항의 보기 선택을 나란히 표시합니다.${cohortSummaryWarning}${inferredOmittedWarning}`);
       setText("item-response-scope-copy", cohort.population.includes("AIME qualifier")
         ? "MAA High School Summary의 AIME 진출자 응답표입니다. 전체 응시자 분포가 아니며, 선발된 고득점 집단의 응답 참고 자료입니다. 학생 개인의 풀이 원인이나 AIME 진출 가능성을 판정하지 않습니다. "
         : "선택한 집단의 공개 응답 분포입니다. 표본의 범위는 원자료 표기를 따릅니다. 보기 선택만으로 개인의 풀이 원인이나 개념 숙달을 판정하지 않습니다. ");
