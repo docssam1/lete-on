@@ -198,3 +198,17 @@ CC0 법문 URL은 같지만 각 사진의 지정 근거는 아래 개별 페이�
 | `bean-sun-4.jpg` | 베란다 화분을 위에서 본 강낭콩 — 잎이 늘어남(창가 화분 날짜별 넷째 사진) | 원장 직접 촬영 | 원장 소유 | 546×482 · 70761 B |
 | `bean-dry-2.jpg` | 베란다 화분 — 지지대에 집게로 묶은 강낭콩 | 원장 직접 촬영 | 원장 소유 | 203×469 · 30335 B |
 | `bean-shade-3.jpg` | 회색 벽 앞 화분 — 줄기가 길어지고 덩굴손이 나옴 | 원장 직접 촬영 | 원장 소유 | 652×705 · 67821 B |
+
+## 3차 — 2026-11-07 (Claude, 같은 공개 데이터를 끝까지 다시 읽음)
+
+2차는 사진 표를 읽다 중간에 끊겨(약 16 GB/21 GB) 2021년 이전 사진만 후보였다. 이번에는 표 전체(2026-10-27판, 21.1 GB)를 끝까지 읽어 **지시서의 종**과 **한국·일본 사진**을 더 찾았고, 지금 사진은 그대로 두고 둘째 사진(`-2`)으로 붙였다(사진 탭에서 넘겨 봄, `data/observe-photos.js`). 조건은 2차와 같다(연구등급 + 사진별 CC0, 눈으로 확인).
+
+| 파일 | 종·관찰 특징 확인 | 출처·촬영자 | 라이선스 | 규격 |
+|---|---|---|---|---|
+| `alisma-2.jpg` | 택사(Alisma canaliculatum) — 꽃 — 타이완 습지에서 찍은 택사 꽃 — 흰 꽃잎 3장과 가운데 노란 암술·수술이 보여요. 잎은 이 사진에 없어요. | [leaf0605](https://www.inaturalist.org/observations/bac5bb80-f0d6-4173-a4f0-076fb530ecd4) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×768 · 55231 B |
+| `typha-2.jpg` | 부들(Typha orientalis) — 이삭 — 긴 칼 모양 잎 사이에 갈색 소시지 꼴 이삭(암꽃 이삭)이 보여요. 지시서의 종(Typha orientalis) 사진이에요(오스트레일리아에서 찍음). 이삭 길이는 재지 않았어요. | [silverbird](https://www.inaturalist.org/observations/0d17c409-a2c4-43e2-a8a3-d2a776fe23bd) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×683 · 125546 B |
+| `lk-cherry-2.jpg` | 왕벚나무(Prunus × yedoensis) — 꽃 — 일본에서 찍은 왕벚나무 꽃 — 잎이 나기 전에 흰 꽃이 피었어요. 잎 생김새(톱니)는 이 사진에 없어요. | [renshuchu](https://www.inaturalist.org/observations/b52f8b03-f782-4ebe-94a0-5035dd1b4a60) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×768 · 167725 B |
+| `lk-wisteria-2.jpg` | 등나무(Wisteria floribunda) — 잎 — 지시서의 종(Wisteria floribunda) — 끝이 뾰족한 작은잎이 깃꼴로 늘어선 겹잎이 여러 장 보여요. 미국 공원에서 찍은 사진이에요. | [bombycilla](https://www.inaturalist.org/observations/1be5f5dd-719c-4d21-a2f7-b7396b6ed391) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 768×1024 · 218162 B |
+| `centipede-2.jpg` | 왕지네(Scolopendra mutilans) — 일본 숲 바닥 낙엽 위의 왕지네 — 붉은 머리, 마디마다 노란 다리 1쌍이 보여요. 실제 길이는 재지 않았어요. | [hanwen-zhang](https://www.inaturalist.org/observations/62aadefa-dddb-4fdd-852e-0355fd253812) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×683 · 265740 B |
+| `lk-zelkova-2.jpg` | 느티나무(Zelkova serrata) — 가지의 잎 — 일본에서 찍은 느티나무 가지 — 어긋나게 붙은 홑잎과 가장자리 톱니가 보여요. | [renshuchu](https://www.inaturalist.org/observations/b2a73379-8d73-42b0-95a8-d529259d0b37) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×768 · 252504 B |
+| `woodlouse-2.jpg` | 쥐며느리(Porcellio scaber) — 자와 함께 — 일본에서 찍은 쥐며느리를 자(cm) 옆에서 본 모습 — 몸길이가 1 cm 남짓이에요(자 눈금으로 어림, 정밀하게 잰 값은 아님). | [konoda](https://www.inaturalist.org/observations/299d2029-99ac-4c62-99b4-d6b1cc7f3059) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×657 · 97710 B |
