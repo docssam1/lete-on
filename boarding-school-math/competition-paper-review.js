@@ -924,7 +924,7 @@
           : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
     }
     const gradePercentileReference = window.GFIELDAMCFallGradePercentileReference;
-    const gradePercentile = gradePercentileReference && ["amc10", "amc12"].includes(selectedFormat().id) && selectedYear === 2021 && grade === 7 && result.complete && result.scoreEstimate
+    const gradePercentile = gradePercentileReference && ["amc10", "amc12"].includes(selectedFormat().id) && selectedYear === 2021 && result.complete && result.scoreEstimate
       ? gradePercentileReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade)
       : null;
     const gradePercentileSection = $("amc-grade-percentile-reference");
@@ -935,7 +935,7 @@
       const learnerScore = result.scoreEstimate.points;
       const scoreDisplay = Number.isInteger(learnerScore) ? String(learnerScore) : learnerScore.toFixed(1);
       const paperForm = gradePercentile.form;
-      setText("amc-grade-percentile-summary", `Grade 7 · 2021 가을 ${selectedFormat().title} ${paperForm} · 입력 점수 ${scoreDisplay}/150점`);
+      setText("amc-grade-percentile-summary", `Grade ${grade} · 2021 가을 ${selectedFormat().title} ${paperForm} · 차트 학년 표본 n=${gradePercentile.participantCount.toLocaleString("en-US")} · 입력 점수 ${scoreDisplay}/150점`);
       gradePercentile.rows.forEach(function (benchmark) {
         const row = document.createElement("tr");
         const band = document.createElement("th"); band.scope = "row"; band.textContent = `${benchmark.percentile}백분위 경계`;
@@ -947,6 +947,7 @@
       const highest = crossed[crossed.length - 1];
       const next = gradePercentile.rows.find(function (benchmark) { return learnerScore < benchmark.scoreThreshold; });
       let position = highest ? `입력 점수는 ${highest.percentile}백분위 경계(${highest.scoreThreshold}점)를 넘었어요.` : "입력 점수는 표의 50백분위 경계 아래에 있어요.";
+      if (gradePercentile.participantCount < 100) position += ` 학년 표본이 ${gradePercentile.participantCount}명으로 적어 백분위 경계는 거친 참고치예요.`;
       if (highest && next) position += ` 다음 경계는 ${next.percentile}백분위 · ${next.scoreThreshold}점입니다.`;
       else if (highest && !next) position += " 표에 표시된 가장 높은 구간까지 도달했어요.";
       setText("amc-grade-percentile-position", position);
