@@ -774,6 +774,7 @@
         Number.isFinite(amcCohort.schools) ? `학교 ${amcCohort.schools.toLocaleString("en-US")}곳` : "",
         Number.isFinite(amcCohort.average) ? `평균 ${amcCohort.average.toFixed(2)}` : "",
         Number.isFinite(amcCohort.standardDeviation) ? `표준편차 ${amcCohort.standardDeviation.toFixed(2)}` : "",
+        Number.isFinite(amcCohort.perfectScores) ? `만점 ${amcCohort.perfectScores.toLocaleString("en-US")}명` : "",
         reportAsOf
       ].filter(Boolean);
       setText("amc-cohort-stats", statParts.length ? `${statParts.join(" · ")}.` : "출처에서 확인한 평균·표본 수는 없습니다.");

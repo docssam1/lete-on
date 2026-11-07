@@ -2171,6 +2171,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Next: continue year/form web search for national published response tables and usable primary scans. Keep school/venue samples separate from national results. Preserve `raw_youtube.txt`; no external sync or publishing.
 # Progress update · 2026-11-05
 
+### 2026-11-08 · 2019 AMC 12A overall score report recovered
+
+- The 2020 TestDaily article links a distinct 2019 AMC 12A `Contest Score Report` image. Apple Vision OCR and visual inspection verified the printed score boundaries, mean 49.22, SD 20.80, 34,476 students, 1,872 schools, high score, and perfect-score count. Added the whole-cohort fields to the AMC score lookup and a source row to `amc12a-2019-maa-score-distribution.csv`; this is not grade-level evidence and the image does not state geographic scope.
+- Static CSV/runtime/source cross-check passed for all report fields; `git diff --check` passed. The paper-review display and script cache version were updated to surface the report's perfect-score count and data-as-of date when present. No browser QA or broader tests were run. Preserve untracked `raw_youtube.txt`; no push, publishing, or Drive sync.
+
 ### 2026-11-08 · 2021 Spring AMC participant totals from web research
 
 - Web-opened the TestDaily 2021 Fall MAA-statistics analysis and verified Spring totals in its contest-count sections: AMC 10A/B 24,817/19,179 and AMC 12A/B 16,887/13,677. Added them to the corresponding 2021A/2021B whole-cohort score-reference rows, with a linked corroborating source and a note that geographic scope is unspecified.
