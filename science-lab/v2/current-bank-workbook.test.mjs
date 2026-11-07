@@ -1,3 +1,4 @@
+import {SEASON_PAIR_LANGUAGE_VERSION} from './season-pair-language.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {currentBankWorkbook,CURRENT_BANK_WORKBOOK_VERSION} from './current-bank-workbook.js';
@@ -14,7 +15,7 @@ const cases=await Promise.all(specs.map(async([name,cap,unit,count])=>{
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clone=value=>structuredClone(value);
 
-test('five print books use640 current workbook questions, retain237 pair IDs and show128 revised electricity and combustion pairs',()=>{
+test('five print books use640 current workbook questions, retain237 pair IDs and show198 revised electricity, combustion and season pairs',()=>{
  let matched=0,paired=0,revisedPairs=0;
  for(const c of cases){
   const before=clone(c.prior),itemsBefore=clone(c.items),bookBefore=clone(c.workbook),byItem=new Map(c.items.map(q=>[q.id,q]));
@@ -25,7 +26,7 @@ test('five print books use640 current workbook questions, retain237 pair IDs and
    assert.equal(q.id,old.id);assert.equal(q.no,old.no);assert.equal(q.sourceItemId,old.sourceItemId);assert.equal(q.sourceBookQuestionId,old.sourceBookQuestionId);assert.deepEqual(q.sourceRef,old.sourceRef);
    if(item?.sourceRef?.type==='authored-pair'){
     paired++;
-    if([ELECTRICITY_PAIR_LANGUAGE_VERSION,COMBUSTION_PAIR_LANGUAGE_VERSION].includes(item.contentVersion)){
+    if([ELECTRICITY_PAIR_LANGUAGE_VERSION,COMBUSTION_PAIR_LANGUAGE_VERSION,SEASON_PAIR_LANGUAGE_VERSION].includes(item.contentVersion)){
      revisedPairs++;assert.notEqual(q,old);assert.equal(q.contentVersion,item.contentVersion);
      for(const key of ['prompt','choices','explanation','responseContract','answerContract'])assert.deepEqual(q[key]??null,item[key]??null);
      assert.deepEqual(q.given,Object.entries(item.givens||{}).filter(([,v])=>typeof v==='string').map(([key,value])=>key+': '+value));
@@ -40,7 +41,7 @@ test('five print books use640 current workbook questions, retain237 pair IDs and
   }
   assert.deepEqual(currentBankWorkbook(c.prior,c.workbook,c.items),c.current);assert.deepEqual(c.prior,before);assert.deepEqual(c.items,itemsBefore);assert.deepEqual(c.workbook,bookBefore);
  }
- assert.equal(matched,640);assert.equal(paired,237);assert.equal(revisedPairs,128);
+ assert.equal(matched,640);assert.equal(paired,237);assert.equal(revisedPairs,198);
 });
 
 test('all five actual print renderers show current student text, keys, explanations and 877 quick answers',()=>{

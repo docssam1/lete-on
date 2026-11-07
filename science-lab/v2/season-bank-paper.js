@@ -1,4 +1,5 @@
-import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-combustion-pair-language';
+import{seasonPairCurrentItems}from'./season-pair-language.js?v=20261108-season-pair-language';
+import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-season-pair-language';
 import{workbook as currentWorkbook}from'../data/book/c22-s62-u01.workbook.js?v=20261106-season-readable-workbook';
 import{seasonReadableCurrentItems}from'../data/book/c22-s62-u01.editorial.js?v=20261106-season-readable-workbook';
 import{bankBook}from'../data/book/c22-s62-u01.bank-book.js';
@@ -14,6 +15,6 @@ const table=rows=>`<table class="ed-table season-book-table"><thead><tr>${['번�
 const figures=seasonLanguage({...bankBook.figures,...workbook.figures});for(let start=0;start<questions.length;start+=24){const rows=questions.slice(start,start+24);figures['season-bank-quick-'+start]='<div class="season-quick-grid">'+[rows.slice(0,12),rows.slice(12)].filter(r=>r.length).map(table).join('')+'</div>';}
 export const seasonBankBook={...seasonLanguage(bankBook),theme:'#2f6b4a',questions:questions.map(q=>({...q,misconception:seasonLanguage(q.misconception)})),figures};
 // 위 BankBook은 기존 원고 대조용으로 보존한다. 실제 인쇄는 현재 교재를 쓴다.
-export const currentSeasonBankBook=currentBankWorkbook(seasonBankBook,currentWorkbook,seasonReadableCurrentItems(Array.from(current.values()),'c22-s62-u01'));
+export const currentSeasonBankBook=currentBankWorkbook(seasonBankBook,currentWorkbook,seasonPairCurrentItems(seasonReadableCurrentItems(Array.from(current.values()),'c22-s62-u01'),'c22-s62-u01'));
 const paper=makeWorkbookPaper(currentSeasonBankBook,{}, {route:'print',toolLabel:'198문항집 고르기',modes:[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']]});
 export const bankPaper=paper.workbookPaper;export const wireBankPaper=paper.wireWorkbookPaper;

@@ -1,4 +1,4 @@
-import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-combustion-pair-language';
+import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-season-pair-language';
 import{workbook as currentWorkbook}from'../data/book/c22-s61-u04.workbook.js?v=20261106-earth-motion-readable-workbook';
 import{earthMotionReadableCurrentItems}from'../data/book/c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook';
 import{observationCurrentItems}from'../data/book/observation-language.js';
