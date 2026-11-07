@@ -478,9 +478,9 @@ export function withBiologyElementaryOpening(wb){
  const pages=rows=>rows.map((page,index)=>{
   if(index>1)return page;
   return {...page,blocks:page.blocks.map(block=>{
-   if(index===0&&block.type==='text')return {...block,text:'버섯과 곰팡이는 어떻게 생겼을까요? 해캄과 짚신벌레도 관찰해 보아요. 세균은 사진이나 영상으로 살펴요. 생물의 생김새와 사는 곳을 비교하고, 우리 생활에 주는 도움과 피해를 알아보아요.'};
+   if(index===0&&block.type==='text')return {...block,text:'버섯과 곰팡이를 본 적이 있나요? 해캄과 짚신벌레는 어떻게 생겼을까요? 생김새와 사는 곳을 살펴보아요. 세균은 사진이나 영상으로 보아요. 이 생물들이 우리 생활에 주는 도움과 피해도 알아보아요.'};
    if(index===0&&block.type==='field'&&block.title==='워밍업')return {...block,hint:'버섯이나 곰팡이를 본 적이 있나요? 기억나는 모습이나 궁금한 점을 적어 보아요.'};
-   if(index===1&&block.type==='table')return {...block,rows:[['생물의 특징과 사는 곳','버섯·곰팡이·해캄·짚신벌레를 관찰해요. 세균은 사진이나 영상으로 살펴요.'],['우리 생활에 주는 도움과 피해','어떤 도움이 되거나 피해를 주는지 알아보고 발표해요.'],['생명과학을 이용하는 예','생물의 특징을 어디에 이용하는지 글과 그림으로 소개해요.']]};
+   if(index===1&&block.type==='table')return {...block,rows:[['생물의 특징과 사는 곳','버섯·곰팡이·해캄·짚신벌레를 관찰해요. 세균은 사진이나 영상으로 보아요.'],['우리 생활에 주는 도움과 피해','음식을 만들 때 도움을 주는 예와 음식을 상하게 하는 예 등을 찾아요. 알아본 내용을 발표해요.'],['생명과학을 이용하는 예','생물의 특징을 이용해 요구르트나 빵을 만들어요. 이런 예를 찾아 글과 그림으로 소개해요.']]};
    if(index===1&&block.type==='list')return {...block,items:['사진이나 그림을 자세히 살펴요.','문제를 풀고, 답을 고른 까닭을 생각해요.','틀린 문제는 풀이를 읽고 다시 풀어 보아요.']};
    if(index===1&&block.type==='field'&&block.title==='궁금한 점')return {...block,hint:'가장 궁금한 생물은 무엇인가요? 알고 싶은 것을 한 가지 적어 보아요.'};
    return block;
@@ -489,7 +489,7 @@ export function withBiologyElementaryOpening(wb){
  return {...wb,pages:pages(wb.pages),...(wb.teacherStudentPages?{teacherStudentPages:pages(wb.teacherStudentPages)}:{})};
 }
 
-export const BIOLOGY_ELEMENTARY_VERSION='20261108-elementary-reading-followup';
+export const BIOLOGY_ELEMENTARY_VERSION='20261108-elementary-task-language';
 
 // 학생이 해야 할 일이 드러나도록 문장만 풀어 쓴다. 원본 연결과 채점 자료는 유지한다.
 const ELEMENTARY_PROMPTS={

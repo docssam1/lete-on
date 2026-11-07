@@ -1,7 +1,7 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261108-source-schema';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261105-history-review';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-elementary-reading-followup';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-elementary-task-language';
 import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261108-earth-motion-pair-language';
 import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
@@ -673,7 +673,7 @@ async function pageLabBook(u, mod, mode, pageNo = 1, seg = 'lab-book') {
   const bookMod = await BOOK().then(m=>seg==='lab-book'?revisedTextbook(u,m):m).catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
   const teacherEd = mode === 'teacher';
-  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js?terms=20261104-earth-motion-book'), import('./book-view.js')]);
+  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js?terms=20261108-elementary-task-language'), import('./book-view.js')]);
   if (stale()) return;
   const L = seg === 'records-book' && mod.lesson?.explore?.records ? { ...mod.lesson, engage: { ...mod.lesson.engage, scene: null }, explore: { ...mod.lesson.explore, lab: mod.lesson.explore.records } } : mod.lesson;
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));

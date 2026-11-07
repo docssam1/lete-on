@@ -306,6 +306,7 @@
 .bk-editorial.revised-workbook[data-unit] .ed-main h2{font-family:var(--ed-reading);font-weight:700;letter-spacing:-.025em}
 .bk-editorial.revised-workbook[data-unit] .ed-main h3{font-family:var(--ed-reading);font-weight:600;letter-spacing:normal}
 .bk-editorial.revised-workbook[data-unit] :is(.ed-qhead b,.bk-band-t,.bk-band-u){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.bk-band-no,.bk-pn){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
 .bk-editorial.revised-workbook[data-unit] :is(.ed-qhead span,.ed-table th){font-weight:600;letter-spacing:normal}
 .bk-editorial.revised-workbook[data-unit] :is(.ed-field h3,.ed-note h3){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
 .bk-editorial.revised-workbook[data-unit] .ed-note h3{font-size:10.5pt;line-height:1.4}
@@ -331,6 +332,7 @@
 /* 화면에서는 초등학생이 읽기 편한 크기로 본문·문제·보기를 함께 키운다.
    글자가 늘어난 쪽은 내용만큼 길어지며, 인쇄의 A4 지면 규칙은 별도로 유지한다. */
 @media screen{
+ .bk-editorial.revised-workbook[data-unit] .ed-qhead span{font-size:14px;line-height:1.5;font-weight:600}
  .bk-editorial.revised-workbook[data-unit] .ed-choices li{line-height:1.75}
  .bk-editorial.revised-workbook[data-unit] .ed-main h2{letter-spacing:normal;line-height:1.4}
  .bk-editorial.revised-workbook[data-unit] .ed-question p{margin:.45em 0 .65em}

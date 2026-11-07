@@ -1,4 +1,4 @@
-import {renderEditorialChapter as renderRevisedChapter} from './revised-book-editorial.js?v=20261108-learning-note-roles';
+import {renderEditorialChapter as renderRevisedChapter} from './revised-book-editorial.js?v=20261108-elementary-task-language';
 // GFIELD 실험 과학 영재 — 실험 한 장(chapter)을 웹과 A4 인쇄 둘 다로 그린다.
 // 쪽 구성: 머리띠(색 띠) · 본문 · 옆날개(플러스 노트·용어풀이·빈칸 답) · 단원 손잡이 탭 · 쪽 번호.
 // 홀수 쪽은 옆날개가 오른쪽, 짝수 쪽은 왼쪽(책을 펼쳤을 때 바깥쪽).
