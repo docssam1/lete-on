@@ -5,6 +5,20 @@ const pools=Object.freeze([
  {a:[[7,12],[9,14],[7,15]],b:[[2,3,8],[1,1,3],[3,19]],c:[[2,1,6],[3,8],[1,4]],d:[[5,1,3],[2,1,6],[3,5]],e:[[5,18],[6,11],[3,3,5]]},
  {a:[[8,15],[5,16],[6,7]],b:[[4,1,5],[1,2,7],[5,36]],c:[[1,2,5],[5,12],[1,6]],d:[[6,2,5],[3,1,10],[5,11]],e:[[7,20],[4,9],[2,1,2]]}
 ]);
+// The previously approved pool stays at the standard level.
+const tierPools=Object.freeze({
+ '-1':Object.freeze([
+  {a:[[1,2],[2,3],[3,4]],b:[[1,1,2],[1,1,3],[1,2]],c:[[1,1,2],[1,3],[1,6]],d:[[2,1,2],[1,1,2],[2,3]],e:[[1,2],[2,3],[1,1,2]]},
+  {a:[[2,3],[3,4],[4,5]],b:[[2,1,2],[1,1,5],[1,3]],c:[[1,1,2],[1,2],[1,4]],d:[[3,1,2],[1,1,2],[1,2]],e:[[2,3],[3,4],[1,1,3]]},
+  {a:[[3,4],[4,5],[5,6]],b:[[1,1,2],[1,1,3],[2,3]],c:[[2,1,2],[1,3],[1,6]],d:[[3,1,2],[2,1,2],[3,4]],e:[[3,4],[4,5],[1,1,4]]}
+ ]),
+ '0':pools,
+ '1':Object.freeze([
+  {a:[[7,12],[11,15],[13,14]],b:[[3,5,8],[2,3,7],[7,11]],c:[[2,5,6],[5,14],[7,12]],d:[[5,7,12],[2,3,8],[9,11]],e:[[11,18],[7,15],[2,4,7]]},
+  {a:[[11,18],[13,20],[15,22]],b:[[4,3,7],[2,5,9],[7,13]],c:[[3,1,8],[7,18],[5,12]],d:[[6,5,6],[3,7,12],[7,10]],e:[[13,21],[9,16],[3,2,5]]},
+  {a:[[13,20],[7,18],[15,26]],b:[[3,7,10],[2,4,9],[5,12]],c:[[2,7,9],[5,16],[7,18]],d:[[7,5,12],[3,7,8],[11,15]],e:[[7,18],[13,20],[2,3,7]]}
+ ])
+});
 const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a)||1,frac=(n,d)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||d<=0)throw Error('분수 확인');let g=gcd(n,d);return [n/g,d/g]},add=(a,b)=>frac(a[0]*b[1]+b[0]*a[1],a[1]*b[1]),sub=(a,b)=>frac(a[0]*b[1]-b[0]*a[1],a[1]*b[1]),mul=(a,b)=>frac(a[0]*b[0],a[1]*b[1]);
 const value=x=>x.length===3?frac(x[0]*x[2]+x[1],x[2]):frac(...x),f=x=>x.length===3?`${x[0]} ${x[1]}/${x[2]}`:`${x[0]}/${x[1]}`,q=x=>`${x[0]}/${x[1]}`,display=x=>{const w=Math.floor(x[0]/x[1]),r=x[0]%x[1];return r?`${w?`${w} `:''}${r}/${x[1]}`:String(w)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),math=s=>`<span class="math-inline-expression">${esc(s)}</span>`;
@@ -14,5 +28,5 @@ function build(p,level){const results=derive(p),expressions=[p.a.map(f).join(' �
  const prompt=`<div data-source-item-id="${id}"><p>다음을 계산하세요.</p>${expressions.map((x,i)=>`<p>(${i+1}) ${math(x)}</p>`).join('')}</div>`;
  const solution=`<div data-source-answer="${id}" class="source52-u2-solution">${lines.map((x,i)=>`<span class="source52-u2-step">(${i+1}) ${math(x)}</span>`).join('')}</div>`;
  return {prompt,solution,answer:answers.map((x,i)=>`(${i+1}) ${x}`).join(', '),answerModel:results.map(([n,d])=>({numerator:n,denominator:d})),questionModel:{kind:'five-fraction-calculations',expressions},answerVisualRequired:false,answerVisualStatus:'not-required'};}
-function install(target){const api=target?.HSE_GENERATORS;if(!api||typeof api.generatorKey!=='function'||typeof api.generate!=='function')return false;if(api.__source52U2Page17Mission1SyntheticInstalled)return true;const pk=api.generatorKey.bind(api),pg=api.generate.bind(api),belongs=t=>t&&(t.id===id||t.sourceItemId===id||t.generatorKey===key),valid=t=>t&&t.id===id&&t.sourceItemId===id&&t.generatorKey===key&&t.reviewLocked===false&&t.sourceVerified===true;api.generatorKey=t=>belongs(t)?valid(t)?key:'':pk(t);api.generate=(t,unit,level,seed,variant=0)=>{if(!belongs(t))return pg(t,unit,level,seed,variant);if(!valid(t)||!Number.isSafeInteger(variant)||variant<0||![-1,0,1].includes(level??0))return null;const i=variant%pools.length;return Object.freeze({...build(pools[i],level??0),sourceItemId:id,generator:key,variantProvenance:'synthetic-source-structure',generationMode:'fixed-verified-pool',verifiedPoolIndex:i,verifiedVariantCount:3,verifiedVariantTarget:3,publisherKeyVerified:false,publisherAnswerVerified:false,handwrittenAnswerVerified:false,answerVerification:'independent-exact-fraction-arithmetic'});};if(Array.isArray(api.names)&&!api.names.includes(key))api.names.push(key);Object.defineProperty(api,'__source52U2Page17Mission1SyntheticInstalled',{value:true});return true;}
-return Object.freeze({id,key,pools,derive,build,install});});
+function install(target){const api=target?.HSE_GENERATORS;if(!api||typeof api.generatorKey!=='function'||typeof api.generate!=='function')return false;if(api.__source52U2Page17Mission1SyntheticInstalled)return true;const pk=api.generatorKey.bind(api),pg=api.generate.bind(api),belongs=t=>t&&(t.id===id||t.sourceItemId===id||t.generatorKey===key),valid=t=>t&&t.id===id&&t.sourceItemId===id&&t.generatorKey===key&&t.reviewLocked===false&&t.sourceVerified===true;api.generatorKey=t=>belongs(t)?valid(t)?key:'':pk(t);api.generate=(t,unit,level,seed,variant=0)=>{if(!belongs(t))return pg(t,unit,level,seed,variant);if(!valid(t)||!Number.isSafeInteger(variant)||variant<0||![-1,0,1].includes(level??0))return null;const i=variant%pools.length;return Object.freeze({...build(tierPools[level??0][i],level??0),sourceItemId:id,generator:key,variantProvenance:'synthetic-source-structure',generationMode:'fixed-verified-pool',verifiedPoolIndex:i,verifiedVariantCount:3,verifiedVariantTarget:3,publisherKeyVerified:false,publisherAnswerVerified:false,handwrittenAnswerVerified:false,answerVerification:'independent-exact-fraction-arithmetic'});};if(Array.isArray(api.names)&&!api.names.includes(key))api.names.push(key);Object.defineProperty(api,'__source52U2Page17Mission1SyntheticInstalled',{value:true});return true;}
+return Object.freeze({id,key,pools,tierPools,derive,build,install});});
