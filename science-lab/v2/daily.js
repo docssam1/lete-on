@@ -7,9 +7,9 @@ import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 //    틀린 문항은 정답을 먼저 보여 주지 않고 독쌤이 되묻는다(「생각해 봤어요 · 해설 보기」를 눌러야 열림).
 //  · 기록: 문항마다 처음 채점한 답만 진단 기록(progress.js)에 남긴다. 규칙으로 못 가린 쓰기 답은 「선생님 확인」(check.js)에 모인다.
 //  · 아무것도 서버로 보내지 않는다(채점 계약 승인 전 — GRADING-CONTRACT-DRAFT.md).
-import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js?v=20261104-season-book';
+import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js?v=20261108-source-schema';
 import { sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
-import {isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview} from './source-content.js?v=20261108-source-response';
+import {isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview} from './source-content.js?v=20261108-source-schema';
 import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261105-history-review';
 import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js?v=20261108-original-source';
 

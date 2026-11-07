@@ -5,8 +5,9 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const marks=['①','②','③','④','⑤'];
 export const isStructuredSource=q=>q?.sourceRef?.type==='original'&&q.sourceContentVersion===SOURCE_CONTENT_VERSION;
 
-function table(t){
- if(!t||!Array.isArray(t.heads)||!t.heads.length||t.heads.some(h=>typeof h!=='string')||!Array.isArray(t.rows)||!t.rows.length||t.rows.some(r=>!Array.isArray(r)||r.length!==t.heads.length||r.some(c=>typeof c!=='string'&&!Number.isFinite(c))))throw Error('원문 표의 행·열이 맞지 않습니다.');
+function table(t,{allowHeadless=false}={}){
+ const width=t?.heads?.length||(allowHeadless&&Array.isArray(t?.rows?.[0])?t.rows[0].length:0);
+ if(!t||!Array.isArray(t.heads)||!width||t.heads.some(h=>typeof h!=='string')||!Array.isArray(t.rows)||!t.rows.length||t.rows.some(r=>!Array.isArray(r)||r.length!==width||r.some(c=>typeof c!=='string'&&!Number.isFinite(c))))throw Error('원문 표의 행·열이 맞지 않습니다.');
  return t;
 }
 // 원문 공통 자료와 문항 자료의 순서를 보존한다. 기존 원고는 새 형식에 참여하지 않는다.
@@ -18,7 +19,11 @@ export function sourceBlocksHtml(q,place){
  return blocks.map(b=>{
   if(b?.type==='text'&&typeof b.text==='string')return `<p class="lead">${esc(b.text)}</p>`;
   if(b?.type==='list'&&Array.isArray(b.items)&&b.items.every(t=>typeof t==='string'))return `<div class="source-list">${b.items.map(t=>`<p class="lead">${esc(t)}</p>`).join('')}</div>`;
-  if(b?.type==='table'){table(b);return sourceTableHtml({머리:b.heads,행:b.rows});}
+  if(b?.type==='table'){
+   table(b,{allowHeadless:true});
+   if(!b.heads.length)return `<table class="tbl source-table"><tbody>${b.rows.map(row=>`<tr>${row.map(cell=>`<td>${esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+   return sourceTableHtml({머리:b.heads,행:b.rows});
+  }
   if(b?.type==='figure'&&typeof b.src==='string'&&/^assets\/bank\/[a-zA-Z0-9_./-]+\.(?:png|webp|jpe?g)$/.test(b.src)&&!b.src.split('/').includes('..')&&typeof b.alt==='string'&&b.alt.trim())return `<figure class="src-fig dt-fig"><img src="../${esc(b.src)}" alt="${esc(b.alt)}" loading="lazy"></figure>`;
   throw Error('지원하지 않거나 빠진 원문 자료가 있습니다.');
  }).join('');
@@ -34,12 +39,12 @@ export function sourceChoiceTableHtml(q,{print=false,show=false,mode='lesson',va
 
 export function sourceAnswerHint(q){
  if(!isStructuredSource(q))return '';
- const earth=q.answerContract?.earthMotionContract,season=q.answerContract?.seasonContract;
+ const earth=q.answerContract?.earthMotionContract,terms=q.answerContract?.sourceResponseContract??q.answerContract?.seasonContract;
  if(earth?.kind==='ordered-word-parts'&&Array.isArray(earth.parts)&&earth.parts.length>=2)return `${earth.parts.map(p=>`${p.label} 답`).join(' / ')}처럼 순서대로 써요.`;
- if(season?.kind==='ordered-term-parts'&&Array.isArray(season.parts)&&season.parts.length>=2)return `${season.parts.map(p=>p.label).join(' → ')} 순서로 답만 쓰고, 쉼표로 나누어요.${season.parts.some(p=>p.unitRequired)?' 수에는 단위도 함께 써요.':''}`;
+ if(terms?.kind==='ordered-term-parts'&&Array.isArray(terms.parts)&&terms.parts.length>=2)return `${terms.parts.map(p=>p.label).join(' → ')} 순서로 답만 쓰고, 쉼표로 나누어요.${terms.parts.some(p=>p.unitRequired)?' 수에는 단위도 함께 써요.':''}`;
  return '';
 }
-export const needsSourceTeacherReview=q=>isStructuredSource(q)&&(q.answerContract?.earthMotionContract?.teacherRequired===true||q.answerContract?.seasonContract?.teacherRequired===true);
+export const needsSourceTeacherReview=q=>isStructuredSource(q)&&(q.answerContract?.earthMotionContract?.teacherRequired===true||q.answerContract?.seasonContract?.teacherRequired===true||q.answerContract?.sourceResponseContract?.teacherRequired===true);
 export function sourceAnswerText(q,{printed=false}={}){
  if(!isStructuredSource(q))return null;
  if(!printed&&q.sourceRef.reviewOnly&&typeof q.reviewSummary==='string')return q.reviewSummary;

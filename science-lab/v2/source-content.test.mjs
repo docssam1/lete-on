@@ -41,6 +41,14 @@ test('표 모양 보기는 다섯 행·열과 선택 위치를 보존하고 학�
  assert.equal(sourceChoiceTableHtml({...q,sourceContentVersion:'future'}),null);
 });
 
+test('머리글 없는 원문 표는 실제 두 행만 표시하고 머리글을 만들지 않는다',()=>{
+ const q=fixture('short-text');q.sourceMaterialBlocks=[{type:'table',heads:[],rows:[['<첫째 통>','가상 시간 A'],['둘째 통','가상 시간 B']]}];
+ const before=structuredClone(q),html=sourceBlocksHtml(q,'material');
+ assert(!html.includes('<thead>'));assert(!html.includes('<th'));assert.equal((html.match(/<tr>/g)||[]).length,2);assert.equal((html.match(/<td>/g)||[]).length,4);assert(html.includes('&lt;첫째 통&gt;'));assert(html.includes('가상 시간 B'));assert.deepEqual(q,before);
+ for(const rows of [[],[[]],[['하나'],['둘','셋']],[['하나',{}]]])assert.throws(()=>sourceBlocksHtml({...q,sourceMaterialBlocks:[{type:'table',heads:[],rows}]},'material'));
+ assert.throws(()=>sourceChoiceTableHtml({...fixture(),sourceChoiceTable:{heads:[],rows:Array.from({length:5},()=>['한 값'])}}));
+});
+
 test('입력 안내는 답을 읽지 않고 기호 순서만 알려 준다',()=>{
  const q=fixture('short-text');
  q.answerContract={earthMotionContract:{kind:'ordered-word-parts',parts:[{label:'㉠',get accepted(){throw Error('do not read answer');}},{label:'㉡',get accepted(){throw Error('do not read answer');}}]}};
@@ -57,6 +65,8 @@ test('계절 원문은 인쇄된 빈칸 순서로 답만 쓰게 안내하며 정
  q.answerContract.seasonContract.parts=[part('㉠'),measured];
  assert(sourceAnswerHint(q).includes('수에는 단위도 함께 써요.'));
  assert.equal(sourceAnswerHint({...q,sourceRef:{type:'similar'}}),'');
+ q.answerContract.sourceResponseContract=q.answerContract.seasonContract;delete q.answerContract.seasonContract;
+ assert(sourceAnswerHint(q).includes('㉠ → ㉡'));
 });
 
 function element(dataset={}){
@@ -68,8 +78,8 @@ function cardFor(q){
  return {dataset:{},buttons,why,input,check,querySelector:s=>s==='.why'?why:s==='input'?input:s==='[data-act=check-short]'?check:null,querySelectorAll:s=>s==='.choice'?buttons:s==='button'?[...buttons,check]:[]};
 }
 test('교사 확인 선택·쓰기 답은 수업에서 자동 정오 표시 없이 보존한다',()=>{
- for(const type of ['single-choice','multi-choice','short-text']){
-  const q=fixture(type);q.answerContract.earthMotionContract={kind:'teacher-review',teacherRequired:true};
+ for(const contractKey of ['earthMotionContract','sourceResponseContract'])for(const type of ['single-choice','multi-choice','short-text']){
+  const q=fixture(type);delete q.answerContract.earthMotionContract;q.answerContract[contractKey]={kind:'teacher-review',teacherRequired:true};
   const card=cardFor(q);assert(wireSourceTeacherReview(card,q));
   if(type==='short-text'){card.check.fire('click');assert.equal(card.dataset.done,undefined);card.input.value='내 생각';card.input.fire('keydown',{key:'Enter'});}
   else{card.buttons[1].fire('click');if(type==='multi-choice'){assert.equal(card.dataset.done,undefined);card.buttons[3].fire('click');}}
@@ -147,8 +157,8 @@ test('실제 수업 입력 연결이 교사 확인 답을 정오 콜백과 진�
  const snippet=source.slice(source.indexOf('function wireItem('),source.indexOf('// ── 화면 뼈대'));
  let records=0,callbacks=0;
  const wire=new vm.Script(snippet+'\nwireItem').runInContext(vm.createContext({wireSourceTeacherReview,record:()=>records++,du:x=>x,MISC:{}}));
- for(const type of ['single-choice','multi-choice','short-text']){
-  const q=fixture(type);q.answerContract.earthMotionContract={kind:'teacher-review',teacherRequired:true};
+ for(const contractKey of ['earthMotionContract','sourceResponseContract'])for(const type of ['single-choice','multi-choice','short-text']){
+  const q=fixture(type);delete q.answerContract.earthMotionContract;q.answerContract[contractKey]={kind:'teacher-review',teacherRequired:true};
   const card=cardFor(q);wire(card,q,()=>callbacks++,{u:'fixture-unit',stage:'bank'});
   if(type==='short-text'){card.input.value='확인할 답';card.check.fire('click');}
   else{card.buttons[1].fire('click');if(type==='multi-choice')card.buttons[2].fire('click');}
