@@ -923,8 +923,8 @@
           ? "GEMT 보고서에 직접 실린 대만 지역 참가자 통계입니다. Grade 7 표본은 19명으로 작습니다. 세계 또는 미국 학년 기준과 섞지 않으며, 백분위·현재 규준·능력 등급이 아닙니다. "
           : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
     }
-    const gradePercentileReference = window.GFIELDAMCFallGradePercentileReference;
-    const gradePercentile = gradePercentileReference && ["amc10", "amc12"].includes(selectedFormat().id) && selectedYear === 2021 && result.complete && result.scoreEstimate
+    const gradePercentileReference = window.GFIELDAMCGradePercentileReference;
+    const gradePercentile = gradePercentileReference && ["amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate
       ? gradePercentileReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade)
       : null;
     const gradePercentileSection = $("amc-grade-percentile-reference");
@@ -935,7 +935,9 @@
       const learnerScore = result.scoreEstimate.points;
       const scoreDisplay = Number.isInteger(learnerScore) ? String(learnerScore) : learnerScore.toFixed(1);
       const paperForm = gradePercentile.form;
-      setText("amc-grade-percentile-summary", `Grade ${grade} · 2021 가을 ${selectedFormat().title} ${paperForm} · 차트 학년 표본 n=${gradePercentile.participantCount.toLocaleString("en-US")} · 입력 점수 ${scoreDisplay}/150점`);
+      const administrationLabel = gradePercentile.administration === "fall" ? "가을 " : "";
+      setText("amc-grade-percentile-title", `${gradePercentile.year} ${administrationLabel}${selectedFormat().title} · 학년별 점수 경계`);
+      setText("amc-grade-percentile-summary", `Grade ${grade} · ${gradePercentile.year} ${administrationLabel}${selectedFormat().title} ${paperForm} · 차트 학년 표본 n=${gradePercentile.participantCount.toLocaleString("en-US")} · 입력 점수 ${scoreDisplay}/150점`);
       gradePercentile.rows.forEach(function (benchmark) {
         const row = document.createElement("tr");
         const band = document.createElement("th"); band.scope = "row"; band.textContent = `${benchmark.percentile}백분위 경계`;
