@@ -4343,6 +4343,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id===id);
     if (type) type.alternativeTypeId=alternativeTypeId;
   }
+  for (const [unitId,id,alternativeTypeId] of [
+    ["5-2-u3","5-2-u3-t5-3","5-2-u3-practice-62-clarified-similar"],
+    ["5-2-u4","5-2-u4-t2-9","5-2-u4-e2-mission-4"]
+  ]) {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
+    const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
+    if (type) type.alternativeTypeId=alternativeTypeId;
+  }
 
   const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
   if (source52Triangle) {
