@@ -3,7 +3,7 @@ function host(){const events=new Map(),controls=new Map();return{innerHTML:'',ev
 const predict=h=>{for(const key of['grass','rabbit','fox'])h.predict(key,'unknown');},save=h=>{predict(h);h.action('reveal');h.action('record');};
 test('세 예상을 먼저 고르고 두 조건을 비교하며 처음 예상과 실제 조사 구별을 유지한다',()=>{
  const h=host(),saved=[],handle=mountEcologyCompare(h,{onRecord:(rows,info)=>saved.push({rows,info})});assert(!h.innerHTML.includes('모형의 3년 뒤 표시 값'));h.action('reveal');h.predict('grass','same');h.predict('rabbit','same');h.action('reveal');h.action('record');assert.equal(saved.length,0);predict(h);h.action('reveal');h.predict('grass','up');h.action('record');assert.equal(handle.rows[0].prediction.grass,'unknown');assert.equal(saved[0].info.complete,false);h.action('record');assert.equal(saved.length,1);
- h.action('again');save(h);assert.equal(saved.at(-1).info.done,1);h.condition(CHANGES[2]);save(h);assert.equal(saved.at(-1).info.done,1);h.condition(CHANGES[1]);save(h);assert.equal(saved.at(-1).info.complete,true);assert(h.innerHTML.includes('실제 조사·제작·토의·실천 기록과는 구별해요'));handle.dispose();assert.equal(h.events.size,0);
+ h.action('again');save(h);assert.equal(saved.at(-1).info.done,1);h.condition(CHANGES[2]);save(h);assert.equal(saved.at(-1).info.done,1);h.condition(CHANGES[1]);save(h);assert.equal(saved.at(-1).info.complete,true);assert(h.innerHTML.includes('다른 조건도 살펴보아요'));handle.dispose();assert.equal(h.events.size,0);
 });
 test('교사는 학생 행을 불러오지 않고 복구·읽기·콜백 모두 사본을 사용한다',()=>{
  const row=ecologyCompareRecord(CHANGES[0],{grass:'same',rabbit:'same',fox:'same'}),before=structuredClone(row),a=host(),teacher=mountEcologyCompare(a,{personal:false,rows:[row]});assert.equal(teacher.rows.length,0);teacher.dispose();

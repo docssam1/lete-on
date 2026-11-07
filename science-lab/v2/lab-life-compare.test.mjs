@@ -5,7 +5,7 @@ test('판단 전 결과를 감추고 여덟 조건·계획을 모두 비교해�
  const h=host(),saved=[],handle=mountLifeCompare(h,{onRecord:(rows,info)=>saved.push({rows,info})});assert(h.innerHTML.includes('가상 자료 비교 0/8'));assert(!h.innerHTML.includes('5일 뒤 · 가상 자료'));h.action('reveal');assert(!h.innerHTML.includes('5일 뒤 · 가상 자료'));record(h);assert.equal(saved.length,1);assert.equal(saved[0].info.done,1);assert.equal(saved[0].info.complete,false);assert.equal(handle.rows[0].judgment,'unknown');h.action('record');assert.equal(saved.length,1);
  h.action('again');record(h);assert.equal(saved.length,2);assert.equal(saved[1].info.done,1);
  for(const experiment of Object.keys(LIFE_EXPERIMENTS))for(const plan of Object.keys(LIFE_PLANS)){h.change('experiment',experiment);h.change('plan',plan);record(h);}
- assert.equal(saved.at(-1).info.complete,true);assert.equal(saved.at(-1).info.done,8);assert(h.innerHTML.includes('가상 자료 비교 8/8'));assert(h.innerHTML.includes('실제 관찰 기록을 만든 것은 아니에요'));handle.dispose();assert.equal(h.events.size,0);
+ assert.equal(saved.at(-1).info.complete,true);assert.equal(saved.at(-1).info.done,8);assert(h.innerHTML.includes('가상 자료 비교 8/8'));assert(h.innerHTML.includes('다른 계획도 살펴보아요'));handle.dispose();assert.equal(h.events.size,0);
 });
 test('교사 화면은 학생의 행을 쓰지 않고 전달한 사본 변경은 내부 기록을 바꾸지 않는다',()=>{
  const row=lifeCompareRecord('germ-temp','mixed','no'),before=structuredClone(row),h=host();const handle=mountLifeCompare(h,{personal:false,rows:[row],onRecord:rows=>{rows[0].material.results[0][1]='5개';}});assert.equal(handle.rows.length,0);record(h);assert.equal(handle.rows[0].material.results[0][1],'0개');assert.deepEqual(row,before);handle.dispose();
