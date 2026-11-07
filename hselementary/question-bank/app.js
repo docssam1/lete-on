@@ -230,6 +230,19 @@
     previewPopover.setAttribute("aria-live", "polite");
     previewPopover.hidden = true;
     previewPopover.addEventListener("click", event => {
+      const alternativeButton = event.target.closest("button[data-select-alternative-type]");
+      if (alternativeButton) {
+        const alternative = typeById.get(alternativeButton.dataset.selectAlternativeType);
+        const original = typeById.get(previewAnchor?.dataset.previewTypeId);
+        if (original?.reviewLocked && original.alternativeTypeId === alternative?.id &&
+            alternative.semesterId === original.semesterId && alternative.unitId === original.unitId &&
+            alternative.generator && !alternative.reviewLocked) {
+          state.selected.add(alternative.id);
+          hideTypePreview(true);
+          renderCatalog();
+        }
+        return;
+      }
       const commonButton = event.target.closest("button[data-select-common-type]");
       if (commonButton) {
         const commonType = typeById.get(commonButton.dataset.selectCommonType);
@@ -290,7 +303,12 @@
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${commonSourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer class="type-preview-common-action"><span>${compound ? "같은 원문의 전체 문항으로 연결됩니다." : "같은 탐구의 양초 예제와 풀이가 같습니다."}</span><button type="button" data-select-common-type="${escapeHtml(commonType.id)}">공통 유형 선택</button></footer>`;
     } else if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
-      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
+      const alternative = type.alternativeTypeId && typeById.get(type.alternativeTypeId);
+      const canOfferAlternative = type.reviewLocked && alternative?.generator && !alternative.reviewLocked &&
+        alternative.semesterId === type.semesterId && alternative.unitId === type.unitId;
+      const alternativeAction = canOfferAlternative ? `<footer class="type-preview-common-action"><span>선택 가능: ${escapeHtml(typeDisplayName(alternative))}</span><button type="button" data-select-alternative-type="${escapeHtml(alternative.id)}">유사문항 선택</button></footer>` : "";
+      const notice = canOfferAlternative ? "이 유형은 준비 중입니다. 검증된 유사문항을 선택할 수 있습니다." : `검수 대기 · ${reviewReason}`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer class="${canOfferAlternative ? 'type-preview-alternative-notice' : ''}">${escapeHtml(notice)}</footer>${alternativeAction}`;
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.generationMode === "fixed-verified-pool" ? 0 : type.variant ?? 0);
       if (!generated) return;

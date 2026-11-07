@@ -4331,6 +4331,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id===id);
     if (type) Object.assign(type,{sourceVerified:false,reviewLocked:true,generationMode:"review-locked",implementationStatus:"review-locked",verifiedVariantCount:0,verifiedVariantTarget:0,reviewReason:reason});
   }
+  if (source52Unit2) for (const [id, alternativeTypeId] of [
+    ["5-2-u2-t1-2", "5-2-u2-practice-6-distance-similar"],
+    ["5-2-u2-t1-3", "5-2-u2-practice-20-source-faithful-similar"],
+    ["5-2-u2-t4-2", "5-2-u2-practice-71-count-similar"]
+  ]) {
+    const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id===id);
+    if (type) type.alternativeTypeId=alternativeTypeId;
+  }
 
   const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
   if (source52Triangle) {
