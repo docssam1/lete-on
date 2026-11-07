@@ -2265,3 +2265,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Strath Haven Middle School의 2025 MAA Grade Report 공개 재게시본을 웹에서 확인했다. 전체 학교 코호트 n=46, 평균 12.37/25, 문항별 정답 인원 25개를 CSV로 따로 저장했다. 원문 LIVE 정답키 25개와 대조했고 표시된 정답 인원 평균은 12.37로 보고서 평균과 맞는다.
 - 데이터: `boarding-school-math/competition/historical-amc-grade/amc8-2025-strath-haven-school-item-correct.csv`. README와 검색 기록에 출처/제한 추가. 이는 단일 학교, 학년 미분리, 선택지별 오답 분포 미제공 자료라 전국 규준·학년 비교·개별 오개념 판정으로 사용하면 안 된다. AMC 연도별 인쇄 시험·정답·해설은 기존 266행 연도/폼 카탈로그의 LIVE 허가 링크에 정리돼 있다.
 - MAA overall 2025 점수 참조는 이미 79,524명/평균 11.74로 들어 있다. Scribd 재게시 요약의 79,511명은 불일치라 대체하지 않았다. 다음: 구 MAA score-report의 학교별/학년별 데이터가 공개 검색 가능한 경우에만 같은 코호트 경계를 유지해 누적하고, AMC10/12 원본의 연도·폼별 회차 카탈로그와 overall/grade/item coverage를 별도로 보강한다.
+
+
+### 2026-11-08 · 웹 검색: 2026 AMC 10A·12A 원본 학습자료 링크 추가
+
+- MAA 일정에서 AMC 10A/12A 시행일(2026-11-05), 10B/12B 예정일(2026-11-13)을 확인했다. 11월 6일 게시된 Think Academy의 2026 AMC 10A/12A 페이지와 PDF를 열어 각 문제지가 25문항임을 확인했다. 각 페이지는 문제 PDF와 정답 키 이미지, 풀이 PDF를 연결한다. 12A 풀이 자료는 Q1–15와 Q16–25 두 PDF로 나뉜다.
+- 연도별 카탈로그에 2026 AMC 10A와 AMC 12A 두 행을 추가했다. 아직 MAA/LIVE 공식 과거 시험 아카이브에 올라온 자료로 확인하지 못했으므로 제3자 재게시로 출처를 명시하고 공식 페이지가 생기면 바꿀 후속 항목으로 기록했다. 전체 PDF/문항 텍스트는 저장소에 복사하지 않았다.
+- README·연도별 카탈로그 문서·검색 기록을 갱신했다. 남은 작업은 11월 13일 B회차 시행 뒤 원본·정답·풀이를 찾아 10B/12B 추가, 그리고 2026 회차의 공개 MAA 점수·학년·문항 응답 자료를 모집단을 구분해 보강하는 일이다. 원본 링크와 연도별 이력은 `boarding-school-math/competition/amc-original-source-catalog.csv`, `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 있다.
+- 268행 카탈로그 CSV 파싱 및 중복 회차 검사를 통과했다. 일곱 PDF/키 URL 모두 HTTP 200이며 CRLF CSV를 고려한 `git -c core.whitespace=cr-at-eol diff --check`가 통과했다. `raw_youtube.txt`는 보존하고 이번 커밋에서 제외한다.
