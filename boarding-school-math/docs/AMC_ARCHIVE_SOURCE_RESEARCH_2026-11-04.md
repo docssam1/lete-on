@@ -747,3 +747,11 @@ AMC 10A 평균 59.33, AMC 10B 평균 66.56, AMC 12B 평균 58.35는 두 공개 �
 [Bard Math Circle 2017 B 결과](https://www.bardmathcircle.org/p/2017-amc-1012b-results)는 AMC10B 16명(7학년 3명 포함), AMC12B 3명(11학년 2명·12학년 1명)의 한 시험장 기록이다. 학년 참고용 출처로 보존하되 국가/세계 학년 규준과 문항응답률로 사용하지 않았다. 2017 B의 국가 전체 문항별 선택률과 완전한 학년 평균표는 이번 검색에서도 찾지 못했다. [연구 논문 표본 집계](https://www.researchgate.net/publication/345252767_Trends_in_Gender_Disparities_Among_High-Achieving_Students_in_Mathematics_An_Analysis_of_the_American_Mathematics_Competition_AMC)는 2017년 AMC10/12 참여자 총수만 다루며 A/B 개별 시험이나 점수·학년 분포를 대신하지 않는다.
 
 검수: 네 개 AIME cutoff URL이 해당 폼을 직접 가리킴, 2017 AMC 12A 평균 억제 확인, 10A/10B/12B 평균 근거 URL 교체, 2017 B 문항응답 coverage에 지역 표본 제한 반영. `git diff --check` 통과. 공개 시험지와 풀이를 프로젝트로 복사하지 않고 원본 링크만 유지한다. 다음 연도별 회수 목표는 2017 A/B의 MAA 점수보고서 본문·학년표·문항별 응답표 원문이다.
+
+### 2026-11-07 · 2018 AMC 10/12 B 결과표·지역 학년표 재확인
+
+[2018 AMC 10/12 최종 cutoff 결과 페이지](https://ivyleaguecenter.org/2018/03/02/2018-amc-10-12-aime-cutoff-scores/)의 최종 비교표는 10A 111, 10B 108, 12A 93, 12B 99를 구분해 싣는다. 같은 페이지의 앞쪽 bullet은 B형 이름을 A형으로 잘못 표기하므로 CSV 출처 메모에 최종 결과표를 사용했다고 기록했다. 회차별 로컬 원본은 LIVE의 [2018 AMC 10B](https://live.poshenloh.com/past-contests/amc10/2018B), [2018 AMC 12B](https://live.poshenloh.com/past-contests/amc12/2018B)에서 인쇄 PDF·정답·전문 풀이를 제공하며, AIME cutoffs와 시험지 자료는 각각 분리해 사용한다.
+
+2018 평균은 재게시 연도표 간 반올림 차가 있다: Hanlin은 10B 57.82, 12B 57.86; Math Gold Medalist는 10B 57.81, 12B 57.85; 과거 집계 PDF는 각각 57.81/57.85다. 값 차이는 0.01점이므로 현재 비교에 저장된 평균 57.81/57.85를 유지했으나 원 MAA 점수보고서는 아직 회수되지 않았다. top-1% 경계도 재게시표가 일치하는 10B 123, 12B 126이다.
+
+[2018 Bard Math Circle 결과](https://www.bardmathcircle.org/p/2018-amc-10-12b)는 AMC10B n=17 중 7학년 표본은 없고, AMC12B는 11학년 1명(n=1)뿐이다. 이는 지역 점수 기록이지 국가 학년 기준선이 아니다. 이 연도에 대해 이번 검색에서도 전국 문항별 A–E 응답표·완전한 국가 학년표는 찾지 못했다. 기존 coverage의 2018 B Bard 링크와 표본 제한을 유지한다. cutoff CSV의 네 개 2018 행 출처만 2018 최종 결과표로 교체했다.

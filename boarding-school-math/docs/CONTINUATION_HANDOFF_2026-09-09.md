@@ -1041,3 +1041,7 @@ The AMC10A discrepancy is present in the report itself: Global n=66,591 and repo
 2017 AMC 10A/10B/12A/12B AIME cutoff CSV의 출처를 각 A/B contemporaneous notice로 바로잡았다. AMC 10A 59.33, 10B 66.56, 12B 58.35 평균은 공개 연도표 두 곳에서 일치해 평균 출처 링크를 갱신했다. AMC 12A 평균은 56.99와 60.32로 상충해 UI에서 제거했다. 2017 B 폼의 미국 내 전체 문항 응답률이나 국가 전체 학년 표는 아직 회수되지 않았다. Bard의 AMC10B n=16, AMC12B n=3 지역 결과는 URL이 연구 로그에 있으며 국가 규준·문항 응답률과 분리한다. LIVE 연도별 원본/키/풀이 링크는 종전대로 쓴다. `git diff --check` 통과. 최신 커밋은 작업 전 `e7d444aeb`; 이번 변경은 아직 미커밋. `raw_youtube.txt` 미수정·미추적 유지.
 
 다음은 연대순으로 2017 MAA 결과표 본문과 학년/문항 응답 표를 계속 회수하고, 회수된 원본은 인구집단·시험 폼별로 독립 대조한다. 출처 간 통계가 상충하면 화면에 평균/경계를 내보내지 않고 원표를 더 찾는다. 확인 출처: [2017 AMC 10A/12A cutoff](https://ivyleaguecenter.org/2017/02/23/2017-amc-1012-a-aime-cutoff-scores/), [2017 AMC 10B/12B cutoff](https://ivyleaguecenter.org/2017/03/01/2017-amc-10b12b-aime-cutoff-scores/), [AMC10 연도별 평균](https://www.mt100edu.com/h/576.html), [AMC12 평균 교차 검토](https://www.think-matrix.com/math_planet/awards_setting_and_historical_result), [Bard 지역 결과](https://www.bardmathcircle.org/p/2017-amc-1012b-results).
+
+### 2026-11-07 · 2018 AMC B source check
+
+2018 A/B cutoff CSV의 네 행은 2018-03-02 결과 페이지로 연결했다. 페이지 본문의 B cutoff bullet은 형식을 A로 잘못 적지만, 바로 아래 최종 결과표가 10A 111, 10B 108, 12A 93, 12B 99로 명시한다. 두 값은 그 표를 기준으로 유지하고 CSV 메모에 오류 위치를 알렸다. 전체 평균은 제3자 표에서 0.01점 차이(10B 57.81/57.82, 12B 57.85/57.86)이며 현재 값 유지, 원 MAA 점수보고서 미회수. Bard 지역 기록 n=17 (10B; 7학년은 없음), n=1 (12B, 11학년)뿐이라 국가 학년 기준으로 쓰지 않는다. 2018 B 전체 문항 선택률은 여전히 미발견. 변경 미커밋; 다음 2019년으로 넘어가기 전에 정확한 출처 차이를 보존. `raw_youtube.txt` 보존.
