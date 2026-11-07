@@ -2921,6 +2921,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
+  if (source52Count && !source52Count.types.some(t=>t.id==="5-2-u6-e3-example-1-difference-similar")) {
+    const id="5-2-u6-e3-example-1-difference-similar", name="두 주사위 눈의 차가 배수인 경우 · 조건변형";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-e3-example-1",sourceItemLabel:"예제 3-1 조건변형 유사문항",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:58,alternateSourcePdfPage:57,sourcePrintedPage:62,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U6DiceDifferenceSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 구별되는 두 주사위 경우의 수를 바탕으로 합 조건을 차 조건으로 바꾸고 36가지 순서쌍을 독립 검산했습니다."});
+  }
   if (source52Count) for (const [n,name] of [[1,"네 사람이 모두 남의 자리에 앉기"],[2,"두 주사위의 곱이 18 이상"],[3,"15개 이하의 동전으로 380원 만들기"],[4,"B를 거치는 최단 거리"],[6,"여섯 사람 중 두 사람이 이웃하기"]]) {
     const id=`5-2-u6-e3-mission-${n}-original`,label=`${name} · 원문`,key=`source52U6P63Mission${n}Original`;
     if (!source52Count.types.some(t=>t.id===id)) { const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1; source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name:label,label,sourceItemId:id,sourceSection:"mission",sourcePrintedPage:63,sourcePdfPage:59,alternateSourcePdfPage:58,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치와 그림을 대조하고 경우의 수를 독립 열거했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false}); }
@@ -4347,7 +4352,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u3","5-2-u3-t5-3","5-2-u3-practice-62-clarified-similar"],
     ["5-2-u4","5-2-u4-t2-9","5-2-u4-e2-mission-4"],
     ["5-2-u4","5-2-u4-t1-11","5-2-u4-e1-mission-6"],
-    ["5-2-u4","5-2-u4-t2-8","5-2-u4-e2-mission-3"]
+    ["5-2-u4","5-2-u4-t2-8","5-2-u4-e2-mission-3"],
+    ["5-2-u6","5-2-u6-t3-6","5-2-u6-e3-example-1-difference-similar"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
