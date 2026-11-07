@@ -111,7 +111,7 @@
           populations.forEach(function (population) {
             const count = Number(population.respondentCount);
             const countLabel = Number.isFinite(count) && count > 0 ? ` · ${count.toLocaleString("ko-KR")}명` : "";
-            const label = population.id === "taiwan" ? `대만 응시자 표본${countLabel}` : population.id === "global" ? `세계 응시자 표본${countLabel}` : population.label;
+            const label = population.id === "taiwan" ? `대만 응시자 표본${countLabel}` : population.id === "global" ? `세계 응시자 표본${countLabel}` : population.id === "aime-qualifiers" ? `AIME 진출자 표본${countLabel}` : population.label;
             responsePopulationSelect.append(option(population.id, label));
           });
           responsePopulationSelect.value = populations.some(function (population) { return population.id === params.get("population"); }) ? params.get("population") : "global";
@@ -862,7 +862,7 @@
       $("amc-aime-cutoff-source").textContent = fixedThreshold ? "MAA 2027 AIME 공식 기준 ↗" : aimeCutoff.year === 2025 ? "MAA 공식 발표와 대조한 점수선 ↗" : "연도별 AIME 점수선 자료 ↗";
     }
     const historicalGradeReference = window.GFIELDAMCHistoricalGradeReference;
-    const gradePopulationId = ["amc10", "amc12"].includes(selectedFormat().id) && !$("archive-response-population-field").hidden ? $("archive-response-population").value : undefined;
+    const gradePopulationId = ["amc10", "amc12"].includes(selectedFormat().id) && !$("archive-response-population-field").hidden && $("archive-response-population").value !== "aime-qualifiers" ? $("archive-response-population").value : undefined;
     const gradeReferenceSection = $("amc-grade-reference");
     const gradeReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && historicalGradeReference
       ? historicalGradeReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade, gradePopulationId)
@@ -1153,11 +1153,15 @@
     itemResponseSection.hidden = cohortItemResponses.length === 0;
     if (cohortItemResponses.length) {
       const cohort = cohortItemResponses[0].reference;
-      const responsePopulationLabel = cohort.population.includes("Taiwan") ? "대만 응시자 표본" : "세계 응시자 표본";
+      const responsePopulationLabel = cohort.population.includes("AIME qualifier") ? `AIME 진출자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : cohort.population.includes("Taiwan") ? `대만 응시자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : cohort.population.includes("MAA U.S.") ? `MAA 미국 참가자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : `세계 응시자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}`;
+      setText("item-response-title", cohort.population.includes("AIME qualifier") ? "AIME 진출자 표본의 보기 선택 분포" : "같은 회차 응시자의 보기 선택 분포");
       const cohortSummaryWarning = cohort.sourceStatus.includes("Source reconciliation warning")
         ? " · 원본 평균 불일치: 문항 응답 참고용"
         : "";
       setText("item-response-summary", `${selectedYear} AMC ${itemResponseProgram === "amc10" ? "10" : "12"}${itemResponseForm} · ${responsePopulationLabel} · 오답·미응답 문항의 보기 선택을 나란히 표시합니다.${cohortSummaryWarning}`);
+      setText("item-response-scope-copy", cohort.population.includes("AIME qualifier")
+        ? "MAA High School Summary의 AIME 진출자 응답표입니다. 전체 응시자 분포가 아니며, 선발된 고득점 집단의 응답 참고 자료입니다. 학생 개인의 풀이 원인이나 AIME 진출 가능성을 판정하지 않습니다. "
+        : "선택한 집단의 공개 응답 분포입니다. 표본의 범위는 원자료 표기를 따릅니다. 보기 선택만으로 개인의 풀이 원인이나 개념 숙달을 판정하지 않습니다. ");
       const rows = $("item-response-rows");
       rows.replaceChildren();
       cohortItemResponses.forEach(function ({ reviewItem, reference }) {
