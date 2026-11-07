@@ -1,0 +1,129 @@
+{
+  "phase": 326,
+  "date": "2026-11-08",
+  "scope": "Plain display-only wording for water/magnet/ground/combustion comparison material.",
+  "priorLocalCommit": "f00a84909f26705eae2aa33faffb5f038300b992",
+  "reviewParent": "675ddcc78a97f6df3bd1f654d58d7ef0b64679d1",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "nativeValidation": {
+    "currentWorkbooksUnchanged": 32,
+    "currentWorkbookHtmlUnchanged": 128,
+    "currentRuntimeQuestionPoolsUnchanged": 32,
+    "otherClassroomUnitsUnchanged": 29,
+    "otherClassroomSlideArraysUnchanged": 58,
+    "changedSlides": [
+      {
+        "unit": "c22-s62-u02",
+        "mode": "self",
+        "id": "seacase"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "mode": "teach",
+        "id": "seacase"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "id": "design"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "id": "design"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "id": "lab"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "id": "lab"
+      }
+    ],
+    "changedSlideCount": 6,
+    "changedSlideMarkupUnchanged": true,
+    "changedCuesAndFlow": {
+      "changedCues": [
+        {
+          "unit": "s41-u03",
+          "ids": [
+            "feedback"
+          ]
+        },
+        {
+          "unit": "c22-s62-u02",
+          "ids": [
+            "seacase"
+          ]
+        }
+      ],
+      "changedFlowPage": "seacase",
+      "changedFlowFields": [
+        "text"
+      ],
+      "allOtherClassroomMetadataUnchanged": true
+    },
+    "comparisonDisplayCasesReworded": 4,
+    "rawRecordVariantsPreservedByTests": 124,
+    "comparisonWidgetsExercised": 31,
+    "fullModelCaseSettings": 206,
+    "nativeWidgetStatesCompared": 618,
+    "modifiedWidgetKinds": [
+      "combustion-compare",
+      "ground-compare",
+      "magnet-compare",
+      "water-compare"
+    ],
+    "modifiedCaseSettings": 18,
+    "changedWidgetStateCounts": {
+      "start": 18,
+      "shown": 18,
+      "record": 18
+    },
+    "other27WidgetsExactlyUnchanged": true,
+    "allCallbacksRowsProgressAndRestoreEqual": true,
+    "allHtmlTagsControlsImagesAndOptionValuesEqual": true,
+    "existingEarthquakeDisplaySafetyWordingPreserved": true,
+    "rawDataAndModelFilesUnchanged": 815,
+    "allQuestionsAnswersSavedGradesAndHistoryUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkCalls": 0,
+    "actualAudioPlays": 0,
+    "newRegressionTests": 4,
+    "existingWordingFixturesUpdated": 1,
+    "syntaxFiles": 13,
+    "actualBrowserVerified": false,
+    "newOcrRuns": 0,
+    "newBitmaps": 0
+  },
+  "newQuestionContextsReviewed": 0,
+  "currentQuestionContextsPreviouslyReviewed": 3080,
+  "currentQuestionContextsPreviouslyModified": 1902,
+  "tests": {
+    "files": 240,
+    "total": 1332,
+    "pass": 1330,
+    "fail": 0,
+    "skip": 2,
+    "newTests": 4,
+    "existingWordingFixturesUpdated": 1
+  },
+  "currentOriginalUnits": 23,
+  "currentOriginalQuestions": 1512,
+  "pendingOriginalUnits": 9,
+  "rawSourceAndPairBanksUnchanged": true,
+  "curriculumConceptsAndScienceClaimsUnchanged": true,
+  "allDataNumbersAndSavedMaterialSchemasPreserved": true,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

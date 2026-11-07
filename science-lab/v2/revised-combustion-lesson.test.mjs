@@ -36,7 +36,7 @@ test('6과14의 네 목표가 관찰·비교·시범·조사·제안과 공유�
   assert(at('mixplan').body.includes('밀폐하지'));assert(at('fuelwatch').body.includes('뜨거울 때 보충하지'));
   assert(at('carbonwatch').body.includes('입으로 불거나'));assert(at('waterwatch').body.includes('손대지'));
   assert(at('ecosystem').body.includes('피해를 증명하는 사진은 아니'));
-  assert(at('seacase').body.includes('NOAA 글에 나온 실측값이 아니'));
+  assert(at('seacase').body.includes('NOAA 글에 나온 실제 관측값은 아니'));
   assert(at('makecard').body.includes('제안한 방법이 어느 부분에 도움이 되는지'));
   assert(at('share').body.includes('교실에서'));assert(at('revise').body.includes('질문'));
   assert(at('test16').body.includes('combustion-draw-space'));
