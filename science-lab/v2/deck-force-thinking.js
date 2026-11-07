@@ -1,3 +1,4 @@
+import{FORCE_END_GUIDANCE}from'./learner-class-guidance.js?v=20261108-learner-class-guidance';
 // 힘 단원의 사고력 기본 수업. 실제 활동/보고서 교재는 records-book 경로에 보존한다.
 import {findLifeItem} from './book-life.js';
 import {thinkingCheckQuestion as checkQuestion} from './thinking-check-question.js?v=20261102-material';
@@ -31,6 +32,6 @@ export function buildForceThinkingSlides(ch,art,plan,pool,mode,ix){
  add('apply','extend','주장을 근거로 고쳐 보세요',p('“수평이면 두 물체는 언제나 같은 무게야.” “큰 물체가 언제나 무거워.” 두 주장 중 하나를 골라 필요한 조건과 반례를 설명해요.')+peek('수평은 거리 조건도 확인해야 해요. 겉크기가 같아도 내용물이나 재료가 달라 무게가 다를 수 있어요. 자료에 없는 측정값을 만들지 않고 비교 방법을 제안해요.'),{kind:'think'});
  const keys=[...ch.formative.items,...ch.check];
  keys.forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`힘 사고력 확인 문항 없음: ${key}`);add(`test${i+1}`,'check',`근거로 확인하기 ${i+1}/${keys.length}`,checkQuestion(q,i+1,teach),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
- add('end','check','조건·관찰·설명을 연결했나요?',`<ul>${['밀기·당기기의 방향과 비교 조건','같은 거리에서 무게 비교와 다른 거리에서 수평 찾기','저울의 영점·범위·안정된 표시·단위','지레·빗면의 도움과 생활 속 쓰임'].map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+p('실제 활동을 더 하고 싶은 경우 첫 화면의 선택 기록 교재를 이용해요. 모형·자료 문제를 푼 것을 실제 수행이나 공식 성적 완료로 처리하지 않아요.')+'<a class="btn" href="#/s31-u01/daily">Daily Test</a>',{kind:'end'});
+ add('end','check',FORCE_END_GUIDANCE.title,`<ul>${FORCE_END_GUIDANCE.points.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+p(FORCE_END_GUIDANCE.afterword)+'<a class="btn" href="#/s31-u01/daily">Daily Test</a>',{kind:'end'});
  S.forEach((s,i)=>s.n=i+1);return S;
 }
