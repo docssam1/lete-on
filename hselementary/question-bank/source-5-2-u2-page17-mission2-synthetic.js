@@ -26,7 +26,7 @@
   }
   function build(index, difficulty) {
     const value = derive(index), [home, city, fire] = value.distances;
-    const prompt = `<div class="source52-p17m2-question"><p>민서의 집에서 도서관까지의 거리는 ${math(`${mixed(value.p.homeSchool)} km`)}입니다. 집에서 미술관까지의 거리는 집에서 도서관까지 거리의 ${math(mixed(value.p.schoolCity))}배이고, 집에서 수영장까지 거리는 집에서 미술관까지 거리의 ${math(mixed(value.p.cityFire))}배입니다. 민서의 집에서 수영장까지의 거리를 구하여라.</p>${difficulty < 0 ? `<span class="source52-u2-hint">도움말: 먼저 집에서 미술관까지의 거리를 구한 뒤, 그 결과에 다음 배율을 곱하세요.</span>` : ""}</div>`;
+    const prompt = `<div class="source52-p17m2-question"><p>민서의 집에서 도서관까지의 거리는 ${math(`${mixed(value.p.homeSchool)} km`)}입니다. 집에서 미술관까지의 거리는 집에서 도서관까지 거리의 ${math(mixed(value.p.schoolCity))}배이고, 집에서 수영장까지 거리는 집에서 미술관까지 거리의 ${math(mixed(value.p.cityFire))}배입니다. 민서의 집에서 수영장까지의 거리를 구하여라.</p></div>`;
     const lines = difficulty < 0 ? [
       `대분수를 가분수로 바꾸어 집에서 도서관까지 거리를 나타냅니다: ${math(`${value.p.homeSchool[0]}/${value.p.homeSchool[1]} km`)}.`,
       `먼저 미술관까지는 ${math(`${text(home)}×${text(value.factors[1])}=${text(city)} km`)}입니다. 이를 한 번 더 곱하면 ${math(`${text(city)}×${text(value.factors[2])}=${text(fire)} km`)}입니다.`
