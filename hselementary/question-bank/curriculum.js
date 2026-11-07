@@ -4346,7 +4346,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   for (const [unitId,id,alternativeTypeId] of [
     ["5-2-u3","5-2-u3-t5-3","5-2-u3-practice-62-clarified-similar"],
     ["5-2-u4","5-2-u4-t2-9","5-2-u4-e2-mission-4"],
-    ["5-2-u4","5-2-u4-t1-11","5-2-u4-e1-mission-6"]
+    ["5-2-u4","5-2-u4-t1-11","5-2-u4-e1-mission-6"],
+    ["5-2-u4","5-2-u4-t2-8","5-2-u4-e2-mission-3"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
