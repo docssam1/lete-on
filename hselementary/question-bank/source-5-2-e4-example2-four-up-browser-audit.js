@@ -19,6 +19,8 @@ const ids = ["5-2-u3-e4-example-2"];
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u3");
+      const geometryRow = page.locator(`#typeList [data-preview-type-id='${ids[0]}']`);
+      assert.match(await geometryRow.innerText(), /예제 4-2 유사문항/, "the visible source label identifies the geometry practice");
       for (const id of ids) await page.locator(`#typeList input[data-type-id='${id}']`).check();
       await page.locator("#questionCountInput").fill("4");
       await page.locator("#difficultyFilter [data-difficulty='0']").click();

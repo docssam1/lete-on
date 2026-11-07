@@ -17,6 +17,13 @@ assert.ok(definition && type, "Example 4-2 is represented in the generator and c
 assert.equal(definition.publicReady, true);
 assert.equal(type.reviewLocked, false);
 assert.equal(window.HSE_GENERATORS.generatorKey(type), definition.generatorKey, "reviewed generator is publicly registered");
+const unit3 = window.HSE_CURRICULUM.semesters.flatMap(s => s.units).find(u => u.id === "5-2-u3");
+const geometryGroup = unit3.subunits.find(group => group.types.some(item => item.id === sourceId));
+assert.equal(geometryGroup.name, "합동의 활용 ②", "equilateral practice stays under the geometry unit");
+assert.match(type.sourceItemLabel, /예제 4-2.*유사문항/, "geometry practice is attributed as a similar question");
+const unit1 = window.HSE_CURRICULUM.semesters.flatMap(s => s.units).find(u => u.id === "5-2-u1");
+const roundingType = unit1.subunits.flatMap(group => group.types).find(item => item.id === "5-2-u1-e4-example-2");
+assert.match(roundingType.sourceItemLabel, /예제 4-2.*유사문항/, "the separate rounding practice keeps its own attribution");
 
 const distance = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
 const angleAt = (vertex,a,b) => {
