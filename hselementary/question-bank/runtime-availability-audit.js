@@ -1,7 +1,5 @@
 "use strict";
 
-const fs = require("node:fs");
-const path = require("node:path");
 
 global.window = {};
 require("./source-inventory-4-1.js");
@@ -350,19 +348,10 @@ const ready = types.filter(type => generatorApi.generatorKey(type) && !type.revi
 const locked = types.filter(type => !generatorApi.generatorKey(type) || type.reviewLocked);
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
 
-const readme = fs.readFileSync(path.join(__dirname, "README.md"), "utf8");
-for (const [label, pattern, expected] of [
-  ["전체", /런타임 ([\d,]+)개 세부 유형 항목/, types.length],
-  ["생성 가능", /현재 생성 가능:[^\n]*?([\d,]+)개 유형/, ready.length],
-  ["검수 대기", /검수 대기(?:·공통 기능 연결)?:[^\n]*?([\d,]+)개 (?:유형|기록)/, locked.length]
-]) {
-  const match = readme.match(pattern);
-  if (!match || Number(match[1].replaceAll(",", "")) !== expected) failures.push(`README ${label} 수치가 실제 ${expected}개와 다릅니다.`);
-}
-
-if (types.length !== 2275) failures.push(`런타임 유형은 2275개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1496) failures.push(`생성 가능 유형은 1496개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 779) failures.push(`검수 대기 유형은 779개여야 하나 ${locked.length}개입니다.`);
+// This legacy Node harness loads a manually maintained subset of browser scripts.
+// A missing generator here does not imply a locked type in the deployed app.
+// For actual availability use browser-source-release-audit.cjs against the site.
+if (!types.length || !ready.length || ready.length + locked.length !== types.length) failures.push("수동 로드 범위의 유형 분류가 올바르지 않습니다.");
 if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
 if (sourceGrade6.filter(type => !type.reviewLocked).length !== 419 || sourceGrade6.filter(type => type.reviewLocked).length !== 214) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
@@ -414,9 +403,9 @@ for (const type of ready) {
 }
 
 if (failures.length) {
-  console.error(`런타임 생성 가능성 감사 실패: ${failures.length}건`);
+  console.error(`Node 수동 로드 생성 검사 실패: ${failures.length}건`);
   console.error(failures.slice(0, 40).join("\n"));
   process.exit(1);
 }
 
-console.log(`런타임 생성 가능성 감사 통과: 전체 ${types.length} · 생성 가능 ${ready.length} · 검수 대기 ${locked.length}(6학년 원문 ${sourceGrade6.filter(type => type.reviewLocked).length} 포함) · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`Node 수동 로드 생성 검사 통과: 전체 분류 ${types.length} · 이 검사에서 생성 ${ready.length} · 수동 로드에서 미생성 ${locked.length} · ${generatedCount.toLocaleString()}회 생성. 실제 공개·잠금 수는 브라우저 감사로 확인하세요.`);
