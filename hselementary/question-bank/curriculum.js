@@ -2630,6 +2630,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
 
   const source52Dice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s5");
+  if (source52Dice && !source52Dice.types.some(t=>t.id==="5-2-u5-practice-62-top-similar")) {
+    const id="5-2-u5-practice-62-top-similar",name="주사위를 굴린 윗면의 합 · 조건변형";
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Dice.types.push({id,number:source52Dice.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u5-practice-62-original",sourceItemLabel:"확인학습 62번 조건변형 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:109,alternateSourcePdfPage:110,sourcePrintedPage:115,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5RollTopSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 전개도와 경로를 보존하고 바닥면 대신 윗면의 합을 구하도록 바꿔 주사위 회전을 독립 검산했습니다."});
+  }
+
   if (source52Dice) for (const [n,name] of [[62,"전개도로 만든 주사위가 일곱 칸에 닿는 눈의 합 · 확인학습 원문"],[64,"여덟 칸의 바닥에 닿은 주사위 눈의 합 · 확인학습 원문"],[61,"다섯 칸 경로를 구른 주사위의 윗면 · 확인학습 원문"],[63,"일곱 칸 경로를 구른 주사위의 윗면 · 확인학습 원문"],[59,"정육면체 열여섯 개의 바닥 숫자 합 · 확인학습 원문"],[60,"여섯 정육면체의 반대편 숫자 합으로 빈칸 찾기 · 확인학습 원문"],[57,"두 주사위에서 겹친 두 면의 수의 합 · 확인학습 원문"],[58,"같은 전개도의 정육면체 여섯 개에서 뒷면의 합 · 확인학습 원문"],[55,"세 방향에서 본 점의 개수로 마주 보는 면 찾기 · 확인학습 원문"],[56,"세 방향에서 본 정육면체의 마주 보는 문자 짝 · 확인학습 원문"],[53,"여러 방향에서 본 색칠한 정육면체의 반대 면 · 확인학습 원문"],[54,"세 방향으로 본 정육면체의 바닥 숫자 합 · 확인학습 원문"],[49,"맞닿은 면의 수의 합이 8인 다섯 정육면체 · 확인학습 원문"],[50,"같은 주사위 여섯 개의 맞닿은 눈의 합 · 확인학습 원문"],[51,"맞닿은 눈이 같은 네 주사위 쌓기 · 확인학습 원문"],[52,"같은 방향으로 쌓은 주사위의 맞닿은 면의 눈의 합 · 확인학습 원문"]]) {
     const id=`5-2-u5-practice-${n}-original`;
     if (source52Dice.types.some(type=>type.id===id)) continue;
@@ -4361,7 +4367,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u4","5-2-u4-t2-8","5-2-u4-e2-mission-3"],
     ["5-2-u6","5-2-u6-t3-6","5-2-u6-e3-example-1-difference-similar"],
     ["5-2-u6","5-2-u6-t4-4","5-2-u6-e4-mission-1-same-choice-similar"],
-    ["5-2-u6","5-2-u6-t4-5","5-2-u6-e4-mission-2"]
+    ["5-2-u6","5-2-u6-t4-5","5-2-u6-e4-mission-2"],
+    ["5-2-u5","5-2-u5-t6-4","5-2-u5-practice-62-top-similar"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
