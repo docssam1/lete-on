@@ -4,5 +4,7 @@
 .p48ex1-layout ol{padding-left:1.5em;margin:.2em 0}.p48ex1-layout li{margin:0 0 .2em}
 .p48ex1-face{white-space:nowrap}
 .p48ex1-diagram{display:block;width:100%;height:auto;max-width:220px;margin:auto}
+.p48ex1-answers{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;border:0;padding-bottom:0}
+.p48ex1-answers span{display:block;min-height:20px;border-bottom:1px solid #91a2b5}
 @media(max-width:480px){.p48ex1-layout{grid-template-columns:1fr}.p48ex1-diagram{max-width:180px}}
-@media print{.p48ex1-question,.p48ex1-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p48ex1-layout{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}.p48ex1-diagram{max-height:45mm}}
+@media print{.p48ex1-question,.p48ex1-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p48ex1-layout{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr)}.p48ex1-diagram{max-height:40mm}#problemView .print-page--four-up .p48ex1-question{line-height:1.3}#problemView .print-page--four-up .p48ex1-layout li{margin:0}#problemView .print-page--four-up .p48ex1-answers{margin-top:4px;padding-top:0;gap:1mm 4mm}#problemView .print-page--four-up .p48ex1-answers span{min-height:4mm}}

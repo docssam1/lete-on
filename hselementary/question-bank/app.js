@@ -644,7 +644,7 @@
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}"${isCompactFractionProblem(question) ? ' data-compact-fraction="true"' : ""}>
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${problemPromptHtml(question)}</div>
-        <div class="answer-line">답</div>
+        ${question.type.id === "5-2-u5-e1-exploration" ? `<div class="answer-line p48ex1-answers" aria-label="각 물음의 답"><span>①</span><span>②</span><span>③</span><span>④</span><span>⑤</span><span>⑥</span></div>` : '<div class="answer-line">답</div>'}
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
   }
