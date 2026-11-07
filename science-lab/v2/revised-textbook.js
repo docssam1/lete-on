@@ -56,7 +56,7 @@ export async function revisedTextbook(unit, mod) {
 export async function revisedTextbookPaper(unit) {
  const d=await data(unit);return d?makeWorkbookPaper(d.workbook,d.art):null;
 }
-import{BIOLOGY_ELEMENTARY_VERSION}from'../data/book/s41-u04.editorial.js?v=20261108-elementary-reading';
+import{BIOLOGY_ELEMENTARY_VERSION}from'../data/book/s41-u04.editorial.js?v=20261108-elementary-reading-followup';
 import{SKY_READABILITY_VERSION}from'../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook';
 import{ECOLOGY_READABILITY_VERSION}from'../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';
 import{GAS_READABILITY_VERSION}from'../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook';
