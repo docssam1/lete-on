@@ -48,6 +48,17 @@ test('입력 안내는 답을 읽지 않고 기호 순서만 알려 준다',()=>
  assert.equal(sourceAnswerHint({...q,sourceContentVersion:'future'}),'');
 });
 
+test('계절 원문은 인쇄된 빈칸 순서로 답만 쓰게 안내하며 정답을 읽지 않는다',()=>{
+ const q=fixture('short-text');
+ const part=label=>({label,get accepted(){throw Error('do not read answer');},get value(){throw Error('do not read answer');}});
+ q.answerContract={seasonContract:{kind:'ordered-term-parts',parts:[part('(나)'),part('(라)')]}};
+ assert.equal(sourceAnswerHint(q),'(나) → (라) 순서로 답만 쓰고, 쉼표로 나누어요.');
+ const measured=part('㉡');measured.unitRequired=true;
+ q.answerContract.seasonContract.parts=[part('㉠'),measured];
+ assert(sourceAnswerHint(q).includes('수에는 단위도 함께 써요.'));
+ assert.equal(sourceAnswerHint({...q,sourceRef:{type:'similar'}}),'');
+});
+
 function element(dataset={}){
  const listeners={},classes=new Set();
  return {dataset,disabled:false,readOnly:false,value:'',hidden:true,textContent:'',classList:{add:(...x)=>x.forEach(v=>classes.add(v)),toggle:(c,on)=>on?classes.add(c):classes.delete(c),contains:c=>classes.has(c)},setAttribute(k,v){this[k]=v;},addEventListener(k,fn){listeners[k]=fn;},fire(k,e={}){listeners[k]?.(e);}};
@@ -92,6 +103,7 @@ test('실제 수업·Daily 입력 렌더러가 두 그림과 보기표를 빠뜨
 test('실제 Daily 채점 루프는 보류된 선택형을 점수·진단에서 빼고 교사 목록으로 보낸다',()=>{
  const a=fixture(),b={...fixture('multi-choice'),id:'multi-fixture'},c={...fixture(),id:'auto-fixture'};
  for(const q of [a,b])q.answerContract={...q.answerContract,earthMotionContract:{kind:'teacher-review',teacherRequired:true}};
+ delete b.answerContract.earthMotionContract;b.answerContract.seasonContract={kind:'teacher-review',teacherRequired:true};
  const list=[a,b,c],S={answers:{[a.id]:0,[b.id]:[0,2],[c.id]:0},first:{}},queued=[];let records=0,rows;
  const source=fs.readFileSync(new URL('./daily.js',import.meta.url),'utf8');
  const start=source.indexOf('  function grade({restoring=false}={}) {'),end=source.indexOf("  $app.querySelector('.dt-grade')",start);

@@ -1,4 +1,4 @@
-import {isStructuredSource,sourceReviewPromptHtml,sourceAnswerText} from './source-content.js?v=20261108-original-source';
+import {isStructuredSource,sourceReviewPromptHtml,sourceAnswerText} from './source-content.js?v=20261108-source-response';
 import{questionAtVersion}from'./question-revision.js?v=20261105-history-review';
 // 선생님 확인 — 스스로 공부(v2/deck.js)에서 이 기기에 남은 쓰기 답을 모아 본다(원장 2026-09-30).
 //  · 규칙으로 가리지 못한 답(도전 과제, 다른 말로 쓴 긴 답)은 「확인 필요」에 모인다. 선생님이 맞음/다시 쓰기와 한마디를 남기면

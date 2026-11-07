@@ -17,7 +17,7 @@ import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js?v=20261
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
 import { bankLabel, groupLabel, examHeading, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
-import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeacherReview,needsSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js?v=20261108-original-source';
+import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeacherReview,needsSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js?v=20261108-source-response';
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js?v=20261104-energy-class';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js?v=20261104-season-book';
 import { readingHtml } from './reading.js';
@@ -569,7 +569,7 @@ function labBar(u, { print = false } = {}) {
 // 첫 화면: 무엇을 할지 처음에 바로 고른다 — 학생 교재 · 교사 교재 · 스스로 공부 · 가르치기
 // 선생님 확인: 이 기기의 스스로 공부 쓰기 답 중 규칙으로 가리지 못한 것 — 맞음/다시 쓰기·한마디
 async function pageCheck(only) {
-  const { renderCheck, records } = await import('./check.js?v=20261108-original-source');
+  const { renderCheck, records } = await import('./check.js?v=20261108-source-response');
   const known = [...new Set([...Object.keys(BOOKS), ...Object.keys(BANK)])];
   const selected = known.includes(only) ? only : null;
   // 전체 확인도 실제 기록이 있는 단원만 읽어 빈 은행을 한꺼번에 불러오지 않는다.
@@ -597,7 +597,7 @@ async function pageStart(u, L) {
     $app.innerHTML=`<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header><main class="wrap start"><h2>${esc(ch.title)}</h2><p>교재와 문제은행을 골라 학습해요.</p><div class="start-grid">${[['sub/E1','유형별 문제'],['lab-book/student','학생용 교재'],['lab-book/teacher','교사용 교재'],...(ch.workbookRoute?['student','teacher','answers','quick'].map((m,i)=>[ch.workbookRoute+'/'+m,['학생용 교재 A4','교사용 교재 A4','교재 정답·해설','교재 빠른 정답표'][i]]):[]),['print/student','전체 문항 문제지'],['print/teacher','교사 해설'],['print/answers','정답·해설만'],['print/quick','빠른 정답표'],...sets.map(n=>['exam/'+n,BANK[u]?.groups?groupLabel(BANK[u],n):'옛5-1 원문 세트'+n])].map(([path,label])=>`<a class="start-card" href="#/${u}/${path}"><b>${label}</b></a>`).join('')}</div><p>${esc(ch.startNote || '실제 출처와 문항 번호를 보존한 옛단원 연계 학습이에요. 전체 탐구 수업과 실제 활동 기록은 준비 중이에요.')}</p></main>`;
     scrollTo(0,0);return;
   }
-  const ch = bookMod.chapter, need = (await import('./check.js?v=20261108-original-source')).countNeeds([u]);
+  const ch = bookMod.chapter, need = (await import('./check.js?v=20261108-source-response')).countNeeds([u]);
   const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header>
     <main class="wrap start"><p class="step-label">${esc(placeLabel(u) || `${ch.link?.course || ''} ${ch.link?.unit || ''}`)}</p>${placeNow(u) ? `<p class="start-now">${esc(placeNow(u))}</p>` : ''}
@@ -744,7 +744,7 @@ async function pageDaily(u, mod, L, mode) {
   let list = ch.check ? [...new Set([...(ch.check || []), ...(ch.formative?.items || [])])].map(bySrc).filter(Boolean) : [];
   if (!list.length) list = [...(L.evaluate?.items || []), ...(L.explain?.miniTest || [])].map((id) => I[id]).filter(Boolean);
   if (!list.length) { $app.innerHTML = '<main class="wrap"><p>이 단원의 Daily Test는 준비 중이에요.</p></main>'; return; }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-original-source');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-source-response');
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};
   const pool = [...similar, ...items];
@@ -777,7 +777,7 @@ async function pageExam(u, mod, L, set, mode, isCurrent = () => true) {
     $app.innerHTML = assessmentPaperHtml({ unit:u, bank:BANK[u], list, form:set, teacher:mode === 'teacher' });
     scrollTo(0,0); return;
   }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-original-source');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-source-response');
   if (!isCurrent()) return;
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC, heading, back: `#/${u}/exam/${set}`, tabs }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};

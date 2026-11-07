@@ -33,11 +33,13 @@ export function sourceChoiceTableHtml(q,{print=false,show=false,mode='lesson',va
 }
 
 export function sourceAnswerHint(q){
- const c=isStructuredSource(q)&&q.answerContract?.earthMotionContract;
- if(c?.kind!=='ordered-word-parts'||!Array.isArray(c.parts)||c.parts.length<2)return '';
- return `${c.parts.map(p=>`${p.label} 답`).join(' / ')}처럼 순서대로 써요.`;
+ if(!isStructuredSource(q))return '';
+ const earth=q.answerContract?.earthMotionContract,season=q.answerContract?.seasonContract;
+ if(earth?.kind==='ordered-word-parts'&&Array.isArray(earth.parts)&&earth.parts.length>=2)return `${earth.parts.map(p=>`${p.label} 답`).join(' / ')}처럼 순서대로 써요.`;
+ if(season?.kind==='ordered-term-parts'&&Array.isArray(season.parts)&&season.parts.length>=2)return `${season.parts.map(p=>p.label).join(' → ')} 순서로 답만 쓰고, 쉼표로 나누어요.${season.parts.some(p=>p.unitRequired)?' 수에는 단위도 함께 써요.':''}`;
+ return '';
 }
-export const needsSourceTeacherReview=q=>isStructuredSource(q)&&q.answerContract?.earthMotionContract?.teacherRequired===true;
+export const needsSourceTeacherReview=q=>isStructuredSource(q)&&(q.answerContract?.earthMotionContract?.teacherRequired===true||q.answerContract?.seasonContract?.teacherRequired===true);
 export function sourceAnswerText(q,{printed=false}={}){
  if(!isStructuredSource(q))return null;
  if(!printed&&q.sourceRef.reviewOnly&&typeof q.reviewSummary==='string')return q.reviewSummary;
