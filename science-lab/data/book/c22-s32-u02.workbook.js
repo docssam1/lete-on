@@ -1,4 +1,5 @@
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
+import {withEarthSeaElementaryWorkbook} from './c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary';
 import {withMaterialEarthStudentLanguage} from './material-earth-student-language.js';
 import {withEarthSeaBodyLanguage} from './material-earth-body-language.js';
 import {withEarthSeaRails,withEarthSeaLearnerReasoning} from './c22-s32-u02.rail-notes.js?v=20261105-earth-sea-learner-reasoning';
@@ -7916,4 +7917,5 @@ const baseWorkbook = {
 };
 
 export const earthSeaReasoningPriorWorkbook=withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withEarthSeaBodyLanguage(withStudentOpeningLanguage(withEarthSeaRails(baseWorkbook)))));
-export const workbook=withEarthSeaLearnerReasoning(earthSeaReasoningPriorWorkbook);
+export const earthSeaElementaryPriorWorkbook=withEarthSeaLearnerReasoning(earthSeaReasoningPriorWorkbook);
+export const workbook=withEarthSeaElementaryWorkbook(earthSeaElementaryPriorWorkbook);
