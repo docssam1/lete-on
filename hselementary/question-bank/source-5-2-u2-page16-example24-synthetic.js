@@ -38,7 +38,7 @@
 
   function build(legCm, difficultyOffset) {
     const v = derive(legCm), sideSequence = v.sideTexts.join(", "), areaSequence = v.areaTexts.join(" + "), sum = v.areaTexts.join("+");
-    const prompt = `<div class="source52-p16e24-question"><p>그림과 같이 직각을 이루는 한 변이 ${math(`${legCm}cm`)}인 직각이등변삼각형 안에 정사각형을 차례로 그렸습니다. 처음 6개의 정사각형 넓이의 합을 구하세요.</p><figure>${diagram(v)}<figcaption>직각이등변삼각형 안에 차례로 그린 정사각형 6개</figcaption></figure>${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 먼저 정사각형의 한 변 길이를 차례로 구한 다음, 각 길이를 제곱해 넓이를 더해 보세요.</span>` : ""}</div>`;
+    const prompt = `<div class="source52-p16e24-question"><p>그림과 같이 직각을 이루는 한 변이 ${math(`${legCm}cm`)}인 직각이등변삼각형 안에 정사각형을 차례로 그렸습니다. 처음 6개의 정사각형 넓이의 합을 구하세요.</p><figure>${diagram(v)}</figure></div>`;
     const commonDenominator = v.total.d;
     const totalNumerator = v.areas.reduce((sum, area) => sum + area.n * (commonDenominator / area.d), 0);
     const lines = difficultyOffset === -1 ? [
@@ -70,7 +70,7 @@
     return Object.freeze({ ...item, prompt: `<div data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`, sourceItemId, generator: generatorKey,
       generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length,
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure", resultContract: "single-value-with-square-centimeters", mathematicalContract: "first-six-similar-inscribed-square-areas",
-      answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", difficultyDesign: ["guided-side-sequence-and-area-sum", "exact-six-square-side-and-area-sum", "common-denominator-pattern-sum"][difficultyOffset + 1], reasoningSteps: 4,
+      answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", difficultyDesign: ["side-sequence-and-area-sum", "exact-six-square-side-and-area-sum", "common-denominator-pattern-sum"][difficultyOffset + 1], reasoningSteps: 4,
       sourceStructurePreserved: true, sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Example 2-4; physical PDF p.12; original/clean scan + Apple Vision OCR; diagram geometry visually reconstructed",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-six-term-square-area-sum" });
   }

@@ -13,3 +13,7 @@
   .source52-p16e24-diagram { max-height: 420px; }
   .solution-answer-visual .source52-p16e24-diagram { max-height: 360px; }
 }
+
+@media print {
+  #problemView .print-page--four-up .source52-p16e24-diagram { max-height:210px; }
+}

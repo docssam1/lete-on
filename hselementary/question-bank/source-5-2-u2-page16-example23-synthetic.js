@@ -36,7 +36,7 @@
 
   function build(pool, difficultyOffset) {
     const v = derive(pool), twiceFirst = multiply(v.firstRebound, fraction(2, 1));
-    const prompt = `<div class="source52-u2-page16-example23" data-source-item="${sourceItemId}"><p>${math(v.heightText)}m의 높이에서 공을 떨어뜨립니다. 이 공은 떨어진 높이의 ${math(v.ratioText)}만큼 튀어 오릅니다. 두 번째로 튀어 올랐을 때까지 공이 움직인 거리는 모두 몇 m인가요?</p>${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 첫 낙하, 첫 상승과 낙하, 두 번째 상승까지의 거리를 순서대로 적어 보세요.</span>` : ""}</div>`;
+    const prompt = `<div class="source52-u2-page16-example23" data-source-item="${sourceItemId}"><p>${math(v.heightText)}m의 높이에서 공을 떨어뜨립니다. 이 공은 떨어진 높이의 ${math(v.ratioText)}만큼 튀어 오릅니다. 두 번째로 튀어 올랐을 때까지 공이 움직인 거리는 모두 몇 m인가요?</p></div>`;
     const lines = [
       `처음 떨어진 거리는 ${math(`${v.heightText}m`)}입니다.`,
       `처음 튀어 오른 높이는 ${math(`${v.heightText}×${v.ratioText}=${fractionText(v.firstRebound)}m`)}이고, 다시 떨어진 거리도 같습니다.`,
@@ -57,7 +57,7 @@
     return Object.freeze({ ...item, prompt: `<div data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`, sourceItemId, generator: generatorKey,
       generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length,
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure", resultContract: "single-value-with-meters", mathematicalContract: "total-distance-through-second-rebound",
-      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["guided-four-travel-segments", "exact-rebound-height-and-segment-sum", "explicit-paired-first-rebound-segments"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
+      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["four-travel-segments", "exact-rebound-height-and-segment-sum", "explicit-paired-first-rebound-segments"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
       sourceStructurePreserved: true, sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Example 2-3; physical PDF p.12; original/clean scan + Apple Vision OCR; fractions visually cross-checked",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-two-rebound-distance-sum" });
   }
