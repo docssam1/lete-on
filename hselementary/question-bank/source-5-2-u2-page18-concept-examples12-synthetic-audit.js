@@ -6,5 +6,11 @@ for(let n=0;n<3;n++){const m=mods[n],type=unit.subunits.flatMap(s=>s.types).find
  if(n===0){let candidates=[];for(let l=p.difference+1;l<=1000;l++)if(l*p.longWet[0]*p.shortWet[1]===(l-p.difference)*p.shortWet[0]*p.longWet[1])candidates.push(l);assert.equal(candidates.length,1);expected=mul([candidates[0],1],p.longWet);}
  if(n===1){let h=[p.height,1];for(let j=0;j<p.bounce;j++)h=mul(h,[p.ratio[1],p.ratio[0]]);expected=h;let forward=h;for(let j=0;j<p.bounce;j++)forward=mul(forward,p.ratio);assert.deepEqual(forward,[p.height,1]);assert.match(q.solution,/바로 전 낙하 높이에/);assert.match(q.solution,/나누어 구합니다/);}
  if(n===2){const grade=p.girls*p.boys[1]/(p.boys[1]-p.boys[0]),all=grade*p.grade5[1]/p.grade5[0];assert(Number.isInteger(grade)&&Number.isInteger(all));assert(p.awardBoys<=grade-p.girls);expected=r(p.awardBoys,all);}
- assert.deepEqual([q.answerModel.numerator,q.answerModel.denominator],expected,`item ${n} pool ${i} level ${level}`);assert.equal(q.verifiedPoolIndex,i);assert.equal(q.variantProvenance,'synthetic-source-structure');assert.equal(q.publisherKeyVerified,false);assert(q.solution.includes(`data-source-answer="${type.id}"`));assert(!q.prompt.includes('data-source-answer'));
- }}console.log('PASS: three source structures, 3 pools × 3 levels, independent enumeration and reverse calculations, source locks');
+ assert.deepEqual([q.answerModel.numerator,q.answerModel.denominator],expected,`item ${n} pool ${i} level ${level}`);assert.equal(q.verifiedPoolIndex,i);assert.equal(q.variantProvenance,'synthetic-source-structure');assert.equal(q.publisherKeyVerified,false);assert(q.solution.includes(`data-source-answer="${type.id}"`));assert(!q.prompt.includes('data-source-answer'));if(n<2)assert.doesNotMatch(q.prompt,/도움말|힌트|source52-u2-hint/);
+ }}
+// Original printed p.18: the 30cm-different rods have wet fractions 4/5 and 6/7.
+const sourceLongCandidates=[];for(let l=31;l<=1000;l++)if(l*4*7===(l-30)*6*5)sourceLongCandidates.push(l);
+assert.deepEqual(sourceLongCandidates,[450]);assert.deepEqual(mul([450,1],[4,5]),[360,1]);
+// Original Example 3-1: four rises of 2/3 turn the initial 324cm into 64cm.
+let sourceHeight=[324,1];for(let j=0;j<4;j++)sourceHeight=mul(sourceHeight,[2,3]);assert.deepEqual(sourceHeight,[64,1]);
+console.log('PASS: three source structures, 3 pools × 3 levels, independent enumeration and reverse calculations, source locks');
