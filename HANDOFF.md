@@ -2307,3 +2307,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 원문과 LIVE 답안키 전수 대조에서 2010 AMC 12B Q24 오답키/응답률 오기재를 발견해 C 정답 및 A/B/C/D/E = 2.59/3.79/9.42/2.21/0.63%, 공란 81.37%로 고쳤다. 네 폼 100개 문항이 모두 정답키와 일치하고 25행씩 연결된다. 표에 인쇄된 반올림 응답률은 총합 100%에서 최대 0.20%p 차이가 있다.
 - 로컬 브라우저에서 2010 AMC 12B 입력 흐름을 실행했다. 23정답·1오답·1공란은 역사적 채점 공식으로 139.5/150으로 계산됐고, Table XI 표본 n=3,270, 전체 평균 59.8, Grade 10 평균 63.1(n=3,210), AIME 기준점 88.5가 분리 표시됐다. 오답/공란은 Q14/Q24 응답분포·문항 개념·G·MAP 창작 연습으로 연결됐다. 학습자 기록은 저장하지 않았다. `git diff --check`와 JavaScriptCore 100문항 키/행/응답률 대조 통과. Node.js 부재로 테스트 스위트는 실행하지 않았다.
 - 로컬 작업만 수행. `raw_youtube.txt`는 보존·미추적 상태이며 커밋 제외. push·배포·Drive 동기화 없음. 다음은 HS Summary 자료가 있는 다음 연도/시험형을 연도별로 찾아 전체 응답/진출자 응답·점수/학년 요약을 모집단 구분과 함께 더 연결하는 일이다.
+
+### 2026-11-08 · 2011 MAA AMC 10/12 통계 PDF 재확인
+
+- 예전 `2026-11-05 · 2011 AMC 10/12 B형 문항 응답표 검색` 항목의 “응답표 미회수”는 현재 상태와 맞지 않아 이 결과로 대체한다. Internet Archive에 보존된 MAA 2011 통계 페이지가 [Item Difficulty PDF](https://web.archive.org/web/20130121072809id_/http://amc.maa.org/amc1012/2011/stats/11AMC1012-itemdiff.pdf)와 [Score Distribution PDF](https://web.archive.org/web/20130121074149id_/http://amc.maa.org/amc1012/2011/stats/11AMC1012-scoredist.pdf)를 연결한다. 당시 페이지의 실제 링크도 확인했다.
+- Apple Vision OCR와 PDF 페이지 이미지로 Item Difficulty 표 네 폼을 다시 확인했다. 런타임 응답표 100행은 LIVE 정답키 100개와 일치한다. 보기·공란·판독 불가 비율 합계의 최대 차이는 인쇄 반올림 기준 0.02%p다. 재구성 평균은 AMC 10A 67.6968, 10B 72.2124, 12A 66.8274, 12B 64.9398로 MAA Grand Statistics의 반올림 평균 67.7, 72.2, 66.8, 64.9에 맞는다.
+- B형 Item Difficulty 표는 “All Participants”라고만 하고 응답 분모를 밝히지 않는다. Grand Statistics의 공식 학생 수 33,723/30,846명을 문항별 분모로 넣지 않는다. 기존 런타임·coverage에는 B형 25문항이 이미 들어 있다. Score Distribution PDF는 발견했으나 이번에는 그래프 수치를 새로 전사하지 않았다. 브라우저 검수는 Mac 잠금으로 진행하지 않았고, 정적 JavaScriptCore 키·표본·합계·평균 대조만 했다.
+- 출처 조사 세부사항: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 2011 절. 이 확인에서는 코드 데이터 변경이 없으며 사용자 파일 `raw_youtube.txt`는 그대로 보존한다.
