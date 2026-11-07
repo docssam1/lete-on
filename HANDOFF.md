@@ -2171,6 +2171,12 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Next: continue year/form web search for national published response tables and usable primary scans. Keep school/venue samples separate from national results. Preserve `raw_youtube.txt`; no external sync or publishing.
 # Progress update · 2026-11-05
 
+### 2026-11-08 · 2021 Spring AMC participant totals from web research
+
+- Web-opened the TestDaily 2021 Fall MAA-statistics analysis and verified Spring totals in its contest-count sections: AMC 10A/B 24,817/19,179 and AMC 12A/B 16,887/13,677. Added them to the corresponding 2021A/2021B whole-cohort score-reference rows, with a linked corroborating source and a note that geographic scope is unspecified.
+- These totals are not grade samples. They add cohort-size context only; 2021 Spring exact-grade charts and item-response tables remain unrecovered. 2020 B exact-grade charts also remain an open search target. Fall 2021 C/D grade and item-response data stay separate.
+- Validation: focused source-row assertions passed for all four counts and their TestDaily link; CSV coverage assertions confirmed Spring A/B remain `no-grade-table-recovered` while Fall C/D remain staged; `git diff --check` passed. Follow-up web queries for 2021 Spring grade reports and 2020 B grade charts returned no qualifying source. Preserve untracked `raw_youtube.txt`; only commit relevant tracked files. No push, publishing, or Drive sync.
+
 - Recovered the 57th MAA annual report from the Internet Archive and cross-checked every 2006 AMC 10/12 grade-group count and mean (22 records across 10A/B and 12A/B) against original Tables I–II. Counts sum to each published U.S. National Statistics total, and weighted means reconcile to the printed overall mean. Updated the data and coverage source links to the MAA report.
 - Web search reconfirmed the 2004 AMC 8 item response table in a MAA-attributed Scribd scan. The LIVE key matches all 25 starred answers. Its Q1 rates sum to 99.74%, so that item remains excluded from runtime comparisons; the remaining eligible items are year-matched cohort context. MAA's 56th Annual report independently confirms the 154,590 cohort and recorded-grade averages, but does not include the item-choice table. The question-level source stays labeled as a secondary scan.
 - Search notes and provenance distinctions are recorded in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md` and the historical AMC README.
