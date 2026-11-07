@@ -19,7 +19,7 @@ export function curriculumBankHtml(bank) {
   return `<main class="wrap bank bank-2022">
     ${catalogNavigation('2022')}
     <p class="step-label">초등 과학 3~6학년 · 2022 개정</p><h2>32단원 문제은행</h2>
-    <p class="lead">8개 학기의 단원 순서예요. 현재 ${withOriginals.length}개 단원의 원문 ${originals}문항과 짝 유사문항을 풀 수 있어요.${authoredOnly.length ? ` 별도로 ${authoredOnly.length}개 단원의 창작 학습 ${authoredOnly.reduce((n,b)=>n+b.supplement,0)}문항을 제공해요. 이 단원의 원문은 준비 중이에요.` : ''}${excerptTitles.length?` ${esc(excerptTitles.join('·'))} 단원은 옛단원 연계 발췌를 제공하며 현행 전체 원문은 준비 중이에요.`:''} 나머지 단원은 차례로 준비하고 있어요.</p>
+    <p class="lead">8개 학기의 단원 순서예요. 현재 ${withOriginals.length}개 단원의 원문 ${originals}문항과 짝 유사문항을 풀 수 있어요.${authoredOnly.length ? ` 별도로 ${authoredOnly.length}개 단원의 창작 학습 ${authoredOnly.reduce((n,b)=>n+b.supplement,0)}문항을 제공해요. 이 단원의 원문은 준비 중이에요.` : ''}${excerptTitles.length?` ${esc(excerptTitles.join('·'))} 단원은 옛단원 연계 발췌를 제공하며 현행 전체 원문은 준비 중이에요.`:''}${resources.length<SEMS_2022.reduce((n,s)=>n+s.units.length,0)?' 나머지 단원은 차례로 준비하고 있어요.':''}</p>
     ${SEMS_2022.map((s) => `<section class="bank-sem"><h3>${s.sem.replace('-', '학년 ')}학기</h3><ol class="bank-units">${s.units.map((u) => {
       const b = bankFor2022(u.position, bank);
       const currentClassroom = b && revisedTextbookUnits.has(b.contentId) && b.lesson !== false && !b.bankOnly;

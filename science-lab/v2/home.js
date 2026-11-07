@@ -2,7 +2,7 @@ import { currentCourses } from './home-courses.js?v=20261104-home-courses';
 import { CLASSROOM_VISIT_KEY, classroomVisitSummary } from './classroom-visit.js?v=20261104-classroom-visit';
 // 홈 = 교과 연결 사고력 수업·교재와 2022 개정32단원의 차례.
 // 기존 2015 실험 자료와 그 학습 기록은 아래 별도 목록에 보존한다.
-import { SEMS, READY, BOOK_UNITS, BANK } from './units-index.js?v=20261104-career-labels';
+import { SEMS, READY, BOOK_UNITS, BANK } from './units-index.js?v=20261107-catalog-practice-counts';
 import { SEMS_2022, contentId2022 } from './curriculum-2022.js?v=20261104-career-class';
 import { placeOf, placeLabel, placeNow, legacyFor } from './curriculum-place.js?v=20261104-career-labels';
 import { countNeeds } from './check.js';

@@ -130,6 +130,7 @@ export const READY = {
 };
 
 // 문제은행 = 단원평가 원문(<단원>.source.js) + 유사문항. sets = 세트 번호, n = 원문 수.
+// supplement는 현재 연습의 전체 창작 수, lessonSupplement는 그중 수업에서 추가한 문항 수다.
 // 5단계 수업이 없는 단원도 여기에 있으면 지도에서 열린다(READY에 bankOnly:true로 함께 등록).
 export const BANK = {
  'c22-s62-u04':{sets:[],n:0,supplement:128,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'현행 범위 창작128',sourceScopeNote:'현행 단원평가 원문 준비 중',paperLabel:'전체128문항집',paperAvailable:true},
@@ -147,18 +148,18 @@ export const BANK = {
  'c22-s51-mid':{sets:[1,2],n:0,authored:72,originalPending:true,assessment51Print:true,label:'중간평가 · 창작',assessment:true,formLabel:'평가 유형',groups:{1:'A형',2:'B형'},courseLabel:'초등 과학 5학년 1학기',scope:['지층과 화석','빛의 성질'],scopeNote:'1~2단원 학습용 구성 · 학교별 공식 범위와 별개',paperLabel:'전체72문항집',reviewUnits:{E1:'c22-s51-u01',E2:'c22-s51-u02'}},
  'c22-s51-fin':{sets:[1,2,3,4,5,6],n:42,authored:96,mixedSourceAssessment:true,sourceExcerptOnly:true,reviewOnly:7,originalPending:true,assessment51Print:true,label:'기말평가',assessment:true,formLabel:'평가 자료',groups:{1:'옛 기말1 · 발췌10',2:'옛 기말2 · 발췌13',3:'옛 기말3 · 발췌13',4:'옛 기말4 · 발췌6',5:'창작 A형48',6:'창작 B형48'},courseLabel:'초등 과학 5학년 1학기',scope:['지층과 화석','빛의 성질','용해와 용액','우리 몸의 구조와 기능'],scopeNote:'창작은1~4단원 · 옛 원문은 용해와 용액 관련 발췌 · 현행 전체 원문 준비 중',paperLabel:'전체180문항집',reviewUnits:{E1:'c22-s51-u01',E2:'c22-s51-u02',E3:'c22-s51-u03',E4:'c22-s51-u04'}},
  'c22-s51-u04':{sets:[1,2,3,4],n:58,supplement:96,lesson:true,bookAvailable:true,labLabel:'내 몸 탐구·실천 기록',reviewOnly:6,label:'옛6-2 관련 발췌',sourceExcerptOnly:true,sourceScopeNote:'현행 전체 원문 준비 중',paperLabel:'전체212문항집',groups:{1:'옛6-2 세트1 · 발췌13',2:'옛6-2 세트2 · 발췌12',3:'옛6-2 세트3 · 발췌17',4:'옛6-2 세트4 · 발췌16'}},
- 'c22-s42-u04':{sets:[1,2,3,4],n:6,supplement:108,lesson:true,labLabel:'내 기후변화 탐구 기록',label:'옛 에너지/날씨 대응 관련 발췌',sourceExcerptOnly:true,sourceScopeNote:'현행 전체 원문 준비 중',groups:{1:'에너지 원세트1 · 발췌2',2:'에너지 원세트2 · 발췌1',3:'에너지 원세트3 · 발췌2',4:'날씨 원세트2 · 발췌1'},paperLabel:'전체120문항집'},
+ 'c22-s42-u04':{sets:[1,2,3,4],n:6,supplement:120,lessonSupplement:12,lesson:true,labLabel:'내 기후변화 탐구 기록',label:'옛 에너지/날씨 대응 관련 발췌',sourceExcerptOnly:true,sourceScopeNote:'현행 전체 원문 준비 중',groups:{1:'에너지 원세트1 · 발췌2',2:'에너지 원세트2 · 발췌1',3:'에너지 원세트3 · 발췌2',4:'날씨 원세트2 · 발췌1'},paperLabel:'전체132문항집'},
  'c22-s42-u03':{sets:[1,2,3,4],n:75,supplement:96,lesson:true,labLabel:'내 기체 탐구 기록',label:'옛6-1 여러 가지 기체 원문',groups:{1:'원문 세트1 ·10문항',2:'원문 세트2 ·20문항',3:'원문 세트3 ·20문항',4:'원문 세트4 ·25문항'},reviewOnly:3,paperLabel:'전체246문항집'},
- 'c22-s42-u02':{sets:[1,2,3,4],n:70,supplement:80,lesson:true,labLabel:'내 생태계 탐구 기록',label:'옛5-2 생물과 환경 원문',groups:{1:'원문 세트1 ·15문항',2:'원문 세트2 ·15문항',3:'원문 세트3 ·20문항',4:'원문 세트4 ·20문항'},reviewOnly:2,paperLabel:'전체220문항집'},
- 'c22-s42-u01':{sets:[1,2,3,4,5,6,7,8],n:95,supplement:80,lesson:true,labLabel:'내 밤하늘 탐구 기록',label:'밤하늘 연계 원문',groups:{1:'태양계 원문1 ·10문항',2:'태양계 원문2 ·20문항',3:'태양계 원문3 ·20문항',4:'태양계 원문4 ·25문항',5:'달 관찰 발췌1 ·3문항',6:'달 관찰 발췌2 ·5문항',7:'달 관찰 발췌3 ·5문항',8:'달 관찰 발췌4 ·7문항'},reviewOnly:5,paperLabel:'전체270문항집'},
- 's41-u04':{sets:[1,2,3,4],n:75,supplement:64,lesson:true,labLabel:'내 생물 탐구 기록',label:'옛5-1 원문',groups:{1:'세트1 ·10문항',2:'세트2 ·20문항',3:'세트3 ·20문항',4:'세트4 ·25문항'},reviewOnly:7,paperLabel:'전체214문항집'},
+ 'c22-s42-u02':{sets:[1,2,3,4],n:70,supplement:92,lessonSupplement:12,lesson:true,labLabel:'내 생태계 탐구 기록',label:'옛5-2 생물과 환경 원문',groups:{1:'원문 세트1 ·15문항',2:'원문 세트2 ·15문항',3:'원문 세트3 ·20문항',4:'원문 세트4 ·20문항'},reviewOnly:2,paperLabel:'전체232문항집'},
+ 'c22-s42-u01':{sets:[1,2,3,4,5,6,7,8],n:95,supplement:92,lessonSupplement:12,lesson:true,labLabel:'내 밤하늘 탐구 기록',label:'밤하늘 연계 원문',groups:{1:'태양계 원문1 ·10문항',2:'태양계 원문2 ·20문항',3:'태양계 원문3 ·20문항',4:'태양계 원문4 ·25문항',5:'달 관찰 발췌1 ·3문항',6:'달 관찰 발췌2 ·5문항',7:'달 관찰 발췌3 ·5문항',8:'달 관찰 발췌4 ·7문항'},reviewOnly:5,paperLabel:'전체282문항집'},
+ 's41-u04':{sets:[1,2,3,4],n:75,supplement:76,lessonSupplement:12,lesson:true,labLabel:'내 생물 탐구 기록',label:'옛5-1 원문',groups:{1:'세트1 ·10문항',2:'세트2 ·20문항',3:'세트3 ·20문항',4:'세트4 ·25문항'},reviewOnly:7,paperLabel:'전체226문항집'},
   's41-u01': { sets:[1,2,3,4], n:80, supplement:90, lesson:true, labLabel:'내 자석 탐구 기록' },
  'c22-s32-mid':{sets:[1,2],n:0,authored:60,label:'중간평가 · 창작',assessment:true,formLabel:'평가 유형',groups:{1:'A형',2:'B형'},courseLabel:'초등 과학 3학년 2학기',scope:['물체와 물질','지구와 바다'],scopeNote:'1~2단원 학습용 구성 · 학교별 공식 시험 범위와 별개',reviewUnits:{E1:'c22-s32-u01',E2:'c22-s32-u02'}},
  'c22-s32-fin':{sets:[1,2],n:0,authored:60,label:'기말평가 · 창작',assessment:true,formLabel:'평가 유형',groups:{1:'A형',2:'B형'},courseLabel:'초등 과학 3학년 2학기',scope:['물체와 물질','지구와 바다','소리의 성질','감염병과 건강한 생활'],scopeNote:'1~4단원 학습용 구성 · 학교별 공식 시험 범위와 별개',reviewUnits:{E1:'c22-s32-u01',E2:'c22-s32-u02',E3:'c22-s32-u03',E4:'c22-s32-u04'}},
- 'c22-s32-u04':{sets:[],n:0,supplement:80,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 건강 생활 탐구 기록'},
- 'c22-s32-u03':{sets:[1,2,3,4],n:70,supplement:64,lesson:true,labLabel:'내 소리 탐구 기록',label:'소리의 성질 원문',reusedSourceUnit:'s32-u05'},
- 'c22-s32-u02':{sets:[],n:0,supplement:80,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 지구·바다 탐구 기록'},
- 'c22-s32-u01':{sets:[1,2,3,4],n:70,supplement:64,lesson:true,label:'상태 관찰 원문',labLabel:'내 관찰·분류·설계 기록',reusedSourceUnit:'s32-u04'},
+ 'c22-s32-u04':{sets:[],n:0,supplement:92,lessonSupplement:12,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 건강 생활 탐구 기록'},
+ 'c22-s32-u03':{sets:[1,2,3,4],n:70,supplement:76,lessonSupplement:12,lesson:true,labLabel:'내 소리 탐구 기록',label:'소리의 성질 원문',reusedSourceUnit:'s32-u05'},
+ 'c22-s32-u02':{sets:[],n:0,supplement:92,lessonSupplement:12,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 지구·바다 탐구 기록'},
+ 'c22-s32-u01':{sets:[1,2,3,4],n:70,supplement:76,lessonSupplement:12,lesson:true,label:'상태 관찰 원문',labLabel:'내 관찰·분류·설계 기록',reusedSourceUnit:'s32-u04'},
   's31-fin': { sets: [1, 2], n: 0, authored: 60, label: '기말평가 · 창작', assessment: true, formLabel: '평가 유형', groups: { 1: 'A형', 2: 'B형' }, reviewUnits: { E1: 's31-u01', E2: 's31-u02', E3: 's31-u03', E4: 's31-u04' } },
   's31-u04': { sets: [1, 2, 3, 4], n: 41, supplement: 64, lesson: true, label: '교재 문항', groups: { 1: '동물의 자람과 관찰', 2: '곤충의 한살이', 3: '식물의 자람 조건', 4: '식물 실험·자료 해석' } },
   's41-u02': { sets:[1,2,3,4], n:80, supplement:78, lesson:true, labLabel:'내 물 탐구 기록' },
