@@ -1,5 +1,13 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2026 AMC 10A·12A를 원본 복습 화면에 연결 (2026-11-08)
+
+[MAA 공식 일정](https://maa.org/student-programs/amc/)에서 A형 시행일 11월 5일과 B형 예정일 11월 13일을 확인했다. [Think Academy 10A 자료 페이지](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/)와 [12A 자료 페이지](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/)는 회차별 문제지 PDF, 답안 키 이미지, 풀이 자료를 제공한다. 10A는 풀이 PDF 하나, 12A는 게시물 안에 1–15번과 16–25번 PDF 두 개가 있다. MAA/LIVE 공개 과거시험 색인에는 2026 A형이 아직 없으므로, 앱에서 이 두 시험은 제3자 공개 재게시 자료로 따로 표시한다.
+
+문제 복습 화면에 2026 연도 선택, A형 자료 링크, 실제 PDF 인쇄, 정답 키 자동 채점을 연결했다. Apple Vision으로 키 이미지를 읽고 원본 이미지와 눈으로 대조해 저장한 키는 AMC 10A `BADACAACDCDDCBBDCDCCCADDB`, AMC 12A `ADACACACEBDECCACADDDDCDDB`이며 각각 25개다. 정답 대조 결과에는 Think Academy 키 출처를 표시한다. 전체 PDF나 문항 문장은 저장소에 저장하지 않는다. 이 제3자 페이지에는 LIVE 방식의 개별 문항 URL이 없어서 문항별 링크를 만들지 않고 전체 풀이 페이지/PDF를 연다.
+
+연결 확인: 두 시험 페이지와 PDF·키 이미지 URL은 HTTP 200을 반환했다. JavaScriptCore에서 두 A형만 선택되는지, 25문항 키가 연결되는지, 인쇄·풀이 URL이 맞는지, 문항별 LIVE 링크가 없는지 확인했다. 실제 인쇄물의 페이지별 레이아웃 검수와 브라우저 화면 검수는 아직 하지 않았다. 다음에는 11월 13일 이후 AMC 10B/12B 원자료를 찾아 같은 방식으로 출처 확인 후 연결한다. [AMC 10A](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/), [AMC 12A](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/).
+
 ## 2026-11-05 웹 검색: 연도별 원본·답·풀이 링크 재확인
 
 [LIVE의 AMC 과거 시험 아카이브](https://live.poshenloh.com/past-contests)는 실제 AMC 자료를 MAA의 공식 허가를 받아 호스팅한다고 밝히며, 각 시험의 인쇄용 PDF와 온라인 문항·정답·풀이를 제공한다. 웹 인덱스의 AMC 10 52회(2000–2025, 2021 C/D 포함), AMC 12 102회(1950–2025, 2021 C/D 포함)를 우리 [`amc-original-source-catalog.csv`](../competition/amc-original-source-catalog.csv)와 대조했다. 카탈로그의 AMC 10 52행과 AMC 12 102행 모두 온라인 시험, 인쇄용 PDF, 정답, 풀이 링크가 채워져 있다. 저작권이 있는 시험 문항 원문을 복사해 저장하지 않고 허가된 출처로 연결한다.

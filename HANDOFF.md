@@ -2266,6 +2266,13 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 데이터: `boarding-school-math/competition/historical-amc-grade/amc8-2025-strath-haven-school-item-correct.csv`. README와 검색 기록에 출처/제한 추가. 이는 단일 학교, 학년 미분리, 선택지별 오답 분포 미제공 자료라 전국 규준·학년 비교·개별 오개념 판정으로 사용하면 안 된다. AMC 연도별 인쇄 시험·정답·해설은 기존 266행 연도/폼 카탈로그의 LIVE 허가 링크에 정리돼 있다.
 - MAA overall 2025 점수 참조는 이미 79,524명/평균 11.74로 들어 있다. Scribd 재게시 요약의 79,511명은 불일치라 대체하지 않았다. 다음: 구 MAA score-report의 학교별/학년별 데이터가 공개 검색 가능한 경우에만 같은 코호트 경계를 유지해 누적하고, AMC10/12 원본의 연도·폼별 회차 카탈로그와 overall/grade/item coverage를 별도로 보강한다.
 
+### 2026-11-08 · 2026 AMC 10A·12A 화면 연결
+
+- 공개 웹 자료를 연도별 시험 선택기와 인쇄/정답/풀이 액션에 연결했다. MAA 일정의 11월 5일 A형, 11월 13일 예정 B형을 반영해 2026은 현재 A만 노출한다. 10A·12A 자료 페이지, 문제 PDF, 키 이미지가 모두 HTTP 200이다.
+- 공개 키 이미지를 Apple Vision OCR 후 시각 대조해 각각 25개 답안을 등록했다. JavaScriptCore 확인에서 시험 선택, 출처 표시, 자동 채점 키 길이, PDF·풀이 링크를 확인했다. Third-party 자료임을 분명히 적고 LIVE 공식 아카이브로 잘못 부르지 않는다. 2026 개별 문항 LIVE 경로는 없으므로 통합 풀이 자료를 연다.
+- 추가 확인 중 `archiveRoute`와 `problemRoute`의 2026 분기에서 `selectedYear`가 선언되지 않은 참조 오류를 발견해 수정했다. 웹 화면용 답안 안내도 출처가 바뀌어도 맞도록 “해당 회차 공개 답안 키”로 고쳤다. `git diff --check` 통과. 실제 브라우저·프린트 미리보기 검수는 미실행.
+- 변경 경로: `boarding-school-math/competition/amc-original-paper-library.js`, `amc-original-answer-key-reference.js`, `competition-paper-review.js/.html`, `docs/AMC_YEARLY_SOURCE_CATALOG.md`, `docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. 사용자 자료 `raw_youtube.txt`는 그대로 둔다. 다음: 2026B가 공개되면 등록 후 연결, 그리고 2026A 학년별/전국 진단 비교 자료가 공개되는지 연도별로 조사한다.
+
 
 ### 2026-11-08 · 웹 검색: 2026 AMC 10A·12A 원본 학습자료 링크 추가
 

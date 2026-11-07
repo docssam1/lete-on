@@ -8,8 +8,8 @@
   // Original contest content remains at its authorized host. GFIELD stores only routes and metadata.
   const archives = Object.freeze({
     amc8: Object.freeze({ title: "AMC 8", years: Object.freeze(Array.from({ length: 42 }, function (_, index) { return 2026 - index; }).filter(function (year) { return year !== 2021; })), forms: Object.freeze([""]), archiveUrl: "https://live.poshenloh.com/past-contests", path: "amc8" }),
-    amc10: Object.freeze({ title: "AMC 10", years: Object.freeze(Array.from({ length: 26 }, function (_, index) { return 2025 - index; })), forms: Object.freeze(["A", "B"]), archiveUrl: "https://live.poshenloh.com/past-contests", path: "amc10" }),
-    amc12: Object.freeze({ title: "AMC 12", years: Object.freeze(Array.from({ length: 76 }, function (_, index) { return 2025 - index; })), forms: Object.freeze(["A", "B"]), archiveUrl: "https://live.poshenloh.com/past-contests", path: "amc12" }),
+    amc10: Object.freeze({ title: "AMC 10", years: Object.freeze(Array.from({ length: 27 }, function (_, index) { return 2026 - index; })), forms: Object.freeze(["A", "B"]), archiveUrl: "https://live.poshenloh.com/past-contests", path: "amc10" }),
+    amc12: Object.freeze({ title: "AMC 12", years: Object.freeze(Array.from({ length: 77 }, function (_, index) { return 2026 - index; })), forms: Object.freeze(["A", "B"]), archiveUrl: "https://live.poshenloh.com/past-contests", path: "amc12" }),
     aime: Object.freeze({ title: "AIME", years: Object.freeze(Array.from({ length: 44 }, function (_, index) { return 2026 - index; })), forms: Object.freeze(["I", "II"]), archiveUrl: "https://live.poshenloh.com/past-contests", path: "aime" })
   });
   function archiveFor(programId) { return archives[programId] || null; }
@@ -20,6 +20,8 @@
     if (!archive || !archive.years.includes(selectedYear)) return Object.freeze([]);
     if (programId === "amc8" || programId === "aime" && selectedYear <= 1999 || (programId === "amc10" || programId === "amc12") && selectedYear <= 2001) return Object.freeze([""]);
     if ((programId === "amc10" || programId === "amc12") && selectedYear === 2021) return Object.freeze(["A", "B", "C", "D"]);
+    // Only the A forms have public post-exam materials as of 2026-11-08.
+    if ((programId === "amc10" || programId === "amc12") && selectedYear === 2026) return Object.freeze(["A"]);
     return programId === "aime" ? Object.freeze(["I", "II"]) : Object.freeze(["A", "B"]);
   }
 
@@ -52,7 +54,7 @@
       const scoreAdjustment = programId === "amc12" && selectedYear === 2025 && selectedForm === "A"
         ? Object.freeze({ pointsByQuestion: Object.freeze({ 25: 6 }), note: "2025 AMC 12A 25번은 무효 문항입니다. 공식 점수에는 답과 관계없이 6점을 반영합니다. 풀이 기록은 학습용으로 따로 확인하세요.", sourceUrl: "https://live.poshenloh.com/past-contests/amc12/2025A/problem/25" })
         : null;
-      return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 75, scoring: scoring, scoreAdjustment: scoreAdjustment, rawOnly: false, formatNote: scoreAdjustment ? scoreAdjustment.note : "해당 연도 공식 배점으로 계산합니다." });
+      return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 75, scoring: scoring, scoreAdjustment: scoreAdjustment, rawOnly: false, sourceStatus: selectedYear === 2026 ? "third-party-reproduction" : "maa-authorized-live-archive", formatNote: scoreAdjustment ? scoreAdjustment.note : "해당 연도 공식 배점으로 계산합니다." });
     }
     if (programId === "amc8") {
       const title = selectedYear < 1999 ? "AJHSME" : archive.title;
@@ -64,9 +66,15 @@
 
   function archiveRoute(programId, year, form) {
     const archive = archiveFor(programId);
-    if (!archive || !archive.years.includes(Number(year))) return archive ? archive.archiveUrl : "";
+    const selectedYear = Number(year);
+    if (!archive || !archive.years.includes(selectedYear)) return archive ? archive.archiveUrl : "";
     const formId = String(form || "").toUpperCase();
     if (!formsFor(programId, year).includes(formId)) return "";
+    if (selectedYear === 2026 && (programId === "amc10" || programId === "amc12")) {
+      return programId === "amc10"
+        ? "https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/"
+        : "https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/";
+    }
     const suffix = formId;
     return `https://live.poshenloh.com/past-contests/${archive.path}/${Number(year)}${suffix}`;
   }
@@ -84,6 +92,10 @@
   }
 
   function printRoute(programId, year, form) {
+    if (Number(year) === 2026 && String(form || "").toUpperCase() === "A") {
+      if (programId === "amc10") return "https://www.thethinkacademy.com/blog/wp-content/uploads/2026/11/2026-AMC-10A-Paper.pdf";
+      if (programId === "amc12") return "https://www.thethinkacademy.com/blog/wp-content/uploads/2026/11/2026-AMC-12A-Paper.pdf";
+    }
     const route = archiveRoute(programId, year, form);
     if (!route || route === "https://live.poshenloh.com/past-contests") return "";
     const archive = archiveFor(programId);
@@ -92,21 +104,31 @@
   }
 
   function answerRoute(programId, year, form) {
+    if (Number(year) === 2026 && String(form || "").toUpperCase() === "A") {
+      if (programId === "amc10") return "https://i0.wp.com/www.thethinkacademy.com/blog/wp-content/uploads/2026/11/2026-AMC-10A-Answer-Key-1024x316.webp";
+      if (programId === "amc12") return "https://i0.wp.com/www.thethinkacademy.com/blog/wp-content/uploads/2026/11/2026-AMC-12A-Answer-Key-1024x359.webp";
+    }
     const route = archiveRoute(programId, year, form);
     return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/answers` : "";
   }
 
   function solutionsRoute(programId, year, form) {
+    if (Number(year) === 2026 && String(form || "").toUpperCase() === "A") {
+      if (programId === "amc10") return "https://www.thethinkacademy.com/blog/wp-content/uploads/2026/11/2026-AMC10A-Solutions.pdf";
+      if (programId === "amc12") return "https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/";
+    }
     const route = archiveRoute(programId, year, form);
     return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/solutions` : "";
   }
 
   function problemRoute(programId, year, form, questionNumber) {
+    const selectedYear = Number(year);
     const format = formatFor(programId, year);
     const number = Number(questionNumber);
     if (!format || !Number.isInteger(number) || number < 1 || number > format.itemCount) return "";
     const selectedForm = String(form || "").toUpperCase();
     if (!formsFor(programId, year).includes(selectedForm)) return "";
+    if (selectedYear === 2026 && (programId === "amc10" || programId === "amc12")) return "";
     const route = archiveRoute(programId, year, form);
     return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/problem/${number}` : "";
   }

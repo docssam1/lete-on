@@ -92,7 +92,7 @@
         const meta = paperLibrary.formatFor(format.id, year, form);
         const label = `${year} ${meta ? meta.title : format.title}${form ? ` ${paperLibrary.formLabel(format.id, year, form)}` : ""}`;
         $("archive-open-link").href = paperLibrary.archiveRoute(format.id, year, form);
-        $("archive-open-link").textContent = `${label} · 온라인 회차 ↗`;
+        $("archive-open-link").textContent = `${label} · ${meta && meta.sourceStatus === "third-party-reproduction" ? "자료 출처" : "온라인 회차"} ↗`;
         $("archive-print-link").href = paperLibrary.printRoute(format.id, year, form);
         $("archive-print-link").textContent = `${label} · 시험지 PDF 인쇄 ↗`;
         $("archive-answer-link").href = paperLibrary.answerRoute(format.id, year, form);
@@ -132,11 +132,14 @@
       };
       const syncArchiveRouteNote = function () {
         const year = Number(yearSelect.value);
+        const meta = paperLibrary.formatFor(format.id, year, formSelect.value);
         const archiveNote = $("archive-route-note");
         if (format.id === "amc10" && year === 2016 && formSelect.value === "B") {
           archiveNote.textContent = "정답표 확인: LIVE 인쇄용 답안 PDF의 18번은 B로 잘못 표기되어 있어요. LIVE 공개 정답표와 전문 풀이, MAA 해설 자료는 E가 정답임을 확인합니다. 아래 자동 채점도 E를 기준으로 합니다.";
+        } else if (meta && meta.sourceStatus === "third-party-reproduction") {
+          archiveNote.textContent = "2026 A형의 공개 시험지·답안·풀이는 Think Academy 자료입니다. MAA/LIVE 공식 색인에 실린 회차가 아니며, GFIELD는 시험 내용을 복사하지 않고 원문 링크와 답안 키만 연결합니다.";
         } else {
-          archiveNote.textContent = `LIVE 연도별 색인 ${paperLibrary.contestCount(format.id)}회 중 선택한 원본이에요. 시험지 PDF·정답표·전문 풀이를 열고, 아래 문항별 링크에서 개념과 해설을 확인하세요.`;
+          archiveNote.textContent = "연도별 자료에서 선택한 원본 시험지예요. 시험지 PDF·정답표·전문 풀이를 열고, 아래 문항별 링크에서 개념과 해설을 확인하세요.";
         }
       };
       const renderArchiveRoute = function () {
@@ -274,8 +277,8 @@
     $("answer-entry-guide").hidden = !format || !["amc8", "amc10", "amc12", "aime"].includes(format.id);
     $("answer-entry-guide").querySelector("strong").textContent = "답을 입력하고 공개 정답표와 대조해요";
     $("answer-entry-guide").querySelector("p").textContent = programId === "aime"
-      ? "각 문항에 내가 쓴 정수 답(0–999)을 입력하고 ‘정답표 대조’를 누르면 LIVE 공개 답안과 자동 채점합니다. 빈칸은 미응답으로 처리하며, 답과 진단은 이 화면에서만 사용합니다."
-      : "A–E에서 고른 답을 입력하고 ‘정답표 대조’를 누르면 LIVE 공개 답안과 자동 채점합니다. 빈칸은 미응답으로 처리하며, 풀이 영역과 오답 이유는 결과 화면에서 직접 조정할 수 있어요.";
+      ? "각 문항에 내가 쓴 정수 답(0–999)을 입력하고 ‘정답표 대조’를 누르면 해당 회차의 공개 답안 키로 자동 채점합니다. 빈칸은 미응답으로 처리하며, 답과 진단은 이 화면에서만 사용합니다."
+      : "A–E에서 고른 답을 입력하고 ‘정답표 대조’를 누르면 해당 회차의 공개 답안 키로 자동 채점합니다. 빈칸은 미응답으로 처리하며, 풀이 영역과 오답 이유는 결과 화면에서 직접 조정할 수 있어요.";
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
     $("review-sasmo-source").hidden = programId !== "sasmo";
@@ -471,7 +474,7 @@
       }
     }
     updateProgress();
-    return { enteredCount: enteredCount, correctCount: correctCount, wrongCount: wrongCount, blankCount: blankCount, itemCount: rows.length, sourceUrl: formReference.sourceUrl };
+    return { enteredCount: enteredCount, correctCount: correctCount, wrongCount: wrongCount, blankCount: blankCount, itemCount: rows.length, sourceUrl: formReference.sourceUrl, sourceLabel: formReference.sourceLabel };
   }
 
   function conceptLabelFor(li) {
@@ -713,7 +716,7 @@
     answerKeyNote.hidden = !autoGradeSummary;
     answerKeyNote.replaceChildren();
     if (autoGradeSummary) {
-      answerKeyNote.append(document.createTextNode(`LIVE 공개 정답표로 ${autoGradeSummary.itemCount}문항을 대조했어요. 정답 ${autoGradeSummary.correctCount} · 오답 ${autoGradeSummary.wrongCount} · 미응답 ${autoGradeSummary.blankCount}${autoGradeSummary.adjusted ? " · 이후 답안 상태를 직접 수정" : ""} · `));
+      answerKeyNote.append(document.createTextNode(`${autoGradeSummary.sourceLabel || "LIVE 공개 정답표"}로 ${autoGradeSummary.itemCount}문항을 대조했어요. 정답 ${autoGradeSummary.correctCount} · 오답 ${autoGradeSummary.wrongCount} · 미응답 ${autoGradeSummary.blankCount}${autoGradeSummary.adjusted ? " · 이후 답안 상태를 직접 수정" : ""} · `));
       const answerKeyLink = document.createElement("a");
       answerKeyLink.href = autoGradeSummary.sourceUrl;
       answerKeyLink.target = "_blank";
