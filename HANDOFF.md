@@ -2348,3 +2348,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 - 브라우저 검수에서 점수 카드 평균 73.39와 99CEF 2015 연례보고서 p.6 Global 평균 73.59가 다름을 확인했다. 73.39는 2차 역사표 값이며 MAA 원통계와 해당 모집단 범위는 확보되지 않았다.
 - 점수 카드 설명을 수정해 출처별 참고값으로 분리하고, 두 평균을 같은 집단 값으로 합치거나 Grade 7 규준으로 보지 않도록 안내했다. 99CEF 표와 2차 연도별 표를 각각 연구노트에 기록했다. `git diff --check` 후 커밋한다. `raw_youtube.txt`는 제외.
+
+### 2026-11-08 · 2018 AMC 10B/12B 평균 출처 불일치 처리
+
+- 웹에서 확인한 2018 AMC 10B 재인용 평균은 57.81(Think Matrix/Ivy Track) 또는 57.82(Hanlin/MT100)다. AMC 12B는 57.81(Think Matrix), 57.85(Ivy Track/Math Gold Medalist), 57.86(Hanlin/MT100)으로 갈린다. MAA 원 점수보고서는 회수하지 못했다.
+- 두 B형의 active score reference에서 disputed average를 제거하고, 확인 가능한 컷·상위 경계는 유지했다. 각 설명에 평균 보류 및 출처 한계를 표시했다. 출처 비교와 후속 검색 기록은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 남겼다.
+- 검수: `git diff --check` 통과. Node.js가 없어 브라우저 테스트는 실행하지 않았다. `raw_youtube.txt`는 보존하고 커밋에서 제외한다.
