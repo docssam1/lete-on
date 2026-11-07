@@ -923,6 +923,35 @@
           ? "GEMT 보고서에 직접 실린 대만 지역 참가자 통계입니다. Grade 7 표본은 19명으로 작습니다. 세계 또는 미국 학년 기준과 섞지 않으며, 백분위·현재 규준·능력 등급이 아닙니다. "
           : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
     }
+    const gradePercentileReference = window.GFIELDAMCFallGradePercentileReference;
+    const gradePercentile = gradePercentileReference && ["amc10", "amc12"].includes(selectedFormat().id) && selectedYear === 2021 && grade === 7 && result.complete && result.scoreEstimate
+      ? gradePercentileReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade)
+      : null;
+    const gradePercentileSection = $("amc-grade-percentile-reference");
+    gradePercentileSection.hidden = !gradePercentile;
+    const gradePercentileRows = $("amc-grade-percentile-rows");
+    gradePercentileRows.replaceChildren();
+    if (gradePercentile) {
+      const learnerScore = result.scoreEstimate.points;
+      const scoreDisplay = Number.isInteger(learnerScore) ? String(learnerScore) : learnerScore.toFixed(1);
+      const paperForm = gradePercentile.form;
+      setText("amc-grade-percentile-summary", `Grade 7 · 2021 가을 ${selectedFormat().title} ${paperForm} · 입력 점수 ${scoreDisplay}/150점`);
+      gradePercentile.rows.forEach(function (benchmark) {
+        const row = document.createElement("tr");
+        const band = document.createElement("th"); band.scope = "row"; band.textContent = `${benchmark.percentile}백분위 경계`;
+        const score = document.createElement("td"); score.textContent = `${Number.isInteger(benchmark.scoreThreshold) ? benchmark.scoreThreshold : benchmark.scoreThreshold.toFixed(1)}점`;
+        const percentile = document.createElement("td"); percentile.textContent = `${benchmark.reportedCumulativePercent.toFixed(2)}%`;
+        row.append(band, score, percentile); gradePercentileRows.append(row);
+      });
+      const crossed = gradePercentile.rows.filter(function (benchmark) { return learnerScore >= benchmark.scoreThreshold; });
+      const highest = crossed[crossed.length - 1];
+      const next = gradePercentile.rows.find(function (benchmark) { return learnerScore < benchmark.scoreThreshold; });
+      let position = highest ? `입력 점수는 ${highest.percentile}백분위 경계(${highest.scoreThreshold}점)를 넘었어요.` : "입력 점수는 표의 50백분위 경계 아래에 있어요.";
+      if (highest && next) position += ` 다음 경계는 ${next.percentile}백분위 · ${next.scoreThreshold}점입니다.`;
+      else if (highest && !next) position += " 표에 표시된 가장 높은 구간까지 도달했어요.";
+      setText("amc-grade-percentile-position", position);
+      $("amc-grade-percentile-source").href = gradePercentile.sourceUrl;
+    }
     const overallCohortReference = window.GFIELDAMC8OverallCohortReference;
     const overallCohortSection = $("amc8-overall-cohort-reference");
     const overallCohort = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && overallCohortReference
