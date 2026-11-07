@@ -8,6 +8,10 @@
 
 연결 확인: 두 시험 페이지와 PDF·키 이미지 URL은 HTTP 200을 반환했다. JavaScriptCore에서 두 A형만 선택되는지, 25문항 키가 연결되는지, 인쇄·풀이 URL이 맞는지, 문항별 LIVE 링크가 없는지 확인했다. 실제 인쇄물의 페이지별 레이아웃 검수와 브라우저 화면 검수는 아직 하지 않았다. 다음에는 11월 13일 이후 AMC 10B/12B 원자료를 찾아 같은 방식으로 출처 확인 후 연결한다. [AMC 10A](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/), [AMC 12A](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/).
 
+### 2026 A형 성적 비교 자료 상태
+
+2026-11-08 검색에서 [MAA 공개 점수분포 페이지](https://maa.edvistas.com/eduview/report.aspx?mode=6&r433=&view=1561)는 여전히 School Year 2025/2026의 Fall 2025 AMC 10A를 가리켰고, 2026-11-05 시행 A형의 결과 분포는 확인되지 않았다. 따라서 2026 AMC 10A/12A에는 점수·상위 비율·학년 비교 등급을 임의로 붙이지 않는다. 2026–27의 고정 AIME 점수 기준은 자격 규칙일 뿐 시험 결과 분포나 학년별 등급이 아니다. MAA가 공식 결과표를 게시하면 출처·모집단·학년 구분이 확인되는 항목만 별도 연결한다.
+
 ## 2026-11-05 웹 검색: 연도별 원본·답·풀이 링크 재확인
 
 [LIVE의 AMC 과거 시험 아카이브](https://live.poshenloh.com/past-contests)는 실제 AMC 자료를 MAA의 공식 허가를 받아 호스팅한다고 밝히며, 각 시험의 인쇄용 PDF와 온라인 문항·정답·풀이를 제공한다. 웹 인덱스의 AMC 10 52회(2000–2025, 2021 C/D 포함), AMC 12 102회(1950–2025, 2021 C/D 포함)를 우리 [`amc-original-source-catalog.csv`](../competition/amc-original-source-catalog.csv)와 대조했다. 카탈로그의 AMC 10 52행과 AMC 12 102행 모두 온라인 시험, 인쇄용 PDF, 정답, 풀이 링크가 채워져 있다. 저작권이 있는 시험 문항 원문을 복사해 저장하지 않고 허가된 출처로 연결한다.
