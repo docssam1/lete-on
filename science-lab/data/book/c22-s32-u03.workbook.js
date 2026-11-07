@@ -1,3 +1,4 @@
+import{withGrade3PracticeWorkbook}from'./c22-s32-practice-language.js?v=20261108-grade3-practice-language';
 import{withSoundLearnerReasoning}from'./c22-s32-u03.rail-notes.js?v=20261105-sound-learner-reasoning';
 import{withSoundPhotoLanguage}from'./c22-s32-u03.rail-notes.js?v=20261105-sound-motion-photo-language';
 import{withSoundUpperScience}from'./c22-s32-u03.rail-notes.js?v=20261105-sound-upper-science';
@@ -7753,4 +7754,5 @@ export const learnerPriorWorkbook=withStudentOpeningLanguage(withSoundRails(base
 export const soundUpperPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const soundPhotoPriorWorkbook=withSoundUpperScience(soundUpperPriorWorkbook);
 export const soundReasoningPriorWorkbook=withSoundPhotoLanguage(soundPhotoPriorWorkbook);
-export const workbook=withSoundLearnerReasoning(soundReasoningPriorWorkbook);
+export const soundElementaryPriorWorkbook=withSoundLearnerReasoning(soundReasoningPriorWorkbook);
+export const workbook=withGrade3PracticeWorkbook(soundElementaryPriorWorkbook);

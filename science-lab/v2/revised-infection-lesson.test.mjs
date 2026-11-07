@@ -1,3 +1,5 @@
+import{grade3PracticeCurrentItems}from'../data/book/c22-s32-practice-language.js';
+import{questionAtVersion}from'./question-revision.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import{fileURLToPath}from'node:url';import{execFileSync}from'node:child_process';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js';import*as original from'../data/book/c22-s32-u04.book.js';import*as records from'../data/book/c22-s32-u04.records-book.js';import{items}from'../data/units/c22-s32-u04.js';import{similar}from'../data/units/c22-s32-u04.similar.js';import{lesson}from'../data/units/c22-s32-u04.lesson.js';import{interact}from'../data/book/c22-s32-u04.interact.js';import{withThink}from'./think-merge.js';import{buildSlides,deckSlideIndex}from'./deck.js';import{deckPredictionKey}from'./deck-answer-state.js';import{glitterModel}from'../scenes/glitter-model.js';
 import{INFECTION_ROUNDS,infectionComparison,infectionCompareRecord,validInfectionCompareRow,infectionComparisonProgress,infectionCompareValues}from'./infection-compare-model.js';
@@ -14,7 +16,7 @@ test('감염병은 사례 토의·여러 감염 과정·공유와 실천을 세 
 test('12개 확인문항의 원래 원고·계약·출처와 실제 glitterRows·선택 기록을 보존한다',()=>{
  assert.equal(items.length,80);assert(records.chapter.pages.length>0);assert.equal(lesson.explore.lab.rowsKey,'glitterRows');assert.equal(mod.classroomLab.rowsKey,'infectionCompareRows');assert.equal(original.chapter.infectionThinking,undefined);assert.equal(mod.classroomItems.length,12);
  assert.deepEqual(mod.classroomItems.map(q=>q.taxonomy.standard).reduce((a,s)=>(a[s]=(a[s]||0)+1,a),{}),{'4과08-01':4,'4과08-02':4,'4과08-03':4});
- for(const q of mod.classroomItems)assert.deepEqual(q,items.find(x=>x.id===q.id));
+ for(const q of mod.classroomItems){const old=items.find(x=>x.id===q.id);assert.deepEqual(q,grade3PracticeCurrentItems([old],'c22-s32-u04')[0]);const restored=questionAtVersion(q,old.contentVersion||1);for(const [key,value]of Object.entries(old))assert.deepEqual(restored[key],value);}
  for(const q of pool){const old=oldPool.find(x=>x.id===q.id);for(const key of['answerContract','sourceRef','taxonomy'])assert.deepEqual(q[key],old[key]);}
  const daily=[...classroomQuestions(mod,data.similar),...classroomQuestions(mod,data.items)];for(const q of mod.classroomItems)assert.equal(daily.find(x=>x.id===q.id),q);assert.notEqual(deckPredictionKey('c22-s32-u04',mod.chapter),deckPredictionKey('c22-s32-u04',original.chapter));
 });

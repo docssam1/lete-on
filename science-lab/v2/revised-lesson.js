@@ -1,3 +1,4 @@
+import{withGrade3PracticeClassroom}from'../data/book/c22-s32-practice-language.js?v=20261108-grade3-practice-language';
 import{earthMotionPairCurrentItems}from'./earth-motion-pair-language.js?v=20261108-earth-motion-pair-language';
 import{seasonPairCurrentItems}from'./season-pair-language.js?v=20261108-season-pair-language';
 import{combustionPairCurrentItems}from'./combustion-pair-language.js?v=20261108-combustion-pair-language';
@@ -33,7 +34,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261108-earth-sea-elementary';
+import {revisedTextbook} from './revised-textbook.js?v=20261108-grade3-practice-language';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';
@@ -128,7 +129,7 @@ export async function revisedClassroom(unit, mod) {
  ]);
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
  const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
- return withEarthSeaElementaryClassroom(unit,withLearnerClassGuidance(withSolutionLearnerCues(withComparisonLearnerCues({...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:earthMotionPairCurrentItems(seasonPairCurrentItems(combustionPairCurrentItems(electricityPairCurrentItems(careerReadableCurrentItems(electricityReadableCurrentItems(combustionReadableCurrentItems(seasonReadableCurrentItems(earthMotionReadableCurrentItems(plantStructureReadableCurrentItems(motionReadableCurrentItems(acidReadableCurrentItems(energyReadableCurrentItems(weatherReadableCurrentItems(heatReadableCurrentItems(mixtureReadableCurrentItems(bodyReadableCurrentItems(solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab}))));
+ return withGrade3PracticeClassroom(unit,withEarthSeaElementaryClassroom(unit,withLearnerClassGuidance(withSolutionLearnerCues(withComparisonLearnerCues({...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:earthMotionPairCurrentItems(seasonPairCurrentItems(combustionPairCurrentItems(electricityPairCurrentItems(careerReadableCurrentItems(electricityReadableCurrentItems(combustionReadableCurrentItems(seasonReadableCurrentItems(earthMotionReadableCurrentItems(plantStructureReadableCurrentItems(motionReadableCurrentItems(acidReadableCurrentItems(energyReadableCurrentItems(weatherReadableCurrentItems(heatReadableCurrentItems(mixtureReadableCurrentItems(bodyReadableCurrentItems(solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab})))));
 }
 
 export function classroomQuestions(mod, pool) {
