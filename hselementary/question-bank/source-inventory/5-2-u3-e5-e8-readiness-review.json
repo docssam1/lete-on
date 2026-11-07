@@ -471,9 +471,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안 미대조로 원문 잠금을 유지하며 별도 창작 연습만 연결합니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u3-e6-example-3-original",
+      "publisherKeyVerified": false,
+      "lockReason": "",
+      "releaseEvidence": "인쇄 34쪽 원문과 10부터 1000까지의 대칭수를 독립 대조했습니다. 실제 생성기 연결, PC·모바일 및 한 페이지 네 문항 A4 출력을 확인했습니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u3-e6-example-6-4",
@@ -1331,8 +1334,8 @@
     "sourceItemCount": 44,
     "directlyReviewedCount": 44,
     "publicCandidateCount": 0,
-    "lockedCount": 37,
-    "publicCount": 7,
+    "lockedCount": 36,
+    "publicCount": 8,
     "calculationCheckedCount": 44,
     "nonUniqueCount": 0,
     "constructionOrEnumerationLockedCount": 37,

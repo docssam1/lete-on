@@ -8,5 +8,12 @@ const count=n=>polygons.filter(p=>p.length===n).length;assert.deepEqual([count(3
 const palindromes=Array.from({length:991},(_,i)=>i+10).filter(n=>String(n)===String(n).split('').reverse().join(''));assert.equal(palindromes.length,99);
 let x=0,y=20,dx=1,dy=1,hits=0;do{const t=Math.min(dx>0?120-x:x,dy>0?40-y:y);assert.ok(t>0);x+=dx*t;y+=dy*t;if(x===0||x===120)dx=-dx;if(y===0||y===40)dy=-dy;hits++;assert.ok(hits<20)}while(x!==0||y!==20);assert.equal(hits,8);const diamondArea=area([[0,20],[20,0],[40,20],[20,40]]);assert.equal(diamondArea*3,2400);
 for(const id of ['5-2-u3-e6-exploration','5-2-u3-e6-example-1','5-2-u3-e6-example-3']){const item=common.sourceItems.find(x=>x.sourceItemId===id);assert.equal(item.implementationStatus,'review-locked');assert.equal(item.publisherKeyVerified,false);assert.equal(item.publicDecision,'locked')}
+const palindrome=common.sourceItems.find(x=>x.sourceItemId==='5-2-u3-e6-example-3');
+const palindromeDetail=review.items.find(x=>x.commonSourceItemId===palindrome.sourceItemId);
+assert.equal(palindrome.runtimeTypeId,'5-2-u3-e6-example-3-original');
+assert.equal(palindrome.runtimeReleaseStatus,'public-source-reconstruction');
+assert.equal(palindromeDetail.runtimeTypeId,palindrome.runtimeTypeId);
+assert.equal(palindromeDetail.publicDecision,'public');
+assert.equal(palindromeDetail.publisherKeyVerified,false);
 assert.equal(review.items.filter(x=>x.publicDecision==='locked').length,review.summary.lockedCount);assert.equal(review.items.filter(x=>x.publicDecision==='public').length,review.summary.publicCount);assert.equal(review.items.filter(x=>x.publicDecision==='public-candidate').length,review.summary.publicCandidateCount);assert.equal(review.summary.lockedCount+review.summary.publicCount+review.summary.publicCandidateCount,review.items.length);
 console.log('34쪽 원문 감사 통과: 거울 경로·면적, 접기 조각 독립 분할·넓이 보존, 대칭수 전수검사, 원문 잠금·장부 합계');
