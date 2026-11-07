@@ -1,9 +1,10 @@
+import{earthMotionPairPrintQuestion}from'./earth-motion-pair-language.js?v=20261108-earth-motion-pair-language';
 import{seasonPairPrintQuestion}from'./season-pair-language.js?v=20261108-season-pair-language';
 import{combustionPairPrintQuestion}from'./combustion-pair-language.js?v=20261108-combustion-pair-language';
 import{electricityPairPrintQuestion,electricityPairPrintFigures}from'./electricity-pair-language.js?v=20261108-electricity-pair-language';
 // 별도 문항집 인쇄에도 현재 교재와 연습의 원고를 쓴다.
 // 원문·독립 짝은 실제 문항 ID로 구별하며 과거 문항/저장 답안은 고치지 않는다.
-export const CURRENT_BANK_WORKBOOK_VERSION='20261108-current-bank-workbook-season-pairs';
+export const CURRENT_BANK_WORKBOOK_VERSION='20261108-current-bank-workbook-earth-motion-pairs';
 const clone=value=>structuredClone(value);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -16,7 +17,7 @@ export function currentBankWorkbook(priorBook,workbook,items){
  const seen=new Set();
  const questions=priorBook.questions.map(old=>{
   const current=byItem.get(old.sourceItemId);
-  if(current?.sourceRef?.type==='authored-pair')return seasonPairPrintQuestion(combustionPairPrintQuestion(electricityPairPrintQuestion(old,current),current),current);
+  if(current?.sourceRef?.type==='authored-pair')return earthMotionPairPrintQuestion(seasonPairPrintQuestion(combustionPairPrintQuestion(electricityPairPrintQuestion(old,current),current),current),current);
   if(current?.status!=='authored'||current.sourceRef?.type!=='authored-supplement')return old;
   const q=byQuestion.get(current.bookQuestionId);
   if(!q||q.id!==old.sourceBookQuestionId)return old;

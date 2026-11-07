@@ -1,4 +1,4 @@
-import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-season-pair-language';
+import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-earth-motion-pair-language';
 import{workbook as currentWorkbook}from'../data/book/c22-s62-u04.workbook.js?v=20261107-career-readable-workbook';
 import{careerReadableCurrentItems}from'../data/book/c22-s62-u04.editorial.js?v=20261107-career-readable-workbook';
 import{guidanceParticleCurrentItems}from'../data/book/term-particle-language.js?v=20261105-guidance-particles';
