@@ -1045,3 +1045,7 @@ The AMC10A discrepancy is present in the report itself: Global n=66,591 and repo
 ### 2026-11-07 · 2018 AMC B source check
 
 2018 A/B cutoff CSV의 네 행은 2018-03-02 결과 페이지로 연결했다. 페이지 본문의 B cutoff bullet은 형식을 A로 잘못 적지만, 바로 아래 최종 결과표가 10A 111, 10B 108, 12A 93, 12B 99로 명시한다. 두 값은 그 표를 기준으로 유지하고 CSV 메모에 오류 위치를 알렸다. 전체 평균은 제3자 표에서 0.01점 차이(10B 57.81/57.82, 12B 57.85/57.86)이며 현재 값 유지, 원 MAA 점수보고서 미회수. Bard 지역 기록 n=17 (10B; 7학년은 없음), n=1 (12B, 11학년)뿐이라 국가 학년 기준으로 쓰지 않는다. 2018 B 전체 문항 선택률은 여전히 미발견. 변경 미커밋; 다음 2019년으로 넘어가기 전에 정확한 출처 차이를 보존. `raw_youtube.txt` 보존.
+
+### 2026-11-07 · 2019 B-score-report scope
+
+2019 AMC10B/12B score-report copies are already recorded with counts and whole-cohort statistics (n=23,832/19,116). Web confirmation found these reports do not provide exact-grade means or item-by-item response choices; both coverage limits remain. The cutoff CSV now points all 2019 forms to the 2019 contemporaneous AIME cutoff notice. Bard 2019B grade observations are local only (10B G7 n=2, G8 n=1; 12B G11 n=7), kept separate. `git diff --check` and source alignment pending immediately before commit. Next: continue forward to 2020, checking unique administration timing/population and avoid conflating national score reports with item response or Bard cohorts.

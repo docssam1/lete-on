@@ -755,3 +755,9 @@ AMC 10A 평균 59.33, AMC 10B 평균 66.56, AMC 12B 평균 58.35는 두 공개 �
 2018 평균은 재게시 연도표 간 반올림 차가 있다: Hanlin은 10B 57.82, 12B 57.86; Math Gold Medalist는 10B 57.81, 12B 57.85; 과거 집계 PDF는 각각 57.81/57.85다. 값 차이는 0.01점이므로 현재 비교에 저장된 평균 57.81/57.85를 유지했으나 원 MAA 점수보고서는 아직 회수되지 않았다. top-1% 경계도 재게시표가 일치하는 10B 123, 12B 126이다.
 
 [2018 Bard Math Circle 결과](https://www.bardmathcircle.org/p/2018-amc-10-12b)는 AMC10B n=17 중 7학년 표본은 없고, AMC12B는 11학년 1명(n=1)뿐이다. 이는 지역 점수 기록이지 국가 학년 기준선이 아니다. 이 연도에 대해 이번 검색에서도 전국 문항별 A–E 응답표·완전한 국가 학년표는 찾지 못했다. 기존 coverage의 2018 B Bard 링크와 표본 제한을 유지한다. cutoff CSV의 네 개 2018 행 출처만 2018 최종 결과표로 교체했다.
+
+### 2026-11-07 · 2019 AMC B score reports vs item/grade coverage
+
+2019 AMC 10B and AMC 12B MAA-format [score reports](https://www.mathcontest.org/sites/default/files/AMC10B-2019-Score-Distribution.pdf) and [12B report](https://mathcontest.org/sites/default/files/AMC12B-2019-Score-Distribution.pdf) give whole-cohort counts and score summaries, already retained in `amc10-12-score-distribution-2019b-maa-report-copy.csv`: n=23,832/19,116, means 58.42/56.73, plus percentile cut lines and standard deviations. These reports do not contain grade breakdowns or per-item option-response tables. The search found no public 2019B national item-difficulty table; do not derive question response rates from total scores or cutoff summaries.
+
+2019 B cutoff references (10A 103.5, 10B 108, 12A 84, 12B 94.5) are now linked to the contemporaneous [2019 AIME qualification notice](https://ivyleaguecenter.org/2019/03/06/2019-aime-qualification-scores/), which explicitly names all four forms and US score-distribution basis. [Bard's 2019 B results](https://www.bardmathcircle.org/p/2019-amc-10-12b-results) are one local venue: AMC10B includes grade 7 n=2 and grade 8 n=1; AMC12B is grade 11 n=7. Keep these local records distinct from the separate 2019 national score-report cohort and do not use them as national grade norms.
