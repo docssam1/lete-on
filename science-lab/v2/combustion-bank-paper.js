@@ -6,7 +6,7 @@ import{items}from'../data/units/c22-s62-u02.js';
 import{combustionReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u02.workbook.js?v=20261106-combustion-readable-workbook';
 import{combustionCurrentItems,COMBUSTION_CHANGED_NUMBERS}from'./combustion-question-language.js?v=20261106-combustion-readable-workbook';
 import{combustionLanguage}from'../data/book/c22-s62-u02.editorial.js?v=20261104-combustion-book';
-import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261104-earth-motion-book';
+import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261108-learning-note-roles';
 const clone=x=>JSON.parse(JSON.stringify(x)),current=new Map(combustionCurrentItems(items).map(q=>[q.id,q])),byId=new Map(workbook.questions.map(q=>[q.id,q]));
 const questions=bankBook.questions.map(q=>{const it=current.get(q.sourceItemId||q.id);if(!it?.contentVersion)return q;if(!COMBUSTION_CHANGED_NUMBERS.includes(q.sourceBookNo))return{...combustionLanguage(q),choices:it.choices?clone(it.choices):null,responseContract:clone(it.responseContract),answerContract:clone(it.answerContract)};const w=byId.get(q.sourceBookQuestionId);return{...q,...clone(w),id:q.id,no:q.no,sourceItemId:q.sourceItemId,sourceBookQuestionId:q.sourceBookQuestionId,sourceBookNo:q.sourceBookNo,answerContract:clone(it.answerContract)};});
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

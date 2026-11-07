@@ -34,14 +34,14 @@ for(const unit of revisedTextbookUnits){
   }
   for(const mode of ['answers','quick']){
    const expected=(mode==='answers'?wb.teacherPages:wb.quickPages).flatMap(p=>p.rail.map(r=>escape(r.title)));
-   const actual=[...html[mode].matchAll(/<section class="ed-note"><h3>(.*?)<\/h3>/g)].map(m=>m[1]);
+   const actual=[...html[mode].matchAll(/<section class="ed-note"(?: data-note-role="(?:summary|extension|personal|teacher|other)")?><h3>(.*?)<\/h3>/g)].map(m=>m[1]);
    assert.deepEqual(actual,expected);
   }
   assert.equal(count(html.student,/<section class="bk-page /g),wb.pages.length);
   for(const q of wb.questions)assert(html.student.includes(`data-question="${q.id}"`));
   if(added.includes(unit)){
    assert.equal(wb.questions.length,['c22-s61-u01','c22-s61-u02','c22-s61-u03','c22-s61-u04'].includes(unit)?128:['c22-s52-u03','c22-s52-u04'].includes(unit)?112:unit==='c22-s52-u02'?104:['c22-s51-u04','c22-s52-u01'].includes(unit)?96:80);assert.equal(new Set(wb.questions.map(q=>unit==='c22-s61-u04'?q.bookResponseForm:q.form)).size,8);
-   assert.deepEqual([...html.student.matchAll(/<section class="ed-note"><h3>(.*?)<\/h3>/g)].map(m=>m[1]),wb.pages.flatMap(()=>['핵심 정리','더 알아보기','내가 정리할 것']));
+   assert.deepEqual([...html.student.matchAll(/<section class="ed-note"(?: data-note-role="(?:summary|extension|personal|teacher|other)")?><h3>(.*?)<\/h3>/g)].map(m=>m[1]),wb.pages.flatMap(()=>['핵심 정리','더 알아보기','내가 정리할 것']));
   }
  });
  test(`${unit}: 웹 교재와 A4는 같은 문항·본문을 사용하며 기존 수업 계획은 보존한다`,async()=>{

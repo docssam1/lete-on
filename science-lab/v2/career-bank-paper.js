@@ -5,7 +5,7 @@ import{guidanceParticleCurrentItems}from'../data/book/term-particle-language.js?
 import{careerReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261107-career-readable-workbook';
 import{items}from'../data/units/c22-s62-u04.js';
 import{careerCurrentItems}from'./career-question-language.js?v=20261107-career-readable-workbook';
-import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261104-earth-motion-book';
+import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261108-learning-note-roles';
 const current=new Map(guidanceParticleCurrentItems(careerCurrentItems(items),'c22-s62-u04').map(q=>[q.bookQuestionId,q]));
 export const careerBankBook={...workbook,title:'과학과 나의 진로',questions:workbook.questions.map(q=>({...q,sourceItemId:current.get(q.id).id,sourceBookQuestionId:q.id,sourceBookNo:q.no,answerContract:current.get(q.id).answerContract})),pages:workbook.pages.filter(p=>p.kind==='practice'),teacherStudentPages:workbook.teacherStudentPages.filter(p=>p.kind==='practice')};
 // 위 BankBook은 기존 원고 대조용으로 보존한다. 실제 인쇄는 현재 교재를 쓴다.

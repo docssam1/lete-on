@@ -6,7 +6,7 @@ import{bankBook}from'../data/book/c22-s61-u04.bank-book.js';
 import{items}from'../data/units/c22-s61-u04.js';
 import{observationPriorWorkbook as workbook}from'../data/book/c22-s61-u04.workbook.js?v=20261104-earth-motion-questions';
 import{earthMotionCurrentItems,EARTH_MOTION_CHANGED_NUMBERS}from'./earth-motion-question-language.js?v=20261104-earth-motion-questions';
-import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261104-earth-motion-book';
+import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261108-learning-note-roles';
 const clone=x=>JSON.parse(JSON.stringify(x));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const current=new Map(earthMotionCurrentItems(items).map(q=>[q.id,q]));
