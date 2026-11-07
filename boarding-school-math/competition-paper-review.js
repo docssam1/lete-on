@@ -381,13 +381,15 @@
             ? "교사 검토 분류"
             : concept.mappingStatus === "source-tag-crosswalk-suggestion"
               ? "원본 태그 기반 영역 제안"
+              : concept.mappingStatus === "editorial-source-solution-crosswalk"
+                ? "공개 풀이 기반 개념 제안 · 교사 검토 필요"
               : "자동 영역 제안 · 교사 검토 필요";
           suggestion.append(document.createTextNode(`개념 ${concept.topicLabel} · ${mappingCopy} · `));
           const sourceLink = document.createElement("a");
           sourceLink.href = concept.sourceUrl;
           sourceLink.target = "_blank";
           sourceLink.rel = "noopener noreferrer";
-          sourceLink.textContent = "LIVE 출처";
+          sourceLink.textContent = concept.sourceLabel && concept.sourceLabel.includes("LIVE") ? "LIVE 출처" : "분류 출처";
           sourceLink.setAttribute("aria-label", `${number}번 문항 개념 분류 출처 열기`);
           suggestion.append(sourceLink);
           suggestion.dataset.sourceConcepts = concept.sourceConcepts.join(";");

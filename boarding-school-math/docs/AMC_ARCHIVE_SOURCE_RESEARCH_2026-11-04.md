@@ -4,9 +4,9 @@
 
 [MAA 공식 일정](https://maa.org/student-programs/amc/)에서 A형 시행일 11월 5일과 B형 예정일 11월 13일을 확인했다. [Think Academy 10A 자료 페이지](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/)와 [12A 자료 페이지](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/)는 회차별 문제지 PDF, 답안 키 이미지, 풀이 자료를 제공한다. 10A는 풀이 PDF 하나, 12A는 게시물 안에 1–15번과 16–25번 PDF 두 개가 있다. MAA/LIVE 공개 과거시험 색인에는 2026 A형이 아직 없으므로, 앱에서 이 두 시험은 제3자 공개 재게시 자료로 따로 표시한다.
 
-문제 복습 화면에 2026 연도 선택, A형 자료 링크, 실제 PDF 인쇄, 정답 키 자동 채점을 연결했다. Apple Vision으로 키 이미지를 읽고 원본 이미지와 눈으로 대조해 저장한 키는 AMC 10A `BADACAACDCDDCBBDCDCCCADDB`, AMC 12A `ADACACACEBDECCACADDDDCDDB`이며 각각 25개다. 정답 대조 결과에는 Think Academy 키 출처를 표시한다. 전체 PDF나 문항 문장은 저장소에 저장하지 않는다. 이 제3자 페이지에는 LIVE 방식의 개별 문항 URL이 없어서 문항별 링크를 만들지 않고 전체 풀이 페이지/PDF를 연다.
+문제 복습 화면에 2026 연도 선택, A형 자료 링크, 실제 PDF 인쇄, 정답 키 자동 채점을 연결했다. Apple Vision으로 키 이미지를 읽고 원본 이미지와 눈으로 대조해 저장한 키는 AMC 10A `BADACAACDCDDCBBDCDCCCADDB`, AMC 12A `ADACACACEBDECCACADDDDCDDB`이며 각각 25개다. 정답 대조 결과에는 Think Academy 키 출처를 표시한다. 전체 PDF나 문항 문장은 저장소에 저장하지 않는다. Think Academy 자료에는 LIVE 방식의 개별 문항 URL이 없어서 인쇄/전문 풀이 액션은 해당 회차의 전체 페이지/PDF를 연다. 별도 [Random Math Wiki 10A](https://wiki.randommath.com/amc10/2026/part-a) 및 [12A](https://wiki.randommath.com/amc12/2026/part-a) 공개 문제·풀이 목록을 참고해 각 문항의 짧은 개념 태그 50개를 GFIELD가 편집자 분류로 작성했다. 이 crosswalk는 교사 검토 필요로 표시하며, 원문·풀이를 복사하지 않는다. 기존 AMC 10 창작 연습은행과 태그가 직접 맞는 문항은 10A 24/25, 12A 22/25이고, 나머지 네 문항은 선택된 수학 영역 연습으로 이어진다. 이는 편집상 관련 태그 일치율이지 진단 타당도나 개념 숙달 결과가 아니다.
 
-연결 확인: 두 시험 페이지와 PDF·키 이미지 URL은 HTTP 200을 반환했다. JavaScriptCore에서 두 A형만 선택되는지, 25문항 키가 연결되는지, 인쇄·풀이 URL이 맞는지, 문항별 LIVE 링크가 없는지 확인했다. 실제 인쇄물의 페이지별 레이아웃 검수와 브라우저 화면 검수는 아직 하지 않았다. 다음에는 11월 13일 이후 AMC 10B/12B 원자료를 찾아 같은 방식으로 출처 확인 후 연결한다. [AMC 10A](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/), [AMC 12A](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/).
+연결 확인: 두 시험 페이지와 PDF·키 이미지 URL은 HTTP 200을 반환했다. JavaScriptCore에서 두 A형만 선택되는지, 25문항 키 및 25문항 개념 참조가 연결되는지, 인쇄·풀이·개념 출처 URL이 맞는지, 문항별 LIVE 링크가 없는지 확인한다. 실제 인쇄물의 페이지별 레이아웃 검수와 브라우저 화면 검수는 아직 하지 않았다. 다음에는 11월 13일 이후 AMC 10B/12B 원자료를 찾아 같은 방식으로 출처 확인 후 연결한다. [AMC 10A](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/), [AMC 12A](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/).
 
 ### 2026 A형 성적 비교 자료 상태
 
