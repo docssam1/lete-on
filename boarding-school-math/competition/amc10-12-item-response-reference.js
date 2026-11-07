@@ -474,7 +474,7 @@
 22,A,7.20,11.27,12.70,7.42,4.71,56.67,0.03
 23,C,4.19,12.95,10.15,10.35,3.34,58.99,0.03
 24,B,3.56,6.68,7.49,7.12,3.15,71.96,0.02
-25,A,4.04,5.48,6.09,4.74,3.07,76.56,0.02`.trim(), respondentCount: 66591, population: "2015 AMC 10A global response cohort", sourceUrl: "https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf", sourceStatus: "99CEF 2015 analysis report; printed p.11 Global item-response table extracted from the preserved original PDF with macOS PDFKit; correct answers cross-checked with LIVE" }),
+25,A,4.04,5.48,6.09,4.74,3.07,76.56,0.02`.trim(), respondentCount: 66591, population: "2015 AMC 10A global response cohort", sourceUrl: "https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf", sourceStatus: "99CEF 2015 analysis report; printed p.11 Global item-response table recovered from the preserved original PDF and checked against the rendered page with Apple Vision OCR; all correct answers cross-checked with LIVE. Source reconciliation warning: the printed response rates imply 69.47/150, while the report summary gives 73.59/150 (4.12-point difference); use only as item-response context, not a score norm." }),
     "amc12-2015-A": Object.freeze({ raw: `
 1,C,2.20,1.52,90.80,3.79,0.90,0.78,0.01
 2,E,4.47,1.05,0.75,1.19,83.25,9.27,0.02
@@ -526,7 +526,7 @@
 22,D,6.62,6.09,7.33,5.15,3.41,71.40,0.00
 23,A,5.87,4.04,8.75,3.69,2.40,75.25,0.00
 24,D,4.26,5.13,5.76,4.52,2.82,77.51,0.00
-25,D,4.39,4.28,6.72,3.16,2.36,79.09,0.00`.trim(), respondentCount: 5419, population: "2015 AMC 12A Taiwan response cohort", sourceUrl: "https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf", sourceStatus: "99CEF 2015 report search-index transcription; printed p.25 Taiwan table; 25 keys checked against LIVE; current official URL redirects to 2016 and archived PDF unavailable in this run" }),
+25,D,4.39,4.28,6.72,3.16,2.36,79.09,0.00`.trim(), respondentCount: 5419, population: "2015 AMC 12A Taiwan response cohort", sourceUrl: "https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf", sourceStatus: "99CEF 2015 analysis report; printed p.25 Taiwan table recovered from the archived original PDF and checked against the rendered page with Apple Vision OCR; all 25 keys match LIVE; rounded response rates imply 83.16495/150 versus the printed 83.17 summary (rounding-consistent)." }),
     "amc10-2013-A": Object.freeze({ raw: `
 1,C,0.79,1.06,96.70,0.65,0.43,0.37,0.01
 2,B,0.73,98.21,0.35,0.15,0.24,0.31,0.00

@@ -1028,15 +1028,10 @@ MAA 56th Annual report의 [Doczz 검색 가능 보관본](https://doczz.net/doc/
 - 근거와 제한은 `docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`와 historical AMC README에 기록.
 
 
-### 2026-11-05 · 2015 AMC 12A Taiwan item-response cohort
+### 2026-11-05 · 2015 report PDF recovered; AMC10A discrepancy verified
 
-Added the separate 2015 AMC12A Taiwan table (n=5,419; report mean 83.17/150; printed p.25) to the annual source catalog and runtime selector. Values come from the 99CEF search-indexed report text because the current official report URL redirects to 2016 and the archived PDF was not retrievable; do not describe this transcription as Apple Vision OCR or visually verified. All 25 keys matched LIVE, each row’s printed percentages sum within 0.02 percentage points of 100%, and the score from rounded printed percentages is 83.16495/150 (83.16 to two decimals; report gives 83.17). Keep Taiwan separate from Global and grade-specific populations.
+Recovered the original [99CEF 2015 AMC10A/12A report](https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf), rendered printed pp.6, 11, 12, 25 and checked with Apple Vision OCR plus visual review. This supersedes earlier notes that the archived PDF was inaccessible or that the 2015 AMC12A Taiwan table had only indexed-text verification. The Taiwan 12A table (n=5,419; report mean 83.17/150) was checked on p.25; all 25 keys match LIVE, and its rounded response rates imply 83.16495/150.
 
-Next: search and capture the 2015 AMC10A Taiwan item-response table, then extend by year/form using distinct source populations. `raw_youtube.txt` stays untouched. No push, deployment, Drive synchronization, or Claude API call.
+The AMC10A discrepancy is present in the report itself: Global n=66,591 and report mean 73.59 versus 69.47235 implied by the printed item rates; Taiwan n=5,087 and report mean 84.52 versus 81.46035 implied by its printed item rates. All 25 keys match LIVE and item rows sum within rounding. The original tables remain unchanged. Do not add the Taiwan AMC10A population. The existing Global AMC10A table remains available as item-response context, with a visible warning that it is not a score norm. These results and UI notice are recorded in the research log, coverage CSV, and historical AMC README.
 
-
-### 2026-11-05 · 2015 AMC 10A Taiwan table discrepancy
-
-The 99CEF search-indexed report exposes the Taiwan 2015 AMC10A item table (printed p.12) and the summary cohort n=5,087, mean 84.52. All 25 starred keys match the LIVE answer key. However, scoring the table’s rounded correct-choice and omission shares yields 81.46035/150, a 3.06-point gap from the reported mean (unlike the analogous 2015 AMC12A table, which reconciles within rounding). The archived PDF remains inaccessible and the current official URL redirects to 2016, so this needs page-level verification before it can be used for diagnosis; no AMC10A Taiwan CSV or runtime cohort was added.
-
-Next: locate a retrievable image/PDF or independent source copy for p.12 and identify the table/summary discrepancy; continue with other annual reports in parallel where the populations and scoring reconcile.
+2015 B-form web search recovered the LIVE original-paper and solutions pages but no full-cohort item-response report; the Bard result remains a separate local sample (AMC10B n=24, AMC12B n=6). Next collection target: continue chronological source recovery with 2016 B forms, prioritizing annual item tables and exact-year grade/score distributions. Keep local venue data separate from all-participant cohorts. `raw_youtube.txt` stays untracked and untouched. No push, deployment, Drive synchronization, or paid API call.
