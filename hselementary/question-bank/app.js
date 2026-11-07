@@ -506,6 +506,8 @@
   }
 
   function problemWeight(question) {
+    // These mixed-calculation prompts fit four-up with the compact print style.
+    if (["5-1-u1-t1", "5-1-u1-t1-2", "5-1-u1-t1-3", "5-1-u1-t1-4"].includes(question.type?.id)) return 1;
     // These parallel-line diagrams fit a standard four-up cell.
     if (["4-2-u4-t1-2", "4-2-u4-t1-3", "4-2-u4-t1-7", "4-2-u4-t2-6", "4-2-u4-t1-6"].includes(question.type?.id)) return 1;
     // These four fraction word problems fit the standard four-up cell.
