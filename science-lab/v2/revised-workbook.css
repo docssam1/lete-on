@@ -322,3 +322,14 @@
  .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note[data-note-role] h3{font-size:18px}
  .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note[data-note-role="personal"] h3{font-size:22px}
 }
+
+/* 화면에서는 초등학생이 읽기 편한 크기로 본문·문제·보기를 함께 키운다.
+   글자가 늘어난 쪽은 내용만큼 길어지며, 인쇄의 A4 지면 규칙은 별도로 유지한다. */
+@media screen and (min-width:701px){
+ .bk-editorial.revised-workbook[data-unit] .bk-page{height:auto;min-height:297mm}
+ .bk-editorial.revised-workbook[data-unit] .ed-main{font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] :is(.ed-table,.ed-given,.ed-solution p){font-size:17px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit] :is(.ed-rail,.ed-hint){font-size:16px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit] .ed-main h2{letter-spacing:normal;line-height:1.4}
+ .bk-editorial.revised-workbook[data-unit] .ed-table th{font-weight:600}
+}
