@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-07T00:32:30+09:00",
+  "generatedAt": "2026-11-07T23:35:20+09:00",
   "academies": [
     {
       "id": "soma",
@@ -453,6 +453,44 @@
       "origin": "shared-monitor"
     },
     {
+      "id": "shared-dp-blog-224426268104-대치",
+      "academy": "dolpa",
+      "branch": "대치",
+      "sourceId": "dp-blog",
+      "kind": "test",
+      "title": "[대치 제로관]12월 개강시간표 안내",
+      "url": "https://blog.naver.com/dpmath/224426268104",
+      "publishedAt": "2026-11-07",
+      "checkedAt": "2026-11-07",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-dp-blog-224426273445-대치",
+      "academy": "dolpa",
+      "branch": "대치",
+      "sourceId": "dp-blog",
+      "kind": "test",
+      "title": "[대치 초등관]12월 개강시간표 안내",
+      "url": "https://blog.naver.com/dpmath/224426273445",
+      "publishedAt": "2026-11-07",
+      "checkedAt": "2026-11-07",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
       "id": "shared-dp-blog-224407474293-대치",
       "academy": "dolpa",
       "branch": "대치",
@@ -499,44 +537,6 @@
       "title": "[분당관] 정규반 진도 및 신규 개강 안내(9/19~)",
       "url": "https://blog.naver.com/dpmath/224416048124",
       "publishedAt": "2026-09-18",
-      "checkedAt": "2026-11-07",
-      "stages": [
-        "elementary",
-        "middle"
-      ],
-      "events": [],
-      "scheduleText": "",
-      "dateStatus": "unconfirmed",
-      "origin": "shared-monitor"
-    },
-    {
-      "id": "shared-dp-blog-224377663832-대치",
-      "academy": "dolpa",
-      "branch": "대치",
-      "sourceId": "dp-blog",
-      "kind": "test",
-      "title": "[대치 제로관]10월 개강시간표 안내",
-      "url": "https://blog.naver.com/dpmath/224377663832",
-      "publishedAt": "2026-09-05",
-      "checkedAt": "2026-11-07",
-      "stages": [
-        "elementary",
-        "middle"
-      ],
-      "events": [],
-      "scheduleText": "",
-      "dateStatus": "unconfirmed",
-      "origin": "shared-monitor"
-    },
-    {
-      "id": "shared-dp-blog-224377668864-대치",
-      "academy": "dolpa",
-      "branch": "대치",
-      "sourceId": "dp-blog",
-      "kind": "test",
-      "title": "[대치 초등관]10월 개강시간표 안내",
-      "url": "https://blog.naver.com/dpmath/224377668864",
-      "publishedAt": "2026-09-05",
       "checkedAt": "2026-11-07",
       "stages": [
         "elementary",
@@ -926,6 +926,25 @@
       "origin": "official-list"
     },
     {
+      "id": "auto-94510b766167d220a4",
+      "academy": "proud7",
+      "branch": "대치",
+      "sourceId": "proud7-official",
+      "kind": "seminar",
+      "title": "[대치] 프라우드7 UPPER 2027 예비초1 추가 설명회",
+      "url": "https://proud7.com/board_read.asp?boardNumber=814&boardid=16",
+      "publishedAt": "2026-11-07",
+      "checkedAt": "2026-11-07",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
       "id": "auto-0045ec84c8c041b982",
       "academy": "proud7",
       "branch": "대치",
@@ -991,25 +1010,6 @@
       "title": "[대치] 프라우드7 UPPER 2027 예비초1 추가 설명회..",
       "url": "https://proud7.com/board_read.asp?boardNumber=810&boardid=16",
       "publishedAt": "2026-10-12",
-      "checkedAt": "2026-11-07",
-      "stages": [
-        "preschool",
-        "elementary"
-      ],
-      "events": [],
-      "scheduleText": "",
-      "dateStatus": "unconfirmed",
-      "origin": "official-list"
-    },
-    {
-      "id": "auto-060b57bec7dbe9604f",
-      "academy": "proud7",
-      "branch": "대치",
-      "sourceId": "proud7-official",
-      "kind": "admission",
-      "title": "[대치] 프라우드7 UPPER 2027 예비초1 입학 안내",
-      "url": "https://proud7.com/board_read.asp?boardNumber=809&boardid=16",
-      "publishedAt": "2026-10-08",
       "checkedAt": "2026-11-07",
       "stages": [
         "preschool",

@@ -194,6 +194,32 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "scheduleText": "2026-11-27 11:00 · 깊생TV 유튜브 (온라인)"
     },
     {
+      "id": "dp-blog-224426268104-대치",
+      "sourceId": "dp-blog",
+      "academy": "DP",
+      "branch": "대치",
+      "category": "test",
+      "title": "[대치 제로관]12월 개강시간표 안내",
+      "url": "https://blog.naver.com/dpmath/224426268104",
+      "publishedAt": "2026-11-07",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "853bccd82c741de5"
+    },
+    {
+      "id": "dp-blog-224426273445-대치",
+      "sourceId": "dp-blog",
+      "academy": "DP",
+      "branch": "대치",
+      "category": "test",
+      "title": "[대치 초등관]12월 개강시간표 안내",
+      "url": "https://blog.naver.com/dpmath/224426273445",
+      "publishedAt": "2026-11-07",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "81e9604903bb750a"
+    },
+    {
       "id": "ed-blog-224459090480-대치",
       "sourceId": "ed-blog",
       "academy": "ED",
@@ -439,32 +465,6 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "eventDate": null,
       "scheduleText": "",
       "revision": "c43eff708b0dfa7c"
-    },
-    {
-      "id": "dp-blog-224377663832-대치",
-      "sourceId": "dp-blog",
-      "academy": "DP",
-      "branch": "대치",
-      "category": "test",
-      "title": "[대치 제로관]10월 개강시간표 안내",
-      "url": "https://blog.naver.com/dpmath/224377663832",
-      "publishedAt": "2026-09-05",
-      "eventDate": null,
-      "scheduleText": "",
-      "revision": "20ddbe6bf37b8ed8"
-    },
-    {
-      "id": "dp-blog-224377668864-대치",
-      "sourceId": "dp-blog",
-      "academy": "DP",
-      "branch": "대치",
-      "category": "test",
-      "title": "[대치 초등관]10월 개강시간표 안내",
-      "url": "https://blog.naver.com/dpmath/224377668864",
-      "publishedAt": "2026-09-05",
-      "eventDate": null,
-      "scheduleText": "",
-      "revision": "0b6ace7f3774cb8d"
     },
     {
       "id": "wm-blog-224397883830-대치",
