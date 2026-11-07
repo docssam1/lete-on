@@ -1,3 +1,4 @@
+import{withSolutionLearnerCues}from'./solution-learning-language.js?v=20261108-solution-learning-language';
 import{withLearnerClassGuidance}from'./learner-class-guidance.js?v=20261108-grade3-class-guidance';
 import{landReasoningCurrentItems}from'../data/book/s41-u03.editorial.js?v=20261105-land-learner-reasoning';
 import{magnetReasoningCurrentItems}from'../data/book/s41-u01.rail-notes.js?v=20261105-magnet-learner-reasoning';
@@ -50,7 +51,7 @@ import {mountSkyCompare} from './lab-sky-compare.js?v=20261108-comparison-activi
 import {skyCompareValues,validSkyCompareRow} from './sky-compare-model.js';
 import {mountWaterCompare} from './lab-water-compare.js?v=20261108-comparison-activity-guidance';
 import {waterCompareValues,validWaterCompareRow} from './water-compare-model.js';
-import {mountSolutionCompare} from './lab-solution-compare.js?v=20261108-comparison-activity-guidance';
+import {mountSolutionCompare} from './lab-solution-compare.js?v=20261108-solution-learning-language';
 import {solutionCompareValues,validSolutionCompareRow} from './solution-compare-model.js';
 import {mountGroundCompare} from './lab-ground-compare.js?v=20261108-comparison-activity-guidance';
 import {groundCompareValues,validGroundCompareRow} from './ground-compare-model.js';
@@ -121,7 +122,7 @@ export async function revisedClassroom(unit, mod) {
  ]);
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
  const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
- return withLearnerClassGuidance({...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:careerReadableCurrentItems(electricityReadableCurrentItems(combustionReadableCurrentItems(seasonReadableCurrentItems(earthMotionReadableCurrentItems(plantStructureReadableCurrentItems(motionReadableCurrentItems(acidReadableCurrentItems(energyReadableCurrentItems(weatherReadableCurrentItems(heatReadableCurrentItems(mixtureReadableCurrentItems(bodyReadableCurrentItems(solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab});
+ return withLearnerClassGuidance(withSolutionLearnerCues({...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:careerReadableCurrentItems(electricityReadableCurrentItems(combustionReadableCurrentItems(seasonReadableCurrentItems(earthMotionReadableCurrentItems(plantStructureReadableCurrentItems(motionReadableCurrentItems(acidReadableCurrentItems(energyReadableCurrentItems(weatherReadableCurrentItems(heatReadableCurrentItems(mixtureReadableCurrentItems(bodyReadableCurrentItems(solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab}));
 }
 
 export function classroomQuestions(mod, pool) {
