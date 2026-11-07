@@ -2230,3 +2230,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2021 AMC 10/12 A/B에 대해 전국 A–E/공란 응답표를 검색했다. 공개 답·풀이와 전체 점수/AIME 기준 링크는 확인됐지만 보기별 참가자 응답률은 회수하지 못했다. 해설 문구나 총점 분포를 문항 오답률로 취급하지 않는다.
 - 네 2021 폼은 원본 시험지 학습 링크가 완비된 상태이고, 문항별 비교는 data coverage상 미회수다. 자세한 검색 범위와 링크는 `AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 2021 절.
 - 다음은 coverage manifest의 미회수 폼을 연도순 조사한다. 실제 표 발견 시 원문·정답·비율합·기대평균을 검증한 뒤 추가. `raw_youtube.txt` 보존, push·배포·Drive 동기화 없음.
+
+### 2026-11-08 · AMC 연도/회차 통계 연결 오류 수정 및 웹 재검색
+
+- 2021 Fall MAA grade-score percentile 표가 LIVE canonical 2021 C/D(가을 공개 A/B)만을 대상으로 함을 TestDaily 원문과 LIVE 연도별 페이지로 재확인했다. Coverage manifest에서 AMC 10/12의 봄 A/B를 `no-grade-table-recovered`로 고쳤고, 가을 C/D 표는 유지했다. 런타임 percentile rows와 item-response manifest는 이미 canonical C/D로 정확히 연결되어 있었다.
+- 2021 가을 보고서는 봄 회차의 전체 응시자 수/일부 평균을 함께 언급하지만 학년별 점수표는 아니다. 별도 웹 검색 결과, 2020 B형은 AIME/전체 점수선 및 Bard 소규모 학교 표본만 재확인했고 국가 단위 학년별 차트는 찾지 못해 미회수 상태를 유지했다. 검색·범위는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다.
+- 검증: `git diff --check`; 2021 AMC 10/12 A/B coverage에 grade percentile 출처가 없고 C/D만 TestDaily 출처를 갖는지 CSV assertion 통과. 테스트 스위트와 브라우저 검수는 이번 변경에서 실행하지 않았다. `raw_youtube.txt`는 그대로 두고, 다음 단계는 미회수된 2021 봄 학년별 자료 및 2020 B 전국표를 계속 찾은 뒤 다른 해의 회차별 응답/학년 자료를 연도순 조사하는 것이다.
