@@ -2968,6 +2968,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Probability = source52Average?.subunits.find(subunit => subunit.name === "사건의 가능성");
+  if (source52Probability && !source52Probability.types.some(t=>t.id==="5-2-u6-e4-mission-1-same-choice-similar")) {
+    const id="5-2-u6-e4-mission-1-same-choice-similar",name="여러 학생이 같은 색을 선택할 가능성 · 조건변형";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-e4-mission-1",sourceItemLabel:"Mission 1 조건변형 유사문항",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:61,alternateSourcePdfPage:60,sourcePrintedPage:65,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U6SameChoiceSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"동전 앞뒤가 모두 같을 가능성을 묻는 원문의 같은 선택 구조를 학생의 색 선택으로 바꾸고 모든 선택을 독립 열거했습니다."});
+  }
+
   if (source52Probability) for (const [n,name] of [[59,"부모가 이웃하지 않을 가능성 · 확인학습 원문"],[61,"두 주머니에서 서로 다른 색의 공을 뽑을 가능성 · 확인학습 원문"],[62,"세 숫자 카드로 만든 수가 3의 배수일 가능성 · 확인학습 원문"],[63,"네 OX 문제에서 적어도 두 문제를 맞힐 가능성 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52Probability.types.some(type=>type.id===id)) continue;
@@ -4353,7 +4359,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u4","5-2-u4-t2-9","5-2-u4-e2-mission-4"],
     ["5-2-u4","5-2-u4-t1-11","5-2-u4-e1-mission-6"],
     ["5-2-u4","5-2-u4-t2-8","5-2-u4-e2-mission-3"],
-    ["5-2-u6","5-2-u6-t3-6","5-2-u6-e3-example-1-difference-similar"]
+    ["5-2-u6","5-2-u6-t3-6","5-2-u6-e3-example-1-difference-similar"],
+    ["5-2-u6","5-2-u6-t4-4","5-2-u6-e4-mission-1-same-choice-similar"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
