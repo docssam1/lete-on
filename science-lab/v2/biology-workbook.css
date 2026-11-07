@@ -21,3 +21,12 @@
 }
 
 .bk-editorial[data-unit="s41-u04"] .ed-photo img:is([src$="s41-u04-source-spirogyra.webp"],[src$="s41-u04-paramecium-reischig.jpg"]){max-height:40mm;object-fit:contain}
+
+/* 도입 두 쪽은 화면에서 넉넉하게 읽는다. 인쇄 조판과 답안 줄은 유지한다. */
+@media screen and (min-width:701px){
+ .revised-workbook-print[data-paper-unit="s41-u04"] .bk-page:is([data-page="1"],[data-page="2"]){height:auto;min-height:297mm}
+ .revised-workbook-print[data-paper-unit="s41-u04"] .bk-page:is([data-page="1"],[data-page="2"]) .ed-main{font-size:17px;line-height:1.75}
+ .revised-workbook-print[data-paper-unit="s41-u04"] .bk-page:is([data-page="1"],[data-page="2"]) :is(.ed-table,.ed-hint,.ed-rail){font-size:15px;line-height:1.7}
+ .revised-workbook-print[data-paper-unit="s41-u04"] .bk-page:is([data-page="1"],[data-page="2"]) .ed-main h2{letter-spacing:normal;line-height:1.4}
+ .revised-workbook-print[data-paper-unit="s41-u04"] .bk-page:is([data-page="1"],[data-page="2"]) .ed-table th{font-weight:600}
+}

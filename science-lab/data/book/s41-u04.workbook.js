@@ -1,6 +1,6 @@
 import{withObservationLanguage}from'./observation-language.js';
 import {withBiologyStudentLanguage,withBiologyWorkbookGuidance,withBiologyWorkbookCriteria} from './biology-student-language.js?v=20261105-biology-criteria';
-import {withBiologyEditorial,withBiologyReadableWorkbook} from './s41-u04.editorial.js?v=20261106-biology-opening-guide';
+import {withBiologyEditorial,withBiologyReadableWorkbook,withBiologyElementaryOpening} from './s41-u04.editorial.js?v=20261108-biology-elementary-opening';
 // 다양한 생물 A4. scripts/gen-science-workbook-s41u04.mjs가 생성.
 const baseWorkbook = {
  "unit": "s41-u04",
@@ -7320,4 +7320,5 @@ export const observationPriorWorkbook=withBiologyStudentLanguage(withBiologyEdit
 export const biologyGuidancePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const biologyCriteriaPriorWorkbook=withBiologyWorkbookGuidance(biologyGuidancePriorWorkbook);
 export const biologyReadablePriorWorkbook=withBiologyWorkbookCriteria(biologyCriteriaPriorWorkbook);
-export const workbook=withBiologyReadableWorkbook(biologyReadablePriorWorkbook);
+export const biologyOpeningPriorWorkbook=withBiologyReadableWorkbook(biologyReadablePriorWorkbook);
+export const workbook=withBiologyElementaryOpening(biologyOpeningPriorWorkbook);

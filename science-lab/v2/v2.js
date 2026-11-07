@@ -1,7 +1,7 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261104-season-book';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261105-history-review';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-learning-note-roles';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-biology-elementary-opening';
 import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261108-earth-motion-pair-language';
 import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
