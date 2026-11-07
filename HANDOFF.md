@@ -2354,3 +2354,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 웹에서 확인한 2018 AMC 10B 재인용 평균은 57.81(Think Matrix/Ivy Track) 또는 57.82(Hanlin/MT100)다. AMC 12B는 57.81(Think Matrix), 57.85(Ivy Track/Math Gold Medalist), 57.86(Hanlin/MT100)으로 갈린다. MAA 원 점수보고서는 회수하지 못했다.
 - 두 B형의 active score reference에서 disputed average를 제거하고, 확인 가능한 컷·상위 경계는 유지했다. 각 설명에 평균 보류 및 출처 한계를 표시했다. 출처 비교와 후속 검색 기록은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 남겼다.
 - 검수: `git diff --check` 통과. Node.js가 없어 브라우저 테스트는 실행하지 않았다. `raw_youtube.txt`는 보존하고 커밋에서 제외한다.
+
+### 2026-11-08 · 2008 AIME I/II grade-by-score source recovered and connected
+
+- Researched the open 2008 AIME grade-table gap. Internet Archive CDX returned four preserved captures of the original MAA PDF. Downloaded the 2024 replay and extracted PDF pages 263–264 with macOS PDFKit; printed page labels identify the tables as pp. 261–262.
+- Transcribed the 16 score rows × 8 grade groups for each form into `boarding-school-math/competition/aime-historical-grade-distribution-reference.js`. Exact grades 8–13 remain distinct; unknown and `<=7` stay grouped. Both forms are now available to the existing paper-review comparison by exact year/form/grade.
+- Reconciliations: AIME I = n 5,468, weighted mean 4.774→4.77; AIME II = n 3,116, weighted mean 5.273→5.27. Combined n 8,584 matches the report narrative. Updated the coverage manifest and historical-source README/research notes.
+- The 2008 values describe that year's recorded-grade cohort only; they are not current norms, predictions, or student ability labels. Original PDF source: `https://web.archive.org/web/20240107095913id_/https://maa.org/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2007-8pub/Summary,2008HS.pdf`.

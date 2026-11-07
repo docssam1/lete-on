@@ -5,13 +5,38 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  // Transcribed from the grade-level score tables in the MAA-authored 2010
-  // AMC 10/12 Summary, hosted here as a third-party mirror. Columns are
-  // unknown, <=7, 8, 9, 10, 11, 12, and 13. Counts are kept separate by form.
-  const sourceUrl = "https://www.scribd.com/document/51428451/2010-HS-summary";
+  // Transcribed from MAA-authored annual reports. Columns are unknown, <=7,
+  // 8, 9, 10, 11, 12, and 13. Counts are kept separate by year and form.
+  const sourceUrls = Object.freeze({
+    2008: "https://web.archive.org/web/20240107095913id_/https://maa.org/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2007-8pub/Summary,2008HS.pdf",
+    2010: "https://www.scribd.com/document/51428451/2010-HS-summary"
+  });
   const scoresDescending = Object.freeze([15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]);
   const gradeColumns = Object.freeze(["unknown", "le7", "8", "9", "10", "11", "12", "13"]);
-  const scoreRows = Object.freeze({
+  const scoreRowsByYear = Object.freeze({
+    2008: Object.freeze({
+      I: Object.freeze([
+        [0, 0, 0, 0, 0, 1, 3, 0], [0, 0, 0, 0, 3, 3, 2, 0],
+        [0, 0, 0, 2, 0, 2, 1, 0], [0, 0, 2, 3, 6, 10, 13, 0],
+        [0, 0, 0, 2, 8, 26, 24, 0], [0, 2, 5, 14, 17, 25, 21, 0],
+        [0, 2, 9, 29, 45, 55, 42, 0], [0, 4, 26, 31, 47, 71, 117, 0],
+        [0, 7, 26, 36, 98, 114, 148, 1], [0, 14, 34, 63, 127, 208, 236, 1],
+        [1, 19, 34, 95, 179, 298, 302, 2], [1, 10, 42, 95, 212, 354, 343, 2],
+        [5, 10, 45, 79, 192, 296, 281, 1], [0, 4, 8, 40, 130, 161, 162, 0],
+        [0, 2, 9, 13, 60, 64, 75, 0], [0, 1, 4, 2, 8, 22, 19, 0]
+      ]),
+      II: Object.freeze([
+        [0, 0, 0, 0, 1, 0, 3, 0], [0, 0, 0, 1, 1, 5, 3, 0],
+        [1, 1, 0, 0, 2, 9, 14, 0], [0, 0, 0, 1, 7, 9, 12, 0],
+        [0, 0, 1, 2, 13, 20, 22, 0], [0, 1, 0, 5, 26, 39, 35, 0],
+        [0, 0, 6, 7, 41, 56, 49, 1], [1, 2, 7, 11, 57, 79, 74, 0],
+        [0, 5, 11, 27, 64, 88, 98, 2], [0, 3, 14, 40, 92, 117, 119, 2],
+        [1, 12, 11, 51, 95, 144, 169, 3], [1, 6, 12, 37, 103, 143, 153, 4],
+        [2, 2, 13, 29, 64, 148, 142, 0], [0, 3, 5, 25, 46, 91, 104, 1],
+        [0, 2, 7, 9, 18, 43, 63, 1], [0, 4, 1, 2, 8, 13, 18, 0]
+      ])
+    }),
+    2010: Object.freeze({
     I: Object.freeze([
       [0, 0, 0, 0, 0, 2, 1, 0], [0, 0, 1, 2, 0, 7, 1, 0],
       [0, 0, 2, 2, 5, 6, 11, 0], [0, 1, 1, 2, 10, 15, 25, 0],
@@ -32,27 +57,35 @@
       [2, 3, 10, 11, 47, 109, 89, 0], [5, 0, 4, 11, 32, 84, 56, 0],
       [2, 1, 3, 4, 24, 57, 56, 0], [0, 0, 3, 3, 9, 37, 26, 0]
     ])
+    })
   });
 
-  function totalForGrade(form, grade) {
+  function totalForGrade(year, form, grade) {
+    // Keep the original two-argument form call compatible with existing users.
+    if (arguments.length === 2) {
+      grade = form;
+      form = year;
+      year = 2010;
+    }
     const column = gradeColumns.indexOf(String(grade));
     if (column < 2) return null;
-    return scoreRows[form].reduce((sum, row) => sum + row[column], 0);
+    const counts = scoreRowsByYear[Number(year)]?.[form];
+    return counts ? counts.reduce((sum, row) => sum + row[column], 0) : null;
   }
 
   function referenceFor(year, form, grade, score) {
-    if (Number(year) !== 2010) return null;
+    const selectedYear = Number(year);
     const selectedForm = String(form || "").toUpperCase();
     const column = gradeColumns.indexOf(String(grade));
     const selectedScore = Number(score);
-    if (!scoreRows[selectedForm] || column < 2 || column > 7 || !Number.isInteger(selectedScore) || selectedScore < 0 || selectedScore > 15) return null;
-    const counts = scoreRows[selectedForm];
-    const participants = totalForGrade(selectedForm, grade);
+    const counts = scoreRowsByYear[selectedYear]?.[selectedForm];
+    if (!counts || column < 2 || column > 7 || !Number.isInteger(selectedScore) || selectedScore < 0 || selectedScore > 15) return null;
+    const participants = totalForGrade(selectedYear, selectedForm, grade);
     const rowIndex = scoresDescending.indexOf(selectedScore);
     const studentsAtScore = counts[rowIndex][column];
     const studentsBelowScore = counts.slice(rowIndex + 1).reduce((sum, row) => sum + row[column], 0);
     return Object.freeze({
-      year: 2010,
+      year: selectedYear,
       form: selectedForm,
       grade: Number(grade),
       score: selectedScore,
@@ -61,9 +94,12 @@
       studentsBelowScore,
       lowerScorePercent: participants ? studentsBelowScore / participants * 100 : null,
       max: 15,
-      sourceUrl: sourceUrl
+      sourceUrl: sourceUrls[selectedYear]
     });
   }
 
-  return Object.freeze({ sourceUrl, scoresDescending, gradeColumns, scoreRows, totalForGrade, referenceFor });
+  // Keep the original 2010 exports available to existing consumers.
+  const sourceUrl = sourceUrls[2010];
+  const scoreRows = scoreRowsByYear[2010];
+  return Object.freeze({ sourceUrl, sourceUrls, scoresDescending, gradeColumns, scoreRows, scoreRowsByYear, totalForGrade, referenceFor });
 });

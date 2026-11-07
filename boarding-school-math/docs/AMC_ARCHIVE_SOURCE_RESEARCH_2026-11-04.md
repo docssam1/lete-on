@@ -1,5 +1,9 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2026-11-08 · 2008 AIME I/II recorded-grade score distribution recovered
+
+The earlier search note below records that the public StudyLib extraction stopped before the statistical pages. This follow-up resolves that gap: Internet Archive CDX lists four captures of the original MAA URL. The 2024 replay returned the complete 4,320,790-byte PDF. PDFKit extracted PDF pages 263–264, which are printed pages 261–262 and contain Table XIII. Transcribed 16 score rows by eight grade groups (unknown, <=7, 8–13) into `competition/aime-historical-grade-distribution-reference.js`. AIME I totals n=5,468 and weighted mean 4.774 (MAA reports 4.77); AIME II totals n=3,116 and weighted mean 5.273 (MAA reports 5.27); combined n=8,584 matches the report narrative. Exact Grade 8–13 comparisons are available by year/form; grouped grades are not treated as exact grades. Coverage manifest and data README updated. The comparison is historical report-cohort context, not a current norm, student level, or qualifier forecast. [Original MAA report preserved by Internet Archive](https://web.archive.org/web/20240107095913id_/https://maa.org/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2007-8pub/Summary,2008HS.pdf).
+
 ## 2026 AMC 10A·12A를 원본 복습 화면에 연결 (2026-11-08)
 
 [MAA 공식 일정](https://maa.org/student-programs/amc/)에서 A형 시행일 11월 5일과 B형 예정일 11월 13일을 확인했다. [Think Academy 10A 자료 페이지](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/)와 [12A 자료 페이지](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/)는 회차별 문제지 PDF, 답안 키 이미지, 풀이 자료를 제공한다. 10A는 풀이 PDF 하나, 12A는 게시물 안에 1–15번과 16–25번 PDF 두 개가 있다. MAA/LIVE 공개 과거시험 색인에는 2026 A형이 아직 없으므로, 앱에서 이 두 시험은 제3자 공개 재게시 자료로 따로 표시한다.
@@ -335,7 +339,7 @@ The report's Global score-frequency and exact-grade summary tables remain valid 
 
 ## 2008 AIME grade table search follow-up (2026-11-05)
 
-The [MAA-authored 2008 High School Results and Awards Summary](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions) contents explicitly list AIME I and II grade-level score distributions on printed pp. 261–262. Its searchable public mirror exposes the contents and the narrative-level 2008 AIME participant count/means (8,584 total across both forms; I mean 4.77, II mean 5.27), but not those grade-table rows. Exact 2008 grade counts were not transcribed. Searches also returned complete AIME I/II grade tables with totals 3,618 and 2,904 and means 4.12 and 5.91; these are the 2010 AIME tables in the [MAA-authored 2010 summary](https://www.scribd.com/document/51428451/2010-HS-summary), already staged separately, and must not be misattributed to 2008. The 2008 AIME I/II coverage rows therefore remain `aime-grade-table-located-not-transcribed`; no same-grade comparison is added for 2008. The archive researcher describes a 1980–2010 booklet collection, but the page's public full-text link opened a 1968 report rather than the missing 2008 pages: [AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive/).
+At the time of this 2026-11-05 search, the [MAA-authored 2008 High School Results and Awards Summary](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions) mirror exposed the contents and narrative-level AIME figures (8,584 across both forms; I mean 4.77, II mean 5.27), but not the grade-table rows. The 3,618/4.12 and 2,904/5.91 tables belong to 2010 and were correctly kept separate. This source-access gap was resolved by the 2026-11-08 Internet Archive recovery documented at the top of this file; both 2008 score-by-grade tables are now transcribed and connected. The archive researcher describes a 1980–2010 booklet collection, but that page's public full-text link opened a 1968 report rather than the 2008 pages: [AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive/).
 
 The MAA 2025 report says 11.74 rather than 11.75 in some secondary summaries. The MAA 2026 report page returns 80,983 students; other search-result reproductions show nearby but different totals, so they are not merged. These statistics are whole-report cohort cutoffs and summaries, not grade norms or individual percentiles. The live MAA portal is the source; it does not provide a static historic PDF from these report pages.
 
@@ -680,7 +684,7 @@ Internet Archive의 CDX 색인에는 과거 MAA `generalreports.aspx` 페이지�
 
 검색에서 [Math Oasis의 2009 AMC 10/12 B 학교별 결과](https://www.mathsoasis.com/2009/temasek1012b09.pdf)가 확인됐다. Temasek Secondary School 보고서는 AMC 10B 학생 89명(9학년 61명, 10학년 28명)의 응답률을 담고 있고, [Madrasah Al-Irsyad 결과](https://www.mathsoasis.com/2009/mai1012b09.pdf)는 AMC 10B 학생 16명의 학교별 점수 요약을 담는다. 이는 국가 전체 응시자 분포가 아니므로 연도별 AMC 규준이나 개인 진단 비교에 넣지 않았다. 2009 A/B 국가 단위 문항응답 coverage는 계속 `not-found`다.
 
-같은 검색에서 [2010 MAA 연례보고서](https://www.scribd.com/document/51428451/2010-HS-summary)의 2009·2008 AMC 10/12 기록 학년별 평균·인원수가 재확인됐으나 기존 자료와 겹쳐 중복 전사하지 않았다. 2008 AIME 학년별 점수분포 표는 보고서 목차에서 확인되지만, 공개 텍스트 검색은 표 셀을 보여 주지 않아 수치는 추가하지 않았다. 이번 검색에서도 2009 AMC 10/12 국가 단위 응답률 표는 찾지 못했다.
+같은 검색에서 [2010 MAA 연례보고서](https://www.scribd.com/document/51428451/2010-HS-summary)의 2009·2008 AMC 10/12 기록 학년별 평균·인원수가 재확인됐으나 기존 자료와 겹쳐 중복 전사하지 않았다. 2008 AIME 학년별 점수분포 표는 당시 목차 확인만 가능해 수치를 추가하지 않았다. 이 미확보 상태는 2026-11-08 Internet Archive 원본 PDF 회수로 해결되어 Table XIII를 전사·대조했다(상단 최신 기록 참고). 이번 검색에서도 2009 AMC 10/12 국가 단위 응답률 표는 찾지 못했다.
 
 ## 2026-11-05 · 2008 MAA 연례보고서에서 학년 비교 자료 검증
 
