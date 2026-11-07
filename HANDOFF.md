@@ -2259,3 +2259,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Think Academy/Think Matrix 공개 역사표에서 2017 AMC 10A/B·12A/B 전체 참가자 수 53,169 / 25,919 / 44,915 / 23,439명을 확인해 점수 참조 런타임에 반영했다. AMC 10 평균 및 DHR은 MT100 연도표와 교차 확인했다. 해당 표의 지리적 범위는 따로 설명되지 않아 지역 미상 전체 회차 참고로 표기한다.
 - 2017 AMC 12A 평균은 기존 공개 표 56.99 대 60.32 충돌이 있어 계속 숨긴다. 참가자 수는 평균 충돌을 해소하지 않으며, 학년별·문항별 데이터로 전용하지 않았다. 상세 출처/제한은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`.
 - `git diff --check`와 네 연도·폼 참조 값 대조만 수행. 사용자 미추적 `raw_youtube.txt` 보존. 로컬 변경만, push·배포·Drive 동기화 없음.
+
+### 2026-11-08 · 웹 검색: 2025 AMC 8 학교별 문항 결과
+
+- Strath Haven Middle School의 2025 MAA Grade Report 공개 재게시본을 웹에서 확인했다. 전체 학교 코호트 n=46, 평균 12.37/25, 문항별 정답 인원 25개를 CSV로 따로 저장했다. 원문 LIVE 정답키 25개와 대조했고 표시된 정답 인원 평균은 12.37로 보고서 평균과 맞는다.
+- 데이터: `boarding-school-math/competition/historical-amc-grade/amc8-2025-strath-haven-school-item-correct.csv`. README와 검색 기록에 출처/제한 추가. 이는 단일 학교, 학년 미분리, 선택지별 오답 분포 미제공 자료라 전국 규준·학년 비교·개별 오개념 판정으로 사용하면 안 된다. AMC 연도별 인쇄 시험·정답·해설은 기존 266행 연도/폼 카탈로그의 LIVE 허가 링크에 정리돼 있다.
+- MAA overall 2025 점수 참조는 이미 79,524명/평균 11.74로 들어 있다. Scribd 재게시 요약의 79,511명은 불일치라 대체하지 않았다. 다음: 구 MAA score-report의 학교별/학년별 데이터가 공개 검색 가능한 경우에만 같은 코호트 경계를 유지해 누적하고, AMC10/12 원본의 연도·폼별 회차 카탈로그와 overall/grade/item coverage를 별도로 보강한다.
