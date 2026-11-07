@@ -2254,3 +2254,8 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Transcribed all four 2020 AMC 10A/10B/12A/12B MAA score report charts reproduced by TestDaily and Sohu using Apple Vision OCR and visual review. Data are in `amc10-12-2020-maa-score-distribution.csv` and the runtime reference.
 - The 10A/10B charts print 103.5/102 beneath `Top 2.5%`; 12A/12B print 87/87 beneath `Top 5%`. Cutoff sources identify these as AIME cutoffs, distinct from actual Top 5% distinctions 105/103.5/100.5/97.5. Runtime excludes the four cutoffs from percentile comparison while CSV audit columns retain the printed fields. Reports do not state geography and are not grade norms.
 - Static validation confirms both CSV rows/fields, the 266-row source catalog's printable/key/solution routes, runtime values, and cache versions; `git diff --check` passes. Browser QA remains unverified; no push, deploy, or Drive sync. Keep `raw_youtube.txt` unstaged.
+### 2026-11-08 · 웹 검색: 2017 AMC 전체 응시자 수 추가
+
+- Think Academy/Think Matrix 공개 역사표에서 2017 AMC 10A/B·12A/B 전체 참가자 수 53,169 / 25,919 / 44,915 / 23,439명을 확인해 점수 참조 런타임에 반영했다. AMC 10 평균 및 DHR은 MT100 연도표와 교차 확인했다. 해당 표의 지리적 범위는 따로 설명되지 않아 지역 미상 전체 회차 참고로 표기한다.
+- 2017 AMC 12A 평균은 기존 공개 표 56.99 대 60.32 충돌이 있어 계속 숨긴다. 참가자 수는 평균 충돌을 해소하지 않으며, 학년별·문항별 데이터로 전용하지 않았다. 상세 출처/제한은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`.
+- `git diff --check`와 네 연도·폼 참조 값 대조만 수행. 사용자 미추적 `raw_youtube.txt` 보존. 로컬 변경만, push·배포·Drive 동기화 없음.
