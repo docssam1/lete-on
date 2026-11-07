@@ -1,0 +1,47 @@
+'use strict';
+// Independently checks printed p.19 against the existing original-question runtime.
+const assert = require('node:assert/strict');
+global.window = {};
+require('./source-inventory-4-1.js');
+require('./source-inventory-grade6.js');
+require('./curriculum.js');
+require('./generators.js');
+const original = require('./source-5-2-u2-page19-originals.js');
+const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
+const f = (n, d = 1) => { assert(d > 0); const g = gcd(n, d); return [n / g, d / g]; };
+const add = (a, b) => f(a[0] * b[1] + b[0] * a[1], a[1] * b[1]);
+const sub = (a, b) => f(a[0] * b[1] - b[0] * a[1], a[1] * b[1]);
+const mul = (a, b) => f(a[0] * b[0], a[1] * b[1]);
+const div = (a, b) => { assert(b[0] > 0); return f(a[0] * b[1], a[1] * b[0]); };
+const one = f(1);
+const height = div(f(720, 2), add(one, f(5, 4)));
+const area = mul(mul(height, f(5, 4)), height);
+const walk = f(17, 5), totalDistance = div(walk, mul(sub(one, f(4, 5)), sub(one, f(2, 3))));
+const travelled = sub(totalDistance, walk);
+const lastCandy = mul(mul(sub(one, f(1, 5)), sub(one, f(5, 12))), sub(one, f(3, 7)));
+const firstCandy = mul(div(f(40), lastCandy), f(1, 5));
+const pencilPrice = div(f(120), sub(f(3), f(8, 3)));
+const appleTotal = div(f(5 + 6 + 7), sub(sub(sub(one, f(2, 5)), f(1, 4)), f(2, 7)));
+const thirdApples = add(mul(appleTotal, f(2, 7)), f(7));
+const riceGiven = add(f(1, 3), mul(sub(one, f(1, 3)), f(3, 8)));
+const riceRemaining = sub(one, riceGiven);
+const riceTotal = div(f(10), sub(mul(f(10, 7), riceGiven), riceRemaining));
+const riceAnswer = mul(riceTotal, riceRemaining);
+const values = [area, travelled, firstCandy, pencilPrice, thirdApples, riceAnswer];
+const numeric = value => value[1] === 1 ? String(value[0]) : `${Math.floor(value[0] / value[1])}과 ${value[0] % value[1]}/${value[1]}`;
+const expected = values.map((v, i) => `${numeric(v)}${['cm²', 'km', '개', '원', '개', 'kg'][i]}`);
+const fractions = [["4분의 1"], ["5분의 4", "3분의 2", "5분의 2"], ["5분의 1", "12분의 5", "7분의 3"], ["3분의 2"], ["5분의 2", "4분의 1", "7분의 2"], ["3분의 1", "8분의 3", "7분의 3"]];
+const literals = [['720cm', '<span class="p19original-mixed">1'], ['<span class="p19original-mixed">3'], ['40개'], ['120원', '<span class="p19original-mixed">2'], ['5개', '6개', '7개'], ['10kg', '<span class="p19original-mixed">1']];
+const unit = window.HSE_CURRICULUM.semesters.find(s => s.id === '5-2').units.find(u => u.id === '5-2-u2');
+for (let i = 0; i < 6; i++) {
+  const id = original.id(i + 1), type = unit.subunits.flatMap(s => s.types).find(t => t.id === id);
+  assert(type && type.sourceVerified && !type.reviewLocked, `${id}: original runtime unavailable`);
+  const question = window.HSE_GENERATORS.generate(type, 0, 0, 1, 0);
+  assert.equal(question.answer, expected[i], `${id}: independent answer`);
+  assert.equal(question.publisherKeyVerified, false);
+  for (const label of fractions[i]) assert(question.prompt.includes(`aria-label="${label}"`), `${id}: missing source fraction ${label}`);
+  for (const value of literals[i]) assert(question.prompt.includes(value), `${id}: missing source value ${value}`);
+  assert(question.solution.includes('data-source-answer'));
+}
+assert.equal(original.build(2).automaticGrading, false, 'mixed-number answer remains manual');
+console.log(`PASS: printed p.19 six original conditions and independently derived answers: ${expected.join(', ')}`);
