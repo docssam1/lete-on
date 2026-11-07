@@ -1,3 +1,4 @@
+import{withCareerReadableWorkbook}from'./c22-s62-u04.editorial.js?v=20261107-career-readable-workbook';
 import{withGuidanceParticles}from'./term-particle-language.js?v=20261105-guidance-particles';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import{withStudentScienceLanguage}from'./student-science-language.js';
@@ -21611,4 +21612,5 @@ export const workbook20261104=withCareerEditorial(originalWorkbook);
 export const learnerPriorWorkbook=withStudentScienceLanguage(workbook20261104);
 export const guidanceParticlePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const careerReadingPriorWorkbook=withGuidanceParticles(guidanceParticlePriorWorkbook);
-export const workbook=withCareerReadingScience(careerReadingPriorWorkbook);
+export const careerReadablePriorWorkbook=withCareerReadingScience(careerReadingPriorWorkbook);
+export const workbook=withCareerReadableWorkbook(careerReadablePriorWorkbook);

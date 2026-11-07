@@ -46,7 +46,7 @@ test('16확인은 두 성취기준 각8·8형식 각2이며 교재의 답과 버
  for(const[n,a]of Object.entries(answers))assert.equal(gradeDaily(list.find(q=>q.id.endsWith('b'+n.padStart(3,'0'))),a).status,'correct',n);
  for(const q of list.filter(q=>q.responseContract.teacherRequired))assert.equal(gradeDaily(q,q.responseContract.sample).status,'review');
  for(const answer of[['35','7'],['35℃','7분'],['35℃','7W']])assert.equal(gradeDaily(list.find(q=>q.id.endsWith('b123')),answer).status,'wrong');
- assert.equal(pool.filter(q=>q.contentVersion).length,74);assert.equal(pool.filter(q=>q.previousVersions).length,74);
+ assert.equal(pool.filter(q=>['20261104-career-book','20261104-student-science-language'].includes(q.contentVersion)||q.previousVersions?.some(p=>['20261104-career-book','20261104-student-science-language'].includes(p.version))).length,74);assert.equal(pool.filter(q=>q.contentVersion==='20261107-career-readable-workbook').length,110);assert.equal(pool.filter(q=>q.previousVersions?.some(p=>p.version==='20261107-career-readable-workbook')).length,0);
 });
 
 test('8자료는 현재 정보·예상·측정/작동·조건과 직업 속 과학을 실제 조사와 구별한다',()=>{
