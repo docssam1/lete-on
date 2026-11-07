@@ -839,17 +839,22 @@
       const paperLabel = `${selectedYear}${administrationLabel ? ` ${administrationLabel}` : ""} ${contestLabel}${originalForm ? ` ${originalForm}` : ""}`;
       const score = result.scoreEstimate.points;
       const difference = score - aimeCutoff.cutoff;
-      setText("amc-aime-cutoff-summary", `${paperLabel} · 응시 점수 ${score} / 150점 · 당시 진출선 ${aimeCutoff.cutoff}점`);
+      const fixedThreshold = aimeCutoff.sourceStatus === "maa-official-fixed-registration-threshold";
+      const cutoffLabel = fixedThreshold ? "AIME 등록 자격 기준" : "당시 AIME 진출 점수선";
+      setText("amc-aime-cutoff-summary", `${paperLabel} · 응시 점수 ${score} / 150점 · ${cutoffLabel} ${aimeCutoff.cutoff}점`);
       const bands = $("amc-aime-cutoff-bands");
       bands.replaceChildren();
       const item = document.createElement("div");
       item.className = "paper-question-band aime-cohort-band" + (difference >= 0 ? " is-reached" : "");
-      const label = document.createElement("strong"); label.textContent = "당시 AIME 진출 점수선";
+      const label = document.createElement("strong"); label.textContent = cutoffLabel;
       const cutoff = document.createElement("span"); cutoff.textContent = `${aimeCutoff.cutoff} / 150`;
-      const comparison = document.createElement("small"); comparison.textContent = difference >= 0 ? `입력 점수가 ${difference}점 위` : `점수선까지 ${Math.abs(difference)}점`;
+      const comparison = document.createElement("small"); comparison.textContent = difference > 0 ? `기준보다 ${difference}점 위` : difference === 0 ? "기준과 같음" : `기준까지 ${Math.abs(difference)}점`;
       item.append(label, cutoff, comparison); bands.append(item);
+      setText("amc-aime-cutoff-note-copy", fixedThreshold
+        ? "MAA가 2026–27 시즌에 공지한 고정 기준입니다. 기준 이상이면 AIME 등록 자격이 주어지며, 등록·응시 가능 여부는 연령과 지역 등 공식 규정을 확인하세요."
+        : "선택한 연도·시험형에 발표된 점수선과 입력 점수를 나란히 봅니다. 당시 기준과의 비교이며 공식 초대·자격 판정은 아닙니다. 2021년은 봄·가을 시험을 구분합니다.");
       $("amc-aime-cutoff-source").href = aimeCutoff.sourceUrl;
-      $("amc-aime-cutoff-source").textContent = aimeCutoff.year === 2025 ? "MAA 공식 발표와 대조한 점수선 ↗" : "연도별 AIME 점수선 자료 ↗";
+      $("amc-aime-cutoff-source").textContent = fixedThreshold ? "MAA 2027 AIME 공식 기준 ↗" : aimeCutoff.year === 2025 ? "MAA 공식 발표와 대조한 점수선 ↗" : "연도별 AIME 점수선 자료 ↗";
     }
     const historicalGradeReference = window.GFIELDAMCHistoricalGradeReference;
     const gradePopulationId = ["amc10", "amc12"].includes(selectedFormat().id) && !$("archive-response-population-field").hidden ? $("archive-response-population").value : undefined;

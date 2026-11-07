@@ -8,7 +8,9 @@
   const historicalSource = "https://ivyleaguecenter.org/2016/01/23/1487/";
   const currentSource = "https://areteem.org/blog/aime-cutoffs-and-amc-10-12-awards/";
   const maaCurrentAnnouncement = "https://maa.org/news/2025-26-aime-thresholds-are-now-available/";
-  // Final published AIME-qualification lines. 2024 AMC 12A uses the MAA's
+  const maaFixedThresholdAnnouncement = "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/";
+  // Historical published AIME-qualification lines through 2025, followed by
+  // the MAA's fixed 2026-27 registration thresholds. 2024 AMC 12A uses the MAA's
   // revised line (76.5), not the initially announced 85.5. 2025 values are
   // cross-checked against MAA's official announcement (values embedded as a
   // remote image) and an independent published table; older values are secondary.
@@ -39,11 +41,13 @@
     [2022,"regular","amc10","A",93],[2022,"regular","amc10","B",94.5],[2022,"regular","amc12","A",93],[2022,"regular","amc12","B",85.5],
     [2023,"regular","amc10","A",103.5],[2023,"regular","amc10","B",105],[2023,"regular","amc12","A",85.5],[2023,"regular","amc12","B",88.5],
     [2024,"regular","amc10","A",94.5],[2024,"regular","amc10","B",105],[2024,"regular","amc12","A",76.5],[2024,"regular","amc12","B",88.5],
-    [2025,"regular","amc10","A",105],[2025,"regular","amc10","B",99],[2025,"regular","amc12","A",96],[2025,"regular","amc12","B",100.5]
+    [2025,"regular","amc10","A",105],[2025,"regular","amc10","B",99],[2025,"regular","amc12","A",96],[2025,"regular","amc12","B",100.5],
+    [2026,"regular","amc10","A",100],[2026,"regular","amc10","B",100],[2026,"regular","amc12","A",85],[2026,"regular","amc12","B",85]
   ].map(function (row) {
     const [year, administration, contest, form, cutoff] = row;
-    return Object.freeze({ year, administration, contest, form, cutoff, sourceUrl: year === 2025 ? currentSource : historicalSource,
-      sourceStatus: year === 2025 ? "secondary-crosschecked-with-MAA-announcement" : "secondary-historical-transcription" });
+    return Object.freeze({ year, administration, contest, form, cutoff,
+      sourceUrl: year === 2026 ? maaFixedThresholdAnnouncement : year === 2025 ? currentSource : historicalSource,
+      sourceStatus: year === 2026 ? "maa-official-fixed-registration-threshold" : year === 2025 ? "secondary-crosschecked-with-MAA-announcement" : "secondary-historical-transcription" });
   });
 
   function referenceFor(contest, year, form, administration) {
@@ -58,5 +62,5 @@
     if (matches.length !== 1) return null;
     return matches[0];
   }
-  return Object.freeze({ rows: Object.freeze(rows), historicalSource: historicalSource, currentSource: currentSource, maaCurrentAnnouncement: maaCurrentAnnouncement, referenceFor: referenceFor });
+  return Object.freeze({ rows: Object.freeze(rows), historicalSource: historicalSource, currentSource: currentSource, maaCurrentAnnouncement: maaCurrentAnnouncement, maaFixedThresholdAnnouncement: maaFixedThresholdAnnouncement, referenceFor: referenceFor });
 });
