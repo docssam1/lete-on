@@ -27,16 +27,28 @@ const ids = ["5-1-u1-t1", "5-1-u1-t1-2", "5-1-u1-t1-3", "5-1-u1-t1-4"];
         await page.locator('#printMenuList [data-print-mode="problem"]').click();
         await page.emulateMedia({ media: "print" });
         await page.setViewportSize({ width: 794, height: 1123 });
+        if (i === 11) await page.evaluate(() => {
+          const equation = document.querySelector('[data-mixed-kind="e1-exploration-set"]');
+          const prefix = equation.querySelector(".mixed-calculation-prefix");
+          const ending = equation.querySelector(".mixed-calculation-ending");
+          if (!prefix || !ending) throw new Error("missing calculation segments");
+          prefix.textContent = "1195 - {27 + 13 × (100 ÷ 10) - 20}";
+          ending.textContent = " × 8 + 62 = □";
+        });
         const items = await page.locator("#problemView .question-item").evaluateAll(nodes => nodes.map(node => {
           const prompt = node.querySelector(".question-prompt").getBoundingClientRect();
           const answer = node.querySelector(".answer-line").getBoundingClientRect();
           const box = node.getBoundingClientRect(), equation = node.querySelector(".equation");
-          const wrapped = [...equation.childNodes].some(text => {
+          const wrappedText = [...equation.childNodes].filter(text => {
             if (text.nodeType !== Node.TEXT_NODE || !text.textContent.trim()) return false;
             const range = document.createRange(); range.selectNodeContents(text);
             return range.getClientRects().length > 1;
           });
-          return { overlap: prompt.bottom > answer.top + 1, outside: answer.bottom > box.bottom + 1, wrapped, overflow: equation.scrollWidth > equation.clientWidth + 1 };
+          const wrapped = wrappedText.length > 0;
+          const ending = equation.querySelector(".mixed-calculation-ending");
+          const prefix = equation.querySelector(".mixed-calculation-prefix");
+          const segmentsWrapped = [prefix, ending].some(part => part && part.getClientRects().length > 1);
+          return { overlap: prompt.bottom > answer.top + 1, outside: answer.bottom > box.bottom + 1, wrapped: wrapped || segmentsWrapped, wrappedText: wrappedText.map(n => n.textContent), segmentsWrapped, overflow: equation.scrollWidth > equation.clientWidth + 1 };
         }));
         assert.equal(items.length, 4);
         assert(items.every(item => !item.overlap && !item.outside && !item.wrapped && !item.overflow), `equations and answer spaces must fit: ${JSON.stringify(items)}`);

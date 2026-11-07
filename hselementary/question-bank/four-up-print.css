@@ -4,8 +4,9 @@
   #problemView .print-page--four-up :is(.source52-p29m1-workspace, .source52-p29m2c-workspace, .source52-p29m3-workspace) { display:none; }
   #problemView .print-page--four-up .question-item:is([data-type-id="5-1-u1-t1"], [data-type-id="5-1-u1-t1-2"], [data-type-id="5-1-u1-t1-3"], [data-type-id="5-1-u1-t1-4"]) .equation {
     margin-top: 3mm; padding: 1.5mm; font-family: "Noto Serif KR", "Batang", serif;
-    font-size: 9.5pt; font-weight: 400; line-height: 1.4; letter-spacing: -0.03em; white-space: normal; overflow: visible;
+    font-size: 10pt; font-weight: 400; line-height: 1.4; letter-spacing: -0.02em; white-space: normal; overflow: visible;
   }
+  #problemView .print-page--four-up :is(.mixed-calculation-prefix, .mixed-calculation-ending) { white-space: nowrap; }
   /* Preserve drawing space while avoiding a second fixed writing area. */
   #problemView .print-page--four-up :is(.u3ex11-work, .u3ex12-work, .u3m4-work) { min-height: 100px; }
   #problemView .print-page--four-up :is(.p28e33-workspace, .p28e34-workspace, .source52-p28e32-workspace, .p30e41-workspace, .source52-p30e43-workspace, .source52-p30e44-workspace) { display:none; }

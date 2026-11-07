@@ -622,6 +622,25 @@
 
   function problemPromptHtml(question) {
     const html = renderMathNotation(question.prompt);
+    if (question.type?.id === "5-1-u1-t1") {
+      const container = document.createElement("div");
+      container.innerHTML = html;
+      const equation = container.querySelector('.equation[data-mixed-kind="e1-exploration-set"]');
+      for (const node of equation?.childNodes || []) {
+        if (node.nodeType !== Node.TEXT_NODE) continue;
+        const tail = node.textContent.match(/(\s×\s\d+\s\+\s\d+\s=\s□)$/);
+        if (!tail) continue;
+        const prefix = document.createElement("span");
+        prefix.className = "mixed-calculation-prefix";
+        prefix.textContent = node.textContent.slice(0, -tail[1].length);
+        const ending = document.createElement("span");
+        ending.className = "mixed-calculation-ending";
+        ending.textContent = tail[1];
+        node.replaceWith(prefix, document.createElement("wbr"), ending);
+        break;
+      }
+      return container.innerHTML;
+    }
     if (!["4-2-u5-t1-4", "4-2-u5-t1-7", "4-2-u5-t1-8"].includes(question.type?.id)) return html;
     const container = document.createElement("div");
     container.innerHTML = html;
