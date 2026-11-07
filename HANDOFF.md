@@ -2293,3 +2293,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 연도별 카탈로그에 2026 AMC 10A와 AMC 12A 두 행을 추가했다. 아직 MAA/LIVE 공식 과거 시험 아카이브에 올라온 자료로 확인하지 못했으므로 제3자 재게시로 출처를 명시하고 공식 페이지가 생기면 바꿀 후속 항목으로 기록했다. 전체 PDF/문항 텍스트는 저장소에 복사하지 않았다.
 - README·연도별 카탈로그 문서·검색 기록을 갱신했다. 남은 작업은 11월 13일 B회차 시행 뒤 원본·정답·풀이를 찾아 10B/12B 추가, 그리고 2026 회차의 공개 MAA 점수·학년·문항 응답 자료를 모집단을 구분해 보강하는 일이다. 원본 링크와 연도별 이력은 `boarding-school-math/competition/amc-original-source-catalog.csv`, `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 있다.
 - 268행 카탈로그 CSV 파싱 및 중복 회차 검사를 통과했다. 일곱 PDF/키 URL 모두 HTTP 200이며 CRLF CSV를 고려한 `git -c core.whitespace=cr-at-eol diff --check`가 통과했다. `raw_youtube.txt`는 보존하고 이번 커밋에서 제외한다.
+
+### 2026-11-08 · 웹 검색: AMC 8 최신 학년별 비교 출처 확인
+
+- 2023–2026 MAA AMC 8 whole-cohort score report 경로를 확인했다. 연도별 전체 분포·참가자 수는 런타임 데이터에 이미 있지만, 공개 재조회에서 학년별 전국 평균·백분위 표는 회수하지 못했다. 학년별 비교 공백은 `no-grade-table-recovered`로 유지한다.
+- 2026 SMO Malaysia 수상자 목록은 이름·학년·점수가 공개된 선택형 명단이라 전체 응시자 규준으로 쓸 수 없다. 2025 Strath Haven 자료는 단일 학교 n=46의 문항별 정답수이며 grade split·오답 선택지 분포가 없다. 두 모집단을 전국/학년 자료와 혼합하지 않는다.
+- 출처 및 범위 판단을 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다. 다음 작업은 AMC 8/10/12/AIME 원본 카탈로그와 별개로 item-response coverage 미회수 연도를 순서대로 검색하고, 온전한 연도·시험형 전체 표를 발견한 경우만 대조·등록하는 것이다. `raw_youtube.txt`는 건드리지 않고 push·배포·Drive 동기화는 하지 않는다.
