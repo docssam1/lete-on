@@ -475,6 +475,32 @@
 23,C,4.19,12.95,10.15,10.35,3.34,58.99,0.03
 24,B,3.56,6.68,7.49,7.12,3.15,71.96,0.02
 25,A,4.04,5.48,6.09,4.74,3.07,76.56,0.02`.trim(), respondentCount: 66591, population: "2015 AMC 10A global response cohort", sourceUrl: "https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf", sourceStatus: "99CEF 2015 analysis report; printed p.11 Global item-response table recovered from the preserved original PDF and checked against the rendered page with Apple Vision OCR; all correct answers cross-checked with LIVE. Source reconciliation warning: the printed response rates imply 69.47/150, while the report summary gives 73.59/150 (4.12-point difference); use only as item-response context, not a score norm." }),
+    "amc10-2015-A-taiwan": Object.freeze({ raw: `
+1,C,1.89,0.94,94.28,1.85,0.71,0.33,0.00
+2,D,0.81,0.31,0.63,97.11,0.65,0.49,0.00
+3,D,0.18,0.75,2.26,95.87,0.85,0.10,0.00
+4,B,0.88,76.17,1.63,9.87,9.46,1.99,0.00
+5,E,0.28,2.48,0.35,0.75,95.58,0.55,0.02
+6,B,0.49,96.09,0.51,0.77,0.53,1.61,0.00
+7,B,2.46,96.44,0.24,0.14,0.47,0.26,0.00
+8,B,5.56,81.34,1.04,6.84,2.02,3.18,0.00
+9,D,4.40,7.02,15.02,58.99,6.51,8.06,0.00
+10,C,9.30,19.17,46.59,8.91,14.25,1.79,0.00
+11,C,0.39,0.59,93.95,1.00,0.83,3.24,0.00
+12,C,7.35,5.56,45.80,3.54,4.23,33.52,0.00
+13,C,5.33,5.54,45.21,8.71,13.78,21.35,0.08
+14,C,1.32,8.69,7.63,75.82,2.75,3.79,0.00
+15,B,27.13,16.10,4.89,3.20,11.93,36.74,0.00
+16,B,7.21,12.60,15.27,15.06,4.62,45.21,0.02
+17,D,3.93,8.16,6.37,22.78,8.12,50.62,0.02
+18,E,7.21,7.59,8.14,4.46,11.15,61.45,0.00
+19,D,4.62,4.54,3.30,16.26,38.75,32.47,0.06
+20,B,13.51,41.36,3.91,7.75,3.18,30.25,0.04
+21,C,4.29,3.26,9.46,3.11,14.04,65.80,0.06
+22,A,8.63,11.05,13.47,8.77,3.97,54.10,0.02
+23,C,5.50,17.04,11.64,15.86,3.89,46.06,0.00
+24,B,4.32,8.49,8.26,5.92,2.38,70.59,0.04
+25,A,6.61,4.80,7.88,4.72,3.38,72.62,0.00`.trim(), respondentCount: 5087, population: "2015 AMC 10A Taiwan response cohort", sourceUrl: "https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf", sourceStatus: "Source reconciliation warning: 99CEF 2015 analysis report, printed p.12 Taiwan item-response table; all correct-answer marks cross-checked with LIVE. Printed response rates imply mean 81.46/150 under the published scoring rule, versus 84.52 reported on p.6; display item-response context only, not a score norm." }),
     "amc12-2015-A": Object.freeze({ raw: `
 1,C,2.20,1.52,90.80,3.79,0.90,0.78,0.01
 2,E,4.47,1.05,0.75,1.19,83.25,9.27,0.02
