@@ -1,4 +1,4 @@
-import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261107-current-bank-workbook';
+import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-electricity-pair-language';
 import{workbook as currentWorkbook}from'../data/book/c22-s62-u01.workbook.js?v=20261106-season-readable-workbook';
 import{seasonReadableCurrentItems}from'../data/book/c22-s62-u01.editorial.js?v=20261106-season-readable-workbook';
 import{bankBook}from'../data/book/c22-s62-u01.bank-book.js';

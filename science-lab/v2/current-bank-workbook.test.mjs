@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {currentBankWorkbook,CURRENT_BANK_WORKBOOK_VERSION} from './current-bank-workbook.js';
+import {ELECTRICITY_PAIR_LANGUAGE_VERSION} from './electricity-pair-language.js';
 import {revisedClassroom} from './revised-lesson.js';
 import {gradeDaily} from './daily-grade.js';
 import {questionAtVersion,restoreDailyQuestions} from './question-revision.js';
@@ -12,8 +13,8 @@ const cases=await Promise.all(specs.map(async([name,cap,unit,count])=>{
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clone=value=>structuredClone(value);
 
-test('five independent print books use all 640 current workbook questions and retain 237 actual independent pairs',()=>{
- let matched=0,paired=0;
+test('five print books use640 current workbook questions, retain237 pair IDs and show58 revised electricity pairs',()=>{
+ let matched=0,paired=0,revisedPairs=0;
  for(const c of cases){
   const before=clone(c.prior),itemsBefore=clone(c.items),bookBefore=clone(c.workbook),byItem=new Map(c.items.map(q=>[q.id,q]));
   assert.equal(c.current.presentationVersion,CURRENT_BANK_WORKBOOK_VERSION);assert.equal(c.current.questions.length,c.count);
@@ -22,7 +23,14 @@ test('five independent print books use all 640 current workbook questions and re
    const old=c.prior.questions[i],q=c.current.questions[i],item=byItem.get(old.sourceItemId),w=c.workbook.questions.find(w=>w.id===old.sourceBookQuestionId);
    assert.equal(q.id,old.id);assert.equal(q.no,old.no);assert.equal(q.sourceItemId,old.sourceItemId);assert.equal(q.sourceBookQuestionId,old.sourceBookQuestionId);assert.deepEqual(q.sourceRef,old.sourceRef);
    if(item?.sourceRef?.type==='authored-pair'){
-    paired++;assert.equal(q,old);if(old.figure)assert.equal(c.current.figures[old.figure],c.prior.figures[old.figure]);continue;
+    paired++;
+    if(item.contentVersion===ELECTRICITY_PAIR_LANGUAGE_VERSION){
+     revisedPairs++;assert.notEqual(q,old);assert.equal(q.contentVersion,item.contentVersion);
+     for(const key of ['prompt','choices','explanation','responseContract','answerContract'])assert.deepEqual(q[key]??null,item[key]??null);
+     assert.deepEqual(q.given,Object.entries(item.givens||{}).filter(([,v])=>typeof v==='string').map(([key,value])=>key+': '+value));
+     if(old.figure){const expected=old.id==='c22-s62-u03-v049'?c.prior.figures[old.figure].replace('2개를 서로 돕는 한 줄로 연결','2개를 직렬연결'):c.prior.figures[old.figure];assert.equal(c.current.figures[old.figure],expected);}
+    }else{assert.equal(q,old);if(old.figure)assert.equal(c.current.figures[old.figure],c.prior.figures[old.figure]);}
+    continue;
    }
    assert(w);matched++;
    for(const key of ['prompt','choices','given','givens','parts','options','table','figure','answer','responseContract','requirements','criteria','explanation','misconception','drawing','drawingSpaceMinimumMm','drawingExplanationLines'])assert.deepEqual(q[key],w[key],c.unit+' '+w.no+' '+key);
@@ -31,7 +39,7 @@ test('five independent print books use all 640 current workbook questions and re
   }
   assert.deepEqual(currentBankWorkbook(c.prior,c.workbook,c.items),c.current);assert.deepEqual(c.prior,before);assert.deepEqual(c.items,itemsBefore);assert.deepEqual(c.workbook,bookBefore);
  }
- assert.equal(matched,640);assert.equal(paired,237);
+ assert.equal(matched,640);assert.equal(paired,237);assert.equal(revisedPairs,58);
 });
 
 test('all five actual print renderers show current student text, keys, explanations and 877 quick answers',()=>{

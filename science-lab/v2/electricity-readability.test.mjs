@@ -1,3 +1,4 @@
+import {electricityPairCurrentItems} from './electricity-pair-language.js';
 import test from 'node:test';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {items,source,similar} from '../data/units/c22-s62-u03.js';import * as misc from '../data/units/c22-s62-u03.misc.js';
 import {electricityCurrentItems} from './electricity-question-language.js';
@@ -40,6 +41,6 @@ test('current sample wording and conditions retain strict automatic grading',()=
  for(const html of Object.values(workbook.figures).filter(x=>x.includes('electricity-quick-grid')))for(const m of html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[^<]*<\/td><td>([\s\S]*?)<\/td><\/tr>/g)){const q=workbook.questions[Number(m[1])-1];if(q.responseContract.kind==='single-choice')assert([q.answer,'①②③④⑤'[q.key]].includes(m[2]));else if(!['written','draw'].includes(q.form))assert.equal(m[2],q.answer);}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,current);assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===ELECTRICITY_READABILITY_VERSION).length,14);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,electricityPairCurrentItems(current,unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===ELECTRICITY_READABILITY_VERSION).length,14);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/electricity-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,118);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

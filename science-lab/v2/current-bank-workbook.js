@@ -1,6 +1,7 @@
+import{electricityPairPrintQuestion,electricityPairPrintFigures}from'./electricity-pair-language.js?v=20261108-electricity-pair-language';
 // 별도 문항집 인쇄에도 현재 교재와 연습의 원고를 쓴다.
 // 원문·독립 짝은 실제 문항 ID로 구별하며 과거 문항/저장 답안은 고치지 않는다.
-export const CURRENT_BANK_WORKBOOK_VERSION='20261107-current-bank-workbook';
+export const CURRENT_BANK_WORKBOOK_VERSION='20261108-current-bank-workbook-pairs';
 const clone=value=>structuredClone(value);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -13,6 +14,7 @@ export function currentBankWorkbook(priorBook,workbook,items){
  const seen=new Set();
  const questions=priorBook.questions.map(old=>{
   const current=byItem.get(old.sourceItemId);
+  if(current?.sourceRef?.type==='authored-pair')return electricityPairPrintQuestion(old,current);
   if(current?.status!=='authored'||current.sourceRef?.type!=='authored-supplement')return old;
   const q=byQuestion.get(current.bookQuestionId);
   if(!q||q.id!==old.sourceBookQuestionId)return old;
@@ -27,7 +29,7 @@ export function currentBankWorkbook(priorBook,workbook,items){
   return next;
  });
  if(seen.size!==workbook.questions.length)throw Error('현재 교재와 연결되지 않은 인쇄 문항이 있습니다.');
- const figures={...priorBook.figures,...workbook.figures},byNumber=new Map(questions.map(q=>[q.no,q])),quickSeen=new Set();
+ const figures=electricityPairPrintFigures({...priorBook.figures,...workbook.figures},questions),byNumber=new Map(questions.map(q=>[q.no,q])),quickSeen=new Set();
  const quickKeys=new Set(priorBook.quickPages.flatMap(page=>page.blocks.filter(b=>b.type==='diagram').map(b=>b.key)));
  for(const key of quickKeys){
   if(typeof figures[key]!=='string')throw Error('문항집 빠른 정답표가 없습니다.');
