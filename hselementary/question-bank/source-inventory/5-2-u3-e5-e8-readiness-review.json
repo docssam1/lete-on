@@ -1331,17 +1331,18 @@
     "sourceItemCount": 44,
     "directlyReviewedCount": 44,
     "publicCandidateCount": 0,
-    "lockedCount": 44,
+    "lockedCount": 37,
+    "publicCount": 7,
     "calculationCheckedCount": 44,
     "nonUniqueCount": 0,
-    "constructionOrEnumerationLockedCount": 44,
+    "constructionOrEnumerationLockedCount": 37,
     "notes": [
       "E5~E8은 각각 개념탐구 1개, 예제 4개, Mission 6개로 기록했습니다.",
       "E8 Mission 6은 일렬의 꽃이 아닌 원형 꽃잎 13개 게임입니다. 나중 사람이 이기지만 첫 수가 1개인지 2개인지에 따라 첫 대응 개수가 달라집니다. 원문 빈칸과 공식 답안 대조는 남았습니다.",
       "개념탐구 5·6, 예제 5-2·5-3·5-4, Mission 1~6과 예제 6-3의 독립 계산 또는 작도를 확인했습니다. 나머지는 원본 그림·작도·전수 열거·전략 검수가 남아 있습니다.",
       "개념탐구 5의 기존 독립 계산 5가지는 오류여서 재검산 결과 10가지로 수정했습니다. 연필 필기는 근거로 사용하지 않았으며 공식 답안은 미대조입니다.",
       "원문 그림 문항은 원본 점·선·대칭축·방향을 확인한 뒤 별도 구현 단계에서 처리해야 합니다.",
-      "독립 계산을 마친 항목도 공식 답안 미대조인 원문은 잠금으로 기록하며, 별도 검증된 창작 연습의 공개 상태와 구분합니다."
+      "원문 공개 7개와 잠금 37개를 항목별 상태로 구분합니다. 공개 문항의 출판사 공식 답안 확인 여부와 창작 연습의 공개 상태는 각각 따로 확인합니다."
     ]
   }
 }
