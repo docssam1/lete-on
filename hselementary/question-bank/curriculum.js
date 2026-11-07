@@ -2268,6 +2268,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
+  if (source52CuboidViewPractice && !source52CuboidViewPractice.types.some(t=>t.id==="5-2-u5-e3-opposite-products-similar")) {
+    const id="5-2-u5-e3-opposite-products-similar",name="마주 보는 면의 곱 중 가장 큰 수 · 조건변형";
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52CuboidViewPractice.types.push({id,number:source52CuboidViewPractice.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u5-e3-mission-3",sourceParentItemIds:["5-2-u5-e3-mission-3","5-2-u5-practice-46-original"],sourceItemLabel:"53쪽 미션 3·113쪽 46번 조건변형",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:49,alternateSourcePdfPage:48,sourcePrintedPage:53,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5OppositeProductsSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"두 원문 전개도에서 마주 보는 면 관계를 접기 좌표로 검증하고 세 곱의 최댓값을 독립 계산했습니다."});
+  }
+
   if (source52CuboidViewPractice && !source52CuboidViewPractice.types.some(t=>t.id==="5-2-u5-practice-44-clarified-similar")) {
     const id="5-2-u5-practice-44-clarified-similar",name="오른쪽 면을 밝힌 정육면체 무늬 · 유사문항";
     const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
@@ -4389,7 +4395,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u5","5-2-u5-t6-4","5-2-u5-practice-62-top-similar"],
     ["5-2-u5","5-2-u5-t6-3","5-2-u5-practice-62-paths-similar"],
     ["5-2-u5","5-2-u5-t6-2","5-2-u5-practice-62-opposite-similar"],
-    ["5-2-u5","5-2-u5-t6-5","5-2-u5-practice-62-two-route-sums-similar"]
+    ["5-2-u5","5-2-u5-t6-5","5-2-u5-practice-62-two-route-sums-similar"],
+    ["5-2-u5","5-2-u5-t3-4","5-2-u5-e3-opposite-products-similar"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
