@@ -1,4 +1,4 @@
-import{GRADE3_PRACTICE_LANGUAGE_VERSION,GRADE3_PRACTICE_UNITS}from'../data/book/c22-s32-practice-language.js?v=20261108-grade3-practice-language';
+import{GRADE3_PRACTICE_LANGUAGE_VERSION,GRADE3_PRACTICE_UNITS}from'../data/book/c22-s32-practice-language.js?v=20261108-grade3-material-language';
 import{LAND_REASONING_VERSION}from'../data/book/s41-u03.editorial.js?v=20261105-land-learner-reasoning';
 import{EARTH_SEA_ELEMENTARY_VERSION}from'../data/book/c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary';
 import{WATER_REASONING_VERSION}from'../data/book/s41-u02.editorial.js?v=20261105-water-learner-reasoning';

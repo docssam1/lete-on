@@ -1,3 +1,4 @@
+import {materialEarthCurrentItems} from '../data/book/material-earth-student-language.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -11,20 +12,21 @@ import {gradeDaily} from './daily-grade.js';
 import {questionAtVersion,restoreDailyQuestions,restartCurrentQuestion} from './question-revision.js';
 
 const cases=[
- {unit:'c22-s32-u03',prior:'soundElementaryPriorWorkbook',wbChanges:40,bankCount:76,bankChanges:32},
- {unit:'c22-s32-u04',prior:'infectionElementaryPriorWorkbook',wbChanges:35,bankCount:92,bankChanges:34},
+ {unit:'c22-s32-u01',prior:'materialElementaryPriorWorkbook',wbChanges:36,bankCount:76,bankChanges:32,classChanges:4,linked:40},
+ {unit:'c22-s32-u03',prior:'soundElementaryPriorWorkbook',wbChanges:40,bankCount:76,bankChanges:32,classChanges:8,linked:54},
+ {unit:'c22-s32-u04',prior:'infectionElementaryPriorWorkbook',wbChanges:35,bankCount:92,bankChanges:34,classChanges:8},
 ];
 const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','contentVersion','previousVersions'].includes(key)));
 const escape=text=>text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function priorBank(unit){
- const names=['lesson','base','similar','taxonomy','misc',...(unit==='c22-s32-u03'?['source']:[])];
+ const names=['lesson','base','similar','taxonomy','misc',...(unit!=='c22-s32-u04'?['source']:[])];
  const mods=Object.fromEntries(await Promise.all(names.map(async name=>[name,await import('../data/units/'+unit+(name==='base'?'':'.'+name)+'.js')])));
- const mod=await withThink(unit,{...mods.lesson,...mods.base,...mods.similar,...mods.taxonomy,...(mods.source||{source:[]}),misc:mods.misc});
- return unit==='c22-s32-u03'?ecologySoundCurrentItems(mod.items,unit):mod.items;
+ const mod=await withThink(unit,{...(unit==='c22-s32-u01'?{...mods.base,...mods.lesson}:{...mods.lesson,...mods.base}),...mods.similar,...mods.taxonomy,...(mods.source||{source:[]}),misc:mods.misc});
+ return unit==='c22-s32-u01'?materialEarthCurrentItems(mod.items,unit):unit==='c22-s32-u03'?ecologySoundCurrentItems(mod.items,unit):mod.items;
 }
 async function actualBank(unit){
  const source=await readFile(new URL('./v2.js',import.meta.url),'utf8');
- const line=source.split('\n').find(line=>line.includes("'"+unit+"':async()=>"));
+ const line=source.split('\n').find(line=>new RegExp("'"+unit+"':\\s*async\\s*\\(").test(line));
  const body=line.slice(line.indexOf('async()=>')).replace(/,$/,'');
  return new vm.Script('('+body+')',{importModuleDynamically:s=>import(new URL(s,new URL('./v2.js',import.meta.url)).href)}).runInContext(vm.createContext({withThink}))();
 }
@@ -71,13 +73,13 @@ for(const c of cases){
   assert.equal(grade3PracticeCurrentItems(before,'other-unit'),before);
  });
  test(unit+' classroom and bank share revised wording and original response contracts',async()=>{
-  const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items}=await actualBank(unit);
-  const bank=new Map(items.map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,12);
-  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===VERSION).length,8);
+  const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items,source=[],similar=[]}=await actualBank(unit);
+  const bank=new Map([...source,...similar,...items].map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,12);
+  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===VERSION).length,c.classChanges);
   for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
   const {workbook}=await import('../data/book/'+unit+'.workbook.js');
-  if(unit==='c22-s32-u03'){
-   const linked=workbook.questions.filter(q=>q.sourceId);assert.equal(linked.length,54);
+  if(unit!=='c22-s32-u04'){
+   const linked=workbook.questions.filter(q=>q.sourceId);assert.equal(linked.length,c.linked);
    for(const q of linked)assert.equal(q.prompt,bank.get(q.sourceId).prompt);
    const source=(await import('../data/units/'+unit+'.source.js')).source;
    assert.equal(source.length,70);assert.equal(grade3PracticeCurrentItems(source,unit),source);
