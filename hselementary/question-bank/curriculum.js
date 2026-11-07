@@ -2630,6 +2630,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
 
   const source52Dice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s5");
+  if (source52Dice && !source52Dice.types.some(t=>t.id==="5-2-u5-practice-62-opposite-similar")) {
+    const id="5-2-u5-practice-62-opposite-similar",name="굴린 윗면 기록으로 마주 보는 면 찾기 · 조건변형";
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Dice.types.push({id,number:source52Dice.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u5-practice-62-original",sourceItemLabel:"확인학습 62번 조건변형 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:109,alternateSourcePdfPage:110,sourcePrintedPage:115,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5RollOppositeSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 주사위 굴리기 구조에서 면 배치와 경로를 바꾸고 관찰한 윗면으로 마주 보는 면을 추론하도록 구성하여 모든 면 배치를 독립 열거했습니다."});
+  }
+
   if (source52Dice && !source52Dice.types.some(t=>t.id==="5-2-u5-practice-62-paths-similar")) {
     const id="5-2-u5-practice-62-paths-similar",name="세 경로에서 마지막 바닥면의 합 · 조건변형";
     const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
@@ -4375,7 +4381,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u6","5-2-u6-t4-4","5-2-u6-e4-mission-1-same-choice-similar"],
     ["5-2-u6","5-2-u6-t4-5","5-2-u6-e4-mission-2"],
     ["5-2-u5","5-2-u5-t6-4","5-2-u5-practice-62-top-similar"],
-    ["5-2-u5","5-2-u5-t6-3","5-2-u5-practice-62-paths-similar"]
+    ["5-2-u5","5-2-u5-t6-3","5-2-u5-practice-62-paths-similar"],
+    ["5-2-u5","5-2-u5-t6-2","5-2-u5-practice-62-opposite-similar"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
