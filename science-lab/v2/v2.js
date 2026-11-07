@@ -19,7 +19,7 @@ import {conceptCardsHtml} from './concept-cards.js';
 import { bankLabel, groupLabel, examHeading, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
 import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeacherReview,needsSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js?v=20261108-source-schema';
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js?v=20261104-energy-class';
-import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js?v=20261104-season-book';
+import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js?v=20261108-source-writing';
 import { readingHtml } from './reading.js';
 import { practicePaperHtml } from './practice-paper.js';
 import { wireReading } from './reading-live.js';

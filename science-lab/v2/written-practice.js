@@ -1,6 +1,6 @@
 // 학습용 서술형: 쓰기 → 기기 안에서 판정(v2/judge.js + data/units/<u>.judge.js) → 풀이. 저장·전송하지 않는다.
 // 아이에게 "예시 답과 비슷한가요?"를 맡기지 않는다(원장 2026-09-30). 규칙으로 가릴 수 없는 답·종이 답은 선생님 확인.
-import { judgeText,judgeItem } from './judge.js?v=20261104-season-book';
+import { judgeText,judgeItem } from './judge.js?v=20261108-source-writing';
 import {contentUnitOfItem} from './content-unit.js';
 import { loadJudge } from './think-merge.js';
 const TABLES = new Map();
@@ -57,7 +57,7 @@ export function wireWrittenPractice(card, item) {
   const ac = item.answerContract, rb = ac.rubric;
   let built = false, tries = 0, last = null, key = null, opened = false;
   const $j = root.querySelector('.writing-judge');
-  tableFor(item.id).then((t) => { key = t?.[item.id] || null; });
+  if(!ac.sourceResponseContract)tableFor(item.id).then((t) => { key = t?.[item.id] || null; });
   const answerCopy = () => input.value.trim() ? esc(input.value.trim()) : '종이에 쓴 내 답과 나란히 비교해요.';
   const copyHtml = () => `<h4>내가 쓴 답</h4><blockquote class="writing-copy">${answerCopy()}</blockquote>`;
   function buildReview() {
@@ -97,11 +97,15 @@ export function wireWrittenPractice(card, item) {
     const text = input.value.trim();
     if (!text && paper.checked) { opened = true; say('review', '<b>종이 답은 선생님이 확인해요.</b> 풀이를 읽어 보세요.'); if (select('solution')) tabs[1].focus(); return; }
     if (!text) { status.textContent = '먼저 내 생각을 써 보세요.'; input.focus(); return; }
-    await tableFor(item.id); tries++;
-    last = (ac.motionContract||ac.plantAuthoredContract||ac.earthAuthoredContract||ac.earthMotionContract||ac.seasonContract)?judgeItem({text,ac}):judgeText(text, key, { tries }); built = false;
+    if(!ac.sourceResponseContract)await tableFor(item.id); tries++;
+    last = (ac.sourceResponseContract||ac.motionContract||ac.plantAuthoredContract||ac.earthAuthoredContract||ac.earthMotionContract||ac.seasonContract)?judgeItem({text,ac}):judgeText(text, key, { tries }); built = false;
     const r = last;
     if (r.st === 'ok') { opened = true; say('ok', '<b>✓ 맞았어요!</b> 풀이도 읽어 보세요.'); if (select('solution')) tabs[1].focus(); return; }
-    if (r.st === 'review') { opened = true; say('review', r.why === 'unsure' ? `<b>선생님이 한 번 더 볼게요.</b> 풀이를 읽고 ‘${esc(r.missing[0]?.t || '')}’이(가) 내 답에 있는지 확인해 보세요.` : '<b>잘 썼어요!</b> 이 답은 선생님이 확인할게요. 풀이도 읽어 보세요.'); if (select('solution')) tabs[1].focus(); return; }
+    if (r.st === 'review') {
+      opened = true;
+      say('review', ac.sourceResponseContract ? '<b>이 답은 선생님과 함께 확인해요.</b> 풀이도 읽어 보세요.' : r.why === 'unsure' ? `<b>선생님이 한 번 더 볼게요.</b> 풀이를 읽고 ‘${esc(r.missing[0]?.t || '')}’이(가) 내 답에 있는지 확인해 보세요.` : '<b>잘 썼어요!</b> 이 답은 선생님이 확인할게요. 풀이도 읽어 보세요.');
+      if (select('solution')) tabs[1].focus(); return;
+    }
     const hint = r.st === 'wrong' ? `<b>혹시 이렇게 생각했나요?</b> ${esc(r.wrong?.say || '')}` : `<b>${r.st === 'part' ? '좋아요, 조금만 더!' : '다시 써 볼까요?'}</b> ${esc(r.missing[0]?.ask || '문제가 묻는 것을 다시 읽어 봐요.')}`;
     if (tries < 2) { say(r.st, hint); input.focus(); return; }
     opened = true; say(r.st, `${hint} 풀이를 읽고 빠진 생각을 확인해 보세요.`); if (select('solution')) tabs[1].focus();

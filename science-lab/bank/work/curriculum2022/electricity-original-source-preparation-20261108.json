@@ -1,10 +1,10 @@
 {
-  "phase": 345,
+  "phase": 346,
   "date": "2026-11-08",
   "unit": "c22-s62-u03",
-  "scope": "Private electricity original text70 and source figure22 preparation; current core58/excluded12 preserved. Current source schema, runtime connection and actual UI verification remain pending.",
-  "priorLocalCommit": "9b16c25a3d72d8688f7acf017c90a1726390c4aa",
-  "reviewParent": "545c16bfa4e803124ccabb7d3ba00695edeb6be9",
+  "scope": "Private electricity core58 source schema and native input/grading/snapshot paths prepared; public shared writing now honors source review contracts. Source runtime registration and actual UI verification remain pending.",
+  "priorLocalCommit": "f3f372fac66e24342cd7351d1b9d06df3032f959",
+  "reviewParent": "70b21b76e817caf400ce0d0310745618960446a2",
   "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
   "textPreparation": {
     "items": 70,
@@ -124,17 +124,17 @@
     "currentOriginalQuestions": 1512,
     "pendingOriginalUnits": 9,
     "pendingUnitCurrentPracticeItems": 1253,
-    "currentInputSchemaPrepared": false,
-    "productFilesChanged": false,
-    "productTestsRerun": false,
+    "currentInputSchemaPrepared": true,
+    "productFilesChanged": true,
+    "productTestsRerun": true,
     "latestRelatedProductChecks": {
-      "phase": 344,
-      "testFiles": 6,
-      "tests": 85,
-      "pass": 85,
+      "phase": 346,
+      "testFiles": 246,
+      "tests": 1364,
+      "pass": 1362,
       "fail": 0,
-      "skip": 0,
-      "historicalNotRerun": true
+      "browserSkipped": 2,
+      "historicalNotRerun": false
     },
     "previousFullProductSuite": {
       "phase": 343,
@@ -145,8 +145,8 @@
       "browserSkipped": 2,
       "historicalNotRerun": true
     },
-    "newFinalPrivateImages": 22,
-    "newPreservedPrivateCropCopies": 3,
+    "newFinalPrivateImages": 0,
+    "newPreservedPrivateCropCopies": 0,
     "newPublicImages": 0,
     "newPdfFiles": 0,
     "newSourceDownloads": 0,
@@ -159,5 +159,279 @@
     "deployed": false,
     "releaseReady": false,
     "goalAchieved": false
+  },
+  "previousPreparationRecords": [
+    {
+      "phase": 345,
+      "date": "2026-11-08",
+      "unit": "c22-s62-u03",
+      "scope": "Private electricity original text70 and source figure22 preparation; current core58/excluded12 preserved. Current source schema, runtime connection and actual UI verification remain pending.",
+      "priorLocalCommit": "9b16c25a3d72d8688f7acf017c90a1726390c4aa",
+      "reviewParent": "545c16bfa4e803124ccabb7d3ba00695edeb6be9",
+      "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+      "textPreparation": {
+        "items": 70,
+        "core": 58,
+        "excludedLampConnection": 12,
+        "sets": [
+          15,
+          15,
+          20,
+          20
+        ],
+        "questionPages": 16,
+        "answerPages": 7,
+        "priorDirectSourcePageReview": 23,
+        "priorSourceOcrPages": 23,
+        "priorSourceOcrObservations": 1060,
+        "printedExplanations": 70,
+        "printedRubrics": 8,
+        "sharedGroups": 5,
+        "typedTables": 1,
+        "figureAnnotations": 4,
+        "closedAnswerContractsCompared": 49,
+        "teacherReviewOnlyContracts": 9,
+        "responseContractKindsChecked": {
+          "single-choice": 29,
+          "unordered-labels": 2,
+          "written-explanation": 9,
+          "short-text": 15,
+          "multi-choice": 2,
+          "ordered-label-sequence": 1
+        },
+        "standardCountsByExistingLocalTaxonomy": {
+          "6과15-01": 20,
+          "6과15-02": 7,
+          "6과15-04": 9,
+          "6과15-03": 22
+        },
+        "mappingPrintedOnSource": false,
+        "explanationContinuationsPreserved": 2,
+        "nextPageRubricPreserved": 1,
+        "crossPageSharedFigurePreserved": true,
+        "priorInventoriedPdfHashesMatched": 9,
+        "questionAndAnswerPdfHashesMatched": 8,
+        "priorFrozenInputHashesPreserved": 1225,
+        "privateTranscriptionSha256": "f7a67da2da3355ddc2879495e79df63f34481f6646cdef886a2ed86af8b6255a"
+      },
+      "figurePreparation": {
+        "privateFigures": 22,
+        "currentCoreRequiredFigures": 16,
+        "excludedOnlyFigures": 6,
+        "sourceQuestionPdfsRendered": 4,
+        "sourceQuestionPagesRendered": 13,
+        "nativeRenderDpi": 260,
+        "sourcePagePixels": [
+          1469,
+          1900
+        ],
+        "displayedSourcePagePixels": [
+          1376,
+          1779
+        ],
+        "nativeRenderedPixels": [
+          2210,
+          2860
+        ],
+        "existingPngsNotUpscaledForProduction": true,
+        "sourceCropsNotResizedAfterNativeRender": true,
+        "nativePixelComparisonsPassed": 22,
+        "outerEdgeChecksPassed": 22,
+        "manualFigureReviews": 22,
+        "privateAlts": 22,
+        "cropCorrections": 3,
+        "initialCropsPreserved": 3,
+        "currentCoreFigureQuestions": 18,
+        "currentCoreTextOrTableQuestions": 40,
+        "excludedFigureQuestions": 9,
+        "excludedTextOrTableQuestions": 3,
+        "privateManifestSha256": "0f3834533ef86250e4b472d7a5789b85ac40da540970d85a043052ede4decfe8"
+      },
+      "appleVision": {
+        "engine": "VNRecognizeTextRequest",
+        "computePolicy": "CPU-only",
+        "languages": [
+          "ko-KR",
+          "en-US"
+        ],
+        "recognitionLevel": "accurate",
+        "languageCorrection": false,
+        "figures": 22,
+        "observations": 34,
+        "zeroObservationFigures": 13,
+        "zeroObservationWithPrintedRowLabels": 8,
+        "zeroObservationWithPolaritySymbolsOnly": 5,
+        "trulyTextOrSymbolFreeFigures": 0,
+        "manualOriginalComparisonCompleted": true,
+        "ocrIsGroundTruth": false,
+        "existingLocalToolReused": true
+      },
+      "preservation": {
+        "sourceScopeChanged": false,
+        "currentLegacyHoldsRetained": 3,
+        "earlierFirstQuestionHoldReleasePreserved": true,
+        "officialSourceOrKeysModified": false,
+        "olderPrivateDraftsAndContractsUnchanged": true,
+        "allCurrentCoreFiguresSeparatedFromExcludedFigures": true,
+        "sourceMaterialOrderPreserved": true,
+        "compassNeedleLabelsNotRecastAsElectromagnetAnswers": true
+      },
+      "delivery": {
+        "sourceTextPublished": false,
+        "officialAnswersPublished": false,
+        "ocrContentsPublished": false,
+        "sourceFiguresPublished": false,
+        "privateAltsPublished": false,
+        "runtimeOriginalItemsAdded": 0,
+        "currentOriginalUnits": 23,
+        "currentOriginalQuestions": 1512,
+        "pendingOriginalUnits": 9,
+        "pendingUnitCurrentPracticeItems": 1253,
+        "currentInputSchemaPrepared": false,
+        "productFilesChanged": false,
+        "productTestsRerun": false,
+        "latestRelatedProductChecks": {
+          "phase": 344,
+          "testFiles": 6,
+          "tests": 85,
+          "pass": 85,
+          "fail": 0,
+          "skip": 0,
+          "historicalNotRerun": true
+        },
+        "previousFullProductSuite": {
+          "phase": 343,
+          "testFiles": 246,
+          "tests": 1363,
+          "pass": 1361,
+          "fail": 0,
+          "browserSkipped": 2,
+          "historicalNotRerun": true
+        },
+        "newFinalPrivateImages": 22,
+        "newPreservedPrivateCropCopies": 3,
+        "newPublicImages": 0,
+        "newPdfFiles": 0,
+        "newSourceDownloads": 0,
+        "paidApiCalls": 0,
+        "keychainReads": 0,
+        "driveWrites": 0,
+        "cleanupActions": 0,
+        "actualBrowserVerified": false,
+        "mainMerged": false,
+        "deployed": false,
+        "releaseReady": false,
+        "goalAchieved": false
+      }
+    }
+  ],
+  "responseSchemaValidation": {
+    "phase": 346,
+    "privateSourceItems": 58,
+    "automatic": 49,
+    "teacherReview": 9,
+    "coreLegacyHolds": 3,
+    "ordinaryWrittenReview": 6,
+    "sourceFigureBindings": 16,
+    "sourceFigureQuestions": 18,
+    "sourceFigureOccurrences": 18,
+    "choiceTables": 0,
+    "sourceDataTables": 0,
+    "orderedTermContracts": 0,
+    "unorderedLabelContracts": 2,
+    "orderedLabelContracts": 1,
+    "gradingCases": 975,
+    "snapshotCases": 464,
+    "actualDailyGradeRows": 58,
+    "progressRecords": 49,
+    "teacherQueueRecords": 9,
+    "actualLessonResponseCases": 36,
+    "actualHeldLessonChoiceCases": 10,
+    "actualHeldLessonShortCases": 2,
+    "inputHashesPreserved": 1248,
+    "sourceCandidateUnmutated": true,
+    "originalFiveChoiceQuestionsPreserved": true,
+    "symbolSelectionRemainsWrittenSymbols": true,
+    "nativeActualRenderFunctionsExecuted": true,
+    "actualBrowserRuntime": false,
+    "runtimeOriginalsAdded": 0,
+    "privateContentsPublished": false,
+    "releaseReady": false,
+    "candidateSha256": "6e6cac0363ac1e9741df8646126ce333a8b706cce636279621f3b9e228374b77",
+    "moduleSha256": "38d5fd39c0f29ddd45123041519f83dd9c4cb36bbd6dce6c8a3e3ef01e375cb4"
+  },
+  "sourceWritingCorrectionValidation": {
+    "phase": 346,
+    "sourceWrittenQuestions": 11,
+    "actualWritingButtonCases": 44,
+    "perUnitWrittenQuestions": {
+      "c22s62u02": 5,
+      "c22s62u03": 6
+    },
+    "blankAnswersDoNotRevealSample": true,
+    "typedAndPaperAnswersRemainTeacherReview": true,
+    "printedSamplesNotAutomaticallyMarkedCorrect": true,
+    "legacyUnitKeyLoads": 0,
+    "actualModuleWiringExecuted": true,
+    "privateSourceObjectsUnchanged": true,
+    "actualBrowserUsed": false,
+    "sourceContentsPublished": false,
+    "runtimeOriginalsAdded": 0
+  },
+  "currentOriginalRegression": {
+    "phase": 346,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "priorSourceSchemaRegressions": {
+    "earth": {
+      "items": 39,
+      "gradingCases": 740,
+      "snapshotCases": 78,
+      "candidateSha256": "7476df4f72d3d6d18ec7a96a3316a178a59a06728f24197a48eef41c0cf7d5b5",
+      "moduleSha256": "aac5dd29a07393bf3d65487f88f932d555c0ac1c23853d2a1d7d7ec875eea1f6",
+      "unchanged": true
+    },
+    "season": {
+      "items": 68,
+      "gradingCases": 1025,
+      "snapshotCases": 408,
+      "candidateSha256": "bfa1b272243484cac561f585042a15f4c0efc70bf949c4f8ba488c5da3ce6ec2",
+      "moduleSha256": "188d3205f118b97fa6dc837556f05000b69f0ea4f63b21980b6f2d5f2264c095",
+      "unchanged": true
+    },
+    "combustion": {
+      "items": 49,
+      "gradingCases": 842,
+      "snapshotCases": 343,
+      "candidateSha256": "0b187f756a22bc527452ae94d87c0c68d48a93788d278289fb75be076e2fe46b",
+      "moduleSha256": "ef0199298fc325c55fe9af44d46417d4ed7d210cbd929e17ada9064cd1b5f928",
+      "unchanged": true
+    }
+  },
+  "currentNativeSuite": {
+    "testFiles": 246,
+    "tests": 1364,
+    "pass": 1362,
+    "fail": 0,
+    "browserSkipped": 2
+  },
+  "writingRegression": {
+    "reproducedBeforeFix": true,
+    "syntheticLegacyKeyProducedAutomaticPassBeforeFix": true,
+    "sourceContractOverridesLegacyUnitKey": true,
+    "noLegacyKeyLoadForSourceWriting": true,
+    "ordinaryWritingKeepsLegacyKeyBehavior": true,
+    "reviewMessageDoesNotPrejudgeCorrectness": true
   }
 }
