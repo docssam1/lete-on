@@ -198,6 +198,51 @@ body.academy-page.page-paper-review { color: #182230; background: #f5f6f8; backg
   .paper-mark-list[data-choice-entry="false"] .paper-mark-row .mark-reason { grid-column: 3; grid-row: 2; }
   .paper-mark-row select { padding-inline: 6px; }
 }
+
+/* The archive is the primary entry point before a learner has any saved marks.
+   Give it the full reading width and keep year selection separate from source actions. */
+.review-layout.is-empty .review-workspace { max-width: none; }
+.amc-archive-picker {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px 16px;
+  padding: 18px;
+  border-color: #e2d9ee;
+  background: #fcfaff;
+}
+.amc-archive-picker label { gap: 7px; font-size: .8rem; }
+.amc-archive-picker label[for="archive-year"], .amc-archive-picker label[for="archive-form"] { max-width: 360px; }
+.amc-archive-picker small { font-size: .72rem; }
+.amc-archive-picker select { border-color: #b9accd; border-radius: 8px; }
+.amc-archive-picker label[for="archive-response-population"] { grid-column: 1 / -1; }
+.archive-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.archive-actions a {
+  min-width: 0;
+  min-height: 46px;
+  padding: 9px 10px;
+  border-color: #ded5e9;
+  border-radius: 8px;
+  color: #49366a;
+  font-size: .78rem;
+  line-height: 1.35;
+}
+.archive-actions .archive-print-link { border-color: var(--review-accent); }
+.amc-archive-picker > p { font-size: .76rem; }
+@media (max-width: 700px) {
+  .archive-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) {
+  .amc-archive-picker { grid-template-columns: minmax(0, 1fr); padding: 14px; }
+  .amc-archive-picker label[for="archive-year"], .amc-archive-picker label[for="archive-form"] { max-width: none; }
+  .amc-archive-picker label[for="archive-response-population"] { grid-column: auto; }
+  .archive-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .archive-actions a { font-size: .72rem; }
+}
 .aime-cohort-reference { margin-top: 1rem; }
 .aime-cohort-band.is-reached { border-color: var(--gfield-accent, #6b4eff); background: rgba(107, 78, 255, .08); }
 .aime-cohort-reference .paper-performance-note { line-height: 1.55; }
