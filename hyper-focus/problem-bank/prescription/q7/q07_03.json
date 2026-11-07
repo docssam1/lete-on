@@ -1,0 +1,24 @@
+{
+  "same_sh": "star",
+  "same_col": "#9B59B6",
+  "diff_sh": "circle",
+  "opts": [
+    [
+      "circle",
+      "#9B59B6"
+    ],
+    [
+      "star",
+      "#9B59B6"
+    ],
+    [
+      "star",
+      "#9B59B6"
+    ],
+    [
+      "star",
+      "#9B59B6"
+    ]
+  ],
+  "diff_idx": 0
+}

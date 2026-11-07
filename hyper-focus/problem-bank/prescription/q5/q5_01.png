@@ -1,0 +1,1 @@
+$(python3 -c "import json; d=json.load(open('/tmp/pngs_b64.json')); print(d[0]['content'])")

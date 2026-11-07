@@ -1,0 +1,30 @@
+{
+  "pattern": [
+    "diamond",
+    "square"
+  ],
+  "colors": [
+    "#9B59B6",
+    "#27AE60"
+  ],
+  "period": 2,
+  "seq_len": 6,
+  "choices_raw": [
+    [
+      "diamond",
+      "#9B59B6"
+    ],
+    [
+      "star",
+      "#F39C12"
+    ],
+    [
+      "diamond",
+      "#E74C3C"
+    ],
+    [
+      "pentagon",
+      "#9B59B6"
+    ]
+  ]
+}

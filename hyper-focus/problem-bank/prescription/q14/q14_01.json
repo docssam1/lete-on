@@ -1,0 +1,11 @@
+{
+  "shape": "house",
+  "color": "#F39C12",
+  "rot": 270,
+  "opts_angles": [
+    270,
+    0,
+    90,
+    0
+  ]
+}

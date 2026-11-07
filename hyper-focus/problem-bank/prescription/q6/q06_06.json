@@ -1,0 +1,30 @@
+{
+  "target_sh": "square",
+  "target_col": "#27AE60",
+  "opts": [
+    [
+      "diamond",
+      "#27AE60",
+      0.1,
+      0
+    ],
+    [
+      "square",
+      "#9B59B6",
+      0.1,
+      0
+    ],
+    [
+      "house",
+      "#E74C3C",
+      0.1,
+      0
+    ],
+    [
+      "square",
+      "#27AE60",
+      0.1,
+      0
+    ]
+  ]
+}

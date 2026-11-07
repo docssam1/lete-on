@@ -1,0 +1,32 @@
+{
+  "shape": "house",
+  "color": "#E74C3C",
+  "mode": "flip_h",
+  "angle": 0,
+  "opts": [
+    [
+      "flip_h",
+      "house",
+      "#E74C3C",
+      0
+    ],
+    [
+      "orig",
+      "house",
+      "#E74C3C",
+      0
+    ],
+    [
+      "flip_v",
+      "house",
+      "#E74C3C",
+      0
+    ],
+    [
+      "rot90",
+      "house",
+      "#E74C3C",
+      90
+    ]
+  ]
+}

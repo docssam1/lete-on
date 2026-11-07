@@ -1,0 +1,31 @@
+{
+  "shape": "pentagon",
+  "color": "#9B59B6",
+  "angle": 45,
+  "opts": [
+    [
+      "rot90",
+      "pentagon",
+      "#9B59B6",
+      135
+    ],
+    [
+      "orig",
+      "pentagon",
+      "#9B59B6",
+      45
+    ],
+    [
+      "flip_v",
+      "pentagon",
+      "#9B59B6",
+      45
+    ],
+    [
+      "flip_h",
+      "pentagon",
+      "#9B59B6",
+      45
+    ]
+  ]
+}
