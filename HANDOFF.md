@@ -2278,6 +2278,7 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Random Math Wiki 공개 2026 AMC 10A/12A 문제·풀이 색인을 참고해 GFIELD 편집자 작성 개념 태그 50개를 연결했다. 문항 문장·선지·풀이 과정은 저장하지 않는다. 문제 리뷰 결과에는 third-party source label과 교사 검토 필요 표시가 뜬다.
 - 기존 AMC 10 창작 후속 연습은행에서 exact `sourceConcepts` 태그가 확인되는 문항은 10A 24/25, 12A 22/25다. 네 문항은 선택된 수학 영역의 일반 연습으로 이어진다. 이 비율은 연습 태그의 분류 연결 상태이며 진단 타당도/실력 등급이 아니다.
 - 파일: `competition/amc-original-item-concept-reference.js`, `competition-paper-review.js/.html`, `boarding-school-math/README.md`, `docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. JavaScriptCore에서 10A/12A 각각 25문항 모두 reference lookup, source URL, domain, label 연결을 확인했다. 정적 점검에서 exact authored-tag match는 24/25와 22/25이며, 미래 B 폼은 계속 빠져 있고 2025 참조도 그대로다. `git diff --check` 통과. 브라우저·인쇄 미리보기는 별도 미검수. 사용자 자료는 보존한다.
+- 이어서 연도/폼 선택기에서 불러오는 268회 전부(6,550문항)의 문항 개념, 공개 답안 키, 문제 형식별 문항 수를 JavaScriptCore에서 전수 대조했다. 누락 0건. 이는 메타데이터 연결 완전성을 뜻할 뿐 진단 분류의 타당성을 뜻하지 않는다. `docs/AMC_YEARLY_SOURCE_CATALOG.md`와 출처 조사 기록에 남겼다.
 
 
 ### 2026-11-08 · 웹 검색: 2026 AMC 10A·12A 원본 학습자료 링크 추가

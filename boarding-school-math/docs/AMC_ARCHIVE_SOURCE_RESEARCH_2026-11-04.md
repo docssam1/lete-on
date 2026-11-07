@@ -8,6 +8,12 @@
 
 연결 확인: 두 시험 페이지와 PDF·키 이미지 URL은 HTTP 200을 반환했다. JavaScriptCore에서 두 A형만 선택되는지, 25문항 키 및 25문항 개념 참조가 연결되는지, 인쇄·풀이·개념 출처 URL이 맞는지, 문항별 LIVE 링크가 없는지 확인한다. 실제 인쇄물의 페이지별 레이아웃 검수와 브라우저 화면 검수는 아직 하지 않았다. 다음에는 11월 13일 이후 AMC 10B/12B 원자료를 찾아 같은 방식으로 출처 확인 후 연결한다. [AMC 10A](https://www.thethinkacademy.com/blog/2026-amc-10a-problems-solutions/), [AMC 12A](https://www.thethinkacademy.com/blog/2026-amc-12a-problems-solutions/).
 
+## 연도별 AMC/AIME 문항 참조 전수대조 · 2026-11-08
+
+현재 원본 카탈로그의 회차와 런타임 폼·문항 수를 대조했다. AMC 8, AMC 10, AMC 12/AHSME, AIME 268개 회차는 총 6,550문항이며, 각 번호에 공개 답안 참조와 짧은 출처 개념 참조가 모두 있다. JavaScriptCore에서 각 회차의 기대 문항 번호 1…N을 순회한 결과 답안 누락·개념 누락·폼 문항 수 불일치가 0건이었다. 이 검사는 참조 ID 연결 여부의 증거다. 외부 종이시험에 답한 학생의 수학적 이해를 검증하거나, 개념 분류의 타당성을 승인하지 않는다.
+
+2026 AMC 10A/12A의 추가 50개 개념 태그는 [Random Math Wiki 10A](https://wiki.randommath.com/amc10/2026/part-a) 및 [12A](https://wiki.randommath.com/amc12/2026/part-a)의 공개 문제·풀이 색인을 읽고 GFIELD 편집자가 붙였다. 현재 AMC 10 창작 연습은행 태그와 직접 겹치는 10A 24문항 및 12A 22문항은 개념 연습으로 보내고, 나머지 네 문항은 수학 영역 연습으로 보낸다. 모두 교사 검토 필요 표식이며, 과목/정답률/공식 difficulty norm이나 학생 등급으로 전용하지 않는다.
+
 ### 2026 A형 성적 비교 자료 상태
 
 2026-11-08 검색에서 [MAA 공개 점수분포 페이지](https://maa.edvistas.com/eduview/report.aspx?mode=6&r433=&view=1561)는 여전히 School Year 2025/2026의 Fall 2025 AMC 10A를 가리켰고, 2026-11-05 시행 A형의 결과 분포는 확인되지 않았다. 따라서 2026 AMC 10A/12A에는 점수·상위 비율·학년 비교 등급을 임의로 붙이지 않는다. 2026–27의 고정 AIME 점수 기준은 자격 규칙일 뿐 시험 결과 분포나 학년별 등급이 아니다. MAA가 공식 결과표를 게시하면 출처·모집단·학년 구분이 확인되는 항목만 별도 연결한다.
