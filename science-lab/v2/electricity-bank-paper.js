@@ -1,5 +1,5 @@
 import{electricityPairCurrentItems}from'./electricity-pair-language.js?v=20261108-electricity-pair-language';
-import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-electricity-pair-language';
+import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-combustion-pair-language';
 import{workbook as currentWorkbook}from'../data/book/c22-s62-u03.workbook.js?v=20261106-electricity-readable-workbook';
 import{electricityReadableCurrentItems}from'../data/book/c22-s62-u03.editorial.js?v=20261106-electricity-readable-workbook';
 import{withStudentScienceLanguage}from'../data/book/student-science-language.js';
