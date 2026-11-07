@@ -2280,6 +2280,12 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 파일: `competition/amc-original-item-concept-reference.js`, `competition-paper-review.js/.html`, `boarding-school-math/README.md`, `docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. JavaScriptCore에서 10A/12A 각각 25문항 모두 reference lookup, source URL, domain, label 연결을 확인했다. 정적 점검에서 exact authored-tag match는 24/25와 22/25이며, 미래 B 폼은 계속 빠져 있고 2025 참조도 그대로다. `git diff --check` 통과. 브라우저·인쇄 미리보기는 별도 미검수. 사용자 자료는 보존한다.
 - 이어서 연도/폼 선택기에서 불러오는 268회 전부(6,550문항)의 문항 개념, 공개 답안 키, 문제 형식별 문항 수를 JavaScriptCore에서 전수 대조했다. 누락 0건. 이는 메타데이터 연결 완전성을 뜻할 뿐 진단 분류의 타당성을 뜻하지 않는다. `docs/AMC_YEARLY_SOURCE_CATALOG.md`와 출처 조사 기록에 남겼다.
 
+### 2026-11-08 · 웹 검색: 2021 Spring AMC 10/12 학년별 결과 재조사
+
+- 2021 봄 10A/10B/12A/12B의 MAA 연례 보고서·성적표 검색어, MAA `generalreports.aspx`, 공개 역사 통계를 다시 조사했다. 검색으로 회수한 Think Academy·Hanlin 자료는 회차 전체 평균 및 컷/수상 기준이며, 정확한 학년별 표본 수·평균·백분위가 아니다. MAA 보존 메뉴의 해당 봄 A/B 항목은 본문 보고서가 저장되지 않았다.
+- Grade percentile 차트는 2021 가을(C/D)로 명시되어 있어 봄(A/B)에 전용하지 않았다. 네 봄 회차의 `no-grade-table-recovered` 상태를 유지하고 근거/검색 범위를 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 남겼다.
+- 회차별 문제지·정답·풀이 연결은 학년 자료 공백과 별도로 유지된다. 다음 우선순위는 공개된 원보고서/통계의 추가 회수이며, 지역·학교 표본을 전국 또는 학년 규준으로 합치지 않는다. 사용자 원자료 `raw_youtube.txt`는 보존한다.
+
 
 ### 2026-11-08 · 웹 검색: 2026 AMC 10A·12A 원본 학습자료 링크 추가
 
