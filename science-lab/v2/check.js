@@ -1,3 +1,4 @@
+import {isStructuredSource,sourceReviewPromptHtml,sourceAnswerText} from './source-content.js?v=20261108-original-source';
 import{questionAtVersion}from'./question-revision.js?v=20261105-history-review';
 // 선생님 확인 — 스스로 공부(v2/deck.js)에서 이 기기에 남은 쓰기 답을 모아 본다(원장 2026-09-30).
 //  · 규칙으로 가리지 못한 답(도전 과제, 다른 말로 쓴 긴 답)은 「확인 필요」에 모인다. 선생님이 맞음/다시 쓰기와 한마디를 남기면
@@ -53,7 +54,7 @@ export function lookupRecordQuestion(r, ch, similar) {
   if (r.k === 'daily') {   // Daily Test(v2/daily.js)에서 규칙으로 못 가린 답
     const candidate=similar.find((x)=>x.id===r.item)||similar.find((x)=>r.slide===`daily-${x.id}`||r.slide?.startsWith(`daily-${x.id}:paper:`)),it=recordItem(r,candidate),ac=it?.answerContract;
     const a = !ac ? '' : ac.type === 'written-explanation' ? ac.sample : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(' · ') : ac.answer;
-    return { q: it?.prompt||missingQuestion, a, where: ch.assessment ? '학기 평가' : 'Daily Test' };
+    return { q: it?.prompt||missingQuestion, a:isStructuredSource(it)?sourceAnswerText(it):a, ...(isStructuredSource(it)?{sourceHtml:sourceReviewPromptHtml(it),answerLabel:it.sourceRef.reviewOnly?'확인할 점':'예시 답',printedA:it.sourceRef.reviewOnly?sourceAnswerText(it,{printed:true}):''}:{}), where: ch.assessment ? '학기 평가' : 'Daily Test' };
   }
   return { q: r.k, a: '', where: '' };
 }
@@ -92,10 +93,11 @@ export async function renderCheck($app, { units, loadUnit, only = null }) {
     const when = r.at ? new Date(r.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
     return `<article class="ck-card" data-key="${esc(key)}">
       <p class="ck-where">${esc(L.where)}${when ? ` · ${esc(when)}` : ''}${r.tries ? ` · ${r.tries}번 확인` : ''}</p>
-      <p class="ck-q">${esc(L.q)}</p>
+      ${L.sourceHtml?`<div class="ck-q">${L.sourceHtml}</div>`:`<p class="ck-q">${esc(L.q)}</p>`}
       <blockquote class="ck-a">${esc(r.text) || '<i>빈칸</i>'}</blockquote>
       <p class="ck-meta"><span class="ck-badge ${cls}">기기 판정 · ${esc(label)}</span>${t?.v ? `<span class="ck-badge ${t.v === 'ok' ? 'ok' : 'wrong'}">선생님 · ${t.v === 'ok' ? '맞음' : '다시 쓰기'}</span>` : ''}</p>
-      ${L.a ? `<details class="ck-ex"><summary>예시 답</summary><p>${esc(L.a)}</p></details>` : ''}
+      ${L.a ? `<details class="ck-ex"><summary>${esc(L.answerLabel||'예시 답')}</summary><p>${esc(L.a)}</p></details>` : ''}
+      ${L.printedA?`<details class="ck-ex"><summary>인쇄된 답 참고</summary><p>${esc(L.printedA)}</p></details>`:""}
       <div class="ck-act no-print">${t?.v ? `<span class="ck-said">${t.note ? `한마디: ${esc(t.note)}` : ''}</span><button type="button" class="btn" data-act="undo">판정 지우기</button>`
         : `<input class="ck-say" type="text" maxlength="80" placeholder="아이에게 한마디(선택)" aria-label="아이에게 한마디"><button type="button" class="btn primary" data-v="ok">맞음</button><button type="button" class="btn" data-v="redo">다시 쓰기</button>`}</div>
     </article>`;

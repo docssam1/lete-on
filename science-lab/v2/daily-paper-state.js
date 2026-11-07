@@ -1,6 +1,6 @@
 // 시험지 원고와 응답을 함께 보존한다. 기기 저장소를 읽거나 쓰지 않는 순수 함수들이다.
 const clone=x=>JSON.parse(JSON.stringify(x));
-const presentationKeys=['id','prompt','givens','choices','responseContract','answerContract','explanation','sourceRef','figure','figureNote','photoLabels','photoFigure','contentVersion','previousVersions'];
+const presentationKeys=['id','prompt','givens','choices','responseContract','answerContract','explanation','sourceRef','figure','figureNote','photoLabels','photoFigure','sourceContentVersion','sourceContextBlocks','sourceMaterialBlocks','sourceChoiceTable','printedAnswerContract','printedExplanation','printedRubric','reviewSummary','contentVersion','previousVersions'];
 const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
 const signature=questions=>JSON.stringify(canonical(questions.map(q=>Object.fromEntries(presentationKeys.filter(k=>q[k]!==undefined).map(k=>[k,q[k]])))));
 export const snapshotDailyPaper=list=>({version:1,questions:clone(list)});

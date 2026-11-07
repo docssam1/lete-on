@@ -9,8 +9,9 @@ import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 //  · 아무것도 서버로 보내지 않는다(채점 계약 승인 전 — GRADING-CONTRACT-DRAFT.md).
 import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js?v=20261104-season-book';
 import { sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
+import {isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview} from './source-content.js?v=20261108-original-source';
 import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261105-history-review';
-import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js';
+import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js?v=20261108-original-source';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CIRC = ['①', '②', '③', '④', '⑤'];
@@ -53,10 +54,11 @@ async function photoOp(op, key, val) {
 function fieldsHtml(it, v, misc) {
   const ac = it.answerContract;
   if (ac.type === 'single-choice' || ac.type === 'multi-choice') {
+    const table=sourceChoiceTableHtml(it,{mode:'daily',value:v});if(table!==null)return table;
     const sel = [].concat(v ?? []).map(String);
     return `${ac.type === 'multi-choice' ? `<p class="dt-hint">${ac.answers.length}개를 골라요.</p>` : ''}<div class="dt-choices" role="${ac.type === 'single-choice' ? 'radiogroup' : 'group'}">${it.choices.map((c, i) => `<button type="button" class="dt-choice" data-i="${i}" aria-pressed="${sel.includes(String(i))}"><i>${CIRC[i]}</i><span>${sourceChoiceHtml(it,c,i)}</span></button>`).join('')}</div>`;
   }
-  if (ac.type === 'short-text') return `${seasonAnswerHint(ac)?`<p class="dt-hint">${esc(seasonAnswerHint(ac))}</p>`:''}<input class="dt-in" data-f="text" type="text" autocomplete="off" aria-label="내 답" placeholder="답을 써요" value="${esc(v ?? '')}">`;
+  if (ac.type === 'short-text') {const hint=sourceAnswerHint(it)||seasonAnswerHint(ac);return `${hint?`<p class="dt-hint">${esc(hint)}</p>`:''}<input class="dt-in" data-f="text" type="text" autocomplete="off" aria-label="내 답" placeholder="답을 써요" value="${esc(v ?? '')}">`;}
   if (ac.type === 'written-explanation') return `<textarea class="dt-in" data-f="text" rows="4" aria-label="내 답" placeholder="까닭까지 써요">${esc(v ?? '')}</textarea>`;
   if (ac.type === 'table-fill') {
     return `<table class="dt-tbl"><thead><tr><th>${esc(ac.rowHead || '')}</th>${ac.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><th>${esc(r.label)}</th>${ac.columns.map((c, ci) => `<td><select data-r="${ri}" data-c="${ci}" aria-label="${esc(r.label)} ${esc(c)}"><option value="">고르기</option>${ac.options[c].map((o) => `<option${v?.[ri]?.[ci] === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -88,6 +90,7 @@ function formatAnswer(it, v) {
   return String(v).trim();
 }
 function formatKey(it) {
+  if(isStructuredSource(it))return sourceAnswerText(it);
   const ac = it.answerContract;
   if (ac.type === 'single-choice') return `${CIRC[ac.answer]} ${it.choices[ac.answer]}`;
   if (ac.type === 'multi-choice') return ac.answers.map((i) => `${CIRC[i]} ${it.choices[i]}`).join(' · ');
@@ -171,7 +174,7 @@ function mountDailySession(ctx,session){
   function drawQ() {
     const it = list[S.cur], ac = it.answerContract, v = S.answers[it.id], locked=paperLocked||previous(it), speakable = !locked&&['single-choice', 'short-text', 'written-explanation'].includes(ac.type);
     const unbound=paperLocked&&['unbound','unavailable'].includes(session.paper.reason),prompt=unbound?esc(it.prompt):promptHtml(it,v,misc).replace(locked?/<(input|select)\b/g:/$^/g,'<$1 disabled');
-    $q.innerHTML = `<article class="dt-qcard" data-type="${ac.type}"><header><span class="dt-num">${unboundPaper?'기록 ':''}${pad(S.cur + 1)}</span><p>${prompt}</p></header>${locked&&!paperLocked?'<p class="dt-note">수정 전 보기로 푼 기록이에요. 이전 답과 채점은 그대로 보관해요.</p><button type="button" class="btn" data-current-question>수정된 보기로 다시 풀기</button>':''}${it.sourceRef?.label ? `<p class="dt-given">${esc(sourceCaption(it.sourceRef))} · ${esc(it.sourceRef.section)}</p>` : ''}${givensHtml(it)}${figHtml(it)}${unbound?`<p class="dt-note">당시 원고가 없으므로 보관된 원고는 참고로만 보여요. 보기 문구가 함께 남지 않은 경우 고른 번호만 표시해요.</p><p class="dt-saved-answer">저장된 답: ${esc(savedAnswer(it,v))}</p>`:`${locked?'<fieldset disabled class="dt-revision-frozen">':''}${fieldsHtml(it, v, misc)}${locked?'</fieldset>':''}`}${revisionHistoryHtml(it,S.revisionHistory?.[it.id])}
+    $q.innerHTML = `<article class="dt-qcard" data-type="${ac.type}">${sourceBlocksHtml(it,"context")??""}<header><span class="dt-num">${unboundPaper?'기록 ':''}${pad(S.cur + 1)}</span><p>${prompt}</p></header>${locked&&!paperLocked?'<p class="dt-note">수정 전 보기로 푼 기록이에요. 이전 답과 채점은 그대로 보관해요.</p><button type="button" class="btn" data-current-question>수정된 보기로 다시 풀기</button>':''}${it.sourceRef?.label ? `<p class="dt-given">${esc(sourceCaption(it.sourceRef))} · ${esc(it.sourceRef.section)}</p>` : ''}${sourceBlocksHtml(it,"material")??(givensHtml(it)+figHtml(it))}${unbound?`<p class="dt-note">당시 원고가 없으므로 보관된 원고는 참고로만 보여요. 보기 문구가 함께 남지 않은 경우 고른 번호만 표시해요.</p><p class="dt-saved-answer">저장된 답: ${esc(savedAnswer(it,v))}</p>`:`${locked?'<fieldset disabled class="dt-revision-frozen">':''}${fieldsHtml(it, v, misc)}${locked?'</fieldset>':''}`}${revisionHistoryHtml(it,S.revisionHistory?.[it.id])}
       <div class="dt-tools">${speakable ? `<button type="button" class="dt-tool dt-speak" aria-expanded="false">${mic}<span>말로 답하기</span></button>` : ''}
         <div class="dt-self" role="group" aria-label="스스로 체크 · 점수와 별개"><span>스스로 체크</span><button type="button" data-self="sure"${locked?' disabled':''} aria-pressed="${S.self[it.id] === 'sure'}">○ 자신 있어요</button><button type="button" data-self="unsure"${locked?' disabled':''} aria-pressed="${S.self[it.id] === 'unsure'}">△ 헷갈려요</button></div></div>
       ${speakable ? `<section class="dt-drawer" hidden><div class="dt-row-tools"><button type="button" class="btn dt-mic">${mic}<span>마이크로 말하기</span></button><p class="dt-msg" role="status"></p></div>
@@ -244,7 +247,7 @@ function mountDailySession(ctx,session){
       }
       r.m = r.status === 'wrong' ? (r.frozen?S.first[r.id]?.m||[]:S.first[r.id]?.m?.length ? S.first[r.id].m : ctx.classify(r.it, r.detail || {})) : [];
       // 규칙으로 못 가린 쓰기 답 → 선생님 확인(check.js)
-      if (!restoring&&!r.frozen&&r.status === 'review' && ['short-text', 'written-explanation', 'cloze'].includes(r.it.answerContract.type)) deckPut(`${u}:grade:${dailyReviewSlide(r.id,S)}`, { boxes: [{ k: 'daily', st: 'review', text: formatAnswer(r.it, S.answers[r.id]) }], tries: 1, at: S.at, item: r.id, question:JSON.parse(JSON.stringify(r.it)) });
+      if (!restoring&&!r.frozen&&r.status === 'review' && (['short-text', 'written-explanation', 'cloze'].includes(r.it.answerContract.type)||needsSourceTeacherReview(r.it))) deckPut(`${u}:grade:${dailyReviewSlide(r.id,S)}`, { boxes: [{ k: 'daily', st: 'review', text: formatAnswer(r.it, S.answers[r.id]) }], tries: 1, at: S.at, item: r.id, question:JSON.parse(JSON.stringify(r.it)) });
     }
     if(!restoring)save(); paintDots(); report(rows);
   }
@@ -256,7 +259,7 @@ function mountDailySession(ctx,session){
   });
 
   function card(r) {
-    const it = r.it,unbound=paperLocked&&['unbound','unavailable'].includes(session.paper.reason),mine = `<div class="dt-row"><span>${unbound?'저장된 답':'내 답'}</span><b>${esc(unbound?savedAnswer(it,S.answers[it.id]):formatAnswer(it, S.answers[it.id]))}</b></div>`, key = `<div class="dt-row key"><span>정답</span><b>${esc(formatKey(it))}</b></div>`;
+    const it = r.it,unbound=paperLocked&&['unbound','unavailable'].includes(session.paper.reason),mine = `<div class="dt-row"><span>${unbound?'저장된 답':'내 답'}</span><b>${esc(unbound?savedAnswer(it,S.answers[it.id]):formatAnswer(it, S.answers[it.id]))}</b></div>`, key = `<div class="dt-row key"><span>${needsSourceTeacherReview(it)?"확인할 점":"정답"}</span><b>${esc(formatKey(it))}</b></div>`;
     const self = S.self[it.id] ? `<span class="dt-self-tag" title="스스로 체크 · 점수와 별개">${SELF[S.self[it.id]]}</span>` : '';
     const teacherSaid = deckAll()[`${u}:teacher:${dailyReviewSlide(it.id,S)}:daily`];
     let body = '';
@@ -273,8 +276,8 @@ function mountDailySession(ctx,session){
     } else if (r.status === 'review') {
       const J = r.judged, met = J?.met || [], miss = (J?.missing || []).map((x) => x.t);
       body = `${mine}${met.length || miss.length ? `<ul class="dt-need">${met.map((t) => `<li class="ok">✓ ${esc(t)}</li>`).join('')}${miss.map((t) => `<li>□ ${esc(t)}</li>`).join('')}</ul>` : ''}
-        <p class="dt-note">${teacherSaid?.v ? `선생님 확인: <b>${teacherSaid.v === 'ok' ? '맞음' : '다시 쓰기'}</b>${teacherSaid.note ? ` — ${esc(teacherSaid.note)}` : ''}` : '쓴 답을 자동으로 판단하지 않았어요. 점수에서 빼고 선생님과 함께 확인해요.'}</p>
-        <details class="dt-reveal"><summary>예시 답 보기</summary>${key}</details>`;
+        <p class="dt-note">${teacherSaid?.v ? `선생님 확인: <b>${teacherSaid.v === 'ok' ? '맞음' : '다시 쓰기'}</b>${teacherSaid.note ? ` — ${esc(teacherSaid.note)}` : ''}` : (needsSourceTeacherReview(it)?"이 답은 점수에 넣지 않고 선생님과 함께 확인해요.":"쓴 답을 자동으로 판단하지 않았어요. 점수에서 빼고 선생님과 함께 확인해요.")}</p>
+        <details class="dt-reveal"><summary>${needsSourceTeacherReview(it)&&it.sourceRef.reviewOnly?'확인할 점 보기':'예시 답 보기'}</summary>${key}</details>`;
     } else body = `<p class="dt-note">아직 풀지 않았어요.</p><div class="dt-actions"><button type="button" class="dt-link soft" data-goto="${list.indexOf(it)}">문제로 가기</button></div>`;
     return `<article class="dt-card ${r.status}"><header><span class="dt-num">${pad(list.indexOf(it) + 1)}</span><p>${esc(it.prompt.replace(/\( [①②③④⑤] \)/g, '(  )'))}</p>${STAMP[r.status] || ''}</header>${self}${body}</article>`;
   }
@@ -340,5 +343,5 @@ export function teacherKeyHtml({ u, ch, list, misc, heading = 'Daily Test', back
   <p class="lead">쓰기 문항은 예시 답이에요. 기기 판정에서 「검토 필요」로 남은 답은 <a href="#/${u}/check">선생님 확인</a>에 모여요.</p>
   <ol class="dt-key-list">${list.map((it, i) => { const diagnostic=questionMisconceptions(it,misc), ms = new Set([...Object.values(diagnostic?.distractors?.[it.id] || {}), diagnostic?.typed?.[it.id]?.any, diagnostic?.cells?.[it.id], ...[].concat(diagnostic?.cloze?.[it.id]?.wrong || [])].filter(Boolean));
     const printed=it.printedAnswerContract,printedValue=printed?.type==='single-choice'?CIRC[printed.answer]:printed?.type==='multi-choice'?printed.answers.map(i=>CIRC[i]).join(', '):printed?.sample??printed?.answer;
-    return `<li><p><span class="dt-num">${pad(i + 1)}</span>${esc(it.prompt)}</p><p class="dt-row key"><span>${it.sourceRef?.reviewOnly?'검토 요지':'정답'}</span><b>${esc(formatKey(it))}</b></p>${it.sourceRef?.reviewOnly&&printed?`<p class="dt-printed-key">인쇄된 공식 답 참고: ${esc(printedValue)} · 자동 정오 판정 보류</p>`:''}<p class="dt-why">${esc(it.explanation)}</p>${ms.size ? `<p class="dt-mis">오답이면 살펴볼 오개념: ${[...ms].map((m) => esc(misc.misconceptions[m]?.label || m)).join(' · ')}</p>` : ''}</li>`; }).join('')}</ol></main>`;
+    return `<li>${isStructuredSource(it)?`<div><span class="dt-num">${pad(i+1)}</span>${sourceReviewPromptHtml(it)}</div>`:`<p><span class="dt-num">${pad(i + 1)}</span>${esc(it.prompt)}</p>`}<p class="dt-row key"><span>${it.sourceRef?.reviewOnly?'검토 요지':'정답'}</span><b>${esc(formatKey(it))}</b></p>${it.sourceRef?.reviewOnly&&printed?`<p class="dt-printed-key">인쇄된 공식 답 참고: ${esc(printedValue)} · 자동 정오 판정 보류</p>`:''}<p class="dt-why">${esc(it.explanation)}</p>${ms.size ? `<p class="dt-mis">오답이면 살펴볼 오개념: ${[...ms].map((m) => esc(misc.misconceptions[m]?.label || m)).join(' · ')}</p>` : ''}</li>`; }).join('')}</ol></main>`;
 }

@@ -17,6 +17,7 @@ import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js?v=20261
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
 import { bankLabel, groupLabel, examHeading, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
+import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeacherReview,needsSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js?v=20261108-original-source';
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js?v=20261104-energy-class';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js?v=20261104-season-book';
 import { readingHtml } from './reading.js';
@@ -147,19 +148,22 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || (v && typeof v === 'object' && !Array.isArray(v)
     ? `<table class="tbl"><thead><tr>${Object.keys(v).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody><tr>${Object.values(v).map((c) => `<td>${esc([].concat(c).join(', '))}</td>`).join('')}</tr></tbody></table>`
     : `<p class="lead">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b> ' : `<b>${esc(k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`)).join('') : '';
+  const sourceContext=sourceBlocksHtml(it,'context'),sourceMaterial=sourceBlocksHtml(it,'material'),sourceReview=needsSourceTeacherReview(it),showAnswer=show&&!sourceReview,showWrittenAnswer=show&&(!sourceReview||!it.sourceRef.reviewOnly);
   const head = `<p>${no ? `<span class="no">${no}.</span>` : ''}${ac.type === 'cloze' ? blanksHtml(it.prompt, ac.blanks, { print, show }) : esc(it.prompt)}</p>`;
   let body = '';
   const CZ = !print && ac.type === 'cloze' && MISC?.cloze?.[it.id];
   if (CZ) body = `<div class="chips">${CZ.options.map((opts, k) => `<div class="chip-row" data-k="${k}"><span class="chip-no">${CIRC[k]}</span>${shuffled(opts).map((o) => `<button type="button" class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`).join('')}</div><p class="why" hidden></p>`;
   if (ac.type === 'single-choice') {
-    body = print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${show && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
-      : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`;
+    body = sourceChoiceTableHtml(it,{print,show:showAnswer}) ?? (print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${showAnswer && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
+      : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`);
+    if(!print&&it.sourceChoiceTable&&sourceContext!==null)body+='<p class="why" hidden></p>';
   } else if (ac.type === 'multi-choice') {
-    body = print ? `<div>${it.choices.map((c, i) => `<div${show && ac.answers.includes(i) ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
+    body = print ? `<div>${it.choices.map((c, i) => `<div${showAnswer && ac.answers.includes(i) ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
       : `<p class="lead">${ac.answers.length}개를 고르세요.</p><div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}" aria-pressed="false">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`;
   } else if (ac.type === 'short-text') {
-    body = print ? (show ? `<p class="ans">${esc(ac.answer)}</p>` : '<div class="ans-line"></div>')
-      : `${seasonAnswerHint(ac)?`<p class="lead">${esc(seasonAnswerHint(ac))}</p>`:''}<div class="short"><input type="text" aria-label="내 답" autocomplete="off"><button type="button" class="btn" data-act="check-short">확인</button></div><p class="why" hidden></p>`;
+    const hint=sourceAnswerHint(it)||seasonAnswerHint(ac);
+    body = print ? (showAnswer ? `<p class="ans">${esc(ac.answer)}</p>` : '<div class="ans-line"></div>')
+      : `${hint?`<p class="lead">${esc(hint)}</p>`:''}<div class="short"><input type="text" aria-label="내 답" autocomplete="off"><button type="button" class="btn" data-act="check-short">확인</button></div><p class="why" hidden></p>`;
   } else if (ac.type === 'table-fill') {
     const cols = ac.columns;
     body = `<table class="tbl tfill"><thead><tr><th>${esc(ac.rowHead || '물체')}</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><td>${esc(r.label)}</td>${cols.map((c, ci) => print
@@ -168,12 +172,14 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
       ${print ? '' : '<button type="button" class="btn" data-act="check-table">맞았는지 보기</button><p class="why" hidden></p>'}`;
   } else if (ac.type === 'written-explanation') {
     const rb = ac.rubric;
-    body = print ? (show ? `<p class="ans">예시 답: ${esc(ac.sample)}</p><ul class="rubric">${rb.required.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : '<div class="ans-line"></div><div class="ans-line"></div><div class="ans-line"></div>')
+    body = print ? (showWrittenAnswer ? `<p class="ans">예시 답: ${esc(ac.sample)}</p><ul class="rubric">${rb.required.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : '<div class="ans-line"></div><div class="ans-line"></div><div class="ans-line"></div>')
       : writtenPracticeHtml();
+    if(print&&show&&sourceReview&&it.sourceRef.reviewOnly)body+=`<ul class="rubric">${rb.required.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`;
     if (rb.preview) body += `<p class="preview"><b>미리보기</b> ${esc(rb.preview)}</p>`;
   }
+  const review=print&&show?sourcePrintReviewHtml(it)||'':'';
   const expl = print && show ? `<p class="why">${esc(it.explanation)}</p>` : '';
-  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${head}${fig}${giv}${srcFig}${body}${expl}</div>`;
+  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${sourceContext??''}${head}${fig}${sourceMaterial??(giv+srcFig)}${body}${review}${expl}</div>`;
 }
 let FIG = {}, BOOKX = {}, MISC = null;
 // 오답 → 오개념 교정 문장. 연결된 오개념이 없으면 해설만.
@@ -189,6 +195,7 @@ function whyHtml(it, ok, detail) {
 // ctx = { u, stage } 가 있으면 결과를 기록한다. onDone(ok, detail)
 function wireItem(card, it, onDone, ctx) {
   const ac = it.answerContract;
+  if(wireSourceTeacherReview(card,it))return;
   if (ac.type === 'written-explanation') wireWrittenPractice(card, it);
   const done = (ok, detail = {}) => { if (ctx) record(du(ctx.u), it, ctx.stage, ok, detail, MISC); onDone?.(ok, detail); };
   const CZ = ac.type === 'cloze' && MISC?.cloze?.[it.id];
@@ -562,7 +569,7 @@ function labBar(u, { print = false } = {}) {
 // 첫 화면: 무엇을 할지 처음에 바로 고른다 — 학생 교재 · 교사 교재 · 스스로 공부 · 가르치기
 // 선생님 확인: 이 기기의 스스로 공부 쓰기 답 중 규칙으로 가리지 못한 것 — 맞음/다시 쓰기·한마디
 async function pageCheck(only) {
-  const { renderCheck, records } = await import('./check.js?v=20261105-history-review');
+  const { renderCheck, records } = await import('./check.js?v=20261108-original-source');
   const known = [...new Set([...Object.keys(BOOKS), ...Object.keys(BANK)])];
   const selected = known.includes(only) ? only : null;
   // 전체 확인도 실제 기록이 있는 단원만 읽어 빈 은행을 한꺼번에 불러오지 않는다.
@@ -590,7 +597,7 @@ async function pageStart(u, L) {
     $app.innerHTML=`<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header><main class="wrap start"><h2>${esc(ch.title)}</h2><p>교재와 문제은행을 골라 학습해요.</p><div class="start-grid">${[['sub/E1','유형별 문제'],['lab-book/student','학생용 교재'],['lab-book/teacher','교사용 교재'],...(ch.workbookRoute?['student','teacher','answers','quick'].map((m,i)=>[ch.workbookRoute+'/'+m,['학생용 교재 A4','교사용 교재 A4','교재 정답·해설','교재 빠른 정답표'][i]]):[]),['print/student','전체 문항 문제지'],['print/teacher','교사 해설'],['print/answers','정답·해설만'],['print/quick','빠른 정답표'],...sets.map(n=>['exam/'+n,BANK[u]?.groups?groupLabel(BANK[u],n):'옛5-1 원문 세트'+n])].map(([path,label])=>`<a class="start-card" href="#/${u}/${path}"><b>${label}</b></a>`).join('')}</div><p>${esc(ch.startNote || '실제 출처와 문항 번호를 보존한 옛단원 연계 학습이에요. 전체 탐구 수업과 실제 활동 기록은 준비 중이에요.')}</p></main>`;
     scrollTo(0,0);return;
   }
-  const ch = bookMod.chapter, need = (await import('./check.js?v=20261105-history-review')).countNeeds([u]);
+  const ch = bookMod.chapter, need = (await import('./check.js?v=20261108-original-source')).countNeeds([u]);
   const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header>
     <main class="wrap start"><p class="step-label">${esc(placeLabel(u) || `${ch.link?.course || ''} ${ch.link?.unit || ''}`)}</p>${placeNow(u) ? `<p class="start-now">${esc(placeNow(u))}</p>` : ''}
@@ -737,7 +744,7 @@ async function pageDaily(u, mod, L, mode) {
   let list = ch.check ? [...new Set([...(ch.check || []), ...(ch.formative?.items || [])])].map(bySrc).filter(Boolean) : [];
   if (!list.length) list = [...(L.evaluate?.items || []), ...(L.explain?.miniTest || [])].map((id) => I[id]).filter(Boolean);
   if (!list.length) { $app.innerHTML = '<main class="wrap"><p>이 단원의 Daily Test는 준비 중이에요.</p></main>'; return; }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261105-history-review');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-original-source');
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};
   const pool = [...similar, ...items];
@@ -770,7 +777,7 @@ async function pageExam(u, mod, L, set, mode, isCurrent = () => true) {
     $app.innerHTML = assessmentPaperHtml({ unit:u, bank:BANK[u], list, form:set, teacher:mode === 'teacher' });
     scrollTo(0,0); return;
   }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261105-history-review');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-original-source');
   if (!isCurrent()) return;
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC, heading, back: `#/${u}/exam/${set}`, tabs }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};

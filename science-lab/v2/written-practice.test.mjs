@@ -1,3 +1,6 @@
+import vm from 'node:vm';
+import * as sourceContent from './source-content.js';
+import * as sourcePresentation from './source-presentation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -52,5 +55,9 @@ test('local judging has no network or persistent student-data writer, and no chi
   assert.match(code, /judgeText\(text, key/);
   const renderer = await readFile(new URL('./v2.js', import.meta.url), 'utf8');
   assert.match(renderer, /ac\.type === 'written-explanation'\) wireWrittenPractice\(card, it\)/);
-  assert.match(renderer, /body = print \? \(show \?/);
+  const render = new vm.Script(renderer.slice(renderer.indexOf('function itemHtml('),renderer.indexOf('let FIG ='))+'\nitemHtml').runInContext(vm.createContext({...sourceContent,...sourcePresentation,CIRC:['①','②','③','④','⑤'],esc:s=>String(s??''),MISC:null,FIG:{},writtenPracticeHtml}));
+  const item={id:'written-renderer-fixture',prompt:'까닭을 써요.',sourceRef:{type:'authored'},taxonomy:{track:'교과',level:'기본'},answerContract:{type:'written-explanation',sample:'synthetic sample',rubric:{required:['synthetic criterion']}}};
+  const online=render(item),student=render(item,{print:true}),teacher=render(item,{print:true,show:true});
+  assert(online.includes('written-practice'));for(const html of [online,student]){assert(!html.includes(item.answerContract.sample));assert(!html.includes(item.answerContract.rubric.required[0]));}
+  assert(teacher.includes(item.answerContract.sample));assert(teacher.includes(item.answerContract.rubric.required[0]));
 });

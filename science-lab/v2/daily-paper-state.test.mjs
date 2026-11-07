@@ -28,3 +28,17 @@ test('같은 시험지·응답 없는 새 기록은 이전 동작을 유지하�
 test('스냅샷 밖에 남아 있는 응답도 숨기거나 현재 문항으로 합치지 않는다',()=>{
  const list=[q('a')],state={paper:snapshotDailyPaper(list),answers:{a:1,orphan:'예전 답'},graded:{a:'wrong'}},result=resolveDailyPaper(list,state);assert(result.readOnly);assert.deepEqual(result.questions.map(q=>q.id),['a','orphan']);assert.equal(result.questions[1].unavailableOriginal,true);assert.equal(result.reason,'unbound');
 });
+
+test('원문 공통 자료·두 번째 그림·보기표·교사 참고가 바뀌면 저장된 시험지를 읽기 전용으로 보존한다',()=>{
+ const item={...q('source-fixture'),sourceContentVersion:'synthetic-source',sourceContextBlocks:[{type:'text',text:'공통 자료'}],sourceMaterialBlocks:[{type:'figure',src:'assets/bank/fixture/one.png',alt:'첫 그림'},{type:'figure',src:'assets/bank/fixture/two.png',alt:'둘째 그림'}],sourceChoiceTable:{heads:['특징'],rows:[['가'],['나']]},printedAnswerContract:{type:'single-choice',answer:0},printedExplanation:'인쇄 풀이',printedRubric:['확인할 내용'],reviewSummary:'조건을 확인해요.'};
+ const list=[item],state={paper:snapshotDailyPaper(list),answers:{[item.id]:1},graded:{[item.id]:'review'},sentinel:'보존'},before=structuredClone(state);
+ const changes={
+  sourceContentVersion:'다음 자료 형식',
+  sourceContextBlocks:[{type:'text',text:'바뀐 공통 자료'}],
+  sourceMaterialBlocks:[item.sourceMaterialBlocks[0],{...item.sourceMaterialBlocks[1],src:'assets/bank/fixture/new.png'}],
+  sourceChoiceTable:{...item.sourceChoiceTable,rows:[['나'],['가']]},
+  printedAnswerContract:{type:'single-choice',answer:1},printedExplanation:'바뀐 인쇄 풀이',printedRubric:['다른 확인할 내용'],reviewSummary:'다른 조건을 확인해요.',
+ };
+ for(const [key,value]of Object.entries(changes)){const result=resolveDailyPaper([{...item,[key]:value}],state);assert(result.readOnly,key);assert.equal(result.reason,'changed');assert.deepEqual(result.questions,list);assert.deepEqual(state,before);}
+ assert.equal(resolveDailyPaper(list,state).readOnly,false);assert.deepEqual(state,before);
+});
