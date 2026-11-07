@@ -7,6 +7,7 @@ const files = [
   ['promo/index.html', 'promo/index.html'],
   ['promo/promo.css', 'promo/promo.css'],
   ['promo/notices.js', 'promo/notices.js'],
+  ['promo/course-navigation.js', 'promo/course-navigation.js'],
   ['data/academy-notices.js', 'data/academy-notices.js'],
   ['data/available-mocks.js', 'data/available-mocks.js'],
   ['data/official-exam-specs.js', 'data/official-exam-specs.js'],

@@ -112,15 +112,17 @@ test("Mathflat imports remain private candidates until the full gate list and ow
   assert.ok(mathflat.requiredGates.includes("desktop-mobile-a4"));
 });
 
-test("public and member pages share the same standard-exam policy module", () => {
+test("promo uses actual released editions while member tools retain the standard-exam policy", () => {
   const promo = fs.readFileSync(path.join(root, "promo", "index.html"), "utf8");
   const library = fs.readFileSync(path.join(root, "library.html"), "utf8");
   const editor = fs.readFileSync(path.join(root, "admin", "exam-editor.html"), "utf8");
-  for (const html of [promo, library]) {
-    assert.match(html, /data\/academy-engagement\.js/);
-    assert.match(html, /data\/standard-exam-policy\.js/);
-    assert.match(html, /standardPolicy\.resolve/);
-  }
+  assert.match(promo, /data\/academy-engagement\.js/);
+  assert.match(promo, /data\/available-mocks\.js/);
+  assert.match(promo, /course-navigation\.js/);
+  assert.match(promo, /navigation\.examsFor/);
+  assert.match(library, /data\/academy-engagement\.js/);
+  assert.match(library, /data\/standard-exam-policy\.js/);
+  assert.match(library, /standardPolicy\.resolve/);
   assert.match(promo, /academy-launcher/);
   assert.match(promo, /표준 시험지 승인 전에는 신청·판매를 열지 않습니다/);
   assert.match(library, /수강 대비 강좌/);
