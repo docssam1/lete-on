@@ -6,6 +6,11 @@ require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
 const practice = require("./source-5-2-u2-page17-mission6-spacing-synthetic.js");
+const independentlyFormat = (num, den) => {
+  let a=num,b=den;while(b)[a,b]=[b,a%b];num/=a;den/=a;
+  const whole=Math.floor(num/den), remainder=num%den;
+  return remainder ? `${whole ? `${whole} ` : ""}${remainder}/${den}` : String(whole);
+};
 const ledger = require("./source-inventory/5-2-source-items.json");
 const source = ledger.sourceItems.find(row => row.sourceItemId === "5-2-u2-e2-mission-6");
 const types = window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types)));
@@ -21,12 +26,16 @@ assert.equal(window.HSE_GENERATORS.generate({ ...type, reviewLocked: true }, 0, 
 for (let pool = 0; pool < 3; pool++) for (const level of [-1, 0, 1]) {
   const q = window.HSE_GENERATORS.generate(type, 0, level, 0, pool);
   const diameterHalves = [5, 7, 9][pool];
-  assert.equal(q.answer, ["17 1/2cm²", "28cm²", "40 1/2cm²"][pool]);
+  const spacingQuarters = ({[-1]: 4, 0: 2, 1: 1})[level];
+  const expectedNumerator = 2 * diameterHalves * (2 * diameterHalves + 9 * spacingQuarters);
+  assert.equal(q.answer, `${independentlyFormat(expectedNumerator, 16)}cm²`);
+  if (level === 0) assert.equal(q.answer, ["17 1/2cm²", "28cm²", "40 1/2cm²"][pool]);
   assert.equal(q.answerModel.circleCount, 10);
-  assert.equal(q.answerModel.areaNumerator * 4, diameterHalves * (diameterHalves + 9) * q.answerModel.areaDenominator);
+  assert.equal(q.answerModel.areaNumerator * 16, expectedNumerator * q.answerModel.areaDenominator);
+  assert.equal(q.questionModel.spacingQuarters, spacingQuarters);
   assert.match(q.prompt, /중심 사이 거리/);
   assert.doesNotMatch(q.prompt,/도움말|힌트|source52-u2-hint/);
-  assert.match(q.prompt, /1\/2cm/);
+  assert(q.prompt.includes(`${practice.mixed(spacingQuarters, 4)}cm`));
   assert.match(q.prompt, /윗변과 아랫변/);
   assert.match(q.prompt, /왼쪽 변과 오른쪽 변/);
   assert.equal((q.prompt.match(/r="56"/g) || []).length, 10);
@@ -34,4 +43,5 @@ for (let pool = 0; pool < 3; pool++) for (const level of [-1, 0, 1]) {
   assert.ok(q.solution.includes(q.answer));
   assert.equal(q.publisherKeyVerified, false);
 }
+for(let pool=0;pool<3;pool++) assert.equal(new Set([-1,0,1].map(level=>practice.build([5,7,9][pool],level).prompt)).size,3);
 console.log("PASS: original locked; three explicit-spacing practices, nine configurations and ten-circle geometry");
