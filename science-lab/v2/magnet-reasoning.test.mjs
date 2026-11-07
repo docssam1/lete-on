@@ -1,3 +1,4 @@
+import{magnetElementaryCurrentItems}from'../data/book/s41-u01.elementary.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items as raw}from'../data/units/s41-u01.js';
 import{magnetSkyCurrentItems}from'./magnet-sky-question-language.js';
@@ -31,10 +32,11 @@ test('magnet overlay excludes raw originals, similar, other-unit and unexpected 
  const rows=[{...old,status:'review'}];assert.equal(magnetReasoningCurrentItems(rows,unit),rows);assert.equal(magnetReasoningCurrentItems(baseline,'other'),baseline);
 });
 test('repeated magnet classroom and daily pools share the same current authored question objects',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=magnetReasoningCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let linked=0;
- for(const q of first.classroomItems.filter(q=>q.contentVersion===MAGNET_REASONING_VERSION)){
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),reasoning=magnetReasoningCurrentItems(baseline,unit),current=magnetElementaryCurrentItems(reasoning,unit),daily=classroomQuestions(second,current);let linked=0;
+ for(const q of first.classroomItems.filter(q=>reasoning.find(x=>x.id===q.id)?.contentVersion===MAGNET_REASONING_VERSION)){
   linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);
   assert.deepEqual(current.find(x=>x.id===q.id),q);
+  const old=reasoning.find(x=>x.id===q.id),restored=questionAtVersion(q,MAGNET_REASONING_VERSION);for(const [key,value]of Object.entries(old))assert.deepEqual(restored[key],value);
  }
  assert.equal(linked,4);
 });
