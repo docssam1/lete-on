@@ -13,6 +13,19 @@
     Object.freeze({ capacityNumerator: 7, capacityDenominator: 8, filledNumerator: 4, filledDenominator: 7 }),
     Object.freeze({ capacityNumerator: 7, capacityDenominator: 9, filledNumerator: 3, filledDenominator: 7 })
   ]);
+  const tierPools = Object.freeze({
+    '-1': Object.freeze([
+      {capacityNumerator:1,capacityDenominator:2,filledNumerator:1,filledDenominator:2},
+      {capacityNumerator:2,capacityDenominator:3,filledNumerator:1,filledDenominator:2},
+      {capacityNumerator:3,capacityDenominator:4,filledNumerator:2,filledDenominator:3}
+    ]),
+    '0': pools,
+    '1': Object.freeze([
+      {capacityNumerator:7,capacityDenominator:12,filledNumerator:10,filledDenominator:21},
+      {capacityNumerator:11,capacityDenominator:15,filledNumerator:14,filledDenominator:33},
+      {capacityNumerator:13,capacityDenominator:18,filledNumerator:21,filledDenominator:26}
+    ])
+  });
   const esc = value => String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
   const math = text => `<span class="math-inline-expression">${esc(text)}</span>`;
   const step = lines => `<span class="source52-u2-solution">${lines.map((line, index) => `<span class="source52-u2-step">${index + 1}. ${line}</span>`).join("")}</span>`;
@@ -21,7 +34,7 @@
     const { capacityNumerator: a, capacityDenominator: b, filledNumerator: c, filledDenominator: d } = pool;
     if (![a, b, c, d].every(Number.isSafeInteger) || a <= 0 || a >= b || c <= 0 || c >= d) throw new Error("용량과 채워진 비율은 양의 진분수여야 합니다.");
     const numerator = a * c, denominator = b * d, divisor = gcd(numerator, denominator);
-    return { ...pool, numerator, denominator, simplifiedNumerator: numerator / divisor, simplifiedDenominator: denominator / divisor };
+    return { ...pool, numerator, denominator, divisor, simplifiedNumerator: numerator / divisor, simplifiedDenominator: denominator / divisor };
   }
   function build(pool, difficultyOffset) {
     const v = derive(pool);
@@ -31,7 +44,7 @@
     const lines = [
       `물의 양은 물통 전체 용량의 ${math(portion)}이므로, 전체 용량에 이 분수를 곱합니다.`,
       `${math(`${product} = ${v.numerator}/${v.denominator}`)}입니다.`,
-      `${math(`${v.numerator}/${v.denominator} = ${v.simplifiedNumerator}/${v.simplifiedDenominator}`)}로 약분합니다.`,
+      v.divisor === 1 ? `${math(`${v.numerator}/${v.denominator}`)}은 이미 기약분수입니다.` : `${math(`${v.numerator}/${v.denominator} = ${v.simplifiedNumerator}/${v.simplifiedDenominator}`)}로 약분합니다.`,
       `따라서 물통에 들어 있는 물은 ${math(`${v.simplifiedNumerator}/${v.simplifiedDenominator} L`)}입니다.`
     ];
     if (difficultyOffset === -1) lines.splice(1, 0, "분자끼리 곱하고 분모끼리 곱합니다.");
@@ -47,7 +60,7 @@
     if (type.reviewLocked !== false || type.sourceVerified !== true) return null;
     if (!Number.isSafeInteger(variant) || variant < 0) throw new Error("고정 변형 번호가 올바르지 않습니다.");
     if (![-1, 0, 1].includes(difficultyOffset)) throw new Error("난이도는 -1, 0, 1이어야 합니다.");
-    const poolIndex = variant % pools.length, item = build(pools[poolIndex], difficultyOffset);
+    const poolIndex = variant % pools.length, item = build(tierPools[difficultyOffset][poolIndex], difficultyOffset);
     return Object.freeze({ ...item,
       prompt: `<div class="source52-u2-page16-exploration21" data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`,
       sourceItemId, generator: generatorKey, generationMode: "fixed-verified-pool",
@@ -55,7 +68,7 @@
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       resultContract: "single-value-with-units", mathematicalContract: "fraction-of-capacity-multiplication-and-simplification",
       answerVisualRequired: false, answerVisualStatus: "not-required",
-      difficultyDesign: ["capacity-times-filled-fraction", "fraction-product-and-reduction", "explicit-product-and-greatest-common-divisor-check"][difficultyOffset + 1],
+      difficultyDesign: ["small-fraction-product", "fraction-product-and-reduction", "larger-fraction-product-and-reduction"][difficultyOffset + 1],
       reasoningSteps: difficultyOffset === -1 ? 5 : 4, sourceStructurePreserved: true,
       sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Concept Exploration 2 (1); physical PDF p.12; original/clean scan + Apple Vision OCR",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false,
@@ -74,5 +87,5 @@
     Object.defineProperty(api, "__source52U2Page16Exploration21Installed", { value: true });
     return true;
   }
-  return Object.freeze({ sourceItemId, generatorKey, pools, derive, build, generate, install });
+  return Object.freeze({ sourceItemId, generatorKey, pools, tierPools, derive, build, generate, install });
 });
