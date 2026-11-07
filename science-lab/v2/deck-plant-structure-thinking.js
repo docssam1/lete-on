@@ -1,7 +1,7 @@
 import{findLifeItem}from'./book-life.js';
 import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
 import{workbook}from'../data/book/c22-s61-u03.workbook.js?v=20261104-plant-structure-book';
-import{plantStructureCasePresentation as plantStructureCase}from'./learner-class-guidance.js?v=20261108-learner-class-guidance';
+import{plantStructureCasePresentation as plantStructureCase}from'./learner-class-guidance.js?v=20261108-grade3-class-guidance';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;

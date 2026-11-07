@@ -1,5 +1,5 @@
 import {plantStructureCase,validPlantStructureCompareRow} from './plant-structure-compare-model.js';
-export const LEARNER_CLASS_GUIDANCE_VERSION='20261108-learner-class-guidance';
+export const LEARNER_CLASS_GUIDANCE_VERSION='20261108-grade3-class-guidance';
 const clone=value=>structuredClone(value);
 const caseWording={
  starch:{
@@ -47,7 +47,28 @@ const planWording=[
  '여러 차시로 나누는 수업 예시예요. 식물을 미리 준비하고 기다리는 시간은 따로 필요해요. 세포를 관찰할 식물 표본과 비교할 잎을 준비해요. 관찰과 실험을 마친 뒤 소개 자료를 만들고 설명해요.'
 ];
 const cue=page=>[page.title+(/[.?!]$/.test(page.title)?'':'.'),...(page.text||[]),...(page.steps||[])].join(' ');
+const grade3CueWording={
+ 'c22-s32-u01':{
+  share:['설계와 실제 제작, 시험을 나누고 받은 질문으로 보완해요.','그림으로 나타낸 생각과 직접 만들어 시험한 결과를 나누어 설명해요. 친구의 질문을 듣고 그림이나 설명에 더할 내용을 찾아보아요.'],
+  end:['비교한 시료와 조건을 밝히고 성질로 분류와 설계를 설명했나요?','어떤 재료를 어떤 방법으로 비교했나요? 같은 물질로 만든 물체끼리 묶어 보고, 쓰임에 맞는 재료를 고른 까닭을 설명해 보아요.']
+ },
+ 'c22-s32-u02':{
+  share:['친구에게 가치와 행동을 설명하고 받은 질문으로 보완해요.','친구에게 갯벌이 소중한 까닭과 함께 지킬 방법을 설명해요. 친구의 질문을 듣고 설명을 더해 보아요.'],
+  end:['자료의 범위를 지키며 두 물, 물 높이, 갯벌 보전을 설명했나요?','바닷물과 수돗물을 어떻게 비교했나요? 바닷가의 물 높이가 달라지는 모습과 갯벌을 지킬 방법도 설명해 보아요.']
+ },
+ 's31-u01':{
+  apply:['두 주장 중 하나를 골라, 자료에서 찾은 근거로 설명을 고쳐 보아요.','두 생각 중 하나를 골라 보아요. 물체를 놓은 거리나 안에 담긴 것을 살펴보고, 그 생각이 맞지 않는 때도 있을지 설명해요.']
+ }
+};
+function withGrade3GuidanceCues(mod){
+ const unit=mod?.chapter?.unit;if(!Object.hasOwn(grade3CueWording,unit))return mod;
+ const cues=mod.chapter.slideCues;if(!cues)return mod;
+ let next=cues;
+ for(const[id,[before,after]]of Object.entries(grade3CueWording[unit]))if(cues[id]===before)next={...next,[id]:after};
+ return next===cues?mod:{...mod,chapter:{...mod.chapter,slideCues:next}};
+}
 export function withLearnerClassGuidance(mod){
+ mod=withGrade3GuidanceCues(mod);
  if(mod?.chapter?.unit!=='c22-s61-u03')return mod;
  const chapter=mod.chapter;let changed=false,cues=chapter.slideCues;
  const flow=chapter.plantStructureFlow.map(page=>{

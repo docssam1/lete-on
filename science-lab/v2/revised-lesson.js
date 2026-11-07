@@ -1,4 +1,4 @@
-import{withLearnerClassGuidance}from'./learner-class-guidance.js?v=20261108-learner-class-guidance';
+import{withLearnerClassGuidance}from'./learner-class-guidance.js?v=20261108-grade3-class-guidance';
 import{landReasoningCurrentItems}from'../data/book/s41-u03.editorial.js?v=20261105-land-learner-reasoning';
 import{magnetReasoningCurrentItems}from'../data/book/s41-u01.rail-notes.js?v=20261105-magnet-learner-reasoning';
 import{earthSeaReasoningCurrentItems}from'../data/book/c22-s32-u02.rail-notes.js?v=20261105-earth-sea-learner-reasoning';
@@ -19,7 +19,7 @@ import{inquiry as seasonInquiry}from'../data/activities/c22-s62-u01.inquiry.js?v
 import{mountEarthMotionCompare}from'./lab-earth-motion-compare.js?v=20261104-earth-motion-class';
 import{earthMotionCompareValues,validEarthMotionCompareRow}from'./earth-motion-compare-model.js';
 import{inquiry as earthMotionInquiry}from'../data/activities/c22-s61-u04.inquiry.js?v=20261104-earth-motion-class';
-import{mountPlantStructureCompare}from'./lab-plant-structure-compare.js?v=20261108-learner-class-guidance';
+import{mountPlantStructureCompare}from'./lab-plant-structure-compare.js?v=20261108-grade3-class-guidance';
 import{plantStructureCompareValues,validPlantStructureCompareRow}from'./plant-structure-compare-model.js';
 import{inquiry as plantStructureInquiry}from'../data/activities/c22-s61-u03.inquiry.js?v=20261104-plant-structure-class';
 import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
@@ -36,7 +36,7 @@ import {mountLifeCompare} from './lab-life-compare.js';
 import {lifeCompareValues,validLifeCompareRow} from './life-compare-model.js';
 import {mountEcologyCompare} from './lab-ecology-compare.js';
 import {ecologyCompareValues,validEcologyCompareRow} from './ecology-compare-model.js';
-import {mountMaterialCompare} from './lab-material-compare.js';
+import {mountMaterialCompare} from './lab-material-compare.js?v=20261108-grade3-class-guidance';
 import {materialCompareValues,validMaterialCompareRow} from './material-compare-model.js';
 import {mountEarthSeaCompare} from './lab-earth-sea-compare.js';
 import {earthSeaCompareValues,validEarthSeaCompareRow} from './earth-sea-compare-model.js';

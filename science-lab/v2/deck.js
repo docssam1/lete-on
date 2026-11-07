@@ -3,7 +3,7 @@ import{buildElectricityThinkingSlides}from'./deck-electricity-thinking.js?v=2026
 import{buildCombustionThinkingSlides}from'./deck-combustion-thinking.js?v=20261104-combustion-class';
 import{buildSeasonThinkingSlides}from'./deck-season-thinking.js?v=20261104-season-class';
 import{buildEarthMotionThinkingSlides}from'./deck-earth-motion-thinking.js?v=20261104-earth-motion-class';
-import{buildPlantStructureThinkingSlides}from'./deck-plant-structure-thinking.js?v=20261108-learner-class-guidance';
+import{buildPlantStructureThinkingSlides}from'./deck-plant-structure-thinking.js?v=20261108-grade3-class-guidance';
 import{buildMotionThinkingSlides}from'./deck-motion-thinking.js?v=20261105-sound-motion-photo-language';
 import{buildAcidThinkingSlides}from'./deck-acid-thinking.js?v=20261104-acid-class';
 // GFIELD 실험 과학 영재 — 화면 수업 자료(교안). 교재와 같은 chapter 데이터를 16:9 슬라이드로 보여 준다.
@@ -17,11 +17,11 @@ import { mountLabBattle } from './lab-battle.js';
 import { buildLifeSlides } from './deck-life.js';
 import {contentUnitOfItem} from './content-unit.js';
 import { buildForceSlides } from './deck-force.js';
-import { buildForceThinkingSlides } from './deck-force-thinking.js?v=20261108-learner-class-guidance';
+import { buildForceThinkingSlides } from './deck-force-thinking.js?v=20261108-grade3-class-guidance';
 import { buildAnimalThinkingSlides } from './deck-animal-thinking.js?v=20261102-state';
 import { buildPlantThinkingSlides } from './deck-plant-thinking.js?v=20261102-state';
 import { buildEcologyThinkingSlides } from './deck-ecology-thinking.js?v=20261102-state';
-import { buildEarthSeaThinkingSlides } from './deck-earth-sea-thinking.js?v=20261102-earth-sea';
+import { buildEarthSeaThinkingSlides } from './deck-earth-sea-thinking.js?v=20261108-grade3-class-guidance';
 import { buildMixtureThinkingSlides } from './deck-mixture-thinking.js?v=20261104-mixture-class';
 import { buildEnergyThinkingSlides } from './deck-energy-thinking.js?v=20261104-energy-class';
 import { buildWeatherThinkingSlides } from './deck-weather-thinking.js?v=20261105-weather-photo-labels';
@@ -39,7 +39,7 @@ import { buildSkyThinkingSlides } from './deck-sky-thinking.js?v=20261103-sky-cl
 import { buildClimateThinkingSlides } from './deck-climate-thinking.js?v=20261103-climate-class';
 import { buildInfectionThinkingSlides } from './deck-infection-thinking.js?v=20261103-infection-class';
 import { buildSoundThinkingSlides } from './deck-sound-thinking.js?v=20261105-sound-motion-photo-language';
-import { buildMaterialThinkingSlides } from './deck-material-thinking.js?v=20261105-material-water-photo-language';
+import { buildMaterialThinkingSlides } from './deck-material-thinking.js?v=20261108-grade3-class-guidance';
 import { buildLifeThinkingSlides } from './deck-life-thinking.js?v=20261102-state';
 import {buildInquirySlides} from './deck-inquiry.js';
 import { buildAnimalSlides } from './deck-animal.js';
