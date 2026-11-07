@@ -27,7 +27,7 @@
   }
   function build(halfDiameter, level) {
     const diameter = mixed(halfDiameter, 2), width = mixed(halfDiameter + 9, 2), answer = mixed(halfDiameter * (halfDiameter + 9), 4);
-    const prompt = `<div data-source-item-id="${id}"><p>같은 크기의 원 10개가 그림처럼 가로로 일정한 간격으로 겹쳐 있습니다. 각 원은 직사각형의 윗변과 아랫변에 닿고, 맨 왼쪽 원과 맨 오른쪽 원은 각각 직사각형의 왼쪽 변과 오른쪽 변에도 닿습니다. 원의 지름이 ${math(`${diameter}cm`)}이고 이웃한 두 원의 중심 사이 거리가 ${math("1/2cm")}일 때, 직사각형의 넓이를 구하세요.</p>${diagram(halfDiameter)}${level === -1 ? `<p>도움말: 이웃한 중심 사이 간격은 몇 군데인가요?</p>` : ""}</div>`;
+    const prompt = `<div data-source-item-id="${id}"><p>같은 크기의 원 10개가 그림처럼 가로로 일정한 간격으로 겹쳐 있습니다. 각 원은 직사각형의 윗변과 아랫변에 닿고, 맨 왼쪽 원과 맨 오른쪽 원은 각각 직사각형의 왼쪽 변과 오른쪽 변에도 닿습니다. 원의 지름이 ${math(`${diameter}cm`)}이고 이웃한 두 원의 중심 사이 거리가 ${math("1/2cm")}일 때, 직사각형의 넓이를 구하세요.</p>${diagram(halfDiameter)}</div>`;
     const solution = `<div data-source-answer="${id}"><p>원 10개의 중심 사이에는 같은 간격이 9개 있습니다. 직사각형의 세로는 원의 지름인 ${math(`${diameter}cm`)}입니다.</p><p>가로는 원의 지름에 중심 간격 9개를 더한 길이이므로 ${math(`${diameter}+1/2×9=${width}cm`)}입니다.</p><p>따라서 직사각형의 넓이는 ${math(`${diameter}×${width}=${answer}cm²`)}입니다.</p></div>`;
     return { prompt, solution, answer: `${answer}cm²`, answerModel: { diameterHalves: halfDiameter, spacingHalves: 1, circleCount: 10, widthHalves: halfDiameter + 9, areaNumerator: halfDiameter * (halfDiameter + 9), areaDenominator: 4 }, questionModel: { circleCount: 10, diameterHalves: halfDiameter, spacingHalves: 1 }, answerVisualRequired: false, answerVisualStatus: "not-required" };
   }

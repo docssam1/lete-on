@@ -26,7 +26,7 @@
   function build(pool, difficultyOffset) {
     const v = derive(pool);
     const capacity = `${v.capacityNumerator}/${v.capacityDenominator} L`, portion = `${v.filledNumerator}/${v.filledDenominator}`;
-    const prompt = `들이가 ${math(capacity)}인 물통에 전체 용량의 ${math(portion)}만큼 물이 들어 있습니다. 물통에 들어 있는 물은 몇 L인가요?${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 전체 용량에 물이 차 있는 비율을 곱하세요.</span>` : ""}`;
+    const prompt = `들이가 ${math(capacity)}인 물통에 전체 용량의 ${math(portion)}만큼 물이 들어 있습니다. 물통에 들어 있는 물은 몇 L인가요?`;
     const product = `${v.capacityNumerator}/${v.capacityDenominator}×${v.filledNumerator}/${v.filledDenominator}`;
     const lines = [
       `물의 양은 물통 전체 용량의 ${math(portion)}이므로, 전체 용량에 이 분수를 곱합니다.`,
@@ -55,7 +55,7 @@
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       resultContract: "single-value-with-units", mathematicalContract: "fraction-of-capacity-multiplication-and-simplification",
       answerVisualRequired: false, answerVisualStatus: "not-required",
-      difficultyDesign: ["guided-capacity-times-filled-fraction", "fraction-product-and-reduction", "explicit-product-and-greatest-common-divisor-check"][difficultyOffset + 1],
+      difficultyDesign: ["capacity-times-filled-fraction", "fraction-product-and-reduction", "explicit-product-and-greatest-common-divisor-check"][difficultyOffset + 1],
       reasoningSteps: difficultyOffset === -1 ? 5 : 4, sourceStructurePreserved: true,
       sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Concept Exploration 2 (1); physical PDF p.12; original/clean scan + Apple Vision OCR",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false,

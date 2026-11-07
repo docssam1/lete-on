@@ -24,7 +24,7 @@
   }
   function build(end, difficultyOffset) {
     const v = derive(end), product = `5/3×6/4×7/5×8/6×…×${end + 2}/${end}`;
-    const prompt = `다음을 계산하세요. ${math(v.expression)}${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 각 괄호를 분수로 바꾸면 분자와 분모에서 연속된 수가 약분됩니다.</span>` : ""}`;
+    const prompt = `다음을 계산하세요. ${math(v.expression)}`;
     const lines = [
       `각 항을 ${math(`1+2/n=(n+2)/n`)}으로 바꾸면 연속된 분수의 곱이 됩니다.`,
       `따라서 ${math(product)}입니다.`,
@@ -44,7 +44,7 @@
     return Object.freeze({ ...item, prompt: `<div class="source52-u2-page16-example21" data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`,
       sourceItemId, generator: generatorKey, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length,
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure", resultContract: "single-value", mathematicalContract: "consecutive-numerator-denominator-cancellation",
-      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["guided-factor-conversion-and-cancellation", "telescoping-range-and-exact-product", "explicit-cancelled-middle-interval-and-final-reduction"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
+      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["factor-conversion-and-cancellation", "telescoping-range-and-exact-product", "explicit-cancelled-middle-interval-and-final-reduction"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
       sourceStructurePreserved: true, sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Example 2-1; physical PDF p.12; original/clean scan + Apple Vision OCR",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-telescoping-consecutive-product" });
   }

@@ -34,7 +34,7 @@
   }
   function build(pool, difficultyOffset) {
     const v = derive(pool);
-    const prompt = `다음을 계산하세요. ${math(`${v.firstText} + ${v.secondText}`)}${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 각 곱에서 약분할 수 있는 분자와 분모를 먼저 찾아보세요.</span>` : ""}`;
+    const prompt = `다음을 계산하세요. ${math(`${v.firstText} + ${v.secondText}`)}`;
     const lines = [
       `첫째 곱을 약분하여 계산하면 ${math(`${v.firstText} = ${v.first.n}/${v.first.d}`)}입니다.`,
       `둘째 곱을 약분하여 계산하면 ${math(`${v.secondText} = ${v.second.n}/${v.second.d}`)}입니다.`,
@@ -54,7 +54,7 @@
     return Object.freeze({ ...item, prompt: `<div class="source52-u2-page16-exploration22" data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`,
       sourceItemId, generator: generatorKey, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length,
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure", resultContract: "single-value", mathematicalContract: "sum-of-two-exact-fraction-products",
-      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["guided-cross-cancellation-and-product-sum", "exact-products-common-denominator-and-addition", "explicit-cancellation-and-reduced-final-sum"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
+      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["cross-cancellation-and-product-sum", "exact-products-common-denominator-and-addition", "explicit-cancellation-and-reduced-final-sum"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
       sourceStructurePreserved: true, sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Concept Exploration 2 (2); physical PDF p.12; original/clean scan + Apple Vision OCR",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-exact-fraction-products-and-sum" });
   }

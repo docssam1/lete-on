@@ -19,6 +19,7 @@ for (let i=0;i<modules.length;i++) {
   if(i===1){const x=m.pools[j],a=multiply(x.first),b=multiply(x.second);expected=format(reduce(a[0]*b[1]+b[0]*a[1],a[1]*b[1]));}
   if(i===2){let n=1,d=1;for(let k=3;k<=m.pools[j];k++){[n,d]=reduce(n*(k+2),d*k)}expected=d===1?String(n):`${n}/${d}`;}
   assert.equal(q.answer,expected);assert.equal(q.verifiedPoolIndex,j);assert.equal(q.verifiedVariantCount,3);assert.equal(q.variantProvenance,'synthetic-source-structure');assert.equal(q.publisherKeyVerified,false);assert(q.solution.includes(`data-source-answer="${m.sourceItemId}"`));assert(!q.prompt.includes('data-source-answer'));
+  assert.doesNotMatch(q.prompt,/도움말|힌트|source52-u2-hint/);
  }
 }
 console.log('PASS: three synthetic types, independent exact arithmetic, 3 pools × 3 difficulty levels, source locks');

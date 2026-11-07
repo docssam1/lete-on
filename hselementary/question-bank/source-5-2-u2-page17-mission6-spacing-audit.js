@@ -25,6 +25,7 @@ for (let pool = 0; pool < 3; pool++) for (const level of [-1, 0, 1]) {
   assert.equal(q.answerModel.circleCount, 10);
   assert.equal(q.answerModel.areaNumerator * 4, diameterHalves * (diameterHalves + 9) * q.answerModel.areaDenominator);
   assert.match(q.prompt, /중심 사이 거리/);
+  assert.doesNotMatch(q.prompt,/도움말|힌트|source52-u2-hint/);
   assert.match(q.prompt, /1\/2cm/);
   assert.match(q.prompt, /윗변과 아랫변/);
   assert.match(q.prompt, /왼쪽 변과 오른쪽 변/);
