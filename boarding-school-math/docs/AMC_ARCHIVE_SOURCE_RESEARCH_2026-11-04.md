@@ -923,3 +923,8 @@ Re-searched the missing 2009 AMC 10A/10B and AMC 12A/12B all-student item-respon
 ### 2026-11-08 · 2015 AMC 10A Taiwan item-response recovery
 
 Recovered the Taiwan AMC 10A response table from printed p.12 of the archived 99CEF 2015 report. Page 6 identifies n=5,087 and a reported mean of 84.52. Applying the printed 6/0/1.5 rule to the two-decimal item rates yields 81.46035, a 3.06-point mismatch. Kept the table as a distinct selectable cohort and added a visible source-reconciliation warning; it is item-response context, not a score norm. All 25 marked answers are checked against LIVE. The active 99CEF PDF path now redirects to 2016, so use the preserved 2016-04-06 archive snapshot: https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf.
+
+
+### 2026-11-08 · 2015 AMC 10A score-reference mean scope
+
+The interactive report's 2015A secondary score reference prints mean 73.39 and top-1% threshold 115.5, while the archived 99CEF 2015 report's separately labeled Global statistics table (p.6) prints mean 73.59. The original MAA statistics table and the cohort scope behind 73.39 were not recovered. Keep both source values separate: the score card now says its mean is source-specific and must not be merged with the 99CEF Global mean or treated as a Grade 7 norm. Sources: [Ivy Track historical transcription](https://www.ivytrack.org/forum.php?action=printable&mod=viewthread&tid=19383), [99CEF 2015 report archive](https://web.archive.org/web/20160406192614id_/http://www.99cef.org.tw/userfiles/2015AMC10A12AReport.pdf).
