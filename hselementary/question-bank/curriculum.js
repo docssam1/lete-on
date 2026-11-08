@@ -2544,6 +2544,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const group=source52Cuboid.subunits.find(g=>g.id==="5-2-u5-s1"),id="5-2-u5-practice-5-grid-sizes-similar",name="격자 직육면체의 서로 다른 크기 · 조건변형";
     if(group&&!group.types.some(t=>t.id===id)){const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u5-practice-5-original",sourceItemLabel:"확인학습 5번 관련 조건변형",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:102,alternateSourcePdfPage:103,sourcePrintedPage:108,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5GridSizesSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문은 위치별 직육면체 수를 묻습니다. 이 별도 연습은 세 방향을 구분한 서로 다른 크기의 수를 묻습니다."});}
   }
+  if (source52Cuboid) {
+    const group=source52Cuboid.subunits.find(g=>g.id==="5-2-u5-s4"),id="5-2-u5-e1-example-4-three-rope-shortest",name="세 방향 끈으로 가장 짧은 모서리 구하기 · 조건변형";
+    if(group&&!group.types.some(t=>t.id===id)){const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u5-e1-example-4",sourceItemLabel:"예제 1-4 관련 조건변형",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:44,alternateSourcePdfPage:43,sourcePrintedPage:48,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5ThreeRopeShortest",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세 방향 묶기 그림을 이용하고 세 끈 길이를 각각 주는 별도 연습입니다."});}
+  }
   const source52CuboidNets = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s2");
   if (source52CuboidNets && !source52CuboidNets.types.some(t=>t.id==="5-2-u5-e2-paper-choice-practice")) {
     const id="5-2-u5-e2-paper-choice-practice",name="크기가 정해진 도화지와 전개도 둘레 · 별도 연습";
@@ -4423,7 +4427,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u5","5-2-u5-t5-2","5-2-u5-practice-41-blank-similar"],
     ["5-2-u5","5-2-u5-t5-3","5-2-u5-practice-54-view-sums-similar"],
     ["5-2-u5","5-2-u5-t2","5-2-u5-e2-paper-choice-practice"],
-    ["5-2-u5","5-2-u5-t1-4","5-2-u5-practice-5-grid-sizes-similar"]
+    ["5-2-u5","5-2-u5-t1-4","5-2-u5-practice-5-grid-sizes-similar"],
+    ["5-2-u5","5-2-u5-t4-5","5-2-u5-e1-example-4-three-rope-shortest"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
