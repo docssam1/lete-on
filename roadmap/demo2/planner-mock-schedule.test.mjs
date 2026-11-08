@@ -11,6 +11,16 @@ const plain=v=>JSON.parse(JSON.stringify(v));
 const plan=(answers=a(),state)=>S.attach(C.model(answers,fields),answers,fields,state);
 const row=(m,id)=>m.mockCheckPlan.rows.find(p=>p.id===id);
 const input=(extra={})=>({enabled:'on',spacing:'1',boundary:'',...extra});
+test('planned mock dates show only the known month or portion of that month',()=>{
+ assert.equal(S.approxDate('2026-11'), '2026년 11월경');
+ for (const [day, period] of [['01','초'],['10','초'],['11','중순'],['20','중순'],['21','말'],['30','말']]) {
+  assert.equal(S.approxDate('2026-11-' + day), '2026년 11월 ' + period);
+ }
+ assert.equal(S.approxDate('2028-02-29'), '2028년 2월 말');
+ for (const value of [null, '', '2026-13', '2026-04-31', '2026-02-29']) {
+  assert.equal(S.approxDate(value), '');
+ }
+});
 test('verified 2026 scopes identify real paper year, grade and month; no invented November assessment',()=>{
  assert.equal(S.PAPERS.length,8);assert.deepEqual(plain(S.PAPERS.map(p=>p.month)),[3,6,9,10,3,6,9,10]);assert.ok(S.PAPERS.every(p=>p.year===2026));
  assert.match(S.PAPERS.find(p=>p.id==='h1-06').scope,/방정식·부등식/);assert.match(S.PAPERS.find(p=>p.id==='h2-09').scope,/함수의 극한/);assert.match(S.PAPERS.find(p=>p.id==='h2-10').scope,/미분계수/);

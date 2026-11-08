@@ -55,7 +55,11 @@ function actual(a,axis,fields){
 }
 function defaults(fields){const b=P.BAND[fields.band]||P.BAND.B;return {elemMonths:b.elemS?3:Number(fields.speed)||2,bridgeMonths:4,midMonths:b.midLen,highMonths:6,deepMonths:b.midLen,...Object.fromEntries(KMO.map(x=>[x.id+'Months',x.months]))};}
 function date(m,offset=0){const n=m.year*12+m.month-1+Math.floor(offset+1e-8);return {year:Math.floor(n/12),month:n%12+1,label:Math.floor(n/12)+'년 '+(n%12+1)+'월'};}
-function period(m,b){if(b.calendarStart&&b.calendarEnd){const fmt=v=>v.replace(/^(\d+)-(\d+)-(\d+)$/,(a,y,m,d)=>y+'년 '+Number(m)+'월 '+Number(d)+'일');return fmt(b.calendarStart)+(b.calendarStart===b.calendarEnd?'':' – '+fmt(b.calendarEnd));}const a=date(m,b.start),z=date(m,Math.max(b.start,b.end-.00001));return a.label+(a.label===z.label?'':' – '+(a.year===z.year?z.month+'월':z.label))+(b.continues?'까지 표시 · 이후 계속':'');}
+function period(m,b){
+ if(b.guide==='mock' && b.calendarStart && global.PlannerMockSchedule?.approxRange){
+  return global.PlannerMockSchedule.approxRange(b.calendarStart,b.calendarEnd)+' 예정';
+ }
+ if(b.calendarStart&&b.calendarEnd){const fmt=v=>v.replace(/^(\d+)-(\d+)-(\d+)$/,(a,y,m,d)=>y+'년 '+Number(m)+'월 '+Number(d)+'일');return fmt(b.calendarStart)+(b.calendarStart===b.calendarEnd?'':' – '+fmt(b.calendarEnd));}const a=date(m,b.start),z=date(m,Math.max(b.start,b.end-.00001));return a.label+(a.label===z.label?'':' – '+(a.year===z.year?z.month+'월':z.label))+(b.continues?'까지 표시 · 이후 계속':'');}
 function model(answers={},fields={},value){
  const a=I.effective(answers),s=restore(value),durations={...defaults(fields),...s.periods},all=courses(),common=all.findIndex(x=>x.stage==='공통수학2');
  const calendar=s.startMonth?s.startMonth.split('-').map(Number):[+fields.year||new Date().getFullYear(),+fields.mon||new Date().getMonth()+1];

@@ -4,7 +4,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const read=f=>readFileSync(new URL(f,import.meta.url),'utf8');
 const scripts=['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-mock-schedule.js','planner-mock-library-data.js','planner-mock-library.js','planner-mock-scopes.js','planner-mock-matching.js','planner-mock-items-data.js','planner-mock-items.js','planner-mock-feedback.js','planner-learning-evidence.js','planner-goal-curriculum.js'];
-const w={},cx=vm.createContext({window:w,Date});for(const f of scripts)vm.runInContext(read(f),cx,{filename:f});
+// The pupil records the first attempt on Nov 6 in Seoul, whatever day CI runs.
+const fixtureTime = Date.parse('2026-11-06T12:00:00+09:00');
+class PracticeDate extends Date {
+ constructor(...args) { super(...(args.length ? args : [fixtureTime])); }
+ static now() { return fixtureTime; }
+}
+const w={},cx=vm.createContext({window:w,Date:PracticeDate});for(const f of scripts)vm.runInContext(read(f),cx,{filename:f});
 const {PlannerMockItems:I,PlannerMockSchedule:S,PlannerMockEvidence:E,PlannerMockFeedback:F,PlannerCurriculum:C,PlannerMockLibrary:B}=w;
 const plain=v=>JSON.parse(JSON.stringify(v));
 const a={grade:'7',gradeInput:'current',thinkingExperience:'none',schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'공통수학1',schoolStatus:'progress',deepCourse:'none',deepBook:'none',calc:'none'};

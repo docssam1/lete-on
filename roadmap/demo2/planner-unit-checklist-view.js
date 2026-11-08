@@ -59,7 +59,8 @@
   function taskRow(row, disabled) {
     const detail = row.detail && row.detail !== row.unitLabel ? row.detail : '';
     const unit = detail.includes(row.unitLabel) ? '' : row.unitLabel;
-    const meta = [row.kind === 'book' ? tracks[row.track] : '', unit, dateLabel(row.date)].filter(Boolean);
+    const when = row.kind === 'mock' && g.PlannerMockSchedule ? g.PlannerMockSchedule.approxDate(row.date) : dateLabel(row.date);
+    const meta = [row.kind === 'book' ? tracks[row.track] : '', unit, when].filter(Boolean);
     const url = row.kind === 'mock' ? questionLink(row.url) : '';
     return `<li class="uc-task" data-uc-kind="${row.kind === 'mock' ? 'mock' : 'book'}" data-uc-row="${escape(row.id)}">
       <div class="uc-task-copy">${meta.length ? `<small>${escape(meta.join(' · '))}</small>` : ''}<strong>${escape(row.title)}</strong>
