@@ -1,3 +1,4 @@
+import {withForceElementaryWorkbook} from './s31-u01.elementary.js?v=20261108-force-elementary';
 import{withForceWorkbookGuidance,withForceObservationData}from'./force-workbook-guidance.js?v=20261105-force-life-learner-reasoning';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import {withStudentOpeningLanguage,withActivityGuideLanguage} from './student-opening-language.js?v=20261105-activity-guide';
@@ -7826,4 +7827,5 @@ export const learnerPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
 export const forceGuidancePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const activityGuidePriorWorkbook=withForceWorkbookGuidance(forceGuidancePriorWorkbook);
 export const forceObservationPriorWorkbook=withActivityGuideLanguage(activityGuidePriorWorkbook);
-export const workbook=withForceObservationData(forceObservationPriorWorkbook);
+export const forceElementaryPriorWorkbook=withForceObservationData(forceObservationPriorWorkbook);
+export const workbook=withForceElementaryWorkbook(forceElementaryPriorWorkbook);

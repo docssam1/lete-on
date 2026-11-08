@@ -2,10 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {workbook as animal,animalPracticePriorWorkbook as priorAnimal} from '../data/book/s31-u02.workbook.js';
 import {workbook as plant,plantPracticePriorWorkbook as priorPlant} from '../data/book/s31-u03.workbook.js';
+import {workbook as force,forceElementaryPriorWorkbook as priorForce} from '../data/book/s31-u01.workbook.js';
 import {withGrade3LivingPracticeDirections} from '../data/book/s31-living-practice-directions.js';
+import {withForceElementaryWorkbook} from '../data/book/s31-u01.elementary.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
 
-const books=[[animal,priorAnimal,31],[plant,priorPlant,32]];
+const books=[[animal,priorAnimal,31,withGrade3LivingPracticeDirections],[plant,priorPlant,32,withGrade3LivingPracticeDirections],[force,priorForce,25,withForceElementaryWorkbook]];
 const withoutPrompt=q=>Object.fromEntries(Object.entries(q).filter(([key])=>key!=='prompt'));
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -41,13 +43,13 @@ test('the actual four-mode textbook renderer uses the current elementary directi
 });
 
 test('the direction overlay never mutates prior books or overwrites source, unknown or versioned presentations',()=>{
- for(const [current,prior]of books){
-  const saved=structuredClone(prior);assert.deepEqual(withGrade3LivingPracticeDirections(prior),current);assert.deepEqual(prior,saved);
-  assert.equal(withGrade3LivingPracticeDirections(current),current);
+ for(const [current,prior,,apply]of books){
+  const saved=structuredClone(prior);assert.deepEqual(apply(prior),current);assert.deepEqual(prior,saved);
+  assert.equal(apply(current),current);
   const target=prior.questions.find(q=>q.prompt!==current.questions.find(c=>c.id===q.id).prompt);
   for(const row of [{...target,sourceId:'protected'},{...target,sourceRef:{type:'original'}},{...target,sourceRef:{type:'similar'}},{...target,contentVersion:'future'},{...target,id:'unknown'},{...target,prompt:'a later reviewed direction'}]){
-   const book={...prior,questions:[row]};assert.equal(withGrade3LivingPracticeDirections(book),book);
+   const book={...prior,questions:[row]};assert.equal(apply(book),book);
   }
-  const unsupported={...prior,unit:'other-unit'};assert.equal(withGrade3LivingPracticeDirections(unsupported),unsupported);
+  const unsupported={...prior,unit:'other-unit'};assert.equal(apply(unsupported),unsupported);
  }
 });
