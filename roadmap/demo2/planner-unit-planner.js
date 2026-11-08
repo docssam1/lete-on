@@ -9,7 +9,8 @@
   host.tabIndex = -1;
   let context, program, courses, visible, lastText, lastDay;
 
-  let trendTrack = new URLSearchParams(g.location.search).has('weekly') ? 'all' : 'book';
+  const params = new URLSearchParams(g.location.search);
+  let trendTrack = params.get('assessment') === '1' ? 'assessment' : params.get('weekly') === '1' ? 'all' : 'book';
   let trendRecords, books = [], selectedBookId, bookMessage = '', lastBookText, bookState;
   const bookPlan = g.PlannerBookPacePlan;
   const comparisonTrend = document.createElement('div');
@@ -20,7 +21,7 @@
     const comparison = document.getElementById('workspace-panel-graph');
     if (comparison && comparison.firstElementChild !== comparisonTrend) comparison.prepend(comparisonTrend);
     const track = trendTrack;
-    const trend = track === 'book' ? {track} : track === 'units'
+    const trend = track === 'book' || track === 'assessment' ? {track} : track === 'units'
       ? g.PlannerUnitTrend.build({records:trendRecords,program,day:lastDay})
       : g.PlannerWeeklyTrend.build({program,day:lastDay,track});
     const bookModel = track === 'book' ? bookPlan.model(books,selectedBookId,bookState,lastDay,bookMessage) : null;
@@ -28,13 +29,14 @@
     for (const target of [host.querySelector('[data-weekly-trend]'),comparisonTrend]) {
       if (!target?.isConnected) continue;
       g.PlannerWeeklyTrendView.render(target,trend,visible.route);
+      if (track === 'assessment') g.PlannerAssessmentPlanner.mount(target.querySelector('[data-assessment-host]'));
       if (bookModel) g.PlannerBookPaceView.render(target.querySelector('[data-book-pace-host]'),bookModel,visible.route);
     }
   }
 
   function chooseTrendTrack(event) {
     const track = event.detail?.track;
-    if (track === trendTrack || !['book','all','units',...g.PlannerWeeklyModel.TRACKS].includes(track)) return;
+    if (track === trendTrack || !['assessment','book','all','units',...g.PlannerWeeklyModel.TRACKS].includes(track)) return;
     trendTrack = track;
     drawTrend();
   }

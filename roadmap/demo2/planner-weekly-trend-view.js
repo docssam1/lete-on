@@ -1,7 +1,7 @@
 /* Signed session counts from saved weekly reviews. Missing weeks break the line. */
 (function (g) {
   'use strict';
-  const tracks = {book:'교재 진도', all: '전체 학습 횟수', curriculum: '교과', arithmetic: '연산', thinking: '사고력', units: '단원 보완'};
+  const tracks = {book:'교재 진도', assessment:'단원평가 누적 결과', all: '전체 학습 횟수', curriculum: '교과', arithmetic: '연산', thinking: '사고력', units: '단원 보완'};
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => (
     {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]
   ));
@@ -122,10 +122,12 @@
     const track = Object.hasOwn(tracks, model.track) ? model.track : 'all';
     const units = track === 'units';
     const options = Object.entries(tracks)
-      .filter(([value]) => hasProgram || value === 'all' || value === 'units' || value === 'book')
+      .filter(([value]) => hasProgram || value === 'all' || value === 'units' || value === 'book' || value === 'assessment')
       .map(([value, name]) => '<option value="' + value + '"' + (value === track ? ' selected' : '') + '>' + name + '</option>').join('');
     const showChart = points.some(recorded);
     const select = '<label class="wt-filter">그래프 선택 <select data-wt-filter data-wt-focus="filter">' + options + '</select></label>';
+    if (track === 'assessment') return '<section class="wt-card" data-wt-track="assessment" aria-label="단원평가 누적 결과"><div class="wt-head"><h3>단원평가 누적 결과</h3>' +
+      select + '</div><div data-assessment-host></div></section>';
     if (track === 'book') return '<section class="wt-card" data-wt-track="book" aria-label="교재 진도"><div class="wt-head"><h3>목표와 혼자 푼 교재 진도</h3>' +
       select + '</div><div data-book-pace-host></div></section>';
     const latestLabel = hasRecord && (units ? '보완할 단원 ' + Math.abs(latest.gap) + '개' : gapLabel(latest.gap));

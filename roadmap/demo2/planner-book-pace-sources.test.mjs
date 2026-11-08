@@ -89,3 +89,18 @@ test('verified chapter observations stay with their edition and undated intake m
   const mismatch=build({context:{...ctx,answers:changed,bookChecks:next}})[0];
   assert.equal(mismatch.defaultGoal,null);
 });
+
+test('a truncated roadmap horizon is not a finish date and a companion book keeps its own scale',()=>{
+  const ctx={...context,answers:goalIntake(answers),mock:{lanes:[{id:'school',blocks:[
+    {...courses.tracks.curriculum.blocks[0],continues:true}
+  ]}]}};
+  const clipped=build({context:ctx})[0];
+  assert.equal(clipped.suggested.endDate,null);assert.equal(clipped.defaultGoal,null);
+  const hs={...answers,schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'공통수학1',school:undefined};
+  const highCtx={answers:goalIntake(hs),fields};
+  const highCourses={tracks:{curriculum:{blocks:[{title:'공통수학1 기본정석 + 쎈 고등',start:0,end:4}]}}};
+  const week={tracks:{curriculum:{pace:3,items:[{title:'공통수학1 기본정석 + 쎈 고등'}]}}};
+  const selected=build({context:highCtx,source:saved({...highCtx,week}),courses:highCourses})[0];
+  assert.match(selected.title,/기본정석/);assert.doesNotMatch(selected.title,/쎈/);
+  assert.equal(selected.defaultGoal.endDate,'2027-02-28');
+});
