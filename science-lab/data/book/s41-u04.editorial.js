@@ -573,3 +573,224 @@ export function withBiologyElementaryReading(wb){
  });
  return {...wb,questions:wb.questions.map(q=>ELEMENTARY_PROMPTS[q.no]?{...q,prompt:ELEMENTARY_PROMPTS[q.no]}:q),pages:pages(wb.pages),...(wb.teacherStudentPages?{teacherStudentPages:pages(wb.teacherStudentPages)}:{})};
 }
+
+// Reuse the existing elementary workbook directions in the bank and classroom.
+export const BIOLOGY_ELEMENTARY_BANK_VERSION='20261108-biology-elementary-bank';
+const biologyElementaryBankPatches={
+  "s41-u04-b33": {
+    "previous": "“모든 세균은 해롭다”는 말을 검토할 근거로 적절한 것을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "workbookNo": 32
+  },
+  "s41-u04-b34": {
+    "previous": "음식 부패와 발효 식품 생산을 조사했습니다. 바른 발표 문장을 고르세요.",
+    "previousVersion": "20261106-biology-readable-workbook",
+    "workbookNo": 33
+  },
+  "s41-u04-b35": {
+    "previous": "이로운 영향과 해로운 영향을 조사할 표의 머리글로 가장 적절한 것을 고르세요.",
+    "previousVersion": "20261106-biology-readable-workbook",
+    "workbookNo": 34
+  },
+  "s41-u04-b37": {
+    "previous": "서로 다른 자료가 한 생물의 영향을 다르게 설명합니다. 조사 방법으로 적절한 것을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "workbookNo": 36
+  },
+  "s41-u04-b39": {
+    "previous": "조사에 사용한 책·기관·자료의 위치를 다른 사람이 찾도록 적는 정보를 무엇이라고 하나요?",
+    "previousVersion": "20261105-biology-question-language",
+    "workbookNo": 37
+  },
+  "s41-u04-b41": {
+    "previous": "일부 곰팡이가 만든 물질이 세균의 자람을 억제했습니다. 연결되는 이용 사례를 고르세요.",
+    "previousVersion": "20261106-biology-readable-workbook",
+    "workbookNo": 58
+  },
+  "s41-u04-b42": {
+    "previous": "미생물의 작용과 생활 문제를 바르게 연결한 것을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "workbookNo": 59
+  },
+  "s41-u04-b43": {
+    "previous": "효모를 이용한 반죽과 효모 없는 반죽 자료를 비교합니다. 설명으로 알맞은 것을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "workbookNo": 60
+  },
+  "s41-u04-b45": {
+    "previous": "발효 음식 소개에 적절한 설명을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "workbookNo": 62
+  },
+  "s41-u04-b48": {
+    "previous": "생명과학 이용 사례 한 가지를 골라, 생물의 어떤 특징을 이용하여 우리 생활의 어떤 문제를 해결하는지 설명하세요.",
+    "previousVersion": "20261106-biology-readable-workbook",
+    "workbookNo": 64
+  },
+  "s41-u04-b49": {
+    "previous": "저학년 동생을 위한 해캄 소개 자료를 만듭니다. 알맞은 방법을 고르세요.",
+    "previousVersion": 1,
+    "workbookNo": 65
+  },
+  "s41-u04-b50": {
+    "previous": "세균 소개 카드뉴스의 제목으로 가장 적절한 것을 고르세요.",
+    "previousVersion": 1,
+    "workbookNo": 66
+  },
+  "s41-u04-b63": {
+    "previous": "자료를 고치기 위해 실제로 들은 의견이나 질문을 무엇이라고 하나요?",
+    "previousVersion": "20261105-biology-question-language",
+    "workbookNo": 69
+  },
+  "s41-u04-b01": {
+    "previous": "세균 한 개의 모양을 알아보려 합니다. 수업 자료로 가장 적절한 것을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "세균 한 개의 모양을 자세히 보려고 해요. 알맞은 수업 자료를 고르세요."
+  },
+  "s41-u04-b02": {
+    "previous": "살아 있는 짚신벌레의 움직임을 알아보려 합니다. 적절한 자료를 고르세요.",
+    "previousVersion": 1,
+    "prompt": "살아 있는 짚신벌레가 어떻게 움직이는지 알아보려고 해요. 알맞은 자료를 고르세요."
+  },
+  "s41-u04-b03": {
+    "previous": "버섯 갓 안쪽의 주름을 더 자세히 보려 합니다. 수업에서 적절한 방법을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "버섯 갓 안쪽의 주름을 자세히 보려고 해요. 수업에서 알맞은 방법을 고르세요."
+  },
+  "s41-u04-b04": {
+    "previous": "확대 사진 두 장의 크기만으로 생물의 실제 크기를 비교하기 어렵습니다. 먼저 확인할 정보를 고르세요.",
+    "previousVersion": 1,
+    "prompt": "확대 사진 두 장만 보고 생물의 실제 크기를 비교하려고 해요. 먼저 확인할 정보를 고르세요."
+  },
+  "s41-u04-b05": {
+    "previous": "자료의 출처를 적는 목적에 맞는 설명을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "자료의 출처를 왜 적어야 할까요? 알맞은 설명을 고르세요."
+  },
+  "s41-u04-b06": {
+    "previous": "관찰 일지에 적절한 정보 두 개를 고르세요.",
+    "previousVersion": 1,
+    "prompt": "생물을 관찰한 기록에 넣을 내용 두 가지를 고르세요."
+  },
+  "s41-u04-b08": {
+    "previous": "생물 사진의 출처와 배율이 빠져 있습니다. 비교 전에 무엇을 확인하고 기록할지 설명하세요.",
+    "previousVersion": 1,
+    "prompt": "생물 사진에 출처와 배율(얼마나 확대했는지)이 적혀 있지 않아요. 실제 크기를 비교하려면 무엇을 더 확인하고 기록해야 할까요?"
+  },
+  "s41-u04-b11": {
+    "previous": "해캄 사진에서 마디가 보였습니다. 이 근거를 넘어선 결론을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "해캄 사진에서 마디가 보였어요. 이 사진만 보고는 알 수 없는 것을 고르세요."
+  },
+  "s41-u04-b12": {
+    "previous": "버섯 전체 사진에는 가는 실이 잘 보이지 않습니다. 바른 해석을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "버섯 전체를 찍은 사진에서는 가는 실이 잘 보이지 않아요. 이 사진을 보고 알맞게 설명한 것을 고르세요."
+  },
+  "s41-u04-b13": {
+    "previous": "같은 물 표본에서 움직이는 작은 점을 보았습니다. 근거가 더 필요한 판단을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "물 표본에서 움직이는 작은 점을 보았어요. 이 관찰만으로는 알 수 없는 것을 고르세요."
+  },
+  "s41-u04-b14": {
+    "previous": "사진에서 직접 본 형태를 적은 문장 두 개를 고르세요.",
+    "previousVersion": 1,
+    "prompt": "사진에서 직접 본 생김새를 바르게 적은 문장 두 개를 고르세요."
+  },
+  "s41-u04-b15": {
+    "previous": "“직접 본 사실”과 “그 사실로부터 생각한 설명” 중 전자를 가리키는 낱말을 쓰세요.",
+    "previousVersion": 1,
+    "prompt": "생물을 눈이나 도구로 직접 살펴보는 활동을 무엇이라고 하나요? 본 것을 바탕으로 생각해 낸 설명과 구별해 보세요."
+  },
+  "s41-u04-b19": {
+    "previous": "같은 현미경 관찰 자료에 A는 긴 가닥과 마디, B는 짚신 같은 몸과 가는 털이 보입니다. 알맞은 연결을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "같은 현미경 관찰 자료에서 A는 긴 가닥과 마디가 보여요. B는 짚신 같은 몸과 가는 털이 보여요. A와 B의 이름을 알맞게 짝 지은 것을 고르세요."
+  },
+  "s41-u04-b20": {
+    "previous": "효모를 균류로 소개하는 자료를 보았습니다. 균류에 대한 설명으로 바른 것을 고르세요.",
+    "previousVersion": "20261106-biology-readable-workbook",
+    "prompt": "효모가 균류에 속한다는 자료를 보았어요. 균류를 바르게 설명한 것을 고르세요."
+  },
+  "s41-u04-b21": {
+    "previous": "세균이 물체 표면에서 발견된 자료를 읽었습니다. 알맞은 설명을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "물체 표면에서 세균을 발견했다는 자료를 읽었어요. 알맞은 설명을 고르세요."
+  },
+  "s41-u04-b24": {
+    "previous": "해캄·짚신벌레를 한 종류라고 쓴 친구에게 관찰 특징을 이용해 차이를 설명하세요.",
+    "previousVersion": 1,
+    "prompt": "친구가 해캄과 짚신벌레를 같은 종류라고 적었어요. 관찰한 특징을 들어 두 생물이 어떻게 다른지 설명하세요."
+  },
+  "s41-u04-b38": {
+    "previous": "조사 발표에서 적절한 태도 두 개를 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "prompt": "조사한 내용을 발표하려고 해요. 알맞은 방법 두 가지를 고르세요."
+  },
+  "s41-u04-b46": {
+    "previous": "생물의 작용과 이용을 타당하게 연결한 사례 두 개를 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "prompt": "생물이 하는 일과 그 일을 이용한 예를 바르게 연결한 두 가지를 고르세요."
+  },
+  "s41-u04-b52": {
+    "previous": "발표 순서를 구성할 때 적절한 것을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "발표할 내용을 어떤 순서로 나누면 좋을까요? 알맞은 것을 고르세요."
+  },
+  "s41-u04-b53": {
+    "previous": "여러 사람이 함께 자료를 제작합니다. 계획으로 적절한 것을 고르세요.",
+    "previousVersion": 1,
+    "prompt": "여러 친구가 함께 소개 자료를 만들려고 해요. 알맞은 계획을 고르세요."
+  },
+  "s41-u04-b54": {
+    "previous": "소개 자료를 완성하기 전 확인할 사항 두 개를 고르세요.",
+    "previousVersion": 1,
+    "prompt": "소개 자료를 완성하기 전에 확인할 내용 두 가지를 고르세요."
+  },
+  "s41-u04-b57": {
+    "previous": "아직 자료를 보여 주지 않았는데 공유 기록을 적으려 합니다. 바른 기록을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "prompt": "아직 자료를 보여 주지 않았어요. 공유 기록에 어떻게 적으면 좋을까요?"
+  },
+  "s41-u04-b58": {
+    "previous": "친구에게 자료를 보여 주었지만 질문은 없었습니다. 바른 기록을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "prompt": "친구에게 자료를 보여 주었지만 질문은 없었어요. 어떻게 기록하면 좋을까요?"
+  },
+  "s41-u04-b59": {
+    "previous": "발표 후 “해캄이 왜 식물이 아닌가요?”라는 질문을 받았습니다. 적절한 다음 행동을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "prompt": "발표한 뒤 친구가 ‘해캄은 왜 식물이 아닌가요?’라고 물었어요. 다음에 무엇을 해야 할까요?"
+  },
+  "s41-u04-b60": {
+    "previous": "자료를 고친 기록으로 가장 적절한 것을 고르세요.",
+    "previousVersion": "20261105-biology-question-language",
+    "prompt": "소개 자료를 고친 뒤 남긴 기록이에요. 알맞은 것을 고르세요."
+  },
+  "s41-u04-t12": {
+    "previous": "효모빵 실험 결과를 근거로, 「물이 뜨거울수록 빵이 더 많이 부푼다」는 친구의 생각을 고쳐 써요.",
+    "previousVersion": 1,
+    "prompt": "효모빵 실험의 모형 자료를 보고, ‘물이 뜨거울수록 빵이 더 많이 부푼다’는 친구의 말을 바르게 고쳐 쓰세요. 자료에서 알게 된 내용을 넣어 설명하세요."
+  }
+};
+const biologyElementaryBankCache=new WeakMap();
+export function biologyElementaryCurrentItems(rows,unit){
+ if(unit!=='s41-u04'||!Array.isArray(rows))return rows;
+ let changed=false;
+ const next=rows.map(question=>{
+  const entry=biologyElementaryBankPatches[question.id];
+  if(!entry||question.status!=='authored'||!['authored-supplement','authored-lesson'].includes(question.sourceRef?.type)||(question.contentVersion||1)!==entry.previousVersion||question.prompt!==entry.previous)return question;
+  const prompt=entry.workbookNo?ELEMENTARY_PROMPTS[entry.workbookNo]:entry.prompt;
+  if(typeof prompt!=='string'||prompt===question.prompt)return question;
+  changed=true;
+  if(biologyElementaryBankCache.has(question))return biologyElementaryBankCache.get(question);
+  const clone=value=>JSON.parse(JSON.stringify(value));
+  const current={...question,prompt,contentVersion:BIOLOGY_ELEMENTARY_BANK_VERSION,previousVersions:[...(question.previousVersions?clone(question.previousVersions):[]),{...clone(question),version:question.contentVersion||1}]};
+  biologyElementaryBankCache.set(question,current);return current;
+ });
+ return changed?next:rows;
+}
+export function withBiologyElementaryBankClassroom(unit,mod){
+ const items=biologyElementaryCurrentItems(mod.classroomItems,unit);
+ return items===mod.classroomItems?mod:{...mod,classroomItems:items};
+}
