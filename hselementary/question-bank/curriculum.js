@@ -4065,6 +4065,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Unit2 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u2");
   const source52Unit2First = source52Unit2?.subunits.find(subunit => subunit.name === "분수와 자연수의 곱셈");
+  if (source52Unit2First && !source52Unit2First.types.some(t=>t.id==="5-2-u2-practice-9-reading-similar")) {
+    const id="5-2-u2-practice-9-reading-similar",name="남은 쪽수의 분수만큼 읽은 양 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-9-original",sourceItemLabel:"확인학습 9번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:72,alternateSourcePdfPage:71,sourcePrintedPage:76,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P76Q9ReadingSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 전체에서 읽은 양과 남은 양의 분수를 차례로 적용하는 구조를 유지한 9문항을 검산했습니다."});
+  }
   if (source52Unit2First && !source52Unit2First.types.some(t=>t.id==="5-2-u2-practice-3-shaded-similar")) {
     const id="5-2-u2-practice-3-shaded-similar",name="직사각형의 색칠한 부분의 넓이 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
