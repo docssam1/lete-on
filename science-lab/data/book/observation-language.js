@@ -83,6 +83,13 @@ export function withObservationLanguage(workbook){
 
 // 그림에 보이는 모습만 대체 글로 설명한다. 이전 원고와 자료는 보존한다.
 export function withObservedPhotoAlt(workbook){
+ if(workbook.unit==='c22-s61-u02'){
+  const key='motion-escalator',figure=workbook.figures?.[key];
+  const before='<img src="../assets/bank/c22-s61-u02/s1-q05.webp" alt="계단과 나란히 설치된 자동계단"';
+  const after='<img src="../assets/bank/c22-s61-u02/s1-q05.webp" alt="나란히 설치된 두 자동계단의 발판과 손잡이"';
+  if(typeof figure!=='string'||!figure.includes(before))return workbook;
+  return {...workbook,figures:{...workbook.figures,[key]:figure.replace(before,after)}};
+ }
  if(workbook.unit!=='c22-s32-u04')return workbook;
  const revise=rows=>{
   if(!rows)return rows;

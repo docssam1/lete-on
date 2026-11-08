@@ -1,4 +1,4 @@
-import {withObservedPhotoAlt} from '../data/book/observation-language.js?v=20261108-observed-photo-alt';
+import {withObservedPhotoAlt} from '../data/book/observation-language.js?v=20261108-motion-photo-alt';
 import{ELEMENTARY_PROMPT_UNITS,ELEMENTARY_PROMPT_VERSION}from'../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import {GRADE3_STUDY_NOTES_VERSION,GRADE3_STUDY_NOTE_UNITS} from '../data/book/grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import {FORCE_ELEMENTARY_VERSION} from '../data/book/s31-u01.elementary.js?v=20261108-force-elementary';
