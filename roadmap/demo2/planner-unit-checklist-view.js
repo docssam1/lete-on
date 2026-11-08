@@ -99,19 +99,22 @@
           `<span>${escape(entry.items.map(item => [item.title, item.detail].filter(Boolean).join(' · ')).join(' / '))}</span>`}</li>`).join('')}</ul>` : '<p>공부한 항목에서 ‘혼자 풀 수 있어요’가 비어 있으면 다음 주에 다시 풀도록 여기에 담겨요.</p>'}</section>`;
   }
 
-  function markup(model) {
+  function checklist(model) {
     const rows = model.rows || [];
     const isReview = row => row.review || row.reviewOf?.length;
     const reviewRows = rows.filter(isReview);
     const otherRows = rows.filter(row => !isReview(row));
     const notices = (model.notices || []).filter(Boolean);
-    return `<div class="unit-checklist">${routeMap(model.route, rows, model.weekStart)}
-      <section class="uc-week" aria-label="이번 주 체크리스트"><div class="uc-heading"><h3>이번 주 체크리스트</h3><small>${escape(weekLabel(model.weekStart))}</small></div>
+    return `<section class="uc-week" aria-label="이번 주 체크리스트"><div class="uc-heading"><h3>이번 주 체크리스트</h3><small>${escape(weekLabel(model.weekStart))}</small></div>
       ${group('다시 풀 단원',reviewRows,'review',model.readOnly)}${group('교재 범위',otherRows.filter(row => row.kind === 'book'),'book',model.readOnly)}${group('기출 문항',otherRows.filter(row => row.kind === 'mock'),'mock',model.readOnly)}
       ${!rows.length && !notices.length ? '<p class="uc-note">학습 시작일과 사용 중인 교재를 확인하면 이번 주 공부할 범위를 정할 수 있어요.</p>' : ''}
       ${notices.length ? `<ul class="uc-notices">${notices.map(note => `<li>${escape(note)}</li>`).join('')}</ul>` : ''}
-      ${manualForm(model.manualBooks,model.readOnly)}</section>${reviews(model.nextReview || [], model.nextWeekStart)}
-      </div>`;
+      ${manualForm(model.manualBooks,model.readOnly)}</section>${reviews(model.nextReview || [], model.nextWeekStart)}`;
+  }
+
+  function markup(model) {
+    return `<div class="unit-checklist">${routeMap(model.route,model.rows || [],model.weekStart)}
+      <div data-weekly-trend></div><div data-uc-work>${checklist(model)}</div></div>`;
   }
 
   function emit(host, name, detail) {
@@ -178,7 +181,13 @@
     const oldStage = area.querySelector('.uc-road [aria-current=step]');
     const oldMarker = oldStage?.querySelector('.uc-student');
     const previous = oldMarker && { stage: oldStage.dataset.stageId, percent: oldMarker.dataset.ucPercent, week: area.querySelector('.uc-route').dataset.ucWeek };
-    area.innerHTML = markup(model);
+    const routeSection = area.querySelector('.uc-route');
+    if (routeSection) {
+      routeSection.outerHTML = routeMap(model.route,model.rows || [],model.weekStart);
+      area.querySelector('[data-uc-work]').innerHTML = checklist(model);
+    } else {
+      area.innerHTML = markup(model);
+    }
     moveWithinStage(previous, area, model.weekStart);
     const form = area.querySelector('[data-uc-manual]');
     if (draft && form && Array.from(form.elements.bookId.options).some(option => option.value === draft.bookId)) {
