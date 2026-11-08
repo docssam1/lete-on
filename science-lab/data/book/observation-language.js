@@ -80,3 +80,22 @@ export function withObservationLanguage(workbook){
  const map=bodyMaps[workbook.unit],pages=rows=>map?rows?.map(p=>({...p,blocks:replace(p.blocks,map)})):rows;
  return{...workbook,questions:workbook.questions.map(q=>presentation(q,workbook.unit,true)),...(map?{pages:pages(workbook.pages),...(workbook.teacherStudentPages?{teacherStudentPages:pages(workbook.teacherStudentPages)}:{})}:{})};
 }
+
+// 그림에 보이는 모습만 대체 글로 설명한다. 이전 원고와 자료는 보존한다.
+export function withObservedPhotoAlt(workbook){
+ if(workbook.unit!=='c22-s32-u04')return workbook;
+ const revise=rows=>{
+  if(!rows)return rows;
+  const next=rows.map(page=>{
+   const blocks=page.blocks?.map(block=>{
+    if(block.type!=='gallery'||!Array.isArray(block.items))return block;
+    const items=block.items.map(item=>item.src==='../assets/book/c22-s32-u04-photo-glitter-left.webp'&&item.alt==='물로만 헹군 뒤 손가락 사이와 손톱 밑에 남은 반짝이'?{...item,alt:'젖은 손에 반짝이 가루가 남아 있는 설명 장면'}:item);
+    return items.every((item,i)=>item===block.items[i])?block:{...block,items};
+   });
+   return !blocks||blocks.every((block,i)=>block===page.blocks[i])?page:{...page,blocks};
+  });
+  return next.every((page,i)=>page===rows[i])?rows:next;
+ };
+ const pages=revise(workbook.pages),teacherStudentPages=revise(workbook.teacherStudentPages);
+ return pages===workbook.pages&&teacherStudentPages===workbook.teacherStudentPages?workbook:{...workbook,pages,...(teacherStudentPages?{teacherStudentPages}:{})};
+}

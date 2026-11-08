@@ -1,0 +1,2258 @@
+{
+  "phase": 378,
+  "date": "2026-11-08",
+  "candidateBaseline": "f4b233a2c4edb0eb1572ed842e6d9d554d463862",
+  "reviewParent": "64297122d4cf9bdbf8fc71e9b822bf3c95e9ac11",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "3·4학년 교재에 참조되는 소스 이미지의 눈 검수와 주요 설명·대체 글 대조. 실제 웹/인쇄 지면의 시각 검수가 아니다.",
+  "inventory": {
+    "currentLocalImgPaths": 186,
+    "rasterPaths": 184,
+    "referencedSvgPaths": 2,
+    "currentReferences": 520,
+    "lowerGradeReferencedRaster": 86
+  },
+  "manualReview": {
+    "reviewedImagesInThisBatch": 71,
+    "wholeImagesViewedCurrentTurn": 56,
+    "priorUnpublishedNotesCarriedWithMatchingHash": 15,
+    "previousPublishedCurrentHashEvidence": 71,
+    "newPublishedCurrentHashEvidence": 71,
+    "currentSelectedManualEvidenceHashes": 142,
+    "remainingRasterWithoutSelectedEvidence": 42,
+    "all86LowerGradeRasterHaveSelectedManualEvidence": true,
+    "doesNotAssertRemainingImagesNeverReviewed": true,
+    "mismatchesFound": 1,
+    "altFieldsCorrected": 2
+  },
+  "ocr": {
+    "engine": "Apple Vision",
+    "recognitionLevel": "accurate",
+    "languages": [
+      "ko-KR",
+      "en-US"
+    ],
+    "computePolicy": "CPU-only",
+    "oneImagePerProcess": true,
+    "imagesProcessed": 71,
+    "processingFailed": 0,
+    "recognizedTextLines": 0,
+    "priorSingleProcessBatch": {
+      "succeeded": 1,
+      "failed": 70,
+      "failure": "e5rt code 13; preserved local log"
+    },
+    "positiveControl": {
+      "path": "science-lab/assets/book/c22-s51-u02-source-periscope.png",
+      "sha256": "591f55f1dba5288acb2e1aa79c7fb431e64f1ef22fee3d60a05e44268ed2945f",
+      "recognizedTextLines": 2
+    },
+    "smallEnglishTextRecheck": {
+      "images": 7,
+      "minimumTextHeight": 0.001,
+      "processingSucceeded": 6,
+      "processingFailed": 1,
+      "failedImage": "science-lab/assets/activities/s31-u03/rose-native.webp",
+      "failure": "e5rt code 13",
+      "recognizedTextLines": 0
+    },
+    "manualCheckedVisibleLabels": [
+      "(가)/(나) on chrysalis and caterpillar",
+      "S/N on horseshoe magnet",
+      "ㄱ/ㄴ on paired river photographs"
+    ],
+    "visibleSmallMarksNotCertified": [
+      "small characters on rose picture",
+      "small ruler scale",
+      "distant signboards"
+    ],
+    "zeroRecognizedLinesDoesNotProveTextAbsent": true,
+    "rawOcrOutputsPublished": false
+  },
+  "productChange": {
+    "unit": "c22-s32-u04",
+    "image": "science-lab/assets/book/c22-s32-u04-photo-glitter-left.webp",
+    "beforeAlt": "물로만 헹군 뒤 손가락 사이와 손톱 밑에 남은 반짝이",
+    "afterAlt": "젖은 손에 반짝이 가루가 남아 있는 설명 장면",
+    "scope": "current student/teacher workbook display, exact unit/path/prior alt match only",
+    "originalWorkbookSourcesPreserved": true,
+    "futureAltPreserved": true,
+    "all186ImageBytesAndHashesPreserved": true
+  },
+  "validation": {
+    "phase": 378,
+    "date": "2026-11-08",
+    "baseline": "f4b233a2c4edb0eb1572ed842e6d9d554d463862",
+    "workbooks": 32,
+    "questionCount": 3080,
+    "questionsUnchanged": true,
+    "altFieldsChanged": 2,
+    "changedPrintModes": [
+      {
+        "unit": "c22-s32-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "teacher"
+      }
+    ],
+    "unchangedPrintModes": 126,
+    "webModelsChecked": 32,
+    "currentLocalImagePaths": 186,
+    "currentImageReferences": 520,
+    "all186ImageBytesAndHashesPreserved": true,
+    "selectedManualRecords": 71,
+    "nativeTests": {
+      "files": 5,
+      "passed": 79,
+      "failed": 0
+    },
+    "inputImmutableAndIdempotent": true,
+    "actualBrowserOrA4VisualInspection": false
+  },
+  "assets": [
+    {
+      "path": "science-lab/assets/activities/c22-s32-u01/sand-grains-reference.webp",
+      "sha256": "a03e36b4faa248bd3b78339568436346c69f959b3bae566da3779eb3cb6c7b52",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "접시에 모인 여러 색의 둥근 알갱이가 보인다. 알갱이 모양을 살피는 참고 장면과 맞으며 사진 한 장으로 옮겨 담을 때의 변화를 관찰한 결과나 광물 성분을 확정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u01",
+          "mode": "student",
+          "alt": "작은 모래 알갱이가 흰 접시에 모인 생김새 참고 사진"
+        },
+        {
+          "unit": "c22-s32-u01",
+          "mode": "teacher",
+          "alt": "작은 모래 알갱이가 흰 접시에 모인 생김새 참고 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s32-u02/coast-beach-reference.webp",
+      "sha256": "678198a4cd6874a9c22451ecf5d7e45711df0a07da52245b4e733d74c7488c54",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "모래사장과 물가의 파도, 뒤쪽 육지가 보인다. 모래와 물가의 생김새를 비교하는 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "학습용 풍경의 모래사장과 바다"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "학습용 풍경의 모래사장과 바다"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s32-u02/coast-cave-reference.webp",
+      "sha256": "a9878a12ddc451c4ff523d3efca573bf1734bd57979226f5c99b8b1a31d63f27",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "바위 아래 어두운 동굴 모양 입구와 바닷물이 보인다. 입구의 생김새를 비교할 수 있으며 안쪽 깊이나 형성 과정을 사진만으로 확정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "학습용 풍경의 바위 아래 동굴 모양 입구와 바다"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "학습용 풍경의 바위 아래 어두운 동굴 모양 입구와 바다"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "학습용 풍경의 바위 아래 동굴 모양 입구와 바다"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "학습용 풍경의 바위 아래 어두운 동굴 모양 입구와 바다"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+      "sha256": "390708325116c969fdd327ccb42c2b606645811e24342f409d9fdd43689f371e",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "물가의 높고 가파른 바위 벽과 틈이 보인다. 모래사장과 경사·표면을 비교하는 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "학습용 풍경의 가파른 바위 절벽과 바다"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "학습용 풍경의 가파른 바위 절벽과 바다"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "학습용 풍경의 가파른 바위 절벽과 바다"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "학습용 풍경의 가파른 바위 절벽과 바다"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg",
+      "sha256": "36dad3314b64319ea75465c4293719eb131d943566eb462e8bac3281e02c3bd4",
+      "width": 1920,
+      "height": 1920,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "한쪽 지구 표면의 아프리카와 주변 바다·흰 구름이 보인다. 보이지 않는 반대편까지 사진이 보여 준다고 하지 않는 현재 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "아폴로17호가 촬영한 지구의 아프리카와 주변 바다·구름"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "아폴로17호가 촬영한 지구의 아프리카와 주변 바다·구름"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s42-u01/sun-PIA17669.jpg",
+      "sha256": "4c6e67c863037bb5dbaac39b068a6f74f007d425e22e59917a327669c45a0061",
+      "width": 1024,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "태양 원반에 밝고 어두운 부분과 바깥으로 뻗은 구조가 보인다. 맨눈의 실제 색이나 지구에서 본 상대 크기를 사진에서 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u01",
+          "mode": "student",
+          "alt": "NASA SDO AIA의 태양 관측 자료"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "student",
+          "alt": "NASA SDO AIA의 태양 관측 자료"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "teacher",
+          "alt": "NASA SDO AIA의 태양 관측 자료"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "teacher",
+          "alt": "NASA SDO AIA의 태양 관측 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s42-u03/pump-tube-reference.webp",
+      "sha256": "d0e9e4d46a5145efa259b7f311f9616e27e4510ced87c0abb9cd0a27745b2547",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "파란 손 펌프와 아직 연결하지 않은 투명 관이 보인다. 준비물의 생김새를 보여 주는 장면이며 완성 장치나 작동 결과 사진으로 해석하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u03",
+          "mode": "student",
+          "alt": "별도로 놓인 손 펌프와 투명한 관을 나타낸 그림"
+        },
+        {
+          "unit": "c22-s42-u03",
+          "mode": "teacher",
+          "alt": "별도로 놓인 손 펌프와 투명한 관을 나타낸 그림"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/bat.webp",
+      "sha256": "05483c2a9a8a3b99490c77d6830efe1c2a27bdc5947f4d00812d0f2bd56b8f06",
+      "width": 226,
+      "height": 190,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "박쥐의 막처럼 펼쳐진 날개와 몸이 보인다. 날개가 있다는 특징만으로 새와 같은 무리로 정하지 않는 비교 자료다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "박쥐 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "박쥐 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/dragonfly.webp",
+      "sha256": "51962f7f7908c99e9fff233f104d0398a8266e19708a6e5fc750ce59e9d9fe03",
+      "width": 228,
+      "height": 188,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "성충 잠자리의 긴 몸과 다리, 가느다란 날개가 보인다. 겹친 부분의 수를 정밀하게 세는 자료로 삼지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "잠자리 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "잠자리 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/frog.webp",
+      "sha256": "986f8d3e85ebb3645f064cf76e1ce2a842cf995cf47743a062f1ca3f4da1984c",
+      "width": 224,
+      "height": 190,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "물가에 웅크린 개구리의 몸과 다리가 보인다. 관찰할 외형과 자료에 주어진 생활 설명을 구별한다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "개구리 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "개구리 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/lizard.webp",
+      "sha256": "6e767a2ff77d6e6b07cbcecade01fa239adc588da02e3d9b20374d0d7d1631dc",
+      "width": 224,
+      "height": 190,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "도마뱀의 길쭉한 몸과 꼬리, 다리가 보인다. 흐린 사진에서 미세한 비늘을 측정했다고 삼지는 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "도마뱀 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "도마뱀 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/pigeon.webp",
+      "sha256": "95389c2e133130f3addc0d075103db59d353db99c095ae53bb754d7dd40556ad",
+      "width": 236,
+      "height": 182,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "비둘기의 부리·깃털·날개·다리가 보인다. 몸을 덮은 특징 비교에 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "비둘기 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "비둘기 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/shark.webp",
+      "sha256": "030128162474794c4a6e8ada239a27216b58ed89ab90c64a9cb962b7ad943fc2",
+      "width": 250,
+      "height": 222,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "상어의 지느러미와 몸 옆 아가미 틈이 보인다. 사진의 외형 관찰 범위에 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "상어 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "상어 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/squid.webp",
+      "sha256": "a90348420b5e14f55792b9dcfc6a26a46f7c50acb718c4e015f6d52db6adfd98",
+      "width": 224,
+      "height": 190,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "오징어의 길쭉한 몸과 지느러미, 팔 모양이 보인다. 겹친 팔 전체 수를 사진에서 확정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "오징어 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "오징어 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u02/tiger.webp",
+      "sha256": "36da5198b94176eb24f9132035101cb42429dd8a17ce4b947b7033a6bac86dd1",
+      "width": 470,
+      "height": 254,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "호랑이의 줄무늬 털과 몸·다리·꼬리가 보인다. 몸을 덮은 특징의 비교와 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "호랑이 관찰 자료"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "호랑이 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/cherry-native.webp",
+      "sha256": "9a33a56814066b645a06a68978d90fd14f2cb05fd87c6ec86f1e3b42e7a0d3b4",
+      "width": 2555,
+      "height": 1095,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "벚나무 잎의 뾰족한 끝과 톱니 같은 가장자리, 잎맥이 보인다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u03",
+          "mode": "student",
+          "alt": "벚나무 잎 관찰 자료"
+        },
+        {
+          "unit": "s31-u03",
+          "mode": "teacher",
+          "alt": "벚나무 잎 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/hyacinth-native.webp",
+      "sha256": "7dee6ebf8648c17347c21ab39a15f444171f43f750cdd01718b369ccd18fabc3",
+      "width": 727,
+      "height": 521,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "부레옥잠의 둥근 잎과 부푼 자루, 물이 보인다. 잎의 생김새 참고 범위에 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u03",
+          "mode": "student",
+          "alt": "부레옥잠 잎 관찰 자료"
+        },
+        {
+          "unit": "s31-u03",
+          "mode": "teacher",
+          "alt": "부레옥잠 잎 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/rose-native.webp",
+      "sha256": "e994a9af85432ba438536a5fba1667285f11ae6a94e10e06ec62439bb69164d1",
+      "width": 503,
+      "height": 550,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "한 자루에 이어진 여러 작은 부분과 톱니 같은 가장자리가 보인다. 한 부분과 전체 잎 수를 섞지 않는 안내와 맞는다. 사진 모서리에 작은 문자 표시가 있다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u03",
+          "mode": "student",
+          "alt": "장미 잎 관찰 자료"
+        },
+        {
+          "unit": "s31-u03",
+          "mode": "teacher",
+          "alt": "장미 잎 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/strawberry-native.webp",
+      "sha256": "d374edb0de39dcd6d199c9edf30d83a9ecbf8f49dfa032b86d50c37dc1517b56",
+      "width": 1600,
+      "height": 1200,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "딸기 잎의 끝과 톱니 같은 가장자리·잎맥이 보인다. 잘린 사진만으로 전체 잎 수를 확정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u03",
+          "mode": "student",
+          "alt": "딸기 잎 관찰 자료"
+        },
+        {
+          "unit": "s31-u03",
+          "mode": "teacher",
+          "alt": "딸기 잎 관찰 자료"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s31-u04/s2-q13.webp",
+      "sha256": "042c4d39616480f92d18a358d6742bc1fcc733f579807b8981cf830eb2096f15",
+      "width": 400,
+      "height": 285,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "가의 번데기와 나의 애벌레, 두 이름표가 보인다. 같은 순간의 두 상태와 실제 한살이 관찰 기간을 구별한다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u04",
+          "mode": "student",
+          "alt": "가 번데기와 나 애벌레"
+        },
+        {
+          "unit": "s31-u04",
+          "mode": "student",
+          "alt": "가 번데기와 나 애벌레"
+        },
+        {
+          "unit": "s31-u04",
+          "mode": "teacher",
+          "alt": "가 번데기와 나 애벌레"
+        },
+        {
+          "unit": "s31-u04",
+          "mode": "teacher",
+          "alt": "가 번데기와 나 애벌레"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s31-u04/s2-q18.webp",
+      "sha256": "f430513580c4611875c9946a3220561a7e78384ce710f677caebd57a333444fb",
+      "width": 370,
+      "height": 265,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "꽃에 앉은 흰 나비와 겹쳐진 날개가 보인다. 성충의 모습 관찰 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u04",
+          "mode": "student",
+          "alt": "꽃에 앉은 배추흰나비"
+        },
+        {
+          "unit": "s31-u04",
+          "mode": "teacher",
+          "alt": "꽃에 앉은 배추흰나비"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s31-u04/s2-q8.webp",
+      "sha256": "85ba34e550441c5d1f73486c4b2f349f61c588f3c37d0af8168720d7d5ab9dab",
+      "width": 226,
+      "height": 202,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": false,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "상자 속 먹이 잎과 위쪽 덮개가 보인다. 사진만으로 실제 사육이 계속 잘되었다고 삼지 않는 안내와 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u04",
+          "mode": "student",
+          "alt": "먹이 잎과 통풍 덮개가 있는 사육 상자"
+        },
+        {
+          "unit": "s31-u04",
+          "mode": "teacher",
+          "alt": "먹이 잎과 통풍 덮개가 있는 사육 상자"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s41-u01/s2-q09.webp",
+      "sha256": "05e6cca3205d01b3e27fd930f4753e13692198094ebb4ecc20039b5c30cc3920",
+      "width": 312,
+      "height": 265,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "말굽자석의 파란 왼쪽 극에 S, 빨간 오른쪽 극에 N이 보인다. 두 극의 위치를 설명하는 자료와 맞고 색 자체를 극 이름의 보편적 기준으로 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u01",
+          "mode": "student",
+          "alt": "N과 S 표식이 있는 말굽자석"
+        },
+        {
+          "unit": "s41-u01",
+          "mode": "teacher",
+          "alt": "N과 S 표식이 있는 말굽자석"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s41-u01/s3-q19.webp",
+      "sha256": "ad64130a92c26c52ddcdfcd9a9a570434d8783c92307c883846ae77c17b5de4b",
+      "width": 401,
+      "height": 254,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "냉장고 문에 여러 자석으로 종이를 붙인 모습이다. 자석을 이용해 종이를 잡는 생활 속 쓰임과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u01",
+          "mode": "student",
+          "alt": "자석으로 메모를 붙인 냉장고 문"
+        },
+        {
+          "unit": "s41-u01",
+          "mode": "teacher",
+          "alt": "자석으로 메모를 붙인 냉장고 문"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s41-u03/s1-q05.webp",
+      "sha256": "2c8e21b775faaf37a440ec90561c93a211c67caa5420366b3f79e3baf56e5c14",
+      "width": 606,
+      "height": 549,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "위 (ㄱ)는 밝은 모래가 넓게 쌓인 굽은 물가, 아래 (ㄴ)는 큰 바위 사이의 좁은 하천이다. 현재 위아래 설명과 맞으며 한 장씩의 사진만으로 유속이나 변화 순서를 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u03",
+          "mode": "student",
+          "alt": "모래가 쌓인 굽은 강과 바위가 많은 좁은 하천의 원본 사진"
+        },
+        {
+          "unit": "s41-u03",
+          "mode": "teacher",
+          "alt": "모래가 쌓인 굽은 강과 바위가 많은 좁은 하천의 원본 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s41-u03/s3-q04.webp",
+      "sha256": "7721c8fc6ff9f8dd94ee0d130eba6184088460de9a272a49b21a94ce3516bbd4",
+      "width": 415,
+      "height": 279,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "위에서 본 물가에 밝은색 물질이 돌출되어 쌓인 자리와 주변 물·나무가 보인다. 관찰 가능한 자리와 형성 과정·유속을 구별하는 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u03",
+          "mode": "student",
+          "alt": "강가에 밝은색 퇴적물이 쌓인 원본 사진"
+        },
+        {
+          "unit": "s41-u03",
+          "mode": "student",
+          "alt": "강가에 밝은색 퇴적물이 쌓인 원본 사진"
+        },
+        {
+          "unit": "s41-u03",
+          "mode": "teacher",
+          "alt": "강가에 밝은색 퇴적물이 쌓인 원본 사진"
+        },
+        {
+          "unit": "s41-u03",
+          "mode": "teacher",
+          "alt": "강가에 밝은색 퇴적물이 쌓인 원본 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/s41-u04/s3-q11.webp",
+      "sha256": "0e25085d414a29f9a5fc462fcc863a4177787fb409b2e09e895e47b32aa304f0",
+      "width": 354,
+      "height": 213,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "네 칸에서 모여 있는 둥근 몸, 막대 모양 몸, 나선 모양 몸과 꼬리처럼 뻗은 구조가 보인다. 모양 비교와 사진에 색을 입힐 수 있다는 안내에 맞고, 실제 색이나 실제 크기를 단정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u04",
+          "mode": "student",
+          "alt": "공·막대·나선 등 세균 형태를 보여 주는 네 칸 확대 사진"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "student",
+          "alt": "공·막대·나선 등 세균 형태를 보여 주는 네 칸 확대 사진"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "teacher",
+          "alt": "공·막대·나선 등 세균 형태를 보여 주는 네 칸 확대 사진"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "teacher",
+          "alt": "공·막대·나선 등 세균 형태를 보여 주는 네 칸 확대 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+      "sha256": "fc3ae1d695e967922e50e633cf762da7bc3eba1d013975632ea11e09d45158b3",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "왼쪽 금속 몸통 컵, 가운데 나무 몸통 컵, 오른쪽 투명한 컵의 모양과 표면이 보인다. 컵 몸통을 비교하는 설명에 맞으며 왼쪽 검은 테두리를 포함해 컵 전체가 한 물질이라고 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u01",
+          "mode": "student",
+          "alt": "몸통을 금속·나무·유리로 표현한 세 컵"
+        },
+        {
+          "unit": "c22-s32-u01",
+          "mode": "teacher",
+          "alt": "몸통을 금속·나무·유리로 표현한 세 컵"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-materials.webp",
+      "sha256": "285b5a3c5e9df351a862143ce1c421767f7a45c84b713cbc296795aeb12fcdd9",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "나무토막, 숟가락, 투명한 통, 검은 지우개 모양 물체가 보인다. 주어진 물질 이름과 생김새 참고 장면은 맞지만 보기만으로 모든 재료의 성질을 시험한 것은 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u01",
+          "mode": "student",
+          "alt": "나무토막·금속 숟가락·투명한 플라스틱 통·고무 지우개"
+        },
+        {
+          "unit": "c22-s32-u01",
+          "mode": "teacher",
+          "alt": "나무토막·금속 숟가락·투명한 플라스틱 통·고무 지우개"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+      "sha256": "9f8577e917b37c14dff94b8deeacfb3ffb3cd24ed56e64440e10e7820c345511",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "가위의 두 금속 날과 연결축, 파란 손잡이가 보인다. 물체 한 개에 여러 물질을 이용한다는 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u01",
+          "mode": "student",
+          "alt": "금속 날과 파란 플라스틱 손잡이가 있는 안전 가위"
+        },
+        {
+          "unit": "c22-s32-u01",
+          "mode": "teacher",
+          "alt": "금속 날과 파란 플라스틱 손잡이가 있는 안전 가위"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-states.webp",
+      "sha256": "64a58a1d1780b3ebe4f5693653ce98c89509bac9f4b52976868b7fd5743e27ec",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "나무토막, 투명한 컵에 담긴 물, 묶은 투명 주머니가 보인다. 상태를 비교할 준비 모습과 맞으며 공기의 출입이나 옮겨 담을 때의 변화는 사진만으로 관찰한 것으로 세지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u01",
+          "mode": "student",
+          "alt": "나무토막·컵 속 물·공기가 든 주머니"
+        },
+        {
+          "unit": "c22-s32-u01",
+          "mode": "teacher",
+          "alt": "나무토막·컵 속 물·공기가 든 주머니"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u02-photo-evap-kit.webp",
+      "sha256": "7c52009cbb773516b0a071b54e582c158a6de1f4b39c984f252a8ec9f2c1bdf3",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "비어 있는 흰 증발 접시 두 개와 뒤쪽 투명한 병 두 개, 보호 안경이 보인다. 증발 실험의 준비 장면이며 남은 물질이나 실험 결과를 보여 주지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "깨끗한 증발 접시 두 개와 물이 든 용기·보호 안경"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "깨끗한 증발 접시 두 개와 물이 든 용기·보호 안경"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u02-photo-tidal-flat.webp",
+      "sha256": "f0b3fe2d3fa00a8b3d85752154630d2b1b2af095e969665279782231b93e75d4",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "넓은 갯벌과 그 위를 가르는 얕은 물길, 먼 바다가 보인다. 갯벌의 표면을 관찰하는 설명과 맞으며 한 장으로 밀물·썰물 변화 전체를 본 것은 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u02",
+          "mode": "student",
+          "alt": "물이 빠진 때의 갯벌과 얕은 물길을 표현한 풍경"
+        },
+        {
+          "unit": "c22-s32-u02",
+          "mode": "teacher",
+          "alt": "물이 빠진 때의 갯벌과 얕은 물길을 표현한 풍경"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u03-photo-chair.webp",
+      "sha256": "f9fac46cf65fdb8a2d457f66fa328e4a990438363375e905866cc77e25127d81",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "의자 다리 아래 회색의 부드러운 받침과 옆에 놓인 받침이 보인다. 바닥에 닿는 부분을 바꾸어 소음을 줄일 방법의 참고 장면이며 실제 소음 크기 측정값은 없다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u03",
+          "mode": "student",
+          "alt": "의자 다리 바닥의 부드러운 덮개를 표현한 모습"
+        },
+        {
+          "unit": "c22-s32-u03",
+          "mode": "teacher",
+          "alt": "의자 다리 바닥의 부드러운 덮개를 표현한 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u03-photo-drum.webp",
+      "sha256": "144afc4194db7237b53c67bb0417482e983025b2b4c823b4a13b91095a36475e",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "북의 윗면 위에 종잇조각, 옆에 북채가 놓여 있다. 떨림을 살펴볼 준비 모습과 맞으며 정지 사진만으로 소리나 종이의 움직임을 확인했다고 하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u03",
+          "mode": "student",
+          "alt": "작은북 위 종잇조각과 옆의 북채"
+        },
+        {
+          "unit": "c22-s32-u03",
+          "mode": "teacher",
+          "alt": "작은북 위 종잇조각과 옆의 북채"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u03-photo-ruler.webp",
+      "sha256": "c23f02d895dc0546cf6c35bb36efa74251e8e13e2983c4edfc8968c32fdc0570",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "자 한쪽이 책과 책상 사이에 들어 있고 다른 끝은 책상 밖으로 나와 있다. 자의 비교 실험 준비 모습과 맞으며 사진 속 작은 눈금으로 나온 길이나 떨린 횟수를 확정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u03",
+          "mode": "student",
+          "alt": "책으로 고정한 자의 한쪽 끝이 책상 밖으로 나온 준비 모습"
+        },
+        {
+          "unit": "c22-s32-u03",
+          "mode": "teacher",
+          "alt": "책으로 고정한 자의 한쪽 끝이 책상 밖으로 나온 준비 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-cooking.webp",
+      "sha256": "bb1b19e4dad3a9468de16bf7c3d7ea1bd5151bc4521ed1fb46c70063d2151749",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "수돗물 아래 채소가 담긴 채와 불 위 냄비가 보이는 부엌 장면이다. 안전한 음식·물의 이용을 생각하는 그림이며 병원체 유무나 가열 온도·시간을 사진에서 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "채소를 씻고 물을 끓이는 부엌"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "채소를 씻고 물을 끓이는 부엌"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-cough-kit.webp",
+      "sha256": "ad708270dd2203a9bf5b754b4ed9a5bc1ef53daac6110ac53934d05aac476b08",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "휴지 상자와 옆의 작은 휴지통이 책상 위에 놓여 있다. 기침 예절에서 사용할 준비물과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "교실 책상에 놓인 휴지 상자와 작은 휴지통"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "교실 책상에 놓인 휴지 상자와 작은 휴지통"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-doorknob.webp",
+      "sha256": "5c29647e92968b11e9c08539f02f9375e43c4f9aca35827905200e5a6696834c",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "문손잡이를 잡은 손과 손잡이 주변의 손자국이 보인다. 손이 닿는 곳의 설명 장면이며 병원체 자체가 보인다고 하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "문손잡이를 잡는 손"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "문손잡이를 잡는 손"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-glitter-left.webp",
+      "sha256": "60eddb04d22aeff82582b10542d294d73d7370a1db2d4479c37fe51176bb79bb",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "젖은 손의 바깥쪽 등에 반짝이가 남은 모습이다. 수정 전 대체 글의 물로만 헹군 뒤라는 과정과 손톱 밑이라는 위치는 사진에서 확인되지 않아, 젖은 손에 반짝이 가루가 남아 있는 설명 장면으로 바로잡았다.",
+      "captionMismatchFound": true,
+      "mismatchCorrected": true,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "젖은 손에 반짝이 가루가 남아 있는 설명 장면"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "젖은 손에 반짝이 가루가 남아 있는 설명 장면"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-glitter-shake.webp",
+      "sha256": "3e9e019f7d1788b055e77678d7446d34e8cf2cead2996f49e34f7b31c8728476",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "두 손이 맞닿은 악수 장면에 반짝이가 보인다. 손에서 손으로 옮겨 갈 수 있음을 설명하는 모형 장면이며 실제 병원체나 전파량 관찰로 세지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "반짝이 가루가 묻은 두 손이 악수하는 모습"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "반짝이 가루가 묻은 두 손이 맞닿은 설명 장면"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "반짝이 가루가 묻은 두 손이 악수하는 모습"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "반짝이 가루가 묻은 두 손이 맞닿은 설명 장면"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-handwash.webp",
+      "sha256": "90bb3949d5394995dbc385acf462ac16a6bb513e86241c5b5762d1404d268d1e",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "흐르는 물 아래 두 손에 비누 거품이 있는 모습이다. 손 씻기 설명과 맞으며 사진만으로 씻은 시간이나 모든 부위의 세척 효과를 확인하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "흐르는 물과 비누 거품으로 손을 씻는 설명 장면"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "비누 거품으로 손을 씻는 모습"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "흐르는 물과 비누 거품으로 손을 씻는 설명 장면"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "흐르는 물과 비누 거품으로 손을 씻는 설명 장면"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "비누 거품으로 손을 씻는 모습"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "흐르는 물과 비누 거품으로 손을 씻는 설명 장면"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-sneeze.webp",
+      "sha256": "eebd7d9f7c3c2a01c619b6d8c351ddd306dbabfbfe6bf587804c493dd82cab40",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "얼굴 앞에 작은 방울이 넓게 퍼지는 설명 장면이다. 침방울을 설명하는 용도와 맞으며 방울 크기·이동 거리·병원체 유무를 실측한 자료로 삼지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "재채기할 때 퍼지는 작은 침방울"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "재채기할 때 퍼지는 작은 침방울"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-ventilation.webp",
+      "sha256": "ea88c7701159a56f293a5141e6decc00f9fe299bc205e44d09e60eaeef5e64eb",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "창문과 문이 열린 빈 교실이 보인다. 환기를 위한 개방 위치와 맞으며 공기 속 병원체 농도나 실제 환기 효과 측정 결과는 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s32-u04",
+          "mode": "student",
+          "alt": "창문과 문을 연 빈 교실의 설명 장면"
+        },
+        {
+          "unit": "c22-s32-u04",
+          "mode": "teacher",
+          "alt": "창문과 문을 연 빈 교실의 설명 장면"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg",
+      "sha256": "e5fb78d33efb9a64cec032242d2df0f236bcc818e898f146328370de9bd09f76",
+      "width": 1015,
+      "height": 1023,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "달 표면의 둥근 크레이터와 밝은 벽·어두운 그림자, 주변 작은 구덩이가 보인다. 달 표면의 생김새를 살피는 원본 관측 사진 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u01",
+          "mode": "student",
+          "alt": "아폴로10에서 촬영한 달 몰트케 분화구의 둥근 가장자리와 그림자"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "student",
+          "alt": "아폴로10에서 촬영한 달 몰트케 분화구의 둥근 가장자리와 그림자"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "teacher",
+          "alt": "아폴로10에서 촬영한 달 몰트케 분화구의 둥근 가장자리와 그림자"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "teacher",
+          "alt": "아폴로10에서 촬영한 달 몰트케 분화구의 둥근 가장자리와 그림자"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u01-moon-apollo8-nasa.jpg",
+      "sha256": "4484f496b1c18558a534e62465f1a26ac8cbb4eeea0460bfe7147daecdbed1d3",
+      "width": 1000,
+      "height": 1000,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "달의 둥근 표면에 넓은 어두운 부분과 작은 둥근 구덩이, 가장자리 음영이 보인다. 밝고 어두운 표면과 크레이터를 비교하는 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u01",
+          "mode": "student",
+          "alt": "아폴로8 우주선에서 촬영한 달의 둥근 윤곽과 밝고 어두운 지형"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "teacher",
+          "alt": "아폴로8 우주선에서 촬영한 달의 둥근 윤곽과 밝고 어두운 지형"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u01-photo-preparation.webp",
+      "sha256": "faaf55a705d43b950cb339b4af1f0149b24fc1d7dd057b7e79d51f66c48ba75a",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "여러 종이 원판과 큰 종이·색연필·풀이 놓인 준비 장면이다. 행성 모형 만들기의 준비물이며 실제 행성 크기나 거리 비율을 나타낸 결과로 읽지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u01",
+          "mode": "student",
+          "alt": "종이 원판·색연필·풀을 놓은 행성 모형 준비 장면"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "student",
+          "alt": "종이 원판·색연필·풀을 놓은 행성 모형 준비 장면"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "teacher",
+          "alt": "종이 원판·색연필·풀을 놓은 행성 모형 준비 장면"
+        },
+        {
+          "unit": "c22-s42-u01",
+          "mode": "teacher",
+          "alt": "종이 원판·색연필·풀을 놓은 행성 모형 준비 장면"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-atoll.webp",
+      "sha256": "b30c558be9444e90a97a84277295112791147c834d1281c9a4645ba717913f66",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "작은 섬에 집과 나무, 둘레 바닷물과 물가 시설이 보인다. 낮은 바닷가를 떠올리는 설명 그림이라는 현재 안내와 맞으며 특정 섬의 실제 높이·피해 관측으로 읽지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "낮은 섬과 바다를 떠올리는 설명 그림"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "바다 높이와 거의 같은 낮고 평평한 산호섬"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "낮은 섬과 바다를 떠올리는 설명 그림"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "바다 높이와 거의 같은 낮고 평평한 산호섬"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-downpour.webp",
+      "sha256": "ad7dfbe0f55bfbfd2470694afb7a8d2ef92290bf890b53a6bedf9aa02e2d4b54",
+      "width": 868,
+      "height": 488,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "비가 내리는 길에 물이 차 있고 자동차 바퀴 아래쪽이 잠긴 모습이다. 집중호우 피해를 떠올리는 설명과 맞으며 실제 강수량·지역·기후변화의 원인을 사진만으로 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "많은 비로 물에 잠긴 낮은 길"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "비가 내려 도로에 물이 고인 모습을 떠올리는 설명 그림"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "많은 비로 물에 잠긴 낮은 길"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "비가 내려 도로에 물이 고인 모습을 떠올리는 설명 그림"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-drought.webp",
+      "sha256": "0fdb8663a7cf598b6a46d50363e276745b11f4ea3d074549296af3b8f48cb17e",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "넓게 드러나 갈라진 바닥과 가운데 남은 물이 보인다. 가뭄의 영향을 떠올리는 설명과 맞으며 실제 저수량이나 기간 자료는 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "물이 말라 갈라진 저수지 바닥"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "물이 말라 갈라진 저수지 바닥"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-heatwave.webp",
+      "sha256": "41071ac28231b8e48ad880b3c3a2c3b658834c49513186f111ab74e42f92312c",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "강한 빛이 비치는 거리와 우산·그늘막을 이용하는 사람들이 보인다. 더위의 생활 영향을 생각하는 장면이며 폭염 여부나 기온을 사진에서 측정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "햇볕이 강한 여름 거리"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "햇볕이 강한 여름 거리"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-lightswitch.webp",
+      "sha256": "b55439464265545fd33de43f35dba1ff07a0776ef0beb2579fec9c413298c2b2",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "교실 벽 스위치를 누르는 손이 보인다. 전등 사용을 살펴보는 생활 장면과 맞으며 실제 절약한 전력량이나 스위치 상태를 한 장으로 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "사용하지 않는 전등의 스위치를 확인하는 손"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "교실의 전등 스위치를 누르는 모습을 떠올리는 설명 그림"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "사용하지 않는 전등의 스위치를 확인하는 손"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "교실의 전등 스위치를 누르는 모습을 떠올리는 설명 그림"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-model-no-wall-v2.webp",
+      "sha256": "8c203770c6fd9fa74cb327a3891722352dadc0c074c2694bbcb6990a125e60ce",
+      "width": 1659,
+      "height": 948,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "투명한 통 안의 점토 지형과 집 다섯 채, 물이 보이며 앞쪽에 벽이 없다. 모형 준비 모습이라는 설명과 맞고 집 이름·높이·비교 수치는 본문 표에서 읽는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-model-wall-v2.webp",
+      "sha256": "f43ace638df3835b7bd1e752003b780835886e81316ad631fff0869fd5bd9e2b",
+      "width": 1659,
+      "height": 948,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "같은 배치의 점토 지형과 집 다섯 채 앞에 좌우 가장자리까지 이어진 벽이 보인다. 벽을 세운 모형 준비 모습이라는 설명과 맞고 벽의 실제 높이는 사진 눈금으로 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채 앞에 이어 세운 벽"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채 앞에 이어 세운 벽"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채 앞에 이어 세운 벽"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "투명한 통의 점토 지형과 모형 집 다섯 채 앞에 이어 세운 벽"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-seawall.webp",
+      "sha256": "15603654343bfa12dbd20837d44aa1060194289e2c4de9496ec514d0a6de173b",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "물가 콘크리트 구조물과 뒤쪽 벽, 부딪친 물이 보인다. 바닷가 시설을 떠올리는 설명 장면이며 특정 장소의 방재 효과나 벽 높이 실측은 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "해안의 콘크리트 방파제와 파도를 설명하는 장면"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "바닷가의 방파제"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "해안의 콘크리트 방파제와 파도를 설명하는 장면"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "바닷가의 방파제"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s42-u04-photo-smokestack.webp",
+      "sha256": "341c01c7bb4c26505257919165e62cdcbf89542f55ccdbfdf912fabe41e48def",
+      "width": 1344,
+      "height": 768,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "발전 시설 모양의 굴뚝·연결 시설·검은 더미와 흰 기둥이 보인다. 흰 부분만으로 기체 종류를 알 수 없다는 현재 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u04",
+          "mode": "student",
+          "alt": "발전 시설의 굴뚝과 주변 모습"
+        },
+        {
+          "unit": "c22-s42-u04",
+          "mode": "teacher",
+          "alt": "발전 시설의 굴뚝과 주변 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/beans.jpg",
+      "sha256": "959a76d4da8fb7379b640f173a5d4a443bf35526d6111f9d7cdd2f6243dc2e57",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "투명한 접시의 흰 솜 위에 강낭콩 모양 씨앗들이 있고 옆에 물컵이 있다. 씨앗 관찰 준비 모습과 맞으며 발아율·며칠의 성장 결과를 사진에서 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u04",
+          "mode": "student",
+          "alt": "솜을 깐 유리 용기 위의 싹트기 전 강낭콩 씨앗과 물이 든 컵"
+        },
+        {
+          "unit": "s31-u04",
+          "mode": "teacher",
+          "alt": "솜을 깐 유리 용기 위의 싹트기 전 강낭콩 씨앗과 물이 든 컵"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/duck.jpg",
+      "sha256": "9684089d110167b88e11609634fd4488717d59ada9b23818b97d43dfed7497bb",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "물가에 선 오리의 부리·깃털·두 다리와 넓은 발가락 사이 부분이 보인다. 물갈퀴의 생김새를 살펴볼 수 있고 헤엄치는 동작이나 속도를 실제 관찰한 사진은 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "연못가의 바위에 서 있는 청둥오리의 부리·깃털·물갈퀴"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "연못가의 바위에 서 있는 청둥오리의 부리·깃털·물갈퀴"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/fins.jpg",
+      "sha256": "657f6420be63918ad9cf5a2a00b91cbe612eb54cd70100182cfba91da5d9479b",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "파란 오리발 두 개의 넓은 날과 검은 발 넣는 부분이 보인다. 동물의 특징을 이용할 물건의 생김새를 비교하는 설명과 맞으며 특정 제품의 발명 역사나 성능 시험 자료는 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u02",
+          "mode": "student",
+          "alt": "발을 넣는 부분과 넓은 날이 보이는 한 쌍의 수영용 오리발"
+        },
+        {
+          "unit": "s31-u02",
+          "mode": "teacher",
+          "alt": "발을 넣는 부분과 넓은 날이 보이는 한 쌍의 수영용 오리발"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/seedling.jpg",
+      "sha256": "5e9bf12fbdc6ea12d09e5cf60e89a02b99542898212cfd6eeb93fff5f41456e8",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "화분에서 자라는 어린 식물의 줄기와 아래쪽 두꺼운 잎, 위쪽 펼쳐진 잎이 보인다. 현재 한 시점의 모습이며 싹이 튼 날짜·성장량·여러 날의 순서를 사진만으로 정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u04",
+          "mode": "student",
+          "alt": "흙이 담긴 화분에서 줄기와 잎이 자라는 어린 강낭콩"
+        },
+        {
+          "unit": "s31-u04",
+          "mode": "teacher",
+          "alt": "흙이 담긴 화분에서 줄기와 잎이 자라는 어린 강낭콩"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s31-u01-photo-cart.webp",
+      "sha256": "d4f7a65d2e963552a9d1ee8f12e8e67a643e7e254f6d7f0e74ef096621ab2ad6",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "나무 블록이 담긴 바퀴 달린 수레와 줄이 보인다. 수레와 짐의 생김새를 보여 주며 움직임이나 출발에 든 힘을 측정한 사진은 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u01",
+          "mode": "student",
+          "alt": "평평한 바닥의 작은 수레와 실은 물체"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "student",
+          "alt": "평평한 바닥의 작은 수레와 실은 물체"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "teacher",
+          "alt": "평평한 바닥의 작은 수레와 실은 물체"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "teacher",
+          "alt": "평평한 바닥의 작은 수레와 실은 물체"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "student",
+          "alt": "블록을 실은 작은 나무 수레"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "student",
+          "alt": "블록을 실은 작은 나무 수레"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "student",
+          "alt": "블록을 실은 작은 나무 수레"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "teacher",
+          "alt": "블록을 실은 작은 나무 수레"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "teacher",
+          "alt": "블록을 실은 작은 나무 수레"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "teacher",
+          "alt": "블록을 실은 작은 나무 수레"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s31-u01-photo-ramp.webp",
+      "sha256": "c565917e9a2675f4f982dddb9a2091bd461e1745ea30471a932efbd36f92fa49",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "받침 위에 한쪽을 올린 널빤지와 옆에 놓인 작은 상자가 보인다. 빗면과 물체의 준비 모습이며 상자가 실제로 움직인 결과나 손에 든 힘을 보여 주지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u01",
+          "mode": "student",
+          "alt": "낮은 받침대로 이어지는 나무 빗면과 상자"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "student",
+          "alt": "낮은 받침대로 이어지는 나무 빗면과 상자"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "teacher",
+          "alt": "낮은 받침대로 이어지는 나무 빗면과 상자"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "teacher",
+          "alt": "낮은 받침대로 이어지는 나무 빗면과 상자"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s31-u01-photo-scale.webp",
+      "sha256": "d4cf426cce517975aaa0294841f61e56dcad40a83297704887d58dd7bcb240de",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "전자저울 위 사과와 옆 작은 그릇이 보인다. 저울 표시창에는 읽을 수 있는 수치가 없으므로 실제 무게를 읽었다고 하지 않는 준비 장면이다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u01",
+          "mode": "student",
+          "alt": "전자저울 위 사과와 옆의 빈 접시"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "student",
+          "alt": "전자저울 위 사과와 옆의 빈 접시"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "teacher",
+          "alt": "전자저울 위 사과와 옆의 빈 접시"
+        },
+        {
+          "unit": "s31-u01",
+          "mode": "teacher",
+          "alt": "전자저울 위 사과와 옆의 빈 접시"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s31-u03-photo-lotus.webp",
+      "sha256": "e9be247ef3bc544e3d2d684312e6857700399cdd54f12aca1bb806adc418bce2",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "연잎 윗면의 가운데에서 퍼지는 잎맥과 둥글게 맺힌 물방울이 보인다. 물방울의 생김새를 비교하는 설명과 맞으며 정지 사진만으로 굴러가는 과정이나 성능을 측정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u03",
+          "mode": "student",
+          "alt": "연잎의 윗면에 둥글게 맺힌 물방울"
+        },
+        {
+          "unit": "s31-u03",
+          "mode": "teacher",
+          "alt": "연잎의 윗면에 둥글게 맺힌 물방울"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "student",
+          "alt": "넓게 펼쳐진 연잎"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "student",
+          "alt": "넓게 펼쳐진 연잎"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "teacher",
+          "alt": "넓게 펼쳐진 연잎"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "teacher",
+          "alt": "넓게 펼쳐진 연잎"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s31-u03-photo-observe.webp",
+      "sha256": "73fa65302eb90877a71cebaf08963bacc8d7c65233b719f44b0bd6085865ef63",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "잎 두 장과 돋보기, 빈 이름표가 놓여 있다. 관찰 준비 배치와 맞고 잎 전체·끝·가장자리 등을 비교할 수 있으나 실제 길이 눈금은 없다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s31-u03",
+          "mode": "student",
+          "alt": "잎 두 장과 돋보기, 빈 이름표를 놓은 관찰 준비 배치"
+        },
+        {
+          "unit": "s31-u03",
+          "mode": "teacher",
+          "alt": "잎 두 장과 돋보기, 빈 이름표를 놓은 관찰 준비 배치"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "student",
+          "alt": "펼쳐진 잎과 돋보기"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "teacher",
+          "alt": "펼쳐진 잎과 돋보기"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s41-u01-photo-preparation.webp",
+      "sha256": "80468c2550e20a3a39e7a1d1ebcfafd1e552ea8af9bff9b3a033e41435ef3749",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "막대자석, 클립 세 개, 나무토막과 금속 모양 원판을 따로 놓은 준비 모습이다. 주어진 시료 이름을 보여 주며 모든 금속이 자석에 붙는다고 판단하거나 실제 붙인 결과로 읽지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u01",
+          "mode": "student",
+          "alt": "자석·철 클립·나무와 알루미늄 시료를 따로 놓은 준비 모습"
+        },
+        {
+          "unit": "s41-u01",
+          "mode": "teacher",
+          "alt": "자석·철 클립·나무와 알루미늄 시료를 따로 놓은 준비 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s41-u02-photo-preparation.webp",
+      "sha256": "960f3cc5b2111808e92c1f0e6f27ec142df4fbec8ddb53ef1d1683dbe7666107",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "빈 투명 용기와 분리한 뚜껑, 얼음이 있는 접시·펜·마른 천이 보인다. 준비 모습이라는 설명과 맞으며 물방울이 생긴 결과나 기온 변화 관찰 사진은 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u02",
+          "mode": "student",
+          "alt": "빈 플라스틱 용기·분리한 뚜껑·얼음·마른 천·펜을 놓은 준비 모습"
+        },
+        {
+          "unit": "s41-u02",
+          "mode": "teacher",
+          "alt": "빈 플라스틱 용기·분리한 뚜껑·얼음·마른 천·펜을 놓은 준비 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s41-u03-photo-preparation.webp",
+      "sha256": "fe226bf44e0045dd913cd28da1e9e2ba2dba863c99f268610b15df5b5700c9e7",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "모래가 담긴 쟁반과 물컵, 어두운 돌·밝은 돌이 따로 놓여 있다. 땅의 변화 관찰 준비 장면이며 물이 흐른 결과나 돌을 직접 분류한 시험 결과는 아니다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u03",
+          "mode": "student",
+          "alt": "모래 쟁반·물컵·두 돌을 놓은 준비 장면"
+        },
+        {
+          "unit": "s41-u03",
+          "mode": "teacher",
+          "alt": "모래 쟁반·물컵·두 돌을 놓은 준비 장면"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s41-u04-photo-preparation.webp",
+      "sha256": "dc2d01b43fed70a9ca1007169ede7311016cec2543f136042791f7fddd490d94",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "접시에 놓인 버섯의 자루·안쪽 주름과 뒤쪽 빵이 보인다. 균류와 생활을 생각하는 준비 장면과 맞으며 빵 속 효모나 곰팡이가 사진에 보인다고 하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u04",
+          "mode": "student",
+          "alt": "식용 버섯의 갓 안쪽과 접시에 놓인 빵의 준비 장면"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "student",
+          "alt": "식용 버섯의 갓 안쪽과 접시에 놓인 빵의 준비 장면"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "teacher",
+          "alt": "식용 버섯의 갓 안쪽과 접시에 놓인 빵의 준비 장면"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "teacher",
+          "alt": "식용 버섯의 갓 안쪽과 접시에 놓인 빵의 준비 장면"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s41-u04-source-spirogyra.webp",
+      "sha256": "5eb5ce3388a152cbd1d8854ac4fad6526ee29620b5361e46e7e60a8b481d40f4",
+      "width": 429,
+      "height": 300,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "초록색 덩어리와 엉킨 가닥 같은 자취가 보인다. 해캄 덩어리의 참고 사진이라는 설명과 맞으며 이 작은 이미지에서 세포 구조를 자세히 확인했다고 하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u04",
+          "mode": "student",
+          "alt": "초록색 긴 가닥들이 뭉쳐 있는 해캄 덩어리"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "student",
+          "alt": "초록색 긴 가닥들이 뭉쳐 있는 해캄 덩어리"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "teacher",
+          "alt": "초록색 긴 가닥들이 뭉쳐 있는 해캄 덩어리"
+        },
+        {
+          "unit": "s41-u04",
+          "mode": "teacher",
+          "alt": "초록색 긴 가닥들이 뭉쳐 있는 해캄 덩어리"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/photos/s42-u02-cups.webp",
+      "sha256": "c421e0abca3140a5c9a99fdb3d50e7b6c18229225510a6ce20dd6e630a691413",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "viewedCurrentTurn": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "왼쪽 물컵 겉은 매끈하고 오른쪽 얼음이 든 컵 바깥에는 물방울이 보인다. 비교하는 모습과 맞으며 사진 한 장만으로 물방울의 발생 과정이나 실제 온도·시간을 측정하지 않는다.",
+      "captionMismatchFound": false,
+      "mismatchCorrected": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "s41-u02",
+          "mode": "student",
+          "alt": "물만 담은 컵과 얼음이 든 컵의 바깥 물방울을 살피는 모습"
+        },
+        {
+          "unit": "s41-u02",
+          "mode": "teacher",
+          "alt": "물만 담은 컵과 얼음이 든 컵의 바깥 물방울을 살피는 모습"
+        }
+      ]
+    }
+  ],
+  "actualBrowserUsed": false,
+  "actualPrintLayoutReviewed": false,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

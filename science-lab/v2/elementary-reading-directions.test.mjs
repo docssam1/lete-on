@@ -1,3 +1,4 @@
+import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {withElementaryReadingDirections,ELEMENTARY_DIRECTIONS,ELEMENTARY_DIRECTIONS_UNITS} from '../data/book/elementary-reading-directions.js';
@@ -39,9 +40,9 @@ test('reviewed student directions preserve all 3080 questions, answer books, rai
 test('actual web and all 128 print modes use the same reviewed directions and keep answers unchanged',async()=>{
  for(const unit of revisedTextbookUnits){
   const {workbook:before}=await import(`../data/book/${unit}.workbook.js`),{art}=await import(`../data/book/${unit}.workbook-art.js`);
-  const expected=withElementaryReadingDirections(before),web=await revisedTextbook(unit,{chapter:{unit},art:{}}),paper=await revisedTextbookPaper(unit);
+  const expected=withObservedPhotoAlt(withElementaryReadingDirections(before)),web=await revisedTextbook(unit,{chapter:{unit},art:{}}),paper=await revisedTextbookPaper(unit);
   assert.deepEqual(web.workbook,expected);assert.equal(web.chapter.pages,web.workbook.pages);assert.equal(web.chapter.questions,web.workbook.questions);assert.deepEqual(web.chapter.questions,before.questions);
-  const currentPaper=makeWorkbookPaper(expected,art),previousPaper=makeWorkbookPaper(before,art);
+  const currentPaper=makeWorkbookPaper(expected,art),previousPaper=makeWorkbookPaper(withObservedPhotoAlt(before),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});assert.equal(html,currentPaper.workbookPaper({mode}),unit+' '+mode);
    if(['answers','quick'].includes(mode)||!ELEMENTARY_DIRECTIONS_UNITS.includes(unit))assert.equal(html,previousPaper.workbookPaper({mode}));
