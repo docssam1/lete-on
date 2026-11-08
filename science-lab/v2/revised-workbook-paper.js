@@ -3,7 +3,7 @@ import {wireWorkbookPrint} from './workbook-print-ready.js?v=20261106-readable-t
 // 「교과 연결 사고력」 단원의 편집 교재(문제집형 A4) — #/<단원>/workbook/student|teacher|answers|quick
 // 데이터: data/book/<단원>.workbook.js(scripts/gen-science-workbook-<단원>.mjs) + 수업 교재 그림(data/book/<단원>.book.js art).
 // 학생용에는 정답·해설이 없다. 교사용은 문항 바로 아래 정답 + 뒤쪽 정답·해설, 빠른 정답표는 따로.
-import { renderEditorialChapter } from './revised-book-editorial.js?v=20261108-elementary-task-language';
+import { renderEditorialChapter } from './revised-book-editorial.js?v=20261108-opening-warmup-label';
 const MODES = [['student', '학생용 교재'], ['teacher', '교사용 교재'], ['answers', '정답·해설'], ['quick', '빠른 정답표']];
 
 export function makeWorkbookPaper(wb, bookArt = {}, {route = 'workbook', modes = MODES, toolLabel = '교재 고르기'} = {}) {

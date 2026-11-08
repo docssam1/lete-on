@@ -1,4 +1,4 @@
-import {learningRailTitle,learningNoteRole} from './revised-learning-book.js?v=20261108-learning-note-roles';
+import {learningRailTitle,learningNoteRole,isCurrentLearningUnit} from './revised-learning-book.js?v=20261108-learning-note-roles';
 const noteRoleAttribute=(ch,title)=>{const role=learningNoteRole(ch,title);return role?' data-note-role="'+role+'"':'';};
 // 개념·유형 연습·탐구·평가를 같은 지면 규약으로 조판한다. 기존 교재는 opt-in 전까지 그대로 둔다.
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -14,8 +14,8 @@ function question(q, art, key = false) {
   if (!q || !labels[q.form]) throw Error('편집 교재 문항 또는 응답 형식이 없습니다.');
   return `<li class="ed-question" data-question="${esc(q.id)}" data-form="${esc(q.form)}"><div class="ed-qhead"><b>${String(q.no).padStart(2,'0')}</b><span>${esc(questionLabel(q))}</span></div><p>${blankText(q.prompt)}</p>${q.given ? `<div class="ed-given">${q.given.map(esc).join('<br>')}</div>` : ''}${q.figure ? `<div class="ed-diagram">${art[q.figure] || ''}</div>` : ''}${q.choices ? `<ol class="ed-choices">${q.choices.map((c,i)=>`<li><span>${marks[i]}</span>${esc(c)}</li>`).join('')}</ol>` : ''}${q.parts ? q.parts.map(t=>q.answerPerPart?`<p class="ed-part">${esc(t.replace(/\[\s*\]/g,''))}</p>${key?'':'<p class="ed-response ed-part-response">답 <span></span></p>'}`:`<p class="ed-part">${blankText(t)}</p>`).join('') : ''}${q.form==='draw' ? `<div class="ed-drawing${q.drawing==='large'?' large':''}" aria-label="그림과 이름표를 그리는 칸"></div>${q.drawingExplanationLines&&!key?lines(q.drawingExplanationLines):''}` : ''}${q.form==='written' ? (key ? '' : lines(q.lines || 3)) : (!q.answerPerPart&&['short','match','order','multi'].includes(q.form)) ? '<p class="ed-response">답 <span></span></p>' : ''}${key ? `<p class="ed-key"><b>${esc(q.inlineAnswerLabel||((q.responseContract?.teacherRequired||['written','draw'].includes(q.form))?'예시 답':'정답'))}</b> ${esc(q.answer)}</p>` : ''}</li>`;
 }
-function block(b,ch,art,teacher=false) {
-  if(b.type==='text') return `<p>${rich(ch,b.text)}</p>`;
+function block(b,ch,art,teacher=false,warmup=false) {
+  if(b.type==='text') return `<p>${warmup?'<b class="ed-warmup-label">워밍업</b> · ':''}${rich(ch,b.text)}</p>`;
   if(b.type==='heading') return `<h3>${esc(b.text)}</h3>`;
   if(b.type==='list') return `<${b.ordered?'ol':'ul'} class="ed-list">${b.items.map(t=>`<li>${rich(ch,t)}</li>`).join('')}</${b.ordered?'ol':'ul'}>`;
   if(b.type==='diagram') {if(!art[b.key])throw Error(`교재 그림 누락: ${b.key}`);return `<figure class="ed-diagram">${art[b.key]}${b.caption?`<figcaption>${esc(b.caption)}</figcaption>`:''}</figure>`;}
@@ -29,8 +29,18 @@ function block(b,ch,art,teacher=false) {
 }
 export function renderEditorialChapter(ch,art,{teacher=false,live=false}={}) {
   const pages=teacher?[...(ch.teacherStudentPages||ch.pages),...ch.teacherPages]:ch.pages;
-  const content=p=>{
-    if(!ch.verticalFlow)return p.blocks.map(b=>block(b,ch,art,teacher)).join('');
+  const content=(p,index)=>{
+    // An oral opening question is also a warm-up. Keep its text and existing writing space.
+    const warmup=index===0&&ch.thinkWorkbook&&isCurrentLearningUnit(ch.unit)&&p.kind==='opener'
+      &&!p.blocks.some(b=>['questions','solutions'].includes(b.type))
+      &&!p.blocks.some(b=>(b.type==='field'&&b.title==='워밍업')||(b.type==='heading'&&b.text==='워밍업'));
+    let labelled=false;
+    const renderBlock=b=>{
+      const label=warmup&&!labelled&&b.type==='text'&&/[?？]/.test(b.text||'');
+      if(label)labelled=true;
+      return block(b,ch,art,teacher,label);
+    };
+    if(!ch.verticalFlow)return p.blocks.map(renderBlock).join('');
     const groups=[];let group=[];
     const flush=()=>{if(group.length){groups.push(group);group=[];}};
     for(const b of p.blocks){
@@ -39,7 +49,7 @@ export function renderEditorialChapter(ch,art,{teacher=false,live=false}={}) {
       else if(b.type==='solutions'){flush();for(const id of b.ids)groups.push([{...b,ids:[id]}]);}
       else{flush();groups.push([b]);}
     }flush();
-    return `<div class="ed-flow">${groups.map(g=>`<div class="ed-block ed-block-${esc(g[0].type)}">${g.map(b=>block(b,ch,art,teacher)).join('')}</div>`).join('')}</div>`;
+    return `<div class="ed-flow">${groups.map(g=>`<div class="ed-block ed-block-${esc(g[0].type)}">${g.map(renderBlock).join('')}</div>`).join('')}</div>`;
   };
-  return `<div class="bk bk-life bk-editorial revised-workbook${live?' live':''} ${teacher?'bk-t':''}${ch.verticalFlow?' ed-full-height':''}" data-unit="${esc(ch.unit)}" style="--bk-theme:${esc(ch.theme)}">${pages.map((p,i)=>p.kind==='duplex-blank'?`<section class="bk-page ed-duplex-blank" data-page="${i+1}" aria-label="양면 인쇄용 빈 면"></section>`:`<section class="bk-page ed-${esc(p.kind||'learn')}${p.layout?` ed-layout-${esc(p.layout)}`:''}" data-page="${i+1}"><div class="bk-life-watermark" aria-hidden="true">GFIELD · 지필드</div><header class="bk-band"><span class="bk-band-no">${esc(String(ch.no).padStart(2,'0'))}</span><span class="bk-band-t">${esc(ch.title)}</span><span class="bk-band-u">${teacher?'교사용':'학생용'} · ${esc(ch.semester)}</span></header><div class="ed-layout"><main class="ed-main"><p class="ed-kicker">${esc(p.section)}</p><h2>${esc(p.title)}</h2>${p.lead?`<p class="ed-lead">${esc(p.lead)}</p>`:''}${content(p)}</main><aside class="ed-rail" aria-label="${esc(p.title)} 보조 학습">${p.rail.map((r,index)=>`<section class="ed-note"${noteRoleAttribute(ch,learningRailTitle(ch,r.title,index,p.kind))}><h3>${esc(learningRailTitle(ch,r.title,index,p.kind))}</h3>${r.text?`<p>${esc(r.text)}</p>`:''}${r.items?`<ul>${r.items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}${r.write?lines(r.write):''}</section>`).join('')}${teacher&&p.teacherNote?`<section class="ed-note ed-teacher-note"${noteRoleAttribute(ch,'지도 메모')}><h3>지도 메모</h3><p>${esc(p.teacherNote)}</p></section>`:''}</aside></div><footer class="bk-foot"><span>${esc(ch.book)} · ${esc(ch.title)}</span><span class="bk-pn">${i+1}</span></footer></section>`).join('')}</div>`;
+  return `<div class="bk bk-life bk-editorial revised-workbook${live?' live':''} ${teacher?'bk-t':''}${ch.verticalFlow?' ed-full-height':''}" data-unit="${esc(ch.unit)}" style="--bk-theme:${esc(ch.theme)}">${pages.map((p,i)=>p.kind==='duplex-blank'?`<section class="bk-page ed-duplex-blank" data-page="${i+1}" aria-label="양면 인쇄용 빈 면"></section>`:`<section class="bk-page ed-${esc(p.kind||'learn')}${p.layout?` ed-layout-${esc(p.layout)}`:''}" data-page="${i+1}"><div class="bk-life-watermark" aria-hidden="true">GFIELD · 지필드</div><header class="bk-band"><span class="bk-band-no">${esc(String(ch.no).padStart(2,'0'))}</span><span class="bk-band-t">${esc(ch.title)}</span><span class="bk-band-u">${teacher?'교사용':'학생용'} · ${esc(ch.semester)}</span></header><div class="ed-layout"><main class="ed-main"><p class="ed-kicker">${esc(p.section)}</p><h2>${esc(p.title)}</h2>${p.lead?`<p class="ed-lead">${esc(p.lead)}</p>`:''}${content(p,i)}</main><aside class="ed-rail" aria-label="${esc(p.title)} 보조 학습">${p.rail.map((r,index)=>`<section class="ed-note"${noteRoleAttribute(ch,learningRailTitle(ch,r.title,index,p.kind))}><h3>${esc(learningRailTitle(ch,r.title,index,p.kind))}</h3>${r.text?`<p>${esc(r.text)}</p>`:''}${r.items?`<ul>${r.items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}${r.write?lines(r.write):''}</section>`).join('')}${teacher&&p.teacherNote?`<section class="ed-note ed-teacher-note"${noteRoleAttribute(ch,'지도 메모')}><h3>지도 메모</h3><p>${esc(p.teacherNote)}</p></section>`:''}</aside></div><footer class="bk-foot"><span>${esc(ch.book)} · ${esc(ch.title)}</span><span class="bk-pn">${i+1}</span></footer></section>`).join('')}</div>`;
 }

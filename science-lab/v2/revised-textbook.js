@@ -46,7 +46,7 @@ import {WORKBOOK_ANSWER_LANGUAGE_UNITS,WORKBOOK_ANSWER_LANGUAGE_VERSION} from '.
 import {STUDENT_OPENING_UNITS,STUDENT_GUIDE_UNITS,STUDENT_GUIDE_VERSION,ACTIVITY_GUIDE_UNITS,ACTIVITY_GUIDE_VERSION} from '../data/book/student-opening-language.js?v=20261105-activity-guide';
 // 검수한 교재만 연결한다. 기존 수업·보고서·문제은행 모듈은 그대로 둔다.
 import {withPrintedWorkbook} from './revised-learning-book.js?v=20261108-learning-note-roles';
-import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-elementary-task-language';
+import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-opening-warmup-label';
 export const revisedTextbookUnits = new Set(["c22-s62-u04", "c22-s62-u03", "c22-s62-u02", "c22-s62-u01", "c22-s32-u01", "c22-s32-u02", "s41-u01", "c22-s42-u01", "c22-s51-u03", "s31-u01", "s31-u02", "s31-u03", "s31-u04", "c22-s42-u02", "c22-s32-u03", "c22-s32-u04", "c22-s42-u04", "s41-u02", "s41-u03", "s41-u04", "c22-s42-u03", "c22-s51-u01", "c22-s51-u02", "c22-s51-u04", "c22-s52-u01", "c22-s52-u02", "c22-s52-u03", "c22-s52-u04", "c22-s61-u01", "c22-s61-u02", "c22-s61-u03", "c22-s61-u04"]);
 const cache = new Map();
 async function data(unit) {

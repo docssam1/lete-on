@@ -1,0 +1,78 @@
+{
+  "phase": 372,
+  "date": "2026-11-08",
+  "purpose": "Identify an ungraded oral opening question as 워밍업 when the first current workbook page has no existing warm-up field or heading.",
+  "currentUnitsAffected": [
+    "c22-s32-u04",
+    "c22-s42-u04"
+  ],
+  "conditions": [
+    "Current curriculum workbook opted in with thinkWorkbook",
+    "First page is an opener without question/solution blocks",
+    "No existing 워밍업 heading or field",
+    "The first question paragraph receives the inline label once"
+  ],
+  "runtime": {
+    "phase": 372,
+    "all96DataFilesByteEqual": 96,
+    "allQuestionsUnchanged": 3080,
+    "printedModesCompared": 128,
+    "printedModesIdentical": 124,
+    "printedModesWithOnlyWarmupLabel": 4,
+    "webModesCompared": 64,
+    "webModesIdentical": 60,
+    "webModesWithOnlyWarmupLabel": 4,
+    "studentAndTeacherFirstPagesWithOneVisibleWarmup": 64,
+    "allBankPrintModesIdentical": 84,
+    "previousRendererActuallyExecuted": true,
+    "unchangedCliChecks": [
+      {
+        "unit": "c22-s32-u04",
+        "exitCode": 0,
+        "unchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "exitCode": 0,
+        "unchanged": true
+      }
+    ],
+    "writingLinesAndAllOtherHtmlPreserved": true,
+    "actualBrowserUsed": false
+  },
+  "tests": {
+    "phase": 372,
+    "testFiles": 267,
+    "exitCode": 0,
+    "tests": 1440,
+    "pass": 1438,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0,
+    "duration_ms": 8720.02925
+  },
+  "syntaxChecked": [
+    "science-lab/v2/book.js",
+    "science-lab/v2/revised-book-editorial.js",
+    "science-lab/v2/revised-textbook.js",
+    "science-lab/v2/revised-workbook-paper.js",
+    "science-lab/v2/v2.js",
+    "science-lab/v2/opening-warmup-label.test.mjs"
+  ],
+  "cacheEntryUpdates": [
+    "v2.js -> book.js and revised-textbook.js",
+    "book.js and revised-workbook-paper.js -> revised-book-editorial.js",
+    "revised-textbook.js -> revised-workbook-paper.js",
+    "index.html -> v2.js"
+  ],
+  "nativeCacheSimulation": "Both actual web and print entry modules avoid an older renderer injected at the former import URL.",
+  "questionAndAnswerChanges": 0,
+  "workbookManuscriptChanges": false,
+  "fontOrCssChanges": false,
+  "newPrivateSourcesPublished": false,
+  "actualBrowserUsed": false,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}
