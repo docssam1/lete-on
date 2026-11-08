@@ -25,6 +25,7 @@
   function roundLabel(exam) {
     return exam.title.includes('최종') ? '최종(마무리)' : exam.title.match(/\d+회$/)?.[0] || exam.title;
   }
-  root.HIGHSELECT_PROMO_NAV = Object.freeze({examsFor,coursesFor,roundLabel});
+  function selectionForExam(id){const value=courseByExam[id];if(!value)return null;const [program,course]=value.split(':');return {program,course};}
+  root.HIGHSELECT_PROMO_NAV = Object.freeze({examsFor,coursesFor,roundLabel,selectionForExam});
   if (typeof module !== 'undefined' && module.exports) module.exports = root.HIGHSELECT_PROMO_NAV;
 })(typeof window !== 'undefined' ? window : globalThis);
