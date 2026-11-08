@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-48-area-change-similar")) {
+    const id="5-2-u2-practice-48-area-change-similar",name="정사각형 변을 늘이고 줄인 넓이의 배 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-48-original",sourceItemLabel:"확인학습 48번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:76,alternateSourcePdfPage:75,sourcePrintedPage:80,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P80Q48AreaChangeSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"같은 처음 길이의 분수만큼 가로를 늘이고 세로를 줄이는 원문 구조를 유지하고 넓이의 배를 독립 검산했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-47-sum-difference-similar")) {
     const id="5-2-u2-practice-47-sum-difference-similar",name="합과 차로 구한 두 분수의 곱 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
