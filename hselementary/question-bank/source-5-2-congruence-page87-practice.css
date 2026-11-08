@@ -16,6 +16,16 @@
 
 .u3p95-fold82{max-width:340px}
 
+@media print {
+  /* Leave students enough room to construct the reflected shapes. */
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-89-original"] svg.u3p89-figure,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-90-original"] svg.u3p89-figure,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-94-original"] svg.u3p89-figure {
+    max-width: 100% !important;
+    max-height: 250px;
+  }
+}
+
 /* Keep the angle label inside option ② and the length clear of its side. */
 [data-source-item-id="5-2-u3-practice-11-original"] svg text[x="279"][y="91"] { transform: translateY(14px); }
 [data-source-item-id="5-2-u3-practice-11-original"] svg text[x="232"][y="100"] { transform: translateX(-10px); }
