@@ -1,3 +1,4 @@
+import {withGrade3LivingPracticeDirections} from './s31-living-practice-directions.js?v=20261108-grade3-living-directions';
 import{withLearnerExplanations,withPlantObservationQuestions}from'./learner-explanations.js?v=20261105-plant-observation-questions';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 식물의 생활 A4. scripts/gen-science-workbook-s31u03.mjs가 생성.
@@ -5827,4 +5828,5 @@ const baseWorkbook = {
 
 export const learnerPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
 export const plantObservationPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
-export const workbook=withPlantObservationQuestions(plantObservationPriorWorkbook);
+export const plantPracticePriorWorkbook=withPlantObservationQuestions(plantObservationPriorWorkbook);
+export const workbook=withGrade3LivingPracticeDirections(plantPracticePriorWorkbook);

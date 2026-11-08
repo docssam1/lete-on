@@ -1,3 +1,4 @@
+import {withGrade3LivingPracticeDirections} from './s31-living-practice-directions.js?v=20261108-grade3-living-directions';
 import{withLearnerExplanations,withAnimalQuestionLanguage}from'./learner-explanations.js?v=20261105-animal-question-language';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 동물의 생활 A4. scripts/gen-science-workbook-s31u02.mjs가 생성.
@@ -5247,4 +5248,5 @@ const baseWorkbook = {
 
 export const learnerPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
 export const animalLanguagePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
-export const workbook=withAnimalQuestionLanguage(animalLanguagePriorWorkbook);
+export const animalPracticePriorWorkbook=withAnimalQuestionLanguage(animalLanguagePriorWorkbook);
+export const workbook=withGrade3LivingPracticeDirections(animalPracticePriorWorkbook);
