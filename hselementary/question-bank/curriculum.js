@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-47-sum-difference-similar")) {
+    const id="5-2-u2-practice-47-sum-difference-similar",name="합과 차로 구한 두 분수의 곱 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-47-original",sourceItemLabel:"확인학습 47번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:76,alternateSourcePdfPage:75,sourcePrintedPage:80,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P80Q47SumDifferenceSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"두 분수의 합과 차에서 곱을 구해 기약분수의 분자와 분모를 곱하는 원문 구조를 유지하고 9문항을 독립 검산했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-46-correction-similar")) {
     const id="5-2-u2-practice-46-correction-similar",name="잘못 계산한 결과에서 바른 값 구하기 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
