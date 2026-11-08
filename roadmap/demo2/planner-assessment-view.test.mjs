@@ -47,3 +47,15 @@ test('same-named unit scopes are visibly identified by volume',()=>{
   assert.equal(args.bookId,'기본편');
   assert.match(html,/수 &lt;비교&gt; · 응용편/);
 });
+
+test('O/X paper coverage displays recorded paper numbers; rechecks without an assigned denominator only display recorded count',()=>{
+  const initial={...count(2,1,2),paper:{eligible:25,submitted:2}};
+  const recheck={...count(1,1,1),recordedOnly:true};
+  const points=[{date:'2026-11-08',initial,recheck}];
+  const submitted=view(points,{metric:'submitted'}).html;
+  assert.match(submitted,/8%/);assert.match(submitted,/2 \/ 25문항/);assert.match(submitted,/세트 기록률/);
+  assert.match(submitted,/1문항 기록/);assert.doesNotMatch(submitted,/data-assessment-series="recheck"/);
+  const independent=view(points,{metric:'independent'}).html;
+  assert.match(independent,/50%/);assert.match(independent,/1 \/ 2문항/);
+  assert.match(independent,/data-assessment-series="recheck"/);
+});

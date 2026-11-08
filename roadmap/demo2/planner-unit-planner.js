@@ -34,6 +34,12 @@
     }
   }
 
+  function showAssessmentGraph() {
+    trendTrack='assessment';
+    drawTrend();
+    host.querySelector('[data-wt-track="assessment"]')?.scrollIntoView({block:'start'});
+  }
+
   function chooseTrendTrack(event) {
     const track = event.detail?.track;
     if (track === trendTrack || !['assessment','book','all','units',...g.PlannerWeeklyModel.TRACKS].includes(track)) return;
@@ -179,6 +185,7 @@
     bookState = bookPlan.restore(lastBookText);
     visible = {...view,route:route(),notices:[...new Set([...source.notices,...current.notices,...future.notices])],manualBooks:source.manualBooks||[],message,readOnly:weekStart>day};
     g.PlannerUnitChecklistView.render(host,visible);
+    g.PlannerOxPlanner.mount(host,{context,weekStart,onGraph:showAssessmentGraph});
     drawTrend();
     tableReview(view);
   }

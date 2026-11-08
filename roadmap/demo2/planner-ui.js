@@ -1342,7 +1342,7 @@ function drawJourney(){
 
  if(completed&&!selectedCore){const mock=mockScheduleModel();for(const view of ['map','graph','table'])$('workspace-panel-'+view).insertAdjacentHTML('beforeend',ME.renderSchedule(mock,view)+MS.render(mock,view)+MF.render(mock,view));}
  if(completed&&selectedCore)$('workspace-panel-map').insertAdjacentHTML('beforeend',MS.render(selectedCore)+MF.render(selectedCore));
- if(completed){const stats=LE.summary(learningEvidence);$('workspace-panel-map').insertAdjacentHTML('beforeend','<section class="learning-evidence-access"><h3>개념 확인과 학습 수행 기록</h3><p>경시 개념 기록 '+stats.recorded+'개 · 복습 필요 '+stats.counts.review+'개</p><button type="button" data-learning-evidence-open="concepts">경시 개념 체크</button><button type="button" data-learning-evidence-open="work">월별 수행 분량 기록</button><button type="button" data-learning-evidence-open="mock">고등 모평 수행 점검</button><button type="button" data-learning-evidence-open="papers">연도별 기출 보기</button><p>교과·사고력 권별 테스트는 개발·연동 준비 중입니다.</p></section>');}
+ if(completed){const stats=LE.summary(learningEvidence);$('workspace-panel-map').insertAdjacentHTML('beforeend','<section class="learning-evidence-access"><h3>개념 확인과 학습 수행 기록</h3><p>경시 개념 기록 '+stats.recorded+'개 · 복습 필요 '+stats.counts.review+'개</p><button type="button" data-learning-evidence-open="concepts">경시 개념 체크</button><button type="button" data-learning-evidence-open="work">월별 수행 분량 기록</button><button type="button" data-learning-evidence-open="mock">고등 모평 수행 점검</button><button type="button" data-learning-evidence-open="papers">연도별 기출 보기</button><button type="button" data-ox-open>초등 단원평가 O·X</button></section>');}
 
  const selectedSummary=$('journeyMap').querySelector('.workspace-summary,.standard-summary');if(completed&&selectedSummary)$('planningOverview').querySelector('.plan-current-popover').append(selectedSummary);
  const careerContextValue=careerContext();
@@ -1426,7 +1426,12 @@ function openWeeklyCheck(checklist=false){
  showView('vmap');setWorkspaceView('map');mobileWorkspace('result');
  if(checklist)PlannerUnitPlanner.open();else PlannerWeeklyPlanner.open();
 }
+function openOxCheck(queue=false){
+ if(completed)openWeeklyCheck(true);
+ PlannerOxPlanner.open(queue);
+}
 document.addEventListener('click',event=>{
+ if(event.target.closest('[data-ox-open]'))openOxCheck(event.target.closest('[data-ox-open]').dataset.oxOpen==='queue');
  if(event.target.closest('[data-weekly-open]'))openWeeklyCheck();
  if(event.target.closest('[data-unit-checklist-open]'))openWeeklyCheck(true);
 });
@@ -1466,7 +1471,8 @@ if(restoredMobilePane)mobileWorkspace(restoredMobilePane);PlannerGuide.mount(doc
 const incomingSeniorDirectLink=window.location?.href;
 if(classroomSaved?.version===1&&classroomSaved.active===true)showClassroom(true);else if(studySaved?.version===1&&studySaved.active===true)showStudy(true);else if(historySaved?.active===true)showHistory(historySaved.caseId,true);else if(caseSaved?.version===1&&caseSaved.active===true)showCase(true);
 applySeniorDirectLink(incomingSeniorDirectLink);
-if(new URLSearchParams(location.search).get('checklist')==='1')openWeeklyCheck(true);
+if(new URLSearchParams(location.search).get('ox')==='1')openOxCheck();
+else if(new URLSearchParams(location.search).get('checklist')==='1')openWeeklyCheck(true);
 else if(new URLSearchParams(location.search).get('weekly')==='1')openWeeklyCheck();
 // Older sessions may have paths that were never edited after durable storage was added.
 // Promote only absent durable keys; another saved plan and deletion guards stay intact.

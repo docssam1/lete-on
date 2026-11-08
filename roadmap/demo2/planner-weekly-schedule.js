@@ -204,7 +204,7 @@
       '</ul><p>연산 교재에 하루 분량이 있으면 그 분량을 1회로 셉니다. 다른 과정은 해당 영역에서 처음 정한 주당 학습 횟수와 교재별 예정 기간으로 환산했습니다. 다음 과정에 들어가기 전에는 남은 단원과 풀이를 확인해 주세요.</p></details>' : '';
     return '<section class="weekly-personal-schedule" data-weekly-schedule="' + (table ? 'table' : 'map') + '"><h3>' + heading + '</h3><p>현재 설정한 교재와 기록한 학습 횟수로 이어갑니다. 교재나 진도를 바꾼 영역은 새 범위에서 시작합니다. 이번 주 목표를 계속 실천할 때의 예상 일정입니다. 아래 월별 로드맵은 처음 설계한 과정의 참고 일정입니다.</p>' +
       (m.phase === 'due' ? '<p class="weekly-schedule-pending">지난주 점검을 저장하면 이번 주 분량이 갱신됩니다.</p>' : '') +
-      weeks.map(week => '<div class="weekly-schedule-week"><h4>' + range(week) + '</h4>' + weekGrid(week) + '</div>').join('') +
+      weeks.map(week => '<div class="weekly-schedule-week" data-week-start="'+week.start+'" data-week-end="'+week.end+'"><h4>' + range(week) + '</h4>' + weekGrid(week) + '</div>').join('') +
       details + '</section>';
   }
   global.PlannerWeeklySchedule = Object.freeze({lanes, snapshot, restore, reconcile, model, render});
