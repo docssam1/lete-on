@@ -50,6 +50,7 @@ out/
 
 # OmniVoice 로컬 시청(원장 PC) — 가상환경과 시청용 음성은 커밋하지 않는다
 .venv-omnivoice/
+.venv-qwen3tts/
 audition/
 audition-clone/
 clone/
