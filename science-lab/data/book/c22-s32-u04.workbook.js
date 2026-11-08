@@ -1,3 +1,4 @@
+import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import{withGrade3PracticeWorkbook}from'./c22-s32-practice-language.js?v=20261108-grade3-material-language';
 import{withInfectionLearnerReasoning}from'./c22-s32-u04.rail-notes.js?v=20261105-infection-learner-reasoning';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
@@ -9429,4 +9430,5 @@ const baseWorkbook = {
 export const infectionUpperPriorWorkbook=withStudentOpeningLanguage(withInfectionRails(baseWorkbook));
 export const infectionReasoningPriorWorkbook=withInfectionUpperScience(infectionUpperPriorWorkbook);
 export const infectionElementaryPriorWorkbook=withInfectionLearnerReasoning(infectionReasoningPriorWorkbook);
-export const workbook=withGrade3PracticeWorkbook(infectionElementaryPriorWorkbook);
+export const infectionStudyNotesPriorWorkbook=withGrade3PracticeWorkbook(infectionElementaryPriorWorkbook);
+export const workbook=withGrade3StudyNotes(infectionStudyNotesPriorWorkbook);

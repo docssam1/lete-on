@@ -1,5 +1,6 @@
 import {LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import test from 'node:test';
+import {withGrade3StudyNotes} from '../data/book/grade3-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
@@ -30,8 +31,8 @@ const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])
 test('Earth-and-sea reading edits preserve workbook grading, pictures and all four paper views',async()=>{
   assert.equal(workbook.questions.length,80);
   assert.equal(workbook.questions.filter((q,i)=>q.prompt!==prior.questions[i].prompt).length,33);
-  assert.deepEqual(workbook.pages,prior.pages);
-  assert.deepEqual(workbook.teacherStudentPages,prior.teacherStudentPages);
+  assert.deepEqual(workbook.pages,withGrade3StudyNotes(prior).pages);
+  assert.deepEqual(workbook.teacherStudentPages,withGrade3StudyNotes(prior).teacherStudentPages);
   assert.deepEqual(workbook.teacherPages,prior.teacherPages);
   assert.deepEqual(workbook.figures,prior.figures);
   for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(workbook.questions[i]),withoutPresentation(prior.questions[i]));

@@ -1,4 +1,4 @@
-import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-study-notes';
+import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import {withLifeElementaryWorkbook} from './s31-u04.elementary.js?v=20261108-life-elementary';
 import{withLifeLearnerExplanations}from'./learner-explanations.js?v=20261105-force-life-learner-reasoning';
 import{withObservationLanguage}from'./observation-language.js';

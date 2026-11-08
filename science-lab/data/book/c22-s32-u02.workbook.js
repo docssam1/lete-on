@@ -1,3 +1,4 @@
+import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withEarthSeaElementaryWorkbook} from './c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary';
 import {withMaterialEarthStudentLanguage} from './material-earth-student-language.js';
@@ -7918,4 +7919,5 @@ const baseWorkbook = {
 
 export const earthSeaReasoningPriorWorkbook=withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withEarthSeaBodyLanguage(withStudentOpeningLanguage(withEarthSeaRails(baseWorkbook)))));
 export const earthSeaElementaryPriorWorkbook=withEarthSeaLearnerReasoning(earthSeaReasoningPriorWorkbook);
-export const workbook=withEarthSeaElementaryWorkbook(earthSeaElementaryPriorWorkbook);
+export const earthSeaStudyNotesPriorWorkbook=withEarthSeaElementaryWorkbook(earthSeaElementaryPriorWorkbook);
+export const workbook=withGrade3StudyNotes(earthSeaStudyNotesPriorWorkbook);

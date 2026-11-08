@@ -1,4 +1,4 @@
-import {GRADE3_STUDY_NOTES_VERSION,GRADE3_STUDY_NOTE_UNITS} from '../data/book/grade3-study-notes.js?v=20261108-grade3-study-notes';
+import {GRADE3_STUDY_NOTES_VERSION,GRADE3_STUDY_NOTE_UNITS} from '../data/book/grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import {FORCE_ELEMENTARY_VERSION} from '../data/book/s31-u01.elementary.js?v=20261108-force-elementary';
 import {LIFE_ELEMENTARY_VERSION} from '../data/book/s31-u04.elementary.js?v=20261108-life-elementary';
 import {GRADE3_LIVING_DIRECTIONS_VERSION} from '../data/book/s31-living-practice-directions.js?v=20261108-grade3-living-directions';

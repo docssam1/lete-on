@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {withGrade3StudyNotes} from '../data/book/grade3-study-notes.js';
 import assert from 'node:assert/strict';
 import {withMatchedWorkbookRails} from '../data/book/workbook-rail-pages.js';
 import {workbook as materials} from '../data/book/c22-s32-u01.workbook.js';
@@ -28,8 +29,9 @@ test('교사 이어지는 쪽은 문항ID로 원래 내용을 찾고 양면 빈�
 test('실제 네 교재의 다른 학생·교사 쪽 수와 이어지는 문항 배치를 유지한다',()=>{
  for(const [wb,studentCount,teacherCount,questionCount,pairs,notes]of [[materials,51,54,80,[[16,17],[23,25]],MATERIAL_RAIL_NOTES],[magnets,57,58,80,[[34,35]],MAGNET_RAIL_NOTES],[earthSea,52,56,80,[[22,23],[23,25],[34,37]],EARTH_SEA_RAIL_NOTES],[solution,75,75,96,[],SOLUTION_RAIL_NOTES]]){
   assert.equal(wb.pages.length,studentCount);assert.equal(wb.teacherStudentPages.length,teacherCount);
-  // A generator refresh must not disconnect the reviewed rail resource from the published workbook.
-  assert.deepEqual(wb.pages.map(p=>p.rail.map(r=>r.text)),notes);
+  // Keep the reviewed rail resource and its explicit elementary-language overlay connected.
+  const fromReviewedResource={...wb,pages:wb.pages.map((page,i)=>({...page,rail:page.rail.map((note,j)=>({...note,text:notes[i][j]}))}))};
+  assert.deepEqual(wb.pages.map(p=>p.rail.map(r=>r.text)),withGrade3StudyNotes(fromReviewedResource).pages.map(p=>p.rail.map(r=>r.text)));
   const studentIds=wb.pages.flatMap(p=>p.blocks.flatMap(b=>b.type==='questions'?b.ids:[]));
   const teacherIds=wb.teacherStudentPages.flatMap(p=>(p.blocks||[]).flatMap(b=>b.type==='questions'?b.ids:[]));
   assert.deepEqual(teacherIds,studentIds);assert.equal(new Set(teacherIds).size,questionCount);

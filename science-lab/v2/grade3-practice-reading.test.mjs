@@ -1,6 +1,7 @@
 import {LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import {materialEarthCurrentItems} from '../data/book/material-earth-student-language.js';
 import test from 'node:test';
+import {withGrade3StudyNotes} from '../data/book/grade3-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
@@ -37,7 +38,8 @@ for(const c of cases){
   const mod=await import('../data/book/'+unit+'.workbook.js'),wb=mod.workbook,prior=mod[c.prior];
   assert.equal(wb.questions.length,80);
   assert.equal(wb.questions.filter((q,i)=>q.prompt!==prior.questions[i].prompt).length,c.wbChanges);
-  for(const key of Object.keys(prior).filter(k=>k!=='questions'))assert.deepEqual(wb[key],prior[key]);
+  const expectedNotes=withGrade3StudyNotes(prior);
+  for(const key of Object.keys(prior).filter(k=>k!=='questions'))assert.deepEqual(wb[key],expectedNotes[key]);
   for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(wb.questions[i]),withoutPresentation(prior.questions[i]));
   const paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
