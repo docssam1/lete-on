@@ -55,9 +55,15 @@
       preparation: ["대수와 기하를 따로 시간 재서 점검", "심화 문제를 정확한 풀이 과정으로 완성", "한 영역의 약점이 전체 합격을 가리지 않도록 과락 위험 교정", "기본반·실력 듀얼과 신입·중간 편입을 구분하고 반별 운영 방식을 확인"],
       courses: [
         { id: "middle21-basic", label: "중2-1 기본반 신입", scope: "중1 대수·기하 · 통계 제외", status: "guide" },
-        { id: "common1-basic", label: "공통수학1 기본반 입학", scope: "중2·중3 대수·기하 · 확률 포함 · 각 90분", status: "guide" },
+        { id: "middle22-basic", label: "중2-2 기본반 편입", scope: "지원 회차의 대수·기하 범위 확인", status: "guide" },
+        { id: "middle31-basic", label: "중3-1 기본반 편입", scope: "지원 회차의 대수·기하 범위 확인", status: "guide" },
+        { id: "middle2-dual", label: "중2 심화듀얼반", scope: "입반 범위·지원 기준은 공식 공지 확인", status: "guide" },
         { id: "middle-transfer", label: "중등 기본반 편입", scope: "과정·회차별 대수·기하", status: "guide" },
-        { id: "high-dual", label: "실력공수1·2 듀얼", scope: "공통수학1·2 기본 이수 후", status: "guide" }
+        { id: "common1-basic", label: "공통수학1 기본반 입학", scope: "중2·중3 대수·기하 · 확률 포함 · 각 90분", status: "guide" },
+        { id: "common2-basic", label: "공통수학2 기본반", scope: "공통수학1 기본·중등 기하 심화 학습자", status: "guide" },
+        { id: "high-dual", label: "실력공수1·2 듀얼", scope: "공통수학1·2 기본 이수 후", status: "guide" },
+        { id: "algebra-basic", label: "대수 기본반", scope: "실력직행반과 구분 · 회차별 입반 범위 확인", status: "guide" },
+        { id: "algebra-direct", label: "대수 실력직행반", scope: "대수 기본반과 구분 · 지원 기준은 공식 공지 확인", status: "guide" }
       ],
       channel: { label: "원수학 대치 공식 블로그", url: "https://blog.naver.com/wonmath563", status: "official" },
       updates: [
@@ -75,8 +81,19 @@
       courses: [
         { id: "middle1", label: "중1 시작", scope: "초5·초6 전 과정 · 30문항 · 100분", status: "guide" },
         { id: "high-advance", courseCode: "common1-basic", label: "공통수학1 기본반", scope: "중2·중3 전 과정 · 대수 20 + 기하 10 · 100분", status: "guide" },
+        { id: "common1-skill", label: "공통수학1 실력반", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "common2-basic", label: "공통수학2 기본반", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
         { id: "common2-skill", label: "공통수학2 실력반", scope: "공통수학1 실력 + 공통수학2 기본 · 공식 FAQ 범위 예시", status: "guide" },
-        { id: "algebra-basic", label: "대수 기본반", scope: "공통수학1·2 실력 · 공식 FAQ 범위 예시", status: "guide" }
+        { id: "common-math-high", label: "공통수학 High-level", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "algebra-basic", label: "대수 기본반", scope: "공통수학1·2 실력 · 공식 FAQ 범위 예시", status: "guide" },
+        { id: "algebra-skill", label: "대수 실력반", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "calculus1-basic", label: "미적분1 기본반", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "calculus1-skill", label: "미적분1 실력반", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "algebra-calculus1-high", label: "대수·미적분1 High-level", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "calculus2-basic", label: "미적분2 기본반", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "calculus2-high", label: "미적분2 High-level", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "probability-integrated", label: "확통 통합과정", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" },
+        { id: "geometry-basic", label: "기하 기본반", scope: "공식 교육과정 확인 · 입반 범위는 지원 반별 확인", status: "guide" }
       ],
       channel: { label: "이든수학 공식 블로그", url: "https://blog.naver.com/edenmath", status: "verified" },
       updates: [{ date: "2026-10-07", title: "공통수학1 기본반 12월 개강·입반 테스트", url: "https://blog.naver.com/edenmath/224434054175", sourceKind: "공식 블로그" }]
@@ -113,7 +130,7 @@
   ];
 
   root.HIGHSELECT_ACADEMY_ENGAGEMENT = {
-    updatedAt: "2026-11-06",
+    updatedAt: "2026-11-09",
     standardExamPolicy: {
       required: true,
       rule: "모든 대비과정은 승인된 표준 시험지 한 회 이상이 있어야 신청과 판매를 열 수 있습니다.",

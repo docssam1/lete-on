@@ -9,6 +9,7 @@ const files = [
   ['promo/notices.js', 'promo/notices.js'],
   ['promo/course-navigation.js', 'promo/course-navigation.js'],
   ['data/academy-notices.js', 'data/academy-notices.js'],
+  ['data/course-admissions.js', 'data/course-admissions.js'],
   ['data/available-mocks.js', 'data/available-mocks.js'],
   ['data/official-exam-specs.js', 'data/official-exam-specs.js'],
   ['promo/assets/fonts/pretendard-var.woff2', 'promo/assets/fonts/pretendard-var.woff2'],

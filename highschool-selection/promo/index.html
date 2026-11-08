@@ -8,14 +8,14 @@
   <meta name="description" content="생각하는황소·돌파·원수학·이든·깊은생각·생수수학의 지원 과정을 고르고, 과정별 모의고사와 진단·보완 수업 구성을 확인하세요.">
   <link rel="preload" href="./assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../shared/app.css">
-  <link rel="stylesheet" href="./promo.css?v=student-flow-20261108b">
+  <link rel="stylesheet" href="./promo.css?v=course-admissions-20261109">
 </head>
 <body class="selection-promo" data-view="home">
   <svg class="logo-display-filters" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><defs><filter id="logo-paper-out" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%"><feComponentTransfer in="SourceGraphic" result="white-channels"><feFuncR type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncG type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncB type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/></feComponentTransfer><feColorMatrix in="white-channels" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 1 1 0 -2" result="white-mask"/><feComposite in="SourceGraphic" in2="white-mask" operator="out"/></filter></defs></svg>
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand lete-on-brand" href="#" aria-label="LETE-ON 첫 화면"><span class="brand-wordmark">LETE-ON</span><small>초중고 입학 테스트를 위한</small></a>
-    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=student-flow-20261108b">내 시험 입장</a></div>
+    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=course-admissions-20261109">내 시험 입장</a></div>
   </nav></header>
   <main id="main">
     <section class="academy-home" id="academy-home" aria-labelledby="home-title">
@@ -23,7 +23,7 @@
         <div class="home-intro"><p class="section-kicker">학원별 모의고사 · 대비 수업</p><h1 id="home-title" tabindex="-1">학원을 선택하세요.</h1></div>
         <div class="academy-launcher" id="academy-launcher" aria-label="대비 과정을 볼 학원 선택"></div>
         <section class="notice-board-section" id="notices" aria-labelledby="notices-title"><div class="small-section-head"><h2 id="notices-title">테스트 일정·설명회</h2><span>대치·분당 · 황소는 대치</span></div><div id="home-notice-board"></div></section>
-        <noscript><p>대비 과정을 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=student-flow-20261108b">내 시험 입장</a></p></noscript>
+        <noscript><p>대비 과정을 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=course-admissions-20261109">내 시험 입장</a></p></noscript>
       </div>
     </section>
     <section class="academy-intro-view" id="academy-intro-view" hidden>
@@ -37,12 +37,13 @@
     </section>
     <section class="learning-path" id="learning-path"><div class="shell"><h2>모의고사 이용 순서</h2><ol><li><span>1</span>학원·과정 선택</li><li><span>2</span>회차 선택</li><li><span>3</span>내 시험 입장</li></ol></div></section>
   </main>
-  <footer class="footer"><div class="shell"><span>LETE-ON · 초중고 입학 테스트 대비</span><a href="../login.html?v=student-flow-20261108b">배정받은 시험 입장</a></div></footer>
-  <script src="../data/public-exam-profiles.js?v=student-flow-20261108b"></script>
-  <script src="../data/academy-engagement.js?v=student-flow-20261108b"></script>
-  <script src="../data/available-mocks.js?v=student-flow-20261108b"></script>
-  <script src="../data/official-exam-specs.js?v=student-flow-20261108b"></script>
-  <script src="./course-navigation.js?v=student-flow-20261108b"></script>
+  <footer class="footer"><div class="shell"><span>LETE-ON · 초중고 입학 테스트 대비</span><a href="../login.html?v=course-admissions-20261109">배정받은 시험 입장</a></div></footer>
+  <script src="../data/public-exam-profiles.js?v=course-admissions-20261109"></script>
+  <script src="../data/academy-engagement.js?v=course-admissions-20261109"></script>
+  <script src="../data/available-mocks.js?v=course-admissions-20261109"></script>
+  <script src="../data/official-exam-specs.js?v=course-admissions-20261109"></script>
+  <script src="../data/course-admissions.js?v=course-admissions-20261109"></script>
+  <script src="./course-navigation.js?v=course-admissions-20261109"></script>
   <script>
     'use strict';
     const data=HIGHSELECT_PUBLIC_PROFILES;
@@ -53,7 +54,7 @@
     let selectedProgram='';
     if(window.history && 'scrollRestoration' in window.history)window.history.scrollRestoration='manual';
     const route=(code,course='')=>'#'+new URLSearchParams({academy:code,...(course?{course}:{})}).toString();
-    const courseGroups={SH:'고등 선발 · 중등·고등 편입',DP:'중1 시작 · 공통수학 · 대수',WM:'중등 기본 · 공통수학 · 듀얼',ED:'중1 시작 · 공통수학1 기본반',DG:'중1 시작 · 레벨 입학 · 예비고1',SM:'공통수학1 · 공통수학2'};
+    const courseGroups={SH:'고등 선발 · 중등·고등 편입',DP:'중1 시작 · 공통수학 · 대수',WM:'중등 기본 · 공통수학 · 대수',ED:'중1 시작 · 공통수학 · 대수·미적분',DG:'중1 시작 · 레벨 입학 · 예비고1',SM:'공통수학1 · 공통수학2'};
     // These are interface colors, not academy logos or official brand colors.
     const cardColors={SH:'#64d5a2',DP:'#f7d447',WM:'#618df3',ED:'#f39bb9',DG:'#b5a0ee',SM:'#fa9a68'};
     const academyLogos={SH:'sh.png',DP:'dp.png',WM:'wm-transparent-v2.png',ED:'ed-transparent-v2.png',DG:'dg.webp',SM:'sm-transparent-v2.png'};
@@ -82,7 +83,7 @@
     const navigation=HIGHSELECT_PROMO_NAV;
     const courseExams=(program,course)=>navigation.examsFor(program,course,mocks);
     const mockTime=e=>e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · 휴식 ${e.breakMinutes}분 별도`:(e.durationMinutes?e.durationMinutes+'분':'');
-    const examHref=e=>'../login.html?v=student-flow-20261108b&exam='+encodeURIComponent(e.id);
+    const examHref=e=>'../login.html?v=course-admissions-20261109&exam='+encodeURIComponent(e.id);
     function academyLogo(program){
       return `<span class="academy-mark ${program.code==='DP'?'academy-mark-clear':''}"><img src="./assets/logos/${academyLogos[program.code]}" alt="" decoding="async"></span>`;
     }
@@ -100,16 +101,25 @@
         const exams=course.exams;
         const ready=exams.length>0;
         const first=exams[0];
-        return `<a class="course-banner ${ready?'is-ready':'is-preparing'}" href="${esc(route(program.code,course.id))}" data-course="${esc(course.id)}"><div class="course-banner-top"><span class="course-state">${ready?'응시 가능':'준비 중'}</span>${ready?`<span class="course-count">${exams.length}회</span>`:''}</div><h3>${esc(course.label)}</h3><p>${esc(ready?first.scope:course.scope)}</p>${ready?`<div class="course-banner-spec"><span>${first.questionCount}문항</span><span>${esc(mockTime(first))}</span></div>${courseArt()}`:''}<span class="course-banner-action">${ready?'회차 선택':'과정 안내'}<span aria-hidden="true">↗</span></span></a>`;
+        return `<a class="course-banner ${ready?'is-ready':'is-preparing'}" href="${esc(route(program.code,course.id))}" data-course="${esc(course.id)}"><div class="course-banner-top"><span class="course-state">${ready?'모의고사 응시 가능':'모집·레벨 안내'}</span>${ready?`<span class="course-count">${exams.length}회</span>`:''}</div><h3>${esc(course.label)}</h3><p>${esc(ready?first.scope:course.scope)}</p>${ready?`<div class="course-banner-spec"><span>${first.questionCount}문항</span><span>${esc(mockTime(first))}</span></div>${courseArt()}`:''}<span class="course-banner-action">${ready?'회차·모집 안내':'입반 기준 확인'}<span aria-hidden="true">↗</span></span></a>`;
       };
       const tiles=courses.filter(c=>c.exams.length).map(tile).join('');
       const pending=courses.filter(c=>!c.exams.length);
-      const preparing=pending.length?`<details class="preparing-courses"><summary>준비 중인 과정 ${pending.length}개</summary><div class="preparing-list">${pending.map(tile).join('')}</div></details>`:'';
+      const preparing=pending.length?`<section class="admission-courses" aria-labelledby="admission-courses-title"><h2 id="admission-courses-title">모집·레벨 확인</h2><div class="preparing-list">${pending.map(tile).join('')}</div></section>`:'';
       const related=(program.relatedPrograms||[]).filter(p=>safeUrl(p.url)).map(p=>`<a class="related-course" href="${esc(safeUrl(p.url))}"><b>${esc(p.label)}</b><span>바로가기 <span aria-hidden="true">↗</span></span></a>`).join('');
       return `<section class="course-picker" aria-labelledby="course-heading"><div class="course-heading-row"><h2 id="course-heading">대비 과정을 선택하세요.</h2><span>${ready}개 과정 응시 가능</span></div><div class="course-banner-grid${ready>1?' has-multiple-ready':''}">${tiles}</div>${preparing}${related?`<nav class="related-courses" aria-label="연결된 대비 과정">${related}</nav>`:''}</section>`;
     }
     function roundCards(exams){
       return `<div class="round-grid">${exams.map(e=>`<a class="round-card" href="${examHref(e)}"><div class="round-card-title"><h3>${esc(navigation.roundLabel(e))}</h3><span class="round-open" aria-hidden="true">↗</span></div><p>${e.questionCount}문항 <span aria-hidden="true">/</span> ${esc(mockTime(e))}</p><span class="round-card-action">시험 입장</span></a>`).join('')}</div>`;
+    }
+    function renderAdmission(program,course){
+      const info=HIGHSELECT_COURSE_ADMISSIONS.forCourse(program.code,course.id);
+      if(!info)return '';
+      const official=HIGHSELECT_OFFICIAL_EXAM_SPECS.courses[program.code+':'+course.id];
+      const scope=info.entryScope||official?.scope||'입반 범위는 해당 반의 모집 공지에서 확인하세요.';
+      const links=info.links.filter(link=>safeUrl(link.url)).map(link=>`<a class="admission-link" href="${esc(safeUrl(link.url))}" target="_blank" rel="noopener noreferrer"><span><b>${esc(link.label)}</b><small>${esc(link.note)}</small></span><span aria-hidden="true">↗</span><span class="sr-only">새 창</span></a>`).join('');
+      const channel=safeUrl(program.channel?.url);
+      return `<section class="course-admission" aria-labelledby="admission-title"><div class="small-section-head"><h2 id="admission-title" tabindex="-1">모집·레벨 확인</h2><span>${esc(info.branch)} 기준</span></div><dl class="admission-facts"><div><dt>입반시험 범위</dt><dd>${esc(scope)}</dd></div>${info.level?`<div><dt>지원 기준</dt><dd>${esc(info.level)}</dd></div>`:''}</dl><div class="admission-links">${links}${channel?`<a class="admission-link admission-channel" href="${esc(channel)}" target="_blank" rel="noopener noreferrer"><span><b>최신 모집 공지</b><small>${esc(program.publicName)} 공식 블로그</small></span><span aria-hidden="true">↗</span><span class="sr-only">새 창</span></a>`:''}</div><p class="admission-caption">안내 자료 ${esc(info.checkedAt)} 확인 · 모집 여부와 반 배정은 학원에서 확인하세요.</p></section>`;
     }
     function renderCourse(program,course){
       const exams=courseExams(program.code,course.id);
@@ -117,7 +127,7 @@
       const official=HIGHSELECT_OFFICIAL_EXAM_SPECS.courses[program.code+':'+course.id];
       const scope=first?.scope||course.scope;
       const basis=official?`<p class="scope-note">${esc(official.note)} <a href="${esc(safeUrl(official.sourceUrl))}" target="_blank" rel="noopener noreferrer">공식 안내 <span class="sr-only">새 창</span></a></p>`:'';
-      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><div class="course-detail-toolbar"><span>${first?'응시 가능':'준비 중'}</span><a href="${route(program.code)}">과정 바꾸기</a></div><h1 id="selected-course-title" tabindex="-1">${esc(course.label)}</h1><p class="course-scope">${esc(scope)}</p>${first?`<dl class="course-specs${first.sectionMinutes?' has-section-time':''}"><div><dt>문항</dt><dd>${first.questionCount}문항</dd></div><div><dt>시험시간</dt><dd>${esc(mockTime(first))}</dd></div><div><dt>공개 회차</dt><dd>${exams.length}회</dd></div></dl>`:''}</div>${first?`<div class="round-picker" aria-labelledby="round-list-title"><div class="small-section-head"><h2 id="round-list-title">회차를 선택하세요.</h2><span>O/X 자가채점</span></div>${roundCards(exams)}</div>`:`<div class="course-empty"><h2>모의고사를 준비하고 있습니다.</h2><p>현재 공개된 회차가 없습니다.</p><a class="button" href="${route(program.code)}">다른 과정 보기</a></div>`}${basis}</section>`;
+      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><div class="course-detail-toolbar">${first?'<button class="admission-jump" type="button" data-admission-jump>모집·레벨 확인 ↓</button>':'<span>모집·레벨 안내</span>'}<a href="${route(program.code)}">과정 바꾸기</a></div><h1 id="selected-course-title" tabindex="-1">${esc(course.label)}</h1><p class="course-scope">${esc(scope)}</p>${first?`<dl class="course-specs${first.sectionMinutes?' has-section-time':''}"><div><dt>문항</dt><dd>${first.questionCount}문항</dd></div><div><dt>시험시간</dt><dd>${esc(mockTime(first))}</dd></div><div><dt>공개 회차</dt><dd>${exams.length}회</dd></div></dl>`:''}</div>${first?`<div class="round-picker" aria-labelledby="round-list-title"><div class="small-section-head"><h2 id="round-list-title">회차를 선택하세요.</h2><span>O/X 자가채점</span></div>${roundCards(exams)}</div>`:`<div class="course-empty"><h2>이 과정의 모의고사는 준비 중입니다.</h2><a class="button" href="${route(program.code)}">다른 과정 보기</a></div>`}${renderAdmission(program,course)}${basis}</section>`;
     }
     function render(){
       const params=new URLSearchParams(location.hash.slice(1));
@@ -131,12 +141,14 @@
       const course=program.courses.find(item=>item.id===params.get('course'));
       document.body.dataset.course=course?.id||'';
       document.title=course?`${program.publicName} ${course.label} | LETE-ON`:`${program.publicName} 대비 과정 | LETE-ON`;
+      document.getElementById('notice-title').textContent=course?course.label+' 모집·테스트 공지':'테스트 일정·설명회';
       document.getElementById('breadcrumb-name').innerHTML=course?`<a href="${route(program.code)}">${esc(program.publicName)}</a><span aria-hidden="true">/</span><span>${esc(course.label)}</span>`:esc(program.publicName);
       stage.style.setProperty('--academy-color',cardColors[program.code]);
       stage.innerHTML=academyHeader(program,course)+(course?renderCourse(program,course):courseBanners(program));
       renderEvidence();
       document.querySelector('.release-note').hidden=true;
     }
+    stage.addEventListener('click',event=>{if(event.target.closest('[data-admission-jump]')){const title=document.getElementById('admission-title');title?.scrollIntoView({block:'start'});title?.focus({preventScroll:true});}});
     window.addEventListener('hashchange',()=>{
       render();
       const course=new URLSearchParams(location.hash.slice(1)).get('course');
@@ -150,6 +162,6 @@
     render();
   </script>
   <script src="../data/academy-notices.js"></script>
-  <script src="./notices.js?v=mock-ox-20261102"></script>
+  <script src="./notices.js?v=course-admissions-20261109"></script>
 </body>
 </html>
