@@ -398,8 +398,8 @@ function drillFor(u, wrongIds, el) {
 }
 
 // 학습 결과와 복습 — 학생에게는 관찰된 기록을 설명하고 교사용 진단 규칙은 유지한다.
-function pageDiagnose(u, L, items, mode = 'student') {
-  const A = analyze(du(u), MISC), tx = BOOKX.taxonomy, pool = [...(BOOKX.similar || []), ...(BOOKX.source || []), ...items];
+function pageDiagnose(u, L, items, mode = 'student', questionPool = null) {
+  const A = analyze(du(u), MISC), tx = BOOKX.taxonomy, pool = questionPool || [...(BOOKX.similar || []), ...(BOOKX.source || []), ...items];
   const I = Object.fromEntries(pool.map((i) => [i.id, i])), T = mode === 'teacher';
   const currentClassroom = revisedTextbookUnits.has(u);
   const STAGE = { concept: '개념', mini: '잠깐 확인', elaborate: '확장', evaluate: '점검', sub: '유형별', remedy: '복습 문제', book: '교재', 'book-concept': '교재 개념', deck: '수업 확인 문제', daily: 'Daily Test', exam: '단원평가' };
@@ -435,8 +435,8 @@ function pageDiagnose(u, L, items, mode = 'student') {
     <div class="card"><h3>소단원별 정답률</h3>${elems}</div>
     ${cards || ''}
     ${T ? `<div class="card"><h3>유형별 정답률</h3>${(tx?.types || []).filter((t) => A.byType[t.id]).map((t) => bar(t.name, A.byType[t.id])).join('') || '<p class="lead">아직 없음</p>'}</div>` : ''}`);
-  $app.querySelectorAll('.rx-items .item').forEach((c) => wireItem(c, I[c.dataset.id], () => setTimeout(() => pageDiagnose(u, L, items, mode), 1400), { u, stage: 'remedy' }));
-  $app.querySelector('#reset')?.addEventListener('click', () => { if (confirm('이 단원의 학습 기록을 지울까요?')) { clearLog(du(u)); pageDiagnose(u, L, items, mode); } });
+  $app.querySelectorAll('.rx-items .item').forEach((c) => wireItem(c, I[c.dataset.id], () => setTimeout(() => pageDiagnose(u, L, items, mode, pool), 1400), { u, stage: 'remedy' }));
+  $app.querySelector('#reset')?.addEventListener('click', () => { if (confirm('이 단원의 학습 기록을 지울까요?')) { clearLog(du(u)); pageDiagnose(u, L, items, mode, pool); } });
 }
 
 // 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
@@ -851,7 +851,13 @@ async function route() {
   if (!mod.lesson && !['print', 'workbook', 'lab-book', 'lab-class', 'start', 'daily', 'exam'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'start') return pageStart(u, L);
   if (a === 'kit') return pageKit(u, L);
-  if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
+  if (a === 'diagnose') {
+    if (!MISC) return location.replace(`#/${u}`);
+    const classroom = revisedTextbookUnits.has(u) && BOOKS[u] ? await BOOKS[u]().then(m => revisedClassroom(u,m)).catch(() => null) : null;
+    if (!isCurrent()) return;
+    const pool = classroomQuestions(classroom,[...(mod.similar || []), ...(mod.source || []), ...items]);
+    return pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student', pool);
+  }
   if (a === 'report') return pageReport(u, L);
   if (a === 'records') return pageRecords(u, L);
   if (a === 'records-book' && !b) { location.replace(`#/${u}/records-book/student`); return; }   // 학생용/교사용을 안 적으면 학생용

@@ -1,0 +1,69 @@
+{
+  "phase": 355,
+  "date": "2026-11-08",
+  "scope": "Use the versioned classroom pool in diagnosis evidence and remedial questions, including rerender and navigation cancellation.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "a3c909ac95ea945b61aa1178f9ee98208c0d744d",
+    "reviewCommit": "6ff03577755c2469e8a303cd3bee50c6ebf0fd3e"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "diagnosisRouteValidation": {
+    "phase": 355,
+    "unitCount": 32,
+    "currentQuestions": 6203,
+    "restoredHistoryVersions": 2689,
+    "originalQuestionsUnchanged": 1512,
+    "unknownVersionsNeverSubstituted": true,
+    "inputObjectsUnmutated": true,
+    "additionalStorageReads": 0,
+    "additionalStorageWrites": 0,
+    "nativeRouteOnly": true,
+    "actualBrowserRendering": false
+  },
+  "originalSourceRegression": {
+    "phase": 355,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "regressionBefore": {
+    "tests": 3,
+    "pass": 0,
+    "fail": 3,
+    "meaningfulAssertionFailuresReproduced": true
+  },
+  "currentNativeSuite": {
+    "tests": 1394,
+    "suites": 0,
+    "pass": 1392,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "exitCode": 0,
+    "testFiles": 254
+  },
+  "syntaxFilesChecked": 2,
+  "questionTextAnswersChoicesRubricsAndFiguresChanged": false,
+  "cssChangedThisStage": false,
+  "storedAnswersUnchanged": true,
+  "unknownVersionsNeverSubstituted": true,
+  "classroomLoadingFailureFallsBackToAvailableBankPool": true,
+  "cancelledNavigationNeverRendersStaleDiagnosis": true,
+  "newOriginalsAdded": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}
