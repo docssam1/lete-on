@@ -84,7 +84,7 @@
       notice.dataset.weeklyExtra = '';
       peek.append(notice);
     }
-    g.PlannerUnitPlanner.mount(unitContext, program, courses);
+    g.PlannerUnitPlanner.mount(unitContext, program, courses || intake);
   }
 
   function render() {
@@ -150,7 +150,7 @@
     let latest;
     try { latest = JSON.parse(text); } catch {}
     const otherProgram = model.restore(latest?.program);
-    g.PlannerUnitPlanner.mount(unitContext,otherProgram,otherProgram ? schedule.restore(latest.courses) : null);
+    g.PlannerUnitPlanner.mount(unitContext,otherProgram,otherProgram ? schedule.restore(latest.courses) : intake);
   }
   g.addEventListener('focus',refreshChecklist);
   g.addEventListener('storage',e => {if (e.key?.endsWith('.weekly-study.v1')) refreshChecklist();});

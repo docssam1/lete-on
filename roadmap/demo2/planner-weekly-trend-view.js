@@ -1,7 +1,7 @@
 /* Signed session counts from saved weekly reviews. Missing weeks break the line. */
 (function (g) {
   'use strict';
-  const tracks = {all: '전체', curriculum: '교과', arithmetic: '연산', thinking: '사고력', units: '단원 보완'};
+  const tracks = {book:'교재 진도', all: '전체 학습 횟수', curriculum: '교과', arithmetic: '연산', thinking: '사고력', units: '단원 보완'};
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => (
     {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]
   ));
@@ -122,10 +122,12 @@
     const track = Object.hasOwn(tracks, model.track) ? model.track : 'all';
     const units = track === 'units';
     const options = Object.entries(tracks)
-      .filter(([value]) => hasProgram || value === 'all' || value === 'units')
+      .filter(([value]) => hasProgram || value === 'all' || value === 'units' || value === 'book')
       .map(([value, name]) => '<option value="' + value + '"' + (value === track ? ' selected' : '') + '>' + name + '</option>').join('');
     const showChart = points.some(recorded);
     const select = '<label class="wt-filter">그래프 선택 <select data-wt-filter data-wt-focus="filter">' + options + '</select></label>';
+    if (track === 'book') return '<section class="wt-card" data-wt-track="book" aria-label="교재 진도"><div class="wt-head"><h3>목표와 혼자 푼 교재 진도</h3>' +
+      select + '</div><div data-book-pace-host></div></section>';
     const latestLabel = hasRecord && (units ? '보완할 단원 ' + Math.abs(latest.gap) + '개' : gapLabel(latest.gap));
     const title = units ? '단원 보완 흐름' : '계획 대비 학습 흐름';
     const detail = hasRecord ? '<p class="wt-result"><small>최근 ' + (units ? '기록' : '점검') + ' · ' + Number(latest.weekNumber) +

@@ -9,7 +9,9 @@
   host.tabIndex = -1;
   let context, program, courses, visible, lastText, lastDay;
 
-  let trendTrack, trendRecords;
+  let trendTrack = new URLSearchParams(g.location.search).has('weekly') ? 'all' : 'book';
+  let trendRecords, books = [], selectedBookId, bookMessage = '', lastBookText, bookState;
+  const bookPlan = g.PlannerBookPacePlan;
   const comparisonTrend = document.createElement('div');
   comparisonTrend.dataset.weeklyTrend = '';
 
@@ -17,27 +19,58 @@
     if (!visible || !host.isConnected) return;
     const comparison = document.getElementById('workspace-panel-graph');
     if (comparison && comparison.firstElementChild !== comparisonTrend) comparison.prepend(comparisonTrend);
-    // Before the first weekly review, show the student's own checklist observations as they come in.
-    const hasReviews = program?.history.length || program?.prior;
-    const defaultTrack = !hasReviews && trendRecords?.entries.length ? 'units' : 'all';
-    const track = trendTrack || defaultTrack;
-    const trend = track === 'units'
+    const track = trendTrack;
+    const trend = track === 'book' ? {track} : track === 'units'
       ? g.PlannerUnitTrend.build({records:trendRecords,program,day:lastDay})
       : g.PlannerWeeklyTrend.build({program,day:lastDay,track});
+    const bookModel = track === 'book' ? bookPlan.model(books,selectedBookId,bookState,lastDay,bookMessage) : null;
     trend.hasProgram = !!program;
     for (const target of [host.querySelector('[data-weekly-trend]'),comparisonTrend]) {
-      if (target?.isConnected) g.PlannerWeeklyTrendView.render(target,trend,visible.route);
+      if (!target?.isConnected) continue;
+      g.PlannerWeeklyTrendView.render(target,trend,visible.route);
+      if (bookModel) g.PlannerBookPaceView.render(target.querySelector('[data-book-pace-host]'),bookModel,visible.route);
     }
   }
 
   function chooseTrendTrack(event) {
     const track = event.detail?.track;
-    if (track === trendTrack || !['all','units',...g.PlannerWeeklyModel.TRACKS].includes(track)) return;
+    if (track === trendTrack || !['book','all','units',...g.PlannerWeeklyModel.TRACKS].includes(track)) return;
     trendTrack = track;
     drawTrend();
   }
   host.addEventListener('planner-trend-track',chooseTrendTrack);
   comparisonTrend.addEventListener('planner-trend-track',chooseTrendTrack);
+
+  async function changeBook(event) {
+    const input = event.detail || {};
+    const book = books.find(row => row.id === input.bookId);
+    if (!book) return;
+    const action = event.type.slice('planner-book-'.length);
+    selectedBookId = book.id;
+    if (action === 'select') { bookMessage = ''; drawTrend(); return; }
+    const fieldValue = state => {
+      const saved = state.books[book.id];
+      return action === 'goal' ? saved?.goals?.[input.unit] : saved?.observations?.[input.unit]?.[input.date];
+    };
+    const expected = JSON.stringify(fieldValue(bookState));
+    const persist = () => {
+      const latest = bookPlan.restore(storage.getLatestItem(bookPlan.key));
+      if (JSON.stringify(fieldValue(latest)) !== expected) throw Error('다른 화면에서 같은 기록이 바뀌었어요. 최신 값을 확인해 주세요.');
+      const next = bookPlan.apply(latest,book,action,input,g.PlannerWeeklyModel.today());
+      storage.setItem(bookPlan.key,JSON.stringify(next));
+    };
+    try {
+      if (g.navigator.locks) await g.navigator.locks.request('gfield.book-pace.'+g.RoadmapMember.user_id,persist);
+      else persist();
+      bookMessage = action === 'remove' ? '직접 입력한 기록을 삭제했어요.' : action === 'goal' ? '교재 목표를 저장했어요.' : '혼자 풀 수 있는 범위를 저장했어요.';
+    } catch (err) { bookMessage = err?.message || '저장하지 못했어요. 다시 시도해 주세요.'; }
+    lastBookText = storage.getLatestItem(bookPlan.key);
+    bookState = bookPlan.restore(lastBookText);
+    drawTrend();
+  }
+  for (const target of [host,comparisonTrend]) for (const action of ['select','goal','observe','remove']) {
+    target.addEventListener('planner-book-'+action,changeBook);
+  }
 
   function state() {
     const text = storage.getLatestItem(key);
@@ -139,6 +172,9 @@
     lastText = stored.text;
     lastDay = day;
     trendRecords = records;
+    books = g.PlannerBookPaceSources.build({source,context,program,courses,records,today:day}).books;
+    lastBookText = storage.getLatestItem(bookPlan.key);
+    bookState = bookPlan.restore(lastBookText);
     visible = {...view,route:route(),notices:[...new Set([...source.notices,...current.notices,...future.notices])],manualBooks:source.manualBooks||[],message,readOnly:weekStart>day};
     g.PlannerUnitChecklistView.render(host,visible);
     drawTrend();
@@ -203,10 +239,10 @@
   host.addEventListener('planner-unit-change',change);
   host.addEventListener('planner-unit-range',change);
   function refresh() {
-    if (host.isConnected && (lastDay!==g.PlannerWeeklyModel.today() || lastText!==storage.getLatestItem(key))) draw();
+    if (host.isConnected && (lastDay!==g.PlannerWeeklyModel.today() || lastText!==storage.getLatestItem(key) || lastBookText!==storage.getLatestItem(bookPlan.key))) draw();
   }
   g.addEventListener('focus',refresh);
-  g.addEventListener('storage',event=>{if(event.key?.endsWith('.unit-checklist.v1'))refresh();});
+  g.addEventListener('storage',event=>{if(event.key?.endsWith('.unit-checklist.v1') || event.key?.endsWith('.book-pace.v1'))refresh();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
   function open() {
     if (!host.isConnected) return;

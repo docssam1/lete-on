@@ -99,7 +99,12 @@
         const match = candidates.find(row => compact(row.unitLabel) === compact(range));
         const u = {id:match?.unitId || key('own',bookId,range),title:range};
         const item = bookItem(book.track,book.name,u,range + ' · 직접 입력한 범위');
-        item.id = key('manual',bookId,range);
+        let edition;
+        if (book.track === 'curriculum' && sameSchoolBook(book.name,ctx.actual)) {
+          const observed = g.PlannerBookChecks.model(ctx.bookChecks,g.PlannerBookChecks.descriptor('school',ctx.answers,ctx.fields));
+          if (observed.confirmed) edition = observed.book.id;
+        }
+        item.id = edition ? key('manual',bookId,range,edition) : key('manual',bookId,range);
         items.push(item);
         continue;
       }
