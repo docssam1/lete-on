@@ -4,6 +4,8 @@ const path = require('node:path');
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || 'playwright');
 const origin = process.env.HSE_AUDIT_ORIGIN || 'http://127.0.0.1:18767';
 const practice = [
+  '5-2-u3-e7-example-4-shaded-parallelogram-synthetic',
+  '5-2-u3-e7-mission-3-parallelogram-overlap-synthetic',
   '5-2-u3-e7-mission-4-grid-construction-synthetic',
   '5-2-u3-e7-example-3-letter-rotation-synthetic',
   '5-2-u3-e7-example-2-dotboard-area-synthetic',
@@ -33,9 +35,11 @@ const original = '5-2-u3-e7-mission-1-original';
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.match(await row.locator('strong').innerText(), /^연습 ·/, id);
       }
+      const missing = await page.evaluate(() => window.HSE_CURRICULUM.semesters.find(s => s.id === '5-2').units.flatMap(u => u.subunits.flatMap(g => g.types)).filter(t => !t.reviewLocked && /구조 연습/.test(t.sourceItemLabel || '') && !/유사문항|연습|조건변형/.test(t.label || t.name)).map(t => t.id));
+      assert.deepEqual(missing, [], 'source-derived practice must be labeled in its title');
       const originalRow = page.locator(`[data-preview-type-id="${original}"]`);
       assert.match(await originalRow.locator('strong').innerText(), /원문/);
-      const selected = [practice[0], practice[4], practice[5], original];
+      const selected = [practice[0], practice[1], practice[6], original];
       for (const id of selected) await page.locator(`#typeList input[data-type-id="${id}"]`).check();
       await page.locator('#questionCountInput').fill('4');
       await page.locator('#generateButton').click();
@@ -59,5 +63,5 @@ const original = '5-2-u3-e7-mission-1-original';
       await context.close();
     }
   } finally { await browser.close(); }
-  console.log('PASS: ten practice labels and original are distinguished on screen and A4');
+  console.log('PASS: twelve practice labels and original are distinguished on screen and A4');
 })().catch(error => { console.error(error); process.exitCode = 1; });
