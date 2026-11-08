@@ -346,3 +346,9 @@
  .bk-editorial.revised-workbook[data-unit] .ed-main h2{letter-spacing:normal;line-height:1.4}
  .bk-editorial.revised-workbook[data-unit] .ed-table th{font-weight:600}
 }
+
+/* 두 단원에 남은 작은 보기 글씨도 화면 본문과 같은 크기로 읽는다. */
+@media screen{
+ .bk-editorial.revised-workbook[data-unit] .ed-layout-two .ed-choices li{font-family:var(--ed-reading);font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] .ed-kicker{font-family:var(--ed-reading);font-size:15px;font-weight:600;letter-spacing:normal;line-height:1.5}
+}
