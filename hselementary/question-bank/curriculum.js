@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-25-inequality-similar")) {
+    const id="5-2-u2-practice-25-inequality-similar",name="분수 곱 부등식을 만족하는 자연수 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-25-original",sourceItemLabel:"확인학습 25번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:74,alternateSourcePdfPage:73,sourcePrintedPage:78,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P78Q25InequalitySimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 단위분수 곱과 초과 부등식 구조를 유지하고 경계값을 독립 열거했습니다."});
+  }
   if (source52Unit2Product) for (const [n,name] of [[1,"분수 곱셈 다섯 식 계산 · 원문"],[2,"거리의 몇 배로 소방서까지의 거리 구하기 · 원문"],[3,"규칙에 따라 늘어놓은 분수의 순서 · 원문"],[4,"규칙적으로 나열된 분수 백 개의 곱 · 원문"],[5,"세 번째로 튀어 오를 때까지 공의 이동 거리 · 원문"]]) {
     const id=`5-2-u2-e2-mission-${n}-original`;
     if (source52Unit2Product.types.some(type=>type.id===id)) continue;
