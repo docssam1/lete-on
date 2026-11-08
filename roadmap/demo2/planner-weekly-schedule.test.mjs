@@ -84,3 +84,39 @@ test('turning on an inactive track requests its study range and never schedules 
   assert.equal(S.snapshot([{id:'thinking', current:'미정인 공부',status:'pending'}]).tracks.thinking.current,'');
   assert.equal(S.restore({version:1,tracks:{arithmetic:{current:'아직 시작 전'}}}).tracks.arithmetic.current,'');
 });
+
+test('new course starts at its own beginning, including late reviews, while other lane records and targets survive',()=>{
+  const initial=W.review(start(),{dueDate:'2026-11-08',completed:{curriculum:12,arithmetic:7,thinking:2},nextTargets:targets},'2026-11-08');
+  const old=S.restore(courses), inputs=S.snapshot([{id:'school',blocks:[{title:'새 교과 첫 범위',start:0,end:.1,studyDays:5},{title:'새 교과 다음 범위',start:.1,end:3}]}, ...sources.slice(1)]);
+  old.tracks.curriculum.intakeKey='공통수학1';
+  inputs.tracks.curriculum.intakeKey='공통수학2';
+  const swapped=S.reconcile(initial,old,inputs,'2026-11-15');
+  const before=S.model(initial,swapped,'2026-11-15').weeks[0].tracks;
+  assert.equal(before.curriculum.items[0].title,'새 교과 첫 범위');
+  assert.equal(before.curriculum.items[0].sessions,4);
+  assert.deepEqual(before.arithmetic,S.model(initial,courses,'2026-11-15').weeks[0].tracks.arithmetic);
+  const lastWeek=W.review(initial,{dueDate:'2026-11-15',completed:{...targets,curriculum:9},nextTargets:{...targets,curriculum:3}},'2026-11-16');
+  const saved=S.reconcile(lastWeek,swapped,swapped,'2026-11-16');
+  assert.equal(saved.tracks.curriculum.completedBefore,21);
+  assert.equal(S.model(lastWeek,saved,'2026-11-16').weeks[0].tracks.curriculum.items[0].sessions,3);
+  const later=W.review(lastWeek,{dueDate:'2026-11-22',completed:{...targets,curriculum:4},nextTargets:targets},'2026-11-22');
+  const current=S.reconcile(later,JSON.parse(JSON.stringify(saved)),inputs,'2026-11-22');
+  assert.equal(current.tracks.curriculum.changedOn,'2026-11-15');
+  const items=S.model(later,current,'2026-11-22').weeks[0].tracks.curriculum.items;
+  assert.equal(items[0].sessions,1);
+  assert.equal(items[1].title,'새 교과 다음 범위');
+  assert.equal(W.totals(later).curriculum,25);
+});
+
+test('an older enrollment snapshot detects material changes on one axis without inheriting its backlog',()=>{
+  const past=W.review(start(),{dueDate:'2026-11-08',completed:{curriculum:0,arithmetic:2,thinking:0},nextTargets:targets},'2026-11-08');
+  const intake=S.snapshot([{id:'school',blocks:[{title:'현재 선택 교재',start:0,end:4}]},...sources.slice(1)]);
+  const revised=S.reconcile(past,courses,intake,'2026-11-09');
+  assert.equal(revised.tracks.curriculum.changedOn,'2026-11-09');
+  assert.equal(revised.tracks.arithmetic.changedOn,undefined);
+  const result=S.model(past,revised,'2026-11-09').weeks[0].tracks;
+  assert.equal(result.curriculum.carry,0);
+  assert.equal(result.arithmetic.carry,3);
+  assert.equal(result.thinking.carry,2);
+  assert.match(S.render(past,revised,'table','2026-11-09'),/현재 선택 교재/);
+});

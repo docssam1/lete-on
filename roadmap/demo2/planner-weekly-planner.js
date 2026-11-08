@@ -7,14 +7,49 @@
   const key = 'gfield.demo2.weekly-study.v1';
   const host = document.createElement('section');
   host.id = 'plannerWeeklyCheck';
-  let storedText, program, courses, calendarId, intake, calcDays;
+  let storedText, program, courses, calendarId, intake, calcDays, unitContext;
 
-  function read() {
+  let checkpointPending;
+  function lock(fn) {
+    return g.navigator.locks ? g.navigator.locks.request('gfield.weekly-study.' + g.RoadmapMember.user_id,fn) : fn();
+  }
+
+  function rememberNewMaterial(expected, saved, chosen) {
+    // Keep the date of a book change even when the next review is a week away.
+    // Check the latest intake too: a stale tab cannot switch the family's book back.
+    const checkpoint = JSON.stringify(chosen);
+    if (checkpointPending === checkpoint) return;
+    checkpointPending = checkpoint;
+    const persist = () => {
+      if (storedText !== expected || storage.getLatestItem(key) !== expected || JSON.stringify(courses) !== checkpoint) return;
+      let latest;
+      try { latest = JSON.parse(storage.getLatestItem('gfield.demo2.v1')); } catch {}
+      if (latest?.answers) {
+        const current = schedule.snapshot([], {answers:latest.answers,fields:{pendingStatus:latest.pendingStatus}});
+        if (model.TRACKS.some(t => current.tracks[t].intakeKey !== intake.tracks[t].intakeKey)) return;
+      }
+      const text = JSON.stringify({...saved,courses:chosen});
+      storage.setItem(key,text);
+      storedText = text;
+      if (host.isConnected) render();
+    };
+    Promise.resolve().then(() => lock(persist)).finally(() => {
+      if (checkpointPending === checkpoint) checkpointPending = null;
+    });
+  }
+
+  function read(reconcile = true) {
     storedText = storage.getLatestItem(key);
     let saved = null;
     try { saved = JSON.parse(storedText); } catch {}
     program = model.restore(saved?.program);
-    courses = program ? schedule.restore(saved.courses) : null;
+    courses = program ? (reconcile ? schedule.reconcile(program,saved.courses,intake) : schedule.restore(saved.courses)) : null;
+    if (reconcile && courses && model.TRACKS.some(t => {
+      const axis = courses.tracks[t], old = saved.courses?.tracks?.[t];
+      return axis.changedOn && (axis.changedOn !== old?.changedOn || axis.intakeKey !== old?.intakeKey);
+    })) {
+      rememberNewMaterial(storedText,saved,courses);
+    }
     calendarId = /^[0-9a-f-]{36}$/i.test(saved?.calendarId || '') ? saved.calendarId : null;
   }
 
@@ -49,6 +84,7 @@
       notice.dataset.weeklyExtra = '';
       peek.append(notice);
     }
+    g.PlannerUnitPlanner.mount(unitContext, program, courses);
   }
 
   function render() {
@@ -77,11 +113,11 @@
   async function save(next, expected) {
     const persist = () => {
       if (storage.getLatestItem(key) !== expected) {
-        read(); render();
+        read(false); render();
         throw Error('다른 화면에서 점검 내용을 저장했어요. 최신 계획을 확인해 주세요.');
       }
       const first = !program;
-      const snapshot = first ? intake : courses;
+      const snapshot = first ? intake : schedule.reconcile(next,courses,courses);
       const id = calendarId || g.crypto.randomUUID();
       const text = JSON.stringify({version: 1, program: next, courses: snapshot, calendarId: id});
       storage.setItem(key, text);
@@ -91,19 +127,33 @@
       calendarId = id;
       render();
     };
-    if (g.navigator.locks) await g.navigator.locks.request('gfield.weekly-study.' + g.RoadmapMember.user_id, persist);
-    else persist();
+    await lock(persist);
   }
 
-  function mount(lanes, days) {
+  function mount(lanes, days, context) {
     const map = document.getElementById('workspace-panel-map');
     if (!map) return;
+    intake = schedule.snapshot(lanes,context);
     read();
-    intake = schedule.snapshot(lanes);
     calcDays = days;
+    unitContext = context;
     map.prepend(host);
     render();
   }
+
+  // A second tab can change the weekly start/targets while a review form is
+  // open here. Refresh the checklist, retaining the unsent form's conflict token.
+  function refreshChecklist() {
+    if (!host.isConnected || !unitContext) return;
+    const text = storage.getLatestItem(key);
+    if (text === storedText) return;
+    let latest;
+    try { latest = JSON.parse(text); } catch {}
+    const otherProgram = model.restore(latest?.program);
+    g.PlannerUnitPlanner.mount(unitContext,otherProgram,otherProgram ? schedule.restore(latest.courses) : null);
+  }
+  g.addEventListener('focus',refreshChecklist);
+  g.addEventListener('storage',e => {if (e.key?.endsWith('.weekly-study.v1')) refreshChecklist();});
 
   function open() {
     if (!host.isConnected) return;
