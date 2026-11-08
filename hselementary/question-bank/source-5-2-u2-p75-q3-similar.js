@@ -1,7 +1,7 @@
 (function(root,factory){'use strict';const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.HSE_U2_P75_Q3_SIMILAR=api;api.install(root);})(typeof window!=='undefined'?window:globalThis,function(){
 'use strict';
 const source='5-2-u2-practice-3-shaded-similar',parent='5-2-u2-practice-3-original',key='source52U2P75Q3ShadedSimilar';
-const cases=Object.freeze([[21,4,7,6,3],[19,3,5,4,3],[25,4,7,5,4],[17,3,9,7,3]].map(Object.freeze));
+const cases=Object.freeze([[21,4,7,6,3],[19,3,5,4,3],[25,4,7,5,4],[17,3,9,7,3],[29,5,7,4,5],[31,6,11,8,4],[27,5,5,3,3],[25,6,7,4,6],[31,5,8,3,3]].map(Object.freeze));
 function gcd(a,b){while(b){[a,b]=[b,a%b]}return a;}
 function mixed(n,d){const g=gcd(n,d);n/=g;d/=g;const w=Math.floor(n/d),r=n%d;return r?(w?`${w} ${r}/${d}`:`${r}/${d}`):String(w);}
 function fractionLabel(x,y,n,d){const whole=Math.floor(n/d),rem=n%d;return `<g><text x="${x}" y="${y}" font-size="20">${whole}</text><text x="${x+14}" y="${y-8}" font-size="16">${rem}</text><path d="M${x+11} ${y-5}h12" stroke="#191511"/><text x="${x+14}" y="${y+8}" font-size="16">${d}</text><text x="${x+28}" y="${y}" font-size="18">cm</text></g>`;}
