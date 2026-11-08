@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Check independent boundary/count candidates for source page 69; no original is published."""
+"""Check page 69 arithmetic and recorded source-review status."""
 import json
 from pathlib import Path
 
 record = json.loads((Path(__file__).parent / 'source-inventory/5-2-u1-readiness-review.json').read_text())
 review = next(r for r in record['additionalSourceReviews'] if r['sourcePrintedPage'] == 69)
-assert review['sourcePdfPage'] == 65 and review['runtimeConnection'] == 'not-connected'
+assert review['sourcePdfPage'] == 65 and review['runtimeConnection'] == 'partial-verified-local'
 assert review['publisherAnswerVerified'] is False
+expected_statuses = {9: 'public-independent-verification-publisher-key-pending', 10: 'public-independent-verification-publisher-key-pending', 11: 'source-ambiguity-answer-key-pending', 12: 'public-independent-verification-publisher-key-pending', 13: 'source-ambiguity-answer-key-pending', 14: 'public-independent-verification-publisher-key-pending', 15: 'public-independent-verification-publisher-key-pending', 16: 'public-independent-verification-publisher-key-pending'}
+assert {item['number']: item['status'] for item in review['items']} == expected_statuses
 assert [x['number'] for x in review['items']] == list(range(9, 17))
 assert 150 + 24 * 200 < 5000 <= 150 + 25 * 200
 assert (90 / 9, 216 / 9) == (10, 24)
