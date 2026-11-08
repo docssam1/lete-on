@@ -4,7 +4,13 @@
   const pools=Object.freeze([
     Object.freeze({carSpeedCents:7260,busPer15Cents:1920,durationMinutes:150}),
     Object.freeze({carSpeedCents:8130,busPer15Cents:2160,durationMinutes:180}),
-    Object.freeze({carSpeedCents:10470,busPer15Cents:2730,durationMinutes:120})
+    Object.freeze({carSpeedCents:10470,busPer15Cents:2730,durationMinutes:120}),
+    Object.freeze({carSpeedCents:7620,busPer15Cents:2010,durationMinutes:132}),
+    Object.freeze({carSpeedCents:8150,busPer15Cents:2170,durationMinutes:156}),
+    Object.freeze({carSpeedCents:9240,busPer15Cents:2410,durationMinutes:168}),
+    Object.freeze({carSpeedCents:6870,busPer15Cents:1820,durationMinutes:192}),
+    Object.freeze({carSpeedCents:9780,busPer15Cents:2550,durationMinutes:204}),
+    Object.freeze({carSpeedCents:10560,busPer15Cents:2710,durationMinutes:222})
   ]);
   const fmtCents=value=>{const whole=Math.floor(value/100),rem=value%100;if(!rem)return String(whole);return `${whole}.${String(rem).padStart(2,"0").replace(/0+$/g,"")}`;};
   const fmtDuration=m=>`${Math.floor(m/60)}시간${m%60?` ${m%60}분`:""}`;
@@ -19,7 +25,7 @@
     return Object.freeze({busHourlyCents,carDistanceCents,busDistanceCents,gapCents,hoursTenths:pool.durationMinutes/6,answer:fmtCents(gapCents)});
   }
   function build(poolIndex=0,difficultyOffset=0){
-    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음만 사용할 수 있습니다.");
     if(![-1,0,1].includes(difficultyOffset))throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const p=pools[poolIndex],r=calculate(p),car=fmtCents(p.carSpeedCents),bus15=fmtCents(p.busPer15Cents),busHour=fmtCents(r.busHourlyCents),duration=fmtDuration(p.durationMinutes),hours=fmtCents(r.hoursTenths*10);
     const prompt=`<div class="source52-u4-p45-m4-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>승용차는 1시간에 ${car}km를 달리고, 버스는 15분에 ${bus15}km를 달립니다. 두 탈것이 동시에 같은 곳에서 같은 방향으로 출발하여 각각 일정한 속력으로 달립니다. ${duration} 후 승용차와 버스 사이의 거리는 몇 km인가요?</p></div>`;
