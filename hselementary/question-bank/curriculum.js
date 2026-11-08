@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-49-perimeter-similar")) {
+    const id="5-2-u2-practice-49-perimeter-similar",name="둘레와 가로세로 비로 두 길이 구하기 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-49-original",sourceItemLabel:"확인학습 49번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:77,alternateSourcePdfPage:76,sourcePrintedPage:81,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P81Q49PerimeterSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"직사각형 둘레와 가로에 대한 세로의 분수비로 양쪽 길이를 묻는 원문 구조를 유지하고 9문항을 대입 검산했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-48-area-change-similar")) {
     const id="5-2-u2-practice-48-area-change-similar",name="정사각형 변을 늘이고 줄인 넓이의 배 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
