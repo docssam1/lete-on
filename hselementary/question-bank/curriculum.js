@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-58-growth-similar")) {
+    const id="5-2-u2-practice-58-growth-similar",name="매일 자라는 대나무의 처음 키 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-58-original",sourceItemLabel:"확인학습 58번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:78,alternateSourcePdfPage:77,sourcePrintedPage:82,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P82Q58GrowthSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"3일 후 증가량으로 처음 높이를 구하는 원문 구조를 유지하고 세 번의 성장과 역산을 독립 검산했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-57-equal-fractions-similar")) {
     const id="5-2-u2-practice-57-equal-fractions-similar",name="학생 수의 분수 조건으로 남학생 수 구하기 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
