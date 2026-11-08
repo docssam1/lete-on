@@ -58,7 +58,17 @@
     const completedTotals = counts(prior.completedTotals, MAX_COMPLETED * weeks);
     if (!nextTargets || !backlog || !completedTotals) return null;
     const firstTargets = counts(prior.firstTargets, MAX_TARGET) || {...nextTargets};
-    return {dueDate: prior.dueDate, nextTargets, backlog, completedTotals, firstTargets};
+    const restored = {dueDate: prior.dueDate, nextTargets, backlog, completedTotals, firstTargets};
+    const from = prior.trend?.from;
+    if ((from === startDate || validBoundary(startDate, from)) && from < prior.dueDate) {
+      const availableWeeks = daysBetween(from, prior.dueDate) / 7;
+      const gap = prior.trend.gap;
+      if (TRACKS.every(key => Number.isInteger(gap?.[key]) &&
+        gap[key] >= -MAX_TARGET * availableWeeks && gap[key] <= MAX_COMPLETED * availableWeeks)) {
+        restored.trend = {from, gap: trackMap(key => gap[key])};
+      }
+    }
+    return restored;
   }
 
   function append(state, dueDate, recordedOn, completed, nextTargets) {
@@ -132,7 +142,12 @@
       const first = state.history.shift();
       const completedTotals = trackMap(key => (state.prior?.completedTotals[key] || 0) + first.completed[key]);
       const firstTargets = trackMap(key => state.initialTargets[key] || state.prior?.firstTargets[key] || first.nextTargets[key]);
-      state.prior = {dueDate: first.dueDate, nextTargets: first.nextTargets, backlog: first.backlog, completedTotals, firstTargets};
+      // Old archives contain actual totals without corresponding targets. A new
+      // subtotal starts after that boundary and keeps every subsequent known gap.
+      const from = state.prior?.trend?.from || state.prior?.dueDate || state.startDate;
+      const gap = trackMap(key => (state.prior?.trend?.gap[key] || 0) + first.completed[key] - first.targets[key]);
+      state.prior = {dueDate: first.dueDate, nextTargets: first.nextTargets, backlog: first.backlog,
+        completedTotals, firstTargets, trend: {from, gap}};
     }
     return state;
   }

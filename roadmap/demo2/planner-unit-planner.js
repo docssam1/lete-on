@@ -9,6 +9,36 @@
   host.tabIndex = -1;
   let context, program, courses, visible, lastText, lastDay;
 
+  let trendTrack, trendRecords;
+  const comparisonTrend = document.createElement('div');
+  comparisonTrend.dataset.weeklyTrend = '';
+
+  function drawTrend() {
+    if (!visible || !host.isConnected) return;
+    const comparison = document.getElementById('workspace-panel-graph');
+    if (comparison && comparison.firstElementChild !== comparisonTrend) comparison.prepend(comparisonTrend);
+    // Before the first weekly review, show the student's own checklist observations as they come in.
+    const hasReviews = program?.history.length || program?.prior;
+    const defaultTrack = !hasReviews && trendRecords?.entries.length ? 'units' : 'all';
+    const track = trendTrack || defaultTrack;
+    const trend = track === 'units'
+      ? g.PlannerUnitTrend.build({records:trendRecords,program,day:lastDay})
+      : g.PlannerWeeklyTrend.build({program,day:lastDay,track});
+    trend.hasProgram = !!program;
+    for (const target of [host.querySelector('[data-weekly-trend]'),comparisonTrend]) {
+      if (target?.isConnected) g.PlannerWeeklyTrendView.render(target,trend,visible.route);
+    }
+  }
+
+  function chooseTrendTrack(event) {
+    const track = event.detail?.track;
+    if (track === trendTrack || !['all','units',...g.PlannerWeeklyModel.TRACKS].includes(track)) return;
+    trendTrack = track;
+    drawTrend();
+  }
+  host.addEventListener('planner-trend-track',chooseTrendTrack);
+  comparisonTrend.addEventListener('planner-trend-track',chooseTrendTrack);
+
   function state() {
     const text = storage.getLatestItem(key);
     let value;
@@ -108,8 +138,10 @@
     view.nextReview = view.nextReview.map(group=>({...group,practice:future.items.filter(item=>item.unitId===group.unitId)}));
     lastText = stored.text;
     lastDay = day;
+    trendRecords = records;
     visible = {...view,route:route(),notices:[...new Set([...source.notices,...current.notices,...future.notices])],manualBooks:source.manualBooks||[],message,readOnly:weekStart>day};
     g.PlannerUnitChecklistView.render(host,visible);
+    drawTrend();
     tableReview(view);
   }
 
