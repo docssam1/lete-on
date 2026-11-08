@@ -4065,6 +4065,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Unit2 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u2");
   const source52Unit2First = source52Unit2?.subunits.find(subunit => subunit.name === "분수와 자연수의 곱셈");
+  if (source52Unit2First && !source52Unit2First.types.some(t=>t.id==="5-2-u2-practice-3-shaded-similar")) {
+    const id="5-2-u2-practice-3-shaded-similar",name="직사각형의 색칠한 부분의 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-3-original",sourceItemLabel:"확인학습 3번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:71,alternateSourcePdfPage:70,sourcePrintedPage:75,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P75Q3ShadedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 직사각형과 왼쪽 흰 폭, 오른쪽 색칠 구조를 유지한 치수 변형 4개를 분수로 독립 검산했습니다."});
+  }
 
   if (source52Unit2First) for (const [n,name] of [[1,"반복해서 더한 값과 분수만큼의 관계 · 원문"],[2,"분수 조건으로 두 수의 합 찾기 · 원문"]]) {
     const id=`5-2-u2-e1-exploration-${n}-original`;
