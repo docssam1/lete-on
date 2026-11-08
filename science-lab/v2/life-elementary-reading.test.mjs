@@ -5,6 +5,7 @@ import {readFile} from 'node:fs/promises';
 import {workbook,lifeElementaryPriorWorkbook as prior} from '../data/book/s31-u04.workbook.js';
 import {items as priorBank} from '../data/units/s31-u04.js';
 import {LIFE_ELEMENTARY_VERSION,lifeElementaryCurrentItems,withLifeElementaryWorkbook} from '../data/book/s31-u04.elementary.js';
+import {withGrade3StudyNotes} from '../data/book/grade3-study-notes.js';
 import {withThink,loadJudge} from './think-merge.js';
 import {revisedClassroom} from './revised-lesson.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
@@ -18,7 +19,7 @@ const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 test('life workbook directions preserve sources, blanks, answer contracts and all page materials',async()=>{
- assert.equal(workbook.questions.length,80);assert.deepEqual({...workbook,questions:null},{...prior,questions:null});
+ assert.equal(workbook.questions.length,80);assert.deepEqual({...workbook,questions:null},{...withGrade3StudyNotes(prior),questions:null});
  let changed=0,protectedRows=0;
  for(let i=0;i<80;i++){
   const q=workbook.questions[i],old=prior.questions[i];assert.deepEqual(withoutPrompt(q),withoutPrompt(old));
@@ -61,7 +62,7 @@ test('life classroom shares the current bank while source, unknown and future pr
  for(const q of [{...target,contentVersion:'future'},{...target,prompt:'a later reviewed prompt'},...['original','similar'].map(type=>({...target,sourceRef:{type}}))]){const rows=[q];assert.equal(lifeElementaryCurrentItems(rows,unit),rows);}
  assert.equal(lifeElementaryCurrentItems(priorBank,'other-unit'),priorBank);
  assert.equal(lifeElementaryCurrentItems(data.source,unit),data.source);assert.equal(lifeElementaryCurrentItems(data.similar,unit),data.similar);
- const saved=structuredClone(prior);assert.deepEqual(withLifeElementaryWorkbook(prior),workbook);assert.deepEqual(prior,saved);assert.equal(withLifeElementaryWorkbook(workbook),workbook);
+ const saved=structuredClone(prior);assert.deepEqual(withGrade3StudyNotes(withLifeElementaryWorkbook(prior)),workbook);assert.deepEqual(prior,saved);assert.equal(withLifeElementaryWorkbook(workbook),workbook);
  const row=prior.questions.find((q,i)=>q.prompt!==workbook.questions[i].prompt);
  for(const q of [{...row,sourceId:'unknown'},{...row,sourceRef:{type:'original'}},{...row,sourceRef:{type:'similar'}},{...row,contentVersion:'future'},{...row,prompt:'a later reviewed prompt'}]){const wb={...prior,questions:[q]};assert.equal(withLifeElementaryWorkbook(wb),wb);}
 });

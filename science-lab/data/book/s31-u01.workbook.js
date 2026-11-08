@@ -1,3 +1,4 @@
+import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-study-notes';
 import {withForceElementaryWorkbook} from './s31-u01.elementary.js?v=20261108-force-elementary';
 import{withForceWorkbookGuidance,withForceObservationData}from'./force-workbook-guidance.js?v=20261105-force-life-learner-reasoning';
 import{withLearnerExplanations}from'./learner-explanations.js';
@@ -7828,4 +7829,5 @@ export const forceGuidancePriorWorkbook=withLearnerExplanations(learnerPriorWork
 export const activityGuidePriorWorkbook=withForceWorkbookGuidance(forceGuidancePriorWorkbook);
 export const forceObservationPriorWorkbook=withActivityGuideLanguage(activityGuidePriorWorkbook);
 export const forceElementaryPriorWorkbook=withForceObservationData(forceObservationPriorWorkbook);
-export const workbook=withForceElementaryWorkbook(forceElementaryPriorWorkbook);
+export const forceStudyNotesPriorWorkbook=withForceElementaryWorkbook(forceElementaryPriorWorkbook);
+export const workbook=withGrade3StudyNotes(forceStudyNotesPriorWorkbook);

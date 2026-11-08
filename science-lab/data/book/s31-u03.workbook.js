@@ -1,3 +1,4 @@
+import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-study-notes';
 import {withGrade3LivingPracticeDirections} from './s31-living-practice-directions.js?v=20261108-grade3-living-directions';
 import{withLearnerExplanations,withPlantObservationQuestions}from'./learner-explanations.js?v=20261105-plant-observation-questions';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
@@ -5829,4 +5830,5 @@ const baseWorkbook = {
 export const learnerPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
 export const plantObservationPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const plantPracticePriorWorkbook=withPlantObservationQuestions(plantObservationPriorWorkbook);
-export const workbook=withGrade3LivingPracticeDirections(plantPracticePriorWorkbook);
+export const plantStudyNotesPriorWorkbook=withGrade3LivingPracticeDirections(plantPracticePriorWorkbook);
+export const workbook=withGrade3StudyNotes(plantStudyNotesPriorWorkbook);
