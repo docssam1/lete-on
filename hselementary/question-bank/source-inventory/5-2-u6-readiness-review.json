@@ -561,12 +561,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e2-exploration",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e2-exploration-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-exploration",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 표와 두 물음 확인. 공 3개의 8가지 부분집합과 0~50명 빈칸을 독립 열거하여 (4점 12명, 0점 4명, 흰 공 31개) 확인. 공식 출판사 답안 미확인.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2-1",
@@ -590,12 +591,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e2-example-1",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e2-example-1-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-example-1",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 400m²·5명 48분·9명 40분 및 동일 작업량 조건 확인. 600인·분=10인·시간, 40m² 독립 검산. 공식 출판사 답안 미확인.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2-2",
@@ -618,12 +620,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e2-example-2",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e2-example-2-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-example-2",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 5월·매일 50m 증가·평균 1500m 확인. 31일 전체 수열 합 46,500m와 첫날 750m 독립 검산. 공식 출판사 답안 미확인.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2-3",
@@ -676,12 +679,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e2-example-4",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e2-example-4-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-example-4",
       "publisherKeyVerified": false,
       "releaseEvidence": "20살 기준에서 어린이 평균이 어른보다 낮음을 확인. 성별 정수 인원 조합 전수 검사로 남자 어른 63, 어린이 남 17·여 51, 3배 확인. 공식 출판사 답안 미확인.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-1",
@@ -706,12 +710,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "releaseEvidence": "원문의 일주일을 7일로 환산하고 56인·일 ÷ 4명=14일 독립 검산. 공식 출판사 답안 미확인.",
-      "runtimeTypeId": "5-2-u6-e2-mission-1",
+      "runtimeTypeId": "5-2-u6-e2-mission-1-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-1",
       "publisherKeyVerified": false,
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-2",
@@ -734,12 +739,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "releaseEvidence": "원문 변환 순서와 두 평균 대조. 최대 56으로 유일하게 결정되며 10,11,12,13,42,56이 모든 원래 조건을 만족함을 구성해 확인. 공식 출판사 답안 미확인.",
-      "runtimeTypeId": "5-2-u6-e2-mission-2",
+      "runtimeTypeId": "5-2-u6-e2-mission-2-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-2",
       "publisherKeyVerified": false,
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-3",
@@ -763,12 +769,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e2-mission-3",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e2-mission-3-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-3",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 61쪽 표의 아홉 변화와 두 물음 대조, 점수 재구성 및 기호 4가지 전수 검사. 이전 장부는 Mission 5 내용을 잘못 기재. 공식 출판사 답안 미확인.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-4",
@@ -816,12 +823,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e2-mission-5",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e2-mission-5-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-5",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-6",
@@ -844,12 +852,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e2-mission-6",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e2-mission-6-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-6",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-exploration-1",
@@ -901,12 +910,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e3-example-1",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e3-example-1-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-example-1",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-2",
@@ -929,12 +939,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e3-example-2",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e3-example-2-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-example-2",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-3",
@@ -957,12 +968,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e3-example-3",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e3-example-3-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-example-3",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-4",
@@ -985,12 +997,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e3-example-4",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e3-example-4-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-example-4",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-1",
@@ -1013,12 +1026,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e3-mission-1",
+      "runtimeTypeId": "5-2-u6-e3-mission-1-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-mission-1",
       "releaseEvidence": "원문은 4명의 완전순열(9가지), 연습은 3·5·6명(각 2·44·265가지)이다. 답은 전수 검사했으나 문제 규모가 달라 원문과 난이도 동등성은 미확인이다. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-2",
@@ -1041,12 +1055,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e3-mission-2",
+      "runtimeTypeId": "5-2-u6-e3-mission-2-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-mission-2",
       "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-3",
@@ -1069,12 +1084,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e3-mission-3",
+      "runtimeTypeId": "5-2-u6-e3-mission-3-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-mission-3",
       "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-4",
@@ -1097,12 +1113,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e3-mission-4",
+      "runtimeTypeId": "5-2-u6-e3-mission-4-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-mission-4",
       "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-5",
@@ -1151,12 +1168,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e3-mission-6",
+      "runtimeTypeId": "5-2-u6-e3-mission-6-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-mission-6",
       "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-exploration-1",
@@ -1180,12 +1198,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e4-exploration",
+      "runtimeTypeId": "5-2-u6-e4-exploration-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-exploration",
       "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-1",
@@ -1208,12 +1227,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e4-example-1",
+      "runtimeTypeId": "5-2-u6-e4-example-1-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-example-1",
       "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-2",
@@ -1237,11 +1257,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e4-example-2",
-      "originalSourceReleaseStatus": "locked",
+      "runtimeTypeId": "5-2-u6-e4-example-2-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-example-2",
+      "originalSourceReleaseStatus": "public",
       "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
@@ -1290,11 +1311,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
+      "publicDecision": "public",
+      "lockReason": null,
       "publisherKeyVerified": false,
-      "runtimeTypeId": "5-2-u6-e4-example-4",
-      "originalSourceReleaseStatus": "locked",
+      "runtimeTypeId": "5-2-u6-e4-example-4-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-example-4",
+      "originalSourceReleaseStatus": "public",
       "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
@@ -1318,10 +1340,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e4-mission-1",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e4-mission-1-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-mission-1",
+      "originalSourceReleaseStatus": "public",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1347,10 +1370,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e4-mission-2",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e4-mission-2-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-mission-2",
+      "originalSourceReleaseStatus": "public",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1375,10 +1399,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e4-mission-3",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e4-mission-3-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-mission-3",
+      "originalSourceReleaseStatus": "public",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1403,10 +1428,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e4-mission-4",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e4-mission-4-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-mission-4",
+      "originalSourceReleaseStatus": "public",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1432,10 +1458,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e4-mission-5",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e4-mission-5-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-mission-5",
+      "originalSourceReleaseStatus": "public",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1460,10 +1487,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e4-mission-6",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e4-mission-6-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-mission-6",
+      "originalSourceReleaseStatus": "public",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문은 적어도 두 눈이 같으므로 세 눈이 모두 같은 경우도 포함한다. 216개 결과 중 세 눈이 모두 다른 120개를 빼면 96개로 4/9이다. 원본 손글씨에는 11/36과 4/9가 함께 보이며 출처·검증 상태는 불명이다. 기본 균등 가능성 모형을 화면에 명시했으며 출판사 답안은 미대조다."
     }
