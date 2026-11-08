@@ -17,6 +17,7 @@ on:
       - 'highschool-selection/data/catalog.js'
       - 'highschool-selection/data/academy-engagement.js'
       - 'highschool-selection/data/academy-notices.js'
+      - 'highschool-selection/data/course-admissions.js'
       - 'highschool-selection/data/standard-exam-policy.js'
       - 'highschool-selection/data/official-exam-specs.js'
       - 'highschool-selection/scripts/stage-public-intro.cjs'

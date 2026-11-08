@@ -37,12 +37,29 @@
       "middle-transfer": "dp-middle2-2-transfer"
     }),
     WM: Object.freeze({
+      "middle22-basic": null,
+      "middle31-basic": null,
+      "middle2-dual": null,
+      "common2-basic": null,
+      "algebra-basic": null,
+      "algebra-direct": null,
       "middle21-basic": "wm-middle21-basic-entry-r01",
       "common1-basic": "wm-algebra-geometry-diagnostic",
       "middle-transfer": null,
       "high-dual": null
     }),
     ED: Object.freeze({
+      "common1-skill": null,
+      "common2-basic": null,
+      "common-math-high": null,
+      "algebra-skill": null,
+      "calculus1-basic": null,
+      "calculus1-skill": null,
+      "algebra-calculus1-high": null,
+      "calculus2-basic": null,
+      "calculus2-high": null,
+      "probability-integrated": null,
+      "geometry-basic": null,
       middle1: "ed-middle1-entry",
       "high-advance": "ed-high-advance-entry",
       "common2-skill": null,
@@ -80,6 +97,12 @@
       "middle-transfer": Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, 30, 0, "verified", "중2-2 원본 응답 형식 검수") })
     }),
     WM: Object.freeze({
+      "middle22-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "middle31-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "middle2-dual": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "common2-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "algebra-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "algebra-direct": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
       "middle21-basic": Object.freeze({
         targetQuestionCount: 50,
         responseMix: UNKNOWN_RESPONSE_MIX,
@@ -96,6 +119,17 @@
       "high-dual": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX })
     }),
     ED: Object.freeze({
+      "common1-skill": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "common2-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "common-math-high": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "algebra-skill": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "calculus1-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "calculus1-skill": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "algebra-calculus1-high": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "calculus2-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "calculus2-high": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "probability-integrated": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "geometry-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
       middle1: Object.freeze({ targetQuestionCount: 30, responseMix: UNKNOWN_RESPONSE_MIX }),
       "high-advance": Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, 0, 30, "observed", "과거 공개 운영 사례이며 동일 회차 확인 필요") }),
       "common2-skill": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
@@ -287,7 +321,7 @@
 
   return Object.freeze({
     version: "highselect-standard-exam-policy/v1",
-    updatedAt: "2026-09-03",
+    updatedAt: "2026-11-09",
     required: true,
     definition: "모든 대비과정은 범위·문항 수·출처 구성·난도·답·유형·A4 배치가 승인된 표준 시험지 한 회 이상을 가져야 신청·판매 가능",
     requiredGates: REQUIRED_GATES,

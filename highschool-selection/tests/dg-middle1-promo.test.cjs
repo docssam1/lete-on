@@ -21,7 +21,7 @@ const mocks = [
 function promo(hash = "#academy=DG") {
   const nodes = new Map();
   const element = id => {
-    if (!nodes.has(id)) nodes.set(id, { innerHTML: "", textContent: "", dataset: {}, style: { setProperty() {} } });
+    if (!nodes.has(id)) nodes.set(id, { innerHTML: "", textContent: "", dataset: {}, style: { setProperty() {} }, addEventListener() {} });
     return nodes.get(id);
   };
   const context = vm.createContext({
@@ -31,6 +31,7 @@ function promo(hash = "#academy=DG") {
     HIGHSELECT_CATALOG: { exams: [] },
     HIGHSELECT_AVAILABLE_MOCKS: mocks,
     HIGHSELECT_PROMO_NAV: navigation,
+    HIGHSELECT_COURSE_ADMISSIONS: require("../data/course-admissions.js"),
     HIGHSELECT_OFFICIAL_EXAM_SPECS: globalThis.HIGHSELECT_OFFICIAL_EXAM_SPECS,
     URL, URLSearchParams,
     location: { hash, href: "https://lete-on.gfieldacademy.net/highschool-selection/promo/" + hash },
