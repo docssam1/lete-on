@@ -4,7 +4,13 @@
   const pools=Object.freeze([
     Object.freeze({divisorHundredths:1640,particle:"를",quotientTenths:32,remainderHundredths:48}),
     Object.freeze({divisorHundredths:2360,particle:"을",quotientTenths:45,remainderHundredths:72}),
-    Object.freeze({divisorHundredths:3420,particle:"를",quotientTenths:28,remainderHundredths:84})
+    Object.freeze({divisorHundredths:3420,particle:"를",quotientTenths:28,remainderHundredths:84}),
+    Object.freeze({divisorHundredths:1860,particle:"을",quotientTenths:37,remainderHundredths:54}),
+    Object.freeze({divisorHundredths:2740,particle:"를",quotientTenths:26,remainderHundredths:112}),
+    Object.freeze({divisorHundredths:3180,particle:"을",quotientTenths:42,remainderHundredths:78}),
+    Object.freeze({divisorHundredths:2260,particle:"을",quotientTenths:53,remainderHundredths:135}),
+    Object.freeze({divisorHundredths:3940,particle:"를",quotientTenths:38,remainderHundredths:63}),
+    Object.freeze({divisorHundredths:4520,particle:"를",quotientTenths:27,remainderHundredths:148})
   ]);
   const fmt=(value,scale)=>{const whole=Math.floor(value/scale),rem=value%scale;if(!rem)return String(whole);return `${whole}.${String(rem).padStart(String(scale).length-1,"0").replace(/0+$/g,"")}`;};
   const decimal=value=>fmt(value,100),quotient=value=>fmt(value,10);
@@ -19,7 +25,7 @@
     return Object.freeze({dividendHundredths,productNumerator,answer:fmt(productNumerator,10000)});
   }
   function build(poolIndex=0,difficultyOffset=0){
-    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음만 사용할 수 있습니다.");
     if(![-1,0,1].includes(difficultyOffset))throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const pool=pools[poolIndex],result=calculate(pool),divisor=decimal(pool.divisorHundredths),q=quotient(pool.quotientTenths),remainder=decimal(pool.remainderHundredths),dividend=decimal(result.dividendHundredths);
     const partialHundredths=pool.divisorHundredths*pool.quotientTenths/10,partial=decimal(partialHundredths);
