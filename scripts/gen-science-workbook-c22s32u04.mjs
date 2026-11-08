@@ -3,7 +3,9 @@
 // 근거: 2022 개정 [4과08-01~03], 질병관리청 손 씻기 6단계(비누와 흐르는 물로 30초 이상)·기침 예절(휴지나 옷소매 안쪽),
 // 반짝이 가루 손 모형의 짝·차례·손 씻기 규칙(scenes/glitter-model.js, 학습용 규칙). 반짝이는 병원체가 아니라 옮겨 가는 것을 보이게 한 표시다.
 // 「가상 학습값」이라고 밝힌 표는 연습용으로 지은 값이다. 3학년 눈높이: 문장을 짧게, 한 문항에 한 가지만 묻는다.
-// 쓰는 법: node scripts/gen-science-workbook-c22s32u04.mjs (결과 data/book/c22-s32-u04.workbook.js 를 커밋)
+// 이전 구성의 후보 생성기다. 현재 80문항 검수본을 자동으로 교체하지 않는다.
+// 비교: node scripts/gen-science-workbook-c22s32u04.mjs --check (다르면 종료값 1, 파일 저장 없음)
+// 후보: node scripts/gen-science-workbook-c22s32u04.mjs --output <새 파일> (검수본과 비교 후 반영)
 import { workbook, photo, photoSrc, renderSrc, cell, only, PHOTO_CREDIT } from './gen-science-workbook-lib.mjs';
 import { glitterModel, glitterAfter, ROUNDS, RULES } from '../science-lab/scenes/glitter-model.js';
 

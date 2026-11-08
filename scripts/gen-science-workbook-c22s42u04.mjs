@@ -2,7 +2,9 @@
 // 수업(사고력 수업 덱)과 같은 줄기: 날씨·기후 → 기후변화 사례 → 사람의 활동 → 해수면 상승 모형(3D 해안 마을) → 줄이기·대비하기.
 // 근거: 2022 개정 [4과16-01~03], 기상청 2025-01-09 「2024년 연 기후특성」(전국 연평균 14.5 ℃, 평년 12.5 ℃),
 // 해안 마을 모형의 땅 높이·방파제 높이(scenes/sealevel-model.js, 모형 값). 「가상 학습값」이라고 밝힌 표는 연습용으로 지은 값이다.
-// 쓰는 법: node scripts/gen-science-workbook-c22s42u04.mjs (결과 data/book/c22-s42-u04.workbook.js 를 커밋)
+// 이전 구성의 후보 생성기다. 현재 80문항 검수본을 자동으로 교체하지 않는다.
+// 비교: node scripts/gen-science-workbook-c22s42u04.mjs --check (다르면 종료값 1, 파일 저장 없음)
+// 후보: node scripts/gen-science-workbook-c22s42u04.mjs --output <새 파일> (검수본과 비교 후 반영)
 import { workbook, photo, photoSrc, renderSrc, cell, only, PHOTO_CREDIT } from './gen-science-workbook-lib.mjs';
 import { HOUSES, WALL, seaModel } from '../science-lab/scenes/sealevel-model.js';
 
