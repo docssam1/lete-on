@@ -1,7 +1,7 @@
 // Generated from approved public channels. Do not add post bodies or personal data.
 globalThis.HIGHSELECT_ACADEMY_NOTICES = {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-07",
+  "checkedAt": "2026-11-08",
   "policy": {
     "branches": [
       "대치",
@@ -19,81 +19,81 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "dg-bundang-tests",
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=bundang",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "dg-daechi-seminars",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "dg-daechi-tests",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "dp-blog",
       "academy": "DP",
       "branch": "title",
       "url": "https://blog.naver.com/dpmath",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "ed-blog",
       "academy": "ED",
       "branch": "대치",
       "url": "https://blog.naver.com/edenmath",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "sh-blog",
       "academy": "SH",
       "branch": "대치",
       "url": "https://blog.naver.com/sharpedu",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "sm-blog",
       "academy": "SM",
       "branch": "대치",
       "url": "https://blog.naver.com/won1934",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     },
     {
       "id": "wm-blog",
       "academy": "WM",
       "branch": "대치",
       "url": "https://blog.naver.com/wonmath563",
-      "checkedAt": "2026-11-07",
+      "checkedAt": "2026-11-08",
       "status": "ok",
-      "lastSuccessAt": "2026-11-07"
+      "lastSuccessAt": "2026-11-08"
     }
   ],
   "items": [
@@ -192,6 +192,32 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "publishedAt": null,
       "eventDate": "2026-11-27",
       "scheduleText": "2026-11-27 11:00 · 깊생TV 유튜브 (온라인)"
+    },
+    {
+      "id": "sm-blog-224469461138-대치",
+      "sourceId": "sm-blog",
+      "academy": "SM",
+      "branch": "대치",
+      "category": "test",
+      "title": "생크 중등과정 12월 개강",
+      "url": "https://blog.naver.com/won1934/224469461138",
+      "publishedAt": "2026-11-08",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "80010baa07165a1a"
+    },
+    {
+      "id": "sm-blog-224469466415-대치",
+      "sourceId": "sm-blog",
+      "academy": "SM",
+      "branch": "대치",
+      "category": "admission",
+      "title": "생수 초6(예비 중1) 공통수학1 - 12월 개강",
+      "url": "https://blog.naver.com/won1934/224469466415",
+      "publishedAt": "2026-11-08",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "9e1ced08cd102886"
     },
     {
       "id": "dp-blog-224426268104-대치",
@@ -454,19 +480,6 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "revision": "d1c8ed3fc0af47a5"
     },
     {
-      "id": "sm-blog-224405763544-대치",
-      "sourceId": "sm-blog",
-      "academy": "SM",
-      "branch": "대치",
-      "category": "admission",
-      "title": "생수 초6(예비 중1) 공통수학1 10월 개강",
-      "url": "https://blog.naver.com/won1934/224405763544",
-      "publishedAt": "2026-09-09",
-      "eventDate": null,
-      "scheduleText": "",
-      "revision": "c43eff708b0dfa7c"
-    },
-    {
       "id": "wm-blog-224397883830-대치",
       "sourceId": "wm-blog",
       "academy": "WM",
@@ -530,19 +543,6 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "eventDate": null,
       "scheduleText": "10/5(월) 오전 9:30~14:00",
       "revision": "2cfaa30d4423a555"
-    },
-    {
-      "id": "sm-blog-224373357098-대치",
-      "sourceId": "sm-blog",
-      "academy": "SM",
-      "branch": "대치",
-      "category": "test",
-      "title": "생크 중등과정 9월 정규반 개강",
-      "url": "https://blog.naver.com/won1934/224373357098",
-      "publishedAt": "2026-08-09",
-      "eventDate": null,
-      "scheduleText": "",
-      "revision": "755479fe2ec7c93a"
     },
     {
       "id": "wm-blog-224364373777-대치",
