@@ -174,6 +174,12 @@
     $("unitFilter").innerHTML = `<option value="">전체 대단원</option>${units.map(unit => `<option value="${unit.id}" ${unit.id === state.unitId ? "selected" : ""}>${unit.number}. ${escapeHtml(unit.name)}</option>`).join("")}`;
   }
 
+  function availableAlternative(type) {
+    const alternative = type.reviewLocked && type.alternativeTypeId && typeById.get(type.alternativeTypeId);
+    return alternative?.generator && !alternative.reviewLocked &&
+      alternative.semesterId === type.semesterId && alternative.unitId === type.unitId ? alternative : null;
+  }
+
   function typeTreeRow(type) {
     const ready = Boolean(type.generator) && !type.reviewLocked;
     const commonType = commonQuestionType(type);
@@ -181,10 +187,11 @@
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready || linked ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
+    const alternativeHint = !ready && !linked && availableAlternative(type) ? '<span class="tree-alternative-hint">유사문항 있음 · 눌러서 선택</span>' : '';
+    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready || linked ? "" : " is-pending") + (alternativeHint ? " has-alternative" : "") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + (alternativeHint ? ' 유사문항 있음' : '') + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i>' + (linked ? ' · 공통 유형 연결' : '') + '</small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i>' + (linked ? ' · 공통 유형 연결' : '') + alternativeHint + '</small></span>' +
       '<span class="tree-type-preview-action" aria-hidden="true">미리보기</span>' +
       '<span class="tree-type-state ' + (ready || linked ? "is-ready" : "") + '">' + (ready ? "생성 가능" : linked ? "공통 유형" : "검수 대기") + '</span>' +
     '</div>';
@@ -230,6 +237,19 @@
     previewPopover.setAttribute("aria-live", "polite");
     previewPopover.hidden = true;
     previewPopover.addEventListener("click", event => {
+      const alternativeButton = event.target.closest("button[data-select-alternative-type]");
+      if (alternativeButton) {
+        const alternative = typeById.get(alternativeButton.dataset.selectAlternativeType);
+        const original = typeById.get(previewAnchor?.dataset.previewTypeId);
+        if (original?.reviewLocked && original.alternativeTypeId === alternative?.id &&
+            alternative.semesterId === original.semesterId && alternative.unitId === original.unitId &&
+            alternative.generator && !alternative.reviewLocked) {
+          state.selected.add(alternative.id);
+          hideTypePreview(true);
+          renderCatalog();
+        }
+        return;
+      }
       const commonButton = event.target.closest("button[data-select-common-type]");
       if (commonButton) {
         const commonType = typeById.get(commonButton.dataset.selectCommonType);
@@ -290,7 +310,11 @@
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${commonSourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer class="type-preview-common-action"><span>${compound ? "같은 원문의 전체 문항으로 연결됩니다." : "같은 탐구의 양초 예제와 풀이가 같습니다."}</span><button type="button" data-select-common-type="${escapeHtml(commonType.id)}">공통 유형 선택</button></footer>`;
     } else if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
-      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
+      const alternative = availableAlternative(type);
+      const canOfferAlternative = Boolean(alternative);
+      const alternativeAction = canOfferAlternative ? `<footer class="type-preview-common-action"><span>선택 가능: ${escapeHtml(typeDisplayName(alternative))}</span><button type="button" data-select-alternative-type="${escapeHtml(alternative.id)}">유사문항 선택</button></footer>` : "";
+      const notice = canOfferAlternative ? "이 유형은 준비 중입니다. 검증된 유사문항을 선택할 수 있습니다." : `검수 대기 · ${reviewReason}`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer class="${canOfferAlternative ? 'type-preview-alternative-notice' : ''}">${escapeHtml(notice)}</footer>${alternativeAction}`;
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.generationMode === "fixed-verified-pool" ? 0 : type.variant ?? 0);
       if (!generated) return;
@@ -311,8 +335,20 @@
     document.body.classList.remove("is-type-preview-open");
   }
 
+  function distinctQuestionPools(selected) {
+    const pools = new Map();
+    for (const type of selected.map(sourceQuestionType).filter(type => type?.generator && !type.reviewLocked)) {
+      const identity = type.generationMode === "fixed-verified-pool" && type.sourceItemId
+        ? JSON.stringify([type.semesterId, type.sourceItemId, type.generator])
+        : JSON.stringify([type.id]);
+      const existing = pools.get(identity);
+      if (!existing || Number(type.verifiedVariantCount) > Number(existing.verifiedVariantCount)) pools.set(identity, type);
+    }
+    return [...pools.values()];
+  }
+
   function plannedQuestionTypes(selected, requestedCount = state.count) {
-    const ready = [...new Map(selected.map(sourceQuestionType).filter(type => type?.generator && !type.reviewLocked).map(type => [type.id, type])).values()];
+    const ready = distinctQuestionPools(selected);
     const remaining = new Map(ready.map(type => [
       type.id,
       type.generationMode === "fixed-verified-pool"
@@ -342,6 +378,14 @@
     $("selectedQuestionCount").textContent = plannedCount;
     $("selectedTypeSummary").textContent = `${selected.length}개`;
     $("selectedQuestionSummary").textContent = `${plannedCount}문항`;
+    const capacityNotice = $("selectionCapacityNotice");
+    const isShort = selected.length > 0 && plannedCount < state.count;
+    const hasSamePool = distinctQuestionPools(selected).length < selected.filter(type => type?.generator && !type.reviewLocked).length;
+    capacityNotice.hidden = !isShort && !hasSamePool;
+    capacityNotice.textContent = [
+      hasSamePool ? "같은 원문으로 연결된 유형은 한 번만 출제합니다." : "",
+      isShort ? `요청한 ${state.count}문항 중 ${plannedCount}문항을 만들 수 있습니다. 유형을 더 선택해 주세요.` : ""
+    ].filter(Boolean).join(" ");
     $("generateButton").disabled = plannedCount === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
       '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + (type.generationMode === "fixed-verified-pool" ? ' · 검증 문항 ' + type.verifiedVariantCount + '개' : '') + '</small></span>' +
@@ -392,9 +436,11 @@
       const typePoolIndices = seenPoolIndicesByType.get(type.id) || new Set();
       let generated;
       let uniquePromptFallback;
-      for (let attempt = 0; attempt < 32; attempt += 1) {
+      const fixedPool = type.generationMode === "fixed-verified-pool";
+      const attemptLimit = fixedPool ? Math.max(32, Number(type.verifiedVariantCount) || 0) : 32;
+      for (let attempt = 0; attempt < attemptLimit; attempt += 1) {
         const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
-        const variant = type.generationMode === "fixed-verified-pool" ? typePoolIndices.size + attempt : index;
+        const variant = fixedPool ? attempt : index;
         const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, variant);
         if (!candidate || seenPrompts.has(candidate.prompt)) continue;
         if (candidate.generationMode === "fixed-verified-pool" && typePoolIndices.has(candidate.verifiedPoolIndex)) continue;
@@ -480,6 +526,8 @@
   }
 
   function problemWeight(question) {
+    // These mixed-calculation prompts fit four-up with the compact print style.
+    if (["5-1-u1-t1", "5-1-u1-t1-2", "5-1-u1-t1-3", "5-1-u1-t1-4"].includes(question.type?.id)) return 1;
     // These parallel-line diagrams fit a standard four-up cell.
     if (["4-2-u4-t1-2", "4-2-u4-t1-3", "4-2-u4-t1-7", "4-2-u4-t2-6", "4-2-u4-t1-6"].includes(question.type?.id)) return 1;
     // These four fraction word problems fit the standard four-up cell.
@@ -594,6 +642,25 @@
 
   function problemPromptHtml(question) {
     const html = renderMathNotation(question.prompt);
+    if (question.type?.id === "5-1-u1-t1") {
+      const container = document.createElement("div");
+      container.innerHTML = html;
+      const equation = container.querySelector('.equation[data-mixed-kind="e1-exploration-set"]');
+      for (const node of equation?.childNodes || []) {
+        if (node.nodeType !== Node.TEXT_NODE) continue;
+        const tail = node.textContent.match(/(\s×\s\d+\s\+\s\d+\s=\s□)$/);
+        if (!tail) continue;
+        const prefix = document.createElement("span");
+        prefix.className = "mixed-calculation-prefix";
+        prefix.textContent = node.textContent.slice(0, -tail[1].length);
+        const ending = document.createElement("span");
+        ending.className = "mixed-calculation-ending";
+        ending.textContent = tail[1];
+        node.replaceWith(prefix, document.createElement("wbr"), ending);
+        break;
+      }
+      return container.innerHTML;
+    }
     if (!["4-2-u5-t1-4", "4-2-u5-t1-7", "4-2-u5-t1-8"].includes(question.type?.id)) return html;
     const container = document.createElement("div");
     container.innerHTML = html;
@@ -618,7 +685,7 @@
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}"${isCompactFractionProblem(question) ? ' data-compact-fraction="true"' : ""}>
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${problemPromptHtml(question)}</div>
-        <div class="answer-line">답</div>
+        ${question.type.id === "5-2-u5-e1-exploration" ? `<div class="answer-line p48ex1-answers" aria-label="각 물음의 답"><span>①</span><span>②</span><span>③</span><span>④</span><span>⑤</span><span>⑥</span></div>` : '<div class="answer-line">답</div>'}
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
   }

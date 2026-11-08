@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict');
+const api=require('./source-5-2-u4-page43-originals.js');
+assert.deepEqual([46*75,6*490,12*274,23*92],[3450,2940,3288,2116]);
+assert.equal(1050*84*35-1050*16*100,1407000);
+assert.equal(7*86400/100,6048);
+assert.equal(1842+357*299,108585);
+assert.equal((43-6)*16,592);
+const candidates=[];for(let n=1;n<1000;n++)if(245*53<=100*n&&100*n<255*53)candidates.push(n);
+assert.deepEqual(candidates,[130,131,132,133,134,135]);
+assert.equal(candidates.reduce((a,b)=>a+b,0),795);
+assert.deepEqual(api.defs.map(d=>d.answer),['(1) 34.5 (2) 294 (3) 32.88 (4) 21.16','140.7m²','1시간 40분 48초','1085.85','59.2cm','795']);
+console.log('PASS: page 43 exact arithmetic and rounding endpoints');

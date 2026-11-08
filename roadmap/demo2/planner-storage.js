@@ -50,6 +50,24 @@
   return memory.get(key)??null;
  }
 
+ // A weekly review can be open in two tabs. Consult the shared durable copy
+ // inside the save lock before accepting a new review of that same week.
+ function getLatestItem(input){
+  const key=keyOf(input),mark=read('sessionStorage',guardKey(key)).value;
+  if(!overrides.has(key)&&!durableFailures.has(key)&&!mark){
+   const latest=read('localStorage',localKey(key));
+   if(latest.ok&&latest.value!==null){
+    const previous=read('sessionStorage',key);
+    if(previous.value!==null&&previous.value!==latest.value){
+     memory.set(key,latest.value);
+     write('sessionStorage',key,latest.value);
+     global.RoadmapCloud?.changed(String(input),latest.value);
+    }
+    return latest.value;
+   }
+  }
+  return getItem(input);
+ }
  function setItem(input,value){
   const key=keyOf(input),text=String(value);memory.set(key,text);
   const session=write('sessionStorage',key,text);sessionAccess=session;
@@ -106,5 +124,5 @@
   if(sessionAccess&&sessionFailures.size===0&&storage('sessionStorage'))return'session';
   return'memory';
  }
- global.PlannerStorage=Object.freeze({getItem,setItem,removeItem,promoteExisting,status});
+ global.PlannerStorage=Object.freeze({getItem,getLatestItem,setItem,removeItem,promoteExisting,status});
 })(typeof window!=='undefined'?window:globalThis);

@@ -11,7 +11,10 @@
   const pools = Object.freeze([
     Object.freeze({ divisor: 41, targetTenths: 32 }),
     Object.freeze({ divisor: 67, targetTenths: 18 }),
-    Object.freeze({ divisor: 37, targetTenths: 41 })
+    Object.freeze({ divisor: 37, targetTenths: 41 }),
+    ...Array.from({ length: 40 }, (_, i) => 31 + i)
+      .filter(divisor => ![37, 41, 67].includes(divisor))
+      .map((divisor, i) => Object.freeze({ divisor, targetTenths: 16 + (i * 7) % 32 }))
   ]);
   const ceilDiv = (a, b) => Math.floor((a + b - 1) / b);
   const format = value => Number(value).toLocaleString("ko-KR");

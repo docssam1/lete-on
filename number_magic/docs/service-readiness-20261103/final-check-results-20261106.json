@@ -1,0 +1,1516 @@
+{
+  "date": "2026-11-06 KST",
+  "model": "GPT-6.1 Sol",
+  "environment": "Mac mini / Codex",
+  "baselineUniqueChecks": 187,
+  "baselineFailed": 59,
+  "finalPassed": 187,
+  "finalFailed": 0,
+  "replacementChecks": 2,
+  "method": "Full original matrix rerun, followed by affected-gate reruns after fixes. Source-stable eight-gate audit passed; individual archived first attempts may fail. Latest entries below are authoritative.",
+  "rows": [
+    {
+      "check": "check-about-stats.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-about-stats.js",
+      "evidence": "latest/check-about-stats.js.log"
+    },
+    {
+      "check": "check-access-book-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-access-book-browser.js",
+      "evidence": "latest/check-access-book-browser.js.log"
+    },
+    {
+      "check": "check-access-music-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-access-music-browser.js",
+      "evidence": "latest/check-access-music-browser.js.log"
+    },
+    {
+      "check": "check-account-switch-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-account-switch-browser.js",
+      "evidence": "latest/check-account-switch-browser.js.log"
+    },
+    {
+      "check": "check-activity-journeys.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-activity-journeys.js",
+      "evidence": "latest/check-activity-journeys.js.log"
+    },
+    {
+      "check": "check-admin-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-admin-browser.js",
+      "evidence": "latest/check-admin-browser.js.log"
+    },
+    {
+      "check": "check-amount-sheets.js",
+      "beforeExit": 124,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-amount-sheets.js",
+      "evidence": "latest/check-amount-sheets.js.log"
+    },
+    {
+      "check": "check-answerable.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-answerable.js",
+      "evidence": "latest/check-answerable.js.log"
+    },
+    {
+      "check": "check-assessment-controls-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-assessment-controls-browser.js",
+      "evidence": "latest/check-assessment-controls-browser.js.log"
+    },
+    {
+      "check": "check-astra-assessment-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-astra-assessment-browser.js",
+      "evidence": "latest/check-astra-assessment-browser.js.log"
+    },
+    {
+      "check": "check-astra-concept-gaps.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-astra-concept-gaps.js",
+      "evidence": "latest/check-astra-concept-gaps.js.log"
+    },
+    {
+      "check": "check-attendance.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-attendance.js",
+      "evidence": "latest/check-attendance.js.log"
+    },
+    {
+      "check": "check-audio-entry-layout-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-audio-entry-layout-browser.js",
+      "evidence": "latest/check-audio-entry-layout-browser.js.log"
+    },
+    {
+      "check": "check-book-volume-placement.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-book-volume-placement.js",
+      "evidence": "latest/check-book-volume-placement.js.log"
+    },
+    {
+      "check": "check-c0-cognitive.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-c0-cognitive.js",
+      "evidence": "latest/check-c0-cognitive.js.log"
+    },
+    {
+      "check": "check-c0-concrete.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-c0-concrete.js",
+      "evidence": "latest/check-c0-concrete.js.log"
+    },
+    {
+      "check": "check-c4-numberline-print.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-c4-numberline-print.js",
+      "evidence": "latest/check-c4-numberline-print.js.log"
+    },
+    {
+      "check": "check-calculus-pacing.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-calculus-pacing.js",
+      "evidence": "latest/check-calculus-pacing.js.log"
+    },
+    {
+      "check": "check-character-closet-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-character-closet-browser.js",
+      "evidence": "latest/check-character-closet-browser.js.log"
+    },
+    {
+      "check": "check-character-state.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-character-state.js",
+      "evidence": "latest/check-character-state.js.log"
+    },
+    {
+      "check": "check-closet-collection-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-closet-collection-browser.js",
+      "evidence": "latest/check-closet-collection-browser.js.log"
+    },
+    {
+      "check": "check-cognitive-road.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-cognitive-road.js",
+      "evidence": "latest/check-cognitive-road.js.log"
+    },
+    {
+      "check": "check-comics.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-comics.js",
+      "evidence": "latest/check-comics.js.log"
+    },
+    {
+      "check": "check-concept-scenes.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-concept-scenes.js",
+      "evidence": "latest/check-concept-scenes.js.log"
+    },
+    {
+      "check": "check-concept-visuals.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-concept-visuals.js",
+      "evidence": "latest/check-concept-visuals.js.log"
+    },
+    {
+      "check": "check-consent-grade-music-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-consent-grade-music-browser.js",
+      "evidence": "latest/check-consent-grade-music-browser.js.log"
+    },
+    {
+      "check": "check-cosmetics-catalog-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-cosmetics-catalog-browser.js",
+      "evidence": "latest/check-cosmetics-catalog-browser.js.log"
+    },
+    {
+      "check": "check-cosmetics-town-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "node number_magic/scripts/check-cosmetics-town-browser.js",
+      "evidence": "latest/check-cosmetics-town-browser.js.log"
+    },
+    {
+      "check": "check-counting-art.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-counting-art.js",
+      "evidence": "latest/check-counting-art.js.log"
+    },
+    {
+      "check": "check-creative-process.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-creative-process.js",
+      "evidence": "latest/check-creative-process.js.log"
+    },
+    {
+      "check": "check-curriculum-notation.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-curriculum-notation.js",
+      "evidence": "latest/check-curriculum-notation.js.log"
+    },
+    {
+      "check": "check-curriculum-sequence.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-curriculum-sequence.js",
+      "evidence": "latest/check-curriculum-sequence.js.log"
+    },
+    {
+      "check": "check-delivery-versions-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-delivery-versions-browser.js",
+      "evidence": "latest/check-delivery-versions-browser.js.log"
+    },
+    {
+      "check": "check-delivery-versions.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-delivery-versions.js",
+      "evidence": "latest/check-delivery-versions.js.log"
+    },
+    {
+      "check": "check-diagnosis-observe-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "NM_DIAG_ARTIFACTS=/tmp/nm-final-release-187/diagnosis-artifacts node number_magic/scripts/check-diagnosis-observe-browser.js",
+      "evidence": "latest/check-diagnosis-observe-browser.js.log"
+    },
+    {
+      "check": "check-diagnostic-intake-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-diagnostic-intake-browser.js",
+      "evidence": "latest/check-diagnostic-intake-browser.js.log"
+    },
+    {
+      "check": "check-diagnostic-paper-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-diagnostic-paper-browser.js",
+      "evidence": "latest/check-diagnostic-paper-browser.js.log"
+    },
+    {
+      "check": "check-diagnostic-roadmap.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-diagnostic-roadmap.js",
+      "evidence": "latest/check-diagnostic-roadmap.js.log"
+    },
+    {
+      "check": "check-dot-handoff-gates.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "NM_HANDOFF_ARTIFACTS=/tmp/nm-release-dot-stable node number_magic/scripts/check-dot-handoff-gates.js",
+      "evidence": "latest/check-dot-handoff-gates.js.log"
+    },
+    {
+      "check": "check-dunoro-placement.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-dunoro-placement.js",
+      "evidence": "latest/check-dunoro-placement.js.log"
+    },
+    {
+      "check": "check-dunoro-review-candidates.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-dunoro-review-candidates.js",
+      "evidence": "latest/check-dunoro-review-candidates.js.log"
+    },
+    {
+      "check": "check-editorial-print.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-editorial-print.js",
+      "evidence": "latest/check-editorial-print.js.log"
+    },
+    {
+      "check": "check-elementary-examples.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-elementary-examples.js",
+      "evidence": "latest/check-elementary-examples.js.log"
+    },
+    {
+      "check": "check-flow-review-regression.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-flow-review-regression.js",
+      "evidence": "latest/check-flow-review-regression.js.log"
+    },
+    {
+      "check": "check-g1315-gen.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-g1315-gen.js",
+      "evidence": "latest/check-g1315-gen.js.log"
+    },
+    {
+      "check": "check-g1315-screen.js",
+      "beforeExit": 2,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "node number_magic/scripts/check-g1315-screen.js",
+      "evidence": "latest/check-g1315-screen.js.log"
+    },
+    {
+      "check": "check-graph-drawing.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-graph-drawing.js",
+      "evidence": "latest/check-graph-drawing.js.log"
+    },
+    {
+      "check": "check-hero3d.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-hero3d.js",
+      "evidence": "latest/check-hero3d.js.log"
+    },
+    {
+      "check": "check-high-calendar.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-high-calendar.js",
+      "evidence": "latest/check-high-calendar.js.log"
+    },
+    {
+      "check": "check-high-pacing-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-high-pacing-browser.js",
+      "evidence": "latest/check-high-pacing-browser.js.log"
+    },
+    {
+      "check": "check-high-pacing.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-high-pacing.js",
+      "evidence": "latest/check-high-pacing.js.log"
+    },
+    {
+      "check": "check-illustrated-town-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-illustrated-town-browser.js",
+      "evidence": "latest/check-illustrated-town-browser.js.log"
+    },
+    {
+      "check": "check-interactive-viewport.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-interactive-viewport.js",
+      "evidence": "latest/check-interactive-viewport.js.log"
+    },
+    {
+      "check": "check-journey-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-journey-browser.js",
+      "evidence": "latest/check-journey-browser.js.log"
+    },
+    {
+      "check": "check-journey-viewport.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-journey-viewport.js",
+      "evidence": "latest/check-journey-viewport.js.log"
+    },
+    {
+      "check": "check-ladder-placement-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-ladder-placement-browser.js",
+      "evidence": "latest/check-ladder-placement-browser.js.log"
+    },
+    {
+      "check": "check-ladder-placement.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-ladder-placement.js",
+      "evidence": "latest/check-ladder-placement.js.log"
+    },
+    {
+      "check": "check-ladder.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-ladder.js",
+      "evidence": "latest/check-ladder.js.log"
+    },
+    {
+      "check": "check-learner-storage.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-learner-storage.js",
+      "evidence": "latest/check-learner-storage.js.log"
+    },
+    {
+      "check": "check-learning-plan.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-learning-plan.js",
+      "evidence": "latest/check-learning-plan.js.log"
+    },
+    {
+      "check": "check-learning-review.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-learning-review.js",
+      "evidence": "latest/check-learning-review.js.log"
+    },
+    {
+      "check": "check-lesson-lettering.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-lesson-lettering.js",
+      "evidence": "latest/check-lesson-lettering.js.log"
+    },
+    {
+      "check": "check-level-concept.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-level-concept.js",
+      "evidence": "latest/check-level-concept.js.log"
+    },
+    {
+      "check": "check-level-coverage.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-level-coverage.js",
+      "evidence": "latest/check-level-coverage.js.log"
+    },
+    {
+      "check": "check-level-test.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-level-test.js",
+      "evidence": "latest/check-level-test.js.log"
+    },
+    {
+      "check": "check-living-lessons.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-living-lessons.js",
+      "evidence": "latest/check-living-lessons.js.log"
+    },
+    {
+      "check": "check-magazine-models.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-magazine-models.js",
+      "evidence": "latest/check-magazine-models.js.log"
+    },
+    {
+      "check": "check-magazine.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-magazine.js",
+      "evidence": "latest/check-magazine.js.log"
+    },
+    {
+      "check": "check-magic-book-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-magic-book-browser.js",
+      "evidence": "latest/check-magic-book-browser.js.log"
+    },
+    {
+      "check": "check-magic-note-video.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-magic-note-video.js",
+      "evidence": "latest/check-magic-note-video.js.log"
+    },
+    {
+      "check": "check-manipulative-layout.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-manipulative-layout.js",
+      "evidence": "latest/check-manipulative-layout.js.log"
+    },
+    {
+      "check": "check-math-stories-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-math-stories-browser.js",
+      "evidence": "latest/check-math-stories-browser.js.log"
+    },
+    {
+      "check": "check-md11-missing-and-formula-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md11-missing-and-formula-browser.js",
+      "evidence": "latest/check-md11-missing-and-formula-browser.js.log"
+    },
+    {
+      "check": "check-md11-missing-and-formula.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md11-missing-and-formula.js",
+      "evidence": "latest/check-md11-missing-and-formula.js.log"
+    },
+    {
+      "check": "check-md13-polynomial-division-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md13-polynomial-division-browser.js",
+      "evidence": "latest/check-md13-polynomial-division-browser.js.log"
+    },
+    {
+      "check": "check-md13-polynomial-division.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md13-polynomial-division.js",
+      "evidence": "latest/check-md13-polynomial-division.js.log"
+    },
+    {
+      "check": "check-md15-comparison-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md15-comparison-browser.js",
+      "evidence": "latest/check-md15-comparison-browser.js.log"
+    },
+    {
+      "check": "check-md15-comparison.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md15-comparison.js",
+      "evidence": "latest/check-md15-comparison.js.log"
+    },
+    {
+      "check": "check-md19-radical-pool.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md19-radical-pool.js",
+      "evidence": "latest/check-md19-radical-pool.js.log"
+    },
+    {
+      "check": "check-md64-inequality-direction.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md64-inequality-direction.js",
+      "evidence": "latest/check-md64-inequality-direction.js.log"
+    },
+    {
+      "check": "check-md78-md79-function-values.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md78-md79-function-values.js",
+      "evidence": "latest/check-md78-md79-function-values.js.log"
+    },
+    {
+      "check": "check-md82-numberline-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md82-numberline-browser.js",
+      "evidence": "latest/check-md82-numberline-browser.js.log"
+    },
+    {
+      "check": "check-md84-statistics-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md84-statistics-browser.js",
+      "evidence": "latest/check-md84-statistics-browser.js.log"
+    },
+    {
+      "check": "check-md84-statistics.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md84-statistics.js",
+      "evidence": "latest/check-md84-statistics.js.log"
+    },
+    {
+      "check": "check-md85-dispersion-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md85-dispersion-browser.js",
+      "evidence": "latest/check-md85-dispersion-browser.js.log"
+    },
+    {
+      "check": "check-md85-dispersion.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md85-dispersion.js",
+      "evidence": "latest/check-md85-dispersion.js.log"
+    },
+    {
+      "check": "check-md86-quartile-boxplot-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md86-quartile-boxplot-browser.js",
+      "evidence": "latest/check-md86-quartile-boxplot-browser.js.log"
+    },
+    {
+      "check": "check-md86-quartile-boxplot.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md86-quartile-boxplot.js",
+      "evidence": "latest/check-md86-quartile-boxplot.js.log"
+    },
+    {
+      "check": "check-md87-scatter-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md87-scatter-browser.js",
+      "evidence": "latest/check-md87-scatter-browser.js.log"
+    },
+    {
+      "check": "check-md87-scatter.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md87-scatter.js",
+      "evidence": "latest/check-md87-scatter.js.log"
+    },
+    {
+      "check": "check-md88-counting-cases-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md88-counting-cases-browser.js",
+      "evidence": "latest/check-md88-counting-cases-browser.js.log"
+    },
+    {
+      "check": "check-md88-counting-cases.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-md88-counting-cases.js",
+      "evidence": "latest/check-md88-counting-cases.js.log"
+    },
+    {
+      "check": "check-md9-nth-digit.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "node number_magic/scripts/check-md9-nth-digit.js",
+      "evidence": "latest/check-md9-nth-digit.js.log"
+    },
+    {
+      "check": "check-membership-client.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-membership-client.js",
+      "evidence": "latest/check-membership-client.js.log"
+    },
+    {
+      "check": "check-middle-bundles-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-bundles-browser.js",
+      "evidence": "latest/check-middle-bundles-browser.js.log"
+    },
+    {
+      "check": "check-middle-calendar.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-calendar.js",
+      "evidence": "latest/check-middle-calendar.js.log"
+    },
+    {
+      "check": "check-middle-concepts-math.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-concepts-math.js",
+      "evidence": "latest/check-middle-concepts-math.js.log"
+    },
+    {
+      "check": "check-middle-concepts.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-concepts.js",
+      "evidence": "latest/check-middle-concepts.js.log"
+    },
+    {
+      "check": "check-middle-extension-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-extension-browser.js",
+      "evidence": "latest/check-middle-extension-browser.js.log"
+    },
+    {
+      "check": "check-middle-extension-content.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-extension-content.js",
+      "evidence": "latest/check-middle-extension-content.js.log"
+    },
+    {
+      "check": "check-middle-extension-plan.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-extension-plan.js",
+      "evidence": "latest/check-middle-extension-plan.js.log"
+    },
+    {
+      "check": "check-middle-extension-print.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-extension-print.js",
+      "evidence": "latest/check-middle-extension-print.js.log"
+    },
+    {
+      "check": "check-middle-finite-pools.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-finite-pools.js",
+      "evidence": "latest/check-middle-finite-pools.js.log"
+    },
+    {
+      "check": "check-middle-guidance-state.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-guidance-state.js",
+      "evidence": "latest/check-middle-guidance-state.js.log"
+    },
+    {
+      "check": "check-middle-pacing-print.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-pacing-print.js",
+      "evidence": "latest/check-middle-pacing-print.js.log"
+    },
+    {
+      "check": "check-middle-pacing-ui.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-pacing-ui.js",
+      "evidence": "latest/check-middle-pacing-ui.js.log"
+    },
+    {
+      "check": "check-middle-pacing.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-pacing.js",
+      "evidence": "latest/check-middle-pacing.js.log"
+    },
+    {
+      "check": "check-middle-study-guidance-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-study-guidance-browser.js",
+      "evidence": "latest/check-middle-study-guidance-browser.js.log"
+    },
+    {
+      "check": "check-middle-study-guidance.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-study-guidance.js",
+      "evidence": "latest/check-middle-study-guidance.js.log"
+    },
+    {
+      "check": "check-middle-study-pacing.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-middle-study-pacing.js",
+      "evidence": "latest/check-middle-study-pacing.js.log"
+    },
+    {
+      "check": "check-navigation-targets-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-navigation-targets-browser.js",
+      "evidence": "latest/check-navigation-targets-browser.js.log"
+    },
+    {
+      "check": "check-new-levels-lang.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-new-levels-lang.js",
+      "evidence": "latest/check-new-levels-lang.js.log"
+    },
+    {
+      "check": "check-new-levels-math.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-new-levels-math.js",
+      "evidence": "latest/check-new-levels-math.js.log"
+    },
+    {
+      "check": "check-no-legacy-3d-flash.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "current-2D-replacement",
+      "command": "node number_magic/scripts/check-no-legacy-3d-flash.js",
+      "evidence": "latest/check-no-legacy-3d-flash.js.log"
+    },
+    {
+      "check": "check-notify-delivery.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-notify-delivery.js",
+      "evidence": "latest/check-notify-delivery.js.log"
+    },
+    {
+      "check": "check-numi-dialogue.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-numi-dialogue.js",
+      "evidence": "latest/check-numi-dialogue.js.log"
+    },
+    {
+      "check": "check-pace-compare.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-pace-compare.js",
+      "evidence": "latest/check-pace-compare.js.log"
+    },
+    {
+      "check": "check-paper-examples.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-paper-examples.js",
+      "evidence": "latest/check-paper-examples.js.log"
+    },
+    {
+      "check": "check-personal-delivery-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-personal-delivery-browser.js",
+      "evidence": "latest/check-personal-delivery-browser.js.log"
+    },
+    {
+      "check": "check-personal-plan-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-personal-plan-browser.js",
+      "evidence": "latest/check-personal-plan-browser.js.log"
+    },
+    {
+      "check": "check-personal-worksheet.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-personal-worksheet.js",
+      "evidence": "latest/check-personal-worksheet.js.log"
+    },
+    {
+      "check": "check-placement-auto.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-placement-auto.js",
+      "evidence": "latest/check-placement-auto.js.log"
+    },
+    {
+      "check": "check-placement-intake.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-placement-intake.js",
+      "evidence": "latest/check-placement-intake.js.log"
+    },
+    {
+      "check": "check-placement-integration.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-placement-integration.js",
+      "evidence": "latest/check-placement-integration.js.log"
+    },
+    {
+      "check": "check-placement-paths.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-placement-paths.js",
+      "evidence": "latest/check-placement-paths.js.log"
+    },
+    {
+      "check": "check-placement-plan.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-placement-plan.js",
+      "evidence": "latest/check-placement-plan.js.log"
+    },
+    {
+      "check": "check-placement-sheet.js",
+      "beforeExit": 124,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-placement-sheet.js",
+      "evidence": "latest/check-placement-sheet.js.log"
+    },
+    {
+      "check": "check-plan-control.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-plan-control.js",
+      "evidence": "latest/check-plan-control.js.log"
+    },
+    {
+      "check": "check-planned-envelope.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-planned-envelope.js",
+      "evidence": "latest/check-planned-envelope.js.log"
+    },
+    {
+      "check": "check-print-image-readiness.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-print-image-readiness.js",
+      "evidence": "latest/check-print-image-readiness.js.log"
+    },
+    {
+      "check": "check-print-lang.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-print-lang.js",
+      "evidence": "latest/check-print-lang.js.log"
+    },
+    {
+      "check": "check-print-logo-multipage.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-print-logo-multipage.js",
+      "evidence": "latest/check-print-logo-multipage.js.log"
+    },
+    {
+      "check": "check-print-overflow.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-print-overflow.js",
+      "evidence": "latest/check-print-overflow.js.log"
+    },
+    {
+      "check": "check-print-page.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-print-page.js",
+      "evidence": "latest/check-print-page.js.log"
+    },
+    {
+      "check": "check-print.js",
+      "beforeExit": 2,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-print.js",
+      "evidence": "latest/check-print.js.log"
+    },
+    {
+      "check": "check-profile-auth.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-profile-auth.js",
+      "evidence": "latest/check-profile-auth.js.log"
+    },
+    {
+      "check": "check-profile-intake-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-profile-intake-browser.js",
+      "evidence": "latest/check-profile-intake-browser.js.log"
+    },
+    {
+      "check": "check-program-safety-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-program-safety-browser.js",
+      "evidence": "latest/check-program-safety-browser.js.log"
+    },
+    {
+      "check": "check-progress-speed-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-progress-speed-browser.js",
+      "evidence": "latest/check-progress-speed-browser.js.log"
+    },
+    {
+      "check": "check-promo-book.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "node number_magic/scripts/check-promo-book.js",
+      "evidence": "latest/check-promo-book.js.log"
+    },
+    {
+      "check": "check-promo-languages.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "node number_magic/scripts/check-promo-languages.js",
+      "evidence": "latest/check-promo-languages.js.log"
+    },
+    {
+      "check": "check-pwa-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-pwa-browser.js",
+      "evidence": "latest/check-pwa-browser.js.log"
+    },
+    {
+      "check": "check-real-art.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-real-art.js",
+      "evidence": "latest/check-real-art.js.log"
+    },
+    {
+      "check": "check-review-access-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-review-access-browser.js",
+      "evidence": "latest/check-review-access-browser.js.log"
+    },
+    {
+      "check": "check-review-p0.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-review-p0.js",
+      "evidence": "latest/check-review-p0.js.log"
+    },
+    {
+      "check": "check-reviewed-voice-video-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-reviewed-voice-video-browser.js",
+      "evidence": "latest/check-reviewed-voice-video-browser.js.log"
+    },
+    {
+      "check": "check-reviewed-voice.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-reviewed-voice.js",
+      "evidence": "latest/check-reviewed-voice.js.log"
+    },
+    {
+      "check": "check-reward-economy.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-reward-economy.js",
+      "evidence": "latest/check-reward-economy.js.log"
+    },
+    {
+      "check": "check-reward-integration.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-reward-integration.js",
+      "evidence": "latest/check-reward-integration.js.log"
+    },
+    {
+      "check": "check-road-timing.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-road-timing.js",
+      "evidence": "latest/check-road-timing.js.log"
+    },
+    {
+      "check": "check-roadmap-design-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-roadmap-design-browser.js",
+      "evidence": "latest/check-roadmap-design-browser.js.log"
+    },
+    {
+      "check": "check-roadmap-sync.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-roadmap-sync.js",
+      "evidence": "latest/check-roadmap-sync.js.log"
+    },
+    {
+      "check": "check-roadmap-sync.test.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-roadmap-sync.test.js",
+      "evidence": "latest/check-roadmap-sync.test.js.log"
+    },
+    {
+      "check": "check-scatter-answer.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-scatter-answer.js",
+      "evidence": "latest/check-scatter-answer.js.log"
+    },
+    {
+      "check": "check-scatter-learning-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-scatter-learning-browser.js",
+      "evidence": "latest/check-scatter-learning-browser.js.log"
+    },
+    {
+      "check": "check-session-roles.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-session-roles.js",
+      "evidence": "latest/check-session-roles.js.log"
+    },
+    {
+      "check": "check-solution-steps.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-solution-steps.js",
+      "evidence": "latest/check-solution-steps.js.log"
+    },
+    {
+      "check": "check-soma-p-placement.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-soma-p-placement.js",
+      "evidence": "latest/check-soma-p-placement.js.log"
+    },
+    {
+      "check": "check-stages.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-stages.js",
+      "evidence": "latest/check-stages.js.log"
+    },
+    {
+      "check": "check-standard-worksheet-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-standard-worksheet-browser.js",
+      "evidence": "latest/check-standard-worksheet-browser.js.log"
+    },
+    {
+      "check": "check-star-topology.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-star-topology.js",
+      "evidence": "latest/check-star-topology.js.log"
+    },
+    {
+      "check": "check-state-review-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-state-review-browser.js",
+      "evidence": "latest/check-state-review-browser.js.log"
+    },
+    {
+      "check": "check-state-review-regression.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-state-review-regression.js",
+      "evidence": "latest/check-state-review-regression.js.log"
+    },
+    {
+      "check": "check-step-equations.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-step-equations.js",
+      "evidence": "latest/check-step-equations.js.log"
+    },
+    {
+      "check": "check-strategy-lessons.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-strategy-lessons.js",
+      "evidence": "latest/check-strategy-lessons.js.log"
+    },
+    {
+      "check": "check-study-projection.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-study-projection.js",
+      "evidence": "latest/check-study-projection.js.log"
+    },
+    {
+      "check": "check-study-records-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "NM_RECORD_ARTIFACTS=/tmp/nm-final-release-187/records-artifacts node number_magic/scripts/check-study-records-browser.js",
+      "evidence": "latest/check-study-records-browser.js.log"
+    },
+    {
+      "check": "check-study-records.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-study-records.js",
+      "evidence": "latest/check-study-records.js.log"
+    },
+    {
+      "check": "check-symbol-cards-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-symbol-cards-browser.js",
+      "evidence": "latest/check-symbol-cards-browser.js.log"
+    },
+    {
+      "check": "check-tex-hygiene.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-tex-hygiene.js",
+      "evidence": "latest/check-tex-hygiene.js.log"
+    },
+    {
+      "check": "check-tone.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-tone.js",
+      "evidence": "latest/check-tone.js.log"
+    },
+    {
+      "check": "check-town-follow-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-town-follow-browser.js",
+      "evidence": "latest/check-town-follow-browser.js.log"
+    },
+    {
+      "check": "check-town-menu-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-town-menu-browser.js",
+      "evidence": "latest/check-town-menu-browser.js.log"
+    },
+    {
+      "check": "check-town-navigation.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "current-2D-replacement",
+      "command": "node number_magic/scripts/check-town-navigation.js",
+      "evidence": "latest/check-town-navigation.js.log"
+    },
+    {
+      "check": "check-train-steps.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-train-steps.js",
+      "evidence": "latest/check-train-steps.js.log"
+    },
+    {
+      "check": "check-ui-review-regression.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-ui-review-regression.js",
+      "evidence": "latest/check-ui-review-regression.js.log"
+    },
+    {
+      "check": "check-unit-lang.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "affected-gate-rerun",
+      "command": "node number_magic/scripts/check-unit-lang.js",
+      "evidence": "latest/check-unit-lang.js.log"
+    },
+    {
+      "check": "check-visual-map.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-visual-map.js",
+      "evidence": "latest/check-visual-map.js.log"
+    },
+    {
+      "check": "check-voice-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-voice-browser.js",
+      "evidence": "latest/check-voice-browser.js.log"
+    },
+    {
+      "check": "check-weekly-sheets.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-weekly-sheets.js",
+      "evidence": "latest/check-weekly-sheets.js.log"
+    },
+    {
+      "check": "check-worksheet-series.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-worksheet-series.js",
+      "evidence": "latest/check-worksheet-series.js.log"
+    },
+    {
+      "check": "check-worksheet-text.js",
+      "beforeExit": 2,
+      "finalExit": 0,
+      "method": "final-targeted-rerun",
+      "command": "node number_magic/scripts/check-worksheet-text.js /tmp/nm-release-worksheet-text --strict",
+      "evidence": "latest/check-worksheet-text.js.log"
+    },
+    {
+      "check": "check-worksheet-uniqueness.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-worksheet-uniqueness.js",
+      "evidence": "latest/check-worksheet-uniqueness.js.log"
+    },
+    {
+      "check": "check-wp-word-problems.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-wp-word-problems.js",
+      "evidence": "latest/check-wp-word-problems.js.log"
+    },
+    {
+      "check": "check-wp4-unique.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-wp4-unique.js",
+      "evidence": "latest/check-wp4-unique.js.log"
+    },
+    {
+      "check": "check-young-activities-browser.js",
+      "beforeExit": 0,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-young-activities-browser.js",
+      "evidence": "latest/check-young-activities-browser.js.log"
+    },
+    {
+      "check": "check-young-split-browser.js",
+      "beforeExit": 1,
+      "finalExit": 0,
+      "method": "full-rerun",
+      "command": "node number_magic/scripts/check-young-split-browser.js",
+      "evidence": "latest/check-young-split-browser.js.log"
+    }
+  ],
+  "followUpAcceptance": {
+    "date": "2026-11-06 KST",
+    "changedGate": "check-admin-browser.js",
+    "passedAssertions": 64,
+    "evidence": "security-acceptance-evidence-20261106.zip",
+    "note": "Full original matrix is preserved; this follow-up reran the affected admin gate and the 46 handler tests after a real settings_required discovery. Actual recipient confirmation pending."
+  }
+}

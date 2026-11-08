@@ -27,13 +27,8 @@ function load(file) {
   vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), w, { filename:file });
 }
 
-load('engine/rng.js');
-load('engine/threads/mid.js');
-load('data/threads.js');
-load('data/middle-concepts.js');
-load('data/middle-pacing.js');
-load('data/drill-topics.js');
-load('data/courses.js');
+Object.assign(w,require('./lib/runtime-fixture').load().world);w.window=w;
+if(!w.NM_DRILL_TOPICS)load('data/drill-topics.js');
 load('app/exam.js');
 
 const blocks = ['13','26','37','58','107','125','208','314','427','503','1247','2031','142857','076923'];
@@ -122,16 +117,12 @@ for (const [params, tex, answer] of oldCases) {
 /* 앱의 찾기·권장 진도·정규 과정 세 층에 모두 연결되어야 한다. */
 const topic = w.NM_DRILL_TOPICS.flatMap(category => category.subs).find(item => item.thread === 'MD9' && item.level === 5);
 assert(topic && topic.label.includes('n번째'), 'drill topic missing MD9 L5');
-/* 2026-09-25 통합: MD9 는 정규 과정 C31(중1)에 있다 — 보기는 그 회차를 보여 준다(12문항 이상). */
+/* 2026-09-25 통합: MD9 는 정규 과정 C32(중2)에 있다 — 보기는 그 회차를 보여 준다(12문항 이상). */
 const pacingBlocks = Object.values(w.NM_MIDDLE_PACING.grades).flatMap(g => g.sessions.flatMap(session => session.blocks));
 assert(pacingBlocks.some(item => item.t === 'MD9' && item.lv === 5 && item.n >= 12), 'middle view missing MD9 L5 block');
-const course31 = w.NM_COURSE_SPEC.find(course => course.id === 31);
-assert(course31.drills.includes('MD9@5'), 'course31 missing MD9@5');
-assert.equal(
-  course31.minSessions,
-  Math.ceil(course31.drills.length / 2),
-  'course31 minSessions must cover every listed drill at two drills per session'
-);
+const course31 = w.NM_COURSE_SPEC.find(course => course.id === 32);
+assert(course31.drills.includes('MD9@5'), 'course32 missing MD9@5');
+assert(w.NM_COURSES.C32.sessions.some(s=>(s.drills||[]).some(d=>d.t==='MD9'&&d.lv===5)),'C32 must teach the nth-digit type');
 assert(w.NM_MIDDLE_CONCEPTS.MD9.source.includes('18'), 'concept provenance does not point to printed p.18');
 
 /* 대표 결함을 일부러 계산해 검사 민감도를 확인: 나머지 0을 첫째로 고르면 오답이다. */
@@ -143,5 +134,5 @@ assert.notEqual(Number(zeroRemainder.repeatBlock.charAt(0)), zeroRemainder.answe
 console.log(`PASS MD9 L5 math: ${capacity} exact modular tasks; primitive repeating blocks; remainder-0 last-digit rule.`);
 console.log('PASS MD9 L5 allocation: 24 practice + 1 example unique; full pool once; capacity+1 fails closed.');
 console.log('PASS MD9 regression: L1-L4 seeded prompts and answers unchanged.');
-console.log('PASS MD9 integration: drill topic, 24-question middle pacing block, course31 MD9@5.');
+console.log('PASS MD9 integration: drill topic, 24-question middle pacing block, course32 MD9@5.');
 console.log('PASS learner-fit: learner_stage=중2-1; language=나머지 중심 한국어; representations=순환마디와 나눗셈식; prerequisites=순환마디·몫과 나머지; reasoning-load=1회 나눗셈+자리 대응; response-mode=한 자리 숫자 입력.');

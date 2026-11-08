@@ -6,8 +6,23 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v61-geoboard-euler";
+const CACHE = "gfield-geo-v74-straight-cut-main-20261108";
 const CORE = [
+  "/geometry/origami-studio/",
+  "/geometry/origami-studio/app.js?v=origami-studio-18",
+  "/geometry/origami-studio/styles.css?v=origami-studio-9",
+  "/geometry/games/paper-cut/",
+  "/geometry/games/paper-cut/app.js?v=straight-cut-2",
+  "/geometry/games/paper-cut/model.js?v=straight-cut-1",
+  "/geometry/games/paper-cut/copy.js?v=straight-cut-2",
+  "/geometry/games/paper-cut/styles.css?v=straight-cut-2",
+  "/geometry/worksheet/paper-cut/",
+  "/geometry/worksheet/paper-cut/app.js?v=straight-cut-2",
+  "/geometry/worksheet/paper-cut/styles.css?v=straight-cut-1",
+  "/geometry/world-map/assets/foldy-character.webp",
+  "/geometry/games/paper-fold/reverse-fold.js",
+  "/geometry/games/paper-fold/fonts/GmarketSansMedium.otf",
+  "/geometry/games/shape-transform/ui-icons.js",
   "/geometry/world-map/",
   "/geometry/lab/",
   "/geometry/lab/styles.css?v=lab-studio-12",

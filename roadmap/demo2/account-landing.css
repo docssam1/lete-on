@@ -77,7 +77,9 @@
 /* One complete public story; dates provide the structure instead of table cells. */
 .account-senior-section{padding:60px 0 80px;scroll-margin-top:24px}
 .account-senior-example{background:#edf7f5;margin:0 -34px;padding:44px 34px;border-radius:12px}
-.account-senior-header{display:block;max-width:760px;margin-bottom:38px}
+.account-senior-header{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:32px;align-items:center;max-width:920px;margin-bottom:26px}
+/* Same student illustration as the Seoul Science → MIT case (CASE_ART.early). */
+.account-senior-character{display:block;width:132px;aspect-ratio:1/2;background:url('assets/senior-characters-1-20261025.png') no-repeat 0% center/500% 100%;pointer-events:none}
 .account-case-type{font-size:14px;color:#38776d}
 .account-senior-header h3{font-size:34px;line-height:1.4;font-weight:650;letter-spacing:-.045em;margin:12px 0}
 .account-senior-header p{font-size:16px;color:#52665f;line-height:1.8;margin:0}
@@ -207,3 +209,5 @@
 .account-learning-cycle,.account-goal-roadmaps{margin-top:64px;padding-top:30px;border-top:2px solid #c7e4d8}.account-learning-cycle h2,.account-goal-roadmaps h2{font-size:clamp(25px,3vw,36px);line-height:1.5;margin:0 0 22px}.account-cycle-steps{padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.account-cycle-steps li{padding:20px 0;border-top:1px solid #c7e4d8}.account-cycle-steps strong{font-size:20px}.account-cycle-steps small{display:block;color:#477666;font-size:13px;margin:8px 0}.account-cycle-steps p,.account-goal-roadmaps p{line-height:1.85}.account-performance-example{background:#e7f5ee;padding:24px 28px;border-radius:14px}.account-performance-example h3{margin-top:0}.account-performance-example p{line-height:1.8}.account-goal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px;margin:24px 0}.account-goal-grid article{padding-top:16px;border-top:3px solid #719d8b}.account-goal-grid h3{font-size:23px;margin:0}.account-goal-grid a{display:inline-flex;align-items:center;min-height:44px;font-weight:650;color:#285c49}.account-senior-figure{margin:26px 0}.account-senior-figure-scroll{overflow-x:auto;max-width:100%;border:1px solid #c7e4d8;border-radius:14px}.account-senior-figure img{display:block;width:100%;min-width:900px;height:auto}.account-senior-figure figcaption{font-size:14px;line-height:1.8;margin-top:12px}.account-senior-figure figcaption a{display:inline-flex;min-height:44px;align-items:center;color:#285c49;font-weight:650}@media(max-width:700px){.account-cycle-steps,.account-goal-grid{grid-template-columns:1fr}.account-performance-example{padding:20px}.account-learning-cycle,.account-goal-roadmaps{margin-top:38px}.account-senior-figure{margin:20px 0}}
 
 .account-senior-details>summary{min-height:48px;padding:14px 0;font-weight:650;color:#285c49;cursor:pointer}
+@media(max-width:700px){.account-senior-header{grid-template-columns:minmax(0,1fr) 90px;gap:16px}.account-senior-header h3{font-size:24px}.account-senior-character{width:90px}}
+@media(max-width:370px){.account-senior-header{grid-template-columns:minmax(0,1fr) 72px;gap:12px}.account-senior-header h3{font-size:22px}.account-senior-character{width:72px}}

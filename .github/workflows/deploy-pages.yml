@@ -18,6 +18,7 @@ on:
       - 'highschool-selection/data/academy-engagement.js'
       - 'highschool-selection/data/academy-notices.js'
       - 'highschool-selection/data/standard-exam-policy.js'
+      - 'highschool-selection/data/official-exam-specs.js'
       - 'highschool-selection/scripts/stage-public-intro.cjs'
       - 'geometry/**'
       - 'hyper-focus/**'
@@ -62,6 +63,10 @@ jobs:
           node-version: '22'
       - name: Verify public question bank metadata
         run: node hselementary/question-bank/public-inventory-review-reason-audit.js
+      - name: Verify question bank stylesheet staging
+        run: node hselementary/question-bank/stage-styles-audit.cjs
+      - name: Verify question bank script staging
+        run: node hselementary/question-bank/stage-scripts-audit.cjs
       # 수의 마법 — 유닛·과정·앱 지도·문제은행·주간 학습지가 서로 어긋나면 배포를 멈춘다.
       # 2026-09-20~23 에 ws.html 이 mid9·mid10 을 안 실어 중2·중3 학습지가 88+8= 로 나갔다.
       - name: Verify Numbers of Magic navigation and loading
@@ -99,6 +104,9 @@ jobs:
           cp -R boarding-school-math/. _site/boarding-school-math/
           cp -R fields-classic/. _site/fields-classic/
           cp -R hselementary/. _site/hselementary/
+          node hselementary/question-bank/stage-styles.cjs _site/hselementary/question-bank
+          node hselementary/question-bank/stage-scripts.cjs _site/hselementary/question-bank
+          rm -f _site/hselementary/question-bank/stage-styles.cjs _site/hselementary/question-bank/stage-styles-audit.cjs _site/hselementary/question-bank/stage-scripts.cjs _site/hselementary/question-bank/stage-scripts-audit.cjs
           rm -rf _site/hselementary/question-bank/source-inventory
           rm -rf _site/hselementary/question-bank/tmp
           find _site/hselementary/question-bank -maxdepth 1 -type f \( -name '*audit*.js' -o -name 'build-source-inventory*.js' -o -name '*.md' \) -delete
@@ -157,7 +165,13 @@ jobs:
       - name: Upload the staged site as the Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          # Retried runs retain earlier artifacts; deploy only this attempt's file.
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+          # deploy-pages v4 caps its timeout at 10 minutes, regardless of larger inputs.
+          timeout: 600000

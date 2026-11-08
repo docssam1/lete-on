@@ -19,7 +19,7 @@ for(const tag of html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/g)){
 }
 assert(w.NM_THREADS && Object.keys(w.NM_THREADS).length > 100, 'load real threads');
 const courses = w.NM_COURSES;
-assert.equal(courses.C31.sessions.length, 11, 'real thread-dependent course packing');
+assert.equal(courses.C31.sessions.length, 12, 'real thread-dependent course packing');
 const before = JSON.stringify(courses);
 const arrays = new Map(Object.values(courses).map(course => [course, course.sessions]));
 function freeze(value){

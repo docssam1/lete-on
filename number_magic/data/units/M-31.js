@@ -53,7 +53,7 @@ window.NM_UNITS['M-31'] = {
               en:'This reuses the same radical-simplifying convention — no new rule invented just for distance.',
               zh:'沿用根号化简的同一规约——没有为距离公式另外发明新规则。'} }
     ],
-    rule:{ ko:'① 거리 = √((x₂-x₁)²+(y₂-y₁)²)  ② 답은 근호 밖과 안의 빈칸을 채워요. 근호 밖의 수가 없으면 1',
+    rule:{ ko:'① 거리 = √((x₂-x₁)²+(y₂-y₁)²)  ② 답은 근호 밖과 안의 빈칸을 채웁니다. 근호 밖의 수가 없으면 1',
       en:'① Distance = √((x₂-x₁)²+(y₂-y₁)²)  ② Answer is [coefficient, radicand] — coefficient 1 if it doesn\'t simplify',
       zh:'① 距离 = √((x₂-x₁)²+(y₂-y₁)²)  ② 答案是[系数,根号内]——不能化简时系数为1' }
   },

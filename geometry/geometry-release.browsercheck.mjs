@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const baseUrl = (process.env.GFIELD_BASE_URL || "http://127.0.0.1:8765").replace(/\/$/, "");
 const checks = [
+  "geometry/games/paper-cut/model.selftest.mjs",
+  "geometry/games/paper-cut/paper-cut.browsercheck.mjs",
   "geometry/games/net-observatory/net-observatory.selftest.mjs",
   "geometry/games/dice-roll/dice-roll.selftest.mjs",
   "geometry/games/soma-cube/soma-cube.selftest.mjs",

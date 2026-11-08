@@ -1,6 +1,6 @@
 ---
 name: web-ui-library-picks
-description: 원장이 소개 영상으로 보낸 웹 UI 라이브러리 7개(Anime.js · Motion · Bklit UI · react-three-fiber · liquid-glass-js · shadergradient · liquid-logo)를 지필드 화면에 쓸지 판정한 기록과 쓰는 법. 화면에 움직임·숫자 애니메이션·그래프·3D·유리/그라데이션 효과를 넣자는 말이 나오거나, 새 라이브러리를 들이자는 말이 나올 때 먼저 읽는다.
+description: 원장이 소개 영상으로 보낸 웹 UI 라이브러리 7개(Anime.js · Motion · Bklit UI · react-three-fiber · liquid-glass-js · shadergradient · liquid-logo)와 디자인 스킬 4개(taste-skill · impeccable · hallmark · frontend-design)를 지필드 화면에 쓸지 판정한 기록과 쓰는 법. 화면에 움직임·숫자 애니메이션·그래프·3D·유리/그라데이션 효과를 넣자는 말이 나오거나, 새 라이브러리를 들이자는 말이 나올 때 먼저 읽는다.
 ---
 
 # 웹 UI 라이브러리 7개 — 무엇을 쓰고 무엇을 안 쓰나
@@ -15,7 +15,7 @@ description: 원장이 소개 영상으로 보낸 웹 UI 라이브러리 7개(An
 
 | 라이브러리 | 하는 일 | 판정 | 이유 · 쓰는 곳 |
 |---|---|---|---|
-| **Anime.js** 4.5.0 (MIT) | 짜인 순서의 움직임(타임라인·글자 쪼개기·SVG 선 그리기·숫자) | **씀** | 첫 화면 인트로(`home.js`: 로고가 굴러 들어오고 큰 글자 GIFTED MATH BANK가 한 글자씩 올라옴), 스스로 공부 덱 표지 들어오기, 도착 장 메달 체크 그리기·숫자 0부터 올리기·점수 고리 |
+| **Anime.js** 4.5.0 (MIT) | 짜인 순서의 움직임(타임라인·글자 쪼개기·SVG 선 그리기·숫자) | **씀** | 첫 화면 인트로(`home.js`: 로고가 굴러 들어오고 큰 글자 GIFTED MATH BANK가 한 글자씩 올라옴), 스스로 공부 첫 화면(`start.js` → `playIntro`: 「오늘 공부할 내용은?」 글자째 · 교재 목록 하나씩, 단추 누름은 Motion), 스스로 공부 덱 표지 들어오기, 도착 장 메달 체크 그리기·숫자 0부터 올리기·점수 고리 |
 | **Motion** 12.43.0 (MIT) | 누른 데 답하는 움직임(스프링·press·hover) | **씀** | 덱 장 넘김(누른 방향에서 들어옴), 단추 누름(쏙 들어갔다 튐) |
 | **Bklit UI** | 숫자·차트 컴포넌트(shadcn 꼴) | **못 씀 → 생각만** | React 전용. 같은 생각(숫자가 올라가고 고리가 차오름)을 Anime.js + SVG로 그렸다(`study-motion.js` `ringMarkup`) |
 | react-three-fiber | Three.js를 React로 | **안 씀** | React가 없다. 3D는 이미 Three.js를 직접 쓴다(과학 랩·쌓기나무) |
@@ -36,6 +36,28 @@ description: 원장이 소개 영상으로 보낸 웹 UI 라이브러리 7개(An
 - 보라 그라데이션 주 단추 → 단색 + 아래 그림자(게임 단추처럼).
 - 똑같은 카드 다섯 개(표지 공부 순서) → 번호 동그라미를 점선으로 잇는 길(차례가 있는 내용이라 번호는 그대로).
 - 반짝 이모지 단추 글은 쓰지 않는다(「🖨 인쇄해서 풀기」 → 「인쇄해서 풀기」).
+- **단추 그림은 이모지 대신 `fields-classic/question-bank/ui-icons.js`**(`icon(이름, 크기)` · `setIcon(단추, 이름, 크기)`, 선 그림 SVG, 색은 글자색을 따름, 이름은 단추의 aria-label이 맡음). 지금 있는 그림: soundOn · soundOff · pause · play · first · trash · lock. 2026-11-05에 덱 음성·멈춤·처음으로, 첫 화면 영상 소리·멈춤, 판서 멈춤, 게임 잠긴 판, 학습지 편집 빼기 단추를 바꿨고 진도표 「🖨 인쇄」·종이접기 「🔄 새 문제」는 글만 남겼다. 새 그림이 필요하면 이 파일에 한 줄 더한다.
+- **글씨 대비 4.5:1 이상**: 시작 화면 흐린 글 `--muted`를 #7a6f5c → #6f6452(종이 위 5.2:1)로, 첫 화면 세 번째 꼬리표(파랑 바탕 흰 글 3.22:1)는 다른 둘처럼 검은 글로(5.4:1).
+
+## 디자인 스킬 4개(2026-11-05 원장 「이것도 사용 가능한지 확인해봐」)
+
+글(Threads)이 꼽은 넷: taste-skill(방향부터 잡음) · impeccable(만든 화면 다듬기·검사) · hallmark(AI 글꼴·보라 그라데이션 막기) · frontend-design. 셋을 내려받아 SKILL.md를 끝까지 읽고, hallmark 검사기는 우리 화면에 돌려 봤다.
+
+| 스킬 | 저장소 · 라이선스 | 판정 | 이유 |
+|---|---|---|---|
+| frontend-design | anthropics/skills · Apache 2.0 | **이미 씀**(2026-11-01) | `.claude/skills/frontend-design` |
+| taste-skill 2.5 | Leonxlnx/taste-skill · MIT | **안 씀** | 회사 홍보 사이트(figma.com·x.ai가 기준)를 짓는 스킬. 「한 화면에 한 구역」·사진 12~20장·「보라 금지」(덱 주 단추가 보라)·자체 견본 40MB와 배정 스크립트로 처음부터 새로 짓는 방식이라 교재·학습 화면과 안 맞는다 |
+| impeccable 4.8 | pbakaus/impeccable · Apache 2.0 | **설치 안 함, 글만 참고** | 첫 실행 때 운영체제별 실행 파일을 내려받아 돌리는 구조(검사합은 맞춰 보지만 저장소에 낯선 실행 파일을 들이지 않는다). `critique`·`audit`·`polish` 안내문(`reference/*.md`)은 글이라 필요할 때 읽어 볼 만하다 |
+| hallmark 2.0 | Nutlope/hallmark · MIT | **짓는 데는 안 씀, 검사기만 가끔** | 테마를 뽑아 새 페이지를 짓는 스킬이라 우리 결을 덮는다(기존 화면엔 이름을 불러야만 쓰라고 스스로 적어 둠). 검사기 `sloplint.mjs`는 Node만으로 돈다 — 아래 |
+
+**hallmark 검사기 돌리는 법**(저장소에 넣지 않는다 — 임시 폴더에 받아서):
+
+```bash
+git clone --depth 1 https://github.com/Nutlope/hallmark <임시>/hallmark   # 2026-11-05 확인 판 407fa68
+node <임시>/hallmark/skills/hallmark/scripts/sloplint.mjs fields-classic/question-bank/home.html --genre playful
+```
+
+결과 대부분은 우리 결정과 부딪혀 **버린다**: 4px 단위 여백(24b), 모든 색을 토큰으로(48), 가운뎃점 묶음(63 — 우리 화면 글에 많이 씀), 「다음 →」 화살표(63). **볼 것만 골라 본다**: 글씨 대비 4.5:1 미만(40), 단추 글의 이모지(30a), 영어 대문자 꼬리표(54·67 — 단, 첫 화면 「WELCOME TO」는 **원장이 영어 그대로 두기로 함**(2026-11-05 「WELCOME TO 는 영어가 좋아」), 검사기가 잡아도 고치지 않는다), `:focus-visible`·움직임 줄이기 빠짐. 2026-11-05에 처음 돌렸을 때 걸린 진짜는 home.html 세 번째 카드 작은 글 대비 3.22:1, start.html `.st-step.is-empty`·`.st-lock-tag` 4.42:1, study.html·home.html 소리 단추의 🔊·⏸·🔇 이모지였다→ 2026-11-05 원장 「대비랑 이모지 단추 고쳐」로 고쳤다(아래 「AI 티 지우기」).
 
 ## 새 라이브러리가 또 오면
 

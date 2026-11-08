@@ -48,3 +48,13 @@
 @media(max-width:360px){.panel-video .cinema-play{width:56px;height:56px;font-size:20px;padding-left:9px}}
 @media(max-height:570px) and (min-width:701px){.magic-book-app[data-view=video] .open-book{--cinema-top:46px;--cinema-bottom:46px;--cinema-max-width:96vw;--cinema-max-height:96dvh}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.closed-book:hover,.sample-preview:hover img{transform:none}}
+
+/* Ten curriculum stages share the rail; keep the tour control outside it. */
+.roadmap-rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:3px}
+.roadmap-rail:before{display:none}
+.roadmap-stop{min-height:0;grid-template-columns:32px minmax(0,1fr);grid-template-rows:auto auto;gap:0 5px;padding:2px}
+.roadmap-stop .station{grid-row:1/3;width:28px;height:28px;margin-left:0;font-size:13px}
+.roadmap-stop strong{font-size:11px;line-height:1.25}.roadmap-stop small{grid-column:2;font-size:9px}
+.roadmap-journey .roadmap-note{position:static;width:auto;height:auto;min-height:40px;flex:none;margin:3px 0 0}
+@media(max-height:570px) and (min-width:701px){.roadmap-rail{grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}.roadmap-stop{grid-template-columns:22px minmax(0,1fr)}.roadmap-stop .station{width:21px;height:21px;font-size:10px}.roadmap-stop strong{font-size:9px}.roadmap-stop small{font-size:8px}.roadmap-journey .roadmap-note{min-height:32px}}
+.roadmap-stop strong,.roadmap-stop small{min-width:0;overflow-wrap:anywhere;white-space:normal}

@@ -16,7 +16,7 @@ function setup(completed,options={}){
   clearInterval(){},clearTimeout(){},setTimeout:fn=>{timers.push(fn);return timers.length;},
   save:()=>{events.saves++;if(events.failSaves){events.failSaves--;return false;}return true;},render:()=>{events.renders++;w.lessonVersion++;},
   coinAdd:n=>{w.S.coins+=n;return n;},maybeAwardWeeklyBonus(){},
-  renderMath(){},playSfx(){},logDaily(){},dots:()=>'',labExprHtml:value=>value,applyMinusKey:value=>value==='-'?'':'-',
+  matchesLearningAnswer:(value,answer)=>String(value)===String(answer),renderMath(){},playSfx(){},logDaily(){},dots:()=>'',labExprHtml:value=>value,applyMinusKey:value=>value==='-'?'':'-',
   navigationLabel:view=>'Return to '+view,unitReturnLabel:()=> 'Return to village',buildNumpad:(pad,callback)=>{w.padCallback=callback;},NM_VOICE:{isSpeaking:()=>false},
   NM_RNG:{hashSeed:()=>1,mulberry32:()=>()=>.5},NM_THREADS:{},NM_TGEN:{}};
  w.window=w;vm.createContext(w);vm.runInContext(stats,w,{filename:'actual-progress-stats.js'});
@@ -30,7 +30,7 @@ function setupCheckup(){
   items:[0,1,2].map(()=>({t:'AD3',lv:1,kind:'calc',pv:false})),
   calcOk:0,calcTotal:3,wpOk:0,wpTotal:0,creOk:0,creTotal:0,log:[],qStart:Date.now(),
   cur:{prompt:{ko:'합성 점검'},tex:'3',answer:3}};
- vm.runInContext(section('screenCheckup','/* 학년 고치기'),w,{filename:'actual-screenCheckup.js'});
+ vm.runInContext(section('screenCheckup','/* 나이·학년 고치기'),w,{filename:'actual-screenCheckup.js'});
  return runtime;
 }
 const findings=[];

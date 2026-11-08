@@ -45,6 +45,18 @@ async function prepare(page, width) {
     await page.waitForFunction(() => !document.querySelector("#worksheet").hidden);
     const diagram = page.locator(`#problemView [data-source-item-id='${id}'] svg.source52-cube-box-diagram`).first();
     assert.equal(await diagram.count(), 1);
+    if (variant === 0 && difficulty === 0) {
+      await page.emulateMedia({ media: "print" });
+      const ink = await diagram.evaluate(svg => ({
+        lines: [...svg.querySelectorAll("path, rect")].map(el => getComputedStyle(el).stroke),
+        labels: [...svg.querySelectorAll("text")].map(el => getComputedStyle(el).fill),
+        prompt: getComputedStyle(svg.closest(".source52-cube-box-question")).color
+      }));
+      assert(ink.lines.length > 0 && ink.lines.every(color => color === "rgb(25, 21, 17)"), "print diagram lines use dark ink");
+      assert(ink.labels.length > 0 && ink.labels.every(color => color === "rgb(25, 21, 17)"), "print diagram labels use dark ink");
+      assert.equal(ink.prompt, "rgb(25, 21, 17)", "print question text uses dark ink");
+      await page.emulateMedia({ media: null });
+    }
     const facts = await diagram.evaluate(svg => ({ room: svg.dataset.roomCm.split("x").map(Number), side: Number(svg.dataset.cubeSideCm), label: svg.getAttribute("aria-label"), box: svg.getBoundingClientRect().toJSON() }));
     assert(facts.label.includes("직육면체") && facts.label.includes("센티미터"));
     assert(facts.box.width <= width - 20, `Diagram must fit ${width}px viewport`);

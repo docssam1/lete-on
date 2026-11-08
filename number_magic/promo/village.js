@@ -75,7 +75,7 @@ async function mount(){
   if(controller || mountPromise) return mountPromise;
   mountPromise=(async()=>{
     try{
-      const {mountTown3D}=await import('../app/town3d/town3d.js');
+      const {mountTown3D}=await import('../app/town3d/town3d.js?v=20261106-release-audit');
       const ctl=await mountTown3D(scene,{
         lang:I?.getLanguage()||'ko',
         spots:[

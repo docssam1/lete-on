@@ -1,0 +1,96 @@
+{
+  "runtimeCommit": "dfc81ba45593bb973ef25f6db869ed2d429e8ed5",
+  "assets": [
+    {
+      "file": "app/exam.js",
+      "status": 200,
+      "sha256": "fa56272cce87be3718624278709acde93c13836cf07195ec0960fd150a40d848",
+      "identical": true
+    },
+    {
+      "file": "data/paper-tools.js",
+      "status": 200,
+      "sha256": "d219c860b62244b1bb07a21437bb54241aabe7eaf104ffe7a3be77422f975544",
+      "identical": true
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "sha256": "4e75ba3ea282e1381219f213576a7f93901a7102b979aec5449426a3edd210f2",
+      "identical": true
+    },
+    {
+      "file": "drill.html",
+      "status": 200,
+      "sha256": "4be5062984ec4094d276e234d9cbdb8d8c2f1f36532497f8ba46cde58c44b7e2",
+      "identical": true
+    },
+    {
+      "file": "placement-sheet.html",
+      "status": 200,
+      "sha256": "0b2ce11d455e0604d19d5b990ed9106048169ba2ce08be08e9e91b6a01a6b3ea",
+      "identical": true
+    },
+    {
+      "file": "ws.html",
+      "status": 200,
+      "sha256": "bdfb13dbcbe52541b31f748df0068f60699d273808aae75d1f0ec015b40b5a6e",
+      "identical": true
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "sha256": "f2e746d861018ec2786b171b8398ebbf9352704baabfa1fd9801c5b314250b48",
+      "identical": true
+    }
+  ],
+  "cases": [
+    {
+      "course": "C1",
+      "width": 1100,
+      "key": "tenframe",
+      "anchorTop": 78.0625,
+      "images": true
+    },
+    {
+      "course": "C3",
+      "width": 1100,
+      "key": "place",
+      "anchorTop": 78.375,
+      "images": true
+    },
+    {
+      "course": "C13",
+      "width": 1100,
+      "key": "fraction",
+      "anchorTop": 78.0625,
+      "images": true
+    },
+    {
+      "course": "C26",
+      "width": 1100,
+      "key": "pentomino",
+      "anchorTop": 78.375,
+      "images": true
+    },
+    {
+      "course": "C1",
+      "width": 390,
+      "key": "tenframe",
+      "anchorTop": 132.5,
+      "images": true
+    }
+  ],
+  "errors": [],
+  "externalWrites": [],
+  "pagesRun": {
+    "id": 42120442716,
+    "conclusion": "success",
+    "url": "https://github.com/docssam1/lete-on/actions/runs/42120442716"
+  },
+  "firstRuntime": {
+    "commit": "7a7adf34dc1ec9a2db467f2013b077559e2253df",
+    "pagesRun": 42119819597,
+    "conclusion": "success"
+  }
+}

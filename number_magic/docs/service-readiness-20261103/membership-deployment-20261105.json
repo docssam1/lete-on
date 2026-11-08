@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-05",
+  "function": {
+    "version": 8,
+    "status": "ACTIVE",
+    "files": [
+      {
+        "file": "index.ts",
+        "exact": true
+      },
+      {
+        "file": "handler.mjs",
+        "exact": true
+      },
+      {
+        "file": "course-limits.json",
+        "exact": true
+      }
+    ]
+  },
+  "dbMigration": "nm_delivery_curriculum3_bounds",
+  "dbCases": [
+    {
+      "kind": "above_end",
+      "total": 740,
+      "passed": 740
+    },
+    {
+      "kind": "missing_revision",
+      "total": 740,
+      "passed": 740
+    },
+    {
+      "kind": "old_revision",
+      "total": 740,
+      "passed": 740
+    },
+    {
+      "kind": "unknown_revision",
+      "total": 740,
+      "passed": 740
+    },
+    {
+      "kind": "valid_current",
+      "total": 740,
+      "passed": 740
+    },
+    {
+      "kind": "zero_session",
+      "total": 740,
+      "passed": 740
+    }
+  ],
+  "dbTotal": 4440,
+  "newSecurityAdvisories": 0
+}

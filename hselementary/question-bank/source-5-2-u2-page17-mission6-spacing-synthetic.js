@@ -9,6 +9,7 @@
   const id = "5-2-u2-e2-mission-6-spacing-synthetic";
   const key = "source52U2Page17Mission6Spacing";
   const diametersInHalves = Object.freeze([5, 7, 9]);
+  const spacingQuartersByLevel = Object.freeze({"-1":4,"0":2,"1":1});
   const gcd = (a, b) => b ? gcd(b, a % b) : a;
   function mixed(n, d) {
     const g = gcd(n, d); n /= g; d /= g;
@@ -16,20 +17,26 @@
     return rest ? `${whole ? `${whole} ` : ""}${rest}/${d}` : String(whole);
   }
   const math = text => `<span class="math-inline-expression">${text}</span>`;
-  function diagram(halfDiameter) {
-    const diameter = 112, radius = diameter / 2, step = diameter / halfDiameter;
+  function diagram(halfDiameter, spacingQuarters = 2) {
+    const diameter = 112, radius = diameter / 2, step = diameter * spacingQuarters / (2 * halfDiameter);
     const left = 26, top = 36, width = diameter + 9 * step, centerY = top + radius;
     const circles = Array.from({ length: 10 }, (_, i) => {
       const x = left + radius + i * step;
       return `<circle cx="${x.toFixed(3)}" cy="${centerY}" r="${radius}" fill="none" stroke="#222" stroke-width="1.4"/><circle cx="${x.toFixed(3)}" cy="${centerY}" r="2.1" fill="#222"/>`;
     }).join("");
-    return `<svg class="source52-u2-overlap-circles" data-circle-count="10" data-diameter-halves="${halfDiameter}" data-spacing-halves="1" viewBox="0 0 ${Math.ceil(width + 52)} 184" role="img" aria-label="같은 원 10개가 일정한 중심 간격으로 겹쳐진 직사각형" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;max-width:520px;height:auto;margin:12px auto"><rect x="${left}" y="${top}" width="${width.toFixed(3)}" height="${diameter}" fill="none" stroke="#222" stroke-width="2"/>${circles}</svg>`;
+    return `<svg class="source52-u2-overlap-circles" data-circle-count="10" data-diameter-halves="${halfDiameter}" data-spacing-halves="${spacingQuarters / 2}" data-spacing-quarters="${spacingQuarters}" viewBox="0 0 ${Math.ceil(width + 52)} 184" role="img" aria-label="같은 원 10개가 일정한 중심 간격으로 겹쳐진 직사각형" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;max-width:520px;height:auto;margin:12px auto"><rect x="${left}" y="${top}" width="${width.toFixed(3)}" height="${diameter}" fill="none" stroke="#222" stroke-width="2"/>${circles}</svg>`;
   }
-  function build(halfDiameter, level) {
-    const diameter = mixed(halfDiameter, 2), width = mixed(halfDiameter + 9, 2), answer = mixed(halfDiameter * (halfDiameter + 9), 4);
-    const prompt = `<div data-source-item-id="${id}"><p>같은 크기의 원 10개가 그림처럼 가로로 일정한 간격으로 겹쳐 있습니다. 각 원은 직사각형의 윗변과 아랫변에 닿고, 맨 왼쪽 원과 맨 오른쪽 원은 각각 직사각형의 왼쪽 변과 오른쪽 변에도 닿습니다. 원의 지름이 ${math(`${diameter}cm`)}이고 이웃한 두 원의 중심 사이 거리가 ${math("1/2cm")}일 때, 직사각형의 넓이를 구하세요.</p>${diagram(halfDiameter)}${level === -1 ? `<p>도움말: 이웃한 중심 사이 간격은 몇 군데인가요?</p>` : ""}</div>`;
-    const solution = `<div data-source-answer="${id}"><p>원 10개의 중심 사이에는 같은 간격이 9개 있습니다. 직사각형의 세로는 원의 지름인 ${math(`${diameter}cm`)}입니다.</p><p>가로는 원의 지름에 중심 간격 9개를 더한 길이이므로 ${math(`${diameter}+1/2×9=${width}cm`)}입니다.</p><p>따라서 직사각형의 넓이는 ${math(`${diameter}×${width}=${answer}cm²`)}입니다.</p></div>`;
-    return { prompt, solution, answer: `${answer}cm²`, answerModel: { diameterHalves: halfDiameter, spacingHalves: 1, circleCount: 10, widthHalves: halfDiameter + 9, areaNumerator: halfDiameter * (halfDiameter + 9), areaDenominator: 4 }, questionModel: { circleCount: 10, diameterHalves: halfDiameter, spacingHalves: 1 }, answerVisualRequired: false, answerVisualStatus: "not-required" };
+  function build(halfDiameter, level = 0) {
+    const spacingQuarters = spacingQuartersByLevel[level];
+    if (!Number.isSafeInteger(halfDiameter) || !diametersInHalves.includes(halfDiameter) || !spacingQuarters) throw new Error("검증된 지름과 난도를 선택하세요.");
+    const diameter = mixed(halfDiameter, 2), spacing = mixed(spacingQuarters, 4);
+    const widthQuarters = 2 * halfDiameter + 9 * spacingQuarters;
+    const width = mixed(widthQuarters, 4), answer = mixed(2 * halfDiameter * widthQuarters, 16);
+    const prompt = `<div data-source-item-id="${id}"><p>같은 크기의 원 10개가 그림처럼 가로로 일정한 간격으로 겹쳐 있습니다. 각 원은 직사각형의 윗변과 아랫변에 닿고, 맨 왼쪽 원과 맨 오른쪽 원은 각각 직사각형의 왼쪽 변과 오른쪽 변에도 닿습니다. 원의 지름이 ${math(`${diameter}cm`)}이고 이웃한 두 원의 중심 사이 거리가 ${math(`${spacing}cm`)}일 때, 직사각형의 넓이를 구하세요.</p>${diagram(halfDiameter, spacingQuarters)}</div>`;
+    const solution = `<div data-source-answer="${id}"><p>원 10개의 중심 사이에는 같은 간격이 9개 있습니다. 직사각형의 세로는 원의 지름인 ${math(`${diameter}cm`)}입니다.</p><p>가로는 원의 지름에 중심 간격 9개를 더한 길이이므로 ${math(`${diameter}+${spacing}×9=${width}cm`)}입니다.</p><p>따라서 직사각형의 넓이는 ${math(`${diameter}×${width}=${answer}cm²`)}입니다.</p></div>`;
+    const areaNumerator = spacingQuarters % 2 === 0 ? halfDiameter * (halfDiameter + 9 * spacingQuarters / 2) : 2 * halfDiameter * widthQuarters;
+    const areaDenominator = spacingQuarters % 2 === 0 ? 4 : 16;
+    return { prompt, solution, answer: `${answer}cm²`, answerModel: { diameterHalves: halfDiameter, spacingHalves: spacingQuarters / 2, spacingQuarters, circleCount: 10, widthHalves: widthQuarters / 2, areaNumerator, areaDenominator }, questionModel: { circleCount: 10, diameterHalves: halfDiameter, spacingHalves: spacingQuarters / 2, spacingQuarters }, answerVisualRequired: false, answerVisualStatus: "not-required" };
   }
   function install(target) {
     const api = target?.HSE_GENERATORS;
@@ -49,5 +56,5 @@
     Object.defineProperty(api, "__source52U2Mission6SpacingInstalled", { value: true });
     return true;
   }
-  return Object.freeze({ id, key, diametersInHalves, mixed, diagram, build, install });
+  return Object.freeze({ id, key, diametersInHalves, spacingQuartersByLevel, mixed, diagram, build, install });
 });

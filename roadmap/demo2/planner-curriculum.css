@@ -18,3 +18,45 @@
 @media(max-width:420px){.mock-evidence .curriculum-fields{grid-template-columns:minmax(0,1fr)}.mock-evidence fieldset{padding:10px}.mock-evidence .curriculum-form{gap:12px}}
 .mock-evidence .mock-notice{padding:12px;border-left:3px solid #376b59;background:#e5f2ea;font-weight:650}
 #pathwayCoach .learning-evidence-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}#pathwayCoach .learning-evidence-tabs button{flex:1 1 120px;min-height:44px;min-width:0;padding:10px 12px;border:1px solid #a8c7bb;border-radius:8px;background:#f5faf7;color:#24483b;box-shadow:none;font:inherit;cursor:pointer}#pathwayCoach .learning-evidence-tabs button strong{font-size:14px;line-height:1.5;color:inherit}#pathwayCoach .learning-evidence-tabs button[aria-pressed=true]{background:#d7eee2;border:2px solid #5b8879}#pathwayCoach .learning-evidence-tabs button:focus-visible{outline:3px solid #aacaed;outline-offset:3px}
+.mock-check-controls fieldset{margin:14px 0}.mock-check-schedule ul{list-style:none;padding:0}.mock-check-schedule li{margin:12px 0;border-top:1px solid #bed7ca;padding-top:10px}.mock-check-schedule button{min-height:44px;max-width:100%;font:inherit;color:#24483b;background:white;border:1px solid #98bca9;border-radius:7px;padding:10px 12px;margin:4px 0;cursor:pointer;text-align:left;overflow-wrap:anywhere}.mock-check-schedule button strong,.mock-check-schedule button span,.mock-check-schedule button small{display:block}.mock-check-schedule button span,.mock-check-schedule button small{margin-top:6px}.mock-check-schedule button:focus-visible{outline:3px solid #4869a1;outline-offset:2px}
+.mock-feedback-controls summary{cursor:pointer;font-weight:650}.mock-feedback a{display:inline-flex;align-items:center;min-height:44px;color:#205d86;text-decoration:underline;margin:4px 8px}.mock-feedback .mock-record>button{min-height:44px;font:inherit;background:#fff;color:#24483b;border:1px solid #98bca9;border-radius:7px;padding:10px 12px;margin:4px 8px 4px 0;max-width:100%;overflow-wrap:anywhere;cursor:pointer}.mock-feedback [hidden]{display:none!important}.mock-feedback :is(button,a):focus-visible{outline:3px solid #4869a1;outline-offset:3px}[data-mock-units] fieldset{margin:14px 0}
+.mock-feedback-card{padding:16px 0;border-top:1px solid #bed7ca}.mock-feedback-card>button{min-height:44px;font:inherit;background:#fff;color:#24483b;border:1px solid #98bca9;border-radius:7px;padding:10px 12px;margin:4px 8px 4px 0;max-width:100%;overflow-wrap:anywhere;cursor:pointer}
+.mock-book-summary{margin:14px 0;padding:14px;border:1px solid #bed7ca;border-radius:9px;background:#fff}.mock-book-summary h5{font-size:1rem;margin:0 0 10px}.mock-book-summary p{overflow-wrap:anywhere}.mock-book-summary button,.mock-book-editor button{min-height:44px;font:inherit;border:1px solid #98bca9;border-radius:7px;padding:10px 12px;margin:4px 8px 4px 0;color:#24483b;background:#fff;max-width:100%;overflow-wrap:anywhere;cursor:pointer}.mock-book-editor{max-width:100%;overflow-wrap:anywhere}.mock-book-editor form{padding:14px;border:1px solid #bed7ca;border-radius:9px;background:#f4f9f6}.mock-book-editor form :is(input,select){min-width:0;width:100%;max-width:100%;box-sizing:border-box}.mock-book-editor form input[type=checkbox]{width:auto;min-width:20px;min-height:20px}.mock-book-editor form [hidden]{display:none!important}.mock-book-editor article{border-top:1px solid #bed7ca;padding:10px 0}.mock-book-editor :is(button,a,input,select):focus-visible{outline:3px solid #4869a1;outline-offset:2px}.mock-book-editor a{display:inline-flex;align-items:center;min-height:44px;color:#205d86}.repair-topic-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.repair-topic-tabs button[aria-pressed=true]{background:#d8ede3}.repair-recommendations{border-left:3px solid #96b8a7;padding-left:12px}.mock-book-editor .curriculum-fields{grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr))}@media print{.mock-book-summary button{display:none}}
+
+.high-study-pair{margin:0 0 20px;padding:12px;background:#f2f8f5;border-radius:10px}.high-study-pair h4{margin:0 0 9px;font-size:15px}.high-study-pair>div{display:flex;align-items:center;gap:8px}.high-study-pair button{flex:1;min-width:0;text-align:left;background:#fff}.high-study-pair small,.high-study-pair strong{display:block;overflow-wrap:anywhere}.high-study-pair small{font-size:12px;margin-bottom:4px}.high-study-pair strong{font-size:14px}@media(max-width:450px){.high-study-pair>div{flex-wrap:wrap}.high-study-pair button{flex-basis:100%}.high-study-pair>div>span{display:none}}
+
+/* Compact official paper actions; answers stay closed until requested. */
+.mock-paper-links{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin:10px 0;max-width:100%;min-width:0}
+.mock-paper-links .mock-paper-caption{flex-basis:100%;margin:0;font-size:13px;line-height:1.6;color:#446255;overflow-wrap:anywhere}
+.mock-paper-links a,.mock-paper-links summary{box-sizing:border-box;min-height:44px;max-width:100%;padding:10px 12px;border:1px solid #98bca9;border-radius:7px;background:#fff;color:#24483b;font:inherit;font-size:14px;line-height:1.5;overflow-wrap:anywhere;cursor:pointer}
+.mock-paper-links a{display:inline-flex;align-items:center;gap:4px;margin:0;text-decoration:underline;text-underline-offset:3px}
+.mock-paper-links>a[data-mock-paper-file=problem]{background:#e5f2ea;font-weight:650}
+.mock-paper-links .mock-paper-answers{margin:0;padding:0;border:0;min-width:0;max-width:100%}
+.mock-paper-links .mock-paper-answers>div{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 0;max-width:100%}
+.mock-paper-links .mock-paper-answers[open]{flex-basis:100%}
+.mock-paper-links small{display:block;flex-basis:100%;font-size:12px;color:#536b60}
+.mock-paper-links :is(a,summary):focus-visible{outline:3px solid #4869a1;outline-offset:3px}
+
+/* A year at a time: no fixed overlays or long all-years wall of links. */
+.mock-library{min-width:0;overflow-wrap:anywhere}
+.mock-library-heading .mock-library-eyebrow{font-size:12px;letter-spacing:.04em;color:#436454;margin:0 0 8px;font-weight:650}
+.mock-library-heading h3{margin-top:0}
+.mock-library-filters{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0 12px}
+.mock-library-filters label{flex:1 1 135px;min-width:0;font-size:13px;font-weight:650;color:#24483b}
+.mock-library-filters select{display:block;width:100%;box-sizing:border-box;min-height:44px;margin-top:6px;padding:10px;border:1px solid #98bca9;border-radius:8px;background:white;color:#24483b;font:inherit;font-size:15px}
+.mock-library .mock-library-count{font-size:15px;font-weight:700;margin:14px 0 8px}
+.mock-library .mock-library-guidance{font-size:13px;line-height:1.7;color:#496457;padding:12px;background:#eaf3ed;border-radius:8px}
+.mock-library-grade{margin:24px 0}
+.mock-library-grade h4{font-size:19px;margin:0 0 12px}
+.mock-library-grade h4>span{font-size:12px;font-weight:500;color:#496457;margin-left:8px}
+.mock-library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.mock-library-card{padding:16px;border:1px solid #bdd2c5;border-radius:12px;background:#fff;min-width:0}
+.mock-library-card>header{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.mock-library-card h5{font-size:19px;margin:0 auto 0 0;color:#24483b}
+.mock-library-card h5>span{font-size:14px}
+.mock-library-badge{padding:4px 7px;border-radius:5px;background:#e5f2ea;color:#285743;font-size:12px}
+.mock-library-card .mock-library-date,.mock-library-card .mock-library-note{font-size:12px;line-height:1.6;color:#526a5e;margin:7px 0}
+.mock-library-card>button{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:44px;width:100%;padding:10px 0 0;border:0;border-top:1px solid #e0e9e3;background:transparent;color:#275e47;font:inherit;font-size:14px;text-align:left;cursor:pointer;box-shadow:none}
+.mock-library-about{margin-top:20px;font-size:13px;line-height:1.7}
+.mock-library-about summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:650}
+.mock-library :is(select,button,summary):focus-visible{outline:3px solid #4869a1;outline-offset:3px}

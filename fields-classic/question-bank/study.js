@@ -1,15 +1,16 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261103d";
-import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261103d";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261105b";
+import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261105b";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
-import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261104a";
+import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
+import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
 //  · 골든벨 화면은 덱 안의 창 하나(golden-bell.html?embed=1)를 계속 쓰고, 장이 바뀌면 postMessage로 그 장의 학습만 연다.
 //    「다음」은 그 창 안의 장(개념 덩어리)을 먼저 넘기고, 끝이면 덱의 다음 장으로 간다.
-//  · 게임을 마치거나 골든벨 문항을 다 풀면 독쌤이 칭찬하고 저절로 다음 장으로 간다(⏸ 단추로 멈춘다).
+//  · 게임을 마치거나 골든벨 문항을 다 풀면 독쌤이 칭찬하고 저절로 다음 장으로 간다(멈춤 단추로 멈춘다).
 //  · 본책 번호를 누르면 같은 유형의 유사문제가 이 장 위에 뜬다(문제은행 학생 화면, embed). 닫으면 번호판으로 돌아온다.
 //  · 독쌤 말은 글이 원본이고, 음성은 기기 음성(ko-KR)으로 읽는다. 소리 없이 입을 움직이는 그림은 쓰지 않는다(표정 3장만 바꿔 끼움).
 //  · 화면은 그림 액자 틀이다(원장: 「밝아야 돼」 → 「배너 말고 틀」). 섬 그림이 가장자리를 두르고 가운데 넓은 칸에서 공부한다.
@@ -210,9 +211,10 @@ function speak(text, voiceId = null) {
   });
 }
 function paintGuideButtons() {
-  $("voiceBtn").textContent = pref.sound ? "🔊" : "🔇";
+  setIcon($("voiceBtn"), pref.sound ? "soundOn" : "soundOff", "16px");
   $("voiceBtn").setAttribute("aria-pressed", String(pref.sound));
-  $("pauseBtn").textContent = pref.paused ? "▶" : "⏸";
+  setIcon($("pauseBtn"), pref.paused ? "play" : "pause", "16px");
+  $("pauseBtn").setAttribute("aria-label", pref.paused ? "저절로 넘어가기 켜기" : "저절로 넘어가기 멈추기");
   $("pauseBtn").title = pref.paused ? "다음 장으로 저절로 넘어가기 켜기" : "저절로 넘어가기 멈추기";
   $("pauseBtn").setAttribute("aria-pressed", String(pref.paused));
 }

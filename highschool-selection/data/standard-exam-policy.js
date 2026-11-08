@@ -44,9 +44,12 @@
     }),
     ED: Object.freeze({
       middle1: "ed-middle1-entry",
-      "high-advance": "ed-high-advance-entry"
+      "high-advance": "ed-high-advance-entry",
+      "common2-skill": null,
+      "algebra-basic": null
     }),
     DG: Object.freeze({
+      middle1: null,
       "level-entry": "dg-entry-common",
       "pre-high1": null
     }),
@@ -78,7 +81,7 @@
     }),
     WM: Object.freeze({
       "middle21-basic": Object.freeze({
-        targetQuestionCount: 40,
+        targetQuestionCount: 50,
         responseMix: UNKNOWN_RESPONSE_MIX,
         sourceDiversity: Object.freeze({
           minimumSourceFamilies: 8,
@@ -94,9 +97,12 @@
     }),
     ED: Object.freeze({
       middle1: Object.freeze({ targetQuestionCount: 30, responseMix: UNKNOWN_RESPONSE_MIX }),
-      "high-advance": Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, 0, 30, "observed", "과거 공개 운영 사례이며 동일 회차 확인 필요") })
+      "high-advance": Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, 0, 30, "observed", "과거 공개 운영 사례이며 동일 회차 확인 필요") }),
+      "common2-skill": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "algebra-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX })
     }),
     DG: Object.freeze({
+      middle1: Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, null, null, "observed", "보유 1·2회는 주관식·풀이 서술형이며 회차별 비율은 별도 검수") }),
       "level-entry": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
       "pre-high1": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX })
     }),

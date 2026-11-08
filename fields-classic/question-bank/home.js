@@ -1,5 +1,6 @@
 // 첫 화면(home.html): 카드 주소에 학생 이름(?student=) 이어 붙이기 · 숏릴 자막 · 멈춤 단추.
 import { createTimeline, stagger, splitText } from "./vendor/animejs-4.5.0/anime.esm.min.js";
+import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 인트로(원장 2026-11-04 「인트로에 필요 없어?」 — 영상 1 「로고·인트로는 Anime.js」, 스킬 web-ui-library-picks):
 // 로고 동그라미가 굴러 들어오고 → WELCOME TO → 뒤의 큰 글자 GIFTED MATH BANK가 한 글자씩 아래에서 올라온다. 카드 셋은 원래 CSS 등장(hm-in) 그대로.
@@ -63,7 +64,7 @@ video.addEventListener("seeked", syncCaption);
 const play = document.getElementById("reelPlay");
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let userPaused = still;
-const setState = (playing) => { play.setAttribute("aria-pressed", String(playing)); play.setAttribute("aria-label", playing ? "영상 멈추기" : "영상 재생하기"); play.textContent = playing ? "❚❚" : "▶"; };
+const setState = (playing) => { play.setAttribute("aria-pressed", String(playing)); play.setAttribute("aria-label", playing ? "영상 멈추기" : "영상 재생하기"); setIcon(play, playing ? "pause" : "play", "18px"); };
 if (still) { video.removeAttribute("autoplay"); video.pause(); }
 setState(!video.paused);
 video.addEventListener("play", () => setState(true));
@@ -72,7 +73,7 @@ video.addEventListener("pause", () => setState(false));
 const sound = document.getElementById("reelSound");
 sound.addEventListener("click", () => {
   video.muted = !video.muted;
-  sound.setAttribute("aria-pressed", String(!video.muted)); sound.setAttribute("aria-label", video.muted ? "소리 켜기" : "소리 끄기"); sound.textContent = video.muted ? "🔇" : "🔊";
+  sound.setAttribute("aria-pressed", String(!video.muted)); sound.setAttribute("aria-label", video.muted ? "소리 켜기" : "소리 끄기"); setIcon(sound, video.muted ? "soundOff" : "soundOn", "18px");
   if (!video.muted && video.paused) { userPaused = false; video.play().catch(() => {}); }
 });
 play.addEventListener("click", () => { if (video.paused) { userPaused = false; video.play().catch(() => {}); } else { userPaused = true; video.pause(); } });

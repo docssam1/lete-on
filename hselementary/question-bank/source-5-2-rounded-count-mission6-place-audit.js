@@ -4,7 +4,7 @@ function candidates(target,unit){const r=[];for(let n=Math.max(1,target-1000);n<
 assert.deepEqual(candidates(7200,1),[7200]);assert.equal(candidates(7200,10).length,10);assert.equal(candidates(7200,100).length,100);assert.equal(candidates(7200,1000).length,0);
 for(let v=0;v<3;v++)for(const difficulty of [-1,0,1]){
  const q=api.getQuestion(v,difficulty),t=q.questionModel.target;
- assert.match(q.prompt,/십의 자리 이상/);assert.match(q.prompt,/\(ㄱ\).*\(ㄴ\)/);
+ assert.match(q.prompt,/반올림하여 십의 자리 이상의 한 자리까지 나타내었더니/);assert.match(q.prompt,/\(ㄱ\).*\(ㄴ\)/);
  assert.equal(candidates(t,1).length,1);assert.equal(candidates(t,10).length,10);assert.equal(candidates(t,100).length,100);assert.equal(candidates(t,1000).length,0);
  assert.equal(q.answer,'ㄱ=10개, ㄴ=100개');
 }

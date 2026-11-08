@@ -1,9 +1,10 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261101b";
-import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261103d";
+import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261105b";
 import { readRecord, weekRate, loggedIn, checkSession } from "./study-progress.js?v=20261029q";
 import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261103d";
-import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261103d";
+import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261105b";
+import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
 // 한 번에 한 장만 보이고, 위의 길(1권 › 01 도형 움직이기)이나 「‹」로 앞 장으로 돌아간다. 브라우저 뒤로 가기도 앞 장으로.
@@ -325,6 +326,12 @@ wireAccess(document.body);
 paintBanner();
 showStep();
 syncAddress();
+// 첫 화면 움직임(study-motion.js · 스킬 web-ui-library-picks, 원장 2026-11-04 「스스로 공부 첫 화면에도 넣어줘」):
+// 처음 열 때 한 번 — 제목이 글자째 올라오고 교재 목록이 하나씩 들어온다. 단추는 누르면 쏙(Motion)
+if (view.step === 0) playIntro($("todayHeading"), [...document.querySelectorAll("#bookList > button")]);
+const PRESS = ".st-book-list button, .st-units button, .st-units a, .st-week-start, .st-door-switch button, .st-mode button, .st-back, .st-crumbs button";
+bindPress(PRESS);
+addEventListener("load", () => bindPress(PRESS));
 if (loggedIn()) checkSession().then(() => { paintBanner(); showStep(); });
 
 loadGoldenBell().then((data) => {

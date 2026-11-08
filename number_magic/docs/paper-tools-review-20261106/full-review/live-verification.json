@@ -1,0 +1,289 @@
+{
+  "runtimeCommit": "34a8643a11e6bad9605ce2d10cf5b227baccc3a9",
+  "assets": [
+    {
+      "file": "app/exam.js",
+      "status": 200,
+      "identical": true,
+      "sha256": "c65b1619055fdaa150e3b19c443a5ff4e359b40dff9180267a9e9993ad8b716b"
+    },
+    {
+      "file": "data/paper-tools.js",
+      "status": 200,
+      "identical": true,
+      "sha256": "554e5d0e518bb0dd5e107d60d2c7345aa1bbdb45b87a9eeec349d050f68fe1ee"
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "identical": true,
+      "sha256": "245cc21f299c876613785b6068da2020c108e047c7d96d5c59d6595d8be6946b"
+    },
+    {
+      "file": "drill.html",
+      "status": 200,
+      "identical": true,
+      "sha256": "f837751649f3ce84e5c74d5e9b1a577bf13e9f9d8da8aafb88fe09f5550e9b24"
+    },
+    {
+      "file": "placement-sheet.html",
+      "status": 200,
+      "identical": true,
+      "sha256": "80b7311e2e2269ec651afb4e2dcaf51adabe13a16bfabb71620e3c4421e0cb89"
+    },
+    {
+      "file": "ws.html",
+      "status": 200,
+      "identical": true,
+      "sha256": "0da5cdf14748e67e8104ec0969001eb0c7ba9be6cabbb87f66f55fd980b8f5c4"
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "identical": true,
+      "sha256": "c42e6606d5296839d92aaf28f574e77482003f26a333e7dc2f52a7689520f0aa"
+    },
+    {
+      "file": "paper-tools.html",
+      "status": 200,
+      "identical": true,
+      "sha256": "63d38e6b0a6bcf077fbc915224155c2a11791f256e5f96a96c8b24b8f22f6ca7"
+    },
+    {
+      "file": "docs/paper-tools-review-20261106/full-review/all-paper-tools.pdf",
+      "status": 200,
+      "identical": true,
+      "sha256": "72eafb80540f4ef98bd741542e355eb59633ea643dddeacb21fec6c58876e316"
+    }
+  ],
+  "cases": [
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "tenframe",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "place",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "numberline",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "array",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "balance",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "fraction",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "decimal",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "pentomino",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "intline",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "algtiles",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "coord",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 1440,
+      "key": "unitcircle",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "language",
+      "width": 1440,
+      "key": "unitcircle",
+      "lang": "en"
+    },
+    {
+      "kind": "language",
+      "width": 1440,
+      "key": "unitcircle",
+      "lang": "zh"
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "tenframe",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "place",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "numberline",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "array",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "balance",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "fraction",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "decimal",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "pentomino",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "intline",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "algtiles",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "coord",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "gallery",
+      "width": 375,
+      "key": "unitcircle",
+      "images": true,
+      "example": true
+    },
+    {
+      "kind": "language",
+      "width": 375,
+      "key": "unitcircle",
+      "lang": "en"
+    },
+    {
+      "kind": "language",
+      "width": 375,
+      "key": "unitcircle",
+      "lang": "zh"
+    },
+    {
+      "kind": "worksheet",
+      "course": "C1",
+      "key": "tenframe"
+    },
+    {
+      "kind": "worksheet",
+      "course": "C4",
+      "key": "array"
+    },
+    {
+      "kind": "worksheet",
+      "course": "C5",
+      "key": "place"
+    },
+    {
+      "kind": "worksheet",
+      "course": "C16",
+      "key": "decimal"
+    },
+    {
+      "kind": "worksheet",
+      "course": "C17",
+      "key": "array"
+    },
+    {
+      "kind": "worksheet",
+      "course": "C26",
+      "key": "pentomino"
+    }
+  ],
+  "errors": [],
+  "externalWrites": [],
+  "deployedCommit": "d3d7f32743b7f867715f92e5b3c9417119150e9e",
+  "pagesRun": 42138926046,
+  "checkedAt": "2026-11-06T00:48:30Z",
+  "deployment": "verified"
+}

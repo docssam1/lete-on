@@ -12,7 +12,13 @@
   const pools = Object.freeze([
     { length: 36, width: 40, cabbageHundredths: 24, sweetPotatoHundredths: 30 },
     { length: 32, width: 45, cabbageHundredths: 20, sweetPotatoHundredths: 30 },
-    { length: 28, width: 50, cabbageHundredths: 30, sweetPotatoHundredths: 40 }
+    { length: 28, width: 50, cabbageHundredths: 30, sweetPotatoHundredths: 40 },
+    ...Array.from({ length: 40 }, (_, i) => 22 + i)
+      .filter(length => ![28, 32, 36].includes(length))
+      .map((length, i) => {
+        const rates = [[15, 25], [20, 35], [25, 40], [30, 30]][i % 4];
+        return { length, width: 26 + (i * 7) % 19, cabbageHundredths: rates[0], sweetPotatoHundredths: rates[1] };
+      })
   ].map(Object.freeze));
   const formatArea = tenThousandths => {
     const whole = Math.trunc(tenThousandths / 10000);
@@ -47,7 +53,7 @@
   }
 
   function build(poolIndex = 0, difficultyOffset = 0) {
-    if (!Number.isSafeInteger(poolIndex) || poolIndex < 0 || poolIndex >= pools.length) throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if (!Number.isSafeInteger(poolIndex) || poolIndex < 0 || poolIndex >= pools.length) throw new RangeError("확인된 수치 묶음 범위를 벗어났습니다.");
     if (![-1, 0, 1].includes(difficultyOffset)) throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const pool = pools[poolIndex];
     const result = calculate(pool);

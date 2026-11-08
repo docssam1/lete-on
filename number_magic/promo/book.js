@@ -223,7 +223,7 @@ function renderRoadmap(){
  const pin=$('.roadmap-traveller');pin.hidden=allCourses;
  requestAnimationFrame(()=>{const station=$$('.roadmap-stop .station')[stageIndex],r=station.getBoundingClientRect(),rail=$('#roadmapRows').getBoundingClientRect();pin.style.transform='translate('+(r.left-rail.left+r.width-5)+'px,'+(r.top-rail.top-6)+'px)';});
  clearInterval(exampleTimer);$('#stageExample').hidden=allCourses;
- const steps=selected.example.split('→').map(s=>s.trim());let exampleStep=0;
+ const steps=localized(selected.exampleI18n||selected.example).split('→').map(s=>s.trim());let exampleStep=0;
  function example(){const el=$('#stageExpression');el.textContent=steps[exampleStep];el.classList.remove('is-revealing');requestAnimationFrame(()=>el.classList.add('is-revealing'));exampleStep=(exampleStep+1)%steps.length;}
  example();$('#stageExample').classList.toggle('is-multi',steps.length>1&&!reduced.matches);
  if(!allCourses&&!reduced.matches&&steps.length>1)exampleTimer=setInterval(example,2400);

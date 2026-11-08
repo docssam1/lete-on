@@ -41,6 +41,7 @@ window.NM_STAGES = [
       en:'The goal is to befriend numbers, so nothing is timed. The child moves beads onto two plates and sees 5 split into 2 and 3, then come back together. This splitting becomes complements next, and the distributive law later.',
       zh:'目标是与数字亲近，所以不计时。孩子把珠子分到两个盘子里，亲眼看到5分成2和3，再合回来。这里的“分”就是下一阶段的补数，也是日后的分配律。'},
     example:'구슬 5개 → 2개와 3개',
+    exampleI18n:{ko:'구슬 5개 → 2개와 3개',en:'5 beads → 2 beads and 3 beads',zh:'5颗珠子 → 2颗和3颗'},
     symbols:[{sym:'5', tr:{ko:'숫자와 탤리 막대 — 수는 그릴 수 있다',en:'Numerals and tally marks — a number can be drawn',zh:'数字与计数符号——数是可以画出来的'}}],
     symbolNote:{ko:'1~18회는 그림과 말로 배우고, 19회 다리 학습에서 +·−·= 기호를 처음 만납니다. 과정 1에서 연산을 이어 갑니다.',
       en:'Sessions 1–18 use pictures and words. Session 19 introduces +, − and = as a bridge to Course 1.',

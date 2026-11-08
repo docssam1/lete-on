@@ -23,7 +23,9 @@ const MIDDLE_PLAN_VERSION = "20261023-middle25";
 const MIDDLE_PLAN_COURSE = /^C(29|3[0-7])$/;
 const CALCULUS_PLAN_VERSION = "20261024-calculus3m";
 const CALCULUS_PLAN_COURSE = /^C7[0-3]$/;
-const DELIVERY_PLAN_VERSION = "20261024-personal1";
+const DELIVERY_PLAN_VERSION = "20261026-personal2";
+const LEGACY_DELIVERY_PLAN_VERSION = "20261024-personal1";
+const CURRICULUM_REVISION = "20261104-curriculum3";
 const MIDDLE_EXTENSION_VERSION = "20261024-middle-extension1";
 // Canonical source sessions, not the compact bundle count. Keep in sync with
 // course-limits.json and NM_DELIVERY_PLAN.SOURCE_LIMITS (verified offline).
@@ -62,6 +64,10 @@ function personalPlan(v) {
       || !SPEEDS.includes(v.speed) || !SPEEDS.includes(v.amount) || !["w1", "w2"].includes(v.cadence)
       || !["p0", "p1", "p2", "p3", "p4"].includes(v.pace)) return null;
   const p = pick(v, ["courseKey", "sessionIndex", "startDate", "speed", "amount", "cadence", "pace"]);
+  if (Object.hasOwn(v, "curriculumRevision")) {
+    if (v.curriculumRevision !== CURRICULUM_REVISION) return null;
+    p.curriculumRevision = v.curriculumRevision;
+  }
   if (Object.hasOwn(v, "middleExtensions")) {
     if (!object(v.middleExtensions) || Object.entries(v.middleExtensions).some(([g, version]) => !["1", "2", "3"].includes(g) || version !== MIDDLE_EXTENSION_VERSION)) return null;
     p.middleExtensions = { ...v.middleExtensions };
@@ -243,19 +249,24 @@ export function createHandler(deps) {
         if (r.fail || !r.data.config) return fail("not_found", 404);
         if (Object.hasOwn(r.data.config, "deliveryPlanVersion") || Object.hasOwn(r.data.config, "learningPlan")) {
           const raw = r.data.config, plan = personalPlan(raw.learningPlan);
-          if (raw.deliveryPlanVersion !== DELIVERY_PLAN_VERSION || !plan || !isoWeek(raw.week) || raw.k !== 1
+          if (![DELIVERY_PLAN_VERSION, LEGACY_DELIVERY_PLAN_VERSION].includes(raw.deliveryPlanVersion) || !plan
+              || raw.deliveryPlanVersion === LEGACY_DELIVERY_PLAN_VERSION && Object.hasOwn(plan, "curriculumRevision") || !isoWeek(raw.week) || raw.k !== 1
               || raw.courseKey !== plan.courseKey || raw.sessionIndex !== plan.sessionIndex || raw.amount !== plan.amount
               || raw.cadence !== plan.cadence || Object.hasOwn(raw, "highPlanVersion")) return fail("not_found", 404);
           return out({ config: { ...pick(raw, ["courseKey", "week", "k", "amount", "cadence", "sessionIndex"]),
-            deliveryPlanVersion: DELIVERY_PLAN_VERSION, learningPlan: plan } });
+            deliveryPlanVersion: raw.deliveryPlanVersion, learningPlan: plan } });
         }
         const config = pick(r.data.config, ["courseKey", "week", "k", "amount", "cadence", "sessionIndex"]);
         // A stored snapshot opts in once; old links keep their original single-session seed.
         const planVersion = HIGH_PLAN_COURSE.test(config.courseKey) ? HIGH_PLAN_VERSION
           : MIDDLE_PLAN_COURSE.test(config.courseKey) ? MIDDLE_PLAN_VERSION
           : CALCULUS_PLAN_COURSE.test(config.courseKey) ? CALCULUS_PLAN_VERSION : null;
-        if (planVersion && r.data.config.highPlanVersion === planVersion) {
-          config.highPlanVersion = planVersion;
+        const snapshotVersion = r.data.config.highPlanVersion;
+        const currentVersion = HIGH_PLAN_COURSE.test(config.courseKey) ? "20261026-high3m-v2"
+          : MIDDLE_PLAN_COURSE.test(config.courseKey) ? "20261026-middle25-v2"
+          : CALCULUS_PLAN_COURSE.test(config.courseKey) ? "20261026-calculus3m-v2" : null;
+        if (planVersion && [planVersion, currentVersion].includes(snapshotVersion)) {
+          config.highPlanVersion = snapshotVersion;
           if (startDate(r.data.config.highStartDate) !== INVALID) config.highStartDate = r.data.config.highStartDate;
           if (SPEEDS.includes(r.data.config.highSpeed)) config.highSpeed = r.data.config.highSpeed;
         }

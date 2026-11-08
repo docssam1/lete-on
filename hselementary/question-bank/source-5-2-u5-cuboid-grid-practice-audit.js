@@ -2,9 +2,9 @@
 const assert = require("node:assert/strict");
 const practice = require("./source-5-2-u5-cuboid-grid-practice.js");
 const type = {id:practice.id,generatorKey:practice.key,sourceVerified:true,reviewLocked:false};
-const expected = [180,135,270,450];
+const expected = [180,135,270,450,54,90,360,600,675];
 const seen = new Set();
-for (let i=0;i<4;i++) {
+for (let i=0;i<expected.length;i++) {
   const q=practice.generate(type,0,0,0,i), [w,h,d]=q.answerModel.dimensions;
   let count=0;
   for(let x0=0;x0<w;x0++) for(let x1=x0+1;x1<=w;x1++)
@@ -23,4 +23,4 @@ for (let i=0;i<4;i++) {
 }
 assert.equal(practice.generate({...type,reviewLocked:true},0,0,0,0),null);
 assert.equal(practice.generate({...type,sourceVerified:false},0,0,0,0),null);
-console.log("PASS: four distinct grid diagrams and independently enumerated subcuboids; original remains separate");
+console.log("PASS: nine distinct grid diagrams and independently enumerated subcuboids; original remains separate");

@@ -6,8 +6,8 @@ const thinking=['킨더팩토','키즈팩토','초등팩토','PRE 1031','1031 �
 const calc=[['소마셈 K','수 가르기·모으기'],['기적의 계산법 2권','한 자리 덧셈·뺄셈'],['기적의 계산법 3권','받아올림·받아내림'],['기적의 계산법 4권','구구단'],['기적의 계산법 5권','곱셈·나눗셈'],['기적의 계산법 6권','복합 계산']];
 const schoolBooks=['디딤돌 기본+응용','디딤돌 응용','원리해설','개념원리','개념응용 · 최상위','개념응용 · 최상위라이트'];
 const highSubjects=['공통수학1','공통수학2','대수','미적분Ⅰ','확률과 통계','미적분Ⅱ','기하'];
-const highBook=v=>['개념원리 고등','수학의 정석','쎈 고등','학교 지정 교재'].includes(v);
-const bookList=(course,axis)=>course==='foreign'?['학교 지정 교재']:course==='high'?(axis==='deep'?['쎈 고등','수학의 정석','학교 지정 교재']:['개념원리 고등','수학의 정석','학교 지정 교재']):(axis==='deep'?deepBooks:schoolBooks).filter(v=>middleBook(v)===(course==='mid'));
+const highBook=v=>['기본정석','실력정석','개념원리 고등','수학의 정석','쎈 고등','RPM 고등','고쟁이','숨마쿰라우데 고등','학교 지정 교재'].includes(v);
+const bookList=(course,axis)=>course==='foreign'?['학교 지정 교재']:course==='high'?(axis==='deep'?['실력정석','고쟁이','숨마쿰라우데 고등','학교 지정 교재','쎈 고등','RPM 고등','수학의 정석','기본정석']:['기본정석','개념원리 고등','쎈 고등','RPM 고등','수학의 정석','학교 지정 교재']):(axis==='deep'?deepBooks:schoolBooks).filter(v=>middleBook(v)===(course==='mid'));
 const deepBooks=['최상위 S','최상위 수학','개념응용 · 최상위','A급','RPM'];
 const special=v=>['none','unknown'].includes(v);
 const middleBook=v=>['원리해설','개념원리','개념응용 · 최상위라이트','A급','RPM'].includes(v);
@@ -54,7 +54,7 @@ function order(a,fields){a=effective(a);
 // The broader book guide is a reference list, not a replacement for those rules.
 function standardBook(band,course,axis){
  if(course==='foreign')return '학교 지정 교재 · 현재 과목·판본 확인';
- if(course==='high')return axis==='school'?'개념원리 고등 · 수학의 정석':'쎈 고등 · 학교 지정 교재';
+ if(course==='high')return axis==='school'?'기본정석(개념) + 쎈(유형) 병행':'실력정석 · 고쟁이 등에서 현재 풀이에 맞춰 선택';
  if(course==='mid')return axis==='school'?P.BAND[band].midBook:band==='C'?'RPM · 응용 반복':P.BAND[band].deep;
  return band==='D'?'개념응용 · 최상위':axis==='school'?'디딤돌 기본+응용 · 디딤돌 응용':'최상위 S';
 }
@@ -66,12 +66,12 @@ function questions(a,fields){a=effective(a);const curriculum=global.PlannerColle
  thinkingStatus:['이 사고력 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  preDone:['초등팩토는 끝냈나요?','초등팩토를 마쳤는지 함께 확인할게요.',[['1','네'],['0','아니요']]],
  schoolCourse:[young?'교과 수학은 어느 과정을 공부하나요?':'교과는 어느 과정을 공부하나요?',group==='preschool'?'초등·중등 교과서에서 배우는 수학이에요.':young?'학교에서 배우는 수학을 말해요. 지금 공부하는 과정을 골라주세요.':'지금 공부하는 초등·중등·고등 과정을 골라주세요.',courses],
- schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v])],
+ schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':v])],
  school:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',stageOptions(false)],
  schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?','과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,v])],
- schoolStatus:['이 교과 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
+ schoolStatus:['이 교과 교재는 끝냈나요?',a.schoolCourse==='high'?'선택한 교재의 상태입니다. 개념 교재 완료와 쎈 유형 완료는 따로 기록합니다.':'지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  deepCourse:[young?'심화 수학은 어느 과정을 공부하나요?':'심화는 어느 과정을 공부하나요?',young?'배운 내용을 써서 더 깊이 생각하는 문제를 풀어요. 아직 시작 전도 고를 수 있어요.':'아직 시작하지 않았다면 아래에서 골라주세요.',courses],
- deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.deepCourse,'deep')}`,bookList(a.deepCourse,'deep').map(v=>[v,v==='RPM'?'RPM · 응용 반복':v])],
+ deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.deepCourse,'deep')}`,bookList(a.deepCourse,'deep').map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
  deepStage:['심화는 어느 과정인가요?','심화 교재의 학년과 학기를 골라 주세요.',highBook(a.deepBook)?deepMath.map(v=>[v,v]):stageOptions(middleBook(a.deepBook))],
  deepStatus:['이 심화 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  calc:[young?'수와 계산은 어디까지 공부했나요?':'연산은 어디까지 되나요?',group==='preschool'?'수를 나누고 모으기, 덧셈·뺄셈 등을 말해요.':young?'덧셈·뺄셈·곱셈·나눗셈 중 혼자 할 수 있는 것을 골라주세요.':'도움 없이 혼자 할 수 있는 단계예요.',calc.map(([v,t])=>[v,t]).concat(older?[['advanced','그 이후 단계']]:[]).concat([['high','고등 계산·식 변형 연습'],['none','아직 시작 전'],['unknown','잘 모르겠어요']])],

@@ -626,3 +626,13 @@ html .nm-unit-view[data-young-numbers=true] .nm-widget-work>.nm-lab-widget{paddi
 @media screen {
 html .nm-unit-view[data-young-numbers=true][data-learning-band][lang] .nm-unit-inner :is(.nm-g46-numcard,.nm-g46-goal b,.nm-g46-left b,.nm-g46-bignum,.nm-g46-mc b,.nm-g79-cap b,.nm-g79-roof b,.nm-g79-rc,.nm-g1012-pf-given,.nm-g1315-num,.nm-g1315-badge .nm-dialog-figure){font-family:var(--lesson-font);font-size:36px;font-weight:700}
 }
+
+@media screen and (max-width:699px) and (min-height:600px) and (max-height:900px){
+ html .nm-unit-view[data-young-numbers=true]:is([data-learning-step=practice],[data-learning-step=lab]) .nm-unit-bar{min-height:48px;padding:2px 8px}
+ html .nm-unit-view[data-young-numbers=true]:is([data-learning-step=practice],[data-learning-step=lab]) .nm-unit-title{min-width:0;font-size:18px;line-height:1.2}
+ html .nm-unit-view[data-young-numbers=true]:is([data-learning-step=practice],[data-learning-step=lab]) .nm-unit-title small{display:none}
+ html .nm-unit-view[data-young-numbers=true]:is([data-learning-step=practice],[data-learning-step=lab]) .nm-flowbtn{min-height:44px;font-size:12px;padding:4px}
+ #app:has(.nm-unit-view[data-young-numbers=true])>.nm-top{flex-wrap:nowrap;gap:6px;padding:4px 8px;min-height:52px}
+ #app:has(.nm-unit-view[data-young-numbers=true])>.nm-top .nm-top-right{flex-wrap:nowrap;gap:6px}
+ #app:has(.nm-unit-view[data-young-numbers=true])>.nm-top :is(.nm-lang,.nm-attendance-open){font-size:14px;padding:6px 10px}
+}

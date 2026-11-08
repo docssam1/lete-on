@@ -19,6 +19,11 @@ for (let variant = 0; variant < api.pools.length; variant++) for (const difficul
   assert.match(svg, /data-source52-cube-box="true"/);
   const room = item.questionModel.roomCm;
   const side = item.questionModel.cubeSideCm;
+  for (const length of room) {
+    assert(svg.includes(`${length / 100}m`), "diagram retains the given metre unit");
+    assert(!svg.includes(`${length}cm`), "diagram does not reveal the unit conversion");
+  }
+  assert(!/도움말|source52-cube-box-hint/.test(item.prompt), "problem does not add a solution hint");
   const counts = room.map(length => Math.floor(length / side));
   const remainders = room.map(length => length % side);
   const answer = counts.reduce((product, count) => product * count, 1);

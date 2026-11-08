@@ -73,6 +73,7 @@
   function errText(r, fallback) {
     if (r.config) return '관리자 설정이 완료되지 않았습니다.';
     if (r.network) return '네트워크에 연결할 수 없습니다. 잠시 후 다시 시도하세요.';
+    if (r.status === 409 && r.data && r.data.error === 'settings_required') return '시작 과정·회차와 시작일을 확인한 뒤 ‘학습 설정 저장’을 눌러 주세요. 저장 후 학습지 문자를 보낼 수 있어요.';
     if (r.status === 401) return '인증에 실패했습니다.';
     if (r.status === 403) return '권한이 없습니다.';
     if (r.status === 409) return '이미 연결된 정보와 충돌합니다. 이메일과 학생을 확인하세요.';
@@ -355,7 +356,7 @@
     };
     var refresh = function () {
       var s = current();
-      summary.textContent = '시작: ' + courseName(s.courseKey) + ' ' + s.sessionIndex + '회차 · 속도 ' + s.speed + '배 · 학습량 ' + s.amount + '배 · 주 ' + (s.cadence === 'w2' ? 2 : 1) + '회';
+      summary.textContent = (p.settings ? '' : '저장 전 예시 · ') + '시작: ' + courseName(s.courseKey) + ' ' + s.sessionIndex + '회차 · 속도 ' + s.speed + '배 · 학습량 ' + s.amount + '배 · 주 ' + (s.cadence === 'w2' ? 2 : 1) + '회';
       renderRoadmap(road, advice, s);
     };
     course.input.addEventListener('change', function () { fillSessions(1); refresh(); });
@@ -371,7 +372,7 @@
       authed('admin_set_learning', Object.assign({ profileName: p.name }, s)).then(function (r) {
         saveBtn.disabled = false;
         if (!state.token) return;
-        if (r.ok && r.data && r.data.settings) { p.settings = r.data.settings; say(saveStatus, '저장되었습니다. 완료한 학습 기록은 그대로 유지됩니다.', 'ok'); }
+        if (r.ok && r.data && r.data.settings) { p.settings = r.data.settings; refresh(); say(saveStatus, '저장되었습니다. 완료한 학습 기록은 그대로 유지됩니다.', 'ok'); }
         else say(saveStatus, errText(r, '저장하지 못했습니다.'), 'err');
       });
     });

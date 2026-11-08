@@ -1,0 +1,10 @@
+{
+  "PASS": true,
+  "controlPending": 1,
+  "readyMs": 301.19999999925494,
+  "printMs": 650.4000000003725,
+  "printCalls": 1,
+  "questions": 24,
+  "diagramCount": 17,
+  "nativeCount": 123
+}

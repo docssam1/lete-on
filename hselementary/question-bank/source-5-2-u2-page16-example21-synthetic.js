@@ -8,6 +8,7 @@
   "use strict";
   const sourceItemId = "5-2-u2-e2-example-1-synthetic", generatorKey = "source52U2Page16Example21";
   const pools = Object.freeze([9, 15, 21]);
+  const tierPools = Object.freeze({'-1':Object.freeze([6,7,8]),'0':pools,'1':Object.freeze([27,33,39])});
   const esc = value => String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
   const math = text => `<span class="math-inline-expression">${esc(text)}</span>`;
   const steps = lines => `<span class="source52-u2-solution">${lines.map((line, index) => `<span class="source52-u2-step">${index + 1}. ${line}</span>`).join("")}</span>`;
@@ -20,11 +21,11 @@
     if (n !== numerator / divisor || d !== denominator / divisor) throw new Error("연속 곱의 약분 결과가 일치하지 않습니다.");
     const answer = d === 1 ? String(n) : `${n}/${d}`;
     const terms = Array.from({ length: 4 }, (_, index) => `(1+2/${3 + index})`).join("×");
-    return { end, numerator, denominator, divisor, reducedNumerator: n, reducedDenominator: d, answer, expression: `${terms}×…×(1+2/${end})` };
+    return { end, numerator, denominator, divisor, reducedNumerator: n, reducedDenominator: d, answer, expression: end === 6 ? terms : `${terms}×…×(1+2/${end})` };
   }
   function build(end, difficultyOffset) {
-    const v = derive(end), product = `5/3×6/4×7/5×8/6×…×${end + 2}/${end}`;
-    const prompt = `다음을 계산하세요. ${math(v.expression)}${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 각 괄호를 분수로 바꾸면 분자와 분모에서 연속된 수가 약분됩니다.</span>` : ""}`;
+    const v = derive(end), product = end === 6 ? "5/3×6/4×7/5×8/6" : `5/3×6/4×7/5×8/6×…×${end + 2}/${end}`;
+    const prompt = `다음을 계산하세요. ${math(v.expression)}`;
     const lines = [
       `각 항을 ${math(`1+2/n=(n+2)/n`)}으로 바꾸면 연속된 분수의 곱이 됩니다.`,
       `따라서 ${math(product)}입니다.`,
@@ -40,11 +41,11 @@
     if (type.reviewLocked !== false || type.sourceVerified !== true) return null;
     if (!Number.isSafeInteger(variant) || variant < 0) throw new Error("고정 변형 번호가 올바르지 않습니다.");
     if (![-1, 0, 1].includes(difficultyOffset)) throw new Error("난이도는 -1, 0, 1이어야 합니다.");
-    const poolIndex = variant % pools.length, item = build(pools[poolIndex], difficultyOffset);
+    const poolIndex = variant % pools.length, item = build(tierPools[difficultyOffset][poolIndex], difficultyOffset);
     return Object.freeze({ ...item, prompt: `<div class="source52-u2-page16-example21" data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`,
       sourceItemId, generator: generatorKey, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length,
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure", resultContract: "single-value", mathematicalContract: "consecutive-numerator-denominator-cancellation",
-      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["guided-factor-conversion-and-cancellation", "telescoping-range-and-exact-product", "explicit-cancelled-middle-interval-and-final-reduction"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
+      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["shorter-consecutive-product", "telescoping-range-and-exact-product", "longer-consecutive-product"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
       sourceStructurePreserved: true, sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Example 2-1; physical PDF p.12; original/clean scan + Apple Vision OCR",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-telescoping-consecutive-product" });
   }
@@ -58,5 +59,5 @@
     if (Array.isArray(api.names) && !api.names.includes(generatorKey)) api.names.push(generatorKey);
     Object.defineProperty(api, "__source52U2Page16Example21Installed", { value: true }); return true;
   }
-  return Object.freeze({ sourceItemId, generatorKey, pools, derive, build, generate, install });
+  return Object.freeze({ sourceItemId, generatorKey, pools, tierPools, derive, build, generate, install });
 });

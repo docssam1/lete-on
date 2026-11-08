@@ -1,0 +1,280 @@
+{
+  "date": "2026-11-06 KST",
+  "model": "GPT-6.1 Sol",
+  "host": "Mac mini / Codex",
+  "project": "fgahqumaldheqettmvqg",
+  "plan": "free",
+  "userDecision": "Keep Free; use the existing account for login/SMS checks; no new test signup",
+  "settings": {
+    "secure_password_change": {
+      "before": false,
+      "after": true,
+      "verification": "Saved in dashboard; reopened Email settings and observed enabled"
+    },
+    "password_min_length": {
+      "before": 6,
+      "after": 8,
+      "verification": "Saved in dashboard; reopened Email settings and visually confirmed 8"
+    },
+    "password_hibp_enabled": {
+      "after": false,
+      "status": "Not available on Free; remains a documented WARN, not resolved",
+      "source": "https://supabase.com/docs/guides/auth/password-security"
+    }
+  },
+  "unchanged": {
+    "emailProvider": true,
+    "confirmEmail": true,
+    "secureEmailChange": true,
+    "emailOtpExpirySeconds": 600,
+    "emailOtpDigits": 8
+  },
+  "noSubscriptionChange": true,
+  "acceptance": {
+    "mode": "existing-account",
+    "emailAuthExists": true,
+    "emailPreviouslyVerified": true,
+    "passwordAlreadySet": true,
+    "membershipBeforeLogin": "none",
+    "linkedStudentsBeforeLogin": 0,
+    "login": "Email OTP authentication visibly completed in app; user reported password saved",
+    "realSmsSent": 1,
+    "realEmailSent": 1,
+    "print": {
+      "sameSmsLinkOpened": true,
+      "course": "C1",
+      "session": 1,
+      "questions": 60,
+      "pages": 24,
+      "paper": "A4",
+      "scale": "default",
+      "duplexPrinterPreview": true,
+      "browserHeaders": false,
+      "backgroundGraphics": true,
+      "nativePdfOpened": true,
+      "nativePdfSaved": true,
+      "physicalPaperPrinted": false,
+      "pdfGenerationVerified": true,
+      "pdfSavedLocally": true,
+      "pdfQa": {
+        "pages": 24,
+        "pageSizesPt": [
+          [
+            595.276,
+            841.89
+          ]
+        ],
+        "allPagesRenderedAndNonblank": true,
+        "coverImageTextNotExtractable": true,
+        "bodyTextPagesNonblank": 23,
+        "browserHeadersRemoved": true,
+        "sha256": "11c1a42a720c51a5685f85fa263912600f26c82caa175673e609f35d33697c69",
+        "bytes": 1998448,
+        "source": "Native Chrome print -> Preview Save",
+        "file": "output/pdf/nm-acceptance-20261106-C1-r1.pdf",
+        "physicalPaperPrinted": false,
+        "renderedContent": [
+          {
+            "page": 1,
+            "visibleContentPixels": 4935
+          },
+          {
+            "page": 2,
+            "visibleContentPixels": 7218
+          },
+          {
+            "page": 3,
+            "visibleContentPixels": 6290
+          },
+          {
+            "page": 4,
+            "visibleContentPixels": 6031
+          },
+          {
+            "page": 5,
+            "visibleContentPixels": 6463
+          },
+          {
+            "page": 6,
+            "visibleContentPixels": 4680
+          },
+          {
+            "page": 7,
+            "visibleContentPixels": 2978
+          },
+          {
+            "page": 8,
+            "visibleContentPixels": 3837
+          },
+          {
+            "page": 9,
+            "visibleContentPixels": 3629
+          },
+          {
+            "page": 10,
+            "visibleContentPixels": 3611
+          },
+          {
+            "page": 11,
+            "visibleContentPixels": 4220
+          },
+          {
+            "page": 12,
+            "visibleContentPixels": 8530
+          },
+          {
+            "page": 13,
+            "visibleContentPixels": 6059
+          },
+          {
+            "page": 14,
+            "visibleContentPixels": 6032
+          },
+          {
+            "page": 15,
+            "visibleContentPixels": 5020
+          },
+          {
+            "page": 16,
+            "visibleContentPixels": 4835
+          },
+          {
+            "page": 17,
+            "visibleContentPixels": 5389
+          },
+          {
+            "page": 18,
+            "visibleContentPixels": 9095
+          },
+          {
+            "page": 19,
+            "visibleContentPixels": 5358
+          },
+          {
+            "page": 20,
+            "visibleContentPixels": 5085
+          },
+          {
+            "page": 21,
+            "visibleContentPixels": 5871
+          },
+          {
+            "page": 22,
+            "visibleContentPixels": 5188
+          },
+          {
+            "page": 23,
+            "visibleContentPixels": 5569
+          },
+          {
+            "page": 24,
+            "visibleContentPixels": 6634
+          }
+        ]
+      }
+    },
+    "emailReceipt": {
+      "verified": true,
+      "destination": "previously authorized existing mailbox",
+      "location": "INBOX",
+      "receivedAt": "2026-11-05T21:21:48+00:00",
+      "senderDomain": "gfieldacademy.net"
+    },
+    "passwordReset": "User completed direct entry and save; agent did not read or enter new password",
+    "oneTimeCodeRead": false,
+    "passwordSaveUserConfirmed": true,
+    "contact": {
+      "registered": true,
+      "smsConsent": true,
+      "phoneMatchesAuthorizedSuffix": true
+    },
+    "membershipAfterLogin": "trial",
+    "linkedStudentsAfterLogin": 1,
+    "next": "Recipient confirmed phone receipt and link. All-24-page native A4 PDF checks complete; physical paper output not performed. User moved on to paper-manipulative design review; do not resend SMS.",
+    "provider": {
+      "httpStatus": 200,
+      "resultCode": 1,
+      "successCount": 1,
+      "errorCount": 0,
+      "timedOut": false,
+      "reconciledOk": true,
+      "requestId": 1568
+    },
+    "receiptUserConfirmed": true,
+    "learnerLink": "User created/linked a learner during the app check; stale create-test-learner prompt was superseded by visible linked state",
+    "agentProgressWrites": 0,
+    "agentLearningSettingsWrites": 1,
+    "learningSettings": {
+      "courseKey": "C1",
+      "sessionIndex": 1,
+      "speed": 1,
+      "amount": 1,
+      "cadence": "w1",
+      "startDate": "2026-11-06",
+      "grade": "left unknown; no invented birth year"
+    },
+    "newAuthAccountsCreated": 0,
+    "phoneLinkOpenedUserConfirmed": true,
+    "recipientConfirmation": "User confirmed SMS receipt and that the link opens on 2026-11-06 KST"
+  },
+  "remainingWarning": "auth_leaked_password_protection",
+  "note": "User retained Free; secure password change and minimum length do not replace leaked-password detection. User entered OTP/new password directly. Actual provider acknowledged one LMS; no resend. A linked learner appeared before the stale create-test-learner choice returned, so no additional learner was made by the agent.",
+  "agentCredentialsChanged": false,
+  "userCredentialsChanged": true,
+  "followUpFix": {
+    "issue": "Unsaved learning settings returned settings_required but admin UI incorrectly described a student/email conflict",
+    "changes": [
+      "Allowlisted settings_required message explains saving course/session/start date first",
+      "Unsaved default values are labeled as an example",
+      "Saving clears the unsaved label",
+      "Cache version updated for admin script"
+    ],
+    "checks": {
+      "adminBrowserAssertionsPassed": 64,
+      "membershipHandlerPassed": 46,
+      "failed": 0
+    },
+    "sourceStatus": "main 11fce8f933e9e4e734d6f10c390369c2ce7ac004; Pages descendant 9af2a6bebb8e28c53d0480aacc77c1b002a7fded succeeded; live admin HTML/JS byte-identical"
+  },
+  "quota": {
+    "plan": "Free",
+    "cycle": "2026-10-20 through 2026-11-20",
+    "observedStorageGb": 0.736,
+    "storageLimitGb": 1,
+    "observedDatabaseGb": 0.051,
+    "databaseLimitGb": 0.5,
+    "observedEgressGb": 0.154,
+    "egressLimitGb": 5,
+    "observedEdgeInvocations": 6969,
+    "edgeInvocationLimit": 500000,
+    "overQuotaObserved": false,
+    "planChanged": false,
+    "spendCapChanged": false
+  },
+  "release": {
+    "runtimeCommit": "11fce8f933e9e4e734d6f10c390369c2ce7ac004",
+    "firstPagesRun": {
+      "id": 42114886145,
+      "conclusion": "cancelled",
+      "reason": "A later main commit deployed the same Number Magic changes"
+    },
+    "deployedCommit": "9af2a6bebb8e28c53d0480aacc77c1b002a7fded",
+    "pagesRun": {
+      "id": 42115126582,
+      "conclusion": "success",
+      "url": "https://github.com/docssam1/lete-on/actions/runs/42115126582"
+    },
+    "liveAssets": [
+      {
+        "path": "admin.html",
+        "identical": true,
+        "sha256": "63304a0614028db20bcfa47b349d649051b077f61231e81b17ea42d8cfb23c89"
+      },
+      {
+        "path": "app/admin.js",
+        "identical": true,
+        "sha256": "d2a570ca790a7b9a2cb76b20f72ee64c2540ead6f6c8546a407494b49182dfa7"
+      }
+    ]
+  }
+}

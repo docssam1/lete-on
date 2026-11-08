@@ -1,0 +1,30 @@
+[
+  {
+    "course": "C1",
+    "questions": 60,
+    "answers": 60,
+    "pages": 24,
+    "identical": true
+  },
+  {
+    "course": "C3",
+    "questions": 54,
+    "answers": 54,
+    "pages": 20,
+    "identical": true
+  },
+  {
+    "course": "C13",
+    "questions": 54,
+    "answers": 54,
+    "pages": 24,
+    "identical": true
+  },
+  {
+    "course": "C26",
+    "questions": 36,
+    "answers": 36,
+    "pages": 20,
+    "identical": true
+  }
+]

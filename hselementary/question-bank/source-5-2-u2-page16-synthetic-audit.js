@@ -15,10 +15,13 @@ for (let i=0;i<modules.length;i++) {
  assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},0,0,0,0),null);
  for(let j=0;j<3;j++)for(const level of [-1,0,1]){
   const q=window.HSE_GENERATORS.generate(type,0,level,1,j);let expected;
-  if(i===0){const x=m.pools[j];expected=format(reduce(x.capacityNumerator*x.filledNumerator,x.capacityDenominator*x.filledDenominator))+' L';}
-  if(i===1){const x=m.pools[j],a=multiply(x.first),b=multiply(x.second);expected=format(reduce(a[0]*b[1]+b[0]*a[1],a[1]*b[1]));}
-  if(i===2){let n=1,d=1;for(let k=3;k<=m.pools[j];k++){[n,d]=reduce(n*(k+2),d*k)}expected=d===1?String(n):`${n}/${d}`;}
+  if(i===0){const x=m.tierPools[level][j];expected=format(reduce(x.capacityNumerator*x.filledNumerator,x.capacityDenominator*x.filledDenominator))+' L';}
+  if(i===1){const x=m.tierPools[level][j],a=multiply(x.first),b=multiply(x.second);expected=format(reduce(a[0]*b[1]+b[0]*a[1],a[1]*b[1]));}
+  if(i===2){let n=1,d=1;for(let k=3;k<=m.tierPools[level][j];k++){[n,d]=reduce(n*(k+2),d*k)}expected=d===1?String(n):`${n}/${d}`;}
   assert.equal(q.answer,expected);assert.equal(q.verifiedPoolIndex,j);assert.equal(q.verifiedVariantCount,3);assert.equal(q.variantProvenance,'synthetic-source-structure');assert.equal(q.publisherKeyVerified,false);assert(q.solution.includes(`data-source-answer="${m.sourceItemId}"`));assert(!q.prompt.includes('data-source-answer'));
+  assert.doesNotMatch(q.prompt,/도움말|힌트|source52-u2-hint/);
  }
 }
+for(const m of modules)for(let j=0;j<3;j++)assert.equal(new Set([-1,0,1].map(d=>m.build(m.tierPools[d][j],d).prompt)).size,3);
+assert.doesNotMatch(modules[2].build(6,-1).prompt,/…/);
 console.log('PASS: three synthetic types, independent exact arithmetic, 3 pools × 3 difficulty levels, source locks');

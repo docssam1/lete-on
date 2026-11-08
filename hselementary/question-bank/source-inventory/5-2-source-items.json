@@ -47,9 +47,10 @@
     },
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
-    "readyItems": 5,
+    "readyItems": 7,
+    "reviewedItems": 5,
     "verifiedLocalItems": 131,
-    "reviewLockedItems": 150
+    "reviewLockedItems": 143
   },
   "units": [
     {
@@ -3036,7 +3037,9 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 범위와 독립 계산을 확인했으나 공식 답안 대조 전 원문은 잠금 유지합니다.",
+      "reviewReason": "이 장부의 공식 답안 대조 기준은 미충족입니다. 별도로 등록된 원문 재구성 유형은 원문 대조와 독립 검산을 거쳐 생성 가능합니다.",
+      "runtimeTypeId": "5-2-u3-e6-example-3-original",
+      "runtimeReleaseStatus": "public-source-reconstruction",
       "syntheticRuntimeTypeId": "5-2-u3-e6-example-3-palindrome-synthetic",
       "publisherKeyVerified": false,
       "publicDecision": "locked"

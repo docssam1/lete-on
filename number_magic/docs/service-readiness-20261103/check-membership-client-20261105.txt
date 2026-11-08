@@ -1,0 +1,19 @@
+ok   - no auth: no request, canUse false
+ok   - password pending: no request
+ok   - request uses correct JWT, anon key, action + user id only from token
+ok   - profileName is the only extra field sent with status
+ok   - expiry uses server clock + monotonic performance, not Date.now
+ok   - trial uses trialEndsAt; missing/invalid end is false
+ok   - no persisted entitlement and no raw phone anywhere
+ok   - fail closed: network error / malformed JSON / bad shape / wrong identity
+ok   - previously valid entitlement is dropped after a failed refresh
+ok   - session switched mid-request (guardian_changed) is rejected
+ok   - stale owner response after logout is ignored
+ok   - stale response for owner A ignored after switching to owner B
+ok   - logout then same user login quickly: old in-flight response ignored
+ok   - registerContact: same-owner status refresh in flight does not clobber result
+ok   - registerContact: owner changes during register -> guardian_changed, no refresh for new owner mixed in
+ok   - registerContact without auth rejects and sends nothing
+ok   - password-required auth change clears entitlement
+ok   - consent renewal: unversioned contact stays blocked; missing/stale/false consent sends nothing
+all 18 passed

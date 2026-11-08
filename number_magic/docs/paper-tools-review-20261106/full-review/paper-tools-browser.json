@@ -1,0 +1,3974 @@
+{
+  "templates": 12,
+  "cases": [
+    {
+      "key": "tenframe",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9888802083333332,
+      "frameCount": 2,
+      "counters": 20,
+      "counterDiameterMm": 16.810963541666663,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 8,
+      "demoRings": 7,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n10칸 수판과 수 조각\n\n10칸 수판(십틀)은 동그라미를 놓는 빈 칸이에요. 낱개 10개를 한 줄로 묶은 십막대와는 달라요.\n\n점선만 오려요\n실선은 그대로 두어요\n10칸 수판 1\n10칸 수판 2\n동그라미 20개\n한 칸에 하나씩 놓아요. 한 줄은 5개, 두 줄은 10개예요.\n이렇게 만들었어요\n8\n+\n7\n=\n10\n+\n5\n=\n15\n8+7=10+5=15\n\n8개에 2개를 옮겨 10개를 만들었어요.\n\n이렇게 해 봐요\n1\n첫 수판에 8개, 둘째 수판에 7개를 놓아요.\n2\n둘째 수판에서 2개를 옮겨 첫 수판의 빈 칸을 채워요.\n3\n꽉 찬 10개와 남은 5개! 모두 15개인지 세어 봐요.\nQR 찍기\n다른 교구를 쓰려면\n연결 큐브\n\n수판 대신 큐브를 10개씩 연결해도 10 만들기를 할 수 있어요.\n\n살 때 보는 것 — 아이 손으로 쉽게 붙이고 뗄 수 있는 크기.\n또는\n집에서 준비하기\n이 종이 교구로 충분해요\n\n바깥 점선을 따라 수판 2장과 동그라미를 오려요. 수판 안쪽 선은 자르지 않아요. 가위는 보호자와 함께 써요.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-tenframe"
+    },
+    {
+      "key": "tenframe",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9888802083333332,
+      "frameCount": 2,
+      "counters": 20,
+      "counterDiameterMm": 16.810963541666663,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 8,
+      "demoRings": 7,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nTen-frame and counters\n\nA ten-frame has ten spaces for counters. A ten rod is different: ten units joined in a row.\n\nCut dashed outlines only\nKeep solid lines intact\nTen-frame 1\nTen-frame 2\n20 counters\nOne counter per box. One row holds 5; two rows hold 10.\nWorked example\n8\n+\n7\n=\n10\n+\n5\n=\n15\n8+7=10+5=15\n\nMove 2 to the 8 to complete ten.\n\nTry it together\n1\nPlace 8 counters on the first frame and 7 on the second.\n2\nMove 2 from the second frame to fill the first frame.\n3\nA full ten and 5 more! Count to check that there are 15.\nScan\nOptional alternative\nLinking cubes\n\nAs an alternative to frames, join cubes in groups of ten.\n\nWhat to check — Easy for small hands to join and separate.\nor\nPrepare at home\nUse this paper set\n\nCut out both frames and the counters along the dashed outlines. Keep the grid lines intact. An adult helps with scissors.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-tenframe"
+    },
+    {
+      "key": "tenframe",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9888802083333332,
+      "frameCount": 2,
+      "counters": 20,
+      "counterDiameterMm": 16.810963541666663,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 8,
+      "demoRings": 7,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n十格框与圆片\n\n十格框是放圆片的十个空格。十条则是把十个单位连成一行，两者不同。\n\n只剪虚线\n保留实线\n十格框 1\n十格框 2\n20个圆片\n每格放一个。一行5个，两行10个。\n完成的例子\n8\n+\n7\n=\n10\n+\n5\n=\n15\n8+7=10+5=15\n\n给8个移来2个，凑成10个。\n\n一起试一试\n1\n第一张放8个，第二张放7个。\n2\n从第二张移2个，把第一张填满。\n3\n满满的10个和剩下的5个！数一数，共15个。\n扫码\n也可选用\n连接积木\n\n也可以不用框，把积木每10个连成一条来凑十。\n\n挑选要点 — 选择孩子容易拼接和拆开的大小。\n或\n在家准备\n用这套纸教具就够了\n\n沿外侧虚线剪下两张框和圆片，框内的实线不要剪。请大人协助使用剪刀。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-tenframe"
+    },
+    {
+      "key": "place",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9889028610159816,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 8,
+      "ones": 20,
+      "rodSizeMm": [
+        7.911222888127853,
+        79.11222888127854
+      ],
+      "oneSizeMm": 7.911222888127853,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n수 모형: 백 모형·십막대·낱개\n\n작은 정사각형 1개는 1, 십막대 1개는 10, 큰 정사각형 1개는 100을 나타내요. 낱개 10개를 십막대 1개와 바꾸며 수를 만들어요.\n\n점선만 오려요\n실선은 그대로 두어요\n백 모형 1개\n십막대 8개\n일 모형 20개 (낱개)\n낱개 10개를 모으면 십막대 1개와 같아요.\n이렇게 만들었어요\n37\n=\n30\n+\n7\n37=30+7\n\n십막대 3개와 낱개 7개로 37을 만들어요.\n\n37\n이렇게 해 봐요\n1\n바깥 점선을 따라 백 모형, 십막대, 낱개를 오려요.\n2\n십막대 3개와 낱개 7개를 놓아 37을 만들어요.\n3\n낱개 10개를 모아 십막대 1개와 바꾸어 봐요.\nQR 찍기\n다른 교구를 쓰려면\n십진 블록 세트\n\n낱개 10개와 십막대 1개를 바꾸며 자릿값을 살펴봐요.\n\n살 때 보는 것 — 낱개 100개, 십막대 20개 이상. 백 모형이 들어 있으면 더 좋습니다.\n또는\n집에서 준비하기\n빨대와 고무줄\n\n빨대 10개를 고무줄로 묶어 10을 나타내요. 묶음 하나와 낱개 10개를 바꾸어 보세요.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-place"
+    },
+    {
+      "key": "place",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889028610159816,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 8,
+      "ones": 20,
+      "rodSizeMm": [
+        7.911222888127853,
+        79.11222888127854
+      ],
+      "oneSizeMm": 7.911222888127853,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nHundred board, ten rods, ones\n\nBundling ten into one is place value itself. Carrying is trading ten ones for one rod.\n\nCut dashed outlines only\nKeep solid lines intact\n1 hundred flat\n8 ten rods\n20 ones\nTen ones have the same value as one ten rod.\nWorked example\n37\n=\n30\n+\n7\n37=30+7\n\nThree tens and seven ones represent 37.\n\n37\nTry it together\n1\nCut along the outer dashed lines.\n2\nPlace 3 tens and 7 ones to represent 37.\n3\nTrade ten ones for one ten rod.\nScan\nOptional alternative\nBase-ten blocks\n\nTrade ten unit blocks for one ten rod to explore place value.\n\nWhat to check — 100 ones and 20 rods at least; a hundred flat is a plus.\nor\nPrepare at home\nStraws and rubber bands\n\nBundle ten straws with a band. The bundling and unbundling is the carrying itself, which a pre-made block cannot show.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-place"
+    },
+    {
+      "key": "place",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889028610159816,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 8,
+      "ones": 20,
+      "rodSizeMm": [
+        7.911222888127853,
+        79.11222888127854
+      ],
+      "oneSizeMm": 7.911222888127853,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n百板·十条·个\n\n把十个捆成一个，就是位值本身。进位就是用十个\"个\"换一根\"十条\"。\n\n只剪虚线\n保留实线\n1个百板\n8根十条\n20个个位方块\n10个一与1根十条表示的数一样大。\n完成的例子\n37\n=\n30\n+\n7\n37=30+7\n\n3根十条和7个一表示37。\n\n37\n一起试一试\n1\n沿外侧虚线剪下数模型。\n2\n摆3根十条、7个一，表示37。\n3\n把10个一换成1根十条。\n扫码\n也可选用\n十进制积木\n\n把10个个位块换成1根十条，观察位值。\n\n挑选要点 — 至少100个个位块和20根十条，有百板更好。\n或\n在家准备\n吸管与橡皮筋\n\n用橡皮筋把十根吸管捆成一条。捆和解的动作就是进位，现成的积木反而看不到这一步。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-place"
+    },
+    {
+      "key": "numberline",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n수직선 띠\n\n한 칸이 얼마인지 먼저 보세요. 같은 간격만큼 이동하며 덧셈과 뺄셈을 해 봐요.\n\n점선만 오려요\n실선은 그대로 두어요\n0~20 · 한 칸은 1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n0~20 · 한 칸은 1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n0~100 · 한 칸은 10\n0\n10\n20\n30\n40\n50\n60\n70\n80\n90\n100\n0에서 20까지는 똑같은 간격으로 1씩 커져요.\n이렇게 만들었어요\n8\n+\n5\n=\n13\n8+5=13\n\n8에서 오른쪽으로 한 칸씩 5번 가면 13이에요.\n\n8\n9\n10\n11\n12\n13\n이렇게 해 봐요\n1\n수직선 띠를 오려요. 칸 하나가 1인지 10인지 확인해요.\n2\n0~20 띠의 8에 연필 끝을 놓아요. 오른쪽으로 5칸 가요.\n3\n13에서 왼쪽으로 5칸 돌아가면 어디에 오는지 보세요.\nQR 찍기\n다른 교구를 쓰려면\n천 줄자 2m\n\n줄자의 같은 간격을 보며 10씩 커지는 수를 읽어 봐요.\n\n살 때 보는 것 — 숫자가 큼직한 것. 쇠 줄자보다 천 줄자가 아이에게 안전합니다.\n또는\n집에서 준비하기\n종이 띠와 바닥 테이프\n\n위 띠 세 개를 오려 책상에 붙입니다. 바닥에 마스킹테이프로 0부터 20까지 크게 그려 두면 아이가 직접 뛰어 셉니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-numberline"
+    },
+    {
+      "key": "numberline",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nNumber line strips\n\nCheck the value of one space. Move equal steps to add or subtract.\n\nCut dashed outlines only\nKeep solid lines intact\n0–20 · each step is 1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n0–20 · each step is 1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n0–100 · each step is 10\n0\n10\n20\n30\n40\n50\n60\n70\n80\n90\n100\nEqual spaces show equal steps.\nWorked example\n8\n+\n5\n=\n13\n8+5=13\n\nStart at 8 and move right five steps to 13.\n\n8\n9\n10\n11\n12\n13\nTry it together\n1\nCut the strips. Check whether one step is 1 or 10.\n2\nOn a 0–20 strip, start at 8 and move right 5 steps.\n3\nFrom 13, move left 5 steps. Where do you land?\nScan\nOptional alternative\nCloth tape measure, 2m\n\nRead equal increments on the tape to count by tens.\n\nWhat to check — Large numerals; a cloth tape is safer for a child than a steel one.\nor\nPrepare at home\nPaper strips and floor tape\n\nCut the three strips above. Tape a big 0 to 20 line on the floor and let the child hop along it.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-numberline"
+    },
+    {
+      "key": "numberline",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n数轴纸条\n\n先看一格表示多少，再移动相同的间隔来做加减法。\n\n只剪虚线\n保留实线\n0~20，每格1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n0~20，每格1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n0~100，每格10\n0\n10\n20\n30\n40\n50\n60\n70\n80\n90\n100\n相同的间隔表示相同的增加量。\n完成的例子\n8\n+\n5\n=\n13\n8+5=13\n\n从8向右走5格，到13。\n\n8\n9\n10\n11\n12\n13\n一起试一试\n1\n剪下数轴纸条，先看每格是1还是10。\n2\n在0~20的数轴上，从8向右移5格。\n3\n再从13向左移5格，看看回到哪里。\n扫码\n也可选用\n软尺2米\n\n观察卷尺等间隔的刻度，练习十个十个数。\n\n挑选要点 — 数字要大，软尺比钢卷尺对孩子更安全。\n或\n在家准备\n纸条和地上的胶带\n\n剪下上面三条纸条。用美纹胶带在地上画一条大的0到20，让孩子亲自跳着数。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-numberline"
+    },
+    {
+      "key": "array",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 100,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 12,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n곱셈 배열판과 모서리 표시자\n\n한 줄에 같은 수의 점이 있어요. 줄 수와 한 줄의 개수를 곱하면 전체 개수를 알 수 있어요.\n\n점선만 오려요\n실선은 그대로 두어요\n점 배열판 · 10줄, 한 줄에 10개\n모서리 표시자 2개\n표시자는 범위의 모서리를 짚어요. 점을 가리는 종이가 아니에요.\n이렇게 만들었어요\n3\n×\n4\n=\n4\n×\n3\n=\n12\n3×4=4×3=12\n\n3줄에 4개씩 있어요. 돌려도 모두 12개예요.\n\n12\n이렇게 해 봐요\n1\n점 배열판과 모서리 표시자 두 개를 오려요.\n2\n표시자로 3줄, 한 줄에 4개인 범위를 짚고 점을 세요.\n3\n종이를 돌려 4줄에 3개씩 보세요. 전체 개수는 같아요.\nQR 찍기\n다른 교구를 쓰려면\n투명 색타일 100개\n\n3 곱하기 4를 직사각형으로 깔면 곱셈이 넓이가 됩니다. 판을 돌려 보면 4 곱하기 3과 같다는 것도 바로 압니다.\n\n살 때 보는 것 — 같은 크기 정사각형 100개. 2.5cm 안팎이면 배열이 눈에 잘 들어옵니다.\n또는\n집에서 준비하기\n종이 배열판과 계란판\n\n이 점 배열판과 모서리 표시자를 사용해요. 색연필로 선택한 범위를 둘러도 좋아요.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-array"
+    },
+    {
+      "key": "array",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 100,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 12,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nMultiplication array and corner markers\n\nEvery row has the same number of dots. Multiply rows by dots per row to find the total.\n\nCut dashed outlines only\nKeep solid lines intact\nDot array · 10 rows of 10\n2 corner markers\nMarkers show the corners of your chosen array.\nWorked example\n3\n×\n4\n=\n4\n×\n3\n=\n12\n3×4=4×3=12\n\nThree rows of four. Rotate: still twelve dots.\n\n12\nTry it together\n1\nCut the dot board and both corner markers.\n2\nMark 3 rows of 4 dots and count the selected dots.\n3\nRotate the sheet to see 4 rows of 3. The total is unchanged.\nScan\nOptional alternative\nTransparent colour tiles, 100\n\nLaying 3 by 4 as a rectangle turns multiplication into area; turning it shows 4 by 3 is the same.\n\nWhat to check — 100 identical squares, about 2.5cm.\nor\nPrepare at home\nPaper array board and an egg carton\n\nUse this board and its corner markers, or outline an array with a coloured pencil.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-array"
+    },
+    {
+      "key": "array",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 100,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 12,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n乘法点阵板与角标\n\n每行的点数相同。行数乘每行点数，就是总数。\n\n只剪虚线\n保留实线\n点阵板：10行，每行10个\n2个角标\n角标标出选定范围的角，不是把点全部遮住。\n完成的例子\n3\n×\n4\n=\n4\n×\n3\n=\n12\n3×4=4×3=12\n\n3行，每行4个。转一转，仍有12个。\n\n12\n一起试一试\n1\n剪下点阵板和两个角标。\n2\n标出3行、每行4个的范围，数出点数。\n3\n转动纸张，变成4行、每行3个，总数不变。\n扫码\n也可选用\n彩色方块100个\n\n把3×4摆成长方形，乘法就成了面积；转一下就知道4×3一样。\n\n挑选要点 — 100个大小相同的方块，约2.5厘米。\n或\n在家准备\n纸阵列板和鸡蛋盒\n\n使用本点阵板与角标，也可用彩色笔圈定范围。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-array"
+    },
+    {
+      "key": "balance",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.907575954861111,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n등식 저울판과 수 카드\n\n등호는 양쪽의 값이 같다는 뜻이에요. 종이 저울은 실제로 기울지 않으니, 양쪽 카드의 값을 구해서 비교해요.\n\n점선만 오려요\n실선은 그대로 두어요\n왼쪽 식을 놓아요\n오른쪽 수를 놓아요\n=\n수 카드 · 바깥 점선을 따라 오려요\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n+\n−\n×\n÷\n□\n이렇게 만들었어요\n7\n+\n5\n=\n12\n7+5=12\n\n7에 5를 더한 값과 12는 같아요.\n\n7 + 5\n=\n12\n이렇게 해 봐요\n1\n수 카드를 오려요. 저울 그림이 있는 종이는 놀이판으로 두어요.\n2\n왼쪽에 7, +, 5를 놓고 오른쪽에 1과 2로 12를 만들어요.\n3\n왼쪽의 5 대신 □를 놓아요. 알맞은 수 카드를 찾아 바꾸어요.\nQR 찍기\n다른 교구를 쓰려면\n양팔 저울\n\n실물 저울은 같은 수의 동일한 추로 양쪽 무게를 비교할 수 있어요.\n\n살 때 보는 것 — 접시가 크고 추가 함께 오는 것. 플라스틱이면 충분합니다.\n또는\n집에서 준비하기\n옷걸이와 종이컵 저울\n\n옷걸이 양 끝에 실로 종이컵 두 개를 매답니다. 문고리에 걸면 저울이 됩니다. 양쪽에 동전을 같은 수만큼 넣어 평평해지는 것을 봅니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-balance"
+    },
+    {
+      "key": "balance",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.8947977825126262,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nBalance mat and number cards\n\nThe equals sign means both sides have the same value. This paper mat does not tilt: calculate and compare the cards on each side.\n\nCut dashed outlines only\nKeep solid lines intact\nLeft expression\nRight value\n=\nCards · cut dashed outlines\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n+\n−\n×\n÷\n□\nWorked example\n7\n+\n5\n=\n12\n7+5=12\n\nSeven plus five has the same value as twelve.\n\n7 + 5\n=\n12\nTry it together\n1\nCut out the cards; keep the printed scale as the mat.\n2\nPlace 7, +, 5 on the left. Form 12 with 1 and 2 on the right.\n3\nReplace the left 5 with □. Find the card that belongs there.\nScan\nOptional alternative\nBalance scale\n\nA real balance compares equal numbers of identical weights.\n\nWhat to check — Large pans with a set of weights; plastic is fine.\nor\nPrepare at home\nA coat-hanger and paper-cup balance\n\nHang two paper cups from a coat-hanger with string and hook it on a door handle. Put the same number of coins in each and watch it level out.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-balance"
+    },
+    {
+      "key": "balance",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.8915406013257575,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n等式天平板与数字卡\n\n等号表示两边的值相同。纸天平不会真的倾斜，要算出两边卡片的值来比较。\n\n只剪虚线\n保留实线\n左边的算式\n右边的数\n=\n数字卡：沿外侧虚线剪\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n+\n−\n×\n÷\n□\n完成的例子\n7\n+\n5\n=\n12\n7+5=12\n\n7加5的值与12相同。\n\n7 + 5\n=\n12\n一起试一试\n1\n剪下卡片，把天平图保留为操作板。\n2\n左边放7、+、5，右边用1和2组成12。\n3\n把左边的5换成□，找出合适的数卡。\n扫码\n也可选用\n天平\n\n实物天平可以用相同砝码比较两边的重量。\n\n挑选要点 — 托盘大、带砝码的即可，塑料的就够。\n或\n在家准备\n衣架和纸杯做的天平\n\n用绳子在衣架两端各挂一个纸杯，挂在门把手上。两边放一样多的硬币，看它变平。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-balance"
+    },
+    {
+      "key": "fraction",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 5,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [
+        {
+          "n": 1,
+          "r": 25
+        },
+        {
+          "n": 2,
+          "r": 25
+        },
+        {
+          "n": 3,
+          "r": 25
+        },
+        {
+          "n": 4,
+          "r": 25
+        },
+        {
+          "n": 6,
+          "r": 25
+        },
+        {
+          "n": 8,
+          "r": 25
+        }
+      ],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n분수 원판\n\n크기가 같은 원을 똑같이 나눈 조각이에요. 한 조각의 크기와 조각 수를 함께 살펴봐요.\n\n점선만 오려요\n실선은 그대로 두어요\n전체 1\n1\n2\n2조각\n1\n3\n3조각\n1\n4\n4조각\n1\n6\n6조각\n1\n8\n8조각\n이렇게 만들었어요\n1\n2\n=\n1\n4\n+\n1\n4\n2\n1\n\t​\n\n=\n4\n1\n\t​\n\n+\n4\n1\n\t​\n\n\n같은 크기 원에서 4분의 1 두 조각이 2분의 1과 같아요.\n\n=\n이렇게 해 봐요\n1\n바깥 점선을 오려요. 전체 1은 두고 나머지 원은 점선을 따라 나누어요.\n2\n1\n3\n 조각과 \n1\n4\n 조각의 꼭짓점을 맞춰 크기를 비교해요.\n3\n1\n4\n 두 조각을 모아 \n1\n2\n 위에 덮어 보아요.\nQR 찍기\n다른 교구를 쓰려면\n분수 원판 세트\n\n조각을 겹쳐 보면 3분의 1이 4분의 1보다 크다는 것을 설명 없이 압니다. 종이보다 튼튼해 오래 씁니다.\n\n살 때 보는 것 — 1, 2분의 1, 3분의 1, 4분의 1, 6분의 1, 8분의 1이 다 들어 있는 것. 분모마다 색이 다르면 좋습니다.\n또는\n집에서 준비하기\n종이 원판과 색종이 접기\n\n위 원판 여섯 장을 오려 선을 따라 자릅니다. 색종이를 반으로, 또 반으로 접으면 2분의 1, 4분의 1, 8분의 1이 그대로 나옵니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-fraction"
+    },
+    {
+      "key": "fraction",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 5,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [
+        {
+          "n": 1,
+          "r": 25
+        },
+        {
+          "n": 2,
+          "r": 25
+        },
+        {
+          "n": 3,
+          "r": 25
+        },
+        {
+          "n": 4,
+          "r": 25
+        },
+        {
+          "n": 6,
+          "r": 25
+        },
+        {
+          "n": 8,
+          "r": 25
+        }
+      ],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nFraction discs\n\nEach same-sized whole is divided into equal parts. Compare both part size and number of parts.\n\nCut dashed outlines only\nKeep solid lines intact\n1 whole\n1\n2\n2 pieces\n1\n3\n3 pieces\n1\n4\n4 pieces\n1\n6\n6 pieces\n1\n8\n8 pieces\nWorked example\n1\n2\n=\n1\n4\n+\n1\n4\n2\n1\n\t​\n\n=\n4\n1\n\t​\n\n+\n4\n1\n\t​\n\n\nTwo quarters equal one half of the same-sized whole.\n\n=\nTry it together\n1\nCut dashed lines. Keep the whole disc intact; divide the others.\n2\nAlign a third and a quarter at their centre points to compare.\n3\nPlace two quarter pieces over one half.\nScan\nOptional alternative\nFraction disc set\n\nOverlapping the pieces shows that a third beats a quarter without any explanation, and plastic lasts.\n\nWhat to check — A set with 1, \n1\n2\n, \n1\n3\n, \n1\n4\n, \n1\n6\n and \n1\n8\n; colour-coded is better.\nor\nPrepare at home\nPaper discs and folded origami paper\n\nCut the six discs above along the lines. Folding origami paper in half again and again gives a half, a quarter and an eighth.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-fraction"
+    },
+    {
+      "key": "fraction",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 5,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [
+        {
+          "n": 1,
+          "r": 25
+        },
+        {
+          "n": 2,
+          "r": 25
+        },
+        {
+          "n": 3,
+          "r": 25
+        },
+        {
+          "n": 4,
+          "r": 25
+        },
+        {
+          "n": 6,
+          "r": 25
+        },
+        {
+          "n": 8,
+          "r": 25
+        }
+      ],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n分数圆盘\n\n同样大的圆被平均分成小块，比较每块大小和块数。\n\n只剪虚线\n保留实线\n整体1\n1\n2\n2块\n1\n3\n3块\n1\n4\n4块\n1\n6\n6块\n1\n8\n8块\n完成的例子\n1\n2\n=\n1\n4\n+\n1\n4\n2\n1\n\t​\n\n=\n4\n1\n\t​\n\n+\n4\n1\n\t​\n\n\n同样大的圆中，两个四分之一等于二分之一。\n\n=\n一起试一试\n1\n沿虚线剪，整体1保留，其余圆再沿虚线分开。\n2\n把三分之一与四分之一的圆心角顶点对齐比较。\n3\n用两个四分之一盖住一个二分之一。\n扫码\n也可选用\n分数圆盘套装\n\n把块叠起来，不用讲就知道三分之一比四分之一大，塑料的也更耐用。\n\n挑选要点 — 要有1、\n1\n2\n、\n1\n3\n、\n1\n4\n、\n1\n6\n、\n1\n8\n，按颜色区分更好。\n或\n在家准备\n纸圆盘和折纸\n\n剪下上面六个圆盘并沿线剪开。把色纸对折再对折，就得到\n1\n2\n、\n1\n4\n、\n1\n8\n。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-fraction"
+    },
+    {
+      "key": "decimal",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9359377034505207,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n소수 모눈판\n\n큰 모눈판 한 장을 1로 보아요. 한 줄은 0.1, 작은 한 칸은 0.01이에요.\n\n점선만 오려요\n실선은 그대로 두어요\n전체 1 = 100칸\n전체 1 = 100칸\n한 줄 띠 10개 · 한 줄은 0.1, 한 칸은 0.01\n이렇게 만들었어요\n0.3\n+\n0.4\n=\n0.7\n0.3+0.4=0.7\n\n전체를 1로 볼 때, 세 줄과 네 줄은 일곱 줄이에요.\n\n0.3 + 0.4\n= 0.7\n이렇게 해 봐요\n1\n모눈판과 띠를 오려요. 띠 안쪽의 칸은 자르지 않아요.\n2\n한 판을 1로 보고, 한 줄 띠 10개로 모두 덮어 보아요.\n3\n0.3은 세 줄, 0.4는 네 줄이에요. 합쳐 몇 줄인지 확인해요.\nQR 찍기\n다른 교구를 쓰려면\n십진 블록 세트\n\n백 모형을 1로 정하면 십막대는 0.1, 낱개는 0.01이 돼요.\n\n살 때 보는 것 — 백 모형·십막대·낱개가 같은 단위 크기로 맞는 것.\n또는\n집에서 준비하기\n모눈종이와 색연필\n\n10×10칸을 그리고 전체를 1로 정해요. 한 줄씩 칠하며 소수를 나타내요.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-decimal"
+    },
+    {
+      "key": "decimal",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9359377034505207,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nDecimal grids\n\nOne large grid represents 1. A row is 0.1 and one small cell is 0.01.\n\nCut dashed outlines only\nKeep solid lines intact\n1 whole = 100 cells\n1 whole = 100 cells\n10 strips · each strip is 0.1; each cell is 0.01\nWorked example\n0.3\n+\n0.4\n=\n0.7\n0.3+0.4=0.7\n\nWith the whole worth one, three strips plus four make seven.\n\n0.3 + 0.4\n= 0.7\nTry it together\n1\nCut out the grids and strips. Keep each strip in one piece.\n2\nLet one grid be 1. Cover it with ten strips.\n3\nUse 3 strips for 0.3 and 4 for 0.4. Count the total.\nScan\nOptional alternative\nBase-ten blocks\n\nLet a hundred flat represent 1: a ten rod is 0.1 and a unit block is 0.01.\n\nWhat to check — Flats, rods and units must have matching unit lengths.\nor\nPrepare at home\nGraph paper and coloured pencils\n\nDraw a 10×10 grid and define the whole as 1. Shade rows to show decimals.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-decimal"
+    },
+    {
+      "key": "decimal",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9194012451171875,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n小数方格板\n\n一大块方格板表示1，一行是0.1，一小格是0.01。\n\n只剪虚线\n保留实线\n整体1＝100格\n整体1＝100格\n10条纸条：每条0.1，每格0.01\n完成的例子\n0.3\n+\n0.4\n=\n0.7\n0.3+0.4=0.7\n\n把整块看作1，3条加4条共7条。\n\n0.3 + 0.4\n= 0.7\n一起试一试\n1\n剪下方格板和纸条，纸条内部的小格不要剪。\n2\n把整板看作1，用10条纸条盖满。\n3\n0.3是3条，0.4是4条，合起来数一数。\n扫码\n也可选用\n十进制积木\n\n把百板定为1，则十条是0.1，个位块是0.01。\n\n挑选要点 — 百板、十条、个位块的单位长度应相同。\n或\n在家准备\n方格纸与彩色笔\n\n画10×10方格，把整体定为1，逐行涂色表示小数。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-decimal"
+    },
+    {
+      "key": "pentomino",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [
+        {
+          "id": "F",
+          "cells": [
+            {
+              "x": 62,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 34,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "I",
+          "cells": [
+            {
+              "x": 96,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 112,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 120,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 128,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "L",
+          "cells": [
+            {
+              "x": 138,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 34,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 42,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 42,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "N",
+          "cells": [
+            {
+              "x": 62,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 82,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "P",
+          "cells": [
+            {
+              "x": 96,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "T",
+          "cells": [
+            {
+              "x": 138,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "U",
+          "cells": [
+            {
+              "x": 54,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "V",
+          "cells": [
+            {
+              "x": 96,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 112,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "W",
+          "cells": [
+            {
+              "x": 138,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "X",
+          "cells": [
+            {
+              "x": 62,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "Y",
+          "cells": [
+            {
+              "x": 104,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 162,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "Z",
+          "cells": [
+            {
+              "x": 138,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        }
+      ],
+      "pentoExample": [
+        {
+          "id": "F",
+          "x": 3,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 7.3,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 11.6,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 15.899999999999999,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 20.2,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 24.5,
+          "y": 117
+        },
+        {
+          "id": "F",
+          "x": 3,
+          "y": 121.3
+        },
+        {
+          "id": "F",
+          "x": 7.3,
+          "y": 121.3
+        },
+        {
+          "id": "F",
+          "x": 11.6,
+          "y": 121.3
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 121.3
+        },
+        {
+          "id": "U",
+          "x": 20.2,
+          "y": 121.3
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 121.3
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 125.6
+        },
+        {
+          "id": "F",
+          "x": 7.3,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 11.6,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 20.2,
+          "y": 125.6
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 125.6
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 129.9
+        },
+        {
+          "id": "P",
+          "x": 7.3,
+          "y": 129.9
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 129.9
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 129.9
+        },
+        {
+          "id": "U",
+          "x": 20.2,
+          "y": 129.9
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 129.9
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 134.2
+        },
+        {
+          "id": "P",
+          "x": 7.3,
+          "y": 134.2
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 15.899999999999999,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 20.2,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 134.2
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 138.5
+        },
+        {
+          "id": "L",
+          "x": 7.3,
+          "y": 138.5
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 138.5
+        },
+        {
+          "id": "Z",
+          "x": 15.899999999999999,
+          "y": 138.5
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 138.5
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 138.5
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 7.3,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 11.6,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 15.899999999999999,
+          "y": 142.8
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 142.8
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 142.8
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 147.1
+        },
+        {
+          "id": "Z",
+          "x": 7.3,
+          "y": 147.1
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 147.1
+        },
+        {
+          "id": "W",
+          "x": 15.899999999999999,
+          "y": 147.1
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 147.1
+        },
+        {
+          "id": "N",
+          "x": 24.5,
+          "y": 147.1
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 151.4
+        },
+        {
+          "id": "Y",
+          "x": 7.3,
+          "y": 151.4
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 151.4
+        },
+        {
+          "id": "W",
+          "x": 15.899999999999999,
+          "y": 151.4
+        },
+        {
+          "id": "W",
+          "x": 20.2,
+          "y": 151.4
+        },
+        {
+          "id": "N",
+          "x": 24.5,
+          "y": 151.4
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 7.3,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 15.899999999999999,
+          "y": 155.7
+        },
+        {
+          "id": "W",
+          "x": 20.2,
+          "y": 155.7
+        },
+        {
+          "id": "W",
+          "x": 24.5,
+          "y": 155.7
+        }
+      ],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 0,
+      "images": true,
+      "text": "오려 쓰는 교구\n펜토미노 12조각과 6×10 판\n\n모두 5칸으로 된 조각이에요. 돌리거나 뒤집어서 6×10 판을 빈틈없이 채워 봐요.\n\n점선만 오려요\n실선은 그대로 두어요\n6 × 10 판\n조각 12개 · 점선만 오려요\nF\nI\nL\nN\nP\nT\nU\nV\nW\nX\nY\nZ\n완성 예시\n5 × 12 = 60\n이렇게 해 봐요\n1\n판과 조각 열두 개를 오립니다. 굵은 점선만 자르고 안쪽 얇은 금은 그냥 둡니다.\n2\n모든 조각은 5칸이에요. 모서리부터 맞춰 보세요.\n3\n다 채우면 다른 방법으로 또 채워 봅니다. 답은 하나가 아닙니다.\nQR 찍기\n다른 교구를 쓰려면\n펜토미노 세트\n\n조각이 두꺼워 잘 밀리지 않고, 색이 달라 어느 조각을 썼는지 한눈에 보입니다.\n\n살 때 보는 것 — 12조각이 다 있는 것. 판이 함께 오면 더 좋습니다.\n또는\n집에서 준비하기\n종이 조각과 두꺼운 종이\n\n위 조각을 오립니다. 우유갑이나 택배 상자에 붙여 오리면 두꺼워져 훨씬 잘 다뤄집니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-pentomino"
+    },
+    {
+      "key": "pentomino",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [
+        {
+          "id": "F",
+          "cells": [
+            {
+              "x": 62,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 34,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "I",
+          "cells": [
+            {
+              "x": 96,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 112,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 120,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 128,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "L",
+          "cells": [
+            {
+              "x": 138,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 34,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 42,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 42,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "N",
+          "cells": [
+            {
+              "x": 62,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 82,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "P",
+          "cells": [
+            {
+              "x": 96,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "T",
+          "cells": [
+            {
+              "x": 138,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "U",
+          "cells": [
+            {
+              "x": 54,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "V",
+          "cells": [
+            {
+              "x": 96,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 112,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "W",
+          "cells": [
+            {
+              "x": 138,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "X",
+          "cells": [
+            {
+              "x": 62,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "Y",
+          "cells": [
+            {
+              "x": 104,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 162,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "Z",
+          "cells": [
+            {
+              "x": 138,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        }
+      ],
+      "pentoExample": [
+        {
+          "id": "F",
+          "x": 3,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 7.3,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 11.6,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 15.899999999999999,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 20.2,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 24.5,
+          "y": 117
+        },
+        {
+          "id": "F",
+          "x": 3,
+          "y": 121.3
+        },
+        {
+          "id": "F",
+          "x": 7.3,
+          "y": 121.3
+        },
+        {
+          "id": "F",
+          "x": 11.6,
+          "y": 121.3
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 121.3
+        },
+        {
+          "id": "U",
+          "x": 20.2,
+          "y": 121.3
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 121.3
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 125.6
+        },
+        {
+          "id": "F",
+          "x": 7.3,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 11.6,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 20.2,
+          "y": 125.6
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 125.6
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 129.9
+        },
+        {
+          "id": "P",
+          "x": 7.3,
+          "y": 129.9
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 129.9
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 129.9
+        },
+        {
+          "id": "U",
+          "x": 20.2,
+          "y": 129.9
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 129.9
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 134.2
+        },
+        {
+          "id": "P",
+          "x": 7.3,
+          "y": 134.2
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 15.899999999999999,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 20.2,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 134.2
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 138.5
+        },
+        {
+          "id": "L",
+          "x": 7.3,
+          "y": 138.5
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 138.5
+        },
+        {
+          "id": "Z",
+          "x": 15.899999999999999,
+          "y": 138.5
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 138.5
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 138.5
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 7.3,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 11.6,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 15.899999999999999,
+          "y": 142.8
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 142.8
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 142.8
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 147.1
+        },
+        {
+          "id": "Z",
+          "x": 7.3,
+          "y": 147.1
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 147.1
+        },
+        {
+          "id": "W",
+          "x": 15.899999999999999,
+          "y": 147.1
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 147.1
+        },
+        {
+          "id": "N",
+          "x": 24.5,
+          "y": 147.1
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 151.4
+        },
+        {
+          "id": "Y",
+          "x": 7.3,
+          "y": 151.4
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 151.4
+        },
+        {
+          "id": "W",
+          "x": 15.899999999999999,
+          "y": 151.4
+        },
+        {
+          "id": "W",
+          "x": 20.2,
+          "y": 151.4
+        },
+        {
+          "id": "N",
+          "x": 24.5,
+          "y": 151.4
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 7.3,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 15.899999999999999,
+          "y": 155.7
+        },
+        {
+          "id": "W",
+          "x": 20.2,
+          "y": 155.7
+        },
+        {
+          "id": "W",
+          "x": 24.5,
+          "y": 155.7
+        }
+      ],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 0,
+      "images": true,
+      "text": "Cut-out tools\nTwelve pentominoes and a 6×10 board\n\nEvery piece has five cells. Turn or flip them to fill a 6×10 board without gaps.\n\nCut dashed outlines only\nKeep solid lines intact\n6 × 10 board\n12 pieces · cut dashed outlines\nF\nI\nL\nN\nP\nT\nU\nV\nW\nX\nY\nZ\nOne solution\n5 × 12 = 60\nTry it together\n1\nCut out the board and the twelve pieces, following the bold dotted lines only.\n2\nEvery piece has five cells. Try filling a corner first.\n3\nWhen it is full, fill it a second way — there is more than one answer.\nScan\nOptional alternative\nPentomino set\n\nThick pieces do not slide, and the colours show at a glance which piece went where.\n\nWhat to check — All twelve pieces; a board included is better.\nor\nPrepare at home\nPaper pieces on card\n\nCut out the pieces above. Glue them to a milk carton or cardboard first and they handle far better.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-pentomino"
+    },
+    {
+      "key": "pentomino",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [
+        {
+          "id": "F",
+          "cells": [
+            {
+              "x": 62,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 34,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "I",
+          "cells": [
+            {
+              "x": 96,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 112,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 120,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 128,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "L",
+          "cells": [
+            {
+              "x": 138,
+              "y": 18,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 26,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 34,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 42,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 42,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "N",
+          "cells": [
+            {
+              "x": 62,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 82,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "P",
+          "cells": [
+            {
+              "x": 96,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "T",
+          "cells": [
+            {
+              "x": 138,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 58,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 66,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 74,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "U",
+          "cells": [
+            {
+              "x": 54,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "V",
+          "cells": [
+            {
+              "x": 96,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 112,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "W",
+          "cells": [
+            {
+              "x": 138,
+              "y": 98,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 138,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 106,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 114,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "X",
+          "cells": [
+            {
+              "x": 62,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 54,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 70,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 62,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "Y",
+          "cells": [
+            {
+              "x": 104,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 96,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 104,
+              "y": 162,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        },
+        {
+          "id": "Z",
+          "cells": [
+            {
+              "x": 138,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 138,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 146,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 146,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            },
+            {
+              "x": 154,
+              "y": 154,
+              "w": 8,
+              "h": 8
+            }
+          ]
+        }
+      ],
+      "pentoExample": [
+        {
+          "id": "F",
+          "x": 3,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 7.3,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 11.6,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 15.899999999999999,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 20.2,
+          "y": 117
+        },
+        {
+          "id": "I",
+          "x": 24.5,
+          "y": 117
+        },
+        {
+          "id": "F",
+          "x": 3,
+          "y": 121.3
+        },
+        {
+          "id": "F",
+          "x": 7.3,
+          "y": 121.3
+        },
+        {
+          "id": "F",
+          "x": 11.6,
+          "y": 121.3
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 121.3
+        },
+        {
+          "id": "U",
+          "x": 20.2,
+          "y": 121.3
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 121.3
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 125.6
+        },
+        {
+          "id": "F",
+          "x": 7.3,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 11.6,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 125.6
+        },
+        {
+          "id": "X",
+          "x": 20.2,
+          "y": 125.6
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 125.6
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 129.9
+        },
+        {
+          "id": "P",
+          "x": 7.3,
+          "y": 129.9
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 129.9
+        },
+        {
+          "id": "X",
+          "x": 15.899999999999999,
+          "y": 129.9
+        },
+        {
+          "id": "U",
+          "x": 20.2,
+          "y": 129.9
+        },
+        {
+          "id": "U",
+          "x": 24.5,
+          "y": 129.9
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 134.2
+        },
+        {
+          "id": "P",
+          "x": 7.3,
+          "y": 134.2
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 15.899999999999999,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 20.2,
+          "y": 134.2
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 134.2
+        },
+        {
+          "id": "L",
+          "x": 3,
+          "y": 138.5
+        },
+        {
+          "id": "L",
+          "x": 7.3,
+          "y": 138.5
+        },
+        {
+          "id": "P",
+          "x": 11.6,
+          "y": 138.5
+        },
+        {
+          "id": "Z",
+          "x": 15.899999999999999,
+          "y": 138.5
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 138.5
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 138.5
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 7.3,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 11.6,
+          "y": 142.8
+        },
+        {
+          "id": "Z",
+          "x": 15.899999999999999,
+          "y": 142.8
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 142.8
+        },
+        {
+          "id": "V",
+          "x": 24.5,
+          "y": 142.8
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 147.1
+        },
+        {
+          "id": "Z",
+          "x": 7.3,
+          "y": 147.1
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 147.1
+        },
+        {
+          "id": "W",
+          "x": 15.899999999999999,
+          "y": 147.1
+        },
+        {
+          "id": "N",
+          "x": 20.2,
+          "y": 147.1
+        },
+        {
+          "id": "N",
+          "x": 24.5,
+          "y": 147.1
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 151.4
+        },
+        {
+          "id": "Y",
+          "x": 7.3,
+          "y": 151.4
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 151.4
+        },
+        {
+          "id": "W",
+          "x": 15.899999999999999,
+          "y": 151.4
+        },
+        {
+          "id": "W",
+          "x": 20.2,
+          "y": 151.4
+        },
+        {
+          "id": "N",
+          "x": 24.5,
+          "y": 151.4
+        },
+        {
+          "id": "Y",
+          "x": 3,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 7.3,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 11.6,
+          "y": 155.7
+        },
+        {
+          "id": "T",
+          "x": 15.899999999999999,
+          "y": 155.7
+        },
+        {
+          "id": "W",
+          "x": 20.2,
+          "y": 155.7
+        },
+        {
+          "id": "W",
+          "x": 24.5,
+          "y": 155.7
+        }
+      ],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 0,
+      "images": true,
+      "text": "剪纸教具\n十二块五格骨牌与6×10板\n\n每块都是5格。旋转或翻面，试着填满6×10方格板。\n\n只剪虚线\n保留实线\n6 × 10方格板\n12块：只剪虚线\nF\nI\nL\nN\nP\nT\nU\nV\nW\nX\nY\nZ\n拼成的例子\n5 × 12 = 60\n一起试一试\n1\n剪下板和十二块骨牌，只沿粗虚线剪。\n2\n每块都有5格。试着从角落开始拼。\n3\n铺满之后换一种方法再铺一次——答案不止一个。\n扫码\n也可选用\n五格骨牌套装\n\n块厚不易滑动，颜色不同一眼看出用了哪块。\n\n挑选要点 — 要12块齐全，附板更好。\n或\n在家准备\n纸块与厚纸\n\n剪下上面的骨牌。先贴在牛奶盒或纸箱上再剪，会好用得多。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-pentomino"
+    },
+    {
+      "key": "intline",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9769854710574893,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 12,
+      "operationCards": 2,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n정수 수직선과 수·연산 카드\n\n0보다 작은 정수는 왼쪽에 있습니다. 수 카드의 부호와 더하기·빼기 연산기호를 구분합니다.\n\n점선만 오려요\n실선은 그대로 두어요\n0의 왼쪽은 음수, 오른쪽은 양수\n−10\n−9\n−8\n−7\n−6\n−5\n−4\n−3\n−2\n−1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n한 번 더 놓아 보는 수직선\n−10\n−9\n−8\n−7\n−6\n−5\n−4\n−3\n−2\n−1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n정수 카드 12장 + 연산 카드 2장\n+1\n+2\n+3\n+5\n+7\n−1\n−2\n−3\n−5\n−7\n+10\n−10\n+\n−\n양수를 더하면 오른쪽, 음수를 더하면 왼쪽으로 가요.\n이렇게 만들었어요\n−\n3\n+\n(\n−\n5\n)\n=\n−\n8\n−3+(−5)=−8\n\n−5를 더하면 왼쪽으로 5칸 이동합니다.\n\n-10\n-8\n-3\n0\n−5\n이렇게 해 봐요\n1\n수직선과 카드를 오립니다. 연산 카드는 따로 놓습니다.\n2\n−3에서 + (−5)를 해 봅니다. 왼쪽으로 5칸 가면 −8입니다.\n3\n같은 자리에서 − (−5)를 해 봅니다. 오른쪽으로 5칸 가면 2입니다.\nQR 찍기\n다른 교구를 쓰려면\n실내 온도계\n\n영하가 실제로 눈금 아래에 있습니다. 아침 기온을 매일 읽으면 음수가 생활 속 수가 됩니다.\n\n살 때 보는 것 — 영하 20도까지 읽히고 눈금이 큼직한 것. 알코올식이면 충분합니다.\n또는\n집에서 준비하기\n종이 수직선과 지우개 말\n\n위 수직선을 오려 책상에 붙이고 지우개를 말로 씁니다. 엘리베이터 버튼(지하 −1, −2)도 훌륭한 수직선입니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-intline"
+    },
+    {
+      "key": "intline",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.972929852320675,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 12,
+      "operationCards": 2,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nInteger line, number and operation cards\n\nNegative integers lie left of zero. Distinguish a number’s sign from the addition or subtraction operation.\n\nCut dashed outlines only\nKeep solid lines intact\nNegative left of zero; positive right\n−10\n−9\n−8\n−7\n−6\n−5\n−4\n−3\n−2\n−1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\nA second number line\n−10\n−9\n−8\n−7\n−6\n−5\n−4\n−3\n−2\n−1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n12 integer cards + 2 operation cards\n+1\n+2\n+3\n+5\n+7\n−1\n−2\n−3\n−5\n−7\n+10\n−10\n+\n−\nAdd a positive: move right. Add a negative: move left.\nWorked example\n−\n3\n+\n(\n−\n5\n)\n=\n−\n8\n−3+(−5)=−8\n\nAdding −5 moves five steps left.\n\n-10\n-8\n-3\n0\n−5\nTry it together\n1\nCut the lines and cards. Keep operation cards separate.\n2\nStart at −3 and add −5. Move left five steps to −8.\n3\nStart at −3 and subtract −5. Move right five steps to 2.\nScan\nOptional alternative\nIndoor thermometer\n\nBelow zero really sits below the mark. Reading the morning temperature makes negatives an everyday number.\n\nWhat to check — Reads to −20°C with large marks; an alcohol type is fine.\nor\nPrepare at home\nPaper line and an eraser counter\n\nCut out the line above and use an eraser as the counter. A lift panel with basement floors is a fine number line too.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-intline"
+    },
+    {
+      "key": "intline",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.960239690466772,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 12,
+      "operationCards": 2,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n整数数轴、数字卡与运算卡\n\n负整数在0左边。区分数的正负号与加减运算符号。\n\n只剪虚线\n保留实线\n0左边是负数，右边是正数\n−10\n−9\n−8\n−7\n−6\n−5\n−4\n−3\n−2\n−1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n0左边是负数，右边是正数\n−10\n−9\n−8\n−7\n−6\n−5\n−4\n−3\n−2\n−1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n12张整数卡＋2张运算卡\n+1\n+2\n+3\n+5\n+7\n−1\n−2\n−3\n−5\n−7\n+10\n−10\n+\n−\n加正数向右，加负数向左。\n完成的例子\n−\n3\n+\n(\n−\n5\n)\n=\n−\n8\n−3+(−5)=−8\n\n加上−5，要向左移5格。\n\n-10\n-8\n-3\n0\n−5\n一起试一试\n1\n剪下数轴与卡片，把运算卡单独放好。\n2\n从−3加上−5，向左5格到−8。\n3\n从−3减去−5，向右5格到2。\n扫码\n也可选用\n室内温度计\n\n零下就在刻度下面。每天读早上的气温，负数就成了生活里的数。\n\n挑选要点 — 能读到零下20度、刻度大的即可，酒精式就够。\n或\n在家准备\n纸数轴与橡皮棋子\n\n剪下上面的数轴贴在桌上，用橡皮当棋子。电梯的地下楼层按钮也是很好的数轴。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-intline"
+    },
+    {
+      "key": "algtiles",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        }
+      ],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n대수 타일 (x² · x · 1)\n\nx가 양수일 때, 타일의 넓이로 다항식을 나타냅니다. 타일을 직사각형으로 맞추면 인수분해를 살펴볼 수 있습니다.\n\n점선만 오려요\n실선은 그대로 두어요\nx² 타일 4개\nx²\nx²\nx²\nx²\nx 타일 8개 · 가로 1, 세로 x\nx\nx\nx\nx\nx\nx\nx\nx\n1 타일 20개 · 한 변 1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\nx > 0인 넓이 모형입니다. 그림의 길이 비는 예시예요.\n이렇게 만들었어요\n𝑥\n2\n+\n3\n𝑥\n+\n2\n=\n(\n𝑥\n+\n1\n)\n(\n𝑥\n+\n2\n)\nx\n2\n+3x+2=(x+1)(x+2)\n\n직사각형의 두 변은 x+1, x+2이고 넓이는 두 길이의 곱입니다.\n\nx + 2\nx + 1\nx² + 3x + 2\n이렇게 해 봐요\n1\n타일의 바깥 점선을 따라 오립니다. x는 양수로 봅니다.\n2\nx² 타일 1개, x 타일 3개, 1 타일 2개를 준비합니다.\n3\n그림처럼 직사각형을 만들고 두 변 x+1, x+2를 확인합니다.\nQR 찍기\n다른 교구를 쓰려면\n대수 타일 세트\n\n앞뒤 색이 달라 양수와 음수를 뒤집어 나타냅니다. 종이로는 그 뒤집기가 잘 안 됩니다.\n\n살 때 보는 것 — x², x, 1 세 종류가 다 있고 앞뒤 색이 다른 것.\n또는\n집에서 준비하기\n종이 타일과 색칠한 뒷면\n\n위 타일을 오리고 뒷면을 색연필로 칠합니다. 뒤집으면 음수 — 색이 다르니 앞뒤가 구별됩니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-algtiles"
+    },
+    {
+      "key": "algtiles",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        }
+      ],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nAlgebra tiles (x², x, 1)\n\nFor positive x, tile areas represent polynomials. Arrange a rectangle to explore factorisation.\n\nCut dashed outlines only\nKeep solid lines intact\n4 x² tiles\nx²\nx²\nx²\nx²\n8 x tiles · sides 1 and x\nx\nx\nx\nx\nx\nx\nx\nx\n20 unit tiles · side 1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\nArea model for x > 0. Length proportions are illustrative.\nWorked example\n𝑥\n2\n+\n3\n𝑥\n+\n2\n=\n(\n𝑥\n+\n1\n)\n(\n𝑥\n+\n2\n)\nx\n2\n+3x+2=(x+1)(x+2)\n\nThe sides are x+1 and x+2; their product is the area.\n\nx + 2\nx + 1\nx² + 3x + 2\nTry it together\n1\nCut the tile outlines. Use the model for positive x.\n2\nTake 1 square x² tile, 3 x tiles and 2 unit tiles.\n3\nBuild the shown rectangle and identify the sides x+1 and x+2.\nScan\nOptional alternative\nAlgebra tile set\n\nThe two faces are different colours, so flipping a tile makes it negative — paper cannot do that well.\n\nWhat to check — All three sizes, with different colours front and back.\nor\nPrepare at home\nPaper tiles with a coloured back\n\nCut out the tiles and colour the backs. Flipped over means negative, and the colour tells them apart.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-algtiles"
+    },
+    {
+      "key": "algtiles",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9889031756365739,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-square",
+          "w": 30,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-x",
+          "w": 10,
+          "h": 30
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        },
+        {
+          "part": "algebra-one",
+          "w": 10,
+          "h": 10
+        }
+      ],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n代数瓷砖（x²·x·1）\n\n当x为正数时，用方块面积表示多项式，拼成长方形来观察因式分解。\n\n只剪虚线\n保留实线\n4块x²\nx²\nx²\nx²\nx²\n8块x：两边长为1和x\nx\nx\nx\nx\nx\nx\nx\nx\n20块单位方块：边长1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n这是x＞0的面积模型，图中的长度比仅作示意。\n完成的例子\n𝑥\n2\n+\n3\n𝑥\n+\n2\n=\n(\n𝑥\n+\n1\n)\n(\n𝑥\n+\n2\n)\nx\n2\n+3x+2=(x+1)(x+2)\n\n两边长为x+1和x+2，它们的乘积就是面积。\n\nx + 2\nx + 1\nx² + 3x + 2\n一起试一试\n1\n沿外侧虚线剪，模型中的x为正数。\n2\n取1块x²、3块x和2块单位方块。\n3\n照图拼成长方形，确认边长x+1与x+2。\n扫码\n也可选用\n代数瓷砖套装\n\n正反两面颜色不同，翻过来就是负数——纸做的很难表现这一点。\n\n挑选要点 — 三种规格齐全、正反异色。\n或\n在家准备\n纸瓷砖与涂色的背面\n\n剪下瓷砖，把背面涂上颜色。翻过来就是负数，颜色一看就分得清。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-algtiles"
+    },
+    {
+      "key": "coord",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9133947007519723,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n좌표 모눈판\n\n원점은 두 축이 만나는 0입니다. x좌표만큼 가로로, y좌표만큼 세로로 움직여 점을 찍습니다.\n\n점선만 오려요\n실선은 그대로 두어요\n-10\n-10\n-5\n-5\n5\n5\n10\n10\n0\nx\ny\n이렇게 만들었어요\n𝑦\n=\n𝑥\n−\n1\ny=x−1\n\nA(2,1)과 B(4,3)을 찍어 직선을 그린 예입니다.\n\nA(2,1)\nB(4,3)\n이렇게 해 봐요\n1\n바깥 점선을 오려 판을 만듭니다. 얇은 모눈선은 그대로 둡니다.\n2\n원점에서 오른쪽 2칸, 위로 1칸 가서 A(2,1)을 찍습니다.\n3\nB(4,3)을 찍고 두 점을 지나도록 직선을 그립니다.\nQR 찍기\n다른 교구를 쓰려면\n모눈 공책 (5mm)\n\n매번 새 판에 그릴 수 있습니다. 시험지에 손으로 좌표를 그리는 연습도 됩니다.\n\n살 때 보는 것 — 5mm 모눈, 줄이 옅은 것. 두꺼우면 그린 선이 안 보입니다.\n또는\n집에서 준비하기\n종이 좌표판과 투명 파일\n\n위 좌표판을 오려 투명 파일에 끼우면 보드마카로 쓰고 지울 수 있습니다. 몇 번이고 다시 씁니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-coord"
+    },
+    {
+      "key": "coord",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9133947007519723,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nCoordinate grid\n\nThe origin is where the axes meet. Move horizontally by x, then vertically by y to plot a point.\n\nCut dashed outlines only\nKeep solid lines intact\n-10\n-10\n-5\n-5\n5\n5\n10\n10\n0\nx\ny\nWorked example\n𝑦\n=\n𝑥\n−\n1\ny=x−1\n\nPlot A(2,1) and B(4,3), then draw the line.\n\nA(2,1)\nB(4,3)\nTry it together\n1\nCut the outer border, keeping the grid intact.\n2\nFrom the origin move 2 right and 1 up; plot A(2,1).\n3\nPlot B(4,3) and draw a straight line through both points.\nScan\nOptional alternative\nGraph notebook (5mm)\n\nA fresh grid every time, and it trains drawing axes by hand on an exam paper.\n\nWhat to check — 5mm squares with faint rules; dark rules hide your line.\nor\nPrepare at home\nPaper grid in a clear file\n\nSlip the grid into a clear file and write on it with a whiteboard marker — wipe and reuse.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-coord"
+    },
+    {
+      "key": "coord",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.8977388822115384,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "armLength": null,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n坐标方格板\n\n原点是两轴相交的0。先按x坐标横向移动，再按y坐标纵向移动来描点。\n\n只剪虚线\n保留实线\n-10\n-10\n-5\n-5\n5\n5\n10\n10\n0\nx\ny\n完成的例子\n𝑦\n=\n𝑥\n−\n1\ny=x−1\n\n描出A(2,1)、B(4,3)，再画直线。\n\nA(2,1)\nB(4,3)\n一起试一试\n1\n剪下外框，保留内部网格线。\n2\n从原点向右2格、向上1格，描出A(2,1)。\n3\n再描B(4,3)，画直线通过这两点。\n扫码\n也可选用\n方格本（5毫米）\n\n每次都有新的方格，也练习在试卷上手画坐标。\n\n挑选要点 — 5毫米方格、格线要淡，太深会盖住画的线。\n或\n在家准备\n纸坐标板与透明文件夹\n\n把坐标板夹进透明文件夹，用白板笔写了擦、擦了写。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-coord"
+    },
+    {
+      "key": "unitcircle",
+      "lang": "ko",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": true,
+      "scaleMm": 0.98320830845276,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "unitCircleRadius": "50",
+      "armLength": 50,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "오려 쓰는 교구\n단위원 판과 반지름 자\n\n반지름의 길이를 1로 정한 원입니다. 회전하는 자의 끝점을 원 위에 맞추고 x좌표와 y좌표를 읽습니다.\n\n점선만 오려요\n실선은 그대로 두어요\n-1\n-1\n-0.5\n-0.5\n0.5\n0.5\n1\n1\n0\nx\ny\n0°\n30°\n45°\n60°\n90°\n180°\n270°\n반지름 자 · 두 점 사이가 반지름 1\n1\n이렇게 만들었어요\ncos\n⁡\n3\n0\n∘\n=\n3\n2\n,\nsin\n⁡\n3\n0\n∘\n=\n1\n2\ncos30\n∘\n=\n2\n3\n\t​\n\n\t​\n\n,sin30\n∘\n=\n2\n1\n\t​\n\n\n반지름을 1로 볼 때 끝점의 x좌표는 cos, y좌표는 sin입니다.\n\ncos 30° =\n√3\n2\nsin 30° =\n1\n2\n이렇게 해 봐요\n1\n판과 자의 바깥 점선을 오립니다. 원 둘레는 자르지 않습니다.\n2\n판의 중심점과 자의 시작점을 맞춰 할핀으로 고정합니다.\n3\n자 끝점을 30°에 맞춥니다. x는 cos, y는 sin이며 눈금값은 근삿값입니다.\nQR 찍기\n다른 교구를 쓰려면\n각도기와 컴퍼스 세트\n\n각을 정확히 재고 원을 직접 그립니다. 고등 도형 문제는 결국 손으로 그려 봐야 보입니다.\n\n살 때 보는 것 — 반투명 각도기(밑에 선이 비치는 것)와 나사로 고정되는 컴퍼스.\n또는\n집에서 준비하기\n종이 단위원과 할핀\n\n두 중심점을 맞춰 할핀으로 고정하고, 두 번째 점이 원 위를 따라가는지 확인합니다.\n\n위 종이 교구를 그대로 사용할 수 있어요.\n1 / 1\nTOOL-unitcircle"
+    },
+    {
+      "key": "unitcircle",
+      "lang": "en",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.98320830845276,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "unitCircleRadius": "50",
+      "armLength": 50,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "Cut-out tools\nUnit circle and a radius arm\n\nThe circle has radius 1. Align the rotating arm’s tip with the circle and read its x and y coordinates.\n\nCut dashed outlines only\nKeep solid lines intact\n-1\n-1\n-0.5\n-0.5\n0.5\n0.5\n1\n1\n0\nx\ny\n0°\n30°\n45°\n60°\n90°\n180°\n270°\nRadius arm · distance between the dots is 1\n1\nWorked example\ncos\n⁡\n3\n0\n∘\n=\n3\n2\n,\nsin\n⁡\n3\n0\n∘\n=\n1\n2\ncos30\n∘\n=\n2\n3\n\t​\n\n\t​\n\n,sin30\n∘\n=\n2\n1\n\t​\n\n\nOn the unit circle the point has x=cos θ and y=sin θ.\n\ncos 30° =\n√3\n2\nsin 30° =\n1\n2\nTry it together\n1\nCut the dashed outlines, not the circle circumference.\n2\nAlign the two pivot dots and fasten with a split pin.\n3\nTurn to 30°. Read x=cos and y=sin; scale readings are approximate.\nScan\nOptional alternative\nProtractor and compass set\n\nMeasure angles exactly and draw the circle yourself; high-school geometry opens up once it is drawn.\n\nWhat to check — A translucent protractor and a screw-locking compass.\nor\nPrepare at home\nPaper circle and a split pin\n\nJoin the pivot dots with a split pin. Check that the second dot follows the circle.\n\nYou can use the paper tools above.\n1 / 1\nTOOL-unitcircle"
+    },
+    {
+      "key": "unitcircle",
+      "lang": "zh",
+      "overflow": 0,
+      "artClipped": false,
+      "labelOverflow": [],
+      "labelCollisions": [],
+      "fontLoaded": true,
+      "nonKoreanDiagram": false,
+      "scaleMm": 0.9663558668391719,
+      "frameCount": 0,
+      "counters": 0,
+      "counterDiameterMm": null,
+      "rods": 0,
+      "ones": 0,
+      "rodSizeMm": null,
+      "oneSizeMm": null,
+      "fractionLabels": 0,
+      "slashFraction": false,
+      "unitCircleRadius": "50",
+      "armLength": 50,
+      "fractionDiscs": [],
+      "algebra": [],
+      "pentoPieces": [],
+      "pentoExample": [],
+      "arrayDots": 0,
+      "integerCards": 0,
+      "operationCards": 0,
+      "demoDots": 0,
+      "demoRings": 0,
+      "examples": 1,
+      "images": true,
+      "text": "剪纸教具\n单位圆板与半径尺\n\n把半径长定为1。将转动尺的端点对准圆周，读取x、y坐标。\n\n只剪虚线\n保留实线\n-1\n-1\n-0.5\n-0.5\n0.5\n0.5\n1\n1\n0\nx\ny\n0°\n30°\n45°\n60°\n90°\n180°\n270°\n半径尺：两点间的长度为半径1\n1\n完成的例子\ncos\n⁡\n3\n0\n∘\n=\n3\n2\n,\nsin\n⁡\n3\n0\n∘\n=\n1\n2\ncos30\n∘\n=\n2\n3\n\t​\n\n\t​\n\n,sin30\n∘\n=\n2\n1\n\t​\n\n\n单位圆上端点的x坐标是cos θ，y坐标是sin θ。\n\ncos 30° =\n√3\n2\nsin 30° =\n1\n2\n一起试一试\n1\n沿外侧虚线剪，圆周不要剪。\n2\n对准板与尺上的中心点，用两脚钉固定。\n3\n转到30°，x是cos、y是sin，刻度读数为近似值。\n扫码\n也可选用\n量角器与圆规套装\n\n准确量角、亲手画圆。高中的图形题，画出来才看得明白。\n\n挑选要点 — 半透明量角器和带螺丝固定的圆规。\n或\n在家准备\n纸单位圆与工字钉\n\n用两脚钉连接两个中心点，确认另一点沿圆周移动。\n\n可以直接使用上面的纸教具。\n1 / 1\nTOOL-unitcircle"
+    }
+  ],
+  "errors": [],
+  "externalWrites": [],
+  "allTools": {
+    "pages": 12,
+    "uniqueIds": 12,
+    "questions": 0
+  },
+  "gallery": {
+    "viewports": [
+      1440,
+      375
+    ],
+    "toolsPerViewport": 12,
+    "invalidLinkRejected": true
+  },
+  "weeklySheets": {
+    "cases": 42,
+    "passed": 42,
+    "courses": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8",
+      "C11",
+      "C13",
+      "C14",
+      "C16",
+      "C17",
+      "C18",
+      "C19",
+      "C20",
+      "C22",
+      "C23",
+      "C24",
+      "C25",
+      "C26"
+    ]
+  },
+  "scope": "Actual public standalone tool route; all 12 tools in 3 languages, all-tool 12-page export, and gallery previous/next at 1440/375px. Local fixtures only for preserved unrelated preview state; no tool-selection mock.",
+  "deployment": "verified",
+  "liveVerification": "live-verification.json"
+}

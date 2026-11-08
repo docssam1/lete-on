@@ -17,7 +17,7 @@ const check=(name,fn)=>{ try{ fn(); ok.push(name); }catch(e){ fails.push(name+':
 
 global.window={};
 const PC=require(path.join(APP,'app/pace-compare.js'));
-require(path.join(APP,'data/courses.js'));
+global.window.NM_COURSES=require('./lib/runtime-fixture').load().world.NM_COURSES;
 const C=global.window.NM_COURSES;
 const BANNED=/소마|황소|S학원|Academy S|S学院|프리미어|Premier|합격생|admits|录取生/i;
 
@@ -120,9 +120,10 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
     const page=await browser.newPage({viewport:{width:390,height:844}}); const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     await page.route('**/*',r=>/supabase|google-analytics|googletagmanager/.test(r.request().url())?r.abort():r.continue());
-    await page.addInitScript(()=>{ if(sessionStorage.getItem('pcSeeded')) return; sessionStorage.setItem('pcSeeded','1'); localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'속도 검수',view:'courseroad',
+    await page.addInitScript(()=>{ if(sessionStorage.getItem('pcSeeded')) return; sessionStorage.setItem('pcSeeded','1'); localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'속도 검수',view:'courseroad',
       avatar:{kind:'boy'},account:{status:'active'},placement:{course:'C10',self:true},roadCadence:'w2',roadPace:'p2',roadSpeed:1})); });
-    await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
+    await require('./lib/preview-fixture')(page);
+    await require('./lib/preview-fixture')(page);await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>typeof window.NM_PACE_DIAG==='function',null,{timeout:60000});
     const r=await page.evaluate(()=>{
       const D=window.NM_PACE_DIAG, PC=window.NM_PACE_COMPARE;
@@ -168,7 +169,7 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
 
     // 화면: 로드맵에 카드가 그려지고, 실제 학원 이름이 안 나온다(세 언어)
     for(const lang of ['ko','en','zh']){
-      await page.evaluate(l=>{ const s=JSON.parse(localStorage.getItem('nm_state_v1')); s.lang=l; s.schoolAge={entryYear:new Date().getFullYear()+((new Date().getMonth()+1)>=3?2:1)}; s.view='courseroad'; localStorage.setItem('nm_state_v1',JSON.stringify(s)); },lang);
+      await page.evaluate(l=>{ const s=JSON.parse(localStorage.getItem('nm_preview_state_v1')); s.lang=l; s.schoolAge={entryYear:new Date().getFullYear()+((new Date().getMonth()+1)>=3?2:1)}; s.view='courseroad'; localStorage.setItem('nm_preview_state_v1',JSON.stringify(s)); },lang);
       await page.reload({waitUntil:'domcontentloaded',timeout:60000});
       await page.waitForFunction(()=>typeof window.NM_PACE_DIAG==='function',null,{timeout:60000});
       /* 타이틀(모드 선택)이 뜨는 시점이 들쭉날쭉하다 — 카드가 보일 때까지 로드맵 버튼을 눌러 본다 */
@@ -185,7 +186,7 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
           const candidate=await page.locator('#crPaceCmp').innerText();
           if(ready.test(candidate))txt=candidate;
         }
-        if(!txt)debug=await page.evaluate(()=>{let state=null;try{state=JSON.parse(localStorage.getItem('nm_state_v1'))}catch(e){}return{view:state&&state.view,ttRoad:!!document.querySelector('#ttRoad'),title3d:document.querySelectorAll('.nm-title3d button').length,townRoad:!!document.querySelector('#townCourseRoad'),pace:!!document.querySelector('#crPaceCmp'),text:(document.body.innerText||'').slice(0,180)}});
+        if(!txt)debug=await page.evaluate(()=>{let state=null;try{state=JSON.parse(localStorage.getItem('nm_preview_state_v1'))}catch(e){}return{view:state&&state.view,ttRoad:!!document.querySelector('#ttRoad'),title3d:document.querySelectorAll('.nm-title3d button').length,townRoad:!!document.querySelector('#townCourseRoad'),pace:!!document.querySelector('#crPaceCmp'),text:(document.body.innerText||'').slice(0,180)}});
       }
       check(`화면(${lang}): 카드·판정·이름`, ()=>{
         assert(txt, '#crPaceCmp 없음 '+JSON.stringify(debug));

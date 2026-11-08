@@ -17,7 +17,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(repo,'.'+decodeU
  const result=await page.evaluate(()=>{
   const refs=new Map(),widgets=new Set();let checked=0,semantic=0;
   function collect(o){if(!o||typeof o!=='object')return;if(/^NL\d+$/.test(o.t)&&o.lv)refs.set(o.t+'@'+o.lv,[o.t,o.lv]);for(const v of Object.values(o))if(typeof v==='object')collect(v);}
-  collect(NM_COURSES.C0.sessions);
+  collect(NM_COURSES.C0.sessions);for(const [t,lv]of [['NL28',3],['NL28',4],['NL28',5],['NL28',6],['NL30',5],['NL36',14],['NL37',10],['NL37',11],['NL41',4]])refs.set(t+'@'+lv,[t,lv]);
   if(__paperBody({widget:'g46LineDraw'})!=='')throw Error('Unsupported manual widget must keep its existing paper behavior');
   const eq=(a,b,msg)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw Error(msg+': '+JSON.stringify(a)+' != '+JSON.stringify(b));semantic++;};
   for(const [ref,[t,lv]]of refs)for(let seed=1;seed<=12;seed++){
@@ -65,7 +65,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(repo,'.'+decodeU
     case 'g12_partsFill':{const sums=[...d.querySelectorAll('.nm-pe-math p')].map(e=>e.textContent.split(' = ')[0].split(' + ').map(Number));for(const ns of sums){eq(ns.length,p.parts,'Partition count');eq(ns.reduce((a,b)=>a+b,0),p.whole,'Partition total');for(const[i,n]of Object.entries(p.given||{}))eq(ns[i],n,'Given part changed');if(p.equal)eq(new Set(ns).size,1,'Equal partition');if(ns.some(n=>n<(p.min||1)))throw Error('Partition below minimum');}break;}
     case 'g12_gridGroup':{const used=new Set();for(let gi=0;gi<p.need;gi++){const ns=[...d.querySelectorAll('[data-pe-group="'+gi+'"]')].map(e=>Number(e.dataset.peValue));eq(ns.length,p.size,'Group size');eq(ns.reduce((a,b)=>a+b,0),p.target,'Wrong grouped sum');const coords=p.solutionGroups[gi].map(c=>c.join(':'));for(const key of coords){if(used.has(key))throw Error('A cell belongs to two groups');used.add(key);}const reached=new Set([0]);for(let n=0;n<p.size;n++)for(let a=0;a<p.size;a++)for(let b=0;b<p.size;b++)if(reached.has(a)&&Math.max(Math.abs(p.solutionGroups[gi][a][0]-p.solutionGroups[gi][b][0]),Math.abs(p.solutionGroups[gi][a][1]-p.solutionGroups[gi][b][1]))<=1)reached.add(b);eq(reached.size,p.size,'Disconnected group');}break;}
     case 'g46Line':eq(d.querySelectorAll('.nm-nl-g46-ppl.nm-pe-ring').length,p.ask==='total'?p.total:p.ask==='convert'?1:p.ask==='behind'?p.total-p.mark-1:p.mark,'Wrong people marked');break;
-    case 'g13Rep':case 'matchLine':case 'g46Match':for(const line of d.querySelectorAll('[data-pe-match]')){const[i,j]=line.dataset.peMatch.split(',').map(Number);eq(p.left[i],p.right[j],'Wrong matching line');}break;
+    case 'g13Rep':case 'matchLine':case 'g46Match':for(const line of d.querySelectorAll('[data-pe-match]')){const[i,j]=line.dataset.peMatch.split(',').map(Number);eq(p.matchRule==='sum'?p.left[i]+p.right[j]:p.left[i],p.matchRule==='sum'?p.sumTo:p.right[j],'Wrong matching line');}break;
     case 'framePaint':eq(d.querySelectorAll('.nm-nl-tf.nm-pe-filled').length,p.target,'Wrong filled ten-frame count');break;
     case 'gridPaint':if(p.gridMode==='single'){eq(d.querySelectorAll('.nm-pe-ring').length,1,'Select exactly one ordinal position');eq([...d.querySelectorAll('.nm-pe-objects>span')].findIndex(e=>e.classList.contains('nm-pe-ring')),p.targetIndex,'Wrong ordinal position selected');break;}
     case 'tapMake':eq(d.querySelectorAll('.nm-nl-cell-empty.nm-pe-filled').length,p.target,'Wrong number of filled cells');break;

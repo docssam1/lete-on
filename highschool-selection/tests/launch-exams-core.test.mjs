@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {evaluateResponse,makeReport,publicQuestions,publicExam,validGrant,fixedEqual,applyReview,makeSelfReport} from '../../supabase/functions/highselect-exams/core.mjs';
+import {evaluateResponse,makeReport,publicQuestions,publicExam,documentPages,validGrant,fixedEqual,applyReview,makeSelfReport} from '../../supabase/functions/highselect-exams/core.mjs';
 const q=(spec,number=1)=>({number,responseType:spec.type||'input',classification:{domain:'기하',majorUnit:'도형',detailType:'길이'},spec});
 test('fractions, decimals, radicals, units and ratios accept equivalent notation without evaluating code',()=>{
  assert.equal(evaluateResponse('0.5',q({type:'input',mode:'fraction-equivalent',answers:['1/2']})),'correct');
@@ -48,4 +48,15 @@ test('O/X self-check rejects answers and forged states, preserves unmarked items
  const e={id:'self',title:'시험',mode:'pilot',version:'v2',pages:['paper'],answerPages:['private-answer-page'],questions:[q({answers:['private-key']}),q({answers:['2']},2),q({answers:['3']},3)]};
  const r=makeSelfReport(e,['O','X','']);assert.deepEqual([r.correctCount,r.wrongCount,r.blankCount],[1,1,1]);assert.equal(r.gradingMethod,'self-reported');assert.equal(r.final,false);assert.equal(r.cutlineDecision,null);assert.doesNotMatch(JSON.stringify(r),/private-answer-page|private-key/);
  for(const marks of [['O'],['correct','X',''],['O',null,''],['O','X','<script>']])assert.throws(()=>makeSelfReport(e,marks));
+});
+
+test('paper, key and analysis remain distinct protected documents; metadata exposes only counts and timing',()=>{
+ const e={id:'wm',title:'시험',pages:['PRIVATE_PAPER'],answerPages:['PRIVATE_KEY'],analysisPages:['PRIVATE_ANALYSIS'],questions:[],durationMinutes:140,sectionMinutes:{ALG:70,GEO:70},breakMinutes:20};
+ assert.deepEqual(documentPages(e,'analysis'),['PRIVATE_ANALYSIS']);
+ assert.deepEqual(documentPages(e,'paper'),['PRIVATE_PAPER']);
+ assert.deepEqual(documentPages(e,'answers'),['PRIVATE_KEY']);
+ for(const kind of ['invalid','constructor','__proto__'])assert.equal(documentPages(e,kind),undefined);
+ const meta=publicExam(e);assert.deepEqual([meta.pageCount,meta.answerPageCount,meta.analysisPageCount],[1,1,1]);
+ assert.deepEqual(meta.sectionMinutes,{ALG:70,GEO:70});assert.equal(meta.breakMinutes,20);assert.doesNotMatch(JSON.stringify(meta),/PRIVATE_/);
+ assert.equal(publicExam({...e,analysisPages:undefined}).analysisPageCount,0);
 });

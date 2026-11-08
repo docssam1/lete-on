@@ -77,7 +77,7 @@ body.hm {
 .hm-three small { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--card-ink); }
 .hm-three li:nth-child(1) small { background: var(--yellow); }
 .hm-three li:nth-child(2) small { background: var(--green); }
-.hm-three li:nth-child(3) small { background: var(--blue); color: #fff; }
+.hm-three li:nth-child(3) small { background: var(--blue); }
 .hm-three b { display: block; margin-top: 12px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
 .hm-three p { margin: 10px 0 0; font-size: 15px; line-height: 1.6; color: #c9c3b6; }
 

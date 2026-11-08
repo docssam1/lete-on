@@ -420,7 +420,7 @@
         ],
         solution: [
           { tex: `${a}-2\\times${b}=\\square`, blank:red },
-          { tex: `${red}\\text{은 7의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
+          { tex: `${red}\\text{${NM_RNG.koJosa(red,'은','는').slice(String(red).length)} 7의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
         ]
       };
     }
@@ -462,7 +462,7 @@
         ],
         solution: [
           { tex: `(${d[0]}+${d[2]})-(${d[1]}+${d[3]})=\\square`, blank:diff },
-          { tex: `${diff}\\text{은 11의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
+          { tex: `${diff}\\text{${NM_RNG.koJosa(diff,'은','는').slice(String(diff).length)} 11의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
         ]
       };
     }
@@ -656,7 +656,7 @@
       const choice=R(rng,0,9), n=choice===0?1:pick(rng,choice<5?primes:composites);
       const prime=n>1&&smallestPF(n)===n, answer=n===1?3:prime?1:2;
       return {
-        prompt:{ko:`${n}은 소수인가요, 합성수인가요? 소수 1, 합성수 2, 둘 다 아니면 3을 쓰세요.`,
+        prompt:{ko:`${NM_RNG.koJosa(n,'은','는')} 소수인가요, 합성수인가요? 소수 1, 합성수 2, 둘 다 아니면 3을 쓰세요.`,
           en:`Classify ${n}: write 1 for prime, 2 for composite, or 3 for neither.`,
           zh:`判断${n}：质数填1，合数填2，都不是填3。`},
         tex:`${n}\\;\\text{→ 소수 1, 합성수 2, 둘 다 아님 3: }\\square`,
@@ -670,7 +670,7 @@
     if (mode === 'powerNotation') {
       const base=R(rng,2,12), exponent=R(rng,2,6);
       return {
-        prompt:{ko:`${base}를 ${exponent}번 곱했어요. 거듭제곱의 지수를 쓰세요.`,
+        prompt:{ko:`${NM_RNG.koJosa(base,'을','를')} ${exponent}번 곱했어요. 거듭제곱의 지수를 쓰세요.`,
           en:`Multiply ${base} by itself ${exponent} times. Write the exponent.`,
           zh:`${base}连乘${exponent}次，填写指数。`},
         tex:`${Array(exponent).fill(base).join(' \\times ')}=${base}^{\\square}`,
@@ -684,13 +684,13 @@
       const otherFactors=factors.filter(v=>v===1||(v>1&&smallestPF(v)!==v));
       const yes=R(rng,0,1)===1, factor=pick(rng,yes?primeFactors:otherFactors);
       return {
-        prompt:{ko:`${factor}은 ${n}의 인수예요. 소인수이기도 한가요? 맞으면 1, 아니면 2를 쓰세요.`,
+        prompt:{ko:`${NM_RNG.koJosa(factor,'은','는')} ${n}의 인수예요. 소인수이기도 한가요? 맞으면 1, 아니면 2를 쓰세요.`,
           en:`${factor} is a factor of ${n}. Is it also a prime factor? Write 1 for yes or 2 for no.`,
           zh:`${factor}是${n}的因数，也是质因数吗？是填1，否填2。`},
-        tex:`${n}\\div ${factor}=${n/factor}\\;\\Rightarrow\\;${factor}\\text{은 소인수? }\\square`,
+        tex:`${n}\\div ${factor}=${n/factor}\\;\\Rightarrow\\;${factor}\\text{${NM_RNG.koJosa(factor,'은','는').slice(String(factor).length)} 소인수? }\\square`,
         answer:yes?1:2,answerType:'number',widget:'numpad',
-        solution:[{tex:yes?`${factor}\\text{은 소수이므로 소인수}`
-          :`${factor}\\text{은 소수가 아니므로 소인수가 아님}`,blank:yes?1:2}]
+        solution:[{tex:yes?`${factor}\\text{${NM_RNG.koJosa(factor,'은','는').slice(String(factor).length)} 소수이므로 소인수}`
+          :`${factor}\\text{${NM_RNG.koJosa(factor,'은','는').slice(String(factor).length)} 소수가 아니므로 소인수가 아님}`,blank:yes?1:2}]
       };
     }
 

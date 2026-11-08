@@ -42,7 +42,7 @@ body{background:#f4f5ef}
 @media(prefers-reduced-motion:reduce){.studio-intro img{animation:none}}
 .level-copy .level-stage{display:block;min-height:16px;margin-bottom:5px;color:#876126;font-size:10px;font-weight:950}
 #foldLevelGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
-#applicationGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#applicationGrid,#straightCutGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
 #overlapGrid{grid-template-columns:minmax(0,1fr)}
 #overlapGrid .level-card{min-height:210px;grid-template-columns:minmax(220px,.38fr) minmax(0,1fr);grid-template-rows:210px}
 #overlapGrid .level-copy{display:flex;flex-direction:column;justify-content:center}

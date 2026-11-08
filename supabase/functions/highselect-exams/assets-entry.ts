@@ -19,11 +19,11 @@ Deno.serve(async req=>{
  try{
   const q=new URL(req.url).searchParams;if(req.method!=='GET'||q.get('action')!=='asset')return fail('route_not_found',404);
   const id=q.get('exam')||'',sub=q.get('sub')||'',kind=q.get('kind')||'',page=Number(q.get('page')),exp=Number(q.get('exp')),sig=q.get('sig')||'';
-  if(!/^[a-f0-9]{64}$/.test(sub)||!['paper','answers'].includes(kind)||!Number.isSafeInteger(page)||page<1||!Number.isSafeInteger(exp)||exp<Math.floor(Date.now()/1000)||exp>Math.floor(Date.now()/1000)+600)return fail('page_expired');
+  if(!/^[a-f0-9]{64}$/.test(sub)||!['paper','answers','analysis'].includes(kind)||!Number.isSafeInteger(page)||page<1||!Number.isSafeInteger(exp)||exp<Math.floor(Date.now()/1000)||exp>Math.floor(Date.now()/1000)+600)return fail('page_expired');
   const expected=hex(await crypto.subtle.sign('HMAC',await key,encode.encode([id,sub,kind,page,exp].join('|'))));if(!equal(expected,sig))return fail('page_invalid');
   const s=await db.from('highselect_sessions').select('student_id,expires_at').eq('token_hash',sub).maybeSingle();if(s.error)return fail('storage_unavailable',503);if(!s.data||Date.parse(s.data.expires_at)<=Date.now())return fail('login_required',401);
   const a=await db.from('highselect_students').select('active,expires_at,exam_grants').eq('id',s.data.student_id).maybeSingle();if(a.error)return fail('storage_unavailable',503);if(!a.data?.active||Date.parse(a.data.expires_at)<=Date.now())return fail('login_required',401);if(!a.data.exam_grants.includes(id))return fail('exam_not_approved');
-  const exam=bank.exams.find(e=>e.id===id),asset=(kind==='answers'?exam?.answerPages:exam?.pages)?.[page-1];if(!asset)return fail('page_not_found',404);
+  const exam=bank.exams.find(e=>e.id===id),asset=({paper:exam?.pages,answers:exam?.answerPages,analysis:exam?.analysisPages})[kind]?.[page-1];if(!asset)return fail('page_not_found',404);
   headers.set('Content-Type','image/jpeg');return new Response(Uint8Array.from(atob(asset),c=>c.charCodeAt(0)),{headers});
  }catch{return fail('service_unavailable',503);}
 });

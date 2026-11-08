@@ -1536,5 +1536,264 @@
    "reviewed": "2026-10-28, 실제 이미지 눈으로 확인(Claude). 메타데이터는 다시 저장하며 지움",
    "license": "원장 소유 — 이 교재에서 사용"
   }
+ ],
+ [
+  "alisma-2",
+  {
+   "observation": "bac5bb80-f0d6-4173-a4f0-076fb530ecd4",
+   "taxon": "Alisma canaliculatum",
+   "observed_on": "2021-09-07",
+   "author": "leaf0605",
+   "photo": {
+    "id": 173587427,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/173587427/square.jpeg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/bac5bb80-f0d6-4173-a4f0-076fb530ecd4",
+   "quality_grade": "research",
+   "retrieved": "2026-11-07",
+   "file": "alisma-2.jpg",
+   "name": "택사(Alisma canaliculatum) — 꽃",
+   "visible_features": "타이완 습지에서 찍은 택사 꽃 — 흰 꽃잎 3장과 가운데 노란 암술·수술이 보여요. 잎은 이 사진에 없어요.",
+   "original_download_size": [
+    1024,
+    768
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 768,
+   "bytes": 55231,
+   "sha256": "c03a837e230070e689f852cdff768e69fc4858f27564c493d901fb4e8d89e894",
+   "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/173587427/original.jpeg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/173587427/large.jpeg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "typha-2",
+  {
+   "observation": "0d17c409-a2c4-43e2-a8a3-d2a776fe23bd",
+   "taxon": "Typha orientalis",
+   "observed_on": "2023-11-25",
+   "author": "silverbird",
+   "photo": {
+    "id": 337805127,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/337805127/square.jpg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/0d17c409-a2c4-43e2-a8a3-d2a776fe23bd",
+   "quality_grade": "research",
+   "retrieved": "2026-11-07",
+   "file": "typha-2.jpg",
+   "name": "부들(Typha orientalis) — 이삭",
+   "visible_features": "긴 칼 모양 잎 사이에 갈색 소시지 꼴 이삭(암꽃 이삭)이 보여요. 지시서의 종(Typha orientalis) 사진이에요(오스트레일리아에서 찍음). 이삭 길이는 재지 않았어요.",
+   "original_download_size": [
+    1024,
+    683
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 683,
+   "bytes": 125546,
+   "sha256": "5001e730b80ce4741243d1fc1892dab544d4fe497404d58ff1257162435fc540",
+   "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/337805127/original.jpg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/337805127/large.jpg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "lk-cherry-2",
+  {
+   "observation": "b52f8b03-f782-4ebe-94a0-5035dd1b4a60",
+   "taxon": "Prunus × yedoensis",
+   "observed_on": "2026-03-28",
+   "author": "renshuchu",
+   "photo": {
+    "id": 630901517,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/630901517/square.jpg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/b52f8b03-f782-4ebe-94a0-5035dd1b4a60",
+   "quality_grade": "research",
+   "retrieved": "2026-11-07",
+   "file": "lk-cherry-2.jpg",
+   "name": "왕벚나무(Prunus × yedoensis) — 꽃",
+   "visible_features": "일본에서 찍은 왕벚나무 꽃 — 잎이 나기 전에 흰 꽃이 피었어요. 잎 생김새(톱니)는 이 사진에 없어요.",
+   "original_download_size": [
+    1024,
+    768
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 768,
+   "bytes": 167725,
+   "sha256": "e18e98a08458657306a6981cb6a26a5a6db54940c1d081ab6c057f2df7b5b843",
+   "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/630901517/original.jpg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/630901517/large.jpg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "lk-wisteria-2",
+  {
+   "observation": "1be5f5dd-719c-4d21-a2f7-b7396b6ed391",
+   "taxon": "Wisteria floribunda",
+   "observed_on": "2025-05-31",
+   "author": "bombycilla",
+   "photo": {
+    "id": 514431377,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/514431377/square.jpg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/1be5f5dd-719c-4d21-a2f7-b7396b6ed391",
+   "quality_grade": "research",
+   "retrieved": "2026-11-07",
+   "file": "lk-wisteria-2.jpg",
+   "name": "등나무(Wisteria floribunda) — 잎",
+   "visible_features": "지시서의 종(Wisteria floribunda) — 끝이 뾰족한 작은잎이 깃꼴로 늘어선 겹잎이 여러 장 보여요. 미국 공원에서 찍은 사진이에요.",
+   "original_download_size": [
+    768,
+    1024
+   ],
+   "crop": null,
+   "width": 768,
+   "height": 1024,
+   "bytes": 218162,
+   "sha256": "ce0892df44580d946a89718e457bb1da1520ee08eb7637219bcca7f40617fe36",
+   "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/514431377/original.jpg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/514431377/large.jpg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "centipede-2",
+  {
+   "observation": "62aadefa-dddb-4fdd-852e-0355fd253812",
+   "taxon": "Scolopendra mutilans",
+   "observed_on": "2025-06-26",
+   "author": "hanwen-zhang",
+   "photo": {
+    "id": 526901320,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/526901320/square.jpg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/62aadefa-dddb-4fdd-852e-0355fd253812",
+   "quality_grade": "research",
+   "retrieved": "2026-11-07",
+   "file": "centipede-2.jpg",
+   "name": "왕지네(Scolopendra mutilans)",
+   "visible_features": "일본 숲 바닥 낙엽 위의 왕지네 — 붉은 머리, 마디마다 노란 다리 1쌍이 보여요. 실제 길이는 재지 않았어요.",
+   "original_download_size": [
+    1024,
+    683
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 683,
+   "bytes": 265740,
+   "sha256": "7307ea0b88b4f8aa651f0eade541abec5b6bf9194d57fb8f4dc80096839fab55",
+   "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/526901320/original.jpg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/526901320/large.jpg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "lk-zelkova-2",
+  {
+   "observation": "b2a73379-8d73-42b0-95a8-d529259d0b37",
+   "taxon": "Zelkova serrata",
+   "observed_on": "2021-04-18",
+   "author": "renshuchu",
+   "photo": {
+    "id": 412547311,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/412547311/square.jpeg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/b2a73379-8d73-42b0-95a8-d529259d0b37",
+   "quality_grade": "research",
+   "retrieved": "2026-11-07",
+   "file": "lk-zelkova-2.jpg",
+   "name": "느티나무(Zelkova serrata) — 가지의 잎",
+   "visible_features": "일본에서 찍은 느티나무 가지 — 어긋나게 붙은 홑잎과 가장자리 톱니가 보여요.",
+   "original_download_size": [
+    1024,
+    768
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 768,
+   "bytes": 252504,
+   "sha256": "d0fb82aaf7706b8ad66e0086775ac8d7e9b074342406600f072d314ed1f9c63c",
+   "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/412547311/original.jpeg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/412547311/large.jpeg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "woodlouse-2",
+  {
+   "observation": "299d2029-99ac-4c62-99b4-d6b1cc7f3059",
+   "taxon": "Porcellio scaber",
+   "observed_on": "2022-03-14",
+   "author": "konoda",
+   "photo": {
+    "id": 183377862,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/183377862/square.png",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/299d2029-99ac-4c62-99b4-d6b1cc7f3059",
+   "quality_grade": "research",
+   "retrieved": "2026-11-07",
+   "file": "woodlouse-2.jpg",
+   "name": "쥐며느리(Porcellio scaber) — 자와 함께",
+   "visible_features": "일본에서 찍은 쥐며느리를 자(cm) 옆에서 본 모습 — 몸길이가 1 cm 남짓이에요(자 눈금으로 어림, 정밀하게 잰 값은 아님).",
+   "original_download_size": [
+    1024,
+    657
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 657,
+   "bytes": 97710,
+   "sha256": "8ba7fd9714bade6d77ddc56def4d84ad073c4981cdfad21741f9eaf3d772c4c8",
+   "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/183377862/original.png",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/183377862/large.png",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
  ]
 ]

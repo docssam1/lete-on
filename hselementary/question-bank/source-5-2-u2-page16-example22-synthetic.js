@@ -26,11 +26,11 @@
     const transform = `translate(${x} ${y})${rotation ? ` rotate(${rotation})` : ""}`;
     if (!match) return `<text class="${className}" x="${x}" y="${y}" text-anchor="middle">${esc(value)} ${esc(unit)}</text>`;
     const whole = match[1], numerator = match[2], denominator = match[3];
-    const fractionWidth = Math.max(13, 8 * Math.max(numerator.length, denominator.length));
-    const wholeWidth = whole ? 10 * whole.length + 4 : 0;
-    const unitWidth = unit.length * 9 + 4, left = -(wholeWidth + fractionWidth + unitWidth) / 2;
+    const fractionWidth = Math.max(21, 14 * Math.max(numerator.length, denominator.length));
+    const wholeWidth = whole ? 16 * whole.length + 6 : 0;
+    const unitWidth = unit.length * 14 + 6, left = -(wholeWidth + fractionWidth + unitWidth) / 2;
     const middle = left + wholeWidth + fractionWidth / 2;
-    return `<g class="${className} source52-p16e22-stacked" transform="${transform}" aria-hidden="true">${whole ? `<text x="${left}" y="5">${esc(whole)}</text>` : ""}<text x="${middle}" y="-6" text-anchor="middle">${esc(numerator)}</text><path d="M${left + wholeWidth} -2 h${fractionWidth}"/><text x="${middle}" y="12" text-anchor="middle">${esc(denominator)}</text><text x="${left + wholeWidth + fractionWidth + 4}" y="5">${esc(unit)}</text></g>`;
+    return `<g class="${className} source52-p16e22-stacked" transform="${transform}" aria-hidden="true">${whole ? `<text x="${left}" y="8">${esc(whole)}</text>` : ""}<text x="${middle}" y="-9" text-anchor="middle">${esc(numerator)}</text><path d="M${left + wholeWidth} -3 h${fractionWidth}"/><text x="${middle}" y="19" text-anchor="middle">${esc(denominator)}</text><text x="${left + wholeWidth + fractionWidth + 4}" y="8">${esc(unit)}</text></g>`;
   }
 
   function derive(pool) {
@@ -42,21 +42,21 @@
     return { ...pool, w, h, totalArea, aArea, answer: mixed(aArea), widthText: mixedText(width), heightText: mixedText(height), ratio, aspect, partitionBottom: ratio - delta, partitionTop: ratio + delta };
   }
   function diagram(v, { solution = false } = {}) {
-    const x = 46, y = 82, width = 420, height = width * v.aspect;
+    const x = 46, y = 96, width = 420, height = width * v.aspect;
     const bottomX = x + width * v.partitionBottom, topX = x + width * v.partitionTop;
     const answerLabel = solution ? svgMixedLabel(v.answer, "cm²", x + width * v.ratio / 2, y + height * 0.75, "source52-p16e22-answer") : "";
     const aria = `가로 ${v.widthText}cm, 세로 ${v.heightText}cm인 직사각형을 ㉮와 ㉯로 나눈 그림${solution ? `, ㉮의 넓이는 ${v.answer}제곱센티미터` : ""}`;
-    return `<svg class="source52-p16e22-diagram" viewBox="0 0 580 430" role="img" aria-label="${esc(aria)}" xmlns="http://www.w3.org/2000/svg">
-      <path class="source52-p16e22-dimension" d="M${x} 62 Q${x + width / 2} 28 ${x + width} 62"/>${svgMixedLabel(v.widthText, "cm", x + width / 2, 20, "source52-p16e22-dimension-label")}
-      <path class="source52-p16e22-dimension" d="M${x + width + 14} ${y} Q${x + width + 38} ${y + height / 2} ${x + width + 14} ${y + height}"/>${svgMixedLabel(v.heightText, "cm", x + width + 68, y + height / 2, "source52-p16e22-dimension-label")}
+    return `<svg class="source52-p16e22-diagram" viewBox="0 -14 610 444" role="img" aria-label="${esc(aria)}" xmlns="http://www.w3.org/2000/svg">
+      <path class="source52-p16e22-dimension" d="M${x} 76 Q${x + width / 2} 42 ${x + width} 76"/>${svgMixedLabel(v.widthText, "cm", x + width / 2, 32, "source52-p16e22-dimension-label")}
+      <path class="source52-p16e22-dimension" d="M${x + width + 14} ${y} Q${x + width + 38} ${y + height / 2} ${x + width + 14} ${y + height}"/>${svgMixedLabel(v.heightText, "cm", x + width + 76, y + height / 2, "source52-p16e22-dimension-label")}
       <rect class="source52-p16e22-rect" x="${x}" y="${y}" width="${width}" height="${height}" rx="0"/>
       <path class="source52-p16e22-divider" d="M${topX} ${y} L${bottomX} ${y + height}"/>
-      <circle class="source52-p16e22-label-circle" cx="${x + width * v.ratio / 2}" cy="${y + height / 2}" r="17"/><text class="source52-p16e22-label" x="${x + width * v.ratio / 2}" y="${y + height / 2 + 6}" text-anchor="middle">㉮</text>
-      <circle class="source52-p16e22-label-circle" cx="${x + width * (1 + v.ratio) / 2}" cy="${y + height / 2}" r="17"/><text class="source52-p16e22-label" x="${x + width * (1 + v.ratio) / 2}" y="${y + height / 2 + 6}" text-anchor="middle">㉯</text>${answerLabel}</svg>`;
+      <text class="source52-p16e22-label" x="${x + width * v.ratio / 2}" y="${y + height / 2 + 10}" text-anchor="middle">㉮</text>
+      <text class="source52-p16e22-label" x="${x + width * (1 + v.ratio) / 2}" y="${y + height / 2 + 10}" text-anchor="middle">㉯</text>${answerLabel}</svg>`;
   }
   function build(pool, difficultyOffset) {
     const v = derive(pool), totalAreaText = formatFraction(v.totalArea), productNumerator = v.totalArea.n * v.aParts, productDenominator = v.totalArea.d * (v.aParts + v.bParts), rawArea = formatFraction({ n: productNumerator, d: productDenominator });
-    const prompt = `<div class="source52-p16e22-question"><p>그림과 같이 직사각형을 ㉮, ㉯ 두 부분으로 나누었습니다. ㉮의 넓이가 ㉯의 넓이의 ${math(`${v.aParts}/${v.bParts}`)}일 때, ㉮의 넓이를 구하세요.</p><figure>${diagram(v)}<figcaption>두 부분의 넓이 비와 직사각형의 가로·세로</figcaption></figure>${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 먼저 직사각형 전체 넓이를 구하고, ㉮가 전체에서 차지하는 비율을 생각하세요.</span>` : ""}</div>`;
+    const prompt = `<div class="source52-p16e22-question"><p>그림과 같이 직사각형을 ㉮, ㉯ 두 부분으로 나누었습니다. ㉮의 넓이가 ㉯의 넓이의 ${math(`${v.aParts}/${v.bParts}`)}일 때, ㉮의 넓이를 구하세요.</p><figure>${diagram(v)}</figure></div>`;
     const lines = [
       `직사각형의 전체 넓이는 ${math(`${v.widthText}×${v.heightText}=${totalAreaText} cm²`)}입니다.`,
       `㉮:㉯=${math(`${v.aParts}:${v.bParts}`)}이므로 전체는 ${v.aParts + v.bParts}등분이고, ㉮는 전체의 ${math(`${v.aParts}/${v.aParts + v.bParts}`)}입니다.`,
@@ -76,7 +76,7 @@
     return Object.freeze({ ...item, prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`,
       sourceItemId, generator: generatorKey, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length,
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure", resultContract: "single-value-with-square-centimeter-unit", mathematicalContract: "rectangle-area-times-ratio-part-of-whole",
-      answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", difficultyDesign: ["guided-whole-area-and-part-ratio", "whole-area-times-a-over-a-plus-b", "equivalent-parts-model-and-exact-area"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
+      answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", difficultyDesign: ["whole-area-and-part-ratio", "whole-area-times-a-over-a-plus-b", "equivalent-parts-model-and-exact-area"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
       sourceStructurePreserved: true, sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Example 2-2; physical PDF p.12; original/clean scan + Apple Vision OCR + visual diagram reconstruction",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-rectangle-area-ratio-and-partition-model" });
   }

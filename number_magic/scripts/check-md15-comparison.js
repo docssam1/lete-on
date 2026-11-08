@@ -62,19 +62,19 @@ for(const mode of modes){
 }
 
 /* Explicit requirements: negative-root reversal; fraction/decimal equality;
-   different signs; and no floating-point approximation in the answer. */
+   same-sign pairs as requested by the director; and no floating-point approximation in the answer. */
 let sawNegativeReverse=false,sawFraction=false,sawDecimal=false,sawMixedSign=false,sawMixedEquality=false;
 for(let seed=0;seed<20000;seed++){
   const neg=verify(gen({mode:'compareNegative'},w.NM_RNG.mulberry32(seed)),'compareNegative');
   const left=neg.comparison.left,right=neg.comparison.right;
   if(neg.answer!==2 && left.sign<0 && right.sign<0) sawNegativeReverse=true;
   const p=verify(gen({mode:'compareMixed'},w.NM_RNG.mulberry32(seed)),'compareMixed');
-  sawFraction ||= /\\dfrac/.test(p.tex);
+  sawFraction ||= /\\(?:dfrac|frac)/.test(p.tex);
   sawDecimal ||= /\d+\.\d/.test(p.tex);
   sawMixedSign ||= p.comparison.left.sign!==p.comparison.right.sign;
   sawMixedEquality ||= p.answer===2 && p.comparison.left.kind!==p.comparison.right.kind;
 }
-assert(sawNegativeReverse&&sawFraction&&sawDecimal&&sawMixedSign&&sawMixedEquality,'required comparison fixtures did not appear');
+assert(sawNegativeReverse&&sawFraction&&sawDecimal&&!sawMixedSign&&sawMixedEquality,'required comparison fixtures did not appear '+JSON.stringify({sawNegativeReverse,sawFraction,sawDecimal,sawMixedSign,sawMixedEquality}));
 
 /* Seed replay and a deliberately large classroom round. Core de-duplication
    must never repeat a visible variant. */

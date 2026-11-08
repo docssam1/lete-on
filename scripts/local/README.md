@@ -14,6 +14,17 @@
 | `_setup-omnivoice.cmd` | 위 둘이 같이 쓰는 준비 단계(가상환경·설치·GPU 확인) | — |
 | **`omnivoice-clone.command`** · `omnivoice-nm.command` · `omnivoice-docssam.command` · `omnivoice-audition.command` | **맥(애플 칩)판** — 하는 일은 같은 이름의 `.cmd` 와 같다. 준비 단계는 `_setup-omnivoice.sh` | **아니오** |
 
+## qwen3tts-audition.cmd — OmniVoice 와 Qwen3-TTS 나란히 듣기 (2026-11-08)
+
+원장: 「옴니보이스보다 한국어에 맞는 복제 프로그램 찾아봐」 → 「진행」. 조사 결과 1순위 Qwen3-TTS(Apache 2.0, 한국어 공식 지원)를 **우리 귀로** 확인하는 도구.
+
+- **독쌤 녹음 파일을 `qwen3tts-audition.cmd` 위에 끌어다 놓기**(맥은 `qwen3tts-audition.command` 더블클릭). 처음 한 번은 설치 + 모델 받기(약 5GB)로 오래 걸립니다.
+- 녹음을 OmniVoice 때와 똑같이 다듬고, OmniVoice 가 이 PC 에 받아 적어 둔 참조 전사(`.docssam-work\ref.json`)를 그대로 씁니다.
+- 이미 OmniVoice 음성이 있는 독쌤 대사 8줄(덱·판서·사이언스 랩·숫자 든 줄)을 Qwen3-TTS 로 만들어 **`.docssam-work\qwen3\듣기.html`** 한 장에 줄마다 두 목소리를 나란히 놓습니다(소리가 파일 안에 들어 있어 휴대폰으로 옮겨도 열림).
+- 사이트 음성은 바꾸지 않고 아무것도 올리지 않습니다. 가상환경은 따로(`.venv-qwen3tts`) — OmniVoice 와 필요한 판이 달라서.
+- 그래픽 메모리가 모자라면 끝에 `--model Qwen/Qwen3-TTS-12Hz-0.6B-Base`.
+- 들어 보고 어느 쪽이 녹음과 더 같은 사람 같은지 Claude 에게 알려 주세요. Qwen3-TTS 가 낫다면 그때 운영 생성기(파일 이름 규칙·받아쓰기 검사)를 Qwen3-TTS 로도 돌게 바꿉니다.
+
 ## 맥에서 OmniVoice (2026-10-24, 원장: "이제 옴니보이스 맥에도 설치하자")
 
 **`omnivoice-clone.command` 를 더블클릭하면 그게 곧 설치입니다.** 처음 한 번:

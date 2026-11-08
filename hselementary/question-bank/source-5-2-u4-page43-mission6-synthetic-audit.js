@@ -1,8 +1,8 @@
 "use strict";
 const assert = require("node:assert/strict");
 const m = require("./source-5-2-u4-page43-mission6.js");
-assert.equal(m.pools.length, 3);
-for (let i = 0; i < 3; i++) for (const difficulty of [-1,0,1]) {
+assert.equal(m.pools.length, 40);
+for (let i = 0; i < m.pools.length; i++) for (const difficulty of [-1,0,1]) {
   const q = m.getQuestion(i,difficulty), p = q.questionModel;
   const candidates = [];
   for (let n = 1; n <= 500; n++) {
@@ -16,8 +16,9 @@ for (let i = 0; i < 3; i++) for (const difficulty of [-1,0,1]) {
   assert.equal(q.publisherKeyVerified,false);
   assert(q.solution.includes(`${p.count}개`));
 }
+assert.equal(new Set(m.pools.map(p => p.divisor)).size, 40, "every divisor produces a distinct question");
 // Boundary ties: lower endpoint is included, upper endpoint is excluded.
 const edge=m.calculate(20,20);
 assert.equal(edge.first,39); assert.equal(edge.last,40);
-assert.equal(m.getQuestion(3,0),null);
+assert.equal(m.getQuestion(40,0),null);
 console.log('Mission 6: integer rounding enumeration, endpoints and sums verified');

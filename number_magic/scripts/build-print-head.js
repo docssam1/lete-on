@@ -50,7 +50,7 @@ server.listen(0, async () => {
   for(const lang of ['ko', 'en', 'zh']){
     const page = await browser.newPage({ viewport:{ width:1100, height:1100 } });
     await page.route('**/*', r => /jsdelivr|supabase|google/.test(r.request().url()) ? r.abort() : r.continue());
-    await page.addInitScript(l => { window.NM_NO_AUTOPRINT = true; localStorage.setItem('nm_state_v1', JSON.stringify({ lang:l })); }, lang);
+    await page.addInitScript(l => { window.NM_NO_AUTOPRINT = true; localStorage.setItem('nm_preview_state_v1', JSON.stringify({ lang:l })); }, lang);
     await page.goto(`http://localhost:${server.address().port}/drill.html`);
     await page.emulateMedia({ media:'print' });
     await page.addStyleTag({ content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}' });

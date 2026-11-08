@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const fs=require('fs'),path=require('path'),crypto=require('crypto'),{spawn}=require('child_process');
-const out=path.resolve(process.env.NM_HANDOFF_ARTIFACTS||'E:/Codex/artifacts/numbers-dot-handoff-20261003/gates');
-if(!/^[EG]:[\\/]/i.test(out))throw Error('Artifacts must be on E: or G:');
+const out=path.resolve(process.env.NM_HANDOFF_ARTIFACTS||path.join(require('os').tmpdir(),'nm-dot-handoff-gates'));
 fs.mkdirSync(out,{recursive:true});
 const tasks=[['answerable',[]],['print-lang',[]],['ladder',[]],['stages',[]],['about-stats',[]],['roadmap-sync',[]],['session-roles',['--browser']],['weekly-sheets',[]]];
 const tracked=['app/main.js','app/styles.css','app/living-lesson.js','app/living-lesson.css','app/activity-journey.js','app/journey-stage.js','app/town3d/town3d.js','app/town3d/movement.js','app/char3d/char3d.js','data/activity-journeys.js','data/curriculum.js','data/courses.js','data/threads.js','data/units/M-02.js'];

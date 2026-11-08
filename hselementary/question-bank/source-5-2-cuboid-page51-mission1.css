@@ -10,7 +10,7 @@
 .source52-p51m1-answer{font-weight:700}
 .source52-p51m1-solution-net{max-width:470px;margin:.65rem auto}
 @media(max-width:560px){.source52-p51m1-figures{grid-template-columns:1fr;max-width:440px;gap:.25rem}.source52-p51m1-cube{max-width:270px;margin:auto}.source52-p51m1-net{max-width:390px;margin:auto}}
-@media print{.source52-p51m1-question,.source52-p51m1-solution{font-size:10.5pt}.source52-p51m1-figures{grid-template-columns:32% 68%;gap:3mm;max-width:100%;margin:3mm auto}.source52-p51m1-net text{font-size:14px}.source52-p51m1-solution-net{max-width:115mm;margin:2mm auto}}
+@media print{.source52-p51m1-question,.source52-p51m1-solution{font-size:10.5pt}.source52-p51m1-figures{grid-template-columns:minmax(0,32fr) minmax(0,68fr);gap:3mm;max-width:100%;margin:3mm auto}.source52-p51m1-net text{font-size:14px}.source52-p51m1-solution-net{max-width:115mm;margin:2mm auto}}
 
 @page source52P51MissionsAnswer { size: A4; margin: 10mm 0; }
 @media print {

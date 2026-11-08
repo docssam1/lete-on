@@ -20,15 +20,15 @@ async function run(){
   const cases=[[1280,720,'ko'],[390,844,'ko']].flatMap(v=>fixtures.map(f=>({v,f})));
   for(const v of [[390,844,'en'],[390,844,'zh'],[390,667,'ko'],[844,390,'ko']])
     for(const id of ['fingers','split-cake','hop-draw'])cases.push({v,f:fixtures.find(f=>f.id===id)});
-  for(const {v:[width,height,lang],f} of cases){
+  for(const {v:[width,height,lang],f} of cases.filter(x=>!process.env.NM_MANIPULATIVE_CASE||process.env.NM_MANIPULATIVE_CASE===x.f.id+'-'+x.v[0]+'-'+x.v[1]+'-'+x.v[2])){
    const ctx=await browser.newContext({viewport:{width,height},hasTouch:width<700,serviceWorkers:'block'});
    await ctx.route('**/*',r=>!r.request().url().startsWith(base)||!['GET','HEAD'].includes(r.request().method())?r.abort():r.continue());
    await ctx.route('**/app/entry.js*',r=>r.fulfill({contentType:'application/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));
-   await ctx.addInitScript(({unit,lang})=>localStorage.setItem('nm_state_v1',JSON.stringify({lang,name:'교구검수',onboarded:true,view:'unit',unit,step:'lab',avatar:{kind:'boy'},placement:{course:'C0',self:true},account:{status:'active'},symbolDex:{'+':{},'-':{},'−':{},'×':{},'÷':{},'=':{},'□':{}},progress:{[unit]:{introSeen:true,steps:{},touchedAt:1}}})),{unit:f.unit,lang});
+   await ctx.addInitScript(({unit,lang})=>localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang,name:'교구검수',onboarded:true,view:'unit',unit,step:'lab',avatar:{kind:'boy'},placement:{course:'C0',self:true},account:{status:'active'},symbolDex:{'+':{},'-':{},'−':{},'×':{},'÷':{},'=':{},'□':{}},progress:{[unit]:{introSeen:true,steps:{},touchedAt:1}}})),{unit:f.unit,lang});
    const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.setDefaultNavigationTimeout(120000);
    await page.goto(base+'/number_magic/index.html?enter=1',{waitUntil:'domcontentloaded'});
    await page.locator('[data-id="continue"]:visible,#ttContinue:visible').first().click({timeout:40000});
-   await page.locator('.nm-unit-view').waitFor();
+   await require('./lib/preview-fixture')(page);await page.reload();await page.evaluate(unit=>__NM_AUDIT_OPEN(unit,'lab'),f.unit);await page.locator('.nm-unit-view').waitFor();
    for(let i=0;i<20;i++){const close=page.locator('#nmUnlockOverlayClose,#nmSymClose').last();if(!await close.count()||!await close.isVisible())break;await close.click();}
    const p=await page.evaluate(f=>{
     const gen=NM_TGEN[f.gen];let p;
@@ -36,7 +36,7 @@ async function run(){
     if(f.rightType&&p.rightType!==f.rightType)throw Error('Missing seeded representation');
     NM_TGEN[f.gen]=()=>JSON.parse(JSON.stringify(p));return p;
    },f);
-   await page.locator(`[data-step="${f.step||'lab'}"]`).click();
+   await page.evaluate(([unit,step])=>__NM_AUDIT_OPEN(unit,step),[f.unit,f.step||'lab']);
    if(await page.locator('#skipNo').count())await page.locator('#skipNo').click();
    if(await page.locator('#nmLessonBegin').count())await page.locator('#nmLessonBegin').click();
    await page.locator(f.root).waitFor();await page.evaluate(()=>document.fonts.ready);
@@ -70,7 +70,7 @@ async function run(){
    await snapshot('first');
    if(!measure){
     const original=await page.locator(f.root).elementHandle();
-    const tap=async(b)=>width<700?b.tap():b.click();
+    const tap=async(b)=>{const box=await b.boundingBox();assert(box,'visible target');if(width<700)await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);else await page.mouse.click(box.x+box.width/2,box.y+box.height/2);};
     const key=async(b,k='Enter')=>{await b.focus();await page.keyboard.press(k);};
     const resize=async()=>{await page.setViewportSize({width:width+8,height:height+8});await page.setViewportSize({width,height});};
     if(p.widget==='g13Rep'){
@@ -95,7 +95,7 @@ async function run(){
       const ticks=page.locator('.nm-g79-tickbtn');
       await ticks.first().focus();await page.keyboard.press('ArrowRight');assert.equal(await page.locator(':focus').getAttribute('aria-label'),'1','tick keyboard navigation');
       await key(ticks.first());assert.equal(await page.locator('.nm-g79-hopsvg .arc').count(),0,'wrong tick not accepted');
-      await tap(ticks.nth(p.hops[0].to));await resize();assert.equal(await page.locator('.nm-g79-hopsvg .arc').count(),1,'resize preserves hop');
+      if(process.env.NM_MANIPULATIVE_CASE)console.log('HOP_TARGET',p.hops,await ticks.nth(p.hops[0].to).evaluate(e=>{const r=e.getBoundingClientRect(),h=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return{rect:r.toJSON(),hit:h?.outerHTML.slice(0,250),root:!!e.closest('#labWidget')};}));await tap(ticks.nth(p.hops[0].to));assert.equal(await page.locator('.nm-g79-hopsvg .arc').count(),1,'pointer reaches first hop target');await resize();assert.equal(await page.locator('.nm-g79-hopsvg .arc').count(),1,'resize preserves hop');
       await key(ticks.nth(p.hops[1].to),'Space');
      }
      await tap(nums.nth((p.answer+1)%10));

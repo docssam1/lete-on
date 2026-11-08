@@ -308,6 +308,10 @@ begin
     end if;
     out_plan := out_plan || pg_catalog.jsonb_build_object('extensionAnchor',anchor);
   end if;
+  if p ? 'curriculumRevision' then
+    if p->'curriculumRevision' is distinct from '"20261104-curriculum3"'::jsonb then return null; end if;
+    out_plan := out_plan || pg_catalog.jsonb_build_object('curriculumRevision','20261104-curriculum3');
+  end if;
   return out_plan;
 end $f$;
 
@@ -367,16 +371,12 @@ revoke all on all functions in schema nm_private from public, anon, authenticate
 
 -- ===== the ONE public entry point =====
 
-create or replace function public.nm_membership_rpc(
-  p_action  text,
-  p_payload jsonb,
-  p_actor   uuid default null,
-  p_ip_hash text default null
-) returns jsonb
-language plpgsql
-security definer
-set search_path = pg_catalog
-as $fn$
+CREATE OR REPLACE FUNCTION public.nm_membership_rpc(p_action text, p_payload jsonb, p_actor uuid DEFAULT NULL::uuid, p_ip_hash text DEFAULT NULL::text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'pg_catalog'
+AS $function$
 declare
   v_p     jsonb := p_payload;
   v_now   timestamptz := pg_catalog.now();
@@ -541,12 +541,12 @@ begin
         return pg_catalog.jsonb_build_object('managed',true,'canUse',false,'cadence',v_cadence,'error','invalid_learning_plan','status',409);
       elsif v_plan_choice->>'status'='personal' then
         if v_k<>1 then
-          return pg_catalog.jsonb_build_object('managed',true,'canUse',false,'cadence',v_cadence,'wholeWeek',true,'deliveryPlanVersion','20261024-personal1','link',null);
+          return pg_catalog.jsonb_build_object('managed',true,'canUse',false,'cadence',v_cadence,'wholeWeek',true,'deliveryPlanVersion','20261026-personal2','link',null);
         end if;
         v_config := pg_catalog.jsonb_build_object('courseKey',v_plan_choice#>>'{learningPlan,courseKey}',
           'sessionIndex',v_plan_choice#>'{learningPlan,sessionIndex}','week',v_week,'k',1,
           'amount',v_plan_choice#>'{learningPlan,amount}','cadence',v_cadence,
-          'deliveryPlanVersion','20261024-personal1','learningPlan',v_plan_choice->'learningPlan');
+          'deliveryPlanVersion','20261026-personal2','learningPlan',v_plan_choice->'learningPlan');
         v_token := pg_catalog.encode(extensions.gen_random_bytes(16),'hex');
         v_link := 'https://lete-on.gfieldacademy.net/w/?m='||v_token;
         insert into nm_private.worksheet_previews(token_hash,admin_user,admin_session,profile_name,owner_id,k,config,
@@ -554,7 +554,7 @@ begin
         values(nm_private.sha256_hex(v_token),'automatic','cron',v_name,v_uid,1,v_config,
           '','','SMS',nm_private.sha256_hex(v_phone),nm_private.mask_phone(v_phone),0,v_now,v_now+interval '14 days');
         return pg_catalog.jsonb_build_object('managed',true,'canUse',true,'cadence',v_cadence,'wholeWeek',true,
-          'deliveryPlanVersion','20261024-personal1','config',v_config,'link',v_link);
+          'deliveryPlanVersion','20261026-personal2','config',v_config,'link',v_link);
       end if;
       return pg_catalog.jsonb_build_object('managed',true,'canUse',true,'cadence',v_cadence,'link',null)
         || case when v_plan_choice->>'status'='legacy' then '{"personalPlanLegacy":true}'::jsonb else '{}'::jsonb end;
@@ -564,18 +564,14 @@ begin
     insert into nm_private.worksheet_previews(token_hash,admin_user,admin_session,profile_name,owner_id,k,config,
       message,title,message_type,phone_hash,phone_masked,settings_version,send_expires_at,share_expires_at)
     values(nm_private.sha256_hex(v_token),'automatic','cron',v_name,v_uid,v_k::smallint,
-      pg_catalog.jsonb_build_object('courseKey',ls.course_key,'week',v_week,'k',v_k,'amount',ls.amount,
-        'cadence',ls.cadence,'sessionIndex',ls.session_index)
-        || case when ls.course_key ~ '^C7[0-3]$'
-             then pg_catalog.jsonb_build_object('highPlanVersion','20261024-calculus3m',
+      (pg_catalog.jsonb_build_object('courseKey',ls.course_key,'week',v_week,'k',v_k,'amount',ls.amount,
+        'cadence',ls.cadence,'sessionIndex',ls.session_index) || case when ls.course_key ~ '^C(29|3[0-7])$'
+             then pg_catalog.jsonb_build_object('highPlanVersion','20261026-middle25-v2',
                'highStartDate',ls.start_date,'highSpeed',ls.speed)
-             when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
-             then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
+             when ls.course_key ~ '^C7[0-3]$'
+             then pg_catalog.jsonb_build_object('highPlanVersion','20261026-calculus3m-v2',
                'highStartDate',ls.start_date,'highSpeed',ls.speed)
-             when ls.course_key ~ '^C(29|3[0-7])$'
-             then pg_catalog.jsonb_build_object('highPlanVersion','20261023-middle25',
-               'highStartDate',ls.start_date,'highSpeed',ls.speed)
-             else '{}'::jsonb end,
+             when ls.course_key ~ '^C(3[89]|[4-6][0-9])$' then pg_catalog.jsonb_build_object('highPlanVersion','20261026-high3m-v2','highStartDate',ls.start_date,'highSpeed',ls.speed) else '{}'::jsonb end),
       '','','SMS',nm_private.sha256_hex(v_phone),nm_private.mask_phone(v_phone),ls.version,
       v_now, v_now+interval '14 days') returning config into v_config;
     return pg_catalog.jsonb_build_object('managed',true,'canUse',true,'cadence',v_cadence,'link',v_link,'config',v_config);
@@ -844,18 +840,14 @@ begin
         (token_hash, admin_user, admin_session, profile_name, owner_id, k, config, message, title, message_type,
          phone_hash, phone_masked, settings_version, send_expires_at, share_expires_at)
       values (nm_private.sha256_hex(v_token), v_user, v_sess, v_name, v_uid, v_k::smallint,
-              pg_catalog.jsonb_build_object('courseKey', ls.course_key, 'week', v_week, 'k', v_k, 'amount', ls.amount,
-                                            'cadence', ls.cadence, 'sessionIndex', ls.session_index)
-                || case when ls.course_key ~ '^C7[0-3]$'
-                     then pg_catalog.jsonb_build_object('highPlanVersion','20261024-calculus3m',
-                       'highStartDate',ls.start_date,'highSpeed',ls.speed)
-                     when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
-                     then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
-                       'highStartDate',ls.start_date,'highSpeed',ls.speed)
-                     when ls.course_key ~ '^C(29|3[0-7])$'
-                     then pg_catalog.jsonb_build_object('highPlanVersion','20261023-middle25',
-                       'highStartDate',ls.start_date,'highSpeed',ls.speed)
-                     else '{}'::jsonb end,
+              (pg_catalog.jsonb_build_object('courseKey', ls.course_key, 'week', v_week, 'k', v_k, 'amount', ls.amount,
+                                            'cadence', ls.cadence, 'sessionIndex', ls.session_index) || case when ls.course_key ~ '^C(29|3[0-7])$'
+             then pg_catalog.jsonb_build_object('highPlanVersion','20261026-middle25-v2',
+               'highStartDate',ls.start_date,'highSpeed',ls.speed)
+             when ls.course_key ~ '^C7[0-3]$'
+             then pg_catalog.jsonb_build_object('highPlanVersion','20261026-calculus3m-v2',
+               'highStartDate',ls.start_date,'highSpeed',ls.speed)
+             when ls.course_key ~ '^C(3[89]|[4-6][0-9])$' then pg_catalog.jsonb_build_object('highPlanVersion','20261026-high3m-v2','highStartDate',ls.start_date,'highSpeed',ls.speed) else '{}'::jsonb end),
               v_msg, v_title, v_type, nm_private.sha256_hex(v_phone), nm_private.mask_phone(v_phone), ls.version,
               v_now + interval '10 minutes', v_now + interval '14 days')
       returning id into v_pid;
@@ -924,7 +916,7 @@ exception when others then
   -- never leak SQL errors / internals
   return pg_catalog.jsonb_build_object('error', 'server_error', 'status', 503);
 end
-$fn$;
+$function$;
 
 revoke all on function public.nm_membership_rpc(text, jsonb, uuid, text) from public, anon, authenticated;
 grant execute on function public.nm_membership_rpc(text, jsonb, uuid, text) to service_role;

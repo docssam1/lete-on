@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id), P=Planner, I=PlannerIntake, D=DemoContent;
 const opt=(el,list,sel)=>{ el.innerHTML=list.map(([v,t])=>`<option value="${v}"${String(v)===String(sel)?' selected':''}>${t}</option>`).join(''); };
 const state={hwOn:'1',gifted:'1',planMode:'table',kmo:'switch'};
-const CP=PlannerCurriculum,LE=PlannerLearningEvidence,ME=PlannerMockEvidence,GP=PlannerGoalCurriculum;let curriculumState=CP.restore(null),curriculumWindow=0,learningEvidence=LE.restore(null),goalCurricula=GP.restore(null),learningPage='concepts',learningStage=null;
+const CP=PlannerCurriculum,LE=PlannerLearningEvidence,ME=PlannerMockEvidence,MS=PlannerMockSchedule,MF=PlannerMockFeedback,MBR=PlannerMockBooks,GP=PlannerGoalCurriculum;let curriculumState=CP.restore(null),curriculumWindow=0,learningEvidence=LE.restore(null),goalCurricula=GP.restore(null),learningPage='concepts',learningStage=null;
 const d=new Date(); $('year').value=d.getFullYear();
 opt($('mon'),[3,4,5,6,7,8,9,10,11,12,1,2].map(m=>[m,m+'월']),d.getMonth()+1);
 opt($('school'),[...Array.from({length:12},(_,i)=>[i+1,P.SEM(i+1)+' 디딤돌']),[13,'초등 계통 대수심화'],...P.MID.map((x,i)=>[14+i,x+' 원리해설'])],9);
@@ -115,7 +115,7 @@ const answers={}, history=[],manualPeriods={},pendingStatus={};let completed=fal
 const storageKey='gfield.demo2.v1',studentKey='gfield.demo2.student.v1';let studentProfile=PlannerStudentVisual.profile(null),studentNext=null;try{studentProfile=PlannerStudentVisual.profile(JSON.parse(PlannerStorage.getItem(studentKey)));}catch{}
 function openStudentChoice(next=null){studentNext=next;$('studentChoiceContent').innerHTML=PlannerStudentVisual.selection({...careerContext(),gender:studentProfile.gender});$('studentChoiceDialog').showModal();}
 const draftIds=['level','band','year','grade','mon','school','schoolLeft','comp','compLeft','calc','calcLeft','speed','hw','hwDeep','hwMid'];
-function saveDraft(){try{PlannerStorage.setItem(storageKey,JSON.stringify({version:2,answers,history,completed,question,state,curriculumState,learningEvidence,goalCurricula,manualPeriods,pendingStatus,legacyDraft,editReturn,fields:Object.fromEntries(draftIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value]))}));}catch{}}
+function saveDraft(){try{if(completed)syncMockChoices();}catch{}try{PlannerStorage.setItem(storageKey,JSON.stringify({version:2,answers,history,completed,question,state,curriculumState,learningEvidence,goalCurricula,manualPeriods,pendingStatus,legacyDraft,editReturn,fields:Object.fromEntries(draftIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value]))}));}catch{}}
 function restoreDraft(){try{const d=JSON.parse(PlannerStorage.getItem(storageKey));if(![1,2].includes(d?.version))return false;curriculumState=CP.restore(d.curriculumState);learningEvidence=LE.restore(d.learningEvidence);goalCurricula=GP.restore(d.goalCurricula);legacyDraft=d.version===1?d:d.legacyDraft||null;editReturn=d.editReturn?.mode==='custom'?d.editReturn:null;Object.assign(manualPeriods,d.manualPeriods||{});Object.assign(pendingStatus,d.pendingStatus||{});for(const id of draftIds){const v=d.fields?.[id];if(v===undefined)continue;if($(id).type==='checkbox')$(id).checked=!!v;else if(id!=='hw')$(id).value=String(v);}hwOptions();if([...$('hw').options].some(o=>o.value===d.fields.hw))$('hw').value=d.fields.hw;Object.assign(answers,d.answers);if(restoredRoadmapMode?.signature===JSON.stringify(answers)){standardPattern=restoredRoadmapMode.pattern||null;standardAccepted=!!restoredRoadmapMode.accepted;}Object.assign(state,d.state);Object.keys(state).forEach(k=>setSeg(k,state[k]));history.push(...(d.history||[]));completed=!!d.completed;$('speed').disabled=['C','D'].includes($('band').value);const missing=I.firstMissing(answers,intakeFields());if(d.question==='student'&&!completed){draw();askStudent();}else if(d.question==='welcome'&&!completed){draw();showWelcome();}else if(completed&&!missing)finish(true);else{draw();const order=questionOrder();ask(missing&&(completed||order.indexOf(missing)<order.indexOf(d.question))?missing:order.includes(d.question)?d.question:missing||'grade');}return true;}catch{return false;}}
 let question='grade';
 function syncDetailedAnswers(id){
@@ -162,7 +162,7 @@ function finish(restoring=false){
 }
 function saveRoadmapMode(){PlannerStorage.setItem('gfield.demo2.roadmap-mode.v1',JSON.stringify({version:1,mode:roadmapMode,pattern:standardPattern,accepted:standardAccepted,signature:JSON.stringify(answers)}));}
 function showStandard(remember=true){if(historyState.active)closeHistory(false);leavePathway();document.body.classList.remove('questioning');$('conversation').hidden=true;roadmapMode='standard';workspaceView='map';showView('vmap');drawJourney();mobileWorkspace('result');if(remember)saveRoadmapMode();}
-function enterCustom(){roadmapMode='custom';standardAccepted=false;const baseline=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision});if(T.inheritCadence)transition=T.inheritCadence(transition,progression,answers,intakeFields(),baseline.level,baseline.sequential?'deep':'thinking');saveRoadmapMode();saveTransition();openOverview();}
+function enterCustom(){roadmapMode='custom';standardAccepted=false;const baseline=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths});if(T.inheritCadence)transition=T.inheritCadence(transition,progression,answers,intakeFields(),baseline.level,baseline.sequential?'deep':'thinking');saveRoadmapMode();saveTransition();openOverview();}
 
 $('questionOptions').onclick=e=>{const student=e.target.closest('[data-student-gender]');if(student?.dataset.studentGender){studentProfile=PlannerStudentVisual.profile({version:1,gender:student.dataset.studentGender});PlannerStorage.setItem(studentKey,JSON.stringify(studentProfile));ask(I.firstMissing(answers,intakeFields())||'grade');return;}if(handleCollegeClick(e))return;const flow=e.target.closest('[data-flow-overview]');if(flow?.dataset.flowOverview){openOverview();return;}if(e.target.closest('[data-start]')?.dataset.start){askStudent();return;}const b=e.target.closest('[data-answer]');if(!b)return;const key=question,v=b.dataset.answer,previous=answers[key];if(key.endsWith('Status')&&v==='progress'){const total=$('progressTotal')?.value,done=$('progressDone')?.value;let value;if(total===''&&done==='')value={done:0,total:1,estimated:true};else{const t=Number(total),d=Number(done);if(total===''||done===''||!Number.isInteger(t)||!Number.isInteger(d)||t<1||t>9999||d<0||d>=t){$('progressError').textContent='완료 분량은 0 이상, 전체보다 작게 입력해 주세요. 모두 마쳤다면 ‘끝냈어요’를 선택하세요.';return;}value={done:d,total:t};}answers[I.progressKey(key)]={...value,unit:$('progressUnit').value,course:I.progressCourse(answers,key)};}answers[key]=v;if(key==='grade'){answers.gradeInput='current';if(collegeState.enabled&&collegeState.school.format==='kr'){collegeState.school.level=v==='pre'?null:v;saveCollege();}}const dependent=({schoolCourse:'schoolStatus',deepCourse:'deepStatus',schoolBook:'schoolStatus',school:'schoolStatus',schoolHigh:'schoolStatus',schoolExact:'schoolStatus',schoolHigh:'schoolStatus',deepBook:'deepStatus',deepStage:'deepStatus',thinking:'thinkingStatus',compExact:'thinkingStatus',calc:'calcStatus',calcExact:'calcStatus',calcHigh:'calcStatus'})[key];if(dependent&&previous!==v)pendingStatus[dependent]=true;if(key.endsWith('Status'))delete pendingStatus[key];history.push(key);
  if(key==='hw'||key==='gifted')setSeg(key==='hw'?'hwOn':'gifted',v);
@@ -302,7 +302,7 @@ function saveReferencePlan(){PlannerStorage.setItem(referencePlanKey,JSON.string
 function referenceContext(){
  const context=pathwayContext(),current=context.currentStudy,base={ready:completed,current,giftedAllowed:Q.institutePolicy(scienceState.schoolGoal,context.grade).allowed};if(!completed)return base;
  if(intakeFields().internationalCalendar||I.highBook(I.effective(answers).schoolBook))return {...base,coursePlanning:true,notes:{book:current.school,deep:current.deep,science:K.scienceLabel(collegeState),tempo:'현재 과목의 학습량과 복습 계획 확인',table:[current.thinking,current.calc].filter(Boolean).join(' / '),center:'영재원 대비는 기존 공부에 별도 추가',goal:Q.GOALS[scienceState.schoolGoal]?.title||'진학 목표 선택 전'}};
- const d=T.detail(transition,progression,answers,intakeFields()),custom=roadmapMode!=='standard',standard=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision});
+ const d=T.detail(transition,progression,answers,intakeFields()),custom=roadmapMode!=='standard',standard=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths});
  const sc=S.normalContext(standard,custom&&d.book&&d.range?T.timeline({...d.s,axis:'school'},progression,answers,intakeFields()):null,intakeFields()),science=scienceState.enabled?S.model(scienceState,sc):null;
  const school=custom&&d.book&&d.range?d.book.book+' · '+d.range.title:current.school;
  const deep=custom&&d.deep?(d.deep.id==='none'?'별도 심화 추가 보류':d.rows[0]?.deep||current.deep):current.deep;
@@ -420,7 +420,7 @@ function openPathway(id){
  $('pathwayCoachContent').innerHTML=`<p class="pathway-coach-advice">${esc(c.advice)}</p>${c.academyStory?`<button type="button" class="ast-context-link" data-academy-story-open="${esc(c.academyStory)}"><strong>누테학원 준비와 선택</strong><span>학원별 시작반·편입 · 준비 범위 · 컷라인 ↗</span></button>`:''}${c.giftedStory?`<button type="button" class="ast-context-link" data-academy-story-open="${esc(c.giftedStory)}"><strong>영재원 준비와 선택</strong><span>교육청·대학부설 · 준비 교재 · 탐구·서술 ↗</span></button>`:''}${pathwayTrail[0]==='center'?'<p class="school-goal-rule">'+esc(Q.institutePolicy(scienceState.schoolGoal,pathwayContext().grade).note)+'</p>':''}<h2>다음에는 어떤 과정을 살펴볼까요?</h2><div class="pathway-options">${c.next.filter(n=>n.id!=='center'||Q.institutePolicy(scienceState.schoolGoal,pathwayContext().grade).allowed).map(n=>`<button type="button" data-pathway-from="${c.id}" data-pathway-to="${n.id}"><span class="pathway-option-dot" aria-hidden="true"></span><strong>${esc(n.title)}</strong></button>`).join('')}</div><details class="pathway-detail"><summary>공부 내용과 병행 방법</summary><h3>공부할 내용</h3>${bullets(c.what)}<h3>이 로드맵을 살펴볼 때</h3><p>${esc(c.why)}</p><h3>함께 이어갈 공부</h3>${bullets(c.parallel)}</details><details class="pathway-detail${['contest','kmoBase','intro','kmoBasic','kmoDeep','second'].includes(c.id)?' kmo-guide':''}"><summary>${['contest','kmoBase','intro','kmoBasic','kmoDeep','second'].includes(c.id)?'KMO 교재·공부 순서·병행 사례':'교재와 고르는 방법'}</summary>${bookSections||`<p>${esc(c.books||'현재 공부하는 교과·심화 과정에서 관련 교재를 살펴봐요. 아직 고르지 않았다면 질문의 선택지에서 과정과 교재를 고를 수 있어요.')}</p>`}</details>${CP.supports(pathwayTrail)?'<div class="pathway-options"><button type="button" data-curriculum-open><strong>현재 진도로 시작점·일정 계산</strong></button></div>':''}<div class="pathway-options"><button type="button" data-plan-open="books"><strong>이 경로의 교재와 공부 계획 고르기</strong></button></div>`;
  showView('vmap');drawJourney();rememberFlow();focusFlow();revealMap('[data-pathway-open="'+id+'"]');
 }
-$('courseContent').onclick=e=>{const core=e.target.closest('[data-curriculum-open],[data-goal-curriculum-open],[data-learning-evidence-open]');if(core){flowClick(core);return;}if(handleBookCheckClick(e)||handleCollegeClick(e))return;const entry=e.target.closest('[data-pathway-entry]');if(entry){setPathwayTrail(X.entry(entry.dataset.pathwayEntry));openPathway(pathwayTrail.at(-1));return;}const b=e.target.closest('[data-pathway-to]');if(!b)return;choosePathway(b.dataset.pathwayFrom,b.dataset.pathwayTo);openPathway(pathwayTrail.at(-1));};
+$('courseContent').onclick=e=>{const core=e.target.closest('[data-curriculum-open],[data-goal-curriculum-open],[data-learning-evidence-open],[data-mock-check-record],[data-mock-library-record],[data-mock-library-seen],[data-mock-feedback-record],[data-mock-books-open],[data-mock-books-topic],[data-mock-books-edit],[data-mock-books-remove],[data-high-study-open],[data-current-area]');if(core){flowClick(core);return;}if(handleBookCheckClick(e)||handleCollegeClick(e))return;const entry=e.target.closest('[data-pathway-entry]');if(entry){setPathwayTrail(X.entry(entry.dataset.pathwayEntry));openPathway(pathwayTrail.at(-1));return;}const b=e.target.closest('[data-pathway-to]');if(!b)return;choosePathway(b.dataset.pathwayFrom,b.dataset.pathwayTo);openPathway(pathwayTrail.at(-1));};
 function focusFlow(target='pathwayTitle'){if(CR.young(careerContext()))for(const b of $('pathwayCoachContent').querySelectorAll('[data-career-open]')){b.dataset.flowOverview='study';delete b.dataset.careerOpen;b.textContent='공부 방법과 학습 습관 살펴보기';}PlannerWorkspace.compactCoach($('pathwayCoachContent'));const refs=$('coachReferences');refs.replaceChildren();for(const n of [...$('pathwayCoachContent').children])if((n.tagName==='DETAILS'&&!n.classList.contains('kmo-guide'))||n.classList.contains('personality-actions'))refs.append(n);mobileWorkspace('choice');$(target)?.focus({preventScroll:true});if(innerWidth<=800)window.scrollTo({top:0,behavior:'auto'});}
 function revealMap(selector){
  // Selecting a branch updates the visible result in place, without jumping the page.
@@ -508,8 +508,8 @@ function reportAssessment(c,a,fields){
 }
 function reportContext(){
  if(studyActive)return SPV.reportContext(SPV.model(studyState));
- const fields=intakeFields(),a=I.effective(answers),comparison=G.comparison(a,fields),standard=PlannerStandard.model(a,fields,{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision}),custom=roadmapMode==='custom'?PlannerWorkspace.model(transition,progression,a,{...fields,calcDaysPerWeek,supplementDecision},visiblePathwayTrail()):null;
- let lanes=standard.lanes;
+ const fields=intakeFields(),a=I.effective(answers),comparison=G.comparison(a,fields),standard=PlannerStandard.model(a,fields,{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths}),custom=roadmapMode==='custom'?PlannerWorkspace.model(transition,progression,a,{...fields,calcDaysPerWeek,supplementDecision},visiblePathwayTrail()):null;
+ let lanes=standard.lanes,highReadyAt=standard.highReadyAt;
  if(custom){
   lanes=[{id:'school',label:'교과',current:comparison.axes.find(x=>x.id==='school')?.current||'현재 범위 확인 전',status:custom.rows.length?'known':'pending',note:custom.range?'선택한 교재·범위의 맞춤 일정입니다.':'이어갈 교재와 범위를 선택하면 세부 일정이 연결됩니다.',blocks:custom.rows.map(r=>{const seg=custom.m.segments.find(b=>b.gain>0&&T.schoolNumber(G.stage(b.course,'school'))===r.id);return {title:r.school,start:seg?seg.scenarioEnd-seg.duration-custom.m.now:null,end:seg?seg.scenarioEnd-custom.m.now:null,startLabel:r.start||'일정 확인 후 연결',endLabel:r.end||'범위 확인 후 연결',method:r.checkpoint||'',timing:r.timing,completed:r.timing==='done',...(r.timing==='done'?{startLabel:'',endLabel:''}:{})};})},...custom.independentLanes];
   if(custom.depthSlots.length&&!lanes.some(x=>x.id==='deep'))lanes.push({id:'deep',label:'심화',current:custom.parallel.deep,status:'known',note:custom.d.s.cadence==='parallel'?'선택한 심화를 교과와 병행합니다.':'선택한 교과 뒤 심화를 이어갑니다.',blocks:custom.depthSlots.map(b=>({title:b.depthTitle,startLabel:b.start,endLabel:b.end,method:b.parallel?'교과와 병행':'교과를 다룬 뒤 이어가기'}))});
@@ -517,8 +517,8 @@ function reportContext(){
   for(const id of ['thinking','deep','calc'])if(!lanes.some(l=>l.id===id)){const row=standard.lanes.find(l=>l.id===id);if(row)lanes.push({...row,blocks:[],note:id==='calc'?custom.parallel.calc:row.note});}
  }
  const core=selectedCoreModel();
- if(core)lanes=core.lanes.map(l=>({...l,label:l.title,status:l.blocks.length?'known':'pending',blocks:l.blocks.map(b=>({...b,startLabel:CP.date(core,b.start).label,endLabel:CP.date(core,Math.max(b.start,b.end-.00001)).label}))}));
- if(!core){const mock=mockScheduleModel();lanes=[...lanes,...mock.lanes.map(l=>({...l,label:l.title,status:'known',blocks:l.blocks.map(b=>({...b,startLabel:CP.date(mock,b.start).label,endLabel:CP.date(mock,Math.max(b.start,b.end-.00001)).label}))}))];}
+ if(core)lanes=core.lanes.map(l=>({...l,label:l.title,status:l.blocks.length?'known':'pending',blocks:l.blocks.map(b=>({...b,startLabel:b.calendarStart?MF.label(b.calendarStart):CP.date(core,b.start).label,endLabel:b.calendarEnd?MF.label(b.calendarEnd):CP.date(core,Math.max(b.start,b.end-.00001)).label}))}));
+ if(!core){const mock=mockScheduleModel();lanes=[...lanes,...mock.lanes.filter(l=>['mockReview','mockCheck','mockRepair','mockRetest'].includes(l.id)).map(l=>({...l,label:l.title,status:'known',blocks:l.blocks.map(b=>({...b,startLabel:b.calendarStart?MF.label(b.calendarStart):CP.date(mock,b.start).label,endLabel:b.calendarEnd?MF.label(b.calendarEnd):CP.date(mock,Math.max(b.start,b.end-.00001)).label}))}))];}
  const axis=roadmapMode==='standard'?(standardAxis||T.defaultAxis(a,fields)):T.restore(transition,progression,a,fields).axis;
  const plan=roadmapMode==='standard'?T.choose(T.inheritCadence(null,null,a,fields,standard.level,standard.sequential?'deep':'thinking'),null,a,fields,'axis',axis):transition;
  const graph=core||fields.internationalCalendar?'':axis==='calc'?PlannerStandard.renderCalculationGraph(standard.calcPlan):T.renderGraph(plan,roadmapMode==='standard'?null:progression,a,fields,{academyLines:false});
@@ -535,7 +535,7 @@ function reportContext(){
  for(const detail of academyHost.querySelectorAll('details'))detail.open=true;
  const questionHost=document.createElement('div');questionHost.innerHTML=roadmapMode==='standard'?PlannerStandard.renderQuestions(standard)+PlannerStandard.renderSupplementQuestions(standard):PlannerWorkspace.renderQuestions(transition,progression,a,fields,paths);
  const questions=[...(window.PlannerCounsellingUpdates?.commonQuestions(I.gradeChoice(answers,fields),{hwangso:answers.hw==='1'})||[]),...[...questionHost.querySelectorAll('details')].map(node=>({question:node.querySelector('summary')?.textContent||'',answer:[...node.querySelectorAll('p')].map(p=>p.textContent).join(' ')})).filter(q=>q.question&&q.answer)];
- const evidenceStats=LE.summary(learningEvidence),evidenceNotes=[...ME.notes(learningEvidence.mock),...(evidenceStats.recorded?['경시 개념 자기 기록 '+evidenceStats.recorded+'개 · 혼자 설명·적용 '+evidenceStats.counts.independent+'개 · 복습 필요 '+evidenceStats.counts.review+'개. 테스트 점수나 자동 승급 판정이 아닙니다.']:[]),...LE.workSummary(learningEvidence,learningMonth()).map(r=>learningMonth()+' 직접 입력한 수행률 · '+LE.UNITS[r.unit]+' 기준 '+r.percent+'% ('+r.completed+'/'+r.planned+'). 권별 테스트는 개발·연동 준비 중입니다.')];
+ const evidenceStats=LE.summary(learningEvidence),evidenceNotes=[...ME.notes(learningEvidence.mock),...MF.notes(mockScheduleModel()),...(mockScheduleModel().mockCheckPlan?.rows.filter(p=>p.start!==null).map(p=>p.title+' · 풀어볼 월 '+p.suggested+' · '+p.scope)||[]),...(evidenceStats.recorded?['경시 개념 자기 기록 '+evidenceStats.recorded+'개 · 혼자 설명·적용 '+evidenceStats.counts.independent+'개 · 복습 필요 '+evidenceStats.counts.review+'개. 테스트 점수나 자동 승급 판정이 아닙니다.']:[]),...LE.workSummary(learningEvidence,learningMonth()).map(r=>learningMonth()+' 직접 입력한 수행률 · '+LE.UNITS[r.unit]+' 기준 '+r.percent+'% ('+r.completed+'/'+r.planned+'). 권별 테스트는 개발·연동 준비 중입니다.')];
  const calcBook=a.calc==='advanced'?P.CALC[+a.calcExact]?.[0]:!I.special(a.calc)&&a.calc!=='high'?a.calc:null;
  const current=comparison.axes.map(x=>({id:x.id==='comp'?'thinking':x.id,label:x.label,text:x.id==='calc'&&calcBook&&!x.current.includes(calcBook)?calcBook+' · '+x.current:x.current}));
  return {...reportAssessment(comparison,a,fields),name:$('name')?.value.trim()||'우리 아이',grade,age:Number(a.age)||null,fields,now:standard.now,mode:roadmapMode,current,lanes,sequential:core?false:custom?custom.d.s.cadence==='sequential'&&custom.depthSlots.length>0:standard.sequential,independentDepth:custom?custom.independentLanes.some(l=>l.id==='deep')||custom.depthSlots.some(b=>b.parallel):standard.independentDepth,graphTitle:(T.AXES.find(x=>x.id===axis)?.title||'학습')+' 진도 비교',graphHtml:graphHost.innerHTML,graphSvg:graph.match(/<svg\b[\s\S]*?<\/svg>/)?.[0]||'',academyHtml:fields.internationalCalendar?'':academyHost.innerHTML+(grade==='pre'&&window.PlannerPreschoolDetail?window.PlannerPreschoolDetail.render(preschoolDetailId,{print:true}):''),observation:G.OBSERVATIONS.find(x=>x.id===observed.observation)||null,goal,science,scienceStage:science?PlannerScienceLevels.model(science):null,questions,assumptions:[...(core?[core.assumptions,...core.warnings]:roadmapMode==='standard'?standard.assumptions:[T.scenarioNote(custom.d,custom.m),T.cadenceNote(custom.d.s)]),...evidenceNotes],scienceQuestions:science?S.questions(scienceState,sc):[],languages,languageQuestions:languageIds.flatMap(id=>L.questions(languageState,id,languageContext()).map(q=>({question:L.SUBJECTS[id]+' · '+q.q,answer:q.a}))),selectedPaths:paths.map(id=>X.paths[id]?.title||X.paths[id]?.short||id),personalityMethods:Y.methods(personalityState).map(x=>({title:x.title,method:x.method})),gender:studentProfile.gender,institute:{selected:scienceState.institute!=='none'||paths.some(id=>/^center/.test(id)),allowed:policy.allowed,label:science?.institute||'영재원 대비'},extra:!core&&custom&&custom.d.s.tempo==='gradual'?{tempo:'gradual',enabled:custom.m.enabled,adjusting:custom.m.adjusting,within:custom.within,scope:custom.range,loadTitle:custom.load,allocation:custom.d.s.allocation,meetingText:custom.meeting,followup:custom.after,catch:custom.c&&custom.m.catch?{months:custom.c.months,extraMonths:custom.c.extraMonths,target:custom.m.catch.target,course:custom.m.catch.course,dateLabel:custom.catchDate,maintenanceExtra:custom.m.catch.maintenanceExtra,baselineSessions:custom.m.catch.baselineSessions,sessionHours:custom.m.catch.sessionHours}:null}:null};
@@ -610,26 +610,71 @@ function savePathwayPlan(){try{PlannerStorage.setItem(planKey,JSON.stringify(pat
 function selectedCoreModel(){
  if(roadmapMode!=='custom'||intakeFields().internationalCalendar)return null;
  const f={...intakeFields(),calcDaysPerWeek};
- if(GP.supports(scienceState.schoolGoal)&&goalCurricula.activeRoute!=='contest')return GP.model(answers,f,goalCurricula,scienceState.schoolGoal,curriculumState,{evidence:learningEvidence});
- if(CP.supports(visiblePathwayTrail()))return LE.attachReviews(CP.model(answers,f,curriculumState),learningEvidence);
+ if(GP.supports(scienceState.schoolGoal)&&goalCurricula.activeRoute!=='contest')return MF.attach(MS.attach(GP.model(answers,f,goalCurricula,scienceState.schoolGoal,curriculumState,{evidence:learningEvidence}),answers,f,learningEvidence.mock.schedule,learningEvidence.mock.records),learningEvidence.mock,MBR.context(answers,intakeFields(),bookChecks));
+ if(CP.supports(visiblePathwayTrail()))return MF.attach(MS.attach(LE.attachReviews(CP.model(answers,f,curriculumState),learningEvidence),answers,f,learningEvidence.mock.schedule,learningEvidence.mock.records),learningEvidence.mock,MBR.context(answers,intakeFields(),bookChecks));
+ if(I.highBook(I.effective(answers).schoolBook)){
+  const m=CP.model(answers,f,curriculumState);m.kind='high';m.lanes=m.lanes.filter(l=>l.id!=='kmo');m.entry=null;m.introEntry=null;m.warnings=m.warnings.filter(t=>!/(KMO|기초반|입문반|중등 대수·기하 심화)/.test(t));
+  return MF.attach(MS.attach(m,answers,f,learningEvidence.mock.schedule,learningEvidence.mock.records),learningEvidence.mock,MBR.context(answers,f,bookChecks));
+ }
  return null;
 }
 function learningCourses(){const core=selectedCoreModel(),titles=core?.lanes.flatMap(l=>l.blocks.map(b=>b.title))||I.summary(answers,intakeFields()).slice(1).map(x=>x.text);return [...new Set(titles.filter(t=>t&&!/확인 전|미선택|경험 없음|아직 시작/.test(t)))];}
-let mockEditing=null,mockNotice='';
-function mockScheduleModel(){const f=intakeFields();return selectedCoreModel()||ME.attach({year:Number(f.year),month:Number(f.mon),lanes:[],horizon:1,warnings:[]},learningEvidence.mock);}
-function updateMock(state,notice='모평 결과를 기록했습니다. 아래 기록에서 수정하거나 보완 완료를 표시할 수 있습니다.'){mockNotice=notice;learningEvidence=LE.restore({...learningEvidence,mock:state});mockEditing=null;saveDraft();openLearningEvidence('mock');}
+let mockEditing=null,mockNotice='',mockPrefill=null,mockLibraryFilter=PlannerMockLibrary.selection();
+function mockScheduleModel(){
+ const core=selectedCoreModel();if(core)return core;
+ const f={...intakeFields(),calcDaysPerWeek,supplementDecision},standard=PlannerStandard.model(answers,f,{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths});
+ let lanes=standard.lanes,highReadyAt=standard.highReadyAt;
+ if(roadmapMode==='custom'&&!f.internationalCalendar){
+  const w=PlannerWorkspace.model(transition,progression,answers,f,pathwayTrail),blocks=w.m.segments.filter(b=>b.gain>0).map((b,i)=>({id:'mock-source-'+i,stage:G.stage(b.course,'school'),start:b.scenarioEnd-b.duration-w.m.now,end:b.scenarioEnd-w.m.now}));
+  if(blocks.length){
+   const school={id:'school',title:'교과',blocks},deep=w.independentLanes.find(l=>l.id==='deep')||{id:'deep',title:'심화',blocks:[]},a=I.effective(answers),actual=CP.actual(a,'school',f),middle=blocks.find(b=>b.stage==='중3-2'),highStart=actual&&(I.highSubjects.includes(actual.stage)||actual.stage==='중3-2'&&actual.done)?0:middle?.end??null;
+   const h=PlannerHighStudy.apply({schoolLane:school,deepLane:deep,actualSchool:actual,actualDeep:CP.actual(a,'deep',f),subjects:I.highSubjects,highStart,months:curriculumState.periods.highMonths||6,state:curriculumState.highStudy});
+   lanes=[h.schoolLane,h.deepLane];highReadyAt=h.readyAt;
+  }
+ }
+
+ const base={year:Number(f.year),month:Number(f.mon),lanes,horizon:24,warnings:standard.highWarnings||[],highReadyAt};
+ return MF.attach(MS.attach(ME.attach(base,learningEvidence.mock),f.internationalCalendar?{}:answers,f,learningEvidence.mock.schedule,learningEvidence.mock.records),learningEvidence.mock,MBR.context(answers,intakeFields(),bookChecks));
+}
+function openHighStudy(stage,notice=''){
+ const H=PlannerHighStudy,h=H.restore(curriculumState.highStudy),a=I.effective(answers),current=CP.actual(a,'school',intakeFields());
+ stage=I.highSubjects.includes(stage)?stage:I.highSubjects.includes(current?.stage)?current.stage:I.highSubjects[0];
+ const reported=[current,CP.actual(a,'deep',intakeFields())].find(r=>r?.stage===stage&&H.isApplicationBook(r.book)),progress=reported?I.progressValue(a,reported.status):null,record=h.subjects[stage]||(reported?{book:reported.book,status:reported.done?'done':'progress',...(!reported.done&&progress&&!progress.estimated?{done:progress.done,total:progress.total}:{})}:{book:'쎈 고등',status:'unknown'}),selectedCore=selectedCoreModel(),months=selectedCore?.durations?.highMonths||curriculumState.periods.highMonths||6;
+ $('courseTitle').textContent='고등 개념·쎈·심화 일정';delete $('courseContent').dataset.curriculumBlock;
+ $('courseContent').innerHTML=`<p>같은 과목의 <strong>기본정석 개념과 쎈 유형을 병행</strong>한 뒤, 다음 과목을 선행하면서 앞 과목을 심화합니다. 현재 쓰는 개념서와 심화 교재는 유지합니다.</p><p>기본정석을 끝낸 기록만으로 쎈을 완료 처리하지 않습니다. 아래 유형 교재의 분량을 따로 기록하면 남은 기간과 다음 과정·모평 일정이 함께 바뀝니다.</p>${notice?`<p role="status">${esc(notice)}</p>`:''}${record.status==='done'?'<p>유형 교재 완료로 기록했습니다.</p>':record.total?`<p>유형 학습 수행률 <strong>${Math.round(record.done/record.total*100)}%</strong> · ${record.done}/${record.total}</p>`:''}<form data-high-study-form class="curriculum-form"><label>유형 학습을 확인할 과목<select name="stage">${I.highSubjects.map(v=>`<option${v===stage?' selected':''}>${esc(v)}</option>`).join('')}</select></label><label>현재 유형 교재<select name="book">${H.BOOKS.map(v=>`<option${v===record.book?' selected':''}>${esc(v)}</option>`).join('')}</select></label><label>유형 교재 진행 상태<select name="status">${[['unknown','아직 분량 확인 전'],['none','아직 시작 전'],['progress','공부 중'],['done','끝냈어요']].map(([v,t])=>`<option value="${v}"${v===record.status?' selected':''}>${t}</option>`).join('')}</select></label><fieldset><legend>같은 기준으로 세어 입력하세요</legend><p>단원·문항·회차 중 하나의 기준으로 전체와 완료를 적습니다. 분량을 모르면 비워 두세요.</p><div class="curriculum-fields"><label>전체 분량<input type="number" name="total" min="1" max="9999" value="${record.total??''}"></label><label>완료 분량<input type="number" name="done" min="0" max="9999" value="${record.done??''}"></label></div></fieldset><details><summary>고등 과정별 기간 조정</summary><p>개념과 유형을 함께 공부하는 전체 기간입니다. 빠른 진도를 맞추기 위한 고정 기한이 아니며, 다음 과목과 앞 과목 심화에 필요한 시간을 함께 확보합니다. 선택한 목표와 표준 로드맵에 적용합니다.</p><div class="curriculum-fields"><label>한 과목 개념+유형 · 개월<input type="number" name="highMonths" min="0.5" max="24" step="0.5" value="${months}" required></label><label>한 과목 심화 · 개월<input type="number" name="deepMonths" min="0.5" max="24" step="0.5" value="${h.deepMonths||6}" required></label></div></details><p data-high-study-error role="alert"></p><button type="submit" class="curriculum-apply">유형 수행 저장 · 일정 다시 계산</button><button type="button" data-current-area="schoolCourse">개념 교재·완료 분량 수정</button><button type="button" data-current-area="deepCourse">현재 심화 교재·진도 수정</button></form>`;
+ if(!$('courseDetail').open)showCourseDialog();$('courseContent').scrollTop=0;
+}
+document.addEventListener('change',e=>{const form=e.target.closest('[data-high-study-form]');if(!form)return;if(e.target.name==='stage'){openHighStudy(e.target.value);return;}if(e.target.name==='book'){form.elements.status.value='unknown';form.elements.done.value='';form.elements.total.value='';}if(e.target.name==='status'&&e.target.value!=='progress'){form.elements.done.value='';form.elements.total.value='';}});
+document.addEventListener('submit',e=>{
+ const form=e.target.closest('[data-high-study-form]');if(!form)return;e.preventDefault();const input=Object.fromEntries(new FormData(form)),r=PlannerHighStudy.updateRecord(curriculumState.highStudy,input.stage,input);
+ const valid=n=>Number.isFinite(+n)&&+n>=.5&&+n<=24;
+ if(r.errors.length||!valid(input.highMonths)||!valid(input.deepMonths)){form.querySelector('[data-high-study-error]').textContent=[...r.errors,...(!valid(input.highMonths)||!valid(input.deepMonths)?['과정별 기간은 0.5~24개월 사이로 입력해 주세요.']:[])].join(' ');return;}
+ curriculumState=CP.restore({...curriculumState,highStudy:{...r.state,deepMonths:+input.deepMonths},periods:{...curriculumState.periods,highMonths:+input.highMonths}});
+ if(GP.supports(scienceState.schoolGoal))goalCurricula=GP.restore({...goalCurricula,goals:{...goalCurricula.goals,[scienceState.schoolGoal]:{...goalCurricula.goals[scienceState.schoolGoal],mathPeriods:{...goalCurricula.goals[scienceState.schoolGoal].mathPeriods,highMonths:+input.highMonths}}}});
+ saveDraft();drawJourney();openHighStudy(input.stage,'유형 교재의 실제 수행을 저장하고 선행·심화·모평 일정을 다시 계산했습니다.');
+});
+function openMockBooks(id,topic=null,edit=null){
+ $('courseTitle').textContent='부족한 단원 · 교재 보완과 수행률';$('courseContent').innerHTML=MBR.editor(mockScheduleModel(),id,topic,edit);delete $('courseContent').dataset.curriculumBlock;if(!$('courseDetail').open)showCourseDialog();$('courseContent').scrollTop=0;
+}
+document.addEventListener('change',e=>{const form=e.target.closest('[data-mock-book-form]');if(form&&e.target.name==='chapter'){if(e.target.value)form.elements.unitTitle.value=e.target.value;return;}if(form&&['course','need','ready','bookChoice','edition'].includes(e.target.name)){if(['course','bookChoice','edition'].includes(e.target.name))form.elements.confirmed.checked=false;MBR.refresh(form,mockScheduleModel(),e.target.name);}});
+document.addEventListener('submit',e=>{const form=e.target.closest('[data-mock-book-form]');if(!form)return;e.preventDefault();const input=Object.fromEntries(new FormData(form)),r=MBR.save(learningEvidence.mock,input,mockScheduleModel());if(r.error){form.querySelector('[data-repair-error]').textContent=r.error;return;}updateMock(r.state,'보완 교재·단원과 실제 수행 분량을 저장했습니다.');openMockBooks(input.record,input.topicKey);$('courseContent').insertAdjacentHTML('afterbegin','<p role="status">교재 보완 계획과 실제 수행 분량을 저장했습니다.</p>');});
+function syncMockChoices(){const before=JSON.stringify(learningEvidence.mock),m=mockScheduleModel();learningEvidence=LE.restore({...learningEvidence,mock:{...MF.sync(learningEvidence.mock,m),schedule:MS.sync(learningEvidence.mock.schedule,m)}});return before!==JSON.stringify(learningEvidence.mock);}
+function updateMock(state,notice='모평 결과를 기록했습니다. 아래 기록에서 수정하거나 보완 완료를 표시할 수 있습니다.'){mockNotice=notice;mockPrefill=null;learningEvidence=LE.restore({...learningEvidence,mock:state});mockEditing=null;syncMockChoices();saveDraft();openLearningEvidence('mock');}
 function learningMonth(){if(learningEvidence.workMonth)return learningEvidence.workMonth;const m=selectedCoreModel()||CP.model(answers,intakeFields(),curriculumState);return m.year+'-'+String(m.month).padStart(2,'0');}
 function openLearningEvidence(page=learningPage){
- learningPage=['work','mock'].includes(page)?page:'concepts';flowMode='learning-evidence';
+ if(syncMockChoices())saveDraft();
+ learningPage=['work','mock','papers'].includes(page)?page:'concepts';flowMode='learning-evidence';
  coach('개념 확인과 실제 학습 수행을 기록합니다.','개념 확인, 공부한 분량, 모평에서 혼자 해결한 결과를 함께 살펴봅니다.');
- $('pathwayCoachContent').innerHTML='<div class="learning-evidence-tabs" role="group" aria-label="학습 점검 종류"><button type="button" data-learning-evidence-open="concepts"><strong>경시 개념 체크</strong></button><button type="button" data-learning-evidence-open="work"><strong>월별 수행 분량 기록</strong></button><button type="button" data-learning-evidence-open="mock"><strong>고등 모평 수행 점검</strong></button></div>'+(learningPage==='mock'?ME.render(learningEvidence.mock,{month:learningMonth(),edit:mockEditing,notice:mockNotice}):learningPage==='work'?LE.renderWork(learningEvidence,learningCourses(),learningMonth()):LE.render(learningEvidence));
+ $('pathwayCoachContent').innerHTML='<div class="learning-evidence-tabs" role="group" aria-label="학습 점검 종류"><button type="button" data-learning-evidence-open="concepts"><strong>경시 개념 체크</strong></button><button type="button" data-learning-evidence-open="work"><strong>월별 수행 분량 기록</strong></button><button type="button" data-learning-evidence-open="mock"><strong>고등 모평 수행 점검</strong></button><button type="button" data-learning-evidence-open="papers"><strong>연도별 기출</strong></button></div>'+(learningPage==='papers'?PlannerMockLibrary.render(mockLibraryFilter,mockScheduleModel(),learningEvidence.mock):learningPage==='mock'?MS.controls(mockScheduleModel(),answers,learningEvidence.mock.schedule)+MF.controls(learningEvidence.mock)+MF.render(mockScheduleModel())+ME.render(learningEvidence.mock,{month:learningMonth(),edit:mockEditing,notice:mockNotice,prefill:mockPrefill}):learningPage==='work'?LE.renderWork(learningEvidence,learningCourses(),learningMonth()):LE.render(learningEvidence));
  $('pathwayCoachContent').querySelectorAll('.learning-evidence-tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.learningEvidenceOpen===learningPage)));
  drawJourney();rememberFlow();focusFlow();$('pathwayCoach').scrollTop=0;
 }
 function showCurriculumDetail(id){
- const m=id.startsWith('mock-review-')?mockScheduleModel():selectedCoreModel()||LE.attachReviews(CP.model(answers,intakeFields(),curriculumState),learningEvidence),d=CP.detail(m,id);if(!d)return;
+ const m=/^mock-(review|check|repair|retest)-/.test(id)?mockScheduleModel():selectedCoreModel()||LE.attachReviews(CP.model(answers,intakeFields(),curriculumState),learningEvidence),d=CP.detail(roadmapMode==='standard'&&!/^mock-/.test(id)?{...PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths}),kind:'high',year:+intakeFields().year,month:+intakeFields().mon}:m,id);if(!d)return;
  learningStage=id.startsWith('kmo-')?id.slice(4):null;$('courseTitle').textContent=d.title;
- $('courseContent').innerHTML=d.html+(learningStage?LE.render(learningEvidence,{stage:learningStage}):'')+'<button type="button" data-learning-evidence-open="'+(id.startsWith('mock-review-')?'mock':'work')+'">이 과정의 수행 기록 살펴보기</button>';
+ $('courseContent').innerHTML=d.html+(learningStage?LE.render(learningEvidence,{stage:learningStage}):'')+'<button type="button" data-learning-evidence-open="'+(/^mock-(review|check|repair|retest)-/.test(id)?'mock':'work')+'">이 과정의 수행 기록 살펴보기</button>';
+ if(id.startsWith('mock-check-')){const paper=m.mockCheckPlan?.rows.find(p=>'mock-check-'+p.id===id);if(paper&&!paper.pending)$('courseContent').insertAdjacentHTML('beforeend',MS.paperLinks(paper)+(PlannerMockItems.summary(paper.questionSelection)||'')+'<button type="button" data-mock-print-check="'+paper.id+'">선택 문항 학습지 인쇄</button><p><a href="'+MS.SOURCE+'" target="_blank" rel="noopener noreferrer">출제 범위 근거 (새 창)</a></p><button type="button" data-mock-check-record="'+paper.id+'">이 기출을 풀고 결과 기록</button>');}
+ if(id.startsWith('mock-retest-')){const plan=m.mockFeedback?.plans.find(p=>p.id===id.slice(12));if(plan&&!plan.paper.pending)$('courseContent').insertAdjacentHTML('beforeend',MS.paperLinks(plan.paper,{caption:true,followupOf:plan.id})+(PlannerMockItems.summary(plan.paper.questionSelection)||'')+'<button type="button" data-mock-print-feedback="'+plan.id+'">재점검 문제 학습지 인쇄</button><button type="button" data-mock-feedback-record="'+id.slice(12)+'">재점검 결과 기록</button>');}
  $('courseContent').dataset.curriculumBlock=id;showCourseDialog();
 }
 function openGoalCurriculum(){
@@ -640,19 +685,66 @@ function openGoalCurriculum(){
  $('pathwayCoachContent').innerHTML=GP.controls(goalCurricula,goal,m);drawJourney();rememberFlow();focusFlow();$('pathwayCoach').scrollTop=0;
 }
 document.addEventListener('submit',e=>{
+ const form=e.target.closest('[data-mock-feedback-form]');if(!form)return;e.preventDefault();const data=Object.fromEntries(new FormData(form)),feedback=MF.restore({...learningEvidence.mock.feedback,enabled:data.enabled==='on',reviewDays:Number(data.reviewDays),gapDays:Number(data.gapDays)});updateMock({...learningEvidence.mock,feedback},'결과별 보완·재점검 주기를 적용했습니다.');
+});
+document.addEventListener('submit',e=>{
+ const form=e.target.closest('[data-mock-schedule-form]');if(!form)return;e.preventDefault();
+ const r=MS.update(learningEvidence.mock.schedule,Object.fromEntries(new FormData(form)),answers);
+ if(r.errors.length){form.querySelector('[data-mock-schedule-error]').textContent=r.errors.join(' ');return;}
+ updateMock({...learningEvidence.mock,schedule:r.state},'현재 진도로 기출 풀이 일정을 다시 계산했습니다.');
+});
+document.addEventListener('submit',e=>{
  const form=e.target.closest('[data-mock-form]');if(!form)return;e.preventDefault();
  const r=ME.save(learningEvidence.mock,Object.fromEntries(new FormData(form)));
  if(r.error){form.querySelector('[data-mock-error]').textContent=r.error;return;}
  updateMock(r.state);$('pathwayCoachContent').querySelector('[data-mock-heading]')?.focus({preventScroll:true});
 });
+document.addEventListener('change',e=>{
+ const filter=e.target.closest('[data-mock-library-filter]');if(!filter)return;
+ const key=filter.dataset.mockLibraryFilter,host=filter.closest('[data-mock-library]');
+ mockLibraryFilter=PlannerMockLibrary.selection({...mockLibraryFilter,[key]:filter.value});
+ host.outerHTML=PlannerMockLibrary.render(mockLibraryFilter,mockScheduleModel(),learningEvidence.mock);
+ $('pathwayCoachContent').querySelector('[data-mock-library-filter="'+key+'"]')?.focus({preventScroll:true});
+});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-mock-print-check],[data-mock-print-feedback],[data-mock-print-library],[data-mock-print-record],[data-mock-print-form]');if(!b)return;e.preventDefault();
+ const m=mockScheduleModel(),k=m.mockCheckPlan?.knowledge;let opts=null;
+ if(b.hasAttribute('data-mock-print-check')){const p=m.mockCheckPlan?.rows.find(r=>r.id===b.dataset.mockPrintCheck),d=p&&MS.prefill(p.id,m);if(d)opts={paper:MS.resolvePaper(p),selection:d.questionSelection,practiceDate:p.practiceDate};}
+ if(b.hasAttribute('data-mock-print-feedback')){const p=m.mockFeedback?.plans.find(r=>r.id===b.dataset.mockPrintFeedback);if(p&&!p.paper.pending)opts={paper:MS.resolvePaper(p.paper),selection:p.paper.questionSelection,practiceDate:p.recheck,topics:p.topics,bookPlan:p.bookPlan};}
+ if(b.hasAttribute('data-mock-print-library')){const p=PlannerMockLibrary.find(b.dataset.mockPrintLibrary);if(p)opts={paper:p,selection:PlannerMockItems.select(p,k?.learned||[]),practiceDate:MF.localToday()};}
+ if(b.hasAttribute('data-mock-print-record')){const r=learningEvidence.mock.records.find(x=>x.id===b.dataset.mockPrintRecord);if(r)opts={paper:MS.resolvePaper(r),selection:r.questionSelection,practiceDate:r.date,answers:r.answers,record:r};}
+ if(b.hasAttribute('data-mock-print-form')){const f=b.closest('[data-mock-form]'),data=Object.fromEntries(new FormData(f));let selection;try{selection=PlannerMockItems.restoreSelection(JSON.parse(data.questionSelection),data);}catch{}if(selection)opts={paper:MS.resolvePaper(data),selection,practiceDate:data.date,answers:Object.fromEntries(selection.selected.map(n=>[n,data['question-'+n]]))};}
+ const result=opts&&(b.hasAttribute('data-mock-print-record')?PlannerMockPrint.open(opts):PlannerMockWorksheet.open(opts));if(!result?.ok){let note=b.parentElement.querySelector('[data-print-error]');if(!note){note=document.createElement('p');note.dataset.printError='';note.setAttribute('role','alert');b.after(note);}note.textContent=result?.error||'선택한 기출과 배운 단원을 먼저 확인해 주세요.';}
+});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-mock-full]');if(!b)return;e.preventDefault();const m=mockScheduleModel(),p=MS.resolvePaper(b.dataset.mockFull);if(!p)return;
+ mockEditing=null;const prior=b.dataset.mockFullFollowup&&learningEvidence.mock.records.find(r=>r.id===b.dataset.mockFullFollowup);mockPrefill={...PlannerMockFull.prefill(p,m.mockCheckPlan?.knowledge?.learned||[]),...(prior?{followupOf:prior.id,timing:prior.timing,limit:prior.limit}:{} )};mockNotice='전체 시험 성적 분석입니다. 공식 문제 PDF를 인쇄해 풀고, 공식 해설로 확인한 30문항 결과를 입력하세요.';
+ if($('courseDetail').open)$('courseDetail').close();openLearningEvidence('mock');$('pathwayCoachContent').querySelector('[data-mock-heading]')?.focus({preventScroll:true});
+});
+document.addEventListener('change',e=>{
+ const f=e.target.closest('[data-mock-schedule-form]');if(!f)return;
+ if(e.target.name.startsWith('learned-unit-')){f.elements.knowledgeEdited.value='on';return;}
+ if(e.target.name==='boundary'){const b=MS.BOUNDARIES.find(x=>x.id===e.target.value),m=mockScheduleModel(),stage=m.mockCheckPlan?.actual?.stage,ids=b?PlannerMockItems.projectedUnits({needs:[[b.stage,b.step]]},{learned:[]}):[];for(const u of PlannerMockItems.UNITS)if(u.course===stage)f.elements['learned-unit-'+u.id].checked=ids.includes(u.id);f.elements.knowledgeEdited.value='on';}
+});
+function refreshMockPaperLinks(e){
+ const f=e.target.closest('[data-mock-form]');if(!f||!['exam','level'].includes(e.target.name))return;
+ const data=Object.fromEntries(new FormData(f));
+ const host=f.querySelector('[data-mock-paper-picker]');if(host)host.innerHTML=MS.paperLinks(data,{caption:true});
+ if(f.elements.questionSelection){const current=PlannerMockItems.restoreSelection(JSON.parse(f.elements.questionSelection.value),data);if(!current){f.querySelector('[data-mock-question-fields]')?.remove();for(const key of ['total','unlearned','correct','helped']){f.elements[key].readOnly=false;f.elements[key].value=key==='unlearned'||key==='helped'?'0':'';}f.querySelector('[type=submit]').disabled=false;f.querySelector('[data-mock-error]').textContent='시험이 바뀌어 이전 문항 선택을 해제했습니다. 연도별 기출에서 새 회차를 선택하면 현재 진도로 번호를 다시 고릅니다.';}}
+
+}
+document.addEventListener('input',refreshMockPaperLinks);
+document.addEventListener('change',refreshMockPaperLinks);
 document.addEventListener('input',e=>{
  const f=e.target.closest('[data-mock-form]');if(!f)return;
+ PlannerMockItems.refreshForm(f);
+ const live=f.querySelector('[data-mock-full-preview]');if(live){const d=Object.fromEntries(new FormData(f));try{const s=JSON.parse(d.questionSelection),answers=Object.fromEntries(s.selected.map(n=>[n,d['question-'+n]]));live.innerHTML=PlannerMockFull.summary({...d,questionSelection:s,answers,total:+d.total,unlearned:+d.unlearned,correct:+d.correct,helped:+d.helped})||'<p>30문항 결과를 모두 입력하면 총점과 단원별 분석이 표시됩니다.</p>';}catch{live.textContent='문항 결과를 확인해 주세요.';}}
  const data=Object.fromEntries(new FormData(f)),numbers=['total','unlearned','correct','helped'].map(k=>data[k]),[total,unlearned,correct,helped]=numbers.map(Number),learned=total-unlearned;
- f.querySelector('[data-mock-preview]').textContent=numbers.every(v=>v.trim()!==''&&Number.isInteger(+v)&&+v>=0)&&total>0&&learned>=0&&correct+helped<=learned?(learned?'배운 범위 '+learned+'문항 중 혼자 '+correct+'문항 해결 · 실전 수행률 '+Math.round(correct/learned*100)+'%':'배운 범위가 없어 실전 수행률을 계산하지 않습니다.'):'문항 수를 입력하면 배운 범위의 실전 수행률을 확인할 수 있습니다.';
+ f.querySelector('[data-mock-preview]').textContent=numbers.every(v=>String(v??'').trim()!==''&&Number.isInteger(+v)&&+v>=0)&&total>0&&learned>=0&&correct+helped<=learned?(learned?'배운 범위 '+learned+'문항 중 혼자 '+correct+'문항 해결 · 실전 수행률 '+Math.round(correct/learned*100)+'%':'배운 범위가 없어 실전 수행률을 계산하지 않습니다.'):'문항 수를 입력하면 배운 범위의 실전 수행률을 확인할 수 있습니다.';
 });
 document.addEventListener('change',e=>{
  const f=e.target.closest('[data-mock-form]');if(!f||e.target.name!=='timing')return;
- const timed=e.target.value==='timed';f.querySelector('[data-mock-limit]').hidden=!timed;f.elements.limit.required=timed;
+ const timed=e.target.value==='timed';f.querySelector('[data-mock-limit]').hidden=!timed;f.elements.limit.required=timed;f.elements.limit.disabled=!timed;
 });
 document.addEventListener('submit',e=>{
  const form=e.target.closest('[data-goal-curriculum-form],[data-learning-work]');if(!form)return;e.preventDefault();const input=Object.fromEntries(new FormData(form));
@@ -784,7 +876,7 @@ function progressClick(b){
 }
 function scienceContext(){
  if(caseActive)return S.caseContext(PlannerCase.model(caseState));
- const fields=intakeFields(),standard=PlannerStandard.model(answers,fields,{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision});
+ const fields=intakeFields(),standard=PlannerStandard.model(answers,fields,{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths});
  const timeline=completed&&roadmapMode==='custom'&&transition?.book&&transition?.range?T.timeline({...T.restore(transition,progression,answers,fields),axis:'school'},progression,answers,fields):null;
  return S.normalContext(standard,timeline,fields);
 }
@@ -857,8 +949,36 @@ function handleScienceClick(e){
  return false;
 }
 function flowClick(b){
- if(b?.hasAttribute('data-mock-edit')){mockNotice='';mockEditing=b.dataset.mockEdit;openLearningEvidence('mock');return true;}
- if(b?.hasAttribute('data-mock-cancel')){mockEditing=null;openLearningEvidence('mock');return true;}
+ if(b?.hasAttribute('data-mock-library-seen')){
+  const id=b.dataset.mockLibrarySeen,seen=learningEvidence.mock.schedule.seenPaperIds?.includes(id);
+  learningEvidence=LE.restore({...learningEvidence,mock:{...learningEvidence.mock,schedule:MS.markSeen(learningEvidence.mock.schedule,id,!seen)}});
+  syncMockChoices();saveDraft();openLearningEvidence('papers');
+  $('pathwayCoachContent').querySelector('[data-mock-library-seen="'+id+'"]')?.focus({preventScroll:true});return true;
+ }
+
+ if(b?.hasAttribute('data-mock-library-record')){
+  const prefill=PlannerMockLibrary.prefill(b.dataset.mockLibraryRecord,mockScheduleModel());if(!prefill)return true;
+  mockEditing=null;mockPrefill=prefill;mockNotice=prefill.scope?'선택한 기출의 시험명·학년·범위를 채웠습니다. 실제로 푼 결과를 입력해 주세요.':'선택한 기출의 시험명·학년을 채웠습니다. 당시 문제에서 실제 배운 단원과 푼 범위를 확인해 기록해 주세요.';
+  if($('courseDetail').open)$('courseDetail').close();openLearningEvidence('mock');
+  const form=$('pathwayCoachContent').querySelector('[data-mock-form]');form?.scrollIntoView({block:'start'});form?.querySelector('[name="'+(prefill.scope?'date':'scope')+'"]')?.focus({preventScroll:true});return true;
+ }
+
+ if(b?.hasAttribute('data-high-study-open')){openHighStudy(b.dataset.highStudyOpen);return true;}
+ if(b?.hasAttribute('data-current-area')){if($('courseDetail').open)$('courseDetail').close();ask(b.dataset.currentArea);return true;}
+ if(b?.hasAttribute('data-mock-books-open')){openMockBooks(b.dataset.mockBooksOpen);return true;}
+ if(b?.hasAttribute('data-mock-books-topic')){openMockBooks(b.dataset.record,b.dataset.mockBooksTopic);return true;}
+ if(b?.hasAttribute('data-mock-books-edit')){openMockBooks(b.dataset.record,b.dataset.topic,b.dataset.mockBooksEdit);return true;}
+ if(b?.hasAttribute('data-mock-books-remove')){updateMock(MBR.remove(learningEvidence.mock,b.dataset.record,b.dataset.mockBooksRemove),'선택한 보완 학습 기록을 삭제했습니다.');openMockBooks(b.dataset.record,b.dataset.topic);return true;}
+
+ if(b?.hasAttribute('data-mock-feedback-record')){mockEditing=null;mockPrefill=MF.prefill(mockScheduleModel(),b.dataset.mockFeedbackRecord);if(!mockPrefill)return true;mockNotice='보완한 범위의 재점검입니다. 실제로 푼 날짜·범위·결과를 확인해 기록해 주세요.';if($('courseDetail').open)$('courseDetail').close();openLearningEvidence('mock');const form=$('pathwayCoachContent').querySelector('[data-mock-form]');form?.scrollIntoView({block:'start'});return true;}
+ if(b?.hasAttribute('data-mock-feedback-restart')){const next=ME.restore(learningEvidence.mock),r=next.records.find(x=>x.id===b.dataset.mockFeedbackRestart);if(r)r.feedbackStart=MF.localToday();updateMock(next,'보완과 재점검을 오늘부터 다시 배치했습니다.');return true;}
+ if(b?.hasAttribute('data-mock-unit-add')){const form=b.closest('[data-mock-form]'),host=form.querySelector('[data-mock-units]'),used=[...host.querySelectorAll('[name^=topic-]')].map(n=>+n.name.split('-')[1]),index=Array.from({length:8},(_,i)=>i).find(i=>!used.includes(i));if(index!==undefined)host.insertAdjacentHTML('beforeend',MF.unitRow(index));return true;}
+ if(b?.hasAttribute('data-mock-unit-remove')){b.closest('[data-mock-unit]')?.remove();return true;}
+
+ if(b?.hasAttribute('data-mock-check-record')){mockEditing=null;mockPrefill=MS.prefill(b.dataset.mockCheckRecord,mockScheduleModel());if(!mockPrefill)return true;mockNotice='선택한 기출의 시험명·학년·범위를 채웠습니다. 실제로 푼 결과를 입력해 주세요.';if($('courseDetail').open)$('courseDetail').close();openLearningEvidence('mock');const form=$('pathwayCoachContent').querySelector('[data-mock-form]');form?.scrollIntoView({block:'start'});return true;}
+
+ if(b?.hasAttribute('data-mock-edit')){mockNotice='';mockPrefill=null;mockEditing=b.dataset.mockEdit;openLearningEvidence('mock');return true;}
+ if(b?.hasAttribute('data-mock-cancel')){mockEditing=null;mockPrefill=null;openLearningEvidence('mock');return true;}
  if(b?.hasAttribute('data-mock-remove')){updateMock(ME.remove(learningEvidence.mock,b.dataset.mockRemove),'선택한 모평 기록과 연결된 보완 일정을 삭제했습니다.');return true;}
  if(b?.hasAttribute('data-mock-status')){updateMock(ME.reviewStatus(learningEvidence.mock,b.dataset.mockStatus,b.dataset.status),b.dataset.status==='done'?'보완 완료로 기록했습니다. 기존 교과·경시 진도는 그대로 이어집니다.':'지정했던 날짜의 보완 일정을 다시 열었습니다.');return true;}
 
@@ -1014,7 +1134,7 @@ function closeHistory(render=true){
  if(render)resumeOwnPlan(view,pane);
 }
 function historyComparison(){
- const fields=intakeFields(),standard=PlannerStandard.model(answers,fields,{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision});
+ const fields=intakeFields(),standard=PlannerStandard.model(answers,fields,{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths});
  const value=roadmapMode==='standard'?T.inheritCadence(null,null,answers,fields,standard.level,standard.sequential?'deep':'thinking'):transition;
  const selected=T.choose(value,progression,answers,fields,'axis','school'),timeline=T.timeline(selected,progression,answers,fields),allowSelected=roadmapMode==='custom'&&selected.tempo==='gradual'&&timeline.adjusting;
  const useSelected=allowSelected&&historyState.compareMode==='selected',points=(useSelected?timeline.gradual:timeline.keep).map(p=>({x:p.x-timeline.now,y:p.y}));
@@ -1180,7 +1300,7 @@ function drawJourney(){
  const scrollTop=$('journeyPanel').scrollTop;
  PlannerFaq.unmount($('journeyMap'));
  for(const host of [$('coachQuestions'),$('intakeQuestions')])host.replaceChildren();
- const standard=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision}),standardActive=completed&&roadmapMode==='standard';
+ const standard=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths}),standardActive=completed&&roadmapMode==='standard';
  document.body.dataset.planMode=standardActive?'standard':completed?'custom':'intake';document.body.dataset.scienceFlow=String(flowMode==='science');document.body.dataset.referenceFlow=String(flowMode==='reference');document.body.dataset.languageFlow=String(flowMode==='language');
  $('planningOverview').hidden=!completed;
  $('planningOverview').innerHTML=completed?'<details class="plan-current-details"><summary>현재 공부·선택한 계획</summary><div class="plan-current-popover">'+PlannerWorkspace.currentSummary(answers,intakeFields())+'<button type="button" data-student-choice>남학생·여학생 선택 변경</button><button type="button" data-plan-references>전체 답변·기존 시기별 학습 로드맵 보기</button></div></details>':'';
@@ -1214,9 +1334,15 @@ function drawJourney(){
   for(const node of $('workspace-panel-map').querySelectorAll('.standard-calendar,.month-plan')){const fold=document.createElement('details');fold.className='plan-map-months';const summary=document.createElement('summary');summary.textContent='월별 과정 펼쳐보기';node.before(fold);fold.append(summary,node);}
  }
  const selectedCore=completed?selectedCoreModel():null;
- if(selectedCore){for(const view of ['map','graph','table'])$('workspace-panel-'+view).innerHTML=CP.render(selectedCore,view,curriculumWindow);$('workspace-tab-graph').textContent='과정별 일정';const edit=$('journeyMap').querySelector('.plan-design-entry');if(edit){delete edit.dataset.transitionOpen;edit.dataset[selectedCore.kind==='goal'?'goalCurriculumOpen':'curriculumOpen']='';edit.textContent='현재 단계·기간 조정';}}
- if(completed&&!selectedCore){const mock=mockScheduleModel();for(const view of ['map','graph','table'])$('workspace-panel-'+view).insertAdjacentHTML('beforeend',ME.renderSchedule(mock,view));}
- if(completed){const stats=LE.summary(learningEvidence);$('workspace-panel-map').insertAdjacentHTML('beforeend','<section class="learning-evidence-access"><h3>개념 확인과 학습 수행 기록</h3><p>경시 개념 기록 '+stats.recorded+'개 · 복습 필요 '+stats.counts.review+'개</p><button type="button" data-learning-evidence-open="concepts">경시 개념 체크</button><button type="button" data-learning-evidence-open="work">월별 수행 분량 기록</button><button type="button" data-learning-evidence-open="mock">고등 모평 수행 점검</button><p>교과·사고력 권별 테스트는 개발·연동 준비 중입니다.</p></section>');}
+ if(selectedCore){for(const view of ['map','graph','table'])$('workspace-panel-'+view).innerHTML=CP.render(selectedCore,view,curriculumWindow);$('workspace-tab-graph').textContent='과정별 일정';const edit=$('journeyMap').querySelector('.plan-design-entry');if(edit){delete edit.dataset.transitionOpen;edit.dataset[selectedCore.kind==='goal'?'goalCurriculumOpen':selectedCore.kind==='high'?'highStudyOpen':'curriculumOpen']='';edit.textContent='현재 단계·기간 조정';}}
+ if(completed&&standardActive&&standard.lanes.some(l=>l.blocks.some(b=>b.highPhase))){
+  const highStandard={...standard,kind:'high',year:+intakeFields().year,month:+intakeFields().mon,entry:null,introEntry:null,warnings:standard.highWarnings||[],assumptions:standard.assumptions.join(' '),lanes:standard.lanes.map(l=>({...l,title:l.label||l.title}))};
+  for(const view of ['map','graph','table'])$('workspace-panel-'+view).innerHTML=CP.render(highStandard,view);
+ }
+
+ if(completed&&!selectedCore){const mock=mockScheduleModel();for(const view of ['map','graph','table'])$('workspace-panel-'+view).insertAdjacentHTML('beforeend',ME.renderSchedule(mock,view)+MS.render(mock,view)+MF.render(mock,view));}
+ if(completed&&selectedCore)$('workspace-panel-map').insertAdjacentHTML('beforeend',MS.render(selectedCore)+MF.render(selectedCore));
+ if(completed){const stats=LE.summary(learningEvidence);$('workspace-panel-map').insertAdjacentHTML('beforeend','<section class="learning-evidence-access"><h3>개념 확인과 학습 수행 기록</h3><p>경시 개념 기록 '+stats.recorded+'개 · 복습 필요 '+stats.counts.review+'개</p><button type="button" data-learning-evidence-open="concepts">경시 개념 체크</button><button type="button" data-learning-evidence-open="work">월별 수행 분량 기록</button><button type="button" data-learning-evidence-open="mock">고등 모평 수행 점검</button><button type="button" data-learning-evidence-open="papers">연도별 기출 보기</button><p>교과·사고력 권별 테스트는 개발·연동 준비 중입니다.</p></section>');}
 
  const selectedSummary=$('journeyMap').querySelector('.workspace-summary,.standard-summary');if(completed&&selectedSummary)$('planningOverview').querySelector('.plan-current-popover').append(selectedSummary);
  const careerContextValue=careerContext();
@@ -1281,9 +1407,31 @@ function drawJourney(){
  $('pathwayStatus').textContent=({durable:'이 기기에 저장되었습니다.',session:'현재 탭에 저장되었습니다.',memory:'현재 화면에만 유지됩니다. 저장 공간을 사용할 수 없습니다.'})[PlannerStorage.status()];
  $('flowMapPeek').innerHTML=`<small>지금까지의 계획</small><span>${esc(peek)}</span><button type="button" data-flow-map>계획 비교</button>`;
  applyAcademyLines();
+ if(completed){
+  const weeklyCustom=!standardActive&&!selectedCore&&!intakeFields().internationalCalendar?live:null;
+  const weeklyLanes=PlannerWeeklySchedule.lanes(standard,selectedCore,weeklyCustom);
+  const fields=intakeFields(),actual=CP.actual(I.effective(answers),'school',fields);
+  PlannerWeeklyPlanner.mount(weeklyLanes,calcDaysPerWeek,{
+   answers,fields,bookChecks,actual,gender:studentProfile.gender,grade:I.gradeChoice(answers,fields),
+   goalTitle:selectedCore?.goalTitle||(selectedCore && CP.supports(pathwayTrail)?'경시 준비':''),mock:selectedCore||mockScheduleModel()
+  });
+ }
 }
+function openWeeklyCheck(checklist=false){
+ if(!completed)return;
+ if(studyActive)closeStudy(false);
+ if(historyState.active)closeHistory(false);
+ if(caseActive)closeCase(false);
+ if(!document.getElementById('plannerWeeklyCheck'))drawJourney();
+ showView('vmap');setWorkspaceView('map');mobileWorkspace('result');
+ if(checklist)PlannerUnitPlanner.open();else PlannerWeeklyPlanner.open();
+}
+document.addEventListener('click',event=>{
+ if(event.target.closest('[data-weekly-open]'))openWeeklyCheck();
+ if(event.target.closest('[data-unit-checklist-open]'))openWeeklyCheck(true);
+});
 $('journeyMap').addEventListener('toggle',e=>{if(e.target.matches?.('.ppd-reference'))preschoolDetailOpen=e.target.open;},true);
-$('journeyMap').onclick=e=>{if(handlePreschoolDetail(e.target.closest('button'))||handleStudyButton(e.target.closest('button'))||handleHistoryClick(e)||handleCollegeClick(e)||handleScienceClick(e)||handleCaseClick(e))return;const b=e.target.closest('button');if(!b||!journeyModel)return;if(academyBeamClick(b))return;if(b.dataset.currentArea){ask(b.dataset.currentArea);return;}if(b.dataset.supplement){supplementDecision=PlannerStandard.chooseSupplement(answers,intakeFields(),b.dataset.supplement);rememberWorkspace();drawJourney();return;}if(b.dataset.calcDays){calcDaysPerWeek=+b.dataset.calcDays;rememberWorkspace();drawJourney();return;}if(b.dataset.standardBlock){const m=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision}),lane=m.lanes.find(l=>l.blocks.some(x=>x.id===b.dataset.standardBlock)),block=lane?.blocks.find(x=>x.id===b.dataset.standardBlock);if(block){PlannerFullscreen.leaveForAction(b);$('courseTitle').textContent=block.title;const from=T.calendarAt(m.now,block.start,intakeFields()),to=T.calendarAt(m.now,Math.max(block.start,block.end-.001),intakeFields());$('courseContent').innerHTML='<p class="course-context">표준 로드맵 · '+esc(lane.label)+'</p><p>'+esc(from.label)+' → '+esc(to.label)+'</p><p>'+(block.sustained?'꾸준히 병행할 시기 · 한 권의 이수 기간 아님':block.fullMonths?'전체 과정 기준 '+block.fullMonths+'개월'+(block.continues?' · 화면 마지막 달 이후에도 계속':block.remainingAssumption?' · 현재 과정은 절반이 남은 가정':''):block.studyDays?block.studyDays+'일분 · 주 '+m.calcPlan.daysPerWeek+'일 · 약 '+Number(block.weeks.toFixed(1))+'주':'참고 기간 '+(block.end-block.start).toFixed(1)+'개월')+'</p><p>'+esc(lane.id==='school'?'개념과 대표 유형을 익히고 응용 문제의 조건을 설명하는지 확인합니다.':lane.id==='deep'?'같은 학기의 교과 개념을 낯선 문제에 적용하고 풀이의 이유와 다른 방법을 비교합니다.':lane.method?lane.method:lane.id==='calc'?'현재 연산 진도에서 원리·정확성·오류 수정을 확인하며 순서대로 이어갑니다.':'스스로 조건을 정리하고 여러 풀이를 비교하는 시간을 유지합니다.')+'</p>'+(block.current?'<p>현재 진행 중이라는 답은 해당 과정의 절반을 남긴 것으로 가정한 참고 일정입니다. 실제 남은 범위는 맞춤 설계에서 다시 살펴봅니다.</p>':'');showCourseDialog();}return;}if(b.dataset.standardPattern){standardPattern=b.dataset.standardPattern;standardAccepted=false;saveRoadmapMode();drawJourney();return;}if(b.hasAttribute('data-standard-accept')){standardAccepted=true;saveRoadmapMode();drawJourney();return;}if(b.dataset.roadmapMode){PlannerFullscreen.leaveForAction(b);if(b.dataset.roadmapMode==='standard')showStandard();else enterCustom();return;}if(b.dataset.workspaceView){setWorkspaceView(b.dataset.workspaceView);return;}if(b.dataset.workspaceCourse){const y=scrollY,x=$('journeyMap').querySelector('.month-ribbon')?.scrollLeft||0;workspaceCourse=b.dataset.workspaceCourse;workspaceView='map';rememberWorkspace();drawJourney();requestAnimationFrame(()=>{$('journeyMap').querySelector('.month-ribbon')?.scrollTo({left:x,behavior:'auto'});window.scrollTo({top:y,behavior:'auto'});$('journeyMap').querySelector('.course-stop[data-workspace-course="'+workspaceCourse+'"]')?.focus({preventScroll:true});});return;}if(b.dataset.atlasFull){setWorkspaceView(b.dataset.atlasFull==='graph'?'graph':'map');return;}if(b.dataset.landscapePan){const scroller=b.closest('.learning-landscape').querySelector('.landscape-scroll');if(b.dataset.landscapePan==='start')scroller.scrollTo({left:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});else scroller.scrollBy({left:(b.dataset.landscapePan==='next'?1:-1)*scroller.clientWidth*.8,behavior:'smooth'});return;}PlannerFullscreen.leaveForAction(b);if(b.dataset.atlasJump){setWorkspaceView(({route:'map',compare:'graph',schedule:'table',current:'records',plan:'records',questions:'records'})[b.dataset.atlasJump]||'map');return;}if(flowClick(b))return;if(b.dataset.pathwayTo){choosePathway(b.dataset.pathwayFrom,b.dataset.pathwayTo);openPathway(pathwayTrail.at(-1));return;}const root=b.dataset.journeyDirection||b.dataset.pathwayRoot;if(root){choosePathway(null,root);openPathway(root);return;}if(b.dataset.pathwayOpen){openPathway(b.dataset.pathwayOpen);return;}const next=journeyModel.axes.find(a=>a.id===b.dataset.journeyNext);if(next?.next){openCourse({title:next.label+' · '+next.next,axis:next.id==='thinking'?'thinking1':next.id,sub:'현재 진도에서 이어서 공부할 수 있는 과정이에요.'});return;}const item=journeyModel.axes.find(a=>a.id===b.dataset.journeyCourse);if(item)openCourse(item.detail);};
+$('journeyMap').onclick=e=>{if(handlePreschoolDetail(e.target.closest('button'))||handleStudyButton(e.target.closest('button'))||handleHistoryClick(e)||handleCollegeClick(e)||handleScienceClick(e)||handleCaseClick(e))return;const b=e.target.closest('button');if(!b||!journeyModel)return;if(academyBeamClick(b))return;if(b.dataset.currentArea){ask(b.dataset.currentArea);return;}if(b.dataset.supplement){supplementDecision=PlannerStandard.chooseSupplement(answers,intakeFields(),b.dataset.supplement);rememberWorkspace();drawJourney();return;}if(b.dataset.calcDays){calcDaysPerWeek=+b.dataset.calcDays;rememberWorkspace();drawJourney();return;}if(b.dataset.standardBlock){const m=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths}),lane=m.lanes.find(l=>l.blocks.some(x=>x.id===b.dataset.standardBlock)),block=lane?.blocks.find(x=>x.id===b.dataset.standardBlock);if(block&&block.highPhase){PlannerFullscreen.leaveForAction(b);const d=CP.detail({...m,year:+intakeFields().year,month:+intakeFields().mon,kind:'high'},block.id);$('courseTitle').textContent=d.title;$('courseContent').innerHTML=d.html;delete $('courseContent').dataset.curriculumBlock;showCourseDialog();return;}if(block){PlannerFullscreen.leaveForAction(b);$('courseTitle').textContent=block.title;const from=T.calendarAt(m.now,block.start,intakeFields()),to=T.calendarAt(m.now,Math.max(block.start,block.end-.001),intakeFields());$('courseContent').innerHTML='<p class="course-context">표준 로드맵 · '+esc(lane.label)+'</p><p>'+esc(from.label)+' → '+esc(to.label)+'</p><p>'+(block.sustained?'꾸준히 병행할 시기 · 한 권의 이수 기간 아님':block.fullMonths?'전체 과정 기준 '+block.fullMonths+'개월'+(block.continues?' · 화면 마지막 달 이후에도 계속':block.remainingAssumption?' · 현재 과정은 절반이 남은 가정':''):block.studyDays?block.studyDays+'일분 · 주 '+m.calcPlan.daysPerWeek+'일 · 약 '+Number(block.weeks.toFixed(1))+'주':'참고 기간 '+(block.end-block.start).toFixed(1)+'개월')+'</p><p>'+esc(lane.id==='school'?'개념과 대표 유형을 익히고 응용 문제의 조건을 설명하는지 확인합니다.':lane.id==='deep'?'같은 학기의 교과 개념을 낯선 문제에 적용하고 풀이의 이유와 다른 방법을 비교합니다.':lane.method?lane.method:lane.id==='calc'?'현재 연산 진도에서 원리·정확성·오류 수정을 확인하며 순서대로 이어갑니다.':'스스로 조건을 정리하고 여러 풀이를 비교하는 시간을 유지합니다.')+'</p>'+(block.current?'<p>현재 진행 중이라는 답은 해당 과정의 절반을 남긴 것으로 가정한 참고 일정입니다. 실제 남은 범위는 맞춤 설계에서 다시 살펴봅니다.</p>':'');showCourseDialog();}return;}if(b.dataset.standardPattern){standardPattern=b.dataset.standardPattern;standardAccepted=false;saveRoadmapMode();drawJourney();return;}if(b.hasAttribute('data-standard-accept')){standardAccepted=true;saveRoadmapMode();drawJourney();return;}if(b.dataset.roadmapMode){PlannerFullscreen.leaveForAction(b);if(b.dataset.roadmapMode==='standard')showStandard();else enterCustom();return;}if(b.dataset.workspaceView){setWorkspaceView(b.dataset.workspaceView);return;}if(b.dataset.workspaceCourse){const y=scrollY,x=$('journeyMap').querySelector('.month-ribbon')?.scrollLeft||0;workspaceCourse=b.dataset.workspaceCourse;workspaceView='map';rememberWorkspace();drawJourney();requestAnimationFrame(()=>{$('journeyMap').querySelector('.month-ribbon')?.scrollTo({left:x,behavior:'auto'});window.scrollTo({top:y,behavior:'auto'});$('journeyMap').querySelector('.course-stop[data-workspace-course="'+workspaceCourse+'"]')?.focus({preventScroll:true});});return;}if(b.dataset.atlasFull){setWorkspaceView(b.dataset.atlasFull==='graph'?'graph':'map');return;}if(b.dataset.landscapePan){const scroller=b.closest('.learning-landscape').querySelector('.landscape-scroll');if(b.dataset.landscapePan==='start')scroller.scrollTo({left:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});else scroller.scrollBy({left:(b.dataset.landscapePan==='next'?1:-1)*scroller.clientWidth*.8,behavior:'smooth'});return;}PlannerFullscreen.leaveForAction(b);if(b.dataset.atlasJump){setWorkspaceView(({route:'map',compare:'graph',schedule:'table',current:'records',plan:'records',questions:'records'})[b.dataset.atlasJump]||'map');return;}if(flowClick(b))return;if(b.dataset.pathwayTo){choosePathway(b.dataset.pathwayFrom,b.dataset.pathwayTo);openPathway(pathwayTrail.at(-1));return;}const root=b.dataset.journeyDirection||b.dataset.pathwayRoot;if(root){choosePathway(null,root);openPathway(root);return;}if(b.dataset.pathwayOpen){openPathway(b.dataset.pathwayOpen);return;}const next=journeyModel.axes.find(a=>a.id===b.dataset.journeyNext);if(next?.next){openCourse({title:next.label+' · '+next.next,axis:next.id==='thinking'?'thinking1':next.id,sub:'현재 진도에서 이어서 공부할 수 있는 과정이에요.'});return;}const item=journeyModel.axes.find(a=>a.id===b.dataset.journeyCourse);if(item)openCourse(item.detail);};
 $('journeyMap').addEventListener('keydown',e=>{
  const calendar=e.target.closest('.college-calendar');if(calendar&&e.target===calendar&&!e.ctrlKey&&!e.metaKey&&['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();if(e.key==='Home')calendar.scrollLeft=0;else if(e.key==='End')calendar.scrollLeft=calendar.scrollWidth;else calendar.scrollLeft+=(e.key==='ArrowRight'?1:-1)*100;return;}
  const tab=e.target.closest('[role="tab"][data-workspace-view]');if(!tab)return;
@@ -1318,6 +1466,8 @@ if(restoredMobilePane)mobileWorkspace(restoredMobilePane);PlannerGuide.mount(doc
 const incomingSeniorDirectLink=window.location?.href;
 if(classroomSaved?.version===1&&classroomSaved.active===true)showClassroom(true);else if(studySaved?.version===1&&studySaved.active===true)showStudy(true);else if(historySaved?.active===true)showHistory(historySaved.caseId,true);else if(caseSaved?.version===1&&caseSaved.active===true)showCase(true);
 applySeniorDirectLink(incomingSeniorDirectLink);
+if(new URLSearchParams(location.search).get('checklist')==='1')openWeeklyCheck(true);
+else if(new URLSearchParams(location.search).get('weekly')==='1')openWeeklyCheck();
 // Older sessions may have paths that were never edited after durable storage was added.
 // Promote only absent durable keys; another saved plan and deletion guards stay intact.
 for(const key of [preschoolDetailKey,cohortKey,languageKey,studentKey,storageKey,pathwayKey,personalityKey,careerKey,flowKey,planKey,progressKey,transitionKey,caseKey,historyKey,referencePlanKey,scienceKey,collegeKey,bookCheckKey,'gfield.demo2.roadmap-mode.v1','gfield.demo2.workspace.v1'])PlannerStorage.promoteExisting(key);

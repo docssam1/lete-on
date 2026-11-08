@@ -67,7 +67,7 @@ function staticPreflight() {
     if (!fs.existsSync(path.join(questionBankDir, file.slice(2)))) fail(`${file} 파일이 없습니다.`);
   }
   const appText = fs.readFileSync(path.join(questionBankDir, "app.js"), "utf8");
-  if (!appText.includes("typePoolIndices.size + attempt")) fail("app.js에 유형별 fixed-pool variant 선택이 없습니다.");
+  if (!appText.includes("typePoolIndices.has(candidate.verifiedPoolIndex)")) fail("app.js에 유형별 fixed-pool variant 선택이 없습니다.");
   if (!appText.includes("fallbackVariant")) fail("app.js에 fixed-pool fallback variant가 없습니다.");
 }
 

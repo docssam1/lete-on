@@ -7,7 +7,7 @@
 })(typeof window !== "undefined" ? window : globalThis, function() {
   "use strict";
   const id = "5-2-u5-e1-mission-1-grid-synthetic", key = "source52U5CuboidGridPractice";
-  const cases = Object.freeze([[4,3,2],[5,2,2],[5,3,2],[5,4,2]].map(Object.freeze));
+  const cases = Object.freeze([[4,3,2],[5,2,2],[5,3,2],[5,4,2],[3,2,2],[4,2,2],[4,3,3],[4,4,3],[5,5,2]].map(Object.freeze));
   const chooseTwo = n => n * (n - 1) / 2;
   function model(index) {
     const dimensions = cases[index];
@@ -38,7 +38,7 @@
     if (!type || type.id!==id || type.generatorKey!==key || type.sourceVerified!==true || type.reviewLocked!==false) return null;
     if (!Number.isSafeInteger(variant) || variant<0) throw new Error("변형 번호 오류");
     const index=variant%cases.length;
-    return {...build(index),sourceItemId:id,generator:key,generationMode:"fixed-verified-pool",verifiedPoolIndex:index,verifiedVariantCount:4,verifiedVariantTarget:4,verifiedVariantId:`${id}:v${index}`,variantProvenance:"synthetic-different-grid-dimensions",publisherKeyVerified:false,publisherAnswerVerified:false,answerVerification:"independent-grid-interval-enumeration"};
+    return {...build(index),sourceItemId:id,generator:key,generationMode:"fixed-verified-pool",verifiedPoolIndex:index,verifiedVariantCount:cases.length,verifiedVariantTarget:cases.length,verifiedVariantId:`${id}:v${index}`,variantProvenance:"synthetic-different-grid-dimensions",publisherKeyVerified:false,publisherAnswerVerified:false,answerVerification:"independent-grid-interval-enumeration"};
   }
   function install(target) {
     const api=target?.HSE_GENERATORS;

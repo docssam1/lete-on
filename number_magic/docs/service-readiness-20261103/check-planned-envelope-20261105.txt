@@ -1,0 +1,17 @@
+{
+  "realCourseData": true,
+  "sourceImmutable": true,
+  "externalWrites": 0,
+  "cases": 8,
+  "reports": [
+    "multiple exact elementary sessions across and within courses",
+    "repeated concepts receive one introduction without dropping practice",
+    "high school course boundary preserves every selected source and count",
+    "partial compact start never reintroduces completed canonical sources",
+    "middle-three print follows its current taught sources without high-school bridge",
+    "calculus boundary uses its one-to-one source lessons",
+    "invalid references fail the whole envelope without silently selecting another source",
+    "source sessions, storage and all existing envelope paths remain unchanged"
+  ]
+}
+OK: 8 planned-envelope cases; elementary/middle/high/calculus exact refs, boundary merging, amount, labels and legacy parity.

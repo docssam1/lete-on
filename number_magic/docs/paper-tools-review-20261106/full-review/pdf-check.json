@@ -1,0 +1,22 @@
+{
+  "pages": 12,
+  "bytes": 2206291,
+  "sha256": "72eafb80540f4ef98bd741542e355eb59633ea643dddeacb21fec6c58876e316",
+  "allPagesA4": true,
+  "textChars": [
+    538,
+    549,
+    708,
+    582,
+    605,
+    626,
+    536,
+    523,
+    775,
+    714,
+    545,
+    672
+  ],
+  "physicalPrint": false,
+  "review": "All twelve HTML pages and twelve-page A4 PDF rendered and visually inspected; no child handling trial."
+}

@@ -1,0 +1,24 @@
+.weekly-personal-schedule {
+  margin-block: .8rem;
+  padding: 1rem;
+  color: #24334a;
+  background: #f4f8fb;
+  border: 1px solid #c9d8e4;
+  border-radius: .9rem;
+  overflow-wrap: anywhere;
+}
+.weekly-personal-schedule h3, .weekly-personal-schedule h4 { margin: 0; font-weight: 750; }
+.weekly-personal-schedule > p, .weekly-personal-schedule details p { color: #495d6e; margin: .3rem 0; font-size: .88rem; }
+.weekly-schedule-week { padding-top: .75rem; margin-top: .5rem; border-top: 1px solid #d8e1e9; }
+.weekly-schedule-week h4 { font-size: .88rem; }
+.weekly-schedule-tracks { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .6rem; margin: .5rem 0 0; }
+.weekly-schedule-tracks dt { font-weight: 700; font-size: .84rem; }
+.weekly-schedule-tracks dd { margin: .15rem 0 0; font-size: .86rem; }
+.weekly-schedule-tracks dd > * { display: block; }
+.weekly-schedule-tracks small { color: #745522; }
+.weekly-personal-schedule details { margin-top: .75rem; }
+.weekly-personal-schedule summary { cursor: pointer; padding: .45rem 0; }
+@media (max-width: 620px) {
+  .weekly-schedule-tracks { grid-template-columns: 1fr; gap: .3rem; }
+  .weekly-schedule-tracks > div { display: grid; grid-template-columns: 3.7em 1fr; align-items: baseline; }
+}

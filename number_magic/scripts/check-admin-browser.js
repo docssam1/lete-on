@@ -82,7 +82,7 @@ function makeMock() {
         m.unlinked = m.unlinked.filter((x) => x.name !== body.profileName);
         return json(200, { ok: true });
       case 'admin_set_learning': m.learning.push(body); return json(200, { settings: Object.assign({}, body, { action: undefined, adminToken: undefined, profileName: undefined }) });
-      case 'admin_preview_worksheet': m.previews++; return json(200, { previewId: 'pv-1', message: MSG, link: 'https://example.test/ws/1', phoneMasked: '010-****-1234', messageType: 'LMS', expiresAt: '2099-01-01T00:10:00Z' });
+      case 'admin_preview_worksheet': m.previews++; if (m.previewError) return json(409, { error: m.previewError }); return json(200, { previewId: 'pv-1', message: MSG, link: 'https://example.test/ws/1', phoneMasked: '010-****-1234', messageType: 'LMS', expiresAt: '2099-01-01T00:10:00Z' });
       case 'admin_send_worksheet': m.sends.push(body.previewId); return json(200, { ok: true, status: 'sent', phoneMasked: '010-****-1234' });
       default: return json(400, { error: 'unknown' });
     }
@@ -208,6 +208,7 @@ async function noOverflow(page, label) {
 
     console.log('learning settings + roadmap');
     const stu = page.locator('.student').first();
+    ok((await stu.locator('.learn-summary').textContent()).includes('저장 전 예시'), 'unsaved defaults are not presented as a saved plan');
     const courseSel = stu.locator('select[id$="-course"]');
     const opts = await courseSel.locator('option').evaluateAll((o) => o.map((x) => x.value));
     ok(opts.length > 1 && opts.every((v) => /^C\d+$/.test(v)), 'course options come from NM_COURSES (C-keys)');
@@ -239,9 +240,16 @@ async function noOverflow(page, label) {
     ok(L && L.entryYear === ay && L.sessionIndex === Math.min(2, sessCount), 'entryYear from grade (March school year) + 1-based session');
 
     console.log('sms');
+    ok(!(await stu.locator('.learn-summary').textContent()).includes('저장 전 예시'), 'saved settings replace the unsaved example label');
+    mock.previewError = 'settings_required';
+    await stu.getByRole('button', { name: '학습지 문자 전송' }).click();
+    await page.waitForFunction(() => /학습 설정 저장/.test(document.querySelector('.sms > .status').textContent));
+    const missingSettings = await stu.locator('.sms > .status').textContent();
+    ok(!missingSettings.includes('충돌') && mock.sends.length === 0, 'missing settings gives the saving step and sends nothing');
+    mock.previewError = null;
     await stu.getByRole('button', { name: '학습지 문자 전송' }).click();
     await page.waitForSelector('.sms-box:not([hidden])');
-    ok(mock.previews === 1 && mock.sends.length === 0, 'preview made, zero sends before confirm');
+    ok(mock.previews === 2 && mock.sends.length === 0, 'preview made after settings recovery, zero sends before confirm');
     const boxText = await stu.locator('.sms-box').textContent();
     ok(boxText.includes('010-****-1234') && !/010-\d{4}-\d{4}/.test(boxText), 'recipient is masked');
     ok(boxText.includes('LMS'), 'LMS label shown');

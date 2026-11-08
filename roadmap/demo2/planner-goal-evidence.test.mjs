@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const window={},ctx=vm.createContext({window});
-for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-standard.js','planner-curriculum.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
+for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
 const {PlannerGoalCurriculum:G,PlannerCurriculum:C,PlannerLearningEvidence:E,PlannerIntake:I}=window;
 const fields={grade:'7',year:'2026',mon:'11',band:'B',speed:'2'};
 const base=()=>({grade:'7',gradeInput:'current',thinkingExperience:'none',schoolCourse:'mid',schoolBook:'원리해설',schoolExact:'16',schoolStatus:'progress',deepCourse:'mid',deepBook:'A급',deepStage:'15',deepStatus:'progress',calc:'none'});

@@ -86,7 +86,7 @@
       scopeKey: "middle2-1-to-middle3-2",
       scopeLabel: "중2-1~중3-2",
       evidenceStatus: "verified",
-      evidenceRefs: ["PUBLIC:DP-TIMETABLE-OFFICIAL-2026-09"]
+      evidenceRefs: ["PUBLIC:DP-DAECHI-DEC-2026-OFFICIAL"]
     },
     {
       id: "WM:middle-entry",
@@ -95,7 +95,7 @@
       scopeKey: "middle1-algebra-geometry-no-statistics",
       scopeLabel: "중1 대수·기하 누적 · 통계 제외",
       evidenceStatus: "verified",
-      evidenceRefs: ["PUBLIC:WM-M21-CHANGE-2025", "PUBLIC:WM-M21-JULY-2026"]
+      evidenceRefs: ["PUBLIC:WM-M21-OCT-2026-OFFICIAL"]
     },
     {
       id: "WM:common-math-entry",
@@ -104,7 +104,7 @@
       scopeKey: "middle-algebra-geometry",
       scopeLabel: "중등 대수·기하 누적",
       evidenceStatus: "verified",
-      evidenceRefs: ["PUBLIC:WM-ENTRY-2025-MIRROR"]
+      evidenceRefs: ["PUBLIC:WM-CM1-DEC-2026-OFFICIAL"]
     },
     {
       id: "ED:middle-entry",
@@ -129,9 +129,9 @@
       programCode: "DG",
       trackId: "high-advance",
       scopeKey: "middle-common-math-mixed",
-      scopeLabel: "중등 심화·공통수학 누적",
+      scopeLabel: "대치 2027 예비고1 · 공통수학1 + 공통수학2 도형의 방정식",
       evidenceStatus: "verified",
-      evidenceRefs: ["PUBLIC:DG-SCOPE-MIRROR"]
+      evidenceRefs: ["PUBLIC:DG-DAECHI-PREHIGH-2027-OFFICIAL"]
     },
     {
       id: "SM:common-math-entry",

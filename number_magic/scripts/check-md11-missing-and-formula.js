@@ -19,9 +19,8 @@ w.window = w;
 w.document = {getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[],head:{appendChild(){}},body:{appendChild(){}}};
 w.localStorage = {getItem:k=>store.has(k)?store.get(k):null,setItem:(k,v)=>store.set(k,String(v))};
 vm.createContext(w);
-for(const file of ['engine/rng.js','engine/threads/mid2.js','data/threads.js','data/middle-concepts.js','data/middle-pacing.js','data/wordable.js','data/courses.js','app/exam.js']) {
-  vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),w,{filename:file});
-}
+Object.assign(w,require('./lib/runtime-fixture').load().world);w.window=w;
+vm.runInContext(fs.readFileSync(path.join(root,'app/exam.js'),'utf8'),w,{filename:'app/exam.js'});
 
 const plain = v => JSON.parse(JSON.stringify(v));
 const sig = p => JSON.stringify({prompt:p.prompt.ko,tex:p.tex,answer:p.answer});

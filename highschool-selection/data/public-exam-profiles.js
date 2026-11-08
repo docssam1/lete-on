@@ -2,26 +2,82 @@
   "use strict";
 
   const sources = {
+    "SH-DAECHI-2026-OFFICIAL": {
+      "title": "황소 대치 2026년 편입시험 안내 · 고등 시작반 범위",
+      "url": "https://blog.naver.com/sharpedu/224086447021",
+      "grade": "A",
+      "publishedAt": null,
+      "checkedAt": "2026-11-06"
+    },
+    "DP-DAECHI-DEC-2026-OFFICIAL": {
+      "title": "돌파 대치 중등관 초6 12월 개강 · 과정별 테스트 범위",
+      "url": "https://blog.naver.com/dpmath/224407474293",
+      "grade": "A",
+      "publishedAt": null,
+      "checkedAt": "2026-11-06"
+    },
+    "DP-BUNDANG-OCT-2026-OFFICIAL": {
+      "title": "돌파 분당 9/19 이후 정규반 진도·테스트 안내",
+      "url": "https://blog.naver.com/dpmath/224416048124",
+      "grade": "A",
+      "publishedAt": null,
+      "checkedAt": "2026-11-06"
+    },
+    "WM-M21-OCT-2026-OFFICIAL": {
+      "title": "원수학 대치 10월 중2-1 기본반 신입 입학테스트",
+      "url": "https://blog.naver.com/wonmath563/224393421982",
+      "grade": "A",
+      "publishedAt": "2026-08-28",
+      "checkedAt": "2026-11-06"
+    },
+    "WM-CM1-DEC-2026-OFFICIAL": {
+      "title": "원수학 대치 12월 공통수학1 기본반 신입 입학테스트(수정)",
+      "url": "https://blog.naver.com/wonmath563/224443076138",
+      "grade": "A",
+      "publishedAt": null,
+      "checkedAt": "2026-11-06"
+    },
+    "DG-DAECHI-ENTRY-OFFICIAL": {
+      "title": "깊은생각 대치 공식 입학안내 · 초등70분·중고등90분",
+      "url": "https://www.dailystudy.com/branches/a_daechi/guide/contents/4",
+      "grade": "A",
+      "publishedAt": null,
+      "checkedAt": "2026-11-06"
+    },
+    "DG-DAECHI-PREHIGH-2027-OFFICIAL": {
+      "title": "깊은생각 대치 2027 예비고1 입학테스트 범위",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master&grade=M3",
+      "grade": "A",
+      "publishedAt": null,
+      "checkedAt": "2026-11-06"
+    },
+    "SM-CM1-OCT-2026-OFFICIAL": {
+      "title": "생수 대치 본관 초6(예비중1) 공통수학1 10월 개강",
+      "url": "https://blog.naver.com/won1934/224405763544",
+      "grade": "A",
+      "publishedAt": "2026-09-09",
+      "checkedAt": "2026-11-06"
+    },
     "ED-CM1-BASIC-OFFICIAL-2026-12": {
       title: "이든수학 공식 공통수학1 기본반 12월 개강·입반시험 안내",
       url: "https://blog.naver.com/edenmath/224434054175",
       grade: "A",
       publishedAt: "2026-10-07",
-      checkedAt: "2026-11-03"
+      checkedAt: "2026-11-06"
     },
     "ED-MIDDLE1-OFFICIAL-2026-10": {
       title: "이든수학 공식 초등관 10월 이후 정규반·중1 시작반 테스트 안내",
       url: "https://blog.naver.com/edenmath/224367798692",
       grade: "A",
       publishedAt: "2026-08-04",
-      checkedAt: "2026-11-03"
+      checkedAt: "2026-11-06"
     },
     "ED-FAQ-OFFICIAL": {
       title: "이든수학 공식 교육철학 및 FAQ · 과정별 입학시험 범위 예시",
       url: "https://blog.naver.com/edenmath/223377125157",
       grade: "A",
       publishedAt: "2024-03-08",
-      checkedAt: "2026-11-03"
+      checkedAt: "2026-11-06"
     },
     "SH-CURRICULUM-OFFICIAL": {
       title: "생각하는황소 고등과정",
@@ -196,21 +252,18 @@
         { label: "현재 과정", value: "기본정석 Light · 기본정석 Plus · 실력정석", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL", "SH-REFORM-OFFICIAL"] },
         { label: "현행 과목", value: "공통수학1·2 병렬 운영", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL"] },
         { label: "우리 판매용 모의고사", value: "중등 누적 40문항 · 110분", state: "confirmed", sourceIds: [] },
-        { label: "공개 시간 사례", value: "고등과정 입학시험 110분", state: "verified", sourceIds: ["SH-SONGPA-2025-08-MIRROR"] },
+        { label: "대치 고등 시작반 범위", value: "중등 1~3과정", state: "verified", sourceIds: ["SH-DAECHI-2026-OFFICIAL"] },
+        { label: "대치 고등 시작반 시험시간", value: "110분 · 원장 확인", state: "confirmed", sourceIds: [] },
         { label: "개편 전 교재 후기", value: "상·하 본교재 + 홀짝 숙제교재 6권 · 첨삭 미션·보충 프린트", state: "observed", sourceIds: [] },
         { label: "개편 전 퀵테스트 후기", value: "서술형 2문항 · 10점 · 부분점수", state: "observed", sourceIds: [] }
       ],
       cutline: {
-        state: "verified",
-        display: "실력정석 70 · Plus 50 · Light 30점",
-        context: "위례점 · 2026년 6월 고등과정 시작반 공개 결과",
-        branch: "위례점",
-        course: "고등과정 시작반",
-        round: "2026-06",
-        sourceIds: ["SH-WIRYE-2026-06-MIRROR"]
+        state: "needs-review", display: "확인 필요",
+        context: "대치 고등 시작반의 해당 회차 공식 기준 확인 필요",
+        branch: null, course: null, round: null, sourceIds: []
       },
       style: "중등 수·식, 함수·좌표, 평면·입체도형, 경우의 수·확률을 한 회차에 누적 배치합니다.",
-      caveat: "우리 제작·보유 시험지를 기준으로 하며 공식 기출로 표시하지 않습니다. 110분은 우리 판매용 모의고사 운영 설정이고, 외부 공개 사례와 지점·회차별 커트라인은 별도 참고 근거로 관리합니다. 과거 기본정석 교재 6권과 퀵테스트 후기는 2026년 교재 개편 전 자료이므로 현행 교재 안내에 쓰지 않습니다."
+      caveat: "우리 제작·보유 시험지를 기준으로 하며 공식 기출로 표시하지 않습니다. 대치 고등 시작반 시험시간은 원장 확인으로 110분이며 모의고사에도 같은 시간을 적용합니다. 공식 공개 안내의 문항 수와 레벨별 커트라인은 별도 확인합니다. 과거 기본정석 교재 6권과 퀵테스트 후기는 2026년 교재 개편 전 자료이므로 현행 교재 안내에 쓰지 않습니다."
     },
     {
       code: "DP",
@@ -220,21 +273,18 @@
       facts: [
         { label: "중1 입학 관찰 사례", value: "초5-1~초6-2 누적 · 30문항 · 2/3/4점", state: "observed", sourceIds: [] },
         { label: "예비중1 성적표 사례", value: "공통수학1 기본 · 30문항 · 60점 컷", state: "observed", sourceIds: [] },
-        { label: "공개 범위 사례", value: "공통수학1 기본 전범위", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
-        { label: "공개 규격 사례", value: "30문항 · 150분 · 20문항 기준", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
+        { label: "대치 공통수학1 기본반 범위", value: "중2·중3 전 과정", state: "verified", sourceIds: ["DP-DAECHI-DEC-2026-OFFICIAL"] },
+        { label: "대치 12월 입반 규격", value: "30문항 · 150분 · 커트라인 추후 발표", state: "verified", sourceIds: ["DP-DAECHI-DEC-2026-OFFICIAL"] },
+        { label: "분당 시험시간", value: "중2-1~대수 150분 · 미적분1 포함 180분", state: "verified", sourceIds: ["DP-BUNDANG-OCT-2026-OFFICIAL"] },
         { label: "중간반 대표 준비 범위", value: "중1-1~중2-1 전 범위(일차함수까지)", state: "confirmed", sourceIds: [] },
         { label: "원본 시험지 범위", value: "전 범위형과 중간 단원 종료형을 시험지별로 따로 기록", state: "confirmed", sourceIds: [] },
-        { label: "공통수학1 입반 준비 범위", value: "중2-1~중3-2", state: "verified", sourceIds: ["DP-TIMETABLE-OFFICIAL-2026-09"] },
+        { label: "공통수학1 입반 준비 범위", value: "중2-1~중3-2", state: "verified", sourceIds: ["DP-DAECHI-DEC-2026-OFFICIAL"] },
         { label: "실출제 경향", value: "후반 변별형·조건 분기·그래프/조합 결합", state: "observed", sourceIds: [] }
       ],
       cutline: {
-        state: "verified",
-        display: "20 / 30문항",
-        context: "대치 · 2026년 공통수학2 기본반 입학 · 공통수학1 기본 전범위",
-        branch: "대치",
-        course: "공통수학2 기본반 입학",
-        round: "2026-08-14 공지",
-        sourceIds: ["DP-ENTRY-MIRROR"]
+        state: "needs-review", display: "확인 필요",
+        context: "대치 2026년 12월 개강 공지: 커트라인 추후 발표. 분당 정규반의 20/30 기준과 구분.",
+        branch: null, course: null, round: null, sourceIds: ["DP-DAECHI-DEC-2026-OFFICIAL"]
       },
       style: "초반 기본 정확도와 후반 복합 조건을 함께 보며, 공통수학1 실출제 원본은 별도 프로필로 관리합니다.",
       caveat: "공개 수치는 2026년 특정 지점·반 공지 기준입니다. 원본 시험지는 문항 원천으로 보존하되, 현재 지원 과정의 범위 밖 문항과 원본이 아닌 대체 문항은 새 시험 구성에서 제외합니다."
@@ -247,26 +297,29 @@
       facts: [
         { label: "중등과정", value: "중2·중3 각 기본 2+2개월 뒤 심화듀얼 2.5개월", state: "verified", sourceIds: ["WM-MIDDLE-LAUNCH-2025", "WM-MIDDLE-QA-2026-08"] },
         { label: "기본반 목적", value: "해당 학기를 처음 배우거나 개념을 처음부터 재정비", state: "verified", sourceIds: ["WM-M31-JULY-2026"] },
-        { label: "중2-1 기본반 현행 구조", value: "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외", state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
+        { label: "중2-1 기본반 현행 구조", value: "중1 대수 25 + 중1 기하 25 · 각 70분 · 통계 제외", state: "verified", sourceIds: ["WM-M21-OCT-2026-OFFICIAL"] },
         { label: "공수1 결과분석 사례", value: "중등대수 30 + 중등 기하·종합 30 · 문항별 유형표", state: "observed", sourceIds: [] },
-        { label: "중2-1 최신 전형 창", value: "2026년 7월 공지 기준 120분", state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
-        { label: "중2-1 공지 변경 이력", value: "최초 25+25 공지 후 같은 전형을 20+20으로 정정", state: "verified", sourceIds: ["WM-M21-INITIAL-2025", "WM-M21-CHANGE-2025"] },
+        { label: "중2-1 최신 전형 창", value: "2026년 10월 개강 · 시험 140분 + 휴식 20분", state: "verified", sourceIds: ["WM-M21-OCT-2026-OFFICIAL"] },
+        { label: "공통수학1 기본반 최신 규격", value: "2026년 12월 개강 · 중2·중3 대수25·기하25(확률 포함) · 각90분 + 휴식20분", state: "verified", sourceIds: ["WM-CM1-DEC-2026-OFFICIAL"] },
+        { label: "중2-1 공지 변경 이력", value: "2026년 1월 20+20 정정 · 7월 20+20 · 10월 25+25", state: "verified", sourceIds: ["WM-M21-INITIAL-2025", "WM-M21-CHANGE-2025"] },
         { label: "2025 공수1 난이도 후기", value: "대수·기하 25+25 · 극심화보다 심화 문제의 정확도 중심", state: "observed", sourceIds: ["WM-ENTRY-2025-REVIEW"] },
         { label: "중2-2 편입 개편", value: "2026년 5월 45문항에서 9월 50문항으로 변경", state: "verified", sourceIds: ["WM-M22-MAY-2026", "WM-M22-SEP-2026"] },
         { label: "고등 듀얼 분리", value: "실력공수1,2 듀얼은 공수1·2 기본 이수 뒤의 별도 고등과정", state: "verified", sourceIds: ["WM-HIGH-DUAL-JULY-2026"] }
       ],
       cutline: {
         state: "verified",
-        display: "28 / 40문항 · 대수 13미만/기하 12미만 과락 · 25이상 풀이 검토",
-        context: "대치 · 2026년 7월 중2-1 기본반 신입",
+        display: "35 / 50문항 · 대수 17미만/기하 15미만 과락 · 32이상 풀이 검토",
+        context: "대치 · 2026년 10월 중2-1 기본반 신입",
         branch: "대치",
         course: "중2-1 기본반 신입",
-        round: "2026-07",
-        sourceIds: ["WM-M21-JULY-2026"]
+        round: "2026-10",
+        sourceIds: ["WM-M21-OCT-2026-OFFICIAL"]
       },
       roundProfiles: [
+        { id: "WM-M21-BASIC-ENTRY-2026-10", course: "중2-1 기본 신입", round: "2026-10", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [70, 70], breakMinutes: 20, minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-M21-OCT-2026-OFFICIAL"] },
+        { id: "WM-CM1-BASIC-ENTRY-2026-12", course: "공통수학1 기본 입학", round: "2026-12", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [90, 90], breakMinutes: 20, minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-CM1-DEC-2026-OFFICIAL"] },
         { id: "WM-CM1-BASIC-ENTRY-2025-09", course: "공통수학1 기본 입학", round: "2025-09", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [90, 90], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR", "WM-ENTRY-2025-REVIEW"] },
-        { id: "WM-M21-BASIC-ENTRY-2026-07", course: "중2-1 기본 신입", round: "2026-07", questionCount: 40, sectionCounts: [20, 20], sectionMinutes: [50, 50], minimum: 28, sectionMinimums: [13, 12], reviewFrom: 25, state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
+        { id: "WM-M21-BASIC-ENTRY-2026-07", course: "중2-1 기본 신입", round: "2026-07", questionCount: 40, sectionCounts: [20, 20], sectionMinutes: [50, 50], minimum: 28, sectionMinimums: [13, 12], reviewFrom: 25, state: "superseded", sourceIds: ["WM-M21-JULY-2026"] },
         { id: "WM-M22-BASIC-TRANSFER-2026-05", course: "중2-2 기본 편입", round: "2026-05", questionCount: 45, sectionCounts: [25, 20], sectionMinutes: [70, 50], minimum: 32, sectionMinimums: [15, 13], reviewFrom: 28, state: "superseded", sourceIds: ["WM-M22-MAY-2026"] },
         { id: "WM-M22-BASIC-TRANSFER-2026-09", course: "중2-2 기본 편입", round: "2026-09", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [70, 70], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-M22-SEP-2026"] },
         { id: "WM-M31-BASIC-TRANSFER-2026-07", course: "중3-1 기본 편입", round: "2026-07", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [70, 70], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-M31-JULY-2026"] },
@@ -292,16 +345,13 @@
         { label: "누적·총괄평가 후기", value: "매시간 누적 20문항 · 실력과정 총괄 3회(각 20점)", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
         { label: "재원 총괄평가 후기 기준", value: "총 42점 이상 + 최소 2회 14점 이상", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
         { label: "고등 교재 후기 사례", value: "학원 개념노트·정석 워크북·쎈·기본 수학의 정석", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
-        { label: "합격 기준", value: "최신 공식 기준 확인 필요", state: "needs-review", sourceIds: [] }
+        { label: "12월 공통수학1 기본반 합격 기준", value: "21문항 이상 · 대수·기하 균형과 풀이 과정 검토", state: "verified", sourceIds: ["ED-CM1-BASIC-OFFICIAL-2026-12"] }
       ],
       cutline: {
-        state: "needs-review",
-        display: "확인 필요",
-        context: "익명 결과의 20/30·17/30 불합격은 관찰값이며 커트라인이 아닙니다.",
-        branch: null,
-        course: null,
-        round: null,
-        sourceIds: []
+        state: "verified", display: "21 / 30문항 이상 · 영역 균형·서술 과정 검토",
+        context: "대치 · 2026년 12월 공통수학1 기본반. 21미만은 풀이 검토 후 결정하며 자동 합격 판정하지 않음.",
+        branch: "대치", course: "공통수학1 기본반", round: "2026-12",
+        sourceIds: ["ED-CM1-BASIC-OFFICIAL-2026-12"]
       },
       style: "공통수학1 기본반 대비 2회는 대수 1~20번·기하 21~30번으로 구분하고 풀이 과정도 확인합니다.",
       caveat: "공통수학1 기본반 범위는 2026년 12월 개강 공지에 해당합니다. 대수 기본반·공통수학2 실력반은 FAQ의 범위 예시이며 다른 반에 임의 적용하지 않습니다. 공식 공지의 21문항 이상 기준도 서술 과정과 대수·기하 균형을 검토하므로 자동 판정하지 않습니다. 42점·14점 후기 수치는 입학 커트라인이나 현행 공식 규정으로 사용하지 않습니다."
@@ -309,12 +359,13 @@
     {
       code: "DG",
       publicName: "깊은생각 입학테스트 대비",
-      eyebrow: "중3 심화·고등 누적",
-      summary: "예비고1 공개 범위에 맞춰 중3-1, 공통수학1, 공통수학2 도형의 방정식까지 점검합니다.",
+      eyebrow: "과정별 입학테스트",
+      summary: "대치 2027 예비고1은 공통수학1과 공통수학2 도형의 방정식을 점검합니다. 초등관 중1 시작반은 별도 시험지입니다.",
       facts: [
-        { label: "공개 범위 사례", value: "중3-1 + 공통수학1 전범위 + 공통수학2 도형의 방정식", state: "verified", sourceIds: ["DG-SCOPE-MIRROR"] },
+        { label: "대치 2027 예비고1 범위", value: "공통수학1 + 공통수학2 도형의 방정식", state: "verified", sourceIds: ["DG-DAECHI-PREHIGH-2027-OFFICIAL"] },
+        { label: "대치 공식 시험시간", value: "초등관 30문항·70분 / 중고등 30문항·90분", state: "verified", sourceIds: ["DG-DAECHI-ENTRY-OFFICIAL"] },
         { label: "강조 유형", value: "이차함수·여러 가지 부등식의 연결", state: "observed", sourceIds: [] },
-        { label: "문항·커트", value: "공식 최신 기준 확인 필요", state: "needs-review", sourceIds: [] }
+        { label: "분당 범위", value: "예비고1 공식 조회에 등록값 없음 · 대치 범위와 별도 확인", state: "needs-review", sourceIds: [] }
       ],
       cutline: {
         state: "needs-review",
@@ -326,7 +377,7 @@
         sourceIds: []
       },
       style: "단원별 단순 완주보다 이차함수와 부등식처럼 여러 과정을 연결하는 고난도 문항을 강화합니다.",
-      caveat: "지점·레벨별 차이가 크므로 공개 범위 외 문항 수와 커트라인은 확정하지 않습니다."
+      caveat: "대치 2027 예비고1 범위에 과거 중3-1 별도 범위를 추가하지 않습니다. 초등관 보유 시험지와 중등부 2027 예비중1 A·B형을 구분합니다. 공식 레벨 커트라인은 확인 필요입니다."
     },
     {
       code: "SM",
@@ -334,19 +385,15 @@
       eyebrow: "중2-2~중3-2 · 대수 15 + 기하 15",
       summary: "현재 공지 범위와 2022 구판 모의 참고지 2회를 분리해 감사하고, 현재 시험이 더 어렵다는 사용자 관찰을 제작 난도에만 반영합니다.",
       facts: [
-        { label: "현재 시험 범위", value: "중2-2 · 중3-1 · 중3-2", state: "verified", sourceIds: ["SM-CM1-ENTRY-2026-MIRROR", "SM-CM1-APRIL-2026-MIRROR"] },
-        { label: "현재 시험 구성", value: "대수 15 + 기하 15 · 총 30문항 · 180분", state: "verified", sourceIds: ["SM-CM1-ENTRY-2026-MIRROR"] },
+        { label: "현재 시험 범위", value: "중2-2 · 중3-1 · 중3-2", state: "verified", sourceIds: ["SM-CM1-OCT-2026-OFFICIAL"] },
+        { label: "현재 시험 구성", value: "대수 15 + 기하 15 · 총 30문항 · 180분", state: "verified", sourceIds: ["SM-CM1-OCT-2026-OFFICIAL"] },
         { label: "구판 참고지 감사", value: "2022 모의 참고지 2회 · 60문항 세부유형 후보 분류", state: "observed", sourceIds: [] },
         { label: "현행 난도 보정", value: "사용자 관찰을 반영해 조건 결합과 풀이 단계를 강화", state: "confirmed", sourceIds: [] }
       ],
       cutline: {
-        state: "verified",
-        display: "20 / 30문항 이상",
-        context: "예비 중1 공통수학1 기본 입반의 동일 범위·30문항 공지에만 적용합니다.",
-        branch: "생각하는수학학원",
-        course: "중1 공통수학1 기본 입반",
-        round: "2026년 3~4월 개강 공지",
-        sourceIds: ["SM-CM1-ENTRY-2026-MIRROR"]
+        state: "needs-review", display: "확인 필요",
+        context: "대치 본관 · 2026년 10월 예비중1 공통수학1 기본반은 전체 응시생 성적순 선발. 고정 20/30 기준 미적용.",
+        branch: null, course: null, round: null, sourceIds: ["SM-CM1-OCT-2026-OFFICIAL"]
       },
       style: "대수와 기하를 15문항씩 맞추고, 구판의 쉬운 단일 적용형은 조건 결합·표현 전환·역추론이 필요한 문제로 높입니다.",
       caveat: "구판 모의 참고지는 현행 공식 기출이 아닙니다. 최신 실제 원본을 확보하기 전까지 대표 시험은 생수형 공통수학1 입반 대비 추정 구성으로 표시합니다."
@@ -354,7 +401,7 @@
   ];
 
   root.HIGHSELECT_PUBLIC_PROFILES = {
-    updatedAt: "2026-11-03",
+    updatedAt: "2026-11-06",
     evidencePolicy: "A=공식 원문, B=공식 게시물 미러, C=독립 정리, 관찰=사용자 제공 원본/익명 결과, 운영 확정=우리 모의고사 설정. 외부 수치는 해당 회차에만 적용.",
     sources,
     profiles

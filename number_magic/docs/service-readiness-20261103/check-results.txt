@@ -1,3 +1,243 @@
+2026-11-06 | 교구12종 운영 배포 | VERIFIED | Pages42138926046 success; 9파일바이트동일,운영34조건오류0,GET-only외부쓰기0. 아래배포대기기록대체.
+2026-11-06 | 교구12종 운영 배포 | NOT VERIFIED | main 반영/로컬검사완료; 공용Pages42136851442실패,42138926046진행중,09:46KST 갤러리HTTP404. 기존 운영검사 통과 기록을 신규 교구 운영검증으로 대신하지 않음.
+# 2026-11-06 종이 교구12종 전체 디자인 후속 (아래187개와 별도)
+2026-11-06 | check-paper-tools-browser.js | PASS 36/36 | 실제교구URL·수학형상·단위·색/고리연결·3언어·갤러리2화면x12종·저장상태보존
+2026-11-06 | check-weekly-sheets.js (21 courses) | PASS 42/42 | 현재 과정 연결과 실제지면
+2026-11-06 | 교구수정 전후 비교 (7 courses) | IDENTICAL | 354문항·354정답·쪽수 동일
+2026-11-06 | 전체교구 PDF | PASS 12 pages A4 | 전부렌더/직접확인, 실제종이출력 미실행
+# 2026-11-06 종이 교구 후속 — 영향 범위 재검 (아래187개와 별도)
+2026-11-06 | check-paper-tools-browser.js | PASS 36/36 | 12종·3언어 A4·도형/문자 잘림0·물리 크기/비율·외부쓰기0
+2026-11-06 | check-weekly-sheets.js C1 C2 C3 C4 C11 C13 C26 | PASS 14/14 | 실제 학습지 생성/넘침
+2026-11-06 | 교구 수정 전후 비교 | IDENTICAL 4 courses | 204문항·정답 및 24/20/24/20쪽 유지
+2026-11-06 | 교구 PDF | PASS 4 one-page A4 exports | 실제 종이 출력 미실행
+# 2026-11-06 무료 보안·실사용 후속 — 아래 기존187개 재검 이후의 영향 검사
+2026-11-06 | check-admin-browser.js | PASS 64 assertions | settings_required 복구 안내·미저장 예시·중복방지·모바일 검증, 실제 문자 없는 mock 검사
+2026-11-06 | nm-membership handler.test.mjs | PASS 46/46 | 처리기 전체, 실제 발송 없음
+2026-11-06 | 실제 이메일 | INBOX RECEIVED 1 | 원장 직접 OTP/비밀번호 설정 완료, 새 가입 검사 아님
+2026-11-06 | 실제 LMS | PROVIDER SUCCESS 1 / ERROR 0 + RECIPIENT CONFIRMED | 원장 실제 수신/휴대폰 링크 열림 확인, 재전송 없음
+2026-11-06 | 실제 문자 링크 인쇄 | A4 PDF 24 pages | 60문항, native PDF 저장·전체24쪽 렌더·A4·빈쪽0 확인; 실제종이출력 미실행
+2026-11-06 | 운영 관리자 UI | LIVE IDENTICAL 2/2 | main11fce8f93 포함 Pages42115126582 성공
+2026-11-06 | auth_leaked_password_protection | WARN REMAINS | 원장 Free 유지, 별도 보강 secure-password-change ON / minimum 8 적용
+# ----- 아래는 전체187개 최종 재검과 이전 날짜 기록 -----
+# 2026-11-06 최종 재검 — GPT-6.1 Sol / Mac mini
+# 187개 고유 검사 전체 재실행 + 수정 영향 항목 재검. 최신 187/187 통과, 실패 0.
+# 기존 기본 3D 전용 2개는 원장 승인한 현재 만화풍(2D) 마을의 검사를 실행한다. --legacy-3d로 역사 검사를 보존.
+# 전체 첫 실행과 최종 재검 로그를 ZIP에 구분 보존. final-check-results-20261106.json에 항목별 명령/방법/이전 exit 기록.
+# DOT 필수 8/8, 검사 중 해당 소스 변경 없음. 문자는 발송하지 않음.
+2026-11-06 | check-about-stats.js | PASS | full-rerun
+2026-11-06 | check-access-book-browser.js | PASS | full-rerun
+2026-11-06 | check-access-music-browser.js | PASS | full-rerun
+2026-11-06 | check-account-switch-browser.js | PASS | full-rerun
+2026-11-06 | check-activity-journeys.js | PASS | full-rerun
+2026-11-06 | check-admin-browser.js | PASS | full-rerun
+2026-11-06 | check-amount-sheets.js | PASS | full-rerun
+2026-11-06 | check-answerable.js | PASS | full-rerun
+2026-11-06 | check-assessment-controls-browser.js | PASS | full-rerun
+2026-11-06 | check-astra-assessment-browser.js | PASS | full-rerun
+2026-11-06 | check-astra-concept-gaps.js | PASS | full-rerun
+2026-11-06 | check-attendance.js | PASS | full-rerun
+2026-11-06 | check-audio-entry-layout-browser.js | PASS | full-rerun
+2026-11-06 | check-book-volume-placement.js | PASS | full-rerun
+2026-11-06 | check-c0-cognitive.js | PASS | full-rerun
+2026-11-06 | check-c0-concrete.js | PASS | full-rerun
+2026-11-06 | check-c4-numberline-print.js | PASS | full-rerun
+2026-11-06 | check-calculus-pacing.js | PASS | full-rerun
+2026-11-06 | check-character-closet-browser.js | PASS | full-rerun
+2026-11-06 | check-character-state.js | PASS | full-rerun
+2026-11-06 | check-closet-collection-browser.js | PASS | full-rerun
+2026-11-06 | check-cognitive-road.js | PASS | full-rerun
+2026-11-06 | check-comics.js | PASS | full-rerun
+2026-11-06 | check-concept-scenes.js | PASS | full-rerun
+2026-11-06 | check-concept-visuals.js | PASS | full-rerun
+2026-11-06 | check-consent-grade-music-browser.js | PASS | full-rerun
+2026-11-06 | check-cosmetics-catalog-browser.js | PASS | full-rerun
+2026-11-06 | check-cosmetics-town-browser.js | PASS | final-targeted-rerun
+2026-11-06 | check-counting-art.js | PASS | full-rerun
+2026-11-06 | check-creative-process.js | PASS | affected-gate-rerun
+2026-11-06 | check-curriculum-notation.js | PASS | full-rerun
+2026-11-06 | check-curriculum-sequence.js | PASS | full-rerun
+2026-11-06 | check-delivery-versions-browser.js | PASS | full-rerun
+2026-11-06 | check-delivery-versions.js | PASS | full-rerun
+2026-11-06 | check-diagnosis-observe-browser.js | PASS | final-targeted-rerun
+2026-11-06 | check-diagnostic-intake-browser.js | PASS | affected-gate-rerun
+2026-11-06 | check-diagnostic-paper-browser.js | PASS | full-rerun
+2026-11-06 | check-diagnostic-roadmap.js | PASS | affected-gate-rerun
+2026-11-06 | check-dot-handoff-gates.js | PASS | final-targeted-rerun
+2026-11-06 | check-dunoro-placement.js | PASS | full-rerun
+2026-11-06 | check-dunoro-review-candidates.js | PASS | full-rerun
+2026-11-06 | check-editorial-print.js | PASS | full-rerun
+2026-11-06 | check-elementary-examples.js | PASS | full-rerun
+2026-11-06 | check-flow-review-regression.js | PASS | full-rerun
+2026-11-06 | check-g1315-gen.js | PASS | full-rerun
+2026-11-06 | check-g1315-screen.js | PASS | final-targeted-rerun
+2026-11-06 | check-graph-drawing.js | PASS | full-rerun
+2026-11-06 | check-hero3d.js | PASS | full-rerun
+2026-11-06 | check-high-calendar.js | PASS | full-rerun
+2026-11-06 | check-high-pacing-browser.js | PASS | full-rerun
+2026-11-06 | check-high-pacing.js | PASS | full-rerun
+2026-11-06 | check-illustrated-town-browser.js | PASS | full-rerun
+2026-11-06 | check-interactive-viewport.js | PASS | full-rerun
+2026-11-06 | check-journey-browser.js | PASS | full-rerun
+2026-11-06 | check-journey-viewport.js | PASS | full-rerun
+2026-11-06 | check-ladder-placement-browser.js | PASS | full-rerun
+2026-11-06 | check-ladder-placement.js | PASS | full-rerun
+2026-11-06 | check-ladder.js | PASS | full-rerun
+2026-11-06 | check-learner-storage.js | PASS | full-rerun
+2026-11-06 | check-learning-plan.js | PASS | full-rerun
+2026-11-06 | check-learning-review.js | PASS | full-rerun
+2026-11-06 | check-lesson-lettering.js | PASS | full-rerun
+2026-11-06 | check-level-concept.js | PASS | full-rerun
+2026-11-06 | check-level-coverage.js | PASS | full-rerun
+2026-11-06 | check-level-test.js | PASS | full-rerun
+2026-11-06 | check-living-lessons.js | PASS | full-rerun
+2026-11-06 | check-magazine-models.js | PASS | full-rerun
+2026-11-06 | check-magazine.js | PASS | full-rerun
+2026-11-06 | check-magic-book-browser.js | PASS | full-rerun
+2026-11-06 | check-magic-note-video.js | PASS | full-rerun
+2026-11-06 | check-manipulative-layout.js | PASS | affected-gate-rerun
+2026-11-06 | check-math-stories-browser.js | PASS | full-rerun
+2026-11-06 | check-md11-missing-and-formula-browser.js | PASS | full-rerun
+2026-11-06 | check-md11-missing-and-formula.js | PASS | full-rerun
+2026-11-06 | check-md13-polynomial-division-browser.js | PASS | full-rerun
+2026-11-06 | check-md13-polynomial-division.js | PASS | full-rerun
+2026-11-06 | check-md15-comparison-browser.js | PASS | full-rerun
+2026-11-06 | check-md15-comparison.js | PASS | full-rerun
+2026-11-06 | check-md19-radical-pool.js | PASS | full-rerun
+2026-11-06 | check-md64-inequality-direction.js | PASS | full-rerun
+2026-11-06 | check-md78-md79-function-values.js | PASS | full-rerun
+2026-11-06 | check-md82-numberline-browser.js | PASS | full-rerun
+2026-11-06 | check-md84-statistics-browser.js | PASS | full-rerun
+2026-11-06 | check-md84-statistics.js | PASS | full-rerun
+2026-11-06 | check-md85-dispersion-browser.js | PASS | full-rerun
+2026-11-06 | check-md85-dispersion.js | PASS | full-rerun
+2026-11-06 | check-md86-quartile-boxplot-browser.js | PASS | full-rerun
+2026-11-06 | check-md86-quartile-boxplot.js | PASS | full-rerun
+2026-11-06 | check-md87-scatter-browser.js | PASS | full-rerun
+2026-11-06 | check-md87-scatter.js | PASS | full-rerun
+2026-11-06 | check-md88-counting-cases-browser.js | PASS | full-rerun
+2026-11-06 | check-md88-counting-cases.js | PASS | full-rerun
+2026-11-06 | check-md9-nth-digit.js | PASS | final-targeted-rerun
+2026-11-06 | check-membership-client.js | PASS | full-rerun
+2026-11-06 | check-middle-bundles-browser.js | PASS | full-rerun
+2026-11-06 | check-middle-calendar.js | PASS | full-rerun
+2026-11-06 | check-middle-concepts-math.js | PASS | full-rerun
+2026-11-06 | check-middle-concepts.js | PASS | full-rerun
+2026-11-06 | check-middle-extension-browser.js | PASS | full-rerun
+2026-11-06 | check-middle-extension-content.js | PASS | full-rerun
+2026-11-06 | check-middle-extension-plan.js | PASS | full-rerun
+2026-11-06 | check-middle-extension-print.js | PASS | full-rerun
+2026-11-06 | check-middle-finite-pools.js | PASS | full-rerun
+2026-11-06 | check-middle-guidance-state.js | PASS | full-rerun
+2026-11-06 | check-middle-pacing-print.js | PASS | full-rerun
+2026-11-06 | check-middle-pacing-ui.js | PASS | full-rerun
+2026-11-06 | check-middle-pacing.js | PASS | full-rerun
+2026-11-06 | check-middle-study-guidance-browser.js | PASS | full-rerun
+2026-11-06 | check-middle-study-guidance.js | PASS | full-rerun
+2026-11-06 | check-middle-study-pacing.js | PASS | full-rerun
+2026-11-06 | check-navigation-targets-browser.js | PASS | full-rerun
+2026-11-06 | check-new-levels-lang.js | PASS | full-rerun
+2026-11-06 | check-new-levels-math.js | PASS | full-rerun
+2026-11-06 | check-no-legacy-3d-flash.js | PASS | current-2D-replacement
+2026-11-06 | check-notify-delivery.js | PASS | full-rerun
+2026-11-06 | check-numi-dialogue.js | PASS | full-rerun
+2026-11-06 | check-pace-compare.js | PASS | full-rerun
+2026-11-06 | check-paper-examples.js | PASS | affected-gate-rerun
+2026-11-06 | check-personal-delivery-browser.js | PASS | full-rerun
+2026-11-06 | check-personal-plan-browser.js | PASS | full-rerun
+2026-11-06 | check-personal-worksheet.js | PASS | full-rerun
+2026-11-06 | check-placement-auto.js | PASS | full-rerun
+2026-11-06 | check-placement-intake.js | PASS | full-rerun
+2026-11-06 | check-placement-integration.js | PASS | affected-gate-rerun
+2026-11-06 | check-placement-paths.js | PASS | full-rerun
+2026-11-06 | check-placement-plan.js | PASS | full-rerun
+2026-11-06 | check-placement-sheet.js | PASS | full-rerun
+2026-11-06 | check-plan-control.js | PASS | full-rerun
+2026-11-06 | check-planned-envelope.js | PASS | full-rerun
+2026-11-06 | check-print-image-readiness.js | PASS | full-rerun
+2026-11-06 | check-print-lang.js | PASS | full-rerun
+2026-11-06 | check-print-logo-multipage.js | PASS | full-rerun
+2026-11-06 | check-print-overflow.js | PASS | affected-gate-rerun
+2026-11-06 | check-print-page.js | PASS | full-rerun
+2026-11-06 | check-print.js | PASS | affected-gate-rerun
+2026-11-06 | check-profile-auth.js | PASS | full-rerun
+2026-11-06 | check-profile-intake-browser.js | PASS | full-rerun
+2026-11-06 | check-program-safety-browser.js | PASS | affected-gate-rerun
+2026-11-06 | check-progress-speed-browser.js | PASS | full-rerun
+2026-11-06 | check-promo-book.js | PASS | final-targeted-rerun
+2026-11-06 | check-promo-languages.js | PASS | final-targeted-rerun
+2026-11-06 | check-pwa-browser.js | PASS | full-rerun
+2026-11-06 | check-real-art.js | PASS | full-rerun
+2026-11-06 | check-review-access-browser.js | PASS | full-rerun
+2026-11-06 | check-review-p0.js | PASS | full-rerun
+2026-11-06 | check-reviewed-voice-video-browser.js | PASS | full-rerun
+2026-11-06 | check-reviewed-voice.js | PASS | full-rerun
+2026-11-06 | check-reward-economy.js | PASS | full-rerun
+2026-11-06 | check-reward-integration.js | PASS | full-rerun
+2026-11-06 | check-road-timing.js | PASS | affected-gate-rerun
+2026-11-06 | check-roadmap-design-browser.js | PASS | full-rerun
+2026-11-06 | check-roadmap-sync.js | PASS | full-rerun
+2026-11-06 | check-roadmap-sync.test.js | PASS | full-rerun
+2026-11-06 | check-scatter-answer.js | PASS | full-rerun
+2026-11-06 | check-scatter-learning-browser.js | PASS | full-rerun
+2026-11-06 | check-session-roles.js | PASS | full-rerun
+2026-11-06 | check-solution-steps.js | PASS | full-rerun
+2026-11-06 | check-soma-p-placement.js | PASS | full-rerun
+2026-11-06 | check-stages.js | PASS | full-rerun
+2026-11-06 | check-standard-worksheet-browser.js | PASS | full-rerun
+2026-11-06 | check-star-topology.js | PASS | full-rerun
+2026-11-06 | check-state-review-browser.js | PASS | full-rerun
+2026-11-06 | check-state-review-regression.js | PASS | full-rerun
+2026-11-06 | check-step-equations.js | PASS | affected-gate-rerun
+2026-11-06 | check-strategy-lessons.js | PASS | full-rerun
+2026-11-06 | check-study-projection.js | PASS | full-rerun
+2026-11-06 | check-study-records-browser.js | PASS | final-targeted-rerun
+2026-11-06 | check-study-records.js | PASS | full-rerun
+2026-11-06 | check-symbol-cards-browser.js | PASS | full-rerun
+2026-11-06 | check-tex-hygiene.js | PASS | full-rerun
+2026-11-06 | check-tone.js | PASS | affected-gate-rerun
+2026-11-06 | check-town-follow-browser.js | PASS | full-rerun
+2026-11-06 | check-town-menu-browser.js | PASS | full-rerun
+2026-11-06 | check-town-navigation.js | PASS | current-2D-replacement
+2026-11-06 | check-train-steps.js | PASS | full-rerun
+2026-11-06 | check-ui-review-regression.js | PASS | full-rerun
+2026-11-06 | check-unit-lang.js | PASS | affected-gate-rerun
+2026-11-06 | check-visual-map.js | PASS | full-rerun
+2026-11-06 | check-voice-browser.js | PASS | full-rerun
+2026-11-06 | check-weekly-sheets.js | PASS | full-rerun
+2026-11-06 | check-worksheet-series.js | PASS | full-rerun
+2026-11-06 | check-worksheet-text.js | PASS | final-targeted-rerun
+2026-11-06 | check-worksheet-uniqueness.js | PASS | full-rerun
+2026-11-06 | check-wp-word-problems.js | PASS | full-rerun
+2026-11-06 | check-wp4-unique.js | PASS | full-rerun
+2026-11-06 | check-young-activities-browser.js | PASS | full-rerun
+2026-11-06 | check-young-split-browser.js | PASS | full-rerun
+2026-11-06 | nm-membership handler | PASS 46/46 | 운영 v8 ACTIVE
+2026-11-06 | weekly-notify delivery | PASS 9/9 | 운영 v26 ACTIVE, 배포 3파일 로컬과 동일
+2026-11-06 | 실제 DB canonical_delivery_plan | PASS 4440/4440 | 읽기 전용 검증, 학생 기록 변경 없음
+# ----- 아래는 이전 날짜의 기록 -----
+# 2026-11-05 최신 재검 결과 — 아래 11/03 원본은 역사 기록으로 보존
+# 전체 187개를 오늘 모두 재실행한 결과가 아니다. 11/03 원본은 재시도 포함 234행/187개 고유 검사이며, 오늘 검증한 항목과 11/05 인쇄 검수는 아래 최신 칸이 우선한다.
+# 실행일 | 검사 | 상태 | 범위/근거
+2026-11-05 | nm-membership/handler.test.mjs | PASS 46/46 | 옛 검사 의존성/버전 기대값 갱신, personal2/curriculum3 추가, 보안·연락처·발송 모의 검사
+2026-11-05 | 실제 DB canonical_delivery_plan | PASS 4440/4440 | 74과정×5속도×2횟수×6유효/무효 조건
+2026-11-05 | 실제 nm-membership 배포 | PASS v8 ACTIVE | index.ts·handler.mjs·course-limits.json 모두 배포 원본과 동일
+2026-11-05 | 실제 HTTP 거부 동작 | PASS 3/3 | 미인증 status 401, 잘못된/없는 링크 404 (문자 발송·학생 쓰기 없음)
+2026-11-05 | check-personal-worksheet.js | PASS | 1102선택·5렌더·한도표 일치
+2026-11-05 | check-delivery-versions.js | PASS | 355조건·구버전 74과정 551회차 유지
+2026-11-05 | check-planned-envelope.js | PASS | 8편성 조건
+2026-11-05 | check-plan-control.js | PASS | 14220조건
+2026-11-05 | check-membership-client.js | PASS | 18조건
+2026-11-05 | check-notify-delivery.js | PASS | 발송 모의 검사
+2026-11-05 | build-nm-delivery-runtime --check | PASS | 서버 번들 원본 일치
+2026-11-05 | check-worksheet-series.js | PASS | 444모델·12브라우저·문항/정답 유지 (cover-review-20261103 로그)
+2026-11-05 | check-weekly-sheets.js | PASS | 148/148 (cover-review-20261103 로그)
+2026-11-05 | check-editorial-print.js | PASS | 9유형·PC/휴대폰 (cover-review-20261103 로그)
+2026-11-05 | check-standard-worksheet-browser.js | PASS | 표준 회차·문항 UP·짧은 링크 (cover-review-20261103 로그)
+2026-11-05 | check-print-image-readiness.js | PASS | 이미지 준비·실제 인쇄 호출 (cover-review-20261103 로그)
+2026-11-05 | check-cover-open-points-browser.js | PASS | C45/C70 실제 학습지·A4 PDF (cover-review-20261103 로그)
+# 원본 187개 중 이번에 다시 보지 않은 실패는 해결 판정하지 않는다.
+
+# ----- 아래는 2026-11-03 원본/재시도 기록 -----
 # 전체 검사 결과 2026-11-03 (exit 소요초 파일) — 0=통과
 0 1s check-about-stats.js
 0 41s check-access-book-browser.js

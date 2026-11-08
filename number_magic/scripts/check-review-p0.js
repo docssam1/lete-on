@@ -48,7 +48,7 @@ const server=http.createServer((req,res)=>{
   }
   for(const [n,a,b,want] of [['3/2','과','와','3/2과'],['2/3','과','와','2/3와'],['장','이에요','예요','장이에요'],['1','으로','로','1로'],['6','으로','로','6으로']])eq(NM_RNG.koJosa(n,a,b),want,'Spoken Korean particle');
   const inline=Q.prosePowersHtml('A^C와 2^(2/3)은 수식이에요.');
-  ok(inline.includes('data-tex="A^C"')&&inline.includes('data-tex="2^{2/3}"')&&inline.includes('와 '),'Inline powers retain surrounding prose');
+  ok(inline.includes('data-tex="A^C"')&&inline.includes('data-tex="2^{\\dfrac{2}{3}}"')&&inline.includes('와 '),'Inline powers retain surrounding prose');
   const indexed=Q.prosePowersHtml('log_a N=k, a_n은 일반항이에요.');
   ok(indexed.includes('data-tex="\\log_a N"')&&indexed.includes('data-tex="a_n"'),'Logarithm bases and sequence indices are typeset as math');
   ok(!Q.w2LevelInstruction('MD86',1).includes('상자그림'),'Quartile calculation is not a drawing instruction');

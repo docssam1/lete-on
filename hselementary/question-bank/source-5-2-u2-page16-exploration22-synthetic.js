@@ -12,6 +12,19 @@
     Object.freeze({ first: [[3, 4], [2, 5], [5, 9]], second: [[1, 1, 3], [3, 8], [4, 5]] }),
     Object.freeze({ first: [[5, 6], [3, 7], [14, 15]], second: [[1, 1, 4], [8, 15], [9, 10]] })
   ]);
+  const tierPools = Object.freeze({
+    '-1': Object.freeze([
+      {first:[[1,2],[2,3],[3,4]],second:[[1,1,2],[2,3],[1,2]]},
+      {first:[[2,3],[3,4],[1,2]],second:[[1,1,2],[2,3],[1,3]]},
+      {first:[[3,4],[2,3],[2,3]],second:[[1,1,3],[3,4],[1,2]]}
+    ]),
+    '0': pools,
+    '1': Object.freeze([
+      {first:[[7,12],[11,15],[13,14]],second:[[2,3,7],[7,11],[5,8]]},
+      {first:[[11,18],[13,20],[15,22]],second:[[1,5,9],[9,14],[7,12]]},
+      {first:[[13,20],[7,18],[15,26]],second:[[2,4,9],[9,13],[11,16]]}
+    ])
+  });
   const esc = value => String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
   const math = text => `<span class="math-inline-expression">${esc(text)}</span>`;
   const steps = lines => `<span class="source52-u2-solution">${lines.map((line, index) => `<span class="source52-u2-step">${index + 1}. ${line}</span>`).join("")}</span>`;
@@ -34,7 +47,7 @@
   }
   function build(pool, difficultyOffset) {
     const v = derive(pool);
-    const prompt = `다음을 계산하세요. ${math(`${v.firstText} + ${v.secondText}`)}${difficultyOffset === -1 ? `<span class="source52-u2-hint">도움말: 각 곱에서 약분할 수 있는 분자와 분모를 먼저 찾아보세요.</span>` : ""}`;
+    const prompt = `다음을 계산하세요. ${math(`${v.firstText} + ${v.secondText}`)}`;
     const lines = [
       `첫째 곱을 약분하여 계산하면 ${math(`${v.firstText} = ${v.first.n}/${v.first.d}`)}입니다.`,
       `둘째 곱을 약분하여 계산하면 ${math(`${v.secondText} = ${v.second.n}/${v.second.d}`)}입니다.`,
@@ -50,11 +63,11 @@
     if (type.reviewLocked !== false || type.sourceVerified !== true) return null;
     if (!Number.isSafeInteger(variant) || variant < 0) throw new Error("고정 변형 번호가 올바르지 않습니다.");
     if (![-1, 0, 1].includes(difficultyOffset)) throw new Error("난이도는 -1, 0, 1이어야 합니다.");
-    const poolIndex = variant % pools.length, item = build(pools[poolIndex], difficultyOffset);
+    const poolIndex = variant % pools.length, item = build(tierPools[difficultyOffset][poolIndex], difficultyOffset);
     return Object.freeze({ ...item, prompt: `<div class="source52-u2-page16-exploration22" data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${item.prompt}</div>`,
       sourceItemId, generator: generatorKey, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length,
       verifiedVariantId: `${sourceItemId}:v${poolIndex}`, variantProvenance: "synthetic-source-structure", resultContract: "single-value", mathematicalContract: "sum-of-two-exact-fraction-products",
-      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["guided-cross-cancellation-and-product-sum", "exact-products-common-denominator-and-addition", "explicit-cancellation-and-reduced-final-sum"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
+      answerVisualRequired: false, answerVisualStatus: "not-required", difficultyDesign: ["small-fraction-products-and-sum", "exact-products-common-denominator-and-addition", "larger-fraction-products-and-sum"][difficultyOffset + 1], reasoningSteps: difficultyOffset === -1 ? 5 : 4,
       sourceStructurePreserved: true, sourceEvidenceRef: "canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.16 Concept Exploration 2 (2); physical PDF p.12; original/clean scan + Apple Vision OCR",
       publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-exact-fraction-products-and-sum" });
   }
@@ -68,5 +81,5 @@
     if (Array.isArray(api.names) && !api.names.includes(generatorKey)) api.names.push(generatorKey);
     Object.defineProperty(api, "__source52U2Page16Exploration22Installed", { value: true }); return true;
   }
-  return Object.freeze({ sourceItemId, generatorKey, pools, derive, build, generate, install });
+  return Object.freeze({ sourceItemId, generatorKey, pools, tierPools, derive, build, generate, install });
 });

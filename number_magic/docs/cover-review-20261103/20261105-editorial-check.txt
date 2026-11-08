@@ -1,0 +1,152 @@
+{
+  "sets": [
+    {
+      "thread": "AD1",
+      "level": 1,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 3,
+      "practice": [
+        12
+      ],
+      "bad": []
+    },
+    {
+      "thread": "DC6",
+      "level": 3,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 3,
+      "practice": [
+        12
+      ],
+      "bad": []
+    },
+    {
+      "thread": "MD4",
+      "level": 1,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 5,
+      "practice": [
+        6,
+        6
+      ],
+      "bad": []
+    },
+    {
+      "thread": "MD10",
+      "level": 2,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 5,
+      "practice": [
+        6,
+        6
+      ],
+      "bad": []
+    },
+    {
+      "thread": "MD51",
+      "level": 2,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 5,
+      "practice": [
+        6,
+        6
+      ],
+      "bad": []
+    },
+    {
+      "thread": "MD69",
+      "level": 2,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 6,
+      "practice": [
+        6,
+        6
+      ],
+      "bad": []
+    },
+    {
+      "thread": "MD72",
+      "level": 2,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 5,
+      "practice": [
+        6,
+        6
+      ],
+      "bad": []
+    },
+    {
+      "thread": "MD82",
+      "level": 2,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 6,
+      "practice": [
+        6,
+        6
+      ],
+      "bad": []
+    },
+    {
+      "thread": "MD83",
+      "level": 5,
+      "count": 12,
+      "seed": "concept-a",
+      "questions": 12,
+      "keys": 12,
+      "scratch": 0,
+      "logos": true,
+      "logoCount": 6,
+      "practice": [
+        6,
+        6
+      ],
+      "bad": []
+    }
+  ],
+  "errors": [],
+  "failures": [],
+  "screens": [
+    1440,
+    390
+  ]
+}

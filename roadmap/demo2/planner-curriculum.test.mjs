@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const window={},ctx=vm.createContext({window});
-for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-standard.js','planner-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
+for(const f of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),ctx,{filename:f});
 const C=window.PlannerCurriculum,I=window.PlannerIntake;
 const fields={grade:'7',year:'2026',mon:'11',band:'B',speed:'2'};
 const base=()=>({grade:'7',gradeInput:'current',thinkingExperience:'none',schoolCourse:'mid',schoolBook:'원리해설',schoolExact:'16',schoolStatus:'progress',deepCourse:'mid',deepBook:'A급',deepStage:'15',deepStatus:'progress',calc:'none'});
@@ -23,7 +23,7 @@ test('faster and later learners use the same core with actual prerequisite compl
 test('exact progress shortens only the current course and cascades its dependent start times',()=>{
  const a=base(),full=C.model(a,fields),part=C.model(measure(a,'schoolStatus',3,4),fields);
  assert.equal(lane(part,'school').blocks[0].end,.75);assert.equal(part.academicReady,full.academicReady-2.25);
- assert.deepEqual(plain(lane(part,'deep')),plain(lane(full,'deep')),'reported depth keeps its own independent calendar');
+ assert.deepEqual(plain(lane(part,'deep').blocks.filter(b=>!b.highPhase)),plain(lane(full,'deep').blocks.filter(b=>!b.highPhase)),'reported middle depth keeps its own independent calendar; proposed high depth follows its prerequisites');
  const d=C.model(measure(a,'deepStatus',3,4),fields);assert.equal(lane(d,'deep').blocks[0].end,.75);
  assert.deepEqual(plain(lane(d,'school')),plain(lane(full,'school')));
 });
@@ -31,7 +31,7 @@ test('completed courses and advanced high-school learning never restart the refe
  const a={...base(),schoolCourse:'high',schoolBook:'개념원리 고등',schoolHigh:'미적분Ⅰ',deepCourse:'high',deepBook:'수학의 정석',deepStage:'대수'};
  const m=C.model(a,fields);assert.equal(m.entry,0);assert.equal(lane(m,'school').blocks[0].stage,'미적분Ⅰ');
  assert.equal(lane(m,'deep').blocks[0].stage,'대수');assert.ok(!lane(m,'school').blocks.some(b=>b.stage==='공통수학1'));
- const done=C.model({...a,schoolStatus:'done'},fields);assert.equal(lane(done,'school').blocks[0].stage,'확률과 통계');
+ const done=C.model({...a,schoolStatus:'done'},fields);assert.equal(lane(done,'school').blocks[0].stage,'미적분Ⅰ');assert.equal(lane(done,'school').blocks[0].applicationOnly,true,'concept completion does not complete application');
  const bridge=C.model({...base(),school:'advanced',schoolExact:'13'},fields);assert.equal(lane(bridge,'school').blocks[0].stage,'초등 계통 대수심화');
 });
 test('a current KMO stage continues immediately with its remaining workload even when academics lag',()=>{
@@ -49,7 +49,7 @@ test('missing progress is explicit, unknown prerequisites stay undated, and curr
 });
 test('foundation reviews middle depth while common math gates the later introductory stage',()=>{
  const a={...base(),schoolCourse:'elem',schoolBook:'디딤돌 응용',school:'6-2',deepCourse:'none'},m=C.model(a,fields);
- assert.equal(lane(m,'deep').blocks.length,0,'foundation covers the essential review rather than stacking a full duplicate depth curriculum');
+ assert.equal(lane(m,'deep').blocks.filter(b=>!b.highPhase).length,0,'foundation covers the essential review rather than stacking a full duplicate depth curriculum');
  const kmo=lane(m,'kmo').blocks;assert.equal(kmo[0].start,m.middleAcademicReady);assert.equal(kmo[0].end-kmo[0].start,3);
  assert.equal(kmo[1].start,Math.max(kmo[0].end,m.academicReady));
  const rpm=C.model({...base(),deepBook:'RPM',deepStage:'19',deepStatus:'done'},fields);

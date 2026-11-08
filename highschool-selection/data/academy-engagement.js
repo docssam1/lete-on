@@ -32,8 +32,8 @@
       preparation: ["응시 학년보다 지원 과정명을 먼저 확정", "시작반과 중간 편입을 구분해 해당 회차의 범위·마지막 단원을 확인", "기본 정확도 뒤에 조건 결합·그래프·경우 나누기 연습", "수업 속도·과제·보충 방식은 지원할 지점과 반에 직접 확인"],
       courses: [
         { id: "middle1", label: "중1 과정 입학", scope: "초등 누적 · 회차별 확인", status: "guide" },
-        { id: "common1-basic", label: "공통수학1 기본", scope: "중2·중3 전 과정 공개 사례", status: "guide" },
-        { id: "common2-basic", label: "공통수학2 기본", scope: "공통수학1 기본 전범위 공개 사례", status: "guide" },
+        { id: "common1-basic", label: "공통수학1 기본", scope: "중2·중3 전 과정 · 대치 2026년 12월 개강", status: "guide" },
+        { id: "common2-basic", label: "공통수학2 기본", scope: "지원 반의 공식 진도표·종료 단원 확인", status: "guide" },
         { id: "common1-skill", label: "공통수학1 실력", scope: "회차별 공식 범위", status: "guide" },
         { id: "common2-skill", label: "공통수학2 실력", scope: "회차별 공식 범위", status: "guide" },
         { id: "algebra-basic", label: "대수 기본", scope: "회차별 공식 범위", status: "guide" },
@@ -55,14 +55,14 @@
       preparation: ["대수와 기하를 따로 시간 재서 점검", "심화 문제를 정확한 풀이 과정으로 완성", "한 영역의 약점이 전체 합격을 가리지 않도록 과락 위험 교정", "기본반·실력 듀얼과 신입·중간 편입을 구분하고 반별 운영 방식을 확인"],
       courses: [
         { id: "middle21-basic", label: "중2-1 기본반 신입", scope: "중1 대수·기하 · 통계 제외", status: "guide" },
-        { id: "common1-basic", label: "공통수학1 기본반 입학", scope: "중등 대수·기하 누적", status: "guide" },
+        { id: "common1-basic", label: "공통수학1 기본반 입학", scope: "중2·중3 대수·기하 · 확률 포함 · 각 90분", status: "guide" },
         { id: "middle-transfer", label: "중등 기본반 편입", scope: "과정·회차별 대수·기하", status: "guide" },
         { id: "high-dual", label: "실력공수1·2 듀얼", scope: "공통수학1·2 기본 이수 후", status: "guide" }
       ],
-      channel: { label: "공식 게시물 미러 확인 중", url: "https://www.gangmom.kr/news/6a753c571042abe5f053b14c", status: "mirror" },
+      channel: { label: "원수학 대치 공식 블로그", url: "https://blog.naver.com/wonmath563", status: "official" },
       updates: [
-        { date: "2026-08", title: "중2-2 기본반 편입테스트 수정 공지", url: "https://www.gangmom.kr/news/6a753c571042abe5f053b14c", sourceKind: "공식 게시물 미러" },
-        { date: "2026-08", title: "중등과정 자주 묻는 질문", url: "https://www.gangmom.kr/news/6a753cb21042abe5f053b2c6", sourceKind: "공식 게시물 미러" }
+        { date: "2026-08-28", title: "10월 중2-1 기본반 신입 · 각70분·25문항", url: "https://blog.naver.com/wonmath563/224393421982", sourceKind: "공식" },
+        { date: "2026-11-06", title: "12월 공통수학1 기본반 신입 · 각90분·25문항", url: "https://blog.naver.com/wonmath563/224443076138", sourceKind: "공식" }
       ]
     },
     {
@@ -86,13 +86,14 @@
       shortName: "깊생",
       publicName: "깊은생각",
       accent: "#8a6730",
-      examNature: "이차함수·부등식·도형의 방정식처럼 여러 과정을 연결해 보는 고난도 입학형",
+      examNature: "중1 시작반은 초5·초6 누적, 예비고1은 공통수학 연결형 입반 테스트",
       preparation: ["단원별 풀이보다 개념 사이 연결을 설명", "함수 그래프와 부등식 조건을 함께 해석", "한 문제 안에서 여러 경우를 끝까지 검토"],
       courses: [
+        { id: "middle1", label: "중1 시작반", scope: "초5·초6 누적 · 각 30문항 · 70분", status: "guide" },
         { id: "level-entry", label: "레벨 입학", scope: "중3 심화·공통수학 연결", status: "guide" },
         { id: "pre-high1", label: "예비고1 입학", scope: "공통수학1·공통수학2 도형의 방정식", status: "guide" }
       ],
-      channel: { label: "공식 블로그 주소 확인 중", url: "", status: "pending" },
+      channel: { label: "깊은생각 공식 입학테스트 안내", url: "https://apply.dailystudy.com/entrance-test/info/?academy=master", status: "official" },
       updates: []
     },
     {
@@ -106,13 +107,13 @@
         { id: "common1-basic", label: "공통수학1 기본 입반", scope: "중2-2·중3-1·중3-2", status: "guide" },
         { id: "common2", label: "공통수학2 과정", scope: "회차별 공식 범위 확인", status: "guide" }
       ],
-      channel: { label: "공식 블로그 주소 확인 중", url: "", status: "pending" },
+      channel: { label: "생각하는수학 공식 블로그", url: "https://blog.naver.com/won1934", status: "official" },
       updates: []
     }
   ];
 
   root.HIGHSELECT_ACADEMY_ENGAGEMENT = {
-    updatedAt: "2026-11-03",
+    updatedAt: "2026-11-06",
     standardExamPolicy: {
       required: true,
       rule: "모든 대비과정은 승인된 표준 시험지 한 회 이상이 있어야 신청과 판매를 열 수 있습니다.",

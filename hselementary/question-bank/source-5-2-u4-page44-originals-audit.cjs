@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict');
+const api=require('./source-5-2-u4-page44-originals.js');
+assert.equal(3747n*78528n,294244416n);
+assert.equal(519*47,24393);
+assert.equal(345*168,57960);
+assert.equal(355*168,59640);
+assert.equal((2019n*(7n**2019n))%10n,7n);
+let f=1n;for(let i=1n;i<=9n;i++)f*=i;
+assert.equal(f,362880n);
+let exponent=19;while(f%10n===0n){f/=10n;exponent--}assert.equal(exponent,18);
+assert.equal((4025-350*150/100)/500,7);
+assert.deepEqual(api.defs.map((_,i)=>api.makeQuestion(i).answer),['㉠=2, ㉡=6','㉠=243.93, ㉡=470, ㉢=4.7, ㉣=519','57.96 이상 59.64 미만','(1) 7 (2) 소수 18자리','7m']);
+console.log('PASS: page 44 exact products, bounds and decimal places');

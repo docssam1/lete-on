@@ -28,13 +28,14 @@ async function main(){
     ]){
       const context=await browser.newContext({viewport:{width,height},reducedMotion:'reduce'});
       await context.addInitScript(language=>{
-        localStorage.setItem('nm_state_v1',JSON.stringify({lang:language,onboarded:true,name:'지도 검수',progress:{},
+        localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:language,onboarded:true,name:'지도 검수',progress:{},
           view:'courseroad',roadView:'map',account:{status:'active'},placement:{course:'C20',self:true}}));
       },lang);
       const page=await context.newPage(),errors=[];
       page.on('pageerror',e=>errors.push(e.message));
       await page.route('**/*',route=>/supabase|google-analytics|googletagmanager/.test(route.request().url())?route.abort():route.continue());
-      await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
+      await require('./lib/preview-fixture')(page);
+ await require('./lib/preview-fixture')(page);await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
       await page.locator('#ttRoad').click();
       try{await page.locator('#crVisual:not([hidden])').waitFor({timeout:15000});}
       catch(e){console.error('지도 진입 진단',lang,width,await page.title(),await page.locator('body').innerText().then(x=>x.slice(0,450)),errors);throw e;}
@@ -103,10 +104,10 @@ async function main(){
       console.log(`✓ 그림 지도 ${lang} ${width}px · 이미지/단계/전환/키보드/폭`);
     }
     const context=await browser.newContext({viewport:{width:1280,height:900}});
-    await context.addInitScript(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'지도 검수',
+    await context.addInitScript(()=>localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'지도 검수',
       progress:{'B-01':{touchedAt:100}},view:'courseroad',roadView:'map',account:{status:'active'},placement:{course:'C20',self:true}})));
     const page=await context.newPage();
-    await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
+    await require('./lib/preview-fixture')(page);await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
     await page.locator('#ttRoad').click();await page.locator('#crVisual:not([hidden])').waitFor({timeout:15000});
     assert.equal(await page.locator('.nm-vmap-stop.is-learning').count(),1,'실제 학습 위치 표식 1개');
     assert.equal(await page.locator('.nm-vmap-stop.is-recommendation').count(),1,'다른 그룹의 선택 시작점 표식 1개');

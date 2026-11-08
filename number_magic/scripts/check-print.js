@@ -99,7 +99,7 @@ function serve(){
       /* 1) 생성 — 정답 쏠림 검사를 위해 여러 시드로 넉넉히 */
       let probs;
       try { probs = NM_EXAM.buildProblems(id, lv, COUNT, 4242); }
-      catch(e){ res.gen = 'throw: ' + e.message; return res; }
+      catch(e){if(e.code==='NM_UNIQUE_POOL_EXHAUSTED'){res.skipPool=true;return res;}res.gen = 'throw: ' + e.message; return res; }
       if(!probs || probs.length !== COUNT){ res.gen = `문항 ${probs ? probs.length : 0}/${COUNT}`; return res; }
 
       for(let s = 0; s < 20; s++){
@@ -160,7 +160,7 @@ function serve(){
         document.head.appendChild(st);
       }
       document.querySelectorAll('.nm-print-sheet').forEach(e => e.remove());
-      NM_EXAM.renderPrint({ thread: id, level: lv, count: COUNT, seed: 'chk1' });
+      try{NM_EXAM.renderPrint({ thread: id, level: lv, count: COUNT, seed: 'chk1' });}catch(e){if(e.code==='NM_UNIQUE_POOL_EXHAUSTED'){res.skipPool=true;return res;}throw e;}
       await new Promise(r => setTimeout(r, 60));
 
       const sheet = document.querySelector('.nm-print-sheet');
@@ -209,6 +209,7 @@ function serve(){
       return res;
     }, { id: t.id, lv: t.lv });
 
+    if(r.skipPool){warns.push(t.id+'@'+t.lv+' has fewer than 12 unused variants');continue;}
     const tag = `${t.id}L${t.lv} ${t.name}/${t.lvLabel}`;
     if(r.gen)            fails.push(`${tag} — 생성/인쇄 실패: ${r.gen}`);
     else {

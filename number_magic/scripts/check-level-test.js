@@ -9,10 +9,7 @@
 'use strict';
 const fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '..');
-global.window = global;
-for (const f of ['engine/rng.js', 'engine/generators.js']) eval(fs.readFileSync(path.join(ROOT, f), 'utf8'));
-fs.readdirSync(path.join(ROOT, 'engine/threads')).forEach(f => eval(fs.readFileSync(path.join(ROOT, 'engine/threads', f), 'utf8')));
-for (const f of ['data/threads.js', 'data/courses.js', 'data/stages.js', 'app/level-test-core.js']) eval(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+const fixture=require('./lib/runtime-fixture').load();fixture.run('app/level-test-core.js');Object.assign(global,fixture.world);
 const LT = window.NM_LEVEL_TEST;
 const fail = [];
 const ok = (c, m) => { if (!c) fail.push(m); };
