@@ -104,7 +104,7 @@ for (const def of source.definitions) {
         assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
         assert.equal(item.answer, "27cm²");
         assert.match(item.solution, /넓이 합의 절반/);
-      } else if (def.sourceItemId.endsWith("example-2")) {
+      } else if (/example-2(?:-original)?$/.test(def.sourceItemId)) {
         const { alpha, beta, firstAtN, secondAtN, target, rotationDegrees } = item.answerModel;
         assert.equal(firstAtN, 60-alpha);
         assert.equal(secondAtN, alpha);
@@ -115,8 +115,14 @@ for (const def of source.definitions) {
         assert.match(item.solution, /회전은 각의 크기를 보존/);
         assert.equal(item.reviewLocked, false);
         assert.equal(source.isPublicReady(def.sourceItemId), true);
-        assert.equal(alpha, [28,34,40,24][variant]);
-        assert.equal(beta, [22,24,26,30][variant] + [-2,0,2][difficultyOffset+1]);
+        if (def.sourceItemId.endsWith("-original")) {
+          assert.equal(alpha, 35);
+          assert.equal(beta, 20);
+          assert.equal(target, 125);
+        } else {
+          assert.equal(alpha, [28,34,40,24][variant]);
+          assert.equal(beta, [22,24,26,30][variant] + [-2,0,2][difficultyOffset+1]);
+        }
       } else if (def.sourceItemId.endsWith("mission-1")) {
         const { alpha, beta, answer } = item.answerModel;
         assert.equal(alpha + beta, 45);

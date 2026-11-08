@@ -95,7 +95,8 @@ const verified5_2LockedPractice = new Set([
   "5-2-u3-e1-exploration",
   ...[1, 2].flatMap(e => [`5-2-u4-e${e}-exploration`, ...[1, 2, 3, 4].map(n => `5-2-u4-e${e}-example-${n}`), ...[1, 2, 3, 4, 5, 6].map(n => `5-2-u4-e${e}-mission-${n}`)])
 ]);
-const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
+const publishedIndependent5_2 = new Set(["5-2-u3-e1-example-3", "5-2-u3-e1-example-4", "5-2-u3-e4-example-2"]);
+const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const ready5_2Releases = new Set(["5-2-u3-e5-exploration", "5-2-u3-e5-example-3", ...[2, 3, 4, 5, 6].map(n => `5-2-u3-e7-mission-${n}`)]);
 const allIds = new Set();
 const semesterCounts = {};
@@ -180,8 +181,9 @@ for (const spec of specs) {
     const status = item.implementationStatus;
     byStatus[status] = (byStatus[status] || 0) + 1;
     if (spec.semester === "5-2") {
-      const expected = verified5_2Page49.has(item.sourceItemId) || verified5_2Page53.has(item.sourceItemId) || verified5_2LockedPractice.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : ready5_2Releases.has(item.sourceItemId) ? "ready" : "review-locked";
+      const expected = publishedIndependent5_2.has(item.sourceItemId) ? "public-independent-verification-publisher-key-pending" : verified5_2Page49.has(item.sourceItemId) || verified5_2Page53.has(item.sourceItemId) || verified5_2LockedPractice.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : ready5_2Releases.has(item.sourceItemId) ? "ready" : "review-locked";
       if (status !== expected) fail(`${label}: implementationStatus가 ${expected}가 아닙니다.`);
+      if (publishedIndependent5_2.has(item.sourceItemId) && (item.publicDecision !== "public" || item.publisherKeyVerified !== false || runtimeTypes.filter(type => type.id === item.runtimeTypeId && type.sourceVerified === true && type.reviewLocked === false).length !== 1)) fail(`${label}: 독립 검수 원문 연결 또는 출판사 정답 확인 상태가 잘못되었습니다.`);
       if (verified5_2Page53.has(item.sourceItemId) && (item.sourceVerified !== true || runtimeTypes.filter(type => type.id === item.runtimeTypeId && type.sourceVerified === true && type.reviewLocked === false).length !== 1)) fail(`${label}: 원문 검수 또는 공개 유형 연결이 잘못되었습니다.`);
       if (verified5_2LockedPractice.has(item.sourceItemId) && !verifiedLockedPractice(item)) {
         fail(`${label}: 원문 잠금 또는 검증된 연습 유형 연결이 잘못되었습니다.`);
@@ -203,7 +205,7 @@ for (const spec of specs) {
   }
 
   if (spec.semester === "5-2") {
-    for (const [field, status] of [["readyItems", "ready"], ["reviewedItems", "reviewed"], ["verifiedLocalItems", "verified-local"], ["reviewLockedItems", "review-locked"]]) {
+    for (const [field, status] of [["readyItems", "ready"], ["reviewedItems", "reviewed"], ["verifiedLocalItems", "verified-local"], ["reviewLockedItems", "review-locked"], ["publicIndependentItems", "public-independent-verification-publisher-key-pending"]]) {
       if (document.integrity?.[field] !== (byStatus[status] || 0)) fail(`5-2: ${field} count differs from ${status} rows.`);
     }
   }

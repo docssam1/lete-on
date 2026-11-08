@@ -20,7 +20,8 @@
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4-original", generatorKey: "source52SquareTrisectionAreaPage31Mission4Original", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5-original", generatorKey: "source52CongruentTriangleAreaPage31Mission5Original", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-1-original", generatorKey: "source52SquareAnglePage31Mission1Original", publicReady: true }),
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-2-original", generatorKey: "source52SemicircleAnglePage31Mission2Original", publicReady: true })
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-2-original", generatorKey: "source52SemicircleAnglePage31Mission2Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-example-2-original", generatorKey: "source52EquilateralAngleChaseExample2Original", publicReady: true })
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
@@ -148,7 +149,7 @@
     return result("5-2-u3-e4-mission-3-original",0,0,prompt,"160°",solution,{targetAngle:140,rotationDegrees:60,answer:160},false,answerVisual("각 ㉮","160°","∠ㄱㄹㅁ"));
   }
 
-  function equilateralExampleDiagram(alpha, beta, showCorrespondingAngle = false) {
+  function equilateralExampleDiagram(alpha, beta, showCorrespondingAngle = false, original = false) {
     const n = { x: 88, y: 338 }, d = { x: 428, y: 338 };
     const side = d.x - n.x;
     const g = { x: (n.x + d.x) / 2, y: n.y - side * Math.sqrt(3) / 2 };
@@ -162,18 +163,18 @@
     const betaLabel = { x: d.x + (betaMark.label.x - d.x) * 2.4, y: d.y + (betaMark.label.y - d.y) * 2.4 };
     const correspondingMark = showCorrespondingAngle ? angleMark(r, n, d, 22) : null;
     const target = 180 - alpha - beta;
-    return `<svg class="source52-p31-diagram source52-p31-equilateral-example" data-source52-figure="equilateral-angle-chase-example2" data-alpha="${alpha}" data-beta="${beta}" data-target-angle="${target}" data-n="${point(n.x,n.y)}" data-d="${point(d.x,d.y)}" data-g="${point(g.x,g.y)}" data-m="${point(m.x,m.y)}" data-r="${point(r.x,r.y)}" viewBox="0 0 520 500" role="img" aria-label="정삼각형 ㄱㄴㄷ과 ㄴㄹㅁ, 주어진 두 각과 목표각 그림" xmlns="http://www.w3.org/2000/svg">${line(g,n)}${line(n,d)}${line(d,g)}${line(n,m)}${line(m,r)}${line(r,n)}${line(m,g)}${line(d,r)}<path class="source52-angle-mark" d="${alphaMark.d}"/><path class="source52-angle-mark" d="${betaMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/>${correspondingMark ? `<path class="source52-angle-mark source52-corresponding-angle-mark" d="${correspondingMark.d}"/>` : ""}<text class="source52-angle-label" text-anchor="middle" x="${alphaLabel.x.toFixed(2)}" y="${(alphaLabel.y + 4).toFixed(2)}">${alpha}°</text><text class="source52-angle-label" text-anchor="middle" x="${betaLabel.x.toFixed(2)}" y="${(betaLabel.y + 4).toFixed(2)}">${beta}°</text><text class="source52-target-label" x="${(targetMark.label.x - 8).toFixed(2)}" y="${(targetMark.label.y + 4).toFixed(2)}">㉠</text>${correspondingMark ? `<text class="source52-target-label" x="${(correspondingMark.label.x - 8).toFixed(2)}" y="${(correspondingMark.label.y + 4).toFixed(2)}">㉠</text>` : ""}${label(g,"ㄱ",-9,-10)}${label(n,"ㄴ",-20,24)}${label(d,"ㄷ",8,24)}${label(r,"ㄹ",8,20)}${label(m,"ㅁ",9,-8)}</svg>`;
+    return `<svg class="source52-p31-diagram source52-p31-equilateral-example" data-source52-figure="equilateral-angle-chase-example2" data-alpha="${alpha}" data-beta="${beta}" data-target-angle="${target}" data-n="${point(n.x,n.y)}" data-d="${point(d.x,d.y)}" data-g="${point(g.x,g.y)}" data-m="${point(m.x,m.y)}" data-r="${point(r.x,r.y)}" viewBox="${original ? "50 5 420 455" : "0 0 520 500"}" role="img" aria-label="정삼각형 ㄱㄴㄷ과 ㄴㄹㅁ, 주어진 두 각과 목표각 그림" xmlns="http://www.w3.org/2000/svg">${line(g,n)}${line(n,d)}${line(d,g)}${line(n,m)}${line(m,r)}${line(r,n)}${line(m,g)}${line(d,r)}<path class="source52-angle-mark" d="${alphaMark.d}"/><path class="source52-angle-mark" d="${betaMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/>${correspondingMark ? `<path class="source52-angle-mark source52-corresponding-angle-mark" d="${correspondingMark.d}"/>` : ""}<text class="source52-angle-label" text-anchor="middle" x="${alphaLabel.x.toFixed(2)}" y="${(alphaLabel.y + 4).toFixed(2)}">${alpha}°</text><text class="source52-angle-label" text-anchor="middle" x="${betaLabel.x.toFixed(2)}" y="${(betaLabel.y + 4).toFixed(2)}">${beta}°</text><text class="source52-target-label" x="${(targetMark.label.x - 8).toFixed(2)}" y="${(targetMark.label.y + 4).toFixed(2)}">㉠</text>${correspondingMark ? `<text class="source52-target-label" x="${(correspondingMark.label.x - 8).toFixed(2)}" y="${(correspondingMark.label.y + 4).toFixed(2)}">㉠</text>` : ""}${label(g,"ㄱ",-9,-10)}${label(n,"ㄴ",-20,24)}${label(d,"ㄷ",8,24)}${label(r,"ㄹ",8,20)}${label(m,"ㅁ",9,-8)}</svg>`;
   }
 
-  function buildEquilateralExample2(variant, offset) {
-    const alpha = equilateralExampleAlphas[variant];
-    const beta = equilateralExampleBetas[variant] + difficultyDeltas[offset + 1];
+  function buildEquilateralExample2(variant, offset, original = false) {
+    const alpha = original ? 35 : equilateralExampleAlphas[variant];
+    const beta = original ? 20 : equilateralExampleBetas[variant] + difficultyDeltas[offset + 1];
     const firstAtN = 60 - alpha;
     const secondAtN = 60 - firstAtN;
     const target = 180 - alpha - beta;
-    const prompt = `<div class="source52-p31-question"><p>정삼각형 ㄱㄴㄷ과 정삼각형 ㄴㄹㅁ이 있습니다. ∠ㄱㄴㅁ=${alpha}°, ∠ㄴㄷㄹ=${beta}°일 때 ∠ㄴㅁㄱ의 크기를 구하세요.</p>${equilateralExampleDiagram(alpha,beta)}</div>`;
+    const prompt = original ? `<div class="source52-p31-question"><p>오른쪽 그림에서 삼각형 ㄱㄴㄷ과 삼각형 ㄴㄹㅁ은 정삼각형이다. 각 ㄴㅁㄱ의 크기를 구하여라.</p>${equilateralExampleDiagram(alpha,beta,false,true)}</div>` : `<div class="source52-p31-question"><p>정삼각형 ㄱㄴㄷ과 정삼각형 ㄴㄹㅁ이 있습니다. ∠ㄱㄴㅁ=${alpha}°, ∠ㄴㄷㄹ=${beta}°일 때 ∠ㄴㅁㄱ의 크기를 구하세요.</p>${equilateralExampleDiagram(alpha,beta)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>△ㄱㄴㄷ은 정삼각형이므로 ∠ㄱㄴㄷ=60°입니다. 따라서 ∠ㅁㄴㄷ=60°−${alpha}°=${firstAtN}°입니다.</li><li>△ㄴㄹㅁ도 정삼각형이므로 ∠ㄹㄴㅁ=60°입니다. 그러므로 △ㄴㄷㄹ의 ∠ㄴ은 60°−${firstAtN}°=${secondAtN}°입니다.</li><li>△ㄴㄷㄹ에서 세 각의 합은 180°입니다. 따라서 ∠ㄴㄹㄷ=180°−${secondAtN}°−${beta}°=${target}°입니다.</li><li>ㄴ을 중심으로 시계 방향 60° 회전하면 ㅁ은 ㄹ로, ㄱ은 ㄷ으로 옮겨집니다. 회전은 각의 크기를 보존하므로 ∠ㄴㅁㄱ=∠ㄴㄹㄷ=${target}°입니다.</li></ol>${equilateralExampleDiagram(alpha,beta,true)}</div>`;
-    return result("5-2-u3-e4-example-2",variant,offset,prompt,`${target}°`,solution,{alpha,beta,firstAtN,secondAtN,target,rotationDegrees:60},false,answerVisual("정삼각형 회전으로 구한 목표각",`${target}°`));
+    return result(original ? "5-2-u3-e4-example-2-original" : "5-2-u3-e4-example-2",variant,offset,prompt,`${target}°`,solution,{alpha,beta,firstAtN,secondAtN,target,rotationDegrees:60},false,answerVisual("정삼각형 회전으로 구한 목표각",`${target}°`));
   }
 
   function congruentTriangleAreaDiagram(height, width) {
@@ -348,6 +349,7 @@
     if (sourceItemId === definitions[10].sourceItemId) return buildMission5(0,0,true);
     if (sourceItemId === definitions[11].sourceItemId) return buildMission1(0,0,true);
     if (sourceItemId === definitions[12].sourceItemId) return buildMission2(0,0,true);
+    if (sourceItemId === definitions[13].sourceItemId) return buildEquilateralExample2(0,0,true);
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";
