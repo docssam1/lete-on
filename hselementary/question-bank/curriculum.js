@@ -4421,6 +4421,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) type.alternativeTypeId=alternativeTypeId;
   }
   for (const [unitId,id,alternativeTypeId] of [
+    ["5-2-u3","5-2-u3-t7-2","5-2-u3-e8-mission-5-rotated-number-synthetic"],
     ["5-2-u3","5-2-u3-t5-3","5-2-u3-practice-62-clarified-similar"],
     ["5-2-u4","5-2-u4-t2-9","5-2-u4-e2-mission-4"],
     ["5-2-u4","5-2-u4-t1-11","5-2-u4-e1-mission-6"],
