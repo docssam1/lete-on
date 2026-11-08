@@ -2148,6 +2148,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Range = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52RangeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s1");
   const source52PackingPracticeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s3");
+  if (source52PackingPracticeGroup && !source52PackingPracticeGroup.types.some(t=>t.id==="5-2-u1-practice-34-stair-similar")) {
+    const id="5-2-u1-practice-34-stair-similar",name="계단 모양 도형의 둘레와 반올림 · 유사문항";
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52PackingPracticeGroup.types.push({id,number:source52PackingPracticeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-practice-34-original",sourceItemLabel:"확인학습 34번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:68,alternateSourcePdfPage:67,sourcePrintedPage:72,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1P72Q34StairSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 계단 구조와 어림 방법을 유지하고 치수만 변경한 유사문항 4개입니다."});
+  }
   if (source52PackingPracticeGroup && !source52PackingPracticeGroup.types.some(t=>t.id==="5-2-u1-practice-37-packing-time-similar")) {
     const id="5-2-u1-practice-37-packing-time-similar",name="사과를 포장하는 데 걸리는 시간 · 유사문항";
     const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
