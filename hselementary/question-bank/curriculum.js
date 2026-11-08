@@ -2148,6 +2148,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Range = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52RangeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s1");
   const source52PackingPracticeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s3");
+  const source52RoundingPracticeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s4");
+  if (source52RoundingPracticeGroup && !source52RoundingPracticeGroup.types.some(t=>t.id==="5-2-u1-practice-55-table-similar")) {
+    const id="5-2-u1-practice-55-table-similar",name="반올림한 입장객 수 표의 빈칸 · 유사문항";
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52RoundingPracticeGroup.types.push({id,number:source52RoundingPracticeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-practice-55-original",sourceItemLabel:"확인학습 55번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:70,alternateSourcePdfPage:69,sourcePrintedPage:74,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1P74Q55TableSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세 달 표와 천의 자리 반올림 구조를 유지한 수치 변형 9개를 독립 열거했습니다."});
+  }
   if (source52PackingPracticeGroup && !source52PackingPracticeGroup.types.some(t=>t.id==="5-2-u1-practice-34-stair-similar")) {
     const id="5-2-u1-practice-34-stair-similar",name="계단 모양 도형의 둘레와 반올림 · 유사문항";
     const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
