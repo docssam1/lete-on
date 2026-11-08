@@ -1,0 +1,90 @@
+{
+  "phase": 360,
+  "date": "2026-11-08",
+  "scope": "Make mixture bank printing read the current ninety-six-question workbook manuscript while retaining the complete prior print view and avoiding stale inherited unit exports.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "82100c38dc4ec00eac9a0f8bc4f9a6b19b686e2a",
+    "reviewCommit": "f9865a75156efe4f8fe36b16cae01396a54c4efb"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "regressionBefore": {
+    "manuscriptAndRendererTests": 2,
+    "fail": 2,
+    "staleInheritedExportTest": 1,
+    "staleExportFail": 1,
+    "staleExportTestUsesNativeVmSimulation": true
+  },
+  "currentPrintValidation": {
+    "phase": 360,
+    "unit": "c22-s52-u01",
+    "currentPrintQuestions": 96,
+    "currentResponseFormats": 8,
+    "legacyCurrentDifferences": {
+      "prompts": 23,
+      "explanations": 92,
+      "samples": 5
+    },
+    "currentModesMatchWorkbook": 4,
+    "priorPrintModesPreserved": 4,
+    "otherBankModesByteEqual": 80,
+    "allBankClassroomWorkbookDataFilesUnchanged": 96,
+    "currentBankLinksMatched": 96,
+    "gradingCases": 614,
+    "bankObjectsUnmutated": true,
+    "newOriginalsAdded": 0,
+    "actualBrowserUsed": false,
+    "releaseReady": false,
+    "goalAchieved": false
+  },
+  "originalSourceRegression": {
+    "phase": 360,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "currentNativeSuite": {
+    "tests": 1413,
+    "suites": 0,
+    "pass": 1411,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "exitCode": 0,
+    "testFiles": 259
+  },
+  "preflight": {
+    "syntaxFiles": 4,
+    "diffCheck": true
+  },
+  "preservationPolicy": {
+    "all32BankClassroomWorkbookDataUnchanged": true,
+    "existingQuestionIdsFormsChoicesAndGradingContractsUnchanged": true,
+    "priorFourModePrintViewPreserved": true,
+    "rawLegacyManuscriptAndFiguresUnmodified": true,
+    "currentPrintReadsCanonicalWorkbookModule": true,
+    "currentFontAndPreparationRulesReused": true,
+    "simulatedStaleUnitPrintExportsReplacedByCurrentVersionedModule": true,
+    "otherTwentyBankPrintViewsByteEqual": true
+  },
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

@@ -38,7 +38,7 @@ test('actual bank handlers wait for reading fonts, FontFaceSet and images and ig
   const reading=defer(),fontSet=defer(),calls=[];document.fonts={load:(font,text)=>{calls.push({font,text});return font.startsWith('400')?reading.promise:Promise.resolve([{}]);},ready:fontSet.promise};
   const late=image(),h=host(html,[image(true,100),late]),close=data.wireBankPaper(h),before=prints();
   assert(calls.some(c=>c.font==='400 12px "Pretendard Variable"'),unit+' normal reading font');assert(calls.some(c=>c.font==='700 12px "Pretendard Variable"'),unit+' bold reading font');assert(calls.every(c=>c.text?.includes('과학')));
-  if(unit==='c22-s52-u01')assert(calls.some(c=>c.font.includes('Noto Serif KR')));
+  if(unit==='c22-s52-u01'&&!html.includes('revised-workbook-print'))assert(calls.some(c=>c.font.includes('Noto Serif KR')));
   if(html.includes('revised-workbook-print'))assert(!calls.some(c=>c.font.includes('Noto Serif KR')));
   h.click();assert.equal(prints(),before);late.emit('load');await tick();assert(h.button.disabled);
   reading.resolve([{}]);await tick();assert(h.button.disabled);fontSet.resolve();await tick();assert.equal(h.button.disabled,false,unit+' ready');
