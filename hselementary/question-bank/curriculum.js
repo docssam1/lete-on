@@ -2909,10 +2909,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52AverageApplication) {
-    const id = "5-2-u6-e2-exploration", name = "공 넣기 점수와 평균으로 학생 수 구하기";
+    const id = "5-2-u6-e2-exploration", name = "공 넣기 점수와 평균으로 학생 수 구하기 · 유사문항";
     const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
     source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
-      difficultyBand:0, sourceItemId:id, sourceItemLabel:"개념탐구 2", sourceSection:"exploration", sourceTier:"advanced",
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"개념탐구 2 유사문항", sourceSection:"exploration", sourceTier:"advanced",
       sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
       generatorKey:"source52AverageOriginalPage60Exploration2", generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
       answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
@@ -2920,13 +2920,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   if (source52AverageApplication) {
     for (const [ordinal, name, generatorKey] of [
-      [1, "한 사람의 시간당 작업 넓이", "source52AverageOriginalPage60Example21"],
-      [2, "평균 달리기 거리로 첫날 거리 구하기", "source52AverageOriginalPage60Example22"]
+      [1, "한 사람의 시간당 작업 넓이 · 유사문항", "source52AverageOriginalPage60Example21"],
+      [2, "평균 달리기 거리로 첫날 거리 구하기 · 유사문항", "source52AverageOriginalPage60Example22"]
     ]) {
       const id = `5-2-u6-e2-example-${ordinal}`;
       const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
       source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
-        difficultyBand:0, sourceItemId:id, sourceItemLabel:`예제 2-${ordinal}`, sourceSection:"example", sourceTier:"advanced",
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`예제 2-${ordinal} 유사문항`, sourceSection:"example", sourceTier:"advanced",
         sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
         generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
         answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
@@ -2934,10 +2934,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52AverageApplication) {
-    const id = "5-2-u6-e2-example-4", name = "어른·어린이의 평균 나이와 인원";
+    const id = "5-2-u6-e2-example-4", name = "어른·어린이의 평균 나이와 인원 · 유사문항";
     const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
     source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
-      difficultyBand:0, sourceItemId:id, sourceItemLabel:"예제 2-4", sourceSection:"example", sourceTier:"advanced",
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"예제 2-4 유사문항", sourceSection:"example", sourceTier:"advanced",
       sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
       generatorKey:"source52AverageOriginalPage60Example24", generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
       answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
