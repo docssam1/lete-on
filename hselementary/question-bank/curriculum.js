@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-53-students-similar")) {
+    const id="5-2-u2-practice-53-students-similar",name="안경 쓴 5학년 여학생 수로 전교생 구하기 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-53-original",sourceItemLabel:"확인학습 53번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:77,alternateSourcePdfPage:76,sourcePrintedPage:81,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P81Q53StudentsSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"전교생에서 5학년·여학생·안경 쓴 여학생으로 이어지는 원문 구조를 유지하고 9문항의 각 인원과 답을 검산했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-52-fifths-similar")) {
     const id="5-2-u2-practice-52-fifths-similar",name="변을 5등분한 삼각형의 색칠한 넓이 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
