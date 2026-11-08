@@ -15,5 +15,6 @@ for(const id of ids){
  assert.equal(r.publicDecision,'public');assert.equal(r.originalSourceReleaseStatus,'public');assert.equal(r.syntheticRuntimeTypeId,id);assert.equal(r.lockReason,null);assert.equal(type.reviewLocked,false);assert.equal(type.sourceVerified,true);assert.equal(type.publisherKeyVerified,false);assert.equal(row.publisherKeyVerified,false);assert.equal(r.publisherKeyVerified,false);
 }
 for(const suffix of ['exploration','example-1','example-2','example-4']){const id=`5-2-u6-e2-${suffix}`;assert.match(types.find(t=>t.id===id).name,/유사문항/);assert.match(types.find(t=>t.id===id+'-original').name,/원문/);}
+for(const n of [1,2,3,5,6]){const id=`5-2-u6-e2-mission-${n}`;assert.match(types.find(t=>t.id===id).name,/유사문항/);assert.match(types.find(t=>t.id===id+'-original').name,/원문/);}
 for(const id of ['5-2-u6-e2-example-2-3','5-2-u6-e2-mission-4','5-2-u6-e3-mission-5','5-2-u6-e4-example-4-3']){const r=review.items.find(x=>x.sourceItemId===id);assert(r&&r.publicDecision==='locked',`must remain locked: ${id}`)}
 console.log(`PASS: ${ids.length} deployed originals agree with both ledgers; four ambiguous originals remain locked`);
