@@ -10,6 +10,6 @@ matches = [x for x, product in zip(candidates, products) if int(product * 100) %
 assert matches == [Decimal('45.7')]
 assert record['independentAnswer'].startswith('45.7')
 assert record['resultContract'] == 'single-value'
-assert any('16.8' in condition and '둘째' in condition for condition in record['conditions'])
-assert all('168' not in condition for condition in record['conditions'])
+assert '16.8' in record['alternateSourceComparison'] and '둘째' in record['alternateSourceComparison']
+assert any('168' in condition and '첫째' in condition for condition in record['conditions'])
 print('Page 42 Example 1-3: original hundredths-digit condition selects 45.7; publisher key unverified.')
