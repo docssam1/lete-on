@@ -3272,7 +3272,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52DecimalDecimal) {
     const id = "5-2-u4-e2-mission-1", name = "소수 혼합 계산 네 식";
     const typeNumber = Math.max(0,...source52DecimalUnit.subunits.flatMap(s => s.types.map(t => Number(t.typeNumber) || 0))) + 1;
-    source52DecimalDecimal.types.push({id, number:source52DecimalDecimal.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"Mission 1", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:41, sourcePrintedPage:45, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52DecimalMixedOperationsPage45Mission1", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:false, answerVisualStatus:"not-required"});
+    source52DecimalDecimal.types.push({id, number:source52DecimalDecimal.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"Mission 1", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:41, sourcePrintedPage:45, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52DecimalMixedOperationsPage45Mission1", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:9, verifiedVariantTarget:9, answerVisualRequired:false, answerVisualStatus:"not-required"});
   }
 
   if (source52DecimalDecimal) {

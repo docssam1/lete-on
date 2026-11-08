@@ -11,7 +11,13 @@
   const pools = Object.freeze([
     Object.freeze({ a:[420,150,320], b:[176,235,56,235], c:[34,19,950,210,950], d:[426,530,426,410,60] }),
     Object.freeze({ a:[540,120,250], b:[345,126,125,126], c:[38,23,620,180,620], d:[428,550,428,250,40] }),
-    Object.freeze({ a:[360,250,180], b:[284,175,104,175], c:[47,29,730,170,730], d:[352,650,352,410,70] })
+    Object.freeze({ a:[360,250,180], b:[284,175,104,175], c:[47,29,730,170,730], d:[352,650,352,410,70] }),
+    Object.freeze({ a:[480,125,240], b:[253,185,73,185], c:[42,18,780,160,780], d:[372,640,372,220,50] }),
+    Object.freeze({ a:[625,160,140], b:[387,135,157,135], c:[45,27,840,230,840], d:[468,720,468,340,30] }),
+    Object.freeze({ a:[750,120,160], b:[294,225,114,225], c:[39,16,650,140,650], d:[385,610,385,290,80] }),
+    Object.freeze({ a:[560,175,150], b:[328,145,128,145], c:[52,31,920,190,920], d:[412,730,412,310,50] }),
+    Object.freeze({ a:[640,125,220], b:[415,165,145,165], c:[46,24,870,130,870], d:[536,840,536,360,25] }),
+    Object.freeze({ a:[840,150,125], b:[372,215,152,215], c:[51,28,560,220,560], d:[645,680,645,230,40] })
   ]);
   const num = n => Number(n);
   const fmtScaled = (value, scale) => {
@@ -44,7 +50,7 @@
     return { answers, expressions, steps };
   }
   function build(poolIndex=0, difficultyOffset=0) {
-    if (!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length) throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if (!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length) throw new RangeError("확인된 수치 묶음만 사용할 수 있습니다.");
     if (![-1,0,1].includes(difficultyOffset)) throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const data=compute(pools[poolIndex]);
     const prompt=`<div class="source52-u4-p45-m1-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>다음 식을 계산하여라.</p><ol>${data.expressions.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`;
