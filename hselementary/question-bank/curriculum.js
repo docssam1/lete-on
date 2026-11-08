@@ -4361,7 +4361,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u1-t3-2","5-2-u1-practice-38-conversion-similar","5-2-u1-practice-38-original","source52U1RibbonBundlesSimilar",false,68,72]
   ]) {
     const type=source52RangeUnit.subunits.flatMap(group=>group.types).find(item=>item.id===id);
-    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:id==="5-2-u1-t2-2"?9:1,verifiedVariantTarget:id==="5-2-u1-t2-2"?9:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
   if (source52Unit2) {
