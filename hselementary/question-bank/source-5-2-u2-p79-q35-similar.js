@@ -1,7 +1,7 @@
 (function(root,factory){'use strict';const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.HSE_U2_P79_Q35_SIMILAR=api;api.install(root);})(typeof window!=='undefined'?window:globalThis,function(){
 'use strict';
 const source='5-2-u2-practice-35-midpoint-similar',parent='5-2-u2-practice-35-original',key='source52U2P79Q35MidpointSimilar';
-const cases=Object.freeze([[17,2],[25,3],[31,4],[28,3]].map(Object.freeze));
+const cases=Object.freeze([[17,2],[25,3],[31,4],[28,3],[19,2],[23,3],[29,4],[35,4],[26,3]].map(Object.freeze));
 function gcd(a,b){while(b){[a,b]=[b,a%b]}return a;}
 function mixed(n,d){const g=gcd(n,d);n/=g;d/=g;const w=Math.floor(n/d),r=n%d;return r?(w?`${w} ${r}/${d}`:`${r}/${d}`):String(w);}
 function figure(n,d){const whole=Math.floor(n/d),rem=n%d;return `<svg class="u2p79-midpoint-figure" style="max-width:250px" viewBox="0 0 290 220" role="img" aria-label="한 변이 ${mixed(n,d)}cm인 바깥 정사각형의 네 변의 가운데점을 이어 만든 정사각형과, 그 네 변의 가운데점을 다시 이어 만든 색칠한 정사각형"><rect x="20" y="20" width="180" height="180" fill="white" stroke="#191511" stroke-width="2"/><path d="M110 20 L200 110 L110 200 L20 110 Z" fill="none" stroke="#191511" stroke-width="2"/><rect data-shaded="true" x="65" y="65" width="90" height="90" fill="#aaa" stroke="#191511" stroke-width="2"/><path d="M204 20 Q231 110 204 200" fill="none" stroke="#191511" stroke-width="1.2" stroke-dasharray="3 3"/><text x="237" y="114" font-size="19">${whole}</text><text x="253" y="104" font-size="15">${rem}</text><path d="M251 108h13" stroke="#191511"/><text x="253" y="123" font-size="15">${d}</text><text x="268" y="114" font-size="17">cm</text></svg>`;}
