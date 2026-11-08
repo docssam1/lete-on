@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Check page 72 calculation candidates independently without publishing the source."""
+"""Check page 72 arithmetic and recorded source-review status."""
 import json
 from pathlib import Path
 
 record = json.loads((Path(__file__).parent / 'source-inventory/5-2-u1-readiness-review.json').read_text())
 review = next(r for r in record['additionalSourceReviews'] if r['sourcePrintedPage'] == 72)
-assert review['sourcePdfPage'] == 68 and review['runtimeConnection'] == 'not-connected'
+assert review['sourcePdfPage'] == 68 and review['runtimeConnection'] == 'partial-verified-local'
 assert review['publisherAnswerVerified'] is False
+expected_statuses = {33: 'public-independent-verification-publisher-key-pending', 34: 'public-independent-verification-publisher-key-pending', 35: 'public-independent-verification-publisher-key-pending', 36: 'public-independent-verification-publisher-key-pending', 37: 'source-reviewed-answer-key-pending', 38: 'public-independent-verification-publisher-key-pending', 39: 'public-independent-verification-publisher-key-pending', 40: 'public-independent-verification-publisher-key-pending'}
+assert {item['number']: item['status'] for item in review['items']} == expected_statuses
 assert [x['number'] for x in review['items']] == list(range(33, 41))
 assert (600-2*120-3*90)//25 == 3
 perimeter_mm = 2*(447+572)
@@ -20,4 +22,4 @@ sundays = sum(1 for day in range(365) if day%7 == 0)
 assert sundays == 53 and divmod(365*3+sundays,20) == (57,8)
 options = [(100*a+10*b, 420000*a+45000*b) for a in range(8) for b in range(60) if 100*a+10*b >= 474]
 assert min(cost for people,cost in options) == 2040000
-print('PASS: page 72 quantities, perimeter, weekday count, and bundle minimum; source remains unconnected')
+print('PASS: page 72 quantities, perimeter, weekday count, and bundle minimum; review record is partially connected')
