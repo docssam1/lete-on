@@ -1,4 +1,4 @@
-import {workbook as currentWorkbook} from '../data/book/c22-s52-u01.workbook.js?v=20261106-mixture-readable-workbook';
+import {workbook as currentWorkbook} from '../data/book/c22-s52-u01.workbook.js?v=20261108-grade5-study-notes';
 import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-learning-note-roles';
 import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 // 교재와 정답표는 동일한96문항·해설 객체를 사용한다.

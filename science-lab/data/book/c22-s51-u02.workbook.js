@@ -1,3 +1,4 @@
+import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withLightReadableWorkbook}from'./c22-s51-u02.editorial.js?v=20261106-light-readable-workbook';
 import {withLightStudentLanguage} from './light-student-language.js';
 import {withLightEditorial,withLightPictureGuide} from './c22-s51-u02.editorial.js?v=20261105-light-picture-guide';
@@ -6683,4 +6684,5 @@ const baseWorkbook = {
 
 export const lightPicturePriorWorkbook=withLightStudentLanguage(withLightEditorial(baseWorkbook));
 export const lightReadablePriorWorkbook=withLightPictureGuide(lightPicturePriorWorkbook);
-export const workbook=withLightReadableWorkbook(lightReadablePriorWorkbook);
+export const grade5StudyNotesPriorWorkbook=withLightReadableWorkbook(lightReadablePriorWorkbook);
+export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);

@@ -1,3 +1,4 @@
+import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withHeatReadableWorkbook}from'./c22-s52-u02.editorial.js?v=20261106-heat-readable-workbook';
 import{withActivityGuideLanguage}from'./student-opening-language.js?v=20261105-activity-guide';
 import{withObservationLanguage}from'./observation-language.js';
@@ -10178,4 +10179,5 @@ const baseWorkbook = {
 export const observationPriorWorkbook=withHeatEditorial(baseWorkbook);
 export const activityGuidePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const heatReadablePriorWorkbook=withActivityGuideLanguage(activityGuidePriorWorkbook);
-export const workbook=withHeatReadableWorkbook(heatReadablePriorWorkbook);
+export const grade5StudyNotesPriorWorkbook=withHeatReadableWorkbook(heatReadablePriorWorkbook);
+export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);

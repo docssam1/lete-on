@@ -1,3 +1,4 @@
+import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from 'node:test';
 import {withGrade3StudyNotes} from '../data/book/grade3-study-notes.js';
 import assert from 'node:assert/strict';
@@ -31,7 +32,7 @@ test('실제 네 교재의 다른 학생·교사 쪽 수와 이어지는 문항 
   assert.equal(wb.pages.length,studentCount);assert.equal(wb.teacherStudentPages.length,teacherCount);
   // Keep the reviewed rail resource and its explicit elementary-language overlay connected.
   const fromReviewedResource={...wb,pages:wb.pages.map((page,i)=>({...page,rail:page.rail.map((note,j)=>({...note,text:notes[i][j]}))}))};
-  assert.deepEqual(wb.pages.map(p=>p.rail.map(r=>r.text)),withGrade3StudyNotes(fromReviewedResource).pages.map(p=>p.rail.map(r=>r.text)));
+  assert.deepEqual(wb.pages.map(p=>p.rail.map(r=>r.text)),withGrade5StudyNotes(withGrade3StudyNotes(fromReviewedResource)).pages.map(p=>p.rail.map(r=>r.text)));
   const studentIds=wb.pages.flatMap(p=>p.blocks.flatMap(b=>b.type==='questions'?b.ids:[]));
   const teacherIds=wb.teacherStudentPages.flatMap(p=>(p.blocks||[]).flatMap(b=>b.type==='questions'?b.ids:[]));
   assert.deepEqual(teacherIds,studentIds);assert.equal(new Set(teacherIds).size,questionCount);

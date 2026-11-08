@@ -1,3 +1,4 @@
+import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withSolutionReadableWorkbook}from'./c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withSolutionStudentLanguage} from './solution-student-language.js';
@@ -8552,4 +8553,5 @@ const baseWorkbook = {
 };
 
 export const solutionReadablePriorWorkbook=withWorkbookAnswerLanguage(withSolutionStudentLanguage(withSolutionBodyLanguage(withStudentOpeningLanguage(withSolutionRails(baseWorkbook)))));
-export const workbook=withSolutionReadableWorkbook(solutionReadablePriorWorkbook);
+export const grade5StudyNotesPriorWorkbook=withSolutionReadableWorkbook(solutionReadablePriorWorkbook);
+export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);

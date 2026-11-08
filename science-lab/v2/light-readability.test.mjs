@@ -1,3 +1,4 @@
+import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s51-u02.js';import{similar}from'../data/units/c22-s51-u02.similar.js';import{lightCurrentItems}from'../data/book/light-student-language.js';
 import{lightReadableCurrentItems,LIGHT_READABILITY_VERSION}from'../data/book/c22-s51-u02.editorial.js';
@@ -38,7 +39,7 @@ test('light keeps all raw and prior language fields, answer positions and perisc
  const current=lightReadableCurrentItems(baseline,unit);
  for(const q of current){const raw=items.find(x=>x.id===q.id),restored=questionAtVersion(q,1);for(const key of Object.keys(raw))assert.deepEqual(restored[key],raw[key]);}
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(lightReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['id','no','form','key','answer','responseContract','taxonomy'].includes(k)))assert.deepEqual(workbook.questions[i][key],lightReadablePriorWorkbook.questions[i][key]);
- for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],lightReadablePriorWorkbook[key]);
+ for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],withGrade5StudyNotes(lightReadablePriorWorkbook)[key]);
  const q64=workbook.questions.find(q=>q.no===64),b64=current.find(q=>q.id==='c22-s51-u02-b064');assert.equal(q64.key,3);assert.equal(b64.answerContract.answer,2);assert.equal(q64.choices[3],b64.choices[2]);assert.equal(q64.choices.length,4);assert.equal(b64.choices.length,5);
  for(const no of[30,31,68])assert(workbook.questions.find(q=>q.no===no).prompt.includes('\uC544\uB798\uCABD'));
  const periscope=workbook.pages.flatMap(p=>p.blocks).find(b=>b.type==='diagram'&&b.key==='sourcePeriscope');assert(periscope.caption.includes('\uC544\uB798 \uAC70\uC6B8 \u2192 \uC704 \uAC70\uC6B8 \u2192 \uB208'));assert(periscope.caption.includes('\uC704 \uAC70\uC6B8 \u2192 \uC544\uB798 \uAC70\uC6B8 \u2192 \uB208'));

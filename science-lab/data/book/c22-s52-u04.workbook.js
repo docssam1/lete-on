@@ -1,3 +1,4 @@
+import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withEnergyReadableWorkbook}from'./c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook';
 import {withEnergyEditorial} from './c22-s52-u04.editorial.js?v=20261104-energy-book';
 // 자원112문항. scripts/gen-science-workbook-c22s52u04.mjs가 생성.
@@ -11142,4 +11143,5 @@ const baseWorkbook = {
 };
 
 export const energyReadablePriorWorkbook=withEnergyEditorial(baseWorkbook);
-export const workbook=withEnergyReadableWorkbook(energyReadablePriorWorkbook);
+export const grade5StudyNotesPriorWorkbook=withEnergyReadableWorkbook(energyReadablePriorWorkbook);
+export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);

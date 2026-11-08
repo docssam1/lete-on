@@ -1,3 +1,4 @@
+import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withMixtureReadableWorkbook}from'./c22-s52-u01.editorial.js?v=20261106-mixture-readable-workbook';
 import{withObservationLanguage}from'./observation-language.js';
 import{withMixtureEditorial}from'./c22-s52-u01.editorial.js?v=20261104-mixture-book';
@@ -8725,4 +8726,5 @@ const baseWorkbook = {
 
 export const observationPriorWorkbook=withMixtureEditorial(baseWorkbook);
 export const mixtureReadablePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
-export const workbook=withMixtureReadableWorkbook(mixtureReadablePriorWorkbook);
+export const grade5StudyNotesPriorWorkbook=withMixtureReadableWorkbook(mixtureReadablePriorWorkbook);
+export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);

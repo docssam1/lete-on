@@ -1,3 +1,4 @@
+import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withBodyReadableWorkbook}from'./c22-s51-u04.editorial.js?v=20261106-body-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import{withObservationLanguage}from'./observation-language.js';
@@ -9234,4 +9235,5 @@ export const observationPriorWorkbook=withBodyEditorial(baseWorkbook);
 export const learnerPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const bodyUpperPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const bodyReadablePriorWorkbook=withBodyUpperProgression(bodyUpperPriorWorkbook);
-export const workbook=withBodyReadableWorkbook(bodyReadablePriorWorkbook);
+export const grade5StudyNotesPriorWorkbook=withBodyReadableWorkbook(bodyReadablePriorWorkbook);
+export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);

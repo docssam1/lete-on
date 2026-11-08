@@ -1,3 +1,4 @@
+import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s51-u04.js';import{similar}from'../data/units/c22-s51-u04.similar.js';import{observationCurrentItems}from'../data/book/observation-language.js';
 import{bodyReadableCurrentItems,BODY_READABILITY_VERSION}from'../data/book/c22-s51-u04.editorial.js';
@@ -38,7 +39,7 @@ test('body keeps raw and prior fields, model limits and walking comparison times
  const current=bodyReadableCurrentItems(baseline,unit);
  for(const q of current){const raw=items.find(x=>x.id===q.id),restored=questionAtVersion(q,1);for(const key of Object.keys(raw))assert.deepEqual(restored[key],raw[key]);}
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(bodyReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['id','no','form','key','answer','responseContract','taxonomy'].includes(k)))assert.deepEqual(workbook.questions[i][key],bodyReadablePriorWorkbook.questions[i][key]);
- for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],bodyReadablePriorWorkbook[key]);
+ for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],withGrade5StudyNotes(bodyReadablePriorWorkbook)[key]);
  const q51=workbook.questions.find(q=>q.no===51),b51=current.find(q=>q.id==='c22-s51-u04-b051');assert.equal(q51.key,2);assert.equal(b51.answerContract.answer,3);assert.equal(q51.choices.length,4);assert.equal(b51.choices.length,5);assert.equal(q51.choices[2],b51.choices[3]);assert(q51.prompt.includes('걷기 전 18회'));assert(!q51.prompt.includes('쉬기 전'));
  assert(!current.find(q=>q.id==='c22-s51-u04-b092').prompt.includes('AI 실사형'));
  assert(!/기관계의 연결|대응|미실행/.test(workbook.questions.map(q=>q.explanation).join(' ')));

@@ -1,3 +1,4 @@
+import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s51-u03.js';import{similar}from'../data/units/c22-s51-u03.similar.js';import{solutionCurrentItems}from'./solution-question-language.js';
 import{solutionReadableCurrentItems,SOLUTION_READABILITY_VERSION}from'../data/book/c22-s51-u03.rail-notes.js';
@@ -38,7 +39,7 @@ test('solution keeps all raw and prior fields, weight vocabulary and the melting
  const current=solutionReadableCurrentItems(baseline,unit);
  for(const q of current){const raw=items.find(x=>x.id===q.id),restored=questionAtVersion(q,1);for(const key of Object.keys(raw))assert.deepEqual(restored[key],raw[key]);assert.equal(solutionCurrentItems([q])[0],q);}
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(solutionReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['id','no','form','key','answer','responseContract','taxonomy'].includes(k)))assert.deepEqual(workbook.questions[i][key],solutionReadablePriorWorkbook.questions[i][key]);
- for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],solutionReadablePriorWorkbook[key]);
+ for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],withGrade5StudyNotes(solutionReadablePriorWorkbook)[key]);
  const q65=workbook.questions.find(q=>q.no===65),b65=current.find(q=>q.id==='c22-s51-u03-b065');assert.equal(q65.key,1);assert.equal(b65.answerContract.answer,0);assert(q65.choices.includes('\uB179\uAE30'));assert(b65.choices.includes('\uB179\uAE30'));assert(!q65.choices.includes('\uC735\uD574'));assert(!b65.choices.includes('\uC735\uD574'));assert.equal(q65.choices.length,4);assert.equal(b65.choices.length,5);
  const q89=workbook.questions.find(q=>q.no===89);assert(q89.prompt.includes('\uC5BC\uC74C'));assert(!q89.explanation.includes('\uC124\uD0D5 \uC790\uCCB4\uAC00 \uC5F4'));
  for(const q of workbook.questions)assert(!/\uC9C8\uB7C9|\uAC19\uC740 \uACC4|\uD558\uD55C \uC815\uBCF4/.test(q.explanation));

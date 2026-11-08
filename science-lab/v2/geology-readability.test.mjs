@@ -1,3 +1,4 @@
+import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s51-u01.js';import{similar}from'../data/units/c22-s51-u01.similar.js';import{geologyCurrentItems}from'../data/book/geology-student-language.js';
 import{geologyReadableCurrentItems,GEOLOGY_READABILITY_VERSION}from'../data/book/c22-s51-u01.editorial.js';
@@ -39,5 +40,5 @@ test('geology keeps raw version one, the prior language version and corrected an
  for(const q of current){const raw=items.find(x=>x.id===q.id),restored=questionAtVersion(q,1);for(const key of Object.keys(raw))assert.deepEqual(restored[key],raw[key]);}
  for(const no of[15,16,31]){const q=workbook.questions.find(q=>q.no===no);assert.equal(q.answer,'\u2460\u2461\u2462\u2463\u2464'[q.key]+' '+q.choices[q.key]);assert.notEqual(q.answer,geologyReadablePriorWorkbook.questions.find(q=>q.no===no).answer);}
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(geologyReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['id','no','form','key','responseContract','taxonomy'].includes(k)))assert.deepEqual(workbook.questions[i][key],geologyReadablePriorWorkbook.questions[i][key]);
- for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],geologyReadablePriorWorkbook[key]);
+ for(const key of['pages','teacherStudentPages','teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],withGrade5StudyNotes(geologyReadablePriorWorkbook)[key]);
 });

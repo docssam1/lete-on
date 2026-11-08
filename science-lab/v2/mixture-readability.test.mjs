@@ -1,3 +1,4 @@
+import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s52-u01.js';import{similar}from'../data/units/c22-s52-u01.similar.js';import{observationCurrentItems}from'../data/book/observation-language.js';
 import{mixtureReadableCurrentItems,MIXTURE_READABILITY_VERSION}from'../data/book/c22-s52-u01.editorial.js';
@@ -38,8 +39,8 @@ test('mixture preserves prior figures and answers while explaining the actual se
  const current=mixtureReadableCurrentItems(baseline,unit);
  for(const q of current){const raw=items.find(x=>x.id===q.id),restored=questionAtVersion(q,1);for(const key of Object.keys(raw))assert.deepEqual(restored[key],raw[key]);}
  const displayAnswers=new Set([46,56,84,88]);for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(mixtureReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['id','no','form','key','responseContract','taxonomy'].includes(k)||(k==='answer'&&!displayAnswers.has(i+1))))assert.deepEqual(workbook.questions[i][key],mixtureReadablePriorWorkbook.questions[i][key]);
- for(const key of['teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],mixtureReadablePriorWorkbook[key]);
- for(const key of['pages','teacherStudentPages'])for(let i=0;i<workbook[key].length;i++){const a=mixtureReadablePriorWorkbook[key][i],b=workbook[key][i];assert.deepEqual(b.rail,a.rail);if(![25,31,37].includes(i))assert.deepEqual(b,a);else{const{blocks:ab,...ap}=a,{blocks:bb,...bp}=b;assert.deepEqual(ap,bp);assert(!/음용|잔류|회수|시료/.test(JSON.stringify(bb)));}}
+ for(const key of['teacherPages','quickPages','figures'])assert.deepEqual(workbook[key],withGrade5StudyNotes(mixtureReadablePriorWorkbook)[key]);
+ for(const key of['pages','teacherStudentPages'])for(let i=0;i<workbook[key].length;i++){const a=withGrade5StudyNotes(mixtureReadablePriorWorkbook)[key][i],b=workbook[key][i];assert.deepEqual(b.rail,a.rail);if(![25,31,37].includes(i))assert.deepEqual(b,a);else{const{blocks:ab,...ap}=a,{blocks:bb,...bp}=b;assert.deepEqual(ap,bp);assert(!/음용|잔류|회수|시료/.test(JSON.stringify(bb)));}}
  for(const n of[6,9,17,20,92])assert.deepEqual(workbook.questions[n-1],mixtureReadablePriorWorkbook.questions[n-1]);
  for(const n of[55,67,86,93]){const q=workbook.questions[n-1],b=current.find(x=>x.workbookRef?.no===n);assert.deepEqual(b.givens['보기'],q.given);assert.deepEqual(b.givens['문항'],q.parts);}
  const b92=current.find(q=>q.workbookRef?.no===92);assert.equal(b92.prompt,workbook.questions[91].prompt);assert.equal(b92.explanation,workbook.questions[91].explanation);assert(!b92.prompt.includes('실사형'));
