@@ -1163,12 +1163,13 @@ button{
 .print-page .question-item header span{color:#444;font-weight:500}
 .print-page .question-item header em{color:#555;font-weight:400}
 .print-page .question-item header b{background:#fff;color:#111;border:1px solid #333;font-weight:600}
-.print-page .watermark span{color:rgba(0,0,0,.035);font-weight:500}
+.print-page .watermark span,.answer-key-page .watermark span{color:rgba(0,0,0,.035);font-weight:500}
 
 @page{size:A4;margin:0}
 @page source61GraphsE4Answer{size:A4;margin:6mm 0}
 
 @media print{
+  body[data-print-mode="answer-key"] .answer-key-page .watermark{bottom:auto;height:240mm}
   html,body{background:#fff!important}
   .app-shell{width:auto;margin:0;padding:0}
 
@@ -1696,3 +1697,7 @@ button{
 @media screen and (max-width: 700px) {
   .selection-capacity-notice { grid-column: 1 / -1; grid-row: 1; flex: none; text-align: left; }
 }
+
+/* Keep the available alternative legible while the original stays locked. */
+.tree-type.is-pending.has-alternative { opacity: 1; }
+.tree-alternative-hint { display: block; margin-top: 3px; color: #2f6b4a; font-size: 11px; font-weight: 600; }

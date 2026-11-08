@@ -41,19 +41,72 @@
       blocks.push(block);
     }
     const current = ['none', 'unknown', 'pending'].includes(track?.status) ? '' : material(track?.current);
-    return {current, blocks: blocks.sort((a,b) => a.start - b.start || a.end - b.end)};
+    const result = {current, blocks: blocks.sort((a,b) => a.start - b.start || a.end - b.end)};
+    if (typeof track?.intakeKey === 'string' && track.intakeKey.length <= 1000) result.intakeKey = track.intakeKey;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(track?.changedOn) && Number.isSafeInteger(track.completedBefore) && track.completedBefore >= 0) {
+      result.changedOn = track.changedOn;
+      result.completedBefore = track.completedBefore;
+    }
+    return result;
   }
 
-  function snapshot(rows) {
+  function intakeKey(ctx, id) {
+    if (!ctx?.answers) return '';
+    const intake = global.PlannerIntake, a = intake.effective(ctx.answers);
+    const status = {school:'schoolStatus',calc:'calcStatus',thinking:'thinkingStatus'}[id];
+    const progress = intake.progressValue(a,status);
+    return JSON.stringify([intake.progressCourse(a,status),a[status] || '',!!ctx.fields?.pendingStatus?.[status],
+      progress && !progress.estimated ? [progress.unit,progress.done,progress.total] : null]);
+  }
+
+  function snapshot(rows, context) {
     return {version: 1, tracks: Object.fromEntries(Object.entries(axes).map(([key,[id]]) => {
       const track = Array.isArray(rows) && rows.find(l => l?.id === id);
-      return [key, cleanTrack(track)];
+      const clean = cleanTrack(track);
+      const signature = intakeKey(context,id);
+      if (signature) clean.intakeKey = signature;
+      return [key,clean];
     }))};
   }
 
   function restore(value) {
     const tracks = value?.version === 1 ? value.tracks : null;
     return {version: 1, tracks: Object.fromEntries(Object.keys(axes).map(key => [key, cleanTrack(tracks?.[key])]))};
+  }
+
+  // Weekly reviews count the preceding week. Previously recorded sessions and
+  // a late entry for the week before changing books cannot advance the new book.
+  function beforeChange(program, key, day) {
+    const prior = program.prior;
+    const archived = prior?.dueDate <= day ? prior.completedTotals[key] : 0;
+    return program.history.reduce((n,r) => n + (r.dueDate <= day ? r.completed[key] : 0),archived);
+  }
+
+  function reconcile(raw, saved, current, day = global.PlannerWeeklyModel.today()) {
+    const program = global.PlannerWeeklyModel.restore(raw), previous = restore(saved), fresh = restore(current);
+    if (!program) return fresh;
+    for (const key of Object.keys(axes)) {
+      const old = previous.tracks[key], next = fresh.tracks[key];
+      const first = row => row.blocks.find(b => b.start === 0)?.title || row.current;
+      // Pre-feature snapshots lack intake signatures; compare the actual material
+      // that opened each lane without interpreting old estimates as completion.
+      const changed = old.intakeKey && next.intakeKey ? old.intakeKey !== next.intakeKey : first(old) !== first(next);
+      if (changed) {
+        previous.tracks[key] = {...next,changedOn:day,completedBefore:beforeChange(program,key,day)};
+      } else {
+        if (next.intakeKey) old.intakeKey = next.intakeKey;
+        if (old.changedOn) old.completedBefore = Math.max(old.completedBefore,beforeChange(program,key,old.changedOn));
+      }
+    }
+    return previous;
+  }
+
+  function currentBacklog(track,key,state,fallback) {
+    if (!track.changedOn) return fallback;
+    let backlog = state.prior?.dueDate > track.changedOn ? state.prior.backlog[key] : 0;
+    for (const record of state.history) if (record.dueDate > track.changedOn)
+      backlog = Math.max(0, Math.max(backlog,record.targets[key]) - record.completed[key]);
+    return backlog;
   }
 
   // Elementary arithmetic has dated daily portions. Other course lengths are
@@ -109,15 +162,17 @@
     const transitions = {};
     for (const key of Object.keys(axes)) {
       const track = courses[key], pace = view.targets[key], available = portions(track, baseTargets[key]);
-      const next = available.find(p => !p.gap && p.start > totals[key]);
+      const completed = Math.max(0,totals[key] - (track.completedBefore || 0));
+      const backlog = currentBacklog(track,key,state,view.backlog[key]);
+      const next = available.find(p => !p.gap && p.start > completed);
       if (pace && next) {
-        const weeksUntil = Math.floor((next.start - totals[key]) / pace);
+        const weeksUntil = Math.floor((next.start - completed) / pace);
         transitions[key] = {title: next.title, weekStart: weekly.addDays(view.liveWeekStart, weeksUntil * 7)};
       }
       weeks.forEach((week, index) => {
         const offset = index * pace;
-        const carry = Math.min(pace, Math.max(view.backlog[key] - offset, 0));
-        week.tracks[key] = {pace, carry, items: workItems(available, track, totals[key] + offset, pace)};
+        const carry = Math.min(pace, Math.max(backlog - offset, 0));
+        week.tracks[key] = {pace, carry, items: workItems(available, track, completed + offset, pace)};
       });
     }
     return {phase: view.phase, weeks, transitions};
@@ -147,10 +202,10 @@
       esc(next.title) + ' · ' + esc(next.weekStart) + ' 주 예상</li>').join('');
     const details = table && estimates ? '<details><summary>다음 교재·과정으로 넘어갈 예상 주</summary><ul>' + estimates +
       '</ul><p>연산 교재에 하루 분량이 있으면 그 분량을 1회로 셉니다. 다른 과정은 해당 영역에서 처음 정한 주당 학습 횟수와 교재별 예정 기간으로 환산했습니다. 다음 과정에 들어가기 전에는 남은 단원과 풀이를 확인해 주세요.</p></details>' : '';
-    return '<section class="weekly-personal-schedule" data-weekly-schedule="' + (table ? 'table' : 'map') + '"><h3>' + heading + '</h3><p>학습 시작일에 선택한 교재를 기준으로, 기록한 횟수 다음부터 이어갑니다. 이번 주 목표를 계속 실천할 때의 예상 일정입니다. 아래 월별 로드맵은 처음 설계한 과정의 참고 일정입니다.</p>' +
+    return '<section class="weekly-personal-schedule" data-weekly-schedule="' + (table ? 'table' : 'map') + '"><h3>' + heading + '</h3><p>현재 설정한 교재와 기록한 학습 횟수로 이어갑니다. 교재나 진도를 바꾼 영역은 새 범위에서 시작합니다. 이번 주 목표를 계속 실천할 때의 예상 일정입니다. 아래 월별 로드맵은 처음 설계한 과정의 참고 일정입니다.</p>' +
       (m.phase === 'due' ? '<p class="weekly-schedule-pending">지난주 점검을 저장하면 이번 주 분량이 갱신됩니다.</p>' : '') +
       weeks.map(week => '<div class="weekly-schedule-week"><h4>' + range(week) + '</h4>' + weekGrid(week) + '</div>').join('') +
       details + '</section>';
   }
-  global.PlannerWeeklySchedule = Object.freeze({lanes, snapshot, restore, model, render});
+  global.PlannerWeeklySchedule = Object.freeze({lanes, snapshot, restore, reconcile, model, render});
 })(typeof window === 'undefined' ? globalThis : window);

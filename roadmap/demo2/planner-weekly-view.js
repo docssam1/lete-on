@@ -233,7 +233,7 @@
   let clock, clockHost;
   function refreshOnDayChange() {
     if (!clockHost) return;
-    if (clockHost.isConnected) draw(clockHost);
+    if (clockHost.isConnected) { draw(clockHost); g.PlannerUnitPlanner?.refresh(); }
     g.clearTimeout(clock);
     const midnight = Date.parse(model.today() + 'T00:00:00+09:00') + 86400000;
     clock = g.setTimeout(refreshOnDayChange, Math.max(1000, midnight - Date.now() + 200));

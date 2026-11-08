@@ -1410,20 +1410,25 @@ function drawJourney(){
  if(completed){
   const weeklyCustom=!standardActive&&!selectedCore&&!intakeFields().internationalCalendar?live:null;
   const weeklyLanes=PlannerWeeklySchedule.lanes(standard,selectedCore,weeklyCustom);
-  PlannerWeeklyPlanner.mount(weeklyLanes,calcDaysPerWeek);
+  const fields=intakeFields(),actual=CP.actual(I.effective(answers),'school',fields);
+  PlannerWeeklyPlanner.mount(weeklyLanes,calcDaysPerWeek,{
+   answers,fields,bookChecks,actual,gender:studentProfile.gender,grade:I.gradeChoice(answers,fields),
+   goalTitle:selectedCore?.goalTitle||(selectedCore && CP.supports(pathwayTrail)?'경시 준비':''),mock:selectedCore||mockScheduleModel()
+  });
  }
 }
-function openWeeklyCheck(){
+function openWeeklyCheck(checklist=false){
  if(!completed)return;
  if(studyActive)closeStudy(false);
  if(historyState.active)closeHistory(false);
  if(caseActive)closeCase(false);
  if(!document.getElementById('plannerWeeklyCheck'))drawJourney();
  showView('vmap');setWorkspaceView('map');mobileWorkspace('result');
- PlannerWeeklyPlanner.open();
+ if(checklist)PlannerUnitPlanner.open();else PlannerWeeklyPlanner.open();
 }
 document.addEventListener('click',event=>{
  if(event.target.closest('[data-weekly-open]'))openWeeklyCheck();
+ if(event.target.closest('[data-unit-checklist-open]'))openWeeklyCheck(true);
 });
 $('journeyMap').addEventListener('toggle',e=>{if(e.target.matches?.('.ppd-reference'))preschoolDetailOpen=e.target.open;},true);
 $('journeyMap').onclick=e=>{if(handlePreschoolDetail(e.target.closest('button'))||handleStudyButton(e.target.closest('button'))||handleHistoryClick(e)||handleCollegeClick(e)||handleScienceClick(e)||handleCaseClick(e))return;const b=e.target.closest('button');if(!b||!journeyModel)return;if(academyBeamClick(b))return;if(b.dataset.currentArea){ask(b.dataset.currentArea);return;}if(b.dataset.supplement){supplementDecision=PlannerStandard.chooseSupplement(answers,intakeFields(),b.dataset.supplement);rememberWorkspace();drawJourney();return;}if(b.dataset.calcDays){calcDaysPerWeek=+b.dataset.calcDays;rememberWorkspace();drawJourney();return;}if(b.dataset.standardBlock){const m=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths}),lane=m.lanes.find(l=>l.blocks.some(x=>x.id===b.dataset.standardBlock)),block=lane?.blocks.find(x=>x.id===b.dataset.standardBlock);if(block&&block.highPhase){PlannerFullscreen.leaveForAction(b);const d=CP.detail({...m,year:+intakeFields().year,month:+intakeFields().mon,kind:'high'},block.id);$('courseTitle').textContent=d.title;$('courseContent').innerHTML=d.html;delete $('courseContent').dataset.curriculumBlock;showCourseDialog();return;}if(block){PlannerFullscreen.leaveForAction(b);$('courseTitle').textContent=block.title;const from=T.calendarAt(m.now,block.start,intakeFields()),to=T.calendarAt(m.now,Math.max(block.start,block.end-.001),intakeFields());$('courseContent').innerHTML='<p class="course-context">표준 로드맵 · '+esc(lane.label)+'</p><p>'+esc(from.label)+' → '+esc(to.label)+'</p><p>'+(block.sustained?'꾸준히 병행할 시기 · 한 권의 이수 기간 아님':block.fullMonths?'전체 과정 기준 '+block.fullMonths+'개월'+(block.continues?' · 화면 마지막 달 이후에도 계속':block.remainingAssumption?' · 현재 과정은 절반이 남은 가정':''):block.studyDays?block.studyDays+'일분 · 주 '+m.calcPlan.daysPerWeek+'일 · 약 '+Number(block.weeks.toFixed(1))+'주':'참고 기간 '+(block.end-block.start).toFixed(1)+'개월')+'</p><p>'+esc(lane.id==='school'?'개념과 대표 유형을 익히고 응용 문제의 조건을 설명하는지 확인합니다.':lane.id==='deep'?'같은 학기의 교과 개념을 낯선 문제에 적용하고 풀이의 이유와 다른 방법을 비교합니다.':lane.method?lane.method:lane.id==='calc'?'현재 연산 진도에서 원리·정확성·오류 수정을 확인하며 순서대로 이어갑니다.':'스스로 조건을 정리하고 여러 풀이를 비교하는 시간을 유지합니다.')+'</p>'+(block.current?'<p>현재 진행 중이라는 답은 해당 과정의 절반을 남긴 것으로 가정한 참고 일정입니다. 실제 남은 범위는 맞춤 설계에서 다시 살펴봅니다.</p>':'');showCourseDialog();}return;}if(b.dataset.standardPattern){standardPattern=b.dataset.standardPattern;standardAccepted=false;saveRoadmapMode();drawJourney();return;}if(b.hasAttribute('data-standard-accept')){standardAccepted=true;saveRoadmapMode();drawJourney();return;}if(b.dataset.roadmapMode){PlannerFullscreen.leaveForAction(b);if(b.dataset.roadmapMode==='standard')showStandard();else enterCustom();return;}if(b.dataset.workspaceView){setWorkspaceView(b.dataset.workspaceView);return;}if(b.dataset.workspaceCourse){const y=scrollY,x=$('journeyMap').querySelector('.month-ribbon')?.scrollLeft||0;workspaceCourse=b.dataset.workspaceCourse;workspaceView='map';rememberWorkspace();drawJourney();requestAnimationFrame(()=>{$('journeyMap').querySelector('.month-ribbon')?.scrollTo({left:x,behavior:'auto'});window.scrollTo({top:y,behavior:'auto'});$('journeyMap').querySelector('.course-stop[data-workspace-course="'+workspaceCourse+'"]')?.focus({preventScroll:true});});return;}if(b.dataset.atlasFull){setWorkspaceView(b.dataset.atlasFull==='graph'?'graph':'map');return;}if(b.dataset.landscapePan){const scroller=b.closest('.learning-landscape').querySelector('.landscape-scroll');if(b.dataset.landscapePan==='start')scroller.scrollTo({left:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});else scroller.scrollBy({left:(b.dataset.landscapePan==='next'?1:-1)*scroller.clientWidth*.8,behavior:'smooth'});return;}PlannerFullscreen.leaveForAction(b);if(b.dataset.atlasJump){setWorkspaceView(({route:'map',compare:'graph',schedule:'table',current:'records',plan:'records',questions:'records'})[b.dataset.atlasJump]||'map');return;}if(flowClick(b))return;if(b.dataset.pathwayTo){choosePathway(b.dataset.pathwayFrom,b.dataset.pathwayTo);openPathway(pathwayTrail.at(-1));return;}const root=b.dataset.journeyDirection||b.dataset.pathwayRoot;if(root){choosePathway(null,root);openPathway(root);return;}if(b.dataset.pathwayOpen){openPathway(b.dataset.pathwayOpen);return;}const next=journeyModel.axes.find(a=>a.id===b.dataset.journeyNext);if(next?.next){openCourse({title:next.label+' · '+next.next,axis:next.id==='thinking'?'thinking1':next.id,sub:'현재 진도에서 이어서 공부할 수 있는 과정이에요.'});return;}const item=journeyModel.axes.find(a=>a.id===b.dataset.journeyCourse);if(item)openCourse(item.detail);};
@@ -1461,7 +1466,8 @@ if(restoredMobilePane)mobileWorkspace(restoredMobilePane);PlannerGuide.mount(doc
 const incomingSeniorDirectLink=window.location?.href;
 if(classroomSaved?.version===1&&classroomSaved.active===true)showClassroom(true);else if(studySaved?.version===1&&studySaved.active===true)showStudy(true);else if(historySaved?.active===true)showHistory(historySaved.caseId,true);else if(caseSaved?.version===1&&caseSaved.active===true)showCase(true);
 applySeniorDirectLink(incomingSeniorDirectLink);
-if(new URLSearchParams(location.search).get('weekly')==='1')openWeeklyCheck();
+if(new URLSearchParams(location.search).get('checklist')==='1')openWeeklyCheck(true);
+else if(new URLSearchParams(location.search).get('weekly')==='1')openWeeklyCheck();
 // Older sessions may have paths that were never edited after durable storage was added.
 // Promote only absent durable keys; another saved plan and deletion guards stay intact.
 for(const key of [preschoolDetailKey,cohortKey,languageKey,studentKey,storageKey,pathwayKey,personalityKey,careerKey,flowKey,planKey,progressKey,transitionKey,caseKey,historyKey,referencePlanKey,scienceKey,collegeKey,bookCheckKey,'gfield.demo2.roadmap-mode.v1','gfield.demo2.workspace.v1'])PlannerStorage.promoteExisting(key);
