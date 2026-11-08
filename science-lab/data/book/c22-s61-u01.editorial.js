@@ -1476,6 +1476,41 @@ const acidReadablePriorVersions={
  "c22-s61-u01-b127": 1
 };
 const acidReadableCache=new WeakMap();
+// 상위 학습의 내용은 유지하고 학생이 읽는 오른쪽 설명만 풀어 쓴다.
+export const ACID_FURTHER_READING_VERSION='20261108-acid-further-reading';
+export const ACID_FURTHER_READING=Object.freeze({
+ '더 깊이 공부하면 빛을 이용해 색의 차이를 측정하는 방법을 알아보아요. 기구를 써도 시료의 원래 색과 빛이 지나는 길이 등 조건을 살펴야 해요.':'더 깊이 공부하면 빛을 이용해 용액 색의 차이를 재는 방법을 알아보아요. 이때도 용액의 원래 색과 빛이 용액을 지나가는 거리 같은 조건을 살펴야 해요.',
+ '다른 용액이 도구에 남아 있으면 아주 적은 양도 다음 시료에 들어갈 수 있어요. 분석 실험에서 도구를 깨끗이 하는 것은 비교할 대상의 조성을 지키는 일이에요.':'도구에 다른 용액이 조금이라도 남으면 다음에 살필 용액과 섞일 수 있어요. 분석 실험에서는 살펴볼 용액에 다른 물질이 섞이지 않도록 도구를 깨끗이 해요.',
+ '빛을 흡수하는 물질이 시료 안에 여럿 있으면 색이 겹쳐 보일 수 있어요. 더 깊은 분석에서는 원래 시료의 색을 따로 측정해 비교하기도 해요.':'빛을 흡수하는 물질이 용액 안에 여러 가지 있으면 색이 겹쳐 보일 수 있어요. 더 깊은 분석에서는 용액의 원래 색을 따로 재어 비교하기도 해요.',
+ '중학교의 화학 반응 실험에서는 반응 전후의 물질과 조건을 함께 살펴요. 표본의 크기나 온도가 달라지면 같은 반응도 다르게 보일 수 있어요.':'중학교의 화학 반응 실험에서는 반응하기 전후의 물질과 실험 조건을 함께 살펴요. 실험에 쓰는 물질의 크기나 온도가 다르면 같은 반응도 다르게 보일 수 있어요.',
+ '중학교에서는 물질을 구별하는 성질 가운데 어떤 조건에서 일정한 특성이 있는지 알아보아요. 시료의 겉모습은 준비된 양이나 용기에도 영향을 받아요.':'중학교에서는 물질을 구별할 때 어떤 조건에서 성질이 일정한지 알아보아요. 겉모습은 담은 양이나 용기에 따라서도 달라질 수 있어요.',
+ '환경 연구에서는 여러 지역과 오랜 기간의 자료를 모아 경향을 알아보아요. 한 지역의 한 시점 결과가 다른 모든 장소의 결과를 뜻하지는 않아요.':'환경 연구에서는 여러 지역에서 오랜 기간 자료를 모아 어떤 변화가 이어지는지 살펴요. 한 지역의 한때에 나온 결과가 다른 모든 곳에도 똑같이 나타나는 것은 아니에요.',
+ '색을 이용하는 분석에서는 시료가 스스로 가진 색도 결과에 영향을 줄 수 있어요. 더 깊이 공부하면 대조 시료를 두어 그 영향을 살피는 방법을 알아보아요.':'색을 이용해 용액을 분석할 때는 용액의 원래 색도 결과에 영향을 줄 수 있어요. 더 깊이 공부하면 비교할 용액을 따로 준비해 그 영향을 살피는 방법을 알아보아요.',
+ '더 깊은 반응 실험에서는 물질이 닿는 면과 섞는 정도도 영향을 줄 수 있어요. 표본의 질량만 같다고 모든 반응 조건이 같은 것은 아니에요.':'더 깊은 반응 실험에서는 물질이 서로 닿는 면의 넓이와 섞는 정도도 살펴요. 실험에 쓰는 물질의 질량이 같아도 이 조건들은 다를 수 있어요.',
+ '숲과 물 환경에는 빛·온도·물·여러 물질 등 많은 요인이 작용해요. 더 깊은 환경 연구에서는 함께 달라지는 요인들을 나누어 원인과 영향을 검토해요.':'숲과 물 환경에는 빛·온도·물·여러 물질 등이 함께 영향을 주어요. 더 깊은 환경 연구에서는 이들 가운데 무엇이 달라졌는지 나누어 살피며 환경이 변한 까닭을 알아보아요.',
+ '더 깊이 공부하면 고체 재료의 표면과 용액이 만나는 부분에서 변화가 진행됨을 알아보아요. 접촉 면이 다른 표본은 같은 양이어도 변화가 다르게 보일 수 있어요.':'더 깊이 공부하면 고체 재료와 용액이 맞닿는 곳에서 변화가 일어남을 알아보아요. 닿는 면의 넓이가 다르면 같은 양의 재료라도 변화가 다르게 보일 수 있어요.',
+ '더 깊은 분석 실험에서는 한 시료를 여러 방법으로 조사하여 설명을 검토해요. 지시약과 반응 실험의 결과가 어긋나면 조건이나 다른 성분의 영향을 다시 살펴요.':'더 깊은 분석 실험에서는 같은 용액을 여러 방법으로 살펴봐요. 지시약으로 살핀 결과와 반응 실험의 결과가 다르면 실험 조건이나 다른 성분의 영향을 다시 알아봐요.'
+});
+export function withAcidFurtherReading(workbook){
+ if(workbook?.unit!=='c22-s61-u01')return workbook;
+ let changed=false;const fields={};
+ for(const key of ['pages','teacherStudentPages']){
+  if(!Array.isArray(workbook[key]))continue;
+  let pagesChanged=false;
+  const pages=workbook[key].map(page=>{
+   if(!Array.isArray(page.rail))return page;
+   let railChanged=false;
+   const rail=page.rail.map(note=>{
+    if(note.title!=='더 알아보기'||!Object.hasOwn(ACID_FURTHER_READING,note.text))return note;
+    railChanged=true;return {...note,text:ACID_FURTHER_READING[note.text]};
+   });
+   if(!railChanged)return page;
+   pagesChanged=true;return {...page,rail};
+  });
+  if(pagesChanged){changed=true;fields[key]=pages;}
+ }
+ return changed?{...workbook,...fields}:workbook;
+}
 export function acidReadableCurrentItems(rows,unit){
  if(unit!=='c22-s61-u01'||!Array.isArray(rows))return rows;let changed=false;
  const next=rows.map(question=>{const patch=acidReadableBank[question.id];if(!patch||question.status!=='authored'||question.sourceRef?.type!=='authored-supplement'||(question.contentVersion||1)!==acidReadablePriorVersions[question.id])return question;changed=true;if(acidReadableCache.has(question))return acidReadableCache.get(question);
