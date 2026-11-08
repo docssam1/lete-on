@@ -1887,10 +1887,11 @@
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조 대조 및 창작 변형 검증. 출판사 정답 미확인으로 원문은 잠금 유지.",
+      "implementationStatus": "public-independent-verification-publisher-key-pending",
+      "reviewReason": "원문 변·각과 추가 조건을 대조하고 SSA 두 해를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u3-e1-example-3-original",
       "syntheticRuntimeTypeId": "5-2-u3-e1-example-3"
     },
     {
