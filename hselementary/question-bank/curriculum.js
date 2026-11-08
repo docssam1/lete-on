@@ -2549,6 +2549,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if(group&&!group.types.some(t=>t.id===id)){const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u5-e1-example-4",sourceItemLabel:"예제 1-4 관련 조건변형",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:44,alternateSourcePdfPage:43,sourcePrintedPage:48,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5ThreeRopeShortest",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세 방향 묶기 그림을 이용하고 세 끈 길이를 각각 주는 별도 연습입니다."});}
   }
   const source52CuboidNets = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s2");
+  if (source52CuboidNets && !source52CuboidNets.types.some(t=>t.id==="5-2-u5-e2-smallest-paper-similar")) {
+    const id="5-2-u5-e2-smallest-paper-similar",name="전개도에 필요한 가장 작은 도화지 · 조건변형";
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CuboidNets.types.push({id,number:source52CuboidNets.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u5-e2-exploration-1",sourceItemLabel:"개념탐구 2 관련 조건변형",sourceSection:"exploration",sourceTier:"advanced",sourcePdfPage:45,alternateSourcePdfPage:44,sourcePrintedPage:50,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5SmallestPaperSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 종이 최대 크기는 미확인입니다. 이 조건변형은 방향이 정해진 도화지의 최소 둘레만 묻습니다."});
+  }
   if (source52CuboidNets && !source52CuboidNets.types.some(t=>t.id==="5-2-u5-e2-paper-choice-practice")) {
     const id="5-2-u5-e2-paper-choice-practice",name="크기가 정해진 도화지와 전개도 둘레 · 별도 연습";
     const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
@@ -4428,7 +4433,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u5","5-2-u5-t5-3","5-2-u5-practice-54-view-sums-similar"],
     ["5-2-u5","5-2-u5-t2","5-2-u5-e2-paper-choice-practice"],
     ["5-2-u5","5-2-u5-t1-4","5-2-u5-practice-5-grid-sizes-similar"],
-    ["5-2-u5","5-2-u5-t4-5","5-2-u5-e1-example-4-three-rope-shortest"]
+    ["5-2-u5","5-2-u5-t4-5","5-2-u5-e1-example-4-three-rope-shortest"],
+    ["5-2-u5","5-2-u5-t2-3","5-2-u5-e2-smallest-paper-similar"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
