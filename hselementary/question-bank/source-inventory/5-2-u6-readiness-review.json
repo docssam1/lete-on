@@ -862,12 +862,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "locked",
-      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
-      "runtimeTypeId": "5-2-u6-e3-exploration",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u6-e3-exploration-original",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-exploration",
       "publisherKeyVerified": false,
-      "releaseEvidence": "원문 두 점은 한 모서리로 이웃한다. 연습 0은 이웃한 점이지만 연습 1·2는 각각 같은 면의 대각 및 공간 대각으로 점 사이 관계가 다르다. 각 경우의 수는 별도로 검산했으나 원문과 난이도 동등성 및 구조 변형 승인 여부는 미확인이다. 출판사 답안 미대조.",
-      "originalSourceReleaseStatus": "locked"
+      "releaseEvidence": "인쇄 62쪽 원문과 그림의 뒤쪽 위 양 끝점을 직접 대조하고, 모서리 1·3·5·7개 경로를 독립 열거해 합 15를 확인했다. 출판사 공식 답안은 미확인이다.",
+      "originalSourceReleaseStatus": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-1",

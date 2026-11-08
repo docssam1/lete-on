@@ -5539,10 +5539,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 그림과 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 꼭짓점으로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문 두 꼭짓점과 모서리 그림을 직접 대조하고 15개 단순 경로를 독립 열거했습니다. 출판사 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e3-exploration-original",
       "syntheticRuntimeTypeId": "5-2-u6-e3-exploration"
     },
     {
