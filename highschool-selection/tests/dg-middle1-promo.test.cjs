@@ -85,6 +85,7 @@ test("middle1 course detail offers both actual rounds and the official elementar
   assert.match(detail, />2회</);
   assert.doesNotMatch(detail, /exam=dg-pre-high1-r01/);
   assert.doesNotMatch(stage, /class="course-banner-grid"/);
+  assert.doesNotMatch(stage, /data-admission-jump/, "Do not show a jump to an absent admission section");
 });
 
 test("each chosen course opens only its own rounds while academy view stays on course selection", () => {
