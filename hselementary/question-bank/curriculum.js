@@ -4026,7 +4026,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u1-e4-mission-5-quotient-range-sum","두 몫의 어림 조건을 만족하는 수의 합","source52QuotientRangeSumMissionFive","Mission 5 유사문항"],
     ["5-2-u1-e4-mission-6-rounded-place-synthetic","반올림 자리별 가능한 수의 개수","source52RoundedCountMission6","Mission 6 유사문항"]
   ]) if (!source52RoundRange.types.some(t => t.id === id)) {
-    source52RoundRange.types.push({id,number:source52RoundRange.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:label,sourceSection:"mission",sourcePdfPage:9,sourcePrintedPage:11,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조와 다른 수치의 창작 문항을 독립 열거로 검산했습니다. 출판사 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+    source52RoundRange.types.push({id,number:source52RoundRange.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:label,sourceSection:"mission",sourcePdfPage:9,sourcePrintedPage:11,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조와 다른 수치의 창작 문항을 독립 열거로 검산했습니다. 출판사 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:id === "5-2-u1-e4-mission-6-rounded-place-synthetic" ? 4 : 3,verifiedVariantTarget:id === "5-2-u1-e4-mission-6-rounded-place-synthetic" ? 4 : 3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
   if (source52Unit1) {
     const type=source52Unit1.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u1-t3-3");

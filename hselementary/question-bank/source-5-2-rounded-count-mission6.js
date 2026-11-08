@@ -8,7 +8,7 @@
   "use strict";
   const sourceItemId = "5-2-u1-e4-mission-6-rounded-place-synthetic";
   const generatorKey = "source52RoundedCountMission6";
-  const pools = Object.freeze([4300, 6700, 9200]);
+  const pools = Object.freeze([4300, 6700, 9200, 2400]);
   const offsets = Object.freeze([-100, 0, 100]);
   const fmt = value => Number(value).toLocaleString("ko-KR");
 
