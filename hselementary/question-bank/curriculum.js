@@ -3023,7 +3023,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
     source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name:i ? `${name} · 유사문항` : `${name} · 조건변형 포함 연습`,label:i ? `${name} · 유사문항` : `${name} · 조건변형 포함 연습`,difficultyBand:0,sourceItemId:id,
       sourceItemLabel:i ? `예제 3-${i} 기반 유사문항` : "개념탐구 3 기반·꼭짓점 조건변형 포함 연습",sourceSection:i ? "example" : "exploration",sourceTier:"advanced",sourcePdfPage:58,sourcePrintedPage:62,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,
-      generatorKey:i ? `source52CountPage62Example${i}` : "source52CountPage62Exploration",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+      generatorKey:i ? `source52CountPage62Example${i}` : "source52CountPage62Exploration",generationMode:"fixed-verified-pool",verifiedVariantTarget:i===3?4:3,verifiedVariantCount:i===3?4:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
   }
 
   if (source52Count) for (const [n,name] of [[1,"자기 자리를 피하는 자리 배치"],[2,"두 주사위의 곱과 기준"],[3,"개수 제한 안에서 동전 조합하기"],[4,"B를 지나는 격자 최단 경로"],[6,"두 사람이 이웃하는 줄 세우기"]]) {
