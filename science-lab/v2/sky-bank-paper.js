@@ -1,3 +1,4 @@
+import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 import {bankAnswerText,bankPromptHtml,bankResponseTableHtml} from './bank-response-print.js?v=20261108-bank-answer-formats';
 // 밤하늘 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
 import {sourceCaption,sourceTableHtml} from './source-presentation.js';
@@ -18,9 +19,4 @@ export function skyBankPaperHtml({unit,source,similar,items,mode='student'}){
  const body=quick?`<h2>빠른 정답표</h2><p>서술형은 예시 답으로 자동 확정하지 않습니다. 자료 검토 문항은 교사 해설에서 공식 답과 조건을 비교하세요.</p><div class="sky-quick">${all.map((q,i)=>`<div data-paper-item="${esc(q.id)}"><b>${i+1}.</b> ${q.sourceRef.reviewOnly?'교사와 자료 검토':q.answerContract.type==='written-explanation'?'서술 · 교사 확인':esc(skyAnswer(q.answerContract))}</div>`).join('')}</div>`:[['원문 · 실제 출처와 번호 보존',source],['짝문항 · 독립 창작',similar],['현행 범위 보충 · 독립 창작',items]].map(([title,rows])=>`<section class="sky-section"><h2>${title}</h2>${rows.map(card).join('')}</section>`).join('');
  return `<div class="sky-bank-paper gfield-ui">${tools}<div class="sky-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="sky-paper"><header><p>GFIELD · 지필드 | 초등 과학4-2 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>원문${source.length} · 짝${similar.length} · 독립 보충${items.length} =${source.length+similar.length+items.length}문항. 원문은 옛5-1 태양계 네 세트와 옛6-1 달 관찰 발췌입니다. 원문5개는 자동 정오 판정을 보류하고 조건을 교사와 검토합니다.</p><p>표시된 옛교재 연계 확장은 현행 필수 수치 암기가 아닙니다. 문제 응답·사진·모형을 실제 밤하늘 관찰이나 제작·공유를 한 기록으로 세지 않습니다. 수업 교재나 학교 공식 시험지와 구별합니다.</p><p>태양은 제공된 사진으로 살펴봅니다. 밤하늘은 보호자와 안전한 장소에서 관찰하며, 날씨·가림 때문에 못 보거나 실행하지 못한 날도 그대로 기록합니다.</p></header>${body}</main></div>`;
 }
-export function wireSkyBankPaper(root){
- let active=true;const button=root.querySelector('[data-sky-print]'),status=root.querySelector('[data-print-status]'),imgs=[...root.querySelectorAll('img')];
- const ready=im=>im.complete?(im.naturalWidth?Promise.resolve():Promise.reject(new Error('image'))):new Promise((resolve,reject)=>{im.addEventListener('load',resolve,{once:true});im.addEventListener('error',reject,{once:true});});
- Promise.all([document.fonts.ready,...imgs.map(ready)]).then(()=>{if(active&&root.isConnected){button.disabled=false;status.textContent='그림과 글꼴이 준비되었습니다.';}}).catch(()=>{if(active&&root.isConnected)status.textContent='그림을 불러오지 못했어요. 다시 열어 주세요.';});
- const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};
-}
+export function wireSkyBankPaper(root){return wireBankPrint(root,{buttonSelector:'[data-sky-print]'});}

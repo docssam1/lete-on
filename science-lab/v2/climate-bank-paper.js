@@ -1,3 +1,4 @@
+import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 import {bankAnswerText,bankPromptHtml,bankResponseTableHtml} from './bank-response-print.js?v=20261108-bank-answer-formats';
 // 기후변화 연계 발췌 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
 import {sourceCaption,sourceTableHtml} from './source-presentation.js';
@@ -18,9 +19,4 @@ export function climateBankPaperHtml({unit,source,similar,items,mode='student'})
  const body=quick?`<h2>빠른 정답표</h2><p>서술형은 예시 답으로 자동 확정하지 않습니다. 자료 검토 문항은 교사 해설에서 공식 답과 조건을 비교하세요.</p><div class="climate-quick">${all.map((q,i)=>`<div data-paper-item="${esc(q.id)}"><b>${i+1}.</b> ${q.sourceRef.reviewOnly?'교사와 자료 검토':q.answerContract.type==='written-explanation'?'서술 · 교사 확인':esc(climateAnswer(q.answerContract))}</div>`).join('')}</div>`:[['옛단원 연계 발췌 · 실제 출처와 번호 보존',source],['짝문항 · 독립 창작',similar],['현행 범위 보충 · 독립 창작',items]].map(([title,rows])=>`<section class="climate-section"><h2>${title}</h2>${rows.map(card).join('')}</section>`).join('');
  return `<div class="climate-bank-paper gfield-ui">${tools}<div class="climate-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="climate-paper"><header><p>GFIELD · 지필드 | 초등 과학4-2 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>옛단원 연계 원문${source.length} · 독립 짝${similar.length} · 현행 보충${items.length} =${source.length+similar.length+items.length}문항. 옛6-2 에너지5개와 옛5-2 날씨1개를 실제 출처·쪽·번호와 함께 발췌했습니다. 현행 기후변화 전체 원문 시험지는 아직 확보하지 못했습니다.</p><p>현행 범위는 평년과 비교한 사례·인간 활동의 관련성 토의·생활/환경 영향·해수면 피해 모형·대응 조사와 실제 실천입니다. 과학적 발생 원인이나 대응 방법의 어려운 용어 구분을 필수로 요구하지 않습니다.</p><p>명시한 연습 수치/모형/기록은 실제 학생 결과가 아닙니다. 문제 응답·저장만으로 실제 토의·실험·실천·공유나 학교 공식 성적을 확정하지 않습니다. 위험한 현장 접근을 활동으로 요구하지 않습니다.</p></header>${body}</main></div>`;
 }
-export function wireClimateBankPaper(root){
- let active=true;const button=root.querySelector('[data-climate-print]'),status=root.querySelector('[data-print-status]'),imgs=[...root.querySelectorAll('img')];
- const ready=im=>im.complete?(im.naturalWidth?Promise.resolve():Promise.reject(new Error('image'))):new Promise((resolve,reject)=>{im.addEventListener('load',resolve,{once:true});im.addEventListener('error',reject,{once:true});});
- Promise.all([document.fonts.ready,...imgs.map(ready)]).then(()=>{if(active&&root.isConnected){button.disabled=false;status.textContent='그림과 글꼴이 준비되었습니다.';}}).catch(()=>{if(active&&root.isConnected)status.textContent='그림을 불러오지 못했어요. 다시 열어 주세요.';});
- const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};
-}
+export function wireClimateBankPaper(root){return wireBankPrint(root,{buttonSelector:'[data-climate-print]'});}

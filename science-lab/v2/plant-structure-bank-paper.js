@@ -1,6 +1,6 @@
 import{plantStructureCurrentItems}from'./plant-structure-question-language.js?v=20261104-plant-structure-class';
 // 식물의 구조와 기능 원문·독립짝·창작278문항의 동일 객체로 화면과 문항집을 연결한다.
-import {wireEnergyBankPaper as wirePlantStructureBankPaper} from './energy-bank-paper.js';
+import {wireEnergyBankPaper as wirePlantStructureBankPaper} from './energy-bank-paper.js?v=20261108-bank-print-ready';
 export {wirePlantStructureBankPaper};
 import {photoFigureHtml} from './photo-figure.js';
 import {sourceCaption,sourceChoiceHtml} from './source-presentation.js';

@@ -1,3 +1,4 @@
+import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 // 여러 가지 기체 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
 import {sourceCaption,sourceTableHtml} from './source-presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -17,9 +18,4 @@ export function gasBankPaperHtml({unit,source,similar,items,mode='student'}){
  const body=quick?`<h2>빠른 정답표</h2><p>서술형은 예시 답으로 자동 확정하지 않습니다. 자료 검토 문항은 교사 해설에서 공식 답과 조건을 비교하세요.</p><div class="gas-quick">${all.map((q,i)=>`<div data-paper-item="${esc(q.id)}"><b>${i+1}.</b> ${q.sourceRef.reviewOnly?'교사와 자료 검토':q.answerContract.type==='written-explanation'?'서술 · 교사 확인':esc(gasAnswer(q.answerContract))}</div>`).join('')}</div>`:[['원문 · 실제 출처와 번호 보존',source],['짝문항 · 독립 창작',similar],['현행 범위 보충 · 독립 창작',items]].map(([title,rows])=>`<section class="gas-section"><h2>${title}</h2>${rows.map(card).join('')}</section>`).join('');
  return `<div class="gas-bank-paper gfield-ui">${tools}<div class="gas-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="gas-paper"><header><p>GFIELD · 지필드 | 초등 과학4-2 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>원문75 · 독립 짝75 · 현행 보충96 =246문항. 원문은 옛6-1 여러 가지 기체 네 세트이며 실제 출처·쪽·번호를 보존했습니다. 원문3개는 자동 정오 판정을 보류하고 조건을 교사와 검토합니다.</p><p>옛교재의 약품 기체 발생·목욕제 반응은 연계 확장입니다. 현행 기체 무게·온도/압력과 부피·기체 종류 조사·공기 장치 제작과 구별합니다. 원문은 세트별10·20·20·25문항입니다. 짝문항은 대응하는 원문 번호를 보고 다시 풀 수 있습니다.</p><p>사진·연습 수치/기록은 실제 학생 결과가 아닙니다. 장치 작동에는 공기를 쓰고 교사와 안전한 재료/방법을 정합니다. 기체 흡입·혼자 약품/불꽃·고압/밀폐가열을 요구하지 않습니다. 문제 응답·저장을 실제 실험/제작/발표·학교 공식 성적으로 세지 않습니다.</p></header>${body}</main></div>`;
 }
-export function wireGasBankPaper(root){
- let active=true;const button=root.querySelector('[data-gas-print]'),status=root.querySelector('[data-print-status]'),imgs=[...root.querySelectorAll('img')];
- const ready=im=>im.complete?(im.naturalWidth?Promise.resolve():Promise.reject(new Error('image'))):new Promise((resolve,reject)=>{im.addEventListener('load',resolve,{once:true});im.addEventListener('error',reject,{once:true});});
- Promise.all([document.fonts.ready,...imgs.map(ready)]).then(()=>{if(active&&root.isConnected){button.disabled=false;status.textContent='그림과 글꼴이 준비되었습니다.';}}).catch(()=>{if(active&&root.isConnected)status.textContent='그림을 불러오지 못했어요. 다시 열어 주세요.';});
- const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};
-}
+export function wireGasBankPaper(root){return wireBankPrint(root,{buttonSelector:'[data-gas-print]'});}

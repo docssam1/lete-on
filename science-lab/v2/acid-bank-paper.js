@@ -1,6 +1,6 @@
 import{acidCurrentItems}from'./acid-question-language.js?v=20261104-acid-class';
 // 산과 염기 원문·짝·교재266문항의 동일 객체로 화면과 문항집을 연결한다.
-import {wireEnergyBankPaper as wireAcidBankPaper} from './energy-bank-paper.js';
+import {wireEnergyBankPaper as wireAcidBankPaper} from './energy-bank-paper.js?v=20261108-bank-print-ready';
 export {wireAcidBankPaper};
 import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 import {sourceCaption,sourceChoiceHtml} from './source-presentation.js';

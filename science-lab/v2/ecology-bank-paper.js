@@ -1,3 +1,4 @@
+import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 import {bankAnswerText,bankPromptHtml,bankResponseTableHtml} from './bank-response-print.js?v=20261108-bank-answer-formats';
 // 생물과 환경 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
 import {sourceCaption,sourceTableHtml} from './source-presentation.js';
@@ -18,9 +19,4 @@ export function ecologyBankPaperHtml({unit,source,similar,items,mode='student'})
  const body=quick?`<h2>빠른 정답표</h2><p>서술형은 예시 답으로 자동 확정하지 않습니다. 자료 검토 문항은 교사 해설에서 공식 답과 조건을 비교하세요.</p><div class="eco-quick">${all.map((q,i)=>`<div data-paper-item="${esc(q.id)}"><b>${i+1}.</b> ${q.sourceRef.reviewOnly?'교사와 자료 검토':q.answerContract.type==='written-explanation'?'서술 · 교사 확인':esc(ecologyAnswer(q.answerContract))}</div>`).join('')}</div>`:[['원문 · 실제 출처와 번호 보존',source],['짝문항 · 독립 창작',similar],['현행 범위 보충 · 독립 창작',items]].map(([title,rows])=>`<section class="eco-section"><h2>${title}</h2>${rows.map(card).join('')}</section>`).join('');
  return `<div class="eco-bank-paper gfield-ui">${tools}<div class="eco-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="eco-paper"><header><p>GFIELD · 지필드 | 초등 과학4-2 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>원문${source.length} · 독립 짝${similar.length} · 현행 보충${items.length} =${source.length+similar.length+items.length}문항. 원문은 옛5-2 생물과 환경 네 세트이며 실제 출처·쪽·번호를 보존했습니다. 원문2개는 자동 정오 판정을 보류하고 조건을 교사와 검토합니다.</p><p>옛교재의 적응·평형·비생물 조건 비교는 연계 확장으로 표시했습니다. 현행 생태계 구성·먹이그물·인간 활동과 보전 실천의 필수 범위와 구별합니다. 문제 응답을 실제 현장 조사·모형 제작·토의·실천을 한 기록으로 세지 않습니다.</p><p>사진과 제시된 연습 자료의 범위로 답합니다. 실제 보전 활동은 교사와 안전한 장소에서 계획하며 관찰·실행하지 못한 일은 그대로 기록합니다. 수업 교재·학교 공식 시험지와 구별합니다.</p></header>${body}</main></div>`;
 }
-export function wireEcologyBankPaper(root){
- let active=true;const button=root.querySelector('[data-eco-print]'),status=root.querySelector('[data-print-status]'),imgs=[...root.querySelectorAll('img')];
- const ready=im=>im.complete?(im.naturalWidth?Promise.resolve():Promise.reject(new Error('image'))):new Promise((resolve,reject)=>{im.addEventListener('load',resolve,{once:true});im.addEventListener('error',reject,{once:true});});
- Promise.all([document.fonts.ready,...imgs.map(ready)]).then(()=>{if(active&&root.isConnected){button.disabled=false;status.textContent='그림과 글꼴이 준비되었습니다.';}}).catch(()=>{if(active&&root.isConnected)status.textContent='그림을 불러오지 못했어요. 다시 열어 주세요.';});
- const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};
-}
+export function wireEcologyBankPaper(root){return wireBankPrint(root,{buttonSelector:'[data-eco-print]'});}
