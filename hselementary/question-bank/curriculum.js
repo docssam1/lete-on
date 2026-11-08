@@ -2983,7 +2983,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52AverageApplication) {
     const id="5-2-u6-e2-passfail-mean-synthetic", name="합격·불합격 두 집단의 평균 · 연습";
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(subunit=>subunit.types.map(type=>Number(type.typeNumber)||0)))+1;
-    source52AverageApplication.types.push({id,number:source52AverageApplication.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"예제 2-3·Mission 4 구조 연습",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:56,sourcePrintedPage:60,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52PassFailAverageSynthetic",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 선발 기준 확인 전 잠금이며, 평균의 높은 쪽을 명시한 별도 연습을 독립 검산했습니다."});
+    source52AverageApplication.types.push({id,number:source52AverageApplication.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"예제 2-3·Mission 4 구조 연습",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:56,sourcePrintedPage:60,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52PassFailAverageSynthetic",generationMode:"fixed-verified-pool",verifiedVariantTarget:4,verifiedVariantCount:4,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 선발 기준 확인 전 잠금이며, 평균의 높은 쪽을 명시한 별도 연습을 독립 검산했습니다."});
   }
 
   const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
