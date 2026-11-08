@@ -1,5 +1,13 @@
 # 과학 탐구 랩: GPT 인수인계서 (2026-09-22부터 1주일)
 
+## §386 · 2026-11-08 · 네 단원 비공개 원문214개·그림69개의 연결 준비 묶음
+
+- §385 로컬cdadf5c7 / 검토f4b963bb 다음이다. 지구의 운동39·계절68·연소49·전기58개의 앞서 준비한 current-core 발췌를 현재 코드로 재검사했다. 각 기존 validator를 복사해 결과 저장 위치와 지구 validator의 상대 helper import만 새 QA 위치에 맞췄고 입력/채점/원문 보존 판정은 바꾸지 않았다. 네 검사 모두 통과, 채점3,582경우·저장 답안1,293경우이며 자동185개/교사 확인29개를 구별한다. 이 수는 전체 제품 검사 수에 더하지 않는다.
+- 원래 candidate JSON4개·source module4개를 byte 그대로 복사하고 그림69개를 SHA/PNG 크기와 맞춰 로컬 비공개 ZIP으로 묶었다. manifest에는 runtimeTarget→packagePath 상대 경로 연결을 두며 원고에 남은 준비 당시 privatePath를 다른 컴퓨터의 필수 경로로 사용하지 않는다. 기존/이전 버전의 그림 참조69개도 모두 이 연결에 있다. 기존 텍스트/보기/자료/공식 답/풀이/보류·계약과 privateOnly/미등록/releaseReady false를 그대로 보존했다. 원본 PDF나 원시 OCR 파일을 ZIP에 추가하지 않았다.
+- 묶음은84파일/13,073,309bytes이며 원래 폴더와 별도 relocation-check에 실제로 풀어 같은 독립 Python verifier를 통과했다. 원래 비공개 입력77개 SHA도 끝에 다시 확인했다. 파일/ZIP 권한은0600이다. ZIP SHA256:2da49f8392e2680083bfdcb881d93524bd1f5bbb7812db485e9e6f5dec74cea4. 실제 자료는 QA phase386/private-source-review-package와 science-private-source-review-4units-214items.zip에만 있으며 Git에는 수치·해시·검수 metadata만 넣는다.
+- 제품 코드/원고/그림/장면은 바꾸지 않아 전체 제품 검사는 재실행하지 않았다. 직전 §385 전체270파일1,449검사는1,447통과/실패0/브라우저2skip다. 원문 등록은 아직23단원1,512개이며 미연결9단원/이번 추가0이다. 네 단원의 전체 현행 판본 원문 확보를 뜻하지 않는다. 실제 화면/A4·음성/WebGL·3D와 안전한 비공개 원문 등록 경로가 남는다. QA: science-question-review/phase386/; 공개 metadata: private-source-package-review-20261108.json. 기존 인수인계/메인·다른 AI/output/을 보존한다. 새 유료 AI API·키체인·Drive 쓰기·정리·메인 병합·배포는 없으며 전체 목표는 active다.
+
+
 ## §385 · 2026-11-08 · 최신 메인 af4a5f50의 관찰·보고서 변경을 검토본에 합치기
 
 - §384 로컬bd57cf67 / 검토148cc171 다음이다. GitHub 응답의 base_sha는 이전5d9e37be였지만 실제 origin/main은af4a5f50이었다. 새 메인을 fetch해 실제 merge-tree를 실행하니 science-lab/index.html 한 곳의 충돌로 exit1이었다. 메인의 report.css?v=22와 검토본의 binder.css/binder-unit.css를 모두 남기고, 검토본 index의 보고서 CSS 버전21→22 한 곳만 고쳐 해결했다. 기존 서류철 제목·설명·app 진입은 그대로다.
