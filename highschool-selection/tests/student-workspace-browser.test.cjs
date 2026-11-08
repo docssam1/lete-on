@@ -78,3 +78,37 @@ test('mobile starts large and positional buttons preserve reading, marks and who
   await ox(page,390);await page.locator('[name="ox-1"][value="X"]').check({force:true});await paper(page,390);assert.equal(await page.locator('#page-zoom').inputValue(),'200');await page.locator('#pan-right').click();await ox(page,390);assert.equal(await page.locator('[name="ox-1"][value="X"]').isChecked(),true);assert.deepEqual(errors,[]);
  }finally{await page.close();}
 });
+
+test('selected entry context is public metadata and pending courses are compact',async()=>{
+ const {page,errors}=await open(390,844);try{
+  await page.goto(base+'promo/#academy=DP');assert.equal(await page.locator('.course-banner.is-ready:visible').count(),1);assert.equal(await page.locator('.is-preparing:visible').count(),0);await page.locator('.preparing-courses summary').click();assert.equal(await page.locator('.is-preparing:visible').count(),6);
+  await page.locator('.is-ready').click();await page.locator('#selected-course-title').waitFor();await page.evaluate(()=>document.fonts.ready);await shot(page,'compact-rounds-390');const firstRoundY=(await page.locator('.round-card').first().boundingBox()).y;assert(firstRoundY<420,'first round begins at '+firstRoundY);await page.locator('.round-card').first().click();await page.locator('#entry-selection:not([hidden])').waitFor();assert.match(await page.locator('#entry-exam-title').innerText(),/돌파/);assert.match(await page.locator('#entry-exam-spec').innerText(),/150분/);assert.equal(await page.locator('#entry-course-back').getAttribute('href'),'./promo/#academy=DP&course=common1-basic');await shot(page,'selected-login-390');
+  await page.locator('#entry-course-back').click();assert.equal(await page.locator('.round-card').count(),2);await page.goto(base+'login.html?exam=unknown');assert.equal(await page.locator('#entry-selection').isVisible(),false);assert.deepEqual(errors,[]);
+ }finally{await page.close();}
+});
+for(const width of [1440,390,320])test(`back, reload, exact reading position and O/X drafts at ${width}`,async()=>{
+ const {page,api,errors}=await open(width,900,{compact:true});try{
+  await login(page);await page.locator('#next-page').click();await page.locator('#page-zoom').selectOption('300');await page.locator('#pan-right').click();await page.locator('#paper-viewport').evaluate(e=>e.scrollTop=140);await ox(page,width);await page.locator('[name="ox-1"][value="O"]').check({force:true});await paper(page,width);
+  await page.locator('#view-answers').click();await page.waitForFunction(()=>document.getElementById('view-answers').getAttribute('aria-pressed')==='true');await page.locator('#next-page').click();await page.locator('#paper-viewport').evaluate(e=>e.scrollTop=90);
+  await page.locator('#view-paper').click();await page.waitForFunction(()=>document.getElementById('view-paper').getAttribute('aria-pressed')==='true');assert.equal(await page.locator('#page-position').innerText(),'2 / 3쪽');assert.equal(await page.locator('#page-zoom').inputValue(),'300');assert.equal(await page.locator('#paper-viewport').evaluate(e=>e.scrollTop),140);assert.equal(await page.locator('#pan-right').getAttribute('aria-pressed'),'true');
+  await page.goBack();await page.locator('#library-view:not([hidden])').waitFor();await page.goForward();await page.locator('#exam-view:not([hidden])').waitFor();await page.waitForFunction(()=>document.getElementById('print-paper').disabled===false);assert.equal(await page.locator('#page-position').innerText(),'2 / 3쪽');await ox(page,width);assert.equal(await page.locator('[name="ox-1"][value="O"]').isChecked(),true);await paper(page,width);
+  await page.reload();await page.locator('#exam-view:not([hidden])').waitFor();await page.waitForFunction(()=>document.getElementById('print-paper').disabled===false);assert.equal(await page.locator('#page-position').innerText(),'2 / 3쪽');assert.equal(await page.locator('#page-zoom').inputValue(),'300');await ox(page,width);assert.equal(await page.locator('[name="ox-1"][value="O"]').isChecked(),true);
+  await page.locator('#submit-responses').click();await page.locator('#confirm-save').click();await page.locator('#saved-result-status:not([hidden])').waitFor();assert.equal(api.submissions.length,1);await page.goBack();await page.locator('#exam-view:not([hidden])').waitFor();await page.goForward();await page.locator('#report-view:not([hidden])').waitFor();assert.equal(api.submissions.length,1);await page.reload();await page.locator('#report-view:not([hidden])').waitFor();assert.equal(api.submissions.length,1);assert.deepEqual(errors,[]);
+ }finally{await page.close();}
+});
+test('save is single-flight and late reply cannot interrupt a different view',async()=>{
+ const {page,api}=await open(390,844,{compact:true});try{
+  await login(page);await ox(page,390);await page.locator('[name="ox-1"][value="X"]').check({force:true});api.submitDelay=300;await page.locator('#submit-responses').click();await page.locator('#confirm-save').click();assert.equal(await page.locator('[name="ox-1"]').first().isDisabled(),true);await page.keyboard.press('Escape');await page.locator('#back-library').click();await page.locator('#library-view:not([hidden])').waitFor();await page.waitForTimeout(450);assert.equal(await page.locator('#library-view').isVisible(),true);assert.equal(api.submissions.length,1);assert.equal(await page.locator('[data-result]').count(),1);
+ }finally{await page.close();}
+});
+
+test('all academy courses keep actual round links and readable layouts at four widths',async()=>{
+ require('../data/academy-engagement.js');const programs=globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;const nav=require('../promo/course-navigation.js');
+ for(const width of [1440,768,390,320]){const {page,errors}=await open(width,900);try{
+  for(const program of programs){for(const course of nav.coursesFor(program,editions).filter(c=>c.exams.length)){
+   await page.goto(base+'promo/#academy='+program.code+'&course='+course.id);await page.waitForFunction(label=>document.getElementById('selected-course-title')?.textContent===label,course.label);await page.evaluate(()=>document.fonts.ready);
+   assert.equal(await page.locator('.round-card').count(),course.exams.length);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,program.code+' '+width);const links=await page.locator('.round-card').evaluateAll(nodes=>nodes.map(n=>new URL(n.href).searchParams.get('exam')));assert.deepEqual(links,course.exams.map(e=>e.id));
+   if(width===320&&program.code==='WM')await shot(page,'wonmath-long-time-320');
+  }}assert.deepEqual(errors,[]);
+ }finally{await page.close();}}
+});
