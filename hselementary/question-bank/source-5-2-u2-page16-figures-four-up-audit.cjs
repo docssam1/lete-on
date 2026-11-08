@@ -7,7 +7,8 @@ const diagramIds = ['5-2-u2-e2-example-2-synthetic', '5-2-u2-e2-example-4-synthe
   const browser = await chromium.launch();
   try {
     for (const level of [-1, 0, 1]) for (const variant of [0, 1, 2]) {
-      const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, serviceWorkers: 'block' });
+      const width = level === -1 ? 320 : level === 0 ? 375 : 1440;
+      const page = await browser.newPage({ viewport: { width, height: 1100 }, serviceWorkers: 'block' });
       await page.goto(`${origin}/hselementary/question-bank/`, { waitUntil: 'networkidle' });
       await page.locator('#gradeFilter [data-grade="5"]').click();
       await page.locator('#termFilter [data-term="2"]').click();
@@ -24,11 +25,13 @@ const diagramIds = ['5-2-u2-e2-example-2-synthetic', '5-2-u2-e2-example-4-synthe
       }, { diagramIds, variant });
       await page.locator('#generateButton').click();
       await page.waitForFunction(() => !document.querySelector('#worksheet').hidden);
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `horizontal overflow at ${width}px`);
       assert.equal(await page.locator('#problemView .question-item').count(), 4);
       assert.doesNotMatch(await page.locator('#problemView').innerText(), /도움말|힌트/);
       await page.locator('#printMenuButton').click();
       await page.locator('[data-print-mode="problem"]').click();
       await page.emulateMedia({ media: 'print' });
+      await page.setViewportSize({ width: 794, height: 1123 });
       for (const id of diagramIds) {
         const question = page.locator(`#problemView [data-source-item-id="${id}"]`).first();
         const svg = question.locator('svg');
@@ -45,6 +48,14 @@ const diagramIds = ['5-2-u2-e2-example-2-synthetic', '5-2-u2-e2-example-4-synthe
           return { width: view.width, height: view.height, labels, squares: el.querySelectorAll('.source52-p16e24-square').length };
         });
         if (id === diagramIds[0]) {
+          const clipped = await svg.evaluate(el => {
+            const viewport = el.getBoundingClientRect();
+            return [...el.querySelectorAll('text')].filter(text => {
+              const box = text.getBoundingClientRect();
+              return box.width && box.height && (box.left < viewport.left - 0.5 || box.right > viewport.right + 0.5 || box.top < viewport.top - 0.5 || box.bottom > viewport.bottom + 0.5);
+            }).map(text => text.textContent);
+          });
+          assert.deepEqual(clipped, [], `variant ${variant} level ${level}: clipped dimension labels`);
           assert.deepEqual(geometry.labels.map(x => x.text), ['㉮', '㉯']);
           assert(geometry.labels.every(x => x.x >= 0 && x.y >= 0 && x.right <= geometry.width && x.bottom <= geometry.height));
         } else assert.equal(geometry.squares, 6);
