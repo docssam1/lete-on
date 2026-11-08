@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-56-marbles-similar")) {
+    const id="5-2-u2-practice-56-marbles-similar",name="세 사람이 나눈 구슬과 남은 개수 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-56-original",sourceItemLabel:"확인학습 56번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:77,alternateSourcePdfPage:76,sourcePrintedPage:81,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P81Q56MarblesSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"세 사람이 전체의 분수보다 정해진 개수만큼 덜거나 더 가진 원문 구조를 유지하고 각 인원과 남은 구슬을 대입 검산했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-55-candy-similar")) {
     const id="5-2-u2-practice-55-candy-similar",name="사탕을 네 차례 나누거나 먹고 남은 양 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
