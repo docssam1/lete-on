@@ -2945,13 +2945,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   if (source52AverageApplication) {
     for (const [ordinal, name, generatorKey] of [
-      [1, "사람 수에 따른 일하는 날짜 구하기", "source52AverageOriginalPage61Mission1"],
-      [2, "평균 변화로 가장 큰 수 구하기", "source52AverageOriginalPage61Mission2"]
+      [1, "사람 수에 따른 일하는 날짜 구하기 · 유사문항", "source52AverageOriginalPage61Mission1"],
+      [2, "평균 변화로 가장 큰 수 구하기 · 유사문항", "source52AverageOriginalPage61Mission2"]
     ]) {
       const id = `5-2-u6-e2-mission-${ordinal}`;
       const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
       source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
-        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal} 유사문항`, sourceSection:"mission", sourceTier:"advanced",
         sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
         generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
         answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
@@ -2959,21 +2959,21 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52AverageApplication) {
-    const id = "5-2-u6-e2-mission-3", name = "시험 점수 변화와 평균 구하기";
+    const id = "5-2-u6-e2-mission-3", name = "시험 점수 변화와 평균 구하기 · 유사문항";
     const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
     source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
-      difficultyBand:0, sourceItemId:id, sourceItemLabel:"Mission 3", sourceSection:"mission", sourceTier:"advanced",
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"Mission 3 유사문항", sourceSection:"mission", sourceTier:"advanced",
       sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
       generatorKey:"source52AverageOriginalPage61Mission3", generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
       answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
   }
 
   if (source52AverageApplication) {
-    for (const [n,name] of [[5,"여덟 명의 점수와 평균"],[6,"점수별 학생 수와 맞힌 문제"]]) {
+    for (const [n,name] of [[5,"여덟 명의 점수와 평균 · 유사문항"],[6,"점수별 학생 수와 맞힌 문제 · 유사문항"]]) {
       const id = `5-2-u6-e2-mission-${n}`;
       const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
       source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
-        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${n}`, sourceSection:"mission", sourceTier:"advanced",
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${n} 유사문항`, sourceSection:"mission", sourceTier:"advanced",
         sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
         generatorKey:`source52AverageOriginalPage61Mission${n}`, generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
         answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
