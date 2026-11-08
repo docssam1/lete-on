@@ -1,0 +1,334 @@
+{
+  "phase": 380,
+  "date": "2026-11-08",
+  "candidateBaseline": "65f9f22307c240ee4d83f23aa84595f5c0e3b6b2",
+  "reviewParent": "f24dc3bc10df926cd366d218f473e26c89a21f9d",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "problem": "수업 어댑터가 오래된 별도 textbook URL을 사용해 최신 학생 안내/대체 글 변환을 빠뜨릴 수 있었다.",
+  "change": "수업과 앱이 같은 현재 교재 URL을 공유하고 수업 모듈 및 앱 진입 URL도 갱신한다.",
+  "reproduction": {
+    "engine": "native Node VM modules",
+    "actualOldTextbookSourceCommit": "00864c5f8b6a8a30c71d9c835b26cc2bbf319d65",
+    "oldCachedTextbookUrl": "./revised-textbook.js?v=20261108-ecology-elementary",
+    "unitsChecked": 32,
+    "beforeCachedUrlReads": 1,
+    "beforeDifferentWorkbookUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "s31-u01",
+      "s31-u02",
+      "s31-u03",
+      "c22-s32-u04",
+      "s41-u02",
+      "s41-u03",
+      "c22-s42-u03",
+      "c22-s61-u01",
+      "c22-s61-u02",
+      "c22-s61-u03"
+    ],
+    "afterCachedUrlReads": 0,
+    "afterDifferentWorkbookUnits": [],
+    "currentWorkbookFilesUsedDuringReproduction": true,
+    "actualBrowserCacheObserved": false
+  },
+  "regressionTest": {
+    "file": "science-lab/v2/classroom-textbook-cache.test.mjs",
+    "covers": [
+      "previous textbook and classroom URL caches",
+      "all32 current workbooks and classroom questions",
+      "current textbook shared between app and classroom",
+      "already prepared book reuse",
+      "original book input preservation",
+      "unsupported unit identity"
+    ]
+  },
+  "validation": {
+    "phase": 380,
+    "date": "2026-11-08",
+    "baseline": "65f9f22307c240ee4d83f23aa84595f5c0e3b6b2",
+    "workbooks": 32,
+    "questionCount": 3080,
+    "workbooksChapterPlanQuestionsArtUnchanged": true,
+    "currentClassroomDecksChecked": 64,
+    "currentClassroomSlidesChecked": 3048,
+    "allCurrentSlidesUnchanged": true,
+    "currentClassroomWebViewsChecked": 64,
+    "currentWebHtmlBytes": 16982912,
+    "allCurrentWebHtmlUnchanged": true,
+    "originalBookInputsUnchanged": true,
+    "activityAdaptersUnchanged": true,
+    "actualBrowserUsed": false,
+    "units": [
+      {
+        "unit": "c22-s62-u04",
+        "selectedClassroomChecks": 128,
+        "workbookSha": "fa8467b7d9c8e6d705deaac25d9f3f6801e78d296c6d234d094229264a65afae",
+        "selfSlides": 58,
+        "teacherSlides": 59
+      },
+      {
+        "unit": "c22-s62-u03",
+        "selectedClassroomChecks": 186,
+        "workbookSha": "38017cd2da77dfa6c0bfe68bdaf976abcda4e2e2ea8dda959e00a2b126b9237a",
+        "selfSlides": 58,
+        "teacherSlides": 59
+      },
+      {
+        "unit": "c22-s62-u02",
+        "selectedClassroomChecks": 198,
+        "workbookSha": "1a8185b6bd42d00f303e22422f3c38e26d026bfa4ed5730f392e49588a29a971",
+        "selfSlides": 55,
+        "teacherSlides": 56
+      },
+      {
+        "unit": "c22-s62-u01",
+        "selectedClassroomChecks": 198,
+        "workbookSha": "b216f9b0fb05044bfbaa7b59ca3f913610016299235ea85fb0024cf9f37e2a34",
+        "selfSlides": 56,
+        "teacherSlides": 57
+      },
+      {
+        "unit": "c22-s32-u01",
+        "selectedClassroomChecks": 12,
+        "workbookSha": "671b85f4fd3d1e093d3d6261e9161f58b0681d6fad21bb7bc7f5c451658989a9",
+        "selfSlides": 31,
+        "teacherSlides": 32
+      },
+      {
+        "unit": "c22-s32-u02",
+        "selectedClassroomChecks": 12,
+        "workbookSha": "9593bb620b62cd163d2e18319bf712642ce8cf294259c976b4463cf8a471271f",
+        "selfSlides": 33,
+        "teacherSlides": 34
+      },
+      {
+        "unit": "s41-u01",
+        "selectedClassroomChecks": 26,
+        "workbookSha": "2f9728927b6389b97b7e858a6ea7b1748407ed2b996af934d5ea26da87bd65e2",
+        "selfSlides": 51,
+        "teacherSlides": 52
+      },
+      {
+        "unit": "c22-s42-u01",
+        "selectedClassroomChecks": 12,
+        "workbookSha": "dbcf6aa0428296089f76a84b4fcd8c189aaabb55d55a8685b1b91b71ecab524d",
+        "selfSlides": 34,
+        "teacherSlides": 35
+      },
+      {
+        "unit": "c22-s51-u03",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "64cba4eca77ed1d2a995ab3f3801e340aca9769f09a0b588a3184182b4ea8316",
+        "selfSlides": 41,
+        "teacherSlides": 42
+      },
+      {
+        "unit": "s31-u01",
+        "selectedClassroomChecks": 11,
+        "workbookSha": "fac57d06a17f3fec5a6ef075ffd38d4abab9ba6c6b41d61784a5011d83ef24f8",
+        "selfSlides": 26,
+        "teacherSlides": 27
+      },
+      {
+        "unit": "s31-u02",
+        "selectedClassroomChecks": 11,
+        "workbookSha": "27bf691939b965e968317b35b35c27c6e09ac5b0edea2170fe27c3983c043d81",
+        "selfSlides": 27,
+        "teacherSlides": 28
+      },
+      {
+        "unit": "s31-u03",
+        "selectedClassroomChecks": 11,
+        "workbookSha": "e49847012f5c2e99b022a64445d5e967ff0d64c8fa6c8e30de335603e721b58e",
+        "selfSlides": 27,
+        "teacherSlides": 28
+      },
+      {
+        "unit": "s31-u04",
+        "selectedClassroomChecks": 11,
+        "workbookSha": "86b4f87fcdcfd9f06b9a079a1e2753492d2d93eabdb65e337f228ebcb54a8132",
+        "selfSlides": 27,
+        "teacherSlides": 28
+      },
+      {
+        "unit": "c22-s42-u02",
+        "selectedClassroomChecks": 12,
+        "workbookSha": "66ded18a151b0eab94a1aefb43127be991618968d6358fddd1fe5a1b47a3534f",
+        "selfSlides": 37,
+        "teacherSlides": 38
+      },
+      {
+        "unit": "c22-s32-u03",
+        "selectedClassroomChecks": 12,
+        "workbookSha": "1b35b31e77319268a170f9cab6426da10807b11937982238b783254b7d96ccfa",
+        "selfSlides": 31,
+        "teacherSlides": 32
+      },
+      {
+        "unit": "c22-s32-u04",
+        "selectedClassroomChecks": 12,
+        "workbookSha": "68a331c6acb848a5f874a6f8c62e159d01bb9c795869f85d66a4930ee3468dfc",
+        "selfSlides": 31,
+        "teacherSlides": 32
+      },
+      {
+        "unit": "c22-s42-u04",
+        "selectedClassroomChecks": 12,
+        "workbookSha": "cb866f9c42cde695a1b83b151412523bb45532bff1a76bfad805cb9315ab368c",
+        "selfSlides": 32,
+        "teacherSlides": 33
+      },
+      {
+        "unit": "s41-u02",
+        "selectedClassroomChecks": 26,
+        "workbookSha": "76f3b3f6a7121dc4da28774517437e40b57d74cc38c4f10959d6d44f4aff56f4",
+        "selfSlides": 54,
+        "teacherSlides": 55
+      },
+      {
+        "unit": "s41-u03",
+        "selectedClassroomChecks": 25,
+        "workbookSha": "cbdf6ef915efc7609370e1e0e268ae7e582ee8fccf99b09c4042d432a1b0c2ba",
+        "selfSlides": 53,
+        "teacherSlides": 54
+      },
+      {
+        "unit": "s41-u04",
+        "selectedClassroomChecks": 25,
+        "workbookSha": "cb3a94f8fae4e5b09a30871d3c03654a6920842e31671a4b1b8643dbfb333dea",
+        "selfSlides": 53,
+        "teacherSlides": 54
+      },
+      {
+        "unit": "c22-s42-u03",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "18420b506cb6ce7ecd32259b97e99a54e9b41d070596f5f78ffdf6039a8fb348",
+        "selfSlides": 47,
+        "teacherSlides": 48
+      },
+      {
+        "unit": "c22-s51-u01",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "a12b93d113f577e7ac3856492fd486b90dfd1dfc95678f2a543c539c87930eec",
+        "selfSlides": 51,
+        "teacherSlides": 52
+      },
+      {
+        "unit": "c22-s51-u02",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "386bc6a0ff98c0e6b297ff061495981b3f69a5122f0639b04fbf64604eb745eb",
+        "selfSlides": 52,
+        "teacherSlides": 53
+      },
+      {
+        "unit": "c22-s51-u04",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "017804faa3bb893c3feaf412ecb666833076cdd9b9669ea1c51096dfa500884d",
+        "selfSlides": 60,
+        "teacherSlides": 61
+      },
+      {
+        "unit": "c22-s52-u01",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "063fabebb641e40d617bbc44a8cd02260386645a4cae8fdb45e3a06279fc0a66",
+        "selfSlides": 57,
+        "teacherSlides": 58
+      },
+      {
+        "unit": "c22-s52-u02",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "098133ff53bb98caba4d2f39ee973d6ef12fb0501ab8b04b62507d6d3270c992",
+        "selfSlides": 60,
+        "teacherSlides": 61
+      },
+      {
+        "unit": "c22-s52-u03",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "a87cf1f03b33735c43508fef9f1b5a804b471381aaaf738f4a654cbfbc395b68",
+        "selfSlides": 59,
+        "teacherSlides": 60
+      },
+      {
+        "unit": "c22-s52-u04",
+        "selectedClassroomChecks": 16,
+        "workbookSha": "d707dffc0e71ab7d49d1392e75acdacd7f309982b28221998256aaabf3ffbcf8",
+        "selfSlides": 61,
+        "teacherSlides": 62
+      },
+      {
+        "unit": "c22-s61-u01",
+        "selectedClassroomChecks": 128,
+        "workbookSha": "c7dd49b0376b1ab5e2664d0541c293a2bd585eeb02f610ba4dcd64cb288d1eac",
+        "selfSlides": 65,
+        "teacherSlides": 66
+      },
+      {
+        "unit": "c22-s61-u02",
+        "selectedClassroomChecks": 128,
+        "workbookSha": "29899e4c2ae1e62471b9fb6ee4ff9dec07a7be1f3a3f6ccf17e036c1962ad24a",
+        "selfSlides": 65,
+        "teacherSlides": 66
+      },
+      {
+        "unit": "c22-s61-u03",
+        "selectedClassroomChecks": 128,
+        "workbookSha": "ae9e385d66da834505ea39bd051b4262eecda938e8c195bc60e965ace8811e5d",
+        "selfSlides": 62,
+        "teacherSlides": 63
+      },
+      {
+        "unit": "c22-s61-u04",
+        "selectedClassroomChecks": 167,
+        "workbookSha": "8916f40c0fe32ef747f35ba0495db2a01ded57035eb784129e7f0ec4d6b818cb",
+        "selfSlides": 54,
+        "teacherSlides": 55
+      }
+    ]
+  },
+  "nativeTests": {
+    "initialSuite": {
+      "exitCode": 1,
+      "files": 270,
+      "tests": 1449,
+      "suites": 0,
+      "pass": 1446,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "resolvedInitialFailure": "6학년 개인 정리 비교가 이전 자동계단 대체 글을 기대했다. 기존 문항/정리 보존 검사는 유지하고 현재 대체 글 변환을 이전/현재/복원 비교에 모두 명시했다.",
+    "finalSuite": {
+      "exitCode": 0,
+      "files": 270,
+      "tests": 1449,
+      "suites": 0,
+      "pass": 1447,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "browserEnvironmentUnset": true,
+    "relatedInitialFiles": 5,
+    "relatedInitialTestsPassed": 17,
+    "relatedRecheckFiles": 2,
+    "relatedRecheckTestsPassed": 4,
+    "syntaxFiles": 4
+  },
+  "preservation": {
+    "workbookAndBankDataSourceFilesUnchanged": true,
+    "allPictureAssetsUnchanged": true,
+    "questionContractsAndPreviousVersionsUnchanged": true,
+    "studentStorageAndReportsUnchanged": true,
+    "freshStateClassroomDecksAndWebMarkupUnchanged": true
+  },
+  "actualBrowserUsed": false,
+  "actualA4VisualInspection": false,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}
