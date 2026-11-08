@@ -6,6 +6,7 @@ const m=q.prompt.match(/M100 30 L([\d.]+) ([\d.]+) L([\d.]+) ([\d.]+) Z M([\d.]+
 const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),area=(a,b,c)=>Math.abs((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]))/2;
 for(const [x,y] of [[dist(G,N),dist(G,R)],[dist(N,D),dist(R,M)],[dist(D,G),dist(M,G)]])assert(Math.abs(x-y)<0.002);
 const shaded=area(G,M,D)+area(B,D,R),other=area(G,N,B);assert(Math.abs(shaded-other)<0.05);assert(Math.abs(shaded*(20/dist(G,N))**2-80)<0.002);
+const footPath=q.prompt.match(/M([\d.]+) ([\d.]+) L([\d.]+) ([\d.]+) M100 30 L[\d.]+ [\d.]+" fill="none" stroke="#191511" stroke-width="1.3" stroke-dasharray="4 3"/);assert(footPath,'height marker must be present');const F=footPath.slice(1,3).map(Number),heightEnd=footPath.slice(3,5).map(Number);assert(dist(heightEnd,B)<0.002);const edge=[N[0]-G[0],N[1]-G[1]],height=[B[0]-F[0],B[1]-F[1]];assert(Math.abs((F[0]-G[0])*edge[1]-(F[1]-G[1])*edge[0])<0.01,'height foot must lie on side ㄱㄴ');assert(Math.abs(height[0]*edge[0]+height[1]*edge[1])<0.01,'height must be perpendicular to ㄱㄴ');assert(Math.abs(dist(F,B)/dist(G,N)-8/20)<0.0001,'height must match 8cm relative to side 20cm');
 const origin=process.env.HSE_AUDIT_ORIGIN||'http://127.0.0.1:8932';
 (async()=>{const browser=await chromium.launch({headless:true});try{for(const width of [1280,375]){
  const context=await browser.newContext({viewport:{width,height:1000},serviceWorkers:'block'});await context.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());await context.addInitScript(()=>{window.print=()=>{};});
