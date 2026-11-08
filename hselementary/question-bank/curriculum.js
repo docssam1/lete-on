@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-35-midpoint-similar")) {
+    const id="5-2-u2-practice-35-midpoint-similar",name="가운데점을 두 번 이은 정사각형의 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-35-original",sourceItemLabel:"확인학습 35번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:75,alternateSourcePdfPage:74,sourcePrintedPage:79,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P79Q35MidpointSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 두 번 가운데점 잇기와 중앙 색칠 구조를 유지한 치수 변형 4개를 독립 검산했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-25-inequality-similar")) {
     const id="5-2-u2-practice-25-inequality-similar",name="분수 곱 부등식을 만족하는 자연수 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
