@@ -1,3 +1,4 @@
+import {withLifeElementaryWorkbook} from './s31-u04.elementary.js?v=20261108-life-elementary';
 import{withLifeLearnerExplanations}from'./learner-explanations.js?v=20261105-force-life-learner-reasoning';
 import{withObservationLanguage}from'./observation-language.js';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
@@ -5189,4 +5190,5 @@ const baseWorkbook = {
 
 export const observationPriorWorkbook=withStudentOpeningLanguage(baseWorkbook);
 export const lifeExplanationPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
-export const workbook=withLifeLearnerExplanations(lifeExplanationPriorWorkbook);
+export const lifeElementaryPriorWorkbook=withLifeLearnerExplanations(lifeExplanationPriorWorkbook);
+export const workbook=withLifeElementaryWorkbook(lifeElementaryPriorWorkbook);

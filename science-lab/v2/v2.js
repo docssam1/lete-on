@@ -1,8 +1,8 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261108-source-schema';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261105-history-review';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-grade3-living-directions';
-import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261108-lesson-reference-data';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-life-elementary';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261108-life-elementary';
 import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
@@ -61,7 +61,7 @@ const UNITS = {
   's31-u03': async () => ({ ...(await import('../data/units/s31-u03.js')), ...(await import('../data/units/s31-u03.lesson.js')), ...(await import('../data/units/s31-u03.similar.js')), ...(await import('../data/units/s31-u03.source.js')), ...(await import('../data/units/s31-u03.taxonomy.js')), misc: await import('../data/units/s31-u03.misc.js') }),
   's31-u02': async () => ({ ...(await import('../data/units/s31-u02.js')), ...(await import('../data/units/s31-u02.lesson.js')), ...(await import('../data/units/s31-u02.similar.js')), ...(await import('../data/units/s31-u02.source.js')), ...(await import('../data/units/s31-u02.taxonomy.js')), misc: await import('../data/units/s31-u02.misc.js') }),
   's31-u01': async () => ({ ...(await import('../data/units/s31-u01.js')), ...(await import('../data/units/s31-u01.lesson.js')), ...(await import('../data/units/s31-u01.similar.js')), ...(await import('../data/units/s31-u01.source.js')), ...(await import('../data/units/s31-u01.taxonomy.js')), misc: await import('../data/units/s31-u01.misc.js') }),
-  's31-u04': async () => ({ ...(await import('../data/units/s31-u04.js')), ...(await import('../data/units/s31-u04.lesson.js')), ...(await import('../data/units/s31-u04.similar.js')), ...(await import('../data/units/s31-u04.source.js')), ...(await import('../data/units/s31-u04.taxonomy.js')), misc: await import('../data/units/s31-u04.misc.js') }),
+  's31-u04': async()=>{const mod={ ...(await import('../data/units/s31-u04.js')), ...(await import('../data/units/s31-u04.lesson.js')), ...(await import('../data/units/s31-u04.similar.js')), ...(await import('../data/units/s31-u04.source.js')), ...(await import('../data/units/s31-u04.taxonomy.js')), misc: await import('../data/units/s31-u04.misc.js') };return {...mod,items:(await import('../data/book/s31-u04.elementary.js?v=20261108-life-elementary')).lifeElementaryCurrentItems(mod.items,'s31-u04')};},
   's42-u04': async () => ({ ...(await import('../data/units/s42-u04.js')), ...(await import('../data/units/s42-u04.lesson.js')), ...(await import('../data/units/s42-u04.similar.js')), ...(await import('../data/units/s42-u04.source.js')), ...(await import('../data/units/s42-u04.taxonomy.js')), misc: await import('../data/units/s42-u04.misc.js') }),
   's42-u05': async () => ({ ...(await import('../data/units/s42-u05.js')), ...(await import('../data/units/s42-u05.lesson.js')), ...(await import('../data/units/s42-u05.similar.js')), ...(await import('../data/units/s42-u05.source.js')), ...(await import('../data/units/s42-u05.taxonomy.js')), misc: await import('../data/units/s42-u05.misc.js') }),
   's51-u01': async () => ({ ...(await import('../data/units/s51-u01.js')), ...(await import('../data/units/s51-u01.lesson.js')), ...(await import('../data/units/s51-u01.similar.js')), ...(await import('../data/units/s51-u01.source.js')), ...(await import('../data/units/s51-u01.taxonomy.js')), misc: await import('../data/units/s51-u01.misc.js') }),
