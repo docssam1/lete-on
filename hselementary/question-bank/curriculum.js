@@ -4134,6 +4134,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-61-unit-fraction-similar")) {
+    const id="5-2-u2-practice-61-unit-fraction-similar",name="두 곱이 단위분수가 되는 가장 큰 단위분수 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-61-original",sourceItemLabel:"확인학습 61번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:78,alternateSourcePdfPage:77,sourcePrintedPage:82,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P82Q61UnitFractionSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"같은 단위분수를 곱한 두 결과가 단위분수가 되는 원문 조건을 유지하고 최소 분모를 독립 열거했습니다."});
+  }
   if (source52Unit2Product && !source52Unit2Product.types.some(t=>t.id==="5-2-u2-practice-60-perimeter-change-similar")) {
     const id="5-2-u2-practice-60-perimeter-change-similar",name="가로를 늘린 직사각형의 원래 가로 · 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
