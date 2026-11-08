@@ -329,8 +329,20 @@
     document.body.classList.remove("is-type-preview-open");
   }
 
+  function distinctQuestionPools(selected) {
+    const pools = new Map();
+    for (const type of selected.map(sourceQuestionType).filter(type => type?.generator && !type.reviewLocked)) {
+      const identity = type.generationMode === "fixed-verified-pool" && type.sourceItemId
+        ? JSON.stringify([type.semesterId, type.sourceItemId, type.generator])
+        : JSON.stringify([type.id]);
+      const existing = pools.get(identity);
+      if (!existing || Number(type.verifiedVariantCount) > Number(existing.verifiedVariantCount)) pools.set(identity, type);
+    }
+    return [...pools.values()];
+  }
+
   function plannedQuestionTypes(selected, requestedCount = state.count) {
-    const ready = [...new Map(selected.map(sourceQuestionType).filter(type => type?.generator && !type.reviewLocked).map(type => [type.id, type])).values()];
+    const ready = distinctQuestionPools(selected);
     const remaining = new Map(ready.map(type => [
       type.id,
       type.generationMode === "fixed-verified-pool"
@@ -362,10 +374,12 @@
     $("selectedQuestionSummary").textContent = `${plannedCount}문항`;
     const capacityNotice = $("selectionCapacityNotice");
     const isShort = selected.length > 0 && plannedCount < state.count;
-    capacityNotice.hidden = !isShort;
-    capacityNotice.textContent = isShort
-      ? `요청한 ${state.count}문항 중 ${plannedCount}문항을 만들 수 있습니다. 유형을 더 선택해 주세요.`
-      : "";
+    const hasSamePool = distinctQuestionPools(selected).length < selected.filter(type => type?.generator && !type.reviewLocked).length;
+    capacityNotice.hidden = !isShort && !hasSamePool;
+    capacityNotice.textContent = [
+      hasSamePool ? "같은 원문으로 연결된 유형은 한 번만 출제합니다." : "",
+      isShort ? `요청한 ${state.count}문항 중 ${plannedCount}문항을 만들 수 있습니다. 유형을 더 선택해 주세요.` : ""
+    ].filter(Boolean).join(" ");
     $("generateButton").disabled = plannedCount === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
       '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + (type.generationMode === "fixed-verified-pool" ? ' · 검증 문항 ' + type.verifiedVariantCount + '개' : '') + '</small></span>' +
