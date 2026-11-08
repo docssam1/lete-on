@@ -106,7 +106,7 @@
       };
       const tiles=courses.filter(c=>c.exams.length).map(tile).join('');
       const pending=courses.filter(c=>!c.exams.length);
-      const preparing=pending.length?`<section class="admission-courses" aria-labelledby="admission-courses-title"><h2 id="admission-courses-title">모집·레벨 확인</h2><div class="preparing-list">${pending.map(tile).join('')}</div></section>`:'';
+      const preparing=pending.length?`<section class="admission-courses" aria-labelledby="admission-courses-title"><h2 id="admission-courses-title">${pending.some(c=>HIGHSELECT_COURSE_ADMISSIONS.forCourse(program.code,c.id))?'모집·레벨 확인':'다른 과정'}</h2><div class="preparing-list">${pending.map(tile).join('')}</div></section>`:'';
       const related=(program.relatedPrograms||[]).filter(p=>safeUrl(p.url)).map(p=>`<a class="related-course" href="${esc(safeUrl(p.url))}"><b>${esc(p.label)}</b><span>바로가기 <span aria-hidden="true">↗</span></span></a>`).join('');
       return `<section class="course-picker" aria-labelledby="course-heading"><div class="course-heading-row"><h2 id="course-heading">대비 과정을 선택하세요.</h2><span>${ready}개 과정 응시 가능</span></div><div class="course-banner-grid${ready>1?' has-multiple-ready':''}">${tiles}</div>${preparing}${related?`<nav class="related-courses" aria-label="연결된 대비 과정">${related}</nav>`:''}</section>`;
     }
