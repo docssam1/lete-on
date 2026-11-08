@@ -1,3 +1,4 @@
+import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withSeasonReadableWorkbook}from'./c22-s62-u01.editorial.js?v=20261106-season-readable-workbook';
 import{withStudentGuideLanguage}from'./student-opening-language.js?v=20261105-student-guide';
 import{withGuidanceParticles}from'./term-particle-language.js?v=20261105-guidance-particles';
@@ -25471,4 +25472,5 @@ export const guidanceParticlePriorWorkbook=withLearnerExplanations(learnerPriorW
 export const studentGuidePriorWorkbook=withGuidanceParticles(guidanceParticlePriorWorkbook);
 export const seasonConceptPriorWorkbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
 export const seasonReadablePriorWorkbook=withSeasonConceptLanguage(seasonConceptPriorWorkbook);
-export const workbook=withSeasonReadableWorkbook(seasonReadablePriorWorkbook);
+export const grade6StudyNotesPriorWorkbook=withSeasonReadableWorkbook(seasonReadablePriorWorkbook);
+export const workbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);

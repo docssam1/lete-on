@@ -1,3 +1,4 @@
+import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withAcidReadableWorkbook}from'./c22-s61-u01.editorial.js?v=20261106-acid-readable-workbook';
 import{withTermParticleLanguage}from'./term-particle-language.js';
 import {withAcidStudentLanguage} from './acid-student-language.js';
@@ -11417,4 +11418,5 @@ const baseWorkbook = {
 export const acidClass20261104Workbook=withAcidEditorial(baseWorkbook);
 export const termParticlePriorWorkbook=withAcidStudentLanguage(acidClass20261104Workbook);
 export const acidReadablePriorWorkbook=withTermParticleLanguage(termParticlePriorWorkbook);
-export const workbook=withAcidReadableWorkbook(acidReadablePriorWorkbook);
+export const grade6StudyNotesPriorWorkbook=withAcidReadableWorkbook(acidReadablePriorWorkbook);
+export const workbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);

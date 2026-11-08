@@ -1,3 +1,4 @@
+import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withMotionReadableWorkbook}from'./c22-s61-u02.editorial.js?v=20261106-motion-readable-workbook';
 import{withMotionPhotoLanguage}from'./c22-s61-u02.editorial.js?v=20261105-sound-motion-photo-language';
 import{withObservationLanguage}from'./observation-language.js';
@@ -15442,4 +15443,5 @@ const baseWorkbook = {
 export const observationPriorWorkbook=withMotionEditorial(baseWorkbook);
 export const motionPhotoPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const motionReadablePriorWorkbook=withMotionPhotoLanguage(motionPhotoPriorWorkbook);
-export const workbook=withMotionReadableWorkbook(motionReadablePriorWorkbook);
+export const grade6StudyNotesPriorWorkbook=withMotionReadableWorkbook(motionReadablePriorWorkbook);
+export const workbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);

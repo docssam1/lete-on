@@ -1,3 +1,4 @@
+import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withPlantStructureReadableWorkbook}from'./c22-s61-u03.editorial.js?v=20261106-plant-structure-readable-workbook';
 import{withStudentGuideLanguage}from'./student-opening-language.js?v=20261105-student-guide';
 import{withGuidanceParticles}from'./term-particle-language.js?v=20261105-guidance-particles';
@@ -14601,4 +14602,5 @@ const baseWorkbook = {
 export const guidanceParticlePriorWorkbook=withPlantStructureEditorial(baseWorkbook);
 export const studentGuidePriorWorkbook=withGuidanceParticles(guidanceParticlePriorWorkbook);
 export const plantStructureReadablePriorWorkbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
-export const workbook=withPlantStructureReadableWorkbook(plantStructureReadablePriorWorkbook);
+export const grade6StudyNotesPriorWorkbook=withPlantStructureReadableWorkbook(plantStructureReadablePriorWorkbook);
+export const workbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
