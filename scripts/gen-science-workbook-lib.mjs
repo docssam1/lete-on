@@ -5,6 +5,8 @@
 // 모든 문항이 어느 쪽에든 실림(빠짐·중복 없음), 문항 형식 8가지 중 6가지 이상 사용, 쪽마다 오른쪽 날개 있음.
 import fs from 'node:fs';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 const R = new URL('../science-lab/', import.meta.url).pathname;
 const J = (o) => JSON.stringify(o, null, 1);
 const MARK = ['①', '②', '③', '④', '⑤'];
@@ -31,6 +33,36 @@ export function saveWorkbookSource(target,source,{check=false}={}){
   // A file created after the existence check must also survive untouched.
   fs.writeFileSync(target,source,{encoding:'utf8',flag:'wx'});
   return {status:'created',target};
+}
+
+export async function reviewedWorkbookCandidate({unit,sourceUrl,gen,target}){
+  const sourcePath=fileURLToPath(sourceUrl),authoredSource=fs.readFileSync(sourcePath,'utf8');
+  const inputHash=createHash('sha256').update(authoredSource).digest('hex');
+  const loadUrl=new URL(sourceUrl);loadUrl.searchParams.set('authoring',inputHash);
+  const authored=await import(loadUrl.href),book=authored.workbook;
+  if(book?.unit!==unit||!Array.isArray(book.questions)||!Array.isArray(book.pages))throw Error('검수 원고의 단원·문항·쪽을 확인하세요.');
+  for(const [name,value]of Object.entries(authored))if(value?.unit!==unit||!Array.isArray(value.questions))throw Error(`교재 원고가 아닌 export: ${name}`);
+  const forms=new Set(book.questions.map(q=>q.form)),expected=['choice','multi','blank','short','written','match','order','draw'];
+  if(forms.size!==8||expected.some(form=>!forms.has(form)))throw Error('검수 원고에는 여덟 문항 형식이 필요합니다.');
+  const ids=book.questions.map(q=>q.id),used=book.pages.flatMap(p=>(p.blocks||[]).filter(b=>b.type==='questions').flatMap(b=>b.ids||[]));
+  if(new Set(ids).size!==ids.length||used.length!==ids.length||new Set(used).size!==used.length||used.some(id=>!ids.includes(id)))throw Error('문항 ID와 학생 쪽의 연결을 확인하세요.');
+  if(book.pages.some(page=>JSON.stringify(page.rail?.map(note=>note.title))!==JSON.stringify(['핵심 정리','더 알아보기','내가 정리할 것'])))throw Error('학생 쪽의 세 가지 정리 칸을 확인하세요.');
+  const fingerprint=createHash('sha256').update(authoredSource).update('\0').update(JSON.stringify({...authored})).digest('hex');
+  if(fs.readFileSync(sourcePath,'utf8')!==authoredSource)throw Error('생성 도중 작성 원고가 바뀌었습니다. 다시 확인하세요.');
+  const relative=path.relative(path.dirname(target),sourcePath).split(path.sep).join('/');
+  const reference=path.isAbsolute(relative)?pathToFileURL(sourcePath).href:(relative.startsWith('.')?relative:'./'+relative).split('/').map(encodeURIComponent).join('/');
+  const source=`// ${book.title} — 검수 원고에서 생성한 교재 진입 파일.\n// 확인: node scripts/${gen} --check\nexport * from ${JSON.stringify(reference+'?v='+fingerprint)};\n`;
+  return {workbook:book,source,target,fingerprint,exports:Object.keys(authored)};
+}
+
+export async function generateReviewedWorkbook({unit,sourceUrl,gen}){
+  const options=generationOptions(process.argv.slice(2)),target=options.output||fileURLToPath(new URL(`${unit}.workbook.js`,sourceUrl));
+  const candidate=await reviewedWorkbookCandidate({unit,sourceUrl,gen,target});
+  const saved=saveWorkbookSource(target,candidate.source,options),book=candidate.workbook;
+  if(options.check&&saved.status!=='unchanged')process.exitCode=1;
+  console.log(unit,'교재',book.pages.length,'쪽 · 해설',book.teacherPages.length,'쪽 · 빠른 정답',book.quickPages.length,'쪽 · 문항',book.questions.length,'· 형식',[...new Set(book.questions.map(q=>q.form))].join(','));
+  console.log(options.check?'파일 비교':'후보 저장',saved.status,saved.target);
+  return {...candidate,...saved};
 }
 
 export function workbook({ U, title, semester, no, theme, misconception, criteria, misByTopic = {} }) {

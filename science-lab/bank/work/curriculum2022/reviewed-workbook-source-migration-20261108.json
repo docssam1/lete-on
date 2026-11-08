@@ -1,0 +1,72 @@
+{
+  "phase": 368,
+  "date": "2026-11-08",
+  "purpose": "Preserve the reviewed elementary wording and all prior workbook editions when regenerating the two current workbooks.",
+  "authoringMigration": [
+    {
+      "unit": "c22-s32-u04",
+      "authoringSourceEqualsPreviousEntryExceptStaleComment": true,
+      "currentQuestions": 80
+    },
+    {
+      "unit": "c22-s42-u04",
+      "authoringSourceEqualsPreviousEntryExceptStaleComment": true,
+      "currentQuestions": 80
+    }
+  ],
+  "runtime": {
+    "phase": 368,
+    "all32BankClassroomWorkbookDataFilesByteEqual": 96,
+    "allWorkbookQuestionsUnchanged": 3080,
+    "allWorkbookModesByteEqual": 128,
+    "allBankPrintModesByteEqual": 84,
+    "actualCliGeneratorsCompared": 2,
+    "actualCliCandidateCreationAndRepeatVerified": 2,
+    "currentWorkbooksNotOverwritten": true,
+    "virtualRaceAndExistingFileCasesVerified": true,
+    "actualBrowserUsed": false
+  },
+  "tests": {
+    "phase": 368,
+    "testFiles": 263,
+    "exitCode": 0,
+    "tests": 1427,
+    "pass": 1425,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0,
+    "duration_ms": 8220.612042
+  },
+  "syntaxChecked": [
+    "science-lab/data/book/c22-s32-u04.workbook.js",
+    "science-lab/data/book/c22-s42-u04.workbook.js",
+    "science-lab/v2/revised-textbook.js",
+    "science-lab/v2/v2.js",
+    "scripts/gen-science-workbook-c22s32u04.mjs",
+    "scripts/gen-science-workbook-c22s42u04.mjs",
+    "scripts/gen-science-workbook-lib.mjs",
+    "scripts/tests/science-workbook-generation.test.mjs",
+    "science-lab/data/book/c22-s32-u04.workbook-source.js",
+    "science-lab/data/book/c22-s42-u04.workbook-source.js"
+  ],
+  "sourcePolicy": "Authoring modules retain the already public workbook data; generated entries re-export all named editions and fingerprint the source and resolved exports. The writer still refuses different existing files.",
+  "currentStudentPageCheck": {
+    "unit": "s41-u04",
+    "opening": "워밍업",
+    "guide": "이번 단원에서 배울 내용",
+    "guideHeaders": [
+      "배울 내용",
+      "해 볼 활동"
+    ],
+    "personalPrompt": "궁금한 점",
+    "cssPolicy": "Pretendard Gothic body; 18px on screen; handwriting limited to personal headings",
+    "fontCssChangedThisPhase": false,
+    "actualVisualVerified": false
+  },
+  "actualBrowserUsed": false,
+  "newPrivateSourcesPublished": false,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}
