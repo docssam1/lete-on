@@ -2,6 +2,7 @@ import test from'node:test';import assert from'node:assert/strict';
 import{items as raw}from'../data/units/c22-s42-u02.js';import{items as think}from'../data/units/c22-s42-u02.think.js';
 import{ecologySoundCurrentItems}from'./ecology-sound-question-language.js';
 import{ecologyReadableCurrentItems,ECOLOGY_READABILITY_VERSION}from'../data/book/c22-s42-u02.editorial.js';
+import{ecologyElementaryCurrentItems}from'../data/book/c22-s42-u02.elementary.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u02.book.js';
 import{workbook,ecologyReadablePriorWorkbook}from'../data/book/c22-s42-u02.workbook.js';import{revisedTextbookPaper}from'./revised-textbook.js';
@@ -31,8 +32,8 @@ test('ecology readability excludes originals, similar, other units and future ve
  assert.equal(ecologyReadableCurrentItems(baseline,'other'),baseline);assert.equal(ecologyReadableCurrentItems(null,unit),null);
 });
 test('ecology classroom and Daily share six revised objects and retain each presentation answer position',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=ecologyReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let linked=0;
- for(const q of first.classroomItems.filter(q=>q.contentVersion===ECOLOGY_READABILITY_VERSION)){linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),prior=ecologyReadableCurrentItems(baseline,unit),current=ecologyElementaryCurrentItems(prior,unit),daily=classroomQuestions(second,current);let linked=0;
+ for(const q of first.classroomItems.filter(q=>q.contentVersion===ECOLOGY_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===ECOLOGY_READABILITY_VERSION))){linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);assert.deepEqual(questionAtVersion(q,ECOLOGY_READABILITY_VERSION).prompt,prior.find(x=>x.id===q.id).prompt);}
  assert.equal(linked,6);const q=current.find(q=>q.id==='c22-s42-u02-b78');assert.equal(q.answerContract.answer,1);assert(q.choices[1].includes('서로의 까닭'));assert(q.explanation.includes('둘째 보기'));assert.equal(workbook.questions.find(q=>q.no===63).key,4);
 });
 test('the current card-count blank agrees with all answer modes and keeps earlier cards and upper rails',async()=>{
