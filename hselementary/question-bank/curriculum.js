@@ -3029,7 +3029,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52Count) for (const [n,name] of [[1,"자기 자리를 피하는 자리 배치"],[2,"두 주사위의 곱과 기준"],[3,"개수 제한 안에서 동전 조합하기"],[4,"B를 지나는 격자 최단 경로"],[6,"두 사람이 이웃하는 줄 세우기"]]) {
     const id = `5-2-u6-e3-mission-${n}`;
     const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
-    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name:`${name} · 유사문항`,label:`${name} · 유사문항`,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n} 기반 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:59,sourcePrintedPage:63,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52CountPage63Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name:`${name} · 유사문항`,label:`${name} · 유사문항`,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n} 기반 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:59,sourcePrintedPage:63,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52CountPage63Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:n===1?3:4,verifiedVariantCount:n===1?3:4,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
   }
 
   if (source52Count) {
