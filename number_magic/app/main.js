@@ -1794,6 +1794,7 @@ function screenTown(){
   ['townCourseRoad','townDex','townMagazine','townMail','townReport'].forEach(id=>{const button=scr.querySelector('#'+id);const label=document.createElement('span');label.textContent=button.title;button.appendChild(label);});
   TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
   list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
+  {const c=document.createElement('a');c.className='nm-iconbtn nm-town-credits';c.href='assets/town3d/credits.html';c.target='_blank';c.rel='noopener';c.textContent=S.lang==='ko'?'지도 그림 출처':S.lang==='en'?'Map art credits':'地图素材来源';list.appendChild(c);}
   toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   toolbox.addEventListener('focusout',e=>{if(e.relatedTarget&&!toolbox.contains(e.relatedTarget))toolbox.open=false;});
   $('#townLeave').onclick=()=>{S.view='title';S.unitReturn=null;S._fromRoadmap=false;S._fromCourseRoad=false;save();render();};
@@ -6711,6 +6712,15 @@ function initTownWorld(scr){
   const W=TOWN_WORLD_W,H=TOWN_WORLD_H;
   let cam={x:0,y:0,scale:1},minS=1,maxS=3,cameraReady=false;
   const BBOX=computeContentBBox(W,H,.04);
+  /* 살아 있는 지도(2026-11-08, 원장 「동물의 숲 같이 … 2d느낌의 3d」) — app/town-live.js 가 같은 장면을
+     #townWorld 맨 아래 캔버스에 그려 파도·풍차·나무가 움직인다. 시점 고정이라 이름표·걷기 좌표는 그대로.
+     WebGL 이 없거나 ?live=0 이면 assets/map.jpg(같은 장면의 그림)가 그대로 보인다. */
+  let liveCtl=null,liveGone=false;
+  if(!/[?&]live=0\b/.test(location.search))import('./town-live.js?v=20261108-live1').then(m=>liveGone?null:m.mountTownLive(world)).then(ctl=>{
+    if(!ctl)return;
+    if(liveGone||!world.isConnected){ctl.dispose();return;}
+    liveCtl=ctl;vp.classList.add('is-live-map');
+  }).catch(e=>console.warn('[town-live] still map',e));
 
   /* 지도를 화면 가득 채운다. 좁은 세로 화면의 바깥 건물은 드래그하거나
      측면 메뉴의 장소 목록으로 입장한다. 캐릭터 이동은 필요하지 않다. */
@@ -6971,6 +6981,7 @@ function initTownWorld(scr){
   };
 
   return function cleanup(){
+    liveGone=true;if(liveCtl){liveCtl.dispose();liveCtl=null;}
     if(cameraReady&&vp.clientWidth&&vp.clientHeight)illustratedTownVisits.set(visitOwner,{
       zoom:cam.scale/minS,center:{x:(vp.clientWidth/2-cam.x)/cam.scale,y:(vp.clientHeight/2-cam.y)/cam.scale},
       follow,party:nbs.slice(0,2).map(n=>({x:n.x,y:n.y}))

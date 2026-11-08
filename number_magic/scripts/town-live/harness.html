@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>town live harness</title>
+<style>html,body{margin:0;background:#222}#w{position:relative;width:2000px;height:1342px;background:url(../../assets/map.jpg) 0 0/2000px 1342px;transform-origin:0 0}</style>
+<div id="w"></div>
+<script type="module">
+const q=new URLSearchParams(location.search);const w=document.getElementById('w');
+const sc=+(q.get('scale')||1);w.style.transform=`scale(${sc})`;
+const t0=performance.now();
+import('../../app/town-live.js').then(m=>m.mountTownLive(w,{preserve:true,still:q.get('still')==='1'})).then(ctl=>{window.CTL=ctl;window.LOADMS=performance.now()-t0;window.DONE=true;}).catch(e=>{window.ERR=String(e&&e.stack||e);window.DONE=true;});
+</script>

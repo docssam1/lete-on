@@ -14,11 +14,11 @@ const OUT = path.join(ROOT, 'offline-files.json');
 const PAGES = ['access.html', 'index.html', 'install.html', 'ws.html', 'drill.html', 'manifest.webmanifest'];
 const DIRS = ['app', 'engine', 'data', 'vendor', 'audio/omni',
   'assets/app-icons', 'assets/audio', 'assets/characters', 'assets/fonts', 'assets/hero3d',
-  'assets/images', 'assets/magazine', 'assets/stages'];
+  'assets/images', 'assets/magazine', 'assets/stages', 'assets/town3d'];
 const SINGLE = ['assets/favicon.png', 'assets/gfield-logo.svg', 'assets/gfield-logo.png', 'assets/map.jpg'];
 /* number_magic 밖이지만 index.html 이 부르는 것(같은 사이트라 서비스 워커가 받아 준다) */
-const OUTSIDE = ['../geometry/worksheet/render.js'];
-const EXT = /\.(js|mjs|css|json|woff2?|ttf|otf|png|webp|jpe?g|svg|gif|mp3|m4a|ogg|wav)$/i;
+const OUTSIDE = ['../geometry/worksheet/render.js', '../world-explorer/vendor/three.module.js', '../world-explorer/vendor/three.core.js'];
+const EXT = /\.(js|mjs|css|json|woff2?|ttf|otf|png|webp|jpe?g|svg|gif|mp3|m4a|ogg|wav|glb)$/i;
 const SKIP = [/(^|\/)[^/]*-src(\/|$)/, /(^|\/)\./, /\.md$/i, /(^|\/)(scripts|docs|labs|promo|landing)(\/|$)/,
   /voice-(recheck|release|video)-\d+\.json$/, /review-candidates\.json$/, /(^|\/)LICENSE$/];
 const MAX_BYTES = 8 * 1024 * 1024;   // 한 파일이 이보다 크면 넣지 않는다(목록 검사가 알려 준다)
