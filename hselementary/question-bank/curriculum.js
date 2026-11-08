@@ -4304,6 +4304,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Application = source52Unit2?.subunits.find(subunit => subunit.name === "분수의 곱셈 응용 문제");
+  if (source52Unit2Application && !source52Unit2Application.types.some(t=>t.id==="5-2-u2-practice-62-coprime-fractions-similar")) {
+    const id="5-2-u2-practice-62-coprime-fractions-similar",name="곱이 자연수인 기약분수 모두 찾기 · 유사문항",typeNumber=source52Unit2Application.types.length+1;
+    source52Unit2Application.types.push({id,number:typeNumber,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-62-original",sourceItemLabel:"확인학습 62번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:78,alternateSourcePdfPage:77,sourcePrintedPage:82,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P82Q62CoprimeFractionsSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 기약분수와 자연수 곱 조건을 유지하고 모든 분자와 분모를 독립 열거했습니다."});
+  }
   if (source52Unit2Application) for (const [n,name] of [[1,"네 분수를 한 번씩 써서 가장 큰 값 만들기 · 원문"],[2,"세 기약 진분수의 곱과 세 자리 수 · 원문"],[3,"두 기약 진분수의 곱에서 두 수의 합 · 원문"],[4,"곱의 결과가 자연수인 빈칸 수의 합 · 원문"],[5,"다섯 등분한 수직선 위 가의 위치 · 원문"],[6,"세 곱을 자연수로 만드는 분수 중 9에 가까운 수 · 원문"]]) {
     const id=`5-2-u2-e4-mission-${n}-original`;
     if (source52Unit2Application.types.some(type=>type.id===id)) continue;
