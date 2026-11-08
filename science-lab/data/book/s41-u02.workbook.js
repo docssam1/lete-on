@@ -1,3 +1,4 @@
+import{withGrade4StudyNotes}from'./grade4-study-notes.js?v=20261108-grade4-study-notes';
 import{withWaterElementaryWorkbook}from'./s41-u02.elementary.js?v=20261108-water-elementary';
 import{withWaterLearnerReasoning}from'./s41-u02.editorial.js?v=20261105-water-learner-reasoning';
 import{withWaterPhotoLanguage}from'./s41-u02.editorial.js?v=20261105-material-water-photo-language';
@@ -7228,4 +7229,5 @@ export const waterUpperPriorWorkbook=withStudentGuideLanguage(studentGuidePriorW
 export const waterPhotoPriorWorkbook=withWaterUpperScience(waterUpperPriorWorkbook);
 export const waterReasoningPriorWorkbook=withWaterPhotoLanguage(waterPhotoPriorWorkbook);
 export const waterElementaryPriorWorkbook=withWaterLearnerReasoning(waterReasoningPriorWorkbook);
-export const workbook=withWaterElementaryWorkbook(waterElementaryPriorWorkbook);
+export const waterStudyNotesPriorWorkbook=withWaterElementaryWorkbook(waterElementaryPriorWorkbook);
+export const workbook=withGrade4StudyNotes(waterStudyNotesPriorWorkbook);

@@ -1,5 +1,6 @@
 import {landReasoningCurrentItems} from '../data/book/s41-u03.editorial.js';
 import test from 'node:test';
+import {withGrade4StudyNotes} from '../data/book/grade4-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
@@ -28,8 +29,8 @@ const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])
 test('Land-change reading edits preserve workbook grading, pictures and all four paper views',async()=>{
   assert.equal(workbook.questions.length,80);
   assert.equal(workbook.questions.filter((q,i)=>q.prompt!==prior.questions[i].prompt).length,34);
-  assert.deepEqual(workbook.pages,prior.pages);
-  assert.deepEqual(workbook.teacherStudentPages,prior.teacherStudentPages);
+  assert.deepEqual(workbook.pages,withGrade4StudyNotes(prior).pages);
+  assert.deepEqual(workbook.teacherStudentPages,withGrade4StudyNotes(prior).teacherStudentPages);
   assert.deepEqual(workbook.teacherPages,prior.teacherPages);
   assert.deepEqual(workbook.figures,prior.figures);
   for(const no of [64,66,68,69,73,74,75,76,78,79,80])assert.deepEqual(workbook.questions.find(q=>q.no===no),prior.questions.find(q=>q.no===no));

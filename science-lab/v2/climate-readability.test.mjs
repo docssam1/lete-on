@@ -1,4 +1,5 @@
 import {lessonReferenceItems} from '../data/book/lesson-reference-data.js';
+import {withGrade4StudyNotes} from '../data/book/grade4-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s42-u04.js';import{similar}from'../data/units/c22-s42-u04.similar.js';import{withThink}from'./think-merge.js';
 import{climateReadableCurrentItems,CLIMATE_READABILITY_VERSION}from'../data/book/c22-s42-u04.rail-notes.js';
@@ -38,7 +39,8 @@ test('climate bank, recurring classroom and Daily use the same eleven current pr
 });
 test('climate workbook preserves all grading/source fields, optional upper rails and model data',()=>{
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(climateReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['id','no','form','key','responseContract','taxonomy'].includes(k)))assert.deepEqual(workbook.questions[i][key],climateReadablePriorWorkbook.questions[i][key]);
- for(const key of['pages','teacherStudentPages'])for(let i=0;i<workbook[key].length;i++){assert.deepEqual(workbook[key][i].rail,climateReadablePriorWorkbook[key][i].rail);assert.equal(workbook[key][i].kind,climateReadablePriorWorkbook[key][i].kind);}
+ const reviewedNotes=withGrade4StudyNotes(climateReadablePriorWorkbook);
+ for(const key of['pages','teacherStudentPages'])for(let i=0;i<workbook[key].length;i++){assert.deepEqual(workbook[key][i].rail,reviewedNotes[key][i].rail);assert.equal(workbook[key][i].kind,climateReadablePriorWorkbook[key][i].kind);}
  assert.deepEqual(workbook.quickPages,climateReadablePriorWorkbook.quickPages);assert.deepEqual(workbook.figures,climateReadablePriorWorkbook.figures);
  for(const no of[27,47,50,55,57,59,73,74,77]){const q=workbook.questions.find(q=>q.no===no);assert(q.explanation.length>0);}
  assert(workbook.questions.find(q=>q.no===57).explanation.includes('0채를 관찰한 것은 달라요'));

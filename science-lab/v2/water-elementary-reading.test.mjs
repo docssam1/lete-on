@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {withGrade4StudyNotes} from '../data/book/grade4-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
@@ -27,8 +28,8 @@ const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])
 test('Water state-change reading edits preserve workbook grading, pictures and all four paper views',async()=>{
   assert.equal(workbook.questions.length,80);
   assert.equal(workbook.questions.filter((q,i)=>q.prompt!==prior.questions[i].prompt).length,28);
-  assert.deepEqual(workbook.pages,prior.pages);
-  assert.deepEqual(workbook.teacherStudentPages,prior.teacherStudentPages);
+  assert.deepEqual(workbook.pages,withGrade4StudyNotes(prior).pages);
+  assert.deepEqual(workbook.teacherStudentPages,withGrade4StudyNotes(prior).teacherStudentPages);
   assert.deepEqual(workbook.teacherPages,prior.teacherPages);
   assert.deepEqual(workbook.figures,prior.figures);
   for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(workbook.questions[i]),withoutPresentation(prior.questions[i]));
