@@ -5059,10 +5059,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 표 구조와 독립 계산을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-exploration-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-exploration"
     },
     {
@@ -5081,10 +5082,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조와 그림을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-example-1-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-example-1"
     },
     {
@@ -5103,10 +5105,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-example-2-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-example-2"
     },
     {
@@ -5125,10 +5128,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조와 그림을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-example-3-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-example-3"
     },
     {
@@ -5147,10 +5151,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-example-4-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-example-4"
     },
     {
@@ -5169,10 +5174,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조와 필요한 그림을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-mission-1-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-mission-1"
     },
     {
@@ -5191,10 +5197,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조와 필요한 그림을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-mission-2-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-mission-2"
     },
     {
@@ -5213,10 +5220,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-mission-3-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-mission-3"
     },
     {
@@ -5235,10 +5243,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-mission-4-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-mission-4"
     },
     {
@@ -5257,10 +5266,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-mission-5-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-mission-5"
     },
     {
@@ -5279,10 +5289,11 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
+      "reviewReason": "원문과 풀이를 대조한 원문 항목이 공개되어 있습니다. 출판사 공식 정답은 미확인입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "originalSourceReleaseStatus": "locked",
+      "publicDecision": "public",
+      "originalSourceReleaseStatus": "public",
+      "originalRuntimeTypeId": "5-2-u6-e1-mission-6-original",
       "syntheticRuntimeTypeId": "5-2-u6-e1-mission-6"
     },
     {
