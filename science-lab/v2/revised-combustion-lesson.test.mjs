@@ -52,7 +52,7 @@ test('16확인은 네 성취기준 각4·여덟 응답 형식 각2이며 현재 
  const checks=mod.chapter.check.map(id=>pool.find(q=>q.id===id));
  assert.deepEqual(Object.values(checks.reduce((a,q)=>(a[q.bookResponseForm]=(a[q.bookResponseForm]||0)+1,a),{})),Array(8).fill(2));
  assert.deepEqual(Object.values(checks.reduce((a,q)=>(a[workbook.questions.find(w=>w.id===q.bookQuestionId).standard]=(a[workbook.questions.find(w=>w.id===q.bookQuestionId).standard]||0)+1,a),{})),Array(4).fill(4));
- assert.equal(checks.filter(q=>q.contentVersion===COMBUSTION_QUESTION_VERSION||q.previousVersions?.some(p=>p.version===COMBUSTION_QUESTION_VERSION)).length,7);assert.equal(mod.classroomItems.filter(q=>q.contentVersion===COMBUSTION_READABILITY_VERSION).length,115);
+ assert.equal(checks.filter(q=>q.contentVersion===COMBUSTION_QUESTION_VERSION||q.previousVersions?.some(p=>p.version===COMBUSTION_QUESTION_VERSION)).length,7);assert.equal(mod.classroomItems.filter(q=>q.contentVersion===COMBUSTION_READABILITY_VERSION||q.previousVersions?.some(p=>p.version===COMBUSTION_READABILITY_VERSION)).length,115);
  assert.equal(checks.filter(q=>q.responseContract.teacherRequired).length,4);
  // Independent expected responses, including matching order and required count units.
  const answers={1:2,81:2,19:['액체','베이킹 소다'],83:['석회수','뿌옇게'],53:['ㄴ','ㄷ','ㄱ'],118:['ㄴ','ㄷ','ㄱ'],56:['ㄴ','ㄱ','ㄷ'],120:['ㄴ','ㄱ','ㄷ'],41:[0,1,3],106:[0,3,4],59:['300mL','19초'],124:['2개','2개']};

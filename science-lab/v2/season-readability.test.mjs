@@ -1,8 +1,9 @@
+import{elementaryPromptCurrentItems}from'../data/book/elementary-question-prompts.js';
 import {seasonPairCurrentItems} from './season-pair-language.js';
 import test from 'node:test';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {items,source,similar} from '../data/units/c22-s62-u01.js';import * as misc from '../data/units/c22-s62-u01.misc.js';
 import {seasonCurrentItems} from './season-question-language.js';
-import {seasonReadableCurrentItems,SEASON_READABILITY_VERSION} from '../data/book/c22-s62-u01.editorial.js';import {workbook,seasonReadablePriorWorkbook} from '../data/book/c22-s62-u01.workbook.js';
+import {seasonReadableCurrentItems,SEASON_READABILITY_VERSION} from '../data/book/c22-s62-u01.editorial.js';import {workbook,elementaryPromptPriorWorkbook,seasonReadablePriorWorkbook} from '../data/book/c22-s62-u01.workbook.js';
 import {gradeDaily} from './daily-grade.js';import {questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts} from './question-revision.js';
 import {revisedClassroom,classroomQuestions} from './revised-lesson.js';import * as book from '../data/book/c22-s62-u01.book.js';
 const unit='c22-s62-u01',prior=seasonCurrentItems(items),current=seasonReadableCurrentItems(prior,unit);
@@ -28,9 +29,9 @@ test('season revision excludes original, paired, unrelated and future questions'
  for(const old of prior){const future={...old,contentVersion:'future',previousVersions:[]},external={...old,sourceRef:{type:'original'}},draft={...old,status:'draft'};for(const q of [future,external,draft]){assert.equal(seasonReadableCurrentItems([q],unit)[0],q);assert.equal(seasonCurrentItems([q])[0],q);}}
 });
 const number=p=>p.value+(p.unitRequired?p.units[0]:''),valid=c=>c.teacherRequired?c.sample||'그림과 글':c.kind==='single-choice'?c.answer:c.kind==='multi-choice'?c.answers:c.kind==='ordered-label-sequence'?c.sequence.join(' → '):c.kind==='unordered-labels'?c.answers.join(', '):c.kind==='ordered-term-parts'?c.parts.map(p=>p.kind==='number-unit'?number(p):p.accepted[0]).join(' / '):c.kind==='number-unit'?number(c):c.accepted[0];
-test('current sample wording and conditions retain strict automatic grading',()=>{
+test('readable-stage samples and current answer keys retain strict automatic grading',()=>{
  let samples=0,auto=0,review=0;
- for(const q of current){const old=prior.find(x=>x.id===q.id),w=workbook.questions.find(w=>w.id===q.bookQuestionId);const c=q.answerContract.seasonContract||q.answerContract.seasonContract;
+ for(const q of current){const old=prior.find(x=>x.id===q.id),w=elementaryPromptPriorWorkbook.questions.find(w=>w.id===q.bookQuestionId);const c=q.answerContract.seasonContract||q.answerContract.seasonContract;
   assert.equal(gradeDaily(q,valid(c)).status,c.teacherRequired?'review':'correct',q.id);c.teacherRequired?review++:auto++;if(!w)continue;
   assert.equal(q.prompt,w.prompt);assert.equal(q.explanation,w.explanation);if(w.givens)assert.equal(q.givens.조건,w.givens);if(w.options)assert.deepEqual(q.givens.보기.행,w.options.map(s=>[s]));if(w.table)assert.deepEqual(q.givens.자료표,w.table);if(w.choices)assert.deepEqual(q.choices,w.choices);assert.deepEqual(q.responseContract,w.responseContract);assert.deepEqual(q.answerContract.seasonContract,w.responseContract);
   if(q.answerContract.sample!==old.answerContract.sample){samples++;assert.equal(q.answerContract.sample,w.answer);const clean=contract=>{const value=structuredClone(contract);delete value.sample;delete value.seasonContract.sample;return value;};assert.deepEqual(clean(q.answerContract),clean(old.answerContract));}
@@ -41,6 +42,6 @@ test('current sample wording and conditions retain strict automatic grading',()=
  for(const html of Object.values(workbook.figures).filter(x=>x.includes('season-quick-grid')))for(const m of html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[^<]*<\/td><td>([\s\S]*?)<\/td><\/tr>/g)){const q=workbook.questions[Number(m[1])-1];if(q.responseContract.kind==='single-choice')assert([q.answer,'①②③④⑤'[q.key]].includes(m[2]));else if(!['written','draw'].includes(q.form))assert.equal(m[2],q.answer);}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,seasonPairCurrentItems(current,unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===SEASON_READABILITY_VERSION).length,9);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,elementaryPromptCurrentItems(seasonPairCurrentItems(current,unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>questionAtVersion(mod.classroomItems.find(q=>q.id===id),SEASON_READABILITY_VERSION)?.contentVersion===SEASON_READABILITY_VERSION).length,9);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/season-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,114);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

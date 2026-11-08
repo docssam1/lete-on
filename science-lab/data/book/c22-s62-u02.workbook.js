@@ -1,3 +1,4 @@
+import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withCombustionReadableWorkbook}from'./c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import{withCombustionEditorial}from'./c22-s62-u02.editorial.js?v=20261104-combustion-book';
@@ -22194,4 +22195,5 @@ const baseWorkbook = {
 
 export const learnerPriorWorkbook=withCombustionEditorial(baseWorkbook);
 export const combustionReadablePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
-export const workbook=withCombustionReadableWorkbook(combustionReadablePriorWorkbook);
+export const elementaryPromptPriorWorkbook=withCombustionReadableWorkbook(combustionReadablePriorWorkbook);
+export const workbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
