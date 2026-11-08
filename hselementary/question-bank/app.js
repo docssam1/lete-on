@@ -174,6 +174,12 @@
     $("unitFilter").innerHTML = `<option value="">전체 대단원</option>${units.map(unit => `<option value="${unit.id}" ${unit.id === state.unitId ? "selected" : ""}>${unit.number}. ${escapeHtml(unit.name)}</option>`).join("")}`;
   }
 
+  function availableAlternative(type) {
+    const alternative = type.reviewLocked && type.alternativeTypeId && typeById.get(type.alternativeTypeId);
+    return alternative?.generator && !alternative.reviewLocked &&
+      alternative.semesterId === type.semesterId && alternative.unitId === type.unitId ? alternative : null;
+  }
+
   function typeTreeRow(type) {
     const ready = Boolean(type.generator) && !type.reviewLocked;
     const commonType = commonQuestionType(type);
@@ -181,10 +187,11 @@
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready || linked ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
+    const alternativeHint = !ready && !linked && availableAlternative(type) ? '<span class="tree-alternative-hint">유사문항 있음 · 눌러서 선택</span>' : '';
+    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready || linked ? "" : " is-pending") + (alternativeHint ? " has-alternative" : "") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + (alternativeHint ? ' 유사문항 있음' : '') + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i>' + (linked ? ' · 공통 유형 연결' : '') + '</small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i>' + (linked ? ' · 공통 유형 연결' : '') + alternativeHint + '</small></span>' +
       '<span class="tree-type-preview-action" aria-hidden="true">미리보기</span>' +
       '<span class="tree-type-state ' + (ready || linked ? "is-ready" : "") + '">' + (ready ? "생성 가능" : linked ? "공통 유형" : "검수 대기") + '</span>' +
     '</div>';
@@ -303,9 +310,8 @@
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${commonSourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer class="type-preview-common-action"><span>${compound ? "같은 원문의 전체 문항으로 연결됩니다." : "같은 탐구의 양초 예제와 풀이가 같습니다."}</span><button type="button" data-select-common-type="${escapeHtml(commonType.id)}">공통 유형 선택</button></footer>`;
     } else if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
-      const alternative = type.alternativeTypeId && typeById.get(type.alternativeTypeId);
-      const canOfferAlternative = type.reviewLocked && alternative?.generator && !alternative.reviewLocked &&
-        alternative.semesterId === type.semesterId && alternative.unitId === type.unitId;
+      const alternative = availableAlternative(type);
+      const canOfferAlternative = Boolean(alternative);
       const alternativeAction = canOfferAlternative ? `<footer class="type-preview-common-action"><span>선택 가능: ${escapeHtml(typeDisplayName(alternative))}</span><button type="button" data-select-alternative-type="${escapeHtml(alternative.id)}">유사문항 선택</button></footer>` : "";
       const notice = canOfferAlternative ? "이 유형은 준비 중입니다. 검증된 유사문항을 선택할 수 있습니다." : `검수 대기 · ${reviewReason}`;
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer class="${canOfferAlternative ? 'type-preview-alternative-notice' : ''}">${escapeHtml(notice)}</footer>${alternativeAction}`;

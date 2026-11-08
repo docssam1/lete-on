@@ -1696,3 +1696,7 @@ button{
 @media screen and (max-width: 700px) {
   .selection-capacity-notice { grid-column: 1 / -1; grid-row: 1; flex: none; text-align: left; }
 }
+
+/* Keep the available alternative legible while the original stays locked. */
+.tree-type.is-pending.has-alternative { opacity: 1; }
+.tree-alternative-hint { display: block; margin-top: 3px; color: #2f6b4a; font-size: 11px; font-weight: 600; }
