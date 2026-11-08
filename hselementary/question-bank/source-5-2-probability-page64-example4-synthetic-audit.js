@@ -1,7 +1,7 @@
 "use strict";
 const assert = require('node:assert/strict');
 const source = require('./source-5-2-probability-page64-original.js');
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 4; i++) {
   const q = source.makeQuestion(3, i);
   const balls = q.questionModel.bags.map(bag => bag.flatMap((count, color) => Array.from({length: count}, () => color)));
   const pairs = balls[0].flatMap(a => balls[1].map(b => [a, b]));
@@ -11,7 +11,8 @@ for (let i = 0; i < 3; i++) {
   assert.deepEqual(q.answerModel.same, same);
   assert.equal(q.answerModel.good, good);
   assert.equal(q.answerModel.numerator * pairs.length, good * q.answerModel.denominator);
-  assert.equal(q.answer, ['2/3', '55/81', '25/36'][i]);
+  assert.equal(q.answer, ['2/3', '55/81', '25/36', '43/63'][i]);
+  assert.match(q.prompt, /두 선택은 서로 영향을 주지 않습니다/);
   assert.equal(q.variantProvenance, 'synthetic-source-structure');
   assert.equal(q.publisherKeyVerified, false);
 }
