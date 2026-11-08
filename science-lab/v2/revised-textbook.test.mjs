@@ -1,3 +1,4 @@
+import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -49,7 +50,7 @@ for(const unit of revisedTextbookUnits){
   const merged=await revisedTextbook(unit,original);
   assert.equal(merged.plan,original.plan);
   assert.deepEqual(merged.chapter.questions,wb.questions);
-  assert.deepEqual(merged.chapter.pages,wb.pages);
+  assert.deepEqual(merged.chapter.pages,withElementaryReadingDirections(wb).pages);
   assert.equal(merged.chapter.revisedCurriculumWorkbook,true);
   assert.equal(merged.chapter.book,'지필드 교과 연결 사고력');
   const html=renderChapter(merged.chapter,merged.art,[],{live:true});

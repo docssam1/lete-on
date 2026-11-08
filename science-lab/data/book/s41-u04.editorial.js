@@ -491,6 +491,27 @@ export function withBiologyElementaryOpening(wb){
 
 export const BIOLOGY_ELEMENTARY_VERSION='20261108-elementary-task-language';
 
+export const BIOLOGY_STARTER_VERSION='20261108-elementary-starter-reading';
+// 도입은 아는 경험을 떠올리는 워밍업이다. 문제·정답·필기 칸은 바꾸지 않는다.
+export function withBiologyStarterReading(wb){
+ if(wb.unit!=='s41-u04')return wb;
+ const pages=rows=>rows.map((page,index)=>{
+  if(index>1)return page;
+  const blocks=page.blocks.map(block=>{
+   if(index===0&&block.type==='text')return {...block,text:'버섯이나 곰팡이를 어디에서 보았나요? 어떤 모습이었는지 떠올려 보아요.'};
+   if(index===0&&block.type==='field'&&block.title==='워밍업')return {...block,hint:'기억나는 모습을 말하거나 그려 보아요. 본 적이 없다면 사진을 보고 궁금한 점을 적어도 좋아요.'};
+   if(index===1&&block.type==='table')return {...block,rows:[
+    ['생물의 특징과 사는 곳','버섯·곰팡이·해캄·짚신벌레를 살펴보아요. 세균은 사진이나 영상으로 보아요.'],
+    ['우리 생활에 주는 도움과 피해','음식을 만드는 데 도움을 주는 생물과 음식을 상하게 하는 생물을 알아보아요.'],
+    ['생명과학을 이용하는 예','빵이나 요구르트를 만들 때 어떤 생물을 이용할까요? 알아본 내용을 글과 그림으로 소개해요.'],
+   ]};
+   return block;
+  });
+  return {...page,...(index===0?{lead:'생김새를 살펴보고, 우리 생활과 연결해요.'}:{title:'무엇을 배울까요?'}),blocks};
+ });
+ return {...wb,pages:pages(wb.pages),...(wb.teacherStudentPages?{teacherStudentPages:pages(wb.teacherStudentPages)}:{})};
+}
+
 // 학생이 해야 할 일이 드러나도록 문장만 풀어 쓴다. 원본 연결과 채점 자료는 유지한다.
 const ELEMENTARY_PROMPTS={
  9:'해캄 한 가닥을 확대한 모습을 살펴보세요. 보이는 특징을 바르게 설명한 것을 고르세요.',
