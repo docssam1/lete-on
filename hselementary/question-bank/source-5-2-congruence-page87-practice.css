@@ -24,6 +24,12 @@
     max-width: 100% !important;
     max-height: 250px;
   }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-95-original"] svg.u3p89-figure,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-97-original"] svg.u3p89-figure,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-101-original"] svg.u3p89-figure {
+    max-width: 100% !important;
+    max-height: 210px;
+  }
 }
 
 /* Keep the angle label inside option ② and the length clear of its side. */
