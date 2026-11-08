@@ -95,7 +95,7 @@ const verified5_2LockedPractice = new Set([
   "5-2-u3-e1-exploration",
   ...[1, 2].flatMap(e => [`5-2-u4-e${e}-exploration`, ...[1, 2, 3, 4].map(n => `5-2-u4-e${e}-example-${n}`), ...[1, 2, 3, 4, 5, 6].map(n => `5-2-u4-e${e}-mission-${n}`)])
 ]);
-const publishedIndependent5_2 = new Set(["5-2-u3-e1-example-3", "5-2-u3-e1-example-4", "5-2-u3-e4-example-2"]);
+const publishedIndependent5_2 = new Set(["5-2-u3-e1-example-3", "5-2-u3-e1-example-4", "5-2-u3-e2-example-3", "5-2-u3-e4-example-2"]);
 const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const ready5_2Releases = new Set(["5-2-u3-e5-exploration", "5-2-u3-e5-example-3", ...[2, 3, 4, 5, 6].map(n => `5-2-u3-e7-mission-${n}`)]);
 const allIds = new Set();
