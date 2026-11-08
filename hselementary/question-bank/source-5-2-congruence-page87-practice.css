@@ -42,7 +42,7 @@
 @media print { .u3p94-fold76{max-height:72mm} }
 @media print {
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-76-original"] svg.u3p94-fold76 { max-height: 255px; }
-  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-86-original"] svg.u3p95-fold86 { max-height: 210px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-86-original"] svg.u3p95-fold86 { max-height: 250px; }
 }
 
 .u3p98-torn104{display:block;width:100%;max-width:430px;height:auto;margin:.3em auto}
@@ -50,7 +50,7 @@
 
 .u3p95-fold84{display:block;width:100%;max-width:300px;height:auto;margin:.2em auto}
 #solutionView .u3p95-fold84-answer{display:block;width:min(210px,100%);height:auto;margin:auto}
-@media print { #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-84-original"] svg.u3p95-fold84{max-height:255px} }
+@media print { #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-84-original"] svg.u3p95-fold84{max-height:295px} }
 
 @media print {
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-6-original"] svg.u3p89-figure {
