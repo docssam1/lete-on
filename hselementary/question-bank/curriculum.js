@@ -4031,7 +4031,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52Application) for (const [n,name] of [[3,"상자와 묶음 판매액 · 연습"],[4,"택시 요금 계산 · 연습"]]) {
     const id = `5-2-u1-e3-example-${n}-synthetic`;
     const typeNumber = Math.max(0,...source52Unit1.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
-    source52Application.types.push({id,number:source52Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`예제 3-${n} 구조 연습`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:6,sourcePrintedPage:8,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52Page8Example${n}Synthetic`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 조건 확인 전 잠금이며, 조건을 명확히 한 별도 창작 연습을 독립 검산했습니다."});
+    source52Application.types.push({id,number:source52Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`예제 3-${n} 구조 연습`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:6,sourcePrintedPage:8,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52Page8Example${n}Synthetic`,generationMode:"fixed-verified-pool",verifiedVariantTarget:n===3?4:3,verifiedVariantCount:n===3?4:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 조건 확인 전 잠금이며, 조건을 명확히 한 별도 창작 연습을 독립 검산했습니다."});
   }
 
   if (source52Application) {
