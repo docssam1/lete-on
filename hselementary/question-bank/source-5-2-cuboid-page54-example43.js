@@ -56,7 +56,7 @@
         parts.push(pipMarkup(front[row][col], x + 8, y + 6, u - 16, h - 12, `front-${row}-${col}`));
       }
     }
-    return `<figure class="source52-p54e43-figure"><svg class="source52-p54e43-block" viewBox="0 0 440 250" role="img" aria-label="주사위 12개를 가로 3개, 깊이 2개, 높이 2개로 붙인 모양. 앞면 윗줄은 1, 6, 1, 아랫줄은 5, 2, 5이고 위쪽 6면에는 각각 4개의 점이 있습니다. 오른쪽 면은 앞쪽 위 5, 아래 1이고 뒤쪽 위 2, 아래 6입니다." xmlns="http://www.w3.org/2000/svg"><g stroke="#4b463f" stroke-width="1.5" stroke-linejoin="round">${parts.join("")}</g></svg><figcaption>앞면 윗줄 1·6·1, 아랫줄 5·2·5 · 윗면은 모두 4</figcaption></figure>`;
+    return `<figure class="source52-p54e43-figure"><svg class="source52-p54e43-block" viewBox="0 0 440 250" role="img" aria-label="주사위 12개를 가로 3개, 깊이 2개, 높이 2개로 붙인 모양. 앞면 윗줄은 1, 6, 1, 아랫줄은 5, 2, 5이고 위쪽 6면에는 각각 4개의 점이 있습니다. 오른쪽 면은 앞쪽 위 5, 아래 1이고 뒤쪽 위 2, 아래 6입니다." xmlns="http://www.w3.org/2000/svg"><g stroke="#4b463f" stroke-width="1.5" stroke-linejoin="round">${parts.join("")}</g></svg></figure>`;
   }
   function makeQuestion() {
     const figure = sourceDiagram();
