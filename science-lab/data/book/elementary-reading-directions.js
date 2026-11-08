@@ -1,7 +1,67 @@
 // 학생 안내와 함께 푸는 예제의 편집 용어를 풀어 쓴다.
 // 검토한 단원의 같은 문장에만 적용하며 문항·답·그림·오른쪽 정리는 건드리지 않는다.
-export const ELEMENTARY_DIRECTIONS_VERSION='20261108-elementary-reading-followup';
+export const ELEMENTARY_DIRECTIONS_VERSION='20261108-experience-warmups';
+// 첫 학생/교사용 학생 지면의 워밍업 칸만 경험과 궁금한 점으로 시작한다.
+export const EXPERIENCE_WARMUP_DIRECTIONS={
+ "s31-u01": {
+  "겉모습만 보고 두 물체의 무게를 알 수 있을까요?": "문을 밀거나 수레를 당겨 본 적이 있나요? 힘을 써 본 일을 자유롭게 적어 보아요."
+ },
+ "s31-u04": {
+  "싹튼 수가 다르면 물 때문이라고만 할 수 있을까요?": "씨앗이 싹트거나 동물이 자라는 모습을 본 적이 있나요? 기억나는 모습이나 궁금한 점을 적어 보아요."
+ },
+ "c22-s42-u02": {
+  "움직이지 않는 버섯은 생물일까요? 한 먹이가 줄면 모든 생물이 반드시 사라질까요?": "풀밭이나 연못에서 어떤 생물을 보았나요? 기억나는 생물이나 주변 환경에 관해 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s42-u03": {
+  "주사기 입구를 열 때와 막을 때 피스톤을 미는 느낌이 어떻게 다를지 예상해요.": "풍선에 바람을 넣어 본 적이 있나요? 공기에 관해 알고 있거나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s51-u01": {
+  "큰 자갈은 언제나 맨 아래일까요? 화석은 생물의 몸 전체가 돌로 된 것만 있을까요?": "줄무늬가 있는 돌이나 화석 사진을 본 적이 있나요? 기억나는 모습이나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s52-u01": {
+  "모래와 자갈, 소금과 모래를 같은 방법으로 분리할 수 있을까요?": "여러 가지가 섞인 것을 나누어 본 적이 있나요? 어떻게 나누었는지 자유롭게 적어 보아요."
+ },
+ "c22-s52-u02": {
+  "차가운 물병을 수건으로 감싸면 물의 온도는 어떻게 달라질까요?": "차가운 물이나 따뜻한 물을 오래 두면 어떻게 되었나요? 기억나는 일이나 궁금한 점을 적어 보아요."
+ },
+ "c22-s52-u03": {
+  "안개가 낀 날에는 오후에 반드시 비가 올까요? 지금 생각을 적어요.": "오늘 하늘과 바람은 어떤가요? 오늘 날씨에 관해 느끼거나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s52-u04": {
+  "재생에너지를 이용하면 에너지를 언제 어디서나 무한히 쓸 수 있을까요? 지금 생각을 적어요.": "집이나 학교에서 물이나 전기를 아껴 쓴 적이 있나요? 기억나는 일이나 궁금한 점을 적어 보아요."
+ },
+ "c22-s61-u01": {
+  "맑고 무색인 두 용액은 성질도 모두 같을까요? 지금 생각을 적어요.": "물에 무엇을 섞어 본 적이 있나요? 그때 보았던 모습이나 용액에 관해 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s61-u02": {
+  "움직이는 수레의 사진 한 장만으로 빠르기를 알 수 있을까요? 처음 생각을 적어요.": "주변에서 빠르게 움직이거나 천천히 움직이는 것을 본 적이 있나요? 기억나는 모습이나 궁금한 점을 적어 보아요."
+ },
+ "c22-s61-u03": {
+  "작은 잎 한 장도 여러 세포로 이루어져 있을까요? 식물의 몸에 관한 처음 생각을 적어요.": "식물을 키우거나 자세히 본 적이 있나요? 뿌리·줄기·잎에 관해 알고 있거나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s61-u04": {
+  "하루 동안 태양과 별의 위치가 달라지는 까닭은 무엇일까요? 처음 생각을 자유롭게 적어요.": "아침과 저녁 하늘에서 어떤 모습을 보았나요? 기억나는 모습이나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s62-u01": {
+  "여름과 겨울에는 햇빛과 그림자가 어떻게 다를까요? 처음 생각을 자유롭게 적어요.": "여름과 겨울에 달랐던 주변 모습은 무엇인가요? 기억나는 모습이나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s62-u03": {
+  "전구를 켜려면 전선을 어디에 연결해야 할까요? 처음 생각을 자유롭게 적어요.": "집이나 학교에서 전기를 쓰는 물건을 찾아보아요. 써 본 경험이나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "c22-s62-u02": {
+  "초가 녹을 때와 탈 때에는 어떤 차이가 있을까요? 처음 생각을 자유롭게 적어요.": "촛불을 본 적이 있나요? 기억나는 모습이나 불에 관해 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "s41-u02": {
+  "이미 아는 것과 더 확인하고 싶은 것을 나누어 적어요.": "얼음이 녹거나 젖은 빨래가 마르는 모습을 본 적이 있나요? 기억나는 모습이나 궁금한 점을 자유롭게 적어 보아요."
+ },
+ "s41-u03": {
+  "알고 있는 것과 더 확인하고 싶은 것을 나누어요.": "비가 온 뒤 땅이나 물길이 달라진 모습을 본 적이 있나요? 기억나는 모습이나 화산·지진에 관해 궁금한 점을 자유롭게 적어 보아요."
+ }
+};
 export const ELEMENTARY_DIRECTIONS={
+ 's31-u04':{
+  '조건과 자료로 설명하는 생물의 한살이':'생물은 어떻게 자랄까요?',
+ },
  's41-u03':{
   "계획 보완":"비교 방법 고치기",
   "차이 전체를 한 조건의 영향으로 정하기 어렵다.":"경사와 물의 양이 함께 달라졌어요. 어느 것 때문에 결과가 달라졌는지 알기 어려워요.",
@@ -98,22 +158,24 @@ export const ELEMENTARY_DIRECTIONS={
   '이 연구는 특정한 온실가스 배출과 사회 변화의 가정을 이용했어요. 이미 미래를 관측한 결과가 아니라 그 가정에 따른 전망이에요.':'이 연구는 앞으로 온실가스를 얼마나 내보내고 사회가 어떻게 달라질지 조건을 정했어요. 그 조건으로 미래를 예상한 것이며, 미래의 모습을 미리 관찰한 결과는 아니에요.',
  },
 };
+for(const[unit,edits]of Object.entries(EXPERIENCE_WARMUP_DIRECTIONS))ELEMENTARY_DIRECTIONS[unit]={...ELEMENTARY_DIRECTIONS[unit],...edits};
 export const ELEMENTARY_DIRECTIONS_UNITS=Object.keys(ELEMENTARY_DIRECTIONS);
 export function withElementaryReadingDirections(workbook){
  if(!Object.hasOwn(ELEMENTARY_DIRECTIONS,workbook.unit))return workbook;
- const edits=ELEMENTARY_DIRECTIONS[workbook.unit];
- const text=value=>typeof value==='string'?(Object.hasOwn(edits,value)?edits[value]:value):value;
- const block=value=>{
-  if(Array.isArray(value)){const next=value.map(block);return next.every((v,i)=>v===value[i])?value:next;}
+ const edits=ELEMENTARY_DIRECTIONS[workbook.unit],warmups=EXPERIENCE_WARMUP_DIRECTIONS[workbook.unit]||{};
+ const text=value=>typeof value==='string'?(Object.hasOwn(edits,value)&&!Object.hasOwn(warmups,value)?edits[value]:value):value;
+ const block=(value,opening=false)=>{
+  if(Array.isArray(value)){const next=value.map(v=>block(v,opening));return next.every((v,i)=>v===value[i])?value:next;}
   if(value&&typeof value==='object'){
    if(['questions','solutions','diagram','gallery'].includes(value.type))return value;
-   const pairs=Object.entries(value).map(([k,v])=>[k,block(v)]);
+   const hint=opening&&value.type==='field'&&value.title==='워밍업'&&Object.hasOwn(warmups,value.hint)?warmups[value.hint]:undefined;
+   const pairs=Object.entries(value).map(([k,v])=>[k,k==='hint'&&hint!==undefined?hint:block(v)]);
    return pairs.every(([k,v])=>v===value[k])?value:Object.fromEntries(pairs);
   }
   return text(value);
  };
- const pages=rows=>{const next=rows.map(page=>{
-  const title=text(page.title),lead=text(page.lead),blocks=block(page.blocks);
+ const pages=rows=>{const next=rows.map((page,index)=>{
+  const title=text(page.title),lead=text(page.lead),blocks=block(page.blocks,index===0);
   return title===page.title&&lead===page.lead&&blocks===page.blocks?page:{...page,title,...(Object.hasOwn(page,'lead')?{lead}:{}),blocks};
  });return next.every((p,i)=>p===rows[i])?rows:next;};
  const student=pages(workbook.pages),teacher=workbook.teacherStudentPages&&pages(workbook.teacherStudentPages);

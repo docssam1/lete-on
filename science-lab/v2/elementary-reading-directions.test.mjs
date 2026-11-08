@@ -33,7 +33,7 @@ test('reviewed student directions preserve all 3080 questions, answer books, rai
    assert.deepEqual(writing(current),writing(old));
   }
  }
- assert.deepEqual({units,pages,fields,questions},{units:13,pages:31,fields:70,questions:3080});
+ assert.deepEqual({units,pages,fields,questions},{units:21,pages:49,fields:89,questions:3080});
  for(const unit of ELEMENTARY_DIRECTIONS_UNITS)assert.deepEqual([...seen[unit]].sort(),Object.keys(ELEMENTARY_DIRECTIONS[unit]).sort());
 });
 
