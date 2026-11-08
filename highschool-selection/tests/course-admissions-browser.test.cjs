@@ -23,7 +23,10 @@ for(const width of [320,390,1440])test(`admission and mock status stay separate 
           assert.equal(new URL(await link.getAttribute('href')).hostname,'blog.naver.com');
           assert((await link.boundingBox()).height>=44);
         }
-        if(['algebra-direct','calculus1-basic','common2-basic'].includes(course.id))assert.equal(await page.locator('.round-card').count(),0,'guide must not open another course mock');
+        if(['algebra-direct','calculus1-basic','common2-basic'].includes(course.id)){
+          assert.equal(await page.locator('.round-card').count(),0,'guide must not open another course mock');
+          assert((await page.locator('.course-admission').boundingBox()).y<(await page.locator('.course-empty').boundingBox()).y,'admission guidance comes before the unavailable-mock message');
+        }
       }
     }
     if(process.env.HIGHSELECT_UI_ARTIFACT_DIR){
