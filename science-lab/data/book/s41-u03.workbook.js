@@ -1,3 +1,4 @@
+import{withLandElementaryWorkbook}from'./s41-u03.elementary.js?v=20261108-land-elementary';
 import{withLandLearnerReasoning}from'./s41-u03.editorial.js?v=20261105-land-learner-reasoning';
 import{withLandPhotoLanguage}from'./s41-u03.editorial.js?v=20261105-land-photo-language';
 import{withLandUpperScience}from'./s41-u03.editorial.js?v=20261105-land-upper-science';
@@ -7453,4 +7454,5 @@ export const studentGuidePriorWorkbook=withObservationLanguage(observationPriorW
 export const landUpperPriorWorkbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
 export const landPhotoPriorWorkbook=withLandUpperScience(landUpperPriorWorkbook);
 export const landReasoningPriorWorkbook=withLandPhotoLanguage(landPhotoPriorWorkbook);
-export const workbook=withLandLearnerReasoning(landReasoningPriorWorkbook);
+export const landElementaryPriorWorkbook=withLandLearnerReasoning(landReasoningPriorWorkbook);
+export const workbook=withLandElementaryWorkbook(landElementaryPriorWorkbook);
