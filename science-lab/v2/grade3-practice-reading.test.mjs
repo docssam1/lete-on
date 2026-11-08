@@ -1,3 +1,4 @@
+import {LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import {materialEarthCurrentItems} from '../data/book/material-earth-student-language.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,7 +17,7 @@ const cases=[
  {unit:'c22-s32-u03',prior:'soundElementaryPriorWorkbook',wbChanges:40,bankCount:76,bankChanges:32,classChanges:8,linked:54},
  {unit:'c22-s32-u04',prior:'infectionElementaryPriorWorkbook',wbChanges:35,bankCount:92,bankChanges:34,classChanges:8},
 ];
-const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','contentVersion','previousVersions'].includes(key)));
+const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','givens','contentVersion','previousVersions'].includes(key)));
 const escape=text=>text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function priorBank(unit){
  const names=['lesson','base','similar','taxonomy','misc',...(unit!=='c22-s32-u04'?['source']:[])];
@@ -49,11 +50,11 @@ for(const c of cases){
   const before=await priorBank(unit),savedBefore=structuredClone(before),{items:current}=await actualBank(unit);
   assert.equal(current.length,c.bankCount);let changed=0;
   for(let i=0;i<before.length;i++){
-   const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));
+   const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(q.contentVersion!==LESSON_REFERENCE_DATA_VERSION)assert.deepEqual(q.givens,old.givens);
    const ac=q.answerContract,values=ac.type==='single-choice'?[0,1,2,3,4]:ac.type==='multi-choice'?Array.from({length:32},(_,mask)=>[0,1,2,3,4].filter(n=>mask&(1<<n))):ac.type==='short-text'?[ac.answer,...(ac.accepted||[]),'다른 답']:ac.type==='written-explanation'?[ac.sample,'다른 설명']:ac.type==='cloze'?[ac.blanks.map(b=>b.answer),ac.blanks.map(()=>''),ac.blanks.map(()=>'다른 답')]:ac.type==='table-fill'?[ac.rows.map(r=>r.answer),ac.rows.map(r=>r.answer.map(()=>'')),ac.rows.map(r=>r.answer.map(()=>'다른 답'))]:[];
    for(const value of values)assert.deepEqual(gradeDaily(q,value),gradeDaily(old,value));
    if(q.prompt===old.prompt)continue;
-   changed++;assert.equal(q.contentVersion,VERSION);
+   changed++;assert.equal(questionAtVersion(q,VERSION).prompt,q.prompt);
    for(const version of new Set([old.contentVersion||1,...(old.previousVersions||[]).map(v=>v.version)])){
     const expected=questionAtVersion(old,version),restored=questionAtVersion(q,version);
     for(const [key,value]of Object.entries(expected))assert.deepEqual(restored[key],value);

@@ -1,3 +1,4 @@
+import {LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -24,7 +25,7 @@ async function actualBank(){
   const body=line.slice(line.indexOf('async()=>')).replace(/,$/,'');
   return new vm.Script('('+body+')',{importModuleDynamically:specifier=>import(new URL(specifier,new URL('./v2.js',import.meta.url)).href)}).runInContext(vm.createContext({withThink}))();
 }
-const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','contentVersion','previousVersions'].includes(key)));
+const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','givens','contentVersion','previousVersions'].includes(key)));
 
 test('Earth-and-sea reading edits preserve workbook grading, pictures and all four paper views',async()=>{
   assert.equal(workbook.questions.length,80);
@@ -46,11 +47,11 @@ test('actual bank loader preserves every answer boundary and saved presentation 
   const before=await priorBank(),savedBefore=structuredClone(before),{items:current}=await actualBank();
   assert.equal(current.length,92);let changed=0;
   for(let i=0;i<before.length;i++){
-    const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));
+    const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(q.contentVersion!==LESSON_REFERENCE_DATA_VERSION)assert.deepEqual(q.givens,old.givens);
     const ac=q.answerContract,values=ac.type==='single-choice'?[0,1,2,3,4]:ac.type==='multi-choice'?Array.from({length:32},(_,mask)=>[0,1,2,3,4].filter(n=>mask&(1<<n))):ac.type==='short-text'?[ac.answer,...(ac.accepted||[]),'다른 답']:ac.type==='written-explanation'?[ac.sample,'다른 설명']:[];
     for(const value of values)assert.deepEqual(gradeDaily(q,value),gradeDaily(old,value));
     if(q.prompt===old.prompt)continue;
-    changed++;assert.equal(q.contentVersion,EARTH_SEA_ELEMENTARY_VERSION);
+    changed++;assert.equal(questionAtVersion(q,EARTH_SEA_ELEMENTARY_VERSION).prompt,q.prompt);
     for(const version of new Set([old.contentVersion||1,...(old.previousVersions||[]).map(v=>v.version)])){
       const expected=questionAtVersion(old,version),restored=questionAtVersion(q,version);
       for(const [key,value]of Object.entries(expected))assert.deepEqual(restored[key],value);

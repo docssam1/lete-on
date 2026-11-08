@@ -1,3 +1,4 @@
+import {lessonReferenceItems} from '../data/book/lesson-reference-data.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s42-u04.js';import{similar}from'../data/units/c22-s42-u04.similar.js';import{withThink}from'./think-merge.js';
 import{climateReadableCurrentItems,CLIMATE_READABILITY_VERSION}from'../data/book/c22-s42-u04.rail-notes.js';
@@ -30,8 +31,8 @@ test('climate readability guards original, similar, review, future and other uni
  assert.equal(climateReadableCurrentItems(baseline,'other'),baseline);assert.equal(climateReadableCurrentItems(null,unit),null);
 });
 test('climate bank, recurring classroom and Daily use the same eleven current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=climateReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===CLIMATE_READABILITY_VERSION)changed++;}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=lessonReferenceItems(climateReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===CLIMATE_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===CLIMATE_READABILITY_VERSION))changed++;}
  assert.equal(changed,11);assert.equal(first.classroomItems.length,12);assert.equal(first.classroomItems[0],baseline.find(q=>q.id==='c22-s42-u04-t01'));
  const t08=current.find(q=>q.id==='c22-s42-u04-t08');assert(t08.explanation.startsWith('이 모형에서'));assert(!t08.explanation.includes('땅의 높이가 정해요'));
 });

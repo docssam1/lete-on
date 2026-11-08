@@ -1,3 +1,4 @@
+import {LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import {biologyReadableCurrentItems} from '../data/book/s41-u04.editorial.js';
 import {biologyCurrentItems} from '../data/book/biology-student-language.js';
 import test from 'node:test';
@@ -26,17 +27,17 @@ async function actualBank(){
  const loaders=new vm.Script('('+body+')',{importModuleDynamically:s=>import(new URL(s,new URL('./v2.js',import.meta.url)).href)}).runInContext(vm.createContext({withThink}));
  return loaders[unit]();
 }
-const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','contentVersion','previousVersions'].includes(key)));
+const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','givens','contentVersion','previousVersions'].includes(key)));
 
 test('actual bank loader preserves every answer boundary and saved presentation when prompts change',async()=>{
   const before=await priorBank(),savedBefore=structuredClone(before),{items:current}=await actualBank();
   assert.equal(current.length,76);let changed=0;
   for(let i=0;i<before.length;i++){
-    const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));
+    const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(q.contentVersion!==LESSON_REFERENCE_DATA_VERSION)assert.deepEqual(q.givens,old.givens);
     const ac=q.answerContract,values=ac.type==='single-choice'?[0,1,2,3,4]:ac.type==='multi-choice'?Array.from({length:32},(_,mask)=>[0,1,2,3,4].filter(n=>mask&(1<<n))):ac.type==='short-text'?[ac.answer,...(ac.accepted||[]),'다른 답']:ac.type==='written-explanation'?[ac.sample,'다른 설명']:[];
     for(const value of values)assert.deepEqual(gradeDaily(q,value),gradeDaily(old,value));
     if(q.prompt===old.prompt)continue;
-    changed++;assert.equal(q.contentVersion,BIOLOGY_ELEMENTARY_BANK_VERSION);
+    changed++;assert.equal(questionAtVersion(q,BIOLOGY_ELEMENTARY_BANK_VERSION).prompt,q.prompt);
     for(const version of new Set([old.contentVersion||1,...(old.previousVersions||[]).map(v=>v.version)])){
       const expected=questionAtVersion(old,version),restored=questionAtVersion(q,version);
       for(const [key,value]of Object.entries(expected))assert.deepEqual(restored[key],value);
@@ -59,7 +60,7 @@ test('actual bank loader preserves every answer boundary and saved presentation 
 test('classroom questions use the same revised bank prompts while retaining their contracts',async()=>{
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items,source,similar}=await actualBank();
   const bank=new Map([...source,...similar,...items].map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,25);
-  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===BIOLOGY_ELEMENTARY_BANK_VERSION).length,11);
+  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===BIOLOGY_ELEMENTARY_BANK_VERSION||q.previousVersions?.some(v=>v.version===BIOLOGY_ELEMENTARY_BANK_VERSION)).length,11);
   for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
   assert.equal(workbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement').length,20);
   for(const q of workbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement'))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
