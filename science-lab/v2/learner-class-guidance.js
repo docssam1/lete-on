@@ -1,5 +1,5 @@
 import {plantStructureCase,validPlantStructureCompareRow} from './plant-structure-compare-model.js';
-export const LEARNER_CLASS_GUIDANCE_VERSION='20261108-grade3-class-guidance';
+export const LEARNER_CLASS_GUIDANCE_VERSION='20261108-student-reading';
 const clone=value=>structuredClone(value);
 const caseWording={
  starch:{
@@ -67,8 +67,22 @@ function withGrade3GuidanceCues(mod){
  for(const[id,[before,after]]of Object.entries(grade3CueWording[unit]))if(cues[id]===before)next={...next,[id]:after};
  return next===cues?mod:{...mod,chapter:{...mod.chapter,slideCues:next}};
 }
+function withAcidGuidance(mod){
+ const chapter=mod?.chapter;
+ if(chapter?.unit!=='c22-s61-u01'||!Array.isArray(chapter.acidFlow))return mod;
+ let changed=false,cues=chapter.slideCues;
+ const acidFlow=chapter.acidFlow.map(page=>{
+  if(page.id!=='litmusplan'||page.steps?.[1]!=='시료마다 새 시험지와 깨끗한 도구를 나누어 준비해요.')return page;
+  const steps=[...page.steps];steps[1]='용액마다 새 시험지와 깨끗한 도구를 나누어 준비해요.';
+  const next={...page,steps};changed=true;
+  if(cues?.[page.id]===cue(page))cues={...cues,[page.id]:cue(next)};
+  return next;
+ });
+ return changed?{...mod,chapter:{...chapter,acidFlow,...(cues!==chapter.slideCues?{slideCues:cues}:{})}}:mod;
+}
 export function withLearnerClassGuidance(mod){
  mod=withGrade3GuidanceCues(mod);
+ mod=withAcidGuidance(mod);
  if(mod?.chapter?.unit!=='c22-s61-u03')return mod;
  const chapter=mod.chapter;let changed=false,cues=chapter.slideCues;
  const flow=chapter.plantStructureFlow.map(page=>{
