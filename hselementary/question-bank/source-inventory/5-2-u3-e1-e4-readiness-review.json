@@ -782,10 +782,12 @@
       "singleAnswerCheck": "정답은 3개 조건의 유일한 집합이며 SSA 조건은 제외됩니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
-      "visualCheckStatus": "needs-implementation-check",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "추가 조건의 변·각 표식과 화면 선택 방식이 구현에서 정확히 보존되는지 확인 필요입니다."
+      "visualCheckStatus": "source-figure-reconstructed-and-checked",
+      "implementationStatus": "public-independent-verification-publisher-key-pending",
+      "publicDecision": "public",
+      "lockReason": null,
+      "runtimeTypeId": "5-2-u3-e1-example-3-original",
+      "publisherAnswerVerified": false
     },
     {
       "sourceItemId": "5-2-u3-e1-example-4",
