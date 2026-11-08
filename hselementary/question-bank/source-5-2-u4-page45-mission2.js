@@ -11,7 +11,13 @@
   const pools = Object.freeze([
     Object.freeze({ lowerHundredths:124, lowerFactor:12, upperHundredths:132, upperFactor:14 }),
     Object.freeze({ lowerHundredths:117, lowerFactor:16, upperHundredths:131, upperFactor:19 }),
-    Object.freeze({ lowerHundredths:136, lowerFactor:14, upperHundredths:127, upperFactor:18 })
+    Object.freeze({ lowerHundredths:136, lowerFactor:14, upperHundredths:127, upperFactor:18 }),
+    Object.freeze({ lowerHundredths:139, lowerFactor:12, upperHundredths:141, upperFactor:16 }),
+    Object.freeze({ lowerHundredths:123, lowerFactor:15, upperHundredths:139, upperFactor:18 }),
+    Object.freeze({ lowerHundredths:127, lowerFactor:13, upperHundredths:142, upperFactor:16 }),
+    Object.freeze({ lowerHundredths:138, lowerFactor:14, upperHundredths:146, upperFactor:19 }),
+    Object.freeze({ lowerHundredths:115, lowerFactor:16, upperHundredths:134, upperFactor:18 }),
+    Object.freeze({ lowerHundredths:143, lowerFactor:13, upperHundredths:148, upperFactor:19 })
   ]);
   const fmtHundredths = value => `${Math.floor(value/100)}.${String(value%100).padStart(2,"0")}`;
   const andParticle = value => [0,1,3,6,7,8].includes(value%10) ? "과" : "와";
@@ -26,7 +32,7 @@
     return Object.freeze({lower,upper,first:candidates[0],last:candidates[candidates.length-1],count:candidates.length,candidates:Object.freeze(candidates)});
   }
   function build(poolIndex=0,difficultyOffset=0){
-    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음만 사용할 수 있습니다.");
     if(![-1,0,1].includes(difficultyOffset))throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const pool=pools[poolIndex], result=calculate(pool);
     const lowerExpression=`${fmtHundredths(pool.lowerHundredths)}×${pool.lowerFactor}=${fmtHundredths(result.lower)}`;
