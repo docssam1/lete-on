@@ -23,6 +23,10 @@ Object.assign(text.en,{craftEyebrow:'PAPER MAGIC · Hands-on play',craftTitle:'F
 Object.assign(text.zh,{craftEyebrow:'彩纸魔法 · 动手玩',craftTitle:'折一折、剪一剪、叠一叠',craftDesc:'创作图案、收集纸片，一层层发现彩纸的秘密。'});
 Object.assign(text.ja,{craftEyebrow:'紙マジック · 手を動かそう',craftTitle:'折って、切って、重ねて発見',craftDesc:'模様を作り、かけらを集め、色紙を一枚ずつ見つけよう。'});
 const t = (key) => text[lang]?.[key] || text.ko[key];
+Object.assign(text.ko,{straightTitle:'직선으로 잘라 도형 만들기',straightDesc:'종이를 접지 않고 잘라, 조각의 모양과 개수를 생각해요.'});
+Object.assign(text.en,{straightTitle:'Make shapes with straight cuts',straightDesc:'Cut without folding and reason about the shapes and number of pieces.'});
+Object.assign(text.zh,{straightTitle:'用直线剪出图形',straightDesc:'不用折叠，剪开彩纸，思考纸片的形状和数量。'});
+Object.assign(text.ja,{straightTitle:'直線で切って形を作る',straightDesc:'折らずに切って、かけらの形と数を考えよう。'});
 text.ko.calculationCount="숫자 색종이 게임 2활동 · 기존 학습지";
 text.zh.calculationCount="数字彩纸游戏2项活动 · 现有练习纸";
 text.ja.calculationCount="数の色紙ゲーム2活動 · 既存プリント";
@@ -107,6 +111,10 @@ renderActivities([
   {title:{ko:'색종이 마술 활동지',en:'Paper Magic Activity Sheets',zh:'彩纸魔法活动纸',ja:'色紙マジックのプリント'},description:{ko:'종이를 접고 자르고 오려 붙이며 놀아요. 게임에서 만든 내 무늬도 학습지로 이어져요.',en:'Fold, cut, and build with real paper. Bring your own game pattern to a worksheet.',zh:'用真正的纸折、剪、拼。游戏里自创的图案也能打印。',ja:'本物の紙を折って切って並べよう。ゲームで作った模様もプリントにできるよ。'},href:'../worksheet/paper-craft/?family=all&count=33&lang='+encodeURIComponent(lang),stage:{ko:'문제 · 놀이 풀이 · 빠른 정답',en:'Activities · Solutions · Quick answers',zh:'活动 · 解法 · 快速答案',ja:'活動・解き方・答え'}}
 ],"#craftPlayGrid",['#255f9e','#146b55']);
 renderActivities(foldWorksheetActivities,"#foldLevelGrid",["#e5b548"],foldLevels.length);
+renderActivities([
+ {title:{ko:'잘린 조각의 모양 세기',en:'Count Cut Shapes',zh:'数剪开的图形',ja:'切った形を数える'},description:{ko:'선을 따라 자른 뒤 삼각형·사각형·오각형의 개수를 세어요.',en:'Cut on the line and count triangles, quadrilaterals and pentagons.',zh:'沿线剪开，数三角形、四边形和五边形。',ja:'線で切り、三角形・四角形・五角形を数えよう。'},href:'../games/paper-cut/?type=count',action:'start',stage:{ko:'접지 않고 자르기 · 12문제',en:'No folding · 12 questions',zh:'不折叠 · 12题',ja:'折らずに切る · 12問'}},
+ {title:{ko:'목표 모양으로 자르기',en:'Cut for Target Shapes',zh:'剪出目标图形',ja:'目標の形に切る'},description:{ko:'두 점을 골라, 주어진 개수의 도형이 되도록 한 번 더 잘라요.',en:'Choose two points for one more cut to make the target shapes.',zh:'选两个点，再剪一次，得到指定数量的图形。',ja:'二つの点を選び、もう一回切って目標の形と数にしよう。'},href:'../games/paper-cut/?type=make',action:'start',stage:{ko:'선 찾기 · 12문제',en:'Find a cut · 12 questions',zh:'找剪线 · 12题',ja:'切る線を探す · 12問'}}
+],"#straightCutGrid",['#bd7195','#3b9a87']);
 renderActivities(calculationActivities,"#applicationGrid",["#2456c4","#e5b548","#df7562"]);
 renderActivities(overlapActivities,"#overlapGrid",["#57bba6"]);
 renderLevels(turnLevels, "#turnLevelGrid", "paper-turn", ["#57bba6", "#ec8c72", "#59a8da", "#8d75c9", "#e5b548"]);
