@@ -4417,7 +4417,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u5","5-2-u5-t3-4","5-2-u5-e3-opposite-products-similar"],
     ["5-2-u5","5-2-u5-t3","5-2-u5-e3-vertex-impossible-similar"],
     ["5-2-u5","5-2-u5-t5-2","5-2-u5-practice-41-blank-similar"],
-    ["5-2-u5","5-2-u5-t5-3","5-2-u5-practice-54-view-sums-similar"]
+    ["5-2-u5","5-2-u5-t5-3","5-2-u5-practice-54-view-sums-similar"],
+    ["5-2-u5","5-2-u5-t2","5-2-u5-e2-paper-choice-practice"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
