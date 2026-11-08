@@ -2642,6 +2642,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
 
   const source52Dice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s5");
+  if (source52Dice && !source52Dice.types.some(t=>t.id==="5-2-u5-practice-54-view-sums-similar")) {
+    const id="5-2-u5-practice-54-view-sums-similar",name="세 모습의 면의 합으로 바닥면 찾기 · 조건변형";
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Dice.types.push({id,number:source52Dice.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u5-practice-54-original",sourceItemLabel:"확인학습 54번 조건변형 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:108,alternateSourcePdfPage:109,sourcePrintedPage:114,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5ViewSumsHiddenSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 세 방향에서 보이는 면 관계를 합과 굴리기 순서 조건으로 바꾸고 720개 면 배치를 독립 대조했습니다."});
+  }
+
   if (source52Dice && !source52Dice.types.some(t=>t.id==="5-2-u5-practice-41-blank-similar")) {
     const id="5-2-u5-practice-41-blank-similar",name="두 전개도의 대응 면으로 빈 면 찾기 · 조건변형";
     const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
@@ -4410,7 +4416,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     ["5-2-u5","5-2-u5-t6-5","5-2-u5-practice-62-two-route-sums-similar"],
     ["5-2-u5","5-2-u5-t3-4","5-2-u5-e3-opposite-products-similar"],
     ["5-2-u5","5-2-u5-t3","5-2-u5-e3-vertex-impossible-similar"],
-    ["5-2-u5","5-2-u5-t5-2","5-2-u5-practice-41-blank-similar"]
+    ["5-2-u5","5-2-u5-t5-2","5-2-u5-practice-41-blank-similar"],
+    ["5-2-u5","5-2-u5-t5-3","5-2-u5-practice-54-view-sums-similar"]
   ]) {
     const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id===unitId);
     const type=unit?.subunits.flatMap(group=>group.types).find(item=>item.id===id);
