@@ -1,3 +1,4 @@
+import{withGasIndependentQuestionLinks}from'./c22-s42-u03.editorial.js?v=20261108-gas-workbook-links';
 import{withGasUpperScience,withGasReadableWorkbook}from'./c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import {withGasEditorial} from './c22-s42-u03.editorial.js';
@@ -8782,4 +8783,5 @@ const baseWorkbook = {
 export const learnerPriorWorkbook=withGasEditorial(baseWorkbook);
 export const gasUpperPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const gasReadablePriorWorkbook=withGasUpperScience(gasUpperPriorWorkbook);
-export const workbook=withGasReadableWorkbook(gasReadablePriorWorkbook);
+export const gasLinkPriorWorkbook=withGasReadableWorkbook(gasReadablePriorWorkbook);
+export const workbook=withGasIndependentQuestionLinks(gasLinkPriorWorkbook);

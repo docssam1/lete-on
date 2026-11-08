@@ -491,3 +491,34 @@ export function gasReadableCurrentItems(rows,unit){
   gasReadableCache.set(question,current);return current;
  });return changed?next:rows;
 }
+
+// These two workbook scenarios are independent of the older bank cases.
+export const GAS_WORKBOOK_LINK_VERSION='20261108-gas-workbook-links';
+const independentWorkbookQuestions={
+  "c22-s42-u03-w015": {
+    "no": 15,
+    "sourceId": "c22-s42-u03-b85",
+    "prompt": "같은 판·시작 상태·펌프 방법으로 시험한 가상 기록입니다. 연결부 한 곳만 고친 뒤의 변화로 알맞게 설명한 것은 무엇인가요?",
+    "key": 3,
+    "figure": "reuse-c22-s42-u03-b85"
+  },
+  "c22-s42-u03-w016": {
+    "no": 16,
+    "sourceId": "c22-s42-u03-b91",
+    "prompt": "두 장치를 같은 판·시작 상태·펌프 방법으로5번씩 시험했습니다. 표로 확인할 수 있는 것은 무엇인가요?",
+    "key": 2,
+    "figure": "reuse-c22-s42-u03-b91"
+  }
+};
+export function withGasIndependentQuestionLinks(wb){
+ if(wb.unit!=='c22-s42-u03')return wb;
+ let changed=false;
+ const questions=wb.questions.map(q=>{
+  const entry=independentWorkbookQuestions[q.id];
+  if(!entry||q.sourceRef?.type!=='authored-supplement'||q.form!=='choice'||q.previousBankSourceId!==undefined||!Object.entries(entry).every(([key,value])=>q[key]===value))return q;
+  changed=true;
+  const {sourceId,...current}=q;
+  return {...current,status:'authored',previousBankSourceId:sourceId,sourceRef:{...q.sourceRef,type:'authored-workbook',unit:wb.unit,originalCounterpart:false}};
+ });
+ return changed?{...wb,questions}:wb;
+}

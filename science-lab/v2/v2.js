@@ -1,8 +1,8 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261108-source-schema';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261105-history-review';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-land-elementary';
-import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261108-biology-elementary-bank';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-classroom-consistency';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261108-classroom-consistency';
 import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
@@ -578,7 +578,8 @@ async function pageCheck(only) {
     loadUnit: async (u) => {
       const load = UNITS[u] || bankLoader(u);
       const [b,m] = await Promise.all([BOOKS[u] ? BOOKS[u]() : null, load()]);
-      const pool = [...(m.similar || []), ...(m.source || []), ...(m.items || [])];
+      const classroom = b ? await revisedClassroom(u,b) : null;
+      const pool = classroomQuestions(classroom,[...(m.similar || []), ...(m.source || []), ...(m.items || [])]);
       return { ch: b?.chapter || { no:'', title:m.unit?.title || m.taxonomy?.title || u, assessment:Boolean(BANK[u]?.assessment) }, similar:pool,
         ...(b ? {} : { back:'#/bank', backLabel:'문제은행으로' }) };
     } });

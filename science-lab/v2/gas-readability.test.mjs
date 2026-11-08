@@ -2,7 +2,7 @@ import test from'node:test';import assert from'node:assert/strict';
 import{items as baseline}from'../data/units/c22-s42-u03.js';import{gasReadableCurrentItems,GAS_READABILITY_VERSION}from'../data/book/c22-s42-u03.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u03.book.js';
-import{workbook,gasReadablePriorWorkbook}from'../data/book/c22-s42-u03.workbook.js';
+import{workbook,gasReadablePriorWorkbook,gasLinkPriorWorkbook}from'../data/book/c22-s42-u03.workbook.js';
 const unit='c22-s42-u03';
 test('gas readable presentations keep scoring and every old field and answer snapshot',()=>{
  const before=structuredClone(baseline),current=gasReadableCurrentItems(baseline,unit);let changed=0;
@@ -35,6 +35,6 @@ test('gas answer reasons distinguish experiment roles and keep independent bank 
  assert(b85.prompt.includes('설계 그림'));assert(b85.explanation.includes('아직 장치는 만들지'));assert(!/2초|6초/.test(b85.explanation));assert(b91.prompt.includes('저장'));assert(!/3번|5번/.test(b91.explanation));assert(workbook.questions.find(q=>q.no===15).explanation.includes('2초에서 6초'));
  const q30=workbook.questions.find(q=>q.no===30);assert(q30.explanation.includes('바꿀 것은 누르는 압력'));assert(q30.explanation.includes('바깥 압력은 같게'));assert(!q30.explanation.includes('질문마다 다른 역할로 읽지'));
  for(const key of['pages','teacherStudentPages'])for(let i=0;i<workbook[key].length;i++)assert.deepEqual(workbook[key][i].rail,gasReadablePriorWorkbook[key][i].rail);
- for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(gasReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['key','responseContract'].includes(k)))assert.deepEqual(workbook.questions[i][key],gasReadablePriorWorkbook.questions[i][key]);
+ for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(gasReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['key','responseContract'].includes(k)))assert.deepEqual(gasLinkPriorWorkbook.questions[i][key],gasReadablePriorWorkbook.questions[i][key]);
  assert.deepEqual(workbook.quickPages,gasReadablePriorWorkbook.quickPages);assert.deepEqual(workbook.figures,gasReadablePriorWorkbook.figures);
 });
