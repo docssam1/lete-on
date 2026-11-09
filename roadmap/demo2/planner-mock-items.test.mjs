@@ -101,3 +101,16 @@ test('primary-topic-only high2 tags never assign a partial-course item before pr
  const lacking=I.select('h2-06',ids.filter(id=>id!=='c1-quadratic'));
  assert.ok(lacking.excludedUnlearned.includes(15));
 });
+
+test('a pupil studying a course after the unit list has every earlier course as learned', () => {
+ const earlier = I.UNITS.filter(u => u.course !== '이전 교육과정·별도 확인').map(u => u.id);
+ for (const stage of ['미적분Ⅱ', '기하']) {
+  const learned = I.knowledge(a, null, { stage, done: false }).learned;
+  assert.equal(learned.length, earlier.length, stage);
+  assert.deepEqual([...learned].sort(), [...earlier].sort(), stage);
+ }
+ // A course inside the list still counts only the courses before it.
+ assert.equal(I.knowledge(a, null, { stage: '공통수학1', done: false }).learned.some(id => id.startsWith('c1-')), false);
+ // An unknown course name stays empty instead of unlocking everything.
+ assert.equal(I.knowledge(a, null, { stage: '확인 전', done: false }).learned.length, 0);
+});

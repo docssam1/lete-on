@@ -163,6 +163,9 @@ body.integrated-planner .horizontal-course-grid .standard-block :is(strong,small
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+/* 화면 끝에서 잘려 한 달 폭도 안 되는 블록: 글자가 한 자씩 세로로 꺾여 줄 전체 높이를 늘리지 않도록 글자를 숨긴다. 내용은 aria-label에 남는다. */
+body.integrated-planner .horizontal-course-grid .standard-block.is-sliver { padding-inline: 0; overflow: hidden; }
+body.integrated-planner .horizontal-course-grid .standard-block.is-sliver :is(strong,small) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 body.integrated-planner .horizontal-course-grid .standard-block strong { font-size: .8125rem; line-height: 1.55; font-weight: 600; text-wrap: balance; }
 body.integrated-planner .horizontal-course-grid .standard-block small { font-size: .6875rem; line-height: 1.55; font-variant-numeric: tabular-nums; }
 body.roadmap-studio.integrated-planner :is(.standard-table,.workspace-schedule table) { font-size: .8125rem; line-height: 1.75; }
