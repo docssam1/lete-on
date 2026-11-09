@@ -53,7 +53,7 @@ function clipped(block,limit){
  if(!Number.isFinite(block.start)||!Number.isFinite(block.end)||block.end<=block.start||block.start>=limit)return null;
  const result=clone(block);if(block.end>limit){result.unclippedEnd=block.end;result.end=limit;result.continues=true;result.endClipped=true;result.clipped=true;}return result;
 }
-function apply({schoolLane={},deepLane={},actualSchool=null,actualDeep=null,subjects=SUBJECTS,highStart=null,months=6,deepMonths=6,state:value,limit=Infinity}={}){
+function apply({schoolLane={},deepLane={},actualSchool=null,actualDeep=null,actualAdditionalDeep=null,subjects=SUBJECTS,highStart=null,months=6,deepMonths=6,state:value,limit=Infinity}={}){
  const state=restore(value),warnings=[],readyAt={},school=clone(schoolLane),deep=clone(deepLane),list=subjects.filter(s=>SUBJECTS.includes(s));
  school.blocks=(school.blocks||[]).filter(b=>!SUBJECTS.includes(b.stage));
  const oldDeep=clone(deep.blocks||[]);deep.blocks=oldDeep.filter(b=>!SUBJECTS.includes(b.stage));
@@ -108,7 +108,14 @@ function apply({schoolLane={},deepLane={},actualSchool=null,actualDeep=null,subj
   const b={...existing,id:'deep-'+(19+SUBJECTS.indexOf(stage)),stage,title:stage+' '+actualDeep.book,books:[actualDeep.book],kind:'deep',type:'high',highPhase:'deep',start:0,end,full:depthFull,fraction:fraction(actualDeep),current:true,reported:true,guide:'high',source:'reported-high-depth',tasks:existing?.tasks||'현재 심화 교재의 남은 분량을 이어갑니다. 풀이 설명과 오답 재해결을 확인합니다.'};
   const visible=clipped(b,horizon);if(visible)deep.blocks.push(visible);depthCursor=Math.max(depthCursor,end);firstDeep=deepIndex+1;
  }else if(reportedDepth&&actualDeep.done)firstDeep=deepIndex+1;
+ const additional=actualAdditionalDeep&&list.includes(actualAdditionalDeep.stage)&&actualAdditionalDeep.stage!==actualDeep?.stage&&!isApplicationBook(actualAdditionalDeep.book)&&!isBasicBook(actualAdditionalDeep.book)&&!isLegacyJeongseok(actualAdditionalDeep.book)?actualAdditionalDeep:null;
+ if(additional&&!additional.done){
+  const end=round(depthFull*(1-fraction(additional)));
+  const b={id:'deep-additional-'+SUBJECTS.indexOf(additional.stage),stage:additional.stage,title:additional.stage+' '+additional.book+' · 추가 현재 심화',books:[additional.book],kind:'deep',type:'high',highPhase:'deep',start:0,end,full:depthFull,fraction:fraction(additional),current:true,reported:true,additional:true,guide:'high',source:'reported-high-depth',tasks:'동시에 진행하는 별도 심화의 남은 분량입니다. 다른 현재 심화를 대체하지 않습니다. 개념·유형의 빈틈이 있으면 이 과목에서 함께 보완합니다.'};
+  const visible=clipped(b,horizon);if(visible)deep.blocks.push(visible);depthCursor=Math.max(depthCursor,end);
+ }
  if(firstDeep>=0)for(let i=firstDeep;i<list.length;i++){
+  if(additional?.stage===list[i])continue;
   const stage=list[i],ready=readyAt[stage];
   if(!Number.isFinite(ready))break;
   const start=round(Math.max(depthCursor,ready)),end=round(start+depthFull);

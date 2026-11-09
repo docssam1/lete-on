@@ -350,3 +350,92 @@ test('중등 개념·유형 교재를 실제 이름으로 교과에 기록할 �
   assert.match(I.summary(a,fields).find(x=>x.key==='school').text,new RegExp(book.replace(/[+]/g,'\\+')));
  }
 });
+
+test('고등 선행·후행 심화 질문은 학년과 연산 범위를 추정하지 않는다',()=>{
+ const a={schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'대수',schoolStatus:'progress',deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',deepStatus:'progress',calc:'unknown'};
+ const q=I.questions(a,{mon:'11',band:'B'});
+ assert.equal(I.gradeChoice(a,{mon:'11',band:'B'}),undefined);
+ assert.equal(I.firstMissing(a,{mon:'11',band:'B'}),'grade');
+ assert.match(q.deepStage[0],/현재 심화하는 과목/);
+ assert.doesNotMatch(q.deepStage[1],/학년과 학기/);
+ assert.match(q.calc[1],/고등 선행과 연산 범위는 다를/);
+ assert.ok(q.calc[2].some(([key])=>key==='advanced'));
+ assert.ok(q.calc[2].some(([key])=>key==='high'));
+ assert.equal(a.calc,'unknown');
+ assert.equal(a.deepStage,'공통수학2');
+});
+
+test('추가 현재 심화는 기존 답을 보존하고 같은 과목을 막으며 미확인과 없음을 구분한다',()=>{
+ const a={...answer,deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',deepStatus:'progress',deepExtra:'yes',deepExtraStage:'대수',deepExtraBook:'고쟁이',deepExtraStatus:'progress'};
+ a.deepExtraProgress={course:I.progressCourse(a,'deepExtraStatus'),done:1,total:4,unit:'unit'};
+ const before=JSON.stringify(a),extra=I.additionalDeep(a,fields);
+ assert.equal(extra.stage,'대수');assert.equal(extra.fraction,.25);
+ assert.ok(I.summary(a,fields).some(r=>r.key==='deepExtraBook'&&r.text.includes('대수')));
+ assert.equal(JSON.stringify(a),before);
+ assert.equal(I.additionalDeep({...a,deepExtraStage:'공통수학2'},fields),null);
+ assert.ok(!I.questions(a,fields).deepExtraStage[2].some(([id])=>id==='공통수학2'));
+ assert.match(I.summary({...a,deepExtra:undefined},fields).find(r=>r.key==='deepExtraBook').text,/확인 전/);
+ assert.match(I.summary({...a,deepExtra:'no'},fields).find(r=>r.key==='deepExtraBook').text,/없음/);
+ assert.equal(I.additionalDeep(a,{...fields,pendingStatus:{deepExtraStatus:true}}),null);
+});
+
+test('새 심화 상태 입력과 기존 요약 편집 모두 추가 심화 질문에 도달한다',()=>{
+ const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+ assert.match(ui,/key==='deepStatus'&&answers.deepCourse==='high'\?'deepExtra'/);
+ assert.match(ui,/it.key==='deepExtraBook'\?'deepExtra'/);
+ const weekly=readFileSync(new URL('planner-weekly-planner.js',import.meta.url),'utf8');
+ assert.match(weekly,/현재 병행하는 심화/);
+ assert.match(weekly,/심화 회차를 자동으로 더하지 않습니다/);
+});
+
+test('사고력 질문은 초2 이하 또는 초3 이상 교과 초5완료 이하에서만 표시한다',()=>{
+ const f={mon:'11',band:'B',grade:'1'};
+ for(const grade of ['pre','1','2']){
+  const a={grade,gradeInput:'current',age:grade==='pre'?'6':undefined,schoolCourse:'high',schoolHigh:'대수'};
+  assert.equal(I.thinkingRequired(a,f),true);assert.ok(I.order(a,f).includes('thinkingExperience'));
+ }
+ for(const grade of ['3','6','7','10'])for(const [course,stage,status,expected] of [['elem','5-2','progress',true],['elem','5-2','done',true],['elem','6-1','progress',false],['elem','6-1','done',false],['mid',null,'progress',false],['high',null,'progress',false]]){
+  const a={grade,gradeInput:'current',schoolCourse:course,school:stage,schoolStatus:status};
+  assert.equal(I.thinkingRequired(a,f),expected);assert.equal(I.order(a,f).includes('thinkingExperience'),expected);
+ }
+ for(const a of [{},{grade:'3',gradeInput:'current'},{grade:'3',gradeInput:'current',schoolCourse:'unknown'},{grade:'3',gradeInput:'current',schoolCourse:'none'},{grade:'3',gradeInput:'current',schoolCourse:'elem'}])assert.equal(I.thinkingRequired(a,f),null);
+});
+
+test('초3 이상은 과목·복수심화를 먼저 고르고 교재와 연산 후 필요한 사고력을 묻는다',()=>{
+ const a={grade:'4',gradeInput:'current',schoolCourse:'high',schoolHigh:'대수',deepCourse:'high',deepStage:'공통수학2',deepExtra:'yes',deepExtraStage:'대수'};
+ const f={mon:'11',band:'B'},q=I.questions(a,f),order=I.order(a,f);
+ assert.deepEqual(plain(order.slice(0,14)),['grade','schoolCourse','schoolHigh','deepCourse','deepStage','deepExtra','deepExtraStage','schoolBook','schoolStatus','deepBook','deepStatus','deepExtraBook','deepExtraStatus','calc']);
+ assert.ok(q.deepStage[2].some(([id])=>id==='공통수학2'));
+ assert.ok(!order.includes('thinkingExperience'));
+ const low={...a,schoolCourse:'elem',school:'5-2'};
+ assert.ok(I.order(low,f).indexOf('thinkingExperience')>I.order(low,f).indexOf('calc'));
+ assert.equal(I.firstMissing({...a,schoolBook:'기본정석',schoolStatus:'progress',deepBook:'실력정석',deepStatus:'progress',deepExtraBook:'고쟁이',deepExtraStatus:'progress'},f),'calc');
+ assert.notEqual(I.summary({...a,calc:undefined},f).find(x=>x.key==='calc').text,I.summary({...a,calc:'none'},f).find(x=>x.key==='calc').text);
+ // Stale books from a former course must not determine the new subject choices.
+ const mid=I.questions({...a,deepCourse:'mid',deepBook:'실력정석'},f);
+ assert.ok(mid.deepStage[2].some(([id])=>id==='14'));assert.ok(!mid.deepStage[2].some(([id])=>id==='대수'));
+});
+
+test('사고력 질문을 생략해도 이전 기록과 경로 입력은 삭제하지 않는다',()=>{
+ const a={...answer,grade:'4',gradeInput:'current',schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'대수'};
+ const before=JSON.stringify(a),progress=I.sourceInput(a,fields).thinking;
+ I.order(a,fields);I.firstMissing(a,fields);I.questions(a,fields);
+ assert.equal(JSON.stringify(a),before);assert.ok(progress.length>0);
+ assert.equal(I.thinkingRequired({...a,schoolCourse:'unknown'},fields),null);
+ assert.equal(I.thinkingRequired({schoolCourse:'high'},fields),null);
+});
+
+test('실제 질문 핸들러로 고등 복수심화 과목→교재→연산 순서를 끝까지 밟는다',()=>{
+ const f=storageFixture({version:2,answers:{},fields:{...fields,hw:'57'},history:[],state:{}});
+ f.c.restoreDraft();f.c.handleCollegeClick=()=>false;f.c.collegeState={enabled:false};
+ const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+ vm.runInContext(ui.slice(ui.indexOf("$('questionOptions').onclick="),ui.indexOf("$('questionBack').onclick=")),f.c);
+ const steps=[['grade','4'],['schoolCourse','high'],['schoolHigh','대수'],['deepCourse','high'],['deepStage','공통수학2'],['deepExtra','yes'],['deepExtraStage','대수'],['schoolBook','기본정석'],['schoolStatus','progress'],['deepBook','실력정석'],['deepStatus','progress'],['deepExtraBook','고쟁이'],['deepExtraStatus','progress'],['calc','unknown']];
+ for(let i=0;i<steps.length;i++){
+  const [key,value]=steps[i];f.c.question=key;
+  f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:value}})}});
+  if(i<steps.length-1)assert.equal(f.asked,steps[i+1][0],key+' 다음 질문');
+ }
+ assert.equal(f.c.answers.calc,'unknown');assert.equal(f.c.answers.thinkingExperience,undefined);
+ assert.equal(f.c.answers.deepStage,'공통수학2');assert.equal(f.c.answers.deepExtraStage,'대수');
+});

@@ -101,3 +101,27 @@ test('완료 기반 일정은 유지하되 독립 풀이 확인과 현재 과목
  assert.match(m.schoolLane.blocks[0].tasks,/현재 과목의 개념·유형 보완을 먼저/);
  assert.match(m.deepLane.blocks[0].tasks,/현재 개념·유형부터 보완/);
 });
+
+test('기존 단일 심화 입력: 추가 심화 미입력일 때만 대수 심화를 계획으로 유지한다',()=>{
+ const original=input({actualSchool:actual('대수',{book:'기본정석',fraction:0}),actualDeep:actual('공통수학2',{book:'실력정석',fraction:0})});
+ const before=JSON.stringify(original),m=H.apply(original);
+ const school=m.schoolLane.blocks[0],current=m.deepLane.blocks.find(b=>b.current),next=m.deepLane.blocks.find(b=>b.stage==='대수');
+ assert.equal(school.stage,'대수');assert.equal(school.current,true);
+ assert.equal(current.stage,'공통수학2');assert.equal(current.reported,true);
+ assert.equal(next.current,false);assert.equal(next.proposed,true);
+ assert.ok(next.start>=school.end);assert.ok(next.start>=current.end);
+ assert.equal(JSON.stringify(original),before);
+});
+
+test('두 고등 심화는 입력 순서와 무관하게 별도 현재 과목이며 미래 계획과 중복하지 않는다',()=>{
+ for(const [primary,secondary] of [['공통수학2','대수'],['대수','공통수학2']]){
+  const m=H.apply(input({actualSchool:actual('대수'),actualDeep:actual(primary,{book:'실력정석',fraction:.25}),actualAdditionalDeep:actual(secondary,{book:'고쟁이',fraction:.5})}));
+  const current=m.deepLane.blocks.filter(b=>b.current);
+  assert.equal(current.length,2);
+  assert.deepEqual(plain(current.map(b=>b.stage).sort()),['공통수학2','대수'].sort());
+  for(const b of current){assert.equal(b.start,0);assert.equal(b.reported,true);assert.ok(!b.proposed);assert.equal(m.deepLane.blocks.filter(x=>x.stage===b.stage).length,1);}
+  assert.equal(current.find(b=>b.additional).end,3);
+ }
+ const m=H.apply(input({actualDeep:actual('공통수학2',{book:'실력정석'}),actualAdditionalDeep:actual('공통수학2',{book:'고쟁이'})}));
+ assert.equal(m.deepLane.blocks.filter(b=>b.stage==='공통수학2').length,1);
+});

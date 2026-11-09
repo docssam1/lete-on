@@ -78,3 +78,39 @@ test('the supplied five stages retain their distinct duration and selected mater
  assert.match(intro,/CPG/);assert.match(intro,/合|합동식/);assert.match(intro,/체바/);assert.ok(!intro.includes('<summary>수열·기타'));
  assert.match(basic,/AMC/);assert.match(basic,/비둘기집/);assert.match(advanced,/오일러 φ/);assert.match(advanced,/피보나치/);
 });
+
+test('동시 현재 심화 두 과목이 표준·목표 월별 일정에서 보존된다',()=>{
+ const a={...base(),schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'대수',schoolStatus:'progress',deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',deepStatus:'progress',deepExtra:'yes',deepExtraStage:'대수',deepExtraBook:'고쟁이',deepExtraStatus:'progress',calc:'unknown'};
+ for(const m of [C.model(a,fields),window.PlannerStandard.model(a,fields)]){
+  const current=lane(m,'deep').blocks.filter(b=>b.current);
+  assert.deepEqual(plain(current.map(b=>b.stage).sort()),['공통수학2','대수']);
+  assert.ok(current.every(b=>b.reported&&!b.proposed));
+ }
+ assert.equal(a.calc,'unknown');
+});
+
+test('동시에 시작하는 두 심화 블록은 표준 달력과 목표 그래프의 서로 다른 시각 행에 놓인다',()=>{
+ const a={...base(),schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'대수',deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',deepStatus:'progress',deepExtra:'yes',deepExtraStage:'대수',deepExtraBook:'고쟁이',deepExtraStatus:'progress'};
+ const c=C.model(a,fields),s=window.PlannerStandard.model(a,fields);
+ for(const [m,html,track] of [[c,C.render(c,'graph'),'curriculum-track'],[s,window.PlannerStandard.render(s,{view:'table'}),'standard-lane-track']]){
+  const snapshot=JSON.stringify(m);
+  const rows=[...html.matchAll(new RegExp('<div class="'+track+'">([\\s\\S]*?)</div>','g'))].map(x=>x[1]);
+  const primary=rows.findIndex(x=>x.includes('data-'+(track==='curriculum-track'?'curriculum':'standard')+'-block="deep-20"'));
+  const extra=rows.findIndex(x=>x.includes('deep-additional-2'));
+  assert.ok(primary>=0);assert.ok(extra>=0);assert.notEqual(primary,extra);
+  assert.match(html,/추가 현재 심화/);
+  assert.equal(JSON.stringify(m),snapshot);
+ }
+});
+
+test('사고력 질문 생략한 신규 고등 입력은 사고력 과정을 만들지 않고 실제 옛 기록만 보존한다',()=>{
+ const a={grade:'4',gradeInput:'current',schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'대수',schoolStatus:'progress',deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',deepStatus:'progress',deepExtra:'yes',deepExtraStage:'대수',deepExtraBook:'고쟁이',deepExtraStatus:'progress',calc:'unknown'};
+ const before=JSON.stringify(a);
+ assert.equal(I.buildPlan(a,fields).rows.find(r=>r.key==='comp').blocks.length,0);
+ const p=I.profile(a,fields).rows.find(r=>r.key==='thinking1');assert.equal(p.blocks.length,0);assert.equal(p.remaining.length,0);
+ const t=window.PlannerStandard.model(a,fields).lanes.find(l=>l.id==='thinking');assert.equal(t.blocks.length,0);assert.equal(t.status,'pending');
+ assert.equal(JSON.stringify(a),before);assert.equal(a.thinkingExperience,undefined);
+ const old={...a,thinkingExperience:'yes',thinking:'1031 초급',thinkingStatus:'progress'};
+ const saved=window.PlannerStandard.model(old,fields).lanes.find(l=>l.id==='thinking');assert.equal(saved.status,'known');assert.ok(saved.blocks.length>0);
+ assert.equal(old.thinking,'1031 초급');
+});

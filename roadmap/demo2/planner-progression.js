@@ -35,7 +35,7 @@ function actualStage(a,axis){
 function context(answers,fields){
  const a=I.effective(answers),grade=I.gradeChoice(a,fields),now=!fields.internationalCalendar&&grade&&(grade!=='pre'||I.hasAnswer(a,fields,'age'))?D.monthOf(I.age(a,fields),fields.mon):null,order=I.order(a,fields),summary=I.summary(a,fields);
  const axes=AXES.map(axis=>{
-  const required=order.filter(k=>axis.prefix.test(k)),ready=!!grade&&required.length>0&&required.every(k=>I.hasAnswer(a,fields,k))&&!fields.pendingStatus?.[axis.status]&&a[axis.status]&& !I.special(axis.id==='comp'?a.thinkingExperience:axis.id==='school'?a.schoolBook:axis.id==='deep'?a.deepBook:a.calc);
+  const required=axis.id==='comp'&&a.thinking&&a.thinkingStatus?['thinkingExperience','thinking',...(a.thinking==='advanced'?['compExact']:[]),...(a.thinking==='PRE 1031'?['preDone']:[]),'thinkingStatus']:order.filter(k=>axis.prefix.test(k)),ready=!!grade&&required.length>0&&required.every(k=>I.hasAnswer(a,fields,k))&&!fields.pendingStatus?.[axis.status]&&a[axis.status]&& !I.special(axis.id==='comp'?a.thinkingExperience:axis.id==='school'?a.schoolBook:axis.id==='deep'?a.deepBook:a.calc);
   return {...axis,ready:!!ready,current:summary.find(s=>s.key===axis.key)?.text||'현재 학습 확인 전',stage:ready&&axis.id!=='deep'?actualStage(a,axis.id):null,done:a[axis.status]==='done',fraction:a[axis.status]==='done'?1:(I.progressValue(a,axis.status)?I.progressValue(a,axis.status).done/I.progressValue(a,axis.status).total:.5)};
  });
  const signature=JSON.stringify([grade,now,axes.map(x=>[x.ready,x.current,x.stage,x.done])]);

@@ -11,6 +11,8 @@
   const errorBox=dock.querySelector('[data-ox-error]');
   let options={}, catalogRequest, revision=0, dialog, queueRequested=false;
   const setNames={m:'중',h:'상',x:'최상'};
+  // Match the studied course, not the child's age or school grade.
+  const isElementary = context => /^[1-6]-[12]$/.test(context?.actual?.stage || '');
   async function fetchJson(file) {
     const response=await fetch(file+'?v=20261110-contentaudit1');
     if (!response.ok) throw Error('단원평가 자료를 열지 못했어요.');
@@ -100,19 +102,22 @@
   }
   function mount(host,next) {
     options=next;
+    if (!isElementary(next.context) && !dialog?.open) {
+      ++revision; dock.open=false; dock.remove(); schedules({units:[]},[]); return;
+    }
     const route=host.querySelector('.uc-route');
     if (route && !dialog?.open && route.nextElementSibling!==dock) route.after(dock);
     refresh();
   }
   function open(queue=false) {
     const route=document.querySelector('#workspace-panel-map:not([hidden]) .uc-route');
-    if (route && !dialog?.open) route.after(dock);
+    if (route && isElementary(options.context) && !dialog?.open) route.after(dock);
     else if (!dialog?.open) {
       if (!dialog) {
         dialog=document.createElement('dialog'); dialog.className='ox-direct-dialog'; dialog.setAttribute('aria-label','초등 단원평가');
         dialog.innerHTML='<form method="dialog"><button aria-label="단원평가 닫기">닫기</button></form><div data-ox-standalone-graph hidden></div>';
         document.body.append(dialog);
-        dialog.addEventListener('close',()=>{dialog.querySelector('[data-ox-standalone-graph]').hidden=true;const r=document.querySelector('#plannerUnitChecklist .uc-route');if(r)r.after(dock);});
+        dialog.addEventListener('close',()=>{dialog.querySelector('[data-ox-standalone-graph]').hidden=true;const r=document.querySelector('#plannerUnitChecklist .uc-route');if(r && isElementary(options.context))r.after(dock);else dock.remove();});
       }
       dialog.querySelector('form').after(dock);
       dialog.showModal();
@@ -127,5 +132,5 @@
   g.addEventListener('storage',event=>{if(event.key?.endsWith('.assessment-results.v1'))refresh();});
   g.addEventListener('focus',refresh);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
-  g.PlannerOxPlanner=Object.freeze({mount,open});
+  g.PlannerOxPlanner=Object.freeze({mount,open,isElementary});
 })(window);
