@@ -65,6 +65,7 @@ function apply({schoolLane={},deepLane={},actualSchool=null,actualDeep=null,subj
  const startsHigh=schoolIndex>=0,hasStart=Number.isFinite(highStart)&&highStart>=0;
  const startIndex=startsHigh?schoolIndex:hasStart?0:-1;
  let cursor=startsHigh?0:hasStart?highStart:0;
+ if(startIndex>=0)warnings.push('다음 과목과 심화 일정은 교재 분량에 따른 계획안입니다. 완료 기록만으로 숙달을 판단하지 않습니다. 개념과 주요 유형을 도움 없이 풀고 설명할 수 있는지 확인한 뒤 진행하고, 막히는 부분이 있으면 현재 과목의 개념·유형 보완을 먼저 하며 일정을 늦춥니다.');
  if(startsHigh)for(let i=0;i<schoolIndex;i++)readyAt[list[i]]=0;
  if(startIndex>=0)for(let i=startIndex;i<list.length;i++){
   const stage=list[i],current=startsHigh&&i===schoolIndex,app=application(stage,current,actualSchool,actualDeep,state);
@@ -77,7 +78,7 @@ function apply({schoolLane={},deepLane={},actualSchool=null,actualDeep=null,subj
   if(current&&app.status==='unknown')warnings.push(stage+'의 유형 교재 수행은 아직 확인하지 않았습니다. 개념 교재 완료만으로 쎈 완료를 판단하지 않고 전체 유형 학습 기간을 잡았습니다.');
   if(current&&isApplicationBook(actualSchool.book))warnings.push(stage+'는 현재 보고한 유형 교재에서 이어갑니다. 개념 교재의 이수 여부도 확인해 주세요. 유형 진도만으로 개념 숙달을 판정하지 않습니다.');
   if(current&&isLegacyJeongseok(actualSchool.book))warnings.push(stage+'의 기존 ‘수학의 정석’ 기록을 유지했습니다. 기본정석·실력정석 중 실제 판본을 확인해 주세요.');
-  const b={id:'school-'+(19+SUBJECTS.indexOf(stage)),stage,type:'high',kind:'school',highPhase:'basic-types',title:stage+' '+(applicationOnly?app.book+' · 유형 보완':conceptBook+' + '+app.book),books:applicationOnly?[app.book]:[conceptBook,app.book],start:round(cursor),end,full,fraction:Math.min(conceptFraction,app.fraction),conceptFraction,applicationFraction:app.fraction,applicationStatus:app.status,applicationSource:app.source,applicationOnly,current,reported:current,guide:'high',source:'high-study',tasks:'기본정석의 개념·예제를 배우며 쎈 유형을 함께 풉니다. 유형 적용과 오답을 확인하고 다음 과목 선행과 이 과목 심화를 병행합니다.'};
+  const b={id:'school-'+(19+SUBJECTS.indexOf(stage)),stage,type:'high',kind:'school',highPhase:'basic-types',title:stage+' '+(applicationOnly?app.book+' · 유형 보완':conceptBook+' + '+app.book),books:applicationOnly?[app.book]:[conceptBook,app.book],start:round(cursor),end,full,fraction:Math.min(conceptFraction,app.fraction),conceptFraction,applicationFraction:app.fraction,applicationStatus:app.status,applicationSource:app.source,applicationOnly,current,reported:current,guide:'high',source:'high-study',tasks:'기본정석의 개념·예제를 배우며 쎈 유형을 함께 풉니다. 유형 적용과 오답을 도움 없이 풀고 설명할 수 있는지 확인한 뒤 다음 과목 선행과 이 과목 심화를 병행합니다. 완료 기록만으로 다음 과목을 시작하지 않으며, 풀이가 불안하면 현재 과목의 개념·유형 보완을 먼저 합니다.'};
   const visible=clipped(b,horizon);if(visible)school.blocks.push(visible);readyAt[stage]=end;cursor=end;
  }
  // A genuine reported depth course has its own remaining workload. A basic
@@ -111,7 +112,7 @@ function apply({schoolLane={},deepLane={},actualSchool=null,actualDeep=null,subj
   const stage=list[i],ready=readyAt[stage];
   if(!Number.isFinite(ready))break;
   const start=round(Math.max(depthCursor,ready)),end=round(start+depthFull);
-  const b={id:'deep-'+(19+SUBJECTS.indexOf(stage)),stage,title:stage+' 심화 · 다음 과목 선행과 병행',books:['실력정석 · 수준에 맞는 심화 교재 선택'],kind:'deep',type:'high',highPhase:'deep',start,end,full:depthFull,fraction:0,current:false,proposed:true,guide:'high',source:'high-study',prerequisiteSchoolBlockId:'school-'+(19+SUBJECTS.indexOf(stage)),tasks:'이 과목의 기본·유형을 마친 뒤 실력정석 등 맞는 심화 교재를 선택합니다. 다음 과목의 기본정석·쎈과 병행하며 혼자 설명하는 풀이와 오답을 점검합니다.'};
+  const b={id:'deep-'+(19+SUBJECTS.indexOf(stage)),stage,title:stage+' 심화 · 다음 과목 선행과 병행',books:['실력정석 · 수준에 맞는 심화 교재 선택'],kind:'deep',type:'high',highPhase:'deep',start,end,full:depthFull,fraction:0,current:false,proposed:true,guide:'high',source:'high-study',prerequisiteSchoolBlockId:'school-'+(19+SUBJECTS.indexOf(stage)),tasks:'이 과목의 기본·유형을 마치고 주요 문제를 도움 없이 풀고 설명할 수 있는지 확인한 뒤 실력정석 등 맞는 심화 교재를 선택합니다. 풀이가 불안하면 심화와 다음 과목 선행을 서두르지 않고 현재 개념·유형부터 보완합니다. 다음 과목의 기본정석·쎈과 병행하며 혼자 설명하는 풀이와 오답을 점검합니다.'};
   const visible=clipped(b,horizon);if(visible)deep.blocks.push(visible);depthCursor=end;
  }
  if(applicationDepth)warnings.push(actualDeep.stage+'의 '+actualDeep.book+' 진행은 유형 수행에 반영했습니다. 같은 공부를 심화 일정에 중복 배정하지 않습니다.');

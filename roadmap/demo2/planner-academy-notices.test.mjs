@@ -15,7 +15,9 @@ test('게시일·제목의 모집 연도를 행사일로 추정하지 않는다'
  assert.equal(N.status({...x,title:'2027 신규모집 설명회',publishedAt:'2026-10-01'}).code,'unknown');
 });
 test('서울 시간 접수 경계와 지난 일정·원문 변경을 구분한다',()=>{
- const x=N.find('notice-reviewed-224443076138');assert.ok(x);
+ const original=N.find('notice-reviewed-224443076138');assert.ok(original);
+ // Test date boundaries independently of the live feed's later source-review status.
+ const x={...original,sourceState:'unchanged'};
  assert.equal(N.status(x,'2026-11-04',Date.parse('2026-11-04T22:59:59+09:00')).label,'접수 예정');
  assert.equal(N.status(x,'2026-11-04',Date.parse('2026-11-04T23:00:00+09:00')).label,'접수 기간');
  assert.equal(N.status(x,'2026-11-07',Date.parse('2026-11-07T00:00:00+09:00')).code,'closed');

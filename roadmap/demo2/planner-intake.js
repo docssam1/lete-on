@@ -4,13 +4,13 @@
 const D=global.DemoContent,P=global.Planner;
 const thinking=['킨더팩토','키즈팩토','초등팩토','PRE 1031','1031 입문','1031 초급'];
 const calc=[['소마셈 K','수 가르기·모으기'],['기적의 계산법 2권','한 자리 덧셈·뺄셈'],['기적의 계산법 3권','받아올림·받아내림'],['기적의 계산법 4권','구구단'],['기적의 계산법 5권','곱셈·나눗셈'],['기적의 계산법 6권','복합 계산']];
-const schoolBooks=['디딤돌 기본+응용','디딤돌 응용','원리해설','개념원리','개념응용 · 최상위','개념응용 · 최상위라이트'];
+const schoolBooks=['디딤돌 기본+응용','디딤돌 응용','원리해설','개념원리','쎈','RPM','개념+유형 라이트','개념+유형 파워','개념응용 · 최상위','개념응용 · 최상위라이트'];
 const highSubjects=['공통수학1','공통수학2','대수','미적분Ⅰ','확률과 통계','미적분Ⅱ','기하'];
 const highBook=v=>['기본정석','실력정석','개념원리 고등','수학의 정석','쎈 고등','RPM 고등','고쟁이','숨마쿰라우데 고등','학교 지정 교재'].includes(v);
 const bookList=(course,axis)=>course==='foreign'?['학교 지정 교재']:course==='high'?(axis==='deep'?['실력정석','고쟁이','숨마쿰라우데 고등','학교 지정 교재','쎈 고등','RPM 고등','수학의 정석','기본정석']:['기본정석','개념원리 고등','쎈 고등','RPM 고등','수학의 정석','학교 지정 교재']):(axis==='deep'?deepBooks:schoolBooks).filter(v=>middleBook(v)===(course==='mid'));
 const deepBooks=['최상위 S','최상위 수학','개념응용 · 최상위','A급','RPM'];
 const special=v=>['none','unknown'].includes(v);
-const middleBook=v=>['원리해설','개념원리','개념응용 · 최상위라이트','A급','RPM'].includes(v);
+const middleBook=v=>['원리해설','개념원리','쎈','RPM','개념+유형 라이트','개념+유형 파워','개념응용 · 최상위라이트','A급'].includes(v);
 const stageOptions=middle=>middle?P.MID.map((t,i)=>[String(i+14),t.replace(/중(\d)-(\d)/,'중등 $1학년 $2학기')]):Array.from({length:12},(_,i)=>[P.SEM(i+1),`초등 ${Math.ceil((i+1)/2)}학년 ${i%2+1}학기`]);
 const absent=v=>v==='none'?'아직 시작 전':v==='unknown'?'잘 모르겠어요':'미선택';
 const noThinking=a=>special(a.thinkingExperience);
@@ -66,7 +66,7 @@ function questions(a,fields){a=effective(a);const curriculum=global.PlannerColle
  thinkingStatus:['이 사고력 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  preDone:['초등팩토는 끝냈나요?','초등팩토를 마쳤는지 함께 확인할게요.',[['1','네'],['0','아니요']]],
  schoolCourse:[young?'교과 수학은 어느 과정을 공부하나요?':'교과는 어느 과정을 공부하나요?',group==='preschool'?'초등·중등 교과서에서 배우는 수학이에요.':young?'학교에서 배우는 수학을 말해요. 지금 공부하는 과정을 골라주세요.':'지금 공부하는 초등·중등·고등 과정을 골라주세요.',courses],
- schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':v])],
+ schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
  school:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',stageOptions(false)],
  schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?','과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,v])],
  schoolStatus:['이 교과 교재는 끝냈나요?',a.schoolCourse==='high'?'선택한 교재의 상태입니다. 개념 교재 완료와 쎈 유형 완료는 따로 기록합니다.':'지금 공부 중인지, 끝냈는지 골라주세요.',progress],

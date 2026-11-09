@@ -340,3 +340,13 @@ test('unknown progress keeps a full course and completion does not reuse the fra
  assert.equal(I.fieldChanges({...a,schoolStatus:'done'},{...fields,speed:'4'},'schoolStatus').schoolLeft,'4');
  assert.equal(I.progressValue({...a,schoolBook:'디딤돌 기본+응용'},'schoolStatus'),null);
 });
+
+test('중등 개념·유형 교재를 실제 이름으로 교과에 기록할 수 있다',()=>{
+ for(const book of ['쎈','RPM','개념+유형 라이트','개념+유형 파워']){
+  const a={...answer,schoolCourse:'mid',schoolBook:book,schoolExact:'14'};
+  assert.ok(I.bookList('mid','school').includes(book));
+  assert.ok(!I.bookList('elem','school').includes(book));
+  assert.ok(I.order(a,fields).includes('schoolExact'));
+  assert.match(I.summary(a,fields).find(x=>x.key==='school').text,new RegExp(book.replace(/[+]/g,'\\+')));
+ }
+});

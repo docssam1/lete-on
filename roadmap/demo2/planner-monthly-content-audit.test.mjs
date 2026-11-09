@@ -1,0 +1,32 @@
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const window={};
+vm.runInNewContext(readFileSync(new URL('./planner.js',import.meta.url),'utf8'),{window,console});
+const P=window.Planner;
+const opts={grade:3,mon:3,year:2026,school:12,schoolLeft:1,comp:4,compLeft:7,calc:9,calcLeft:1,speed:2,hw:'none',gifted:true,kmo:'switch'};
+for(const band of ['A','B','C','D'])test(`${band}: gifted choice is kept without inventing admission dates`,()=>{
+ const p=P.build({...opts,band});
+ assert.equal(p.choices.gifted,true);
+ assert.ok(p.rows.filter(r=>/^gift/.test(r.key)).every(r=>r.blocks.length===0));
+ assert.ok(p.warn.some(x=>x.includes('공식 모집요강 확인 전')));
+ assert.match(P.renderTable(p),/공식 모집요강 확인 전/);
+ assert.ok(p.flags.every(x=>!String(x[1]).includes('영재원')));
+ assert.ok(p.rows.flatMap(r=>r.blocks).every(b=>!/공동 온라인 선교육|사이버영재 접수/.test(b[0])));
+ const off=P.build({...opts,band,gifted:false});
+ assert.equal(off.choices.gifted,false);
+ assert.ok(off.warn.every(x=>!x.includes('공식 모집요강 확인 전')));
+ // This correction must not change the existing study schedule.
+ for(const key of ['school','school2','comp','calc','sci'])assert.deepEqual(p.rows.find(r=>r.key===key),off.rows.find(r=>r.key===key));
+});
+test('monthly high-school chain uses current subjects without duplicated calculus I',()=>{
+ const p=P.build({...opts,band:'A'}),names=p.rows.find(r=>r.key==='school').blocks.map(b=>b[0]);
+ assert.ok(names.some(x=>x==='대수'));assert.ok(names.some(x=>x==='미적분Ⅰ'));
+ assert.equal(names.filter(x=>x==='미적분Ⅰ').length,1);
+ assert.ok(names.some(x=>x==='확률과 통계'));
+ for(const band of ['A','B','C','D']){
+  const p=P.build({...opts,band});
+  assert.doesNotMatch(p.rows.filter(r=>['school','comp'].includes(r.key)).flatMap(r=>r.blocks).map(b=>b[0]).join('\n'),/수학\(상\)|수학\(하\)|수Ⅰ|수Ⅱ/);
+ }
+});

@@ -80,3 +80,12 @@
 .ox-card .ox-exercise>p { font-size:.95rem; color:var(--ox-ink); }
 .ox-card .ox-exercise summary { display:list-item; cursor:pointer; width:fit-content; min-height:44px; padding:.65rem .2rem; color:var(--ox-violet); font-weight:650; font-size:.82rem; }
 .ox-card .ox-exercise details p { font-size:.87rem; }
+
+/* Owned vector diagrams and stacked fractions in authored extra practice. */
+.ox-card .ox-diagram { display:block; width:100%; max-width:440px; height:auto; margin:.65rem auto; color:#30273b; }
+.ox-card .ox-diagram text { font:14px sans-serif; }
+.ox-card .ox-fraction { display:inline-block; vertical-align:middle; margin:0 .12em; line-height:1.15; text-align:center; }
+.ox-card .ox-fraction>span { display:inline-flex; flex-direction:column; }
+.ox-card .ox-fraction>span>span { padding:0 .16em; }
+.ox-card .ox-fraction>span>span:first-child { border-bottom:1px solid currentColor; padding-bottom:.08em; }
+.ox-card .ox-fraction>span>span:last-child { padding-top:.08em; }

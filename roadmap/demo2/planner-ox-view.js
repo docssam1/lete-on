@@ -111,10 +111,42 @@
     return [...sets].map(([set, numbers]) => `${setLabel(set)} ${numbers.join('·')}번`).join(', ');
   }
 
+  // Escape text first; only numeric fraction tokens become owned markup.
+  function mathText(value) {
+    return escape(value).replace(/(\d+)\/(\d+)/g, (_, n, d) =>
+      `<span class="ox-fraction" role="math" aria-label="${d}분의 ${n}"><span aria-hidden="true"><span>${n}</span><span>${d}</span></span></span>`);
+  }
+
+  function exerciseDiagram(kind) {
+    const wrap = (label, body, height=220) => `<svg class="ox-diagram" viewBox="0 0 440 ${height}" role="img" aria-label="${escape(label)}" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="1.6">${body}</g></svg>`;
+    const text = (x,y,label,extra='') => `<text x="${x}" y="${y}" fill="currentColor" stroke="none" text-anchor="middle" ${extra}>${label}</text>`;
+    if (kind === 'number-line-jumps') {
+      const ticks = Array.from({length:13},(_,i)=>`<path d="M${32+i*30} 95v10"/>${text(32+i*30,126,i)}`).join('');
+      const jumps = Array.from({length:4},(_,i)=>`<path d="M${32+i*90} 90q45 -75 90 0l-9 -6m9 6l1 -11"/>`).join('');
+      return wrap('0부터 12까지 1씩 표시한 수직선. 0에서 3, 6, 9, 12로 네 번 같은 크기로 뛰는 화살표.',`<path d="M22 100H412l-9 -5m9 5l-9 5"/>${ticks}${jumps}`,155);
+    }
+    if (kind === 'library-bars') {
+      const grid = Array.from({length:9},(_,i)=>`<path stroke="#c8c4cf" d="M65 ${180-i*17}H405"/>${text(43,185-i*17,i*4)}`).join('');
+      const bars = [5,8,6].map((v,i)=>`<rect x="${105+i*100}" y="${180-v*17}" width="46" height="${v*17}" fill="#c9b9df"/>${text(128+i*100,204,['월','화','수'][i])}`).join('');
+      return wrap('도서관 방문자 수. 세로축은 0부터 32명까지 4명씩. 월요일 20명, 화요일 32명, 수요일 24명.',`${text(220,20,'도서관 방문자 수')}${text(38,39,'(명)')}${grid}<path d="M65 44V180H405"/>${bars}`);
+    }
+    if (kind === 'reading-pies') {
+      const pie = (cx,pct,room,total) => {
+        const angle = pct/100*Math.PI*2, ex=cx+65*Math.sin(angle),ey=108-65*Math.cos(angle);
+        return `<circle cx="${cx}" cy="108" r="65" fill="#fff"/><path d="M${cx} 108V43A65 65 0 0 1 ${ex} ${ey}Z" fill="#c9b9df"/>${text(cx,23,`${room} (전체 ${total}명)`)}${text(cx,196,`독서부 ${pct}%`)}${text(cx-18,120,`그 외 ${100-pct}%`)}`;
+      };
+      return wrap('A반 전체 20명 중 독서부 25%, 그 외 75%. B반 전체 30명 중 독서부 20%, 그 외 80%. 보라색 부분이 독서부.',pie(115,25,'A반',20)+pie(325,20,'B반',30)+text(220,225,'색칠한 부분: 독서부'),245);
+    }
+    if (kind === 'triangular-prism-net') {
+      return wrap('세로 4cm, 가로 2cm 직사각형 3개를 가로로 이어 놓고 가운데 직사각형 위아래에 한 변 2cm 정삼각형을 붙인 전개도.',`<path fill="#f3edf9" d="M130 70H190L220 18L250 70H310V190H250L220 242L190 190H130Z"/><path stroke-dasharray="5 4" d="M190 70V190M250 70V190M190 70H250M190 190H250"/><path d="M112 70V190m-4 -120h8m-8 120h8M130 205H190m-60 -4v8m60 -8v8"/>${text(88,137,'4cm')}${text(160,227,'2cm')}`,260);
+    }
+    return '';
+  }
+
   function exerciseBody(item) {
     if (!item.exercise) return '';
-    return `<div class="ox-exercise" data-ox-exercise="${escape(item.id)}"><p>${escape(item.exercise.prompt)}</p>
-      <details><summary>풀이 확인</summary><p>${escape(item.exercise.check)}</p></details></div>`;
+    return `<div class="ox-exercise" data-ox-exercise="${escape(item.id)}"><p>${mathText(item.exercise.prompt)}</p>${exerciseDiagram(item.exercise.diagram)}
+      <details><summary>풀이 확인</summary><p>${mathText(item.exercise.check)}</p></details></div>`;
   }
 
   function taskRow(view, task) {

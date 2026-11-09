@@ -92,3 +92,12 @@ test('restoration and validated updates preserve data and reject completion disg
  assert.ok(H.updateRecord(null,'공통수학1',{book:'쎈 고등',status:'progress',done:1,total:10000}).errors.length);
  assert.equal(H.restore({deepMonths:.25}).deepMonths,undefined);assert.equal(H.restore({deepMonths:25}).deepMonths,undefined);assert.equal(H.restore({deepMonths:.5}).deepMonths,.5);
 });
+
+test('완료 기반 일정은 유지하되 독립 풀이 확인과 현재 과목 보완을 안내한다',()=>{
+ const m=H.apply(input({actualSchool:actual('공통수학1',{done:true}),state:{subjects:{공통수학1:{book:'쎈 고등',status:'done'}}}}));
+ assert.equal(m.schoolLane.blocks[0].stage,'공통수학2');
+ assert.equal(m.schoolLane.blocks[0].start,0);
+ assert.ok(m.warnings.some(x=>/완료 기록만으로 숙달을 판단하지 않습니다/.test(x)));
+ assert.match(m.schoolLane.blocks[0].tasks,/현재 과목의 개념·유형 보완을 먼저/);
+ assert.match(m.deepLane.blocks[0].tasks,/현재 개념·유형부터 보완/);
+});
