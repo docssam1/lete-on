@@ -2,32 +2,32 @@
    No image billboards. The village's articulated number guide shares its geometry cache. */
 const copy={
  ko:{tenTitle:'10을 채우는 수',signedTitle:'0이 되는 한 쌍',tenAsk:'몇 개를 더 놓으면 10이 될까요?',signedAsk:'붉은 수와 검은 수를 합하면 얼마입니까?',
-  guess:'먼저 답을 골라 보세요. 교구로 확인해도 좋아요.',right:'생각한 수가 맞아요. 이제 직접 옮겨 확인해 보세요.',try:'빈칸을 살펴보고 하나씩 옮겨 확인해 보세요.',signedRight:'예측이 맞습니다. 서로 반대인 두 수를 짝지어 확인해 보세요.',signedTry:'양수와 음수 한 개씩 짝지어 합이 0인 부분을 찾아보세요.',
+  guess:'먼저 답을 골라 보세요. 교구로 확인해도 좋아요.',right:'생각한 수가 맞아요. 노란 조각을 판 위로 끌어다 놓아 확인해 보세요.',try:'노란 조각을 하나씩 판 위로 끌어다 놓아 확인해 보세요.',signedRight:'예측이 맞아요. 붉은 막대를 검은 막대 위로 끌어다 놓아 한 쌍을 만들어 보세요.',signedTry:'붉은 막대를 검은 막대 위로 끌어다 놓아 합이 0인 한 쌍을 만들어 보세요.',
   add:'한 개 옮기기',pair:'한 쌍 묶기',undo:'되돌리기',reset:'처음부터',next:'다른 수로',loading:'입체 교구를 준비하고 있어요',
   original:'처음 놓인 수',added:'직접 옮기는 수',positive:'양수 (+1)',negative:'음수 (−1)',fallback:'입체 화면을 사용할 수 없어 수 카드로 표시합니다. 아래 버튼으로 똑같이 조작할 수 있습니다.',
-  scene:'입체 수 교구. 교구를 누르거나 아래 조작 버튼을 사용하세요.',tenDone:'열 칸을 모두 채웠어요. 모자란 수만큼 옮겼네요!',signedDone:'반대인 수를 한 쌍씩 묶어도 전체 합은 같습니다.',
+  scene:'입체 수 교구. 조각을 끌어다 놓거나 눌러서 옮기세요. 아래 단추로도 할 수 있어요.',tenDone:'열 칸을 모두 채웠어요. 모자란 수만큼 옮겼네요!',signedDone:'반대인 수를 한 쌍씩 묶어도 전체 합은 같습니다.',
   remaining:n=>`빈칸이 ${n}개 남았어요.`,paired:n=>`(+1)과 (−1)은 합이 0입니다. 지금 ${n}쌍을 옆으로 옮겼습니다.`,
-  prediction:'예측한 답',choosePositive:'붉은 막대를 골랐습니다. 검은 막대를 눌러 한 쌍을 만드세요.',chooseNegative:'검은 막대를 골랐습니다. 붉은 막대를 눌러 한 쌍을 만드세요.',
+  prediction:'예측한 답',choosePositive:'붉은 막대를 골랐어요. 검은 막대를 누르면 한 쌍이 돼요.',chooseNegative:'검은 막대를 골랐어요. 붉은 막대를 누르면 한 쌍이 돼요.',
   tenProof:(b,n)=>`${b}에 ${n}을 더하면 10. 10에서 ${n}을 빼면 ${b}.`,signedProof:(p,n)=>`붉은 막대 ${p}개, 검은 막대 ${n}개가 남았습니다.`},
  en:{tenTitle:'Partners that make 10',signedTitle:'A pair that makes zero',tenAsk:'How many more will make 10?',signedAsk:'What is the sum of the red and black numbers?',
-  guess:'Make a prediction, then test it with the pieces.',right:'Good prediction. Move the pieces to check.',try:'Look at the spaces. Move one piece at a time to check.',signedRight:'Your prediction is correct. Pair opposite numbers to check.',signedTry:'Pair one positive with one negative to find a sum of zero.',
+  guess:'Make a prediction, then test it with the pieces.',right:'Good prediction. Drag the yellow pieces onto the tray to check.',try:'Drag the yellow pieces onto the tray one at a time to check.',signedRight:'Your prediction is correct. Drag a red rod onto a black rod to make a pair.',signedTry:'Drag a red rod onto a black rod to make a pair that sums to zero.',
   add:'Move one',pair:'Pair opposites',undo:'Undo',reset:'Reset',next:'Try other numbers',loading:'Preparing the 3D pieces',original:'Starting number',added:'Moved pieces',positive:'Positive (+1)',negative:'Negative (−1)',
-  fallback:'3D is unavailable. Number cards and the same controls remain available.',scene:'3D number pieces. Tap a piece or use the action buttons below.',tenDone:'All ten spaces are filled. You moved exactly the missing number!',signedDone:'Pairing opposite numbers leaves the total unchanged.',
+  fallback:'3D is unavailable. Number cards and the same controls remain available.',scene:'3D number pieces. Drag or tap a piece to move it, or use the buttons below.',tenDone:'All ten spaces are filled. You moved exactly the missing number!',signedDone:'Pairing opposite numbers leaves the total unchanged.',
   remaining:n=>`${n} spaces remain.`,paired:n=>`(+1) and (−1) make zero. ${n} pairs have been moved aside.`,prediction:'Your prediction',choosePositive:'Red selected. Tap a black rod to make a pair.',chooseNegative:'Black selected. Tap a red rod to make a pair.',
   tenProof:(b,n)=>`${b} + ${n} = 10, so 10 − ${n} = ${b}.`,signedProof:(p,n)=>`${p} red and ${n} black rods remain.`},
  zh:{tenTitle:'凑成10的好朋友',signedTitle:'和为0的一对',tenAsk:'再放几个就能凑成10？',signedAsk:'红色的数与黑色的数相加，和是多少？',
-  guess:'先猜一猜，再动手验证。',right:'猜对了。动手移动棋子来验证吧。',try:'看看空格，一个一个移动来验证。',signedRight:'预测正确。把相反的数配对验证。',signedTry:'把一个正数和一个负数配成和为0的一对。',
+  guess:'先猜一猜，再动手验证。',right:'猜对了。把黄色棋子拖到盘子上验证吧。',try:'把黄色棋子一个一个拖到盘子上来验证。',signedRight:'预测正确。把红色算筹拖到黑色算筹上配成一对。',signedTry:'把红色算筹拖到黑色算筹上，配成和为0的一对。',
   add:'移动一个',pair:'配成一对',undo:'撤回',reset:'重新开始',next:'换一组数',loading:'正在准备立体教具',original:'原来的数',added:'移入的数',positive:'正数 (+1)',negative:'负数 (−1)',
-  fallback:'无法显示立体教具，改用数字卡片。下方按钮仍可进行相同操作。',scene:'立体数字教具。点击棋子或使用下方按钮。',tenDone:'十个格子都填满了！移入的个数正好是缺少的数。',signedDone:'将相反的数配对，总和不变。',
+  fallback:'无法显示立体教具，改用数字卡片。下方按钮仍可进行相同操作。',scene:'立体数字教具。拖动或点击棋子来移动，也可以用下方按钮。',tenDone:'十个格子都填满了！移入的个数正好是缺少的数。',signedDone:'将相反的数配对，总和不变。',
   remaining:n=>`还剩${n}个空格。`,paired:n=>`(+1)与(−1)的和为0。已移开${n}对。`,prediction:'预测的答案',choosePositive:'已选红色。点击黑色算筹组成一对。',chooseNegative:'已选黑色。点击红色算筹组成一对。',
   tenProof:(b,n)=>`${b}加${n}等于10，10减${n}等于${b}。`,signedProof:(p,n)=>`还剩${p}根红算筹和${n}根黑算筹。`}
 };
 const signed=n=>n>0?'+'+n:n<0?'−'+Math.abs(n):'0';
 
 export async function mount(host,uid,lang,options={}){
- if(['A-02','M-02','T-DV4'].includes(uid))return (await import('./activity-journey.js?v=20261109-drag1')).mount(host,uid,lang,options);
+ if(['A-02','M-02','T-DV4'].includes(uid))return (await import('./activity-journey.js?v=20261109-touch1')).mount(host,uid,lang,options);
  const api=window.NM_LIVING_LESSONS;if(!host||!host.isConnected||!api||!api.has(uid))return null;
- if(api.create(uid).kind==='hop')return (await import('./hop-lesson.js?v=20261010-hop-motion')).mount(host,uid,lang);   /* 유아 수직선 뛰기(N-07) */
+ if(api.create(uid).kind==='hop')return (await import('./hop-lesson.js?v=20261109-touch1')).mount(host,uid,lang);   /* 유아 수직선 뛰기(N-07) */
  if(!['ten','signed'].includes(api.create(uid).kind))return (await import('./strategy-lesson.js')).mount(host,uid,lang);
  if(host.__livingLesson)host.__livingLesson.dispose();
  const t=copy[lang]||copy.ko,ten=api.create(uid).kind==='ten';let state=api.create(uid),selected=null,visual=null,disposed=false;
@@ -96,12 +96,13 @@ export async function mount(host,uid,lang,options={}){
  host.addEventListener('click',onClick);update(true);
  function dispose(){if(disposed)return;disposed=true;host.removeEventListener('click',onClick);observer.disconnect();if(visual)visual.dispose();delete host.__livingLesson;}
  const observer=new MutationObserver(()=>{if(!host.isConnected)dispose();});observer.observe(document.body,{childList:true,subtree:true});
- const controller={dispose,getState:()=>api.snapshot(state)};host.__livingLesson=controller;
+ const controller={dispose,getState:()=>api.snapshot(state),getVisualState:()=>visual?.inspect?.()};host.__livingLesson=controller;
  try{
   const [THREE,chars]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys')]);
   if(disposed||!host.isConnected)return controller;
   visual=createScene(stage,THREE,chars,ten,t,()=>api.snapshot(state),hit=>{
    if(ten){action('add',hit.index);return;}
+   if(hit.pairWith){action('pair',{[hit.sign]:hit.index,[hit.pairWith.sign]:hit.pairWith.index});return;}
    if(selected&&selected.sign!==hit.sign){action('pair',{[selected.sign]:selected.index,[hit.sign]:hit.index});return;}
    selected=hit;$('.nm-live-feedback').textContent=feedback();visual.select(hit);
   });
@@ -183,13 +184,14 @@ function createScene(stage,T,chars,ten,text,getState,onHit){
     destination(o,p,reset);o.rotation.x=Math.PI/2;o.scale.setScalar(paired?.66:1);
    });zeroPairs.forEach((o,i)=>o.visible=i<v.pairs);
   }
+  canvas.style.touchAction=(ten?spares:pieces).some(o=>o.visible&&o.userData.active)?'none':'';
   motionEnd=reduced.matches?0:performance.now()+650;wake();
  }
  function frame(now){
   raf=0;if(disposed)return;if(!stage.isConnected){dispose();return;}
   if(document.hidden||!visible)return;
   const dt=Math.min(.05,(now-(last||now))/1000);last=now;time+=dt;
-  for(const [o,p]of poses){const f=reduced.matches?1:Math.min(1,(now-p.start)/550),e=f*f*(3-2*f);o.position.lerpVectors(p.from,p.to,e);if(f<1)o.position.y+=Math.sin(f*Math.PI)*.56;}
+  for(const [o,p]of poses){if(drag&&o===drag.o)continue;const f=reduced.matches?1:Math.min(1,(now-p.start)/550),e=f*f*(3-2*f);o.position.lerpVectors(p.from,p.to,e);if(f<1)o.position.y+=Math.sin(f*Math.PI)*.56;}
   if(!reduced.matches)guide.update(dt,time);
   if(!ten)for(const o of pieces)o.material.emissive.set(highlight&&highlight.sign===o.userData.sign&&highlight.index===o.userData.index?'#775219':'#000000');
   renderer.render(scene,camera);
@@ -201,8 +203,28 @@ function createScene(stage,T,chars,ten,text,getState,onHit){
   const active=(ten?spares:pieces).filter(o=>o.visible&&o.userData.active);
   const pick=ray.intersectObjects(active,false)[0];if(pick)onHit({sign:pick.object.userData.sign,index:pick.object.userData.index});
  }
- const onDown=e=>{down={x:e.clientX,y:e.clientY};},onUp=e=>{if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<12)hit(e);down=null;},onCancel=()=>{down=null;};
- canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointerup',onUp);canvas.addEventListener('pointercancel',onCancel);
+ /* 끌어다 놓기(2026-11-09 원장 「다른 차시도 … 터치나 드래그」): 짧게 누르면 예전처럼 고르기, 끌면 손가락을 따라온다.
+    10 채우기 — 노란 조각을 판 위에 놓으면 들어간다. 0이 되는 한 쌍 — 막대를 반대 색 막대 위에 놓으면 한 쌍이 된다.
+    맞지 않는 곳에 놓으면 제자리로 돌아간다. */
+ const dragPlane=new T.Plane(new T.Vector3(0,1,0),-.7),groundPlane=new T.Plane(new T.Vector3(0,1,0),-.1),hp=new T.Vector3();let drag=null;
+ const aim=e=>{const rect=canvas.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);};
+ const activeList=()=>(ten?spares:pieces).filter(o=>o.visible&&o.userData.active);
+ const info=o=>({sign:o.userData.sign,index:o.userData.index});
+ const onDown=e=>{down={x:e.clientX,y:e.clientY};aim(e);const pick=ray.intersectObjects(activeList(),false)[0];if(!pick)return;const o=pick.object;drag={o,id:e.pointerId,home:(poses.get(o)?.to||o.position).clone(),moved:false};poses.delete(o);try{canvas.setPointerCapture(e.pointerId);}catch(ignore){}motionEnd=performance.now()+60000;wake();};
+ const onMove=e=>{if(!drag){if(down===null&&activeList().length){aim(e);canvas.style.cursor=ray.intersectObjects(activeList(),false)[0]?'grab':'';}return;}if(e.pointerId!==drag.id)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>=12)drag.moved=true;if(!drag.moved)return;canvas.style.cursor='grabbing';aim(e);if(ray.ray.intersectPlane(dragPlane,hp))drag.o.position.set(hp.x,.7,hp.z);wake();};
+ const finish=(e,cancel)=>{const g=drag;drag=null;canvas.style.cursor='';try{canvas.releasePointerCapture(e.pointerId);}catch(ignore){}motionEnd=performance.now()+700;
+  if(!g.moved){destination(g.o,g.home,false);if(!cancel)onHit(info(g.o));wake();return;}
+  if(!cancel){
+   aim(e);
+   if(ten){const p=ray.ray.intersectPlane(groundPlane,hp)?hp:g.o.position;if(p.x>-2.5&&p.x<2.7&&p.z>-1.45&&p.z<.95)onHit(info(g.o));}
+   else{const others=pieces.filter(o=>o!==g.o&&o.visible&&o.userData.active&&o.userData.sign!==g.o.userData.sign);
+    let target=ray.intersectObjects(others,false)[0]?.object;
+    if(!target&&ray.ray.intersectPlane(groundPlane,hp)){const near=others.map(o=>[o,Math.hypot(o.position.x-hp.x,o.position.z-hp.z)]).sort((a,b)=>a[1]-b[1])[0];if(near&&near[1]<.9)target=near[0];}
+    if(target)onHit({...info(g.o),pairWith:info(target)});}
+  }
+  if(!poses.has(g.o))destination(g.o,g.home,false);wake();};
+ const onUp=e=>{if(drag&&e.pointerId===drag.id){finish(e,false);down=null;return;}down=null;},onCancel=e=>{if(drag&&e.pointerId===drag.id)finish(e,true);down=null;};
+ canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointermove',onMove);canvas.addEventListener('pointerup',onUp);canvas.addEventListener('pointercancel',onCancel);
  const ro=new ResizeObserver(resize);ro.observe(stage);
  const io=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{cancelAnimationFrame(raf);raf=0;}},{threshold:.02});io.observe(stage);
  const onVisibility=()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0;}else wake();};document.addEventListener('visibilitychange',onVisibility);
@@ -210,10 +232,10 @@ function createScene(stage,T,chars,ten,text,getState,onHit){
  const contextLost=e=>{e.preventDefault();stage.dataset.renderer='fallback';const note=stage.parentElement.querySelector('.nm-live-render-note');if(note)note.hidden=false;dispose();};canvas.addEventListener('webglcontextlost',contextLost);
  function dispose(){
   if(disposed)return;disposed=true;cancelAnimationFrame(raf);ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',onVisibility);reduced.removeEventListener('change',onReduce);
-  canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointerup',onUp);canvas.removeEventListener('pointercancel',onCancel);canvas.removeEventListener('webglcontextlost',contextLost);
+  canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointermove',onMove);canvas.removeEventListener('pointerup',onUp);canvas.removeEventListener('pointercancel',onCancel);canvas.removeEventListener('webglcontextlost',contextLost);
   guide.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());if(sun.shadow.map)sun.shadow.map.dispose();renderer.dispose();renderer.forceContextLoss();canvas.remove();
  }
  resize();
- return {sync,select:sign=>{highlight=sign;wake();},respond:()=>{if(!reduced.matches)guide.wave();wake();},dispose};
+ return {inspect:()=>({pieces:(ten?spares:pieces).map(o=>{const q=o.position.clone().project(camera);return {sign:o.userData.sign||null,index:o.userData.index,visible:o.visible,active:!!o.userData.active,screen:[(q.x+1)/2,(1-q.y)/2]};})}),sync,select:sign=>{highlight=sign;wake();},respond:()=>{if(!reduced.matches)guide.wave();wake();},dispose};
  }catch(e){for(const release of onFailure.reverse()){try{release();}catch(ignore){}}throw e;}
 }

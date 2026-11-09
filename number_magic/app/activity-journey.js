@@ -1,4 +1,4 @@
-import {createJourney,restoreJourney,view,equation,act,finalize,scenes} from '../data/activity-journeys.js?v=20261109-drag1';
+import {createJourney,restoreJourney,view,equation,act,finalize,scenes} from '../data/activity-journeys.js?v=20261109-touch1';
 
 const feedbackTranslations={
  '빈칸을 하나씩 살펴봐.':['Look at each empty space.','一个一个看看空格。'],
@@ -72,7 +72,7 @@ export async function mount(host,uid,lang='ko',options={}){
    if(v.phase===1){
     // 3D 화면에서는 그림 속 조각을 눌러 고른다. 조각 단추는 화면 밖에 두고 키보드로 갈 때만 보인다(없는 입체 화면에서는 늘 보인다).
     const pictured=stage.dataset.renderer==='webgl',n=v.selected.length;
-    return `<p class="nm-journey-pick-hint">${pictured?tr('오른쪽 조각을 끌어서 왼쪽 빈칸에 놓아 봐!','Drag a piece from the right and drop it into an empty space on the left!','把右边的棋子拖到左边的空格里！'):tr('아래에서 옮길 조각을 골라 봐.','Choose the pieces to move below.','在下面选择要移动的棋子。')}</p><div class="nm-journey-piece-controls" role="group" aria-label="${tr('옮길 조각 고르기','Choose pieces to move','选择要移动的棋子')}">${v.objects.filter(o=>o.origin==='right'&&o.group==='right').map((o,i)=>button('select',o.id,tr(`오른쪽 조각 ${i+1}`,`Right piece ${i+1}`,`右边棋子${i+1}`),`aria-pressed="${v.selected.includes(o.id)}"`)).join('')}</div>${pictured&&!n?'':button('move','',n?tr(`빈칸으로 옮기기 (${n}개)`,`Move into the spaces (${n})`,`移进空格（${n}个）`):tr('빈칸으로 옮기기','Move into the spaces','移进空格'),!n?'disabled':'')}`;
+    return `<p class="nm-journey-pick-hint">${pictureHint(v)}</p><div class="nm-journey-piece-controls" role="group" aria-label="${tr('옮길 조각 고르기','Choose pieces to move','选择要移动的棋子')}">${v.objects.filter(o=>o.origin==='right'&&o.group==='right').map((o,i)=>button('select',o.id,tr(`오른쪽 조각 ${i+1}`,`Right piece ${i+1}`,`右边棋子${i+1}`),`aria-pressed="${v.selected.includes(o.id)}"`)).join('')}</div>${pictured&&!n?'':button('move','',n?tr(`빈칸으로 옮기기 (${n}개)`,`Move into the spaces (${n})`,`移进空格（${n}个）`):tr('빈칸으로 옮기기','Move into the spaces','移进空格'),!n?'disabled':'')}`;
    }
    if(v.phase===2)return button('group','',tr('10 묶음 확인','Confirm the group of ten','确认一组十'));
    if(v.phase===3)return input(tr('전체 개수','Total number of pieces','棋子总数'));
@@ -80,17 +80,17 @@ export async function mount(host,uid,lang='ko',options={}){
    return '';
   }
   if(v.kind==='integer'){
-   if(v.phase===0)return numbers('start',[-3,-2,-1,0,1,2,3],sign);
+   if(v.phase===0)return hintLine(v)+numbers('start',[-3,-2,-1,0,1,2,3],sign);
    if(v.phase===1)return button('face',-1,tr('왼쪽 보기','Face left','面向左'))+button('face',1,tr('오른쪽 보기','Face right','面向右'));
    if(v.phase===2)return button('walk',1,tr('앞으로 걷기','Walk forward','向前走'))+button('walk',-1,tr('뒤로 걷기','Walk backward','向后走'));
    if(v.phase===3)return numbers('count',[1,2,3,4,5],n=>tr(`${n}칸`,`${n} steps`,`${n}格`));
-   if(v.phase===4)return button('step','one',tr('한 칸 걷기','Take one step','走一格'));
+   if(v.phase===4)return hintLine(v)+button('step','one',tr('한 칸 걷기','Take one step','走一格'));
    if(v.phase===5)return input(tr('도착한 수','Number at the destination','到达的数'));
    if(!v.meaning)return button('meaning','roles',tr('뒤 수는 보는 쪽, 기호는 걷는 방법','Following sign: facing. Operation: walking.','后数符号决定面向，运算符号决定走法'))+button('meaning','same',tr('보는 쪽과 걷는 쪽은 항상 같아','Facing and movement are always the same','面向和移动总是相同'));
    return '';
   }
   if(v.phase===0)return `<p>${tr('한 묶음에 놓을 개수','Pieces in each group','每组的个数')}</p>${numbers('tryGroup',Array.from({length:Math.max(v.a,v.b)},(_,i)=>i+1))}<p>${tr('두 모임에서 모두 남김없는 후보','Candidates with no remainder in either collection','两堆都无剩余的候选数')}</p>${numbers('common',[...new Set([...v.divisorsA,...v.divisorsB])])}<p>${tr('공통 후보 중 가장 큰 수','The greatest common candidate','共同候选数中最大的数')}</p>${numbers('greatest',v.common)}`;
-  if(v.phase===1)return button('track','A',tr(`${v.a}씩 가기`,`Step by ${v.a}`,`每次走${v.a}`))+button('track','B',tr(`${v.b}씩 가기`,`Step by ${v.b}`,`每次走${v.b}`))+`<p>${tr('0 다음 첫 만남 선택','Select the first meeting after zero','选择0之后的首次相遇')}</p>${numbers('least',[...new Set([...v.trackA,...v.trackB])].sort((a,b)=>a-b))}`;
+  if(v.phase===1)return hintLine(v)+button('track','A',tr(`${v.a}씩 가기`,`Step by ${v.a}`,`每次走${v.a}`))+button('track','B',tr(`${v.b}씩 가기`,`Step by ${v.b}`,`每次走${v.b}`))+`<p>${tr('0 다음 첫 만남 선택','Select the first meeting after zero','选择0之后的首次相遇')}</p>${numbers('least',[...new Set([...v.trackA,...v.trackB])].sort((a,b)=>a-b))}`;
   if(v.word&&v.phase===2)return input(v.word==='divide'?tr('한 조각의 길이(m)','Length of one piece (m)','一段长度（米）'):tr('다시 함께 켜질 때(분)','First next meeting (minutes)','下次同时亮（分钟）'));
   if(v.word&&v.verified&&!v.meaning)return button('meaning',v.word,v.word==='divide'?tr('최대공약수는 한 조각의 길이','Greatest common divisor: length of one piece','最大公因数是一段长度'):tr('최소공배수는 처음 함께 켜지는 때','Least common multiple: first next meeting','最小公倍数是下次同时亮的时刻'));
   if(v.word)return '';
@@ -101,7 +101,18 @@ export async function mount(host,uid,lang='ko',options={}){
   if(v.phase===6)return v.productRead?input(tr('전체 블록의 개수','Total number of blocks','积木总个数')):button('product','multiply',tr('A와 B를 곱해요','Multiply A by B','A乘B'))+button('product','digits',tr('두 자리 수예요','A two-digit number','一个两位数'));
   return '';
  }
- function syncPickHint(){const p=$('.nm-journey-pick-hint');if(p&&stage.dataset.renderer==='webgl'&&!view(state).selected.length)$('.nm-journey-controls [data-action="move"]')?.remove();if(p)p.textContent=stage.dataset.renderer==='webgl'?tr('오른쪽 조각을 끌어서 왼쪽 빈칸에 놓아 봐!','Drag a piece from the right and drop it into an empty space on the left!','把右边的棋子拖到左边的空格里！'):tr('아래에서 옮길 조각을 골라 봐.','Choose the pieces to move below.','在下面选择要移动的棋子。');}
+ /* 그림으로 할 수 있는 일 한 줄(2026-11-09) — 입체 화면일 때만. 끌기가 맞는 곳은 끌기, 고르기가 맞는 곳은 누르기 */
+ function pictureHint(v){
+  const pictured=stage.dataset.renderer==='webgl';
+  if(v.kind==='ten')return pictured?tr('오른쪽 조각을 끌어서 왼쪽 빈칸에 놓아 봐!','Drag a piece from the right and drop it into an empty space on the left!','把右边的棋子拖到左边的空格里！'):tr('아래에서 옮길 조각을 골라 봐.','Choose the pieces to move below.','在下面选择要移动的棋子。');
+  if(!pictured)return '';
+  if(v.kind==='integer'&&v.phase===0)return tr('수직선에서 출발할 눈금을 눌러 봐!','Tap the starting number on the line!','在数轴上点出发的刻度！');
+  if(v.kind==='integer'&&v.phase===4)return tr('사람을 끌어서 걸어 보거나, 화면을 눌러 한 칸씩 걸어 봐!','Drag the person to walk, or tap the picture for one step!','拖动小人走，或点画面走一格！');
+  if(v.kind==='common'&&v.phase===1)return tr('줄을 누르면 한 번 더 가요. 두 줄이 처음 같이 서는 점을 눌러 봐!','Tap a row to jump once more. Then tap the first spot where both rows meet!','点一行就再跳一次。再点两行第一次相遇的点！');
+  return '';
+ }
+ function hintLine(v){const text=pictureHint(v);return `<p class="nm-journey-pick-hint"${text?'':' hidden'}>${text}</p>`;}
+ function syncPickHint(){const p=$('.nm-journey-pick-hint'),v=view(state);if(p&&v.kind==='ten'&&stage.dataset.renderer==='webgl'&&!v.selected.length)$('.nm-journey-controls [data-action="move"]')?.remove();if(p){const text=pictureHint(v);p.textContent=text;p.hidden=!text;}}
  function fallback(v){
   if(v.kind==='integer')return `<div class="nm-journey-numberline">${Array.from({length:17},(_,i)=>`<span class="${i-8===v.position?'current':''}">${sign(i-8)}</span>`).join('')}</div><p>${tr('현재 위치','Current position','当前位置')} ${sign(v.position)} · ${v.face===null?'':v.face<0?'←':'→'} ${v.walk===null?'':v.walk<0?tr('뒤로','Backward','向后'):tr('앞으로','Forward','向前')}</p>`;
   if(v.kind==='common'&&(v.phase===1||v.word==='meet'&&v.model==='meet'))return [['A',v.a,v.trackA],['B',v.b,v.trackB]].map(([key,n,values])=>`<p>${n}${v.word?tr('분',' min','分钟'):tr('씩',' per step','每步')}</p><div class="nm-journey-numberline" data-track="${key}">${[0,...values].map(value=>`<span class="${value===v.least?'current':''}">${value}</span>`).join('')}</div>`).join('');
@@ -179,9 +190,9 @@ export async function mount(host,uid,lang='ko',options={}){
  const controller={pick:id=>dispatch('pick',id),dispose,getState:()=>JSON.parse(JSON.stringify(state)),getView:()=>view(state),getManifest:()=>({version:1,unit:uid,graded:false,reward:0,roles:scenes(uid),invariants:['identity','quantity','operation-role','independent-transfer']}),getVisualState:()=>visual?.inspect(),dispatch};
  host.__livingLesson=controller;render(true);await persist();
  try{
-  const [T,chars,module]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys'),import('./journey-stage.js?v=20261109-drag1')]);
+  const [T,chars,module]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys'),import('./journey-stage.js?v=20261109-touch1')]);
   if(disposed||!host.isConnected)return controller;
-  visual=module.createStage(stage,T,chars,view(state),id=>dispatch('pick',id),()=>{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;pendingDisplay=null;busy=false;render();}},settled);
+  visual=module.createStage(stage,T,chars,view(state),x=>typeof x==='object'?dispatch(x.action,x.value):dispatch('pick',x),()=>{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;pendingDisplay=null;busy=false;render();}},settled);
   stage.dataset.renderer='webgl';visual.sync(view(state),true);syncPickHint();
  }catch{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;syncPickHint();}}
  if(!disposed&&options.saved?.ui)requestAnimationFrame(()=>{if(disposed)return;const ui=options.saved.ui;if(scroller)scroller.scrollTop=ui.scrollTop||0;const b=[...host.querySelectorAll('[data-action]')].find(b=>b.dataset.action===ui.action&&b.dataset.value===ui.value&&!b.disabled);b?.focus({preventScroll:true});});

@@ -92,17 +92,53 @@ export function createStage(stage,T,chars,initial,onSelect,onLost,onSettled){
  /* 끌어다 놓기(2026-11-09 원장 「드래그로 하자」): 오른쪽 조각을 눌러 끌면 손가락을 따라오고, 왼쪽 판에 놓으면 그 조각이
     빈칸으로 들어간다(onSelect → pick). 다른 곳에 놓으면 제자리로 돌아간다. 짧게 누르기만 해도 예전처럼 들어간다. */
  const dragPlane=new T.Plane(new T.Vector3(0,1,0),-.75),hitPoint=new T.Vector3();let drag=null;
- const canDrag=()=>v.kind==='ten'&&v.phase===1;
+ const canDrag=()=>v.kind==='ten'&&v.phase===1||v.kind==='integer'&&v.phase===4&&!!pawn;
  const aim=e=>{const r=canvas.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,1-(e.clientY-r.top)/r.height*2);ray.setFromCamera(pointer,camera);};
  const pieceAt=e=>{aim(e);const hit=ray.intersectObjects([...pieces.values()],true)[0];if(!hit)return null;let o=hit.object;while(!o.userData.id&&o.parent)o=o.parent;const d=v.objects.find(d=>d.id===o.userData.id);return d?.origin==='right'&&d.group==='right'?{d,o}:null;};
  const overLeft=p=>{const a=tenSlot(0,'left'),b=tenSlot(9,'left');return p.x>Math.min(a.x,b.x)-.7&&p.x<Math.max(a.x,b.x)+.7&&p.z>Math.min(a.z,b.z)-.75&&p.z<Math.max(a.z,b.z)+.75;};
- const pointerDown=e=>{down={id:e.pointerId,x:e.clientX,y:e.clientY};if(!canDrag())return;const got=pieceAt(e);if(!got)return;drag={id:e.pointerId,d:got.d,o:got.o,home:got.o.position.clone(),moved:false};poses.delete(got.o);try{canvas.setPointerCapture(e.pointerId);}catch{}canvas.style.cursor='grabbing';until=performance.now()+60000;wake();};
- const pointerMove=e=>{if(!drag){if(canDrag())canvas.style.cursor=pieceAt(e)?'grab':'';return;}if(e.pointerId!==drag.id)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>=12)drag.moved=true;if(!drag.moved)return;aim(e);if(ray.ray.intersectPlane(dragPlane,hitPoint)){drag.o.position.set(hitPoint.x,.75,hitPoint.z);}until=performance.now()+60000;wake();};
+ /* 그 밖의 장면은 「누르기」(2026-11-09 원장 「상황에 따라 터치나 드레그」):
+    수직선 걷기 — 출발할 때는 눈금을 누르고, 걸을 때는 사람을 끌거나(넘은 눈금만큼 걷는다) 화면을 눌러 한 칸.
+    배수 만나기 — 줄을 누르면 그 수만큼 한 번 더 가고, 두 줄이 같이 있는 점을 누르면 「처음 만남」으로 고른다. */
+ const groundPlane=new T.Plane(new T.Vector3(0,1,0),-.05);
+ const ground=e=>{aim(e);return ray.ray.intersectPlane(groundPlane,hitPoint)?hitPoint.clone():null;};
+ const remaining=()=>v.target===null?0:v.target-v.steps,stepDir=()=>v.face*v.walk;
+ const tapAction=e=>{
+  if(v.kind==='integer'){
+   if(v.phase===0&&(!v.word||v.model)){const g=ground(e);if(!g||Math.abs(g.z)>1.8)return null;const n=Math.round(g.x);return Math.abs(g.x-n)<.45&&Math.abs(n)<=8?{action:'start',value:n}:null;}
+   if(v.phase===4&&remaining()>0)return {action:'step',value:'one'};
+   return null;
+  }
+  if(v.kind==='common'&&v.phase===1){
+   const g=ground(e);if(!g||g.x<-5.3||g.x>5.3||Math.abs(g.z)>2.2)return null;
+   const value=Math.round((g.x+4.5)/.18),both=v.trackA.includes(value)&&v.trackB.includes(value);
+   if(both&&Math.abs(-4.5+value*.18-g.x)<.3&&value>0)return {action:'least',value};
+   return {action:'track',value:g.z<0?'A':'B'};
+  }
+  return null;
+ };
+ const pawnHit=e=>{if(!pawn)return false;aim(e);return !!ray.intersectObject(pawn.object,true)[0];};
+ const pointerDown=e=>{down={id:e.pointerId,x:e.clientX,y:e.clientY};if(!canDrag())return;
+  if(v.kind==='integer'){if(!pawnHit(e)||remaining()<=0)return;drag={id:e.pointerId,o:pawn.object,pawn:true,home:new T.Vector3(v.position,.08,0),moved:false};}
+  else{const got=pieceAt(e);if(!got)return;drag={id:e.pointerId,d:got.d,o:got.o,home:got.o.position.clone(),moved:false};}
+  poses.delete(drag.o);try{canvas.setPointerCapture(e.pointerId);}catch{}canvas.style.cursor='grabbing';until=performance.now()+60000;wake();};
+ const pointerMove=e=>{
+  if(!drag){if(canDrag()&&v.kind==='ten')canvas.style.cursor=pieceAt(e)?'grab':'';else if(v.kind==='integer'&&v.phase===4)canvas.style.cursor=pawnHit(e)?'grab':'pointer';else canvas.style.cursor=tapAction(e)?'pointer':'';return;}
+  if(e.pointerId!==drag.id)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>=12)drag.moved=true;if(!drag.moved)return;
+  if(drag.pawn){const g=ground(e);if(g){const d=stepDir(),far=v.position+d*remaining(),lo=Math.min(v.position,far),hi=Math.max(v.position,far);drag.o.position.x=Math.max(lo,Math.min(hi,g.x));pawn.setWalking(true,1.0,v.walk===-1);}}
+  else{aim(e);if(ray.ray.intersectPlane(dragPlane,hitPoint)){drag.o.position.set(hitPoint.x,.75,hitPoint.z);}}
+  until=performance.now()+60000;wake();};
  const endDrag=(e,cancel)=>{const g=drag;drag=null;canvas.style.cursor='';try{canvas.releasePointerCapture(e.pointerId);}catch{}until=performance.now()+1000;
+  if(g.pawn){
+   const n=g.moved?Math.round(Math.abs(g.o.position.x-v.position)):1;
+   if(!cancel&&n>0)onSelect({action:'step',value:n});
+   if(!poses.has(g.o))pose(g.o,g.home,false);pawn.setWalking(false);motionPending=true;wake();return;
+  }
   const tap=!g.moved;const dropIn=!cancel&&(tap||overLeft(g.o.position));
   if(dropIn)onSelect(g.d.id);
   if(!poses.has(g.o))pose(g.o,g.home,false);motionPending=true;wake();};
- const pointerUp=e=>{if(drag&&e.pointerId===drag.id){endDrag(e,false);down=null;return;}down=null;};
+ const pointerUp=e=>{if(drag&&e.pointerId===drag.id){endDrag(e,false);down=null;return;}
+  if(down&&down.id===e.pointerId&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<12){const a=tapAction(e);if(a)onSelect(a);}
+  down=null;};
  const pointerCancel=e=>{if(drag&&e.pointerId===drag.id)endDrag(e,true);down=null;};
  const visibility=()=>{if(document.hidden){pauseMotion();cancelAnimationFrame(raf);raf=0;pawn?.setWalking(false);}else wake();},reduce=()=>{sync(v,true);};
  const lost=e=>{e.preventDefault();dispose();onLost();};
