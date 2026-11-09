@@ -74,12 +74,13 @@ export function createStage(stage,T,chars,initial,onSelect,onLost,onSettled){
    else if(v.phase===0&&v.groupSize){for(const origin of ['A','B']){const n=origin==='A'?v.a:v.b;for(let i=0;i<n;i+=v.groupSize){const d=v.objects.find(o=>o.origin===origin&&o.slot===i),p=layout(d,origin==='A'?i:v.a+i),size=Math.min(v.groupSize,n-i),rows=Math.ceil(size/3),cols=Math.min(3,size);decorate(tray,size===v.groupSize?well:selected,p.x+(cols-1)*.34,.03,p.z+(rows-1)*.34,cols*.68+.12,rows*.68+.12);}}}
   }
   if([...poses.values()].some(p=>p.from.distanceTo(p.to)>.001&&performance.now()-p.start<650))motionPending=true;
+  canvas.style.touchAction=canDrag()?'none':'';
   until=performance.now()+1000;resize();wake();
  }
  function labelPositions(){scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);for(const l of labels){const p=l.p.clone().project(camera);l.el.style.left=`${(p.x+1)*50}%`;l.el.style.top=`${(1-p.y)*50}%`;}}
  function resize(){if(disposed)return;const w=stage.clientWidth||1,h=stage.clientHeight||1;renderer.setSize(w,h,false);const aspect=w/h,width=v.kind==='integer'?19:mobile()&&v.kind==='ten'?6.4:v.kind==='common'?10.6:12,height=Math.max(v.kind==='integer'?5.8:v.kind==='ten'?6.2:8.5,width/aspect);camera.left=-height*aspect/2;camera.right=height*aspect/2;camera.top=height/2;camera.bottom=-height/2;camera.position.set(0,14,13);camera.lookAt(0,0,0);camera.updateProjectionMatrix();labelPositions();}
  function frame(now){raf=0;if(disposed||document.hidden||!visible)return;if(!stage.isConnected){dispose();return;}const dt=Math.min(.05,(now-(last||now))/1000);last=now;time+=dt;let moving=false;
-  for(const [o,p]of poses){const f=reduced.matches?1:Math.max(0,Math.min(1,(now-p.start)/650)),e=f*f*(3-2*f);o.position.lerpVectors(p.from,p.to,e);if(f<1){moving=true;if(v.kind!=='integer')o.position.y+=Math.sin(f*Math.PI)*.55;}}
+  for(const [o,p]of poses){if(drag&&o===drag.o)continue;const f=reduced.matches?1:Math.max(0,Math.min(1,(now-p.start)/650)),e=f*f*(3-2*f);o.position.lerpVectors(p.from,p.to,e);if(f<1){moving=true;if(v.kind!=='integer')o.position.y+=Math.sin(f*Math.PI)*.55;}}
   if(pawn){if(!moving)pawn.setWalking(false);if(!reduced.matches)pawn.update(dt,time);}renderer.render(scene,camera);labelPositions();if(!moving&&motionPending){motionPending=false;onSettled?.();}if(!raf&&(!reduced.matches||now<until))raf=requestAnimationFrame(frame);
  }
  function pauseMotion(){if(v.kind==='ten'&&pausedAt===null)pausedAt=performance.now();}
@@ -88,12 +89,25 @@ export function createStage(stage,T,chars,initial,onSelect,onLost,onSettled){
  const styleObserver=new MutationObserver(()=>{if(!disposed&&stage.__journeyLargeText!==largeText())sync(v,true);});styleObserver.observe(document.head,{childList:true});
  const io=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{pauseMotion();cancelAnimationFrame(raf);raf=0;}},{threshold:.01});io.observe(stage);
  const ray=new T.Raycaster(),pointer=new T.Vector2();
- const pointerDown=e=>{down={id:e.pointerId,x:e.clientX,y:e.clientY};},pointerCancel=()=>{down=null;};
- const pointerUp=e=>{if(down?.id===e.pointerId&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<12&&v.kind==='ten'&&v.phase===1){const r=canvas.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,1-(e.clientY-r.top)/r.height*2);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects([...pieces.values()],true)[0];if(hit){let o=hit.object;while(!o.userData.id&&o.parent)o=o.parent;const d=v.objects.find(d=>d.id===o.userData.id);if(d?.origin==='right'&&d.group==='right')onSelect(d.id);}}down=null;};
+ /* 끌어다 놓기(2026-11-09 원장 「드래그로 하자」): 오른쪽 조각을 눌러 끌면 손가락을 따라오고, 왼쪽 판에 놓으면 그 조각이
+    빈칸으로 들어간다(onSelect → pick). 다른 곳에 놓으면 제자리로 돌아간다. 짧게 누르기만 해도 예전처럼 들어간다. */
+ const dragPlane=new T.Plane(new T.Vector3(0,1,0),-.75),hitPoint=new T.Vector3();let drag=null;
+ const canDrag=()=>v.kind==='ten'&&v.phase===1;
+ const aim=e=>{const r=canvas.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,1-(e.clientY-r.top)/r.height*2);ray.setFromCamera(pointer,camera);};
+ const pieceAt=e=>{aim(e);const hit=ray.intersectObjects([...pieces.values()],true)[0];if(!hit)return null;let o=hit.object;while(!o.userData.id&&o.parent)o=o.parent;const d=v.objects.find(d=>d.id===o.userData.id);return d?.origin==='right'&&d.group==='right'?{d,o}:null;};
+ const overLeft=p=>{const a=tenSlot(0,'left'),b=tenSlot(9,'left');return p.x>Math.min(a.x,b.x)-.7&&p.x<Math.max(a.x,b.x)+.7&&p.z>Math.min(a.z,b.z)-.75&&p.z<Math.max(a.z,b.z)+.75;};
+ const pointerDown=e=>{down={id:e.pointerId,x:e.clientX,y:e.clientY};if(!canDrag())return;const got=pieceAt(e);if(!got)return;drag={id:e.pointerId,d:got.d,o:got.o,home:got.o.position.clone(),moved:false};poses.delete(got.o);try{canvas.setPointerCapture(e.pointerId);}catch{}canvas.style.cursor='grabbing';until=performance.now()+60000;wake();};
+ const pointerMove=e=>{if(!drag){if(canDrag())canvas.style.cursor=pieceAt(e)?'grab':'';return;}if(e.pointerId!==drag.id)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>=12)drag.moved=true;if(!drag.moved)return;aim(e);if(ray.ray.intersectPlane(dragPlane,hitPoint)){drag.o.position.set(hitPoint.x,.75,hitPoint.z);}until=performance.now()+60000;wake();};
+ const endDrag=(e,cancel)=>{const g=drag;drag=null;canvas.style.cursor='';try{canvas.releasePointerCapture(e.pointerId);}catch{}until=performance.now()+1000;
+  const tap=!g.moved;const dropIn=!cancel&&(tap||overLeft(g.o.position));
+  if(dropIn)onSelect(g.d.id);
+  if(!poses.has(g.o))pose(g.o,g.home,false);motionPending=true;wake();};
+ const pointerUp=e=>{if(drag&&e.pointerId===drag.id){endDrag(e,false);down=null;return;}down=null;};
+ const pointerCancel=e=>{if(drag&&e.pointerId===drag.id)endDrag(e,true);down=null;};
  const visibility=()=>{if(document.hidden){pauseMotion();cancelAnimationFrame(raf);raf=0;pawn?.setWalking(false);}else wake();},reduce=()=>{sync(v,true);};
  const lost=e=>{e.preventDefault();dispose();onLost();};
- canvas.addEventListener('pointerdown',pointerDown);canvas.addEventListener('pointerup',pointerUp);canvas.addEventListener('pointercancel',pointerCancel);canvas.addEventListener('webglcontextlost',lost);document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',reduce);
+ canvas.addEventListener('pointerdown',pointerDown);canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerup',pointerUp);canvas.addEventListener('pointercancel',pointerCancel);canvas.addEventListener('webglcontextlost',lost);document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',reduce);
  stage.appendChild(canvas);sync(initial,true);
- function dispose(){if(disposed)return;disposed=true;cancelAnimationFrame(raf);ro.disconnect();io.disconnect();styleObserver.disconnect();document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',reduce);canvas.removeEventListener('pointerdown',pointerDown);canvas.removeEventListener('pointerup',pointerUp);canvas.removeEventListener('pointercancel',pointerCancel);canvas.removeEventListener('webglcontextlost',lost);clearScene();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());sun.shadow.map?.dispose();renderer.dispose();try{renderer.forceContextLoss();}catch{}canvas.remove();}
- return {sync,dispose,inspect:()=>({renderer:'webgl',scene:v.id,objects:[...pieces.values()].map(o=>({id:o.userData.id,origin:o.userData.origin,group:o.userData.group,position:o.position.toArray()})),person:pawn?{position:pawn.object.position.toArray(),facing:pawn.object.rotation.y,walk:v.walk,human:pawn.recipe.human}:null,ticks:v.kind==='integer'?Array.from({length:17},(_,i)=>i-8):[],camera:{position:camera.position.toArray(),left:camera.left,right:camera.right}})};
+ function dispose(){if(disposed)return;disposed=true;cancelAnimationFrame(raf);ro.disconnect();io.disconnect();styleObserver.disconnect();document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',reduce);canvas.removeEventListener('pointerdown',pointerDown);canvas.removeEventListener('pointermove',pointerMove);canvas.removeEventListener('pointerup',pointerUp);canvas.removeEventListener('pointercancel',pointerCancel);canvas.removeEventListener('webglcontextlost',lost);clearScene();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());sun.shadow.map?.dispose();renderer.dispose();try{renderer.forceContextLoss();}catch{}canvas.remove();}
+ return {sync,dispose,inspect:()=>({renderer:'webgl',scene:v.id,objects:[...pieces.values()].map(o=>{const q=o.position.clone().project(camera);return {id:o.userData.id,origin:o.userData.origin,group:o.userData.group,position:o.position.toArray(),screen:[(q.x+1)/2,(1-q.y)/2]};}),person:pawn?{position:pawn.object.position.toArray(),facing:pawn.object.rotation.y,walk:v.walk,human:pawn.recipe.human}:null,ticks:v.kind==='integer'?Array.from({length:17},(_,i)=>i-8):[],camera:{position:camera.position.toArray(),left:camera.left,right:camera.right}})};
 }
