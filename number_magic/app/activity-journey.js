@@ -1,4 +1,4 @@
-import {createJourney,restoreJourney,view,equation,act,finalize,scenes} from '../data/activity-journeys.js';
+import {createJourney,restoreJourney,view,equation,act,finalize,scenes} from '../data/activity-journeys.js?v=20261109-tap2';
 
 const feedbackTranslations={
  '빈칸을 하나씩 살펴봐.':['Look at each empty space.','一个一个看看空格。'],
@@ -55,7 +55,7 @@ export async function mount(host,uid,lang='ko',options={}){
  function copy(v){
   const role=v.word?tr('이야기에 적용','Apply to a story','应用到故事'):v.id==='number-transfer'?tr('새 수로 확인','Try new numbers','换数字验证'):v.id==='comparison'?tr('다른 걷기 비교','Compare a different walk','比较不同走法'):tr('직접 발견하기','Discover by doing','动手发现');
   if(v.kind==='ten'){
-   const questions=[tr('왼쪽을 10으로 만들려면 어떻게 옮길까?','How can you move pieces to make ten on the left?','怎样移动才能让左边成为十？'),tr('그림 속 조각을 눌러 고르고, 빈칸으로 옮겨 봐.','Tap pieces in the picture, then move them into the spaces.','点图里的棋子，再把它们移进空格。'),tr('열 칸에 놓인 조각을 한 묶음으로 볼까?','Can the ten filled spaces be one group?','把填满的十格看成一组好吗？'),tr('10 묶음과 남은 조각은 모두 몇 개일까?','How many pieces are in the ten and the remainder?','一组十和剩下的棋子一共有几个？'),tr('왜 전체 개수는 그대로일까?','Why has the total stayed the same?','为什么总数没有变？')];
+   const questions=[tr('왼쪽을 10으로 만들려면 어떻게 옮길까?','How can you move pieces to make ten on the left?','怎样移动才能让左边成为十？'),tr('오른쪽 조각을 눌러서 왼쪽을 10으로 채워 봐.','Tap pieces on the right to fill the left up to ten.','点右边的棋子，把左边填满十个。'),tr('열 칸에 놓인 조각을 한 묶음으로 볼까?','Can the ten filled spaces be one group?','把填满的十格看成一组好吗？'),tr('10 묶음과 남은 조각은 모두 몇 개일까?','How many pieces are in the ten and the remainder?','一组十和剩下的棋子一共有几个？'),tr('왜 전체 개수는 그대로일까?','Why has the total stayed the same?','为什么总数没有变？')];
    return {title:tr('수를 이사시켜요','Moving numbers','数字搬家'),role,question:v.word&&!v.model?tr('구슬 7개와 6개를 합하려고 해. 어떤 계산일까?','You combine seven marbles and six marbles. Which operation?','把七颗和六颗弹珠放在一起，用什么运算？'):questions[v.phase]};
   }
   if(v.kind==='integer'){
@@ -72,7 +72,7 @@ export async function mount(host,uid,lang='ko',options={}){
    if(v.phase===1){
     // 3D 화면에서는 그림 속 조각을 눌러 고른다. 조각 단추는 화면 밖에 두고 키보드로 갈 때만 보인다(없는 입체 화면에서는 늘 보인다).
     const pictured=stage.dataset.renderer==='webgl',n=v.selected.length;
-    return `<p class="nm-journey-pick-hint">${pictured?tr('그림에서 오른쪽 조각을 눌러 골라 봐.','Tap the pieces on the right in the picture.','点图里右边的棋子来选择。'):tr('아래에서 옮길 조각을 골라 봐.','Choose the pieces to move below.','在下面选择要移动的棋子。')}</p><div class="nm-journey-piece-controls" role="group" aria-label="${tr('옮길 조각 고르기','Choose pieces to move','选择要移动的棋子')}">${v.objects.filter(o=>o.origin==='right'&&o.group==='right').map((o,i)=>button('select',o.id,tr(`오른쪽 조각 ${i+1}`,`Right piece ${i+1}`,`右边棋子${i+1}`),`aria-pressed="${v.selected.includes(o.id)}"`)).join('')}</div>${button('move','',n?tr(`빈칸으로 옮기기 (${n}개)`,`Move into the spaces (${n})`,`移进空格（${n}个）`):tr('빈칸으로 옮기기','Move into the spaces','移进空格'),!n?'disabled':'')}`;
+    return `<p class="nm-journey-pick-hint">${pictured?tr('오른쪽 조각을 눌러 봐. 누르면 왼쪽 빈칸으로 쏙 들어가!','Tap a piece on the right. It hops into an empty space on the left!','点右边的棋子，它会跳进左边的空格！'):tr('아래에서 옮길 조각을 골라 봐.','Choose the pieces to move below.','在下面选择要移动的棋子。')}</p><div class="nm-journey-piece-controls" role="group" aria-label="${tr('옮길 조각 고르기','Choose pieces to move','选择要移动的棋子')}">${v.objects.filter(o=>o.origin==='right'&&o.group==='right').map((o,i)=>button('select',o.id,tr(`오른쪽 조각 ${i+1}`,`Right piece ${i+1}`,`右边棋子${i+1}`),`aria-pressed="${v.selected.includes(o.id)}"`)).join('')}</div>${pictured&&!n?'':button('move','',n?tr(`빈칸으로 옮기기 (${n}개)`,`Move into the spaces (${n})`,`移进空格（${n}个）`):tr('빈칸으로 옮기기','Move into the spaces','移进空格'),!n?'disabled':'')}`;
    }
    if(v.phase===2)return button('group','',tr('10 묶음 확인','Confirm the group of ten','确认一组十'));
    if(v.phase===3)return input(tr('전체 개수','Total number of pieces','棋子总数'));
@@ -101,7 +101,7 @@ export async function mount(host,uid,lang='ko',options={}){
   if(v.phase===6)return v.productRead?input(tr('전체 블록의 개수','Total number of blocks','积木总个数')):button('product','multiply',tr('A와 B를 곱해요','Multiply A by B','A乘B'))+button('product','digits',tr('두 자리 수예요','A two-digit number','一个两位数'));
   return '';
  }
- function syncPickHint(){const p=$('.nm-journey-pick-hint');if(p)p.textContent=stage.dataset.renderer==='webgl'?tr('그림에서 오른쪽 조각을 눌러 골라 봐.','Tap the pieces on the right in the picture.','点图里右边的棋子来选择。'):tr('아래에서 옮길 조각을 골라 봐.','Choose the pieces to move below.','在下面选择要移动的棋子。');}
+ function syncPickHint(){const p=$('.nm-journey-pick-hint');if(p&&stage.dataset.renderer==='webgl'&&!view(state).selected.length)$('.nm-journey-controls [data-action="move"]')?.remove();if(p)p.textContent=stage.dataset.renderer==='webgl'?tr('오른쪽 조각을 눌러 봐. 누르면 왼쪽 빈칸으로 쏙 들어가!','Tap a piece on the right. It hops into an empty space on the left!','点右边的棋子，它会跳进左边的空格！'):tr('아래에서 옮길 조각을 골라 봐.','Choose the pieces to move below.','在下面选择要移动的棋子。');}
  function fallback(v){
   if(v.kind==='integer')return `<div class="nm-journey-numberline">${Array.from({length:17},(_,i)=>`<span class="${i-8===v.position?'current':''}">${sign(i-8)}</span>`).join('')}</div><p>${tr('현재 위치','Current position','当前位置')} ${sign(v.position)} · ${v.face===null?'':v.face<0?'←':'→'} ${v.walk===null?'':v.walk<0?tr('뒤로','Backward','向后'):tr('앞으로','Forward','向前')}</p>`;
   if(v.kind==='common'&&(v.phase===1||v.word==='meet'&&v.model==='meet'))return [['A',v.a,v.trackA],['B',v.b,v.trackB]].map(([key,n,values])=>`<p>${n}${v.word?tr('분',' min','分钟'):tr('씩',' per step','每步')}</p><div class="nm-journey-numberline" data-track="${key}">${[0,...values].map(value=>`<span class="${value===v.least?'current':''}">${value}</span>`).join('')}</div>`).join('');
@@ -159,8 +159,8 @@ export async function mount(host,uid,lang='ko',options={}){
   const beforeState=JSON.parse(JSON.stringify(state)),before=view(state);state=act(state,action,value,`${session}:${++sequence}`);
   if(view(state).complete)state=finalize(state);
   const after=view(state),changed=after.revision!==before.revision;
-  busy=changed&&['move','start','face','step','regroup'].includes(action)&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
-  pendingDisplay=busy&&uid==='A-02'&&action==='move'&&visual?beforeState:null;
+  busy=changed&&['move','pick','start','face','step','regroup'].includes(action)&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+  pendingDisplay=busy&&uid==='A-02'&&(action==='move'||action==='pick')&&visual?beforeState:null;
   clearTimeout(timer);if(busy&&!pendingDisplay)timer=setTimeout(()=>{busy=false;render();},750);
   render(action==='next'||action==='reset'||action==='undo');
   await persist();
@@ -176,12 +176,12 @@ export async function mount(host,uid,lang='ko',options={}){
  const observer=new MutationObserver(()=>{if(!host.isConnected)dispose();});observer.observe(document.body,{subtree:true,childList:true});
  host.addEventListener('click',click);host.addEventListener('submit',submit);scroller?.addEventListener('scroll',saveUI,{passive:true});
  function dispose(){if(disposed)return;disposed=true;clearTimeout(timer);clearTimeout(uiTimer);observer.disconnect();scroller?.removeEventListener('scroll',saveUI);host.removeEventListener('click',click);host.removeEventListener('submit',submit);visual?.dispose();delete host.__livingLesson;}
- const controller={dispose,getState:()=>JSON.parse(JSON.stringify(state)),getView:()=>view(state),getManifest:()=>({version:1,unit:uid,graded:false,reward:0,roles:scenes(uid),invariants:['identity','quantity','operation-role','independent-transfer']}),getVisualState:()=>visual?.inspect(),dispatch};
+ const controller={pick:id=>dispatch('pick',id),dispose,getState:()=>JSON.parse(JSON.stringify(state)),getView:()=>view(state),getManifest:()=>({version:1,unit:uid,graded:false,reward:0,roles:scenes(uid),invariants:['identity','quantity','operation-role','independent-transfer']}),getVisualState:()=>visual?.inspect(),dispatch};
  host.__livingLesson=controller;render(true);await persist();
  try{
   const [T,chars,module]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys'),import('./journey-stage.js?v=20261014-arrival')]);
   if(disposed||!host.isConnected)return controller;
-  visual=module.createStage(stage,T,chars,view(state),id=>dispatch('select',id),()=>{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;pendingDisplay=null;busy=false;render();}},settled);
+  visual=module.createStage(stage,T,chars,view(state),id=>dispatch('pick',id),()=>{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;pendingDisplay=null;busy=false;render();}},settled);
   stage.dataset.renderer='webgl';visual.sync(view(state),true);syncPickHint();
  }catch{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;syncPickHint();}}
  if(!disposed&&options.saved?.ui)requestAnimationFrame(()=>{if(disposed)return;const ui=options.saved.ui;if(scroller)scroller.scrollTop=ui.scrollTop||0;const b=[...host.querySelectorAll('[data-action]')].find(b=>b.dataset.action===ui.action&&b.dataset.value===ui.value&&!b.disabled);b?.focus({preventScroll:true});});

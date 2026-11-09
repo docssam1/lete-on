@@ -72,6 +72,8 @@ export function act(s,action,value,actionId){
   if(action==='predict'&&v.phase===0){v.prediction=value;changed=true;}
   if(action==='begin'&&v.phase===0&&v.prediction!==null&&(!d.word||v.model)){v.phase=1;changed=true;}
   if(action==='select'&&v.phase===1){const selectable=ids(d.prefix[1],d.b).includes(value)&&!v.moved.includes(value);if(selectable){if(v.selection.includes(value))v.selection=v.selection.filter(id=>id!==value);else if(v.selection.length<10-d.a-v.moved.length)v.selection.push(value);else fail('남은 빈칸만큼만 고를 수 있어.',false);changed=!error;}}
+  // 그림 속 조각을 누르면 그 조각 하나가 바로 빈칸으로 간다(고르기+옮기기를 한 번에, 되돌리기도 한 번에).
+  if(action==='pick'&&v.phase===1){const selectable=ids(d.prefix[1],d.b).includes(value)&&!v.moved.includes(value);if(selectable){if(v.moved.length<10-d.a){v.selection=v.selection.filter(x=>x!==value);v.moved.push(value);changed=true;if(v.moved.length===10-d.a){v.selection=[];v.phase=2;}}else fail('남은 빈칸만큼만 고를 수 있어.',false);}}
   if(action==='move'&&v.phase===1){if(v.selection.length&&v.selection.length<=10-d.a-v.moved.length){v.moved.push(...v.selection);v.selection=[];changed=true;if(v.moved.length===10-d.a)v.phase=2;}else fail('옮길 블록을 먼저 골라 봐.',false);}
   if(action==='group'&&v.phase===2&&v.moved.length===10-d.a){v.grouped=true;v.phase=3;changed=true;}
   if(action==='submit'&&v.phase===3){n.attempts.push({id,scene:d.id,revision:n.revision,answer:value});if(Number(value)===d.a+d.b){v.answer=Number(value);v.verified=true;v.phase=4;changed=true;}else fail('10 묶음 옆에 남은 블록을 다시 세어 봐.');}
