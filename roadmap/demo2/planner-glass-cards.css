@@ -83,4 +83,9 @@
 .intake-progress{grid-column:1/-1;min-width:0;border:1px solid #a7b5e0;border-radius:18px;padding:16px;background:rgba(255,255,255,.08)}
 .intake-progress legend{font-weight:700}.intake-progress p,.intake-progress small{font-size:13px;line-height:1.6}.intake-progress>div{display:flex;gap:10px}.intake-progress label{flex:1;min-width:0;font-size:13px}.intake-progress input,.intake-progress select{display:block;width:100%;min-height:44px;box-sizing:border-box;border:1px solid #aeb9d2;border-radius:10px;background:#fff;color:#202946;padding:9px;font:inherit}.intake-progress [role=alert]{color:#fa9dad;margin:0}
 
-body.roadmap-studio #questionOptions .intake-progress p,body.roadmap-studio #questionOptions .intake-progress small{color:#e0eaff}body.roadmap-studio #questionOptions .intake-progress #progressError{color:#ffc4d2}#questionTitle{scroll-margin-top:72px}
+body.roadmap-studio #questionOptions .intake-progress p,body.roadmap-studio #questionOptions .intake-progress small{color:#e0eaff}
+/* 분량 빠른 선택: 직계 선택 버튼 규칙을 받지 않으므로 글자색·크기를 직접 지정한다. */
+#questionOptions .intake-progress [data-progress-percent]{flex:1;min-width:0;min-height:44px;height:auto;padding:8px 6px;border:1px solid #aeb9d2;border-radius:10px;background:#fff;color:#202946;font:inherit;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer}
+#questionOptions .intake-progress [data-progress-percent]:hover{background:#eef3ff}
+#questionOptions .intake-progress [data-progress-percent]:focus-visible{outline:3px solid #94dcff;outline-offset:2px}
+body.roadmap-studio #questionOptions .intake-progress #progressError{color:#ffc4d2}#questionTitle{scroll-margin-top:72px}
