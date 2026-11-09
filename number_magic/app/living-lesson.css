@@ -127,7 +127,7 @@ html .nm-unit-view[data-learning-band] .nm-journey .nm-live-feedback{font-size:2
 .nm-journey[data-lesson="A-02"] .nm-live-feedback:empty{display:none}
 .nm-journey[data-lesson="A-02"] .nm-journey-save{font-size:16px;margin:4px 0;line-height:1.4}
 .nm-journey[data-lesson="A-02"] .nm-live-actions{display:flex;flex-wrap:wrap;padding-top:8px;gap:8px;align-items:start}
-html .nm-unit-view[data-learning-band] .nm-journey[data-lesson="A-02"] .nm-live-actions>button{min-width:48px;min-height:48px;font-size:18px;flex:1;padding:8px}
+html .nm-unit-view[data-learning-band] .nm-journey[data-lesson="A-02"] .nm-live-actions>button{min-width:48px;min-height:48px;font-size:18px;flex:1 1 calc(33.3% - 8px);padding:8px;white-space:nowrap}
 .nm-journey-tools{flex:1;min-width:64px}
 .nm-journey-tools summary{min-height:48px;box-sizing:border-box;display:grid;place-items:center;border:1px solid #9cab9c;border-radius:8px;cursor:pointer;font-size:18px;font-weight:700;background:#fffef9;color:#244436}
 .nm-journey-tools summary:focus-visible{outline:3px solid #245e49;outline-offset:3px}
@@ -147,3 +147,10 @@ html .nm-unit-view[data-learning-band] .nm-journey[data-lesson="A-02"] .nm-live-
 .nm-hop-lesson[data-moving="true"] .nm-hop-stage{cursor:progress}
 .nm-hop-lesson button[aria-disabled="true"]{opacity:.5;cursor:default}
 }
+
+/* 2026-11-09 원장 「그림의 조각을 눌러 옮겨 보세요」 — 입체 화면에서는 그림 속 조각을 눌러 고른다.
+   조각 단추는 흐름 밖(절대 위치)에 숨겨 두고, 키보드로 갈 때(:focus-within)만 조작 칸 위에 떠서 보인다 — 나타나고 사라져도 아래 단추가 움직이지 않는다. 입체 화면이 없으면 늘 보인다. */
+.nm-journey:has(.nm-live-stage[data-renderer="webgl"]) .nm-journey-controls{position:relative}
+.nm-journey:has(.nm-live-stage[data-renderer="webgl"]) .nm-journey-piece-controls{position:absolute;left:0;right:0;bottom:100%;z-index:3;background:#fffef9;border:1px solid #9cab9c;border-radius:10px;padding:6px;box-shadow:0 6px 18px rgba(36,68,54,.18)}
+.nm-journey:has(.nm-live-stage[data-renderer="webgl"]) .nm-journey-piece-controls:not(:focus-within){clip-path:inset(50%);opacity:0;pointer-events:none}
+.nm-journey .nm-live-actions>button{white-space:nowrap}
