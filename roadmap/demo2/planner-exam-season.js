@@ -5,7 +5,9 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let selection={months:[],pace:0};
 function eligible(answers,fields){const grade=global.PlannerIntake.gradeChoice(answers,fields);return !fields.internationalCalendar&&['7','8','9'].includes(String(grade));}
 function months(fields,count=24){const year=Number(fields.year),month=Number(fields.mon);if(!Number.isInteger(year)||!Number.isInteger(month)||month<1||month>12)return[];return Array.from({length:count},(_,i)=>{const n=year*12+month-1+i,y=Math.floor(n/12),m=n%12+1;return{index:i,key:y+'-'+String(m).padStart(2,'0'),label:y+'년 '+m+'월',month:m};});}
+function calendarFields(model,fields){return Number.isInteger(Number(model?.year))&&Number.isInteger(Number(model?.month))&&Number(model.month)>=1&&Number(model.month)<=12?{...fields,year:Number(model.year),mon:Number(model.month)}:fields;}
 function compare(model,fields,state={}){
+ fields=calendarFields(model,fields);
  const calendar=months(fields),chosen=new Set((state.months||[]).filter(k=>calendar.some(m=>m.key===k))),pace=state.pace===.5?.5:0;
  let position=0;
  const rows=calendar.map(m=>{const exam=chosen.has(m.key),capacity=exam?pace:1,start=position;position+=capacity;return{...m,exam,capacity,start,end:position};});
@@ -22,7 +24,7 @@ function mount(host,{answers={},fields={},model}={}){
  const box=global.document.createElement('section');host.append(box);
  const paint=()=>{box.innerHTML=render(model,fields,selection);};paint();
  box.addEventListener('change',e=>{if(e.target.matches('[data-exam-month]')){const key=e.target.dataset.examMonth;selection.months=selection.months.filter(x=>x!==key);if(e.target.checked)selection.months.push(key);}else if(e.target.matches('[data-exam-pace]'))selection.pace=Number(e.target.value);else return;paint();});
- box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-exam-example'))selection.months=months(fields).filter(m=>[4,6,9,11].includes(m.month)).map(m=>m.key);else if(b.hasAttribute('data-exam-clear'))selection={months:[],pace:0};else return;paint();});
+ box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-exam-example'))selection.months=months(calendarFields(model,fields)).filter(m=>[4,6,9,11].includes(m.month)).map(m=>m.key);else if(b.hasAttribute('data-exam-clear'))selection={months:[],pace:0};else return;paint();});
 }
 global.PlannerExamSeason=Object.freeze({eligible,months,compare,render,mount});
 })(window);

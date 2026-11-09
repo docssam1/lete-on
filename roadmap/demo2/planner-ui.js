@@ -1347,7 +1347,7 @@ function drawJourney(){
   for(const view of ['map','graph','table'])$('workspace-panel-'+view).innerHTML=CP.render(highStandard,view);
  }
 
- if(completed)PlannerExamSeason.mount($('workspace-panel-table'),{answers,fields:intakeFields(),model:selectedCore||standard});
+ if(completed&&(selectedCore||standardActive))PlannerExamSeason.mount($('workspace-panel-table'),{answers,fields:intakeFields(),model:selectedCore||standard});
  if(completed&&!selectedCore){const mock=mockScheduleModel();for(const view of ['map','graph','table'])$('workspace-panel-'+view).insertAdjacentHTML('beforeend',ME.renderSchedule(mock,view)+MS.render(mock,view)+MF.render(mock,view));}
  if(completed&&selectedCore)$('workspace-panel-map').insertAdjacentHTML('beforeend',MS.render(selectedCore)+MF.render(selectedCore));
  if(completed){const stats=LE.summary(learningEvidence);$('workspace-panel-map').insertAdjacentHTML('beforeend','<section class="learning-evidence-access"><h3>개념 확인과 학습 수행 기록</h3><p>경시 개념 기록 '+stats.recorded+'개 · 복습 필요 '+stats.counts.review+'개</p><button type="button" data-learning-evidence-open="concepts">경시 개념 체크</button><button type="button" data-learning-evidence-open="work">월별 수행 분량 기록</button><button type="button" data-learning-evidence-open="mock">고등 모평 수행 점검</button><button type="button" data-learning-evidence-open="papers">연도별 기출 보기</button><button type="button" data-ox-open>초등 평가 기록·복습 (선택)</button></section>');}
