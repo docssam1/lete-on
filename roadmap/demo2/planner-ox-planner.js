@@ -12,7 +12,7 @@
   let options={}, catalogRequest, revision=0, dialog, queueRequested=false;
   const setNames={m:'중',h:'상',x:'최상'};
   async function fetchJson(file) {
-    const response=await fetch(file+'?v=20261108-ox1');
+    const response=await fetch(file+'?v=20261110-contentaudit1');
     if (!response.ok) throw Error('단원평가 자료를 열지 못했어요.');
     return response.json();
   }
