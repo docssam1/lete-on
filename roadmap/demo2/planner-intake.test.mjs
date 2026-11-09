@@ -439,3 +439,42 @@ test('실제 질문 핸들러로 고등 복수심화 과목→교재→연산 �
  assert.equal(f.c.answers.calc,'unknown');assert.equal(f.c.answers.thinkingExperience,undefined);
  assert.equal(f.c.answers.deepStage,'공통수학2');assert.equal(f.c.answers.deepExtraStage,'대수');
 });
+
+test('2022 과목명 선택 ID는 유지하고 구 과목과 동일하지 않음을 설명한다',()=>{
+ const a={...answer,schoolCourse:'high',schoolBook:'기본정석',deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',calc:'high'};
+ const q=I.questions(a,fields);
+ for(const key of ['schoolHigh','deepStage','deepExtraStage','calcHigh']){
+  assert.match(q[key][1],/대수는 구 수학Ⅰ/);
+  assert.match(q[key][1],/미적분Ⅰ은 구 수학Ⅱ/);
+  assert.match(q[key][1],/같은 과정은 아닙니다/);
+  assert.ok(q[key][2].some(([id,label])=>id==='대수'&&label.includes('구 수학Ⅰ')));
+  assert.ok(q[key][2].some(([id,label])=>id==='미적분Ⅰ'&&label.includes('구 수학Ⅱ')));
+ }
+ assert.ok(!I.highSubjects.includes('수학Ⅰ'));
+});
+
+test('대략 20/50/80 버튼은 저장 전 폼만 채우며 진행 상태 선택 시 분량으로 저장한다',()=>{
+ for(const percent of [20,50,80]){
+  const savedAnswers={...answer,schoolStatus:'progress',schoolProgress:{course:I.progressCourse(answer,'schoolStatus'),done:2,total:6,unit:'page'}};
+  const f=storageFixture({version:2,answers:savedAnswers,fields:{...fields,hw:'57'},history:[],state:{}});
+  f.c.restoreDraft();f.c.question='schoolStatus';f.c.handleCollegeClick=()=>false;f.c.collegeState={enabled:false};
+  const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+  vm.runInContext(ui.slice(ui.indexOf("$('questionOptions').onclick="),ui.indexOf("$('questionBack').onclick=")),f.c);
+  const before=JSON.stringify(f.c.answers);
+  f.els.questionOptions.onclick({target:{closest:selector=>selector==='[data-progress-percent]'?{dataset:{progressPercent:String(percent)}}:null}});
+  assert.equal(JSON.stringify(f.c.answers),before);
+  assert.equal(f.els.progressTotal.value,'100');assert.equal(f.els.progressDone.value,String(percent));assert.equal(f.els.progressUnit.value,'percent');
+  f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:'progress'}})}});
+  const p=I.progressValue(f.c.answers,'schoolStatus');
+  assert.equal(p.done,percent);assert.equal(p.total,100);assert.equal(p.approximate,true);assert.notEqual(p.estimated,true);
+  assert.equal(f.c.answers.schoolStatus,'progress');assert.match(I.progressText(f.c.answers,'schoolStatus'),new RegExp('약 '+percent+'%'));
+  assert.match(I.progressText(f.c.answers,'schoolStatus'),/숙달 아님/);
+  // Switching back to exact numbers removes the approximation marker.
+  f.c.question='schoolStatus';f.els.progressUnit.value='page';f.els.progressTotal.value='6';f.els.progressDone.value='2';
+  f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:'progress'}})}});
+  assert.equal(I.progressValue(f.c.answers,'schoolStatus').approximate,undefined);
+  assert.match(I.progressText(f.c.answers,'schoolStatus'),/6 쪽 중 2 완료/);
+ }
+ const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+ assert.match(ui,/key.endsWith\('Status'\).*대략 진행 분량/s);
+});
