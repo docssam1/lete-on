@@ -1,6 +1,6 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261101b";
 import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261105b";
-import { readRecord, weekRate, loggedIn, checkSession } from "./study-progress.js?v=20261029q";
+import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261029q";
 import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261103d";
 import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261105b";
@@ -30,6 +30,7 @@ const view = {
   pick: { units: null, stage: "type", count: 20 }
 };
 let goldenBell = null; // { books, flows, flowTitles, activities } — 크기가 커서 첫 화면을 그린 뒤 불러온다
+let bellReady = null;  // 그 불러오기 Promise(교재 인쇄 주소를 만들 때 기다린다)
 
 function link(page, entries) {
   const url = new URLSearchParams({ student, ...entries });
@@ -69,7 +70,7 @@ function showStep() {
   if (view.step >= 1) crumbs.push(`<button type="button" data-go="1"${view.step === 1 ? ' aria-current="page"' : ""}>${esc(book.label)}</button>`);
   if (view.step === 2) crumbs.push(`<button type="button" data-go="2" aria-current="page">${String(view.unit + 1).padStart(2, "0")} ${esc(unit.label)}</button>`);
   $("crumbs").innerHTML = crumbs.join('<span aria-hidden="true">›</span>');
-  if (view.step === 0) renderBooks();
+  if (view.step === 0) { renderBooks(); renderQuick(); }
   else if (view.step === 1) renderDoors();
   else renderParts();
 }
@@ -148,6 +149,120 @@ function renderSelfUnits(book) {
     return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · ${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
   }).join("")}${book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
+const studyLink = (bookId, unitIndex, part, last = 0) => link("study.html", { book: bookId, unit: String(unitIndex), part: String(part), ...(last ? { s: String(last) } : {}) });
+// 한 차시 교재 인쇄 주소(golden-bell.html?sessionbook=1) — 차시 카드와 「책 시작 때 인쇄할까요?」가 같이 쓴다
+function sessionLinks(book, unitIndex, part) {
+  const unit = book.units[unitIndex], { count } = unitParts(unit);
+  const bellBook = goldenBell?.books.find((entry) => entry.id === book.id);
+  const all = goldenBell ? lessonsByUnit(book, bellBook).units[unitIndex] : [];
+  const size = Math.ceil(all.length / count), lessons = all.slice((part - 1) * size, part * size);
+  const lastPart = part === count;
+  const sheet = link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
+    picks: sessionBookPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 본책과 과제` });
+  const presheet = part > 1 ? link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
+    picks: sessionDailyPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
+  const testParts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problemCount(unit, part)}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
+  const bookPrint = link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
+    label: `${unitIndex + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: testParts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });
+  return { bookPrint, lessons };
+}
+
+// ── 학부모가 처음 와도 바로 시작하게(원장 2026-11-09 「처음부터 또는 진도 선택부터 유연하게 · 책 시작하는 처음에 교재를 인쇄하겠습니까」) ──
+// 첫 장 맨 위에 세 갈래: 이어서 하기(공부 기록이 있으면) · 처음부터(또는 정해 둔 시작 진도) · 진도 골라 시작(아래 권 목록).
+// 한 권을 처음 시작할 때 한 번만 「교재를 인쇄할까요?」를 묻고, 고른 답은 이 기기에 권마다 기억한다.
+const PRINT_KEY = (bookId) => `gm-print-ask:${student}:${bookId}`;
+function printPref(bookId, value) {
+  try {
+    if (value) localStorage.setItem(PRINT_KEY(bookId), value);
+    return localStorage.getItem(PRINT_KEY(bookId)) || "";
+  } catch { return value || ""; }
+}
+const bookById = (id) => CURRICULUM.find((book) => book.id === id);
+const placeLabel = (book, unit, part) => `${book.label} ${unit + 1}단원 ${part}차시`;
+// 이 학생의 차시 기록(kind week) — 처음엔 이 기기 것, 로그인했으면 서버 것까지 합쳐 다시 그린다
+let weekRows = loadLocalAll().records.filter((row) => row.student_name === student && row.kind === "week")
+  .map((row) => ({ key: row.record_key, payload: row.payload, at: String(row.updated_at || "") }));
+const startedBook = (bookId) => weekRows.some((row) => row.key.startsWith(`${bookId}-u`));
+function latestPlace() {
+  const row = [...weekRows].sort((a, b) => b.at.localeCompare(a.at))[0];
+  const match = row && /^(book-\d+)-u(\d+)$/.exec(row.key);
+  const book = match && bookById(match[1]);
+  if (!book || !book.units[Number(match[2])]) return null;
+  const unit = Number(match[2]), { count } = unitParts(book.units[unit]);
+  const part = Math.min(Math.max(1, Number(row.payload?.part) || 1), count);
+  return { book, unit, part, last: Number(row.payload?.last) || 1 };
+}
+function firstPlace() {
+  const start = loggedIn()?.member?.start;
+  const book = start?.book && bookById(start.book);
+  if (book && book.units[Number(start.unit) || 0]) {
+    const unit = Number(start.unit) || 0, { count } = unitParts(book.units[unit]);
+    return { book, unit, part: Math.min(Math.max(1, Number(start.part) || 1), count), last: 0, chosen: true };
+  }
+  return { book: CURRICULUM[0], unit: 0, part: 1, last: 0, chosen: false };
+}
+function renderQuick() {
+  $("quickStart").hidden = view.mode === "class";
+  const now = latestPlace(), first = firstPlace();
+  const cont = $("quickContinue");
+  cont.hidden = !now;
+  if (now) {
+    cont.dataset.start = `${now.book.id}|${now.unit}|${now.part}|${now.last}`;
+    cont.innerHTML = `<b>이어서 하기</b><span>${esc(placeLabel(now.book, now.unit, now.part))} · ${esc(now.book.units[now.unit].label)}</span>`;
+  }
+  const firstBtn = $("quickFirst");
+  firstBtn.dataset.start = `${first.book.id}|${first.unit}|${first.part}|`;
+  firstBtn.classList.toggle("is-main", !now);
+  firstBtn.innerHTML = first.chosen
+    ? `<b>정해 둔 진도부터</b><span>${esc(placeLabel(first.book, first.unit, first.part))} · ${esc(first.book.units[first.unit].label)}</span>`
+    : `<b>처음부터 시작</b><span>1권 1단원 1차시 · ${esc(first.book.units[0].label)}</span>`;
+  $("pickTitle").textContent = "권 고르기 · 권을 누르면 단원과 차시가 나와요";
+}
+
+// 차시 공부를 연다. 그 권을 처음 시작하고 아직 묻지 않았으면 「교재를 인쇄할까요?」를 먼저 묻는다.
+let asking = null;
+async function startSession(target) {
+  const [bookId, unitText, partText, lastText] = String(target).split("|");
+  const book = bookById(bookId), unit = Number(unitText) || 0, part = Number(partText) || 1, last = Number(lastText) || 0;
+  if (!book) return;
+  if (!canStudy(book.id, unit).ok) {   // 열리지 않은 진도 → 그 단원 장으로 가서 잠김 안내를 보여 준다
+    view.bookId = book.id; view.unit = unit; view.door = "study"; view.mode = "self";
+    return go(2);
+  }
+  const href = studyLink(book.id, unit, part, last);
+  if (view.mode === "class" || startedBook(book.id) || printPref(book.id)) return location.assign(href);
+  try { await bellReady; } catch {}
+  const links = goldenBell ? sessionLinks(book, unit, part) : null;
+  if (!links) return location.assign(href);
+  asking = { book, href, print: links.bookPrint };
+  $("printAskText").textContent = `${book.label}을 처음 시작해요. 종이 교재를 인쇄해서 같이 공부할까요? 「인쇄하고 시작」을 누르면 ${unit + 1}단원 ${part}차시 교재가 새 창에 열리고, 이 창에서는 공부가 시작돼요.`;
+  $("printAsk").showModal();
+}
+$("printAskYes").addEventListener("click", () => {
+  if (!asking) return;
+  printPref(asking.book.id, "print");
+  window.open(asking.print, "_blank", "noopener");
+  $("printAsk").close();
+  location.assign(asking.href);
+});
+$("printAskNo").addEventListener("click", () => {
+  if (!asking) return;
+  printPref(asking.book.id, "screen");
+  $("printAsk").close();
+  location.assign(asking.href);
+});
+$("printAsk").addEventListener("close", () => { asking = null; });
+document.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-start]");
+  if (!target || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return;
+  event.preventDefault();
+  startSession(target.dataset.start);
+});
+$("quickPick").addEventListener("click", () => {
+  $("pickTitle").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  $("bookList").querySelector("button")?.focus({ preventScroll: true });
+});
+
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」): 대단원을 누르면 차시마다 공부 순서를 보여 주고
 // 차시마다 「N차시 공부 시작하기」로 덱(study.html?part=N)을 연다.
 function renderParts() {
@@ -176,19 +291,14 @@ function renderParts() {
       ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : [])
     ];
     const on = week?.part === part;
+    const { bookPrint } = goldenBell ? sessionLinks(book, view.unit, part) : {};
+    const wantPrint = printPref(book.id) === "print";
     // 한 차시 교재 인쇄(원장 2026-10-29 「워밍업 교재 표지와 같게, 한 회차 교재 구성 전체를 묶으라고」):
     // 워밍업 교재 표지 → (2차시부터) 지난 차시 데일리 테스트 → 워밍업 학습마다 개념·워밍업 → 본책 → 오늘의 과제 → (마지막 차시) 단원 평가 (golden-bell.html?sessionbook=1)
-    const sheet = link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
-      picks: sessionBookPicks(unit, view.unit, part, view.bookId), title: `${book.label} ${view.unit + 1}단원 ${part}차시 · 본책과 과제` });
-    const presheet = part > 1 ? link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
-      picks: sessionDailyPicks(unit, view.unit, part, view.bookId), title: `${book.label} ${view.unit + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
-    const testParts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problemCount(unit, part)}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
-    const bookPrint = link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
-      label: `${view.unit + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: testParts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });
     return `<section class="st-session${on ? " is-on" : ""}"><h4>${part}차시</h4>
       <ol class="st-week">${steps.map(([label, note], i) => `<li><b>${i + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>
-      <a class="st-week-start st-btn${on || (!week && part === 1) ? " primary" : ""}" href="${esc(link("study.html", { book: book.id, unit: String(view.unit), part: String(part), ...(on ? { s: String(week.last || 1) } : {}) }))}">${part}차시 ${on ? "이어서 하기" : "공부 시작하기"} ›</a>
-      ${goldenBell ? `<a class="st-session-print" href="${esc(bookPrint)}" target="_blank" rel="noopener">🖨 ${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}개념 · 워밍업 · 본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
+      <a class="st-week-start st-btn${on || (!week && part === 1) ? " primary" : ""}" data-start="${book.id}|${view.unit}|${part}|${on ? week.last || 1 : ""}" href="${esc(studyLink(book.id, view.unit, part, on ? week.last || 1 : 0))}">${part}차시 ${on ? "이어서 하기" : "공부 시작하기"} ›</a>
+      ${goldenBell ? `<a class="st-session-print${wantPrint ? " is-wanted" : ""}" href="${esc(bookPrint)}" target="_blank" rel="noopener">${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}개념 · 워밍업 · 본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
   });
   $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>`;
 }
@@ -328,13 +438,19 @@ showStep();
 syncAddress();
 // 첫 화면 움직임(study-motion.js · 스킬 web-ui-library-picks, 원장 2026-11-04 「스스로 공부 첫 화면에도 넣어줘」):
 // 처음 열 때 한 번 — 제목이 글자째 올라오고 교재 목록이 하나씩 들어온다. 단추는 누르면 쏙(Motion)
-if (view.step === 0) playIntro($("todayHeading"), [...document.querySelectorAll("#bookList > button")]);
-const PRESS = ".st-book-list button, .st-units button, .st-units a, .st-week-start, .st-door-switch button, .st-mode button, .st-back, .st-crumbs button";
+if (view.step === 0) playIntro($("todayHeading"), [...document.querySelectorAll("#quickStart > button:not([hidden]), #bookList > button")]);
+const PRESS = ".st-quick-card, .st-book-list button, .st-units button, .st-units a, .st-week-start, .st-door-switch button, .st-mode button, .st-back, .st-crumbs button";
 bindPress(PRESS);
 addEventListener("load", () => bindPress(PRESS));
-if (loggedIn()) checkSession().then(() => { paintBanner(); showStep(); });
+if (loggedIn()) checkSession().then(async () => {
+  // 서버에 남은 공부 기록(다른 기기에서 한 것)까지 합쳐 「이어서 하기」를 다시 정한다
+  const { records } = await loadRecords(student);
+  weekRows = [...records.values()].filter((row) => row.kind === "week").map((row) => ({ key: row.key, payload: row.payload, at: String(row.updatedAt || "") }));
+  paintBanner(); showStep();
+}).catch(() => {});
 
-loadGoldenBell().then((data) => {
+bellReady = loadGoldenBell();
+bellReady.then((data) => {
   goldenBell = data;
   if (view.step === 2) renderParts();
   else if (view.step === 1 && view.door === "study") renderStudy();

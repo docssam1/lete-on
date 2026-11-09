@@ -244,3 +244,26 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-session-print { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 2px 8px; margin-top: 8px; padding: 9px 12px; border: 1px dashed var(--line-strong, #c9bda2); border-radius: 8px; color: var(--ink, #2a241c); font-size: 14px; font-weight: 600; text-decoration: none; }
 .st-session-print small { color: var(--muted, #7a6f5c); font-size: 12px; font-weight: 500; }
 .st-session-print:hover { border-color: var(--accent, #2f6b4a); background: var(--accent-soft, #e9f0e7); }
+
+/* 첫 장 세 갈래(원장 2026-11-09 「처음부터 또는 진도 선택부터 유연하게」) — 이어서 · 처음부터 · 진도 골라 */
+.st-quick { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.st-quick-card { display: grid; gap: 4px; min-height: 76px; padding: 14px 18px; text-align: left; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); box-shadow: 0 2px 0 var(--line-strong); }
+.st-quick-card b { font-size: 17px; font-weight: 700; }
+.st-quick-card span { font-size: 13px; color: var(--muted); line-height: 1.4; }
+.st-quick-card:hover { border-color: var(--ink); }
+.st-quick-card.is-main { border-color: var(--accent-ink); background: var(--accent); color: #fff; box-shadow: 0 3px 0 var(--accent-ink); }
+.st-quick-card.is-main span { color: #e4eee6; }
+.st-quick-card.is-main:hover { background: var(--accent-ink); }
+.st-quick-card[hidden] { display: none; }
+.st-pick-title { margin: 22px 0 0; font-size: 15px; font-weight: 600; color: var(--muted); scroll-margin-top: 16px; }
+.st-pick-title + .st-book-list { margin-top: 8px; }
+
+/* 책 처음 시작할 때 한 번 묻기 */
+.st-ask { width: min(440px, calc(100vw - 32px)); padding: 22px 22px 18px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); color: var(--ink); }
+.st-ask::backdrop { background: rgba(42, 36, 28, 0.42); }
+.st-ask h2 { font-size: 20px; }
+.st-ask p { margin: 10px 0 0; line-height: 1.6; }
+.st-ask-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+.st-ask-note { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 420px) { .st-ask-actions { grid-template-columns: 1fr; } }
+.st-session-print.is-wanted { border-style: solid; border-color: var(--accent); background: var(--accent-soft); }

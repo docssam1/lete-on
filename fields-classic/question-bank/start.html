@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#fdfbf5" />
   <title>GM 스스로 공부</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./start.css?v=20261105b" />
+  <link rel="stylesheet" href="./start.css?v=20261109a" />
 </head>
 <body>
   <header class="st-header">
@@ -20,13 +20,20 @@
     <div id="accessBanner" class="st-access" hidden></div>
     <section class="st-today" aria-labelledby="todayHeading">
       <div class="st-today-head">
-        <h1 id="todayHeading">오늘 공부할 내용은?</h1>
+        <h1 id="todayHeading">어디서부터 공부할까요?</h1>
         <nav class="st-crumbs" id="crumbs" aria-label="고른 곳"></nav>
       </div>
 
       <!-- 한 번에 한 장: 권 → 대단원 → 소단원(차시). 누르면 다음 장이 옆에서 밀려 들어온다 -->
       <div class="st-stage">
-        <section class="st-pane" id="paneBooks" data-step="0" aria-label="교재">
+        <section class="st-pane" id="paneBooks" data-step="0" aria-label="어디서부터">
+          <!-- 원장 2026-11-09 「학부모가 들어가면 뭘 해야 할지 모르겠대. 처음부터 또는 진도 선택부터 유연하게」 -->
+          <div class="st-quick" id="quickStart">
+            <button type="button" class="st-quick-card is-main" id="quickContinue" hidden></button>
+            <button type="button" class="st-quick-card" id="quickFirst"></button>
+            <button type="button" class="st-quick-card" id="quickPick"><b>진도 골라 시작</b><span>아래에서 권 → 단원 → 차시를 차례로 골라요</span></button>
+          </div>
+          <h2 class="st-pick-title" id="pickTitle">권 고르기</h2>
           <div class="st-book-list" id="bookList"></div>
         </section>
 
@@ -95,7 +102,17 @@
       </div>
     </section>
   </main>
+  <!-- 책을 처음 시작할 때 한 번만 묻는다(원장 2026-11-09 「책 시작하는 처음에 교재를 인쇄하겠습니까」) -->
+  <dialog class="st-ask" id="printAsk" aria-labelledby="printAskTitle">
+    <h2 id="printAskTitle">교재를 인쇄할까요?</h2>
+    <p id="printAskText"></p>
+    <div class="st-ask-actions">
+      <button type="button" class="st-btn primary" id="printAskYes">인쇄하고 시작</button>
+      <button type="button" class="st-btn" id="printAskNo">화면으로만 공부</button>
+    </div>
+    <p class="st-ask-note">차시마다 「교재 인쇄」 단추로 언제든 다시 인쇄할 수 있어요.</p>
+  </dialog>
   <script src="./vendor/motion-12.43.0/motion.min.js" defer></script>
-  <script type="module" src="./start.js?v=20261105b"></script>
+  <script type="module" src="./start.js?v=20261109a"></script>
 </body>
 </html>
