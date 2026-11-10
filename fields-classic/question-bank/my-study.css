@@ -1,9 +1,11 @@
-/* 내 학습 상황 — gfield-textbook-design: 따뜻한 종이 + 깊은 초록, Pretendard. 파랑 금지 */
+/* 내 학습 상황 · 진도표 · 로그인 · 가입 · 선생님 보기 — 지필드의 파란 결(원장 2026-11-10 「다른 화면도 다 파란 결로 바꿔」):
+   옅은 하늘 바탕 · 흰 카드 · 남색 주 단추, Pretendard. 인쇄물의 종이색 규칙은 gfield-textbook-design 그대로 */
 @font-face { font-family: 'FC Sans'; src: url('./assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
 :root {
-  --bg: #f1ece1; --paper: #fdfbf5; --paper-dim: #f7f2e7;
-  --ink: #2a241c; --muted: #7a6f5c; --line: #e2d9c6; --line-strong: #c9bda2;
-  --accent: #2f6b4a; --accent-ink: #1e4631; --accent-soft: #e9f0e7; --terra: #b4512e; --gold: #a87c22;
+  --bg: #f2f6fd; --paper: #ffffff; --paper-dim: #eaf3ff;
+  --ink: #1b2340; --muted: #56627f; --line: #e0e9f8; --line-strong: #c7d6ee;
+  --accent: #243184; --accent-ink: #141b5d; --accent-soft: #eaf3ff; --terra: #c2452d; --gold: #2f6be0;
+  --card-shadow: 0 6px 16px rgba(30, 99, 200, .10);
   --sans: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 * { box-sizing: border-box; }
@@ -116,7 +118,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ms-try { display: grid; justify-items: center; gap: 4px; padding: 20px 16px; border: 2px solid var(--accent); border-radius: 14px; background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
 .ms-try b { font-size: 24px; font-weight: 700; }
 .ms-try small { color: var(--accent-ink); font-size: 14px; opacity: .85; }
-.ms-try:hover { background: #dfe9dc; }
+.ms-try:hover { background: #d6e2fb; }
 /* 가입(signup.html, 원장 2026-10-29 「이메일 인증 후 2주 체험」) */
 .ms-signup { width: min(100%, 480px); }
 .ms-login-box label small { color: var(--muted); font-size: 12.5px; font-weight: 500; }
@@ -186,7 +188,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .pl-table td a span { color: var(--muted); font-size: 13px; }
 .pl-table td small { display: block; color: var(--muted); font-size: 12px; }
 .pl-month th { background: var(--accent-soft); color: var(--accent-ink); font-size: 14px; }
-.pl-rest td { color: var(--muted); background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(0,0,0,0.025) 8px 16px); }
+.pl-rest td { color: var(--muted); background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(36,49,132,0.035) 8px 16px); }
 .pl-absent td { color: var(--terra); background: #fbf0ea; }
 .pl-makeup td:first-child { color: var(--accent-ink); }
 .pl-tag { padding: 1px 6px; border-radius: 99px; background: var(--accent); color: #fff; font-size: 11px; font-style: normal; }
@@ -222,7 +224,7 @@ tr.is-done td { color: var(--muted); }
 .ms-members-table th small, .ms-members-table td small { display: block; color: var(--muted); font-size: 12px; }
 .ms-members-table select { min-height: 32px; margin: 0 4px 4px 0; padding: 2px 6px; border: 1px solid var(--line-strong); border-radius: 6px; background: #fff; font: inherit; font-size: 13px; }
 .ms-status { display: inline-block; white-space: nowrap; padding: 2px 8px; border-radius: 99px; font-size: 12.5px; font-weight: 700; background: var(--paper-dim); color: var(--muted); }
-.ms-status.is-trial { background: #fbf1dc; color: var(--gold); }
+.ms-status.is-trial { background: #e3edff; color: var(--gold); }
 .ms-status.is-approved { background: var(--accent-soft); color: var(--accent-ink); }
 .ms-status.is-ended, .ms-status.is-paused { background: #f8e6df; color: var(--terra); }
 .ms-ask { display: block; color: var(--terra); font-size: 12.5px; font-style: normal; font-weight: 700; }
@@ -254,3 +256,10 @@ tr.is-done td { color: var(--muted); }
 
 /* 단원 카드: 오답 유사문제(정식 회원) */
 .ms-retry { justify-self: center; padding: 6px 10px; color: var(--accent-ink); font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── 파란 결 마무리(원장 2026-11-10) — 주 단추는 남색 + 파란 그림자, 카드는 흰 바탕에 옅은 파란 그림자 ── */
+.ms-header { border-bottom-color: var(--line); box-shadow: 0 2px 10px rgba(30, 99, 200, .06); }
+.ms-btn { border-radius: 10px; }
+.ms-btn.primary { border-color: var(--accent-ink); background: var(--accent-ink); box-shadow: 0 8px 18px rgba(20, 27, 93, .28); }
+.ms-btn.primary:hover { background: var(--accent); }
+.ms-stat, .ms-week, .ms-plan { box-shadow: var(--card-shadow); }

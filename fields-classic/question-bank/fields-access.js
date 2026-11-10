@@ -54,7 +54,7 @@ function addCss() {
   if (cssAdded) return;
   cssAdded = true;
   const link = document.createElement("link");
-  link.rel = "stylesheet"; link.href = new URL("./fields-access.css?v=20261029q", import.meta.url).href;
+  link.rel = "stylesheet"; link.href = new URL("./fields-access.css?v=20261110s", import.meta.url).href;
   document.head.append(link);
 }
 

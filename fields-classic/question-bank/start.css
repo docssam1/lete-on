@@ -1,19 +1,21 @@
-/* 시작 화면 — gfield-textbook-design: 따뜻한 종이 + 깊은 초록 하나, Pretendard 100~700, 얇은 선·정렬·여백 */
+/* 시작 화면 — 지필드의 파란 결(원장 2026-11-10 「다른 화면도 다 파란 결로 바꿔」): 옅은 하늘 바탕 · 흰 카드 · 남색 주 단추.
+   사이언스 랩 --k-* 토큰과 같은 색. 인쇄물(교재·시험지)의 종이색 규칙은 gfield-textbook-design 그대로. Pretendard 100~700 */
 @font-face { font-family: 'FC Sans'; src: url('./assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
 
 :root {
-  --bg: #f1ece1;
-  --paper: #fdfbf5;
-  --paper-dim: #f7f2e7;
-  --ink: #2a241c;
-  --muted: #6f6452;
-  --line: #e2d9c6;
-  --line-strong: #c9bda2;
-  --accent: #2f6b4a;
-  --accent-ink: #1e4631;
-  --accent-soft: #e9f0e7;
-  --terra: #b4512e;
-  --gold: #a87c22;
+  --bg: #f2f6fd;
+  --paper: #ffffff;
+  --paper-dim: #eaf3ff;
+  --ink: #1b2340;
+  --muted: #56627f;
+  --line: #e0e9f8;
+  --line-strong: #c7d6ee;
+  --accent: #243184;
+  --accent-ink: #141b5d;
+  --accent-soft: #eaf3ff;
+  --terra: #c2452d;
+  --gold: #2f6be0;
+  --card-shadow: 0 6px 16px rgba(30, 99, 200, .10);
   --sans: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 
@@ -229,8 +231,8 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 
 /* 차시(원장 2026-10-29 「1단원을 2번으로 끊어」): 차시마다 공부 순서 + 시작 단추 */
 .st-sessions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-.st-session { display: grid; grid-template-rows: auto 1fr auto; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fbfaf7; }
-.st-session.is-on { border-color: var(--accent, #2f6b4f); box-shadow: 0 0 0 2px var(--accent-soft, #e3efe7); }
+.st-session { display: grid; grid-template-rows: auto 1fr auto; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #f6f9ff; }
+.st-session.is-on { border-color: var(--accent, #243184); box-shadow: 0 0 0 2px #d6e2fb; }
 .st-session h4 { margin: 0; font-size: 18px; }
 .st-session .st-week li { grid-template-columns: 30px 120px minmax(0, 1fr); }
 .st-session .st-week-start { margin: 0; }
@@ -243,7 +245,7 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-book-list button.is-locked:hover, .st-unit-card.is-locked:hover { opacity: .85; }
 /* 한 차시 교재 인쇄 */
 .st-session-print { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 2px 8px; margin-top: 8px; padding: 9px 12px; border: 1px dashed var(--line-strong, #c9bda2); border-radius: 8px; color: var(--ink, #2a241c); font-size: 14px; font-weight: 600; text-decoration: none; }
-.st-session-print small { color: var(--muted, #7a6f5c); font-size: 12px; font-weight: 500; }
+.st-session-print small { color: var(--muted, #56627f); font-size: 12px; font-weight: 500; }
 .st-session-print:hover { border-color: var(--accent, #2f6b4a); background: var(--accent-soft, #e9f0e7); }
 
 /* 첫 장 세 갈래(원장 2026-11-09 「처음부터 또는 진도 선택부터 유연하게」) — 이어서 · 처음부터 · 진도 골라 */
@@ -253,7 +255,7 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-quick-card span { font-size: 13px; color: var(--muted); line-height: 1.4; }
 .st-quick-card:hover { border-color: var(--ink); }
 .st-quick-card.is-main { border-color: var(--accent-ink); background: var(--accent); color: #fff; box-shadow: 0 3px 0 var(--accent-ink); }
-.st-quick-card.is-main span { color: #e4eee6; }
+.st-quick-card.is-main span { color: #cfe0ff; }
 .st-quick-card.is-main:hover { background: var(--accent-ink); }
 .st-quick-card[hidden] { display: none; }
 .st-pick-title { margin: 22px 0 0; font-size: 15px; font-weight: 600; color: var(--muted); scroll-margin-top: 16px; }
@@ -261,7 +263,7 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 
 /* 책 처음 시작할 때 한 번 묻기 */
 .st-ask { width: min(440px, calc(100vw - 32px)); padding: 22px 22px 18px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); color: var(--ink); }
-.st-ask::backdrop { background: rgba(42, 36, 28, 0.42); }
+.st-ask::backdrop { background: rgba(20, 27, 93, 0.38); }
 .st-ask h2 { font-size: 20px; }
 .st-ask p { margin: 10px 0 0; line-height: 1.6; }
 .st-ask-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
@@ -285,7 +287,7 @@ body.sm { padding-bottom: 92px; }
 .sm-tabs button:hover { border-color: var(--ink); }
 .sm-tabs button[aria-checked="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
 .sm-numbers { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
-.sm-part { padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 10px; background: #fbfaf7; }
+.sm-part { padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 10px; background: #f6f9ff; }
 .sm-part h3 { font-size: 16px; }
 .sm-block { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 10px; align-items: start; margin-top: 12px; }
 .sm-block > span { padding-top: 11px; font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -328,15 +330,20 @@ body.sm { padding-bottom: 92px; }
 @media (max-width: 640px) { .st-retry { grid-template-columns: minmax(0, 1fr) auto; } .st-retry span { grid-column: 1 / -1; grid-row: 2; } }
 .st-btn[hidden] { display: none; }   /* 고른 번호가 없을 때 「다시 고르기」가 보이던 것 */
 
-/* ── 오답 유사문제 화면은 지필드의 파란 결(원장 2026-11-10 「왜 또 누런색이야 우리 파란색 결의 UI 디자인 맞춰」) ──
+/* ── 파란 결 마무리(원장 2026-11-10 「왜 또 누런색이야 우리 파란색 결의 UI 디자인 맞춰」「다른 화면도 다 파란 결로 바꿔」) ──
    성향 검사 「AI 맞춤 상담」 카드·사이언스 랩의 --k-* 토큰과 같은 색: 흰 카드 + 옅은 하늘 바탕, 남색 글씨와 주 단추, 파란 그림자.
-   이 화면만 색 변수를 바꿔 끼운다(틀·크기는 그대로). 종이색·초록을 다시 쓰지 않는다 */
-body.sm {
-  --bg: #f2f6fd; --paper: #ffffff; --paper-dim: #eaf3ff;
-  --ink: #1b2340; --muted: #56627f; --line: #e0e9f8; --line-strong: #c7d6ee;
-  --accent: #243184; --accent-ink: #141b5d; --accent-soft: #eaf3ff; --gold: #2f6be0; --terra: #c2452d;
-}
-body.sm .st-header { border-bottom-color: var(--line); box-shadow: 0 2px 10px rgba(30, 99, 200, .06); }
+   색은 맨 위 :root 하나에서 온다(시작 화면·강사용 차시 고르기·오답 유사문제가 같이 쓴다). 종이색·초록을 다시 쓰지 않는다 */
+.st-header { border-bottom-color: var(--line); box-shadow: 0 2px 10px rgba(30, 99, 200, .06); }
+.st-btn { border-radius: 10px; }
+.st-btn.primary { background: var(--accent-ink); border-color: var(--accent-ink); box-shadow: 0 8px 18px rgba(20, 27, 93, .28); }
+.st-btn.primary:hover { background: var(--accent); }
+.st-doors, .st-quick-card, .st-unit-card, .st-session, .st-retry { box-shadow: var(--card-shadow); }
+.st-doors { border-color: var(--line); border-radius: 18px; }
+.st-quick-card.is-main { border-color: var(--accent-ink); background: var(--accent-ink); box-shadow: 0 8px 18px rgba(20, 27, 93, .28); }
+.st-door-switch button[aria-selected="true"] { background: var(--accent-ink); }
+.st-book-list button { border-radius: 12px; }
+.st-unit-card, .st-session { border-color: var(--line); border-radius: 14px; }
+/* 오답 유사문제(similar.html) */
 body.sm .sm-sheet { border-color: var(--line); border-radius: 18px; box-shadow: 0 6px 16px rgba(30, 99, 200, .12); }
 body.sm .sm-tabs button { border-radius: 10px; }
 body.sm .sm-tabs button[aria-checked="true"] { border-color: var(--accent); background: var(--accent); color: #fff; }
@@ -346,9 +353,4 @@ body.sm .sm-nums button { border-radius: 10px; box-shadow: 0 2px 0 var(--line); 
 body.sm .sm-nums button:hover { border-color: var(--accent); }
 body.sm .sm-nums button[aria-pressed="true"] { border-color: var(--accent-ink); background: var(--accent-ink); box-shadow: 0 3px 0 #0b1040; }
 body.sm .sm-dock { border-top-color: var(--line); box-shadow: 0 -6px 16px rgba(30, 99, 200, .10); }
-body.sm .st-btn { border-radius: 10px; }
-body.sm .st-btn.primary { background: var(--accent-ink); border-color: var(--accent-ink); box-shadow: 0 8px 18px rgba(20, 27, 93, .28); }
-body.sm .st-btn.primary:hover { background: var(--accent); }
-/* 잠금 안내·체험 띠도 같은 결 */
-body.sm :is(.fa-lock, .fa-banner) { --fa-paper: #ffffff; --fa-ink: #1b2340; --fa-muted: #56627f; --fa-line: #e0e9f8; --fa-line-strong: #c7d6ee; --fa-accent: #243184; --fa-accent-ink: #141b5d; --fa-accent-soft: #eaf3ff; }
 .sm-dock[hidden] { display: none; }   /* 잠금 안내가 뜰 때는 아래 줄을 숨긴다 */

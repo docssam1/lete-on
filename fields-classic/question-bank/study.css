@@ -394,31 +394,31 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
 @media (max-width: 900px) { .sd-chalk-task { font-size: 24px; } .sd-chalk-count { font-size: 21px; } .sd-chalk ol.sd-chalk-steps { font-size: 17px; } }
 
 /* ── 강사용 교안(?as=class) — 학생 덱과 다른 틀(원장 2026-11-10 「학생용과는 디자인과 구성이 달라야지」) ──
-   섬 그림 액자·보라·독쌤 그림을 걷고, 교재와 같은 따뜻한 종이색 + 깊은 초록(gfield-textbook-design).
+   섬 그림 액자·보라·독쌤 그림을 걷고, 지필드의 파란 결(옅은 하늘 바탕 · 흰 종이 · 남색, 원장 2026-11-10 「다른 화면도 다 파란 결로」).
    구성: 위 얇은 머리줄(차시 · 도구) / 왼쪽 수업 차례(모든 장) / 넓은 수업 화면 / 아래 지도 말 · 이전 · 다음 */
 .sd-tools, .sd-outline { display: none; }
 body.sd.is-class {
-  --ink: #2a241c; --muted: #6f6452; --line: #e2d9c6; --line-strong: #c9bda2;
-  --v: #2f6b4a; --v-deep: #1e4631; --v-soft: #e9f0e7; --pill: #fdfbf5; --frame-x: 14px; --outline-w: 268px;
+  --ink: #1b2340; --muted: #56627f; --line: #e0e9f8; --line-strong: #c7d6ee;
+  --v: #243184; --v-deep: #141b5d; --v-soft: #eaf3ff; --pill: #ffffff; --frame-x: 14px; --outline-w: 268px;
   grid-template-columns: var(--outline-w) minmax(0, 1fr); grid-template-rows: 52px minmax(0, 1fr) 64px;
   grid-template-areas: "top top" "outline main" "outline bar";
-  background: #f1ece1;
+  background: #f2f6fd;
 }
 body.is-class.outline-closed { grid-template-columns: 0 minmax(0, 1fr); }
 body.is-class .sd-world, body.is-class .sd-steps, body.is-class .sd-student, body.is-class .sd-guide-img, body.is-class .sd-guide-face { display: none !important; }
 /* 머리줄: 띠 하나. 왼쪽에 차시, 오른쪽에 도구 */
-body.is-class .sd-top { grid-area: top; gap: 10px; padding: 0 14px; background: #fdfbf5; border-bottom: 1px solid var(--line-strong); }
+body.is-class .sd-top { grid-area: top; gap: 10px; padding: 0 14px; background: #ffffff; border-bottom: 1px solid var(--line-strong); }
 body.is-class .sd-pill { border: 0; border-radius: 0; background: none; box-shadow: none; backdrop-filter: none; }
 body.is-class .sd-brand { padding: 0; min-height: 0; }
 body.is-class .sd-brand b { padding: 3px 8px; border-radius: 4px; background: var(--v); color: #fff; font-size: 13px; }
 body.is-class .sd-brand span { display: inline; padding-left: 0; border: 0; color: var(--ink); font-size: 15px; font-weight: 700; }
 body.is-class .sd-brand strong { padding-left: 10px; border-left: 1px solid var(--line-strong); color: var(--muted); font-size: 14px; font-weight: 500; }
 body.is-class .sd-tools { display: flex; align-items: center; gap: 6px; margin-left: auto; flex: none; }
-body.is-class .sd-tools :is(a, button) { display: inline-flex; align-items: center; min-height: 36px; padding: 4px 12px; border: 1px solid var(--line-strong); border-radius: 6px; background: #fdfbf5; color: var(--ink); font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+body.is-class .sd-tools :is(a, button) { display: inline-flex; align-items: center; min-height: 36px; padding: 4px 12px; border: 1px solid var(--line-strong); border-radius: 6px; background: #ffffff; color: var(--ink); font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap; }
 body.is-class .sd-tools :is(a, button):hover { border-color: var(--v); color: var(--v-deep); }
 body.is-class .sd-tools button[aria-pressed="true"] { border-color: var(--v); background: var(--v-soft); color: var(--v-deep); }
 /* 왼쪽 수업 차례 */
-body.is-class .sd-outline { grid-area: outline; display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; background: #fdfbf5; border-right: 1px solid var(--line-strong); z-index: 2; }
+body.is-class .sd-outline { grid-area: outline; display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; background: #ffffff; border-right: 1px solid var(--line-strong); z-index: 2; }
 body.is-class.outline-closed .sd-outline { border: 0; }
 .sd-outline h2 { flex: none; padding: 14px 16px 8px; color: var(--muted); font-size: 12.5px; font-weight: 600; letter-spacing: .08em; }
 .sd-outline ol { flex: 1; min-height: 0; overflow-y: auto; margin: 0; padding: 0 8px 12px; list-style: none; }
@@ -427,7 +427,7 @@ body.is-class.outline-closed .sd-outline { border: 0; }
 .sd-outline button b { display: grid; place-items: center; width: 24px; height: 24px; margin-top: 1px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--muted); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .sd-outline button span { display: grid; min-width: 0; color: var(--ink); font-size: 14px; font-weight: 600; line-height: 1.35; word-break: keep-all; }
 .sd-outline button em { color: var(--muted); font-size: 11.5px; font-style: normal; font-weight: 500; }
-.sd-outline button:hover:not(:disabled) { background: #f7f2e7; }
+.sd-outline button:hover:not(:disabled) { background: #f3f8ff; }
 .sd-outline button.is-done b { border-color: var(--v); background: var(--v-soft); color: var(--v-deep); }
 .sd-outline button.is-done span { color: var(--muted); font-weight: 500; }
 .sd-outline button.is-on { border-left-color: var(--v); background: var(--v-soft); }
@@ -436,7 +436,7 @@ body.is-class.outline-closed .sd-outline { border: 0; }
 .sd-outline button:disabled { opacity: .5; cursor: default; }
 /* 수업 화면: 액자 없이 종이 한 장 */
 body.is-class .sd-main { grid-area: main; padding: 10px 12px 8px; }
-body.is-class .sd-card { border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: none; background: #fffefb; }
+body.is-class .sd-card { border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: none; background: #ffffff; }
 body.is-class .sd-slide-head { padding: 12px 20px 10px; }
 body.is-class .sd-slide-body { padding: 18px 22px; }
 body.is-class .sd-btn { border-radius: 8px; border-width: 1px; }
@@ -447,18 +447,18 @@ body.is-class .sd-plan li { border-radius: 10px; box-shadow: none; }
 body.is-class .sd-medal { box-shadow: none; }
 /* 아래 줄: 지도 말(독쌤 말을 글로) · 이전 · 다음 */
 body.is-class .sd-bar { grid-area: bar; gap: 8px; padding: 0 12px calc(8px + env(safe-area-inset-bottom)); }
-body.is-class .sd-talk { max-width: none; flex: 1; margin-left: 0; padding: 6px 8px 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fdfbf5; box-shadow: none; }
+body.is-class .sd-talk { max-width: none; flex: 1; margin-left: 0; padding: 6px 8px 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; box-shadow: none; }
 body.is-class .sd-talk::before { content: "수업 도움말"; position: static; flex: none; border: 0; transform: none; color: var(--muted); font-size: 12px; font-weight: 600; }
 body.is-class .sd-talk p { font-size: 14px; }
-body.is-class .sd-talk[data-mood="praise"] { background: #fdfbf5; }
+body.is-class .sd-talk[data-mood="praise"] { background: #ffffff; }
 body.is-class .sd-talk-ctl button { border-radius: 6px; }
 body.is-class .sd-count { min-height: 0; padding: 0 6px; }
-body.is-class .sd-prev, body.is-class .sd-first { min-width: 0; background: #fdfbf5; }
+body.is-class .sd-prev, body.is-class .sd-first { min-width: 0; background: #ffffff; }
 body.is-class .sd-next { min-width: 190px; font-size: 17px; }
 /* 좁은 화면: 차례는 수업 화면 위에 덮어 연다 */
 @media (max-width: 999px) {
   body.sd.is-class { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main" "bar"; }
-  body.is-class .sd-outline { position: fixed; left: 0; top: 52px; bottom: 0; width: min(300px, 86vw); box-shadow: 8px 0 24px rgba(42, 36, 28, .18); }
+  body.is-class .sd-outline { position: fixed; left: 0; top: 52px; bottom: 0; width: min(300px, 86vw); box-shadow: 8px 0 24px rgba(20, 27, 93, .18); }
   body.is-class.outline-closed .sd-outline { display: none; }
   body.is-class .sd-brand strong, body.is-class #fullBtn { display: none; }
   body.is-class .sd-talk p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
