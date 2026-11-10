@@ -72,12 +72,12 @@ function study(row){
 function label(row){return`<span class="lv">${esc(row.level)}${row.summary?' · '+esc(row.summary):''}</span>`;}
 // 레벨 × 과정 표: 칸마다 끝나는 달, 그 아래 책 이름
 function table(m){
- const head='<div class="corner">레벨 ＼ 과정</div>'+STAGES.map(s=>`<div class="head">${s}</div>`).join('');
+ const head='<div class="corner">레벨 ＼ 과정</div>'+STAGES.map((s,i)=>`<div class="head c${i}">${s}</div>`).join('');
  const body=m.rows.map(row=>{const now=row.id==='now'?' is-now':'';
   const cells=row.ends.map((end,i)=>{
-   if(end===null)return`<div class="cell${now}"><small>기준표에 없음</small></div>`;
-   if(end<=0)return`<div class="cell${now}"><b>마침</b><small>${esc(row.books[i])}</small></div>`;
-   const at=monthAt(m.base,end);return`<div class="cell${now}"><b>${at.year}.${at.month}</b><small>${esc(row.books[i])}</small></div>`;}).join('');
+   if(end===null)return`<div class="cell c${i}${now}"><small>기준표에 없음</small></div>`;
+   if(end<=0)return`<div class="cell c${i}${now}"><b>마침</b><small>${esc(row.books[i])}</small></div>`;
+   const at=monthAt(m.base,end);return`<div class="cell c${i}${now}"><b>${at.year}.${at.month}</b><small>${esc(row.books[i])}</small></div>`;}).join('');
   return`<div class="tier${now}"><strong>${esc(row.name)}</strong>${label(row)}<div class="study">${study(row)}</div></div>${cells}`;}).join('');
  return`<div class="level-pace-scroll" tabindex="0" role="region" aria-label="레벨별로 과정이 끝나는 달과 책"><div class="level-pace-table">${head}${body}</div></div>`;
 }

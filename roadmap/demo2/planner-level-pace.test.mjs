@@ -85,5 +85,5 @@ test('each row names its level and what it studies now, and the table puts the l
  assert.match(html,/한 레벨 위/);assert.doesNotMatch(html,/단계 위|단계 아래/);
  assert.ok(html.includes('class="lv">L6 · '+level('L6').summary));
  const months=end('L7',/^중3-2/)+1-now,i=10+months-1;
- assert.ok(html.includes(`<div class="cell is-now"><b>${2026+Math.floor(i/12)}.${i%12+1}</b><small>중3-2 원리해설</small></div>`));
+ assert.ok(html.includes(`<div class="cell c1 is-now"><b>${2026+Math.floor(i/12)}.${i%12+1}</b><small>중3-2 원리해설</small></div>`));
 });
