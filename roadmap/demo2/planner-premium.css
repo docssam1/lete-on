@@ -2,187 +2,187 @@
    One screen-only material system; original plan, controls and print remain intact. */
 @media screen {
  body.roadmap-studio.integrated-planner.premium-planner {
-  --pp-night:#0d1543;--pp-navy:#17285f;--pp-blue:#2361c5;--pp-violet:#8274ed;
-  --pp-glass:rgba(255,255,255,.075);--pp-glass-line:rgba(204,219,255,.24);
-  --pp-light:#f4f7ff;--pp-muted:#c0cee9;--pp-ink:#202d4b;--pp-sub:#596983;
-  --ink:var(--pp-ink);--sub:var(--pp-sub);--p:#4563b6;--pl:#edf2ff;--line:#dce3f0;
-  --work-ink:var(--pp-ink);--work-muted:var(--pp-sub);--work-line:#dce3f0;
-  background:radial-gradient(ellipse at 100% 0%,#244c924a,transparent 55%),linear-gradient(140deg,#0d1543,#172b67 65%,#1e4a94);
+  --pp-night:#34153b;--pp-navy:#472155;--pp-blue:#7e3aae;--pp-violet:#df7de4;
+  --pp-glass:rgba(255,255,255,.075);--pp-glass-line:rgba(231,208,251,.24);
+  --pp-light:#faf5fe;--pp-muted:#d4c3e6;--pp-ink:#3b2645;--pp-sub:#715f7d;
+  --ink:var(--pp-ink);--sub:var(--pp-sub);--p:#8e55a6;--pl:#f7eefe;--line:#e6deee;
+  --work-ink:var(--pp-ink);--work-muted:var(--pp-sub);--work-line:#e6deee;
+  background:radial-gradient(ellipse at 100% 0%,#6333834a,transparent 55%),linear-gradient(140deg,#34153b,#4b225c 65%,#612f83);
   background-attachment:fixed;color:var(--pp-light);font-family:var(--font-ui,'Pretendard',sans-serif);font-size:16px;
  }
  body.roadmap-studio.integrated-planner.premium-planner :is(button,input,select,textarea) {font-family:var(--font-ui,'Pretendard',sans-serif)}
  body.roadmap-studio.integrated-planner.premium-planner :is(h1,h2,h3,h4) {letter-spacing:-.035em;word-break:keep-all;overflow-wrap:anywhere}
- body.roadmap-studio.integrated-planner.premium-planner :is(button,a,summary,input,select,textarea):focus-visible {outline:3px solid #77c9ff;outline-offset:3px}
+ body.roadmap-studio.integrated-planner.premium-planner :is(button,a,summary,input,select,textarea):focus-visible {outline:3px solid #9c81f5;outline-offset:3px}
  body.roadmap-studio.integrated-planner.premium-planner button {transition:background .16s,border-color .16s,box-shadow .16s;touch-action:manipulation}
  body.roadmap-studio.integrated-planner.premium-planner .top {
-  min-height:60px;padding:7px 28px;gap:14px;background:rgba(9,17,54,.64);border-color:rgba(200,216,255,.16);
+  min-height:60px;padding:7px 28px;gap:14px;background:rgba(41,15,48,.64);border-color:rgba(229,204,251,.16);
   backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 1px 0 #ffffff04;z-index:30;
  }
- body.roadmap-studio.integrated-planner.premium-planner .top .logo {display:inline-flex;align-items:center;justify-content:center;flex:none;margin:0;padding:4px 8px;background:#fff;border:1px solid #ffffffa6;border-radius:10px;box-shadow:0 3px 12px #020a2b24;line-height:1}
+ body.roadmap-studio.integrated-planner.premium-planner .top .logo {display:inline-flex;align-items:center;justify-content:center;flex:none;margin:0;padding:4px 8px;background:#fff;border:1px solid #ffffffa6;border-radius:10px;box-shadow:0 3px 12px #1f082524;line-height:1}
  body.roadmap-studio.integrated-planner.premium-planner .top .brand-mark {display:block;width:103px;height:auto;max-height:36px;object-fit:contain}
  body.roadmap-studio.integrated-planner.premium-planner .top :is(button,.member-account-link) {white-space:nowrap}
  body.roadmap-studio.integrated-planner.premium-planner .top :is(.ttl,.nav button) {color:var(--pp-muted)}
- body.roadmap-studio.integrated-planner.premium-planner .top .logo-sep {background:#dce5ff40}
- body.roadmap-studio.integrated-planner.premium-planner .top .chip {background:#ffffff12;border:1px solid #ffffff26;color:#c7d7fa}
+ body.roadmap-studio.integrated-planner.premium-planner .top .logo-sep {background:#f0dffc40}
+ body.roadmap-studio.integrated-planner.premium-planner .top .chip {background:#ffffff12;border:1px solid #ffffff26;color:#e1cbf6}
  body.roadmap-studio.integrated-planner.premium-planner .top .nav {background:#ffffff0a;border:1px solid #ffffff1f;border-radius:13px;padding:3px}
- body.roadmap-studio.integrated-planner.premium-planner .top .nav button {border-radius:10px;min-height:44px;font-size:13px;padding:8px 14px;background:transparent;color:#c0cee9;box-shadow:none;border-color:transparent}
+ body.roadmap-studio.integrated-planner.premium-planner .top .nav button {border-radius:10px;min-height:44px;font-size:13px;padding:8px 14px;background:transparent;color:#d4c3e6;box-shadow:none;border-color:transparent}
  body.roadmap-studio.integrated-planner.premium-planner .top .nav button.on {color:#fff;background:#ffffff20;border-color:#ffffff36;box-shadow:inset 0 1px 0 #ffffff12}
  body.roadmap-studio.integrated-planner.premium-planner .top :is(.gear,.member-account-link),body.roadmap-studio.integrated-planner.premium-planner .prn-global>summary {
-  background:linear-gradient(#ffffff12,#ffffff06);color:#e5ecff;border:1px solid #c4d5ff4a;border-bottom:2px solid #9aade54a;
+  background:linear-gradient(#ffffff12,#ffffff06);color:#f3e7fd;border:1px solid #e4c8fb4a;border-bottom:2px solid #c5a0df4a;
   border-radius:12px;min-height:44px;font-size:12px;padding:8px 13px;box-shadow:inset 0 1px 0 #ffffff0d;
  }
- body.roadmap-studio.integrated-planner.premium-planner .top :is(.gear,.member-account-link):hover,body.roadmap-studio.integrated-planner.premium-planner .prn-global>summary:hover {background:#ffffff1b;border-color:#bcd3ff80}
+ body.roadmap-studio.integrated-planner.premium-planner .top :is(.gear,.member-account-link):hover,body.roadmap-studio.integrated-planner.premium-planner .prn-global>summary:hover {background:#ffffff1b;border-color:#ddc1fa80}
  body.roadmap-studio.integrated-planner.premium-planner .prn-global>summary {line-height:20px}
  body.roadmap-studio.integrated-planner.premium-planner .prn-global>summary::before {font-size:16px;line-height:20px}
  body.roadmap-studio.integrated-planner.premium-planner:is(.questioning,.exploring) main {gap:24px;padding:24px 28px 32px;grid-template-columns:350px minmax(0,1fr)}
- body.roadmap-studio.integrated-planner.premium-planner :is(.standard-intro h1,.result-intro h1) {color:#f4f7ff}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.standard-intro h1,.result-intro h1) {color:#faf5fe}
  body.roadmap-studio.integrated-planner.premium-planner :is(.standard-intro p,.standard-intro>small,.result-intro p) {color:var(--pp-muted)}
  body.roadmap-studio.integrated-planner.premium-planner:is(.questioning,.exploring) :is(#conversation,#pathwayCoach) {
   padding:24px;border:1px solid var(--pp-glass-line);border-radius:24px;
-  background:linear-gradient(140deg,#ffffff10,#ffffff06);box-shadow:inset 0 1px 0 #ffffff12,0 22px 50px #050b2926;
+  background:linear-gradient(140deg,#ffffff10,#ffffff06);box-shadow:inset 0 1px 0 #ffffff12,0 22px 50px #1f0a2426;
   backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);color:var(--pp-light);
  }
  body.roadmap-studio.integrated-planner.premium-planner :is(#questionTitle,#pathwayTitle) {
-  background:none;border:0;border-radius:0;padding:0;box-shadow:none;color:#f4f7ff;
+  background:none;border:0;border-radius:0;padding:0;box-shadow:none;color:#faf5fe;
   font-size:25px;font-weight:750;line-height:1.5;margin:22px 0 16px;outline:none;
  }
  body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide {gap:12px;margin:0 0 12px;padding-bottom:0;border-bottom:0}
- body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide :is(.planner-guide-title,strong,span) {color:#e4edff}
- body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide :is(small,.planner-guide-caption) {color:#b4c5e6}
- body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide .planner-guide-portrait {background:#ffffff12;border-color:#b7cbff40;box-shadow:0 4px 18px #020a2d20}
- body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide .planner-guide-toggle {color:#cbdcff;text-decoration-color:#b5ceff66;font-size:12px}
+ body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide :is(.planner-guide-title,strong,span) {color:#f2e6fd}
+ body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide :is(small,.planner-guide-caption) {color:#cdb8e2}
+ body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide .planner-guide-portrait {background:#ffffff12;border-color:#debcfa40;box-shadow:0 4px 18px #20082720}
+ body.roadmap-studio.integrated-planner.premium-planner .guide.planner-guide .planner-guide-toggle {color:#e5cffb;text-decoration-color:#dabbf966;font-size:12px}
  body.roadmap-studio.integrated-planner.premium-planner :is(#questionHelp,#pathwaySummary).planner-guide-bubble {
-  background:#ecf3ff0d;border:1px solid #c0d3fa38;border-radius:5px 16px 16px 16px;
-  color:#d6e3fa;padding:16px 17px;box-shadow:inset 0 1px 0 #ffffff09;font-family:var(--font-ui);font-size:15px;line-height:1.85;
+  background:#f5edfe0d;border:1px solid #ddc4f638;border-radius:5px 16px 16px 16px;
+  color:#e7d9f7;padding:16px 17px;box-shadow:inset 0 1px 0 #ffffff09;font-family:var(--font-ui);font-size:15px;line-height:1.85;
  }
- body.roadmap-studio.integrated-planner.premium-planner .planner-guide-bubble::before {background:#263969;border-color:#c0d3fa38}
+ body.roadmap-studio.integrated-planner.premium-planner .planner-guide-bubble::before {background:#502f60;border-color:#ddc4f638}
  body.roadmap-studio.integrated-planner.premium-planner .planner-guide-bubble :is(.speech-copy,.speech-kicker) {color:inherit;font-family:var(--font-ui);font-size:inherit;line-height:inherit}
- body.roadmap-studio.integrated-planner.premium-planner .planner-guide-bubble .speech-kicker {color:#b8cbef;font-size:12px;margin-bottom:5px}
+ body.roadmap-studio.integrated-planner.premium-planner .planner-guide-bubble .speech-kicker {color:#d3bceb;font-size:12px;margin-bottom:5px}
  body.roadmap-studio.integrated-planner.premium-planner :is(#questionStep,.design-progress,.design-progress strong,.workspace-prev,.study-focus,.study-current-range) {color:var(--pp-muted)}
- body.roadmap-studio.integrated-planner.premium-planner #questionHelp:not(.planner-guide-bubble) {font:15px/1.85 var(--font-ui);color:#c6d7f4}
+ body.roadmap-studio.integrated-planner.premium-planner #questionHelp:not(.planner-guide-bubble) {font:15px/1.85 var(--font-ui);color:#dcc9f1}
  body.roadmap-studio.integrated-planner.premium-planner :is(:where(#pathwayCoach) .pathway-options,.question-options) {gap:12px;margin:20px 0}
  body.roadmap-studio.integrated-planner.premium-planner :is(:where(#pathwayCoach) .pathway-options,.question-options)>button,
  body.roadmap-studio.integrated-planner.premium-planner #questionOptions>button {
-  color:#eef3ff;background:linear-gradient(155deg,#ffffff13,#ffffff08);border:1px solid #c0d3ff55;border-bottom:3px solid #6c83bc70;
-  border-radius:15px;box-shadow:inset 0 1px 0 #ffffff12,0 4px 10px #070d2e18;
+  color:#f7effe;background:linear-gradient(155deg,#ffffff13,#ffffff08);border:1px solid #e1c5fa55;border-bottom:3px solid #9772b670;
+  border-radius:15px;box-shadow:inset 0 1px 0 #ffffff12,0 4px 10px #230c2918;
   font-size:15px;line-height:1.65;font-weight:550;min-height:62px;padding:16px 36px 16px 17px;
  }
  body.roadmap-studio.integrated-planner.premium-planner :is(:where(#pathwayCoach) .pathway-options,.question-options)>button:hover,
- body.roadmap-studio.integrated-planner.premium-planner #questionOptions>button:hover {background:#ffffff1e;border-color:#c9dcffa1;box-shadow:inset 0 1px 0 #ffffff1e,0 5px 16px #030b2b26}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions>button:hover {background:#ffffff1e;border-color:#e3cdfba1;box-shadow:inset 0 1px 0 #ffffff1e,0 5px 16px #1f092526}
  body.roadmap-studio.integrated-planner.premium-planner :is(:where(#pathwayCoach) .pathway-options,.question-options)>button[aria-pressed=true],
  body.roadmap-studio.integrated-planner.premium-planner #questionOptions>button[aria-pressed=true] {
-  color:#fff;background:linear-gradient(130deg,#31579b,#414c95);border-color:#9cc8ff;border-bottom-color:#6d9cde;
-  box-shadow:inset 3px 0 0 #89caff,inset 0 1px 0 #ffffff24,0 5px 18px #050b322b;
+  color:#fff;background:linear-gradient(130deg,#6e408c,#7f4d89);border-color:#c4a3f8;border-bottom-color:#9e75d6;
+  box-shadow:inset 3px 0 0 #ae92f6,inset 0 1px 0 #ffffff24,0 5px 18px #260b2c2b;
  }
  body.roadmap-studio.integrated-planner.premium-planner .question-options[data-question=welcome]>button:first-child,
  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]>button:first-child,
  body.roadmap-studio.integrated-planner.premium-planner :where(#pathwayCoach) .pathway-options>button[data-flow-map] {
-  color:#fff;background:linear-gradient(120deg,#2961bd,#5d55bb);border-color:#94b9ff99;border-bottom-color:#3e3d89;
-  font-weight:700;box-shadow:inset 0 1px 0 #ffffff35,0 8px 20px #080e3626;
+  color:#fff;background:linear-gradient(120deg,#7c3ea8,#ac5db3);border-color:#c89cf799;border-bottom-color:#7d487e;
+  font-weight:700;box-shadow:inset 0 1px 0 #ffffff35,0 8px 20px #2a0e3026;
  }
  body.roadmap-studio.integrated-planner.premium-planner :is(:where(#pathwayCoach) .pathway-options,.question-options)>button :is(strong,b,small,span) {color:inherit}
- body.roadmap-studio.integrated-planner.premium-planner :is(:where(#pathwayCoach) .pathway-options,.question-options)>button small {color:#c7d7f0;font-size:12px}
- body.roadmap-studio.integrated-planner.premium-planner :where(#pathwayCoach) .pathway-options>button::after {color:#b8d1ff}
+ body.roadmap-studio.integrated-planner.premium-planner :is(:where(#pathwayCoach) .pathway-options,.question-options)>button small {color:#dacaed;font-size:12px}
+ body.roadmap-studio.integrated-planner.premium-planner :where(#pathwayCoach) .pathway-options>button::after {color:#dabdfa}
  body.roadmap-studio.integrated-planner.premium-planner :is(.question-options[data-question=grade],.question-options[data-question=age],.question-options[data-question=school],.question-options[data-question=deepStage])>button {padding:12px;text-align:center}
  body.roadmap-studio.integrated-planner.premium-planner :is(.question-actions,.pathway-coach-actions,.personality-actions) {border-color:#ffffff24;gap:10px;background:none}
- body.roadmap-studio.integrated-planner.premium-planner #questionBack {background:none;color:#d4e2fb;padding:8px 12px;text-align:left;min-height:44px}
- body.roadmap-studio.integrated-planner.premium-planner :is(.question-actions,.pathway-coach-actions,.personality-actions) button {color:#d4e2fb;min-height:44px;border-radius:10px}
+ body.roadmap-studio.integrated-planner.premium-planner #questionBack {background:none;color:#e7d7f8;padding:8px 12px;text-align:left;min-height:44px}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.question-actions,.pathway-coach-actions,.personality-actions) button {color:#e7d7f8;min-height:44px;border-radius:10px}
  body.roadmap-studio.integrated-planner.premium-planner :is(.question-actions,.pathway-coach-actions) button:not(:disabled):hover {background:#ffffff10}
- body.roadmap-studio.integrated-planner.premium-planner .question-actions #intakeLater {background:#ffffff0c;color:#e3edff;border:1px solid #b8cdf950;padding:9px 14px;border-bottom-width:2px}
- body.roadmap-studio.integrated-planner.premium-planner :is(.choice-help,.pathway-detail,.coach-reference,.choice-help>summary,.pathway-detail>summary,.coach-reference>summary) {color:#c2d2ee;border-color:#b9cfff30}
- body.roadmap-studio.integrated-planner.premium-planner :is(.choice-help,.pathway-detail) :is(p,li) {color:#d3e0f6;font-size:14px;line-height:1.8}
- body.roadmap-studio.integrated-planner.premium-planner :is(.study-chosen-book,.plan-question-shortcut,.flow-map-peek) {background:#ffffff0c;border-color:#b8cdf93b;color:#e4edff;box-shadow:inset 0 1px 0 #ffffff0c}
+ body.roadmap-studio.integrated-planner.premium-planner .question-actions #intakeLater {background:#ffffff0c;color:#f0e5fd;border:1px solid #d9bdf450;padding:9px 14px;border-bottom-width:2px}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.choice-help,.pathway-detail,.coach-reference,.choice-help>summary,.pathway-detail>summary,.coach-reference>summary) {color:#d7c5eb;border-color:#ddbefa30}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.choice-help,.pathway-detail) :is(p,li) {color:#e3d6f3;font-size:14px;line-height:1.8}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.study-chosen-book,.plan-question-shortcut,.flow-map-peek) {background:#ffffff0c;border-color:#d9bdf43b;color:#f2e6fd;box-shadow:inset 0 1px 0 #ffffff0c}
  body.roadmap-studio.integrated-planner.premium-planner :is(.study-chosen-book,.plan-question-shortcut,.flow-map-peek) :is(strong,small,button) {color:inherit}
- body.roadmap-studio.integrated-planner.premium-planner .flow-map-peek button {color:#e0ebff;background:#ffffff0c;border:1px solid #bcd0f959;border-radius:10px;min-height:44px;padding:8px 12px}
+ body.roadmap-studio.integrated-planner.premium-planner .flow-map-peek button {color:#efe2fd;background:#ffffff0c;border:1px solid #dbc1f459;border-radius:10px;min-height:44px;padding:8px 12px}
  body.roadmap-studio.integrated-planner.premium-planner #pathwayCoach .pathway-options>button.science-entry {color:#345f50}
  body.roadmap-studio.integrated-planner.premium-planner :is(#planningOverview,.current-learning-summary,.standard-reference) {color:var(--pp-ink)}
- body.roadmap-studio.integrated-planner.premium-planner #planningOverview>.plan-current-details>summary {color:#c8d9f7}
- body.roadmap-studio.integrated-planner.premium-planner .plan-current-popover {color:var(--pp-ink);background:#fff;border-color:#bdcde6;box-shadow:0 15px 40px #06123945}
+ body.roadmap-studio.integrated-planner.premium-planner #planningOverview>.plan-current-details>summary {color:#deccf3}
+ body.roadmap-studio.integrated-planner.premium-planner .plan-current-popover {color:var(--pp-ink);background:#fff;border-color:#d0c0e3;box-shadow:0 15px 40px #280d3245}
  /* The shared canvas is a light report surface framed by the navy workspace. */
  body.roadmap-studio.integrated-planner.premium-planner #journeyPanel {
-  background:#fff;color:var(--pp-ink);border:1px solid #a1b8f04d;border-radius:24px;overflow:hidden;
-  box-shadow:0 24px 60px #030b352e,inset 0 1px 0 #ffffff40;
+  background:#fff;color:var(--pp-ink);border:1px solid #cba7ea4d;border-radius:24px;overflow:hidden;
+  box-shadow:0 24px 60px #270a2e2e,inset 0 1px 0 #ffffff40;
  }
  body.roadmap-studio.integrated-planner.premium-planner #journeyPanel>.journey-heading {
-  background:linear-gradient(110deg,#1b2e65,#284d90);color:#f1f6ff;border:0;border-bottom:1px solid #ffffff1a;
+  background:linear-gradient(110deg,#4b255b,#643781);color:#f8f2fe;border:0;border-bottom:1px solid #ffffff1a;
   padding:16px 24px;min-height:66px;border-radius:0;gap:16px;
  }
  body.roadmap-studio.integrated-planner.premium-planner #journeyPanel>.journey-heading :is(h2,small) {color:inherit}
  body.roadmap-studio.integrated-planner.premium-planner #journeyTitle {font-size:20px;font-weight:700;line-height:1.5}
- body.roadmap-studio.integrated-planner.premium-planner #journeyPanel>.journey-heading button {color:#eef4ff;background:#ffffff10;border:1px solid #b8ceff5e;border-radius:11px;font-size:12px;min-height:44px;padding:8px 12px}
+ body.roadmap-studio.integrated-planner.premium-planner #journeyPanel>.journey-heading button {color:#f6effe;background:#ffffff10;border:1px solid #ddbdfa5e;border-radius:11px;font-size:12px;min-height:44px;padding:8px 12px}
  body.roadmap-studio.integrated-planner.premium-planner .workspace-summary {color:var(--pp-ink);padding-block:16px}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-summary :is(strong,strong span) {color:#253554}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-summary :is(small,.workspace-summary-meta small) {color:#5e6f8b}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-summary-meta>span {color:#35559a;background:#edf3ff;border-color:#c8d7f5}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-tabs {background:#f5f7fc;border-color:#dfe5f0;gap:8px;padding:9px 20px}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-summary :is(strong,strong span) {color:#412c4d}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-summary :is(small,.workspace-summary-meta small) {color:#776485}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-summary-meta>span {color:#72438c;background:#f6eefe;border-color:#decbf2}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-tabs {background:#f9f6fb;border-color:#e7e0ef;gap:8px;padding:9px 20px}
  body.roadmap-studio.integrated-planner.premium-planner .workspace-tabs button {
-  background:#fff;color:#5b6c89;border:1px solid #cdd7e8;border-bottom:3px solid #c1cde2;border-radius:12px;
+  background:#fff;color:#756183;border:1px solid #dacfe6;border-bottom:3px solid #d1c3e0;border-radius:12px;
   padding:9px 15px;min-height:46px;font-size:13px;font-weight:600;box-shadow:inset 0 1px 0 #fff;
  }
  body.roadmap-studio.integrated-planner.premium-planner .workspace-tabs button[aria-selected=true] {
-  background:linear-gradient(130deg,#2856ab,#5857ae);color:#fff;border-color:#4264b1;border-bottom:3px solid #323a7a;
-  box-shadow:inset 0 1px 0 #ffffff30,0 4px 10px #233c791a;font-weight:700;
+  background:linear-gradient(130deg,#743a99,#9c5ea7);color:#fff;border-color:#8652a1;border-bottom:3px solid #683c70;
+  box-shadow:inset 0 1px 0 #ffffff30,0 4px 10px #592f6d1a;font-weight:700;
  }
  body.roadmap-studio.integrated-planner.premium-planner .workspace-panel {background:#fff;color:var(--pp-ink)}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(h3,h4,.workspace-level-caption,.graph-selected-scope,.transition-legend) {color:#3b4f72}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(.workspace-note,.graph-reading,.workspace-choices,.workspace-current,.workspace-comparison) {color:#566884;border-color:#dbe3f0}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(.workspace-note,.graph-reading,.workspace-choices,.workspace-current,.workspace-comparison)>summary {color:#3d557b}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-graph-result {background:#eff4ff;color:#315183;border-left:3px solid #659ce6;border-radius:0 10px 10px 0;font-size:14px;padding:12px 15px}
- body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap {background:#f8faff;border-radius:14px;border:1px solid #e3eaf5}
- body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap .curve-quarter-band.band-0 {fill:#eaf0fa}
- body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap .curve-quarter-band.band-1 {fill:#f8faff}
- body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap :is(.curve-grid,.curve-calendar-grid) {stroke:#d9e3f1}
- body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap svg text {fill:#516587}
- body.roadmap-studio.integrated-planner.premium-planner .transition-axis-buttons {background:#eef2fa;border-color:#d7e1f2}
- body.roadmap-studio.integrated-planner.premium-planner .transition-axis-buttons button {color:#536c8a}
- body.roadmap-studio.integrated-planner.premium-planner .transition-axis-buttons button[aria-pressed=true] {color:#2e559a;border-color:#aebfe0;background:white}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(h3,h4,.workspace-level-caption,.graph-selected-scope,.transition-legend) {color:#5b436a}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(.workspace-note,.graph-reading,.workspace-choices,.workspace-current,.workspace-comparison) {color:#6f5c7e;border-color:#e5ddee}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(.workspace-note,.graph-reading,.workspace-choices,.workspace-current,.workspace-comparison)>summary {color:#604672}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-graph-result {background:#f7f0fe;color:#5f3c78;border-left:3px solid #9b6fdc;border-radius:0 10px 10px 0;font-size:14px;padding:12px 15px}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap {background:#fcf9fe;border-radius:14px;border:1px solid #ebe4f4}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap .curve-quarter-band.band-0 {fill:#f1ebf9}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap .curve-quarter-band.band-1 {fill:#fcf9fe}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap :is(.curve-grid,.curve-calendar-grid) {stroke:#e3dbef}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-chart-wrap svg text {fill:#70597f}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-axis-buttons {background:#f4eff9;border-color:#e4d9f0}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-axis-buttons button {color:#6f5b82}
+ body.roadmap-studio.integrated-planner.premium-planner .transition-axis-buttons button[aria-pressed=true] {color:#6c3d8b;border-color:#c7b2dc;background:white}
  body.roadmap-studio.integrated-planner.premium-planner .course-terrain>img {filter:saturate(.92) brightness(1.01)}
- body.roadmap-studio.integrated-planner.premium-planner .course-terrain::after {background:linear-gradient(180deg,#152c5d14,transparent 24%,#f0f5ff16)}
- body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map::after {content:'';position:absolute;inset:0;background:linear-gradient(180deg,#1a346326,transparent 30%);pointer-events:none}
- body.roadmap-studio.integrated-planner.premium-planner .course-stop-label {border-color:#c7d4e8;background:#fffffff0;box-shadow:0 4px 0 #a9bdd885,0 10px 24px #183c7020;backdrop-filter:blur(10px)}
- body.roadmap-studio.integrated-planner.premium-planner .course-stop-label :is(strong,span,small),body.roadmap-studio.integrated-planner.premium-planner .course-stop.is-active .course-stop-label strong {color:#385985}
- body.roadmap-studio.integrated-planner.premium-planner .course-stop.is-active .course-stop-label {border-color:#6f9fda;background:#f7fbfff5;box-shadow:0 4px 0 #79a2d8,0 8px 26px #3469a72b}
- body.roadmap-studio.integrated-planner.premium-planner .course-stop.is-active .course-stop-label strong {text-decoration-color:#8fc5f95c}
- body.roadmap-studio.integrated-planner.premium-planner .standard-stage {border-color:#b4c8e3;box-shadow:0 4px 0 #91a9cb85,0 12px 28px #14376b28;backdrop-filter:blur(12px)}
- body.roadmap-studio.integrated-planner.premium-planner .standard-stage :is(strong,b) {color:#345276}
- body.roadmap-studio.integrated-planner.premium-planner .standard-stage :is(span,small) {color:#536d8e}
- body.roadmap-studio.integrated-planner.premium-planner .course-stops .stop-base b {background:#496eb5;color:white;box-shadow:0 0 0 5px #e2efffb3}
- body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map li {background:#ffffffef;border-color:#b7cae8;color:#334f7a;box-shadow:0 4px 0 #96add0,0 10px 24px #10275526;backdrop-filter:blur(10px)}
- body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map li :is(small,strong) {color:#395c88}
- body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map li>span {background:#e3ecff;color:#355790;border-color:#93addb;box-shadow:0 4px 0 #819dc9}
- body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map>p {color:#3a5680;background:#ffffffeb;border-color:#c8d5eb}
- body.roadmap-studio.integrated-planner.premium-planner :is(.plan-travel,.history-travel,.pco-travel) {color:#4d6280;border-color:#dce5f1;background:#fff}
- body.roadmap-studio.integrated-planner.premium-planner :is(.plan-travel,.history-travel,.pco-travel) button {color:#49618a;background:#f6f8fd;border-color:#c9d5e9;border-radius:10px}
- body.roadmap-studio.integrated-planner.premium-planner .plan-standard-travel button:last-child {color:#fff;background:linear-gradient(120deg,#2c5eaf,#5556ad);border-color:#3d5f9e;box-shadow:inset 0 1px 0 #ffffff20,0 2px 0 #2b3d78}
+ body.roadmap-studio.integrated-planner.premium-planner .course-terrain::after {background:linear-gradient(180deg,#411f5314,transparent 24%,#f8f1fe16)}
+ body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map::after {content:'';position:absolute;inset:0;background:linear-gradient(180deg,#44245926,transparent 30%);pointer-events:none}
+ body.roadmap-studio.integrated-planner.premium-planner .course-stop-label {border-color:#d6c9e6;background:#fffffff0;box-shadow:0 4px 0 #bdadd485,0 10px 24px #48246420;backdrop-filter:blur(10px)}
+ body.roadmap-studio.integrated-planner.premium-planner .course-stop-label :is(strong,span,small),body.roadmap-studio.integrated-planner.premium-planner .course-stop.is-active .course-stop-label strong {color:#61437a}
+ body.roadmap-studio.integrated-planner.premium-planner .course-stop.is-active .course-stop-label {border-color:#9a77d2;background:#faf8fef5;box-shadow:0 4px 0 #a180d1,0 8px 26px #6e44972b}
+ body.roadmap-studio.integrated-planner.premium-planner .course-stop.is-active .course-stop-label strong {text-decoration-color:#b497f15c}
+ body.roadmap-studio.integrated-planner.premium-planner .standard-stage {border-color:#c8b8df;box-shadow:0 4px 0 #aa95c785,0 12px 28px #44205f28;backdrop-filter:blur(12px)}
+ body.roadmap-studio.integrated-planner.premium-planner .standard-stage :is(strong,b) {color:#563d6d}
+ body.roadmap-studio.integrated-planner.premium-planner .standard-stage :is(span,small) {color:#725b86}
+ body.roadmap-studio.integrated-planner.premium-planner .course-stops .stop-base b {background:#8958a6;color:white;box-shadow:0 0 0 5px #eee4fdb3}
+ body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map li {background:#ffffffef;border-color:#cdbbe4;color:#5a3d70;box-shadow:0 4px 0 #b09acc,0 10px 24px #391a4b26;backdrop-filter:blur(10px)}
+ body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map li :is(small,strong) {color:#62447d}
+ body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map li>span {background:#f1e5fd;color:#694283;border-color:#b598d6;box-shadow:0 4px 0 #a286c4}
+ body.roadmap-studio.integrated-planner.premium-planner .intake-growing-map>p {color:#604476;background:#ffffffeb;border-color:#d8cbe8}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.plan-travel,.history-travel,.pco-travel) {color:#695479;border-color:#e5deef;background:#fff}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.plan-travel,.history-travel,.pco-travel) button {color:#6e5281;background:#faf7fc;border-color:#d8cbe7;border-radius:10px}
+ body.roadmap-studio.integrated-planner.premium-planner .plan-standard-travel button:last-child {color:#fff;background:linear-gradient(120deg,#763e9d,#995ca6);border-color:#764b90;box-shadow:inset 0 1px 0 #ffffff20,0 2px 0 #5e366d}
  body.roadmap-studio.integrated-planner.premium-planner :is(.horizontal-course-grid,.workspace-table-scroll,.standard-table) {color:var(--pp-ink)}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule :is(td,th) {border-color:#dce4f0;color:#405674;text-align:center;vertical-align:middle}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule thead th {background:#eef3fc;color:#42618d;font-weight:650}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule tbody th {background:#f7f9fd;color:#35537e;font-weight:650}
- body.roadmap-studio.integrated-planner.premium-planner :is(.workspace-schedule small,.workspace-schedule caption) {color:#62738e}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule tr+tr {border-top:1px solid #dce4f0}
- body.roadmap-studio.integrated-planner.premium-planner :is(.plan-question-shortcut,.faq-orbit):not(#pathwayCoach .plan-question-shortcut) {background:#f0f5ff;color:#334f7a;border-color:#c9d9f1}
- body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(.plan-question-shortcut small,.plan-question-shortcut strong) {color:#425d84}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule :is(td,th) {border-color:#e5deee;color:#5c476d;text-align:center;vertical-align:middle}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule thead th {background:#f5effb;color:#6a4c83;font-weight:650}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule tbody th {background:#faf7fd;color:#5c3f74;font-weight:650}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.workspace-schedule small,.workspace-schedule caption) {color:#7b6888}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-schedule tr+tr {border-top:1px solid #e5deee}
+ body.roadmap-studio.integrated-planner.premium-planner :is(.plan-question-shortcut,.faq-orbit):not(#pathwayCoach .plan-question-shortcut) {background:#f8f1fe;color:#5a3d70;border-color:#dbccee}
+ body.roadmap-studio.integrated-planner.premium-planner .workspace-panel :is(.plan-question-shortcut small,.plan-question-shortcut strong) {color:#664b7b}
  /* Paper dialogs keep their content palette; only navigation shares the material. */
- body.roadmap-studio.integrated-planner.premium-planner dialog {color:var(--pp-ink);border-color:#b5c5e0;border-radius:20px;box-shadow:0 30px 90px #020a3766}
- body.roadmap-studio.integrated-planner.premium-planner dialog::backdrop {background:#071437b3;backdrop-filter:blur(5px)}
- body.roadmap-studio.integrated-planner.premium-planner dialog>:is(header,.pr-toolbar),body.roadmap-studio.integrated-planner.premium-planner :is(.ast-heading,.ast-detail-heading) {background:linear-gradient(110deg,#192b61,#2b4c88);color:#f1f6ff;border-bottom-color:#ffffff26}
+ body.roadmap-studio.integrated-planner.premium-planner dialog {color:var(--pp-ink);border-color:#c9b8dd;border-radius:20px;box-shadow:0 30px 90px #29093066}
+ body.roadmap-studio.integrated-planner.premium-planner dialog::backdrop {background:#260e30b3;backdrop-filter:blur(5px)}
+ body.roadmap-studio.integrated-planner.premium-planner dialog>:is(header,.pr-toolbar),body.roadmap-studio.integrated-planner.premium-planner :is(.ast-heading,.ast-detail-heading) {background:linear-gradient(110deg,#482357,#61387b);color:#f8f2fe;border-bottom-color:#ffffff26}
  body.roadmap-studio.integrated-planner.premium-planner :is(.ast-heading,.ast-detail-heading) :is(h2,p,small,button) {color:inherit}
  body.roadmap-studio.integrated-planner.premium-planner :is(.ast-heading,.ast-detail-heading) button {background:#ffffff12;border-color:#ffffff50;border-radius:10px}
  body.roadmap-studio.integrated-planner.premium-planner dialog>header :is(h2,small,button),body.roadmap-studio.integrated-planner.premium-planner .ast-header :is(h2,small,button) {color:inherit}
  body.roadmap-studio.integrated-planner.premium-planner dialog>header button,body.roadmap-studio.integrated-planner.premium-planner .ast-header button {background:#ffffff12;border-color:#ffffff50;border-radius:10px;min-height:44px}
- body.roadmap-studio.integrated-planner.premium-planner .prn-global-body,body.roadmap-studio.integrated-planner.premium-planner .prn-tools-body {background:#f9fbff;color:#30476c;border:1px solid #b7c9e5;box-shadow:0 16px 40px #030c3a40;border-radius:16px}
- body.roadmap-studio.integrated-planner.premium-planner .prn-global-body button {background:#fff;color:#3d5984;border-color:#c5d3e8;border-radius:10px}
- body.roadmap-studio.integrated-planner.premium-planner .prn-global-body .member-account-link {display:flex;align-items:center;min-height:44px;margin:0;background:#fff;color:#3d5984;border:1px solid #c5d3e8;border-radius:10px;padding:8px 12px;box-shadow:none}
- body.roadmap-studio.integrated-planner.premium-planner .prn-tools {background:#1d3469;color:#e1ecff;border-color:#a8c8ff30}
- body.roadmap-studio.integrated-planner.premium-planner .prn-tools>summary,body.roadmap-studio.integrated-planner.premium-planner .prn-tools-label {color:#d7e5ff;border-color:#ffffff30}
- body.roadmap-studio.integrated-planner.premium-planner #pathwayCoachContent :is(.language-subjects button,.language-actions button,.science-flow-actions button) {color:#e5ecff;background:#ffffff0c;border-color:#b2cbff59}
- body.roadmap-studio.integrated-planner.premium-planner #pathwayCoachContent .language-subjects button[aria-pressed=true] {color:#fff;background:#365c9b;border-color:#a8c6ff}
- body.roadmap-studio.integrated-planner.premium-planner #pathwayCoachContent :is(.language-step,.science-step,.science-selection-summary dt) {color:#c0cee9}
- body.roadmap-studio.integrated-planner.premium-planner .mobile-workspace-nav {background:#0d1d4ced;border-color:#bdd1ff26;backdrop-filter:blur(16px)}
- body.roadmap-studio.integrated-planner.premium-planner .mobile-workspace-nav button {background:#ffffff0a;border-color:#b2cbff59;color:#d5e3ff;border-radius:11px}
- body.roadmap-studio.integrated-planner.premium-planner .mobile-workspace-nav button[aria-pressed=true] {background:linear-gradient(120deg,#2f61b7,#6659b8);color:#fff;border-color:#a2c3ff80;box-shadow:inset 0 1px 0 #ffffff25,0 2px 0 #122d68}
+ body.roadmap-studio.integrated-planner.premium-planner .prn-global-body,body.roadmap-studio.integrated-planner.premium-planner .prn-tools-body {background:#fcf9ff;color:#523864;border:1px solid #ccbae2;box-shadow:0 16px 40px #2a0b3240;border-radius:16px}
+ body.roadmap-studio.integrated-planner.premium-planner .prn-global-body button {background:#fff;color:#64477a;border-color:#d5c8e5;border-radius:10px}
+ body.roadmap-studio.integrated-planner.premium-planner .prn-global-body .member-account-link {display:flex;align-items:center;min-height:44px;margin:0;background:#fff;color:#64477a;border:1px solid #d5c8e5;border-radius:10px;padding:8px 12px;box-shadow:none}
+ body.roadmap-studio.integrated-planner.premium-planner .prn-tools {background:#4c285e;color:#efe3fd;border-color:#d1aff830}
+ body.roadmap-studio.integrated-planner.premium-planner .prn-tools>summary,body.roadmap-studio.integrated-planner.premium-planner .prn-tools-label {color:#eadafc;border-color:#ffffff30}
+ body.roadmap-studio.integrated-planner.premium-planner #pathwayCoachContent :is(.language-subjects button,.language-actions button,.science-flow-actions button) {color:#f3e7fd;background:#ffffff0c;border-color:#d9b8f959}
+ body.roadmap-studio.integrated-planner.premium-planner #pathwayCoachContent .language-subjects button[aria-pressed=true] {color:#fff;background:#6f448d;border-color:#d3aff8}
+ body.roadmap-studio.integrated-planner.premium-planner #pathwayCoachContent :is(.language-step,.science-step,.science-selection-summary dt) {color:#d4c3e6}
+ body.roadmap-studio.integrated-planner.premium-planner .mobile-workspace-nav {background:#361643ed;border-color:#e0c2fa26;backdrop-filter:blur(16px)}
+ body.roadmap-studio.integrated-planner.premium-planner .mobile-workspace-nav button {background:#ffffff0a;border-color:#d9b8f959;color:#ead8fc;border-radius:11px}
+ body.roadmap-studio.integrated-planner.premium-planner .mobile-workspace-nav button[aria-pressed=true] {background:linear-gradient(120deg,#7d42a4,#ae60b1);color:#fff;border-color:#cfa9f880;box-shadow:inset 0 1px 0 #ffffff25,0 2px 0 #461e5c}
  body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .top,
- body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .workspace-tabs {background:#122250;border-color:#bbd1ff29}
+ body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .workspace-tabs {background:#3a1b47;border-color:#dec0fa29}
  body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace] .top {min-height:var(--prn-header);height:var(--prn-header);padding:2px 10px;gap:8px}
  body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace] .top .logo {padding:2px 7px;border-radius:8px}
  body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace] .top .brand-mark {width:78px;max-height:28px}
@@ -194,8 +194,8 @@
  body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .workspace-tabs button {padding:8px 6px}
  body.roadmap-studio.integrated-planner.premium-planner[data-responsive-workspace][data-workspace-pane=choice] #pathwayCoach {border-radius:0;border:0;background:#ffffff06;padding:20px}
  body.roadmap-studio.integrated-planner.premium-planner .atlas-fullscreen {background:#fff}
- body.roadmap-studio.integrated-planner.premium-planner .atlas-fullscreen-toolbar {background:#172b60;color:#f2f7ff;border-color:#ffffff24}
- body.roadmap-studio.integrated-planner.premium-planner .atlas-fullscreen-toolbar button {background:#ffffff12;color:#eaf2ff;border-color:#b9cfff66;border-radius:10px}
+ body.roadmap-studio.integrated-planner.premium-planner .atlas-fullscreen-toolbar {background:#462156;color:#f8f3fe;border-color:#ffffff24}
+ body.roadmap-studio.integrated-planner.premium-planner .atlas-fullscreen-toolbar button {background:#ffffff12;color:#f4ecfd;border-color:#ddbefa66;border-radius:10px}
  @media(min-width:801px) and (max-width:1250px) {
   body.roadmap-studio.integrated-planner.premium-planner .top {flex-wrap:nowrap;padding-inline:14px;gap:8px}
   body.roadmap-studio.integrated-planner.premium-planner .top :is(.ttl,.chip,.logo-sep) {display:none}
