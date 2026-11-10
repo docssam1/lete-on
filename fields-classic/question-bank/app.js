@@ -60,6 +60,8 @@ if (testMode) document.body.classList.add("as-test");
 if (asStudent) document.body.classList.add("as-student");
 // 학생 차시 덱(study.html)의 유사문제 창 안(?embed=1): 머리줄은 덱이 맡는다
 if (asStudent && params.get("embed") === "1" && parent !== window) document.body.classList.add("as-embed");
+// 강사용 교안 덱 안이면 단추를 그 덱의 남색으로(styles.css 「덱 안 학습지의 단추」). 같은 사이트 안의 창이라 바깥 문서를 볼 수 있다
+try { if (parent !== window && parent.document.body.classList.contains("is-class")) document.body.classList.add("in-class"); } catch { /* 다른 곳에 끼워진 창이면 학생 덱 색 그대로 */ }
 // 덱 안(study.html의 공부하기·오늘의 과제·데일리·단원 평가, ?embed=1): 한 화면에 한 문제씩 넘긴다
 // (원장 2026-10-30 「게임이나 학습 과정에서 아래로 스크롤을 해야 하는 경우가 있어」). 그림은 왼쪽, 문제·답은 오른쪽.
 // 칸보다 크면 통째로 줄여(zoom) 넣는다. 테스트는 마지막 장이 채점 장.
