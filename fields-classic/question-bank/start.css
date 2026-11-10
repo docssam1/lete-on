@@ -317,3 +317,12 @@ body.sm { padding-bottom: 92px; }
 .st-part-list > .st-sessions, .st-part-list > .fa-lock { grid-column: 1 / -1; }
 .st-session .st-week li { grid-template-columns: 30px minmax(120px, auto) minmax(0, 1fr); }
 .st-session .st-week { align-content: start; }
+
+/* 단원마다 골라서 다시 풀기(정식 회원, 원장 2026-11-10) — 차시 카드 아래 한 줄 */
+.st-part-list > .st-retry { grid-column: 1 / -1; }
+.st-retry { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 4px 14px; min-height: 60px; padding: 12px 18px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); text-decoration: none; }
+.st-retry b { font-size: 16px; font-weight: 700; }
+.st-retry span { font-size: 13.5px; color: var(--muted); }
+.st-retry i { font-style: normal; color: var(--muted); }
+.st-retry:hover { border-color: var(--accent); background: var(--accent-soft); }
+@media (max-width: 640px) { .st-retry { grid-template-columns: minmax(0, 1fr) auto; } .st-retry span { grid-column: 1 / -1; grid-row: 2; } }

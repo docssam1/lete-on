@@ -3,7 +3,7 @@ import { unitParts, loadGoldenBell } from "./study-map.js?v=20261105b";
 import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261105b";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
-import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
+import { canStudy, lockPage } from "./fields-access.js?v=20261110f";
 import { planStatus, dayLabel } from "./study-plan.js?v=20261110d";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 

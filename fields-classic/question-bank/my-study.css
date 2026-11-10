@@ -251,3 +251,6 @@ tr.is-done td { color: var(--muted); }
   .ms-tools { order: 5; width: 100%; }
   .ms-tools .ms-btn { flex: 1; padding-left: 8px; padding-right: 8px; font-size: 14px; }
 }
+
+/* 단원 카드: 골라서 다시 풀기(정식 회원) */
+.ms-retry { justify-self: center; padding: 6px 10px; color: var(--accent-ink); font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }

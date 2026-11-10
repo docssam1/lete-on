@@ -1,5 +1,5 @@
 import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261029q";
-import { KAKAO } from "./fields-access.js?v=20261029q";
+import { KAKAO } from "./fields-access.js?v=20261110f";
 
 // 승인(로그인) 페이지(원장 2026-10-27): 승인번호 + 이름 → 학생은 스스로 공부 첫 화면, 관리자(DOCSSAM)는 선생님 보기.
 // 승인번호는 가입(signup.html, 이메일 인증)에서 받는다. 체험이 끝났거나 멈춘 회원은 서버가 막고, 여기서 카톡 요청 단추를 보인다.

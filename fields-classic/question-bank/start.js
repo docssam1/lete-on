@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261101b";
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261105b";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261029q";
-import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
+import { canStudy, isPaid, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110f";
 import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261105b";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
@@ -276,7 +276,9 @@ function renderParts() {
       <a class="st-week-start st-btn${isClass() || on || (!week && part === 1) ? " primary" : ""}" data-start="${book.id}|${view.unit}|${part}|${on ? week.last || 1 : ""}" href="${esc(studyLink(book.id, view.unit, part, on ? week.last || 1 : 0))}">${part}차시 ${startWord} ›</a>
       ${goldenBell ? `<a class="st-session-print${wantPrint ? " is-wanted" : ""}" href="${esc(bookPrint)}" target="_blank" rel="noopener">${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}개념 · 워밍업 · 본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
   });
-  $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>`;
+  // 단원마다 「골라서 다시 풀기」(원장 2026-11-10 「유료 회원일 때는 각 단원에서 선택하여 다시 풀기」) — 정식 회원이 아니면 눌렀을 때 안내가 나온다
+  const retry = isClass() ? "" : `<a class="st-retry" href="${esc(link("similar.html", { book: book.id, unit: String(view.unit) }))}"><b>골라서 다시 풀기</b><span>이 단원 본책에서 모르는 번호를 골라 같은 유형의 새 문제로 다시 풀어요</span>${isPaid() ? "" : `<em class="st-lock-tag">정규회원</em>`}<i aria-hidden="true">›</i></a>`;
+  $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>${retry}`;
 }
 
 function renderStudy() {

@@ -1,13 +1,14 @@
 import { CURRICULUM } from "./source-data.js?v=20261101b";
 import { unitParts, partProblems } from "./study-map.js?v=20261105b";
 import { loadLocalAll } from "./study-progress.js?v=20261029q";
-import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
+import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110f";
 import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261105b";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
 // 권 · 단원을 고르면 본책 번호판(차시마다 활동 · 확인 · 연습 · 도전)이 나온다. 모르는 번호를 누르고 「유사문제 만들기」 →
 // 번호마다 같은 유형·같은 단계의 새 문제 한 문제(문제은행 학생 화면: index.html?as=student&picks=유형~단계~표시~단원[~조건]|…).
 // 번호판과 picks는 스스로 공부 덱과 같은 것(study-map.js partProblems · study-deck.js pickOf)을 쓴다 — 덱의 본책 장과 어긋나지 않게.
+// 유료(정식) 회원 기능이다(원장 2026-11-10 「유료 회원일 때는 각 단원에서 선택하여 다시 풀기 할 수 있도록」) — 단원마다 들어오는 길: 시작 화면 차시 장 · 내 학습 상황 단원 카드.
 // 이 화면은 번호만 고른다. 문제를 만들고 답을 확인하는 일은 문제은행 학생 화면이 그대로 맡는다.
 
 const $ = (id) => document.getElementById(id);
@@ -46,8 +47,10 @@ function renderTabs() {
 // 번호판: 차시마다 한 묶음, 그 안에 활동 · 확인 · 연습 · 도전 줄
 function renderNumbers() {
   const book = activeBook(), unit = book.units[view.unit];
-  const gate = canStudy(book.id, view.unit);
-  if (!gate.ok) { $("numberList").innerHTML = lockCard(gate.why, { bookId: book.id, here: "similar.html" }); return; }
+  // 골라서 다시 풀기는 정식 회원 것(fields-access.js canRetry) — 둘러보기·체험은 안내 카드
+  const gate = canRetry(book.id, view.unit);
+  $("dock").hidden = !gate.ok;
+  if (!gate.ok) { $("numberList").innerHTML = lockCard(gate.why, { bookId: book.id, here: `similar.html${location.search}` }); return; }
   const { count } = unitParts(unit);
   const sessions = Array.from({ length: count }, (_, k) => {
     const part = k + 1, option = partPickOption(book.id, view.unit, part);
