@@ -2771,7 +2771,7 @@ function w2PaperToolPageHtml(courseNum, code, selectedTool){
     <b>${esc(pickL(tool.name))}</b>
   </div>
   <div class="nm-pt-intro">${child && portrait ? `<img src="${esc(portrait)}" alt="" width="54" height="54">` : ''}<p class="nm-pt-why">${paperToolText(pickL(tool.why))}</p></div>
-  <div class="nm-pt-legend"><span><i></i>${esc(lk('점선만 오려요','Cut dashed outlines only','只剪虚线'))}</span><span><i class="nm-pt-solid"></i>${esc(lk('실선은 그대로 두어요','Keep solid lines intact','保留实线'))}</span></div>
+  <div class="nm-pt-legend"><span><i></i>${esc(lk('점선만 오려요','Cut dashed outlines only','只剪虚线'))}</span><span><i class="nm-pt-solid"></i>${esc(lk('실선은 그대로 두어요','Keep solid lines intact','保留实线'))}</span><span class="nm-pt-keep">${esc(lk('오린 교구는 봉투에 모아 두고 다음 주에도 써요','Keep the pieces in an envelope for next week','剪好的教具收进袋子，下周还要用'))}</span></div>
   <div class="nm-pt-art">${art}</div>
   ${tool.embeddedExample ? '' : `<aside class="nm-pt-example"><div><b>${esc(lk('이렇게 만들었어요','Worked example','完成的例子'))}</b><div class="nm-pt-example-math">${exampleMath}</div><p>${paperToolText(pickL(tool.exampleText) || '')}</p></div><div class="nm-pt-demo">${demo}</div></aside>`}
   <div class="nm-pt-play"><b>${esc(lk('이렇게 해 봐요','Try it together','一起试一试'))}</b><ol class="nm-pt-steps">${steps}</ol></div>
@@ -3089,6 +3089,8 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   if(extra.paper){
     paperRow = `<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('먼저, 이번 주 종이 교구','First: this week\'s paper tool','先看本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`;
     page += 1;
+  }else if(extra.paperNote){
+    paperRow = `<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('교구 봉투에서 꺼내요','Take out of your tool envelope','从教具袋里取出'))} · ${esc(extra.paperNote)}</td><td></td><td></td><td></td></tr>`;
   }
   const rows = contents.map((r, i) => {
     const n = r.problems.length, from = page, to = page + w2PagesOf(r) - 1; page = to + 1;
@@ -7416,7 +7418,15 @@ function renderMixedSheetBody(items, envelopeCode, opts){
      과정 수준과 맞지 않는 이야기(로그표·구거법)가 섞여 있었다. w2HistoryPageHtml 은 남겨 둔다. */
   const historyHtml = '';
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
-  const paperHtml = opts.pacing || highCompact ? '' : w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
+  /* 같은 교구 지면을 매주 다시 싣지 않는다(2026-11-10). 과정의 첫 주에 첫 교구, 둘째 주에 둘째 교구(있으면)를
+     한 번씩만 싣고, 그 뒤 주에는 표지 목차에 「교구 봉투에서 꺼내요」 한 줄만 적는다. 회차를 모르면 첫 주로 본다. */
+  let paperHtml = '', paperNote = '';
+  if(!(opts.pacing || highCompact) && opts.cover && window.NM_PAPER_TOOLS_OF_COURSE){
+    const toolList = NM_PAPER_TOOLS_OF_COURSE(cv.courseNum);
+    const toolWeek = sIdx != null ? Math.floor(sIdx / (cv.cadence === 'w2' ? 2 : 1)) : (cv.k >= 1 ? cv.k - 1 : 0);
+    if(toolList[toolWeek]) paperHtml = w2PaperToolPageHtml(cv.courseNum, envelopeCode, toolList[toolWeek]);
+    else if(toolList.length) paperNote = toolList.map(t => pickL(t.name)).join(' · ');
+  }
   /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
      돌린다(과정 번호는 안 쓴다). 주간 학습지(표지가 있는 것)에만 싣는다 — 편지함 편집기가 한 회차만
      뽑을 때까지 읽을거리를 딸려 보내면 문제보다 읽을거리가 많아진다. */
@@ -7427,7 +7437,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true,series:!!series });
   const studyDays = opts.cover ? assignStudyDays(rounds, opts.cover.studyDays) : 0;
   if(opts.cover && studyDays) opts.cover.studyDays = studyDays;
-  const coverHtml = opts.cover ? (series?series.front(opts.cover,series.model(opts.cover,examLang())):'')+weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true,series:!!series })
+  const coverHtml = opts.cover ? (series?series.front(opts.cover,series.model(opts.cover,examLang())):'')+weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, paperNote, answerKey: true,series:!!series })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
