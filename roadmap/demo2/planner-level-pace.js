@@ -111,6 +111,7 @@ ${table(m)}
 </section>`;
 }
 // 그림의 카메라 이동은 화면에서 한 번 끝까지 재생된 뒤에는 다시 재생하지 않는다.
-global.document?.addEventListener?.('animationend',e=>{if(e.animationName==='level-pace-unroll')played=true;},true);
+// 끝나면 표시도 지운다. 남겨 두면 다른 탭에 갔다 돌아올 때마다 처음부터 다시 움직인다.
+global.document?.addEventListener?.('animationend',e=>{if(e.animationName!=='level-pace-unroll')return;played=true;e.target?.closest?.('.level-pace')?.classList.remove('is-entering');},true);
 global.PlannerLevelPace={model,render};
 })(typeof window!=='undefined'?window:globalThis);
