@@ -1,8 +1,8 @@
 import { CURRICULUM } from "./source-data.js?v=20261101b";
-import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261105b";
+import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261110h";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261029q";
 import { canStudy, isPaid, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110f";
-import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261105b";
+import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261110h";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -124,21 +124,9 @@ function renderSelfUnits(book) {
   }).join("")}${!isClass() && book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
 const studyLink = (bookId, unitIndex, part, last = 0) => link("study.html", { book: bookId, unit: String(unitIndex), part: String(part), ...(last ? { s: String(last) } : {}), ...(isClass() ? { as: "class" } : {}) });
-// 한 차시 교재 인쇄 주소(golden-bell.html?sessionbook=1) — 차시 카드와 「책 시작 때 인쇄할까요?」가 같이 쓴다
+// 한 차시 교재 인쇄 주소와 그 차시 학습 묶음 — 덱과 같은 것(study-deck.js sessionPrintHref · sessionLessons)
 function sessionLinks(book, unitIndex, part) {
-  const unit = book.units[unitIndex], { count } = unitParts(unit);
-  const bellBook = goldenBell?.books.find((entry) => entry.id === book.id);
-  const all = goldenBell ? lessonsByUnit(book, bellBook).units[unitIndex] : [];
-  const size = Math.ceil(all.length / count), lessons = all.slice((part - 1) * size, part * size);
-  const lastPart = part === count;
-  const sheet = link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
-    picks: sessionBookPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 본책과 과제` });
-  const presheet = part > 1 ? link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
-    picks: sessionDailyPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
-  const testParts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problemCount(unit, part)}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
-  const bookPrint = link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
-    label: `${unitIndex + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: testParts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });
-  return { bookPrint, lessons };
+  return { bookPrint: sessionPrintHref(book, unitIndex, part, goldenBell, link), lessons: sessionLessons(book, unitIndex, goldenBell, part) };
 }
 
 // ── 학부모가 처음 와도 바로 시작하게(원장 2026-11-09 「처음부터 또는 진도 선택부터 유연하게 · 책 시작하는 처음에 교재를 인쇄하겠습니까」) ──
@@ -245,15 +233,12 @@ function renderParts() {
   const gate = gateOf(book.id, view.unit);
   if (!gate.ok) { $("partList").innerHTML = lockCard(gate.why, { bookId: book.id, here: "start.html" }); return; }
   const { count } = unitParts(unit);
-  const bellBook = goldenBell?.books.find((entry) => entry.id === book.id);
-  const all = goldenBell ? lessonsByUnit(book, bellBook).units[view.unit] : [];
-  const size = Math.ceil(all.length / count);
   const last = view.unit === book.units.length - 1;
   // 강사용 교안은 학생 기록을 보지 않는다(점수·이어서 하기 없음)
   const week = isClass() ? null : readRecord(student, "week", `${book.id}-u${view.unit}`);
   const result = isClass() ? null : readRecord(student, "test", `${book.id}-u${view.unit}`);
   const sessions = Array.from({ length: count }, (_, k) => {
-    const part = k + 1, lessons = all.slice(k * size, part * size);
+    const part = k + 1, lessons = goldenBell ? sessionLessons(book, view.unit, goldenBell, part) : [];
     const daily = part > 1 && !isClass() ? readRecord(student, "test", `${book.id}-u${view.unit}-d${part - 1}`) : null;
     const lastPart = part === count;
     // 2차시부터 맨 앞에 지난 차시 데일리 테스트(원장 2026-10-29 「데일리 테스트는 다음날이야」), 마지막 차시 끝에 단원 평가

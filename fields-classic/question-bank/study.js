@@ -1,10 +1,10 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261105b";
-import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261105b";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261110h";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261110h";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage } from "./fields-access.js?v=20261110f";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261110d";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261110h";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -26,6 +26,9 @@ import { setIcon } from "./ui-icons.js?v=20261105b";
 //  · 강사용 교안(&as=class, 원장 2026-11-10 「강사는 교안이 수업 흐름대로 되어야 하고」): 같은 차시 덱을 수업 화면으로 연다 — 차례가 학생 덱과 같다.
 //    회원 잠금 없음 · 기록을 남기지 않음(학생 이름 대신 「수업」) · 독쌤 음성과 저절로 넘어가기는 처음에 꺼 둠(말은 강사가 한다, 켤 수 있다)
 //    · 데일리 테스트·단원 평가는 채점표 없이 문제만 한 장씩(답은 강사가 「답 확인」을 누를 때) · 평가 전 약점 팝업 없음.
+//    · 모양과 구성도 학생 덱과 다르다(원장 2026-11-10 「학생용과는 디자인과 구성이 달라야지」): 섬 그림 액자·독쌤 그림 없이 종이색 교안 틀,
+//      왼쪽 「수업 차례」에 그 차시의 모든 장(누르면 그 장으로, 접을 수 있다), 머리줄에 「이 차시 교재 인쇄」「전체 화면」, 아래 줄에 지도 말.
+//      판서 옆 독쌤도 두지 않아 판서를 넓게 쓴다. 모양은 study.css 「강사용 교안」 블록(body.is-class).
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -456,12 +459,17 @@ async function mountNative(slide, intro = Promise.resolve()) {
   let host = wrap;
   // 판서 오른쪽에 독쌤 + 손그림 판서 틀(&look=plain이면 예전 모양)
   if (LOOK && game.board) {
-    wrap.classList.add("has-presenter", `look-${LOOK}`);
+    wrap.classList.add(`look-${LOOK}`);
     host = document.createElement("div");
     host.className = "sd-board-host";
-    presenter = makePresenter();
-    wrap.append(host, presenter.el);
-    document.body.classList.add("has-presenter");
+    wrap.append(host);
+    // 강사용 교안은 강사가 설명하므로 독쌤을 세우지 않고 판서를 넓게 쓴다
+    if (!classMode) {
+      wrap.classList.add("has-presenter");
+      presenter = makePresenter();
+      wrap.append(presenter.el);
+      document.body.classList.add("has-presenter");
+    }
   }
   $("slideBody").replaceChildren(wrap);
   nativeGame = mod[game.mount](host, {
@@ -481,13 +489,24 @@ function disposeNative() {
 }
 // 작은 가로 화면(원장 2026-10-26 「한 화면에 가득 차야지」): 게임판이 칸보다 크면 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다
 const fitObserver = new MutationObserver(() => requestAnimationFrame(fitNative));
+// 칸보다 작으면 키운다(원장 2026-11-10 「게임하기나 문제 풀기 그림 확대 잘 안 보여」 — 넓은 화면에서 게임판·판서가 가운데 작게 떠 있었다):
+// 넘치지 않는 가장 큰 배율(0.4~1.7)을 반씩 나눠 찾는다. 창(iframe)으로 도는 게임(연습 공방)은 창 안에서 스스로 맞추므로 건드리지 않는다.
+const NATIVE_MIN = 0.4, NATIVE_MAX = 1.7;   // 가로로 든 휴대폰은 0.55로도 넘쳤다
 function fitNative() {
   const body = $("slideBody"), host = body.querySelector(":scope > .sd-native");
-  if (!host || !["game", "concept"].includes(slides[index]?.kind)) return;   // 판서(개념)도 칸보다 크면 줄인다
-  host.style.zoom = "";
+  if (!host || !["game", "concept"].includes(slides[index]?.kind)) return;   // 판서(개념)도 칸에 맞춘다
+  if (host.querySelector(":scope > iframe")) { host.style.zoom = ""; host.style.minHeight = ""; return; }
   const cs = getComputedStyle(body), avail = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-  const need = host.scrollHeight;
-  if (need > avail + 2) host.style.zoom = String(Math.max(0.4, Math.floor((avail / need) * 100) / 100));   // 가로로 든 휴대폰은 0.55로도 넘쳤다
+  host.style.setProperty("transition", "none", "important");   // 배율을 바꾸자마자 재므로 전환이 걸리면 옛 크기를 읽는다
+  host.style.minHeight = "0";   // 칸 높이만큼 늘어나 있으면(min-height 100%) 내용 높이를 잴 수 없다
+  // scrollHeight·scrollWidth는 배율을 뺀 값 → 보이는 높이 = scrollHeight × 배율. 가로는 배율만큼 좁아진 칸에서 넘치는지 본다
+  const fits = (z) => { host.style.zoom = String(z); return host.scrollHeight * z <= avail + 1 && host.scrollWidth <= host.clientWidth + 1; };
+  let lo = NATIVE_MIN, hi = NATIVE_MAX;
+  if (fits(1)) lo = 1; else hi = 1;
+  for (let step = 0; step < 7; step += 1) { const mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
+  const zoom = Math.floor(lo * 100) / 100;
+  host.style.zoom = zoom === 1 ? "" : String(zoom);
+  host.style.minHeight = `${100 / zoom}%`;   // 배율을 건 뒤에도 칸 높이를 채워 가운데 맞춤이 그대로 되게
 }
 addEventListener("resize", () => requestAnimationFrame(fitNative));
 
@@ -568,11 +587,11 @@ function coverMarkup() {
   };
   const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, board: `본책 ${counts.board}문제`, homework: `${counts.homework}문제 · 집에서`, daily: `${counts.daily}문제 · ○✕`, test: `${counts.test}문제 · ○✕ 진단`, booktest: `${counts.booktest}문제` };
   return `<div class="sd-cover">
-    <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${parts > 1 ? ` <small>(${parts}차시 중)</small>` : ""}</p>
+    <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${classMode ? " 교안" : ""}${parts > 1 ? ` <small>(${parts}차시 중)</small>` : ""}</p>
     <h1>${esc(unit.label)}</h1>
-    <p class="sd-cover-lead">${classMode ? "위의 차례를 누르면 그 장으로 바로 가요." : "섬을 따라 한 곳씩 가 봐요."}</p>
+    <p class="sd-cover-lead">${classMode ? "왼쪽 수업 차례대로 진행해요. 차례를 누르면 그 장으로 바로 가요." : "섬을 따라 한 곳씩 가 봐요."}</p>
     <ol class="sd-plan" style="--n:${planPhases(counts).length}">${planPhases(counts).map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
-    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>출발하기 →</button>
+    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>${classMode ? "수업 시작 →" : "출발하기 →"}</button>
   </div>`;
 }
 function boardMarkup(block) {
@@ -615,7 +634,7 @@ function endMarkup() {
       : `<a class="sd-btn primary" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">${esc(book.label)} 권별 테스트 ›</a>`;
   return `<div class="sd-cover sd-end">
     <span class="sd-medal" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16" /></svg></span>
-    <h1>${lastPart ? `${unitIndex + 1}단원 공부를 마쳤어요!` : `${unitIndex + 1}단원 ${part}차시를 마쳤어요!`}</h1>
+    <h1>${classMode ? `${unitIndex + 1}단원 ${part}차시 수업을 마쳤어요` : lastPart ? `${unitIndex + 1}단원 공부를 마쳤어요!` : `${unitIndex + 1}단원 ${part}차시를 마쳤어요!`}</h1>
     <p class="sd-cover-lead">${esc(unit.label)}</p>
     ${tallyMarkup(result, lastPart)}
     ${nextDayMarkup()}
@@ -663,7 +682,7 @@ function show({ atEnd = false } = {}) {
   setNextLabel();
   $("count").textContent = `${index + 1} / ${slides.length}`;
   renderSigns();
-  placeWorld();
+  if (classMode) renderOutline(); else placeWorld();
   recordVisit();
   if (ready && !classMode && ["test", "booktest"].includes(slide.kind)) openGate(slide);
   const url = new URL(location.href);
@@ -685,7 +704,7 @@ const sheetHasPrev = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt &
 function setNextLabel() {
   const slide = slides[index];
   const grade = !classMode && sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
-  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? "출발하기 →" : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : "다음 →";
+  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? (classMode ? "수업 시작 →" : "출발하기 →") : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : "다음 →";
 }
 function sheetGo(go) { document.getElementById("workFrame")?.contentWindow?.postMessage({ type: "fc-study", cmd: "oneup", go }, location.origin); }
 const gamesDone = new Set();
@@ -782,6 +801,37 @@ function openWeakSheet(weak) {
   $("sheetClose").focus({ preventScroll: true });
 }
 
+// ── 강사용 교안: 수업 차례(왼쪽) · 머리줄 도구 ─────────────────
+// 그 차시의 모든 장을 차례대로 적는다(학생 덱 윗줄은 여덟 곳만 보여 준다). 누르면 그 장으로. 표지·마침도 한 줄씩.
+const OUTLINE_LABEL = { cover: "표지", daily: "데일리 테스트", concept: "개념 판서", game: "게임", board: "본책", homework: "오늘의 과제", test: "단원 평가", booktest: "권별 테스트", end: "마침" };
+function renderOutline() {
+  const rows = slides.map((slide, k) => {
+    const label = slide.kind === "bell" ? bellLabel(slide) : OUTLINE_LABEL[slide.kind] || "";
+    const title = slide.kind === "cover" ? `${unitIndex + 1}단원 ${part}차시` : slide.kind === "end" ? "수업 마침" : slideTitle(slide).replace(/^본책 /, "");
+    return `<li><button type="button" data-jump="${k}" class="${k === index ? "is-on" : k < index ? "is-done" : ""}" ${k === index ? 'aria-current="step"' : ""} ${ready ? "" : "disabled"}><b>${k + 1}</b><span><em>${esc(label)}</em>${esc(title)}</span></button></li>`;
+  });
+  $("outlineList").innerHTML = rows.join("");
+  $("outlineList").querySelector(".is-on")?.scrollIntoView({ block: "nearest" });
+}
+function setupClass() {
+  document.body.classList.add("is-class");
+  $("classTools").hidden = false;
+  $("outline").hidden = false;
+  // 좁은 화면에서는 차례를 접어 둔다(수업 화면이 먼저)
+  const closed = pref.outline === undefined ? innerWidth < 1000 : !pref.outline;
+  const paint = (isClosed) => { document.body.classList.toggle("outline-closed", isClosed); $("outlineBtn").setAttribute("aria-pressed", String(!isClosed)); };
+  paint(closed);
+  $("outlineBtn").addEventListener("click", () => { const next = !document.body.classList.contains("outline-closed"); paint(next); pref.outline = !next; savePref(); requestAnimationFrame(fitNative); });
+  $("outlineList").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-jump]");
+    if (button && !button.disabled) { cancelAuto(); closeSheet(false); go(Number(button.dataset.jump)); if (innerWidth < 1000) paint(true); }
+  });
+  $("fullBtn").hidden = !document.documentElement.requestFullscreen;
+  $("fullBtn").addEventListener("click", () => { if (document.fullscreenElement) document.exitFullscreen?.(); else document.documentElement.requestFullscreen?.().catch(() => {}); });
+  document.addEventListener("fullscreenchange", () => { const on = Boolean(document.fullscreenElement); $("fullBtn").setAttribute("aria-pressed", String(on)); $("fullBtn").textContent = on ? "전체 화면 끝내기" : "전체 화면"; });
+  $("classPrint").href = link("start.html", { book: book.id, unit: String(unitIndex) });   // 워밍업 자료를 불러오면 인쇄 주소로 바꾼다
+}
+
 // ── 조작 ──────────────────────────────────────────────────
 $("nextBtn").addEventListener("click", next);
 bindPress();
@@ -826,7 +876,7 @@ function startIndex() {
 }
 // 열리지 않은 권·단원이면 덱 대신 안내(둘러보기 1권 1단원 · 체험 시작 권 · 정식 한 달에 1권, fields-access.js)
 const gate = classMode ? { ok: true } : canStudy(book.id, unitIndex);
-if (classMode) document.body.classList.add("is-class");
+if (classMode) setupClass();
 if (!gate.ok) lockPage(gate.why, { bookId: book.id, student, here: `study.html${location.search}` });
 else {
 renderHead();
@@ -834,6 +884,7 @@ paintGuideButtons();
 show();
 loadGoldenBell().then((data) => {
   bellData = data;
+  if (classMode) $("classPrint").href = sessionPrintHref(book, unitIndex, part, bellData, link);
   slides = buildSlides();
   ready = true;
   index = startIndex();

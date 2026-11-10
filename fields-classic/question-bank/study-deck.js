@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261105b";
+import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261110h";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -139,6 +139,20 @@ export function sessionBookPicks(unit, unitIndex, part, bookId = "") {
 // 그 차시 맨 앞의 데일리 테스트(지난 차시에 배운 것) — 1차시는 없다
 export const sessionDailyPicks = (unit, unitIndex, part, bookId = "") => part > 1
   ? dailyTypes(unit, part - 1).map((typeId) => pickOf(typeId, "practice", `${part - 1}차시 데일리 테스트`, unitIndex, partPickOption(bookId, unitIndex, part - 1))).join("|") : "";
+// 한 차시 교재 인쇄 주소(golden-bell.html?sessionbook=1: 워밍업 교재 표지 → (2차시부터) 지난 차시 데일리 → 개념·워밍업 → 본책 → 과제 → (마지막 차시) 단원 평가).
+// 시작 화면 차시 카드 · 「책 시작 때 인쇄할까요?」 · 강사용 교안 머리줄이 같이 쓴다. 학습 묶음은 덱과 같은 sessionLessons(덱 전용 학습은 인쇄할 워밍업이 없어 뺀다).
+// link(page, entries) = 그 화면의 주소 만들기(학생 이름을 붙인다)
+export function sessionPrintHref(book, unitIndex, part, bellData, link) {
+  const unit = book.units[unitIndex], lastPart = part === sessionCount(unit);
+  const lessons = sessionLessons(book, unitIndex, bellData, part).filter((lesson) => !lesson.deckOnly);
+  const problems = sessionBlocks(unit, part).reduce((sum, block) => sum + block.numbers.length, 0);
+  const sheetBase = { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1" };
+  const sheet = link("index.html", { ...sheetBase, picks: sessionBookPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 본책과 과제` });
+  const presheet = part > 1 ? link("index.html", { ...sheetBase, picks: sessionDailyPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
+  const parts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problems}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
+  return link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
+    label: `${unitIndex + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: parts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });
+}
 // 유형 목록에서 n문제: 유형이 많으면 고르게 건너뛰며, 적으면 돌아가며 한 번 더
 export const spreadTypes = (types, n) => !types.length ? [] : Array.from({ length: n }, (_, k) => types.length >= n ? types[Math.floor((k * types.length) / n)] : types[k % types.length]);
 export const dailyTypes = (unit, part) => spreadTypes(sessionTypes(unit, part), DAILY_COUNT);

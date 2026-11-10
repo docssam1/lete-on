@@ -2260,6 +2260,8 @@ const FIT_MIN = 0.42, FIT_MAX = 1.7;   // 휴대폰 세로에서는 게임이 0.
 function fitEmbed() {
   if (!embed.on && !classMode) return;
   const content = $("lessonContent");
+  // 배율(zoom)을 바꾸자마자 크기를 재므로 전환 효과가 걸려 있으면 옛 크기를 읽는다 — 움직임 줄이기 설정(전환 0.01ms)에서 게임이 1.7배로 커져 잘렸다(2026-11-10). 맞추는 칸에는 전환을 두지 않는다
+  content.style.setProperty("transition", "none", "important");
   // 수업 화면의 개념 쪽은 길게 이어 읽는 장이라 한 화면에 줄여 넣지 않고 크게만 보인다(넓은 화면에서 1.3배)
   if (classMode && state.phase !== "original") { content.style.zoom = innerWidth >= 1300 ? "1.3" : ""; return; }
   // 학습 칸은 늘어나 창을 채우므로(높이가 늘 창과 같다) 안에 든 것의 아래 끝으로 잰다
@@ -2368,7 +2370,14 @@ if (params.get("as") === "student" || embed.on || classMode) {
         if (!fig) continue;
         // 그림이 원래 차지하려는 폭(max-content)을 재서, 칸보다 넓으면 그 폭으로 그린 채 줄인다(칸 안에서 서로 겹치지 않게)
         fig.style.zoom = ""; fig.style.width = "max-content"; fig.style.maxWidth = "none";
-        const natural = fig.getBoundingClientRect().width;
+        let natural = fig.getBoundingClientRect().width;
+        // 그림 틀이 속 그림보다 넓게 재질 때가 있다(속 그림 폭이 min(100%, 760px)처럼 %로 묶인 경우 틀의 max-content가 부풀어 1278px로 재졌고,
+        // 실제 그림은 760px인데 0.52배로 줄어 안 보였다 — 원장 2026-11-10 「그림 확대 잘 안 보여」). 속 그림이 실제로 차지한 폭이 더 좁으면 그 폭으로 잰다
+        const kids = [...fig.children].map((child) => child.getBoundingClientRect()).filter((rect) => rect.width > 0);
+        if (kids.length) {
+          const figCs = getComputedStyle(fig), drawn = Math.max(...kids.map((rect) => rect.right)) - Math.min(...kids.map((rect) => rect.left)) + parseFloat(figCs.paddingLeft) + parseFloat(figCs.paddingRight);
+          if (drawn < natural - 1) natural = drawn;
+        }
         const cs = getComputedStyle(box), room = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
         if (natural > room + 1) { fig.style.width = `${Math.ceil(natural)}px`; fig.style.zoom = String(Math.max(0.5, Math.floor((room / natural) * 100) / 100)); }
         else { fig.style.width = ""; fig.style.maxWidth = ""; }

@@ -378,7 +378,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 }
 
 @media(prefers-reduced-motion:reduce){
-  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:0s!important;transition-delay:0s!important}
 }
 
 .vertical-addition strong{letter-spacing:0}
@@ -858,3 +858,21 @@ html:has(body.as-class),body.as-class{background:#fffefb;background-image:none}
 .as-class .lesson-content{padding:20px 28px 28px}
 .as-class .stage-step{min-height:58px;font-size:12px}.as-class .stage-step strong{font-size:15px}
 .as-class .embed-off{display:none!important}
+
+/* 덱 안 게임(원장 2026-11-10 「게임하기 … 그림 확대 잘 안 보여」): 손으로 하는 게임(.hand-content)은 위에서 아래로 쌓여 있어
+   덱 칸 높이에 맞추면 통째로 0.4배까지 줄어 가운데 작게 떴다. 넓은 칸에서는 게임판을 왼쪽에 크게, 할 일·독쌤 말·단추를 오른쪽에 둔다.
+   제목은 덱 장 머리에 이미 있고, 「예제에서 본 방법으로 …」 한 줄은 덱의 독쌤이 말하므로 뺀다. 시계·레벨 게임은 스스로 두 칸이라 그대로.
+   (위 움직임 줄이기 규칙의 전환 시간은 0s — 0.01ms로 두면 전환이 만들어져, 배율을 바꾸자마자 재는 fitEmbed가 옛 크기를 읽고 게임을 1.7배로 키워 잘랐다) */
+.as-embed .gb-flow-lead { display: none; }
+@media (min-width: 860px) {
+  .as-embed .gold-hands-on .hand-content:has(> .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"])) {
+    display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(280px, 1fr); column-gap: 22px; align-items: start; align-content: start;
+    width: min(1560px, calc(100% - 24px)); padding: 6px 0 10px;
+  }
+  .as-embed .gold-hands-on .hand-content:has(> .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"])) > * { grid-column: 2; min-width: 0; }
+  .as-embed .gold-hands-on .hand-content > .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"]) { grid-column: 1; grid-row: 1 / span 12; margin: 0; }
+  .as-embed .gold-hands-on .hand-content:has(> .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"])) > .hand-title { display: none; }
+  .as-embed .gold-hands-on .hand-content:has(> .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"])) > .hand-guide { grid-template-columns: 64px minmax(0, 1fr); min-height: 0; margin: 10px 0; }
+  .as-embed .gold-hands-on .hand-content:has(> .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"])) > .hand-guide img { width: 64px; height: 72px; }
+  .as-embed .gold-hands-on .hand-content:has(> .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"])) > .hand-footer { margin-top: 6px; }
+}
