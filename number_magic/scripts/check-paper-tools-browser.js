@@ -43,7 +43,7 @@ try{for(const tool of tools)for(const lang of ['ko','en','zh']){
   return {key:page.dataset.tool,lang:document.querySelector('.nm-print-sheet').lang,overflow:page.scrollHeight-page.clientHeight,
    artClipped:ar.top<pr.top-1||ar.bottom>pr.bottom+1||bb.x<-.6||bb.y<-.6||bb.x+bb.width>v.width+.6||bb.y+bb.height>v.height+.6,
    labelOverflow:bad,labelCollisions:collisions,fontLoaded:document.fonts.check('12px "NM Tools Sans"'),nonKoreanDiagram:/[가-힣]/.test(s.textContent),scaleMm:m.a/mm,frameCount:s.querySelectorAll('[data-part="frame"]').length,
-   counters:s.querySelectorAll('[data-part="counter"]').length,counterDiameterMm:counter?+counter.getAttribute('r')*2*m.a/mm:null,
+   counters:s.querySelectorAll('[data-part="counter"]').length,counterDiameterMm:counter?(counter.tagName==='rect'?+counter.getAttribute('width'):+counter.getAttribute('r')*2)*m.a/mm:null,
    rods:s.querySelectorAll('[data-part="rod"]').length,ones:s.querySelectorAll('[data-part="one"]').length,
    rodSizeMm:rod?[+rod.getAttribute('width')*m.a/mm,+rod.getAttribute('height')*m.d/mm]:null,oneSizeMm:one?+one.getAttribute('width')*m.a/mm:null,
    fractionLabels:s.querySelectorAll('[data-part="fraction-label"]').length,slashFraction:/\b1\/[23468]\b/.test(page.textContent),

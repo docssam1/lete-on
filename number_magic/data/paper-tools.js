@@ -25,7 +25,15 @@ var LINE = 'fill:none;stroke:#191511;stroke-width:.4';
 var THIN = 'fill:none;stroke:#918777;stroke-width:.25';
 var TXT = 'font-family:Pretendard,sans-serif;font-size:3.8px;fill:#191511';
 
-var P={ink:'#191511',green:'#2f6b4a',soft:'#e9f0e7',gold:'#a87c22',tint:'#fff1d1'};
+/* 색(2026-11-10, 원장 「칼라로 디자인」). 색만으로 구분하지 않는다 — 숫자·점·고리 표시는 그대로 두어 흑백으로 뽑아도 쓸 수 있다.
+   자릿값 색은 앱·학습지의 자릿값 색 힌트(app/place-color.js)와 같은 계열: 일 빨강 · 십 파랑 · 백 초록 · 천 보라. */
+var P={ink:'#191511',green:'#2f6b4a',soft:'#bfe6c8',gold:'#a87c22',tint:'#ffdf80'};
+var PLACE={1:['#f9cfca','#C62828'],10:['#cfe1f7','#1565C0'],100:['#cfe9cf','#2E7D32'],1000:['#e4d0f0','#6A1B9A']};
+/* 수막대 색 — 길이마다 다른 색. 숫자가 함께 적혀 있어 색을 못 봐도 쓸 수 있다. */
+var ROD={1:'#ffffff',2:'#f6a39b',3:'#bfe8a8',4:'#d0b3ee',5:'#ffe36e',6:'#7fcf95',7:'#c9ced6',8:'#d9b48a',9:'#9cc6f5',10:'#ffbd73'};
+var PIECE=['#f6a39b','#ffe36e','#bfe8a8','#9cc6f5','#d0b3ee','#ffbd73','#7fcf95','#f3b6d4','#c9ced6','#d9b48a','#a8e0dc','#ffd0a6'];
+/* 가위 표시 — 자르기 시작하는 곳. 글자가 아니라 그림이라 언어와 상관없다. */
+function scissors(x,y){return '<g data-part="scissors" transform="translate('+x+' '+y+')" style="fill:#fff;stroke:#191511;stroke-width:.45"><circle cx="0" cy="-1.6" r="1.25"/><circle cx="0" cy="1.6" r="1.25"/><line x1="1" y1="-1.1" x2="5.2" y2="1.5"/><line x1="1" y1="1.1" x2="5.2" y2="-1.5"/></g>';}
 var STRONG='fill:none;stroke:#2f6b4a;stroke-width:.7';
 function segment(x,y,xx,yy,style){return '<line x1="'+x+'" y1="'+y+'" x2="'+xx+'" y2="'+yy+'" style="'+style+'"/>';}
 function text(x,y,t,size,anchor){return '<text x="'+x+'" y="'+y+'" text-anchor="'+(anchor||'start')+'" style="font-family:Pretendard,sans-serif;font-size:'+(size||3.8)+'px;fill:#191511">'+t+'</text>';}
@@ -50,43 +58,49 @@ function tenFrame(lang){
     b += label(x, y - 6, words(lang, '10칸 수판 ' + (f + 1), 'Ten-frame ' + (f + 1), '十格框 ' + (f + 1)));
     // 바깥 점선만 자르면 칸 전체가 한 장의 놀이판으로 남는다.
     b += '<rect data-part="frame" x=".5" y="' + (y - 2.5) + '" width="100" height="43" rx="2" style="' + CUT + '"/>';
-    b += rect(x, y, c * 5, c * 2, 'fill:#f5f8f2;stroke:#2f6b4a;stroke-width:.65');
-    b += rect(x, y, c * 5, c, 'fill:#e9f0e7;stroke:none');
+    b += rect(x, y, c * 5, c * 2, 'fill:#fffdf4;stroke:#2f6b4a;stroke-width:.65');
+    b += rect(x, y, c * 5, c, 'fill:#eaf6ee;stroke:none');
     for(var i = 1; i < 5; i++) b += '<line x1="' + (x + c * i) + '" y1="' + y + '" x2="' + (x + c * i) + '" y2="' + (y + c * 2) + '" style="' + LINE + '"/>';
     b += '<line x1="' + x + '" y1="' + (y + c) + '" x2="' + (x + c * 5) + '" y2="' + (y + c) + '" style="stroke:#2f6b4a;stroke-width:.65"/>';
   }
-  b += label(105, 9, words(lang, '동그라미 20개', '20 counters', '20个圆片'));
+  /* 수 조각은 서로 붙은 네모 — 곧은 선으로만 자른다(동그라미는 어린 손에 어렵다). 가로로 길게 자른 뒤 한 칸씩. */
+  var s0 = 17.5, x0 = 107, y0 = 15;
+  b += label(105, 9, words(lang, '수 조각 20개 · 줄대로 곧게 잘라요', '20 counters · cut straight lines', '20个数片 · 沿直线剪'));
   for(var k = 0; k < 20; k++){
-    var cx = 113.5 + (k % 4) * 18.5, cy = 24 + Math.floor(k / 4) * 22;
-    var first = k < 10;
-    b += '<circle data-part="counter" cx="' + cx + '" cy="' + cy + '" r="8.5" style="fill:' + (first ? '#e9f0e7' : '#fff1d1') + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
+    var tx = x0 + (k % 4) * s0, ty = y0 + Math.floor(k / 4) * s0, first = k < 10;
+    b += '<rect data-part="counter" x="' + tx + '" y="' + ty + '" width="' + s0 + '" height="' + s0 + '" style="fill:#fff;stroke:#191511;stroke-width:.45;stroke-dasharray:1.8 1.2"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="6.8" style="fill:' + (first ? '#6cc98a' : '#ffcf4d') + ';stroke:' + (first ? '#2f6b4a' : '#9a6b00') + ';stroke-width:.5"/>';
     // 색을 볼 수 없어도 가운데 점/고리로 두 묶음을 구별한다.
-    b += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (first ? 2.2 : 3.4) + '" style="fill:' + (first ? '#2f6b4a' : 'none') + ';stroke:' + (first ? '#2f6b4a' : '#765614') + ';stroke-width:.65"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="' + (first ? 2.2 : 3.3) + '" style="fill:' + (first ? '#1d4a31' : 'none') + ';stroke:' + (first ? '#1d4a31' : '#6b4a00') + ';stroke-width:.7"/>';
   }
+  b += scissors(103.2, y0);
   b += label(3, 133, words(lang, '한 칸에 하나씩 놓아요. 한 줄은 5개, 두 줄은 10개예요.', 'One counter per box. One row holds 5; two rows hold 10.', '每格放一个。一行5个，两行10个。'));
   return svg(180, 140, b);
 }
 
 /* 백 모형·십 모형·일 모형은 같은 단위 길이(8mm)를 공유한다. */
 function placeValue(lang){
-  var b = '', ox = 3, oy = 14, u = 8;
+  var b = '', ox = 3, oy = 14, u = 8, H = PLACE[100], T = PLACE[10], O = PLACE[1];
   b += label(ox, oy - 5, words(lang, '백 모형 1개', '1 hundred flat', '1个百板'));
-  b += rect(ox, oy, u * 10, u * 10, 'fill:#f5f8f2;stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6');
+  b += rect(ox, oy, u * 10, u * 10, 'fill:' + H[0] + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6');
   for(var i = 1; i < 10; i++){
     b += '<line x1="' + (ox + u * i) + '" y1="' + oy + '" x2="' + (ox + u * i) + '" y2="' + (oy + u * 10) + '" style="' + (i === 5 ? LINE : THIN) + '"/>';
     b += '<line x1="' + ox + '" y1="' + (oy + u * i) + '" x2="' + (ox + u * 10) + '" y2="' + (oy + u * i) + '" style="' + (i === 5 ? LINE : THIN) + '"/>';
   }
-  var bx = 92;
-  b += label(bx, oy - 5, words(lang, '십막대 8개', '8 ten rods', '8根十条'));
+  /* 십막대 8개는 서로 붙어 있다 — 세로로 곧게 아홉 번만 자르면 된다. */
+  var bx = 96;
+  b += label(bx, oy - 5, words(lang, '십막대 8개 · 세로로 곧게', '8 ten rods · straight cuts', '8根十条 · 竖着直剪'));
   for(var m = 0; m < 8; m++){
-    var x = bx + m * 11;
-    b += '<rect data-part="rod" x="' + x + '" y="' + oy + '" width="' + u + '" height="' + (u * 10) + '" style="fill:#e9f0e7;stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
+    var x = bx + m * u;
+    b += '<rect data-part="rod" x="' + x + '" y="' + oy + '" width="' + u + '" height="' + (u * 10) + '" style="fill:' + T[0] + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
     for(var j = 1; j < 10; j++) b += '<line x1="' + x + '" y1="' + (oy + u * j) + '" x2="' + (x + u) + '" y2="' + (oy + u * j) + '" style="' + (j === 5 ? LINE : THIN) + '"/>';
   }
+  b += scissors(bx - 4, oy);
+  /* 낱개 20개도 두 줄로 붙어 있다 — 가로로 한 번, 그다음 한 칸씩. */
   var sy = 108;
-  b += label(ox, sy - 5, words(lang, '일 모형 20개 (낱개)', '20 ones', '20个个位方块'));
+  b += label(ox, sy - 5, words(lang, '일 모형 20개 (낱개) · 줄대로 곧게', '20 ones · cut straight lines', '20个个位方块 · 沿直线剪'));
   for(var r = 0; r < 2; r++) for(var k = 0; k < 10; k++)
-    b += '<rect data-part="one" x="' + (ox + k * 12) + '" y="' + (sy + r * 12) + '" width="' + u + '" height="' + u + '" style="fill:#fff1d1;stroke:#191511;stroke-width:.45;stroke-dasharray:1.2 .9"/>';
+    b += '<rect data-part="one" x="' + (ox + k * u) + '" y="' + (sy + r * u) + '" width="' + u + '" height="' + u + '" style="fill:' + O[0] + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.2 .9"/>';
   b += label(3, 140, words(lang, '낱개 10개를 모으면 십막대 1개와 같아요.', 'Ten ones have the same value as one ten rod.', '10个一与1根十条表示的数一样大。'));
   return svg(180, 146, b);
 }
@@ -98,16 +112,20 @@ function hundredBoard(lang){
   b += '<rect data-part="frame" x="' + (ox - 2) + '" y="' + (oy - 2) + '" width="' + (c * 10 + 4) + '" height="' + (c * 10 + 4) + '" rx="2" style="' + CUT + '"/>';
   for(var r = 0; r < 10; r++) for(var k = 0; k < 10; k++){
     var n = r * 10 + k + 1;
-    b += '<rect data-part="hundred-cell" x="' + (ox + k * c) + '" y="' + (oy + r * c) + '" width="' + c + '" height="' + c + '" style="fill:' + (k === 9 ? '#e9f0e7' : '#fff') + ';stroke:#2f6b4a;stroke-width:.3"/>';
+    /* 줄마다 바탕을 번갈아 칠하고, 10·20·…·100 이 있는 끝 줄은 더 진하게. */
+    b += '<rect data-part="hundred-cell" x="' + (ox + k * c) + '" y="' + (oy + r * c) + '" width="' + c + '" height="' + c + '" style="fill:' + (k === 9 ? '#ffdf80' : (r % 2 ? '#eaf6ee' : '#fff')) + ';stroke:#2f6b4a;stroke-width:.3"/>';
     b += text(ox + k * c + c / 2, oy + r * c + c / 2 + 1.8, n, n === 100 ? 4.3 : 5, 'middle');
   }
-  var cx0 = 144;
-  b += label(cx0 - 6, oy - 3.5, words(lang, '수 칩 14개', '14 counters', '14个圆片'));
+  /* 수 칩은 붙어 있는 네모 14개 — 곧은 선으로만 자른다. */
+  var s0 = 15, x0 = 146;
+  b += label(142, oy - 3.5, words(lang, '수 칩 14개', '14 chips', '14个数片'));
   for(var i = 0; i < 14; i++){
-    var x = cx0 + (i % 2) * 17, y = oy + 7 + Math.floor(i / 2) * 17, first = i % 2 === 0;
-    b += '<circle data-part="counter" cx="' + x + '" cy="' + y + '" r="7" style="fill:' + (first ? '#e9f0e7' : '#fff1d1') + ';fill-opacity:.9;stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
-    b += '<circle cx="' + x + '" cy="' + y + '" r="' + (first ? 1.8 : 2.8) + '" style="fill:' + (first ? '#2f6b4a' : 'none') + ';stroke:' + (first ? '#2f6b4a' : '#765614') + ';stroke-width:.6"/>';
+    var tx = x0 + (i % 2) * s0, ty = oy + Math.floor(i / 2) * s0, first = i % 2 === 0;
+    b += '<rect data-part="counter" x="' + tx + '" y="' + ty + '" width="' + s0 + '" height="' + s0 + '" style="fill:#fff;stroke:#191511;stroke-width:.45;stroke-dasharray:1.8 1.2"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="5.6" style="fill:' + (first ? '#6cc98a' : '#ffcf4d') + ';fill-opacity:.85;stroke:' + (first ? '#2f6b4a' : '#9a6b00') + ';stroke-width:.5"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="' + (first ? 1.8 : 2.7) + '" style="fill:' + (first ? '#1d4a31' : 'none') + ';stroke:' + (first ? '#1d4a31' : '#6b4a00') + ';stroke-width:.6"/>';
   }
+  b += scissors(x0 - 3.6, oy);
   b += label(3, 146, words(lang, '아래로 한 칸 가면 10 큰 수, 오른쪽으로 한 칸 가면 1 큰 수예요.', 'One box down is 10 more. One box to the right is 1 more.', '往下一格大10，往右一格大1。'));
   return svg(180, 149, b);
 }
@@ -115,43 +133,49 @@ function hundredBoard(lang){
 /* 14. 수막대 — 1~10. 한 줄에 놓인 두 막대를 이으면 언제나 10이다(2026-11-10). 곧은 선만 오린다. */
 /* 유아 과정(C0)은 19주 전까지 +, −, = 기호를 쓰지 않는다(check-c0-cognitive). 이 교구 지면에도 식을 쓰지 않고 말로만 적는다. */
 function numberRods(lang){
-  var b = '', ox = 3, oy = 12, u = 14, h = 13, gap = 4;
+  var b = '', ox = 8, oy = 12, u = 14, h = 14;
   var rows = [[1,9],[2,8],[3,7],[4,6],[5,5],[10],[1,2,3,4]];
-  b += label(ox, oy - 5, words(lang, '수막대 · 한 줄의 막대를 이으면 10', 'Number rods · each row makes 10', '数棒 · 每一行合起来是10'));
+  b += label(3, oy - 5, words(lang, '수막대 · 한 줄의 막대를 이으면 10', 'Number rods · each row makes 10', '数棒 · 每一行合起来是10'));
+  /* 줄과 줄, 막대와 막대가 붙어 있다 — 가로로 여섯 번 길게 자른 뒤, 줄마다 세로로 한두 번. */
   rows.forEach(function(row, r){
-    var x = ox, y = oy + r * (h + 4);
-    row.forEach(function(n, i){
-      b += '<rect data-part="rod-strip" data-n="' + n + '" x="' + x + '" y="' + y + '" width="' + (u * n) + '" height="' + h + '" style="fill:' + (n % 2 ? '#e9f0e7' : '#fff1d1') + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
-      for(var j = 1; j < n; j++) b += '<line x1="' + (x + u * j) + '" y1="' + y + '" x2="' + (x + u * j) + '" y2="' + (y + h) + '" style="' + THIN + '"/>';
+    var x = ox, y = oy + r * h;
+    row.forEach(function(n){
+      b += '<rect data-part="rod-strip" data-n="' + n + '" x="' + x + '" y="' + y + '" width="' + (u * n) + '" height="' + h + '" style="fill:' + ROD[n] + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
+      for(var j = 1; j < n; j++) b += '<line x1="' + (x + u * j) + '" y1="' + (y + 2.5) + '" x2="' + (x + u * j) + '" y2="' + (y + h - 2.5) + '" style="' + THIN + '"/>';
       b += text(x + u * n / 2, y + h / 2 + 2, n, 5.5, 'middle');
-      x += u * n + (row.length > 1 && r < 5 ? gap : 2);
+      x += u * n;
     });
   });
-  b += label(3, 137, words(lang, '막대 안의 가는 선은 자르지 않아요. 한 칸이 1이에요.', 'Do not cut the thin lines inside a rod. One box is 1.', '棒里面的细线不要剪。一格是1。'));
-  return svg(180, 140, b);
+  b += scissors(ox - 4.6, oy + h);
+  b += label(3, 122, words(lang, '먼저 가로로 길게 자르고, 그다음 굵은 점선에서 막대를 나눠요.', 'Cut the long rows first, then split each row at the dashed line.', '先横着剪成长条，再在粗虚线处把数棒分开。'));
+  b += label(3, 130, words(lang, '막대 안의 가는 선은 자르지 않아요. 한 칸이 1이에요.', 'Do not cut the thin lines inside a rod. One box is 1.', '棒里面的细线不要剪。一格是1。'));
+  return svg(180, 134, b);
 }
 
 /* 15. 자릿값 판과 수 칩 — 천·백·십·일(2026-11-10). 네 자리 수 과정용. 칩은 네모라 곧게 자른다. */
 function placeChips(lang){
-  var b = '', ox = 3, oy = 12, cw = 34, bh = 46;
+  var b = '', ox = 3, oy = 12, cw = 34, bh = 46, vals = [1000, 100, 10, 1];
   var heads = [words(lang,'천','Thousands','千'), words(lang,'백','Hundreds','百'), words(lang,'십','Tens','十'), words(lang,'일','Ones','个')];
   b += label(ox, oy - 5, words(lang, '자릿값 판', 'Place-value mat', '数位板'));
   b += '<rect data-part="frame" x="' + (ox - 2) + '" y="' + (oy - 2) + '" width="' + (cw * 4 + 4) + '" height="' + (bh + 4) + '" rx="2" style="' + CUT + '"/>';
   heads.forEach(function(t, i){
-    b += rect(ox + i * cw, oy, cw, bh, 'fill:' + (i % 2 ? '#fff' : '#f5f8f2') + ';stroke:#2f6b4a;stroke-width:.5');
-    b += rect(ox + i * cw, oy, cw, 9, 'fill:#e9f0e7;stroke:#2f6b4a;stroke-width:.5');
+    var col = PLACE[vals[i]];
+    b += rect(ox + i * cw, oy, cw, bh, 'fill:#fff;stroke:' + col[1] + ';stroke-width:.6');
+    b += rect(ox + i * cw, oy, cw, 9, 'fill:' + col[0] + ';stroke:' + col[1] + ';stroke-width:.6');
     b += text(ox + i * cw + cw / 2, oy + 6.5, t, 4.4, 'middle');
   });
-  var sets = [[1000,4,'#fff'],[100,12,'#e9f0e7'],[10,12,'#fff1d1'],[1,12,'#fff']], y = oy + bh + 12, u = 13.5;
-  b += label(ox, y - 4, words(lang, '수 칩 · 1000 네 개, 100·10·1 열두 개씩', 'Chips · four 1000s; twelve each of 100, 10, 1', '数片 · 1000四个，100、10、1各十二个'));
+  /* 칩은 줄끼리 붙어 있는 네모 — 가로로 길게 자른 뒤 한 칸씩. 색은 자릿값 판의 머리 색과 같다. */
+  var sets = [[1000,4],[100,12],[10,12],[1,12]], y = oy + bh + 12, u = 13.5;
+  b += label(ox, y - 4, words(lang, '수 칩 · 1000 네 개, 100·10·1 열두 개씩 · 줄대로 곧게', 'Chips · four 1000s; twelve each of 100, 10, 1 · straight cuts', '数片 · 1000四个，100、10、1各十二个 · 沿直线剪'));
   sets.forEach(function(st, r){
     for(var k = 0; k < st[1]; k++){
-      var x = ox + k * u, yy = y + r * (u + 2.5);
-      b += '<rect data-part="value-chip" data-v="' + st[0] + '" x="' + x + '" y="' + yy + '" width="' + u + '" height="' + u + '" style="fill:' + st[2] + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
+      var x = ox + 6 + k * u, yy = y + r * u;
+      b += '<rect data-part="value-chip" data-v="' + st[0] + '" x="' + x + '" y="' + yy + '" width="' + u + '" height="' + u + '" style="fill:' + PLACE[st[0]][0] + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
       b += text(x + u / 2, yy + u / 2 + 1.5, st[0], st[0] === 1000 ? 3.6 : 4.2, 'middle');
     }
   });
-  return svg(180, 142, b);
+  b += scissors(ox + 1.4, y + u);
+  return svg(180, 130, b);
 }
 
 /* 3. 수직선 띠 — 0~20 두 개(뛰어세기·덧뺄), 0~100 한 개(십의 자리로 건너뛰기). */
@@ -214,7 +238,7 @@ function fractionDisc(lang){
   var b='',R=25,parts=[1,2,3,4,6,8];
   parts.forEach(function(n,i){
     var cx=32+i%3*58,cy=30+Math.floor(i/3)*66;
-    b+='<circle data-part="fraction-disc" data-parts="'+n+'" cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+(i%2?P.tint:P.soft)+'" stroke="'+P.ink+'" stroke-width=".5" stroke-dasharray="2 1.5"/>';
+    b+='<circle data-part="fraction-disc" data-parts="'+n+'" cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+PIECE[i]+'" stroke="'+P.ink+'" stroke-width=".5" stroke-dasharray="2 1.5"/>';
     for(var k=0;k<n&&n>1;k++){var a=2*Math.PI*k/n-Math.PI/2;b+=segment(cx,cy,cx+R*Math.cos(a),cy+R*Math.sin(a),CUT_S);}
     var fy=cy+R+8;
     if(n===1)b+=text(cx,fy,words(lang,'전체 1','1 whole','整体1'),3.8,'middle');
@@ -259,7 +283,7 @@ function pentomino(lang){
     b += '<g data-part="pento-piece" data-piece="'+k+'">';
     cells.forEach(function(c){
       var x = gx + c[0] * u, y = gy + c[1] * u;
-      b += rect(x, y, u, u, 'fill:'+(n%2?P.tint:P.soft)+';stroke:#8a8374;stroke-width:.25');
+      b += rect(x, y, u, u, 'fill:'+PIECE[n]+';stroke:#8a8374;stroke-width:.25');
       /* 이웃이 없는 변만 자르는 선 */
       if(!has[(c[0]) + ',' + (c[1] - 1)]) b += '<line x1="' + x + '" y1="' + y + '" x2="' + (x + u) + '" y2="' + y + '" style="' + CUT + '"/>';
       if(!has[(c[0]) + ',' + (c[1] + 1)]) b += '<line x1="' + x + '" y1="' + (y + u) + '" x2="' + (x + u) + '" y2="' + (y + u) + '" style="' + CUT + '"/>';
@@ -332,7 +356,7 @@ function unitCircle(lang){
 var PENTO_EXAMPLE=[["F", "I", "I", "I", "I", "I"], ["F", "F", "F", "X", "U", "U"], ["L", "F", "X", "X", "X", "U"], ["L", "P", "P", "X", "U", "U"], ["L", "P", "P", "V", "V", "V"], ["L", "L", "P", "Z", "N", "V"], ["Y", "Z", "Z", "Z", "N", "V"], ["Y", "Z", "T", "W", "N", "N"], ["Y", "Y", "T", "W", "W", "N"], ["Y", "T", "T", "T", "W", "W"]];
 function pentoPicture(x,y,u){
  var b='',names='FILNPTUVWXYZ';
- PENTO_EXAMPLE.forEach(function(row,r){row.forEach(function(k,c){var fill=names.indexOf(k)%2?P.tint:P.soft;b+='<rect data-part="pento-example-cell" data-piece="'+k+'" x="'+(x+c*u)+'" y="'+(y+r*u)+'" width="'+u+'" height="'+u+'" fill="'+fill+'"/>';[[0,-1],[0,1],[-1,0],[1,0]].forEach(function(d){var rr=r+d[1],cc=c+d[0];if(PENTO_EXAMPLE[rr]&&PENTO_EXAMPLE[rr][cc]===k)return;var xa=x+c*u,ya=y+r*u;b+=segment(xa+(d[0]===1?u:0),ya+(d[1]===1?u:0),xa+(d[0]===-1?0:u),ya+(d[1]===-1?0:u),'stroke:'+P.ink+';stroke-width:.35');});});});return b;
+ PENTO_EXAMPLE.forEach(function(row,r){row.forEach(function(k,c){var fill=PIECE[names.indexOf(k)];b+='<rect data-part="pento-example-cell" data-piece="'+k+'" x="'+(x+c*u)+'" y="'+(y+r*u)+'" width="'+u+'" height="'+u+'" fill="'+fill+'"/>';[[0,-1],[0,1],[-1,0],[1,0]].forEach(function(d){var rr=r+d[1],cc=c+d[0];if(PENTO_EXAMPLE[rr]&&PENTO_EXAMPLE[rr][cc]===k)return;var xa=x+c*u,ya=y+r*u;b+=segment(xa+(d[0]===1?u:0),ya+(d[1]===1?u:0),xa+(d[0]===-1?0:u),ya+(d[1]===-1?0:u),'stroke:'+P.ink+';stroke-width:.35');});});});return b;
 }
 /* Small worked states are separate from pieces that will be cut out. */
 function paperDemo(key,lang){
@@ -341,21 +365,21 @@ function paperDemo(key,lang){
  if(key==='tenframe'){
   [10,5].forEach(function(n,f){var x=4+f*48,y=5,c=7;b+=rect(x,y,35,14,LINE);for(var j=1;j<5;j++)b+=segment(x+j*c,y,x+j*c,y+14,THIN);b+=segment(x,y+7,x+35,y+7,LINE);for(var k=0;k<n;k++)b+=dot(x+(k%5+.5)*c,y+(Math.floor(k/5)+.5)*c,f===1||(f===0&&k>=8));});
  }else if(key==='place'){
-  b+=rect(2,1,25,25,'fill:#f5f8f2;stroke:'+g+';stroke-width:.4');for(var q=1;q<10;q++)b+=segment(2+2.5*q,1,2+2.5*q,26,THIN)+segment(2,1+2.5*q,27,1+2.5*q,THIN);
-  for(var r=0;r<3;r++){b+=rect(32+r*5,1,2.5,25,'fill:'+P.soft+';stroke:'+g+';stroke-width:.4');for(var k=1;k<10;k++)b+=segment(32+r*5,1+2.5*k,34.5+r*5,1+2.5*k,THIN);}
-  for(var i=0;i<7;i++)b+=rect(50+i%4*5,6+Math.floor(i/4)*8,2.5,2.5,'fill:'+P.tint+';stroke:'+t+';stroke-width:.4');b+=text(86,18,'137',9,'middle');
+  b+=rect(2,1,25,25,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.4');for(var q=1;q<10;q++)b+=segment(2+2.5*q,1,2+2.5*q,26,THIN)+segment(2,1+2.5*q,27,1+2.5*q,THIN);
+  for(var r=0;r<3;r++){b+=rect(32+r*5,1,2.5,25,'fill:'+PLACE[10][0]+';stroke:'+PLACE[10][1]+';stroke-width:.4');for(var k=1;k<10;k++)b+=segment(32+r*5,1+2.5*k,34.5+r*5,1+2.5*k,THIN);}
+  for(var i=0;i<7;i++)b+=rect(50+i%4*5,6+Math.floor(i/4)*8,2.5,2.5,'fill:'+PLACE[1][0]+';stroke:'+PLACE[1][1]+';stroke-width:.4');b+=text(86,18,'137',9,'middle');
  }else if(key==='hundred'){
   var c=8,x=30,y=1;[[23,24,25],[33,34,35],[43,44,45]].forEach(function(row,r){row.forEach(function(n,k){var on=n===34,to=n===44;b+=rect(x+k*c*1.6,y+r*c*1.1,c*1.6,c*1.1,'fill:'+(on?P.soft:to?P.tint:'#fff')+';stroke:'+g+';stroke-width:.35');b+=text(x+k*c*1.6+c*.8,y+r*c*1.1+6.3,n,4.2,'middle');});});
   b+=segment(x+c*2.4,y+c*1.9,x+c*2.4,y+c*2.3,'stroke:'+g+';stroke-width:.7')+text(84,17,'+10',5.5,'middle');
  }else if(key==='rods'){
-  var u=5.2,x=14,y=3;b+=rect(x,y,u*10,8,'fill:'+P.tint+';stroke:'+g+';stroke-width:.45')+text(x+u*5,y+6,'10',4.5,'middle');
-  b+=rect(x,y+11,u*3,8,'fill:'+P.soft+';stroke:'+g+';stroke-width:.45')+text(x+u*1.5,y+17,'3',4.5,'middle');
+  var u=5.2,x=14,y=3;b+=rect(x,y,u*10,8,'fill:'+ROD[10]+';stroke:'+g+';stroke-width:.45')+text(x+u*5,y+6,'10',4.5,'middle');
+  b+=rect(x,y+11,u*3,8,'fill:'+ROD[3]+';stroke:'+g+';stroke-width:.45')+text(x+u*1.5,y+17,'3',4.5,'middle');
   b+=rect(x+u*3,y+11,u*7,8,'fill:#fff;stroke:'+t+';stroke-width:.45;stroke-dasharray:1.4 1')+text(x+u*6.5,y+17,'7',4.5,'middle');
  }else if(key==='placechips'){
-  var u=5.4,x=4;for(var i=0;i<12;i++){var cx=x+(i%6)*(u+.8),cy=3+Math.floor(i/6)*(u+.8);b+=rect(cx,cy,u,u,'fill:'+P.soft+';stroke:'+g+';stroke-width:.35');}
+  var u=5.4,x=4;for(var i=0;i<12;i++){var cx=x+(i%6)*(u+.8),cy=3+Math.floor(i/6)*(u+.8);b+=rect(cx,cy,u,u,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.35');}
   b+=rect(x-1.2,1.8,5*(u+.8)+u+1.6,u+2.4,'fill:none;stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1')+rect(x+4*(u+.8)-1.2,3+u+.8-1.2,2*(u+.8)+.6,u+2.4,'fill:none;stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1');
-  b+=text(52,17,'→',6,'middle')+rect(62,8,11,11,'fill:#fff;stroke:'+g+';stroke-width:.45')+text(67.5,15.3,'1000',3,'middle');
-  b+=rect(76,8,7,7,'fill:'+P.soft+';stroke:'+g+';stroke-width:.35')+rect(84,8,7,7,'fill:'+P.soft+';stroke:'+g+';stroke-width:.35');
+  b+=text(52,17,'→',6,'middle')+rect(62,8,11,11,'fill:'+PLACE[1000][0]+';stroke:'+PLACE[1000][1]+';stroke-width:.45')+text(67.5,15.3,'1000',3,'middle');
+  b+=rect(76,8,7,7,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.35')+rect(84,8,7,7,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.35');
  }else if(key==='numberline'){
   b+=segment(5,17,96,17,LINE)+arrow(96,17,1,g);for(var i=0;i<6;i++){var x=8+i*16;b+=segment(x,15,x,19,LINE)+text(x,25,8+i,3.7,'middle');if(i<5)b+='<path d="M'+x+' 15 Q'+(x+8)+' 1 '+(x+16)+' 15" fill="none" stroke="'+g+'" stroke-width=".6"/>'+arrow(x+16,15,1,g);}
  }else if(key==='array'){
@@ -392,7 +416,7 @@ window.NM_PAPER_TOOLS = [
       "zh": "十格框与圆片"
     },
     "why": {
-      "ko": "10칸 수판(십틀)은 동그라미를 놓는 빈 칸이에요. 낱개 10개를 한 줄로 묶은 십막대와는 달라요.",
+      "ko": "10칸 수판(십틀)은 수 조각을 놓는 빈 칸이에요. 낱개 10개를 한 줄로 묶은 십막대와는 달라요.",
       "en": "A ten-frame has ten spaces for counters. A ten rod is different: ten units joined in a row.",
       "zh": "十格框是放圆片的十个空格。十条则是把十个单位连成一行，两者不同。"
     },
@@ -438,9 +462,9 @@ window.NM_PAPER_TOOLS = [
         "zh": "用这套纸教具就够了"
       },
       "how": {
-        "ko": "바깥 점선을 따라 수판 2장과 동그라미를 오려요. 수판 안쪽 선은 자르지 않아요. 가위는 보호자와 함께 써요.",
-        "en": "Cut out both frames and the counters along the dashed outlines. Keep the grid lines intact. An adult helps with scissors.",
-        "zh": "沿外侧虚线剪下两张框和圆片，框内的实线不要剪。请大人协助使用剪刀。"
+        "ko": "수판 2장은 바깥 점선만 오려요. 수 조각은 줄대로 곧게 자르면 돼요. 수판 안쪽 선은 자르지 않아요. 가위는 보호자와 함께 써요.",
+        "en": "Cut each frame along its outer dashed line only. The counters are squares, so every cut is straight. An adult helps with scissors.",
+        "zh": "两张框只剪外侧虚线。数片是方形，直着剪就行。框内的实线不要剪。请大人协助使用剪刀。"
       }
     },
     "courseIds": [
