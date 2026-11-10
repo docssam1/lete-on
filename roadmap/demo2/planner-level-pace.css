@@ -1,12 +1,12 @@
 /* 레벨 기준 비교 (planner-level-pace.js). 이 구역 안에서만 쓰는 값. */
 .level-pace{--lp-ink:#241f3a;--lp-muted:#625b78;--lp-line:#e4dce9;--lp-panel:#fff;--lp-now:#5b3a6c;--lp-c0:#f8f3fb;--lp-c1:#f0f8f5;--lp-c2:#fdf7ec;
- --lp-s0:#f0e7f7;--lp-s0-ink:#513865;--lp-s1:#e3f2ed;--lp-s1-ink:#235c52;--lp-s2:#fbefdb;--lp-s2-ink:#795017;--lp-s3:#ebe8f1;--lp-s3-ink:#4f4860;
+ --lp-s0:#f0e7f7;--lp-s0-ink:#513865;--lp-s1:#e3f2ed;--lp-s1-ink:#235c52;--lp-s2:#fbefdb;--lp-s2-ink:#795017;--lp-s3:#f8e8f0;--lp-s3-ink:#7a3f63;--lp-s4:#e9e4f6;--lp-s4-ink:#463a78;--lp-s5:#ebe8f1;--lp-s5-ink:#4f4860;--lp-c3:#fcf3f7;--lp-c4:#f4f1fb;
  display:flex;flex-direction:column;gap:10px;margin-top:20px;color:var(--lp-ink)}
 .level-pace h3{margin:0;font-size:17px;line-height:1.35}
 .level-pace-art{overflow:hidden;border-radius:14px}
 .level-pace-art img{display:block;width:100%;height:auto;aspect-ratio:16/7;object-fit:cover;object-position:50% 60%}
 .level-pace-scroll{overflow-x:auto;border:1px solid var(--lp-line);border-radius:14px;background:var(--lp-panel)}
-.level-pace-grid{min-width:760px;padding:14px 16px 16px;display:grid;grid-template-columns:230px 1fr;row-gap:6px;column-gap:12px;align-items:center}
+.level-pace-grid{min-width:900px;padding:14px 16px 16px;display:grid;grid-template-columns:230px 1fr;row-gap:6px;column-gap:12px;align-items:center}
 .level-pace-grid .axis{position:relative;height:34px;border-bottom:1px solid var(--lp-line)}
 .level-pace-grid .axis span{position:absolute;bottom:0;height:100%;display:flex;align-items:flex-end;padding:0 0 4px 6px;border-left:1px solid var(--lp-line);font-size:12.5px;color:var(--lp-muted);white-space:nowrap}
 .level-pace-grid .axis b{color:var(--lp-ink)}
@@ -16,14 +16,14 @@
 .level-pace .lv{display:table;align-self:flex-start;margin:3px 0;padding:0 8px;border-radius:999px;background:#eceaf3;color:var(--lp-ink);font-size:12px;font-weight:700;line-height:1.6}
 .level-pace .is-now .lv{background:#efe6f6;color:var(--lp-now)}
 /* 레벨 × 과정 표 */
-.level-pace-table{display:grid;grid-template-columns:minmax(220px,1.3fr) repeat(3,minmax(150px,1fr));min-width:720px}
+.level-pace-table{display:grid;grid-template-columns:minmax(220px,1.4fr) repeat(5,minmax(124px,1fr));min-width:900px}
 .level-pace-table>div{padding:12px;border-bottom:1px solid var(--lp-line);border-right:1px solid var(--lp-line);min-width:0}
-.level-pace-table>div:nth-child(4n){border-right:0}
-.level-pace-table>div:nth-last-child(-n+4){border-bottom:0}
+.level-pace-table>div:nth-child(6n){border-right:0}
+.level-pace-table>div:nth-last-child(-n+6){border-bottom:0}
 .level-pace-table .corner,.level-pace-table .head{color:#fff;font-size:14px;font-weight:700;text-align:center}
-.level-pace-table .head.c0{background:#76528d}.level-pace-table .head.c1{background:#2f7a6c}.level-pace-table .head.c2{background:#8f5a1c}
-.level-pace-table .cell.c0{background:var(--lp-c0)}.level-pace-table .cell.c1{background:var(--lp-c1)}.level-pace-table .cell.c2{background:var(--lp-c2)}
-.level-pace-table .cell.c0 b{color:var(--lp-s0-ink)}.level-pace-table .cell.c1 b{color:var(--lp-s1-ink)}.level-pace-table .cell.c2 b{color:var(--lp-s2-ink)}
+.level-pace-table .head.c0{background:#76528d}.level-pace-table .head.c1{background:#2f7a6c}.level-pace-table .head.c2{background:#8f5a1c}.level-pace-table .head.c3{background:#7a3f63}.level-pace-table .head.c4{background:#463a78}
+.level-pace-table .cell.c0{background:var(--lp-c0)}.level-pace-table .cell.c1{background:var(--lp-c1)}.level-pace-table .cell.c2{background:var(--lp-c2)}.level-pace-table .cell.c3{background:var(--lp-c3)}.level-pace-table .cell.c4{background:var(--lp-c4)}
+.level-pace-table .cell.c0 b{color:var(--lp-s0-ink)}.level-pace-table .cell.c1 b{color:var(--lp-s1-ink)}.level-pace-table .cell.c2 b{color:var(--lp-s2-ink)}.level-pace-table .cell.c3 b{color:var(--lp-s3-ink)}.level-pace-table .cell.c4 b{color:var(--lp-s4-ink)}
 .level-pace-table .corner{background:#45294f;color:#dccdea;font-size:12px;font-weight:500;text-align:left}
 .level-pace-table .tier{display:flex;flex-direction:column;justify-content:center;background:#f6f4fa;font-size:14px;line-height:1.35}
 .level-pace-table .tier strong{font-size:15px}
@@ -32,7 +32,7 @@
 .level-pace-table .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
 .level-pace-table .cell b{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .level-pace-table .cell small{font-size:13px;line-height:1.4;color:var(--lp-muted)}
-.level-pace-table .cell.is-now.c0{background:var(--lp-s0)}.level-pace-table .cell.is-now.c1{background:var(--lp-s1)}.level-pace-table .cell.is-now.c2{background:var(--lp-s2)}
+.level-pace-table .cell.is-now.c0{background:var(--lp-s0)}.level-pace-table .cell.is-now.c1{background:var(--lp-s1)}.level-pace-table .cell.is-now.c2{background:var(--lp-s2)}.level-pace-table .cell.is-now.c3{background:var(--lp-s3)}.level-pace-table .cell.is-now.c4{background:var(--lp-s4)}
 .level-pace-table .cell.is-now{box-shadow:inset 0 2px 0 var(--lp-now),inset 0 -2px 0 var(--lp-now)}.level-pace-table .cell.is-now b{font-size:20px}
 .level-pace-table .tier.is-now{background:#efe6f6}
 .level-pace-table .tier.is-now{box-shadow:inset 5px 0 0 var(--lp-now),inset 0 2px 0 var(--lp-now),inset 0 -2px 0 var(--lp-now);color:var(--lp-s0-ink)}
@@ -44,6 +44,8 @@
 .level-pace .s1{background:var(--lp-s1);color:var(--lp-s1-ink)}
 .level-pace .s2{background:var(--lp-s2);color:var(--lp-s2-ink)}
 .level-pace .s3{background:var(--lp-s3);color:var(--lp-s3-ink)}
+.level-pace .s4{background:var(--lp-s4);color:var(--lp-s4-ink)}
+.level-pace .s5{background:var(--lp-s5);color:var(--lp-s5-ink)}
 .level-pace-grid .end{position:absolute;top:calc(100% + 2px);transform:translateX(-100%);padding-right:3px;font-size:12px;color:var(--lp-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 .level-pace-grid .end.first{transform:none;padding:0 0 0 3px}
 .level-pace-grid .bar.is-now .end{color:var(--lp-ink);font-weight:700}
@@ -67,7 +69,7 @@
  .level-pace-grid .axis span{font-size:0;padding-left:4px}
  .level-pace-grid .axis b{font-size:12px}
  .level-pace-grid .seg{font-size:12px}
- .level-pace-grid .seg.s0,.level-pace-grid .seg.s2,.level-pace-grid .seg.s3,.level-pace-grid .seg.none{font-size:0}
+ .level-pace-grid .seg.s0,.level-pace-grid .seg.s2,.level-pace-grid .seg.s3,.level-pace-grid .seg.s4,.level-pace-grid .seg.s5,.level-pace-grid .seg.none{font-size:0}
  .level-pace-grid .end{font-size:12px}
 }
 @media print{.level-pace-art{display:none}.level-pace.is-entering .bar{animation:none}}

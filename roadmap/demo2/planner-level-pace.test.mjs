@@ -78,7 +78,7 @@ test('Premier, Fields S and Challenge tables are named as the standard roadmap o
 test('each row names its level and what it studies now, and the table puts the last book under each end month',()=>{
  const now=60,m=P.model(standard('L7',now),LEVELS,fields),row=m.rows.find(r=>r.id==='up1');
  assert.equal(row.level,'L6');assert.equal(row.summary,level('L6').summary);
- assert.deepEqual(Array.from(row.books),['6-2 디딤돌 응용','중3-2 원리해설','공통수학2']);
+ assert.deepEqual(Array.from(row.books),['6-2 디딤돌 응용','중3-2 원리해설','공통수학2','대수','미적분Ⅰ']);
  const at=(rows,t)=>rows.find(b=>t>=b[1]&&t<b[2]+1)[0];
  assert.equal(row.doing.school,at(level('L6').school,now));assert.equal(row.doing.comp,at(level('L6').comp,now));
  const html=P.render(standard('L7',now),fields);
@@ -86,4 +86,16 @@ test('each row names its level and what it studies now, and the table puts the l
  assert.ok(html.includes('class="lv">L6 · '+level('L6').summary));
  const months=end('L7',/^중3-2/)+1-now,i=10+months-1;
  assert.ok(html.includes(`<div class="cell c1 is-now"><b>${2026+Math.floor(i/12)}.${i%12+1}</b><small>중3-2 원리해설</small></div>`));
+});
+
+test('algebra and calculus 1 follow common math 2 in every level, three months each, before the career fork',()=>{
+ for(const l of LEVELS){
+  const i=l.school.findIndex(b=>b[0]==='공통수학2'),rows=l.school.slice(i,i+4);
+  assert.deepEqual(Array.from(rows,b=>b[0]),['공통수학2','대수','미적분Ⅰ','진로: KMO 입문 또는 이과 상위권'],l.id);
+  for(let k=1;k<4;k++)assert.equal(rows[k][1],rows[k-1][2]+1,l.id);
+  assert.equal(rows[1][2]-rows[1][1],2,l.id);assert.equal(rows[2][2]-rows[2][1],2,l.id);
+ }
+ const m=P.model(standard('L7',60),LEVELS,fields);
+ assert.equal(m.rows[0].ends.length,5);
+ assert.match(P.render(standard('L7',60),fields),/class="head c4">미적분Ⅰ/);
 });

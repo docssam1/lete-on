@@ -2,11 +2,12 @@
    날짜는 planner-levels.js 레벨표와 표준 계획의 교과 기준점에서만 계산한다. 합격·도달 판정이 아니다. */
 (function(global){
 'use strict';
-const MARKS=[/^6-2/,/^중3-2/,/^공통수학2/];
-const NAMES=['초등','중등','공통수학1·2','이후 과목'];
-const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','이후 과목'];
+const MARKS=[/^6-2/,/^중3-2/,/^공통수학2/,/^대수$/,/^미적분Ⅰ/];
+const NAMES=['초등','중등','공통수학1·2','대수','미적분Ⅰ','이후 과목'];
+const LAST=MARKS.length;
+const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','대수','미적분Ⅰ','이후 과목'];
 const OFFSETS=[[-2,'up2','두 레벨 위'],[-1,'up1','한 레벨 위'],[0,'now','지금 계획'],[1,'down1','한 레벨 아래']];
-const STAGES=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2'];
+const STAGES=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','대수','미적분Ⅰ'];
 // 원장님 2026-11-10: 프리미어·챌린지·필즈 기준표는 "합격생의 표준 로드맵"으로 부른다(L0 프리미어 · L1 필즈 S · L2 챌린지).
 const PASSED={L0:'프리미어',L1:'필즈 S',L2:'챌린지'};
 let played=false;
@@ -47,12 +48,12 @@ function model(standard,levels,fields){
 function bar(row,m){
  const pc=v=>(Math.min(m.total,Math.max(0,v))/m.total*100).toFixed(2)+'%';
  let from=0,html='',missing=false;
- for(let i=0;i<4;i++){
-  const end=i<3?row.ends[i]:m.total;
+ for(let i=0;i<=LAST;i++){
+  const end=i<LAST?row.ends[i]:m.total;
   if(end===null){missing=true;html+=`<div class="seg none" style="left:${pc(from)};width:${pc(m.total-from)}">기준표에 없음</div>`;break;}
   if(end<=from)continue;
   html+=`<div class="seg s${i}" style="left:${pc(from)};width:${pc(end-from)}">${NAMES[i]}</div>`;
-  if(i<3&&end<m.total){const at=monthAt(m.base,end);html+=`<span class="end${end/m.total<.12?' first':''}" style="left:${pc(end)}">${at.year}.${at.month}</span>`;}
+  if(i<LAST&&end<m.total){const at=monthAt(m.base,end);html+=`<span class="end${end/m.total<.12?' first':''}" style="left:${pc(end)}">${at.year}.${at.month}</span>`;}
   from=end;
  }
  return{html,missing};
