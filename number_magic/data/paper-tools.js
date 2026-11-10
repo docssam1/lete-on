@@ -91,6 +91,69 @@ function placeValue(lang){
   return svg(180, 146, b);
 }
 
+/* 13. 백판 — 1~100 수 배열판과 수 칩(2026-11-10). 아래로 한 칸은 10 큰 수, 오른쪽으로 한 칸은 1 큰 수. */
+function hundredBoard(lang){
+  var b = '', ox = 3, oy = 9, c = 13;
+  b += label(ox, oy - 3.5, words(lang, '백판 · 1부터 100까지', 'Hundred board · 1 to 100', '百数表 · 1到100'));
+  b += '<rect data-part="frame" x="' + (ox - 2) + '" y="' + (oy - 2) + '" width="' + (c * 10 + 4) + '" height="' + (c * 10 + 4) + '" rx="2" style="' + CUT + '"/>';
+  for(var r = 0; r < 10; r++) for(var k = 0; k < 10; k++){
+    var n = r * 10 + k + 1;
+    b += '<rect data-part="hundred-cell" x="' + (ox + k * c) + '" y="' + (oy + r * c) + '" width="' + c + '" height="' + c + '" style="fill:' + (k === 9 ? '#e9f0e7' : '#fff') + ';stroke:#2f6b4a;stroke-width:.3"/>';
+    b += text(ox + k * c + c / 2, oy + r * c + c / 2 + 1.8, n, n === 100 ? 4.3 : 5, 'middle');
+  }
+  var cx0 = 144;
+  b += label(cx0 - 6, oy - 3.5, words(lang, '수 칩 14개', '14 counters', '14个圆片'));
+  for(var i = 0; i < 14; i++){
+    var x = cx0 + (i % 2) * 17, y = oy + 7 + Math.floor(i / 2) * 17, first = i % 2 === 0;
+    b += '<circle data-part="counter" cx="' + x + '" cy="' + y + '" r="7" style="fill:' + (first ? '#e9f0e7' : '#fff1d1') + ';fill-opacity:.9;stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
+    b += '<circle cx="' + x + '" cy="' + y + '" r="' + (first ? 1.8 : 2.8) + '" style="fill:' + (first ? '#2f6b4a' : 'none') + ';stroke:' + (first ? '#2f6b4a' : '#765614') + ';stroke-width:.6"/>';
+  }
+  b += label(3, 146, words(lang, '아래로 한 칸 가면 10 큰 수, 오른쪽으로 한 칸 가면 1 큰 수예요.', 'One box down is 10 more. One box to the right is 1 more.', '往下一格大10，往右一格大1。'));
+  return svg(180, 149, b);
+}
+
+/* 14. 수막대 — 1~10. 한 줄에 놓인 두 막대를 이으면 언제나 10이다(2026-11-10). 곧은 선만 오린다. */
+/* 유아 과정(C0)은 19주 전까지 +, −, = 기호를 쓰지 않는다(check-c0-cognitive). 이 교구 지면에도 식을 쓰지 않고 말로만 적는다. */
+function numberRods(lang){
+  var b = '', ox = 3, oy = 12, u = 14, h = 13, gap = 4;
+  var rows = [[1,9],[2,8],[3,7],[4,6],[5,5],[10],[1,2,3,4]];
+  b += label(ox, oy - 5, words(lang, '수막대 · 한 줄의 막대를 이으면 10', 'Number rods · each row makes 10', '数棒 · 每一行合起来是10'));
+  rows.forEach(function(row, r){
+    var x = ox, y = oy + r * (h + 4);
+    row.forEach(function(n, i){
+      b += '<rect data-part="rod-strip" data-n="' + n + '" x="' + x + '" y="' + y + '" width="' + (u * n) + '" height="' + h + '" style="fill:' + (n % 2 ? '#e9f0e7' : '#fff1d1') + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
+      for(var j = 1; j < n; j++) b += '<line x1="' + (x + u * j) + '" y1="' + y + '" x2="' + (x + u * j) + '" y2="' + (y + h) + '" style="' + THIN + '"/>';
+      b += text(x + u * n / 2, y + h / 2 + 2, n, 5.5, 'middle');
+      x += u * n + (row.length > 1 && r < 5 ? gap : 2);
+    });
+  });
+  b += label(3, 137, words(lang, '막대 안의 가는 선은 자르지 않아요. 한 칸이 1이에요.', 'Do not cut the thin lines inside a rod. One box is 1.', '棒里面的细线不要剪。一格是1。'));
+  return svg(180, 140, b);
+}
+
+/* 15. 자릿값 판과 수 칩 — 천·백·십·일(2026-11-10). 네 자리 수 과정용. 칩은 네모라 곧게 자른다. */
+function placeChips(lang){
+  var b = '', ox = 3, oy = 12, cw = 34, bh = 46;
+  var heads = [words(lang,'천','Thousands','千'), words(lang,'백','Hundreds','百'), words(lang,'십','Tens','十'), words(lang,'일','Ones','个')];
+  b += label(ox, oy - 5, words(lang, '자릿값 판', 'Place-value mat', '数位板'));
+  b += '<rect data-part="frame" x="' + (ox - 2) + '" y="' + (oy - 2) + '" width="' + (cw * 4 + 4) + '" height="' + (bh + 4) + '" rx="2" style="' + CUT + '"/>';
+  heads.forEach(function(t, i){
+    b += rect(ox + i * cw, oy, cw, bh, 'fill:' + (i % 2 ? '#fff' : '#f5f8f2') + ';stroke:#2f6b4a;stroke-width:.5');
+    b += rect(ox + i * cw, oy, cw, 9, 'fill:#e9f0e7;stroke:#2f6b4a;stroke-width:.5');
+    b += text(ox + i * cw + cw / 2, oy + 6.5, t, 4.4, 'middle');
+  });
+  var sets = [[1000,4,'#fff'],[100,12,'#e9f0e7'],[10,12,'#fff1d1'],[1,12,'#fff']], y = oy + bh + 12, u = 13.5;
+  b += label(ox, y - 4, words(lang, '수 칩 · 1000 네 개, 100·10·1 열두 개씩', 'Chips · four 1000s; twelve each of 100, 10, 1', '数片 · 1000四个，100、10、1各十二个'));
+  sets.forEach(function(st, r){
+    for(var k = 0; k < st[1]; k++){
+      var x = ox + k * u, yy = y + r * (u + 2.5);
+      b += '<rect data-part="value-chip" data-v="' + st[0] + '" x="' + x + '" y="' + yy + '" width="' + u + '" height="' + u + '" style="fill:' + st[2] + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
+      b += text(x + u / 2, yy + u / 2 + 1.5, st[0], st[0] === 1000 ? 3.6 : 4.2, 'middle');
+    }
+  });
+  return svg(180, 142, b);
+}
+
 /* 3. 수직선 띠 — 0~20 두 개(뛰어세기·덧뺄), 0~100 한 개(십의 자리로 건너뛰기). */
 function numberLine(lang){
   var b='',ox=7,w=166;
@@ -278,8 +341,21 @@ function paperDemo(key,lang){
  if(key==='tenframe'){
   [10,5].forEach(function(n,f){var x=4+f*48,y=5,c=7;b+=rect(x,y,35,14,LINE);for(var j=1;j<5;j++)b+=segment(x+j*c,y,x+j*c,y+14,THIN);b+=segment(x,y+7,x+35,y+7,LINE);for(var k=0;k<n;k++)b+=dot(x+(k%5+.5)*c,y+(Math.floor(k/5)+.5)*c,f===1||(f===0&&k>=8));});
  }else if(key==='place'){
-  for(var r=0;r<3;r++){b+=rect(5+r*6,1,2.5,25,'fill:'+P.soft+';stroke:'+g+';stroke-width:.4');for(var k=1;k<10;k++)b+=segment(5+r*6,1+2.5*k,7.5+r*6,1+2.5*k,THIN);}
-  for(var i=0;i<7;i++)b+=rect(37+i%4*6,6+Math.floor(i/4)*8,2.5,2.5,'fill:'+P.tint+';stroke:'+t+';stroke-width:.4');b+=text(85,18,'37',10,'middle');
+  b+=rect(2,1,25,25,'fill:#f5f8f2;stroke:'+g+';stroke-width:.4');for(var q=1;q<10;q++)b+=segment(2+2.5*q,1,2+2.5*q,26,THIN)+segment(2,1+2.5*q,27,1+2.5*q,THIN);
+  for(var r=0;r<3;r++){b+=rect(32+r*5,1,2.5,25,'fill:'+P.soft+';stroke:'+g+';stroke-width:.4');for(var k=1;k<10;k++)b+=segment(32+r*5,1+2.5*k,34.5+r*5,1+2.5*k,THIN);}
+  for(var i=0;i<7;i++)b+=rect(50+i%4*5,6+Math.floor(i/4)*8,2.5,2.5,'fill:'+P.tint+';stroke:'+t+';stroke-width:.4');b+=text(86,18,'137',9,'middle');
+ }else if(key==='hundred'){
+  var c=8,x=30,y=1;[[23,24,25],[33,34,35],[43,44,45]].forEach(function(row,r){row.forEach(function(n,k){var on=n===34,to=n===44;b+=rect(x+k*c*1.6,y+r*c*1.1,c*1.6,c*1.1,'fill:'+(on?P.soft:to?P.tint:'#fff')+';stroke:'+g+';stroke-width:.35');b+=text(x+k*c*1.6+c*.8,y+r*c*1.1+6.3,n,4.2,'middle');});});
+  b+=segment(x+c*2.4,y+c*1.9,x+c*2.4,y+c*2.3,'stroke:'+g+';stroke-width:.7')+text(84,17,'+10',5.5,'middle');
+ }else if(key==='rods'){
+  var u=5.2,x=14,y=3;b+=rect(x,y,u*10,8,'fill:'+P.tint+';stroke:'+g+';stroke-width:.45')+text(x+u*5,y+6,'10',4.5,'middle');
+  b+=rect(x,y+11,u*3,8,'fill:'+P.soft+';stroke:'+g+';stroke-width:.45')+text(x+u*1.5,y+17,'3',4.5,'middle');
+  b+=rect(x+u*3,y+11,u*7,8,'fill:#fff;stroke:'+t+';stroke-width:.45;stroke-dasharray:1.4 1')+text(x+u*6.5,y+17,'7',4.5,'middle');
+ }else if(key==='placechips'){
+  var u=5.4,x=4;for(var i=0;i<12;i++){var cx=x+(i%6)*(u+.8),cy=3+Math.floor(i/6)*(u+.8);b+=rect(cx,cy,u,u,'fill:'+P.soft+';stroke:'+g+';stroke-width:.35');}
+  b+=rect(x-1.2,1.8,5*(u+.8)+u+1.6,u+2.4,'fill:none;stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1')+rect(x+4*(u+.8)-1.2,3+u+.8-1.2,2*(u+.8)+.6,u+2.4,'fill:none;stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1');
+  b+=text(52,17,'→',6,'middle')+rect(62,8,11,11,'fill:#fff;stroke:'+g+';stroke-width:.45')+text(67.5,15.3,'1000',3,'middle');
+  b+=rect(76,8,7,7,'fill:'+P.soft+';stroke:'+g+';stroke-width:.35')+rect(84,8,7,7,'fill:'+P.soft+';stroke:'+g+';stroke-width:.35');
  }else if(key==='numberline'){
   b+=segment(5,17,96,17,LINE)+arrow(96,17,1,g);for(var i=0;i<6;i++){var x=8+i*16;b+=segment(x,15,x,19,LINE)+text(x,25,8+i,3.7,'middle');if(i<5)b+='<path d="M'+x+' 15 Q'+(x+8)+' 1 '+(x+16)+' 15" fill="none" stroke="'+g+'" stroke-width=".6"/>'+arrow(x+16,15,1,g);}
  }else if(key==='array'){
@@ -368,8 +444,10 @@ window.NM_PAPER_TOOLS = [
       }
     },
     "courseIds": [
-      1,
       2
+    ],
+    "secondCourseIds": [
+      1
     ],
     "order": 1,
     "audience": "early",
@@ -398,17 +476,17 @@ window.NM_PAPER_TOOLS = [
     "steps": {
       "ko": [
         "바깥 점선을 따라 백 모형, 십막대, 낱개를 오려요.",
-        "십막대 3개와 낱개 7개를 놓아 37을 만들어요.",
+        "백 모형 1개, 십막대 3개, 낱개 7개를 놓아 137을 만들어요.",
         "낱개 10개를 모아 십막대 1개와 바꾸어 봐요."
       ],
       "en": [
         "Cut along the outer dashed lines.",
-        "Place 3 tens and 7 ones to represent 37.",
+        "Place 1 hundred, 3 tens and 7 ones to represent 137.",
         "Trade ten ones for one ten rod."
       ],
       "zh": [
         "沿外侧虚线剪下数模型。",
-        "摆3根十条、7个一，表示37。",
+        "摆1个百板、3根十条、7个一，表示137。",
         "把10个一换成1根十条。"
       ]
     },
@@ -444,17 +522,16 @@ window.NM_PAPER_TOOLS = [
     },
     "courseIds": [
       3,
-      5,
-      6
+      5
     ],
     "order": 2,
     "audience": "early",
     "portrait": "numi-0-think.png",
-    "exampleTex": "37=30+7",
+    "exampleTex": "137=100+30+7",
     "exampleText": {
-      "ko": "십막대 3개와 낱개 7개로 37을 만들어요.",
-      "en": "Three tens and seven ones represent 37.",
-      "zh": "3根十条和7个一表示37。"
+      "ko": "백 모형 1개, 십막대 3개, 낱개 7개로 137을 만들어요.",
+      "en": "One hundred, three tens and seven ones represent 137.",
+      "zh": "1个百板、3根十条和7个一表示137。"
     },
     "build": placeValue,
     "demo": function(lang){return paperDemo("place",lang);}
@@ -1243,6 +1320,114 @@ window.NM_PAPER_TOOLS = [
     },
     "build": unitCircle,
     "demo": function(lang){return paperDemo("unitcircle",lang);}
+  },
+  {
+    "key": "hundred",
+    "name": {"ko": "백판과 수 칩", "en": "Hundred board and counters", "zh": "百数表与圆片"},
+    "why": {
+      "ko": "백판은 1부터 100까지 수를 열 개씩 줄지어 놓은 판이에요. 수가 어디에 있는지 보면 얼마나 큰지 알 수 있어요.",
+      "en": "A hundred board lines up the numbers 1 to 100 in rows of ten. Where a number sits shows how big it is.",
+      "zh": "百数表把1到100每十个排成一行。看一个数在哪里，就知道它有多大。"
+    },
+    "steps": {
+      "ko": ["34를 찾아 칩을 놓아요.", "바로 아래 칸을 읽어요. 10 큰 수 44예요.", "4, 14, 24처럼 10씩 뛰어 세며 칩을 놓아요."],
+      "en": ["Find 34 and put a counter on it.", "Read the box just below. It is 44, which is 10 more.", "Count on by tens — 4, 14, 24 — and place counters."],
+      "zh": ["找到34，放一个圆片。", "读正下方的一格，是大10的44。", "像4、14、24这样十个十个地数，放上圆片。"]
+    },
+    "buy": {
+      "name": {"ko": "백판(100 숫자판)", "en": "Hundred number board", "zh": "百数板"},
+      "why": {"ko": "판과 숫자 타일이 따로 있어 수를 직접 채워 넣을 수 있어요.", "en": "A board with loose number tiles lets a child build the chart.", "zh": "板和数字片分开，孩子可以自己把数填上去。"},
+      "pick": {"ko": "숫자가 큼직하고 칩이 함께 오는 것.", "en": "Large numerals, with counters included.", "zh": "数字大、附带圆片的。"},
+      "key": "hundred"
+    },
+    "make": {
+      "name": {"ko": "이 종이 교구로 충분해요", "en": "Use this paper set", "zh": "用这套纸教具就够了"},
+      "how": {
+        "ko": "바깥 점선을 따라 백판 한 장과 칩을 오려요. 칩 대신 바둑알이나 단추를 써도 돼요. 가위는 보호자와 함께 써요.",
+        "en": "Cut out the board and counters along the dashed outlines. Buttons or game stones also work. An adult helps with scissors.",
+        "zh": "沿外侧虚线剪下百数表和圆片。也可以用围棋子或纽扣代替。请大人协助使用剪刀。"
+      }
+    },
+    "courseIds": [1],
+    "order": 13,
+    "audience": "early",
+    "portrait": "numi-0-happy.png",
+    "exampleTex": "34+10=44",
+    "exampleText": {"ko": "34에서 아래로 한 칸 가면 44예요.", "en": "One box below 34 is 44.", "zh": "从34往下一格是44。"},
+    "build": hundredBoard,
+    "demo": function(lang){return paperDemo("hundred",lang);}
+  },
+  {
+    "key": "rods",
+    "name": {"ko": "수막대", "en": "Number rods", "zh": "数棒"},
+    "why": {
+      "ko": "수막대는 길이로 수를 보여 줘요. 두 막대를 이어 10 막대와 길이가 같으면, 두 수를 모아 10이 돼요.",
+      "en": "Number rods show a number as a length. If two rods together match the 10 rod, the two numbers make 10.",
+      "zh": "数棒用长度表示数。两根接起来和10的棒一样长，这两个数合起来就是10。"
+    },
+    "steps": {
+      "ko": ["10 막대 아래에 3 막대를 놓아요.", "남은 자리에 꼭 맞는 막대를 찾아요.", "7 막대예요. 3과 7을 모으면 10이에요."],
+      "en": ["Put the 3 rod under the 10 rod.", "Find the rod that fills the space exactly.", "It is the 7 rod. 3 and 7 make 10."],
+      "zh": ["把3的棒放在10的棒下面。", "找一根正好填满空位的棒。", "是7的棒。3和7合起来是10。"]
+    },
+    "buy": {
+      "name": {"ko": "연결 큐브", "en": "Linking cubes", "zh": "连接积木"},
+      "why": {"ko": "큐브를 1개부터 10개까지 이어 붙이면 수막대와 같아요.", "en": "Joining 1 to 10 cubes makes the same set of rods.", "zh": "把积木1个到10个连起来，就和数棒一样。"},
+      "pick": {"ko": "아이 손으로 쉽게 붙이고 뗄 수 있는 크기.", "en": "Easy for small hands to join and separate.", "zh": "选择孩子容易拼接和拆开的大小。"},
+      "key": "cubes"
+    },
+    "make": {
+      "name": {"ko": "이 종이 교구로 충분해요", "en": "Use this paper set", "zh": "用这套纸教具就够了"},
+      "how": {
+        "ko": "굵은 점선을 따라 막대를 오려요. 모두 곧은 선이에요. 막대 안의 가는 선은 자르지 않아요. 가위는 보호자와 함께 써요.",
+        "en": "Cut the rods along the dashed lines — all straight cuts. Do not cut the thin lines inside. An adult helps with scissors.",
+        "zh": "沿虚线剪下数棒，都是直线。棒里面的细线不要剪。请大人协助使用剪刀。"
+      }
+    },
+    "courseIds": [0],
+    "order": 14,
+    "audience": "early",
+    "portrait": "numi-0-happy.png",
+    "exampleTex": "",
+    "exampleText": {"ko": "3 막대와 7 막대를 이으면 10 막대와 길이가 같아요.", "en": "The 3 rod and the 7 rod together match the 10 rod.", "zh": "3的棒和7的棒接起来，和10的棒一样长。"},
+    "build": numberRods,
+    "demo": function(lang){return paperDemo("rods",lang);}
+  },
+  {
+    "key": "placechips",
+    "name": {"ko": "자릿값 판과 수 칩", "en": "Place-value mat and chips", "zh": "数位板与数片"},
+    "why": {
+      "ko": "천, 백, 십, 일의 자리에 칩을 놓아 네 자리 수를 만들어요. 같은 칩 10개는 바로 윗자리 칩 1개와 바꿔요.",
+      "en": "Place chips in the thousands, hundreds, tens and ones columns to build four-digit numbers. Ten of one chip trade for one chip of the next place.",
+      "zh": "在千、百、十、个位上放数片，摆出四位数。同一种数片满10个，就换成上一位的1个。"
+    },
+    "steps": {
+      "ko": ["백의 자리에 100 칩 7개를 놓고, 5개를 더 놓아요.", "100 칩이 12개예요. 10개를 모아 1000 칩 1개와 바꿔요.", "천의 자리 1개, 백의 자리 2개. 1200이에요."],
+      "en": ["Put seven 100 chips in the hundreds column, then five more.", "There are twelve 100 chips. Trade ten of them for one 1000 chip.", "One thousand and two hundreds: 1200."],
+      "zh": ["在百位放7个100，再放5个。", "有12个100。把其中10个换成1个1000。", "千位1个，百位2个，是1200。"]
+    },
+    "buy": {
+      "name": {"ko": "십진 블록 세트", "en": "Base-ten blocks", "zh": "十进制积木"},
+      "why": {"ko": "천 모형까지 들어 있는 세트면 크기로도 비교할 수 있어요.", "en": "A set that includes a thousand cube also shows the sizes.", "zh": "带千位立方体的一套，还可以比较大小。"},
+      "pick": {"ko": "천 모형이 1개 이상 들어 있는 것.", "en": "At least one thousand cube included.", "zh": "至少含1个千位立方体。"},
+      "key": "baseten"
+    },
+    "make": {
+      "name": {"ko": "이 종이 교구로 충분해요", "en": "Use this paper set", "zh": "用这套纸教具就够了"},
+      "how": {
+        "ko": "자릿값 판은 바깥 점선만 오려요. 칩은 네모라 곧게 자르면 돼요. 가위는 보호자와 함께 써요.",
+        "en": "Cut the mat along its outer dashed line only. The chips are squares, so every cut is straight. An adult helps with scissors.",
+        "zh": "数位板只剪外侧虚线。数片是方形，直着剪就行。请大人协助使用剪刀。"
+      }
+    },
+    "courseIds": [6],
+    "order": 15,
+    "audience": "early",
+    "portrait": "numi-0-think.png",
+    "exampleTex": "700+500=1200",
+    "exampleText": {"ko": "100 칩 10개를 1000 칩 1개와 바꿨어요.", "en": "Ten 100 chips were traded for one 1000 chip.", "zh": "把10个100换成了1个1000。"},
+    "build": placeChips,
+    "demo": function(lang){return paperDemo("placechips",lang);}
   }
 ];
 
@@ -1268,12 +1453,21 @@ window.NM_BUY_TOOLS = [
 /* 현재 과정 번호 → 종이 교구. 없으면 null(그 주는 교구 지면이 안 붙는다). */
 window.NM_PAPER_TOOL_OF_COURSE = function(n){
   var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i, ''), 10) : n;
-  if(!(num >= 1)) return null;
+  if(!(num >= 0)) return null;
   for(var i = 0; i < window.NM_PAPER_TOOLS.length; i++){
     var t = window.NM_PAPER_TOOLS[i];
     if(t.courseIds.indexOf(num) >= 0) return t;
   }
   return null;
+};
+/* 그 과정에서 쓰는 교구를 차례로(2026-11-10). [첫 주에 싣는 교구, 둘째 주에 싣는 교구].
+   같은 교구 지면을 매주 다시 싣지 않는다 — 한 번 오려 봉투에 두고 계속 쓴다. */
+window.NM_PAPER_TOOLS_OF_COURSE = function(n){
+  var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i, ''), 10) : n, out = [];
+  var first = window.NM_PAPER_TOOL_OF_COURSE(num);
+  if(first) out.push(first);
+  window.NM_PAPER_TOOLS.forEach(function(t){ if((t.secondCourseIds || []).indexOf(num) >= 0 && out.indexOf(t) < 0) out.push(t); });
+  return out;
 };
 
 if(typeof module !== 'undefined' && module.exports) module.exports = window.NM_PAPER_TOOLS;

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Actual standalone tool and worksheet renderer, 12 tools × 3 languages.
+// Actual standalone tool and worksheet renderer, every tool × 3 languages.
 // Gallery navigation, mathematical dimensions, labels and A4; no cloud writes.
 'use strict';
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
@@ -9,8 +9,9 @@ const source=fs.readFileSync(path.join(ROOT,'data/paper-tools.js'),'utf8');
 const box={window:{}};require('vm').runInNewContext(source,box);
 const tools=box.window.NM_PAPER_TOOLS;
 const ids=tools.flatMap(t=>t.courseIds);assert.equal(new Set(ids).size,ids.length,'course assigned twice');
-for(const [course,key]of [[4,'array'],[5,'place'],[16,'decimal'],[17,'array'],[31,'algtiles'],[34,'coord'],[36,'algtiles'],[62,'unitcircle']])assert.equal(box.window.NM_PAPER_TOOL_OF_COURSE(course).key,key);
+for(const [course,key]of [[0,'rods'],[1,'hundred'],[2,'tenframe'],[6,'placechips'],[4,'array'],[5,'place'],[16,'decimal'],[17,'array'],[31,'algtiles'],[34,'coord'],[36,'algtiles'],[62,'unitcircle']])assert.equal(box.window.NM_PAPER_TOOL_OF_COURSE(course).key,key);
 assert.equal(box.window.NM_PAPER_TOOL_OF_COURSE(53),null);
+assert.equal(box.window.NM_PAPER_TOOLS_OF_COURSE(1).map(t=>t.key).join(','),'hundred,tenframe','C1 gets the hundred board first, then the ten-frame');
 const report={templates:tools.length,cases:[],errors:[],externalWrites:[]};
 if(OUT)fs.mkdirSync(OUT,{recursive:true});
 const server=http.createServer((req,res)=>{
@@ -59,6 +60,7 @@ try{for(const tool of tools)for(const lang of ['ko','en','zh']){
  assert.equal(await p.evaluate(()=>localStorage.getItem('nm_preview_state_v1')),saved,'preview state changed');
  report.cases.push(d);assert.equal(d.key,tool.key);assert.equal(d.lang,lang);assert(d.overflow<=3,tool.key+' '+lang+' A4 overflow '+d.overflow);assert(!d.artClipped,tool.key+' clipped art');assert.deepEqual(d.labelOverflow,[],tool.key+' labels');assert(d.images,'missing character');assert(d.fontLoaded,'local tool font');assert.deepEqual(d.labelCollisions,[],tool.key+' label overlap');if(lang!=='ko')assert(!d.nonKoreanDiagram,tool.key+' unlocalised diagram');assert.equal(d.examples,tool.embeddedExample?0:1);
  if(tool.key==='tenframe'){assert.equal(d.frameCount,2);assert.equal(d.counters,20);assert.equal(d.demoDots,8);assert.equal(d.demoRings,7);assert(d.counterDiameterMm>=16,'counter too small');assert(19*d.scaleMm>=18,'frame cell too small');assert(!/빌려|borrowing/.test(d.text));}
+ if(tool.key==='hundred'){assert.equal(d.counters,14);assert(d.counterDiameterMm>=13,'hundred-board counter too small');}
  if(tool.key==='place'){assert.equal(d.rods,8);assert.equal(d.ones,20);assert(d.oneSizeMm>=7.5);assert(Math.abs(d.rodSizeMm[1]/d.oneSizeMm-10)<.01,'ten rod must equal ten units');assert(Math.abs(d.rodSizeMm[0]/d.oneSizeMm-1)<.01);}
  if(tool.key==='array')assert.equal(d.arrayDots,100);
  if(tool.key==='intline'){assert.equal(d.integerCards,12);assert.equal(d.operationCards,2);}
@@ -83,12 +85,12 @@ try{for(const tool of tools)for(const lang of ['ko','en','zh']){
  const ctx=await b.newContext(),p=await ctx.newPage();
  await ctx.route('**/*',r=>r.request().method()==='GET'&&r.request().url().startsWith(base+'/')?r.continue():r.abort());
  await p.goto(base+'/ws.html?tool=all&l=ko&auto=0');await p.waitForFunction(()=>window.NM_WS_READY===true);
- assert.equal(await p.locator('.nm-pt-page').count(),12);assert.equal(await p.locator('.nm-w2-item').count(),0);
- assert.equal(await p.locator('.nm-pt-page').evaluateAll(es=>new Set(es.map(e=>e.id)).size),12);
+ assert.equal(await p.locator('.nm-pt-page').count(),tools.length);assert.equal(await p.locator('.nm-w2-item').count(),0);
+ assert.equal(await p.locator('.nm-pt-page').evaluateAll(es=>new Set(es.map(e=>e.id)).size),tools.length);
  await p.emulateMedia({media:'print'});await p.addStyleTag({content:'html,body,.nm-print-sheet{width:190mm!important}'});
  const overflow=await p.locator('.nm-pt-page').evaluateAll(es=>es.filter(e=>e.scrollHeight>e.clientHeight+3).map(e=>e.dataset.tool));assert.deepEqual(overflow,[]);
  if(OUT)await p.pdf({path:path.join(OUT,'all-paper-tools.pdf'),format:'A4',margin:{top:'10mm',bottom:'10mm',left:'10mm',right:'10mm'},printBackground:true});
- await ctx.close();report.allTools={pages:12,uniqueIds:12,questions:0};
+ await ctx.close();report.allTools={pages:tools.length,uniqueIds:tools.length,questions:0};
 }
 // Visit all twelve tools through the real previous/next gallery controls.
 for(const width of [1440,375]){
@@ -97,21 +99,21 @@ for(const width of [1440,375]){
  await p.goto(base+'/paper-tools.html');
  for(let i=0;i<tools.length;i++){
   await p.waitForFunction(key=>{const w=document.getElementById('sheet').contentWindow;return w.NM_WS_READY===true&&w.document.querySelector('.nm-pt-page')?.dataset.tool===key;},tools[i].key);
-  assert.equal(await p.locator('#progress').textContent(),(i+1)+' / 12');
+  assert.equal(await p.locator('#progress').textContent(),(i+1)+' / '+tools.length);
   assert.equal(await p.frameLocator('#sheet').locator('.nm-pt-page').getAttribute('data-tool'),tools[i].key);
   assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'gallery horizontal overflow '+width);
   assert.equal(await p.frameLocator('#sheet').locator('#wsBar').isVisible(),false,'duplicate frame toolbar');
   if(i<tools.length-1)await p.locator('#next').click();
  }
  assert(await p.locator('#print').evaluate(e=>e.innerText.trim().length>0),'empty print button');
- assert(await p.locator('#next').isDisabled());await p.locator('#prev').click();assert.equal(await p.locator('#progress').textContent(),'11 / 12');
- await p.waitForFunction(()=>document.getElementById('sheet').contentWindow.NM_WS_READY===true&&document.getElementById('sheet').contentWindow.document.querySelector('.nm-pt-page')?.dataset.tool==='coord');
+ assert(await p.locator('#next').isDisabled());await p.locator('#prev').click();assert.equal(await p.locator('#progress').textContent(),(tools.length-1)+' / '+tools.length);
+ await p.waitForFunction(key=>document.getElementById('sheet').contentWindow.NM_WS_READY===true&&document.getElementById('sheet').contentWindow.document.querySelector('.nm-pt-page')?.dataset.tool===key,tools[tools.length-2].key);
  for(const language of ['en','zh','ko']){await p.locator('#lang').selectOption(language);await p.waitForFunction(l=>{const w=document.getElementById('sheet').contentWindow;return w.NM_WS_READY===true&&w.document.documentElement.lang===l;},language);}
  if(OUT)await p.screenshot({path:path.join(OUT,'gallery-'+width+'.png')});
  await p.goto(base+'/ws.html?tool=unknown');await p.waitForFunction(()=>window.NM_WS_READY==='error');assert(await p.locator('#wsPrint').isDisabled());
  await ctx.close();
 }
-report.gallery={viewports:[1440,375],toolsPerViewport:12,invalidLinkRejected:true};
+report.gallery={viewports:[1440,375],toolsPerViewport:tools.length,invalidLinkRejected:true};
 assert.deepEqual(report.errors,[]);assert.deepEqual(report.externalWrites,[]);console.log('Paper tools: '+report.cases.length+' A4/language cases passed; SVG/text clipping 0; external writes 0.');
 }finally{if(OUT)fs.writeFileSync(path.join(OUT,'paper-tools-browser.json'),JSON.stringify(report,null,2));await b.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});
