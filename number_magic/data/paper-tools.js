@@ -233,18 +233,24 @@ function balanceMat(lang){
   return svg(180,165,b);
 }
 
-/* 5. 분수 원판 — 1 · 1/2 · 1/3 · 1/4 · 1/6 · 1/8. 겹쳐서 크기를 비교한다. */
-function fractionDisc(lang){
-  var b='',R=25,parts=[1,2,3,4,6,8];
-  parts.forEach(function(n,i){
-    var cx=32+i%3*58,cy=30+Math.floor(i/3)*66;
-    b+='<circle data-part="fraction-disc" data-parts="'+n+'" cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+PIECE[i]+'" stroke="'+P.ink+'" stroke-width=".5" stroke-dasharray="2 1.5"/>';
-    for(var k=0;k<n&&n>1;k++){var a=2*Math.PI*k/n-Math.PI/2;b+=segment(cx,cy,cx+R*Math.cos(a),cy+R*Math.sin(a),CUT_S);}
-    var fy=cy+R+8;
-    if(n===1)b+=text(cx,fy,words(lang,'전체 1','1 whole','整体1'),3.8,'middle');
-    else b+='<g data-part="fraction-label">'+fraction(cx-14,fy,'1',n)+text(cx-6,fy+1,words(lang,n+'조각',n+' pieces',n+'块'),3.5)+'</g>';
+/* 5. 분수 막대 — 1 · 1/2 · 1/3 · 1/4 · 1/5 · 1/6 · 1/8 · 1/10 · 1/12 (2026-11-10, 원장 「곧게 자르는 분수 막대로」).
+   모든 줄의 길이가 같다(168mm) — 조각을 나란히 놓아 길이로 크기를 비교한다. 줄끼리 붙어 있어
+   가로로 길게 자른 뒤 줄마다 굵은 점선에서 나눈다. 원판과 달리 곧은 선만 자른다. */
+function fractionBars(lang){
+  var b='',ox=6,oy=12,W=168,h=13.5,parts=[1,2,3,4,5,6,8,10,12];
+  b+=label(3,oy-5,words(lang,'분수 막대 · 모든 줄의 길이가 같아요','Fraction bars · every row is the same length','分数条 · 每一行一样长'));
+  parts.forEach(function(n,r){
+    var y=oy+r*h,w=W/n;
+    for(var k=0;k<n;k++){
+      var x=ox+k*w;
+      b+='<rect data-part="fraction-piece" data-parts="'+n+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" style="fill:'+PIECE[r]+';stroke:#191511;stroke-width:.45;stroke-dasharray:2 1.4"/>';
+      if(n===1)b+=text(x+w/2,y+h/2+2,'1',5.5,'middle');
+      else b+='<g data-part="fraction-label">'+fraction(x+w/2,y+h/2-.6,'1',n)+'</g>';
+    }
   });
-  return svg(180,143,b);
+  b+=scissors(ox-4.2,oy+h);
+  b+=label(3,oy+parts.length*h+8,words(lang,'먼저 가로로 길게 자르고, 그다음 줄마다 점선에서 조각을 나눠요.','Cut the long rows first, then split each row at the dashed lines.','先横着剪成长条，再在虚线处把每一行分开。'));
+  return svg(180,oy+parts.length*h+12,b);
 }
 
 /* 6. 소수 모눈 — 1을 100칸으로. 0.1 띠는 **판의 한 줄과 정확히 같은 크기**여야 덮어 볼 수 있다
@@ -387,7 +393,9 @@ function paperDemo(key,lang){
  }else if(key==='balance'){
   b+=rect(3,4,36,19,'fill:'+P.soft+';stroke:'+g+';stroke-width:.5')+rect(61,4,36,19,'fill:'+P.soft+';stroke:'+g+';stroke-width:.5');b+=text(21,17,'7 + 5',7,'middle')+text(50,17,'=',8,'middle')+text(79,17,'12',7,'middle');
  }else if(key==='fraction'){
-  [26,74].forEach(function(x,f){var y=13,R=11;b+='<path d="M'+x+' '+(y-R)+' A'+R+' '+R+' 0 0 1 '+x+' '+(y+R)+' L'+x+' '+y+' Z" fill="'+(f?P.tint:P.soft)+'"/>';b+='<circle cx="'+x+'" cy="'+y+'" r="'+R+'" fill="none" stroke="'+g+'" stroke-width=".5"/>'+segment(x,y-R,x,y+R,LINE);if(f)b+=segment(x-R,y,x+R,y,LINE);});b+=text(50,17,'=',7,'middle');
+  var x0=14,w=72,y1=3,y2=15,hh=9;b+=rect(x0,y1,w/2,hh,'fill:'+PIECE[1]+';stroke:'+g+';stroke-width:.45')+rect(x0+w/2,y1,w/2,hh,'fill:#fff;stroke:'+g+';stroke-width:.45');
+  b+=rect(x0,y2,w/4,hh,'fill:'+PIECE[3]+';stroke:'+g+';stroke-width:.45')+rect(x0+w/4,y2,w/4,hh,'fill:'+PIECE[3]+';stroke:'+g+';stroke-width:.45')+rect(x0+w/2,y2,w/4,hh,'fill:#fff;stroke:'+g+';stroke-width:.45')+rect(x0+w*3/4,y2,w/4,hh,'fill:#fff;stroke:'+g+';stroke-width:.45');
+  b+=segment(x0+w/2,1,x0+w/2,27,'stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1');
  }else if(key==='decimal'){
   var u=2.2,x=12,y=2;for(var r=0;r<10;r++)for(var c=0;c<10;c++)b+=rect(x+c*u,y+r*u,u,u,'fill:'+(r<3?P.soft:r<7?P.tint:'#fff')+';stroke:'+g+';stroke-width:.15');b+=text(63,16,'0.3 + 0.4',5,'middle')+text(63,24,'= 0.7',5,'middle');
  }else if(key==='pentomino'){
@@ -796,61 +804,49 @@ window.NM_PAPER_TOOLS = [
   },
   {
     "key": "fraction",
-    "name": {
-      "ko": "분수 원판",
-      "en": "Fraction discs",
-      "zh": "分数圆盘"
-    },
+    "name": {"ko": "분수 막대", "en": "Fraction bars", "zh": "分数条"},
     "why": {
-      "ko": "크기가 같은 원을 똑같이 나눈 조각이에요. 한 조각의 크기와 조각 수를 함께 살펴봐요.",
-      "en": "Each same-sized whole is divided into equal parts. Compare both part size and number of parts.",
-      "zh": "同样大的圆被平均分成小块，比较每块大小和块数。"
+      "ko": "길이가 같은 막대를 똑같이 나눈 조각이에요. 한 조각의 길이와 조각 수를 함께 살펴봐요.",
+      "en": "Each same-length bar is divided into equal parts. Compare both the length of a part and the number of parts.",
+      "zh": "同样长的条被平均分成小块，比较每块的长短和块数。"
     },
     "steps": {
       "ko": [
-        "바깥 점선을 오려요. 전체 1은 두고 나머지 원은 점선을 따라 나누어요.",
-        "1/3 조각과 1/4 조각의 꼭짓점을 맞춰 크기를 비교해요.",
-        "1/4 두 조각을 모아 1/2 위에 덮어 보아요."
+        "가로로 길게 자른 뒤, 줄마다 점선에서 조각을 나눠요. 전체 1 막대는 그대로 둬요.",
+        "1/3 조각과 1/4 조각의 왼쪽 끝을 맞춰 길이를 비교해요.",
+        "1/4 조각 두 개를 이어 1/2 조각 아래에 놓아 보아요."
       ],
       "en": [
-        "Cut dashed lines. Keep the whole disc intact; divide the others.",
-        "Align a third and a quarter at their centre points to compare.",
-        "Place two quarter pieces over one half."
+        "Cut the long rows, then split each row at the dashed lines. Keep the whole bar intact.",
+        "Line up a third and a quarter at the left end to compare their lengths.",
+        "Join two quarter pieces and place them under one half."
       ],
       "zh": [
-        "沿虚线剪，整体1保留，其余圆再沿虚线分开。",
-        "把三分之一与四分之一的圆心角顶点对齐比较。",
-        "用两个四分之一盖住一个二分之一。"
+        "先横着剪成长条，再在虚线处分开。整体1的那条保留。",
+        "把三分之一与四分之一的左端对齐，比较长短。",
+        "把两个四分之一接起来，放在二分之一下面。"
       ]
     },
     "buy": {
-      "name": {
-        "ko": "분수 원판 세트",
-        "en": "Fraction disc set",
-        "zh": "分数圆盘套装"
-      },
+      "name": {"ko": "분수 막대 세트", "en": "Fraction bar set", "zh": "分数条套装"},
       "why": {
-        "ko": "조각을 겹쳐 보면 3분의 1이 4분의 1보다 크다는 것을 설명 없이 압니다. 종이보다 튼튼해 오래 씁니다.",
-        "en": "Overlapping the pieces shows that a third beats a quarter without any explanation, and plastic lasts.",
-        "zh": "把块叠起来，不用讲就知道三分之一比四分之一大，塑料的也更耐用。"
+        "ko": "조각을 나란히 놓으면 3분의 1이 4분의 1보다 길다는 것을 설명 없이 압니다. 종이보다 튼튼해 오래 씁니다.",
+        "en": "Laying the pieces side by side shows that a third is longer than a quarter without any explanation, and plastic lasts.",
+        "zh": "把块并排放，不用讲就知道三分之一比四分之一长，塑料的也更耐用。"
       },
       "pick": {
-        "ko": "1, 2분의 1, 3분의 1, 4분의 1, 6분의 1, 8분의 1이 다 들어 있는 것. 분모마다 색이 다르면 좋습니다.",
-        "en": "A set with 1, 1/2, 1/3, 1/4, 1/6 and 1/8; colour-coded is better.",
-        "zh": "要有1、1/2、1/3、1/4、1/6、1/8，按颜色区分更好。"
+        "ko": "1부터 12분의 1까지 들어 있는 것. 분모마다 색이 다르면 좋습니다.",
+        "en": "A set from 1 down to twelfths; colour-coded is better.",
+        "zh": "从1到十二分之一都有的，按颜色区分更好。"
       },
-      "key": "fracdisc"
+      "key": "fracbar"
     },
     "make": {
-      "name": {
-        "ko": "종이 원판과 색종이 접기",
-        "en": "Paper discs and folded origami paper",
-        "zh": "纸圆盘和折纸"
-      },
+      "name": {"ko": "종이 막대와 색종이 접기", "en": "Paper bars and folded paper strips", "zh": "纸条和折纸"},
       "how": {
-        "ko": "위 원판 여섯 장을 오려 선을 따라 자릅니다. 색종이를 반으로, 또 반으로 접으면 2분의 1, 4분의 1, 8분의 1이 그대로 나옵니다.",
-        "en": "Cut the six discs above along the lines. Folding origami paper in half again and again gives a half, a quarter and an eighth.",
-        "zh": "剪下上面六个圆盘并沿线剪开。把色纸对折再对折，就得到1/2、1/4、1/8。"
+        "ko": "위 막대를 줄대로 곧게 자릅니다. 색종이 띠를 반으로, 또 반으로 접으면 2분의 1, 4분의 1, 8분의 1이 그대로 나옵니다.",
+        "en": "Cut the bars above along the straight lines. Folding a paper strip in half again and again gives a half, a quarter and an eighth.",
+        "zh": "把上面的分数条沿直线剪开。把纸条对折再对折，就得到二分之一、四分之一、八分之一。"
       }
     },
     "courseIds": [
@@ -864,11 +860,11 @@ window.NM_PAPER_TOOLS = [
     "portrait": "sym-divide.png",
     "exampleTex": "\\frac12=\\frac14+\\frac14",
     "exampleText": {
-      "ko": "같은 크기 원에서 4분의 1 두 조각이 2분의 1과 같아요.",
-      "en": "Two quarters equal one half of the same-sized whole.",
-      "zh": "同样大的圆中，两个四分之一等于二分之一。"
+      "ko": "같은 길이 막대에서 4분의 1 두 조각이 2분의 1과 같아요.",
+      "en": "Two quarters are as long as one half of the same bar.",
+      "zh": "同样长的条里，两个四分之一和二分之一一样长。"
     },
-    "build": fractionDisc,
+    "build": fractionBars,
     "demo": function(lang){return paperDemo("fraction",lang);}
   },
   {
