@@ -100,7 +100,7 @@ test('KMO follows common math 2 directly; algebra and calculus 1 are not rows bu
  const html=P.render(standard('L7',now),fields),months=end('L7',/^공통수학2/)+1-now,ym=k=>{const i=10+k;return`${2026+Math.floor(i/12)}.${i%12+1}`;};
  assert.ok(html.includes(`<div class="cell c3 fork is-now"><b>${ym(months)}부터</b>`));
  assert.ok(html.includes(`<i>이과 상위권</i>대수 → 미적분Ⅰ을 바로 이어서<span>대수 ${ym(months+2)}까지 · 미적분Ⅰ ${ym(months+5)}까지</span>`));
- assert.match(html,/<i>영과고 · KMO<\/i>KMO 준비<span>대수 · 미적분Ⅰ 선행은 방학, KMO 1차 시험 뒤 발표 전, 1차 결과에 따라 쉬는 구간에<\/span>/);
+ assert.ok(html.includes('<i>영과고 · KMO</i>KMO 준비. 대수 · 미적분Ⅰ 선행은 쉬는 구간과 방학에<span><em>1차 시험 뒤 발표 전 (5월 중순~6월 중순)</em> 대수 시작</span><span><em>1차에 떨어졌을 때</em> 대수 · 미적분Ⅰ을 이어서. 다음 해 1차 재도전 또는 고등 선행으로 전환</span><span><em>1차에 붙었을 때</em> 2차 준비(11월). 선행은 2차 뒤 겨울방학에</span>'));
  assert.match(html,/class="head c3">공통수학2 뒤/);
  assert.match(html,/1차 시험이 5월 중순 토요일, 1차 발표가 30일 뒤인 6월 중순, 2차 시험이 11월 초·중순/);
 });
