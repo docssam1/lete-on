@@ -16,7 +16,7 @@
 .level-pace .lv{display:table;align-self:flex-start;margin:3px 0;padding:0 8px;border-radius:999px;background:#eceaf3;color:var(--lp-ink);font-size:12px;font-weight:700;line-height:1.6}
 .level-pace .is-now .lv{background:#efe6f6;color:var(--lp-now)}
 /* 레벨 × 과정 표 */
-.level-pace-table{display:grid;grid-template-columns:minmax(220px,1.4fr) repeat(3,minmax(130px,1fr)) minmax(200px,1.4fr);min-width:900px}
+.level-pace-table{display:grid;grid-template-columns:minmax(220px,1.4fr) repeat(3,minmax(124px,1fr)) minmax(260px,1.9fr);min-width:940px}
 .level-pace-table>div{padding:12px;border-bottom:1px solid var(--lp-line);border-right:1px solid var(--lp-line);min-width:0}
 .level-pace-table>div:nth-child(5n){border-right:0}
 .level-pace-table>div:nth-last-child(-n+5){border-bottom:0}
@@ -32,6 +32,11 @@
 .level-pace-table .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
 .level-pace-table .cell b{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .level-pace-table .cell small{font-size:13px;line-height:1.4;color:var(--lp-muted)}
+.level-pace-table .cell.fork{align-items:stretch;text-align:left;gap:6px}
+.level-pace-table .cell.fork b{text-align:center}
+.level-pace-table .cell.fork p{margin:0;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.7);font-size:13px;line-height:1.45;color:var(--lp-ink)}
+.level-pace-table .cell.fork i{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--lp-s3-ink)}
+.level-pace-table .cell.fork span{display:block;font-size:12px;color:var(--lp-muted)}
 .level-pace-table .cell.is-now.c0{background:var(--lp-s0)}.level-pace-table .cell.is-now.c1{background:var(--lp-s1)}.level-pace-table .cell.is-now.c2{background:var(--lp-s2)}.level-pace-table .cell.is-now.c3{background:var(--lp-s3)}.level-pace-table .cell.is-now.c4{background:var(--lp-s4)}
 .level-pace-table .cell.is-now{box-shadow:inset 0 2px 0 var(--lp-now),inset 0 -2px 0 var(--lp-now)}.level-pace-table .cell.is-now b{font-size:20px}
 .level-pace-table .tier.is-now{background:#efe6f6}

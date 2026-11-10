@@ -3,11 +3,14 @@
 (function(global){
 'use strict';
 const MARKS=[/^6-2/,/^중3-2/,/^공통수학2/];
-// 원장님 2026-11-10: 영재학교·과학고 지원, KMO 경험 학생은 공통수학2를 마친 뒤 KMO를 한다. 대수·미적분Ⅰ 선행은 방학과 쉬는 구간에 한다.
-const AFTER='대수 · 미적분Ⅰ 선행은 방학과 쉬는 구간에';
-const NAMES=['초등','중등','공통수학1·2','KMO · 방학 선행'];
+// 원장님 2026-11-10: 공통수학2 뒤는 두 갈래다.
+//  이과 상위권: 대수 → 미적분Ⅰ을 바로 잇는다(각 3개월로 계산).
+//  영재학교·과학고 지원, KMO 경험: KMO를 한다. 대수·미적분Ⅰ 선행은 방학, KMO 1차 시험 뒤 발표 전, 1차 결과(합격·불합격)에 따라 생기는 쉬는 구간에 한다.
+const HIGH_MONTHS=3;
+const KMO_REST='대수 · 미적분Ⅰ 선행은 방학, KMO 1차 시험 뒤 발표 전, 1차 결과에 따라 쉬는 구간에';
+const NAMES=['초등','중등','공통수학1·2','대수·미적분Ⅰ 또는 KMO'];
 const LAST=MARKS.length;
-const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','공통수학2 뒤: KMO 준비, 대수·미적분Ⅰ은 방학에'];
+const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','공통수학2 뒤: 이과 상위권은 대수·미적분Ⅰ, 영과고·KMO는 KMO 준비'];
 const OFFSETS=[[-2,'up2','두 레벨 위'],[-1,'up1','한 레벨 위'],[0,'now','지금 계획'],[1,'down1','한 레벨 아래']];
 const STAGES=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','공통수학2 뒤'];
 // 원장님 2026-11-10: 프리미어·챌린지·필즈 기준표는 "합격생의 표준 로드맵"으로 부른다(L0 프리미어 · L1 필즈 S · L2 챌린지).
@@ -84,7 +87,8 @@ function table(m){
    if(end<=0)return`<div class="cell c${i}${now}"><b>마침</b><small>${esc(row.books[i])}</small></div>`;
    const at=monthAt(m.base,end);return`<div class="cell c${i}${now}"><b>${at.year}.${at.month}</b><small>${esc(row.books[i])}</small></div>`;}).join('');
   const end=row.ends[2],from=end===null?null:monthAt(m.base,Math.max(0,end)+1);
-  const next=!row.after||end===null?`<div class="cell c3${now}"><small>기준표에 없음</small></div>`:`<div class="cell c3${now}"><b>${end<=0?'진행 중':from.year+'.'+from.month+'부터'}</b><small>${esc(row.after)}</small><small>${AFTER}</small></div>`;
+  const next=!row.after||end===null?`<div class="cell c3${now}"><small>기준표에 없음</small></div>`:(()=>{const e=Math.max(0,end),a=monthAt(m.base,e+HIGH_MONTHS),c=monthAt(m.base,e+HIGH_MONTHS*2);
+   return`<div class="cell c3 fork${now}"><b>${end<=0?'진행 중':from.year+'.'+from.month+'부터'}</b><p><i>이과 상위권</i>대수 → 미적분Ⅰ을 바로 이어서<span>대수 ${a.year}.${a.month}까지 · 미적분Ⅰ ${c.year}.${c.month}까지</span></p><p><i>영과고 · KMO</i>KMO 준비<span>${KMO_REST}</span></p></div>`;})();
   return`<div class="tier${now}"><strong>${esc(row.name)}</strong>${label(row)}<div class="study">${study(row)}</div></div>${cells}${next}`;}).join('');
  return`<div class="level-pace-scroll" tabindex="0" role="region" aria-label="레벨별로 과정이 끝나는 달과 책"><div class="level-pace-table">${head}${body}</div></div>`;
 }
@@ -102,7 +106,7 @@ function render(standard,fields){
 <div class="level-pace-scroll" tabindex="0" role="region" aria-label="기준별 일정 비교"><div class="level-pace-grid"><div></div><div class="axis">${ticks.join('')}</div>${rows}</div></div>
 <ul class="level-pace-key">${KEYS.map((k,i)=>`<li><i class="s${i}"></i>${k}</li>`).join('')}</ul>
 ${table(m)}
-<p class="level-pace-note">막대 아래와 표의 날짜는 그 과정이 끝나는 달이고, 표의 날짜 아래는 그 과정의 마지막 책입니다. 공통수학2를 마친 뒤에는 KMO 준비로 이어지고, 대수·미적분Ⅰ 선행은 방학과 쉬는 구간에 합니다. 위·아래 레벨은 같은 학년·월의 다른 기준표이며, 그 반에 들어갈 수 있다는 판정이 아닙니다.${missing?' 회색 칸은 그 기준표에 이후 과정이 아직 없다는 뜻입니다.':''}</p>
+<p class="level-pace-note">막대 아래와 표의 날짜는 그 과정이 끝나는 달이고, 표의 날짜 아래는 그 과정의 마지막 책입니다. 공통수학2 뒤는 두 갈래입니다. 이과 상위권은 대수·미적분Ⅰ을 바로 잇고(한 과목 3개월로 계산), 영재학교·과학고 지원과 KMO 경험 학생은 KMO를 하면서 방학과 쉬는 구간에 선행합니다. 위·아래 레벨은 같은 학년·월의 다른 기준표이며, 그 반에 들어갈 수 있다는 판정이 아닙니다.${missing?' 회색 칸은 그 기준표에 이후 과정이 아직 없다는 뜻입니다.':''}</p>
 </section>`;
 }
 // 그림의 카메라 이동은 화면에서 한 번 끝까지 재생된 뒤에는 다시 재생하지 않는다.
