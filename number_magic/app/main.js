@@ -7429,7 +7429,10 @@ function stepDiscover(body,u){
       loading="lazy" onerror="this.closest('.nm-story-art').remove()"></figure>`;
   /* 수학사 네 컷 만화(data/story-comics.js) — 등록된 유닛은 🏛 한 줄 대신 만화.
      캡션이 이야기를 다 전하므로 산문 history는 그 유닛에선 그리지 않는다. */
-  const comic=window.NM_COMICS&&NM_COMICS[u.id];
+  /* 네 컷 그림은 개념 노트에 싣지 않는다(원장 2026-11-10 「쓸데없는 말이 안 되는 그림 없애고」) —
+     숫자·화살표 조각 그림이라 수업 내용과 이어지지 않았다. 이야기 글(st.history)은 그대로 보인다.
+     네 컷 순서 맞히기 놀이(renderHistQuiz)는 따로이며 여기서 건드리지 않는다. */
+  const comic=null;
   const histHtml=comic
     ?`<div class="nm-comic-h">${kid?'📖 '+(S.lang==='ko'?'네 컷 이야기':S.lang==='en'?'A Story in 4 Panels':'四格故事')
         :'🏛 '+(S.lang==='ko'?'네 컷 수학사':S.lang==='en'?'Math History in 4 Panels':'四格数学史')}</div>

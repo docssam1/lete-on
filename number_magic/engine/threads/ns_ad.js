@@ -140,7 +140,11 @@ NM_TGEN['ns1_placeValue'] = function(params, rng){
   const placeParts = [];
   for(let p = digits - 1; p >= 0; p--){
     if(p === placeIdx){
-      placeParts.push(`\\square \\times ${placeValue}`);
+      /* 네 자리까지는 곱셈을 배우기 전(C1~C3)에도 나온다 — 「×」 대신 「10이 □개」로 쓴다(2026-11-10).
+         일의 자리는 그냥 □. */
+      placeParts.push(digits <= 4
+        ? (placeValue === 1 ? `\\square` : `\\text{${placeValue}이 }\\square\\text{개}`)
+        : `\\square \\times ${placeValue}`);
     } else {
       const pv = Math.pow(10, p);
       const dg = Math.floor(n / pv) % 10;
