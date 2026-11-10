@@ -1,6 +1,7 @@
 # 누미 한국어 목소리 후보 만들기 (2026-11-10, 원장 「A 1번」)
 #
 # 누미가 독쌤 같은 남자 목소리라 원장이 준 여자 녹음(쇼릴 본 녹음)을 본으로 한국어 대사를 다시 복제한다.
+# 본 녹음은 끝이 말 도중에 끊겨 있어 앞 두 문장(4.1초, 문장 사이 쉼)만 쓴다 — 다 쓰면 남은 말이 새 대사 앞에 붙었다.
 # 앱 음성·연결표는 건드리지 않는다. 만든 MP3 와 검수표는 따로 떨어진 브랜치 numi-voice-candidate 에만 올린다.
 # 들어 보고 고른 뒤에 앱에 넣는 일은 따로 한다(연결표·길이표·재생 속도).
 # GPU 가 없어 CPU 로 돌므로 조각으로 나눠 병렬로 돈다. 구글 키는 쓰지 않는다.
@@ -40,6 +41,7 @@ jobs:
           python scripts/omnivoice-nm.py --device cpu --lang ko --voice nm-numi-v2 \
             --ref-wav number_magic/scripts/showreel/narration/_ref/voice-ref.wav \
             --ref-json number_magic/scripts/showreel/narration/omnivoice-rec/_ref.json \
+            --ref-cut 4.1 --ref-sentences 2 \
             --with-map-keys --out part --shard ${{ matrix.shard }}/12 --limit ${{ inputs.limit }}
       - uses: actions/upload-artifact@v4
         if: always()

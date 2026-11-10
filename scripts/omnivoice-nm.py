@@ -81,13 +81,18 @@ def map_keys(lang):
     return list((obj.get(lang) or {}).keys())
 
 
-def custom_ref(path, text, work):
-    """본 녹음을 24kHz 모노로 다시 쓰고 앞뒤 무음을 자른다. 전사는 지어내지 않고 받은 글 그대로."""
+def custom_ref(path, text, work, cut=0.0):
+    """본 녹음을 24kHz 모노로 다시 쓰고 앞뒤 무음을 자른다. 전사는 지어내지 않고 받은 글 그대로.
+    cut(초)을 주면 그 자리(문장 사이 쉼)에서 자르고 끝에 짧은 무음을 붙인다 — 녹음 끝이 말 도중에 끊겨 있으면
+    모델이 남은 말을 새 대사 앞에 붙여 읽는다(2026-11-10 시험: 12줄 중 10줄 앞에 「확실하게 관리합니다」)."""
     import numpy as np, librosa, soundfile as sf
     if not os.path.exists(path):
         sys.exit("본 녹음이 없습니다: " + path)
     y, sr = librosa.load(path, sr=SR, mono=True)
+    if cut:
+        y = y[:int(sr * cut)]
     y, _ = librosa.effects.trim(y, top_db=35)
+    y = np.concatenate([y, np.zeros(int(sr * 0.2), dtype=y.dtype)])
     secs = len(y) / sr
     rms = float(np.sqrt(np.mean(y ** 2))) if len(y) else 0.0
     if secs < 2.5 or rms < 0.005 or not text.strip():
@@ -270,6 +275,8 @@ def main():
     ap.add_argument("--ref-wav", default="", help="구글 대신 이 녹음을 본으로 복제")
     ap.add_argument("--ref-text", default="", help="본 녹음의 전사")
     ap.add_argument("--ref-json", default="", help="전사를 이 JSON 의 ref_text 에서 읽는다")
+    ap.add_argument("--ref-cut", type=float, default=0.0, help="본 녹음을 이 초에서 자른다(문장 사이 쉼)")
+    ap.add_argument("--ref-sentences", type=int, default=0, help="전사에서 앞의 N문장만 쓴다(--ref-cut 과 짝)")
     ap.add_argument("--with-map-keys", action="store_true", help="지금 연결표에만 있는 글(영상 대사 등)도 만든다")
     a = ap.parse_args()
     voice = a.voice or VOICE
@@ -282,7 +289,9 @@ def main():
     langs = [l for l in (a.lang.split(",") if a.lang else LANGS) if l in LANGS]
     if a.ref_wav:
         text = a.ref_text or (json.load(open(a.ref_json, encoding="utf-8")).get("ref_text", "") if a.ref_json else "")
-        wav = custom_ref(a.ref_wav, text, os.path.join(WORK, "custom-ref"))
+        if a.ref_sentences:
+            text = " ".join(re.findall(r"[^.!?]+[.!?]", text)[:a.ref_sentences])
+        wav = custom_ref(a.ref_wav, text, os.path.join(WORK, "custom-ref"), a.ref_cut)
         refs = {l: (wav, text.strip()) for l in langs}
     else:
         refs = ovclone.build_refs(langs, a.ref_dir)
