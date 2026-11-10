@@ -66,3 +66,11 @@ test('end labels are calendar months counted from the intake month',()=>{
  assert.ok(html.includes('class="bar is-now"'));
  assert.ok(!/합격 가능|도달 가능/.test(html));
 });
+
+test('Premier, Fields S and Challenge tables are named as the standard roadmap of passers',()=>{
+ const html=P.render(standard('L3',40),fields);
+ assert.match(html,/필즈 S 합격생의 표준 로드맵/);
+ assert.match(html,/챌린지 합격생의 표준 로드맵/);
+ assert.match(P.render(standard('L1',40),fields),/프리미어 합격생의 표준 로드맵/);
+ assert.match(P.render(standard('L8',60),fields),/L7 기준표/);
+});
