@@ -64,7 +64,7 @@ function renderWeeks(book, state) {
       <i class="ms-bar" style="--rate:${rate}%"></i>
       <ol class="ms-phases">${phases}</ol>
       <a class="ms-btn${week && rate < 100 ? " primary" : ""}" href="${esc(go)}">${!week ? "시작하기" : rate >= 100 ? "다시 보기" : "이어서 하기"} ›</a>
-      ${week ? `<a class="ms-retry" href="${esc(link("similar.html", { book: book.id, unit: String(index) }))}">골라서 다시 풀기 ›</a>` : ""}
+      ${week ? `<a class="ms-retry" href="${esc(link("similar.html", { book: book.id, unit: String(index) }))}">오답 유사문제 ›</a>` : ""}
     </li>`;
   });
   const bt = state.bookTest;

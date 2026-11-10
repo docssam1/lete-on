@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261101b";
 import { unitParts, partProblems } from "./study-map.js?v=20261110m";
 import { loadLocalAll } from "./study-progress.js?v=20261029q";
-import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110m";
+import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110n";
 import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261110m";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
@@ -47,7 +47,7 @@ function renderTabs() {
 // 번호판: 차시마다 한 묶음, 그 안에 활동 · 확인 · 연습 · 도전 줄
 function renderNumbers() {
   const book = activeBook(), unit = book.units[view.unit];
-  // 골라서 다시 풀기는 정식 회원 것(fields-access.js canRetry) — 둘러보기·체험은 안내 카드
+  // 오답 유사문제는 정식 회원 것(fields-access.js canRetry) — 둘러보기·체험은 안내 카드
   const gate = canRetry(book.id, view.unit);
   $("dock").hidden = !gate.ok;
   if (!gate.ok) { $("numberList").innerHTML = lockCard(gate.why, { bookId: book.id, here: `similar.html${location.search}` }); return; }
@@ -66,13 +66,13 @@ function renderNumbers() {
 
 function renderDock() {
   const book = activeBook(), size = view.picked.size;
-  $("pickSummary").textContent = size ? `${book.label} ${view.unit + 1}단원 · ${size}문제 골랐어요${size >= MAX ? ` (한 번에 ${MAX}문제까지)` : ""}` : "모르는 번호를 눌러요";
+  $("pickSummary").textContent = size ? `${book.label} ${view.unit + 1}단원 · ${size}문제 골랐어요${size >= MAX ? ` (한 번에 ${MAX}문제까지)` : ""}` : "틀렸거나 모르는 번호를 눌러요";
   $("clearPicks").hidden = !size;
   const make = $("makeLink");
   make.setAttribute("aria-disabled", String(!size));
   make.textContent = size ? `유사문제 만들기 · ${size}문제` : "유사문제 만들기";
   make.href = size ? link("index.html", { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), build: "1", as: "student",
-    title: `${book.label} ${view.unit + 1}단원 · 골라서 다시 풀기`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit) })}` }) : "./index.html";
+    title: `${book.label} ${view.unit + 1}단원 · 오답 유사문제`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit) })}` }) : "./index.html";
 }
 
 function show() { renderTabs(); renderNumbers(); renderDock(); syncAddress(); }

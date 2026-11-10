@@ -37,7 +37,7 @@ export function canStudy(bookId, unitIndex = null) {
   return { ok: (m.books || []).includes(bookId), why: "book", who };
 }
 
-// 골라서 다시 풀기(모르는 문제 유사문제 similar.html)는 유료(정식) 회원 것
+// 오답 유사문제(모르는 문제 유사문제 similar.html)는 유료(정식) 회원 것
 // (원장 2026-11-10 「유료 회원일 때는 각 단원에서 선택하여 다시 풀기 할 수 있도록」). 정식 회원·옛 승인번호·선생님만 ok.
 // 둘러보기·체험 회원은 why "retry"(잠금 카드에서 가입·정규회원 요청으로 잇는다). 그 권·단원이 안 열렸으면 canStudy의 까닭 그대로.
 export function canRetry(bookId, unitIndex = null) {
@@ -77,8 +77,8 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
   const m = who.member;
   const login = `./login.html${here ? `?next=${encodeURIComponent(here)}` : ""}`;
   if (why === "retry") return `<div class="fa-lock"><p class="fa-kick">정규회원</p>
-    <h2>골라서 다시 풀기는 정규회원이 쓸 수 있어요</h2>
-    <p>단원마다 본책에서 모르는 번호를 고르면 <b>같은 유형의 새 문제</b>로 다시 풀 수 있어요.${who.kind === "member" ? " 정규회원 승인은 카톡으로 요청해 주세요." : " 이메일로 가입해 2주 체험한 뒤 정규회원이 되면 열려요."}</p>
+    <h2>오답 유사문제는 정규회원이 쓸 수 있어요</h2>
+    <p>단원마다 본책에서 틀렸거나 모르는 번호를 고르면 <b>같은 유형의 새 문제</b>로 다시 풀 수 있어요.${who.kind === "member" ? " 정규회원 승인은 카톡으로 요청해 주세요." : " 이메일로 가입해 2주 체험한 뒤 정규회원이 되면 열려요."}</p>
     <div class="fa-actions">${who.kind === "member"
       ? (m?.approvalRequestedAt ? `<span class="fa-small">${day(m.approvalRequestedAt)}에 정규회원 요청을 보냈어요.</span>` : `<button type="button" class="fa-btn primary" data-fa="regular">정규회원 승인 요청(카톡) ›</button>`)
       : `<a class="fa-btn primary" href="./signup.html">이메일로 가입하기 ›</a><a class="fa-btn" href="${login}">승인번호로 로그인</a>`}</div><p class="fa-small" data-fa-msg></p></div>`;
