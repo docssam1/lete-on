@@ -1,0 +1,136 @@
+/* 버튼·상자·글자 크기 정리 (2026-11-10). 맨 마지막에 불러온다.
+   기준: 누르는 것의 글자는 14px 이상, 읽는 글자는 12px 이상, 굵기는 700까지, 버튼 모서리는 10px.
+   색과 배치는 건드리지 않는다. */
+body.roadmap-studio{--polish-control-radius:10px;--polish-focus:#7a4fa3}
+
+/* 1. 누르는 것: 글자 14px, 굵기 600, 같은 모서리 */
+body.roadmap-studio :is(
+ .top .nav button,.top .gear,
+ .journey-heading .atlas-heading-actions button,
+ .workspace-results>.prn-tools>summary,.plan-travel button,
+ .workspace-tabs button,
+ .plan-current-details>summary,.plan-current-popover button,
+ .student-growth-open,
+ .plan-map-months>summary,.standard-assumptions>summary,
+ .wk-actions button,
+ [data-standard-accept],[data-roadmap-mode],
+ #questionBack,#openReport,#atlasExpand
+){font-size:14px;font-weight:600;line-height:1.3;letter-spacing:0}
+body.roadmap-studio :is(
+ .top .nav button,.top .gear,
+ .journey-heading .atlas-heading-actions button,
+ .workspace-results>.prn-tools>summary,.plan-travel button,
+ .workspace-tabs button,.plan-current-popover button,
+ .wk-actions button,[data-standard-accept],[data-roadmap-mode]
+){border-radius:var(--polish-control-radius)}
+body.roadmap-studio :is(.bp-card,.wk-form,form) select{font-size:14px;border-radius:8px}
+
+/* 계획 머리줄의 버튼은 기존 규칙의 우선순위가 높아 같은 조건으로 한 번 더 지정한다 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel>.journey-heading :is(button,summary),
+body.roadmap-studio.integrated-planner.premium-planner .top .member-account-link{font-size:14px;font-weight:600;border-radius:var(--polish-control-radius)}
+
+/* 질문 화면의 "이전": 흐린 글자 대신 테두리가 있는 보조 버튼 */
+body.roadmap-studio #questionBack{min-width:64px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,.34);border-radius:var(--polish-control-radius);background:rgba(255,255,255,.06);color:#f1f6ff;opacity:1}
+body.roadmap-studio #questionBack:hover{background:rgba(255,255,255,.14)}
+body.roadmap-studio #questionBack:disabled{opacity:.45}
+
+/* 2. 읽는 글자: 12px 아래로 내려가지 않게 */
+body.roadmap-studio :is(
+ .standard-month-axis span>small,
+ .standard-block>small,
+ .standard-quarter-axis>span,
+ .standard-lane>header>span,
+ .current-study-edit>small,
+ .ox-entry>summary>small,
+ .case-route-root small,
+ .uc-stop-name>b
+){font-size:12px;line-height:1.35}
+
+/* 3. 굵기는 700까지 */
+body.roadmap-studio :is(
+ .uc-stop-name>b,.ox-entry>summary,.cnu-summary-label,
+ #drawer .close,#ctl legend
+){font-weight:700}
+
+/* 4. 키보드 초점은 어디서나 같은 테두리 */
+body.roadmap-studio :is(button,select,summary,[role=tab],a,input,textarea):focus-visible{outline:3px solid var(--polish-focus);outline-offset:2px}
+
+/* 좁은 화면에서는 위쪽 메뉴 글자를 13px로 줄여 한 줄을 지킨다 */
+@media (max-width:900px){
+ body.roadmap-studio :is(.top .nav button,.top .gear){font-size:13px}
+}
+
+/* 5. 탭 안쪽(진도 비교·교재·월별 계획·학부모 질문)에서 남아 있던 작은 글자와 버튼 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .level-comparison-card>header>small,.level-comparison-pace>small,.level-comparison-note,
+ .transition-graph>header small,
+ .standard-lane>header>span,.standard-block>small,
+ .workspace-panel thead th,tr[data-study-area] td small,
+ .faq-position,.journey-axis>small,.journey-node-label,.journey-next>small
+){font-size:12px;line-height:1.4}
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ [data-atlas-full],.transition-axis-buttons button,
+ .workspace-note>summary,.graph-reading>summary,.horizontal-plan-details>summary,
+ .faq-ghost,.faq-controls button,.faq-library>summary,
+ button[data-journey-course],.journey-next,.progress-edit
+){font-size:14px;line-height:1.35}
+
+/* 스타일이 빠져 브라우저 기본 회색으로 보이던 보조 버튼 */
+body.roadmap-studio .wk-secondary{min-height:44px;padding:0 16px;border:1px solid #cfc3da;border-radius:var(--polish-control-radius);background:#fff;color:#4c355e;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+body.roadmap-studio .wk-secondary:hover{background:#f4eef8;border-color:#b9a6c9}
+
+/* 6. 휴대폰 너비에서 남아 있던 작은 글자 */
+body.roadmap-studio :is(.top .prn-global>summary){font-size:14px;font-weight:600}
+body.roadmap-studio.integrated-planner.premium-planner :is(
+ .plan-travel strong,.standard-stage>small,.standard-stage>span,.transition-overview dt
+){font-size:12px;line-height:1.35}
+
+/* 7. 카드: 흰 종이 한 장이 살짝 떠 있는 모양으로 통일한다.
+      얇은 테두리 + 두 겹 그림자, 왼쪽 띠로 종류를 구분, 제목 앞에 남색 표식. */
+body.roadmap-studio{
+ --card-radius:16px;--card-line:rgba(102,67,119,.16);
+ --card-shadow:0 1px 2px rgba(64,38,78,.06),0 14px 30px -16px rgba(64,38,78,.28);
+ --card-shadow-strong:0 2px 4px rgba(64,38,78,.08),0 22px 40px -18px rgba(64,38,78,.38);
+ --card-navy:#5b3a6c;--card-mint:#2f7a6c;--card-plum:#76528d;--card-amber:#a76c24}
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .unit-checklist,.learning-evidence,.learning-evidence-access,.book-check-summary,
+ .transition-chart-wrap,.level-comparison-card,.level-pace-scroll,.progress-panel
+){position:relative;border:1px solid var(--card-line);border-radius:var(--card-radius);background:#fff;box-shadow:var(--card-shadow)}
+/* 종류를 알려 주는 왼쪽 띠 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .learning-evidence,.learning-evidence-access,.book-check-summary,.progress-panel,.level-comparison-card
+)::before{content:"";position:absolute;left:-1px;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--card-tone,var(--card-navy))}
+body.roadmap-studio #journeyPanel :is(.learning-evidence,.learning-evidence-access){--card-tone:var(--card-mint)}
+body.roadmap-studio #journeyPanel .book-check-summary{--card-tone:var(--card-amber)}
+body.roadmap-studio #journeyPanel :is(.progress-panel,.level-comparison-card){--card-tone:var(--card-plum)}
+/* 지금 위치의 카드는 남색 테두리와 더 깊은 그림자 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel .level-comparison-card.is-current{--card-tone:var(--card-navy);border-color:var(--card-navy);box-shadow:0 0 0 1px var(--card-navy),var(--card-shadow-strong);background:linear-gradient(180deg,#f6f0fa 0,#fff 96px)}
+/* 카드 제목 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .learning-evidence,.learning-evidence-access,.book-check-summary,.progress-panel
+)>:is(h2,h3,h4):first-child,
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .learning-evidence,.learning-evidence-access,.book-check-summary,.progress-panel
+)>header:first-child :is(h2,h3,h4){font-size:18px;font-weight:700;letter-spacing:-.01em;color:#3b2748}
+/* 카드 안의 접는 줄은 카드 안쪽 선으로만 구분 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(.learning-evidence,.learning-evidence-access) details{border-color:rgba(102,67,119,.14)}
+@media print{body.roadmap-studio #journeyPanel :is(.unit-checklist,.learning-evidence,.learning-evidence-access,.book-check-summary,.transition-chart-wrap,.level-comparison-card,.level-pace-scroll,.progress-panel){box-shadow:none}}
+/* 긴 설명은 읽는 글씨로: 손글씨는 제목과 짧은 말에만 남긴다 (원장님 2026-11-10) */
+.pr-front-prose p{font-family:var(--font-ui,Pretendard,'Apple SD Gothic Neo',sans-serif);font-size:16px;line-height:1.85;letter-spacing:-.005em;color:#33283d}
+.pr-front-prose p+p{margin-top:12px}
+.sp-chart-note>strong{display:block;font-family:var(--font-hand,'GFIELD Handwriting',var(--font-ui));font-size:26px;font-weight:400;line-height:1.3;color:#4c355e}
+.sp-chart-note p{font-family:var(--font-ui,Pretendard,'Apple SD Gothic Neo',sans-serif);font-size:15px;line-height:1.8;color:#3f3148}
+@media(max-width:800px){.pr-front-prose p{font-size:15px;line-height:1.8}.sp-chart-note p{font-size:15px}}
+@media print{.pr-front-prose p{font-size:11pt;line-height:1.7}}
+/* 미리 보기 위쪽 단추: 한 가지 모양, 인쇄만 채운 단추 */
+.pr-toolbar :is(button,.pr-pdf-download){min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #cfc3da;border-radius:10px;padding:8px 16px;background:#fff;color:#4c355e;font:inherit;font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap;box-shadow:none}
+.pr-toolbar :is(button,.pr-pdf-download):hover{background:#f4eef8}
+.pr-toolbar #printReport{background:#5b3a6c;border-color:#5b3a6c;color:#fff;box-shadow:none}
+.pr-toolbar #printReport:hover{background:#4a2d59}
+.pr-toolbar h2{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.pr-toolbar small{font-size:12px}
+@media(max-width:800px){.pr-toolbar :is(button,.pr-pdf-download){font-size:14px;padding:8px 8px}}
+/* 레벨 안내 카드 */
+.sp-level-guide h3{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.sp-level-grid article>small{font-size:13px;font-weight:600}
+.sp-level-grid article>strong{font-size:17px;line-height:1.45}
