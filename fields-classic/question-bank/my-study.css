@@ -231,3 +231,23 @@ tr.is-done td { color: var(--muted); }
 .ms-memo { flex: 1 1 120px; min-height: 32px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; font: inherit; font-size: 13px; }
 .ms-code-inline { color: var(--accent-ink); font-size: 18px; letter-spacing: .1em; }
 .ms-empty { color: var(--muted); text-align: center; }
+
+/* 계획대로 가는지 한 줄(원장 2026-11-10): 판정 + 다음 공부 날·차시. 밀렸을 때만 감색 */
+.ms-plan { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 16px 20px; border: 1px solid var(--accent); border-radius: 10px; background: var(--accent-soft); }
+.ms-plan[hidden] { display: none; }
+.ms-plan-text { flex: 1 1 280px; display: grid; gap: 2px; }
+.ms-plan-text b { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--accent-ink); }
+.ms-plan-text span { font-size: 14px; color: var(--ink); }
+.ms-plan[data-state="behind"] { border-color: var(--terra); background: #fbf0ea; }
+.ms-plan[data-state="behind"] .ms-plan-text b { color: var(--terra); }
+.ms-plan[data-state="none"], .ms-plan[data-state="before"] { border-color: var(--line-strong); background: var(--paper); }
+.ms-plan[data-state="none"] .ms-plan-text b, .ms-plan[data-state="before"] .ms-plan-text b { color: var(--ink); }
+
+/* 선생님 보기 머리줄의 원장 도구(문제은행 · 강사용 교안): 좁은 화면에서는 아래 한 줄로 */
+.ms-tools { display: flex; gap: 8px; }
+.ms-tools .ms-btn { white-space: nowrap; }
+@media (max-width: 760px) {
+  .ms-header:has(.ms-tools) { flex-wrap: wrap; }
+  .ms-tools { order: 5; width: 100%; }
+  .ms-tools .ms-btn { flex: 1; padding-left: 8px; padding-right: 8px; font-size: 14px; }
+}

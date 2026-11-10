@@ -4,6 +4,7 @@ import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSli
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261110d";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -594,6 +595,16 @@ function tallyMarkup(result, lastPart) {
   return `<div class="sd-tally">${result ? `<figure class="sd-tally-ring">${ringMarkup(result.right, result.total)}<figcaption>${lastPart ? "단원 평가" : "데일리 테스트"}</figcaption></figure>` : ""}
     <dl>${items.map(([label, v, u]) => `<div><dt>${label}</dt><dd><b data-count="${v}">${v}</b>${u}</dd></div>`).join("")}</dl></div>`;
 }
+// 도착 장: 진도표가 있으면 다음 공부 날을 한 줄로(원장 2026-11-10 설계 — 차시가 끝나면 다음에 언제 하는지 알려 준다). 강사용 교안에는 없다
+function nextDayMarkup() {
+  if (classMode) return "";
+  const plan = readRecord(student, "plan", "main");
+  if (!plan?.start || !plan.from) return "";
+  try {
+    const status = planStatus(CURRICULUM, plan, (bookId, unit) => readRecord(student, "week", `${bookId}-u${unit}`));
+    return status.nextDate && status.state !== "done" ? `<p class="sd-end-next">다음 공부는 <b>${esc(dayLabel(status.nextDate))}</b>이에요.</p>` : "";
+  } catch { return ""; }
+}
 function endMarkup() {
   const lastPart = part >= parts;
   const result = lastPart ? testResult(testId) : null;
@@ -607,6 +618,7 @@ function endMarkup() {
     <h1>${lastPart ? `${unitIndex + 1}단원 공부를 마쳤어요!` : `${unitIndex + 1}단원 ${part}차시를 마쳤어요!`}</h1>
     <p class="sd-cover-lead">${esc(unit.label)}</p>
     ${tallyMarkup(result, lastPart)}
+    ${nextDayMarkup()}
     <div class="sd-end-actions">
       ${nextLink}
       ${classMode ? "" : `<a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>`}

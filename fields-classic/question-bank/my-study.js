@@ -1,5 +1,6 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
 import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261029q";
+import { planStatus, planLine } from "./study-plan.js?v=20261110d";
 
 // 내 학습 상황(원장 2026-10-27 「학생이 직접 학습 상황을 볼 수 있는 것도 · 수행률 진도」)
 //   권마다: 수행률(단원 + 권별 테스트) · 진도(지금 몇 단원) · 단원 평가 평균 · 권별 테스트
@@ -93,7 +94,28 @@ function renderWeak(book, state) {
     <a class="ms-btn primary" href="${esc(href)}">약점 유형 다시 공부하기 · ${weak.length}유형 × 2문제 ›</a>`;
 }
 
+// 계획대로 가는지 한 줄(원장 2026-11-10): 진도표(plan/main)가 있으면 판정 + 다음 공부 날·차시, 없으면 진도표 만들기 안내
+function renderPlan() {
+  const plan = get("plan", "main");
+  const box = $("planLine");
+  box.hidden = false;
+  if (!plan?.start || !plan.from) {
+    box.dataset.state = "none";
+    box.innerHTML = `<div class="ms-plan-text"><b>진도표가 아직 없어요</b><span>수업 요일을 고르면 공부할 날이 정해지고, 계획대로 가는지 여기서 알려 줘요.</span></div>
+      <a class="ms-btn" href="${esc(link("plan.html", {}))}">진도표 만들기</a>`;
+    return;
+  }
+  const status = planStatus(CURRICULUM, plan, (book, unit) => get("week", `${book}-u${unit}`));
+  const { title, detail } = planLine(status);
+  const next = status.nextSession;
+  box.dataset.state = status.state;
+  box.innerHTML = `<div class="ms-plan-text"><b>${esc(title)}</b>${detail ? `<span>${esc(detail)}</span>` : ""}</div>
+    ${next && loggedIn()?.type !== "admin" ? `<a class="ms-btn primary" href="${esc(link("study.html", { book: next.book, unit: String(next.unit), part: String(next.part) }))}">이 차시 공부하기</a>` : ""}
+    <a class="ms-btn" href="${esc(link("plan.html", {}))}">진도표 보기</a>`;
+}
+
 function render() {
+  renderPlan();
   const book = CURRICULUM.find((entry) => entry.id === bookId);
   const state = bookState(book);
   renderBooks();

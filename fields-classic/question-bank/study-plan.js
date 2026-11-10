@@ -83,3 +83,46 @@ export function changesOf(rows) {
   const makeup = rows.filter((row) => row.type === "makeup").length;
   return { absent, makeup, behind: absent - makeup };
 }
+
+// ── 계획대로 가는지(원장 2026-11-10 「대문이 학생 문 · 학부모나 학생이나 같잖아」 — 같은 화면에서 계획과 실제를 한 줄로) ──
+// 진도표의 날짜와 차시 기록을 맞댄다. 새 기록은 만들지 않는다.
+//   weekOf(bookId, unit) → 그 단원의 차시 기록 payload({ seen: ["p<차시>:<종류>:<몇 번째>"] }) 또는 null
+//   마친 차시 = 차시 순서에서 기록이 있는 가장 뒤 차시의 앞까지 + 그 차시가 오늘의 과제(마지막 차시는 단원 평가) 장까지 갔으면 그 차시도.
+//   state: before(시작 전) · on(계획대로) · behind(밀림) · ahead(앞섬) · done(다 마침).  count = 밀리거나 앞선 차시 수
+//   nextDate = 다음 공부 날(오늘이 수업일이고 오늘 몫이 남았으면 오늘), nextSession = 다음에 공부할 차시
+export function planStatus(curriculum, plan, weekOf, now = today()) {
+  const sessions = sessionSequence(curriculum, plan.from, plan.toBook);
+  const held = schedule(plan, sessions).filter((row) => row.type === "class" || row.type === "makeup");
+  const touched = (session) => (weekOf(session.book, session.unit)?.seen || []).filter((id) => id.startsWith(`p${session.part}:`));
+  let last = -1;
+  sessions.forEach((session, index) => { if (touched(session).length) last = index; });
+  const lastDone = last >= 0 && touched(sessions[last]).some((id) => /^p\d+:(homework|test):/.test(id));
+  const done = last < 0 ? 0 : last + (lastDone ? 1 : 0);
+  const due = held.filter((row) => row.date < now).length;
+  const todayRow = held.find((row) => row.date === now) || null;
+  const nextRow = todayRow && done <= due ? todayRow : held.find((row) => row.date > now) || null;
+  const base = { done, due, total: sessions.length, nextDate: nextRow?.date || "", nextSession: sessions[done] || null, startDate: held[0]?.date || plan.start };
+  if (sessions.length && done >= sessions.length) return { ...base, state: "done", count: 0 };
+  if (!due && !todayRow && !done) return { ...base, state: "before", count: 0 };
+  if (done < due) return { ...base, state: "behind", count: due - done };
+  const ahead = done - due - (todayRow ? 1 : 0);
+  return ahead > 0 ? { ...base, state: "ahead", count: ahead } : { ...base, state: "on", count: 0 };
+}
+// 「11월 12일 목요일」 — 오늘이면 「오늘(11월 10일 화요일)」
+export function dayLabel(date, now = today()) {
+  const d = parseYmd(date), text = `${d.getMonth() + 1}월 ${d.getDate()}일 ${WEEKDAYS[d.getDay()]}요일`;
+  return date === now ? `오늘(${text})` : text;
+}
+export const sessionLabel = (session) => `${session.bookLabel} ${session.unit + 1}단원 ${session.part}차시`;
+// 화면에 쓰는 한 줄: { title, detail }
+export function planLine(status, now = today()) {
+  const title = status.state === "done" ? "진도표의 공부를 모두 마쳤어요"
+    : status.state === "before" ? `${dayLabel(status.startDate, now)}에 시작해요`
+    : status.state === "behind" ? `${status.count}차시 밀렸어요`
+    : status.state === "ahead" ? `계획보다 ${status.count}차시 앞서 있어요`
+    : "계획대로 가고 있어요";
+  const parts = [];
+  if (status.nextDate && status.state !== "done") parts.push(`다음 공부 · ${dayLabel(status.nextDate, now)}`);
+  if (status.nextSession) parts.push(sessionLabel(status.nextSession));
+  return { title, detail: parts.join(" · ") };
+}

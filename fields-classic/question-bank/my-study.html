@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#fdfbf5" />
   <title>내 학습 상황</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./my-study.css?v=20261029r" />
+  <link rel="stylesheet" href="./my-study.css?v=20261110e" />
 </head>
 <body>
   <header class="ms-header">
@@ -17,6 +17,8 @@
     <div class="ms-student" id="studentName">DEMO</div>
   </header>
   <main class="ms-main">
+    <!-- 계획대로 가는지 한 줄(진도표 날짜와 차시 기록을 맞댐, study-plan.js planStatus) — 학생과 학부모가 같은 화면에서 본다 -->
+    <section class="ms-plan" id="planLine" aria-label="계획대로 가는지" hidden></section>
     <nav class="ms-books" id="books" aria-label="교재 고르기"></nav>
     <section class="ms-summary" id="summary" aria-label="수행률과 진도"></section>
     <section class="ms-weeks" aria-labelledby="weeksHeading">
@@ -26,6 +28,6 @@
     <section class="ms-weak" id="weak" aria-labelledby="weakHeading"></section>
     <p class="ms-note" id="note"></p>
   </main>
-  <script type="module" src="./my-study.js?v=20261110a"></script>
+  <script type="module" src="./my-study.js?v=20261110d"></script>
 </body>
 </html>

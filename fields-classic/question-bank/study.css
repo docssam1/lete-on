@@ -383,3 +383,6 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
 /* 강사용 교안(?as=class, 원장 2026-11-10): 수업 화면에 띄우므로 그림 액자를 얇게 해 공부 칸을 넓힌다 */
 body.is-class { --frame-x: 8px; }
 body.is-class .sd-main { padding-top: 8px; padding-bottom: 8px; }
+/* 도착 장: 다음 공부 날(진도표가 있을 때) */
+.sd-end-next { margin: 8px 0 0; font-size: 17px; color: var(--ink, #2a2440); }
+.sd-end-next b { font-weight: 700; }
