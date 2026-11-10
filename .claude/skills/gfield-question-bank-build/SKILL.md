@@ -55,6 +55,10 @@ description: 지필드 사고력 문제은행(fields-classic/question-bank) 화�
 - 화면 글꼴은 Pretendard(`'FC Sans'`, `assets/fonts/pretendard-var.woff2`, 100~700). 문제은행 머리줄·1단계·미리보기·2단계에 쓴다. 인쇄 본문은 `print-templates.css` 규칙(명조·흑백)을 그대로 둔다.
 - 파랑 금지 — 선택·주 단추·체크는 깊은 초록 `#2f6b4a`(진 `#1e4631`, 옅은 `#e9f0e7`), 선 `#e2d9c6`·`#c9bda2`, 보조 글자 `#7a6f5c`. 학습 단계 색: 개념 `#8fb89c` · 유형 `#2f6b4a` · 연습 `#a87c22` · 심화 `#b4512e`(띠·막대 모두 같게).
 - 예전 파란 규칙은 지우지 않고 맨 끝 「따뜻한 종이 + 깊은 초록」 블록에서 덮는다(`#builderPanel`·`.type-preview` 범위 + 변수 `--blue*`를 초록으로).
+- **화면 틀은 워밍업 학습 화면 결(원장 2026-11-10 「디자인을 워밍업 학습 화면 같이 바꿔」)**: 문제은행 편집 화면(`index.html`, `body.bank-ui`)은 남색 머리줄 `#172c36` · 바탕 `#edf1ef` + 줄무늬 · 회청색 글씨와 선 · 주 단추 파랑 `#2456c4`. 고른 칸·체크의 깊은 초록과 학습 단계 색은 위 그대로다. 위의 종이색 값은 이제 **학습지 종이와 인쇄**의 색이고(화면 미리보기도 종이는 그 색), 화면 틀에서는 도구가 회청색으로 바꿔 끼운다.
+  - 도구 `tools/screen-skin/build.mjs`: `styles.css`·`print-templates.css`의 누런 중간색을 `var(--wRRGGBB,#RRGGBB)`로 감싸고 `styles.css` 맨 끝 `▼▼ screen-skin` 블록(@media screen)에서 문제은행 화면에만 값을 넣는다. 종이 영역(`.question-grid`·`.worksheet-head`·`.pt-lead`·`.ed-q`·`.visual`·`.answer-dialog table`·`.cv-thumb`·`.watermark`)에서는 변수를 다시 비워 원래 색이 나온다. 인쇄·학생 화면(`as-student`)·`golden-bell.html`·`drill.html`에는 걸리지 않는다.
+  - **색을 새로 쓰거나 고친 뒤에는 `node fields-classic/question-bank/tools/screen-skin/build.mjs`를 돌린다**(여러 번 돌려도 같다. `--check`는 낡았으면 실패). 색은 평소처럼 `#rrggbb`로 쓰면 도구가 감싼다. `▼▼ screen-skin` 블록은 손으로 고치지 않고, 머리줄·바탕·주 단추 같은 손 규칙은 `tools/screen-skin/finish.css`에 쓴다.
+  - 새 종이 영역(인쇄물과 같은 색이어야 하는 칸)을 만들면 도구의 `PAPER` 목록에 더하고, 그 칸이 바깥 틀에서 글자색을 물려받으면 `finish.css`에 예전 값을 직접 준다(안 그러면 종이 글자가 회청색이 된다). 확인은 앞뒤 판의 계산된 색 비교(종이 영역 · `@media print` 전체).
 
 ## 6. 수식은 MathML 공통 모듈 하나 (`math-markup.js` · `math-markup.css`)
 - 브라우저에 들어 있는 MathML만 쓴다. KaTeX·MathJax 같은 외부 라이브러리·CDN을 쓰지 않는다.
@@ -77,6 +81,7 @@ description: 지필드 사고력 문제은행(fields-classic/question-bank) 화�
 - 파일을 고치면 그 파일을 부르는 곳의 `?v=`를 바꾸고, 그 부르는 파일도 바뀌었으니 다시 그 위로 — html까지 올라간다. 손으로 하지 말고 「바뀐 파일 이름 → 부르는 곳 바꾸기 → 바뀐 js를 다시 목록에」 반복하는 작은 스크립트로 한다(이번 세션의 방식). 하나라도 빠지면 학생 화면에 옛 모듈이 섞인다.
 
 ## 10. 검사 (고친 뒤 반드시)
+- 화면 덧칠 표 `node tools/screen-skin/build.mjs --check`(styles.css·print-templates.css를 고쳤을 때).
 - 정답 보호 `golden-bell-protection-audit.mjs` · 그림 색 `golden-bell-style-audit.mjs` · 권별 `bookNN-audit.mjs` · 과정 레슨 `golden-bell-course*-audit.mjs`.
 - 브라우저: `question-bank-layout-browser-audit.mjs`(85항목) · `question-bank-compact-visual-audit.mjs`(그림 칸 넘침) · `question-bank-answer-print-audit.mjs` · 골든벨 흐름 `FLOWS=frac golden-bell-3d-game-browser-audit.mjs`.
   - 이 클라우드에서는 `CODEX_NODE_MODULES`(playwright + pdf-lib가 든 node_modules)·`FIELDS_BASE_URL`·`USERPROFILE`을 준다. 정적 서버는 **Range 요청과 폴더 index.html**을 받아야 한다(`python3 -m http.server`는 Range를 못 받아 영상 검사가 멈춘다).
