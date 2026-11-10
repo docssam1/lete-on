@@ -306,3 +306,14 @@ body.sm { padding-bottom: 92px; }
   .sm-dock p { flex-basis: 100%; }
   .sm-dock .st-btn.primary { flex: 1; min-width: 0; }
 }
+/* 강사용: 본책 단원과 짝이 없는 워밍업 학습 */
+.st-rest { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.st-rest h3 { font-size: 15px; }
+.st-rest h3 small { margin-left: 6px; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.st-rest-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.st-rest-links a { display: inline-flex; align-items: center; min-height: 40px; padding: 4px 12px; border: 1px solid var(--line-strong); border-radius: 6px; font-size: 13.5px; text-decoration: none; }
+.st-rest-links a:hover { border-color: var(--ink); }
+/* 차시 카드는 칸 전체 너비에 나란히(좁은 한 줄에 쌓이지 않게) */
+.st-part-list > .st-sessions, .st-part-list > .fa-lock { grid-column: 1 / -1; }
+.st-session .st-week li { grid-template-columns: 30px minmax(120px, auto) minmax(0, 1fr); }
+.st-session .st-week { align-content: start; }

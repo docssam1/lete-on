@@ -1,17 +1,18 @@
-import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261101b";
-import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261105b";
+import { CURRICULUM } from "./source-data.js?v=20261101b";
+import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261105b";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261029q";
 import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261103d";
 import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261105b";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
 // 한 번에 한 장만 보이고, 위의 길(1권 › 01 도형 움직이기)이나 「‹」로 앞 장으로 돌아간다. 브라우저 뒤로 가기도 앞 장으로.
-// 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 본책) 또는
+// 권을 고르고 「공부하기」(대단원 → 차시 카드 → 차시 덱 study.html) 또는
 // 「유사문제 만들기」(모르는 문제 유사문제 similar.html · 권별테스트 원문 풀기 · 권별테스트 유사문제)로 들어간다.
 // 이 화면은 길 안내만 한다. 문제를 만들고 채점하는 일은 문제은행(index.html)과 골든벨(golden-bell.html)이 그대로 맡고,
 // 여기서는 그 화면들이 받는 주소(book·lesson·phase·units·stage·count·set·build)만 만든다.
+// 강사용 교안(?as=class, 대문 아래 작은 글자 — 원장 2026-11-10 「강사는 교안이 수업 흐름대로 되어야 하고」): 같은 권 → 대단원 → 차시 카드인데
+// 잠금·기록·이어서 하기 없이 차시마다 「교안 열기」(study.html?as=class — 학생 차시 덱과 같은 차례)와 「교재 인쇄」만 둔다.
 // 설계: PROGRAM-STRUCTURE-20261024.md
 
 const $ = (id) => document.getElementById(id);
@@ -22,7 +23,7 @@ const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&
 const hasBook = CURRICULUM.some((book) => book.id === params.get("book"));
 const view = {
   bookId: hasBook ? params.get("book") : CURRICULUM[0].id,
-  step: hasBook ? (params.get("unit") !== null && params.get("door") !== "test" && params.get("as") !== "class" ? 2 : 1) : 0,
+  step: hasBook ? (params.get("unit") !== null && params.get("door") !== "test" ? 2 : 1) : 0,
   unit: Math.max(0, Number(params.get("unit")) || 0),
   door: params.get("door") === "test" ? "test" : "study",
   // 학생·학부모 화면은 늘 스스로 공부(self). 수업용(class)은 대문 아래 「강사용 교안」(?as=class)으로만 들어온다
@@ -81,14 +82,16 @@ function go(step, push = true) {
   window.scrollTo({ top: 0 });
 }
 
-// 골든벨 학습을 단원에 나눠 담는 규칙·게임 찾기는 study-map.js(학생 차시 화면과 같이 쓴다).
-const gamesFor = (lesson) => gameTitles(view.bookId, lesson, goldenBell.games);
+// 골든벨 학습을 단원에 나눠 담는 규칙은 study-map.js(학생 차시 화면과 같이 쓴다).
+const isClass = () => view.mode === "class";
+// 수업용은 회원 잠금에 걸리지 않는다(fields-access.js 머리말)
+const gateOf = (bookId, unit) => isClass() ? { ok: true, who: {} } : canStudy(bookId, unit);
 
 // ── 권 고르기 ──
 function renderBooks() {
   // 열리지 않은 권(둘러보기·체험·정식의 범위 밖)은 「잠김」 표시 — 눌러 들어가면 단원 장에서 안내한다(fields-access.js)
   $("bookList").innerHTML = CURRICULUM.map((book) => {
-    const gate = canStudy(book.id);
+    const gate = gateOf(book.id);
     const mark = gate.who.kind === "preview" && gate.ok ? `<em class="st-lock-tag is-open">1단원 둘러보기</em>` : gate.ok ? "" : `<em class="st-lock-tag">잠김</em>`;
     return `<button type="button" data-book="${book.id}" class="${[book.id === view.bookId && hasBook ? "was" : "", gate.ok ? "" : "is-locked"].filter(Boolean).join(" ")}">
     <b>${esc(book.label)}</b><span>${esc(book.title)}</span>${mark}<i aria-hidden="true">›</i></button>`;
@@ -107,34 +110,6 @@ function renderDoors() {
 }
 
 // ── 공부하기 ──
-function bookCell(unitIndex) {
-  const self = view.mode === "self";
-  const entries = { units: String(unitIndex), count: self ? "10" : "20", build: "1", ...(self ? {} : { form: "lesson" }) };
-  const stages = TEXTBOOK_STAGES.map((stage) => `<a href="${esc(bankLink({ ...entries, stage: stage.id }))}">${esc(stage.label)}</a>`).join("");
-  return `<div class="st-cell st-book-cell"><b>④ 본책</b><div class="st-stage-links">${stages}</div>
-    <small>${self ? "10문제 학습지 · 화면에서 풀고 바로 채점" : "교재형 학습지 20문제 · 인쇄"}</small></div>`;
-}
-
-function lessonRow(lesson) {
-  const self = view.mode === "self";
-  const tutorial = Boolean(goldenBell.games.flows[`${view.bookId}/${lesson.id}`]);
-  const concept = tutorial ? "튜토리얼" : lesson.experience ? "개념 설명" : "개념 쪽";
-  const games = gamesFor(lesson);
-  const count = lesson.original?.items?.length || 0;
-  return `<li class="st-lesson">
-    <span class="st-lesson-title">${esc(lesson.title)}</span>
-    <a class="st-step${tutorial ? " has-tutorial" : ""}" href="${esc(bellLink({ lesson: lesson.id }))}"><i>①</i>${concept}</a>
-    ${games.length
-      ? `<a class="st-step" href="${esc(bellLink({ lesson: lesson.id }))}"><i>②</i>${esc(games.join(" · "))}</a>`
-      : DRILL_RECIPES[`${view.bookId}/${lesson.id}`]   // 워밍업 게임이 없는 차시는 연습 공방(drill.html)으로
-        ? `<a class="st-step" href="./drill.html?book=${esc(view.bookId)}&amp;lesson=${esc(lesson.id)}"><i>②</i>연습 공방</a>`
-        : `<span class="st-step is-empty"><i>②</i>게임 준비 중</span>`}
-    ${count
-      ? `<a class="st-step" href="${esc(bellLink({ lesson: lesson.id, phase: "original" }))}"><i>③</i>워밍업 ${count}문항${self ? "" : " · 수업 화면"}</a>`
-      : `<span class="st-step is-empty"><i>③</i>워밍업 준비 중</span>`}
-  </li>`;
-}
-
 // 학습형(학생): 원장 지시(2026-10-24) 「학생용은 우선 권 단원 고르기. 1단원을 2번 정도로 나누어 공부」 —
 // 대단원을 누르면 그 단원의 차시(소단원) 장으로 넘어가고, 차시 안에서 개념 배우기 → 게임하기 → 골든벨 → 공부하기(study.html).
 const problemCount = (unit, part) => partProblems(unit, part).reduce((sum, block) => sum + block.numbers.length, 0);
@@ -142,13 +117,13 @@ function renderSelfUnits(book) {
   $("unitList").innerHTML = `<div class="st-unit-cards">${book.units.map((unit, index) => {
     const { count } = unitParts(unit);
     const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
-    const key = `${book.id}-u${index}`, rate = weekRate(readRecord(student, "week", key), readRecord(student, "test", key));
-    const test = readRecord(student, "test", key);
-    const locked = !canStudy(book.id, index).ok;
+    const key = `${book.id}-u${index}`, rate = isClass() ? 0 : weekRate(readRecord(student, "week", key), readRecord(student, "test", key));
+    const test = isClass() ? null : readRecord(student, "test", key);
+    const locked = !gateOf(book.id, index).ok;
     return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
-  }).join("")}${book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
+  }).join("")}${!isClass() && book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
-const studyLink = (bookId, unitIndex, part, last = 0) => link("study.html", { book: bookId, unit: String(unitIndex), part: String(part), ...(last ? { s: String(last) } : {}) });
+const studyLink = (bookId, unitIndex, part, last = 0) => link("study.html", { book: bookId, unit: String(unitIndex), part: String(part), ...(last ? { s: String(last) } : {}), ...(isClass() ? { as: "class" } : {}) });
 // 한 차시 교재 인쇄 주소(golden-bell.html?sessionbook=1) — 차시 카드와 「책 시작 때 인쇄할까요?」가 같이 쓴다
 function sessionLinks(book, unitIndex, part) {
   const unit = book.units[unitIndex], { count } = unitParts(unit);
@@ -224,8 +199,8 @@ async function startSession(target) {
   const [bookId, unitText, partText, lastText] = String(target).split("|");
   const book = bookById(bookId), unit = Number(unitText) || 0, part = Number(partText) || 1, last = Number(lastText) || 0;
   if (!book) return;
-  if (!canStudy(book.id, unit).ok) {   // 열리지 않은 진도 → 그 단원 장으로 가서 잠김 안내를 보여 준다
-    view.bookId = book.id; view.unit = unit; view.door = "study"; view.mode = "self";
+  if (!gateOf(book.id, unit).ok) {   // 열리지 않은 진도 → 그 단원 장으로 가서 잠김 안내를 보여 준다
+    view.bookId = book.id; view.unit = unit; view.door = "study";
     return go(2);
   }
   const href = studyLink(book.id, unit, part, last);
@@ -267,36 +242,38 @@ $("quickPick").addEventListener("click", () => {
 function renderParts() {
   const book = activeBook(), unit = book.units[view.unit];
   $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)}`;
-  const gate = view.mode === "self" ? canStudy(book.id, view.unit) : { ok: true };
+  const gate = gateOf(book.id, view.unit);
   if (!gate.ok) { $("partList").innerHTML = lockCard(gate.why, { bookId: book.id, here: "start.html" }); return; }
   const { count } = unitParts(unit);
   const bellBook = goldenBell?.books.find((entry) => entry.id === book.id);
   const all = goldenBell ? lessonsByUnit(book, bellBook).units[view.unit] : [];
   const size = Math.ceil(all.length / count);
   const last = view.unit === book.units.length - 1;
-  const week = readRecord(student, "week", `${book.id}-u${view.unit}`);
-  const result = readRecord(student, "test", `${book.id}-u${view.unit}`);
+  // 강사용 교안은 학생 기록을 보지 않는다(점수·이어서 하기 없음)
+  const week = isClass() ? null : readRecord(student, "week", `${book.id}-u${view.unit}`);
+  const result = isClass() ? null : readRecord(student, "test", `${book.id}-u${view.unit}`);
   const sessions = Array.from({ length: count }, (_, k) => {
     const part = k + 1, lessons = all.slice(k * size, part * size);
-    const daily = part > 1 ? readRecord(student, "test", `${book.id}-u${view.unit}-d${part - 1}`) : null;
+    const daily = part > 1 && !isClass() ? readRecord(student, "test", `${book.id}-u${view.unit}-d${part - 1}`) : null;
     const lastPart = part === count;
     // 2차시부터 맨 앞에 지난 차시 데일리 테스트(원장 2026-10-29 「데일리 테스트는 다음날이야」), 마지막 차시 끝에 단원 평가
     const steps = [
       ...(part > 1 ? [[`데일리 테스트`, daily ? `${part - 1}차시 복습 4문제 · ${daily.right} / ${daily.total}` : `${part - 1}차시 복습 4문제 · ○✕`]] : []),
       ...(lessons.length ? [["개념 → 게임 → 워밍업", lessons.map((lesson) => lesson.title).join(" · ")]] : []),
-      ["공부하기", `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
+      ["공부하기", isClass() ? `본책 ${problemCount(unit, part)}문항 · 한 문제씩 화면에` : `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
       ["오늘의 과제", "칠판에 적힌 과제 · 집에서"],
       ...(lastPart ? [["단원 평가", result ? `10문제 · ${result.right} / ${result.total}` : "10문제 · ○✕ 진단 · 약점 유형"]] : []),
       ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : [])
     ];
     const on = week?.part === part;
     const { bookPrint } = goldenBell ? sessionLinks(book, view.unit, part) : {};
-    const wantPrint = printPref(book.id) === "print";
+    const wantPrint = !isClass() && printPref(book.id) === "print";
+    const startWord = isClass() ? "교안 열기" : on ? "이어서 하기" : "공부 시작하기";
     // 한 차시 교재 인쇄(원장 2026-10-29 「워밍업 교재 표지와 같게, 한 회차 교재 구성 전체를 묶으라고」):
     // 워밍업 교재 표지 → (2차시부터) 지난 차시 데일리 테스트 → 워밍업 학습마다 개념·워밍업 → 본책 → 오늘의 과제 → (마지막 차시) 단원 평가 (golden-bell.html?sessionbook=1)
     return `<section class="st-session${on ? " is-on" : ""}"><h4>${part}차시</h4>
       <ol class="st-week">${steps.map(([label, note], i) => `<li><b>${i + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>
-      <a class="st-week-start st-btn${on || (!week && part === 1) ? " primary" : ""}" data-start="${book.id}|${view.unit}|${part}|${on ? week.last || 1 : ""}" href="${esc(studyLink(book.id, view.unit, part, on ? week.last || 1 : 0))}">${part}차시 ${on ? "이어서 하기" : "공부 시작하기"} ›</a>
+      <a class="st-week-start st-btn${isClass() || on || (!week && part === 1) ? " primary" : ""}" data-start="${book.id}|${view.unit}|${part}|${on ? week.last || 1 : ""}" href="${esc(studyLink(book.id, view.unit, part, on ? week.last || 1 : 0))}">${part}차시 ${startWord} ›</a>
       ${goldenBell ? `<a class="st-session-print${wantPrint ? " is-wanted" : ""}" href="${esc(bookPrint)}" target="_blank" rel="noopener">${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}개념 · 워밍업 · 본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
   });
   $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>`;
@@ -304,33 +281,13 @@ function renderParts() {
 
 function renderStudy() {
   const book = activeBook();
-  document.querySelector(".st-steps").hidden = view.mode === "self";
-  if (view.mode === "self") {
-    $("studyLead").textContent = "대단원을 골라요.";
-    return renderSelfUnits(book);
-  }
-  $("studyLead").innerHTML = view.mode === "self"
-    ? ""
-    : "선생님 화면에 띄워 같은 순서로 수업해요. ④ 본책은 교재형 학습지로 인쇄해요.";
-  if (!goldenBell) {
-    $("unitList").innerHTML = book.units.map((unit, index) => `<section class="st-unit"><h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}</h3>
-      <div class="st-unit-body"><p class="st-loading">워밍업 학습을 불러오는 중…</p>${bookCell(index)}</div></section>`).join("");
-    return;
-  }
-  const bellBook = goldenBell.books.find((entry) => entry.id === book.id);
-  const { units, rest } = lessonsByUnit(book, bellBook);
-  const unitBlocks = book.units.map((unit, index) => `<section class="st-unit">
-    <h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}<small>본책 ${unit.typeIds.length}개 유형 · 워밍업 학습 ${units[index].length}개</small></h3>
-    <div class="st-unit-body">
-      ${units[index].length ? `<ol class="st-lessons">${units[index].map(lessonRow).join("")}</ol>` : `<p class="st-empty">이 단원은 본책 문제로 공부해요. 워밍업 학습은 준비하고 있어요.</p>`}
-      ${bookCell(index)}
-    </div>
-  </section>`).join("");
-  const restBlock = rest.length ? `<section class="st-unit st-rest">
-    <h3><span>+</span>그 밖의 워밍업<small>본책 단원과 짝이 없는 워밍업 학습 ${rest.length}개</small></h3>
-    <div class="st-unit-body"><ol class="st-lessons">${rest.map(lessonRow).join("")}</ol></div>
-  </section>` : "";
-  $("unitList").innerHTML = unitBlocks + restBlock;
+  $("studyLead").textContent = isClass() ? "수업할 대단원을 골라요. 차시마다 교안과 교재 인쇄가 나와요." : "대단원을 골라요.";
+  renderSelfUnits(book);
+  // 강사용: 본책 단원과 짝이 없는 워밍업 학습은 여기서 수업 화면으로 바로 연다(차시 교안에는 들어가지 않는다)
+  if (!isClass() || !goldenBell) return;
+  const { rest } = lessonsByUnit(book, goldenBell.books.find((entry) => entry.id === book.id));
+  if (rest.length) $("unitList").insertAdjacentHTML("beforeend", `<section class="st-rest"><h3>그 밖의 워밍업 <small>본책 단원과 짝이 없는 학습 ${rest.length}개 · 수업 화면으로 열려요</small></h3>
+    <div class="st-rest-links">${rest.map((lesson) => `<a href="${esc(bellLink({ lesson: lesson.id }))}">${esc(lesson.title)}</a>`).join("")}</div></section>`);
 }
 
 // ── 유사문제 만들기 ──
@@ -422,5 +379,4 @@ bellReady.then((data) => {
   if (view.step === 2) renderParts();
   else if (view.step === 1 && view.door === "study") renderStudy();
 }).catch(() => {
-  $("unitList").querySelectorAll(".st-loading").forEach((node) => { node.textContent = "워밍업 학습을 불러오지 못했어요. 새로고침해 주세요."; });
 });

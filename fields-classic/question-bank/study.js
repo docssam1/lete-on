@@ -22,10 +22,14 @@ import { setIcon } from "./ui-icons.js?v=20261105b";
 //    → 오늘의 과제(칠판 글씨) → 앞 차시는 데일리 테스트 4문제 · 마지막 차시는 단원 평가 10문제(○✕ 진단 · 약점 유형)
 //    → (그 권의 마지막 단원 마지막 차시면) 권별 테스트 → 도착. 문제는 문제은행 학생 화면(index.html?picks=…&as=student&embed=1)을 장 안에 띄운다.
 // 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   (part 없으면 1차시)
+//  · 강사용 교안(&as=class, 원장 2026-11-10 「강사는 교안이 수업 흐름대로 되어야 하고」): 같은 차시 덱을 수업 화면으로 연다 — 차례가 학생 덱과 같다.
+//    회원 잠금 없음 · 기록을 남기지 않음(학생 이름 대신 「수업」) · 독쌤 음성과 저절로 넘어가기는 처음에 꺼 둠(말은 강사가 한다, 켤 수 있다)
+//    · 데일리 테스트·단원 평가는 채점표 없이 문제만 한 장씩(답은 강사가 「답 확인」을 누를 때) · 평가 전 약점 팝업 없음.
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const student = params.get("student") || "DEMO";
+const classMode = params.get("as") === "class";
+const student = classMode ? "수업" : params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const book = CURRICULUM.find((entry) => entry.id === params.get("book")) || CURRICULUM[0];
 const unitIndex = Math.min(Math.max(Number(params.get("unit")) || 0, 0), book.units.length - 1);
@@ -35,11 +39,13 @@ const part = Math.min(Math.max(Number(params.get("part")) || 1, 1), parts);
 const lastUnit = unitIndex === book.units.length - 1;
 const seenKey = `fields-classic-study-seen:${student}:${book.id}:${unitIndex}`;
 const seen = (() => { try { return new Set(JSON.parse(localStorage.getItem(seenKey) || "[]")); } catch { return new Set(); } })();
-const prefKey = "fields-classic-study-pref";
-const pref = (() => { try { return { sound: true, paused: false, ...JSON.parse(localStorage.getItem(prefKey) || "{}") }; } catch { return { sound: true, paused: false }; } })();
+const prefKey = classMode ? "fields-classic-class-pref" : "fields-classic-study-pref";
+const PREF_START = classMode ? { sound: false, paused: true } : { sound: true, paused: false };
+const pref = (() => { try { return { ...PREF_START, ...JSON.parse(localStorage.getItem(prefKey) || "{}") }; } catch { return { ...PREF_START }; } })();
 const savePref = () => { try { localStorage.setItem(prefKey, JSON.stringify(pref)); } catch {} };
 
-const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries })}`;
+// 강사용 교안에서 여는 차시 덱·차시 고르기는 계속 수업용으로
+const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries, ...(classMode && ["study.html", "start.html"].includes(page) ? { as: "class" } : {}) })}`;
 const phaseNo = (kind) => PHASES.findIndex(([id]) => id === kind) + 1;
 
 let slides = [{ kind: "cover" }];
@@ -63,7 +69,7 @@ const COUNTED = (slide) => !["cover", "end", "booktest"].includes(slide.kind);
 let allSessions = null;   // 차시마다의 장(다른 차시는 수행률 분모로만)
 function recordVisit() {
   const slide = slides[index];
-  if (!ready || !COUNTED(slide)) return;
+  if (classMode || !ready || !COUNTED(slide)) return;
   allSessions ||= Array.from({ length: parts }, (_, k) => (k + 1 === part ? slides : buildSessionSlides(book, unitIndex, k + 1, bellData)));
   const same = slides.filter((entry) => entry.kind === slide.kind);
   const id = `p${part}:${slide.kind}:${same.indexOf(slide)}`;
@@ -91,9 +97,9 @@ function sheetUrl(slide, { print = false } = {}) {
   } else if (slide.kind === "homework") {
     entries = { picks: todayTypes().map((typeId) => pickOf(typeId, "practice", "오늘의 과제", unitIndex, partPickOption(book.id, unitIndex, part))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 오늘의 과제` };
   } else if (slide.kind === "daily") {
-    entries = { picks: dailyTypes(unit, part - 1).map((typeId) => pickOf(typeId, "practice", "데일리 테스트", unitIndex, partPickOption(book.id, unitIndex, part - 1))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트`, test: "1", testId: dailyId };
+    entries = { picks: dailyTypes(unit, part - 1).map((typeId) => pickOf(typeId, "practice", "데일리 테스트", unitIndex, partPickOption(book.id, unitIndex, part - 1))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트`, ...(classMode ? {} : { test: "1", testId: dailyId }) };
   } else {
-    entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
+    entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, ...(classMode ? {} : { test: "1", testId }) };
   }
   // 표지는 장마다 붙이지 않고 「한 주 교재 인쇄」(처음 화면 단원 장)에서 한 번에 — 원장 2026-10-29 「표지와 같이 한 주차 교재가 같이」
   return link("index.html", { ...base, ...entries, ...(print ? { print: "1" } : { embed: "1", deck: "1" }) });
@@ -489,7 +495,8 @@ function renderHead() {
   document.title = `${book.label} ${unitIndex + 1}단원 ${part}차시 · ${unit.label}`;
   $("eyebrow").textContent = `${book.label} ${unitIndex + 1}단원 · ${part}차시`;
   $("unitTitle").textContent = unit.label;
-  $("studentName").textContent = student;
+  $("studentName").textContent = classMode ? "강사용 교안" : student;
+  $("backLink").setAttribute("aria-label", classMode ? "차시 고르기로" : "단원 고르기로");
   $("backLink").href = link("start.html", { book: book.id, unit: String(unitIndex) });
 }
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
@@ -562,7 +569,7 @@ function coverMarkup() {
   return `<div class="sd-cover">
     <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${parts > 1 ? ` <small>(${parts}차시 중)</small>` : ""}</p>
     <h1>${esc(unit.label)}</h1>
-    <p class="sd-cover-lead">섬을 따라 한 곳씩 가 봐요.</p>
+    <p class="sd-cover-lead">${classMode ? "위의 차례를 누르면 그 장으로 바로 가요." : "섬을 따라 한 곳씩 가 봐요."}</p>
     <ol class="sd-plan" style="--n:${planPhases(counts).length}">${planPhases(counts).map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
     <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>출발하기 →</button>
   </div>`;
@@ -602,8 +609,8 @@ function endMarkup() {
     ${tallyMarkup(result, lastPart)}
     <div class="sd-end-actions">
       ${nextLink}
-      <a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>
-      <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">단원 고르기</a>
+      ${classMode ? "" : `<a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>`}
+      <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">${classMode ? "차시 고르기" : "단원 고르기"}</a>
       <button type="button" class="sd-btn" data-act="restart">처음부터 다시 하기</button>
     </div>
   </div>`;
@@ -646,7 +653,7 @@ function show({ atEnd = false } = {}) {
   renderSigns();
   placeWorld();
   recordVisit();
-  if (ready && ["test", "booktest"].includes(slide.kind)) openGate(slide);
+  if (ready && !classMode && ["test", "booktest"].includes(slide.kind)) openGate(slide);
   const url = new URL(location.href);
   url.searchParams.set("s", String(index + 1));
   history.replaceState(null, "", url);
@@ -665,7 +672,7 @@ const sheetHasNext = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt &
 const sheetHasPrev = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt && sheetAt.at > 0;
 function setNextLabel() {
   const slide = slides[index];
-  const grade = sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
+  const grade = !classMode && sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
   $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? "출발하기 →" : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : "다음 →";
 }
 function sheetGo(go) { document.getElementById("workFrame")?.contentWindow?.postMessage({ type: "fc-study", cmd: "oneup", go }, location.origin); }
@@ -806,7 +813,8 @@ function startIndex() {
   return Math.min(Math.max((Number(params.get("s")) || 1) - 1, 0), slides.length - 1);
 }
 // 열리지 않은 권·단원이면 덱 대신 안내(둘러보기 1권 1단원 · 체험 시작 권 · 정식 한 달에 1권, fields-access.js)
-const gate = canStudy(book.id, unitIndex);
+const gate = classMode ? { ok: true } : canStudy(book.id, unitIndex);
+if (classMode) document.body.classList.add("is-class");
 if (!gate.ok) lockPage(gate.why, { bookId: book.id, student, here: `study.html${location.search}` });
 else {
 renderHead();

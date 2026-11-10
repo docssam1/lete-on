@@ -379,3 +379,7 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
   .sd-work.has-chalk .sd-chalk-dots { flex-basis: 100%; margin: 2px 0 0; }
 }
 @media (max-width: 900px) { .sd-chalk-task { font-size: 24px; } .sd-chalk-count { font-size: 21px; } .sd-chalk ol.sd-chalk-steps { font-size: 17px; } }
+
+/* 강사용 교안(?as=class, 원장 2026-11-10): 수업 화면에 띄우므로 그림 액자를 얇게 해 공부 칸을 넓힌다 */
+body.is-class { --frame-x: 8px; }
+body.is-class .sd-main { padding-top: 8px; padding-bottom: 8px; }
