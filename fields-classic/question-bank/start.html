@@ -6,12 +6,13 @@
   <meta name="theme-color" content="#fdfbf5" />
   <title>GM 스스로 공부</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./start.css?v=20261109a" />
+  <link rel="stylesheet" href="./start.css?v=20261110a" />
 </head>
 <body>
   <header class="st-header">
-    <div class="st-brand"><span>GIFTED MATH BANK · 1과정</span><strong>스스로 공부</strong></div>
-    <nav class="st-links" aria-label="다른 화면"><a id="introLink" href="./home.html">소개</a><a id="myStudyLink" class="st-my" href="./my-study.html">내 학습 상황</a><a id="planLink" href="./plan.html">학습 진도표</a><a id="bankLink" href="./index.html">문제은행 자세히 고르기</a></nav>
+    <!-- 머리 메뉴는 둘만(원장 2026-11-10 「대문이 학생 문 · 불편하게 하지 마」): 대문으로는 이름을 눌러 돌아간다 -->
+    <a class="st-brand" id="introLink" href="./home.html"><span>GIFTED MATH BANK · 1과정</span><strong id="brandName">스스로 공부</strong></a>
+    <nav class="st-links" aria-label="다른 화면"><a id="myStudyLink" class="st-my" href="./my-study.html">내 학습 상황</a><a id="planLink" href="./plan.html">학습 진도표</a></nav>
     <a class="st-login" id="loginLink" href="./login.html">로그인</a>
     <div class="st-student" id="studentName">DEMO</div>
   </header>
@@ -43,17 +44,13 @@
             <h2 id="bookTitle">1권</h2>
             <div class="st-door-switch" role="tablist" aria-label="무엇을 할까요">
               <button type="button" role="tab" id="doorStudy" data-door="study" aria-selected="true" aria-controls="studyPanel">공부하기</button>
-              <button type="button" role="tab" id="doorTest" data-door="test" aria-selected="false" aria-controls="testPanel">시험지 만들기</button>
+              <button type="button" role="tab" id="doorTest" data-door="test" aria-selected="false" aria-controls="testPanel">유사문제 만들기</button>
             </div>
           </div>
 
           <section id="studyPanel" class="st-panel" role="tabpanel" aria-labelledby="doorStudy">
             <div class="st-panel-head">
               <p class="st-lead" id="studyLead"></p>
-              <div class="st-mode" role="radiogroup" aria-label="공부 방식">
-                <button type="button" role="radio" data-mode="self" aria-checked="true">학습형 <small>혼자</small></button>
-                <button type="button" role="radio" data-mode="class" aria-checked="false">수업형 <small>선생님 화면·교재 인쇄</small></button>
-              </div>
             </div>
             <ol class="st-steps" aria-label="공부 순서">
               <li><b>① 개념</b><span>워밍업 대표 문제로 개념 설명 · 튜토리얼</span></li>
@@ -66,11 +63,18 @@
 
       <section id="testPanel" class="st-panel" role="tabpanel" aria-labelledby="doorTest" hidden>
         <div class="st-test-grid">
+          <!-- 문제은행은 학생 쪽에서 「모르는 문제 유사문제 만들기」(원장 2026-11-10) — 시험지를 짜는 화면은 원장 쪽 문제은행에 그대로 -->
+          <article class="st-test is-main">
+            <h3>모르는 문제 유사문제</h3>
+            <p>본책에서 모르는 문제 번호를 고르면 같은 유형의 새 문제가 나와요. 풀고 바로 답을 확인해요.</p>
+            <p class="st-meta">활동 · 확인 · 연습 · 도전 번호</p>
+            <a class="st-btn primary" id="similarLink" href="./similar.html">모르는 번호 고르기</a>
+          </article>
           <article class="st-test">
             <h3>권별테스트 원문 풀기</h3>
             <p>교재 권별테스트 원문 시험지를 그대로 1세트 풀어요. 답안지에 답을 적은 뒤 ○✕로 채점해요.</p>
             <p class="st-meta">원문 25문항 · 인쇄 가능</p>
-            <a class="st-btn primary" id="unitTestSource" href="./unit-test-viewer.html">원문 풀기</a>
+            <a class="st-btn" id="unitTestSource" href="./unit-test-viewer.html">원문 풀기</a>
           </article>
           <article class="st-test">
             <h3>권별테스트 유사문제</h3>
@@ -78,17 +82,7 @@
             <p class="st-meta" id="unitTestFreshMeta"></p>
             <a class="st-btn" id="unitTestFresh" href="./index.html">유사문제 만들기</a>
           </article>
-          <article class="st-test st-pick">
-            <h3>교재에서 골라 만들기</h3>
-            <form id="pickForm">
-              <fieldset><legend>단원</legend><div id="pickUnits" class="st-chips"></div></fieldset>
-              <fieldset><legend>난이도</legend><div id="pickStages" class="st-chips"></div></fieldset>
-              <fieldset><legend>문항 수</legend><div id="pickCounts" class="st-chips"></div></fieldset>
-              <div class="st-pick-foot"><span id="pickSummary"></span><button type="submit" class="st-btn primary">시험지 만들기</button></div>
-            </form>
-          </article>
         </div>
-        <p class="st-more">단원·유형을 하나하나 고르려면 <a id="bankMore" href="./index.html">문제은행 자세히 고르기</a>.</p>
       </section>
         </section>
 
@@ -113,6 +107,6 @@
     <p class="st-ask-note">차시마다 「교재 인쇄」 단추로 언제든 다시 인쇄할 수 있어요.</p>
   </dialog>
   <script src="./vendor/motion-12.43.0/motion.min.js" defer></script>
-  <script type="module" src="./start.js?v=20261109a"></script>
+  <script type="module" src="./start.js?v=20261110a"></script>
 </body>
 </html>

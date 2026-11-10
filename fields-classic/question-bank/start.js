@@ -9,7 +9,7 @@ import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
 // 한 번에 한 장만 보이고, 위의 길(1권 › 01 도형 움직이기)이나 「‹」로 앞 장으로 돌아간다. 브라우저 뒤로 가기도 앞 장으로.
 // 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 본책) 또는
-// 「시험지 만들기」(권별테스트 원문 풀기 · 권별테스트 유사문제 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
+// 「유사문제 만들기」(모르는 문제 유사문제 similar.html · 권별테스트 원문 풀기 · 권별테스트 유사문제)로 들어간다.
 // 이 화면은 길 안내만 한다. 문제를 만들고 채점하는 일은 문제은행(index.html)과 골든벨(golden-bell.html)이 그대로 맡고,
 // 여기서는 그 화면들이 받는 주소(book·lesson·phase·units·stage·count·set·build)만 만든다.
 // 설계: PROGRAM-STRUCTURE-20261024.md
@@ -18,7 +18,6 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const COUNTS = [10, 20, 30];
 
 const hasBook = CURRICULUM.some((book) => book.id === params.get("book"));
 const view = {
@@ -26,8 +25,9 @@ const view = {
   step: hasBook ? (params.get("unit") !== null && params.get("door") !== "test" && params.get("as") !== "class" ? 2 : 1) : 0,
   unit: Math.max(0, Number(params.get("unit")) || 0),
   door: params.get("door") === "test" ? "test" : "study",
-  mode: params.get("as") === "class" ? "class" : "self",
-  pick: { units: null, stage: "type", count: 20 }
+  // 학생·학부모 화면은 늘 스스로 공부(self). 수업용(class)은 대문 아래 「강사용 교안」(?as=class)으로만 들어온다
+  // (원장 2026-11-10 「강사용은 그냥 판서 수업용 · 학생은 스스로 공부하도록 돕는 거고」) — 화면에서 고르지 않는다.
+  mode: params.get("as") === "class" ? "class" : "self"
 };
 let goldenBell = null; // { books, flows, flowTitles, activities } — 크기가 커서 첫 화면을 그린 뒤 불러온다
 let bellReady = null;  // 그 불러오기 Promise(교재 인쇄 주소를 만들 때 기다린다)
@@ -103,7 +103,6 @@ function renderDoors() {
     tab.setAttribute("aria-selected", String(view.door === door));
     $(`${door}Panel`).hidden = view.door !== door;
   }
-  document.querySelectorAll("[data-mode]").forEach((button) => button.setAttribute("aria-checked", String(button.dataset.mode === view.mode)));
   if (view.door === "study") renderStudy(); else renderTest();
 }
 
@@ -146,7 +145,7 @@ function renderSelfUnits(book) {
     const key = `${book.id}-u${index}`, rate = weekRate(readRecord(student, "week", key), readRecord(student, "test", key));
     const test = readRecord(student, "test", key);
     const locked = !canStudy(book.id, index).ok;
-    return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · ${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
+    return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
   }).join("")}${book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
 const studyLink = (bookId, unitIndex, part, last = 0) => link("study.html", { book: bookId, unit: String(unitIndex), part: String(part), ...(last ? { s: String(last) } : {}) });
@@ -267,7 +266,7 @@ $("quickPick").addEventListener("click", () => {
 // 차시마다 「N차시 공부 시작하기」로 덱(study.html?part=N)을 연다.
 function renderParts() {
   const book = activeBook(), unit = book.units[view.unit];
-  $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)} <small>${view.unit + 1}주</small>`;
+  $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)}`;
   const gate = view.mode === "self" ? canStudy(book.id, view.unit) : { ok: true };
   if (!gate.ok) { $("partList").innerHTML = lockCard(gate.why, { bookId: book.id, here: "start.html" }); return; }
   const { count } = unitParts(unit);
@@ -334,7 +333,7 @@ function renderStudy() {
   $("unitList").innerHTML = unitBlocks + restBlock;
 }
 
-// ── 시험지 만들기 ──
+// ── 유사문제 만들기 ──
 function renderTest() {
   const book = activeBook();
   const questions = book.source.unitTestQuestions || [];
@@ -344,22 +343,7 @@ function renderTest() {
     : `${questions.length}문항 중 ${verified}문항을 준비했어요 — 준비한 문항만 나와요`;
   $("unitTestSource").href = link("unit-test-viewer.html", { book: book.id });
   $("unitTestFresh").href = bankLink({ set: "unit-test", fresh: "1", build: "1" });
-  $("bankMore").href = link("index.html", {});
-  if (!view.pick.units || view.pick.units.bookId !== book.id) view.pick.units = { bookId: book.id, set: new Set(book.units.map((_, index) => index)) };
-  $("pickUnits").innerHTML = book.units.map((unit, index) => `<label><input type="checkbox" value="${index}" ${view.pick.units.set.has(index) ? "checked" : ""} /><span>${esc(unit.label)}</span></label>`).join("");
-  $("pickStages").innerHTML = TEXTBOOK_STAGES.map((stage) => `<label><input type="radio" name="stage" value="${stage.id}" ${stage.id === view.pick.stage ? "checked" : ""} /><span>${esc(stage.label)}<small>${esc(stage.sourceLabel)}</small></span></label>`).join("");
-  $("pickCounts").innerHTML = COUNTS.map((count) => `<label><input type="radio" name="count" value="${count}" ${count === view.pick.count ? "checked" : ""} /><span>${count}문제</span></label>`).join("");
-  renderPickSummary();
-}
-
-function renderPickSummary() {
-  const book = activeBook();
-  const units = [...view.pick.units.set].sort();
-  const stage = TEXTBOOK_STAGES.find((entry) => entry.id === view.pick.stage);
-  $("pickSummary").textContent = units.length
-    ? `${book.label} ${units.length === book.units.length ? "전체 단원" : units.map((index) => book.units[index].label).join(" · ")} · ${stage.label} · ${view.pick.count}문제`
-    : "단원을 하나 이상 골라 주세요";
-  $("pickForm").querySelector("button[type=submit]").disabled = !units.length;
+  $("similarLink").href = link("similar.html", { book: book.id });
 }
 
 // ── 이벤트 ──
@@ -394,31 +378,14 @@ document.querySelector(".st-door-switch").addEventListener("click", (event) => {
   renderDoors();
   syncAddress();
 });
-document.querySelector(".st-mode").addEventListener("click", (event) => {
-  const button = event.target.closest("[data-mode]");
-  if (!button) return;
-  view.mode = button.dataset.mode;
-  renderDoors();
-  syncAddress();
-});
-$("pickForm").addEventListener("change", (event) => {
-  const input = event.target;
-  if (input.type === "checkbox") {
-    if (input.checked) view.pick.units.set.add(Number(input.value)); else view.pick.units.set.delete(Number(input.value));
-  } else if (input.name === "stage") view.pick.stage = input.value;
-  else if (input.name === "count") view.pick.count = Number(input.value);
-  renderPickSummary();
-});
-$("pickForm").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const units = [...view.pick.units.set].sort();
-  if (!units.length) return;
-  location.assign(bankLink({ units: units.join(","), stage: view.pick.stage, count: String(view.pick.count), build: "1" }));
-});
-
 $("studentName").textContent = student;
+if (view.mode === "class") {
+  document.body.classList.add("is-class");
+  $("brandName").textContent = "강사용 교안";
+  $("todayHeading").textContent = "어느 차시를 수업할까요?";
+  document.title = "GM 강사용 교안";
+}
 $("introLink").href = link("home.html", {});
-$("bankLink").href = link("index.html", {});
 $("myStudyLink").href = link("my-study.html", { book: view.bookId });
 $("planLink").href = link("plan.html", { book: view.bookId });
 // 로그인(승인 페이지): 로그인했으면 「로그인됨」, 선생님이면 선생님 보기로
@@ -439,7 +406,7 @@ syncAddress();
 // 첫 화면 움직임(study-motion.js · 스킬 web-ui-library-picks, 원장 2026-11-04 「스스로 공부 첫 화면에도 넣어줘」):
 // 처음 열 때 한 번 — 제목이 글자째 올라오고 교재 목록이 하나씩 들어온다. 단추는 누르면 쏙(Motion)
 if (view.step === 0) playIntro($("todayHeading"), [...document.querySelectorAll("#quickStart > button:not([hidden]), #bookList > button")]);
-const PRESS = ".st-quick-card, .st-book-list button, .st-units button, .st-units a, .st-week-start, .st-door-switch button, .st-mode button, .st-back, .st-crumbs button";
+const PRESS = ".st-quick-card, .st-book-list button, .st-units button, .st-units a, .st-week-start, .st-door-switch button, .st-back, .st-crumbs button";
 bindPress(PRESS);
 addEventListener("load", () => bindPress(PRESS));
 if (loggedIn()) checkSession().then(async () => {

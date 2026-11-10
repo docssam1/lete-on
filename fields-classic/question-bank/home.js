@@ -1,6 +1,7 @@
-// 첫 화면(home.html): 카드 주소에 학생 이름(?student=) 이어 붙이기 · 숏릴 자막 · 멈춤 단추.
+// 첫 화면(home.html): 카드 주소에 학생 이름(?student=) 이어 붙이기 · 이어서 하기 한 줄 · 로그인 글자 · 숏릴 자막 · 멈춤 단추.
 import { createTimeline, stagger, splitText } from "./vendor/animejs-4.5.0/anime.esm.min.js";
 import { setIcon } from "./ui-icons.js?v=20261105b";
+import { loggedIn, loadLocalAll } from "./study-progress.js?v=20261029q";
 
 // 인트로(원장 2026-11-04 「인트로에 필요 없어?」 — 영상 1 「로고·인트로는 Anime.js」, 스킬 web-ui-library-picks):
 // 로고 동그라미가 굴러 들어오고 → WELCOME TO → 뒤의 큰 글자 GIFTED MATH BANK가 한 글자씩 아래에서 올라온다. 카드 셋은 원래 CSS 등장(hm-in) 그대로.
@@ -14,13 +15,37 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
     .add(".hm-welcome", { opacity: [0, 1], y: [-12, 0], letterSpacing: ["0.4em", "0.06em"], duration: 700 }, 120)
     .add(chars, { opacity: [0, 1], y: ["70%", "0%"], duration: 900, delay: stagger(36) }, 200);
 }
-const student = new URLSearchParams(location.search).get("student");
+// 학생 이름: 주소(?student=) → 로그인한 학생 → 없음(DEMO). 카드 주소에 이어 붙인다.
+const me = loggedIn();
+const student = new URLSearchParams(location.search).get("student") || (me && me.type !== "admin" ? me.name : "") || "";
 if (student) {
   document.querySelectorAll("a[data-link]").forEach((a) => {
     const url = new URL(a.getAttribute("href"), location.href);
     url.searchParams.set("student", student);
     a.href = `./${url.pathname.split("/").pop()}${url.search}${url.hash}`;
   });
+}
+// 위 오른쪽: 로그인했으면 이름(학생) 또는 「원장 화면」, 가입 글자는 숨긴다
+if (me) {
+  const login = document.getElementById("homeLogin");
+  login.textContent = me.type === "admin" ? "원장 화면" : `${me.name} 로그인됨`;
+  login.href = me.type === "admin" ? "./teacher.html" : "./login.html";
+  document.getElementById("homeSignup").hidden = true;
+}
+// 이어서 하기(원장 2026-11-10 「대문이 학생 문이 되어야지」): 이 기기에 남은 차시 기록 가운데 가장 최근 것 → 누르면 바로 그 차시 덱.
+// 기록 열쇠 `book-NN-u<단원>` · payload { part, last } (study-progress.js). 기록이 없으면 보이지 않는다.
+{
+  const who = student || "DEMO";
+  const row = loadLocalAll().records.filter((entry) => entry.student_name === who && entry.kind === "week" && /^book-\d+-u\d+$/.test(entry.record_key))
+    .sort((a, b) => String(b.updated_at || "").localeCompare(String(a.updated_at || "")))[0];
+  if (row) {
+    const [, bookId, unitText] = /^(book-(?:\d+))-u(\d+)$/.exec(row.record_key);
+    const unit = Number(unitText), part = Math.max(1, Number(row.payload?.part) || 1), last = Number(row.payload?.last) || 0;
+    const link = document.getElementById("homeContinue");
+    link.href = `./study.html?${new URLSearchParams({ student: who, book: bookId, unit: String(unit), part: String(part), ...(last ? { s: String(last) } : {}) })}`;
+    document.getElementById("homeContinueAt").textContent = `${Number(bookId.slice(5))}권 ${unit + 1}단원 ${part}차시`;
+    link.hidden = false;
+  }
 }
 
 // 숏릴 장면(초): tools/home-reel/record.cjs 가 영상과 함께 assets/front/reel-scenes.json 에 적는다. 못 읽으면 아래 기본값.

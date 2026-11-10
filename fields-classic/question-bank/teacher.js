@@ -47,7 +47,7 @@ function render() {
     <div class="ms-stat"><span>${esc(book.label)} 공부 중</span><b>${started.length}<small>명</small></b><small>기록이 있는 학생</small></div>
     <div class="ms-stat ms-rate"><span>평균 수행률</span><b>${avg}<small>%</small></b><i style="--rate:${avg}%"></i><small>공부 중인 학생 기준</small></div>
     <div class="ms-stat"><span>단원 평가 평균</span><b>${tests.length ? Math.round((tests.reduce((a, b) => a + b, 0) / tests.length) * 100) : "–"}${tests.length ? "<small>%</small>" : ""}</b><small>${tests.length}번 채점</small></div>`;
-  const head = `<thead><tr><th>학생</th>${book.units.map((unit, index) => `<th title="${esc(unit.label)}">${index + 1}주</th>`).join("")}<th>권별 테스트</th><th>약점 유형</th><th>최근</th></tr></thead>`;
+  const head = `<thead><tr><th>학생</th>${book.units.map((unit, index) => `<th title="${esc(unit.label)}">${index + 1}단원</th>`).join("")}<th>권별 테스트</th><th>약점 유형</th><th>최근</th></tr></thead>`;
   const body = rows.map((row) => `<tr class="${row.latest ? "" : "is-idle"}">
     <th><a href="./my-study.html?${new URLSearchParams({ student: row.name, book: book.id })}">${esc(row.name)}</a></th>
     ${row.weeks.map((week) => `<td><i class="ms-bar" style="--rate:${week.rate}%"></i><span>${week.rate ? `${week.rate}%` : "–"}</span>${week.test?.marked ? `<small>평가 ${week.test.right}/${week.test.total}</small>` : ""}</td>`).join("")}

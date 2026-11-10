@@ -2,7 +2,7 @@ import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
 import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261029q";
 
 // 내 학습 상황(원장 2026-10-27 「학생이 직접 학습 상황을 볼 수 있는 것도 · 수행률 진도」)
-//   권마다: 수행률(4주 + 권별 테스트) · 진도(지금 몇 주) · 단원 평가 평균 · 권별 테스트
+//   권마다: 수행률(단원 + 권별 테스트) · 진도(지금 몇 단원) · 단원 평가 평균 · 권별 테스트
 //   주마다: 수행률 막대 · 개념/게임/골든벨/공부하기/과제 몇 장 봤는지 · 단원 평가 점수 · 이어서 하기
 //   약점 유형: 단원 평가·권별 테스트에서 틀린 유형을 모아 다시 공부하기(같은 유형 새 문제 2개씩)
 // 기록은 study-progress.js(지금은 이 기기, 로그인하면 서버도).
@@ -42,10 +42,10 @@ function renderBooks() {
 
 function renderSummary(book, state) {
   const { current, started } = state;
-  const progress = !started ? "아직 시작 전" : state.bookTestDone ? "권별 테스트까지 끝" : current.rate >= 100 ? `${current.index + 1}주까지 끝` : `${current.index + 1}주 · ${esc(current.unit.label)}`;
+  const progress = !started ? "아직 시작 전" : state.bookTestDone ? "권별 테스트까지 끝" : current.rate >= 100 ? `${current.index + 1}단원까지 끝` : `${current.index + 1}단원 · ${esc(current.unit.label)}`;
   $("summary").innerHTML = `
-    <div class="ms-stat ms-rate"><span>수행률</span><b>${state.rate}<small>%</small></b><i style="--rate:${state.rate}%"></i><small>${book.units.length}주 + 권별 테스트 중</small></div>
-    <div class="ms-stat"><span>진도</span><b class="ms-text">${progress}</b><small>${started} / ${book.units.length}주 시작</small></div>
+    <div class="ms-stat ms-rate"><span>수행률</span><b>${state.rate}<small>%</small></b><i style="--rate:${state.rate}%"></i><small>${book.units.length}단원 + 권별 테스트 중</small></div>
+    <div class="ms-stat"><span>진도</span><b class="ms-text">${progress}</b><small>${started} / ${book.units.length}단원 시작</small></div>
     <div class="ms-stat"><span>단원 평가 평균</span><b>${state.testRate ?? "–"}${state.testRate == null ? "" : "<small>%</small>"}</b><small>${state.weeks.filter((week) => week.test?.marked).length}번 봤어요</small></div>
     <div class="ms-stat"><span>권별 테스트</span><b>${state.bookTest?.marked ? `${state.bookTest.right}<small> / ${state.bookTest.total}</small>` : "–"}</b><small>${state.bookTest?.marked ? `${state.bookTest.marked}문제 채점` : "아직 안 봤어요"}</small></div>`;
 }
@@ -59,7 +59,7 @@ function renderWeeks(book, state) {
     }).join("");
     const go = week ? link("study.html", { book: book.id, unit: String(index), part: String(week.part || 1), s: String(week.last || 1) }) : link("study.html", { book: book.id, unit: String(index), part: "1" });
     return `<li class="ms-week${rate >= 100 ? " is-done" : week ? " is-on" : ""}">
-      <div class="ms-week-head"><span class="ms-week-no">${index + 1}주</span><b>${esc(unit.label)}</b><em>${rate}%</em></div>
+      <div class="ms-week-head"><span class="ms-week-no">${index + 1}단원</span><b>${esc(unit.label)}</b><em>${rate}%</em></div>
       <i class="ms-bar" style="--rate:${rate}%"></i>
       <ol class="ms-phases">${phases}</ol>
       <a class="ms-btn${week && rate < 100 ? " primary" : ""}" href="${esc(go)}">${!week ? "시작하기" : rate >= 100 ? "다시 보기" : "이어서 하기"} ›</a>
@@ -69,7 +69,7 @@ function renderWeeks(book, state) {
   rows.push(`<li class="ms-week ms-book-test${state.bookTestDone ? " is-done" : ""}">
     <div class="ms-week-head"><span class="ms-week-no">마무리</span><b>${esc(book.label)} 권별 테스트</b><em>${bt?.marked ? `${bt.right} / ${bt.total}` : "전"}</em></div>
     <i class="ms-bar" style="--rate:${bt?.marked ? Math.round((bt.right / bt.total) * 100) : 0}%"></i>
-    <p class="ms-week-note">${bt?.wrong?.length ? `틀린 번호 ${bt.wrong.join(", ")}` : bt?.marked ? "틀린 번호가 없어요" : `${book.units.length}주를 마치면 풀어요 · 원문 ${book.source.unitTestQuestions?.length || 25}문제`}</p>
+    <p class="ms-week-note">${bt?.wrong?.length ? `틀린 번호 ${bt.wrong.join(", ")}` : bt?.marked ? "틀린 번호가 없어요" : `${book.units.length}단원을 마치면 풀어요 · 원문 ${book.source.unitTestQuestions?.length || 25}문제`}</p>
     <a class="ms-btn" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">${bt?.marked ? "답안지 보기" : "풀기"} ›</a>
   </li>`);
   $("weeks").innerHTML = rows.join("");
@@ -77,9 +77,9 @@ function renderWeeks(book, state) {
 
 function renderWeak(book, state) {
   const sources = new Map();
-  for (const week of state.weeks) for (const typeId of week.test?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), `${week.index + 1}주 단원 평가`]);
+  for (const week of state.weeks) for (const typeId of week.test?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), `${week.index + 1}단원 평가`]);
   // 데일리 테스트(차시마다) 약점도 모은다(원장 2026-10-29 「데일리 테스트 결과와 약점 유형 누적」)
-  for (const week of state.weeks) for (let d = 1; d <= 3; d += 1) for (const typeId of get("test", `${week.key}-d${d}`)?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), `${week.index + 1}주 ${d}차시 데일리`]);
+  for (const week of state.weeks) for (let d = 1; d <= 3; d += 1) for (const typeId of get("test", `${week.key}-d${d}`)?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), `${week.index + 1}단원 ${d}차시 데일리`]);
   for (const typeId of state.bookTest?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), "권별 테스트"]);
   const weak = [...sources].map(([typeId, where]) => ({ type: typeById(typeId), where })).filter((entry) => entry.type);
   if (!weak.length) {

@@ -28,7 +28,7 @@ h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
 
 /* 머리줄 */
 .st-header { display: flex; align-items: center; gap: 20px; padding: 12px 28px; background: var(--paper); border-bottom: 1px solid var(--line-strong); }
-.st-brand { display: grid; line-height: 1.25; }
+.st-brand { display: grid; line-height: 1.25; color: inherit; text-decoration: none; }
 .st-brand span { font-size: 11px; color: var(--muted); letter-spacing: 0.18em; font-weight: 500; }
 .st-brand strong { font-size: 19px; font-weight: 700; }
 .st-links { display: flex; gap: 4px; margin-left: auto; }
@@ -100,7 +100,8 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-stage-links a:hover { border-color: var(--accent); color: var(--accent-ink); }
 
 /* 시험지 만들기 */
-.st-test-grid { display: grid; grid-template-columns: 1fr 1fr 1.6fr; gap: 14px; align-items: stretch; }
+.st-test-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 14px; align-items: stretch; }
+.st-test.is-main { border-color: var(--accent); background: var(--accent-soft); }
 .st-test { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border: 1px solid var(--line-strong); border-radius: 8px; }
 .st-test h3 { font-size: 16px; }
 .st-test p { margin: 0; color: var(--muted); font-size: 13.5px; }
@@ -267,3 +268,41 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-ask-note { font-size: 12.5px; color: var(--muted); }
 @media (max-width: 420px) { .st-ask-actions { grid-template-columns: 1fr; } }
 .st-session-print.is-wanted { border-style: solid; border-color: var(--accent); background: var(--accent-soft); }
+
+/* 강사용 교안(?as=class, 대문 아래 작은 글자로 들어온다): 학생 것(내 학습 상황·진도표·이름·로그인·이어서 하기)을 숨긴다 */
+body.is-class .st-links, body.is-class .st-student, body.is-class .st-login, body.is-class .st-door-switch, body.is-class .st-access { display: none; }
+
+/* ── 모르는 문제 유사문제(similar.html, 원장 2026-11-10): 권 · 단원 → 본책 번호판 → 유사문제 만들기 ── */
+body.sm { padding-bottom: 92px; }
+.sm-sheet { padding: 26px 28px 30px; background: var(--paper); border: 1px solid var(--line-strong); border-radius: 10px; }
+.sm-sheet h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
+.sm-lead { margin: 6px 0 0; max-width: 60ch; color: var(--muted); }
+.sm-row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; align-items: start; margin-top: 18px; }
+.sm-row h2 { padding-top: 10px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.sm-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.sm-tabs button { display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 6px 14px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--paper); font-size: 14px; }
+.sm-tabs button b { font-weight: 600; color: var(--gold); }
+.sm-tabs button:hover { border-color: var(--ink); }
+.sm-tabs button[aria-checked="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+.sm-numbers { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+.sm-part { padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 10px; background: #fbfaf7; }
+.sm-part h3 { font-size: 16px; }
+.sm-block { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 10px; align-items: start; margin-top: 12px; }
+.sm-block > span { padding-top: 11px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.sm-nums { display: flex; flex-wrap: wrap; gap: 6px; }
+.sm-nums button { min-width: 44px; min-height: 44px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sm-nums button:hover { border-color: var(--ink); }
+.sm-nums button[aria-pressed="true"] { border-color: var(--accent-ink); background: var(--accent); color: #fff; box-shadow: 0 2px 0 var(--accent-ink); }
+.sm-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: 12px max(16px, calc((100vw - 1180px) / 2 + 16px)); padding-bottom: max(12px, env(safe-area-inset-bottom)); background: var(--paper); border-top: 1px solid var(--line-strong); }
+.sm-dock p { flex: 1; margin: 0; font-weight: 600; }
+.sm-dock .st-btn.primary { min-width: 200px; min-height: 48px; font-size: 16px; }
+.sm-dock .st-btn[aria-disabled="true"] { opacity: 0.45; pointer-events: none; }
+@media (max-width: 640px) {
+  .sm-sheet { padding: 18px 14px 22px; }
+  .sm-sheet h1 { font-size: 23px; }
+  .sm-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .sm-row h2 { padding-top: 0; }
+  .sm-dock { flex-wrap: wrap; }
+  .sm-dock p { flex-basis: 100%; }
+  .sm-dock .st-btn.primary { flex: 1; min-width: 0; }
+}
