@@ -3084,6 +3084,12 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     }else contents.push({...r,problems:r.problems.slice(),studyDays:(r.studyDays||[]).slice(),
       thName:cv.compactHigh?(r.sessionLabel||r.thName):r.thName});
   });
+  /* 종이 교구가 첫 지면이다(2026-11-10) — 회차 쪽 번호는 그 뒤부터 센다. */
+  let paperRow = '';
+  if(extra.paper){
+    paperRow = `<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('먼저, 이번 주 종이 교구','First: this week\'s paper tool','先看本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`;
+    page += 1;
+  }
   const rows = contents.map((r, i) => {
     const n = r.problems.length, from = page, to = page + w2PagesOf(r) - 1; page = to + 1;
     const ds = (r.studyDays || []).filter((d, j, a) => a.indexOf(d) === j);
@@ -3100,10 +3106,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('매거진 읽을거리','Magazine read','杂志阅读'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
-  if(extra.paper){
-    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('이번 주 종이 교구','This week\'s paper tool','本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
-    page += 1;
-  }
+  if(paperRow) rows.unshift(paperRow);
   if(extra.answerKey !== false){
     rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td data-nm-cover-key-pages>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
@@ -7408,7 +7411,10 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       langAnswerHtml = NM_LANG_THINK.pageHtml(...args,true);
     }
   }
-  const historyHtml = (opts.pacing || highCompact || rBand === 'young') ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, rBand);
+  /* 수학사 「네 컷으로 읽기」 지면은 싣지 않는다(원장 2026-11-10 「쓸데없는 말이 안 되는 그림 없애고」).
+     그림이 숫자·화살표 조각이라 뜻이 통하지 않았고, 두 주 연속 같은 지면이 나왔으며,
+     과정 수준과 맞지 않는 이야기(로그표·구거법)가 섞여 있었다. w2HistoryPageHtml 은 남겨 둔다. */
+  const historyHtml = '';
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
   const paperHtml = opts.pacing || highCompact ? '' : w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
   /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
@@ -7441,11 +7447,12 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       r.html=holder.innerHTML;
     });
   }
+  /* 종이 교구는 표지 바로 다음, 문제보다 먼저(원장 2026-11-10 「교구부터」). 쪽 번호도 이 순서로 찍는다. */
+  const paperStamped = paperHtml ? stampPg(paperHtml) : '';
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
   const historyStamped = historyHtml ? stampPg(historyHtml) : '';
   const langStamped = langHtml ? stampPg(langHtml) : '';
   const magazineStamped = magazineHtml ? stampPg(magazineHtml) : '';
-  const paperStamped = paperHtml ? stampPg(paperHtml) : '';
 
   const akSections = rounds.filter(r=>!r.drawing).map(r => r.magic ? (r.akHtml || '') : `
 <div class="nm-ak-section">
@@ -7456,11 +7463,11 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   /* 시트 전체 워터마크(printWatermarkHtml, fixed)는 더 이상 안 붙인다 — 회차 페이지가 저마다 갖는다. */
   sheet.innerHTML = `
 ${coverHtml}
+${paperStamped}
 ${roundsHtml}
 ${historyStamped}
 ${langStamped}
 ${magazineStamped}
-${paperStamped}
 <div class="nm-print-answer-key">
   ${w2AnswerKeyHeadHtml(envelopeCode)}
   ${akSections}
