@@ -2,6 +2,7 @@
  'use strict';
  const A=RoadmapMembership,P=RoadmapPolicy,$=id=>document.getElementById(id),root=$('memberContent');
  const next=A.destination(new URLSearchParams(location.search).get('next'));
+ let entryIntent='signup';
  let member=null,proof=null,email='',mode='signup',cooldown=0,timer=null,busy=false;
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const field=(name,label,type='text',attr='')=>`<label class="member-field">${label}<input name="${name}" type="${type}" ${attr} required></label>`;
@@ -9,8 +10,10 @@
  function announce(text='',error=false){$('memberStatus').textContent=text;$('memberStatus').classList.toggle('is-error',error);}
  function screen(title,body){root.innerHTML=`<h2 id="memberTitle" tabindex="-1">${title}</h2>${body}`;announce();$('memberTitle').focus({preventScroll:true});}
  async function run(fn){if(busy)return;busy=true;root.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){announce(A.message(e),true);}finally{busy=false;root.querySelectorAll('button').forEach(b=>b.disabled=false);updateCooldown();}}
+ function entryTabs(active){return `<div class="account-entry-tabs" role="group" aria-label="신규 가입 또는 기존 로그인 선택"><button type="button" data-action="signup" aria-pressed="${active==='signup'}">처음이에요 · 무료 시작</button><button type="button" data-action="login" aria-pressed="${active==='login'}">기존 회원 로그인</button></div>`;}
  function login(){
-  screen('로그인',`<p class="member-lead">아이디와 승인번호를 입력해 주세요.</p><form id="loginForm">${field('identifier','아이디','text','autocomplete="username" maxlength="254" autocapitalize="none" spellcheck="false" placeholder="아이디 또는 이메일" aria-describedby="loginIdHelp"')}${field('code','승인번호','password','inputmode="numeric" pattern="[0-9]{4,12}" minlength="4" maxlength="12" autocomplete="current-password"')}<button class="member-primary">로그인</button></form><div class="member-actions"><button data-action="signup">이메일로 가입·로그인</button><button data-action="reset">승인번호를 잊으셨나요?</button></div><p class="member-note" id="loginIdHelp">이메일로 가입했다면 아이디에 이메일 주소를 입력해 주세요.</p>`);
+  entryIntent='login';
+  screen('기존 회원 로그인',`${entryTabs('login')}<p class="member-lead">아이디와 승인번호를 입력해 주세요.</p><form id="loginForm">${field('identifier','아이디','text','autocomplete="username" maxlength="254" autocapitalize="none" spellcheck="false" placeholder="아이디 또는 이메일" aria-describedby="loginIdHelp"')}${field('code','승인번호','password','inputmode="numeric" pattern="[0-9]{4,12}" minlength="4" maxlength="12" autocomplete="current-password"')}<button class="member-primary">로그인</button></form><div class="member-actions"><button data-action="signup">이메일 인증으로 로그인하기</button><button data-action="reset">승인번호를 잊으셨나요?</button></div><p class="member-note" id="loginIdHelp">이메일로 가입했다면 아이디에 이메일 주소를 입력해 주세요.</p>`);
   root.querySelector('[name=identifier]').value=email;
   $('loginForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);run(async()=>{
    const identifier=String(f.get('identifier')).trim(),code=String(f.get('code'));
@@ -22,8 +25,8 @@
   screen('내 계정',`<p class="member-lead">${esc(member.username)}</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">이 계정으로 만든 설계는 이 기기에 따로 보관됩니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
  }
  function emailScreen(intent='signup'){
-  mode=intent;
-  screen(intent==='reset'?'로그인 번호를 다시 정합니다.':intent==='withdraw'?'탈퇴 전 이메일을 확인합니다.':'이메일로 시작합니다.',`<p class="member-lead">${intent==='signup'?'보호자 이메일로 인증번호를 받아 주세요.':'가입한 이메일로 인증한 뒤 진행합니다.'}</p><form id="emailForm">${field('email','보호자 이메일','email','autocomplete="email" maxlength="254"')}<label class="check"><input type="checkbox" name="emailConsent" required><span><b>[필수]</b> 이메일 인증과 계정 관리를 위한 이메일 수집·이용에 동의합니다. <a href="privacy.html" target="_blank" rel="noopener">내용 보기</a></span></label><button class="member-primary" id="sendCode">인증번호 받기</button></form><form id="codeForm" hidden>${field('code','이메일 인증번호','text','inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10"')}<button class="member-primary">인증번호 확인</button></form><button class="member-link" data-action="login">로그인으로 돌아가기</button>`);
+  mode=intent;if(intent==='signup')entryIntent='signup';
+  screen(intent==='reset'?'로그인 번호를 다시 정합니다.':intent==='withdraw'?'탈퇴 전 이메일을 확인합니다.':'이메일로 무료 시작',`${intent==='signup'?entryTabs('signup'):''}<p class="member-lead">${intent==='signup'?'승인번호가 없어도 괜찮아요. 보호자 이메일 인증 후 학생 정보를 등록하면 무료로 이용할 수 있습니다.':'가입한 이메일로 인증한 뒤 진행합니다.'}</p><form id="emailForm">${field('email','보호자 이메일','email','autocomplete="email" maxlength="254"')}<label class="check"><input type="checkbox" name="emailConsent" required><span><b>[필수]</b> 이메일 인증과 계정 관리를 위한 이메일 수집·이용에 동의합니다. <a href="privacy.html" target="_blank" rel="noopener">내용 보기</a></span></label><button class="member-primary" id="sendCode">이메일 인증번호 받기</button></form><form id="codeForm" hidden>${field('code','이메일 인증번호','text','inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10"')}<button class="member-primary">인증번호 확인</button></form><button class="member-link" data-action="login">이미 가입했다면 기존 회원 로그인</button>`);
   root.querySelector('[name=email]').value=member?.email||email;
   $('emailForm').onsubmit=e=>{e.preventDefault();run(async()=>{
    const f=new FormData(e.target);email=String(f.get('email')).trim().toLowerCase();
@@ -41,7 +44,7 @@
   });};
   updateCooldown();
  }
- function updateCooldown(){const b=$('sendCode'),left=Math.max(0,Math.ceil((cooldown-Date.now())/1000));if(!left){clearInterval(timer);timer=null;}if(!b)return;b.disabled=busy||left>0;b.textContent=left?`다시 받기 · ${left}초 후`:$('codeForm')?.hidden?'인증번호 받기':'인증번호 다시 받기';}
+ function updateCooldown(){const b=$('sendCode'),left=Math.max(0,Math.ceil((cooldown-Date.now())/1000));if(!left){clearInterval(timer);timer=null;}if(!b)return;b.disabled=busy||left>0;b.textContent=left?`다시 받기 · ${left}초 후`:$('codeForm')?.hidden?'이메일 인증번호 받기':'인증번호 다시 받기';}
  function schoolFields(m){
   return field('studentName','학생 이름','text','autocomplete="off" maxlength="30"')+field('guardianPhone','보호자 휴대폰 번호','tel','autocomplete="tel-national" maxlength="15"')+`<div class="member-row"><label class="member-field">학교 단계<select name="school" required><option value="preschool">유치</option><option value="elementary">초등</option><option value="middle">중등</option><option value="high">고등</option></select></label><label class="member-field"><span id="levelLabel">나이</span><select name="level" required></select></label></div>`;
  }
@@ -86,5 +89,6 @@
    }announce(count?'이전 설계를 계정에 연결했습니다.':'연결할 이전 설계가 없거나 이미 연결되어 있습니다.');}catch{announce('기기 저장 공간을 확인해 주세요.',true);}
   }
  });
- A.status().then(m=>{member=m;if(m)profile();else login();}).catch(e=>{login();announce(A.message(e),true);});
+ document.addEventListener('click',e=>{const target=e.target.closest('[data-account-entry]');if(!target||busy)return;entryIntent=target.dataset.accountEntry;if(member)profile();else if(entryIntent==='login')login();else emailScreen('signup');});
+ A.status().then(m=>{member=m;if(m)profile();else if(entryIntent==='login')login();else emailScreen('signup');}).catch(e=>{if(entryIntent==='login')login();else emailScreen('signup');announce(A.message(e),true);});
 })();

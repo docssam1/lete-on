@@ -6,6 +6,8 @@ const thinking=['킨더팩토','키즈팩토','초등팩토','PRE 1031','1031 �
 const calc=[['소마셈 K','수 가르기·모으기'],['기적의 계산법 2권','한 자리 덧셈·뺄셈'],['기적의 계산법 3권','받아올림·받아내림'],['기적의 계산법 4권','구구단'],['기적의 계산법 5권','곱셈·나눗셈'],['기적의 계산법 6권','복합 계산']];
 const schoolBooks=['디딤돌 기본+응용','디딤돌 응용','원리해설','개념원리','쎈','RPM','개념+유형 라이트','개념+유형 파워','개념응용 · 최상위','개념응용 · 최상위라이트'];
 const highSubjects=['공통수학1','공통수학2','대수','미적분Ⅰ','확률과 통계','미적분Ⅱ','기하'];
+const highSubjectLabel=v=>v==='대수'?'대수 · 구 수학Ⅰ 주요 내용 대응':v==='미적분Ⅰ'?'미적분Ⅰ · 구 수학Ⅱ 주요 내용 대응':v;
+const highSubjectHelp='2022 개정 과목명입니다. 대수는 구 수학Ⅰ, 미적분Ⅰ은 구 수학Ⅱ의 주요 내용에 대응하지만 범위·구성이 같은 과정은 아닙니다. 교재의 교육과정과 목차를 확인하세요.';
 const highBook=v=>['기본정석','실력정석','개념원리 고등','수학의 정석','쎈 고등','RPM 고등','고쟁이','숨마쿰라우데 고등','학교 지정 교재'].includes(v);
 const bookList=(course,axis)=>course==='foreign'?['학교 지정 교재']:course==='high'?(axis==='deep'?['실력정석','고쟁이','숨마쿰라우데 고등','학교 지정 교재','쎈 고등','RPM 고등','수학의 정석','기본정석']:['기본정석','개념원리 고등','쎈 고등','RPM 고등','수학의 정석','학교 지정 교재']):(axis==='deep'?deepBooks:schoolBooks).filter(v=>middleBook(v)===(course==='mid'));
 const deepBooks=['최상위 S','최상위 수학','개념응용 · 최상위','A급','RPM'];
@@ -91,18 +93,18 @@ function questions(a,fields){a=effective(a);const curriculum=global.PlannerColle
  schoolCourse:[young?'교과 수학은 어느 과정을 공부하나요?':'교과는 어느 과정을 공부하나요?',group==='preschool'?'초등·중등 교과서에서 배우는 수학이에요.':young?'학교에서 배우는 수학을 말해요. 지금 공부하는 과정을 골라주세요.':'지금 공부하는 초등·중등·고등 과정을 골라주세요.',courses],
  schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
  school:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',stageOptions(false)],
- schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?','과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,v])],
+ schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?',(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,highSubjectLabel(v)])],
  schoolStatus:['이 교과 교재는 끝냈나요?',a.schoolCourse==='high'?'선택한 교재의 상태입니다. 개념 교재 완료와 쎈 유형 완료는 따로 기록합니다.':'지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  deepCourse:[young?'심화 수학은 어느 과정을 공부하나요?':'심화는 어느 과정을 공부하나요?',young?'배운 내용을 써서 더 깊이 생각하는 문제를 풀어요. 아직 시작 전도 고를 수 있어요.':'아직 시작하지 않았다면 아래에서 골라주세요.',courses],
  deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.deepCourse,'deep')}`,bookList(a.deepCourse,'deep').map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
- deepStage:[deepHigh?'현재 심화하는 과목은 무엇인가요?':'심화는 어느 과정인가요?',deepHigh?'지금 공부 중인 심화 과목을 고릅니다. 선행 과목과 달라도 됩니다. 이후 심화는 다음 계획으로 구분하며, 이 선택을 바꾸면 현재 심화 기록이 바뀝니다.':'심화 교재의 학년과 학기를 골라 주세요.',deepHigh?deepMath.map(v=>[v,v]):stageOptions(deepMiddle)],
+ deepStage:[deepHigh?'현재 심화하는 과목은 무엇인가요?':'심화는 어느 과정인가요?',deepHigh?(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 지금 공부 중인 심화 과목을 고릅니다. 선행 과목과 달라도 됩니다. 이후 심화는 다음 계획으로 구분하며, 이 선택을 바꾸면 현재 심화 기록이 바뀝니다.':'심화 교재의 학년과 학기를 골라 주세요.',deepHigh?deepMath.map(v=>[v,highSubjectLabel(v)]):stageOptions(deepMiddle)],
  deepExtra:['동시에 공부하는 다른 고등 심화 과목도 있나요?','앞서 입력한 심화는 그대로 두고, 별도로 진행하는 심화 하나를 추가합니다.',[['no','아니요'],['yes','네, 다른 과목도 함께 해요'],['unknown','아직 확인 전이에요']]],
- deepExtraStage:['함께 공부하는 다른 심화 과목은 무엇인가요?','앞서 입력한 심화와 다른 과목을 고릅니다.',highSubjects.filter(v=>v!==a.deepStage).map(v=>[v,v])],
+ deepExtraStage:['함께 공부하는 다른 심화 과목은 무엇인가요?',highSubjectHelp+' 앞서 입력한 심화와 다른 과목을 고릅니다.',highSubjects.filter(v=>v!==a.deepStage).map(v=>[v,highSubjectLabel(v)])],
  deepExtraBook:['추가 심화는 어떤 교재로 공부하나요?','기존 심화 교재를 바꾸지 않고 별도로 기록합니다.',['실력정석','고쟁이','숨마쿰라우데 고등','학교 지정 교재'].map(v=>[v,v])],
  deepExtraStatus:['추가 심화 교재는 현재 어느 상태인가요?','이 과목의 실제 진행 상태와 완료 분량만 입력합니다.',progress],
  deepStatus:['이 심화 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  calc:[highLearning?'별도로 공부하는 연산은 어느 범위인가요?':young?'수와 계산은 어디까지 공부했나요?':'연산은 어디까지 되나요?',highLearning?'고등 선행과 연산 범위는 다를 수 있습니다. 초등 후반·중등 연산은 그 이후 단계에서, 고등 계산·식 변형은 별도로 고르세요. 범위를 모르면 잘 모르겠어요를 선택합니다.':group==='preschool'?'수를 나누고 모으기, 덧셈·뺄셈 등을 말해요.':young?'덧셈·뺄셈·곱셈·나눗셈 중 혼자 할 수 있는 것을 골라주세요.':'도움 없이 혼자 할 수 있는 단계예요.',calc.map(([v,t])=>[v,t]).concat(older?[['advanced','그 이후 단계']]:[]).concat([['high','고등 계산·식 변형 연습'],['none','아직 시작 전'],['unknown','잘 모르겠어요']])],
- calcHigh:[fields.internationalCalendar?'계산·식 변형은 어느 과목에서 연습하나요?':'계산·식 변형은 어느 고등 과목에서 연습하나요?','현재 교과·심화와 별개로 실제 연습하는 범위를 고릅니다.',calcMath.map(v=>[v,v])],
+ calcHigh:[fields.internationalCalendar?'계산·식 변형은 어느 과목에서 연습하나요?':'계산·식 변형은 어느 고등 과목에서 연습하나요?',(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 현재 교과·심화와 별개로 실제 연습하는 범위를 고릅니다.',calcMath.map(v=>[v,highSubjectLabel(v)])],
  calcStatus:[(calc.find(c=>c[0]===a.calc)?.[1]||'이 연산')+' 단계는요?','지금 연습하는 중인지, 끝냈는지 골라 주세요.',progress],
  compExact:['지금 사고력 교재는요?','현재 과정 하나만 골라 주세요.',P.COMP.map((c,i)=>[String(i),c[0]])],
  schoolExact:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',[['13','초등 계통 대수심화'],...stageOptions(true)]],
@@ -125,7 +127,7 @@ function progressKey(status){return status.replace(/Status$/,'Progress');}
 function progressCourse(a,status){const keys={schoolStatus:['schoolCourse','schoolBook','school','schoolExact','schoolHigh'],deepStatus:['deepCourse','deepBook','deepStage'],deepExtraStatus:['deepExtra','deepExtraStage','deepExtraBook'],thinkingStatus:['thinking','compExact','preDone'],calcStatus:['calc','calcExact','calcHigh']}[status]||[];return keys.map(k=>a[k]||'').join('|');}
 function progressValue(a,status){const v=a[progressKey(status)];return v&&v.course===progressCourse(a,status)&&Number.isFinite(v.done)&&Number.isFinite(v.total)&&v.total>0&&v.done>=0&&v.done<v.total?v:null;}
 function remainingMonths(a,status,full){const v=progressValue(a,status);return Math.max(1,Math.ceil(full*(v?1-v.done/v.total:.5)));}
-function progressText(a,status){const v=progressValue(a,status);return v?(v.estimated?'남은 범위 확인 전':v.total+' '+(v.unit==='session'?'회':v.unit==='page'?'쪽':'단원')+' 중 '+v.done+' 완료'):'';}
+function progressText(a,status){const v=progressValue(a,status);return v?(v.estimated?'남은 범위 확인 전':v.unit==='percent'?'약 '+Math.round(v.done/v.total*100)+'% 분량 진행 · 숙달 아님':v.total+' '+(v.unit==='session'?'회':v.unit==='page'?'쪽':'단원')+' 중 '+v.done+' 완료'):'';}
 function fieldChanges(a,fields,key){a=effective(a);
  const result={};const recalc=['band','speed'].includes(key),y=age(a,fields),g=gradeForAge(y,fields.mon);
  if(['age','grade'].includes(key)&&g>=1&&g<=12)result.grade=String(g);

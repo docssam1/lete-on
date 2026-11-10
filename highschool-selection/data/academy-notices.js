@@ -1,7 +1,7 @@
 // Generated from approved public channels. Do not add post bodies or personal data.
 globalThis.HIGHSELECT_ACADEMY_NOTICES = {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-08",
+  "checkedAt": "2026-11-10",
   "policy": {
     "branches": [
       "대치",
@@ -19,81 +19,81 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "dg-bundang-tests",
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=bundang",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "dg-daechi-seminars",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "dg-daechi-tests",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "dp-blog",
       "academy": "DP",
       "branch": "title",
       "url": "https://blog.naver.com/dpmath",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "ed-blog",
       "academy": "ED",
       "branch": "대치",
       "url": "https://blog.naver.com/edenmath",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "sh-blog",
       "academy": "SH",
       "branch": "대치",
       "url": "https://blog.naver.com/sharpedu",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "sm-blog",
       "academy": "SM",
       "branch": "대치",
       "url": "https://blog.naver.com/won1934",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     },
     {
       "id": "wm-blog",
       "academy": "WM",
       "branch": "대치",
       "url": "https://blog.naver.com/wonmath563",
-      "checkedAt": "2026-11-08",
+      "checkedAt": "2026-11-10",
       "status": "ok",
-      "lastSuccessAt": "2026-11-08"
+      "lastSuccessAt": "2026-11-10"
     }
   ],
   "items": [
@@ -192,6 +192,32 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "publishedAt": null,
       "eventDate": "2026-11-27",
       "scheduleText": "2026-11-27 11:00 · 깊생TV 유튜브 (온라인)"
+    },
+    {
+      "id": "dp-blog-224467457228-분당",
+      "sourceId": "dp-blog",
+      "academy": "DP",
+      "branch": "분당",
+      "category": "test",
+      "title": "[분당 중등관]12월 개강 및 정규반 진도표(12/10~)",
+      "url": "https://blog.naver.com/dpmath/224467457228",
+      "publishedAt": "2026-11-09",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "2b0feffe7b930a9c"
+    },
+    {
+      "id": "wm-blog-224470731361-대치",
+      "sourceId": "wm-blog",
+      "academy": "WM",
+      "branch": "대치",
+      "category": "test",
+      "title": "[중등/정규반] 12월, '중2-2기본반' 편입테스트 안내",
+      "url": "https://blog.naver.com/wonmath563/224470731361",
+      "publishedAt": "2026-11-09",
+      "eventDate": null,
+      "scheduleText": "12/02 (수) 오후 4:00~6:40",
+      "revision": "8b4a34763a5e1fa0"
     },
     {
       "id": "sm-blog-224469461138-대치",
