@@ -16,10 +16,10 @@
 .level-pace .lv{display:table;align-self:flex-start;margin:3px 0;padding:0 8px;border-radius:999px;background:#eceaf3;color:var(--lp-ink);font-size:12px;font-weight:700;line-height:1.6}
 .level-pace .is-now .lv{background:#efe6f6;color:var(--lp-now)}
 /* 레벨 × 과정 표 */
-.level-pace-table{display:grid;grid-template-columns:minmax(220px,1.4fr) repeat(5,minmax(124px,1fr));min-width:900px}
+.level-pace-table{display:grid;grid-template-columns:minmax(220px,1.4fr) repeat(3,minmax(130px,1fr)) minmax(200px,1.4fr);min-width:900px}
 .level-pace-table>div{padding:12px;border-bottom:1px solid var(--lp-line);border-right:1px solid var(--lp-line);min-width:0}
-.level-pace-table>div:nth-child(6n){border-right:0}
-.level-pace-table>div:nth-last-child(-n+6){border-bottom:0}
+.level-pace-table>div:nth-child(5n){border-right:0}
+.level-pace-table>div:nth-last-child(-n+5){border-bottom:0}
 .level-pace-table .corner,.level-pace-table .head{color:#fff;font-size:14px;font-weight:700;text-align:center}
 .level-pace-table .head.c0{background:#76528d}.level-pace-table .head.c1{background:#2f7a6c}.level-pace-table .head.c2{background:#8f5a1c}.level-pace-table .head.c3{background:#7a3f63}.level-pace-table .head.c4{background:#463a78}
 .level-pace-table .cell.c0{background:var(--lp-c0)}.level-pace-table .cell.c1{background:var(--lp-c1)}.level-pace-table .cell.c2{background:var(--lp-c2)}.level-pace-table .cell.c3{background:var(--lp-c3)}.level-pace-table .cell.c4{background:var(--lp-c4)}

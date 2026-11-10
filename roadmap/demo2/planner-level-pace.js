@@ -2,12 +2,14 @@
    날짜는 planner-levels.js 레벨표와 표준 계획의 교과 기준점에서만 계산한다. 합격·도달 판정이 아니다. */
 (function(global){
 'use strict';
-const MARKS=[/^6-2/,/^중3-2/,/^공통수학2/,/^대수$/,/^미적분Ⅰ/];
-const NAMES=['초등','중등','공통수학1·2','대수','미적분Ⅰ','이후 과목'];
+const MARKS=[/^6-2/,/^중3-2/,/^공통수학2/];
+// 원장님 2026-11-10: 영재학교·과학고 지원, KMO 경험 학생은 공통수학2를 마친 뒤 KMO를 한다. 대수·미적분Ⅰ 선행은 방학과 쉬는 구간에 한다.
+const AFTER='대수 · 미적분Ⅰ 선행은 방학과 쉬는 구간에';
+const NAMES=['초등','중등','공통수학1·2','KMO · 방학 선행'];
 const LAST=MARKS.length;
-const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','대수','미적분Ⅰ','이후 과목'];
+const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','공통수학2 뒤: KMO 준비, 대수·미적분Ⅰ은 방학에'];
 const OFFSETS=[[-2,'up2','두 레벨 위'],[-1,'up1','한 레벨 위'],[0,'now','지금 계획'],[1,'down1','한 레벨 아래']];
-const STAGES=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','대수','미적분Ⅰ'];
+const STAGES=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','공통수학2 뒤'];
 // 원장님 2026-11-10: 프리미어·챌린지·필즈 기준표는 "합격생의 표준 로드맵"으로 부른다(L0 프리미어 · L1 필즈 S · L2 챌린지).
 const PASSED={L0:'프리미어',L1:'필즈 S',L2:'챌린지'};
 let played=false;
@@ -15,6 +17,8 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 // 기준점에서 각 과정이 끝날 때까지 남은 개월 수. 표에 그 과정이 없으면 null.
 const plain=v=>String(v??'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
 // 각 과정의 마지막 책 이름. 표에 적힌 그대로 쓴다.
+// 공통수학2 다음 행(진로)의 이름. 표에 적힌 그대로 쓰되 앞의 '진로: '만 뗀다.
+function after(rows){const i=(rows||[]).findIndex(b=>MARKS[2].test(b[0])),row=i<0?null:rows[i+1];return row?plain(row[0]).replace(/^진로:\s*/,''):null;}
 function books(rows){return MARKS.map(re=>{const row=(rows||[]).find(b=>re.test(b[0]));return row?plain(row[0]):null;});}
 // 그 달에 그 레벨이 하고 있는 책. 표가 끝났으면 null.
 function doing(rows,t){const row=(rows||[]).find(b=>t>=b[1]&&t<b[2]+1);return row?plain(row[0]):null;}
@@ -34,7 +38,7 @@ function model(standard,levels,fields){
   if(!level)return[];
   // 지금 계획은 실제 공부 중인 위치에서, 다른 기준은 같은 학년·월 위치에서 잰다.
   const at=offset?standard.now:school.anchor;
-  return[{id,name,level:level.id,summary:plain(level.summary),ends:ends(level.school,at),books:books(level.school),
+  return[{id,name,level:level.id,summary:plain(level.summary),ends:ends(level.school,at),books:books(level.school),after:after(level.school),
    doing:{school:doing(level.school,at),comp:doing(level.comp,standard.now),calc:doing(level.calc,standard.now)}}];
  });
  const now=rows.find(r=>r.id==='now');
@@ -79,7 +83,9 @@ function table(m){
    if(end===null)return`<div class="cell c${i}${now}"><small>기준표에 없음</small></div>`;
    if(end<=0)return`<div class="cell c${i}${now}"><b>마침</b><small>${esc(row.books[i])}</small></div>`;
    const at=monthAt(m.base,end);return`<div class="cell c${i}${now}"><b>${at.year}.${at.month}</b><small>${esc(row.books[i])}</small></div>`;}).join('');
-  return`<div class="tier${now}"><strong>${esc(row.name)}</strong>${label(row)}<div class="study">${study(row)}</div></div>${cells}`;}).join('');
+  const end=row.ends[2],from=end===null?null:monthAt(m.base,Math.max(0,end)+1);
+  const next=!row.after||end===null?`<div class="cell c3${now}"><small>기준표에 없음</small></div>`:`<div class="cell c3${now}"><b>${end<=0?'진행 중':from.year+'.'+from.month+'부터'}</b><small>${esc(row.after)}</small><small>${AFTER}</small></div>`;
+  return`<div class="tier${now}"><strong>${esc(row.name)}</strong>${label(row)}<div class="study">${study(row)}</div></div>${cells}${next}`;}).join('');
  return`<div class="level-pace-scroll" tabindex="0" role="region" aria-label="레벨별로 과정이 끝나는 달과 책"><div class="level-pace-table">${head}${body}</div></div>`;
 }
 function render(standard,fields){
@@ -96,7 +102,7 @@ function render(standard,fields){
 <div class="level-pace-scroll" tabindex="0" role="region" aria-label="기준별 일정 비교"><div class="level-pace-grid"><div></div><div class="axis">${ticks.join('')}</div>${rows}</div></div>
 <ul class="level-pace-key">${KEYS.map((k,i)=>`<li><i class="s${i}"></i>${k}</li>`).join('')}</ul>
 ${table(m)}
-<p class="level-pace-note">막대 아래와 표의 날짜는 그 과정이 끝나는 달이고, 표의 날짜 아래는 그 과정의 마지막 책입니다. 위·아래 레벨은 같은 학년·월의 다른 기준표이며, 그 반에 들어갈 수 있다는 판정이 아닙니다.${missing?' 회색 칸은 그 기준표에 이후 과정이 아직 없다는 뜻입니다.':''}</p>
+<p class="level-pace-note">막대 아래와 표의 날짜는 그 과정이 끝나는 달이고, 표의 날짜 아래는 그 과정의 마지막 책입니다. 공통수학2를 마친 뒤에는 KMO 준비로 이어지고, 대수·미적분Ⅰ 선행은 방학과 쉬는 구간에 합니다. 위·아래 레벨은 같은 학년·월의 다른 기준표이며, 그 반에 들어갈 수 있다는 판정이 아닙니다.${missing?' 회색 칸은 그 기준표에 이후 과정이 아직 없다는 뜻입니다.':''}</p>
 </section>`;
 }
 // 그림의 카메라 이동은 화면에서 한 번 끝까지 재생된 뒤에는 다시 재생하지 않는다.

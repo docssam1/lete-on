@@ -357,7 +357,7 @@ function slowPlan(fast){
   const mid=semAt(13);
   school.push(...seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])));
   // 중등 뒤 고등 과정은 빠른 레벨과 같은 순서·기간으로 잇는다(원장님 2026-11-10 "채워 순서대로").
-  school.push(...seqFrom(mid+24, [['공통수학1',3],['공통수학2',3],['대수',3],['미적분Ⅰ',3],['진로: KMO 입문 또는 이과 상위권',12]]));
+  school.push(...seqFrom(mid+24, [['공통수학1',3],['공통수학2',3],['진로: KMO 입문 또는 이과 상위권',12]]));
   school2.push(...seqFrom(mid, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4])));
   calc.push(...seqFrom(mid, MID_CALC));
   const stretch=arr=>arr.map(([t,a,e])=>[t,SLOW_AT+Math.round((a-SLOW_AT)*SLOW_SEM/3),SLOW_AT+Math.round((e+1-SLOW_AT)*SLOW_SEM/3)-1]);
@@ -385,7 +385,7 @@ function levelPlan(id, shift){
   const calc=demoCalc.concat(elemCalc, seqFrom(mid, MID_CALC));
   const school=demoSchool.concat(derived,[['여유 · 초등 대수 심화<br><small>(선택)</small>',mid-1,mid-1]])
     .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])))
-    .concat(seqFrom(mid+24, [['공통수학1',3],['공통수학2',3],['대수',3],['미적분Ⅰ',3],['진로: KMO 입문 또는 이과 상위권',12]]));
+    .concat(seqFrom(mid+24, [['공통수학1',3],['공통수학2',3],['진로: KMO 입문 또는 이과 상위권',12]]));
   const demoTop=(window.ROAD_L0||ROAD_L0).school.filter(b=>!notTop(b)).map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]);
   const topEnd=demoTop.length?demoTop[demoTop.length-1][2]:0;
   const school2=demoTop
