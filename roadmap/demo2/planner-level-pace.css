@@ -36,7 +36,9 @@
 .level-pace-table .cell.fork b{text-align:center}
 .level-pace-table .cell.fork p{margin:0;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.7);font-size:13px;line-height:1.45;color:var(--lp-ink)}
 .level-pace-table .cell.fork i{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--lp-s3-ink)}
-.level-pace-table .cell.fork span{display:block;font-size:12px;color:var(--lp-muted)}
+.level-pace-table .cell.fork span{display:block;font-size:12px;line-height:1.5;color:var(--lp-muted)}
+.level-pace-table .cell.fork em{font-style:normal;font-weight:700;color:var(--lp-ink)}
+.level-pace-table .cell.fork em:after{content:' →';font-weight:400}
 .level-pace-table .cell.is-now.c0{background:var(--lp-s0)}.level-pace-table .cell.is-now.c1{background:var(--lp-s1)}.level-pace-table .cell.is-now.c2{background:var(--lp-s2)}.level-pace-table .cell.is-now.c3{background:var(--lp-s3)}.level-pace-table .cell.is-now.c4{background:var(--lp-s4)}
 .level-pace-table .cell.is-now{box-shadow:inset 0 2px 0 var(--lp-now),inset 0 -2px 0 var(--lp-now)}.level-pace-table .cell.is-now b{font-size:20px}
 .level-pace-table .tier.is-now{background:#efe6f6}

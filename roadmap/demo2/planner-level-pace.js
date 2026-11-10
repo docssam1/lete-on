@@ -7,7 +7,8 @@ const MARKS=[/^6-2/,/^중3-2/,/^공통수학2/];
 //  이과 상위권: 대수 → 미적분Ⅰ을 바로 잇는다(각 3개월로 계산).
 //  영재학교·과학고 지원, KMO 경험: KMO를 한다. 대수·미적분Ⅰ 선행은 방학, KMO 1차 시험 뒤 발표 전, 1차 결과(합격·불합격)에 따라 생기는 쉬는 구간에 한다.
 const HIGH_MONTHS=3;
-const KMO_REST='대수 · 미적분Ⅰ 선행은 방학, KMO 1차 시험 뒤 발표 전, 1차 결과에 따라 쉬는 구간에';
+// 원장님 2026-11-10 "진행": 1차 시험 뒤 발표 전에는 대수를 시작하고, 떨어지면 대수·미적분Ⅰ을 이어서 한 뒤 다음 해 1차에 다시 도전하거나 고등 선행으로 돌리고, 붙으면 2차를 준비하고 선행은 2차 뒤 방학에 한다.
+const KMO_REST=[['1차 시험 뒤 발표 전 (5월 중순~6월 중순)','대수 시작'],['1차에 떨어졌을 때','대수 · 미적분Ⅰ을 이어서. 다음 해 1차 재도전 또는 고등 선행으로 전환'],['1차에 붙었을 때','2차 준비(11월). 선행은 2차 뒤 겨울방학에']];
 const NAMES=['초등','중등','공통수학1·2','대수·미적분Ⅰ 또는 KMO'];
 const LAST=MARKS.length;
 const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','공통수학2 뒤: 이과 상위권은 대수·미적분Ⅰ, 영과고·KMO는 KMO 준비'];
@@ -88,7 +89,7 @@ function table(m){
    const at=monthAt(m.base,end);return`<div class="cell c${i}${now}"><b>${at.year}.${at.month}</b><small>${esc(row.books[i])}</small></div>`;}).join('');
   const end=row.ends[2],from=end===null?null:monthAt(m.base,Math.max(0,end)+1);
   const next=!row.after||end===null?`<div class="cell c3${now}"><small>기준표에 없음</small></div>`:(()=>{const e=Math.max(0,end),a=monthAt(m.base,e+HIGH_MONTHS),c=monthAt(m.base,e+HIGH_MONTHS*2);
-   return`<div class="cell c3 fork${now}"><b>${end<=0?'진행 중':from.year+'.'+from.month+'부터'}</b><p><i>이과 상위권</i>대수 → 미적분Ⅰ을 바로 이어서<span>대수 ${a.year}.${a.month}까지 · 미적분Ⅰ ${c.year}.${c.month}까지</span></p><p><i>영과고 · KMO</i>KMO 준비<span>${KMO_REST}</span></p></div>`;})();
+   return`<div class="cell c3 fork${now}"><b>${end<=0?'진행 중':from.year+'.'+from.month+'부터'}</b><p><i>이과 상위권</i>대수 → 미적분Ⅰ을 바로 이어서<span>대수 ${a.year}.${a.month}까지 · 미적분Ⅰ ${c.year}.${c.month}까지</span></p><p><i>영과고 · KMO</i>KMO 준비. 대수 · 미적분Ⅰ 선행은 쉬는 구간과 방학에${KMO_REST.map(r=>`<span><em>${r[0]}</em> ${r[1]}</span>`).join('')}</p></div>`;})();
   return`<div class="tier${now}"><strong>${esc(row.name)}</strong>${label(row)}<div class="study">${study(row)}</div></div>${cells}${next}`;}).join('');
  return`<div class="level-pace-scroll" tabindex="0" role="region" aria-label="레벨별로 과정이 끝나는 달과 책"><div class="level-pace-table">${head}${body}</div></div>`;
 }
