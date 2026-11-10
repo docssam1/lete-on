@@ -97,7 +97,9 @@ test('KMO follows common math 2 directly; algebra and calculus 1 are not rows bu
  }
  const now=60,m=P.model(standard('L7',now),LEVELS,fields),row=m.rows.find(r=>r.id==='now');
  assert.equal(row.ends.length,3);assert.equal(row.after,'KMO 입문 또는 이과 상위권');
- const html=P.render(standard('L7',now),fields),months=end('L7',/^공통수학2/)+1-now,i=10+months;
- assert.ok(html.includes(`<div class="cell c3 is-now"><b>${2026+Math.floor(i/12)}.${i%12+1}부터</b><small>KMO 입문 또는 이과 상위권</small><small>대수 · 미적분Ⅰ 선행은 방학과 쉬는 구간에</small></div>`));
+ const html=P.render(standard('L7',now),fields),months=end('L7',/^공통수학2/)+1-now,ym=k=>{const i=10+k;return`${2026+Math.floor(i/12)}.${i%12+1}`;};
+ assert.ok(html.includes(`<div class="cell c3 fork is-now"><b>${ym(months)}부터</b>`));
+ assert.ok(html.includes(`<i>이과 상위권</i>대수 → 미적분Ⅰ을 바로 이어서<span>대수 ${ym(months+2)}까지 · 미적분Ⅰ ${ym(months+5)}까지</span>`));
+ assert.match(html,/<i>영과고 · KMO<\/i>KMO 준비<span>대수 · 미적분Ⅰ 선행은 방학, KMO 1차 시험 뒤 발표 전, 1차 결과에 따라 쉬는 구간에<\/span>/);
  assert.match(html,/class="head c3">공통수학2 뒤/);
 });
