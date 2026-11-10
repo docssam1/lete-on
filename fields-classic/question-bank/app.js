@@ -1,4 +1,4 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261101b";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261110x";
 import { GENERATORS } from "./generators.js?v=20261101n";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { icon } from "./ui-icons.js?v=20261105b";

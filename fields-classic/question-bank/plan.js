@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261101b";
+import { CURRICULUM } from "./source-data.js?v=20261110x";
 import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261029q";
 import { sessionCount } from "./study-deck.js?v=20261110m";
 import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261110m";

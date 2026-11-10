@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261101b";
+import { CURRICULUM } from "./source-data.js?v=20261110x";
 import { unitParts, partProblems } from "./study-map.js?v=20261110m";
 import { loadLocalAll } from "./study-progress.js?v=20261029q";
 import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110s";
