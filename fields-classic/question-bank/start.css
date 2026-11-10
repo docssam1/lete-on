@@ -327,3 +327,28 @@ body.sm { padding-bottom: 92px; }
 .st-retry:hover { border-color: var(--accent); background: var(--accent-soft); }
 @media (max-width: 640px) { .st-retry { grid-template-columns: minmax(0, 1fr) auto; } .st-retry span { grid-column: 1 / -1; grid-row: 2; } }
 .st-btn[hidden] { display: none; }   /* 고른 번호가 없을 때 「다시 고르기」가 보이던 것 */
+
+/* ── 오답 유사문제 화면은 지필드의 파란 결(원장 2026-11-10 「왜 또 누런색이야 우리 파란색 결의 UI 디자인 맞춰」) ──
+   성향 검사 「AI 맞춤 상담」 카드·사이언스 랩의 --k-* 토큰과 같은 색: 흰 카드 + 옅은 하늘 바탕, 남색 글씨와 주 단추, 파란 그림자.
+   이 화면만 색 변수를 바꿔 끼운다(틀·크기는 그대로). 종이색·초록을 다시 쓰지 않는다 */
+body.sm {
+  --bg: #f2f6fd; --paper: #ffffff; --paper-dim: #eaf3ff;
+  --ink: #1b2340; --muted: #56627f; --line: #e0e9f8; --line-strong: #c7d6ee;
+  --accent: #243184; --accent-ink: #141b5d; --accent-soft: #eaf3ff; --gold: #2f6be0; --terra: #c2452d;
+}
+body.sm .st-header { border-bottom-color: var(--line); box-shadow: 0 2px 10px rgba(30, 99, 200, .06); }
+body.sm .sm-sheet { border-color: var(--line); border-radius: 18px; box-shadow: 0 6px 16px rgba(30, 99, 200, .12); }
+body.sm .sm-tabs button { border-radius: 10px; }
+body.sm .sm-tabs button[aria-checked="true"] { border-color: var(--accent); background: var(--accent); color: #fff; }
+body.sm .sm-tabs button[aria-checked="true"] b { color: #cfe0ff; }
+body.sm .sm-part { border-color: var(--line); border-radius: 14px; background: linear-gradient(180deg, #ffffff, #f3f8ff); }
+body.sm .sm-nums button { border-radius: 10px; box-shadow: 0 2px 0 var(--line); }
+body.sm .sm-nums button:hover { border-color: var(--accent); }
+body.sm .sm-nums button[aria-pressed="true"] { border-color: var(--accent-ink); background: var(--accent-ink); box-shadow: 0 3px 0 #0b1040; }
+body.sm .sm-dock { border-top-color: var(--line); box-shadow: 0 -6px 16px rgba(30, 99, 200, .10); }
+body.sm .st-btn { border-radius: 10px; }
+body.sm .st-btn.primary { background: var(--accent-ink); border-color: var(--accent-ink); box-shadow: 0 8px 18px rgba(20, 27, 93, .28); }
+body.sm .st-btn.primary:hover { background: var(--accent); }
+/* 잠금 안내·체험 띠도 같은 결 */
+body.sm :is(.fa-lock, .fa-banner) { --fa-paper: #ffffff; --fa-ink: #1b2340; --fa-muted: #56627f; --fa-line: #e0e9f8; --fa-line-strong: #c7d6ee; --fa-accent: #243184; --fa-accent-ink: #141b5d; --fa-accent-soft: #eaf3ff; }
+.sm-dock[hidden] { display: none; }   /* 잠금 안내가 뜰 때는 아래 줄을 숨긴다 */
