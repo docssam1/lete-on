@@ -84,3 +84,34 @@ body.roadmap-studio :is(.top .prn-global>summary){font-size:14px;font-weight:600
 body.roadmap-studio.integrated-planner.premium-planner :is(
  .plan-travel strong,.standard-stage>small,.standard-stage>span,.transition-overview dt
 ){font-size:12px;line-height:1.35}
+
+/* 7. 카드: 흰 종이 한 장이 살짝 떠 있는 모양으로 통일한다.
+      얇은 테두리 + 두 겹 그림자, 왼쪽 띠로 종류를 구분, 제목 앞에 남색 표식. */
+body.roadmap-studio{
+ --card-radius:16px;--card-line:rgba(23,43,103,.12);
+ --card-shadow:0 1px 2px rgba(13,21,67,.06),0 14px 30px -16px rgba(13,21,67,.28);
+ --card-shadow-strong:0 2px 4px rgba(13,21,67,.08),0 22px 40px -18px rgba(13,21,67,.38);
+ --card-navy:#172b67;--card-mint:#2f7a6c;--card-plum:#76528d;--card-amber:#a76c24}
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .unit-checklist,.learning-evidence,.learning-evidence-access,.book-check-summary,
+ .transition-chart-wrap,.level-comparison-card,.level-pace-scroll,.progress-panel
+){position:relative;border:1px solid var(--card-line);border-radius:var(--card-radius);background:#fff;box-shadow:var(--card-shadow)}
+/* 종류를 알려 주는 왼쪽 띠 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .learning-evidence,.learning-evidence-access,.book-check-summary,.progress-panel,.level-comparison-card
+)::before{content:"";position:absolute;left:-1px;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--card-tone,var(--card-navy))}
+body.roadmap-studio #journeyPanel :is(.learning-evidence,.learning-evidence-access){--card-tone:var(--card-mint)}
+body.roadmap-studio #journeyPanel .book-check-summary{--card-tone:var(--card-amber)}
+body.roadmap-studio #journeyPanel :is(.progress-panel,.level-comparison-card){--card-tone:var(--card-plum)}
+/* 지금 위치의 카드는 남색 테두리와 더 깊은 그림자 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel .level-comparison-card.is-current{--card-tone:var(--card-navy);border-color:var(--card-navy);box-shadow:0 0 0 1px var(--card-navy),var(--card-shadow-strong);background:linear-gradient(180deg,#f4f6fd 0,#fff 96px)}
+/* 카드 제목 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .learning-evidence,.learning-evidence-access,.book-check-summary,.progress-panel
+)>:is(h2,h3,h4):first-child,
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .learning-evidence,.learning-evidence-access,.book-check-summary,.progress-panel
+)>header:first-child :is(h2,h3,h4){font-size:18px;font-weight:700;letter-spacing:-.01em;color:#1b2552}
+/* 카드 안의 접는 줄은 카드 안쪽 선으로만 구분 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(.learning-evidence,.learning-evidence-access) details{border-color:rgba(23,43,103,.1)}
+@media print{body.roadmap-studio #journeyPanel :is(.unit-checklist,.learning-evidence,.learning-evidence-access,.book-check-summary,.transition-chart-wrap,.level-comparison-card,.level-pace-scroll,.progress-panel){box-shadow:none}}
