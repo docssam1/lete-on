@@ -45,6 +45,6 @@
  .level-pace-grid .axis b{font-size:12px}
  .level-pace-grid .seg{font-size:12px}
  .level-pace-grid .seg.s0,.level-pace-grid .seg.s2,.level-pace-grid .seg.s3,.level-pace-grid .seg.none{font-size:0}
- .level-pace-grid .end{font-size:11px}
+ .level-pace-grid .end{font-size:12px}
 }
 @media print{.level-pace-art{display:none}.level-pace.is-entering .bar{animation:none}}

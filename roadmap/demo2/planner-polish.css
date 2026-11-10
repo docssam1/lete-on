@@ -1,0 +1,86 @@
+/* 버튼·상자·글자 크기 정리 (2026-11-10). 맨 마지막에 불러온다.
+   기준: 누르는 것의 글자는 14px 이상, 읽는 글자는 12px 이상, 굵기는 700까지, 버튼 모서리는 10px.
+   색과 배치는 건드리지 않는다. */
+body.roadmap-studio{--polish-control-radius:10px;--polish-focus:#2b7fd6}
+
+/* 1. 누르는 것: 글자 14px, 굵기 600, 같은 모서리 */
+body.roadmap-studio :is(
+ .top .nav button,.top .gear,
+ .journey-heading .atlas-heading-actions button,
+ .workspace-results>.prn-tools>summary,.plan-travel button,
+ .workspace-tabs button,
+ .plan-current-details>summary,.plan-current-popover button,
+ .student-growth-open,
+ .plan-map-months>summary,.standard-assumptions>summary,
+ .wk-actions button,
+ [data-standard-accept],[data-roadmap-mode],
+ #questionBack,#openReport,#atlasExpand
+){font-size:14px;font-weight:600;line-height:1.3;letter-spacing:0}
+body.roadmap-studio :is(
+ .top .nav button,.top .gear,
+ .journey-heading .atlas-heading-actions button,
+ .workspace-results>.prn-tools>summary,.plan-travel button,
+ .workspace-tabs button,.plan-current-popover button,
+ .wk-actions button,[data-standard-accept],[data-roadmap-mode]
+){border-radius:var(--polish-control-radius)}
+body.roadmap-studio :is(.bp-card,.wk-form,form) select{font-size:14px;border-radius:8px}
+
+/* 계획 머리줄의 버튼은 기존 규칙의 우선순위가 높아 같은 조건으로 한 번 더 지정한다 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel>.journey-heading :is(button,summary),
+body.roadmap-studio.integrated-planner.premium-planner .top .member-account-link{font-size:14px;font-weight:600;border-radius:var(--polish-control-radius)}
+
+/* 질문 화면의 "이전": 흐린 글자 대신 테두리가 있는 보조 버튼 */
+body.roadmap-studio #questionBack{min-width:64px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,.34);border-radius:var(--polish-control-radius);background:rgba(255,255,255,.06);color:#f1f6ff;opacity:1}
+body.roadmap-studio #questionBack:hover{background:rgba(255,255,255,.14)}
+body.roadmap-studio #questionBack:disabled{opacity:.45}
+
+/* 2. 읽는 글자: 12px 아래로 내려가지 않게 */
+body.roadmap-studio :is(
+ .standard-month-axis span>small,
+ .standard-block>small,
+ .standard-quarter-axis>span,
+ .standard-lane>header>span,
+ .current-study-edit>small,
+ .ox-entry>summary>small,
+ .case-route-root small,
+ .uc-stop-name>b
+){font-size:12px;line-height:1.35}
+
+/* 3. 굵기는 700까지 */
+body.roadmap-studio :is(
+ .uc-stop-name>b,.ox-entry>summary,.cnu-summary-label,
+ #drawer .close,#ctl legend
+){font-weight:700}
+
+/* 4. 키보드 초점은 어디서나 같은 테두리 */
+body.roadmap-studio :is(button,select,summary,[role=tab],a,input,textarea):focus-visible{outline:3px solid var(--polish-focus);outline-offset:2px}
+
+/* 좁은 화면에서는 위쪽 메뉴 글자를 13px로 줄여 한 줄을 지킨다 */
+@media (max-width:900px){
+ body.roadmap-studio :is(.top .nav button,.top .gear){font-size:13px}
+}
+
+/* 5. 탭 안쪽(진도 비교·교재·월별 계획·학부모 질문)에서 남아 있던 작은 글자와 버튼 */
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ .level-comparison-card>header>small,.level-comparison-pace>small,.level-comparison-note,
+ .transition-graph>header small,
+ .standard-lane>header>span,.standard-block>small,
+ .workspace-panel thead th,tr[data-study-area] td small,
+ .faq-position,.journey-axis>small,.journey-node-label,.journey-next>small
+){font-size:12px;line-height:1.4}
+body.roadmap-studio.integrated-planner.premium-planner #journeyPanel :is(
+ [data-atlas-full],.transition-axis-buttons button,
+ .workspace-note>summary,.graph-reading>summary,.horizontal-plan-details>summary,
+ .faq-ghost,.faq-controls button,.faq-library>summary,
+ button[data-journey-course],.journey-next,.progress-edit
+){font-size:14px;line-height:1.35}
+
+/* 스타일이 빠져 브라우저 기본 회색으로 보이던 보조 버튼 */
+body.roadmap-studio .wk-secondary{min-height:44px;padding:0 16px;border:1px solid #aeb9d2;border-radius:var(--polish-control-radius);background:#fff;color:#202946;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+body.roadmap-studio .wk-secondary:hover{background:#f3f5fb;border-color:#8795b8}
+
+/* 6. 휴대폰 너비에서 남아 있던 작은 글자 */
+body.roadmap-studio :is(.top .prn-global>summary){font-size:14px;font-weight:600}
+body.roadmap-studio.integrated-planner.premium-planner :is(
+ .plan-travel strong,.standard-stage>small,.standard-stage>span,.transition-overview dt
+){font-size:12px;line-height:1.35}
