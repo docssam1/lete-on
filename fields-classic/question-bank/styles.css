@@ -1744,3 +1744,31 @@ body.as-embed{background:#fff}
   .as-student .fold-draw-answer svg{width:46mm;height:auto}
   .as-student .fold-draw-answer b,.as-student .b1-draw-answer b{font-size:9pt;color:#5c5446}
 }
+
+/* ── 학생 화면의 틀은 파란 결(원장 2026-11-10 「다른 화면도 다 파란 결로 바꿔」) ──
+   유사문제 학습지를 따로 열었을 때(as-student, 덱 안 as-embed 제외)의 머리줄·바탕·단추만 바꾼다.
+   학습지 종이(머리·문항 카드·그림)는 인쇄물과 같은 것이라 그대로 둔다(gfield-textbook-design). 인쇄에는 걸리지 않는다. */
+@media screen{
+  html:has(body.as-student:not(.as-embed)){background:#f2f6fd}
+  body.as-student:not(.as-embed){background:#f2f6fd;color:#1b2340}
+  body.as-student:not(.as-embed) .app-header{border-bottom-color:#e0e9f8;background:#fff;color:#1b2340;box-shadow:0 2px 10px rgba(30,99,200,.06)}
+  body.as-student:not(.as-embed) .app-header .brand-block strong{color:#1b2340}
+  body.as-student:not(.as-embed) .app-header .brand-block span{color:#56627f}
+  body.as-student:not(.as-embed) .student-name{color:#141b5d}
+  body.as-student:not(.as-embed) .student-back{border-color:#c7d6ee;border-radius:10px;background:#fff;color:#1b2340}
+  body.as-student:not(.as-embed) .student-back:hover{border-color:#243184;background:#eaf3ff;color:#141b5d}
+  body.as-student:not(.as-embed) .worksheet-actions button{border-color:#c7d6ee;border-radius:10px;background:#fff;color:#1b2340}
+  body.as-student:not(.as-embed) .worksheet-actions button:hover{border-color:#243184;background:#eaf3ff}
+  body.as-student:not(.as-embed) .question-grid{border-color:transparent;background:transparent}
+  body.as-student:not(.as-embed) .worksheet-head,
+  body.as-student:not(.as-embed) .question-card{border-color:#e0e9f8;box-shadow:0 6px 16px rgba(30,99,200,.10)}
+  body.as-student:not(.as-embed) .student-check-actions button{border-color:#c7d6ee;border-radius:12px;background:#fff;color:#1b2340}
+  body.as-student:not(.as-embed) .student-check-actions .student-check-button{border-color:#141b5d;background:#141b5d;color:#fff;box-shadow:0 5px 0 #0b1040}
+  body.as-student:not(.as-embed) .student-check-actions .student-check-button:active{box-shadow:0 2px 0 #0b1040}
+  body.as-student:not(.as-embed) .choice-buttons button{border-color:#c7d6ee;color:#1b2340;box-shadow:0 3px 0 #c7d6ee}
+  body.as-student:not(.as-embed) .choice-buttons button[aria-pressed="true"]{border-color:#141b5d;background:#141b5d;color:#fff;box-shadow:0 3px 0 #0b1040}
+  body.as-student:not(.as-embed) .choice-buttons button:focus-visible{outline-color:#243184}
+  body.as-student:not(.as-embed) .test-panel{border-color:#e0e9f8;background:#fff;color:#1b2340;box-shadow:0 6px 16px rgba(30,99,200,.10)}
+  body.as-student:not(.as-embed) .test-panel>p{color:#56627f}
+}
+.test-panel[hidden]{display:none}   /* display:grid 가 hidden 을 이겨 빈 상자가 보이던 것 */

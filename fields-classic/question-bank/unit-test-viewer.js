@@ -73,8 +73,8 @@ function renderDiagnosis() {
     ${weak.length ? `<p class="ut-diag-weak">더 공부할 영역: <b>${weak.map((row) => esc(row.minor)).join(" · ")}</b></p>${weakTypes.length ? `<a class="ut-btn primary" href="${esc(weakTypeLink(weakTypes))}">약점 영역 공부하기 · ${weakTypes.length}유형 × 2문제</a>` : ""}` : marked.length === questions.length ? `<p class="ut-diag-clear">부족한 영역이 없어요. 잘했어요!</p>` : ""}`;
 }
 
-document.title = `${book.label} 권별테스트 원문 풀기`;
-$("title").textContent = `${book.label} 권별테스트 · 원문`;
+document.title = `${book.label} 권별 테스트 풀기`;
+$("title").textContent = `${book.label} 권별 테스트`;
 $("eyebrow").textContent = `GIFTED MATH BANK · 1과정 · ${book.title}`;
 $("backLink").href = `./start.html?${new URLSearchParams({ student, book: book.id, door: "test" })}`;
 // 원문을 우리 시험지 꼴로 다시 짠 권(원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」):
@@ -107,7 +107,7 @@ if (original) {
 }
 $("pages").innerHTML = original ? originalPagesMarkup() : Array.from({ length: book.source.unitTestPageCount }, (_, index) => {
   const page = String(index + 1).padStart(2, "0");
-  return `<figure><img src="./assets/unit-tests/${folder}/page-${page}.png?v=20261024a" alt="${esc(book.label)} 권별테스트 원문 ${index + 1}쪽" loading="${index > 1 ? "lazy" : "eager"}" /></figure>`;
+  return `<figure><img src="./assets/unit-tests/${folder}/page-${page}.png?v=20261024a" alt="${esc(book.label)} 권별 테스트 ${index + 1}쪽" loading="${index > 1 ? "lazy" : "eager"}" /></figure>`;
 }).join("");
 $("watermark").innerHTML = Array.from({ length: 4 }, () => `<span>${esc(student)} · GFIELD · ${esc(student)} · GFIELD · ${esc(student)}</span>`).join("");
 
