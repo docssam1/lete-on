@@ -36,10 +36,20 @@ test('top and bottom of the table: missing neighbours are left out, not invented
 });
 
 test('a table without common math keeps null instead of a made-up date',()=>{
- const m=P.model(standard('L10',60),LEVELS,fields);
+ // 실제 레벨표는 모두 공통수학까지 있으므로, 공통수학이 빠진 표를 따로 만들어 확인한다.
+ const cut=LEVELS.map(l=>l.id==='L10'?{...l,school:l.school.filter(b=>!/^공통수학|^진로/.test(b[0]))}:l);
+ const m=P.model(standard('L10',60),cut,fields);
  assert.equal(m.rows.find(r=>r.id==='now').ends[2],null);
  assert.equal(typeof m.rows.find(r=>r.id==='up1').ends[2],'number');
- assert.match(P.render(standard('L10',60),fields),/기준표에 없음/);
+});
+
+test('every level in the real table reaches common math, in order after middle school',()=>{
+ for(const l of LEVELS){
+  const at=re=>l.school.findIndex(b=>re.test(b[0]));
+  assert.ok(at(/^중3-2/)>=0&&at(/^공통수학1/)===at(/^중3-2/)+1&&at(/^공통수학2/)===at(/^공통수학1/)+1,l.id);
+  assert.equal(l.school[at(/^공통수학1/)][1],l.school[at(/^중3-2/)][2]+1,l.id);
+ }
+ assert.doesNotMatch(P.render(standard('L13',94,91.5),fields),/기준표에 없음/);
 });
 
 test('no chart when the plan is not anchored to the level table',()=>{
