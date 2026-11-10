@@ -32,7 +32,7 @@ window.NM_UNITS['C-22'] = {
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 크기가 다르면 못 더해요',en:'1) Different sizes can\'t be added',zh:'① 大小不同不能加'},
-        head:{ko:'반쪽 + 3분의 1쪽 = ? 조각이 달라요!',en:'A half + a third = ? The slices differ!',zh:'半块+三分之一块=？块不一样！'},
+        head:{ko:'반쪽 + 3분의 1쪽 = ? 조각이 달라요!',en:'A half + a third = ? The pieces differ!',zh:'半块+三分之一块=？块不一样！'},
         desc:{ko:'1/2 + 1/3을 분자끼리 더해 2/5라고 하면 <b>틀려요!</b> 반쪽(1/2)과 3분의 1쪽(1/3)은 <b>조각 크기가 달라서</b> 개수만 더하면 안 돼요. 사과 2개+귤 3개를 "5사과"라고 못 부르는 것과 같아요. 먼저 <b>같은 크기의 조각으로 바꿔야</b> 해요!',
               en:'Adding numerators in 1/2 + 1/3 to get 2/5 is <b>wrong!</b> A half and a third are <b>different-sized pieces</b>, so counting them together fails — like calling 2 apples + 3 oranges "5 apples". We must first <b>convert to equal-sized pieces</b>!',
               zh:'把1/2 + 1/3的分子直接相加得2/5是<b>错的！</b>半块和三分之一块<b>大小不同</b>，不能只数个数——就像2个苹果+3个橘子不能叫"5个苹果"。必须先<b>换成同样大小的块</b>！'},
@@ -74,9 +74,9 @@ window.NM_UNITS['C-22'] = {
       { tex:'\\dfrac{2}{3} - \\dfrac{1}{2} = \\dfrac{\\square}{6}', answer:1,
         hint:{ ko:'2/3=4/6, 1/2=3/6, 4/6−3/6=?', en:'2/3=4/6, 1/2=3/6, 4/6−3/6=?', zh:'2/3=4/6，1/2=3/6，4/6−3/6=？' } }
     ],
-    open:{ ko:'1/2 + 1/3이 2/5가 아닌 이유를 피자 그림으로 설명하고 진짜 답을 구해 봐요.',
-      en:'Using pizza pictures, explain why 1/2 + 1/3 isn\'t 2/5, and find the real answer.',
-      zh:'用披萨图解释为什么1/2 + 1/3不是2/5，并求出真正的答案。' },
+    open:{ ko:'1/2 + 1/3이 2/5가 아닌 이유를 분수 막대 그림으로 설명하고 진짜 답을 구해 봐요.',
+      en:'Using fraction-bar pictures, explain why 1/2 + 1/3 isn\'t 2/5, and find the real answer.',
+      zh:'用分数条图解释为什么1/2 + 1/3不是2/5，并求出真正的答案。' },
     openHint:{ ko:'예) 반쪽과 3분의 1쪽은 크기가 달라 개수로 못 더해요. 둘 다 6등분으로 자르면 3조각+2조각=5조각 → 5/6. 참고로 2/5(=0.4)는 1/2(=0.5)보다도 작아서 말이 안 돼요!',
       en:'e.g. A half and a third are different sizes. Re-cut both into sixths: 3+2=5 sixths → 5/6. Note 2/5 (=0.4) is even smaller than 1/2 (=0.5) alone — impossible!',
       zh:'例）半块和三分之一块大小不同不能直接数。都切成6等分：3块+2块=5块→5/6。而且2/5(=0.4)比单独的1/2(=0.5)还小——不可能！' }

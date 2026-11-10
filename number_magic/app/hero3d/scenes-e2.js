@@ -158,49 +158,48 @@ export const SCENES_E2 = {
     k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[0, 7, 2], spotAt:[0, 0, 0], spot:28 });
   }},
 
-  /* 분수 덧뺄셈(같은 분모) — stage ①②: 7조각 피자, 2조각 + 3조각 = 5조각, 2/7 + 3/7 = 5/7 */
+  /* 분수 덧뺄셈(같은 분모) — stage ①②: 7조각으로 나눈 분수 막대, 2조각 + 3조각 = 5조각, 2/7 + 3/7 = 5/7.
+     그림은 종이 교구와 같은 분수 막대 세 줄(원장 2026-11-10 「바꿔」 — 피자 → 분수 막대, C-22 와 같은 모양) */
   'C-21': { seed:2101, caps:{ P:8, list:[
-    [0.0, "피자 한 판을 똑같이 $7$조각으로 잘랐어요.", "A pizza is cut into $7$ equal slices.", "一张披萨平均切成$7$块。"],
-    [0.15, "$2$조각은 $\\dfrac{2}{7}$, $3$조각은 $\\dfrac{3}{7}$이에요.", "$2$ slices are $\\dfrac{2}{7}$ and $3$ slices are $\\dfrac{3}{7}$.", "$2$块是$\\dfrac{2}{7}$，$3$块是$\\dfrac{3}{7}$。"],
-    [0.5, "합치면 $5$조각이라 $\\dfrac{2}{7}+\\dfrac{3}{7}=\\dfrac{5}{7}$이에요.", "Together that is $5$ slices: $\\dfrac{2}{7}+\\dfrac{3}{7}=\\dfrac{5}{7}$.", "合起来是$5$块：$\\dfrac{2}{7}+\\dfrac{3}{7}=\\dfrac{5}{7}$。"],
-    [0.76, "조각 크기는 그대로라서 분모 $7$은 더하지 않아요.", "The slice size stays the same, so the $7$ is not added.", "每块大小不变，所以分母$7$不相加。"]
+    [0.0, "분수 막대 한 줄을 똑같이 $7$조각으로 나눴어요.", "A fraction bar is cut into $7$ equal pieces.", "一条分数条平均分成$7$块。"],
+    [0.15, "$2$조각은 $\\dfrac{2}{7}$, $3$조각은 $\\dfrac{3}{7}$이에요.", "$2$ pieces are $\\dfrac{2}{7}$ and $3$ pieces are $\\dfrac{3}{7}$.", "$2$块是$\\dfrac{2}{7}$，$3$块是$\\dfrac{3}{7}$。"],
+    [0.5, "합치면 $5$조각이라 $\\dfrac{2}{7}+\\dfrac{3}{7}=\\dfrac{5}{7}$이에요.", "Together that is $5$ pieces: $\\dfrac{2}{7}+\\dfrac{3}{7}=\\dfrac{5}{7}$.", "合起来是$5$块：$\\dfrac{2}{7}+\\dfrac{3}{7}=\\dfrac{5}{7}$。"],
+    [0.76, "조각 크기는 그대로라서 분모 $7$은 더하지 않아요.", "The piece size stays the same, so the $7$ is not added.", "每块大小不变，所以分母$7$不相加。"]
   ]},
     build(k){
-    const { THREE, scene } = k;
-    k.frame([0, 0, 0.15], 5.6, 56);
+    k.frame([-0.03, 0, -0.1], 5.9, 58);
     k.table();
-    const R = 1.1, CZ = -0.55, A = Math.PI * 2 / 7, BASE = Math.PI - 6 * A;
-    /* 나무 도마 */
-    const board = new THREE.Mesh(new THREE.CylinderGeometry(R + 0.4, R + 0.4, 0.08, 64), k.woodMat('#b98a55', [110, 70, 35]));
-    board.position.set(0, 0.04, CZ); board.castShadow = board.receiveShadow = true; scene.add(board);
-    /* 피자 윗면(치즈·토마토·페퍼로니·가장자리 빵) — 조각마다 같은 원형 좌표를 쓰므로 한 장으로 이어진다 */
-    const topTex = k.canvasTex(1024, 1024, (g, w, h) => {
-      g.fillStyle = '#c98a45'; g.fillRect(0, 0, w, h);
-      g.fillStyle = '#d9562e'; g.beginPath(); g.arc(w / 2, h / 2, w * 0.44, 0, Math.PI * 2); g.fill();
-      for(let i = 0; i < 900; i++){ const a = k.rnd() * Math.PI * 2, r = Math.sqrt(k.rnd()) * w * 0.43; g.fillStyle = `rgba(${245 + k.rnd() * 10},${200 + k.rnd() * 40},${90 + k.rnd() * 60},${0.35 + k.rnd() * 0.4})`;
-        g.beginPath(); g.ellipse(w / 2 + Math.cos(a) * r, h / 2 + Math.sin(a) * r, 8 + k.rnd() * 18, 5 + k.rnd() * 10, k.rnd() * 3, 0, Math.PI * 2); g.fill(); }
-      for(let i = 0; i < 24; i++){ const a = k.rnd() * Math.PI * 2, r = (0.08 + k.rnd() * 0.3) * w; g.fillStyle = '#9b2a1c';
-        g.beginPath(); g.arc(w / 2 + Math.cos(a) * r, h / 2 + Math.sin(a) * r, w * 0.035, 0, Math.PI * 2); g.fill(); }
-      const gr = g.createRadialGradient(w / 2, h / 2, w * 0.42, w / 2, h / 2, w * 0.5); gr.addColorStop(0, 'rgba(120,70,20,0)'); gr.addColorStop(1, 'rgba(120,70,20,.5)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
-    const topM = new THREE.MeshStandardMaterial({ map:topTex, roughness:0.7 }), crust = new THREE.MeshStandardMaterial({ color:'#c98a45', roughness:0.8 });
-    const slices = [];
-    for(let i = 0; i < 7; i++){
-      const m = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 0.09, 24, 1, false, BASE + i * A + 0.02, A - 0.04), [crust, topM, crust]);
-      m.castShadow = m.receiveShadow = true;
-      const g = new THREE.Group(); g.add(m); const c = BASE + (i + 0.5) * A; g.userData.dir = new THREE.Vector3(Math.sin(c), 0, Math.cos(c));
-      g.position.set(0, 0.125, CZ); scene.add(g); slices.push(g); }
-    /* 2조각 무리(0,1)와 3조각 무리(2,3,4)를 살짝 빼 둔다 — 두 무리의 가운데 방향으로 */
-    const dirOf = ids => ids.reduce((v, i) => v.add(slices[i].userData.dir), new THREE.Vector3()).normalize();
-    const GA = [0, 1], GB = [2, 3, 4], dA = dirOf(GA), dB = dirOf(GB), OUT = 0.2;
-    const place = (ids, d, s, y) => ids.forEach(i => slices[i].position.set(d.x * s, 0.125 + y, CZ + d.z * s));
-    place(GA, dA, OUT, 0); place(GB, dB, OUT, 0);
-    /* 식 카드 */
-    cardF(k, [{ n:'2', d:'7' }, '+', { n:'3', d:'7' }, '=', { n:'5', d:'7' }], 0, 1.55, { w:3.0, d:0.9, fs:0.34, bg:'#f1e0b8' });
-    /* 움직임: 2조각 무리 → 3조각 무리가 차례로 들렸다 놓이고, 둘이 함께 들썩(합쳐서 5조각) */
+    /* 길이가 같은 7등분 막대 세 줄: 빨강 2조각 · 파랑 3조각 · 빨강 2 + 파랑 3 */
+    const L = 4.4, D = 0.52, H = 0.14, X0 = -1.68, GAP = 0.03, Y0 = 0.05, ZR = [-1.7, -0.95, -0.2], W = L / 7;
+    const red = k.plastic('#d0462f', 0.3), blue = k.plastic('#3a7cc4', 0.3), pale = k.plastic('#efe4cf', 0.5);
+    const tray = k.woodMat('#b98a55', [110, 70, 35]);
+    const bar = (z, mats) => {
+      k.tile(null, X0 + L / 2, z, { w:L + 0.14, d:D + 0.14, h:Y0, side:tray, rad:0.04 });
+      return mats.map((m, i) => k.tile(null, X0 + W * (i + 0.5), z, { w:W - GAP, d:D, h:H, y:Y0, side:m, rad:0.035 })); };
+    const two = bar(ZR[0], [red, red, pale, pale, pale, pale, pale]);
+    const three = bar(ZR[1], [blue, blue, blue, pale, pale, pale, pale]);
+    const five = bar(ZR[2], [red, red, blue, blue, blue, pale, pale]);
+    /* 줄 앞 이름표: 2/7 · + 3/7 · = 5/7 */
+    const LO = { w:0.9, d:0.66, fs:0.27 };
+    cardF(k, [{ n:'2', d:'7' }], X0 - 0.65, ZR[0], LO);
+    cardF(k, ['+', { n:'3', d:'7' }], X0 - 0.65, ZR[1], LO);
+    cardF(k, ['=', { n:'5', d:'7' }], X0 - 0.65, ZR[2], Object.assign({}, LO, { bg:'#f1e0b8' }));
+    const eq = cardF(k, [{ n:'2', d:'7' }, '+', { n:'3', d:'7' }, '=', { n:'5', d:'7' }], -0.03, 1.0, { w:3.2, d:1.0, fs:0.34, bg:'#f1e0b8' });
+    /* 움직임: 첫 줄 7조각이 차례로 톡톡(7조각으로 나눔) → 빨강 2조각 · 파랑 3조각이 한 번씩 →
+       빨강 2조각이 셋째 줄 빨강 위로 갔다 오고, 파랑 3조각이 두 칸 옆 파랑 위로 갔다 옴(합치기) → 5조각 함께 → 식 카드 */
+    const xs = two.map(g => g.position.x);
+    const trip = (p, a) => seg(p, a, a + 0.04) * (1 - seg(p, a + 0.08, a + 0.12));
     k.onFrame(t => { const p = cyc(t, 8);
-      const a = hop(p, 0.15, 0.3), b = hop(p, 0.32, 0.47), c = hop(p, 0.52, 0.7);
-      place(GA, dA, OUT + 0.15 * a, 0.25 * Math.max(a, c)); place(GB, dB, OUT + 0.15 * b, 0.25 * Math.max(b, c)); });
-    k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[0, 7, 2], spotAt:[0, 0, 0], spot:28 });
+      const ur = trip(p, 0.5), ub = trip(p, 0.63);
+      two.forEach((g, i) => { const a = 0.01 + i * 0.016;
+        const y = 0.1 * hop(p, a, a + 0.05) + (i < 2 ? 0.2 * hop(p, 0.17, 0.3) + 0.36 * Math.min(1, ur * 3) : 0);
+        g.position.set(xs[i], Y0 + y, ZR[0] + (i < 2 ? (ZR[2] - ZR[0]) * ur : 0)); });
+      three.forEach((g, i) => { if(i > 2) return;
+        g.position.set(xs[i] + 2 * W * ub, Y0 + 0.2 * hop(p, 0.3, 0.43) + 0.36 * Math.min(1, ub * 3), ZR[1] + (ZR[2] - ZR[1]) * ub); });
+      five.forEach((g, i) => { if(i > 4) return; const a = i < 2 ? 0.53 : 0.66;
+        g.position.y = Y0 + Math.max(0.1 * hop(p, a, a + 0.07), 0.2 * hop(p, 0.76 + i * 0.008, 0.86)); });
+      eq.position.y = 0.16 * hop(p, 0.86, 0.97); });
+    k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[0, 7, 2], spotAt:[0, 0, -0.5], spot:28 });
   }},
 
   /* 창살 곱셈법 — stage ③: 342 × 67. 칸마다 곱(18 24 12 / 21 28 14), 대각선 띠를 더하면 2 2 9 1 4 */
