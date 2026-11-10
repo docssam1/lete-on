@@ -2370,7 +2370,8 @@ if (params.get("as") === "student" || embed.on || classMode) {
         if (!fig) continue;
         // 그림이 원래 차지하려는 폭(max-content)을 재서, 칸보다 넓으면 그 폭으로 그린 채 줄인다(칸 안에서 서로 겹치지 않게)
         fig.style.zoom = ""; fig.style.width = "max-content"; fig.style.maxWidth = "none";
-        let natural = fig.getBoundingClientRect().width;
+        const rect = fig.getBoundingClientRect();
+        let natural = rect.width;
         // 그림 틀이 속 그림보다 넓게 재질 때가 있다(속 그림 폭이 min(100%, 760px)처럼 %로 묶인 경우 틀의 max-content가 부풀어 1278px로 재졌고,
         // 실제 그림은 760px인데 0.52배로 줄어 안 보였다 — 원장 2026-11-10 「그림 확대 잘 안 보여」). 속 그림이 실제로 차지한 폭이 더 좁으면 그 폭으로 잰다
         const kids = [...fig.children].map((child) => child.getBoundingClientRect()).filter((rect) => rect.width > 0);
@@ -2380,8 +2381,15 @@ if (params.get("as") === "student" || embed.on || classMode) {
         }
         const cs = getComputedStyle(box), room = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
         if (natural > room + 1) { fig.style.width = `${Math.ceil(natural)}px`; fig.style.zoom = String(Math.max(0.5, Math.floor((room / natural) * 100) / 100)); }
-        else { fig.style.width = ""; fig.style.maxWidth = ""; }
+        else {
+          fig.style.width = ""; fig.style.maxWidth = "";
+          // 작은 그림(작은 표 하나)이 넓은 칸 가운데 작게 떠 있던 것: 칸과 창 높이에 여유가 있으면 키운다(최대 1.8배, 창 높이의 0.42까지).
+          // 낮은 화면에서는 높이 조건에 걸려 키우지 않는다 — 글씨가 그만큼 줄어들면 안 되므로
+          const grow = Math.min(1.8, (room * 0.7) / natural, (innerHeight * 0.42) / rect.height);
+          if (grow >= 1.15) fig.style.zoom = String(Math.floor(grow * 100) / 100);
+        }
       }
+      requestAnimationFrame(fitEmbed);   // 그림 크기가 바뀌었으니 칸 전체 맞춤을 한 번 더
     };
     new MutationObserver(() => requestAnimationFrame(fitVisuals)).observe($("lessonContent"), { childList: true, subtree: true });
     addEventListener("resize", () => requestAnimationFrame(fitVisuals));
