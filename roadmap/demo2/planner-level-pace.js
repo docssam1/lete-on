@@ -6,6 +6,8 @@ const MARKS=[/^6-2/,/^중3-2/,/^공통수학2/];
 const NAMES=['초등','중등','공통수학1·2','이후 과목'];
 const KEYS=['초등 (6-2까지)','중등 (중3-2까지)','공통수학1·2','이후 과목'];
 const OFFSETS=[[-2,'up2','두 단계 위 기준'],[-1,'up1','한 단계 위 기준'],[0,'now','지금 계획'],[1,'down1','한 단계 아래 기준']];
+// 원장님 2026-11-10: 프리미어·챌린지·필즈 기준표는 "합격생의 표준 로드맵"으로 부른다(L0 프리미어 · L1 필즈 S · L2 챌린지).
+const PASSED={L0:'프리미어',L1:'필즈 S',L2:'챌린지'};
 let played=false;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 // 기준점에서 각 과정이 끝날 때까지 남은 개월 수. 표에 그 과정이 없으면 null.
@@ -49,7 +51,7 @@ function bar(row,m){
 }
 function note(row,m){
  if(row.id==='now')return'현재 교과 진도에서 이어지는 표준 계획';
- const table=esc(row.level)+' 기준표';
+ const table=PASSED[row.level]?PASSED[row.level]+' 합격생의 표준 로드맵':esc(row.level)+' 기준표';
  if(row.delta===null)return table;
  const what=NAMES[m.mark];
  return table+' · '+(row.delta>0?`${what} ${row.delta}개월 앞`:row.delta<0?`${what} ${-row.delta}개월 뒤`:`${what} 같은 달`);
