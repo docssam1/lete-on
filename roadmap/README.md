@@ -1,5 +1,14 @@
 # 지필드 영재교육 TOP SECRET 로드맵 — 필즈·소마 진도
 
+## 레벨 기준 비교 막대 — 2026-11-10
+
+- Mac Claude, 같은 작업본·브랜치(`claude/roadmap-content-fixes-20261110`). 로컬 커밋만 했고 원격 푸시·공개 배포·Drive 업로드는 하지 않았다. 참고한 스킬: frontend-design, ui-ux-pro-max, gfield-design-system, web-ui-library-picks(움직임은 한 화면에 한 번).
+- 추가: `planner-level-pace.js`·`.css`. 표준 계획의 "그래프" 탭 아래에 지금 계획과 한·두 단계 위, 한 단계 아래 기준표가 초등·중등·공통수학1·2를 언제 마치는지 달력 막대로 보여 준다. 날짜는 `planner-levels.js` 레벨표와 표준 계획의 교과 기준점에서만 계산하고, 표에 없는 과정은 "기준표에 없음"으로 표시한다. 합격·도달 판정 문구는 넣지 않았다. 교과가 레벨표에 연결되지 않은 계획(현재 프로필 기반)에는 표시하지 않는다.
+- 그림: `assets/roadmap-level-lanes-20261110.webp`(로컬 mflux FLUX.2 Klein, 기존 캐스트 참조, 프롬프트 파일 동봉). 처음 한 번만 길 끝에서 전체 장면으로 물러나는 움직임과 막대가 열리는 움직임이 재생되고, 움직임 줄이기 설정에서는 재생하지 않는다.
+- 연결: `planner-ui.js` 그래프 탭 한 곳, `planner.html` 스타일·스크립트 한 줄씩과 `planner-ui.js` 캐시 버전.
+- 검증: 새 테스트 6개 포함 demo2 Node 테스트 453개 통과. 로컬 합성 회원 화면에 모듈 출력을 직접 넣어 PC·375px에서 확인(초5 5-2 진행 = L13, 초2 5-2 진행 = L8 두 경우). 설문을 처음부터 밟아 그래프 탭에서 보는 확인은 하지 않았다.
+- 원장 확인 필요: L10~L13 기준표에는 공통수학이 없어 회색으로 남는다. 줄 이름은 "L12 기준표"처럼 번호로만 적었다(L5~L13의 설명 문구가 "초2 3월 교과 …"라 다른 학년에는 맞지 않음).
+
 ## 읽기 검수 뒤 작은 수정 — 2026-11-10
 
 - Mac Claude, 별도 작업본 `/Users/docssam/Developer/GFIELD/lete-on-roadmap-fixes-20261110`, 브랜치 `claude/roadmap-content-fixes-20261110`(기준 `26ae68925`). 로컬 커밋만 했고 원격 푸시·공개 배포·Drive 업로드는 하지 않았다. 스킬: ui-ux-pro-max·frontend-design 규칙은 읽지 않고 기존 화면 규칙만 따랐다.
