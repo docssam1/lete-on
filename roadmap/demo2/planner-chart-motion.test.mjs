@@ -26,3 +26,21 @@ test('reduced motion and print show charts and pictures fully',()=>{
  // 기다리는 그래프를 잘라서 숨기면 화면 진입을 감지하지 못한다. 투명도로만 숨긴다.
  assert.match(css,/\.chart-motion-wait\{opacity:0\}/);assert.match(src,/setTimeout\(/);
 });
+
+test('a wide schedule on a phone starts when a fair part of it is on screen',()=>{
+ const w={};vm.runInContext(src,vm.createContext({window:w}));const M=w.PlannerChartMotion,view={innerWidth:390,innerHeight:800};
+ const e=(bw,bh,sw,sh)=>({boundingClientRect:{width:bw,height:bh},intersectionRect:{width:sw,height:sh}});
+ assert.equal(M.enough(e(1536,121,262,121),view),true);   // 화면보다 넓은 일정 막대
+ assert.equal(M.enough(e(1536,121,262,20),view),false);   // 아래쪽에 조금만 걸친 경우
+ assert.equal(M.enough(e(620,326,620,326),view),true);
+ assert.equal(M.enough(e(620,326,40,326),view),false);
+});
+
+test('rescans when a tab or folded section reveals a chart, and clears the mark when done',()=>{
+ const w={};vm.runInContext(src,vm.createContext({window:w}));
+ for(const name of ['hidden','open','class'])assert.ok(Array.from(w.PlannerChartMotion.WATCH).includes(name));
+ assert.match(src,/attributeFilter:WATCH/);assert.match(src,/checkVisibility/);
+ // 표시가 남으면 탭을 오갈 때마다 다시 움직인다.
+ assert.match(src,/addEventListener\('animationend',done,\{once:true\}\)/);
+ assert.match(src,/played\.add\(names\.get\(el\)\)/);
+});
