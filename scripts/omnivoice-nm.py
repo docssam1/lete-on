@@ -28,6 +28,13 @@
   러너(CPU)   : .github/workflows/omnivoice-nm.yml 수동 실행(조각 병렬)
   python scripts/omnivoice-nm.py [--shard 3/16] [--out DIR] [--lang ko] [--force] [--limit N]
   python scripts/omnivoice-nm.py --manifest-only        # 있는 mp3 로 map 만 다시
+
+누미 한국어 목소리 바꾸기(2026-11-10, 원장 「A 1번」 — 원장이 준 여자 녹음을 본으로)
+  python scripts/omnivoice-nm.py --lang ko --voice nm-numi-v2 --ref-wav <녹음> --ref-json <전사 json>
+         --with-map-keys --out <후보 폴더>
+  --voice 를 주면 파일 이름이 새 목소리 이름으로 갈리므로 지금 앱 음성과 섞이지 않는다.
+  --out 이 앱 폴더가 아니면 연결표(tts-map-omni.js)는 건드리지 않는다 — 후보만 만든다.
+  앱에 넣는 일(연결표·길이표·재생 속도)은 들어 보고 고른 뒤 따로 한다.
 """
 import argparse, base64, hashlib, importlib.util, json, os, re, subprocess, sys, tempfile, time, wave
 
@@ -59,8 +66,37 @@ def tasks():
     return out
 
 
-def fname(lang, text):
-    return f"{lang}-{hashlib.sha1(f'{VOICE}|{lang}|{text}'.encode('utf-8')).hexdigest()[:12]}.mp3"
+def fname(lang, text, voice=None):
+    return f"{lang}-{hashlib.sha1(f'{voice or VOICE}|{lang}|{text}'.encode('utf-8')).hexdigest()[:12]}.mp3"
+
+
+def map_keys(lang):
+    """지금 앱 연결표에 있는 글(대사 목록 밖에서 들어온 영상 대사 등까지)."""
+    if not os.path.exists(MAP):
+        return []
+    src = open(MAP, encoding="utf-8").read()
+    start = src.index("window.NM_TTS_OMNI")
+    body = src[src.index("{", start):]
+    obj, _ = json.JSONDecoder().raw_decode(body)
+    return list((obj.get(lang) or {}).keys())
+
+
+def custom_ref(path, text, work):
+    """본 녹음을 24kHz 모노로 다시 쓰고 앞뒤 무음을 자른다. 전사는 지어내지 않고 받은 글 그대로."""
+    import numpy as np, librosa, soundfile as sf
+    if not os.path.exists(path):
+        sys.exit("본 녹음이 없습니다: " + path)
+    y, sr = librosa.load(path, sr=SR, mono=True)
+    y, _ = librosa.effects.trim(y, top_db=35)
+    secs = len(y) / sr
+    rms = float(np.sqrt(np.mean(y ** 2))) if len(y) else 0.0
+    if secs < 2.5 or rms < 0.005 or not text.strip():
+        sys.exit(f"본 녹음이 너무 짧거나 조용하거나 전사가 없습니다({secs:.1f}초 · 크기 {rms:.3f}).")
+    os.makedirs(work, exist_ok=True)
+    out = os.path.join(work, "custom-ref.wav")
+    sf.write(out, y, sr)
+    print(f"본 녹음: {secs:.1f}초 · 크기 {rms:.3f} · 전사 \"{text}\"", flush=True)
+    return out
 
 
 # 읽지 않는 글자 — 그림 글자(🪄✨)·이음 글자. 파일 이름 해시는 원문 그대로(앱이 원문으로 찾는다).
@@ -230,13 +266,26 @@ def main():
     ap.add_argument("--tries", type=int, default=TRIES, help="문장별 최대 생성 횟수(기본 3)")
     ap.add_argument("--speed", type=float, default=None)
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
+    ap.add_argument("--voice", default="", help="새 목소리 이름(파일 이름에 들어간다). 주면 --out 은 앱 폴더가 아니어야 한다")
+    ap.add_argument("--ref-wav", default="", help="구글 대신 이 녹음을 본으로 복제")
+    ap.add_argument("--ref-text", default="", help="본 녹음의 전사")
+    ap.add_argument("--ref-json", default="", help="전사를 이 JSON 의 ref_text 에서 읽는다")
+    ap.add_argument("--with-map-keys", action="store_true", help="지금 연결표에만 있는 글(영상 대사 등)도 만든다")
     a = ap.parse_args()
+    voice = a.voice or VOICE
+    if a.voice and os.path.abspath(a.out) == os.path.abspath(OUT):
+        sys.exit("--voice 로 새 목소리를 만들 때는 --out 을 후보 폴더로 주세요(앱 음성과 섞지 않습니다).")
     os.makedirs(a.out, exist_ok=True); os.makedirs(WORK, exist_ok=True)
     if a.manifest_only:
         write_map(OUT); return
 
     langs = [l for l in (a.lang.split(",") if a.lang else LANGS) if l in LANGS]
-    refs = ovclone.build_refs(langs, a.ref_dir)
+    if a.ref_wav:
+        text = a.ref_text or (json.load(open(a.ref_json, encoding="utf-8")).get("ref_text", "") if a.ref_json else "")
+        wav = custom_ref(a.ref_wav, text, os.path.join(WORK, "custom-ref"))
+        refs = {l: (wav, text.strip()) for l in langs}
+    else:
+        refs = ovclone.build_refs(langs, a.ref_dir)
     json.dump({l: refs[l][1] for l in refs}, open(os.path.join(a.out, "refs.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     if a.refs_only:
         print(f"참조만 만들었습니다: {a.ref_dir}"); return
@@ -246,9 +295,14 @@ def main():
         selected = set()
         for row in json.load(open(a.tasks_file, encoding="utf-8")):
             selected.add(row.get("file") or fname(row["lang"], row["text"]))
-    todo = [t for t in tasks() if t["lang"] in refs
-            and (selected is None or fname(t["lang"],t["text"]) in selected)
-            and (a.force or not os.path.exists(os.path.join(OUT, fname(t["lang"], t["text"]))))]
+    pool = tasks()
+    if a.with_map_keys:
+        have = {(t["lang"], t["text"]) for t in pool}
+        for lang in langs:
+            pool += [{"lang": lang, "text": k, "unitId": "map", "key": "extra"} for k in map_keys(lang) if (lang, k) not in have]
+    todo = [t for t in pool if t["lang"] in refs
+            and (selected is None or fname(t["lang"], t["text"], voice) in selected)
+            and (a.force or not os.path.exists(os.path.join(a.out if a.voice else OUT, fname(t["lang"], t["text"], voice))))]
     if a.shard:
         k, n = map(int, a.shard.split("/")); todo = todo[k::n]
     if a.limit:
@@ -308,8 +362,8 @@ def main():
             if best is None:
                 continue
             c, hyp, y = best; audio_s += len(y) / SR
-            f = fname(lang, text); ok = not a.no_check and c <= CER_OK
-            report[f] = {"unit": t["unitId"], "key": t["key"], "lang": lang, "text": text, "asr": hyp,
+            f = fname(lang, text, voice); ok = not a.no_check and c <= CER_OK
+            report[f] = {"unit": t["unitId"], "key": t["key"], "lang": lang, "voice": voice, "text": text, "asr": hyp,
                          "cer": round(c, 3), "ok": ok, "checked": not a.no_check, "spoken": say, "sec": round(len(y) / SR, 2)}
             if ok or a.no_check:
                 wav = os.path.join(WORK, "tmp.wav"); write_wav(wav, y)

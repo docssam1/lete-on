@@ -24,4 +24,7 @@ class VoiceQuality(unittest.TestCase):
                 result=pathlib.Path(m.MAP).read_text();self.assertIn(files[0],result);self.assertNotIn(files[1],result);self.assertNotIn(files[2],result)
                 self.assertTrue(extra.exists());self.assertTrue(all(pathlib.Path(d,f).exists() for f in files))
             finally:m.tasks,m.MAP=original_tasks,original_map
+    def test_new_voice_gets_its_own_file_names(self):
+        self.assertNotEqual(m.fname('ko','하나'),m.fname('ko','하나','nm-numi-v2'))
+        self.assertEqual(m.fname('ko','하나'),m.fname('ko','하나',None))
 if __name__=='__main__':unittest.main()
