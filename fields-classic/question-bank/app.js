@@ -3451,7 +3451,7 @@ function studentCheckMarkup(question, index) {
   const typed = !["drawing", "visual-fill"].includes(question.responseKind);
   return `<div class="student-check" data-student-index="${index}">
     <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
-      ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사 문제 풀기</button>`}</div>
+      ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사문제 풀기</button>`}</div>
     <p class="student-check-message" role="status"></p>
     <div class="student-answer${handAnswers ? " is-hand" : ""}" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution && (!handAnswers || handSolution) ? `<p class="${handSolution ? "hand-solution" : ""}"><b>풀이</b> ${question.solution}</p>` : ""}</div>
   </div>`;
@@ -3776,11 +3776,11 @@ function initControls() {
   $("introLink").href = `./home.html?student=${encodeURIComponent(student)}`;
   $("startLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   if (asStudent) {
-    $("regenerateButton").textContent = "모두 유사 문제로";
+    $("regenerateButton").textContent = "모두 유사문제로";
     const back = document.createElement("a");
     back.className = "back-link student-back";
     back.href = studentBack || $("startLink").href;
-    back.textContent = studentBack ? "← 본책 번호판" : "← 처음 화면";
+    back.textContent = studentBack ? "← 번호 고르기로" : "← 처음 화면";
     document.querySelector(".header-links").prepend(back);
   }
   $("worksheetStudent").textContent = student;

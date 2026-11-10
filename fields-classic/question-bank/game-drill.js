@@ -4,7 +4,7 @@ export function mountDrill(host, { say = () => {}, onDone = () => {}, lesson } =
   const book = new URLSearchParams(location.search).get("book") || "";
   const frame = document.createElement("iframe");
   frame.className = "drill-frame";
-  frame.title = "연습 공방";
+  frame.title = "연습 게임";
   const test = new URLSearchParams(location.search).get("test") === "1" ? "&test=1" : "";
   frame.src = `./drill.html?v=20261030c&book=${encodeURIComponent(book)}&lesson=${encodeURIComponent(lesson?.id || "")}${test}`;
   host.replaceChildren(frame);

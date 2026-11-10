@@ -91,7 +91,7 @@ export function mountLevelGame(host, game, { single = true, onQuestions = null, 
       <button type="button" class="cg-level" data-game-levels><span class="cg-level-no" data-game-level-no></span><span class="cg-level-name" data-game-level-name></span><span class="cg-level-more" aria-hidden="true">▾</span></button>
       <ol class="cg-track" aria-label="이번 레벨 진행"></ol>
       <div class="cg-score" aria-live="polite"><span class="cg-stars" title="이번 레벨에서 모은 별"><b data-game-stars>0</b></span><span class="cg-streak" data-game-streak hidden></span></div>
-      <button type="button" class="cg-skip" data-game-skip>넘어가기 ›</button>
+      <button type="button" class="cg-skip" data-game-skip>건너뛰기 ›</button>
       <button type="button" class="cg-sound" data-game-sound aria-pressed="${sound.on}" title="소리"><span class="cg-sound-icon" aria-hidden="true"></span><span class="cg-sr">소리 ${sound.on ? "끄기" : "켜기"}</span></button>
     </header>
     <div class="cg-main">

@@ -86,7 +86,7 @@ async function afterVerify() {
   $("lead").textContent = "승인번호를 잊었으면 새로 받아요. 새 번호를 받으면 옛 번호로는 로그인할 수 없어요.";
   $("mine").hidden = false;
   $("mine").innerHTML = `<p class="ms-signup-email">✓ ${esc(parent.email)} 인증됨</p><ul class="ms-kids">${mine.children.map((kid) => `<li>
-      <b>${esc(kid.child)}</b><small>${kid.status === "approved" ? "정식 회원" : kid.status === "paused" ? "잠시 멈춤" : kid.open ? `체험 중 · ${day(kid.trialUntil)}까지` : "체험 끝 · 정규회원 승인 요청은 카톡으로"}${kid.upTo ? ` · ${Number(kid.upTo.slice(5))}권까지` : ""}</small>
+      <b>${esc(kid.child)}</b><small>${kid.status === "approved" ? "정규회원" : kid.status === "paused" ? "잠시 멈춤" : kid.open ? `체험 중 · ${day(kid.trialUntil)}까지` : "체험 끝 · 정규회원 승인 요청은 카톡으로"}${kid.upTo ? ` · ${Number(kid.upTo.slice(5))}권까지` : ""}</small>
       <button type="button" class="ms-btn" data-reissue="${esc(kid.child)}">승인번호 다시 받기</button></li>`).join("")}</ul>
     <button type="button" class="ms-btn" id="addKid">아이 한 명 더 가입하기</button>`;
   $("addKid").addEventListener("click", () => { $("mine").hidden = true; showChildForm(); });
@@ -108,7 +108,7 @@ function showEmail(message = "") {
 // ── ③ 아이 정보 ──
 function showChildForm() {
   $("heading").textContent = "아이 정보";
-  $("lead").innerHTML = "가입하면 <b>2주 동안 체험</b>해요. 체험 동안은 시작 권 하나를 공부하고, 정식 회원이 되면 한 달에 1권씩 열려요.";
+  $("lead").innerHTML = "가입하면 <b>2주 동안 체험</b>해요. 체험 동안은 시작 권 하나를 공부하고, 정규회원이 되면 한 달에 1권씩 열려요.";
   $("childForm").hidden = false;
   $("child").focus();
 }

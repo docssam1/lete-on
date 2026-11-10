@@ -1,8 +1,8 @@
 import { CURRICULUM } from "./source-data.js?v=20261101b";
-import { unitParts, partProblems } from "./study-map.js?v=20261110h";
+import { unitParts, partProblems } from "./study-map.js?v=20261110m";
 import { loadLocalAll } from "./study-progress.js?v=20261029q";
-import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110f";
-import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261110h";
+import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110m";
+import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261110m";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
 // 권 · 단원을 고르면 본책 번호판(차시마다 활동 · 확인 · 연습 · 도전)이 나온다. 모르는 번호를 누르고 「유사문제 만들기」 →
@@ -72,7 +72,7 @@ function renderDock() {
   make.setAttribute("aria-disabled", String(!size));
   make.textContent = size ? `유사문제 만들기 · ${size}문제` : "유사문제 만들기";
   make.href = size ? link("index.html", { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), build: "1", as: "student",
-    title: `${book.label} ${view.unit + 1}단원 · 모르는 문제 유사문제`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit) })}` }) : "./index.html";
+    title: `${book.label} ${view.unit + 1}단원 · 골라서 다시 풀기`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit) })}` }) : "./index.html";
 }
 
 function show() { renderTabs(); renderNumbers(); renderDock(); syncAddress(); }

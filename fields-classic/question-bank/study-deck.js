@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261110h";
+import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261110m";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -211,7 +211,8 @@ export function slideLine(slide, { book, unitIndex, part = 1, hasConcept = true 
     ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고, 게임과 워밍업으로 익힌 다음 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
     : `오늘은 ${unit.label} ${part}차시예요. ${first}본책 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
   if (slide.kind === "concept") return voiceLine("concept", slide.native ? `${slide.lesson.title} 개념이에요. 칠판을 봐요.` : `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`);
-  if (slide.kind === "game") return voiceLine("game", `${slide.title} 게임이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`);
+  // 이름이 이미 「… 게임」으로 끝나면(연습 게임 · 디지털 숫자 게임 · 뒤집고 돌리기 게임 — 2026-11-10 「공방」을 「게임」으로) 「게임」을 한 번 더 붙이지 않는다
+  if (slide.kind === "game") return voiceLine("game", `${slide.title}${slide.title.endsWith("게임") ? "" : " 게임"}이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`);
   if (slide.kind === "bell") return voiceLine("bell", `${bellLabel(slide)} 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.`);
   if (slide.kind === "board") return voiceLine("board", `본책 ${slide.block.label} 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 유사 문제를 풀어 봐요.`);
   if (slide.kind === "homework") return voiceLine("homework", "오늘의 과제예요. 칠판에 적힌 대로 인쇄해서 집에서 풀고, 다 풀면 화면에서 답을 확인해요.");

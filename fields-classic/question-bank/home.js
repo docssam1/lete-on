@@ -50,7 +50,7 @@ if (me) {
 
 // 숏릴 장면(초): tools/home-reel/record.cjs 가 영상과 함께 assets/front/reel-scenes.json 에 적는다. 못 읽으면 아래 기본값.
 let SCENES = [
-  {at: 0, id: "shape", kicker: "보고 배우고", title: "뒤집고 돌리기 공방", step: 0},
+  {at: 0, id: "shape", kicker: "보고 배우고", title: "뒤집고 돌리기 게임", step: 0},
   {at: 3, id: "clock", kicker: "보고 배우고", title: "시계 바늘 돌리기", step: 0},
   {at: 8, id: "balance", kicker: "보고 배우고", title: "무게 줄 세우기", step: 0},
   {at: 12, id: "cubes", kicker: "보고 배우고", title: "쌓기나무 탑 쌓기", step: 0},

@@ -1,4 +1,4 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261105b";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261110m";
 import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261101m";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
@@ -151,7 +151,7 @@ export const LESSON_FLOWS = Object.freeze({
   "book-04/fold-hole-count": { examples: "fold", game: "drill" },
   "book-04/polyomino-family-count": { examples: "fold", game: "drill" }
 });
-export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기", "cross-sums": "두 줄의 합 맞추기", "line-order": "조건대로 줄 세우기", "b2-matrix": "도형 값 찾기", "b2-pattern": "무늬 기차", "b2-sudoku": "빈칸 채우기", digital: "디지털 숫자 공방", "shape-moves": "뒤집고 돌리기 공방", "fold-once": "한 번 접고 잘라 보기", "fold-twice": "두 번 접고 펼쳐 보기" });
+export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 게임", "share-equally": "같아지도록 옮기기", "cross-sums": "두 줄의 합 맞추기", "line-order": "조건대로 줄 세우기", "b2-matrix": "도형 값 찾기", "b2-pattern": "무늬 기차", "b2-sudoku": "빈칸 채우기", digital: "디지털 숫자 공방", "shape-moves": "뒤집고 돌리기 공방", "fold-once": "한 번 접고 잘라 보기", "fold-twice": "두 번 접고 펼쳐 보기" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -208,8 +208,8 @@ function exampleView(view, groups) {
 
 // 학습 덱의 우리 게임(study-map.js OWN_GAMES와 같은 파일·꼬리표). 끝내면 골든벨 문제로 간다
 const OWN_FLOW_GAMES = {
-  digital: { module: "./game-digital.js?v=20261101k", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop" },
-  "shape-moves": { module: "./game-shape-moves.js?v=20261101k", css: "./game-shape-moves.css?v=20261028zb", mount: "mountShapeMoves" }
+  digital: { module: "./game-digital.js?v=20261110m", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop" },
+  "shape-moves": { module: "./game-shape-moves.js?v=20261110m", css: "./game-shape-moves.css?v=20261028zb", mount: "mountShapeMoves" }
 };
 async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson }) {
   if (Object.hasOwn(OWN_FLOW_GAMES, gameId)) {
@@ -221,20 +221,20 @@ async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson 
   if (gameId === "drill") {
     // 연습 공방은 창(iframe) 안에서 돈다. 마지막 「골든벨 문제로」를 누르면 골든벨 문제 칸으로 간다.
     if (!document.querySelector('link[data-drill-css]')) document.head.insertAdjacentHTML("beforeend", '<link rel="stylesheet" href="./game-drill.css?v=20261110h" data-drill-css>');
-    const { mountDrill } = await import("./game-drill.js?v=20261030c");
+    const { mountDrill } = await import("./game-drill.js?v=20261110m");
     return mountDrill(host, { lesson, onDone: () => onQuestions?.() });
   }
   if (gameId === "turn-clock") {
-    const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261105b");
+    const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261110m");
     return mountClockGame(host, { single: false, saved, onQuestions, onComplete });
   }
-  const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261105b");
+  const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261110m");
   if (gameId.startsWith("b2-")) {
-    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261105b");
+    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261110m");
     return mountLevelGame(host, BOOK02_LEVEL_GAMES[gameId], { single: false, saved, onQuestions, onComplete });
   }
   if (gameId.startsWith("b9-")) {
-    const [{ BOOK09_LEVEL_GAMES }, models] = await Promise.all([import("./golden-bell-book09-games.js?v=20261105b"), import("./golden-bell-book09-game-models.js?v=20261105b")]);
+    const [{ BOOK09_LEVEL_GAMES }, models] = await Promise.all([import("./golden-bell-book09-games.js?v=20261110m"), import("./golden-bell-book09-game-models.js?v=20261110m")]);
     // 이 레슨의 원본 그림과 같은 판은 게임에 내지 않는다(그림은 공개 자료, 답은 게임이 스스로 구한다).
     for (const item of lesson.original?.items || []) {
       const v = item.visual;
@@ -246,7 +246,7 @@ async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson 
   const { HANDS_ON_ACTIVITIES } = await import("./golden-bell-hands-on-models.js?v=20261023t");
   if (Object.hasOwn(HANDS_ON_ACTIVITIES, gameId)) {
     // 골든벨 「직접 해보기」 체험을 게임 칸(.gold-hands-on 안)에 바로 띄운다. 마지막 「연결 문제 풀기」를 누르면 골든벨 문제 칸으로 간다.
-    const { mountEmbedHandsOn } = await import("./golden-bell-hands-on.js?v=20261105b");
+    const { mountEmbedHandsOn } = await import("./golden-bell-hands-on.js?v=20261110m");
     host.innerHTML = '<div class="hand-content"></div>';
     mountEmbedHandsOn(host.querySelector(".hand-content"), { active: gameId, states: saved.handsOn ||= {} }, () => onQuestions?.());
     return { dispose() {} };

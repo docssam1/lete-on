@@ -1,8 +1,8 @@
 import { CURRICULUM } from "./source-data.js?v=20261101b";
-import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261110h";
+import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261110m";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261029q";
-import { canStudy, isPaid, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110f";
-import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261110h";
+import { canStudy, isPaid, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110m";
+import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261110m";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -245,7 +245,7 @@ function renderParts() {
     const steps = [
       ...(part > 1 ? [[`데일리 테스트`, daily ? `${part - 1}차시 복습 4문제 · ${daily.right} / ${daily.total}` : `${part - 1}차시 복습 4문제 · ○✕`]] : []),
       ...(lessons.length ? [["개념 → 게임 → 워밍업", lessons.map((lesson) => lesson.title).join(" · ")]] : []),
-      ["공부하기", isClass() ? `본책 ${problemCount(unit, part)}문항 · 한 문제씩 화면에` : `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
+      ["공부하기", isClass() ? `본책 ${problemCount(unit, part)}문항 · 한 문제씩 화면에` : `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사문제`],
       ["오늘의 과제", "칠판에 적힌 과제 · 집에서"],
       ...(lastPart ? [["단원 평가", result ? `10문제 · ${result.right} / ${result.total}` : "10문제 · ○✕ 진단 · 약점 유형"]] : []),
       ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : [])

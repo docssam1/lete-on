@@ -448,7 +448,7 @@ body.is-class .sd-medal { box-shadow: none; }
 /* 아래 줄: 지도 말(독쌤 말을 글로) · 이전 · 다음 */
 body.is-class .sd-bar { grid-area: bar; gap: 8px; padding: 0 12px calc(8px + env(safe-area-inset-bottom)); }
 body.is-class .sd-talk { max-width: none; flex: 1; margin-left: 0; padding: 6px 8px 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fdfbf5; box-shadow: none; }
-body.is-class .sd-talk::before { content: "지도 말"; position: static; flex: none; border: 0; transform: none; color: var(--muted); font-size: 12px; font-weight: 600; }
+body.is-class .sd-talk::before { content: "수업 도움말"; position: static; flex: none; border: 0; transform: none; color: var(--muted); font-size: 12px; font-weight: 600; }
 body.is-class .sd-talk p { font-size: 14px; }
 body.is-class .sd-talk[data-mood="praise"] { background: #fdfbf5; }
 body.is-class .sd-talk-ctl button { border-radius: 6px; }

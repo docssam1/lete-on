@@ -84,7 +84,7 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
       : `<a class="fa-btn primary" href="./signup.html">이메일로 가입하기 ›</a><a class="fa-btn" href="${login}">승인번호로 로그인</a>`}</div><p class="fa-small" data-fa-msg></p></div>`;
   if (why === "preview") return `<div class="fa-lock"><p class="fa-kick">둘러보기</p>
     <h2>둘러보기는 1권 1단원(한 주 분량)까지예요</h2>
-    <p>이메일로 가입하면 승인번호가 바로 나오고 <b>2주 동안 체험</b>할 수 있어요. 체험이 끝난 뒤에는 정식 회원으로 이어서 공부해요.</p>
+    <p>이메일로 가입하면 승인번호가 바로 나오고 <b>2주 동안 체험</b>할 수 있어요. 체험이 끝난 뒤에는 정규회원으로 이어서 공부해요.</p>
     <div class="fa-actions"><a class="fa-btn primary" href="./signup.html">이메일로 가입하기 ›</a><a class="fa-btn" href="${login}">승인번호로 로그인</a></div></div>`;
   if (why === "trial_expired" || why === "paused") return `<div class="fa-lock"><p class="fa-kick">${why === "paused" ? "잠시 멈춤" : "체험 끝"}</p>
     <h2>${why === "paused" ? "지금은 공부가 잠시 멈춰 있어요" : "2주 체험이 끝났어요"}</h2>

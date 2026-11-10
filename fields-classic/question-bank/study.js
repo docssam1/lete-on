@@ -1,10 +1,10 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261110h";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261110h";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261110m";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261110m";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
-import { canStudy, lockPage } from "./fields-access.js?v=20261110f";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261110h";
+import { canStudy, lockPage } from "./fields-access.js?v=20261110m";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261110m";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -595,11 +595,11 @@ function coverMarkup() {
   </div>`;
 }
 function boardMarkup(block) {
-  return `<p class="sd-board-help">본책을 펴서 <b>${esc(block.label)}</b> 문제를 풀어요. 모르는 번호를 누르면 같은 유형의 비슷한 문제가 나와요.</p>
+  return `<p class="sd-board-help">본책을 펴서 <b>${esc(block.label)}</b> 문제를 풀어요. 모르는 번호를 누르면 같은 유형의 유사문제가 나와요.</p>
     <div class="sd-numbers">${block.numbers.map(({ n, typeId, stage }) => {
       const ref = refOf(block, n);
       const key = `${block.section}${block.group}-${n}`;
-      return `<button type="button" class="sd-number${seen.has(key) ? " is-seen" : ""}" data-key="${key}" data-type="${esc(typeId)}" data-stage="${stage}" data-ref="${esc(ref)}" aria-label="${esc(ref)} 비슷한 문제">${n}</button>`;
+      return `<button type="button" class="sd-number${seen.has(key) ? " is-seen" : ""}" data-key="${key}" data-type="${esc(typeId)}" data-stage="${stage}" data-ref="${esc(ref)}" aria-label="${esc(ref)} 유사문제">${n}</button>`;
     }).join("")}</div>
     <p class="sd-board-note">○ 표시는 한 번 눌러 본 번호예요. 다 풀었으면 다음으로 가요.</p>`;
 }
@@ -732,7 +732,7 @@ function openSheet(button) {
   seen.add(button.dataset.key);
   button.classList.add("is-seen");
   try { localStorage.setItem(seenKey, JSON.stringify([...seen])); } catch {}
-  $("sheetTitle").textContent = `${ref} · 비슷한 문제`;
+  $("sheetTitle").textContent = `${ref} · 유사문제`;
   $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: button.dataset.type, stage: button.dataset.stage, count: "1", build: "1", as: "student", embed: "1", ref: `${unitIndex + 1}단원 ${ref}` });
   $("sheet").hidden = false;
   $("sheetClose").focus({ preventScroll: true });
@@ -744,7 +744,7 @@ function closeSheet(talk = true) {
   const weak = $("sheet").dataset.weak === "1";
   $("sheet").hidden = true;
   delete $("sheet").dataset.weak;
-  $("sheetClose").textContent = "‹ 본책 번호판";
+  $("sheetClose").textContent = "‹ 본책 문제 번호";
   $("sheetFrame").removeAttribute("src");
   if (talk) { const back = weak ? FIXED_LINES.gateBack : SHEET_BACK; say(back.text, "talk", back.id); }
 }
