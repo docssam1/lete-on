@@ -24,3 +24,6 @@
 @media(max-width:650px){.ast-modes button{font-size:12px;padding-inline:5px}.ast-notice-controls{grid-template-columns:1fr 1fr;gap:10px}.ast-notice-controls label:first-child{grid-column:1/-1}.ast-notice-controls select{font-size:16px}.ast-notice-policy{font-size:12px}.ast-notice-dates li{padding:15px}}
 @media(max-height:520px) and (orientation:landscape){.ast-notice-controls{grid-template-columns:1.4fr 1fr 1fr}.ast-notice-controls label:first-child{grid-column:auto}.ast-notices{padding-top:10px}}
 @media(max-width:650px){.ast-heading{padding:8px 16px}.ast-heading small,.ast-heading>p{display:none}.ast-heading h2{font-size:18px;min-height:44px;margin:0 74px 0 0;display:flex;align-items:center}.ast-heading>button{top:8px}.ast-tabs{padding-block:8px}.ast-notice-meta{margin-block:12px}}
+/* 누테 안내: 시험·개강 시기와 입반 전 한 번 공부 (2026-11-10) */
+.ast-nute-when{margin:6px 0 0;font-size:14px;line-height:1.55}.ast-nute-when b{display:inline-block;margin-right:8px;color:#513865}
+.ast-nute-prestudy{margin:14px 0;padding:14px 16px;border-radius:12px;background:#fbefdb;color:#795017;box-shadow:inset 5px 0 0 #a76c24}.ast-nute-prestudy h4{margin:0 0 2px;font-size:16px}.ast-nute-prestudy p{margin:0;font-size:14px;line-height:1.55}
