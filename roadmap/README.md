@@ -1078,3 +1078,11 @@ Mac mini · Claude · 브랜치 `claude/roadmap-intro-rebuild-20261111`. 대상�
 - 연간 설명 '고등 선행' 문장에 수능 과목 심화·내신·진로 탐색과 "미적분Ⅱ·기하는 고등에서 진로에 맞춰" 안내를 붙임.
 - 영과고형(D, `buildD`)의 미적분Ⅱ 1회독·완성 블록과 의대 목표의 `extendedMath` 선택은 그대로 둠. D도 바꿀지는 원장님 결정 대기.
 - 테스트: `planner-monthly-content-audit.test.mjs`에 A·B·C × 초3~5 학교 줄에 미적분Ⅱ·기하가 없고 확통이 있는지 확인 추가. 516 통과.
+
+### 2026-11-11 · 문답 순서: 과정 → 학년·학기 → 교재, 교과 다음 심화
+- 원장님: 선행·심화 과정을 먼저 다 묻고 교재를 나중에 몰아 물으면 어느 쪽 교재인지 헷갈려 잘못 고른다.
+- `planner-intake.js` `order`: 학년과 관계없이 `schoolCourse → (school|schoolExact|schoolHigh) → schoolBook → schoolStatus → deepCourse → deepStage → deepBook → deepStatus → (deepExtra…) → calc`. 전에는 초3 이상이 교과 과정·심화 과정을 먼저 묻고 교재를 뒤에 몰아 물었고, 초2 이하는 과정 → 교재 → 학기였다.
+- 학기 질문은 교재가 아니라 고른 과정으로 정한다(고등·해외 → schoolHigh, 중등 → schoolExact, 초등 → school). 교재가 없음·모름이면 상태만 건너뜀.
+- 첫 교과 질문 제목 "현재 공부하고 있는 수학 진도는 무엇인가요?". 교재 질문 제목에 고른 과정을 붙임("초등 5학년 2학기 교과는 어떤 교재로…").
+- `planner-ui.js` 수정 시 다음 질문 표(revisit)도 같은 순서로. 고등 심화는 심화 상태 뒤에 "다른 고등 심화 과목" 질문.
+- 테스트 517 통과. 실제 화면(초5 예시)으로 순서 확인.
