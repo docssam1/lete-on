@@ -25,10 +25,12 @@ if (student) {
     a.href = `./${url.pathname.split("/").pop()}${url.search}${url.hash}`;
   });
 }
-// 위 오른쪽: 로그인했으면 이름(학생) 또는 「원장 화면」, 가입 글자는 숨긴다
+// 위 오른쪽: 로그인했으면 이름(학생), 관리자(원장) 계정이면 「강사용 교안」·「Admin」(관리 화면). 가입 글자는 숨긴다.
+// 대문에는 강사·원장 문을 따로 두지 않는다 — 로그인한 계정에 따라 달라진다(원장 2026-11-11)
 if (me) {
   const login = document.getElementById("homeLogin");
-  login.textContent = me.type === "admin" ? "원장 화면" : `${me.name} 로그인됨`;
+  login.textContent = me.type === "admin" ? "Admin" : `${me.name} 로그인됨`;
+  document.getElementById("homeClass").hidden = me.type !== "admin";
   login.href = me.type === "admin" ? "./teacher.html" : "./login.html";
   document.getElementById("homeSignup").hidden = true;
 }

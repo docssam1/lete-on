@@ -97,10 +97,6 @@ body.hm {
 .hm-three p { margin: 10px 0 0; font-size: 15px; line-height: 1.6; color: #c9c3b6; }
 
 .hm-foot { padding: 0 16px 24px; text-align: center; font-size: 12px; letter-spacing: 0.14em; color: var(--dim); }
-/* 강사·원장: 맨 아래 작은 글자(학생·학부모 눈에 걸리지 않게) */
-.hm-roles { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; letter-spacing: 0; }
-.hm-roles a { display: inline-flex; align-items: center; min-height: 32px; padding: 4px 12px; border-radius: 999px; color: var(--dim); font-size: 13px; text-decoration: none; }
-.hm-roles a:hover, .hm-roles a:focus-visible { color: var(--ink); background: #1d1b18; }
 
 @media (max-width: 720px) {
   .hm-stage { min-height: 0; padding-top: 24px; }
