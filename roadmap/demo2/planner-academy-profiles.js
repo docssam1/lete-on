@@ -150,12 +150,12 @@ function render(x){if(!x?.academyProfile)return '';const experience=x.experience
 const lowerGrades=Object.freeze({checkedOn:'2026-11-11',
  /* from·through: 학년 축의 위치(5세 0, 6세 1, 7세 2, 초1 3 … 초6 8, 중등 9, 축 끝 10). through가 있으면 그 구간까지 확인된 것이고, from이 없으면 시작 학년을 확인하지 못한 곳이다. */
  axis:['5세','6세','7세','초1','초2','초3','초4','초5','초6','중등'],
- starts:{0:'5세부터',0.1:'5세 초반부터',0.5:'5세 중반부터',1:'6세 일부부터',2:'7세부터',3:'초저학년부터',4:'초2부터 응시',4.4:'초2 여름부터 응시',4.8:'초2 말부터 응시',5:'초3부터',5.8:'초3 말부터',7:'초5 대상 개강 안내',8:'초6 대상 개강 안내'},
+ starts:{0:'5세부터',0.1:'5세 초반부터',0.5:'5세 중반부터',1:'6세 일부부터',2:'7세부터',3:'초저학년부터',4:'초2부터 응시',4.4:'초2 여름부터 응시',4.8:'초2 말부터 응시',5:'초3부터',5.8:'초3 말부터',6:'초4부터',8:'초6 대상 개강 안내'},
  groups:[
  {title:'초저학년부터 다닐 수 있는 교과학원',items:[{name:'꿈짜',from:3},{name:'짱솔',from:3,note:'본관·2관'},{name:'대치해법',from:3},{name:'아카로드',from:3},{name:'다즐',from:3},{name:'CMS 프리미엄관',from:3},{name:'CMS 영재관',from:3},{name:'개념상상 SM관',from:3,through:10,id:'academy-gnss-sm'},{name:'심화랑',from:3,note:'점프왕으로 수업'},{name:'글로리앤수학',from:3},{name:'유니크수학',from:3},{name:'다움수학',from:3},{name:'수학의 미래',from:3},{name:'지필드',from:0,through:10},{name:'브레인밸리',from:1},{name:'매쓰피크',from:3},{name:'상어수학',from:3},{name:'금비수학',from:3,note:'팀수업은 문의 후 가능'},{name:'와이즈만',from:3,id:'academy-wiseman'}]},
  {title:'시작 학년 제한이 있는 곳 · 초2 말부터 초4',items:[{name:'매쓰몽 경시반',from:4},{name:'탑티어',from:4.4},{name:'BMI',from:4.8},{name:'강의하는 아이들',from:5,note:'패드 사용 수업 있음'},{name:'클라디학원',from:5,note:'과외 같은 학원 수업'},{name:'수학하마'},{name:'파인만',from:4.8},{name:'개념폴리아',note:'초등·중등 · 공식 안내 기준'}]},
- {title:'추가로 받은 곳',items:[{name:'시매쓰',from:0.1},{name:'와이키즈'},{name:'헤이그'},{name:'에스온 아카데미'},{name:'매쓰무적',from:0.5,through:5},{name:'소마',from:0.5,through:7,note:'RAY 과정부터',id:'academy-soma'},{name:'필즈 더 클래식',from:2,note:'예비7세 입학 안내 기준',id:'academy-fields'}]},
- {title:'누적테스트 학원 · 누테',plain:true,items:[{name:'돌파수학',from:8,id:'academy-dolpa'},{name:'생각하는 수학 – 생각이 크는 수학',from:8},{name:'이든수학',from:7,id:'academy-eden'},{name:'깊은생각수학',from:5.8},{name:'원수학',note:'중2-1 기본반부터 · 과정 기준',id:'academy-won'}]}
+ {title:'추가로 받은 곳',items:[{name:'시매쓰',from:0.1},{name:'와이키즈'},{name:'헤이그'},{name:'에스온 아카데미'},{name:'매쓰무적',from:0.5,through:5},{name:'픽스'},{name:'다원'},{name:'소마',from:0.5,through:7,note:'RAY 과정부터',id:'academy-soma'},{name:'필즈 더 클래식',from:2,note:'예비7세 입학 안내 기준',id:'academy-fields'}]},
+ {title:'누적테스트 학원 · 누테',plain:true,items:[{name:'돌파수학',from:5.8,note:'예비 초4 · 대치 초등관·제로관 입반테스트',id:'academy-dolpa'},{name:'생각하는 수학 – 생각이 크는 수학',from:8,note:'생크는 초6 과정부터 · 과정 기준'},{name:'이든수학',from:6,note:'초등관 1-1반 대상 4·5학년',id:'academy-eden'},{name:'깊은생각수학',from:5.8},{name:'원수학',from:6,note:'중등 과정 반의 초4·5·6 대상 공지 기준',id:'academy-won'}]}
 ]});
 g.PlannerAcademyProfiles=Object.freeze({profiles,posts,render,lowerGrades});
 })(window);
