@@ -34,4 +34,7 @@ class VoiceQuality(unittest.TestCase):
         self.assertEqual(m.cer('ko','2와 5를 찾아봐!','이와 오를 찾아봐'),0.0)
         self.assertEqual(m.cer('ko',m.spoken('ko','완벽해! 2~9단 완전 정복!'),'완벽해 2단부터 9단까지 완전 정복.'),0.0)
         self.assertGreater(m.cer('ko','우와, 잘 셌어!','우와 잘 태어.'),0.12)
+        self.assertEqual(m.cer('ko','백의 자리부터 먼저 빼는 연습이에요!','베개 자리부터 먼저 빼는 연습이에요.'),0.0)
+        self.assertEqual(m.cer('ko',m.spoken('ko','우와, 잘 셌어!'),'우와 잘 새었어'),0.0)
+        self.assertGreater(m.cer('ko','이번엔 다른 마법이야!','이번엔 다른 바다야!'),0.12)
 if __name__=='__main__':unittest.main()

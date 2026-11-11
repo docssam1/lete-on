@@ -153,8 +153,39 @@ def cer(lang, ref, hyp):
     받아쓰기가 「2단부터 9단까지」처럼 숫자로 적거나 「이와 오」처럼 글자로 적어도 같은 말이면 통과한다."""
     if lang == "ko":
         sino = lambda t: re.sub(r"[0-9]", lambda m: SINO[m.group()], t)
-        return min(_cer(lang, ref, hyp), _cer(lang, sino(ref), sino(hyp)))
+        best = min(_cer(lang, ref, hyp), _cer(lang, sino(ref), sino(hyp)))
+        # 소리가 같은데 철자만 다른 받아쓰기(ㅐ/ㅔ, 「백의」→「베개」)는 자모로 소리 나는 대로 견준다. 자모 오류 5% 이하면 통과.
+        if best > CER_OK and _cer_sound(sino(ref), sino(hyp)) <= 0.05:
+            return 0.0
+        return best
     return _cer(lang, ref, hyp)
+
+
+_FINAL = dict(zip("ᆨᆩᆫᆮᆯᆷᆸᆺᆻᆽᆾᆿᇀᇁᇂ", "ᄀᄁᄂᄃᄅᄆᄇᄉᄊᄌᄎᄏᄐᄑᄒ"))
+_VOWEL = {"ᅢ": "ᅦ", "ᅤ": "ᅨ", "ᅫ": "ᅰ", "ᅬ": "ᅰ", "ᅴ": "ᅦ"}
+
+
+def sound_jamo(t):
+    """한글을 자모로 풀어 소리가 같은 것끼리 합친다: 첫소리 ㅇ 은 뺀다, 받침은 첫소리로(연음), ㅐ=ㅔ 등."""
+    import unicodedata
+    out = []
+    for ch in unicodedata.normalize("NFD", re.sub(r"[^가-힣]", "", t)):
+        if ch == "ᄋ":
+            continue
+        out.append(_FINAL.get(ch, _VOWEL.get(ch, ch)))
+    return "".join(out)
+
+
+def _cer_sound(ref, hyp):
+    a, b = sound_jamo(ref), sound_jamo(hyp)
+    if not a:
+        return 0.0
+    d = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        prev, d[0] = d[0], i
+        for j, cb in enumerate(b, 1):
+            prev, d[j] = d[j], min(d[j] + 1, d[j - 1] + 1, prev + (ca != cb))
+    return d[len(b)] / len(a)
 
 
 def _cer(lang, ref, hyp):
