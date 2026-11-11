@@ -42,13 +42,13 @@ test('every line is at its finished size without the script, with reduced motion
  assert.match(motion,/@media print\{[^}]*opacity:1!important;transform:none!important/);
  assert.doesNotMatch(css,/transition:all|transition:[^;}]*\b(width|height|top|left|margin|padding)\b/);
 });
-test('the motion only reads position and writes its own two values',()=>{
+test('the motion only reads position and writes its own three values',()=>{
  assert.doesNotMatch(js,/localStorage|sessionStorage|fetch\(|XMLHttpRequest|cookie|RoadmapMembership/);
- assert.deepEqual([...new Set([...js.matchAll(/setProperty\('(--[a-z]+)'/g)].map(m=>m[1]))].sort(),['--f','--zp']);
+ assert.deepEqual([...new Set([...js.matchAll(/setProperty\('(--[a-z]+)'/g)].map(m=>m[1]))].sort(),['--dp','--f','--zp']);
 });
 test('the introduction keeps its anchors, tabs, links and the single senior example',()=>{
- for(const id of ['introduction','introHeading','previewMap','previewGraph','previewTable','previewMapPanel','previewGraphPanel','previewTablePanel','inputExampleHeading','learningCycleHeading','goalRoadmapsHeading','mockAnalysis','mockHeading','unitTest','unitHeading','seniorExample','seniorHeading','seniorCaseTitle','stageHeading','libraryHeading','howHeading','questionsHeading','startHeading','accountEntry','memberContent','memberTitle','memberStatus'])assert.equal(html.split(`id="${id}"`).length,2,id);
- for(const href of ['#introduction','#seniorExample','planner.html?books=math','planner.html?goal=contest','planner.html?goal=medicine','planner.html?goal=giftedSchool','planner.html?view=seniors','planner.html?ox=1','assets/roadmap-program-unit-ox-20261111.png','planner.html?academy=schools','planner.html?academy=notices','planner.html?academy=soma-fields','assets/roadmap-program-map-20261101.png','assets/roadmap-program-graph-20261101.png','assets/roadmap-program-table-20261101.png','assets/senior-seoul-science-roadmap-20261104.svg'])assert.ok(html.includes(`href="${href}"`),href);
+ for(const id of ['introduction','introHeading','previewMap','previewGraph','previewTable','previewMapPanel','previewGraphPanel','previewTablePanel','inputExampleHeading','learningCycleHeading','goalRoadmapsHeading','mockAnalysis','mockHeading','unitTest','unitHeading','bookTest','bookTestHeading','growthHeading','seniorExample','seniorHeading','seniorCaseTitle','stageHeading','libraryHeading','howHeading','questionsHeading','startHeading','accountEntry','memberContent','memberTitle','memberStatus'])assert.equal(html.split(`id="${id}"`).length,2,id);
+ for(const href of ['#introduction','#seniorExample','planner.html?books=math','planner.html?goal=contest','planner.html?goal=medicine','planner.html?goal=giftedSchool','planner.html?view=seniors','planner.html?ox=1','assets/roadmap-program-unit-ox-20261111.png','planner.html?academy=schools','planner.html?academy=notices','planner.html?academy=soma-fields','assets/roadmap-program-map-20261111.jpg','assets/roadmap-program-graph-20261111.jpg','assets/roadmap-program-table-20261111.jpg','assets/roadmap-program-mock-20261111.jpg','assets/roadmap-program-booktest-20261111.jpg','assets/senior-seoul-science-roadmap-20261104.svg'])assert.ok(html.includes(`href="${href}"`),href);
  assert.equal((html.match(/role="tab"/g)||[]).length,3);assert.equal((html.match(/role="tabpanel"/g)||[]).length,3);
  assert.equal((html.match(/class="account-senior-example"/g)||[]).length,1);
 });
@@ -66,4 +66,33 @@ test('the mock analysis and unit test figures are the ones the program holds',()
  assert.match(library,/2017/);assert.match(library,/2026/);assert.ok(layouts.length>1000);
  assert.doesNotMatch(html,/교과·사고력 권별 테스트 <small>개발·연동 준비 중/);
  assert.match(html,/자동 채점은 하지 않습니다/);assert.match(html,/문제 원문과 정답표는 사이트에 올려 두지 않았고/);
+});
+test('a graph line extends with the scroll, linearly, and is whole without the script',()=>{
+ assert.equal(M.drawn(900,900),0);assert.equal(M.drawn(1200,900),0);assert.equal(M.drawn(300,900),1);
+ const mid=M.drawn(700,900),next=M.drawn(600,900),after=M.drawn(500,900);
+ assert.ok(mid>0&&mid<next&&next<after&&after<1);assert.ok(Math.abs((next-mid)-(after-next))<1e-9);
+ assert.match(css,/\.growth-lines\{clip-path:inset\([^)]*var\(--dp,1\)/);assert.match(css,/scaleX\(calc\(var\(--v,1\) \* min\(1,var\(--dp,1\) \* 1\.7\)\)\)/);
+ assert.match(css,/@media print\{\.growth-lines\{clip-path:none!important\}/);
+ assert.match(js,/removeProperty\('--dp'\)/);
+});
+test('every picture added to the introduction exists, has its size and says what it shows',()=>{
+ const imgs=[...html.matchAll(/<img\b[^>]*>/g)].map(m=>m[0]).filter(t=>/20261111|roadmap-level-lanes/.test(t));
+ assert.equal(imgs.length,10);
+ for(const t of imgs){
+  const src=t.match(/src="([^"]+)"/)[1];assert.ok(readFileSync(new URL(src,import.meta.url)).length>10000,src);
+  assert.match(t,/width="\d+" height="\d+"/);assert.match(t,/loading="lazy"/);assert.ok(t.match(/alt="([^"]*)"/)[1].length>15,src);
+ }
+ for(const old of ['roadmap-program-map-20261101','roadmap-program-graph-20261101','roadmap-program-table-20261101'])assert.doesNotMatch(html,new RegExp(old));
+});
+test('the example typed in is the one the screens and the graph were made from',()=>{
+ assert.match(html,/<dt>교과<\/dt><dd>디딤돌 기본\+응용 5-2<\/dd>/);assert.match(html,/<dt>심화<\/dt><dd>최상위 수학 5-1<\/dd>/);
+ assert.match(html,/<dt>사고력<\/dt><dd>1031 입문<\/dd>/);assert.match(html,/<dt>연산<\/dt><dd>복합 계산 단계<\/dd>/);
+ assert.equal((html.match(/class="line-(now|near|far)"/g)||[]).length,3);assert.equal((html.match(/class="key-(now|near|far)"/g)||[]).length,3);
+ assert.match(html,/class="growth-chart" role="img" aria-label="[^"]{30,}"/);
+});
+test('the book test is described as it is: ten books, marked by hand, not yet joined to the roadmap',()=>{
+ assert.match(html,/id="bookTest"/);assert.match(html,/1과정 10권,<br>250문항/);assert.equal(10*25,250);
+ assert.match(html,/href="\.\.\/\.\.\/fields-classic\/question-bank\/unit-test-viewer\.html\?book=book-01"/);
+ assert.match(html,/정답을 보며 번호마다 ○·✕를 누릅니다/);assert.match(html,/잇는 연동은 준비하고 있습니다/);
+ assert.doesNotMatch(html,/사고력 권별 테스트는 준비하고 있습니다/);
 });

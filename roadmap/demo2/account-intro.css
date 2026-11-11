@@ -79,7 +79,9 @@ html,body.member-landing{overflow-x:clip}
 .account-lanes p{max-width:30em;margin:var(--in-s3) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
 
 /* 5. Checking the work: one deep band, the heading held beside the steps. */
-.account-learning-cycle{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--in-s7) var(--in-s8);align-items:start;margin-top:var(--in-gap);padding-block:var(--in-gap);background:var(--in-deep);color:var(--in-on-deep);box-shadow:0 0 0 100vmax var(--in-deep);clip-path:inset(0 -100vmax)}
+/* The heading keeps its place only beside the five steps: it and the steps share their own grid. */
+.account-cycle-main{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--in-s7) var(--in-s8);align-items:start}
+.account-learning-cycle{margin-top:var(--in-gap);padding-block:var(--in-gap);background:var(--in-deep);color:var(--in-on-deep);box-shadow:0 0 0 100vmax var(--in-deep);clip-path:inset(0 -100vmax)}
 .account-learning-cycle h2{position:sticky;top:var(--in-s7)}
 .account-cycle-steps{list-style:none;margin:0;padding:0;counter-reset:cycle;border-bottom:1px solid var(--in-deep-line)}
 .account-cycle-steps li{counter-increment:cycle;display:grid;grid-template-columns:3rem minmax(0,1fr);column-gap:var(--in-s4);padding-block:var(--in-s6);border-top:1px solid var(--in-deep-line)}
@@ -237,7 +239,7 @@ html,body.member-landing{overflow-x:clip}
  .account-preview-tabs{position:static;flex-direction:row;flex-wrap:wrap;gap:0 var(--in-s4);margin-bottom:var(--in-s4)}
  .account-preview-tabs button{font-size:1.375rem;transform:scale(.8)}
  .account-preview figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
- .account-input-example,.account-lanes,.account-learning-cycle,.account-performance-example,.account-questions{grid-template-columns:minmax(0,1fr)}
+ .account-input-example,.account-lanes,.account-cycle-main,.account-performance-example,.account-questions{grid-template-columns:minmax(0,1fr)}
  .account-unit{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s6)}
  .account-unit figure{position:static}
  .account-unit figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
@@ -285,3 +287,94 @@ html,body.member-landing{overflow-x:clip}
  .intro-motion .is-near{will-change:transform,opacity}
 }
 @media print{.intro-motion [data-zoom],.intro-motion [data-focus]>h3{opacity:1!important;transform:none!important}}
+
+/* Pictures and program screens beside the copy, added 2026-11-11. Each screen is a capture of the program itself. */
+.account-shot{margin:var(--in-s6) 0 0;min-width:0}
+.account-shot img{display:block;width:100%;height:auto;background:var(--in-paper);border:1px solid var(--in-line);border-radius:6px}
+.account-shot figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 var(--in-s4);padding-top:var(--in-s2);font-size:var(--in-t-small);line-height:1.5;color:var(--in-muted)}
+.account-shot figcaption a{display:inline-flex;align-items:center;min-height:44px;flex:none}
+.account-ask{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);column-gap:var(--in-s8);align-items:start}
+.account-ask-question{grid-column:1}
+.account-ask-art{grid-column:2;grid-row:1/span 2;margin:0;min-width:0}
+.account-ask-art img,.account-lanes-art img{display:block;width:100%;height:auto;object-fit:cover;border-radius:6px}
+.account-ask-art img{aspect-ratio:4/5;object-position:50% 70%}
+.account-ask-answer{grid-column:1;margin-left:calc(100% / 8 * 2)}
+.account-lanes-art{margin:var(--in-gap) 0 0}
+.account-lanes-art img{aspect-ratio:21/9;object-position:50% 60%}
+.account-lanes-art+.account-lanes{margin-top:var(--in-s8)}
+
+/* The example plan as a graph. The lines are the program's own for the example above; they extend as the figure scrolls in. */
+.account-growth{margin:var(--in-gap) 0 0;min-width:0}
+.account-growth figcaption h3{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em;overflow-wrap:break-word}
+.account-growth figcaption p{max-width:36em;margin:var(--in-s5) 0 0;font-size:var(--in-t-lead);line-height:1.7;color:var(--in-muted)}
+.growth-chart{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:var(--in-s3);margin-top:var(--in-s7);padding-right:var(--in-s4)}
+.growth-y,.growth-plot{position:relative;aspect-ratio:auto;height:clamp(240px,34vw,460px)}
+.growth-y{width:5.2em;font-size:var(--in-t-small);color:var(--in-muted)}
+.growth-y span{position:absolute;right:0;top:var(--y);transform:translateY(-50%);white-space:nowrap;line-height:1}
+.growth-plot svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.growth-grid path{fill:none;stroke:var(--in-line);stroke-width:1;vector-effect:non-scaling-stroke}
+.growth-lines path{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.growth-lines .line-now{stroke:var(--member-ink);stroke-width:4}
+.growth-lines .line-near{stroke:var(--in-accent);stroke-width:3;stroke-dasharray:10 7}
+.growth-lines .line-far{stroke:var(--in-muted);stroke-width:3;stroke-dasharray:2 7}
+.growth-lines{clip-path:inset(-8px calc((1 - var(--dp,1)) * 100%) -8px -8px)}
+.growth-end{position:absolute;left:100%;top:var(--y);width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;opacity:clamp(0,calc((var(--dp,1) - .94) * 17),1)}
+.growth-end.end-now,.growth-end.end-start{background:var(--member-ink)}
+.growth-end.end-start{left:0;opacity:1}
+.growth-end.end-near{background:var(--in-accent)}
+.growth-end.end-far{background:var(--in-muted)}
+.growth-x{grid-column:2;position:relative;height:3.4em;margin-top:var(--in-s2);font-size:var(--in-t-small);line-height:1.4;color:var(--in-muted)}
+.growth-x span{position:absolute;left:var(--x);top:0;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.growth-x span:first-child{transform:none;text-align:left}
+.growth-x span:last-child{transform:translateX(-100%);text-align:right}
+.growth-x small{display:block;font-size:inherit}
+.growth-legend{list-style:none;display:flex;flex-wrap:wrap;gap:var(--in-s2) var(--in-s6);margin:var(--in-s5) 0 0;padding:0;font-size:var(--in-t-body);line-height:1.6;color:var(--member-ink)}
+.growth-legend li{display:flex;align-items:center;gap:var(--in-s3)}
+.growth-legend li::before{content:"";flex:none;width:34px;border-top:4px solid var(--member-ink)}
+.growth-legend .key-near::before{border-top:3px dashed var(--in-accent)}
+.growth-legend .key-far::before{border-top:3px dotted var(--in-muted)}
+
+/* A thin bar under each 75%: it fills to the figure it sits under. */
+.account-meter{display:block;height:6px;margin:var(--in-s4) 0 var(--in-s5);background:var(--in-deep-line);border-radius:3px;overflow:hidden}
+.account-meter::before{content:"";display:block;height:100%;background:var(--in-on-deep);transform-origin:left center;transform:scaleX(calc(var(--v,1) * min(1,var(--dp,1) * 1.7)))}
+
+/* 고등 모평: the order of work beside the analysis screen. */
+.account-mock-body{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:var(--in-s8);align-items:start;margin-top:var(--in-s8)}
+.account-mock-body .account-mock-steps{margin-top:0}
+.account-mock-body .account-mock-steps li{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s1)}
+.account-mock-body .account-shot{position:sticky;top:var(--in-s6);margin-top:0}
+
+/* 사고력 권별 테스트: the screen first, then what happens on it. */
+.account-booktest{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:var(--in-s8);align-items:start;margin-top:var(--in-gap);scroll-margin-top:var(--in-s5)}
+.account-booktest .account-shot{position:sticky;top:var(--in-s6);margin-top:0}
+.account-main .account-booktest h2{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em;color:inherit;overflow-wrap:break-word;min-width:0}
+.account-booktest .account-fact{margin-top:var(--in-s6);font-size:clamp(1.875rem,1.2rem + 2.4vw,3.25rem)}
+.account-booktest-copy>a{display:inline-flex;align-items:center;min-height:44px;margin-top:var(--in-s5);font-size:var(--in-t-body)}
+
+/* A few real lines from the book map and the academy board. */
+.account-sample{max-width:38em;margin:var(--in-s5) 0 var(--in-s3);border-bottom:1px solid var(--in-line)}
+.account-sample>div{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:var(--in-s4);align-items:baseline;padding-block:var(--in-s3);border-top:1px solid var(--in-line)}
+.account-sample dt{font-size:var(--in-t-small);color:var(--in-muted)}
+.account-sample dd{margin:0;font-size:var(--in-t-body);font-weight:700;line-height:1.6;color:var(--member-ink)}
+.account-library-grid article:has(.account-math-sample)>.account-shot{grid-column:1/-1}
+.account-library-grid .account-shot figcaption{justify-content:flex-start}
+
+@media(max-width:1000px){
+ .account-ask-answer{margin-left:0}
+}
+@media(max-width:700px){
+ .account-ask,.account-mock-body,.account-booktest{grid-template-columns:minmax(0,1fr)}
+ .account-ask-art{grid-column:1;grid-row:auto;margin-top:var(--in-s6)}
+ .account-ask-art img{aspect-ratio:16/10;object-position:50% 78%}
+ .account-ask-answer{margin-top:var(--in-s7)}
+ .account-lanes-art img{aspect-ratio:16/9}
+ .account-mock-body .account-shot,.account-booktest .account-shot{position:static}
+ .account-mock-body .account-shot{margin-top:var(--in-s6)}
+ .account-booktest{row-gap:var(--in-s6)}
+ .growth-chart{padding-right:var(--in-s2);column-gap:var(--in-s2)}
+ .growth-y{width:4.6em}
+ .growth-x span:nth-child(even){display:none}
+ .growth-legend{flex-direction:column}
+ .account-sample>div{grid-template-columns:6.5rem minmax(0,1fr)}
+}
+@media print{.growth-lines{clip-path:none!important}.growth-end{opacity:1!important}.account-meter::before{transform:scaleX(var(--v,1))!important}}
