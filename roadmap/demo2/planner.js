@@ -225,7 +225,14 @@ function build(o){
   // 중등 6학기 뒤 고등 선행(CMS 6개월 단위). 아무리 빨라도 초6 3월(CMS 중등 최소 12개월), 중3 7월 뒤는 내신·실전(원장님 2026-10-20 "내신 조심")
   const midEnd=mid+6*B.midLen, hiStart=Math.max(midEnd,mOf(6,3));
   if(hiStart>midEnd) school.push([o.band==='C'?'중등 응용 반복':'중등 심화 반복 · 경시(선택)',midEnd,hiStart-1]);
-  hiChain(hiStart,o.band,o.hiScope==='beyond').filter(b=>b[1]<=mOf(9,7)).map(b=>[b[0],b[1],Math.min(b[2],mOf(9,7))]).forEach(b=>school.push(b));
+  // 중3 7월에서 잘리는 고등 선행은 알린다(원장님 검수 2026-11-11). 잘린 과목은 '(일부)'로 적고, 못 다 한 과목은 고등학교 내신 진도에서 이어간다.
+  { const cut=mOf(9,7), chain=hiChain(hiStart,o.band,o.hiScope==='beyond'), kept=chain.filter(b=>b[1]<=cut);
+    const subj=b=>b[0]!==HI_AFTER&&b[0]!==HI_BEYOND, part=kept.find(b=>b[2]>cut&&subj(b)), left=chain.filter(b=>b[1]>cut&&subj(b)).map(b=>b[0]);
+    kept.map(b=>[b===part?b[0]+' (일부)':b[0],b[1],Math.min(b[2],cut)]).forEach(b=>school.push(b));
+    const last=kept.filter(subj).at(-1)?.[0], reach=part?part[0]+'의 일부까지':last?last+'까지':'';
+    const beyond=chain.find(b=>b[0]===HI_BEYOND), beyondCut=!!beyond&&beyond[2]>cut;
+    if(part||left.length) warn.push(`${reach?'중등 기간이 끝나 고등 선행은 '+reach+' 잡았어요':'중등 기간 안에는 고등 선행을 시작하지 못해요'}. 중3 8월부터는 내신·고입 실전으로 넘어가고, ${part?part[0]+' 나머지':left[0]}부터는 고등학교에서 진도에 맞춰 이어가요.${beyondCut?' 선택하신 미적분Ⅱ·기하도 고등학교에서 진로에 맞춰 배워요.':''}`);
+    else if(beyondCut) warn.push('선택하신 미적분Ⅱ·기하는 중등 기간 안에 다 넣지 못해요. 중3 8월부터는 내신·고입 실전으로 넘어가고, 나머지는 고등학교에서 진로에 맞춰 배워요.'); }
   school.push(['중3 내신 · 고입 실전',mOf(9,8),mOf(9,12)]);
   const s2end=school2.length?school2[school2.length-1][2]:now-1;
   if(B.deepLag>0&&mid+B.deepLag-1>=s2end+1) school2.push([o.hw!=='none'?'생각하는 황소 대비 고려에 따라 고민 + 중등 쎈':'중등 쎈으로 기본 다지기',Math.max(s2end+1,now),mid+B.deepLag-1]);

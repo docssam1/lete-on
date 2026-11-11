@@ -88,7 +88,7 @@ test('모르는 공부는 채우지 않는다: 심화 시작 전·확인 전, �
  assert.equal(lane(w.PlannerStandard.model(unknown.a,unknown.f,{pattern:'deep'}),'deep').blocks.length,0);
  // 중등 심화서를 이미 보고한 학생: 보고한 교재가 그대로 이어진다.
  const reported=example();Object.assign(reported.a,{grade:'7',schoolCourse:'mid',schoolBook:'원리해설',school:'advanced',schoolExact:'16',deepCourse:'mid',deepBook:'A급',deepStage:'15'});reported.f.grade='7';
- const mid=w.PlannerStandard.model(reported.a,reported.f);assert.equal(rule(mid).length,0);assert.equal(mid.depthRule,null);assert.ok(lane(mid,'deep').blocks.some(b=>/A급/.test(b.title)));
+ const mid=w.PlannerStandard.model(reported.a,reported.f);assert.equal(rule(mid).length,0);assert.equal(mid.depthRule,null);assert.ok(lane(mid,'deep').blocks.some(b=>/에이급수학/.test(b.title)));
  // 고등 교과를 하는 학생의 고등 심화 일정은 바뀌지 않는다.
  const high=example();Object.assign(high.a,{grade:'9',schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'공통수학1',deepStage:'6-2'});high.f.grade='9';
  const hm=w.PlannerStandard.model(high.a,high.f);assert.equal(rule(hm).length,0);assert.equal(lane(hm,'deep').blocks.find(b=>b.stage==='공통수학1').start,6);

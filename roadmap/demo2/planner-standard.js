@@ -147,6 +147,8 @@ function model(answers={},fields={},options={}){
   deep.blocks=profileBlocks(profile,'deep');deep.source='current-profile';deep.anchor=deep.blocks[0]?.stage||null;
   // A reported elementary depth book ends at 6-2. The middle-school part follows the level rule;
   // a reported middle or high depth book keeps its own reported course untouched.
+  // 맞춤 계획(I.buildPlan)이 붙이는 6-2 뒤 중등 칸은 여기서 레벨 규칙으로 다시 만든다(중복 방지).
+  if(a.deepCourse==='elem'&&!I.middleBook(a.deepBook)&&!I.highBook(a.deepBook))deep.blocks=deep.blocks.filter(b=>/^[1-6]-[12]$/.test(b.stage||''));
   if(a.deepCourse==='elem'&&!I.middleBook(a.deepBook)&&!I.highBook(a.deepBook)&&school.blocks.length&&!deep.blocks.some(b=>b.endClipped)){
    deep.blocks.push(...middleDepthChain({band,after:Math.max(0,...deep.blocks.map(b=>b.end)),schoolBlocks:fullSchool.length?fullSchool:school.blocks,sourceRows:source?.school||[],passed:schoolPassed}));
   }
@@ -172,7 +174,7 @@ function model(answers={},fields={},options={}){
  if(school.blocks.length&&lastSchoolEnd<LIMIT)school.note='표준 자료에 있는 교과 일정은 '+monthAt(fields,Math.max(0,Math.ceil(lastSchoolEnd)-1)).label+'까지입니다. 이후 교재와 기간은 맞춤 조정에서 선택합니다. 공통수학 등 다음 과정은 그때의 이해도와 학습량에 맞춰 이어갑니다.';
  const actualSchool=c.axes.find(x=>x.id==='school');
  // Keep the reported current book visible, even when its name differs from the standard example.
- if(actualSchool?.ready&&!actualSchool.done&&a.schoolBook&&!I.special(a.schoolBook))school.blocks=school.blocks.map(block=>block.current&&block.stage===actualSchool.stage?{...block,title:actualSchool.stage+' '+a.schoolBook,reported:true}:block);
+ if(actualSchool?.ready&&!actualSchool.done&&a.schoolBook&&!I.special(a.schoolBook))school.blocks=school.blocks.map(block=>block.current&&block.stage===actualSchool.stage?{...block,title:actualSchool.stage+' '+I.bookName(a.schoolBook),reported:true}:block);
  let highReadyAt={},highWarnings=[];
  if(!fields.internationalCalendar&&global.PlannerHighStudy&&global.PlannerCurriculum){
   const actual=global.PlannerCurriculum.actual(a,'school',fields),actualDeep=global.PlannerCurriculum.actual(a,'deep',fields),middle=school.blocks.find(b=>b.stage==='중3-2'&&!b.continues&&!b.endClipped);
