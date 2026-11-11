@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="robots" content="noindex">
-<title>학습 로드맵 설계 · GFIELD</title>
+<title>우리 아이 공부 지도 · GFIELD</title>
 <link rel="stylesheet" href="membership.css?v=20261101-fill1">
-<link rel="stylesheet" href="account-landing.css?v=20261111-fields1">
-<link rel="stylesheet" href="account-intro.css?v=20261111-shots1">
+<link rel="stylesheet" href="account-landing.css?v=20261111-beta1">
+<link rel="stylesheet" href="account-intro.css?v=20261111-plan1">
 <link rel="stylesheet" href="docssam-contact.css?v=20261104-compact1">
 </head>
 <body class="member-page member-landing">
@@ -18,7 +18,7 @@
 <main class="account-main">
  <section class="account-hero" aria-labelledby="accountHeading">
   <div class="account-heading">
-   <h1 id="accountHeading"><span>성공하는 공부습관 만들기</span>학습 로드맵 설계</h1>
+   <h1 id="accountHeading"><span>성공하는 공부습관 만들기</span>우리 아이 공부 지도<sup class="account-beta" lang="en">BETA</sup><small lang="en">Where your child is, and where to go next.</small></h1>
    <p>우리 아이는 언제, 어디까지 공부하면 좋을까요?<br> 선배들의 로드맵을 참고해 우리 아이에게 맞는 계획을 만들어 갑니다.</p>
   </div>
   <div class="account-first-start"><a class="member-primary" href="#accountEntry" data-account-entry="signup">이메일로 무료 시작하기</a><a href="#accountEntry" data-account-entry="login">기존 회원 로그인</a><a href="planner.html?guest=1">로그인 없이 살펴보기</a><p>처음이라면 승인번호 없이 이메일 인증으로 시작하세요.<br>인증 후 학생 정보를 등록하면 무료로 이용할 수 있습니다.<br>살펴보기는 로드맵이 만들어지는 데까지이며, 입력한 내용은 저장되지 않습니다.</p></div>
@@ -67,7 +67,7 @@
     <button id="previewTable" type="button" role="tab" aria-selected="false" aria-controls="previewTablePanel" tabindex="-1">월별 교재 계획</button>
    </div>
    <div id="previewMapPanel" class="account-preview-panel" role="tabpanel" aria-labelledby="previewMap" tabindex="0">
-    <figure><img src="assets/roadmap-program-map-20261111.jpg" width="1600" height="506" loading="lazy" alt="지금 공부하는 5-2 디딤돌 기본+응용에서 6-1, 6-2 디딤돌 응용으로 이어지는 시기를 그림 위에 놓은 학습 로드맵 화면"><figcaption>프로그램의 학습 로드맵 화면 · 초5 입력 예시 <a href="assets/roadmap-program-map-20261111.jpg" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
+    <figure><img src="assets/roadmap-program-map-20261111.jpg" width="1600" height="507" loading="lazy" alt="지금 공부하는 5-2 디딤돌 기본+응용에서 6-1, 6-2 디딤돌 응용으로 이어지는 시기를 그림 위에 놓은 학습 로드맵 화면"><figcaption>프로그램의 학습 로드맵 화면 · 초5 입력 예시 <a href="assets/roadmap-program-map-20261111.jpg" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
     <div class="account-preview-copy"><h3>다음 교재와 시작 시기를 한눈에</h3><p>현재 교재에서 다음 학기, 중등·고등 과정까지 이어지는 교재와 예상 시작·완료 시기를 봅니다. 월별 과정을 펼치면 달마다 공부할 범위도 볼 수 있습니다.</p></div>
    </div>
    <div id="previewGraphPanel" class="account-preview-panel" role="tabpanel" aria-labelledby="previewGraph" tabindex="0" hidden>
@@ -81,22 +81,22 @@
   </div>
   <article class="account-input-example" aria-labelledby="inputExampleHeading">
    <header><h3 id="inputExampleHeading" data-zoom="in">초5, 5-2 응용을 공부하고 있다면</h3><p>이렇게 입력하면 시작할 수 있어요. 현재 진도를 입력하는 예시입니다. 아이의 실제 교재와 마친 분량에 맞춰 바꿔 주세요.</p></header>
-   <dl><div><dt>교과</dt><dd>디딤돌 기본+응용 5-2</dd></div><div><dt>심화</dt><dd>최상위 수학 5-1</dd></div><div><dt>사고력</dt><dd>1031 입문</dd></div><div><dt>연산</dt><dd>복합 계산 단계</dd></div></dl>
+   <dl><div><dt>교과</dt><dd>디딤돌 기본+응용 5-2</dd></div><div><dt>심화</dt><dd>최상위 수학 5-1</dd></div><div><dt>사고력</dt><dd>1031 입문</dd></div><div><dt>연산</dt><dd>3-2 교과 연산 · 두 자리 수 곱셈</dd></div></dl>
    <div class="account-example-answer"><h4>계획에서 함께 확인할 것</h4><ul><li><strong>다음 교과</strong> 초등 6-1 과정부터 중1-1·1-2까지 언제 이어갈지</li><li><strong>병행할 공부</strong> 새 진도를 배우며 어느 학기의 응용을 다질지</li><li><strong>준비할 연산</strong> 분수·소수를 정리하고 중등 연산을 언제 시작할지</li><li><strong>일정 조정</strong> 방학 특강과 중등 내신 준비에 필요한 시간을 어떻게 남길지</li></ul></div>
   </article>
   <figure class="account-growth" aria-labelledby="growthHeading" data-draw>
-   <figcaption><h3 id="growthHeading">이렇게 넣으면, 24개월이 이렇게 그려집니다</h3><p>위 예시를 프로그램에 넣어 나온 진도 비교 그래프의 선입니다. 지금 속도로 이어갈 때와 더 앞선 진도의 예시 두 가지를 함께 봅니다. 아이마다 출발점과 기울기가 달라집니다.</p></figcaption>
-   <div class="growth-chart" role="img" aria-label="초5 11월 5-2에서 출발해 지금 속도로 이어가면 24개월 뒤 중3-1 무렵에 닿고, 더 앞선 진도 예시 두 선은 공통수학1 앞뒤에 닿는 그래프">
+   <figcaption><h3 id="growthHeading">이렇게 넣으면, 24개월이 이렇게 그려집니다</h3><p>위 예시를 프로그램에 넣어 나온 진도 비교 그래프의 선입니다. 지금 속도로 이어갈 때와 더 앞선 진도의 예시 두 가지를 함께 봅니다. 아이마다 출발점과 기울기가 달라집니다. 진도 비교와 월별 로드맵은 앞으로 24개월을 보여 주고, 고등·KMO·영재고 같은 목표 과정은 끝까지 이어서 24개월씩 넘겨 봅니다.</p></figcaption>
+   <div class="growth-chart" role="img" aria-label="현재 레벨 L13, 초5 11월 5-2에서 출발해 지금 속도로 이어가면 24개월 뒤 중3-1 무렵에 닿고, 앞선 진도 예시 L12와 L11 두 선은 공통수학1 앞뒤에 닿는 그래프">
     <div class="growth-y" aria-hidden="true"><span style="--y:0%">공통수학2</span><span style="--y:18.2%">공통수학1</span><span style="--y:36.4%">중3-1</span><span style="--y:63.6%">중1-2</span><span style="--y:81.8%">6-2</span><span style="--y:100%">5-2</span></div>
     <div class="growth-plot" aria-hidden="true">
      <svg class="growth-grid" viewBox="126 28 604 260" preserveAspectRatio="none"><path d="M126 28H730M126 75.3H730M126 122.5H730M126 193.5H730M126 240.7H730M126 288H730M277 28V288M428 28V288M579 28V288M730 28V288"/></svg>
      <svg class="growth-lines" viewBox="126 28 604 260" preserveAspectRatio="none"><path class="line-far" d="M126 193.4L629.3 75.3L730 43.8"/><path class="line-near" d="M126 217.1L151.2 217.1L730 81.2"/><path class="line-now" d="M126 269.1L292.7 216.9L730 114.3"/></svg>
      <span class="growth-end end-start" style="--y:92.7%"></span>
-     <span class="growth-end end-far" style="--y:6.1%"></span><span class="growth-end end-near" style="--y:20.5%"></span><span class="growth-end end-now" style="--y:33.2%"></span>
+     <span class="growth-end end-far" style="--y:6.1%"></span><span class="growth-end end-near" style="--y:20.5%"></span><span class="growth-end end-now" style="--y:33.2%"></span><span class="growth-tag tag-far" style="--y:6.1%">L11</span><span class="growth-tag tag-near" style="--y:20.5%">L12</span><span class="growth-tag tag-now" style="--y:33.2%">L13 · 지금</span>
     </div>
     <div class="growth-x" aria-hidden="true"><span style="--x:0%">지금 · 초5 11월<small>2026</small></span><span style="--x:25%">초6 5월<small>2027</small></span><span style="--x:50%">초6 11월<small>2027</small></span><span style="--x:75%">중1 5월<small>2028</small></span><span style="--x:100%">중1 11월<small>2028</small></span></div>
    </div>
-   <ul class="growth-legend"><li class="key-now">지금 공부 속도 유지</li><li class="key-near">앞선 진도 예시 · 6-2와 중1-1 사이에서 출발</li><li class="key-far">더 앞선 진도 예시 · 중1-2에서 출발</li></ul>
+   <ul class="growth-legend"><li class="key-now"><b>L13</b> 지금 공부 속도 유지</li><li class="key-near"><b>L12</b> 앞선 진도 예시 · 6-2와 중1-1 사이에서 출발</li><li class="key-far"><b>L11</b> 더 앞선 진도 예시 · 중1-2에서 출발</li></ul>
   </figure>
   <figure class="account-lanes-art"><img src="assets/roadmap-level-lanes-20261110.webp" width="1344" height="768" loading="lazy" alt="두 아이가 여러 갈래로 나란히 이어진 길을 내려다보는 그림"></figure>
   <div class="account-lanes" aria-label="함께 계획하는 네 가지 수학 공부">
@@ -112,14 +112,37 @@
     <li><strong>현재 진도에서 계획</strong><p>교과·심화·사고력·연산을 각각 입력합니다. 마친 범위를 빼고 남은 분량으로 다음 과정과 실제 월별 일정을 계산합니다.</p></li>
     <li><strong>경시 개념 확인 <small>지금 사용</small></strong><p>정수·대수·기하·조합·수열의 항목을 아직 배우지 않음, 학습 중, 혼자 설명·적용 가능, 복습 필요로 기록합니다. 복습할 개념은 계획에 따로 연결합니다.</p></li>
     <li><strong>고등 모평 수행 점검 <small>직접 기록 가능</small></strong><p>중학생도 현재 배운 범위의 고등 학평·모평 기출로 활용 능력을 확인합니다. 현재 교과·심화의 종료 시점에 맞춰 고1·고2 3·6·9·10월 기출을 풀어볼 실제 월을 잡습니다. 기록과 분석 방법은 바로 아래에서 이어집니다.</p></li>
-    <li><strong>초등 단원테스트 <small>지금 사용</small></strong><p>초1-1부터 6-2까지 난이도별 단원테스트로 진단하고, 부족한 유형은 7일 뒤 유사문제로 다시 풉니다. 사고력은 권별 테스트로 부족한 영역을 진단합니다.</p></li>
+    <li><strong>초등 단원테스트 <small>지금 사용</small></strong><p>초1-1부터 6-2까지 난이도별 단원테스트로 진단하고, 부족한 유형은 7일 뒤 유사문제로 다시 풉니다. 사고력 교재별 진단 테스트지는 차후 업데이트합니다.</p></li>
     <li><strong>월별 수행 기록 <small>직접 기록 가능</small></strong><p>정한 회차·단원·쪽수 중 실제 마친 분량을 기록합니다. 분량 완료율과 개념 확인, 모평 수행 결과를 함께 살펴보고 복습과 다음 계획을 조정합니다.</p></li>
    </ol>
    </div>
-   <aside class="account-performance-example"><h3>분량 완료율과 실전 수행률을 함께 봅니다.</h3>
-    <div><p class="account-performance-case"><strong>입력 예시: 계획 20회차 중 15회차 완료 → 수행률 <span class="account-performance-figure" data-zoom="in">75%</span></strong></p><span class="account-meter" style="--v:.75" data-draw aria-hidden="true"></span><p>정한 공부를 얼마나 수행했는지 보여주는 수치입니다. 개념을 혼자 설명한 비율이나 테스트 정답률과 같게 처리하지 않습니다. 단원·회차·쪽수도 같은 단위 안에서 계산합니다.</p></div>
-    <div><p class="account-performance-case"><strong>모평 입력 예시: 확인한 10문항 중 미학습 2문항, 혼자 맞힌 6문항 → 배운 범위의 실전 수행률 <span class="account-performance-figure" data-zoom="in">75%</span></strong></p><span class="account-meter" style="--v:.75" data-draw aria-hidden="true"></span><p>힌트·해설을 참고한 문항은 혼자 맞힌 수에서 뺍니다. 초견과 재풀이를 구분하고, 결과가 다른 시험·범위를 하나의 점수로 평균내지 않습니다.</p></div>
+   <aside class="account-performance-example"><h3>공부한 양과 실제로 풀어낸 정도는 따로 계산합니다.</h3>
+    <div><p class="account-performance-case"><strong>분량 수행률 · 4주 누적</strong><span class="account-performance-figure" data-zoom="in">83%</span></p><p class="account-performance-sum">계획 40회 중 33회를 마쳤습니다.</p><span class="account-meter" style="--v:.83" data-draw aria-hidden="true"></span>
+     <div class="account-performance-scroll" tabindex="0" role="region" aria-label="주차별 분량 기록 예시"><table class="account-performance-table"><caption>주차별 기록 · 교과·연산·사고력 합계 · 입력 예시</caption><thead><tr><th scope="col">주차</th><th scope="col">목표</th><th scope="col">실제</th><th scope="col">누적 차이</th></tr></thead><tbody><tr><th scope="row">1주</th><td>10회</td><td>10회</td><td>0회</td></tr><tr><th scope="row">2주</th><td>10회</td><td>8회</td><td>−2회</td></tr><tr><th scope="row">3주</th><td>10회</td><td>5회</td><td>−7회</td></tr><tr><th scope="row">4주</th><td>10회</td><td>10회</td><td>−7회</td></tr></tbody></table></div>
+     <p>밀린 7회는 다음 주부터 남은 공부로 먼저 이어갑니다. 개념 이해나 정답률과 섞지 않고, 회차·단원·쪽수는 같은 단위끼리만 더합니다.</p></div>
+    <div><p class="account-performance-case"><strong>실전 수행률 · 고1 3월 모평 기출</strong><span class="account-performance-figure" data-zoom="in">81%</span></p><p class="account-performance-sum">배운 26문항 중 21문항을 혼자 풀었습니다.</p><span class="account-meter" style="--v:.81" data-draw aria-hidden="true"></span>
+     <div class="account-performance-scroll" tabindex="0" role="region" aria-label="문항 결과별 진단 예시"><table class="account-performance-table"><caption>문항 결과별 진단 · 입력 예시 30문항</caption><thead><tr><th scope="col">결과</th><th scope="col">문항</th><th scope="col">다음 할 일</th></tr></thead><tbody><tr><th scope="row">혼자 해결</th><td>21</td><td>점수·수행률에 넣음</td></tr><tr><th scope="row">도움 참고</th><td>2</td><td>보완 단원으로, 점수에서 뺌</td></tr><tr><th scope="row">틀림</th><td>3</td><td>보완 단원으로</td></tr><tr><th scope="row">미학습</th><td>4</td><td>계산에서 빼고, 배운 뒤 풀기</td></tr></tbody></table></div>
+     <p>공식 배점으로 계산하면 68점입니다. 보완한 단원은 같은 범위의 다른 연도 기출로 다시 확인합니다. 처음 푼 결과와 다시 푼 결과는 따로 기록합니다.</p></div>
    </aside>
+  </section>
+  <section id="studyPlan" class="account-unit account-plan" aria-labelledby="planHeading">
+   <div class="account-unit-copy">
+    <h2 id="planHeading"><span class="h-lead" data-zoom="out">학습 플랜 관리, 계획한 공부를 했는지</span> <span class="h-main" data-zoom="in">매주 점검하고 속도까지 맞춥니다</span></h2>
+    <p class="account-fact" data-zoom="in">교과·연산·사고력<br>주간 목표와 실제 횟수</p>
+    <p class="account-fact-note">학습 시작일부터 7일마다 같은 요일에 점검합니다. 오른쪽은 4주 동안 기록한 입력 예시입니다.</p>
+    <ul class="account-unit-points">
+     <li><strong>주간 목표</strong> 학습 시작일과 교과·연산·사고력의 주간 횟수를 정하면, 이번 주 계획에 지금 쓰는 교재가 함께 나옵니다.</li>
+     <li><strong>했는지 점검</strong> 점검일에 영역마다 실제로 공부한 횟수를 적습니다. 못 한 영역은 0회로 남기고, 다음 주 목표를 정합니다.</li>
+     <li><strong>밀린 공부 이어가기</strong> 다음 목표를 줄이면 남은 공부부터 그 횟수 안에서 이어갑니다. ‘실제 횟수에 맞춰 목표 줄이기’로 속도를 바로 맞출 수 있습니다.</li>
+     <li><strong>계획 대비 흐름</strong> 실제 횟수에서 그 주 목표를 뺀 차이를 주마다 누적해 그래프로 봅니다. 점검하지 않은 주는 미기록으로 남기고 계산에서 뺍니다.</li>
+     <li><strong>점검 알림</strong> 점검일 저녁 7시(한국 시간) 알림을 캘린더에 추가할 수 있습니다.</li>
+    </ul>
+    <a href="planner.html">로그인하고 학습 플랜 시작하기</a>
+   </div>
+   <div class="account-plan-shots">
+    <figure><img src="assets/roadmap-program-weekly-check-20261111.jpg" width="1400" height="929" loading="lazy" alt="11월 4일부터 10일까지 학습 점검: 교과 목표 3회, 연산 목표 5회, 사고력 목표 2회 옆에 실제 공부 횟수와 다음 목표를 적고, 적용할 다음 주 계획을 보여 주는 화면"><figcaption>프로그램의 주간 학습 점검 화면 · 입력 예시 <a href="assets/roadmap-program-weekly-check-20261111.jpg" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
+    <figure><img src="assets/roadmap-program-weekly-trend-20261111.jpg" width="1600" height="572" loading="lazy" alt="계획 대비 학습 흐름 그래프: 1주차 계획선에서 시작해 2주차 2회, 3주차 7회 밀렸고 4주차는 목표만큼 공부해 7회 남은 위치를 유지한 선"><figcaption>계획 대비 학습 흐름 · 4주 기록 <a href="assets/roadmap-program-weekly-trend-20261111.jpg" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
+   </div>
   </section>
   <section id="mockAnalysis" class="account-mock" aria-labelledby="mockHeading">
    <h2 id="mockHeading"><span class="h-lead" data-zoom="out">고등 모평, 배운 범위만 골라 풀고</span> <span class="h-main" data-zoom="in">단원별 분석과 재점검까지</span></h2>
@@ -155,18 +178,44 @@
    <figure><img src="assets/roadmap-program-unit-ox-20261111.png" width="1600" height="1120" loading="lazy" alt="학기·단원·난이도를 고르고 1번부터 25번까지 문항마다 O와 X 단추를 누르는 초등 교과 단원평가 화면"><figcaption>프로그램의 초등 단원테스트 화면 <a href="assets/roadmap-program-unit-ox-20261111.png" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
   </section>
   <section id="bookTest" class="account-booktest" aria-labelledby="bookTestHeading">
-   <figure class="account-shot"><img src="assets/roadmap-program-booktest-20261111.jpg" width="1600" height="1112" loading="lazy" alt="왼쪽에 1권 권별 테스트 시험지, 오른쪽에 답안 확인 및 진단하기 단추가 있는 권별 테스트 풀기 화면"><figcaption>사고력 수학 1과정 1권 권별 테스트 화면 <a href="assets/roadmap-program-booktest-20261111.jpg" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
+   <figure class="account-shot"><img src="assets/roadmap-program-booktest-20261111.jpg" width="1600" height="1112" loading="lazy" alt="왼쪽에 사고력 진단 테스트지, 오른쪽에 답안 확인 및 진단하기 단추가 있는 준비 중인 테스트 화면 예시"><figcaption>준비 중인 사고력 진단 테스트 화면 · 예시 <a href="assets/roadmap-program-booktest-20261111.jpg" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
    <div class="account-booktest-copy">
-    <h2 id="bookTestHeading"><span class="h-lead" data-zoom="out">사고력은 권별 테스트로 풀고</span> <span class="h-main" data-zoom="in">부족한 영역 진단까지</span></h2>
-    <p class="account-fact" data-zoom="in">1과정 10권,<br>250문항</p>
-    <p class="account-fact-note">지필드 사고력 수학(GM) 1과정의 1권부터 10권까지, 한 권에 25문항입니다.</p>
+    <h2 id="bookTestHeading"><span class="h-lead" data-zoom="out">사고력은 시중 교재별 진단 테스트지로</span> <span class="h-main" data-zoom="in">부족한 영역 진단까지</span></h2>
+    <p class="account-fact" data-zoom="in">1031·팩토·필즈·<br>3% 올림피아드</p>
+    <p class="account-fact-note">시중 사고력 교재의 진단 테스트지를 제공합니다. 차후 업데이트로 열리며, 왼쪽 화면은 준비 중인 예시입니다.</p>
     <ul class="account-unit-points">
-     <li><strong>시험지 풀기</strong> 권마다 시험지를 화면으로 보거나 인쇄해, 공책이나 종이에 풉니다.</li>
-     <li><strong>답안 확인과 진단</strong> 다 풀고 ‘답안 확인 및 진단하기’를 누른 뒤, 정답을 보며 번호마다 ○·✕를 누릅니다. ✕가 나온 문항을 영역별로 묶어 부족한 영역을 알려 줍니다.</li>
-     <li><strong>약점 유형 다시 공부</strong> 틀린 번호는 약점 유형으로 모여, 유사문제로 다시 공부하는 화면으로 이어집니다.</li>
-     <li><strong>로드맵과의 연결</strong> 권별 테스트는 ‘GM 스스로 공부’에서 풉니다. 결과를 로드맵의 수행 기록에 자동으로 잇는 연동은 준비하고 있습니다.</li>
+     <li><strong>교재별 진단 테스트지</strong> 지금 공부하는 사고력 교재와 권에 맞춘 테스트지를 인쇄해 풉니다.</li>
+     <li><strong>부족한 영역 진단</strong> 다 푼 뒤 번호마다 ○·✕를 누르면, ✕가 나온 문항을 영역별로 묶어 보여 줍니다.</li>
     </ul>
-    <a href="../../fields-classic/question-bank/unit-test-viewer.html?book=book-01">1권 권별 테스트 열어 보기</a>
+    <a href="#unitTest">지금 쓸 수 있는 초등 교과 단원테스트 보기</a>
+   </div>
+  </section>
+  <section id="boarding" class="account-boarding" aria-labelledby="boardingHeading">
+   <div class="account-boarding-head">
+    <h2 id="boardingHeading"><span class="h-lead" data-zoom="out">보딩 스쿨을 준비한다면</span> <span class="h-main" data-zoom="in">Pre-Algebra부터 경시까지</span></h2>
+    <p class="account-fact" data-zoom="in">AMC · AIME ·<br>SASMO · Math Kangaroo</p>
+    <p class="account-fact-note">지필드 보딩 스쿨 수학(G·MAP)은 미국 학교 수학 과정과 해외 수학 경시를 함께 진행합니다. 영어·중국어(싱가포르) 안내도 있습니다.</p>
+    <p class="account-boarding-links"><a href="../../boarding-school-math/">보딩 스쿨 수학 열어 보기</a> <a href="../../boarding-school-math/international.html?locale=en" lang="en">G·MAP in English</a></p>
+   </div>
+   <div class="account-boarding-body">
+    <figure class="account-shot account-boarding-shot"><span class="account-boarding-soon" lang="en">Coming soon</span><img src="assets/roadmap-boarding-growth-map-20261111.jpg" width="1484" height="590" loading="lazy" alt="7학년 성장 지도: 유리수, 비례 관계, 식·방정식, 기하·혼합 문제의 네 개념 지점을 01부터 04까지 섬과 보라색 길로 이은 그림"><figcaption>보딩 스쿨 수학 · 학년별 성장 지도(7학년) · 준비 중 <a href="assets/roadmap-boarding-growth-map-20261111.jpg" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
+    <div class="account-boarding-en" lang="en">
+     <p class="account-boarding-en-kicker">G·MAP · GFIELD Math Assessment &amp; Pathway</p>
+     <p class="account-boarding-en-title">From Foundations to Competition.</p>
+     <p class="account-boarding-en-tag">Diagnose. Learn. Advance.</p>
+     <p>G·MAP connects evidence from diagnosis and analysis to concept learning, targeted practice, mock assessment, and a next-step learning prescription.</p>
+     <ol class="account-boarding-steps"><li>Diagnostic</li><li>Analysis</li><li>Learning prescription</li><li>Concept learning</li><li>Targeted practice</li><li>Mock assessment and recheck</li></ol>
+     <p class="account-boarding-en-cycle">A score alone is not a learning plan. <span>Concept → Diagnostic → Clinic → Workbook → Check</span></p>
+    </div>
+    <div class="account-boarding-tracks">
+     <div><h3>학교 수학 <span lang="en">US Curriculum</span></h3><ol class="account-boarding-rail" lang="en"><li>Pre-Algebra</li><li>Algebra 1</li><li>Geometry</li><li>Algebra 2</li><li>Precalculus</li></ol><p>미국 K–12 과정. 과정마다 선수 개념과 다음 과정을 보고, 학교의 실제 수강 순서에 맞춥니다.</p></div>
+     <div><h3>경시 <span lang="en">Competition</span></h3><ol class="account-boarding-rail" lang="en"><li>AMC 8</li><li>AMC 10</li><li>AMC 12</li><li>AIME</li></ol><ul class="account-boarding-chips"><li><b lang="en">SASMO</b> K2·G1–12</li><li><b lang="en">Math Kangaroo</b> G1–12</li></ul><p>경시는 학교 과정 배정과 나눠서 준비합니다.</p></div>
+    </div>
+    <dl class="account-sample">
+     <div><dt>학년별 성장 지도 <small lang="en">Coming soon</small></dt><dd>학년마다 개념 지점과 1년 학습 흐름을 보고, 지금 듣는 과목에서 다음 과정을 고릅니다. AMC·SAT은 학교 수학과 나눈 선택 경로입니다.</dd></div>
+     <div><dt>지필드 모의고사 <small lang="en">Coming soon</small></dt><dd>Grade 7 단원 모의고사(14문항·40분), AMC 8 스타일(25문항·40분), AMC 10·12 범위(25문항·75분). 문항별 결과와 오답 이유로 다음 연습을 정하며, 공식 AMC 점수나 등급으로 환산하지 않습니다.</dd></div>
+     <div><dt>학생·강사 화면</dt><dd>같은 진단 결과를 학생에게는 오늘 할 공부로, 강사에게는 다음 수업 계획으로 보여 줍니다.</dd></div>
+    </dl>
    </div>
   </section>
   <section class="account-goal-roadmaps" aria-labelledby="goalRoadmapsHeading">
@@ -182,6 +231,7 @@
  </section>
  <section id="seniorExample" class="account-senior-section" aria-labelledby="seniorHeading">
   <div class="account-section-heading"><h2 id="seniorHeading"><span class="h-lead" data-zoom="out">선배들의 로드맵,</span> <span class="h-main" data-zoom="in">한 사례를 먼저 살펴보세요.</span></h2><p>그때 어떤 교과와 사고력 과정을 함께 공부했을까요? 초등 시기의 주요 전환을 모아봤습니다.</p></div>
+  <ul class="account-senior-cast" aria-label="선배들의 로드맵에 나오는 학생들"><li><span class="account-senior-cast-art" style="--col:0%" aria-hidden="true"></span><strong>서울과학고 합격</strong><small>졸업 후 MIT 진학</small></li><li><span class="account-senior-cast-art" style="--col:25%" aria-hidden="true"></span><strong>한국과학영재학교 합격</strong><small>황소 심화반 합격 후</small></li><li><span class="account-senior-cast-art" style="--col:50%" aria-hidden="true"></span><strong>KMO 금상</strong><small>지금 영재고 준비 중</small></li><li><span class="account-senior-cast-art" style="--col:75%" aria-hidden="true"></span><strong>황소 초등선발 1등</strong><small>필즈 S 선발에서</small></li><li><span class="account-senior-cast-art" style="--col:100%" aria-hidden="true"></span><strong>황소 초등선발 2등</strong><small>꾸준한 실전 모의로</small></li></ul>
   <article class="account-senior-example" aria-labelledby="seniorCaseTitle">
    <header class="account-senior-header"><div><h3 id="seniorCaseTitle">서울과학고 합격 학생의 로드맵</h3><p>서울과학고 졸업 후 MIT 진학. 선배들의 로드맵 가운데 공개한 예시입니다.</p></div><span class="account-senior-character" aria-hidden="true"></span></header>
    <figure class="account-senior-figure"><div class="account-senior-figure-scroll" tabindex="0" role="region" aria-label="서울과학고 합격 학생의 로드맵 그림 · 좌우로 이동"><img src="assets/senior-seoul-science-roadmap-20261104.svg" width="1160" height="580" loading="lazy" alt="초3 7월 초등 6-2 심화와 중1-1·1031·3% 병행, 초3 11월 중1-2 준비, 초4 8월 중3 점검과 탐구, 초5 1월 고등 수열과 KMO로 이어진 사례 그림"></div><figcaption>한 학생의 실제 공부 흐름을 정리한 사례입니다. 작은 화면에서는 좌우로 이동해 볼 수 있습니다. <a href="assets/senior-seoul-science-roadmap-20261104.svg" target="_blank" rel="noopener">로드맵 그림 크게 보기</a></figcaption></figure>

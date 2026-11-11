@@ -3,7 +3,17 @@
 'use strict';
 const D=global.DemoContent,P=global.Planner;
 const thinking=['킨더팩토','키즈팩토','초등팩토','PRE 1031','1031 입문','1031 초급'];
-const calc=[['소마셈 K','수 가르기·모으기'],['기적의 계산법 2권','한 자리 덧셈·뺄셈'],['기적의 계산법 3권','받아올림·받아내림'],['기적의 계산법 4권','구구단'],['기적의 계산법 5권','곱셈·나눗셈'],['기적의 계산법 6권','복합 계산']];
+/* 연산은 교재와 상관없이 '어느 학년·학기 교과 연산까지 혼자 하는지'로 고른다(원장 2026-11-11).
+   학기별 주제는 넘버스 오브 매직 data/placement-books.js의 기적의 계산법 2021판 권별 공식 주제(한 권 = 한 학기)를 따른다.
+   값은 예전과 같은 '기적의 계산법 N권'(N = 학기 순서)이라 저장된 답과 계획 계산은 그대로다. */
+const calc=[['소마셈 K','수 가르기·모으기'],
+ ['기적의 계산법 1권','1-1 · 첫 덧셈·뺄셈 · 두 자리 수 기초'],['기적의 계산법 2권','1-2 · 10 묶기 · 받아올림·받아내림'],
+ ['기적의 계산법 3권','2-1 · 두 자리 덧셈·뺄셈 · 구구단'],['기적의 계산법 4권','2-2 · 구구단 종합 · 세 자리 덧셈·뺄셈'],
+ ['기적의 계산법 5권','3-1 · 한 자리 수로 곱하기 · 첫 나눗셈'],['기적의 계산법 6권','3-2 · 두 자리 수 곱셈 · 한 자리 수로 나누기'],
+ ['기적의 계산법 7권','4-1 · 큰 자연수 곱셈 · 두 자리 수로 나누기'],['기적의 계산법 8권','4-2 · 같은 분모 분수 · 소수 덧셈·뺄셈'],
+ ['기적의 계산법 9권','5-1 · 약수·배수 · 약분·통분 · 분수 덧셈·뺄셈'],['기적의 계산법 10권','5-2 · 혼합 계산 · 분수·소수 곱셈'],
+ ['기적의 계산법 11권','6-1 · 분수·소수 나눗셈'],['기적의 계산법 12권','6-2 · 비·비례식 · 중학 연결']];
+const calcChoices=(group,current)=>calc.filter(([v],i)=>(group==='preschool'?i<=4:i>=1)||v===current);
 const schoolBooks=['디딤돌 기본+응용','디딤돌 응용','원리해설','개념원리','쎈','RPM','개념+유형 라이트','개념+유형 파워','개념응용 · 최상위','개념응용 · 최상위라이트'];
 const highSubjects=['공통수학1','공통수학2','대수','미적분Ⅰ','확률과 통계','미적분Ⅱ','기하'];
 const highSubjectLabel=v=>v==='대수'?'대수 · 구 수학Ⅰ 주요 내용 대응':v==='미적분Ⅰ'?'미적분Ⅰ · 구 수학Ⅱ 주요 내용 대응':v;
@@ -11,6 +21,9 @@ const highSubjectHelp='2022 개정 과목명입니다. 대수는 구 수학Ⅰ, 
 const highBook=v=>['기본정석','실력정석','개념원리 고등','수학의 정석','쎈 고등','RPM 고등','고쟁이','숨마쿰라우데 고등','학교 지정 교재'].includes(v);
 const bookList=(course,axis)=>course==='foreign'?['학교 지정 교재']:course==='high'?(axis==='deep'?['실력정석','고쟁이','숨마쿰라우데 고등','학교 지정 교재','쎈 고등','RPM 고등','수학의 정석','기본정석']:['기본정석','개념원리 고등','쎈 고등','RPM 고등','수학의 정석','학교 지정 교재']):(axis==='deep'?deepBooks:schoolBooks).filter(v=>middleBook(v)===(course==='mid'));
 const deepBooks=['최상위 S','최상위 수학','개념응용 · 최상위','A급','RPM'];
+/* '개념응용 · 최상위'와 '개념응용 · 최상위라이트'는 실제 교재 이름이 아니다(원장 2026-11-11). 저장된 답은 계속 읽고, 새로 고르는 선택지와 예시에는 보이지 않는다. */
+const pairedLabel=v=>/^개념응용 · 최상위/.test(v);
+const choosable=(list,current)=>list.filter(v=>!pairedLabel(v)||v===current);
 const special=v=>['none','unknown'].includes(v);
 const middleBook=v=>['원리해설','개념원리','쎈','RPM','개념+유형 라이트','개념+유형 파워','개념응용 · 최상위라이트','A급'].includes(v);
 const stageOptions=middle=>middle?P.MID.map((t,i)=>[String(i+14),t.replace(/중(\d)-(\d)/,'중등 $1학년 $2학기')]):Array.from({length:12},(_,i)=>[P.SEM(i+1),`초등 ${Math.ceil((i+1)/2)}학년 ${i%2+1}학기`]);
@@ -77,6 +90,8 @@ function order(a,fields){a=effective(a);
 }
 // Curriculum standards come from the existing four BAND rules and buildD.
 // The broader book guide is a reference list, not a replacement for those rules.
+/* 질문의 예시는 실제 교재 이름만 쓴다. 영과고형(D)의 계획 줄 이름은 standardBook이 그대로 맡는다. */
+function exampleBook(band,course,axis){if(band==='D'&&(course==='elem'||course==='mid')&&!(course==='mid'&&axis==='deep'))return course==='mid'?'개념원리 · 최상위수학 중학':axis==='school'?'디딤돌 응용':'최상위 수학';return standardBook(band,course,axis);}
 function standardBook(band,course,axis){
  if(course==='foreign')return '학교 지정 교재 · 현재 과목·판본 확인';
  if(course==='high')return axis==='school'?'기본정석(개념) + 쎈(유형) 병행':'실력정석 · 고쟁이 등에서 현재 풀이에 맞춰 선택';
@@ -91,24 +106,24 @@ function questions(a,fields){a=effective(a);const curriculum=global.PlannerColle
  thinkingStatus:['이 사고력 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  preDone:['초등팩토는 끝냈나요?','초등팩토를 마쳤는지 함께 확인할게요.',[['1','네'],['0','아니요']]],
  schoolCourse:[young?'교과 수학은 어느 과정을 공부하나요?':'교과는 어느 과정을 공부하나요?',group==='preschool'?'초등·중등 교과서에서 배우는 수학이에요.':young?'학교에서 배우는 수학을 말해요. 지금 공부하는 과정을 골라주세요.':'지금 공부하는 초등·중등·고등 과정을 골라주세요.',courses],
- schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
+ schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.schoolCourse,'school')}`,choosable(bookList(a.schoolCourse,'school'),a.schoolBook).map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
  school:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',stageOptions(false)],
  schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?',(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,highSubjectLabel(v)])],
  schoolStatus:['이 교과 교재는 끝냈나요?',a.schoolCourse==='high'?'선택한 교재의 상태입니다. 개념 교재 완료와 쎈 유형 완료는 따로 기록합니다.':'지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  deepCourse:[young?'심화 수학은 어느 과정을 공부하나요?':'심화는 어느 과정을 공부하나요?',young?'배운 내용을 써서 더 깊이 생각하는 문제를 풀어요. 아직 시작 전도 고를 수 있어요.':'아직 시작하지 않았다면 아래에서 골라주세요.',courses],
- deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.deepCourse,'deep')}`,bookList(a.deepCourse,'deep').map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
+ deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.deepCourse,'deep')}`,choosable(bookList(a.deepCourse,'deep'),a.deepBook).map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
  deepStage:[deepHigh?'현재 심화하는 과목은 무엇인가요?':'심화는 어느 과정인가요?',deepHigh?(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 지금 공부 중인 심화 과목을 고릅니다. 선행 과목과 달라도 됩니다. 이후 심화는 다음 계획으로 구분하며, 이 선택을 바꾸면 현재 심화 기록이 바뀝니다.':'심화 교재의 학년과 학기를 골라 주세요.',deepHigh?deepMath.map(v=>[v,highSubjectLabel(v)]):stageOptions(deepMiddle)],
  deepExtra:['동시에 공부하는 다른 고등 심화 과목도 있나요?','앞서 입력한 심화는 그대로 두고, 별도로 진행하는 심화 하나를 추가합니다.',[['no','아니요'],['yes','네, 다른 과목도 함께 해요'],['unknown','아직 확인 전이에요']]],
  deepExtraStage:['함께 공부하는 다른 심화 과목은 무엇인가요?',highSubjectHelp+' 앞서 입력한 심화와 다른 과목을 고릅니다.',highSubjects.filter(v=>v!==a.deepStage).map(v=>[v,highSubjectLabel(v)])],
  deepExtraBook:['추가 심화는 어떤 교재로 공부하나요?','기존 심화 교재를 바꾸지 않고 별도로 기록합니다.',['실력정석','고쟁이','숨마쿰라우데 고등','학교 지정 교재'].map(v=>[v,v])],
  deepExtraStatus:['추가 심화 교재는 현재 어느 상태인가요?','이 과목의 실제 진행 상태와 완료 분량만 입력합니다.',progress],
  deepStatus:['이 심화 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
- calc:[highLearning?'별도로 공부하는 연산은 어느 범위인가요?':young?'수와 계산은 어디까지 공부했나요?':'연산은 어디까지 되나요?',highLearning?'고등 선행과 연산 범위는 다를 수 있습니다. 초등 후반·중등 연산은 그 이후 단계에서, 고등 계산·식 변형은 별도로 고르세요. 범위를 모르면 잘 모르겠어요를 선택합니다.':group==='preschool'?'수를 나누고 모으기, 덧셈·뺄셈 등을 말해요.':young?'덧셈·뺄셈·곱셈·나눗셈 중 혼자 할 수 있는 것을 골라주세요.':'도움 없이 혼자 할 수 있는 단계예요.',calc.map(([v,t])=>[v,t]).concat(older?[['advanced','그 이후 단계']]:[]).concat([['high','고등 계산·식 변형 연습'],['none','아직 시작 전'],['unknown','잘 모르겠어요']])],
+ calc:[highLearning?'별도로 공부하는 연산은 어느 범위인가요?':young?'수와 계산은 어디까지 공부했나요?':'연산은 어느 학기까지 되나요?',highLearning?'고등 선행과 연산 범위는 다를 수 있습니다. 초등 후반·중등 연산은 그 이후 단계에서, 고등 계산·식 변형은 별도로 고르세요. 범위를 모르면 잘 모르겠어요를 선택합니다.':group==='preschool'?'수를 나누고 모으기, 덧셈·뺄셈 등을 말해요.':young?'혼자 할 수 있는 교과 연산의 학년·학기를 골라주세요. 소마셈·원리셈·두뇌로·구몬 등 어떤 교재로 하든 같은 기준이에요.':'도움 없이 혼자 할 수 있는 교과 연산의 학년·학기를 고르세요. 소마셈·원리셈·두뇌로·구몬 등 어떤 교재로 하든 같은 기준으로 고르면 됩니다.',calcChoices(group,a.calc).map(([v,t])=>[v,t]).concat(older?[['advanced','중학 연산 이후']]:[]).concat([['high','고등 계산·식 변형 연습'],['none','아직 시작 전'],['unknown','잘 모르겠어요']])],
  calcHigh:[fields.internationalCalendar?'계산·식 변형은 어느 과목에서 연습하나요?':'계산·식 변형은 어느 고등 과목에서 연습하나요?',(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 현재 교과·심화와 별개로 실제 연습하는 범위를 고릅니다.',calcMath.map(v=>[v,highSubjectLabel(v)])],
  calcStatus:[(calc.find(c=>c[0]===a.calc)?.[1]||'이 연산')+' 단계는요?','지금 연습하는 중인지, 끝냈는지 골라 주세요.',progress],
  compExact:['지금 사고력 교재는요?','현재 과정 하나만 골라 주세요.',P.COMP.map((c,i)=>[String(i),c[0]])],
  schoolExact:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',[['13','초등 계통 대수심화'],...stageOptions(true)]],
- calcExact:['지금 연산 교재는요?','현재 연습하는 연산·도형 교재를 고릅니다. 교과 선행 과목과 같을 필요는 없습니다.',P.CALC.map((c,i)=>[String(i),c[0]])],
+ calcExact:['지금 연산 교재는요?','현재 연습하는 연산·도형 교재를 고릅니다. 교과 선행 과목과 같을 필요는 없습니다. 초등 연산은 앞 질문에서 권별로 고릅니다.',P.CALC.map((c,i)=>[String(i),c[0]]).filter(([i])=>+i>=12||i===a.calcExact)],
  hw:['생각하는 황소도 고려하고 계세요?','나중에 바꿔도 괜찮아요.',[['1','네'],['0','아니요'],['pending','아직 고민 중']]],
  gifted:['영재원도 고려하고 계세요?','나중에 바꿔도 괜찮아요.',[['1','네'],['0','아니요'],['pending','아직 고민 중']]]
  };}

@@ -121,7 +121,7 @@ test('초등·중등 교재 목록과 A/B/C/D 표준을 구분한다',()=>{
    const a={...answer,schoolCourse:course,deepCourse:course},q=I.questions(a,f);
    for(const [v]of q.schoolBook[2])assert.equal(I.middleBook(v),course==='mid');
    for(const [v]of q.deepBook[2])assert.equal(I.middleBook(v),course==='mid');
-   assert.ok(q.schoolBook[1].includes(I.standardBook(band,course,'school')));
+   if(band!=='D')assert.ok(q.schoolBook[1].includes(I.standardBook(band,course,'school')));
   }
  }
  assert.equal(I.standardBook('A','mid','school'),'원리해설');
@@ -477,4 +477,31 @@ test('대략 20/50/80 버튼은 저장 전 폼만 채우며 진행 상태 선택
  }
  const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
  assert.match(ui,/key.endsWith\('Status'\).*대략 진행 분량/s);
+});
+
+test('book choices and examples never offer the paired labels that are not real book names',()=>{
+ for(const band of ['A','B','C','D'])for(const course of ['elem','mid']){
+  const a={...answer,schoolCourse:course,deepCourse:course,schoolBook:'',deepBook:''},q=I.questions(a,{...fields,band});
+  const offered=[...q.schoolBook[2],...q.deepBook[2]].map(o=>o[0]+' '+o[1]).join(' / ');
+  assert.doesNotMatch(offered,/개념응용 · 최상위/,band+course);
+  assert.doesNotMatch(q.schoolBook[1]+q.deepBook[1],/개념응용/,band+course);
+ }
+ const saved={...answer,deepCourse:'elem',deepBook:'개념응용 · 최상위'};
+ assert.ok(I.questions(saved,fields).deepBook[2].some(o=>o[0]==='개념응용 · 최상위'),'a saved answer stays visible as chosen');
+ assert.ok(I.deepBooks.includes('개념응용 · 최상위'),'saved answers still validate');
+});
+
+test('arithmetic is asked by school semester, whatever book the child uses, so multiplication by digit count is distinguishable',()=>{
+ const q=I.questions({...answer,calc:''},fields).calc,labels=Object.fromEntries(q[2]);
+ assert.match(q[1],/학년·학기/);assert.match(q[1],/소마셈·원리셈·두뇌로·구몬/);
+ assert.equal(labels['기적의 계산법 5권'],'3-1 · 한 자리 수로 곱하기 · 첫 나눗셈');
+ assert.equal(labels['기적의 계산법 6권'],'3-2 · 두 자리 수 곱셈 · 한 자리 수로 나누기');
+ assert.equal(labels['기적의 계산법 7권'],'4-1 · 큰 자연수 곱셈 · 두 자리 수로 나누기');
+ assert.equal(labels['기적의 계산법 10권'],'5-2 · 혼합 계산 · 분수·소수 곱셈');
+ for(let n=1;n<=12;n++)assert.match(labels['기적의 계산법 '+n+'권'],new RegExp('^'+Math.ceil(n/2)+'-'+(n%2?1:2)+' · '),n+'권');
+ assert.ok(!Object.values(labels).some(v=>/기적의 계산법/.test(v)),'no book name is forced in the choices');
+ const pre=I.questions({...answer,age:'5',calc:''},{...fields,grade:'pre'}).calc[2].map(o=>o[0]);
+ assert.ok(pre.includes('소마셈 K'));
+ const old={...answer,calc:'기적의 계산법 4권',calcStatus:'done'};
+ assert.equal(I.profile(old,fields).rows.find(r=>r.key==='calc').blocks.length>0,true,'saved answers keep working');
 });
