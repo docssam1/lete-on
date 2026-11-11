@@ -121,7 +121,7 @@ test('초등·중등 교재 목록과 A/B/C/D 표준을 구분한다',()=>{
    const a={...answer,schoolCourse:course,deepCourse:course},q=I.questions(a,f);
    for(const [v]of q.schoolBook[2])assert.equal(I.middleBook(v),course==='mid');
    for(const [v]of q.deepBook[2])assert.equal(I.middleBook(v),course==='mid');
-   assert.ok(q.schoolBook[1].includes(I.standardBook(band,course,'school')));
+   if(band!=='D')assert.ok(q.schoolBook[1].includes(I.standardBook(band,course,'school')));
   }
  }
  assert.equal(I.standardBook('A','mid','school'),'원리해설');
@@ -477,4 +477,16 @@ test('대략 20/50/80 버튼은 저장 전 폼만 채우며 진행 상태 선택
  }
  const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
  assert.match(ui,/key.endsWith\('Status'\).*대략 진행 분량/s);
+});
+
+test('book choices and examples never offer the paired labels that are not real book names',()=>{
+ for(const band of ['A','B','C','D'])for(const course of ['elem','mid']){
+  const a={...answer,schoolCourse:course,deepCourse:course,schoolBook:'',deepBook:''},q=I.questions(a,{...fields,band});
+  const offered=[...q.schoolBook[2],...q.deepBook[2]].map(o=>o[0]+' '+o[1]).join(' / ');
+  assert.doesNotMatch(offered,/개념응용 · 최상위/,band+course);
+  assert.doesNotMatch(q.schoolBook[1]+q.deepBook[1],/개념응용/,band+course);
+ }
+ const saved={...answer,deepCourse:'elem',deepBook:'개념응용 · 최상위'};
+ assert.ok(I.questions(saved,fields).deepBook[2].some(o=>o[0]==='개념응용 · 최상위'),'a saved answer stays visible as chosen');
+ assert.ok(I.deepBooks.includes('개념응용 · 최상위'),'saved answers still validate');
 });

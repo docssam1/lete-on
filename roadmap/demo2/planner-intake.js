@@ -11,6 +11,9 @@ const highSubjectHelp='2022 개정 과목명입니다. 대수는 구 수학Ⅰ, 
 const highBook=v=>['기본정석','실력정석','개념원리 고등','수학의 정석','쎈 고등','RPM 고등','고쟁이','숨마쿰라우데 고등','학교 지정 교재'].includes(v);
 const bookList=(course,axis)=>course==='foreign'?['학교 지정 교재']:course==='high'?(axis==='deep'?['실력정석','고쟁이','숨마쿰라우데 고등','학교 지정 교재','쎈 고등','RPM 고등','수학의 정석','기본정석']:['기본정석','개념원리 고등','쎈 고등','RPM 고등','수학의 정석','학교 지정 교재']):(axis==='deep'?deepBooks:schoolBooks).filter(v=>middleBook(v)===(course==='mid'));
 const deepBooks=['최상위 S','최상위 수학','개념응용 · 최상위','A급','RPM'];
+/* '개념응용 · 최상위'와 '개념응용 · 최상위라이트'는 실제 교재 이름이 아니다(원장 2026-11-11). 저장된 답은 계속 읽고, 새로 고르는 선택지와 예시에는 보이지 않는다. */
+const pairedLabel=v=>/^개념응용 · 최상위/.test(v);
+const choosable=(list,current)=>list.filter(v=>!pairedLabel(v)||v===current);
 const special=v=>['none','unknown'].includes(v);
 const middleBook=v=>['원리해설','개념원리','쎈','RPM','개념+유형 라이트','개념+유형 파워','개념응용 · 최상위라이트','A급'].includes(v);
 const stageOptions=middle=>middle?P.MID.map((t,i)=>[String(i+14),t.replace(/중(\d)-(\d)/,'중등 $1학년 $2학기')]):Array.from({length:12},(_,i)=>[P.SEM(i+1),`초등 ${Math.ceil((i+1)/2)}학년 ${i%2+1}학기`]);
@@ -77,6 +80,8 @@ function order(a,fields){a=effective(a);
 }
 // Curriculum standards come from the existing four BAND rules and buildD.
 // The broader book guide is a reference list, not a replacement for those rules.
+/* 질문의 예시는 실제 교재 이름만 쓴다. 영과고형(D)의 계획 줄 이름은 standardBook이 그대로 맡는다. */
+function exampleBook(band,course,axis){if(band==='D'&&(course==='elem'||course==='mid')&&!(course==='mid'&&axis==='deep'))return course==='mid'?'개념원리 · 최상위수학 중학':axis==='school'?'디딤돌 응용':'최상위 수학';return standardBook(band,course,axis);}
 function standardBook(band,course,axis){
  if(course==='foreign')return '학교 지정 교재 · 현재 과목·판본 확인';
  if(course==='high')return axis==='school'?'기본정석(개념) + 쎈(유형) 병행':'실력정석 · 고쟁이 등에서 현재 풀이에 맞춰 선택';
@@ -91,12 +96,12 @@ function questions(a,fields){a=effective(a);const curriculum=global.PlannerColle
  thinkingStatus:['이 사고력 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  preDone:['초등팩토는 끝냈나요?','초등팩토를 마쳤는지 함께 확인할게요.',[['1','네'],['0','아니요']]],
  schoolCourse:[young?'교과 수학은 어느 과정을 공부하나요?':'교과는 어느 과정을 공부하나요?',group==='preschool'?'초등·중등 교과서에서 배우는 수학이에요.':young?'학교에서 배우는 수학을 말해요. 지금 공부하는 과정을 골라주세요.':'지금 공부하는 초등·중등·고등 과정을 골라주세요.',courses],
- schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
+ schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.schoolCourse,'school')}`,choosable(bookList(a.schoolCourse,'school'),a.schoolBook).map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
  school:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',stageOptions(false)],
  schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?',(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,highSubjectLabel(v)])],
  schoolStatus:['이 교과 교재는 끝냈나요?',a.schoolCourse==='high'?'선택한 교재의 상태입니다. 개념 교재 완료와 쎈 유형 완료는 따로 기록합니다.':'지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  deepCourse:[young?'심화 수학은 어느 과정을 공부하나요?':'심화는 어느 과정을 공부하나요?',young?'배운 내용을 써서 더 깊이 생각하는 문제를 풀어요. 아직 시작 전도 고를 수 있어요.':'아직 시작하지 않았다면 아래에서 골라주세요.',courses],
- deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.deepCourse,'deep')}`,bookList(a.deepCourse,'deep').map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
+ deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.deepCourse,'deep')}`,choosable(bookList(a.deepCourse,'deep'),a.deepBook).map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
  deepStage:[deepHigh?'현재 심화하는 과목은 무엇인가요?':'심화는 어느 과정인가요?',deepHigh?(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 지금 공부 중인 심화 과목을 고릅니다. 선행 과목과 달라도 됩니다. 이후 심화는 다음 계획으로 구분하며, 이 선택을 바꾸면 현재 심화 기록이 바뀝니다.':'심화 교재의 학년과 학기를 골라 주세요.',deepHigh?deepMath.map(v=>[v,highSubjectLabel(v)]):stageOptions(deepMiddle)],
  deepExtra:['동시에 공부하는 다른 고등 심화 과목도 있나요?','앞서 입력한 심화는 그대로 두고, 별도로 진행하는 심화 하나를 추가합니다.',[['no','아니요'],['yes','네, 다른 과목도 함께 해요'],['unknown','아직 확인 전이에요']]],
  deepExtraStage:['함께 공부하는 다른 심화 과목은 무엇인가요?',highSubjectHelp+' 앞서 입력한 심화와 다른 과목을 고릅니다.',highSubjects.filter(v=>v!==a.deepStage).map(v=>[v,highSubjectLabel(v)])],
