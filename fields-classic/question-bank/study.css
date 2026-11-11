@@ -333,6 +333,7 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
 .sd-native.has-presenter { display: grid; grid-template-columns: minmax(0, 1fr) clamp(170px, 21vw, 290px); align-items: center; gap: 0; }
 .sd-board-host { min-width: 0; }
 .sd-presenter { position: relative; width: 100%; aspect-ratio: 475 / 720; align-self: center; }
+.sd-native.is-fitting .sd-presenter { overflow: clip; }   /* 크기를 재는 동안만: 독쌤 몸짓(돌기·깡충)이 칸 밖으로 나간 것을 fitNative가 「넘침」으로 읽어 배율이 0.4로 떨어졌다 돌아오며 깜빡였다. 재는 동안은 그리지 않으니 잘려 보이지 않는다 */
 .sd-pres-act, .sd-pres-bob { position: absolute; inset: 0; transform-origin: 50% 96%; }
 .sd-presenter img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
 .sd-presenter img.on { opacity: 1; }

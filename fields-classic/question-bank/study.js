@@ -501,6 +501,7 @@ function fitNative() {
   const cs = getComputedStyle(body), avail = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
   host.style.setProperty("transition", "none", "important");   // 배율을 바꾸자마자 재므로 전환이 걸리면 옛 크기를 읽는다
   host.style.minHeight = "0";   // 칸 높이만큼 늘어나 있으면(min-height 100%) 내용 높이를 잴 수 없다
+  host.classList.add("is-fitting");   // 재는 동안 독쌤 몸짓이 칸 밖으로 나간 것은 넘침으로 치지 않는다(study.css)
   // scrollHeight·scrollWidth는 배율을 뺀 값 → 보이는 높이 = scrollHeight × 배율. 가로는 배율만큼 좁아진 칸에서 넘치는지 본다
   const fits = (z) => { host.style.zoom = String(z); return host.scrollHeight * z <= avail + 1 && host.scrollWidth <= host.clientWidth + 1; };
   let lo = NATIVE_MIN, hi = NATIVE_MAX;
@@ -508,6 +509,7 @@ function fitNative() {
   for (let step = 0; step < 7; step += 1) { const mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
   const zoom = Math.floor(lo * 100) / 100;
   host.style.zoom = zoom === 1 ? "" : String(zoom);
+  host.classList.remove("is-fitting");
   host.style.minHeight = `${100 / zoom}%`;   // 배율을 건 뒤에도 칸 높이를 채워 가운데 맞춤이 그대로 되게
 }
 addEventListener("resize", () => requestAnimationFrame(fitNative));
