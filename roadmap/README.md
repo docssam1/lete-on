@@ -1062,5 +1062,5 @@ Mac mini · Claude · 브랜치 `claude/roadmap-intro-rebuild-20261111`. 대상�
 - 진도 비교 그래프 선 끝과 범례에 레벨 꼬리표(L13 지금, L12, L11)를 달았다. 프로그램 그래프 화면의 상위 비교 L12·L11과 같다.
 - 학습 로드맵 미리보기 그림이 위아래로 잘려 있어 `standard-landscape` 전체를 2배로 다시 찍었다(1600×507).
 - 사고력: 원장 지시로 "1031·팩토·필즈·3% 올림피아드 등 시중 사고력 교재의 진단 테스트지 제공"으로 바꾸고 차후 업데이트로 표시했다. 그림은 준비 중 예시로 두고, GM 1과정 10권·250문항과 권별 테스트 링크는 뺐다. 대신 지금 쓸 수 있는 초등 교과 단원테스트(`#unitTest`)로 잇는다.
-- 보딩 스쿨 수학(G·MAP, `boarding-school-math/`) 구역을 목표 로드맵 앞에 넣었다: Pre-Algebra부터 Precalculus까지의 미국 학교 수학, AMC 8→10→12와 AIME, SASMO, Math Kangaroo. AIME는 원장 말씀 기준이다(G·MAP 카탈로그에는 아직 AMC 8·10·12까지만 있다).
+- 보딩 스쿨 수학(G·MAP, `boarding-school-math/`) 구역을 목표 로드맵 앞에 넣었다: Pre-Algebra부터 Precalculus까지의 미국 학교 수학, AMC 8→10→12와 AIME, SASMO, Math Kangaroo. AIME는 원장 말씀 기준이다(G·MAP 카탈로그에는 아직 AMC 8·10·12까지만 있다). 이어서 원장 지시로 두 단 구성으로 꾸몄다: 학년별 성장 지도 그림(continuations/boarding-school 작업본의 `boarding-roadmap.html?grade=7`을 2배로 찍어 섬·길 일러스트만 잘라 `assets/roadmap-boarding-growth-map-20261111.jpg`), "Coming soon" 표시, 영어 G·MAP 소개 일부(`international.html?locale=en`의 표어·6단계·학습 순환), 학교 수학·경시 과정 줄. 성장 지도와 지필드 모의고사(AMC 8·10·12, Grade 7 단원)는 브랜치 `codex/boarding-g7-nsa-mac-20261017`에만 있고 아직 배포 전이라 Coming soon으로 표시했다. 그 작업본은 다른 작업자의 미커밋 변경이 있어 건드리지 않았다.
 

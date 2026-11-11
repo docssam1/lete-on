@@ -77,7 +77,7 @@ test('a graph line extends with the scroll, linearly, and is whole without the s
 });
 test('every picture added to the introduction exists, has its size and says what it shows',()=>{
  const imgs=[...html.matchAll(/<img\b[^>]*>/g)].map(m=>m[0]).filter(t=>/20261111|roadmap-level-lanes/.test(t));
- assert.equal(imgs.length,10);
+ assert.equal(imgs.length,11);
  for(const t of imgs){
   const src=t.match(/src="([^"]+)"/)[1];assert.ok(readFileSync(new URL(src,import.meta.url)).length>10000,src);
   assert.match(t,/width="\d+" height="\d+"/);assert.match(t,/loading="lazy"/);assert.ok(t.match(/alt="([^"]*)"/)[1].length>15,src);
