@@ -16,7 +16,6 @@
 html,body.member-landing{overflow-x:clip}
 
 /* Under the film: a plain index of the page instead of icon tiles. */
-.member-landing .member-reel{padding-bottom:0}
 .account-quicklinks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--in-line)}
 .account-quicklinks a{display:flex;align-items:center;min-height:76px;padding:var(--in-s4) var(--in-s5);font-size:1.125rem;font-weight:700;line-height:1.4;letter-spacing:-.02em;color:var(--member-ink);text-decoration:none}
 .account-quicklinks a:first-child{padding-left:0}
