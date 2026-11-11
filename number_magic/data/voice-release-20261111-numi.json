@@ -3607,5 +3607,10 @@
       "voice": "nm-numi-v2"
     }
   ],
-  "missing": []
+  "missing": [],
+  "ownerApprovedAfterRelease": {
+    "date": "2026-11-11",
+    "words": "통과",
+    "note": "배포 뒤 앱에서 들어 보고 확인"
+  }
 }
