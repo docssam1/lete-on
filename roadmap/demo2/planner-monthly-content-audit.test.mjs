@@ -30,3 +30,13 @@ test('monthly high-school chain uses current subjects without duplicated calculu
   assert.doesNotMatch(p.rows.filter(r=>['school','comp'].includes(r.key)).flatMap(r=>r.blocks).map(b=>b[0]).join('\n'),/수학\(상\)|수학\(하\)|수Ⅰ|수Ⅱ/);
  }
 });
+test('middle-school high-school preview stops at the 2028 CSAT subjects',()=>{
+ // 2028 수능 수학은 대수·미적분Ⅰ·확률과 통계. 중등 동안 미적분Ⅱ·기하 선행을 잡지 않는다(영과고형 D는 별도 설계).
+ for(const band of ['A','B','C'])for(const grade of [3,4,5]){
+  const names=P.build({...opts,band,grade}).rows.find(r=>r.key==='school').blocks.map(b=>b[0]);
+  assert.ok(names.every(x=>!/미적분Ⅱ|기하/.test(x)),`${band} 초${grade}: ${names.join(' / ')}`);
+ }
+ const a=P.build({...opts,band:'A'}).rows.find(r=>r.key==='school').blocks.map(b=>b[0]);
+ assert.ok(a.includes('확률과 통계'));
+ assert.ok(a.includes('수능 범위 심화 · 내신 · 진로 탐색'));
+});
