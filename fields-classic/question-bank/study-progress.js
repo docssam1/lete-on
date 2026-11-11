@@ -10,7 +10,7 @@
 const ROOT = "https://fgahqumaldheqettmvqg.supabase.co/functions/v1";
 const API = `${ROOT}/fields-progress`;
 const SESSION_KEY = "gfield_fields_session";
-const NAME_KEY = "gf_n", TYPE_KEY = "gf_t", MEMBER_KEY = "gf_m";
+const NAME_KEY = "gf_n", TYPE_KEY = "gf_t", MEMBER_KEY = "gf_m", PERM_KEY = "gf_p";   // gf_p: 승인 권한 목록(강사용 교안 등, fields-access.js canTeach)
 const PREFIX = "fields-classic-rec:";
 const localKey = (student, kind, key) => `${PREFIX}${student}:${kind}:${key}`;
 
@@ -23,14 +23,19 @@ const stored = (key) => { try { return sessionStorage.getItem(key) || ""; } catc
 export function loggedIn() {
   if (!session()) return null;
   let member = null;
+  let permissions = [];
   try { member = JSON.parse(stored(MEMBER_KEY) || "null"); } catch {}
-  return { name: stored(NAME_KEY), type: stored(TYPE_KEY) || "student", member };
+  try { permissions = JSON.parse(stored(PERM_KEY) || "[]"); } catch {}
+  return { name: stored(NAME_KEY), type: stored(TYPE_KEY) || "student", member, permissions: Array.isArray(permissions) ? permissions : [] };
 }
 async function auth(body, token = "") {
   const response = await fetch(`${ROOT}/fields-auth`, { method: "POST", headers: { "Content-Type": "application/json", ...(token ? { "x-fields-session": token } : {}) }, body: JSON.stringify(body), cache: "no-store" });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) { const error = new Error(payload.error || `request_failed_${response.status}`); error.status = response.status; error.member = payload.member || null; throw error; }
   return payload;
+}
+function rememberPermissions(permissions) {
+  try { sessionStorage.setItem(PERM_KEY, JSON.stringify(Array.isArray(permissions) ? permissions : [])); } catch {}
 }
 export function rememberMember(member) {
   try { if (member) sessionStorage.setItem(MEMBER_KEY, JSON.stringify(member)); else sessionStorage.removeItem(MEMBER_KEY); } catch {}
@@ -44,6 +49,7 @@ export async function login(code, name) {
     sessionStorage.setItem(TYPE_KEY, result.type === "admin" ? "admin" : "student");
   } catch {}
   rememberMember(result.member);
+  rememberPermissions(result.permissions);
   return { name: result.name, type: result.type === "admin" ? "admin" : "student", member: result.member || null };
 }
 // 저장된 세션이 아직 살아 있는지 서버에 묻는다. 만료됐거나(401) 체험이 끝났으면(403) 지운다.
@@ -53,13 +59,14 @@ export async function checkSession() {
   try {
     const result = await auth({ action: "session" }, token);
     rememberMember(result.member);
+    rememberPermissions(result.permissions);
     return { name: result.name, type: result.type === "admin" ? "admin" : "student", member: result.member || null };
   } catch (error) {
     if (error.status === 401 || error.status === 403) clearSession();
     return null;
   }
 }
-function clearSession() { try { [SESSION_KEY, NAME_KEY, TYPE_KEY, MEMBER_KEY, "gf_c"].forEach((key) => sessionStorage.removeItem(key)); } catch {} }
+function clearSession() { try { [SESSION_KEY, NAME_KEY, TYPE_KEY, MEMBER_KEY, PERM_KEY, "gf_c"].forEach((key) => sessionStorage.removeItem(key)); } catch {} }
 // 회원 서버 함수(fields-members)를 로그인 세션으로 부른다 — status · request · start · admin-*
 export async function memberCall(body) {
   const token = session();

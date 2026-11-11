@@ -1,7 +1,8 @@
 // 첫 화면(home.html): 카드 주소에 학생 이름(?student=) 이어 붙이기 · 이어서 하기 한 줄 · 로그인 글자 · 숏릴 자막 · 멈춤 단추.
 import { createTimeline, stagger, splitText } from "./vendor/animejs-4.5.0/anime.esm.min.js";
 import { setIcon } from "./ui-icons.js?v=20261105b";
-import { loggedIn, loadLocalAll } from "./study-progress.js?v=20261029q";
+import { loggedIn, loadLocalAll } from "./study-progress.js?v=20261111m";
+import { canTeach } from "./fields-access.js?v=20261111m";
 
 // 인트로(원장 2026-11-04 「인트로에 필요 없어?」 — 영상 1 「로고·인트로는 Anime.js」, 스킬 web-ui-library-picks):
 // 로고 동그라미가 굴러 들어오고 → WELCOME TO → 뒤의 큰 글자 GIFTED MATH BANK가 한 글자씩 아래에서 올라온다. 카드 셋은 원래 CSS 등장(hm-in) 그대로.
@@ -25,12 +26,12 @@ if (student) {
     a.href = `./${url.pathname.split("/").pop()}${url.search}${url.hash}`;
   });
 }
-// 위 오른쪽: 로그인했으면 이름(학생), 관리자(원장) 계정이면 「강사용 교안」·「Admin」(관리 화면). 가입 글자는 숨긴다.
+// 위 오른쪽: 로그인했으면 이름(학생), 관리자(원장) 계정이면 「Admin」(관리 화면). 「강사용 교안」은 승인 권한이 있는 계정만(canTeach). 가입 글자는 숨긴다.
 // 대문에는 강사·원장 문을 따로 두지 않는다 — 로그인한 계정에 따라 달라진다(원장 2026-11-11)
 if (me) {
   const login = document.getElementById("homeLogin");
   login.textContent = me.type === "admin" ? "Admin" : `${me.name} 로그인됨`;
-  document.getElementById("homeClass").hidden = me.type !== "admin";
+  document.getElementById("homeClass").hidden = !canTeach();
   login.href = me.type === "admin" ? "./teacher.html" : "./login.html";
   document.getElementById("homeSignup").hidden = true;
 }

@@ -30,6 +30,7 @@ const PRODUCT_IDS = new Set([
   "파이널모의고사2회",
   "파이널모의고사3회",
   "마무리점검",
+  "강사용교안", // 스스로 공부 강사용 교안(원장 2026-11-11)
 ]);
 
 class HttpError extends Error {

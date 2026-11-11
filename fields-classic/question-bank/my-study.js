@@ -1,5 +1,5 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
-import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261029q";
+import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261111m";
 import { planStatus, planLine } from "./study-plan.js?v=20261111f";
 
 // 내 학습 상황(원장 2026-10-27 「학생이 직접 학습 상황을 볼 수 있는 것도 · 수행률 진도」)

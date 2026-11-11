@@ -1,9 +1,9 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261111c";
 import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261111f";
-import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
+import { readRecord, saveRecord } from "./study-progress.js?v=20261111m";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
-import { canStudy, lockPage } from "./fields-access.js?v=20261111e";
+import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261111m";
 import { planStatus, dayLabel } from "./study-plan.js?v=20261111f";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
@@ -900,7 +900,7 @@ function startIndex() {
   return Math.min(Math.max((Number(params.get("s")) || 1) - 1, 0), slides.length - 1);
 }
 // 열리지 않은 권·단원이면 덱 대신 안내(둘러보기 1권 1단원 · 체험 시작 권 · 정식 한 달에 1권, fields-access.js)
-const gate = classMode ? { ok: true } : canStudy(book.id, unitIndex);
+const gate = classMode ? (canTeach() ? { ok: true } : { ok: false, why: "teach" }) : canStudy(book.id, unitIndex);
 if (classMode) setupClass();
 if (!gate.ok) lockPage(gate.why, { bookId: book.id, student, here: `study.html${location.search}` });
 else {

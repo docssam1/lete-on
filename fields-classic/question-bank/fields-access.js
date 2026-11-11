@@ -1,4 +1,4 @@
-import { loggedIn, memberCall } from "./study-progress.js?v=20261029q";
+import { loggedIn, memberCall } from "./study-progress.js?v=20261111m";
 
 // 스스로 공부를 어디까지 열어 주나(원장 2026-10-29 「이메일 인증 후 2주 체험 · 인증하지 않고 둘러보기는 한 주분만 · 그다음 정식」)
 //   둘러보기(로그인 안 함)      → 1권 1단원(한 주 = 1·2차시)만
@@ -48,6 +48,13 @@ export function canRetry(bookId, unitIndex = null) {
   return paid ? gate : { ok: false, why: "retry", who };
 }
 export const isPaid = () => canRetry(PREVIEW.book, PREVIEW.unit).why !== "retry";
+// 강사용 교안(?as=class)은 승인 권한에 따라(원장 2026-11-11 「승인 권한에 따라 다르도록」): 관리자(DOCSSAM)이거나
+// 승인 관리(fields-classic/admin.html)에서 「강사용 교안」 권한을 켠 승인번호로 로그인했을 때만 연다. 화면 쪽 잠금이다.
+export const TEACH_PERMISSION = "강사용교안";
+export function canTeach() {
+  const me = loggedIn();
+  return Boolean(me) && (me.type === "admin" || (me.permissions || []).includes(TEACH_PERMISSION));
+}
 
 let cssAdded = false;
 function addCss() {
@@ -82,6 +89,10 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
     <div class="fa-actions">${who.kind === "member"
       ? (m?.approvalRequestedAt ? `<span class="fa-small">${day(m.approvalRequestedAt)}에 정규회원 요청을 보냈어요.</span>` : `<button type="button" class="fa-btn primary" data-fa="regular">정규회원 승인 요청(카톡) ›</button>`)
       : `<a class="fa-btn primary" href="./signup.html">이메일로 가입하기 ›</a><a class="fa-btn" href="${login}">승인번호로 로그인</a>`}</div><p class="fa-small" data-fa-msg></p></div>`;
+  if (why === "teach") return `<div class="fa-lock"><p class="fa-kick">강사용 교안</p>
+    <h2>강사용 교안은 승인된 강사만 열 수 있어요</h2>
+    <p>원장님께 「강사용 교안」 권한을 받은 승인번호로 로그인해 주세요.${who.kind !== "preview" ? " 지금 로그인한 승인번호에는 이 권한이 없어요." : ""}</p>
+    <div class="fa-actions"><a class="fa-btn primary" href="${login}">승인번호로 로그인 ›</a><a class="fa-btn" href="./start.html">학생 화면으로</a></div></div>`;
   if (why === "preview") return `<div class="fa-lock"><p class="fa-kick">둘러보기</p>
     <h2>둘러보기는 1권 1단원(한 주 분량)까지예요</h2>
     <p>이메일로 가입하며 승인번호를 정하면 <b>2주 동안 체험</b>할 수 있어요. 체험이 끝난 뒤에는 정규회원으로 이어서 공부해요.</p>

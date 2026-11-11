@@ -1,12 +1,12 @@
-import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261029q";
-import { KAKAO } from "./fields-access.js?v=20261111e";
+import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261111m";
+import { KAKAO } from "./fields-access.js?v=20261111m";
 
 // 승인(로그인) 페이지(원장 2026-10-27): 승인번호 + 이름 → 학생은 스스로 공부 첫 화면, 관리자(DOCSSAM)는 선생님 보기.
 // 승인번호는 가입(signup.html, 이메일 인증)에서 받는다. 체험이 끝났거나 멈춘 회원은 서버가 막고, 여기서 카톡 요청 단추를 보인다.
-// &next=my-study.html 처럼 돌아갈 화면을 줄 수 있다(같은 폴더의 html 만).
+// &next=my-study.html 처럼 돌아갈 화면을 줄 수 있다(같은 폴더의 html 만, 강사용 교안처럼 ?뒤 주소도 함께).
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const next = /^[\w-]+\.html$/u.test(params.get("next") || "") ? params.get("next") : "";
+const next = /^[\w-]+\.html(\?[^#]*)?$/u.test(params.get("next") || "") ? params.get("next") : "";
 const MESSAGES = {
   credentials_invalid: "승인번호와 이름을 다시 확인해 주세요.",
   too_many_attempts: "로그인 시도가 많아요. 잠시 뒤에 다시 해 주세요.",
@@ -22,8 +22,11 @@ $("askBtn").addEventListener("click", async () => {
   $("error").textContent = "보낼 말을 복사해 두었어요. 카톡 창에 붙여 넣어 보내 주세요.";
 });
 const destination = (me) => {
-  const page = me.type === "admin" ? (next || "teacher.html") : (next && next !== "teacher.html" ? next : "start.html");
-  return `./${page}?${new URLSearchParams(me.type === "admin" ? {} : { student: me.name })}`;
+  const page = me.type === "admin" ? (next || "teacher.html") : (next && !next.startsWith("teacher.html") ? next : "start.html");
+  const [file, query = ""] = page.split("?");
+  const search = new URLSearchParams(query);
+  if (me.type !== "admin") search.set("student", me.name);
+  return `./${file}?${search}`;
 };
 
 function showAlready(me) {

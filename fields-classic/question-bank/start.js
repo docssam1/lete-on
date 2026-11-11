@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261111c";
-import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261029q";
-import { canStudy, isPaid, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261111e";
+import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261111m";
+import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261111m";
 import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261111f";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
@@ -323,6 +323,11 @@ document.querySelector(".st-door-switch").addEventListener("click", (event) => {
   syncAddress();
 });
 $("studentName").textContent = student;
+// 강사용 교안은 승인 권한이 있을 때만(fields-access.js canTeach). 없으면 안내로 바꾸고 이 화면의 나머지는 그리지 않는다(끝나지 않는 await로 멈춤)
+if (view.mode === "class" && !canTeach()) {
+  lockPage("teach", { here: `start.html${location.search}` });
+  await new Promise(() => {});
+}
 if (view.mode === "class") {
   document.body.classList.add("is-class");
   $("brandName").textContent = "강사용 교안";
