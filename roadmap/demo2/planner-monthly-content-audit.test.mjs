@@ -30,3 +30,27 @@ test('monthly high-school chain uses current subjects without duplicated calculu
   assert.doesNotMatch(p.rows.filter(r=>['school','comp'].includes(r.key)).flatMap(r=>r.blocks).map(b=>b[0]).join('\n'),/수학\(상\)|수학\(하\)|수Ⅰ|수Ⅱ/);
  }
 });
+test('middle-school high-school preview stops at the 2028 CSAT subjects',()=>{
+ // 2028 수능 수학은 대수·미적분Ⅰ·확률과 통계. 중등 동안 미적분Ⅱ·기하 선행을 잡지 않는다(영과고형 D는 별도 설계).
+ for(const band of ['A','B','C'])for(const grade of [3,4,5]){
+  const names=P.build({...opts,band,grade}).rows.find(r=>r.key==='school').blocks.map(b=>b[0]);
+  assert.ok(names.every(x=>!/미적분Ⅱ|기하/.test(x)),`${band} 초${grade}: ${names.join(' / ')}`);
+ }
+ const a=P.build({...opts,band:'A'}).rows.find(r=>r.key==='school').blocks.map(b=>b[0]);
+ assert.ok(a.includes('확률과 통계'));
+ assert.ok(a.includes('수능 범위 심화 · 내신 · 진로 탐색'));
+});
+test('beyond-CSAT high-school preview is only an opt-in, marked not recommended',()=>{
+ for(const band of ['A','B','C']){
+  const base=P.build({...opts,band}),beyond=P.build({...opts,band,hiScope:'beyond'});
+  const names=p=>p.rows.find(r=>r.key==='school').blocks.map(b=>b[0]);
+  assert.ok(!names(base).some(x=>/미적분Ⅱ/.test(x)));
+  const b=names(beyond),i=b.findIndex(x=>/미적분Ⅱ · 기하/.test(x));
+  assert.ok(i>0,band+': '+b.join(' / '));assert.match(b[i],/비추천/);
+  assert.ok(b.slice(0,i).some(x=>/확률과 통계/.test(x)),'확통 뒤에 둔다');
+  assert.match(JSON.stringify(P.narrative(beyond)),/권하지 않지만/);
+  assert.doesNotMatch(JSON.stringify(P.narrative(base)),/권하지 않지만/);
+  // 영과고형은 별도 설계라 이 선택과 무관하다.
+  assert.deepEqual(P.build({...opts,band:'D',hiScope:'beyond'}).rows,P.build({...opts,band:'D'}).rows);
+ }
+});

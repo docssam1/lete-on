@@ -89,3 +89,5 @@ body.roadmap-studio #questionOptions .intake-progress p,body.roadmap-studio #que
 #questionOptions .intake-progress [data-progress-percent]:hover{background:#f7effe}
 #questionOptions .intake-progress [data-progress-percent]:focus-visible{outline:3px solid #94dcff;outline-offset:2px}
 body.roadmap-studio #questionOptions .intake-progress #progressError{color:#ffc4d2}#questionTitle{scroll-margin-top:72px}
+/* 함께 하는 교재 체크 목록 */
+#questionOptions .intake-with>div{flex-wrap:wrap;gap:8px 14px}#questionOptions .intake-with label{flex:0 1 auto;display:flex;align-items:center;gap:6px;min-height:32px}#questionOptions .intake-with input{width:18px;height:18px;margin:0}
