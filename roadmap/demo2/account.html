@@ -5,7 +5,7 @@
 <title>학습 로드맵 설계 · GFIELD</title>
 <link rel="stylesheet" href="membership.css?v=20261101-fill1">
 <link rel="stylesheet" href="account-landing.css?v=20261111-film1">
-<link rel="stylesheet" href="account-intro.css?v=20261111-film1">
+<link rel="stylesheet" href="account-intro.css?v=20261111-check1">
 <link rel="stylesheet" href="docssam-contact.css?v=20261104-compact1">
 </head>
 <body class="member-page member-landing">
@@ -94,14 +94,43 @@
    <ol class="account-cycle-steps">
     <li><strong>현재 진도에서 계획</strong><p>교과·심화·사고력·연산을 각각 입력합니다. 마친 범위를 빼고 남은 분량으로 다음 과정과 실제 월별 일정을 계산합니다.</p></li>
     <li><strong>경시 개념 확인 <small>지금 사용</small></strong><p>정수·대수·기하·조합·수열의 항목을 아직 배우지 않음, 학습 중, 혼자 설명·적용 가능, 복습 필요로 기록합니다. 복습할 개념은 계획에 따로 연결합니다.</p></li>
-    <li><strong>고등 모평 수행 점검 <small>직접 기록 가능</small></strong><p>중학생도 현재 배운 범위의 고등 학평·모평 기출로 활용 능력을 확인합니다. 현재 교과·심화의 종료 시점에 맞춰 고1·고2 3·6·9·10월 기출을 풀어볼 실제 월을 잡습니다.</p><details><summary>기록하는 내용 자세히 보기</summary><p>이미 마친 세부 단원을 확인하면 더 이른 기출부터 연결합니다. 초견과 재풀이, 소요 시간, 힌트 없이 혼자 해결한 문항과 도움받은 문항을 기록합니다.</p><p>아직 배우지 않은 문항은 실전 수행률 계산에서 빼고, 단원별 미해결·도움 문항을 입력하면 필요한 보완과 재점검할 기출·날짜가 자동으로 이어집니다. 단원 분류가 없으면 먼저 틀린 문항의 단원을 확인하도록 연결합니다.</p><p>현재 교과·심화 교재에서 찾아볼 단원을 연결하고, 실제 판본의 목차·쪽수와 보완 분량을 저장할 수 있습니다. 현재 책의 설명이나 연습량이 부족할 때는 필요한 역할의 추가 교재를 선택하며, 보완 수행률은 문항·쪽·회차별로 따로 기록합니다. 분량 완료와 재점검 결과는 구분하고 보완·재점검 주기와 날짜는 조정할 수 있습니다.</p></details></li>
-    <li><strong>교과·사고력 권별 테스트 <small>개발·연동 준비 중</small></strong><p>권별 테스트 프로그램을 개발하고 있습니다. 앞으로 응시 여부와 결과, 다시 볼 개념을 로드맵과 연결해 확인할 계획입니다. 현재 화면은 자동 채점 결과를 가져오지 않습니다.</p></li>
+    <li><strong>고등 모평 수행 점검 <small>직접 기록 가능</small></strong><p>중학생도 현재 배운 범위의 고등 학평·모평 기출로 활용 능력을 확인합니다. 현재 교과·심화의 종료 시점에 맞춰 고1·고2 3·6·9·10월 기출을 풀어볼 실제 월을 잡습니다. 기록과 분석 방법은 아래 ‘고등 모평 분석’에서 이어집니다.</p></li>
+    <li><strong>초등 단원평가 O·X <small>지금 사용</small></strong><p>초1-1부터 6-2까지 단원별 문제지를 풀고 문항마다 O·X를 누릅니다. X가 나온 유형은 7일 뒤 다른 문항으로 다시 확인합니다. 사고력 권별 테스트는 준비하고 있습니다.</p></li>
     <li><strong>월별 수행 기록 <small>직접 기록 가능</small></strong><p>정한 회차·단원·쪽수 중 실제 마친 분량을 기록합니다. 분량 완료율과 개념 확인, 모평 수행 결과를 함께 살펴보고 복습과 다음 계획을 조정합니다.</p></li>
    </ol>
    <aside class="account-performance-example"><h3>분량 완료율과 실전 수행률을 함께 봅니다.</h3>
     <div><p class="account-performance-case"><strong>입력 예시: 계획 20회차 중 15회차 완료 → 수행률 <span class="account-performance-figure" data-zoom="in">75%</span></strong></p><p>정한 공부를 얼마나 수행했는지 보여주는 수치입니다. 개념을 혼자 설명한 비율이나 테스트 정답률과 같게 처리하지 않습니다. 단원·회차·쪽수도 같은 단위 안에서 계산합니다.</p></div>
     <div><p class="account-performance-case"><strong>모평 입력 예시: 확인한 10문항 중 미학습 2문항, 혼자 맞힌 6문항 → 배운 범위의 실전 수행률 <span class="account-performance-figure" data-zoom="in">75%</span></strong></p><p>힌트·해설을 참고한 문항은 혼자 맞힌 수에서 뺍니다. 초견과 재풀이를 구분하고, 결과가 다른 시험·범위를 하나의 점수로 평균내지 않습니다.</p></div>
    </aside>
+  </section>
+  <section id="mockAnalysis" class="account-mock" aria-labelledby="mockHeading">
+   <h2 id="mockHeading"><span class="h-lead" data-zoom="out">배운 데까지만 골라 푸는</span> <span class="h-main" data-zoom="in">고등 모평 분석</span></h2>
+   <p class="account-mock-lede">고1·고2 전국연합학력평가 수학 기출을 현재 진도에 맞춰 풀고, 결과를 단원별로 나눠 봅니다. 문제와 정답·해설은 EBSi 공식 파일을 새 창으로 엽니다.</p>
+   <p class="account-fact" data-zoom="in">고1·고2 수학 기출 92회차,<br>2,760문항</p>
+   <p class="account-fact-note">2017~2026년 기출입니다. 문항 위치와 공식 배점을 확인한 범위이며, 단원 연결은 확인이 끝난 문항부터 씁니다.</p>
+   <ol class="account-mock-steps">
+    <li><strong>풀 회차와 시기</strong><p>현재 교과·심화가 끝나는 시점에 맞춰 풀 회차를 고릅니다. 풀어볼 시기는 월의 초·중순·말로 안내합니다.</p></li>
+    <li><strong>배운 문항만 인쇄</strong><p>배운 단원을 체크하면 지금 풀 수 있는 문항 번호를 고릅니다. 고른 문항만 원문 그대로 A4 학습지로 인쇄할 수 있습니다.</p></li>
+    <li><strong>문항별 기록</strong><p>문항마다 혼자 해결, 도움 참고, 틀림, 미응답, 미학습으로 기록합니다. 초견과 재풀이, 소요 시간도 남깁니다. 아직 배우지 않은 문항은 수행률 계산에서 뺍니다.</p></li>
+    <li><strong>전체 시험 결과 분석</strong><p>30문항의 공식 배점으로 혼자 해결한 점수를 계산하고, 배운 범위의 수행률과 단원별 결과를 봅니다. 도움받은 문항과 미학습 문항은 득점에 넣지 않습니다.</p></li>
+    <li><strong>보완과 재점검</strong><p>틀린 단원은 현재 교재에서 보완할 분량으로 잇고, 같은 범위의 다른 연도 기출로 재점검할 날짜를 잡습니다. 분량 완료와 재점검 결과는 구분해 기록합니다.</p></li>
+   </ol>
+   <a href="planner.html">로그인하고 기출 기록 시작하기</a>
+  </section>
+  <section id="unitTest" class="account-unit" aria-labelledby="unitHeading">
+   <div class="account-unit-copy">
+    <h2 id="unitHeading"><span class="h-lead" data-zoom="out">문항마다 O·X로 남기는</span> <span class="h-main" data-zoom="in">초등 단원평가</span></h2>
+    <p class="account-fact" data-zoom="in">71단원, 213세트,<br>5,325문항</p>
+    <p class="account-fact-note">초1-1부터 6-2까지, 단원마다 중·상·최상 세 세트입니다.</p>
+    <ul class="account-unit-points">
+     <li><strong>풀고 바로 기록</strong> 푼 문항의 번호를 찾아 혼자 맞혔으면 O, 틀리거나 도움받았으면 X를 누릅니다. 누르는 대로 계정에 저장됩니다.</li>
+     <li><strong>7일 뒤 다시</strong> X가 나온 유형은 7일 뒤 일정표에 같은 유형의 다른 문항으로 나옵니다. 재점검에서 O면 보완을 닫습니다.</li>
+     <li><strong>누적 그래프</strong> 첫 평가와 재점검을 나눠 날짜별로 봅니다. 문항 수행률, 혼자 맞힌 비율, 혼자 맞힌 누적 문항 수를 확인합니다.</li>
+     <li><strong>문제지</strong> 수업 때 받은 문제지 PDF를 기기에서 엽니다. 문제 원문과 정답표는 사이트에 올려 두지 않았고, 자동 채점은 하지 않습니다.</li>
+    </ul>
+    <a href="planner.html?ox=1">로그인하고 초등 단원평가 열기</a>
+   </div>
+   <figure><img src="assets/roadmap-program-unit-ox-20261111.png" width="1600" height="1120" loading="lazy" alt="학기·단원·난이도를 고르고 1번부터 25번까지 문항마다 O와 X 단추를 누르는 초등 교과 단원평가 화면"><figcaption>프로그램 화면의 초등 단원평가 예시 <a href="assets/roadmap-program-unit-ox-20261111.png" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
   </section>
   <section class="account-goal-roadmaps" aria-labelledby="goalRoadmapsHeading">
    <h2 id="goalRoadmapsHeading"><span class="h-main" data-zoom="in">경시·의대·영과고,</span> <span class="h-lead" data-zoom="out">현재 공부에서 필요한 핵심을 이어갑니다.</span></h2>

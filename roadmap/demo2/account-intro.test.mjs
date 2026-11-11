@@ -47,8 +47,8 @@ test('the motion only reads position and writes its own two values',()=>{
  assert.deepEqual([...new Set([...js.matchAll(/setProperty\('(--[a-z]+)'/g)].map(m=>m[1]))].sort(),['--f','--zp']);
 });
 test('the introduction keeps its anchors, tabs, links and the single senior example',()=>{
- for(const id of ['introduction','introHeading','previewMap','previewGraph','previewTable','previewMapPanel','previewGraphPanel','previewTablePanel','inputExampleHeading','learningCycleHeading','goalRoadmapsHeading','seniorExample','seniorHeading','seniorCaseTitle','stageHeading','libraryHeading','howHeading','questionsHeading','startHeading','accountEntry','memberContent','memberTitle','memberStatus'])assert.equal(html.split(`id="${id}"`).length,2,id);
- for(const href of ['#introduction','#seniorExample','planner.html?books=math','planner.html?goal=contest','planner.html?goal=medicine','planner.html?goal=giftedSchool','planner.html?view=seniors','planner.html?academy=schools','planner.html?academy=notices','planner.html?academy=soma-fields','assets/roadmap-program-map-20261101.png','assets/roadmap-program-graph-20261101.png','assets/roadmap-program-table-20261101.png','assets/senior-seoul-science-roadmap-20261104.svg'])assert.ok(html.includes(`href="${href}"`),href);
+ for(const id of ['introduction','introHeading','previewMap','previewGraph','previewTable','previewMapPanel','previewGraphPanel','previewTablePanel','inputExampleHeading','learningCycleHeading','goalRoadmapsHeading','mockAnalysis','mockHeading','unitTest','unitHeading','seniorExample','seniorHeading','seniorCaseTitle','stageHeading','libraryHeading','howHeading','questionsHeading','startHeading','accountEntry','memberContent','memberTitle','memberStatus'])assert.equal(html.split(`id="${id}"`).length,2,id);
+ for(const href of ['#introduction','#seniorExample','planner.html?books=math','planner.html?goal=contest','planner.html?goal=medicine','planner.html?goal=giftedSchool','planner.html?view=seniors','planner.html?ox=1','assets/roadmap-program-unit-ox-20261111.png','planner.html?academy=schools','planner.html?academy=notices','planner.html?academy=soma-fields','assets/roadmap-program-map-20261101.png','assets/roadmap-program-graph-20261101.png','assets/roadmap-program-table-20261101.png','assets/senior-seoul-science-roadmap-20261104.svg'])assert.ok(html.includes(`href="${href}"`),href);
  assert.equal((html.match(/role="tab"/g)||[]).length,3);assert.equal((html.match(/role="tabpanel"/g)||[]).length,3);
  assert.equal((html.match(/class="account-senior-example"/g)||[]).length,1);
 });
@@ -58,4 +58,12 @@ test('no label sits above a heading, no arrow is glued to a link, and nothing zo
  assert.doesNotMatch(below,/↗|aria-hidden="true">→/);
  assert.doesNotMatch(below,/data-zoom="(in|out)"[^>]*>(?:(?!<\/(span|h2|h3|p|div)>).)*data-zoom=/);
  assert.match(html,/account-intro\.css\?v=/);assert.match(html,/account-intro\.js\?v=/);
+});
+test('the mock analysis and unit test figures are the ones the program holds',()=>{
+ const layouts=read('planner-mock-paper-layouts.js'),library=read('planner-mock-library-data.js');
+ assert.match(html,/고1·고2 수학 기출 92회차,<br>2,760문항/);assert.match(html,/71단원, 213세트,<br>5,325문항/);
+ assert.equal(213*25,5325);assert.equal(71*3,213);assert.equal(92*30,2760);
+ assert.match(library,/2017/);assert.match(library,/2026/);assert.ok(layouts.length>1000);
+ assert.doesNotMatch(html,/교과·사고력 권별 테스트 <small>개발·연동 준비 중/);
+ assert.match(html,/자동 채점은 하지 않습니다/);assert.match(html,/문제 원문과 정답표는 사이트에 올려 두지 않았고/);
 });

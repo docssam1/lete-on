@@ -98,6 +98,29 @@ html,body.member-landing{overflow-x:clip}
 .account-performance-figure{display:block;width:fit-content;margin-top:var(--in-s2);font-size:clamp(4.5rem,2.4rem + 9vw,10rem);font-weight:800;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
 .member-landing .account-learning-cycle :is(a,button,summary):focus-visible{outline-color:var(--in-on-deep)}
 
+/* 5b. 고등 모평 분석: one statement of what is in it, then the order of work as a ledger. */
+.account-mock{margin-top:var(--in-gap);scroll-margin-top:var(--in-s5)}
+.account-main :is(.account-mock,.account-unit) h2{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em;color:inherit;overflow-wrap:break-word;min-width:0}
+.account-mock-lede{max-width:36em;margin:var(--in-s5) 0 0;font-size:var(--in-t-lead);line-height:1.7;color:var(--in-muted)}
+.account-fact{width:fit-content;margin:var(--in-s8) 0 0;font-size:var(--in-t-display);font-weight:800;line-height:1.18;letter-spacing:-.045em;font-variant-numeric:tabular-nums;color:var(--member-ink)}
+.account-fact-note{max-width:36em;margin:var(--in-s4) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-mock-steps{list-style:none;margin:var(--in-s8) 0 0;padding:0;border-bottom:1px solid var(--in-line)}
+.account-mock-steps li{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);column-gap:var(--in-s8);align-items:baseline;padding-block:var(--in-s5);border-top:1px solid var(--in-line)}
+.account-mock-steps strong{font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-mock-steps p{max-width:38em;margin:0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-mock>a,.account-unit-copy>a{display:inline-flex;align-items:center;min-height:44px;margin-top:var(--in-s5);font-size:var(--in-t-body)}
+
+/* 5c. 초등 단원평가: the real screen beside what it records. */
+.account-unit{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:var(--in-s8);align-items:start;margin-top:var(--in-gap);padding-block:var(--in-gap);background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax);scroll-margin-top:var(--in-s5)}
+.account-unit .account-fact{margin-top:var(--in-s6);font-size:clamp(1.875rem,1.2rem + 2.4vw,3.25rem)}
+.account-unit-points{list-style:none;margin:var(--in-s6) 0 0;padding:0;border-bottom:1px solid var(--in-line)}
+.account-unit-points li{padding-block:var(--in-s4);border-top:1px solid var(--in-line);font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-unit-points strong{display:block;font-size:1.125rem;font-weight:800;letter-spacing:-.02em;color:var(--member-ink)}
+.account-unit figure{position:sticky;top:var(--in-s6);margin:0;min-width:0}
+.account-unit figure img{display:block;width:100%;height:auto;background:var(--in-paper);border:1px solid var(--in-line);border-radius:6px}
+.account-unit figcaption{display:flex;justify-content:space-between;align-items:center;gap:var(--in-s4);padding-top:var(--in-s2);font-size:var(--in-t-small);line-height:1.5;color:var(--in-muted)}
+.account-unit figcaption a{display:inline-flex;align-items:center;min-height:44px;flex:none}
+
 /* 6. Three destinations, each a row. */
 .account-goal-roadmaps{margin-top:var(--in-gap)}
 .account-main .account-goal-roadmaps h2{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em}
@@ -215,6 +238,10 @@ html,body.member-landing{overflow-x:clip}
  .account-preview-tabs button{font-size:1.375rem;transform:scale(.8)}
  .account-preview figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
  .account-input-example,.account-lanes,.account-learning-cycle,.account-performance-example,.account-questions{grid-template-columns:minmax(0,1fr)}
+ .account-unit{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s6)}
+ .account-unit figure{position:static}
+ .account-unit figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
+ .account-mock-steps li{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s1)}
  .account-input-example dl>div,.account-example-answer li{grid-template-columns:5.5rem minmax(0,1fr)}
  .account-lanes{gap:var(--in-s7)}
  .account-lanes article:nth-child(even){margin-top:0}
