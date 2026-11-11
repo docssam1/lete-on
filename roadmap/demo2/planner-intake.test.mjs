@@ -523,7 +523,9 @@ test('교과는 진도(과정)→학년·학기→교재, 심화도 과정→학
 test('중등 교재는 책 지도의 교재를 모두 싣고 RPM은 응용으로 표시하며 저장값은 그대로 읽는다',()=>{
  const f={mon:'11',band:'B'},a={grade:'7',gradeInput:'current',schoolCourse:'mid',schoolExact:'14',deepCourse:'mid',deepStage:'15'},q=I.questions(a,f);
  const all=[...q.schoolBook[2],...q.deepBook[2]].map(o=>o[1]).join(' / ');
- for(const name of ['EBS 중학 뉴런','개념원리 중학','에이급 원리해설','베이직쎈','개념+유형 라이트','라이트쎈 중등','RPM 중학','쎈 중등','일품 중등','블랙라벨 중학','에이급수학','최상위수학 중학'])assert.ok(all.includes(name),name);
+ for(const name of ['EBS 중학 뉴런','개념원리 중학','에이급 원리해설','베이직쎈','개념+유형 라이트','라이트쎈 중등','RPM 중학','쎈 중등','일품 중등','블랙라벨 중학','에이급수학','최상위수학 중학','수학의 신 중학 수학','수학의 신 구판','라인업 대수·기하','인사이트 수학','하이퍼 최고난도 수학','에이급수학 리미티드 에디션','SUPERMATH 중1 수학','올림피아드 수학의 지름길'])assert.ok(all.includes(name),name);
+ assert.equal(q.deepBook[2].find(o=>o[0]==='수학의 신 구판')[1],'수학의 신 구판(최고수준 완성) · 극심화 · 절판');
+ assert.ok(!q.schoolBook[2].some(o=>/극심화/.test(o[1])));
  assert.equal(q.deepBook[2].find(o=>o[0]==='RPM')[1],'RPM 중학 · 응용');
  assert.ok(q.deepBook[2].some(o=>/심화$/.test(o[1])));
  assert.ok(!q.schoolBook[2].some(o=>/블랙라벨|에이급수학|최상위수학/.test(o[1])),'심화서는 심화나 활용에서');
