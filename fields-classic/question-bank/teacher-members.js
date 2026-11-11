@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261110x";
+import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { memberCall } from "./study-progress.js?v=20261029q";
 
 // 선생님 보기 · 회원 관리(원장 2026-10-29): 이메일로 가입한 아이들 — 체험 2주 → 원장 승인하면 정식(한 달에 1권씩),

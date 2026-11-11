@@ -13,12 +13,12 @@ import {
   questionClassificationForType,
   representativeConceptForType,
   textbookGuideForType
-} from "./source-data.js?v=20261110x";
+} from "./source-data.js?v=20261111g";
 import { defineQuestionBankAdapter } from "./question-bank-adapter.js?v=20260918a";
 
 export const FIELDS_QUESTION_BANK_ADAPTER = defineQuestionBankAdapter({
   id: "fields-classic",
-  label: "GM",
+  label: "Gifted Math",
   types: TYPES,
   sourceItems: SOURCE_QUESTION_INDEX,
   catalog: {

@@ -31,6 +31,8 @@ body.hm {
 .hm-acct a:hover, .hm-acct a:focus-visible { color: var(--ink); background: #1d1b18; }
 .hm-acct a[hidden] { display: none; }
 .hm-logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
+.hm-logo .gm-word b { font-size: 1.15em; font-weight: 800; }
+.hm-logo .gm-word small { margin-left: .03em; font-size: .7em; font-weight: 600; }
 .hm-logo i { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50% 50% 50% 14%; background: var(--yellow); color: var(--card-ink); font-style: normal; font-weight: 700; font-size: 13px; letter-spacing: -0.02em; }
 
 /* 첫 장: WELCOME TO · 큰 글자 · 카드 셋 */

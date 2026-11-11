@@ -1,4 +1,4 @@
-import { DOMAINS, EXAMS, typeById } from "./source-data.js?v=20261110x";
+import { DOMAINS, EXAMS, typeById } from "./source-data.js?v=20261111g";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);

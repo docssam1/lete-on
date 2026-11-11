@@ -11,7 +11,7 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
   const chars = giant.flatMap((line) => splitText(line, { chars: true }).chars);
   createTimeline({ defaults: { ease: "out(4)" } })
     .add(".hm-logo i", { rotate: [-200, 0], scale: [0.3, 1], opacity: [0, 1], duration: 700, ease: "outBack(1.6)" }, 0)
-    .add(".hm-logo span", { opacity: [0, 1], x: [-10, 0], duration: 420 }, 260)
+    .add(".hm-logo > span", { opacity: [0, 1], x: [-10, 0], duration: 420 }, 260)
     .add(".hm-welcome", { opacity: [0, 1], y: [-12, 0], letterSpacing: ["0.4em", "0.06em"], duration: 700 }, 120)
     .add(chars, { opacity: [0, 1], y: ["70%", "0%"], duration: 900, delay: stagger(36) }, 200);
 }

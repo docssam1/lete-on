@@ -1,10 +1,10 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261110x";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261111c";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261111c";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261111f";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage } from "./fields-access.js?v=20261111e";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261111c";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261111f";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -221,6 +221,17 @@ function speak(text, voiceId = null) {
   });
 }
 function paintGuideButtons() {
+  // 강사용 교안: 그림 단추(소리·↺·▶/⏸)가 판서의 멈추기·처음부터와 비슷해 보여 글로 쓴다(원장 2026-11-11 「정리」)
+  if (classMode) {
+    $("voiceBtn").textContent = pref.sound ? "음성 켜짐" : "음성 꺼짐";
+    $("voiceBtn").setAttribute("aria-pressed", String(pref.sound));
+    $("againBtn").textContent = "다시 듣기";
+    $("pauseBtn").textContent = pref.paused ? "자동 넘김 꺼짐" : "자동 넘김 켜짐";
+    $("pauseBtn").setAttribute("aria-label", pref.paused ? "다음 장으로 저절로 넘어가기 켜기" : "저절로 넘어가기 끄기");
+    $("pauseBtn").title = $("pauseBtn").getAttribute("aria-label");
+    $("pauseBtn").setAttribute("aria-pressed", String(!pref.paused));
+    return;
+  }
   setIcon($("voiceBtn"), pref.sound ? "soundOn" : "soundOff", "16px");
   $("voiceBtn").setAttribute("aria-pressed", String(pref.sound));
   setIcon($("pauseBtn"), pref.paused ? "play" : "pause", "16px");
@@ -572,7 +583,9 @@ function slideHead(slide) {
   const label = slide.kind === "bell" ? bellLabel(slide) : PHASES[phaseNo(slide.kind) - 1][1];
   const title = slideTitle(slide);
   // 게임은 건너뛸 수 있다(원장 2026-10-29 「게임은 넘어갈 수 있고」) — 이어진 게임 장을 다 넘어 워밍업으로
-  const skip = slide.kind === "game" ? `<button type="button" class="sd-skip" data-act="skip-games">게임 건너뛰기 ›</button>` : "";
+  // 판서는 「다음 장면」으로 한 장면씩 넘기고, 통째로 넘기려면 「건너뛰기」(원장 2026-11-11 「건너뛰기로 이름 바꿔」)
+  const skip = slide.kind === "game" ? `<button type="button" class="sd-skip" data-act="skip-games">게임 건너뛰기 ›</button>`
+    : slide.kind === "concept" && slide.native?.board ? `<button type="button" class="sd-skip" data-act="skip-board">건너뛰기 ›</button>` : "";
   const print = WORK_KINDS.includes(slide.kind) ? `<a class="sd-skip sd-print" href="${esc(sheetUrl(slide, { print: true }))}" target="_blank" rel="noopener">인쇄해서 풀기</a>` : "";
   return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>${print}`;
 }
@@ -854,7 +867,10 @@ function skipGames() {
   while (slides[target]?.kind === "game") target += 1;
   go(target);
 }
-$("slideHead").addEventListener("click", (event) => { if (event.target.closest("[data-act='skip-games']")) skipGames(); });
+$("slideHead").addEventListener("click", (event) => {
+  if (event.target.closest("[data-act='skip-games']")) skipGames();
+  if (event.target.closest("[data-act='skip-board']")) { cancelAuto(); go(index + 1); }
+});
 $("signs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-jump]");
   if (button && !button.disabled) { cancelAuto(); go(Number(button.dataset.jump)); }

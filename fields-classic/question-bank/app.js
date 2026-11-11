@@ -1,4 +1,4 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261110x";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261111g";
 import { GENERATORS } from "./generators.js?v=20261101n";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { icon } from "./ui-icons.js?v=20261105b";
@@ -39,6 +39,14 @@ const {
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// 한 차시 교재 학습지의 짧은 주소(&session=<단원>~<차시>~book|daily): 문제 목록과 제목을 덱과 같은 study-deck.js로 다시 만든다.
+// 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
+if (params.has("session") && !params.has("picks")) {
+  const [unitText, partText, kind] = params.get("session").split("~");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261111f");
+  const entries = sessionSheetEntries(CURRICULUM.find((entry) => entry.id === params.get("book")), Number(unitText), Number(partText), kind);
+  if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
+}
 const student = params.get("student") || "DEMO";
 // 권별테스트를 「유사형」(같은 구조, 새 숫자)으로 만들 때. 기본은 늘 같은 문제가 나오는 원본형.
 const freshUnitTest = params.get("fresh") === "1";

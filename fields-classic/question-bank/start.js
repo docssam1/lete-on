@@ -1,8 +1,8 @@
-import { CURRICULUM } from "./source-data.js?v=20261110x";
+import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261111c";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261029q";
 import { canStudy, isPaid, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261111e";
-import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261111c";
+import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261111f";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -327,7 +327,7 @@ if (view.mode === "class") {
   document.body.classList.add("is-class");
   $("brandName").textContent = "강사용 교안";
   $("todayHeading").textContent = "어느 차시를 수업할까요?";
-  document.title = "GM 강사용 교안";
+  document.title = "Gifted Math 강사용 교안";
 }
 $("introLink").href = link("home.html", {});
 $("myStudyLink").href = link("my-study.html", { book: view.bookId });

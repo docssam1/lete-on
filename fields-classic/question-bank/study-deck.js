@@ -142,13 +142,22 @@ export const sessionDailyPicks = (unit, unitIndex, part, bookId = "") => part > 
 // 한 차시 교재 인쇄 주소(golden-bell.html?sessionbook=1: 워밍업 교재 표지 → (2차시부터) 지난 차시 데일리 → 개념·워밍업 → 본책 → 과제 → (마지막 차시) 단원 평가).
 // 시작 화면 차시 카드 · 「책 시작 때 인쇄할까요?」 · 강사용 교안 머리줄이 같이 쓴다. 학습 묶음은 덱과 같은 sessionLessons(덱 전용 학습은 인쇄할 워밍업이 없어 뺀다).
 // link(page, entries) = 그 화면의 주소 만들기(학생 이름을 붙인다)
+// 학습지 주소에는 문제 목록(picks)을 통째로 싣지 않고 &session=<단원>~<차시>~book|daily만 둔다 — 문제은행 화면(app.js)이
+// sessionSheetEntries로 picks·제목을 다시 만든다. 예전에는 학습지 주소 둘이 인쇄 주소 안에 다시 들어가 8천 자를 넘어
+// 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11, 10권 1단원 3차시 8,663자).
+export function sessionSheetEntries(book, unitIndex, part, kind) {
+  const unit = book?.units[unitIndex];
+  if (!unit || !(part >= 1 && part <= sessionCount(unit))) return null;
+  if (kind === "daily") return part > 1 ? { picks: sessionDailyPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트` } : null;
+  return { picks: sessionBookPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 본책과 과제` };
+}
 export function sessionPrintHref(book, unitIndex, part, bellData, link) {
   const unit = book.units[unitIndex], lastPart = part === sessionCount(unit);
   const lessons = sessionLessons(book, unitIndex, bellData, part).filter((lesson) => !lesson.deckOnly);
   const problems = sessionBlocks(unit, part).reduce((sum, block) => sum + block.numbers.length, 0);
   const sheetBase = { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1" };
-  const sheet = link("index.html", { ...sheetBase, picks: sessionBookPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 본책과 과제` });
-  const presheet = part > 1 ? link("index.html", { ...sheetBase, picks: sessionDailyPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
+  const sheet = link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~book` });
+  const presheet = part > 1 ? link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~daily` }) : "";
   const parts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problems}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
   return link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
     label: `${unitIndex + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: parts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });

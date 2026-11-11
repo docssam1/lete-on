@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261110x";
+import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { login } from "./study-progress.js?v=20261029q";
 
 // 가입(원장 2026-10-29 「이메일로 승인번호가 우선 나오고 그다음 접속」「이메일 인증 후 2주 체험」):

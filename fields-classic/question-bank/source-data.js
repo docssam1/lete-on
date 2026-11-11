@@ -25,7 +25,7 @@ export const DOMAINS = [
 // 한 세부 유형은 여러 학원·교재 스타일에서 함께 나타날 수 있다. 유형을 복제하지 않고
 // academyStyleIds에 출처 스타일을 누적해 다대다로 연결한다.
 export const ACADEMY_STYLES = [
-  { id: "fields-classic", label: "GM" }
+  { id: "fields-classic", label: "Gifted Math" }
 ];
 
 const type = (id, domain, middle, label, options = {}) => ({
