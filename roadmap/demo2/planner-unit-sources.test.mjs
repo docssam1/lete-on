@@ -34,7 +34,7 @@ test('edition selection prioritises an observed weak chapter and honours indepen
   assert.match(item.detail,/3단원/);
   const next=build({answers:elem,bookChecks:state,mastered:[item.id]}).items.find(r=>r.track==='curriculum');
   assert.equal(next.unitLabel,b.units[1].title);
-  assert.equal(made.items.find(i=>i.track==='arithmetic').unitLabel,'구구단 종합 · 세 자리 덧셈·뺄셈');
+  assert.equal(made.items.find(i=>i.track==='arithmetic').unitLabel,'2-2 · 구구단 종합 · 세 자리 덧셈·뺄셈');
 });
 test('unknown editions use stage-specific topics and manual ranges are scoped to the book',()=>{
   const input=build({answers:elem});

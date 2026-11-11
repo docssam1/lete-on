@@ -491,14 +491,15 @@ test('book choices and examples never offer the paired labels that are not real 
  assert.ok(I.deepBooks.includes('개념응용 · 최상위'),'saved answers still validate');
 });
 
-test('arithmetic choices name each 기적의 계산법 volume by its own topic, so multiplication by digit count is distinguishable',()=>{
- const q=I.questions({...answer,calc:''},fields).calc[2],labels=Object.fromEntries(q);
- assert.equal(labels['기적의 계산법 5권'],'한 자리 수로 곱하기 · 첫 나눗셈');
- assert.equal(labels['기적의 계산법 6권'],'두 자리 수 곱셈 · 한 자리 수로 나누기');
- assert.equal(labels['기적의 계산법 7권'],'큰 자연수 곱셈 · 두 자리 수로 나누기');
- assert.equal(labels['기적의 계산법 10권'],'혼합 계산 · 분수·소수 곱셈');
- for(let n=1;n<=12;n++)assert.ok(labels['기적의 계산법 '+n+'권'],n+'권');
- assert.ok(!Object.values(labels).includes('곱셈·나눗셈')&&!Object.values(labels).includes('복합 계산'));
+test('arithmetic is asked by school semester, whatever book the child uses, so multiplication by digit count is distinguishable',()=>{
+ const q=I.questions({...answer,calc:''},fields).calc,labels=Object.fromEntries(q[2]);
+ assert.match(q[1],/학년·학기/);assert.match(q[1],/소마셈·원리셈·두뇌로·구몬/);
+ assert.equal(labels['기적의 계산법 5권'],'3-1 · 한 자리 수로 곱하기 · 첫 나눗셈');
+ assert.equal(labels['기적의 계산법 6권'],'3-2 · 두 자리 수 곱셈 · 한 자리 수로 나누기');
+ assert.equal(labels['기적의 계산법 7권'],'4-1 · 큰 자연수 곱셈 · 두 자리 수로 나누기');
+ assert.equal(labels['기적의 계산법 10권'],'5-2 · 혼합 계산 · 분수·소수 곱셈');
+ for(let n=1;n<=12;n++)assert.match(labels['기적의 계산법 '+n+'권'],new RegExp('^'+Math.ceil(n/2)+'-'+(n%2?1:2)+' · '),n+'권');
+ assert.ok(!Object.values(labels).some(v=>/기적의 계산법/.test(v)),'no book name is forced in the choices');
  const pre=I.questions({...answer,age:'5',calc:''},{...fields,grade:'pre'}).calc[2].map(o=>o[0]);
  assert.ok(pre.includes('소마셈 K'));
  const old={...answer,calc:'기적의 계산법 4권',calcStatus:'done'};
