@@ -49,3 +49,20 @@
 .ast-dialog .ast-cal-row,.ast-dialog .ast-cal-undated .ast-post{padding-right:18px}
 @media(max-width:900px){.ast-cal-bar h3{font-size:17px}.ast-cal-nav button{padding-inline:10px}.ast-cal-cell{min-height:52px}.ast-dialog .ast-cal-day{align-items:center;gap:1px;padding:4px 0}.ast-cal-today,.ast-cal-chips{display:none}.ast-cal-count{display:flex;align-items:center;gap:3px;font-size:11px;line-height:1.4;color:#604471}.ast-cal-count:before{content:'';box-sizing:border-box;width:6px;height:6px;border:1px solid #79608d;border-radius:50%;background:#79608d}.ast-cal-count.is-ongoing:before{background:none}.ast-dialog .ast-cal-row,.ast-dialog .ast-cal-undated .ast-post{padding-right:14px}}
 @media(max-width:380px){.ast-cal-grid{margin-inline:-12px}}
+
+/* 대치동 초저학년 수학학원 명단: 카드 하나로 접어 두고, 펼치면 묶음별로 이름과 시작 학년을 본다. */
+.ast-lower{margin:12px 0 18px;background:#fff;border:1px solid #d5c5df;border-radius:18px}
+.ast-lower>summary{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:center;min-height:44px;padding:18px 20px;cursor:pointer;word-break:keep-all}
+.ast-lower>summary>span{grid-column:2}
+.ast-lower>summary strong{font-size:16px;font-weight:800;color:#543764}
+.ast-lower>summary span{font-size:12px;line-height:1.6;color:#786487}
+.ast-lower-body{padding:0 20px 20px;border-top:1px solid #ddd2e4}
+.ast-lower-body>p{margin:14px 0 0;font-size:13px;line-height:1.7;color:#786487;word-break:keep-all}
+.ast-lower-body section{margin-top:18px}
+.ast-lower-body h3{margin:0 0 6px;font-size:14px;font-weight:800;color:#543764;word-break:keep-all}
+.ast-lower-body ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;margin:0;padding:0;list-style:none}
+.ast-lower-body li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:8px 0;border-top:1px solid #ddd2e4;font-size:14px;line-height:1.5;word-break:keep-all}
+.ast-lower-body li b{font-weight:700;color:#543764}
+.ast-lower-body li span{font-size:12px;color:#786487}
+.ast-lower-body li em{font-size:12px;font-style:normal;color:#604471}
+@media(max-width:650px){.ast-lower>summary{padding:16px}.ast-lower-body{padding:0 16px 16px}.ast-lower-body ul{grid-template-columns:minmax(0,1fr)}}

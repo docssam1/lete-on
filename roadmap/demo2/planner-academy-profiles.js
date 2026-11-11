@@ -144,5 +144,12 @@ function freeze(x){if(x&&typeof x==='object'){Object.values(x).forEach(freeze);O
 function render(x){if(!x?.academyProfile)return '';const experience=x.experience?'<section class="ast-experience"><h3>'+esc(x.experience.label)+'</h3>'+x.experience.items.map(i=>'<article><h4>'+esc(i.title)+'</h4><p>'+esc(i.text)+'</p></article>').join('')+'<p class="ast-profile-note">'+esc(x.experience.note)+'</p></section>':'',verified=x.verified?'<section class="ast-profile-verified"><h3>공식 안내에서 확인한 내용</h3><p>'+esc(x.verified.text)+'</p><p>'+x.verified.links.map(l=>'<a href="'+esc(l.url)+'" target="_blank" rel="noopener noreferrer">'+esc(l.label)+' ↗</a>').join(' · ')+'</p><small>확인일 '+esc(x.verified.checkedOn)+'</small></section>':'';const nute=g.PlannerNuteGuide?.academies.find(a=>'academy-'+a.id===x.id);
  return '<section class="ast-profile"><dl><div><dt>아이에게 맞는지 보려면</dt><dd>'+esc(x.fit)+'</dd></div><div><dt>수업 밖 공부와 시간</dt><dd>'+esc(x.burden)+'</dd></div></dl>'+verified+experience+(nute?'<div class="ast-profile-courses"><h3>지원할 과정과 준비 범위</h3>'+nute.courses.map(c=>'<article><h4>'+esc(c.name)+'</h4><p>'+esc(c.range)+'</p><p>'+esc(c.ready)+'</p>'+(c.cutoff?'<p class="ast-profile-cut"><strong>'+esc(c.cutoff.label)+'</strong>'+(c.cutoff.note?'<br>'+esc(c.cutoff.note):'')+'</p>':'')+'</article>').join('')+'</div>':'')+'<p class="ast-profile-note">'+esc(x.sourceNote||'이전 설명회·안내와 상담에서 살펴본 내용을 정리했습니다. 지원할 지점·학년·반의 현재 교재와 수업·과제는 등록 전에 확인하세요.')+'</p></section>';
 }
-g.PlannerAcademyProfiles=Object.freeze({profiles,posts,render});
+/* 원장이 2026-11-11에 정리해 준 대치동 초저학년 수학학원 명단. 순서는 원장이 준 그대로이며 순위가 아니다.
+   강사의 출신·학력은 공식 자료로 확인하지 않아 화면에 쓰지 않는다. id가 있는 곳은 아래 학원별 안내가 있다. */
+const lowerGrades=Object.freeze({checkedOn:'2026-11-11',groups:[
+ {title:'초저학년부터 다닐 수 있는 교과학원',items:[{name:'꿈짜'},{name:'짱솔',note:'본관·2관'},{name:'대치해법'},{name:'아카로드'},{name:'다즐'},{name:'CMS 프리미엄관'},{name:'CMS 영재관'},{name:'개념상상 SM관',id:'academy-gnss-sm'},{name:'심화랑',note:'점프왕으로 수업'},{name:'글로리앤수학'},{name:'유니크수학'},{name:'다움수학'},{name:'수학의 미래'},{name:'지필드'},{name:'브레인밸리'},{name:'매쓰피크'},{name:'상어수학'},{name:'금비수학',note:'팀수업은 문의 후 가능'},{name:'와이즈만',id:'academy-wiseman'}]},
+ {title:'시작 학년 제한이 있는 곳 · 초2 말부터 초4',items:[{name:'매쓰몽 경시반',note:'초2부터 응시'},{name:'탑티어',note:'초2 여름부터 응시'},{name:'BMI',note:'초2 말부터 응시'},{name:'강의하는 아이들',note:'초3부터 · 패드 사용 수업 있음'},{name:'클라디학원',note:'초3부터 · 과외 같은 학원 수업'},{name:'수학하마',note:'시작 학년은 학원에 확인'},{name:'파인만',note:'초2 말부터 응시'},{name:'깊은생각수학',note:'초3 말부터'},{name:'개념폴리아',note:'시작 학년은 학원에 확인'}]},
+ {title:'누적테스트 학원 · 누테',items:[{name:'돌파수학',id:'academy-dolpa'},{name:'생각하는 수학 – 생각이 크는 수학'},{name:'이든수학',id:'academy-eden'},{name:'원수학',id:'academy-won'}]}
+]});
+g.PlannerAcademyProfiles=Object.freeze({profiles,posts,render,lowerGrades});
 })(window);
