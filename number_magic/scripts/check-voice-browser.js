@@ -67,13 +67,14 @@ const server=http.createServer((req,res)=>{
    const started=await page.evaluate(text=>__VOICE_CHECK.feedback(text,'ko'),text);
    assert.equal(await page.locator('#stepBody').getAttribute('inert'),'','accepted answer controls wait for narration');
    await page.waitForFunction(()=>__transitionAt>0);
+   const want=Number(world.window.NM_TTS_OMNI_RATE?.ko)||0.8;
    const a=await page.evaluate(()=>{const a=__played.at(-1);return {rate:a.playbackRate,pitch:a.preservesPitch,ended:a.ended,position:a.currentTime,duration:a.duration,at:__transitionAt};});
-   assert.equal(a.rate,0.8);assert.equal(a.pitch,true);assert(a.ended,'full recording must end before transition: '+text);assert(a.at-started>=a.duration/0.8*1000-100,'feedback was cut short: '+text);
+   assert.equal(a.rate,want);assert.equal(a.pitch,true);assert(a.ended,'full recording must end before transition: '+text);assert(a.at-started>=a.duration/want*1000-100,'feedback was cut short: '+text);
    assert.equal(await page.locator('#stepBody').getAttribute('inert'),null,'input lock releases after narration');
   }
   await page.evaluate(text=>{__VOICE_CHECK.feedback(text,'ko');__VOICE_CHECK.cancel();},feedbackLines[1]);
   await page.waitForTimeout(900);assert.equal(await page.evaluate(()=>__transitionAt),0,'navigation cancels the old transition');
-  const report={plannedUnique:unique.length,byLanguage:Object.fromEntries(Object.entries(map).map(([l,v])=>[l,Object.keys(v).length])),decoded:decoded.count,playbackLanguages:3,rapidSwitch:true,stop:true,staleFailureIgnored:true,rate:0.8,preservesPitch:true,completeFeedbackBeforeAdvance:feedbackLines.length,navigationCancelsAdvance:true,externalWrites:0};
+  const report={plannedUnique:unique.length,byLanguage:Object.fromEntries(Object.entries(map).map(([l,v])=>[l,Object.keys(v).length])),decoded:decoded.count,playbackLanguages:3,rapidSwitch:true,stop:true,staleFailureIgnored:true,rate:world.window.NM_TTS_OMNI_RATE||0.8,preservesPitch:true,completeFeedbackBeforeAdvance:feedbackLines.length,navigationCancelsAdvance:true,externalWrites:0};
   if(process.env.NM_VOICE_REPORT)fs.writeFileSync(process.env.NM_VOICE_REPORT,JSON.stringify(report,null,2));if(pendingVideo)console.warn('VIDEO_LINES_PENDING '+pendingVideo+' magic-note video lines have no OmniVoice recording yet');console.log('VOICE_BROWSER_OK '+JSON.stringify(report));
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});

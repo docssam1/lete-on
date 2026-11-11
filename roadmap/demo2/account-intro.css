@@ -1,0 +1,287 @@
+/* The introduction below the film. Parents' own questions are set large and the answers follow.
+   Colour and type go through the tokens below; motion lives at the end and is optional. */
+.member-landing{
+ --in-paper:#fff;--in-tint:#edf7f5;--in-line:#cfe0da;--in-muted:#52665f;--in-accent:#38776d;--in-link:#285c49;
+ --in-deep:#16302b;--in-deep-line:#34524a;--in-on-deep:#f0f7f4;--in-on-deep-soft:#c2d8d0;
+ --in-s1:4px;--in-s2:8px;--in-s3:12px;--in-s4:16px;--in-s5:24px;--in-s6:32px;--in-s7:48px;--in-s8:72px;
+ --in-gap:clamp(4.5rem,2.6rem + 8vw,10rem);
+ --in-t-display:clamp(2.25rem,1.1rem + 4.9vw,5.25rem);
+ --in-t-section:clamp(1.875rem,1.25rem + 2.7vw,3.5rem);
+ --in-t-word:clamp(2.75rem,1.6rem + 4.9vw,5.75rem);
+ --in-t-title:clamp(1.375rem,1.2rem + .75vw,1.875rem);
+ --in-t-lead:clamp(1.125rem,.98rem + .62vw,1.5rem);
+ --in-t-body:1.0625rem;--in-t-small:.9375rem;
+ --in-amp:.24;
+}
+html,body.member-landing{overflow-x:clip}
+
+/* Under the film: a plain index of the page instead of icon tiles. */
+.account-quicklinks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--in-line)}
+.account-quicklinks a{display:flex;align-items:center;min-height:76px;padding:var(--in-s4) var(--in-s5);font-size:1.125rem;font-weight:700;line-height:1.4;letter-spacing:-.02em;color:var(--member-ink);text-decoration:none}
+.account-quicklinks a:first-child{padding-left:0}
+.account-quicklinks a+a{border-left:1px solid var(--in-line)}
+.account-quicklinks a:hover{text-decoration:underline;text-underline-offset:6px}
+.account-welcome-copy h2{font-weight:800}
+
+/* Shared pieces */
+.account-main :is(summary,figcaption,dt,small,button){word-break:keep-all}
+.account-main :is(h2,h3,h4,summary,.account-ask-question){text-wrap:balance}
+.account-main :is(.account-introduction,.account-senior-section,.account-by-stage,.account-library,.account-questions,.account-how) p{text-wrap:pretty}
+.account-main :is(.account-introduction,.account-senior-section,.account-by-stage,.account-library,.account-how,.account-questions) h2{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em;color:inherit;overflow-wrap:break-word;min-width:0}
+.h-lead,.h-main{display:block}
+.h-lead{font-size:var(--in-t-lead);font-weight:600;line-height:1.5;letter-spacing:-.02em}
+.h-lead+.h-main{margin-top:.12em}
+.h-main+.h-lead{margin-top:.5em}
+.account-section-heading>p,.account-ask-answer>p,.account-goal-roadmaps>p,.account-input-example header>p{max-width:36em;margin:var(--in-s5) 0 0;font-size:var(--in-t-lead);line-height:1.7;color:var(--in-muted)}
+.account-introduction :is(a:not(.member-primary)),.account-senior-section :is(a:not(.member-primary)),.account-library a{color:var(--in-link);font-weight:700;text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
+.account-introduction,.account-senior-section,.account-by-stage,.account-library,.account-questions{scroll-margin-top:var(--in-s5)}
+
+/* 1. The question a parent asks, then the answer. */
+.account-introduction{padding-top:var(--in-gap)}
+.account-ask-question{margin:0;font-size:var(--in-t-display);font-weight:800;line-height:1.18;letter-spacing:-.045em;color:var(--member-ink)}
+.account-ask-answer{margin:var(--in-s8) 0 0 calc(100% / 12 * 4)}
+
+/* 2. The program itself: the three views, chosen by name. */
+.account-preview{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);column-gap:var(--in-s7);align-items:start;margin-top:var(--in-gap);padding-block:var(--in-s8);background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax)}
+.account-preview-tabs{display:flex;flex-direction:column;align-items:flex-start;gap:var(--in-s1);position:sticky;top:var(--in-s6)}
+.account-preview-tabs button{min-height:52px;padding:var(--in-s1) 0;border:0;background:none;color:var(--in-muted);font-size:clamp(1.625rem,1.1rem + 1.9vw,2.75rem);font-weight:800;line-height:1.25;letter-spacing:-.04em;text-align:left;cursor:pointer;transform:scale(.68);transform-origin:left center}
+.account-preview-tabs button[aria-selected=true]{color:var(--member-ink);transform:none}
+.account-preview-tabs button:hover{color:var(--member-ink)}
+.account-preview-panel{grid-column:2;min-width:0}
+.account-preview figure{margin:0}
+.account-preview figure img{display:block;width:100%;height:auto;background:var(--in-paper);border:1px solid var(--in-line);border-radius:6px}
+.account-preview figcaption{display:flex;justify-content:space-between;align-items:center;gap:var(--in-s4);padding-top:var(--in-s2);font-size:var(--in-t-small);line-height:1.5;color:var(--in-muted)}
+.account-preview figcaption a{display:inline-flex;align-items:center;min-height:44px;flex:none}
+.account-preview-copy{margin-top:var(--in-s5)}
+.account-preview-copy h3{margin:0;font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.035em}
+.account-preview-copy p{max-width:38em;margin:var(--in-s3) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+
+/* 3. What a parent types in, and what the plan answers. */
+.account-input-example{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--in-s7) var(--in-s8);margin-top:var(--in-gap)}
+.account-input-example header{grid-column:1/-1}
+.account-input-example h3{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em;overflow-wrap:break-word;min-width:0}
+.account-input-example dl{margin:0;border-bottom:1px solid var(--in-line)}
+.account-input-example dl>div{display:grid;grid-template-columns:7rem minmax(0,1fr);align-items:baseline;gap:var(--in-s4);padding-block:var(--in-s4);border-top:1px solid var(--in-line)}
+.account-input-example dt{font-size:var(--in-t-small);color:var(--in-muted)}
+.account-input-example dd{margin:0;font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-example-answer h4{margin:0 0 var(--in-s4);font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-example-answer ul{list-style:none;margin:0;padding:0;border-bottom:1px solid var(--in-line)}
+.account-example-answer li{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:var(--in-s4);padding-block:var(--in-s4);border-top:1px solid var(--in-line);font-size:var(--in-t-body);line-height:1.7;color:var(--in-muted)}
+.account-example-answer strong{font-weight:700;color:var(--member-ink)}
+
+/* 4. The four kinds of study, set as words. */
+.account-lanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--in-s8);margin-top:var(--in-gap)}
+.account-lanes article{min-width:0}
+.account-lanes article:nth-child(even){margin-top:var(--in-s8)}
+.account-lanes h3{margin:0}
+.lane-word{display:block;width:fit-content;font-size:var(--in-t-word);font-weight:800;line-height:1.1;letter-spacing:-.05em}
+.lane-line{display:block;margin-top:var(--in-s4);font-size:var(--in-t-title);font-weight:700;line-height:1.4;letter-spacing:-.03em}
+.account-lanes p{max-width:30em;margin:var(--in-s3) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+
+/* 5. Checking the work: one deep band, the heading held beside the steps. */
+.account-learning-cycle{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--in-s7) var(--in-s8);align-items:start;margin-top:var(--in-gap);padding-block:var(--in-gap);background:var(--in-deep);color:var(--in-on-deep);box-shadow:0 0 0 100vmax var(--in-deep);clip-path:inset(0 -100vmax)}
+.account-learning-cycle h2{position:sticky;top:var(--in-s7)}
+.account-cycle-steps{list-style:none;margin:0;padding:0;counter-reset:cycle;border-bottom:1px solid var(--in-deep-line)}
+.account-cycle-steps li{counter-increment:cycle;display:grid;grid-template-columns:3rem minmax(0,1fr);column-gap:var(--in-s4);padding-block:var(--in-s6);border-top:1px solid var(--in-deep-line)}
+.account-cycle-steps li::before{content:counter(cycle);grid-row:1/span 4;font-size:var(--in-t-title);font-weight:300;line-height:1.35;color:var(--in-on-deep-soft);font-variant-numeric:tabular-nums}
+.account-cycle-steps li>*{grid-column:2;min-width:0}
+.account-cycle-steps strong{font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-cycle-steps small{display:block;margin-top:var(--in-s1);font-size:var(--in-t-small);font-weight:500;letter-spacing:0;color:var(--in-on-deep-soft)}
+.account-cycle-steps p{margin:var(--in-s3) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-on-deep-soft)}
+.account-cycle-steps summary{display:inline-flex;align-items:center;min-height:44px;margin-top:var(--in-s2);font-size:var(--in-t-small);font-weight:700;color:var(--in-on-deep);text-decoration:underline;text-underline-offset:6px;cursor:pointer}
+.account-performance-example{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--in-s6) var(--in-s8);margin-top:var(--in-s7)}
+.account-performance-example h3{grid-column:1/-1;margin:0;font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-performance-example>div{min-width:0;padding-top:var(--in-s5);border-top:1px solid var(--in-deep-line)}
+.account-performance-example p{margin:var(--in-s4) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-on-deep-soft)}
+.account-performance-example .account-performance-case{margin:0;font-size:var(--in-t-lead);line-height:1.6;color:var(--in-on-deep)}
+.account-performance-case strong{font-weight:700}
+.account-performance-figure{display:block;width:fit-content;margin-top:var(--in-s2);font-size:clamp(4.5rem,2.4rem + 9vw,10rem);font-weight:800;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
+.member-landing .account-learning-cycle :is(a,button,summary):focus-visible{outline-color:var(--in-on-deep)}
+
+/* 5b. 고등 모평 분석: one statement of what is in it, then the order of work as a ledger. */
+.account-mock{margin-top:var(--in-gap);scroll-margin-top:var(--in-s5)}
+.account-main :is(.account-mock,.account-unit) h2{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em;color:inherit;overflow-wrap:break-word;min-width:0}
+.account-mock-lede{max-width:36em;margin:var(--in-s5) 0 0;font-size:var(--in-t-lead);line-height:1.7;color:var(--in-muted)}
+.account-fact{width:fit-content;margin:var(--in-s8) 0 0;font-size:var(--in-t-display);font-weight:800;line-height:1.18;letter-spacing:-.045em;font-variant-numeric:tabular-nums;color:var(--member-ink)}
+.account-fact-note{max-width:36em;margin:var(--in-s4) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-mock-steps{list-style:none;margin:var(--in-s8) 0 0;padding:0;border-bottom:1px solid var(--in-line)}
+.account-mock-steps li{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);column-gap:var(--in-s8);align-items:baseline;padding-block:var(--in-s5);border-top:1px solid var(--in-line)}
+.account-mock-steps strong{font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-mock-steps p{max-width:38em;margin:0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-mock>a,.account-unit-copy>a{display:inline-flex;align-items:center;min-height:44px;margin-top:var(--in-s5);font-size:var(--in-t-body)}
+
+/* 5c. 초등 단원평가: the real screen beside what it records. */
+.account-unit{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:var(--in-s8);align-items:start;margin-top:var(--in-gap);padding-block:var(--in-gap);background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax);scroll-margin-top:var(--in-s5)}
+.account-unit .account-fact{margin-top:var(--in-s6);font-size:clamp(1.875rem,1.2rem + 2.4vw,3.25rem)}
+.account-unit-points{list-style:none;margin:var(--in-s6) 0 0;padding:0;border-bottom:1px solid var(--in-line)}
+.account-unit-points li{padding-block:var(--in-s4);border-top:1px solid var(--in-line);font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-unit-points strong{display:block;font-size:1.125rem;font-weight:800;letter-spacing:-.02em;color:var(--member-ink)}
+.account-unit figure{position:sticky;top:var(--in-s6);margin:0;min-width:0}
+.account-unit figure img{display:block;width:100%;height:auto;background:var(--in-paper);border:1px solid var(--in-line);border-radius:6px}
+.account-unit figcaption{display:flex;justify-content:space-between;align-items:center;gap:var(--in-s4);padding-top:var(--in-s2);font-size:var(--in-t-small);line-height:1.5;color:var(--in-muted)}
+.account-unit figcaption a{display:inline-flex;align-items:center;min-height:44px;flex:none}
+
+/* 6. Three destinations, each a row. */
+.account-goal-roadmaps{margin-top:var(--in-gap)}
+.account-main .account-goal-roadmaps h2{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em}
+.account-goal-grid{margin-top:var(--in-s8);border-bottom:1px solid var(--in-line)}
+.account-goal-grid article{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:var(--in-s8);align-items:start;padding-block:var(--in-s7);border-top:1px solid var(--in-line)}
+.account-goal-grid h3{grid-row:1/span 2;margin:0;font-size:clamp(2.25rem,1.5rem + 3.2vw,4.25rem);font-weight:800;line-height:1.14;letter-spacing:-.05em;overflow-wrap:break-word;min-width:0}
+.account-goal-grid p{grid-column:2;margin:0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-goal-grid a{grid-column:2;display:inline-flex;align-items:center;width:fit-content;min-height:44px;margin-top:var(--in-s3);font-size:var(--in-t-body)}
+.account-goal-roadmaps>.account-goal-grid+p{font-size:var(--in-t-body);margin-top:var(--in-s6)}
+
+/* 7. One senior's story on a tinted band. */
+.account-senior-section{margin-top:var(--in-gap);padding-block:var(--in-gap);background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax)}
+.account-senior-example{margin-top:var(--in-s8)}
+.account-senior-header{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:var(--in-s6);align-items:end}
+.account-senior-character{display:block;width:132px;aspect-ratio:1/2;background:url('assets/senior-characters-1-20261025.png') no-repeat 0% center/500% 100%;pointer-events:none}
+.account-senior-header h3{margin:0;font-size:var(--in-t-section);font-weight:800;line-height:1.22;letter-spacing:-.04em;overflow-wrap:break-word;min-width:0}
+.account-senior-header p{margin:var(--in-s3) 0 0;font-size:var(--in-t-lead);line-height:1.7;color:var(--in-muted)}
+.account-senior-figure{margin:var(--in-s6) 0 0}
+.account-senior-figure-scroll{overflow-x:auto;max-width:100%;background:var(--in-paper);border:1px solid var(--in-line);border-radius:8px}
+.account-senior-figure img{display:block;width:100%;min-width:900px;height:auto}
+.account-senior-figure figcaption{margin-top:var(--in-s3);font-size:var(--in-t-small);line-height:1.8;color:var(--in-muted)}
+.account-senior-figure figcaption a{display:inline-flex;align-items:center;min-height:44px}
+.account-senior-details{margin-top:var(--in-s3)}
+.account-senior-details>summary{display:inline-flex;align-items:center;min-height:48px;font-size:var(--in-t-body);font-weight:700;color:var(--in-link);text-decoration:underline;text-underline-offset:6px;cursor:pointer}
+.account-senior-milestones{list-style:none;margin:var(--in-s5) 0 0;padding:0;border-bottom:1px solid var(--in-line)}
+.account-senior-milestones li{display:grid;grid-template-columns:7rem minmax(0,1fr) minmax(0,1fr);gap:var(--in-s5);padding-block:var(--in-s5);border-top:1px solid var(--in-line)}
+.account-senior-when{font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-senior-lane{min-width:0}
+.account-senior-lane h4{margin:0 0 var(--in-s1);font-size:var(--in-t-small);font-weight:500;line-height:1.6;color:var(--in-muted)}
+.account-senior-lane p{margin:0;font-size:1.125rem;font-weight:700;line-height:1.6}
+.account-senior-lane small{display:block;margin-top:var(--in-s1);font-size:var(--in-t-small);line-height:1.7;color:var(--in-muted)}
+.account-senior-concern{max-width:44em;margin:var(--in-s8) 0 0 calc(100% / 12 * 4)}
+.account-senior-concern h4{margin:0;font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-senior-concern p{margin:var(--in-s3) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-senior-later{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--in-s6);margin-top:var(--in-s8);padding-top:var(--in-s6);border-top:2px solid var(--member-ink)}
+.account-senior-later>div{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:var(--in-s2);min-width:0}
+.account-senior-later strong{font-size:clamp(1.625rem,1.1rem + 2vw,2.875rem);font-weight:800;line-height:1.2;letter-spacing:-.045em}
+.account-senior-later small{font-size:var(--in-t-small);line-height:1.6;color:var(--in-muted)}
+.account-senior-more{display:flex;align-items:center;justify-content:space-between;gap:var(--in-s7);margin-top:var(--in-s8)}
+.account-senior-more h3{margin:0;font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-senior-more p{max-width:36em;margin:var(--in-s2) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-senior-more .member-primary{width:auto;flex:none;margin:0;white-space:nowrap}
+
+/* 8. By age: the open one is set large, the rest wait small. */
+.account-by-stage{padding-top:var(--in-gap)}
+.account-stage-guides{margin-top:var(--in-s8);border-bottom:1px solid var(--in-line)}
+.account-stage-guides details{border-top:1px solid var(--in-line)}
+.account-stage-guides summary{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr) minmax(0,1fr);align-items:baseline;column-gap:var(--in-s5);min-height:88px;padding-block:var(--in-s5);font-size:var(--in-t-title);font-weight:700;line-height:1.4;letter-spacing:-.03em;list-style:none;cursor:pointer}
+.account-stage-guides summary::-webkit-details-marker{display:none}
+.account-stage-guides summary>span{font-size:clamp(2.25rem,1.5rem + 3.2vw,4.25rem);font-weight:800;line-height:1.14;letter-spacing:-.05em;color:var(--in-muted);transform:scale(.6);transform-origin:left center}
+.account-stage-guides details[open]>summary>span{color:var(--member-ink);transform:none}
+.account-stage-guides summary::after{content:"열기";justify-self:end;font-size:var(--in-t-small);font-weight:500;letter-spacing:0;color:var(--in-muted)}
+.account-stage-guides details[open]>summary::after{content:"닫기"}
+.account-stage-guides details>div{max-width:44em;margin-left:calc((100% - var(--in-s5) * 2) / 12 * 4 + var(--in-s5));padding-bottom:var(--in-s6)}
+.account-stage-guides p{margin:0 0 var(--in-s3);font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+
+/* 9. Things to read: the questions lead. */
+.account-library{padding-top:var(--in-gap)}
+.account-library-grid{margin:var(--in-s8) 0 0 calc(100% / 12 * 2)}
+.account-library-grid article{min-width:0;padding-block:var(--in-s7);border-top:1px solid var(--in-line)}
+.account-library-grid article:has(.account-math-sample){display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);column-gap:var(--in-s7);align-items:start}
+.account-library-grid article:has(.account-math-sample)>:not(.account-math-sample){grid-column:1}
+.account-library-grid article:has(.account-math-sample)>.account-math-sample{grid-column:2;grid-row:1/span 3}
+.account-library-grid h3{margin:0;font-size:clamp(1.625rem,1.2rem + 1.9vw,2.75rem);font-weight:800;line-height:1.28;letter-spacing:-.04em;overflow-wrap:break-word}
+.account-library-grid p{max-width:38em;margin:var(--in-s4) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-library-grid p>strong{font-weight:700;color:var(--member-ink)}
+.account-library-grid a{display:inline-flex;align-items:center;min-height:44px;margin:var(--in-s2) var(--in-s5) 0 0;font-size:var(--in-t-body)}
+.account-math-sample{display:flex;gap:var(--in-s4);align-items:flex-start;justify-content:flex-end;margin:0}
+.account-math-sample figure{display:grid;justify-items:center;gap:var(--in-s3);margin:0}
+.account-math-sample img{width:92px;height:129px;object-fit:contain}
+.account-math-sample figure:nth-child(2){margin-top:var(--in-s5)}
+.account-math-sample figcaption{font-size:var(--in-t-small);color:var(--in-muted)}
+
+/* 10. Before starting: the heading stays while the answers pass. */
+.account-questions{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);column-gap:var(--in-s8);align-items:start;padding-top:var(--in-gap)}
+.account-questions>h2{grid-column:1;grid-row:1/span 12;position:sticky;top:var(--in-s7)}
+.account-questions details{grid-column:2;border-top:1px solid var(--in-line)}
+.account-questions details:last-child{border-bottom:1px solid var(--in-line)}
+.account-questions summary{display:flex;align-items:center;justify-content:space-between;gap:var(--in-s5);min-height:76px;padding-block:var(--in-s4);font-size:var(--in-t-title);font-weight:700;line-height:1.4;letter-spacing:-.03em;list-style:none;cursor:pointer}
+.account-questions summary::-webkit-details-marker{display:none}
+.account-questions summary::after{content:"열기";flex:none;font-size:var(--in-t-small);font-weight:500;letter-spacing:0;color:var(--in-muted)}
+.account-questions details[open]>summary::after{content:"닫기"}
+.account-questions p{max-width:40em;margin:0 0 var(--in-s5);font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+
+/* 11. The close: three steps, then the start. */
+.account-how{margin-top:var(--in-gap);padding-top:var(--in-gap);background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax)}
+.account-how ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--in-s7);list-style:none;margin:var(--in-s8) 0 0;padding:0}
+.account-how li{min-width:0;padding-top:var(--in-s4);border-top:2px solid var(--member-ink)}
+.account-how li>span{display:block;width:fit-content;font-size:var(--in-t-word);font-weight:800;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.account-how h3{margin:var(--in-s4) 0 0;font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-how p{margin:var(--in-s2) 0 0;font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
+.account-start{display:flex;align-items:center;gap:var(--in-s5);padding-block:var(--in-s8) var(--in-gap);background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax)}
+.account-start>img{flex:none;width:72px;height:84px;object-fit:cover;border-radius:50%}
+.account-start>div{flex:1;min-width:0}
+.account-main .account-start h2{margin:0;font-size:var(--in-t-title);font-weight:800;line-height:1.35;letter-spacing:-.03em}
+.account-start p{margin:var(--in-s1) 0 0;font-size:var(--in-t-body);color:var(--in-muted)}
+.account-start .member-primary{width:auto;flex:none;margin:0;white-space:nowrap}
+.member-landing .member-footer{background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax)}
+.member-landing .account-introduction :is([tabindex],details>summary):focus-visible,.member-landing .account-senior-figure-scroll:focus-visible{outline:3px solid var(--in-accent);outline-offset:4px}
+
+@media(max-width:1000px){
+ .account-ask-answer,.account-senior-concern{margin-left:calc(100% / 12 * 2)}
+ .account-library-grid{margin-left:0}
+ .account-senior-more{flex-direction:column;align-items:flex-start;gap:var(--in-s5)}
+}
+@media(max-width:700px){
+ .member-landing{--in-amp:.14;--in-s7:36px;--in-s8:48px}
+ .account-quicklinks{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .account-quicklinks a{min-height:60px;padding:var(--in-s3) var(--in-s4);font-size:1rem}
+ .account-quicklinks a:nth-child(odd){padding-left:0;border-left:0}
+ .account-quicklinks a:nth-child(n+3){border-top:1px solid var(--in-line)}
+ .account-ask-answer,.account-senior-concern{margin-left:0}
+ .account-preview{display:block}
+ .account-preview-tabs{position:static;flex-direction:row;flex-wrap:wrap;gap:0 var(--in-s4);margin-bottom:var(--in-s4)}
+ .account-preview-tabs button{font-size:1.375rem;transform:scale(.8)}
+ .account-preview figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
+ .account-input-example,.account-lanes,.account-learning-cycle,.account-performance-example,.account-questions{grid-template-columns:minmax(0,1fr)}
+ .account-unit{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s6)}
+ .account-unit figure{position:static}
+ .account-unit figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
+ .account-mock-steps li{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s1)}
+ .account-input-example dl>div,.account-example-answer li{grid-template-columns:5.5rem minmax(0,1fr)}
+ .account-lanes{gap:var(--in-s7)}
+ .account-lanes article:nth-child(even){margin-top:0}
+ .account-learning-cycle h2,.account-questions>h2{position:static}
+ .account-questions>h2{grid-row:auto;margin-bottom:var(--in-s5)}
+ .account-questions details{grid-column:1}
+ .account-cycle-steps li{grid-template-columns:2rem minmax(0,1fr)}
+ .account-goal-grid article{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s3)}
+ .account-goal-grid h3{grid-row:auto}
+ .account-goal-grid :is(p,a){grid-column:1}
+ .account-senior-header{grid-template-columns:minmax(0,1fr) 84px;gap:var(--in-s4)}
+ .account-senior-character{width:84px}
+ .account-senior-milestones li{grid-template-columns:minmax(0,1fr);gap:var(--in-s3)}
+ .account-senior-later{grid-template-columns:minmax(0,1fr);gap:var(--in-s5)}
+ .account-senior-more .member-primary{width:100%;white-space:normal}
+ .account-stage-guides summary{grid-template-columns:minmax(0,1fr) auto;row-gap:var(--in-s1)}
+ .account-stage-guides summary>span{grid-column:1/-1}
+ .account-stage-guides details>div{margin-left:0}
+ .account-library-grid article:has(.account-math-sample){display:block}
+ .account-math-sample{justify-content:flex-start;margin:var(--in-s5) 0 0}
+ .account-math-sample img{width:84px;height:118px}
+ .account-how ol{grid-template-columns:minmax(0,1fr);gap:var(--in-s5)}
+ .account-how li{display:grid;grid-template-columns:3.5rem minmax(0,1fr);align-items:start}
+ .account-how h3{margin-top:0}
+ .account-start{flex-wrap:wrap}
+ .account-start>img{width:56px;height:66px}
+ .account-start .member-primary{width:100%}
+}
+
+/* Motion. Without the script, with reduced motion and in print every line sits at its finished size. */
+@media(prefers-reduced-motion:no-preference){
+ .account-preview-tabs button{transition:transform .32s cubic-bezier(.2,.7,.2,1),color .2s}
+ .account-stage-guides summary>span{transition:transform .32s cubic-bezier(.2,.7,.2,1),color .2s}
+ .account-preview-panel:not([hidden])>*{animation:account-panel-in .36s cubic-bezier(.2,.7,.2,1) both}
+ .account-preview-panel:not([hidden])>.account-preview-copy{animation-delay:.06s}
+ @keyframes account-panel-in{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+ .intro-motion [data-zoom]{transform-origin:left center;opacity:calc(var(--zp,1) * 1.6)}
+ .intro-motion [data-zoom=in]{transform:scale(calc(1 - var(--in-amp) * (1 - var(--zp,1))))}
+ .intro-motion [data-zoom=out]{transform:scale(calc(1 + var(--in-amp) * (1 - var(--zp,1))))}
+ .intro-motion [data-focus]>h3{transform-origin:left center;transform:scale(calc(.78 + .22 * var(--f,1)));opacity:calc(.6 + .4 * var(--f,1))}
+ .intro-motion .is-near{will-change:transform,opacity}
+}
+@media print{.intro-motion [data-zoom],.intro-motion [data-focus]>h3{opacity:1!important;transform:none!important}}

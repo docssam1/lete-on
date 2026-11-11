@@ -1,0 +1,114 @@
+# 누미 한국어 목소리 후보 만들기 (2026-11-10, 원장 「A 1번」)
+#
+# 누미가 독쌤 같은 남자 목소리라 원장이 준 여자 녹음(쇼릴 본 녹음)을 본으로 한국어 대사를 다시 복제한다.
+# 본 = 원장이 「1번」으로 고른 바로 그 소리(쇼릴 n01: 원장 녹음을 복제해 읽은 소개 문장, 6초, 전사가 정확).
+# 원장 녹음 원본을 그대로 본으로 쓰면 새 대사 앞에 녹음의 말(「안녕하세요」「확실하게 관리합니다」)이 붙어 나왔다
+# (2026-11-10 시험 두 번: 12줄 중 10줄, 5줄).
+# 앱 음성·연결표는 건드리지 않는다. 만든 MP3 와 검수표는 따로 떨어진 브랜치 numi-voice-candidate 에만 올린다.
+# 들어 보고 고른 뒤에 앱에 넣는 일은 따로 한다(연결표·길이표·재생 속도).
+# GPU 가 없어 CPU 로 돌므로 조각으로 나눠 병렬로 돈다. 구글 키는 쓰지 않는다.
+name: OmniVoice — 누미 새 목소리 후보
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: '조각마다 앞에서 N줄만(시험용, 0 = 전부)'
+        default: '0'
+      retry:
+        description: '1 = 후보 브랜치에서 검사 못 넘은 줄만 다시(8번까지), 나머지는 그대로 둔다'
+        default: '0'
+
+concurrency:
+  group: omnivoice-nm-numi
+  cancel-in-progress: false
+
+jobs:
+  gen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: torch(CPU) · OmniVoice 설치
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install --upgrade pip
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install omnivoice soundfile librosa
+      - name: 다시 만들 줄(retry)
+        if: inputs.retry == '1'
+        run: |
+          git fetch -q origin numi-voice-candidate
+          git show origin/numi-voice-candidate:candidate/numi-v2/report.json > prev-report.json
+          python3 -c "import json;r=json.load(open('prev-report.json'));json.dump([{'file':f} for f,v in r.items() if not v['ok']],open('retry.json','w'))"
+          echo "RETRY_ARGS=--tasks-file retry.json --tries 8" >> "$GITHUB_ENV"
+      - name: 조각 ${{ matrix.shard }}/12
+        run: |
+          python scripts/omnivoice-nm.py --device cpu --lang ko --voice nm-numi-v2 \
+            --ref-wav number_magic/scripts/showreel/narration/omnivoice-rec/n01.mp3 \
+            --ref-text "수학 마법 나라에 오신 걸 환영합니다. 이곳에서 아이들은 수를 마법처럼 다루는 법을 배웁니다." \
+            --tries 5 \
+            --with-map-keys --out part --shard ${{ matrix.shard }}/12 --limit ${{ inputs.limit }} $RETRY_ARGS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: numi-part-${{ matrix.shard }}
+          path: part/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  collect:
+    needs: gen
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { pattern: numi-part-*, path: parts }
+      - name: 모아서 후보 브랜치에 올리기
+        run: |
+          mkdir -p candidate/numi-v2
+          find parts -name '*.mp3' -exec cp {} candidate/numi-v2/ \;
+          python3 - <<'PY'
+          import glob, json
+          r = {}
+          for f in glob.glob("parts/**/report*.json", recursive=True):
+              r.update(json.load(open(f, encoding="utf-8")))
+          json.dump(r, open("candidate/numi-v2/report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          bad = [v for v in r.values() if not v["ok"]]
+          print(f"report: {len(r)}줄, 뺀 것 {len(bad)}줄")
+          for v in bad[:60]: print(f"  ✗ CER {v['cer']}: {v['text']}  →  {v['asr']}")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ "${{ inputs.retry }}" = "1" ]; then
+            # 다시 만든 줄만 덮어쓴다: 앞서 통과한 줄과 파일은 그대로 두고, 이번에 통과한 줄만 바꾼다.
+            git fetch -q origin numi-voice-candidate
+            mkdir -p prev && git archive origin/numi-voice-candidate candidate | tar -x -C prev
+            python3 - <<'PY'
+          import json, shutil, os
+          old = json.load(open("prev/candidate/numi-v2/report.json", encoding="utf-8"))
+          new = json.load(open("candidate/numi-v2/report.json", encoding="utf-8"))
+          for f, v in new.items():
+              if v["ok"] or f not in old or v["cer"] < old[f]["cer"]:
+                  old[f] = v
+          for f in os.listdir("candidate/numi-v2"):
+              if f.endswith(".mp3"): shutil.copy(os.path.join("candidate/numi-v2", f), os.path.join("prev/candidate/numi-v2", f))
+          json.dump(old, open("prev/candidate/numi-v2/report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          print("merged:", sum(1 for v in old.values() if v["ok"]), "ok /", len(old))
+          PY
+            rm -rf candidate && mv prev/candidate candidate
+          fi
+          git checkout --orphan numi-voice-candidate
+          git rm -rq --cached .
+          git add candidate
+          git commit -qm "누미 새 목소리 후보 (nm-numi-v2, 자동 생성)"
+          git push -f origin HEAD:refs/heads/numi-voice-candidate

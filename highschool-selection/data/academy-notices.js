@@ -1,7 +1,7 @@
 // Generated from approved public channels. Do not add post bodies or personal data.
 globalThis.HIGHSELECT_ACADEMY_NOTICES = {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-10",
+  "checkedAt": "2026-11-11",
   "policy": {
     "branches": [
       "대치",
@@ -19,81 +19,81 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "dg-bundang-tests",
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=bundang",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "dg-daechi-seminars",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "dg-daechi-tests",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "dp-blog",
       "academy": "DP",
       "branch": "title",
       "url": "https://blog.naver.com/dpmath",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "ed-blog",
       "academy": "ED",
       "branch": "대치",
       "url": "https://blog.naver.com/edenmath",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "sh-blog",
       "academy": "SH",
       "branch": "대치",
       "url": "https://blog.naver.com/sharpedu",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "sm-blog",
       "academy": "SM",
       "branch": "대치",
       "url": "https://blog.naver.com/won1934",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     },
     {
       "id": "wm-blog",
       "academy": "WM",
       "branch": "대치",
       "url": "https://blog.naver.com/wonmath563",
-      "checkedAt": "2026-11-10",
+      "checkedAt": "2026-11-11",
       "status": "ok",
-      "lastSuccessAt": "2026-11-10"
+      "lastSuccessAt": "2026-11-11"
     }
   ],
   "items": [
@@ -372,8 +372,8 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "url": "https://blog.naver.com/wonmath563/224443076138",
       "publishedAt": "2026-10-15",
       "eventDate": null,
-      "scheduleText": "",
-      "revision": "5cd848b83dd4efb5"
+      "scheduleText": "11/14(토) 오전 9:30 ~ 12:50 11/15(일) 오전 9:30 ~ 12:50 오후 13:40 ~ 17:00",
+      "revision": "9ec1f6fb74107072"
     },
     {
       "id": "wm-blog-224440523829-대치",

@@ -28,6 +28,13 @@
   러너(CPU)   : .github/workflows/omnivoice-nm.yml 수동 실행(조각 병렬)
   python scripts/omnivoice-nm.py [--shard 3/16] [--out DIR] [--lang ko] [--force] [--limit N]
   python scripts/omnivoice-nm.py --manifest-only        # 있는 mp3 로 map 만 다시
+
+누미 한국어 목소리 바꾸기(2026-11-10, 원장 「A 1번」 — 원장이 준 여자 녹음을 본으로)
+  python scripts/omnivoice-nm.py --lang ko --voice nm-numi-v2 --ref-wav <녹음> --ref-json <전사 json>
+         --with-map-keys --out <후보 폴더>
+  --voice 를 주면 파일 이름이 새 목소리 이름으로 갈리므로 지금 앱 음성과 섞이지 않는다.
+  --out 이 앱 폴더가 아니면 연결표(tts-map-omni.js)는 건드리지 않는다 — 후보만 만든다.
+  앱에 넣는 일(연결표·길이표·재생 속도)은 들어 보고 고른 뒤 따로 한다.
 """
 import argparse, base64, hashlib, importlib.util, json, os, re, subprocess, sys, tempfile, time, wave
 
@@ -59,8 +66,42 @@ def tasks():
     return out
 
 
-def fname(lang, text):
-    return f"{lang}-{hashlib.sha1(f'{VOICE}|{lang}|{text}'.encode('utf-8')).hexdigest()[:12]}.mp3"
+def fname(lang, text, voice=None):
+    return f"{lang}-{hashlib.sha1(f'{voice or VOICE}|{lang}|{text}'.encode('utf-8')).hexdigest()[:12]}.mp3"
+
+
+def map_keys(lang):
+    """지금 앱 연결표에 있는 글(대사 목록 밖에서 들어온 영상 대사 등까지)."""
+    if not os.path.exists(MAP):
+        return []
+    src = open(MAP, encoding="utf-8").read()
+    start = src.index("window.NM_TTS_OMNI")
+    body = src[src.index("{", start):]
+    obj, _ = json.JSONDecoder().raw_decode(body)
+    return list((obj.get(lang) or {}).keys())
+
+
+def custom_ref(path, text, work, cut=0.0):
+    """본 녹음을 24kHz 모노로 다시 쓰고 앞뒤 무음을 자른다. 전사는 지어내지 않고 받은 글 그대로.
+    cut(초)을 주면 그 자리(문장 사이 쉼)에서 자르고 끝에 짧은 무음을 붙인다 — 녹음 끝이 말 도중에 끊겨 있으면
+    모델이 남은 말을 새 대사 앞에 붙여 읽는다(2026-11-10 시험: 12줄 중 10줄 앞에 「확실하게 관리합니다」)."""
+    import numpy as np, librosa, soundfile as sf
+    if not os.path.exists(path):
+        sys.exit("본 녹음이 없습니다: " + path)
+    y, sr = librosa.load(path, sr=SR, mono=True)
+    if cut:
+        y = y[:int(sr * cut)]
+    y, _ = librosa.effects.trim(y, top_db=35)
+    y = np.concatenate([y, np.zeros(int(sr * 0.2), dtype=y.dtype)])
+    secs = len(y) / sr
+    rms = float(np.sqrt(np.mean(y ** 2))) if len(y) else 0.0
+    if secs < 2.5 or rms < 0.005 or not text.strip():
+        sys.exit(f"본 녹음이 너무 짧거나 조용하거나 전사가 없습니다({secs:.1f}초 · 크기 {rms:.3f}).")
+    os.makedirs(work, exist_ok=True)
+    out = os.path.join(work, "custom-ref.wav")
+    sf.write(out, y, sr)
+    print(f"본 녹음: {secs:.1f}초 · 크기 {rms:.3f} · 전사 \"{text}\"", flush=True)
+    return out
 
 
 # 읽지 않는 글자 — 그림 글자(🪄✨)·이음 글자. 파일 이름 해시는 원문 그대로(앱이 원문으로 찾는다).
@@ -73,6 +114,11 @@ def spoken(lang, text):
         text = text.replace("✔를", "확인 버튼을")
     text = text.replace("✔", {"ko":"확인 버튼", "en":"the check button", "zh":"确认按钮"}.get(lang,""))
     text = EMOJI.sub("", text)
+    if lang == "ko":
+        # 아래 줄표 규칙보다 먼저 — 「끝 - 시작 + 1」이 「끝, 시작 + 1」로 먼저 바뀌어 기호를 안 읽었다(2026-11-11)
+        text = text.replace("끝 - 시작 + 1", "끝 수 빼기 시작, 더하기 일")
+        text = text.replace("뛰면 +,", "뛰면 플러스,").replace("오면 −예요", "오면 마이너스예요")
+        text = text.replace("잘 셌어", "잘 세었어")
     text = re.sub(r"[,]{2,}", ",", text)
     text = re.sub(r"[!?]{2,}", ".", text)
     text = re.sub(r"\s[—–-]\s|——", ", ", text)
@@ -81,7 +127,6 @@ def spoken(lang, text):
         text = text.replace("위+아래 = 왼쪽+오른쪽", "위와 아래를 더한 수는, 왼쪽과 오른쪽을 더한 수와 같아요")
         text = text.replace("2~9단", "이 단부터 구 단까지")
         text = text.replace("+1000 하고 -1", "플러스 천 하고 마이너스 일")
-        text = text.replace("끝 - 시작 + 1", "끝 수 빼기 시작, 더하기 일")
     replacements = {
         "ko": (("□0+□0", "열 개씩 더하기"), ("□0", "열 개씩"), ("□", "빈칸")),
         "en": (("□0+□0", "addition strategy"), ("□0", "tens"), ("□", "the missing number")),
@@ -100,7 +145,50 @@ def letters(lang, s):
     return re.sub(r"[^a-z]", "", s.lower())
 
 
+SINO = dict(zip("0123456789", "영일이삼사오육칠팔구"))
+
+
 def cer(lang, ref, hyp):
+    """글자 오류율. 한국어는 숫자를 두 가지로 견주어 나은 쪽: (1) 숫자를 빼고 (2) 숫자를 한자어로 읽어서.
+    받아쓰기가 「2단부터 9단까지」처럼 숫자로 적거나 「이와 오」처럼 글자로 적어도 같은 말이면 통과한다."""
+    if lang == "ko":
+        sino = lambda t: re.sub(r"[0-9]", lambda m: SINO[m.group()], t)
+        best = min(_cer(lang, ref, hyp), _cer(lang, sino(ref), sino(hyp)))
+        # 소리가 같은데 철자만 다른 받아쓰기(ㅐ/ㅔ, 「백의」→「베개」)는 자모로 소리 나는 대로 견준다. 자모 오류 5% 이하면 통과.
+        if best > CER_OK and _cer_sound(sino(ref), sino(hyp)) <= 0.05:
+            return 0.0
+        return best
+    return _cer(lang, ref, hyp)
+
+
+_FINAL = dict(zip("ᆨᆩᆫᆮᆯᆷᆸᆺᆻᆽᆾᆿᇀᇁᇂ", "ᄀᄁᄂᄃᄅᄆᄇᄉᄊᄌᄎᄏᄐᄑᄒ"))
+_VOWEL = {"ᅢ": "ᅦ", "ᅤ": "ᅨ", "ᅫ": "ᅰ", "ᅬ": "ᅰ", "ᅴ": "ᅦ"}
+
+
+def sound_jamo(t):
+    """한글을 자모로 풀어 소리가 같은 것끼리 합친다: 첫소리 ㅇ 은 뺀다, 받침은 첫소리로(연음), ㅐ=ㅔ 등."""
+    import unicodedata
+    out = []
+    for ch in unicodedata.normalize("NFD", re.sub(r"[^가-힣]", "", t)):
+        if ch == "ᄋ":
+            continue
+        out.append(_FINAL.get(ch, _VOWEL.get(ch, ch)))
+    return "".join(out)
+
+
+def _cer_sound(ref, hyp):
+    a, b = sound_jamo(ref), sound_jamo(hyp)
+    if not a:
+        return 0.0
+    d = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        prev, d[0] = d[0], i
+        for j, cb in enumerate(b, 1):
+            prev, d[j] = d[j], min(d[j] + 1, d[j - 1] + 1, prev + (ca != cb))
+    return d[len(b)] / len(a)
+
+
+def _cer(lang, ref, hyp):
     a, b = letters(lang, ref), letters(lang, hyp)
     if not a:
         return 0.0
@@ -230,13 +318,30 @@ def main():
     ap.add_argument("--tries", type=int, default=TRIES, help="문장별 최대 생성 횟수(기본 3)")
     ap.add_argument("--speed", type=float, default=None)
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
+    ap.add_argument("--voice", default="", help="새 목소리 이름(파일 이름에 들어간다). 주면 --out 은 앱 폴더가 아니어야 한다")
+    ap.add_argument("--ref-wav", default="", help="구글 대신 이 녹음을 본으로 복제")
+    ap.add_argument("--ref-text", default="", help="본 녹음의 전사")
+    ap.add_argument("--ref-json", default="", help="전사를 이 JSON 의 ref_text 에서 읽는다")
+    ap.add_argument("--ref-cut", type=float, default=0.0, help="본 녹음을 이 초에서 자른다(문장 사이 쉼)")
+    ap.add_argument("--ref-sentences", type=int, default=0, help="전사에서 앞의 N문장만 쓴다(--ref-cut 과 짝)")
+    ap.add_argument("--with-map-keys", action="store_true", help="지금 연결표에만 있는 글(영상 대사 등)도 만든다")
     a = ap.parse_args()
+    voice = a.voice or VOICE
+    if a.voice and os.path.abspath(a.out) == os.path.abspath(OUT):
+        sys.exit("--voice 로 새 목소리를 만들 때는 --out 을 후보 폴더로 주세요(앱 음성과 섞지 않습니다).")
     os.makedirs(a.out, exist_ok=True); os.makedirs(WORK, exist_ok=True)
     if a.manifest_only:
         write_map(OUT); return
 
     langs = [l for l in (a.lang.split(",") if a.lang else LANGS) if l in LANGS]
-    refs = ovclone.build_refs(langs, a.ref_dir)
+    if a.ref_wav:
+        text = a.ref_text or (json.load(open(a.ref_json, encoding="utf-8")).get("ref_text", "") if a.ref_json else "")
+        if a.ref_sentences:
+            text = " ".join(re.findall(r"[^.!?]+[.!?]", text)[:a.ref_sentences])
+        wav = custom_ref(a.ref_wav, text, os.path.join(WORK, "custom-ref"), a.ref_cut)
+        refs = {l: (wav, text.strip()) for l in langs}
+    else:
+        refs = ovclone.build_refs(langs, a.ref_dir)
     json.dump({l: refs[l][1] for l in refs}, open(os.path.join(a.out, "refs.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     if a.refs_only:
         print(f"참조만 만들었습니다: {a.ref_dir}"); return
@@ -246,9 +351,14 @@ def main():
         selected = set()
         for row in json.load(open(a.tasks_file, encoding="utf-8")):
             selected.add(row.get("file") or fname(row["lang"], row["text"]))
-    todo = [t for t in tasks() if t["lang"] in refs
-            and (selected is None or fname(t["lang"],t["text"]) in selected)
-            and (a.force or not os.path.exists(os.path.join(OUT, fname(t["lang"], t["text"]))))]
+    pool = tasks()
+    if a.with_map_keys:
+        have = {(t["lang"], t["text"]) for t in pool}
+        for lang in langs:
+            pool += [{"lang": lang, "text": k, "unitId": "map", "key": "extra"} for k in map_keys(lang) if (lang, k) not in have]
+    todo = [t for t in pool if t["lang"] in refs
+            and (selected is None or fname(t["lang"], t["text"], voice) in selected)
+            and (a.force or not os.path.exists(os.path.join(a.out if a.voice else OUT, fname(t["lang"], t["text"], voice))))]
     if a.shard:
         k, n = map(int, a.shard.split("/")); todo = todo[k::n]
     if a.limit:
@@ -308,8 +418,8 @@ def main():
             if best is None:
                 continue
             c, hyp, y = best; audio_s += len(y) / SR
-            f = fname(lang, text); ok = not a.no_check and c <= CER_OK
-            report[f] = {"unit": t["unitId"], "key": t["key"], "lang": lang, "text": text, "asr": hyp,
+            f = fname(lang, text, voice); ok = not a.no_check and c <= CER_OK
+            report[f] = {"unit": t["unitId"], "key": t["key"], "lang": lang, "voice": voice, "text": text, "asr": hyp,
                          "cer": round(c, 3), "ok": ok, "checked": not a.no_check, "spoken": say, "sec": round(len(y) / SR, 2)}
             if ok or a.no_check:
                 wav = os.path.join(WORK, "tmp.wav"); write_wav(wav, y)
