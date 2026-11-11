@@ -8,7 +8,7 @@ for(const f of ['planner-counselling-updates.js','planner-nute-guide.js','planne
 const P=w.PlannerAcademyProfiles,S=w.PlannerAcademyStories;
 
 test('학원별 목록은 고민별 목록과 분리하며 여러 학년에서 같은 안내를 연다',()=>{
- assert.equal(P.profiles.length,24);
+ assert.equal(P.profiles.length,26);
  assert.equal(P.profiles.filter(x=>x.subject==='국어학원').length,8);
  for(const stage of ['elementary','middle']){
   const named=S.data(stage,'academies');
@@ -17,7 +17,7 @@ test('학원별 목록은 고민별 목록과 분리하며 여러 학년에서 �
  }
  assert.ok(S.data('preschool','academies').every(x=>!['academy-jini','academy-dolpa','academy-peai'].includes(x.id)));
  assert.match(S.render('elementary','b13','국어학원','academies'),/6개 학원/);
- assert.match(S.render('middle','b13','수학학원','academies'),/4개 학원/);
+ assert.match(S.render('middle','b13','수학학원','academies'),/5개 학원/);
  assert.match(S.render('high','b13','국어학원','academies'),/확인된 고등 학원별 안내는 아직 없습니다/);
  assert.ok(Object.isFrozen(P.profiles[0].questions));
 });
@@ -66,4 +66,44 @@ test('천개의고원은 국어로 분류하고 공식 과정·개인 경험·�
  assert.ok(Object.isFrozen(x.experience.items));assert.ok(Object.isFrozen(x.verified.links));
  assert.match(S.detail('korean-academy-choice'),/정해진 학원 이동 순서가 있는 것은 아닙니다/);
  const unsafe={...x,experience:{label:'<script>',items:[{title:'<img>',text:'<script>'}],note:'<iframe>'}};assert.ok(!P.render(unsafe).includes('<script>'));
+});
+
+test('개념상상 SM관·와이즈만은 공식 출처와 확인일을 남기고 미확인 사실을 규정처럼 쓰지 않는다',()=>{
+ vm.runInContext(read('planner-academy-directory.js'),c,{filename:'planner-academy-directory.js'});
+ const D=w.PlannerAcademyDirectory,sm=P.profiles.find(x=>x.id==='academy-gnss-sm'),wm=P.profiles.find(x=>x.id==='academy-wiseman');
+ assert.deepEqual([...sm.stages],['elementary','middle']);assert.deepEqual([...wm.stages],['elementary']);
+ for(const x of [sm,wm]){
+  assert.equal(x.subject,'수학학원');assert.equal(x.verified.checkedOn,'2026-11-11');assert.ok(x.questions.length>=3);
+  for(const l of x.verified.links)assert.match(l.url,/^https:\/\/(gnss\.co\.kr|blog\.naver\.com\/gnsssmedu|www\.askwhy\.co\.kr)(\/|$)/,l.url);
+  assert.ok(Object.isFrozen(x.verified.links));
+  const html=S.detail(x.id);
+  for(const t of ['공식 안내에서 확인한 내용','확인일 2026-11-11','공식 홈페이지·공식 블로그에서 확인한 안내','현재 교재와 수업'])assert.ok(html.includes(t),x.id+' '+t);
+  assert.ok(!html.includes('이전 설명회·안내와 상담에서'),x.id);
+  assert.doesNotMatch(html,/\d[\d,]*\s*원|만\s*원|합격자|\d+\s*명|1위|전교|최상위권|보장합니다/,x.id);
+  assert.equal(D.logo(x.id,x.title),'');assert.ok(!D.get(x.id).logo);assert.equal(D.get(x.id).checkedOn,'2026-11-11');
+ }
+ assert.ok(S.data('elementary','academies').some(x=>x.id==='academy-gnss-sm'));assert.ok(S.data('middle','academies').some(x=>x.id==='academy-gnss-sm'));
+ assert.ok(S.data('elementary','academies').some(x=>x.id==='academy-wiseman'));
+ for(const stage of ['preschool','middle','high'])assert.ok(!S.data(stage,'academies').some(x=>x.id==='academy-wiseman'),stage);
+ for(const stage of ['preschool','high'])assert.ok(!S.data(stage,'academies').some(x=>x.id==='academy-gnss-sm'),stage);
+ const smHtml=S.detail(sm.id),wmHtml=S.detail(wm.id);
+ for(const t of ['대치관을 고등·중3, SM관을 초등·중등','2024년 11월 게시물','도곡로 511','과제량은 안내에 없으므로','수강료는 확인하지 않았습니다','https://gnss.co.kr/feature/branches','https://blog.naver.com/gnsssmedu'])assert.ok(smHtml.includes(t),t);
+ for(const t of ['전국 공통 안내','대치센터에서 실제로 여는 반과 학년은 센터에 확인','대치동 994-1','본사 공식 홈페이지','본사 공식 블로그','확인하지 못했습니다','한 센터나 한 아이의 결과로 읽지는 않습니다'])assert.ok(wmHtml.includes(t),t);
+ assert.match(D.render('academy-gnss-sm','개념상상 SM관'),/공식 홈페이지 ↗.*공식 블로그 ↗/);
+ assert.ok(!D.render('academy-soma','소마').includes('본사'));
+ assert.match(S.detail('academy-soma'),/이전 설명회·안내와 상담에서/);
+});
+
+test('대치동 수학학원 학년 지도는 세로 학원·가로 학년 표이고 초등 학원별 보기에서만 보인다',()=>{
+ const L=P.lowerGrades;assert.deepEqual(Array.from(L.groups,x=>x.items.length),[19,9,7,4]);
+ const all=L.groups.flatMap(x=>Array.from(x.items)),names=all.map(y=>y.name);assert.equal(new Set(names).size,names.length);assert.equal(names.length,39);
+ for(const x of all){if(x.id)assert.ok(P.profiles.some(p=>p.id===x.id),x.id);if(x.from!==undefined)assert.ok(L.starts[x.from],x.name);if(x.through)assert.ok(x.through>x.from&&x.through<=L.axis.length,x.name);}
+ const el=S.render('elementary','b13','전체','academies');assert.match(el,/대치동 수학학원 학년 지도/);assert.match(el,/지필드가 정리한 39곳/);
+ assert.deepEqual(Array.from(el.match(/<th scope="col">[^<]+/g)||[],x=>x.replace('<th scope="col">','')),['학원',...L.axis]);
+ for(const n of names)assert.ok(el.includes('<th scope="row"><b>'+n+'</b>'),n);
+ assert.equal((el.match(/<th scope="row">/g)||[]).length,39);assert.equal((el.match(/시작 학년 확인 중<\/small>/g)||[]).length,11);assert.equal((el.match(/class="is-known"/g)||[]).length,2);
+ assert.match(el,/<b>지필드<\/b><\/th><td colspan="10"><span class="ast-gmap-track"><i aria-hidden="true" class="is-known" style="left:0\.0%;right:0\.0%">/);
+ assert.match(S.render('elementary','b13','수학학원','academies'),/ast-lower/);
+ for(const html of [S.render('middle','b13','전체','academies'),S.render('preschool','b13','전체','academies'),S.render('elementary','b13','국어학원','academies'),S.render('elementary','b13','전체','topics')])assert.doesNotMatch(html,/ast-lower/);
+ assert.doesNotMatch(JSON.stringify(L),/출신|서울대|카이스트|부원장/);
 });
