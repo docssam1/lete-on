@@ -10,10 +10,12 @@ async function memberOf(service: any, name: string) {
   return membershipSummary(data);
 }
 
-// 틀린 승인번호 막기(원장 2026-10-31): 같은 이름으로 15분 안에 10번 틀리면 15분 동안 그 이름의 로그인을 막는다.
+// 틀린 승인번호 막기(원장 2026-10-31, 2026-11-11 「보안 설정도 하자」로 더 세게): 같은 이름으로 1시간 안에 5번 틀리면
+// 1시간 동안 그 이름의 로그인을 막는다(예전 15분 10번). 학부모가 정하는 승인번호(4자 이상)를 맞혀 보는 것을 막는 몫이다.
 // 있는 이름만 센다(없는 이름으로 표를 채우지 않게). 표 fields_login_failures는 service_role만 쓴다.
-const MAX_FAILS = 10;
-const LOCK_MS = 15 * 60 * 1000;
+// 관리자(DOCSSAM) 로그인은 hs-admin-session이 따로 막는다(429).
+const MAX_FAILS = 5;
+const LOCK_MS = 60 * 60 * 1000;
 async function lockedOut(service: any, name: string) {
   const { data } = await service.from("fields_login_failures").select("locked_until").eq("student_name", name).maybeSingle();
   return Boolean(data?.locked_until && new Date(data.locked_until).getTime() > Date.now());
@@ -27,6 +29,15 @@ async function failedLogin(service: any, name: string) {
     ? { student_name: name, fails: 0, first_at: new Date(now).toISOString(), locked_until: new Date(now + LOCK_MS).toISOString() }
     : { student_name: name, fails, first_at: fresh ? new Date(now).toISOString() : data.first_at, locked_until: null };
   await service.from("fields_login_failures").upsert(row);
+}
+
+// 관리자 접속·열람 기록(원장 2026-11-11 「보안 설정도 하자」): 표 fields_admin_audit(service_role만). 기록이 실패해도 일은 계속한다.
+// 승인번호·해시는 남기지 않는다. IP는 첫 주소만, 브라우저 정보는 120자까지.
+async function audit(service: any, req: Request, actor: string, action: string, target: string | null = null) {
+  try {
+    const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "").split(",")[0].trim().slice(0, 64) || null;
+    await service.from("fields_admin_audit").insert({ actor, action, target, ip, agent: (req.headers.get("user-agent") || "").slice(0, 120) || null });
+  } catch { /* 기록 실패는 무시 */ }
 }
 
 const ALLOWED_ORIGINS = new Set([
@@ -103,9 +114,16 @@ Deno.serve(async (req: Request) => {
         return json(req, { error: "credentials_invalid" }, 400);
       }
       if (isFieldsAdminName(suppliedName)) {
-        const account = await authenticateFieldsAdmin(service, url, key, req, suppliedName, String(body.code).trim(), fetch, {
-          retainSession: action === "admin-login", deviceToken: action === "admin-login" ? body.deviceToken : "",
-        });
+        let account;
+        try {
+          account = await authenticateFieldsAdmin(service, url, key, req, suppliedName, String(body.code).trim(), fetch, {
+            retainSession: action === "admin-login", deviceToken: action === "admin-login" ? body.deviceToken : "",
+          });
+        } catch (error) {
+          await audit(service, req, "DOCSSAM", error instanceof FieldsAccessError && error.status === 429 ? "login_locked" : "login_failed");
+          throw error;
+        }
+        await audit(service, req, "DOCSSAM", action === "admin-login" ? "admin-login" : "login");
         if (action === "admin-login") {
           if (!("session" in account)) return json(req, { error: "admin_auth_unavailable" }, 503);
           return json(req, { name: account.name, type: "admin", session: account.session, deviceToken: account.deviceToken });

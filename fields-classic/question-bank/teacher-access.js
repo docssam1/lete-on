@@ -1,4 +1,4 @@
-import { memberCall, weekRate } from "./study-progress.js?v=20261111m";
+import { memberCall, weekRate } from "./study-progress.js?v=20261111p";
 
 // 선생님 보기 · 접속한 회원(원장 2026-11-11 「들어간 회원, 회원정보, 학습 상황도 나올 수 있도록」):
 // 모든 승인번호(이메일로 가입한 아이 + 원장이 직접 만든 승인번호)를 마지막 활동 순으로 —
@@ -26,6 +26,22 @@ function memberState(m) {
 }
 
 let accounts = [];
+// 관리자 접속·열람 기록(원장 2026-11-11 「보안 설정도 하자」) — 서버(fields-members admin-access)의 admin: { sessions, audit }
+const ACTION = { login: "관리자 로그인", "admin-login": "관리 화면 로그인", login_failed: "관리자 로그인 실패", login_locked: "관리자 로그인 잠김",
+  "admin-access": "접속한 회원 열람", "admin-list": "회원 관리 열람", "admin-reissue": "승인번호 새로 만듦",
+  "admin-update:approve": "정규회원 승인", "admin-update:trial": "체험 연장", "admin-update:pause": "멈춤", "admin-update:resume": "다시 열기",
+  "admin-update:grant-book": "권 +1", "admin-update:take-book": "권 −1", "admin-update:start": "시작 진도 바꿈", "admin-update:memo": "메모" };
+function renderAdminLog(log) {
+  const box = $("adminLog");
+  if (!box || !log) return;
+  box.hidden = false;
+  const sessions = (log.sessions || []).slice(0, 8).map((s) => `<li><b>${stamp(s.created_at)}</b> 로그인 <small>마지막 활동 ${stamp(s.last_seen_at || s.created_at)}${new Date(s.expires_at) > new Date() ? " · 아직 열려 있음" : ""}</small></li>`).join("");
+  const audit = log.audit === null ? `<p class="ms-note">열람 기록을 남길 표가 아직 없어요.</p>`
+    : `<ul class="ms-log">${(log.audit || []).slice(0, 30).map((a) => `<li class="${/fail|locked/.test(a.action) ? "is-warn" : ""}"><b>${stamp(a.at)}</b> ${esc(ACTION[a.action] || a.action)}${a.target ? ` · ${esc(a.target)}` : ""}<small>${esc(a.ip || "")}${a.agent ? ` · ${esc(a.agent.slice(0, 60))}` : ""}</small></li>`).join("") || "<li><small>아직 기록이 없어요.</small></li>"}</ul>`;
+  box.innerHTML = `<h2>관리자 접속·열람 기록 <small>모르는 시각·장소가 보이면 관리자 승인번호를 바꿔 주세요</small></h2>
+    <div class="ms-log-grid"><section><h3>관리자 로그인</h3><ul class="ms-log">${sessions || "<li><small>기록 없음</small></li>"}</ul></section>
+    <section><h3>열람·변경</h3>${audit}</section></div>`;
+}
 let records = new Map();
 let filter = "today";
 
@@ -85,13 +101,15 @@ export async function initAccess(byStudent) {
   records = byStudent || new Map();
   $("accessBox").hidden = false;
   $("accessMsg").textContent = "접속 기록을 불러오는 중…";
-  try { accounts = (await memberCall({ action: "admin-access" })).accounts || []; }
+  let adminLog = null;
+  try { const data = await memberCall({ action: "admin-access" }); accounts = data.accounts || []; adminLog = data.admin || null; }
   catch (error) { $("accessMsg").textContent = `접속 기록을 불러오지 못했어요(${error.message}).`; return; }
   const today = startOfToday();
   filter = accounts.some((a) => a.lastSeen && new Date(a.lastSeen).getTime() >= today) ? "today"
     : accounts.some((a) => a.lastSeen && Date.now() - new Date(a.lastSeen).getTime() < 7 * DAY) ? "week" : "all";
   $("accessMsg").textContent = "접속은 승인번호로 로그인한 기록이에요. 로그인 없이 둘러본 사람은 남지 않아요.";
   render();
+  renderAdminLog(adminLog);
   $("accessFilter").addEventListener("click", (event) => {
     const button = event.target.closest("[data-filter]");
     if (button) { filter = button.dataset.filter; render(); }

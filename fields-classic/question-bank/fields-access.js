@@ -1,4 +1,4 @@
-import { loggedIn, memberCall } from "./study-progress.js?v=20261111m";
+import { loggedIn, memberCall } from "./study-progress.js?v=20261111p";
 
 // 스스로 공부를 어디까지 열어 주나(원장 2026-10-29 「이메일 인증 후 2주 체험 · 인증하지 않고 둘러보기는 한 주분만 · 그다음 정식」)
 //   둘러보기(로그인 안 함)      → 1권 1단원(한 주 = 1·2차시)만

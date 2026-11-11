@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261111g";
-import { login } from "./study-progress.js?v=20261111m";
+import { login } from "./study-progress.js?v=20261111p";
 
 // 가입(원장 2026-10-29 「이메일로 승인번호가 우선 나오고 그다음 접속」「이메일 인증 후 2주 체험」):
 //  ① 보호자 이메일 → 인증번호 메일(Supabase Auth, 수의 마법과 같은 프로젝트) → 확인

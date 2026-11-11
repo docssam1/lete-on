@@ -1,10 +1,10 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
-import { checkSession, loadClass, loadLocalAll, logout, weekRate } from "./study-progress.js?v=20261111m";
-import { initMembers } from "./teacher-members.js?v=20261111m";
-import { initAccess } from "./teacher-access.js?v=20261111o";
+import { checkSession, loadClass, logout, weekRate } from "./study-progress.js?v=20261111p";
+import { initMembers } from "./teacher-members.js?v=20261111p";
+import { initAccess } from "./teacher-access.js?v=20261111p";
 
 // 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.
-// 지금은 누구나 연다(원장 2026-10-27 「지금은 다 접속되는 걸로」): 로그인 없이 열면 데모 — 이 기기에 저장된 학생 기록만.
+// 관리자(DOCSSAM)만 연다(원장 2026-11-11 「보안 설정도 하자」 — 예전 「지금은 다 접속되는 걸로」(2026-10-27)의 기기 기록 데모는 뺐다).
 // 관리자(DOCSSAM)로 로그인하면 서버(fields-progress class)의 승인된 학생 전체 기록. 서버 기록은 로그인 없이 열지 않는다(학생 이름·진도 보호).
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -89,13 +89,12 @@ function fill(data) {
     render();
 }
 const me = await checkSession();
+// 관리자 로그인이 아니면 아무것도 보이지 않는다(원장 2026-11-11 「보안 설정도 하자」 — 예전의 「이 기기 기록 데모」는 뺐다).
+// 로그인 여부는 서버가 확인한 세션(checkSession)으로 본다.
 if (!me || me.type !== "admin") {
-  $("who").innerHTML = `<a href="./login.html?next=teacher.html">선생님 로그인</a>`;
-  const data = loadLocalAll();
-  $("status").textContent = data.records.length
-    ? "데모 · 이 기기에 저장된 학생 기록이에요. 선생님(DOCSSAM)으로 로그인하면 승인된 학생 전체 기록이 보여요."
-    : "데모 · 이 기기에 아직 공부 기록이 없어요. 스스로 공부를 하면 여기에 보여요. 선생님(DOCSSAM)으로 로그인하면 승인된 학생 전체 기록이 보여요.";
-  fill(data);
+  $("who").innerHTML = "";
+  document.querySelector(".ms-tools")?.remove();
+  $("status").innerHTML = `관리자만 볼 수 있는 화면이에요. <a href="./login.html?next=teacher.html">관리자로 로그인 ›</a>`;
 } else {
   $("who").innerHTML = `<span>${esc(me.name)}</span><button type="button" id="logoutBtn">로그아웃</button>`;
   $("logoutBtn").addEventListener("click", async () => { await logout(); location.assign("./teacher.html"); });

@@ -15,6 +15,7 @@ import { FIELDS_BOOKS, TRIAL_DAYS, membershipSummary } from "../_shared/fields-m
 //    request   — 정규회원 승인 요청(regular) · 다음 권 추가 요청(book). 요청은 카톡으로 하고 여기엔 표시만 남긴다
 //    start     — 시작 진도 바꾸기(학부모)
 //  관리자(DOCSSAM 세션): admin-list · admin-update(승인·체험 연장·멈춤·권 더 열기·시작 진도·메모) · admin-reissue
+//    (관리자 일은 모두 fields_admin_audit에 남긴다 — 누가·언제·무엇을·누구를)
 //    admin-access — 모든 승인번호(직접 발급·이메일 회원)와 접속 기록: 마지막 로그인·마지막 활동·30일 로그인 수·지금 접속 중,
 //                   이메일 회원이면 회원 정보까지(원장 2026-11-11 「들어간 회원, 회원정보, 학습 상황도 나올 수 있도록」). 승인번호 해시는 내보내지 않는다.
 // 승인번호는 해시로만 둔다(fields_access_accounts.code_hash). 응답에만 한 번 보이고 저장소·기록에 남기지 않는다.
@@ -81,6 +82,14 @@ function cleanStart(raw: any) {
   const unit = Math.min(Math.max(Number(raw?.unit) || 0, 0), 3);
   const part = Math.min(Math.max(Number(raw?.part) || 1, 1), 3);
   return { book, unit, part };
+}
+// 관리자 접속·열람 기록(원장 2026-11-11 「보안 설정도 하자」): 표 fields_admin_audit(service_role만). 기록이 실패해도 일은 계속한다.
+// 승인번호·해시는 남기지 않는다. IP는 첫 주소만, 브라우저 정보는 120자까지.
+async function audit(service: any, req: Request, actor: string, action: string, target: string | null = null) {
+  try {
+    const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "").split(",")[0].trim().slice(0, 64) || null;
+    await service.from("fields_admin_audit").insert({ actor, action, target, ip, agent: (req.headers.get("user-agent") || "").slice(0, 120) || null });
+  } catch { /* 기록 실패는 무시 */ }
 }
 // 학부모 화면에 보여 줄 회원 한 명(관리자 목록에는 연락처까지)
 function view(m: any, admin = false) {
@@ -181,6 +190,7 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!admin) throw new HttpError(403, "admin_required");
+    await audit(service, req, account.name, action === "admin-update" ? `admin-update:${String(body.op || "")}` : action, body.child ? cleanName(body.child) : null);
     if (action === "admin-access") {
       const [accounts, sessions, rows] = await Promise.all([
         service.from("fields_access_accounts").select("student_name,permissions,student_type,active,updated_at"),
@@ -200,7 +210,13 @@ Deno.serve(async (req: Request) => {
         seen.set(row.student_name, entry);
       }
       const byChild = new Map((rows.data || []).map((m: any) => [m.child_name, m]));
-      return json(req, { accounts: (accounts.data || []).map((a: any) => ({
+      // 관리자 쪽: 관리자 로그인(세션 기록) 20개 · 관리자 접속·열람 기록 60개(표가 없으면 빈 목록)
+      const [adminSessions, auditRows] = await Promise.all([
+        service.from("fields_access_sessions").select("created_at,last_seen_at,expires_at").not("admin_user_id", "is", null).order("created_at", { ascending: false }).limit(20),
+        service.from("fields_admin_audit").select("at,actor,action,target,ip,agent").order("at", { ascending: false }).limit(60),
+      ]);
+      const adminLog = { sessions: adminSessions.data || [], audit: auditRows.error ? null : auditRows.data || [] };
+      return json(req, { admin: adminLog, accounts: (accounts.data || []).map((a: any) => ({
         name: a.student_name, type: a.student_type, permissions: Array.isArray(a.permissions) ? a.permissions : [], active: a.active !== false, updatedAt: a.updated_at,
         member: byChild.has(a.student_name) ? view(byChild.get(a.student_name), true) : null,
         ...(seen.get(a.student_name) || { lastLogin: null, lastSeen: null, logins30: 0, online: false }),

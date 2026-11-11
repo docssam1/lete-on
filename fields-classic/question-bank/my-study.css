@@ -275,3 +275,11 @@ tr.is-done td { color: var(--muted); }
 .ms-online { background: #e2f5ea; color: #1f7a4a; }
 .ms-teach { background: var(--accent-soft); color: var(--accent-ink); }
 .ms-link { display: inline-block; margin-top: 4px; color: var(--accent-ink); font-size: 13px; font-weight: 700; }
+/* 관리자 접속·열람 기록(원장 2026-11-11 「보안 설정도 하자」) */
+.ms-log-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.ms-log-grid h3 { margin: 0 0 6px; color: var(--muted); font-size: 13px; }
+.ms-log { margin: 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); max-height: 280px; overflow: auto; }
+.ms-log li { padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.ms-log li:last-child { border-bottom: 0; }
+.ms-log li small { display: block; color: var(--muted); font-size: 12px; }
+.ms-log li.is-warn b { color: var(--terra); }

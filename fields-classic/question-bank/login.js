@@ -1,5 +1,5 @@
-import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261111m";
-import { KAKAO } from "./fields-access.js?v=20261111m";
+import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
+import { KAKAO } from "./fields-access.js?v=20261111p";
 
 // 승인(로그인) 페이지(원장 2026-10-27): 승인번호 + 이름 → 학생은 스스로 공부 첫 화면, 관리자(DOCSSAM)는 선생님 보기.
 // 승인번호는 가입(signup.html, 이메일 인증)에서 받는다. 체험이 끝났거나 멈춘 회원은 서버가 막고, 여기서 카톡 요청 단추를 보인다.
@@ -9,7 +9,7 @@ const params = new URLSearchParams(location.search);
 const next = /^[\w-]+\.html(\?[^#]*)?$/u.test(params.get("next") || "") ? params.get("next") : "";
 const MESSAGES = {
   credentials_invalid: "승인번호와 이름을 다시 확인해 주세요.",
-  too_many_attempts: "로그인 시도가 많아요. 잠시 뒤에 다시 해 주세요.",
+  too_many_attempts: "승인번호를 여러 번 틀려서 이 이름은 1시간 동안 로그인할 수 없어요. 잊었으면 「승인번호를 잊었어요」에서 새로 정해 주세요.",
   admin_auth_unavailable: "관리자 확인에 연결하지 못했어요. 잠시 뒤에 다시 해 주세요.",
   trial_expired: "2주 체험이 끝났어요. 정규회원 승인은 카톡으로 요청해 주세요. 승인되면 같은 번호로 이어서 공부해요.",
   paused: "지금은 공부가 잠시 멈춰 있어요. 카톡으로 문의해 주세요."

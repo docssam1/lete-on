@@ -60,6 +60,8 @@ export async function checkSession() {
     const result = await auth({ action: "session" }, token);
     rememberMember(result.member);
     rememberPermissions(result.permissions);
+    // 이름·종류도 서버가 확인한 값으로 덮어쓴다 — 이 탭에서 손으로 고친 값(예: 종류를 admin으로)을 믿지 않게
+    try { sessionStorage.setItem(NAME_KEY, result.name); sessionStorage.setItem(TYPE_KEY, result.type === "admin" ? "admin" : "student"); } catch {}
     return { name: result.name, type: result.type === "admin" ? "admin" : "student", member: result.member || null };
   } catch (error) {
     if (error.status === 401 || error.status === 403) clearSession();
