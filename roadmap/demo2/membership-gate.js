@@ -2,6 +2,11 @@
  'use strict';
  const A=RoadmapMembership,box=document.getElementById('memberGateStatus');
  const destination='account.html?next='+encodeURIComponent('planner.html'+location.search);
+ // Looking around without an account is the one door that needs no session. It is asked for by name
+ // (planner.html?guest=1), opens with nothing read or stored, and keeps the member-only rooms closed.
+ // Its script is fetched only then, so the page still starts with the three membership scripts alone.
+ const guestAsked=/(?:^\?|&)guest=1(?:&|$)/.test(location.search),TOUR_SRC='planner-guest.js?v=20261111-guest1';
+ const loadOne=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=()=>resolve();s.onerror=()=>reject(new Error(`자료 파일을 불러오지 못했습니다: ${src}`));document.body.appendChild(s);});
  const SCRIPT_TIMEOUT_MS=30000;
  let phase='계정 확인',loaded=0,failed=false;
  const pending=new Set();
@@ -28,7 +33,21 @@
  }
  try{
   message('계정을 확인하고 있습니다.');
-  const member=await A.status();
+  let member=null;
+  try{member=await A.status();}catch(error){if(!guestAsked)throw error;}
+  if(!member&&guestAsked){
+   phase='둘러보기 준비';
+   await loadOne(TOUR_SRC);const tour=window.RoadmapGuestTour;
+   window.RoadmapGuest=true;
+   window.RoadmapMember=Object.freeze({user_id:'guest',student_name:'',school:null,grade:null,age:null,review:false,guest:true});
+   const search=tour.tourSearch(location.search);
+   if(window.history&&location.search!==search)window.history.replaceState(null,'','planner.html'+search);
+   phase='학습 자료 불러오기';
+   await loadScripts();
+   document.documentElement.classList.remove('member-checking');box.remove();
+   tour.start(window);
+   return;
+  }
   if(!member){location.replace(destination);return;}
   window.RoadmapMember=Object.freeze({user_id:member.user_id,student_name:member.student_name,school:member.school,grade:member.grade,age:member.age,review:member.review===true});
   phase='저장된 학습 정보 준비';message('저장된 학습 정보를 준비하고 있습니다.');
@@ -47,7 +66,8 @@
  }catch(error){
   failed=true;for(const cancel of [...pending])cancel();
   document.documentElement.classList.add('member-checking');
-  // No offline fallback to an unverified local flag or query-string bypass.
+  // No offline fallback to an unverified local flag. A member's screen never opens from a query string;
+  // the guest tour above is a separate, storage-less screen.
   box.replaceChildren();const p=document.createElement('p');p.textContent=`${phase} 중 문제가 생겼습니다. 연결을 확인한 뒤 다시 시도해 주세요.`;
   const detail=document.createElement('p');detail.textContent=phase==='학습 자료 불러오기'?error.message:'';
   const retry=document.createElement('button');retry.textContent='다시 시도';retry.onclick=()=>location.reload();
