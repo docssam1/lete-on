@@ -9,12 +9,16 @@
      2) data/tts-map-omni.js 를 다시 쓴다: 한국어 줄 → 새 파일, 길이표(NM_VOICE_DURATIONS) 한국어 → 새 길이,
         재생 속도 NM_TTS_OMNI_RATE = {ko:1, en:0.8, zh:0.8}.
      3) data/voice-release-20261111-numi.json 에 줄마다 파일·해시·길이·받아쓰기 결과·옛 파일을 남긴다.
-   새 목소리가 없는 줄은 연결표에서 빠진다(화면 글만 보인다). 다른 목소리를 섞지 않는다. */
+   새 목소리가 없는 줄은 연결표에서 빠진다(화면 글만 보인다). 다른 목소리를 섞지 않는다.
+   다시 돌리면 앞서 빠진 줄(기록의 missing)도 다시 찾는다.
+   --accept-near 0.17: 받아쓰기가 한두 글자만 다른 줄(「백의」→「베개」처럼 소리는 같은데 철자만 다른 것)을 넣고
+   기록에 nearMiss·needsOwnerListening 으로 남긴다 — 원장이 들어 보고 확인할 줄이다. */
 const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('crypto'),{execFileSync}=require('child_process');
 const root=path.resolve(__dirname,'..');
 const VOICE='nm-numi-v2',RATE={ko:1,en:.8,zh:.8};
 const REFERENCE='number_magic/scripts/showreel/narration/omnivoice-rec/n01.mp3';
-const [candDir,prefDir]=process.argv.slice(2);
+const args=process.argv.slice(2),near=args.includes('--accept-near')?Number(args[args.indexOf('--accept-near')+1]):0;
+const [candDir,prefDir]=args.filter((a,i)=>!a.startsWith('--')&&args[i-1]!=='--accept-near');
 if(!candDir)throw Error('Usage: node import-numi-voice.js <candidate dir> [preferred dir]');
 const sha1=s=>crypto.createHash('sha1').update(s,'utf8').digest('hex');
 const sha256=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
@@ -31,9 +35,12 @@ const prior=fs.existsSync(old)?JSON.parse(fs.readFileSync(old,'utf8')):null;
 const reports=[[prefDir,readReport(prefDir),'trial'],[candDir,readReport(candDir),'full']];
 
 const clips=[],missing=[],ko={};
-for(const [text,current] of Object.entries(map.ko)){
+const texts=[...new Set([...Object.keys(map.ko),...(prior?.missing||[])])];
+for(const text of texts){
+  const current=map.ko[text];
   const f=fname(text);
-  const pick=reports.find(([d,r])=>d&&r[f]&&r[f].ok===true&&r[f].text===text&&fs.existsSync(path.join(d,f)));
+  const pass=r=>r.ok===true||(near&&r.cer<=near);
+  const pick=reports.find(([d,r])=>d&&r[f]&&pass(r[f])&&r[f].text===text&&fs.existsSync(path.join(d,f)));
   // 이미 새 목소리로 바뀐 줄을 다시 돌릴 때: 옛 파일 기록을 이어받는다.
   const before=prior?.clips.find(c=>c.text===text);
   const previousFile=before?before.previousFile:current;
@@ -44,8 +51,10 @@ for(const [text,current] of Object.entries(map.ko)){
   const file='audio/omni/'+f,sec=duration(dst);
   ko[text]=file;
   clips.push({lang:'ko',text,file,previousFile,sha256:hash,duration:sec,playbackDuration:Math.round(sec/RATE.ko*100)/100,
-    source,cer:rep[f].cer,asr:rep[f].asr,voice:VOICE});
+    source,cer:rep[f].cer,asr:rep[f].asr,voice:VOICE,...(rep[f].ok===true?{}:{nearMiss:true,needsOwnerListening:true})});
 }
+const oldRel=JSON.parse(fs.readFileSync(path.join(root,'data/voice-release-20261023.json'),'utf8'));
+for(const text of Object.keys(oldRel.durations.ko))if(!(text in durations.ko))durations.ko[text]=oldRel.durations.ko[text];
 for(const text of Object.keys(durations.ko||{})){const c=clips.find(x=>x.text===text);if(c)durations.ko[text]=c.duration;else delete durations.ko[text];}
 map.ko=ko;
 const count=Object.values(map).reduce((n,v)=>n+Object.keys(v).length,0);
@@ -58,7 +67,7 @@ fs.writeFileSync(mapPath,'/* Numbers of Magic — OmniVoice recordings. '+count+
 const manifest={version:'2026-11-11-numi',voice:VOICE,reference:REFERENCE,rate:RATE,
   decision:'원장 2026-11-10 「A 1번」(여자 목소리 1번) → 시험 12줄을 듣고 2026-11-11 「진행」',
   trialLinesHeardByOwner:clips.filter(c=>c.source==='trial').length,operatorListeningPerformed:false,
-  durations,clips,missing};
+  nearMissAccepted:near||0,durations,clips,missing};
 fs.writeFileSync(old,JSON.stringify(manifest,null,2)+'\n');
 console.log(`NUMI_VOICE_IMPORTED ko=${clips.length} trial=${manifest.trialLinesHeardByOwner} missing=${missing.length}`);
 missing.forEach(t=>console.log('  빠짐: '+t));

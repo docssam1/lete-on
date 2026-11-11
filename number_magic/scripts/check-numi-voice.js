@@ -14,9 +14,10 @@ for(const [text,file] of Object.entries(ko)){
   const c=byText.get(text);assert(c,'기록에 없는 한국어 줄: '+text);assert.equal(file,c.file);
   assert(/^audio\/omni\/ko-[0-9a-f]{12}\.mp3$/.test(file));
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex'),c.sha256);
-  assert(c.duration>.2);assert(c.cer<=.12,'받아쓰기 검사를 통과하지 못한 줄: '+text);
+  assert(c.duration>.2);assert(c.cer<=.12||(c.nearMiss&&c.needsOwnerListening&&c.cer<=release.nearMissAccepted),'받아쓰기 검사를 통과하지 못한 줄: '+text);
   if(c.previousFile){assert.notEqual(c.previousFile,file);assert(fs.existsSync(path.join(root,c.previousFile)),'옛 음성이 남아 있어야 합니다: '+c.previousFile);}
 }
 assert.equal(JSON.stringify(w.NM_VOICE_DURATIONS),JSON.stringify(release.durations));
 for(const [text,sec] of Object.entries(release.durations.ko))assert.equal(sec,byText.get(text).duration);
-console.log(`NUMI_VOICE_OK ko=${release.clips.length} trial=${release.trialLinesHeardByOwner} missing=${release.missing.length} rate=ko1/en0.8/zh0.8`);
+const near=release.clips.filter(c=>c.nearMiss).length;
+console.log(`NUMI_VOICE_OK ko=${release.clips.length} trial=${release.trialLinesHeardByOwner} nearMissToListen=${near} missing=${release.missing.length} rate=ko1/en0.8/zh0.8`);
