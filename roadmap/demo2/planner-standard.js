@@ -91,6 +91,35 @@ function renderSupplementChoices(m){
  const message=m.supplementChoice==='covered'?'현재 수업·부교재에서 배우는 문장제·도형을 이어갑니다. 같은 내용을 별도 보충으로 더하지 않습니다.':m.supplementEnabled?'현재 수준에 맞는 문제해결의 길잡이·소마 도형을 꾸준히 병행합니다. 소마 수업과 겹치는 부분은 제외하고 부족한 내용부터 살펴봅니다.':m.supplementChoice==='review'?'현재 수업에서 배우는 범위와 혼자 해결하는 모습을 먼저 확인합니다. 확인 전에는 별도 보충을 추가하지 않습니다.':'현재 수업에서 이미 배우는 내용인지 먼저 확인합니다. 현재 수업·부교재와 겹치는 내용은 중복으로 배정하지 않습니다.';
  return`<section class="supplement-choice" aria-label="초1·2 문장제·도형 학습 확인"><strong>문장제·도형은 지금 어떻게 배우고 있나요?</strong><div role="group" aria-label="현재 수업과 보충 필요">${SUPPLEMENT_CHOICES.map(([id,title])=>`<button type="button" data-supplement="${id}" aria-pressed="${m.supplementChoice===id}">${title}</button>`).join('')}</div><p aria-live="polite">${message}</p></section>`;
 }
+// 중등 심화 줄 (원장님 2026-11-11): 낮은 레벨은 쎈 또는 RPM, 중간 레벨은 쎈과 일품, 그 위 레벨은 쎈과 에이급.
+// 레벨을 낮음·중간·위로 나누는 선은 새로 만들지 않고 2026-10-20 표준 세 묶음(planner.js BAND)을 그대로 쓴다:
+// C 천천히형 L10~L13 = 낮음, B 예시형 L4~L9 = 중간, A 선행형 L0~L3 = 위. 영과고형(D)은 기존 심화서가 에이급이라 위로 본다.
+// [원장 확인 필요] 세 묶음과 낮음·중간·위의 짝, D를 위로 본 것은 Claude가 맞춘 것이다.
+// 교재 이름은 교재 난이도 지도(planner-math-books-data.js)의 표기와 같게 둔다.
+const MIDDLE_DEPTH=Object.freeze({
+ C:Object.freeze({tier:'low',levels:'L10~L13',books:Object.freeze(['쎈 중등','RPM 중학']),join:' 또는 '}),
+ B:Object.freeze({tier:'middle',levels:'L4~L9',books:Object.freeze(['쎈 중등','일품 중등']),join:' + '}),
+ A:Object.freeze({tier:'high',levels:'L0~L3',books:Object.freeze(['쎈 중등','에이급수학']),join:' + '})
+});
+function middleDepth(band){const rule=MIDDLE_DEPTH[band==='D'?'A':band]||MIDDLE_DEPTH.B;return{...rule,title:rule.books.join(rule.join)};}
+const MIDDLE_DEPTH_SOURCE='level-depth-rule';
+const middleDepthExtra=(rule,stage)=>({source:MIDDLE_DEPTH_SOURCE,stage,proposed:true,books:[...rule.books],depthTier:rule.tier});
+// 24개월 끝에서 잘려 한 달 남짓만 보이는 마지막 칸은 긴 교재 이름이 줄 전체를 높이지 않게 글자를 숨긴다(이름과 기간은 aria-label·상세 표·팝업에 남는다).
+const compactTail=b=>b&&b.endClipped&&b.end-b.start<1.5?{...b,compact:true}:b;
+// 초등 심화를 마친 다음의 중등 심화. 앞 심화가 끝난 뒤, 그리고 교과가 그 학기를 시작한 뒤에만 놓는다(심화가 교과를 앞서지 않는다).
+// 한 학기 길이는 같은 레벨표의 중등 교과 한 학기와 같다. 교과 일정을 모르는 학기부터는 만들지 않는다.
+function middleDepthChain({band,after,schoolBlocks,sourceRows,passed}){
+ const rule=middleDepth(band),out=[];let cursor=Math.max(0,after);
+ for(const [n,stage] of P.MID.entries()){
+  const lesson=schoolBlocks.find(b=>b.stage===stage&&!b.highPhase);
+  if(!lesson&&!passed(14+n))break;
+  const row=sourceRows.find(r=>G.stage(r[0],'school')===stage),full=row?row[2]-row[1]+1:(P.BAND[band]||P.BAND.B).midLen;
+  const start=Math.max(cursor,lesson?lesson.start:0),block=clipped(stage+' '+rule.title,start,start+full,'deep-middle-'+(14+n),'deep',middleDepthExtra(rule,stage));
+  if(!block)break;
+  out.push(compactTail(block));cursor=start+full;
+ }
+ return out;
+}
 function model(answers={},fields={},options={}){
  const a=I.effective(answers),c=G.comparison(a,fields),source=(global.PLANNER_LEVELS||[]).find(l=>l.id===c.best),detail=global.PLANNER_STANDARD_DETAILS?.[c.best],levelNumber=source?Number(source.id.slice(1)):null;
  const defaultPattern=a.thinkingExperience==='yes'?'thinking':levelNumber!==null&&levelNumber>=10?'deep':'thinking';
@@ -106,26 +135,36 @@ function model(answers={},fields={},options={}){
  const calcPlan=calculationPlan(a,fields,options.calcDaysPerWeek);calc.blocks=calcPlan.blocks;calc.source=calcPlan.supported?'publisher-workload':null;calc.anchor=calcPlan.blocks[0]?.stage;calc.note=calcPlan.note;if(calcPlan.supported&&calcPlan.hasElementary)calc.current='기적의 계산법 · '+calc.current;
  if(schoolParallel&&detail?.elementaryMode?.id==='application-then-depth'&&school.anchor!==null)school.blocks=withoutDepthSlots(fromSource(source.school,school.anchor,'school','school',{horizon:Infinity}),detail.schoolGaps||[],school.anchor);
  fillIndependent(thinking,a,c,thinkingSource(c),profile);
+ // The same school calendar without the 24-month cut, for depth and science anchors.
+ let fullSchool=[];
+ if(source&&school.anchor!==null){
+  fullSchool=fromSource(source.school,school.anchor,'school-reference','school',{horizon:Infinity});
+  if(schoolParallel&&detail?.elementaryMode?.id==='application-then-depth')fullSchool=withoutDepthSlots(fullSchool,detail.schoolGaps||[],school.anchor,Infinity);
+ }
+ const actualSchoolAxis=c.axes.find(x=>x.id==='school'),schoolIndex=P.MID.indexOf(actualSchoolAxis?.stage);
+ const schoolPassed=n=>!!actualSchoolAxis?.ready&&(I.highBook(a.schoolBook)||schoolIndex>=0&&(14+schoolIndex>n||14+schoolIndex===n&&actualSchoolAxis.done));
  if(independentDepth){
   deep.blocks=profileBlocks(profile,'deep');deep.source='current-profile';deep.anchor=deep.blocks[0]?.stage||null;
+  // A reported elementary depth book ends at 6-2. The middle-school part follows the level rule;
+  // a reported middle or high depth book keeps its own reported course untouched.
+  if(a.deepCourse==='elem'&&!I.middleBook(a.deepBook)&&!I.highBook(a.deepBook)&&school.blocks.length&&!deep.blocks.some(b=>b.endClipped)){
+   deep.blocks.push(...middleDepthChain({band,after:Math.max(0,...deep.blocks.map(b=>b.end)),schoolBlocks:fullSchool.length?fullSchool:school.blocks,sourceRows:source?.school||[],passed:schoolPassed}));
+  }
   deep.note=deep.blocks.length?'현재 심화 교재·범위에서 별도로 이어가는 과정입니다. 교과와 사고력의 진도는 유지합니다.':'현재 심화 과정 이후 교재·범위는 풀이를 확인한 뒤 연결합니다.';
  }else if(pattern==='deep'&&deep.status!=='unknown'&&school.blocks.length&&source&&school.anchor!==null){
   // This is a proposed standard only when no independent depth course is reported.
   const elementary=(detail?.school2||[]).filter(b=>/^[1-6]-[12]$/.test(b.stage||'')||!/중|공통|고등/.test(b.title)&&/최상위/.test(b.title));
   deep.blocks=fromSource(elementary,school.anchor,'deep','school',{all:true});deep.source='standard-depth';deep.anchor=school.anchor;
-  if(band==='C'){
-   for(const block of school.blocks){if(!/^중[1-3]-[12]$/.test(block.stage||''))continue;
-    deep.blocks.push({...block,id:'deep-current-policy-'+block.id,title:block.stage+' '+I.standardBook('C','mid','deep'),kind:'deep',source:'current-engine-C'});
-   }
+  const rule=middleDepth(band);
+  for(const block of school.blocks){if(!/^중[1-3]-[12]$/.test(block.stage||''))continue;
+   deep.blocks.push(compactTail({...block,id:'deep-current-policy-'+block.id,title:block.stage+' '+rule.title,kind:'deep',...middleDepthExtra(rule,block.stage)}));
   }
   deep.note=deep.blocks.length?'아직 별도로 공부 중인 심화가 없을 때 비교하는 표준 심화 과정입니다.':'이 범위의 심화 교재는 현재 학습과 풀이를 확인한 뒤 연결합니다.';
  }else deep.note=deep.status==='unknown'?'현재 심화 교재와 범위를 확인한 뒤 연결합니다.':deep.status==='none'?'아직 시작하지 않은 영역입니다. 시작 교재는 조정 단계에서 선택할 수 있습니다.':'현재 심화 학습을 선택하면 과정이 연결됩니다.';
  if(band==='C')school.blocks=school.blocks.map(block=>/^중/.test(block.stage||'')&&block.source==='level-table'?{...block,title:block.stage+' '+I.standardBook('C','mid','school'),source:'current-engine-C'}:block);
  let scienceAnchor=null;
  if(source&&school.anchor!==null){
-  let full=fromSource(source.school,school.anchor,'science-reference','school',{horizon:Infinity});
-  if(schoolParallel&&detail?.elementaryMode?.id==='application-then-depth')full=withoutDepthSlots(full,detail.schoolGaps||[],school.anchor,Infinity);
-  const middle=full.find(b=>b.stage==='중2-1');
+  const middle=fullSchool.find(b=>b.stage==='중2-1');
   if(middle)scienceAnchor=middle.end;
   else{const raw=source.school.find(b=>G.stage(b[0],'school')==='중2-1');if(raw&&raw[2]+1<=school.anchor)scienceAnchor=raw[2]+1-school.anchor;}
  }
@@ -169,13 +208,16 @@ function model(answers={},fields={},options={}){
  ];
  if(sequential)assumptions.push('응용 3개월 다음에 같은 학기의 심화 2개월을 공부합니다. 교과선이 평평한 두 달은 심화에 집중하는 기간입니다.');
  else if(detail?.elementaryMode?.id==='application-then-depth')assumptions.push(independentDepth?'이미 별도로 진행 중인 심화가 있어 교과 뒤에 표준 심화 2개월을 추가하지 않습니다. 현재 심화의 범위·기간과 사고력·연산은 각각 별도로 이어갑니다.':'교과·사고력 중심 구성에서는 교과 뒤의 별도 심화 2개월을 배정하지 않고 다음 교과를 잇습니다. 다른 영역의 현재 출발점은 그대로 유지합니다.');
- if(band==='C')assumptions.push('중등 교과는 개념원리·RPM으로 개념과 유형을 공부합니다. A급 등 심화 교재는 현재 풀이를 보고 따로 선택합니다.');
+ if(band==='C')assumptions.push('중등 교과는 개념원리로 개념을 배우고, 쎈 또는 RPM으로 유형을 다집니다. 에이급 등 더 어려운 심화서는 현재 풀이를 보고 따로 선택합니다.');
+ const depthRule=deep.blocks.some(b=>b.source===MIDDLE_DEPTH_SOURCE)?middleDepth(band):null;
+ const depthRuleNote=depthRule?'중등 심화 교재는 학습 레벨에 따라 달라집니다. '+MIDDLE_DEPTH.C.levels+'은 쎈 또는 RPM, '+MIDDLE_DEPTH.B.levels+'는 쎈과 일품, '+MIDDLE_DEPTH.A.levels+'은 쎈과 에이급입니다. 이 계획은 '+(c.best?c.best+' 기준이라 ':'')+depthRule.title+'으로 잡았습니다. 실제 풀이를 보고 교재를 바꿀 수 있습니다.':'';
+ if(depthRuleNote)assumptions.push(depthRuleNote,independentDepth?'중등 심화는 지금 하는 초등 심화를 마친 뒤, 교과에서 그 학기를 시작한 다음에 이어갑니다. 한 학기 길이는 중등 교과 한 학기와 같게 잡았습니다.':'중등 심화는 교과와 같은 학기를 함께 공부하는 일정으로 잡았습니다.');
  if(Object.keys(highReadyAt).length)assumptions.push('고등 개념·쎈 병행 → 다음 과목 선행 + 앞 과목 심화. 기본정석의 완료를 쎈 완료로 간주하지 않습니다.',...highWarnings);
  assumptions.push(calcPlan.note);
  if(supplementEligible)assumptions.push('초1·2 문장제·도형 보충은 현재 수업에서 부족한 부분이 있을 때 추가합니다. 문제해결의 길잡이·소마 도형 중 수업과 겹치지 않는 내용을 골라 주세요.');
  if(supplementEnabled)assumptions.push('문제해결의 길잡이와 소마 도형 중 수업과 겹치지 않는 내용을 꾸준히 병행합니다. 표시 범위는 병행할 시기이며 한 권의 이수 기간이 아닙니다. 현재 단계와 풀이를 보고 조정합니다.');
  const composition=['교과',...(thinking.status==='known'||pattern==='thinking'?['사고력']:[]),...(independentDepth||pattern==='deep'||deep.blocks.some(b=>b.highPhase)?['심화']:[]),'연산'].join(' · ');
- return{ready,pattern,composition,highReadyAt,highWarnings,independentDepth,scienceAnchor,level:c.best||null,levelLabel:c.best?G.levelLabel(c,c.best):'현재 학습에서 시작',band,lanes,months,stages,now:c.now,horizon:LIMIT,sequential,calcPlan,supplementEligible,supplementChoice,supplementEnabled,supplements,assumptions,partial:lanes.some(l=>!l.blocks.length),reason:ready?'':school.note||'현재 교과와 진도를 선택하면 표준 계획을 먼저 보여드립니다.'};
+ return{ready,pattern,composition,highReadyAt,highWarnings,independentDepth,depthRule:depthRule?{tier:depthRule.tier,books:[...depthRule.books],title:depthRule.title}:null,depthRuleNote,scienceAnchor,level:c.best||null,levelLabel:c.best?G.levelLabel(c,c.best):'현재 학습에서 시작',band,lanes,months,stages,now:c.now,horizon:LIMIT,sequential,calcPlan,supplementEligible,supplementChoice,supplementEnabled,supplements,assumptions,partial:lanes.some(l=>!l.blocks.length),reason:ready?'':school.note||'현재 교과와 진도를 선택하면 표준 계획을 먼저 보여드립니다.'};
 }
 function period(m,b){const start=monthAt({year:m.months[0]?.year,mon:m.months[0]?.month},Math.floor(b.start)),end=monthAt({year:m.months[0]?.year,mon:m.months[0]?.month},Math.max(0,Math.ceil(b.end)-1));return start.label+(start.label===end.label?'':' – '+(start.year===end.year?end.month+'월':end.label));}
 function renderSummary(m){return`<div class="standard-summary"><div><small>현재 공부에서 이어지는 표준 계획</small><strong>${esc(m.composition)}</strong></div><span>${esc(m.levelLabel)}</span>${Object.keys(m.highReadyAt||{}).length?'<button type="button" data-high-study-open>고등 개념·쎈·심화</button>':''}</div>`;}
@@ -199,10 +241,12 @@ function render(m,options={}){
  const groups=[];m.months.forEach((d,i)=>{const name=d.year+'년 '+d.quarter+'분기';if(groups.at(-1)?.name===name)groups.at(-1).count++;else groups.push({name,start:i,count:1});});
  const endNote=m.lanes.find(row=>row.id==='school')?.note;
  const pendingNote=endNote?`<p class="standard-source-end">${esc(endNote)}</p>`:'';
+ // 월별 표 바로 아래에만 보인다. 지도 보기에서는 달력이 접혀 있어 '기간과 연결 기준' 안에만 둔다.
+ const depthRuleNote=m.depthRuleNote?`<p class="standard-source-end standard-depth-rule">${esc(m.depthRuleNote)}</p>`:'';
  const assumptions=`<details class="standard-assumptions"><summary>표준 계획의 기간과 연결 기준</summary><ul>${m.assumptions.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></details>`;
  const displayRows=m.lanes.flatMap(row=>{const extra=row.blocks.filter(b=>b.additional);return extra.length?[{...row,blocks:row.blocks.filter(b=>!b.additional)},...extra.map(b=>({...row,label:row.label+' · 추가 현재 심화',current:b.title,blocks:[b],note:''}))]:[row];});
- const calendar=`<div class="standard-calendar" tabindex="0" aria-label="24개월 영역별 학습 일정"><div class="standard-calendar-inner"><div class="standard-quarter-axis" style="display:grid;grid-template-columns:repeat(24,minmax(0,1fr))">${groups.map(g=>`<span style="grid-column:${g.start+1}/span ${g.count}">${esc(g.name)}</span>`).join('')}</div><div class="standard-month-axis" style="display:grid;grid-template-columns:repeat(24,minmax(0,1fr))">${m.months.map(d=>`<span><small>${esc(d.grade)}</small>${d.month}월</span>`).join('')}</div><div class="standard-lanes">${displayRows.map(row=>`<section class="standard-lane" data-lane="${row.id}" data-study-area="${row.id}"><header><strong>${esc(row.label)}</strong><span>${esc(row.current)}</span></header><div class="standard-lane-track">${row.blocks.map(b=>`<button type="button" class="standard-block ${b.current?'is-current':''}${b.end-b.start<.75?' is-sliver':''}" data-course-tone="${tone(b)}" data-standard-block="${esc(b.id)}" style="left:${b.start/LIMIT*100}%;width:${(b.end-b.start)/LIMIT*100}%" aria-label="${esc(row.label+' · '+b.title+' · '+period(m,b))}"><strong>${esc(row.id==='calc'?b.title.replace('기적의 계산법 ' ,''):b.title)}</strong><small>${b.weeks?'약 '+Number(b.weeks.toFixed(1))+'주 · ':b.fullMonths?'과정 '+b.fullMonths+'개월 · ':''}${esc(period(m,b))}${b.continues?' · 이후 계속':''}</small></button>`).join('')||`<p class="standard-lane-empty">${esc(row.note)}</p>`}${tail(row)}</div></section>`).join('')}</div></div></div>`;
- if(options.view==='table')return`<section class="standard-roadmap">${summary}<h3 class="horizontal-plan-title">월별 세부 로드맵</h3>${calendar.replace('class="standard-calendar"','class="standard-calendar horizontal-course-grid"')}${pendingNote}${routine}${supplements}<details class="horizontal-plan-details"><summary>교재별 기간 상세</summary><div class="standard-table-wrap"><table class="standard-table"><caption>표준 교재와 월별 과정</caption><thead><tr><th>영역</th><th>기간</th><th>공부할 교재·과정</th></tr></thead><tbody>${m.lanes.map(row=>row.blocks.length?row.blocks.map(b=>`<tr data-study-area="${row.id}" data-course-tone="${tone(b)}"><th scope="row">${esc(row.label)}</th><td>${esc(period(m,b))}</td><td>${esc(b.title)}${b.reported?' · 현재 교재':''}</td></tr>`).join(''):`<tr data-study-area="${row.id}"><th scope="row">${esc(row.label)}</th><td>연결 전</td><td>${esc(row.current)}<small>${esc(row.note)}</small></td></tr>`).join('')}</tbody></table></div></details>${assumptions}</section>`;
+ const calendar=`<div class="standard-calendar" tabindex="0" aria-label="24개월 영역별 학습 일정"><div class="standard-calendar-inner"><div class="standard-quarter-axis" style="display:grid;grid-template-columns:repeat(24,minmax(0,1fr))">${groups.map(g=>`<span style="grid-column:${g.start+1}/span ${g.count}">${esc(g.name)}</span>`).join('')}</div><div class="standard-month-axis" style="display:grid;grid-template-columns:repeat(24,minmax(0,1fr))">${m.months.map(d=>`<span><small>${esc(d.grade)}</small>${d.month}월</span>`).join('')}</div><div class="standard-lanes">${displayRows.map(row=>`<section class="standard-lane" data-lane="${row.id}" data-study-area="${row.id}"><header><strong>${esc(row.label)}</strong><span>${esc(row.current)}</span></header><div class="standard-lane-track">${row.blocks.map(b=>`<button type="button" class="standard-block ${b.current?'is-current':''}${b.end-b.start<.75||b.compact?' is-sliver':''}" data-course-tone="${tone(b)}" data-standard-block="${esc(b.id)}" style="left:${b.start/LIMIT*100}%;width:${(b.end-b.start)/LIMIT*100}%" aria-label="${esc(row.label+' · '+b.title+' · '+period(m,b))}"><strong>${esc(row.id==='calc'?b.title.replace('기적의 계산법 ' ,''):b.title)}</strong><small>${b.weeks?'약 '+Number(b.weeks.toFixed(1))+'주 · ':b.fullMonths?'과정 '+b.fullMonths+'개월 · ':''}${esc(period(m,b))}${b.continues?' · 이후 계속':''}</small></button>`).join('')||`<p class="standard-lane-empty">${esc(row.note)}</p>`}${tail(row)}</div></section>`).join('')}</div></div></div>`;
+ if(options.view==='table')return`<section class="standard-roadmap">${summary}<h3 class="horizontal-plan-title">월별 세부 로드맵</h3>${calendar.replace('class="standard-calendar"','class="standard-calendar horizontal-course-grid"')}${pendingNote}${depthRuleNote}${routine}${supplements}<details class="horizontal-plan-details"><summary>교재별 기간 상세</summary><div class="standard-table-wrap"><table class="standard-table"><caption>표준 교재와 월별 과정</caption><thead><tr><th>영역</th><th>기간</th><th>공부할 교재·과정</th></tr></thead><tbody>${m.lanes.map(row=>row.blocks.length?row.blocks.map(b=>`<tr data-study-area="${row.id}" data-course-tone="${tone(b)}"><th scope="row">${esc(row.label)}</th><td>${esc(period(m,b))}</td><td>${esc(b.title)}${b.reported?' · 현재 교재':''}</td></tr>`).join(''):`<tr data-study-area="${row.id}"><th scope="row">${esc(row.label)}</th><td>연결 전</td><td>${esc(row.current)}<small>${esc(row.note)}</small></td></tr>`).join('')}</tbody></table></div></details>${assumptions}</section>`;
  return`<section class="standard-roadmap">${summary}<div class="standard-landscape" style="background-image:url('assets/learning-landscape-20261023.png')"><div class="standard-stage-cards">${m.stages.map((b,i)=>`<button type="button" class="standard-stage" data-study-area="${b.kind}" data-course-tone="${tone(b)}" data-standard-block="${esc(b.id)}"><small>${i===0?'현재부터':i===1?'다음 과정':'그다음 과정'} · ${esc(label(b.kind))}</small><strong>${esc(b.title)}</strong><span>${esc(period(m,b))}</span></button>`).join('')}</div></div>${calendar}${pendingNote}${routine}${supplements}${assumptions}</section>`;
 }
 global.PlannerStandard=Object.freeze({model,render,renderSummary,faq,renderFAQ,renderQuestions:renderFAQ,calculationPlan,renderCalculationGraph,chooseSupplement,renderSupplementChoices,renderSupplementQuestions});
