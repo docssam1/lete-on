@@ -127,6 +127,8 @@ html,body.member-landing{overflow-x:clip}
 .account-unit-points li{padding-block:var(--in-s4);border-top:1px solid var(--in-line);font-size:var(--in-t-body);line-height:1.8;color:var(--in-muted)}
 .account-unit-points strong{display:block;font-size:1.125rem;font-weight:800;letter-spacing:-.02em;color:var(--member-ink)}
 .account-unit figure{position:sticky;top:var(--in-s6);margin:0;min-width:0}
+.account-plan-shots{position:sticky;top:var(--in-s6);display:grid;gap:var(--in-s5);min-width:0}
+.account-plan .account-plan-shots figure{position:static}
 .account-unit figure img{display:block;width:100%;height:auto;background:var(--in-paper);border:1px solid var(--in-line);border-radius:6px}
 .account-unit figcaption{display:flex;justify-content:space-between;align-items:center;gap:var(--in-s4);padding-top:var(--in-s2);font-size:var(--in-t-small);line-height:1.5;color:var(--in-muted)}
 .account-unit figcaption a{display:inline-flex;align-items:center;min-height:44px;flex:none}
@@ -255,7 +257,7 @@ html,body.member-landing{overflow-x:clip}
  .account-preview figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
  .account-input-example,.account-lanes,.account-cycle-main,.account-performance-example,.account-questions{grid-template-columns:minmax(0,1fr)}
  .account-unit{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s6)}
- .account-unit figure{position:static}
+ .account-unit figure,.account-plan-shots{position:static}
  .account-unit figcaption{flex-wrap:wrap;gap:0 var(--in-s4)}
  .account-mock-steps li{grid-template-columns:minmax(0,1fr);row-gap:var(--in-s1)}
  .account-input-example dl>div,.account-example-answer li{grid-template-columns:5.5rem minmax(0,1fr)}
