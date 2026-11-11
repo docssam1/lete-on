@@ -15,6 +15,9 @@ on:
       limit:
         description: '조각마다 앞에서 N줄만(시험용, 0 = 전부)'
         default: '0'
+      retry:
+        description: '1 = 후보 브랜치에서 검사 못 넘은 줄만 다시(8번까지), 나머지는 그대로 둔다'
+        default: '0'
 
 concurrency:
   group: omnivoice-nm-numi
@@ -38,13 +41,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
           pip install omnivoice soundfile librosa
+      - name: 다시 만들 줄(retry)
+        if: inputs.retry == '1'
+        run: |
+          git fetch -q origin numi-voice-candidate
+          git show origin/numi-voice-candidate:candidate/numi-v2/report.json > prev-report.json
+          python3 -c "import json;r=json.load(open('prev-report.json'));json.dump([{'file':f} for f,v in r.items() if not v['ok']],open('retry.json','w'))"
+          echo "RETRY_ARGS=--tasks-file retry.json --tries 8" >> "$GITHUB_ENV"
       - name: 조각 ${{ matrix.shard }}/12
         run: |
           python scripts/omnivoice-nm.py --device cpu --lang ko --voice nm-numi-v2 \
             --ref-wav number_magic/scripts/showreel/narration/omnivoice-rec/n01.mp3 \
             --ref-text "수학 마법 나라에 오신 걸 환영합니다. 이곳에서 아이들은 수를 마법처럼 다루는 법을 배웁니다." \
             --tries 5 \
-            --with-map-keys --out part --shard ${{ matrix.shard }}/12 --limit ${{ inputs.limit }}
+            --with-map-keys --out part --shard ${{ matrix.shard }}/12 --limit ${{ inputs.limit }} $RETRY_ARGS
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -79,6 +89,24 @@ jobs:
           PY
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ "${{ inputs.retry }}" = "1" ]; then
+            # 다시 만든 줄만 덮어쓴다: 앞서 통과한 줄과 파일은 그대로 두고, 이번에 통과한 줄만 바꾼다.
+            git fetch -q origin numi-voice-candidate
+            mkdir -p prev && git archive origin/numi-voice-candidate candidate | tar -x -C prev
+            python3 - <<'PY'
+          import json, shutil, os
+          old = json.load(open("prev/candidate/numi-v2/report.json", encoding="utf-8"))
+          new = json.load(open("candidate/numi-v2/report.json", encoding="utf-8"))
+          for f, v in new.items():
+              if v["ok"] or f not in old or v["cer"] < old[f]["cer"]:
+                  old[f] = v
+          for f in os.listdir("candidate/numi-v2"):
+              if f.endswith(".mp3"): shutil.copy(os.path.join("candidate/numi-v2", f), os.path.join("prev/candidate/numi-v2", f))
+          json.dump(old, open("prev/candidate/numi-v2/report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          print("merged:", sum(1 for v in old.values() if v["ok"]), "ok /", len(old))
+          PY
+            rm -rf candidate && mv prev/candidate candidate
+          fi
           git checkout --orphan numi-voice-candidate
           git rm -rq --cached .
           git add candidate
