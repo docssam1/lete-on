@@ -91,8 +91,8 @@ test('the example typed in is the one the screens and the graph were made from',
  assert.match(html,/class="growth-chart" role="img" aria-label="[^"]{30,}"/);
 });
 test('the book test is described as it is: ten books, marked by hand, not yet joined to the roadmap',()=>{
- assert.match(html,/id="bookTest"/);assert.match(html,/1과정 10권,<br>250문항/);assert.equal(10*25,250);
- assert.match(html,/href="\.\.\/\.\.\/fields-classic\/question-bank\/unit-test-viewer\.html\?book=book-01"/);
- assert.match(html,/정답을 보며 번호마다 ○·✕를 누릅니다/);assert.match(html,/잇는 연동은 준비하고 있습니다/);
+ assert.match(html,/id="bookTest"/);assert.match(html,/1031·팩토·필즈·<br>3% 올림피아드/);assert.match(html,/차후 업데이트/);assert.doesNotMatch(html,/1과정 10권/);
+ assert.match(html,/<a href="#unitTest">지금 쓸 수 있는 초등 교과 단원테스트 보기<\/a>/);
+ assert.match(html,/번호마다 ○·✕를 누르면, ✕가 나온 문항을 영역별로 묶어/);
  assert.doesNotMatch(html,/사고력 권별 테스트는 준비하고 있습니다/);
 });
