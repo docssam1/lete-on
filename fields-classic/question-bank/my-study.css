@@ -268,3 +268,10 @@ tr.is-done td { color: var(--muted); }
 .ms-signup-code legend { padding: 0 6px; font-weight: 700; }
 .ms-recode { grid-column: 1 / -1; display: grid; gap: 10px; width: 100%; margin-top: 6px; }
 .ms-recode .ms-login-error:empty { display: none; }
+/* 접속한 회원(원장 2026-11-11 「들어간 회원, 회원정보, 학습 상황도」) — teacher-access.js */
+.ms-access-table { min-width: 900px; }
+.ms-access-table th b, .ms-access-table td b { display: block; }
+.ms-online, .ms-teach { display: inline-block; margin-top: 4px; margin-right: 4px; padding: 1px 8px; border-radius: 99px; font-size: 12px; font-style: normal; font-weight: 700; }
+.ms-online { background: #e2f5ea; color: #1f7a4a; }
+.ms-teach { background: var(--accent-soft); color: var(--accent-ink); }
+.ms-link { display: inline-block; margin-top: 4px; color: var(--accent-ink); font-size: 13px; font-weight: 700; }

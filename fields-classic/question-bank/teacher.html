@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#ffffff" />
   <title>선생님 보기</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./my-study.css?v=20261111e" />
+  <link rel="stylesheet" href="./my-study.css?v=20261111n" />
 </head>
 <body>
   <header class="ms-header">
@@ -19,6 +19,14 @@
   <main class="ms-main">
     <p id="status" class="ms-note" role="status">불러오는 중…</p>
     <nav class="ms-books" id="books" aria-label="교재 고르기" hidden></nav>
+    <section class="ms-members ms-access" id="accessBox" hidden>
+      <h2>접속한 회원 <small id="accessCount"></small></h2>
+      <div class="ms-members-filter" id="accessFilter" role="group" aria-label="접속 고르기">
+        <button type="button" data-filter="now">지금 접속</button><button type="button" data-filter="today" class="is-on">오늘</button><button type="button" data-filter="week">7일</button><button type="button" data-filter="all">전체</button>
+      </div>
+      <div class="ms-table-wrap"><table class="ms-table ms-members-table ms-access-table" id="accessTable"></table></div>
+      <p class="ms-note" id="accessMsg" role="status"></p>
+    </section>
     <section class="ms-members" id="membersBox" hidden>
       <h2>회원 관리 <small id="membersCount"></small></h2>
       <div class="ms-members-filter" id="membersFilter" role="group" aria-label="회원 고르기">
@@ -34,6 +42,6 @@
     </section>
     <section class="ms-weak" id="weak" hidden></section>
   </main>
-  <script type="module" src="./teacher.js?v=20261111m"></script>
+  <script type="module" src="./teacher.js?v=20261111o"></script>
 </body>
 </html>

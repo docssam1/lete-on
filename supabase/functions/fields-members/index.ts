@@ -15,6 +15,8 @@ import { FIELDS_BOOKS, TRIAL_DAYS, membershipSummary } from "../_shared/fields-m
 //    request   — 정규회원 승인 요청(regular) · 다음 권 추가 요청(book). 요청은 카톡으로 하고 여기엔 표시만 남긴다
 //    start     — 시작 진도 바꾸기(학부모)
 //  관리자(DOCSSAM 세션): admin-list · admin-update(승인·체험 연장·멈춤·권 더 열기·시작 진도·메모) · admin-reissue
+//    admin-access — 모든 승인번호(직접 발급·이메일 회원)와 접속 기록: 마지막 로그인·마지막 활동·30일 로그인 수·지금 접속 중,
+//                   이메일 회원이면 회원 정보까지(원장 2026-11-11 「들어간 회원, 회원정보, 학습 상황도 나올 수 있도록」). 승인번호 해시는 내보내지 않는다.
 // 승인번호는 해시로만 둔다(fields_access_accounts.code_hash). 응답에만 한 번 보이고 저장소·기록에 남기지 않는다.
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
@@ -179,6 +181,31 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!admin) throw new HttpError(403, "admin_required");
+    if (action === "admin-access") {
+      const [accounts, sessions, rows] = await Promise.all([
+        service.from("fields_access_accounts").select("student_name,permissions,student_type,active,updated_at"),
+        service.from("fields_access_sessions").select("student_name,created_at,last_seen_at,expires_at").not("student_name", "is", null).order("created_at", { ascending: false }).limit(5000),
+        members.select("*"),
+      ]);
+      for (const result of [accounts, sessions, rows]) if (result.error) throw new Error(result.error.message);
+      const now = Date.now(), since = now - 30 * 86400000;
+      const seen = new Map();
+      for (const row of sessions.data || []) {
+        const entry = seen.get(row.student_name) || { lastLogin: null, lastSeen: null, logins30: 0, online: false };
+        if (!entry.lastLogin || row.created_at > entry.lastLogin) entry.lastLogin = row.created_at;
+        const touched = row.last_seen_at || row.created_at;
+        if (!entry.lastSeen || touched > entry.lastSeen) entry.lastSeen = touched;
+        if (new Date(row.created_at).getTime() >= since) entry.logins30 += 1;
+        if (new Date(row.expires_at).getTime() > now && now - new Date(touched).getTime() < 15 * 60000) entry.online = true;
+        seen.set(row.student_name, entry);
+      }
+      const byChild = new Map((rows.data || []).map((m: any) => [m.child_name, m]));
+      return json(req, { accounts: (accounts.data || []).map((a: any) => ({
+        name: a.student_name, type: a.student_type, permissions: Array.isArray(a.permissions) ? a.permissions : [], active: a.active !== false, updatedAt: a.updated_at,
+        member: byChild.has(a.student_name) ? view(byChild.get(a.student_name), true) : null,
+        ...(seen.get(a.student_name) || { lastLogin: null, lastSeen: null, logins30: 0, online: false }),
+      })) });
+    }
     if (action === "admin-list") {
       const { data: rows, error } = await members.select("*").order("created_at", { ascending: false }).limit(500);
       if (error) throw new Error(error.message);

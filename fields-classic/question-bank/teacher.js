@@ -1,6 +1,7 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
 import { checkSession, loadClass, loadLocalAll, logout, weekRate } from "./study-progress.js?v=20261111m";
 import { initMembers } from "./teacher-members.js?v=20261111m";
+import { initAccess } from "./teacher-access.js?v=20261111o";
 
 // 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.
 // 지금은 누구나 연다(원장 2026-10-27 「지금은 다 접속되는 걸로」): 로그인 없이 열면 데모 — 이 기기에 저장된 학생 기록만.
@@ -105,4 +106,5 @@ if (!me || me.type !== "admin") {
     $("status").textContent = "로그인한 학생의 기록이에요. 로그인 없이(데모) 공부한 것은 그 기기에만 있어요.";
     fill(data);
   }
+  initAccess(byStudent);   // 접속한 회원 · 회원 정보 · 학습 상황(맨 위 칸)
 }
