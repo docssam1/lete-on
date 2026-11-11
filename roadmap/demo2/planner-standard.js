@@ -94,7 +94,7 @@ function renderSupplementChoices(m){
 // 중등 심화 줄 (원장님 2026-11-11): 낮은 레벨은 쎈 또는 RPM, 중간 레벨은 쎈과 일품, 그 위 레벨은 쎈과 에이급.
 // 레벨을 낮음·중간·위로 나누는 선은 새로 만들지 않고 2026-10-20 표준 세 묶음(planner.js BAND)을 그대로 쓴다:
 // C 천천히형 L10~L13 = 낮음, B 예시형 L4~L9 = 중간, A 선행형 L0~L3 = 위. 영과고형(D)은 기존 심화서가 에이급이라 위로 본다.
-// [원장 확인 필요] 세 묶음과 낮음·중간·위의 짝, D를 위로 본 것은 Claude가 맞춘 것이다.
+// 세 묶음과 낮음·중간·위의 짝은 원장이 2026-11-11에 확인했다.
 // 교재 이름은 교재 난이도 지도(planner-math-books-data.js)의 표기와 같게 둔다.
 const MIDDLE_DEPTH=Object.freeze({
  C:Object.freeze({tier:'low',levels:'L10~L13',books:Object.freeze(['쎈 중등','RPM 중학']),join:' 또는 '}),
