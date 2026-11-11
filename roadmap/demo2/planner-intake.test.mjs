@@ -146,7 +146,7 @@ test('교재·과정을 바꿔 상태 확인이 필요하면 옛 완료 답을 �
  const f={...fields,pendingStatus:{deepStatus:true}};
  assert.equal(I.hasAnswer(answer,f,'deepStatus'),false);
  assert.equal(I.firstMissing(answer,f),'deepStatus');
- assert.match(I.summary(answer,f).find(x=>x.label==='심화').text,/상태 확인 전/);
+ assert.match(I.summary(answer,f).find(x=>x.label==='심화·활용').text,/상태 확인 전/);
 });
 
 test('D에서도 입력한 중등 교과는 표준 예시의 초등 시작점으로 되돌리지 않는다',()=>{
@@ -516,6 +516,29 @@ test('교과는 진도(과정)→학년·학기→교재, 심화도 과정→학
   const q=I.questions(a,f);
   assert.equal(q.schoolCourse[0],'현재 공부하고 있는 수학 진도는 무엇인가요?');
   assert.match(q.schoolBook[0],a.schoolCourse==='mid'?/^중등 1학년 2학기 교과는/:/^초등 3학년 2학기 교과는/);
-  assert.match(q.deepBook[0],/학기 심화는 어떤 교재로/);
+  assert.match(q.deepBook[0],/학기 심화나 활용은 어떤 교재로/);
  }
+});
+
+test('중등 교재는 책 지도의 교재를 모두 싣고 RPM은 응용으로 표시하며 저장값은 그대로 읽는다',()=>{
+ const f={mon:'11',band:'B'},a={grade:'7',gradeInput:'current',schoolCourse:'mid',schoolExact:'14',deepCourse:'mid',deepStage:'15'},q=I.questions(a,f);
+ const all=[...q.schoolBook[2],...q.deepBook[2]].map(o=>o[1]).join(' / ');
+ for(const name of ['EBS 중학 뉴런','개념원리 중학','에이급 원리해설','베이직쎈','개념+유형 라이트','라이트쎈 중등','RPM 중학','쎈 중등','일품 중등','블랙라벨 중학','에이급수학','최상위수학 중학'])assert.ok(all.includes(name),name);
+ assert.equal(q.deepBook[2].find(o=>o[0]==='RPM')[1],'RPM 중학 · 응용');
+ assert.ok(q.deepBook[2].some(o=>/심화$/.test(o[1])));
+ assert.ok(!q.schoolBook[2].some(o=>/블랙라벨|에이급수학|최상위수학/.test(o[1])),'심화서는 심화나 활용에서');
+ assert.match(q.deepCourse[0],/^심화나 활용은/);
+ // 기존 저장값(A급·원리해설)은 그대로 계획에 쓰이고 화면에는 책 지도 이름으로 보인다.
+ const saved={...a,schoolBook:'원리해설',schoolStatus:'progress',deepBook:'A급',deepStatus:'progress'};
+ assert.ok(I.middleBook('A급')&&I.middleBook('일품 중등'));
+ assert.match(I.summary(saved,f).find(x=>x.key==='deepBook').text,/^에이급수학 /);
+});
+
+test('함께 하는 교재는 요약에 주 교재와 함께 보이고 계획은 주 교재 기준이다',()=>{
+ const f={mon:'11',band:'B'},a={grade:'7',gradeInput:'current',schoolCourse:'mid',schoolExact:'14',schoolBook:'개념원리',schoolStatus:'progress',deepCourse:'mid',deepStage:'14',deepBook:'쎈',deepBookWith:['일품 중등','블랙라벨 중학','없는 책'],deepStatus:'progress'};
+ const s=I.summary(a,f);
+ assert.match(s.find(x=>x.key==='deepBook').text,/^쎈 중등 \+ 일품 중등 \+ 블랙라벨 중학 /);
+ assert.doesNotMatch(s.find(x=>x.key==='deepBook').text,/없는 책/);
+ const {deepBookWith,...one}=a;
+ assert.deepEqual(I.buildPlan(a,f).rows,I.buildPlan(one,f).rows);
 });

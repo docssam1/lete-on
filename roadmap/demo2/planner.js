@@ -183,12 +183,17 @@ function exitRow(M,band){
 // 원장님 2026-11-11: 중등 때 고등 선행은 수능 과목까지만 한다. 2028 수능 수학은 대수·미적분Ⅰ·확률과 통계(선택 없음)이고
 // 미적분Ⅱ·기하는 빠졌다. 그 뒤는 수능 범위 심화와 내신·진로 탐색으로 채우고, 미적분Ⅱ·기하는 고등에서 진로 권장과목으로 배운다.
 // 영과고형(D)은 별도 설계(buildD)라 여기에 들어오지 않는다.
-const HI_AFTER='수능 범위 심화 · 내신 · 진로 탐색';
-function hiChain(start,band){
+// 원장님 2026-11-11 "그 이상 할 수도 있어 선택지를 둬 하지만 비추천": o.hiScope==='beyond'일 때만 확통 뒤에 미적분Ⅱ·기하를 넣는다.
+const HI_AFTER='수능 범위 심화 · 내신 · 진로 탐색', HI_BEYOND='미적분Ⅱ · 기하 (수능 밖 · 비추천 선택)';
+function hiChain(start,band,beyond=false){
   const A={A:[['공통수학1',6],['공통수학2',6],['대수',6],['미적분Ⅰ',6],['대수 심화 · KMO 영역',6],['확률과 통계',6],[HI_AFTER,6]],
     B:[['공통수학1',6],['공통수학2',6],['공통수학 심화',6],['대수 · 미적분Ⅰ',6],['미적분Ⅰ 심화 · 확률과 통계',6],[HI_AFTER,12]],
     C:[['공통수학1',6],['공통수학2',6],['대수',6],['미적분Ⅰ',6],['확률과 통계',6],[HI_AFTER,12]]};
-  return seq(start,(A[band]||A.C));
+  const list=A[band]||A.C;
+  if(!beyond)return seq(start,list);
+  // 확통 블록 바로 뒤에 미적분Ⅱ·기하 6개월을 끼우고, 수능 범위 심화 칸은 그만큼 줄인다(최소 6개월).
+  const at=list.findIndex(x=>x[0]===HI_AFTER);
+  return seq(start,[...list.slice(0,at),[HI_BEYOND,6],[HI_AFTER,Math.max(6,list[at][1]-6)]]);
 }
 
 function build(o){
@@ -220,7 +225,7 @@ function build(o){
   // 중등 6학기 뒤 고등 선행(CMS 6개월 단위). 아무리 빨라도 초6 3월(CMS 중등 최소 12개월), 중3 7월 뒤는 내신·실전(원장님 2026-10-20 "내신 조심")
   const midEnd=mid+6*B.midLen, hiStart=Math.max(midEnd,mOf(6,3));
   if(hiStart>midEnd) school.push([o.band==='C'?'중등 응용 반복':'중등 심화 반복 · 경시(선택)',midEnd,hiStart-1]);
-  hiChain(hiStart,o.band).filter(b=>b[1]<=mOf(9,7)).map(b=>[b[0],b[1],Math.min(b[2],mOf(9,7))]).forEach(b=>school.push(b));
+  hiChain(hiStart,o.band,o.hiScope==='beyond').filter(b=>b[1]<=mOf(9,7)).map(b=>[b[0],b[1],Math.min(b[2],mOf(9,7))]).forEach(b=>school.push(b));
   school.push(['중3 내신 · 고입 실전',mOf(9,8),mOf(9,12)]);
   const s2end=school2.length?school2[school2.length-1][2]:now-1;
   if(B.deepLag>0&&mid+B.deepLag-1>=s2end+1) school2.push([o.hw!=='none'?'생각하는 황소 대비 고려에 따라 고민 + 중등 쎈':'중등 쎈으로 기본 다지기',Math.max(s2end+1,now),mid+B.deepLag-1]);
@@ -490,7 +495,8 @@ function narrative(P){
     { const sc=inY(R('school')), hi=sc.filter(x=>/공통수학|수Ⅰ|수Ⅱ|대수|미적분|확률|기하|수능/.test(x[0])&&!/디딤돌|원리해설|개념원리/.test(x[0]));
       const subj=hi.filter(x=>x[0]!==HI_AFTER), after=hi.find(x=>x[0]===HI_AFTER);
       if(hi.length) items.push({label:'고등 선행',text:(subj.length?`${mon(Math.max(subj[0][1],lo))}부터 ${subj.map(x=>nm(x[0])).join(' → ')}${after||subj[subj.length-1][2]<=b?'':' …'}, 과목당 6개월씩 가요. 중등 심화가 끝난 뒤에 들어가고, 심화에 치우치지 않게 고등 과정을 여러 번 보는 쪽이 안전해요.`:'')
-        +(after?`${subj.length?' ':''}${after[1]<lo?'이어서':mon(after[1])+'부터는'} 수능 과목(대수·미적분Ⅰ·확률과 통계)을 심화하면서 내신과 진로 탐색을 해요. 2028 수능에서 빠진 미적분Ⅱ·기하는 고등학교에서 진로에 맞춰 배워요.`:'')}); }
+        +(subj.some(x=>x[0]===HI_BEYOND)?' 미적분Ⅱ·기하는 2028 수능에 나오지 않아 권하지 않지만, 선택하셔서 넣었어요. 이 시간에 수능 과목 심화와 내신을 다지는 쪽을 권해요.':'')
+        +(after?`${subj.length?' ':''}${after[1]<lo?'이어서':mon(after[1])+'부터는'} 수능 과목(대수·미적분Ⅰ·확률과 통계)을 심화하면서 내신과 진로 탐색을 해요.${subj.some(x=>x[0]===HI_BEYOND)?'':' 2028 수능에서 빠진 미적분Ⅱ·기하는 고등학교에서 진로에 맞춰 배워요.'}`:'')}); }
     { const li=inY(R('lit')); if(li.length) items.push({label:'문해력·활동',text:li.map(x=>/독서/.test(x[0])&&x[1]<lo&&x[2]>b?'독서·문해력 계속':`${x[1]>=lo?mon(x[1])+'부터':'이어서'} ${nm(x[0])}${x[2]<=b&&x[1]<lo?' 마무리':''}`).join(', ')+'. '+(li.some(x=>/독서/.test(x[0])&&x[2]>=lo)?'내신이 없는 초등은 읽는 힘을 키울 때예요. 개념을 빨리 이해하는 힘이 여기서 나와요. 읽은 책은 줄거리를 말해 보게 해요.':li.some(x=>/백지복습/.test(x[0]))?'중1은 매일 복습 습관이에요. 과학은 자기 전에 백지에 써 보고, 1·4·7·14·30일 간격으로 다시 봐요. 문제집 양치기는 고등 가서 하고, 지금은 개념을 몸에 익혀요.':li.some(x=>/모의고사/.test(x[0]))?'중3은 고등 모의고사를 풀려서 수능 최저 감을 미리 잡아요. 학교는 5~7월에 정해요.':'자사·특목고는 학교 들어가서 할 활동이 많아요. 중2부터 집단 프로젝트와 수행평가를 일부러 열심히 해 두면 그게 자소서 소스가 돼요.')}); }
     { const ns=inY(R('naesin')); if(ns.length){ const ex=ns.filter(x=>/중간|기말/.test(x[0])); items.push({label:'내신',text:(ex.length?'시험: '+ex.map(x=>`${mon(x[1])}~${mon(x[2])} ${nm(x[0])}`).join(', ')+'. ':'')+'중등부터는 내신을 조심해요. 시험 4주 전에는 선행을 멈추고 내신 범위만 보고, 수행평가는 미루지 않아요. 내신이 흔들리면 고입 서류부터 막혀요.'}); }
       const ex2=inY(R('exit')); if(ex2.length) items.push({label:'고입',text:ex2.map(x=>`${mon(x[1])}${x[2]>x[1]?'~'+mon(x[2]):''} ${nm(x[0])}`).join(', ')+'. 학교별로 시기가 다르니 당해 요강을 확인해요.'}); }

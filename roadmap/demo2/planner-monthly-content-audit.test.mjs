@@ -40,3 +40,17 @@ test('middle-school high-school preview stops at the 2028 CSAT subjects',()=>{
  assert.ok(a.includes('확률과 통계'));
  assert.ok(a.includes('수능 범위 심화 · 내신 · 진로 탐색'));
 });
+test('beyond-CSAT high-school preview is only an opt-in, marked not recommended',()=>{
+ for(const band of ['A','B','C']){
+  const base=P.build({...opts,band}),beyond=P.build({...opts,band,hiScope:'beyond'});
+  const names=p=>p.rows.find(r=>r.key==='school').blocks.map(b=>b[0]);
+  assert.ok(!names(base).some(x=>/미적분Ⅱ/.test(x)));
+  const b=names(beyond),i=b.findIndex(x=>/미적분Ⅱ · 기하/.test(x));
+  assert.ok(i>0,band+': '+b.join(' / '));assert.match(b[i],/비추천/);
+  assert.ok(b.slice(0,i).some(x=>/확률과 통계/.test(x)),'확통 뒤에 둔다');
+  assert.match(JSON.stringify(P.narrative(beyond)),/권하지 않지만/);
+  assert.doesNotMatch(JSON.stringify(P.narrative(base)),/권하지 않지만/);
+  // 영과고형은 별도 설계라 이 선택과 무관하다.
+  assert.deepEqual(P.build({...opts,band:'D',hiScope:'beyond'}).rows,P.build({...opts,band:'D'}).rows);
+ }
+});
