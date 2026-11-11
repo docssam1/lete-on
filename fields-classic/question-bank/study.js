@@ -1,10 +1,10 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261110x";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261110m";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261110m";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261111c";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261111c";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage } from "./fields-access.js?v=20261110s";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261110m";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261111c";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -444,7 +444,7 @@ function makePresenter() {
 // ── 덱 안의 우리 게임 ──────────────────────────────────────
 let nativeGame = null;
 const loadedCss = new Set();
-async function mountNative(slide, intro = Promise.resolve()) {
+async function mountNative(slide, intro = Promise.resolve(), atEnd = false) {
   const game = slide.native;
   if (!loadedCss.has(game.css)) {
     loadedCss.add(game.css);
@@ -478,6 +478,8 @@ async function mountNative(slide, intro = Promise.resolve()) {
     // 게임은 id 없이 말한다 → 글로 id를 만들어 녹음을 찾는다(목록: tools/export-study-voice.mjs). 녹음이 없으면 기기 음성
     say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId || (slide.kind === "game" && text ? voiceLine("game", text).id : null)); },
     board: game.board, lesson: slide.lesson,
+    // 판서는 덱 아래 「다음 / 뒤로」로 장면을 넘긴다(판서 안 ‹ › 는 뺌 — 원장 2026-11-11 「화살표와 다음의 용도 때문에 헷갈려」)
+    ...(game.board ? { deckNav: true, atEnd, onStep: () => { if (slides[index] === slide) setNextLabel(); } } : {}),
     onDone: () => { if (slide.kind === "game") gameFinished(); if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
   });
   fitObserver.observe(wrap, { childList: true, subtree: true });
@@ -672,7 +674,7 @@ function show({ atEnd = false } = {}) {
   if (slide.kind === "cover" && ready && !coverPlayed) { coverPlayed = true; playCover($("slideBody").querySelector(".sd-cover")); }
   if (slide.kind === "end") playEnd($("slideBody").querySelector(".sd-end"));
   shownIndex = index;
-  if (native) mountNative(slide, intro).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
+  if (native) mountNative(slide, intro, atEnd).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
   $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
@@ -701,10 +703,13 @@ function go(target, options) {
 let sheetAt = null;
 const sheetHasNext = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt && sheetAt.at < sheetAt.steps - 1;
 const sheetHasPrev = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt && sheetAt.at > 0;
+const boardSteps = () => slides[index]?.kind === "concept" && nativeGame?.step ? nativeGame : null;   // 덱 안 판서(장면을 덱 단추로 넘긴다)
 function setNextLabel() {
   const slide = slides[index];
+  const board = boardSteps();
+  $("prevBtn").textContent = board?.hasPrev() ? "‹ 앞 장면" : "‹ 뒤로";
   const grade = !classMode && sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
-  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? (classMode ? "수업 시작 →" : "출발하기 →") : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : "다음 →";
+  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? (classMode ? "수업 시작 →" : "출발하기 →") : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : board?.hasNext() ? "다음 장면 →" : "다음 →";
 }
 function sheetGo(go) { document.getElementById("workFrame")?.contentWindow?.postMessage({ type: "fc-study", cmd: "oneup", go }, location.origin); }
 const gamesDone = new Set();
@@ -715,6 +720,7 @@ function next() {
   if (!$("sheet").hidden) { closeSheet(); return; }
   if (sheetHasNext()) { sheetGo("next"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("next"); return; }
+  if (boardSteps()?.step(1)) return;   // 판서 장면이 남았으면 장면부터
   go(index + 1);
 }
 function prev() {
@@ -722,6 +728,7 @@ function prev() {
   if (!$("sheet").hidden) { closeSheet(); return; }
   if (sheetHasPrev()) { sheetGo("prev"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("prev"); return; }
+  if (boardSteps()?.step(-1)) return;
   const target = index - 1;
   go(target, { atEnd: slides[target]?.kind === "concept" });
 }
