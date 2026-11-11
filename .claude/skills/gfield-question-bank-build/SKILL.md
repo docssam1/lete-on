@@ -86,6 +86,7 @@ description: 지필드 사고력 문제은행(fields-classic/question-bank) 화�
 - 브라우저: `question-bank-layout-browser-audit.mjs`(85항목) · `question-bank-compact-visual-audit.mjs`(그림 칸 넘침) · `question-bank-answer-print-audit.mjs` · 골든벨 흐름 `FLOWS=frac golden-bell-3d-game-browser-audit.mjs`.
   - 이 클라우드에서는 `CODEX_NODE_MODULES`(playwright + pdf-lib가 든 node_modules)·`FIELDS_BASE_URL`·`USERPROFILE`을 준다. 정적 서버는 **Range 요청과 폴더 index.html**을 받아야 한다(`python3 -m http.server`는 Range를 못 받아 영상 검사가 멈춘다).
   - 1단계 흐름이 바뀌면 검사기도 같이 고친다(「문제 구성 확인」 뒤 `#edNext`를 눌러 3단계로).
+  - 숨긴 탭(「시험지별」, 원장 2026-10-28)은 검사기가 누르지 않고 「숨겨져 있는지」만 본다(2026-11-11, 배치 검사 77항목 모두 통과). 탭을 숨기거나 되살리면 `question-bank-layout-browser-audit.mjs`의 그 줄도 같이 고친다.
 - 이미 실패하던 검사(1·2권 권별테스트 인쇄 쪽수 15≠13, 교재 개념 인쇄 PDF 제목, 옛 소개 페이지 검사)는 바뀌기 전 결과와 비교해 「원래 실패」인지 확인하고 보고한다.
 
 ## 11. 하지 말 것

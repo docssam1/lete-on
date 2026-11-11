@@ -3784,6 +3784,9 @@ function initControls() {
     back.href = studentBack || $("startLink").href;
     back.textContent = studentBack ? "← 번호 고르기로" : "← 처음 화면";
     document.querySelector(".header-links").prepend(back);
+    // 머리줄의 작은 글은 선생님용 안내(「… 맞춤 학습지를 만듭니다」)라 학생 화면에서는 학생이 할 일로 바꾼다
+    const lead = document.querySelector(".app-header .brand-block span");
+    if (lead) lead.textContent = testMode ? "다 풀고 채점하면 맞은 문제와 틀린 문제를 알려 줘요." : "풀고 나서 답을 확인하고, 어려우면 유사문제로 다시 풀어요.";
   }
   $("worksheetStudent").textContent = student;
   if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
