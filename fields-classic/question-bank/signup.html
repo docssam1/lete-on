@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#ffffff" />
   <title>스스로 공부 가입</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./my-study.css?v=20261110s" />
+  <link rel="stylesheet" href="./my-study.css?v=20261111e" />
 </head>
 <body class="ms-login-page">
   <main class="ms-login ms-signup">
     <p class="ms-login-kick">GIFTED MATH BANK · 스스로 공부</p>
     <h1 id="heading">이메일로 가입하기</h1>
-    <p class="ms-login-lead" id="lead">보호자 이메일로 인증번호를 받아 확인하면 아이의 <b>승인번호</b>가 바로 나와요. 가입하면 <b>2주 동안 체험</b>하고, 그다음 정규회원으로 이어서 공부해요.</p>
+    <p class="ms-login-lead" id="lead">보호자 이메일로 인증번호를 받아 확인한 뒤 아이의 <b>승인번호</b>를 직접 정해요. 가입하면 <b>2주 동안 체험</b>하고, 그다음 정규회원으로 이어서 공부해요.</p>
 
     <!-- 1. 이메일 인증 -->
     <form id="emailForm" class="ms-login-box" autocomplete="on">
@@ -44,6 +44,10 @@
         <select id="startBook" aria-label="시작 권"></select>
         <select id="startUnit" aria-label="시작 단원"><option value="0">1단원</option><option value="1">2단원</option><option value="2">3단원</option><option value="3">4단원</option></select>
       </fieldset>
+      <fieldset class="ms-signup-code"><legend>승인번호 정하기</legend>
+        <label>승인번호<input id="newCode" autocomplete="new-password" autocapitalize="characters" spellcheck="false" maxlength="20" required /><small>영문·숫자 4~20자. 아이가 로그인할 때 이름과 함께 넣어요(대소문자는 가리지 않아요).</small></label>
+        <label>한 번 더<input id="newCode2" autocomplete="new-password" autocapitalize="characters" spellcheck="false" maxlength="20" required /></label>
+      </fieldset>
       <div class="ms-consent">
         <details><summary>개인정보 수집·이용 동의서 읽기</summary>
           <dl>
@@ -61,7 +65,7 @@
         <label><input type="checkbox" id="consentGuardian" /> <span>[필수] 아이의 보호자(법정대리인)이며 아이 정보 처리에 동의합니다.</span></label>
       </div>
       <p id="childMsg" class="ms-login-error" role="alert"></p>
-      <button type="submit" class="ms-btn primary" id="registerBtn">가입하고 승인번호 받기</button>
+      <button type="submit" class="ms-btn primary" id="registerBtn">가입하기</button>
     </form>
 
     <!-- 4. 승인번호 -->
@@ -69,6 +73,6 @@
 
     <p class="ms-login-demo"><a href="./login.html">승인번호가 있으면 로그인</a> · <a href="./start.html?student=DEMO">가입 없이 둘러보기(1권 1단원)</a></p>
   </main>
-  <script type="module" src="./signup.js?v=20261110x"></script>
+  <script type="module" src="./signup.js?v=20261111e"></script>
 </body>
 </html>

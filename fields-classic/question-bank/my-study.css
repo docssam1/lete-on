@@ -263,3 +263,8 @@ tr.is-done td { color: var(--muted); }
 .ms-btn.primary { border-color: var(--accent-ink); background: var(--accent-ink); box-shadow: 0 8px 18px rgba(20, 27, 93, .28); }
 .ms-btn.primary:hover { background: var(--accent); }
 .ms-stat, .ms-week, .ms-plan { box-shadow: var(--card-shadow); }
+/* 승인번호 정하기(원장 2026-11-11) — 가입 양식 안 묶음 · 가입한 아이 목록의 「새로 정하기」 양식 */
+.ms-signup-code { display: grid; gap: 10px; margin: 0; padding: 12px 14px 14px; border: 1px solid var(--line, #e0e9f8); border-radius: 12px; }
+.ms-signup-code legend { padding: 0 6px; font-weight: 700; }
+.ms-recode { grid-column: 1 / -1; display: grid; gap: 10px; width: 100%; margin-top: 6px; }
+.ms-recode .ms-login-error:empty { display: none; }

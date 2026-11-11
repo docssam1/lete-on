@@ -3,9 +3,10 @@ import { login } from "./study-progress.js?v=20261029q";
 
 // 가입(원장 2026-10-29 「이메일로 승인번호가 우선 나오고 그다음 접속」「이메일 인증 후 2주 체험」):
 //  ① 보호자 이메일 → 인증번호 메일(Supabase Auth, 수의 마법과 같은 프로젝트) → 확인
-//  ② 이 이메일로 가입한 아이가 있으면 목록(승인번호 다시 받기 · 아이 한 명 더)
-//  ③ 아이 이름·보호자 전화·아이 전화(선택)·유치 나이/초등 학년·시작 진도·개인정보 동의 → fields-members register
-//  ④ 승인번호를 한 번 보여 준다(서버에는 해시만) → 「이 번호로 시작하기」는 바로 로그인
+//  ② 이 이메일로 가입한 아이가 있으면 목록(승인번호 새로 정하기 · 아이 한 명 더)
+//  ③ 아이 이름·보호자 전화·아이 전화(선택)·유치 나이/초등 학년·시작 진도·승인번호 정하기·개인정보 동의 → fields-members register
+//  ④ 정한 승인번호를 한 번 더 보여 준다(서버에는 해시만) → 「이 번호로 시작하기」는 바로 로그인
+// 승인번호는 학부모가 정한다(원장 2026-11-11 「이메일 승인 후 접속 승인 번호는 사용자가 정하도록」). 잊으면 이메일 인증 뒤 새로 정한다.
 // 승인번호는 화면에만 보이고 이 기기에도 저장하지 않는다.
 const SB = "https://fgahqumaldheqettmvqg.supabase.co";
 const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs";
@@ -26,7 +27,19 @@ const ERRORS = {
   consent_required: "필수 동의 두 가지에 모두 체크해 주세요.",
   name_taken: "같은 이름으로 이미 가입한 아이가 있어요. 이름 뒤에 숫자를 붙여 주세요(예: 민준2).",
   child_not_found: "이 이메일로 가입한 아이가 아니에요.",
+  code_invalid: "승인번호는 영문과 숫자로 4~20자를 넣어 주세요.",
+  code_weak: "알아내기 쉬운 번호예요. 같은 글자만 쓰거나 1234·ABCD처럼 차례대로 쓰거나 아이 이름과 같으면 안 돼요.",
+  code_mismatch: "두 칸의 승인번호가 달라요. 같은 번호를 두 번 넣어 주세요.",
 };
+// 서버(fields-members chosenCode)와 같은 검사 — 보내기 전에 알려 주려고 한 번 더 본다
+const SEQUENCES = ["0123456789", "9876543210", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ZYXWVUTSRQPONMLKJIHGFEDCBA", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+function codeProblem(code, again, child) {
+  const c = String(code || "").trim().toUpperCase();
+  if (!/^[A-Z0-9]{4,20}$/.test(c)) return "code_invalid";
+  if (/^(.)\1+$/.test(c) || SEQUENCES.some((seq) => seq.includes(c)) || c === String(child || "").toUpperCase()) return "code_weak";
+  if (c !== String(again || "").trim().toUpperCase()) return "code_mismatch";
+  return "";
+}
 const failText = (error) => ERRORS[error.message] || (error instanceof TypeError ? "인터넷 연결을 확인해 주세요." : "잠시 뒤에 다시 해 주세요.");
 
 async function authApi(path, body) {
@@ -83,21 +96,36 @@ async function afterVerify() {
   try { mine = await members({ action: "mine" }); } catch (error) { showEmail(failText(error)); return; }
   if (!mine.children.length) return showChildForm();
   $("heading").textContent = "가입한 아이";
-  $("lead").textContent = "승인번호를 잊었으면 새로 받아요. 새 번호를 받으면 옛 번호로는 로그인할 수 없어요.";
+  $("lead").textContent = "승인번호를 잊었으면 새로 정해요. 새 번호를 정하면 옛 번호로는 로그인할 수 없어요.";
   $("mine").hidden = false;
   $("mine").innerHTML = `<p class="ms-signup-email">✓ ${esc(parent.email)} 인증됨</p><ul class="ms-kids">${mine.children.map((kid) => `<li>
       <b>${esc(kid.child)}</b><small>${kid.status === "approved" ? "정규회원" : kid.status === "paused" ? "잠시 멈춤" : kid.open ? `체험 중 · ${day(kid.trialUntil)}까지` : "체험 끝 · 정규회원 승인 요청은 카톡으로"}${kid.upTo ? ` · ${Number(kid.upTo.slice(5))}권까지` : ""}</small>
-      <button type="button" class="ms-btn" data-reissue="${esc(kid.child)}">승인번호 다시 받기</button></li>`).join("")}</ul>
+      <button type="button" class="ms-btn" data-reissue="${esc(kid.child)}">승인번호 새로 정하기</button>
+      <form class="ms-recode" data-child="${esc(kid.child)}" hidden>
+        <label>새 승인번호<input name="code" autocomplete="new-password" autocapitalize="characters" spellcheck="false" maxlength="20" /><small>영문·숫자 4~20자</small></label>
+        <label>한 번 더<input name="again" autocomplete="new-password" autocapitalize="characters" spellcheck="false" maxlength="20" /></label>
+        <div class="ms-login-actions"><button type="submit" class="ms-btn primary">이 번호로 바꾸기</button><button type="button" class="ms-btn" data-recode-cancel>그만두기</button></div>
+        <p class="ms-login-error" role="alert"></p>
+      </form></li>`).join("")}</ul>
     <button type="button" class="ms-btn" id="addKid">아이 한 명 더 가입하기</button>`;
   $("addKid").addEventListener("click", () => { $("mine").hidden = true; showChildForm(); });
 }
-$("mine").addEventListener("click", async (event) => {
-  const button = event.target.closest("[data-reissue]");
-  if (!button) return;
-  if (!confirm(`${button.dataset.reissue}의 승인번호를 새로 받을까요? 옛 번호로는 더 이상 로그인할 수 없어요.`)) return;
-  button.disabled = true;
-  try { const data = await members({ action: "reissue", child: button.dataset.reissue }); showCode(data.child, data.approvalCode, null); }
-  catch (error) { button.disabled = false; alert(failText(error)); if (!parent) showEmail(); }
+$("mine").addEventListener("click", (event) => {
+  const open = event.target.closest("[data-reissue]"), cancel = event.target.closest("[data-recode-cancel]");
+  if (open) { const form = open.nextElementSibling; open.hidden = true; form.hidden = false; form.elements.code.focus(); }
+  if (cancel) { const form = cancel.closest("form"); form.hidden = true; form.reset(); form.querySelector(".ms-login-error").textContent = ""; form.previousElementSibling.hidden = false; }
+});
+$("mine").addEventListener("submit", async (event) => {
+  const form = event.target.closest(".ms-recode");
+  if (!form) return;
+  event.preventDefault();
+  const child = form.dataset.child, code = form.elements.code.value, msg = form.querySelector(".ms-login-error");
+  const problem = codeProblem(code, form.elements.again.value, child);
+  if (problem) { msg.textContent = ERRORS[problem]; return; }
+  const submit = form.querySelector("[type=submit]");
+  submit.disabled = true; msg.textContent = "바꾸고 있어요…";
+  try { const data = await members({ action: "reissue", child, code: code.trim() }); showCode(data.child, data.approvalCode || code.trim().toUpperCase(), null, !data.approvalCode); }
+  catch (error) { submit.disabled = false; msg.textContent = failText(error); if (!parent) showEmail(ERRORS.email_required); }
 });
 function showEmail(message = "") {
   for (const id of ["mine", "childForm", "done"]) $(id).hidden = true;
@@ -127,16 +155,17 @@ $("childForm").addEventListener("submit", async (event) => {
     guardianPhone: $("guardianPhone").value, childPhone: $("childPhone").value,
     level, age: level === "kinder" ? Number($("age").value) : null, grade: level === "elementary" ? Number($("grade").value) : null,
     consent: { privacy: $("consentPrivacy").checked, guardian: $("consentGuardian").checked },
+    code: $("newCode").value.trim(),
     ...($("startBook").value !== "book-01" || $("startUnit").value !== "0" ? { start: { book: $("startBook").value, unit: Number($("startUnit").value), part: 1 } } : {}),
   };
   const local = !body.child ? "child_invalid" : !/^01\d{8,9}$/.test(body.guardianPhone.replace(/\D/g, "")) ? "phone_invalid"
     : !level || (level === "kinder" && !body.age) || (level === "elementary" && !body.grade) ? "level_invalid"
-    : !body.consent.privacy || !body.consent.guardian ? "consent_required" : "";
+    : codeProblem(body.code, $("newCode2").value, body.child) || (!body.consent.privacy || !body.consent.guardian ? "consent_required" : "");
   if (local) { $("childMsg").textContent = ERRORS[local]; return; }
-  $("registerBtn").disabled = true; $("childMsg").textContent = "승인번호를 만들고 있어요…";
+  $("registerBtn").disabled = true; $("childMsg").textContent = "가입하고 있어요…";
   try {
     const data = await members(body);
-    showCode(data.child, data.approvalCode, data.member);
+    showCode(data.child, data.approvalCode || body.code.toUpperCase(), data.member, !data.approvalCode);
   } catch (error) {
     $("childMsg").textContent = failText(error);
     if (!parent) showEmail(ERRORS.email_required);
@@ -144,10 +173,12 @@ $("childForm").addEventListener("submit", async (event) => {
 });
 
 // ── ④ 승인번호 ──
-function showCode(child, code, member) {
+function showCode(child, code, member, chosen = true) {
   for (const id of ["emailForm", "mine", "childForm"]) $(id).hidden = true;
-  $("heading").textContent = "승인번호가 나왔어요";
-  $("lead").innerHTML = "이 번호는 <b>지금 한 번만</b> 보여요. 적어 두거나 사진으로 찍어 두세요. 잊으면 이 화면에서 이메일 인증을 하고 다시 받아요.";
+  $("heading").textContent = chosen ? (member ? "가입했어요" : "승인번호를 바꿨어요") : "승인번호가 나왔어요";
+  $("lead").innerHTML = chosen
+    ? "아이 <b>이름</b>과 정한 <b>승인번호</b>로 로그인해요. 이 번호는 서버에 그대로 남지 않으니 잊으면 이 화면에서 이메일 인증을 하고 새로 정해요."
+    : "이 번호는 <b>지금 한 번만</b> 보여요. 적어 두거나 사진으로 찍어 두세요. 잊으면 이 화면에서 이메일 인증을 하고 새로 정해요.";
   $("done").hidden = false;
   $("done").innerHTML = `<dl class="ms-code"><dt>이름</dt><dd>${esc(child)}</dd><dt>승인번호</dt><dd class="ms-code-value">${esc(code)}</dd></dl>
     ${member ? `<p>2주 체험 · <b>${day(member.trialUntil)}까지</b> · ${Number(String(member.upTo || "book-01").slice(5))}권</p>` : ""}

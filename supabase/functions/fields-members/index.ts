@@ -4,9 +4,12 @@ import { FIELDS_BOOKS, TRIAL_DAYS, membershipSummary } from "../_shared/fields-m
 
 // 지필드 사고력 수학 스스로 공부 — 회원 가입·승인번호·요청·관리(원장 2026-10-29).
 //  학부모: 이메일 인증(Supabase Auth 인증번호 메일, Authorization: Bearer <access token>) 뒤
-//    register  — 아이 이름·보호자 전화·아이 전화(선택)·유치 나이/초등 학년·개인정보 동의·시작 진도(선택) → 체험 14일 + 승인번호
+//    register  — 아이 이름·보호자 전화·아이 전화(선택)·유치 나이/초등 학년·개인정보 동의·시작 진도(선택)·승인번호 → 체험 14일
 //    mine      — 이 이메일로 가입한 아이들
-//    reissue   — 승인번호를 잊었을 때 새로 받기(옛 번호와 로그인은 끊는다)
+//    reissue   — 승인번호를 잊었을 때 새로 정하기(옛 번호와 로그인은 끊는다)
+//  승인번호는 학부모가 정한다(원장 2026-11-11 「이메일 승인 후 접속 승인 번호는 사용자가 정하도록」): body.code — 영문·숫자 4~20자,
+//  대소문자 가리지 않음(fields-auth 로그인과 같이 trim + 대문자). 같은 글자만·1234·ABCD 같은 차례·아이 이름은 받지 않는다.
+//  code를 보내지 않은 옛 화면에는 예전처럼 무작위 번호를 만들어 준다. 원장 admin-reissue는 무작위 그대로.
 //  학생(이름+승인번호로 로그인한 세션, x-fields-session):
 //    status    — 지금 상태(체험·정규·열린 권)
 //    request   — 정규회원 승인 요청(regular) · 다음 권 추가 요청(book). 요청은 카톡으로 하고 여기엔 표시만 남긴다
@@ -51,6 +54,16 @@ function approvalCode() {
 const cleanName = (v: unknown) => String(v ?? "").normalize("NFKC").replace(/\s+/gu, "").trim();
 const cleanPhone = (v: unknown) => String(v ?? "").replace(/[^\d]/g, "");
 const validPhone = (p: string) => /^01\d{8,9}$/.test(p);
+
+// 학부모가 정한 승인번호 — 로그인(fields-auth)이 trim + 대문자로 해시하므로 같은 꼴로 만들어 해시한다
+const SEQUENCES = ["0123456789", "9876543210", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ZYXWVUTSRQPONMLKJIHGFEDCBA", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+async function chosenCode(raw: unknown, child: string) {
+  const code = String(raw ?? "").trim().toUpperCase();
+  if (!/^[A-Z0-9]{4,20}$/.test(code)) throw new HttpError(400, "code_invalid");
+  if (/^(.)\1+$/.test(code) || SEQUENCES.some((seq) => seq.includes(code)) || code === child.toUpperCase()) throw new HttpError(400, "code_weak");
+  return { code, hash: await sha256(code) };
+}
+const pickCode = (service: any, raw: unknown, child: string) => raw === undefined || raw === null || raw === "" ? newCode(service) : chosenCode(raw, child);
 
 async function newCode(service: any) {
   for (let i = 0; i < 8; i += 1) {
@@ -105,11 +118,11 @@ Deno.serve(async (req: Request) => {
         const child = cleanName(body.child);
         const { data: m } = await members.select("child_name,email").eq("child_name", child).maybeSingle();
         if (!m || m.email !== email) throw new HttpError(404, "child_not_found");
-        const issued = await newCode(service);
+        const issued = await pickCode(service, body.code, child);
         const { error: e } = await service.from("fields_access_accounts").update({ code_hash: issued.hash, active: true, updated_at: new Date().toISOString() }).eq("student_name", child);
         if (e) throw new Error(e.message);
         await service.from("fields_access_sessions").delete().eq("student_name", child);
-        return json(req, { child, approvalCode: issued.code });
+        return json(req, { child, ...(body.code ? { chosen: true } : { approvalCode: issued.code }) });
       }
       // register
       const child = cleanName(body.child);
@@ -124,7 +137,7 @@ Deno.serve(async (req: Request) => {
       const { count, error: ce } = await service.from("fields_access_accounts").select("student_name", { count: "exact", head: true }).eq("student_name", child);
       if (ce) throw new Error(ce.message);
       if (count) throw new HttpError(409, "name_taken");
-      const issued = await newCode(service);
+      const issued = await pickCode(service, body.code, child);
       const now = new Date();
       const { error: ae } = await service.from("fields_access_accounts").insert({ student_name: child, code_hash: issued.hash, permissions: [], student_type: "online", active: true, updated_at: now.toISOString() });
       if (ae) throw new Error(ae.message);
@@ -136,7 +149,7 @@ Deno.serve(async (req: Request) => {
         start_book: start.book, start_unit: start.unit, start_part: start.part, start_set_by: body.start ? "parent" : null,
       }).select("*").single();
       if (me) { await service.from("fields_access_accounts").delete().eq("student_name", child); throw new Error(me.message); }
-      return json(req, { child, approvalCode: issued.code, member: view(m) });
+      return json(req, { child, ...(body.code ? { chosen: true } : { approvalCode: issued.code }), member: view(m) });
     }
 
     // ── 로그인 세션(학생·관리자) ──

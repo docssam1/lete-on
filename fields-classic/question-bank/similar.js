@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261110x";
 import { unitParts, partProblems } from "./study-map.js?v=20261111c";
 import { loadLocalAll } from "./study-progress.js?v=20261029q";
-import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261110s";
+import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261111e";
 import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261111c";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
