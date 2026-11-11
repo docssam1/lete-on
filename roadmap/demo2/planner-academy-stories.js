@@ -69,8 +69,20 @@ function mount(doc){
  const trigger=doc.getElementById('openAcademyStories');if(!trigger||trigger.dataset.astBound)return;
  trigger.dataset.astBound='true';
  const dialog=doc.createElement('dialog');dialog.className='ast-dialog';dialog.setAttribute('aria-labelledby','academyStoryTitle');doc.body.append(dialog);
- let stage='preschool',ray='b13',filter='전체',mode='topics',noticeFilters={academy:'all',kind:'all',when:'recent'},post='',opener='',returnFocus=trigger;
+ let stage='preschool',ray='b13',filter='전체',mode='topics',noticeFilters={academy:'all',kind:'all',when:'recent',view:'list',month:'',day:''},post='',opener='',returnFocus=trigger;
  const draw=()=>{dialog.innerHTML=render(stage,ray,filter,mode,noticeFilters);};
+ // 달력 보기: 다시 그려도 읽던 자리와 초점을 지킨다.
+ const redraw=focus=>{const top=dialog.querySelector('.ast-scroll')?.scrollTop||0;draw();dialog.querySelector('.ast-scroll').scrollTop=top;if(focus)dialog.querySelector(focus)?.focus({preventScroll:true});};
+ const focusKey=a=>{if(!a?.dataset)return '';for(const [k,attr] of [['noticeFilter','data-notice-filter'],['calDay','data-cal-day'],['calNav','data-cal-nav'],['noticeView','data-notice-view']])if(a.dataset[k])return '['+attr+'="'+a.dataset[k]+'"]';return a.hasAttribute('data-notice-retry')?'[data-notice-retry]':'';};
+ const selectDay=(d,reveal)=>{
+  const grid=dialog.querySelector('[data-cal-month]');if(!grid||!d)return;
+  noticeFilters.day=d;
+  if(d.slice(0,7)!==grid.dataset.calMonth){noticeFilters.month=d.slice(0,7);redraw();}
+  else{for(const x of grid.querySelectorAll('[data-cal-day]')){const on=x.dataset.calDay===d;x.tabIndex=on?0:-1;x.parentElement.setAttribute('aria-selected',String(on));}dialog.querySelector('.ast-cal-panel').innerHTML=g.PlannerAcademyNotices.dayPanel(stage,filter,noticeFilters);}
+  const cell=dialog.querySelector('[data-cal-day="'+d+'"]');cell?.focus();
+  // 날짜를 누르면 그날 목록이 보이는 데까지만 내린다. 누른 주는 화면에 남긴다.
+  if(reveal&&cell){const scroll=dialog.querySelector('.ast-scroll'),box=scroll.getBoundingClientRect(),need=dialog.querySelector('.ast-cal-panel').getBoundingClientRect().bottom-box.bottom+12,room=cell.closest('[role=row]').getBoundingClientRect().top-box.top;if(need>0)scroll.scrollTop+=Math.max(0,Math.min(need,room));}
+ };
  const closePost=()=>{
   const pane=dialog.querySelector('.ast-detail');pane.hidden=true;pane.innerHTML='';
   dialog.querySelector('.ast-board').removeAttribute('inert');dialog.classList.remove('ast-reading');post='';
@@ -97,16 +109,21 @@ function mount(doc){
   else if(b.dataset.astPost){if(!b.closest('.ast-detail'))opener=b.dataset.astPost;openPost(b.dataset.astPost);}
   else if(b.hasAttribute('data-notice-retry'))g.PlannerAcademyNotices.load();
   else if(b.dataset.astAcademyNotices){mode='notices';noticeFilters.academy=b.dataset.astAcademyNotices;post='';filter='전체';dialog.classList.remove('ast-reading');dialog.setAttribute('aria-labelledby','academyStoryTitle');draw();dialog.querySelector('[data-notice-filter="academy"]')?.focus();}
+  else if(b.dataset.noticeView){noticeFilters.view=b.dataset.noticeView==='calendar'?'calendar':'list';redraw('[data-notice-view="'+noticeFilters.view+'"]');}
+  else if(b.dataset.calNav){const month=dialog.querySelector('[data-cal-month]')?.dataset.calMonth;noticeFilters.month=b.dataset.calNav==='today'?'':g.PlannerAcademyNotices.shiftMonth(month,b.dataset.calNav==='prev'?-1:1);noticeFilters.day='';redraw('[data-cal-nav="'+b.dataset.calNav+'"]');}
+  else if(b.dataset.calDay)selectDay(b.dataset.calDay,true);
   else if(b.dataset.astMode){mode=b.dataset.astMode;filter='전체';draw();dialog.querySelector('[data-ast-mode="'+mode+'"]').focus();}
   else if(b.dataset.astStage){stage=b.dataset.astStage;filter='전체';noticeFilters.academy='all';draw();dialog.querySelector('[data-ast-stage="'+stage+'"]').focus();}
   else if(b.dataset.astFilter){filter=b.dataset.astFilter;noticeFilters.academy='all';draw();dialog.querySelector('[data-ast-filter="'+filter+'"]').focus();}
   else if(b.dataset.astRay){ray=b.dataset.astRay;const pane=dialog.querySelector('.ast-detail'),scroll=pane.querySelector('.ast-detail-scroll').scrollTop;pane.innerHTML=detail(post,ray);pane.querySelector('.ast-detail-scroll').scrollTop=scroll;pane.querySelector('[data-ast-ray="'+ray+'"]').focus({preventScroll:true});}
  });
  dialog.addEventListener('change',e=>{const key=e.target.dataset.noticeFilter;if(['academy','kind','when'].includes(key)){noticeFilters[key]=e.target.value;draw();dialog.querySelector('[data-notice-filter="'+key+'"]')?.focus();}});
- g.addEventListener?.('roadmap-notices-ready',()=>{if(mode==='notices'&&dialog.open&&!post){const key=doc.activeElement?.dataset.noticeFilter,scroll=dialog.querySelector('.ast-scroll')?.scrollTop||0;draw();dialog.querySelector('.ast-scroll').scrollTop=scroll;if(key)dialog.querySelector('[data-notice-filter="'+key+'"]')?.focus({preventScroll:true});}});
+ g.addEventListener?.('roadmap-notices-ready',()=>{if(mode==='notices'&&dialog.open&&!post)redraw(focusKey(doc.activeElement));});
  // Consume Escape while reading before native CloseWatcher spends its cancel budget.
  // Otherwise repeated article visits can unexpectedly close the whole board.
  dialog.addEventListener('keydown',e=>{if(e.key==='Escape'&&post){e.preventDefault();e.stopPropagation();closePost();}});
+ // 달력 격자: 화살표·Home/End·PageUp/PageDown으로 날짜를 옮긴다. 달을 넘어가면 그 달을 연다.
+ dialog.addEventListener('keydown',e=>{const b=e.target.closest?.('[data-cal-day]');if(!b||e.altKey||e.ctrlKey||e.metaKey)return;const next=g.PlannerAcademyNotices.moveDay(b.dataset.calDay,e.key,e.shiftKey);if(next){e.preventDefault();selectDay(next);}});
  dialog.addEventListener('cancel',e=>{if(post&&e.cancelable){e.preventDefault();closePost();}});
  dialog.addEventListener('close',()=>{post='';dialog.classList.remove('ast-reading');(returnFocus?.isConnected?returnFocus:trigger).focus({preventScroll:true});});
  const requested=new URLSearchParams(g.location?.search||'').get('academy');
