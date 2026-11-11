@@ -70,7 +70,10 @@ test('a signed-in member who follows the tour link stays a member',async()=>{
 test('the member-only rooms are named in one list, and the main page offers the tour and says nothing is saved',()=>{
  for(const sel of ['#openAcademyStories','[data-academy-story-open]','[data-math-books-open]','#openCase','[data-ox-open]','#plannerOxCheck>summary','[data-learning-evidence-open="mock"]','[data-learning-evidence-open="papers"]'])assert.ok(G.LOCKED.split(',').includes(sel),sel);
  assert.equal(G.MARK,'둘러보기 · 저장되지 않습니다');
- const html=read('account.html');assert.ok(html.split('href="planner.html?guest=1"').length>=3);assert.match(html,/살펴보기에서는 입력한 내용이 저장되지 않습니다/);
+ const html=read('account.html');assert.ok(html.split('href="planner.html?guest=1"').length>=3);assert.match(html,/살펴보기는 로드맵이 만들어지는 데까지이며, 입력한 내용은 저장되지 않습니다/);
+ for(const sel of ['.nav [data-v="vplan"]','.nav [data-v="vrep"]','#workspace-tab-graph','#workspace-tab-table','#workspace-tab-records','#openReport','[data-learning-evidence-open]','[data-roadmap-mode="custom"]'])assert.ok(G.LOCKED.split(',').includes(sel),sel);
+ assert.doesNotMatch(G.LOCKED,/workspace-tab-map|openSet|standard-stage|data-start/);
+ const css=read('planner-guest.css');for(const hidden of ['#plannerWeeklyCheck','.learning-evidence-access','#workspace-panel-graph','#workspace-panel-table','#vplan','#vrep'])assert.ok(css.includes(hidden),hidden);
  const planner=read('planner.html');assert.doesNotMatch(planner,/planner-guest\.js/);assert.match(read('membership-gate.js'),/TOUR_SRC='planner-guest\.js\?v=/);assert.match(planner,/planner-guest\.css/);
  assert.doesNotMatch(read('planner-guest.js'),/localStorage|sessionStorage|fetch\(|XMLHttpRequest|RoadmapMembership/);
 });

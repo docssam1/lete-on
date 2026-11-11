@@ -11,3 +11,8 @@
 .guest-lock-actions button{border:1px solid var(--guest-line);background:var(--guest-paper);color:var(--guest-ink)}
 .guest-lock-actions :is(a,button):focus-visible{outline:3px solid var(--guest-ink);outline-offset:3px}
 .guest-tour .top .chip{white-space:nowrap}
+/* The tour ends at the roadmap: record tools inside the roadmap screen are not shown, and the other
+   result screens stay shut even if something switches to them. */
+html.guest-tour :is(.unit-checklist>:not(.uc-route),.uc-progress,#plannerWeeklyCheck,.learning-evidence,.learning-evidence-access,.book-check-access){display:none!important}
+html.guest-tour :is(#workspace-panel-graph,#workspace-panel-table,#workspace-panel-records,#vplan,#vrep){display:none!important}
+html.guest-tour .nav :is([data-v="vplan"],[data-v="vrep"])::after{content:" · 가입 후";font-size:.82em;font-weight:500;opacity:.8}
