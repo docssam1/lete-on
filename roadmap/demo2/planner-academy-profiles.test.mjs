@@ -98,7 +98,7 @@ test('대치동 초저학년 수학학원 명단은 초등 학원별 보기에�
  const L=P.lowerGrades;assert.deepEqual(Array.from(L.groups,x=>x.items.length),[19,9,4]);
  const names=L.groups.flatMap(x=>Array.from(x.items,y=>y.name));assert.equal(new Set(names).size,names.length);
  for(const x of L.groups.flatMap(x=>Array.from(x.items)))if(x.id)assert.ok(P.profiles.some(p=>p.id===x.id),x.id);
- const el=S.render('elementary','b13','전체','academies');assert.match(el,/대치동 초저학년 수학학원 한눈에/);assert.match(el,/지필드가 정리한 32곳/);assert.match(el,/초3 말부터/);
+ const el=S.render('elementary','b13','전체','academies');assert.match(el,/대치동 초저학년 수학학원 한눈에/);assert.match(el,/지필드가 정리한 32곳/);assert.match(el,/초3 말부터/);assert.match(el,/<b>지필드<\/b><span>5세부터 중학생까지<\/span>/);
  assert.match(S.render('elementary','b13','수학학원','academies'),/ast-lower/);
  for(const html of [S.render('middle','b13','전체','academies'),S.render('preschool','b13','전체','academies'),S.render('elementary','b13','국어학원','academies'),S.render('elementary','b13','전체','topics')])assert.doesNotMatch(html,/ast-lower/);
  assert.doesNotMatch(JSON.stringify(L),/출신|서울대|카이스트|부원장/);
