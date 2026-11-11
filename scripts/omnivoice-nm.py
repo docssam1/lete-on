@@ -114,6 +114,11 @@ def spoken(lang, text):
         text = text.replace("✔를", "확인 버튼을")
     text = text.replace("✔", {"ko":"확인 버튼", "en":"the check button", "zh":"确认按钮"}.get(lang,""))
     text = EMOJI.sub("", text)
+    if lang == "ko":
+        # 아래 줄표 규칙보다 먼저 — 「끝 - 시작 + 1」이 「끝, 시작 + 1」로 먼저 바뀌어 기호를 안 읽었다(2026-11-11)
+        text = text.replace("끝 - 시작 + 1", "끝 수 빼기 시작, 더하기 일")
+        text = text.replace("뛰면 +,", "뛰면 플러스,").replace("오면 −예요", "오면 마이너스예요")
+        text = text.replace("잘 셌어", "잘 세었어")
     text = re.sub(r"[,]{2,}", ",", text)
     text = re.sub(r"[!?]{2,}", ".", text)
     text = re.sub(r"\s[—–-]\s|——", ", ", text)
@@ -122,7 +127,6 @@ def spoken(lang, text):
         text = text.replace("위+아래 = 왼쪽+오른쪽", "위와 아래를 더한 수는, 왼쪽과 오른쪽을 더한 수와 같아요")
         text = text.replace("2~9단", "이 단부터 구 단까지")
         text = text.replace("+1000 하고 -1", "플러스 천 하고 마이너스 일")
-        text = text.replace("끝 - 시작 + 1", "끝 수 빼기 시작, 더하기 일")
     replacements = {
         "ko": (("□0+□0", "열 개씩 더하기"), ("□0", "열 개씩"), ("□", "빈칸")),
         "en": (("□0+□0", "addition strategy"), ("□0", "tens"), ("□", "the missing number")),
@@ -141,7 +145,19 @@ def letters(lang, s):
     return re.sub(r"[^a-z]", "", s.lower())
 
 
+SINO = dict(zip("0123456789", "영일이삼사오육칠팔구"))
+
+
 def cer(lang, ref, hyp):
+    """글자 오류율. 한국어는 숫자를 두 가지로 견주어 나은 쪽: (1) 숫자를 빼고 (2) 숫자를 한자어로 읽어서.
+    받아쓰기가 「2단부터 9단까지」처럼 숫자로 적거나 「이와 오」처럼 글자로 적어도 같은 말이면 통과한다."""
+    if lang == "ko":
+        sino = lambda t: re.sub(r"[0-9]", lambda m: SINO[m.group()], t)
+        return min(_cer(lang, ref, hyp), _cer(lang, sino(ref), sino(hyp)))
+    return _cer(lang, ref, hyp)
+
+
+def _cer(lang, ref, hyp):
     a, b = letters(lang, ref), letters(lang, hyp)
     if not a:
         return 0.0
