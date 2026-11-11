@@ -86,7 +86,7 @@ test('every picture added to the introduction exists, has its size and says what
 });
 test('the example typed in is the one the screens and the graph were made from',()=>{
  assert.match(html,/<dt>교과<\/dt><dd>디딤돌 기본\+응용 5-2<\/dd>/);assert.match(html,/<dt>심화<\/dt><dd>최상위 수학 5-1<\/dd>/);
- assert.match(html,/<dt>사고력<\/dt><dd>1031 입문<\/dd>/);assert.match(html,/<dt>연산<\/dt><dd>복합 계산 단계<\/dd>/);
+ assert.match(html,/<dt>사고력<\/dt><dd>1031 입문<\/dd>/);assert.match(html,/<dt>연산<\/dt><dd>기적의 계산법 6권 · 두 자리 수 곱셈<\/dd>/);
  assert.equal((html.match(/class="line-(now|near|far)"/g)||[]).length,3);assert.equal((html.match(/class="key-(now|near|far)"/g)||[]).length,3);
  assert.match(html,/class="growth-chart" role="img" aria-label="[^"]{30,}"/);
 });
