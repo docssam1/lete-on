@@ -66,3 +66,25 @@
 .ast-lower-body li span{font-size:12px;color:#786487}
 .ast-lower-body li em{font-size:12px;font-style:normal;color:#604471}
 @media(max-width:650px){.ast-lower>summary{padding:16px}.ast-lower-body{padding:0 16px 16px}.ast-lower-body ul{grid-template-columns:minmax(0,1fr)}}
+
+/* 학년 지도: 세로는 학원, 가로는 학년. 점이 시작 시점이고 선이 이어지는 구간이다. 끝까지 확인한 곳만 실선. */
+.ast-gmap{margin-top:16px}
+.ast-gmap table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:13px}
+.ast-gmap thead th{position:sticky;top:0;z-index:2;padding:8px 0 8px 4px;background:#fff;border-bottom:1px solid #d5c5df;font-size:12px;font-weight:700;color:#786487;text-align:left;white-space:nowrap}
+.ast-gmap thead th:first-child{width:13rem;padding-left:0}
+.ast-gmap tbody th[scope=row]{padding:9px 12px 9px 0;background:#fff;border-bottom:1px solid #ddd2e4;font-weight:400;text-align:left;line-height:1.45;word-break:keep-all}
+.ast-gmap tbody th b{display:block;font-size:14px;font-weight:700;color:#543764}
+.ast-gmap tbody th span,.ast-gmap tbody th em{display:block;font-size:11px;font-style:normal;color:#786487}
+.ast-gmap td{position:relative;padding:0;border-bottom:1px solid #ddd2e4}
+.ast-gmap-track{position:absolute;inset:0;background-image:linear-gradient(to right,#ddd2e4 1px,transparent 1px);background-size:10% 100%}
+.ast-gmap-track i{position:absolute;top:50%;border-top:2px dotted #79608d}
+.ast-gmap-track i::before{content:"";position:absolute;left:0;top:-6px;width:10px;height:10px;border-radius:50%;background:#543764}
+.ast-gmap-track i.is-known{margin-top:-1px;border-top:4px solid #543764}
+.ast-gmap-track i.is-known::before{top:-7px}
+.ast-gmap-track small{position:absolute;top:50%;transform:translateY(-50%);padding:1px 6px;background:#fff;font-size:12px;font-weight:700;color:#604471;white-space:nowrap}
+.ast-gmap-track small.is-quiet{clip-path:inset(50%);width:1px;height:1px;overflow:hidden;padding:0}
+.ast-gmap-track small.is-open{left:8px;font-weight:400;color:#786487}
+.ast-gmap-section th{padding:16px 0 6px;background:#fff;border-bottom:1px solid #d5c5df;font-size:14px;font-weight:800;color:#543764;text-align:left}
+@media(max-width:650px){.ast-gmap{overflow-x:auto}.ast-gmap table{min-width:640px}.ast-gmap thead th{position:static}.ast-gmap thead th:first-child{width:7.5rem}.ast-gmap thead th:first-child,.ast-gmap tbody th[scope=row]{position:sticky;left:0;z-index:1}.ast-gmap-section th{text-align:left}}
+.ast-lower-body>p.ast-gmap-hint{display:none}
+@media(max-width:650px){.ast-lower-body>p.ast-gmap-hint{display:block;margin-top:8px;font-size:12px;color:#604471}}
