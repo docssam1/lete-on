@@ -95,13 +95,13 @@ test('개념상상 SM관·와이즈만은 공식 출처와 확인일을 남기�
 });
 
 test('대치동 수학학원 학년 지도는 세로 학원·가로 학년 표이고 초등 학원별 보기에서만 보인다',()=>{
- const L=P.lowerGrades;assert.deepEqual(Array.from(L.groups,x=>x.items.length),[19,8,9,6]);
- const all=L.groups.flatMap(x=>Array.from(x.items)),names=all.map(y=>y.name);assert.equal(new Set(names).size,names.length);assert.equal(names.length,42);
+ const L=P.lowerGrades;assert.deepEqual(Array.from(L.groups,x=>x.items.length),[19,8,9,7]);
+ const all=L.groups.flatMap(x=>Array.from(x.items)),names=all.map(y=>y.name);assert.equal(new Set(names).size,names.length);assert.equal(names.length,43);
  for(const x of all){if(x.id)assert.ok(P.profiles.some(p=>p.id===x.id),x.id);if(x.from!==undefined)assert.ok(L.starts[x.from],x.name);if(x.through)assert.ok(x.through>x.from&&x.through<=L.axis.length,x.name);}
- const el=S.render('elementary','b13','전체','academies');assert.match(el,/대치동 수학학원 학년 지도/);assert.match(el,/지필드가 정리한 42곳/);
+ const el=S.render('elementary','b13','전체','academies');assert.match(el,/대치동 수학학원 학년 지도/);assert.match(el,/지필드가 정리한 43곳/);
  assert.deepEqual(Array.from(el.match(/<th scope="col">[^<]+/g)||[],x=>x.replace('<th scope="col">','')),['학원',...L.axis]);
  for(const n of names)assert.ok(el.includes('<th scope="row"><b>'+n+'</b>'),n);
- assert.equal((el.match(/<th scope="row">/g)||[]).length,42);assert.equal((el.match(/시작 학년 확인 중<\/small>/g)||[]).length,7);assert.equal((el.match(/class="is-known"/g)||[]).length,4);assert.match(el,/<b>소마<\/b>.*?class="is-known" style="left:5\.0%;right:30\.0%"/);
+ assert.equal((el.match(/<th scope="row">/g)||[]).length,43);assert.equal((el.match(/시작 학년 확인 중<\/small>/g)||[]).length,8);assert.equal((el.match(/class="is-known"/g)||[]).length,4);assert.match(el,/<b>소마<\/b>.*?class="is-known" style="left:5\.0%;right:30\.0%"/);
  assert.match(el,/<b>지필드<\/b><\/th><td colspan="10"><span class="ast-gmap-track"><i aria-hidden="true" class="is-known" style="left:0\.0%;right:0\.0%">/);
  assert.match(S.render('elementary','b13','수학학원','academies'),/ast-lower/);
  for(const html of [S.render('middle','b13','전체','academies'),S.render('preschool','b13','전체','academies'),S.render('elementary','b13','국어학원','academies'),S.render('elementary','b13','전체','topics')])assert.doesNotMatch(html,/ast-lower/);
