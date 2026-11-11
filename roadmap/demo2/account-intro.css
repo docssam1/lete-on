@@ -143,6 +143,12 @@ html,body.member-landing{overflow-x:clip}
 
 /* 7. One senior's story on a tinted band. */
 .account-senior-section{margin-top:var(--in-gap);padding-block:var(--in-gap);background:var(--in-tint);box-shadow:0 0 0 100vmax var(--in-tint);clip-path:inset(0 -100vmax)}
+.account-senior-cast{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--in-s5);margin:var(--in-s7) 0 0;padding:0;list-style:none}
+.account-senior-cast li{display:flex;flex-direction:column;align-items:center;min-width:0;text-align:center}
+.account-senior-cast-art{display:block;width:min(100%,104px);aspect-ratio:1/2;background:url('assets/senior-characters-1-20261025.png') no-repeat var(--col,0%) center/500% 100%}
+.account-senior-cast strong{margin-top:var(--in-s3);word-break:keep-all;font-size:var(--in-t-body);font-weight:800;line-height:1.4;color:var(--member-ink);text-wrap:balance}
+.account-senior-cast small{margin-top:var(--in-s1);font-size:var(--in-t-small);line-height:1.5;color:var(--in-muted)}
+@media(max-width:640px){.account-senior-cast{display:flex;gap:var(--in-s4);overflow-x:auto;padding-bottom:var(--in-s2);scroll-snap-type:x mandatory}.account-senior-cast li{flex:0 0 132px;scroll-snap-align:start}.account-senior-cast-art{width:80px}}
 .account-senior-example{margin-top:var(--in-s8)}
 .account-senior-header{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:var(--in-s6);align-items:end}
 .account-senior-character{display:block;width:132px;aspect-ratio:1/2;background:url('assets/senior-characters-1-20261025.png') no-repeat 0% center/500% 100%;pointer-events:none}
