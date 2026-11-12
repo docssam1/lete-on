@@ -32,6 +32,7 @@ on:
       - 'reading-world/**'
       - 'roadmap/**'
       - 'science-lab/**'
+      - 'sm/**'
       - 'vocab-quiz/**'
       - 'w/**'
       - 'world-explorer/**'
@@ -99,6 +100,7 @@ jobs:
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
           mkdir -p _site/science-lab
+          mkdir -p _site/sm
           mkdir -p _site/vocab-quiz
           mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
@@ -142,6 +144,9 @@ jobs:
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
           cp -R science-lab/. _site/science-lab/
+          # 소마 레이키즈 학습(원장 2026-11-12 「lete-on 최상위 sm/」) — 원본 스캔·정답·설계 문서는 올리지 않는다
+          cp -R sm/. _site/sm/
+          find _site/sm -type f \( -name '*.md' -o -name '*.mjs' \) -delete
           rm -rf _site/science-lab/bank/tools _site/science-lab/bank/audit.mjs _site/science-lab/bank/taxonomy/build.mjs
           find _site/science-lab -type f -name '*.md' -delete
           test ! -e _site/science-lab/bank/tools

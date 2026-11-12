@@ -1,0 +1,220 @@
+/* 레이키즈 학습(sm/) — 5세용 화면. 원장 2026-11-12 「친절하면서 그래픽이 팡팡」「버튼도 크고 직관적」.
+   · 누를 것은 크게: 일반 단추 72px, 주요 단추 96px 이상, 간격 14px 이상.
+   · 글은 짧게 크게(본문 22px 이상). 지시는 독쌤 음성이 읽고 화면 글은 보조.
+   · 움직임 줄이기 설정이면 튀는 연출을 끈다(sm-reduced). */
+@font-face { font-family: "Pretendard Variable"; src: url("../../fields-classic/question-bank/assets/fonts/pretendard-var.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+
+:root {
+  --sky: #dff1ff; --sky2: #f3faff; --ink: #1d2b44; --ink2: #4a5a78; --line: #d5e3f5;
+  --go: #19b26b; --go-dark: #0f8a51; --go-soft: #e2f8ec;
+  --blue: #2f7de1; --blue-dark: #1f5fb3; --blue-soft: #e5f0ff;
+  --pink: #ff5d8f; --sun: #ffc93c; --grape: #8f63e6; --coral: #ff7a59;
+  --card: #ffffff; --radius: 28px; --shadow: 0 14px 34px rgba(25, 60, 120, .16), 0 3px 8px rgba(25, 60, 120, .08);
+  --tap: 72px; --tap-big: 104px;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: var(--ink);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  background: radial-gradient(1200px 600px at 10% -10%, #fff 0, transparent 60%), linear-gradient(180deg, var(--sky) 0%, var(--sky2) 55%, #fffaf0 100%);
+  background-attachment: fixed; word-break: keep-all; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+/* ── 큰 단추 ─────────────────────────────────────────── */
+.sm-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: var(--tap); min-width: var(--tap); padding: 0 28px;
+  border: 0; border-radius: 999px; background: #fff; color: var(--ink); font-size: 24px; font-weight: 800; letter-spacing: -.5px; cursor: pointer;
+  box-shadow: 0 6px 0 #c9d8ee, 0 12px 22px rgba(25, 60, 120, .18); transition: transform .12s ease, box-shadow .12s ease; touch-action: manipulation; user-select: none;
+}
+.sm-btn:active, .sm-btn.is-pressed { transform: translateY(5px); box-shadow: 0 1px 0 #c9d8ee, 0 4px 10px rgba(25, 60, 120, .18); }
+.sm-btn:focus-visible { outline: 5px solid #ffd23f; outline-offset: 4px; }
+.sm-btn[disabled] { opacity: .45; cursor: default; }
+.sm-btn .ico { font-size: 1.35em; line-height: 1; }
+.sm-btn.go { background: linear-gradient(180deg, #2fd083, var(--go)); color: #fff; box-shadow: 0 7px 0 var(--go-dark), 0 14px 24px rgba(15, 138, 81, .32); }
+.sm-btn.go:active { box-shadow: 0 2px 0 var(--go-dark), 0 5px 10px rgba(15, 138, 81, .3); }
+.sm-btn.blue { background: linear-gradient(180deg, #4b95f0, var(--blue)); color: #fff; box-shadow: 0 7px 0 var(--blue-dark), 0 14px 24px rgba(31, 95, 179, .3); }
+.sm-btn.big { min-height: var(--tap-big); padding: 0 44px; font-size: 32px; }
+.sm-btn.round { width: var(--tap); padding: 0; }
+.sm-btn.round.big { width: var(--tap-big); }
+.sm-btn.pulse { animation: sm-pulse 1.4s ease-in-out infinite; }
+@keyframes sm-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+
+/* ── 머리줄 ─────────────────────────────────────────── */
+.sm-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 14px; padding: 12px 16px; }
+.sm-top .sm-title { flex: 1; min-width: 0; font-size: 22px; font-weight: 800; letter-spacing: -.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-stars { display: flex; gap: 6px; align-items: center; padding: 8px 16px; border-radius: 999px; background: rgba(255, 255, 255, .9); box-shadow: var(--shadow); }
+.sm-stars i { width: 30px; height: 30px; display: grid; place-items: center; font-style: normal; font-size: 26px; line-height: 1; filter: grayscale(1) opacity(.35); transition: filter .3s, transform .3s; }
+.sm-stars i.on { filter: none; animation: sm-star-in .7s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes sm-star-in { 0% { transform: scale(.2) rotate(-90deg); } 70% { transform: scale(1.5) rotate(10deg); } 100% { transform: scale(1); } }
+
+/* ── 로그인·잠금 ─────────────────────────────────────── */
+.sm-gate { max-width: 640px; margin: 4vh auto 40px; padding: 0 16px; text-align: center; }
+.sm-gate .hero { font-size: 96px; line-height: 1; margin: 8px 0 4px; animation: sm-float 3s ease-in-out infinite; }
+@keyframes sm-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.sm-gate h1 { margin: 6px 0 4px; font-size: 40px; font-weight: 800; letter-spacing: -1px; }
+.sm-gate p.lead { margin: 0 0 22px; font-size: 20px; color: var(--ink2); line-height: 1.5; }
+.sm-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 26px 24px; text-align: left; }
+.sm-card .who { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 18px; font-weight: 800; color: var(--blue-dark); }
+.sm-field { display: block; margin: 0 0 16px; }
+.sm-field span { display: block; margin: 0 0 8px; font-size: 18px; font-weight: 800; }
+.sm-field input { width: 100%; min-height: 68px; padding: 0 20px; border: 3px solid var(--line); border-radius: 20px; font: 700 24px/1 inherit; color: var(--ink); background: #fbfdff; }
+.sm-field input:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 5px var(--blue-soft); }
+.sm-msg { min-height: 28px; margin: 4px 0 14px; font-size: 18px; font-weight: 700; color: #c2410c; }
+.sm-card .sm-btn { width: 100%; }
+.sm-note { margin: 18px 0 0; font-size: 15px; color: var(--ink2); line-height: 1.6; }
+
+/* ── 단원 지도(홈) ─────────────────────────────────────── */
+.sm-home { max-width: 1180px; margin: 0 auto; padding: 4px 16px 60px; }
+.sm-hello { display: flex; align-items: center; gap: 14px; margin: 6px 0 22px; font-size: 30px; font-weight: 800; letter-spacing: -.8px; }
+.sm-units { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.sm-unit { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 22px; border: 0; border-radius: 32px; background: #fff; box-shadow: var(--shadow); text-align: left; overflow: hidden; }
+.sm-unit::before { content: ""; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%; background: var(--u, var(--sun)); opacity: .22; }
+.sm-unit .num { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 22px; background: var(--u, var(--sun)); color: #fff; font-size: 34px; font-weight: 900; box-shadow: 0 6px 0 rgba(0, 0, 0, .12); }
+.sm-unit .emoji { position: absolute; right: 18px; top: 16px; font-size: 64px; line-height: 1; }
+.sm-unit h2 { margin: 4px 0 0; font-size: 30px; font-weight: 800; letter-spacing: -.8px; }
+.sm-unit .sessions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.sm-unit .sessions .sm-btn { flex: 1 1 140px; font-size: 22px; }
+.sm-unit .sessions .sm-btn.done::after { content: "⭐"; margin-left: 2px; }
+.sm-unit .soon { font-size: 18px; font-weight: 700; color: var(--ink2); }
+
+/* ── 차시(레슨) ─────────────────────────────────────── */
+.sm-lesson { display: flex; flex-direction: column; height: 100dvh; min-height: 520px; overflow: hidden; }
+.sm-steps { display: flex; gap: 8px; align-items: center; }
+.sm-steps b { width: 18px; height: 18px; border-radius: 50%; background: #c8d7ec; transition: background .3s, transform .3s; }
+.sm-steps b.now { background: var(--blue); transform: scale(1.35); }
+.sm-steps b.done { background: var(--go); }
+.sm-main { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 16px 14px; }
+.sm-main:has(.sm-cover) { overflow-y: auto; }
+.sm-ask { flex: none; display: flex; align-items: center; gap: 14px; min-height: 84px; padding: 14px 20px; border-radius: 26px; background: #fff; box-shadow: var(--shadow); }
+.sm-ask .say { flex: 1; margin: 0; font-size: clamp(22px, 2.6vw, 30px); font-weight: 800; line-height: 1.35; letter-spacing: -.6px; }
+.sm-ask .page { flex: none; padding: 6px 12px; border-radius: 999px; background: var(--blue-soft); color: var(--blue-dark); font-size: 15px; font-weight: 800; }
+.sm-stage { position: relative; flex: 1 1 auto; min-height: 190px; border-radius: 32px; background: linear-gradient(180deg, #ffffff 0%, #eef6ff 100%); box-shadow: var(--shadow), inset 0 0 0 3px #fff; overflow: hidden; }
+.sm-stage .g3d-canvas { cursor: default; }
+.sm-stage .g3d-label { font-size: 22px; padding: 6px 14px; }
+.sm-stage .g3d-label.big { font-size: 34px; padding: 8px 18px; border-radius: 20px; }
+.sm-dock { flex: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; min-height: 96px; padding: 4px 0; }
+.sm-dock:empty { min-height: 0; }
+.sm-dock .lbl { font-size: 22px; font-weight: 800; color: var(--ink2); }
+
+/* 고르기 단추(그림 + 글) */
+.sm-pick { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 150px; min-height: 150px; padding: 14px 18px;
+  border: 4px solid transparent; border-radius: 30px; background: #fff; box-shadow: 0 7px 0 #c9d8ee, 0 14px 24px rgba(25, 60, 120, .16); cursor: pointer; transition: transform .12s, box-shadow .12s, border-color .2s; touch-action: manipulation; }
+.sm-pick .art { font-size: 72px; line-height: 1; }
+.sm-pick .art img { width: 88px; height: 88px; object-fit: contain; }
+.sm-pick .name { font-size: 24px; font-weight: 800; }
+.sm-pick:active { transform: translateY(5px); box-shadow: 0 2px 0 #c9d8ee; }
+.sm-pick:focus-visible { outline: 5px solid #ffd23f; outline-offset: 4px; }
+.sm-pick.is-right { border-color: var(--go); background: var(--go-soft); animation: sm-bounce .6s cubic-bezier(.3, 1.6, .5, 1); }
+.sm-pick.is-wrong { animation: sm-wobble .5s ease-in-out; }
+.sm-pick[disabled] { cursor: default; }
+@keyframes sm-bounce { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes sm-wobble { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-12px) rotate(-4deg); } 40% { transform: translateX(10px) rotate(3deg); } 60% { transform: translateX(-7px); } 80% { transform: translateX(5px); } }
+
+/* 숫자 단추(1~15) */
+.sm-pad { display: grid; grid-template-columns: repeat(5, var(--tap)); gap: 12px; }
+.sm-pad .sm-btn { padding: 0; font-size: 30px; }
+.sm-answer { display: inline-grid; place-items: center; min-width: 110px; height: 96px; padding: 0 16px; border-radius: 24px; border: 4px dashed #9cb8de; background: #fff; font-size: 54px; font-weight: 900; color: var(--blue-dark); }
+.sm-answer.filled { border-style: solid; border-color: var(--blue); animation: sm-bounce .45s ease; }
+
+/* 칸(무거운/가벼운) */
+.sm-bins { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; }
+.sm-bin { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 210px; padding: 12px 16px 16px; border-radius: 28px; background: #fff; box-shadow: var(--shadow); }
+.sm-bin .tag { font-size: 24px; font-weight: 800; }
+.sm-bin .slot { width: 128px; height: 128px; display: grid; place-items: center; border-radius: 24px; border: 4px dashed #b6cbe7; font-size: 78px; background: #f8fbff; transition: border-color .2s, background .2s; }
+.sm-bin.active .slot { border-color: var(--blue); background: var(--blue-soft); animation: sm-pulse 1.2s ease-in-out infinite; }
+.sm-bin .slot.filled { border-style: solid; border-color: var(--go); background: var(--go-soft); animation: sm-bounce .5s ease; }
+
+/* 시작·끝 화면 */
+.sm-cover { flex: 1; display: grid; place-items: center; text-align: center; padding: 24px 16px 60px; }
+.sm-cover .badge { display: inline-block; padding: 8px 18px; border-radius: 999px; background: #fff; box-shadow: var(--shadow); font-size: 20px; font-weight: 800; color: var(--blue-dark); }
+.sm-cover h1 { margin: 18px 0 10px; font-size: clamp(40px, 6vw, 64px); font-weight: 800; letter-spacing: -1.5px; }
+.sm-cover .art { font-size: clamp(90px, 14vw, 150px); line-height: 1.1; animation: sm-float 3s ease-in-out infinite; }
+.sm-cover p { margin: 0 0 26px; font-size: 22px; color: var(--ink2); }
+.sm-cover .got { display: flex; gap: 10px; justify-content: center; margin: 0 0 26px; font-size: 64px; }
+.sm-cover .got span { animation: sm-star-in .8s cubic-bezier(.3, 1.6, .5, 1) both; }
+
+/* ── 팡팡 연출 ─────────────────────────────────────── */
+.sm-fx { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+.sm-stamp { position: fixed; left: 50%; top: 42%; z-index: 81; pointer-events: none; transform: translate(-50%, -50%); padding: 18px 40px; border-radius: 999px;
+  background: linear-gradient(180deg, #ffe66d, #ffbf1f); color: #6b3d00; font-size: clamp(34px, 6vw, 60px); font-weight: 900; letter-spacing: -1px; white-space: nowrap;
+  box-shadow: 0 10px 0 #e19a00, 0 24px 50px rgba(120, 70, 0, .35); animation: sm-stamp 1.5s cubic-bezier(.2, 1.4, .4, 1) forwards; }
+.sm-stamp.try { background: linear-gradient(180deg, #ffffff, #e7f0ff); color: var(--blue-dark); box-shadow: 0 10px 0 #b9cdee, 0 24px 50px rgba(25, 60, 120, .25); }
+@keyframes sm-stamp { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.2) rotate(-12deg); } 22% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(3deg); }
+  34% { transform: translate(-50%, -50%) scale(1) rotate(0); } 82% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -62%) scale(.9); } }
+.sm-shake { animation: sm-shake .45s ease-in-out; }
+@keyframes sm-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(7px); } 75% { transform: translateX(-4px); } }
+
+/* ── 독쌤 안내(크게) ─────────────────────────────────── */
+.sm-guide { position: relative; flex: none; width: 92px; height: 128px; border: 0; padding: 0; background: none; cursor: pointer; }
+.sm-guide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; opacity: 0; transition: opacity .12s; filter: drop-shadow(0 8px 10px rgba(10, 30, 70, .2)); }
+.sm-guide img.on { opacity: 1; }
+.sm-guide .act { position: absolute; inset: 0; transform-origin: 50% 96%; animation: sm-idle 4.8s ease-in-out infinite; }
+.sm-guide.talk .act { animation: sm-talk 1.2s ease-in-out infinite; }
+.sm-guide[data-motion="hop"] .act { animation: sm-hop .9s cubic-bezier(.3, .7, .3, 1); }
+.sm-guide[data-motion="nod"] .act { animation: sm-nod .7s ease-in-out; }
+@keyframes sm-idle { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(1.6deg); } }
+@keyframes sm-talk { 0%, 100% { transform: rotate(-2deg) translateY(0); } 50% { transform: rotate(2deg) translateY(-3px); } }
+@keyframes sm-hop { 0% { transform: translateY(0); } 30% { transform: translateY(-40px) rotate(-6deg); } 55% { transform: translateY(0); } 72% { transform: translateY(-14px); } 100% { transform: translateY(0); } }
+@keyframes sm-nod { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(5deg); } }
+.sm-voice { flex: none; }
+
+@media (max-width: 760px) {
+  :root { --tap: 64px; --tap-big: 88px; }
+  .sm-btn { font-size: 21px; padding: 0 20px; }
+  .sm-btn.big { font-size: 26px; padding: 0 30px; }
+  .sm-guide { width: 64px; height: 90px; }
+  .sm-pick { min-width: 120px; min-height: 124px; }
+  .sm-pick .art { font-size: 56px; }
+  .sm-bin { min-width: 150px; } .sm-bin .slot { width: 104px; height: 104px; font-size: 62px; }
+  .sm-pad { grid-template-columns: repeat(5, 58px); } .sm-pad .sm-btn { min-width: 58px; min-height: 58px; font-size: 26px; }
+  .sm-stage { min-height: 170px; }
+  .sm-ask { min-height: 70px; padding: 8px 12px; }
+}
+.sm-reduced *, .sm-reduced *::before, .sm-reduced *::after { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+
+/* ── 화살판(저울 놀이 31쪽) ─────────────────────────── */
+.sm-spin-wrap { position: relative; width: 210px; height: 210px; flex: none; }
+.sm-spin-wrap::before { content: ""; position: absolute; left: 50%; top: -14px; z-index: 2; transform: translateX(-50%); border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 34px solid #1d2b44; filter: drop-shadow(0 3px 2px rgba(0,0,0,.25)); }
+.sm-spin { position: absolute; inset: 0; border-radius: 50%; border: 8px solid #fff; box-shadow: var(--shadow), inset 0 0 0 3px rgba(0,0,0,.06);
+  background: conic-gradient(#2fb36b 0 120deg, #3b82f6 120deg 240deg, #ffc21a 240deg 360deg); transition: transform 2.4s cubic-bezier(.12,.82,.22,1); }
+.sm-spin span { position: absolute; left: 50%; top: 50%; width: 80px; margin: -40px 0 0 -40px; text-align: center; color: #fff; font-weight: 900; font-size: 17px; text-shadow: 0 2px 3px rgba(0,0,0,.35); line-height: 1.05; }
+.sm-spin span b { display: block; font-size: 40px; line-height: 1.1; }
+.sm-spin-hub { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.25); z-index: 1; }
+.sm-score { display: flex; gap: 14px; align-items: center; font-size: 24px; font-weight: 800; }
+.sm-score span { padding: 8px 16px; border-radius: 999px; background: #fff; box-shadow: var(--shadow); }
+.sm-tray { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.sm-cube-ico { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 9px; background: linear-gradient(180deg, #ffb3d1, #ff7eb3); color: #fff; font-weight: 900; font-size: 24px; box-shadow: inset 0 -4px 0 rgba(0,0,0,.12); }
+
+/* 낮은 화면(가로 폰·작은 노트북): 단추·글을 조금 줄여 한 화면에 */
+@media (max-height: 700px) {
+  :root { --tap: 62px; --tap-big: 80px; }
+  .sm-btn.big { font-size: 26px; }
+  .sm-pick { min-width: 116px; min-height: 108px; padding: 8px 12px; } .sm-pick .art { font-size: 50px; } .sm-pick .name { font-size: 20px; }
+  .sm-bin { flex-direction: row; min-width: 0; padding: 8px 12px; } .sm-bin .slot { width: 84px; height: 84px; font-size: 52px; }
+  .sm-guide { width: 64px; height: 88px; }
+  .sm-ask { min-height: 64px; padding: 6px 14px; } .sm-ask .say { font-size: 22px; }
+  .sm-top { padding: 8px 16px; }
+  .sm-pad .sm-btn { min-width: 56px; min-height: 56px; font-size: 24px; } .sm-pad { grid-template-columns: repeat(5, 56px); gap: 8px; }
+  .sm-answer { height: 70px; font-size: 40px; min-width: 84px; }
+  .sm-spin-wrap { width: 150px; height: 150px; } .sm-spin span { font-size: 13px; width: 64px; margin: -32px 0 0 -32px; } .sm-spin span b { font-size: 28px; }
+}
+
+/* 무대 위에 겹치는 판(화살판·점수) — 저울을 가리지 않게 왼쪽 위 */
+.sm-overlay { position: absolute; left: 14px; top: 14px; z-index: 3; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; pointer-events: none; }
+.sm-overlay .sm-score { flex-direction: column; align-items: flex-start; gap: 8px; font-size: 20px; }
+@media (max-width: 760px), (max-height: 700px) { .sm-overlay { transform: scale(.8); transform-origin: left top; } }
+
+/* 좁은 화면(세로 폰): 머리줄을 한 줄에 — 제목은 숨기고 점·별을 작게 */
+@media (max-width: 560px) {
+  .sm-top { gap: 8px; padding: 8px 10px; }
+  .sm-top .sm-title { display: none; }
+  .sm-top .sm-btn.round { width: 52px; min-width: 52px; min-height: 52px; font-size: 18px; }
+  .sm-steps { flex: 1; gap: 5px; justify-content: center; } .sm-steps b { width: 11px; height: 11px; }
+  .sm-stars { padding: 6px 10px; gap: 2px; } .sm-stars i { width: 20px; height: 20px; font-size: 18px; }
+  .sm-ask .say { font-size: 20px; } .sm-ask .page { display: none; }
+  .sm-main { padding: 0 10px 10px; }
+}
