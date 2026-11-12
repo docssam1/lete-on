@@ -1,11 +1,11 @@
 // 차시 진행 — 시작 화면 → 단계(이야기·해 보기·게임) → 별 받기.
 //  5세용 규칙(설계서 1·6절): 지시는 독쌤이 소리로, 누를 것은 크게, 틀리면 결과 장면 + 부드러운 격려, 두 번 틀리면 같이 해 준다.
-import { gate } from "./access.js?v=20261112d";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261112d";
-import { BOOK, findSession } from "./book.js?v=20261112d";
-import { saveLesson } from "./progress.js?v=20261112d";
-import { createGuide } from "./guide.js?v=20261112d";
-import * as fx from "./fx.js?v=20261112d";
+import { gate } from "./access.js?v=20261113k";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113k";
+import { BOOK, findSession } from "./book.js?v=20261113k";
+import { saveLesson } from "./progress.js?v=20261113k";
+import { createGuide } from "./guide.js?v=20261113k";
+import * as fx from "./fx.js?v=20261113k";
 
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
@@ -33,7 +33,7 @@ async function start() {
   }
   const found = findSession(lessonId);
   if (!found?.session.ready) { location.replace("./index.html"); return; }
-  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261112d`), loadText(BOOK.id)]);
+  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261113k`), loadText(BOOK.id)]);
   run(result.me, found, mod.LESSON, text);
 }
 
@@ -122,6 +122,8 @@ function makeContext(main, guide, addMistake, text) {
     get stage() { return stageEl; },
     get dock() { return dock; },
     reset(page) { stageEl.innerHTML = ""; stageEl.style.display = ""; dock.innerHTML = ""; pageEl.textContent = page || ""; pageEl.hidden = !page; srcEl.hidden = true; srcEl.textContent = ""; actBtn.hidden = true; activity = null; },
+    // 같은 쪽의 둘째 지문 등으로 바꿀 때(원본 글 그대로)
+    setSource(t) { srcEl.hidden = false; srcEl.classList.remove("missing"); srcEl.textContent = t; },
     // 교재 쪽 정보(원본 글 그대로): { section, title, text, activity, bubbles, labels, frame }
     page(no) { return text?.pages?.[no] || null; },
     // 지문을 원본 그대로 보이고 독쌤이 읽는다. 지문 파일이 없으면 「지문 준비 중」만 보인다.
@@ -214,7 +216,7 @@ function showActivity(act) {
   const d = document.createElement("dialog");
   d.className = "sm-actbox";
   d.innerHTML = `<h2>활동 · ${esc(act.name)}</h2>
-    <p class="goal"><b>목 표</b> : ${esc(act.goal)}</p><p class="goal"><b>준비물</b> : ${esc(act.materials)}</p>
+    ${act.goal ? `<p class="goal"><b>목 표</b> : ${esc(act.goal)}</p>` : ""}<p class="goal"><b>준비물</b> : ${esc(act.materials)}</p>
     <ol>${act.steps.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>${act.example ? `<p class="ex"><b>예</b> ${esc(act.example)}</p>` : ""}
     <button class="sm-btn go big" type="button">닫기</button>`;
   document.body.append(d);

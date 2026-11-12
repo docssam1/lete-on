@@ -20,6 +20,16 @@ export const bear = (size, color = "green") => ({ kind: "bear", size, color, w: 
 export const cube = (one = false) => ({ kind: "cube", w: 1, one, name: "큐브" });
 export const solid = (shape, w, name) => ({ kind: shape, w, name });            // shape: sphere | cone
 export const thing = (char, w, name) => ({ kind: "emoji", char, w, name });
+// 그린 그림(SVG 문자열)을 올릴 때 — 사람·동물 얼굴 이모지 대신 쓴다
+export const picture = (svg, w, name, size = 1.0) => ({ kind: "emoji", char: name, svg, w, name, size });
+function svgTexture(svg) {
+  const cv = document.createElement("canvas"); cv.width = cv.height = 256;
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const img = new Image();
+  img.onload = () => { cv.getContext("2d").drawImage(img, 0, 0, 256, 256); tex.needsUpdate = true; };
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  return tex;
+}
 
 const weightOf = (list) => list.reduce((s, it) => s + (Number(it.w) || 0), 0);
 
@@ -129,7 +139,7 @@ export function createBalance(host, { type = "balance", onTap = null } = {}) {
   const emojiTex = new Map();
   function buildEmoji(it) {
     const g = new THREE.Group();
-    if (!emojiTex.has(it.char)) emojiTex.set(it.char, textTexture(it.char, { scale: 0.86 }));
+    if (!emojiTex.has(it.char)) emojiTex.set(it.char, it.svg ? svgTexture(it.svg) : textTexture(it.char, { scale: 0.86 }));
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: emojiTex.get(it.char), transparent: true, toneMapped: false }));
     const size = it.size || 1.0; sp.scale.setScalar(size); sp.position.y = size / 2 - 0.02; g.add(sp);
     const sh = new THREE.Mesh(new THREE.CircleGeometry(size * 0.32, 24), M.shadowDisc); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.006; g.add(sh);
@@ -278,7 +288,7 @@ function createFlatBalance(host, { type, onTap, sides, stateFn }) {
   const listeners = new Set();
   const art = (it) => it.kind === "bear" ? `<span style="font-size:${it.size === "papa" ? 54 : it.size === "mama" ? 42 : 32}px">🧸</span>`
     : it.kind === "cube" ? `<span style="display:inline-grid;place-items:center;width:26px;height:26px;background:#ff9ec8;border-radius:5px;color:#fff;font-weight:900">${it.one ? 1 : ""}</span>`
-    : it.kind === "emoji" ? `<span style="font-size:52px">${it.char}</span>` : `<span style="font-size:48px">${it.kind === "sphere" ? "🟡" : "🔺"}</span>`;
+    : it.kind === "emoji" ? (it.svg ? `<span style="display:inline-block;width:60px;height:60px">${it.svg.replace("<svg ", '<svg width="60" height="60" ')}</span>` : `<span style="font-size:52px">${it.char}</span>`) : `<span style="font-size:48px">${it.kind === "sphere" ? "🟡" : "🔺"}</span>`;
   function draw() {
     const s = stateFn(), deg = locked ? 0 : s.heavy === "left" ? -10 : s.heavy === "right" ? 10 : 0;
     box.innerHTML = `<div style="position:relative;width:min(90%,620px);height:260px">

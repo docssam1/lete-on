@@ -1,15 +1,21 @@
 // 2단원 무게 재기 · 1차시 (원본 30~37쪽)
 //   30 커지는 생각 「시소 타기」 → 31 「저울 놀이」(게임) → 32 무거운/가벼운 물건 → 34 아빠곰과 아기곰(수평)
 //   → 35 「가장 가벼운 블록에 1 쓰기」(원장 지도법 2026-11-12) → 35 공·원뿔은 큐브 몇 개 → 36 아빠곰 무게 재기
-// 33쪽(병아리 반대편에 올 것)은 정답이 하나로 정해지지 않아 정답지 확인 전까지 넣지 않는다(설계서 7절).
+// 33쪽: 병아리 쪽 접시가 올라가 있다 → 오른쪽은 병아리보다 무거운 것 = ③ 돼지.
 // 37쪽 활동판(실물 무게 재기)은 원본에 수치가 없어 원장이 가상 무게를 정한 뒤 넣는다.
 // 지문: 화면 위 칸에 원본 글 그대로(ctx.source, sm/data/a1-3.local.json — 공개 저장소에 올리지 않음). 독쌤 말은 그 아래 따로.
 // 그림 수치: 32쪽 기울기(컵>모자, 가방>컵), 35쪽 큐브(공 7 · 원뿔 5), 36쪽 예(빨간 아빠곰 = 큐브 12, 3개씩 4줄)는 원본 그림·글에서 옮겼다.
-import { createBalance, bear, cube, solid, thing } from "../balance3d.js?v=20261112d";
+import { createBalance, bear, cube, solid, thing, picture } from "../balance3d.js?v=20261113k";
 
-import { BEAR_COLORS } from "../balance3d.js?v=20261112d";
+import { scale, thingAt, thingIcon, svgScene } from "../scale2d.js?v=20261113k";
+import { BEAR_COLORS } from "../balance3d.js?v=20261113k";
 // 색깔 곰돌이 그림(단추용) — 3D 곰과 같은 색
 export const bearIcon = (color, size = 72) => { const c = BEAR_COLORS[color] || color; return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true"><g fill="${c}" stroke="rgba(0,0,0,.18)" stroke-width="3"><circle cx="30" cy="20" r="11"/><circle cx="70" cy="20" r="11"/><ellipse cx="50" cy="72" rx="28" ry="25"/><circle cx="50" cy="36" r="23"/><ellipse cx="22" cy="64" rx="9" ry="13"/><ellipse cx="78" cy="64" rx="9" ry="13"/></g><circle cx="42" cy="33" r="3.5" fill="#1b1b1b"/><circle cx="58" cy="33" r="3.5" fill="#1b1b1b"/><ellipse cx="50" cy="43" rx="6" ry="4" fill="#1b1b1b"/><ellipse cx="44" cy="25" rx="8" ry="5" fill="#fff" opacity=".35"/></svg>`; };
+
+// 30쪽 시소 친구(그린 그림 — 얼굴 이모지 쓰지 않음)
+const face = (fur, inner, extra) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g stroke="#5b3a1e" stroke-width="2.5"><circle cx="24" cy="24" r="13" fill="${fur}"/><circle cx="76" cy="24" r="13" fill="${fur}"/><circle cx="24" cy="24" r="6" fill="${inner}" stroke="none"/><circle cx="76" cy="24" r="6" fill="${inner}" stroke="none"/><ellipse cx="50" cy="94" rx="30" ry="12" fill="${fur}"/><circle cx="50" cy="54" r="36" fill="${fur}"/></g>${extra}<ellipse cx="50" cy="66" rx="17" ry="13" fill="#fff6e8"/><circle cx="37" cy="48" r="5" fill="#2b1a0e"/><circle cx="63" cy="48" r="5" fill="#2b1a0e"/><circle cx="38.5" cy="46.5" r="1.6" fill="#fff"/><circle cx="64.5" cy="46.5" r="1.6" fill="#fff"/><ellipse cx="50" cy="60" rx="6" ry="4.5" fill="#3b2414"/><path d="M43 69 Q50 75 57 69" stroke="#3b2414" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="27" cy="62" r="5" fill="#ff9aa2" opacity=".55"/><circle cx="73" cy="62" r="5" fill="#ff9aa2" opacity=".55"/></svg>`;
+const TIGER = face("#ffa23a", "#ffe0b8", `<g stroke="#5b3a1e" stroke-width="4" stroke-linecap="round" fill="none"><path d="M50 19 v10"/><path d="M41 21 l3 8"/><path d="M59 21 l-3 8"/><path d="M15 50 h9"/><path d="M16 60 h8"/><path d="M85 50 h-9"/><path d="M84 60 h-8"/></g>`);
+const BEAR = face("#b07a4a", "#e9c8a2", "");
 const SAY = {
   heavyHint: "아래로 내려간 쪽이 더 무거워요. 내려간 쪽을 찾아봐요!"
 };
@@ -25,8 +31,8 @@ const sideName = (side) => (side === "left" ? "왼쪽" : "오른쪽");
 async function seesaw(ctx) {
   const b = balanceIn(ctx, "seesaw");
   b.lock(true);
-  b.put("left", thing("🐯", 20, "호돌이"), { animate: false });
-  b.put("right", thing("🐻", 24, "곰돌이"), { animate: false });
+  b.put("left", picture(TIGER, 20, "호돌이"), { animate: false });
+  b.put("right", picture(BEAR, 24, "곰돌이"), { animate: false });
   const pg = ctx.page("30");
   const talk = (pg?.bubbles || []).map((t, i) => b.label(i ? "right" : "left", t));
   await ctx.source("30");
@@ -38,7 +44,7 @@ async function seesaw(ctx) {
   await b.settle();
   ctx.guide.say("시소가 움직였어요! 더 무거운 친구를 눌러 보세요.");
   await ctx.choose(
-    [{ value: "tiger", art: "🐯", name: "호돌이" }, { value: "bear", art: "🐻", name: "곰돌이" }],
+    [{ value: "tiger", art: TIGER.replace("<svg ", '<svg width="72" height="72" '), name: "호돌이" }, { value: "bear", art: BEAR.replace("<svg ", '<svg width="72" height="72" '), name: "곰돌이" }],
     { correct: "bear", wrongSay: "시소가 어느 쪽으로 내려갔나 볼까요?", hint: () => { b.label("right", "⬇ 내려갔어요"); ctx.guide.encourage("곰돌이 쪽이 아래로 내려갔어요. 내려간 쪽이 더 무거워요."); },
       praise: "맞아요! 아래로 내려간 쪽이 더 무거워요." }
   );
@@ -161,6 +167,22 @@ async function heavyLight(ctx) {
 }
 
 // ── 34쪽 아빠곰 1 = 아기곰 3 (수평) ─────────────────────
+
+// ── 33쪽 저울 놀이(쑥쑥 자라는 사고 1) — 원본처럼 납작한 저울 그림 ──
+async function page33(ctx) {
+  const pg = await ctx.source("33");
+  const q = (cx, cy) => `<text x="${cx}" y="${cy - 14}" font-size="70" font-weight="900" text-anchor="middle" fill="#e8417f">?</text>`;
+  ctx.stage.innerHTML = svgScene("0 0 600 300", scale({ x: 80, y: 170, w: 440, tilt: "right", base: "#f2a33a", left: (cx, cy) => thingAt("chick", cx, cy, 80), right: q }));
+  ctx.guide.say("병아리 쪽이 위로 올라갔어요. 오른쪽에는 병아리보다 무거운 것이 있어요!");
+  const opts = pg?.options || ["개미", "사탕", "돼지", "풍선"], kinds = ["ant", "candy", "pig", "balloon"];
+  await ctx.choose(opts.map((name, i) => ({ value: kinds[i], art: thingIcon(kinds[i]), name: `${"①②③④"[i]} ${name}` })), {
+    correct: "pig", wrongSay: "올라간 쪽이 더 가벼워요. 병아리보다 무거운 것을 찾아요.",
+    hint: () => ctx.guide.encourage("내려간 오른쪽이 더 무거워요. 병아리보다 훨씬 무거운 동물은?"),
+    praise: "맞아요! 돼지가 병아리보다 무거워서 오른쪽이 내려갔어요."
+  });
+  ctx.stage.innerHTML = svgScene("0 0 600 300", scale({ x: 80, y: 170, w: 440, tilt: "right", base: "#f2a33a", left: (cx, cy) => thingAt("chick", cx, cy, 80), right: (cx, cy) => thingAt("pig", cx, cy, 100) }));
+  await ctx.next("다음");
+}
 async function papaAndBabies(ctx) {
   const b = balanceIn(ctx);
   b.put("left", bear("papa", "green"), { animate: false });
@@ -291,6 +313,7 @@ export const LESSON = {
     { page: "30쪽", run: seesaw },
     { page: "31쪽 · 게임", run: balanceGame },
     { page: "32쪽", run: heavyLight },
+    { page: "33쪽", run: page33 },
     { page: "34쪽", run: papaAndBabies },
     { page: "선생님 지도 · 35쪽 앞", run: writeOne },
     { page: "35쪽", run: ballAndCone },
