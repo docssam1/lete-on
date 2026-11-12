@@ -3,7 +3,7 @@
 //  ② 거울 반사 미로(mirrorMaze): 점선을 따라 똑바로, 거울을 만나면 90° 꺾임(원본 58쪽 규칙). 사탕은 지나간 점에서 먹는다.
 //  ③ 선 미로(lineMaze): 원본 66쪽처럼 벽이 선인 미로. 벽을 지나갈 수 없고 손가락 길을 그대로 긋는다.
 // 길 긋기 규칙(벽·거울)은 이 엔진이 판정하고, 틀린 쪽으로 가려 하면 까닭을 말해 준다.
-import { kid } from "./art.js?v=20261113q";
+import { kid } from "./art.js?v=20261113v";
 
 const NS = "http://www.w3.org/2000/svg";
 const U = 60;                                   // 한 칸 간격(px, SVG 좌표)
@@ -110,7 +110,7 @@ const PALETTE = ["#ff8fb8", "#ffa552", "#ffe14d", "#cddc5a", "#47a96b", "#5fc7f0
 // spec: { H:[...], V:[...], starts:[{side,k,label,color,who}], target:{node:[i,j]}|{side,k}, treasure:bool }
 export function gapMaze(host, spec) {
   const { H, V } = spec, R = H.length, C = H[0].length + 1;
-  const pad = U * 1.05, W = (C - 1) * U + pad * 2, Hh = (R - 1) * U + pad * 2;
+  const pad = U * 0.92, W = (C - 1) * U + pad * 2, Hh = (R - 1) * U + pad * 2;
   host.innerHTML = "";
   const svg = el("svg", { viewBox: `${-pad} ${-pad} ${W} ${Hh}`, class: "mz-svg", role: "img", "aria-label": "네모네모 미로" }, host);
   const s = U * 0.64, b = U * 0.17;
@@ -182,7 +182,7 @@ export const stepsOf = (path) => path.filter((id) => !id.startsWith("P:")).lengt
 // ── ② 거울 반사 미로 ─────────────────────────────────────
 // spec: { nh, nv, mirrors:{"h,v":"/"|"\\"}, start:{side,k}, exit:{side,k}, candies:["h,v"], color, who }
 export function mirrorMaze(host, spec) {
-  const { nh, nv } = spec, W = nv * U, Hh = nh * U, pad = U * 0.95;
+  const { nh, nv } = spec, W = nv * U, Hh = nh * U, pad = U * 0.85;
   host.innerHTML = "";
   const svg = el("svg", { viewBox: `${-pad} ${-pad} ${W + pad * 2} ${Hh + pad * 2}`, class: "mz-svg", role: "img", "aria-label": "거울 반사 미로" }, host);
   const col = spec.color || "#4cc3c3", arm = U * 0.3, sw = U * 0.075;

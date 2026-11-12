@@ -257,7 +257,7 @@ button { font: inherit; color: inherit; }
 .sm-ribbon figcaption { font-size: 24px; font-weight: 800; margin-top: 2px; }
 .sm-ribbon .bow { display: grid; place-items: end center; height: 142px; line-height: 1; margin-bottom: 2px; filter: drop-shadow(0 4px 4px rgba(0,0,0,.15)); }
 .sm-ribbon .talk { position: absolute; top: -54px; white-space: nowrap; padding: 8px 16px; border-radius: 18px; background: #fff; border: 3px solid #bfe3f0; font-size: 20px; font-weight: 800; }
-.sm-ribbon .strings { width: 100%; max-height: 130px; }
+.sm-ribbon .strings { flex: none; width: 100%; max-height: 130px; }
 @media (max-height: 700px) { .sm-ribbon svg[role="img"] { width: 84px; height: auto; } .sm-ribbon .bow svg { width: 100px; height: auto; } }
 .sm-pin { position: absolute; z-index: 2; transform: translateY(-50%); pointer-events: none; display: grid; place-items: center; }
 .sm-pin svg { width: 100%; height: auto; }
@@ -343,3 +343,26 @@ button { font: inherit; color: inherit; }
 .mz-castle .st { position: absolute; font-size: 26px; animation: sm-float 2.4s ease-in-out infinite; } .mz-castle .s1 { left: 12%; top: 16%; } .mz-castle .s2 { right: 16%; top: 10%; animation-delay: .6s; } .mz-castle .s3 { left: 22%; bottom: 20%; animation-delay: 1.2s; }
 .mz-castle .moon { position: absolute; right: 10%; top: 30%; font-size: 34px; }
 .mz-castle .girl { align-self: flex-end; }
+
+/* 미로 도구(무대 모서리) */
+.mz-tools { position: absolute; right: 10px; top: 10px; z-index: 4; display: flex; align-items: center; gap: 8px; }
+.mz-tools .mz-chip { font-size: 20px; padding: 6px 14px; min-width: 0; }
+.mz-tools .mz-reset { min-width: 56px; min-height: 56px; width: 56px; padding: 0; font-size: 30px; }
+
+/* 아주 낮은 가로 화면(가로로 든 폰·폴드): 위 머리줄·글 칸·아래 단추 줄을 얇게 해 그림 칸을 넓게(원장 2026-11-13) */
+@media (max-height: 560px) {
+  :root { --tap: 50px; --tap-big: 60px; }
+  .sm-lesson { min-height: 0; gap: 6px; }
+  .sm-top { padding: 4px 10px; gap: 10px; } .sm-top .sm-title { font-size: 17px; }
+  .sm-ask { min-height: 0; padding: 4px 12px; gap: 10px; border-radius: 18px; }
+  .sm-guide { width: 46px; height: 62px; }
+  .sm-ask .src { font-size: 15px; line-height: 1.35; padding: 0; } .sm-ask .src + .say, .sm-ask .say { font-size: 15px; }
+  .sm-ask .page { font-size: 12px; padding: 3px 8px; }
+  .sm-stage { min-height: 0; border-radius: 22px; }
+  .sm-dock { min-height: 0; padding: 0; gap: 10px; }
+  .sm-btn { font-size: 19px; padding: 0 20px; } .sm-btn.big { font-size: 22px; padding: 0 28px; }
+  .sm-pick { min-width: 92px; min-height: 78px; padding: 4px 8px; } .sm-pick .art { font-size: 36px; } .sm-pick .art svg { max-height: 46px; width: auto; } .sm-pick .name { font-size: 16px; }
+  .sm-pad .sm-btn { min-width: 46px; min-height: 46px; font-size: 20px; } .sm-pad { grid-template-columns: repeat(6, 46px); gap: 6px; }
+  .sm-answer { height: 52px; font-size: 30px; min-width: 64px; }
+  .mz-tools .mz-reset { min-width: 46px; min-height: 46px; width: 46px; font-size: 24px; }
+}

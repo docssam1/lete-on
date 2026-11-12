@@ -2,18 +2,23 @@
 //  52 마법의 성 → 53 네모네모 미로 길 긋기 → 54 짧은 길(①·② 발자국 세기) → 55~57 「짧은 길을 찾아라!」 활동판 A·B(나 대 독쌤)
 //  → 58 거울 반사 규칙 두 가지(움직이는 그림) → 59·60 거울의 방 빠져나가기
 // 정답(원본 그림에서 계산): 54쪽 ① 11칸 · ② 7칸 → ② / 활동판 A ① 5 · ② 11 · ③ 13 → ① / 활동판 B ① 15 · ② 6 · ③ 11 → ②
-import { gapMaze, mirrorMaze, tokenSvg, chestSvg, stepsOf } from "../maze.js?v=20261113q";
-import { GAP } from "../maze-data.js?v=20261113q";
-import { kid } from "../art.js?v=20261113q";
+import { gapMaze, mirrorMaze, tokenSvg, chestSvg, stepsOf } from "../maze.js?v=20261113v";
+import { GAP } from "../maze-data.js?v=20261113v";
+import { kid } from "../art.js?v=20261113v";
 
 const josa = (w, a, b) => { const c = String(w).charCodeAt(String(w).length - 1) - 0xac00; return c >= 0 && c <= 11171 && c % 28 ? `${w}${a}` : `${w}${b}`; };
 const COLORS = ["#ff5a5a", "#2f7de1", "#2fb36b"];
 
 // 미로 아래 「처음부터」 단추와 발자국 수
+// 미로 무대 모서리의 「처음부터」·발자국 — 아래 단추 줄을 비워 미로를 크게(원장 2026-11-13 「작아 그림이 너무」)
 export function mazeDock(ctx, { onReset, chip = "" }) {
-  ctx.dock.innerHTML = `<div class="sm-tray"><span class="mz-chip" data-chip>${chip}</span><button class="sm-btn" type="button" data-reset>↺ 처음부터</button></div>`;
-  ctx.dock.querySelector("[data-reset]").addEventListener("click", () => { ctx.fx.sound.tap(); onReset(); });
-  return (t) => { const c = ctx.dock.querySelector("[data-chip]"); if (c) c.innerHTML = t; };
+  ctx.dock.innerHTML = "";
+  ctx.stage.querySelector(".mz-tools")?.remove();
+  const box = document.createElement("div"); box.className = "mz-tools";
+  box.innerHTML = `<span class="mz-chip" data-chip>${chip}</span><button class="sm-btn mz-reset" type="button" data-reset aria-label="처음부터">↺</button>`;
+  ctx.stage.append(box);
+  box.querySelector("[data-reset]").addEventListener("click", () => { ctx.fx.sound.tap(); onReset(); });
+  return (t) => { const c = box.querySelector("[data-chip]"); if (c) c.innerHTML = t; };
 }
 // 길 긋기 한 번(끝까지 그릴 때까지)
 export async function drawPath(ctx, maze, port, { who, color, say, countSteps = true } = {}) {

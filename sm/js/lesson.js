@@ -1,11 +1,11 @@
 // 차시 진행 — 시작 화면 → 단계(이야기·해 보기·게임) → 별 받기.
 //  5세용 규칙(설계서 1·6절): 지시는 독쌤이 소리로, 누를 것은 크게, 틀리면 결과 장면 + 부드러운 격려, 두 번 틀리면 같이 해 준다.
-import { gate } from "./access.js?v=20261113q";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113q";
-import { BOOK, findSession } from "./book.js?v=20261113q";
-import { saveLesson } from "./progress.js?v=20261113q";
-import { createGuide } from "./guide.js?v=20261113q";
-import * as fx from "./fx.js?v=20261113q";
+import { gate } from "./access.js?v=20261113v";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113v";
+import { BOOK, findSession } from "./book.js?v=20261113v";
+import { saveLesson } from "./progress.js?v=20261113v";
+import { createGuide } from "./guide.js?v=20261113v";
+import * as fx from "./fx.js?v=20261113v";
 
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
@@ -33,7 +33,7 @@ async function start() {
   }
   const found = findSession(lessonId);
   if (!found?.session.ready) { location.replace("./index.html"); return; }
-  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261113q`), loadText(BOOK.id)]);
+  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261113v`), loadText(BOOK.id)]);
   run(result.me, found, mod.LESSON, text);
 }
 
@@ -113,6 +113,42 @@ function run(me, { unit, session }, lesson, text) {
 // ── 단계에 주는 도구 ─────────────────────────────────────
 function makeContext(main, guide, addMistake, text) {
   const stageEl = main.querySelector(".sm-stage"), dock = main.querySelector(".sm-dock"), pageEl = main.querySelector(".page");
+  // 작은 화면(가로로 든 폰 등)에서 고정 크기로 그린 장면이 무대보다 크면 무대에 맞게 줄인다(원장 2026-11-13 「잘렸어」).
+  //  무대를 꽉 채우는 장면(3D 캔버스·미로·저울 그림 = position:absolute)은 스스로 맞추므로 건드리지 않는다.
+  const fitStage = () => {
+    const W = stageEl.clientWidth, H = stageEl.clientHeight;
+    if (!W || !H) return;
+    for (const el of stageEl.children) {
+      if (el.tagName === "CANVAS" || el instanceof SVGElement || el.classList.contains("mz-tools")) continue;
+      el.style.transform = "";
+      const cs = getComputedStyle(el);
+      if (cs.display === "none") continue;
+      let k = 1;
+      if (cs.position === "absolute" || cs.position === "fixed") {
+        // 무대를 채우는 상자: 안의 것(3단계까지)이 상자 밖으로 넘치면 가운데를 기준으로 줄인다
+        const box = el.getBoundingClientRect(); if (!box.width || !box.height) continue;
+        let t = Infinity, l = Infinity, btm = -Infinity, r = -Infinity;
+        for (const c of el.querySelectorAll(":scope > *, :scope > * > *, :scope > * > * > *")) {
+          if (c.closest("svg") !== c && c.closest("svg")) continue;      // 그림 속 도형은 빼고 그림 하나로
+          const q = c.getBoundingClientRect(); if (!q.width || !q.height) continue;
+          t = Math.min(t, q.top); l = Math.min(l, q.left); btm = Math.max(btm, q.bottom); r = Math.max(r, q.right);
+        }
+        if (t === Infinity) continue;
+        const cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+        k = Math.min(1, box.width / (2 * Math.max(cx - l, r - cx)), (box.height - 6) / (2 * Math.max(cy - t, btm - cy)));
+        el.style.transformOrigin = "center center";
+      } else {
+        const w = Math.max(el.scrollWidth, el.offsetWidth), h = Math.max(el.scrollHeight, el.offsetHeight);
+        k = Math.min(1, W / w, (H - 6) / h);
+        el.style.transformOrigin = "top center";
+      }
+      if (k < 0.995) el.style.transform = `scale(${k.toFixed(3)})`;
+    }
+  };
+  let fitTimer = 0;
+  const queueFit = () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitStage, 30); };
+  new MutationObserver(queueFit).observe(stageEl, { childList: true, subtree: true });
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(queueFit).observe(stageEl);
   const srcEl = main.querySelector(".src"), actBtn = main.querySelector(".sm-actbtn");
   let activity = null;
   actBtn.addEventListener("click", () => showActivity(activity));
@@ -130,8 +166,9 @@ function makeContext(main, guide, addMistake, text) {
     async source(no, { read = true } = {}) {
       const entry = text?.pages?.[no] || null;
       pageEl.textContent = `${no}쪽${entry?.section ? ` · ${entry.section}` : ""}`; pageEl.hidden = false;
-      srcEl.hidden = false;
-      srcEl.textContent = entry?.text || entry?.label || (entry ? entry.title : "") || "(교재 지문 준비 중)";   // 활동판 쪽은 이름만 있다
+      const shown = entry?.text || entry?.label || (entry ? entry.title : "") || "";
+      srcEl.hidden = !shown;                                       // 지문 파일이 없는 공개 페이지는 독쌤 말만
+      srcEl.textContent = shown;   // 활동판 쪽은 이름만 있다
       srcEl.classList.toggle("missing", !entry);
       activity = entry?.activity || null; actBtn.hidden = !activity;
       if (entry?.text && read) await guide.say(entry.text, { display: false });

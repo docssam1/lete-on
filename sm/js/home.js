@@ -1,8 +1,8 @@
 // 홈: 로그인 확인 → 단원 지도(4단원 × 2차시)
-import { gate, logout } from "./access.js?v=20261113q";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113q";
-import { BOOK } from "./book.js?v=20261113q";
-import { readLesson } from "./progress.js?v=20261113q";
+import { gate, logout } from "./access.js?v=20261113v";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113v";
+import { BOOK } from "./book.js?v=20261113v";
+import { readLesson } from "./progress.js?v=20261113v";
 
 const app = document.getElementById("app");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

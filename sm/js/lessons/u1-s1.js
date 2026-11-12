@@ -6,8 +6,8 @@
 //   13쪽 활동지 「7과 4」·「3과 6」 칸 모양(각 5칸×7줄).
 // 8쪽 질문(어떻게 알 수 있을까요?)은 열린 질문 — 사이트에서는 「리본을 풀어 끝을 맞추어 대 보기」를 보여 준다. 어느 쪽이 더 긴지는 원본에 없어 민석이 쪽을 길게 정했다.
 // 13쪽 게임: 원본은 두 팀. 사이트는 나 대 독쌤, 둘 다 「7과 4」(칸 수를 같게). 막대는 가운데 더미(1~5칸 각 5개)에서 찾아 집는다.
-import { createRodStage, RODS, rodIcon } from "../rods3d.js?v=20261113q";
-import { person, animal, animalAt, bow } from "../art.js?v=20261113q";
+import { createRodStage, RODS, rodIcon } from "../rods3d.js?v=20261113v";
+import { person, animal, animalAt, bow } from "../art.js?v=20261113v";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 function rods(ctx, opts) {
@@ -37,6 +37,15 @@ async function ribbon(ctx) {
   const pg = ctx.page("8");
   const names = pg?.names || ["민수", "민지", "민석"];
   // 사람은 노란 이모지 대신 코드로 그린 아이 그림(art.js). 리본은 원본처럼 고리 크기는 같고 늘어진 끈 길이가 다르게(art.js bow).
+  // 끈 그림은 리본을 풀 때 넣는다(그 전에는 자리를 차지하지 않게 — 작은 화면에서 아이 그림을 크게)
+  const stringsHtml = `
+      <svg class="strings" viewBox="0 0 900 120" opacity="0" aria-hidden="true">
+        <defs><linearGradient id="rb" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff6b7a"/><stop offset="1" stop-color="#d81f3c"/></linearGradient></defs>
+        <line x1="160" x2="160" y1="6" y2="114" stroke="#1d2b44" stroke-width="3" stroke-dasharray="8 6"/>
+        <text x="145" y="44" font-size="26" font-weight="800" text-anchor="end" fill="#1d2b44">${esc(names[1])}</text><rect class="s1" x="160" y="24" width="0" height="24" rx="12" fill="url(#rb)"/>
+        <text x="145" y="96" font-size="26" font-weight="800" text-anchor="end" fill="#1d2b44">${esc(names[2])}</text><rect class="s2" x="160" y="76" width="0" height="24" rx="12" fill="url(#rb)"/>
+      </svg>
+`;
   ctx.stage.innerHTML = `
     <div class="sm-ribbon">
       <div class="kids">
@@ -44,18 +53,15 @@ async function ribbon(ctx) {
         <figure class="k k1"><span class="bow">${bow({ tail: 52, spread: 0.7, width: 160 })}</span>${person(names[1], 108)}<figcaption>${esc(names[1])}</figcaption></figure>
         <figure class="k k2"><span class="bow">${bow({ tail: 92, spread: 0.95, width: 160 })}</span>${person(names[2], 108)}<figcaption>${esc(names[2])}</figcaption></figure>
       </div>
-      <svg class="strings" viewBox="0 0 900 120" opacity="0" aria-hidden="true">
-        <defs><linearGradient id="rb" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff6b7a"/><stop offset="1" stop-color="#d81f3c"/></linearGradient></defs>
-        <line x1="160" x2="160" y1="6" y2="114" stroke="#1d2b44" stroke-width="3" stroke-dasharray="8 6"/>
-        <text x="145" y="44" font-size="26" font-weight="800" text-anchor="end" fill="#1d2b44">${esc(names[1])}</text><rect class="s1" x="160" y="24" width="0" height="24" rx="12" fill="url(#rb)"/>
-        <text x="145" y="96" font-size="26" font-weight="800" text-anchor="end" fill="#1d2b44">${esc(names[2])}</text><rect class="s2" x="160" y="76" width="0" height="24" rx="12" fill="url(#rb)"/>
-      </svg>
     </div>`;
   await ctx.source("8");
   ctx.guide.say(pg?.question || "누가 만든 리본이 더 긴지 어떻게 알 수 있을까요?", { mood: "think" });
   await ctx.next("리본을 풀어 보기", { icon: "✂️" });
   const box = ctx.stage.querySelector(".sm-ribbon");
   box.querySelectorAll(".bow").forEach((b) => b.animate?.([{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(.2) rotate(40deg)" }], { duration: 500, fill: "forwards" }));
+  // 풀린 리본·말풍선은 사라진 뒤 자리를 비운다(작은 화면에서 끈 그림을 크게)
+  setTimeout(() => box.querySelectorAll(".bow, .talk").forEach((n) => n.remove()), ctx.fx.reduced() ? 0 : 520);
+  box.insertAdjacentHTML("beforeend", stringsHtml);
   const strings = box.querySelector(".strings"), svg = strings;
   strings.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 400, fill: "forwards" }); strings.setAttribute("opacity", "1");
   const grow = (el, w) => { el.animate?.([{ width: "0px" }, { width: `${w}px` }], { duration: ctx.fx.reduced() ? 1 : 1100, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" }); el.setAttribute("width", w); };
