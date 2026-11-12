@@ -322,3 +322,24 @@ button { font: inherit; color: inherit; }
 .sm-cg-big { padding: 12px; border-radius: 20px; background: #fff; box-shadow: var(--shadow); }
 .sm-cg-big .cb { cursor: pointer; } .sm-cg-big .cb.on rect { fill: #e8417f; } .sm-cg-big .cb.on path { fill: #f06c9c; }
 .sm-cg-score.bump b { display: inline-block; animation: sm-bounce .5s ease 2; }
+
+/* ── 3단원 미로 ───────────────────────────────── */
+.mz-wrap { position: absolute; inset: 0; }
+.mz-host { position: absolute; inset: 6px; }
+.mz-svg { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
+.mz-wrap.small .mz-host { inset: 6px max(6px, calc(50% - 300px)); }
+.mz-token { transition: transform .16s ease-out; pointer-events: none; }
+.mz-path { pointer-events: none; }
+.mz-candy { transition: opacity .25s, transform .25s; } .mz-candy.eaten { opacity: .18; }
+.mz-chip { font-size: 24px; font-weight: 800; padding: 8px 18px; border-radius: 999px; background: #fff; box-shadow: var(--shadow); min-width: 90px; text-align: center; } .mz-chip:empty { display: none; }
+.mz-compare { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
+.mz-compare span { font-size: 22px; font-weight: 800; padding: 8px 16px; border-radius: 16px; background: #fff; border: 3px solid var(--c); color: var(--c); }
+.mz-compare span.best { background: var(--c); color: #fff; animation: sm-bounce .5s ease 2; }
+.mz-intro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; font-size: 24px; font-weight: 700; padding: 16px; }
+.mz-intro .score { font-size: 34px; } .mz-intro .score b { color: var(--pink); font-size: 44px; }
+.mz-castle { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; gap: 30px; padding: 16px; }
+.mz-castle .sky { position: relative; width: min(420px, 60%); height: 92%; border-radius: 48% 52% 40% 44%; background: radial-gradient(circle at 50% 40%, #3a5fa8, #22315f); display: grid; place-items: center; }
+.mz-castle .castle { font-size: clamp(110px, 24vh, 200px); filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
+.mz-castle .st { position: absolute; font-size: 26px; animation: sm-float 2.4s ease-in-out infinite; } .mz-castle .s1 { left: 12%; top: 16%; } .mz-castle .s2 { right: 16%; top: 10%; animation-delay: .6s; } .mz-castle .s3 { left: 22%; bottom: 20%; animation-delay: 1.2s; }
+.mz-castle .moon { position: absolute; right: 10%; top: 30%; font-size: 34px; }
+.mz-castle .girl { align-self: flex-end; }

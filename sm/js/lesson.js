@@ -1,11 +1,11 @@
 // 차시 진행 — 시작 화면 → 단계(이야기·해 보기·게임) → 별 받기.
 //  5세용 규칙(설계서 1·6절): 지시는 독쌤이 소리로, 누를 것은 크게, 틀리면 결과 장면 + 부드러운 격려, 두 번 틀리면 같이 해 준다.
-import { gate } from "./access.js?v=20261113l";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113l";
-import { BOOK, findSession } from "./book.js?v=20261113l";
-import { saveLesson } from "./progress.js?v=20261113l";
-import { createGuide } from "./guide.js?v=20261113l";
-import * as fx from "./fx.js?v=20261113l";
+import { gate } from "./access.js?v=20261113p";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113p";
+import { BOOK, findSession } from "./book.js?v=20261113p";
+import { saveLesson } from "./progress.js?v=20261113p";
+import { createGuide } from "./guide.js?v=20261113p";
+import * as fx from "./fx.js?v=20261113p";
 
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
@@ -33,7 +33,7 @@ async function start() {
   }
   const found = findSession(lessonId);
   if (!found?.session.ready) { location.replace("./index.html"); return; }
-  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261113l`), loadText(BOOK.id)]);
+  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261113p`), loadText(BOOK.id)]);
   run(result.me, found, mod.LESSON, text);
 }
 
@@ -131,7 +131,7 @@ function makeContext(main, guide, addMistake, text) {
       const entry = text?.pages?.[no] || null;
       pageEl.textContent = `${no}쪽${entry?.section ? ` · ${entry.section}` : ""}`; pageEl.hidden = false;
       srcEl.hidden = false;
-      srcEl.textContent = entry?.text || "(교재 지문 준비 중)";
+      srcEl.textContent = entry?.text || entry?.label || (entry ? entry.title : "") || "(교재 지문 준비 중)";   // 활동판 쪽은 이름만 있다
       srcEl.classList.toggle("missing", !entry);
       activity = entry?.activity || null; actBtn.hidden = !activity;
       if (entry?.text && read) await guide.say(entry.text, { display: false });
