@@ -1,0 +1,28 @@
+/* 컨설팅 모드 학생 바와 총평 안의 상담 코멘트 쪽. 색은 총평(planner-report.css)의 보라·테두리를 그대로 쓴다. */
+.consult-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));background:#fff;border-bottom:1px solid #e7ddeb;font-size:13px;color:#182230}
+.consult-mode{color:#50335f;font-weight:700;border:1px solid #50335f;border-radius:4px;padding:3px 8px;white-space:nowrap}
+.consult-field{display:inline-flex;align-items:center;gap:6px}.consult-field>span{color:#566274}
+.consult-bar select,.consult-bar input{font:inherit;min-height:36px;border:1px solid #c9bfd0;border-radius:6px;padding:4px 8px;background:#fff;color:#182230;max-width:12em}
+.consult-name{display:inline-flex;align-items:center;gap:6px;margin:0}
+.consult-bar button{font:inherit;min-height:36px;padding:4px 12px;border:1px solid #c9bfd0;border-radius:6px;background:#fff;color:#50335f;cursor:pointer;white-space:nowrap}
+.consult-bar button:hover{border-color:#50335f}
+.consult-bar :focus-visible,.consult-tools :focus-visible,.consult-editor:focus-visible{outline:3px solid #2456c4;outline-offset:2px}
+.consult-status{margin:0;color:#566274;font-size:12px;flex:1 1 220px;min-width:0}
+@media(max-width:620px){.consult-bar{gap:6px 8px}.consult-name{flex:1 1 100%}.consult-name input{flex:1;max-width:none}.consult-status{flex-basis:100%}}
+
+.pr-consult .consult-lead{color:#566274}
+.consult-tools{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 8px}
+.consult-tools button,.consult-photo{font:inherit;font-size:13px;min-height:36px;padding:4px 10px;border:1px solid #c9bfd0;border-radius:6px;background:#fff;color:#182230;cursor:pointer;display:inline-flex;align-items:center}
+.consult-tools .ct-bold{font-weight:700}.consult-tools .ct-under{text-decoration:underline}.consult-tools .ct-mark{background:#fef08a}.consult-tools .ct-red{color:#c62828}.consult-tools .ct-blue{color:#2456c4}
+.consult-photo input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.consult-photo:focus-within{outline:3px solid #2456c4;outline-offset:2px}
+.consult-editor{min-height:220px;border:1px solid #c9bfd0;border-radius:8px;padding:14px 16px;line-height:1.85;background:#fff;color:#182230}
+.consult-editor:empty::before{content:'여기에 상담 코멘트를 적어 주세요.';color:#8a94a6}
+.consult-editor img{display:block;max-width:100%;height:auto;border-radius:6px;margin:8px 0}
+.consult-editor p{margin:0 0 8px}
+.consult-saved{font-size:12px;color:#566274;min-height:1.4em}
+@media print{
+ .consult-bar,.consult-tools,.consult-saved,.consult-lead,.pr-consult.consult-empty{display:none!important}
+ .consult-editor{border:0;padding:0;min-height:0}
+ .consult-editor:empty::before{content:none}
+}
