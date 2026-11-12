@@ -9,8 +9,12 @@ export { login, logout, loggedIn };
 
 const allowed = (me) => Boolean(me) && (me.type === "admin" || (me.permissions || []).includes(PERMISSION));
 
+// 공개 입구(sm/open/, 원장 2026-11-12 「권한 없이 열리는 공개 페이지」): 페이지가 SM_OPEN을 켜면 로그인·권한 확인 없이 연다.
+//  공개 입구에도 교재 지문 파일은 없다(저장소 밖). 진행 기록은 이 기기에만 「친구」 이름으로 남는다.
+export const OPEN = globalThis.SM_OPEN === true;
 // 서버에서 세션을 다시 확인하고 { ok, me, why } — why: login(로그인 필요) | permission(권한 없음)
 export async function gate() {
+  if (OPEN) return { ok: true, me: { name: "친구", type: "guest", open: true } };
   const me = loggedIn() ? await checkSession().then(() => loggedIn()) : null;
   if (!me) return { ok: false, why: "login" };
   return allowed(me) ? { ok: true, me } : { ok: false, why: "permission", me };

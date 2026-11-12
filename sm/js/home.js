@@ -1,8 +1,8 @@
 // 홈: 로그인 확인 → 단원 지도(4단원 × 2차시)
-import { gate, logout } from "./access.js?v=20261113k";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113k";
-import { BOOK } from "./book.js?v=20261113k";
-import { readLesson } from "./progress.js?v=20261113k";
+import { gate, logout } from "./access.js?v=20261113l";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261113l";
+import { BOOK } from "./book.js?v=20261113l";
+import { readLesson } from "./progress.js?v=20261113l";
 
 const app = document.getElementById("app");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -23,9 +23,9 @@ function renderHome(me) {
   app.innerHTML = `
     <header class="sm-top" style="padding-left:0;padding-right:0">
       <div class="sm-title">${esc(BOOK.title)}</div>
-      <button class="sm-btn" type="button" data-out style="font-size:18px;min-height:56px">로그아웃</button>
+      ${me.open ? "" : `<button class="sm-btn" type="button" data-out style="font-size:18px;min-height:56px">로그아웃</button>`}
     </header>
-    <p class="sm-hello"><span aria-hidden="true">👋</span> ${esc(child)}, 오늘은 무엇을 해 볼까요?</p>
+    <p class="sm-hello"><span aria-hidden="true">👋</span> ${me.open ? "" : `${esc(child)}, `}오늘은 무엇을 해 볼까요?</p>
     <section class="sm-units">
       ${BOOK.units.map((u) => `
         <article class="sm-unit" style="--u:${u.color}">
@@ -42,7 +42,7 @@ function renderHome(me) {
           </div>
         </article>`).join("")}
     </section>`;
-  app.querySelector("[data-out]").addEventListener("click", async () => { await logout(); start(); });
+  app.querySelector("[data-out]")?.addEventListener("click", async () => { await logout(); start(); });
 }
 
 start();

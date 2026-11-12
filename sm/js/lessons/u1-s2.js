@@ -6,7 +6,7 @@
 //   15쪽 연필 3 · 해바라기 5, 16~17쪽 활동판(실제 크기, 지오큐브 2cm): 양 3 · 기린 5 · 토끼 2 · 공룡 4,
 //   18쪽 막대: 보라 4(둘째 칸부터) · 노랑 7(첫 칸부터) · 파랑 6(다섯째 칸부터), 친구: 받침 0·1·2개(머리 높이 같음).
 // 16~17쪽 활동판 길이는 인쇄 크기로 잰 값이라 정답지 확인 필요.
-import { geocube, OBJ, animalAt, kid } from "../art.js?v=20261113k";
+import { geocube, OBJ, animalAt, kid } from "../art.js?v=20261113l";
 
 // 받침에 따라 「이에요/예요」
 const ieyo = (w) => { const c = String(w).charCodeAt(String(w).length - 1) - 0xac00; return c >= 0 && c <= 11171 && c % 28 ? `${w}이에요` : `${w}예요`; };
