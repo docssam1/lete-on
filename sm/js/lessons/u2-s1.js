@@ -3,10 +3,11 @@
 //   → 35 「가장 가벼운 블록에 1 쓰기」(원장 지도법 2026-11-12) → 35 공·원뿔은 큐브 몇 개 → 36 아빠곰 무게 재기
 // 33쪽(병아리 반대편에 올 것)은 정답이 하나로 정해지지 않아 정답지 확인 전까지 넣지 않는다(설계서 7절).
 // 37쪽 활동판(실물 무게 재기)은 원본에 수치가 없어 원장이 가상 무게를 정한 뒤 넣는다.
-// 그림 수치: 32쪽 기울기(컵>모자, 가방>컵), 35쪽 큐브(공 7 · 원뿔 5), 36쪽 예(아빠곰 = 큐브 12)는 원본 그림·글에서 옮겼다.
-import { createBalance, bear, cube, solid, thing } from "../balance3d.js?v=20261112b";
+// 지문: 화면 위 칸에 원본 글 그대로(ctx.source, sm/data/a1-3.local.json — 공개 저장소에 올리지 않음). 독쌤 말은 그 아래 따로.
+// 그림 수치: 32쪽 기울기(컵>모자, 가방>컵), 35쪽 큐브(공 7 · 원뿔 5), 36쪽 예(빨간 아빠곰 = 큐브 12, 3개씩 4줄)는 원본 그림·글에서 옮겼다.
+import { createBalance, bear, cube, solid, thing } from "../balance3d.js?v=20261112d";
 
-import { BEAR_COLORS } from "../balance3d.js?v=20261112b";
+import { BEAR_COLORS } from "../balance3d.js?v=20261112d";
 // 색깔 곰돌이 그림(단추용) — 3D 곰과 같은 색
 export const bearIcon = (color, size = 72) => { const c = BEAR_COLORS[color] || color; return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true"><g fill="${c}" stroke="rgba(0,0,0,.18)" stroke-width="3"><circle cx="30" cy="20" r="11"/><circle cx="70" cy="20" r="11"/><ellipse cx="50" cy="72" rx="28" ry="25"/><circle cx="50" cy="36" r="23"/><ellipse cx="22" cy="64" rx="9" ry="13"/><ellipse cx="78" cy="64" rx="9" ry="13"/></g><circle cx="42" cy="33" r="3.5" fill="#1b1b1b"/><circle cx="58" cy="33" r="3.5" fill="#1b1b1b"/><ellipse cx="50" cy="43" rx="6" ry="4" fill="#1b1b1b"/><ellipse cx="44" cy="25" rx="8" ry="5" fill="#fff" opacity=".35"/></svg>`; };
 const SAY = {
@@ -26,8 +27,12 @@ async function seesaw(ctx) {
   b.lock(true);
   b.put("left", thing("🐯", 20, "호돌이"), { animate: false });
   b.put("right", thing("🐻", 24, "곰돌이"), { animate: false });
-  ctx.guide.say("호돌이와 곰돌이는 키도 같고 덩치도 비슷해요. 누가 더 무거울까요? 시소를 타 봐요!");
+  const pg = ctx.page("30");
+  const talk = (pg?.bubbles || []).map((t, i) => b.label(i ? "right" : "left", t));
+  await ctx.source("30");
+  ctx.guide.say("누가 더 무거울까요? 시소를 타 봐요!");
   await ctx.next("시소 타기", { icon: "🎢" });
+  talk.forEach((l) => l.remove());
   b.lock(false);
   ctx.fx.sound.drop();
   await b.settle();
@@ -73,7 +78,8 @@ async function balanceGame(ctx) {
   ctx.stage.append(overlay);
   const lblL = b.label("left", "나"), lblR = b.label("right", "독쌤");
   void lblL; void lblR;
-  await ctx.guide.say("저울 놀이를 해요! 화살판을 두 번 돌려서 나온 곰돌이를 저울에 올려요. 더 무거운 쪽이 이겨요!");
+  await ctx.source("31");
+  await ctx.guide.say("저울 놀이를 해요! 화살판을 두 번씩 돌려서 나온 곰돌이를 저울에 올려요. 더 무거운 쪽이 이겨요!");
   for (let round = 1; round <= ROUNDS; round++) {
     b.clear(); b.lock(true);
     overlay.innerHTML = `<div data-spin></div><div class="sm-score"><span>나 ${"⭐".repeat(mine) || "·"}</span><span>독쌤 ${"⭐".repeat(his) || "·"}</span></div>`;
@@ -127,18 +133,20 @@ async function heavyLight(ctx) {
     { left: { it: thing("☕", 3, "컵"), v: "cup" }, right: { it: thing("🧢", 2, "모자"), v: "cap" }, heavy: "cup", light: "cap" },
     { left: { it: thing("💼", 6, "가방"), v: "bag" }, right: { it: thing("☕", 3, "컵"), v: "cup" }, heavy: "bag", light: "cup" }
   ];
+  const pg = await ctx.source("32");
+  const tagH = pg?.labels?.heavy || "무거운 물건 :", tagL = pg?.labels?.light || "가벼운 물건 :";
   for (const [i, sc] of scenes.entries()) {
     ctx.stage.innerHTML = "";
     const b = createBalance(ctx.stage);
     b.put("left", sc.left.it, { animate: false }); b.put("right", sc.right.it, { animate: false });
-    ctx.dock.innerHTML = `<div class="sm-bins"><div class="sm-bin" data-bin="heavy"><span class="tag">무거운 물건</span><span class="slot"></span></div><div class="sm-bin" data-bin="light"><span class="tag">가벼운 물건</span><span class="slot"></span></div></div><div class="sm-tray" data-choices></div>`;
+    ctx.dock.innerHTML = `<div class="sm-bins"><div class="sm-bin" data-bin="heavy"><span class="tag">${tagH}</span><span class="slot"></span></div><div class="sm-bin" data-bin="light"><span class="tag">${tagL}</span><span class="slot"></span></div></div><div class="sm-tray" data-choices></div>`;
     const host = ctx.dock.querySelector("[data-choices]"), binH = ctx.dock.querySelector('[data-bin="heavy"]'), binL = ctx.dock.querySelector('[data-bin="light"]');
     const choices = [sc.left, sc.right].map((x) => ({ value: x.v, art: x.it.char, name: x.it.name }));
     const of = (v) => [sc.left, sc.right].find((x) => x.v === v).it;
     sc.heavy = { v: sc.heavy, art: of(sc.heavy).char, name: of(sc.heavy).name };
     sc.light = { v: sc.light, art: of(sc.light).char, name: of(sc.light).name };
     binH.classList.add("active");
-    ctx.guide.say(i === 0 ? "양팔 저울에 물건을 올려 놓았어요. 무거운 물건은 무엇일까요?" : "이번에는요? 무거운 물건을 눌러요.");
+    ctx.guide.say(i === 0 ? "무거운 물건은 무엇일까요? 눌러 보세요." : "이번에는요? 무거운 물건을 눌러요.");
     await ctx.choose(choices, { correct: sc.heavy.v, host, wrongSay: "저울이 어느 쪽으로 내려갔는지 볼까요?", hint: () => { b.label("left", "⬇ 내려갔어요"); ctx.guide.encourage(SAY.heavyHint); } });
     binH.classList.remove("active"); binH.querySelector(".slot").textContent = sc.heavy.art; binH.querySelector(".slot").classList.add("filled");
     binL.classList.add("active");
@@ -157,7 +165,8 @@ async function papaAndBabies(ctx) {
   const b = balanceIn(ctx);
   b.put("left", bear("papa", "green"), { animate: false });
   ctx.dock.innerHTML = `<div class="sm-tray">${["red", "yellow", "blue"].map((c) => `<button class="sm-pick" type="button" data-c="${c}" aria-label="아기곰 올리기"><span class="art">${bearIcon(c)}</span><span class="name">아기곰</span></button>`).join("")}</div>`;
-  await ctx.guide.say("왼쪽에 아빠곰 1마리가 있어요. 아기곰을 하나씩 올려서 저울을 나란하게 만들어 봐요!");
+  const pg = await ctx.source("34");
+  await ctx.guide.say("우리도 해 봐요. 아기곰을 하나씩 올려 보세요!");
   let seq = 0;
   await new Promise((resolve) => {
     ctx.dock.addEventListener("click", async (event) => {
@@ -171,11 +180,14 @@ async function papaAndBabies(ctx) {
     });
   });
   ctx.fx.sound.level(); ctx.fx.cheer(null, { big: true });
-  await ctx.guide.praise("와! 두 접시가 나란해졌어요. 두 저울이 나란한 것을 수평이라고 해요.");
-  ctx.guide.say("아빠곰 1마리와 아기곰 3마리는 무게가 어떨까요?");
+  await ctx.guide.praise("와! 저울이 어느 쪽으로도 기울어지지 않았어요.");
+  ctx.guide.think(pg?.bubbles?.[0] || "왜 그럴까?");
+  // 원본 문장 틀: [아빠곰]과 [아기곰 3]는 무게가 ( 같습니다 , 다릅니다 ).
+  const f = pg?.frame || ["과", "는 무게가 (", "같습니다", ",", "다릅니다", ")."];
+  ctx.dock.innerHTML = `<div class="col"><div class="sm-frame">${bearIcon("green", 56)}<span>${f[0]}</span>${bearIcon("red", 40)}${bearIcon("yellow", 40)}${bearIcon("blue", 40)}<span>${f[1]}</span><span class="paren">${f[2]} ${f[3]} ${f[4]}</span><span>${f[5]}</span></div><div class="sm-tray" data-choices></div></div>`;
   await ctx.choose(
-    [{ value: "same", art: "🟰", name: "같아요" }, { value: "diff", art: "↕️", name: "달라요" }],
-    { correct: "same", wrongSay: "저울이 나란하면 무게가 어떨까요?", praise: "맞아요! 저울이 수평이면 무게가 같아요." }
+    [{ value: "same", art: "🟰", name: f[2] }, { value: "diff", art: "↕️", name: f[4] }],
+    { correct: "same", host: ctx.dock.querySelector("[data-choices]"), wrongSay: "저울이 기울어지지 않았으면 무게가 어떨까요?", praise: "맞아요! 무게가 같아서 저울이 기울어지지 않았어요." }
   );
   await ctx.next("다음");
 }
@@ -211,8 +223,9 @@ async function writeOne(ctx) {
 }
 
 // ── 큐브로 무게 재기(35쪽 공·원뿔, 36쪽 아빠곰) ────────────
-async function measure(ctx, { item, art, name, answer, max, intro }) {
+async function measure(ctx, { item, art, name, answer, max, intro, perRow = 4, before, after, levelSay }) {
   const b = balanceIn(ctx);
+  b.perRow(perRow);
   b.showOnes(true);
   b.put("left", item, { animate: false });
   ctx.dock.innerHTML = `<div class="sm-tray">
@@ -235,10 +248,10 @@ async function measure(ctx, { item, art, name, answer, max, intro }) {
   });
   ctx.fx.sound.level(); ctx.fx.cheer(null, { big: true });
   b.focus(true);
-  await ctx.guide.praise("수평이 되었어요! 이제 큐브를 세어 봐요.");
+  await ctx.guide.praise(levelSay || "수평이 되었어요! 이제 큐브를 세어 봐요.");
   ctx.guide.say(`${name}의 무게는 큐브 몇 개의 무게와 같을까요?`);
   await ctx.number(answer, {
-    max, before: `<span style="font-size:44px" aria-hidden="true">${art}</span> 큐브`, after: "개",
+    max, before: before || `<span style="font-size:44px" aria-hidden="true">${art}</span> 큐브`, after: after || "개",
     hint: async () => {
       await ctx.guide.encourage("같이 세어 봐요!");
       const n = b.items("right").length;
@@ -248,14 +261,23 @@ async function measure(ctx, { item, art, name, answer, max, intro }) {
   });
   await ctx.guide.praise(`맞아요! ${name}의 무게는 큐브 ${answer}개의 무게와 같아요.`);
 }
+const artSpan = (a) => `<span style="font-size:44px" aria-hidden="true">${a}</span>`;
 async function ballAndCone(ctx) {
-  await measure(ctx, { item: solid("sphere", 7, "공"), art: "🟡", name: "공", answer: 7, max: 10, intro: "공과 무게가 같아지도록 큐브를 하나씩 올려 봐요. 저울이 나란해지면 성공!" });
-  ctx.dispose(); ctx.reset("35쪽");
-  await measure(ctx, { item: solid("cone", 5, "원뿔"), art: "🔺", name: "원뿔", answer: 5, max: 10, intro: "이번엔 원뿔이에요. 큐브를 올려서 저울을 나란하게 만들어요!" });
+  const pg = await ctx.source("35");
+  const f = pg?.frame || ["의 무게는 큐브", "개의 무게와 같습니다."];
+  // 원본 그림: 공 = 큐브 7(아래 4 · 위 3), 원뿔 = 큐브 5(아래 3 · 위 2)
+  await measure(ctx, { item: solid("sphere", 7, "공"), art: "🟡", name: "공", answer: 7, max: 10, perRow: 4, before: `${artSpan("🟡")}${f[0]}`, after: f[1], intro: "공과 무게가 같아지도록 큐브를 하나씩 올려 봐요. 저울이 나란해지면 성공!" });
+  ctx.dispose(); ctx.reset("35쪽"); await ctx.source("35", { read: false });
+  await measure(ctx, { item: solid("cone", 5, "원뿔"), art: "🔺", name: "원뿔", answer: 5, max: 10, perRow: 3, before: `${artSpan("🔺")}${f[0]}`, after: f[1], intro: "이번엔 원뿔이에요. 큐브를 올려서 저울을 나란하게 만들어요!" });
   await ctx.next("다음");
 }
 async function papaWeight(ctx) {
-  await measure(ctx, { item: bear("papa", "green"), art: "🧸", name: "아빠곰", answer: 12, max: 15, intro: "아빠곰의 무게를 큐브로 재어 봐요. 큐브를 하나씩 올려서 수평을 만들어요!" });
+  const pg = await ctx.source("36");
+  // 원본 예: 빨간 아빠곰 = 큐브 12(3개씩 4줄). 문장 「아빠곰의 무게는 큐브 12개의 무게와 같습니다.」
+  await measure(ctx, { item: bear("papa", "red"), art: "🧸", name: "아빠곰", answer: 12, max: 15, perRow: 3,
+    before: `${bearIcon("red", 48)} 아빠곰의 무게는 큐브`, after: "개의 무게와 같습니다.",
+    levelSay: pg?.bubbles?.[0] || "두 저울이 나란한 것을 수평이라고 해요.",
+    intro: "아빠곰을 올렸어요. 1g 큐브를 하나씩 올려서 두 접시가 나란하게 만들어요!" });
   await ctx.next("끝내기", { icon: "🏁" });
 }
 
@@ -270,7 +292,7 @@ export const LESSON = {
     { page: "31쪽 · 게임", run: balanceGame },
     { page: "32쪽", run: heavyLight },
     { page: "34쪽", run: papaAndBabies },
-    { page: "35쪽", run: writeOne },
+    { page: "선생님 지도 · 35쪽 앞", run: writeOne },
     { page: "35쪽", run: ballAndCone },
     { page: "36쪽", run: papaWeight }
   ]

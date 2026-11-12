@@ -1,11 +1,11 @@
 // 차시 진행 — 시작 화면 → 단계(이야기·해 보기·게임) → 별 받기.
 //  5세용 규칙(설계서 1·6절): 지시는 독쌤이 소리로, 누를 것은 크게, 틀리면 결과 장면 + 부드러운 격려, 두 번 틀리면 같이 해 준다.
-import { gate } from "./access.js?v=20261112b";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261112b";
-import { BOOK, findSession } from "./book.js?v=20261112b";
-import { saveLesson } from "./progress.js?v=20261112b";
-import { createGuide } from "./guide.js?v=20261112b";
-import * as fx from "./fx.js?v=20261112b";
+import { gate } from "./access.js?v=20261112d";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261112d";
+import { BOOK, findSession } from "./book.js?v=20261112d";
+import { saveLesson } from "./progress.js?v=20261112d";
+import { createGuide } from "./guide.js?v=20261112d";
+import * as fx from "./fx.js?v=20261112d";
 
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
@@ -13,6 +13,15 @@ const lessonId = params.get("l") || "u2-s1";
 const startAt = Math.max(0, (Number(params.get("s")) || 1) - 1);   // &s=번호: 그 단계부터(선생님이 한 단계만 보여 줄 때)
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const wait = (ms) => new Promise((r) => setTimeout(r, fx.reduced() ? Math.min(ms, 120) : ms));
+
+// 교재 지문(원본 글 그대로). 공개 저장소에 두지 않는 파일(sm/data/*.local.json)에서 읽는다.
+// 없으면(배포본) null — 나중에 로그인 세션을 확인하는 서버 함수에서 받도록 바꾼다.
+async function loadText(bookId) {
+  try {
+    const r = await fetch(new URL(`../data/${bookId}.local.json`, import.meta.url), { cache: "no-store" });
+    return r.ok ? await r.json() : null;
+  } catch { return null; }
+}
 
 async function start() {
   const result = await gate();
@@ -24,11 +33,11 @@ async function start() {
   }
   const found = findSession(lessonId);
   if (!found?.session.ready) { location.replace("./index.html"); return; }
-  const mod = await import(`./lessons/${lessonId}.js?v=20261112b`);
-  run(result.me, found, mod.LESSON);
+  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261112d`), loadText(BOOK.id)]);
+  run(result.me, found, mod.LESSON, text);
 }
 
-function run(me, { unit, session }, lesson) {
+function run(me, { unit, session }, lesson, text) {
   app.className = "sm-lesson";
   app.innerHTML = `
     <header class="sm-top">
@@ -59,11 +68,13 @@ function run(me, { unit, session }, lesson) {
   main.querySelector("[data-start]").addEventListener("click", async () => {
     fx.sound.pop();
     main.innerHTML = `
-      <div class="sm-ask"><button class="sm-guide-host" type="button"></button><p class="say"></p><span class="page"></span></div>
+      <div class="sm-ask"><button class="sm-guide-host" type="button"></button>
+        <div class="txt"><p class="src" hidden></p><p class="say"></p></div>
+        <div class="meta"><span class="page"></span><button class="sm-actbtn" type="button" hidden>활동 방법</button></div></div>
       <div class="sm-stage"></div>
       <div class="sm-dock"></div>`;
     const guide = createGuide({ host: main.querySelector(".sm-guide-host"), textEl: main.querySelector(".say"), voiceBtn });
-    const ctx = makeContext(main, guide, () => mistakes++);
+    const ctx = makeContext(main, guide, () => mistakes++, text);
     for (let i = Math.min(startAt, lesson.steps.length - 1); i < lesson.steps.length; i++) {
       dots.forEach((d, k) => { d.className = k < i ? "done" : k === i ? "now" : ""; });
       const step = lesson.steps[i];
@@ -100,14 +111,30 @@ function run(me, { unit, session }, lesson) {
 }
 
 // ── 단계에 주는 도구 ─────────────────────────────────────
-function makeContext(main, guide, addMistake) {
+function makeContext(main, guide, addMistake, text) {
   const stageEl = main.querySelector(".sm-stage"), dock = main.querySelector(".sm-dock"), pageEl = main.querySelector(".page");
+  const srcEl = main.querySelector(".src"), actBtn = main.querySelector(".sm-actbtn");
+  let activity = null;
+  actBtn.addEventListener("click", () => showActivity(activity));
   let cleanups = [];
   const ctx = {
     guide, fx, wait,
     get stage() { return stageEl; },
     get dock() { return dock; },
-    reset(page) { stageEl.innerHTML = ""; stageEl.style.display = ""; dock.innerHTML = ""; pageEl.textContent = page || ""; pageEl.hidden = !page; },
+    reset(page) { stageEl.innerHTML = ""; stageEl.style.display = ""; dock.innerHTML = ""; pageEl.textContent = page || ""; pageEl.hidden = !page; srcEl.hidden = true; srcEl.textContent = ""; actBtn.hidden = true; activity = null; },
+    // 교재 쪽 정보(원본 글 그대로): { section, title, text, activity, bubbles, labels, frame }
+    page(no) { return text?.pages?.[no] || null; },
+    // 지문을 원본 그대로 보이고 독쌤이 읽는다. 지문 파일이 없으면 「지문 준비 중」만 보인다.
+    async source(no, { read = true } = {}) {
+      const entry = text?.pages?.[no] || null;
+      pageEl.textContent = `${no}쪽${entry?.section ? ` · ${entry.section}` : ""}`; pageEl.hidden = false;
+      srcEl.hidden = false;
+      srcEl.textContent = entry?.text || "(교재 지문 준비 중)";
+      srcEl.classList.toggle("missing", !entry);
+      activity = entry?.activity || null; actBtn.hidden = !activity;
+      if (entry?.text && read) await guide.say(entry.text, { display: false });
+      return entry;
+    },
     onDispose(fn) { cleanups.push(fn); },
     dispose() { cleanups.splice(0).reverse().forEach((f) => { try { f(); } catch { /* 계속 */ } }); },
     mistake() { addMistake(); },
@@ -179,6 +206,21 @@ function makeContext(main, guide, addMistake) {
     }
   };
   return ctx;
+}
+
+// 활동 상자(원본 그대로) — 학부모·선생님이 볼 수 있게 큰 창으로
+function showActivity(act) {
+  if (!act) return;
+  const d = document.createElement("dialog");
+  d.className = "sm-actbox";
+  d.innerHTML = `<h2>활동 · ${esc(act.name)}</h2>
+    <p class="goal"><b>목 표</b> : ${esc(act.goal)}</p><p class="goal"><b>준비물</b> : ${esc(act.materials)}</p>
+    <ol>${act.steps.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>${act.example ? `<p class="ex"><b>예</b> ${esc(act.example)}</p>` : ""}
+    <button class="sm-btn go big" type="button">닫기</button>`;
+  document.body.append(d);
+  d.querySelector("button").addEventListener("click", () => d.close());
+  d.addEventListener("close", () => d.remove());
+  d.showModal();
 }
 
 start();

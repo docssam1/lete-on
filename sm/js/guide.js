@@ -68,10 +68,10 @@ export function createGuide({ host, textEl, voiceBtn }) {
 
   const api = {
     // 글을 크게 띄우고 읽는다. 다른 말이 끼어들면 false.
-    async say(text, { mood = "explain", hold = false } = {}) {
+    async say(text, { mood = "explain", hold = false, display = true } = {}) {
       const my = ++token;
       last = text;
-      if (textEl) { textEl.textContent = text; textEl.animate?.([{ transform: "translateY(8px)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 320, easing: "cubic-bezier(.2,.8,.2,1)" }); }
+      if (textEl && display) { textEl.textContent = text; textEl.animate?.([{ transform: "translateY(8px)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 320, easing: "cubic-bezier(.2,.8,.2,1)" }); }
       clearTimeout(moodTimer);
       show(mood); host.classList.add("talk");
       const ok = await speak(text);

@@ -25,7 +25,7 @@ const weightOf = (list) => list.reduce((s, it) => s + (Number(it.w) || 0), 0);
 
 export function createBalance(host, { type = "balance", onTap = null } = {}) {
   const sides = { left: [], right: [] };
-  let locked = false, angle = 0, vel = 0, showOnes = false;
+  let locked = false, angle = 0, vel = 0, showOnes = false, perRow = 4;
   let waiters = [];
   const listeners = new Set();
   const state = () => {
@@ -148,7 +148,7 @@ export function createBalance(host, { type = "balance", onTap = null } = {}) {
     let x = -total / 2;
     const zOthers = cubes.length && others.length ? -0.22 : 0;
     others.forEach((it, i) => { it._home = new THREE.Vector3(x + widths[i] / 2, 0, zOthers); x += widths[i] + 0.05; });
-    const per = 4, rows = Math.ceil(cubes.length / per);
+    const per = perRow, rows = Math.ceil(cubes.length / per);
     cubes.forEach((it, i) => {
       const row = Math.floor(i / per), inRow = Math.min(per, cubes.length - row * per), col = i % per;
       it._home = new THREE.Vector3((col - (inRow - 1) / 2) * CUBE, row * CUBE + CUBE / 2, others.length ? 0.24 : 0);
@@ -236,6 +236,8 @@ export function createBalance(host, { type = "balance", onTap = null } = {}) {
     clear() { for (const side of ["left", "right"]) while (sides[side].length) remove(side, 0, { animate: false }); },
     items(side) { return [...sides[side]]; },
     lock(on) { locked = Boolean(on); kick(); },
+    // 큐브를 한 줄에 몇 개씩 쌓을지(원본 그림과 같게: 35쪽 공 4, 원뿔 3, 36쪽 아빠곰 3)
+    perRow(n) { perRow = Math.max(1, n | 0); },
     get locked() { return locked; },
     // 기울기가 멈추면 한 번 알려 준다
     settle() { return new Promise((resolve) => { if (settled) { resolve(state()); return; } waiters.push(resolve); stage.request(); }); },
@@ -295,6 +297,7 @@ function createFlatBalance(host, { type, onTap, sides, stateFn }) {
     clear() { sides.left.length = 0; sides.right.length = 0; draw(); },
     items(side) { return [...sides[side]]; },
     lock(on) { locked = Boolean(on); draw(); }, get locked() { return locked; },
+    perRow() {}, focus() {},
     settle() { return new Promise((r) => setTimeout(() => r(stateFn()), 650)); },
     onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); },
     label() { return { set() {}, show() {}, remove() {}, setClass() {} }; },

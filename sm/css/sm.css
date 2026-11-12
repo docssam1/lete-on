@@ -218,3 +218,23 @@ button { font: inherit; color: inherit; }
   .sm-ask .say { font-size: 20px; } .sm-ask .page { display: none; }
   .sm-main { padding: 0 10px 10px; }
 }
+
+/* ── 교재 지문(원본 그대로) + 독쌤 말 ─────────────────── */
+.sm-ask .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.sm-ask .src { margin: 0; padding: 4px 0 2px; font-size: clamp(19px, 2.1vw, 25px); font-weight: 700; line-height: 1.45; letter-spacing: -.4px; color: var(--ink); }
+.sm-ask .src.missing { color: #a3adbf; font-weight: 600; }
+.sm-ask .src + .say { font-size: clamp(17px, 1.8vw, 21px); font-weight: 800; color: var(--blue-dark); }
+.sm-ask .src + .say:not(:empty)::before { content: "💬 "; }
+.sm-ask .meta { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.sm-actbtn { min-height: 48px; padding: 0 16px; border: 2px solid var(--line); border-radius: 999px; background: #fff; font-size: 16px; font-weight: 800; color: var(--ink2); cursor: pointer; }
+.sm-actbox { max-width: min(680px, 92vw); border: 0; border-radius: 28px; padding: 26px 28px; box-shadow: var(--shadow); color: var(--ink); }
+.sm-actbox::backdrop { background: rgba(20, 35, 60, .45); }
+.sm-actbox h2 { margin: 0 0 12px; font-size: 26px; }
+.sm-actbox .goal { margin: 4px 0; font-size: 18px; color: #c2456e; }
+.sm-actbox ol { margin: 14px 0; padding-left: 24px; font-size: 19px; line-height: 1.7; }
+.sm-actbox .ex { font-size: 18px; } .sm-actbox .sm-btn { width: 100%; margin-top: 8px; }
+.sm-frame { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; font-size: clamp(20px, 2.2vw, 26px); font-weight: 700; }
+.sm-frame .paren { color: var(--ink2); }
+.sm-dock .col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+@media (max-height: 700px) { .sm-ask .src { font-size: 18px; } .sm-ask .src + .say { font-size: 16px; } }
+@media (max-width: 560px) { .sm-ask .meta { display: none; } .sm-ask .src { font-size: 17px; } }
