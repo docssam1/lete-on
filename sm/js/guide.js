@@ -1,8 +1,10 @@
 // 독쌤 안내 — 5세는 글을 거의 못 읽으므로 모든 지시를 소리로 읽어 준다.
 //  · 그림은 승인된 독쌤 전신 5장(science-lab/assets)을 겹쳐 두고 한 장만 보인다(.claude/skills/docssam-talking-guide).
 //    다른 프로그램이라 science-lab 코드를 가져오지 않고 여기 따로 둔다(스킬 「코드를 복사해서 따로 둔다」).
-//  · 목소리: 기기 음성(Web Speech ko-KR). 독쌤 복제 음성 파일은 아직 없다.
-//    기기 음성일 때는 입을 움직이지 않는다(스킬: 소리 없는 입 움직임 금지 — 기기 음성은 재생 위치를 알 수 없음). 몸만 끄덕인다.
+//  · 목소리: 독쌤 복제 음성(OmniVoice, 사이언스 랩 독쌤과 같은 목소리) 파일이 있으면 그것, 없으면 기기 음성(Web Speech ko-KR).
+//    파일 이름 = sm-<sha1("sm-docssam-v1|"+글) 앞 12자>.mp3, 목록은 audio/docssam/manifest.json (scripts/omnivoice-sm.py 가 만든다).
+//    ${…}로 아이마다 달라지는 말은 파일이 없어 기기 음성으로 읽는다.
+//    입 모양 그림이 없으므로 말하는 동안 몸만 움직인다.
 //  · 말풍선 글은 .sm-ask 의 큰 글씨가 맡는다. 독쌤을 누르면 다시 말한다.
 const A = new URL("../../science-lab/assets/", import.meta.url).href;
 const BODY = { A1: "docssam-A1-mouth-closed.webp", B1: "docssam-B1-surprised.webp", B2: "docssam-B2-thinking.webp", B3: "docssam-B3-praise.webp", B4: "docssam-B4-encourage.webp" };
@@ -21,8 +23,8 @@ function pickVoice() {
 }
 if (typeof speechSynthesis !== "undefined") { pickVoice(); speechSynthesis.addEventListener?.("voiceschanged", pickVoice); }
 
-function speak(text) {
-  if (!voiceOn || typeof speechSynthesis === "undefined" || !text) return Promise.resolve(false);
+function speakDevice(text) {
+  if (typeof speechSynthesis === "undefined") return Promise.resolve(false);
   return new Promise((resolve) => {
     try {
       speechSynthesis.cancel();
@@ -34,6 +36,45 @@ function speak(text) {
       speechSynthesis.speak(u);
     } catch { resolve(false); }
   });
+}
+
+// 독쌤 복제 음성 파일
+const TAG = "sm-docssam-v1";
+const AUDIO = new URL("../audio/docssam/", import.meta.url).href;
+let files = null;
+const ready = fetch(AUDIO + "manifest.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null))
+  .then((m) => { files = new Set(m?.files || []); }).catch(() => { files = new Set(); });
+async function clipFor(text) {
+  await ready;
+  if (!files?.size || !globalThis.crypto?.subtle) return null;
+  const buf = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(`${TAG}|${text}`));
+  const name = `sm-${[...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("").slice(0, 12)}.mp3`;
+  return files.has(name) ? AUDIO + name : null;
+}
+let playing = null, seq = 0;
+function stopAll() {
+  try { speechSynthesis?.cancel?.(); } catch { /* 없음 */ }
+  if (playing) { playing.pause(); playing = null; }
+}
+async function speak(text) {
+  if (!voiceOn || !text) return false;
+  const my = ++seq;
+  stopAll();
+  const url = await clipFor(text).catch(() => null);
+  if (my !== seq) return false;                                   // 그사이 다른 말이 시작됨
+  if (url) {
+    const ok = await new Promise((resolve) => {
+      const a = new Audio(url); playing = a;
+      const t = setTimeout(() => resolve(false), 30000);
+      a.onended = () => { clearTimeout(t); resolve(true); };
+      a.onpause = () => { if (playing !== a) { clearTimeout(t); resolve(false); } };
+      a.onerror = () => { clearTimeout(t); resolve(null); };
+      a.play().catch(() => { clearTimeout(t); resolve(null); });
+    });
+    if (ok !== null) return ok;
+    if (my !== seq) return false;
+  }
+  return speakDevice(text);                                       // 파일이 없거나 재생이 막히면 기기 음성
 }
 
 // host: 독쌤 그림이 들어갈 단추, textEl: 큰 글씨 칸, voiceBtn: 소리 켜기/끄기 단추
@@ -60,7 +101,7 @@ export function createGuide({ host, textEl, voiceBtn }) {
   voiceBtn?.addEventListener("click", () => {
     voiceOn = !voiceOn;
     try { localStorage.setItem(VOICE_KEY, voiceOn ? "on" : "off"); } catch { /* 이번만 */ }
-    if (!voiceOn) speechSynthesis?.cancel?.();
+    if (!voiceOn) stopAll();
     paintVoice();
     if (voiceOn && last) api.say(last);
   });
@@ -83,7 +124,7 @@ export function createGuide({ host, textEl, voiceBtn }) {
     praise(text) { motion("hop"); return api.say(text, { mood: "praise" }); },
     encourage(text) { motion("nod"); return api.say(text, { mood: "encourage" }); },
     think(text) { return api.say(text, { mood: "think" }); },
-    stop() { token++; try { speechSynthesis.cancel(); } catch { /* 없음 */ } host.classList.remove("talk"); },
+    stop() { token++; seq++; stopAll(); host.classList.remove("talk"); },
     get last() { return last; }
   };
   return api;

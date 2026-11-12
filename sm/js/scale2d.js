@@ -1,7 +1,7 @@
 // 납작한 양팔 저울 그림 — 원본 2단원 쪽 그림처럼(흰 접시 두 개, 회색 막대, 세모 받침). 「스캔한 이미지와 비슷해야지」(원장 2026-11-12).
 //  scale({ x, y, w, left, right, tilt, base }) — tilt: "left"(왼쪽이 내려감) | "right" | "level". left/right: 접시 위에 놓을 그림(SVG 조각, 접시 가운데·바닥 기준 함수)
 //  물건은 이모지 대신 쓸 수 있는 그림이 있으면 그 그림을, 없으면 사물 이모지를 쓴다(사람 얼굴 이모지는 쓰지 않음).
-import { animalAt, standAt } from "./art.js?v=20261113p";
+import { animalAt, standAt } from "./art.js?v=20261113q";
 
 // 분홍 큐브(원본처럼 비스듬한 입체). rows: 아래 줄부터 개수, 예) [3, 2] → 아래 3개, 위 2개(왼쪽 정렬)
 export function cubeStack(rows, cx, baseY, s = 34) {

@@ -1,5 +1,5 @@
 // 학부모 로그인·권한 없음 화면(홈과 차시가 같이 쓴다)
-import { login, logout, loginError } from "./access.js?v=20261113p";
+import { login, logout, loginError } from "./access.js?v=20261113q";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

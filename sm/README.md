@@ -67,6 +67,15 @@
 - 확인(2026-11-12, 내장 브라우저 1180×820): 53쪽 끝까지(다리 막힘 안내), 54쪽 발자국 11·7과 고르기, 활동판 A 세 길과 승패, 61쪽 거울 규칙 안내·사탕 2개, 66쪽 벽 막힘, 74쪽 저울 두 번과 컵 고르기·정답 공개. 나머지 단계는 같은 엔진이라 화면만 열어 봄. 내장 브라우저가 애니메이션 프레임을 늦춰서 주인공이 미끄러지는 움직임은 실제 기기에서 확인 필요.
 - 저울이 멈추지 않는 기기를 위해 컵 저울은 2.5초가 지나면 다음으로 넘어간다.
 
+## 독쌤 목소리 (OmniVoice, 원장 2026-11-12 「옴니보이스 진행하자」 · 「이 Mac에서 생성」 · 「지문도 복제 목소리」)
+- 사이언스 랩 독쌤과 같은 목소리: 같은 다듬은 참조 WAV·참조 전사(맥 `lete-on-voice-fcs/.docssam-work`), 공부용 빠르기 0.8, 숫자 고유어 읽기.
+- 줄 모으기: `python3 scripts/sm-voice-lines.py` → `sm/data/voice/sm.voice.json`(코드 대사, 공개) + `sm/data/voice-book.local.json`(지문, 비공개 목록).
+- 만들기(맥, 이미 깔린 환경): `PYTORCH_ENABLE_MPS_FALLBACK=1 HF_HUB_OFFLINE=1 /Users/docssam/Developer/GFIELD/lete-on-voice-fcs/.venv-omnivoice/bin/python scripts/omnivoice-sm.py --ref <lete-on-voice-fcs/.docssam-work/docssam-ref.wav> --ref-text-file .docssam-work/ref-text.txt --work-dir .docssam-work` — 이미 있는 파일은 건너뛴다. 줄마다 약 10초(M5 Pro, MPS).
+- 결과: `sm/audio/docssam/sm-<sha1("sm-docssam-v1|"+글) 앞 12자>.mp3` + `manifest.json`(파일 이름만). 받아 적기 검사 CER 0.35를 넘는 줄은 올리지 않고 기기 음성으로 읽는다. 검수 보고서·듣기 페이지는 `.docssam-work/`(비공개).
+- 재생: `guide.js`가 manifest에 있으면 mp3, 없으면 기기 음성. `${…}`로 아이마다 달라지는 말(52곳)은 기기 음성.
+- 지문 음성 mp3는 공개 저장소에 올라간다(원장 승인). 지문 글 목록 자체는 올리지 않는다.
+- 대사를 고치면: `sm-voice-lines.py` 다시 → `omnivoice-sm.py`(새 줄만 만듦) → 커밋.
+
 ## 확인한 것 (2026-11-12, Mac Claude Code 내장 브라우저, 로컬 서버)
 - 로컬 확인용 페이지(저장소 밖)에서 `fields-auth` 응답만 흉내 내어 열었다. 실제 승인번호·서버는 쓰지 않았다.
 - 1180×820: 1~7단계 모두 진행, 수평 판정(아기곰 3 = 아빠곰, 큐브 7 = 공, 큐브 12 = 아빠곰), 틀린 답 흔들기·힌트, 끝 화면 별·색종이.

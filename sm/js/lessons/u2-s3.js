@@ -2,8 +2,8 @@
 // 원본 그림에서 옮긴 값: 44 고양이 = 큐브 5(아래 3·위 2), 여우 = 큐브 4(2×2) / 45 배구공 2·농구공 3 / 46 수박 3·참외 2·딸기 1
 //   / 47 당근 2·고구마 4(2×2)·감자 1 / 사물 카드 큐브: 가위 7·풀 5·연필 2·지우개 3·휴지 11·컵 1·지갑 7·색연필 4·테이프 8·거울 12·칫솔 6·시계 9
 // 게임: 원본은 두 명이 짝. 사이트는 나 대 독쌤, 차례대로 예측(내 차례·독쌤 차례 번갈아), 6판.
-import { scale, cubeStack, colStack, colWidth, thingAt, thingIcon, svgScene, ring } from "../scale2d.js?v=20261113p";
-import { orderTap } from "./u2-s2.js?v=20261113p";
+import { scale, cubeStack, colStack, colWidth, thingAt, thingIcon, svgScene, ring } from "../scale2d.js?v=20261113q";
+import { orderTap } from "./u2-s2.js?v=20261113q";
 
 // 원본 「( , )」 빈칸 안에는 작은 그림이 들어 있다
 const fillPair = (t, kinds) => t.replace("( , )", `( ${kinds.map((k) => thingIcon(k, 34)).join(" , ")} )`);
