@@ -308,7 +308,8 @@ function joinRow(demoKey, demoShift, pBlocks, pShift, demoFilter){
 }
 /* 중등·과학 규칙 (원장님 2026-10-19)
    - 필즈 S1 ≈ L1, L0는 그보다 조금 빠름. 중등 선행 시작: L0 초1 8월, L1 초1 11월, 그 아래는 레벨 속도대로 계단식(최소 여유 1개월).
-   - 중등은 한 번 돌리고 끝이 아니다: 학기마다 원리해설(기본) + 중등 심화(A급)를 4개월에 함께 한다.
+   - 중등은 한 번 돌리고 끝이 아니다: 학기마다 원리해설(기본) 3개월, 중등 심화(A급)는 2개월 늦게 3개월씩 병행한다(원장님 2026-11-12, L0~L9).
+     천천히형(L10~L13)은 원리해설 + A급 4개월 그대로.
    - 중등 뒤: 공통수학1·2와 함께 중등 대수 심화 → 중등 기하 심화를 이어 가고, 그 뒤 KMO 또는 이과 상위권으로 갈린다.
    - 연산이 기준: 쉬지 않고 꾸준히, 중등 시작 달에 중학 연산(S1 표 순서·기간)이 오도록 기적의 계산법 7~12권을 거꾸로 놓는다.
    - 교과는 연산과 같은 학년·학기(필즈: 연산 진도가 곧 교과 진도). 기적 7권 = 4-1 디딤돌 응용 … 12권 = 6-2.
@@ -316,13 +317,15 @@ function joinRow(demoKey, demoShift, pBlocks, pShift, demoFilter){
      생각하는 황소 대비를 켜면 L0~L3은 초2 9~10월 과학 쉼표. */
 // 중등 시작(교과·중학 연산): L0 초1 8월, L1 초1 11월(원장님), L2~L4는 계단식(앞서 정한 값)
 const MID_START=null; // 중등 시작 = 초1 8월(m 43) + 레벨 간격(3개월)
+// 빠른 레벨(L0~L9) 중등: 원리해설 3개월/학기, A급은 2개월 늦게 3개월씩 병행(원장님 2026-11-12)
+const MID_LEN=3, DEEP_LAG=2;
 const MID_SEMS=['중1-1','중1-2','중2-1','중2-2','중3-1','중3-2'];
 const MID_CALC=[['기적의 중학도형 1권',2],['기적의 중학연산 1AB',5],['기적의 중학도형 2권',2],['기적의 중학연산 2AB',4],['기적의 중학도형 3권',2],['기적의 중학연산 3AB',6]];
 function seqFrom(start, items){ const out=[]; let m=start; items.forEach(([t,n])=>{ out.push([t,m,m+n-1]); m+=n; }); return out; }
-function sciPlan(mid, comp){
-  // 3) 과학: 중2-1 끝(= mid+11) 다음 달 중등과학, 거꾸로 초5·6 과학 6개월, 실험과학 12개월. 생각하는 황소 대비를 켜면 L0~L3은 초2 9~10월 쉼표.
+function sciPlan(mid, comp, deepEnd=mid+11){
+  // 3) 과학: 중2-1(심화 포함) 끝(deepEnd) 다음 달 중등과학, 거꾸로 초5·6 과학 6개월, 실험과학 12개월. 생각하는 황소 대비를 켜면 L0~L3은 초2 9~10월 쉼표.
   const hw=hwangsoPlan(comp), pause=(academyOn.hwangso&&hw.length&&hw[1][2]===58)?[56,57]:[]; // 초2 11월에 보는 레벨만 9~10월 과학 쉼표
-  let sciStart=mid+12; if(pause.length&&sciStart>=pause[0]-1&&sciStart<=pause[1]) sciStart=pause[1]+1;
+  let sciStart=deepEnd+1; if(pause.length&&sciStart>=pause[0]-1&&sciStart<=pause[1]) sciStart=pause[1]+1;
   const label={};
   let m=sciStart-1;
   for(const [t,n] of [['초5·6 과학',6],['실험과학',12]]){ let k=n; while(k>0){ if(pause.includes(m)){ label[m]='쉼표 · 생각하는 황소 대비'; m--; continue; } label[m]=t; m--; k--; } }
@@ -384,16 +387,17 @@ function levelPlan(id, shift){
   const demoCalc=(window.ROAD_L0||ROAD_L0).calc.map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]).filter(b=>b[1]<elemStart).map(([t,s,e])=>[t,s,Math.min(e,elemStart-1)]);
   const calc=demoCalc.concat(elemCalc, seqFrom(mid, MID_CALC));
   const school=demoSchool.concat(derived,[['여유 · 초등 대수 심화<br><small>(선택)</small>',mid-1,mid-1]])
-    .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])))
-    .concat(seqFrom(mid+24, [['공통수학1',3],['공통수학2',3],['진로: KMO 입문 또는 이과 상위권',12]]));
+    .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',MID_LEN])))
+    .concat(seqFrom(mid+6*MID_LEN, [['공통수학1',3],['공통수학2',3],['진로: KMO 입문 또는 이과 상위권',12]]));
   const demoTop=(window.ROAD_L0||ROAD_L0).school.filter(b=>!notTop(b)).map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]);
   const topEnd=demoTop.length?demoTop[demoTop.length-1][2]:0;
   const school2=demoTop
     .concat(derived[0][1]<=mid-1?[['최상위 수학 꾸준히',Math.max(topEnd+1,derived[0][1]),mid-1]]:[])
-    .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4])))
-    .concat(seqFrom(mid+24, [['중등 대수 심화',4],['중등 기하 심화',4]]));
+    .concat([['중등 쎈으로 기본 다지기',mid,mid+DEEP_LAG-1]])
+    .concat(seqFrom(mid+DEEP_LAG, MID_SEMS.map(x=>[x+' 중등 심화(A급)<br><small>원리해설과 병행</small>',MID_LEN])))
+    .concat(seqFrom(mid+DEEP_LAG+6*MID_LEN, [['중등 대수 심화',4],['중등 기하 심화',4]]));
   const comp=joinRow('thinking1',shift,P2.comp,pShift);
-  const sci=sciPlan(mid,comp);
+  const sci=sciPlan(mid,comp,mid+DEEP_LAG+3*MID_LEN-1); // 중2-1 심화(A급) 끝 다음 달 중등과학
   return {comp,school,school2,calc,sci,mid,pShift};
 }
 function levelRows(shift){
@@ -426,9 +430,9 @@ function conceptRows(){
   const upTo=(arr,cut)=>arr.filter(b=>b[1]<cut).map(([t,a,e])=>[t,a,Math.min(e,cut-1)]);
   const sem=['5-1','5-2','6-1','6-2'], mid=68;
   const school=upTo(R('school'),56).concat(sem.map((x,i)=>[x+' 디딤돌 응용',56+2*i,57+2*i]),[['계통 (5·6학년·중1)<br><small>대수 정리</small>',64,67]],
-    seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',3]))); // 원리해설 3개월 단위(원장님 2026-10-20)
+    seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',MID_LEN]))); // 원리해설 3개월 단위(원장님 2026-10-20)
   const school2=upTo(R('school2'),57).concat(['4-1','4-2','5-1','5-2'].map((x,i)=>[x+' 최상위 S',57+2*i,58+2*i]),
-    [['생각하는 황소 대비 고려에 따라 고민<br><small>+ 중등 쎈</small>',65,mid+1]],seqFrom(mid+2, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4]))); // 중등 심화는 초3 11월부터(원장님 2026-10-20)
+    [['생각하는 황소 대비 고려에 따라 고민<br><small>+ 중등 쎈</small>',65,mid+1]],seqFrom(mid+DEEP_LAG, MID_SEMS.map(x=>[x+' 중등 심화(A급)<br><small>원리해설과 병행</small>',MID_LEN]))); // 중등 심화는 초3 11월부터(원장님 2026-10-20), 3개월씩(2026-11-12)
   const early=R('comp').filter(b=>!/1031 (초급|중급)|3%|왕수학/.test(plain(b[0])));
   const ip=early.findIndex(b=>/1031 입문/.test(plain(b[0])));
   const comp=upTo(early.slice(0,ip),early[ip][1]).concat([['1031 입문 + workbook',early[ip][1],53],['TOT 2단계',54,56],['1031 초급',57,63],
@@ -452,7 +456,7 @@ function conceptRows(){
     {key:'comp',label:'사고력·경시',blocks:comp},
     {key:'hwangso',label:'생각하는 황소',blocks:hw},
     {key:'calc',label:'연산',blocks:calc},
-    {key:'sci',label:'과학',blocks:sciPlan(mid+2,comp)}, // 중2-1 심화(A급)가 초4 10월에 끝나 다음 달 중등과학
+    {key:'sci',label:'과학',blocks:sciPlan(mid,comp,mid+DEEP_LAG+3*MID_LEN-1)}, // 중2-1 심화(A급)가 끝난 다음 달 중등과학
     {key:'gifted',label:'영재원 코스<br><small>(가천대·교육청)</small>',blocks:gifted},
     // 교대 영재원: 서울교대 과학영재교육원 초4~6(서울시교육청 목록). 선발 시기는 원장님 자료(초3 7~9월). 대학부설 합격자는 교육청 영재원 지원 불가.
     {key:'gifted',label:'교대 영재원',blocks:[['서울교대 과학영재교육원 지원·선발<br><small>(초3 7~9월)</small>',66,68],['교대 영재원 수업 (합격 시, 초4)<br><small>합격하면 교육청 영재원은 지원 불가</small>',74,83]]}
