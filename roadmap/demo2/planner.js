@@ -4,7 +4,7 @@
    - 조정 항목: 지금 진도(교과·사고력·연산 + 남은 개월), 교과 속도, 생각하는 황소 선택, 영재원 선택.
    - 규칙은 예시 로드맵(원장님 손그림)과 같다:
      교과 디딤돌 응용 학기당 S개월 → 6-2 다음 계통(5·6학년·중1) 대수 정리 4개월 → 중등 원리해설 3개월씩.
-     교과 심화는 한 학년 아래 최상위 S를 1개월 늦게 같은 속도로, 중등 시작 2개월 뒤부터 중등 심화(A급) 4개월씩,
+     교과 심화는 한 학년 아래 최상위 S를 1개월 늦게 같은 속도로, 중등 시작 2개월 뒤부터 중등 심화(A급) 3개월씩 원리해설과 병행,
      그 사이는 '생각하는 황소 대비 고려에 따라 고민 + 중등 쎈'.
      연산은 지금 권부터 S개월씩, 기적 12권 다음 기적의 중학연산 1AB → 도형 1권 → 2AB → 도형 2권 → 3AB → 도형 3권(S1 표 기간).
      과학은 중2-1 중등 심화가 끝난 다음 달 중등과학, 그 앞 6개월 초5·6 과학, 그 앞 12개월 실험과학.
@@ -29,12 +29,12 @@ function seq(start,items){ const out=[]; let t=start; items.forEach(([txt,n])=>{
 
 /* o = {grade, mon, year, school, schoolLeft, comp, compLeft, calc, calcLeft, speed, hw, hwDeep, hwMid, gifted} */
 /* 표준(원장님 2026-10-20 "표준화 시켜"): 속도에 따라 세 묶음.
-   A 선행형(L0~L3): 계통 없이 바로 중등. 원리해설 4개월/학기, 중등 심화(A급) 같이. 사고력 초급→중급→3%1→왕수학 응용 4. 생각하는 황소 초2 11월.
+   A 선행형(L0~L3): 계통 없이 바로 중등. 원리해설 3개월/학기, 2개월 뒤 A급 3개월씩 병행(원장님 2026-11-12). 사고력 초급→중급→3%1→왕수학 응용 4. 생각하는 황소 초2 11월.
    B 예시형(L4~L9): 6-2 뒤 계통 4개월 → 원리해설 3개월/학기, 2개월 뒤 A급. 사고력 초급→3%1(중급 생략). 생각하는 황소는 선택.
    C 천천히형(L10~L13): 초등은 응용 3개월+심화(최상위) 2개월, 연산 5개월. 중등은 개념원리(개념)+RPM(응용) 4개월/학기, 2년. A급 없음.
      사고력은 1031 초급으로 끝("이제 사고력 끝"). 생각하는 황소 없음. */
 const BAND={
-  A:{name:'선행형',elemS:null,topDown:1,sys:false,midLen:4,midBook:'원리해설',deep:'A급',deepLag:0,compStop:null,hw:true},
+  A:{name:'선행형',elemS:null,topDown:1,sys:false,midLen:3,midBook:'원리해설',deep:'A급',deepLag:2,compStop:null,hw:true},
   B:{name:'예시형',elemS:null,topDown:1,sys:true, midLen:3,midBook:'원리해설',deep:'A급',deepLag:2,compStop:null,hw:true},
   C:{name:'천천히형',elemS:5,topDown:0,sys:true, midLen:4,midBook:'개념원리',deep:'RPM',deepLag:0,compStop:'1031 초급',hw:false},
   D:{name:'영과고형',elemS:null,topDown:1,sys:false,midLen:3,midBook:'개념응용 · 최상위라이트',deep:'에이급',deepLag:0,compStop:null,hw:true,fixed:true}
@@ -225,7 +225,14 @@ function build(o){
   // 중등 6학기 뒤 고등 선행(CMS 6개월 단위). 아무리 빨라도 초6 3월(CMS 중등 최소 12개월), 중3 7월 뒤는 내신·실전(원장님 2026-10-20 "내신 조심")
   const midEnd=mid+6*B.midLen, hiStart=Math.max(midEnd,mOf(6,3));
   if(hiStart>midEnd) school.push([o.band==='C'?'중등 응용 반복':'중등 심화 반복 · 경시(선택)',midEnd,hiStart-1]);
-  hiChain(hiStart,o.band,o.hiScope==='beyond').filter(b=>b[1]<=mOf(9,7)).map(b=>[b[0],b[1],Math.min(b[2],mOf(9,7))]).forEach(b=>school.push(b));
+  // 중3 7월에서 잘리는 고등 선행은 알린다(원장님 검수 2026-11-11). 잘린 과목은 '(일부)'로 적고, 못 다 한 과목은 고등학교 내신 진도에서 이어간다.
+  { const cut=mOf(9,7), chain=hiChain(hiStart,o.band,o.hiScope==='beyond'), kept=chain.filter(b=>b[1]<=cut);
+    const subj=b=>b[0]!==HI_AFTER&&b[0]!==HI_BEYOND, part=kept.find(b=>b[2]>cut&&subj(b)), left=chain.filter(b=>b[1]>cut&&subj(b)).map(b=>b[0]);
+    kept.map(b=>[b===part?b[0]+' (일부)':b[0],b[1],Math.min(b[2],cut)]).forEach(b=>school.push(b));
+    const last=kept.filter(subj).at(-1)?.[0], reach=part?part[0]+'의 일부까지':last?last+'까지':'';
+    const beyond=chain.find(b=>b[0]===HI_BEYOND), beyondCut=!!beyond&&beyond[2]>cut;
+    if(part||left.length) warn.push(`${reach?'중등 기간이 끝나 고등 선행은 '+reach+' 잡았어요':'중등 기간 안에는 고등 선행을 시작하지 못해요'}. 중3 8월부터는 내신·고입 실전으로 넘어가고, ${part?part[0]+' 나머지':left[0]}부터는 고등학교에서 진도에 맞춰 이어가요.${beyondCut?' 선택하신 미적분Ⅱ·기하도 고등학교에서 진로에 맞춰 배워요.':''}`);
+    else if(beyondCut) warn.push('선택하신 미적분Ⅱ·기하는 중등 기간 안에 다 넣지 못해요. 중3 8월부터는 내신·고입 실전으로 넘어가고, 나머지는 고등학교에서 진로에 맞춰 배워요.'); }
   school.push(['중3 내신 · 고입 실전',mOf(9,8),mOf(9,12)]);
   const s2end=school2.length?school2[school2.length-1][2]:now-1;
   if(B.deepLag>0&&mid+B.deepLag-1>=s2end+1) school2.push([o.hw!=='none'?'생각하는 황소 대비 고려에 따라 고민 + 중등 쎈':'중등 쎈으로 기본 다지기',Math.max(s2end+1,now),mid+B.deepLag-1]);
@@ -481,7 +488,7 @@ function narrative(P){
       if(sS.length){ const f=sS[0], l=last(sS); out.push(`교과보다 한 학년 아래 최상위 S를 ${mon(Math.max(f[1],lo))}부터 ${len(f)}개월씩 ${sem(f[0])}에서 ${sem(l[0])}까지, 교과보다 한 달 늦게 따라가요.`); }
       if(gap) out.push(`${mon(Math.max(gap[1],lo))}~${mon(gap[2])}은 생각하는 황소를 볼지에 따라 달라요. 이 사이에는 중등 쎈으로 기본을 다져요.`);
       if(sA.length){ const f=sA[0], l=last(sA), end=l[2]<=b?mon(l[2]):label(l[2]);
-        out.push(f[1]>=lo&&/^중1-1/.test(f[0])?`${mon(f[1])}부터 중등 심화(A급)를 ${len(f)}개월씩 시작해 ${end}까지 ${jo(sem(l[0]),'을','를')} 해요. 원리해설보다 두 달 뒤에 따라가는 거예요.`:`중등 심화(A급)는 ${sem(f[0])}부터 ${len(f)}개월씩, ${end}까지 ${jo(sem(l[0]),'을','를')} 해요.`); }
+        out.push(f[1]>=lo&&/^중1-1/.test(f[0])?`${mon(f[1])}부터 중등 심화(A급)를 ${len(f)}개월씩 시작해 ${end}까지 ${jo(sem(l[0]),'을','를')} 해요. 원리해설과 병행하면서 두 달 뒤에 따라가는 거예요.`:`중등 심화(A급)는 ${sem(f[0])}부터 ${len(f)}개월씩, ${end}까지 ${jo(sem(l[0]),'을','를')} 해요.`); }
       if(out.length) items.push({label:'심화',text:out.join(' ')}); }
     { const gj=calc.filter(x=>/계산법/.test(x[0])), mj=calc.filter(x=>/중학/.test(x[0])), out=[];
       if(gj.length){ const f=gj[0], l=last(gj); out.push(gj.length>1?`기적의 계산법 ${f[0].match(/\d+/)[0]}권에서 ${l[0].match(/\d+/)[0]}권까지 ${len(gj[1])}개월에 한 권씩 해요. ${P.band==='C'?'교과와 같은 학기를 한 권으로, 겹치지 않게 가요.':'교과보다 한 학기 앞서 가는 속도예요.'}`:`기적의 계산법 ${f[0].match(/\d+/)[0]}권을 ${mon(f[2])}까지 끝내요.`); }

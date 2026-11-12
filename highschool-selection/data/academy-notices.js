@@ -1,7 +1,7 @@
 // Generated from approved public channels. Do not add post bodies or personal data.
 globalThis.HIGHSELECT_ACADEMY_NOTICES = {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-11",
+  "checkedAt": "2026-11-12",
   "policy": {
     "branches": [
       "대치",
@@ -19,96 +19,84 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "dg-bundang-tests",
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=bundang",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "dg-daechi-seminars",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "dg-daechi-tests",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "dp-blog",
       "academy": "DP",
       "branch": "title",
       "url": "https://blog.naver.com/dpmath",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "ed-blog",
       "academy": "ED",
       "branch": "대치",
       "url": "https://blog.naver.com/edenmath",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "sh-blog",
       "academy": "SH",
       "branch": "대치",
       "url": "https://blog.naver.com/sharpedu",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "sm-blog",
       "academy": "SM",
       "branch": "대치",
       "url": "https://blog.naver.com/won1934",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     },
     {
       "id": "wm-blog",
       "academy": "WM",
       "branch": "대치",
       "url": "https://blog.naver.com/wonmath563",
-      "checkedAt": "2026-11-11",
+      "checkedAt": "2026-11-12",
       "status": "ok",
-      "lastSuccessAt": "2026-11-11"
+      "lastSuccessAt": "2026-11-12"
     }
   ],
   "items": [
-    {
-      "id": "dg-daechi-tests-21ab055c503e",
-      "sourceId": "dg-daechi-tests",
-      "academy": "DG",
-      "branch": "대치",
-      "category": "test",
-      "title": "초4·초5 입학테스트",
-      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "publishedAt": null,
-      "eventDate": "2026-11-14",
-      "scheduleText": "2026-11-14 · 12:00 / 14:00 / 16:00"
-    },
     {
       "id": "dg-daechi-tests-5b6567b6b842",
       "sourceId": "dg-daechi-tests",
@@ -192,6 +180,19 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "publishedAt": null,
       "eventDate": "2026-11-27",
       "scheduleText": "2026-11-27 11:00 · 깊생TV 유튜브 (온라인)"
+    },
+    {
+      "id": "ed-blog-224473074249-대치",
+      "sourceId": "ed-blog",
+      "academy": "ED",
+      "branch": "대치",
+      "category": "admission",
+      "title": "[중등관] 겨울방학 특강 개강 안내",
+      "url": "https://blog.naver.com/edenmath/224473074249",
+      "publishedAt": "2026-11-11",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "a22d09308816fded"
     },
     {
       "id": "dp-blog-224467457228-분당",
@@ -309,19 +310,6 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "eventDate": null,
       "scheduleText": "",
       "revision": "c10b7d97318e3270"
-    },
-    {
-      "id": "ed-blog-224448947060-대치",
-      "sourceId": "ed-blog",
-      "academy": "ED",
-      "branch": "대치",
-      "category": "admission",
-      "title": "[초등관] 중등함수 REPAIR반 개강 안내",
-      "url": "https://blog.naver.com/edenmath/224448947060",
-      "publishedAt": "2026-10-21",
-      "eventDate": null,
-      "scheduleText": "",
-      "revision": "8110a0124e614c23"
     },
     {
       "id": "sh-blog-224449134778-대치",

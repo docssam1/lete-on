@@ -4,7 +4,8 @@
  * school2: explicit curriculum depth; comp2: parallel contest preparation.
  * schoolGaps identify which source school2 blocks occupy a curriculum gap;
  * a gap is never inferred to mean generic review.
- * This is the 2026-10-19 level-table policy, not a new recommendation.
+ * This is the level-table policy (2026-10-19; L0~L9 middle school 3 months per
+ * semester with A-grade depth 2 months later, 2026-11-12), not a new recommendation.
  * planner.js contains a later C middle-school policy (concept + RPM); callers
  * must not silently substitute the older A-grade depth route as that policy.
  * No per-learner choices, semester assignments, or duration overrides are added.
@@ -42,66 +43,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L0-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 43,
-        "end": 46,
-        "stage": "중1-1"
+        "end": 44,
+        "stage": null
       },
       {
         "id": "L0-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 47,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 45,
+        "end": 47,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L0-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 48,
         "end": 50,
         "stage": "중1-2"
       },
       {
-        "id": "L0-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L0-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 51,
-        "end": 54,
+        "end": 53,
         "stage": "중2-1"
       },
       {
-        "id": "L0-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 55,
-        "end": 58,
+        "id": "L0-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 54,
+        "end": 56,
         "stage": "중2-2"
       },
       {
-        "id": "L0-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 59,
-        "end": 62,
+        "id": "L0-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 57,
+        "end": 59,
         "stage": "중3-1"
       },
       {
-        "id": "L0-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 63,
-        "end": 66,
+        "id": "L0-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 60,
+        "end": 62,
         "stage": "중3-2"
       },
       {
-        "id": "L0-school2-10",
+        "id": "L0-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 67,
-        "end": 70,
+        "start": 63,
+        "end": 66,
         "stage": null
       },
       {
-        "id": "L0-school2-11",
+        "id": "L0-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 71,
-        "end": 74,
+        "start": 67,
+        "end": 70,
         "stage": null
       }
     ],
@@ -142,8 +151,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -152,7 +161,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -160,7 +170,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(0)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -194,66 +204,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L1-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 46,
-        "end": 49,
-        "stage": "중1-1"
+        "end": 47,
+        "stage": null
       },
       {
         "id": "L1-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 50,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 48,
+        "end": 50,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L1-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 51,
         "end": 53,
         "stage": "중1-2"
       },
       {
-        "id": "L1-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L1-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 54,
-        "end": 57,
+        "end": 56,
         "stage": "중2-1"
       },
       {
-        "id": "L1-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 58,
-        "end": 61,
+        "id": "L1-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 57,
+        "end": 59,
         "stage": "중2-2"
       },
       {
-        "id": "L1-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 62,
-        "end": 65,
+        "id": "L1-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 60,
+        "end": 62,
         "stage": "중3-1"
       },
       {
-        "id": "L1-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 66,
-        "end": 69,
+        "id": "L1-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 63,
+        "end": 65,
         "stage": "중3-2"
       },
       {
-        "id": "L1-school2-10",
+        "id": "L1-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 70,
-        "end": 73,
+        "start": 66,
+        "end": 69,
         "stage": null
       },
       {
-        "id": "L1-school2-11",
+        "id": "L1-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 74,
-        "end": 77,
+        "start": 70,
+        "end": 73,
         "stage": null
       }
     ],
@@ -294,8 +312,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -304,7 +322,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -312,7 +331,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(3)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -346,66 +365,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L2-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 49,
-        "end": 52,
-        "stage": "중1-1"
+        "end": 50,
+        "stage": null
       },
       {
         "id": "L2-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 53,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 51,
+        "end": 53,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L2-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 54,
         "end": 56,
         "stage": "중1-2"
       },
       {
-        "id": "L2-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L2-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 57,
-        "end": 60,
+        "end": 59,
         "stage": "중2-1"
       },
       {
-        "id": "L2-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 61,
-        "end": 64,
+        "id": "L2-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 60,
+        "end": 62,
         "stage": "중2-2"
       },
       {
-        "id": "L2-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 65,
-        "end": 68,
+        "id": "L2-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 63,
+        "end": 65,
         "stage": "중3-1"
       },
       {
-        "id": "L2-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 69,
-        "end": 72,
+        "id": "L2-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 66,
+        "end": 68,
         "stage": "중3-2"
       },
       {
-        "id": "L2-school2-10",
+        "id": "L2-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 73,
-        "end": 76,
+        "start": 69,
+        "end": 72,
         "stage": null
       },
       {
-        "id": "L2-school2-11",
+        "id": "L2-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 77,
-        "end": 80,
+        "start": 73,
+        "end": 76,
         "stage": null
       }
     ],
@@ -446,8 +473,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -456,7 +483,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -464,7 +492,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(6)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -498,66 +526,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L3-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 52,
-        "end": 55,
-        "stage": "중1-1"
+        "end": 53,
+        "stage": null
       },
       {
         "id": "L3-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 56,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 54,
+        "end": 56,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L3-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 57,
         "end": 59,
         "stage": "중1-2"
       },
       {
-        "id": "L3-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L3-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 60,
-        "end": 63,
+        "end": 62,
         "stage": "중2-1"
       },
       {
-        "id": "L3-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 64,
-        "end": 67,
+        "id": "L3-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 63,
+        "end": 65,
         "stage": "중2-2"
       },
       {
-        "id": "L3-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 68,
-        "end": 71,
+        "id": "L3-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 66,
+        "end": 68,
         "stage": "중3-1"
       },
       {
-        "id": "L3-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 72,
-        "end": 75,
+        "id": "L3-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 69,
+        "end": 71,
         "stage": "중3-2"
       },
       {
-        "id": "L3-school2-10",
+        "id": "L3-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 76,
-        "end": 79,
+        "start": 72,
+        "end": 75,
         "stage": null
       },
       {
-        "id": "L3-school2-11",
+        "id": "L3-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 80,
-        "end": 83,
+        "start": 76,
+        "end": 79,
         "stage": null
       }
     ],
@@ -598,8 +634,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -608,7 +644,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -616,7 +653,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(9)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -650,66 +687,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L4-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 55,
-        "end": 58,
-        "stage": "중1-1"
+        "end": 56,
+        "stage": null
       },
       {
         "id": "L4-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 59,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 57,
+        "end": 59,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L4-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 60,
         "end": 62,
         "stage": "중1-2"
       },
       {
-        "id": "L4-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L4-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 63,
-        "end": 66,
+        "end": 65,
         "stage": "중2-1"
       },
       {
-        "id": "L4-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 67,
-        "end": 70,
+        "id": "L4-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 66,
+        "end": 68,
         "stage": "중2-2"
       },
       {
-        "id": "L4-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 71,
-        "end": 74,
+        "id": "L4-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 69,
+        "end": 71,
         "stage": "중3-1"
       },
       {
-        "id": "L4-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 75,
-        "end": 78,
+        "id": "L4-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 72,
+        "end": 74,
         "stage": "중3-2"
       },
       {
-        "id": "L4-school2-10",
+        "id": "L4-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 79,
-        "end": 82,
+        "start": 75,
+        "end": 78,
         "stage": null
       },
       {
-        "id": "L4-school2-11",
+        "id": "L4-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 83,
-        "end": 86,
+        "start": 79,
+        "end": 82,
         "stage": null
       }
     ],
@@ -750,8 +795,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -760,7 +805,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -768,7 +814,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(12)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -802,66 +848,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L5-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 58,
-        "end": 61,
-        "stage": "중1-1"
+        "end": 59,
+        "stage": null
       },
       {
         "id": "L5-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 62,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 60,
+        "end": 62,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L5-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 63,
         "end": 65,
         "stage": "중1-2"
       },
       {
-        "id": "L5-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L5-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 66,
-        "end": 69,
+        "end": 68,
         "stage": "중2-1"
       },
       {
-        "id": "L5-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 70,
-        "end": 73,
+        "id": "L5-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 69,
+        "end": 71,
         "stage": "중2-2"
       },
       {
-        "id": "L5-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 74,
-        "end": 77,
+        "id": "L5-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 72,
+        "end": 74,
         "stage": "중3-1"
       },
       {
-        "id": "L5-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 78,
-        "end": 81,
+        "id": "L5-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 75,
+        "end": 77,
         "stage": "중3-2"
       },
       {
-        "id": "L5-school2-10",
+        "id": "L5-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 82,
-        "end": 85,
+        "start": 78,
+        "end": 81,
         "stage": null
       },
       {
-        "id": "L5-school2-11",
+        "id": "L5-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 86,
-        "end": 89,
+        "start": 82,
+        "end": 85,
         "stage": null
       }
     ],
@@ -902,8 +956,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -912,7 +966,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -920,7 +975,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(15)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -954,66 +1009,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L6-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 61,
-        "end": 64,
-        "stage": "중1-1"
+        "end": 62,
+        "stage": null
       },
       {
         "id": "L6-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 65,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 63,
+        "end": 65,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L6-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 66,
         "end": 68,
         "stage": "중1-2"
       },
       {
-        "id": "L6-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L6-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 69,
-        "end": 72,
+        "end": 71,
         "stage": "중2-1"
       },
       {
-        "id": "L6-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 73,
-        "end": 76,
+        "id": "L6-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 72,
+        "end": 74,
         "stage": "중2-2"
       },
       {
-        "id": "L6-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 77,
-        "end": 80,
+        "id": "L6-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 75,
+        "end": 77,
         "stage": "중3-1"
       },
       {
-        "id": "L6-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 81,
-        "end": 84,
+        "id": "L6-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 78,
+        "end": 80,
         "stage": "중3-2"
       },
       {
-        "id": "L6-school2-10",
+        "id": "L6-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 85,
-        "end": 88,
+        "start": 81,
+        "end": 84,
         "stage": null
       },
       {
-        "id": "L6-school2-11",
+        "id": "L6-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 89,
-        "end": 92,
+        "start": 85,
+        "end": 88,
         "stage": null
       }
     ],
@@ -1054,8 +1117,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -1064,7 +1127,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -1072,7 +1136,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(18)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -1106,66 +1170,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L7-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 64,
-        "end": 67,
-        "stage": "중1-1"
+        "end": 65,
+        "stage": null
       },
       {
         "id": "L7-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 68,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 66,
+        "end": 68,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L7-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 69,
         "end": 71,
         "stage": "중1-2"
       },
       {
-        "id": "L7-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L7-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 72,
-        "end": 75,
+        "end": 74,
         "stage": "중2-1"
       },
       {
-        "id": "L7-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 76,
-        "end": 79,
+        "id": "L7-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 75,
+        "end": 77,
         "stage": "중2-2"
       },
       {
-        "id": "L7-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 80,
-        "end": 83,
+        "id": "L7-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 78,
+        "end": 80,
         "stage": "중3-1"
       },
       {
-        "id": "L7-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 84,
-        "end": 87,
+        "id": "L7-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 81,
+        "end": 83,
         "stage": "중3-2"
       },
       {
-        "id": "L7-school2-10",
+        "id": "L7-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 88,
-        "end": 91,
+        "start": 84,
+        "end": 87,
         "stage": null
       },
       {
-        "id": "L7-school2-11",
+        "id": "L7-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 92,
-        "end": 95,
+        "start": 88,
+        "end": 91,
         "stage": null
       }
     ],
@@ -1206,8 +1278,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -1216,7 +1288,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -1224,7 +1297,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(21)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -1258,66 +1331,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L8-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 67,
-        "end": 70,
-        "stage": "중1-1"
+        "end": 68,
+        "stage": null
       },
       {
         "id": "L8-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 71,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 69,
+        "end": 71,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L8-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 72,
         "end": 74,
         "stage": "중1-2"
       },
       {
-        "id": "L8-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L8-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 75,
-        "end": 78,
+        "end": 77,
         "stage": "중2-1"
       },
       {
-        "id": "L8-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 79,
-        "end": 82,
+        "id": "L8-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 78,
+        "end": 80,
         "stage": "중2-2"
       },
       {
-        "id": "L8-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 83,
-        "end": 86,
+        "id": "L8-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 81,
+        "end": 83,
         "stage": "중3-1"
       },
       {
-        "id": "L8-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 87,
-        "end": 90,
+        "id": "L8-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 84,
+        "end": 86,
         "stage": "중3-2"
       },
       {
-        "id": "L8-school2-10",
+        "id": "L8-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 91,
-        "end": 94,
+        "start": 87,
+        "end": 90,
         "stage": null
       },
       {
-        "id": "L8-school2-11",
+        "id": "L8-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 95,
-        "end": 98,
+        "start": 91,
+        "end": 94,
         "stage": null
       }
     ],
@@ -1358,8 +1439,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -1368,7 +1449,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -1376,7 +1458,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(24)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -1410,66 +1492,74 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       },
       {
         "id": "L9-school2-04",
-        "title": "중1-1 중등 심화(A급)",
-        "sourceText": "중1-1 중등 심화(A급)",
+        "title": "중등 쎈으로 기본 다지기",
+        "sourceText": "중등 쎈으로 기본 다지기",
         "start": 70,
-        "end": 73,
-        "stage": "중1-1"
+        "end": 71,
+        "stage": null
       },
       {
         "id": "L9-school2-05",
-        "title": "중1-2 중등 심화(A급)",
-        "sourceText": "중1-2 중등 심화(A급)",
-        "start": 74,
+        "title": "중1-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 72,
+        "end": 74,
+        "stage": "중1-1"
+      },
+      {
+        "id": "L9-school2-06",
+        "title": "중1-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중1-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 75,
         "end": 77,
         "stage": "중1-2"
       },
       {
-        "id": "L9-school2-06",
-        "title": "중2-1 중등 심화(A급)",
-        "sourceText": "중2-1 중등 심화(A급)",
+        "id": "L9-school2-07",
+        "title": "중2-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
         "start": 78,
-        "end": 81,
+        "end": 80,
         "stage": "중2-1"
       },
       {
-        "id": "L9-school2-07",
-        "title": "중2-2 중등 심화(A급)",
-        "sourceText": "중2-2 중등 심화(A급)",
-        "start": 82,
-        "end": 85,
+        "id": "L9-school2-08",
+        "title": "중2-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중2-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 81,
+        "end": 83,
         "stage": "중2-2"
       },
       {
-        "id": "L9-school2-08",
-        "title": "중3-1 중등 심화(A급)",
-        "sourceText": "중3-1 중등 심화(A급)",
-        "start": 86,
-        "end": 89,
+        "id": "L9-school2-09",
+        "title": "중3-1 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-1 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 84,
+        "end": 86,
         "stage": "중3-1"
       },
       {
-        "id": "L9-school2-09",
-        "title": "중3-2 중등 심화(A급)",
-        "sourceText": "중3-2 중등 심화(A급)",
-        "start": 90,
-        "end": 93,
+        "id": "L9-school2-10",
+        "title": "중3-2 중등 심화(A급) 원리해설과 병행",
+        "sourceText": "중3-2 중등 심화(A급)<br><small>원리해설과 병행</small>",
+        "start": 87,
+        "end": 89,
         "stage": "중3-2"
       },
       {
-        "id": "L9-school2-10",
+        "id": "L9-school2-11",
         "title": "중등 대수 심화",
         "sourceText": "중등 대수 심화",
-        "start": 94,
-        "end": 97,
+        "start": 90,
+        "end": 93,
         "stage": null
       },
       {
-        "id": "L9-school2-11",
+        "id": "L9-school2-12",
         "title": "중등 기하 심화",
         "sourceText": "중등 기하 심화",
-        "start": 98,
-        "end": 101,
+        "start": 94,
+        "end": 97,
         "stage": null
       }
     ],
@@ -1510,8 +1600,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
     },
     "middleMode": {
       "id": "parallel",
-      "schoolMonths": 4,
-      "depthMonths": 4,
+      "schoolMonths": 3,
+      "depthMonths": 3,
       "depthBook": "A급",
       "sourceLines": [
         309,
@@ -1520,7 +1610,8 @@ global.PLANNER_STANDARD_DETAILS=freeze({
         359,
         385,
         391
-      ]
+      ],
+      "depthLagMonths": 2
     },
     "source": {
       "referenceOnly": true,
@@ -1528,7 +1619,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(27)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -1872,7 +1963,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(30)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -2216,7 +2307,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(33)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -2560,7 +2651,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(35)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }
@@ -2904,7 +2995,7 @@ global.PLANNER_STANDARD_DETAILS=freeze({
       "sourceDefinition": "SchoolRoadmap.levelRows(38)",
       "endInclusive": true,
       "coordinate": "5세 1월 = 0; 원자료 월 좌표",
-      "sha256": "035c0d83cf97163040c7aad306e6a704bb1c0437b3bcbbc06352b203cf583b98",
+      "sha256": "9226584581752ea0440049dbae2d886674603f6d17edc013edb9f1acb9749a2c",
       "dependency": "demo-content.js",
       "dependencySha256": "eb5394213984bfce80b41e2de8135837a94c2e21ef4f61d0737400b83f067712"
     }

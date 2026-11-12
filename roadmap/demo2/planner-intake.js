@@ -29,6 +29,9 @@ const middleLabel=v=>{const b=MIDDLE_BOOKS.find(x=>x[0]===v);return b?b[1]+' · 
 const bookName=v=>(MIDDLE_BOOKS.find(x=>x[0]===v)||[,v])[1];
 /* 함께 하는 교재(schoolBookWith·deepBookWith): 지금 과정의 목록에 있는 것만 이름으로 붙인다. 계획 일정은 주 교재 기준. */
 const withBooks=(a,key,course,axis)=>(Array.isArray(a[key+'With'])?a[key+'With']:[]).filter(v=>v!==a[key]&&bookList(course,axis).includes(v)).map(v=>' + '+bookName(v)).join('');
+/* 계획 칸 이름에 붙이는 병행 교재(예: '중1-1 개념원리 중학 + 쎈 중등 병행'). 기간·분량은 주 교재 기준이다. */
+const alongside=(a,key,course,axis)=>{const w=withBooks(a,key,course,axis);return w?w+' 병행':'';};
+const withList=(a,key,course,axis)=>{const w=withBooks(a,key,course,axis).split(' + ').filter(Boolean);return w.length?' · 함께 '+w.join(', '):'';};
 const schoolBooks=['디딤돌 기본+응용','디딤돌 응용',...middleOn('s'),'개념응용 · 최상위','개념응용 · 최상위라이트'];
 const highSubjects=['공통수학1','공통수학2','대수','미적분Ⅰ','확률과 통계','미적분Ⅱ','기하'];
 const highSubjectLabel=v=>v==='대수'?'대수 · 구 수학Ⅰ 주요 내용 대응':v==='미적분Ⅰ'?'미적분Ⅰ · 구 수학Ⅱ 주요 내용 대응':v;
@@ -100,7 +103,13 @@ function order(a,fields){a=effective(a);
 // Curriculum standards come from the existing four BAND rules and buildD.
 // The broader book guide is a reference list, not a replacement for those rules.
 /* 질문의 예시는 실제 교재 이름만 쓴다. 영과고형(D)의 계획 줄 이름은 standardBook이 그대로 맡는다. */
-function exampleBook(band,course,axis){if(band==='D'&&(course==='elem'||course==='mid')&&!(course==='mid'&&axis==='deep'))return course==='mid'?'개념원리 · 최상위수학 중학':axis==='school'?'디딤돌 응용':'최상위 수학';return standardBook(band,course,axis);}
+/* 예시는 책 지도의 화면 이름으로 쓰고(내부 저장값 '원리해설'·'A급' 대신 '에이급 원리해설'·'에이급수학'), 여러 권은 쉼표로 나눈다(원장님 검수 2026-11-11). */
+function exampleBook(band,course,axis){
+ if(course==='foreign')return standardBook(band,course,axis);
+ if(course==='high')return axis==='school'?'기본정석(개념)과 쎈 고등(유형)을 함께':'실력정석, 고쟁이 등 현재 풀이에 맞춰 선택';
+ if(course==='mid'){if(axis==='deep')return band==='C'?'RPM 중학, 쎈 중등':'에이급수학';return band==='D'?'개념원리 중학, 최상위수학 중학':bookName(P.BAND[band]?.midBook||P.BAND.B.midBook);}
+ return axis==='school'?(band==='D'?'디딤돌 응용':'디딤돌 기본+응용, 디딤돌 응용'):band==='D'?'최상위 수학':'최상위 S';
+}
 function standardBook(band,course,axis){
  if(course==='foreign')return '학교 지정 교재 · 현재 과목·판본 확인';
  if(course==='high')return axis==='school'?'기본정석(개념) + 쎈(유형) 병행':'실력정석 · 고쟁이 등에서 현재 풀이에 맞춰 선택';
@@ -116,7 +125,7 @@ function questions(a,fields){const q=baseQuestions(a,fields);a=effective(a);
  if(dl)q.deepBook=[dl+' 심화나 활용은 어떤 교재로 공부하나요?',...q.deepBook.slice(1)];
  /* 중등 교재는 책 지도 이름과 단계(개념·유형·응용·준심화·심화)로 보여 준다. */
  for(const k of ['schoolBook','deepBook'])q[k]=[q[k][0],q[k][1],q[k][2].map(([v,l])=>[v,middleLabel(v)||l])];
- q.deepBook[1]=q.deepBook[1]+(a.deepCourse==='mid'?' · RPM·쎈 같은 응용 교재도 여기서 고릅니다.':'');
+ if(a.deepCourse==='mid')q.deepBook[1]+=' RPM·쎈 같은 응용 교재도 여기에서 고를 수 있어요.';
  return q;}
 function baseQuestions(a,fields){a=effective(a);const curriculum=global.PlannerCollegeData?.CURRICULA[fields.schoolContext?.curriculum],mathOptions=fields.internationalCalendar?(curriculum?.math?.length?curriculum.math:['학교 수학 · 과목 확인 전']):highSubjects;const allMath=[...new Set([...highSubjects,...Object.values(global.PlannerCollegeData?.CURRICULA||{}).flatMap(c=>c.math)])];const retained=(base,value)=>[...new Set([...base,...(allMath.includes(value)?[value]:[])])];const schoolMath=retained(a.schoolCourse==='foreign'?mathOptions:highSubjects,a.schoolHigh),deepMath=retained(a.deepCourse==='foreign'?mathOptions:highSubjects,a.deepStage),calcMath=retained([...mathOptions,...highSubjects],a.calcHigh);const courses=fields.internationalCalendar?[['foreign','현재 학교 교육과정'],...courseOptions]:courseOptions;const deepHigh=a.deepCourse?a.deepCourse==='high':highBook(a.deepBook),deepMiddle=a.deepCourse?a.deepCourse==='mid':middleBook(a.deepBook);const highLearning=a.schoolCourse==='high'||a.deepCourse==='high',older=age(a,fields)>=8||highLearning,group=audience(a,fields),young=['preschool','lower'].includes(group);return {
  age:['아이는 지금 몇 살인가요?','미취학 아동의 한국 나이를 골라 주세요.',[4,5,6,7].map(v=>[String(v),v+'세']).concat(+fields.mon<3?[['8','8세 · 입학 전']]:[])],
@@ -126,12 +135,12 @@ function baseQuestions(a,fields){a=effective(a);const curriculum=global.PlannerC
  thinkingStatus:['이 사고력 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  preDone:['초등팩토는 끝냈나요?','초등팩토를 마쳤는지 함께 확인할게요.',[['1','네'],['0','아니요']]],
  schoolCourse:['현재 공부하고 있는 수학 진도는 무엇인가요?',(group==='preschool'?'초등·중등 교과서에서 배우는 수학이에요. ':young?'학교에서 배우는 교과 수학이에요. ':'선행을 포함한 교과 진도예요. ')+'과정을 고르면 학년·학기, 교재 순서로 이어서 물어요. 심화는 그다음에 따로 물어요.',courses],
- schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.schoolCourse,'school')}`,choosable(bookList(a.schoolCourse,'school'),a.schoolBook).map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
+ schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.schoolCourse,'school')}.`,choosable(bookList(a.schoolCourse,'school'),a.schoolBook).map(v=>[v,v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 학습':['쎈','RPM'].includes(v)?v+' · 유형 학습':v])],
  school:['교과는 어느 과정인가요?','지금 공부하는 교과의 학년과 학기를 골라 주세요.',stageOptions(false)],
  schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?',(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,highSubjectLabel(v)])],
  schoolStatus:['이 교과 교재는 끝냈나요?',a.schoolCourse==='high'?'선택한 교재의 상태입니다. 개념 교재 완료와 쎈 유형 완료는 따로 기록합니다.':'지금 공부 중인지, 끝냈는지 골라주세요.',progress],
  deepCourse:['심화나 활용은 어느 과정을 공부하나요?',young?'배운 내용을 응용하거나 더 깊이 생각하는 문제를 풀어요. 아직 시작 전도 고를 수 있어요.':'아직 시작하지 않았다면 아래에서 골라주세요.',courses],
- deepBook:['심화나 활용은 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.deepCourse,'deep')}`,choosable(bookList(a.deepCourse,'deep'),a.deepBook).map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
+ deepBook:['심화나 활용은 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${exampleBook(fields.band,a.deepCourse,'deep')}.`,choosable(bookList(a.deepCourse,'deep'),a.deepBook).map(v=>[v,v==='RPM'?'RPM · 응용 반복':['쎈 고등','RPM 고등'].includes(v)?v+' · 유형 학습(기존 기록)':v==='수학의 정석'?'수학의 정석 · 기본/실력 확인 전':v==='기본정석'?'기본정석 · 개념 보완':v])],
  deepStage:[deepHigh?'현재 심화하는 과목은 무엇인가요?':'심화나 활용은 어느 과정인가요?',deepHigh?(fields.internationalCalendar?'학교 교육과정의 과목명을 기준으로 확인하세요.':highSubjectHelp)+' 지금 공부 중인 심화 과목을 고릅니다. 선행 과목과 달라도 됩니다. 이후 심화는 다음 계획으로 구분하며, 이 선택을 바꾸면 현재 심화 기록이 바뀝니다.':'지금 심화·활용 교재로 공부하는 학년과 학기를 골라 주세요.',deepHigh?deepMath.map(v=>[v,highSubjectLabel(v)]):stageOptions(deepMiddle)],
  deepExtra:['동시에 공부하는 다른 고등 심화 과목도 있나요?','앞서 입력한 심화는 그대로 두고, 별도로 진행하는 심화 하나를 추가합니다.',[['no','아니요'],['yes','네, 다른 과목도 함께 해요'],['unknown','아직 확인 전이에요']]],
  deepExtraStage:['함께 공부하는 다른 심화 과목은 무엇인가요?',highSubjectHelp+' 앞서 입력한 심화와 다른 과목을 고릅니다.',highSubjects.filter(v=>v!==a.deepStage).map(v=>[v,highSubjectLabel(v)])],
@@ -192,8 +201,8 @@ function additionalDeep(a,fields={}){
 function summary(a,fields){a=effective(a);const status=k=>fields.pendingStatus?.[k]?'상태 확인 전':a[k]==='done'?'완료':a[k]==='progress'?['진행 중',progressText(a,k)].filter(Boolean).join(' · '):'';
  return [{key:'grade',label:'학년',text:studentLabel(a,fields)},
  {key:'thinking',label:'사고력',text:noThinking(a)?(a.thinkingExperience==='none'?'공부한 경험 없음':'잘 모르겠어요'):(a.thinking==='advanced'?(P.COMP[+a.compExact]?.[0]||'이후 과정'):a.thinking||'미선택')+' '+status('thinkingStatus')},
- {key:'school',label:'교과',text:special(a.schoolBook)?absent(a.schoolBook):[a.schoolExact==='13'&&a.school==='advanced'?'':(bookName(a.schoolBook)||'')+(a.schoolBook?withBooks(a,'schoolBook',a.schoolCourse,'school'):''),highBook(a.schoolBook)?a.schoolHigh||'과목 미선택':middleBook(a.schoolBook)||a.school==='advanced'?(+a.schoolExact<=12?P.SEM(+a.schoolExact):a.schoolExact==='13'?'초등 계통 대수심화':P.MID[+a.schoolExact-14]||'이후 과정'):a.school||'미선택',status('schoolStatus')].filter(Boolean).join(' ')},
- {key:'deepBook',label:'심화·활용',text:special(a.deepBook)?absent(a.deepBook):a.deepBook?`${bookName(a.deepBook)}${withBooks(a,'deepBook',a.deepCourse,'deep')} ${highBook(a.deepBook)?a.deepStage||'과목 미선택':middleBook(a.deepBook)?P.MID[+a.deepStage-14]||'과정 미선택':a.deepStage||'과정 미선택'} ${status('deepStatus')}`:'미선택'},
+ {key:'school',label:'교과',text:special(a.schoolBook)?absent(a.schoolBook):[a.schoolExact==='13'&&a.school==='advanced'?'':(bookName(a.schoolBook)||''),highBook(a.schoolBook)?a.schoolHigh||'과목 미선택':middleBook(a.schoolBook)||a.school==='advanced'?(+a.schoolExact<=12?P.SEM(+a.schoolExact):a.schoolExact==='13'?'초등 계통 대수심화':P.MID[+a.schoolExact-14]||'이후 과정'):a.school||'미선택',status('schoolStatus')].filter(Boolean).join(' ')+(a.schoolBook?withList(a,'schoolBook',a.schoolCourse,'school'):'')},
+ {key:'deepBook',label:'심화·활용',text:special(a.deepBook)?absent(a.deepBook):a.deepBook?`${bookName(a.deepBook)} ${highBook(a.deepBook)?a.deepStage||'과목 미선택':middleBook(a.deepBook)?P.MID[+a.deepStage-14]||'과정 미선택':a.deepStage||'과정 미선택'} ${status('deepStatus')}`.trim()+withList(a,'deepBook',a.deepCourse,'deep'):'미선택'},
  ...(a.deepCourse==='high'?[{key:'deepExtraBook',label:'추가 심화',text:additionalDeep(a,fields)?a.deepExtraBook+' '+a.deepExtraStage+' '+status('deepExtraStatus'):a.deepExtra==='no'?'동시 추가 심화 없음':'추가 심화 여부·과목 확인 전'}]:[]),
  {key:'calc',label:'연산',text:special(a.calc)?absent(a.calc):a.calc==='high'?(a.calcHigh||'고등 과목 확인 전')+' · 계산·식 변형 연습 '+status('calcStatus'):(a.calc==='advanced'?(P.CALC[+a.calcExact]?.[0]||'이후 단계'):calc.find(c=>c[0]===a.calc)?.[1]||'미선택')+' '+status('calcStatus')}];
 }
@@ -218,11 +227,32 @@ function deepRow(a,fields,now){a=effective(a);
  for(let n=first;n<=last;n++){
   if(n===first&&a.deepStatus==='done')continue;
   const count=n===first?remainingMonths(a,'deepStatus',duration):duration;
-  blocks.push([`${mid?P.MID[n-14]:P.SEM(n)} ${a.deepBook}`,t,t+count-1,duration]);t+=count;
+  blocks.push([`${mid?P.MID[n-14]:P.SEM(n)} ${bookName(a.deepBook)}${alongside(a,'deepBook',a.deepCourse,'deep')}`,t,t+count-1,duration]);t+=count;
   // Preserve the reported current book in C, without recommending an excluded course.
   if(fields.band==='C'&&a.deepBook==='A급')break;
  }
  return {key:'school2',label:'교과 심화',blocks,color:'#e0f2fe',lane:'수학'};
+}
+/* 초등 심화 교재를 6-2까지 마친 뒤의 중등 심화: 표준 줄(P.build school2)의 중등 칸을 그 끝 다음 달부터 잇는다.
+   학기 칸 길이는 그대로 두고 앞 칸이 늦게 끝나면 뒤로 민다. 쎈 다지기 칸(B)은 겹친 앞부분만 줄인다. */
+function continueMiddle(blocks,standard,now,A1){
+ let cursor=blocks.length?blocks.at(-1)[2]+1:now;const out=[];
+ for(const b of standard.filter(x=>!/^[1-6]-[12] /.test(x[0]))){
+  let s=b[1],e=b[2];
+  if(!/^중\d-\d |반복/.test(b[0])){s=Math.max(s,cursor);if(s>e)continue;}
+  else if(s<cursor){e+=cursor-s;s=cursor;}
+  e=Math.min(e,A1);if(s>e)break;out.push([b[0],s,e,b[3]]);cursor=e+1;
+ }
+ return out;
+}
+/* 고등 교재로 심화하면 지금 과목 칸(남은 기간, 고등 과목 6개월 기준)과 '이후 고등 심화' 안내 칸을 둔다. 계획표가 빈 줄이 되지 않게 한다. */
+function highDeepRow(a,fields,now,A1){
+ const blocks=[];let t=now;
+ if(highSubjects.includes(a.deepStage)&&['progress','done'].includes(a.deepStatus)&&!fields.pendingStatus?.deepStatus){
+  if(a.deepStatus==='progress'){const n=remainingMonths(a,'deepStatus',6);blocks.push([`${a.deepStage} ${a.deepBook}${alongside(a,'deepBook','high','deep')} · 고등 심화`,t,Math.min(A1,t+n-1),6]);t+=n;}
+  if(t<=A1)blocks.push(['이후 고등 심화 · 표준 로드맵의 고등 설계에서 이어가요',t,A1,A1-t+1]);
+ }
+ return blocks.length?{key:'school2',label:'교과 심화',blocks,color:'#e0f2fe',lane:'수학'}:null;
 }
 function unresolvedThinking(a){return !a.thinking||!['progress','done'].includes(a.thinkingStatus);}
 function buildPlan(a,fields,overrides={}){a=effective(a);
@@ -231,12 +261,25 @@ function buildPlan(a,fields,overrides={}){a=effective(a);
  if(fields.band==='D'&&a.schoolBook&&!special(a.schoolBook)){const personal=P.build({...o,personalSchool:true});plan.rows=plan.rows.map(r=>r.key==='school'?personal.rows.find(x=>x.key==='school'):r);plan.mid=personal.mid;}
  if(a.schoolBook&&!special(a.schoolBook)){
   const row=plan.rows.find(r=>r.key==='school');
-  row.blocks=row.blocks.map(b=>[b[0].replace(middleBook(a.schoolBook)?/원리해설|개념원리|개념응용 · 최상위라이트/:/디딤돌 (?:기본\+응용|응용)|개념응용 · 최상위(?!라이트)/g,a.schoolBook),...b.slice(1)]);
+  const pattern=middleBook(a.schoolBook)?/원리해설|개념원리|개념응용 · 최상위라이트/:/디딤돌 (?:기본\+응용|응용)|개념응용 · 최상위(?!라이트)/g,extra=alongside(a,'schoolBook',a.schoolCourse,'school');
+  row.blocks=row.blocks.map(b=>{const t=b[0].replace(pattern,bookName(a.schoolBook));return [t!==b[0]?t+extra:t,...b.slice(1)];});
  }
+ /* 심화 줄(원장님 검수 2026-11-11): 고른 심화 교재가 있으면 그 과정으로 바꾸고, 초등 심화 교재는 6-2 뒤 표준 중등 심화로 잇는다.
+    고등 교재는 지금 과목 칸 + 이후 안내 칸. '아직 시작 전'이고 교과가 확인되면 표준 심화 줄을 지금부터 제안한다.
+    '잘 모르겠어요'·미응답은 기존 원칙대로 과정을 배정하지 않는다(현재 교재 확인 뒤 연결). */
  if(Object.hasOwn(a,'deepBook')){
-  const row=deepRow(a,fields,plan.now)||{key:'school2',label:'교과 심화',blocks:[],color:'#e0f2fe',lane:'수학'};
-  plan.rows=plan.rows.map(r=>r.key==='school2'?row:r);plan.independentDeep=true;
+  const std=plan.rows.find(r=>r.key==='school2'),empty={key:'school2',label:'교과 심화',blocks:[],color:'#e0f2fe',lane:'수학'};
+  const schoolKnown=a.schoolBook&&!special(a.schoolBook)&&!highBook(a.schoolBook)&&hasAnswer(a,fields,'schoolStatus');
+  let row=null;
+  if(highBook(a.deepBook))row=highDeepRow(a,fields,plan.now,plan.A1);
+  else if((row=deepRow(a,fields,plan.now))&&!middleBook(a.deepBook)&&std)row={...row,blocks:[...row.blocks,...continueMiddle(row.blocks,std.blocks,plan.now,plan.A1)]};
+  if(row){plan.rows=plan.rows.map(r=>r.key==='school2'?row:r);plan.independentDeep=true;}
+  else if(a.deepBook==='none'&&schoolKnown&&std){plan.rows=plan.rows.map(r=>r.key==='school2'?{...std,blocks:std.blocks.filter(b=>b[2]>=plan.now).map(b=>[b[0],Math.max(b[1],plan.now),...b.slice(2)]),proposed:true}:r);}
+  else plan.rows=plan.rows.map(r=>r.key==='school2'?empty:r);
+  if(!row)plan.independentDeep=a.deepBook!=='none'||!schoolKnown;
  }
+ /* 연산 칸은 질문·요약과 같은 학기 이름을 앞에 쓴다(예: '5-1 연산 (기적의 계산법 9권)'). 권 번호는 그대로 남겨 다른 화면의 단계 읽기를 바꾸지 않는다. */
+ plan.rows=plan.rows.map(r=>r.key==='calc'?{...r,blocks:r.blocks.map(b=>{const n=+(String(b[0]).match(/^기적의 계산법 (\d+)$/)?.[1]||0);return n>=1&&n<=12?[`${P.SEM(n)} 연산 (기적의 계산법 ${n}권)`,...b.slice(1)]:b;})}:r);
  for(const [key,status]of [['school','schoolStatus'],['school2','deepStatus'],['comp','thinkingStatus'],['calc','calcStatus']])if(fields.pendingStatus?.[status])plan.rows=plan.rows.map(r=>r.key===key?{...r,blocks:[]}:r);
  if(noThinking(a)||unresolvedThinking(a))plan.rows=plan.rows.map(r=>r.key==='comp'?{...r,blocks:[]}:r);
  return plan;
@@ -300,5 +343,5 @@ function milestones(a,fields,p){a=effective(a);
  forks.push({id:'gift',title:'영재원',m:p.now+2,selected:a.gifted==='1',pending:!['0','1'].includes(a.gifted),yes:'선발 안내 함께 확인',no:'현재 학습 이어가기',reason:a.gifted==='1'?'선발 시기와 자격은 해당 연도 공고에서 확인해요.':'지금 학습을 이어가며 나중에 바꿔도 괜찮아요.'});
  return {main,branch:[],forks};
 }
-global.PlannerIntake=Object.freeze({seniorIntake,thinkingRequired,additionalDeep,progressKey,progressCourse,progressValue,remainingMonths,progressText,highSubjects,highBook,bookList,thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeChoice,audience,learningLabels,studentLabel,labelMonth,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
+global.PlannerIntake=Object.freeze({bookName,seniorIntake,thinkingRequired,additionalDeep,progressKey,progressCourse,progressValue,remainingMonths,progressText,highSubjects,highBook,bookList,thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeChoice,audience,learningLabels,studentLabel,labelMonth,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
 })(window);
