@@ -4,7 +4,7 @@
 //   4 붓 = 큐브 5(빨강 3개 띄엄, 파랑 3개, 노랑 5개 맞음, 초록 4개 들쭉날쭉), 5 연필 4·6·3, 6 숟가락 3·빗 4(큐브 칸 5개),
 //   7 분홍 6(다섯째 칸부터)·노랑 7(다섯째 칸부터)·연두 8(첫 칸부터)(11칸×5줄), 8 받침 1·2·3개(머리 높이 같음, 여우·원숭이·고양이).
 //   길 만들기 카드: 굽은 길 6·곧은 길 6·네거리 4(활동지 A1-3-2). 길 연결 판정은 지오메트리 「길 잇기 산책로」(path-walk)의 방향 비트를 쓴다.
-import { geocube, OBJ, kid, stand, standAt } from "../art.js?v=20261113v";
+import { geocube, OBJ, kid, stand, standAt } from "../art.js?v=20261114b";
 import { directionBits, rotateMask } from "../../../geometry/games/path-walk/levels.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

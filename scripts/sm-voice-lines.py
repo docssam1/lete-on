@@ -4,7 +4,7 @@
 
   1) 코드의 고정 대사: guide.say/praise/encourage/think("…") 와 say:/wrongSay:/praise:/hint: "…" 글.
      ${…}가 들어간 글(아이마다 달라지는 말)은 미리 만들 수 없어 기기 음성으로 남는다 — 개수만 알려 준다.
-  2) 교재 지문: sm/data/a1-3.local.json 의 text(원장 2026-11-12 「지문도 복제 목소리」).
+  2) 교재 지문: sm/data/a1-3.local.json 의 text·text2·bubbles·rules(원장 2026-11-12 「지문도 복제 목소리」).
      지문 글 목록은 공개 저장소에 두지 않는다 → sm/data/voice-book.local.json (gitignore: sm/data/*.local.json)
 
 결과
@@ -50,8 +50,10 @@ def main():
     p = os.path.join(SM, "data", "a1-3.local.json")
     if os.path.exists(p):
         for no, e in sorted(json.load(open(p, encoding="utf-8"))["pages"].items(), key=lambda kv: int(kv[0])):
-            if e.get("text"):
-                book.append(e["text"])
+            # 지문(text·text2)과 화면에서 독쌤이 읽는 말풍선·규칙(4단원부터 읽음)
+            for t in [e.get("text"), e.get("text2"), *(e.get("bubbles") or []), *(e.get("rules") or [])]:
+                if t:
+                    book.append(t)
     def pack(texts):
         seen, out = set(), []
         for t in texts:

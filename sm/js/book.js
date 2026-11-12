@@ -21,8 +21,8 @@ export const BOOK = {
       { id: "u3-s2", label: "2차시", pages: "61~74쪽", ready: true }
     ] },
     { n: 4, title: "스도쿠와 매트릭스", emoji: "🍬", color: "#8f63e6", sessions: [
-      { id: "u4-s1", label: "1차시", pages: "78~85쪽", ready: false },
-      { id: "u4-s2", label: "2차시", pages: "86~98쪽", ready: false }
+      { id: "u4-s1", label: "1차시", pages: "78~85쪽", ready: true },
+      { id: "u4-s2", label: "2차시", pages: "86~98쪽", ready: true }
     ] }
   ]
 };

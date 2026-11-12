@@ -2,10 +2,10 @@
 //  61 사탕 먹기 예 → 62~65 「사탕 먹기」 활동판 A~D(먼저 몇 개 먹을지 예상 → 길 긋기 → 먹은 사탕 세기)
 //  → 66~73 푸리수리 1~8 → 74 「아빠곰을 찾아라!」(2단원 저울 재사용)
 // 정답(원본 그림에서 계산): 61 (위) 2 · (아래) 2 / 활동판 A 2 · B 3 · C 4 · D 4 / 68쪽 ② / 69쪽 소이 / 71 (1) 2 · (2) 3 / 72쪽 3 / 73쪽 4
-import { gapMaze, mirrorMaze, lineMaze, tokenSvg, candySvg, stepsOf } from "../maze.js?v=20261113v";
-import { GAP, LINE66 } from "../maze-data.js?v=20261113v";
-import { drawPath, drawMirror, mirrorRooms, mazeDock } from "./u3-s1.js?v=20261113v";
-import { createBalance, picture, BEARS } from "../balance3d.js?v=20261113v";
+import { gapMaze, mirrorMaze, lineMaze, tokenSvg, candySvg, stepsOf } from "../maze.js?v=20261114b";
+import { GAP, LINE66 } from "../maze-data.js?v=20261114b";
+import { drawPath, drawMirror, mirrorRooms, mazeDock } from "./u3-s1.js?v=20261114b";
+import { createBalance, picture, BEARS } from "../balance3d.js?v=20261114b";
 
 const stageBox = (ctx) => { ctx.stage.innerHTML = `<div class="mz-wrap"><div class="mz-host"></div></div>`; return ctx.stage.querySelector(".mz-host"); };
 const COLORS = ["#ff5a5a", "#2f7de1"];

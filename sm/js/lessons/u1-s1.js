@@ -6,8 +6,8 @@
 //   13쪽 활동지 「7과 4」·「3과 6」 칸 모양(각 5칸×7줄).
 // 8쪽 질문(어떻게 알 수 있을까요?)은 열린 질문 — 사이트에서는 「리본을 풀어 끝을 맞추어 대 보기」를 보여 준다. 어느 쪽이 더 긴지는 원본에 없어 민석이 쪽을 길게 정했다.
 // 13쪽 게임: 원본은 두 팀. 사이트는 나 대 독쌤, 둘 다 「7과 4」(칸 수를 같게). 막대는 가운데 더미(1~5칸 각 5개)에서 찾아 집는다.
-import { createRodStage, RODS, rodIcon } from "../rods3d.js?v=20261113v";
-import { person, animal, animalAt, bow } from "../art.js?v=20261113v";
+import { createRodStage, RODS, rodIcon } from "../rods3d.js?v=20261114b";
+import { person, animal, animalAt, bow } from "../art.js?v=20261114b";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 function rods(ctx, opts) {
