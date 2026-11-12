@@ -429,10 +429,10 @@ function conceptRows(){
   const base=levelRows(L_SHIFT.L9), R=k=>(base.find(r=>r.key===k)||{blocks:[]}).blocks;
   const upTo=(arr,cut)=>arr.filter(b=>b[1]<cut).map(([t,a,e])=>[t,a,Math.min(e,cut-1)]);
   const sem=['5-1','5-2','6-1','6-2'], mid=68;
-  const school=upTo(R('school'),56).concat(sem.map((x,i)=>[x+' 디딤돌 응용',56+2*i,57+2*i]),[['계통 (5·6학년·중1)<br><small>대수 정리</small>',64,67]],
+  const school=upTo(R('school'),56).concat(sem.map((x,i)=>[x+' 디딤돌 응용',56+2*i,57+2*i]),[['계통 (5·6학년·중1)<br><small>대수 정리 · 초등 심화 정리</small>',64,67]],
     seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',MID_LEN]))); // 원리해설 3개월 단위(원장님 2026-10-20)
-  const school2=upTo(R('school2'),57).concat(['4-1','4-2','5-1','5-2'].map((x,i)=>[x+' 최상위 S',57+2*i,58+2*i]),
-    [['생각하는 황소 대비 고려에 따라 고민<br><small>+ 중등 쎈</small>',65,mid+1]],seqFrom(mid+DEEP_LAG, MID_SEMS.map(x=>[x+' 중등 심화(A급)<br><small>원리해설과 병행</small>',MID_LEN]))); // 중등 심화는 초3 11월부터(원장님 2026-10-20), 3개월씩(2026-11-12)
+  const school2=upTo(R('school2'),57).concat(['4-1','4-2','5-1','5-2'].map((x,i)=>[x+' 최상위 S',57+2*i,Math.min(58+2*i,63)]), // 계통(64~67)에는 계통만(원장님 2026-11-12)
+    [['생각하는 황소 대비 고려에 따라 고민<br><small>+ 중등 쎈</small>',mid,mid+DEEP_LAG-1]],seqFrom(mid+DEEP_LAG, MID_SEMS.map(x=>[x+' 중등 심화(A급)<br><small>원리해설과 병행</small>',MID_LEN]))); // 중등 심화는 초3 11월부터(원장님 2026-10-20), 3개월씩(2026-11-12)
   const early=R('comp').filter(b=>!/1031 (초급|중급)|3%|왕수학/.test(plain(b[0])));
   const ip=early.findIndex(b=>/1031 입문/.test(plain(b[0])));
   const comp=upTo(early.slice(0,ip),early[ip][1]).concat([['1031 입문 + workbook',early[ip][1],53],['TOT 2단계',54,56],['1031 초급',57,63],
