@@ -1,8 +1,8 @@
-// 홈: 로그인 확인 → 책 고르기(A1-2 · A1-3) → 단원 지도
-import { gate, logout } from "./access.js?v=20261115a";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261115a";
-import { BOOKS, findBook } from "./book.js?v=20261115a";
-import { readLesson } from "./progress.js?v=20261115a";
+// 홈: 로그인 확인 → 교재별 구분 상자(A1-2 · A1-3) 안에 단원 지도
+import { gate, logout } from "./access.js?v=20261115b";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261115b";
+import { BOOKS, findBook } from "./book.js?v=20261115b";
+import { readLesson } from "./progress.js?v=20261115b";
 
 const app = document.getElementById("app");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -17,46 +17,57 @@ async function start() {
   renderHome(result.me);
 }
 
-// 고른 책: 주소 ?b= → 이 기기에 기억한 책 → A1-3(처음부터 있던 책)
+// 교재마다 구분 상자 하나(원장 2026-11-13 「교재 구분 박스도 만들어야지」): 이름표 띠 + 그 교재의 단원 카드.
+//  주소 ?b= 또는 이 기기에서 마지막에 연 교재 상자로 스크롤한다(수업에서 🏠로 돌아올 때).
 const BOOK_KEY = "sm-book";
-function pickBook() {
+function lastBook() {
   const q = new URLSearchParams(location.search).get("b");
   let saved = null; try { saved = localStorage.getItem(BOOK_KEY); } catch { /* 저장 안 됨 */ }
-  return findBook(q) || findBook(saved) || findBook("a1-3");
+  return findBook(q) || findBook(saved);
 }
 
-function renderHome(me, BOOK = pickBook()) {
+function bookBox(book, child) {
+  return `
+    <section class="sm-bookbox" id="book-${book.id}" style="--b:${book.color}" aria-label="${esc(book.title)}">
+      <header class="sm-bookhead">
+        <span class="tag">${esc(book.short)}</span>
+        <h2>${esc(book.title)}</h2>
+        <span class="note">${esc(book.note || "")}</span>
+      </header>
+      <div class="sm-units">
+        ${book.units.map((u) => `
+          <article class="sm-unit" style="--u:${u.color}">
+            <span class="emoji" aria-hidden="true">${u.emoji}</span>
+            <span class="num">${u.n}</span>
+            <h2>${esc(u.title)}</h2>
+            <div class="sessions">
+              ${u.sessions.map((s) => {
+                const rec = readLesson(child, book.id, s.id);
+                return s.ready
+                  ? `<a class="sm-btn ${rec?.done ? "go done" : "blue"}" href="./lesson.html?l=${s.id}" data-book="${book.id}" style="text-decoration:none">${s.label}</a>`
+                  : `<button class="sm-btn" type="button" disabled title="곧 열려요">${s.label} 🔒</button>`;
+              }).join("")}
+            </div>
+          </article>`).join("")}
+      </div>
+    </section>`;
+}
+
+function renderHome(me) {
   const child = me.name;
-  try { localStorage.setItem(BOOK_KEY, BOOK.id); } catch { /* 저장 안 됨 */ }
   app.className = "sm-home";
   app.innerHTML = `
     <header class="sm-top" style="padding-left:0;padding-right:0">
       <div class="sm-title">레이키즈</div>
-      <nav class="sm-books" aria-label="책 고르기">${BOOKS.map((b) => `<button class="sm-btn ${b.id === BOOK.id ? "go" : ""}" type="button" data-book="${b.id}" aria-pressed="${b.id === BOOK.id}">${esc(b.short)}</button>`).join("")}</nav>
+      <nav class="sm-books" aria-label="교재로 가기">${BOOKS.map((b) => `<a class="sm-btn" href="#book-${b.id}" style="--b:${b.color};text-decoration:none">${esc(b.short)}</a>`).join("")}</nav>
       ${me.open ? "" : `<button class="sm-btn" type="button" data-out style="font-size:18px;min-height:56px">로그아웃</button>`}
     </header>
     <p class="sm-hello"><span aria-hidden="true">👋</span> ${me.open ? "" : `${esc(child)}, `}오늘은 무엇을 해 볼까요?</p>
-    <section class="sm-units">
-      ${BOOK.units.map((u) => `
-        <article class="sm-unit" style="--u:${u.color}">
-          <span class="emoji" aria-hidden="true">${u.emoji}</span>
-          <span class="num">${u.n}</span>
-          <h2>${esc(u.title)}</h2>
-          <div class="sessions">
-            ${u.sessions.map((s) => {
-              const rec = readLesson(child, BOOK.id, s.id);
-              return s.ready
-                ? `<a class="sm-btn ${rec?.done ? "go done" : "blue"}" href="./lesson.html?l=${s.id}" style="text-decoration:none">${s.label}</a>`
-                : `<button class="sm-btn" type="button" disabled title="곧 열려요">${s.label} 🔒</button>`;
-            }).join("")}
-          </div>
-        </article>`).join("")}
-    </section>`;
-  app.querySelectorAll("[data-book]").forEach((b) => b.addEventListener("click", () => {
-    const next = findBook(b.dataset.book); if (!next || next === BOOK) return;
-    history.replaceState(null, "", `?b=${next.id}`); renderHome(me, next);
-  }));
+    ${BOOKS.map((b) => bookBox(b, child)).join("")}`;
+  app.querySelectorAll("a[data-book]").forEach((a) => a.addEventListener("click", () => { try { localStorage.setItem(BOOK_KEY, a.dataset.book); } catch { /* 저장 안 됨 */ } }));
   app.querySelector("[data-out]")?.addEventListener("click", async () => { await logout(); start(); });
+  const last = lastBook();
+  if (last && last !== BOOKS[0]) requestAnimationFrame(() => document.getElementById(`book-${last.id}`)?.scrollIntoView({ block: "start" }));
 }
 
 start();

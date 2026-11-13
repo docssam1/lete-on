@@ -3,8 +3,8 @@
 //  80·81 수민 큐브 10 · 정민 큐브 8 → 개수만큼 색칠, 더 많은 쪽 · 더 큰 수 ○
 //  82·83 「큰 수 찾기」 파란 큐브와 빨간 큐브를 하나씩 짝지어 더 큰 수 ○ (보기 3·4, 활동판 A 6장)
 //  84 풍선 두 수 중 큰 수 ○ (4·15·20), 작은 수 △ (10·2·11)
-import { esc, scene, icon, cube, bagSvg, colorN, onHit, pad, pickArt, countSay, pairUp } from "../numbers.js?v=20261115a";
-import { kid } from "../art.js?v=20261115a";
+import { esc, scene, icon, cube, bagSvg, colorN, onHit, pad, pickArt, countSay, pairUp } from "../numbers.js?v=20261115b";
+import { kid } from "../art.js?v=20261115b";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle", extra = "" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" ${extra}>${t}</text>`;
 const SUMIN = { hair: "bob", hairColor: "#a0522d", shirt: "#c0392b", bottom: "#7a2a22" };

@@ -1,11 +1,11 @@
 // 차시 진행 — 시작 화면 → 단계(이야기·해 보기·게임) → 별 받기.
 //  5세용 규칙(설계서 1·6절): 지시는 독쌤이 소리로, 누를 것은 크게, 틀리면 결과 장면 + 부드러운 격려, 두 번 틀리면 같이 해 준다.
-import { gate } from "./access.js?v=20261115a";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261115a";
-import { findSession } from "./book.js?v=20261115a";
-import { saveLesson } from "./progress.js?v=20261115a";
-import { createGuide } from "./guide.js?v=20261115a";
-import * as fx from "./fx.js?v=20261115a";
+import { gate } from "./access.js?v=20261115b";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261115b";
+import { findSession } from "./book.js?v=20261115b";
+import { saveLesson } from "./progress.js?v=20261115b";
+import { createGuide } from "./guide.js?v=20261115b";
+import * as fx from "./fx.js?v=20261115b";
 
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
@@ -33,7 +33,7 @@ async function start() {
   }
   const found = findSession(lessonId);
   if (!found?.session.ready) { location.replace("./index.html"); return; }
-  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261115a`), loadText(found.book.id)]);
+  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261115b`), loadText(found.book.id)]);
   run(result.me, found, mod.LESSON, text);
 }
 
@@ -42,7 +42,7 @@ function run(me, { book, unit, session }, lesson, text) {
   app.innerHTML = `
     <header class="sm-top">
       <a class="sm-btn round" href="./index.html?b=${book.id}" aria-label="처음 화면으로" style="text-decoration:none"><span class="ico">🏠</span></a>
-      <div class="sm-title">${unit.n}. ${esc(unit.title)} · ${esc(session.label)}</div>
+      <div class="sm-title"><span class="sm-booktag" style="--b:${book.color}">${esc(book.short)}</span> ${unit.n}. ${esc(unit.title)} · ${esc(session.label)}</div>
       <div class="sm-steps" aria-hidden="true">${lesson.steps.map(() => "<b></b>").join("")}</div>
       <div class="sm-stars" aria-label="모은 별"><i>⭐</i><i>⭐</i><i>⭐</i></div>
       <button class="sm-btn round sm-voice" type="button" aria-label="소리 끄기">🔊</button>

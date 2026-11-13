@@ -3,7 +3,7 @@
 //   38 바나나 = 큐브 2, 수박 = 큐브 3(모두 수평) → 수박 / 39 닭 2·양 4(2×2)·오리 3 → 양·오리·닭
 //   40 축구공=곰인형(수평) → 같습니다, 팽이(올라감) < 곰인형 → 다릅니다 / 41 수박 > 바나나, 하트 풍선 < 돌, 큐브 3 < 큐브 5
 //   42 바나나가 올라감 → 오른쪽에는 더 무거운 수박 / 43 모자 < 비행기, 책 > 비행기
-import { scale, cubeStack, thingAt, thingIcon, svgScene, ring } from "../scale2d.js?v=20261115a";
+import { scale, cubeStack, thingAt, thingIcon, svgScene, ring } from "../scale2d.js?v=20261115b";
 
 export const orderTap = async (ctx, items, { heavyFirst = true, slotsHost = ctx.dock, hint }) => {
   // 카드를 무거운(또는 가벼운) 것부터 차례로 누르면 아래 칸(□→□→□)에 들어간다

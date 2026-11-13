@@ -2,7 +2,7 @@
 //  58 1~20 순서대로 빈칸(사과) · 59 거꾸로 빈칸(나무) · 60 「수 완성하기」 백판 숫자칩(나 대 독쌤)
 //  61 11→20 토끼 길, 10→1 고양이 길 · 62 물고기(세모 4·사다리꼴 3) · 63 오리(육각형 1·세모 6·마름모 3)
 //  빈칸·길·블록 위치는 원본 그림에서 옮겼다(sm/data/a1-2.local.json data, 공개 저장소에는 정답 수만 코드에).
-import { scene, seqFill, numPath, blockCount, onHit, countSay } from "../numbers.js?v=20261115a";
+import { scene, seqFill, numPath, blockCount, onHit, countSay } from "../numbers.js?v=20261115b";
 
 const range = (a, b) => (a <= b ? Array.from({ length: b - a + 1 }, (_, i) => a + i) : Array.from({ length: a - b + 1 }, (_, i) => a - i));
 // 4줄 × 5칸 배치. blanks: 빈칸인 수

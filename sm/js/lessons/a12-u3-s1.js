@@ -2,8 +2,8 @@
 //  54·55 생활 속의 숫자(길거리 그림에서 숫자 찾기 — 그림은 원본 장면을 코드로 다시 그림)
 //  56 큐브 세기(10개 묶고 남은 것 세기: 보기 13, 문제 15·17·20 — 원본 주머니 그림에서 셈)
 //  57 「큐브 세기」 활동: 주머니에서 큐브를 꺼내 세고 수 카드 가져가기, 나 대 독쌤
-import { esc, scene, icon, cube, bagSvg, bagCubes, group10, findAll, numCard, onHit, pad, countSay } from "../numbers.js?v=20261115a";
-import { kid } from "../art.js?v=20261115a";
+import { esc, scene, icon, cube, bagSvg, bagCubes, group10, findAll, numCard, onHit, pad, countSay } from "../numbers.js?v=20261115b";
+import { kid } from "../art.js?v=20261115b";
 
 // ── 54쪽 길거리(채소 가게·과일 가게·빨간 자동차) ──
 const T = (x, y, s, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle", rot = 0 } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" ${rot ? `transform="rotate(${rot} ${x} ${y})"` : ""}>${t}</text>`;

@@ -1,7 +1,7 @@
 // A1-2 3·4단원(수와 숫자의 탄생 · 큰 수, 작은 수) 공용 부품 — 원본 54~96쪽 활동을 화면으로.
 //  모두 SVG 한 장(무대를 꽉 채움)에 그리고, 5세가 손가락으로 누르기만 하면 되게 만든다.
 //  독쌤 말은 정해진 문장만 쓴다(바뀌는 수는 화면에 크게 보이고, 소리는 「하나·둘…」 세기 말만) → 모두 독쌤 목소리로 미리 만든다.
-import { svgScene } from "./scale2d.js?v=20261115a";
+import { svgScene } from "./scale2d.js?v=20261115b";
 
 export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const scene = (ctx, vb, body) => { ctx.stage.innerHTML = svgScene(vb, body); return ctx.stage.querySelector("svg"); };

@@ -3,7 +3,7 @@
 //  92 8·1 큰 수 → 9, 4·2 작은 수 → 2 · 93 16·1 작은 수 → 15, 18·2 큰 수 → 20
 //  94 7: 6과 8, 9: 8과 10, 5: 3과 7 만큼 색칠 · 95 「3보다 2 큰 수」 → 5 … 잇기
 //  96 그림자의 주인: 원본의 속성 카드·그림자 카드는 책 부록에 없는 별도 교구 → 원본 보기(뱀)처럼 동물 그림 9장과 그 그림자를 코드로 그림
-import { esc, scene, icon, onHit, pickArt, pairUp, colorN, matchLines, numStrip, cardSpin, solveSpin, pointArrow } from "../numbers.js?v=20261115a";
+import { esc, scene, icon, onHit, pickArt, pairUp, colorN, matchLines, numStrip, cardSpin, solveSpin, pointArrow } from "../numbers.js?v=20261115b";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 

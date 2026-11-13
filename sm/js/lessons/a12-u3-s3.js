@@ -3,8 +3,8 @@
 //  68 연잎 1~20 빈칸 · 69 꿀벌 1→10 벌집 길 · 70 순서대로·거꾸로 빈칸 · 71 10→1 보물 길 두 개 · 72 보석(세모 9·마름모 5)
 //  73·74 입체도형 빙고: 주머니에서 입체도형을 꺼내 닮은 그림 카드를 뒤집기, 한 줄 먼저 → 빙고(나 대 독쌤)
 //  그림 위치·수는 원본에서 옮겼다(sm/data/a1-2.local.json data). 그림은 모두 코드로 다시 그림.
-import { esc, scene, icon, cube, group10, colorN, matchLines, seqFill, numPath, blockCount, findAll, bagSvg, onHit, pad } from "../numbers.js?v=20261115a";
-import { kid } from "../art.js?v=20261115a";
+import { esc, scene, icon, cube, group10, colorN, matchLines, seqFill, numPath, blockCount, findAll, bagSvg, onHit, pad } from "../numbers.js?v=20261115b";
+import { kid } from "../art.js?v=20261115b";
 
 const range = (a, b) => (a <= b ? Array.from({ length: b - a + 1 }, (_, i) => a + i) : Array.from({ length: a - b + 1 }, (_, i) => a - i));
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle", extra = "" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" ${extra}>${t}</text>`;

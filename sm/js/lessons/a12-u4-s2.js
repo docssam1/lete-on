@@ -2,8 +2,8 @@
 //  85 재희: 수 카드 5 + 화살판 「1 큰 수」 → 6 ○ · 86 「큰 수, 작은 수」 활동(독쌤이 수 카드 3~18을 뽑고 내가 화살판을 돌려 찾기)
 //  87 11 · 1 작은 수 → 10, 12 · 2 큰 수 → 14 · 88 새의 말 → 나무의 수(11·4·7·17) 잇기
 //  화살판 칸 배치와 화살 위치는 원본 그림에서 옮겼다.
-import { scene, numCard, spinnerSvg, spinTo, pointArrow, numStrip, stripMark, stripHop, SPIN, onHit, matchLines, icon, cardSpin, solveSpin } from "../numbers.js?v=20261115a";
-import { kid } from "../art.js?v=20261115a";
+import { scene, numCard, spinnerSvg, spinTo, pointArrow, numStrip, stripMark, stripHop, SPIN, onHit, matchLines, icon, cardSpin, solveSpin } from "../numbers.js?v=20261115b";
+import { kid } from "../art.js?v=20261115b";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 const JAEHEE = { hair: "boy", hairColor: "#3a2418", shirt: "#ff8a3c", bottom: "#e9edf3" };

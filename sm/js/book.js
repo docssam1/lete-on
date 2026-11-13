@@ -4,6 +4,8 @@ export const BOOK_A12 = {
   id: "a1-2",
   short: "A1-2",
   title: "레이키즈 A1-2",
+  note: "3·4단원",
+  color: "#13a38b",
   units: [
     { n: 3, title: "수와 숫자의 탄생", emoji: "🔢", color: "#2fb67c", sessions: [
       { id: "a12-u3-s1", label: "1차시", pages: "54~57쪽", ready: true },
@@ -25,6 +27,8 @@ export const BOOK_A12 = {
 export const BOOK = {
   id: "a1-3",
   short: "A1-3",
+  note: "1~4단원",
+  color: "#7b5cd6",
   title: "레이키즈 A1-3",
   units: [
     { n: 1, title: "길이 재기", emoji: "📏", color: "#ffb020", sessions: [
