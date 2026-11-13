@@ -6,8 +6,8 @@
 //   13쪽 활동지 「7과 4」·「3과 6」 칸 모양(각 5칸×7줄).
 // 8쪽 질문(어떻게 알 수 있을까요?)은 열린 질문 — 사이트에서는 「리본을 풀어 끝을 맞추어 대 보기」를 보여 준다. 어느 쪽이 더 긴지는 원본에 없어 민석이 쪽을 길게 정했다.
 // 13쪽 게임: 원본은 두 팀. 사이트는 나 대 독쌤, 둘 다 「7과 4」(칸 수를 같게). 막대는 가운데 더미(1~5칸 각 5개)에서 찾아 집는다.
-import { createRodStage, RODS, rodIcon } from "../rods3d.js?v=20261114b";
-import { person, animal, animalAt, bow } from "../art.js?v=20261114b";
+import { createRodStage, RODS, rodIcon } from "../rods3d.js?v=20261114c";
+import { person, animal, animalAt, bow } from "../art.js?v=20261114c";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 function rods(ctx, opts) {
@@ -268,7 +268,7 @@ async function numberGame(ctx) {
     if (!anyOk) await ctx.guide.encourage(n === 6 ? "놓을 수 있는 막대가 없어요." : `${n}칸 막대는 놓을 곳이 없어요. 다음 차례!`);
     else {
       ctx.dock.innerHTML = `<p class="sm-docknote">👉 가운데 더미에서 ${n === 6 ? "원하는" : `${n}칸`} 막대를 눌러요</p>`;
-      ctx.guide.say(n === 6 ? "6이 나왔어요! 원하는 막대를 더미에서 골라요." : `${n}이 나왔어요! ${n}칸짜리 막대를 더미에서 찾아요.`);
+      ctx.guide.say(n === 6 ? "6이 나왔어요! 원하는 막대를 더미에서 골라요." : `${n}${[2, 4, 5].includes(n) ? "가" : "이"} 나왔어요! ${n}칸짜리 막대를 더미에서 찾아요.`);
       let item;
       for (;;) {
         item = await P.next();

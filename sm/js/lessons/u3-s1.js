@@ -2,9 +2,9 @@
 //  52 마법의 성 → 53 네모네모 미로 길 긋기 → 54 짧은 길(①·② 발자국 세기) → 55~57 「짧은 길을 찾아라!」 활동판 A·B(나 대 독쌤)
 //  → 58 거울 반사 규칙 두 가지(움직이는 그림) → 59·60 거울의 방 빠져나가기
 // 정답(원본 그림에서 계산): 54쪽 ① 11칸 · ② 7칸 → ② / 활동판 A ① 5 · ② 11 · ③ 13 → ① / 활동판 B ① 15 · ② 6 · ③ 11 → ②
-import { gapMaze, mirrorMaze, tokenSvg, chestSvg, stepsOf } from "../maze.js?v=20261114b";
-import { GAP } from "../maze-data.js?v=20261114b";
-import { kid } from "../art.js?v=20261114b";
+import { gapMaze, mirrorMaze, tokenSvg, chestSvg, stepsOf } from "../maze.js?v=20261114c";
+import { GAP } from "../maze-data.js?v=20261114c";
+import { kid } from "../art.js?v=20261114c";
 
 const josa = (w, a, b) => { const c = String(w).charCodeAt(String(w).length - 1) - 0xac00; return c >= 0 && c <= 11171 && c % 28 ? `${w}${a}` : `${w}${b}`; };
 const COLORS = ["#ff5a5a", "#2f7de1", "#2fb36b"];

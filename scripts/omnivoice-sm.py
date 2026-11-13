@@ -16,6 +16,7 @@
   python3 scripts/omnivoice-sm.py --manifest-only
 """
 import argparse, importlib.util, json, os, re, sys, time
+import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SM = os.path.join(ROOT, "sm")
@@ -27,6 +28,26 @@ spec = importlib.util.spec_from_file_location("ovd", os.path.join(ROOT, "scripts
 ovd = importlib.util.module_from_spec(spec); spec.loader.exec_module(ovd)
 
 EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿⭐️]")
+# 레이키즈 화면 글 읽기: 출발점 번호 ①②③은 「일 번」, 컵 번호는 「일 번 컵」(개수 「한 번」이 아님), 큐브 무게 1g은 「일 그램」
+SM_SPOKEN = [("①", "일 번"), ("②", "이 번"), ("③", "삼 번"),
+             (r"([1-9])번 컵", lambda m: ovd.DIG[m.group(1)] + " 번 컵"), (r"([1-9])번 ([아엄])", lambda m: ovd.DIG[m.group(1)] + " 번 " + m.group(2)),
+             (r"1g", "일 그램"), (r"([0-9])대 ([0-9])", r"\1 대 \2")]
+# 큐브를 하나씩 짚으며 세는 말(「1」「2」…)은 「하나」「둘」…로 센다
+COUNT = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "열하나", "열둘", "열셋", "열넷", "열다섯"]
+
+
+def count_hyp(say, hyp):
+    # 받아쓰기는 「열셋」을 「13」으로 적으므로 세기 말일 때는 숫자를 다시 세기 말로 바꿔 비교한다
+    d = re.sub(r"[^0-9]", "", hyp)
+    return COUNT[int(d)] if say in COUNT and d and re.fullmatch(r"\s*[0-9]+[.!]?\s*", hyp) and int(d) < len(COUNT) else hyp
+
+
+def sm_spoken(text):
+    if re.fullmatch(r"[1-9][0-9]?", text) and int(text) < len(COUNT):
+        return COUNT[int(text)]
+    for a, b in SM_SPOKEN:
+        text = re.sub(a, b, text)
+    return ovd.spoken(EMOJI.sub("", text).strip())
 
 
 def lines():
@@ -78,8 +99,10 @@ def main():
     report = json.load(open(report_path, encoding="utf-8")) if os.path.exists(report_path) else {}
     made, t0, audio_s = [], time.time(), 0.0
     for n, (lid, text) in enumerate(todo, 1):
-        t = time.time(); say = ovd.spoken(EMOJI.sub("", text).strip()); best = None
+        t = time.time(); say = sm_spoken(text); best = None
         exp = ovd.expected(say) / SPEED; dur = None
+        if say in COUNT:  # 세기 말은 한 낱말이라 너무 짧게 자르면 소리가 뭉개진다
+            exp = max(exp, 0.9)
         for k in range(ovd.TRIES):
             try:
                 y = model.generate(text=say, language="ko", voice_clone_prompt=prompt, duration=dur, speed=None if dur else SPEED)[0]
@@ -91,7 +114,8 @@ def main():
                 dur = round(exp * 1.08, 2)
                 if k < ovd.TRIES - 1:
                     continue
-            hyp = ko({"raw": y.astype("float32"), "sampling_rate": SR}); c = ovd.cer(say, hyp)
+            pad = np.zeros(int(SR * 0.4), dtype="float32")  # 아주 짧은 소리는 받아쓰기가 지어내지 않게 앞뒤에 쉼을 둔다
+            hyp = ko({"raw": np.concatenate([pad, y.astype("float32"), pad]), "sampling_rate": SR}); c = ovd.cer(say, count_hyp(say, hyp))
             if best is None or c < best[0]:
                 best = (c, hyp, y)
             if c <= ovd.CER_RETRY:

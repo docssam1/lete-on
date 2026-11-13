@@ -5,9 +5,9 @@
 // 정답(원본 그림에서 계산 · 답이 하나뿐인지 solve로 확인): 79 오른쪽 위 레몬 · 왼쪽 아래 레몬 · 오른쪽 아래 딸기
 //  80 ×(세로줄 빨강 둘) · ×(가로줄 파랑 둘) · ○ / 81 RYBG·GBRY, BYGR·RGBY / 82 RYBG·GBRY / 83 BRGY·YGRB, RYGB·BGRY
 //  84 1324·4213, 2314·1423·3142·4231 / 85 2134·3421·4312·1243
-import { COLORS, parse, solve, conflict, lastGap, makeBoard, tileHtml, units } from "../sudoku.js?v=20261114b";
-import { ballCandy, FLAVOR } from "../matrix.js?v=20261114b";
-import { kid } from "../art.js?v=20261114b";
+import { COLORS, parse, solve, conflict, lastGap, makeBoard, tileHtml, units } from "../sudoku.js?v=20261114c";
+import { ballCandy, FLAVOR } from "../matrix.js?v=20261114c";
+import { kid } from "../art.js?v=20261114c";
 
 const KIDS = {
   수영: { hair: "girl", hairColor: "#4a3a33", shirt: "#ff6b6b", bottom: "#ffffff" },

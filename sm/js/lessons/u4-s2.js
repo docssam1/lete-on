@@ -3,9 +3,9 @@
 //  → 90~97 푸리수리 1~8 → 98 「틱택토 게임」(나 빨강 대 독쌤 파랑)
 // 정답(원본 그림에서 계산): 87 빨간 하트 / 90 × × ○ / 91 YGBR·BRGY, BYGR·RGYB / 92 ○ × ×
 //  93 1432·2314, 2134·3421, 1423·3214 / 94 3214·4123·2431·1342, 2134·4312·1423·3241 / 95 초록 새(넷째) / 97 초록 펭귄(셋째)
-import { makeBoard } from "../sudoku.js?v=20261114b";
-import { matrixBoard, piece, crayon, PAL, GRAY } from "../matrix.js?v=20261114b";
-import { fillBox, kidFig, judge, fillPuzzle, sweep, WIDE } from "./u4-s1.js?v=20261114b";
+import { makeBoard } from "../sudoku.js?v=20261114c";
+import { matrixBoard, piece, crayon, PAL, GRAY } from "../matrix.js?v=20261114c";
+import { fillBox, kidFig, judge, fillPuzzle, sweep, WIDE } from "./u4-s1.js?v=20261114c";
 
 const shuffle = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 // 고르기 단추를 무대 오른쪽에 둔다 → 아래 줄이 비어 판이 커진다(가로 폰)

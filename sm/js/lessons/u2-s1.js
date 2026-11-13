@@ -5,10 +5,10 @@
 // 37쪽 활동판(실물 무게 재기)은 원본에 수치가 없어 원장이 가상 무게를 정한 뒤 넣는다.
 // 지문: 화면 위 칸에 원본 글 그대로(ctx.source, sm/data/a1-3.local.json — 공개 저장소에 올리지 않음). 독쌤 말은 그 아래 따로.
 // 그림 수치: 32쪽 기울기(컵>모자, 가방>컵), 35쪽 큐브(공 7 · 원뿔 5), 36쪽 예(빨간 아빠곰 = 큐브 12, 3개씩 4줄)는 원본 그림·글에서 옮겼다.
-import { createBalance, bear, cube, solid, thing, picture } from "../balance3d.js?v=20261114b";
+import { createBalance, bear, cube, solid, thing, picture } from "../balance3d.js?v=20261114c";
 
-import { scale, thingAt, thingIcon, svgScene } from "../scale2d.js?v=20261114b";
-import { BEAR_COLORS } from "../balance3d.js?v=20261114b";
+import { scale, thingAt, thingIcon, svgScene } from "../scale2d.js?v=20261114c";
+import { BEAR_COLORS } from "../balance3d.js?v=20261114c";
 // 색깔 곰돌이 그림(단추용) — 3D 곰과 같은 색
 export const bearIcon = (color, size = 72) => { const c = BEAR_COLORS[color] || color; return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true"><g fill="${c}" stroke="rgba(0,0,0,.18)" stroke-width="3"><circle cx="30" cy="20" r="11"/><circle cx="70" cy="20" r="11"/><ellipse cx="50" cy="72" rx="28" ry="25"/><circle cx="50" cy="36" r="23"/><ellipse cx="22" cy="64" rx="9" ry="13"/><ellipse cx="78" cy="64" rx="9" ry="13"/></g><circle cx="42" cy="33" r="3.5" fill="#1b1b1b"/><circle cx="58" cy="33" r="3.5" fill="#1b1b1b"/><ellipse cx="50" cy="43" rx="6" ry="4" fill="#1b1b1b"/><ellipse cx="44" cy="25" rx="8" ry="5" fill="#fff" opacity=".35"/></svg>`; };
 

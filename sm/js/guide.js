@@ -85,7 +85,7 @@ export function createGuide({ host, textEl, voiceBtn }) {
   host.innerHTML = `<span class="act">${Object.entries(BODY).map(([k, f]) => `<img data-b="${k}" src="${A}${f}" alt="" draggable="false" decoding="async">`).join("")}</span>`;
   const imgs = Object.fromEntries([...host.querySelectorAll("img")].map((i) => [i.dataset.b, i]));
   Object.values(imgs).forEach((i) => i.decode?.().catch(() => {}));
-  let last = "", token = 0, moodTimer = 0;
+  let last = "", lastVoice = null, token = 0, moodTimer = 0;
   const show = (mood) => { const b = MOOD[mood] || "A1"; Object.entries(imgs).forEach(([k, i]) => i.classList.toggle("on", k === b)); };
   const motion = (m) => { delete host.dataset.motion; void host.offsetWidth; if (m) host.dataset.motion = m; };
   host.addEventListener("animationend", () => delete host.dataset.motion);
@@ -103,25 +103,26 @@ export function createGuide({ host, textEl, voiceBtn }) {
     try { localStorage.setItem(VOICE_KEY, voiceOn ? "on" : "off"); } catch { /* 이번만 */ }
     if (!voiceOn) stopAll();
     paintVoice();
-    if (voiceOn && last) api.say(last);
+    if (voiceOn && last) api.say(last, { voice: lastVoice });
   });
-  host.addEventListener("click", () => { if (last) api.say(last); });
+  host.addEventListener("click", () => { if (last) api.say(last, { voice: lastVoice }); });
 
   const api = {
     // 글을 크게 띄우고 읽는다. 다른 말이 끼어들면 false.
-    async say(text, { mood = "explain", hold = false, display = true } = {}) {
+    // voice: 소리로 읽을 글이 화면 글과 다를 때(예: 아이 이름을 빼고 읽기 — 미리 만든 독쌤 목소리로)
+    async say(text, { mood = "explain", hold = false, display = true, voice = null } = {}) {
       const my = ++token;
-      last = text;
+      last = text; lastVoice = voice;
       if (textEl && display) { textEl.textContent = text; textEl.animate?.([{ transform: "translateY(8px)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 320, easing: "cubic-bezier(.2,.8,.2,1)" }); }
       clearTimeout(moodTimer);
       show(mood); host.classList.add("talk");
-      const ok = await speak(text);
+      const ok = await speak(voice || text);
       if (my !== token) return false;
       host.classList.remove("talk");
       if (!hold && mood !== "explain") moodTimer = setTimeout(() => show("explain"), 1600);
       return ok;
     },
-    praise(text) { motion("hop"); return api.say(text, { mood: "praise" }); },
+    praise(text, opts = {}) { motion("hop"); return api.say(text, { ...opts, mood: "praise" }); },
     encourage(text) { motion("nod"); return api.say(text, { mood: "encourage" }); },
     think(text) { return api.say(text, { mood: "think" }); },
     stop() { token++; seq++; stopAll(); host.classList.remove("talk"); },

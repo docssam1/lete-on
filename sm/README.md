@@ -6,7 +6,7 @@
 - 주소 `lete-on.gfieldacademy.net/sm/`. 원생만(DEMO 없음). 학부모가 필즈 더 클래식과 같은 방법(승인번호 + 아이 이름, `fields-auth`)으로 로그인.
 - 들어가는 권한: 관리자(DOCSSAM) 또는 승인 관리(`fields-classic/admin.html`)에서 **「레이키즈」** 권한을 켠 승인번호.
   서버 `supabase/functions/fields-approval-admin`의 `PRODUCT_IDS`에도 넣었다 → **함수 다시 배포 전에는 권한을 켜도 저장되지 않는다.**
-- 5세용: 지시는 독쌤 음성(기기 음성), 큰 단추(72px 이상·주요 104px), 틀리면 결과 장면 + 격려, 맞으면 팡팡(색종이·별·도장·소리).
+- 5세용: 지시는 독쌤 음성(복제 목소리 mp3, 없을 때만 기기 음성), 큰 단추(72px 이상·주요 104px), 틀리면 결과 장면 + 격려, 맞으면 팡팡(색종이·별·도장·소리).
 - 무게 단원은 필즈 2권 3D 저울 구성을 가져온다. 무게 지도는 「가장 가벼운 것(블록)에 1 쓰기」.
 - 원본 순서 그대로. 원본 스캔·정답은 저장소에 두지 않는다. 그림은 코드가 다시 그린다.
 
@@ -21,7 +21,7 @@
 | `index.html`, `js/home.js` | 로그인 확인 → 단원 지도(4단원 × 2차시, 열린 차시만 누름) |
 | `lesson.html`, `js/lesson.js` | 차시 진행: 시작 → 단계들 → 별 받기. `?l=<차시>`; `&s=<번호>`는 그 단계부터 |
 | `js/access.js`, `js/login-view.js` | 필즈 `study-progress.js`의 `login`·`checkSession`을 쓰는 입장 확인과 학부모 로그인 화면 |
-| `js/guide.js` | 독쌤 안내(science-lab 그림 5장, 기기 음성. 기기 음성일 때는 입을 움직이지 않음) |
+| `js/guide.js` | 독쌤 안내(science-lab 그림 5장, 독쌤 목소리 mp3 → 없으면 기기 음성. 기기 음성일 때는 입을 움직이지 않음) |
 | `js/fx.js` | 효과음(필즈 `createSound` + 5세용 소리), 색종이·별 터뜨리기, 도장 |
 | `js/balance3d.js` | 3D 양팔 저울·시소(필즈 골든벨 3D 엔진). 곰돌이(아빠 12·엄마 8·아기 4), 1g 큐브, 공·원뿔, 그림 물건. WebGL이 없으면 평면 |
 | `js/book.js` | A1-3 차례(원본 4쪽 순서)와 열린 차시 |
@@ -81,7 +81,10 @@
 - 줄 모으기: `python3 scripts/sm-voice-lines.py` → `sm/data/voice/sm.voice.json`(코드 대사, 공개) + `sm/data/voice-book.local.json`(지문, 비공개 목록).
 - 만들기(맥, 이미 깔린 환경): `PYTORCH_ENABLE_MPS_FALLBACK=1 HF_HUB_OFFLINE=1 /Users/docssam/Developer/GFIELD/lete-on-voice-fcs/.venv-omnivoice/bin/python scripts/omnivoice-sm.py --ref <lete-on-voice-fcs/.docssam-work/docssam-ref.wav> --ref-text-file .docssam-work/ref-text.txt --work-dir .docssam-work` — 이미 있는 파일은 건너뛴다. 줄마다 약 10초(M5 Pro, MPS).
 - 결과: `sm/audio/docssam/sm-<sha1("sm-docssam-v1|"+글) 앞 12자>.mp3` + `manifest.json`(파일 이름만). 받아 적기 검사 CER 0.35를 넘는 줄은 올리지 않고 기기 음성으로 읽는다. 검수 보고서·듣기 페이지는 `.docssam-work/`(비공개).
-- 재생: `guide.js`가 manifest에 있으면 mp3, 없으면 기기 음성. `${…}`로 아이마다 달라지는 말(52곳)은 기기 음성.
+- 재생: `guide.js`가 manifest에 있으면 mp3, 없으면 기기 음성. `say(글, { voice })`로 화면 글과 다른 말을 읽힐 수 있다(마지막 칭찬은 화면에 아이 이름, 소리는 이름 없이).
+- 1~4단원 전부(원장 2026-11-13 「4차시까지 보이스 넣어」): 코드의 모든 대사 + `${…}`로 바뀌는 말 52곳을 값마다 펼쳐 만든다(`sm-voice-lines.py`의 `vary()` — 막대 이름·물건·카드 짝·컵 순서·미로 발자국 수(실제로 갈 수 있는 길 길이만) 등). 템플릿 글이 바뀌어 못 찾으면 스크립트가 멈춘다. 지금 코드 831줄 + 지문 81줄 = 912개.
+- 읽기 규칙(`omnivoice-sm.py`의 `SM_SPOKEN`): ①②③ → 일 번·이 번·삼 번, 「1번 컵」 → 일 번 컵, 1g → 일 그램, 같이 세기 「1」~「15」 → 하나~열다섯(받아쓰기가 숫자로 적어도 세기 말로 바꿔 비교, 짧은 소리는 앞뒤 쉼을 붙여 검사).
+- 새로 `${…}` 말을 넣으면 `vary()`에 그 값 목록을 더해야 독쌤 목소리가 나온다(안 더하면 기기 음성).
 - 지문 음성 mp3는 공개 저장소에 올라간다(원장 승인). 지문 글 목록 자체는 올리지 않는다.
 - 대사를 고치면: `sm-voice-lines.py` 다시 → `omnivoice-sm.py`(새 줄만 만듦) → 커밋.
 
