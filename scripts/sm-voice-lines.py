@@ -5,7 +5,7 @@
   1) 코드의 고정 대사: guide.say/praise/encourage/think("…") 와 say:/wrongSay:/praise:/hint: "…" 글.
      ${…}가 들어간 글(아이마다 달라지는 말)은 아래 VARY 표에서 나올 수 있는 값을 모두 펼쳐 만든다(원장 2026-11-13 「4차시까지 보이스 넣어」).
      변수에 담아 넘기는 말(삼항식·intro·why 등)도 놓치지 않게, 화면 코드의 문장(. ! ?로 끝나는 한글 글)을 모두 모은다.
-  2) 교재 지문: sm/data/a1-3.local.json 의 text·text2·bubbles·rules(원장 2026-11-12 「지문도 복제 목소리」).
+  2) 교재 지문: sm/data/a1-2.local.json · a1-3.local.json 의 text·text2·bubbles·rules(원장 2026-11-12 「지문도 복제 목소리」).
      지문 글 목록은 공개 저장소에 두지 않는다 → sm/data/voice-book.local.json (gitignore: sm/data/*.local.json)
 
 결과
@@ -39,7 +39,7 @@ def key(text):
 # ── 문장 모으기: 변수·삼항식으로 넘기는 말까지(제목·이름표 같은 글은 . ! ?로 끝나지 않아 빠진다) ──
 LIT = re.compile(r'"((?:[^"\\\n]|\\.)*)"|\'((?:[^\'\\\n]|\\.)*)\'|`([^`]*)`')
 NOT_SPOKEN_KEY = re.compile(r"\b(?:title|subtitle|doneTitle|doneText|name|label|page|mark|aria-label)\s*:\s*$")
-SPOKEN_FILES = ["js/lesson.js", "js/maze.js", "js/lessons/*.js"]
+SPOKEN_FILES = ["js/lesson.js", "js/maze.js", "js/numbers.js", "js/lessons/*.js"]
 
 
 def sentences():
@@ -183,7 +183,7 @@ def vary(book_pages):
     add("lessons/u3-s2.js", "아빠곰은 ${papaCup}번", rows)
     add("lessons/u3-s2.js", "곰돌이를 ${got}개", [{"got": g} for g in range(0, 4)])
     # 같이 세기(큐브를 하나씩 짚으며 「1」「2」… — 1단원·2단원)
-    out += [str(n) for n in range(1, 16)]
+    out += [str(n) for n in range(1, 21)]   # 같이 세기 하나~스물(A1-2 20까지의 수)
     return out
 
 
@@ -203,8 +203,10 @@ def main():
     pages = json.load(open(p, encoding="utf-8"))["pages"] if os.path.exists(p) else {}
     made = vary(pages)
     code += sentences() + made
-    if True:
-        for no, e in sorted(pages.items(), key=lambda kv: int(kv[0])):
+    p12 = os.path.join(SM, "data", "a1-2.local.json")   # A1-2 3·4단원 지문(2026-11-13~)
+    pages12 = json.load(open(p12, encoding="utf-8"))["pages"] if os.path.exists(p12) else {}
+    for pg in (pages12, pages):
+        for no, e in sorted(pg.items(), key=lambda kv: int(kv[0])):
             # 지문(text·text2)과 화면에서 독쌤이 읽는 말풍선·규칙(4단원부터 읽음)
             for t in [e.get("text"), e.get("text2"), *(e.get("bubbles") or []), *(e.get("rules") or [])]:
                 if t:

@@ -1,11 +1,11 @@
 // 차시 진행 — 시작 화면 → 단계(이야기·해 보기·게임) → 별 받기.
 //  5세용 규칙(설계서 1·6절): 지시는 독쌤이 소리로, 누를 것은 크게, 틀리면 결과 장면 + 부드러운 격려, 두 번 틀리면 같이 해 준다.
-import { gate } from "./access.js?v=20261114c";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261114c";
-import { BOOK, findSession } from "./book.js?v=20261114c";
-import { saveLesson } from "./progress.js?v=20261114c";
-import { createGuide } from "./guide.js?v=20261114c";
-import * as fx from "./fx.js?v=20261114c";
+import { gate } from "./access.js?v=20261115a";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261115a";
+import { findSession } from "./book.js?v=20261115a";
+import { saveLesson } from "./progress.js?v=20261115a";
+import { createGuide } from "./guide.js?v=20261115a";
+import * as fx from "./fx.js?v=20261115a";
 
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
@@ -33,15 +33,15 @@ async function start() {
   }
   const found = findSession(lessonId);
   if (!found?.session.ready) { location.replace("./index.html"); return; }
-  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261114c`), loadText(BOOK.id)]);
+  const [mod, text] = await Promise.all([import(`./lessons/${lessonId}.js?v=20261115a`), loadText(found.book.id)]);
   run(result.me, found, mod.LESSON, text);
 }
 
-function run(me, { unit, session }, lesson, text) {
+function run(me, { book, unit, session }, lesson, text) {
   app.className = "sm-lesson";
   app.innerHTML = `
     <header class="sm-top">
-      <a class="sm-btn round" href="./index.html" aria-label="처음 화면으로" style="text-decoration:none"><span class="ico">🏠</span></a>
+      <a class="sm-btn round" href="./index.html?b=${book.id}" aria-label="처음 화면으로" style="text-decoration:none"><span class="ico">🏠</span></a>
       <div class="sm-title">${unit.n}. ${esc(unit.title)} · ${esc(session.label)}</div>
       <div class="sm-steps" aria-hidden="true">${lesson.steps.map(() => "<b></b>").join("")}</div>
       <div class="sm-stars" aria-label="모은 별"><i>⭐</i><i>⭐</i><i>⭐</i></div>
@@ -58,7 +58,7 @@ function run(me, { unit, session }, lesson, text) {
   main.innerHTML = `
     <div class="sm-cover">
       <div>
-        <span class="badge">${unit.n}단원 · ${esc(session.label)} · ${esc(session.pages)}</span>
+        <span class="badge">${esc(book.short)} · ${unit.n}단원 · ${esc(session.label)} · ${esc(session.pages)}</span>
         <div class="art" aria-hidden="true">${lesson.coverArt}</div>
         <h1>${esc(lesson.title)}</h1>
         <p>${esc(lesson.subtitle)}</p>
@@ -85,7 +85,7 @@ function run(me, { unit, session }, lesson, text) {
     }
     dots.forEach((d) => { d.className = "done"; });
     const stars = mistakes <= 2 ? 3 : mistakes <= 6 ? 2 : 1;
-    saveLesson(me.name, BOOK.id, lessonId, { done: true, stars });
+    saveLesson(me.name, book.id, lessonId, { done: true, stars });
     finish(main, guide, stars, lesson);
   });
 
@@ -98,7 +98,7 @@ function run(me, { unit, session }, lesson, text) {
         <h1>${esc(lessonDef.doneTitle || "오늘 공부 끝!")}</h1>
         <p>${esc(lessonDef.doneText || "")}</p>
         <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-          <a class="sm-btn go big" href="./index.html" style="text-decoration:none"><span class="ico">🏠</span> 처음 화면</a>
+          <a class="sm-btn go big" href="./index.html?b=${book.id}" style="text-decoration:none"><span class="ico">🏠</span> 처음 화면</a>
           <button class="sm-btn big" type="button" data-again><span class="ico">↺</span> 다시 하기</button>
         </div></div>`;
     root.append(cover);

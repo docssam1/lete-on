@@ -28,15 +28,17 @@ spec = importlib.util.spec_from_file_location("ovd", os.path.join(ROOT, "scripts
 ovd = importlib.util.module_from_spec(spec); spec.loader.exec_module(ovd)
 
 EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿⭐️]")
-# 레이키즈 화면 글 읽기: 출발점 번호 ①②③은 「일 번」, 컵 번호는 「일 번 컵」(개수 「한 번」이 아님), 큐브 무게 1g은 「일 그램」
+# 레이키즈 화면 글 읽기: 출발점 번호 ①②③은 「일 번」, 컵 번호는 「일 번 컵」(개수 「한 번」이 아님), 큐브 무게 1g은 「일 그램」, 「8번 버스」는 「팔 번 버스」
 SM_SPOKEN = [("①", "일 번"), ("②", "이 번"), ("③", "삼 번"),
              (r"([1-9])번 컵", lambda m: ovd.DIG[m.group(1)] + " 번 컵"), (r"([1-9])번 ([아엄])", lambda m: ovd.DIG[m.group(1)] + " 번 " + m.group(2)),
-             (r"1g", "일 그램"), (r"([0-9])대 ([0-9])", r"\1 대 \2")]
+             (r"1g", "일 그램"), (r"([1-9])번 버스", lambda m: ovd.DIG[m.group(1)] + " 번 버스"), (r"([0-9])대 ([0-9])", r"\1 대 \2")]
 # 큐브를 하나씩 짚으며 세는 말(「1」「2」…)은 「하나」「둘」…로 센다
-COUNT = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "열하나", "열둘", "열셋", "열넷", "열다섯"]
+COUNT = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "열하나", "열둘", "열셋", "열넷", "열다섯", "열여섯", "열일곱", "열여덟", "열아홉", "스물"]
 
 
 def count_hyp(say, hyp):
+    # 받아쓰기가 「독쌤」을 「독셈·독샘」으로 적는 일이 잦다 → 이름은 같은 것으로 보고 비교한다
+    hyp = re.sub(r"독[셈샘쌘셈]", "독쌤", hyp)
     # 받아쓰기는 「열셋」을 「13」으로 적으므로 세기 말일 때는 숫자를 다시 세기 말로 바꿔 비교한다
     d = re.sub(r"[^0-9]", "", hyp)
     return COUNT[int(d)] if say in COUNT and d and re.fullmatch(r"\s*[0-9]+[.!]?\s*", hyp) and int(d) < len(COUNT) else hyp
