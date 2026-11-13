@@ -905,6 +905,19 @@
   .nm-cvw.nm-cvw-dense .nm-cvw-course { margin-bottom:3mm; }
   .nm-cvw.nm-cvw-dense .nm-cv-meta { margin-top:3mm; padding:3mm 4mm; }
   .nm-cvw.nm-cvw-dense .nm-cvw-foot { margin-top:3mm; padding-top:3mm; }
+  /* 목차가 16줄 이상(총정리 회차 — C25 4회는 24줄)이면 한 단계 더 촘촘하게(2026-11-13: 표가 종이 밖으로 387px 나가
+     아래 줄·점수 칸·QR 칸이 통째로 잘렸다). 안내 띠는 빼고 줄 높이를 줄인다. */
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-toc td { padding:.35mm 3mm; font-size:10.5px; line-height:1.25; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-toc th { padding-bottom:1mm; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-toc td.nm-cvw-chk { font-size:12px; line-height:1; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-day { font-size:9.5px; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-day { line-height:1.1; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-day-tag { padding:.1mm 1.6mm; line-height:1.15; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-daily { margin-bottom:.5mm; padding:.6mm 3mm; }
+  .nm-cvw.nm-cvw-dense2 .nm-cv-meta { margin-top:2mm; padding:2mm 4mm; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-foot { margin-top:2mm; padding-top:2mm; }
+  .nm-series-sheet .nm-series-contents.nm-cvw-dense2 .nm-series-mentor { display:none; }
+  .nm-series-sheet .nm-series-contents.nm-cvw-dense2 .nm-cvw-hero { margin:4mm 0 2mm; }
   .nm-cvw .nm-cvw-foot { position:relative; display:flex; align-items:stretch; gap:6mm; margin:6mm 2mm 0; padding-top:5mm;
     border-top:1px solid #c9c6be; }
   .nm-cvw .nm-cvw-foot-r { flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:flex-end;
@@ -1149,6 +1162,8 @@
   .nm-mn-fill .nm-w2-tex { font-size:calc(16px * var(--ws-fs, 1)); }
   .nm-mn-open { flex:0 0 auto; margin-top:8px; }
   .nm-mn-open-q { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; }
+  /* 고등 과정 마법 노트는 내용이 길어 쪽 번호가 8px 잘렸다(C60 1회 14쪽, 2026-11-13) — 쓰는 줄 간격만 조금 줄인다. */
+  .nm-series-academic .nm-mn-open .nm-w2-train-dots i { height:5.5mm; }
   /* Training Course(창의 회차) */
   .nm-w2-train-banner { flex:0 0 auto; display:flex; align-items:center; gap:8px; margin:2px 0 6px; }
   .nm-w2-train-banner img { height:15mm; width:auto; }
@@ -3117,7 +3132,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   const kTxt = cv.cadence === 'w2' && !cv.highWholeWeek ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
   const studentTag = cv.name ? ` · ${esc(cv.name)}` : '';
   const magazineC4 = +cv.courseNum === 4 && examLang() === 'ko';
-  return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}${magazineC4 ? ' nm-cvw-magazine-c4' : ''}">
+  return `<div class="nm-print-cover nm-cvw${rows.length >= 16 ? ' nm-cvw-dense nm-cvw-dense2' : rows.length >= 9 ? ' nm-cvw-dense' : ''}${magazineC4 ? ' nm-cvw-magazine-c4' : ''}">
   <div class="nm-cv-brand"><span>${worksheetBrandHtml()}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}

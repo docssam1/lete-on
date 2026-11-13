@@ -335,7 +335,7 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
       tex: `${n} \\div ${d} = 0.\\overline{\\square}`,
       answer: n, answerType: 'number', widget: 'numpad',
       solution: [
-        { tex: `${d} = \\underbrace{9\\cdots9}_{${nDigits}\\text{자리}} \\;\\Rightarrow\\; \\text{몫의 반복마디는 나누어지는 수를 자리 수에 맞춰 쓴 모양}` },
+        { tex: `${d} = \\underbrace{9\\cdots9}_{${nDigits}\\text{자리}} \\;\\Rightarrow\\; \\text{반복마디도 }${nDigits}\\text{자리}` },
         { tex: `${n} \\div ${d} = 0.\\overline{\\square}`, blank: n }
       ]
     };
