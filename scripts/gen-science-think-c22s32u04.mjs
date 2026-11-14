@@ -174,7 +174,7 @@ const interact = {
     answers: [0, 2, 4], summary: '감염병은 여러 길로 옮겨 가요. 손 씻기와 기침 예절은 옮겨 갈 가능성을 크게 줄여 줘요.' },
 };
 
-buildThink({ U, P, T, STD, NAME, Q, MISC, JUDGE, LINES, chapter, plan, interact, grade: 3, semester: 2, area: '생명', course: '3-2', title: '감염병과 건강한 생활', gen: 'gen-science-think-c22s32u04.mjs',
+buildThink({ U, P, T, STD, NAME, Q, MISC, JUDGE, LINES, chapter, plan, interact, grade: 3, semester: 2, area: '과학과 사회', course: '3-2', title: '감염병과 건강한 생활', gen: 'gen-science-think-c22s32u04.mjs',
   art: {
     opener: ['glit-hero', '반짝이 가루 손 모형 — 여섯 친구가 둥글게 서 있고 A의 손에만 반짝이가 묻어 빛나는 모습', 1800, 820],
     step1: ['glit-start', 'A~F 여섯 친구가 둥글게 선 모습 — A의 손에만 반짝이 가루', 1280, 600],

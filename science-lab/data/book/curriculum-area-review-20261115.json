@@ -1,0 +1,67 @@
+{
+  "date": "2026-11-15",
+  "scope": [
+    "c22-s32-u04",
+    "c22-s42-u04"
+  ],
+  "curriculum": "2022 개정",
+  "area": "과학과 사회",
+  "previousAreas": {
+    "c22-s32-u04": "생명",
+    "c22-s42-u04": "환경"
+  },
+  "evidence": {
+    "title": "교육부 고시 제2022-33호 [별책9] 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "member": "[별책9] 과학과 교육과정.hwp",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "section": "내용 체계 > (5) 과학과 사회 > 3~4학년군"
+  },
+  "changes": {
+    "rawDataFiles": 9,
+    "currentAreaFields": 242,
+    "generatedTaxonomyJson": 2,
+    "generatorInputs": 2,
+    "questionAndAnswerEdits": 0,
+    "sourceReferenceEdits": 0
+  },
+  "preservation": {
+    "rawDataAllOtherBytesMatchPriorCommit": true,
+    "previousAnswerSheetsRemainEditable": true,
+    "previousAnswerSheetContentsRetained": true,
+    "gradingUnchanged": true
+  },
+  "sourceQuestionFigureOcr": {
+    "files": 527,
+    "references": 740,
+    "allImageAndOcrSha256Match": true,
+    "recognizedLines": 1192,
+    "recognizedCharacters": 5272,
+    "noRecognizedTextFiles": 242,
+    "printedAnswerExplanationKeywordCandidates": 0,
+    "engine": "Apple Vision CPU-only ko-KR/en-US",
+    "reusedIdenticalImages": 51,
+    "remainingImagesProcessedInFreshSingleImageProcesses": 476,
+    "scope": "Keyword review; does not establish all picture text accuracy or scientific correctness."
+  },
+  "validation": {
+    "nativeTestFiles": 275,
+    "tests": 1468,
+    "pass": 1466,
+    "fail": 0,
+    "skippedBrowserTests": 2,
+    "bankAudit": true,
+    "taxonomyBuildCheck": true,
+    "rawDataBeforeAfterComparison": true
+  },
+  "remaining": {
+    "originalSourceMissingUnits": [
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s62-u04"
+    ],
+    "actualPcMobileA4Review": false,
+    "mergedToMain": false,
+    "deployed": false
+  }
+}
