@@ -2,6 +2,7 @@ import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERE
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
 export const BIOLOGY_OBSERVATION_CHOICE_VERSION='20261115-biology-photo-observations';
+export const GEOLOGY_OBSERVATION_CONTEXT_VERSION='20261115-geology-observation-context';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const priorBiologyChoices=['갓 안쪽에 여러 주름이 보였다.','이 버섯을 먹으면 모든 병이 낫는다.','이 세균은 누구에게나 해롭다.','이 사진 하나면 모든 균류를 분류할 수 있다.','한 가닥 안에 마디가 이어져 보였다.'];
 const priorBiologyExplanation='주름과 마디는 사진의 형태를 기록한 것입니다. 치료 효과·보편적 해로움·모든 생물의 분류는 추가 근거가 필요합니다.';
@@ -27,7 +28,18 @@ const waterNotice='연습을 위해 만든 자료예요. 실제 지역·인물�
 // Reuse season question 28's five samples without claiming an exact transit time.
 const altitudeTable={머리:['시각(KST)','고도'],행:[['10:15','41°'],['11:15','53°'],['12:15','62°'],['13:15','60°'],['14:15','49°']]};
 const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 관측하거나 정밀하게 계산한 천문 자료는 아니에요. 정확한 남중 시각은 따로 주어지지 않았어요.';
+const geologyHorizontal='assets/book/c22-s51-u01-source-horizontal.png',geologyBroken='assets/book/c22-s51-u01-source-broken.png';
 const entries={
+ 'c22-s51-u01-b001':{
+  unit:'c22-s51-u01',version:'20261106-geology-readable-workbook',currentVersion:GEOLOGY_OBSERVATION_CONTEXT_VERSION,
+  prompt:'절벽의 지층 사진을 관찰할 때 먼저 기록할 특징은 무엇인가요?',
+  fields:{prompt:'다음 지층 사진을 보세요. 직접 관찰하여 기록할 수 있는 특징을 고르세요.',figure:geologyHorizontal,figureNote:'밝고 어두운 여러 층과 경계가 보이는 지층 사진. 자료: 지필드 과학 교재.'},
+ },
+ 'c22-s51-u01-b010':{
+  unit:'c22-s51-u01',version:'20261106-geology-readable-workbook',currentVersion:GEOLOGY_OBSERVATION_CONTEXT_VERSION,
+  prompt:'사진에서 층이 끊어져 서로 어긋나 있어요. 관찰한 모습을 바르게 적은 것은?',
+  fields:{prompt:'다음 지층 사진을 보세요. 관찰한 모습을 바르게 적은 문장을 고르세요.',figure:geologyBroken,figureNote:'밝고 어두운 층이 이어지다가 가운데에서 끊기고 높이가 어긋나 보이는 지층 사진. 자료: 지필드 과학 교재.'},
+ },
  's41-u04-v006':{
   unit:'s41-u04',sourceType:'similar',sourceOf:{set:1,no:6},version:1,currentVersion:BIOLOGY_REFERENCE_PHOTO_VERSION,
   prompt:'사진 설명에서 세균의 특징을 바르게 정리한 문장을 고르세요.',
@@ -86,7 +98,7 @@ const entries={
 };
 const cache=new WeakMap();
 export function standaloneQuestionContexts(rows,unit){
- if(!['s41-u04','c22-s62-u04','c22-s62-u01','c22-s42-u01'].includes(unit)||!Array.isArray(rows))return rows;
+ if(!['s41-u04','c22-s62-u04','c22-s62-u01','c22-s42-u01','c22-s51-u01'].includes(unit)||!Array.isArray(rows))return rows;
  let changed=false;
  const next=rows.map(q=>{
   const entry=Object.hasOwn(entries,q.id)?entries[q.id]:null;
@@ -121,4 +133,17 @@ export function withSeasonStandaloneContext(workbook){
   changed=true;return {...q,givens:altitudeNotice,given:[altitudeNotice],table:clone(altitudeTable),figure:'season-question-data-28'};
  });
  return changed?{...workbook,questions}:workbook;
+}
+export function withGeologyStandaloneArt(art){
+ if(!art?.geoHorizontal?.includes('../'+geologyHorizontal)||!art.geoShapes?.includes('../'+geologyBroken)||Object.hasOwn(art,'geoBroken'))return art;
+ return {...art,geoBroken:`<figure class="ed-photo"><img src="../${geologyBroken}" alt="밝고 어두운 층이 가운데에서 끊기고 높이가 어긋나 보이는 지층 사진"><figcaption>자료: 지필드 과학 교재.</figcaption></figure>`};
+}
+export function withGeologyStandaloneContext(workbook){
+ if(workbook.unit!=='c22-s51-u01'||!Array.isArray(workbook.questions))return workbook;
+ const figures=withGeologyStandaloneArt(workbook.figures),links={'c22-s51-u01-w001':['c22-s51-u01-b001','geoHorizontal'],'c22-s51-u01-w004':['c22-s51-u01-b010','geoBroken']};let changed=false;
+ const questions=workbook.questions.map(q=>{
+  const link=links[q.id],entry=link&&entries[link[0]];if(!entry||q.sourceRef?.type!=='authored-supplement'||q.sourceId!==link[0]||q.prompt!==entry.prompt||q.figure||q.table||q.given||q.givens||!figures?.[link[1]])return q;
+  changed=true;return {...q,prompt:entry.fields.prompt,figure:link[1]};
+ });
+ return changed?{...workbook,questions,figures}:workbook;
 }

@@ -1,10 +1,11 @@
+import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s51-u01.js';import{similar}from'../data/units/c22-s51-u01.similar.js';import{geologyCurrentItems}from'../data/book/geology-student-language.js';
 import{geologyReadableCurrentItems,GEOLOGY_READABILITY_VERSION}from'../data/book/c22-s51-u01.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s51-u01.book.js';
-import{workbook,geologyReadablePriorWorkbook}from'../data/book/c22-s51-u01.workbook.js';
+import{geologyObservationPriorWorkbook as workbook,geologyReadablePriorWorkbook}from'../data/book/c22-s51-u01.workbook.js';
 const unit='c22-s51-u01',baseline=geologyCurrentItems(items);
 test('geology current presentations preserve scoring, every old field and saved responses',()=>{
  const before=structuredClone(baseline),current=geologyReadableCurrentItems(baseline,unit);let changed=0;
@@ -31,8 +32,8 @@ test('geology readability guards original, similar, review, future and other uni
  assert.equal(geologyReadableCurrentItems(baseline,'other'),baseline);assert.equal(geologyReadableCurrentItems(null,unit),null);
 });
 test('geology bank, recurring classroom and Daily use the same twelve current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=geologyReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===GEOLOGY_READABILITY_VERSION)changed++;}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=standaloneQuestionContexts(geologyReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===GEOLOGY_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===GEOLOGY_READABILITY_VERSION))changed++;}
  assert.equal(changed,12);assert.equal(first.classroomItems.length,16);
 });
 test('geology keeps raw version one, the prior language version and corrected answer displays',()=>{

@@ -1,3 +1,4 @@
+import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -36,7 +37,7 @@ test('5자동·12교사 확인은 인쇄 답과 추가 근거가 필요한 판�
  const snapshot=snapshotDailyPaper(source),changed=structuredClone(source);changed[0].prompt+=' revised';const restored=resolveDailyPaper(changed,{paper:snapshot,answers});assert.equal(restored.readOnly,true);assert.equal(restored.questions[0].prompt,source[0].prompt);assert.deepEqual(restored.questions.map(q=>q.id),source.map(q=>q.id));
 });
 test('실제113문항집은 현재 쉬운 표현을 유지하고 학생·교사·해설만·빠른표와 인쇄 도구를 구별한다',async()=>{
- const mod=await loaders[unit](),current=geologyReadableCurrentItems(geologyCurrentItems(items),unit),before=JSON.stringify(mod.items);assert.deepEqual(mod.items,current);assert.equal(mod.source.length,17);assert.equal(mod.wireBankPaper,wireSourceBankPrint);
+ const mod=await loaders[unit](),current=standaloneQuestionContexts(geologyReadableCurrentItems(geologyCurrentItems(items),unit),unit),before=JSON.stringify(mod.items);assert.deepEqual(mod.items,current);assert.equal(mod.source.length,17);assert.equal(mod.wireBankPaper,wireSourceBankPrint);
  for(const mode of ['student','teacher','answers','quick']){const html=mod.bankPaper({...mod,mode});assert.equal((html.match(/data-paper-item=/g)||[]).length,113);assert.equal((html.match(/data-workbook-print/g)||[]).length,1);assert(html.includes('data-workbook-print disabled'));assert(html.includes('data-paper-unit="'+unit+'"'));assert(!html.includes('data-geo-print'));assert(!html.includes('원문이 없어'));assert(html.includes('원문 17개'));
   if(mode==='student'){assert(!html.includes('source-print-key'));assert(!html.includes('geo-key'));assert(!html.includes('source-review'));assert(!html.includes('class="ans"'));assert(!html.includes('loading="lazy"'));assert(html.includes('loading="eager"'));}
   if(['answers','quick'].includes(mode)){const originals=html.slice(html.indexOf('<main'),html.indexOf('<section class="source-bank-practice">'));assert(!originals.includes('<img'));assert(!originals.includes('source-print-number'));assert(!html.includes('<img'));}

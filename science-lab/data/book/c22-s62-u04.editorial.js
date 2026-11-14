@@ -1,4 +1,4 @@
-import{withCareerStandaloneContext}from'./standalone-question-context.js?v=20261115-biology-reference-photos';
+import{withCareerStandaloneContext}from'./standalone-question-context.js?v=20261115-geology-observation-context';
 import{questionPatches,upperNotes,sectionTitles,coreNotes,selfQuestions}from'./c22-s62-u04.editorial-data.js?v=20261104-career-book';
 export{questionPatches as CAREER_QUESTION_PATCHES};
 const changes=[['구체적인 업무','직업에서 하는 일'],['업무의 과학적 연결','일에 이용되는 과학'],['과학적 연결','과학과의 관계'],['자료의 지위','자료에서 알 수 있는 것'],['자료 지위','자료에서 알 수 있는 것'],['조건부 예상','조건에 따른 예상'],['미확인 질문','더 알아볼 질문'],['미확인 칸','더 알아볼 점을 적는 칸'],['미확인으로','아직 알 수 없다고'],['미확인을','아직 알 수 없는 것을'],['미확인과','아직 모르는 것과'],['미확인','아직 알 수 없음'],['미관측','관측하지 않음'],['미실행','아직 하지 않음'],['미수행','아직 하지 않음'],['지위 남기기','관측과 예상 구별하기'],['업무','일']];

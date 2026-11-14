@@ -1,5 +1,6 @@
+import{withGeologyStandaloneArt}from'./standalone-question-context.js?v=20261115-geology-observation-context';
 // 지층 교재의 표·사진 자료. 원래 수업과 기록은 그대로 둔다.
-export const art={
+export const geologyObservationPriorArt={
   "strata": "<figure class=\"ed-photo\"><img src=\"../assets/book/c22-s51-u01-source-horizontal.png\" alt=\"수평으로 놓인 지층을 보여 주는 원교재 사진\"><figcaption>거의 수평으로 놓인 지층이에요. 층의 색과 두께를 살펴요. 자료: 지필드 과학 교재.</figcaption></figure>",
   "strata-shapes.svg": "<div class=\"ed-photo\"><img src=\"../assets/bank/c22-s51-u01/strata-shapes.svg\" alt=\"지층 모양 자료에서 나처럼 층의 경계가 휘어 보입니다. 관찰한 모습에 맞는 말은 무엇인가요?\"><small class=\"ed-photo-credit\">창작 학습 모식도 · 실제 크기·연도 자료 아님</small></div>",
   "layers-abc.svg": "<div class=\"ed-photo\"><img src=\"../assets/bank/c22-s51-u01/layers-abc.svg\" alt=\"뒤집히거나 순서가 바뀌지 않은 세 층에서 가장 아래 가층이 있습니다. 쌓인 순서에 맞는 것은 무엇인가요?\"><small class=\"ed-photo-credit\">창작 학습 모식도 · 실제 크기·연도 자료 아님</small></div>",
@@ -17,3 +18,4 @@ export const art={
   "geoCompare": "<table class=\"ed-table\"><thead><tr><th scope=\"col\">가상 관찰 기록</th><th scope=\"col\">알갱이의 모습</th></tr></thead><tbody><tr><th scope=\"row\">가</th><td>매우 작아 눈으로 낱낱이 구별하기 어려움</td></tr><tr><th scope=\"row\">나</th><td>주로 모래 크기의 알갱이가 보임</td></tr><tr><th scope=\"row\">다</th><td>자갈 크기의 알갱이와 작은 알갱이가 함께 굳음</td></tr></tbody></table>",
   "geoSources": "<p class=\"ed-given\">더 읽기: <a href=\"https://www.nps.gov/subjects/fossils/what-is-a-fossil.htm\" target=\"_blank\" rel=\"noopener noreferrer\">미국 국립공원청 · 화석의 여러 증거</a> / <a href=\"https://www.nps.gov/subjects/fossils/how-fossils-form.htm\" target=\"_blank\" rel=\"noopener noreferrer\">화석의 형성 과정</a>. 실습은 교사 준비 실온 재료로 하며 가열·절단·수지/경화제를 쓰지 않아요.</p>"
 };
+export const art=withGeologyStandaloneArt(geologyObservationPriorArt);

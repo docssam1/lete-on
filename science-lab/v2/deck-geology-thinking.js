@@ -1,6 +1,6 @@
 import{findLifeItem}from'./book-life.js';
 import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261115-classroom-question-figures';
-import{workbook}from'../data/book/c22-s51-u01.workbook.js?v=20261105-geology-student-language';
+import{workbook}from'../data/book/c22-s51-u01.workbook.js?v=20261115-geology-observation-context';
 import{geologyCase}from'./geology-compare-model.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -50,7 +50,7 @@ export function buildGeologyThinkingSlides(ch,art,plan,pool,mode,ix){
  activity('share','communicate','관찰·모형·과거 환경을 친구에게 설명해요','실제로 관찰한 특징과 만든 모형, 자료로 추리한 내용을 연결해 소개해요.',['지층이나 화석에서 직접 살펴본 특징과 모형이 표현하는 점을 보여 주어요.','어떤 자료로 과거 생물과 환경을 추리했는지 설명하고 화석이 소중한 까닭을 말해요.','그림이나 파일을 저장한 것과 친구에게 실제로 설명한 것을 구별해요. 질문을 들었다면 그 내용을 남겨요.'],['6과01-03']);
  activity('revise','communicate','친구의 질문에 맞게 설명을 보완해요','“그 화석은 어디에서 나왔어?”와 같은 질문을 받으면 자료 설명을 찾아보아요.',['실제로 받은 질문을 확인해요. 아직 질문이나 의견을 받지 못했다면 그렇게 남겨요.','화석이 나온 지층이나 생물의 생활 자료를 확인해 설명에 덧붙여요. 확인하지 못한 정보는 만들어 넣지 않아요.','고친 설명을 다시 소개해요. 아직 하지 않은 재관찰·재제작·소개는 다음 계획과 구별해요.'],['6과01-03']);
  add('conclusion','check','처음 생각에서 무엇이 달라졌나요?',(teach?p('층의 순서·암석의 알갱이·화석과 생활 자료를 각각 어떤 판단에 썼는지 설명하게 해요.'):'<div class="dk-card"><h3>처음에 고른 생각</h3><p data-prediction-summary></p></div>')+'<div class="dk-mylab" hidden></div>'+peek('지층의 특징을 관찰하고 형성 과정을 모형으로 표현해요. 퇴적암은 알갱이 크기로 분류해요. 화석의 특징과 관련 자료로 과거 생물과 환경을 추리하며 화석의 가치를 알아보아요. 교재의 예시와 직접 한 활동을 구별해요.'),{kind:'think'});
- ch.check.forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`지층 문항 없음 ${key}`);add(`test${i+1}`,'check',`배운 내용 확인하기 ${i+1}/${ch.check.length}`,thinkingCheckQuestion(q,i+1,teach,{figureHtml:q.figure?figure(q.figure.split('/').at(-1)):''}),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
+ ch.check.forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`지층 문항 없음 ${key}`);const custom=q.figure&&workbook.figures[q.figure.split('/').at(-1)];add(`test${i+1}`,'check',`배운 내용 확인하기 ${i+1}/${ch.check.length}`,thinkingCheckQuestion(q,i+1,teach,custom?{figureHtml:custom}:{}),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
  add('end','check','지층과 화석은 어떤 과거를 알려 줄까요?',`<ul>${['지층의 색·두께·모양을 관찰하고 형성 과정을 모형으로 표현하기','암석을 이루는 알갱이 크기로 이암·사암·역암 분류하기','화석의 생성 과정을 모형으로 설명하기','화석과 관련 자료로 과거 생물과 환경을 추리하고 가치를 설명하기'].map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+p('문제에서 배운 내용과 직접 관찰하고 만든 모형에서 알아낸 점을 함께 돌아보아요.')+'<a class="btn" href="#/c22-s51-u01/daily">Daily Test</a>',{kind:'end'});
  S.forEach((s,i)=>s.n=i+1);return S;
 }

@@ -1,3 +1,4 @@
+import{withGeologyStandaloneContext}from'./standalone-question-context.js?v=20261115-geology-observation-context';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withGeologyReadableWorkbook}from'./c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook';
 import{withGeologyStudentLanguage}from'./geology-student-language.js';
@@ -7733,4 +7734,5 @@ const baseWorkbook = {
 
 export const geologyReadablePriorWorkbook=withGeologyStudentLanguage(withGeologyEditorial(baseWorkbook));
 export const grade5StudyNotesPriorWorkbook=withGeologyReadableWorkbook(geologyReadablePriorWorkbook);
-export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+export const geologyObservationPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+export const workbook=withGeologyStandaloneContext(geologyObservationPriorWorkbook);
