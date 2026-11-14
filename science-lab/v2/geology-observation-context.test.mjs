@@ -1,3 +1,4 @@
+import{REFERENCE_CONTEXT_CACHE_VERSION as appCacheVersion}from'../data/book/standalone-question-context.js';
 import{BIOLOGY_COMPARISON_VERSION}from'../data/book/biology-observation-photos.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{items as raw}from'../data/units/c22-s51-u01.js';import{source}from'../data/units/c22-s51-u01.source.js';import{geologyCurrentItems}from'../data/book/geology-student-language.js';import{geologyReadableCurrentItems}from'../data/book/c22-s51-u01.editorial.js';
@@ -35,5 +36,5 @@ test('unchanged photo bytes reach learning, Daily, both question paper modes and
  for(const[id,i]of ids.map((id,i)=>[id,i])){const q=mod.items.find(q=>q.id===id);assert.equal(createHash('sha256').update(fs.readFileSync(new URL('../'+q.figure,import.meta.url))).digest('hex'),hashes[i]);const outputs=[item(q),item(q,{print:true}),daily(q),thinkingCheckQuestion(q,1,false),thinkingCheckQuestion(q,1,true)];for(const mode of['student','teacher']){const html=mod.bankPaper({...mod,mode}),at=html.indexOf('data-paper-item="'+id+'"');assert(at>=0);const block=html.slice(at,html.indexOf('</article>',at));outputs.push(block);if(mode==='student')assert(!block.includes('geo-key'));}for(const html of outputs)assert(html.includes('../'+q.figure));}
  const cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(cls,mod.items);let shown=0;
  for(const mode of['self','teach'])for(const slide of buildSlides(cls.chapter,cls.art,cls.plan,pool,mode)){if(slide.item!==ids[0])continue;shown++;const q=mod.items.find(q=>q.id===slide.item);assert.equal([...slide.body.matchAll(/<img[^>]*src="([^"]+)"/g)].filter(m=>m[1]==='../'+q.figure).length,1);assert.equal(slide.body.includes('dk-ans rv'),mode==='teach');}
- assert.equal(shown,2);assert(code.includes('standalone-question-context.js?v='+BIOLOGY_COMPARISON_VERSION));assert(fs.readFileSync(new URL('./index.html',import.meta.url),'utf8').includes('v2.js?v='+BIOLOGY_COMPARISON_VERSION));
+ assert.equal(shown,2);assert(code.includes('standalone-question-context.js?v='+appCacheVersion));assert(fs.readFileSync(new URL('./index.html',import.meta.url),'utf8').includes('v2.js?v='+appCacheVersion));
 });

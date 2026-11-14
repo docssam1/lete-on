@@ -1,4 +1,4 @@
-import{BIOLOGY_COMPARISON_VERSION as cacheVersion}from'../data/book/biology-observation-photos.js';
+import{REFERENCE_CONTEXT_CACHE_VERSION as cacheVersion}from'../data/book/standalone-question-context.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{standaloneQuestionContexts,withMaterialStandaloneContext,MATERIAL_OBSERVATION_CONTEXT_VERSION as version}from'../data/book/standalone-question-context.js';
 import{withThink,loadJudge}from'./think-merge.js';import{revisedTextbookPaper}from'./revised-textbook.js';import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import{buildSlides}from'./deck.js';import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';

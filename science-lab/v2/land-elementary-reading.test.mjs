@@ -1,10 +1,11 @@
+import{LAND_OBSERVATION_CONTEXT_VERSION}from'../data/book/land-observation-context.js';
 import {landReasoningCurrentItems} from '../data/book/s41-u03.editorial.js';
 import test from 'node:test';
 import {withGrade4StudyNotes} from '../data/book/grade4-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-import {workbook,landElementaryPriorWorkbook as prior} from '../data/book/s41-u03.workbook.js';
+import {landObservationPriorWorkbook as workbook,workbook as actualWorkbook,landElementaryPriorWorkbook as prior} from '../data/book/s41-u03.workbook.js';
 import {landElementaryCurrentItems,LAND_ELEMENTARY_VERSION} from '../data/book/s41-u03.elementary.js';
 import {withThink} from './think-merge.js';
 import {revisedClassroom} from './revised-lesson.js';
@@ -13,6 +14,7 @@ import {gradeDaily} from './daily-grade.js';
 import {questionAtVersion,restoreDailyQuestions,restartCurrentQuestion} from './question-revision.js';
 
 const unit='s41-u03';
+const beforeObservation=q=>q.contentVersion===LAND_OBSERVATION_CONTEXT_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 async function priorBank(){
  const {items}=await import('../data/units/s41-u03.js');
  return landReasoningCurrentItems(items,unit);
@@ -38,13 +40,13 @@ test('Land-change reading edits preserve workbook grading, pictures and all four
   const paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
     const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-    if(mode==='student'||mode==='teacher')for(const q of workbook.questions)for(const text of q.prompt.split(/\[\s*\]|\(\s*\)/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
+    if(mode==='student'||mode==='teacher')for(const q of actualWorkbook.questions)for(const text of q.prompt.split(/\[\s*\]|\(\s*\)/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
 });
 
 test('actual bank loader preserves every answer boundary and saved presentation when prompts change',async()=>{
-  const before=await priorBank(),savedBefore=structuredClone(before),{items:current}=await actualBank();
+  const before=await priorBank(),savedBefore=structuredClone(before),{items:observedCurrent}=await actualBank();const current=observedCurrent.map(beforeObservation);
   assert.equal(current.length,82);let changed=0;
   for(let i=0;i<before.length;i++){
     const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));
@@ -75,10 +77,10 @@ test('actual bank loader preserves every answer boundary and saved presentation 
 test('classroom questions use the same revised bank prompts while retaining their contracts',async()=>{
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items,source,similar}=await actualBank();
   const bank=new Map([...source,...similar,...items].map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,25);
-  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===LAND_ELEMENTARY_VERSION).length,13);
+  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===LAND_ELEMENTARY_VERSION||q.previousVersions?.some(p=>p.version===LAND_ELEMENTARY_VERSION)).length,13);
   for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
   assert.equal(workbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement').length,20);
-  for(const q of workbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement'))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
+  for(const q of actualWorkbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement'))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
   assert.equal(workbook.questions.filter(q=>q.sourceRef?.type==='similar').length,20);
   for(const q of workbook.questions.filter(q=>q.sourceRef?.type==='similar'))assert.deepEqual(q,prior.questions.find(p=>p.id===q.id));
   assert.equal(source.length,80);assert.equal(landElementaryCurrentItems(source,unit),source);assert.equal(landElementaryCurrentItems(similar,unit),similar);

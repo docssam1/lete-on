@@ -1,3 +1,4 @@
+import{REFERENCE_CONTEXT_CACHE_VERSION as appCacheVersion}from'../data/book/standalone-question-context.js';
 import{BIOLOGY_COMPARISON_VERSION}from'../data/book/biology-observation-photos.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{withThink,loadJudge}from'./think-merge.js';import{biologyObservationChoiceItems,BIOLOGY_OBSERVATION_CHOICE_VERSION}from'../data/book/standalone-question-context.js';import{BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION}from'../data/book/biology-observation-photos.js';
@@ -32,5 +33,5 @@ test('current learning, Daily, teacher keys and both question paper modes show t
  for(const html of outputs){for(const choice of q.choices)assert(html.includes(esc(choice)));for(const photo of q.observationPhotos)assert(html.includes('../'+photo.src));for(const choice of old.choices.slice(1,4))assert(!html.includes(esc(choice)));}
  const key=teacherKeyHtml({u:unit,ch:{title:mod.unit.title},list:[q],misc:mod.misc});assert(key.includes(esc(q.explanation)));assert(!key.includes(esc(old.explanation)));for(const photo of q.observationPhotos)assert(daily(q).includes('../'+photo.src));
 
- const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(index.includes('v2.js?v='+BIOLOGY_COMPARISON_VERSION));assert(code.includes('standalone-question-context.js?v='+BIOLOGY_COMPARISON_VERSION));assert(code.includes('revised-lesson.js?v='+BIOLOGY_COMPARISON_VERSION));
+ const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(index.includes('v2.js?v='+appCacheVersion));assert(code.includes('standalone-question-context.js?v='+appCacheVersion));assert(code.includes('revised-lesson.js?v='+appCacheVersion));
 });

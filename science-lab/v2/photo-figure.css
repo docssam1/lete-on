@@ -10,3 +10,6 @@
 .observation-photo small{display:block;font-size:14px;font-weight:400;overflow-wrap:anywhere}
 @media screen and (max-width:520px){.observation-photos,.observation-photos[data-photo-count="3"]{grid-template-columns:minmax(0,1fr)}}
 @media print{.observation-photos{gap:3mm;margin:3mm auto;max-width:145mm}.observation-photo img{max-height:45mm}.observation-photo figcaption{font-size:10pt;margin-top:1mm}.observation-photo small{font-size:8pt}}
+
+/* Keep the two land reference images readable beside the existing printed exercises. */
+@media print{.bank-photo-figure img[src="../assets/book/s41-u03-runoff-before-after-v1.png"],.bank-photo-figure img[src="../assets/bank/s41-u03/s3-q04.webp"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}

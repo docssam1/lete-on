@@ -14,7 +14,7 @@ test('all 32 student and teacher decks show every required question image exactl
   }
   assert.equal(JSON.stringify({mod,pool}),before,unit+' mutated classroom data');
  }
- assert.equal(decks,64);assert.equal(slides,3048);assert.equal(pictures,12);assert.deepEqual(geology,[['self','c22-s51-u01-b001'],['teach','c22-s51-u01-b001']]);assert.deepEqual(bacteria,[['self','s41-u04-b09'],['self','s41-u04-b16'],['teach','s41-u04-b09'],['teach','s41-u04-b16']]);
+ assert.equal(decks,64);assert.equal(slides,3048);assert.equal(pictures,16);assert.deepEqual(geology,[['self','c22-s51-u01-b001'],['teach','c22-s51-u01-b001']]);assert.deepEqual(bacteria,[['self','s41-u04-b09'],['self','s41-u04-b16'],['teach','s41-u04-b09'],['teach','s41-u04-b16']]);
 });
 
 test('native source images, HD copies, labeled photos and custom classroom figures keep prompts, tables, keys and response controls',()=>{

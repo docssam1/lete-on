@@ -1,9 +1,10 @@
+import{withLandObservationWorkbook}from'../data/book/land-observation-context.js';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {withGrade4StudyNotes,GRADE4_STUDY_NOTE_UNITS} from '../data/book/grade4-study-notes.js';
 import {workbook as water,waterStudyNotesPriorWorkbook as priorWater} from '../data/book/s41-u02.workbook.js';
-import {workbook as land,landStudyNotesPriorWorkbook as priorLand} from '../data/book/s41-u03.workbook.js';
+import {landObservationPriorWorkbook as land,landStudyNotesPriorWorkbook as priorLand} from '../data/book/s41-u03.workbook.js';
 import {workbook as climate,climateStudyNotesPriorWorkbook as priorClimate} from '../data/book/c22-s42-u04.workbook.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
@@ -36,7 +37,7 @@ test('grade-four personal directions preserve all questions, upper learning and 
 
 test('actual four paper views show the reviewed directions and keep answer views and all other HTML identical',async()=>{
  for(const [current,prior,count]of books){
-  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withElementaryReadingDirections(prior),art),expected=makeWorkbookPaper(withElementaryReadingDirections(current),art);
+  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withLandObservationWorkbook(withElementaryReadingDirections(prior)),art),expected=makeWorkbookPaper(withLandObservationWorkbook(withElementaryReadingDirections(current)),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=actual.workbookPaper({mode});assert.equal(html,expected.workbookPaper({mode}));
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
@@ -46,7 +47,7 @@ test('actual four paper views show the reviewed directions and keep answer views
      const note=current[key][i].rail[j],old=prior[key][i].rail[j];
      if(note.text!==old.text){assert(html.includes(escape(note.text)));restored[key][i].rail[j].text=old.text;if(key==='pages')changed++;}
     }
-    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withElementaryReadingDirections(restored),art).workbookPaper({mode}),before.workbookPaper({mode}));
+    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withLandObservationWorkbook(withElementaryReadingDirections(restored)),art).workbookPaper({mode}),before.workbookPaper({mode}));
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
    }
   }

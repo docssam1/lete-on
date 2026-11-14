@@ -1,3 +1,5 @@
+import{landObservationEntries,LAND_OBSERVATION_CONTEXT_VERSION}from'./land-observation-context.js?v=20261115-land-observation-context';
+export const REFERENCE_CONTEXT_CACHE_VERSION=LAND_OBSERVATION_CONTEXT_VERSION;
 import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION,BIOLOGY_COMPARISON_VERSION,BIOLOGY_COMPARISON_PROMPTS,BIOLOGY_SHAPES_NOTE}from'./biology-observation-photos.js?v=20261115-biology-comparison-photos';
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
@@ -32,6 +34,7 @@ const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 �
 const geologyHorizontal='assets/book/c22-s51-u01-source-horizontal.png',geologyBroken='assets/book/c22-s51-u01-source-broken.png';
 const preparationPhoto='assets/activities/c22-s51-u03/mixing-photo-v1.webp',environmentPicture='assets/activities/c22-s61-u01/environment.webp';
 const entries={
+ ...landObservationEntries,
  's41-u04-v031':{
   unit:'s41-u04',sourceType:'similar',sourceOf:{set:3,no:1},version:1,currentVersion:BIOLOGY_COMPARISON_VERSION,
   prompt:'교사가 제공한 서로 다른 빵곰팡이 사진 세 장에서 흰색·초록색·검은색 부분을 보았습니다. 기록으로 알맞은 것을 고르세요.',
@@ -125,11 +128,11 @@ const entries={
 };
 const cache=new WeakMap();
 export function standaloneQuestionContexts(rows,unit){
- if(!['s41-u04','c22-s62-u04','c22-s62-u01','c22-s42-u01','c22-s51-u01','c22-s62-u02','c22-s61-u01'].includes(unit)||!Array.isArray(rows))return rows;
+ if(!['s41-u04','c22-s62-u04','c22-s62-u01','c22-s42-u01','c22-s51-u01','c22-s62-u02','c22-s61-u01','s41-u03'].includes(unit)||!Array.isArray(rows))return rows;
  let changed=false;
  const next=rows.map(q=>{
   const entry=Object.hasOwn(entries,q.id)?entries[q.id]:null;
-  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!==(entry.sourceType||'authored-supplement')||(entry.sourceOf&&JSON.stringify(q.sourceRef.of)!==JSON.stringify(entry.sourceOf))||(q.contentVersion||1)!==entry.version||q.prompt!==entry.prompt||q.givens!=null||q.figure||q.photoLabels||q.observationPhotos||q.sourceContent||q.visualModel)return q;
+  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!==(entry.sourceType||'authored-supplement')||(entry.sourceOf&&JSON.stringify(q.sourceRef.of)!==JSON.stringify(entry.sourceOf))||(q.contentVersion||1)!==entry.version||q.prompt!==entry.prompt||(entry.previousChoices&&JSON.stringify(q.choices)!==JSON.stringify(entry.previousChoices))||q.givens!=null||q.figure||q.photoLabels||q.observationPhotos||q.sourceContent||q.visualModel)return q;
   changed=true;if(cache.has(q))return cache.get(q);
   const current={...q,...clone(entry.fields),contentVersion:entry.currentVersion||STANDALONE_CONTEXT_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
   if(entry.preserveDiagnosticVersion&&q.diagnosticOverride?.version===(q.contentVersion||1))current.diagnosticOverride={...clone(q.diagnosticOverride),version:current.contentVersion};
