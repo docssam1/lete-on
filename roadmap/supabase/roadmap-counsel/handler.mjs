@@ -3,6 +3,13 @@ const ORIGINS=new Set(['https://roadmap.gfieldacademy.net','https://lete-on.gfie
 export class HttpError extends Error{constructor(status,code){super(code);this.status=status;}}
 const checked=async promise=>{const r=await promise;if(r.error)throw new HttpError(503,'service_unavailable');return r;};
 async function hash(text){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),b=>b.toString(16).padStart(2,'0')).join('');}
+function customerSource(row){
+ const {status,...source}=row;
+ if(row.kind==='drive'||/https:\/\/(?:drive|docs)\.google\.com\//i.test(row.source||'')){
+  source.source='원장님 승인 상담 자료';
+ }
+ return source;
+}
 export function createHandler({service,ask,aiAvailable=false,now=()=>Date.now()}){
  const cache=new Map(),pending=new Map();
  async function authenticate(req){
@@ -42,11 +49,13 @@ export function createHandler({service,ask,aiAvailable=false,now=()=>Date.now()}
     let text=clean(value);if(member.student_name?.length>=2)text=text.split(member.student_name).join('학생');return text;
    };
    const context={question:sanitize(b.question).slice(0,1000),progress:sanitize(b.progress),stage:['preschool','elementary','middle','high'].includes(b.stage)?b.stage:'all'};
+   if(typeof b.previous==='string'&&b.previous.trim())context.previous=sanitize(b.previous).slice(0,600);
    if(context.question.length<2)throw new HttpError(400,'question_missing');
    const rows=await approved(),sources=selectKnowledge(rows,context);
    const revision=await hash(JSON.stringify(rows));
-   const answer=answerFromSources(sources,context);
-   const result={...answer,sources:sources.map(({status,...r})=>r),revision,aiAvailable:aiAvailable&&sources.length>0,generated:false};
+   const approvedSources=sources.map(customerSource);
+   const answer=answerFromSources(approvedSources,context);
+   const result={...answer,sources:approvedSources,revision,aiAvailable:aiAvailable&&sources.length>0,generated:false};
    if(b.action==='lookup')return reply(result);
    if(!sources.length)throw new HttpError(422,'sources_missing');
    if(!aiAvailable)throw new HttpError(503,'ai_not_configured');
@@ -57,7 +66,7 @@ export function createHandler({service,ask,aiAvailable=false,now=()=>Date.now()}
     const work=(async()=>{
      const {data:allowed}=await checked(service.rpc('roadmap_counsel_take_daily',{p_subject:await hash(member.user_id),p_limit:40}));
      if(allowed!==true)throw new HttpError(429,'too_many_attempts');
-     const detail=clean(await ask({context,sources}),6000);
+     const detail=clean(await ask({context,sources:approvedSources}),6000);
      if(!detail)throw new HttpError(502,'ai_empty');
      if(cache.size>=64)cache.delete(cache.keys().next().value);
      cache.set(key,{text:detail,expires:now()+300000});return detail;

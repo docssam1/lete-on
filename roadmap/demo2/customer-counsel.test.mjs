@@ -66,3 +66,13 @@ test('concurrent repeats share one model call; daily refusal prevents paid reque
  const denied=createHandler({service:fake({allowed:false}),aiAvailable:true,ask:async()=>assert.fail('model')});
  assert.equal((await denied(req('explain'))).status,429);
 });
+test('optional previous result enters a follow-up request and internal Drive sources stay private',async()=>{
+ const internal='원장님 자료 https://docs.google.com/document/d/internal-example/edit';
+ let received;
+ const h=createHandler({service:fake({rows:[row({kind:'drive',source:internal})]}),aiAvailable:true,
+  ask:async context=>{received=context;return '복습을 이어가세요.';}});
+ const data=await (await h(req('explain',{previous:'김하늘 · 010-1234-5678 · 함수 · 혼자 풀 수 있어요'}))).json();
+ assert.equal(data.sources[0].source,'원장님 승인 상담 자료');
+ assert.match(received.context.previous,/함수 · 혼자 풀 수 있어요/);
+ assert.doesNotMatch(JSON.stringify([received,data]),/internal-example|김하늘|010-1234/);
+});

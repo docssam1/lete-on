@@ -35,3 +35,12 @@
  .customer-counsel-open{font-size:13px;padding:8px 10px}.customer-counsel .cc-more{width:100%}
 }
 @media print{.customer-counsel,.customer-counsel-open{display:none!important}}
+
+.customer-counsel .cc-use-previous{display:flex;align-items:center;gap:10px;min-height:44px}
+.cc-use-previous input{width:20px;height:20px;accent-color:#285c49}
+.customer-counsel .cc-references{border-top:1px solid #cfe0da;margin-top:18px}
+.cc-references>summary{padding:12px 2px;cursor:pointer;font-weight:650;color:#285c49}
+.cc-interview-card{margin:15px 0;padding:16px;border:1px solid #cfe0da;border-radius:8px;overflow-wrap:anywhere}
+.cc-interview-card p{margin:6px 0}
+.cc-interview-links a{display:inline-block;padding:6px 0}
+.cc-interview-practice{background:#f4f8f6;border-radius:6px;padding:10px 12px}
