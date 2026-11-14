@@ -168,7 +168,7 @@ export const BANK = {
   's42-u05': { sets: [1,  2,  3], n: 45 },
   's42-u04': { sets: [1,  2,  3,  4], n: 70 },
   's42-u03': { sets: [1,  2,  3,  4], n: 70 },
-  'c22-s51-u01':{sets:[],n:0,supplement:96,sourcePending:true,label:'창작 학습',lesson:true,labLabel:'내 지층·화석 탐구 기록',paperLabel:'전체96문항집'},
+  'c22-s51-u01':{sets:[1,2,3,4],n:17,supplement:96,label:'옛 교재 연계 원문',lesson:true,labLabel:'내 지층·화석 탐구 기록',paperLabel:'전체113문항집',paperAvailable:true,sourceIntegrated:true,pairsInPractice:true,paired:17,sourceExcerptOnly:true,reviewOnly:12,sourceScopeNote:'현행 단원평가 전체 원문 준비 중',groups:{1:'이론 개념 확인 · 10문항',2:'이론 개념 응용 · 4문항',3:'이론 자료 읽기 · 1문항',4:'이론 굳어짐 그림 해석 · 2문항'}},
   'c22-s51-u03':{sets:[1,2,3,4],n:75,supplement:96,lesson:true,reviewOnly:10,label:'옛5-1 연계 원문',sourceScopeNote:'현행 판본 전체 원문 확인은 별도',paperLabel:'전체246문항집'},
   'c22-s51-u02':{sets:[1,2,3,4,5,6,7,8],n:40,supplement:80,lesson:true,labLabel:'내 빛 탐구 기록',sourceExcerptOnly:true,sourceScopeNote:'현행 전체 원문 준비 중',label:'옛단원 연계 발췌',paperLabel:'전체160문항집',groups:{1:'옛6-1 빛·렌즈 1 발췌',2:'옛6-1 빛·렌즈 2 발췌',3:'옛6-1 빛·렌즈 3 발췌',4:'옛6-1 빛·렌즈 4 발췌',5:'옛4-2 그림자·거울 1 발췌',6:'옛4-2 그림자·거울 2 발췌',7:'옛4-2 그림자·거울 3 발췌',8:'옛4-2 그림자·거울 4 발췌'}},
   'c22-s42-fin':{sets:[1,2],n:0,authored:104,originalPending:true,label:'기말평가 · 창작',assessment:true,formLabel:'평가 유형',groups:{1:'A형',2:'B형'},courseLabel:'초등 과학 4학년 2학기',scope:['밤하늘 관찰','생물과 환경','여러 가지 기체','기후변화와 우리 생활'],scopeNote:'1~4단원 학습용 구성·학교별 공식 범위와 별개',paperLabel:'전체104문항집',reviewUnits:{E1:'c22-s42-u01',E2:'c22-s42-u02',E3:'c22-s42-u03',E4:'c22-s42-u04'}},

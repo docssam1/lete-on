@@ -79,7 +79,8 @@ function presentation(q,book){
  return JSON.stringify(next)===JSON.stringify(q)?q:next;
 }
 export function geologyCurrentItems(rows){return rows.map(q=>{
- if(!/^c22-s51-u01-b\d+$/.test(q.id||'')||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||q.contentVersion===GEOLOGY_LANGUAGE_VERSION||q.previousVersions?.some(p=>p.version===GEOLOGY_LANGUAGE_VERSION))return q;
+ const eligibleSource=q.sourceRef?.type==='authored-supplement'||(q.sourceRef?.type==='authored-pair'&&q.sourceRef.originalAuthoredType==='authored-supplement'&&q.sourceRef.of);
+ if(!/^c22-s51-u01-b\d+$/.test(q.id||'')||q.status!=='authored'||!eligibleSource||q.contentVersion===GEOLOGY_LANGUAGE_VERSION||q.previousVersions?.some(p=>p.version===GEOLOGY_LANGUAGE_VERSION))return q;
  const next=presentation(q,false);if(next===q)return q;
  return{...next,contentVersion:GEOLOGY_LANGUAGE_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1}]};
 });}

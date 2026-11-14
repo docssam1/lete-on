@@ -42,7 +42,7 @@ export function sourceExamPaperHtml({unit,set,bank,title,list,mode='student',ren
   if(number==null||String(number).trim()==='')throw Error('원래 문항 번호가 없습니다.');
   const legacyReview=q.sourceRef.reviewOnly===true&&!isStructuredSource(q);
   return '<article class="source-exam-question" data-paper-item="'+esc(q.id)+'"><p class="source-exam-origin">'+esc(sourceCaption(q.sourceRef))+'</p>'+renderItem(q,{print:true,show:teacher&&!legacyReview,no:String(number)})+(teacher&&legacyReview?legacyReviewHtml(q):'')+'</article>';
- }).join('');
+ }).join('').replaceAll('loading="lazy"','loading="eager"');
  return (tools?'<header class="top no-print"><div class="wrap"><a class="back" href="'+href+'">‹ 문제 풀기로</a><h1>'+esc(questionTitle)+' · '+(teacher?'교사 해설':'문제지')+'</h1><button type="button" class="btn" data-source-exam-print disabled>인쇄</button><p role="status" data-source-exam-status>그림과 글꼴을 준비하고 있어요.</p>'+sourceExamPrintLinks(unit,set)+'</div></header>':'')
   +'<main class="source-exam-paper'+(teacher?' source-exam-teacher':'')+'"><header class="source-exam-heading"><p>GFIELD · 지필드</p><h1>'+esc(heading)+'</h1><p>'+(teacher?'교사용 · 정답과 해설':'학생용 · 이름 ____________________')+'</p></header>'
   +'<div class="source-exam-intro"><p>'+list.length+'문항 · 자료를 읽고 답해요. 원래 문제 번호를 그대로 두었어요.</p>'+(bank?.sourceScopeNote?'<p>'+esc(bank.sourceScopeNote)+'</p>':'')+(bank?.sourceExcerptOnly?'<p>이 자료는 관련 문제를 골라 묶은 것이에요.</p>':'')+(teacher?'<p>선생님 확인이 필요한 답은 자동으로 맞고 틀림을 정하지 않아요.</p>':'')+'</div>'+body+'</main>';

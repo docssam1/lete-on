@@ -13,9 +13,13 @@ export const unit = {
     "과거 환경 추리·화석의 가치"
   ],
   "sources": {
-    "bank": [],
+    "bank": [
+      "이론421 지층과 화석 현행 연계 발췌17문항"
+    ],
     "originalExamAvailable": false,
-    "basis": "bank/work/c22s51u01/curriculum.json"
+    "basis": "bank/work/c22s51u01/curriculum.json",
+    "originalBookAvailable": true,
+    "scope": "옛 교사용 교재의 현행 범위 발췌17개. 현행 단원평가 전체 원문과 구별한다."
   }
 };
 export const items = [
@@ -182,9 +186,15 @@ export const items = [
     "id": "c22-s51-u01-b004",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 2,
+        "no": 1
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -290,9 +300,15 @@ export const items = [
     "id": "c22-s51-u01-b006",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 1
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1449,9 +1465,15 @@ export const items = [
     "id": "c22-s51-u01-b028",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 2
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1709,9 +1731,15 @@ export const items = [
     "id": "c22-s51-u01-b033",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 3
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1762,9 +1790,15 @@ export const items = [
     "id": "c22-s51-u01-b034",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 4,
+        "no": "4(2)"
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1868,9 +1902,15 @@ export const items = [
     "id": "c22-s51-u01-b036",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 4
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1974,9 +2014,15 @@ export const items = [
     "id": "c22-s51-u01-b038",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 4,
+        "no": "4(1)"
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -2074,9 +2120,15 @@ export const items = [
     "id": "c22-s51-u01-b040",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 5
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -2715,9 +2767,15 @@ export const items = [
     "id": "c22-s51-u01-b052",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 6
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -3629,9 +3687,15 @@ export const items = [
     "id": "c22-s51-u01-b069",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 7
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -3944,9 +4008,15 @@ export const items = [
     "id": "c22-s51-u01-b075",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 2,
+        "no": 7
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -4103,9 +4173,15 @@ export const items = [
     "id": "c22-s51-u01-b078",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 8
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -4205,9 +4281,15 @@ export const items = [
     "id": "c22-s51-u01-b080",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 2,
+        "no": 8
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -4365,9 +4447,15 @@ export const items = [
     "id": "c22-s51-u01-b083",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 9
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -4418,9 +4506,15 @@ export const items = [
     "id": "c22-s51-u01-b084",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 3,
+        "no": "1(1)"
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -4524,9 +4618,15 @@ export const items = [
     "id": "c22-s51-u01-b086",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 2,
+        "no": 5
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -4679,9 +4779,15 @@ export const items = [
     "id": "c22-s51-u01-b089",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 지층과 화석 창작 학습",
-      "course": "초등5-1"
+      "course": "초등5-1",
+      "originalAuthoredType": "authored-supplement",
+      "of": {
+        "sourceId": "gfield-theory-42-1",
+        "set": 1,
+        "no": 10
+      }
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -5096,3 +5202,4 @@ export const items = [
   }
 ];
 export {geologyBankPaperHtml as bankPaper,wireGeologyBankPaper as wireBankPaper} from '../../v2/geology-bank-paper.js';
+export {source,sourceRegistration} from './c22-s51-u01.source.js';
