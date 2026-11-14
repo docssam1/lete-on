@@ -17,3 +17,7 @@
   .ut-header .ut-btn { flex: 1 1 40%; min-height: 40px; padding: 6px 10px; }
 }
 @media print { .ut-guide { display: none; } }
+.st-ans { white-space: nowrap; }
+.ut-q-ans.is-multi { flex-wrap: wrap; column-gap: 1.6em; row-gap: 0.4em; }
+.ut-q-ans.is-multi i { width: 10cqw; }
+@media screen and (max-width: 700px) { .ut-q-ans.is-multi i { width: 64px; } }

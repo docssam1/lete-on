@@ -1,7 +1,7 @@
 import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES } from "./source-data.js?v=20261111g";
 import { remediationUrl } from "./result-diagnosis-data.js?v=20261111g";
 import { loggedIn } from "./study-progress.js?v=20261111p";
-import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114b";
+import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
 
 // 입학 모의고사 고르기(원장 2026-11-14). 시험은 문제은행에 이미 있는 것 그대로(source-data.js):
 //   초1 입학 대비 = 7세 선발시험, 초2 입학 대비 = 초1 선발시험(원본 이미지·유형 대조가 끝난 것), 실전·파이널 모의고사.

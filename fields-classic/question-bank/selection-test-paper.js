@@ -1,6 +1,6 @@
 import { EXAMS } from "./source-data.js?v=20261111g";
 import { loggedIn } from "./study-progress.js?v=20261111p";
-import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114b";
+import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
 
 // 선발시험 시험지(다시 짠 것) 보기·인쇄 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 권별 테스트(unit-test-viewer.js)와 같은 방식: 문제 글·수·배치는 원문 그대로, 글꼴·색·그림은 우리 것.
@@ -25,7 +25,10 @@ if (params.get("student")) back.set("student", params.get("student"));
 $("backLink").href = `./entrance.html${back.size ? `?${back}` : ""}`;
 
 function questionMarkup(question) {
-  const answer = question.answer ? `<p class="ut-q-ans">${esc(question.answer.label || "답")} <span aria-hidden="true">(</span><i></i><span aria-hidden="true">)</span>${question.answer.unit ? esc(question.answer.unit) : ""}</p>` : "";
+  // 답 칸: { label, unit } 하나, 또는 답이 둘 이상이면 그 배열(한 줄에 나란히)
+  const blank = (a) => `<span class="st-ans">${esc(a.label || "답")} <span aria-hidden="true">(</span><i></i><span aria-hidden="true">)</span>${a.unit ? esc(a.unit) : ""}</span>`;
+  const list = [].concat(question.answer || []);
+  const answer = list.length ? `<p class="ut-q-ans${list.length > 1 ? " is-multi" : ""}">${list.map(blank).join("")}</p>` : "";
   return `<section class="ut-q" aria-label="${question.number}번"><div class="ut-q-head"><b>${question.number}</b><p>${esc(question.prompt)}</p></div><div class="ut-q-fig">${question.figure ? question.figure() : ""}</div>${answer}</section>`;
 }
 function pagesMarkup() {
