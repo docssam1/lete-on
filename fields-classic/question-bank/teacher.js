@@ -1,9 +1,10 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
-import { checkSession, loadClass, logout, weekRate } from "./study-progress.js?v=20261111p";
-import { initMembers } from "./teacher-members.js?v=20261111p";
-import { initAccess } from "./teacher-access.js?v=20261111p";
+import { checkSession, loadClass, logout, weekRate, memberCall } from "./study-progress.js?v=20261111p";
+import { initAdmin } from "./teacher-admin.js?v=20261114a";
+import { initAccess, refreshAccess, setRecords } from "./teacher-access.js?v=20261114a";
 
-// 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.
+// 관리자 화면(원장 2026-11-14 「어드민 좀 쉽게」 — 탭 셋: GM 회원 · 모의고사 회원 · 접속·학습 상황, teacher-admin.js).
+// 「접속·학습 상황」 탭 = 예전 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.
 // 관리자(DOCSSAM)만 연다(원장 2026-11-11 「보안 설정도 하자」 — 예전 「지금은 다 접속되는 걸로」(2026-10-27)의 기기 기록 데모는 뺐다).
 // 관리자(DOCSSAM)로 로그인하면 서버(fields-progress class)의 승인된 학생 전체 기록. 서버 기록은 로그인 없이 열지 않는다(학생 이름·진도 보호).
 const $ = (id) => document.getElementById(id);
@@ -98,12 +99,40 @@ if (!me || me.type !== "admin") {
 } else {
   $("who").innerHTML = `<span>${esc(me.name)}</span><button type="button" id="logoutBtn">로그아웃</button>`;
   $("logoutBtn").addEventListener("click", async () => { await logout(); location.assign("./teacher.html"); });
-  initMembers();
-  const data = await loadClass().catch(() => null);
-  if (!data) $("status").textContent = "기록을 불러오지 못했어요. 새로고침해 주세요.";
-  else {
-    $("status").textContent = "로그인한 학생의 기록이에요. 로그인 없이(데모) 공부한 것은 그 기기에만 있어요.";
-    fill(data);
+  // 탭: 고른 탭은 주소(?tab=)에 남긴다 — 새로고침해도 그 탭
+  const TABS = ["gm", "mock", "study"];
+  const showTab = (tab) => {
+    for (const key of TABS) {
+      const on = key === tab;
+      $(`tab-${key}`).setAttribute("aria-selected", String(on)); $(`tab-${key}`).tabIndex = on ? 0 : -1;
+      $(`pane-${key}`).hidden = !on;
+    }
+    const url = new URL(location.href); url.searchParams.set("tab", tab); history.replaceState(null, "", url);
+  };
+  $("tabs").addEventListener("click", (event) => { const b = event.target.closest("[data-tab]"); if (b) showTab(b.dataset.tab); });
+  $("tabs").addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    const i = TABS.indexOf(document.activeElement?.dataset?.tab);
+    if (i < 0) return;
+    const next = TABS[(i + (event.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length];
+    showTab(next); $(`tab-${next}`).focus();
+  });
+  let access = null;
+  try { access = await memberCall({ action: "admin-access" }); }
+  catch (error) { $("status").textContent = `회원 목록을 불러오지 못했어요(${error.message}). 새로고침해 주세요.`; }
+  if (access) {
+    $("status").hidden = true;
+    $("tabs").hidden = false;
+    showTab(TABS.includes(params.get("tab")) ? params.get("tab") : "gm");
+    initAdmin(access.accounts || [], () => refreshAccess());
+    initAccess(access, byStudent);   // 접속한 회원 · 회원 정보 · 학습 상황
+    $("classStatus").textContent = "학생 기록을 불러오는 중…";
+    const data = await loadClass().catch(() => null);
+    if (!data) $("classStatus").textContent = "학생 기록을 불러오지 못했어요. 새로고침해 주세요.";
+    else {
+      $("classStatus").textContent = "로그인한 학생의 기록이에요. 로그인 없이(둘러보기) 공부한 것은 그 기기에만 있어요.";
+      fill(data);
+      setRecords(byStudent);
+    }
   }
-  initAccess(byStudent);   // 접속한 회원 · 회원 정보 · 학습 상황(맨 위 칸)
 }

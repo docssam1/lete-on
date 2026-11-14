@@ -1,13 +1,18 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { FieldsAccessError, isFieldsAdminName, authenticateFieldsAdmin, resolveFieldsSession } from "../_shared/fields-admin-access.js";
-import { membershipSummary } from "../_shared/fields-membership.js";
+import { membershipSummary, directSummary, blocksLogin } from "../_shared/fields-membership.js";
 
-// 가입 회원(fields_members, 원장 2026-10-29)이면 체험이 끝났거나 멈춘 경우 로그인을 막고, 열린 권을 함께 돌려준다.
-// 회원 표에 없는 옛 승인번호(원장이 직접 만든 것)는 그대로 들어온다.
+// GM 과정(스스로 공부) 상태를 함께 돌려준다(원장 2026-11-14 「권별 이나 기간」): 가입 회원(fields_members)은 체험·정규 규칙,
+// GM 열기 방식(fields_gm_plans)이 있으면 그 방식이 먼저. 원장이 직접 만든 승인번호는 방식이 없으면 GM이 닫혀 있다(gm_none).
+// 로그인을 막는 것은 가입 회원의 체험 끝·멈춤뿐이다(blocksLogin) — 모의고사 회원은 같은 승인번호로 모의고사에 들어가야 한다.
 async function memberOf(service: any, name: string) {
-  const { data, error } = await service.from("fields_members").select("*").eq("child_name", name).maybeSingle();
-  if (error) return null;
-  return membershipSummary(data);
+  const [member, plan] = await Promise.all([
+    service.from("fields_members").select("*").eq("child_name", name).maybeSingle(),
+    service.from("fields_gm_plans").select("*").eq("student_name", name).maybeSingle(),
+  ]);
+  if (member.error) return null;
+  const planRow = plan.error ? null : plan.data;
+  return member.data ? membershipSummary(member.data, planRow) : directSummary(planRow);
 }
 
 // 틀린 승인번호 막기(원장 2026-10-31, 2026-11-11 「보안 설정도 하자」로 더 세게): 같은 이름으로 1시간 안에 5번 틀리면
@@ -149,7 +154,7 @@ Deno.serve(async (req: Request) => {
       }
       await service.from("fields_login_failures").delete().eq("student_name", account.student_name);
       const member = await memberOf(service, account.student_name);
-      if (member && !member.open) return json(req, { error: member.reason, member }, 403);
+      if (blocksLogin(member)) return json(req, { error: member.reason, member }, 403);
       const token = randomToken();
       const tokenHash = await sha256(token);
       const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
@@ -173,7 +178,7 @@ Deno.serve(async (req: Request) => {
     if (action !== "session") return json(req, { error: "action_invalid" }, 400);
     const account = await resolveFieldsSession(service, tokenHash);
     const member = account.type === "admin" ? null : await memberOf(service, account.name);
-    if (member && !member.open) return json(req, { error: member.reason, member }, 403);
+    if (blocksLogin(member)) return json(req, { error: member.reason, member }, 403);
     await service.from("fields_access_sessions").update({ last_seen_at: new Date().toISOString() }).eq("token_hash", tokenHash);
     return json(req, {
       ok: true,

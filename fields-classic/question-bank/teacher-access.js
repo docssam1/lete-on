@@ -1,4 +1,5 @@
-import { memberCall, weekRate } from "./study-progress.js?v=20261111p";
+import { weekRate } from "./study-progress.js?v=20261111p";
+import { gmState } from "./teacher-admin.js?v=20261114a";
 
 // 선생님 보기 · 접속한 회원(원장 2026-11-11 「들어간 회원, 회원정보, 학습 상황도 나올 수 있도록」):
 // 모든 승인번호(이메일로 가입한 아이 + 원장이 직접 만든 승인번호)를 마지막 활동 순으로 —
@@ -18,19 +19,14 @@ function stamp(iso) {
   const diff = startOfToday() - new Date(d).setHours(0, 0, 0, 0);
   return diff <= 0 ? `오늘 ${time}` : diff <= DAY ? `어제 ${time}` : `${d.getMonth() + 1}/${d.getDate()} ${time}`;
 }
-function memberState(m) {
-  if (m.status === "paused") return ["멈춤", "is-paused"];
-  if (m.status === "approved") return ["정규회원", "is-approved"];
-  if (!m.open) return ["체험 끝", "is-ended"];
-  return [`체험 ${Math.max(0, Math.ceil((new Date(m.trialUntil).getTime() - Date.now()) / DAY))}일 남음`, "is-trial"];
-}
 
 let accounts = [];
 // 관리자 접속·열람 기록(원장 2026-11-11 「보안 설정도 하자」) — 서버(fields-members admin-access)의 admin: { sessions, audit }
 const ACTION = { login: "관리자 로그인", "admin-login": "관리 화면 로그인", login_failed: "관리자 로그인 실패", login_locked: "관리자 로그인 잠김",
   "admin-access": "접속한 회원 열람", "admin-list": "회원 관리 열람", "admin-reissue": "승인번호 새로 만듦",
   "admin-update:approve": "정규회원 승인", "admin-update:trial": "체험 연장", "admin-update:pause": "멈춤", "admin-update:resume": "다시 열기",
-  "admin-update:grant-book": "권 +1", "admin-update:take-book": "권 −1", "admin-update:start": "시작 진도 바꿈", "admin-update:memo": "메모" };
+  "admin-update:grant-book": "권 +1", "admin-update:take-book": "권 −1", "admin-update:start": "시작 진도 바꿈", "admin-update:memo": "메모",
+  "admin-gm": "GM 여는 방식 바꿈", "admin-account-create": "승인번호 만듦", "admin-account-set": "모의고사 회차·사용 바꿈" };
 function renderAdminLog(log) {
   const box = $("adminLog");
   if (!box || !log) return;
@@ -82,11 +78,10 @@ function render() {
   $("accessTable").innerHTML = `<thead><tr><th>이름</th><th>접속</th><th>회원 정보</th><th>학습 상황</th></tr></thead><tbody>${rows.map((a) => {
     const m = a.member, study = latestStudy(a.name);
     const teach = a.permissions.includes("강사용교안");
-    const info = m
-      ? (() => { const [label, cls] = memberState(m); return `<span class="ms-status ${cls}">${label}</span>
-          <small>${m.level === "kinder" ? `유치 ${m.age}세` : `초${m.grade}`} · ${m.open && m.books?.length ? `${bookNo(m.books[0]) === bookNo(m.upTo) ? "" : `${bookNo(m.books[0])}~`}${bookNo(m.upTo)}권 열림` : "열린 권 없음"}</small>
-          <small>${esc(m.email)} · 보호자 ${esc(phone(m.guardianPhone))}</small>${m.memo ? `<small>메모: ${esc(m.memo)}</small>` : ""}`; })()
-      : `<span class="ms-status">${a.type === "internal" ? "재원생" : a.type === "online" ? "온라인" : "직접 발급"}</span><small>원장이 만든 승인번호${a.active ? "" : " · 사용 중지"}</small>`;
+    const gm = gmState(a);
+    const info = `<span class="ms-status ${gm.cls}">GM ${esc(gm.text)}</span>` + (m
+      ? `<small>이메일 가입 · ${m.level === "kinder" ? `유치 ${m.age}세` : `초${m.grade}`}</small><small>${esc(m.email)} · 보호자 ${esc(phone(m.guardianPhone))}</small>${m.memo ? `<small>메모: ${esc(m.memo)}</small>` : ""}`
+      : `<small>${a.type === "online" ? "온라인" : "재원생"} · 원장이 만든 승인번호${a.active ? "" : " · 사용 중지"}</small>`);
     return `<tr class="${a.lastSeen ? "" : "is-idle"}">
       <th><b>${esc(a.name)}</b>${a.online ? `<em class="ms-online">지금 접속</em>` : ""}${teach ? `<em class="ms-teach">강사용 교안</em>` : ""}</th>
       <td>${a.lastSeen ? `<b>${stamp(a.lastSeen)}</b><small>로그인 ${stamp(a.lastLogin)} · 30일 ${a.logins30}번</small>` : "<small>아직 로그인 기록 없음</small>"}</td>
@@ -96,14 +91,14 @@ function render() {
   }).join("") || `<tr><td colspan="4" class="ms-empty">${{ now: "지금 접속한 사람이 없어요.", today: "오늘 들어온 사람이 없어요.", week: "7일 동안 들어온 사람이 없어요." }[filter] || "승인번호가 없어요."}</td></tr>`}</tbody>`;
 }
 
-// byStudent: teacher.js가 불러 둔 학생 기록 Map(학생 → Map(`kind:key` → { key, payload, updatedAt }))
-export async function initAccess(byStudent) {
+// data: teacher.js가 불러 둔 admin-access 응답(accounts는 관리 탭과 같은 배열) · byStudent: 학생 기록 Map(학생 → Map(`kind:key` → { key, payload, updatedAt }))
+export function refreshAccess() { if (accounts.length) render(); }
+export function setRecords(byStudent) { records = byStudent || new Map(); refreshAccess(); }
+export function initAccess(data, byStudent) {
   records = byStudent || new Map();
   $("accessBox").hidden = false;
-  $("accessMsg").textContent = "접속 기록을 불러오는 중…";
-  let adminLog = null;
-  try { const data = await memberCall({ action: "admin-access" }); accounts = data.accounts || []; adminLog = data.admin || null; }
-  catch (error) { $("accessMsg").textContent = `접속 기록을 불러오지 못했어요(${error.message}).`; return; }
+  accounts = data.accounts || [];
+  const adminLog = data.admin || null;
   const today = startOfToday();
   filter = accounts.some((a) => a.lastSeen && new Date(a.lastSeen).getTime() >= today) ? "today"
     : accounts.some((a) => a.lastSeen && Date.now() - new Date(a.lastSeen).getTime() < 7 * DAY) ? "week" : "all";

@@ -1,9 +1,9 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261111c";
 import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261111f";
-import { readRecord, saveRecord, checkSession } from "./study-progress.js?v=20261111p";
+import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
-import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261111p";
+import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261114a";
 import { planStatus, dayLabel } from "./study-plan.js?v=20261111f";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
@@ -903,6 +903,8 @@ function startIndex() {
 // 강사용 교안은 이 기기에 적힌 로그인 정보를 믿지 않고 서버에 다시 물어 본다(원장 2026-11-11 「보안 설정도 하자」) —
 // 서버가 확인해 준 세션이 없으면(만료·위조·연결 끊김) 잠근다. 확인되면 권한 목록(gf_p)도 서버 것으로 바뀐다.
 const verified = classMode ? await checkSession() : null;
+// 학생도 로그인했으면 GM 상태(권별·기간, 원장 2026-11-14)를 서버에서 다시 받아 잠금을 정한다 — 연결이 안 되면 이 탭에 적힌 것으로
+if (!classMode && loggedIn()) await checkSession();
 const gate = classMode ? (verified && canTeach() ? { ok: true } : { ok: false, why: "teach" }) : canStudy(book.id, unitIndex);
 if (classMode) setupClass();
 if (!gate.ok) lockPage(gate.why, { bookId: book.id, student, here: `study.html${location.search}` });

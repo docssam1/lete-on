@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { unitParts, partProblems } from "./study-map.js?v=20261111c";
-import { loadLocalAll } from "./study-progress.js?v=20261111p";
-import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261111p";
+import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261111p";
+import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261114a";
 import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261111f";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
@@ -105,6 +105,8 @@ $("studentName").textContent = student;
 $("introLink").href = link("home.html", {});
 $("startLink").href = link("start.html", {});
 $("myStudyLink").href = link("my-study.html", { book: view.bookId });
+// 로그인했으면 GM 상태(권별·기간)를 서버에서 다시 받아 잠금을 정한다(원장 2026-11-14) — 연결이 안 되면 이 탭에 적힌 것으로
+if (loggedIn()) await checkSession();
 {
   const html = accessBanner();
   $("accessBanner").innerHTML = html; $("accessBanner").hidden = !html;
