@@ -15,3 +15,5 @@
 @media print{.bank-photo-figure img[src="../assets/book/s41-u03-runoff-before-after-v1.png"],.bank-photo-figure img[src="../assets/bank/s41-u03/s3-q04.webp"],.bank-photo-figure img[src="../assets/bank/s41-u03/s3-q06.webp"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}
 
 @media print{.ed-question .ed-photo img[src="../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg"],.bank-photo-figure img[src="../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}
+
+@media print{.ed-question .motion-book-photo img[src="../assets/bank/c22-s61-u02/s4-q05.webp"],.bank-photo-figure img[src="../assets/bank/c22-s61-u02/s4-q05.webp"],.observation-photo img[src="../assets/book/c22-s62-u03-damaged-cord-dmahalko.jpg"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}

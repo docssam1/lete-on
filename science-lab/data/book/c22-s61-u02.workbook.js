@@ -1,3 +1,4 @@
+import{withMotionElectricalWorkbook}from'./motion-electricity-reference-context.js?v=20261115-motion-electricity-reference';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withMotionReadableWorkbook}from'./c22-s61-u02.editorial.js?v=20261106-motion-readable-workbook';
 import{withMotionPhotoLanguage}from'./c22-s61-u02.editorial.js?v=20261105-sound-motion-photo-language';
@@ -15444,4 +15445,5 @@ export const observationPriorWorkbook=withMotionEditorial(baseWorkbook);
 export const motionPhotoPriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const motionReadablePriorWorkbook=withMotionPhotoLanguage(motionPhotoPriorWorkbook);
 export const grade6StudyNotesPriorWorkbook=withMotionReadableWorkbook(motionReadablePriorWorkbook);
-export const workbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
+export const motionReferencePriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
+export const workbook=withMotionElectricalWorkbook(motionReferencePriorWorkbook);

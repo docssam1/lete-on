@@ -1,0 +1,119 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "물체의 운동29번·전기의 이용110번의 실제 사진 연결",
+  "cacheVersion": "20261115-motion-electricity-reference",
+  "standards": [
+    "6과10-01",
+    "6과15-04"
+  ],
+  "learningDistinctions": [
+    "비행기 사진 한 장으로 이륙/착륙·높아짐/낮아짐·빠르기 변화를 판정하지 않는다. 시간에 따른 위치나 이동 거리 자료가 더 필요하다.",
+    "손상된 전선의 겉모습과 내부 상태를 구별하며 기존 사용 중단·어른 점검의 설명과 교사 확인 기준을 유지한다. 실제 손상 전선을 학생이 만지거나 수리하는 활동으로 바꾸지 않는다."
+  ],
+  "images": [
+    {
+      "path": "assets/bank/c22-s61-u02/s4-q05.webp",
+      "sha256": "d4548e46dfc0d15e01a755c88f8f968430b3f3145c09208727529a1706bbf5f5",
+      "width": 422,
+      "height": 272,
+      "existingOriginalBytesUnchanged": true,
+      "credit": "지필드 과학 교재"
+    },
+    {
+      "path": "assets/book/c22-s62-u03-damaged-cord-dmahalko.jpg",
+      "sha256": "9e6be16c0ee421de4367360488815cd223f08bf182b3e621680caef7d52638a1",
+      "size": 4317684,
+      "width": 3648,
+      "height": 2736,
+      "creator": "Dale Mahalko",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_lamp_cord_-_brittle_after_50_yrs.jpg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/4/48/Plastic_lamp_cord_-_brittle_after_50_yrs.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "originalBytesPreserved": true,
+      "imageEditedOrCropped": false,
+      "sourceCheck": "저자가 직접 촬영한 겉부분이 갈라지는 램프 전선 사진. 원본 파일과 저자·CC BY-SA3.0 링크를 함께 표시한다. 사진의 손상 원인이나 통전 여부는 문제에서 새로 단정하지 않는다."
+    }
+  ],
+  "safetyReference": {
+    "title": "CPSC Guide to Home Wiring Hazards",
+    "url": "https://www.cpsc.gov/s3fs-public/518.pdf",
+    "supports": "겉부분이 손상된 전선의 사용 중단과 적절한 점검/교체가 필요하다는 기존 설명을 확인했다. 학생 수리 절차로 제공하지 않는다."
+  },
+  "changes": {
+    "workbook": [
+      "c22-s61-u02-w029",
+      "c22-s62-u03-w110"
+    ],
+    "bank": [
+      "c22-s61-u02-b029",
+      "c22-s62-u03-b110"
+    ],
+    "motion": "사진을 붙이고 내려오는 비행기라는 단정을 활주로 가까이에서 촬영한 비행기로 바꾼다. 해설도 시간에 따른 위치/이동 거리 자료의 필요로 맞춘다.",
+    "electricity": "사진과 출처·저자·표시 조건 링크 및 기존 그림 key1개를 추가하고 발문이 실제 제시 자료를 가리키게 한다. 응답 계약·예시 답·해설은 유지한다.",
+    "printPolicy": "문제 속 두 사진만 인쇄 최대 높이38mm, 원본 비율을 유지한다. 기존 개념 사진 크기는 바꾸지 않는다."
+  },
+  "ocr": {
+    "engine": "Apple Vision",
+    "computePolicy": "CPU-only",
+    "files": 2,
+    "frames": 2,
+    "failures": 0,
+    "recognizedLines": 0,
+    "manualReview": true,
+    "note": "두 파일을 별도 프로세스로 처리하고 실제 모습을 직접 확인했다.0줄만으로 글자 없음의 증명을 삼지 않는다."
+  },
+  "preservation": {
+    "previousGit": "48904238fbbbb6f835aa4501b02b8f0144802e27",
+    "priorManuscriptsExecutedInMemory": true,
+    "actualUnits": 32,
+    "currentQuestions": 3179,
+    "currentQuestionsUnchanged": 3177,
+    "changedItems": [
+      "c22-s62-u03-b110",
+      "c22-s61-u02-b029"
+    ],
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestionsUnchanged": 1512,
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3078,
+    "allKeysContractsChoiceOrdersPageStructuresWritingAreasAndSidebarsPreserved": true,
+    "allOldFiguresPreserved": true,
+    "newCableFigureKeys": 1,
+    "answerComparisons": 9,
+    "oldVersionsPreserved": 5,
+    "actualWorkbookPrintModesCompared": 8,
+    "genericQuestionStudentTeacherPrintsCompared": 4,
+    "actualBankPrintModesCompared": 8,
+    "allQuickPrintsByteIdentical": true,
+    "electricityAnswerPrintsByteIdentical": true,
+    "motionAnswerPrintOnlyExplanationChangedInWorkbookAndPromptExplanationInBank": true,
+    "printChangesLimitedToTwoPhotographsPromptsAndMotionExplanation": true,
+    "previousRevisionLoadersDecksAndElectricityBankExecutedFromGit": true,
+    "decks": 64,
+    "slides": 3048,
+    "allSlidesByteIdentical": true,
+    "pictureSlides": 16,
+    "rawSourcesAndQuestionWorkbookRendererCodeUnchanged": true,
+    "actualBrowserAndA4Reviewed": false
+  },
+  "verification": {
+    "testFiles": 292,
+    "tests": 1520,
+    "passed": 1518,
+    "failed": 0,
+    "browserSkipped": 2,
+    "newRegressionTests": 4,
+    "syntaxFiles": 29,
+    "bankAudit": true,
+    "taxonomyCheck": true,
+    "diffCheck": true,
+    "fullHistoricSnapshots": 2814,
+    "choiceOnlyDeltas": 2
+  },
+  "newOriginalQuestions": 0,
+  "newGeneratedImages": 0,
+  "newExternalPhotos": 1,
+  "browserAndA4Reviewed": false,
+  "deployed": false
+}

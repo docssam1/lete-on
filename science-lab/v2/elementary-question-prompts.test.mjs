@@ -1,3 +1,4 @@
+import{MOTION_ELECTRICITY_REFERENCE_VERSION}from'../data/book/motion-electricity-reference-context.js';
 import{OBSERVATION_CONTEXT_VERSION,MATERIAL_OBSERVATION_CONTEXT_VERSION}from'../data/book/standalone-question-context.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -31,7 +32,7 @@ const versioned=new Set(['prompt','contentVersion','previousVersions','diagnosti
 test('only eleven authored workbook prompts change; every other field and complete prior manuscript survive',async()=>{
  let changed=0;
  for(const unit of units){
-  const exports=await import(`../data/book/${unit}.workbook.js`),{elementaryPromptPriorWorkbook:prior}=exports,current=exports.materialObservationPriorWorkbook||exports.observationContextPriorWorkbook||exports.workbook,saved=structuredClone(prior);
+  const exports=await import(`../data/book/${unit}.workbook.js`),{elementaryPromptPriorWorkbook:prior}=exports,current=exports.electricityReferencePriorWorkbook||exports.materialObservationPriorWorkbook||exports.observationContextPriorWorkbook||exports.workbook,saved=structuredClone(prior);
   assert.equal(current.questions.length,128);
   for(const key of Object.keys(prior).filter(k=>k!=='questions'))assert.equal(current[key],prior[key]);
   for(let i=0;i<128;i++){
@@ -110,7 +111,7 @@ test('bank paper modules bypass cached former workbook URLs and load the revised
    const target=new URL(spec,url);if(cache.has(target.href))return cache.get(target.href);
    let ns=await import(target.href);
    if(target.pathname.endsWith(`/${unit}.workbook.js`)){
-    if(target.search.includes(unit==='c22-s62-u01'?OBSERVATION_CONTEXT_VERSION:unit==='c22-s62-u02'?MATERIAL_OBSERVATION_CONTEXT_VERSION:ELEMENTARY_PROMPT_VERSION))freshReads++;
+    if(target.search.includes(unit==='c22-s62-u01'?OBSERVATION_CONTEXT_VERSION:unit==='c22-s62-u02'?MATERIAL_OBSERVATION_CONTEXT_VERSION:MOTION_ELECTRICITY_REFERENCE_VERSION))freshReads++;
     else {staleReads++;ns={...ns,workbook:ns.elementaryPromptPriorWorkbook};}
    }
    const mod=new vm.SyntheticModule(Object.keys(ns),function(){for(const [key,value]of Object.entries(ns))this.setExport(key,value);},{context});cache.set(target.href,mod);await mod.link(()=>{});return mod;

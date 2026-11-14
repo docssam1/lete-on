@@ -1,3 +1,4 @@
+import{withMotionElectricalWorkbook}from'./motion-electricity-reference-context.js?v=20261115-motion-electricity-reference';
 import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withElectricityReadableWorkbook}from'./c22-s62-u03.editorial.js?v=20261106-electricity-readable-workbook';
 import{withGuidanceParticles}from'./term-particle-language.js?v=20261105-guidance-particles';
@@ -21268,4 +21269,5 @@ export const termParticlePriorWorkbook=withLearnerExplanations(learnerPriorWorkb
 export const guidanceParticlePriorWorkbook=withTermParticleLanguage(termParticlePriorWorkbook);
 export const electricityReadablePriorWorkbook=withGuidanceParticles(guidanceParticlePriorWorkbook);
 export const elementaryPromptPriorWorkbook=withElectricityReadableWorkbook(electricityReadablePriorWorkbook);
-export const workbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
+export const electricityReferencePriorWorkbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
+export const workbook=withMotionElectricalWorkbook(electricityReferencePriorWorkbook);

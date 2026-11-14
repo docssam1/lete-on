@@ -1,7 +1,8 @@
+import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import test from 'node:test';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {items} from '../data/units/c22-s61-u02.js';import {source} from '../data/units/c22-s61-u02.source.js';import {similar} from '../data/units/c22-s61-u02.similar.js';import * as misc from '../data/units/c22-s61-u02.misc.js';
 import {motionCurrentItems} from './motion-question-language.js';import {observationCurrentItems} from '../data/book/observation-language.js';
-import {motionReadableCurrentItems,MOTION_READABILITY_VERSION} from '../data/book/c22-s61-u02.editorial.js';import {workbook,motionReadablePriorWorkbook} from '../data/book/c22-s61-u02.workbook.js';
+import {motionReadableCurrentItems,MOTION_READABILITY_VERSION} from '../data/book/c22-s61-u02.editorial.js';import {motionReferencePriorWorkbook as workbook,motionReadablePriorWorkbook} from '../data/book/c22-s61-u02.workbook.js';
 import {gradeDaily} from './daily-grade.js';import {questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts} from './question-revision.js';
 import {revisedClassroom,classroomQuestions} from './revised-lesson.js';import * as book from '../data/book/c22-s61-u02.book.js';
 const unit='c22-s61-u02',prior=observationCurrentItems(motionCurrentItems(items),unit),current=motionReadableCurrentItems(prior,unit);
@@ -37,6 +38,6 @@ test('current sample wording changes no grading rules and quick keys match all f
  const core=JSON.stringify({pages:workbook.pages.map(p=>p.blocks),questions:workbook.questions.map(q=>({prompt:q.prompt,explanation:q.explanation}))});assert(!/평균 속력|미수신|재전달/.test(core));for(const q of current){const c=q.answerContract.motionContract,w=workbook.questions.find(w=>w.id===q.bookQuestionId),value=c.kind==='single-choice'?c.answer:c.kind==='multi-choice'?c.answers:c.kind==='ordered-parts'?c.answers:c.kind==='ordered-sequence'?c.sequence:w.answer;assert.equal(gradeDaily(q,value).status,c.teacherRequired?'review':'correct');}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,current);assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===MOTION_READABILITY_VERSION).length,8);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,standaloneQuestionContexts(current,unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===MOTION_READABILITY_VERSION).length,8);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/motion-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,69);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });
