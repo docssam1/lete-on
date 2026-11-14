@@ -2,4 +2,6 @@
 // selection-test-paper.js(시험지 보기·인쇄)와 entrance.js(「시험지 인쇄」 단추)가 같이 본다.
 export const TYPESET_EXAMS = {
   "k6-2023-02": "20261114a",
+  "k7-2022-04": "20261114a",
+  "k7-2022-06": "20261114a",
 };
