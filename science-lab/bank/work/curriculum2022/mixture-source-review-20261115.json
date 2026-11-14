@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "science-textbook-source-review/v1",
+  "date": "2026-11-15",
+  "unit": "c22-s52-u01",
+  "registration": {
+    "schemaVersion": "science-reviewed-source-registration/v1",
+    "unit": "c22-s52-u01",
+    "items": 20,
+    "teacherReview": 9,
+    "audience": "all-science-app-students",
+    "loginRequired": false,
+    "transport": "static-files",
+    "sourceScope": "legacy-textbook-current-core-extract",
+    "wholeCurrentEdition": false,
+    "runtimeRegistered": true,
+    "currentTaxonomyBound": true,
+    "pairedItemsBound": 20,
+    "reviewedContentSha256": "def5c567f53f697a592278a1c48e81556c808cc8322ca35667205a1d33ce94a9",
+    "sourcePdfSha256": "aff6bda0734f5333e15e1ad6fe36bbf4526bf4e045cc81587722cae62bda667e",
+    "sourcePages": [
+      6,
+      7,
+      8,
+      9,
+      18,
+      26,
+      27,
+      28,
+      29
+    ]
+  },
+  "groupCounts": [
+    5,
+    3,
+    3,
+    3,
+    6
+  ],
+  "originalFigures": 4,
+  "figureChecksums": [
+    {
+      "path": "assets/bank/c22-s52-u01/theory-p07-filter.png",
+      "page": 7,
+      "box": [
+        788,
+        711,
+        895,
+        835
+      ],
+      "sha256": "6a85bd10b910381e3f707eaeac360a55e15abdbee4308824f0075416a31f84c9"
+    },
+    {
+      "path": "assets/bank/c22-s52-u01/theory-p08-net.png",
+      "page": 8,
+      "box": [
+        570,
+        281,
+        840,
+        464
+      ],
+      "sha256": "851605ac50ab52c74eefc2598115cfb92124f173d963d74d1a16b61da25c1bf6"
+    },
+    {
+      "path": "assets/bank/c22-s52-u01/workbook-p27-net.png",
+      "page": 27,
+      "box": [
+        578,
+        804,
+        832,
+        968
+      ],
+      "sha256": "152b0a1f481dedfae656e1b68606c52cae2a8c7d2e5a00d5ab621c4357aee751"
+    },
+    {
+      "path": "assets/bank/c22-s52-u01/workbook-p26-choice-photos.png",
+      "page": 26,
+      "boxes": [
+        [
+          100,
+          225,
+          283,
+          340
+        ],
+        [
+          296,
+          225,
+          476,
+          340
+        ],
+        [
+          100,
+          371,
+          283,
+          486
+        ],
+        [
+          296,
+          371,
+          476,
+          486
+        ],
+        [
+          100,
+          515,
+          283,
+          640
+        ]
+      ],
+      "sha256": "a4c81a85efa2da13b1203147e230a6f5d62b1e5f6ba985f954c84fcddc47ed0b"
+    }
+  ],
+  "allOriginalPdfPagesInspected": 9,
+  "appleVisionPages": 9,
+  "appleVisionFailed": 0,
+  "existingPracticeCount": 96,
+  "existingPracticePromptAnswerTaxonomyPreserved": true,
+  "currentOriginalSourceUnits": 28,
+  "currentOriginalSourceCount": 1746,
+  "noOriginalSourceUnits": [
+    "c22-s62-u04",
+    "c22-s32-u02",
+    "c22-s32-u04",
+    "c22-s51-u01"
+  ],
+  "noOriginalSourcePracticeCount": 408,
+  "tests": {
+    "files": 273,
+    "total": 1462,
+    "passed": 1460,
+    "failed": 0,
+    "browserSkipped": 2
+  },
+  "fullCurrentEditionClaimed": false,
+  "browserVisualVerified": false,
+  "mainMerged": false,
+  "deployed": false,
+  "qa": "science-question-review/phase390",
+  "previousGoalTurnClassification": "progress",
+  "latestRemoteMainObserved": "4d7b5a507bfb6e70bede9eec440e89f1014e8eee"
+}

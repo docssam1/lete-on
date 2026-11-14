@@ -18,5 +18,5 @@ for(const unit of revisedTextbookUnits){
  }}
  units.push({unit,source:source.length,similar:similar.length,practice:items.length,total,catalogSupplement:b.supplement||0,lessonSupplement:b.lessonSupplement||0,paperLabel:b.paperLabel||null,headerModesChecked:printed});
 }
-assert(catalog.includes('27개 단원의 원문 '+sourceCount+'문항'));assert(catalog.includes('별도로 '+pending.length+'개 단원의 창작 학습 '+pendingPracticeCount+'문항'));assert.equal(reads+writes+network,0);
+assert(catalog.includes('28개 단원의 원문 '+sourceCount+'문항'));assert(catalog.includes('별도로 '+pending.length+'개 단원의 창작 학습 '+pendingPracticeCount+'문항'));assert.equal(reads+writes+network,0);
 console.log(JSON.stringify({units,sourceCount,pending,pendingPracticeCount,productionUnitLoadersExecuted:units.length,headerModesChecked:units.reduce((n,u)=>n+u.headerModesChecked,0),studentReads:reads,studentWrites:writes,network,browserVerified:false}));

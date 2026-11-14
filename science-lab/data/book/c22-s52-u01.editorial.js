@@ -952,7 +952,8 @@ export function mixtureReadableCurrentItems(rows,unit){
  let changed=false;
  const next=rows.map(question=>{
   const patch=mixtureReadableBank[question.id];
-  if(!patch||question.status!=='authored'||question.sourceRef?.type!=='authored-supplement'||(question.contentVersion||1)!==mixtureReadablePriorVersions[question.id])return question;
+  const eligibleSource=question.sourceRef?.type==='authored-supplement'||(question.sourceRef?.type==='authored-pair'&&question.sourceRef.originalAuthoredType==='authored-supplement'&&question.sourceRef.of);
+  if(!patch||question.status!=='authored'||!eligibleSource||(question.contentVersion||1)!==mixtureReadablePriorVersions[question.id])return question;
   changed=true;if(mixtureReadableCache.has(question))return mixtureReadableCache.get(question);
   const clone=value=>JSON.parse(JSON.stringify(value));
   const current={...question,...clone(patch),contentVersion:MIXTURE_READABILITY_VERSION,previousVersions:[...(question.previousVersions?clone(question.previousVersions):[]),{...clone(question),version:question.contentVersion||1}]};

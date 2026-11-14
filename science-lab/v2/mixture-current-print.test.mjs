@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 import {withThink} from './think-merge.js';
 import {workbook} from '../data/book/c22-s52-u01.workbook.js';
+import {withSourceBankPaper} from './source-bank-paper.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
 import {wireWorkbookPrint} from './workbook-print-ready.js?v=20261106-readable-type';
 import {priorMixtureBankPaperHtml,wirePriorMixtureBankPaper} from './mixture-bank-paper.js';
@@ -32,7 +33,7 @@ test('all four mixture print modes share the current workbook renderer, typograp
  const paper=makeWorkbookPaper(workbook,{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
  assert.equal(data.wireBankPaper,wireWorkbookPrint);
  for(const mode of ['student','teacher','answers','quick']){
-  const html=data.bankPaper({...data,mode});assert.equal(html,paper.workbookPaper({mode}));
+  const html=data.bankPaper({...data,mode});assert.equal(html,withSourceBankPaper({...data,bankPaper:paper.workbookPaper}).bankPaper({...data,mode}));
   assert(html.includes('revised-workbook-print'));assert(html.includes('data-workbook-print disabled'));assert(html.includes('/print/'+mode));assert(!/AI 실사형 설명 이미지|undefined|\[object Object\]/.test(html));
  }
 });
@@ -41,7 +42,7 @@ test('the actual mixture route replaces stale bank exports inherited from a cach
  const context=vm.createContext({withThink}),raw=await import('../data/units/c22-s52-u01.js'),stalePrint=()=> 'stale bank paper',staleWire=()=>{};
  const inherited={...raw,bankPaper:stalePrint,wireBankPaper:staleWire};
  const cached=new vm.SyntheticModule(Object.keys(inherited),function(){for(const [key,value]of Object.entries(inherited))this.setExport(key,value);},{context});await cached.link(()=>{});await cached.evaluate();
- const routes=new vm.Script('('+source.slice(start,end).trim().replace(/;$/,'')+')',{importModuleDynamically:spec=>spec==='../data/units/c22-s52-u01.js'?cached:import(new URL(spec,new URL('./v2.js',import.meta.url)).href)}).runInContext(context);
+ const routes=new vm.Script('('+source.slice(start,end).trim().replace(/;$/,'')+')',{importModuleDynamically:spec=>spec==='../data/units/c22-s52-u01.js?v=20261115-mixture-source'?cached:import(new URL(spec,new URL('./v2.js',import.meta.url)).href)}).runInContext(context);
  const current=await routes['c22-s52-u01']();assert.notEqual(current.bankPaper,stalePrint);assert.notEqual(current.wireBankPaper,staleWire);
  assert.equal(current.wireBankPaper,wireWorkbookPrint);assert(current.bankPaper({...current,mode:'student'}).includes('revised-workbook-print'));
 });
