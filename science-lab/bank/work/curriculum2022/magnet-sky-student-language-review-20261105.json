@@ -1,0 +1,248 @@
+{
+  "phase": 239,
+  "date": "2026-11-05",
+  "baseCommit": "bf135251d7ab226d0cb073f1457abcc28415f78d",
+  "units": [
+    "s41-u01",
+    "c22-s42-u01"
+  ],
+  "scope": "Workbook presentation26 (magnet23/sky3), current authored online presentation16 (9/7), explanatory HTML text in17 figure resources including one quick-answer table. Standalone workbook items are not forced into fictitious online correspondences.",
+  "changes": [
+    "Use concrete objects, facing surfaces and center rod wording while preserving the given axial-pole tool and lateral guide conditions.",
+    "Use did-not-observe/not-yet-known wording for Moon/planet/Polaris records and further investigation.",
+    "Keep numbers, N/S relationships, choice positions and all response contracts; map only learner presentation fields.",
+    "Apply current versions in both production unit loaders and classroom checks; preserve old presentations for all16 changed online items."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 30,
+    "questionsWithSameAnswersCriteriaExplanationsAndContracts": 3080,
+    "units": [
+      {
+        "unit": "s41-u01",
+        "workbookQuestionNumbers": [
+          4,
+          5,
+          13,
+          16,
+          17,
+          25,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          56,
+          59,
+          65,
+          66,
+          67,
+          69,
+          71,
+          72,
+          75,
+          76,
+          77
+        ],
+        "figureKeys": [
+          "materialData",
+          "distanceData",
+          "plateData",
+          "towerData",
+          "given-s41-u01-v004",
+          "given-s41-u01-v009",
+          "given-s41-u01-v025",
+          "given-s41-u01-v029",
+          "given-s41-u01-v048",
+          "given-s41-u01-v049",
+          "given-s41-u01-v064",
+          "given-s41-u01-v052",
+          "given-s41-u01-v068",
+          "given-s41-u01-v006",
+          "given-s41-u01-v032",
+          "quick-41"
+        ],
+        "allOtherDataAndGeneratedSourcePreserved": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "workbookQuestionNumbers": [
+          25,
+          54,
+          56
+        ],
+        "figureKeys": [
+          "skyCompareCards"
+        ],
+        "allOtherDataAndGeneratedSourcePreserved": true
+      }
+    ],
+    "runtimeVersioned": {
+      "s41-u01": [
+        "s41-u01-a07",
+        "s41-u01-b01",
+        "s41-u01-b02",
+        "s41-u01-b04",
+        "s41-u01-b06",
+        "s41-u01-b19",
+        "s41-u01-b44",
+        "s41-u01-b45",
+        "s41-u01-b52"
+      ],
+      "c22-s42-u01": [
+        "c22-s42-u01-b21",
+        "c22-s42-u01-b22",
+        "c22-s42-u01-b23",
+        "c22-s42-u01-b24",
+        "c22-s42-u01-b25",
+        "c22-s42-u01-b50",
+        "c22-s42-u01-b72"
+      ]
+    },
+    "allPageDataWritingSpaceFigureTagsAttributesAndNumericValuesPreserved": true,
+    "productsChanged": [
+      {
+        "unit": "s41-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "answers"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "quick"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher"
+      }
+    ],
+    "productsUnchanged": 122,
+    "slideArraysChanged": [
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "slides": 51
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "slides": 52
+      }
+    ],
+    "slideArraysUnchanged": 62,
+    "htmlChecks": [
+      {
+        "unit": "s41-u01",
+        "mode": "student",
+        "matchedPrompts": 23
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher",
+        "matchedPrompts": 23
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "student",
+        "matchedPrompts": 3
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher",
+        "matchedPrompts": 3
+      }
+    ],
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF.md",
+      "science-lab/bank/BANK-HANDOFF.md",
+      "science-lab/data/book/c22-s42-u01.thinking-lesson.js",
+      "science-lab/data/book/c22-s42-u01.workbook.js",
+      "science-lab/data/book/s41-u01.thinking-lesson.js",
+      "science-lab/data/book/s41-u01.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-magnet-lesson.test.mjs",
+      "science-lab/v2/revised-sky-lesson.test.mjs",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "productionAudit": {
+    "units": [
+      {
+        "unit": "s41-u01",
+        "productionLoaderExecuted": true,
+        "baseItems": 90,
+        "loadedItems": 90,
+        "versioned": 9,
+        "source": 80,
+        "similar": 80,
+        "classroomChecks": 26,
+        "currentClassroomChecks": 2,
+        "poolAndChecksAgree": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "productionLoaderExecuted": true,
+        "baseItems": 80,
+        "loadedItems": 92,
+        "versioned": 7,
+        "source": 95,
+        "similar": 95,
+        "classroomChecks": 12,
+        "currentClassroomChecks": 1,
+        "poolAndChecksAgree": true
+      }
+    ],
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "tests": {
+    "v2": {
+      "pass": 819,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "newTests": 2,
+    "purpose": "Source/similar exclusion despite authored status, unchanged contracts and choice outcomes, actual table-fill answer/wrong cell, open-response review boundary, prior-version restoration/selection text/restart history without state mutation.",
+    "initialFinding": "Similar items also carry status authored. The initial exclusion test found that status alone was insufficient; the adapter now checks a/b/t ID families and excludes similar source type. The final test retains exact source/similar object-identity assertions.",
+    "existingClassroomRegressions": "Use current authored question presentations in the expected pools; keep all original plan, source pool, activity, model, storage and interaction comparisons.",
+    "threeDRuntimeExecuted": false
+  },
+  "sourceBasis": {
+    "title": "교육부2022-33 별책9 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+    "localText": "Previously verified curriculum-standards/science-curriculum.txt:4과09 and4과13",
+    "scope": "Observation of magnetic forces/poles and device design; observed Moon phases, planet characteristics/models and northern constellations. These prose edits do not add magnetic-field, phase-cause or physical-quantity requirements."
+  },
+  "editorialConnection": "Additive workbook editor; runtime language version adapter applies only to a/b/t authored families. Raw original/similar/authored/think source modules, answers, criteria, explanations, optional reports and stored student data are unchanged. Keep hooks after regeneration.",
+  "cacheVersion": "20261105-magnet-sky-student-language",
+  "remaining": "Other initial-two units and wider question/teacher/classroom wording, embedded raster text where needed, actual desktop/mobile/A4/audio/WebGL and mandatory3D gate; v1 consistency and main integration/deployment. Previous browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase239:32-workbook/128-paper/64-deck snapshots, source text/tag/attribute/number checks, old/current runtime objects, two actual production loaders executed in VM with zero storage/network access, eight generated paper fragments and per-question prompt checks, initial/final test logs."
+}

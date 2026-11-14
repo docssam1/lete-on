@@ -1,0 +1,179 @@
+{
+  "phase": 201,
+  "protectedFiles": 1902,
+  "unchangedOldPdfs": 64,
+  "unchangedWorkbookHtmlProducts": 100,
+  "unchangedOtherClassroomArrays": 50,
+  "integratedWorkbooks": 26,
+  "integratedFullClassrooms": 25,
+  "studentPages": 97,
+  "teacherPages": 146,
+  "answerPages": 48,
+  "quickPages": 5,
+  "questions": 128,
+  "scienceQuestionPatches": [
+    92,
+    95,
+    115,
+    116,
+    117,
+    120,
+    121,
+    122,
+    123,
+    126,
+    128
+  ],
+  "modifiedQuestionNumbers": [
+    41,
+    42,
+    46,
+    54,
+    60,
+    62,
+    65,
+    67,
+    68,
+    71,
+    72,
+    73,
+    74,
+    76,
+    77,
+    78,
+    80,
+    83,
+    86,
+    92,
+    93,
+    95,
+    96,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    126,
+    127,
+    128
+  ],
+  "changedShortAnswerQuestions": [
+    115,
+    120,
+    121
+  ],
+  "copiedFiles": 35,
+  "adaptedCopiedFiles": [
+    "science-lab/data/book/c22-s61-u02.workbook.js",
+    "science-lab/v2/motion-bank-paper.js",
+    "science-lab/v2/motion-book.css"
+  ],
+  "newImages": 0,
+  "new3D": 0,
+  "newPaidApiCalls": 0,
+  "browserVerified": false,
+  "fullMotionClassroomPending": true,
+  "pdf": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 97,
+        "bytes": 1856290,
+        "sha256": "b93ecefa6ff33e42b6aae3d76d6c88170b89cf0c5cee2c3674f5250f9e339043",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 146,
+        "bytes": 2040181,
+        "sha256": "6e75b9394019710dcbb7972bfa4cd8d362d78cf832bc204c081f18f8c51a3fdb",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 48,
+        "bytes": 337165,
+        "sha256": "7346ddce3a1dc01455c43207ad4f1a7a9270509a8c45253c2d06fc3694540ac7",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 5,
+        "bytes": 115345,
+        "sha256": "cd29b552885bc1f3e59109caf6df3eb5104ab5b02780cc5e37acb7b4360bbee7",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 256,
+    "solutionExpressions": 256,
+    "teacherAnswerStartsOnRecto": 99
+  },
+  "vision": {
+    "engine": "native macOS Vision VNRecognizeTextRequest",
+    "runs": {
+      "pdf-vision": 97,
+      "asset-vision": 21,
+      "pdf-vision-final": 97,
+      "pdf-vision-source-final": 4,
+      "pdf-vision-rail-final": 1
+    },
+    "finalStudentPagesCovered": 97,
+    "exactTitlesRecognized": 97,
+    "titleReviewNeeded": [],
+    "totalNativeRuns": 220
+  },
+  "visualReview": {
+    "contactSheetsViewed": 15,
+    "uniqueZoomFilesViewed": 12,
+    "workbookPhotosViewedAtOriginalSize": 4,
+    "bankAssetsContactViewed": 21,
+    "coordinatePointVisibilityCorrected": true,
+    "lastModifiedSourcePagesViewed": [
+      69,
+      79,
+      95,
+      97
+    ],
+    "lastModifiedRailPageViewed": 85
+  },
+  "tests": {
+    "v2Total": 666,
+    "v2Pass": 664,
+    "v2Skip": 2,
+    "bankPass": 299,
+    "totalPass": 963,
+    "fail": 0,
+    "taxonomyCheck": true,
+    "bankAudit": true
+  },
+  "status": "local-candidate-reviewed",
+  "push": false,
+  "deployed": false,
+  "remaining": [
+    "물체의 운동 전체 사고력 수업 검수·현재 문항 버전 연결",
+    "나머지6개 교재와7개 전체 수업",
+    "최신 main 통합",
+    "허용된 실제 브라우저·모바일·소리·WebGL 검수와 main 전 3D 검사",
+    "승인 범위 배포"
+  ],
+  "sourceOriginalUnchanged": true
+}

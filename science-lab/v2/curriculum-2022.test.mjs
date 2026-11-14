@@ -38,7 +38,7 @@ test('검수된 연결은 실제 원문 수와 1:1 유사문항이 있는 자료
   for (const unit of SEMS_2022.flatMap((s) => s.units)) {
     const resource = bankFor2022(unit.position, BANK);
     if (!resource) continue;
-    if(resource.sourcePending){assert.equal(resource.n,0);const{items,unit}=await import(`../data/units/${resource.contentId}.js`);assert.equal(items.length,resource.supplement);assert.equal(unit.sources.originalExamAvailable,false);continue;}
+    if(resource.sourcePending){assert.equal(resource.n,0);const{items,unit}=await import(`../data/units/${resource.contentId}.js`);assert.equal(items.length+(resource.lessonSupplement||0),resource.supplement);assert.equal(unit.sources.originalExamAvailable,false);continue;}
     const { source } = await import(`../data/units/${resource.contentId}.source.js`);
     const { similar } = await import(`../data/units/${resource.contentId}.similar.js`);
     assert.equal(source.length, resource.n, unit.key);
@@ -82,7 +82,7 @@ test('중간평가는 실제 두 단원 범위와 50쌍을 유지하고 32단원
   for(const q of source) assert.equal(similar.filter((s)=>s.sourceRef.of.set===q.sourceRef.set&&s.sourceRef.of.no===q.sourceRef.no).length,1);
   const html=curriculumBankHtml(BANK);
   assert.equal((html.match(/data-curriculum-unit=/g)||[]).length,32);
-  assert(html.includes('현재 20개 단원의 원문 1298문항'));
+  assert(html.includes('현재 23개 단원의 원문 1512문항'));
   assert(html.includes('data-assessment="s31-mid"'));
   assert(html.includes('#/s31-fin/exam/1'));
   assert(html.includes('창작 60문항'));
@@ -95,11 +95,11 @@ test('중간평가는 실제 두 단원 범위와 50쌍을 유지하고 32단원
 
 test('새 물체와 물질의 내용 ID는 기존 탐구 단원과 저장 위치를 덮어쓰지 않는다', async () => {
  const old=SEMS.find(s=>s.sem==='3-2').units[0],current=bankFor2022('s32-u01',BANK);
- assert.equal(old.id,'s32-u01');assert.equal(old.title,'재미있는 나의 탐구');assert.equal(current.contentId,'c22-s32-u01');assert.equal(current.n,70);assert.equal(current.supplement,64);assert.equal(current.reusedSourceUnit,'s32-u04');
+ assert.equal(old.id,'s32-u01');assert.equal(old.title,'재미있는 나의 탐구');assert.equal(current.contentId,'c22-s32-u01');assert.equal(current.n,70);assert.equal(current.supplement,76);assert.equal(current.reusedSourceUnit,'s32-u04');
  const {unit}=await import('../data/units/s32-u01.js');assert.equal(unit.id,'s32-u01');assert.equal(unit.title,'재미있는 나의 탐구');
- const h=curriculumBankHtml(BANK);assert(h.includes('#/c22-s32-u01/start'));assert(h.includes('원문 70 · 짝 70 · 보충 64'));assert(!h.includes('#/s32-u01/exam/'));
+ const h=curriculumBankHtml(BANK);assert(h.includes('#/c22-s32-u01/start'));assert(h.includes('원문 70 · 짝 70 · 보충 76'));assert(!h.includes('#/s32-u01/exam/'));
 });
 
 test('지구와 바다의 창작 학습은 원문 보유 단원으로 표시하지 않는다',()=>{
- const b=bankFor2022('s32-u02',BANK),h=curriculumBankHtml(BANK);assert.equal(b.contentId,'c22-s32-u02');assert.equal(b.n,0);assert.equal(b.supplement,80);assert(b.sourcePending);assert.deepEqual(b.sets,[]);assert(!h.includes('#/c22-s32-u02/exam/'));assert(h.includes('창작 80 · 원문 준비 중'));assert(h.includes('20개 단원의 원문 1298문항'));assert(h.includes('별도로 4개 단원의 창작 학습 352문항'));
+ const b=bankFor2022('s32-u02',BANK),h=curriculumBankHtml(BANK);assert.equal(b.contentId,'c22-s32-u02');assert.equal(b.n,0);assert.equal(b.supplement,92);assert(b.sourcePending);assert.deepEqual(b.sets,[]);assert(!h.includes('#/c22-s32-u02/exam/'));assert(h.includes('창작 92 · 원문 준비 중'));assert(h.includes('23개 단원의 원문 1512문항'));assert(h.includes('별도로 9개 단원의 창작 학습 1253문항'));
 });

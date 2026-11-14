@@ -1,0 +1,15 @@
+import fs from'node:fs';import vm from'node:vm';import assert from'node:assert/strict';
+import{checks}from'../../data/book/c22-s52-u04.thinking-lesson.js';import{items}from'../../data/units/c22-s52-u04.js';import*as misc from'../../data/units/c22-s52-u04.misc.js';
+import{presentationRecord,questionMisconceptions,questionAtVersion}from'../question-revision.js';import{teacherKeyHtml}from'../daily.js';
+const q=checks.find(q=>q.id==='c22-s52-u04-b051'),old=items.find(x=>x.id===q.id),before=JSON.stringify(misc),oldVersion=questionAtVersion(q,1);
+assert.equal(q.taxonomy.element,'E6');assert.equal(old.taxonomy.element,'E8');assert.equal(questionMisconceptions(old,misc),misc);assert.equal(questionMisconceptions(oldVersion,misc),misc);assert.equal(questionMisconceptions(q,misc).typed[q.id],undefined);assert.equal(misc.typed[q.id].any,'M08');
+const bytes=new Map(),context=vm.createContext({presentationRecord,questionMisconceptions,Date,localStorage:{getItem:k=>bytes.get(k)||null,setItem:(k,v)=>bytes.set(k,v)}});
+const source=fs.readFileSync(new URL('../progress.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/,'').replace(/export /g,'');
+const progress=new vm.Script(source+'\n({classify,record,analyze,remedyItems,log})').runInContext(context);
+assert.deepEqual(Array.from(progress.classify(old,misc,false,{typed:'확인이 필요한 예전 답'}).m),['M08']);assert.deepEqual(Array.from(progress.classify(q,misc,false,{typed:'확인이 필요한 새 답'}).m),[]);
+progress.record('synthetic-energy',old,'daily',false,{typed:'확인이 필요한 예전 답'},misc);
+for(let i=0;i<2;i++){const event=progress.record('synthetic-energy',q,'daily',true,{typed:'전기 에너지'},misc);assert.equal(event.element,'E6');assert.equal(event.presentationVersion,q.contentVersion);assert.deepEqual(Array.from(event.testedMisconceptions),[]);}
+assert.equal(progress.analyze('synthetic-energy',misc).mis.M08.streak,0);assert.equal(progress.analyze('synthetic-energy',misc).mis.M08.status,'suspected');assert.equal(progress.remedyItems('synthetic-energy','M08',misc,[q],1).length,0);assert.equal(progress.remedyItems('synthetic-energy','M08',misc,[old],1).length,1);
+for(let i=0;i<2;i++)progress.record('synthetic-energy',old,'daily',true,{typed:old.answerContract.answer},misc);assert.equal(progress.analyze('synthetic-energy',misc).mis.M08.status,'resolved');
+const key=it=>teacherKeyHtml({u:'c22-s52-u04',ch:{title:'자원과 에너지'},list:[it],misc});assert(!key(q).includes(misc.misconceptions.M08.label));assert(key(oldVersion).includes(misc.misconceptions.M08.label));assert.equal(JSON.stringify(misc),before);
+console.log(JSON.stringify({currentTaxonomy:'E6',originalTaxonomy:'E8',originalDiagnosticRuleUnmodified:true,currentQuestionDoesNotInheritOpinionRule:true,oldVersionUsesOriginalRule:true,currentCorrectAnswersDoNotResolveOldMisconception:true,originalCorrectAnswersStillResolveOldMisconception:true,remedyPoolSeparatesVersions:true,teacherKeyUsesMatchingVersion:true,actualStudentStorageReads:0,actualStudentStorageWrites:0,syntheticProgressEvents:5}));

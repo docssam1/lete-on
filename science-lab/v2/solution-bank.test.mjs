@@ -26,7 +26,7 @@ test('연습 수치와 표의 결론을 독립 계산하고 단일 정답의 보
 });
 test('사진·기호를 화면과 네 인쇄 모드에서 같은 자료로 연결하고 학생 정답 유출을 막는다',()=>{
  for(const q of all.filter(q=>q.figure))assert(existsSync(new URL('../'+q.figure,import.meta.url)),q.id);
- const photos=similar.filter(q=>q.photoLabels);assert.equal(photos.length,10);for(const q of photos){assert.match(q.figure,/\.webp$/);const html=photoFigureHtml(q);assert.match(html,/AI 실사형 설명 이미지/);assert.equal((html.match(/<span>/g)||[]).length,q.photoLabels.length);}
+ const photos=similar.filter(q=>q.photoLabels);assert.equal(photos.length,10);for(const q of photos){assert.match(q.figure,/\.webp$/);const html=photoFigureHtml(q);assert.match(html,/문항을 설명하는 그림/);assert(!html.includes('AI 실사형 설명 이미지'));assert.match(q.photoCredit,/AI 실사형 설명 이미지/);assert.equal((html.match(/<span>/g)||[]).length,q.photoLabels.length);}
  const html=photoFigureHtml({figure:'assets/x.webp',photoLabels:['<x>','&'],photoCredit:'<script>',figureNote:'"'});assert(!html.includes('<script>'));assert(html.includes('&lt;x&gt;'));assert(!photoFigureHtml({figure:'x'}));
  for(const mode of['student','teacher','answers','quick']){const h=solutionBankPaperHtml({unit,source,similar,items,mode});assert.equal((h.match(/data-paper-item=/g)||[]).length,246);assert(!h.includes('[object Object]'));assert(!h.includes('여러 가지 기체'));assert(!h.includes('독립 짝 · 옛6-1'));assert.equal((h.match(/<img /g)||[]).length,['answers','quick'].includes(mode)?0:23);assert.equal((h.match(/class="solution-key"/g)||[]).length,['teacher','answers'].includes(mode)?246:0);assert.equal((h.match(/class="solution-drawing"/g)||[]).length,mode==='student'?5:0);if(['teacher','answers'].includes(mode))assert.equal((h.match(/인쇄된 공식 답 참고/g)||[]).length,10);if(mode==='student')assert(!h.includes('검토 요지:'));}
 });

@@ -1,3 +1,9 @@
+import{checkSeasonResponse}from'../bank/season-response.mjs';
+import{checkSourceResponse}from'../bank/source-response.mjs';
+import{checkAuthoredEarthMotionResponse}from'../bank/earth-motion-authored-response.mjs';
+import{checkEarthMotionResponse}from'../bank/earth-motion-response.mjs';
+import{checkAuthoredPlantResponse}from'../bank/plant-structure-authored-response.mjs';
+import{checkAuthoredMotionResponse}from'../bank/motion-authored-response.mjs';
 // 쓰기 답 로컬 판정 — API 없이 기기 안에서. 아이에게 "예시 답과 비슷한가요?"를 묻지 않는다(원장 2026-09-30).
 //
 // 두 갈래:
@@ -87,6 +93,11 @@ export function judgeText(text, key, { tries = 1, reviewLen = 15 } = {}) {
 
 // 문항(answerContract)이나 판정표 항목 하나를 받아 판정
 export function judgeItem({ text, ac, key, tries }) {
+  if(ac?.sourceResponseContract){const r=checkSourceResponse({responseContract:ac.sourceResponseContract},text);return{st:({correct:'ok',wrong:'no',review:'review',empty:'empty'})[r.status],short:!ac.sourceResponseContract.teacherRequired,missing:[],why:r.status==='review'?'source-open':undefined};}
+  if(ac?.seasonContract){const r=checkSeasonResponse({responseContract:ac.seasonContract},text);return{st:({correct:'ok',wrong:'no',review:'review',empty:'empty'})[r.status],short:!ac.seasonContract.teacherRequired,missing:[],why:r.status==='review'?'season-open':undefined};}
+  if(ac?.earthAuthoredContract||ac?.earthMotionContract){const c=ac.earthAuthoredContract||ac.earthMotionContract,check=ac.earthAuthoredContract?checkAuthoredEarthMotionResponse:checkEarthMotionResponse,r=check({responseContract:c},text);return{st:({correct:'ok',wrong:'no',review:'review',empty:'empty'})[r.status],short:!c.teacherRequired,missing:[],why:r.status==='review'?'earth-motion-open':undefined};}
+  if(ac?.plantAuthoredContract){const r=checkAuthoredPlantResponse({responseContract:ac.plantAuthoredContract},text);return{st:({correct:'ok',wrong:'no',review:'review',empty:'empty'})[r.status],short:!ac.plantAuthoredContract.teacherRequired,missing:[],why:r.status==='review'?'plant-structure-open':undefined};}
+  if(ac?.motionContract){const r=checkAuthoredMotionResponse({responseContract:ac.motionContract},text);return{st:({correct:'ok',wrong:'no',review:'review',empty:'empty'})[r.status],short:!ac.motionContract.teacherRequired,missing:[],why:r.status==='review'?'motion-open':undefined};}
   if (ac?.type === 'short-text') return judgeShort(text, ac.accepted?.length ? ac.accepted : [ac.answer]);
   return judgeText(text, key, { tries });
 }

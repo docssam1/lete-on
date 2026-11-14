@@ -1,0 +1,712 @@
+{
+  "phase": 271,
+  "date": "2026-11-05",
+  "unit": "c22-s62-u01",
+  "title": "계절 개념/관찰 안내7개 표와 이어지는 예제 안내의 학생 문장 정리",
+  "status": "verified-local-candidate-browser-gate-pending",
+  "baselineCommit": "a1e470aa055a73cecb9378674fbab5fc73e06017",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / native Node modules and VM fixtures; no API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design"
+  ],
+  "reviewScope": "Seven concept tables on student pages 16/34/52/70/88/103/117; page52 body/hint and the identical companion-example hint on page53. Not an all-question or all-unit curriculum-completion claim.",
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "localExtractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "codes": [
+        "6과13-01~03"
+      ],
+      "lines": [
+        911,
+        924
+      ],
+      "use": "Solar altitude, shadow length, air temperature, meridian altitude, length of day and tilted-axis revolution. Retain observations, comparable locations/dates, and models as learning processes, rather than calling all their labels science vocabulary."
+    },
+    {
+      "title": "JCGM/BIPM VIM3 2.15: measurement precision",
+      "url": "https://jcgm.bipm.org/vim/en/2.15.html",
+      "use": "Precision concerns agreement among repeated measurements under specified conditions. Do not define it as a discrepancy between minute-level displayed times and a separately displayed duration."
+    },
+    {
+      "title": "JCGM/BIPM VIM3 4.14: resolution",
+      "url": "https://jcgm.bipm.org/vim/en/4.14.html",
+      "use": "Resolution concerns a perceptible change of indication. No substitute advanced metrology term was introduced into the elementary table."
+    }
+  ],
+  "sourceData": "Existing KASI calculated records/figures and all numerical answers remain unchanged. No KASI live refresh or new claim about the cause of the recorded one-minute discrepancy. Retain separate displayed duration and duration computed from displayed times.",
+  "preservation": {
+    "modifiedConceptPages": [
+      {
+        "kind": "pages",
+        "page": 16,
+        "title": "같은 막대의 그림자가 달라져요"
+      },
+      {
+        "kind": "pages",
+        "page": 34,
+        "title": "태양이 높을 때 가장 더울까요?"
+      },
+      {
+        "kind": "pages",
+        "page": 52,
+        "title": "일출과 일몰 사이 시간을 구해요"
+      },
+      {
+        "kind": "pages",
+        "page": 53,
+        "title": "일출과 일몰 사이 시간을 구해요 · 함께 풀기"
+      },
+      {
+        "kind": "pages",
+        "page": 70,
+        "title": "네 계절의 고도와 낮의 길이"
+      },
+      {
+        "kind": "pages",
+        "page": 88,
+        "title": "같은 빛이 퍼진 넓이를 비교해요"
+      },
+      {
+        "kind": "pages",
+        "page": 103,
+        "title": "자전축이 기울어진 채 공전해요"
+      },
+      {
+        "kind": "pages",
+        "page": 117,
+        "title": "근거를 이어 계절을 설명해요"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 16,
+        "title": "같은 막대의 그림자가 달라져요"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 34,
+        "title": "태양이 높을 때 가장 더울까요?"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 52,
+        "title": "일출과 일몰 사이 시간을 구해요"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 53,
+        "title": "일출과 일몰 사이 시간을 구해요 · 함께 풀기"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 70,
+        "title": "네 계절의 고도와 낮의 길이"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 88,
+        "title": "같은 빛이 퍼진 넓이를 비교해요"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 103,
+        "title": "자전축이 기울어진 채 공전해요"
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 117,
+        "title": "근거를 이어 계절을 설명해요"
+      }
+    ],
+    "changedTextFields": 104,
+    "leafChanges": [
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/rows/0/0",
+        "before": "같은 막대",
+        "after": "비교할 막대"
+      },
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/rows/0/1",
+        "before": "높이·방향을 바꾸지 않는 비교 대상",
+        "after": "관찰하는 동안 막대의 높이와 세운 방향을 바꾸지 않아요."
+      },
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/rows/1/0",
+        "before": "고도와 그림자",
+        "after": "태양 고도와 그림자 길이"
+      },
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/rows/1/1",
+        "before": "같은 수평면의 수직 막대에서 고도가 높을수록 그림자가 짧아지는 관계",
+        "after": "같은 수평면에 수직으로 세운 막대는 태양 고도가 높을수록 그림자가 짧아요."
+      },
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/rows/2/0",
+        "before": "반복 읽기",
+        "after": "다시 측정하기"
+      },
+      {
+        "path": "c22-s62-u01/pages/15/blocks/0/rows/2/1",
+        "before": "같은 설정에서 다시 읽어 차이와 기준을 확인하는 일",
+        "after": "같은 조건에서 값을 다시 읽고 눈금을 읽은 기준도 확인해요."
+      },
+      {
+        "path": "c22-s62-u01/pages/33/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/pages/33/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/pages/33/blocks/0/rows/0/1",
+        "before": "통풍되는 그늘에서 읽는 공기의 온도",
+        "after": "공기의 온도예요. 햇빛이 직접 닿지 않고 바람이 통하는 곳에서 재요."
+      },
+      {
+        "path": "c22-s62-u01/pages/33/blocks/0/rows/1/0",
+        "before": "최고 시각",
+        "after": "최고값의 시각"
+      },
+      {
+        "path": "c22-s62-u01/pages/33/blocks/0/rows/1/1",
+        "before": "각 자료에서 가장 큰 기록이 나온 시각",
+        "after": "태양 고도와 기온에서 가장 큰 값이 나타난 시각을 각각 찾아요."
+      },
+      {
+        "path": "c22-s62-u01/pages/33/blocks/0/rows/2/1",
+        "before": "시계 시각을 분 단위로 바꾸어 비교한 차이",
+        "after": "두 시각 사이에 지난 시간이에요. 시간과 분을 구별하여 구해요."
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/0/rows/0/0",
+        "before": "일출·일몰",
+        "after": "일출 시각·일몰 시각"
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/0/rows/0/1",
+        "before": "해가 뜨고 지는 시각",
+        "after": "해가 뜨고 지는 시각이에요."
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/0/rows/1/1",
+        "before": "일출부터 일몰까지의 시간",
+        "after": "같은 날 해가 뜬 때부터 질 때까지의 시간이에요."
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/0/rows/2/0",
+        "before": "표시 정밀도",
+        "after": "표의 시각"
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/0/rows/2/1",
+        "before": "분 단위 시각과 따로 계산한 낮의 길이가 조금 다를 수 있는 특성",
+        "after": "이 표의 일출·일몰 시각은 분 단위로 나타냈어요."
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/3/text",
+        "before": "표시된 일몰−일출은 낮의 길이(근삿값)예요. 사이트가 따로 표시한 낮의 길이와 봄·겨울에는 1분 차이가 있어요. 두 값을 고치거나 합치지 않아요.",
+        "after": "여기서는 표의 일몰 시각에서 일출 시각을 빼서 낮의 길이(근삿값)를 구해요. 누리집이 따로 보여 주는 낮의 길이는 봄·겨울 자료에서 1분 차이가 나요. 두 값은 구별하여 적어요."
+      },
+      {
+        "path": "c22-s62-u01/pages/51/blocks/4/hint",
+        "before": "사이트 낮의 길이와 표시 시각의 뺄셈을 기록에서 어떻게 구별할까요?",
+        "after": "누리집이 보여 준 낮의 길이와 내가 계산한 낮의 길이를 어떻게 구별해 적을까요?"
+      },
+      {
+        "path": "c22-s62-u01/pages/52/blocks/1/hint",
+        "before": "사이트 낮의 길이와 표시 시각의 뺄셈을 기록에서 어떻게 구별할까요?",
+        "after": "누리집이 보여 준 낮의 길이와 내가 계산한 낮의 길이를 어떻게 구별해 적을까요?"
+      },
+      {
+        "path": "c22-s62-u01/pages/69/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/pages/69/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/pages/69/blocks/0/rows/0/1",
+        "before": "태양이 남쪽에 왔을 때의 고도",
+        "after": "우리나라에서 태양이 남쪽 하늘에 왔을 때의 고도예요."
+      },
+      {
+        "path": "c22-s62-u01/pages/69/blocks/0/rows/1/0",
+        "before": "같은 장소 비교",
+        "after": "같은 장소의 계절별 비교"
+      },
+      {
+        "path": "c22-s62-u01/pages/69/blocks/0/rows/1/1",
+        "before": "위도·경도 기준을 맞추고 날짜를 바꾼 비교",
+        "after": "장소를 같게 하고 날짜를 달리하여 남중 고도와 낮의 길이를 비교해요."
+      },
+      {
+        "path": "c22-s62-u01/pages/69/blocks/0/rows/2/0",
+        "before": "계절 경향",
+        "after": "계절에 따른 관계"
+      },
+      {
+        "path": "c22-s62-u01/pages/69/blocks/0/rows/2/1",
+        "before": "여러 조건 속에서 계절별로 나타나는 일반적 관계",
+        "after": "우리나라에서는 여름에 태양의 남중 고도가 높고 낮의 길이가 길어요."
+      },
+      {
+        "path": "c22-s62-u01/pages/87/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/pages/87/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/pages/87/blocks/0/rows/0/0",
+        "before": "빛의 총량",
+        "after": "비교할 빛의 양"
+      },
+      {
+        "path": "c22-s62-u01/pages/87/blocks/0/rows/0/1",
+        "before": "비교에서 같게 맞춘 전체 빛",
+        "after": "빛의 양은 같게 하고 비추는 각도를 달리하여 비교해요."
+      },
+      {
+        "path": "c22-s62-u01/pages/87/blocks/0/rows/1/1",
+        "before": "한 칸처럼 같은 크기로 나눈 면적",
+        "after": "한 칸처럼 비교를 위해 같게 정한 넓이예요."
+      },
+      {
+        "path": "c22-s62-u01/pages/87/blocks/0/rows/2/0",
+        "before": "빛 받는 각",
+        "after": "빛이 비추는 각도"
+      },
+      {
+        "path": "c22-s62-u01/pages/87/blocks/0/rows/2/1",
+        "before": "같은 양의 빛이 퍼지는 면적을 바꾸는 조건",
+        "after": "같은 양의 빛이라도 비스듬히 비추면 더 넓게 퍼져요."
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/rows/0/0",
+        "before": "자전축 기울기",
+        "after": "자전축의 기울기"
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/rows/0/1",
+        "before": "지구의 자전축이 공전 궤도면의 수직 방향에서 기울어진 상태",
+        "after": "지구의 자전축이 공전 궤도면에 수직인 방향에서 기울어져 있어요."
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/rows/1/0",
+        "before": "방향 유지",
+        "after": "자전축의 방향"
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/rows/1/1",
+        "before": "공전 중 축이 우주에서 거의 같은 방향을 향하는 조건",
+        "after": "지구가 공전하는 동안 자전축은 거의 같은 방향을 향해요."
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/rows/2/0",
+        "before": "모형 비교",
+        "after": "모형에서 같게 할 조건"
+      },
+      {
+        "path": "c22-s62-u01/pages/102/blocks/0/rows/2/1",
+        "before": "수직 축과 기울어진 축에서 같은 지역의 남중을 맞춰 살피는 방법",
+        "after": "광원과 관찰할 지역을 같게 하고, 각 모형에서 남중할 때를 비교해요."
+      },
+      {
+        "path": "c22-s62-u01/pages/116/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/pages/116/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/pages/116/blocks/0/rows/0/1",
+        "before": "자료로 설명하려는 계절 관계",
+        "after": "자료를 보고 계절의 변화에 대해 설명하려는 생각이에요."
+      },
+      {
+        "path": "c22-s62-u01/pages/116/blocks/0/rows/1/1",
+        "before": "같은 장소·조건이 드러난 고도와 낮의 길이의 값",
+        "after": "같은 장소에서 살핀 태양 고도와 낮의 길이 등의 자료예요."
+      },
+      {
+        "path": "c22-s62-u01/pages/116/blocks/0/rows/2/0",
+        "before": "설명 보완",
+        "after": "설명 고치기"
+      },
+      {
+        "path": "c22-s62-u01/pages/116/blocks/0/rows/2/1",
+        "before": "원기록을 보존하고 질문에 맞춰 근거와 설명을 다시 확인하는 일",
+        "after": "기록한 값은 그대로 두고, 질문에 맞춰 근거와 설명을 다시 살펴요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/rows/0/0",
+        "before": "같은 막대",
+        "after": "비교할 막대"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/rows/0/1",
+        "before": "높이·방향을 바꾸지 않는 비교 대상",
+        "after": "관찰하는 동안 막대의 높이와 세운 방향을 바꾸지 않아요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/rows/1/0",
+        "before": "고도와 그림자",
+        "after": "태양 고도와 그림자 길이"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/rows/1/1",
+        "before": "같은 수평면의 수직 막대에서 고도가 높을수록 그림자가 짧아지는 관계",
+        "after": "같은 수평면에 수직으로 세운 막대는 태양 고도가 높을수록 그림자가 짧아요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/rows/2/0",
+        "before": "반복 읽기",
+        "after": "다시 측정하기"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/15/blocks/0/rows/2/1",
+        "before": "같은 설정에서 다시 읽어 차이와 기준을 확인하는 일",
+        "after": "같은 조건에서 값을 다시 읽고 눈금을 읽은 기준도 확인해요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/33/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/33/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/33/blocks/0/rows/0/1",
+        "before": "통풍되는 그늘에서 읽는 공기의 온도",
+        "after": "공기의 온도예요. 햇빛이 직접 닿지 않고 바람이 통하는 곳에서 재요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/33/blocks/0/rows/1/0",
+        "before": "최고 시각",
+        "after": "최고값의 시각"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/33/blocks/0/rows/1/1",
+        "before": "각 자료에서 가장 큰 기록이 나온 시각",
+        "after": "태양 고도와 기온에서 가장 큰 값이 나타난 시각을 각각 찾아요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/33/blocks/0/rows/2/1",
+        "before": "시계 시각을 분 단위로 바꾸어 비교한 차이",
+        "after": "두 시각 사이에 지난 시간이에요. 시간과 분을 구별하여 구해요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/0/rows/0/0",
+        "before": "일출·일몰",
+        "after": "일출 시각·일몰 시각"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/0/rows/0/1",
+        "before": "해가 뜨고 지는 시각",
+        "after": "해가 뜨고 지는 시각이에요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/0/rows/1/1",
+        "before": "일출부터 일몰까지의 시간",
+        "after": "같은 날 해가 뜬 때부터 질 때까지의 시간이에요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/0/rows/2/0",
+        "before": "표시 정밀도",
+        "after": "표의 시각"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/0/rows/2/1",
+        "before": "분 단위 시각과 따로 계산한 낮의 길이가 조금 다를 수 있는 특성",
+        "after": "이 표의 일출·일몰 시각은 분 단위로 나타냈어요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/3/text",
+        "before": "표시된 일몰−일출은 낮의 길이(근삿값)예요. 사이트가 따로 표시한 낮의 길이와 봄·겨울에는 1분 차이가 있어요. 두 값을 고치거나 합치지 않아요.",
+        "after": "여기서는 표의 일몰 시각에서 일출 시각을 빼서 낮의 길이(근삿값)를 구해요. 누리집이 따로 보여 주는 낮의 길이는 봄·겨울 자료에서 1분 차이가 나요. 두 값은 구별하여 적어요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/51/blocks/4/hint",
+        "before": "사이트 낮의 길이와 표시 시각의 뺄셈을 기록에서 어떻게 구별할까요?",
+        "after": "누리집이 보여 준 낮의 길이와 내가 계산한 낮의 길이를 어떻게 구별해 적을까요?"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/52/blocks/1/hint",
+        "before": "사이트 낮의 길이와 표시 시각의 뺄셈을 기록에서 어떻게 구별할까요?",
+        "after": "누리집이 보여 준 낮의 길이와 내가 계산한 낮의 길이를 어떻게 구별해 적을까요?"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/69/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/69/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/69/blocks/0/rows/0/1",
+        "before": "태양이 남쪽에 왔을 때의 고도",
+        "after": "우리나라에서 태양이 남쪽 하늘에 왔을 때의 고도예요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/69/blocks/0/rows/1/0",
+        "before": "같은 장소 비교",
+        "after": "같은 장소의 계절별 비교"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/69/blocks/0/rows/1/1",
+        "before": "위도·경도 기준을 맞추고 날짜를 바꾼 비교",
+        "after": "장소를 같게 하고 날짜를 달리하여 남중 고도와 낮의 길이를 비교해요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/69/blocks/0/rows/2/0",
+        "before": "계절 경향",
+        "after": "계절에 따른 관계"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/69/blocks/0/rows/2/1",
+        "before": "여러 조건 속에서 계절별로 나타나는 일반적 관계",
+        "after": "우리나라에서는 여름에 태양의 남중 고도가 높고 낮의 길이가 길어요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/87/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/87/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/87/blocks/0/rows/0/0",
+        "before": "빛의 총량",
+        "after": "비교할 빛의 양"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/87/blocks/0/rows/0/1",
+        "before": "비교에서 같게 맞춘 전체 빛",
+        "after": "빛의 양은 같게 하고 비추는 각도를 달리하여 비교해요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/87/blocks/0/rows/1/1",
+        "before": "한 칸처럼 같은 크기로 나눈 면적",
+        "after": "한 칸처럼 비교를 위해 같게 정한 넓이예요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/87/blocks/0/rows/2/0",
+        "before": "빛 받는 각",
+        "after": "빛이 비추는 각도"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/87/blocks/0/rows/2/1",
+        "before": "같은 양의 빛이 퍼지는 면적을 바꾸는 조건",
+        "after": "같은 양의 빛이라도 비스듬히 비추면 더 넓게 퍼져요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/rows/0/0",
+        "before": "자전축 기울기",
+        "after": "자전축의 기울기"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/rows/0/1",
+        "before": "지구의 자전축이 공전 궤도면의 수직 방향에서 기울어진 상태",
+        "after": "지구의 자전축이 공전 궤도면에 수직인 방향에서 기울어져 있어요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/rows/1/0",
+        "before": "방향 유지",
+        "after": "자전축의 방향"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/rows/1/1",
+        "before": "공전 중 축이 우주에서 거의 같은 방향을 향하는 조건",
+        "after": "지구가 공전하는 동안 자전축은 거의 같은 방향을 향해요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/rows/2/0",
+        "before": "모형 비교",
+        "after": "모형에서 같게 할 조건"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/102/blocks/0/rows/2/1",
+        "before": "수직 축과 기울어진 축에서 같은 지역의 남중을 맞춰 살피는 방법",
+        "after": "광원과 관찰할 지역을 같게 하고, 각 모형에서 남중할 때를 비교해요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/116/blocks/0/heads/0",
+        "before": "낱말",
+        "after": "살펴볼 내용"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/116/blocks/0/heads/1",
+        "before": "이번 공부에서의 뜻",
+        "after": "뜻과 확인할 점"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/116/blocks/0/rows/0/1",
+        "before": "자료로 설명하려는 계절 관계",
+        "after": "자료를 보고 계절의 변화에 대해 설명하려는 생각이에요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/116/blocks/0/rows/1/1",
+        "before": "같은 장소·조건이 드러난 고도와 낮의 길이의 값",
+        "after": "같은 장소에서 살핀 태양 고도와 낮의 길이 등의 자료예요."
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/116/blocks/0/rows/2/0",
+        "before": "설명 보완",
+        "after": "설명 고치기"
+      },
+      {
+        "path": "c22-s62-u01/teacherStudentPages/116/blocks/0/rows/2/1",
+        "before": "원기록을 보존하고 질문에 맞춰 근거와 설명을 다시 확인하는 일",
+        "after": "기록한 값은 그대로 두고, 질문에 맞춰 근거와 설명을 다시 살펴요."
+      }
+    ],
+    "tableChangesPerMode": 7,
+    "allShapesAndWritingSpaceUnchanged": true,
+    "teacherDuplexBlankUnchanged": true,
+    "allRailsUnchanged": true,
+    "missingPrecisionLabelRemoved": true,
+    "noUnprovenRoundingCauseAdded": true,
+    "sourceFiguresModelsAndValuesUnchanged": true,
+    "unchangedWorkbooks": 31,
+    "unchangedQuestions": 3080,
+    "unchangedProducts": 126,
+    "changedProducts": [
+      {
+        "unit": "c22-s62-u01",
+        "mode": "student",
+        "sha256": "722e448912203ad7dba46122dfa70e6ea019922f94475d1252f5b40a201a0a1e"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "mode": "teacher",
+        "sha256": "af2d396bd2bc6bab2d23e7db93037cb07b01d706256f8c32d937b9cd6d0c1a57"
+      }
+    ],
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbookIncludingUndefined": true,
+    "priorEditorialBytesUnchanged": true,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/c22-s62-u01.editorial.js",
+      "science-lab/data/book/c22-s62-u01.workbook.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "validation": {
+    "tests": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "skipped": 2,
+    "syntaxFiles": 4,
+    "diffCheck": true,
+    "nativeSnapshot": "32 workbooks / 128 HTML modes / 64 slide arrays / 32 real unit loaders; actual student storage read/write and QA network 0",
+    "qaFindingsResolved": [
+      "Initial new adapter assumed blocks existed on the teacher duplex blank; preserve the blockless blank unchanged.",
+      "Corrected a typo in the new external QA expected header; product header already correct.",
+      "The same day-length writing hint also appears on companion page53. Inspected that context and verified both changes, rather than retaining inconsistent adjacent wording."
+    ],
+    "browserVerified": false,
+    "actual3DVerified": false,
+    "noNewMirroringTests": true
+  },
+  "unperformed": [
+    "actual PC/mobile/A4/fonts/overflow/speech/WebGL and mandatory 3D runtime checks",
+    "main WIP integration",
+    "merge",
+    "push",
+    "deployment",
+    "paid AI API calls",
+    "cleanup"
+  ],
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase271"
+}

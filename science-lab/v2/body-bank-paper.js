@@ -1,5 +1,6 @@
+import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 // 우리 몸 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
-import {photoFigureHtml} from './photo-figure.js';
+import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 import {sourceCaption,sourceTableHtml} from './source-presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const circ='①②③④⑤';
@@ -16,11 +17,6 @@ export function bodyBankPaperHtml({unit,source,similar,items,mode='student'}){
  };
  const tools=`<nav class="solution-tools no-print" aria-label="문항집 인쇄 도구"><a class="btn" href="#/${unit.id}/sub/E1">소단원으로</a>${[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']].map(([m,l])=>`<a class="btn" href="#/${unit.id}/print/${m}"${m===mode?' aria-current="page"':''}>${l}</a>`).join('')}<button class="btn primary" data-solution-print disabled>A4 인쇄</button><p role="status" data-print-status>글꼴과 그림을 준비하고 있어요.</p></nav>`;
  const body=quick?`<h2>빠른 정답표</h2><p>서술형은 예시 답으로 자동 확정하지 않습니다. 자료 검토 문항은 교사 해설에서 공식 답과 조건을 비교하세요.</p><div class="solution-quick">${all.map((q,i)=>`<div data-paper-item="${esc(q.id)}"><b>${i+1}.</b> ${q.sourceRef.reviewOnly?'교사와 자료 검토':q.answerContract.type==='written-explanation'?'서술 · 교사 확인':esc(solutionAnswer(q.answerContract))}</div>`).join('')}</div>`:[['원문 · 실제 출처와 번호 보존',source],['짝문항 · 독립 창작',similar],['현행 범위 보충 · 독립 창작',items]].map(([title,rows])=>`<section class="solution-section"><h2>${title}</h2>${rows.map(card).join('')}</section>`).join('');
- return `<div class="solution-bank-paper body-bank-paper gfield-ui">${tools}<div class="solution-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="solution-paper"><header><p>GFIELD · 지필드 | 초등 과학5-1 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>옛6-2 관련 원문58 · 독립 짝58 · 교재 연계96 =212문항. 원문70 중 현행 관련 부분을13·12·17·16문항씩 발췌했으며 출처·쪽·원래 번호를 보존했습니다. 현행 판본 전체 원문 시험지 완료를 뜻하지 않습니다.</p><p>원문6개는 조건·보기·해설의 해석을 교사와 검토하며 자동 채점을 보류합니다. 공식 답은 교사 해설에 보존했습니다. 짝 문항은 자체 조건으로 풀고 교재 연계 선택형은 별도 다섯 보기이므로 교재와 답 번호가 다를 수 있습니다.</p><p>원문 그림은 원형을 보존했습니다. 창작 사진은 AI 실사형 설명 이미지이고 수치는 연습 자료입니다. 실제 관찰·조사·제작·전달 결과나 학교 공식 성적과 구별합니다. 몸의 변화는 교사와 무리 없는 방법으로 관찰하고 수치로 건강을 판정하지 않습니다.</p></header>${body}</main></div>`;
+ return `<div class="solution-bank-paper body-bank-paper gfield-ui">${tools}<div class="solution-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="solution-paper"><header><p>GFIELD · 지필드 | 초등 과학5-1 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>옛6-2 관련 원문58 · 독립 짝58 · 교재 연계96 =212문항. 원문70 중 현행 관련 부분을13·12·17·16문항씩 발췌했으며 출처·쪽·원래 번호를 보존했습니다. 현행 판본 전체 원문 시험지 완료를 뜻하지 않습니다.</p><p>원문6개는 조건·보기·해설의 해석을 교사와 검토하며 자동 채점을 보류합니다. 공식 답은 교사 해설에 보존했습니다. 짝 문항은 자체 조건으로 풀고 교재 연계 선택형은 별도 다섯 보기이므로 교재와 답 번호가 다를 수 있습니다.</p><p>원문 그림은 원형을 보존했습니다. 사진은 내용을 살펴보는 자료이고, 수치는 연습 자료입니다. 실제 관찰·조사·제작·전달 결과나 학교 공식 성적과 구별합니다. 몸의 변화는 교사와 무리 없는 방법으로 관찰하고 수치로 건강을 판정하지 않습니다.</p></header>${body}</main></div>`;
 }
-export function wireBodyBankPaper(root){
- let active=true;const button=root.querySelector('[data-solution-print]'),status=root.querySelector('[data-print-status]'),imgs=[...root.querySelectorAll('img')];
- const ready=im=>im.complete?(im.naturalWidth?Promise.resolve():Promise.reject(new Error('image'))):new Promise((resolve,reject)=>{im.addEventListener('load',resolve,{once:true});im.addEventListener('error',reject,{once:true});});
- Promise.all([document.fonts.ready,...imgs.map(ready)]).then(()=>{if(active&&root.isConnected){button.disabled=false;status.textContent='그림과 글꼴이 준비되었습니다.';}}).catch(()=>{if(active&&root.isConnected)status.textContent='그림을 불러오지 못했어요. 다시 열어 주세요.';});
- const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};
-}
+export function wireBodyBankPaper(root){return wireBankPrint(root,{buttonSelector:'[data-solution-print]'});}

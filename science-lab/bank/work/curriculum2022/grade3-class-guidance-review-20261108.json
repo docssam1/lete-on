@@ -1,0 +1,337 @@
+{
+  "phase": 322,
+  "date": "2026-11-08",
+  "scope": "Concrete elementary wording for grade3 force, materials and earth/sea non-question instructions.",
+  "priorLocalCommit": "ad813d0e2280d9cafac28f29716f3121597042d5",
+  "reviewParent": "d07bacfb5c6882dff98b356ea9d96a77ed727db0",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "units": [
+    "s31-u01",
+    "c22-s32-u01",
+    "c22-s32-u02"
+  ],
+  "currentNonQuestionContentPagesChanged": 15,
+  "newQuestionContextsReviewed": 0,
+  "currentQuestionContextsPreviouslyReviewed": 3080,
+  "currentQuestionContextsPreviouslyModified": 1902,
+  "nativeValidation": {
+    "otherClassroomUnitsUnchanged": 29,
+    "otherSlideArraysUnchanged": 58,
+    "changedSlides": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "cover",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "conclusion",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "design-object",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "design-make",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "share",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "end",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "cover",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "conclusion",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "design-object",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "design-make",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "share",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "end",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "id": "cover",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "id": "design",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "id": "results",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "id": "limits",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "id": "end",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "id": "cover",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "id": "design",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "id": "results",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "id": "limits",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "id": "end",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "id": "design",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "id": "scale",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "id": "apply",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "id": "design",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "id": "scale",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "id": "apply",
+        "keys": [
+          "title",
+          "body"
+        ]
+      }
+    ],
+    "changedSlideCount": 30,
+    "changedCues": [
+      {
+        "unit": "c22-s32-u01",
+        "ids": [
+          "share",
+          "end"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "ids": [
+          "share",
+          "end"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "ids": [
+          "apply"
+        ]
+      }
+    ],
+    "totalChangedCues": 5,
+    "changedSlideMarkupUnchanged": true,
+    "allOtherClassroomMetadataUnchanged": true,
+    "rawMaterialRecordVariantsPreserved": 1412,
+    "oldAndCurrentMountRecordsProgressControlsEqual": true,
+    "rawModelAndRecordSchemaUnchanged": true,
+    "currentWorkbookUnitsUnchanged": 32,
+    "currentWorkbookHtmlUnchanged": 128,
+    "currentRuntimeQuestionPoolsUnchanged": 32,
+    "allGradingAndQuestionHistoryUnchanged": true,
+    "syntaxFiles": 12,
+    "actualBrowserVerified": false,
+    "newOcrRuns": 0,
+    "newBitmaps": 0
+  },
+  "tests": {
+    "files": 237,
+    "total": 1323,
+    "pass": 1321,
+    "fail": 0,
+    "skip": 2,
+    "newRegressionTests": 2,
+    "additionalExistingProvenanceTestsIncluded": 6
+  },
+  "currentOriginalUnits": 23,
+  "currentOriginalQuestions": 1512,
+  "pendingOriginalUnits": 9,
+  "rawSourceAndPairBanksUnchanged": true,
+  "curriculumConceptsAndScienceClaimsUnchanged": true,
+  "heatingSafetyInstructionsPreserved": true,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

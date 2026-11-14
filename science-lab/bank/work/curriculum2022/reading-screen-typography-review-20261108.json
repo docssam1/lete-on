@@ -1,0 +1,70 @@
+{
+  "phase": 384,
+  "date": "2026-11-08",
+  "candidateBaseline": "307c940733232ee552cc0a506b5575830b42a777",
+  "reviewParent": "309111bb3de1461d9b3b465f1e6bd95a8d5e44e8",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "공용 읽을거리의 학생 화면 글씨 규칙과 화면 교재 쪽의 높이를 보완한다. 기존 읽을거리15편에는 기존 교육과정 자료도 포함되어 있으며 현행32단원 새 콘텐츠라는 집계가 아니다.",
+  "validation": {
+    "phase": 384,
+    "date": "2026-11-08",
+    "baseline": "307c940733232ee552cc0a506b5575830b42a777",
+    "productChangedFiles": [
+      "science-lab/v2/index.html",
+      "science-lab/v2/reading.css"
+    ],
+    "existingReadingArticles": 15,
+    "articleViewsUnchanged": 30,
+    "readingDataAndRendererUnchanged": true,
+    "articleInputsUnchanged": true,
+    "screenSourceRules": {
+      "rules": 12,
+      "contexts": [
+        "standalone reading",
+        "lesson main",
+        "non-A4 magazine page"
+      ],
+      "bodyAndQuestionPx": 18,
+      "leadAndActivityLinksPx": 16,
+      "captionsSourcesAndConnectionPx": 14,
+      "headingsUseBodyGothic": true,
+      "headingLetterSpacingNormal": true,
+      "nonA4MagazineHeightAuto": true,
+      "actualComputedStylesVerified": false
+    },
+    "allPreviousCssBytesPreserved": true,
+    "addedRulesOnlyInScreenMedia": true,
+    "a4MagazineExcludedBySelector": true,
+    "indexDiffOnlyReadingCssVersion": true,
+    "questionDataAssetsScenesUnchanged": true,
+    "actualBrowserUsed": false,
+    "actualMobileLayoutVerified": false,
+    "actualA4VisualInspection": false
+  },
+  "nativeTests": {
+    "relatedFiles": 2,
+    "tests": 10,
+    "pass": 9,
+    "fail": 0,
+    "browserSkipped": 1,
+    "fullSuiteNotRerunForCssOnlyChange": true,
+    "previousFullSuitePhase": 383,
+    "previousFullSuitePass": 1447,
+    "previousFullSuiteBrowserSkipped": 2
+  },
+  "preservation": {
+    "allPreviousCssBytesPreserved": true,
+    "onlyAppendedScreenMediaRules": true,
+    "a4MagazineExcludedBySelector": true,
+    "articleViews30IdenticalToBaselineRenderer": true,
+    "allDataAssetsScenesAndProductJsUnchanged": true,
+    "indexOnlyReadingStylesheetVersionChanged": true
+  },
+  "actualBrowserUsed": false,
+  "actualComputedFontOrOverflowVerified": false,
+  "actualA4VisualInspection": false,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

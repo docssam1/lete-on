@@ -1,0 +1,186 @@
+{
+  "phase": 321,
+  "date": "2026-11-08",
+  "scope": "Elementary learner wording in plant comparisons and classroom instructions, plus force recap.",
+  "priorLocalCommit": "c5177d5e0a2d91aa1ce7d1cd664aedc808cf9226",
+  "reviewParent": "8f7db5cd591a868d71186a27771c5c8428b7d7be",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "newQuestionContextsReviewed": 0,
+  "currentQuestionContextsPreviouslyReviewed": 3080,
+  "currentQuestionContextsPreviouslyModified": 1902,
+  "nativeValidation": {
+    "otherClassroomUnitsUnchanged": 30,
+    "changedSlides": [
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "id": "end",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "id": "end",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "self",
+        "id": "starchprepare",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "self",
+        "id": "starchobserve",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "self",
+        "id": "starchdata",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "self",
+        "id": "starchunexpected",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "self",
+        "id": "organdata",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teach",
+        "id": "plan",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teach",
+        "id": "starchprepare",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teach",
+        "id": "starchobserve",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teach",
+        "id": "starchdata",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teach",
+        "id": "starchunexpected",
+        "keys": [
+          "title",
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teach",
+        "id": "organdata",
+        "keys": [
+          "body"
+        ]
+      }
+    ],
+    "changedSlideCount": 13,
+    "changedPlanFields": [
+      "note"
+    ],
+    "changedCues": [
+      "starchprepare",
+      "starchobserve",
+      "starchunexpected"
+    ],
+    "changedComparisonPresentationCases": [
+      "starch",
+      "transpiration",
+      "organs"
+    ],
+    "rawCompareRecordVariantsPreserved": 32,
+    "rawModelAndRecordSchemaUnchanged": true,
+    "currentWorkbookUnitsUnchanged": 32,
+    "currentWorkbookHtmlUnchanged": 128,
+    "currentRuntimeQuestionPoolsUnchanged": 32,
+    "allGradingAndQuestionHistoryUnchanged": true,
+    "syntaxFiles": 8,
+    "actualBrowserVerified": false,
+    "newOcrRuns": 0,
+    "newBitmaps": 0
+  },
+  "scienceEvidence": {
+    "phase": 321,
+    "scope": "Plain Korean for existing plant classroom comparisons; no new curriculum topics or experimental procedures.",
+    "sources": [
+      {
+        "url": "https://www.ssc.education.ed.ac.uk/BSL/chemistry/iodinesolutiond.html",
+        "verifiedFact": "Iodine gives a blue-black colour with starch."
+      },
+      {
+        "url": "https://www.saps.org.uk/teaching-resources/resources/285/student-sheet-20-can-plants-make-starch-in-the-dark/",
+        "verifiedFact": "Light/dark starch comparison and iodine colour response.",
+        "useLimit": "Only factual colour/comparison reference; no age14-16 experimental procedures, timings or advanced concepts adopted."
+      }
+    ],
+    "unchangedCurriculumReference": "2022 revised science curriculum; 6과11-02",
+    "qualification": "An absent visible reaction does not establish absolute absence or identify all nutrients; retained the existing limited-evidence interpretation.",
+    "newOriginalQuestionContent": 0,
+    "newImages": 0,
+    "newOcrRuns": 0
+  },
+  "tests": {
+    "total": 1315,
+    "pass": 1313,
+    "fail": 0,
+    "skip": 2
+  },
+  "currentOriginalUnits": 23,
+  "currentOriginalQuestions": 1512,
+  "pendingOriginalUnits": 9,
+  "rawSourceAndPairBanksUnchanged": true,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

@@ -1,0 +1,193 @@
+{
+  "phase": 255,
+  "date": "2026-11-05",
+  "baseCommit": "146f1b783c32678c7336cdd7b04681983de3eaec",
+  "version": "20261105-guidance-particles",
+  "scope": "Correct proven noun-particle errors in current workbook guidance, plus the same single career drawing-rubric phrase in the live bank and paper.",
+  "review": {
+    "method": "Consonant/vowel candidate search for 을/를/과/와 in current text; manual context review distinguishes actual particles from noun/verb endings.",
+    "candidateRows": 139,
+    "uniqueTokens": 17,
+    "confirmedWrongSurfaceForms": [
+      "것와",
+      "까닭와",
+      "방향를",
+      "분를",
+      "겨울를",
+      "닿음를",
+      "설명를"
+    ],
+    "falsePositiveExamples": [
+      "교과",
+      "효과",
+      "사과",
+      "가을",
+      "마을",
+      "여과",
+      "이을",
+      "모을",
+      "관련지을",
+      "농사지을"
+    ],
+    "limit": "A bounded suffix audit, not a complete Korean-language or curriculum-content verification."
+  },
+  "changes": {
+    "workbookTextFields": 10,
+    "questionCriteria": {
+      "c22-s62-u04": [
+        96
+      ],
+      "c22-s62-u01": [
+        1,
+        50,
+        65
+      ],
+      "c22-s61-u03": [
+        100,
+        116
+      ]
+    },
+    "careerRequirementsAndResponseContract": 96,
+    "electricityStudentAndTeacherBodyPage": 119,
+    "onlineCareerItem": "c22-s62-u04-b096",
+    "semantics": "Only exact particle substitutions. The same three rubric requirements, teacherRequired/reviewRequired, sample and exactStringScoring=false remain."
+  },
+  "implementation": {
+    "existingHelper": "term-particle-language.js extended with separate GUIDANCE exports. All prior language function bytes remain a prefix unchanged.",
+    "workbooks": "Four guidanceParticlePriorWorkbook exports preserve native full prior objects including own undefined fields. Generated bodies unchanged outside the import/final wrapper/export.",
+    "currentRoutes": "Actual career item loader, classroom normalization and custom careerBankBook use the same new item. A full old snapshot retains earlier rubric wording; diagnostic map is unchanged and rebound only when its version matches.",
+    "cache": "20261105-guidance-particles",
+    "tests": "One additional drawing-rubric lifecycle test covers old/current teacher review, diagnostic identity, every saved contract generation, saved responses, restart, idempotence, future and canonical exclusions. The existing career regression still checks all prior74 items against the prior workbook and independently checks current workbook/bank contract equality.",
+    "qaCorrections": "The itemHtml fixture initially expected rubric text that itemHtml does not display; removed that unsupported assertion. Actual rubric display was verified in teacher/answer workbook and custom bank papers. A mistyped QA file path was corrected; no product workaround was added."
+  },
+  "verification": {
+    "workbookTextFields": 10,
+    "changedQuestions": [
+      {
+        "unit": "c22-s62-u04",
+        "no": 96,
+        "fields": [
+          "requirements",
+          "responseContract",
+          "criteria"
+        ]
+      },
+      {
+        "unit": "c22-s62-u01",
+        "no": 1,
+        "fields": [
+          "criteria"
+        ]
+      },
+      {
+        "unit": "c22-s62-u01",
+        "no": 50,
+        "fields": [
+          "criteria"
+        ]
+      },
+      {
+        "unit": "c22-s62-u01",
+        "no": 65,
+        "fields": [
+          "criteria"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "no": 100,
+        "fields": [
+          "criteria"
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "no": 116,
+        "fields": [
+          "criteria"
+        ]
+      }
+    ],
+    "changedUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u01",
+      "c22-s61-u03"
+    ],
+    "allEditsOnlyExactParticleSubstitutions": true,
+    "otherWorkbooksUnchanged": 28,
+    "allGeneratedWorkbookBodiesAndPriorLanguageFunctionsPreserved": true,
+    "sourceSimilarAndAllHistoricalRuntimePreserved": true,
+    "currentCareerRubricItems": 1,
+    "classroomCopies": 1,
+    "rubricRequiredPhraseCorrectionsPerItem": 3,
+    "all64SlideArraysExactlyUnchanged": true,
+    "unchangedPrintedHTML": 120,
+    "changedPrintedHTML": [
+      {
+        "unit": "c22-s62-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s62-u04",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "answers"
+      }
+    ],
+    "teacherSolutionSectionsChecked": 12,
+    "studentTeacherBodyTextsChecked": 2,
+    "unchangedAssets": 1249,
+    "browserVerified": false,
+    "nativePriorWorkbooksExactlyPreserved": 4,
+    "customCareerBankPaperModes": 4,
+    "customBankContractsEqualActualCurrentItem": true,
+    "syntaxFiles": 11,
+    "nativeItemHtmlExecutions": 2,
+    "nativeItemHtmlRubricDisplayClaim": false,
+    "regressions": {
+      "total": 845,
+      "passed": 843,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    }
+  },
+  "preservation": {
+    "workbooks": 32,
+    "questions": 3080,
+    "runtimeCurrent": 3179,
+    "runtimeSource": 1512,
+    "runtimeSimilar": 1512,
+    "classroom": 1635,
+    "selectedChecks": 490,
+    "other28Workbooks": "exact",
+    "sourceSimilarAndAllOldVersions": "exact",
+    "runtimeExceptCareer096": "exact",
+    "responseAndAnswerContracts": "Unchanged outside the one career item required-phrase particle; all scoring flags, sample, keys, numeric values and meanings preserved.",
+    "allPhotosFiguresRailsWritingAndReport3D": "unchanged"
+  },
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase255",
+  "stage": "Candidate local only. Actual PC/mobile/A4, mandatory3D runtime and broader content review, v1 consistency, main integration and deployment remain. No browser/server, API, merge, push or deploy performed."
+}

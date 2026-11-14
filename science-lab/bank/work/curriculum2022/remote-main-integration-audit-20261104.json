@@ -1,0 +1,78 @@
+{
+  "phase": 221,
+  "date": "2026-11-04",
+  "status": "remote-main-three-way-integration-audited-not-merged",
+  "baseCommit": "2700e2a4a449c3e8d518ceb8a086d9897a894ded",
+  "remoteMain": "77f163e1601b4507ce67e31063a56d8a861e39f5",
+  "remoteReadOnlyVerified": true,
+  "localMain": "d900f93da025f15e4d39c3b5099a43e721868151",
+  "rootWorktreeOutstandingPaths": 757,
+  "rootWorktreeNotEdited": true,
+  "candidateCommitDelta": 67,
+  "upstreamCommitDelta": 347,
+  "candidateChangedFiles": 803,
+  "upstreamChangedFiles": 678,
+  "scienceOverlap": [],
+  "mergeProposal": {
+    "mergeTree": "7a51e307f2207a1e41bb359759ce71fb396b20cf",
+    "upstream": "77f163e1601b4507ce67e31063a56d8a861e39f5",
+    "candidate": "2700e2a4a449c3e8d518ceb8a086d9897a894ded",
+    "conflicts": 0,
+    "actualWorktreeMerged": false,
+    "proposedChangedFiles": 803,
+    "proposedChangedRoots": [
+      "science-lab"
+    ],
+    "scienceSubtreeExactlyCandidate": true,
+    "allOtherFilesExactlyUpstream": true,
+    "published": false
+  },
+  "currentClassrooms": 32,
+  "canonicalClassroom3DUnits": [
+    "s41-u01",
+    "s31-u01",
+    "s41-u02",
+    "s41-u03",
+    "s41-u04"
+  ],
+  "threeDCheck": {
+    "script": "scripts/check-science-3d.mjs",
+    "rules": "science-lab/3D-RULES.md",
+    "executed": false,
+    "serverStarted": false,
+    "headlessBrowserStarted": false,
+    "currentIssues": [
+      "deck scan requires a 3D title even for revised classes using 2D comparison",
+      "ringTowerClicks still requires a classroom battle that revised lesson disables",
+      "scene and model route coverage must be aligned with actual classroom slides"
+    ],
+    "rulePreserved": "실패 0건이 아니면 main에 올리지 않는다."
+  },
+  "existingVerifiedTests": {
+    "phase": 220,
+    "v2Pass": 802,
+    "bankPass": 299,
+    "totalPass": 1101,
+    "existingBrowserSkips": 2,
+    "newTestRun": false
+  },
+  "implementationEdited": false,
+  "actualStudentStorageReads": 0,
+  "actualStudentStorageWrites": 0,
+  "newPdfs": 0,
+  "newImages": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "gitReadOnlyRemoteCheck": true,
+  "cloudSync": false,
+  "branchMerge": false,
+  "pushed": false,
+  "published": false,
+  "qa": "science-question-review/phase221",
+  "requiredNext": [
+    "align required 3D checker with retained and canonical classroom routes without suppressing applicable checks",
+    "authorized actual browser/mobile/audio/WebGL/print verification and mandatory3D gate",
+    "recompute merge proposal against then-current remote and publish only verified science scope",
+    "remaining shared language and original v1 scope"
+  ]
+}

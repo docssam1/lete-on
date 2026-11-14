@@ -1,0 +1,98 @@
+{
+  "phase": 371,
+  "date": "2026-11-08",
+  "purpose": "Explain compressed grade-six personal directions while keeping model/viewpoint/observation boundaries and all question contracts.",
+  "personalNoteTextsRead": 485,
+  "units": [
+    {
+      "unit": "c22-s61-u01",
+      "studentDirections": 7,
+      "teacherStudentDirections": 7
+    },
+    {
+      "unit": "c22-s61-u02",
+      "studentDirections": 7,
+      "teacherStudentDirections": 7
+    },
+    {
+      "unit": "c22-s61-u03",
+      "studentDirections": 8,
+      "teacherStudentDirections": 8
+    },
+    {
+      "unit": "c22-s61-u04",
+      "studentDirections": 10,
+      "teacherStudentDirections": 10
+    },
+    {
+      "unit": "c22-s62-u01",
+      "studentDirections": 8,
+      "teacherStudentDirections": 8
+    }
+  ],
+  "allowedChanges": [
+    "pages[].rail[personal].text",
+    "teacherStudentPages[].rail[personal].text"
+  ],
+  "runtime": {
+    "phase": 371,
+    "allQuestionsUnchanged": 3080,
+    "unchangedDataFiles": 91,
+    "studentNoteChanges": 40,
+    "teacherStudentNoteChanges": 40,
+    "allOtherFieldsPreserved": true,
+    "unchangedCoreNotes": 4780,
+    "unchangedUpperNotes": 4780,
+    "workbookModesGenerated": 128,
+    "other27WorkbookModesIdentical": 108,
+    "allAnswerQuickModesIdentical": 64,
+    "allWorkbookModesRestoredByOnlyNoteText": 128,
+    "bankPrintModesIdentical": 84,
+    "priorWholeWorkbookAliasesPreserved": 5,
+    "generatorChecks": [
+      {
+        "unit": "c22-s32-u04",
+        "exitCode": 0,
+        "currentFileUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "exitCode": 0,
+        "currentFileUnchanged": true
+      }
+    ],
+    "actualBrowserUsed": false
+  },
+  "tests": {
+    "phase": 371,
+    "testFiles": 266,
+    "exitCode": 0,
+    "tests": 1437,
+    "pass": 1435,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0,
+    "duration_ms": 8662.555875
+  },
+  "syntaxChecked": [
+    "science-lab/data/book/c22-s61-u01.workbook.js",
+    "science-lab/data/book/c22-s61-u02.workbook.js",
+    "science-lab/data/book/c22-s61-u03.workbook.js",
+    "science-lab/data/book/c22-s61-u04.workbook.js",
+    "science-lab/data/book/c22-s62-u01.workbook.js",
+    "science-lab/v2/revised-textbook.js",
+    "science-lab/v2/v2.js",
+    "science-lab/data/book/grade6-study-notes.js",
+    "science-lab/v2/grade6-study-notes.test.mjs"
+  ],
+  "preservedWholeWorkbookExports": 5,
+  "independentBaselineComparison": "Canonical JSON is compared with the pre-edit snapshot. Native tests separately preserve own properties including undefined fields on existing duplex blank pages.",
+  "questionAndAnswerChanges": 0,
+  "fontOrCssChanges": false,
+  "newPrivateSourcesPublished": false,
+  "actualBrowserUsed": false,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

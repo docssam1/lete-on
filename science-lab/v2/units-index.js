@@ -1,3 +1,11 @@
+import{taxonomy as txCareer62}from'../data/units/c22-s62-u04.taxonomy-student.js?v=20261104-career-labels';
+import{taxonomy as txElectricity62}from'../data/units/c22-s62-u03.taxonomy.js';
+import{taxonomy as txCombustion62}from'../data/units/c22-s62-u02.taxonomy.js';
+import{taxonomy as txSeason62}from'../data/units/c22-s62-u01.taxonomy.js';
+import {taxonomy as txEarthMotion61}from'../data/units/c22-s61-u04.taxonomy.js';
+import {taxonomy as txPlantStructure61} from '../data/units/c22-s61-u03.taxonomy.js';
+import {taxonomy as txMotion61} from '../data/units/c22-s61-u02.taxonomy.js';
+import {taxonomy as txAcid61} from '../data/units/c22-s61-u01.taxonomy.js';
 import {taxonomy as txEnergy52} from '../data/units/c22-s52-u04.taxonomy.js';
 import {taxonomy as txWeather52} from '../data/units/c22-s52-u03.taxonomy.js';
 import {taxonomy as txHeat52} from '../data/units/c22-s52-u02.taxonomy.js';
@@ -62,6 +70,14 @@ export const SEMS = [
 const subsOf = (tx) => tx.elements.map((e) => ({ ...e, types: tx.types.filter((t) => t.element === e.id).length }));
 // lesson:false = 5단계 화면 준비 전(소단원 유형별 문제만 열림)
 export const READY = {
+ 'c22-s62-u04':{subs:subsOf(txCareer62),hero:'미래 사회의 문제·과학의 도움·관심 있는 진로와 과학',lesson:true},
+ 'c22-s62-u03':{subs:txElectricity62.elements.map(e=>({...e,types:txElectricity62.types.filter(t=>(t.elements||[t.element]).includes(e.id)).length})),hero:'불이 켜지는 회로·전지의 직렬연결·전자석·안전하고 효율적인 사용',lesson:true},
+ 'c22-s62-u02':{subs:subsOf(txCombustion62),hero:'성질의 변화·연소의 현상과 조건·물과 이산화 탄소 확인·생태계의 영향',lesson:true},
+ 'c22-s62-u01':{subs:subsOf(txSeason62),hero:'태양 고도·그림자·기온·계절별 낮의 길이와 자전축',lesson:true},
+ 'c22-s61-u04':{subs:subsOf(txEarthMotion61),hero:'남쪽 하늘 관찰·자전과 낮밤·공전과 계절별 별자리',lesson:true},
+ 'c22-s61-u03':{subs:subsOf(txPlantStructure61),hero:'식물 세포 관찰·기관의 구조와 기능·특징 소개',lesson:true},
+ 'c22-s61-u02':{subs:subsOf(txMotion61),hero:'위치 변화·거리와 시간·속력 비교와 교통안전',lesson:true},
+ 'c22-s61-u01':{subs:subsOf(txAcid61),hero:'지시약·용액의 반응과 혼합·생활 속 이용·산성화의 환경 피해',lesson:true},
  'c22-s52-u04':{subs:subsOf(txEnergy52),hero:'자원의 한계·재생에너지·집 모형·실천과 소통',labs:[{id:'c22-s52-u04',hero:'실제 자원 조사·모형 제작/측정/수정·생활 실천과 의견 기록',covers:['E1','E2','E3','E4','E5','E6','E7','E8']}]},
  'c22-s52-u03':{subs:subsOf(txWeather52),hero:'기상 요소·응결 비교·기압/해륙풍·생활 · 관련 원문/독립짝'},
  'c22-s52-u02':{subs:subsOf(txHeat52),hero:'온도·열 이동·단열 장치 · 실제 측정/제작·소통',labs:[{id:'c22-s52-u02',hero:'실제 시각/온도·조건·반복·장치 시험과 의견 기록',covers:['E1','E2','E3','E4','E5','E6','E7','E8']}]},
@@ -114,8 +130,17 @@ export const READY = {
 };
 
 // 문제은행 = 단원평가 원문(<단원>.source.js) + 유사문항. sets = 세트 번호, n = 원문 수.
+// supplement는 현재 연습의 전체 창작 수, lessonSupplement는 그중 수업에서 추가한 문항 수다.
 // 5단계 수업이 없는 단원도 여기에 있으면 지도에서 열린다(READY에 bankOnly:true로 함께 등록).
 export const BANK = {
+ 'c22-s62-u04':{sets:[],n:0,supplement:128,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'현행 범위 창작128',sourceScopeNote:'현행 단원평가 원문 준비 중',paperLabel:'전체128문항집',paperAvailable:true},
+ 'c22-s62-u03':{sets:[],n:0,supplement:186,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'독립 연습58·창작128',sourceScopeNote:'현행 판본 전체 원문 준비 중',paperLabel:'전체186문항집',paperAvailable:true},
+ 'c22-s62-u02':{sets:[],n:0,supplement:198,sourcePending:true,bookAvailable:true,originalPending:true,label:'독립 연습70·창작128',sourceScopeNote:'현행 판본 전체 원문 준비 중',paperLabel:'전체198문항집',paperAvailable:true},
+ 'c22-s62-u01':{sets:[],n:0,supplement:198,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'독립 연습70·창작128',sourceScopeNote:'현행 판본 전체 원문 준비 중',paperLabel:'전체198문항집',paperAvailable:true},
+ 'c22-s61-u04':{sets:[],n:0,supplement:167,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'독립 연습39·창작128',sourceScopeNote:'원문·공식 답 비공개 · 현행 전체 원문 준비 중',paperLabel:'전체167문항집',paperAvailable:true},
+ 'c22-s61-u03':{sets:[1,2,3,4],n:75,supplement:128,bookAvailable:true,lesson:true,reviewOnly:5,sourceExcerptOnly:true,originalPending:true,label:'옛6-1 식물의 구조와 기능 관련 발췌',sourceScopeNote:'현행6-1 전체 원문 준비 중',groups:{1:'원세트1 · 관련10',2:'원세트2 · 관련20',3:'원세트3 · 관련20',4:'원세트4 · 관련25'},paperLabel:'전체278문항집',paperAvailable:true},
+ 'c22-s61-u02':{sets:[1,2,3,4],n:70,supplement:128,bookAvailable:true,lesson:true,reviewOnly:7,sourceExcerptOnly:true,originalPending:true,label:'옛5-2 물체의 운동 관련 발췌',sourceScopeNote:'현행6-1 전체 원문 준비 중',groups:{1:'원세트1 · 관련15',2:'원세트2 · 관련15',3:'원세트3 · 관련20',4:'원세트4 · 관련20'},paperLabel:'전체268문항집',paperAvailable:true},
+ 'c22-s61-u01':{sets:[1,2,3,4],n:69,supplement:128,bookAvailable:true,lesson:true,reviewOnly:3,sourceExcerptOnly:true,originalPending:true,label:'옛5-2 산과 염기 관련 발췌',sourceScopeNote:'현행6-1 전체 원문 준비 중',groups:{1:'원세트1 · 관련15',2:'원세트2 · 관련15',3:'원세트3 · 관련20',4:'원세트4 · 관련19'},paperLabel:'전체266문항집',paperAvailable:true},
  'c22-s52-u04':{sets:[1,2,3],n:11,supplement:112,bookAvailable:true,lesson:true,labLabel:'자원 조사·집 모형·실천과 소통 기록',reviewOnly:1,sourceExcerptOnly:true,originalPending:true,label:'옛6-2 에너지 관련 발췌',sourceScopeNote:'현행 전체 원문 준비 중',groups:{1:'원세트1 · 관련4',2:'원세트2 · 관련2',3:'원세트3 · 관련5'},paperLabel:'전체134문항집',paperAvailable:true},
  'c22-s52-u03':{sets:[1,2,3,4],n:57,supplement:112,bookAvailable:true,lesson:true,labLabel:'날씨 관측·모형 실험·소통 기록',reviewOnly:6,sourceExcerptOnly:true,originalPending:true,label:'옛날씨 관련 발췌',sourceScopeNote:'현행 전체 원문 준비 중',groups:{1:'원세트1 · 관련13',2:'원세트2 · 관련12',3:'원세트3 · 관련16',4:'원세트4 · 관련16'},paperLabel:'전체226문항집',paperAvailable:true},
  'c22-s52-u02':{sets:[1,2,3,4],n:75,supplement:104,bookAvailable:true,lesson:true,labLabel:'열 탐구·단열 장치·소통 기록',reviewOnly:4,label:'옛단원 연계 평가',paperLabel:'전체254문항집'},
@@ -123,18 +148,18 @@ export const BANK = {
  'c22-s51-mid':{sets:[1,2],n:0,authored:72,originalPending:true,assessment51Print:true,label:'중간평가 · 창작',assessment:true,formLabel:'평가 유형',groups:{1:'A형',2:'B형'},courseLabel:'초등 과학 5학년 1학기',scope:['지층과 화석','빛의 성질'],scopeNote:'1~2단원 학습용 구성 · 학교별 공식 범위와 별개',paperLabel:'전체72문항집',reviewUnits:{E1:'c22-s51-u01',E2:'c22-s51-u02'}},
  'c22-s51-fin':{sets:[1,2,3,4,5,6],n:42,authored:96,mixedSourceAssessment:true,sourceExcerptOnly:true,reviewOnly:7,originalPending:true,assessment51Print:true,label:'기말평가',assessment:true,formLabel:'평가 자료',groups:{1:'옛 기말1 · 발췌10',2:'옛 기말2 · 발췌13',3:'옛 기말3 · 발췌13',4:'옛 기말4 · 발췌6',5:'창작 A형48',6:'창작 B형48'},courseLabel:'초등 과학 5학년 1학기',scope:['지층과 화석','빛의 성질','용해와 용액','우리 몸의 구조와 기능'],scopeNote:'창작은1~4단원 · 옛 원문은 용해와 용액 관련 발췌 · 현행 전체 원문 준비 중',paperLabel:'전체180문항집',reviewUnits:{E1:'c22-s51-u01',E2:'c22-s51-u02',E3:'c22-s51-u03',E4:'c22-s51-u04'}},
  'c22-s51-u04':{sets:[1,2,3,4],n:58,supplement:96,lesson:true,bookAvailable:true,labLabel:'내 몸 탐구·실천 기록',reviewOnly:6,label:'옛6-2 관련 발췌',sourceExcerptOnly:true,sourceScopeNote:'현행 전체 원문 준비 중',paperLabel:'전체212문항집',groups:{1:'옛6-2 세트1 · 발췌13',2:'옛6-2 세트2 · 발췌12',3:'옛6-2 세트3 · 발췌17',4:'옛6-2 세트4 · 발췌16'}},
- 'c22-s42-u04':{sets:[1,2,3,4],n:6,supplement:108,lesson:true,labLabel:'내 기후변화 탐구 기록',label:'옛 에너지/날씨 대응 관련 발췌',sourceExcerptOnly:true,sourceScopeNote:'현행 전체 원문 준비 중',groups:{1:'에너지 원세트1 · 발췌2',2:'에너지 원세트2 · 발췌1',3:'에너지 원세트3 · 발췌2',4:'날씨 원세트2 · 발췌1'},paperLabel:'전체120문항집'},
+ 'c22-s42-u04':{sets:[1,2,3,4],n:6,supplement:120,lessonSupplement:12,lesson:true,labLabel:'내 기후변화 탐구 기록',label:'옛 에너지/날씨 대응 관련 발췌',sourceExcerptOnly:true,sourceScopeNote:'현행 전체 원문 준비 중',groups:{1:'에너지 원세트1 · 발췌2',2:'에너지 원세트2 · 발췌1',3:'에너지 원세트3 · 발췌2',4:'날씨 원세트2 · 발췌1'},paperLabel:'전체132문항집'},
  'c22-s42-u03':{sets:[1,2,3,4],n:75,supplement:96,lesson:true,labLabel:'내 기체 탐구 기록',label:'옛6-1 여러 가지 기체 원문',groups:{1:'원문 세트1 ·10문항',2:'원문 세트2 ·20문항',3:'원문 세트3 ·20문항',4:'원문 세트4 ·25문항'},reviewOnly:3,paperLabel:'전체246문항집'},
- 'c22-s42-u02':{sets:[1,2,3,4],n:70,supplement:80,lesson:true,labLabel:'내 생태계 탐구 기록',label:'옛5-2 생물과 환경 원문',groups:{1:'원문 세트1 ·15문항',2:'원문 세트2 ·15문항',3:'원문 세트3 ·20문항',4:'원문 세트4 ·20문항'},reviewOnly:2,paperLabel:'전체220문항집'},
- 'c22-s42-u01':{sets:[1,2,3,4,5,6,7,8],n:95,supplement:80,lesson:true,labLabel:'내 밤하늘 탐구 기록',label:'밤하늘 연계 원문',groups:{1:'태양계 원문1 ·10문항',2:'태양계 원문2 ·20문항',3:'태양계 원문3 ·20문항',4:'태양계 원문4 ·25문항',5:'달 관찰 발췌1 ·3문항',6:'달 관찰 발췌2 ·5문항',7:'달 관찰 발췌3 ·5문항',8:'달 관찰 발췌4 ·7문항'},reviewOnly:5,paperLabel:'전체270문항집'},
- 's41-u04':{sets:[1,2,3,4],n:75,supplement:64,lesson:true,labLabel:'내 생물 탐구 기록',label:'옛5-1 원문',groups:{1:'세트1 ·10문항',2:'세트2 ·20문항',3:'세트3 ·20문항',4:'세트4 ·25문항'},reviewOnly:7,paperLabel:'전체214문항집'},
+ 'c22-s42-u02':{sets:[1,2,3,4],n:70,supplement:92,lessonSupplement:12,lesson:true,labLabel:'내 생태계 탐구 기록',label:'옛5-2 생물과 환경 원문',groups:{1:'원문 세트1 ·15문항',2:'원문 세트2 ·15문항',3:'원문 세트3 ·20문항',4:'원문 세트4 ·20문항'},reviewOnly:2,paperLabel:'전체232문항집'},
+ 'c22-s42-u01':{sets:[1,2,3,4,5,6,7,8],n:95,supplement:92,lessonSupplement:12,lesson:true,labLabel:'내 밤하늘 탐구 기록',label:'밤하늘 연계 원문',groups:{1:'태양계 원문1 ·10문항',2:'태양계 원문2 ·20문항',3:'태양계 원문3 ·20문항',4:'태양계 원문4 ·25문항',5:'달 관찰 발췌1 ·3문항',6:'달 관찰 발췌2 ·5문항',7:'달 관찰 발췌3 ·5문항',8:'달 관찰 발췌4 ·7문항'},reviewOnly:5,paperLabel:'전체282문항집'},
+ 's41-u04':{sets:[1,2,3,4],n:75,supplement:76,lessonSupplement:12,lesson:true,labLabel:'내 생물 탐구 기록',label:'옛5-1 원문',groups:{1:'세트1 ·10문항',2:'세트2 ·20문항',3:'세트3 ·20문항',4:'세트4 ·25문항'},reviewOnly:7,paperLabel:'전체226문항집'},
   's41-u01': { sets:[1,2,3,4], n:80, supplement:90, lesson:true, labLabel:'내 자석 탐구 기록' },
  'c22-s32-mid':{sets:[1,2],n:0,authored:60,label:'중간평가 · 창작',assessment:true,formLabel:'평가 유형',groups:{1:'A형',2:'B형'},courseLabel:'초등 과학 3학년 2학기',scope:['물체와 물질','지구와 바다'],scopeNote:'1~2단원 학습용 구성 · 학교별 공식 시험 범위와 별개',reviewUnits:{E1:'c22-s32-u01',E2:'c22-s32-u02'}},
  'c22-s32-fin':{sets:[1,2],n:0,authored:60,label:'기말평가 · 창작',assessment:true,formLabel:'평가 유형',groups:{1:'A형',2:'B형'},courseLabel:'초등 과학 3학년 2학기',scope:['물체와 물질','지구와 바다','소리의 성질','감염병과 건강한 생활'],scopeNote:'1~4단원 학습용 구성 · 학교별 공식 시험 범위와 별개',reviewUnits:{E1:'c22-s32-u01',E2:'c22-s32-u02',E3:'c22-s32-u03',E4:'c22-s32-u04'}},
- 'c22-s32-u04':{sets:[],n:0,supplement:80,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 건강 생활 탐구 기록'},
- 'c22-s32-u03':{sets:[1,2,3,4],n:70,supplement:64,lesson:true,labLabel:'내 소리 탐구 기록',label:'소리의 성질 원문',reusedSourceUnit:'s32-u05'},
- 'c22-s32-u02':{sets:[],n:0,supplement:80,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 지구·바다 탐구 기록'},
- 'c22-s32-u01':{sets:[1,2,3,4],n:70,supplement:64,lesson:true,label:'상태 관찰 원문',labLabel:'내 관찰·분류·설계 기록',reusedSourceUnit:'s32-u04'},
+ 'c22-s32-u04':{sets:[],n:0,supplement:92,lessonSupplement:12,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 건강 생활 탐구 기록'},
+ 'c22-s32-u03':{sets:[1,2,3,4],n:70,supplement:76,lessonSupplement:12,lesson:true,labLabel:'내 소리 탐구 기록',label:'소리의 성질 원문',reusedSourceUnit:'s32-u05'},
+ 'c22-s32-u02':{sets:[],n:0,supplement:92,lessonSupplement:12,sourcePending:true,lesson:true,label:'창작 학습',labLabel:'내 지구·바다 탐구 기록'},
+ 'c22-s32-u01':{sets:[1,2,3,4],n:70,supplement:76,lessonSupplement:12,lesson:true,label:'상태 관찰 원문',labLabel:'내 관찰·분류·설계 기록',reusedSourceUnit:'s32-u04'},
   's31-fin': { sets: [1, 2], n: 0, authored: 60, label: '기말평가 · 창작', assessment: true, formLabel: '평가 유형', groups: { 1: 'A형', 2: 'B형' }, reviewUnits: { E1: 's31-u01', E2: 's31-u02', E3: 's31-u03', E4: 's31-u04' } },
   's31-u04': { sets: [1, 2, 3, 4], n: 41, supplement: 64, lesson: true, label: '교재 문항', groups: { 1: '동물의 자람과 관찰', 2: '곤충의 한살이', 3: '식물의 자람 조건', 4: '식물 실험·자료 해석' } },
   's41-u02': { sets:[1,2,3,4], n:80, supplement:78, lesson:true, labLabel:'내 물 탐구 기록' },
@@ -166,4 +191,4 @@ export const BANK = {
 };
 
 // 실험 교재(data/book/<id>.book.js)가 있는 수업 — 지도의 시트에서 첫 화면(#/<id>/start)으로 들어간다.
-export const BOOK_UNITS = new Set(['c22-s52-u04','c22-s52-u03','c22-s52-u02', 'c22-s52-u01', 'c22-s51-u04', 'c22-s51-u03', 'c22-s51-u02', 'c22-s51-u01', 'c22-s42-u04', 'c22-s42-u03', 'c22-s42-u02', 'c22-s42-u01', 's41-u04', 'c22-s32-u04', 'c22-s32-u03', 'c22-s32-u02', 'c22-s32-u01', 's31-u03', 's31-u02', 's31-u01', 's31-u04', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01']);
+export const BOOK_UNITS = new Set(['c22-s62-u04','c22-s62-u03','c22-s62-u02','c22-s62-u01','c22-s61-u04','c22-s61-u03','c22-s61-u02','c22-s61-u01','c22-s52-u04','c22-s52-u03','c22-s52-u02', 'c22-s52-u01', 'c22-s51-u04', 'c22-s51-u03', 'c22-s51-u02', 'c22-s51-u01', 'c22-s42-u04', 'c22-s42-u03', 'c22-s42-u02', 'c22-s42-u01', 's41-u04', 'c22-s32-u04', 'c22-s32-u03', 'c22-s32-u02', 'c22-s32-u01', 's31-u03', 's31-u02', 's31-u01', 's31-u04', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01']);

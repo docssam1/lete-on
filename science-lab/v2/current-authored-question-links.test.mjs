@@ -1,0 +1,4 @@
+import test from'node:test';import assert from'node:assert/strict';import{execFileSync}from'node:child_process';import{fileURLToPath}from'node:url';
+test('현행32단원의 실제 은행 로더는 수업의 모든 창작 버전·응답 계약과 일치한다',()=>{
+ const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/current-authored-question-links.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert.equal(result.units,32);assert.equal(result.linkedAuthoredItems,1559);assert.equal(result.canonicalClassroomItems,76);assert.equal(result.canonicalContextChanges,33);assert.equal(result.resolvedChecks,490);assert(result.versionedSlides>100);assert.equal(result.studentStorageReads,0);assert.equal(result.studentStorageWrites,0);assert.equal(result.networkRequests,0);assert.equal(result.browserVerified,false);
+});

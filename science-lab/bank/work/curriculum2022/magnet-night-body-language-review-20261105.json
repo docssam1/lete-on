@@ -1,0 +1,172 @@
+{
+  "phase": 237,
+  "date": "2026-11-05",
+  "baseCommit": "e195ffb62e02f0757e980c84833ac63f04c99250",
+  "units": [
+    "s41-u01",
+    "c22-s42-u01"
+  ],
+  "scope": "Shared explanatory/activity body: all first10 magnet pages and19 of the first20 night-sky pages. The already reviewed night-sky guide on p2 is unchanged. Later questions, embedded figures, answer appendix and classroom slides remain unchanged.",
+  "changes": [
+    "Describe poles, attraction/repulsion, the two facing ring surfaces and the guide rod in student sentences. State the axial N/S arrangement as a condition of this teaching tool.",
+    "Keep material/distance/inserted-sheet comparisons distinct and plan a useful device around purpose, two parts and properties.",
+    "Describe Moon shape/surface, observational dates/times and records of cloudy days without professional evidence/status labels.",
+    "Use approximate monthly recurrence instead of a warning framed around exactly30 days.",
+    "Clarify the Big Dipper cup’s outside pointer stars, the pole star and program preview versus actual sky observation.",
+    "Keep the safety rules and later-grade theory boundary; no new practical task or assessed requirement added."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 30,
+    "questionsPreserved": 3080,
+    "units": [
+      {
+        "unit": "s41-u01",
+        "studentPages": 57,
+        "teacherPages": 58,
+        "sharedBodyPagesRevised": 10,
+        "questionsPreserved": 80,
+        "teacherPagesAfterEditedPrefixExactlyUnchanged": true,
+        "bodyStringLengthBefore": 3576,
+        "bodyStringLengthAfter": 4151
+      },
+      {
+        "unit": "c22-s42-u01",
+        "studentPages": 76,
+        "teacherPages": 76,
+        "sharedBodyPagesRevised": 19,
+        "questionsPreserved": 80,
+        "teacherPagesAfterEditedPrefixExactlyUnchanged": true,
+        "bodyStringLengthBefore": 9000,
+        "bodyStringLengthAfter": 9778
+      }
+    ],
+    "revisedSharedStudentPages": 29,
+    "revisedSharedTeacherPages": 29,
+    "questionsFiguresRailsWritingSpaceBlockTypesTableShapesAndExampleGivensPreserved": true,
+    "removedNonDataNumericWarnings": {
+      "s41-u01/p3": "force zero qualifier replaced by concrete observation and condition checks",
+      "c22-s42-u01/p10": "exact30-day negation replaced by approximately one-month recurrence already stated in the table"
+    },
+    "generatedBodiesByteIdentical": 2,
+    "productsChanged": [
+      {
+        "unit": "s41-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher"
+      }
+    ],
+    "productsUnchanged": 124,
+    "slideArraysUnchanged": 64,
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF.md",
+      "science-lab/bank/BANK-HANDOFF.md",
+      "science-lab/data/book/c22-s42-u01.workbook.js",
+      "science-lab/data/book/s41-u01.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-sky-lesson.test.mjs",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "htmlChecks": [
+    {
+      "unit": "s41-u01",
+      "mode": "student",
+      "matchedEditedStrings": 68,
+      "bodyPages": 57,
+      "actualBrowserOrA4Verified": false
+    },
+    {
+      "unit": "s41-u01",
+      "mode": "teacher",
+      "matchedEditedStrings": 68,
+      "bodyPages": 58,
+      "actualBrowserOrA4Verified": false
+    },
+    {
+      "unit": "c22-s42-u01",
+      "mode": "student",
+      "matchedEditedStrings": 129,
+      "bodyPages": 76,
+      "actualBrowserOrA4Verified": false
+    },
+    {
+      "unit": "c22-s42-u01",
+      "mode": "teacher",
+      "matchedEditedStrings": 129,
+      "bodyPages": 76,
+      "actualBrowserOrA4Verified": false
+    }
+  ],
+  "tests": {
+    "v2": {
+      "pass": 815,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "initialRun": {
+      "fail": 2,
+      "reason": "Two tests located source tables by old prose page titles. Final selectors use the unchanged content section; row/slide/model/storage assertions are byte-identical."
+    },
+    "newTests": 0,
+    "threeDRuntimeExecuted": false
+  },
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+      "localText": "Existing verified curriculum-standards/science-curriculum.txt lines590–602,655–674",
+      "scope": "Current 4과09 force/pole phenomena and everyday device design, without a magnetic-field concept; 4과13 observed Moon phases/surface, Sun/planets and model making, self-luminous stars and northern constellations, without lunar-phase causes or detailed physical quantities."
+    },
+    {
+      "title": "EIA Magnets and Electricity",
+      "url": "https://www.eia.gov/energyexplained/electricity/magnets-and-electricity.php",
+      "scope": "Only like/unlike pole attraction/repulsion cross-checked. Atomic/electron/field/electricity mechanism not copied."
+    },
+    {
+      "title": "NASA Moon Phases",
+      "url": "https://science.nasa.gov/moon/moon-phases/",
+      "scope": "Approximately monthly recurrence and Moon reflecting sunlight. No 29.5-day value, phase-cause mechanism or orbital calculation introduced."
+    },
+    {
+      "title": "NASA What Is the North Star",
+      "url": "https://science.nasa.gov/solar-system/what-is-the-north-star-and-how-do-you-find-it/",
+      "scope": "Use the outer pointer stars on the Big Dipper cup, not its handle; Polaris is not the brightest star. No axial/precession mechanism introduced."
+    },
+    {
+      "title": "NASA Why Observe the Sun in Different Colors",
+      "url": "https://svs.gsfc.nasa.gov/vis/a010000/a013800/a013859/script_31299_00.html",
+      "scope": "Image display colors depend on observation method. No wavelength/temperature values or optical procedure introduced."
+    }
+  ],
+  "editorialConnection": "Outer magnet-night-body-language.js follows existing opening/rail editors. Expected unit/count/title/block type and pre-edit student/teacher body equality are checked. Later teacher continuation and untouched pages retain original objects. Regeneration must preserve the wrapper and trigger review if the prefix changes.",
+  "cacheVersion": "20261105-magnet-night-body-language",
+  "remaining": "Question wording, embedded figure captions and broader workbook/classroom language consistency; actual desktop/mobile/A4/audio/WebGL and mandatory 3D gate; v1 consistency and main integration/deployment. Existing browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase237: full32 workbook and128 product snapshots,64 slides, body diffs, numerical/structural validation with only two explicit non-data warning-number removals, four production HTML fragments/text checks and initial/final test logs."
+}

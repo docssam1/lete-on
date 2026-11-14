@@ -1,0 +1,113 @@
+{
+  "phase": 381,
+  "date": "2026-11-08",
+  "candidateBaseline": "d36c7c3fa5c3fe32cc382ad8f4ac2e263b8e55fc",
+  "reviewParent": "a4d138c0aac9dd1482baef309379616eb3173979",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "현재32단원의 학생 수업 안내와31개 기본 비교 화면의 선택한 편집 용어 검색, 휴대폰 스스로 공부 화면의 글씨 규칙 보완.",
+  "languageReview": {
+    "studentClassroomUnitsChecked": 32,
+    "questionSlidesAndTeacherPlanExcluded": true,
+    "defaultComparisonWidgetsChecked": 31,
+    "revealedAndSavedWidgetStatesNotExhaustivelyReviewed": true,
+    "initialSubstringFalsePositivesExcluded": "원인과/확인과의 일부를 인과로 잡는 것을 구별했다.",
+    "reviewedCandidateSlides": 1,
+    "remainingSelectedLexicalMatches": 0,
+    "doesNotClaimCompleteLanguageMeaningAudit": true,
+    "change": {
+      "unit": "c22-s61-u01",
+      "flow": "acidFlow",
+      "page": "litmusplan",
+      "stepIndex": 1,
+      "before": "시료마다 새 시험지와 깨끗한 도구를 나누어 준비해요.",
+      "after": "용액마다 새 시험지와 깨끗한 도구를 나누어 준비해요.",
+      "rawThinkingLessonPreserved": true,
+      "currentVoiceCueUnchanged": true
+    }
+  },
+  "mobileTypography": {
+    "scope": "screen, max760px, self-study",
+    "bodyChoicesTablesPx": 18,
+    "hintsPx": 16,
+    "commonHeadingPx": 26,
+    "commonFootnotePx": 14,
+    "tableHeadingWrapEnabled": true,
+    "previousCssBytesPreserved": true,
+    "desktopTeacherAndPrintRulesUnchanged": true,
+    "actualComputedFontsOrWrappingVerified": false
+  },
+  "validation": {
+    "phase": 381,
+    "date": "2026-11-08",
+    "baseline": "d36c7c3fa5c3fe32cc382ad8f4ac2e263b8e55fc",
+    "classroomUnits": 32,
+    "totalSlides": 3048,
+    "unchangedDecks": 62,
+    "changedDecks": [
+      {
+        "unit": "c22-s61-u01",
+        "mode": "self",
+        "slide": "litmusplan"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "mode": "teach",
+        "slide": "litmusplan"
+      }
+    ],
+    "changedChapterTextFields": 1,
+    "questionCount": 3080,
+    "allWorkbooksQuestionsPlansArtAdaptersAndOriginalInputsUnchanged": true,
+    "predictionKeysUnchanged": true,
+    "oldClassroomViewHistoryPreserved": true,
+    "defaultComparisonWidgetsChecked": 31,
+    "selectedLexicalMatchesRemaining": 0,
+    "doesNotClaimCompleteLanguageMeaningAudit": true,
+    "mobileCss": {
+      "scope": "screen, max760px, self-study",
+      "bodyChoicesTablesPx": 18,
+      "hintsPx": 16,
+      "commonHeadingPx": 26,
+      "commonFootnotePx": 14,
+      "tableHeadingWrapEnabled": true,
+      "previousCssBytesPreserved": true,
+      "desktopTeacherAndPrintRulesUnchanged": true,
+      "actualComputedFontsOrWrappingVerified": false
+    },
+    "actualBrowserUsed": false,
+    "actualA4VisualInspection": false
+  },
+  "nativeTests": {
+    "relatedFiles": 5,
+    "relatedTestsPassed": 22,
+    "fullSuite": {
+      "exitCode": 0,
+      "files": 270,
+      "tests": 1449,
+      "suites": 0,
+      "pass": 1447,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "browserEnvironmentUnset": true,
+    "syntaxFiles": 3
+  },
+  "preservation": {
+    "questionDataAndWorkbookSourcesUnchanged": true,
+    "allPictureAssetsUnchanged": true,
+    "allClassroomChecksAndContractsUnchanged": true,
+    "teacherDesktopAndPrintCssRulesUnchanged": true,
+    "allPriorCssBytesPreserved": true,
+    "reportsAndStorageCodeUnchanged": true,
+    "priorClassroomViewRecordPreservedInHistory": true
+  },
+  "actualBrowserUsed": false,
+  "actualPhoneFontOrWrappingReviewed": false,
+  "actualA4VisualInspection": false,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

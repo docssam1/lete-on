@@ -1,0 +1,875 @@
+{
+  "phase": 185,
+  "date": "2026-11-04",
+  "unit": "c22-s51-u01",
+  "title": "지층 관찰·쌓임 모형·퇴적암 분류·화석 모형·과거 환경 추리 전체 수업 연결",
+  "status": "local-candidate-browser-gate-pending",
+  "baselineCommit": "64e732228adad4816b01cb685949b27cf8355ef3",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini · Codex desktop · local Node VM; no API delegation/model override or new image generation",
+  "skills": [
+    "instructional-design",
+    "ux-writing",
+    "frontend-design",
+    "gfield-textbook-design"
+  ],
+  "rulesRead": [
+    "COMMON_WORKFLOW.md",
+    "CLAUDE.md",
+    "3D-RULES.md"
+  ],
+  "curriculum": {
+    "document": "교육부2022-33 별책9 과학과 교육과정",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "basicLines": [
+      718,
+      734
+    ],
+    "standards": [
+      "6과01-01",
+      "6과01-02",
+      "6과01-03"
+    ],
+    "currentSemesterPrimaryReviewPhase": 184,
+    "scope": [
+      "지층 색·두께 및 수평·휘어짐·끊어짐 관찰",
+      "지층 형성 과정 모형 표현",
+      "알갱이 크기에 따른 이암·사암·역암 분류",
+      "동물·식물 화석 관찰 및 화석 생성 과정 모형 설명",
+      "화석·생활/발견 지층 자료로 과거 생물과 환경 추리·가치 인식"
+    ],
+    "advancedFormationPrinciplesAndAbsoluteDatingExcludedFromBasic": true,
+    "original260MinutePlanPreserved": true
+  },
+  "classroom": {
+    "selfSlides": 51,
+    "teacherSlides": 52,
+    "minutes": 260,
+    "phases": 10,
+    "checks": 16,
+    "manualAdvanceActivityScreens": 16,
+    "comparisonCases": [
+      "layers",
+      "order",
+      "rocks",
+      "scale",
+      "fossils",
+      "model",
+      "past",
+      "share"
+    ],
+    "newPredictionKey": "geology-thinking-v1",
+    "newCompareRowsKey": "geologyCompareRows",
+    "originalActualInquiryRowsKey": "geologyInquiryRows",
+    "originalInquiryActivities": 8,
+    "originalRawLessonAndReportUnchanged": true,
+    "optionalRecordsAdapter": true,
+    "defaultReportCTA": false,
+    "comparisonCompletionIsNotPhysicalObservationOrModelMakingCompletion": true,
+    "noNewOrUnconnected3D": true,
+    "legacyDailyObjectsAndOrderExactlyPreserved": true,
+    "legacyDailySnapshotReason": "current",
+    "legacyDailyReadOnly": false,
+    "selectedQuestionImagesRendered": {
+      "c22-s51-u01-b017": "layers-abc.svg",
+      "c22-s51-u01-b049": "rock-c.png"
+    },
+    "questionImageFieldsAcross18ClassesAudited": true,
+    "allFigureFieldQuestionsActuallyContainImage": true
+  },
+  "integration": {
+    "geology": [
+      {
+        "unit": "c22-s51-u01",
+        "mode": "self",
+        "slides": 51,
+        "checks": 16,
+        "minutes": 260,
+        "manuallyContinuedActivities": 16,
+        "allSelectedQuestionsExactlyPreserved": true,
+        "noUnconnected3D": true
+      },
+      {
+        "unit": "c22-s51-u01",
+        "mode": "teach",
+        "slides": 52,
+        "checks": 16,
+        "minutes": 260,
+        "manuallyContinuedActivities": 16,
+        "allSelectedQuestionsExactlyPreserved": true,
+        "noUnconnected3D": true
+      }
+    ],
+    "otherClassroomSlideArraysUnchanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "slides": 51,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "slides": 52,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "slides": 35,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "slides": 41,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "slides": 42,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "slides": 26,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "self",
+        "slides": 37,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teach",
+        "slides": 38,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "self",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teach",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "self",
+        "slides": 54,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teach",
+        "slides": 55,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "slides": 53,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "slides": 54,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "slides": 53,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "slides": 54,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u03",
+        "mode": "self",
+        "slides": 47,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u03",
+        "mode": "teach",
+        "slides": 48,
+        "exactlyUnchanged": true
+      }
+    ],
+    "workbookProductsUnchanged": 72,
+    "protectedOriginals": [
+      {
+        "file": "science-lab/data/units/c22-s51-u01.js",
+        "sha256": "699e979f63cd838db8a8e812491704401855ba65f104ade874b74bdb8a496322",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.similar.js",
+        "sha256": "75d0c128a90a0f713dce29284c8a984e72ba2b951ba0c7b5ddc2899530fdbd3c",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.lesson.js",
+        "sha256": "6f985fd050c7d00308b64d04d47966f826b2c49f0a689af66e0494a3f1357704",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.taxonomy.js",
+        "sha256": "6a495d7e32de6f324cc3a66067ee18678a8f7aaed72519c85c66c45a7817b232",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.judge.js",
+        "sha256": "63f6020f3f66846fcbfb321260afc638cd62cf34aa93d6b298a6a087047e6e3a",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.misc.js",
+        "sha256": "5277fa1eba07128242a1f2b3d255361542ff93094b8b7f5331fdff7156b882e2",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.book.js",
+        "sha256": "fe9413d65b4a818db9540c353c099f9cf881742c3e6f7e4aac7589e0e11c207b",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.workbook.js",
+        "sha256": "4a66e6f58f84e59f6301ea1ad47feb49f289f537fc81b1ff35e58951c6ed2c0d",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.workbook-art.js",
+        "sha256": "c891ce82f3839297bb3d181a9ac13ec4a97b06fae0f4d4a4cf45eb2a52007850",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.editorial.js",
+        "sha256": "70c862ce3127e864f4426b2a85a98b96ed90e9e60d8ea23d2acd7d5293a25a54",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/activities/c22-s51-u01.inquiry.js",
+        "sha256": "23c3bd0b71ab60253880f592bfd2657a2762248822b3dbb09f4ee3126fdf799b",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-bread.js",
+        "sha256": "16a5d2d269ca8e0492ac20fdbccc6d01d4641a2f8d4e86762fb6c4171123eb73",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/bread-model.js",
+        "sha256": "4241e9ff1f02ca75c52a838bd14e5ae1a52451a8b452b0e3faaa118761a395d4",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/think-merge.js",
+        "sha256": "5951f886cc74d7331c9c47e1c3de8aefbfbaad406c1d2a89569686b9c468ff16",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/inquiry-records.js",
+        "sha256": "54b01c6d91a9c73a1515e9f38a57050732873c2547f46dd6c1496c7caa6c5638",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-inquiry.js",
+        "sha256": "cbc79ffc0f023a4b3b70223102f4e99e87bed9530e7962ed60ca81c668849630",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily.js",
+        "sha256": "125770f6d7e088259a5a3283577f5d4a66a92d29b731efc9879fce5e323a1bf6",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/check.js",
+        "sha256": "b9afbd688c21970b3d6d52777f79c9d8a643496ff5856edc6afc323c53939898",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily-paper-state.js",
+        "sha256": "a66f3a5d1c6f81971d90cc44fd5279557f8ca40bca618f13453a3c872da13153",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-ring-tower.js",
+        "sha256": "11ca20224791dcd5942848e294d2b8a838fa437f7b71d3fd99d853443a25a21c",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/ring-tower.js",
+        "sha256": "be2fbc6096d59c3740ae711f19121aba15e3254c5fc6ec5490ae39ada865eebe",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-freeze.js",
+        "sha256": "4c2b315e24856ba72999ab3be68a31bbaebfddd7314b4d2881fba2d63b9b9c27",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-hill.js",
+        "sha256": "5ccf6da051f525c1433350ffa070736f96e26ee558ac221e99f763cec22c978a",
+        "unchanged": true
+      }
+    ],
+    "images": [
+      {
+        "file": "science-lab/assets/book/c22-s51-u01-source-horizontal.png",
+        "sha256": "133bcab4fdf3bf81681f642327aa92cf6c98f4d69c5584d395e1aceddab960b3",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/book/c22-s51-u01-source-bent.png",
+        "sha256": "10d978aa457ab208f53143e68e3151b8a6216e6efbd5c3d8a00fd9f5e82a7106",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/book/c22-s51-u01-source-broken.png",
+        "sha256": "dab0b73fa1eb5fff2b0bd559a3fd5ba9c08ecd4cce35a9e8b1d578fb1f476414",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/book/c22-s51-u01-source-clay.png",
+        "sha256": "a5254bbcefab65c764370ca50609cea0150c69e2261932e1973e4da3f5cc80e9",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/bank/c22-s51-u01/rock-a.png",
+        "sha256": "c43292f1f7cbf933032378e1b571f54eb58d0dd52b5038f4b7532cae4afaa636",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/bank/c22-s51-u01/rock-b.png",
+        "sha256": "9542dfbd7475c5bc57e3a662be6dd71e9fcf27401168ca63fb545732734c8007",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/bank/c22-s51-u01/rock-c.png",
+        "sha256": "5ef18a5c7efc00f9b8afe7c60ba7ff8500fe1ba6d26bcb46a640fc095d4c5dd1",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/bank/c22-s51-u01/fossil-fish.png",
+        "sha256": "fddd707bc30fc3ffe2b90e2768e6d8bce3da90cd345ae992dd94a397cb013b87",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/book/c22-s51-u01-fern-nps.jpg",
+        "sha256": "7f15bedd829943b335febb597226b191626f000c0822434c91ddd15c3bb35f88",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      },
+      {
+        "file": "science-lab/assets/bank/c22-s51-u01/layers-abc.svg",
+        "sha256": "eb5b5eef6f75f7a2f59a7714fd1cfbdbf9b9b2cf600c20d73f99642f2cd16674",
+        "bytesUnchanged": true,
+        "actualVisionReviewedInPhase": 184,
+        "actualDirectVisualReviewInPhase": 184
+      }
+    ],
+    "previousPdfs": [
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-student.pdf",
+        "sha256": "448550e9f71c625bfa30b22067b2cc4b924d4cbcb6dcc7833a29d26ffe1ba77c",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-teacher.pdf",
+        "sha256": "70f64b4bd56a638f6a5c7ce59738e461584272b8a837074f4628d90a94ad544a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-answers.pdf",
+        "sha256": "49f29e808e7961f3462a76b0234cf822d128a32e59d0b617cf43ade1e8dba65a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-quick.pdf",
+        "sha256": "596bf586110e8d6db3c86db06cdb8fbf75b2aaaa16c2a334a710d04d180cb4be",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-student.pdf",
+        "sha256": "f3c0437d837a77e0bd2cacc06b062e26fd4ecfaf716a9925efa668dd569d1afa",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-teacher.pdf",
+        "sha256": "bb1273765ac102d5ea1da8586184e305873e60d78d1258ba9e1405bdef12a8a5",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-answers.pdf",
+        "sha256": "ef2d178052c3ba43c59440bc9f265a121acf707848f193a5b0770178c7cf1a61",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-quick.pdf",
+        "sha256": "26764f8fc6eb3eeae959da7887b92c81e9661bedade18ff2cee3c56176bc861f",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-student.pdf",
+        "sha256": "1ad441160cedc580ac5fb1ef12ac02a5fd3fe6ced7980dc91251898f901ae9da",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-teacher.pdf",
+        "sha256": "b7366112a9e6ce803e87afab57178890731c18ce1e670199e44e01dadfb22c74",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-answers.pdf",
+        "sha256": "c0ca4f56ac3db9cbdee1767efbb725e64bc546fcc3c74801cf6e309d5e80cdbc",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-quick.pdf",
+        "sha256": "5a9f4552312dfe299f5498b96ee046a239413cd1dff077579937d79a9d6e1537",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-student.pdf",
+        "sha256": "7f9cf4e1a4bd91f636f31cbcac2243e58b96d9a1ec5db6460a7d599a97dc7094",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-teacher.pdf",
+        "sha256": "721da084d184397e9d293a79a9569b98a9dde53c6f9220e2eb8c22cd0d7ea2fb",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-answers.pdf",
+        "sha256": "a1c7df1a94f4bae1873b850e4cbd66ee0163fb28504b2254b14a1944c4f351a4",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-quick.pdf",
+        "sha256": "5b3cfe0460b5e35a2a393e47a09205abf0d72c1b4f2f39c3c21a4c2adae70910",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-student.pdf",
+        "sha256": "87315bf2c55ecdad16247ea0811349e8bf48e52c84b19641ffd9eeae00dd7432",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-teacher.pdf",
+        "sha256": "74da526fcbcce4166cc11b23f5e98ff8f0aba00180f188c98a818ba37de82270",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-answers.pdf",
+        "sha256": "4a78698a88ed7f6e78fb214cc6b1e6ef59faddb9bd49b281e5b5d9c13296fa81",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-quick.pdf",
+        "sha256": "67753f2dc719e2e2c690d660d050370a29952e0a8aaeb2d52ab360621fa8ffe9",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-student.pdf",
+        "sha256": "c9ed53acf1e35f0697d7fdfaa9683c86fcad4ca0608bb1cd301deb1d17dfe8e8",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-teacher.pdf",
+        "sha256": "76c9d1e7f9b1caba7fc970fef946921e11dd65b3647d77578ec2d99bd846a652",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-answers.pdf",
+        "sha256": "b62641d0ea663447896e36d80c9a65004c82775d413a6759d25985959dd48358",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-quick.pdf",
+        "sha256": "52e1b704b44b7a28688be8fff408770c622a39cf51d26b81e05eb423767c5123",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-student.pdf",
+        "sha256": "fdbf6d8df388cc4d9b44245f4a8a5c05e85be5e07371936c357905184085826e",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-teacher.pdf",
+        "sha256": "f5e4c637e3288c795dfd2646e9c4573e00a0e70d8ee862d5e8f5dc0164629c25",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-answers.pdf",
+        "sha256": "7be98052a55f88b8449f4a27c96d1f0b7038de3b245dd0585c68d1d25ce325a9",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-quick.pdf",
+        "sha256": "4b295a1820490d0e1fdcdb025dce251f073e79c6c4eaa7866ee5df822ed0c63a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-student.pdf",
+        "sha256": "a29422fa4d18575d3ef539dfc21077a78e81fb2d19f466e4a781afccd768bbb1",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-teacher.pdf",
+        "sha256": "d3f17eef516b6d2fb490c81628ab63dce9b6b4ff1f5249b9fd6e16bb908b1c41",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-answers.pdf",
+        "sha256": "4b7525b7924edcc20373aeab0a9db9751192c9fe149137826a92921255e668db",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-quick.pdf",
+        "sha256": "5eac5f98d04af1d900e767345f56ce16a14ca9aa956d245d1081ab74c7857f48",
+        "unchanged": true
+      }
+    ],
+    "geologyLegacyDailyPaper": {
+      "legacyQuestions": 16,
+      "currentQuestions": 16,
+      "objectsAndOrderExactlyPreserved": true,
+      "snapshotReadOnly": false,
+      "snapshotReason": "current",
+      "partialReadOnly": false,
+      "partialReason": "current",
+      "viewStateUnchanged": true,
+      "explicitNewAttemptArchivesOriginalStateIncludingUnknownFields": true,
+      "actualStudentStorageAccessed": false,
+      "ids": [
+        "c22-s51-u01-b008",
+        "c22-s51-u01-b024",
+        "c22-s51-u01-b040",
+        "c22-s51-u01-b056",
+        "c22-s51-u01-b065",
+        "c22-s51-u01-b072",
+        "c22-s51-u01-b075",
+        "c22-s51-u01-b080",
+        "c22-s51-u01-b081",
+        "c22-s51-u01-b088",
+        "c22-s51-u01-b089",
+        "c22-s51-u01-b096",
+        "c22-s51-u01-b001",
+        "c22-s51-u01-b017",
+        "c22-s51-u01-b033",
+        "c22-s51-u01-b049"
+      ]
+    },
+    "teacherDeckEvents": {
+      "teacherMounts": 1,
+      "teacherPersonal": false,
+      "staleLegacyBattleIgnored": true,
+      "comparisonClickDoesNotAdvance": true,
+      "outsideClickAdvances": true,
+      "browserVerified": false
+    },
+    "geologyRoutes": {
+      "unit": "c22-s51-u01",
+      "startLinks": true,
+      "actualPageStartLabClassDailyLabBookAndRecords": true,
+      "defaultThinkingClass": true,
+      "checksSharedWithDaily": 16,
+      "legacyDailyQuestions": 16,
+      "teacherStudentReads": 0,
+      "teacherStudentWrites": 0,
+      "comparisonKey": "geologyCompareRows",
+      "actualInquiryKey": "geologyInquiryRows",
+      "originalRecordsBookExactlyUnchanged": true,
+      "originalReportAndObservationStatePreserved": true,
+      "noNew3D": true,
+      "comparisonEventHandlersActuallyExecuted": true,
+      "releaseDisposesMountedActivities": true,
+      "browserVerified": false
+    },
+    "existingOtherRouteUnits": 17,
+    "browserVerified": false,
+    "actualStudentStorageAccessed": false,
+    "newPaidApiCalls": 0,
+    "newVisionImages": 0,
+    "newImageGeneration": 0,
+    "newPdfExports": 0,
+    "new3D": 0
+  },
+  "tests": {
+    "v2": {
+      "total": 533,
+      "passed": 531,
+      "failed": 0,
+      "skipped": 2,
+      "skipReason": "existing browser-only checks"
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "assets": {
+    "reused": 10,
+    "rasterPhotos": 9,
+    "originalQuestionSVGs": 1,
+    "new": 0,
+    "phase184BytesAndPhotoCreditsPreserved": true,
+    "actualPhotoVisionAndDirectVisualReviewInPhase": 184,
+    "originalQuestionSVGReviewedInPhase184PDFPage": 19,
+    "visionRunInThisPhase": false
+  },
+  "figureAudit": [
+    {
+      "unit": "c22-s32-u01",
+      "figures": []
+    },
+    {
+      "unit": "c22-s32-u02",
+      "figures": []
+    },
+    {
+      "unit": "s41-u01",
+      "figures": []
+    },
+    {
+      "unit": "c22-s42-u01",
+      "figures": []
+    },
+    {
+      "unit": "c22-s51-u03",
+      "figures": []
+    },
+    {
+      "unit": "s31-u01",
+      "figures": []
+    },
+    {
+      "unit": "s31-u02",
+      "figures": []
+    },
+    {
+      "unit": "s31-u03",
+      "figures": []
+    },
+    {
+      "unit": "s31-u04",
+      "figures": []
+    },
+    {
+      "unit": "c22-s42-u02",
+      "figures": []
+    },
+    {
+      "unit": "c22-s32-u03",
+      "figures": []
+    },
+    {
+      "unit": "c22-s32-u04",
+      "figures": []
+    },
+    {
+      "unit": "c22-s42-u04",
+      "figures": []
+    },
+    {
+      "unit": "s41-u02",
+      "figures": []
+    },
+    {
+      "unit": "s41-u03",
+      "figures": []
+    },
+    {
+      "unit": "s41-u04",
+      "figures": []
+    },
+    {
+      "unit": "c22-s42-u03",
+      "figures": []
+    },
+    {
+      "unit": "c22-s51-u01",
+      "figures": [
+        {
+          "id": "c22-s51-u01-b017",
+          "figure": "assets/bank/c22-s51-u01/layers-abc.svg",
+          "slide": "test14",
+          "imagePresent": true
+        },
+        {
+          "id": "c22-s51-u01-b049",
+          "figure": "assets/bank/c22-s51-u01/rock-c.png",
+          "slide": "test16",
+          "imagePresent": true
+        }
+      ]
+    }
+  ],
+  "files": {
+    "science-lab/data/book/c22-s51-u01.thinking-lesson.js": "435d78cef49838251721da9592b583d8748033c0d8c3567b0adcceff308890cd",
+    "science-lab/v2/deck-geology-thinking.js": "a537f9a941ccdb83e21eedc1c660ae389b376d76e95ab575747b803d03450273",
+    "science-lab/v2/geology-compare-model.js": "3ec3ae3bc6c4a8a40cd79e3eef31dc8308d29132b33f66f480604d17eaf0110b",
+    "science-lab/v2/lab-geology-compare.js": "89a1250cec1d3f659bb238899d7a20e8cec1a559038db6eb513d31d9a465da28",
+    "science-lab/v2/lab-geology-compare.css": "eaed4c5c43b75c6f0b9f679aa036116bf4630f29a4a968b098071c36512dd32a",
+    "science-lab/v2/lab-geology-compare.test.mjs": "966dc00ea5c7920a9ca7a7ae8d1a91711484ad2edacd08a287d56f47a1785815",
+    "science-lab/v2/revised-geology-lesson.test.mjs": "ecf066e66f44365e98bcd71d78c9324432ff55d0acba1a9643045ec3f541b4d7",
+    "science-lab/v2/tests/geology-classroom-routes.mjs": "cc09614423deb0c4f100a859348ef68935a83d0d64b35082ff3521c3ee170dd0",
+    "science-lab/v2/tests/geology-deck-events.mjs": "54fe509c0aacb7843d9068501e7f791fff007641ed44e7d78507cdf635f7104e",
+    "science-lab/v2/deck.js": "211dd47664a9551c8852a36a08f1b37286811b6a4598ea277679ccb6ea3fee13",
+    "science-lab/v2/revised-lesson.js": "6e907107b714be1cb57cd87c2028d328c75c496879c904160b3551fac9ee4b4b",
+    "science-lab/v2/index.html": "1c8a220ca4ce169556a35d5ea362bf3715296de1b9b917215ca0d1619f023db6",
+    "science-lab/v2/v2.js": "aedcbcf400d9bbb758c3b9a0d2e13d67f915030ce4efe8c585a0fd37b0088f90",
+    "science-lab/v2/revised-force-lesson.test.mjs": "5f767f3ec9e8b542d7dd6c7fa5811ca0c44b6cd8686428052c2fa2050a67fa20",
+    "science-lab/v2/revised-geology-workbook.test.mjs": "b42f883960d1363bf5f2e90ad3eac7756db71adfeaa4792274d9a0078b978869"
+  },
+  "workbookUnits": 18,
+  "thinkingClassroomUnits": 18,
+  "pdfExports": 0,
+  "previousPDFsUnchanged": 32,
+  "newImageGeneration": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "actualStudentStorageAccessed": false,
+  "push": false,
+  "deployment": false,
+  "browserVerified": false,
+  "browserLimitation": "Previously denied science-lab/v2 target was not bypassed using localhost/headless/alternate URL. Node VM is not actual browser/CSS/mobile/audio/3D validation. 3D-RULES checker/release gate remains pending.",
+  "remaining": [
+    "다른 학기 교재·전체 수업 통합",
+    "학기/단원 연결을 현행 자료와 사용 교재에 대조",
+    "v1/v2 역할·교육과정/원문 근거 요건 점검",
+    "최신main 통합·실제 브라우저/모바일/3D/소리 검수 및 승인 범위의 배포"
+  ]
+}

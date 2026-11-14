@@ -15,7 +15,7 @@ export default {
     const soap = new THREE.Group();
     for (let i = 0; i < 4; i++) { const g = new THREE.Group(); const head = sphere(0.14, P.accent2); const tail = cylinder(0.04, 0.04, 0.6, P.accent2); tail.position.y = -0.4; g.add(head, tail); g.position.set(-1.8 + i * 1.2, 1.0, 0.3); g.userData.i = i; soap.add(g); }
     soap.position.set(0, 2.2, 0); world.add('soap', soap);
-    const lbS = label('비누가 끼어들면 표면장력이 약 30%까지 줄어 얇게 퍼진다', { size: 0.3 }); lbS.position.set(0, 4.2, 0); world.add('lbS', lbS);
+    const lbS = label('비누가 표면장력을 낮추고 얇은 막이 유지되도록 돕는다', { size: 0.3 }); lbS.position.set(0, 4.2, 0); world.add('lbS', lbS);
     // 빨대와 비눗방울
     const straw = cylinder(0.08, 0.08, 2.2, P.red); straw.rotation.z = Math.PI / 2 - 0.6; straw.position.set(-2.4, 1.4, 0); world.add('straw', straw);
     const bubbleMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.05, metalness: 0, transparent: true, opacity: 0.35, iridescence: 1, iridescenceIOR: 1.3, iridescenceThicknessRange: [100, 500], side: THREE.DoubleSide });
@@ -30,28 +30,28 @@ export default {
     b1.position.x = -0.75; b2.position.x = 0.75; const wall = new THREE.Mesh(new THREE.CircleGeometry(0.5, 40), mat(P.accent, { opacity: 0.55, side: THREE.DoubleSide })); wall.rotation.y = Math.PI / 2;
     pair.add(b1, b2, wall); pair.position.set(0, 1.7, 0); pair.userData = { b1, b2, wall }; world.add('pair', pair);
     const lbP = label('같은 크기: 양쪽 압력이 같아 벽이 평면', { size: 0.32 }); lbP.position.set(0, 4.2, 0); world.add('lbP', lbP);
-    const lbP2 = label('작은 방울은 압력이 높아 벽이 큰 쪽으로 볼록', { size: 0.32 }); lbP2.position.set(0, 4.2, 0); world.add('lbP2', lbP2);
+    const lbP2 = label('화살표: 작은 방울에서 큰 방울로 경계면이 밀리는 방향', { size: 0.32 }); lbP2.position.set(0, 4.2, 0); world.add('lbP2', lbP2);
     const wallBulge = arrow([0.1, 1.7, 0], [0.7, 1.7, 0], P.red, 0.04); world.add('bulge', wallBulge);
     // 세 방울 120°
     const trio = new THREE.Group(); const R = 0.75;
     for (let i = 0; i < 3; i++) { const a = Math.PI / 2 + i * 2 * Math.PI / 3; const b = new THREE.Mesh(new THREE.SphereGeometry(0.72, 40, 28), bubbleMat); b.position.set(Math.cos(a) * R, Math.sin(a) * R, 0); trio.add(b); const seg = cylinder(0.03, 0.03, 0.9, P.accent); const ang = a + Math.PI / 3; seg.position.set(Math.cos(ang) * 0.45, Math.sin(ang) * 0.45, 0); seg.rotation.z = ang - Math.PI / 2; trio.add(seg); }
     trio.position.set(0, 1.9, 0); world.add('trio', trio);
-    const lb120 = label('세 방울이 만나면 120°로 만난다 — 벌집·현무암 기둥도 같은 각', { size: 0.3 }); lb120.position.set(0, 4.2, 0); world.add('lb120', lb120);
+    const lb120 = label('안정된 세 비누막이 한 선에서 만나면 약 120°', { size: 0.3 }); lb120.position.set(0, 4.2, 0); world.add('lb120', lb120);
     // 증발 입자 + 글리세린
     const vapor = particles(40, 0.04, P.water, { x: 2.4, y: 1.0, z: 2.4 }, { glow: 0.3 }); vapor.position.set(-0.2, 3.0, 0); world.add('vapor', vapor);
-    const lbV = label('물이 증발해 막이 얇아지면 터진다 → 글리세린·설탕이 증발을 늦춘다', { size: 0.3 }); lbV.position.set(0, 4.2, 0); world.add('lbV', lbV);
+    const lbV = label('물의 증발 → 막이 얇아짐 · 첨가물 효과는 비교 실험으로', { size: 0.3 }); lbV.position.set(0, 4.2, 0); world.add('lbV', lbV);
     const lbR = label('막 두께 ≈ 빛의 파장 → 앞·뒤 반사광이 간섭해 무지개색', { size: 0.3 }); lbR.position.set(0, 4.2, 0); world.add('lbR', lbR);
     return { update(dt, t) { vapor.jitter(t, 0.04, 2); } };
   },
   beats: [
-    { text: '물만으로는 방울이 안 만들어집니다. 물 분자는 한쪽이 양전기, 한쪽이 음전기를 띠어 서로 세게 끌어당기기 때문입니다. 이 힘이 표면장력입니다.', show: ['mol', 'lbT'], dur: 5, anim(p, o) { o.mol.scale.setScalar(0.3 + 0.7 * p); } },
-    { text: '비누 분자는 물을 좋아하는 머리와 싫어하는 꼬리를 가집니다. 물 분자 사이에 끼어들어 거리를 벌리면 표면장력이 30% 정도까지 줄어들어, 물이 얇은 막으로 퍼질 수 있습니다.', show: ['soap', 'lbS'], hide: ['lbT'], dur: 6, anim(p, o) { o.soap.children.forEach((g) => { g.position.y = 1.4 - 1.4 * p; }); } },
-    { text: '빨대로 공기를 불면 두 겹의 비누막 사이에 물이 낀 얇은 막이 공기를 감싸며 부풉니다.', show: ['straw', 'bubble', 'lbB'], hide: ['mol', 'soap', 'lbS'], dur: 4, anim(p, o) { o.bubble.scale.setScalar(0.05 + 1.05 * p); } },
-    { text: '네모 틀로 불어도 결국 둥글어집니다. 자연은 에너지가 가장 적은 모양을 찾고, 비누막의 에너지는 표면적에 비례합니다. 같은 부피에서 표면적이 가장 작은 모양이 구입니다.', show: ['cube', 'lbC'], hide: ['lbB', 'straw'], dur: 6, anim(p, o) { o.cube.material.opacity = 1 - p; o.cube.material.transparent = true; o.bubble.scale.setScalar(1.1 - 0.15 * p); } },
-    { text: '같은 크기의 두 방울이 붙으면 사이의 벽은 평면입니다. 벽 양쪽 압력이 같기 때문입니다.', show: ['pair', 'lbP'], hide: ['bubble', 'cube', 'lbC'], dur: 5, anim(p, o) { const { b1, b2 } = o.pair.userData; b1.position.x = -1.6 + 0.85 * p; b2.position.x = 1.6 - 0.85 * p; } },
-    { text: '크기가 다르면 작은 방울 쪽 압력이 더 높아, 벽이 큰 방울 쪽으로 볼록하게 밀려 들어갑니다.', show: ['lbP2', 'bulge'], hide: ['lbP'], dur: 5, anim(p, o) { const { b1, b2, wall } = o.pair.userData; b1.scale.setScalar(1 - 0.35 * p); b2.scale.setScalar(1 + 0.25 * p); wall.position.x = 0.35 * p; wall.scale.setScalar(1 - 0.3 * p); } },
-    { text: '세 개 이상이 붙으면 만나는 벽은 항상 120°를 이룹니다. 그래야 비누막의 넓이가 최소가 됩니다. 벌집, 현무암 기둥, 잠자리 날개에도 같은 각이 나옵니다.', show: ['trio', 'lb120'], hide: ['pair', 'lbP2', 'bulge'], dur: 6, anim(p, o) { o.trio.rotation.z = p * Math.PI * 2 / 3; } },
-    { text: '비눗방울은 10초쯤이면 터집니다. 막의 물이 증발해 얇아지기 때문입니다. 글리세린이나 설탕을 섞으면 증발이 느려지고, 차갑게 식힌 비눗물도 오래 갑니다.', show: ['bubble', 'vapor', 'lbV'], hide: ['trio', 'lb120'], dur: 6, anim(p, o) { o.bubble.scale.setScalar(1.0); o.vapor.children.forEach((d, i) => { d.visible = i < 40 * (1 - p * 0.8); }); } },
-    { text: '막의 두께는 약 1마이크로미터, 빛의 파장과 비슷합니다. 막의 앞면과 뒷면에서 반사된 두 빛이 간섭해 자리마다 다른 색이 아롱거립니다.', show: ['lbR'], hide: ['vapor', 'lbV'], dur: 5, anim(p, o, t) { o.bubble.material.iridescenceThicknessRange = [100 + 200 * Math.sin(t) ** 2, 500 + 300 * p]; o.bubble.rotation.y = t * 0.3; } },
+    { text: '물에서도 거품이 생기지만 금방 터져요. 액체의 표면이 넓이를 줄이려는 성질을 표면장력이라고 해요.', show: ['mol', 'lbT'], dur: 5, anim(p, o) { o.mol.scale.setScalar(0.3 + 0.7 * p); } },
+    { text: '비누는 물의 표면장력을 낮추고 얇은 막이 유지되도록 도와요. 효과는 비누의 종류와 섞는 양에 따라 달라요.', show: ['soap', 'lbS'], hide: ['lbT'], dur: 6, anim(p, o) { o.soap.children.forEach((g) => { g.position.y = 1.4 - 1.4 * p; }); } },
+    { text: '얇은 물층의 양쪽 표면에 비누 분자가 모여 있어요. 공기를 불어 넣으면 이 막이 공기를 둘러싸며 부풀어요.', show: ['straw', 'bubble', 'lbB'], hide: ['mol', 'soap', 'lbS'], dur: 4, anim(p, o) { o.bubble.scale.setScalar(0.05 + 1.05 * p); } },
+    { text: '다른 물체에 닿지 않고 조용히 떠 있는 작은 방울은 거의 구 모양이에요. 같은 부피에서 겉넓이가 가장 작은 모양이 구이기 때문이에요.', show: ['cube', 'lbC'], hide: ['lbB', 'straw'], dur: 6, anim(p, o) { o.cube.material.opacity = 1 - p; o.cube.material.transparent = true; o.bubble.scale.setScalar(1.1 - 0.15 * p); } },
+    { text: '같은 비눗물로 만든 같은 크기의 두 방울이 안정되게 붙으면 사이의 면은 평평해요. 양쪽 압력이 같기 때문이에요.', show: ['pair', 'lbP'], hide: ['bubble', 'cube', 'lbC'], dur: 5, anim(p, o) { const { b1, b2 } = o.pair.userData; b1.position.x = -1.6 + 0.85 * p; b2.position.x = 1.6 - 0.85 * p; } },
+    { text: '크기가 다르면 작은 방울 쪽 압력이 더 높아 사이의 면이 큰 방울 쪽으로 굽어요. 화살표는 밀리는 방향을 나타낸 모형이에요.', show: ['lbP2', 'bulge'], hide: ['lbP'], dur: 5, anim(p, o) { const { b1, b2, wall } = o.pair.userData; b1.scale.setScalar(1 - 0.35 * p); b2.scale.setScalar(1 + 0.25 * p); wall.position.x = 0.35 * p; wall.scale.setScalar(1 - 0.3 * p); } },
+    { text: '같은 비눗물의 세 비누막이 한 선을 따라 만나 안정되면 막 사이의 각은 약 120도예요. 방울의 개수와 만나는 막의 수를 구별해요.', show: ['trio', 'lb120'], hide: ['pair', 'lbP2', 'bulge'], dur: 6, anim(p, o) { o.trio.rotation.z = p * Math.PI * 2 / 3; } },
+    { text: '막의 물이 증발하면 얇아져 터질 수 있어요. 유지 시간은 비눗물과 주위 조건에 따라 달라요. 첨가물 효과는 같은 조건에서 비교해요.', show: ['bubble', 'vapor', 'lbV'], hide: ['trio', 'lb120'], dur: 6, anim(p, o) { o.bubble.scale.setScalar(1.0); o.vapor.children.forEach((d, i) => { d.visible = i < 40 * (1 - p * 0.8); }); } },
+    { text: '얇은 막의 앞면과 뒷면에서 반사된 빛이 겹치며 여러 색이 보여요. 막의 두께가 달라지면 보이는 색도 달라져요.', show: ['lbR'], hide: ['vapor', 'lbV'], dur: 5, anim(p, o, t) { o.bubble.material.iridescenceThicknessRange = [100 + 200 * Math.sin(t) ** 2, 500 + 300 * p]; o.bubble.rotation.y = t * 0.3; } },
   ],
 };

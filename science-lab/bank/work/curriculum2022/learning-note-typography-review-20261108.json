@@ -1,0 +1,185 @@
+{
+  "phase": 320,
+  "date": "2026-11-08",
+  "scope": "Semantic heading roles for current learning books; personal handwriting and teacher guidance stay distinct.",
+  "priorLocalCommit": "60bdf5cf47263b7f8e260ead0fc35f2d2fc1a368",
+  "reviewParent": "0daa067e0ccac9b0a301acbf46dffc06ef18efdb",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "currentLearningUnits": 32,
+  "rolePolicy": {
+    "summary": "reading font",
+    "extension": "reading font",
+    "personal": "handwriting heading",
+    "teacher": "reading font",
+    "other": "reading font"
+  },
+  "teacherHeadingsPreviouslyMisclassifiedByLastChild": 31,
+  "oldCssBytePrefixPreserved": true,
+  "oldLegacyMarkupPreserved": true,
+  "allQuestionsAndSavedGradesUnchanged": true,
+  "nativeValidation": {
+    "currentUnits": 32,
+    "workbookHtmlChecked": 128,
+    "roleAttributesChecked": 20501,
+    "teacherGuidanceHeadings": 31,
+    "personalHeadingsInTeacherMode": 3024,
+    "all32WorkbookQuestionsAndRuntimeUnchanged": true,
+    "all64ClassroomArraysUnchanged": true,
+    "all128WorkbookHtmlUnchangedAfterRemovingRoleAttributes": true,
+    "oldCssBytePrefixPreserved": true,
+    "legacyMarkupUnchanged": true,
+    "all877IndependentPrintQuestionModelsUnchanged": true,
+    "bankHtmlChangedOnlyInRolesAndThreeLearningIdentityFooters": true,
+    "banks": [
+      {
+        "unit": "c22-s62-u04",
+        "modes": [
+          "student",
+          "teacher",
+          "answers",
+          "quick"
+        ],
+        "questions": 128,
+        "oldAndCurrentQuestionModelsUnchanged": true,
+        "footerLearningIdentityNormalized": false
+      },
+      {
+        "unit": "c22-s62-u03",
+        "modes": [
+          "student",
+          "teacher",
+          "answers",
+          "quick"
+        ],
+        "questions": 186,
+        "oldAndCurrentQuestionModelsUnchanged": true,
+        "footerLearningIdentityNormalized": true
+      },
+      {
+        "unit": "c22-s62-u02",
+        "modes": [
+          "student",
+          "teacher",
+          "answers",
+          "quick"
+        ],
+        "questions": 198,
+        "oldAndCurrentQuestionModelsUnchanged": true,
+        "footerLearningIdentityNormalized": true
+      },
+      {
+        "unit": "c22-s62-u01",
+        "modes": [
+          "student",
+          "teacher",
+          "answers",
+          "quick"
+        ],
+        "questions": 198,
+        "oldAndCurrentQuestionModelsUnchanged": true,
+        "footerLearningIdentityNormalized": true
+      },
+      {
+        "unit": "c22-s61-u04",
+        "modes": [
+          "student",
+          "teacher",
+          "answers",
+          "quick"
+        ],
+        "questions": 167,
+        "oldAndCurrentQuestionModelsUnchanged": true,
+        "footerLearningIdentityNormalized": false
+      }
+    ],
+    "syntaxFiles": 13,
+    "actualBrowserVerified": false,
+    "newOcrRuns": 0,
+    "newBitmaps": 0
+  },
+  "priorSourceEvidenceRevalidation": {
+    "date": "2026-11-08",
+    "localOriginalPdfsMatchedPriorManifest": 8,
+    "questionPages": 16,
+    "answerPages": 7,
+    "priorOriginalQuestionReview": 70,
+    "priorCurrentScopeIndependentPairs": 58,
+    "priorExcludedLampConnectionQuestions": 12,
+    "priorAppleVisionPages": 38,
+    "priorAppleVisionCandidates": 1737,
+    "newOcrRuns": 0,
+    "newDownloads": 0,
+    "newOriginalSourceItems": 0,
+    "priorPrivateSourcePolicyPreserved": true,
+    "remoteContentHashRechecked": false,
+    "sourceFileHashes": [
+      {
+        "sourceId": "legacy-s62-electric-s1-questions",
+        "sha256": "e0193d5936ad37d4346ab625f88ac62c477b98624293da7824c9968560b7cf8f",
+        "bytes": 1136346,
+        "pages": 3
+      },
+      {
+        "sourceId": "legacy-s62-electric-s1-answers",
+        "sha256": "b19a5b002230061f2bb31d9b899f28dd213e084fc1646882ad9d6f2c043ff24d",
+        "bytes": 939881,
+        "pages": 2
+      },
+      {
+        "sourceId": "legacy-s62-electric-s2-questions",
+        "sha256": "b69bfdcdbae7b18b8655266db279b0ac51cff11addceecaa2edd92e0536deac5",
+        "bytes": 1019554,
+        "pages": 4
+      },
+      {
+        "sourceId": "legacy-s62-electric-s2-answers",
+        "sha256": "b9ab821d4ae9e908c1a45834c106d388092e5dfd84ef6efa6d59aeabc9ef5e71",
+        "bytes": 717752,
+        "pages": 1
+      },
+      {
+        "sourceId": "legacy-s62-electric-s3-questions",
+        "sha256": "a7ddc489da11f33120e6cabf3b1c7d5bd2f4d9208446c6061704ca095ed4943e",
+        "bytes": 1690651,
+        "pages": 5
+      },
+      {
+        "sourceId": "legacy-s62-electric-s3-answers",
+        "sha256": "6e49c81e14ccf490b37e3b7521d83c7c2393fc4b85946c807f38debdaed88d90",
+        "bytes": 1381393,
+        "pages": 2
+      },
+      {
+        "sourceId": "legacy-s62-electric-s4-questions",
+        "sha256": "57523a28aa44d2c3c791181cf20cf0f922c2dc3277b8e03eabd4e1eb5a81512b",
+        "bytes": 1395594,
+        "pages": 4
+      },
+      {
+        "sourceId": "legacy-s62-electric-s4-answers",
+        "sha256": "3eca88f5fe150e93183291fe24067465e3f9ea88991c89fe4702c2076a0b60a8",
+        "bytes": 1262102,
+        "pages": 2
+      }
+    ],
+    "scope": "Prior local source preparation and second-review evidence revalidated; not a new content pass or approval to publish originals/official answers.",
+    "priorDriveMetadataReadOn": "2026-11-07",
+    "priorDriveFileByteCountsMatched": true
+  },
+  "tests": {
+    "total": 1311,
+    "pass": 1309,
+    "fail": 0,
+    "skip": 2
+  },
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "newOriginalItems": 0,
+  "newSourceContentPass": false,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

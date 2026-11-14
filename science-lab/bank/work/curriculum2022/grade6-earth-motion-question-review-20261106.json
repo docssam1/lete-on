@@ -1,0 +1,446 @@
+{
+  "date": "2026-11-06",
+  "unit": "c22-s61-u04",
+  "scope": "Elementary student wording with one repaired learner drawing task; preserve all prior questions, responses and grading.",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "branch": "codex/science-workbook-integration-20261102",
+  "priorLocalCommit": "546859af84051594b7e6f4c460a1c1d28179cf90",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "reviewParent": "bdf3db0409700f61eb73dacbcf07dbade0e91935",
+  "workbookQuestionsRead": 128,
+  "workbookQuestionsEdited": 106,
+  "fieldsEdited": 253,
+  "explanationsEdited": 105,
+  "promptsEdited": 46,
+  "sampleAnswersEdited": 45,
+  "sampleOnlyContracts": 44,
+  "repairedLearnerDrawingQuestion": 96,
+  "choiceAnswerLabelsUpdated": [
+    1,
+    34,
+    98
+  ],
+  "quickAnswerFiguresChanged": 3,
+  "quickAnswerRowsChanged": 3,
+  "practicePresentationsEdited": 106,
+  "classroomChecksEdited": 10,
+  "independentPairedQuestionsPreserved": 39,
+  "sourceQuestions": 0,
+  "similarQuestions": 0,
+  "pages": 121,
+  "studentTeacherPagesEdited": [
+    2,
+    3,
+    4,
+    17,
+    32,
+    46,
+    59,
+    60,
+    73,
+    88,
+    103,
+    104,
+    116,
+    117,
+    118,
+    120,
+    121
+  ],
+  "priorVersionRestorationVerified": true,
+  "automaticScoringRulesPreserved": true,
+  "legacyEditorProtectsFutureVersions": true,
+  "independentBankPaperRetainsPriorEditorialStage": true,
+  "scienceEvidence": {
+    "curriculum": {
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "document": "교육부2022-33 별책9",
+      "codes": [
+        "6과12-01",
+        "6과12-02",
+        "6과12-03"
+      ],
+      "cachedTextSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "checkedLines": [
+        895,
+        911
+      ],
+      "scope": "남쪽 하늘의 하루 동안 태양/별 위치 변화, 자전과 낮밤 모형, 공전과 계절별 별자리. 자전축의 기울기와 관찰 조건 유지. 별자리 이름 암기나 고학년 좌표/계산은 추가하지 않음."
+    },
+    "sources": [
+      {
+        "url": "https://spaceplace.nasa.gov/constellations/en/",
+        "read": "Constellations body paragraphs11~29",
+        "supports": "계절과 위치에 따라 보이는 별자리가 다르며 공전으로 밤 방향이 달라짐; 낮에도 별은 있으나 태양빛에 가려 보기 어려움",
+        "notImported": "특정 별자리/날짜의 실제 위치 계산,88개 암기,고급천문좌표"
+      },
+      {
+        "url": "https://www.lpi.usra.edu/education/skytellers/constellations/",
+        "read": "SkyTellers constellations paragraphs96~103",
+        "supports": "자전 때문에 지상의 사람에게 별이 동쪽에서 서쪽으로 옮겨 보이며 공전으로 계절별 밤 방향이 달라짐",
+        "notImported": "천구·적경/적위·고유운동·별 목록·점성술"
+      },
+      {
+        "url": "https://science.nasa.gov/eclipses/safety/",
+        "read": "Solar viewing safety body248~276",
+        "supports": "태양을 맨눈/쌍안경/망원경으로 직접 보지 않고 준비된 간접 자료/프로그램을 사용한다는 기존 안전 문구",
+        "notImported": "필터/투영기 제작법·새 관측 장비 절차·일식 예외/의학 설명"
+      },
+      {
+        "url": "https://science.nasa.gov/earth/facts/",
+        "read": "Orbit and Rotation body261~300",
+        "supports": "지구 자전·태양 둘레 공전과 기울어진 축의 구별",
+        "notImported": "정밀시간/각도·달력·계절별 온도 원리; 교육과정의 하루/일 년 근사값만 사용"
+      }
+    ],
+    "realEphemerisVerified": false
+  },
+  "nativeValidation": {
+    "priorNativeWorkbookPreserved": true,
+    "editorialBytePrefixPreserved": true,
+    "responseKeysChecked": 32,
+    "explanationsRendered": 210,
+    "syntaxFiles": 11,
+    "actualBrowserVerified": false
+  },
+  "preservation": {
+    "workbooks": 32,
+    "otherWorkbooksUnchanged": 31,
+    "questions": 3080,
+    "questionPatches": 106,
+    "bankPatches": 106,
+    "sampleOnlyContracts": 44,
+    "repairedLearnerDrawing": 96,
+    "independentPairedQuestionsPreserved": 39,
+    "changedClassroomChecks": [
+      "c22-s61-u04-b001",
+      "c22-s61-u04-b004",
+      "c22-s61-u04-b022",
+      "c22-s61-u04-b027",
+      "c22-s61-u04-b035",
+      "c22-s61-u04-b039",
+      "c22-s61-u04-b062",
+      "c22-s61-u04-b073",
+      "c22-s61-u04-b087",
+      "c22-s61-u04-b107"
+    ],
+    "changedSlides": [
+      [
+        "self",
+        "test1"
+      ],
+      [
+        "self",
+        "test2"
+      ],
+      [
+        "self",
+        "test3"
+      ],
+      [
+        "self",
+        "test4"
+      ],
+      [
+        "self",
+        "test5"
+      ],
+      [
+        "self",
+        "test6"
+      ],
+      [
+        "self",
+        "test8"
+      ],
+      [
+        "self",
+        "test9"
+      ],
+      [
+        "self",
+        "test10"
+      ],
+      [
+        "self",
+        "test11"
+      ],
+      [
+        "teach",
+        "test1"
+      ],
+      [
+        "teach",
+        "test2"
+      ],
+      [
+        "teach",
+        "test3"
+      ],
+      [
+        "teach",
+        "test4"
+      ],
+      [
+        "teach",
+        "test5"
+      ],
+      [
+        "teach",
+        "test6"
+      ],
+      [
+        "teach",
+        "test8"
+      ],
+      [
+        "teach",
+        "test9"
+      ],
+      [
+        "teach",
+        "test10"
+      ],
+      [
+        "teach",
+        "test11"
+      ]
+    ],
+    "changedHtml": [
+      {
+        "unit": "c22-s61-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "mode": "quick"
+      }
+    ],
+    "otherRuntimeUnitsPreserved": 31,
+    "mainScienceFilesPreserved": 2958,
+    "browserVerified": false
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "phase": 305,
+        "questions": 96,
+        "currentQuestionSha256": "34761681a0bb79de7752834f0cabb12fc1e67aaf611ede9970a7188d36d245e2"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "phase": 306,
+        "questions": 104,
+        "currentQuestionSha256": "fdd2a62e25e3d0044600bc110cac6e6939b3917125c86744cbd3e8720de8f9cf"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "phase": 307,
+        "questions": 112,
+        "currentQuestionSha256": "97645c2bb87f7962b93ee66fd5179d612e6c8b04a152447855493187958508ef"
+      },
+      {
+        "unit": "c22-s52-u04",
+        "phase": 308,
+        "questions": 112,
+        "currentQuestionSha256": "d0bd1ee47e2be29a97968f462cd7e8c33ee1925bfaceabd11facbb1145f6822e"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "phase": 310,
+        "questions": 128,
+        "currentQuestionSha256": "c7e6b3e3ea7f2daf07dae2a9d2cc984f3c74a09ed92fc67d1101ab7c36133291"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "phase": 311,
+        "questions": 128,
+        "currentQuestionSha256": "431ffb2786c5d189eae880e1550acdb6632fcc2ec6d9b40fc2ab78337660428e"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "phase": 312,
+        "questions": 128,
+        "currentQuestionSha256": "bf7ab6b858964739ae659dfc7cec19772a0e80beeaf9050a88865135ec671dba"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "phase": 313,
+        "questions": 128,
+        "currentQuestionSha256": "24d23b9ba2ce412607f287244cce4b8f5ea447bce33e0270d0a306f6adee3b75"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 2568,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 106,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideTwentyEightUnitPass": {
+      "units": 4,
+      "questions": 512,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To313": 1445
+  },
+  "tests": {
+    "total": 1286,
+    "pass": 1284,
+    "fail": 0,
+    "skip": 2
+  },
+  "goalAchieved": false,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "paidApiCalls": 0,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "nextUnit": "c22-s62-u01"
+}

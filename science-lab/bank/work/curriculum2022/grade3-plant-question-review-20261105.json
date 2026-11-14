@@ -1,0 +1,156 @@
+{
+  "phase": 288,
+  "date": "2026-11-05",
+  "previousGoalTurn": "progress: animal review published b7498666",
+  "sourceCandidateBefore": "ba116dd6d2de98659d80a68adcc20a99aa77b53f",
+  "reviewHeadBefore": "b749866649ad896cc312b07d4f8b74c7f4dd41fe",
+  "questionChanges": {
+    "unit": "s31-u03",
+    "patches": {
+      "5": {
+        "prompt": "들이나 산에 사는 나무만 묶은 것을 고르세요."
+      },
+      "7": {
+        "choices": [
+          "꽃의 색깔이 모두 노란색이다.",
+          "뿌리, 줄기, 잎을 구분할 수 있다.",
+          "키가 모두 사람보다 훨씬 크다.",
+          "땅에 뿌리를 내리지 않고 물에 떠서 산다.",
+          "잎의 모양과 크기가 모두 같다."
+        ]
+      },
+      "18": {
+        "prompt": "보기에서 주로 높은 산에 사는 식물만 묶은 것을 고르세요."
+      },
+      "37": {
+        "topic": "잎의 겉모습 비교",
+        "prompt": "두 식물의 잎 관찰 기록을 읽고, 공통적인 겉모습을 두 가지 쓰세요. 전체 모양과 끝 모양을 각각 살펴보아요.",
+        "given": [
+          "잎의 겉모습을 살펴본 관찰 기록 예예요.",
+          "강아지풀: 잎 전체가 좁고 길며, 끝이 뾰족하다.",
+          "소나무: 잎 전체가 바늘처럼 좁고 길며, 끝이 뾰족하다."
+        ],
+        "answer": "잎 전체가 좁고 길다. 잎 끝이 뾰족하다.",
+        "explanation": "두 기록에서 잎 전체의 모양은 모두 좁고 길고, 끝 모양은 모두 뾰족해요. 전체 모양과 끝 모양의 공통점을 하나씩 쓰면 돼요.",
+        "misconception": "잎 전체의 모양과 잎 끝의 모양을 나누어 살펴보아요.",
+        "criteria": "제시한 두 관찰 기록에 공통으로 나타난 전체 모양과 끝 모양을 각각 설명했는지 확인해요. 같은 뜻의 다른 표현도 인정해요.",
+        "standard": "4과03-01",
+        "answerContract": {
+          "type": "written-explanation",
+          "sample": "잎 전체가 좁고 길다. 잎 끝이 뾰족하다.",
+          "rubric": {
+            "required": [
+              "잎 전체가 좁고 길다",
+              "잎 끝이 뾰족하다"
+            ],
+            "pass": "관찰 기록의 전체 모양과 끝 모양에서 공통점을 하나씩 설명한다."
+          }
+        }
+      },
+      "58": {
+        "choices": [
+          "딸기와 벚나무는 톱니 기준에 해당한다",
+          "네 식물의 실제 길이가 모두 같다는 뜻이다",
+          "길이 판단에는 실제 측정 같은 자료가 필요하다",
+          "자료가 더 필요한 잎은 모두 같은 종류의 식물이다",
+          "기준에 따라 필요한 자료가 달라질 수 있다"
+        ]
+      }
+    },
+    "version": "20261105-plant-observation-questions",
+    "changedExampleAnswerQuestion": 37
+  },
+  "reviewedUnit": {
+    "unit": "s31-u03",
+    "questions": 80,
+    "givenAndSharedFiguresRead": [
+      "two-criteria",
+      "length-data",
+      "water-life"
+    ],
+    "standards": [
+      "4과03-01",
+      "4과03-02",
+      "4과03-03"
+    ],
+    "officialTextSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510"
+  },
+  "cumulativeReview": {
+    "scope": "Curriculum language, displayed questions/choices/explanations and supplied evidence; not independent verification of every species fact or all scientific meanings.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      }
+    ],
+    "currentQuestionContextsReviewed": 320,
+    "totalWorkbookQuestions": 3080,
+    "outsideThisFourUnitPass": 2760,
+    "changedQuestionsAcrossPhases286To288": 52,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false
+  },
+  "preservation": {
+    "reviewedQuestionContexts": 80,
+    "changedQuestions": 5,
+    "changedExampleAnswerQuestion": "s31-u03-w037",
+    "unchangedOtherAnswersAndCurrentContracts": 3079,
+    "sourceFieldsAndKeysUnchanged": 3080,
+    "priorNativeWorkbookPreserved": true,
+    "priorHelperBytePrefixPreserved": true,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": 3,
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "choicePresentationsGraded": 37,
+    "writtenSampleRequiresTeacherReview": true,
+    "syntaxFiles": 5,
+    "browserVerified": false
+  },
+  "nativeTests": {
+    "total": 1207,
+    "pass": 1205,
+    "fail": 0,
+    "skip": 2
+  },
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase288",
+  "mainMerged": false,
+  "siteDeployed": false,
+  "goalAchieved": false,
+  "goalAtImpasse": false
+}

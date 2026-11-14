@@ -1,5 +1,12 @@
+import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
+import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
+import {withEarthSeaElementaryWorkbook} from './c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary';
+import {withMaterialEarthStudentLanguage} from './material-earth-student-language.js';
+import {withEarthSeaBodyLanguage} from './material-earth-body-language.js';
+import {withEarthSeaRails,withEarthSeaLearnerReasoning} from './c22-s32-u02.rail-notes.js?v=20261105-earth-sea-learner-reasoning';
+import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 지구와 바다 A4. scripts/gen-science-workbook-c22s32u02.mjs가 생성.
-export const workbook = {
+const baseWorkbook = {
  "unit": "c22-s32-u02",
  "title": "지구와 바다",
  "semester": "3-2",
@@ -7909,3 +7916,8 @@ export const workbook = {
   }
  ]
 };
+
+export const earthSeaReasoningPriorWorkbook=withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withEarthSeaBodyLanguage(withStudentOpeningLanguage(withEarthSeaRails(baseWorkbook)))));
+export const earthSeaElementaryPriorWorkbook=withEarthSeaLearnerReasoning(earthSeaReasoningPriorWorkbook);
+export const earthSeaStudyNotesPriorWorkbook=withEarthSeaElementaryWorkbook(earthSeaElementaryPriorWorkbook);
+export const workbook=withGrade3StudyNotes(earthSeaStudyNotesPriorWorkbook);

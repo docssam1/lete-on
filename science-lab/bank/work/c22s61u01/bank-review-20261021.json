@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-21",
+  "unit": "c22-s61-u01",
+  "stage": "static-bank-connected; basic-thinking-class-and-default-workbook-upgrade-pending",
+  "source": {
+    "course": "legacy5-2 acid and base",
+    "candidates": 70,
+    "selected": 69,
+    "selectedBySet": [
+      15,
+      15,
+      20,
+      19
+    ],
+    "excluded": [
+      "4-16"
+    ],
+    "teacherReviewOnly": [
+      "1-8",
+      "3-16",
+      "4-15"
+    ],
+    "originalQuestionKeyPagesDirectlyReviewed": 22,
+    "originalFiguresUnchanged": 15,
+    "currentEditionWholeOriginalExamConfirmed": false
+  },
+  "pairs": {
+    "count": 69,
+    "responseForms": {
+      "sc": 26,
+      "mc": 12,
+      "st": 30,
+      "wr": 1
+    },
+    "ownConditionsAndAnswersReviewed": true,
+    "singleChoiceBalancePassed": true,
+    "sourceCorrespondencePassed": true,
+    "acceptedAnswerSetsAndOrderReviewed": true,
+    "sha256": "3e097c6e7ce28800304492b07732b8cc339ddf5356230fce553ff1f1613e5aaf"
+  },
+  "workbookAuthoredItems": 128,
+  "runtimeQuestions": 266,
+  "closedResponses": 227,
+  "teacherReviewResponses": 39,
+  "sourceQuestionsAndKeysUnchanged": true,
+  "printedExplanationOriginalPreserved": true,
+  "printedExplanationCorrectionsSeparated": true,
+  "curriculum": {
+    "standards": [
+      "6과09-01",
+      "6과09-02",
+      "6과09-03",
+      "6과09-04"
+    ],
+    "source": "MOE 2022 science curriculum section9: standards, explanations and teaching considerations",
+    "sourceReview": "workbook-sources-review-20261019.json",
+    "omittedBeyondRequiredScope": [
+      "neutrality",
+      "pH",
+      "neutralization theory"
+    ]
+  },
+  "display": {
+    "recordValuesRenderedAsTables": true,
+    "originalReviewChoicesShownSeparately": true,
+    "historicalSourceCaptionOnHome": true,
+    "forbiddenImageLabelRemoved": true
+  },
+  "browser": {
+    "examQuestionViews": 138,
+    "teacherKeyViews": 8,
+    "subunitViews": 14,
+    "printModes": 8,
+    "wrongToIndependentPairFlows": 2,
+    "errors": 0,
+    "legacyStatePreserved": true
+  },
+  "bankPrintSheets": {
+    "student": 102,
+    "teacher": 124,
+    "answers": 74,
+    "quick": 5
+  },
+  "bankPrintTextOverflow": 0,
+  "newPdfFiles": 0,
+  "tests": {
+    "total": 801,
+    "pass": 799,
+    "skip": 2,
+    "fail": 0
+  },
+  "runtimeConnected": true,
+  "full5eConnected": false,
+  "defaultWorkbookConnected": false,
+  "unitSoftwareComplete": false,
+  "reportWork": "Separate user-assigned work; no external message sent",
+  "apiCalls": 0,
+  "new3D": false,
+  "newPhoto": false,
+  "committed": false,
+  "pushed": false,
+  "deployed": false,
+  "next": "Connect a curriculum-aligned thinking class and rebuild the default workbook. Do not place long reports in the default lesson."
+}

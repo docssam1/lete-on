@@ -1,0 +1,218 @@
+{
+  "phase": 174,
+  "date": "2026-11-03",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "4ef8c4a2a9ab36dfce318b86dc5e84da23bc1f3b",
+  "scope": "5-1 용해와 용액 기본 사고력 수업·일곱 자료 비교·실제 탐구/자료 제작/공유 선택 기록 연결",
+  "classroom": [
+    {
+      "unit": "c22-s51-u03",
+      "mode": "self",
+      "slides": 41,
+      "checks": 16,
+      "minutes": 280,
+      "allSelectedQuestionsExactlyPreserved": true
+    },
+    {
+      "unit": "c22-s51-u03",
+      "mode": "teach",
+      "slides": 42,
+      "checks": 16,
+      "minutes": 280,
+      "allSelectedQuestionsExactlyPreserved": true
+    }
+  ],
+  "curriculum": {
+    "document": "교육부2022-33 별책9 과학과 교육과정",
+    "localSourceSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "lines": [
+      749,
+      764
+    ],
+    "standards": [
+      "6과03-01",
+      "6과03-02",
+      "6과03-03"
+    ],
+    "scope": [
+      "용해 의미·용질/용매/용액·같은 전체 무게·종류/물 온도와 녹는 양",
+      "물/용질 양과 같은 물체의 자유 부유로 상대 진하기 비교",
+      "생활 속 필요성 조사·자료 실제 제작·누리망 등을 통한 공유와 받은 질문 보완"
+    ],
+    "excludedBasicContent": [
+      "입자 모형·용해의 과학적 원인/기작",
+      "밀도·부력 공식·용해도 곡선"
+    ]
+  },
+  "comparison": {
+    "cases": 7,
+    "ids": [
+      "mass",
+      "kind",
+      "temperature",
+      "amountAB",
+      "amountBC",
+      "floating",
+      "contact"
+    ],
+    "sameSourceValuesAsWorkbook": true,
+    "requiresThoughtBeforeReveal": true,
+    "initialThoughtPreserved": true,
+    "allSevenDistinctCasesForCompletion": true,
+    "noActualMeasurementValuesInvented": true,
+    "rowsKey": "solutionCompareRows",
+    "actualInquiryRowsKey": "solutionInquiryRows",
+    "originalNineActivityConfigPreserved": true,
+    "optionalActualRecordPageAndBookLinked": true
+  },
+  "regressions": {
+    "otherClassroomSlideArraysUnchanged": 24,
+    "workbookProductsUnchanged": 52,
+    "protectedOriginalFilesUnchanged": 19,
+    "previousPdfHashesUnchanged": 12,
+    "currentRouteUnits": 12,
+    "rawBankItems": 96,
+    "similarItems": 75,
+    "allOriginal16QuestionObjectsAndOrderPreserved": true,
+    "legacyDailyPaper": {
+      "legacyQuestions": 16,
+      "currentQuestions": 16,
+      "restoredSavedEntries": 16,
+      "readOnly": false,
+      "reason": "current",
+      "savedStateUnchanged": true,
+      "legacyIds": [
+        "c22-s51-u03-b030",
+        "c22-s51-u03-b036",
+        "c22-s51-u03-b047",
+        "c22-s51-u03-b085",
+        "c22-s51-u03-b010",
+        "c22-s51-u03-b016",
+        "c22-s51-u03-b022",
+        "c22-s51-u03-b034",
+        "c22-s51-u03-b037",
+        "c22-s51-u03-b046",
+        "c22-s51-u03-b056",
+        "c22-s51-u03-b088",
+        "c22-s51-u03-b001",
+        "c22-s51-u03-b012",
+        "c22-s51-u03-b018",
+        "c22-s51-u03-b024"
+      ],
+      "currentIds": [
+        "c22-s51-u03-b030",
+        "c22-s51-u03-b036",
+        "c22-s51-u03-b047",
+        "c22-s51-u03-b085",
+        "c22-s51-u03-b010",
+        "c22-s51-u03-b016",
+        "c22-s51-u03-b022",
+        "c22-s51-u03-b034",
+        "c22-s51-u03-b037",
+        "c22-s51-u03-b046",
+        "c22-s51-u03-b056",
+        "c22-s51-u03-b088",
+        "c22-s51-u03-b001",
+        "c22-s51-u03-b012",
+        "c22-s51-u03-b018",
+        "c22-s51-u03-b024"
+      ]
+    },
+    "existingMagnetDefault3DAndModelFilesPreserved": true
+  },
+  "teacherAndLifecycle": {
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "restoreGetterCallbackCopiesPreserveOriginals": true,
+    "pauseInactiveDisposeIgnored": true,
+    "comparisonClicksDoNotAdvance": true,
+    "legacyBattleStateIgnored": true,
+    "optionalRecordViewUsesOriginalConfigAndKey": true
+  },
+  "images": {
+    "reusedAssets": [
+      {
+        "file": "science-lab/assets/activities/c22-s51-u03/mixing-photo-v1.webp",
+        "sha256": "e41e3022551224c6f764bc80d30914a2c992d2418021b4d42665c2ee016d8195",
+        "actualVisionReviewedInPhase": 174,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u03/residue-photo-v1.webp",
+        "sha256": "257b17e0fce12417ba35f64f1e1343eb0f824830bbc4450693579c17ce85d9f8",
+        "actualVisionReviewedInPhase": 174,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u03/mass-photo-v1.webp",
+        "sha256": "69054d2a59ccb2c9727859bedfa39443dd1c1e69d62aa91134ffec5ed1c14195",
+        "actualVisionReviewedInPhase": 174,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u03/temperature-photo-v1.webp",
+        "sha256": "365f12e19f729648c368b0297c609b438c05edd538d2f1abf6bc96c5c5e70423",
+        "actualVisionReviewedInPhase": 174,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u03/concentration-photo-v1.webp",
+        "sha256": "a47c0a1b7b61106bda8520e3367f66edcc2d1ba78b9894cbf07f335e83a58303",
+        "actualVisionReviewedInPhase": 174,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u03/floating-photo-v1.webp",
+        "sha256": "915c70401dfe02f177e9e116192ae98e44d8b30964d5d35a33f5c9d160f669b8",
+        "actualVisionReviewedInPhase": 174,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s51-u03/communication-photo-v1.webp",
+        "sha256": "c1f74c95bf3c443a418844d2580cac51934b1e14f439f8a9b443c94da2ddabc3",
+        "actualVisionReviewedInPhase": 174,
+        "bytesUnchanged": true
+      }
+    ],
+    "actualVisionRunPages": 7,
+    "directVisualReview": true,
+    "newImageGeneration": 0
+  },
+  "tests": {
+    "total": 450,
+    "pass": 448,
+    "fail": 0,
+    "preexistingBrowserSkips": 2,
+    "log": "all-v2-tests.txt"
+  },
+  "actualStudentStorageAccessed": false,
+  "browserVerified": false,
+  "browserCssAudioReviewPending": true,
+  "newPdfExports": 0,
+  "new3D": 0,
+  "newPaidApiCalls": 0,
+  "push": false,
+  "deploy": false,
+  "goalStatus": "active",
+  "wholeProgramComplete": false,
+  "remaining": [
+    "다른 학기 교재·수업 보완",
+    "원래 자석3D 기본 수업은 기존 결정에 따라 보존하며 실제 사용 검수",
+    "v1/v2 역할·교육과정·원문 요건·최신main 재대조",
+    "실제 브라우저/CSS/A4·소리·기록 복구 화면 검수"
+  ],
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase174",
+  "evidence": [
+    "baseline-slides.json",
+    "baseline-products.json",
+    "solution-self.json",
+    "solution-teach.json",
+    "integration-validation.json",
+    "routes-validation.json",
+    "assets.json",
+    "vision-log.txt",
+    "vision-review.json",
+    "all-v2-tests.txt",
+    "review.json"
+  ]
+}

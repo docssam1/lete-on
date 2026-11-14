@@ -1,0 +1,39 @@
+/* 기존 지필드 수업의 종이색·초록·Pretendard 기준을 이 단원에 적용한다. */
+.acid-thinking{--disp:Pretendard,sans-serif;--t:#2f6b4a;--o:#2f6b4a;--n:#2a241c;font-family:Pretendard,sans-serif;background:#f1ece1;color:#2a241c}
+.acid-thinking :is(.dk-top,.dk-top a,.dk-top b,.dk-h){color:#2a241c}
+.acid-thinking :is(.dk-h,.dk-kick,h1,h2,h3,strong,b,button){font-weight:700}
+.acid-thinking .dk-h{border-color:#c9bda2}
+.acid-thinking .dk-phases span{background:#e2d9c6;color:#2a241c}
+.acid-thinking .dk-phases span.on{background:#2f6b4a;color:#fff}
+.acid-thinking .dk-stage{background:#fdfbf5}
+.acid-thinking .dk-stage::before{background:#2f6b4a}
+.acid-thinking .dk-body a{color:#1e4631}
+.acid-thinking :is(.dk-tbl,.ed-table){table-layout:fixed;width:100%;border-collapse:collapse}
+.acid-thinking :is(.dk-tbl,.ed-table) :is(td,th){border:1px solid #c9bda2;padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+.acid-thinking .ed-photo{margin:0 auto 16px;text-align:center}
+.acid-thinking .ed-photo img{max-width:100%;width:auto;height:auto;max-height:240px;object-fit:contain}
+.acid-thinking .ed-photo :is(figcaption,.ed-photo-note,small),.acid-thinking .ed-given{font-size:13px;color:#7a6f5c}
+.acid-thinking .ed-photo-credit{display:block;margin-top:8px}
+.acid-thinking .dk-inrow label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;width:100%}
+.acid-thinking .dk-inrow textarea{min-height:44px}
+.acid-thinking .dk-given-list{list-style:none;margin:.5em 0 0;padding:0;display:grid;gap:.4em}
+.acid-compare{--mc-ink:#2a241c;--mc-accent:#2f6b4a;--mc-line:#c9bda2;font-family:Pretendard,sans-serif;color:var(--mc-ink);padding:12px;line-height:1.65;min-width:0}
+.acid-compare label{display:grid;gap:6px;font-weight:700}
+.acid-compare select{width:100%;min-width:0;min-height:44px;padding:8px;border:1px solid var(--mc-line);border-radius:6px;background:#fdfbf5;color:var(--mc-ink);font:inherit}
+.acid-compare :is(select,button):focus-visible{outline:2px solid var(--mc-accent);outline-offset:3px}
+.acid-compare-notice{padding:12px;background:#e9f0e7;border-left:4px solid var(--mc-accent)}
+.acid-compare-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.acid-compare-actions button{min-height:44px;padding:8px 12px;border:1px solid var(--mc-line);border-radius:6px;font:inherit;background:#fdfbf5;color:var(--mc-ink);cursor:pointer}
+.acid-compare-actions button:disabled{opacity:.5;cursor:default}
+.acid-compare-result{padding:12px;margin-top:12px;background:#e9f0e7;border:1px solid var(--mc-line)}
+.acid-compare [hidden]{display:none!important}
+.acid-compare-table{width:100%;overflow-x:auto}
+.acid-compare table{table-layout:fixed;width:100%;border-collapse:collapse}
+.acid-compare :is(td,th){border:1px solid var(--mc-line);padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:700px){.acid-compare{padding:8px}.acid-compare-result{padding:8px}.acid-thinking .ed-photo img{max-height:210px}}
+
+.acid-thinking .ed-fig{margin:0 auto 16px;text-align:center}
+.acid-thinking .ed-fig svg,.acid-compare svg{display:block;width:100%;height:auto;max-height:260px;margin:auto}
+.acid-compare .ed-photo img{display:block;max-width:100%;width:auto;max-height:240px;height:auto;object-fit:contain;margin:auto}
+.acid-compare .ed-photo{margin:16px auto;text-align:center}
+.acid-compare .ed-photo-credit{font-size:13px}

@@ -1,0 +1,73 @@
+{
+  "phase": 366,
+  "date": "2026-11-08",
+  "scope": "Elementary personal-study directions for the four grade-three second-semester units while preserving extension concepts, core science notes, practical directions and every question.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "0d159befb43c8d276ff63e9c1660d886ee6ff46f",
+    "reviewCommit": "f599598537281e87655b016109b80d51bdeefe96"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "validation": {
+    "phase": 366,
+    "reviewedUniqueNoteTexts": 72,
+    "studentNoteTextOccurrencesChanged": 72,
+    "teacherStudentNoteTextOccurrencesChanged": 74,
+    "conceptExampleFieldsChanged": 0,
+    "allWorkbookQuestionsUnchanged": 3080,
+    "allStudentExtensionNotesUnchanged": 2476,
+    "allStudentCoreNotesUnchanged": 2476,
+    "allTeacherAnswerPagesUnchanged": true,
+    "allBankAndClassroomDataUnchanged": true,
+    "otherDataFilesByteEqual": 92,
+    "currentPaperModesMatch": 128,
+    "otherTwentyEightPaperModesByteEqual": 112,
+    "allAnswerAndQuickModesByteEqual": 64,
+    "priorPaperModesRestorable": 128,
+    "allBankPrintModesByteEqual": 84,
+    "actualBrowserUsed": false
+  },
+  "handsOnDirections": {
+    "materialAndEarthSeaHandsOnDirectionsChecked": 13,
+    "unchanged": true
+  },
+  "nativeSuite": {
+    "testFiles": 262,
+    "exitCode": 0,
+    "tests": 1423,
+    "suites": 0,
+    "pass": 1421,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "preflight": {
+    "syntaxFiles": 15,
+    "diffCheck": true
+  },
+  "preservationPolicy": {
+    "all32WorkbookQuestionsAndTeacherAnswersUnchanged": true,
+    "allStudentExtensionAndCoreNotesUnchanged": true,
+    "onlyReviewedPersonalNoteTextChanged": true,
+    "allWritingSpacesRoleTitlesAndTeacherOnlyNotesUnchanged": true,
+    "allAnswerAndQuickViewsUnchanged": true,
+    "priorFourWholeWorkbooksExported": true,
+    "firstSemesterGradeThreeContentUnchanged": true,
+    "allBankAndClassroomDataUnchanged": true,
+    "noMedicalGuidanceOrPracticalProcedureEdits": true,
+    "noCssFontGraderStorageOrReportChanges": true,
+    "allEightGradeThreeWorkbooksCoveredByExistingNoteTests": true,
+    "reviewedRawRailsAndCurrentLanguageOverlayBothCompared": true
+  },
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

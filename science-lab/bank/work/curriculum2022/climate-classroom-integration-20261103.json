@@ -1,0 +1,182 @@
+{
+  "phase": 172,
+  "date": "2026-11-03",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "9a4882bd4f56cad502daa00c3d9c890e22adcd97",
+  "scope": "4-2 기후변화 기본 사고력 수업·해안 모형 자료 비교·생활 속 실천 연결",
+  "classroom": [
+    {
+      "unit": "c22-s42-u04",
+      "mode": "self",
+      "slides": 32,
+      "checks": 12,
+      "minutes": 80,
+      "allSelectedQuestionsExactlyPreserved": true
+    },
+    {
+      "unit": "c22-s42-u04",
+      "mode": "teach",
+      "slides": 33,
+      "checks": 12,
+      "minutes": 80,
+      "allSelectedQuestionsExactlyPreserved": true
+    }
+  ],
+  "curriculum": {
+    "document": "교육부2022-33 별책9 과학과 교육과정",
+    "localSourceSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "lines": [
+      702,
+      715
+    ],
+    "standards": [
+      "4과16-01",
+      "4과16-02",
+      "4과16-03"
+    ],
+    "checksPerStandard": 4,
+    "scope": [
+      "평년과 비교한 여러 해 사례·인간 활동과의 관련성 토의",
+      "생활과 환경에 미치는 영향·해수면 상승 피해 모형",
+      "대응 방법 조사·생활 속 실천·실제 질문으로 보완"
+    ],
+    "scientificMechanismAndMitigationAdaptationClassificationNotAddedAsBasicContent": true
+  },
+  "model": {
+    "derivedFrom": "science-lab/scenes/sealevel-model.js",
+    "waterLevelsCm": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "wallHeightCm": 3.5,
+    "noWallWetHouses": [
+      [],
+      [
+        "B"
+      ],
+      [
+        "B",
+        "C"
+      ],
+      [
+        "B",
+        "C",
+        "D"
+      ]
+    ],
+    "wallWetHouses": [
+      [],
+      [],
+      [],
+      [
+        "B",
+        "C",
+        "D"
+      ]
+    ],
+    "requiresPredictionBeforeReveal": true,
+    "predictionNotChangedAfterReveal": true,
+    "requiresAllFourDistinctLevels": true,
+    "repeatedAndForgedRowsCannotComplete": true,
+    "separateRowsKey": "climateCompareRows",
+    "notActualPhysicalExperimentOrSeaObservation": true,
+    "actualPhysicalExperimentGuidanceAndOriginalOptionalRecordsPreserved": true
+  },
+  "regressions": {
+    "otherClassroomSlideArraysUnchanged": 24,
+    "workbookProductsUnchanged": 52,
+    "protectedOriginalFilesUnchanged": 22,
+    "previousPdfHashesUnchanged": 12,
+    "previouslyReviewedPhotoHashesUnchanged": 8,
+    "routeUnits": 10,
+    "rawBankItems": 108,
+    "thinkItems": 12,
+    "similarItems": 6,
+    "selectedQuestionObjectsPreserved": true,
+    "legacyDailyPaper": {
+      "legacyQuestions": 10,
+      "currentQuestions": 12,
+      "restoredSavedEntries": 10,
+      "readOnly": true,
+      "reason": "unbound",
+      "savedStateUnchanged": true,
+      "legacyIds": [
+        "c22-s42-u04-t06",
+        "c22-s42-u04-t08",
+        "c22-s42-u04-t09",
+        "c22-s42-u04-b01",
+        "c22-s42-u04-b57",
+        "c22-s42-u04-t12",
+        "c22-s42-u04-t07",
+        "c22-s42-u04-t10",
+        "c22-s42-u04-b67",
+        "c22-s42-u04-t11"
+      ],
+      "currentIds": [
+        "c22-s42-u04-t01",
+        "c22-s42-u04-b01",
+        "c22-s42-u04-b27",
+        "c22-s42-u04-b32",
+        "c22-s42-u04-t08",
+        "c22-s42-u04-t09",
+        "c22-s42-u04-b60",
+        "c22-s42-u04-b68",
+        "c22-s42-u04-b75",
+        "c22-s42-u04-b90",
+        "c22-s42-u04-b94",
+        "c22-s42-u04-b105"
+      ]
+    }
+  },
+  "teacherAndLifecycle": {
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "restoreGetterAndCallbackCopiesPreserveOriginals": true,
+    "pauseInactiveDisposeIgnored": true,
+    "comparisonClicksDoNotAdvance": true,
+    "legacyBattleStateIgnored": true
+  },
+  "tests": {
+    "total": 436,
+    "pass": 434,
+    "fail": 0,
+    "preexistingBrowserSkips": 2,
+    "log": "all-v2-tests.txt"
+  },
+  "sourcesReusedFromPriorVerifiedWork": [
+    "기상청2024 연 기후특성(2025-01-09), 전국14.5℃/평년12.5℃",
+    "UNDP Notes from Tuvalu(2023), 지하수·농작물·해안 자료와 계획",
+    "phase171 교재의 월~금 가상 확인 집계"
+  ],
+  "imageReview": "수업에 쓰는8장 모두 phase171에서 실제 Apple Vision·직접 시각 검수한 사진과 SHA 동일. 새 이미지/OCR 실행 없음.",
+  "actualStudentStorageAccessed": false,
+  "browserVerified": false,
+  "browserCssAudioReviewPending": true,
+  "newImageGeneration": 0,
+  "newVisionRuns": 0,
+  "newPdfExports": 0,
+  "new3D": 0,
+  "newPaidApiCalls": 0,
+  "push": false,
+  "deploy": false,
+  "goalStatus": "active",
+  "wholeProgramComplete": false,
+  "remaining": [
+    "다른 학기 교재·수업 보완",
+    "v1/v2 역할·교육과정·원문 요건·최신main 재대조",
+    "실제 브라우저/CSS/A4·소리·기록 복구 화면 검수"
+  ],
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase172",
+  "evidence": [
+    "baseline-slides.json",
+    "baseline-products.json",
+    "climate-self.json",
+    "climate-teach.json",
+    "integration-validation.json",
+    "routes-validation.json",
+    "all-v2-tests.txt",
+    "review.json"
+  ]
+}

@@ -1,5 +1,6 @@
+import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 // 자원과 에너지 단원 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
-import {photoFigureHtml} from './photo-figure.js';
+import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 import {sourceCaption,sourceTableHtml,sourceChoiceHtml} from './source-presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const circ='①②③④⑤';
@@ -17,7 +18,7 @@ export function energyBankPaperHtml({unit,source,similar,items,mode='student'}){
  };
  const tools=`<nav class="solution-tools no-print" aria-label="문항집 인쇄 도구"><a class="btn" href="#/${unit.id}/sub/E1">소단원으로</a>${[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']].map(([m,l])=>`<a class="btn" href="#/${unit.id}/print/${m}"${m===mode?' aria-current="page"':''}>${l}</a>`).join('')}<button class="btn primary" data-solution-print disabled>A4 인쇄</button><p role="status" data-print-status>글꼴과 그림을 준비하고 있어요.</p></nav>`;
  const body=quick?`<h2>빠른 정답표</h2><p>서술형은 예시 답으로 자동 확정하지 않습니다. 자료 검토 문항은 교사 해설에서 공식 답과 조건을 비교하세요.</p><div class="solution-quick">${all.map((q,i)=>`<div data-paper-item="${esc(q.id)}"><b>${i+1}.</b> ${q.sourceRef.reviewOnly?'교사와 자료 검토':q.answerContract.type==='written-explanation'?'서술 · 교사 확인':esc(solutionAnswer(q.answerContract))}</div>`).join('')}</div>`:[['원문 · 실제 출처와 번호 보존',source],['짝문항 · 독립 창작',similar],['현행 범위 보충 · 독립 창작',items]].filter(([,rows])=>rows.length).map(([title,rows])=>`<section class="solution-section"><h2>${title}</h2>${rows.map(card).join('')}</section>`).join('');
- return `<div class="solution-bank-paper energy-bank-paper gfield-ui">${tools}<div class="solution-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="solution-paper"><header><p>GFIELD · 지필드 | 초등 과학5-2 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>옛6-2 에너지와 생활 세 세트50문항 중 현행 관련11문항과 독립 짝11문항, 창작 교재112문항을 합한 총134문항입니다. 실제 출처·쪽·원래 번호를 보존하며 현행 필수 범위와 다른39문항은 제외했습니다. 현행5-2 판본 전체 원문 확보를 뜻하지 않습니다.</p><p>원문1개는 서로 다른 기구의 등급 비교 조건을 교사와 검토하며 자동 정오 판정을 보류합니다. 인쇄된 공식 답과 보기는 교사 해설에 보존했습니다. 옛 표시의 수치/비용을 현재 제품의 공통 기준으로 쓰지 않습니다.</p><p>창작 사진은 AI 실사형 설명 이미지입니다. 가상 수치/설명 사진을 실제 측정·제작·실천/소통의 증거로 쓰지 않습니다. 집 모형은 교사 준비 재료와 안전한 조건을 사용하며 학생 가열/불꽃/뜨거운 물·절단/실제 전기나 건축 설비 변경을 하지 않습니다.</p></header>${body}</main></div>`;
+ return `<div class="solution-bank-paper energy-bank-paper gfield-ui">${tools}<div class="solution-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="solution-paper"><header><p>GFIELD · 지필드 | 초등 과학5-2 · 2022 개정 학습</p><h1>${esc(unit.title)} · ${quick?'빠른 정답표':only?'정답과 해설':'문제은행 문항집'}</h1><p>${show?'교사용':'학생용 · 이름 ____________________ · 날짜 ______________'}</p><p>옛6-2 에너지와 생활 세 세트50문항 중 현행 관련11문항과 독립 짝11문항, 창작 교재112문항을 합한 총134문항입니다. 실제 출처·쪽·원래 번호를 보존하며 현행 필수 범위와 다른39문항은 제외했습니다. 현행5-2 판본 전체 원문 확보를 뜻하지 않습니다.</p><p>원문1개는 서로 다른 기구의 등급 비교 조건을 교사와 검토하며 자동 정오 판정을 보류합니다. 인쇄된 공식 답과 보기는 교사 해설에 보존했습니다. 옛 표시의 수치/비용을 현재 제품의 공통 기준으로 쓰지 않습니다.</p><p>사진은 내용을 이해하는 데 쓰는 설명 자료입니다. 가상 수치/설명 사진을 실제 측정·제작·실천/소통의 증거로 쓰지 않습니다. 집 모형은 교사 준비 재료와 안전한 조건을 사용하며 학생 가열/불꽃/뜨거운 물·절단/실제 전기나 건축 설비 변경을 하지 않습니다.</p></header>${body}</main></div>`;
 }
 // 글꼴과 사진의 실제 높이로 A4를 나눈 뒤 남은 높이를 작성 공간에 배분한다.
 // 원문/정답 노드는 복제하지 않아 화면·인쇄의 문항 수와 번호가 같다.
@@ -61,9 +62,4 @@ export function paginateEnergyBank(root){
  }catch(error){main.innerHTML=original;throw error;}
  finally{host.classList.remove('energy-layout-measure');}
 }
-export function wireEnergyBankPaper(root){
- let active=true;const button=root.querySelector('[data-solution-print]'),status=root.querySelector('[data-print-status]'),imgs=[...root.querySelectorAll('img')];
- const ready=im=>im.complete?(im.naturalWidth?Promise.resolve():Promise.reject(new Error('image'))):new Promise((resolve,reject)=>{im.addEventListener('load',resolve,{once:true});im.addEventListener('error',reject,{once:true});});
- Promise.all([document.fonts.load('700 18px Gaegu'),document.fonts.ready,...imgs.map(ready)]).then(()=>{if(active&&root.isConnected){paginateEnergyBank(root);button.disabled=false;status.textContent='그림·글꼴과 A4 지면이 준비되었습니다.';}}).catch(()=>{if(active&&root.isConnected)status.textContent='그림 또는 지면을 불러오지 못했어요. 다시 열어 주세요.';});
- const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};
-}
+export function wireEnergyBankPaper(root){return wireBankPrint(root,{buttonSelector:'[data-solution-print]',handwriting:true,prepare:()=>paginateEnergyBank(root),readyText:'그림·글꼴과 A4 지면이 준비되었습니다.'});}

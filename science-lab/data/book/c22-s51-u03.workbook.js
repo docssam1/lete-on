@@ -1,5 +1,12 @@
+import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
+import{withSolutionReadableWorkbook}from'./c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook';
+import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
+import {withSolutionStudentLanguage} from './solution-student-language.js';
+import {withSolutionBodyLanguage} from './c22-s51-u03.body-language.js';
+import {withSolutionRails} from './c22-s51-u03.rail-notes.js';
+import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 용해와 용액96문항. scripts/gen-science-workbook-c22s51u03.mjs가 생성.
-export const workbook = {
+const baseWorkbook = {
  "unit": "c22-s51-u03",
  "title": "용해와 용액",
  "semester": "5-1",
@@ -8544,3 +8551,7 @@ export const workbook = {
   "solution-quick-72": "<div class=\"mt-quick-grid\"><table class=\"ed-table\"><thead><tr><th scope=\"col\">번호</th><th scope=\"col\">형식</th><th scope=\"col\">정답</th></tr></thead><tbody><tr><th scope=\"row\">73</th><td>객관식</td><td>①</td></tr><tr><th scope=\"row\">74</th><td>빈칸</td><td>6</td></tr><tr><th scope=\"row\">75</th><td>순서</td><td>ㄷ → ㄴ → ㄱ → ㄹ</td></tr><tr><th scope=\"row\">76</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">77</th><td>객관식</td><td>④</td></tr><tr><th scope=\"row\">78</th><td>연결</td><td>(1) ㄱ (2) ㄴ</td></tr><tr><th scope=\"row\">79</th><td>복수</td><td>②, ③</td></tr><tr><th scope=\"row\">80</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">81</th><td>객관식</td><td>①</td></tr><tr><th scope=\"row\">82</th><td>단답</td><td>교사와 같은 물체의 자유 부유 재비교</td></tr><tr><th scope=\"row\">83</th><td>그림</td><td>교사 확인</td></tr><tr><th scope=\"row\">84</th><td>서술</td><td>교사 확인</td></tr></tbody></table><table class=\"ed-table\"><thead><tr><th scope=\"col\">번호</th><th scope=\"col\">형식</th><th scope=\"col\">정답</th></tr></thead><tbody><tr><th scope=\"row\">85</th><td>객관식</td><td>③</td></tr><tr><th scope=\"row\">86</th><td>순서</td><td>ㄷ → ㄱ → ㄴ → ㄹ</td></tr><tr><th scope=\"row\">87</th><td>복수</td><td>①, ③</td></tr><tr><th scope=\"row\">88</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">89</th><td>빈칸</td><td>용해</td></tr><tr><th scope=\"row\">90</th><td>객관식</td><td>④</td></tr><tr><th scope=\"row\">91</th><td>단답</td><td>같은 조건에서 조금씩 더 넣고 잔류 관찰</td></tr><tr><th scope=\"row\">92</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">93</th><td>연결</td><td>(1) ㄱ (2) ㄴ (3) ㄷ</td></tr><tr><th scope=\"row\">94</th><td>객관식</td><td>②</td></tr><tr><th scope=\"row\">95</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">96</th><td>서술</td><td>교사 확인</td></tr></tbody></table></div>"
  }
 };
+
+export const solutionReadablePriorWorkbook=withWorkbookAnswerLanguage(withSolutionStudentLanguage(withSolutionBodyLanguage(withStudentOpeningLanguage(withSolutionRails(baseWorkbook)))));
+export const grade5StudyNotesPriorWorkbook=withSolutionReadableWorkbook(solutionReadablePriorWorkbook);
+export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);

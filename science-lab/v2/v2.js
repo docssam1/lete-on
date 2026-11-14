@@ -1,20 +1,26 @@
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261025';
-import {photoFigureHtml} from './photo-figure.js';
-// docssam 과학 탐구 랩 v2 — 단원 = 5E 한 단계 한 화면 + 준비물(QR) + 탐구보고서 + 교재 인쇄.
+import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
+import{judgeItem}from'./judge.js?v=20261108-source-schema';
+import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261105-history-review';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261108-experience-warmups';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261108-experience-warmups';
+import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
+// docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
-import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js?v=16';
+import { mount3D, LABS, mountLabOf } from './mounts.js?v=20261105-fullscreen-lifecycle';
+import { pageHome } from './home.js?v=20261107-catalog-practice-counts';
 import { escapeInApp } from './inapp.js';
-import { SEMS, BANK, READY } from './units-index.js';
-import { placeLabel, placeNow } from './curriculum-place.js';
+import { SEMS, BANK, READY } from './units-index.js?v=20261107-catalog-practice-counts';
+import { placeLabel, placeNow } from './curriculum-place.js?v=20261104-career-labels';
 import { withThink, loadJudge } from './think-merge.js';
-import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js';
+import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js?v=20261107-catalog-practice-counts';
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
 import { bankLabel, groupLabel, examHeading, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
-import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
-import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
+import {sourceExamPaperHtml,sourceExamPrintLinks,sourcePaperMode} from './source-exam-paper.js?v=20261114-source-exam-print';
+import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeacherReview,needsSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js?v=20261108-source-schema';
+import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js?v=20261104-energy-class';
+import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js?v=20261108-source-writing';
 import { readingHtml } from './reading.js';
 import { practicePaperHtml } from './practice-paper.js';
 import { wireReading } from './reading-live.js';
@@ -25,30 +31,38 @@ import { loadPlant, plantReportSections } from './plant-records.js';
 escapeInApp();
 
 const UNITS = {
- 'c22-s52-u04':async()=>({...(await import('../data/units/c22-s52-u04.js')),...(await import('../data/units/c22-s52-u04.lesson.js')),...(await import('../data/units/c22-s52-u04.source.js')),...(await import('../data/units/c22-s52-u04.similar.js')),...(await import('../data/units/c22-s52-u04.taxonomy.js')),misc:await import('../data/units/c22-s52-u04.misc.js')}),
- 'c22-s52-u03':async()=>({...(await import('../data/units/c22-s52-u03.js')),...(await import('../data/units/c22-s52-u03.lesson.js')),...(await import('../data/units/c22-s52-u03.source.js')),...(await import('../data/units/c22-s52-u03.similar.js')),...(await import('../data/units/c22-s52-u03.taxonomy.js')),misc:await import('../data/units/c22-s52-u03.misc.js')}),
- 'c22-s52-u02':async()=>({...(await import('../data/units/c22-s52-u02.js')),...(await import('../data/units/c22-s52-u02.lesson.js')),...(await import('../data/units/c22-s52-u02.similar.js')),...(await import('../data/units/c22-s52-u02.taxonomy.js')),...(await import('../data/units/c22-s52-u02.source.js')),misc:await import('../data/units/c22-s52-u02.misc.js')}),
- 'c22-s52-u01':async()=>({...(await import('../data/units/c22-s52-u01.js')),...(await import('../data/units/c22-s52-u01.lesson.js')),...(await import('../data/units/c22-s52-u01.similar.js')),...(await import('../data/units/c22-s52-u01.taxonomy.js')),source:[],misc:await import('../data/units/c22-s52-u01.misc.js')}),
- 'c22-s51-u04':async()=>({...(await import('../data/units/c22-s51-u04.js')),...(await import('../data/units/c22-s51-u04.lesson.js')),...(await import('../data/units/c22-s51-u04.similar.js')),...(await import('../data/units/c22-s51-u04.source.js')),...(await import('../data/units/c22-s51-u04.taxonomy.js')),misc:await import('../data/units/c22-s51-u04.misc.js')}),
- 'c22-s51-u03':async()=>({...(await import('../data/units/c22-s51-u03.js')),...(await import('../data/units/c22-s51-u03.lesson.js')),...(await import('../data/units/c22-s51-u03.similar.js')),...(await import('../data/units/c22-s51-u03.source.js')),...(await import('../data/units/c22-s51-u03.taxonomy.js')),misc:await import('../data/units/c22-s51-u03.misc.js')}),
- 'c22-s51-u02':async()=>({...(await import('../data/units/c22-s51-u02.js')),...(await import('../data/units/c22-s51-u02.lesson.js')),...(await import('../data/units/c22-s51-u02.similar.js')),...(await import('../data/units/c22-s51-u02.source.js')),...(await import('../data/units/c22-s51-u02.taxonomy.js')),misc:await import('../data/units/c22-s51-u02.misc.js')}),
- 'c22-s51-u01':async()=>({...(await import('../data/units/c22-s51-u01.js')),...(await import('../data/units/c22-s51-u01.lesson.js')),...(await import('../data/units/c22-s51-u01.similar.js')),...(await import('../data/units/c22-s51-u01.taxonomy.js')),source:[],misc:await import('../data/units/c22-s51-u01.misc.js')}),
+ 'c22-s62-u04':async()=>{const data={...(await import('../data/units/c22-s62-u04.js')),...(await import('../data/units/c22-s62-u04.lesson.js?v=20261104-student-science-language')),...(await import('../data/units/c22-s62-u04.taxonomy-student.js?v=20261104-career-labels')),...(await import('./career-bank-paper.js?v=20261108-earth-motion-pair-language')),items:(await import('../data/book/term-particle-language.js?v=20261105-guidance-particles')).guidanceParticleCurrentItems((await import('./career-question-language.js?v=20261107-career-readable-workbook')).careerCurrentItems((await import('../data/units/c22-s62-u04.js')).items),'c22-s62-u04'),misc:await import('../data/units/c22-s62-u04.misc.js?v=20261104-student-science-language')};return{...data,items:(await import('../data/book/c22-s62-u04.editorial.js?v=20261107-career-readable-workbook')).careerReadableCurrentItems(data.items,'c22-s62-u04')};},
+ 'c22-s62-u03':async()=>{const data={...(await import('../data/units/c22-s62-u03.js')),...(await import('../data/units/c22-s62-u03.lesson.js?v=20261104-student-science-language')),...(await import('../data/units/c22-s62-u03.taxonomy.js')),...(await import('./electricity-bank-paper.js?v=20261108-elementary-question-prompts')),items:(await import('./electricity-question-language.js?v=20261106-electricity-readable-workbook')).electricityCurrentItems((await import('../data/units/c22-s62-u03.js')).items),misc:await import('../data/units/c22-s62-u03.misc.js')};return{...data,items:(await import('../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts')).elementaryPromptCurrentItems((await import('./electricity-pair-language.js?v=20261108-electricity-pair-language')).electricityPairCurrentItems((await import('../data/book/c22-s62-u03.editorial.js?v=20261106-electricity-readable-workbook')).electricityReadableCurrentItems(data.items,'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03')};},
+ 'c22-s62-u02':async()=>{const data={...(await import('../data/units/c22-s62-u02.js')),...(await import('../data/units/c22-s62-u02.lesson.js?v=20261104-combustion-class')),...(await import('../data/units/c22-s62-u02.taxonomy.js')),...(await import('./combustion-bank-paper.js?v=20261108-elementary-question-prompts')),items:(await import('./combustion-question-language.js?v=20261106-combustion-readable-workbook')).combustionCurrentItems((await import('../data/units/c22-s62-u02.js')).items),misc:await import('../data/units/c22-s62-u02.misc.js')};return{...data,items:(await import('../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts')).elementaryPromptCurrentItems((await import('./combustion-pair-language.js?v=20261108-combustion-pair-language')).combustionPairCurrentItems((await import('../data/book/c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook')).combustionReadableCurrentItems(data.items,'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02')};},
+ 'c22-s62-u01':async()=>{const data={...(await import('../data/units/c22-s62-u01.js')),...(await import('../data/units/c22-s62-u01.lesson.js?v=20261104-season-class')),...(await import('../data/units/c22-s62-u01.taxonomy.js')),...(await import('./season-bank-paper.js?v=20261108-elementary-question-prompts')),items:(await import('./season-question-language.js?v=20261106-season-readable-workbook')).seasonCurrentItems((await import('../data/units/c22-s62-u01.js')).items),misc:await import('../data/units/c22-s62-u01.misc.js')};return{...data,items:(await import('../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts')).elementaryPromptCurrentItems((await import('./season-pair-language.js?v=20261108-season-pair-language')).seasonPairCurrentItems((await import('../data/book/c22-s62-u01.editorial.js?v=20261106-season-readable-workbook')).seasonReadableCurrentItems(data.items,'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01')};},
+ 'c22-s61-u04':async()=>{const mod=await (async()=>({...(await import('../data/units/c22-s61-u04.js')),...(await import('../data/units/c22-s61-u04.lesson.js')),...(await import('../data/units/c22-s61-u04.taxonomy.js')),...(await import('./earth-motion-bank-paper.js?v=20261108-bank-print-ready')),items:(await import('./earth-motion-question-language.js?v=20261106-earth-motion-readable-workbook')).earthMotionCurrentItems((await import('../data/units/c22-s61-u04.js')).items),misc:await import('../data/units/c22-s61-u04.misc.js')}))();return{...mod,items:(await import('./earth-motion-pair-language.js?v=20261108-earth-motion-pair-language')).earthMotionPairCurrentItems((await import('../data/book/c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook')).earthMotionReadableCurrentItems((await import('../data/book/observation-language.js')).observationCurrentItems(mod.items,'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04')};},
+ 'c22-s61-u03':async()=>{const data={...(await import('../data/units/c22-s61-u03.js')),...(await import('../data/units/c22-s61-u03.lesson.js')),...(await import('../data/units/c22-s61-u03.source.js')),...(await import('../data/units/c22-s61-u03.similar.js')),...(await import('../data/units/c22-s61-u03.taxonomy.js')),items:(await import('./plant-structure-question-language.js?v=20261106-plant-structure-readable-workbook')).plantStructureCurrentItems((await import('../data/units/c22-s61-u03.js')).items),misc:await import('../data/units/c22-s61-u03.misc.js')};return{...data,bankPaper:(await import('./plant-structure-bank-paper.js?v=20261108-bank-print-ready')).plantStructureBankPaperHtml,wireBankPaper:(await import('./plant-structure-bank-paper.js?v=20261108-bank-print-ready')).wirePlantStructureBankPaper,items:(await import('../data/book/c22-s61-u03.editorial.js?v=20261106-plant-structure-readable-workbook')).plantStructureReadableCurrentItems(data.items,'c22-s61-u03')};},
+ 'c22-s61-u02':async()=>{const mod=await (async()=>({...(await import('../data/units/c22-s61-u02.js')),...(await import('../data/units/c22-s61-u02.lesson.js')),...(await import('../data/units/c22-s61-u02.source.js')),...(await import('../data/units/c22-s61-u02.similar.js')),...(await import('../data/units/c22-s61-u02.taxonomy.js')),items:(await import('./motion-question-language.js?v=20261106-motion-readable-workbook')).motionCurrentItems((await import('../data/units/c22-s61-u02.js')).items),misc:await import('../data/units/c22-s61-u02.misc.js')}))();return{...mod,bankPaper:(await import('./motion-bank-paper.js?v=20261108-bank-print-ready')).motionBankPaperHtml,wireBankPaper:(await import('./motion-bank-paper.js?v=20261108-bank-print-ready')).wireMotionBankPaper,items:(await import('../data/book/c22-s61-u02.editorial.js?v=20261106-motion-readable-workbook')).motionReadableCurrentItems((await import('../data/book/observation-language.js')).observationCurrentItems(mod.items,'c22-s61-u02'),'c22-s61-u02')};},
+ 'c22-s61-u01':async()=>{const data={...(await import('../data/units/c22-s61-u01.js')),...(await import('../data/units/c22-s61-u01.lesson.js')),...(await import('../data/units/c22-s61-u01.source.js')),...(await import('../data/units/c22-s61-u01.similar.js')),...(await import('../data/units/c22-s61-u01.taxonomy.js')),items:(await import('../data/book/term-particle-language.js')).termParticleCurrentItems((await import('../data/book/acid-student-language.js?v=20261105-acid-student-language')).acidStudentCurrentItems((await import('./acid-question-language.js?v=20261105-acid-student-language')).acidCurrentItems((await import('../data/units/c22-s61-u01.js')).items)),'c22-s61-u01'),misc:await import('../data/units/c22-s61-u01.misc.js')};return{...data,bankPaper:(await import('./acid-bank-paper.js?v=20261108-bank-print-ready')).acidBankPaperHtml,wireBankPaper:(await import('./acid-bank-paper.js?v=20261108-bank-print-ready')).wireAcidBankPaper,items:(await import('../data/book/c22-s61-u01.editorial.js?v=20261106-acid-readable-workbook')).acidReadableCurrentItems(data.items,'c22-s61-u01')};},
+ 'c22-s52-u04':async()=>{const data={...(await import('../data/units/c22-s52-u04.js')),...(await import('../data/units/c22-s52-u04.lesson.js')),...(await import('../data/units/c22-s52-u04.source.js')),...(await import('../data/units/c22-s52-u04.similar.js')),...(await import('../data/units/c22-s52-u04.taxonomy.js')),misc:await import('../data/units/c22-s52-u04.misc.js'),items:(await import('./heat-energy-question-language.js?v=20261106-heat-readable-workbook')).heatEnergyCurrentItems((await import('../data/units/c22-s52-u04.js')).items,'c22-s52-u04')};return{...data,bankPaper:(await import('./energy-bank-paper.js?v=20261108-bank-print-ready')).energyBankPaperHtml,wireBankPaper:(await import('./energy-bank-paper.js?v=20261108-bank-print-ready')).wireEnergyBankPaper,items:(await import('../data/book/c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook')).energyReadableCurrentItems(data.items,'c22-s52-u04')};},
+ 'c22-s52-u03':async()=>{const mod=await (async()=>({...(await import('../data/units/c22-s52-u03.js')),...(await import('../data/units/c22-s52-u03.lesson.js')),...(await import('../data/units/c22-s52-u03.source.js')),...(await import('../data/units/c22-s52-u03.similar.js')),...(await import('../data/units/c22-s52-u03.taxonomy.js')),misc:await import('../data/units/c22-s52-u03.misc.js')}))();return{...mod,bankPaper:(await import('./weather-bank-paper.js?v=20261108-bank-print-ready')).weatherBankPaperHtml,wireBankPaper:(await import('./weather-bank-paper.js?v=20261108-bank-print-ready')).wireWeatherBankPaper,items:(await import('../data/book/c22-s52-u03.editorial.js?v=20261106-weather-readable-workbook')).weatherReadableCurrentItems((await import('../data/book/observation-language.js')).observationCurrentItems(mod.items,'c22-s52-u03'),'c22-s52-u03')};},
+ 'c22-s52-u02':async()=>{const mod=await (async()=>({...(await import('../data/units/c22-s52-u02.js')),...(await import('../data/units/c22-s52-u02.lesson.js')),...(await import('../data/units/c22-s52-u02.similar.js')),...(await import('../data/units/c22-s52-u02.taxonomy.js')),...(await import('../data/units/c22-s52-u02.source.js')),misc:await import('../data/units/c22-s52-u02.misc.js'),items:(await import('./heat-energy-question-language.js?v=20261106-heat-readable-workbook')).heatEnergyCurrentItems((await import('../data/units/c22-s52-u02.js')).items,'c22-s52-u02')}))();return{...mod,bankPaper:(await import('./heat-bank-paper.js?v=20261108-bank-print-ready')).heatBankPaperHtml,wireBankPaper:(await import('./heat-bank-paper.js?v=20261108-bank-print-ready')).wireHeatBankPaper,items:(await import('../data/book/c22-s52-u02.editorial.js?v=20261106-heat-readable-workbook')).heatReadableCurrentItems((await import('../data/book/observation-language.js')).observationCurrentItems(mod.items,'c22-s52-u02'),'c22-s52-u02')};},
+ 'c22-s52-u01':async()=>{const mod=await (async()=>({...(await import('../data/units/c22-s52-u01.js')),...(await import('../data/units/c22-s52-u01.lesson.js')),...(await import('../data/units/c22-s52-u01.similar.js')),...(await import('../data/units/c22-s52-u01.taxonomy.js')),source:[],misc:await import('../data/units/c22-s52-u01.misc.js')}))();return{...mod,bankPaper:(await import('./mixture-bank-paper.js?v=20261108-grade5-study-notes')).mixtureBankPaperHtml,wireBankPaper:(await import('./mixture-bank-paper.js?v=20261108-grade5-study-notes')).wireMixtureBankPaper,items:(await import('../data/book/c22-s52-u01.editorial.js?v=20261106-mixture-readable-workbook')).mixtureReadableCurrentItems((await import('../data/book/observation-language.js')).observationCurrentItems(mod.items,'c22-s52-u01'),'c22-s52-u01')};},
+ 'c22-s51-u04':async()=>{const mod=await (async()=>({...(await import('../data/units/c22-s51-u04.js')),...(await import('../data/units/c22-s51-u04.lesson.js')),...(await import('../data/units/c22-s51-u04.similar.js')),...(await import('../data/units/c22-s51-u04.source.js')),...(await import('../data/units/c22-s51-u04.taxonomy.js')),misc:await import('../data/units/c22-s51-u04.misc.js')}))();return{...mod,bankPaper:(await import('./body-bank-paper.js?v=20261108-bank-print-ready')).bodyBankPaperHtml,wireBankPaper:(await import('./body-bank-paper.js?v=20261108-bank-print-ready')).wireBodyBankPaper,items:(await import('../data/book/c22-s51-u04.editorial.js?v=20261106-body-readable-workbook')).bodyReadableCurrentItems((await import('../data/book/observation-language.js')).observationCurrentItems(mod.items,'c22-s51-u04'),'c22-s51-u04')};},
+ 'c22-s51-u03':async()=>{const data={...(await import('../data/units/c22-s51-u03.js')),...(await import('../data/units/c22-s51-u03.lesson.js')),...(await import('../data/units/c22-s51-u03.similar.js')),...(await import('../data/units/c22-s51-u03.source.js')),...(await import('../data/units/c22-s51-u03.taxonomy.js')),items:(await import('./solution-question-language.js?v=20261106-solution-readable-workbook')).solutionCurrentItems((await import('../data/units/c22-s51-u03.js')).items),misc:await import('../data/units/c22-s51-u03.misc.js')};return{...data,bankPaper:(await import('./solution-bank-paper.js?v=20261108-bank-print-ready')).solutionBankPaperHtml,wireBankPaper:(await import('./solution-bank-paper.js?v=20261108-bank-print-ready')).wireSolutionBankPaper,items:(await import('../data/book/c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook')).solutionReadableCurrentItems(data.items,'c22-s51-u03')};},
+ 'c22-s51-u02':async()=>{const mod={...(await import('../data/units/c22-s51-u02.js')),...(await import('../data/units/c22-s51-u02.lesson.js')),...(await import('../data/units/c22-s51-u02.similar.js')),...(await import('../data/units/c22-s51-u02.source.js')),...(await import('../data/units/c22-s51-u02.taxonomy.js')),misc:await import('../data/units/c22-s51-u02.misc.js')};const current=(await import('../data/book/light-student-language.js')).lightCurrentItems(mod.items);return{...mod,bankPaper:(await import('./light-bank-paper.js?v=20261108-bank-print-ready')).lightBankPaperHtml,wireBankPaper:(await import('./light-bank-paper.js?v=20261108-bank-print-ready')).wireLightBankPaper,items:(await import('../data/book/c22-s51-u02.editorial.js?v=20261106-light-readable-workbook')).lightReadableCurrentItems(current,'c22-s51-u02')};},
+ 'c22-s51-u01':async()=>{const mod={...(await import('../data/units/c22-s51-u01.js')),...(await import('../data/units/c22-s51-u01.lesson.js')),...(await import('../data/units/c22-s51-u01.similar.js')),...(await import('../data/units/c22-s51-u01.taxonomy.js')),source:[],misc:await import('../data/units/c22-s51-u01.misc.js')};const current=(await import('../data/book/geology-student-language.js')).geologyCurrentItems(mod.items);return{...mod,bankPaper:(await import('./geology-bank-paper.js?v=20261108-bank-print-ready')).geologyBankPaperHtml,wireBankPaper:(await import('./geology-bank-paper.js?v=20261108-bank-print-ready')).wireGeologyBankPaper,items:(await import('../data/book/c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook')).geologyReadableCurrentItems(current,'c22-s51-u01')};},
  'c22-s42-fin':async()=>({...(await import('../data/units/c22-s42-fin.js')),...(await import('../data/units/c22-s42-fin.similar.js')),...(await import('../data/units/c22-s42-fin.taxonomy.js')),misc:await import('../data/units/c22-s42-fin.misc.js')}),
  'c22-s42-mid':async()=>({...(await import('../data/units/c22-s42-mid.js')),...(await import('../data/units/c22-s42-mid.similar.js')),...(await import('../data/units/c22-s42-mid.taxonomy.js')),misc:await import('../data/units/c22-s42-mid.misc.js')}),
  'c22-s41-fin':async()=>({...(await import('../data/units/c22-s41-fin.js')),...(await import('../data/units/c22-s41-fin.similar.js')),...(await import('../data/units/c22-s41-fin.taxonomy.js')),misc:await import('../data/units/c22-s41-fin.misc.js')}),
  'c22-s41-mid':async()=>({...(await import('../data/units/c22-s41-mid.js')),...(await import('../data/units/c22-s41-mid.similar.js')),...(await import('../data/units/c22-s41-mid.source.js')),...(await import('../data/units/c22-s41-mid.taxonomy.js')),misc:await import('../data/units/c22-s41-mid.misc.js')}),
- 'c22-s42-u04':async()=>withThink('c22-s42-u04',{...(await import('../data/units/c22-s42-u04.js')),...(await import('../data/units/c22-s42-u04.lesson.js')),...(await import('../data/units/c22-s42-u04.similar.js')),...(await import('../data/units/c22-s42-u04.source.js')),...(await import('../data/units/c22-s42-u04.taxonomy.js')),misc:await import('../data/units/c22-s42-u04.misc.js')}),
- 'c22-s42-u03':async()=>({...(await import('../data/units/c22-s42-u03.js')),...(await import('../data/units/c22-s42-u03.lesson.js')),...(await import('../data/units/c22-s42-u03.similar.js')),...(await import('../data/units/c22-s42-u03.source.js')),...(await import('../data/units/c22-s42-u03.taxonomy.js')),misc:await import('../data/units/c22-s42-u03.misc.js')}),
- 'c22-s42-u02':async()=>withThink('c22-s42-u02',{...(await import('../data/units/c22-s42-u02.js')),...(await import('../data/units/c22-s42-u02.lesson.js')),...(await import('../data/units/c22-s42-u02.similar.js')),...(await import('../data/units/c22-s42-u02.source.js')),...(await import('../data/units/c22-s42-u02.taxonomy.js')),misc:await import('../data/units/c22-s42-u02.misc.js')}),
- 'c22-s42-u01':async()=>withThink('c22-s42-u01',{...(await import('../data/units/c22-s42-u01.js')),...(await import('../data/units/c22-s42-u01.lesson.js')),...(await import('../data/units/c22-s42-u01.similar.js')),...(await import('../data/units/c22-s42-u01.source.js')),...(await import('../data/units/c22-s42-u01.taxonomy.js')),misc:await import('../data/units/c22-s42-u01.misc.js')}),
- 'c22-s32-u04':async()=>withThink('c22-s32-u04',{...(await import('../data/units/c22-s32-u04.lesson.js')),...(await import('../data/units/c22-s32-u04.js')),...(await import('../data/units/c22-s32-u04.similar.js')),...(await import('../data/units/c22-s32-u04.taxonomy.js')),source:[],misc:await import('../data/units/c22-s32-u04.misc.js')}),
- 'c22-s32-u03':async()=>withThink('c22-s32-u03',{...(await import('../data/units/c22-s32-u03.lesson.js')),...(await import('../data/units/c22-s32-u03.js')),...(await import('../data/units/c22-s32-u03.similar.js')),...(await import('../data/units/c22-s32-u03.source.js')),...(await import('../data/units/c22-s32-u03.taxonomy.js')),misc:await import('../data/units/c22-s32-u03.misc.js')}),
- 'c22-s32-u02':async()=>withThink('c22-s32-u02',{...(await import('../data/units/c22-s32-u02.lesson.js')),...(await import('../data/units/c22-s32-u02.js')),...(await import('../data/units/c22-s32-u02.similar.js')),...(await import('../data/units/c22-s32-u02.taxonomy.js')),source:[],misc:await import('../data/units/c22-s32-u02.misc.js')}),
- 'c22-s32-u01': async()=>withThink('c22-s32-u01',{...(await import('../data/units/c22-s32-u01.js')),...(await import('../data/units/c22-s32-u01.lesson.js')),...(await import('../data/units/c22-s32-u01.similar.js')),...(await import('../data/units/c22-s32-u01.source.js')),...(await import('../data/units/c22-s32-u01.taxonomy.js')),misc:await import('../data/units/c22-s32-u01.misc.js')}),
+ 'c22-s42-u04':async()=>{const data=await withThink('c22-s42-u04',{...(await import('../data/units/c22-s42-u04.js')),...(await import('../data/units/c22-s42-u04.lesson.js')),...(await import('../data/units/c22-s42-u04.similar.js')),...(await import('../data/units/c22-s42-u04.source.js')),...(await import('../data/units/c22-s42-u04.taxonomy.js')),misc:await import('../data/units/c22-s42-u04.misc.js')});const {climateReadableCurrentItems}=await import('../data/book/c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook');return {...data,bankPaper:(await import('./climate-bank-paper.js?v=20261108-bank-print-ready')).climateBankPaperHtml,wireBankPaper:(await import('./climate-bank-paper.js?v=20261108-bank-print-ready')).wireClimateBankPaper,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems(climateReadableCurrentItems(data.items,'c22-s42-u04'),'c22-s42-u04')};},
+ 'c22-s42-u03':async()=>{const mod={...(await import('../data/units/c22-s42-u03.js')),...(await import('../data/units/c22-s42-u03.lesson.js')),...(await import('../data/units/c22-s42-u03.similar.js')),...(await import('../data/units/c22-s42-u03.source.js')),...(await import('../data/units/c22-s42-u03.taxonomy.js')),misc:await import('../data/units/c22-s42-u03.misc.js')};return{...mod,bankPaper:(await import('./gas-bank-paper.js?v=20261108-bank-print-ready')).gasBankPaperHtml,wireBankPaper:(await import('./gas-bank-paper.js?v=20261108-bank-print-ready')).wireGasBankPaper,items:(await import('../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook')).gasReadableCurrentItems(mod.items,'c22-s42-u03')};},
+ 'c22-s42-u02':async()=>{const mod=await withThink('c22-s42-u02',{...(await import('../data/units/c22-s42-u02.js')),...(await import('../data/units/c22-s42-u02.lesson.js')),...(await import('../data/units/c22-s42-u02.similar.js')),...(await import('../data/units/c22-s42-u02.source.js')),...(await import('../data/units/c22-s42-u02.taxonomy.js')),misc:await import('../data/units/c22-s42-u02.misc.js')});return{...mod,bankPaper:(await import('./ecology-bank-paper.js?v=20261108-bank-print-ready')).ecologyBankPaperHtml,wireBankPaper:(await import('./ecology-bank-paper.js?v=20261108-bank-print-ready')).wireEcologyBankPaper,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems((await import('../data/book/c22-s42-u02.elementary.js?v=20261108-ecology-elementary')).ecologyElementaryCurrentItems((await import('../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook')).ecologyReadableCurrentItems((await import('./ecology-sound-question-language.js?v=20261105-ecology-sound-bank')).ecologySoundCurrentItems(mod.items,'c22-s42-u02'),'c22-s42-u02'),'c22-s42-u02'),'c22-s42-u02')};},
+ 'c22-s42-u01':async()=>{const mod=await withThink('c22-s42-u01',{...(await import('../data/units/c22-s42-u01.js')),...(await import('../data/units/c22-s42-u01.lesson.js')),...(await import('../data/units/c22-s42-u01.similar.js')),...(await import('../data/units/c22-s42-u01.source.js')),...(await import('../data/units/c22-s42-u01.taxonomy.js')),misc:await import('../data/units/c22-s42-u01.misc.js')});return {...mod,bankPaper:(await import('./sky-bank-paper.js?v=20261108-bank-print-ready')).skyBankPaperHtml,wireBankPaper:(await import('./sky-bank-paper.js?v=20261108-bank-print-ready')).wireSkyBankPaper,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems((await import('../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook')).skyReadableCurrentItems((await import('./magnet-sky-question-language.js?v=20261105-magnet-sky-student-language')).magnetSkyCurrentItems(mod.items,'c22-s42-u01'),'c22-s42-u01'),'c22-s42-u01')};},
+ 'c22-s32-u04':async()=>{const mod=await withThink('c22-s32-u04',{...(await import('../data/units/c22-s32-u04.lesson.js')),...(await import('../data/units/c22-s32-u04.js')),...(await import('../data/units/c22-s32-u04.similar.js')),...(await import('../data/units/c22-s32-u04.taxonomy.js')),source:[],misc:await import('../data/units/c22-s32-u04.misc.js')});return{...mod,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems((await import('../data/book/c22-s32-practice-language.js?v=20261108-grade3-material-language')).grade3PracticeCurrentItems(mod.items,'c22-s32-u04'),'c22-s32-u04')};},
+ 'c22-s32-u03':async()=>{const mod=await withThink('c22-s32-u03',{...(await import('../data/units/c22-s32-u03.lesson.js')),...(await import('../data/units/c22-s32-u03.js?v=20261102-choice-version')),...(await import('../data/units/c22-s32-u03.similar.js')),...(await import('../data/units/c22-s32-u03.source.js')),...(await import('../data/units/c22-s32-u03.taxonomy.js')),misc:await import('../data/units/c22-s32-u03.misc.js')});return{...mod,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems((await import('../data/book/c22-s32-practice-language.js?v=20261108-grade3-material-language')).grade3PracticeCurrentItems((await import('./ecology-sound-question-language.js?v=20261105-ecology-sound-bank')).ecologySoundCurrentItems(mod.items,'c22-s32-u03'),'c22-s32-u03'),'c22-s32-u03')};},
+ 'c22-s32-u02':async()=>{const mod=await withThink('c22-s32-u02',{...(await import('../data/units/c22-s32-u02.lesson.js')),...(await import('../data/units/c22-s32-u02.js')),...(await import('../data/units/c22-s32-u02.similar.js')),...(await import('../data/units/c22-s32-u02.taxonomy.js')),source:[],misc:await import('../data/units/c22-s32-u02.misc.js')});return {...mod,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems((await import('../data/book/c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary')).earthSeaElementaryCurrentItems((await import('../data/book/c22-s32-u02.rail-notes.js?v=20261105-earth-sea-learner-reasoning')).earthSeaReasoningCurrentItems((await import('../data/book/material-earth-student-language.js?v=20261105-material-earth-student-language')).materialEarthCurrentItems(mod.items,'c22-s32-u02'),'c22-s32-u02'),'c22-s32-u02'),'c22-s32-u02')};},
+ 'c22-s32-u01': async()=>{const mod=await withThink('c22-s32-u01',{...(await import('../data/units/c22-s32-u01.js')),...(await import('../data/units/c22-s32-u01.lesson.js')),...(await import('../data/units/c22-s32-u01.similar.js')),...(await import('../data/units/c22-s32-u01.source.js')),...(await import('../data/units/c22-s32-u01.taxonomy.js')),misc:await import('../data/units/c22-s32-u01.misc.js')});return {...mod,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems((await import('../data/book/c22-s32-practice-language.js?v=20261108-grade3-material-language')).grade3PracticeCurrentItems((await import('../data/book/material-earth-student-language.js?v=20261105-material-earth-student-language')).materialEarthCurrentItems(mod.items,'c22-s32-u01'),'c22-s32-u01'),'c22-s32-u01')};},
   's31-u03': async () => ({ ...(await import('../data/units/s31-u03.js')), ...(await import('../data/units/s31-u03.lesson.js')), ...(await import('../data/units/s31-u03.similar.js')), ...(await import('../data/units/s31-u03.source.js')), ...(await import('../data/units/s31-u03.taxonomy.js')), misc: await import('../data/units/s31-u03.misc.js') }),
   's31-u02': async () => ({ ...(await import('../data/units/s31-u02.js')), ...(await import('../data/units/s31-u02.lesson.js')), ...(await import('../data/units/s31-u02.similar.js')), ...(await import('../data/units/s31-u02.source.js')), ...(await import('../data/units/s31-u02.taxonomy.js')), misc: await import('../data/units/s31-u02.misc.js') }),
   's31-u01': async () => ({ ...(await import('../data/units/s31-u01.js')), ...(await import('../data/units/s31-u01.lesson.js')), ...(await import('../data/units/s31-u01.similar.js')), ...(await import('../data/units/s31-u01.source.js')), ...(await import('../data/units/s31-u01.taxonomy.js')), misc: await import('../data/units/s31-u01.misc.js') }),
-  's31-u04': async () => ({ ...(await import('../data/units/s31-u04.js')), ...(await import('../data/units/s31-u04.lesson.js')), ...(await import('../data/units/s31-u04.similar.js')), ...(await import('../data/units/s31-u04.source.js')), ...(await import('../data/units/s31-u04.taxonomy.js')), misc: await import('../data/units/s31-u04.misc.js') }),
+  's31-u04': async()=>{const mod={ ...(await import('../data/units/s31-u04.js')), ...(await import('../data/units/s31-u04.lesson.js')), ...(await import('../data/units/s31-u04.similar.js')), ...(await import('../data/units/s31-u04.source.js')), ...(await import('../data/units/s31-u04.taxonomy.js')), misc: await import('../data/units/s31-u04.misc.js') };return {...mod,items:(await import('../data/book/s31-u04.elementary.js?v=20261108-life-elementary')).lifeElementaryCurrentItems(mod.items,'s31-u04')};},
   's42-u04': async () => ({ ...(await import('../data/units/s42-u04.js')), ...(await import('../data/units/s42-u04.lesson.js')), ...(await import('../data/units/s42-u04.similar.js')), ...(await import('../data/units/s42-u04.source.js')), ...(await import('../data/units/s42-u04.taxonomy.js')), misc: await import('../data/units/s42-u04.misc.js') }),
   's42-u05': async () => ({ ...(await import('../data/units/s42-u05.js')), ...(await import('../data/units/s42-u05.lesson.js')), ...(await import('../data/units/s42-u05.similar.js')), ...(await import('../data/units/s42-u05.source.js')), ...(await import('../data/units/s42-u05.taxonomy.js')), misc: await import('../data/units/s42-u05.misc.js') }),
   's51-u01': async () => ({ ...(await import('../data/units/s51-u01.js')), ...(await import('../data/units/s51-u01.lesson.js')), ...(await import('../data/units/s51-u01.similar.js')), ...(await import('../data/units/s51-u01.source.js')), ...(await import('../data/units/s51-u01.taxonomy.js')), misc: await import('../data/units/s51-u01.misc.js') }),
@@ -59,12 +73,12 @@ const UNITS = {
   's51-u02': async () => ({ ...(await import('../data/units/s51-u02.js')), ...(await import('../data/units/s51-u02.lesson.js')), ...(await import('../data/units/s51-u02.similar.js')), ...(await import('../data/units/s51-u02.taxonomy.js')), misc: await import('../data/units/s51-u02.misc.js') }),
   's42-u03': async () => ({ ...(await import('../data/units/s42-u03.js')), ...(await import('../data/units/s42-u03.lesson.js')), ...(await import('../data/units/s42-u03.similar.js')), ...(await import('../data/units/s42-u03.source.js')), ...(await import('../data/units/s42-u03.taxonomy.js')), misc: await import('../data/units/s42-u03.misc.js') }),
   's42-u02': async () => ({ ...(await import('../data/media/s42-u02.media.js')), ...(await import('../data/units/s42-u02.js')), ...(await import('../data/units/s42-u02.lesson.js')), ...(await import('../data/units/s42-u02.similar.js')), ...(await import('../data/units/s42-u02.source.js')), ...(await import('../data/units/s42-u02.taxonomy.js')), misc: await import('../data/units/s42-u02.misc.js') }), 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
-  ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.source.js')), ...(await import('../data/units/s41-u01.taxonomy.js')), misc: await import('../data/units/s41-u01.misc.js') }),
+  ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.source.js')), ...(await import('../data/units/s41-u01.taxonomy.js')), items:(await import('../data/book/s41-u01.elementary.js?v=20261108-magnet-elementary')).magnetElementaryCurrentItems((await import('../data/book/s41-u01.rail-notes.js?v=20261105-magnet-learner-reasoning')).magnetReasoningCurrentItems((await import('./magnet-sky-question-language.js?v=20261105-magnet-sky-student-language')).magnetSkyCurrentItems((await import('../data/units/s41-u01.js')).items,'s41-u01'),'s41-u01'),'s41-u01'),misc: await import('../data/units/s41-u01.misc.js') }),
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
-  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.source.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), misc: await import('../data/units/s41-u02.misc.js') }),
-  's41-u04': async () => withThink('s41-u04', { ...(await import('../data/units/s41-u04.js')), ...(await import('../data/units/s41-u04.lesson.js')), ...(await import('../data/units/s41-u04.similar.js')), ...(await import('../data/units/s41-u04.source.js')), ...(await import('../data/units/s41-u04.taxonomy.js')), misc: await import('../data/units/s41-u04.misc.js') }),
+  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.source.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), items:(await import('../data/book/s41-u02.elementary.js?v=20261108-water-elementary')).waterElementaryCurrentItems((await import('../data/units/s41-u02.js')).items,'s41-u02'),misc: await import('../data/units/s41-u02.misc.js') }),
+  's41-u04': async()=>{const mod=await withThink('s41-u04', { ...(await import('../data/units/s41-u04.js')), ...(await import('../data/units/s41-u04.lesson.js')), ...(await import('../data/units/s41-u04.similar.js')), ...(await import('../data/units/s41-u04.source.js')), ...(await import('../data/units/s41-u04.taxonomy.js')), misc: await import('../data/units/s41-u04.misc.js') });return {...mod,bankPaper:(await import('./biology-bank-paper.js?v=20261108-bank-print-ready')).biologyBankPaperHtml,wireBankPaper:(await import('./biology-bank-paper.js?v=20261108-bank-print-ready')).wireBiologyBankPaper,items:(await import('../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data')).lessonReferenceItems((await import('../data/book/s41-u04.editorial.js?v=20261108-biology-elementary-bank')).biologyElementaryCurrentItems((await import('../data/book/s41-u04.editorial.js?v=20261106-biology-readable-workbook')).biologyReadableCurrentItems((await import('../data/book/biology-student-language.js?v=20261105-biology-question-language')).biologyCurrentItems(mod.items),'s41-u04'),'s41-u04'),'s41-u04')};},
   's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
-  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.source.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), misc: await import('../data/units/s41-u03.misc.js') }),
+  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.source.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), items:(await import('../data/book/s41-u03.elementary.js?v=20261108-land-elementary')).landElementaryCurrentItems((await import('../data/book/s41-u03.editorial.js?v=20261105-land-learner-reasoning')).landReasoningCurrentItems((await import('../data/units/s41-u03.js')).items,'s41-u03'),'s41-u03'), misc: await import('../data/units/s41-u03.misc.js') }),
   's41-u03b': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03b.lesson.js')),
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
@@ -135,19 +149,22 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || (v && typeof v === 'object' && !Array.isArray(v)
     ? `<table class="tbl"><thead><tr>${Object.keys(v).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody><tr>${Object.values(v).map((c) => `<td>${esc([].concat(c).join(', '))}</td>`).join('')}</tr></tbody></table>`
     : `<p class="lead">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b> ' : `<b>${esc(k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`)).join('') : '';
+  const sourceContext=sourceBlocksHtml(it,'context'),sourceMaterial=sourceBlocksHtml(it,'material'),sourceReview=needsSourceTeacherReview(it),showAnswer=show&&!sourceReview,showWrittenAnswer=show&&(!sourceReview||!it.sourceRef.reviewOnly);
   const head = `<p>${no ? `<span class="no">${no}.</span>` : ''}${ac.type === 'cloze' ? blanksHtml(it.prompt, ac.blanks, { print, show }) : esc(it.prompt)}</p>`;
   let body = '';
   const CZ = !print && ac.type === 'cloze' && MISC?.cloze?.[it.id];
   if (CZ) body = `<div class="chips">${CZ.options.map((opts, k) => `<div class="chip-row" data-k="${k}"><span class="chip-no">${CIRC[k]}</span>${shuffled(opts).map((o) => `<button type="button" class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`).join('')}</div><p class="why" hidden></p>`;
   if (ac.type === 'single-choice') {
-    body = print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${show && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
-      : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`;
+    body = sourceChoiceTableHtml(it,{print,show:showAnswer}) ?? (print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${showAnswer && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
+      : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`);
+    if(!print&&it.sourceChoiceTable&&sourceContext!==null)body+='<p class="why" hidden></p>';
   } else if (ac.type === 'multi-choice') {
-    body = print ? `<div>${it.choices.map((c, i) => `<div${show && ac.answers.includes(i) ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
+    body = print ? `<div>${it.choices.map((c, i) => `<div${showAnswer && ac.answers.includes(i) ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
       : `<p class="lead">${ac.answers.length}개를 고르세요.</p><div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}" aria-pressed="false">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`;
   } else if (ac.type === 'short-text') {
-    body = print ? (show ? `<p class="ans">${esc(ac.answer)}</p>` : '<div class="ans-line"></div>')
-      : `<div class="short"><input type="text" aria-label="내 답" autocomplete="off"><button type="button" class="btn" data-act="check-short">확인</button></div><p class="why" hidden></p>`;
+    const hint=sourceAnswerHint(it)||seasonAnswerHint(ac);
+    body = print ? (showAnswer ? `<p class="ans">${esc(ac.answer)}</p>` : '<div class="ans-line"></div>')
+      : `${hint?`<p class="lead">${esc(hint)}</p>`:''}<div class="short"><input type="text" aria-label="내 답" autocomplete="off"><button type="button" class="btn" data-act="check-short">확인</button></div><p class="why" hidden></p>`;
   } else if (ac.type === 'table-fill') {
     const cols = ac.columns;
     body = `<table class="tbl tfill"><thead><tr><th>${esc(ac.rowHead || '물체')}</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><td>${esc(r.label)}</td>${cols.map((c, ci) => print
@@ -156,12 +173,14 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
       ${print ? '' : '<button type="button" class="btn" data-act="check-table">맞았는지 보기</button><p class="why" hidden></p>'}`;
   } else if (ac.type === 'written-explanation') {
     const rb = ac.rubric;
-    body = print ? (show ? `<p class="ans">예시 답: ${esc(ac.sample)}</p><ul class="rubric">${rb.required.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : '<div class="ans-line"></div><div class="ans-line"></div><div class="ans-line"></div>')
+    body = print ? (showWrittenAnswer ? `<p class="ans">예시 답: ${esc(ac.sample)}</p><ul class="rubric">${rb.required.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : '<div class="ans-line"></div><div class="ans-line"></div><div class="ans-line"></div>')
       : writtenPracticeHtml();
+    if(print&&show&&sourceReview&&it.sourceRef.reviewOnly)body+=`<ul class="rubric">${rb.required.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`;
     if (rb.preview) body += `<p class="preview"><b>미리보기</b> ${esc(rb.preview)}</p>`;
   }
+  const review=print&&show?sourcePrintReviewHtml(it)||'':'';
   const expl = print && show ? `<p class="why">${esc(it.explanation)}</p>` : '';
-  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${head}${fig}${giv}${srcFig}${body}${expl}</div>`;
+  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${sourceContext??''}${head}${fig}${sourceMaterial??(giv+srcFig)}${body}${review}${expl}</div>`;
 }
 let FIG = {}, BOOKX = {}, MISC = null;
 // 오답 → 오개념 교정 문장. 연결된 오개념이 없으면 해설만.
@@ -177,6 +196,7 @@ function whyHtml(it, ok, detail) {
 // ctx = { u, stage } 가 있으면 결과를 기록한다. onDone(ok, detail)
 function wireItem(card, it, onDone, ctx) {
   const ac = it.answerContract;
+  if(wireSourceTeacherReview(card,it))return;
   if (ac.type === 'written-explanation') wireWrittenPractice(card, it);
   const done = (ok, detail = {}) => { if (ctx) record(du(ctx.u), it, ctx.stage, ok, detail, MISC); onDone?.(ok, detail); };
   const CZ = ac.type === 'cloze' && MISC?.cloze?.[it.id];
@@ -217,7 +237,7 @@ function wireItem(card, it, onDone, ctx) {
     const $in = card.querySelector('input'), $why = card.querySelector('.why');
     const norm = (x) => String(x).replace(/[\s()·.,/:\-]/g, '').replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/[oO]/g, '○').replace(/[xX]/g, '×').toUpperCase();
     const check = () => { if (card.dataset.done || !$in.value.trim()) return; card.dataset.done = 1;
-      const ok = ac.accepted.some((a) => norm(a) === norm($in.value)); $in.readOnly = true; $in.classList.add(ok ? 'right' : 'wrong');
+      const ok = (ac.sourceResponseContract||ac.motionContract||ac.plantAuthoredContract||ac.earthAuthoredContract||ac.earthMotionContract||ac.seasonContract)?judgeItem({text:$in.value,ac}).st==='ok':ac.accepted.some((a) => norm(a) === norm($in.value)); $in.readOnly = true; $in.classList.add(ok ? 'right' : 'wrong');
       $why.hidden = false; $why.innerHTML = `${ok ? '' : `<b class="no">정답: ${esc(ac.answer)}</b> `}${whyHtml(it, ok, { typed: $in.value })}`; done(ok, { typed: $in.value }); };
     card.querySelector('[data-act=check-short]').addEventListener('click', check);
     $in.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
@@ -239,7 +259,7 @@ function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   $app.innerHTML = `<header class="top"><div class="wrap">
       <a class="back" href="#/">‹ 지도로</a><h1>${esc(lesson.title)}</h1>
       ${stepIdx != null ? `<nav class="dots" aria-label="단계">${STEPS.map((s, i) => `<a href="#/${u}/${i + 1}" class="${i === stepIdx ? 'on' : (st.done || []).includes(i) ? 'done' : ''}" aria-label="${s.label}"></a>`).join('')}</nav>` : ''}
-      ${MISC ? `<a class="icon-btn diag-link" href="#/${u}/diagnose" title="진단·처방">진단</a>` : ''}<button class="icon-btn" id="voice" aria-pressed="${voiceOn}" title="읽어 주기">${voiceOn ? '소리 켬' : '소리'}</button>
+      ${MISC ? `<a class="icon-btn diag-link" href="#/${u}/diagnose" title="학습 결과와 복습">결과</a>` : ''}<button class="icon-btn" id="voice" aria-pressed="${voiceOn}" title="읽어 주기">${voiceOn ? '소리 켬' : '소리'}</button>
     </div></header>
     <main class="wrap">${inner}</main>
     ${next ? `<div class="bottom"><div class="wrap"><a class="btn primary" href="${next}" style="display:flex;align-items:center;justify-content:center;text-decoration:none">${nextLabel}</a></div></div>` : ''}`;
@@ -354,7 +374,7 @@ function stepEvaluate(u, L, items, retry = false) {
     answered++; if (ok) right++; else wrongIds.push(list[k].id);
     if (answered === list.length) {
       const pass = right >= x.pass; store.set(u, { passed: pass || store.get(u).passed, best: Math.max(right, store.get(u).best || 0) });
-      const diag = MISC ? `<a class="btn" href="#/${u}/diagnose" style="display:inline-flex;align-items:center;text-decoration:none">진단 보기</a>` : '';
+      const diag = MISC ? `<a class="btn" href="#/${u}/diagnose" style="display:inline-flex;align-items:center;text-decoration:none">학습 결과 보기</a>` : '';
       document.getElementById('res').innerHTML = `<div class="card result"><p class="score">${right} / ${list.length}</p>
         <p>${pass ? '관문 통과! 깃발을 받았어요.' : `${x.pass}문제 이상 맞으면 통과예요.`}</p>
         <div class="print-bar" style="justify-content:center">${pass ? `<button class="btn" id="again">다시 풀기</button>${diag}<a class="btn primary" href="#/" style="display:inline-flex;align-items:center;text-decoration:none">다음 정거장</a>` : `<a class="btn" href="#/${u}/3" style="display:inline-flex;align-items:center;text-decoration:none">개념 다시 보기</a>${diag}<button class="btn primary" id="again">다시 풀기</button>`}</div></div>
@@ -378,49 +398,61 @@ function drillFor(u, wrongIds, el) {
   el.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: 'remedy' }));
 }
 
-// 진단·분석·처방 — 학습 중 고른 오답을 오개념표로 읽어 정리한다(학생용/강사용, 인쇄)
-function pageDiagnose(u, L, items, mode = 'student') {
-  const A = analyze(du(u), MISC), tx = BOOKX.taxonomy, pool = [...(BOOKX.similar || []), ...(BOOKX.source || []), ...items];
+// 학습 결과와 복습 — 학생에게는 관찰된 기록을 설명하고 교사용 진단 규칙은 유지한다.
+function pageDiagnose(u, L, items, mode = 'student', questionPool = null) {
+  const A = analyze(du(u), MISC), tx = BOOKX.taxonomy, pool = questionPool || [...(BOOKX.similar || []), ...(BOOKX.source || []), ...items];
   const I = Object.fromEntries(pool.map((i) => [i.id, i])), T = mode === 'teacher';
-  const STAGE = { concept: '개념', mini: '잠깐 확인', elaborate: '확장', evaluate: '점검', sub: '유형별', remedy: '한 판 더', book: '교재', 'book-concept': '교재 개념', daily: 'Daily Test', exam: '단원평가' };
-  const ST = { confirmed: ['확정', 'st-c'], suspected: ['의심', 'st-s'], resolved: ['해소', 'st-r'] };
+  const currentClassroom = revisedTextbookUnits.has(u);
+  const STAGE = { concept: '개념', mini: '잠깐 확인', elaborate: '확장', evaluate: '점검', sub: '유형별', remedy: '복습 문제', book: '교재', 'book-concept': '교재 개념', deck: '수업 확인 문제', daily: 'Daily Test', exam: '단원평가' };
+  const ST = T ? { confirmed: ['확정', 'st-c'], suspected: ['의심', 'st-s'], resolved: ['해소', 'st-r'] }
+    : { confirmed: ['다시 살펴봐요', 'st-c'], suspected: ['한 번 더 확인해요', 'st-s'], resolved: ['다시 맞혔어요', 'st-r'] };
   const pct = (o) => (o.tot ? Math.round((o.ok / o.tot) * 100) : null);
   const bar = (name, o) => { const p = pct(o); return `<div class="bar"><span>${esc(name)}</span><i><b style="width:${p ?? 0}%" class="${p == null ? '' : p < 60 ? 'weak' : p < 80 ? 'mid' : 'good'}"></b></i><em>${p == null ? '—' : `${p}%`}<small> ${o.ok}/${o.tot}</small></em></div>`; };
   const elems = (tx?.elements || []).map((e) => bar(e.name, A.byElement[e.id] || { ok: 0, tot: 0 })).join('');
-  const pickText = (e) => { const it = I[e.id]; if (e.chip) return `'${e.chip}' 자리를 틀림`; if (!it) return ''; if (e.picked != null && it.choices) return [].concat(e.picked).map((i) => `${CIRC[i]} ${it.choices[i]}`).join(' / '); if (e.typed) return `"${e.typed}"`; return '빈칸·표를 틀림'; };
-  const evText = (e) => (e.id.startsWith('book:') ? '개념 정리 빈칸' : `${I[e.id]?.prompt?.slice(0, 40) || e.id}…`);
+  const pickText = (e) => { const it = I[e.id]; if (e.chip) return `'${e.chip}' 자리를 틀림`; if (!it) return ''; if (e.picked != null && it.choices) return pickedChoiceTexts(it,e).map((text,k) => `${CIRC[[].concat(e.picked)[k]]} ${text}`).join(' / '); if (e.typed) return `"${e.typed}"`; return '빈칸·표를 틀림'; };
+  const evText = (e) => {
+    if (e.id.startsWith('book:')) return '개념 정리 빈칸';
+    const question = questionAtVersion(I[e.id], e.presentationVersion || 1);
+    if (!question?.prompt) return '이전 문항의 내용을 확인할 수 없어요.';
+    return question.prompt.length > 40 ? question.prompt.slice(0, 40) + '…' : question.prompt;
+  };
   const cards = A.order.map((m, ci) => { const M = MISC.misconceptions[m], r = A.mis[m], [lab, cls] = ST[r.status];
     const rem = remedyItems(du(u), m, MISC, pool, 3);
     return `<section class="card mis ${cls}"><div class="mis-head"><span class="st">${lab}</span><h3>${esc(M.label)}</h3></div>
       <p class="fix">${M.fix}</p>
-      <details ${T ? 'open' : ''}><summary>근거 ${r.wrong.length}건${r.streak ? ` · 그 뒤 ${r.streak}번 연속 맞힘` : ''}</summary><ul class="ev">${r.wrong.map((e) => `<li><b>${esc(STAGE[e.stage] || e.stage)}</b> ${esc(evText(e))} → <span class="picked">${esc(pickText(e))}</span></li>`).join('')}</ul></details>
-      ${r.status === 'resolved' ? '' : `<div class="rx"><b>처방</b> <a href="#/${u}/${MISC.remedy?.[m]?.step || 3}">${['', '궁금', '실험', '개념', '확장', '점검'][MISC.remedy?.[m]?.step || 3]} 화면 다시 보기</a> · 아래 ${rem.length}문제로 확인</div>
-      <details class="rx-d" ${ci === 0 ? 'open' : ''}><summary>처방 문제 ${rem.length}개 풀기</summary><div class="rx-items">${rem.map((it) => itemHtml(it)).join('')}</div></details>`}</section>`; }).join('');
-  const verdict = !A.total ? '아직 푼 문제가 없어요. 5단계 탐구나 유형별 문제를 풀면 여기에 진단이 쌓여요.'
-    : A.order.filter((m) => A.mis[m].status === 'confirmed').length ? `되풀이되는 오개념이 <b>${A.order.filter((m) => A.mis[m].status === 'confirmed').length}개</b> 있어요. 빨간 카드부터 처방 문제를 풀어요.`
-    : A.order.filter((m) => A.mis[m].status === 'suspected').length ? '한 번씩 헷갈린 것이 있어요. 노란 카드의 문제로 확인해요.' : '오개념 없이 잘 이해하고 있어요!';
-  frame(u, L, null, `<p class="step-label">진단 · 분석 · 처방</p><h2>${esc(L.title)}</h2>
-    <div class="print-bar no-print"><a class="btn${T ? '' : ' primary'}" href="#/${u}/diagnose">학생용</a><a class="btn${T ? ' primary' : ''}" href="#/${u}/diagnose/teacher">강사용</a><button class="btn" onclick="print()">인쇄</button>${T ? '<button class="btn" id="reset">기록 지우기</button>' : ''}</div>
+      <details ${T ? 'open' : ''}><summary>${T ? '근거' : '틀렸던 문제'} ${r.wrong.length}${T ? '건' : '개'}${r.streak ? ` · 그 뒤 ${r.streak}번 연속 맞힘` : ''}</summary><ul class="ev">${r.wrong.map((e) => `<li><b>${esc(STAGE[e.stage] || e.stage)}</b> ${esc(evText(e))} → <span class="picked">${esc(pickText(e))}</span></li>`).join('')}</ul></details>
+      ${r.status === 'resolved' ? '' : `<div class="rx"><b>${T ? '처방' : '다시 공부하기'}</b> <a href="#/${u}/${currentClassroom ? `lab-class/${T ? 'teach' : 'self'}/1` : MISC.remedy?.[m]?.step || 3}">${currentClassroom ? '사고력 수업 다시 보기' : ['', '궁금', '실험', '개념', '확장', '점검'][MISC.remedy?.[m]?.step || 3] + ' 화면 다시 보기'}</a>${rem.length ? ` · 아래 ${rem.length}문제로 확인` : ''}</div>
+      ${rem.length ? `<details class="rx-d" ${ci === 0 ? 'open' : ''}><summary>${T ? '처방' : '복습'} 문제 ${rem.length}개 풀기</summary><div class="rx-items">${rem.map((it) => itemHtml(it)).join('')}</div></details>` : ''}`}</section>`; }).join('');
+  const verdict = !A.total ? (revisedTextbookUnits.has(u) ? '아직 푼 문제가 없어요. 수업의 확인 문제나 유형별 문제를 풀면 여기에 학습 결과가 쌓여요.' : '아직 푼 문제가 없어요. 5단계 탐구나 유형별 문제를 풀면 여기에 진단이 쌓여요.')
+    : A.order.filter((m) => A.mis[m].status === 'confirmed').length ? `서로 다른 문제에서 두 번 이상 헷갈린 내용이 <b>${A.order.filter((m) => A.mis[m].status === 'confirmed').length}개</b> 있어요. 위쪽부터 다시 살펴보고 복습 문제를 풀어요.`
+    : A.order.filter((m) => A.mis[m].status === 'suspected').length ? '한 번씩 헷갈린 내용이 있어요. 복습 문제로 다시 확인해요.'
+    : A.order.length ? '헷갈렸던 내용을 다시 맞혔어요. 배운 내용을 스스로 설명해 보아요.'
+    : A.right < A.total ? '틀린 문제를 다시 살펴봐요. 이 기록만으로는 헷갈린 까닭을 정하기 어려워요.'
+    : '지금까지 기록된 문제는 모두 맞혔어요. 배운 내용을 스스로 설명해 보아요.';
+  frame(u, L, null, `<p class="step-label">${T ? '진단 · 분석 · 처방' : '학습 결과와 복습'}</p><h2>${esc(L.title)}</h2>
+    <div class="print-bar no-print"><a class="btn${T ? '' : ' primary'}" href="#/${u}/diagnose">학생용</a><a class="btn${T ? ' primary' : ''}" href="#/${u}/diagnose/teacher">교사용</a><button class="btn" onclick="print()">인쇄</button>${T ? '<button class="btn" id="reset">기록 지우기</button>' : ''}</div>
     <div class="card sum"><p class="score">${A.right} / ${A.total}</p><p class="verdict">${verdict}</p>
-      <p class="legend"><span class="st st-c">확정</span> 서로 다른 문제 2개 이상에서 같은 오개념 <span class="st st-s">의심</span> 1번 <span class="st st-r">해소</span> 그 뒤 2번 연속 맞힘${A.slips ? ` · 단순 실수 ${A.slips}` : ''}${A.reveals ? ` · 답 열어 봄 ${A.reveals}` : ''}</p></div>
+      <p class="legend"><span class="st st-c">${ST.confirmed[0]}</span> 같은 내용에서 서로 다른 문제 2개 이상 틀림 <span class="st st-s">${ST.suspected[0]}</span> 1개 틀림 <span class="st st-r">${ST.resolved[0]}</span> 그 뒤 확인 문제 2번 연속 맞힘${A.slips ? ` · 까닭을 분류하지 못한 오답 ${A.slips}` : ''}${A.reveals ? ` · 답 열어 봄 ${A.reveals}` : ''}</p></div>
     <div class="card"><h3>소단원별 정답률</h3>${elems}</div>
     ${cards || ''}
     ${T ? `<div class="card"><h3>유형별 정답률</h3>${(tx?.types || []).filter((t) => A.byType[t.id]).map((t) => bar(t.name, A.byType[t.id])).join('') || '<p class="lead">아직 없음</p>'}</div>` : ''}`);
-  $app.querySelectorAll('.rx-items .item').forEach((c) => wireItem(c, I[c.dataset.id], () => setTimeout(() => pageDiagnose(u, L, items, mode), 1400), { u, stage: 'remedy' }));
-  $app.querySelector('#reset')?.addEventListener('click', () => { if (confirm('이 단원의 학습 기록을 지울까요?')) { clearLog(du(u)); pageDiagnose(u, L, items, mode); } });
+  $app.querySelectorAll('.rx-items .item').forEach((c) => wireItem(c, I[c.dataset.id], () => setTimeout(() => pageDiagnose(u, L, items, mode, pool), 1400), { u, stage: 'remedy' }));
+  $app.querySelector('#reset')?.addEventListener('click', () => { if (confirm('이 단원의 학습 기록을 지울까요?')) { clearLog(du(u)); pageDiagnose(u, L, items, mode, pool); } });
 }
 
 // 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
 function pageSub(u, L, eid) {
-  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], src = BOOKX.source || [], extra = (BOOKX.items || []).filter((q) => q.status === 'authored' && ['authored-supplement','authored-practice','authored-assessment'].includes(q.sourceRef?.type)), e = tx?.elements.find((x) => x.id === eid);
+  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], src = BOOKX.source || [], extra = (BOOKX.items || []).filter((q) => q.status === 'authored' && (['authored-supplement','authored-practice','authored-assessment'].includes(q.sourceRef?.type)||(u==='c22-s62-u03'&&q.sourceRef?.type==='authored-pair'))), e = tx?.elements.find((x) => x.id === eid);
   if (!e) { location.replace('#/'); return; }
-  const types = tx.types.filter((t) => t.element === e.id);
+  const types = tx.types.filter((t) => u==='c22-s62-u03'?(t.elements||[t.element]).includes(e.id):t.element===e.id);
+  const lessonAvailable = READY[u]?.lesson !== false && !READY[u]?.bankOnly && !BANK[u]?.bankOnly;
+  const currentClassroom = lessonAvailable && revisedTextbookUnits.has(u);
   frame(u, L, null, `<p class="step-label">소단원 ${tx.elements.indexOf(e) + 1}</p><h2>${esc(e.name)}</h2>
-    ${L.engage ? `<div class="print-bar"><a class="btn primary" href="#/${u}/1" style="display:inline-flex;align-items:center;text-decoration:none">5단계 탐구로 배우기</a></div>` : ''}
+    ${currentClassroom || (L.engage && lessonAvailable) ? `<div class="print-bar"><a class="btn primary" href="#/${u}/${currentClassroom?'lab-class/self/1':'1'}" style="display:inline-flex;align-items:center;text-decoration:none">${currentClassroom?'사고력 수업으로 배우기':'5단계 탐구로 배우기'}</a></div>` : ''}
     ${extra.length && (!L.engage || BANK[u]?.sourcePending) ? `<div class="print-bar"><a class="btn" href="#/${u}/print/student">${esc(BANK[u]?.paperLabel||'창작 학습 문제지')}</a><a class="btn" href="#/${u}/print/teacher">교사 해설</a></div>` : ''}
     ${src.length ? `<div class="print-bar sub-exam"><span>${esc(bankLabel(BANK[u]))}</span>${[...new Set(src.map((x) => x.sourceRef.set))].map((n) => `<a class="btn" href="#/${u}/exam/${n}">${esc(groupLabel(BANK[u], n))}</a>`).join('')}</div>` : ''}
     <nav class="modes" aria-label="소단원">${tx.elements.map((x, i) => `<a href="#/${u}/sub/${x.id}" class="btn" style="display:inline-flex;align-items:center;text-decoration:none;min-height:44px;font-size:17px${x.id === e.id ? ';background:var(--navy);color:var(--on-navy)' : ''}">${i + 1}</a>`).join('')}</nav>
-    ${types.map((t) => { const os = src.filter((s) => s.taxonomy.type === t.id), ss = sim.filter((s) => s.taxonomy.type === t.id), es = extra.filter((s) => s.taxonomy.type === t.id);
+    ${types.map((t) => { const os = src.filter((s) => s.taxonomy.type === t.id), ss = sim.filter((s) => s.taxonomy.type === t.id), es = extra.filter((s) => s.taxonomy.type === t.id&&(u!=='c22-s62-u03'||s.taxonomy.element===e.id));
       return `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${os.length ? `<p class="sub-h">${esc(bankLabel(BANK[u]))} 문제 ${os.length}</p>${os.map((s) => itemHtml(s)).join('')}<p class="sub-h">비슷한 문제 ${ss.length}</p>` : ''}${ss.map((s) => itemHtml(s)).join('')}${es.length ? `<p class="sub-h">${BANK[u]?.authored ? '창작 평가' : '보충 문제'} ${es.length} · 직접 만든 문제예요</p>${es.map((s) => itemHtml(s)).join('')}` : ''}`; }).join('')}`);
   const I = Object.fromEntries([...sim, ...src, ...extra].map((s) => [s.id, s]));
   $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: 'sub' }));
@@ -452,7 +484,8 @@ function reportAuto(u, L) {
   };
 }
 function pageReport(u, L) {
-  const R = L.report, auto = reportAuto(u, L), saved = store.get(u).report || {};
+  const R = L.report; if(!R){location.replace(`#/${u}/start`);return;}
+  const auto = reportAuto(u, L), saved = store.get(u).report || {};
   frame(u, L, null, `<p class="step-label">탐구보고서</p><h2>${esc(R.title)}</h2>
     <div class="print-bar no-print"><button class="btn" onclick="print()">A4로 인쇄</button><a class="btn" href="#/${u}/${L.explore.records ? 'records' : '4'}" style="display:inline-flex;align-items:center;text-decoration:none">${L.explore.records ? '탐구 기록장으로' : '확장으로 돌아가기'}</a></div>
     <form class="report card">${R.sections.map((s) => `<label for="r-${s.key}">${esc(s.label)}</label>${s.hint ? `<p class="hint">${esc(s.hint)}</p>` : ''}
@@ -475,10 +508,11 @@ function pageRecords(u, L) {
   const key = R.rowsKey || 'labRows';
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/${u}/start">‹ 처음으로</a><h1>${esc(R.title)}</h1></div></header>
     <main class="wrap records-page"><p class="step-label">${esc(placeLabel(u))} · 선택 기능</p><h2>${esc(L.title)} · 탐구 기록장</h2><p class="lead">${esc(R.note || '')}</p>
-      <p class="start-more"><a href="#/${u}/start">사고력 수업으로 돌아가기</a> · <a href="#/${u}/report">탐구보고서로 정리하기</a> · <a href="#/${u}/records-book/student">기록 교재(학생용)</a> · <a href="#/${u}/records-book/teacher">기록 교재(교사용)</a></p>
+      <p class="start-more"><a href="#/${u}/start">사고력 수업으로 돌아가기</a> · ${L.report?`<a href="#/${u}/report">탐구보고서로 정리하기</a> · `:''}<a href="#/${u}/records-book/student">기록 교재(학생용)</a> · <a href="#/${u}/records-book/teacher">기록 교재(교사용)</a></p>
       <div class="lab-host records-host"></div></main>`;
-  let H = null; Promise.resolve(mountLabOf(R.kind)($app.querySelector('.records-host'), { ...R, personal: true, rows: store.get(u)[key] || [], onRecord: (rows) => store.set(u, { [key]: rows }) })).then((h) => { H = h; });
-  releasePage = () => H?.dispose?.(); scrollTo(0, 0);
+  let H = null, released=false;
+  Promise.resolve(mountLabOf(R.kind)($app.querySelector('.records-host'), { ...R, personal: true, rows: store.get(u)[key] || [], onRecord: (rows) => { if(!released)store.set(u, { [key]: rows }); } })).then((h) => { if(released)h?.dispose?.();else H = h; });
+  releasePage = () => { released=true; H?.dispose?.(); }; scrollTo(0, 0);
 }
 
 // 교재 인쇄: student(빈칸) · teacher(정답 포함) · answers(정답·해설만)
@@ -526,9 +560,9 @@ function pageBook(u, L, items, mode) {
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
 // 사고력 수업으로 바꾸기 전의 탐구 기록 교재(선택 기능 · #/<단원>/records-book)
-const RECORDS_BOOKS = { 'c22-s42-u02': () => import('../data/book/c22-s42-u02.records-book.js'), 'c22-s42-u01': () => import('../data/book/c22-s42-u01.records-book.js'), 'c22-s42-u04': () => import('../data/book/c22-s42-u04.records-book.js'), 'c22-s32-u04': () => import('../data/book/c22-s32-u04.records-book.js'), 'c22-s32-u01': () => import('../data/book/c22-s32-u01.records-book.js'), 'c22-s32-u02': () => import('../data/book/c22-s32-u02.records-book.js'), 'c22-s32-u03': () => import('../data/book/c22-s32-u03.records-book.js'),
+const RECORDS_BOOKS = { 'c22-s61-u01': () => import('../data/book/c22-s61-u01.book.js'), 'c22-s52-u04': () => import('../data/book/c22-s52-u04.book.js'), 'c22-s52-u03': () => import('../data/book/c22-s52-u03.book.js'), 'c22-s52-u02': () => import('../data/book/c22-s52-u02.book.js'), 'c22-s52-u01': () => import('../data/book/c22-s52-u01.book.js'), 'c22-s51-u04': () => import('../data/book/c22-s51-u04.book.js'), 'c22-s51-u02': () => import('../data/book/c22-s51-u02.book.js'), 'c22-s51-u01': () => import('../data/book/c22-s51-u01.book.js'), 'c22-s42-u03': () => import('../data/book/c22-s42-u03.book.js'), 'c22-s51-u03': () => import('../data/book/c22-s51-u03.book.js'), 's31-u04': () => import('../data/book/s31-u04.book.js'), 's31-u03': () => import('../data/book/s31-u03.book.js'), 's31-u02': () => import('../data/book/s31-u02.book.js'), 's31-u01': () => import('../data/book/s31-u01.book.js'), 'c22-s42-u02': () => import('../data/book/c22-s42-u02.records-book.js'), 'c22-s42-u01': () => import('../data/book/c22-s42-u01.records-book.js'), 'c22-s42-u04': () => import('../data/book/c22-s42-u04.records-book.js'), 'c22-s32-u04': () => import('../data/book/c22-s32-u04.records-book.js'), 'c22-s32-u01': () => import('../data/book/c22-s32-u01.records-book.js'), 'c22-s32-u02': () => import('../data/book/c22-s32-u02.records-book.js'), 'c22-s32-u03': () => import('../data/book/c22-s32-u03.records-book.js'),
   's41-u01': () => import('../data/book/s41-u01.inquiry.book.js'), 's41-u02': () => import('../data/book/s41-u02.inquiry.book.js'), 's41-u03': () => import('../data/book/s41-u03.inquiry.book.js'), 's41-u04': () => import('../data/book/s41-u04.inquiry.book.js') };
-const BOOKS = { 'c22-s52-u04':()=>import('../data/book/c22-s52-u04.book.js'), 'c22-s52-u03':()=>import('../data/book/c22-s52-u03.book.js'), 'c22-s52-u02':()=>import('../data/book/c22-s52-u02.book.js'), 'c22-s52-u01':()=>import('../data/book/c22-s52-u01.book.js'), 'c22-s51-u04':()=>import('../data/book/c22-s51-u04.book.js'), 'c22-s51-u03':()=>import('../data/book/c22-s51-u03.book.js'), 'c22-s51-u02':()=>import('../data/book/c22-s51-u02.book.js'), 'c22-s51-u01':()=>import('../data/book/c22-s51-u01.book.js'), 'c22-s42-u04':()=>import('../data/book/c22-s42-u04.book.js'), 'c22-s42-u03':()=>import('../data/book/c22-s42-u03.book.js'), 'c22-s42-u02':()=>import('../data/book/c22-s42-u02.book.js'), 'c22-s42-u01':()=>import('../data/book/c22-s42-u01.book.js'), 's41-u04':()=>import('../data/book/s41-u04.book.js'), 'c22-s32-u04':()=>import('../data/book/c22-s32-u04.book.js'), 'c22-s32-u03':()=>import('../data/book/c22-s32-u03.book.js'), 'c22-s32-u02':()=>import('../data/book/c22-s32-u02.book.js'), 'c22-s32-u01':()=>import('../data/book/c22-s32-u01.book.js'), 's31-u03': () => import('../data/book/s31-u03.book.js'), 's31-u02': () => import('../data/book/s31-u02.book.js'), 's31-u01': () => import('../data/book/s31-u01.book.js'), 's31-u04': () => import('../data/book/s31-u04.book.js'), 's52-u01': () => import('../data/book/s52-u01.book.js'), 's51-u05': () => import('../data/book/s51-u05.book.js'), 's51-u04': () => import('../data/book/s51-u04.book.js'), 's51-u03': () => import('../data/book/s51-u03.book.js'), 's51-u02': () => import('../data/book/s51-u02.book.js'), 's51-u01': () => import('../data/book/s51-u01.book.js'), 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
+const BOOKS = { 'c22-s62-u04':()=>import('../data/book/c22-s62-u04.book.js?v=20261104-student-science-language'), 'c22-s62-u03':()=>import('../data/book/c22-s62-u03.book.js?v=20261104-student-science-language'), 'c22-s62-u02':()=>import('../data/book/c22-s62-u02.book.js?v=20261104-combustion-book'), 'c22-s62-u01':()=>import('../data/book/c22-s62-u01.book.js?v=20261104-season-book'), 'c22-s61-u04':()=>import('../data/book/c22-s61-u04.book.js?v=20261104-earth-motion-class'), 'c22-s61-u03':()=>import('../data/book/c22-s61-u03.book.js?v=20261104-earth-motion-book'), 'c22-s61-u02':()=>import('../data/book/c22-s61-u02.book.js'), 'c22-s61-u01':()=>import('../data/book/c22-s61-u01.book.js'), 'c22-s52-u04':()=>import('../data/book/c22-s52-u04.book.js'), 'c22-s52-u03':()=>import('../data/book/c22-s52-u03.book.js'), 'c22-s52-u02':()=>import('../data/book/c22-s52-u02.book.js'), 'c22-s52-u01':()=>import('../data/book/c22-s52-u01.book.js'), 'c22-s51-u04':()=>import('../data/book/c22-s51-u04.book.js'), 'c22-s51-u03':()=>import('../data/book/c22-s51-u03.book.js'), 'c22-s51-u02':()=>import('../data/book/c22-s51-u02.book.js'), 'c22-s51-u01':()=>import('../data/book/c22-s51-u01.book.js'), 'c22-s42-u04':()=>import('../data/book/c22-s42-u04.book.js'), 'c22-s42-u03':()=>import('../data/book/c22-s42-u03.book.js'), 'c22-s42-u02':()=>import('../data/book/c22-s42-u02.book.js'), 'c22-s42-u01':()=>import('../data/book/c22-s42-u01.book.js'), 's41-u04':()=>import('../data/book/s41-u04.book.js'), 'c22-s32-u04':()=>import('../data/book/c22-s32-u04.book.js'), 'c22-s32-u03':()=>import('../data/book/c22-s32-u03.book.js'), 'c22-s32-u02':()=>import('../data/book/c22-s32-u02.book.js'), 'c22-s32-u01':()=>import('../data/book/c22-s32-u01.book.js'), 's31-u03': () => import('../data/book/s31-u03.book.js'), 's31-u02': () => import('../data/book/s31-u02.book.js'), 's31-u01': () => import('../data/book/s31-u01.book.js'), 's31-u04': () => import('../data/book/s31-u04.book.js'), 's52-u01': () => import('../data/book/s52-u01.book.js'), 's51-u05': () => import('../data/book/s51-u05.book.js'), 's51-u04': () => import('../data/book/s51-u04.book.js'), 's51-u03': () => import('../data/book/s51-u03.book.js'), 's51-u02': () => import('../data/book/s51-u02.book.js'), 's51-u01': () => import('../data/book/s51-u01.book.js'), 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
 // 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
 function labBar(u, { print = false } = {}) {
   return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
@@ -536,7 +570,7 @@ function labBar(u, { print = false } = {}) {
 // 첫 화면: 무엇을 할지 처음에 바로 고른다 — 학생 교재 · 교사 교재 · 스스로 공부 · 가르치기
 // 선생님 확인: 이 기기의 스스로 공부 쓰기 답 중 규칙으로 가리지 못한 것 — 맞음/다시 쓰기·한마디
 async function pageCheck(only) {
-  const { renderCheck, records } = await import('./check.js');
+  const { renderCheck, records } = await import('./check.js?v=20261108-source-schema');
   const known = [...new Set([...Object.keys(BOOKS), ...Object.keys(BANK)])];
   const selected = known.includes(only) ? only : null;
   // 전체 확인도 실제 기록이 있는 단원만 읽어 빈 은행을 한꺼번에 불러오지 않는다.
@@ -545,13 +579,14 @@ async function pageCheck(only) {
     loadUnit: async (u) => {
       const load = UNITS[u] || bankLoader(u);
       const [b,m] = await Promise.all([BOOKS[u] ? BOOKS[u]() : null, load()]);
-      const pool = [...(m.similar || []), ...(m.source || []), ...(m.items || [])];
+      const classroom = b ? await revisedClassroom(u,b) : null;
+      const pool = classroomQuestions(classroom,[...(m.similar || []), ...(m.source || []), ...(m.items || [])]);
       return { ch: b?.chapter || { no:'', title:m.unit?.title || m.taxonomy?.title || u, assessment:Boolean(BANK[u]?.assessment) }, similar:pool,
         ...(b ? {} : { back:'#/bank', backLabel:'문제은행으로' }) };
     } });
 }
 async function pageStart(u, L) {
-  const bookMod = BOOKS[u] ? await BOOKS[u]().then(m=>revisedTextbook(u,m)).catch(() => null) : null, src = BOOKX.source || [];
+  const bookMod = BOOKS[u] ? await BOOKS[u]().then(m=>revisedTextbook(u,m)).then(m=>revisedClassroom(u,m)).catch(() => null) : null, src = BOOKX.source || [];
   const sets = [...new Set(src.map((x) => x.sourceRef.set))];
   if (!bookMod && (BANK[u]?.bankOnly || READY[u]?.bankOnly) && src.length) {
     const links=[['sub/E1','소단원별 문제'],['print/student','학생 문제지'],['print/teacher','교사 해설'],['print/answers','정답·해설만'],['print/quick','빠른 정답표'],...sets.map(n=>['exam/'+n,groupLabel(BANK[u],n)])];
@@ -561,15 +596,16 @@ async function pageStart(u, L) {
   if (!bookMod) { location.replace(`#/${u}`); return; }
   if (BANK[u]?.bankOnly) {
     const ch=bookMod.chapter;
-    $app.innerHTML=`<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header><main class="wrap start"><h2>${esc(ch.title)}</h2><p>교재와 문제은행을 골라 학습해요.</p><div class="start-grid">${[['sub/E1','유형별 문제'],['lab-book/student','학생용 교재'],['lab-book/teacher','교사용 교재'],...(ch.workbookRoute?[[ch.workbookRoute+'/student','교재 A4 인쇄']]:[]),['print/student','전체 문항 문제지'],['print/teacher','교사 해설'],['print/answers','정답·해설만'],['print/quick','빠른 정답표'],...sets.map(n=>['exam/'+n,BANK[u]?.groups?groupLabel(BANK[u],n):'옛5-1 원문 세트'+n])].map(([path,label])=>`<a class="start-card" href="#/${u}/${path}"><b>${label}</b></a>`).join('')}</div><p>${esc(ch.startNote || '실제 출처와 문항 번호를 보존한 옛단원 연계 학습이에요. 전체 탐구 수업과 실제 활동 기록은 준비 중이에요.')}</p></main>`;
+    $app.innerHTML=`<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header><main class="wrap start"><h2>${esc(ch.title)}</h2><p>교재와 문제은행을 골라 학습해요.</p><div class="start-grid">${[['sub/E1','유형별 문제'],['lab-book/student','학생용 교재'],['lab-book/teacher','교사용 교재'],...(ch.workbookRoute?['student','teacher','answers','quick'].map((m,i)=>[ch.workbookRoute+'/'+m,['학생용 교재 A4','교사용 교재 A4','교재 정답·해설','교재 빠른 정답표'][i]]):[]),['print/student','전체 문항 문제지'],['print/teacher','교사 해설'],['print/answers','정답·해설만'],['print/quick','빠른 정답표'],...sets.map(n=>['exam/'+n,BANK[u]?.groups?groupLabel(BANK[u],n):'옛5-1 원문 세트'+n])].map(([path,label])=>`<a class="start-card" href="#/${u}/${path}"><b>${label}</b></a>`).join('')}</div><p>${esc(ch.startNote || '실제 출처와 문항 번호를 보존한 옛단원 연계 학습이에요. 전체 탐구 수업과 실제 활동 기록은 준비 중이에요.')}</p></main>`;
     scrollTo(0,0);return;
   }
-  const ch = bookMod.chapter, need = (await import('./check.js')).countNeeds([u]);
+  const ch = bookMod.chapter, need = (await import('./check.js?v=20261108-source-schema')).countNeeds([u]);
   const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header>
     <main class="wrap start"><p class="step-label">${esc(placeLabel(u) || `${ch.link?.course || ''} ${ch.link?.unit || ''}`)}</p>${placeNow(u) ? `<p class="start-now">${esc(placeNow(u))}</p>` : ''}
       <h2><span class="start-no">${esc(ch.no)}</span>${esc(ch.title)}</h2><p class="lead">무엇을 할까요?</p>
       <div class="start-grid">
+        ${ch.revisedThinkingClassroom ? card(`#/${u}/lab-class/self/resume`, '↪', '지난 화면부터 공부하기', '이 기기에서 마지막으로 열어 본 화면부터 시작해요. 기록이 없으면 처음부터 열려요.', true) : ''}
         ${card(`#/${u}/lab-class/self/1`, '🧪', esc(ch.sessionLabels?.[0] ? '스스로 공부하기 · '+ch.sessionLabels[0] : '스스로 공부하기 · 1차시'), esc(ch.startDescriptions?.[0] || '「해 보기」 약 20분 — 예상하고, 가설 세우고, 3D 실험실에서 직접 해 봐요.'), true)}
         ${card(`#/${u}/lab-class/self/s2`, '🔎', esc(ch.sessionLabels?.[1] ? '스스로 공부하기 · '+ch.sessionLabels[1] : '스스로 공부하기 · 2차시'), esc(ch.startDescriptions?.[1] || '「알아 가기」 약 20분 — 3D로 확인하고, 결론과 개념을 정리해요.'), true)}
         ${card(`#/${u}/daily`, '📝', 'Daily Test · 채점과 첨삭', '확인 문제를 한 문항씩 풀고 한꺼번에 채점해요. 틀린 문제는 독쌤이 먼저 되물어요.', true)}
@@ -577,11 +613,12 @@ async function pageStart(u, L) {
         ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', esc(ch.startDescriptions?.[2] || '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.'))}
         ${ch.thinkWorkbook ? card(`#/${u}/workbook/student`, '📗', '학생용 교재', '문제집형 A4 · 개념 정리·유형 연습·자료 해석·단원평가') : card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
         ${L.explore?.records ? card(`#/${u}/records`, '🗂️', '탐구 기록장(선택)', '조사·실천을 따로 기록할 때 써요. 예전에 쓴 기록도 그대로 있어요.') : ''}
-        ${ch.thinkWorkbook ? card(`#/${u}/workbook/teacher`, '📕', '교사용 교재', '문항 아래 정답 · 정답·해설 · 빠른 정답표') + card(`#/${u}/lab-book/student`, '📖', '수업 교재(웹)', '수업 화면과 같은 차례 · 3D 실험실이 쪽 옆에 열려요') : card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
+        ${((ch.revisedThinkingClassroom || ch.revisedCurriculumWorkbook) && RECORDS_BOOKS[u]) ? card(`#/${u}/records-book/student`, '🗂️', '실제 활동 기록 교재(선택)', '직접 활동하고 관찰한 내용을 따로 기록할 때 써요.') : ''}
+        ${ch.thinkWorkbook ? card(`#/${u}/workbook/teacher`, '📕', '교사용 교재', '문항 아래 정답 · 정답·해설 · 빠른 정답표') + card(`#/${u}/lab-book/student`, '📖', '수업 교재(웹)', esc(ch.webBookDescription || '수업 화면과 같은 차례 · 3D 실험실이 쪽 옆에 열려요')) : card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
         ${ch.workbookRoute && !ch.thinkWorkbook ? card(`#/${u}/${ch.workbookRoute}/student`, '📄', '교재 A4 인쇄', '학생용·교사용·해설·빠른 정답표') : ''}
         ${ch.bankPrintLabel ? [['student',ch.bankPrintLabel],['teacher','전체 문항 교사 해설'],['answers','전체 정답·해설만'],['quick','전체 빠른 정답표']].map(([mode,title])=>card(`#/${u}/print/${mode}`, '📄',esc(title),esc(ch.bankPrintDescription||'원문·짝·교재 연계 문항 · A4 인쇄'))).join('') : ''}
       </div>
-      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a> · <a href="#/${u}/daily/teacher">Daily Test 정답표</a> ·${sets.length ? ` <a href="#/${u}/exam/${sets[0]}/teacher">${esc(bankLabel(BANK[u]))} 정답표</a> ·` : ''} <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;
+      <p class="start-more"><a href="#/${u}/${ch.revisedThinkingClassroom?'lab-class/self/1':'1'}">${ch.revisedThinkingClassroom?'사고력 수업으로 보기':'5단계 탐구 화면으로 보기'}</a> · <a href="#/${u}/daily/teacher">Daily Test 정답표</a> ·${sets.length ? ` <a href="#/${u}/exam/${sets[0]}/teacher">${esc(bankLabel(BANK[u]))} 정답표</a> ·` : ''} <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;
   scrollTo(0, 0);
 }
 async function pageReading(u, L, mode) {
@@ -638,7 +675,7 @@ async function pageLabBook(u, mod, mode, pageNo = 1, seg = 'lab-book') {
   const bookMod = await BOOK().then(m=>seg==='lab-book'?revisedTextbook(u,m):m).catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
   const teacherEd = mode === 'teacher';
-  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js?terms=20261025'), import('./book-view.js')]);
+  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js?terms=20261108-opening-warmup-label'), import('./book-view.js')]);
   if (stale()) return;
   const L = seg === 'records-book' && mod.lesson?.explore?.records ? { ...mod.lesson, engage: { ...mod.lesson.engage, scene: null }, explore: { ...mod.lesson.explore, lab: mod.lesson.explore.records } } : mod.lesson;
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
@@ -660,40 +697,60 @@ async function pageLabBook(u, mod, mode, pageNo = 1, seg = 'lab-book') {
     misc: MISC, onAnswer: teacherEd ? null : onAnswer, guide, sayFor });
 }
 async function pageLabClass(u, mod, L, mode, idx) {
+  const requestedHash = location.hash;
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const bookMod = await BOOKS[u]().catch(() => null);
+  const bookMod = await BOOKS[u]().then(m=>revisedClassroom(u,m)).catch(() => null);
+  if (location.hash !== requestedHash) return;
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
-  const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
-  const handles = []; releasePage = () => handles.forEach((h) => h.dispose?.());
-  renderDeck($app, { u, ch: chapter, art, plan, media, similar: [...(mod.similar || []), ...(mod.items || [])], mode, idx, misc: MISC, ix,
-    myLab: () => ({ cols: L.explore?.lab?.columns || [], rows: store.get(u)[labRowsKey(L)] || [] }),
+  const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js?v=20261108-comparison-material-language'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
+  if (location.hash !== requestedHash) return;
+  const classLab=bookMod.classroomLab || L.explore?.lab || {}, classRowsKey=classLab.rowsKey || 'labRows';
+  const mountClassLab=(el,options)=>(classLab.mount || mountLabOf(classLab.kind))(el,options);
+  const classroomItems=classroomQuestions(bookMod,[...(mod.similar || []), ...(mod.items || [])]);
+  const I = Object.fromEntries(classroomItems.map((x) => [x.id, x]));
+  const handles = []; let released=false;
+  releasePage = () => { released=true; handles.splice(0).forEach(h=>h.dispose?.()); };
+  const visits = chapter.revisedThinkingClassroom && mode === 'self'
+    ? (await import('./classroom-visit.js?v=20261104-classroom-visit')).classroomVisitHandlers(u, store, () => !released && location.hash === requestedHash && requestedHash.startsWith(`#/${u}/lab-class/self/`)) : {};
+  const trackHandle=handle=>{const track=h=>{if(!h?.dispose)return;if(released)h.dispose();else handles.push(h);};if(handle?.then)Promise.resolve(handle).then(track);else track(handle);return handle;};
+  if (released || location.hash !== requestedHash) return;
+  renderDeck($app, { u, ch: chapter, art, plan, media, similar: classroomItems, mode, idx, misc: MISC, ix, ...visits,
+    myLab: () => classroomTableData(u,classLab,store.get(u)[classRowsKey] || []),
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene || L.explore.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
-    mountModel: (el, o={}) => { const handle=mountLabOf(L.explore.modelLab.kind)(el,{...L.explore.modelLab,personal:o.personal!==false,lowPower:!!o.lowPower,fixedSource:!!o.fixedSource,isActive:o.isActive,mode:o.mode,rows:o.personal===false?(o.rows||[]):store.get(u).labRows||[],onRecord:rows=>{if(o.personal!==false)store.set(u,{labRows:rows});o.onRecord?.(rows);}});if(handle?.dispose)handles.push(handle);return handle; },
+    mountModel: (el, o={}) => {
+      const config=L.explore.modelLab, rowsKey=config.rowsKey||'labRows';
+      return trackHandle(mountLabOf(config.kind)(el,{...config,personal:o.personal!==false,lowPower:!!o.lowPower,fixedSource:!!o.fixedSource,isActive:o.isActive,mode:o.mode,
+        rows:o.personal===false?(o.rows||[]):store.get(u)[rowsKey]||[],
+        onRecord:(rows,info)=>{if(released)return;if(o.personal!==false)store.set(u,{[rowsKey]:rows});o.onRecord?.(rows,config.progress?config.progress(rows):info);}}));
+    },
     // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
-    mountLab: (el, o = {}) => { const handle = mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
+    mountLab: (el, o = {}) => { const handle = mountClassLab(el, { ...classLab,
       personal: o.personal !== false, tab: o.tab,
       lowPower: !!o.lowPower, fixedSource: !!o.fixedSource, isActive: o.isActive, mode: o.mode,
-      rows: o.personal === false ? (o.rows || []) : store.get(u)[labRowsKey(L)] || [],
-      onRecord: (rows, info) => { if (o.personal !== false) store.set(u, { [labRowsKey(L)]: rows }); o.onRecord?.(rows, info); } }); if (handle?.dispose) handles.push(handle); return handle; },
+      rows: o.personal === false ? (o.rows || []) : store.get(u)[classRowsKey] || [],
+      onRecord: (rows, info) => { if (released) return; if (o.personal !== false) store.set(u, { [classRowsKey]: rows }); o.onRecord?.(rows, info); } }); if (handle?.dispose) handles.push(handle); return handle; },
     // 스스로 공부하기의 확인 문제: 첫 시도만 진단 기록에 남긴다
     onAnswer: (id, ok, picked) => { if (I[id]) record(du(u), I[id], 'deck', ok, { picked }, MISC); } });
 }
 
 // Daily Test — 교재의 교과 확인 문제 + 형성평가를 한 번에 풀고 채점·첨삭(v2/daily.js). 아무것도 서버로 보내지 않는다.
 async function pageDaily(u, mod, L, mode) {
-  const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null;
-  const similar = mod.similar || [], items = mod.items || [], I = byId([...similar, ...items]);
+  const originalBook = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null;
+  const bookMod = originalBook ? await revisedClassroom(u,originalBook).catch(() => null) : null;
+  const originalPool=[...(mod.similar||[]),...(mod.items||[])],originalBySrc=k=>{const q=originalPool.find(q=>q.id===k)||originalPool.find(q=>q.sourceRef?.of&&`${q.sourceRef.of.set}-${q.sourceRef.of.no}`===k);return q?.previousVersions?.length?questionAtVersion(q,1):q;};
+  const legacyList=originalBook?.chapter?[...new Set([...(originalBook.chapter.check||[]),...(originalBook.chapter.formative?.items||[])])].map(originalBySrc).filter(Boolean):[];
+  if(!legacyList.length&&bookMod?.chapter.legacyDailyAvailable!==false)legacyList.push(...[...new Set([...(L.evaluate?.items||[]),...(L.explain?.miniTest||[])])].map(originalBySrc).filter(Boolean));
+  const similar = classroomQuestions(bookMod,mod.similar || []), items = classroomQuestions(bookMod,mod.items || []), I = byId([...similar, ...items]);
   const ch = bookMod?.chapter || { no: '', title: L.title || u, book: L.title || u };
   const bySrc = (k) => I[k] || similar.find((s) => `${s.sourceRef?.of?.set}-${s.sourceRef?.of?.no}` === k);
   let list = ch.check ? [...new Set([...(ch.check || []), ...(ch.formative?.items || [])])].map(bySrc).filter(Boolean) : [];
   if (!list.length) list = [...(L.evaluate?.items || []), ...(L.explain?.miniTest || [])].map((id) => I[id]).filter(Boolean);
   if (!list.length) { $app.innerHTML = '<main class="wrap"><p>이 단원의 Daily Test는 준비 중이에요.</p></main>'; return; }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-source-schema');
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};
   const pool = [...similar, ...items];
-  releasePage = mountDaily({ $app, u, title: `${ch.book} · ${ch.title}`, ch, list, pool, misc: MISC, judge,
+  releasePage = mountDaily({ $app, u, title: `${ch.book} · ${ch.title}`, ch, list, legacyList, pool, misc: MISC, judge,
     record: (it, stage, ok, detail) => record(du(u), it, stage, ok, detail, MISC),
     classify: (it, d) => classify(it, MISC, false, d).m,
     remedyItems: (m, n) => remedyItems(du(u), m, MISC, pool, n),
@@ -722,14 +779,18 @@ async function pageExam(u, mod, L, set, mode, isCurrent = () => true) {
     $app.innerHTML = assessmentPaperHtml({ unit:u, bank:BANK[u], list, form:set, teacher:mode === 'teacher' });
     scrollTo(0,0); return;
   }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js');
+  if (sourcePaperMode(mode) && list.every(q=>q.sourceRef?.type==='original')) {
+    $app.innerHTML = sourceExamPaperHtml({unit:u,set,bank:BANK[u],title,list,mode:sourcePaperMode(mode),renderItem:itemHtml});
+    scrollTo(0,0); return;
+  }
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-source-schema');
   if (!isCurrent()) return;
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC, heading, back: `#/${u}/exam/${set}`, tabs }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};
   if (!isCurrent()) return;
   const pool = [...similar, ...src, ...items];
   const twin = (it) => similar.find((s) => s.sourceRef?.of?.set === it.sourceRef.set && s.sourceRef?.of?.no === it.sourceRef.no);
-  const printLinks = (BANK[u]?.authored ? `<a class="btn" href="#/${u}/exam/${set}/paper">문제지 인쇄</a><a class="btn" href="#/${u}/exam/${set}/teacher">교사 해설</a>` : '')
+  const printLinks = (BANK[u]?.authored ? `<a class="btn" href="#/${u}/exam/${set}/paper">문제지 인쇄</a><a class="btn" href="#/${u}/exam/${set}/teacher">교사 해설</a>` : list.every(q=>q.sourceRef?.type==='original') ? sourceExamPrintLinks(u,set) : '')
     + (BANK[u]?.assessment ? `<a class="btn" href="#/${u}/check">선생님 확인</a>` : '');
   releasePage = mountDaily({ $app, u, store: `${u}:exam${set}`, stage: 'exam', heading, src: `${list[0].sourceRef.edition} · ${list.length}문항`, tabs:tabs+printLinks, tabLabel: BANK[u]?.formLabel || (BANK[u]?.groups ? '교재 묶음' : '세트'),
     title: title === label ? title : `${title} · ${label}`, ch, list, pool, misc: MISC, judge, twin,
@@ -771,15 +832,37 @@ async function route() {
   if (!u) return pageHome($app, store, teacher);
   if (u === 'check' || a === 'check') return pageCheck(u === 'check' ? null : u);   // 선생님 확인(v2/check.js)
   if (u === 'bank') return pageBank(a);
+  if(u==='c22-s62-u04'&&!a){location.replace(`#/${u}/start`);return;}
+  if(u==='c22-s62-u04'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
+  if(u==='c22-s62-u03'&&!a){location.replace(`#/${u}/start`);return;}
+  if(u==='c22-s62-u03'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
+  if(u==='c22-s62-u02'&&!a){location.replace(`#/${u}/start`);return;}
+  if(u==='c22-s62-u02'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
+  if(u==='c22-s62-u01'&&!a){location.replace(`#/${u}/start`);return;}
+  if(u==='c22-s62-u01'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
+  if(u==='c22-s61-u04'&&!a){location.replace(`#/${u}/start`);return;}
+  if(u==='c22-s61-u04'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
+  if(u==='c22-s61-u03'&&!a){location.replace(`#/${u}/start`);return;}
+  if(u==='c22-s61-u03'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
+  if(u==='c22-s61-u02'&&!a){location.replace(`#/${u}/start`);return;}
+  if(u==='c22-s61-u02'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
+  if (u === 'c22-s61-u01' && !a) { location.replace(`#/${u}/start`); return; }
+  if(u==='c22-s61-u01'&&/^[1-5]$/.test(a)){location.replace(`#/${u}/lab-class/self/1`);return;}
   if(a==='workbook'&&revisedTextbookUnits.has(u)){const paper=await revisedTextbookPaper(u);if(!isCurrent())return;$app.innerHTML=paper.workbookPaper({mode:b||'student'});releasePage=paper.wireWorkbookPaper($app);return;}
   const load = UNITS[u] || (BANK[u] ? bankLoader(u) : a === 'lab-book' && BOOKS[u] ? async()=>({items:[]}) : null); if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); if (!isCurrent()) return;
-  const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, source: mod.source || [], items, guidance:mod.unit?.sources?.guidance }; MISC = mod.misc || null;
+  const L = withOptionalClassroomRecords(u,mod.lesson || { title: mod.taxonomy?.title || u }), items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, source: mod.source || [], items, guidance:mod.unit?.sources?.guidance }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);
   if (!mod.lesson && !['print', 'workbook', 'lab-book', 'lab-class', 'start', 'daily', 'exam'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'start') return pageStart(u, L);
   if (a === 'kit') return pageKit(u, L);
-  if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
+  if (a === 'diagnose') {
+    if (!MISC) return location.replace(`#/${u}`);
+    const classroom = revisedTextbookUnits.has(u) && BOOKS[u] ? await BOOKS[u]().then(m => revisedClassroom(u,m)).catch(() => null) : null;
+    if (!isCurrent()) return;
+    const pool = classroomQuestions(classroom,[...(mod.similar || []), ...(mod.source || []), ...items]);
+    return pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student', pool);
+  }
   if (a === 'report') return pageReport(u, L);
   if (a === 'records') return pageRecords(u, L);
   if (a === 'records-book' && !b) { location.replace(`#/${u}/records-book/student`); return; }   // 학생용/교사용을 안 적으면 학생용
@@ -791,7 +874,7 @@ async function route() {
   if(a==='print'&&mod.bankPaper){$app.innerHTML=mod.bankPaper({...mod,mode:b||'student'});releasePage=mod.wireBankPaper?.($app)||(()=>{});return;}
   if (a === 'print') return pageBook(u, L, L.includePairedItems ? [...items,...(mod.similar||[])] : L.reusePairedItems ? mod.similar || [] : items, b || 'student');
   if (a === 'lab-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1);
-  if (a === 'lab-class') { const seg = location.hash.split('/')[4]; return pageLabClass(u, mod, L, b || 'teach', seg === 's2' ? 's2' : +seg || 1); }
+  if (a === 'lab-class') { const seg = location.hash.split('/')[4]; return pageLabClass(u, mod, L, b || 'teach', seg === 's2' || seg === 'resume' ? seg : +seg || 1); }
   const step = Math.min(5, Math.max(1, +a || (store.get(u).step ?? 0) + 1));
   if (!a) { location.replace(`#/${u}/${step}`); return; }
   [stepEngage, (u2, L2) => stepExplore(u2, L2, b), stepExplain, stepElaborate, stepEvaluate][step - 1](u, L, L.includePairedItems ? [...items,...(mod.similar||[])] : L.reusePairedItems ? mod.similar || [] : items);

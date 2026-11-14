@@ -1,0 +1,215 @@
+{
+  "phase": 234,
+  "date": "2026-11-05",
+  "baseCommit": "eff532719aa4b909a10e34c621d50e4fd1d55dc8",
+  "units": [
+    "c22-s32-u02",
+    "c22-s51-u03"
+  ],
+  "scope": "All three right-rail columns on 52 Earth/ocean and 75 solution student content pages; separate teacher pagination retained.",
+  "learningBoundary": "Tidal causes, coastal formation mechanisms, particle/solubility/density/buoyancy models stay explicitly later-grade enrichment. Current body/questions/criteria do not acquire these requirements. Ion preview is linked to middle-school 9과11; dynamic equilibrium is named as high-school learning.",
+  "preservation": {
+    "reviewedUnits": 32,
+    "changedUnits": [
+      "c22-s32-u02",
+      "c22-s51-u03"
+    ],
+    "fullUnchangedUnits": 30,
+    "questionsPreserved": 3080,
+    "studentPagesRevised": 127,
+    "teacherPagesPreserved": 131,
+    "teacherContinuationsMapped": 3,
+    "duplexBlanksPreserved": 1,
+    "onlyRailTitleAndTextChanged": true,
+    "questionsAnswersFiguresCriteriaHistoryAndBodyPreserved": true,
+    "writingSpacePreserved": true,
+    "generatedBodiesByteIdentical": 2,
+    "productsChanged": [
+      {
+        "unit": "c22-s32-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher"
+      }
+    ],
+    "productsUnchanged": 124,
+    "slideArraysUnchanged": 64,
+    "careerHistoryUnchanged": true,
+    "htmlChecks": [
+      {
+        "unit": "c22-s32-u02",
+        "mode": "student",
+        "matchedNotes": 156,
+        "pages": 52,
+        "browserOrA4LayoutVerified": false
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher",
+        "matchedNotes": 165,
+        "pages": 56,
+        "browserOrA4LayoutVerified": false
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "student",
+        "matchedNotes": 225,
+        "pages": 75,
+        "browserOrA4LayoutVerified": false
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher",
+        "matchedNotes": 225,
+        "pages": 75,
+        "browserOrA4LayoutVerified": false
+      }
+    ],
+    "baselineScienceFiles": 6346,
+    "changedExistingFilesBeforeHandoff": [
+      "science-lab/data/book/c22-s32-u02.workbook.js",
+      "science-lab/data/book/c22-s51-u03.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js",
+      "science-lab/v2/workbook-rail-pages.test.mjs"
+    ]
+  },
+  "initialFiveMilestone": {
+    "units": [
+      {
+        "unit": "c22-s32-u01",
+        "title": "물체와 물질",
+        "studentPages": 51,
+        "questions": 80
+      },
+      {
+        "unit": "c22-s32-u02",
+        "title": "지구와 바다",
+        "studentPages": 52,
+        "questions": 80
+      },
+      {
+        "unit": "s41-u01",
+        "title": "자석의 이용",
+        "studentPages": 57,
+        "questions": 80
+      },
+      {
+        "unit": "c22-s42-u01",
+        "title": "밤하늘 관찰",
+        "studentPages": 76,
+        "questions": 80
+      },
+      {
+        "unit": "c22-s51-u03",
+        "title": "용해와 용액",
+        "studentPages": 75,
+        "questions": 96
+      }
+    ],
+    "studentPages": 311,
+    "questions": 416,
+    "scope": "All three rail columns revised; body language and actual layout remain separate review tasks."
+  },
+  "tests": {
+    "v2": {
+      "pass": 815,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "threeDPlanOnly": {
+      "pass": 5,
+      "fail": 0,
+      "runtimeVerified": false
+    },
+    "newMirrorTests": 0,
+    "extendedExistingRegression": "Four real workbook exports must consume their reviewed note resources, preserve 336 question references, six teacher continuations and two duplex blanks."
+  },
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9",
+      "source": "Existing verified curriculum-standards/science-curriculum.txt",
+      "scope": "Current 4과06 and 6과03; related later learning in 4과10/11/14/15/16, 6과01/05/06/08, 9과03/04/05/08/09/11/14/18 and high-school equilibrium/light. Examples are related enrichment, not claims that every example is a mandatory criterion."
+    },
+    {
+      "title": "NOAA What Are Tides",
+      "url": "https://oceanservice.noaa.gov/facts/tides.html",
+      "scope": "Sea-surface rise/fall and coastal variation."
+    },
+    {
+      "title": "NOAA What Causes Tides",
+      "url": "https://oceanservice.noaa.gov/education/tutorial_tides/tides02_cause.html",
+      "scope": "Moon/Sun gravitational effects; no fixed local tide times or daily counts introduced."
+    },
+    {
+      "title": "NOAA Estuaries",
+      "url": "https://oceanservice.noaa.gov/education/tutorial_estuaries/est01_whatis.html",
+      "scope": "Fresh/salt water, local salinity and tidal variability."
+    },
+    {
+      "title": "USGS Where Is Earth’s Water",
+      "url": "https://www.usgs.gov/water-science-school/science/where-earths-water",
+      "scope": "Surface water, groundwater, ice and atmosphere; no numerical distribution figures copied."
+    },
+    {
+      "title": "UNESCO Getbol",
+      "url": "https://whc.unesco.org/en/list/1591/",
+      "scope": "Tidal-flat habitats and feeding/migratory-waterbird value; no site or species counts introduced."
+    },
+    {
+      "title": "ACS Water and Dissolving",
+      "url": "https://www.acs.org/middleschoolchemistry/lessonplans/chapter5.html",
+      "scope": "Particle explanation of dissolving and differing material properties."
+    },
+    {
+      "title": "ACS Can Gases Dissolve in Water",
+      "url": "https://www.acs.org/middleschoolchemistry/lessonplans/chapter5/lesson8.html",
+      "scope": "Gases dissolve; many gases are more soluble in cooler water."
+    },
+    {
+      "title": "ACS Density Student Reading",
+      "url": "https://www.acs.org/content/dam/acsorg/msc/downloads/chapter-3/ch3-student-reading.pdf",
+      "scope": "Dissolved salt changes density and can change floating."
+    },
+    {
+      "title": "OpenStax Solubility",
+      "url": "https://openstax.org/books/chemistry-2e/pages/11-3-solubility",
+      "scope": "Saturation, solubility, equilibrium and temperature."
+    },
+    {
+      "title": "OpenStax Electrolytes",
+      "url": "https://openstax.org/books/chemistry-2e/pages/11-2-electrolytes",
+      "scope": "Mobile ions and solution conductivity; described as later learning, no circuit procedure added."
+    },
+    {
+      "title": "UCLA Organic Chemistry Glossary: Beer’s Law",
+      "url": "https://www.chem.ucla.edu/~harding/IGOC/B/beers_law.html",
+      "scope": "Longer optical path can change a colored solution’s appearance; no formula or laboratory method copied."
+    }
+  ],
+  "safety": "Existing teacher heating/boiling-chip/hot-dish precautions, cooling/no-tasting rules, actual local tide/visit checks and solution/chemical/product/acetone/small-object restrictions retained in planning/synthesis notes. No practical chemical or electrical procedure added.",
+  "cacheVersion": "20261105-earth-solution-rails",
+  "remaining": "Broader body language/scientific review, actual desktop/mobile/A4/audio/WebGL and mandatory 3D gate; main integration/deployment. Previous browser reauthorization remains unanswered; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4LayoutVerified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase234: full workbook baseline/current objects, 128 product hashes, 64 slide arrays, teacher mappings, four HTML products, validate-final.py, source checks, initial-five summary and test logs."
+}

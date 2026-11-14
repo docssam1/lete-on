@@ -1,0 +1,200 @@
+{
+  "phase": 270,
+  "date": "2026-11-05",
+  "unit": "c22-s51-u04",
+  "title": "우리 몸 더 알아보기6곳에서 중학교 기초와 고등학교 심화를 구별",
+  "status": "verified-local-candidate-browser-gate-pending",
+  "baselineCommit": "115d35a90b93e55f1187dbf9ea29bf714fbfc588",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / native Node module and VM fixtures; no API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design"
+  ],
+  "reviewScope": "Read current right-side extensions for all 78 body pages and 90 weather pages, and checked selected curriculum connections. Not a claim that all 32 workbooks or every question are semantically verified.",
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "localExtractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "codes": [
+        "6과04-01~03",
+        "9과02-01~02",
+        "9과13-01~05",
+        "9과20-02",
+        "12생과01-02~04",
+        "12생과02-01~03"
+      ],
+      "use": "Basic 6과04 observation/model, organ functions and health stay intact. Middle-school body organization, cellular respiration, neural stimulus-response; high-school organization through ecosystems, ATP and neural conduction/synaptic transmission. High-school standards explicitly repeat some earlier content; do not call every prior high-school label erroneous."
+    },
+    {
+      "title": "NIGMS: ATP’s Amazing Power",
+      "url": "https://nigms.nih.gov/biobeat/2022/11/science-snippet-atps-amazing-power",
+      "use": "ATP stores/transfers usable energy in cells, including muscle contraction. No ATP yield, formula, bond structure or strenuous-exercise claims imported."
+    },
+    {
+      "title": "NIGMS: What Is a Neurotransmitter?",
+      "url": "https://www.nigms.nih.gov/biobeat/2024/08/what-is-a-neurotransmitter",
+      "use": "Neural signals along neurons and transmission across synapses to other cells. No medication, neurotransmitter-disorder or treatment claims imported."
+    },
+    {
+      "title": "NIDDK: Story of Discovery—Intestinal Stem Cells",
+      "url": "https://www.niddk.nih.gov/news/archive/2017/story-discovery-intestinal-stem-cells",
+      "use": "Villi increase intestinal absorption surface area. No stem-cell turnover timings or newer research claims imported."
+    },
+    {
+      "title": "NHLBI: What Breathing Does for the Body",
+      "url": "https://www.nhlbi.nih.gov/health/lungs/breathing-benefits",
+      "use": "Air movement, gas exchange between alveoli and blood, and body cells using oxygen; read in phase269 and retained as primary explanation."
+    }
+  ],
+  "pageCurriculumConnections": {
+    "2": [
+      "9과02-02",
+      "12생과01-02"
+    ],
+    "6": [
+      "9과13-05",
+      "12생과01-03 해설"
+    ],
+    "10": [
+      "9과20-02",
+      "12생과02-01~02"
+    ],
+    "57": [
+      "9과02-01~02"
+    ],
+    "67": [
+      "9과13-02~05"
+    ],
+    "73": [
+      "9과02-01",
+      "9과13-01"
+    ]
+  },
+  "retainedFindings": [
+    {
+      "unit": "c22-s52-u03",
+      "page": 2,
+      "finding": "대기 대순환 is explicitly included in 9과17-02; retained, not moved wholesale to high school."
+    },
+    {
+      "unit": "c22-s51-u01",
+      "page": 30,
+      "finding": "Scale bars/magnification are useful scientific-image reading content. A prefix search alone does not justify deletion."
+    },
+    {
+      "unit": "c22-s51-u04",
+      "pages": [
+        31,
+        33,
+        36,
+        40,
+        42,
+        47,
+        53,
+        56,
+        70,
+        77
+      ],
+      "finding": "Relevant high-school homeostasis, immunity, metabolism or integrated physiological changes remain linked to 12생과01/02. Repetition across school levels is not evidence of curricular error."
+    }
+  ],
+  "preservation": {
+    "changedUpperNotes": [
+      {
+        "page": 2,
+        "title": "이번 단원에서 배울 내용",
+        "before": "고등학교에서는 비슷한 일을 하는 세포가 조직을 이루고, 여러 조직이 모여 기관을 이룬다는 구성 단계를 배워요.",
+        "after": "중학교에서는 세포·조직·기관·기관계·개체로 이어지는 동물의 구성 단계를 배워요. 고등학교에서는 개체를 넘어 생태계까지 생명 시스템의 구성 단계를 넓혀 살펴요."
+      },
+      {
+        "page": 6,
+        "title": "짧아지는 근육이 뼈를 당겨요",
+        "before": "고등학교에서는 세포의 생명 활동에 에너지가 필요함을 배워요. 근육이 힘을 내는 데에도 세포가 이용할 에너지가 필요해요.",
+        "after": "중학교에서는 세포호흡으로 생명 활동에 필요한 에너지를 얻는 과정을 배워요. 고등학교에서는 이 에너지가 ATP라는 물질에 저장되고 근육 수축 등에 사용됨을 알아보아요."
+      },
+      {
+        "page": 10,
+        "title": "팔의 움직임",
+        "before": "고등학교에서는 신경이 정보를 전달하여 몸의 반응을 조절하는 과정을 배워요. 팔을 움직이는 데에도 근육과 신경의 협력이 필요해요.",
+        "after": "중학교에서는 자극이 신경계를 거쳐 반응으로 이어지는 경로를 배워요. 고등학교에서는 신경 세포인 뉴런을 따라 신호가 이동하는 일과 시냅스를 거쳐 다음 세포로 전달되는 일을 더 자세히 살펴요."
+      },
+      {
+        "page": 57,
+        "title": "움직임 정리",
+        "before": "고등학교의 생명 시스템에서는 세포·조직·기관의 단계가 연결돼요. 근육 조직의 기능이 팔 전체의 움직임으로 이어지는 예를 생각해요.",
+        "after": "중학교에서는 생김새와 하는 일이 비슷한 세포들이 조직을 이루는 것을 배워요. 근육 조직은 많은 근육 세포로 이루어져요. 팔에는 근육 조직뿐 아니라 뼈·혈관·신경 등도 함께 있어요."
+      },
+      {
+        "page": 67,
+        "title": "모형이 보여 주는 범위",
+        "before": "고등학교에서는 세포호흡과 폐의 호흡을 연결해요. 폐에서 산소를 받아들이는 것과 세포가 그 산소를 이용하는 것은 서로 다른 과정이에요.",
+        "after": "중학교에서는 호흡 운동·기체 교환·세포호흡을 구별하여 연결해요. 공기가 폐로 드나드는 일, 폐포와 혈액 사이에서 기체가 이동하는 일, 세포가 영양소와 산소를 이용해 에너지를 얻는 일은 서로 다른 과정이에요."
+      },
+      {
+        "page": 73,
+        "title": "움직임 바로잡기",
+        "before": "몸의 기관은 형태가 다른 만큼 주로 하는 일도 달라요. 고등학교의 구조와 기능 관계를 근육 조직과 소화관·배설관에 적용해 보아요.",
+        "after": "중학교에서는 세포와 기관의 구조를 기능과 연결해요. 작은창자 안쪽의 많은 융털은 영양소를 흡수하는 면적을 넓혀요. 기관의 겉모양과 안쪽 구조를 함께 살펴보아요."
+      }
+    ],
+    "changedFields": 12,
+    "all78CurrentUpperNotesUnique": true,
+    "noVagueUpperSubjectPrefixAfterLabel": true,
+    "unchangedWorkbooks": 31,
+    "unchangedQuestions": 3080,
+    "unchangedProducts": 126,
+    "changedProducts": [
+      {
+        "unit": "c22-s51-u04",
+        "mode": "student",
+        "sha256": "d61a180bd69d768d83359a55176cf5cd386dfdc3300d55de17cb40c8d04a1591"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "mode": "teacher",
+        "sha256": "dd8d1543ef06d5442b4116380bd7cdfb0ff98a3a3e64c2435230d7dc19e0efea"
+      }
+    ],
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbookIncludingUndefined": true,
+    "priorEditorialBytesUnchanged": true,
+    "coreNotesAndStudentWritingTasksUnchanged": true,
+    "renderedNotes": 12,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/c22-s51-u04.editorial.js",
+      "science-lab/data/book/c22-s51-u04.workbook.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "validation": {
+    "totalTests": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "skipped": 2,
+    "syntaxFiles": 4,
+    "diffCheck": true,
+    "nativeSnapshot": "32 workbooks / 128 HTML modes / 64 slide arrays / 32 real loaders; actual student storage read/write and QA network 0",
+    "browserVerified": false,
+    "actual3DVerified": false,
+    "noNewMirroringTests": true
+  },
+  "unperformed": [
+    "actual PC/mobile/A4/fonts/overflow/speech/WebGL and mandatory 3D runtime checks",
+    "main WIP integration",
+    "merge",
+    "push",
+    "deployment",
+    "paid AI API calls",
+    "cleanup"
+  ],
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase270"
+}

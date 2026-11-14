@@ -23,6 +23,14 @@ export const SEMS_2022 = rows.map(([sem, book, titles]) => ({
 
 // 원문·창작 문항과 해당 화면을 실제로 검증한 연결만 등록한다.
 const CONTENT = {
+ 's62-u04':{contentId:'c22-s62-u04',review:'bank/work/curriculum2022/career-workbook-integration-20261104.json',lessonReview:'bank/work/curriculum2022/career-classroom-integration-20261104.json'},
+ 's62-u03':{contentId:'c22-s62-u03',review:'bank/work/curriculum2022/electricity-workbook-integration-20261104.json',lessonReview:'bank/work/curriculum2022/electricity-classroom-integration-20261104.json'},
+ 's62-u02':{contentId:'c22-s62-u02',review:'bank/work/curriculum2022/combustion-workbook-integration-20261104.json',lessonReview:'bank/work/curriculum2022/combustion-classroom-integration-20261104.json'},
+  's62-u01':{contentId:'c22-s62-u01',review:'bank/work/curriculum2022/season-workbook-integration-20261104.json',lessonReview:'bank/work/curriculum2022/season-classroom-integration-20261104.json'},
+  's61-u04':{contentId:'c22-s61-u04',review:'bank/work/curriculum2022/earth-motion-workbook-integration-20261104.json',lessonReview:'bank/work/curriculum2022/earth-motion-classroom-integration-20261104.json'},
+  's61-u03':{contentId:'c22-s61-u03',review:'bank/work/c22s61u03/bank-review-20261021.json',lessonReview:'bank/work/curriculum2022/plant-structure-classroom-integration-20261104.json'},
+  's61-u02':{contentId:'c22-s61-u02',review:'bank/work/c22s61u02/bank-review-20261021.json',lessonReview:'bank/work/curriculum2022/motion-classroom-integration-20261104.json'},
+  's61-u01':{contentId:'c22-s61-u01',review:'bank/work/c22s61u01/bank-review-20261021.json',lessonReview:'bank/work/curriculum2022/acid-classroom-integration-20261104.json'},
   's52-u04':{contentId:'c22-s52-u04',review:'bank/work/c22s52u04/review-20261019.json'},
   's52-u03':{contentId:'c22-s52-u03',review:'bank/work/c22s52u03/review-20261018.json',lessonReview:'bank/work/c22s52u03/lesson-review-20261018.json'},
   's52-u02':{contentId:'c22-s52-u02',review:'bank/work/c22s52u02/review-20261018.json',lessonReview:'bank/work/c22s52u02/lesson-review-20261018.json'},

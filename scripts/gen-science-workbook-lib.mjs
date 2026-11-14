@@ -4,9 +4,66 @@
 // 지키는 것(어기면 멈춘다): 객관식 보기 5개·중복 없음, 정답 자리 쏠림 ≤2, 정답이 눈에 띄게 가장 긴 보기 아님,
 // 모든 문항이 어느 쪽에든 실림(빠짐·중복 없음), 문항 형식 8가지 중 6가지 이상 사용, 쪽마다 오른쪽 날개 있음.
 import fs from 'node:fs';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 const R = new URL('../science-lab/', import.meta.url).pathname;
 const J = (o) => JSON.stringify(o, null, 1);
 const MARK = ['①', '②', '③', '④', '⑤'];
+
+export function generationOptions(args){
+  const options={check:false,output:null};
+  for(let i=0;i<args.length;i++){
+    if(args[i]==='--check')options.check=true;
+    else if(args[i]==='--output'){
+      if(options.output!==null||!args[i+1]||args[i+1].startsWith('--'))throw Error('--output 뒤에 새 후보 파일 경로 하나를 쓰세요.');
+      options.output=path.resolve(args[++i]);
+    }else throw Error(`알 수 없는 옵션: ${args[i]}. --check 또는 --output <새 파일>을 사용하세요.`);
+  }
+  return options;
+}
+
+export function saveWorkbookSource(target,source,{check=false}={}){
+  if(fs.existsSync(target)){
+    if(fs.readFileSync(target,'utf8')===source)return {status:'unchanged',target};
+    if(check)return {status:'different',target};
+    throw Error(`기존 교재와 생성 후보가 달라 덮어쓰지 않았습니다: ${target}\n--check로 차이를 확인하거나 --output <새 파일>로 후보를 저장하세요.`);
+  }
+  if(check)return {status:'missing',target};
+  // A file created after the existence check must also survive untouched.
+  fs.writeFileSync(target,source,{encoding:'utf8',flag:'wx'});
+  return {status:'created',target};
+}
+
+export async function reviewedWorkbookCandidate({unit,sourceUrl,gen,target}){
+  const sourcePath=fileURLToPath(sourceUrl),authoredSource=fs.readFileSync(sourcePath,'utf8');
+  const inputHash=createHash('sha256').update(authoredSource).digest('hex');
+  const loadUrl=new URL(sourceUrl);loadUrl.searchParams.set('authoring',inputHash);
+  const authored=await import(loadUrl.href),book=authored.workbook;
+  if(book?.unit!==unit||!Array.isArray(book.questions)||!Array.isArray(book.pages))throw Error('검수 원고의 단원·문항·쪽을 확인하세요.');
+  for(const [name,value]of Object.entries(authored))if(value?.unit!==unit||!Array.isArray(value.questions))throw Error(`교재 원고가 아닌 export: ${name}`);
+  const forms=new Set(book.questions.map(q=>q.form)),expected=['choice','multi','blank','short','written','match','order','draw'];
+  if(forms.size!==8||expected.some(form=>!forms.has(form)))throw Error('검수 원고에는 여덟 문항 형식이 필요합니다.');
+  const ids=book.questions.map(q=>q.id),used=book.pages.flatMap(p=>(p.blocks||[]).filter(b=>b.type==='questions').flatMap(b=>b.ids||[]));
+  if(new Set(ids).size!==ids.length||used.length!==ids.length||new Set(used).size!==used.length||used.some(id=>!ids.includes(id)))throw Error('문항 ID와 학생 쪽의 연결을 확인하세요.');
+  if(book.pages.some(page=>JSON.stringify(page.rail?.map(note=>note.title))!==JSON.stringify(['핵심 정리','더 알아보기','내가 정리할 것'])))throw Error('학생 쪽의 세 가지 정리 칸을 확인하세요.');
+  const fingerprint=createHash('sha256').update(authoredSource).update('\0').update(JSON.stringify({...authored})).digest('hex');
+  if(fs.readFileSync(sourcePath,'utf8')!==authoredSource)throw Error('생성 도중 작성 원고가 바뀌었습니다. 다시 확인하세요.');
+  const relative=path.relative(path.dirname(target),sourcePath).split(path.sep).join('/');
+  const reference=path.isAbsolute(relative)?pathToFileURL(sourcePath).href:(relative.startsWith('.')?relative:'./'+relative).split('/').map(encodeURIComponent).join('/');
+  const source=`// ${book.title} — 검수 원고에서 생성한 교재 진입 파일.\n// 확인: node scripts/${gen} --check\nexport * from ${JSON.stringify(reference+'?v='+fingerprint)};\n`;
+  return {workbook:book,source,target,fingerprint,exports:Object.keys(authored)};
+}
+
+export async function generateReviewedWorkbook({unit,sourceUrl,gen}){
+  const options=generationOptions(process.argv.slice(2)),target=options.output||fileURLToPath(new URL(`${unit}.workbook.js`,sourceUrl));
+  const candidate=await reviewedWorkbookCandidate({unit,sourceUrl,gen,target});
+  const saved=saveWorkbookSource(target,candidate.source,options),book=candidate.workbook;
+  if(options.check&&saved.status!=='unchanged')process.exitCode=1;
+  console.log(unit,'교재',book.pages.length,'쪽 · 해설',book.teacherPages.length,'쪽 · 빠른 정답',book.quickPages.length,'쪽 · 문항',book.questions.length,'· 형식',[...new Set(book.questions.map(q=>q.form))].join(','));
+  console.log(options.check?'파일 비교':'후보 저장',saved.status,saved.target);
+  return {...candidate,...saved};
+}
 
 export function workbook({ U, title, semester, no, theme, misconception, criteria, misByTopic = {} }) {
   const questions = [], pages = [], teacherNotes = {}, errors = [];
@@ -72,8 +129,13 @@ export function workbook({ U, title, semester, no, theme, misconception, criteri
         rail: [{ title: '쓰는 법', text: '채점만 빠르게 할 때 써요. 풀이와 인정 답안은 정답·해설 쪽에 있어요.' }] });
     }
     const out = { unit: U, title, semester, no, theme, richText: true, questions, pages, teacherPages, quickPages, figures };
-    fs.writeFileSync(R + `data/book/${U}.workbook.js`, `// ${title} — 편집 교재(문제집형 A4). scripts/${gen} 가 만든다(직접 고치지 말 것).\n// 그리는 곳: v2/think-workbook-paper.js → #/${U}/workbook/student|teacher|answers|quick\nexport const workbook = ${J(out)};\n`);
+    const source=`// ${title} — 편집 교재 생성 후보. scripts/${gen}\n// 기존 검수본과 비교한 뒤 반영한다.\nexport const workbook = ${J(out)};\n`;
+    const options=generationOptions(process.argv.slice(2));
+    const saved=saveWorkbookSource(options.output||R+`data/book/${U}.workbook.js`,source,options);
+    if(options.check&&saved.status!=='unchanged')process.exitCode=1;
     console.log(U, '교재', pages.length, '쪽 · 해설', teacherPages.length, '쪽 · 빠른 정답', quickPages.length, '쪽 · 문항', questions.length, '· 정답 위치', pos.join('·'), '· 형식', [...forms].join(','));
+    console.log(options.check?'파일 비교':'후보 저장',saved.status,saved.target);
+    return {workbook:out,source,...saved};
   };
   return api;
 }
@@ -84,7 +146,7 @@ export const photo = (U, shot, alt, note, credit = '3D 모형 렌더 · 모형 �
 
 // 실사형 설명 사진(원장 PC에서 만든 AI 사진 · scripts/book-photos.py → assets/book/<U>-photo-<key>.webp).
 // 파일이 있으면 그 경로를, 없으면 null(그 자리는 3D 렌더로 대신하거나 블록을 뺀다).
-export const PHOTO_CREDIT = 'AI 실사형 설명 이미지 · 실제 사진 아님';
+export const PHOTO_CREDIT = '학습 내용을 설명하는 그림';
 export const photoSrc = (U, key) => (fs.existsSync(R + `assets/book/${U}-photo-${key}.webp`) ? `../assets/book/${U}-photo-${key}.webp` : null);
 export const renderSrc = (U, shot) => `../assets/book/${U}-${shot}.webp`;
 // 사진이 있으면 사진, 없으면 3D 렌더 — 갤러리 칸 하나

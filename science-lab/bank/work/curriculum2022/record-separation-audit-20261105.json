@@ -1,0 +1,376 @@
+{
+  "phase": 273,
+  "date": "2026-11-05",
+  "title": "32단원 현재 수업 카드/기록 읽기 분리와 운동 용어 읽기 전용 검수",
+  "status": "verified-native-audit-product-unchanged-browser-gates-pending",
+  "baselineCommit": "262538f9e0d1535c40a6e369d6c2ae5424e0232c",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / fresh real unit loaders, native Node modules and actual-source storage-reader fixtures; no API delegation",
+  "skills": [
+    "instructional-design",
+    "ux-writing"
+  ],
+  "curriculum": {
+    "title": "교육부2022-33 별책9",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "extractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "codes": [
+      "6과10-01~03"
+    ],
+    "lines": [
+      860,
+      875
+    ],
+    "use": "Simple coordinate-plane expression of initial/later position is explicitly required in 6과10-01 commentary. Do not delete 좌표 simply because it sounds advanced; no coordinate-distance calculation is required."
+  },
+  "findings": [
+    "Current 64 self/teach slide arrays (3048 authored cards) contain no legacy dk-mine hypothesis container.",
+    "Executed actual fillMine source for 38 self session-transition cards with a memo getter that throws if accessed; no old hypothesis reads. A positive legacy fixture still renders its original hypothesis/result/lab text.",
+    "Executed the actual v2 myLab callback against synthetic store states with throwing legacy-row getters for 31 distinct current comparison namespaces; no old rows selected. Force keeps original labRows and force lab intentionally.",
+    "The base source contains old motion quick-answer text, but the executed current workbook and generated quick HTML correctly use 속력 for question120 and contain no 미수신. No correction was needed.",
+    "The selected search terms 보류/판정 etc. also occurred in legitimate data-evaluation or distractor contexts. A regex hit is not evidence of a curriculum defect."
+  ],
+  "results": {
+    "auditedCurrentUnits": 32,
+    "authoredSlideArrays": 64,
+    "authoredCardCount": 3048,
+    "noLegacyHypothesisContainerInCurrentCards": true,
+    "actualSessionGuardInvocations": 38,
+    "legacyHypothesisMemoReads": 0,
+    "originalLegacyRenderingPreservedByPositiveFixture": true,
+    "dedicatedComparisonNamespaces": 31,
+    "dedicatedReadersAccessingOldRows": 0,
+    "forceOriginalLabRowsIntentionallyShared": true,
+    "namespaceSelections": [
+      {
+        "unit": "c22-s62-u04",
+        "currentKind": "career-compare",
+        "currentKey": "careerCompareRows",
+        "legacyKind": null,
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s62-u03",
+        "currentKind": "electricity-compare",
+        "currentKey": "electricityCompareRows",
+        "legacyKind": null,
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s62-u02",
+        "currentKind": "combustion-compare",
+        "currentKey": "combustionCompareRows",
+        "legacyKind": null,
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s62-u01",
+        "currentKind": "season-compare",
+        "currentKey": "seasonCompareRows",
+        "legacyKind": null,
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s32-u01",
+        "currentKind": "material-compare",
+        "currentKey": "materialCompareRows",
+        "legacyKind": "material",
+        "legacyKey": "materialRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s32-u02",
+        "currentKind": "earth-sea-compare",
+        "currentKey": "earthSeaCompareRows",
+        "legacyKind": "seawater",
+        "legacyKey": "seawaterRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "s41-u01",
+        "currentKind": "magnet-compare",
+        "currentKey": "magnetCompareRows",
+        "legacyKind": "ring-tower",
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s42-u01",
+        "currentKind": "sky-compare",
+        "currentKey": "skyCompareRows",
+        "legacyKind": "moon",
+        "legacyKey": "moonRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s51-u03",
+        "currentKind": "solution-compare",
+        "currentKey": "solutionCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "solutionInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "s31-u01",
+        "currentKind": "force",
+        "currentKey": "labRows",
+        "legacyKind": "force",
+        "legacyKey": "labRows",
+        "dedicatedComparison": false,
+        "legacyRowsAccessed": 1
+      },
+      {
+        "unit": "s31-u02",
+        "currentKind": "animal-compare",
+        "currentKey": "animalCompareRows",
+        "legacyKind": "animal",
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "s31-u03",
+        "currentKind": "plant-compare",
+        "currentKey": "plantCompareRows",
+        "legacyKind": "plant",
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "s31-u04",
+        "currentKind": "life-compare",
+        "currentKey": "lifeCompareRows",
+        "legacyKind": "life",
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s42-u02",
+        "currentKind": "ecology-compare",
+        "currentKey": "ecologyCompareRows",
+        "legacyKind": "meadow",
+        "legacyKey": "meadowRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s32-u03",
+        "currentKind": "sound-compare",
+        "currentKey": "soundCompareRows",
+        "legacyKind": "ruler",
+        "legacyKey": "rulerRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s32-u04",
+        "currentKind": "infection-compare",
+        "currentKey": "infectionCompareRows",
+        "legacyKind": "glitter",
+        "legacyKey": "glitterRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s42-u04",
+        "currentKind": "climate-compare",
+        "currentKey": "climateCompareRows",
+        "legacyKind": "sealevel",
+        "legacyKey": "seaRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "s41-u02",
+        "currentKind": "water-compare",
+        "currentKey": "waterCompareRows",
+        "legacyKind": "freeze",
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "s41-u03",
+        "currentKind": "ground-compare",
+        "currentKey": "groundCompareRows",
+        "legacyKind": "hill",
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "s41-u04",
+        "currentKind": "biology-compare",
+        "currentKey": "biologyCompareRows",
+        "legacyKind": "bread",
+        "legacyKey": "breadRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s42-u03",
+        "currentKind": "gas-compare",
+        "currentKey": "gasCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "gasInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s51-u01",
+        "currentKind": "geology-compare",
+        "currentKey": "geologyCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "geologyInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s51-u02",
+        "currentKind": "light-compare",
+        "currentKey": "lightCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "lightInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s51-u04",
+        "currentKind": "body-compare",
+        "currentKey": "bodyCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "bodyInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s52-u01",
+        "currentKind": "mixture-compare",
+        "currentKey": "mixtureCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "mixtureInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s52-u02",
+        "currentKind": "heat-compare",
+        "currentKey": "heatCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "heatInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s52-u03",
+        "currentKind": "weather-compare",
+        "currentKey": "weatherCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "weatherInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s52-u04",
+        "currentKind": "energy-compare",
+        "currentKey": "energyCompareRows",
+        "legacyKind": "inquiry",
+        "legacyKey": "energyInquiryRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s61-u01",
+        "currentKind": "acid-compare",
+        "currentKey": "acidCompareRows",
+        "legacyKind": null,
+        "legacyKey": "acidObservationRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s61-u02",
+        "currentKind": "motion-compare",
+        "currentKey": "motionCompareRows",
+        "legacyKind": null,
+        "legacyKey": "motionObservationRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s61-u03",
+        "currentKind": "plant-structure-compare",
+        "currentKey": "plantStructureCompareRows",
+        "legacyKind": null,
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      },
+      {
+        "unit": "c22-s61-u04",
+        "currentKind": "earth-motion-compare",
+        "currentKey": "earthMotionCompareRows",
+        "legacyKind": null,
+        "legacyKey": "labRows",
+        "dedicatedComparison": true,
+        "legacyRowsAccessed": 0
+      }
+    ],
+    "motionCoordinateTermExplicitlyIn6과10해설": true,
+    "motionQuestion120CurrentAnswer": "속력",
+    "motionCurrentQuickTableNotStale": true,
+    "unchangedWorkbooks": 32,
+    "unchangedQuestions": 3080,
+    "unchangedPaperHtmlProducts": 128,
+    "unchangedRuntimeUnits": 32,
+    "allTrackedScienceFilesUnchangedBeforeDocumentation": true,
+    "studentStorageReadWrite": "Synthetic stores and memo fixtures only; real student data never accessed",
+    "browserVerified": false,
+    "audioPlayed": false
+  },
+  "verificationScope": "Fresh native generated artifacts and actual source branches with synthetic data. No real student storage accessed, no browser DOM/rendering/audio/3D verification, no claim that every scientific explanation in all questions is reviewed.",
+  "validation": {
+    "freshSnapshot": "32 workbooks / 128 paper HTML products / 64 slide arrays / 32 loader datasets exactly match phase272 current artifacts",
+    "productChanges": 0,
+    "allTrackedScienceFilesUnchangedBeforeDocs": true,
+    "realStudentStorageReads": 0,
+    "realStudentStorageWrites": 0,
+    "qaNetwork": 0,
+    "fullTestSuiteRerun": false,
+    "lastUnchangedProductSuite": {
+      "phase": 272,
+      "tests": 1207,
+      "passed": 1205,
+      "failed": 0,
+      "skipped": 2
+    },
+    "reasonNoFullRerun": "No product code, data, tests, images or styles changed; scoped audit passed."
+  },
+  "unperformed": [
+    "actual PC/mobile/A4/fonts/overflow/speech/WebGL and mandatory 3D runtime checks",
+    "main WIP integration",
+    "merge",
+    "push",
+    "deployment",
+    "paid AI API calls",
+    "cleanup"
+  ],
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase273"
+}

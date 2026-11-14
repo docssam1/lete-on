@@ -1,3 +1,5 @@
+import {isStructuredSource,sourceReviewPromptHtml,sourceAnswerText} from './source-content.js?v=20261108-source-schema';
+import{questionAtVersion}from'./question-revision.js?v=20261105-history-review';
 // 선생님 확인 — 스스로 공부(v2/deck.js)에서 이 기기에 남은 쓰기 답을 모아 본다(원장 2026-09-30).
 //  · 규칙으로 가리지 못한 답(도전 과제, 다른 말로 쓴 긴 답)은 「확인 필요」에 모인다. 선생님이 맞음/다시 쓰기와 한마디를 남기면
 //    아이가 그 쓰기 칸에 다시 왔을 때 보인다.
@@ -16,15 +18,26 @@ export function records(units) {
   for (const [key, rec] of Object.entries(a)) {
     const m = /^(.+?):grade:(.+)$/.exec(key); if (!m || !rec?.boxes) continue;
     const [, u, slide] = m; if (units && !units.includes(u)) continue;
-    for (const b of rec.boxes) out.push({ u, slide, k: b.k, st: b.st, m: b.m, text: b.text, tries: rec.tries, at: rec.at, item: rec.item || null, teacher: a[`${u}:teacher:${slide}:${b.k}`] || null });
+    for (const b of rec.boxes) out.push({ u, slide, k: b.k, st: b.st, m: b.m, text: b.text, tries: rec.tries, at: rec.at, item: rec.item || null, question:rec.question||null, teacher: a[`${u}:teacher:${slide}:${b.k}`] || null });
   }
   return out.sort((x, y) => (y.at || 0) - (x.at || 0));
 }
 export const needs = (r) => r.st === 'review' && !r.teacher?.v;
 export const countNeeds = (units) => records(units).filter(needs).length;
 
+// A stored question is authoritative. Otherwise resolve the record's version,
+// never replace an unknown historical version with today's question.
+function recordItem(r,it){
+ if(r.question)return r.question;
+ if(!it)return null;
+ const stamp=/:version:([^:]+)$/.exec(r.slide||'')?.[1]||(/^test:item:/.test(r.k||'')?/:version:([^:]+)(?::blank:\d+)?$/.exec(r.k)?.[1]:null);
+ const version=stamp?[it.contentVersion||1,...(it.previousVersions||[]).map(p=>p.version)].find(v=>String(v)===stamp):1;
+ return version===undefined?null:questionAtVersion(it,version);
+}
+const missingQuestion='기록 당시 문제를 확인할 수 없어요.';
+
 // 칸 이름(k) → 질문과 예시 답. 교과 확인 문제는 기록된 문항 id로, 옛 기록은 ch.check 순서로 찾는다.
-function lookup(r, ch, similar) {
+export function lookupRecordQuestion(r, ch, similar) {
   const g = ch.gifted;
   if (r.k === 'hypo') return { q: ch.hypothesis.hint, a: ch.hypothesis.a, where: '가설 세우기' };
   if (r.k === 'wonder') return { q: ch.wonder.q, a: ch.wonder.a, where: '이런 경우는?' };
@@ -32,14 +45,16 @@ function lookup(r, ch, similar) {
   if (r.k === 'discuss') return { q: ch.discuss.q, a: ch.discuss.a, where: '도전 · 토의' };
   if (r.k === 'creative') return { q: ch.creative.q, a: ch.creative.a, where: '도전 · 창의력' };
   if (r.k.startsWith('gifted-')) { const row = r.k.slice(7); return { q: `${g.title} — ${row}`, a: g.a?.[row], where: '도전 · 영재성' }; }
-  if (/^test\d/.test(r.k)) {
-    const it = similar.find((x) => x.id === r.item) || similar.find((x) => `${x.sourceRef?.of?.set}-${x.sourceRef?.of?.no}` === ch.check[+r.k.slice(4)]);
-    const ac = it?.answerContract; return { q: it?.prompt, a: ac ? (ac.type === 'short-text' ? ac.answer : ac.sample) : '', where: '교과 확인 문제' };
+  if (/^test(?:\d|:item:)/.test(r.k)) {
+    const itemId=r.item||/^test:item:([^:]+)/.exec(r.k)?.[1]||/^item:([^:]+)/.exec(r.slide||'')?.[1],candidate=similar.find((x)=>x.id===itemId)||similar.find((x)=>`${x.sourceRef?.of?.set}-${x.sourceRef?.of?.no}`===ch.check?.[+r.k.slice(4)]),it=recordItem(r,candidate);
+    const ac = it?.answerContract,blank=/:blank:(\d+)$/.exec(r.k);
+    const answer=ac?.type==='cloze'?(blank?ac.blanks[Number(blank[1])]?.answer:ac.blanks.map((b,i)=>`${i+1}. ${b.answer}`).join(' · ')):ac?.type==='short-text'?ac.answer:ac?.sample;
+    return { q: it?.prompt||missingQuestion, a: answer||'', where: blank?`교과 확인 문제 · ${Number(blank[1])+1}번 빈칸`:'교과 확인 문제' };
   }
   if (r.k === 'daily') {   // Daily Test(v2/daily.js)에서 규칙으로 못 가린 답
-    const it = similar.find((x) => x.id === r.item), ac = it?.answerContract;
+    const candidate=similar.find((x)=>x.id===r.item)||similar.find((x)=>r.slide===`daily-${x.id}`||r.slide?.startsWith(`daily-${x.id}:paper:`)),it=recordItem(r,candidate),ac=it?.answerContract;
     const a = !ac ? '' : ac.type === 'written-explanation' ? ac.sample : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(' · ') : ac.answer;
-    return { q: it?.prompt, a, where: ch.assessment ? '학기 평가' : 'Daily Test' };
+    return { q: it?.prompt||missingQuestion, a:isStructuredSource(it)?sourceAnswerText(it):a, ...(isStructuredSource(it)?{sourceHtml:sourceReviewPromptHtml(it),answerLabel:it.sourceRef.reviewOnly?'확인할 점':'예시 답',printedA:it.sourceRef.reviewOnly?sourceAnswerText(it,{printed:true}):''}:{}), where: ch.assessment ? '학기 평가' : 'Daily Test' };
   }
   return { q: r.k, a: '', where: '' };
 }
@@ -74,14 +89,15 @@ export async function renderCheck($app, { units, loadUnit, only = null }) {
     scrollTo(0, 0);
   };
   const card = (r, d) => {
-    const L = lookup(r, d.ch, d.similar), [label, cls] = ST[r.st] || [r.st, 'miss'], key = `${r.u}:teacher:${r.slide}:${r.k}`, t = r.teacher;
+    const L = lookupRecordQuestion(r, d.ch, d.similar), [label, cls] = ST[r.st] || [r.st, 'miss'], key = `${r.u}:teacher:${r.slide}:${r.k}`, t = r.teacher;
     const when = r.at ? new Date(r.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
     return `<article class="ck-card" data-key="${esc(key)}">
       <p class="ck-where">${esc(L.where)}${when ? ` · ${esc(when)}` : ''}${r.tries ? ` · ${r.tries}번 확인` : ''}</p>
-      <p class="ck-q">${esc(L.q)}</p>
+      ${L.sourceHtml?`<div class="ck-q">${L.sourceHtml}</div>`:`<p class="ck-q">${esc(L.q)}</p>`}
       <blockquote class="ck-a">${esc(r.text) || '<i>빈칸</i>'}</blockquote>
       <p class="ck-meta"><span class="ck-badge ${cls}">기기 판정 · ${esc(label)}</span>${t?.v ? `<span class="ck-badge ${t.v === 'ok' ? 'ok' : 'wrong'}">선생님 · ${t.v === 'ok' ? '맞음' : '다시 쓰기'}</span>` : ''}</p>
-      ${L.a ? `<details class="ck-ex"><summary>예시 답</summary><p>${esc(L.a)}</p></details>` : ''}
+      ${L.a ? `<details class="ck-ex"><summary>${esc(L.answerLabel||'예시 답')}</summary><p>${esc(L.a)}</p></details>` : ''}
+      ${L.printedA?`<details class="ck-ex"><summary>인쇄된 답 참고</summary><p>${esc(L.printedA)}</p></details>`:""}
       <div class="ck-act no-print">${t?.v ? `<span class="ck-said">${t.note ? `한마디: ${esc(t.note)}` : ''}</span><button type="button" class="btn" data-act="undo">판정 지우기</button>`
         : `<input class="ck-say" type="text" maxlength="80" placeholder="아이에게 한마디(선택)" aria-label="아이에게 한마디"><button type="button" class="btn primary" data-v="ok">맞음</button><button type="button" class="btn" data-v="redo">다시 쓰기</button>`}</div>
     </article>`;

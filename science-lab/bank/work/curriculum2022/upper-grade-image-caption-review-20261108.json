@@ -1,0 +1,1594 @@
+{
+  "phase": 379,
+  "date": "2026-11-08",
+  "candidateBaseline": "6fa2186c0ad6551a639e059b93b5296f996820b8",
+  "reviewParent": "9f1c90ff85860f11305a575472ec868b55e0d4ed",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "5·6학년 소스 사진/그림34개·QR8개와 별도 참조 SVG2개. 전체 인라인 SVG나 실제 화면/인쇄 지면의 시각 검수를 뜻하지 않는다.",
+  "inventory": {
+    "localImgPaths": 186,
+    "rasterPaths": 184,
+    "externalSvgPaths": 2,
+    "references": 520
+  },
+  "manualReview": {
+    "rasterImagesViewedThisTurn": 42,
+    "externalSvgSourcesAndNativeViewsThisTurn": 2,
+    "previousPublishedCurrentHashEvidence": 142,
+    "newPublishedRasterHashEvidence": 42,
+    "totalRasterWithCurrentHashEvidence": 184,
+    "totalRasterPaths": 184,
+    "externalSvgWithCurrentHashEvidence": 2,
+    "captionClarificationsFound": 1,
+    "currentFigureFieldsChanged": 1,
+    "doesNotClaimAllImagesWereReviewedThisTurn": true,
+    "priorEvidenceFiles": [
+      "release-gates-image-review-20261105.json",
+      "image-caption-review-20261108.json",
+      "lower-grade-image-caption-review-20261108.json"
+    ]
+  },
+  "ocr": {
+    "engine": "Apple Vision",
+    "computePolicy": "CPU-only",
+    "recognitionLevel": "accurate",
+    "languages": [
+      "ko-KR",
+      "en-US"
+    ],
+    "textImagesProcessed": 34,
+    "textImageFailures": 0,
+    "textImageRecognizedLines": 0,
+    "qrImagesProcessed": 8,
+    "qrCodesDecoded": 8,
+    "qrCurrentPrintUrlsAndKoreanDateTimeLocationDirectionMatched": true,
+    "svgNativeViewImagesProcessed": 2,
+    "svgNativeViewRecognizedLines": 12,
+    "svgSourceTextAndVisibleLabelsManuallyMatched": true,
+    "svgPunctuationShapeDifferenceManuallyChecked": true,
+    "zeroRecognizedLinesDoesNotProveTextAbsent": true,
+    "rawOcrOutputsOrDerivedImagesPublished": false
+  },
+  "productChange": {
+    "unit": "c22-s61-u02",
+    "image": "science-lab/assets/bank/c22-s61-u02/s1-q05.webp",
+    "beforeAlt": "계단과 나란히 설치된 자동계단",
+    "afterAlt": "나란히 설치된 두 자동계단의 발판과 손잡이",
+    "currentDisplayOnly": true,
+    "exactUnitFigureAndImageAltMatchOnly": true,
+    "originalWorkbookSourcesAndQuestionBankPreserved": true,
+    "futureDescriptionPreserved": true
+  },
+  "validation": {
+    "phase": 379,
+    "date": "2026-11-08",
+    "baseline": "6fa2186c0ad6551a639e059b93b5296f996820b8",
+    "workbooks": 32,
+    "questionCount": 3080,
+    "questionsUnchanged": true,
+    "changedFigureFields": 1,
+    "changedPrintModes": [
+      {
+        "unit": "c22-s61-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "mode": "teacher"
+      }
+    ],
+    "unchangedPrintModes": 126,
+    "webModelsChecked": 32,
+    "currentImagePaths": 186,
+    "currentImageReferences": 520,
+    "all186ImageBytesAndHashesPreserved": true,
+    "selectedManualRasterRecords": 42,
+    "totalCurrentRasterWithSelectedManualEvidence": 184,
+    "totalCurrentRaster": 184,
+    "externalSvgSourceViewsReviewed": 2,
+    "nativeTests": {
+      "files": 5,
+      "passed": 84,
+      "failed": 0
+    },
+    "sourceQuestionBankDescription": "자동계단의 사진.",
+    "sourceBankQuestionAndDescriptionUnchanged": true,
+    "qrChecked": [
+      {
+        "id": "h021",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-09-21T12%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-09-21",
+        "koreanHour": 21,
+        "currentPrintLinkMatches": true
+      },
+      {
+        "id": "h022",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-03-21T12%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-03-21",
+        "koreanHour": 21,
+        "currentPrintLinkMatches": true
+      },
+      {
+        "id": "h023",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-03-21T13%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-03-21",
+        "koreanHour": 22,
+        "currentPrintLinkMatches": true
+      },
+      {
+        "id": "h024",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-06-21T12%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-06-21",
+        "koreanHour": 21,
+        "currentPrintLinkMatches": true
+      },
+      {
+        "id": "h025",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-03-21T00%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-03-21",
+        "koreanHour": 9,
+        "currentPrintLinkMatches": true
+      },
+      {
+        "id": "h026",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-03-21T03%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-03-21",
+        "koreanHour": 12,
+        "currentPrintLinkMatches": true
+      },
+      {
+        "id": "h027",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-03-21T06%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-03-21",
+        "koreanHour": 15,
+        "currentPrintLinkMatches": true
+      },
+      {
+        "id": "h028",
+        "payload": "https://stellarium-web.org/?lat=37.56668&lng=126.97829&date=2026-12-21T12%3A00%3A00Z&az=180&alt=30&fov=100",
+        "koreanDate": "2026-12-21",
+        "koreanHour": 21,
+        "currentPrintLinkMatches": true
+      }
+    ],
+    "inputImmutableAndIdempotent": true,
+    "actualBrowserOrA4VisualInspection": false
+  },
+  "assets": [
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/air-photo-v1.webp",
+      "sha256": "2d4df34be70c7f93075bb37ebed3717ccde5dbb230c0a5651de2fa59a04f46b2",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "높은 벽의 냉방 기구와 낮은 벽의 난방 기구가 보인다. 배치의 설명과 맞으며 사진에 공기의 흐름은 보이지 않는다는 본문 안내를 유지한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "밝은 교실의 높은 곳 냉방 기구와 낮은 곳 난방 기구를 보여 주는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "밝은 교실의 높은 곳 냉방 기구와 낮은 곳 난방 기구를 보여 주는 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/conduction-photo-v1.webp",
+      "sha256": "950805d708fd4393d2fd534514b4fbc90b6811f08271843c7572a4c3319735af",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "왼쪽 구리색·가운데 은색·오른쪽 흰색 띠가 같은 수면에 담기고 각 띠의 비슷한 높이에 같은 모양의 표시가 있다. 비교 장치의 설명과 맞고 표시가 변한 순서는 실제 관찰하도록 안내한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "구리색·은색·흰색 띠가 같은 물에 세로로 놓이고 위쪽에 같은 모양의 온도 표시가 붙은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "구리색·은색·흰색 띠가 같은 물에 세로로 놓이고 위쪽에 같은 모양의 온도 표시가 붙은 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/contact-photo-v1.webp",
+      "sha256": "74717360c112c8d7b1a32f6dc4cc4bf533257c33cafb7a27f3353239969907cf",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "큰 비커 속 작은 금속 컵과 각각의 물에 들어간 두 탐침이 보인다. 안팎 물을 섞지 않고 온도를 재는 장치의 설명과 맞으며 실제 온도 수치는 사진에 없다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "큰 비커의 물 안에 작은 금속 컵이 있고 두 물에 각각 온도 탐침이 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "큰 비커의 물 안에 작은 금속 컵이 있고 두 물에 각각 온도 탐침이 놓인 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/insulation-photo-v1.webp",
+      "sha256": "77941c95b3cf851df685952601ec7f9f764f819d42ba59fa3e72fb919aa829bf",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "안감이 보이는 가방 안팎에 같은 모양의 닫힌 병, 옆에 접은 천이 있다. 단열에 쓰는 구조의 참고 장면과 맞으며 열린 가방 자체를 비교 실험이 끝난 결과로 읽지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "안감이 보이는 보냉 가방 안과 밖에 같은 모양의 닫힌 물병, 옆에 접힌 천이 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "안감이 보이는 보냉 가방 안과 밖에 같은 모양의 닫힌 물병, 옆에 접힌 천이 놓인 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/light-photo-v1.webp",
+      "sha256": "2899c641cc08679aa41c273e6219dbc8d251137c36d67d91c8a17d8900afe80a",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "나란한 검은 종이·흰 종이에 탐침이 가운데 가까이 같은 방식으로 붙어 있다. 같은 빛에서 색에 따른 차이를 살필 준비 장면과 맞고 실제 온도 결과는 기록에서 확인한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "같은 햇빛을 받는 검은 종이와 흰 종이에 각각 같은 위치의 센서가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "같은 햇빛을 받는 검은 종이와 흰 종이에 각각 같은 위치의 센서가 놓인 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/measure-photo-v1.webp",
+      "sha256": "2d4df8a1f4b77c7c40e5f6ee439a4e0e4775638f592d92dee9048ae329d1f885",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "온도 탐침이 비커 물 안에 고정되고 끝이 바닥·벽과 떨어져 있다. 바른 측정 위치 설명과 맞으며 옆 표시창에는 읽을 수 있는 온도값이 없다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "물속 중앙에 온도 탐침이 고정되어 벽·바닥과 떨어져 있는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "물속 중앙에 온도 탐침이 고정되어 벽·바닥과 떨어져 있는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "물속 중앙에 온도 탐침이 고정되어 벽·바닥과 떨어져 있는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "물속 중앙에 온도 탐침이 고정되어 벽·바닥과 떨어져 있는 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/prototype-photo-v1.webp",
+      "sha256": "952fe95e40777778d3f4e5a36f3e687f16d2d507ffe9a074ce1578021dbf4d82",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "같은 모양의 뚜껑 있는 컵 둘에 탐침이 있고 오른쪽 컵만 천으로 감싸져 있다. 비교 장치의 구조 설명과 맞으며 감싼 쪽 물의 양이나 실제 온도 변화는 사진으로 읽지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "같은 모양 컵 둘 중 하나는 맨 컵, 다른 하나는 천으로 감싼 비교 장치의 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "같은 모양 컵 둘 중 하나는 맨 컵, 다른 하나는 천으로 감싼 비교 장치의 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u02/water-photo-v1.webp",
+      "sha256": "c04c5a3cc9627ae95997496feffaf8e3cbec4a1fde2bdc658d228a9acc0b9999",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "교사용 전기 가열판 위 비커 안에서 붉은 색소 부분이 아래에서 위쪽 수면까지 이어져 보인다. 움직임을 살펴볼 장치 설명과 맞으며 한 장만으로 흐름의 방향이나 가열 원인을 확정하지 않는 본문을 유지한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "student",
+          "alt": "안정된 교사용 전기 가열판 위 비커에서 붉은 색소 부분이 위로 퍼진 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teacher",
+          "alt": "안정된 교사용 전기 가열판 위 비커에서 붉은 색소 부분이 위로 퍼진 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/station.webp",
+      "sha256": "f15dab339a86c6f181f153817572b2315514e3bf3d375398599e6a412e0db776",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "높은 곳의 컵 모양 바람 기구·방향 날개, 흰 덮개와 옆 강수 관측 기구가 보인다. 각 기구의 배치 설명과 맞으며 실제 기온·풍향·풍속·강수량 수치는 없다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u03",
+          "mode": "student",
+          "alt": "학교 정원에 흰색 기온/습도 관측 장치 덮개, 강수량 관측 기구와 높은 곳의 바람 기구가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u03",
+          "mode": "student",
+          "alt": "학교 정원에 흰색 기온/습도 관측 장치 덮개, 강수량 관측 기구와 높은 곳의 바람 기구가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u03",
+          "mode": "student",
+          "alt": "학교 정원에 흰색 기온/습도 관측 장치 덮개, 강수량 관측 기구와 높은 곳의 바람 기구가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u03",
+          "mode": "teacher",
+          "alt": "학교 정원에 흰색 기온/습도 관측 장치 덮개, 강수량 관측 기구와 높은 곳의 바람 기구가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u03",
+          "mode": "teacher",
+          "alt": "학교 정원에 흰색 기온/습도 관측 장치 덮개, 강수량 관측 기구와 높은 곳의 바람 기구가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u03",
+          "mode": "teacher",
+          "alt": "학교 정원에 흰색 기온/습도 관측 장치 덮개, 강수량 관측 기구와 높은 곳의 바람 기구가 놓인 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/house.webp",
+      "sha256": "6f0ab3cd817dadf5cd864132c792cf0dd78b67cbcd8d2070917c996415b7eeb4",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "집 모형 두 개와 지붕에 연결한 탐침, 각각의 표시 기구가 보인다. 오른쪽 모형 옆벽의 덧댄 재료는 보이지만 표시창은 빈 상태여서 단열 효과 수치를 사진에서 읽지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "탁자 위 집 모형 두 개와 온도 측정 도구를 배치한 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "탁자 위 집 모형 두 개와 온도 측정 도구를 배치한 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "탁자 위 집 모형 두 개와 온도 측정 도구를 배치한 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "탁자 위 집 모형 두 개와 온도 측정 도구를 배치한 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/hydro.webp",
+      "sha256": "0b763f1e23a621acecf9f537e50dc917bef33da8a21a4c1bfd6eb6958412eede",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "큰 물 저장 공간과 댐 구조물, 아래쪽 물길과 건물이 보인다. 수력 발전을 떠올리는 장면과 맞고 내부 수차·발전기나 발전량은 사진만으로 확인하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "강의 물과 댐 구조물이 보이는 수력 발전 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "강의 물과 댐 구조물이 보이는 수력 발전 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "강의 물과 댐 구조물이 보이는 수력 발전 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "강의 물과 댐 구조물이 보이는 수력 발전 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/ocean.webp",
+      "sha256": "69283233421ed125ccc1a61560058fbf90d3110c6dfb2b768853a07627d5dee5",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "바위 해안과 굽이치는 물결이 보인다. 해양 에너지를 생각하는 배경 장면과 맞으며 실제 발전 장치가 설치되었다고 설명하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "바위 해안과 바다 물결이 보이는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "바위 해안과 바다 물결이 보이는 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/practice.webp",
+      "sha256": "562cce0ed077aeb7e8a6f4660adce4770e667898e6d4409dfb4f22e6c41426b6",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "사람이 책상 위 빈 카드와 공책을 정돈하는 모습이다. 절약 방법을 소개할 자료를 준비하는 장면과 맞으며 이미 글을 완성하거나 실제 효과를 측정한 사진이 아니다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "한 사람이 교실 책상 위 빈 안내 카드와 공책을 정돈하는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "한 사람이 교실 책상 위 빈 안내 카드와 공책을 정돈하는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "한 사람이 교실 책상 위 빈 안내 카드와 공책을 정돈하는 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "한 사람이 교실 책상 위 빈 안내 카드와 공책을 정돈하는 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/resources.webp",
+      "sha256": "853e38fbcd72a4a9187237ee9f6f906a824cbc81aea4880ecb6613f840863afb",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "물 든 용기·나무 조각·돌 모양 표본과 금속 숟가락이 따로 놓였다. 물·산림·광물 자원을 연결하는 설명과 맞고 돌의 정확한 종류나 금속 함량은 단정하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "물 든 투명 용기·나무 조각·암석 표본과 금속 숟가락을 분리해 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "물 든 투명 용기·나무 조각·암석 표본과 금속 숟가락을 분리해 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "물 든 투명 용기·나무 조각·암석 표본과 금속 숟가락을 분리해 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "물 든 투명 용기·나무 조각·암석 표본과 금속 숟가락을 분리해 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "물 든 투명 용기·나무 조각·암석 표본과 금속 숟가락을 분리해 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "물 든 투명 용기·나무 조각·암석 표본과 금속 숟가락을 분리해 놓은 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/reuse.webp",
+      "sha256": "44e2f6830b9922282a4dbe7f4305862740a9a67ecba28dd20c8f2d4251363d3a",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "천 가방·물병·필통·빈 금속 용기·종이가 보인다. 사용 줄이기·다시 쓰기·재료를 처리해 쓰기를 생각하는 설명과 맞으며 분리배출 완료나 특정 지역 기준 자체를 보여 주지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "필통·가방·물병·비운 용기와 종이를 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "필통·가방·물병·비운 용기와 종이를 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "필통·가방·물병·비운 용기와 종이를 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "필통·가방·물병·비운 용기와 종이를 놓은 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/solar.webp",
+      "sha256": "36ae82b79dff2359dd3e86b5820276b6b729a71f523a1cb0ce80c374f2515397",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "건물 지붕 위에 여러 검푸른 판이 고정되어 있다. 태양 전지판을 보여 주는 설명과 맞으며 태양열로 물을 데우는 관 모양 장치와 혼동하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "학교 건물 지붕에 여러 장의 검푸른 판이 고정된 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "학교 건물 지붕에 여러 장의 검푸른 판이 고정된 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u04/wind.webp",
+      "sha256": "d95d033fb0de8cf0ddc8404d4e7abb7a6c39dbfc948da5ddf5e11fcbac75e4ee",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "세 날개 풍력 발전기 세 대가 풀밭에 서 있다. 날개와 주변 환경 설명과 맞으며 사진 한 장으로 회전 속도나 전기 생산량을 정하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s52-u04",
+          "mode": "student",
+          "alt": "풀밭 주변에 세 날개를 가진 큰 풍력 발전기가 설치된 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u04",
+          "mode": "teacher",
+          "alt": "풀밭 주변에 세 날개를 가진 큰 풍력 발전기가 설치된 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/card-materials.webp",
+      "sha256": "c3e8cf46ca7adb40d40de72623b44d9e18aecc851618f5f95c679c997707a90d",
+      "width": 1152,
+      "height": 384,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "빈 종이 두 장과 연필이 책상 위에 있다. 설명 카드를 준비하는 예라는 안내와 맞고 완성 자료나 학습자의 실제 활동 결과로 읽지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "빈 종이 두 장과 연필을 책상에 놓은 설명 카드 준비 예"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "빈 종이 두 장과 연필을 책상에 놓은 설명 카드 준비 예"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/model-preparation.webp",
+      "sha256": "185bccbc2b4732a3a69745f0e166272a958919c9ae99ff24980273206878c983",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "왼쪽 LED 광원과 받침 위 흰 공의 빨간 표시가 보인다. 일반 공을 준비 예로 쓴 장면이며 기울어진 축이 있는 지구의를 실제 수업에 쓰라는 본문 안내와 맞는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "LED 광원과 빨간 표시가 있는 흰 공을 받침에 놓은 준비 예"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "LED 광원과 빨간 표시가 있는 흰 공을 받침에 놓은 준비 예"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/night-environment.webp",
+      "sha256": "a0b25f075071fd75f6d84d019adf757f0dd53d9dc1102eeeb4851464628f92cc",
+      "width": 1152,
+      "height": 384,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "어른과 아이 둘이 넓고 평평한 곳에서 하늘을 바라본다. 안전한 장소를 준비하는 예이며 사진의 별 점으로 별자리·정확한 날짜와 시각을 정하지 않는 설명과 맞는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "어른과 아이들이 넓은 평지에서 하늘을 살펴보는 환경 준비 예"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "어른과 아이들이 넓은 평지에서 하늘을 살펴보는 환경 준비 예"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-autumn-21-qr.png",
+      "sha256": "2dd6810847c86fc2499e3e4504c387fde7931a42651a814aa27757ac6ead4409",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "검은 모듈과 흰 여백, 세 모서리 찾기 무늬가 있는 QR 원본을 보았다. 실제 연결 날짜·시각은 Apple Vision이 해독한 주소와 본문 설정으로 대조한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "9월 21일 · 밤 9시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "9월 21일 · 밤 9시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-spring-21-qr.png",
+      "sha256": "ad5561b1c9c2a95d2ac4567dcea15e3406565e0a03bf83f583a8b7e892a960da",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "QR 모듈과 바깥 흰 여백이 보인다. 봄 밤9시 설정은 시각적인 패턴만으로 판단하지 않고 해독 주소와 대조한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "3월 21일 · 밤 9시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "3월 21일 · 밤 9시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "3월 21일 · 밤 9시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "3월 21일 · 밤 9시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-spring-22-qr.png",
+      "sha256": "034b8f8f984ae838548d3c78dd84d18e4e67dc733f6215221fe9d8f7115077d9",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "QR 모듈과 바깥 흰 여백이 보인다. 봄 밤10시 설정은 해독 주소와 대조한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "3월 21일 · 밤 10시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "3월 21일 · 밤 10시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-summer-21-qr.png",
+      "sha256": "7a87c27b143de628473b1a649de3fff4f284fb888ac2836ade65f02ec04806e2",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "QR 모듈과 바깥 흰 여백이 보인다. 여름 밤9시 설정은 해독 주소와 대조한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "6월 21일 · 밤 9시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "6월 21일 · 밤 9시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-sun-09-qr.png",
+      "sha256": "9f00e1c952b3c452b66e4d16253566460c33838a62b97c9ba3ce4acff296e900",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "QR 원본의 모듈과 여백을 보았다. 오전9시 설정은 해독 주소의 UTC 시각에9시간을 더해 확인한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "오전 9시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "오전 9시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-sun-12-qr.png",
+      "sha256": "86b22d5c477872ab3898bb989629a17e6f0570b318af9c73ec52b5b65ad18d69",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "QR 원본의 모듈과 여백을 보았다. 낮12시 설정은 해독 주소의 UTC 시각에9시간을 더해 확인한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "낮 12시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "낮 12시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-sun-15-qr.png",
+      "sha256": "11b899c309a4140b20b0731dd1a04ac9d7d9fe87ff469c937ee3bcb564af6f99",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "QR 원본의 모듈과 여백을 보았다. 오후3시 설정은 해독 주소의 UTC 시각에9시간을 더해 확인한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "오후 3시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "오후 3시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u04/sky-winter-21-qr.png",
+      "sha256": "c220167bfb0ac704c5175365f98811a7a71035c0f0e577265a83bb354706a42d",
+      "width": 392,
+      "height": 392,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "QR 원본의 모듈과 여백을 보았다. 겨울 밤9시 설정은 해독 주소와 본문 날짜로 대조한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "QR",
+        "status": "ok",
+        "decodedCodes": 1,
+        "payloadMatchesCurrentPrintLink": true
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u04",
+          "mode": "student",
+          "alt": "12월 21일 · 밤 9시 설정 QR"
+        },
+        {
+          "unit": "c22-s61-u04",
+          "mode": "teacher",
+          "alt": "12월 21일 · 밤 9시 설정 QR"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u01/measurement-materials.webp",
+      "sha256": "022b1bcce9726456576498cbadf586afc8d2fa4cddd19e2a82a44b4b781bce30",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "흰 받침판·막대·실·테이프·연필이 따로 놓여 있다. 그림자 측정 준비 재료라는 설명과 맞으며 아직 세운 막대·측정한 각도나 그림자 길이를 보여 주지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s62-u01",
+          "mode": "student",
+          "alt": "흰 받침판·나무 막대·실·테이프·연필의 준비 재료 예"
+        },
+        {
+          "unit": "c22-s62-u01",
+          "mode": "student",
+          "alt": "흰 받침판·나무 막대·실·테이프·연필의 준비 재료 예"
+        },
+        {
+          "unit": "c22-s62-u01",
+          "mode": "teacher",
+          "alt": "흰 받침판·나무 막대·실·테이프·연필의 준비 재료 예"
+        },
+        {
+          "unit": "c22-s62-u01",
+          "mode": "teacher",
+          "alt": "흰 받침판·나무 막대·실·테이프·연필의 준비 재료 예"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u02/candle-reference.webp",
+      "sha256": "7fcbf6e02b46894f97402d247fa12b7443ff22afb019c78f49a57b66ae62db11",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "넓은 받침의 흰 양초 심지 위에 불꽃이 있다. 타는 모습과 남아 있는 초를 살피는 설명과 맞으며 생성물·연소 시간·온도는 사진에서 확인하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s62-u02",
+          "mode": "student",
+          "alt": "넓은 도자기 받침에 놓인 흰 양초와 심지의 불꽃"
+        },
+        {
+          "unit": "c22-s62-u02",
+          "mode": "student",
+          "alt": "넓은 도자기 받침에 놓인 흰 양초와 심지의 불꽃"
+        },
+        {
+          "unit": "c22-s62-u02",
+          "mode": "teacher",
+          "alt": "넓은 도자기 받침에 놓인 흰 양초와 심지의 불꽃"
+        },
+        {
+          "unit": "c22-s62-u02",
+          "mode": "teacher",
+          "alt": "넓은 도자기 받침에 놓인 흰 양초와 심지의 불꽃"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u02/shells-reference.webp",
+      "sha256": "52e06bdba63365ca5a38b8b791ccf84bd8691a12ccd85d8dc2ba6ddb0bc40340",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "받침 위 조개껍데기 세 개의 바깥 무늬와 안쪽 오목한 면이 보인다. 껍데기 생김새를 살피는 장면과 맞고 변화 전후 실제 측정 기록이 아니라는 본문 안내를 유지한다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s62-u02",
+          "mode": "student",
+          "alt": "밝은 받침에 놓인 조개껍데기 세 개의 모양"
+        },
+        {
+          "unit": "c22-s62-u02",
+          "mode": "teacher",
+          "alt": "밝은 받침에 놓인 조개껍데기 세 개의 모양"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u03/bulb-reference.webp",
+      "sha256": "94c6b09140e992cf2009b4fac82a95e364d55e9fedff838cdc87b37fcba1ce5d",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "전구 밑부분의 옆 나사 금속과 바닥 금속 접점, 사이의 검은 절연 부분이 보인다. 서로 다른 두 접점을 찾는 설명과 맞는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s62-u03",
+          "mode": "student",
+          "alt": "작은 전구 밑부분의 옆 금속·절연 부분·바닥 금속 접점"
+        },
+        {
+          "unit": "c22-s62-u03",
+          "mode": "student",
+          "alt": "작은 전구 밑부분의 옆 금속·절연 부분·바닥 금속 접점"
+        },
+        {
+          "unit": "c22-s62-u03",
+          "mode": "teacher",
+          "alt": "작은 전구 밑부분의 옆 금속·절연 부분·바닥 금속 접점"
+        },
+        {
+          "unit": "c22-s62-u03",
+          "mode": "teacher",
+          "alt": "작은 전구 밑부분의 옆 금속·절연 부분·바닥 금속 접점"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u03/coil-reference.webp",
+      "sha256": "071f7bdc2542da120d639adcc6c0039d5c49995c6c46d9d70e3bd6ec073e5af0",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "주황색 선을 묶은 덩어리와 따로 놓인 금속 막대가 보인다. 준비 재료이며 아직 철심에 감은 전자석의 완성 모습이 아니라는 현재 설명과 맞는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s62-u03",
+          "mode": "student",
+          "alt": "둥글게 묶어 놓은 주황색 선과 따로 놓인 금속 막대"
+        },
+        {
+          "unit": "c22-s62-u03",
+          "mode": "teacher",
+          "alt": "둥글게 묶어 놓은 주황색 선과 따로 놓인 금속 막대"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u04/camera-reference.webp",
+      "sha256": "0671c89e46d1c6fe298789eedc3db78c228d4dfd297c84676e7d5d2e2949e772",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "카메라 뒷면의 검은 화면과 버튼, 옆으로 이어진 렌즈 외관이 보인다. 빛을 기록하는 도구 설명과 맞으며 내부 센서 작동이나 실제 촬영 설정은 사진에서 확인하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s62-u04",
+          "mode": "student",
+          "alt": "뒷면의 화면이 꺼진 카메라와 렌즈의 바깥 모습"
+        },
+        {
+          "unit": "c22-s62-u04",
+          "mode": "teacher",
+          "alt": "뒷면의 화면이 꺼진 카메라와 렌즈의 바깥 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u04/seedling-reference.webp",
+      "sha256": "4895cb6218100d4c47b667610d2a7c027e8a1873e4f8b7e3ffede73ec2401c51",
+      "width": 1024,
+      "height": 768,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "온실처럼 보이는 곳의 화분에 줄기와 초록 잎이 있다. 농부가 생장 조건을 살핀다는 설명의 참고 장면이며 수분·빛·온도의 측정 결과는 아니다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s62-u04",
+          "mode": "student",
+          "alt": "화분의 흙에서 자라는 초록 식물"
+        },
+        {
+          "unit": "c22-s62-u04",
+          "mode": "teacher",
+          "alt": "화분의 흙에서 자라는 초록 식물"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u02/s1-q05.webp",
+      "sha256": "e5884e70832e00440debd5c7a61c3128ec8cb7f7a91d8f95196aa26fabd73d10",
+      "width": 418,
+      "height": 270,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "나란한 두 자동계단의 발판과 손잡이가 보인다. 일반 계단 옆에 설치된 듯 읽히던 기존 대체 글을 나란히 설치된 두 자동계단의 발판과 손잡이로 고쳤다. 문항집의 기존 자동계단의 사진이라는 설명도 확인해 유지했다.",
+      "captionClarificationFound": true,
+      "descriptionCorrected": true,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u02",
+          "mode": "student",
+          "alt": "나란히 설치된 두 자동계단의 발판과 손잡이"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "teacher",
+          "alt": "나란히 설치된 두 자동계단의 발판과 손잡이"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u02/s2-q05.webp",
+      "sha256": "51098cd9ac3c5bfacd49f0a9124eb9958e36d1c95ef5faf8b896d2d903cdbb78",
+      "width": 424,
+      "height": 290,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "빙판에서 몸을 낮추고 스케이트를 신은 선수가 보인다. 움직이는 물체의 예로 맞고 같은 거리·시간의 경기 기록이나 빠르기를 정할 자료는 사진에 없다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u02",
+          "mode": "student",
+          "alt": "빙판에서 자세를 낮춘 스케이팅 선수"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "teacher",
+          "alt": "빙판에서 자세를 낮춘 스케이팅 선수"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u02/s4-q05.webp",
+      "sha256": "d4548e46dfc0d15e01a755c88f8f968430b3f3145c09208727529a1706bbf5f5",
+      "width": 422,
+      "height": 272,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "활주로 가까운 공중에 바퀴가 나온 비행기가 보인다. 현재 위치의 설명과 맞으며 한 장에서 이륙/착륙의 진행 방향이나 실제 속력 변화를 확정하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s61-u02",
+          "mode": "student",
+          "alt": "활주로를 배경으로 촬영한 비행기"
+        },
+        {
+          "unit": "c22-s61-u02",
+          "mode": "teacher",
+          "alt": "활주로를 배경으로 촬영한 비행기"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u01-source-bent.png",
+      "sha256": "10d978aa457ab208f53143e68e3151b8a6216e6efbd5c3d8a00fd9f5e82a7106",
+      "width": 320,
+      "height": 199,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "밝고 어두운 층들이 가운데에서 휘어진 암석 노두가 보인다. 휘어진 지층의 참고 사진과 맞으며 작용한 힘·시간을 사진만으로 정하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "휘어진 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "휘어진 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "휘어진 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "휘어진 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "휘어진 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "휘어진 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u01-source-broken.png",
+      "sha256": "dab0b73fa1eb5fff2b0bd559a3fd5ba9c08ecd4cce35a9e8b1d578fb1f476414",
+      "width": 342,
+      "height": 202,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "진한 층의 이어지는 높이가 가운데 경계 양쪽에서 달라진 노두가 보인다. 끊어져 어긋난 지층의 설명과 맞으며 한 장으로 움직인 방향·시기·힘을 모두 정하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "끊어져 어긋난 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "끊어져 어긋난 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "끊어져 어긋난 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "끊어져 어긋난 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "끊어져 어긋난 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "끊어져 어긋난 모습"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u01-source-clay.png",
+      "sha256": "a5254bbcefab65c764370ca50609cea0150c69e2261932e1973e4da3f5cc80e9",
+      "width": 392,
+      "height": 164,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "여러 색의 점토 층이 쌓인 모형의 단면 두 부분이 보인다. 층과 경계를 나타낸 모형 사진이라는 설명과 맞고 실제 암석의 성질이나 형성 시간은 그대로 재현한 것이 아니다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "여러 색의 층과 경계를 보여 주는 교재의 점토 모형 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "여러 색의 층과 경계를 보여 주는 교재의 점토 모형 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u01-source-horizontal.png",
+      "sha256": "133bcab4fdf3bf81681f642327aa92cf6c98f4d69c5584d395e1aceddab960b3",
+      "width": 325,
+      "height": 195,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "밝고 어두운 얇은 층들이 거의 나란하게 이어진 암석 표면이다. 수평 지층의 생김새 참고 사진과 맞으며 모든 위치가 정확히 같은 각도이거나 두께가 같다고 정하지 않는다.",
+      "captionClarificationFound": false,
+      "descriptionCorrected": false,
+      "appleVision": {
+        "kind": "text",
+        "status": "ok",
+        "recognizedTextLines": 0
+      },
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "수평으로 놓인 지층을 보여 주는 원교재 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "수평으로 놓인 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "수평으로 놓인 지층을 보여 주는 원교재 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "수평으로 놓인 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "수평으로 놓인 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "alt": "수평으로 놓인 지층을 보여 주는 원교재 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "수평으로 놓인 지층을 보여 주는 원교재 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "수평으로 놓인 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "수평으로 놓인 지층을 보여 주는 원교재 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "수평으로 놓인 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "수평으로 놓인 모습"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "alt": "수평으로 놓인 지층을 보여 주는 원교재 사진"
+        }
+      ]
+    }
+  ],
+  "externalSvgReviews": [
+    {
+      "path": "science-lab/assets/bank/c22-s51-u01/layers-abc.svg",
+      "sha256": "788944089d06f7f7b3be1f77acea0c0dbb92671a1ce21896473afb213929ab9c",
+      "manualReview": "위에서 다·나·가 순으로 놓인 세 층과 순서가 바뀌지 않았다는 조건이 보인다. 실제 두께 비율을 나타내지 않는다는 안내도 읽을 수 있다.",
+      "renderer": "AppKit _NSSVGImageRep",
+      "webKitFrameworkLoaded": false,
+      "derivedViewSha256": "87af209775dbbb91cee4a622de95907e71c24b0eca592472aa4bf6cb7682cef9",
+      "width": 720,
+      "height": 380,
+      "recognizedTextLines": 6
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s51-u01/strata-shapes.svg",
+      "sha256": "ae9ba19e55e938df3cf5077bb8f8ec45162166f516ecaa81c47c7607fedf96ff",
+      "manualReview": "가의 나란한 층, 나의 휘어진 층, 다의 끊어져 어긋난 층이 구별된다. 과정·힘·시간을 나타내지 않았다는 안내와 맞는다.",
+      "renderer": "AppKit _NSSVGImageRep",
+      "webKitFrameworkLoaded": false,
+      "derivedViewSha256": "c7ba70a7bd9850a0aebf8956c610da9915d64825ca1e0f2b019b4284d300ee32",
+      "width": 720,
+      "height": 380,
+      "recognizedTextLines": 6
+    }
+  ],
+  "actualBrowserUsed": false,
+  "actualA4VisualInspection": false,
+  "all186ImageBytesAndHashesPreserved": true,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

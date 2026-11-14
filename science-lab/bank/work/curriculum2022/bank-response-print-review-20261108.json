@@ -1,0 +1,91 @@
+{
+  "phase": 358,
+  "date": "2026-11-08",
+  "scope": "Print complete cloze/table-fill answer areas and keys in four actual bank papers, render biology reference tables, and provide its quick-answer view.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "03890ee1df148e00a8dcc029ad3554856a56f5d9",
+    "reviewCommit": "527f2358cceb2cca7462fc052b359bac9a1fcbee"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "regressionBefore": {
+    "tests": 2,
+    "pass": 0,
+    "fail": 2,
+    "meaningfulAssertionFailuresReproduced": true
+  },
+  "bankPaperValidation": {
+    "phase": 358,
+    "customBankUnits": 21,
+    "paperModesExecuted": 84,
+    "unaffectedPaperModesByteEqual": 68,
+    "protectedOriginalCardsByteEqual": 738,
+    "protectedSimilarCardsByteEqual": 738,
+    "otherAuthoredCardsByteEqual": 1077,
+    "protectedQuickEntriesByteEqual": 631,
+    "legacyAnswerFormatsUnchanged": 852,
+    "studentBlankFields": 24,
+    "studentTableResponseCells": 13,
+    "specialQuestionsFixed": 20,
+    "biologyReferenceTablesFixed": 2,
+    "allBankClassroomWorkbookDataFilesUnchanged": 96,
+    "originalObjectsUnmutated": true,
+    "allObjectPlaceholdersRemoved": true,
+    "actualBrowserUsed": false,
+    "releaseReady": false,
+    "goalAchieved": false
+  },
+  "originalSourceRegression": {
+    "phase": 358,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "currentNativeSuite": {
+    "tests": 1404,
+    "suites": 0,
+    "pass": 1402,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "exitCode": 0,
+    "testFiles": 257
+  },
+  "preflight": {
+    "syntaxFiles": 7,
+    "diffCheck": true,
+    "responseStyleSheetLinked": true,
+    "cssBracesBalanced": true
+  },
+  "preservationPolicy": {
+    "all32BankClassroomAndWorkbookDataUnchanged": true,
+    "allGradingContractsUnchanged": true,
+    "legacySingleMultiShortAndWrittenAnswerFormattingUnchanged": true,
+    "protectedOriginalAndSimilarCardsByteEqual": true,
+    "protectedQuickEntriesByteEqual": true,
+    "studentAnswerFieldsContainNoPrintedAnswers": true,
+    "noInteractivePaperControlsAdded": true,
+    "referenceTablesRenderedFromExistingData": true,
+    "existingOther17BankPaperModesUnchanged": true
+  },
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

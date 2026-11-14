@@ -1,0 +1,231 @@
+{
+  "phase": 261,
+  "date": "2026-11-05",
+  "baseCommit": "6f2ed32c62d0f865afeef9e7cd7a94ddf8324a57",
+  "unit": "s41-u04",
+  "version": "20261105-biology-explanations",
+  "scope": "24 printed-workbook explanations and misconception hints; no learner questions, answers, grading criteria, contracts, source material, online-bank items or historical answers changed.",
+  "preservation": {
+    "changedQuestions": [
+      {
+        "no": 15,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 16,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 17,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 18,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 19,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 20,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 21,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 22,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 23,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 24,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 25,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 26,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 27,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 28,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 71,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 72,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 73,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 74,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 75,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 76,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 77,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 78,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 79,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      },
+      {
+        "no": 80,
+        "fields": [
+          "explanation",
+          "misconception"
+        ]
+      }
+    ],
+    "changedProducts": [
+      {
+        "unit": "s41-u04",
+        "mode": "teacher",
+        "sha256": "41d8f137283d20720540920b9cb6c538769f4e4154902e09db30b6f74256d83f"
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "answers",
+        "sha256": "a18eeedb0f92de30ec547e5aaaa4a5488783ee32723b372492e77c076faa27ab"
+      }
+    ],
+    "unchangedWorkbooks": 31,
+    "unchangedProducts": 126,
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "priorWorkbookExactIncludingUndefined": true,
+    "oldHelperFunctionBytesUnchanged": true,
+    "allQuestionFieldsExcept48GuidanceStringsUnchanged": true,
+    "renderedSolutionNodes": 24,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/biology-student-language.js",
+      "science-lab/data/book/s41-u04.workbook.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/observation-language.test.mjs",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "review": "Read each selected prompt, choices, given, parts and answer; explain observed features, correct option positions, cloze words, matching pairs and order. No new scientific mechanisms or required outcomes.",
+  "tests": {
+    "total": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "existingBrowserSkips": 2,
+    "syntaxFiles": 5,
+    "command": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs"
+  },
+  "regressionBoundary": "Existing observation-layer comparison now targets the exact preserved pre-guidance workbook. Full before/after invariant and actual24 solution-node checks are in QA.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase261",
+  "remaining": [
+    "Remaining explanations and teaching criteria, full curriculum/content review",
+    "Actual A4 reflow/clipping and font checks for longer explanations",
+    "Actual PC/phone/voice/WebGL/mandatory3D gate",
+    "Main WIP preservation, integration and deployment"
+  ],
+  "browserVerified": false,
+  "studentDataReads": 0,
+  "studentDataWrites": 0,
+  "networkInNativeValidation": 0
+}

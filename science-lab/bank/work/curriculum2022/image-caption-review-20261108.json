@@ -1,0 +1,1192 @@
+{
+  "phase": 376,
+  "date": "2026-11-08",
+  "candidateBaseline": "8ad0462fae07e52edcd6b0f5e99df0aafa6c25d9",
+  "scope": "현행32권 학생/교사 교재의 실제 이미지 참조와 선택33개 소스 이미지·주요 설명 대조",
+  "inventory": {
+    "referencedLocalImagePaths": 186,
+    "rasterImages": 184,
+    "imgReferencedSvgFiles": 2,
+    "rasterSha256Unique": 184,
+    "imageReferencesEnumerated": 520,
+    "inventoryIncludesInlineSvg": false
+  },
+  "manualReview": {
+    "imagesViewedThisTurn": 33,
+    "newHashesComparedWithSelectedPriorEvidence": 30,
+    "recheckedPriorHashes": 3,
+    "priorCurrentMatchedManualHashes": 41,
+    "currentSelectedManualEvidenceHashes": 71,
+    "currentRasterHashesWithoutSelectedEvidence": 113,
+    "doesNotAssertNeverPreviouslyReviewed": true,
+    "priorEvidenceFile": "release-gates-image-review-20261105.json",
+    "scopeLimit": "선택한 과거 기록의 SHA 일치와 이번 소스 이미지의 눈 검수 범위다. 모든 이미지나 실제 화면·인쇄 지면 검수 완료를 뜻하지 않는다.",
+    "primaryImageCaptionMismatchesFound": 0
+  },
+  "ocr": {
+    "engine": "Apple Vision",
+    "languages": [
+      "ko-KR",
+      "en-US"
+    ],
+    "computePolicy": "CPU-only",
+    "imagesProcessed": 33,
+    "processingFailed": 0,
+    "recognizedTextLines": 2,
+    "manualVerifiedOpticsLabels": 2,
+    "visibleReticleMarksMissedByOcr": [
+      "science-lab/assets/book/c22-s61-u03-onion-kot.jpg"
+    ],
+    "reticleFocusedRecheckPerformed": true,
+    "reticleFocusedRecheckRecognizedLines": 0,
+    "zeroRecognizedLinesDoesNotProveTextAbsent": true,
+    "numeralTranscriptionOrRealSizeConversionCertified": false,
+    "rawOcrOutputsPublished": false
+  },
+  "preservation": {
+    "all186ReferencedAssetHashesUnchanged": true,
+    "appCodeCssQuestionsAnswersFiguresAndImagesChanged": false,
+    "newGeneratedImages": 0,
+    "newSourceQuestionRegistrations": 0,
+    "sourceSnapshotsCopiedIntoPublicRepo": 0
+  },
+  "tests": {
+    "productTestsRerun": false,
+    "unchangedProductBaseline": "8ad0462fae07e52edcd6b0f5e99df0aafa6c25d9",
+    "lastRelatedCheckPassed": 36,
+    "currentImageHashAndOcrResultChecksPassed": true
+  },
+  "assets": [
+    {
+      "path": "science-lab/assets/book/ecology-20261028/meadow.jpg",
+      "sha256": "5ddcdac89de29aea5988f7ea86eb75934309bdf77f41e525f5b8cca100339114",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "풀밭의 토끼·여우·풀 모습이 보인다. 본문은 생김새 관찰과 먹이 관계 모형을 구별한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 6,
+          "title": "풀밭의 생김새를 자세히 살펴요",
+          "alt": "풀을 먹는 토끼와 뒤쪽 풀밭에 서 있는 여우"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 6,
+          "title": "풀밭의 생김새를 자세히 살펴요",
+          "alt": "풀을 먹는 토끼와 뒤쪽 풀밭에 서 있는 여우"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s42-u02/fungus-photo.webp",
+      "sha256": "ca02e7ddd6b564977deb9bea326e918dd0b537a5ff3536fd1bfabe4f2a0cbcbb",
+      "width": 391,
+      "height": 268,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "가는 실과 가지 친 부분이 보인다. 확대 장면을 보이는 특징을 찾는 데 사용한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 5,
+          "title": "같은 장소에서도 역할이 달라요",
+          "alt": "실처럼 뻗어 가지를 친 부분이 보이는 곰팡이 확대 사진"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 5,
+          "title": "같은 장소에서도 역할이 달라요",
+          "alt": "실처럼 뻗어 가지를 친 부분이 보이는 곰팡이 확대 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/ecology-20261028/rice.jpg",
+      "sha256": "76c41da5b969ced651e24994d51ac55e40800c0c428f9741286407421b6a5638",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "긴 잎과 알곡이 이어진 이삭이 보인다. 해당 생김새 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 5,
+          "title": "같은 장소에서도 역할이 달라요",
+          "alt": "긴 잎과 알곡이 달린 가지가 늘어진 벼 이삭"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 5,
+          "title": "같은 장소에서도 역할이 달라요",
+          "alt": "긴 잎과 알곡이 달린 가지가 늘어진 벼 이삭"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/ecology-20261028/habitat.jpg",
+      "sha256": "9063f3555089a4b8a3d4051412ac911638ed4aa239def7e51efd9bd7cd75079e",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "나무·풀·물·흙이 함께 보인다. 사진에 없는 생물이나 수질은 단정하지 않는 본문과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 1,
+          "title": "생물과 환경",
+          "alt": "나무와 풀이 자라고 물과 흙이 함께 보이는 연못가"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 3,
+          "title": "생물과 주변 환경을 함께 살펴요",
+          "alt": "나무와 풀이 자라고 물과 흙이 함께 보이는 연못가"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 27,
+          "title": "사진에서 확인한 사실",
+          "alt": "나무와 풀이 자라고 물과 흙이 함께 보이는 연못가"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 1,
+          "title": "생물과 환경",
+          "alt": "나무와 풀이 자라고 물과 흙이 함께 보이는 연못가"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 3,
+          "title": "생물과 주변 환경을 함께 살펴요",
+          "alt": "나무와 풀이 자라고 물과 흙이 함께 보이는 연못가"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 27,
+          "title": "사진에서 확인한 사실",
+          "alt": "나무와 풀이 자라고 물과 흙이 함께 보이는 연못가"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/ecology-20261028/water-waste.jpg",
+      "sha256": "f673838420a0ab8058707502c7b3b7571d7f77d8d5a4f8b5ddc9e8b6bc76c3b7",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "병·봉지·컵이 물 위에 보인다. 성분·원인·생물 피해는 추가 조사로 구별한 본문과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 12,
+          "title": "보인 사실과 가능한 영향을 나누어요",
+          "alt": "물 표면에 떠 있는 플라스틱병과 비닐봉지, 일회용 컵"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "student",
+          "page": 50,
+          "title": "쓰레기 사진의 근거",
+          "alt": "물 표면에 떠 있는 플라스틱병과 비닐봉지, 일회용 컵"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 12,
+          "title": "보인 사실과 가능한 영향을 나누어요",
+          "alt": "물 표면에 떠 있는 플라스틱병과 비닐봉지, 일회용 컵"
+        },
+        {
+          "unit": "c22-s42-u02",
+          "mode": "teacher",
+          "page": 50,
+          "title": "쓰레기 사진의 근거",
+          "alt": "물 표면에 떠 있는 플라스틱병과 비닐봉지, 일회용 컵"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/mixture-photo-v1.png",
+      "sha256": "c91d290223014e37aea11e3ca0ede328c35597c8789913f9e1937a580f239e5d",
+      "width": 1448,
+      "height": 1086,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "큰 자갈과 작은 알갱이의 혼합물, 따로 담은 재료가 보인다. 혼합과 분리 도입 장면에 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 1,
+          "title": "혼합물의 분리",
+          "alt": "낮은 쟁반에 작은 모래와 큰 회색 자갈이 섞여 있고 옆 접시에 각각의 재료가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 5,
+          "title": "혼합물이란 무엇일까요?",
+          "alt": "낮은 쟁반에 작은 모래와 큰 회색 자갈이 섞여 있고 옆 접시에 각각의 재료가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 1,
+          "title": "혼합물의 분리",
+          "alt": "낮은 쟁반에 작은 모래와 큰 회색 자갈이 섞여 있고 옆 접시에 각각의 재료가 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 5,
+          "title": "혼합물이란 무엇일까요?",
+          "alt": "낮은 쟁반에 작은 모래와 큰 회색 자갈이 섞여 있고 옆 접시에 각각의 재료가 놓인 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/sieve-photo-v1.png",
+      "sha256": "f1e864bb70e0fe0d9b573c35305e7d9df5b69c4f24bdf71a9246fad86b902941",
+      "width": 1448,
+      "height": 1086,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "체 위 큰 자갈과 아래 모래가 보인다. 체 구멍의 조건을 설명하는 장면과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 9,
+          "title": "어떤 체로 모래와 자갈을 분리할까요?",
+          "alt": "받침 위의 금속 체에는 큰 자갈이 남고 아래 받침에 모래가 모인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 9,
+          "title": "어떤 체로 모래와 자갈을 분리할까요?",
+          "alt": "받침 위의 금속 체에는 큰 자갈이 남고 아래 받침에 모래가 모인 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/oil-photo-v1.png",
+      "sha256": "99b119b19f59eda6a06dc3ca7bc31059db8df076f37abf82bef8d58f579675f2",
+      "width": 1448,
+      "height": 1086,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "위쪽 노란 층과 아래쪽 맑은 층, 경계가 보인다. 물·식용유의 위치 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 15,
+          "title": "물과 식용유를 섞으면 어떻게 될까요?",
+          "alt": "눈금 없는 투명 비커에 아래 무색 액체와 위 옅은 노란 액체가 한 경계면으로 나뉘고 옆에 스포이트가 놓임."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 15,
+          "title": "물과 식용유를 섞으면 어떻게 될까요?",
+          "alt": "눈금 없는 투명 비커에 아래 무색 액체와 위 옅은 노란 액체가 한 경계면으로 나뉘고 옆에 스포이트가 놓임."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/dissolve-photo-v1.png",
+      "sha256": "2e9d1e944a35ecdb455abc3544e0ab9d1a1e5065a1da3541171f82d63125b669",
+      "width": 1448,
+      "height": 1086,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "두 비커의 고체 혼합물과 액체 아래 남은 모래가 보인다. 재료와 과정이 본문에 주어진 설명 장면이다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 20,
+          "title": "소금과 모래는 물에서 어떻게 될까요?",
+          "alt": "왼쪽 비커에는 흰 알갱이와 모래 혼합물, 오른쪽에는 맑은 액체 아래 모래가 남은 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 20,
+          "title": "소금과 모래는 물에서 어떻게 될까요?",
+          "alt": "왼쪽 비커에는 흰 알갱이와 모래 혼합물, 오른쪽에는 맑은 액체 아래 모래가 남은 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/filter-photo-v1.png",
+      "sha256": "33521293c9fd73aa1b30620b25eab9ca3766e2032b04be4fe1750ac5d62cd2d8",
+      "width": 1448,
+      "height": 1086,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "거름종이의 모래와 아래 맑은 액체, 고정대·비커가 보인다. 거름 결과 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 25,
+          "title": "거름종이 위와 아래에는 무엇이 있을까요?",
+          "alt": "무거운 받침의 고정대와 고리에 놓인 깔때기, 흰 거름종이에 남은 모래와 아래 비커에 모인 맑은 액체의 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 25,
+          "title": "거름종이 위와 아래에는 무엇이 있을까요?",
+          "alt": "무거운 받침의 고정대와 고리에 놓인 깔때기, 흰 거름종이에 남은 모래와 아래 비커에 모인 맑은 액체의 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/evaporate-photo-v1.png",
+      "sha256": "127be38ec0a8ab8c60ad975cf4e75dd0d4c89e59529bbf9e531e578420bd61f8",
+      "width": 1447,
+      "height": 1087,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "얕은 두 접시에 액체와 흰 알갱이를 각각 나타냈다. 본문은 실제 관찰 날짜·과정을 별도로 요구한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 30,
+          "title": "소금물에서 소금을 얻어요",
+          "alt": "같은 모양의 얕은 흰 접시 두 개. 왼쪽에는 맑은 액체, 오른쪽에는 흰 결정이 놓인 설명 장면."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 30,
+          "title": "소금물에서 소금을 얻어요",
+          "alt": "같은 모양의 얕은 흰 접시 두 개. 왼쪽에는 맑은 액체, 오른쪽에는 흰 결정이 놓인 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/technology-photo-v1.png",
+      "sha256": "b28fb1472f809e9c73d983805b79c5bb74521a26ebb1d88f6e0781ec34595198",
+      "width": 1448,
+      "height": 1086,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "여러 수조·배관·난간이 보인다. 본문은 특정 실제 시설이나 처리 순서를 사진만으로 정하지 않는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s52-u01",
+          "mode": "student",
+          "page": 38,
+          "title": "정수장에서는 물을 어떻게 깨끗하게 할까요?",
+          "alt": "난간과 통로가 있는 야외 수처리 시설의 여러 콘크리트 수조·배관을 담은 일반적인 시설 모습을 나타낸 그림."
+        },
+        {
+          "unit": "c22-s52-u01",
+          "mode": "teacher",
+          "page": 38,
+          "title": "정수장에서는 물을 어떻게 깨끗하게 할까요?",
+          "alt": "난간과 통로가 있는 야외 수처리 시설의 여러 콘크리트 수조·배관을 담은 일반적인 시설 모습을 나타낸 그림."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u04-source-arm-straight.png",
+      "sha256": "0d947e0ecc2f7e9d84450c6ac9811b85d2ec32b000bfd31b0303d3924d7edea9",
+      "width": 512,
+      "height": 384,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "편 막대의 두 용수철과 연결 부분이 보인다. 손으로 움직인 모형과 근육의 수축을 구별한 설명에 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u04",
+          "mode": "student",
+          "page": 8,
+          "title": "용수철 사진은 무엇을 보여 줄까요?",
+          "alt": "모형을 폈을 때의 나무 막대·연결·용수철"
+        },
+        {
+          "unit": "c22-s51-u04",
+          "mode": "teacher",
+          "page": 8,
+          "title": "용수철 사진은 무엇을 보여 줄까요?",
+          "alt": "모형을 폈을 때의 나무 막대·연결·용수철"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u04-source-arm-bent.png",
+      "sha256": "a1f0afc22d70fd51eb5d332ef9ba7ad66d49d18d3ab68f3424ca4726b56d8295",
+      "width": 512,
+      "height": 384,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "굽힌 막대의 안팎 용수철 모습이 보인다. 자세 변화의 정성 비교에 쓰이며 정밀 길이 측정으로 확인한 것은 아니다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u04",
+          "mode": "student",
+          "page": 8,
+          "title": "용수철 사진은 무엇을 보여 줄까요?",
+          "alt": "모형을 굽혔을 때의 나무 막대·연결·용수철"
+        },
+        {
+          "unit": "c22-s51-u04",
+          "mode": "teacher",
+          "page": 8,
+          "title": "용수철 사진은 무엇을 보여 줄까요?",
+          "alt": "모형을 굽혔을 때의 나무 막대·연결·용수철"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s61-u03-onion-kot.jpg",
+      "sha256": "b5a7c77f488ea5e70fd177962760e933d30839276b22b8267f434ff558055800",
+      "width": 2291,
+      "height": 2182,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "길쭉한 양파 표피 세포와 경계, 작은 눈금·숫자 표시가 보인다. 본문은 이 눈금만으로 실제 크기를 정하지 않는다. 숫자는 기본/영역 OCR 모두 놓쳤다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u03",
+          "mode": "student",
+          "page": 3,
+          "title": "식물의 몸을 이루는 세포",
+          "alt": "현미경으로 촬영한 양파 표피의 길쭉한 세포와 이어진 세포벽"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "teacher",
+          "page": 3,
+          "title": "식물의 몸을 이루는 세포",
+          "alt": "현미경으로 촬영한 양파 표피의 길쭉한 세포와 이어진 세포벽"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s61-u03-apple-higginson.jpg",
+      "sha256": "d2e665ef4ab9ab613c5763748026cca1b80a33a8f704e6e85158653d7a7ebadf",
+      "width": 3264,
+      "height": 2448,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "꽃잎과 중심의 구조가 보인다. 본문은 꽃가루받이 과정 자체를 정지 사진으로 확인한 것으로 삼지 않는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u03",
+          "mode": "student",
+          "page": 68,
+          "title": "꽃·열매·씨는 어떤 일을 할까요?",
+          "alt": "사과꽃의 꽃잎과 중앙의 암술, 꽃가루가 만들어지는 수술"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "teacher",
+          "page": 68,
+          "title": "꽃·열매·씨는 어떤 일을 할까요?",
+          "alt": "사과꽃의 꽃잎과 중앙의 암술, 꽃가루가 만들어지는 수술"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/s31-u04-photo-seedling.webp",
+      "sha256": "9ea4a501084f99d95ecb4ef6b73709f6834607b4abe449ceee9054e60f57930a",
+      "width": 1024,
+      "height": 640,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "화분 위 줄기와 잎이 보이며 뿌리는 흙에 가려져 있다. 본문도 뿌리를 별도로 관찰하도록 구별한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u03",
+          "mode": "student",
+          "page": 14,
+          "title": "뿌리는 어떤 일을 할까요?",
+          "alt": "화분에서 줄기와 잎이 자란 어린 식물"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "student",
+          "page": 57,
+          "title": "함께 일하는 뿌리·줄기·잎",
+          "alt": "화분에서 줄기와 잎이 자란 어린 식물"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "teacher",
+          "page": 14,
+          "title": "뿌리는 어떤 일을 할까요?",
+          "alt": "화분에서 줄기와 잎이 자란 어린 식물"
+        },
+        {
+          "unit": "c22-s61-u03",
+          "mode": "teacher",
+          "page": 57,
+          "title": "함께 일하는 뿌리·줄기·잎",
+          "alt": "화분에서 줄기와 잎이 자란 어린 식물"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u01-fern-nps.jpg",
+      "sha256": "7f15bedd829943b335febb597226b191626f000c0822434c91ddd15c3bb35f88",
+      "width": 1312,
+      "height": 1005,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "줄기 양쪽에 이어진 잎 모양 자취가 보인다. 식물 화석의 생김새 관찰 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 9,
+          "title": "화석에서 동물과 식물의 특징을 찾아요",
+          "alt": "줄기 양옆으로 작은 잎 모양이 이어진 고사리 화석"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 9,
+          "title": "화석에서 동물과 식물의 특징을 찾아요",
+          "alt": "줄기 양옆으로 작은 잎 모양이 이어진 고사리 화석"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s51-u01/fossil-fish.png",
+      "sha256": "fddd707bc30fc3ffe2b90e2768e6d8bce3da90cd345ae992dd94a397cb013b87",
+      "width": 219,
+      "height": 129,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "물고기 몸 윤곽과 뼈·지느러미 모양이 보인다. 본문은 이름만으로 과거 바다라고 정하지 않는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 9,
+          "title": "화석에서 동물과 식물의 특징을 찾아요",
+          "alt": "교재에서 물고기로 제시한 화석 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 67,
+          "title": "화석 사진과 환경 추리",
+          "alt": "교재에서 물고기로 제시한 화석 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 9,
+          "title": "화석에서 동물과 식물의 특징을 찾아요",
+          "alt": "교재에서 물고기로 제시한 화석 사진"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 67,
+          "title": "화석 사진과 환경 추리",
+          "alt": "교재에서 물고기로 제시한 화석 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s51-u01/rock-a.png",
+      "sha256": "c43292f1f7cbf933032378e1b571f54eb58d0dd52b5038f4b7532cae4afaa636",
+      "width": 185,
+      "height": 125,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "낱알 구분이 어려운 작은 표본 사진이다. 본문은 제공된 관찰 기록과 함께 읽게 하며 사진 크기만으로 분류하지 않는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 7,
+          "title": "퇴적암을 이루는 알갱이를 관찰해요",
+          "alt": "암석 표본 A"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 7,
+          "title": "퇴적암을 이루는 알갱이를 관찰해요",
+          "alt": "암석 표본 A"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s51-u01/rock-b.png",
+      "sha256": "9542dfbd7475c5bc57e3a662be6dd71e9fcf27401168ca63fb545732734c8007",
+      "width": 251,
+      "height": 200,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "작은 알갱이로 보이는 표면의 표본 사진이다. 본문은 같은 기준의 관찰 기록과 연결한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 7,
+          "title": "퇴적암을 이루는 알갱이를 관찰해요",
+          "alt": "암석 표본 B"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 40,
+          "title": "이암·사암·역암 분류",
+          "alt": "주로 모래 크기의 알갱이가 보이는 표본을 이암·사암·역암 중 분류하면 무엇인가요?"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 7,
+          "title": "퇴적암을 이루는 알갱이를 관찰해요",
+          "alt": "암석 표본 B"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 40,
+          "title": "이암·사암·역암 분류",
+          "alt": "주로 모래 크기의 알갱이가 보이는 표본을 이암·사암·역암 중 분류하면 무엇인가요?"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s51-u01/rock-c.png",
+      "sha256": "5ef18a5c7efc00f9b8afe7c60ba7ff8500fe1ba6d26bcb46a640fc095d4c5dd1",
+      "width": 258,
+      "height": 202,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "큰 둥근 알갱이와 그 사이의 작은 바탕이 보인다. 본문의 구성 알갱이 관찰 설명과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 7,
+          "title": "퇴적암을 이루는 알갱이를 관찰해요",
+          "alt": "암석 표본 C"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "student",
+          "page": 39,
+          "title": "이암·사암·역암 분류",
+          "alt": "암석에 자갈처럼 큰 알갱이가 다른 작은 알갱이와 함께 굳어 있습니다. 이 단원의 세 퇴적암 중 알맞은 이름은 무엇인가요?"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 7,
+          "title": "퇴적암을 이루는 알갱이를 관찰해요",
+          "alt": "암석 표본 C"
+        },
+        {
+          "unit": "c22-s51-u01",
+          "mode": "teacher",
+          "page": 39,
+          "title": "이암·사암·역암 분류",
+          "alt": "암석에 자갈처럼 큰 알갱이가 다른 작은 알갱이와 함께 굳어 있습니다. 이 단원의 세 퇴적암 중 알맞은 이름은 무엇인가요?"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/observe.webp",
+      "sha256": "cee91f76aea5a7cb74b2de6868b42a6d6151c367e013a5f042fff4164b2243d3",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "따로 놓인 세 병의 무색·노랑·푸른 액체가 보인다. 본문은 겉보기와 용액 성질을 구별한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 1,
+          "title": "산과 염기",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 5,
+          "title": "겉보기 외의 기준으로 나누어요",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 10,
+          "title": "지시약으로 색 변화를 비교해요",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 45,
+          "title": "성질을 생활 속 쓰임과 연결해요",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 1,
+          "title": "산과 염기",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 5,
+          "title": "겉보기 외의 기준으로 나누어요",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 10,
+          "title": "지시약으로 색 변화를 비교해요",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 45,
+          "title": "성질을 생활 속 쓰임과 연결해요",
+          "alt": "같은 모양의 뚜껑이 있는 병 세 개에 맑은 무색·옅은 노란색·옅은 푸른색 액체가 따로 담긴 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/litmus.webp",
+      "sha256": "e6fd0410b2229146e244398f4c811bb6197d982fd0ef09997d192d615e5ea107",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "붉고 푸른 마른 종이, 관찰판과 핀셋이 보인다. 준비 장면을 실제 색 변화 결과와 구별한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 15,
+          "title": "리트머스의 색 변화를 살펴요",
+          "alt": "마른 붉고 푸른 리트머스 종이와 핀셋·흰 관찰판을 준비한 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 15,
+          "title": "리트머스의 색 변화를 살펴요",
+          "alt": "마른 붉고 푸른 리트머스 종이와 핀셋·흰 관찰판을 준비한 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/phenol.webp",
+      "sha256": "414505619c2dfb11a0a7b0b016bb3451c97f0791fc3388adcb5fb97bbca2d995",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "서로 다른 병의 무색·분홍 액체와 장갑 낀 손·스포이트가 보인다. 정확한 성질은 지시약 조건과 함께 읽게 한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 20,
+          "title": "페놀프탈레인의 변화를 살펴요",
+          "alt": "서로 다른 병의 무색·분홍빛 액체와 장갑 낀 교사가 들고 있는 스포이트를 보여 주는 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 20,
+          "title": "페놀프탈레인의 변화를 살펴요",
+          "alt": "서로 다른 병의 무색·분홍빛 액체와 장갑 낀 교사가 들고 있는 스포이트를 보여 주는 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/cabbage.webp",
+      "sha256": "b45ddf95740c5b75f9a22c0ac77623c1fd60a81b90c55bd57ec5d26e5aa74350",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "양배추 잎·보라색 액체·거름 도구가 보인다. 추출액 준비를 보여 주며 온도를 사진으로 측정한 것은 아니다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 25,
+          "title": "붉은 양배추 지시약을 이용해요",
+          "alt": "붉은 양배추 잎과 식힌 자주색 추출액·거름종이와 안정된 깔때기를 보여 주는 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 56,
+          "title": "세 지시약의 결과를 연결해요",
+          "alt": "붉은 양배추 잎과 식힌 자주색 추출액·거름종이와 안정된 깔때기를 보여 주는 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 25,
+          "title": "붉은 양배추 지시약을 이용해요",
+          "alt": "붉은 양배추 잎과 식힌 자주색 추출액·거름종이와 안정된 깔때기를 보여 주는 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 56,
+          "title": "세 지시약의 결과를 연결해요",
+          "alt": "붉은 양배추 잎과 식힌 자주색 추출액·거름종이와 안정된 깔때기를 보여 주는 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/mixing.webp",
+      "sha256": "187ac63b5a21887532ffdb2f9a47b2b8d2e2ac55f26d0c312ea529041d4b91db",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "서로 다른 세 병의 붉은색·보라색·푸른색 액체가 보인다. 실제 시간에 따른 한 용액의 변화로 삼지 않는 안내와 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 40,
+          "title": "섞을 때의 색 변화를 관찰해요",
+          "alt": "서로 다른 병 세 개에 붉은색·보라색·푸른색 액체를 놓은 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 40,
+          "title": "섞을 때의 색 변화를 관찰해요",
+          "alt": "서로 다른 병 세 개에 붉은색·보라색·푸른색 액체를 놓은 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/carbonate.webp",
+      "sha256": "5c531400a16950532d0fb5ef8aeed4de6d6c58219161c5d8014489dc5fb32735",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "껍데기와 흰 돌 표본이 따로 준비되어 있다. 반응 전 준비 장면이며 기체 발생 결과를 보여 주는 사진으로 쓰지 않는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 30,
+          "title": "껍데기와 산성 용액의 반응",
+          "alt": "달걀 껍데기와 작은 흰 돌 표본을 서로 다른 접시에 준비한 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 30,
+          "title": "껍데기와 산성 용액의 반응",
+          "alt": "달걀 껍데기와 작은 흰 돌 표본을 서로 다른 접시에 준비한 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/protein.webp",
+      "sha256": "0633399853f3ecce9d213a70e1f5e3cc73bd5b57a5344d450d028d6544a06cc8",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "흰자와 두부를 따로 담은 용기가 보인다. 껍데기와 흰자의 성분을 구별하는 본문과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 35,
+          "title": "흰자와 껍데기의 성분을 구별해요",
+          "alt": "뚜껑 있는 표본 용기에 삶은 흰자와 두부를 따로 준비한 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 35,
+          "title": "흰자와 껍데기의 성분을 구별해요",
+          "alt": "뚜껑 있는 표본 용기에 삶은 흰자와 두부를 따로 준비한 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/environment.webp",
+      "sha256": "11d45398eb46d38c1beff3b1755a4ceb25068232d97ffe519163333ecc4df680",
+      "width": 1536,
+      "height": 1024,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "바닷속 조개류·식물·바위가 보인다. 산성화 피해 자체를 관찰한 사진으로 삼지 않는 본문과 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": false,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s61-u01",
+          "mode": "student",
+          "page": 50,
+          "title": "산성화의 환경 피해를 조사해요",
+          "alt": "자연광이 비치는 얕은 바닷속 암석에 조개류와 해초가 있는 일반화된 설명 장면."
+        },
+        {
+          "unit": "c22-s61-u01",
+          "mode": "teacher",
+          "page": 50,
+          "title": "산성화의 환경 피해를 조사해요",
+          "alt": "자연광이 비치는 얕은 바닷속 암석에 조개류와 해초가 있는 일반화된 설명 장면."
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u02-source-lens.png",
+      "sha256": "14e85cc2711a3d52df5fc9222c3a4fb51dea56eb47bd5867f3a6b40777792ede",
+      "width": 302,
+      "height": 169,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "렌즈 앞뒤 종이 위 빛 자취와 렌즈가 보인다. 진행 방향은 광원 위치와 함께 확인하는 설명에 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": true,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u02",
+          "mode": "student",
+          "page": 30,
+          "title": "렌즈를 넣으면 빛의 경로가 어떻게 될까요?",
+          "alt": "렌즈 앞뒤의 빛 자취를 종이 위에서 살펴본 원교재 사진"
+        },
+        {
+          "unit": "c22-s51-u02",
+          "mode": "teacher",
+          "page": 30,
+          "title": "렌즈를 넣으면 빛의 경로가 어떻게 될까요?",
+          "alt": "렌즈 앞뒤의 빛 자취를 종이 위에서 살펴본 원교재 사진"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u02-source-periscope.png",
+      "sha256": "591f55f1dba5288acb2e1aa79c7fb431e64f1ef22fee3d60a05e44268ed2945f",
+      "width": 434,
+      "height": 412,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "눈과 평행한 두 거울, 거울 이름표 두 개가 보인다. 표시 화살표는 거울을 가리키며 본문이 빛의 진행 순서를 별도로 설명한다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": true,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 2,
+      "references": [
+        {
+          "unit": "c22-s51-u02",
+          "mode": "student",
+          "page": 25,
+          "title": "거울의 쓰임새와 빛의 경로를 알아보아요",
+          "alt": "두 평면거울을 통하여 눈으로 빛이 이어지는 원교재 설명 그림"
+        },
+        {
+          "unit": "c22-s51-u02",
+          "mode": "teacher",
+          "page": 25,
+          "title": "거울의 쓰임새와 빛의 경로를 알아보아요",
+          "alt": "두 평면거울을 통하여 눈으로 빛이 이어지는 원교재 설명 그림"
+        }
+      ]
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u02-source-mirror.png",
+      "sha256": "311e4e17e6b83f1267e61e3f2d37d419ef8085326498714960b4936966367989",
+      "width": 512,
+      "height": 384,
+      "wholeImageViewed": true,
+      "displayMayBeResized": true,
+      "manualCaptionReview": "접힌 거울에 주변 모습이 비친다. 정확한 반사각을 재는 자료로 삼지 않는 현재 관찰 설명에 맞는다.",
+      "captionMismatchFound": false,
+      "priorSelectedManualEvidenceMatched": true,
+      "appleVisionProcessing": "ok",
+      "recognizedTextLines": 0,
+      "references": [
+        {
+          "unit": "c22-s51-u02",
+          "mode": "student",
+          "page": 15,
+          "title": "거울에서 되돌아 나아가요",
+          "alt": "접힌 안전 거울에 주변 모습이 비치는 원교재 사진"
+        },
+        {
+          "unit": "c22-s51-u02",
+          "mode": "teacher",
+          "page": 15,
+          "title": "거울에서 되돌아 나아가요",
+          "alt": "접힌 안전 거울에 주변 모습이 비치는 원교재 사진"
+        }
+      ]
+    }
+  ],
+  "actualBrowserUsed": false,
+  "actualPrintLayoutReviewed": false,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

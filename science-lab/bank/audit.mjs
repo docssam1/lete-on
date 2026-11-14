@@ -13,6 +13,8 @@ const EARLY_TERMS = {
   5: ['자기장', '자기력선', '전자석', '코일', '원자', '분자'],
   6: ['자기력선', '원자', '분자'],
 };
+// ‘원자료’는 원자(물질의 구성 입자)를 가리키는 낱말이 아니다.
+const hasEarlyTerm = (body, word) => (word==='원자'?body.replaceAll('원자료',''):body).includes(word);
 const LEVELS = new Set(['기본', '심화', '영재']);
 const TRACKS = new Set(['교과', '영재성']);
 
@@ -42,7 +44,7 @@ for (const f of unitFiles) {
     if (!TRACKS.has(t.track)) err(`${it.id} track=${t.track}`);
     const body = [it.prompt, JSON.stringify(it.givens ?? ''), JSON.stringify(it.choices ?? ''), it.explanation,
       it.answerContract?.sample ?? '', JSON.stringify(it.answerContract?.blanks ?? '')].join(' ');
-    for (const w of EARLY_TERMS[t.grade] ?? []) if (body.includes(w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
+    for (const w of EARLY_TERMS[t.grade] ?? []) if (hasEarlyTerm(body,w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
     if (it.answerContract?.type === 'single-choice') {
       const a = it.answerContract.answer, L = it.choices.map((c) => c.length);
       pos[a]++;
@@ -74,7 +76,7 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.similar.js'))) 
     else if (!tx.sources[key] || tx.sources[key][0] !== t.type) err(`${it.id} 원문 ${key}와 유형 불일치`);
     perType[t.type] = (perType[t.type] || 0) + 1;
     const body = JSON.stringify([it.prompt, it.givens, it.choices, it.explanation, it.answerContract]);
-    for (const w of EARLY_TERMS[t.grade] ?? []) if (body.includes(w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
+    for (const w of EARLY_TERMS[t.grade] ?? []) if (hasEarlyTerm(body,w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
     if (it.answerContract.type === 'single-choice') {
       const a = it.answerContract.answer, L = it.choices.map((c) => c.length), so = [...L].sort((x, y) => y - x);
       pos[a]++; if (so[0] >= 12 && L[a] === so[0] && so[0] - so[1] >= 3) err(`${it.id} 정답이 눈에 띄게 가장 긴 보기`);
