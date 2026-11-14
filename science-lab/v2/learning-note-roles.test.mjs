@@ -9,7 +9,7 @@ import {workbook as animal,animalStudyNotesPriorWorkbook as priorAnimal} from '.
 import {workbook as plant,plantStudyNotesPriorWorkbook as priorPlant} from '../data/book/s31-u03.workbook.js';
 import {workbook as life,lifeStudyNotesPriorWorkbook as priorLife} from '../data/book/s31-u04.workbook.js';
 import {workbook as material,materialStudyNotesPriorWorkbook as priorMaterial} from '../data/book/c22-s32-u01.workbook.js';
-import {workbook as earthSea,earthSeaStudyNotesPriorWorkbook as priorEarthSea} from '../data/book/c22-s32-u02.workbook.js';
+import {earthSurfacePhotoPriorWorkbook as earthSea,earthSeaStudyNotesPriorWorkbook as priorEarthSea} from '../data/book/c22-s32-u02.workbook.js';
 import {workbook as sound,soundStudyNotesPriorWorkbook as priorSound} from '../data/book/c22-s32-u03.workbook.js';
 import {workbook as infection,infectionStudyNotesPriorWorkbook as priorInfection} from '../data/book/c22-s32-u04.workbook.js';
 const roles={'핵심 정리':'summary','더 알아보기':'extension','내가 정리할 것':'personal','지도 메모':'teacher'};

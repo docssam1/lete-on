@@ -1,4 +1,4 @@
-import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-volcano-reference-context';
+import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-earth-surface-photo';
 import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withCombustionReadableWorkbook}from'./c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';

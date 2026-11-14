@@ -1,10 +1,11 @@
+import{EARTH_SURFACE_PHOTO_VERSION,withEarthSeaStandaloneContext}from'../data/book/standalone-question-context.js';
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import test from 'node:test';
 import {withGrade3StudyNotes} from '../data/book/grade3-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-import {workbook,earthSeaElementaryPriorWorkbook as prior} from '../data/book/c22-s32-u02.workbook.js';
+import {earthSurfacePhotoPriorWorkbook as workbook,workbook as currentWorkbook,earthSeaElementaryPriorWorkbook as prior} from '../data/book/c22-s32-u02.workbook.js';
 import {earthSeaElementaryCurrentItems,EARTH_SEA_ELEMENTARY_VERSION} from '../data/book/c22-s32-u02.elementary.js';
 import {materialEarthCurrentItems} from '../data/book/material-earth-student-language.js';
 import {earthSeaReasoningCurrentItems} from '../data/book/c22-s32-u02.rail-notes.js';
@@ -39,13 +40,13 @@ test('Earth-and-sea reading edits preserve workbook grading, pictures and all fo
   const paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
     const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-    if(mode==='student'||mode==='teacher')for(const q of workbook.questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
+    if(mode==='student'||mode==='teacher')for(const q of withEarthSeaStandaloneContext(workbook).questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
 });
 
 test('actual bank loader preserves every answer boundary and saved presentation when prompts change',async()=>{
-  const before=await priorBank(),savedBefore=structuredClone(before),{items:current}=await actualBank();
+  const before=await priorBank(),savedBefore=structuredClone(before),{items:latest}=await actualBank(),current=latest.map(q=>q.contentVersion===EARTH_SURFACE_PHOTO_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q);
   assert.equal(current.length,92);let changed=0;
   for(let i=0;i<before.length;i++){
     const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);
@@ -77,5 +78,5 @@ test('classroom questions use the same revised bank prompts while retaining thei
   const bank=new Map(items.map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,12);
   assert.equal(mod.classroomItems.filter(q=>q.contentVersion===EARTH_SEA_ELEMENTARY_VERSION).length,6);
   for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
-  for(const q of workbook.questions.filter(q=>q.sourceId))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
+  for(const q of currentWorkbook.questions.filter(q=>q.sourceId))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
 });

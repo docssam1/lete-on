@@ -1,3 +1,4 @@
+import{withEarthSeaStandaloneContext}from'./standalone-question-context.js?v=20261115-earth-surface-photo';
 import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withEarthSeaElementaryWorkbook} from './c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary';
@@ -7920,4 +7921,5 @@ const baseWorkbook = {
 export const earthSeaReasoningPriorWorkbook=withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withEarthSeaBodyLanguage(withStudentOpeningLanguage(withEarthSeaRails(baseWorkbook)))));
 export const earthSeaElementaryPriorWorkbook=withEarthSeaLearnerReasoning(earthSeaReasoningPriorWorkbook);
 export const earthSeaStudyNotesPriorWorkbook=withEarthSeaElementaryWorkbook(earthSeaElementaryPriorWorkbook);
-export const workbook=withGrade3StudyNotes(earthSeaStudyNotesPriorWorkbook);
+export const earthSurfacePhotoPriorWorkbook=withGrade3StudyNotes(earthSeaStudyNotesPriorWorkbook);
+export const workbook=withEarthSeaStandaloneContext(earthSurfacePhotoPriorWorkbook);

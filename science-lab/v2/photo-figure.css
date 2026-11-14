@@ -13,3 +13,5 @@
 
 /* Keep the two land reference images readable beside the existing printed exercises. */
 @media print{.bank-photo-figure img[src="../assets/book/s41-u03-runoff-before-after-v1.png"],.bank-photo-figure img[src="../assets/bank/s41-u03/s3-q04.webp"],.bank-photo-figure img[src="../assets/bank/s41-u03/s3-q06.webp"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}
+
+@media print{.ed-question .ed-photo img[src="../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg"],.bank-photo-figure img[src="../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}

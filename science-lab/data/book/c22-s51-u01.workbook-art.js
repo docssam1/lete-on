@@ -1,4 +1,4 @@
-import{withGeologyStandaloneArt}from'./standalone-question-context.js?v=20261115-volcano-reference-context';
+import{withGeologyStandaloneArt}from'./standalone-question-context.js?v=20261115-earth-surface-photo';
 // 지층 교재의 표·사진 자료. 원래 수업과 기록은 그대로 둔다.
 export const geologyObservationPriorArt={
   "strata": "<figure class=\"ed-photo\"><img src=\"../assets/book/c22-s51-u01-source-horizontal.png\" alt=\"수평으로 놓인 지층을 보여 주는 원교재 사진\"><figcaption>거의 수평으로 놓인 지층이에요. 층의 색과 두께를 살펴요. 자료: 지필드 과학 교재.</figcaption></figure>",
