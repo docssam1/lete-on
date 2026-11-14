@@ -21,3 +21,6 @@
 .ut-q-ans.is-multi { flex-wrap: wrap; column-gap: 1.6em; row-gap: 0.4em; }
 .ut-q-ans.is-multi i { width: 10cqw; }
 @media screen and (max-width: 700px) { .ut-q-ans.is-multi i { width: 64px; } }
+/* 2과정 권별 테스트 채점 칸: 유사문제 칸이 없어 세 칸 */
+.c2-rows { margin: 0; padding: 0; list-style: none; }
+.c2-rows .ut-row { grid-template-columns: 26px minmax(0, 1fr) auto; }
