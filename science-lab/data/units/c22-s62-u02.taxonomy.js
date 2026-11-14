@@ -189,7 +189,204 @@ export const taxonomy = {
     "까닭 설명",
     "그림·설계"
   ],
-  "sources": {},
+  "sources": {
+    "1-1": [
+      "T01",
+      "single-choice"
+    ],
+    "1-2": [
+      "T12",
+      "written-explanation"
+    ],
+    "1-3": [
+      "T02",
+      "multi-choice"
+    ],
+    "1-4": [
+      "T03",
+      "single-choice"
+    ],
+    "1-5": [
+      "T04",
+      "short-text"
+    ],
+    "1-6": [
+      "T05",
+      "written-explanation"
+    ],
+    "1-7": [
+      "T05",
+      "short-text"
+    ],
+    "1-8": [
+      "T07",
+      "single-choice"
+    ],
+    "1-9": [
+      "T07",
+      "short-text"
+    ],
+    "1-10": [
+      "T09",
+      "single-choice"
+    ],
+    "1-11": [
+      "T08",
+      "multi-choice"
+    ],
+    "1-12": [
+      "T11",
+      "single-choice"
+    ],
+    "1-13": [
+      "T12",
+      "multi-choice"
+    ],
+    "2-2": [
+      "T01",
+      "single-choice"
+    ],
+    "2-3": [
+      "T02",
+      "short-text"
+    ],
+    "2-4": [
+      "T05",
+      "written-explanation"
+    ],
+    "2-5": [
+      "T06",
+      "multi-choice"
+    ],
+    "2-6": [
+      "T06",
+      "short-text"
+    ],
+    "2-7": [
+      "T07",
+      "short-text"
+    ],
+    "2-8": [
+      "T07",
+      "single-choice"
+    ],
+    "2-9": [
+      "T09",
+      "short-text"
+    ],
+    "2-10": [
+      "T08",
+      "short-text"
+    ],
+    "2-11": [
+      "T10",
+      "single-choice"
+    ],
+    "2-12": [
+      "T11",
+      "short-text"
+    ],
+    "3-1": [
+      "T01",
+      "single-choice"
+    ],
+    "3-2": [
+      "T01",
+      "single-choice"
+    ],
+    "3-3": [
+      "T02",
+      "single-choice"
+    ],
+    "3-4": [
+      "T03",
+      "short-text"
+    ],
+    "3-5": [
+      "T05",
+      "short-text"
+    ],
+    "3-6": [
+      "T05",
+      "single-choice"
+    ],
+    "3-7": [
+      "T06",
+      "short-text"
+    ],
+    "3-8": [
+      "T06",
+      "single-choice"
+    ],
+    "3-9": [
+      "T07",
+      "single-choice"
+    ],
+    "3-10": [
+      "T07",
+      "single-choice"
+    ],
+    "3-11": [
+      "T08",
+      "single-choice"
+    ],
+    "3-12": [
+      "T10",
+      "multi-choice"
+    ],
+    "3-13": [
+      "T10",
+      "written-explanation"
+    ],
+    "3-14": [
+      "T11",
+      "single-choice"
+    ],
+    "3-15": [
+      "T12",
+      "single-choice"
+    ],
+    "4-1": [
+      "T01",
+      "single-choice"
+    ],
+    "4-2": [
+      "T02",
+      "single-choice"
+    ],
+    "4-3": [
+      "T03",
+      "single-choice"
+    ],
+    "4-4": [
+      "T05",
+      "multi-choice"
+    ],
+    "4-5": [
+      "T06",
+      "single-choice"
+    ],
+    "4-6": [
+      "T07",
+      "short-text"
+    ],
+    "4-7": [
+      "T08",
+      "short-text"
+    ],
+    "4-8": [
+      "T09",
+      "short-text"
+    ],
+    "4-9": [
+      "T10",
+      "single-choice"
+    ],
+    "4-10": [
+      "T11",
+      "written-explanation"
+    ]
+  },
   "authored": {
     "c22-s62-u02-v001": "T01",
     "c22-s62-u02-v002": "T12",
@@ -1383,11 +1580,12 @@ export const taxonomy = {
     }
   ],
   "supplementAuthored": true,
-  "sourcePending": true,
+  "sourcePending": false,
   "counts": {
-    "source": 0,
+    "source": 49,
     "supplement": 198,
     "paired": 70,
-    "independentAuthored": 128
+    "independentAuthored": 128,
+    "total": 247
   }
 };

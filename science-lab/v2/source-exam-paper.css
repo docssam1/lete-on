@@ -7,6 +7,7 @@
 .source-exam-paper .source-exam-origin{font-size:14px;color:#526359;margin:0 0 8px}
 .source-exam-paper .q{border:0;border-radius:0;box-shadow:none;background:none;margin:0;padding:0;font-size:inherit;line-height:inherit}
 .source-exam-paper .q p,.source-exam-paper .q .lead{font-size:inherit;line-height:inherit}
+.source-exam-paper .q p{white-space:pre-line}
 .source-exam-paper .q .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 20px}
 .source-exam-paper .src-fig{margin:14px 0;text-align:center}
 .source-exam-paper img{max-width:100%;height:auto;max-height:105mm;object-fit:contain}
@@ -16,6 +17,8 @@
 .source-exam-paper .no{color:#24543a;font-weight:700}
 .source-exam-paper .why,.source-exam-paper .source-review{font-size:16px;margin-top:14px}
 .source-exam-paper .source-exam-review{margin-top:14px;padding:10px 14px;border-left:3px solid #2f6b4a;font-size:16px}
+.source-exam-paper .source-print-number{font-weight:700;color:#24543a}
+.source-exam-paper .source-print-key{margin-top:14px;padding-top:8px;border-top:1px solid #bacabd}
 @media(max-width:600px){
  .source-exam-paper{margin:12px;padding:18px}
  .source-exam-paper .source-exam-heading h1{font-size:23px}
@@ -35,4 +38,5 @@
  .source-exam-paper .source-exam-review{font-size:11pt;padding:6pt 9pt}
  .source-exam-paper .ans-line{min-height:22pt}
  .source-exam-paper a{color:inherit;text-decoration:none}
+ .source-bank-combined>.source-exam-paper{break-after:page}
 }

@@ -1,4 +1,4 @@
-export const taxonomy={
+export const taxonomy = {
   "unit": "c22-s62-u03",
   "curriculum": "2022 개정",
   "grade": 6,
@@ -1239,14 +1239,248 @@ export const taxonomy={
     }
   ],
   "counts": {
-    "source": 0,
+    "source": 58,
     "similar": 0,
     "supplement": 186,
     "paired": 58,
-    "independentAuthored": 128
+    "independentAuthored": 128,
+    "total": 244
   },
-  "sourcePending": true,
-  "sources": {},
+  "sourcePending": false,
+  "sources": {
+    "1-1": [
+      "T01",
+      "single-choice"
+    ],
+    "1-2": [
+      "T04",
+      "single-choice"
+    ],
+    "1-3": [
+      "T02",
+      "short-text"
+    ],
+    "1-4": [
+      "T02",
+      "written-explanation"
+    ],
+    "1-5": [
+      "T05",
+      "short-text"
+    ],
+    "1-8": [
+      "T13",
+      "single-choice"
+    ],
+    "1-9": [
+      "T14",
+      "single-choice"
+    ],
+    "1-10": [
+      "T08",
+      "single-choice"
+    ],
+    "1-11": [
+      "T10",
+      "written-explanation"
+    ],
+    "1-12": [
+      "T09",
+      "single-choice"
+    ],
+    "1-13": [
+      "T12",
+      "short-text"
+    ],
+    "1-14": [
+      "T01",
+      "single-choice"
+    ],
+    "1-15": [
+      "T03",
+      "single-choice"
+    ],
+    "2-1": [
+      "T01",
+      "single-choice"
+    ],
+    "2-2": [
+      "T03",
+      "single-choice"
+    ],
+    "2-3": [
+      "T02",
+      "single-choice"
+    ],
+    "2-4": [
+      "T02",
+      "written-explanation"
+    ],
+    "2-5": [
+      "T05",
+      "short-text"
+    ],
+    "2-6": [
+      "T05",
+      "single-choice"
+    ],
+    "2-9": [
+      "T13",
+      "short-text"
+    ],
+    "2-10": [
+      "T14",
+      "short-text"
+    ],
+    "2-11": [
+      "T09",
+      "short-text"
+    ],
+    "2-12": [
+      "T11",
+      "short-text"
+    ],
+    "2-13": [
+      "T09",
+      "multi-choice"
+    ],
+    "2-14": [
+      "T12",
+      "single-choice"
+    ],
+    "2-15": [
+      "T03",
+      "single-choice"
+    ],
+    "3-1": [
+      "T01",
+      "single-choice"
+    ],
+    "3-2": [
+      "T03",
+      "single-choice"
+    ],
+    "3-3": [
+      "T02",
+      "single-choice"
+    ],
+    "3-4": [
+      "T02",
+      "short-text"
+    ],
+    "3-5": [
+      "T05",
+      "written-explanation"
+    ],
+    "3-11": [
+      "T13",
+      "single-choice"
+    ],
+    "3-12": [
+      "T14",
+      "single-choice"
+    ],
+    "3-13": [
+      "T08",
+      "single-choice"
+    ],
+    "3-14": [
+      "T08",
+      "single-choice"
+    ],
+    "3-15": [
+      "T07",
+      "short-text"
+    ],
+    "3-16": [
+      "T11",
+      "single-choice"
+    ],
+    "3-17": [
+      "T06",
+      "single-choice"
+    ],
+    "3-18": [
+      "T09",
+      "multi-choice"
+    ],
+    "3-19": [
+      "T12",
+      "short-text"
+    ],
+    "3-20": [
+      "T12",
+      "single-choice"
+    ],
+    "4-1": [
+      "T01",
+      "short-text"
+    ],
+    "4-2": [
+      "T02",
+      "short-text"
+    ],
+    "4-3": [
+      "T03",
+      "short-text"
+    ],
+    "4-4": [
+      "T04",
+      "single-choice"
+    ],
+    "4-5": [
+      "T02",
+      "short-text"
+    ],
+    "4-6": [
+      "T07",
+      "short-text"
+    ],
+    "4-7": [
+      "T06",
+      "short-text"
+    ],
+    "4-8": [
+      "T05",
+      "written-explanation"
+    ],
+    "4-12": [
+      "T14",
+      "single-choice"
+    ],
+    "4-13": [
+      "T14",
+      "single-choice"
+    ],
+    "4-14": [
+      "T13",
+      "single-choice"
+    ],
+    "4-15": [
+      "T08",
+      "short-text"
+    ],
+    "4-16": [
+      "T08",
+      "short-text"
+    ],
+    "4-17": [
+      "T10",
+      "single-choice"
+    ],
+    "4-18": [
+      "T11",
+      "written-explanation"
+    ],
+    "4-19": [
+      "T11",
+      "single-choice"
+    ],
+    "4-20": [
+      "T12",
+      "single-choice"
+    ]
+  },
   "authored": {
     "c22-s62-u03-v001": "T01",
     "c22-s62-u03-v002": "T04",

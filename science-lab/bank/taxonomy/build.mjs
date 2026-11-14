@@ -17,8 +17,11 @@ const normalizedText = (text) => text.replace(/\r\n/g, '\n');
 for (const unit of UNITS) {
   const src = join(here, '..', '..', 'data', 'units', `${unit}.taxonomy.js`);
   const { taxonomy: t } = await import(pathToFileURL(src).href);
-  const { similar } = await import(pathToFileURL(join(here, '..', '..', 'data', 'units', `${unit}.similar.js`)).href);
+  const { similar: separate } = await import(pathToFileURL(join(here, '..', '..', 'data', 'units', `${unit}.similar.js`)).href);
 
+  const registered = await import(pathToFileURL(join(unitsDir,unit+'.js')).href);
+  const bound = new Set(registered.sourceRegistration?.runtimeRegistered ? registered.source.map(q=>q.sourcePair?.itemId).filter(Boolean) : []);
+  const similar = [...separate,...(registered.items||[]).filter(q=>bound.has(q.id))];
   const bySrc = Object.entries(t.sources);                       // '세트-번호' → [유형, 형식]
   const count = (id) => bySrc.filter(([, v]) => v[0] === id).length;
   const srcOf = (id) => bySrc.filter(([, v]) => v[0] === id).map(([k]) => k);

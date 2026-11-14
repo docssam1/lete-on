@@ -123,7 +123,280 @@ export const taxonomy = {
       "element": "E4"
     }
   ],
-  "sources": {},
+  "sources": {
+    "1-1": [
+      "T01",
+      "short-text"
+    ],
+    "1-2": [
+      "T01",
+      "single-choice"
+    ],
+    "1-3": [
+      "T02",
+      "single-choice"
+    ],
+    "1-4": [
+      "T03",
+      "single-choice"
+    ],
+    "1-5": [
+      "T04",
+      "short-text"
+    ],
+    "1-6": [
+      "T03",
+      "single-choice"
+    ],
+    "1-7": [
+      "T05",
+      "short-text"
+    ],
+    "1-8": [
+      "T06",
+      "single-choice"
+    ],
+    "1-9": [
+      "T07",
+      "single-choice"
+    ],
+    "1-10": [
+      "T08",
+      "short-text"
+    ],
+    "1-11": [
+      "T09",
+      "short-text"
+    ],
+    "1-12": [
+      "T10",
+      "single-choice"
+    ],
+    "1-13": [
+      "T06",
+      "short-text"
+    ],
+    "1-14": [
+      "T10",
+      "written-explanation"
+    ],
+    "2-1": [
+      "T01",
+      "single-choice"
+    ],
+    "2-2": [
+      "T02",
+      "short-text"
+    ],
+    "2-3": [
+      "T01",
+      "short-text"
+    ],
+    "2-4": [
+      "T05",
+      "single-choice"
+    ],
+    "2-5": [
+      "T03",
+      "short-text"
+    ],
+    "2-6": [
+      "T03",
+      "written-explanation"
+    ],
+    "2-7": [
+      "T03",
+      "single-choice"
+    ],
+    "2-8": [
+      "T06",
+      "short-text"
+    ],
+    "2-9": [
+      "T07",
+      "single-choice"
+    ],
+    "2-10": [
+      "T09",
+      "single-choice"
+    ],
+    "2-11": [
+      "T08",
+      "short-text"
+    ],
+    "2-12": [
+      "T08",
+      "single-choice"
+    ],
+    "2-14": [
+      "T06",
+      "single-choice"
+    ],
+    "2-15": [
+      "T10",
+      "single-choice"
+    ],
+    "3-1": [
+      "T01",
+      "short-text"
+    ],
+    "3-2": [
+      "T02",
+      "short-text"
+    ],
+    "3-3": [
+      "T03",
+      "multi-choice"
+    ],
+    "3-4": [
+      "T04",
+      "short-text"
+    ],
+    "3-5": [
+      "T04",
+      "single-choice"
+    ],
+    "3-6": [
+      "T05",
+      "short-text"
+    ],
+    "3-7": [
+      "T03",
+      "single-choice"
+    ],
+    "3-8": [
+      "T07",
+      "single-choice"
+    ],
+    "3-9": [
+      "T07",
+      "single-choice"
+    ],
+    "3-10": [
+      "T06",
+      "single-choice"
+    ],
+    "3-11": [
+      "T06",
+      "single-choice"
+    ],
+    "3-12": [
+      "T07",
+      "short-text"
+    ],
+    "3-13": [
+      "T08",
+      "short-text"
+    ],
+    "3-14": [
+      "T09",
+      "single-choice"
+    ],
+    "3-15": [
+      "T08",
+      "single-choice"
+    ],
+    "3-16": [
+      "T10",
+      "written-explanation"
+    ],
+    "3-17": [
+      "T11",
+      "single-choice"
+    ],
+    "3-18": [
+      "T11",
+      "short-text"
+    ],
+    "3-19": [
+      "T10",
+      "short-text"
+    ],
+    "3-20": [
+      "T10",
+      "single-choice"
+    ],
+    "4-1": [
+      "T01",
+      "short-text"
+    ],
+    "4-2": [
+      "T02",
+      "single-choice"
+    ],
+    "4-3": [
+      "T03",
+      "short-text"
+    ],
+    "4-4": [
+      "T04",
+      "short-text"
+    ],
+    "4-5": [
+      "T01",
+      "short-text"
+    ],
+    "4-6": [
+      "T12",
+      "short-text"
+    ],
+    "4-7": [
+      "T06",
+      "short-text"
+    ],
+    "4-8": [
+      "T12",
+      "single-choice"
+    ],
+    "4-9": [
+      "T07",
+      "single-choice"
+    ],
+    "4-10": [
+      "T08",
+      "short-text"
+    ],
+    "4-11": [
+      "T08",
+      "written-explanation"
+    ],
+    "4-12": [
+      "T10",
+      "single-choice"
+    ],
+    "4-13": [
+      "T11",
+      "short-text"
+    ],
+    "4-14": [
+      "T09",
+      "single-choice"
+    ],
+    "4-15": [
+      "T11",
+      "short-text"
+    ],
+    "4-16": [
+      "T11",
+      "short-text"
+    ],
+    "4-17": [
+      "T11",
+      "short-text"
+    ],
+    "4-18": [
+      "T06",
+      "short-text"
+    ],
+    "4-19": [
+      "T10",
+      "written-explanation"
+    ],
+    "4-20": [
+      "T11",
+      "multi-choice"
+    ]
+  },
   "authored": {
     "c22-s62-u01-v001": "T01",
     "c22-s62-u01-v002": "T01",
@@ -1329,10 +1602,11 @@ export const taxonomy = {
   ],
   "supplementAuthored": true,
   "counts": {
-    "source": 0,
+    "source": 68,
     "supplement": 198,
     "paired": 70,
-    "independentAuthored": 128
+    "independentAuthored": 128,
+    "total": 266
   },
-  "sourcePending": true
+  "sourcePending": false
 };

@@ -1,8 +1,8 @@
 import{taxonomy as txCareer62}from'../data/units/c22-s62-u04.taxonomy-student.js?v=20261104-career-labels';
-import{taxonomy as txElectricity62}from'../data/units/c22-s62-u03.taxonomy.js';
-import{taxonomy as txCombustion62}from'../data/units/c22-s62-u02.taxonomy.js';
-import{taxonomy as txSeason62}from'../data/units/c22-s62-u01.taxonomy.js';
-import {taxonomy as txEarthMotion61}from'../data/units/c22-s61-u04.taxonomy.js';
+import{taxonomy as txElectricity62}from'../data/units/c22-s62-u03.taxonomy.js?v=20261114-source-integration';
+import{taxonomy as txCombustion62}from'../data/units/c22-s62-u02.taxonomy.js?v=20261114-source-integration';
+import{taxonomy as txSeason62}from'../data/units/c22-s62-u01.taxonomy.js?v=20261114-source-integration';
+import {taxonomy as txEarthMotion61}from'../data/units/c22-s61-u04.taxonomy.js?v=20261114-source-integration';
 import {taxonomy as txPlantStructure61} from '../data/units/c22-s61-u03.taxonomy.js';
 import {taxonomy as txMotion61} from '../data/units/c22-s61-u02.taxonomy.js';
 import {taxonomy as txAcid61} from '../data/units/c22-s61-u01.taxonomy.js';
@@ -134,10 +134,10 @@ export const READY = {
 // 5단계 수업이 없는 단원도 여기에 있으면 지도에서 열린다(READY에 bankOnly:true로 함께 등록).
 export const BANK = {
  'c22-s62-u04':{sets:[],n:0,supplement:128,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'현행 범위 창작128',sourceScopeNote:'현행 단원평가 원문 준비 중',paperLabel:'전체128문항집',paperAvailable:true},
- 'c22-s62-u03':{sets:[],n:0,supplement:186,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'독립 연습58·창작128',sourceScopeNote:'현행 판본 전체 원문 준비 중',paperLabel:'전체186문항집',paperAvailable:true},
- 'c22-s62-u02':{sets:[],n:0,supplement:198,sourcePending:true,bookAvailable:true,originalPending:true,label:'독립 연습70·창작128',sourceScopeNote:'현행 판본 전체 원문 준비 중',paperLabel:'전체198문항집',paperAvailable:true},
- 'c22-s62-u01':{sets:[],n:0,supplement:198,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'독립 연습70·창작128',sourceScopeNote:'현행 판본 전체 원문 준비 중',paperLabel:'전체198문항집',paperAvailable:true},
- 'c22-s61-u04':{sets:[],n:0,supplement:167,sourcePending:true,bookAvailable:true,lesson:true,originalPending:true,label:'독립 연습39·창작128',sourceScopeNote:'원문·공식 답 비공개 · 현행 전체 원문 준비 중',paperLabel:'전체167문항집',paperAvailable:true},
+ 'c22-s62-u03':{sets:[1,2,3,4],n:58,supplement:186,bookAvailable:true,lesson:true,originalPending:true,label:'옛단원 연계 원문',sourceScopeNote:'현행 전체 원문 준비 중',paperLabel:'전체244문항집',paperAvailable:true,sourceIntegrated:true,pairsInPractice:true,paired:58,sourceExcerptOnly:true,reviewOnly:9,groups:{"1": "세트1 · 13문항", "2": "세트2 · 13문항", "3": "세트3 · 15문항", "4": "세트4 · 17문항"}},
+ 'c22-s62-u02':{sets:[1,2,3,4],n:49,supplement:198,bookAvailable:true,originalPending:true,label:'옛단원 연계 원문',sourceScopeNote:'현행 전체 원문 준비 중',paperLabel:'전체247문항집',paperAvailable:true,sourceIntegrated:true,pairsInPractice:true,paired:49,sourceExcerptOnly:true,reviewOnly:6,groups:{"1": "세트1 · 13문항", "2": "세트2 · 11문항", "3": "세트3 · 15문항", "4": "세트4 · 10문항"}},
+ 'c22-s62-u01':{sets:[1,2,3,4],n:68,supplement:198,bookAvailable:true,lesson:true,originalPending:true,label:'옛단원 연계 원문',sourceScopeNote:'현행 전체 원문 준비 중',paperLabel:'전체266문항집',paperAvailable:true,sourceIntegrated:true,pairsInPractice:true,paired:68,sourceExcerptOnly:true,reviewOnly:8,groups:{"1": "세트1 · 14문항", "2": "세트2 · 14문항", "3": "세트3 · 20문항", "4": "세트4 · 20문항"}},
+ 'c22-s61-u04':{sets:[1,2,3,4],n:39,supplement:167,bookAvailable:true,lesson:true,originalPending:true,label:'옛단원 연계 원문',sourceScopeNote:'현행 전체 원문 준비 중',paperLabel:'전체206문항집',paperAvailable:true,sourceIntegrated:true,pairsInPractice:true,paired:39,sourceExcerptOnly:true,reviewOnly:6,groups:{"1": "세트1 · 5문항", "2": "세트2 · 12문항", "3": "세트3 · 8문항", "4": "세트4 · 14문항"}},
  'c22-s61-u03':{sets:[1,2,3,4],n:75,supplement:128,bookAvailable:true,lesson:true,reviewOnly:5,sourceExcerptOnly:true,originalPending:true,label:'옛6-1 식물의 구조와 기능 관련 발췌',sourceScopeNote:'현행6-1 전체 원문 준비 중',groups:{1:'원세트1 · 관련10',2:'원세트2 · 관련20',3:'원세트3 · 관련20',4:'원세트4 · 관련25'},paperLabel:'전체278문항집',paperAvailable:true},
  'c22-s61-u02':{sets:[1,2,3,4],n:70,supplement:128,bookAvailable:true,lesson:true,reviewOnly:7,sourceExcerptOnly:true,originalPending:true,label:'옛5-2 물체의 운동 관련 발췌',sourceScopeNote:'현행6-1 전체 원문 준비 중',groups:{1:'원세트1 · 관련15',2:'원세트2 · 관련15',3:'원세트3 · 관련20',4:'원세트4 · 관련20'},paperLabel:'전체268문항집',paperAvailable:true},
  'c22-s61-u01':{sets:[1,2,3,4],n:69,supplement:128,bookAvailable:true,lesson:true,reviewOnly:3,sourceExcerptOnly:true,originalPending:true,label:'옛5-2 산과 염기 관련 발췌',sourceScopeNote:'현행6-1 전체 원문 준비 중',groups:{1:'원세트1 · 관련15',2:'원세트2 · 관련15',3:'원세트3 · 관련20',4:'원세트4 · 관련19'},paperLabel:'전체266문항집',paperAvailable:true},

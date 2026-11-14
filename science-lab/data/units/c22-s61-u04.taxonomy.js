@@ -135,7 +135,164 @@ export const taxonomy = {
     "단답형",
     "서술형"
   ],
-  "sources": {},
+  "sources": {
+    "1-1": [
+      "T01",
+      "multi-choice"
+    ],
+    "1-3": [
+      "T02",
+      "short-text"
+    ],
+    "1-4": [
+      "T03",
+      "single-choice"
+    ],
+    "1-5": [
+      "T05",
+      "single-choice"
+    ],
+    "1-6": [
+      "T05",
+      "multi-choice"
+    ],
+    "2-1": [
+      "T03",
+      "short-text"
+    ],
+    "2-2": [
+      "T04",
+      "short-text"
+    ],
+    "2-3": [
+      "T03",
+      "short-text"
+    ],
+    "2-7": [
+      "T04",
+      "multi-choice"
+    ],
+    "2-8": [
+      "T02",
+      "short-text"
+    ],
+    "2-9": [
+      "T02",
+      "single-choice"
+    ],
+    "2-10": [
+      "T05",
+      "single-choice"
+    ],
+    "2-11": [
+      "T10",
+      "single-choice"
+    ],
+    "2-12": [
+      "T06",
+      "short-text"
+    ],
+    "2-13": [
+      "T07",
+      "written-explanation"
+    ],
+    "2-14": [
+      "T10",
+      "single-choice"
+    ],
+    "2-15": [
+      "T07",
+      "single-choice"
+    ],
+    "3-1": [
+      "T10",
+      "short-text"
+    ],
+    "3-2": [
+      "T04",
+      "single-choice"
+    ],
+    "3-3": [
+      "T01",
+      "single-choice"
+    ],
+    "3-6": [
+      "T02",
+      "single-choice"
+    ],
+    "3-7": [
+      "T03",
+      "single-choice"
+    ],
+    "3-8": [
+      "T09",
+      "written-explanation"
+    ],
+    "3-9": [
+      "T05",
+      "short-text"
+    ],
+    "3-10": [
+      "T10",
+      "single-choice"
+    ],
+    "4-1": [
+      "T08",
+      "short-text"
+    ],
+    "4-2": [
+      "T04",
+      "multi-choice"
+    ],
+    "4-3": [
+      "T01",
+      "short-text"
+    ],
+    "4-4": [
+      "T03",
+      "short-text"
+    ],
+    "4-7": [
+      "T01",
+      "single-choice"
+    ],
+    "4-8": [
+      "T02",
+      "single-choice"
+    ],
+    "4-9": [
+      "T02",
+      "short-text"
+    ],
+    "4-10": [
+      "T02",
+      "single-choice"
+    ],
+    "4-11": [
+      "T02",
+      "single-choice"
+    ],
+    "4-12": [
+      "T05",
+      "single-choice"
+    ],
+    "4-13": [
+      "T06",
+      "single-choice"
+    ],
+    "4-14": [
+      "T03",
+      "short-text"
+    ],
+    "4-16": [
+      "T05",
+      "written-explanation"
+    ],
+    "4-17": [
+      "T05",
+      "single-choice"
+    ]
+  },
   "authored": {
     "c22-s61-u04-v001": "T01",
     "c22-s61-u04-v002": "T02",
@@ -317,5 +474,6 @@ export const taxonomy = {
     "자료 해석": 16,
     "까닭 설명": 16,
     "그림·설계": 16
-  }
+  },
+  "sourcePending": false
 };

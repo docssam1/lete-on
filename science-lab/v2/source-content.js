@@ -92,3 +92,20 @@ export function sourcePrintReviewHtml(q){
  const summary=q.sourceRef.reviewOnly&&q.reviewSummary?q.reviewSummary:'쓴 답과 까닭을 선생님과 함께 확인해요.';
  return `<section class="source-review"><p class="lead"><b>선생님과 확인해요.</b> ${esc(summary)}</p>${q.sourceRef.reviewOnly?`<p class="lead">인쇄된 답 참고: ${esc(sourceAnswerText(q,{printed:true}))} · 자동 정오 판정 보류</p>`:''}</section>`;
 }
+
+// 검수된 구조화 원문의 통합 문항집 인쇄. 풀이 화면과 같은 자료·보기 함수를 쓴다.
+export function sourceQuestionKeyHtml(q){
+ if(!isStructuredSource(q))throw Error('확인할 원문의 답안을 살펴 주세요.');
+ const a=q.answerContract,review=needsSourceTeacherReview(q);
+ const answer=review&&q.sourceRef.reviewOnly?'':'<p><b>'+(review?'예시 답':'정답')+':</b> '+esc(sourceAnswerText(q))+'</p>';
+ return '<section class="source-print-key">'+answer+(review?sourcePrintReviewHtml(q):'')+'<p>'+esc(q.explanation)+'</p>'+(a.rubric?.required?'<p><b>확인 기준:</b> '+a.rubric.required.map(esc).join(' / ')+'</p>':'')+'</section>';
+}
+export function sourceQuestionPrintHtml(q,{show=false,no=''}={}){
+ if(!isStructuredSource(q))throw Error('인쇄할 원문 형식을 확인해 주세요.');
+ const a=q.answerContract;
+ if(!['single-choice','multi-choice','short-text','written-explanation'].includes(a?.type))throw Error('원문 답안 공간의 형식을 확인해 주세요.');
+ const lines=a.type==='written-explanation'?3:a.type==='short-text'?1:0;
+ const space=show?'':'<div class="source-answer-space">'+Array.from({length:lines},()=>'<div class="ans-line"></div>').join('')+'</div>';
+ const key=show?sourceQuestionKeyHtml(q):'';
+ return '<div class="q" data-id="'+esc(q.id)+'"><p class="source-print-number">'+esc(no)+'.</p>'+sourceReviewPromptHtml(q)+space+key+'</div>';
+}

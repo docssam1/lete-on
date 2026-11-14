@@ -75,7 +75,7 @@ test('이전 형식의 자동 판정 보류 원문도 확정 답 대신 검토 �
 
 async function exam(mode,bank={},mod={}){
  const state={daily:0,key:0,authored:0,judge:0,scroll:0},app={innerHTML:''},list=[fixture()];
- const ctx=context({$app:app,BANK:{'fixture-unit':bank},assessmentPool,assessmentRelated,sourceExamPaperHtml,sourceExamPrintLinks,sourcePaperMode,scrollTo:()=>state.scroll++,releasePage:()=>{},loadJudge:async()=>{state.judge++;return{};},du:x=>x,wireItem:()=>{}});
+ const ctx=context({$app:app,BANK:{'fixture-unit':bank},assessmentPool,assessmentRelated,sourceExamPaperHtml,sourceExamPrintLinks,sourcePaperMode,wireSourceExamPaper:()=>()=>{},scrollTo:()=>state.scroll++,releasePage:()=>{},loadJudge:async()=>{state.judge++;return{};},du:x=>x,wireItem:()=>{}});
  const start=src.indexOf('async function pageExam('),end=src.indexOf('\n// 문제은행 전체 차례',start);
  const dynamic=async(spec)=>{
   const values=spec.startsWith('./daily.js')?{mountDaily:args=>{state.daily++;state.args=args;return()=>{};},teacherKeyHtml:()=>{state.key++;return'기존 교사 답안';}}:{assessmentPaperHtml:()=>{state.authored++;return'기존 창작 문제지';}};

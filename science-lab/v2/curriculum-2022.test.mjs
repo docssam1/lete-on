@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { SEMS_2022, bankFor2022, assessmentsFor2022 } from './curriculum-2022.js';
 import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js';
 import { SEMS, BANK } from './units-index.js';
+import {originalSourceTwin} from './original-source-pairs.js';
 
 test('2022 차례는 8학기 32개 위치를 기존 자료 ID와 구분한다', () => {
   assert.deepEqual(SEMS_2022.map((s) => s.sem), ['3-1', '3-2', '4-1', '4-2', '5-1', '5-2', '6-1', '6-2']);
@@ -43,7 +44,8 @@ test('검수된 연결은 실제 원문 수와 1:1 유사문항이 있는 자료
     const { similar } = await import(`../data/units/${resource.contentId}.similar.js`);
     assert.equal(source.length, resource.n, unit.key);
     assert.deepEqual([...new Set(source.map((q) => q.sourceRef.set))], resource.sets);
-    for (const q of source) assert.equal(similar.filter((s) => s.sourceRef.of.set === q.sourceRef.set && s.sourceRef.of.no === q.sourceRef.no).length, 1);
+    const {items}=await import('../data/units/'+resource.contentId+'.js');
+    for (const q of source) assert(originalSourceTwin(q,{similar,items}),q.id+' has an actual paired practice');
   }
   assert.equal(bankFor2022('s31-u01', BANK).contentId, 's31-u01');
   assert.equal(bankFor2022('s31-u02', BANK).contentId, 's31-u02');
@@ -82,7 +84,7 @@ test('중간평가는 실제 두 단원 범위와 50쌍을 유지하고 32단원
   for(const q of source) assert.equal(similar.filter((s)=>s.sourceRef.of.set===q.sourceRef.set&&s.sourceRef.of.no===q.sourceRef.no).length,1);
   const html=curriculumBankHtml(BANK);
   assert.equal((html.match(/data-curriculum-unit=/g)||[]).length,32);
-  assert(html.includes('현재 23개 단원의 원문 1512문항'));
+  assert(html.includes('현재 27개 단원의 원문 1726문항'));
   assert(html.includes('data-assessment="s31-mid"'));
   assert(html.includes('#/s31-fin/exam/1'));
   assert(html.includes('창작 60문항'));
@@ -101,5 +103,5 @@ test('새 물체와 물질의 내용 ID는 기존 탐구 단원과 저장 위치
 });
 
 test('지구와 바다의 창작 학습은 원문 보유 단원으로 표시하지 않는다',()=>{
- const b=bankFor2022('s32-u02',BANK),h=curriculumBankHtml(BANK);assert.equal(b.contentId,'c22-s32-u02');assert.equal(b.n,0);assert.equal(b.supplement,92);assert(b.sourcePending);assert.deepEqual(b.sets,[]);assert(!h.includes('#/c22-s32-u02/exam/'));assert(h.includes('창작 92 · 원문 준비 중'));assert(h.includes('23개 단원의 원문 1512문항'));assert(h.includes('별도로 9개 단원의 창작 학습 1253문항'));
+ const b=bankFor2022('s32-u02',BANK),h=curriculumBankHtml(BANK);assert.equal(b.contentId,'c22-s32-u02');assert.equal(b.n,0);assert.equal(b.supplement,92);assert(b.sourcePending);assert.deepEqual(b.sets,[]);assert(!h.includes('#/c22-s32-u02/exam/'));assert(h.includes('창작 92 · 원문 준비 중'));assert(h.includes('27개 단원의 원문 1726문항'));assert(h.includes('별도로 5개 단원의 창작 학습 504문항'));
 });

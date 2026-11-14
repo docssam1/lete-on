@@ -47,7 +47,7 @@ test('all current routes ignore stale inherited print exports without changing t
  for(const unit of revisedTextbookUnits){
   const expected=await normal[unit](),current=await cached[unit]();
   for(const key of ['items','source','similar'])assert.equal(JSON.stringify(current[key]),JSON.stringify(expected[key]),unit+' '+key);
-  assert.equal(current.bankPaper,expected.bankPaper,unit+' renderer with cached unit');
+  assert.equal(current.bankPaper?.basePaper||current.bankPaper,expected.bankPaper?.basePaper||expected.bankPaper,unit+' reviewed renderer with cached unit');
   assert.equal(current.wireBankPaper,expected.wireBankPaper,unit+' preparation with cached unit');
   if(!current.bankPaper)continue;
   assert.notEqual(current.bankPaper,stalePrint);assert.notEqual(current.wireBankPaper,staleWire);banks++;

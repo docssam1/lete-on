@@ -3,6 +3,7 @@
 import { readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
+import {originalSourceTwin} from '../v2/original-source-pairs.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const unitsDir = join(here, '..', 'data', 'units');
@@ -82,7 +83,9 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.similar.js'))) 
       pos[a]++; if (so[0] >= 12 && L[a] === so[0] && so[0] - so[1] >= 3) err(`${it.id} 정답이 눈에 띄게 가장 긴 보기`);
     }
   }
-  const missing = Object.keys(tx.sources).filter((k) => !similar.some((it) => `${it.sourceRef.of.set}-${it.sourceRef.of.no}` === k));
+  const registered = await import(pathToFileURL(join(unitsDir,u+'.js')).href);
+  const embedded = registered.sourceRegistration?.runtimeRegistered ? registered : null;
+  const missing = Object.keys(tx.sources).filter(k => !similar.some(it=>it.sourceRef.of.set+'-'+it.sourceRef.of.no===k) && !(embedded?.source?.find(q=>q.key===k)&&originalSourceTwin(embedded.source.find(q=>q.key===k),embedded)?.taxonomy.type===tx.sources[k][0]));
   if (missing.length) err(`유사문항 없는 원문: ${missing.join(', ')}`);
   console.log(`  단일 선택 정답 위치 ①~⑤ = ${pos.join('·')}`);
   if (Math.max(...pos) - Math.min(...pos) > 2) err('유사문항 정답 위치 쏠림');
