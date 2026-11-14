@@ -142,15 +142,27 @@
   $('first-unmarked').disabled=missing===0;
   for(const q of current.questions){const row=$('response-fields').querySelector(`[data-number="${q.number}"]`);row.querySelector('[data-clear]').disabled=!row.querySelector('input:checked');}
  }
+ async function loadSavedMarks(data,request){
+  const e=data.exam,key=`highselectDraft:${token.slice(0,16)}:${e.id}:${e.version}`;
+  try{if(sessionStorage.getItem(key)!==null||savedMarks.has(key))return false;}catch{}
+  try{
+   const history=await api('attempts');if(request!==examRequest)return false;
+   const latest=history.attempts.find(a=>a.report?.exam?.id===e.id&&a.report.exam.version===e.version&&a.report.gradingMethod==='self-reported');
+   const rows=latest?.report?.items;
+   if(Array.isArray(rows)&&rows.length===e.questionCount&&rows.every((row,i)=>row.number===i+1&&['correct','wrong','blank'].includes(row.state)))savedMarks.set(key,rows.map(row=>row.state==='correct'?'O':row.state==='wrong'?'X':''));
+   return false;
+  }catch(error){if(error.code==='login_required')throw error;return true;}
+ }
  async function openExam(id,{record=true}={}){
   rememberReading();const request=++examRequest;const data=await api('manifest',{query:{exam:id}});if(request!==examRequest)return;
+  const savedLoadFailed=await loadSavedMarks(data,request);if(request!==examRequest)return;
   current=data;assetKind='paper';pagePositions={};readingPositions={};const reading=loadReading();readingPositions=reading?.positions||{};mountedVersion='';versionValid=true;documentRequest++;show('exam-view',{record});const e=current.exam;
   $('exam-title').textContent=e.title;document.title=e.title+' | LETE-ON';setPane('paper');
   $('exam-mode').textContent=e.mode==='pilot'?'시범 모의고사 · O/X 자가채점':'모의고사 · O/X 자가채점';$('pilot-note').hidden=e.mode!=='pilot';
   setZoom(matchMedia('(max-width:800px)').matches?'200':'100');mountPages(current);
   $('response-fields').innerHTML=current.questions.map(q=>`<fieldset class="ox-row" data-number="${q.number}"><legend>${q.number}번</legend><label><input type="radio" name="ox-${q.number}" value="O" aria-label="${q.number}번 O"><span>O</span></label><label><input type="radio" name="ox-${q.number}" value="X" aria-label="${q.number}번 X"><span>X</span></label><button type="button" class="ox-clear" data-clear="${q.number}" aria-label="${q.number}번 표시 지우기">지우기</button></fieldset>`).join('');
   let restored=false,restoredSaved=false;try{restoredSaved=!sessionStorage.getItem(draftKey())&&savedMarks.has(draftKey());const draft=JSON.parse(sessionStorage.getItem(draftKey())||'null')||savedMarks.get(draftKey());if(Array.isArray(draft)&&draft.length===e.questionCount)current.questions.forEach((q,i)=>{if(['O','X'].includes(draft[i])){document.querySelector(`input[name="ox-${q.number}"][value="${draft[i]}"]`).checked=true;restored=true;}});}catch{}
-  $('draft-status').textContent=restoredSaved?'저장한 O/X 결과입니다. 표시를 바꾸면 다시 저장해 주세요.':restored?'이 탭의 임시 표시를 불러왔습니다.':'표시한 내용은 이 탭에 임시 저장됩니다.';
+  $('draft-status').textContent=savedLoadFailed?'저장한 O/X를 불러오지 못했습니다. 결과 목록에서 다시 확인해 주세요.':restoredSaved?'저장한 O/X 결과입니다. 표시를 바꾸면 다시 저장해 주세요.':restored?'이 탭의 임시 표시를 불러왔습니다.':'표시한 내용은 이 탭에 임시 저장됩니다.';
   $('submit-responses').disabled=false;$('confirm-save').disabled=false;updateCheck();fitViewport();
   if(matchMedia('(max-width:800px)').matches&&innerHeight-$('paper-viewport').getBoundingClientRect().top-144<200)focusReadingArea();
   scheduleRenew();if(reading&&reading.kind!=='paper'&&current.exam[{answers:'answerPageCount',analysis:'analysisPageCount'}[reading.kind]])await showDocument(reading.kind,{capture:false});

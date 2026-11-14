@@ -31,7 +31,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
     }
    }
   }
-  if(dots.size!==6||kinds.size!==3)fail('Variety: dots5–10 and shape kinds1–3');
+  if(dots.size!==6||kinds.size!==2||kinds.has(1))fail('Variety: dots5–10 and shape kinds 2–3 (never 1)');
   for(const [word,expected]of[['6와','6과'],['2과','2와'],['10와','10과'],['농구공가','농구공이']])if(NM_C0.korean(word+' ')!==expected+' ')fail('Particle fixture '+word);
   for(const text of ['3가지를 더 찾아요','2과정','4이상'])if(NM_C0.korean(text)!==text)fail('Counter/word must not become a particle: '+text);
   // Outside C0 the adapter must call the exact original function with its inputs.

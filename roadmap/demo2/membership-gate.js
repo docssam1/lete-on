@@ -5,7 +5,7 @@
  // Looking around without an account is the one door that needs no session. It is asked for by name
  // (planner.html?guest=1), opens with nothing read or stored, and keeps the member-only rooms closed.
  // Its script is fetched only then, so the page still starts with the three membership scripts alone.
- const guestAsked=/(?:^\?|&)guest=1(?:&|$)/.test(location.search),TOUR_SRC='planner-guest.js?v=20261111-guest2';
+ const guestAsked=/(?:^\?|&)guest=1(?:&|$)/.test(location.search),TOUR_SRC='planner-guest.js?v=20261111-guest2',CONSULT_SRC='planner-consult.js?v=20261113-copy2';
  const loadOne=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=()=>resolve();s.onerror=()=>reject(new Error(`자료 파일을 불러오지 못했습니다: ${src}`));document.body.appendChild(s);});
  const SCRIPT_TIMEOUT_MS=30000;
  let phase='계정 확인',loaded=0,failed=false;
@@ -49,14 +49,17 @@
    return;
   }
   if(!member){location.replace(destination);return;}
-  window.RoadmapMember=Object.freeze({user_id:member.user_id,student_name:member.student_name,school:member.school,grade:member.grade,age:member.age,review:member.review===true});
+  // 컨설팅 모드: 서버가 확인한 검수 계정(review)만. 학생마다 저장 소유자를 나누고, 계정 클라우드 저장은 쓰지 않는다.
+  let consult=null;
+  if(member.review===true){phase='컨설팅 모드 준비';await loadOne(CONSULT_SRC);consult=window.RoadmapConsult.prepare(member);}
+  window.RoadmapMember=Object.freeze({user_id:consult?consult.owner:member.user_id,student_name:consult?consult.name:member.student_name,school:member.school,grade:member.grade,age:member.age,review:member.review===true,consult:!!consult});
   phase='저장된 학습 정보 준비';message('저장된 학습 정보를 준비하고 있습니다.');
-  await window.RoadmapCloud?.prepare(member);
+  if(!consult)await window.RoadmapCloud?.prepare(member);
   phase='학습 자료 불러오기';
   await loadScripts();
   phase='학습 화면 준비';message('학습 화면을 열고 있습니다.');
-  await window.RoadmapCloud?.mount();
-  const name=document.getElementById('name');if(name&&!name.value)name.value=member.student_name;
+  if(consult)window.RoadmapConsult.mount(document);else await window.RoadmapCloud?.mount();
+  const name=document.getElementById('name');if(name&&(consult||!name.value))name.value=consult?consult.name:member.student_name;
   document.documentElement.classList.remove('member-checking');box.remove();
   const link=document.createElement('a');link.className='member-account-link';link.href=destination;link.textContent='내 계정';link.setAttribute('aria-label',member.review?'계정 확인과 로그아웃':'학생 정보와 로그인 번호·수신 동의 관리');
   const menu=document.querySelector('.prn-global-body')||document.querySelector('.top');menu?.appendChild(link);

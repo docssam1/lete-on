@@ -1,0 +1,10 @@
+--- a/supabase/functions/hs-admin-session/index.ts
++++ b/supabase/functions/hs-admin-session/index.ts
+@@ -3,6 +3,7 @@
+ 
+ const ALLOWED_ORIGINS = new Set([
+   "https://lete-on.gfieldacademy.net",
++  "https://roadmap.gfieldacademy.net",
+   "https://hs.gfieldacademy.net",
+   "https://docssam1.github.io",
+   "http://localhost:8000",

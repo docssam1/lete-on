@@ -3,7 +3,7 @@
    - 데이터 한 벌(build)로 상세 표 · 간단 보기 · 3D(보여주기용)를 함께 그린다.
    - 조정 항목: 지금 진도(교과·사고력·연산 + 남은 개월), 교과 속도, 생각하는 황소 선택, 영재원 선택.
    - 규칙은 예시 로드맵(원장님 손그림)과 같다:
-     교과 디딤돌 응용 학기당 S개월 → 6-2 다음 계통(5·6학년·중1) 대수 정리 4개월 → 중등 원리해설 3개월씩.
+     교과 디딤돌 응용 학기당 S개월 → 6-2 다음 계통(5·6학년·중1) 대수 정리·초등 심화 정리 4개월(이 기간은 계통만) → 중등 원리해설 3개월씩.
      교과 심화는 한 학년 아래 최상위 S를 1개월 늦게 같은 속도로, 중등 시작 2개월 뒤부터 중등 심화(A급) 3개월씩 원리해설과 병행,
      그 사이는 '생각하는 황소 대비 고려에 따라 고민 + 중등 쎈'.
      연산은 지금 권부터 S개월씩, 기적 12권 다음 기적의 중학연산 1AB → 도형 1권 → 2AB → 도형 2권 → 3AB → 도형 3권(S1 표 기간).
@@ -217,9 +217,9 @@ function build(o){
       }
       t+=S;
     }
-    if(B.sys){ school.push(['계통 (5·6학년·중1) · 대수 정리',t,t+3]); mid=t+4; }
+    if(B.sys){ school.push(['계통 (5·6학년·중1) · 대수 정리 · 초등 심화 정리',t,t+3]); mid=t+4; }
     else { school.push(['여유 · 초등 대수 심화',t,t]); mid=t+1; }
-  } else if(o.school===13){ school.push(['계통 (5·6학년·중1) · 대수 정리',now-(4-o.schoolLeft),now+o.schoolLeft-1]); mid=now+o.schoolLeft; }
+  } else if(o.school===13){ school.push(['계통 (5·6학년·중1) · 대수 정리 · 초등 심화 정리',now-(4-o.schoolLeft),now+o.schoolLeft-1]); mid=now+o.schoolLeft; }
   else { mid=now-(o.school-14)*B.midLen-(B.midLen-o.schoolLeft); }
   seq(mid, MID.map(x=>[x+' '+B.midBook,B.midLen])).forEach(b=>school.push(b));
   // 중등 6학기 뒤 고등 선행(CMS 6개월 단위). 아무리 빨라도 초6 3월(CMS 중등 최소 12개월), 중3 7월 뒤는 내신·실전(원장님 2026-10-20 "내신 조심")
@@ -234,8 +234,11 @@ function build(o){
     if(part||left.length) warn.push(`${reach?'중등 기간이 끝나 고등 선행은 '+reach+' 잡았어요':'중등 기간 안에는 고등 선행을 시작하지 못해요'}. 중3 8월부터는 내신·고입 실전으로 넘어가고, ${part?part[0]+' 나머지':left[0]}부터는 고등학교에서 진도에 맞춰 이어가요.${beyondCut?' 선택하신 미적분Ⅱ·기하도 고등학교에서 진로에 맞춰 배워요.':''}`);
     else if(beyondCut) warn.push('선택하신 미적분Ⅱ·기하는 중등 기간 안에 다 넣지 못해요. 중3 8월부터는 내신·고입 실전으로 넘어가고, 나머지는 고등학교에서 진로에 맞춰 배워요.'); }
   school.push(['중3 내신 · 고입 실전',mOf(9,8),mOf(9,12)]);
+  // 계통 기간에는 계통만(원장님 2026-11-12 "계통 할 때는 계통만, 초등 심화 정리와"): 교과 심화 줄을 비우고, 중등 쎈은 중1-1 시작 달부터.
+  const sysB=school.find(b=>/^계통/.test(b[0]));
+  if(sysB) for(let i=school2.length-1;i>=0;i--){ const b=school2[i]; if(b[1]>=sysB[1]) school2.splice(i,1); else if(b[2]>=sysB[1]) school2[i]=[b[0],b[1],sysB[1]-1]; }
   const s2end=school2.length?school2[school2.length-1][2]:now-1;
-  if(B.deepLag>0&&mid+B.deepLag-1>=s2end+1) school2.push([o.hw!=='none'?'생각하는 황소 대비 고려에 따라 고민 + 중등 쎈':'중등 쎈으로 기본 다지기',Math.max(s2end+1,now),mid+B.deepLag-1]);
+  if(B.deepLag>0&&mid+B.deepLag-1>=Math.max(s2end+1,mid)) school2.push([o.hw!=='none'?'생각하는 황소 대비 고려에 따라 고민 + 중등 쎈':'중등 쎈으로 기본 다지기',Math.max(s2end+1,now,mid),mid+B.deepLag-1]);
   const deepName=B.deep==='A급'?x=>x+' 중등 심화(A급)':x=>x+' RPM (응용)';
   const mid2=seq(mid+B.deepLag, MID.map(x=>[deepName(x),B.midLen])); mid2.forEach(b=>school2.push(b));
   if(o.band!=='C') school2.push(['중등 심화 반복 · 내신 심화(일품·블랙라벨)',mid+B.deepLag+6*B.midLen,Math.min(A1,mid+B.deepLag+6*B.midLen+11)]);

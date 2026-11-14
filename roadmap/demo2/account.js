@@ -2,6 +2,7 @@
  'use strict';
  const A=RoadmapMembership,P=RoadmapPolicy,$=id=>document.getElementById(id),root=$('memberContent');
  const next=A.destination(new URLSearchParams(location.search).get('next'));
+ const adminIntent=new URLSearchParams(location.search).get('next')==='admin.html';
  let entryIntent='signup';
  let member=null,proof=null,email='',mode='signup',cooldown=0,timer=null,busy=false;
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,12 +18,17 @@
   root.querySelector('[name=identifier]').value=email;
   $('loginForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);run(async()=>{
    const identifier=String(f.get('identifier')).trim(),code=String(f.get('code'));
+   if(identifier.toUpperCase()==='DOCSSAM'){
+    // 같은 로그인 칸을 사용하되 관리자 승인은 기존 서버 인증으로만 확인한다.
+    await GFIELD_FIELDS_ADMIN_AUTH.signIn('DOCSSAM',code);
+    e.target.reset();location.assign('admin.html');return;
+   }
    const result=identifier.includes('@')?await A.call('login',{email:identifier.toLowerCase(),pin:code}):await A.call('review-login',{username:identifier,code});
    member=A.accept(result);e.target.reset();location.assign(next);
   });};
  }
  function reviewProfile(){
-  screen('내 계정',`<p class="member-lead">${esc(member.username)}</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">이 계정으로 만든 설계는 이 기기에 따로 보관됩니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
+  screen('내 계정',`<p class="member-lead">${esc(member.username)}</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">컨설팅 모드 계정입니다. 학생별 설계와 상담 코멘트는 이 기기에만 보관됩니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
  }
  function emailScreen(intent='signup'){
   mode=intent;if(intent==='signup')entryIntent='signup';
@@ -90,5 +96,8 @@
   }
  });
  document.addEventListener('click',e=>{const target=e.target.closest('[data-account-entry]');if(!target||busy)return;entryIntent=target.dataset.accountEntry;if(member)profile();else if(entryIntent==='login')login();else emailScreen('signup');});
- A.status().then(m=>{member=m;if(m)profile();else if(entryIntent==='login')login();else emailScreen('signup');}).catch(e=>{if(entryIntent==='login')login();else emailScreen('signup');announce(A.message(e),true);});
+ if(adminIntent){
+  entryIntent='login';
+  GFIELD_FIELDS_ADMIN_AUTH.getSession().then(s=>{if(s?.user?.app_metadata?.role==='admin')location.assign('admin.html');else login();}).catch(()=>login());
+ }else A.status().then(m=>{member=m;if(m)profile();else if(entryIntent==='login')login();else emailScreen('signup');}).catch(e=>{if(entryIntent==='login')login();else emailScreen('signup');announce(A.message(e),true);});
 })();
