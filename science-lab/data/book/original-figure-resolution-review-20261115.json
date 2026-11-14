@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-15",
+  "unit": "c22-s42-u01",
+  "questionIds": [
+    "c22-s42-u01-o5-08",
+    "c22-s42-u01-o5-09"
+  ],
+  "figure": {
+    "original": "assets/bank/c22-s42-u01/moon-s1-q08.webp",
+    "originalSha256": "5098fb89bb577b1090ef3c71c76e18c17c4cb777859fb0cf46fe7ec87b4de0ee",
+    "variant": "assets/bank/c22-s42-u01/moon-s1-q08-hd.webp",
+    "variantSha256": "aa2555ccce482013f41efa6eb5fd6fe0b36727f86e7d94a75396591b966e2c3f",
+    "originalDimensions": [
+      359,
+      172
+    ],
+    "variantDimensions": [
+      1436,
+      688
+    ],
+    "displayDimensions": [
+      359,
+      172
+    ],
+    "source": {
+      "document": "최다빈출 단원평가 세트1 · 초등6-1 지구와 달의 운동",
+      "page": 2,
+      "pdfSha256": "caeae97f2b6f777c335ae0ae484aa0288b8946b1c1a351455903250eb61fa919",
+      "embeddedObject": "Image6.jpg",
+      "embeddedDimensions": [
+        1603,
+        799
+      ],
+      "embeddedSha256": "30195b3d7a1a469b1836716c4773795314083e16678898eb8215d24f8f949ef6"
+    },
+    "transformation": "Complete embedded original fitted with white side padding to the original display aspect; no cropping, relabeling, AI reconstruction, or answer markings."
+  },
+  "integration": {
+    "mechanism": "srcset at 1x with original src fallback and explicit original width/height",
+    "routes": [
+      "lesson question",
+      "Daily Test",
+      "source exam print",
+      "combined bank paper"
+    ],
+    "compactLegacyTeacherKeyImageFree": true,
+    "originalQuestionObjectsUnchanged": true,
+    "previousAnswerSheetsEditable": true,
+    "originalAssetsPreserved": 527
+  },
+  "inspection": {
+    "unrecognizedOcrFiguresContactSheetReview": 242,
+    "scope": "Composition, obvious crop and answer-mark candidates; not full transcription of all small diagram text.",
+    "sameAppleVisionCpuFreshProcesses": {
+      "oldRecognizedLines": 0,
+      "variantRecognizedLines": 10,
+      "manualCheck": "Seven date labels including the observation time and the east/south/west labels agree with the original."
+    }
+  },
+  "validation": {
+    "nativeTestFiles": 276,
+    "tests": 1470,
+    "pass": 1468,
+    "fail": 0,
+    "skippedBrowserTests": 2,
+    "actualUnits": 32,
+    "originalQuestions": 1763,
+    "originalRenderComparisons": 7052,
+    "changedQuestions": 2,
+    "otherDifferences": 0,
+    "combinedSkyPaperModesCompared": 4,
+    "bankAudit": true,
+    "taxonomyCheck": true
+  },
+  "remaining": {
+    "actualBrowserImageSelectionAndLayoutVerified": false,
+    "actualPcMobileA4Verified": false,
+    "sourceMissingUnits": [
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s62-u04"
+    ],
+    "deployed": false
+  }
+}

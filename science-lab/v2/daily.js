@@ -8,7 +8,7 @@ import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 //  · 기록: 문항마다 처음 채점한 답만 진단 기록(progress.js)에 남긴다. 규칙으로 못 가린 쓰기 답은 「선생님 확인」(check.js)에 모인다.
 //  · 아무것도 서버로 보내지 않는다(채점 계약 승인 전 — GRADING-CONTRACT-DRAFT.md).
 import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js?v=20261108-source-schema';
-import { sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
+import {sourceFigureImageAttrs, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js?v=20261115-original-figure-resolution';
 import {isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview} from './source-content.js?v=20261108-source-schema';
 import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261105-history-review';
 import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js?v=20261108-original-source';
@@ -76,7 +76,7 @@ function promptHtml(it, v, misc) {
     return `<input class="dt-blank" data-k="${i}" type="text" size="6" aria-label="빈칸 ${i + 1}" placeholder="${CIRC[i]}" value="${esc(cur)}">`;
   });
 }
-const figHtml = (it) => it.photoLabels ? photoFigureHtml(it) : (it.figure ? `<figure class="dt-fig"><img src="../${esc(it.figure)}" alt="${esc(it.figureNote || '문항 그림')}"></figure>` : '');
+const figHtml = (it) => it.photoLabels ? photoFigureHtml(it) : (it.figure ? `<figure class="dt-fig"><img ${sourceFigureImageAttrs(it.figure)} alt="${esc(it.figureNote || '문항 그림')}"></figure>` : '');
 const givensHtml = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || `<p class="dt-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : `<b>${esc(k === '보기' ? '〈보기〉' : k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : typeof v === 'object' ? JSON.stringify(v) : v)}</p>`).join('') : '';
 
 function formatAnswer(it, v) {

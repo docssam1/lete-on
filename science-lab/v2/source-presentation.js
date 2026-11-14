@@ -4,6 +4,17 @@ export const bankLabel = (bank) => bank?.label || '단원평가';
 export const groupLabel = (bank, n) => bank?.groups?.[n] || `세트${n}`;
 export const examHeading = (bank, n) => bank?.label ? `${bank.label} · ${groupLabel(bank, n)}` : `단원평가 세트${n}`;
 export const sourceCaption = (ref) => ref?.label ? `${ref.label} · ${ref.page}쪽 ${ref.originalNo}번` : `단원평가 세트${ref?.set} · ${ref?.no}번`;
+// Use a reviewed native-resolution copy while retaining the original path and layout as fallback.
+const nativeSourceFigures = {
+  'assets/bank/c22-s42-u01/moon-s1-q08.webp': {
+    src: 'assets/bank/c22-s42-u01/moon-s1-q08-hd.webp', width: 359, height: 172,
+  },
+};
+export function sourceFigureImageAttrs(src) {
+  const base = `src="../${esc(src)}"`;
+  const image = Object.hasOwn(nativeSourceFigures, src) ? nativeSourceFigures[src] : null;
+  return image ? `${base} srcset="../${image.src} 1x" width="${image.width}" height="${image.height}"` : base;
+}
 export function sourceTableHtml(value) {
   if (!value || !Array.isArray(value.머리) || !Array.isArray(value.행)) return '';
   const headers = value.머리;
