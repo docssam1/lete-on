@@ -7,10 +7,10 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 18 released editions remain reachable in exactly one advertised course', () => {
+test('all 22 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,18);
-  assert.equal(new Set(visible).size,18);
+  assert.equal(visible.length,22);
+  assert.equal(new Set(visible).size,22);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
@@ -35,10 +35,20 @@ test('Deepthink starting and prehigh editions never cross course boundaries', ()
 test('unknown or nonreleased editions do not silently appear under an academy', () => {
   assert.deepEqual(nav.examsFor('DP','common1-basic',[{id:'unknown',programId:'DP',mode:'released'}]),[]);
   assert.deepEqual(nav.examsFor('DP','common1-basic',[{id:'dp-common1-r02',programId:'DP',mode:'review_pending'}]),[]);
-  assert.deepEqual(nav.examsFor('WM','common1-basic',mocks),[]);
+  assert.deepEqual(nav.examsFor('WM','common2-basic',mocks),[]);
 });
 
 test('actual final-round naming is preserved', () => {
   assert.equal(nav.roundLabel(mocks.find(e => e.id === 'sh-selection-r05')),'최종(마무리)');
   assert.equal(nav.roundLabel(mocks.find(e => e.id === 'dp-common1-r02')),'2회');
+});
+
+// A new Won high-entry paper must never replace the existing middle-entry IDs.
+test('Won common1 and middle21 expose their own four editions with separate time and scope', () => {
+ const cm=nav.examsFor('WM','common1-basic',mocks),middle=nav.examsFor('WM','middle21-basic',mocks);
+ assert.equal(cm.length,4);assert.equal(middle.length,4);
+ assert.ok(cm.every(e=>e.id.startsWith('wm-common1-basic-')&&e.questionCount===50&&e.durationMinutes===180&&e.sectionMinutes.ALG===90&&e.sectionMinutes.GEO===90&&e.breakMinutes===20));
+ assert.ok(middle.every(e=>e.durationMinutes===140&&e.sectionMinutes.ALG===70));
+ assert.deepEqual(cm.map(e=>nav.selectionForExam(e.id)),cm.map(()=>({program:'WM',course:'common1-basic'})));
+ assert.ok(cm.every(e=>/중2-1.*중3-1/.test(e.scope)&&/확률/.test(e.scope)));
 });
