@@ -324,3 +324,15 @@ export function skyReadableCurrentItems(rows,unit){
   skyReadableCache.set(question,current);return current;
  });return changed?next:rows;
 }
+
+export const NIGHT_MOON_TIME_REFERENCE_VERSION='20261115-night-moon-time-reference';
+export const nightMoonTimeGiven=Object.freeze(['수업용 모형 자료','음력 3일·7일·15일: 저녁 7시쯤','음력 22일·26일: 새벽 6시쯤']);
+export function withNightMoonTimeReference(workbook){
+ if(workbook.unit!=='c22-s42-u01'||!Array.isArray(workbook.questions))return workbook;
+ const evening=workbook.figures?.skyEvening,dawn=workbook.figures?.skyDawn;
+ if(typeof evening!=='string'||typeof dawn!=='string'||!['3일','7일','15일','저녁 7시쯤'].every(s=>evening.includes(s))||!['22일','26일','새벽 6시쯤'].every(s=>dawn.includes(s)))return workbook;
+ let changed=false;const questions=workbook.questions.map(q=>{
+  if(q.id!=='c22-s42-u01-w024'||q.no!==24||q.form!=='blank'||q.sourceRef||q.sourceId||q.contentVersion||q.prompt!=='저녁 표의3일·7일·15일은 관찰 ㉠[ ]을 같게 한 비교예요.22일·26일 자료는 ㉡[ ] 조건으로 따로 묶어요.'||q.given||q.givens||q.figure||q.table)return q;
+  changed=true;return {...q,prompt:'다음 모형 자료에서 음력 3일·7일·15일은 관찰 ㉠[ ]을 같게 했어요. 음력 22일·26일은 ㉡[ ] 자료로 나누어 비교해요.',given:[...nightMoonTimeGiven]};
+ });return changed?{...workbook,questions}:workbook;
+}

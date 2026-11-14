@@ -1,3 +1,4 @@
+import{withNightMoonTimeReference}from'./c22-s42-u01.rail-notes.js?v=20261115-night-moon-time-reference';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withMagnetSkyStudentLanguage} from './magnet-sky-student-language.js';
 import {withNightBodyLanguage} from './magnet-night-body-language.js';
@@ -9189,4 +9190,5 @@ const baseWorkbook = {
 };
 
 export const skyReadablePriorWorkbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withNightBodyLanguage(withStudentOpeningLanguage(withNightSkyRails(baseWorkbook)))));
-export const workbook=withSkyReadableWorkbook(skyReadablePriorWorkbook);
+export const nightMoonTimePriorWorkbook=withSkyReadableWorkbook(skyReadablePriorWorkbook);
+export const workbook=withNightMoonTimeReference(nightMoonTimePriorWorkbook);

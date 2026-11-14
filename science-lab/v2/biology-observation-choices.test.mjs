@@ -33,5 +33,5 @@ test('current learning, Daily, teacher keys and both question paper modes show t
  for(const html of outputs){for(const choice of q.choices)assert(html.includes(esc(choice)));for(const photo of q.observationPhotos)assert(html.includes('../'+photo.src));for(const choice of old.choices.slice(1,4))assert(!html.includes(esc(choice)));}
  const key=teacherKeyHtml({u:unit,ch:{title:mod.unit.title},list:[q],misc:mod.misc});assert(key.includes(esc(q.explanation)));assert(!key.includes(esc(old.explanation)));for(const photo of q.observationPhotos)assert(daily(q).includes('../'+photo.src));
 
- const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(index.includes('v2.js?v='+appCacheVersion));assert(code.includes('standalone-question-context.js?v='+appCacheVersion));assert(code.includes('revised-lesson.js?v='+appCacheVersion));
+ const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(index.includes('v2.js?v='+appCacheVersion));assert(code.includes('standalone-question-context.js?v='+appCacheVersion));const lessonSpec=code.match(/from\s*['"](\.\/revised-lesson\.js[^'"]*)['"]/)[1],lessonUrl=new URL(lessonSpec,import.meta.url);assert(lessonUrl.searchParams.has('v'));lessonUrl.search='';assert(fs.readFileSync(lessonUrl,'utf8').includes('standalone-question-context.js?v='+appCacheVersion));
 });
