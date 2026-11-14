@@ -1,0 +1,80 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "자료가 빠진 생물 교재 두 문항과 대응 창작 짝문항",
+  "cacheVersion": "20261115-biology-reference-photos",
+  "curriculumStandard": "4과12-01",
+  "pairedQuestions": [
+    "s41-u04-v006",
+    "s41-u04-v011"
+  ],
+  "workbookQuestions": [
+    "s41-u04-w004",
+    "s41-u04-w005"
+  ],
+  "discovery": {
+    "actualBooks": 32,
+    "workbookQuestions": 3080,
+    "sourceLinkedQuestions": 588,
+    "bankPicturesOmittedFromLinkedWorkbookQuestions": 0,
+    "separateTextReferenceCandidatesNotConfirmedMissing": 255
+  },
+  "moldPhoto": {
+    "asset": "assets/book/s41-u04-mold-hyphae-wdkeeper.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rhizopus_stolonifer4.JPG",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Rhizopus_stolonifer4.JPG",
+    "creator": "WDKeeper",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "bytes": 7104424,
+    "sha256": "85dd83c830f18c3618a9058552cb3cdc4ceb75b6c13dee04846f745801d934b8",
+    "width": 4000,
+    "height": 3000,
+    "originalBytesPreserved": true,
+    "directlyReviewed": "many fine white filaments cross and intertwine; dark rounded tips; macro photograph, not a claimed microscope image"
+  },
+  "verification": {
+    "photosDirectlyViewed": 2,
+    "appleVisionFilesSucceeded": 2,
+    "appleVisionFrames": 2,
+    "appleVisionFailures": 0,
+    "recognizedLines": 0,
+    "nativeTestFiles": 285,
+    "nativeTests": 1495,
+    "nativePassed": 1493,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "preservation": {
+    "actualUnits": 32,
+    "currentQuestionsUnchanged": 3179,
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestions": 1512,
+    "pairedQuestionsUnchanged": 1510,
+    "changedPairs": [
+      "s41-u04-v006",
+      "s41-u04-v011"
+    ],
+    "allPairChoicesAndEmptyAnswerComparisons": 12,
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3078,
+    "changedWorkbookQuestions": [
+      "s41-u04-w004",
+      "s41-u04-w005"
+    ],
+    "onlyTwoWorkbookPromptsAndPictureBlocksChanged": true,
+    "allPageStructuresAnswerKeysChoiceOrdersWritingAreasAndOldFiguresPreserved": true,
+    "actualPrintPathsCompared": 8,
+    "answerAndQuickPrintsByteIdentical": true,
+    "rawQuestionSourcePairFilesAndRendererCodeUnchanged": true,
+    "previousContextWorkbookAndArtExecutedFromGit": "d07e99a2b"
+  },
+  "remaining": [
+    "전체 자료 참조 문항의 의미 검수",
+    "현행 원문 없는 세 단원과 전체 현행 판본 확보",
+    "실제 PC·휴대폰·A4·음성·WebGL·3D 검수",
+    "운영 메인 병합·배포"
+  ]
+}

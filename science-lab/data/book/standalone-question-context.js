@@ -1,4 +1,4 @@
-import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION}from'./biology-observation-photos.js?v=20261115-biology-observation-photos';
+import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION}from'./biology-observation-photos.js?v=20261115-biology-reference-photos';
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
 export const BIOLOGY_OBSERVATION_CHOICE_VERSION='20261115-biology-photo-observations';
@@ -28,6 +28,16 @@ const waterNotice='연습을 위해 만든 자료예요. 실제 지역·인물�
 const altitudeTable={머리:['시각(KST)','고도'],행:[['10:15','41°'],['11:15','53°'],['12:15','62°'],['13:15','60°'],['14:15','49°']]};
 const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 관측하거나 정밀하게 계산한 천문 자료는 아니에요. 정확한 남중 시각은 따로 주어지지 않았어요.';
 const entries={
+ 's41-u04-v006':{
+  unit:'s41-u04',sourceType:'similar',sourceOf:{set:1,no:6},version:1,currentVersion:BIOLOGY_REFERENCE_PHOTO_VERSION,
+  prompt:'사진 설명에서 세균의 특징을 바르게 정리한 문장을 고르세요.',
+  fields:{prompt:'다음 세균 확대 자료를 보고, 생김새를 바르게 정리한 문장을 고르세요.',figure:bacteriaFigure,figureNote:'서로 다른 모양의 세균을 보여 주는 네 칸 확대 자료. 원문 세트3 11번 그림.'},
+ },
+ 's41-u04-v011':{
+  unit:'s41-u04',sourceType:'similar',sourceOf:{set:2,no:1},version:1,currentVersion:BIOLOGY_REFERENCE_PHOTO_VERSION,
+  prompt:'교사가 제공한 곰팡이 확대 사진에서 가느다란 실들이 엉킨 모습이 보입니다. 관찰 기록으로 알맞은 것을 고르세요.',
+  fields:{prompt:'다음 곰팡이 확대 사진을 보세요. 관찰한 모습을 바르게 적은 것을 고르세요.',observationPhotos:biologyObservationPhotos('mold')},
+ },
  's41-u04-b04':{
   unit:'s41-u04',version:'20261108-biology-elementary-bank',currentVersion:BIOLOGY_OBSERVATION_PHOTO_VERSION,preserveDiagnosticVersion:true,
   prompt:'확대 사진 두 장만 보고 생물의 실제 크기를 비교하려고 해요. 먼저 확인할 정보를 고르세요.',
@@ -80,7 +90,7 @@ export function standaloneQuestionContexts(rows,unit){
  let changed=false;
  const next=rows.map(q=>{
   const entry=Object.hasOwn(entries,q.id)?entries[q.id]:null;
-  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==entry.version||q.prompt!==entry.prompt||q.givens!=null||q.figure||q.photoLabels||q.observationPhotos||q.sourceContent||q.visualModel)return q;
+  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!==(entry.sourceType||'authored-supplement')||(entry.sourceOf&&JSON.stringify(q.sourceRef.of)!==JSON.stringify(entry.sourceOf))||(q.contentVersion||1)!==entry.version||q.prompt!==entry.prompt||q.givens!=null||q.figure||q.photoLabels||q.observationPhotos||q.sourceContent||q.visualModel)return q;
   changed=true;if(cache.has(q))return cache.get(q);
   const current={...q,...clone(entry.fields),contentVersion:entry.currentVersion||STANDALONE_CONTEXT_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
   if(entry.preserveDiagnosticVersion&&q.diagnosticOverride?.version===(q.contentVersion||1))current.diagnosticOverride={...clone(q.diagnosticOverride),version:current.contentVersion};

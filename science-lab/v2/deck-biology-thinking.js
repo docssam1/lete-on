@@ -1,5 +1,5 @@
 import{findLifeItem}from'./book-life.js';import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261115-classroom-question-figures';
-import{workbook}from'../data/book/s41-u04.workbook.js?v=20261115-biology-observation-photos';
+import{workbook}from'../data/book/s41-u04.workbook.js?v=20261115-biology-reference-photos';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
 const figure=key=>{const f=workbook.figures[key];if(!f)throw Error(`생물 교재 자료 없음 ${key}`);return f.replaceAll('서식 사례','사는 곳의 예');};

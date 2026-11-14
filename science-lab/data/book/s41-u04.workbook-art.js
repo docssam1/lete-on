@@ -1,4 +1,4 @@
-import{withBiologyObservationArt}from'./biology-observation-photos.js?v=20261115-biology-observation-photos';
+import{withBiologyObservationArt,withBiologyReferenceArt}from'./biology-observation-photos.js?v=20261115-biology-reference-photos';
 // 검수한 다양한 생물 교재에 실제 사용하는 그림만 분리한다. 원래 수업과 기록은 그대로 둔다.
 export const biologyReadablePriorArt={
  "given-s41-u04-v001": "<div class=\"ed-given\"><b>보기</b><p>ㄱ. 가는 실 모양의 균사로 이루어져 있다.</p><p>ㄴ. 꽃이 진 자리에 씨가 들어 있는 열매를 만든다.</p><p>ㄷ. 잎과 줄기의 마디가 뚜렷하다.</p><p>ㄹ. 번식에 포자를 이용한다.</p></div>",
@@ -21,4 +21,4 @@ export const biologyReadablePriorArt={
 
 // Keep the earlier quick table available while displaying the current blank answer.
 import{biologyReadableFigures}from'./s41-u04.editorial.js?v=20261106-biology-readable-workbook';
-export const art=withBiologyObservationArt(biologyReadableFigures(biologyReadablePriorArt));
+export const art=withBiologyReferenceArt(withBiologyObservationArt(biologyReadableFigures(biologyReadablePriorArt)));
