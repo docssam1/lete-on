@@ -1,3 +1,4 @@
+import{reviewLabel}from'../science-lab/bank/review-label.mjs';
 // 현행4-2 생물과 환경. 옛5-2 원문 출처와 기존 s42-u02 물 단원은 별도로 보존한다.
 import {readFileSync,writeFileSync} from 'node:fs';
 import {resolve,join} from 'node:path';
@@ -11,7 +12,7 @@ const holds=new Map(review.reviewDispositions.filter(x=>x.disposition==='hold-au
 const extension=new Set(['T17','T18','T19']);
 const required=Object.fromEntries(original.filter(q=>q.format==='서술형').map(q=>[`src:${q.key}`,[q.rubric[0].criterion]]));
 const judge=Object.fromEntries([...original.filter(q=>q.format==='서술형').map(q=>[`src:${q.key}`,{open:true,need:[],ex:{ok:[q.answer],part:[],no:[]}}]),...pairs.filter(q=>q.kind==='wr').map(q=>[`sim:${q.key}`,{open:true,need:[],ex:{ok:[q.sample],part:[],no:[]}}])]);
-const newMis=Object.fromEntries(Object.entries(types).map(([t,v])=>[`M${t.slice(1)}`,{label:`${v.name}를 다시 살펴봐요`,element:v.element,terms:[v.name],fix:v.desc,step:3}]));
+const newMis=Object.fromEntries(Object.entries(types).map(([t,v])=>[`M${t.slice(1)}`,{label:reviewLabel(v.name),element:v.element,terms:[v.name],fix:v.desc,step:3}]));
 const sourceNotes=Object.fromEntries(original.map(q=>[q.key,(extension.has(map[q.key])?'옛교재 연계 확장입니다. 현재 생태계 구성·먹이그물·인간 영향과 보전 실천의 필수 범위와 구별합니다.':'옛5-2 원문을 현행4-2 학습에 연결한 자료입니다. ')+(review.sourceNotes[q.key]||'제시한 생물·환경·관계의 범위로 읽고 실제 조사·실천 기록과 구별합니다.')]));
 const lessonJudge=Object.fromEntries(sup.items.filter(q=>q.responseContract==='written-explanation').map(q=>[q.id,{open:true,need:[],ex:{ok:[q.answerContract.sample],part:[],no:[]},note:'근거·대안과 표현의 타당성은 교사 확인. 응답을 실제 수행·소통으로 세지 않는다.'}]));
 const overrides=Object.fromEntries(original.filter(q=>q.set===3&&[11,12].includes(q.no)).map(q=>[q.key,{...q.givens,표:{머리:['조건','ㄱ','ㄴ','ㄷ','ㄹ'],행:[['햇빛','○','○','×','×'],['물','○','×','○','×']]}}]));

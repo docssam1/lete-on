@@ -1,6 +1,6 @@
 export const misconceptions = {
   "M01": {
-    "label": "달의 모양과 표면를 다시 살펴봐요",
+    "label": "달의 모양과 표면을 다시 살펴봐요",
     "element": "E1",
     "terms": [
       "달의 모양과 표면"
@@ -8,7 +8,7 @@ export const misconceptions = {
     "fix": "달의 모양과 표면"
   },
   "M02": {
-    "label": "관찰 도구와 사진의 조건를 다시 살펴봐요",
+    "label": "관찰 도구와 사진의 조건을 다시 살펴봐요",
     "element": "E1",
     "terms": [
       "관찰 도구와 사진의 조건"
@@ -24,7 +24,7 @@ export const misconceptions = {
     "fix": "여러 날 달 모양의 순서"
   },
   "M04": {
-    "label": "달 관찰 계획과 비교 조건를 다시 살펴봐요",
+    "label": "달 관찰 계획과 비교 조건을 다시 살펴봐요",
     "element": "E2",
     "terms": [
       "달 관찰 계획과 비교 조건"
@@ -32,7 +32,7 @@ export const misconceptions = {
     "fix": "달 관찰 계획과 비교 조건"
   },
   "M05": {
-    "label": "미관찰과 실제 기록의 구별를 다시 살펴봐요",
+    "label": "미관찰과 실제 기록의 구별을 다시 살펴봐요",
     "element": "E2",
     "terms": [
       "미관찰과 실제 기록의 구별"
@@ -40,7 +40,7 @@ export const misconceptions = {
     "fix": "미관찰과 실제 기록의 구별"
   },
   "M06": {
-    "label": "반복과 관찰 범위의 판단를 다시 살펴봐요",
+    "label": "반복과 관찰 범위의 판단을 다시 살펴봐요",
     "element": "E2",
     "terms": [
       "반복과 관찰 범위의 판단"
@@ -48,7 +48,7 @@ export const misconceptions = {
     "fix": "반복과 관찰 범위의 판단"
   },
   "M07": {
-    "label": "태양계 구성원의 구별를 다시 살펴봐요",
+    "label": "태양계 구성원의 구별을 다시 살펴봐요",
     "element": "E3",
     "terms": [
       "태양계 구성원의 구별"
@@ -72,7 +72,7 @@ export const misconceptions = {
     "fix": "행성의 겉모습 비교"
   },
   "M10": {
-    "label": "행성 조사 자료의 선택를 다시 살펴봐요",
+    "label": "행성 조사 자료의 선택을 다시 살펴봐요",
     "element": "E4",
     "terms": [
       "행성 조사 자료의 선택"
@@ -88,7 +88,7 @@ export const misconceptions = {
     "fix": "행성 모형의 설계"
   },
   "M12": {
-    "label": "모형 제작과 한계 설명를 다시 살펴봐요",
+    "label": "모형 제작과 한계 설명을 다시 살펴봐요",
     "element": "E5",
     "terms": [
       "모형 제작과 한계 설명"
@@ -96,7 +96,7 @@ export const misconceptions = {
     "fix": "모형 제작과 한계 설명"
   },
   "M13": {
-    "label": "별의 정의와 자료 판단를 다시 살펴봐요",
+    "label": "별의 정의와 자료 판단을 다시 살펴봐요",
     "element": "E6",
     "terms": [
       "별의 정의와 자료 판단"
@@ -112,7 +112,7 @@ export const misconceptions = {
     "fix": "북극성 주변 별자리 읽기"
   },
   "M15": {
-    "label": "안전한 밤하늘 관찰를 다시 살펴봐요",
+    "label": "안전한 밤하늘 관찰을 다시 살펴봐요",
     "element": "E7",
     "terms": [
       "안전한 밤하늘 관찰"
@@ -120,7 +120,7 @@ export const misconceptions = {
     "fix": "안전한 밤하늘 관찰"
   },
   "M16": {
-    "label": "관찰의 공유와 근거 설명를 다시 살펴봐요",
+    "label": "관찰의 공유와 근거 설명을 다시 살펴봐요",
     "element": "E7",
     "terms": [
       "관찰의 공유와 근거 설명"
@@ -128,7 +128,7 @@ export const misconceptions = {
     "fix": "관찰의 공유와 근거 설명"
   },
   "M17": {
-    "label": "크기 비율 자료·연계 확장를 다시 살펴봐요",
+    "label": "크기 비율 자료·연계 확장을 다시 살펴봐요",
     "element": "E8",
     "terms": [
       "크기 비율 자료·연계 확장"
@@ -136,7 +136,7 @@ export const misconceptions = {
     "fix": "제공된 옛교재 반지름/지름·모형 자료를 해석한다. 현행 필수 수치 암기가 아니다."
   },
   "M18": {
-    "label": "거리 표·단순 모형·연계 확장를 다시 살펴봐요",
+    "label": "거리 표·단순 모형·연계 확장을 다시 살펴봐요",
     "element": "E8",
     "terms": [
       "거리 표·단순 모형·연계 확장"
@@ -144,7 +144,7 @@ export const misconceptions = {
     "fix": "태양 기준 거리와 행성 사이 실제 거리/정렬 모형을 구별한다. 현행 필수 물리량 계산이 아니다."
   },
   "M19": {
-    "label": "천체 위치·밝기의 비교 조건를 다시 살펴봐요",
+    "label": "천체 위치·밝기의 비교 조건을 다시 살펴봐요",
     "element": "E9",
     "terms": [
       "천체 위치·밝기의 비교 조건"
@@ -152,7 +152,7 @@ export const misconceptions = {
     "fix": "배경 별에 대한 상대 위치와 관측 밝기의 조건을 확인하는 옛교재 연계 자료."
   },
   "M20": {
-    "label": "하루/여러 날 위치 기록의 구별를 다시 살펴봐요",
+    "label": "하루/여러 날 위치 기록의 구별을 다시 살펴봐요",
     "element": "E2",
     "terms": [
       "하루/여러 날 위치 기록의 구별"

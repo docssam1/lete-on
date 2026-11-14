@@ -48,3 +48,10 @@ test('영역 표기 수정은 과거 시험지를 읽기 전용으로 만들거�
   }
  }
 });
+
+test('the two bank writers keep the current science-and-society area when rebuilding',async()=>{
+ for(const[unit]of cases){
+  const short=unit.replaceAll('-',''),code=fs.readFileSync(new URL('../../scripts/bank-science-'+short+'.mjs',import.meta.url),'utf8'),mod=await loaders[unit]();
+  const areas=[...code.matchAll(/\b(?:area|domain):\s*['"]([^'"]+)['"]/g)].map(m=>m[1]);assert(areas.length>0);for(const area of areas)assert.equal(area,mod.unit.domain);
+ }
+});
