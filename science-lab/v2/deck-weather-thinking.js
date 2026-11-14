@@ -1,5 +1,5 @@
 import{findLifeItem}from'./book-life.js';
-import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
+import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261115-classroom-question-figures';
 import{workbook}from'../data/book/c22-s52-u03.workbook.js?v=20261105-weather-photo-labels';
 import{weatherCase}from'./weather-compare-model.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
@@ -56,7 +56,7 @@ export function buildWeatherThinkingSlides(ch,art,plan,pool,mode,ix){
  activity('share','communicate','날씨 카드로 활동을 제안해요','친구에게 날씨 자료와 활동 제안을 설명해요.',['어느 지역과 시각의 자료인지 밝혀요.','활동에 영향을 주는 두 가지 이상의 기상 요소를 설명해요.','친구의 질문을 들어요. 혼자 공부했다면 다른 사람에게 소개할 내용을 준비해요.'],'6과06-01');
  activity('revise','communicate','질문에 맞게 자료와 설명을 고쳐요','“오전 기온만으로 오후 활동을 정해도 될까?”라는 질문을 생각해요.',['지역과 대상 시각이 활동에 맞는지 살펴요.','필요한 예보나 관측을 더 확인하고 이름표·단위·설명을 고쳐요.','고친 카드로 다시 설명해요. 받은 질문이 없다면 스스로 비교 조건을 점검해요.'],'6과06-01');
  add('conclusion','check','처음 생각이 어떻게 달라졌나요?',(teach?p('안개는 공기 중 물방울이라는 점과 오후 날씨에 필요한 자료를 연결해 처음 생각을 돌아보게 해요.'):'<div class="dk-card"><h3>처음에 고른 생각</h3><p data-prediction-summary></p></div>')+'<div class="dk-mylab" hidden></div>'+peek('아침에 안개가 끼었다는 사실만으로 오후에 반드시 비가 온다고 할 수는 없어요. 활동할 지역과 오후 시각에 맞는 최신 예보, 기온·바람·강수 등 여러 기상 요소를 함께 확인해요.'),{kind:'think'});
- ch.check.forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`날씨 확인 문항 없음 ${key}`);add(`test${i+1}`,'check',`배운 내용 확인하기 ${i+1}/${ch.check.length}`,(q.figure?figure('observationFogModel'):'')+thinkingCheckQuestion(q,i+1,teach),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
+ ch.check.forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`날씨 확인 문항 없음 ${key}`);add(`test${i+1}`,'check',`배운 내용 확인하기 ${i+1}/${ch.check.length}`,(q.figure?figure('observationFogModel'):'')+thinkingCheckQuestion(q,i+1,teach,{figureHtml:''}),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
  add('end','check','관측과 실험으로 날씨와 생활을 설명해요',`<ul>${['기상 요소를 관측하고 날씨가 생활에 주는 영향 알아보기','이슬·안개·구름의 공통점과 차이점 찾기','주변 기압과 날씨의 특징을 기상 요소로 표현하기','해륙풍 모형을 온도 차이와 기압, 바람 방향으로 설명하기'].map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+p('직접 관측한 날씨와 연습 자료를 함께 돌아보아요. 관측과 실험은 다음 차시에도 이어서 비교해요.')+'<a class="btn" href="#/c22-s52-u03/daily">Daily Test</a>',{kind:'end'});
  S.forEach((s,i)=>s.n=i+1);return S;
 }

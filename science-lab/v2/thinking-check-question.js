@@ -1,12 +1,12 @@
 import {lifeQuestion} from './book-life.js';
-import {sourceTableHtml} from './source-presentation.js';
+import {sourceTableHtml,sourceFigureImageAttrs} from './source-presentation.js?v=20261115-original-figure-resolution';
 import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-observation-photos';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // 보기·관찰 기록은 코드 배열 대신 한 줄씩 읽는다. 표 자료와 채점 표시는 기존 renderer를 쓴다.
-export function thinkingCheckQuestion(q,n,teach,{recordKey}={}){
+export function thinkingCheckQuestion(q,n,teach,{recordKey,figureHtml}={}){
  recordKey ||= q.id?`test:item:${q.id}`:undefined;
  const entries=Object.entries(q.givens||{});
- const photos=q.observationPhotos?photoFigureHtml(q):'';
+ const photos=figureHtml??((q.observationPhotos||q.photoLabels)?photoFigureHtml(q):q.figure?`<figure class="src-fig"><img ${sourceFigureImageAttrs(q.figure)} alt="${esc(q.figureNote||'문항 그림')}"></figure>`:'');
  const isList=value=>Array.isArray(value)&&value.every(v=>typeof v==='string');
  if(q.answerContract?.type==='cloze'){
   const given=entries.map(([title,value])=>`<div class="dk-given"><b>${esc(title)}</b> ${sourceTableHtml(value)||esc(value??'')}</div>`).join(''),key=recordKey||`test${n}`;

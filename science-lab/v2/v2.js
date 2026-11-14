@@ -703,7 +703,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
   const bookMod = await BOOKS[u]().then(m=>revisedClassroom(u,m)).catch(() => null);
   if (location.hash !== requestedHash) return;
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js?v=20261115-biology-observation-photos'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
+  const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js?v=20261115-classroom-question-figures'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
   if (location.hash !== requestedHash) return;
   const classLab=bookMod.classroomLab || L.explore?.lab || {}, classRowsKey=classLab.rowsKey || 'labRows';
   const mountClassLab=(el,options)=>(classLab.mount || mountLabOf(classLab.kind))(el,options);
