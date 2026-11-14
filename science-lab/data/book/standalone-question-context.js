@@ -1,5 +1,6 @@
-import{landObservationEntries,LAND_OBSERVATION_CONTEXT_VERSION}from'./land-observation-context.js?v=20261115-land-observation-context';
-export const REFERENCE_CONTEXT_CACHE_VERSION=LAND_OBSERVATION_CONTEXT_VERSION;
+import{volcanoReferenceEntries,VOLCANO_REFERENCE_VERSION}from'./volcano-reference-context.js?v=20261115-volcano-reference-context';
+import{landObservationEntries}from'./land-observation-context.js?v=20261115-land-observation-context';
+export const REFERENCE_CONTEXT_CACHE_VERSION=VOLCANO_REFERENCE_VERSION;
 import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION,BIOLOGY_COMPARISON_VERSION,BIOLOGY_COMPARISON_PROMPTS,BIOLOGY_SHAPES_NOTE}from'./biology-observation-photos.js?v=20261115-biology-comparison-photos';
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
@@ -34,6 +35,7 @@ const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 �
 const geologyHorizontal='assets/book/c22-s51-u01-source-horizontal.png',geologyBroken='assets/book/c22-s51-u01-source-broken.png';
 const preparationPhoto='assets/activities/c22-s51-u03/mixing-photo-v1.webp',environmentPicture='assets/activities/c22-s61-u01/environment.webp';
 const entries={
+ ...volcanoReferenceEntries,
  ...landObservationEntries,
  's41-u04-v031':{
   unit:'s41-u04',sourceType:'similar',sourceOf:{set:3,no:1},version:1,currentVersion:BIOLOGY_COMPARISON_VERSION,

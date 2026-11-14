@@ -1,3 +1,4 @@
+import{withVolcanoReferenceArt}from'./volcano-reference-context.js?v=20261115-volcano-reference-context';
 import{withLandObservationArt}from'./land-observation-context.js?v=20261115-land-observation-context';
 // 검수한 땅의 변화 교재에 실제 사용하는 그림만 분리한다. 원래 수업과 기록은 그대로 둔다.
 export const landObservationPriorArt={
@@ -27,4 +28,5 @@ export const landObservationPriorArt={
  "quick-61": "<div class=\"mt-quick-grid\"><table class=\"ed-table\"><thead><tr><th scope=\"col\">번호</th><th scope=\"col\">형식</th><th scope=\"col\">정답</th></tr></thead><tbody><tr><th scope=\"row\">61</th><td>단답</td><td>㉠</td></tr><tr><th scope=\"row\">62</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">63</th><td>객관식</td><td>①</td></tr><tr><th scope=\"row\">64</th><td>객관식</td><td>⑤</td></tr><tr><th scope=\"row\">65</th><td>단답</td><td>온천</td></tr><tr><th scope=\"row\">66</th><td>단답</td><td>승강기</td></tr><tr><th scope=\"row\">67</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">68</th><td>서술</td><td>교사 확인</td></tr><tr><th scope=\"row\">69</th><td>객관식</td><td>②</td></tr><tr><th scope=\"row\">70</th><td>객관식</td><td>④</td></tr></tbody></table><table class=\"ed-table\"><thead><tr><th scope=\"col\">번호</th><th scope=\"col\">형식</th><th scope=\"col\">정답</th></tr></thead><tbody><tr><th scope=\"row\">71</th><td>모두 고르기</td><td>②, ⑤</td></tr><tr><th scope=\"row\">72</th><td>모두 고르기</td><td>③, ④</td></tr><tr><th scope=\"row\">73</th><td>빈칸</td><td>㉠ 몸 · ㉡ 선생님/교사</td></tr><tr><th scope=\"row\">74</th><td>빈칸</td><td>㉠ 규모 · ㉡ 피해</td></tr><tr><th scope=\"row\">75</th><td>빈칸</td><td>㉠ 계획 · ㉡ 연습/확인</td></tr><tr><th scope=\"row\">76</th><td>연결</td><td>㉠–③ · ㉡–① · ㉢–②</td></tr><tr><th scope=\"row\">77</th><td>연결</td><td>㉠–② · ㉡–③ · ㉢–①</td></tr><tr><th scope=\"row\">78</th><td>순서</td><td>㉡→㉣→㉠→㉢</td></tr><tr><th scope=\"row\">79</th><td>그림</td><td>교사 확인</td></tr><tr><th scope=\"row\">80</th><td>그림</td><td>교사 확인</td></tr></tbody></table></div>"
 };
 
-export const art=withLandObservationArt(landObservationPriorArt);
+export const volcanoReferencePriorArt=withLandObservationArt(landObservationPriorArt);
+export const art=withVolcanoReferenceArt(volcanoReferencePriorArt);

@@ -1,3 +1,4 @@
+import{withVolcanoReferenceWorkbook}from'./volcano-reference-context.js?v=20261115-volcano-reference-context';
 import{withLandObservationWorkbook}from'./land-observation-context.js?v=20261115-land-observation-context';
 import{withGrade4StudyNotes}from'./grade4-study-notes.js?v=20261108-grade4-study-notes';
 import{withLandElementaryWorkbook}from'./s41-u03.elementary.js?v=20261108-land-elementary';
@@ -7459,4 +7460,5 @@ export const landReasoningPriorWorkbook=withLandPhotoLanguage(landPhotoPriorWork
 export const landElementaryPriorWorkbook=withLandLearnerReasoning(landReasoningPriorWorkbook);
 export const landStudyNotesPriorWorkbook=withLandElementaryWorkbook(landElementaryPriorWorkbook);
 export const landObservationPriorWorkbook=withGrade4StudyNotes(landStudyNotesPriorWorkbook);
-export const workbook=withLandObservationWorkbook(landObservationPriorWorkbook);
+export const volcanoReferencePriorWorkbook=withLandObservationWorkbook(landObservationPriorWorkbook);
+export const workbook=withVolcanoReferenceWorkbook(volcanoReferencePriorWorkbook);
