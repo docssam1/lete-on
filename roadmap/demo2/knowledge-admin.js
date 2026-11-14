@@ -11,7 +11,7 @@
  const call=body=>A.functionCall('roadmap-knowledge',body);
  async function run(fn){if(busy)return;busy=true;try{await fn();}catch(e){say(e.status===403?'지식 관리 권한이 없습니다.':e.status===401?'관리자 로그인이 필요합니다.':e.status===409?'기준 자료가 바뀌었습니다. 목록을 새로 불러와 다시 고쳐 주세요.':e.status===400?'입력을 확인해 주세요. 제목 120자, 내용 4000자까지입니다.':'요청을 처리하지 못했습니다. 연결을 확인해 주세요.',true);}finally{busy=false;}}
  function card(r){
-  const acts=r.status==='candidate'?[['approved','승인'],['archived','버리기']]:r.status==='approved'?[['archived','보관']]:[['approved','다시 승인']];
+  const acts=r.status==='candidate'?[['approved','승인'],['archived','보관']]:r.status==='approved'?[['archived','보관']]:[['approved','다시 승인']];
   return `<li class="k-item"><div class="k-meta"><span class="k-kind">${esc(KIND[r.kind]||r.kind)}</span><span>${esc(STAGE[r.stage]||r.stage)}</span><span>${esc(ORIGIN[r.origin]||r.origin)}</span>${r.checked_on?`<span>확인 ${esc(r.checked_on)}</span>`:''}</div><h3>${esc(r.title)}</h3><p class="k-body">${esc(r.body)}</p>${r.source?`<p class="k-source">출처 · ${esc(r.source)}</p>`:''}<div class="k-actions"><button type="button" data-edit="${esc(r.id)}">고치기</button>${acts.map(([s,l])=>`<button type="button" data-id="${esc(r.id)}" data-status="${s}">${l}</button>`).join('')}</div></li>`;
  }
  async function list(){
@@ -35,7 +35,7 @@
  $('kList').onclick=e=>{
   const ed=e.target.closest('[data-edit]');if(ed){edit(items.find(r=>r.id===ed.dataset.edit));return;}
   const b=e.target.closest('[data-status]');if(!b)return;
-  run(async()=>{await call({action:'status',id:b.dataset.id,status:b.dataset.status});await list();say(b.dataset.status==='approved'?'승인했습니다. 다음 AI 초안부터 반영됩니다.':'옮겼습니다.');});
+  run(async()=>{await call({action:'status',id:b.dataset.id,status:b.dataset.status});await list();say(b.dataset.status==='approved'?'승인했습니다. 다음 상담부터 반영됩니다.':'옮겼습니다.');});
  };
  $('kForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),id=f.get('id')||null;
   run(async()=>{await call({action:'save',id,entry:{kind:f.get('kind'),stage:f.get('stage'),title:f.get('title'),body:f.get('body'),source:f.get('source'),checkedOn:f.get('checkedOn')||null}});
