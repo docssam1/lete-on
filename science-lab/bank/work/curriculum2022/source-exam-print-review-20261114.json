@@ -39,5 +39,12 @@
   "mainMerged": false,
   "deployed": false,
   "releaseReady": false,
-  "goalAchieved": false
+  "goalAchieved": false,
+  "upstreamMergeVerification": {
+    "main": "07ca36e896156d0693764dcd397d2ddb9fa40620",
+    "reviewParent": "321867318e83d2a6ebd5b0226126f59f32170d44",
+    "readOnlyMergeConflictCount": 0,
+    "scienceTreeAndProtectedScriptsUnchanged": true,
+    "operatingMainChanged": false
+  }
 }

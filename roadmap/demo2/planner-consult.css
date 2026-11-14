@@ -1,0 +1,53 @@
+/* 상담 메모와 채팅 복사. 소개 화면의 초록·민트와 기존 글꼴을 사용한다. */
+.consult-bar,.pr-consult{--ct-ink:#16302b;--ct-muted:#52665f;--ct-green:#285c49;--ct-mint:#edf7f5;--ct-line:#cfe0da}
+.consult-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:12px max(16px,env(safe-area-inset-right)) 12px max(16px,env(safe-area-inset-left));background:#fff;border-bottom:1px solid var(--ct-line);font-size:14px;color:var(--ct-ink)}
+.consult-mode{font-size:15px;font-weight:750;white-space:nowrap;margin-right:4px}
+.consult-field{display:inline-flex;align-items:center;gap:8px;min-width:0}.consult-field>span{color:var(--ct-muted);white-space:nowrap}
+.consult-bar select,.consult-bar input{box-sizing:border-box;font:inherit;min-height:44px;border:1px solid var(--ct-line);border-radius:6px;padding:8px 10px;background:#fff;color:var(--ct-ink);max-width:12em;min-width:0}
+.consult-name{display:inline-flex;align-items:center;gap:8px;margin:0;min-width:0}
+.consult-bar button{font:inherit;min-height:44px;padding:8px 14px;border:1px solid var(--ct-line);border-radius:6px;background:#fff;color:var(--ct-green);cursor:pointer;white-space:nowrap}
+.consult-bar button:hover{background:var(--ct-mint);border-color:var(--ct-green)}
+.consult-status{margin:0;color:var(--ct-muted);font-size:12px;line-height:1.6;flex:1 1 240px;min-width:0}
+.consult-bar :focus-visible,.pr-consult :focus-visible{outline:3px solid #38776d;outline-offset:3px}
+.pr-page.pr-consult{background:#fff;color:var(--ct-ink)}
+.pr-consult .pr-section-title{color:var(--ct-ink);border-color:var(--ct-line);font-size:28px;letter-spacing:-.04em}
+.pr-consult .consult-lead{color:var(--ct-muted);font-size:15px;line-height:1.8;margin:12px 0 24px;word-break:keep-all}
+.consult-writing{border:1px solid var(--ct-line);border-radius:8px;overflow:clip}
+.consult-tools{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#f6faf8;border-bottom:1px solid var(--ct-line)}
+.consult-tools button,.consult-photo{box-sizing:border-box;font:inherit;font-size:13px;min-height:44px;padding:8px 10px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ct-ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.consult-tools button:hover,.consult-photo:hover{border-color:var(--ct-line);background:#fff}
+.consult-tools .ct-bold{font-weight:750}.consult-tools .ct-under{text-decoration:underline}.consult-tools .ct-mark{background:#fef08a}.consult-tools .ct-red{color:#b52c28}.consult-tools .ct-blue{color:#2456c4}
+.consult-photo input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.consult-photo:focus-within{outline:3px solid #38776d;outline-offset:2px}
+.consult-editor{box-sizing:border-box;min-height:240px;padding:22px 24px;font-size:16px;line-height:1.9;background:#fff;color:var(--ct-ink);overflow-wrap:anywhere}
+.consult-editor:empty::before{content:'현재 진도, 혼자 풀 수 있는 범위, 다음에 보완할 내용을 적어 주세요.';color:var(--ct-muted);pointer-events:none}
+.consult-editor:focus-visible{outline:2px solid #38776d;outline-offset:-3px}
+.consult-editor img{display:block;max-width:100%;height:auto;border-radius:6px;margin:12px 0}
+.pr-consult .consult-editor p{margin:0 0 12px}
+.pr-consult .consult-saved{font-size:12px;line-height:1.6;color:var(--ct-muted);min-height:20px;margin:8px 0 24px}
+.consult-export{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 24px;padding:24px;background:var(--ct-mint);border-radius:8px;min-width:0}
+.pr-consult .consult-export-heading h3{color:var(--ct-ink);font-size:19px;line-height:1.45;letter-spacing:-.035em;margin:0 0 8px;word-break:keep-all}
+.pr-consult .consult-export-heading p{font-size:14px;line-height:1.75;color:var(--ct-muted);margin:0;word-break:keep-all}
+.consult-export-actions{align-self:center}
+.consult-export .ct-copy{font:inherit;font-size:15px;font-weight:650;min-height:48px;padding:12px 20px;border:1px solid var(--ct-green);border-radius:6px;color:#fff;background:var(--ct-green);cursor:pointer;white-space:nowrap}
+.consult-export .ct-copy:hover{background:#163f31;border-color:#163f31}.consult-export .ct-copy:disabled{opacity:.65;cursor:progress}
+.pr-consult .consult-copy-status{grid-column:1/-1;font-size:13px;line-height:1.7;color:var(--ct-green);margin:12px 0 0}.pr-consult .consult-copy-status:empty{display:none}
+.consult-copy-preview{grid-column:1/-1;min-width:0;margin-top:18px;border-top:1px solid var(--ct-line)}
+.consult-copy-preview summary{font-size:14px;font-weight:600;color:var(--ct-green);min-height:44px;padding:14px 0 0;box-sizing:border-box;cursor:pointer}
+.pr-consult .consult-copy-hint{font-size:13px;color:var(--ct-muted);line-height:1.7;margin:8px 0 12px}
+.consult-copy-text{display:block;box-sizing:border-box;width:100%;min-height:200px;max-height:440px;resize:vertical;padding:16px;font:inherit;font-size:14px;line-height:1.8;border:1px solid var(--ct-line);border-radius:6px;color:var(--ct-ink);background:#fff}
+@media(max-width:620px){
+ .consult-bar{gap:10px;padding:12px 16px}.consult-mode{flex-basis:100%}
+ .consult-name{flex:1 1 100%}.consult-name .consult-field{flex:1}.consult-name input{flex:1;width:100%;max-width:none}.consult-status{flex-basis:100%}
+ .pr-consult .pr-section-title{font-size:24px}.pr-consult .consult-lead{font-size:14px;margin-bottom:18px}
+ .consult-editor{min-height:240px;padding:18px 16px}
+ .consult-export{grid-template-columns:minmax(0,1fr);padding:20px 16px;gap:16px}
+ .consult-export .ct-copy,.consult-export-actions{width:100%}
+ .consult-copy-preview{margin-top:0}.pr-consult .consult-copy-status{margin-top:0}
+ .consult-tools{gap:2px;padding:6px}.consult-tools button,.consult-photo{font-size:13px;padding:8px}
+}
+@media print{
+ .consult-bar,.consult-tools,.consult-saved,.consult-lead,.consult-export,.pr-consult.consult-empty{display:none!important}
+ .consult-writing{border:0;border-radius:0;overflow:visible}
+ .consult-editor{border:0;padding:0;min-height:0;font-size:10.5pt;color:#000}.consult-editor:empty::before{content:none}
+}

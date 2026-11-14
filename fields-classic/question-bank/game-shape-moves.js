@@ -155,7 +155,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     host.innerHTML = `<div class="smv">
       <header class="smv-top">
         <nav class="smv-levels">${LEVELS.map((l, k) => `<button type="button" class="${k === st.level ? "on" : ""}" data-level="${k}"><b>${l.id}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</nav>
-        <span class="smv-right"><span class="smv-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span>${st.solved || st.showing ? "" : '<button type="button" class="smv-skip" data-smv="skip">넘어가기 ›</button>'}</span>
+        <span class="smv-right"><span class="smv-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span>${st.solved || st.showing ? "" : '<button type="button" class="smv-skip" data-smv="skip">건너뛰기 ›</button>'}</span>
       </header>
       <p class="smv-mission">${p.names.length > 1 ? `처음 모양을 <b>${p.names.map((x) => esc(OPS[x].label)).join("</b> 하고 <b>")}</b> 했어요. ${st.step + 1}번째 움직임의 결과를 만들어요.` : `처음 모양을 <b>${esc(o.label)}</b> 했어요. 결과를 만들어요.`}
         ${st.solved || st.showing ? "" : st.free ? `<span class="smv-ask">이제 나머지 칸도 오른쪽 판에 그려 보세요.</span>` : `<span class="smv-ask">${o.kind === "flip" ? "반짝이는 칸과 대칭인 자리" : "반짝이는 칸이 돌아간 자리"}를 오른쪽 판에서 눌러 볼까요?</span>`}</p>
@@ -186,7 +186,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
   }
   function renderFinale() {
     const total = LEVELS.reduce((s, l) => s + l.problems.length, 0), stars = st.stars.reduce((a, b) => a + b, 0);
-    host.innerHTML = `<div class="smv smv-finale"><p class="smv-kick">뒤집고 돌리기 공방 · 완성</p><h3>세 단계를 모두 마쳤어요!</h3>
+    host.innerHTML = `<div class="smv smv-finale"><p class="smv-kick">뒤집고 돌리기 게임 · 완성</p><h3>세 단계를 모두 마쳤어요!</h3>
       <p class="smv-score">처음에 바로 맞힌 문제 <b>${stars}</b> / ${total}</p>
       <ul class="smv-rules">${LEVELS.map((l, k) => `<li><b>${l.id}단계 ${l.title}</b> ★ ${st.stars[k]} / ${l.problems.length}</li>`).join("")}
         <li><b>뒤집고 돌리기</b> 첫 번째 움직임의 결과를 먼저 만들고, 그 모양에 두 번째 움직임을 해요.</li></ul>

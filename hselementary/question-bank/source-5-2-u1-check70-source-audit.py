@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Check source page 70 candidates without connecting or publishing the source."""
+"""Check page 70 arithmetic and recorded source-review status."""
 import itertools
 import json
 from pathlib import Path
 
 record = json.loads((Path(__file__).parent / 'source-inventory/5-2-u1-readiness-review.json').read_text())
 review = next(r for r in record['additionalSourceReviews'] if r['sourcePrintedPage'] == 70)
-assert review['sourcePdfPage'] == 66 and review['runtimeConnection'] == 'not-connected'
+assert review['sourcePdfPage'] == 66 and review['runtimeConnection'] == 'partial-verified-local'
 assert review['publisherAnswerVerified'] is False
+expected_statuses = {17: 'public-independent-verification-publisher-key-pending', 18: 'public-independent-verification-publisher-key-pending', 19: 'public-independent-verification-publisher-key-pending', 20: 'public-independent-verification-publisher-key-pending', 21: 'public-independent-verification-publisher-key-pending', 22: 'public-independent-verification-publisher-key-pending', 23: 'public-independent-verification-publisher-key-pending', 24: 'public-independent-verification-publisher-key-pending'}
+assert {item['number']: item['status'] for item in review['items']} == expected_statuses
 assert [x['number'] for x in review['items']] == list(range(17, 25))
 prices = [n for n in range(1, 4001) if 5 <= 4000 // n < 11]
 assert prices == list(range(364, 801)) and 4000 // 400 == 10
@@ -24,4 +26,4 @@ assert [n for n in range(4800, 5201) if ceil(n,100)==floor(n,100)==half_up(n,100
 nums = [int(''.join(p)) for p in itertools.permutations('291054') if p[0] != '0']
 assert min(nums,key=lambda n:abs(n-900000)) == 901245
 assert half_up(901245,1000) == 901000
-print('PASS: page 70 purchase bounds, combinations and rounding candidates; source remains unconnected')
+print('PASS: page 70 purchase bounds, combinations and rounding candidates; review record is partially connected')

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independently check printed page 77 without connecting source content."""
+"""Check page 77 arithmetic and recorded source-review status."""
 import json
 from fractions import Fraction as F
 from functools import reduce
@@ -8,8 +8,10 @@ from pathlib import Path
 
 record = json.loads((Path(__file__).parent / 'source-inventory/5-2-u2-readiness-review.json').read_text())
 review = next(r for r in record['additionalSourceReviews'] if r['sourcePrintedPage'] == 77)
-assert review['sourcePdfPage'] == 73 and review['runtimeConnection'] == 'not-connected'
+assert review['sourcePdfPage'] == 73 and review['runtimeConnection'] == 'partial-verified-local'
 assert review['publisherAnswerVerified'] is False
+assert all(item['status'] == 'public-independent-verification-publisher-key-pending'
+           for item in review['items'])
 assert [item['number'] for item in review['items']] == list(range(17, 25))
 assert 1025 * F(4, 5) * F(7, 10) * F(1, 2) == 287
 assert (F(7, 3) - F(8, 5)) * 75 == 55
@@ -23,4 +25,4 @@ b = reduce(mul, (F(n, n-1) for n in range(5,14,2)), F(1))
 assert a*b == F(13,3)
 assert reduce(mul, (1-F(1,n) for n in range(11,1001)), F(1)) == F(1,100)
 assert [i['candidate'] for i in review['items']] == ['287명','55km','10과 4/5km','7개','ㄹ, ㄴ, ㄷ, ㄱ','(1) 5/42, (2) 9, (3) 36과 2/3, (4) 38과 1/2','4와 1/3','1/100']
-print('PASS: page 77 exact fractions, comparison and telescoping products; source remains unconnected')
+print('PASS: page 77 exact fractions, comparison and telescoping products; review record is partially connected')

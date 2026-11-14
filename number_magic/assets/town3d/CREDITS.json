@@ -1,0 +1,135 @@
+{
+ "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/) — Polyfork free low-poly mesh files. Colours are remapped in the app.",
+ "models": [
+  {
+   "file": "models/watchtower-140f78.glb",
+   "title": "Watchtower",
+   "credit": "Watchtower by Polyfork (https://polyfork.dev/asset/watchtower-140f78), CC BY 4.0"
+  },
+  {
+   "file": "models/village-tavern-4e94e3.glb",
+   "title": "Village Tavern",
+   "credit": "Village Tavern by Polyfork (https://polyfork.dev/asset/village-tavern-4e94e3), CC BY 4.0"
+  },
+  {
+   "file": "models/two-story-house-40f6dc.glb",
+   "title": "Two-Story House",
+   "credit": "Two-Story House by Polyfork (https://polyfork.dev/asset/two-story-house-40f6dc), CC BY 4.0"
+  },
+  {
+   "file": "models/thatched-cottage-0e63f5.glb",
+   "title": "Thatched Cottage",
+   "credit": "Thatched Cottage by Polyfork (https://polyfork.dev/asset/thatched-cottage-0e63f5), CC BY 4.0"
+  },
+  {
+   "file": "models/blacksmith-forge-09fa85.glb",
+   "title": "Blacksmith Forge",
+   "credit": "Blacksmith Forge by Polyfork (https://polyfork.dev/asset/blacksmith-forge-09fa85), CC BY 4.0"
+  },
+  {
+   "file": "models/mushroom-cottage-1135d1.glb",
+   "title": "Mushroom Cottage",
+   "credit": "Mushroom Cottage by Polyfork (https://polyfork.dev/asset/mushroom-cottage-1135d1), CC BY 4.0"
+  },
+  {
+   "file": "models/backyard-swing-set-38637e.glb",
+   "title": "Backyard Swing Set",
+   "credit": "Backyard Swing Set by Polyfork (https://polyfork.dev/asset/backyard-swing-set-38637e), CC BY 4.0"
+  },
+  {
+   "file": "models/playground-slide-8b764c.glb",
+   "title": "Playground Slide",
+   "credit": "Playground Slide by Polyfork (https://polyfork.dev/asset/playground-slide-8b764c), CC BY 4.0"
+  },
+  {
+   "file": "models/canvas-wall-tent-de8a04.glb",
+   "title": "Canvas Wall Tent",
+   "credit": "Canvas Wall Tent by Polyfork (https://polyfork.dev/asset/canvas-wall-tent-de8a04), CC BY 4.0"
+  },
+  {
+   "file": "models/canvas-ridge-tent-f0df0d.glb",
+   "title": "Canvas Ridge Tent",
+   "credit": "Canvas Ridge Tent by Polyfork (https://polyfork.dev/asset/canvas-ridge-tent-f0df0d), CC BY 4.0"
+  },
+  {
+   "file": "models/dome-tent-9ee59d.glb",
+   "title": "Dome Tent",
+   "credit": "Dome Tent by Polyfork (https://polyfork.dev/asset/dome-tent-9ee59d), CC BY 4.0"
+  },
+  {
+   "file": "models/market-stall-94937d.glb",
+   "title": "Market Stall",
+   "credit": "Market Stall by Polyfork (https://polyfork.dev/asset/market-stall-94937d), CC BY 4.0"
+  },
+  {
+   "file": "models/signpost-8287c3.glb",
+   "title": "Signpost",
+   "credit": "Signpost by Polyfork (https://polyfork.dev/asset/signpost-8287c3), CC BY 4.0"
+  },
+  {
+   "file": "models/windmill-3aad49.glb",
+   "title": "Windmill",
+   "credit": "Windmill by Polyfork (https://polyfork.dev/asset/windmill-3aad49), CC BY 4.0"
+  },
+  {
+   "file": "models/water-mill-b31972.glb",
+   "title": "Water Mill",
+   "credit": "Water Mill by Polyfork (https://polyfork.dev/asset/water-mill-b31972), CC BY 4.0"
+  },
+  {
+   "file": "models/lake-dock-run-f5380e.glb",
+   "title": "Lake Dock Run",
+   "credit": "Lake Dock Run by Polyfork (https://polyfork.dev/asset/lake-dock-run-f5380e), CC BY 4.0"
+  },
+  {
+   "file": "models/rowboat-c42d85.glb",
+   "title": "Rowboat",
+   "credit": "Rowboat by Polyfork (https://polyfork.dev/asset/rowboat-c42d85), CC BY 4.0"
+  },
+  {
+   "file": "models/wooden-bridge-9d2308.glb",
+   "title": "Wooden Bridge",
+   "credit": "Wooden Bridge by Polyfork (https://polyfork.dev/asset/wooden-bridge-9d2308), CC BY 4.0"
+  },
+  {
+   "file": "models/timber-barn-90b3ce.glb",
+   "title": "Timber Barn",
+   "credit": "Timber Barn by Polyfork (https://polyfork.dev/asset/timber-barn-90b3ce), CC BY 4.0"
+  },
+  {
+   "file": "models/haystack-77b0dd.glb",
+   "title": "Haystack",
+   "credit": "Haystack by Polyfork (https://polyfork.dev/asset/haystack-77b0dd), CC BY 4.0"
+  },
+  {
+   "file": "models/wooden-fence-3d8ee7.glb",
+   "title": "Wooden Fence",
+   "credit": "Wooden Fence by Polyfork (https://polyfork.dev/asset/wooden-fence-3d8ee7), CC BY 4.0"
+  },
+  {
+   "file": "models/village-well-f8e361.glb",
+   "title": "Village Well",
+   "credit": "Village Well by Polyfork (https://polyfork.dev/asset/village-well-f8e361), CC BY 4.0"
+  },
+  {
+   "file": "models/lamp-post-c9e409.glb",
+   "title": "Lamp Post",
+   "credit": "Lamp Post by Polyfork (https://polyfork.dev/asset/lamp-post-c9e409), CC BY 4.0"
+  },
+  {
+   "file": "models/barrel-aadc94.glb",
+   "title": "Barrel",
+   "credit": "Barrel by Polyfork (https://polyfork.dev/asset/barrel-aadc94), CC BY 4.0"
+  },
+  {
+   "file": "models/wooden-crate-b9c96a.glb",
+   "title": "Wooden Crate",
+   "credit": "Wooden Crate by Polyfork (https://polyfork.dev/asset/wooden-crate-b9c96a), CC BY 4.0"
+  },
+  {
+   "file": "models/flower-planter-500ed2.glb",
+   "title": "Flower Planter",
+   "credit": "Flower Planter by Polyfork (https://polyfork.dev/asset/flower-planter-500ed2), CC BY 4.0"
+  }
+ ]
+}

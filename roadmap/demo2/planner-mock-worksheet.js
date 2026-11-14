@@ -15,6 +15,7 @@ function validate(options){
  for(const q of items){const page=layout.pages[q.page-1];if(!page||q.rect[0]<0||q.rect[1]<0||q.rect[2]>page.width||q.rect[3]>page.height)return{error:'원문 문항 위치가 페이지 범위를 벗어납니다.'};}
  return{paper:p,selection:s,layout,items};
 }
+function worksheetDate(options){return options.practicePeriod?options.practicePeriod+' 예정':options.practiceDate;}
 function shell(p,s,date){return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>${esc(p?.title||'기출')} · 선택 문항 학습지</title><link rel="stylesheet" href="${asset('planner-mock-worksheet.css?v=20261106-worksheets1')}"></head><body><nav class="mw-tools"><div><strong>선택 문항 학습지</strong><p>${esc(p?.title)} · ${esc(date||'학습일 직접 기록')}</p></div><label>단 수 <select data-columns><option value="1">1단 · 넉넉하게</option><option value="2">2단 · 모아 보기</option></select></label><button data-print disabled>학습지 인쇄</button><button data-guide disabled>결과 기록지</button><a href="${esc(p?.files?.problem||'#')}" target="_blank" rel="noopener noreferrer">공식 원본 확인</a><p data-status role="status">공식 원문에서 선택한 문항을 불러오고 있습니다.</p><p>A4 · 배율 100% · 브라우저 머리글·바닥글 끄기</p></nav><main class="mw-pages" aria-label="선택 문항 학습지"></main></body></html>`;}
 function makePage(d,p,s,date,columns){
  const page=d.createElement('article');page.className='mw-page';
@@ -71,7 +72,8 @@ async function render(target,options,data){
   }
   await Promise.all([d.fonts.load('600 22pt "Mock Worksheet Serif"','기출 문제 학습지'),d.fonts.load('400 10pt "Mock Worksheet Sans"','지필드 학습일'),...images.map(x=>{const img=d.createElement('img');img.src=x.url;return img.decode();})]);
   await d.fonts.ready;let columns=1;
-  const place=()=>{const pages=paginate(d,data,images,columns,options.practiceDate);status.textContent=`선택한 ${images.length}문항 · ${pages}쪽 준비 완료. 인쇄 미리보기에서 문제와 도형을 확인하세요.`;};place();
+  const dateText=worksheetDate(options);
+ const place=()=>{const pages=paginate(d,data,images,columns,dateText);status.textContent=`선택한 ${images.length}문항 · ${pages}쪽 준비 완료. 인쇄 미리보기에서 문제와 도형을 확인하세요.`;};place();
   const print=d.querySelector('[data-print]');print.disabled=false;print.addEventListener('click',async()=>{await d.fonts.ready;await Promise.all([...d.images].map(i=>i.decode()));target.print();});
   d.querySelector('[data-columns]').addEventListener('change',e=>{columns=Number(e.target.value)===2?2:1;place();});
   const guide=d.querySelector('[data-guide]');guide.disabled=false;guide.addEventListener('click',()=>g.PlannerMockPrint.open(options));
@@ -81,7 +83,7 @@ async function render(target,options,data){
 }
 function open(options){
  const data=validate(options);if(data.error)return{ok:false,error:data.error};let target;
- try{target=g.open('about:blank','_blank');if(!target)return{ok:false,error:'팝업을 허용한 뒤 다시 눌러 주세요.'};target.opener=null;target.document.open();target.document.write(shell(data.paper,data.selection,options.practiceDate));target.document.close();target.focus?.();return{ok:true,window:target,ready:render(target,options,data)};}catch(e){target?.close();return{ok:false,error:'선택 문항 학습지를 열지 못했습니다.'};}
+ try{target=g.open('about:blank','_blank');if(!target)return{ok:false,error:'팝업을 허용한 뒤 다시 눌러 주세요.'};target.opener=null;target.document.open();target.document.write(shell(data.paper,data.selection,worksheetDate(options)));target.document.close();target.focus?.();return{ok:true,window:target,ready:render(target,options,data)};}catch(e){target?.close();return{ok:false,error:'선택 문항 학습지를 열지 못했습니다.'};}
 }
 g.PlannerMockWorksheet=Object.freeze({validate,layoutFor,shell,paginate,open});
 })(window);

@@ -18,8 +18,8 @@ function verbal(value,lang){
       return sides.map(term).join(' 와 같은 수 ');
     }
     return term(expression);
-  }).replace(/[+＋]/g,' 모아 ').replace(/[−－]/g,' 덜어 ').replace(/[=＝]/g,' 같은 수 ').replace(/-(?=\s*[\d□])/g,'덜어 ')
-    .replace(/>/g,'더 커요').replace(/</g,'더 작아요');
+  }).replace(/[+＋]/g,' 모아 ').replace(/[−－]/g,' 덜어 ').replace(/[=＝]/g,' 같은 수 ').replace(/-(?=\s*[\d□])/g,'덜어 ');
+  /* 부등호 > < 는 글자로 바꾸지 않는다 — 큰 수·작은 수 단원에서 배우는 기호다(원장 2026-11-12 「부등호 기호를 써야지」). */
 }
 function style(){
   if(document.getElementById('nm-c0-paper-style'))return;

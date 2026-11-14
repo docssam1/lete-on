@@ -1,0 +1,19 @@
+/* 손으로 쓴 마무리 — build.mjs 가 색 표 뒤(@media screen 안)에 그대로 붙인다. 워밍업 학습 화면(golden-bell.css)에서 잰 값:
+   머리줄 #172c36 흰 글씨 · 작은 머리말 금색 #d6b86f · 바탕 #edf1ef + 28px 줄무늬 · 주 단추 파랑 #2456c4 */
+html:has(body.bank-ui:not(.as-student)){background:#edf1ef}
+body.bank-ui:not(.as-student){background-color:#edf1ef;background-image:linear-gradient(rgba(23,44,54,.025) 1px,transparent 1px);background-size:100% 28px}
+body.bank-ui:not(.as-student) .app-header{border-bottom:1px solid rgba(255,255,255,.15);background:#172c36;color:#fff}
+body.bank-ui:not(.as-student) .app-header .brand-block strong{color:#fff}
+body.bank-ui:not(.as-student) .app-header .brand-block span{color:#d6b86f}
+body.bank-ui:not(.as-student) .app-header .header-links a{border-color:transparent;background:transparent;color:#fff}
+body.bank-ui:not(.as-student) .app-header .header-links .back-link{border-color:rgba(255,255,255,.4)}
+body.bank-ui:not(.as-student) .app-header .header-links a:hover{background:rgba(255,255,255,.12);color:#fff}
+body.bank-ui:not(.as-student) .app-header .student-name{color:#fff}
+body.bank-ui:not(.as-student) :is(.next-button:not(:disabled),.ed-next,#printButton){border-color:#2456c4;background:#2456c4;color:#fff}
+body.bank-ui:not(.as-student) :is(.next-button:not(:disabled),.ed-next,#printButton):hover{border-color:#1d479f;background:#1d479f}
+/* 종이가 바깥 틀에서 물려받던 글자색(틀은 색이 바뀌었으므로 종이 뿌리에 예전 값을 직접 준다) */
+body.bank-ui:not(.as-student) .ed-q{color:#2a241c}
+body.bank-ui:not(.as-student) :is(.bk-editor,.type-preview) .visual:not(:is(.ed-q,.visual) *){color:#2a241c}
+body.bank-ui:not(.as-student) .answer-dialog :is(table,.watermark){color:CanvasText}
+body.bank-ui:not(.as-student) .pt-cover-card .cv-thumb{color:#40392e}
+body.bank-ui:not(.as-student) .pt-cover-card:has(:checked) .cv-thumb{color:#1e4631}

@@ -1,6 +1,6 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261101b";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261111g";
 import { GENERATORS } from "./generators.js?v=20261101n";
-import { saveRecord } from "./study-progress.js?v=20261029q";
+import { saveRecord } from "./study-progress.js?v=20261111p";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
@@ -39,6 +39,14 @@ const {
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// 한 차시 교재 학습지의 짧은 주소(&session=<단원>~<차시>~book|daily): 문제 목록과 제목을 덱과 같은 study-deck.js로 다시 만든다.
+// 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
+if (params.has("session") && !params.has("picks")) {
+  const [unitText, partText, kind] = params.get("session").split("~");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261111f");
+  const entries = sessionSheetEntries(CURRICULUM.find((entry) => entry.id === params.get("book")), Number(unitText), Number(partText), kind);
+  if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
+}
 const student = params.get("student") || "DEMO";
 // 권별테스트를 「유사형」(같은 구조, 새 숫자)으로 만들 때. 기본은 늘 같은 문제가 나오는 원본형.
 const freshUnitTest = params.get("fresh") === "1";
@@ -60,6 +68,8 @@ if (testMode) document.body.classList.add("as-test");
 if (asStudent) document.body.classList.add("as-student");
 // 학생 차시 덱(study.html)의 유사문제 창 안(?embed=1): 머리줄은 덱이 맡는다
 if (asStudent && params.get("embed") === "1" && parent !== window) document.body.classList.add("as-embed");
+// 강사용 교안 덱 안이면 단추를 그 덱의 남색으로(styles.css 「덱 안 학습지의 단추」). 같은 사이트 안의 창이라 바깥 문서를 볼 수 있다
+try { if (parent !== window && parent.document.body.classList.contains("is-class")) document.body.classList.add("in-class"); } catch { /* 다른 곳에 끼워진 창이면 학생 덱 색 그대로 */ }
 // 덱 안(study.html의 공부하기·오늘의 과제·데일리·단원 평가, ?embed=1): 한 화면에 한 문제씩 넘긴다
 // (원장 2026-10-30 「게임이나 학습 과정에서 아래로 스크롤을 해야 하는 경우가 있어」). 그림은 왼쪽, 문제·답은 오른쪽.
 // 칸보다 크면 통째로 줄여(zoom) 넣는다. 테스트는 마지막 장이 채점 장.
@@ -3451,7 +3461,7 @@ function studentCheckMarkup(question, index) {
   const typed = !["drawing", "visual-fill"].includes(question.responseKind);
   return `<div class="student-check" data-student-index="${index}">
     <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
-      ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사 문제 풀기</button>`}</div>
+      ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사문제 풀기</button>`}</div>
     <p class="student-check-message" role="status"></p>
     <div class="student-answer${handAnswers ? " is-hand" : ""}" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution && (!handAnswers || handSolution) ? `<p class="${handSolution ? "hand-solution" : ""}"><b>풀이</b> ${question.solution}</p>` : ""}</div>
   </div>`;
@@ -3776,12 +3786,15 @@ function initControls() {
   $("introLink").href = `./home.html?student=${encodeURIComponent(student)}`;
   $("startLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   if (asStudent) {
-    $("regenerateButton").textContent = "모두 유사 문제로";
+    $("regenerateButton").textContent = "모두 유사문제로";
     const back = document.createElement("a");
     back.className = "back-link student-back";
     back.href = studentBack || $("startLink").href;
-    back.textContent = studentBack ? "← 본책 번호판" : "← 처음 화면";
+    back.textContent = studentBack ? "← 번호 고르기로" : "← 처음 화면";
     document.querySelector(".header-links").prepend(back);
+    // 머리줄의 작은 글은 선생님용 안내(「… 맞춤 학습지를 만듭니다」)라 학생 화면에서는 학생이 할 일로 바꾼다
+    const lead = document.querySelector(".app-header .brand-block span");
+    if (lead) lead.textContent = testMode ? "다 풀고 채점하면 맞은 문제와 틀린 문제를 알려 줘요." : "풀고 나서 답을 확인하고, 어려우면 유사문제로 다시 풀어요.";
   }
   $("worksheetStudent").textContent = student;
   if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;

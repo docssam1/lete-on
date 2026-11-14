@@ -4,11 +4,13 @@
    수학은 그림이 정하지 않는다 — 검사기(scripts/check-magic-note-video.js)가 같은 state 로 물체 수를 센다.
    대사는 audio-lines 로 내보내 OmniVoice 생성 목록(scripts/generate-nm-audio.js)에 올린다. 녹음이 없으면 자막만 보인다. */
 (function(root,factory){
-  const measured=typeof module==='object'&&module.exports?require('./voice-release-20261023.json').durations:root.NM_VOICE_DURATIONS||{};
-  const api=factory(measured);
+  const release=typeof module==='object'&&module.exports?(()=>{try{return require('./voice-release-20261111-numi.json');}catch(e){return require('./voice-release-20261023.json');}})():null;
+  const measured=release?release.durations:root.NM_VOICE_DURATIONS||{};
+  const rates=release?release.rate||{}:root.NM_TTS_OMNI_RATE||{};
+  const api=factory(measured,rates);
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.NM_MAGIC_NOTE_VIDEOS=api;
-})(typeof window!=='undefined'?window:globalThis,function(measured){
+})(typeof window!=='undefined'?window:globalThis,function(measured,rates){
 'use strict';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const seg=(t,a,b)=>clamp((t-a)/(b-a),0,1);
@@ -39,7 +41,7 @@ const LINES={
 };
 const TITLE={ko:'누미의 마법 노트',en:"Numi's Magic Note",zh:'努米的魔法笔记'};
 const SUBTITLE={ko:'수 세기',en:'Counting',zh:'数数'};
-/* 장면 시간표(초). 앱 음성은 0.8배속이라 콘티 초안보다 길다. */
+/* 장면 시간표(초). 앱 음성은 0.8배속이라 콘티 초안보다 길다(한국어는 2026-11-11부터 1.0배속 — timed()가 언어별로 맞춘다). */
 const SCENES=[
   {id:'s0',t0:0,t1:3},{id:'s1',t0:3,t1:19},{id:'s2',t0:19,t1:30.5},{id:'s3',t0:30.5,t1:37.5},
   {id:'s3b',t0:37.5,t1:48},{id:'s4',t0:48,t1:59.5},{id:'s5',t0:59.5,t1:65}
@@ -191,10 +193,10 @@ const VIDEOS={
       return out;}}
 };
 /* Keep the approved animation in canonical time, stretching each cue interval
-   to fit its measured recording at 0.8x. Touches, badges, captions and scene
+   to fit its measured recording at that language's playback rate (0.8x; Korean 1.0x from 2026-11-11). Touches, badges, captions and scene
    boundaries use the same monotone mapping, for each language separately. */
 function timed(video,lang){
-  const rate=.8,gap=.18,length=c=>Number(measured[lang]?.[c.text[lang]||c.text.ko])||0;
+  const rate=Number(rates&&rates[lang])||.8,gap=.18,length=c=>Number(measured[lang]?.[c.text[lang]||c.text.ko])||0;
   const seconds=x=>Math.round(x*1e6)/1e6;
   const ready=video.cues.every(c=>length(c)>0),anchors=[[0,0]];
   if(!ready)return {...video,timingReady:false};

@@ -15,7 +15,7 @@ const DIRECTIONS=[
 ];
 const YOUNG_AXES={
  school:{label:'교과 수학',what:'교과서의 기본 내용을 차근차근 익혀요.'},
- deep:{label:'심화 수학',what:'배운 내용으로 더 깊이 생각하는 문제를 풀어요.'},
+ deep:{label:'심화·활용 수학',what:'배운 내용을 응용하거나 더 깊이 생각하는 문제를 풀어요.'},
  thinking:{label:'사고력 수학',what:'규칙과 도형을 살피고 여러 풀이를 찾아봐요.'},
  calc:{label:'수와 계산',what:'수를 이해하고 덧셈·뺄셈 등을 연습해요.'}
 };

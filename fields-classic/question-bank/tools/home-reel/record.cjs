@@ -43,7 +43,7 @@ async function tap(target, selector, pause = 160, sound = "tap") { await target.
 
 // ── 장면 ──
 const SCENES = [
-  { id: "shape", kicker: "보고 배우고", title: "뒤집고 돌리기 공방", step: 0, query: "book=book-01&unit=0&part=1", slide: "뒤집고 돌리기 공방",
+  { id: "shape", kicker: "보고 배우고", title: "뒤집고 돌리기 게임", step: 0, query: "book=book-01&unit=0&part=1", slide: "뒤집고 돌리기 게임",
     ready: (p) => p.locator(".smv-cell.spark").waitFor(),
     async act(page) {
       const g = await page.$eval(".smv-cell.spark", (e) => [+e.dataset.r, +e.dataset.c]);

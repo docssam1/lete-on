@@ -114,7 +114,8 @@ export const SCENES_E3 = {
     k.lights(Object.assign({}, LIGHT, { spotAt:[0, 0, -0.3] }));
   }},
 
-  /* 분수 덧뺄셈(다른 분모) — stage ①②: 반쪽 1/2 과 3분의 1쪽 1/3 은 크기가 달라 6등분으로 다시 잘라 3/6 + 2/6 = 5/6 */
+  /* 분수 덧뺄셈(다른 분모) — stage ①②: 반쪽 1/2 과 3분의 1쪽 1/3 은 크기가 달라 6등분으로 다시 잘라 3/6 + 2/6 = 5/6.
+     그림은 종이 교구와 같은 분수 막대 세 줄(원장 2026-11-10 「분수 막대로 바꿔」) — 길이가 같은 막대라 왼쪽 끝을 맞추면 크기가 바로 견줘진다. */
   'C-22': { seed:2201, caps:{ P:8, list:[
     [0.0, "반쪽 $\\dfrac{1}{2}$과 $\\dfrac{1}{3}$쪽은 조각 크기가 달라서 바로 못 더해요.", "Half, $\\dfrac{1}{2}$, and a third, $\\dfrac{1}{3}$, are different sizes, so we cannot just add.", "$\\dfrac{1}{2}$和$\\dfrac{1}{3}$的块大小不同，不能直接相加。"],
     [0.3, "둘 다 $6$조각으로 다시 잘라요: $\\dfrac{1}{2}=\\dfrac{3}{6}$, $\\dfrac{1}{3}=\\dfrac{2}{6}$", "Cut both into $6$ pieces: $\\dfrac{1}{2}=\\dfrac{3}{6}$, $\\dfrac{1}{3}=\\dfrac{2}{6}$.", "都重新切成$6$块：$\\dfrac{1}{2}=\\dfrac{3}{6}$，$\\dfrac{1}{3}=\\dfrac{2}{6}$。"],
@@ -122,33 +123,37 @@ export const SCENES_E3 = {
     [0.82, "그래서 $\\dfrac{1}{2}+\\dfrac{1}{3}=\\dfrac{5}{6}$이에요.", "So $\\dfrac{1}{2}+\\dfrac{1}{3}=\\dfrac{5}{6}$.", "所以$\\dfrac{1}{2}+\\dfrac{1}{3}=\\dfrac{5}{6}$。"]
   ]},
     build(k){
-    const { THREE, scene } = k;
-    k.frame([0, 0, -0.05], 5.8, 58);
+    k.frame([-0.03, 0, -0.1], 5.9, 58);
     k.table();
-    const R = 0.78, CZ = -0.75, H = 0.08;
+    /* 길이가 같은 막대 세 줄: 2등분(반쪽 빨강) · 3등분(한 칸 파랑) · 6등분(빨강 3칸 + 파랑 2칸) */
+    const L = 4.4, D = 0.52, H = 0.14, X0 = -1.68, GAP = 0.03, Y0 = 0.05, ZR = [-1.7, -0.95, -0.2];
     const red = k.plastic('#d0462f', 0.3), blue = k.plastic('#3a7cc4', 0.3), pale = k.plastic('#efe4cf', 0.5);
-    const disk = (cx, n, mats) => {
-      const base = new THREE.Mesh(new THREE.CylinderGeometry(R + 0.12, R + 0.12, 0.05, 64), k.woodMat('#b98a55', [110, 70, 35]));
-      base.position.set(cx, 0.025, CZ); base.castShadow = base.receiveShadow = true; scene.add(base);
-      const A = Math.PI * 2 / n, S = -Math.PI / 2;           /* 첫 조각이 앞(+z) 쪽에서 시작 */
-      return mats.map((m, i) => {
-        const mesh = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H, 32, 1, false, S + i * A + 0.025, A - 0.05), m);
-        mesh.castShadow = mesh.receiveShadow = true;
-        const g = new THREE.Group(); g.add(mesh); g.position.set(cx, 0.05 + H / 2, CZ); scene.add(g); return g; }); };
-    const half = disk(-2.05, 2, [red, pale]);
-    const third = disk(0, 3, [blue, pale, pale]);
-    const sixth = disk(2.05, 6, [red, red, red, blue, blue, pale]);
-    tileF(k, '+', -1.03, CZ, { w:0.4, d:0.4, h:0.12, fs:0.3 });
-    tileF(k, '=', 1.03, CZ, { w:0.4, d:0.4, h:0.12, fs:0.3 });
-    const eq = cardF(k, [{ n:'1', d:'2' }, '+', { n:'1', d:'3' }, '=', { n:'3', d:'6' }, '+', { n:'2', d:'6' }, '=', { n:'5', d:'6' }], 0, 0.95, { w:4.6, d:1.0, fs:0.32, bg:'#f1e0b8' });
-    /* 움직임: 반쪽 → 3분의 1쪽 → 6등분의 빨간 3조각 → 파란 2조각 → 5조각 함께 → 식 카드 */
-    const y0 = 0.05 + H / 2;
+    const tray = k.woodMat('#b98a55', [110, 70, 35]);
+    const bar = (z, mats) => {
+      k.tile(null, X0 + L / 2, z, { w:L + 0.14, d:D + 0.14, h:Y0, side:tray, rad:0.04 });
+      const w = L / mats.length;
+      return mats.map((m, i) => k.tile(null, X0 + w * (i + 0.5), z, { w:w - GAP, d:D, h:H, y:Y0, side:m, rad:0.035 })); };
+    const half = bar(ZR[0], [red, pale]);
+    const third = bar(ZR[1], [blue, pale, pale]);
+    const sixth = bar(ZR[2], [red, red, red, blue, blue, pale]);
+    /* 줄 앞 이름표: 1/2 · + 1/3 · = 5/6 */
+    const LO = { w:0.9, d:0.66, fs:0.27 };
+    cardF(k, [{ n:'1', d:'2' }], X0 - 0.65, ZR[0], LO);
+    cardF(k, ['+', { n:'1', d:'3' }], X0 - 0.65, ZR[1], LO);
+    cardF(k, ['=', { n:'5', d:'6' }], X0 - 0.65, ZR[2], Object.assign({}, LO, { bg:'#f1e0b8' }));
+    const eq = cardF(k, [{ n:'1', d:'2' }, '+', { n:'1', d:'3' }, '=', { n:'3', d:'6' }, '+', { n:'2', d:'6' }, '=', { n:'5', d:'6' }], -0.03, 1.0, { w:4.6, d:1.0, fs:0.32, bg:'#f1e0b8' });
+    /* 움직임: 반쪽·3분의 1쪽이 한 번씩 → 반쪽이 6등분 막대의 빨간 3칸 위로 가서 크기를 견주고 돌아옴 →
+       3분의 1쪽이 파란 2칸 위로 가서 견주고 돌아옴 → 5칸 함께 → 식 카드 */
+    const hx = half[0].position.x, tx = third[0].position.x, bx = X0 + L * 4 / 6;   /* bx = 파란 2칸의 가운데 */
+    const trip = (p, a) => seg(p, a, a + 0.05) * (1 - seg(p, a + 0.1, a + 0.15));
     k.onFrame(t => { const p = cyc(t, 8);
-      half[0].position.y = y0 + 0.22 * hop(p, 0.05, 0.18);
-      third[0].position.y = y0 + 0.22 * hop(p, 0.14, 0.27);
-      sixth.forEach((g, i) => { if(i > 4) return; const a = i < 3 ? 0.32 : 0.44; g.position.y = y0 + 0.2 * Math.max(hop(p, a + (i % 3) * 0.02, a + 0.12), hop(p, 0.6, 0.74)); });
+      const ur = trip(p, 0.3), ub = trip(p, 0.45);
+      half[0].position.set(hx, Y0 + 0.22 * hop(p, 0.05, 0.18) + 0.36 * Math.min(1, ur * 3), ZR[0] + (ZR[2] - ZR[0]) * ur);
+      third[0].position.set(tx + (bx - tx) * ub, Y0 + 0.22 * hop(p, 0.14, 0.27) + 0.36 * Math.min(1, ub * 3), ZR[1] + (ZR[2] - ZR[1]) * ub);
+      sixth.forEach((g, i) => { if(i > 4) return; const a = i < 3 ? 0.34 : 0.49;
+        g.position.y = Y0 + Math.max(0.1 * hop(p, a, a + 0.08), 0.2 * hop(p, 0.6 + i * 0.01, 0.74)); });
       eq.position.y = 0.16 * hop(p, 0.82, 0.94); });
-    k.lights(LIGHT);
+    k.lights(Object.assign({}, LIGHT, { spotAt:[0, 0, -0.5] }));
   }},
 
   /* 분수의 곱셈 — stage ①: 2/3 × 4/5 = 8/15. 3줄로 나눠 2줄, 그 2줄을 5칸으로 나눠 4칸씩 */

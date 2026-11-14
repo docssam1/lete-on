@@ -1,9 +1,9 @@
-/* 잠긴 권·단원 안내와 체험 띠(fields-access.js) — 따뜻한 종이 + 깊은 초록, 파랑 금지(gfield-textbook-design) */
+/* 잠긴 권·단원 안내와 체험 띠(fields-access.js) — 지필드의 파란 결(원장 2026-11-10): 흰 카드 · 옅은 하늘 바탕 · 남색 주 단추 */
 .fa-lock, .fa-banner, .fa-page {
-  --fa-paper: #fdfbf5; --fa-ink: #2a241c; --fa-muted: #7a6f5c; --fa-line: #e2d9c6; --fa-line-strong: #c9bda2;
-  --fa-accent: #2f6b4a; --fa-accent-ink: #1e4631; --fa-accent-soft: #e9f0e7;
+  --fa-paper: #ffffff; --fa-ink: #1b2340; --fa-muted: #56627f; --fa-line: #e0e9f8; --fa-line-strong: #c7d6ee;
+  --fa-accent: #243184; --fa-accent-ink: #141b5d; --fa-accent-soft: #eaf3ff;
 }
-.fa-page { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px; background: #f1ece1; color: var(--fa-ink); font-family: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+.fa-page { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px; background: #f2f6fd; color: var(--fa-ink); font-family: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
 .fa-wrap { display: grid; gap: 12px; width: min(100%, 480px); text-align: center; }
 .fa-lock { display: grid; gap: 10px; padding: 22px 22px 20px; border: 1px solid var(--fa-line-strong); border-radius: 14px; background: var(--fa-paper); color: var(--fa-ink); text-align: left; }
 .fa-lock h2 { margin: 0; font-size: 20px; line-height: 1.35; }
@@ -13,8 +13,8 @@
 .fa-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .fa-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px; border: 1px solid var(--fa-line-strong); border-radius: 8px; background: var(--fa-paper); color: var(--fa-ink); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
 .fa-btn:hover { border-color: var(--fa-ink); }
-.fa-btn.primary { border-color: var(--fa-accent); background: var(--fa-accent); color: #fff; }
-.fa-btn.primary:hover { background: var(--fa-accent-ink); }
+.fa-btn.primary { border-color: var(--fa-accent-ink); background: var(--fa-accent-ink); color: #fff; box-shadow: 0 8px 18px rgba(20, 27, 93, .28); }
+.fa-btn.primary:hover { background: var(--fa-accent); }
 .fa-btn.small { min-height: 34px; padding: 4px 12px; font-size: 14px; }
 .fa-small { color: var(--fa-muted); font-size: 13px; }
 .fa-small:empty { display: none; }

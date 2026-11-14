@@ -6,12 +6,12 @@
  body.roadmap-studio.integrated-planner.premium-planner .workspace-tabs{padding:3px 12px!important;gap:8px!important}
  body.roadmap-studio.integrated-planner.premium-planner .workspace-tabs button{min-height:44px;padding:6px 10px;font-size:13px}
  body.roadmap-studio.integrated-planner .workspace-tabs .editorial-menu-icon{display:none}
- body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools{position:absolute;top:4px;right:210px;z-index:6;min-height:44px;margin:0;padding:0;border:0;background:transparent;color:#eef4ff}
- body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools>summary{display:flex;align-items:center;justify-content:flex-end;gap:6px;width:fit-content;margin-left:auto;min-height:44px;padding:4px 10px;font-size:12px;cursor:pointer;list-style:none;border:1px solid #b8ceff5e;border-radius:11px;background:#ffffff10;color:#eef4ff}
- body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools>summary .prn-tools-label{color:#eef4ff}
+ body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools{position:absolute;top:4px;right:210px;z-index:6;min-height:44px;margin:0;padding:0;border:0;background:transparent;color:#f6effe}
+ body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools>summary{display:flex;align-items:center;justify-content:flex-end;gap:6px;width:fit-content;margin-left:auto;min-height:44px;padding:4px 10px;font-size:12px;cursor:pointer;list-style:none;border:1px solid #ddbdfa5e;border-radius:11px;background:#ffffff10;color:#f6effe}
+ body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools>summary .prn-tools-label{color:#f6effe}
  body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools>summary .prn-title{display:none}
  body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools>summary::after{content:'⌄';font-size:16px}.prn-tools[open]>summary::after{transform:rotate(180deg)}
- body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools-body{position:absolute;right:8px;top:44px;z-index:25;width:min(360px,calc(100vw - 48px));max-height:min(400px,60dvh);overflow:auto;padding:12px;border:1px solid #c9d5e9;border-radius:10px;background:#fff;box-shadow:0 10px 24px #13285820;box-sizing:border-box}
+ body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools-body{position:absolute;right:8px;top:44px;z-index:25;width:min(360px,calc(100vw - 48px));max-height:min(400px,60dvh);overflow:auto;padding:12px;border:1px solid #d8cbe7;border-radius:10px;background:#fff;box-shadow:0 10px 24px #3e1d4e20;box-sizing:border-box}
  body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools-body :is(.plan-travel,.history-travel,.pco-travel,.workspace-summary,.standard-summary){padding:6px;margin:0;border:0;background:#fff}
  body.roadmap-studio.integrated-planner:not([data-responsive-workspace]) .prn-tools-body :is(.plan-travel-top,.plan-travel-steps){display:flex;align-items:center;flex-wrap:wrap;gap:6px}
  body.roadmap-studio.integrated-planner .prn-tools-body button{min-height:44px}

@@ -1469,8 +1469,8 @@ function renderGridPaint(problem, container, onAnswer){
   cells.forEach(c=>{
     c.addEventListener('pointerup',e=>{
       e.stopPropagation();
-      if(c.classList.contains('on')){ c.classList.remove('on'); painted--; }
-      else{ c.classList.add('on'); painted++; }
+      if(c.classList.contains('on')){ c.classList.remove('on'); painted--; if(problem.drawShape)c.textContent=''; }
+      else{ c.classList.add('on'); painted++; if(problem.drawShape)c.textContent=problem.drawShape.glyph; }
       cnt.textContent=painted;
     });
   });

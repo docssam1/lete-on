@@ -41,9 +41,9 @@ test('partial coverage leaves the untouched topic, while a failed recheck starts
  const source=root({total:10,unlearned:0,correct:6,helped:2,units:[{title:'방정식',missed:1,helped:1,cause:'concept'},{title:'부등식',missed:1,helped:1,cause:'strategy'}]}),child=root({id:'child',date:'2026-11-26',savedOn:'2026-11-26',followupOf:'source',coveredTopics:['unit:방정식'],units:[{title:'방정식',missed:1,helped:1,cause:'concept'}],unlearned:0,correct:8,helped:1});
  const m=model([source,child]),parent=m.mockFeedback.plans.find(p=>p.id==='source'),next=m.mockFeedback.plans.find(p=>p.id==='child');assert.equal(parent.topics.length,1);assert.equal(parent.topics[0].title,'부등식');assert.equal(next.recheck,'2026-12-17');assert.equal(next.topics[0].title,'방정식');
 });
-test('all views and the main practice calendar respect exact followup dates without moving teaching courses',()=>{
+test('planning views show a rough period while the calendar retains the exact recheck date and teaching courses',()=>{
  const initial=S.attach(C.model(a,fields),a,fields),before=JSON.stringify(initial.lanes.filter(l=>l.id!=='mockCheck')),m=F.attach(initial,state([root()]));assert.equal(JSON.stringify(m.lanes.filter(l=>!['mockCheck','mockRepair','mockRetest'].includes(l.id))),before);
- const b=m.lanes.find(l=>l.id==='mockRetest').blocks[0];assert.equal(C.period(m,b),'2026년 11월 26일');assert.match(C.detail(m,b.id).html,/2026년 11월 26일/);for(const view of ['map','graph','table'])assert.match(F.render(m,view),/2026년 11월 26일/);assert.match(F.notes(m)[0],/2026년 11월 26일/);
+ const b=m.lanes.find(l=>l.id==='mockRetest').blocks[0];assert.equal(b.calendarStart,'2026-11-26');assert.equal(C.period(m,b),'2026년 11월 말 예정');assert.match(C.detail(m,b.id).html,/2026년 11월 말/);for(const view of ['map','graph','table'])assert.match(F.render(m,view),/2026년 11월 말/);assert.match(F.notes(m)[0],/2026년 11월 말/);
  for(const r of m.mockCheckPlan.rows.filter(r=>r.start!==null))assert.ok(r.start>=1,'next broad paper follows the November recheck');assert.equal(m.mockCheckPlan.rows.find(r=>r.id==='h1-06').start,null);
 });
 test('state preserves results, concepts, schedule and workload; opt-out restores manual review and deletion unlinks child results',()=>{
@@ -59,7 +59,7 @@ test('record metadata and generated followup text are bounded and escaped',()=>{
 test('a pending recheck retains its exact date and repair work, with no stale PDF or fabricated result form',()=>{
  const source=root({exam:'2026년 6월 학평',level:'2'}),m=model([source]),p=m.mockFeedback.plans[0],html=F.render(m);
  assert.equal(p.paper.pending,true);assert.equal(p.recheck,'2026-11-26');assert.equal(p.start,'2026-11-05');assert.equal(p.end,'2026-11-19');assert.equal(p.topics[0].title,'이차방정식');
- assert.equal(F.prefill(m,'source'),null);assert.ok(!html.includes('data-mock-paper'));assert.ok(!html.includes('data-mock-feedback-record'));assert.match(html,/회차 확인 대기/);assert.match(F.notes(m).join(' '),/2026년 11월 26일/);
+ assert.equal(F.prefill(m,'source'),null);assert.ok(!html.includes('data-mock-paper'));assert.ok(!html.includes('data-mock-feedback-record'));assert.match(html,/회차 확인 대기/);assert.match(F.notes(m).join(' '),/2026년 11월 말/);
  const b=m.lanes.find(l=>l.id==='mockRetest').blocks[0];assert.equal(b.calendarStart,'2026-11-26');assert.equal(b.paperId,null);assert.equal(b.books.length,0);
 });
 test('saved recheck choices survive synchronization, JSON restoration and unrelated results',()=>{

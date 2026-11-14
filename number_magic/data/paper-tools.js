@@ -25,7 +25,15 @@ var LINE = 'fill:none;stroke:#191511;stroke-width:.4';
 var THIN = 'fill:none;stroke:#918777;stroke-width:.25';
 var TXT = 'font-family:Pretendard,sans-serif;font-size:3.8px;fill:#191511';
 
-var P={ink:'#191511',green:'#2f6b4a',soft:'#e9f0e7',gold:'#a87c22',tint:'#fff1d1'};
+/* 색(2026-11-10, 원장 「칼라로 디자인」). 색만으로 구분하지 않는다 — 숫자·점·고리 표시는 그대로 두어 흑백으로 뽑아도 쓸 수 있다.
+   자릿값 색은 앱·학습지의 자릿값 색 힌트(app/place-color.js)와 같은 계열: 일 빨강 · 십 파랑 · 백 초록 · 천 보라. */
+var P={ink:'#191511',green:'#2f6b4a',soft:'#bfe6c8',gold:'#a87c22',tint:'#ffdf80'};
+var PLACE={1:['#f9cfca','#C62828'],10:['#cfe1f7','#1565C0'],100:['#cfe9cf','#2E7D32'],1000:['#e4d0f0','#6A1B9A']};
+/* 수막대 색 — 길이마다 다른 색. 숫자가 함께 적혀 있어 색을 못 봐도 쓸 수 있다. */
+var ROD={1:'#ffffff',2:'#f6a39b',3:'#bfe8a8',4:'#d0b3ee',5:'#ffe36e',6:'#7fcf95',7:'#c9ced6',8:'#d9b48a',9:'#9cc6f5',10:'#ffbd73'};
+var PIECE=['#f6a39b','#ffe36e','#bfe8a8','#9cc6f5','#d0b3ee','#ffbd73','#7fcf95','#f3b6d4','#c9ced6','#d9b48a','#a8e0dc','#ffd0a6'];
+/* 가위 표시 — 자르기 시작하는 곳. 글자가 아니라 그림이라 언어와 상관없다. */
+function scissors(x,y){return '<g data-part="scissors" transform="translate('+x+' '+y+')" style="fill:#fff;stroke:#191511;stroke-width:.45"><circle cx="0" cy="-1.6" r="1.25"/><circle cx="0" cy="1.6" r="1.25"/><line x1="1" y1="-1.1" x2="5.2" y2="1.5"/><line x1="1" y1="1.1" x2="5.2" y2="-1.5"/></g>';}
 var STRONG='fill:none;stroke:#2f6b4a;stroke-width:.7';
 function segment(x,y,xx,yy,style){return '<line x1="'+x+'" y1="'+y+'" x2="'+xx+'" y2="'+yy+'" style="'+style+'"/>';}
 function text(x,y,t,size,anchor){return '<text x="'+x+'" y="'+y+'" text-anchor="'+(anchor||'start')+'" style="font-family:Pretendard,sans-serif;font-size:'+(size||3.8)+'px;fill:#191511">'+t+'</text>';}
@@ -50,45 +58,124 @@ function tenFrame(lang){
     b += label(x, y - 6, words(lang, '10칸 수판 ' + (f + 1), 'Ten-frame ' + (f + 1), '十格框 ' + (f + 1)));
     // 바깥 점선만 자르면 칸 전체가 한 장의 놀이판으로 남는다.
     b += '<rect data-part="frame" x=".5" y="' + (y - 2.5) + '" width="100" height="43" rx="2" style="' + CUT + '"/>';
-    b += rect(x, y, c * 5, c * 2, 'fill:#f5f8f2;stroke:#2f6b4a;stroke-width:.65');
-    b += rect(x, y, c * 5, c, 'fill:#e9f0e7;stroke:none');
+    b += rect(x, y, c * 5, c * 2, 'fill:#fffdf4;stroke:#2f6b4a;stroke-width:.65');
+    b += rect(x, y, c * 5, c, 'fill:#eaf6ee;stroke:none');
     for(var i = 1; i < 5; i++) b += '<line x1="' + (x + c * i) + '" y1="' + y + '" x2="' + (x + c * i) + '" y2="' + (y + c * 2) + '" style="' + LINE + '"/>';
     b += '<line x1="' + x + '" y1="' + (y + c) + '" x2="' + (x + c * 5) + '" y2="' + (y + c) + '" style="stroke:#2f6b4a;stroke-width:.65"/>';
   }
-  b += label(105, 9, words(lang, '동그라미 20개', '20 counters', '20个圆片'));
+  /* 수 조각은 서로 붙은 네모 — 곧은 선으로만 자른다(동그라미는 어린 손에 어렵다). 가로로 길게 자른 뒤 한 칸씩. */
+  var s0 = 17.5, x0 = 107, y0 = 15;
+  b += label(105, 9, words(lang, '수 조각 20개 · 줄대로 곧게 잘라요', '20 counters · cut straight lines', '20个数片 · 沿直线剪'));
   for(var k = 0; k < 20; k++){
-    var cx = 113.5 + (k % 4) * 18.5, cy = 24 + Math.floor(k / 4) * 22;
-    var first = k < 10;
-    b += '<circle data-part="counter" cx="' + cx + '" cy="' + cy + '" r="8.5" style="fill:' + (first ? '#e9f0e7' : '#fff1d1') + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
+    var tx = x0 + (k % 4) * s0, ty = y0 + Math.floor(k / 4) * s0, first = k < 10;
+    b += '<rect data-part="counter" x="' + tx + '" y="' + ty + '" width="' + s0 + '" height="' + s0 + '" style="fill:#fff;stroke:#191511;stroke-width:.45;stroke-dasharray:1.8 1.2"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="6.8" style="fill:' + (first ? '#6cc98a' : '#ffcf4d') + ';stroke:' + (first ? '#2f6b4a' : '#9a6b00') + ';stroke-width:.5"/>';
     // 색을 볼 수 없어도 가운데 점/고리로 두 묶음을 구별한다.
-    b += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (first ? 2.2 : 3.4) + '" style="fill:' + (first ? '#2f6b4a' : 'none') + ';stroke:' + (first ? '#2f6b4a' : '#765614') + ';stroke-width:.65"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="' + (first ? 2.2 : 3.3) + '" style="fill:' + (first ? '#1d4a31' : 'none') + ';stroke:' + (first ? '#1d4a31' : '#6b4a00') + ';stroke-width:.7"/>';
   }
+  b += scissors(103.2, y0);
   b += label(3, 133, words(lang, '한 칸에 하나씩 놓아요. 한 줄은 5개, 두 줄은 10개예요.', 'One counter per box. One row holds 5; two rows hold 10.', '每格放一个。一行5个，两行10个。'));
   return svg(180, 140, b);
 }
 
 /* 백 모형·십 모형·일 모형은 같은 단위 길이(8mm)를 공유한다. */
 function placeValue(lang){
-  var b = '', ox = 3, oy = 14, u = 8;
+  var b = '', ox = 3, oy = 14, u = 8, H = PLACE[100], T = PLACE[10], O = PLACE[1];
   b += label(ox, oy - 5, words(lang, '백 모형 1개', '1 hundred flat', '1个百板'));
-  b += rect(ox, oy, u * 10, u * 10, 'fill:#f5f8f2;stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6');
+  b += rect(ox, oy, u * 10, u * 10, 'fill:' + H[0] + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6');
   for(var i = 1; i < 10; i++){
     b += '<line x1="' + (ox + u * i) + '" y1="' + oy + '" x2="' + (ox + u * i) + '" y2="' + (oy + u * 10) + '" style="' + (i === 5 ? LINE : THIN) + '"/>';
     b += '<line x1="' + ox + '" y1="' + (oy + u * i) + '" x2="' + (ox + u * 10) + '" y2="' + (oy + u * i) + '" style="' + (i === 5 ? LINE : THIN) + '"/>';
   }
-  var bx = 92;
-  b += label(bx, oy - 5, words(lang, '십막대 8개', '8 ten rods', '8根十条'));
+  /* 십막대 8개는 서로 붙어 있다 — 세로로 곧게 아홉 번만 자르면 된다. */
+  var bx = 96;
+  b += label(bx, oy - 5, words(lang, '십막대 8개 · 세로로 곧게', '8 ten rods · straight cuts', '8根十条 · 竖着直剪'));
   for(var m = 0; m < 8; m++){
-    var x = bx + m * 11;
-    b += '<rect data-part="rod" x="' + x + '" y="' + oy + '" width="' + u + '" height="' + (u * 10) + '" style="fill:#e9f0e7;stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
+    var x = bx + m * u;
+    b += '<rect data-part="rod" x="' + x + '" y="' + oy + '" width="' + u + '" height="' + (u * 10) + '" style="fill:' + T[0] + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
     for(var j = 1; j < 10; j++) b += '<line x1="' + x + '" y1="' + (oy + u * j) + '" x2="' + (x + u) + '" y2="' + (oy + u * j) + '" style="' + (j === 5 ? LINE : THIN) + '"/>';
   }
+  b += scissors(bx - 4, oy);
+  /* 낱개 20개도 두 줄로 붙어 있다 — 가로로 한 번, 그다음 한 칸씩. */
   var sy = 108;
-  b += label(ox, sy - 5, words(lang, '일 모형 20개 (낱개)', '20 ones', '20个个位方块'));
+  b += label(ox, sy - 5, words(lang, '일 모형 20개 (낱개) · 줄대로 곧게', '20 ones · cut straight lines', '20个个位方块 · 沿直线剪'));
   for(var r = 0; r < 2; r++) for(var k = 0; k < 10; k++)
-    b += '<rect data-part="one" x="' + (ox + k * 12) + '" y="' + (sy + r * 12) + '" width="' + u + '" height="' + u + '" style="fill:#fff1d1;stroke:#191511;stroke-width:.45;stroke-dasharray:1.2 .9"/>';
+    b += '<rect data-part="one" x="' + (ox + k * u) + '" y="' + (sy + r * u) + '" width="' + u + '" height="' + u + '" style="fill:' + O[0] + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.2 .9"/>';
   b += label(3, 140, words(lang, '낱개 10개를 모으면 십막대 1개와 같아요.', 'Ten ones have the same value as one ten rod.', '10个一与1根十条表示的数一样大。'));
   return svg(180, 146, b);
+}
+
+/* 13. 백판 — 1~100 수 배열판과 수 칩(2026-11-10). 아래로 한 칸은 10 큰 수, 오른쪽으로 한 칸은 1 큰 수. */
+function hundredBoard(lang){
+  var b = '', ox = 3, oy = 9, c = 13;
+  b += label(ox, oy - 3.5, words(lang, '백판 · 1부터 100까지', 'Hundred board · 1 to 100', '百数表 · 1到100'));
+  b += '<rect data-part="frame" x="' + (ox - 2) + '" y="' + (oy - 2) + '" width="' + (c * 10 + 4) + '" height="' + (c * 10 + 4) + '" rx="2" style="' + CUT + '"/>';
+  for(var r = 0; r < 10; r++) for(var k = 0; k < 10; k++){
+    var n = r * 10 + k + 1;
+    /* 줄마다 바탕을 번갈아 칠하고, 10·20·…·100 이 있는 끝 줄은 더 진하게. */
+    b += '<rect data-part="hundred-cell" x="' + (ox + k * c) + '" y="' + (oy + r * c) + '" width="' + c + '" height="' + c + '" style="fill:' + (k === 9 ? '#ffdf80' : (r % 2 ? '#eaf6ee' : '#fff')) + ';stroke:#2f6b4a;stroke-width:.3"/>';
+    b += text(ox + k * c + c / 2, oy + r * c + c / 2 + 1.8, n, n === 100 ? 4.3 : 5, 'middle');
+  }
+  /* 수 칩은 붙어 있는 네모 14개 — 곧은 선으로만 자른다. */
+  var s0 = 15, x0 = 146;
+  b += label(142, oy - 3.5, words(lang, '수 칩 14개', '14 chips', '14个数片'));
+  for(var i = 0; i < 14; i++){
+    var tx = x0 + (i % 2) * s0, ty = oy + Math.floor(i / 2) * s0, first = i % 2 === 0;
+    b += '<rect data-part="counter" x="' + tx + '" y="' + ty + '" width="' + s0 + '" height="' + s0 + '" style="fill:#fff;stroke:#191511;stroke-width:.45;stroke-dasharray:1.8 1.2"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="5.6" style="fill:' + (first ? '#6cc98a' : '#ffcf4d') + ';fill-opacity:.85;stroke:' + (first ? '#2f6b4a' : '#9a6b00') + ';stroke-width:.5"/>';
+    b += '<circle cx="' + (tx + s0 / 2) + '" cy="' + (ty + s0 / 2) + '" r="' + (first ? 1.8 : 2.7) + '" style="fill:' + (first ? '#1d4a31' : 'none') + ';stroke:' + (first ? '#1d4a31' : '#6b4a00') + ';stroke-width:.6"/>';
+  }
+  b += scissors(x0 - 3.6, oy);
+  b += label(3, 146, words(lang, '아래로 한 칸 가면 10 큰 수, 오른쪽으로 한 칸 가면 1 큰 수예요.', 'One box down is 10 more. One box to the right is 1 more.', '往下一格大10，往右一格大1。'));
+  return svg(180, 149, b);
+}
+
+/* 14. 수막대 — 1~10. 한 줄에 놓인 두 막대를 이으면 언제나 10이다(2026-11-10). 곧은 선만 오린다. */
+/* 유아 과정(C0)은 19주 전까지 +, −, = 기호를 쓰지 않는다(check-c0-cognitive). 이 교구 지면에도 식을 쓰지 않고 말로만 적는다. */
+function numberRods(lang){
+  var b = '', ox = 8, oy = 12, u = 14, h = 14;
+  var rows = [[1,9],[2,8],[3,7],[4,6],[5,5],[10],[1,2,3,4]];
+  b += label(3, oy - 5, words(lang, '수막대 · 한 줄의 막대를 이으면 10', 'Number rods · each row makes 10', '数棒 · 每一行合起来是10'));
+  /* 줄과 줄, 막대와 막대가 붙어 있다 — 가로로 여섯 번 길게 자른 뒤, 줄마다 세로로 한두 번. */
+  rows.forEach(function(row, r){
+    var x = ox, y = oy + r * h;
+    row.forEach(function(n){
+      b += '<rect data-part="rod-strip" data-n="' + n + '" x="' + x + '" y="' + y + '" width="' + (u * n) + '" height="' + h + '" style="fill:' + ROD[n] + ';stroke:#191511;stroke-width:.5;stroke-dasharray:2.5 1.6"/>';
+      for(var j = 1; j < n; j++) b += '<line x1="' + (x + u * j) + '" y1="' + (y + 2.5) + '" x2="' + (x + u * j) + '" y2="' + (y + h - 2.5) + '" style="' + THIN + '"/>';
+      b += text(x + u * n / 2, y + h / 2 + 2, n, 5.5, 'middle');
+      x += u * n;
+    });
+  });
+  b += scissors(ox - 4.6, oy + h);
+  b += label(3, 122, words(lang, '먼저 가로로 길게 자르고, 그다음 굵은 점선에서 막대를 나눠요.', 'Cut the long rows first, then split each row at the dashed line.', '先横着剪成长条，再在粗虚线处把数棒分开。'));
+  b += label(3, 130, words(lang, '막대 안의 가는 선은 자르지 않아요. 한 칸이 1이에요.', 'Do not cut the thin lines inside a rod. One box is 1.', '棒里面的细线不要剪。一格是1。'));
+  return svg(180, 134, b);
+}
+
+/* 15. 자릿값 판과 수 칩 — 천·백·십·일(2026-11-10). 네 자리 수 과정용. 칩은 네모라 곧게 자른다. */
+function placeChips(lang){
+  var b = '', ox = 3, oy = 12, cw = 34, bh = 46, vals = [1000, 100, 10, 1];
+  var heads = [words(lang,'천','Thousands','千'), words(lang,'백','Hundreds','百'), words(lang,'십','Tens','十'), words(lang,'일','Ones','个')];
+  b += label(ox, oy - 5, words(lang, '자릿값 판', 'Place-value mat', '数位板'));
+  b += '<rect data-part="frame" x="' + (ox - 2) + '" y="' + (oy - 2) + '" width="' + (cw * 4 + 4) + '" height="' + (bh + 4) + '" rx="2" style="' + CUT + '"/>';
+  heads.forEach(function(t, i){
+    var col = PLACE[vals[i]];
+    b += rect(ox + i * cw, oy, cw, bh, 'fill:#fff;stroke:' + col[1] + ';stroke-width:.6');
+    b += rect(ox + i * cw, oy, cw, 9, 'fill:' + col[0] + ';stroke:' + col[1] + ';stroke-width:.6');
+    b += text(ox + i * cw + cw / 2, oy + 6.5, t, 4.4, 'middle');
+  });
+  /* 칩은 줄끼리 붙어 있는 네모 — 가로로 길게 자른 뒤 한 칸씩. 색은 자릿값 판의 머리 색과 같다. */
+  var sets = [[1000,4],[100,12],[10,12],[1,12]], y = oy + bh + 12, u = 13.5;
+  b += label(ox, y - 4, words(lang, '수 칩 · 1000 네 개, 100·10·1 열두 개씩 · 줄대로 곧게', 'Chips · four 1000s; twelve each of 100, 10, 1 · straight cuts', '数片 · 1000四个，100、10、1各十二个 · 沿直线剪'));
+  sets.forEach(function(st, r){
+    for(var k = 0; k < st[1]; k++){
+      var x = ox + 6 + k * u, yy = y + r * u;
+      b += '<rect data-part="value-chip" data-v="' + st[0] + '" x="' + x + '" y="' + yy + '" width="' + u + '" height="' + u + '" style="fill:' + PLACE[st[0]][0] + ';stroke:#191511;stroke-width:.45;stroke-dasharray:1.5 1"/>';
+      b += text(x + u / 2, yy + u / 2 + 1.5, st[0], st[0] === 1000 ? 3.6 : 4.2, 'middle');
+    }
+  });
+  b += scissors(ox + 1.4, y + u);
+  return svg(180, 130, b);
 }
 
 /* 3. 수직선 띠 — 0~20 두 개(뛰어세기·덧뺄), 0~100 한 개(십의 자리로 건너뛰기). */
@@ -146,18 +233,24 @@ function balanceMat(lang){
   return svg(180,165,b);
 }
 
-/* 5. 분수 원판 — 1 · 1/2 · 1/3 · 1/4 · 1/6 · 1/8. 겹쳐서 크기를 비교한다. */
-function fractionDisc(lang){
-  var b='',R=25,parts=[1,2,3,4,6,8];
-  parts.forEach(function(n,i){
-    var cx=32+i%3*58,cy=30+Math.floor(i/3)*66;
-    b+='<circle data-part="fraction-disc" data-parts="'+n+'" cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+(i%2?P.tint:P.soft)+'" stroke="'+P.ink+'" stroke-width=".5" stroke-dasharray="2 1.5"/>';
-    for(var k=0;k<n&&n>1;k++){var a=2*Math.PI*k/n-Math.PI/2;b+=segment(cx,cy,cx+R*Math.cos(a),cy+R*Math.sin(a),CUT_S);}
-    var fy=cy+R+8;
-    if(n===1)b+=text(cx,fy,words(lang,'전체 1','1 whole','整体1'),3.8,'middle');
-    else b+='<g data-part="fraction-label">'+fraction(cx-14,fy,'1',n)+text(cx-6,fy+1,words(lang,n+'조각',n+' pieces',n+'块'),3.5)+'</g>';
+/* 5. 분수 막대 — 1 · 1/2 · 1/3 · 1/4 · 1/5 · 1/6 · 1/8 · 1/10 · 1/12 (2026-11-10, 원장 「곧게 자르는 분수 막대로」).
+   모든 줄의 길이가 같다(168mm) — 조각을 나란히 놓아 길이로 크기를 비교한다. 줄끼리 붙어 있어
+   가로로 길게 자른 뒤 줄마다 굵은 점선에서 나눈다. 원판과 달리 곧은 선만 자른다. */
+function fractionBars(lang){
+  var b='',ox=6,oy=12,W=168,h=13.5,parts=[1,2,3,4,5,6,8,10,12];
+  b+=label(3,oy-5,words(lang,'분수 막대 · 모든 줄의 길이가 같아요','Fraction bars · every row is the same length','分数条 · 每一行一样长'));
+  parts.forEach(function(n,r){
+    var y=oy+r*h,w=W/n;
+    for(var k=0;k<n;k++){
+      var x=ox+k*w;
+      b+='<rect data-part="fraction-piece" data-parts="'+n+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" style="fill:'+PIECE[r]+';stroke:#191511;stroke-width:.45;stroke-dasharray:2 1.4"/>';
+      if(n===1)b+=text(x+w/2,y+h/2+2,'1',5.5,'middle');
+      else b+='<g data-part="fraction-label">'+fraction(x+w/2,y+h/2-.6,'1',n)+'</g>';
+    }
   });
-  return svg(180,143,b);
+  b+=scissors(ox-4.2,oy+h);
+  b+=label(3,oy+parts.length*h+8,words(lang,'먼저 가로로 길게 자르고, 그다음 줄마다 점선에서 조각을 나눠요.','Cut the long rows first, then split each row at the dashed lines.','先横着剪成长条，再在虚线处把每一行分开。'));
+  return svg(180,oy+parts.length*h+12,b);
 }
 
 /* 6. 소수 모눈 — 1을 100칸으로. 0.1 띠는 **판의 한 줄과 정확히 같은 크기**여야 덮어 볼 수 있다
@@ -196,7 +289,7 @@ function pentomino(lang){
     b += '<g data-part="pento-piece" data-piece="'+k+'">';
     cells.forEach(function(c){
       var x = gx + c[0] * u, y = gy + c[1] * u;
-      b += rect(x, y, u, u, 'fill:'+(n%2?P.tint:P.soft)+';stroke:#8a8374;stroke-width:.25');
+      b += rect(x, y, u, u, 'fill:'+PIECE[n]+';stroke:#8a8374;stroke-width:.25');
       /* 이웃이 없는 변만 자르는 선 */
       if(!has[(c[0]) + ',' + (c[1] - 1)]) b += '<line x1="' + x + '" y1="' + y + '" x2="' + (x + u) + '" y2="' + y + '" style="' + CUT + '"/>';
       if(!has[(c[0]) + ',' + (c[1] + 1)]) b += '<line x1="' + x + '" y1="' + (y + u) + '" x2="' + (x + u) + '" y2="' + (y + u) + '" style="' + CUT + '"/>';
@@ -269,7 +362,7 @@ function unitCircle(lang){
 var PENTO_EXAMPLE=[["F", "I", "I", "I", "I", "I"], ["F", "F", "F", "X", "U", "U"], ["L", "F", "X", "X", "X", "U"], ["L", "P", "P", "X", "U", "U"], ["L", "P", "P", "V", "V", "V"], ["L", "L", "P", "Z", "N", "V"], ["Y", "Z", "Z", "Z", "N", "V"], ["Y", "Z", "T", "W", "N", "N"], ["Y", "Y", "T", "W", "W", "N"], ["Y", "T", "T", "T", "W", "W"]];
 function pentoPicture(x,y,u){
  var b='',names='FILNPTUVWXYZ';
- PENTO_EXAMPLE.forEach(function(row,r){row.forEach(function(k,c){var fill=names.indexOf(k)%2?P.tint:P.soft;b+='<rect data-part="pento-example-cell" data-piece="'+k+'" x="'+(x+c*u)+'" y="'+(y+r*u)+'" width="'+u+'" height="'+u+'" fill="'+fill+'"/>';[[0,-1],[0,1],[-1,0],[1,0]].forEach(function(d){var rr=r+d[1],cc=c+d[0];if(PENTO_EXAMPLE[rr]&&PENTO_EXAMPLE[rr][cc]===k)return;var xa=x+c*u,ya=y+r*u;b+=segment(xa+(d[0]===1?u:0),ya+(d[1]===1?u:0),xa+(d[0]===-1?0:u),ya+(d[1]===-1?0:u),'stroke:'+P.ink+';stroke-width:.35');});});});return b;
+ PENTO_EXAMPLE.forEach(function(row,r){row.forEach(function(k,c){var fill=PIECE[names.indexOf(k)];b+='<rect data-part="pento-example-cell" data-piece="'+k+'" x="'+(x+c*u)+'" y="'+(y+r*u)+'" width="'+u+'" height="'+u+'" fill="'+fill+'"/>';[[0,-1],[0,1],[-1,0],[1,0]].forEach(function(d){var rr=r+d[1],cc=c+d[0];if(PENTO_EXAMPLE[rr]&&PENTO_EXAMPLE[rr][cc]===k)return;var xa=x+c*u,ya=y+r*u;b+=segment(xa+(d[0]===1?u:0),ya+(d[1]===1?u:0),xa+(d[0]===-1?0:u),ya+(d[1]===-1?0:u),'stroke:'+P.ink+';stroke-width:.35');});});});return b;
 }
 /* Small worked states are separate from pieces that will be cut out. */
 function paperDemo(key,lang){
@@ -278,8 +371,21 @@ function paperDemo(key,lang){
  if(key==='tenframe'){
   [10,5].forEach(function(n,f){var x=4+f*48,y=5,c=7;b+=rect(x,y,35,14,LINE);for(var j=1;j<5;j++)b+=segment(x+j*c,y,x+j*c,y+14,THIN);b+=segment(x,y+7,x+35,y+7,LINE);for(var k=0;k<n;k++)b+=dot(x+(k%5+.5)*c,y+(Math.floor(k/5)+.5)*c,f===1||(f===0&&k>=8));});
  }else if(key==='place'){
-  for(var r=0;r<3;r++){b+=rect(5+r*6,1,2.5,25,'fill:'+P.soft+';stroke:'+g+';stroke-width:.4');for(var k=1;k<10;k++)b+=segment(5+r*6,1+2.5*k,7.5+r*6,1+2.5*k,THIN);}
-  for(var i=0;i<7;i++)b+=rect(37+i%4*6,6+Math.floor(i/4)*8,2.5,2.5,'fill:'+P.tint+';stroke:'+t+';stroke-width:.4');b+=text(85,18,'37',10,'middle');
+  b+=rect(2,1,25,25,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.4');for(var q=1;q<10;q++)b+=segment(2+2.5*q,1,2+2.5*q,26,THIN)+segment(2,1+2.5*q,27,1+2.5*q,THIN);
+  for(var r=0;r<3;r++){b+=rect(32+r*5,1,2.5,25,'fill:'+PLACE[10][0]+';stroke:'+PLACE[10][1]+';stroke-width:.4');for(var k=1;k<10;k++)b+=segment(32+r*5,1+2.5*k,34.5+r*5,1+2.5*k,THIN);}
+  for(var i=0;i<7;i++)b+=rect(50+i%4*5,6+Math.floor(i/4)*8,2.5,2.5,'fill:'+PLACE[1][0]+';stroke:'+PLACE[1][1]+';stroke-width:.4');b+=text(86,18,'137',9,'middle');
+ }else if(key==='hundred'){
+  var c=8,x=30,y=1;[[23,24,25],[33,34,35],[43,44,45]].forEach(function(row,r){row.forEach(function(n,k){var on=n===34,to=n===44;b+=rect(x+k*c*1.6,y+r*c*1.1,c*1.6,c*1.1,'fill:'+(on?P.soft:to?P.tint:'#fff')+';stroke:'+g+';stroke-width:.35');b+=text(x+k*c*1.6+c*.8,y+r*c*1.1+6.3,n,4.2,'middle');});});
+  b+=segment(x+c*2.4,y+c*1.9,x+c*2.4,y+c*2.3,'stroke:'+g+';stroke-width:.7')+text(84,17,'+10',5.5,'middle');
+ }else if(key==='rods'){
+  var u=5.2,x=14,y=3;b+=rect(x,y,u*10,8,'fill:'+ROD[10]+';stroke:'+g+';stroke-width:.45')+text(x+u*5,y+6,'10',4.5,'middle');
+  b+=rect(x,y+11,u*3,8,'fill:'+ROD[3]+';stroke:'+g+';stroke-width:.45')+text(x+u*1.5,y+17,'3',4.5,'middle');
+  b+=rect(x+u*3,y+11,u*7,8,'fill:#fff;stroke:'+t+';stroke-width:.45;stroke-dasharray:1.4 1')+text(x+u*6.5,y+17,'7',4.5,'middle');
+ }else if(key==='placechips'){
+  var u=5.4,x=4;for(var i=0;i<12;i++){var cx=x+(i%6)*(u+.8),cy=3+Math.floor(i/6)*(u+.8);b+=rect(cx,cy,u,u,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.35');}
+  b+=rect(x-1.2,1.8,5*(u+.8)+u+1.6,u+2.4,'fill:none;stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1')+rect(x+4*(u+.8)-1.2,3+u+.8-1.2,2*(u+.8)+.6,u+2.4,'fill:none;stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1');
+  b+=text(52,17,'→',6,'middle')+rect(62,8,11,11,'fill:'+PLACE[1000][0]+';stroke:'+PLACE[1000][1]+';stroke-width:.45')+text(67.5,15.3,'1000',3,'middle');
+  b+=rect(76,8,7,7,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.35')+rect(84,8,7,7,'fill:'+PLACE[100][0]+';stroke:'+PLACE[100][1]+';stroke-width:.35');
  }else if(key==='numberline'){
   b+=segment(5,17,96,17,LINE)+arrow(96,17,1,g);for(var i=0;i<6;i++){var x=8+i*16;b+=segment(x,15,x,19,LINE)+text(x,25,8+i,3.7,'middle');if(i<5)b+='<path d="M'+x+' 15 Q'+(x+8)+' 1 '+(x+16)+' 15" fill="none" stroke="'+g+'" stroke-width=".6"/>'+arrow(x+16,15,1,g);}
  }else if(key==='array'){
@@ -287,7 +393,9 @@ function paperDemo(key,lang){
  }else if(key==='balance'){
   b+=rect(3,4,36,19,'fill:'+P.soft+';stroke:'+g+';stroke-width:.5')+rect(61,4,36,19,'fill:'+P.soft+';stroke:'+g+';stroke-width:.5');b+=text(21,17,'7 + 5',7,'middle')+text(50,17,'=',8,'middle')+text(79,17,'12',7,'middle');
  }else if(key==='fraction'){
-  [26,74].forEach(function(x,f){var y=13,R=11;b+='<path d="M'+x+' '+(y-R)+' A'+R+' '+R+' 0 0 1 '+x+' '+(y+R)+' L'+x+' '+y+' Z" fill="'+(f?P.tint:P.soft)+'"/>';b+='<circle cx="'+x+'" cy="'+y+'" r="'+R+'" fill="none" stroke="'+g+'" stroke-width=".5"/>'+segment(x,y-R,x,y+R,LINE);if(f)b+=segment(x-R,y,x+R,y,LINE);});b+=text(50,17,'=',7,'middle');
+  var x0=14,w=72,y1=3,y2=15,hh=9;b+=rect(x0,y1,w/2,hh,'fill:'+PIECE[1]+';stroke:'+g+';stroke-width:.45')+rect(x0+w/2,y1,w/2,hh,'fill:#fff;stroke:'+g+';stroke-width:.45');
+  b+=rect(x0,y2,w/4,hh,'fill:'+PIECE[3]+';stroke:'+g+';stroke-width:.45')+rect(x0+w/4,y2,w/4,hh,'fill:'+PIECE[3]+';stroke:'+g+';stroke-width:.45')+rect(x0+w/2,y2,w/4,hh,'fill:#fff;stroke:'+g+';stroke-width:.45')+rect(x0+w*3/4,y2,w/4,hh,'fill:#fff;stroke:'+g+';stroke-width:.45');
+  b+=segment(x0+w/2,1,x0+w/2,27,'stroke:'+t+';stroke-width:.6;stroke-dasharray:1.6 1');
  }else if(key==='decimal'){
   var u=2.2,x=12,y=2;for(var r=0;r<10;r++)for(var c=0;c<10;c++)b+=rect(x+c*u,y+r*u,u,u,'fill:'+(r<3?P.soft:r<7?P.tint:'#fff')+';stroke:'+g+';stroke-width:.15');b+=text(63,16,'0.3 + 0.4',5,'middle')+text(63,24,'= 0.7',5,'middle');
  }else if(key==='pentomino'){
@@ -316,7 +424,7 @@ window.NM_PAPER_TOOLS = [
       "zh": "十格框与圆片"
     },
     "why": {
-      "ko": "10칸 수판(십틀)은 동그라미를 놓는 빈 칸이에요. 낱개 10개를 한 줄로 묶은 십막대와는 달라요.",
+      "ko": "10칸 수판(십틀)은 수 조각을 놓는 빈 칸이에요. 낱개 10개를 한 줄로 묶은 십막대와는 달라요.",
       "en": "A ten-frame has ten spaces for counters. A ten rod is different: ten units joined in a row.",
       "zh": "十格框是放圆片的十个空格。十条则是把十个单位连成一行，两者不同。"
     },
@@ -362,14 +470,16 @@ window.NM_PAPER_TOOLS = [
         "zh": "用这套纸教具就够了"
       },
       "how": {
-        "ko": "바깥 점선을 따라 수판 2장과 동그라미를 오려요. 수판 안쪽 선은 자르지 않아요. 가위는 보호자와 함께 써요.",
-        "en": "Cut out both frames and the counters along the dashed outlines. Keep the grid lines intact. An adult helps with scissors.",
-        "zh": "沿外侧虚线剪下两张框和圆片，框内的实线不要剪。请大人协助使用剪刀。"
+        "ko": "수판 2장은 바깥 점선만 오려요. 수 조각은 줄대로 곧게 자르면 돼요. 수판 안쪽 선은 자르지 않아요. 가위는 보호자와 함께 써요.",
+        "en": "Cut each frame along its outer dashed line only. The counters are squares, so every cut is straight. An adult helps with scissors.",
+        "zh": "两张框只剪外侧虚线。数片是方形，直着剪就行。框内的实线不要剪。请大人协助使用剪刀。"
       }
     },
     "courseIds": [
-      1,
       2
+    ],
+    "secondCourseIds": [
+      1
     ],
     "order": 1,
     "audience": "early",
@@ -398,17 +508,17 @@ window.NM_PAPER_TOOLS = [
     "steps": {
       "ko": [
         "바깥 점선을 따라 백 모형, 십막대, 낱개를 오려요.",
-        "십막대 3개와 낱개 7개를 놓아 37을 만들어요.",
+        "백 모형 1개, 십막대 3개, 낱개 7개를 놓아 137을 만들어요.",
         "낱개 10개를 모아 십막대 1개와 바꾸어 봐요."
       ],
       "en": [
         "Cut along the outer dashed lines.",
-        "Place 3 tens and 7 ones to represent 37.",
+        "Place 1 hundred, 3 tens and 7 ones to represent 137.",
         "Trade ten ones for one ten rod."
       ],
       "zh": [
         "沿外侧虚线剪下数模型。",
-        "摆3根十条、7个一，表示37。",
+        "摆1个百板、3根十条、7个一，表示137。",
         "把10个一换成1根十条。"
       ]
     },
@@ -444,17 +554,16 @@ window.NM_PAPER_TOOLS = [
     },
     "courseIds": [
       3,
-      5,
-      6
+      5
     ],
     "order": 2,
     "audience": "early",
     "portrait": "numi-0-think.png",
-    "exampleTex": "37=30+7",
+    "exampleTex": "137=100+30+7",
     "exampleText": {
-      "ko": "십막대 3개와 낱개 7개로 37을 만들어요.",
-      "en": "Three tens and seven ones represent 37.",
-      "zh": "3根十条和7个一表示37。"
+      "ko": "백 모형 1개, 십막대 3개, 낱개 7개로 137을 만들어요.",
+      "en": "One hundred, three tens and seven ones represent 137.",
+      "zh": "1个百板、3根十条和7个一表示137。"
     },
     "build": placeValue,
     "demo": function(lang){return paperDemo("place",lang);}
@@ -695,61 +804,49 @@ window.NM_PAPER_TOOLS = [
   },
   {
     "key": "fraction",
-    "name": {
-      "ko": "분수 원판",
-      "en": "Fraction discs",
-      "zh": "分数圆盘"
-    },
+    "name": {"ko": "분수 막대", "en": "Fraction bars", "zh": "分数条"},
     "why": {
-      "ko": "크기가 같은 원을 똑같이 나눈 조각이에요. 한 조각의 크기와 조각 수를 함께 살펴봐요.",
-      "en": "Each same-sized whole is divided into equal parts. Compare both part size and number of parts.",
-      "zh": "同样大的圆被平均分成小块，比较每块大小和块数。"
+      "ko": "길이가 같은 막대를 똑같이 나눈 조각이에요. 한 조각의 길이와 조각 수를 함께 살펴봐요.",
+      "en": "Each same-length bar is divided into equal parts. Compare both the length of a part and the number of parts.",
+      "zh": "同样长的条被平均分成小块，比较每块的长短和块数。"
     },
     "steps": {
       "ko": [
-        "바깥 점선을 오려요. 전체 1은 두고 나머지 원은 점선을 따라 나누어요.",
-        "1/3 조각과 1/4 조각의 꼭짓점을 맞춰 크기를 비교해요.",
-        "1/4 두 조각을 모아 1/2 위에 덮어 보아요."
+        "가로로 길게 자른 뒤, 줄마다 점선에서 조각을 나눠요. 전체 1 막대는 그대로 둬요.",
+        "1/3 조각과 1/4 조각의 왼쪽 끝을 맞춰 길이를 비교해요.",
+        "1/4 조각 두 개를 이어 1/2 조각 아래에 놓아 보아요."
       ],
       "en": [
-        "Cut dashed lines. Keep the whole disc intact; divide the others.",
-        "Align a third and a quarter at their centre points to compare.",
-        "Place two quarter pieces over one half."
+        "Cut the long rows, then split each row at the dashed lines. Keep the whole bar intact.",
+        "Line up a third and a quarter at the left end to compare their lengths.",
+        "Join two quarter pieces and place them under one half."
       ],
       "zh": [
-        "沿虚线剪，整体1保留，其余圆再沿虚线分开。",
-        "把三分之一与四分之一的圆心角顶点对齐比较。",
-        "用两个四分之一盖住一个二分之一。"
+        "先横着剪成长条，再在虚线处分开。整体1的那条保留。",
+        "把三分之一与四分之一的左端对齐，比较长短。",
+        "把两个四分之一接起来，放在二分之一下面。"
       ]
     },
     "buy": {
-      "name": {
-        "ko": "분수 원판 세트",
-        "en": "Fraction disc set",
-        "zh": "分数圆盘套装"
-      },
+      "name": {"ko": "분수 막대 세트", "en": "Fraction bar set", "zh": "分数条套装"},
       "why": {
-        "ko": "조각을 겹쳐 보면 3분의 1이 4분의 1보다 크다는 것을 설명 없이 압니다. 종이보다 튼튼해 오래 씁니다.",
-        "en": "Overlapping the pieces shows that a third beats a quarter without any explanation, and plastic lasts.",
-        "zh": "把块叠起来，不用讲就知道三分之一比四分之一大，塑料的也更耐用。"
+        "ko": "조각을 나란히 놓으면 3분의 1이 4분의 1보다 길다는 것을 설명 없이 압니다. 종이보다 튼튼해 오래 씁니다.",
+        "en": "Laying the pieces side by side shows that a third is longer than a quarter without any explanation, and plastic lasts.",
+        "zh": "把块并排放，不用讲就知道三分之一比四分之一长，塑料的也更耐用。"
       },
       "pick": {
-        "ko": "1, 2분의 1, 3분의 1, 4분의 1, 6분의 1, 8분의 1이 다 들어 있는 것. 분모마다 색이 다르면 좋습니다.",
-        "en": "A set with 1, 1/2, 1/3, 1/4, 1/6 and 1/8; colour-coded is better.",
-        "zh": "要有1、1/2、1/3、1/4、1/6、1/8，按颜色区分更好。"
+        "ko": "1부터 12분의 1까지 들어 있는 것. 분모마다 색이 다르면 좋습니다.",
+        "en": "A set from 1 down to twelfths; colour-coded is better.",
+        "zh": "从1到十二分之一都有的，按颜色区分更好。"
       },
-      "key": "fracdisc"
+      "key": "fracbar"
     },
     "make": {
-      "name": {
-        "ko": "종이 원판과 색종이 접기",
-        "en": "Paper discs and folded origami paper",
-        "zh": "纸圆盘和折纸"
-      },
+      "name": {"ko": "종이 막대와 색종이 접기", "en": "Paper bars and folded paper strips", "zh": "纸条和折纸"},
       "how": {
-        "ko": "위 원판 여섯 장을 오려 선을 따라 자릅니다. 색종이를 반으로, 또 반으로 접으면 2분의 1, 4분의 1, 8분의 1이 그대로 나옵니다.",
-        "en": "Cut the six discs above along the lines. Folding origami paper in half again and again gives a half, a quarter and an eighth.",
-        "zh": "剪下上面六个圆盘并沿线剪开。把色纸对折再对折，就得到1/2、1/4、1/8。"
+        "ko": "위 막대를 줄대로 곧게 자릅니다. 색종이 띠를 반으로, 또 반으로 접으면 2분의 1, 4분의 1, 8분의 1이 그대로 나옵니다.",
+        "en": "Cut the bars above along the straight lines. Folding a paper strip in half again and again gives a half, a quarter and an eighth.",
+        "zh": "把上面的分数条沿直线剪开。把纸条对折再对折，就得到二分之一、四分之一、八分之一。"
       }
     },
     "courseIds": [
@@ -763,11 +860,11 @@ window.NM_PAPER_TOOLS = [
     "portrait": "sym-divide.png",
     "exampleTex": "\\frac12=\\frac14+\\frac14",
     "exampleText": {
-      "ko": "같은 크기 원에서 4분의 1 두 조각이 2분의 1과 같아요.",
-      "en": "Two quarters equal one half of the same-sized whole.",
-      "zh": "同样大的圆中，两个四分之一等于二分之一。"
+      "ko": "같은 길이 막대에서 4분의 1 두 조각이 2분의 1과 같아요.",
+      "en": "Two quarters are as long as one half of the same bar.",
+      "zh": "同样长的条里，两个四分之一和二分之一一样长。"
     },
-    "build": fractionDisc,
+    "build": fractionBars,
     "demo": function(lang){return paperDemo("fraction",lang);}
   },
   {
@@ -1243,6 +1340,114 @@ window.NM_PAPER_TOOLS = [
     },
     "build": unitCircle,
     "demo": function(lang){return paperDemo("unitcircle",lang);}
+  },
+  {
+    "key": "hundred",
+    "name": {"ko": "백판과 수 칩", "en": "Hundred board and counters", "zh": "百数表与圆片"},
+    "why": {
+      "ko": "백판은 1부터 100까지 수를 열 개씩 줄지어 놓은 판이에요. 수가 어디에 있는지 보면 얼마나 큰지 알 수 있어요.",
+      "en": "A hundred board lines up the numbers 1 to 100 in rows of ten. Where a number sits shows how big it is.",
+      "zh": "百数表把1到100每十个排成一行。看一个数在哪里，就知道它有多大。"
+    },
+    "steps": {
+      "ko": ["34를 찾아 칩을 놓아요.", "바로 아래 칸을 읽어요. 10 큰 수 44예요.", "4, 14, 24처럼 10씩 뛰어 세며 칩을 놓아요."],
+      "en": ["Find 34 and put a counter on it.", "Read the box just below. It is 44, which is 10 more.", "Count on by tens — 4, 14, 24 — and place counters."],
+      "zh": ["找到34，放一个圆片。", "读正下方的一格，是大10的44。", "像4、14、24这样十个十个地数，放上圆片。"]
+    },
+    "buy": {
+      "name": {"ko": "백판(100 숫자판)", "en": "Hundred number board", "zh": "百数板"},
+      "why": {"ko": "판과 숫자 타일이 따로 있어 수를 직접 채워 넣을 수 있어요.", "en": "A board with loose number tiles lets a child build the chart.", "zh": "板和数字片分开，孩子可以自己把数填上去。"},
+      "pick": {"ko": "숫자가 큼직하고 칩이 함께 오는 것.", "en": "Large numerals, with counters included.", "zh": "数字大、附带圆片的。"},
+      "key": "hundred"
+    },
+    "make": {
+      "name": {"ko": "이 종이 교구로 충분해요", "en": "Use this paper set", "zh": "用这套纸教具就够了"},
+      "how": {
+        "ko": "바깥 점선을 따라 백판 한 장과 칩을 오려요. 칩 대신 바둑알이나 단추를 써도 돼요. 가위는 보호자와 함께 써요.",
+        "en": "Cut out the board and counters along the dashed outlines. Buttons or game stones also work. An adult helps with scissors.",
+        "zh": "沿外侧虚线剪下百数表和圆片。也可以用围棋子或纽扣代替。请大人协助使用剪刀。"
+      }
+    },
+    "courseIds": [1],
+    "order": 13,
+    "audience": "early",
+    "portrait": "numi-0-happy.png",
+    "exampleTex": "34+10=44",
+    "exampleText": {"ko": "34에서 아래로 한 칸 가면 44예요.", "en": "One box below 34 is 44.", "zh": "从34往下一格是44。"},
+    "build": hundredBoard,
+    "demo": function(lang){return paperDemo("hundred",lang);}
+  },
+  {
+    "key": "rods",
+    "name": {"ko": "수막대", "en": "Number rods", "zh": "数棒"},
+    "why": {
+      "ko": "수막대는 길이로 수를 보여 줘요. 두 막대를 이어 10 막대와 길이가 같으면, 두 수를 모아 10이 돼요.",
+      "en": "Number rods show a number as a length. If two rods together match the 10 rod, the two numbers make 10.",
+      "zh": "数棒用长度表示数。两根接起来和10的棒一样长，这两个数合起来就是10。"
+    },
+    "steps": {
+      "ko": ["10 막대 아래에 3 막대를 놓아요.", "남은 자리에 꼭 맞는 막대를 찾아요.", "7 막대예요. 3과 7을 모으면 10이에요."],
+      "en": ["Put the 3 rod under the 10 rod.", "Find the rod that fills the space exactly.", "It is the 7 rod. 3 and 7 make 10."],
+      "zh": ["把3的棒放在10的棒下面。", "找一根正好填满空位的棒。", "是7的棒。3和7合起来是10。"]
+    },
+    "buy": {
+      "name": {"ko": "연결 큐브", "en": "Linking cubes", "zh": "连接积木"},
+      "why": {"ko": "큐브를 1개부터 10개까지 이어 붙이면 수막대와 같아요.", "en": "Joining 1 to 10 cubes makes the same set of rods.", "zh": "把积木1个到10个连起来，就和数棒一样。"},
+      "pick": {"ko": "아이 손으로 쉽게 붙이고 뗄 수 있는 크기.", "en": "Easy for small hands to join and separate.", "zh": "选择孩子容易拼接和拆开的大小。"},
+      "key": "cubes"
+    },
+    "make": {
+      "name": {"ko": "이 종이 교구로 충분해요", "en": "Use this paper set", "zh": "用这套纸教具就够了"},
+      "how": {
+        "ko": "굵은 점선을 따라 막대를 오려요. 모두 곧은 선이에요. 막대 안의 가는 선은 자르지 않아요. 가위는 보호자와 함께 써요.",
+        "en": "Cut the rods along the dashed lines — all straight cuts. Do not cut the thin lines inside. An adult helps with scissors.",
+        "zh": "沿虚线剪下数棒，都是直线。棒里面的细线不要剪。请大人协助使用剪刀。"
+      }
+    },
+    "courseIds": [0],
+    "order": 14,
+    "audience": "early",
+    "portrait": "numi-0-happy.png",
+    "exampleTex": "",
+    "exampleText": {"ko": "3 막대와 7 막대를 이으면 10 막대와 길이가 같아요.", "en": "The 3 rod and the 7 rod together match the 10 rod.", "zh": "3的棒和7的棒接起来，和10的棒一样长。"},
+    "build": numberRods,
+    "demo": function(lang){return paperDemo("rods",lang);}
+  },
+  {
+    "key": "placechips",
+    "name": {"ko": "자릿값 판과 수 칩", "en": "Place-value mat and chips", "zh": "数位板与数片"},
+    "why": {
+      "ko": "천, 백, 십, 일의 자리에 칩을 놓아 네 자리 수를 만들어요. 같은 칩 10개는 바로 윗자리 칩 1개와 바꿔요.",
+      "en": "Place chips in the thousands, hundreds, tens and ones columns to build four-digit numbers. Ten of one chip trade for one chip of the next place.",
+      "zh": "在千、百、十、个位上放数片，摆出四位数。同一种数片满10个，就换成上一位的1个。"
+    },
+    "steps": {
+      "ko": ["백의 자리에 100 칩 7개를 놓고, 5개를 더 놓아요.", "100 칩이 12개예요. 10개를 모아 1000 칩 1개와 바꿔요.", "천의 자리 1개, 백의 자리 2개. 1200이에요."],
+      "en": ["Put seven 100 chips in the hundreds column, then five more.", "There are twelve 100 chips. Trade ten of them for one 1000 chip.", "One thousand and two hundreds: 1200."],
+      "zh": ["在百位放7个100，再放5个。", "有12个100。把其中10个换成1个1000。", "千位1个，百位2个，是1200。"]
+    },
+    "buy": {
+      "name": {"ko": "십진 블록 세트", "en": "Base-ten blocks", "zh": "十进制积木"},
+      "why": {"ko": "천 모형까지 들어 있는 세트면 크기로도 비교할 수 있어요.", "en": "A set that includes a thousand cube also shows the sizes.", "zh": "带千位立方体的一套，还可以比较大小。"},
+      "pick": {"ko": "천 모형이 1개 이상 들어 있는 것.", "en": "At least one thousand cube included.", "zh": "至少含1个千位立方体。"},
+      "key": "baseten"
+    },
+    "make": {
+      "name": {"ko": "이 종이 교구로 충분해요", "en": "Use this paper set", "zh": "用这套纸教具就够了"},
+      "how": {
+        "ko": "자릿값 판은 바깥 점선만 오려요. 칩은 네모라 곧게 자르면 돼요. 가위는 보호자와 함께 써요.",
+        "en": "Cut the mat along its outer dashed line only. The chips are squares, so every cut is straight. An adult helps with scissors.",
+        "zh": "数位板只剪外侧虚线。数片是方形，直着剪就行。请大人协助使用剪刀。"
+      }
+    },
+    "courseIds": [6],
+    "order": 15,
+    "audience": "early",
+    "portrait": "numi-0-think.png",
+    "exampleTex": "700+500=1200",
+    "exampleText": {"ko": "100 칩 10개를 1000 칩 1개와 바꿨어요.", "en": "Ten 100 chips were traded for one 1000 chip.", "zh": "把10个100换成了1个1000。"},
+    "build": placeChips,
+    "demo": function(lang){return paperDemo("placechips",lang);}
   }
 ];
 
@@ -1268,12 +1473,21 @@ window.NM_BUY_TOOLS = [
 /* 현재 과정 번호 → 종이 교구. 없으면 null(그 주는 교구 지면이 안 붙는다). */
 window.NM_PAPER_TOOL_OF_COURSE = function(n){
   var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i, ''), 10) : n;
-  if(!(num >= 1)) return null;
+  if(!(num >= 0)) return null;
   for(var i = 0; i < window.NM_PAPER_TOOLS.length; i++){
     var t = window.NM_PAPER_TOOLS[i];
     if(t.courseIds.indexOf(num) >= 0) return t;
   }
   return null;
+};
+/* 그 과정에서 쓰는 교구를 차례로(2026-11-10). [첫 주에 싣는 교구, 둘째 주에 싣는 교구].
+   같은 교구 지면을 매주 다시 싣지 않는다 — 한 번 오려 봉투에 두고 계속 쓴다. */
+window.NM_PAPER_TOOLS_OF_COURSE = function(n){
+  var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i, ''), 10) : n, out = [];
+  var first = window.NM_PAPER_TOOL_OF_COURSE(num);
+  if(first) out.push(first);
+  window.NM_PAPER_TOOLS.forEach(function(t){ if((t.secondCourseIds || []).indexOf(num) >= 0 && out.indexOf(t) < 0) out.push(t); });
+  return out;
 };
 
 if(typeof module !== 'undefined' && module.exports) module.exports = window.NM_PAPER_TOOLS;

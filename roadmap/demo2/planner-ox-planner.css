@@ -1,0 +1,15 @@
+.ox-entry { margin: 1rem 0; padding: .2rem .85rem; border: 1px solid #cdc2dc; border-radius: .75rem; background: #fff; color: #302743; scroll-margin-top: 5rem; }
+.ox-entry > summary { padding: .75rem .1rem; font-weight: 750; cursor: pointer; }
+.ox-entry > summary small { margin-inline-start: .55rem; color: #62546c; font-weight: 500; }
+.ox-week-due { margin-block: .6rem; padding: .55rem .75rem; border-inline-start: 3px solid #8770a3; color: #413648; background: #f8f5fb; }
+.ox-week-due button { min-height: 2.4rem; color: #513871; font: inherit; font-weight: 700; background: transparent; border: 0; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.ox-week-due ul { padding-inline-start: 1.2rem; font-size: .875rem; }
+.ox-week-due li { overflow-wrap: anywhere; }
+.ox-direct-dialog,.ox-paper-dialog { box-sizing: border-box; margin: auto; border: 1px solid #cdc2dc; border-radius: .85rem; background: white; color: #302743; padding: 1rem; max-height: 86dvh; max-width: min(95vw,54rem); overflow: auto; }
+.ox-direct-dialog { width: 54rem; }
+.ox-direct-dialog::backdrop,.ox-paper-dialog::backdrop { background: rgb(30 22 40 / .45); }
+.ox-direct-dialog form,.ox-paper-dialog form { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; }
+.ox-paper-dialog form h3 { margin: 0 auto 0 0; }
+.ox-direct-dialog form button,.ox-paper-dialog form button,.ox-paper-dialog a { min-height: 2.5rem; padding: .35rem .7rem; font: inherit; }
+.ox-paper-dialog p { overflow-wrap: anywhere; }
+.ox-paper-dialog input { display: block; margin-block-start: .6rem; max-width: 100%; }

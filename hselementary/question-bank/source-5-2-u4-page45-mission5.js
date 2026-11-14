@@ -4,7 +4,13 @@
   const pools=Object.freeze([
     Object.freeze({aHundredths:432,bHundredths:215}),
     Object.freeze({aHundredths:826,bHundredths:347}),
-    Object.freeze({aHundredths:684,bHundredths:129})
+    Object.freeze({aHundredths:684,bHundredths:129}),
+    Object.freeze({aHundredths:537,bHundredths:246}),
+    Object.freeze({aHundredths:328,bHundredths:417}),
+    Object.freeze({aHundredths:739,bHundredths:126}),
+    Object.freeze({aHundredths:624,bHundredths:385}),
+    Object.freeze({aHundredths:817,bHundredths:293}),
+    Object.freeze({aHundredths:456,bHundredths:638})
   ]);
   const fmtScaled=(value,scale)=>{const whole=Math.floor(value/scale),rem=value%scale;if(!rem)return String(whole);return `${whole}.${String(rem).padStart(String(scale).length-1,"0").replace(/0+$/g,"")}`;};
   const fmtCents=value=>fmtScaled(value,100),esc=value=>String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
@@ -22,7 +28,7 @@
     return Object.freeze({sumHundredths,omittedDifferenceHundredths,recoveredA,recoveredB,productNumerator,answer:fmtScaled(productNumerator,10000)});
   }
   function build(poolIndex=0,difficultyOffset=0){
-    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음만 사용할 수 있습니다.");
     if(![-1,0,1].includes(difficultyOffset))throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const pool=pools[poolIndex],r=calculate(pool),a=fmtCents(pool.aHundredths),b=fmtCents(pool.bHundredths),sum=fmtCents(r.sumHundredths),difference=fmtCents(r.omittedDifferenceHundredths),aTimes=fmtScaled(r.recoveredA,100),bTimes=fmtScaled(r.recoveredB,100);
     const prompt=`<div class="source52-u4-p45-m5-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>소수 둘째 자리까지 나타낸 두 수 가와 나가 있습니다. 가와 나의 합은 ${sum}입니다. 가에서 나를 뺄 때 가의 소수점을 빠뜨리고 계산했더니 ${difference}가 되었습니다. 가와 나의 곱을 구하세요.</p></div>`;

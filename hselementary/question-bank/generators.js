@@ -15428,7 +15428,7 @@
       }
       if (kind === 1) {
         const a = int(rng, 4, 7 + level), b = int(rng, 3, 6 + level), c = int(rng, 2, 5 + level);
-        return result(`그림에서 굵게 표시한 모서리 AB와 평행한 다른 모서리 수, 그리고 AB와 만나지 않으면서 수직인 모서리 수를 차례로 쓰세요.${cuboidEdgeRelationSvg({ a, b, c })}${cuboidEvidence("edge-relation-count", [a, b, c, 3, 4])}`, "3개, 4개", `AB와 같은 방향의 모서리는 모두 4개이므로 AB를 빼면 3개입니다. AB에 수직인 두 방향의 모서리 중 AB의 양 끝에서 만나지 않는 것은 각각 2개씩이므로 4개입니다.`);
+        return result(`그림에서 굵게 표시한 모서리 AB와 평행한 다른 모서리 수, 그리고 AB와 수직으로 만나는 모서리 수를 차례로 쓰세요.${cuboidEdgeRelationSvg({ a, b, c })}${cuboidEvidence("edge-relation-count", [a, b, c, 3, 4])}`, "3개, 4개", `AB와 같은 방향의 모서리는 모두 4개이므로 AB를 빼면 3개입니다. AB의 양 끝에서 AB와 수직으로 만나는 모서리는 각각 2개씩이므로 4개입니다.`);
       }
       if (kind === 2) {
         const pairs = advancedCubeNetPairs(advancedCubeNetCells);
@@ -15465,7 +15465,7 @@
         ];
         const heights = pick(rng, maps.slice(0, 1 + level));
         const dimensions = [heights[0].length, heights.length, Math.max(...heights.flat())].sort((left, right) => right - left);
-        return result(`각 바닥 칸에 쌓인 정육면체의 높이가 표와 같습니다. 이 쌓기나무 전체를 넣는 가장 작은 직육면체 상자의 가로, 세로, 높이를 큰 수부터 쓰세요.${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${cuboidEvidence("minimum-cover-box", [...heights.flat(), ...dimensions])}`, dimensions.join(", "), `바닥의 가로 칸 수, 세로 칸 수, 가장 높은 칸을 확인하면 상자의 세 길이는 ${dimensions.join("cm, ")}cm입니다.`);
+        return result(`한 모서리가 1cm인 정육면체를 쌓았습니다. 각 바닥 칸에 쌓인 정육면체의 높이가 표와 같습니다. 상자의 모서리를 정육면체의 모서리와 나란하게 놓을 때, 이 쌓기나무 전체를 넣는 가장 작은 직육면체 상자의 가로, 세로, 높이를 큰 수부터 쓰세요.${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${cuboidEvidence("minimum-cover-box", [...heights.flat(), ...dimensions])}`, dimensions.join(", "), `바닥의 가로 칸 수, 세로 칸 수, 가장 높은 칸을 확인하면 상자의 세 길이는 ${dimensions.join("cm, ")}cm입니다.`);
       }
       const a = int(rng, 4, 8 + level), b = int(rng, 3, 7 + level), c = int(rng, 2, 6 + level);
       if (kind === 1) {

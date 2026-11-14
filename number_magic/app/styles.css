@@ -4065,3 +4065,7 @@ body.nm-review-mode .nm-title3d{top:48px}
 .nm-middle-study-guidance [data-guidance=apply]{margin-top:12px;min-height:48px}
 .nm-middle-study-guidance details>summary{min-height:44px;box-sizing:border-box;padding:12px 0;line-height:1.5;cursor:pointer}
 #middleExtensionRemove{margin-top:12px;min-height:48px}
+
+/* 2026-11-08 새 지도(동물의 숲 느낌, app/town-live.js) — 옛 그림의 분수 자리는 이제 풀밭이라 0 뿜기를 숨긴다. */
+.nm-town-illustrated #townFountain{display:none}
+.nm-town-tool-list a.nm-town-credits{font-size:12px;color:#5a6b80;text-decoration:none;justify-content:center}

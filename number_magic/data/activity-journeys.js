@@ -72,6 +72,8 @@ export function act(s,action,value,actionId){
   if(action==='predict'&&v.phase===0){v.prediction=value;changed=true;}
   if(action==='begin'&&v.phase===0&&v.prediction!==null&&(!d.word||v.model)){v.phase=1;changed=true;}
   if(action==='select'&&v.phase===1){const selectable=ids(d.prefix[1],d.b).includes(value)&&!v.moved.includes(value);if(selectable){if(v.selection.includes(value))v.selection=v.selection.filter(id=>id!==value);else if(v.selection.length<10-d.a-v.moved.length)v.selection.push(value);else fail('남은 빈칸만큼만 고를 수 있어.',false);changed=!error;}}
+  // 그림 속 조각을 누르면 그 조각 하나가 바로 빈칸으로 간다(고르기+옮기기를 한 번에, 되돌리기도 한 번에).
+  if(action==='pick'&&v.phase===1){const selectable=ids(d.prefix[1],d.b).includes(value)&&!v.moved.includes(value);if(selectable){if(v.moved.length<10-d.a){v.selection=v.selection.filter(x=>x!==value);v.moved.push(value);changed=true;if(v.moved.length===10-d.a){v.selection=[];v.phase=2;}}else fail('남은 빈칸만큼만 고를 수 있어.',false);}}
   if(action==='move'&&v.phase===1){if(v.selection.length&&v.selection.length<=10-d.a-v.moved.length){v.moved.push(...v.selection);v.selection=[];changed=true;if(v.moved.length===10-d.a)v.phase=2;}else fail('옮길 블록을 먼저 골라 봐.',false);}
   if(action==='group'&&v.phase===2&&v.moved.length===10-d.a){v.grouped=true;v.phase=3;changed=true;}
   if(action==='submit'&&v.phase===3){n.attempts.push({id,scene:d.id,revision:n.revision,answer:value});if(Number(value)===d.a+d.b){v.answer=Number(value);v.verified=true;v.phase=4;changed=true;}else fail('10 묶음 옆에 남은 블록을 다시 세어 봐.');}
@@ -82,7 +84,7 @@ export function act(s,action,value,actionId){
   if(action==='face'&&v.phase===1){if(Number(value)===Math.sign(d.b)){v.face=Number(value);v.phase=2;changed=true;}else fail('뒤 수의 −는 왼쪽, +는 오른쪽을 보는 뜻이야.');}
   if(action==='walk'&&v.phase===2){if(Number(value)===(d.op==='+'?1:-1)){v.walk=Number(value);v.phase=3;changed=true;}else fail('가운데 +는 앞으로, −는 뒤로 걷기야. 보는 쪽은 그대로야.');}
   if(action==='count'&&v.phase===3){if(Number(value)===Math.abs(d.b)){v.target=Number(value);v.phase=4;changed=true;}else fail('뒤 수의 크기만큼 걸어 봐.');}
-  if(action==='step'&&v.phase===4){const count=value==='all'?v.target-v.steps:1;if(count>0){for(let i=0;i<count;i++){v.position+=v.face*v.walk;v.steps++;v.path.push(v.position);}if(v.steps===v.target)v.phase=5;changed=true;}}
+  if(action==='step'&&v.phase===4){/* 'one' 한 칸 · 'all' 끝까지 · 숫자 n = 사람을 끌어 넘은 눈금 n칸(남은 칸까지만) */const count=value==='all'?v.target-v.steps:Number.isInteger(Number(value))&&Number(value)>0?Math.min(Number(value),v.target-v.steps):1;if(count>0){for(let i=0;i<count;i++){v.position+=v.face*v.walk;v.steps++;v.path.push(v.position);}if(v.steps===v.target)v.phase=5;changed=true;}}
   if(action==='submit'&&v.phase===5){n.attempts.push({id,scene:d.id,revision:n.revision,answer:value});if(Number(value)===v.position&&v.steps===Math.abs(d.b)){v.answer=Number(value);v.verified=true;v.phase=6;changed=true;}else fail('사람이 지금 서 있는 눈금을 읽어 봐.');}
   if(action==='meaning'&&v.phase===6){if(value==='roles'){v.meaning=true;changed=true;}else fail('보는 쪽과 걷는 쪽은 다른 역할이야.');}
  }

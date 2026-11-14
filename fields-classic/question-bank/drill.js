@@ -4,7 +4,7 @@
 //  · 세 단계: 연습(난이도 1) → 실전(2) → 도전(3). 단계마다 세 문제, 차시에 붙인 유형을 번갈아 낸다(drill-recipes.js).
 //  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고르고, 가쿠로는 칸에 수 카드를 놓는다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
-import { typeById } from "./source-data.js?v=20261101b";
+import { typeById } from "./source-data.js?v=20261111g";
 import { GENERATORS } from "./generators.js?v=20261101n";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261103d";
@@ -132,7 +132,7 @@ const firstStep = (solution) => { const s = plain(solution).split(/(?<=[.다요]
 async function main() {
   const root = document.getElementById("drill");
   const types = DRILL_RECIPES[key];
-  if (!types) { root.innerHTML = `<p class="dr-missing">이 차시의 연습 공방은 아직 준비 중이에요.</p>`; return; }
+  if (!types) { root.innerHTML = `<p class="dr-missing">이 차시의 연습 게임은 아직 준비 중이에요.</p>`; return; }
   // 그림은 문제의 visual.kind(book5 등)로 그린다 — 다른 권의 그림을 빌려 쓰는 유형이 있다
   const renderers = {};
   await Promise.all(Object.entries(RENDERER_TAG).map(async ([nn, tag]) => { renderers[`book${Number(nn)}`] = { nn, markup: (await import(`./book${nn}-renderers.js?v=${tag}`))[`book${nn}Markup`] }; }));
@@ -177,7 +177,7 @@ async function main() {
     const p = st.p;
     root.innerHTML = `<div class="dr">
       <div class="dr-top"><div class="dr-levels">${LEVELS.map((l, k) => `<button type="button" data-level="${k}" class="${k === st.level ? "on" : ""}"><b>${k + 1}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</div>
-        <div class="dr-right"><div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div>${st.phase === "done" ? "" : '<button type="button" class="dr-skip" data-dr="skip">넘어가기 ›</button>'}</div></div>
+        <div class="dr-right"><div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div>${st.phase === "done" ? "" : '<button type="button" class="dr-skip" data-dr="skip">건너뛰기 ›</button>'}</div></div>
       <p class="dr-kind">${esc(p.type.label)}</p>
       <div class="dr-card"><p class="dr-prompt">${esc(plain(p.prompt)).replaceAll("\n", "<br>")}</p>${p.shape.kind !== "grid" ? visualOf(p.visual) : st.reveal ? visualOf(p.answerVisual) : gridBoard(p.shape)}</div>
       ${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
@@ -245,7 +245,7 @@ async function main() {
   }
   function renderFinale() {
     const stars = st.stars.reduce((a, b) => a + b, 0), total = LEVELS.length * PER_LEVEL;
-    root.innerHTML = `<div class="dr dr-finale"><p class="dr-kick">연습 공방 · 완성</p><h3>세 단계를 모두 마쳤어요!</h3>
+    root.innerHTML = `<div class="dr dr-finale"><p class="dr-kick">연습 게임 · 완성</p><h3>세 단계를 모두 마쳤어요!</h3>
       <p class="dr-score">처음에 바로 맞힌 문제 <b>${stars}</b> / ${total}</p>
       <ul class="dr-rules">${LEVELS.map((l, k) => `<li><b>${k + 1}단계 ${l.title}</b> ★ ${st.stars[k]} / ${PER_LEVEL}</li>`).join("")}</ul>
       <div class="dr-actions"><button type="button" class="dr-btn" data-dr="restart">처음부터 다시</button>${parent !== window ? '<button type="button" class="dr-btn primary" data-dr="done">워밍업 문제로 →</button>' : ""}</div></div>`;
@@ -303,7 +303,7 @@ async function main() {
     else if (act === "done") post({ event: "done" });
   });
   if (restore()) render();
-  else { fresh(); say("연습 공방이에요. 개념에서 본 풀이로 실제 문제를 풀어 봐요.", "talk"); }
+  else { fresh(); say("연습 게임이에요. 개념에서 본 풀이로 실제 문제를 풀어 봐요.", "talk"); }
 }
 // 덱 창 안에서는 칸에 꼭 맞게 — 크면 줄이고 작으면 키운다(원장 2026-10-30 「아래로 스크롤」 · 11-01 「화면에 가득 차야지」)
 function fitFrame() {
@@ -324,4 +324,4 @@ if (typeof document !== "undefined" && parent !== window) {
   addEventListener("resize", () => requestAnimationFrame(fitFrame));
   new MutationObserver(() => requestAnimationFrame(fitFrame)).observe(document.getElementById("drill"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "hidden"] });
 }
-if (typeof document !== "undefined") main().catch((error) => { document.getElementById("drill").innerHTML = `<p class="dr-missing">연습 공방을 열지 못했어요: ${esc(error.message)}</p>`; });
+if (typeof document !== "undefined") main().catch((error) => { document.getElementById("drill").innerHTML = `<p class="dr-missing">연습 게임을 열지 못했어요: ${esc(error.message)}</p>`; });

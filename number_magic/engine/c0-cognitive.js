@@ -37,9 +37,22 @@ function dots(profile,rng){
   return {widget:'dotToDot',pts,close:false,answer:n,answerType:'number',prompt:T('1부터 차례대로 점을 이어요. 어떤 모양일지 상상해 보세요! 점은 모두 몇 개일까요?','Join the dots in order from 1. Imagine the shape! How many dots are there?','从1开始按顺序连点，想象会是什么形状！一共有几个点？')};
 }
 function shapeCount(profile,rng){
-  const {R,pick,shuffle}=W.NM_RNG,all=['shape:circle','shape:square','shape:triangle'],k=R(rng,1,3),used=shuffle(rng,all).slice(0,k),items=[];
-  const n=R(rng,k,profile.max);for(let i=0;i<n;i++)items.push({e:i<k?used[i]:pick(rng,used),t:false,x:12+(i%4)*24,y:20+Math.floor(i/4)*30,s:1,r:0});
+  const {R,pick,shuffle}=W.NM_RNG,all=['shape:circle','shape:square','shape:triangle'],k=R(rng,2,3),used=shuffle(rng,all).slice(0,k),items=[];
+  const n=R(rng,Math.min(k+1,profile.max),profile.max);for(let i=0;i<n;i++)items.push({e:i<k?used[i]:pick(rng,used),t:false,x:12+(i%4)*24,y:20+Math.floor(i/4)*30,s:1,r:0});
   return {widget:'g13Count',ask:'kinds',layout:'scatter',items:shuffle(rng,items),choices:[1,2,3],unit:T('가지','','种'),answer:k,answerType:'number',prompt:T('동그라미·세모·네모를 살펴봐요. 서로 다른 모양은 몇 가지인가요?','Look at the circles, triangles and squares. How many kinds of shapes are there?','看看圆形、三角形、正方形，一共有几种不同的形状？'),keyFields:['items','ask']};
+}
+const DRAW_SHAPES=[
+  {key:'circle',glyph:'○',ko:'동그라미',en:'circle',zh:'圆形'},
+  {key:'triangle',glyph:'△',ko:'세모',en:'triangle',zh:'三角形'},
+  {key:'square',glyph:'□',ko:'네모',en:'square',zh:'正方形'}
+];
+function drawShapes(p,rng){
+  const {pick}=W.NM_RNG,sh=pick(rng,DRAW_SHAPES),n=p.target;
+  p.prompt=T('빈 칸에 '+sh.ko+'('+sh.glyph+')를 정확히 '+n+'개만 그려요!','Draw exactly '+n+' '+sh.en+(n>1?'s':'')+' ('+sh.glyph+') in the boxes!','在空格里正好画'+n+'个'+sh.zh+'（'+sh.glyph+'）！');
+  p.drawShape={key:sh.key,glyph:sh.glyph};
+  // Same shape + same count looks identical to a child even when the box count differs: treat as a duplicate.
+  p.__uniqueKey='c0-draw:'+sh.key+':'+n;
+  return p;
 }
 function valuesInRange(p,max){
   // Encoded answers (several filled boxes/matching permutations) are identifiers,
@@ -65,7 +78,11 @@ function generate(thread,level,params,rng,original){
     if(!p||!valuesInRange(p,profile.max))continue;
     // Early number matches use dots/digits/native names, before Sino-Korean names.
     if(profile.block==='A'&&['sino'].includes(p.leftType)||profile.block==='A'&&p.rightType==='sino')continue;
-    return cleanProblem(p);
+    // Week 1 counts up to 5 with real objects: no ten-frame reading/painting there.
+    if(profile.week===1&&(p.widget==='frameRead'||p.widget==='framePaint'||/10칸/.test(p.prompt?.ko||'')))continue;
+    const q=cleanProblem(p);
+    if(thread==='NL8'&&level===3&&q.widget==='gridPaint'&&q.gridMode==='count')return drawShapes(q,rng);
+    return q;
   }
   throw Error('C0 range could not be generated: '+thread+'@'+level+' max '+profile.max);
 }

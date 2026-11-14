@@ -92,8 +92,8 @@ test('schedule map, table and adjustment controls link each displayed paper to i
  assert.equal(m.mockCheckPlan.rows.filter(p=>p.start!==null).length,8);
  for(const html of snapshots)for(const paper of S.PAPERS)assertFiles(group(html,paper.id),paper.id);
  for(const row of m.mockCheckPlan.rows){
-  for(const view of ['map','table'])assert.ok(S.render(m,view).includes(C.date(m,row.start).label));
-  assert.ok(snapshots[2].includes(row.suggested));
+  for(const view of ['map','table'])assert.ok(S.render(m,view).includes(S.approxDate(row.practiceDate || row.suggested)));
+  assert.ok(snapshots[2].includes(S.approxDate(row.practiceDate || row.suggested)));
  }
 });
 
@@ -105,10 +105,10 @@ test('whole-paper June results link the same-scope June paper from another year 
  for(const view of ['map','table']){
   const html=F.render(m,view);assertFiles(html,'y2025-h1-06');
   assert.ok(!hrefs(html).includes(expected('h1-06').problem));
-  assert.match(html,/2026년 11월 26일/);
+  assert.match(html,/2026년 11월 말/);
  }
  const block=m.lanes.find(l=>l.id==='mockRetest').blocks[0];
- assert.equal(C.period(m,block),'2026년 11월 26일');
+ assert.equal(C.period(m,block),'2026년 11월 말 예정');
  assert.equal(F.prefill(m,'source').exam,'2025년 6월 학평');
  assert.equal(JSON.stringify(source),before);
 });

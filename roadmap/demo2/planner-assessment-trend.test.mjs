@@ -78,3 +78,33 @@ test('a selected unit can be restricted to an exact book, including legacy recor
   assert.deepEqual(build({attempts,unitId:'1',bookId:''})[0].initial,counts(1,1,0));
   assert.deepEqual(build({attempts,unitId:'1',bookId:'C'}),[]);
 });
+
+test('started O/X sets have 25 physical numbers and keep recorded progress distinct from first-assessment correctness',()=>{
+  const unitId='didimdol22-1-1-u1';
+  const row=(date,set,phase,items)=>run(unitId+'-'+set+'-ox-'+phase+'-'+date,date,items.map(([n,o])=>q(unitId+'-'+set+'-'+n,o,phase)),{unitId});
+  const rows=[
+    row('2026-11-01','m','initial',[[1,'independent'],[2,'wrong']]),
+    row('2026-11-02','m','initial',[[3,'wrong']]),
+    row('2026-11-08','h','recheck',[[7,'independent']]),
+    row('2026-11-09','h','initial',[[3,'wrong']]),
+    row('2026-11-10','s','recheck',[[9,'wrong']])];
+  const points=build({attempts:rows});
+  assert.deepEqual(points.map(p=>p.initial.paper),[
+    {eligible:25,submitted:2},{eligible:25,submitted:3},{eligible:25,submitted:3},
+    {eligible:50,submitted:5},{eligible:50,submitted:5}]);
+  assert.equal(points.at(-1).initial.eligible,4);
+  assert.equal(points.at(-1).initial.independent,1);
+  assert.equal(points.at(-1).recheck.independent,1);
+  assert.equal(points.at(-1).recheck.recordedOnly,true);
+});
+
+test('a paper union with an imported result excludes explicit unlearned numbers and counts a late O/X grade of an unanswered number once',()=>{
+  const unitId='didimdol22-1-1-u1', prefix=unitId+'-m-';
+  const old=run('teacher','2026-11-01',[q(prefix+'2','unanswered'),q(prefix+'7','unlearned')],{unitId});
+  const day='2026-11-02', direct=run(prefix+'ox-initial-'+day,day,[q(prefix+'2','independent'),q(prefix+'3','wrong')],{unitId});
+  const points=build({attempts:[direct,old]});
+  assert.deepEqual(points[1].initial,{eligible:2,submitted:2,independent:1,paper:{eligible:24,submitted:2}});
+  assert.equal(points[0].initial.eligible,1);
+  const next='2026-11-03', learned=run(prefix+'ox-initial-'+next,next,[q(prefix+'7','independent')],{unitId});
+  assert.deepEqual(build({attempts:[direct,old,learned]}).at(-1).initial.paper,{eligible:25,submitted:3});
+});

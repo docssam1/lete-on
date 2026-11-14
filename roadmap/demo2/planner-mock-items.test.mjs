@@ -4,7 +4,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const read=f=>readFileSync(new URL(f,import.meta.url),'utf8');
 const scripts=['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-standard-data.js','planner-high-study.js','planner-standard.js','planner-curriculum.js','planner-mock-evidence.js','planner-mock-schedule.js','planner-mock-library-data.js','planner-mock-library.js','planner-mock-scopes.js','planner-mock-matching.js','planner-mock-items-data.js','planner-mock-items.js','planner-mock-feedback.js','planner-learning-evidence.js','planner-goal-curriculum.js'];
-const w={},cx=vm.createContext({window:w,Date});for(const f of scripts)vm.runInContext(read(f),cx,{filename:f});
+// The pupil records the first attempt on Nov 6 in Seoul, whatever day CI runs.
+const fixtureTime = Date.parse('2026-11-06T12:00:00+09:00');
+class PracticeDate extends Date {
+ constructor(...args) { super(...(args.length ? args : [fixtureTime])); }
+ static now() { return fixtureTime; }
+}
+const w={},cx=vm.createContext({window:w,Date:PracticeDate});for(const f of scripts)vm.runInContext(read(f),cx,{filename:f});
 const {PlannerMockItems:I,PlannerMockSchedule:S,PlannerMockEvidence:E,PlannerMockFeedback:F,PlannerCurriculum:C,PlannerMockLibrary:B}=w;
 const plain=v=>JSON.parse(JSON.stringify(v));
 const a={grade:'7',gradeInput:'current',thinkingExperience:'none',schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'공통수학1',schoolStatus:'progress',deepCourse:'none',deepBook:'none',calc:'none'};
@@ -94,4 +100,17 @@ test('primary-topic-only high2 tags never assign a partial-course item before pr
  assert.ok(s.selected.includes(15));
  const lacking=I.select('h2-06',ids.filter(id=>id!=='c1-quadratic'));
  assert.ok(lacking.excludedUnlearned.includes(15));
+});
+
+test('a pupil studying a course after the unit list has every earlier course as learned', () => {
+ const earlier = I.UNITS.filter(u => u.course !== '이전 교육과정·별도 확인').map(u => u.id);
+ for (const stage of ['미적분Ⅱ', '기하']) {
+  const learned = I.knowledge(a, null, { stage, done: false }).learned;
+  assert.equal(learned.length, earlier.length, stage);
+  assert.deepEqual([...learned].sort(), [...earlier].sort(), stage);
+ }
+ // A course inside the list still counts only the courses before it.
+ assert.equal(I.knowledge(a, null, { stage: '공통수학1', done: false }).learned.some(id => id.startsWith('c1-')), false);
+ // An unknown course name stays empty instead of unlocking everything.
+ assert.equal(I.knowledge(a, null, { stage: '확인 전', done: false }).learned.length, 0);
 });

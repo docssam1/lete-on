@@ -107,6 +107,18 @@
       onCalendar: date => g.PlannerWeeklyCalendar.download(date, calendarId),
       onPhaseChange: drawSchedules
     });
+    const existing = host.querySelector('[data-weekly-current-depth]');
+    existing?.remove();
+    const I = g.PlannerIntake, a = unitContext?.answers;
+    if (I && a) {
+      const rows = I.summary(a,unitContext.fields || {}).filter(r => ['deepBook','deepExtraBook'].includes(r.key) && (r.key==='deepBook' ? a.deepStatus==='progress' && !unitContext.fields?.pendingStatus?.deepStatus : I.additionalDeep(a,unitContext.fields)?.done===false));
+      if (rows.length) {
+        const panel = document.createElement('section');panel.dataset.weeklyCurrentDepth='';
+        const title = document.createElement('h3');title.textContent='현재 병행하는 심화';panel.append(title);
+        for (const row of rows) {const item=document.createElement('p');item.textContent=row.text;panel.append(item);}
+        const note=document.createElement('p');note.textContent='두 과목을 포함한 현재 심화를 별도로 확인합니다. 위 교과·연산·사고력 주간 회차에 심화 회차를 자동으로 더하지 않습니다.';panel.append(note);host.append(panel);
+      }
+    }
     drawSchedules();
   }
 

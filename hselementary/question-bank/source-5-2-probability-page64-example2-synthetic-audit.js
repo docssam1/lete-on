@@ -1,7 +1,7 @@
 "use strict";
 const assert = require('node:assert/strict');
 const source = require('./source-5-2-probability-page64-original.js');
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 4; i++) {
   const q = source.makeQuestion(2, i), {boys, girls} = q.questionModel;
   const people = Array.from({length: boys + girls}, (_, n) => ({id: n, girl: n >= boys}));
   const pairs = [];
@@ -10,7 +10,7 @@ for (let i = 0; i < 3; i++) {
   assert.equal(q.answerModel.total, pairs.length);
   assert.equal(q.answerModel.good, good);
   assert.equal(q.answerModel.numerator * pairs.length, good * q.answerModel.denominator);
-  assert.equal(q.answer, ['2/5', '2/7', '5/14'][i]);
+  assert.equal(q.answer, ['2/5', '2/7', '5/14', '1/7'][i]);
   assert.equal(q.variantProvenance, 'synthetic-source-structure');
   assert.equal(q.publisherKeyVerified, false);
 }

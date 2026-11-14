@@ -1,19 +1,26 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { FieldsAccessError, isFieldsAdminName, authenticateFieldsAdmin, resolveFieldsSession } from "../_shared/fields-admin-access.js";
-import { membershipSummary } from "../_shared/fields-membership.js";
+import { membershipSummary, directSummary, blocksLogin } from "../_shared/fields-membership.js";
 
-// 가입 회원(fields_members, 원장 2026-10-29)이면 체험이 끝났거나 멈춘 경우 로그인을 막고, 열린 권을 함께 돌려준다.
-// 회원 표에 없는 옛 승인번호(원장이 직접 만든 것)는 그대로 들어온다.
+// GM 과정(스스로 공부) 상태를 함께 돌려준다(원장 2026-11-14 「권별 이나 기간」): 가입 회원(fields_members)은 체험·정규 규칙,
+// GM 열기 방식(fields_gm_plans)이 있으면 그 방식이 먼저. 원장이 직접 만든 승인번호는 방식이 없으면 GM이 닫혀 있다(gm_none).
+// 로그인을 막는 것은 가입 회원의 체험 끝·멈춤뿐이다(blocksLogin) — 모의고사 회원은 같은 승인번호로 모의고사에 들어가야 한다.
 async function memberOf(service: any, name: string) {
-  const { data, error } = await service.from("fields_members").select("*").eq("child_name", name).maybeSingle();
-  if (error) return null;
-  return membershipSummary(data);
+  const [member, plan] = await Promise.all([
+    service.from("fields_members").select("*").eq("child_name", name).maybeSingle(),
+    service.from("fields_gm_plans").select("*").eq("student_name", name).maybeSingle(),
+  ]);
+  if (member.error) return null;
+  const planRow = plan.error ? null : plan.data;
+  return member.data ? membershipSummary(member.data, planRow) : directSummary(planRow);
 }
 
-// 틀린 승인번호 막기(원장 2026-10-31): 같은 이름으로 15분 안에 10번 틀리면 15분 동안 그 이름의 로그인을 막는다.
+// 틀린 승인번호 막기(원장 2026-10-31, 2026-11-11 「보안 설정도 하자」로 더 세게): 같은 이름으로 1시간 안에 5번 틀리면
+// 1시간 동안 그 이름의 로그인을 막는다(예전 15분 10번). 학부모가 정하는 승인번호(4자 이상)를 맞혀 보는 것을 막는 몫이다.
 // 있는 이름만 센다(없는 이름으로 표를 채우지 않게). 표 fields_login_failures는 service_role만 쓴다.
-const MAX_FAILS = 10;
-const LOCK_MS = 15 * 60 * 1000;
+// 관리자(DOCSSAM) 로그인은 hs-admin-session이 따로 막는다(429).
+const MAX_FAILS = 5;
+const LOCK_MS = 60 * 60 * 1000;
 async function lockedOut(service: any, name: string) {
   const { data } = await service.from("fields_login_failures").select("locked_until").eq("student_name", name).maybeSingle();
   return Boolean(data?.locked_until && new Date(data.locked_until).getTime() > Date.now());
@@ -27,6 +34,15 @@ async function failedLogin(service: any, name: string) {
     ? { student_name: name, fails: 0, first_at: new Date(now).toISOString(), locked_until: new Date(now + LOCK_MS).toISOString() }
     : { student_name: name, fails, first_at: fresh ? new Date(now).toISOString() : data.first_at, locked_until: null };
   await service.from("fields_login_failures").upsert(row);
+}
+
+// 관리자 접속·열람 기록(원장 2026-11-11 「보안 설정도 하자」): 표 fields_admin_audit(service_role만). 기록이 실패해도 일은 계속한다.
+// 승인번호·해시는 남기지 않는다. IP는 첫 주소만, 브라우저 정보는 120자까지.
+async function audit(service: any, req: Request, actor: string, action: string, target: string | null = null) {
+  try {
+    const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "").split(",")[0].trim().slice(0, 64) || null;
+    await service.from("fields_admin_audit").insert({ actor, action, target, ip, agent: (req.headers.get("user-agent") || "").slice(0, 120) || null });
+  } catch { /* 기록 실패는 무시 */ }
 }
 
 const ALLOWED_ORIGINS = new Set([
@@ -103,9 +119,16 @@ Deno.serve(async (req: Request) => {
         return json(req, { error: "credentials_invalid" }, 400);
       }
       if (isFieldsAdminName(suppliedName)) {
-        const account = await authenticateFieldsAdmin(service, url, key, req, suppliedName, String(body.code).trim(), fetch, {
-          retainSession: action === "admin-login", deviceToken: action === "admin-login" ? body.deviceToken : "",
-        });
+        let account;
+        try {
+          account = await authenticateFieldsAdmin(service, url, key, req, suppliedName, String(body.code).trim(), fetch, {
+            retainSession: action === "admin-login", deviceToken: action === "admin-login" ? body.deviceToken : "",
+          });
+        } catch (error) {
+          await audit(service, req, "DOCSSAM", error instanceof FieldsAccessError && error.status === 429 ? "login_locked" : "login_failed");
+          throw error;
+        }
+        await audit(service, req, "DOCSSAM", action === "admin-login" ? "admin-login" : "login");
         if (action === "admin-login") {
           if (!("session" in account)) return json(req, { error: "admin_auth_unavailable" }, 503);
           return json(req, { name: account.name, type: "admin", session: account.session, deviceToken: account.deviceToken });
@@ -131,7 +154,7 @@ Deno.serve(async (req: Request) => {
       }
       await service.from("fields_login_failures").delete().eq("student_name", account.student_name);
       const member = await memberOf(service, account.student_name);
-      if (member && !member.open) return json(req, { error: member.reason, member }, 403);
+      if (blocksLogin(member)) return json(req, { error: member.reason, member }, 403);
       const token = randomToken();
       const tokenHash = await sha256(token);
       const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
@@ -155,7 +178,7 @@ Deno.serve(async (req: Request) => {
     if (action !== "session") return json(req, { error: "action_invalid" }, 400);
     const account = await resolveFieldsSession(service, tokenHash);
     const member = account.type === "admin" ? null : await memberOf(service, account.name);
-    if (member && !member.open) return json(req, { error: member.reason, member }, 403);
+    if (blocksLogin(member)) return json(req, { error: member.reason, member }, 403);
     await service.from("fields_access_sessions").update({ last_seen_at: new Date().toISOString() }).eq("token_hash", tokenHash);
     return json(req, {
       ok: true,

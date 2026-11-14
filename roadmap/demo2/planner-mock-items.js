@@ -17,6 +17,8 @@ const GROUPS=[
  ['이전 교육과정·별도 확인',[['old-external','선분의 외분']]]
 ];
 const UNITS=GROUPS.flatMap(([course,rows],ci)=>rows.map(([id,title],order)=>({id,title,course,ci,order}))),ids=new Set(UNITS.map(u=>u.id)),UNIT=Object.fromEntries(UNITS.map(u=>[u.id,u]));
+// 기출 단원 목록(GROUPS)은 확률과 통계에서 끝난다. 그 뒤 과목을 공부 중이면 앞 과정은 모두 배운 범위다.
+const LATER_STAGES=['미적분Ⅱ','기하'];
 const STAGES=GROUPS.map(x=>x[0]),VERSION='20261106.1';
 const unique=v=>[...new Set(Array.isArray(v)?v:[])];
 const validUnits=v=>unique(v).filter(id=>ids.has(id));
@@ -29,7 +31,7 @@ function restoreKnowledge(v){return v?.version===1&&typeof v.signature==='string
 function knowledge(a,s,actual){
  const signature=g.PlannerIntake?.progressCourse(g.PlannerIntake.effective(a),'schoolStatus')||'',saved=restoreKnowledge(s?.knowledge);
  if(saved&&saved.signature===signature)return{...saved,explicit:true,stage:actual?.stage||null};
- const stage=actual?.stage,ci=STAGES.indexOf(stage),learned=UNITS.filter(u=>u.ci<ci&&u.course!=='이전 교육과정·별도 확인').map(u=>u.id);
+ const stage=actual?.stage,ci=LATER_STAGES.includes(stage)?STAGES.length:STAGES.indexOf(stage),learned=UNITS.filter(u=>u.ci<ci&&u.course!=='이전 교육과정·별도 확인').map(u=>u.id);
  if(actual?.done)learned.push(...UNITS.filter(u=>u.course===stage).map(u=>u.id));
  const boundary=s?.signature===signature?s.boundary:null;
  const last={'c1-equations':'c1-inequality','c1-all':'c1-matrix','c2-geometry':'c2-transform','c2-all':'c2-irrational','alg-trig':'a-law','alg-all':'a-recursion','cal-limit':'cal-limit','cal-coefficient':'cal-coefficient','cal-all':'cal-integral'}[boundary],end=UNIT[last];

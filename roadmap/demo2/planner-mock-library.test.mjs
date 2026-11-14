@@ -106,7 +106,7 @@ test('planning and result badges refer to the exact year, grade and variant with
  const model={mockCheckPlan:{enabled:true,rows:[row,{...S.PAPERS.find(p=>p.id==='h2-03'),start:null,suggested:'2027-03',status:'done'}]}};
  const mock={records:[{id:'h1-03',exam:'2017년 3월 학평 · 가형',level:'2'}]};
  const html=L.render({year:2026},model,mock);
- assert.match(card(html,'h1-03'),/내 계획 · 2027-02/);
+ assert.match(card(html,'h1-03'),/내 계획 · 2027년 2월경/);
  assert.doesNotMatch(card(html,'h2-03'),/내 계획/);
  assert.doesNotMatch(html,/결과 기록 1개/);
  const archive=L.render({year:2017},model,mock);
@@ -141,7 +141,7 @@ test('unverified historical scope retains the recheck date without substituting 
  assert.deepEqual(plain(next.lanes.filter(l=>!['mockCheck','mockRepair','mockRetest'].includes(l.id))),plain(initial.lanes.filter(l=>l.id!=='mockCheck')));
  assert.equal(JSON.stringify(initial),before);
  const prefill=F.prefill(next,'source');assert.equal(prefill,null);
- const html=F.render(next);assert.ok(!html.includes(L.find('y2017-h2-03-a').files.problem));assert.match(html,/2026년 11월 26일/);
+ const html=F.render(next);assert.ok(!html.includes(L.find('y2017-h2-03-a').files.problem));assert.match(html,/2026년 11월 말/);
 });
 
 test('manual or unsupported exams use an escaped grade-specific fallback and never supply a wrong direct PDF',()=>{

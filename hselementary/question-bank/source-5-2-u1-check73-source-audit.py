@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Check source page 73 rounding boundaries without publishing the source."""
+"""Check page 73 arithmetic and recorded source-review status."""
 import json
 from pathlib import Path
 
 record = json.loads((Path(__file__).parent / 'source-inventory/5-2-u1-readiness-review.json').read_text())
 review = next(r for r in record['additionalSourceReviews'] if r['sourcePrintedPage'] == 73)
-assert review['sourcePdfPage'] == 69 and review['runtimeConnection'] == 'not-connected'
+assert review['sourcePdfPage'] == 69 and review['runtimeConnection'] == 'partial-verified-local'
 assert review['publisherAnswerVerified'] is False
+expected_statuses = {41: 'public-independent-verification-publisher-key-pending', 42: 'public-independent-verification-publisher-key-pending', 43: 'public-independent-verification-publisher-key-pending', 44: 'public-independent-verification-publisher-key-pending', 45: 'public-independent-verification-publisher-key-pending', 46: 'public-independent-verification-publisher-key-pending', 47: 'public-independent-verification-publisher-key-pending', 48: 'public-independent-verification-publisher-key-pending'}
+assert {item['number']: item['status'] for item in review['items']} == expected_statuses
 assert [x['number'] for x in review['items']] == list(range(41, 49))
 ceil = lambda n,u: (n+u-1)//u*u
 floor = lambda n,u: n//u*u
@@ -24,4 +26,4 @@ assert max(abs(x-y) for x in a for y in b) == 108
 assert [n for n in range(2300,2601) if ceil(n,100)==2500 and floor(n,100)==2400 and round_up(n,10)==2500] == list(range(2495,2500))
 valid=[n for n in range(7810000,7840001) if ceil(n,10000)==7830000 and floor(n,10000)==7820000 and round_up(n,10000)==7820000]
 assert len(valid)==4999 and (min(valid),max(valid))==(7820001,7824999)
-print('PASS: page 73 rounding-boundary candidates and extrema; source remains unconnected')
+print('PASS: page 73 rounding-boundary candidates and extrema; review record is partially connected')

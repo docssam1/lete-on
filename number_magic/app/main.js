@@ -1794,6 +1794,7 @@ function screenTown(){
   ['townCourseRoad','townDex','townMagazine','townMail','townReport'].forEach(id=>{const button=scr.querySelector('#'+id);const label=document.createElement('span');label.textContent=button.title;button.appendChild(label);});
   TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
   list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
+  {const c=document.createElement('a');c.className='nm-iconbtn nm-town-credits';c.href='assets/town3d/credits.html';c.target='_blank';c.rel='noopener';c.textContent=S.lang==='ko'?'지도 그림 출처':S.lang==='en'?'Map art credits':'地图素材来源';list.appendChild(c);}
   toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   toolbox.addEventListener('focusout',e=>{if(e.relatedTarget&&!toolbox.contains(e.relatedTarget))toolbox.open=false;});
   $('#townLeave').onclick=()=>{S.view='title';S.unitReturn=null;S._fromRoadmap=false;S._fromCourseRoad=false;save();render();};
@@ -6711,6 +6712,15 @@ function initTownWorld(scr){
   const W=TOWN_WORLD_W,H=TOWN_WORLD_H;
   let cam={x:0,y:0,scale:1},minS=1,maxS=3,cameraReady=false;
   const BBOX=computeContentBBox(W,H,.04);
+  /* 살아 있는 지도(2026-11-08, 원장 「동물의 숲 같이 … 2d느낌의 3d」) — app/town-live.js 가 같은 장면을
+     #townWorld 맨 아래 캔버스에 그려 파도·풍차·나무가 움직인다. 시점 고정이라 이름표·걷기 좌표는 그대로.
+     WebGL 이 없거나 ?live=0 이면 assets/map.jpg(같은 장면의 그림)가 그대로 보인다. */
+  let liveCtl=null,liveGone=false;
+  if(!/[?&]live=0\b/.test(location.search))import('./town-live.js?v=20261108-live1').then(m=>liveGone?null:m.mountTownLive(world)).then(ctl=>{
+    if(!ctl)return;
+    if(liveGone||!world.isConnected){ctl.dispose();return;}
+    liveCtl=ctl;vp.classList.add('is-live-map');
+  }).catch(e=>console.warn('[town-live] still map',e));
 
   /* 지도를 화면 가득 채운다. 좁은 세로 화면의 바깥 건물은 드래그하거나
      측면 메뉴의 장소 목록으로 입장한다. 캐릭터 이동은 필요하지 않다. */
@@ -6971,6 +6981,7 @@ function initTownWorld(scr){
   };
 
   return function cleanup(){
+    liveGone=true;if(liveCtl){liveCtl.dispose();liveCtl=null;}
     if(cameraReady&&vp.clientWidth&&vp.clientHeight)illustratedTownVisits.set(visitOwner,{
       zoom:cam.scale/minS,center:{x:(vp.clientWidth/2-cam.x)/cam.scale,y:(vp.clientHeight/2-cam.y)/cam.scale},
       follow,party:nbs.slice(0,2).map(n=>({x:n.x,y:n.y}))
@@ -7418,7 +7429,10 @@ function stepDiscover(body,u){
       loading="lazy" onerror="this.closest('.nm-story-art').remove()"></figure>`;
   /* 수학사 네 컷 만화(data/story-comics.js) — 등록된 유닛은 🏛 한 줄 대신 만화.
      캡션이 이야기를 다 전하므로 산문 history는 그 유닛에선 그리지 않는다. */
-  const comic=window.NM_COMICS&&NM_COMICS[u.id];
+  /* 네 컷 그림은 개념 노트에 싣지 않는다(원장 2026-11-10 「쓸데없는 말이 안 되는 그림 없애고」) —
+     숫자·화살표 조각 그림이라 수업 내용과 이어지지 않았다. 이야기 글(st.history)은 그대로 보인다.
+     네 컷 순서 맞히기 놀이(renderHistQuiz)는 따로이며 여기서 건드리지 않는다. */
+  const comic=null;
   const histHtml=comic
     ?`<div class="nm-comic-h">${kid?'📖 '+(S.lang==='ko'?'네 컷 이야기':S.lang==='en'?'A Story in 4 Panels':'四格故事')
         :'🏛 '+(S.lang==='ko'?'네 컷 수학사':S.lang==='en'?'Math History in 4 Panels':'四格数学史')}</div>
@@ -7496,7 +7510,7 @@ function stepDiscover(body,u){
       onStatus:status=>{const next=body.querySelector('#toCheck');if(next)next.disabled=!(status.complete&&status.saved);},
       onTown:()=>{S.view='town';save();render();}
     }:{};
-    import('./living-lesson.js?v=20261014-arrival').then(m=>m.mount(livingHost,u.id,lang,journeyOptions)).catch(()=>{
+    import('./living-lesson.js?v=20261109-touch1').then(m=>m.mount(livingHost,u.id,lang,journeyOptions)).catch(()=>{
       if(livingHost.isConnected)livingHost.textContent=lang==='ko'?'교구를 불러오지 못했습니다. 아래 개념으로 계속 학습할 수 있습니다.':lang==='en'?'The pieces could not load. Continue with the concept below.':'教具加载失败。可以继续学习下方概念。';
     });
   }

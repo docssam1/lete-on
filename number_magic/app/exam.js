@@ -905,6 +905,19 @@
   .nm-cvw.nm-cvw-dense .nm-cvw-course { margin-bottom:3mm; }
   .nm-cvw.nm-cvw-dense .nm-cv-meta { margin-top:3mm; padding:3mm 4mm; }
   .nm-cvw.nm-cvw-dense .nm-cvw-foot { margin-top:3mm; padding-top:3mm; }
+  /* 목차가 16줄 이상(총정리 회차 — C25 4회는 24줄)이면 한 단계 더 촘촘하게(2026-11-13: 표가 종이 밖으로 387px 나가
+     아래 줄·점수 칸·QR 칸이 통째로 잘렸다). 안내 띠는 빼고 줄 높이를 줄인다. */
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-toc td { padding:.35mm 3mm; font-size:10.5px; line-height:1.25; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-toc th { padding-bottom:1mm; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-toc td.nm-cvw-chk { font-size:12px; line-height:1; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-day { font-size:9.5px; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-day { line-height:1.1; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-day-tag { padding:.1mm 1.6mm; line-height:1.15; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-daily { margin-bottom:.5mm; padding:.6mm 3mm; }
+  .nm-cvw.nm-cvw-dense2 .nm-cv-meta { margin-top:2mm; padding:2mm 4mm; }
+  .nm-cvw.nm-cvw-dense2 .nm-cvw-foot { margin-top:2mm; padding-top:2mm; }
+  .nm-series-sheet .nm-series-contents.nm-cvw-dense2 .nm-series-mentor { display:none; }
+  .nm-series-sheet .nm-series-contents.nm-cvw-dense2 .nm-cvw-hero { margin:4mm 0 2mm; }
   .nm-cvw .nm-cvw-foot { position:relative; display:flex; align-items:stretch; gap:6mm; margin:6mm 2mm 0; padding-top:5mm;
     border-top:1px solid #c9c6be; }
   .nm-cvw .nm-cvw-foot-r { flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:flex-end;
@@ -1149,6 +1162,8 @@
   .nm-mn-fill .nm-w2-tex { font-size:calc(16px * var(--ws-fs, 1)); }
   .nm-mn-open { flex:0 0 auto; margin-top:8px; }
   .nm-mn-open-q { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; }
+  /* 고등 과정 마법 노트는 내용이 길어 쪽 번호가 8px 잘렸다(C60 1회 14쪽, 2026-11-13) — 쓰는 줄 간격만 조금 줄인다. */
+  .nm-series-academic .nm-mn-open .nm-w2-train-dots i { height:5.5mm; }
   /* Training Course(창의 회차) */
   .nm-w2-train-banner { flex:0 0 auto; display:flex; align-items:center; gap:8px; margin:2px 0 6px; }
   .nm-w2-train-banner img { height:15mm; width:auto; }
@@ -2771,7 +2786,7 @@ function w2PaperToolPageHtml(courseNum, code, selectedTool){
     <b>${esc(pickL(tool.name))}</b>
   </div>
   <div class="nm-pt-intro">${child && portrait ? `<img src="${esc(portrait)}" alt="" width="54" height="54">` : ''}<p class="nm-pt-why">${paperToolText(pickL(tool.why))}</p></div>
-  <div class="nm-pt-legend"><span><i></i>${esc(lk('점선만 오려요','Cut dashed outlines only','只剪虚线'))}</span><span><i class="nm-pt-solid"></i>${esc(lk('실선은 그대로 두어요','Keep solid lines intact','保留实线'))}</span></div>
+  <div class="nm-pt-legend"><span><i></i>${esc(lk('점선만 오려요','Cut dashed outlines only','只剪虚线'))}</span><span><i class="nm-pt-solid"></i>${esc(lk('실선은 그대로 두어요','Keep solid lines intact','保留实线'))}</span><span class="nm-pt-keep">${esc(lk('오린 교구는 봉투에 모아 두고 다음 주에도 써요','Keep the pieces in an envelope for next week','剪好的教具收进袋子，下周还要用'))}</span></div>
   <div class="nm-pt-art">${art}</div>
   ${tool.embeddedExample ? '' : `<aside class="nm-pt-example"><div><b>${esc(lk('이렇게 만들었어요','Worked example','完成的例子'))}</b><div class="nm-pt-example-math">${exampleMath}</div><p>${paperToolText(pickL(tool.exampleText) || '')}</p></div><div class="nm-pt-demo">${demo}</div></aside>`}
   <div class="nm-pt-play"><b>${esc(lk('이렇게 해 봐요','Try it together','一起试一试'))}</b><ol class="nm-pt-steps">${steps}</ol></div>
@@ -3084,6 +3099,14 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     }else contents.push({...r,problems:r.problems.slice(),studyDays:(r.studyDays||[]).slice(),
       thName:cv.compactHigh?(r.sessionLabel||r.thName):r.thName});
   });
+  /* 종이 교구가 첫 지면이다(2026-11-10) — 회차 쪽 번호는 그 뒤부터 센다. */
+  let paperRow = '';
+  if(extra.paper){
+    paperRow = `<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('먼저, 이번 주 종이 교구','First: this week\'s paper tool','先看本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`;
+    page += 1;
+  }else if(extra.paperNote){
+    paperRow = `<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('교구 봉투에서 꺼내요','Take out of your tool envelope','从教具袋里取出'))} · ${esc(extra.paperNote)}</td><td></td><td></td><td></td></tr>`;
+  }
   const rows = contents.map((r, i) => {
     const n = r.problems.length, from = page, to = page + w2PagesOf(r) - 1; page = to + 1;
     const ds = (r.studyDays || []).filter((d, j, a) => a.indexOf(d) === j);
@@ -3100,10 +3123,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('매거진 읽을거리','Magazine read','杂志阅读'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
-  if(extra.paper){
-    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('이번 주 종이 교구','This week\'s paper tool','本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
-    page += 1;
-  }
+  if(paperRow) rows.unshift(paperRow);
   if(extra.answerKey !== false){
     rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td data-nm-cover-key-pages>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
@@ -3112,7 +3132,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   const kTxt = cv.cadence === 'w2' && !cv.highWholeWeek ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
   const studentTag = cv.name ? ` · ${esc(cv.name)}` : '';
   const magazineC4 = +cv.courseNum === 4 && examLang() === 'ko';
-  return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}${magazineC4 ? ' nm-cvw-magazine-c4' : ''}">
+  return `<div class="nm-print-cover nm-cvw${rows.length >= 16 ? ' nm-cvw-dense nm-cvw-dense2' : rows.length >= 9 ? ' nm-cvw-dense' : ''}${magazineC4 ? ' nm-cvw-magazine-c4' : ''}">
   <div class="nm-cv-brand"><span>${worksheetBrandHtml()}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
@@ -7408,9 +7428,20 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       langAnswerHtml = NM_LANG_THINK.pageHtml(...args,true);
     }
   }
-  const historyHtml = (opts.pacing || highCompact || rBand === 'young') ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, rBand);
+  /* 수학사 「네 컷으로 읽기」 지면은 싣지 않는다(원장 2026-11-10 「쓸데없는 말이 안 되는 그림 없애고」).
+     그림이 숫자·화살표 조각이라 뜻이 통하지 않았고, 두 주 연속 같은 지면이 나왔으며,
+     과정 수준과 맞지 않는 이야기(로그표·구거법)가 섞여 있었다. w2HistoryPageHtml 은 남겨 둔다. */
+  const historyHtml = '';
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
-  const paperHtml = opts.pacing || highCompact ? '' : w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
+  /* 같은 교구 지면을 매주 다시 싣지 않는다(2026-11-10). 과정의 첫 주에 첫 교구, 둘째 주에 둘째 교구(있으면)를
+     한 번씩만 싣고, 그 뒤 주에는 표지 목차에 「교구 봉투에서 꺼내요」 한 줄만 적는다. 회차를 모르면 첫 주로 본다. */
+  let paperHtml = '', paperNote = '';
+  if(!(opts.pacing || highCompact) && opts.cover && window.NM_PAPER_TOOLS_OF_COURSE){
+    const toolList = NM_PAPER_TOOLS_OF_COURSE(cv.courseNum);
+    const toolWeek = sIdx != null ? Math.floor(sIdx / (cv.cadence === 'w2' ? 2 : 1)) : (cv.k >= 1 ? cv.k - 1 : 0);
+    if(toolList[toolWeek]) paperHtml = w2PaperToolPageHtml(cv.courseNum, envelopeCode, toolList[toolWeek]);
+    else if(toolList.length) paperNote = toolList.map(t => pickL(t.name)).join(' · ');
+  }
   /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
      돌린다(과정 번호는 안 쓴다). 주간 학습지(표지가 있는 것)에만 싣는다 — 편지함 편집기가 한 회차만
      뽑을 때까지 읽을거리를 딸려 보내면 문제보다 읽을거리가 많아진다. */
@@ -7421,7 +7452,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true,series:!!series });
   const studyDays = opts.cover ? assignStudyDays(rounds, opts.cover.studyDays) : 0;
   if(opts.cover && studyDays) opts.cover.studyDays = studyDays;
-  const coverHtml = opts.cover ? (series?series.front(opts.cover,series.model(opts.cover,examLang())):'')+weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true,series:!!series })
+  const coverHtml = opts.cover ? (series?series.front(opts.cover,series.model(opts.cover,examLang())):'')+weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, paperNote, answerKey: true,series:!!series })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
@@ -7441,11 +7472,12 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       r.html=holder.innerHTML;
     });
   }
+  /* 종이 교구는 표지 바로 다음, 문제보다 먼저(원장 2026-11-10 「교구부터」). 쪽 번호도 이 순서로 찍는다. */
+  const paperStamped = paperHtml ? stampPg(paperHtml) : '';
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
   const historyStamped = historyHtml ? stampPg(historyHtml) : '';
   const langStamped = langHtml ? stampPg(langHtml) : '';
   const magazineStamped = magazineHtml ? stampPg(magazineHtml) : '';
-  const paperStamped = paperHtml ? stampPg(paperHtml) : '';
 
   const akSections = rounds.filter(r=>!r.drawing).map(r => r.magic ? (r.akHtml || '') : `
 <div class="nm-ak-section">
@@ -7456,11 +7488,11 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   /* 시트 전체 워터마크(printWatermarkHtml, fixed)는 더 이상 안 붙인다 — 회차 페이지가 저마다 갖는다. */
   sheet.innerHTML = `
 ${coverHtml}
+${paperStamped}
 ${roundsHtml}
 ${historyStamped}
 ${langStamped}
 ${magazineStamped}
-${paperStamped}
 <div class="nm-print-answer-key">
   ${w2AnswerKeyHeadHtml(envelopeCode)}
   ${akSections}

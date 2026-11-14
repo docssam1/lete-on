@@ -34,9 +34,9 @@ for(const [width,height] of [[1440,1000],[768,1024],[390,844],[320,700]])test(`s
   await page.locator('#logout').click();await page.locator('#login-view:not([hidden])').waitFor();assert.equal(await page.locator('.exam-page').count(),0);assert.equal(await page.evaluate(()=>Object.keys(sessionStorage).filter(k=>k.startsWith('highselect')).length),0);
  }finally{await page.close();}
 });
-test('18 approved edition metadata stays readable at desktop and mobile',async()=>{
- let count=0;for(const width of [1440,390]){const {page,errors}=await open(width,900);try{await page.addInitScript(()=>sessionStorage.setItem('highselectExamToken','ui-fixture-session-token'));for(const e of editions){await page.goto(base+'login.html?exam='+e.id);await page.locator('#exam-view:not([hidden])').waitFor();await page.waitForFunction(()=>!document.getElementById('print-paper').disabled);assert.equal(await page.locator('#exam-title').innerText(),e.title);const spec=await page.locator('#exam-spec').innerText();assert(spec.includes(e.questionCount+'문항'));if(e.sectionMinutes)assert(spec.includes('대수 70분 · 기하 70분 · 휴식 20분 별도'));else assert(spec.includes(e.durationMinutes+'분'));assert.equal(await page.locator('.ox-row').count(),e.questionCount);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);count++;}assert.deepEqual(errors,[]);}finally{await page.close();}}
- assert.equal(count,36);
+test('23 approved edition metadata stays readable at desktop and mobile',async()=>{
+ let count=0;for(const width of [1440,390]){const {page,errors}=await open(width,900);try{await page.addInitScript(()=>sessionStorage.setItem('highselectExamToken','ui-fixture-session-token'));for(const e of editions){await page.goto(base+'login.html?exam='+e.id);await page.locator('#exam-view:not([hidden])').waitFor();await page.waitForFunction(()=>!document.getElementById('print-paper').disabled);assert.equal(await page.locator('#exam-title').innerText(),e.title);const spec=await page.locator('#exam-spec').innerText();assert(spec.includes(e.questionCount+'문항'));if(e.sectionMinutes)assert(spec.includes(e.id.startsWith('wm-common1-basic-')?'대수 90분 · 기하 90분 · 휴식 20분 별도':'대수 70분 · 기하 70분 · 휴식 20분 별도'));else assert(spec.includes(e.durationMinutes+'분'));assert.equal(await page.locator('.ox-row').count(),e.questionCount);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);count++;}assert.deepEqual(errors,[]);}finally{await page.close();}}
+ assert.equal(count,46);
 });
 test('loading retry, failed save, draft retention and empty result filters',async()=>{
  const {page,api}=await open(390,844,{compact:true});try{
@@ -81,7 +81,7 @@ test('mobile starts large and positional buttons preserve reading, marks and who
 
 test('selected entry context is public metadata and pending courses are compact',async()=>{
  const {page,errors}=await open(390,844);try{
-  await page.goto(base+'promo/#academy=DP');assert.equal(await page.locator('.course-banner.is-ready:visible').count(),1);assert.equal(await page.locator('.is-preparing:visible').count(),0);await page.locator('.preparing-courses summary').click();assert.equal(await page.locator('.is-preparing:visible').count(),6);
+  await page.goto(base+'promo/#academy=DP');assert.equal(await page.locator('.course-banner.is-ready:visible').count(),1);assert.equal(await page.locator('.is-preparing:visible').count(),6);assert.equal(await page.locator('.preparing-courses').count(),0);
   await page.locator('.is-ready').click();await page.locator('#selected-course-title').waitFor();await page.evaluate(()=>document.fonts.ready);await shot(page,'compact-rounds-390');const firstRoundY=(await page.locator('.round-card').first().boundingBox()).y;assert(firstRoundY<420,'first round begins at '+firstRoundY);await page.locator('.round-card').first().click();await page.locator('#entry-selection:not([hidden])').waitFor();assert.match(await page.locator('#entry-exam-title').innerText(),/돌파/);assert.match(await page.locator('#entry-exam-spec').innerText(),/150분/);assert.equal(await page.locator('#entry-course-back').getAttribute('href'),'./promo/#academy=DP&course=common1-basic');await shot(page,'selected-login-390');
   await page.locator('#entry-course-back').click();assert.equal(await page.locator('.round-card').count(),2);await page.goto(base+'login.html?exam=unknown');assert.equal(await page.locator('#entry-selection').isVisible(),false);assert.deepEqual(errors,[]);
  }finally{await page.close();}
@@ -111,4 +111,33 @@ test('all academy courses keep actual round links and readable layouts at four w
    if(width===320&&program.code==='WM')await shot(page,'wonmath-long-time-320');
   }}assert.deepEqual(errors,[]);
  }finally{await page.close();}}
+});
+
+test('saved O/X survives a page reload and reopening the same edition',async()=>{
+ const {page}=await open(390,844,{compact:true});try{
+  await login(page);await ox(page,390);await page.locator('[name="ox-1"][value="O"]').check();await page.locator('[name="ox-2"][value="X"]').check();
+  await page.locator('#submit-responses').click();await page.locator('#confirm-save').click();await page.locator('#report-view:not([hidden])').waitFor();
+  await page.reload();await page.locator('#report-view:not([hidden])').waitFor();await page.locator('#report-reopen').click();await page.locator('#exam-view:not([hidden])').waitFor();await ox(page,390);
+  assert.equal(await page.locator('[name="ox-1"][value="O"]').isChecked(),true);
+  assert.equal(await page.locator('[name="ox-2"][value="X"]').isChecked(),true);
+  assert.match(await page.locator('#check-count').innerText(),/표시 2 \/ 50 · 미확인 48/);
+ }finally{await page.close();}
+});
+
+test('an unsaved O/X draft takes priority over the saved result',async()=>{
+ const {page}=await open(390,844,{compact:true});try{
+  await login(page);await ox(page,390);await page.locator('[name="ox-1"][value="O"]').check();await page.locator('[name="ox-2"][value="X"]').check();await page.locator('#submit-responses').click();await page.locator('#confirm-save').click();await page.locator('#report-view:not([hidden])').waitFor();await page.locator('#report-reopen').click();await ox(page,390);
+  await page.locator('[data-clear="1"]').click();await page.reload();await page.locator('#exam-view:not([hidden])').waitFor();await ox(page,390);
+  assert.equal(await page.locator('[name="ox-1"]:checked').count(),0);assert.equal(await page.locator('[name="ox-2"][value="X"]').isChecked(),true);
+ }finally{await page.close();}
+});
+
+test('saved restoration excludes another edition, another exam, automatic grading and incomplete rows',async()=>{
+ for(const invalid of ['version','exam','grading','rows']){
+  const {page,api}=await open(390,844,{compact:true});try{
+   const report={exam:{id:'ui-workspace',version:'ui-v1',title:'검수 기록'},gradingMethod:'self-reported',correctCount:1,wrongCount:0,blankCount:49,reviewCount:0,total:50,domains:[],items:Array.from({length:50},(_,i)=>({number:i+1,state:i?'blank':'correct'}))};
+   if(invalid==='version')report.exam.version='old-edition';if(invalid==='exam')report.exam.id='another-exam';if(invalid==='grading')report.gradingMethod='automatic';if(invalid==='rows')report.items.pop();api.attempts=[{id:'saved-fixture',report}];
+   await login(page);await ox(page,390);assert.equal(await page.locator('#response-fields input:checked').count(),0,invalid);
+  }finally{await page.close();}
+ }
 });

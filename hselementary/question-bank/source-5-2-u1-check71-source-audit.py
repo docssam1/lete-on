@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Verify source page 71 candidates independently without connecting the source."""
+"""Check page 71 arithmetic and recorded source-review status."""
 import itertools
 import json
 from pathlib import Path
 
 record = json.loads((Path(__file__).parent / 'source-inventory/5-2-u1-readiness-review.json').read_text())
 review = next(r for r in record['additionalSourceReviews'] if r['sourcePrintedPage'] == 71)
-assert review['sourcePdfPage'] == 67 and review['runtimeConnection'] == 'not-connected'
+assert review['sourcePdfPage'] == 67 and review['runtimeConnection'] == 'partial-verified-local'
 assert review['publisherAnswerVerified'] is False
+expected_statuses = {25: 'public-independent-verification-publisher-key-pending', 26: 'public-independent-verification-publisher-key-pending', 27: 'public-independent-verification-publisher-key-pending', 28: 'public-independent-verification-publisher-key-pending', 29: 'public-independent-verification-publisher-key-pending', 30: 'public-independent-verification-publisher-key-pending', 31: 'public-independent-verification-publisher-key-pending', 32: 'source-ambiguity-answer-key-pending'}
+assert {item['number']: item['status'] for item in review['items']} == expected_statuses
 assert [x['number'] for x in review['items']] == list(range(25, 33))
 round_up = lambda n, unit: (n + unit//2)//unit*unit
 nums = [int(''.join(p)) for p in itertools.permutations(['46', '8', '60', '39'])]

@@ -3,8 +3,8 @@
    - 데이터 한 벌(build)로 상세 표 · 간단 보기 · 3D(보여주기용)를 함께 그린다.
    - 조정 항목: 지금 진도(교과·사고력·연산 + 남은 개월), 교과 속도, 생각하는 황소 선택, 영재원 선택.
    - 규칙은 예시 로드맵(원장님 손그림)과 같다:
-     교과 디딤돌 응용 학기당 S개월 → 6-2 다음 계통(5·6학년·중1) 대수 정리 4개월 → 중등 원리해설 3개월씩.
-     교과 심화는 한 학년 아래 최상위 S를 1개월 늦게 같은 속도로, 중등 시작 2개월 뒤부터 중등 심화(A급) 4개월씩,
+     교과 디딤돌 응용 학기당 S개월 → 6-2 다음 계통(5·6학년·중1) 대수 정리·초등 심화 정리 4개월(이 기간은 계통만) → 중등 원리해설 3개월씩.
+     교과 심화는 한 학년 아래 최상위 S를 1개월 늦게 같은 속도로, 중등 시작 2개월 뒤부터 중등 심화(A급) 3개월씩 원리해설과 병행,
      그 사이는 '생각하는 황소 대비 고려에 따라 고민 + 중등 쎈'.
      연산은 지금 권부터 S개월씩, 기적 12권 다음 기적의 중학연산 1AB → 도형 1권 → 2AB → 도형 2권 → 3AB → 도형 3권(S1 표 기간).
      과학은 중2-1 중등 심화가 끝난 다음 달 중등과학, 그 앞 6개월 초5·6 과학, 그 앞 12개월 실험과학.
@@ -29,12 +29,12 @@ function seq(start,items){ const out=[]; let t=start; items.forEach(([txt,n])=>{
 
 /* o = {grade, mon, year, school, schoolLeft, comp, compLeft, calc, calcLeft, speed, hw, hwDeep, hwMid, gifted} */
 /* 표준(원장님 2026-10-20 "표준화 시켜"): 속도에 따라 세 묶음.
-   A 선행형(L0~L3): 계통 없이 바로 중등. 원리해설 4개월/학기, 중등 심화(A급) 같이. 사고력 초급→중급→3%1→왕수학 응용 4. 생각하는 황소 초2 11월.
+   A 선행형(L0~L3): 계통 없이 바로 중등. 원리해설 3개월/학기, 2개월 뒤 A급 3개월씩 병행(원장님 2026-11-12). 사고력 초급→중급→3%1→왕수학 응용 4. 생각하는 황소 초2 11월.
    B 예시형(L4~L9): 6-2 뒤 계통 4개월 → 원리해설 3개월/학기, 2개월 뒤 A급. 사고력 초급→3%1(중급 생략). 생각하는 황소는 선택.
    C 천천히형(L10~L13): 초등은 응용 3개월+심화(최상위) 2개월, 연산 5개월. 중등은 개념원리(개념)+RPM(응용) 4개월/학기, 2년. A급 없음.
      사고력은 1031 초급으로 끝("이제 사고력 끝"). 생각하는 황소 없음. */
 const BAND={
-  A:{name:'선행형',elemS:null,topDown:1,sys:false,midLen:4,midBook:'원리해설',deep:'A급',deepLag:0,compStop:null,hw:true},
+  A:{name:'선행형',elemS:null,topDown:1,sys:false,midLen:3,midBook:'원리해설',deep:'A급',deepLag:2,compStop:null,hw:true},
   B:{name:'예시형',elemS:null,topDown:1,sys:true, midLen:3,midBook:'원리해설',deep:'A급',deepLag:2,compStop:null,hw:true},
   C:{name:'천천히형',elemS:5,topDown:0,sys:true, midLen:4,midBook:'개념원리',deep:'RPM',deepLag:0,compStop:'1031 초급',hw:false},
   D:{name:'영과고형',elemS:null,topDown:1,sys:false,midLen:3,midBook:'개념응용 · 최상위라이트',deep:'에이급',deepLag:0,compStop:null,hw:true,fixed:true}
@@ -66,7 +66,7 @@ function sciTrack(track, M0, kmo){
     midSet(5,['bio','geo','phy','chem']);
     push('화학 심화',M(6,1),M(6,2),SCI_BOOK.deep); push('물리 심화',M(6,3),M(6,6),SCI_BOOK.deep);
     push(kmo?'물리올림피아드 대비반':'프리올림 화학 또는 물리반',M(6,7),M(6,12),SCI_BOOK.olym);
-    push(kmo?'물리올림피아드 대비 · 화1,2 기초':'화1,2 기초 · 물리 정리',M(7,1),M(7,7),SCI_BOOK.hi); push('화학올림피아드 대비 · 물리올림피아드 대비',M(7,8),M(8,7),SCI_BOOK.olym);
+    push(kmo?'물리올림피아드 대비 · 고등 화학 기초':'고등 화학 기초 · 물리 정리',M(7,1),M(7,7),SCI_BOOK.hi); push('화학올림피아드 대비 · 물리올림피아드 대비',M(7,8),M(8,7),SCI_BOOK.olym);
     push('영재고 실전 과학반',M(8,8),M(9,7)); push('기출 적중 · 캠프 대비(실험·글쓰기·토론·면접)',M(9,8),M(9,8));
     [[4,8,'물리인증 9급 (일정 확인 필요)'],[4,11,'물리인증 8급'],[5,2,'물리인증 7급'],[5,11,'물리인증 6급'],[6,2,'물리인증 5급'],[5,4,'과탐토'],[5,5,'과학 실험대회'],[6,4,'과탐토'],[6,5,'과학 실험대회'],[7,7,'물리 올림피아드'],[8,7,'물리 올림피아드'],[8,8,'화학 올림피아드']].forEach(([g,mo,t])=>sciIssue.push([t+' (당해 일정 확인 필요)',M(g,mo),M(g,mo)]));
   } else if(track==='A'){
@@ -83,13 +83,14 @@ function sciTrack(track, M0, kmo){
     push('중등 생물',M(5,1),M(5,6),SCI_BOOK.mid); push('중등 지학',M(5,7),M(5,12),SCI_BOOK.mid);
     push('중등 물리',M(6,1),M(6,6),SCI_BOOK.mid); push('중등 화학',M(6,7),M(6,12),SCI_BOOK.mid);
     push('중등 물리·화학 심화반',M(7,1),M(7,12),SCI_BOOK.deep);
-    push('화학1 · 물리1 기초',M(8,1),M(8,12),SCI_BOOK.hi);
+    push('고등 화학 · 물리학 기초',M(8,1),M(8,12),SCI_BOOK.hi);
     push('물리올림피아드 또는 화학올림피아드 (선택) · 내신',M(9,1),M(9,12),SCI_BOOK.olym);
     [[6,2,'물리인증 7급'],[7,2,'물리인증 6급'],[9,7,'물리 올림피아드 (선택)'],[9,8,'화학 올림피아드 (선택)']].forEach(([g,mo,t])=>sciIssue.push([t+' (당해 일정 확인 필요)',M(g,mo),M(g,mo)]));
   }
   return {sci,sciIssue};
 }
 
+const GIFTED_PENDING='영재원 일정은 공식 모집요강 확인 전입니다. 기관·지원 학년도·지원 자격과 평가일을 확인한 뒤 시험 전 3개월 대비를 연결합니다. 기존 공부는 유지하며, 접수·선발·발표·수업 날짜는 임의로 배정하지 않습니다.';
 function buildD(o){
   const now=mOf(o.grade,o.mon), A0=mOf(o.grade,3), A1=mOf(9,12), warn=[], yearOf=m=>o.year+(Math.floor(m/12)-Math.floor(now/12));
   const M=(g,mon)=>mOf(g,mon); // g: 1~6 초, 7~9 중
@@ -100,12 +101,12 @@ function buildD(o){
   const mids=[['중1-1',M(4,3)],['중1-2',M(4,6)],['중2-1',M(4,9)],['중2-2',M(4,12)],['중3-1',M(5,3)],['중3-2',M(5,6)]];
   mids.forEach(([sm,t],i)=>{ school.push([`${sm} 개념응용 · 최상위라이트`,t,t+2]); if(i>0) school2.push([`${mids[i-1][0]} 에이급`,t,t+2]); });
   school2.push(['중3-2 에이급',M(5,6),M(5,11)]);
-  school.push(['수학(상) 기본정석',M(5,6),M(5,11)],['수학(상) 실력정석 · 수학(하) 기본정석',M(5,12),M(6,3)-1],['고등 수Ⅰ·Ⅱ 기본·응용 · 확률과 통계',M(6,3),M(7,3)-1]);
-  if(o.kmo==='go') school.push(['고등 수Ⅰ·Ⅱ 심화 (KMO 병행)',M(7,3),M(8,3)-1],['미적분 1회독 · 중등 심화(내신)',M(8,3),M(9,6)],['영재고 입학 전 미적분 완성',M(9,7),M(9,12)]);
-  else school.push(['고등 수Ⅰ·Ⅱ 심화 → 중1 겨울 미적분 선행',M(7,3),M(8,3)-1],['미적분 완성 · 기하 · 확통 (과학고 로드맵)',M(8,3),M(9,6)],['중등 심화(내신) · 고등 대비',M(9,7),M(9,12)]);
+  school.push(['공통수학1 기본정석',M(5,6),M(5,11)],['공통수학1 실력정석 · 공통수학2 기본정석',M(5,12),M(6,3)-1],['대수 · 미적분Ⅰ 기본·응용 · 확률과 통계',M(6,3),M(7,3)-1]);
+  if(o.kmo==='go') school.push(['대수 · 미적분Ⅰ 심화 (KMO 병행)',M(7,3),M(8,3)-1],['미적분Ⅱ 1회독 · 중등 심화(내신)',M(8,3),M(9,6)],['영재고 입학 전 미적분Ⅱ 완성',M(9,7),M(9,12)]);
+  else school.push(['대수 · 미적분Ⅰ 심화 → 중1 겨울 미적분Ⅱ 선행',M(7,3),M(8,3)-1],['미적분Ⅱ 완성 · 기하 · 확통 (과학고 로드맵)',M(8,3),M(9,6)],['중등 심화(내신) · 고등 대비',M(9,7),M(9,12)]);
   // ---- 경시
   // KB T3: KMO 는 초5 겨울~초6 3월 시작, 선수 = 공통수학 심화·수Ⅰ·순열조합. 중1 1차 경험 뒤 갈림길(원장님 2026-10-20 "KMO 중등 1차 상 한번 타보고 고등 선행에 집중하는 아이들도")
-  comp.push(['3% 1과정',M(3,12),M(4,5)],['3% 2과정',M(4,6),M(4,11)],['기초경시',M(4,12),M(5,5)],['경시입문',M(5,6),M(5,11)],['KMO 입문<br><small>선수: 공통수학 심화 · 수Ⅰ · 순열조합</small>',M(6,3),M(6,8)],['KMO 1차 집중',M(6,9),M(7,5)]);
+  comp.push(['3% 1과정',M(3,12),M(4,5)],['3% 2과정',M(4,6),M(4,11)],['기초경시',M(4,12),M(5,5)],['경시입문',M(5,6),M(5,11)],['KMO 입문<br><small>선수: 공통수학 심화 · 대수 · 순열조합</small>',M(6,3),M(6,8)],['KMO 1차 집중',M(6,9),M(7,5)]);
   if(o.kmo==='go'){ comp.push(['중등 KMO 1차 (중1)<br><small>동상이면 한 번 더, 은상 이상이면 고등 KMO</small>',M(7,6),M(7,6)],['KMO 2차 · 영역별 심화 (대수+조합 또는 대수+기하)',M(7,7),M(8,5)],['고등 KMO 1차 (중2)',M(8,6),M(8,6)]); }
   else { comp.push(['중등 KMO 1차 (중1) · 상 받고 전환',M(7,6),M(7,6)],['영재고 대비 영역별 심화 2개 (대수+조합 / 대수+기하)',M(7,7),M(8,5)]); }
   // ---- 연산(중등 전까지 교과와 같이)
@@ -114,11 +115,9 @@ function buildD(o){
   const {sci,sciIssue}=sciTrack('S',M,o.kmo==='go');
   // ---- 입시(CMS 영재학교·과학고 로드맵)
   exam.push(['영재학교 예비과정<br><small>중등수학 → KJMO · 고등입문 → KMO · 중등과학</small>',M(6,3),M(8,5)],['영재기본이론 · 고등수학이론 · 영재과학이론',M(8,6),M(8,8)],['기출분석 · 영재수학/과학 문풀 · 고등 물화생지',M(8,9),M(8,12)],
-    ['기출변형 · 창의수학/과학 · 자소서',calM(9,1),M(9,4)],['적중예상 · Final · 학교별 모의고사',M(9,5),M(9,6)],['영재학교 전형 · 캠프 대비',M(9,7),M(9,8)],['과학고 전형 · 면접',M(9,9),M(9,11)],['합격 후: 고등 전범위 심화(미적분·기하·확통) · 서술 훈련<br><small>번아웃·사춘기 주의 — 불합격 시 내신·자사고·의대 트랙</small>',M(9,12),M(9,12)]);
-  // ---- 영재원(교대 초3~5, 연·서울대 초6~중1) + 대비 3개월
-  giftB.push(['서울교대 과학영재교육원 지원·선발',M(3,7),M(3,9)],['교대 영재원 (합격 시)',M(4,3),M(4,12)]);
-  giftA.push(['연세대·서울대 영재교육원 (공동 온라인 선교육 6월 → 지원 9~12월)',M(6,6),M(6,12)],['대학부설 영재원 (합격 시)',M(7,3),M(7,12)]);
-  giftP.push(['영재원 대비 3개월 (교대)<br><small>안쌤 수학 100제 3 · 단원별·유형별 · 맛있는 영재 수학 3 · 파이널</small>',M(3,4),M(3,6)],['영재원 대비 3개월 (대학부설)<br><small>안쌤 수학 100제 6 · 단원별·유형별 · 맛있는 영재 수학 6 · 파이널</small>',M(6,3),M(6,5)]);
+    ['기출변형 · 창의수학/과학 · 자소서',calM(9,1),M(9,4)],['적중예상 · Final · 학교별 모의고사',M(9,5),M(9,6)],['영재학교 전형 · 캠프 대비',M(9,7),M(9,8)],['과학고 전형 · 면접',M(9,9),M(9,11)],['합격 후: 고등 전범위 심화(미적분Ⅱ·기하·확률과 통계) · 서술 훈련<br><small>번아웃·사춘기 주의 — 불합격 시 내신·자사고·의대 트랙</small>',M(9,12),M(9,12)]);
+  // Institution-specific dates must not be inferred from a prior year's example.
+  if(o.gifted) warn.push(GIFTED_PENDING);
   // ---- 생각하는 황소(초2 11월 시험은 이 표 전)
   // ---- 비교과 전국 대회(경험 계획표, 전국만)
   // 비교과 대회(샤인쌤 '영재원 준비를 위한 대회' 2025-03-28 + 경험 계획표 전국 대회). 달은 2025 기준, 해마다 바뀜
@@ -128,7 +127,7 @@ function buildD(o){
   for(let g=5;g<=6;g++) CT.push([g,6,9,'자연관찰탐구대회 (예선)'],[g,4,4,'대한민국 과학축제'],[g,11,11,'과학 싹 큰 잔치']);
   CT.push([5,4,4,'KAIST 사이버영재 접수'],[6,4,4,'KAIST 사이버영재 접수'],[6,6,6,'대학부설 공동 온라인 선교육 접수'],[5,4,6,'KJSO·pre KJSO 접수 (4/20~6/19) · 교육 6월~익년 1월']);
   CT.push([7,4,5,'YIP청소년발명가 · 학생과학탐구올림픽'],[7,9,10,'창의력챔피언대회 · 코딩프로젝트챌린지'],[7,6,8,'KJSO 1단계'],[8,4,5,'학생과학탐구올림픽 · 발명전시회'],[8,9,10,'에너지환경탐구대회 · 코딩챌린지'],[9,4,5,'학생과학탐구올림픽 (중3)']);
-  CT.filter(x=>o.gifted||!/사이버영재|선교육/.test(x[3])).forEach(([g,a,b,t])=>contest.push([t+' (2025·2026 자료 · 당해 일정 확인 필요)',M(g,a),M(g,b)]));
+  CT.filter(x=>!/사이버영재|선교육/.test(x[3])).forEach(([g,a,b,t])=>contest.push([t+' (2025·2026 자료 · 당해 일정 확인 필요)',M(g,a),M(g,b)]));
   const flags=[[M(6,3),'KMO 입문'],[M(6,7),o.kmo==='go'?'물리올림 대비반':'프리올림 화학/물리'],[M(7,6),o.kmo==='go'?'KMO 계속':'KMO 1차 → 고등 선행'],[M(9,7),'영재학교 전형'],[M(9,9),'과학고 전형']];
   const bubbles=[[M(5,6),`${label(M(5,6))} 돌파 · 생크 · 이든 응시 고려`]];
   const rows=[
@@ -165,7 +164,7 @@ function literacy(M,A0){
 function naesin(M0){
   const M=calM; // 학년 줄 1~12월 = 달력 해(한과연 양식)
   const out=[];
-  out.push(['자유학기 · 수행평가 관리',M(7,3),M(7,12)]);
+  out.push(['자유학기(한 학기) · 수행평가 관리<br><small>나머지 학기의 지필 여부는 학교 확인</small>',M(7,3),M(7,12)]);
   for(const g of [8,9]){
     out.push([`${g-6}-1 내신특강`,M(g,1),M(g,2)],[`중간고사 대비<br><small>5/15 전 종료 · 선행 멈춤</small>`,M(g,4),M(g,5)],[`기말고사 대비<br><small>7/25 전 종료</small>`,M(g,6),M(g,7)],
       [`${g-6}-2 내신특강`,M(g,8),M(g,8)],[`중간고사 대비<br><small>10/9 전</small>`,M(g,9),M(g,10)],[`기말고사 대비<br><small>12/25 전</small>`,M(g,11),M(g,12)]);
@@ -176,16 +175,25 @@ function naesin(M0){
 function exitRow(M,band){
   const r=[];
   if(band==='D'||band==='A'){ r.push(['영재학교 전형 (5~8월)',M(9,5),M(9,8)],['과학고 전형 (8~11월)',M(9,9),M(9,11)],['자사고·일반고 대비',M(9,12),M(9,12)]); }
-  else if(band==='B'){ r.push(['과학고·TOP 자사고 실전',M(9,3),M(9,8)],['자사고 전형 (11월~) · 자소서·면접<br><small>의대 목표면 의대 실적 있는 학교(자사고 전교 10등 / 일반고 1~2등)</small>',M(9,9),M(9,12)]); }
+  else if(band==='B'){ r.push(['과학고·TOP 자사고 실전',M(9,3),M(9,8)],['자사고 전형 준비 · 자소서·면접 (원서 12월 · 학교 요강 확인)<br><small>의대 목표면 의대 실적 있는 학교(자사고 전교 10등 / 일반고 1~2등)</small>',M(9,9),M(9,12)]); }
   else { r.push(['일반고·중위권 자사고 대비 · 내신 1등급<br><small>의대 목표면 의대 실적 있는 학교 · 중3부터 고등 모의고사</small>',M(9,3),M(9,12)]); }
   return r;
 }
 // 고등 선행 체인(묶음별 출구에 맞춤). start 달부터 6개월씩
-function hiChain(start,band){
-  const A={A:[['공통수학1',6],['공통수학2',6],['수Ⅰ',6],['수Ⅱ',6],['대수 심화 · KMO 영역',6],['미적분1',6],['미적분2 · 기하',6]],
-    B:[['공통수학1',6],['공통수학2',6],['공통수학 심화',6],['대수 · 미적분1',6],['미적분1 심화 · 확률과 통계',6],['미적분2 · 기하',6],['수능 대비',6]],
-    C:[['공통수학1',6],['공통수학2',6],['대수',6],['미적분1',6],['확률과 통계',6],['기하',6]]};
-  return seq(start,(A[band]||A.C));
+// 원장님 2026-11-11: 중등 때 고등 선행은 수능 과목까지만 한다. 2028 수능 수학은 대수·미적분Ⅰ·확률과 통계(선택 없음)이고
+// 미적분Ⅱ·기하는 빠졌다. 그 뒤는 수능 범위 심화와 내신·진로 탐색으로 채우고, 미적분Ⅱ·기하는 고등에서 진로 권장과목으로 배운다.
+// 영과고형(D)은 별도 설계(buildD)라 여기에 들어오지 않는다.
+// 원장님 2026-11-11 "그 이상 할 수도 있어 선택지를 둬 하지만 비추천": o.hiScope==='beyond'일 때만 확통 뒤에 미적분Ⅱ·기하를 넣는다.
+const HI_AFTER='수능 범위 심화 · 내신 · 진로 탐색', HI_BEYOND='미적분Ⅱ · 기하 (수능 밖 · 비추천 선택)';
+function hiChain(start,band,beyond=false){
+  const A={A:[['공통수학1',6],['공통수학2',6],['대수',6],['미적분Ⅰ',6],['대수 심화 · KMO 영역',6],['확률과 통계',6],[HI_AFTER,6]],
+    B:[['공통수학1',6],['공통수학2',6],['공통수학 심화',6],['대수 · 미적분Ⅰ',6],['미적분Ⅰ 심화 · 확률과 통계',6],[HI_AFTER,12]],
+    C:[['공통수학1',6],['공통수학2',6],['대수',6],['미적분Ⅰ',6],['확률과 통계',6],[HI_AFTER,12]]};
+  const list=A[band]||A.C;
+  if(!beyond)return seq(start,list);
+  // 확통 블록 바로 뒤에 미적분Ⅱ·기하 6개월을 끼우고, 수능 범위 심화 칸은 그만큼 줄인다(최소 6개월).
+  const at=list.findIndex(x=>x[0]===HI_AFTER);
+  return seq(start,[...list.slice(0,at),[HI_BEYOND,6],[HI_AFTER,Math.max(6,list[at][1]-6)]]);
 }
 
 function build(o){
@@ -209,18 +217,28 @@ function build(o){
       }
       t+=S;
     }
-    if(B.sys){ school.push(['계통 (5·6학년·중1) · 대수 정리',t,t+3]); mid=t+4; }
+    if(B.sys){ school.push(['계통 (5·6학년·중1) · 대수 정리 · 초등 심화 정리',t,t+3]); mid=t+4; }
     else { school.push(['여유 · 초등 대수 심화',t,t]); mid=t+1; }
-  } else if(o.school===13){ school.push(['계통 (5·6학년·중1) · 대수 정리',now-(4-o.schoolLeft),now+o.schoolLeft-1]); mid=now+o.schoolLeft; }
+  } else if(o.school===13){ school.push(['계통 (5·6학년·중1) · 대수 정리 · 초등 심화 정리',now-(4-o.schoolLeft),now+o.schoolLeft-1]); mid=now+o.schoolLeft; }
   else { mid=now-(o.school-14)*B.midLen-(B.midLen-o.schoolLeft); }
   seq(mid, MID.map(x=>[x+' '+B.midBook,B.midLen])).forEach(b=>school.push(b));
   // 중등 6학기 뒤 고등 선행(CMS 6개월 단위). 아무리 빨라도 초6 3월(CMS 중등 최소 12개월), 중3 7월 뒤는 내신·실전(원장님 2026-10-20 "내신 조심")
   const midEnd=mid+6*B.midLen, hiStart=Math.max(midEnd,mOf(6,3));
   if(hiStart>midEnd) school.push([o.band==='C'?'중등 응용 반복':'중등 심화 반복 · 경시(선택)',midEnd,hiStart-1]);
-  hiChain(hiStart,o.band).filter(b=>b[1]<=mOf(9,7)).map(b=>[b[0],b[1],Math.min(b[2],mOf(9,7))]).forEach(b=>school.push(b));
+  // 중3 7월에서 잘리는 고등 선행은 알린다(원장님 검수 2026-11-11). 잘린 과목은 '(일부)'로 적고, 못 다 한 과목은 고등학교 내신 진도에서 이어간다.
+  { const cut=mOf(9,7), chain=hiChain(hiStart,o.band,o.hiScope==='beyond'), kept=chain.filter(b=>b[1]<=cut);
+    const subj=b=>b[0]!==HI_AFTER&&b[0]!==HI_BEYOND, part=kept.find(b=>b[2]>cut&&subj(b)), left=chain.filter(b=>b[1]>cut&&subj(b)).map(b=>b[0]);
+    kept.map(b=>[b===part?b[0]+' (일부)':b[0],b[1],Math.min(b[2],cut)]).forEach(b=>school.push(b));
+    const last=kept.filter(subj).at(-1)?.[0], reach=part?part[0]+'의 일부까지':last?last+'까지':'';
+    const beyond=chain.find(b=>b[0]===HI_BEYOND), beyondCut=!!beyond&&beyond[2]>cut;
+    if(part||left.length) warn.push(`${reach?'중등 기간이 끝나 고등 선행은 '+reach+' 잡았어요':'중등 기간 안에는 고등 선행을 시작하지 못해요'}. 중3 8월부터는 내신·고입 실전으로 넘어가고, ${part?part[0]+' 나머지':left[0]}부터는 고등학교에서 진도에 맞춰 이어가요.${beyondCut?' 선택하신 미적분Ⅱ·기하도 고등학교에서 진로에 맞춰 배워요.':''}`);
+    else if(beyondCut) warn.push('선택하신 미적분Ⅱ·기하는 중등 기간 안에 다 넣지 못해요. 중3 8월부터는 내신·고입 실전으로 넘어가고, 나머지는 고등학교에서 진로에 맞춰 배워요.'); }
   school.push(['중3 내신 · 고입 실전',mOf(9,8),mOf(9,12)]);
+  // 계통 기간에는 계통만(원장님 2026-11-12 "계통 할 때는 계통만, 초등 심화 정리와"): 교과 심화 줄을 비우고, 중등 쎈은 중1-1 시작 달부터.
+  const sysB=school.find(b=>/^계통/.test(b[0]));
+  if(sysB) for(let i=school2.length-1;i>=0;i--){ const b=school2[i]; if(b[1]>=sysB[1]) school2.splice(i,1); else if(b[2]>=sysB[1]) school2[i]=[b[0],b[1],sysB[1]-1]; }
   const s2end=school2.length?school2[school2.length-1][2]:now-1;
-  if(B.deepLag>0&&mid+B.deepLag-1>=s2end+1) school2.push([o.hw!=='none'?'생각하는 황소 대비 고려에 따라 고민 + 중등 쎈':'중등 쎈으로 기본 다지기',Math.max(s2end+1,now),mid+B.deepLag-1]);
+  if(B.deepLag>0&&mid+B.deepLag-1>=Math.max(s2end+1,mid)) school2.push([o.hw!=='none'?'생각하는 황소 대비 고려에 따라 고민 + 중등 쎈':'중등 쎈으로 기본 다지기',Math.max(s2end+1,now,mid),mid+B.deepLag-1]);
   const deepName=B.deep==='A급'?x=>x+' 중등 심화(A급)':x=>x+' RPM (응용)';
   const mid2=seq(mid+B.deepLag, MID.map(x=>[deepName(x),B.midLen])); mid2.forEach(b=>school2.push(b));
   if(o.band!=='C') school2.push(['중등 심화 반복 · 내신 심화(일품·블랙라벨)',mid+B.deepLag+6*B.midLen,Math.min(A1,mid+B.deepLag+6*B.midLen+11)]);
@@ -258,22 +276,12 @@ function build(o){
       hw.push(['심화 개념 3개월 (심화 고려 시)',N-5,N-3],['심화 모의고사 2개월',N-2,N-1],['합격 후 고민 (중등 라인은 계속)',N,N]); }
   }
   if(o.hw!=='none'&&o.hwMid&&B.hw){ const N=mOf(4,11); hw.push(['생각하는 황소 중등 시험 대비 3개월',N-3,N-1],['생각하는 황소 중등 시험 (고려)',N,N]); flags.push([N,'생각하는 황소 중등 시험']); }
-  // ---- 영재원 (2026-10-20 모집요강 기준). 초3 11월이 지났으면 초4 기준(수학·과학 초4 지원 → 초5)
-  const gy=now<=mOf(3,11)?3:4, d=12*(gy-3);
+  // Gifted selection stays selected, but has no dated blocks until official dates are known.
   const giftA=[], giftB=[], giftP=[], contest=[];
-  const GBOOK=g=>g<=2?`안쌤 수학 100제 ${g}`:`안쌤 수학 100제 ${g} · 영재 사고력 수학 단원별·유형별 · 맛있는 영재 수학 ${g} · 파이널 50제 (초${g<=4?'3~4':'5~6'})`;
   if(o.gifted){
-    // 시험 전 3개월만 공부: 교대(7~9월 선발) → 4~6월, 교육청(11월 지원·12월 평가) → 8~10월
-    giftP.push([`영재원 대비 3개월 (교대)<br><small>${GBOOK(gy)}</small>`,63+d,65+d],[`영재원 대비 3개월 (교육청)<br><small>${GBOOK(gy)}</small>`,67+d,69+d]); // 영재원은 고려 / 안 고려 하나로(원장님 2026-10-20)
-    giftA.push([`가천대 브릿지 접수 · 온라인 과제 (초${gy} 대상)`,61+d,63+d],['가천대 브릿지 관찰수업 (5월 면접 · 5~9월 토)',64+d,68+d],
-      [gy===3?'강남서초 영재원 수·과융합 (11월 지원 · 12/5 평가 · 과거 자료, 당해 일정 확인 필요)':'강남서초 영재원 수학·과학 (11월 지원 · 12월 평가)',70+d,71+d],['최종 발표',73+d,73+d],
-      [`초${gy+1} 영재원 수업 (합격 시)`,74+d,83+d]);
-    flags.push([73+d,'영재원 발표']);
+    warn.push(GIFTED_PENDING);
     // 대회·행사(샤인쌤 2025-03-28): 성대경시 4·10월(초1~), 서울교대 수학 4월·과학 7월(초3~), SW 사고력 올림피아드 6월(초3~), HME 는 필요할 때
     for(let g=1;g<=6;g++){ const Mg=(mo)=>mOf(g,mo); contest.push(['성대경시 (2025 자료 · 당해 일정 확인 필요)',Mg(4),Mg(4)],['성대경시 (2025 자료 · 당해 일정 확인 필요)',Mg(10),Mg(10)]); if(g>=3) contest.push(['서울교대 초등수학 창의사고력대회',Mg(4),Mg(4)],['AI·SW 사고력 올림피아드',Mg(6),Mg(6)],['서울교대 초등과학 창의사고력대회',Mg(7),Mg(7)]); }
-  }
-  if(o.gifted){
-    giftB.push(['서울교대 과학영재교육원 지원·선발 (7~9월, 당해 일정 확인 필요)',66+d,68+d],[`교대 영재원 수업 (합격 시, 초${gy+1}) · 합격하면 서울 교육청 영재원 지원 불가`,74+d,83+d]);
   }
   // ---- 말풍선: 중3-1 원리해설 시작 달에 중등 학원 응시 고려
   const bubbles=[]; const m31=mid+12; if(m31>=A0&&m31<=A1) bubbles.push([m31,`돌파 · 생크 · 이든 1-1 · 과정·응시 시기 근거 확인 필요`]);
@@ -299,7 +307,7 @@ function build(o){
 
 /* ---------- 상세 표 ---------- */
 function renderTable(P){
-  const n=P.A1-P.A0+1; let h='<table class="pl-table"><thead><tr><th class="pl-corner">학년</th>';
+  const n=P.A1-P.A0+1; let h='<table class="pl-table">'+(P.choices?.gifted?'<caption>'+GIFTED_PENDING+'</caption>':'')+'<thead><tr><th class="pl-corner">학년</th>';
   for(let m=P.A0;m<=P.A1;){ const y=schoolYear(m); let k=0; while(m+k<=P.A1&&schoolYear(m+k)===y) k++; h+=`<th colspan="${k}" class="pl-year">${GRADES[y]} · ${P.yearOf(m)}년 3월~</th>`; m+=k; }
   h+='</tr><tr><th class="pl-corner">월</th>';
   for(let m=P.A0;m<=P.A1;m++) h+=`<th class="pl-mon${m===P.now?' pl-now':''}" title="${P.yearOf(m)}년 ${m%12+1}월">${m%12+1}</th>`;
@@ -393,7 +401,7 @@ function milestones(P){
   const hw=R('hw').filter(b=>/시험/.test(b[0])&&!/대비/.test(b[0])).map(b=>({m:b[1],kind:'branch',title:b[0].replace(/\s*\(.*\)/,''),sub:label(b[1])+' · 선택',icon:'🐂'}));
   const forks=[];
   if(['A','B'].includes(P.band)&&P.now+2<=mOf(4,11)) forks.push({id:'hw',title:'생각하는 황소',m:hw[0]?.m||P.now+3,selected:P.choices.hw,yes:'시험 대비 함께',no:'교과·사고력 이어가기',reason:P.choices.hw?(R('hw').length?'선택한 시험 시기에만 대비해요.':'선택한 시험은 현재 표시 범위 밖이에요.'):'시험 준비를 더하지 않아요.'});
-  forks.push({id:'gift',title:'영재원',m:R('giftP')[0]?.[1]||P.now+6,selected:P.choices.gifted,yes:'3개월 대비 함께',no:'수학·과학 이어가기',reason:P.choices.gifted?(R('giftP').length?'시험 전 3개월만 따로 공부해요.':'선택은 유지돼요. 예시 대비 일정은 현재 학년 이전이에요.'):'기존 수학·과학 진도를 이어가요.'});
+  forks.push({id:'gift',title:'영재원 · 일정 확인 전',m:R('giftP')[0]?.[1]??P.now,selected:P.choices.gifted,yes:'3개월 대비 함께',no:'수학·과학 이어가기',reason:P.choices.gifted?(R('giftP').length?'시험 전 3개월만 따로 공부해요.':'선택은 유지돼요. 공식 평가일 확인 후 시험 전 3개월을 연결해요.'):'기존 수학·과학 진도를 이어가요.'});
   return {main:out,branch:hw,forks};
 }
 function render3DMap(P){
@@ -473,7 +481,7 @@ function narrative(P){
         else if(en) out.push(`하던 ${jo(w,'은','는')} ${mon(x[2])}까지 완료해요.`);
         else out.push(`${jo(w,'은','는')} ${label(x[2])}까지 쭉 이어 가요.`); });
       const cEnd=last(comp); if(P.band==='C'&&cEnd&&/1031 초급/.test(cEnd[0])&&cEnd[2]<=b) out.push('1031 초급까지 하면 사고력은 여기서 끝이에요. 그다음은 교과 심화로 넘어가요.');
-      if(P.band==='D'&&comp.some(x=>/KMO 입문/.test(x[0]))) out.push('KMO는 공통수학 심화와 수Ⅰ, 순열·조합을 끝낸 뒤 시작해요. 영재학교 입시에 KMO가 필수는 아니라서, 중1 1차를 본 뒤 계속 갈지 고등 선행으로 돌릴지 정해요.');
+      if(P.band==='D'&&comp.some(x=>/KMO 입문/.test(x[0]))) out.push('KMO는 공통수학 심화와 대수, 순열·조합을 끝낸 뒤 시작해요. 영재학교 입시에 KMO가 필수는 아니라서, 중1 1차를 본 뒤 계속 갈지 고등 선행으로 돌릴지 정해요.');
       if(P.band==='D'&&comp.some(x=>/상 받고 전환/.test(x[0]))) out.push('이 길은 중1 KMO 1차에서 상을 한 번 받고 고등 선행에 집중하는 쪽이에요. 영재고 대비는 영역 두 개만 깊게 가요.');
       const c3=comp.find(x=>/3%/.test(x[0])); if(c3&&c3[2]<=b&&last(comp)===c3){ const hw=R('hw').find(x=>/시험$/.test(nm(x[0]))&&x[1]>c3[2]&&x[1]<=b); out.push(hw?`3% 1과정은 ${label(hw[1])} 생각하는 황소 시험 전에 마치는 게 목표예요.`:`3% 1과정까지 하면 사고력 라인은 일단 마무리예요.`); }
       if(out.length) items.push({label:'사고력',text:out.join(' ')}); }
@@ -483,7 +491,7 @@ function narrative(P){
       if(sS.length){ const f=sS[0], l=last(sS); out.push(`교과보다 한 학년 아래 최상위 S를 ${mon(Math.max(f[1],lo))}부터 ${len(f)}개월씩 ${sem(f[0])}에서 ${sem(l[0])}까지, 교과보다 한 달 늦게 따라가요.`); }
       if(gap) out.push(`${mon(Math.max(gap[1],lo))}~${mon(gap[2])}은 생각하는 황소를 볼지에 따라 달라요. 이 사이에는 중등 쎈으로 기본을 다져요.`);
       if(sA.length){ const f=sA[0], l=last(sA), end=l[2]<=b?mon(l[2]):label(l[2]);
-        out.push(f[1]>=lo&&/^중1-1/.test(f[0])?`${mon(f[1])}부터 중등 심화(A급)를 ${len(f)}개월씩 시작해 ${end}까지 ${jo(sem(l[0]),'을','를')} 해요. 원리해설보다 두 달 뒤에 따라가는 거예요.`:`중등 심화(A급)는 ${sem(f[0])}부터 ${len(f)}개월씩, ${end}까지 ${jo(sem(l[0]),'을','를')} 해요.`); }
+        out.push(f[1]>=lo&&/^중1-1/.test(f[0])?`${mon(f[1])}부터 중등 심화(A급)를 ${len(f)}개월씩 시작해 ${end}까지 ${jo(sem(l[0]),'을','를')} 해요. 원리해설과 병행하면서 두 달 뒤에 따라가는 거예요.`:`중등 심화(A급)는 ${sem(f[0])}부터 ${len(f)}개월씩, ${end}까지 ${jo(sem(l[0]),'을','를')} 해요.`); }
       if(out.length) items.push({label:'심화',text:out.join(' ')}); }
     { const gj=calc.filter(x=>/계산법/.test(x[0])), mj=calc.filter(x=>/중학/.test(x[0])), out=[];
       if(gj.length){ const f=gj[0], l=last(gj); out.push(gj.length>1?`기적의 계산법 ${f[0].match(/\d+/)[0]}권에서 ${l[0].match(/\d+/)[0]}권까지 ${len(gj[1])}개월에 한 권씩 해요. ${P.band==='C'?'교과와 같은 학기를 한 권으로, 겹치지 않게 가요.':'교과보다 한 학기 앞서 가는 속도예요.'}`:`기적의 계산법 ${f[0].match(/\d+/)[0]}권을 ${mon(f[2])}까지 끝내요.`); }
@@ -495,7 +503,10 @@ function narrative(P){
     { const ex=inY(R('exam')); if(ex.length) items.push({label:'영과고 입시',text:ex.map(x=>`${mon(x[1])}${x[2]>x[1]&&x[2]<=b?'~'+mon(x[2]):''} ${nm(x[0])}`).join(', ')+'.'});
       const ct=inY(R('contest')); if(ct.length) items.push({label:'대회',text:ct.map(x=>`${mon(x[1])} ${nm(x[0])}`).join(', ')+'. 대회는 학습 경험으로 참고해요. 달은 해마다 바뀌니 당해 공고를 확인해요.'}); }
     { const sc=inY(R('school')), hi=sc.filter(x=>/공통수학|수Ⅰ|수Ⅱ|대수|미적분|확률|기하|수능/.test(x[0])&&!/디딤돌|원리해설|개념원리/.test(x[0]));
-      if(hi.length) items.push({label:'고등 선행',text:`${mon(Math.max(hi[0][1],lo))}부터 ${hi.map(x=>nm(x[0])).join(' → ')}${hi[hi.length-1][2]<=b?'':' …'}, 과목당 6개월씩 가요. 중등 심화가 끝난 뒤에 들어가고, 심화에 치우치지 않게 고등 과정을 여러 번 보는 쪽이 안전해요.`}); }
+      const subj=hi.filter(x=>x[0]!==HI_AFTER), after=hi.find(x=>x[0]===HI_AFTER);
+      if(hi.length) items.push({label:'고등 선행',text:(subj.length?`${mon(Math.max(subj[0][1],lo))}부터 ${subj.map(x=>nm(x[0])).join(' → ')}${after||subj[subj.length-1][2]<=b?'':' …'}, 과목당 6개월씩 가요. 중등 심화가 끝난 뒤에 들어가고, 심화에 치우치지 않게 고등 과정을 여러 번 보는 쪽이 안전해요.`:'')
+        +(subj.some(x=>x[0]===HI_BEYOND)?' 미적분Ⅱ·기하는 2028 수능에 나오지 않아 권하지 않지만, 선택하셔서 넣었어요. 이 시간에 수능 과목 심화와 내신을 다지는 쪽을 권해요.':'')
+        +(after?`${subj.length?' ':''}${after[1]<lo?'이어서':mon(after[1])+'부터는'} 수능 과목(대수·미적분Ⅰ·확률과 통계)을 심화하면서 내신과 진로 탐색을 해요.${subj.some(x=>x[0]===HI_BEYOND)?'':' 2028 수능에서 빠진 미적분Ⅱ·기하는 고등학교에서 진로에 맞춰 배워요.'}`:'')}); }
     { const li=inY(R('lit')); if(li.length) items.push({label:'문해력·활동',text:li.map(x=>/독서/.test(x[0])&&x[1]<lo&&x[2]>b?'독서·문해력 계속':`${x[1]>=lo?mon(x[1])+'부터':'이어서'} ${nm(x[0])}${x[2]<=b&&x[1]<lo?' 마무리':''}`).join(', ')+'. '+(li.some(x=>/독서/.test(x[0])&&x[2]>=lo)?'내신이 없는 초등은 읽는 힘을 키울 때예요. 개념을 빨리 이해하는 힘이 여기서 나와요. 읽은 책은 줄거리를 말해 보게 해요.':li.some(x=>/백지복습/.test(x[0]))?'중1은 매일 복습 습관이에요. 과학은 자기 전에 백지에 써 보고, 1·4·7·14·30일 간격으로 다시 봐요. 문제집 양치기는 고등 가서 하고, 지금은 개념을 몸에 익혀요.':li.some(x=>/모의고사/.test(x[0]))?'중3은 고등 모의고사를 풀려서 수능 최저 감을 미리 잡아요. 학교는 5~7월에 정해요.':'자사·특목고는 학교 들어가서 할 활동이 많아요. 중2부터 집단 프로젝트와 수행평가를 일부러 열심히 해 두면 그게 자소서 소스가 돼요.')}); }
     { const ns=inY(R('naesin')); if(ns.length){ const ex=ns.filter(x=>/중간|기말/.test(x[0])); items.push({label:'내신',text:(ex.length?'시험: '+ex.map(x=>`${mon(x[1])}~${mon(x[2])} ${nm(x[0])}`).join(', ')+'. ':'')+'중등부터는 내신을 조심해요. 시험 4주 전에는 선행을 멈추고 내신 범위만 보고, 수행평가는 미루지 않아요. 내신이 흔들리면 고입 서류부터 막혀요.'}); }
       const ex2=inY(R('exit')); if(ex2.length) items.push({label:'고입',text:ex2.map(x=>`${mon(x[1])}${x[2]>x[1]?'~'+mon(x[2]):''} ${nm(x[0])}`).join(', ')+'. 학교별로 시기가 다르니 당해 요강을 확인해요.'}); }
@@ -546,9 +557,9 @@ function narrativeD(P){
     { const cp=inY(R('comp')), out=[];
       cp.forEach(x=>{ const w=head(x[0]); if(/KMO 1차$|KMO 1차 · 상|고등 KMO 1차/.test(w)){ out.push(`${mon(x[1])}에 ${w.replace(/ · 상 받고 전환/,'')}를 봐요.`); return; }
         if(st(x)) out.push(`${mon(x[1])}에 ${jo(w,'을','를')} 시작해 ${x[2]<=b?mon(x[2])+'까지 '+len(x)+'개월':label(x[2])+'까지'}${x[2]<=b?'에 끝내요.':' 가요.'}`); else out.push(`하던 ${jo(w,'은','는')} ${x[2]<=b?mon(x[2])+'까지 완료해요.':label(x[2])+'까지 이어 가요.'}`); });
-      if(cp.some(x=>/KMO 입문/.test(x[0])&&st(x))) out.push('KMO는 공통수학 심화와 수Ⅰ, 순열·조합을 끝낸 뒤 시작해요. 영재학교 입시에 KMO가 필수는 아니라서, 중1 1차를 본 뒤 계속 갈지 고등 선행으로 돌릴지 정해요.');
+      if(cp.some(x=>/KMO 입문/.test(x[0])&&st(x))) out.push('KMO는 공통수학 심화와 대수, 순열·조합을 끝낸 뒤 시작해요. 영재학교 입시에 KMO가 필수는 아니라서, 중1 1차를 본 뒤 계속 갈지 고등 선행으로 돌릴지 정해요.');
       if(cp.some(x=>/상 받고 전환/.test(x[0]))) out.push('이 길은 중1 KMO 1차에서 상을 한 번 받고 고등 선행에 집중하는 쪽이에요. 영재고 대비는 영역 두 개만 깊게 가요.');
-      if(cp.some(x=>/KMO 2차/.test(x[0]))) out.push('이 길은 KMO를 계속 가는 쪽이에요. 중등 1차에서 동상이면 한 번 더, 은상 이상이면 고등 KMO로 넘어가요. 영재고 입학 전까지 미적분 1회독을 맞춰요.');
+      if(cp.some(x=>/KMO 2차/.test(x[0]))) out.push('이 길은 KMO를 계속 가는 쪽이에요. 중등 1차에서 동상이면 한 번 더, 은상 이상이면 고등 KMO로 넘어가요. 영재고 입학 전까지 미적분Ⅱ 1회독을 맞춰요.');
       S('경시',out); }
     // 연산
     { const out=inY(R('calc')).map(x=>`${st(x)?mon(x[1])+'부터':'이어서'} ${jo(head(x[0]),'을','를')} ${x[2]<=b?mon(x[2]):label(x[2])}까지 해요.`); S('연산',out); }

@@ -56,7 +56,9 @@ function arrowHead(x, y, angleDeg, size, stroke) {
   return { d: `M ${p1[0].toFixed(1)} ${p1[1].toFixed(1)} L ${x.toFixed(1)} ${y.toFixed(1)} L ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`, stroke };
 }
 
-export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone = () => {}, board: boardId } = {}) {
+// deckNav: 스스로 공부 덱·강사용 교안 안에서는 덱 아래 「다음 / 뒤로」 하나로 장면을 넘긴다(원장 2026-11-11 「장면 넘어가는 화살표와 다음의 용도 때문에 헷갈려」).
+//   판서 안의 ‹ › 와 위 제목 줄(덱 머리와 겹침)을 빼고, 장면 번호는 조절 줄에 「장면 N / M」으로 둔다. 덱은 step(±1)로 넘기고 onStep으로 단추 글을 고친다.
+export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone = () => {}, onStep = () => {}, board: boardId, deckNav = false, atEnd = false } = {}) {
   const script = BOARDS[boardId];
   const fracs = !String(boardId).startsWith("book-07/");   // 7권 판서의 「3/5」는 날짜(3월 5일)다
   const mathOf = (text) => (fracs ? mathText(esc(text)) : esc(text));
@@ -71,25 +73,30 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   let playing = !reduced;
   let runId = 0;         // 되감기·건너뛰기 때 진행 중인 애니메이션을 끊는 표
   let finished = false;
+  let quietDone = false; // 뒤로 돌아와 다 그린 채로 열 때는 끝 알림(덱이 저절로 넘김)을 한 번 건너뛴다
   let checkState = null; // { tries, solved }
 
-  host.innerHTML = `<div class="cb" data-board="${esc(boardId)}">
+  host.innerHTML = `<div class="cb${deckNav ? " is-deck-nav" : ""}" data-board="${esc(boardId)}">
     <div class="cb-top"><span class="cb-kicker">${esc(script.kicker || "개념 배우기")}</span><strong class="cb-title">${esc(script.title)}</strong><span class="cb-step" data-cb-step></span></div>
     <div class="cb-row"><div class="cb-paper"><svg class="cb-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(script.title)} 판서"><defs></defs><g data-cb-layer></g><g data-cb-pen class="cb-pen" hidden><path d="M -2 -22 L 6 -14 L -12 4 L -20 6 L -18 -2 Z" /><path d="M -12 4 L -20 6 L -18 -2 Z" class="cb-pen-tip" /></g></svg></div>
     <div class="cb-check" data-cb-check hidden></div></div>
     <p class="cb-cap" data-cb-cap aria-live="polite"></p>
     <div class="cb-ctl" role="group" aria-label="판서 조절">
-      <button type="button" class="cb-btn" data-cb="prev" aria-label="앞 장면">‹</button>
+      ${deckNav ? "" : `<button type="button" class="cb-btn" data-cb="prev" aria-label="앞 장면">‹</button>`}
       <button type="button" class="cb-btn primary" data-cb="toggle" aria-label="멈추기">${icon("pause", "16px")}</button>
-      <button type="button" class="cb-btn" data-cb="next" aria-label="다음 장면">›</button>
-      <button type="button" class="cb-btn" data-cb="restart" aria-label="처음부터">↺</button>
+      ${deckNav ? "" : `<button type="button" class="cb-btn" data-cb="next" aria-label="다음 장면">›</button>`}
+      <button type="button" class="cb-btn" data-cb="restart" aria-label="처음부터" title="이 판서 처음부터">↺</button>
+      ${deckNav ? `<span class="cb-scene" data-cb-scene aria-live="polite"></span>` : ""}
       <span class="cb-speed" role="group" aria-label="빠르기">${[1, 1.5, 2].map((v) => `<button type="button" data-cb-speed="${v}" aria-pressed="${v === speed}">${v}×</button>`).join("")}</span>
     </div>
   </div>`;
   const root = host.firstElementChild;
   const svg = root.querySelector(".cb-svg"), layer = root.querySelector("[data-cb-layer]"), pen = root.querySelector("[data-cb-pen]");
   const defs = svg.querySelector("defs");
-  const cap = root.querySelector("[data-cb-cap]"), stepEl = root.querySelector("[data-cb-step]"), checkBox = root.querySelector("[data-cb-check]");
+  const cap = root.querySelector("[data-cb-cap]"), checkBox = root.querySelector("[data-cb-check]");
+  const stepTop = root.querySelector("[data-cb-step]"), sceneEl = root.querySelector("[data-cb-scene]");
+  // 장면 번호는 위(판서만 따로 볼 때) 또는 조절 줄(덱 안)에 쓴다. 바뀔 때마다 덱에 알려 「다음 장면 / 다음」 글을 고치게 한다
+  const stepEl = { set textContent(text) { if (sceneEl) sceneEl.textContent = `장면 ${text}`; else stepTop.textContent = text; queueMicrotask(() => onStep()); } };
   const clipIds = { n: 0 };
 
   const penTo = (x, y) => { pen.hidden = false; pen.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`); };
@@ -328,7 +335,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     verdict.textContent = check.hint || "다시 생각해 봐요.";
     say(check.sayHint || check.hint || "다시 생각해 봐요.", "think", lineId(boardId, "hint"));
   }
-  function finish() { if (finished) return; finished = true; stepEl.textContent = `${beats.length} / ${beats.length}`; root.classList.add("is-done"); onDone(); }
+  function finish() { if (finished) return; finished = true; stepEl.textContent = `${beats.length} / ${beats.length}`; root.classList.add("is-done"); if (quietDone) quietDone = false; else onDone(); }
 
   // 비트 실행: 그림과 말을 같이 시작해, 둘 다 끝나면 다음으로
   function setCaption(beat, k) { cap.innerHTML = mathOf(beat.say || ""); stepEl.textContent = `${Math.min(k + 1, beats.length)} / ${beats.length}`; }
@@ -389,7 +396,16 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   };
   root.addEventListener("click", onClick);
 
-  if (reduced) jump(beats.length, { autoplay: false });
+  // 뒤 장에서 「뒤로」로 돌아오면 다 그린 판서에서 시작한다(한 장면씩 거꾸로 볼 수 있게). 끝난 판서라 덱이 저절로 넘기지 않게 onDone은 부르지 않는다
+  if (atEnd) { quietDone = true; jump(beats.length, { autoplay: false }); }
+  else if (reduced) jump(beats.length, { autoplay: false });
   else run();
-  return { dispose() { runId += 1; loopSeq += 1; playing = false; try { speechSynthesis.cancel(); } catch {} root.removeEventListener("click", onClick); } };
+  // 덱의 「다음 / 뒤로」: 판서 안에서 한 장면 움직였으면 true, 이미 끝(처음)이라 덱이 장을 넘겨야 하면 false
+  function step(dir) {
+    if (dir > 0) { if (at >= beats.length) return false; runId += 1; jump(at + 1, { autoplay: playing }); return true; }
+    if (at <= 0) return false;
+    runId += 1; jump(at - 1, { autoplay: playing }); return true;
+  }
+  const hasNext = () => at < beats.length, hasPrev = () => at > 0;
+  return { step, hasNext, hasPrev, dispose() { runId += 1; loopSeq += 1; playing = false; try { speechSynthesis.cancel(); } catch {} root.removeEventListener("click", onClick); } };
 }

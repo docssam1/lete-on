@@ -1,9 +1,10 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261105b";
-import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261105b";
-import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261111c";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261111f";
+import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
-import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
+import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261114a";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261111f";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -22,10 +23,17 @@ import { setIcon } from "./ui-icons.js?v=20261105b";
 //    → 오늘의 과제(칠판 글씨) → 앞 차시는 데일리 테스트 4문제 · 마지막 차시는 단원 평가 10문제(○✕ 진단 · 약점 유형)
 //    → (그 권의 마지막 단원 마지막 차시면) 권별 테스트 → 도착. 문제는 문제은행 학생 화면(index.html?picks=…&as=student&embed=1)을 장 안에 띄운다.
 // 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   (part 없으면 1차시)
+//  · 강사용 교안(&as=class, 원장 2026-11-10 「강사는 교안이 수업 흐름대로 되어야 하고」): 같은 차시 덱을 수업 화면으로 연다 — 차례가 학생 덱과 같다.
+//    회원 잠금 없음 · 기록을 남기지 않음(학생 이름 대신 「수업」) · 독쌤 음성과 저절로 넘어가기는 처음에 꺼 둠(말은 강사가 한다, 켤 수 있다)
+//    · 데일리 테스트·단원 평가는 채점표 없이 문제만 한 장씩(답은 강사가 「답 확인」을 누를 때) · 평가 전 약점 팝업 없음.
+//    · 모양과 구성도 학생 덱과 다르다(원장 2026-11-10 「학생용과는 디자인과 구성이 달라야지」): 섬 그림 액자·독쌤 그림 없이 종이색 교안 틀,
+//      왼쪽 「수업 차례」에 그 차시의 모든 장(누르면 그 장으로, 접을 수 있다), 머리줄에 「이 차시 교재 인쇄」「전체 화면」, 아래 줄에 지도 말.
+//      판서 옆 독쌤도 두지 않아 판서를 넓게 쓴다. 모양은 study.css 「강사용 교안」 블록(body.is-class).
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const student = params.get("student") || "DEMO";
+const classMode = params.get("as") === "class";
+const student = classMode ? "수업" : params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const book = CURRICULUM.find((entry) => entry.id === params.get("book")) || CURRICULUM[0];
 const unitIndex = Math.min(Math.max(Number(params.get("unit")) || 0, 0), book.units.length - 1);
@@ -35,11 +43,13 @@ const part = Math.min(Math.max(Number(params.get("part")) || 1, 1), parts);
 const lastUnit = unitIndex === book.units.length - 1;
 const seenKey = `fields-classic-study-seen:${student}:${book.id}:${unitIndex}`;
 const seen = (() => { try { return new Set(JSON.parse(localStorage.getItem(seenKey) || "[]")); } catch { return new Set(); } })();
-const prefKey = "fields-classic-study-pref";
-const pref = (() => { try { return { sound: true, paused: false, ...JSON.parse(localStorage.getItem(prefKey) || "{}") }; } catch { return { sound: true, paused: false }; } })();
+const prefKey = classMode ? "fields-classic-class-pref" : "fields-classic-study-pref";
+const PREF_START = classMode ? { sound: false, paused: true } : { sound: true, paused: false };
+const pref = (() => { try { return { ...PREF_START, ...JSON.parse(localStorage.getItem(prefKey) || "{}") }; } catch { return { ...PREF_START }; } })();
 const savePref = () => { try { localStorage.setItem(prefKey, JSON.stringify(pref)); } catch {} };
 
-const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries })}`;
+// 강사용 교안에서 여는 차시 덱·차시 고르기는 계속 수업용으로
+const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries, ...(classMode && ["study.html", "start.html"].includes(page) ? { as: "class" } : {}) })}`;
 const phaseNo = (kind) => PHASES.findIndex(([id]) => id === kind) + 1;
 
 let slides = [{ kind: "cover" }];
@@ -63,7 +73,7 @@ const COUNTED = (slide) => !["cover", "end", "booktest"].includes(slide.kind);
 let allSessions = null;   // 차시마다의 장(다른 차시는 수행률 분모로만)
 function recordVisit() {
   const slide = slides[index];
-  if (!ready || !COUNTED(slide)) return;
+  if (classMode || !ready || !COUNTED(slide)) return;
   allSessions ||= Array.from({ length: parts }, (_, k) => (k + 1 === part ? slides : buildSessionSlides(book, unitIndex, k + 1, bellData)));
   const same = slides.filter((entry) => entry.kind === slide.kind);
   const id = `p${part}:${slide.kind}:${same.indexOf(slide)}`;
@@ -91,9 +101,9 @@ function sheetUrl(slide, { print = false } = {}) {
   } else if (slide.kind === "homework") {
     entries = { picks: todayTypes().map((typeId) => pickOf(typeId, "practice", "오늘의 과제", unitIndex, partPickOption(book.id, unitIndex, part))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 오늘의 과제` };
   } else if (slide.kind === "daily") {
-    entries = { picks: dailyTypes(unit, part - 1).map((typeId) => pickOf(typeId, "practice", "데일리 테스트", unitIndex, partPickOption(book.id, unitIndex, part - 1))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트`, test: "1", testId: dailyId };
+    entries = { picks: dailyTypes(unit, part - 1).map((typeId) => pickOf(typeId, "practice", "데일리 테스트", unitIndex, partPickOption(book.id, unitIndex, part - 1))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트`, ...(classMode ? {} : { test: "1", testId: dailyId }) };
   } else {
-    entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
+    entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, ...(classMode ? {} : { test: "1", testId }) };
   }
   // 표지는 장마다 붙이지 않고 「한 주 교재 인쇄」(처음 화면 단원 장)에서 한 번에 — 원장 2026-10-29 「표지와 같이 한 주차 교재가 같이」
   return link("index.html", { ...base, ...entries, ...(print ? { print: "1" } : { embed: "1", deck: "1" }) });
@@ -211,6 +221,17 @@ function speak(text, voiceId = null) {
   });
 }
 function paintGuideButtons() {
+  // 강사용 교안: 그림 단추(소리·↺·▶/⏸)가 판서의 멈추기·처음부터와 비슷해 보여 글로 쓴다(원장 2026-11-11 「정리」)
+  if (classMode) {
+    $("voiceBtn").textContent = pref.sound ? "음성 켜짐" : "음성 꺼짐";
+    $("voiceBtn").setAttribute("aria-pressed", String(pref.sound));
+    $("againBtn").textContent = "다시 듣기";
+    $("pauseBtn").textContent = pref.paused ? "자동 넘김 꺼짐" : "자동 넘김 켜짐";
+    $("pauseBtn").setAttribute("aria-label", pref.paused ? "다음 장으로 저절로 넘어가기 켜기" : "저절로 넘어가기 끄기");
+    $("pauseBtn").title = $("pauseBtn").getAttribute("aria-label");
+    $("pauseBtn").setAttribute("aria-pressed", String(!pref.paused));
+    return;
+  }
   setIcon($("voiceBtn"), pref.sound ? "soundOn" : "soundOff", "16px");
   $("voiceBtn").setAttribute("aria-pressed", String(pref.sound));
   setIcon($("pauseBtn"), pref.paused ? "play" : "pause", "16px");
@@ -434,7 +455,7 @@ function makePresenter() {
 // ── 덱 안의 우리 게임 ──────────────────────────────────────
 let nativeGame = null;
 const loadedCss = new Set();
-async function mountNative(slide, intro = Promise.resolve()) {
+async function mountNative(slide, intro = Promise.resolve(), atEnd = false) {
   const game = slide.native;
   if (!loadedCss.has(game.css)) {
     loadedCss.add(game.css);
@@ -449,12 +470,17 @@ async function mountNative(slide, intro = Promise.resolve()) {
   let host = wrap;
   // 판서 오른쪽에 독쌤 + 손그림 판서 틀(&look=plain이면 예전 모양)
   if (LOOK && game.board) {
-    wrap.classList.add("has-presenter", `look-${LOOK}`);
+    wrap.classList.add(`look-${LOOK}`);
     host = document.createElement("div");
     host.className = "sd-board-host";
-    presenter = makePresenter();
-    wrap.append(host, presenter.el);
-    document.body.classList.add("has-presenter");
+    wrap.append(host);
+    // 강사용 교안은 강사가 설명하므로 독쌤을 세우지 않고 판서를 넓게 쓴다
+    if (!classMode) {
+      wrap.classList.add("has-presenter");
+      presenter = makePresenter();
+      wrap.append(presenter.el);
+      document.body.classList.add("has-presenter");
+    }
   }
   $("slideBody").replaceChildren(wrap);
   nativeGame = mod[game.mount](host, {
@@ -463,6 +489,8 @@ async function mountNative(slide, intro = Promise.resolve()) {
     // 게임은 id 없이 말한다 → 글로 id를 만들어 녹음을 찾는다(목록: tools/export-study-voice.mjs). 녹음이 없으면 기기 음성
     say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId || (slide.kind === "game" && text ? voiceLine("game", text).id : null)); },
     board: game.board, lesson: slide.lesson,
+    // 판서는 덱 아래 「다음 / 뒤로」로 장면을 넘긴다(판서 안 ‹ › 는 뺌 — 원장 2026-11-11 「화살표와 다음의 용도 때문에 헷갈려」)
+    ...(game.board ? { deckNav: true, atEnd, onStep: () => { if (slides[index] === slide) setNextLabel(); } } : {}),
     onDone: () => { if (slide.kind === "game") gameFinished(); if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
   });
   fitObserver.observe(wrap, { childList: true, subtree: true });
@@ -474,13 +502,26 @@ function disposeNative() {
 }
 // 작은 가로 화면(원장 2026-10-26 「한 화면에 가득 차야지」): 게임판이 칸보다 크면 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다
 const fitObserver = new MutationObserver(() => requestAnimationFrame(fitNative));
+// 칸보다 작으면 키운다(원장 2026-11-10 「게임하기나 문제 풀기 그림 확대 잘 안 보여」 — 넓은 화면에서 게임판·판서가 가운데 작게 떠 있었다):
+// 넘치지 않는 가장 큰 배율(0.4~1.7)을 반씩 나눠 찾는다. 창(iframe)으로 도는 게임(연습 공방)은 창 안에서 스스로 맞추므로 건드리지 않는다.
+const NATIVE_MIN = 0.4, NATIVE_MAX = 1.7;   // 가로로 든 휴대폰은 0.55로도 넘쳤다
 function fitNative() {
   const body = $("slideBody"), host = body.querySelector(":scope > .sd-native");
-  if (!host || !["game", "concept"].includes(slides[index]?.kind)) return;   // 판서(개념)도 칸보다 크면 줄인다
-  host.style.zoom = "";
+  if (!host || !["game", "concept"].includes(slides[index]?.kind)) return;   // 판서(개념)도 칸에 맞춘다
+  if (host.querySelector(":scope > iframe")) { host.style.zoom = ""; host.style.minHeight = ""; return; }
   const cs = getComputedStyle(body), avail = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-  const need = host.scrollHeight;
-  if (need > avail + 2) host.style.zoom = String(Math.max(0.4, Math.floor((avail / need) * 100) / 100));   // 가로로 든 휴대폰은 0.55로도 넘쳤다
+  host.style.setProperty("transition", "none", "important");   // 배율을 바꾸자마자 재므로 전환이 걸리면 옛 크기를 읽는다
+  host.style.minHeight = "0";   // 칸 높이만큼 늘어나 있으면(min-height 100%) 내용 높이를 잴 수 없다
+  host.classList.add("is-fitting");   // 재는 동안 독쌤 몸짓이 칸 밖으로 나간 것은 넘침으로 치지 않는다(study.css)
+  // scrollHeight·scrollWidth는 배율을 뺀 값 → 보이는 높이 = scrollHeight × 배율. 가로는 배율만큼 좁아진 칸에서 넘치는지 본다
+  const fits = (z) => { host.style.zoom = String(z); return host.scrollHeight * z <= avail + 1 && host.scrollWidth <= host.clientWidth + 1; };
+  let lo = NATIVE_MIN, hi = NATIVE_MAX;
+  if (fits(1)) lo = 1; else hi = 1;
+  for (let step = 0; step < 7; step += 1) { const mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
+  const zoom = Math.floor(lo * 100) / 100;
+  host.style.zoom = zoom === 1 ? "" : String(zoom);
+  host.classList.remove("is-fitting");
+  host.style.minHeight = `${100 / zoom}%`;   // 배율을 건 뒤에도 칸 높이를 채워 가운데 맞춤이 그대로 되게
 }
 addEventListener("resize", () => requestAnimationFrame(fitNative));
 
@@ -489,7 +530,8 @@ function renderHead() {
   document.title = `${book.label} ${unitIndex + 1}단원 ${part}차시 · ${unit.label}`;
   $("eyebrow").textContent = `${book.label} ${unitIndex + 1}단원 · ${part}차시`;
   $("unitTitle").textContent = unit.label;
-  $("studentName").textContent = student;
+  $("studentName").textContent = classMode ? "강사용 교안" : student;
+  $("backLink").setAttribute("aria-label", classMode ? "차시 고르기로" : "단원 고르기로");
   $("backLink").href = link("start.html", { book: book.id, unit: String(unitIndex) });
 }
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
@@ -541,7 +583,9 @@ function slideHead(slide) {
   const label = slide.kind === "bell" ? bellLabel(slide) : PHASES[phaseNo(slide.kind) - 1][1];
   const title = slideTitle(slide);
   // 게임은 건너뛸 수 있다(원장 2026-10-29 「게임은 넘어갈 수 있고」) — 이어진 게임 장을 다 넘어 워밍업으로
-  const skip = slide.kind === "game" ? `<button type="button" class="sd-skip" data-act="skip-games">게임 건너뛰기 ›</button>` : "";
+  // 판서는 「다음 장면」으로 한 장면씩 넘기고, 통째로 넘기려면 「건너뛰기」(원장 2026-11-11 「건너뛰기로 이름 바꿔」)
+  const skip = slide.kind === "game" ? `<button type="button" class="sd-skip" data-act="skip-games">게임 건너뛰기 ›</button>`
+    : slide.kind === "concept" && slide.native?.board ? `<button type="button" class="sd-skip" data-act="skip-board">건너뛰기 ›</button>` : "";
   const print = WORK_KINDS.includes(slide.kind) ? `<a class="sd-skip sd-print" href="${esc(sheetUrl(slide, { print: true }))}" target="_blank" rel="noopener">인쇄해서 풀기</a>` : "";
   return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>${print}`;
 }
@@ -560,19 +604,19 @@ function coverMarkup() {
   };
   const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, board: `본책 ${counts.board}문제`, homework: `${counts.homework}문제 · 집에서`, daily: `${counts.daily}문제 · ○✕`, test: `${counts.test}문제 · ○✕ 진단`, booktest: `${counts.booktest}문제` };
   return `<div class="sd-cover">
-    <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${parts > 1 ? ` <small>(${parts}차시 중)</small>` : ""}</p>
+    <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${classMode ? " 교안" : ""}${parts > 1 ? ` <small>(${parts}차시 중)</small>` : ""}</p>
     <h1>${esc(unit.label)}</h1>
-    <p class="sd-cover-lead">섬을 따라 한 곳씩 가 봐요.</p>
+    <p class="sd-cover-lead">${classMode ? "왼쪽 수업 차례대로 진행해요. 차례를 누르면 그 장으로 바로 가요." : "섬을 따라 한 곳씩 가 봐요."}</p>
     <ol class="sd-plan" style="--n:${planPhases(counts).length}">${planPhases(counts).map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
-    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>출발하기 →</button>
+    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>${classMode ? "수업 시작 →" : "출발하기 →"}</button>
   </div>`;
 }
 function boardMarkup(block) {
-  return `<p class="sd-board-help">본책을 펴서 <b>${esc(block.label)}</b> 문제를 풀어요. 모르는 번호를 누르면 같은 유형의 비슷한 문제가 나와요.</p>
+  return `<p class="sd-board-help">본책을 펴서 <b>${esc(block.label)}</b> 문제를 풀어요. 모르는 번호를 누르면 같은 유형의 유사문제가 나와요.</p>
     <div class="sd-numbers">${block.numbers.map(({ n, typeId, stage }) => {
       const ref = refOf(block, n);
       const key = `${block.section}${block.group}-${n}`;
-      return `<button type="button" class="sd-number${seen.has(key) ? " is-seen" : ""}" data-key="${key}" data-type="${esc(typeId)}" data-stage="${stage}" data-ref="${esc(ref)}" aria-label="${esc(ref)} 비슷한 문제">${n}</button>`;
+      return `<button type="button" class="sd-number${seen.has(key) ? " is-seen" : ""}" data-key="${key}" data-type="${esc(typeId)}" data-stage="${stage}" data-ref="${esc(ref)}" aria-label="${esc(ref)} 유사문제">${n}</button>`;
     }).join("")}</div>
     <p class="sd-board-note">○ 표시는 한 번 눌러 본 번호예요. 다 풀었으면 다음으로 가요.</p>`;
 }
@@ -587,6 +631,16 @@ function tallyMarkup(result, lastPart) {
   return `<div class="sd-tally">${result ? `<figure class="sd-tally-ring">${ringMarkup(result.right, result.total)}<figcaption>${lastPart ? "단원 평가" : "데일리 테스트"}</figcaption></figure>` : ""}
     <dl>${items.map(([label, v, u]) => `<div><dt>${label}</dt><dd><b data-count="${v}">${v}</b>${u}</dd></div>`).join("")}</dl></div>`;
 }
+// 도착 장: 진도표가 있으면 다음 공부 날을 한 줄로(원장 2026-11-10 설계 — 차시가 끝나면 다음에 언제 하는지 알려 준다). 강사용 교안에는 없다
+function nextDayMarkup() {
+  if (classMode) return "";
+  const plan = readRecord(student, "plan", "main");
+  if (!plan?.start || !plan.from) return "";
+  try {
+    const status = planStatus(CURRICULUM, plan, (bookId, unit) => readRecord(student, "week", `${bookId}-u${unit}`));
+    return status.nextDate && status.state !== "done" ? `<p class="sd-end-next">다음 공부는 <b>${esc(dayLabel(status.nextDate))}</b>이에요.</p>` : "";
+  } catch { return ""; }
+}
 function endMarkup() {
   const lastPart = part >= parts;
   const result = lastPart ? testResult(testId) : null;
@@ -597,13 +651,14 @@ function endMarkup() {
       : `<a class="sd-btn primary" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">${esc(book.label)} 권별 테스트 ›</a>`;
   return `<div class="sd-cover sd-end">
     <span class="sd-medal" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16" /></svg></span>
-    <h1>${lastPart ? `${unitIndex + 1}단원 공부를 마쳤어요!` : `${unitIndex + 1}단원 ${part}차시를 마쳤어요!`}</h1>
+    <h1>${classMode ? `${unitIndex + 1}단원 ${part}차시 수업을 마쳤어요` : lastPart ? `${unitIndex + 1}단원 공부를 마쳤어요!` : `${unitIndex + 1}단원 ${part}차시를 마쳤어요!`}</h1>
     <p class="sd-cover-lead">${esc(unit.label)}</p>
     ${tallyMarkup(result, lastPart)}
+    ${nextDayMarkup()}
     <div class="sd-end-actions">
       ${nextLink}
-      <a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>
-      <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">단원 고르기</a>
+      ${classMode ? "" : `<a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>`}
+      <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">${classMode ? "차시 고르기" : "단원 고르기"}</a>
       <button type="button" class="sd-btn" data-act="restart">처음부터 다시 하기</button>
     </div>
   </div>`;
@@ -634,7 +689,7 @@ function show({ atEnd = false } = {}) {
   if (slide.kind === "cover" && ready && !coverPlayed) { coverPlayed = true; playCover($("slideBody").querySelector(".sd-cover")); }
   if (slide.kind === "end") playEnd($("slideBody").querySelector(".sd-end"));
   shownIndex = index;
-  if (native) mountNative(slide, intro).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
+  if (native) mountNative(slide, intro, atEnd).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
   $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
@@ -644,9 +699,9 @@ function show({ atEnd = false } = {}) {
   setNextLabel();
   $("count").textContent = `${index + 1} / ${slides.length}`;
   renderSigns();
-  placeWorld();
+  if (classMode) renderOutline(); else placeWorld();
   recordVisit();
-  if (ready && ["test", "booktest"].includes(slide.kind)) openGate(slide);
+  if (ready && !classMode && ["test", "booktest"].includes(slide.kind)) openGate(slide);
   const url = new URL(location.href);
   url.searchParams.set("s", String(index + 1));
   history.replaceState(null, "", url);
@@ -663,10 +718,13 @@ function go(target, options) {
 let sheetAt = null;
 const sheetHasNext = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt && sheetAt.at < sheetAt.steps - 1;
 const sheetHasPrev = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt && sheetAt.at > 0;
+const boardSteps = () => slides[index]?.kind === "concept" && nativeGame?.step ? nativeGame : null;   // 덱 안 판서(장면을 덱 단추로 넘긴다)
 function setNextLabel() {
   const slide = slides[index];
-  const grade = sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
-  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? "출발하기 →" : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : "다음 →";
+  const board = boardSteps();
+  $("prevBtn").textContent = board?.hasPrev() ? "‹ 앞 장면" : "‹ 뒤로";
+  const grade = !classMode && sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
+  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? (classMode ? "수업 시작 →" : "출발하기 →") : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : board?.hasNext() ? "다음 장면 →" : "다음 →";
 }
 function sheetGo(go) { document.getElementById("workFrame")?.contentWindow?.postMessage({ type: "fc-study", cmd: "oneup", go }, location.origin); }
 const gamesDone = new Set();
@@ -677,6 +735,7 @@ function next() {
   if (!$("sheet").hidden) { closeSheet(); return; }
   if (sheetHasNext()) { sheetGo("next"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("next"); return; }
+  if (boardSteps()?.step(1)) return;   // 판서 장면이 남았으면 장면부터
   go(index + 1);
 }
 function prev() {
@@ -684,6 +743,7 @@ function prev() {
   if (!$("sheet").hidden) { closeSheet(); return; }
   if (sheetHasPrev()) { sheetGo("prev"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("prev"); return; }
+  if (boardSteps()?.step(-1)) return;
   const target = index - 1;
   go(target, { atEnd: slides[target]?.kind === "concept" });
 }
@@ -694,7 +754,7 @@ function openSheet(button) {
   seen.add(button.dataset.key);
   button.classList.add("is-seen");
   try { localStorage.setItem(seenKey, JSON.stringify([...seen])); } catch {}
-  $("sheetTitle").textContent = `${ref} · 비슷한 문제`;
+  $("sheetTitle").textContent = `${ref} · 유사문제`;
   $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: button.dataset.type, stage: button.dataset.stage, count: "1", build: "1", as: "student", embed: "1", ref: `${unitIndex + 1}단원 ${ref}` });
   $("sheet").hidden = false;
   $("sheetClose").focus({ preventScroll: true });
@@ -706,7 +766,7 @@ function closeSheet(talk = true) {
   const weak = $("sheet").dataset.weak === "1";
   $("sheet").hidden = true;
   delete $("sheet").dataset.weak;
-  $("sheetClose").textContent = "‹ 본책 번호판";
+  $("sheetClose").textContent = "‹ 본책 문제 번호";
   $("sheetFrame").removeAttribute("src");
   if (talk) { const back = weak ? FIXED_LINES.gateBack : SHEET_BACK; say(back.text, "talk", back.id); }
 }
@@ -763,6 +823,37 @@ function openWeakSheet(weak) {
   $("sheetClose").focus({ preventScroll: true });
 }
 
+// ── 강사용 교안: 수업 차례(왼쪽) · 머리줄 도구 ─────────────────
+// 그 차시의 모든 장을 차례대로 적는다(학생 덱 윗줄은 여덟 곳만 보여 준다). 누르면 그 장으로. 표지·마침도 한 줄씩.
+const OUTLINE_LABEL = { cover: "표지", daily: "데일리 테스트", concept: "개념 판서", game: "게임", board: "본책", homework: "오늘의 과제", test: "단원 평가", booktest: "권별 테스트", end: "마침" };
+function renderOutline() {
+  const rows = slides.map((slide, k) => {
+    const label = slide.kind === "bell" ? bellLabel(slide) : OUTLINE_LABEL[slide.kind] || "";
+    const title = slide.kind === "cover" ? `${unitIndex + 1}단원 ${part}차시` : slide.kind === "end" ? "수업 마침" : slideTitle(slide).replace(/^본책 /, "");
+    return `<li><button type="button" data-jump="${k}" class="${k === index ? "is-on" : k < index ? "is-done" : ""}" ${k === index ? 'aria-current="step"' : ""} ${ready ? "" : "disabled"}><b>${k + 1}</b><span><em>${esc(label)}</em>${esc(title)}</span></button></li>`;
+  });
+  $("outlineList").innerHTML = rows.join("");
+  $("outlineList").querySelector(".is-on")?.scrollIntoView({ block: "nearest" });
+}
+function setupClass() {
+  document.body.classList.add("is-class");
+  $("classTools").hidden = false;
+  $("outline").hidden = false;
+  // 좁은 화면에서는 차례를 접어 둔다(수업 화면이 먼저)
+  const closed = pref.outline === undefined ? innerWidth < 1000 : !pref.outline;
+  const paint = (isClosed) => { document.body.classList.toggle("outline-closed", isClosed); $("outlineBtn").setAttribute("aria-pressed", String(!isClosed)); };
+  paint(closed);
+  $("outlineBtn").addEventListener("click", () => { const next = !document.body.classList.contains("outline-closed"); paint(next); pref.outline = !next; savePref(); requestAnimationFrame(fitNative); });
+  $("outlineList").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-jump]");
+    if (button && !button.disabled) { cancelAuto(); closeSheet(false); go(Number(button.dataset.jump)); if (innerWidth < 1000) paint(true); }
+  });
+  $("fullBtn").hidden = !document.documentElement.requestFullscreen;
+  $("fullBtn").addEventListener("click", () => { if (document.fullscreenElement) document.exitFullscreen?.(); else document.documentElement.requestFullscreen?.().catch(() => {}); });
+  document.addEventListener("fullscreenchange", () => { const on = Boolean(document.fullscreenElement); $("fullBtn").setAttribute("aria-pressed", String(on)); $("fullBtn").textContent = on ? "전체 화면 끝내기" : "전체 화면"; });
+  $("classPrint").href = link("start.html", { book: book.id, unit: String(unitIndex) });   // 워밍업 자료를 불러오면 인쇄 주소로 바꾼다
+}
+
 // ── 조작 ──────────────────────────────────────────────────
 $("nextBtn").addEventListener("click", next);
 bindPress();
@@ -776,7 +867,10 @@ function skipGames() {
   while (slides[target]?.kind === "game") target += 1;
   go(target);
 }
-$("slideHead").addEventListener("click", (event) => { if (event.target.closest("[data-act='skip-games']")) skipGames(); });
+$("slideHead").addEventListener("click", (event) => {
+  if (event.target.closest("[data-act='skip-games']")) skipGames();
+  if (event.target.closest("[data-act='skip-board']")) { cancelAuto(); go(index + 1); }
+});
 $("signs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-jump]");
   if (button && !button.disabled) { cancelAuto(); go(Number(button.dataset.jump)); }
@@ -806,7 +900,13 @@ function startIndex() {
   return Math.min(Math.max((Number(params.get("s")) || 1) - 1, 0), slides.length - 1);
 }
 // 열리지 않은 권·단원이면 덱 대신 안내(둘러보기 1권 1단원 · 체험 시작 권 · 정식 한 달에 1권, fields-access.js)
-const gate = canStudy(book.id, unitIndex);
+// 강사용 교안은 이 기기에 적힌 로그인 정보를 믿지 않고 서버에 다시 물어 본다(원장 2026-11-11 「보안 설정도 하자」) —
+// 서버가 확인해 준 세션이 없으면(만료·위조·연결 끊김) 잠근다. 확인되면 권한 목록(gf_p)도 서버 것으로 바뀐다.
+const verified = classMode ? await checkSession() : null;
+// 학생도 로그인했으면 GM 상태(권별·기간, 원장 2026-11-14)를 서버에서 다시 받아 잠금을 정한다 — 연결이 안 되면 이 탭에 적힌 것으로
+if (!classMode && loggedIn()) await checkSession();
+const gate = classMode ? (verified && canTeach() ? { ok: true } : { ok: false, why: "teach" }) : canStudy(book.id, unitIndex);
+if (classMode) setupClass();
 if (!gate.ok) lockPage(gate.why, { bookId: book.id, student, here: `study.html${location.search}` });
 else {
 renderHead();
@@ -814,6 +914,7 @@ paintGuideButtons();
 show();
 loadGoldenBell().then((data) => {
   bellData = data;
+  if (classMode) $("classPrint").href = sessionPrintHref(book, unitIndex, part, bellData, link);
   slides = buildSlides();
   ready = true;
   index = startIndex();

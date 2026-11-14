@@ -2,26 +2,33 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
+  <script src="./guard.js?v=20261111q"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b0a09" />
   <meta name="description" content="Gifted Math Bank — 보고 배우고(사고력 게임), 공부하고(개념 학습), 완성하기(사고력 문제은행)." />
   <title>Gifted Math Bank</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./home.css?v=20261105b" />
+  <link rel="stylesheet" href="./home.css?v=20261114c" />
 </head>
 <body class="hm">
   <!-- 첫 화면(원장 2026-10-24 「그냥 심플하게」, GDWEB 지학사 2022 개정교과서 참고): 검은 바탕 · WELCOME TO · 뒤에 얇은 큰 글자 · 기울어진 카드 셋 · 아래에 실제 화면 숏릴과 설명 -->
-  <header class="hm-top"><a class="hm-logo" href="./home.html"><i aria-hidden="true">GM</i><span>Gifted Math Bank</span></a></header>
+  <!-- 대문이 곧 학생 문(원장 2026-11-10 「대문이 학생 문이 되어야지 · 학부모나 학생이나 같잖아」): 사람을 고르지 않는다. 로그인·가입은 위 오른쪽, 강사용 교안·관리 화면은 대문에 두지 않고 관리자(원장) 계정으로 로그인했을 때만 위 오른쪽에 보인다(원장 2026-11-11 「그냥 로그인 아이디에 따라 달라지면 되잖아」) -->
+  <header class="hm-top"><a class="hm-logo" href="./home.html"><i aria-hidden="true">GM</i><span><span class="gm-word" aria-label="Gifted Math"><b>G</b><small>ifted</small> <b>M</b><small>ath</small></span> Bank</span></a>
+    <nav class="hm-acct" aria-label="로그인"><a id="homeClass" href="./start.html?as=class" hidden>강사용 교안</a><a id="homeLogin" href="./login.html">로그인</a><a id="homeSignup" href="./signup.html">가입</a></nav></header>
 
   <main>
     <section class="hm-stage" aria-label="들어가기">
       <p class="hm-welcome">WELCOME TO</p>
       <h1 class="hm-giant"><span>GIFTED MATH</span><span>BANK</span></h1>
-      <nav class="hm-cards" aria-label="세 가지 길">
+      <!-- 이 기기에 공부한 기록이 있으면: 누르면 바로 그 차시(home.js) -->
+      <a class="hm-continue" id="homeContinue" href="./start.html" hidden><b>이어서 하기</b><span id="homeContinueAt"></span></a>
+      <nav class="hm-cards" aria-label="네 가지 길">
         <!-- 개념 학습이 먼저(원장 2026-10-28 「개념학습과 사고력 게임 카드 위치 바꿔줘」) -->
         <a class="hm-card green" data-link href="./start.html"><small>공부하고</small><b>개념 학습</b><img src="./assets/front/orbi.webp" width="360" height="360" alt="" /></a>
         <a class="hm-card yellow" data-link href="./study.html?book=book-01&amp;unit=0&amp;at=game"><small>보고 배우고</small><b>사고력 게임</b><img src="./assets/front/foldy.webp" width="420" height="431" alt="" /></a>
-        <a class="hm-card blue" data-link href="./index.html"><small>완성하기</small><b>사고력 문제은행</b><img src="./assets/front/cubi.webp" width="360" height="360" alt="" /></a>
+        <a class="hm-card blue" data-link href="./similar.html"><small>완성하기</small><b>사고력 문제은행</b><img src="./assets/front/cubi.webp" width="360" height="360" alt="" /></a>
+        <!-- 입학 모의고사(원장 2026-11-14 「입학모의고사도 추가하자 이 화면에」) — 문제은행의 선발시험·모의고사(O/X 진단 → 유사문제)와 선발 대비 모의고사를 고르는 화면(entrance.html)으로 -->
+        <a class="hm-card lilac" data-link href="./entrance.html"><small>실전처럼</small><b>입학 모의고사</b><svg class="hm-paper" viewBox="0 0 200 220" aria-hidden="true" focusable="false"><g transform="rotate(-8 100 110)"><rect x="34" y="18" width="132" height="176" rx="10" fill="#fffdf6" stroke="#15140f" stroke-width="5"/><path d="M58 52h84M58 92h84M58 132h84M58 172h54" stroke="#15140f" stroke-width="5" stroke-linecap="round" opacity=".18"/><circle cx="62" cy="52" r="11" fill="none" stroke="#e5484d" stroke-width="5"/><circle cx="62" cy="92" r="11" fill="none" stroke="#e5484d" stroke-width="5"/><path d="M52 122l20 20M72 122l-20 20" stroke="#15140f" stroke-width="5" stroke-linecap="round"/><text x="148" y="190" font-family="sans-serif" font-size="34" font-weight="800" fill="#e5484d" text-anchor="end">90</text></g></svg></a>
       </nav>
     </section>
 
@@ -31,19 +38,19 @@
       <figure class="hm-screen">
         <video id="reel" muted loop playsinline autoplay preload="metadata" poster="./assets/front/reel-poster.jpg" width="960" height="618"><source src="./assets/front/reel.mp4" type="video/mp4" /></video>
         <p class="hm-say" id="reelSay" aria-hidden="true">손으로 뒤집어 보고</p>
-        <figcaption id="reelCap"><em>보고 배우고</em><span>뒤집고 돌리기 공방</span></figcaption>
+        <figcaption id="reelCap"><em>보고 배우고</em><span>뒤집고 돌리기 게임</span></figcaption>
         <button type="button" class="hm-play hm-sound" id="reelSound" aria-pressed="false" aria-label="소리 켜기"><svg class="ui-icon" viewBox="0 0 24 24" width="24" height="24" style="width:18px;height:18px;vertical-align:-0.2em;flex:none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
         <button type="button" class="hm-play" id="reelPlay" aria-pressed="true" aria-label="영상 멈추기"><svg class="ui-icon" viewBox="0 0 24 24" width="24" height="24" style="width:18px;height:18px;vertical-align:-0.2em;flex:none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.5 5.5v13M15.5 5.5v13" stroke-width="3"/></svg></button>
       </figure>
       <ol class="hm-three">
         <li data-step="0" class="is-on"><small>보고 배우고</small><b>사고력 게임</b><p>실제 문제를 손으로 풀어요. 칸과 막대를 옮기고, 바늘을 돌리고, 쌓기나무를 쌓아요. 틀리면 어떤 실수인지 짚어 줘요.</p></li>
         <li data-step="1"><small>공부하고</small><b>개념 학습</b><p>워밍업 대표 문제로 개념을 한 장씩 배우고, 워밍업 문제로 바로 확인해요. 독쌤이 장마다 할 일을 말해 줘요.</p></li>
-        <li data-step="2"><small>완성하기</small><b>사고력 문제은행</b><p>본책에서 막힌 번호는 비슷한 문제로 다시 풀어요. 선생님은 단원과 난이도를 골라 시험지를 만들어요.</p></li>
+        <li data-step="2"><small>완성하기</small><b>사고력 문제은행</b><p>본책에서 틀렸거나 모르는 문제 번호를 고르면 같은 유형의 새 문제가 나와요. 풀고 바로 답을 확인해요.</p></li>
       </ol>
     </section>
   </main>
 
   <footer class="hm-foot">GFIELD GIFTED EDUCATION</footer>
-  <script type="module" src="./home.js?v=20261105b"></script>
+  <script type="module" src="./home.js?v=20261114a"></script>
 </body>
 </html>

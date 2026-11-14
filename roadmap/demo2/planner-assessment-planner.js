@@ -15,27 +15,41 @@
     message='';
   }
   function onError(err) { pending=null; message=err.message || '결과를 읽지 못했어요.'; }
+  // Imports and O/X taps edit the same account document. Rebuild from its latest
+  // value inside the lock so unrelated questions, tabs and imports can coexist.
+  let writes=Promise.resolve();
+  function update(transform) {
+    async function persist() {
+      for (let attempt=0; attempt<3; attempt++) {
+        const original=store.getLatestItem(records.key);
+        const next=transform(await records.decode(original));
+        const encoded=await records.encode(next);
+        if (encoded.length>200000 || (g.RoadmapCloud && !g.RoadmapCloud.safeDocument({...g.RoadmapCloud.snapshot(),[records.key]:encoded}))) {
+          throw new RangeError('이 로드맵의 저장 용량을 넘어요. 기존 기록은 유지됩니다.');
+        }
+        if (store.getLatestItem(records.key)!==original) continue;
+        store.setItem(records.key,encoded);
+        refresh();
+        g.dispatchEvent(new Event('planner-assessment-saved'));
+        return next;
+      }
+      throw Error('다른 창에서 기록이 바뀌었어요. 최신 기록을 확인하고 다시 눌러 주세요.');
+    }
+    const write=()=>g.navigator.locks ? g.navigator.locks.request('gfield.assessments.'+g.RoadmapMember.user_id,persist) : persist();
+    const result=writes.then(write);
+    writes=result.catch(()=>{});
+    return result;
+  }
   async function save() {
     const chosen=pending;
     if (!chosen || busy) return;
     busy=true; refresh();
-    const persist=async()=>{
-      const prior=await records.decode(store.getLatestItem(records.key));
-      const next=records.merge(prior,chosen);
-      const text=await records.encode(next);
-      if (text.length > 200000 || (g.RoadmapCloud && !g.RoadmapCloud.safeDocument({...g.RoadmapCloud.snapshot(),[records.key]:text}))) {
-        throw new RangeError('이 로드맵의 저장 용량을 넘어요. 기존 기록은 유지됩니다.');
-      }
-      // Reading the shared copy inside the lock preserves imports in another tab.
-      store.setItem(records.key,text);
+    try {
+      await update(prior=>records.merge(prior,chosen));
       message=chosen.length+'개 평가를 반영했어요.';
       if (store.status()==='memory') message+=' 저장 공간을 쓸 수 없어 이 창에서만 유지돼요.';
-    };
-    try {
-      if (g.navigator.locks) await g.navigator.locks.request('gfield.assessments.'+g.RoadmapMember.user_id,persist);
-      else await persist();
       pending=null;
-    } catch (err) { message=err instanceof RangeError ? err.message : '기존 결과와 합쳐 저장하지 못했어요. 다시 시도해 주세요.'; }
+    } catch (err) { message=err.message || '기존 결과와 합쳐 저장하지 못했어요. 다시 시도해 주세요.'; }
     busy=false; refresh();
   }
   async function mount(host) {
@@ -90,5 +104,5 @@
     });
     try {g.opener.postMessage({type:'gfield-assessment-ready-v1'},'*');} catch {}
   }
-  g.PlannerAssessmentPlanner=Object.freeze({mount});
+  g.PlannerAssessmentPlanner=Object.freeze({mount,read,update});
 })(window);

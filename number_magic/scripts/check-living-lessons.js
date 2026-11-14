@@ -53,18 +53,19 @@ const out=process.env.NM_LIVE_ARTIFACTS;if(out)fs.mkdirSync(out,{recursive:true}
    await context.route(url=>url.pathname.endsWith('/app/living-lesson.js'),r=>{
     const source=fs.readFileSync(path.join(__dirname,'../app/living-lesson.js'),'utf8').replace(/\r\n/g,'\n');
     const probe=`stage.__probe=()=>{scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);const rect=canvas.getBoundingClientRect();return (ten?spares:pieces).filter(o=>o.visible&&o.userData.active).map(o=>{const p=o.getWorldPosition(new T.Vector3()).project(camera);return {index:o.userData.index,sign:o.userData.sign,x:rect.left+(p.x+1)*rect.width/2,y:rect.top+(1-p.y)*rect.height/2};});};`;
-    const anchor=' resize();\n return {sync';
+    const anchor=' resize();\n return {inspect';
     assert(source.includes(anchor),'The test-only projection probe must be mounted');
     return r.fulfill({contentType:'application/javascript',body:source.replace(anchor,probe+'\n'+anchor)});
    });
    await context.addInitScript(({uid,lang,fallback})=>{
-    localStorage.setItem('nm_state_v1',JSON.stringify({lang,onboarded:true,name:'검수',view:'unit',unit:uid,step:'discover',avatar:{kind:'boy'},placement:{course:uid==='N-07'?'C0':'C29',self:true},account:{status:'active'},symbolDex:{'+':{},'-':{},'−':{},'=':{},'□':{}},progress:{[uid]:{introSeen:true,steps:{}}}}));
+    localStorage.setItem('nm_preview_state_v1',JSON.stringify({lang,onboarded:true,name:'검수',view:'unit',unit:uid,step:'discover',avatar:{kind:'boy'},placement:{course:uid==='N-07'?'C0':'C29',self:true},account:{status:'active'},symbolDex:{'+':{},'-':{},'−':{},'=':{},'□':{}},progress:{[uid]:{introSeen:true,steps:{}}}}));
     if(fallback){const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){if(/^webgl/.test(kind))return null;return original.call(this,kind,...args);};}
    },{uid,lang,fallback});
    const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+   await require('./lib/preview-fixture')(page);
    await page.goto(base+'/number_magic/index.html?enter=1',{waitUntil:'domcontentloaded'});
    const title=page.locator('[data-id="continue"]:visible,#ttContinue:visible');
-   await title.first().click({timeout:30000});
+   await title.first().click({timeout:30000});await page.evaluate(uid=>__NM_AUDIT_OPEN(uid),uid);
    await page.waitForSelector('.nm-live-stage[data-renderer]',{timeout:30000}).catch(async e=>{console.log({uid,errors,body:(await page.locator('body').innerText()).slice(-3500)});throw e;});
    for(let i=0;i<100;i++){
     const close=page.locator('#nmUnlockOverlayClose,#nmSymClose');if(await close.count())await close.last().click();else break;
@@ -85,6 +86,14 @@ const out=process.env.NM_LIVE_ARTIFACTS;if(out)fs.mkdirSync(out,{recursive:true}
     }else{
      const p=points.find(p=>p.sign==='positive'&&p.index===2),n=points.find(p=>p.sign==='negative'&&p.index===1);
      await page.mouse.click(p.x,p.y);await page.mouse.click(n.x,n.y);assert.deepEqual((await state()).paired,[{positive:2,negative:1}]);
+     /* 끌어서 놓기(2026-11-09): 붉은 막대를 검은 막대 위로 끌면 한 쌍, 빈 곳에 놓으면 제자리로 */
+     await page.locator('[data-act="reset"]').click();await page.locator('.nm-live-stage').evaluate(el=>el.scrollIntoView({block:'center'}));await page.waitForTimeout(reduced?100:700);
+     const q=await page.locator('.nm-live-stage').evaluate(el=>el.__probe()),p0=q.find(p=>p.sign==='positive'&&p.index===0),n0=q.find(p=>p.sign==='negative'&&p.index===0);
+     const drag=async(a,b)=>{await page.mouse.move(a.x,a.y);await page.mouse.down();for(let k=1;k<=8;k++)await page.mouse.move(a.x+(b.x-a.x)*k/8,a.y+(b.y-a.y)*k/8);await page.mouse.up();};
+     await drag(p0,{x:p0.x,y:p0.y-140});assert.deepEqual((await state()).paired,[],'a drop on empty ground pairs nothing');
+     await page.waitForTimeout(reduced?100:700);
+     await drag(p0,n0);assert.deepEqual((await state()).paired,[{positive:0,negative:0}],'dragging red onto black makes a zero pair');
+     if(out)await root.screenshot({path:path.join(out,`${uid}-${lang}-${width}-dragged.png`)});
     }
     await page.locator('[data-act="reset"]').click();
    }

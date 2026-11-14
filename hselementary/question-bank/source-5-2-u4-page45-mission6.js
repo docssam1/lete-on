@@ -4,7 +4,13 @@
   const pools=Object.freeze([
     Object.freeze({factorTenths:35,lowerProduct:4,upperProduct:8}),
     Object.freeze({factorTenths:15,lowerProduct:2,upperProduct:7}),
-    Object.freeze({factorTenths:45,lowerProduct:7,upperProduct:15})
+    Object.freeze({factorTenths:45,lowerProduct:7,upperProduct:15}),
+    Object.freeze({factorTenths:25,lowerProduct:4,upperProduct:9}),
+    Object.freeze({factorTenths:55,lowerProduct:5,upperProduct:14}),
+    Object.freeze({factorTenths:65,lowerProduct:6,upperProduct:16}),
+    Object.freeze({factorTenths:75,lowerProduct:7,upperProduct:18}),
+    Object.freeze({factorTenths:85,lowerProduct:10,upperProduct:20}),
+    Object.freeze({factorTenths:95,lowerProduct:8,upperProduct:21})
   ]);
   const fmtScaled=(value,scale)=>{const whole=Math.floor(value/scale),rem=value%scale;if(!rem)return String(whole);return `${whole}.${String(rem).padStart(String(scale).length-1,"0").replace(/0+$/g,"")}`;};
   const fmtTenths=value=>fmtScaled(value,10),fmtHundredths=value=>fmtScaled(value,100);
@@ -21,7 +27,7 @@
     return Object.freeze(candidates);
   }
   function build(poolIndex=0,difficultyOffset=0){
-    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
+    if(!Number.isSafeInteger(poolIndex)||poolIndex<0||poolIndex>=pools.length)throw new RangeError("확인된 수치 묶음만 사용할 수 있습니다.");
     if(![-1,0,1].includes(difficultyOffset))throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const pool=pools[poolIndex],factor=fmtTenths(pool.factorTenths),low=String(pool.lowerProduct),high=String(pool.upperProduct),candidates=enumerate(pool),xs=candidates.map(item=>item.x),products=candidates.map(item=>item.product),m=pool.factorTenths,nMin=Math.floor(pool.lowerProduct*100/m)+1,nMax=Math.ceil(pool.upperProduct*100/m)-1,ns=candidates.map(item=>item.xTenths);
     const symbol="□", object="□를", subject="□가", topic="□는";

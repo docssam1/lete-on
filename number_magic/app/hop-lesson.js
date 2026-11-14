@@ -3,25 +3,25 @@
    0에서 첫 주사위만큼 뛰고, 둘째 주사위만큼 + 면 앞으로·− 면 되돌아온다. 개구리는 실사 소품(assets/images/real/frog.png — 2026-10-07 실사-2차, 그 전엔 토끼). */
 const copy={
  ko:{title:'개구리의 수직선 뛰기',ask:(a,op,c)=>`주사위 ${a}, 그리고 ${c}! 0에서 ${a}칸 뛴 다음 ${c}칸 ${op==='+'?'앞으로':'되돌아'} 와요. 개구리는 어디에 설까요?`,
-  guess:'먼저 개구리가 설 자리를 골라 보세요. 그다음 직접 뛰어 확인해요.',stage1:n=>`첫 주사위만큼! ${n}칸 더 뛰어요.`,stage2:(op,n)=>op==='+'?`이제 앞으로 ${n}칸 더!`:`이제 되돌아 ${n}칸 더!`,
+  guess:'먼저 개구리가 설 자리를 골라 보세요. 그다음 개구리를 끌거나 눌러서 뛰어 봐요.',stage1:n=>`첫 주사위만큼! ${n}칸 더 뛰어요.`,stage2:(op,n)=>op==='+'?`이제 앞으로 ${n}칸 더!`:`이제 되돌아 ${n}칸 더!`,
   right:(a,op,c,x)=>`맞았어요! ${a} ${op==='+'?'+':'−'} ${c} = ${x}. ${op==='+'?'앞으로 뛰면 더하기예요.':'되돌아오면 빼기예요.'}`,
   wrong:(p,x,op)=>`${p}(으)로 생각했는데 개구리는 ${x}에 섰어요. ${op==='+'?'앞으로 뛰면 커져요.':'되돌아오면 작아져요.'}`,
   done:(a,op,c,x)=>`개구리가 ${x}에 섰어요. ${a} ${op==='+'?'+':'−'} ${c} = ${x}.`,
-  hop:'한 칸 뛰기',undo:'되돌리기',reset:'처음부터',next:'다른 수로',prediction:'개구리가 설 자리',scene:'수직선과 개구리. 그림을 누르거나 한 칸 뛰기 버튼을 누르세요.',
+  hop:'한 칸 뛰기',undo:'되돌리기',reset:'처음부터',next:'다른 수로',prediction:'개구리가 설 자리',scene:'수직선과 개구리. 개구리를 끌어 옮기거나, 그림을 누르면 한 칸씩 뛰어요.',
   legend:['첫 주사위만큼','앞으로(+)','되돌아(−)']},
  en:{title:'Frog Hops on the Number Line',ask:(a,op,c)=>`Dice ${a} and ${c}! Hop ${a} from 0, then ${c} ${op==='+'?'forward':'back'}. Where will the frog land?`,
-  guess:'First pick where the frog will land, then hop to check.',stage1:n=>`The first die: ${n} more hop${n>1?'s':''}.`,stage2:(op,n)=>op==='+'?`Now ${n} more forward!`:`Now ${n} more back!`,
+  guess:'First pick where the frog will land, then drag or tap the frog to hop.',stage1:n=>`The first die: ${n} more hop${n>1?'s':''}.`,stage2:(op,n)=>op==='+'?`Now ${n} more forward!`:`Now ${n} more back!`,
   right:(a,op,c,x)=>`Right! ${a} ${op==='+'?'+':'−'} ${c} = ${x}. ${op==='+'?'Hopping forward is adding.':'Hopping back is subtracting.'}`,
   wrong:(p,x,op)=>`You guessed ${p}, but the frog landed on ${x}. ${op==='+'?'Forward makes it bigger.':'Going back makes it smaller.'}`,
   done:(a,op,c,x)=>`The frog landed on ${x}. ${a} ${op==='+'?'+':'−'} ${c} = ${x}.`,
-  hop:'Hop once',undo:'Undo',reset:'Reset',next:'Try other numbers',prediction:'Where it lands',scene:'Number line and frog. Tap the picture or the Hop button.',
+  hop:'Hop once',undo:'Undo',reset:'Reset',next:'Try other numbers',prediction:'Where it lands',scene:'Number line and frog. Drag the frog, or tap the picture to hop once.',
   legend:['First die','Forward (+)','Back (−)']},
  zh:{title:'青蛙在数轴上跳',ask:(a,op,c)=>`骰子${a}和${c}！从0跳${a}格，再${op==='+'?'往前':'往回'}跳${c}格。青蛙会停在哪里？`,
-  guess:'先猜猜青蛙停在哪里，再跳一跳验证。',stage1:n=>`按第一个骰子！还要跳${n}格。`,stage2:(op,n)=>op==='+'?`再往前跳${n}格！`:`再往回跳${n}格！`,
+  guess:'先猜猜青蛙停在哪里，再拖动或点青蛙跳一跳。',stage1:n=>`按第一个骰子！还要跳${n}格。`,stage2:(op,n)=>op==='+'?`再往前跳${n}格！`:`再往回跳${n}格！`,
   right:(a,op,c,x)=>`对了！${a}${op==='+'?'+':'−'}${c}=${x}。${op==='+'?'往前跳就是加。':'往回跳就是减。'}`,
   wrong:(p,x,op)=>`你猜的是${p}，青蛙停在了${x}。${op==='+'?'往前跳会变大。':'往回跳会变小。'}`,
   done:(a,op,c,x)=>`青蛙停在了${x}。${a}${op==='+'?'+':'−'}${c}=${x}。`,
-  hop:'跳一格',undo:'撤回',reset:'重新开始',next:'换一组数',prediction:'青蛙停的位置',scene:'数轴和青蛙。点图或按“跳一格”。',
+  hop:'跳一格',undo:'撤回',reset:'重新开始',next:'换一组数',prediction:'青蛙停的位置',scene:'数轴和青蛙。拖动青蛙，或点图跳一格。',
   legend:['第一个骰子','往前（+）','往回（−）']}
 };
 const X=n=>24+n*31.2, LINE_Y=136;
@@ -59,10 +59,10 @@ export function mount(host,uid,lang){
   s+=die(40,30,v.a,COL.first)+`<text x="80" y="42" text-anchor="middle" font-size="34" font-weight="800" fill="${v.op==='+'?COL.plus:COL.minus}">${v.op==='+'?'+':'−'}</text>`+die(118,30,v.c,v.op==='+'?COL.plus:COL.minus);
   s+=`<line x1="12" y1="${LINE_Y}" x2="348" y2="${LINE_Y}" stroke="${COL.ink}" stroke-width="3" stroke-linecap="round"/>`;
   for(let n=0;n<=10;n++)s+=`<line x1="${X(n)}" y1="${LINE_Y-7}" x2="${X(n)}" y2="${LINE_Y+7}" stroke="${COL.ink}" stroke-width="2.4"/><text data-tick="${n}" x="${X(n)}" y="${LINE_Y+26}" text-anchor="middle" font-size="16" font-weight="800" fill="${n===v.pos?COL.plus:'#4a5468'}">${n}</text>`;
-  s+='<g class="nm-hop-trails"></g>';
+  s+='<g class="nm-hop-trails"></g><circle class="nm-hop-next" r="11" cy="'+LINE_Y+'" cx="0" fill="none" stroke="'+COL.plus+'" stroke-width="3" opacity=".75"/>';
   const rx=X(v.pos);
   s+=`<g class="nm-hop-frog" style="transform:translate(${rx}px,0)"><ellipse class="nm-hop-shadow" cx="0" cy="${LINE_Y-4}" rx="14" ry="3" fill="${COL.ink}" opacity=".15"/>`+
-   `<g class="nm-hop-body"><image href="assets/images/real/frog.png" x="-23" y="${LINE_Y-50}" width="46" height="46"/></g></g>`;
+   `<rect class="nm-hop-grip" x="-26" y="${LINE_Y-56}" width="52" height="64" fill="transparent"/><g class="nm-hop-body"><image draggable="false" href="assets/images/real/frog.png" x="-23" y="${LINE_Y-50}" width="46" height="46"/></g></g>`;
   return s+`</svg>`;
  }
  function feedback(v){
@@ -82,6 +82,8 @@ export function mount(host,uid,lang){
   stage.querySelector('.nm-hop-body image').setAttribute('transform',v.dir<0?'scale(-1,1)':'scale(1,1)');
   stage.querySelector('.nm-hop-trails').innerHTML=v.hops.map((h,i)=>arc(h[0],h[1],i<v.a?COL.first:(v.op==='+'?COL.plus:COL.minus))).join('');
   stage.querySelectorAll('[data-tick]').forEach(el=>el.setAttribute('fill',+el.dataset.tick===v.pos?COL.plus:'#4a5468'));
+  /* 다음에 설 눈금에 동그라미 — 어디로 끌지, 어디를 누를지 보인다 */
+  const ahead=nextPos(),ring=stage.querySelector('.nm-hop-next');ring.style.display=ahead===null?'none':'';if(ahead!==null)ring.setAttribute('cx',X(ahead));
   $('.nm-live-equation').textContent=`${v.a} ${v.op==='+'?'+':'−'} ${v.c} = ${v.complete?v.answer:'□'}`;
   $('.nm-live-feedback').textContent=feedback(v);
   $('[data-act="hop"]').disabled=v.complete;$('[data-act="undo"]').disabled=!v.hops.length;
@@ -133,7 +135,43 @@ export function mount(host,uid,lang){
   if(name==='hop'){hop(next);return;}
   state=next;update(name==='next'||name==='reset');
  }
+ function nextPos(){const v=api.snapshot(state);if(v.complete)return null;const n=api.snapshot(api.act(state,'hop'));return n.pos===v.pos?null:n.pos;}
+ /* 끌기(2026-11-09 원장 「다른 차시도 … 상황에 따라 터치나 드래그」): 개구리를 잡고 끌면 눈금을 넘을 때마다 한 칸 뛴 것으로 센다.
+    갈 수 있는 쪽(첫 주사위는 앞으로, 둘째는 기호 방향)으로만 따라오고, 주사위 하나가 끝나면 거기서 멈춘다. 놓으면 지금 선 눈금에 앉는다. 짧게 누르면 예전처럼 한 칸. */
+ let drag=null,swallowClick=false;
+ const svgX=e=>{const svg=stage.querySelector('svg'),m=svg&&svg.getScreenCTM();if(!m)return null;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(m.inverse()).x;};
+ function onDown(e){
+  if(disposed||!e.target.closest('.nm-hop-frog')||(e.pointerType==='mouse'&&e.button!==0))return;
+  e.preventDefault();/* 개구리 그림(<image>)을 브라우저가 그림 끌기로 가져가면 pointercancel 이 난다 */
+  if(motion){cancelMotion(true);update(false);}
+  drag={id:e.pointerId,x:e.clientX,moved:false,hops:0,stage:api.snapshot(state).stage};try{stage.setPointerCapture(e.pointerId);}catch(ignore){}
+ }
+ function onMove(e){
+  if(!drag||e.pointerId!==drag.id)return;
+  if(!drag.moved&&Math.abs(e.clientX-drag.x)<10)return;
+  drag.moved=true;host.dataset.dragging='true';
+  const x=svgX(e);if(x===null)return;
+  const frog=stage.querySelector('.nm-hop-frog');
+  for(let guard=0;guard<12;guard++){
+   const v=api.snapshot(state),ahead=nextPos();if(ahead===null||v.stage!==drag.stage)break;/* 주사위 하나가 끝나면 멈춘다 — 손을 떼고 둘째 주사위를 새로 끈다 */
+   const mid=(X(v.pos)+X(ahead))/2;if(ahead>v.pos?x<mid:x>mid)break;
+   state=api.act(state,'hop');drag.hops++;update(false);
+  }
+  const v=api.snapshot(state),ahead=v.stage===drag.stage?nextPos():null,home=X(v.pos);
+  const lo=ahead===null?home:Math.min(home,X(ahead)),hi=ahead===null?home:Math.max(home,X(ahead));
+  frog.style.transform=`translate(${Math.max(lo,Math.min(hi,x))}px,0)`;
+  if(ahead!==null)stage.querySelector('.nm-hop-body image').setAttribute('transform',ahead<v.pos?'scale(-1,1)':'scale(1,1)');
+ }
+ function onUp(e,cancel){
+  if(!drag||e.pointerId!==drag.id)return;
+  const g=drag;drag=null;delete host.dataset.dragging;try{stage.releasePointerCapture(e.pointerId);}catch(ignore){}
+  if(g.moved){swallowClick=true;update(false);return;}
+  if(cancel)return;
+ }
+ const onCancel=e=>onUp(e,true);
+ stage.addEventListener('pointerdown',onDown);stage.addEventListener('pointermove',onMove);stage.addEventListener('pointerup',onUp);stage.addEventListener('pointercancel',onCancel);
  function onClick(e){
+  if(swallowClick){swallowClick=false;if(e.target.closest('.nm-hop-stage'))return;}
   const b=e.target.closest('button');
   if(b&&host.contains(b)&&!b.disabled){if(b.hasAttribute('data-predict'))action('predict',+b.dataset.predict);else if(b.dataset.act)action(b.dataset.act);return;}
   if(e.target.closest('.nm-hop-stage'))action('hop');
@@ -141,7 +179,7 @@ export function mount(host,uid,lang){
  host.addEventListener('click',onClick);update(true);busy(false);
  function onReduce(e){if(e.matches&&motion){cancelMotion(true);update(false);}}
  reduced.addEventListener('change',onReduce);
- function dispose(){if(disposed)return;disposed=true;cancelMotion(false);host.removeEventListener('click',onClick);reduced.removeEventListener('change',onReduce);observer.disconnect();delete host.__livingLesson;}
+ function dispose(){if(disposed)return;disposed=true;cancelMotion(false);host.removeEventListener('click',onClick);stage.removeEventListener('pointerdown',onDown);stage.removeEventListener('pointermove',onMove);stage.removeEventListener('pointerup',onUp);stage.removeEventListener('pointercancel',onCancel);reduced.removeEventListener('change',onReduce);observer.disconnect();delete host.__livingLesson;}
  const observer=new MutationObserver(()=>{if(!host.isConnected)dispose();});observer.observe(document.body,{childList:true,subtree:true});
  const controller={dispose,getState:()=>api.snapshot(state)};host.__livingLesson=controller;
  return controller;

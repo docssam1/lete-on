@@ -23,6 +23,8 @@
  function localKey(key){return saved+key.slice(prefix.length);}
  function guardKey(key){return guard+key.slice(prefix.length);}
  function storage(name){
+  // Looking around without an account keeps every value in this page's memory only.
+  if(global.RoadmapGuest)return null;
   try{return global[name]||null;}catch{return null;}
  }
  function read(name,key){

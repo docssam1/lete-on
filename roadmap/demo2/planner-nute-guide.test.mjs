@@ -47,3 +47,12 @@ test('메인 회원 검증 뒤 안내가 로드되고 갈림길에 같은 글을
  assert.match(read('planner-ui.js'),/data-academy-story-open="\$\{esc\(c.academyStory\)\}"/);
  assert.match(read('planner-academy-stories.js'),/get\('academy'\)/);
 });
+
+test('입반 시기는 공지에서 본 달만 적고, 원수학 중등 신입은 중2-1부터임을 밝힌다',()=>{
+ const [d,won,eden]=N.academies,html=N.render();
+ assert.match(won.courses.find(x=>x.name==='중등 시작·편입').when,/중2-1 기본반부터.*중1-1 반은 없습니다/);
+ assert.match(won.courses[0].when,/3월 · 6월 · 9월 · 12월/);
+ assert.ok(d.courses[0].when&&eden.courses[1].when&&!eden.courses[0].when);
+ assert.match(html,/처음 배우는 내용으로 들어가면 따라가기 어렵습니다/);
+ assert.match(html,/해마다 조금씩 다릅니다/);
+});

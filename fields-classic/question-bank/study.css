@@ -34,15 +34,19 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
 /* ── 위 액자: 이름 · 공부 순서 · 학생 ── */
 .sd-top { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; padding: 12px var(--frame-x) 0; }
 .sd-brand { gap: 10px; min-width: 0; color: var(--ink); text-decoration: none; white-space: nowrap; }
-.sd-brand b { color: var(--v-deep); font-size: 18px; letter-spacing: .02em; }
-.sd-brand span { padding-left: 10px; border-left: 1px solid var(--line-strong); color: var(--muted); font-size: 13px; }
+.sd-brand > b { color: var(--v-deep); font-size: 18px; letter-spacing: .02em; }
+/* GM 표기(원장 2026-11-11 「큰 G 옆에 작은 글씨로 ifted, M 옆에 ath」) */
+.gm-word { white-space: nowrap; }
+.gm-word b { font-size: 1em; font-weight: 800; letter-spacing: 0; }
+.gm-word small { margin-left: .04em; font-size: .62em; font-weight: 600; letter-spacing: .01em; }
+.sd-brand > span { padding-left: 10px; border-left: 1px solid var(--line-strong); color: var(--muted); font-size: 13px; }
 .sd-brand strong { overflow: hidden; font-size: 15px; text-overflow: ellipsis; }
 .sd-steps { gap: 4px; margin: 0 auto; padding: 4px; }
 /* 윗줄이 화면 폭을 넘지 않게(2026-11-03 전체 검수: 단원 이름이 길거나 「준비 중」이 붙으면 태블릿에서 오른쪽으로 넘쳤다) */
 .sd-brand { flex: 0 1 auto; overflow: hidden; }
 .sd-steps { flex: 0 1 auto; min-width: 0; overflow: hidden; }
 .sd-student { flex: none; }
-@media (max-width: 1400px) { .sd-step small { display: none; } .sd-brand span { display: none; } }
+@media (max-width: 1400px) { .sd-step small { display: none; } .sd-brand > span { display: none; } }
 .sd-step { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 4px 12px 4px 4px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; white-space: nowrap; }
 .sd-step b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--v-soft); color: var(--v); font-size: 13px; }
 .sd-step small { color: var(--muted); font-size: 11.5px; font-weight: 500; }
@@ -167,7 +171,7 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   body.sd { --frame-x: 10px; grid-template-rows: 56px minmax(0, 1fr) auto; }
   .sd-top { gap: 6px; padding-top: 8px; }
   .sd-pill { min-height: 38px; padding: 4px 12px; }
-  .sd-brand b, .sd-brand span { display: none; }
+  .sd-brand > b, .sd-brand > span { display: none; }
   .sd-brand strong { font-size: 14px; }
   .sd-student { display: none; }
   .sd-steps { margin: 0 0 0 auto; }
@@ -220,6 +224,8 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   .sd-talk.new p { animation: none; }
 }
 .sd-native { min-height: 100%; }
+/* 창으로 도는 게임(연습 공방)은 칸을 그대로 채운다 — 예전엔 창 높이를 520px로 묶어 낮은 화면에서 통째로 줄어들었다 */
+.sd-native:has(> iframe) { height: 100%; }
 
 /* ── 작은 가로 화면(휴대폰·작은 태블릿, 원장 2026-10-26 「틀도 너무 넓고 한 화면에 가득 차야지」) ──
    독쌤 말은 두 줄까지만(한 글자씩 세로로 늘어나 내용을 덮던 것을 막는다), 아래 단추는 짧게, 액자 틀은 얇게. */
@@ -234,12 +240,23 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
 @media (max-width: 1100px) {
   .sd-first .sd-btn-word { display: none; }
 }
+/* 낮은 화면(노트북 1366×768에서 브라우저 줄을 빼면 650쯤): 머리줄·아래 줄·장 머리를 얇게 해 공부 칸을 넓힌다(원장 2026-11-10 「그림 … 잘 안 보여」) */
+@media (max-height: 800px) and (min-height: 641px) and (min-width: 761px) {
+  body.sd:not(.is-class) { --frame-x: 28px; grid-template-rows: 58px minmax(0, 1fr) 72px; }
+  body.sd:not(.is-class) .sd-top { padding-top: 8px; }
+  body.sd:not(.is-class) .sd-main { padding: 10px calc(var(--frame-x) + 8px) 8px; }
+  .sd-slide-head { padding: 9px 22px 7px; }
+  .sd-slide-head h2 { font-size: 19px; }
+  .sd-slide-body { padding: 14px 22px; }
+  .sd-guide-img { width: 78px; left: -24px; }
+  .sd-talk { margin-left: 62px; }
+}
 @media (max-height: 640px) and (min-width: 761px) {
   body.sd { --frame-x: 14px; grid-template-rows: 50px minmax(0, 1fr) 58px; }
   .sd-top { padding-top: 6px; gap: 8px; }
   .sd-pill { min-height: 38px; padding: 4px 12px; }
-  .sd-brand b { font-size: 16px; }
-  .sd-brand span { display: none; }
+  .sd-brand > b { font-size: 16px; }
+  .sd-brand > span { display: none; }
   .sd-step { min-height: 30px; font-size: 13px; }
   .sd-step b { width: 24px; height: 24px; font-size: 12px; }
   .sd-main { padding: 6px calc(var(--frame-x) + 4px) 6px; }
@@ -320,6 +337,7 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
 .sd-native.has-presenter { display: grid; grid-template-columns: minmax(0, 1fr) clamp(170px, 21vw, 290px); align-items: center; gap: 0; }
 .sd-board-host { min-width: 0; }
 .sd-presenter { position: relative; width: 100%; aspect-ratio: 475 / 720; align-self: center; }
+.sd-native.is-fitting .sd-presenter { overflow: clip; }   /* 크기를 재는 동안만: 독쌤 몸짓(돌기·깡충)이 칸 밖으로 나간 것을 fitNative가 「넘침」으로 읽어 배율이 0.4로 떨어졌다 돌아오며 깜빡였다. 재는 동안은 그리지 않으니 잘려 보이지 않는다 */
 .sd-pres-act, .sd-pres-bob { position: absolute; inset: 0; transform-origin: 50% 96%; }
 .sd-presenter img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
 .sd-presenter img.on { opacity: 1; }
@@ -379,3 +397,86 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
   .sd-work.has-chalk .sd-chalk-dots { flex-basis: 100%; margin: 2px 0 0; }
 }
 @media (max-width: 900px) { .sd-chalk-task { font-size: 24px; } .sd-chalk-count { font-size: 21px; } .sd-chalk ol.sd-chalk-steps { font-size: 17px; } }
+
+/* ── 강사용 교안(?as=class) — 학생 덱과 다른 틀(원장 2026-11-10 「학생용과는 디자인과 구성이 달라야지」) ──
+   섬 그림 액자·보라·독쌤 그림을 걷고, 지필드의 파란 결(옅은 하늘 바탕 · 흰 종이 · 남색, 원장 2026-11-10 「다른 화면도 다 파란 결로」).
+   구성: 위 얇은 머리줄(차시 · 도구) / 왼쪽 수업 차례(모든 장) / 넓은 수업 화면 / 아래 지도 말 · 이전 · 다음 */
+.sd-tools, .sd-outline { display: none; }
+body.sd.is-class {
+  --ink: #1b2340; --muted: #56627f; --line: #e0e9f8; --line-strong: #c7d6ee;
+  --v: #243184; --v-deep: #141b5d; --v-soft: #eaf3ff; --pill: #ffffff; --frame-x: 14px; --outline-w: 268px;
+  grid-template-columns: var(--outline-w) minmax(0, 1fr); grid-template-rows: 52px minmax(0, 1fr) 64px;
+  grid-template-areas: "top top" "outline main" "outline bar";
+  background: #f2f6fd;
+}
+body.is-class.outline-closed { grid-template-columns: 0 minmax(0, 1fr); }
+body.is-class .sd-world, body.is-class .sd-steps, body.is-class .sd-student, body.is-class .sd-guide-img, body.is-class .sd-guide-face { display: none !important; }
+/* 머리줄: 띠 하나. 왼쪽에 차시, 오른쪽에 도구 */
+body.is-class .sd-top { grid-area: top; gap: 10px; padding: 0 14px; background: #ffffff; border-bottom: 1px solid var(--line-strong); }
+body.is-class .sd-pill { border: 0; border-radius: 0; background: none; box-shadow: none; backdrop-filter: none; }
+body.is-class .sd-brand { padding: 0; min-height: 0; }
+body.is-class .sd-brand > b { padding: 3px 8px; border-radius: 4px; background: var(--v); color: #fff; font-size: 13px; }
+body.is-class .sd-brand > span { display: inline; padding-left: 0; border: 0; color: var(--ink); font-size: 15px; font-weight: 700; }
+body.is-class .sd-brand strong { padding-left: 10px; border-left: 1px solid var(--line-strong); color: var(--muted); font-size: 14px; font-weight: 500; }
+body.is-class .sd-tools { display: flex; align-items: center; gap: 6px; margin-left: auto; flex: none; }
+body.is-class .sd-tools :is(a, button) { display: inline-flex; align-items: center; min-height: 36px; padding: 4px 12px; border: 1px solid var(--line-strong); border-radius: 6px; background: #ffffff; color: var(--ink); font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+body.is-class .sd-tools :is(a, button):hover { border-color: var(--v); color: var(--v-deep); }
+body.is-class .sd-tools button[aria-pressed="true"] { border-color: var(--v); background: var(--v-soft); color: var(--v-deep); }
+/* 왼쪽 수업 차례 */
+body.is-class .sd-outline { grid-area: outline; display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; background: #ffffff; border-right: 1px solid var(--line-strong); z-index: 2; }
+body.is-class.outline-closed .sd-outline { border: 0; }
+.sd-outline h2 { flex: none; padding: 14px 16px 8px; color: var(--muted); font-size: 12.5px; font-weight: 600; letter-spacing: .08em; }
+.sd-outline ol { flex: 1; min-height: 0; overflow-y: auto; margin: 0; padding: 0 8px 12px; list-style: none; }
+.sd-outline li + li { margin-top: 2px; }
+.sd-outline button { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; align-items: start; width: 100%; padding: 7px 8px; border: 0; border-left: 3px solid transparent; border-radius: 0 6px 6px 0; background: none; text-align: left; }
+.sd-outline button b { display: grid; place-items: center; width: 24px; height: 24px; margin-top: 1px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--muted); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sd-outline button span { display: grid; min-width: 0; color: var(--ink); font-size: 14px; font-weight: 600; line-height: 1.35; word-break: keep-all; }
+.sd-outline button em { color: var(--muted); font-size: 11.5px; font-style: normal; font-weight: 500; }
+.sd-outline button:hover:not(:disabled) { background: #f3f8ff; }
+.sd-outline button.is-done b { border-color: var(--v); background: var(--v-soft); color: var(--v-deep); }
+.sd-outline button.is-done span { color: var(--muted); font-weight: 500; }
+.sd-outline button.is-on { border-left-color: var(--v); background: var(--v-soft); }
+.sd-outline button.is-on b { border-color: var(--v); background: var(--v); color: #fff; }
+.sd-outline button.is-on span { color: var(--v-deep); }
+.sd-outline button:disabled { opacity: .5; cursor: default; }
+/* 수업 화면: 액자 없이 종이 한 장 */
+body.is-class .sd-main { grid-area: main; padding: 10px 12px 8px; }
+body.is-class .sd-card { border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: none; background: #ffffff; }
+body.is-class .sd-slide-head { padding: 12px 20px 10px; }
+body.is-class .sd-slide-body { padding: 18px 22px; }
+body.is-class .sd-btn { border-radius: 8px; border-width: 1px; }
+body.is-class .sd-btn.primary { background: var(--v); box-shadow: 0 3px 0 var(--v-deep); }
+body.is-class .sd-btn.primary:active { box-shadow: 0 1px 0 var(--v-deep); }
+body.is-class .sd-skip { border-radius: 6px; }
+body.is-class .sd-plan li { border-radius: 10px; box-shadow: none; }
+body.is-class .sd-medal { box-shadow: none; }
+/* 아래 줄: 지도 말(독쌤 말을 글로) · 이전 · 다음 */
+body.is-class .sd-bar { grid-area: bar; gap: 8px; padding: 0 12px calc(8px + env(safe-area-inset-bottom)); }
+body.is-class .sd-talk { max-width: none; flex: 1; margin-left: 0; padding: 6px 8px 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; box-shadow: none; }
+body.is-class .sd-talk::before { content: "수업 도움말"; position: static; flex: none; border: 0; transform: none; color: var(--muted); font-size: 12px; font-weight: 600; }
+body.is-class .sd-talk p { font-size: 14px; }
+body.is-class .sd-talk[data-mood="praise"] { background: #ffffff; }
+body.is-class .sd-talk-ctl button { border-radius: 6px; }
+/* 수업 도움말 단추는 글로(판서의 멈추기·처음부터와 헷갈리지 않게) — 꺼진 것은 옅게 */
+body.is-class .sd-talk-ctl button { padding: 0 10px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+body.is-class .sd-talk-ctl #voiceBtn[aria-pressed="false"], body.is-class .sd-talk-ctl #pauseBtn[aria-pressed="false"] { opacity: 1; color: var(--muted); background: #f4f6fb; }
+body.is-class .sd-talk-ctl #voiceBtn[aria-pressed="true"], body.is-class .sd-talk-ctl #pauseBtn[aria-pressed="true"] { color: var(--v); border-color: var(--v); }
+body.is-class .sd-count { min-height: 0; padding: 0 6px; }
+body.is-class .sd-prev, body.is-class .sd-first { min-width: 0; background: #ffffff; }
+body.is-class .sd-next { min-width: 190px; font-size: 17px; }
+/* 좁은 화면: 차례는 수업 화면 위에 덮어 연다 */
+@media (max-width: 999px) {
+  body.sd.is-class { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main" "bar"; }
+  body.is-class .sd-outline { position: fixed; left: 0; top: 52px; bottom: 0; width: min(300px, 86vw); box-shadow: 8px 0 24px rgba(20, 27, 93, .18); }
+  body.is-class.outline-closed .sd-outline { display: none; }
+  body.is-class .sd-brand strong, body.is-class #fullBtn { display: none; }
+  body.is-class .sd-talk p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  body.is-class .sd-btn-word { display: none; }
+}
+@media (max-width: 640px) {
+  body.is-class .sd-guide { display: none; }
+  body.is-class .sd-next { flex: 1; }
+}
+/* 도착 장: 다음 공부 날(진도표가 있을 때) */
+.sd-end-next { margin: 8px 0 0; font-size: 17px; color: var(--ink, #2a2440); }
+.sd-end-next b { font-weight: 700; }

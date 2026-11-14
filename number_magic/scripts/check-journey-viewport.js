@@ -18,7 +18,7 @@ async function check(browser,base,width,height,motion='reduce',lang='ko',large=f
  const host=page.locator('#livingLesson'),prefix=`${width}-${height}-${motion}-${lang}${large?'-large':''}`;
  const shot=async tag=>{if(OUT)await page.screenshot({path:path.join(OUT,prefix+'-'+tag+'.png')});};
  const stable=()=>page.waitForFunction(()=>document.querySelector('#livingLesson')?.dataset.saved==='true'&&document.querySelector('#livingLesson').dataset.moving!=='true');
- const press=async(action,value='')=>{await host.locator(`[data-action="${action}"][data-value="${value}"]`).click();await stable();};
+ const press=async(action,value='')=>{const b=host.locator(`[data-action="${action}"][data-value="${value}"]`);if(action==='select'){await b.focus();await page.keyboard.press('Space');}else await b.click();await stable();};
  const geometry=()=>host.evaluate(e=>{const bounds=n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,height:r.height};};return {screen:bounds(e.closest('#screen')),stage:bounds(e.querySelector('.nm-live-stage')),question:bounds(e.querySelector('.nm-live-question')),controls:bounds(e.querySelector('.nm-journey-controls')),scroll:e.closest('#screen').scrollTop};});
  try{
   await require('./lib/preview-fixture')(page);
@@ -60,7 +60,7 @@ async function check(browser,base,width,height,motion='reduce',lang='ko',large=f
   await press('undo');assert.equal(await host.locator('.nm-live-equation').innerText(),'8 + 7 = ?');await press('move');await press('group');
   assert.equal(await host.locator('.nm-live-equation').innerText(),'8 + 2 + 5 = 10 + 5');assert.equal(await host.locator('.nm-live-equation').innerText().then(t=>t.endsWith('15')),false,'total answer is still hidden');
   await host.locator('input[name="answer"]').fill('15');await host.locator('.nm-journey-answer button').click();await stable();await press('meaning','moved');assert.deepEqual(await scoring(),beforeScore);
-  await host.locator('.nm-journey-tools summary').click();assert.equal(await host.locator('[data-action="reset"]').isVisible(),true);await shot('tools');
+  assert.equal(await host.locator('.nm-journey-tools').count(),0,'no hidden Tools menu');assert.equal(await host.locator('[data-action="hint"]').isVisible(),true);assert.equal(await host.locator('[data-action="reset"]').isVisible(),true);await shot('actions');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);assert.deepEqual(errors,[]);
   const small=await host.locator('button:visible,summary:visible').evaluateAll(bs=>bs.filter(b=>b.getBoundingClientRect().width<48||b.getBoundingClientRect().height<48).map(b=>b.textContent));assert.deepEqual(small,[]);
   return {width,height,motion,lang,large,fitRequired:fit,geometry:g,identities:originalIds,poseBefore,flight,arrival,errors,scoringUnchanged:true};

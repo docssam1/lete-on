@@ -24,4 +24,17 @@ class VoiceQuality(unittest.TestCase):
                 result=pathlib.Path(m.MAP).read_text();self.assertIn(files[0],result);self.assertNotIn(files[1],result);self.assertNotIn(files[2],result)
                 self.assertTrue(extra.exists());self.assertTrue(all(pathlib.Path(d,f).exists() for f in files))
             finally:m.tasks,m.MAP=original_tasks,original_map
+    def test_new_voice_gets_its_own_file_names(self):
+        self.assertNotEqual(m.fname('ko','하나'),m.fname('ko','하나','nm-numi-v2'))
+        self.assertEqual(m.fname('ko','하나'),m.fname('ko','하나',None))
+    def test_symbols_and_numbers_are_read_and_checked(self):
+        self.assertIn('끝 수 빼기 시작, 더하기 일',m.spoken('ko','"끝 - 시작 + 1" 마법으로 세어봐요!'))
+        self.assertIn('플러스',m.spoken('ko','앞으로 뛰면 +, 되돌아오면 −예요!'))
+        self.assertIn('마이너스',m.spoken('ko','앞으로 뛰면 +, 되돌아오면 −예요!'))
+        self.assertEqual(m.cer('ko','2와 5를 찾아봐!','이와 오를 찾아봐'),0.0)
+        self.assertEqual(m.cer('ko',m.spoken('ko','완벽해! 2~9단 완전 정복!'),'완벽해 2단부터 9단까지 완전 정복.'),0.0)
+        self.assertGreater(m.cer('ko','우와, 잘 셌어!','우와 잘 태어.'),0.12)
+        self.assertEqual(m.cer('ko','백의 자리부터 먼저 빼는 연습이에요!','베개 자리부터 먼저 빼는 연습이에요.'),0.0)
+        self.assertEqual(m.cer('ko',m.spoken('ko','우와, 잘 셌어!'),'우와 잘 새었어'),0.0)
+        self.assertGreater(m.cer('ko','이번엔 다른 마법이야!','이번엔 다른 바다야!'),0.12)
 if __name__=='__main__':unittest.main()

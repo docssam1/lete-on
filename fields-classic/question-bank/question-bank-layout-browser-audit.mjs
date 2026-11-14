@@ -374,6 +374,12 @@ try {
         await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
         await page.locator("#builderPanel").waitFor({ state: "visible", timeout: 10000 });
         await settle(page);
+        // 「시험지별」 탭은 숨겨 두었다(원장 2026-10-28 — index.html 의 hidden). 숨긴 탭은 누르지 않고, 숨겨져 있는지만 본다.
+        const tabVisible = await page.locator(`#builderTabs button[data-mode="${mode}"]`).isVisible();
+        if (mode === "exam") {
+          check(`finding-tab-hidden:${viewport.name}:exam`, !tabVisible, { mode, tabVisible });
+          if (!tabVisible) continue;
+        }
         await auditMode(page, viewport, mode);
       }
       await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });

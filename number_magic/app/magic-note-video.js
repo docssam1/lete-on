@@ -90,7 +90,7 @@ function open(id,opts){
   function sayCue(c,offset=0){
     if(!voice||!c)return;
     const ticket=++cueRun,a=voice.say(c.text[lang]||c.text.ko,lang);
-    if(a&&offset>0){const seek=()=>{if(ticket===cueRun&&!closed&&playing&&Number.isFinite(a.duration))a.currentTime=Math.min(offset*(voice.rate||.8),a.duration);};if(a.readyState>=1)seek();else a.addEventListener('loadedmetadata',seek,{once:true});}
+    if(a&&offset>0){const seek=()=>{if(ticket===cueRun&&!closed&&playing&&Number.isFinite(a.duration))a.currentTime=Math.min(offset*(voice.rateOf?voice.rateOf(lang):(voice.rate||.8)),a.duration);};if(a.readyState>=1)seek();else a.addEventListener('loadedmetadata',seek,{once:true});}
   }
   function stopVoice(){cueRun++;if(voice)voice.stop();}
 

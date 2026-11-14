@@ -7,7 +7,7 @@
   const host = document.createElement('section');
   host.id = 'plannerUnitChecklist';
   host.tabIndex = -1;
-  let context, program, courses, visible, lastText, lastDay;
+  let context, program, courses, visible, lastText, lastDay, lastCounselText;
 
   const params = new URLSearchParams(g.location.search);
   let trendTrack = params.get('assessment') === '1' ? 'assessment' : params.get('weekly') === '1' ? 'all' : 'book';
@@ -32,6 +32,12 @@
       if (track === 'assessment') g.PlannerAssessmentPlanner.mount(target.querySelector('[data-assessment-host]'));
       if (bookModel) g.PlannerBookPaceView.render(target.querySelector('[data-book-pace-host]'),bookModel,visible.route);
     }
+  }
+
+  function showAssessmentGraph() {
+    trendTrack='assessment';
+    drawTrend();
+    host.querySelector('[data-wt-track="assessment"]')?.scrollIntoView({block:'start'});
   }
 
   function chooseTrendTrack(event) {
@@ -162,6 +168,13 @@
     const inputs = {...context,today:day,weekStart,week,manualRanges:rangesFor(stored.ranges,weekStart),
       mastered:checks.mastered(records,weekStart)};
     const source = g.PlannerUnitSources.build(inputs);
+    const counseling = g.RoadmapCounselPlan;
+    lastCounselText = counseling && storage.getLatestItem(counseling.key);
+    let plans = [];
+    if (counseling) {
+      try { plans = counseling.saved(); } catch { source.notices.push('상담 일정을 읽지 못했어요. 다시 불러와 주세요.'); }
+      source.items.unshift(...counseling.weekItems(plans,weekStart,records));
+    }
     const initial = checks.view(records,{weekStart,items:source.items});
     const due = byUnit(initial.rows.filter(row=>row.review && !row.solo));
     const reviewWork = (groups,start,usedPaperIds) => groups.length
@@ -171,6 +184,9 @@
     const view = current.items.length ? checks.view(records,{weekStart,items:[...current.items,...source.items]}) : initial;
     const future = reviewWork(view.nextReview,view.nextWeekStart,usedBefore(view.nextWeekStart));
     view.nextReview = view.nextReview.map(group=>({...group,practice:future.items.filter(item=>item.unitId===group.unitId)}));
+    const futureTasks = plans.flatMap(plan => ['practice','recheck'].map(step => counseling.item(plan,step)))
+      .filter(item=>item.date >= view.nextWeekStart).sort((a,b)=>a.date.localeCompare(b.date));
+    view.counselUpcoming = futureTasks;
     lastText = stored.text;
     lastDay = day;
     trendRecords = records;
@@ -179,8 +195,20 @@
     bookState = bookPlan.restore(lastBookText);
     visible = {...view,route:route(),notices:[...new Set([...source.notices,...current.notices,...future.notices])],manualBooks:source.manualBooks||[],message,readOnly:weekStart>day};
     g.PlannerUnitChecklistView.render(host,visible);
+    g.PlannerOxPlanner.mount(host,{context,weekStart,onGraph:showAssessmentGraph});
     drawTrend();
     tableReview(view);
+    const schedule = document.querySelector('[data-weekly-schedule="table"]');
+    for (const week of schedule?.querySelectorAll('.weekly-schedule-week') || []) {
+      for (const task of [...source.items.filter(item=>item.counselId),...futureTasks]) {
+        if (task.date < week.dataset.weekStart || task.date > week.dataset.weekEnd) continue;
+        const note = document.createElement('p');
+        note.className = 'weekly-schedule-pending';
+        note.dataset.unitScheduleReview = '';
+        note.textContent = task.date+' · '+task.title+' · '+task.detail;
+        week.append(note);
+      }
+    }
   }
 
   function mount(next, currentProgram, savedCourses) {
@@ -241,10 +269,10 @@
   host.addEventListener('planner-unit-change',change);
   host.addEventListener('planner-unit-range',change);
   function refresh() {
-    if (host.isConnected && (lastDay!==g.PlannerWeeklyModel.today() || lastText!==storage.getLatestItem(key) || lastBookText!==storage.getLatestItem(bookPlan.key))) draw();
+    if (host.isConnected && (lastDay!==g.PlannerWeeklyModel.today() || lastText!==storage.getLatestItem(key) || (g.RoadmapCounselPlan && lastCounselText!==storage.getLatestItem(g.RoadmapCounselPlan.key)) || lastBookText!==storage.getLatestItem(bookPlan.key))) draw();
   }
   g.addEventListener('focus',refresh);
-  g.addEventListener('storage',event=>{if(event.key?.endsWith('.unit-checklist.v1') || event.key?.endsWith('.book-pace.v1'))refresh();});
+  g.addEventListener('storage',event=>{if(event.key?.endsWith('.unit-checklist.v1') || event.key?.endsWith('.book-pace.v1') || event.key?.endsWith('.counsel-plan.v1'))refresh();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
   function open() {
     if (!host.isConnected) return;

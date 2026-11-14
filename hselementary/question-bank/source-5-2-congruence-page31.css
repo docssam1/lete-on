@@ -228,3 +228,7 @@
 .source52-p31-square .source52-angle-label:nth-of-type(2) { transform: translate(12px, 0); }
 .source52-p31-area .source52-length-label:nth-last-of-type(2) { transform: translate(-24px, 0); }
 .source52-p31-square-trisection text:nth-of-type(6) { transform: translate(-8px, 0); }
+
+/* Larger original angle labels remain legible in four-up print. */
+[data-source-item-id="5-2-u3-e4-example-2-original"] .source52-p31-equilateral-example text { font-size:30px; }
+@media print { #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-example-2-original"] .source52-p31-equilateral-example { max-height:220px; } }

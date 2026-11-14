@@ -32,7 +32,9 @@ test('교과·심화의 진행/완료는 다른 과목의 계획을 바꾸지 �
  const schoolDone={...answer,schoolStatus:'done'};
  assert.equal(I.fieldChanges(schoolDone,fields,'schoolStatus').school,'4');
  assert.match(row(schoolDone,'school').remaining[0].shortText,/2-2/);
- assert.deepEqual(plain(row(schoolDone,'deep')),plain(row(answer,'deep')));
+ // 초등 심화 칸은 교과 완료와 무관하다. 6-2 뒤 중등 심화 칸은 교과가 그 학기를 시작한 뒤에 놓이므로 교과 진도를 따른다.
+ const elem=r=>plain(r.blocks.filter(b=>/^[1-6]-[12] /.test(b.shortText)));
+ assert.deepEqual(elem(row(schoolDone,'deep')),elem(row(answer,'deep')));
 });
 
 test('B→A→B 왕복은 같은 완료 답에서 중급 포함 여부를 다시 계산한다',()=>{
@@ -77,7 +79,8 @@ test('미경험과 모름은 과정을 강제로 배정하지 않고 과거 선�
  for(const value of ['none','unknown']){
   const a={...answer,thinkingExperience:value,schoolBook:value,deepBook:value,calc:value},snapshot=JSON.stringify(a);
   const order=I.order(a,fields);
-  for(const k of ['thinking','thinkingStatus','school','schoolStatus','deepStage','deepStatus','calcStatus'])assert.ok(!order.includes(k));
+  // 과정(학년·학기)은 교재보다 먼저 묻는다(원장님 2026-11-11). 교재가 없음·모름이면 상태만 묻지 않는다.
+  for(const k of ['thinking','thinkingStatus','schoolStatus','deepStatus','calcStatus'])assert.ok(!order.includes(k));
   const p=I.profile(a,fields);assert.ok(p.rows.every(r=>r.remaining.length===0));
   assert.ok(!I.buildPlan(a,fields).rows.find(r=>r.key==='school2').blocks.length);
   assert.equal(JSON.stringify(a),snapshot);
@@ -90,9 +93,12 @@ test('완료한 최종 과정은 진행 중으로 되돌리지 않는다',()=>{
   [{calc:'advanced',calcExact:'17',calcStatus:'done'},'calc'],
   [{thinking:'advanced',compExact:'7',thinkingStatus:'done'},'thinking1'],
   [{schoolCourse:'mid',schoolBook:'개념원리',school:'advanced',schoolExact:'19',schoolStatus:'done'},'school'],
-  [{deepStage:'6-2',deepStatus:'done'},'deep']
+  [{deepCourse:'mid',deepBook:'A급',deepStage:'19',deepStatus:'done'},'deep']
  ];
  for(const [values,key]of variants){const r=row({...answer,...values},key);assert.equal(r.remaining.length,0);assert.equal(r.next,null);}
+ // 초등 심화 6-2를 끝내면 되돌리지 않고 중등 심화(표준 줄)로 넘어간다.
+ const elemDone=row({...answer,deepStage:'6-2',deepStatus:'done'},'deep');
+ assert.ok(elemDone.remaining.length>0);assert.ok(elemDone.remaining.every(b=>!/^[1-6]-[12] /.test(b.shortText)));assert.match(elemDone.next.shortText,/중등 쎈|중1-1/);
 });
 
 test('원본 출처·한국 나이 월 경계와 과목별 독립 입력을 보존한다',()=>{
@@ -121,9 +127,15 @@ test('초등·중등 교재 목록과 A/B/C/D 표준을 구분한다',()=>{
    const a={...answer,schoolCourse:course,deepCourse:course},q=I.questions(a,f);
    for(const [v]of q.schoolBook[2])assert.equal(I.middleBook(v),course==='mid');
    for(const [v]of q.deepBook[2])assert.equal(I.middleBook(v),course==='mid');
-   assert.ok(q.schoolBook[1].includes(I.standardBook(band,course,'school')));
+   // 예시는 화면 이름: 내부 저장값(원리해설·A급·개념응용 · 최상위)이 그대로 보이지 않는다.
+   assert.doesNotMatch(q.schoolBook[1]+q.deepBook[1],/예: (?:원리해설|A급|에이급\.|개념원리\.|개념응용)/);
   }
  }
+ const mid=b=>I.questions({...answer,schoolCourse:'mid',deepCourse:'mid'},{...fields,band:b});
+ assert.equal(mid('A').schoolBook[1],'이 과정의 교재 예: 에이급 원리해설.');
+ assert.equal(mid('C').schoolBook[1],'이 과정의 교재 예: 개념원리 중학.');
+ assert.equal(mid('B').deepBook[1],'이 과정의 교재 예: 에이급수학. RPM·쎈 같은 응용 교재도 여기에서 고를 수 있어요.');
+ assert.equal(mid('D').schoolBook[1],'이 과정의 교재 예: 개념원리 중학, 최상위수학 중학.');
  assert.equal(I.standardBook('A','mid','school'),'원리해설');
  assert.equal(I.standardBook('B','mid','deep'),'A급');
  assert.equal(I.standardBook('C','mid','school'),'개념원리');
@@ -145,7 +157,7 @@ test('교재·과정을 바꿔 상태 확인이 필요하면 옛 완료 답을 �
  const f={...fields,pendingStatus:{deepStatus:true}};
  assert.equal(I.hasAnswer(answer,f,'deepStatus'),false);
  assert.equal(I.firstMissing(answer,f),'deepStatus');
- assert.match(I.summary(answer,f).find(x=>x.label==='심화').text,/상태 확인 전/);
+ assert.match(I.summary(answer,f).find(x=>x.label==='심화·활용').text,/상태 확인 전/);
 });
 
 test('D에서도 입력한 중등 교과는 표준 예시의 초등 시작점으로 되돌리지 않는다',()=>{
@@ -339,4 +351,242 @@ test('unknown progress keeps a full course and completion does not reuse the fra
  assert.equal(I.fieldChanges(a,{...fields,speed:'4'},'schoolStatus').schoolLeft,'4');
  assert.equal(I.fieldChanges({...a,schoolStatus:'done'},{...fields,speed:'4'},'schoolStatus').schoolLeft,'4');
  assert.equal(I.progressValue({...a,schoolBook:'디딤돌 기본+응용'},'schoolStatus'),null);
+});
+
+test('중등 개념·유형 교재를 실제 이름으로 교과에 기록할 수 있다',()=>{
+ for(const book of ['쎈','RPM','개념+유형 라이트','개념+유형 파워']){
+  const a={...answer,schoolCourse:'mid',schoolBook:book,schoolExact:'14'};
+  assert.ok(I.bookList('mid','school').includes(book));
+  assert.ok(!I.bookList('elem','school').includes(book));
+  assert.ok(I.order(a,fields).includes('schoolExact'));
+  assert.match(I.summary(a,fields).find(x=>x.key==='school').text,new RegExp(book.replace(/[+]/g,'\\+')));
+ }
+});
+
+test('고등 선행·후행 심화 질문은 학년과 연산 범위를 추정하지 않는다',()=>{
+ const a={schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'대수',schoolStatus:'progress',deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',deepStatus:'progress',calc:'unknown'};
+ const q=I.questions(a,{mon:'11',band:'B'});
+ assert.equal(I.gradeChoice(a,{mon:'11',band:'B'}),undefined);
+ assert.equal(I.firstMissing(a,{mon:'11',band:'B'}),'grade');
+ assert.match(q.deepStage[0],/현재 심화하는 과목/);
+ assert.doesNotMatch(q.deepStage[1],/학년과 학기/);
+ assert.match(q.calc[1],/고등 선행과 연산 범위는 다를/);
+ assert.ok(q.calc[2].some(([key])=>key==='advanced'));
+ assert.ok(q.calc[2].some(([key])=>key==='high'));
+ assert.equal(a.calc,'unknown');
+ assert.equal(a.deepStage,'공통수학2');
+});
+
+test('추가 현재 심화는 기존 답을 보존하고 같은 과목을 막으며 미확인과 없음을 구분한다',()=>{
+ const a={...answer,deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',deepStatus:'progress',deepExtra:'yes',deepExtraStage:'대수',deepExtraBook:'고쟁이',deepExtraStatus:'progress'};
+ a.deepExtraProgress={course:I.progressCourse(a,'deepExtraStatus'),done:1,total:4,unit:'unit'};
+ const before=JSON.stringify(a),extra=I.additionalDeep(a,fields);
+ assert.equal(extra.stage,'대수');assert.equal(extra.fraction,.25);
+ assert.ok(I.summary(a,fields).some(r=>r.key==='deepExtraBook'&&r.text.includes('대수')));
+ assert.equal(JSON.stringify(a),before);
+ assert.equal(I.additionalDeep({...a,deepExtraStage:'공통수학2'},fields),null);
+ assert.ok(!I.questions(a,fields).deepExtraStage[2].some(([id])=>id==='공통수학2'));
+ assert.match(I.summary({...a,deepExtra:undefined},fields).find(r=>r.key==='deepExtraBook').text,/확인 전/);
+ assert.match(I.summary({...a,deepExtra:'no'},fields).find(r=>r.key==='deepExtraBook').text,/없음/);
+ assert.equal(I.additionalDeep(a,{...fields,pendingStatus:{deepExtraStatus:true}}),null);
+});
+
+test('새 심화 상태 입력과 기존 요약 편집 모두 추가 심화 질문에 도달한다',()=>{
+ const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+ assert.match(ui,/key==='deepStatus'&&answers.deepCourse==='high'\?'deepExtra'/);
+ assert.match(ui,/it.key==='deepExtraBook'\?'deepExtra'/);
+ const weekly=readFileSync(new URL('planner-weekly-planner.js',import.meta.url),'utf8');
+ assert.match(weekly,/현재 병행하는 심화/);
+ assert.match(weekly,/심화 회차를 자동으로 더하지 않습니다/);
+});
+
+test('사고력 질문은 초2 이하 또는 초3 이상 교과 초5완료 이하에서만 표시한다',()=>{
+ const f={mon:'11',band:'B',grade:'1'};
+ for(const grade of ['pre','1','2']){
+  const a={grade,gradeInput:'current',age:grade==='pre'?'6':undefined,schoolCourse:'high',schoolHigh:'대수'};
+  assert.equal(I.thinkingRequired(a,f),true);assert.ok(I.order(a,f).includes('thinkingExperience'));
+ }
+ for(const grade of ['3','6','7','10'])for(const [course,stage,status,expected] of [['elem','5-2','progress',true],['elem','5-2','done',true],['elem','6-1','progress',false],['elem','6-1','done',false],['mid',null,'progress',false],['high',null,'progress',false]]){
+  const a={grade,gradeInput:'current',schoolCourse:course,school:stage,schoolStatus:status};
+  assert.equal(I.thinkingRequired(a,f),expected);assert.equal(I.order(a,f).includes('thinkingExperience'),expected);
+ }
+ for(const a of [{},{grade:'3',gradeInput:'current'},{grade:'3',gradeInput:'current',schoolCourse:'unknown'},{grade:'3',gradeInput:'current',schoolCourse:'none'},{grade:'3',gradeInput:'current',schoolCourse:'elem'}])assert.equal(I.thinkingRequired(a,f),null);
+});
+
+test('초3 이상도 교과 과정→과목→교재→상태, 심화도 같은 순서로 묻고 연산 후 필요한 사고력을 묻는다',()=>{
+ const a={grade:'4',gradeInput:'current',schoolCourse:'high',schoolHigh:'대수',deepCourse:'high',deepStage:'공통수학2',deepExtra:'yes',deepExtraStage:'대수'};
+ const f={mon:'11',band:'B'},q=I.questions(a,f),order=I.order(a,f);
+ assert.deepEqual(plain(order.slice(0,14)),['grade','schoolCourse','schoolHigh','schoolBook','schoolStatus','deepCourse','deepStage','deepBook','deepStatus','deepExtra','deepExtraStage','deepExtraBook','deepExtraStatus','calc']);
+ assert.ok(q.deepStage[2].some(([id])=>id==='공통수학2'));
+ assert.ok(!order.includes('thinkingExperience'));
+ const low={...a,schoolCourse:'elem',school:'5-2'};
+ assert.ok(I.order(low,f).indexOf('thinkingExperience')>I.order(low,f).indexOf('calc'));
+ assert.equal(I.firstMissing({...a,schoolBook:'기본정석',schoolStatus:'progress',deepBook:'실력정석',deepStatus:'progress',deepExtraBook:'고쟁이',deepExtraStatus:'progress'},f),'calc');
+ assert.notEqual(I.summary({...a,calc:undefined},f).find(x=>x.key==='calc').text,I.summary({...a,calc:'none'},f).find(x=>x.key==='calc').text);
+ // Stale books from a former course must not determine the new subject choices.
+ const mid=I.questions({...a,deepCourse:'mid',deepBook:'실력정석'},f);
+ assert.ok(mid.deepStage[2].some(([id])=>id==='14'));assert.ok(!mid.deepStage[2].some(([id])=>id==='대수'));
+});
+
+test('사고력 질문을 생략해도 이전 기록과 경로 입력은 삭제하지 않는다',()=>{
+ const a={...answer,grade:'4',gradeInput:'current',schoolCourse:'high',schoolBook:'기본정석',schoolHigh:'대수'};
+ const before=JSON.stringify(a),progress=I.sourceInput(a,fields).thinking;
+ I.order(a,fields);I.firstMissing(a,fields);I.questions(a,fields);
+ assert.equal(JSON.stringify(a),before);assert.ok(progress.length>0);
+ assert.equal(I.thinkingRequired({...a,schoolCourse:'unknown'},fields),null);
+ assert.equal(I.thinkingRequired({schoolCourse:'high'},fields),null);
+});
+
+test('실제 질문 핸들러로 고등 복수심화 과목→교재→연산 순서를 끝까지 밟는다',()=>{
+ const f=storageFixture({version:2,answers:{},fields:{...fields,hw:'57'},history:[],state:{}});
+ f.c.restoreDraft();f.c.handleCollegeClick=()=>false;f.c.collegeState={enabled:false};
+ const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+ vm.runInContext(ui.slice(ui.indexOf("$('questionOptions').onclick="),ui.indexOf("$('questionBack').onclick=")),f.c);
+ const steps=[['grade','4'],['schoolCourse','high'],['schoolHigh','대수'],['schoolBook','기본정석'],['schoolStatus','progress'],['deepCourse','high'],['deepStage','공통수학2'],['deepBook','실력정석'],['deepStatus','progress'],['deepExtra','yes'],['deepExtraStage','대수'],['deepExtraBook','고쟁이'],['deepExtraStatus','progress'],['calc','unknown']];
+ for(let i=0;i<steps.length;i++){
+  const [key,value]=steps[i];f.c.question=key;
+  f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:value}})}});
+  if(i<steps.length-1)assert.equal(f.asked,steps[i+1][0],key+' 다음 질문');
+ }
+ assert.equal(f.c.answers.calc,'unknown');assert.equal(f.c.answers.thinkingExperience,undefined);
+ assert.equal(f.c.answers.deepStage,'공통수학2');assert.equal(f.c.answers.deepExtraStage,'대수');
+});
+
+test('2022 과목명 선택 ID는 유지하고 구 과목과 동일하지 않음을 설명한다',()=>{
+ const a={...answer,schoolCourse:'high',schoolBook:'기본정석',deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학2',calc:'high'};
+ const q=I.questions(a,fields);
+ for(const key of ['schoolHigh','deepStage','deepExtraStage','calcHigh']){
+  assert.match(q[key][1],/대수는 구 수학Ⅰ/);
+  assert.match(q[key][1],/미적분Ⅰ은 구 수학Ⅱ/);
+  assert.match(q[key][1],/같은 과정은 아닙니다/);
+  assert.ok(q[key][2].some(([id,label])=>id==='대수'&&label.includes('구 수학Ⅰ')));
+  assert.ok(q[key][2].some(([id,label])=>id==='미적분Ⅰ'&&label.includes('구 수학Ⅱ')));
+ }
+ assert.ok(!I.highSubjects.includes('수학Ⅰ'));
+});
+
+test('대략 20/50/80 버튼은 저장 전 폼만 채우며 진행 상태 선택 시 분량으로 저장한다',()=>{
+ for(const percent of [20,50,80]){
+  const savedAnswers={...answer,schoolStatus:'progress',schoolProgress:{course:I.progressCourse(answer,'schoolStatus'),done:2,total:6,unit:'page'}};
+  const f=storageFixture({version:2,answers:savedAnswers,fields:{...fields,hw:'57'},history:[],state:{}});
+  f.c.restoreDraft();f.c.question='schoolStatus';f.c.handleCollegeClick=()=>false;f.c.collegeState={enabled:false};
+  const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+  vm.runInContext(ui.slice(ui.indexOf("$('questionOptions').onclick="),ui.indexOf("$('questionBack').onclick=")),f.c);
+  const before=JSON.stringify(f.c.answers);
+  f.els.questionOptions.onclick({target:{closest:selector=>selector==='[data-progress-percent]'?{dataset:{progressPercent:String(percent)}}:null}});
+  assert.equal(JSON.stringify(f.c.answers),before);
+  assert.equal(f.els.progressTotal.value,'100');assert.equal(f.els.progressDone.value,String(percent));assert.equal(f.els.progressUnit.value,'percent');
+  f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:'progress'}})}});
+  const p=I.progressValue(f.c.answers,'schoolStatus');
+  assert.equal(p.done,percent);assert.equal(p.total,100);assert.equal(p.approximate,true);assert.notEqual(p.estimated,true);
+  assert.equal(f.c.answers.schoolStatus,'progress');assert.match(I.progressText(f.c.answers,'schoolStatus'),new RegExp('약 '+percent+'%'));
+  assert.match(I.progressText(f.c.answers,'schoolStatus'),/숙달 아님/);
+  // Switching back to exact numbers removes the approximation marker.
+  f.c.question='schoolStatus';f.els.progressUnit.value='page';f.els.progressTotal.value='6';f.els.progressDone.value='2';
+  f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:'progress'}})}});
+  assert.equal(I.progressValue(f.c.answers,'schoolStatus').approximate,undefined);
+  assert.match(I.progressText(f.c.answers,'schoolStatus'),/6 쪽 중 2 완료/);
+ }
+ const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+ assert.match(ui,/key.endsWith\('Status'\).*대략 진행 분량/s);
+});
+
+test('book choices and examples never offer the paired labels that are not real book names',()=>{
+ for(const band of ['A','B','C','D'])for(const course of ['elem','mid']){
+  const a={...answer,schoolCourse:course,deepCourse:course,schoolBook:'',deepBook:''},q=I.questions(a,{...fields,band});
+  const offered=[...q.schoolBook[2],...q.deepBook[2]].map(o=>o[0]+' '+o[1]).join(' / ');
+  assert.doesNotMatch(offered,/개념응용 · 최상위/,band+course);
+  assert.doesNotMatch(q.schoolBook[1]+q.deepBook[1],/개념응용/,band+course);
+ }
+ const saved={...answer,deepCourse:'elem',deepBook:'개념응용 · 최상위'};
+ assert.ok(I.questions(saved,fields).deepBook[2].some(o=>o[0]==='개념응용 · 최상위'),'a saved answer stays visible as chosen');
+ assert.ok(I.deepBooks.includes('개념응용 · 최상위'),'saved answers still validate');
+});
+
+test('arithmetic is asked by school semester, whatever book the child uses, so multiplication by digit count is distinguishable',()=>{
+ const q=I.questions({...answer,calc:''},fields).calc,labels=Object.fromEntries(q[2]);
+ assert.match(q[1],/학년·학기/);assert.match(q[1],/소마셈·원리셈·두뇌로·구몬/);
+ assert.equal(labels['기적의 계산법 5권'],'3-1 · 한 자리 수로 곱하기 · 첫 나눗셈');
+ assert.equal(labels['기적의 계산법 6권'],'3-2 · 두 자리 수 곱셈 · 한 자리 수로 나누기');
+ assert.equal(labels['기적의 계산법 7권'],'4-1 · 큰 자연수 곱셈 · 두 자리 수로 나누기');
+ assert.equal(labels['기적의 계산법 10권'],'5-2 · 혼합 계산 · 분수·소수 곱셈');
+ for(let n=1;n<=12;n++)assert.match(labels['기적의 계산법 '+n+'권'],new RegExp('^'+Math.ceil(n/2)+'-'+(n%2?1:2)+' · '),n+'권');
+ assert.ok(!Object.values(labels).some(v=>/기적의 계산법/.test(v)),'no book name is forced in the choices');
+ const pre=I.questions({...answer,age:'5',calc:''},{...fields,grade:'pre'}).calc[2].map(o=>o[0]);
+ assert.ok(pre.includes('소마셈 K'));
+ const old={...answer,calc:'기적의 계산법 4권',calcStatus:'done'};
+ assert.equal(I.profile(old,fields).rows.find(r=>r.key==='calc').blocks.length>0,true,'saved answers keep working');
+});
+
+test('교과는 진도(과정)→학년·학기→교재, 심화도 과정→학년·학기→교재 순서이고 교재 질문에 고른 과정이 붙는다',()=>{
+ const f={mon:'11',band:'B'};
+ for(const a of [{grade:'5',gradeInput:'current',schoolCourse:'mid',schoolExact:'15',deepCourse:'elem',deepStage:'6-1'},{grade:'2',gradeInput:'current',schoolCourse:'elem',school:'3-2',deepCourse:'elem',deepStage:'2-2'}]){
+  const o=I.order(a,f),at=k=>o.indexOf(k),stage=a.schoolCourse==='mid'?'schoolExact':'school';
+  assert.ok(at('schoolCourse')<at(stage)&&at(stage)<at('schoolBook')&&at('schoolBook')<at('schoolStatus')&&at('schoolStatus')<at('deepCourse'));
+  assert.ok(at('deepCourse')<at('deepStage')&&at('deepStage')<at('deepBook')&&at('deepBook')<at('deepStatus'));
+  const q=I.questions(a,f);
+  assert.equal(q.schoolCourse[0],'현재 공부하고 있는 수학 진도는 무엇인가요?');
+  assert.match(q.schoolBook[0],a.schoolCourse==='mid'?/^중등 1학년 2학기 교과는/:/^초등 3학년 2학기 교과는/);
+  assert.match(q.deepBook[0],/학기 심화나 활용은 어떤 교재로/);
+ }
+});
+
+test('중등 교재는 책 지도의 교재를 모두 싣고 RPM은 응용으로 표시하며 저장값은 그대로 읽는다',()=>{
+ const f={mon:'11',band:'B'},a={grade:'7',gradeInput:'current',schoolCourse:'mid',schoolExact:'14',deepCourse:'mid',deepStage:'15'},q=I.questions(a,f);
+ const all=[...q.schoolBook[2],...q.deepBook[2]].map(o=>o[1]).join(' / ');
+ for(const name of ['EBS 중학 뉴런','개념원리 중학','에이급 원리해설','베이직쎈','개념+유형 라이트','라이트쎈 중등','RPM 중학','쎈 중등','일품 중등','블랙라벨 중학','에이급수학','최상위수학 중학','수학의 신 중학 수학','수학의 신 구판','라인업 대수·기하','인사이트 수학','하이퍼 최고난도 수학','에이급수학 리미티드 에디션','SUPERMATH 중1 수학','올림피아드 수학의 지름길'])assert.ok(all.includes(name),name);
+ assert.equal(q.deepBook[2].find(o=>o[0]==='수학의 신 구판')[1],'수학의 신 구판(최고수준 완성) · 극심화 · 절판');
+ assert.ok(!q.schoolBook[2].some(o=>/극심화/.test(o[1])));
+ assert.equal(q.deepBook[2].find(o=>o[0]==='RPM')[1],'RPM 중학 · 응용');
+ assert.ok(q.deepBook[2].some(o=>/심화$/.test(o[1])));
+ assert.ok(!q.schoolBook[2].some(o=>/블랙라벨|에이급수학|최상위수학/.test(o[1])),'심화서는 심화나 활용에서');
+ assert.match(q.deepCourse[0],/^심화나 활용은/);
+ // 기존 저장값(A급·원리해설)은 그대로 계획에 쓰이고 화면에는 책 지도 이름으로 보인다.
+ const saved={...a,schoolBook:'원리해설',schoolStatus:'progress',deepBook:'A급',deepStatus:'progress'};
+ assert.ok(I.middleBook('A급')&&I.middleBook('일품 중등'));
+ assert.match(I.summary(saved,f).find(x=>x.key==='deepBook').text,/^에이급수학 /);
+});
+
+test('함께 하는 교재는 요약에 따로 보이고, 계획 칸에는 병행으로 적되 기간은 주 교재 기준이다',()=>{
+ const f={mon:'11',band:'B'},a={grade:'7',gradeInput:'current',schoolCourse:'mid',schoolExact:'14',schoolBook:'개념원리',schoolStatus:'progress',deepCourse:'mid',deepStage:'14',deepBook:'쎈',deepBookWith:['일품 중등','블랙라벨 중학','없는 책'],deepStatus:'progress'};
+ const s=I.summary(a,f);
+ assert.equal(s.find(x=>x.key==='deepBook').text,'쎈 중등 중1-1 진행 중 · 함께 일품 중등, 블랙라벨 중학');
+ assert.doesNotMatch(s.find(x=>x.key==='deepBook').text,/없는 책/);
+ const {deepBookWith,...one}=a,deep=p=>p.rows.find(r=>r.key==='school2').blocks;
+ const two=deep(I.buildPlan(a,f)),solo=deep(I.buildPlan(one,f));
+ assert.equal(two.length,solo.length);
+ two.forEach((b,i)=>{assert.equal(b[0],solo[i][0]+' + 일품 중등 + 블랙라벨 중학 병행');assert.deepEqual(b.slice(1),solo[i].slice(1));});
+ assert.match(deep(I.buildPlan(one,f))[0][0],/^중1-1 쎈 중등$/);
+ const school={...one,schoolBookWith:['쎈']},row=I.buildPlan(school,f).rows.find(r=>r.key==='school').blocks.find(b=>/중1-1/.test(b[0]));
+ assert.equal(row[0],'중1-1 개념원리 중학 + 쎈 중등 병행');
+ assert.match(I.summary(school,f).find(x=>x.key==='school').text,/^개념원리 중학 중1-1 진행 중 · 함께 쎈 중등$/);
+});
+
+test('심화 줄이 사라지지 않는다: 시작 전은 표준 제안, 초등 심화는 중등 심화로, 고등 심화는 지금 과목과 이후 안내',()=>{
+ const base={grade:'4',gradeInput:'current',thinkingExperience:'none',schoolCourse:'elem',schoolBook:'디딤돌 응용',school:'4-2',schoolStatus:'progress',calc:'기적의 계산법 8권',calcStatus:'progress',gifted:'0',hw:'0'};
+ const deep=(a,band)=>{const p=I.buildPlan(a,{mon:'10',band,speed:'2'});return {p,b:p.rows.find(r=>r.key==='school2').blocks};};
+ for(const band of ['A','B','C']){
+  const none=deep({...base,deepCourse:'none'},band);
+  assert.ok(none.b.length>0,band+' 시작 전');assert.ok(none.b.every(b=>b[1]>=none.p.now),band+' 시작 전 제안은 지금부터');
+  const elem=deep({...base,deepCourse:'elem',deepBook:'최상위 S',deepStage:'4-1',deepStatus:'progress'},band);
+  const at=elem.b.findIndex(b=>/^6-2 /.test(b[0]));
+  assert.ok(at>=0&&elem.b.length>at+1,band+' 초등 심화 뒤 중등');
+  assert.match(elem.b.slice(at+1).map(b=>b[0]).join('|'),band==='C'?/중1-1 RPM/:/중1-1 중등 심화\(A급\)/);
+  elem.b.forEach((b,i)=>{if(i)assert.ok(b[1]>elem.b[i-1][2],band+' 칸이 겹치지 않는다');});
+  const high=deep({...base,deepCourse:'high',deepBook:'실력정석',deepStage:'공통수학1',deepStatus:'progress'},band);
+  assert.match(high.b[0][0],/^공통수학1 실력정석/);assert.match(high.b.at(-1)[0],/표준 로드맵의 고등 설계/);
+  // 모르는 심화는 과정을 지어내지 않는다.
+  assert.equal(deep({...base,deepCourse:'unknown'},band).b.length,0);
+ }
+});
+
+test('고등 선행이 중3 7월에서 잘리면 (일부)로 적고 알린다 · 연산 칸은 학기 이름을 앞에 쓴다',()=>{
+ const o={band:'B',grade:5,mon:3,year:2026,school:9,schoolLeft:2,comp:4,compLeft:3,calc:9,calcLeft:1,speed:2,hw:'none',gifted:false,kmo:'switch'};
+ const p=P.build(o),hi=p.rows.find(r=>r.key==='school').blocks;
+ assert.ok(hi.some(b=>/\(일부\)$/.test(b[0])));
+ assert.ok(p.warn.some(w=>/일부까지 잡았어요.*나머지부터는 고등학교에서/.test(w)));
+ const early=P.build({...o,grade:3,school:5});assert.ok(!early.warn.some(w=>/고등 선행은/.test(w)),'다 들어가면 알리지 않는다');
+ const a={grade:'5',gradeInput:'current',thinkingExperience:'none',schoolCourse:'elem',schoolBook:'디딤돌 응용',school:'5-1',schoolStatus:'progress',deepCourse:'none',calc:'기적의 계산법 9권',calcStatus:'progress'};
+ const calc=I.buildPlan(a,{mon:'4',band:'B',speed:'2'}).rows.find(r=>r.key==='calc').blocks;
+ assert.equal(calc[0][0],'5-1 연산 (기적의 계산법 9권)');
 });

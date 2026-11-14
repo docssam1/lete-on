@@ -40,6 +40,7 @@
 
 @media print {
   #problemView .u3p85-construction-copy, #solutionView .u3p85-construction-copy { width:60mm !important; max-width:100% !important; max-height:none !important; }
+  #problemView [data-source-item-id="5-2-u3-practice-3-original"] .u3p85-construction-copy, #solutionView .u3p85-construction-copy[aria-label="자와 컴퍼스로 옮길 삼각형"] { width:44mm !important; }
 }
 @media print {
   /* Keep the page padding when this answer sheet flows onto a second page. */
