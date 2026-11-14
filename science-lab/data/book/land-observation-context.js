@@ -36,5 +36,10 @@ export function withLandObservationWorkbook(workbook){
   if(!e||q.sourceId!==link[0]||q.sourceRef?.type!==e.sourceType||(e.sourceOf&&JSON.stringify(q.sourceRef.of)!==JSON.stringify(e.sourceOf))||q.prompt!==e.prompt||!Array.isArray(q.choices)||!Number.isInteger(q.key)||q.figure||q.given||q.givens||q.table||!figures?.[link[1]]||JSON.stringify([...q.choices].sort())!==JSON.stringify([...e.previousChoices].sort()))return q;
   changed=true;const choices=q.choices.map(x=>e.choiceReplacements[x]||x);return {...q,prompt:e.fields.prompt,choices,explanation:e.fields.explanation,answer:'①②③④⑤'[q.key]+' '+choices[q.key],figure:link[1]};
  });
- return changed?{...workbook,questions,figures}:workbook;
+ if(!changed)return workbook;
+ const summaries=pages=>pages?.map(page=>{
+  if(!page.blocks?.some(b=>b.type==='questions'&&b.ids?.includes('s41-u03-w009')&&b.ids.includes('s41-u03-w010')))return page;
+  let edited=false;const rail=page.rail.map(note=>{if(note.title!=='핵심 정리'||note.text!=='사진에 보이는 파임과 사진에 없는 속도 자료를 구별해요.')return note;edited=true;return {...note,text:'설명 그림에서 흙이 깎인 곳을 살피고, 강 사진의 모습과 시간에 따른 변화량을 구별해요.'};});return edited?{...page,rail}:page;
+ });
+ return {...workbook,questions,figures,pages:summaries(workbook.pages),teacherStudentPages:summaries(workbook.teacherStudentPages)};
 }

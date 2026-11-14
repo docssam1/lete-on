@@ -61,7 +61,8 @@
     "oldVersionsPreserved": 4,
     "actualWorkbookPrintModesCompared": 4,
     "genericQuestionStudentTeacherPrintsCompared": 6,
-    "printChangesLimitedToRequiredFiguresAndReviewedWording": true,
+    "printChangesLimitedToRequiredFiguresReviewedWordingAndOneSummary": true,
+    "oneStudentTeacherSummaryAligned": true,
     "quickPrintByteIdentical": true,
     "decks": 64,
     "slides": 3048,
@@ -105,5 +106,6 @@
   "actualBrowserAndA4Reviewed": false,
   "newOriginalSourceAdded": false,
   "qa": "science-question-review/phase408/",
-  "deployed": false
+  "deployed": false,
+  "sidebarSummary": "연습9~10쪽의 핵심 정리 한 문장을 설명 그림에서 깎인 곳을 살피고 강 사진의 모습과 시간에 따른 변화량을 구별하는 내용으로 맞춘다. 학생/교사 쪽 구조와 개인 필기 공간은 유지한다."
 }
