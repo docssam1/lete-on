@@ -8,14 +8,14 @@
   <meta name="description" content="생각하는황소·돌파·원수학·이든·깊은생각·생수수학의 지원 과정을 고르고, 과정별 모의고사와 진단·보완 수업 구성을 확인하세요.">
   <link rel="preload" href="./assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../shared/app.css">
-  <link rel="stylesheet" href="./promo.css?v=wm-common1-20261114">
+  <link rel="stylesheet" href="./promo.css?v=wm-final-20261114">
 </head>
 <body class="selection-promo" data-view="home">
   <svg class="logo-display-filters" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><defs><filter id="logo-paper-out" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%"><feComponentTransfer in="SourceGraphic" result="white-channels"><feFuncR type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncG type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncB type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/></feComponentTransfer><feColorMatrix in="white-channels" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 1 1 0 -2" result="white-mask"/><feComposite in="SourceGraphic" in2="white-mask" operator="out"/></filter></defs></svg>
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand lete-on-brand" href="#" aria-label="LETE-ON 첫 화면"><span class="brand-wordmark">LETE-ON</span><small>초중고 입학 테스트를 위한</small></a>
-    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=wm-common1-20261114">내 시험 입장</a></div>
+    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=wm-final-20261114">내 시험 입장</a></div>
   </nav></header>
   <main id="main">
     <section class="academy-home" id="academy-home" aria-labelledby="home-title">
@@ -23,7 +23,7 @@
         <div class="home-intro"><p class="section-kicker">학원별 모의고사 · 대비 수업</p><h1 id="home-title" tabindex="-1">학원을 선택하세요.</h1></div>
         <div class="academy-launcher" id="academy-launcher" aria-label="대비 과정을 볼 학원 선택"></div>
         <section class="notice-board-section" id="notices" aria-labelledby="notices-title"><div class="small-section-head"><h2 id="notices-title">테스트 일정·설명회</h2><span>대치·분당 · 황소는 대치</span></div><div id="home-notice-board"></div></section>
-        <noscript><p>대비 과정을 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=wm-common1-20261114">내 시험 입장</a></p></noscript>
+        <noscript><p>대비 과정을 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=wm-final-20261114">내 시험 입장</a></p></noscript>
       </div>
     </section>
     <section class="academy-intro-view" id="academy-intro-view" hidden>
@@ -37,13 +37,13 @@
     </section>
     <section class="learning-path" id="learning-path"><div class="shell"><h2>모의고사 이용 순서</h2><ol><li><span>1</span>학원·과정 선택</li><li><span>2</span>회차 선택</li><li><span>3</span>내 시험 입장</li></ol></div></section>
   </main>
-  <footer class="footer"><div class="shell"><span>LETE-ON · 초중고 입학 테스트 대비</span><a href="../login.html?v=wm-common1-20261114">배정받은 시험 입장</a></div></footer>
-  <script src="../data/public-exam-profiles.js?v=wm-common1-20261114"></script>
-  <script src="../data/academy-engagement.js?v=wm-common1-20261114"></script>
-  <script src="../data/available-mocks.js?v=wm-common1-20261114"></script>
-  <script src="../data/official-exam-specs.js?v=wm-common1-20261114"></script>
-  <script src="../data/course-admissions.js?v=wm-common1-20261114"></script>
-  <script src="./course-navigation.js?v=wm-common1-20261114"></script>
+  <footer class="footer"><div class="shell"><span>LETE-ON · 초중고 입학 테스트 대비</span><a href="../login.html?v=wm-final-20261114">배정받은 시험 입장</a></div></footer>
+  <script src="../data/public-exam-profiles.js?v=wm-final-20261114"></script>
+  <script src="../data/academy-engagement.js?v=wm-final-20261114"></script>
+  <script src="../data/available-mocks.js?v=wm-final-20261114"></script>
+  <script src="../data/official-exam-specs.js?v=wm-final-20261114"></script>
+  <script src="../data/course-admissions.js?v=wm-final-20261114"></script>
+  <script src="./course-navigation.js?v=wm-final-20261114"></script>
   <script>
     'use strict';
     const data=HIGHSELECT_PUBLIC_PROFILES;
@@ -83,7 +83,7 @@
     const navigation=HIGHSELECT_PROMO_NAV;
     const courseExams=(program,course)=>navigation.examsFor(program,course,mocks);
     const mockTime=e=>e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · 휴식 ${e.breakMinutes}분 별도`:(e.durationMinutes?e.durationMinutes+'분':'');
-    const examHref=e=>'../login.html?v=wm-common1-20261114&exam='+encodeURIComponent(e.id);
+    const examHref=e=>'../login.html?v=wm-final-20261114&exam='+encodeURIComponent(e.id);
     function academyLogo(program){
       return `<span class="academy-mark ${program.code==='DP'?'academy-mark-clear':''}"><img src="./assets/logos/${academyLogos[program.code]}" alt="" decoding="async"></span>`;
     }
@@ -164,6 +164,6 @@
     render();
   </script>
   <script src="../data/academy-notices.js"></script>
-  <script src="./notices.js?v=wm-common1-20261114"></script>
+  <script src="./notices.js?v=wm-final-20261114"></script>
 </body>
 </html>
