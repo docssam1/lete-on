@@ -1,4 +1,4 @@
-import{withBiologyObservationWorkbook,withBiologyReferenceWorkbook}from'./biology-observation-photos.js?v=20261115-biology-reference-photos';
+import{withBiologyObservationWorkbook,withBiologyReferenceWorkbook,withBiologyComparisonWorkbook}from'./biology-observation-photos.js?v=20261115-biology-comparison-photos';
 import{withObservationLanguage}from'./observation-language.js';
 import {withBiologyStudentLanguage,withBiologyWorkbookGuidance,withBiologyWorkbookCriteria} from './biology-student-language.js?v=20261105-biology-criteria';
 import {withBiologyEditorial,withBiologyReadableWorkbook,withBiologyElementaryOpening,withBiologyElementaryReading,withBiologyStarterReading} from './s41-u04.editorial.js?v=20261108-elementary-starter-reading';
@@ -7326,4 +7326,5 @@ export const biologyElementaryPriorWorkbook=withBiologyElementaryOpening(biology
 export const biologyStarterPriorWorkbook=withBiologyElementaryReading(biologyElementaryPriorWorkbook);
 export const biologyObservationPriorWorkbook=withBiologyStarterReading(biologyStarterPriorWorkbook);
 export const biologyReferencePriorWorkbook=withBiologyObservationWorkbook(biologyObservationPriorWorkbook);
-export const workbook=withBiologyReferenceWorkbook(biologyReferencePriorWorkbook);
+export const biologyComparisonPriorWorkbook=withBiologyReferenceWorkbook(biologyReferencePriorWorkbook);
+export const workbook=withBiologyComparisonWorkbook(biologyComparisonPriorWorkbook);

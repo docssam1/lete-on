@@ -1,4 +1,4 @@
-import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION}from'./biology-observation-photos.js?v=20261115-biology-reference-photos';
+import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION,BIOLOGY_COMPARISON_VERSION,BIOLOGY_COMPARISON_PROMPTS,BIOLOGY_SHAPES_NOTE}from'./biology-observation-photos.js?v=20261115-biology-comparison-photos';
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
 export const BIOLOGY_OBSERVATION_CHOICE_VERSION='20261115-biology-photo-observations';
@@ -32,6 +32,16 @@ const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 �
 const geologyHorizontal='assets/book/c22-s51-u01-source-horizontal.png',geologyBroken='assets/book/c22-s51-u01-source-broken.png';
 const preparationPhoto='assets/activities/c22-s51-u03/mixing-photo-v1.webp',environmentPicture='assets/activities/c22-s61-u01/environment.webp';
 const entries={
+ 's41-u04-v031':{
+  unit:'s41-u04',sourceType:'similar',sourceOf:{set:3,no:1},version:1,currentVersion:BIOLOGY_COMPARISON_VERSION,
+  prompt:'교사가 제공한 서로 다른 빵곰팡이 사진 세 장에서 흰색·초록색·검은색 부분을 보았습니다. 기록으로 알맞은 것을 고르세요.',
+  fields:{prompt:BIOLOGY_COMPARISON_PROMPTS.mold,observationPhotos:biologyObservationPhotos('moldBread','moldOrange','moldRice')},
+ },
+ 's41-u04-v040':{
+  unit:'s41-u04',sourceType:'similar',sourceOf:{set:3,no:10},version:1,currentVersion:BIOLOGY_COMPARISON_VERSION,
+  prompt:'연구 사진에는 공·막대·나선 모양의 아주 작은 생물이 있고, 자료에는 종류에 따라 흙·물·몸 안에 산다고 합니다. 이 단원에서 어떤 무리를 다룬 자료인지 고르세요.',
+  fields:{prompt:BIOLOGY_COMPARISON_PROMPTS.shapes,figure:'assets/bank/s41-u04/s3-q11.webp',figureNote:BIOLOGY_SHAPES_NOTE},
+ },
  'c22-s62-u02-b002':{
   unit:'c22-s62-u02',version:'20261106-combustion-readable-workbook',currentVersion:MATERIAL_OBSERVATION_CONTEXT_VERSION,
   prompt:'흰 가루가 담긴 사진 한 장만 있습니다. 사진을 읽는 방법으로 알맞은 것을 고르세요.',

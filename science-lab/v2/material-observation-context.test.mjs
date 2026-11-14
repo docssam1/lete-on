@@ -1,3 +1,4 @@
+import{BIOLOGY_COMPARISON_VERSION as cacheVersion}from'../data/book/biology-observation-photos.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{standaloneQuestionContexts,withMaterialStandaloneContext,MATERIAL_OBSERVATION_CONTEXT_VERSION as version}from'../data/book/standalone-question-context.js';
 import{withThink,loadJudge}from'./think-merge.js';import{revisedTextbookPaper}from'./revised-textbook.js';import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import{buildSlides}from'./deck.js';import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';
@@ -38,5 +39,5 @@ test('unchanged reference images reach learning, Daily and both question print m
   const cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(cls,mod.items);for(const q of mod.items.filter(q=>ids.includes(q.id)))assert.deepEqual(pool.find(it=>it.id===q.id),q);assert(!cls.chapter.check.some(id=>ids.includes(id)));for(const mode of['self','teach'])assert(buildSlides(cls.chapter,cls.art,cls.plan,pool,mode).length>0);
  }
  const acid=mods.get(units[1]).items.find(q=>q.id===ids[2]);assert(acid.prompt.includes('설명하는 그림'));assert(!acid.prompt.includes('설명 사진'));assert.deepEqual(acid.answerContract.answers,[0,2,3]);assert.equal(mods.get(units[0]).items.find(q=>q.id===ids[0]).answerContract.answer,0);assert.deepEqual(mods.get(units[0]).items.find(q=>q.id===ids[1]).answerContract.answers,[0,1,3]);
- assert(code.includes('standalone-question-context.js?v='+version));assert(code.includes('combustion-bank-paper.js?v='+version));assert(fs.readFileSync(new URL('./index.html',import.meta.url),'utf8').includes('v2.js?v='+version));
+ assert(code.includes('standalone-question-context.js?v='+cacheVersion));assert(code.includes('combustion-bank-paper.js?v='+version));assert(fs.readFileSync(new URL('./index.html',import.meta.url),'utf8').includes('v2.js?v='+cacheVersion));
 });

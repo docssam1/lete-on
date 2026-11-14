@@ -2,7 +2,7 @@ import{motionCurrentItems}from'./motion-question-language.js?v=20261104-motion-c
 // 물체의 운동 원문·짝·창작268문항의 동일 객체로 화면과 문항집을 연결한다.
 import {wireEnergyBankPaper as wireMotionBankPaper} from './energy-bank-paper.js?v=20261108-bank-print-ready';
 export {wireMotionBankPaper};
-import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
+import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-comparison-photos';
 import {sourceCaption,sourceChoiceHtml} from './source-presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const circ='①②③④⑤';

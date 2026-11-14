@@ -1,5 +1,5 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
-import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-observation-photos';
+import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-comparison-photos';
 // Daily Test — 스스로 공부하기의 마지막 장면(MSG 초·과·심 「Daily Test 01–09 · 채점과 첨삭」을 참고해 이 사이트에 맞게 다시 만듦).
 //  · 왼쪽: 문항을 하나씩 풀고(이전·다음), 문항마다 「말로 답하기」(받아쓴 초안 → 고쳐서 넣기)와 「스스로 체크」(점수와 별개).
 //    답안 사진은 이 기기(IndexedDB)에만 보관 — 선생님께 자동으로 보내지 않는다.

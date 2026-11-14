@@ -1,4 +1,4 @@
-import{photoFigureHtml}from'./photo-figure.js?v=20261115-biology-observation-photos';
+import{photoFigureHtml}from'./photo-figure.js?v=20261115-biology-comparison-photos';
 import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 import {bankAnswerText,bankPromptHtml,bankResponseTableHtml} from './bank-response-print.js?v=20261108-bank-answer-formats';
 import {sourceTableHtml} from './source-presentation.js';
