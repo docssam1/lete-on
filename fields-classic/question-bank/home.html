@@ -8,7 +8,7 @@
   <meta name="description" content="Gifted Math Bank — 보고 배우고(사고력 게임), 공부하고(개념 학습), 완성하기(사고력 문제은행)." />
   <title>Gifted Math Bank</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./home.css?v=20261111k" />
+  <link rel="stylesheet" href="./home.css?v=20261114b" />
 </head>
 <body class="hm">
   <!-- 첫 화면(원장 2026-10-24 「그냥 심플하게」, GDWEB 지학사 2022 개정교과서 참고): 검은 바탕 · WELCOME TO · 뒤에 얇은 큰 글자 · 기울어진 카드 셋 · 아래에 실제 화면 숏릴과 설명 -->
@@ -22,11 +22,13 @@
       <h1 class="hm-giant"><span>GIFTED MATH</span><span>BANK</span></h1>
       <!-- 이 기기에 공부한 기록이 있으면: 누르면 바로 그 차시(home.js) -->
       <a class="hm-continue" id="homeContinue" href="./start.html" hidden><b>이어서 하기</b><span id="homeContinueAt"></span></a>
-      <nav class="hm-cards" aria-label="세 가지 길">
+      <nav class="hm-cards" aria-label="네 가지 길">
         <!-- 개념 학습이 먼저(원장 2026-10-28 「개념학습과 사고력 게임 카드 위치 바꿔줘」) -->
         <a class="hm-card green" data-link href="./start.html"><small>공부하고</small><b>개념 학습</b><img src="./assets/front/orbi.webp" width="360" height="360" alt="" /></a>
         <a class="hm-card yellow" data-link href="./study.html?book=book-01&amp;unit=0&amp;at=game"><small>보고 배우고</small><b>사고력 게임</b><img src="./assets/front/foldy.webp" width="420" height="431" alt="" /></a>
         <a class="hm-card blue" data-link href="./similar.html"><small>완성하기</small><b>사고력 문제은행</b><img src="./assets/front/cubi.webp" width="360" height="360" alt="" /></a>
+        <!-- 입학 모의고사(원장 2026-11-14 「입학모의고사도 추가하자 이 화면에」) — 선발 대비 모의고사 화면(../mock/)으로 -->
+        <a class="hm-card lilac" href="../mock/index.html"><small>실전처럼</small><b>입학 모의고사</b><svg class="hm-paper" viewBox="0 0 200 220" aria-hidden="true" focusable="false"><g transform="rotate(-8 100 110)"><rect x="34" y="18" width="132" height="176" rx="10" fill="#fffdf6" stroke="#15140f" stroke-width="5"/><path d="M58 52h84M58 92h84M58 132h84M58 172h54" stroke="#15140f" stroke-width="5" stroke-linecap="round" opacity=".18"/><circle cx="62" cy="52" r="11" fill="none" stroke="#e5484d" stroke-width="5"/><circle cx="62" cy="92" r="11" fill="none" stroke="#e5484d" stroke-width="5"/><path d="M52 122l20 20M72 122l-20 20" stroke="#15140f" stroke-width="5" stroke-linecap="round"/><text x="148" y="190" font-family="sans-serif" font-size="34" font-weight="800" fill="#e5484d" text-anchor="end">90</text></g></svg></a>
       </nav>
     </section>
 

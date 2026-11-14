@@ -10,6 +10,7 @@
   --yellow: #f6cf47;
   --green: #66d49b;
   --blue: #5b8cf5;
+  --lilac: #c4a8f5;
   --sans: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 
@@ -61,12 +62,16 @@ body.hm {
   animation: hm-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--delay);
 }
 .hm-card small { display: block; font-size: clamp(13px, 1.15vw, 15px); font-weight: 500; }
-.hm-card b { display: block; margin-top: 6px; font-size: clamp(26px, 2.9vw, 40px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; }
+.hm-card b { display: block; margin-top: 6px; word-break: keep-all; font-size: clamp(24px, 2.5vw, 36px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; }
 .hm-card img { position: absolute; right: -6%; bottom: -6%; width: 78%; height: auto; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .hm-card.yellow { background: var(--yellow); }
 .hm-card.green { background: var(--green); }
 .hm-card.green img { width: 66%; right: 0; bottom: -2%; }
 .hm-card.blue { background: var(--blue); }
+.hm-card.lilac { background: var(--lilac); }
+.hm-card .hm-paper { position: absolute; right: -4%; bottom: -6%; width: 70%; height: auto; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.hm-card:nth-child(4) { --tilt: 5deg; --delay: 0.35s; margin-top: 18px; }
+.hm-card:hover .hm-paper, .hm-card:focus-visible .hm-paper { transform: scale(1.05) rotate(-3deg); }
 /* 기울기·순서는 자리로(카드 순서를 바꿔도 부채꼴이 그대로) */
 .hm-card:nth-child(1) { --tilt: -6deg; --delay: 0.05s; }
 .hm-card:nth-child(2) { --tilt: -2deg; --delay: 0.15s; margin-top: 18px; }
@@ -107,7 +112,8 @@ body.hm {
   .hm-giant { top: 150px; transform: none; font-size: clamp(56px, 19vw, 120px); }
   .hm-cards { flex-direction: column; align-items: center; gap: 18px; }
   .hm-card { width: min(340px, 100%); max-width: none; flex: none; aspect-ratio: 17 / 11; }
-  .hm-card:nth-child(2) { margin-top: 0; }
+  .hm-card:nth-child(2), .hm-card:nth-child(4) { margin-top: 0; }
+  .hm-card .hm-paper { width: 44%; right: -2%; bottom: -10%; }
   .hm-card img { width: 52%; right: -4%; bottom: -10%; }
   .hm-card.green img { width: 44%; right: 2%; bottom: -6%; }
   .hm-screen { border-radius: 16px; }
@@ -116,7 +122,7 @@ body.hm {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hm-card, .hm-card img { animation: none; transition: none; }
+  .hm-card, .hm-card img, .hm-card .hm-paper { animation: none; transition: none; }
 }
 
 /* 숏릴 큰 글씨(장면마다 바뀌며 아래에서 올라온다) · 소리 단추 */
