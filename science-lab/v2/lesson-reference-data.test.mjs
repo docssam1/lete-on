@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-import {lessonReferenceItems,LESSON_REFERENCE_UNITS,LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
+import {lessonReferenceItems,LESSON_REFERENCE_UNITS,LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import {withThink} from './think-merge.js';
 import {revisedClassroom,classroomQuestions} from './revised-lesson.js';
 import {buildSlides} from './deck.js';
@@ -28,6 +28,8 @@ const start=source.indexOf('const UNITS = ')+14,end=source.indexOf('\n// 문제�
 const loaders=new vm.Script('('+source.slice(start,end).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,new URL('./v2.js',import.meta.url)).href)}).runInContext(vm.createContext({withThink}));
 const units=await Promise.all(LESSON_REFERENCE_UNITS.map(async unit=>({unit,data:await loaders[unit]()})));
 const targets=units.flatMap(({unit,data})=>data.items.filter(q=>q.contentVersion===LESSON_REFERENCE_DATA_VERSION).map(q=>({unit,q})));
+const standaloneTargets=units.flatMap(({unit,data})=>data.items.filter(q=>q.contentVersion===LESSON_STANDALONE_DATA_VERSION).map(q=>({unit,q})));
+const allTargets=[...targets,...standaloneTargets];
 const get=id=>targets.find(({q})=>q.id===id).q;
 const escape=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const context=vm.createContext({...presentation,...content,writtenPracticeHtml,seasonAnswerHint,FIG:{},MISC:null,CIRC:['①','②','③','④','⑤'],esc:escape});
@@ -38,7 +40,8 @@ const dailyGivens=new vm.Script(dailySource.slice(givenStart,givenEnd)+';givensH
 
 test('data-dependent authored questions show their required tables online, in print and in Daily',()=>{
  assert.equal(units.length,8);assert.equal(targets.length,17);
- for(const {q}of targets){
+ assert.equal(standaloneTargets.length,6);
+ for(const {q}of allTargets){
   assert.equal(q.status,'authored');assert.equal(q.sourceRef.type,'authored-lesson');
   const tables=Object.values(q.givens).filter(v=>v?.머리&&v?.행);assert(tables.length);
   for(const table of tables){assert(table.caption.includes('모형'));for(const row of table.행)assert.equal(row.length,table.머리.length);}
@@ -73,7 +76,7 @@ test('reference conditions and values come from the same model data as the lesso
 });
 
 test('adding reference material preserves all grading contracts and historical question presentations',()=>{
- for(const {q}of targets){
+ for(const {q}of allTargets){
   const prior=q.previousVersions.at(-1),{version,...snapshot}=prior,restored=questionAtVersion(q,version);
   assert.equal(snapshot.givens,null);for(const [key,value]of Object.entries(snapshot))assert.deepEqual(restored[key],value);
   for(const [key,value]of Object.entries(snapshot))if(!['givens','contentVersion','previousVersions'].includes(key))assert.deepEqual(q[key],value);
@@ -82,12 +85,52 @@ test('adding reference material preserves all grading contracts and historical q
   for(const value of alternatives)assert.deepEqual(gradeDaily(q,value),gradeDaily(snapshot,value));
   const state={answers:{[q.id]:answer,other:'keep'},graded:{[q.id]:{status:'correct'}},questionVersions:{[q.id]:version}},before=structuredClone(state);
   assert.equal(restoreDailyQuestions([q],state)[0].givens,null);
-  const next=restartCurrentQuestion(state,q);assert.deepEqual(state,before);assert.equal(next.answers.other,'keep');assert.equal(next.revisionHistory[q.id][0].version,version);assert.equal(next.questionVersions[q.id],LESSON_REFERENCE_DATA_VERSION);
+  const next=restartCurrentQuestion(state,q);assert.deepEqual(state,before);assert.equal(next.answers.other,'keep');assert.equal(next.revisionHistory[q.id][0].version,version);assert.equal(next.questionVersions[q.id],questionVersion(q));
   const oldPaper={paper:snapshotDailyPaper([snapshot]),answers:{[q.id]:answer}};
   const resolved=resolveDailyPaper([q],oldPaper);assert(resolved.readOnly);assert.equal(resolved.questions[0].givens,null);
   const currentPaper=resolveDailyPaper([q],{paper:snapshotDailyPaper([q])});assert(!currentPaper.readOnly);assert.deepEqual(currentPaper.questions[0].givens,q.givens);
   assert.equal(questionAtVersion(q,'unknown-reference-version'),null);
  }
+});
+
+test('six standalone questions carry enough model conditions to recover their answers without another lesson',()=>{
+ const rows=Object.fromEntries(standaloneTargets.map(({q})=>[q.id,q]));
+ assert.deepEqual(Object.keys(rows).sort(),['c22-s32-u01-t12','c22-s32-u02-t05','c22-s32-u04-t07','c22-s32-u04-t08','c22-s42-u01-t05','c22-s42-u02-t07'].sort());
+ const material=rows['c22-s32-u01-t12'];
+ assert.deepEqual(material.givens.결과표,get('c22-s32-u01-t09').givens.결과표);
+ assert(material.givens.자료.includes('같은 모양과 크기'));
+ const evaporation=rows['c22-s32-u02-t05'];
+ assert.deepEqual(evaporation.givens.결과표.행,[['바닷물','20 mL',evapModel('바닷물',20).look],['수돗물','20 mL',evapModel('수돗물',20).look],['바닷물','40 mL',evapModel('바닷물',40).look]]);
+ assert.match(evaporation.givens.자료,/모형에서 정한 값/);
+ const residues=evaporation.givens.결과표.행.map(row=>[row[2]]);
+ assert.equal(gradeDaily(evaporation,residues).status,'correct');
+ const noWash=rows['c22-s32-u04-t07'],wash=rows['c22-s32-u04-t08'];
+ assert.match(noWash.givens.자료,/A에게만/);assert.match(noWash.givens.자료,/동시에 악수/);
+ // Replay the printed pairing rules, independently of the glitter model helper.
+ const replay=washed=>{
+  const marked=new Set(['A']);
+  for(const [,pairs]of noWash.givens.악수표.행){
+   if(washed)for(const name of ['B','D','F'])marked.delete(name);
+   const before=new Set(marked);
+   for(const pair of pairs.split(' / ')){
+    const [a,b]=pair.split('–');
+    if(before.has(a)||before.has(b)){marked.add(a);marked.add(b);}
+   }
+  }
+  return marked.size;
+ };
+ assert.equal(noWash.choices[noWash.answerContract.answer],replay(false)+'명');
+ assert.equal(replay(true),2);assert.match(wash.givens.자료,/악수하기 전에 B·D·F의 반짝이를 지워요/);
+ assert.deepEqual(wash.givens.결과표,get('c22-s32-u04-t12').givens.결과표);
+ assert.equal(gradeDaily(wash,0).status,'correct');
+ const moon=rows['c22-s42-u01-t05'];
+ assert.deepEqual(moon.givens.관찰표,get('c22-s42-u01-t12').givens.관찰표);
+ assert.equal(gradeDaily(moon,moon.givens.관찰표.행.map(row=>[row[3]])).status,'correct');
+ const ecology=rows['c22-s42-u02-t07'];
+ assert.match(ecology.givens.자료,/실제 생태계의 미래를 알아낸 값이 아니라 모형 값/);
+ const values=Object.fromEntries(ecology.givens.결과표.행.map(([name,before,after])=>[name,after-before]));
+ assert(values['풀(포기)']<0);assert(values['토끼(마리)']>0);assert(values['여우(마리)']<0);
+ assert.equal(gradeDaily(ecology,0).status,'correct');
 });
 
 test('classroom copies share the three revised bank materials and preserve original and unreviewed inputs',async()=>{

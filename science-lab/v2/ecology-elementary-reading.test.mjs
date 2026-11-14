@@ -1,4 +1,4 @@
-import {LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
+import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -40,7 +40,7 @@ test('actual ecology bank retains grading and every historical presentation when
  const before=await priorBank(),snapshot=structuredClone(before),{items:current,source,similar}=await actualBank();
  assert.equal(current.length,92);let changed=0;
  for(let i=0;i<before.length;i++){
-  const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(q.contentVersion!==LESSON_REFERENCE_DATA_VERSION)assert.deepEqual(q.givens,old.givens);
+  const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);
   if(q.prompt===old.prompt)continue;changed++;assert.equal(questionAtVersion(q,ECOLOGY_ELEMENTARY_VERSION).prompt,q.prompt);
   const ac=old.answerContract;
   const values=ac.type==='single-choice'?[0,1,2,3,4]:ac.type==='multi-choice'?Array.from({length:32},(_,mask)=>[0,1,2,3,4].filter(n=>mask&(1<<n))):ac.type==='short-text'?[ac.answer,...(ac.accepted||[]),'different answer']:ac.type==='written-explanation'?[ac.sample,'different explanation']:ac.type==='cloze'?[ac.blanks.map(b=>b.answer),ac.blanks.map(()=> 'different answer')]:ac.type==='table-fill'?[ac.rows.map(r=>r.answer),[]]:[];

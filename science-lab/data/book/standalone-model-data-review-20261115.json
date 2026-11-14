@@ -1,0 +1,47 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "수업 자료 없이 따로 풀 때 조건이나 관찰 결과가 빠져 있던 창작 모형 문항의 자료 보완",
+  "contentVersion": "20261115-standalone-model-data",
+  "questions": [
+    "c22-s32-u01-t12",
+    "c22-s32-u02-t05",
+    "c22-s32-u04-t07",
+    "c22-s32-u04-t08",
+    "c22-s42-u01-t05",
+    "c22-s42-u02-t07"
+  ],
+  "data": {
+    "origin": "기존 수업의 막대·증발 접시·반짝이 손·달 관찰·풀밭 모형",
+    "newMeasurement": false,
+    "modelConditionsExplicit": true,
+    "evaporationAmounts": "20 mL와 40 mL의 제시된 모형 값을 읽도록 하며 염분 농도 계산을 요구하지 않음",
+    "priorReferenceQuestions": 17,
+    "priorReferenceVersionPreserved": "20261108-lesson-reference-data"
+  },
+  "verification": {
+    "actualUnitLoaders": 32,
+    "sourceUnits": 29,
+    "originalQuestionsPreserved": 1763,
+    "currentItemsCompared": 3179,
+    "unchangedCurrentItems": 3173,
+    "changedFields": ["givens", "contentVersion", "previousVersions"],
+    "promptsChoicesAnswersSourceReferencesPreserved": true,
+    "allPreviousPresentationsAndGradingPreserved": true,
+    "printedPairingRulesIndependentlyReplayed": true,
+    "onlineDailyAndPrintHtmlChecked": true,
+    "nativeTestFiles": 276,
+    "nativeTests": 1471,
+    "nativePassed": 1469,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": [
+    "지구와 바다·감염병과 건강한 생활·과학과 나의 진로의 현행 원문 확보",
+    "현행 전체 판본 확보",
+    "실제 PC·휴대폰·A4 지면과 음성·WebGL·3D 동작 검수",
+    "운영 메인 병합·배포"
+  ]
+}

@@ -8,7 +8,44 @@ import {BASE,YEARS,meadowAt} from '../../scenes/meadow-model.js';
 import {HOUSES,WALL} from '../../scenes/sealevel-model.js';
 import {START,MINUTES,WATERS as BREAD_WATERS,breadModel} from '../../scenes/bread-model.js';
 export const LESSON_REFERENCE_DATA_VERSION='20261108-lesson-reference-data';
+export const LESSON_STANDALONE_DATA_VERSION='20261115-standalone-model-data';
 const entries={
+  "c22-s32-u01-t12": {
+    "prompt": "친구가 ‘모양과 크기가 같으면 성질도 같다’고 말했어요. 네 막대 실험에서 알게 된 내용을 넣어 친구의 말을 바르게 고쳐 쓰세요.",
+    "previousVersion": "20261108-grade3-practice-language",
+    "version": LESSON_STANDALONE_DATA_VERSION,
+    "reference": "materialAll"
+  },
+  "c22-s32-u02-t05": {
+    "prompt": "증발 접시 실험에서 물이 모두 날아간 뒤 남은 것을 써요.",
+    "previousVersion": 1,
+    "version": LESSON_STANDALONE_DATA_VERSION,
+    "reference": "evaporationAmounts"
+  },
+  "c22-s32-u04-t07": {
+    "prompt": "아무도 손을 씻지 않을 때, 세 차례 악수한 뒤 반짝이가 묻은 친구는 모두 몇 명이었나요?",
+    "previousVersion": 1,
+    "version": LESSON_STANDALONE_DATA_VERSION,
+    "reference": "glitterPairs"
+  },
+  "c22-s32-u04-t08": {
+    "prompt": "‘B·D·F가 차례마다 손 씻기’ 규칙이에요. 세 차례 뒤 반짝이가 묻은 친구가 2명뿐이었던 까닭을 고르세요.",
+    "previousVersion": "20261108-grade3-practice-language",
+    "version": LESSON_STANDALONE_DATA_VERSION,
+    "reference": "glitterWash"
+  },
+  "c22-s42-u01-t05": {
+    "prompt": "저녁 7시쯤 같은 곳에서 남쪽을 바라보고 관찰했어요. 날마다 달이 보인 방향을 써요.",
+    "previousVersion": 1,
+    "version": LESSON_STANDALONE_DATA_VERSION,
+    "reference": "moon"
+  },
+  "c22-s42-u02-t07": {
+    "prompt": "풀 → 토끼 → 여우의 먹이 관계만 나타낸 모형이에요. 여우가 모두 사라진 조건에서 몇 해 뒤의 모습으로 알맞은 것을 고르세요.",
+    "previousVersion": "20261108-ecology-elementary",
+    "version": LESSON_STANDALONE_DATA_VERSION,
+    "reference": "meadowFox"
+  },
   "c22-s32-u01-t05": {
     "prompt": "네 막대를 물에 넣었을 때의 결과를 써요.",
     "previousVersion": 1,
@@ -103,6 +140,7 @@ function referenceData(kind){
  if(kind==='materialWater')return {자료:materialNotice,결과표:table('물에 넣기 · 막대 모형',['막대','물에 넣었을 때'],MATERIALS.map(m=>[materialName(m),materialResult('물에 넣기',m).text]))};
  if(kind==='materialAll')return {자료:materialNotice,결과표:table('네 막대 비교 · 모형 자료',['막대',...TESTS],MATERIALS.map(m=>[materialName(m),...TESTS.map(t=>materialResult(t,m).text)]))};
  if(kind==='evaporation')return {자료:'두 물을 같은 양씩 같은 모양의 접시에 담아 같은 방법으로 가열한 모형 자료예요. 수돗물에도 물질이 조금 녹아 있을 수 있지만, 이 모형에서는 눈에 띄는 알갱이가 거의 남지 않는 것으로 나타냈어요.',결과표:table('증발 접시 · 모형 자료',['물의 종류','처음 물의 양','물을 모두 증발시킨 뒤'],EVAP_WATERS.map(w=>{const m=evapModel(w,20);return[w,m.ml+' mL',m.look];}))};
+ if(kind==='evaporationAmounts')return {자료:'같은 모양의 접시에서 물을 모두 증발시켰다고 정한 모형 자료예요. 표의 양은 모형에서 정한 값이에요. 실제 바닷물에 녹아 있는 물질의 양은 장소에 따라 달라요. 수돗물에도 물질이 조금 녹아 있을 수 있지만, 이 모형에서는 눈에 띄는 알갱이가 거의 남지 않는 것으로 나타냈어요.',결과표:table('물의 양에 따른 증발 접시 결과 · 모형 자료',['물의 종류','처음 물의 양','물을 모두 증발시킨 뒤'],[['바닷물',20],['수돗물',20],['바닷물',40]].map(([water,ml])=>[water,ml+' mL',evapModel(water,ml).look]))};
  if(kind==='ruler')return {자료:'같은 플라스틱 자에서 내민 길이와 튕기는 세기를 바꾼 모형 자료예요. 소리의 높낮이와 크기를 나누어 읽어 보세요.',결과표:table('자 튕기기 · 모형 자료',['내민 길이','튕기는 세기','소리의 높낮이','소리의 크기'],LENGTHS.flatMap(len=>STRENGTHS.map(strength=>{const m=rulerModel(len,strength);return[len+' cm',strength,m.pitch,m.loud];})))};
  if(kind==='glitterPairs')return {자료:'여섯 친구 A~F 중 처음에는 A에게만 반짝이가 묻어 있어요. 아무도 손을 씻지 않아요. 반짝이가 묻은 친구와 악수하면 두 친구 모두 반짝이가 묻는다고 정해요. 같은 차례의 세 짝은 동시에 악수해요. 반짝이는 손으로 옮겨 가는 모습을 나타낸 표식이에요.',악수표:table('반짝이 모형의 규칙',['차례','악수하는 짝'],ROUNDS.map((pairs,i)=>[(i+1)+'차례',pairs.map(pair=>pair.join('–')).join(' / ')]))};
  if(kind==='glitterWash')return {자료:'여섯 친구 A~F 중 처음에는 A에게만 반짝이가 묻어 있어요. 손 씻기 조건에서는 매 차례 악수하기 전에 B·D·F의 반짝이를 지워요. 반짝이는 손으로 옮겨 가는 모습을 나타낸 표식이에요. 인원수는 모형 규칙으로 나온 값이에요.',결과표:table('반짝이가 묻은 친구 · 모형 자료',['차례','손 씻기 없음','B·D·F가 차례마다 손 씻기'],[0,1,2,3].map(round=>[round?round+'차례 뒤':'처음',glitterModel(round,0).result,glitterModel(round,1).result]))};
@@ -125,7 +163,7 @@ export function lessonReferenceItems(rows,unit){
   const entry=entries[q.id];
   if(!entry||!q.id.startsWith(unit+'-')||q.status!=='authored'||q.sourceRef?.type!=='authored-lesson'||q.prompt!==entry.prompt||(q.contentVersion||1)!==entry.previousVersion||q.givens!=null||q.figure||q.visualModel||q.sourceContent||q.diagnosticOverride)return q;
   changed=true;if(cache.has(q))return cache.get(q);
-  const current={...q,givens:referenceData(entry.reference),contentVersion:LESSON_REFERENCE_DATA_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1}]};
+  const current={...q,givens:referenceData(entry.reference),contentVersion:entry.version||LESSON_REFERENCE_DATA_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1}]};
   cache.set(q,current);return current;
  });return changed?next:rows;
 }

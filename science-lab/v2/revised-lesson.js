@@ -1,6 +1,6 @@
 import{withElementaryPromptClassroom}from'../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import {withLifeElementaryClassroom} from '../data/book/s31-u04.elementary.js?v=20261108-life-elementary';
-import{withLessonReferenceClassroom}from'../data/book/lesson-reference-data.js?v=20261108-lesson-reference-data';
+import{withLessonReferenceClassroom}from'../data/book/lesson-reference-data.js?v=20261115-standalone-model-data';
 import{withEcologyElementaryClassroom}from'../data/book/c22-s42-u02.elementary.js?v=20261108-ecology-elementary';
 import{withVersionedClassroomQuestions}from'./classroom-question-versions.js?v=20261108-classroom-review-versions';
 import{withBiologyElementaryBankClassroom}from'../data/book/s41-u04.editorial.js?v=20261108-biology-elementary-bank';
