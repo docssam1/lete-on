@@ -1,9 +1,9 @@
 import{findLifeItem}from'./book-life.js';
 import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
-import{workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261105-career-reading-science';
+import{workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261115-standalone-question-context';
 import{careerSources}from'../data/activities/c22-s62-u04.resources.js';
 import{seasonAnswerHint as careerAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
-import{careerCase}from'./career-compare-model.js?v=20261104-student-science-language';
+import{careerCase}from'./career-compare-model.js?v=20261115-standalone-question-context';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const p=s=>`<p>${esc(s)}</p>`;
 const program=id=>{const list=id==='all'?careerSources:careerSources.filter(r=>r.id===id);if(!list.length)throw Error('과학과 진로 자료 링크 없음 '+id);return `<section class="career-program" aria-label="과학과 진로 참고 자료"><ul class="career-source-links">${list.map(r=>`<li><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.title)}</a><p>${esc(r.publisher+' · '+r.scope)}</p></li>`).join('')}</ul></section>`;};

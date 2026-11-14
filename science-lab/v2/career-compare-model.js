@@ -1,5 +1,5 @@
 // 같은 교재의 연습 자료와 직업 속 과학을 비교한다. 실제 조사·관찰 결과와 구별한다.
-import{workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261104-student-science-language';
+import{workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261115-standalone-question-context';
 const clone=x=>JSON.parse(JSON.stringify(x)),data=n=>{const t=clone(workbook.questions[n-1].table);return{heads:t.머리,rows:t.행};};
 const cases={
  current:{label:'현재 문제를 알아볼 자료',...data(1),conditions:'교재의 가상 자료 카드예요. 같은 관측소의 지난여름 변화를 알아볼 자료를 찾는 상황이에요.',question:'질문에 가장 알맞은 자료는 무엇일까요?',options:{station:'ㄱ은 같은 관측소에서 같은 기준으로 센 기록이다',newest:'방법이 없어도 가장 최근 광고를 고른다',anywhere:'다른 장소의 조사라면 무엇이든 그대로 비교한다',unknown:'아직 잘 모르겠다'},reason:'ㄱ은 묻는 관측소와 조사 방법에 맞는 기록이에요. ㄷ은 교내 장소 비교로 조사 대상이 달라요. 자료를 만든 시기뿐 아니라 조사한 장소와 기간, 방법을 함께 살펴요.'},

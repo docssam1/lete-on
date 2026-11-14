@@ -1,4 +1,4 @@
-import{withCareerReadableWorkbook}from'./c22-s62-u04.editorial.js?v=20261107-career-readable-workbook';
+import{withCareerReadableWorkbook}from'./c22-s62-u04.editorial.js?v=20261115-standalone-question-context';
 import{withGuidanceParticles}from'./term-particle-language.js?v=20261105-guidance-particles';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import{withStudentScienceLanguage}from'./student-science-language.js';

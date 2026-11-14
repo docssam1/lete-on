@@ -12,7 +12,13 @@ export function questionAtVersion(it,version){
  let presentation=it;
  // Older choice-only deltas inherit unchanged fields from the nearest later
  // snapshot, rather than from a subsequently rewritten current question.
- for(let i=history.length-1;i>=index;i--){const{version:_,...fields}=history[i];presentation={...presentation,...clone(fields)};}
+ for(let i=history.length-1;i>=index;i--){
+  const{version:_,...fields}=history[i];
+  // A full snapshot also records absent fields; newer pictures or data must not leak into it.
+  if(fields.snapshotKind==='full-question'){
+   const{snapshotKind:__,...snapshot}=fields;presentation=clone(snapshot);
+  }else presentation={...presentation,...clone(fields)};
+ }
  return{...presentation,contentVersion:version};
 }
 export function pickedChoiceTexts(it,event){

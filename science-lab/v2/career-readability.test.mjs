@@ -1,10 +1,12 @@
+import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import test from 'node:test';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {items,source,similar} from '../data/units/c22-s62-u04.js';import * as misc from '../data/units/c22-s62-u04.misc.js';
 import {careerCurrentItems} from './career-question-language.js';
-import {careerReadableCurrentItems,CAREER_READABILITY_VERSION} from '../data/book/c22-s62-u04.editorial.js';import {workbook,careerReadablePriorWorkbook} from '../data/book/c22-s62-u04.workbook.js';
+import {careerReadableCurrentItems,careerReadableWorkbookBeforeContext,CAREER_READABILITY_VERSION} from '../data/book/c22-s62-u04.editorial.js';import {careerReadablePriorWorkbook} from '../data/book/c22-s62-u04.workbook.js';
 import {gradeDaily} from './daily-grade.js';import {questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts} from './question-revision.js';
 import {revisedClassroom,classroomQuestions} from './revised-lesson.js';import * as book from '../data/book/c22-s62-u04.book.js';
 import {guidanceParticleCurrentItems} from '../data/book/term-particle-language.js';
+const workbook=careerReadableWorkbookBeforeContext(careerReadablePriorWorkbook);
 const unit='c22-s62-u04',prior=guidanceParticleCurrentItems(careerCurrentItems(items),'c22-s62-u04'),current=careerReadableCurrentItems(prior,unit);
 test('career wording keeps every prior field, grading result and saved response restorable',()=>{
  const before=structuredClone(prior);let changed=0;
@@ -42,6 +44,6 @@ test('current sample wording and conditions retain strict automatic grading',()=
  for(const html of Object.values(workbook.figures).filter(x=>x.includes('career-quick-grid')))for(const m of html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[^<]*<\/td><td>([\s\S]*?)<\/td><\/tr>/g)){const q=workbook.questions[Number(m[1])-1];if(q.responseContract.kind==='single-choice')assert([q.answer,'①②③④⑤'[q.key]].includes(m[2]));else if(!['written','draw'].includes(q.form))assert.equal(m[2],q.answer);}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,current);assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===CAREER_READABILITY_VERSION).length,8);
- const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/career-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,110);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,standaloneQuestionContexts(current,unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===CAREER_READABILITY_VERSION).length,8);
+ const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/career-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,109);assert.equal(result.contextQuestions,1);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

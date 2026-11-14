@@ -1,3 +1,4 @@
+import{STANDALONE_CONTEXT_VERSION}from'../data/book/standalone-question-context.js';
 import {LESSON_REFERENCE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import {biologyReadableCurrentItems} from '../data/book/s41-u04.editorial.js';
 import {biologyCurrentItems} from '../data/book/biology-student-language.js';
@@ -33,7 +34,7 @@ test('actual bank loader preserves every answer boundary and saved presentation 
   const before=await priorBank(),savedBefore=structuredClone(before),{items:current}=await actualBank();
   assert.equal(current.length,76);let changed=0;
   for(let i=0;i<before.length;i++){
-    const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(q.contentVersion!==LESSON_REFERENCE_DATA_VERSION)assert.deepEqual(q.givens,old.givens);
+    const old=before[i],latest=current[i],q=latest.contentVersion===STANDALONE_CONTEXT_VERSION?questionAtVersion(latest,latest.previousVersions.at(-1).version):latest;assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(q.contentVersion!==LESSON_REFERENCE_DATA_VERSION)assert.deepEqual(q.givens,old.givens);
     const ac=q.answerContract,values=ac.type==='single-choice'?[0,1,2,3,4]:ac.type==='multi-choice'?Array.from({length:32},(_,mask)=>[0,1,2,3,4].filter(n=>mask&(1<<n))):ac.type==='short-text'?[ac.answer,...(ac.accepted||[]),'다른 답']:ac.type==='written-explanation'?[ac.sample,'다른 설명']:[];
     for(const value of values)assert.deepEqual(gradeDaily(q,value),gradeDaily(old,value));
     if(q.prompt===old.prompt)continue;

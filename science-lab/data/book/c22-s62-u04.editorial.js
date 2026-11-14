@@ -1,3 +1,4 @@
+import{withCareerStandaloneContext}from'./standalone-question-context.js?v=20261115-standalone-question-context';
 import{questionPatches,upperNotes,sectionTitles,coreNotes,selfQuestions}from'./c22-s62-u04.editorial-data.js?v=20261104-career-book';
 export{questionPatches as CAREER_QUESTION_PATCHES};
 const changes=[['구체적인 업무','직업에서 하는 일'],['업무의 과학적 연결','일에 이용되는 과학'],['과학적 연결','과학과의 관계'],['자료의 지위','자료에서 알 수 있는 것'],['자료 지위','자료에서 알 수 있는 것'],['조건부 예상','조건에 따른 예상'],['미확인 질문','더 알아볼 질문'],['미확인 칸','더 알아볼 점을 적는 칸'],['미확인으로','아직 알 수 없다고'],['미확인을','아직 알 수 없는 것을'],['미확인과','아직 모르는 것과'],['미확인','아직 알 수 없음'],['미관측','관측하지 않음'],['미실행','아직 하지 않음'],['미수행','아직 하지 않음'],['지위 남기기','관측과 예상 구별하기'],['업무','일']];
@@ -1365,7 +1366,7 @@ const careerReadablePages={
   ]
  }
 };
-export function withCareerReadableWorkbook(workbook){
+export function careerReadableWorkbookBeforeContext(workbook){
  if(workbook.unit!=='c22-s62-u04')return workbook;const revise=pages=>pages.map((page,i)=>careerReadablePages[i+1]?{...page,...structuredClone(careerReadablePages[i+1])}:page);return {...workbook,figures:{...workbook.figures,...careerReadableFigures},questions:workbook.questions.map(q=>careerReadableQuestions[q.no]?{...q,...structuredClone(careerReadableQuestions[q.no])}:q),pages:revise(workbook.pages),teacherStudentPages:revise(workbook.teacherStudentPages)};
 }
 const careerReadableBank={
@@ -4348,3 +4349,5 @@ const careerReadableCache=new WeakMap();
 export function careerReadableCurrentItems(rows,unit){
  if(unit!=='c22-s62-u04'||!Array.isArray(rows))return rows;let changed=false;const next=rows.map(question=>{const patch=careerReadableBank[question.id];if(!patch||question.status!=='authored'||question.sourceRef?.type!=='authored-supplement'||(question.contentVersion||1)!==careerReadablePriorVersions[question.id])return question;changed=true;if(careerReadableCache.has(question))return careerReadableCache.get(question);const clone=value=>JSON.parse(JSON.stringify(value)),current={...question,...clone(patch),contentVersion:CAREER_READABILITY_VERSION,previousVersions:[...(question.previousVersions?clone(question.previousVersions):[]),{...clone(question),version:question.contentVersion||1}]};careerReadableCache.set(question,current);return current;});return changed?next:rows;
 }
+
+export const withCareerReadableWorkbook=workbook=>withCareerStandaloneContext(careerReadableWorkbookBeforeContext(workbook));

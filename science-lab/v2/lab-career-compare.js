@@ -1,7 +1,7 @@
-import{CAREER_CASE_IDS,careerCase,careerCompareRecord,validCareerCompareRow,careerCompareValues,careerComparisonProgress}from'./career-compare-model.js?v=20261104-student-science-language';
+import{CAREER_CASE_IDS,careerCase,careerCompareRecord,validCareerCompareRow,careerCompareValues,careerComparisonProgress}from'./career-compare-model.js?v=20261115-standalone-question-context';
 const clone=x=>JSON.parse(JSON.stringify(x)),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const table=(heads,rows)=>`<div class="career-compare-table"><table><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-import{workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261104-student-science-language';
+import{workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261115-standalone-question-context';
 const visual=m=>{if(!m.figureKey)return '';const html=workbook.figures[m.figureKey];if(!html)throw Error(`과학과 진로 비교 그림 없음 ${m.figureKey}`);return html.replace(/<figcaption\b[^>]*>[\s\S]*?<\/figcaption>/g,'').replace(/<p class="ed-photo-note">[\s\S]*?<\/p>/g,'');};
 const caption=m=>m.figureKey?(workbook.figures[m.figureKey].match(/<figcaption\b[^>]*>[\s\S]*?<\/figcaption>|<p class="ed-photo-note">[\s\S]*?<\/p>/g)||[]).map(s=>s.replace(/figcaption/g,'p')).join(''):'';
 let seq=0;

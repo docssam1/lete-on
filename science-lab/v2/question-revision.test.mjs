@@ -1,4 +1,17 @@
 import test from'node:test';import assert from'node:assert/strict';import{execFileSync}from'node:child_process';import{fileURLToPath}from'node:url';import{items}from'../data/units/c22-s32-u03.js';import{questionAtVersion,questionVersion,pickedChoiceTexts,presentationRecord,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{gradeDaily}from'./daily-grade.js';
+
+test('full snapshots remove newly added fields while older choice-only revisions retain their inherited context',()=>{
+ const prior={id:'full-snapshot-check',prompt:'Earlier wording',choices:['clear A','clear B'],answerContract:{type:'single-choice',answer:0},contentVersion:'readable',previousVersions:[{version:1,choices:['old A','old B']}]};
+ const current={...structuredClone(prior),prompt:'Current wording',figure:'new.webp',figureNote:'New picture',givens:{자료:'New data'},contentVersion:'context',previousVersions:[...structuredClone(prior.previousVersions),{...structuredClone(prior),version:'readable',snapshotKind:'full-question'}]};
+ const before=structuredClone(current);
+ assert.deepEqual(questionAtVersion(current,'readable'),prior);
+ assert.deepEqual(questionAtVersion(current,1),questionAtVersion(prior,1));
+ const restored=questionAtVersion(current,1);
+ assert.deepEqual(restored.choices,['old A','old B']);assert.equal(restored.prompt,'Earlier wording');
+ for(const key of ['figure','figureNote','givens','snapshotKind'])assert(!Object.hasOwn(restored,key));
+ restored.choices[0]='changed local copy';assert.deepEqual(current,before);
+ assert.equal(questionAtVersion(current,'missing'),null);
+});
 const revised=items.filter(it=>it.previousVersions?.length);
 test('보기 두 문항만 수정하며 옛 보기·문항 ID·정답 계약과 정답 위치를 유지한다',()=>{
  assert.deepEqual(revised.map(x=>x.id),['c22-s32-u03-b25','c22-s32-u03-b41']);assert.equal(items.length,64);
