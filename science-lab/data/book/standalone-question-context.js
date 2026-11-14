@@ -1,11 +1,25 @@
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
+export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const bacteriaFigure='assets/bank/s41-u04/s3-q11.webp';
 const bacteriaNote='세균의 네 가지 확대 사진. 오른쪽 위에는 초록색으로 표현된 길쭉한 막대 모양의 세균이 보입니다.';
 // The three existing rows from career question 18, shared without loading its full manuscript.
 const waterTable={머리:['상황','쓸 수 있는 물','필요한 물'],행:[['ㄱ','60 L','50 L'],['ㄴ','60 L','70 L'],['ㄷ','60 L','55 L']]};
 const waterNotice='연습을 위해 만든 자료예요. 실제 지역·인물의 통계나 학생이 직접 조사한 결과, 진로 검사 결과는 아니에요.';
+// Reuse season question 28's five samples without claiming an exact transit time.
+const altitudeTable={머리:['시각(KST)','고도'],행:[['10:15','41°'],['11:15','53°'],['12:15','62°'],['13:15','60°'],['14:15','49°']]};
+const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 관측하거나 정밀하게 계산한 천문 자료는 아니에요. 정확한 남중 시각은 따로 주어지지 않았어요.';
 const entries={
+ 'c22-s62-u01-b030':{
+  unit:'c22-s62-u01',version:'20261106-season-readable-workbook',currentVersion:OBSERVATION_CONTEXT_VERSION,
+  prompt:'친구가 “표에서 12:15의 고도가 가장 높으니 정확히 그때 남중했어”라고 했어요. 이 기록만으로 그렇게 말할 수 있을까요?',
+  fields:{givens:{조건:altitudeNotice,자료표:altitudeTable}},
+ },
+ 'c22-s42-u01-b02':{
+  unit:'c22-s42-u01',version:1,currentVersion:OBSERVATION_CONTEXT_VERSION,
+  prompt:'교사가 달의 확대 사진에서 움푹 팬 둥근 지형을 가리켰습니다. 기록할 말로 알맞은 것을 고르세요.',
+  fields:{prompt:'다음 달 표면 확대 사진을 보세요. 관찰한 모습을 바르게 적은 문장을 고르세요.',figure:'assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg',figureNote:'달 표면의 확대 사진. NASA · Apollo 10 · Moltke 분화구.'},
+ },
  's41-u04-b09':{
   unit:'s41-u04',version:'20261106-biology-readable-workbook',
   prompt:'세균의 전자 현미경 사진을 초록색으로 처리했습니다. 사진만으로 말할 수 있는 것을 고르세요.',
@@ -24,13 +38,13 @@ const entries={
 };
 const cache=new WeakMap();
 export function standaloneQuestionContexts(rows,unit){
- if(!['s41-u04','c22-s62-u04'].includes(unit)||!Array.isArray(rows))return rows;
+ if(!['s41-u04','c22-s62-u04','c22-s62-u01','c22-s42-u01'].includes(unit)||!Array.isArray(rows))return rows;
  let changed=false;
  const next=rows.map(q=>{
   const entry=Object.hasOwn(entries,q.id)?entries[q.id]:null;
-  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||q.contentVersion!==entry.version||q.prompt!==entry.prompt||q.givens!=null||q.figure||q.photoLabels||q.sourceContent||q.visualModel)return q;
+  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==entry.version||q.prompt!==entry.prompt||q.givens!=null||q.figure||q.photoLabels||q.sourceContent||q.visualModel)return q;
   changed=true;if(cache.has(q))return cache.get(q);
-  const current={...q,...clone(entry.fields),contentVersion:STANDALONE_CONTEXT_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion,snapshotKind:'full-question'}]};
+  const current={...q,...clone(entry.fields),contentVersion:entry.currentVersion||STANDALONE_CONTEXT_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
   cache.set(q,current);return current;
  });
  return changed?next:rows;
@@ -47,6 +61,15 @@ export function withCareerStandaloneContext(workbook){
   if(!workbook.figures?.['career-question-data-18'])return q;
   changed=true;
   return {...q,givens:waterNotice,given:[waterNotice],table:clone(waterTable),figure:'career-question-data-18'};
+ });
+ return changed?{...workbook,questions}:workbook;
+}
+export function withSeasonStandaloneContext(workbook){
+ if(workbook.unit!=='c22-s62-u01')return workbook;
+ const entry=entries['c22-s62-u01-b030'];let changed=false;
+ const questions=workbook.questions.map(q=>{
+  if(q.id!=='c22-s62-u01-w030'||q.prompt!==entry.prompt||q.given||q.givens||q.figure||q.table||!workbook.figures?.['season-question-data-28'])return q;
+  changed=true;return {...q,givens:altitudeNotice,given:[altitudeNotice],table:clone(altitudeTable),figure:'season-question-data-28'};
  });
  return changed?{...workbook,questions}:workbook;
 }

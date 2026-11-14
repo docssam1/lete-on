@@ -1,4 +1,4 @@
-import{withStandaloneContextClassroom}from'../data/book/standalone-question-context.js?v=20261115-standalone-question-context';
+import{withStandaloneContextClassroom}from'../data/book/standalone-question-context.js?v=20261115-observation-question-context';
 import{withElementaryPromptClassroom}from'../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import {withLifeElementaryClassroom} from '../data/book/s31-u04.elementary.js?v=20261108-life-elementary';
 import{withLessonReferenceClassroom}from'../data/book/lesson-reference-data.js?v=20261115-standalone-model-data';
@@ -31,8 +31,8 @@ import{inquiry as electricityInquiry}from'../data/activities/c22-s62-u03.inquiry
 import{mountCombustionCompare}from'./lab-combustion-compare.js?v=20261108-comparison-material-language';
 import{combustionCompareValues,validCombustionCompareRow}from'./combustion-compare-model.js';
 import{inquiry as combustionInquiry}from'../data/activities/c22-s62-u02.inquiry.js?v=20261104-combustion-class';
-import{mountSeasonCompare}from'./lab-season-compare.js?v=20261104-season-class';
-import{seasonCompareValues,validSeasonCompareRow}from'./season-compare-model.js';
+import{mountSeasonCompare}from'./lab-season-compare.js?v=20261115-observation-question-context';
+import{seasonCompareValues,validSeasonCompareRow}from'./season-compare-model.js?v=20261115-observation-question-context';
 import{inquiry as seasonInquiry}from'../data/activities/c22-s62-u01.inquiry.js?v=20261104-season-class';
 import{mountEarthMotionCompare}from'./lab-earth-motion-compare.js?v=20261104-earth-motion-class';
 import{earthMotionCompareValues,validEarthMotionCompareRow}from'./earth-motion-compare-model.js';
@@ -44,7 +44,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261115-standalone-question-context';
+import {revisedTextbook} from './revised-textbook.js?v=20261115-observation-question-context';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';

@@ -1,4 +1,4 @@
-import{seasonReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261106-season-readable-workbook';
+import{seasonReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261115-observation-question-context';
 import{questions as originalQuestions}from'../data/book/c22-s62-u01.questions.js';
 import{taxonomy}from'../data/units/c22-s62-u01.taxonomy.js';
 import{seasonLanguage}from'../data/book/c22-s62-u01.editorial.js?v=20261104-season-book';

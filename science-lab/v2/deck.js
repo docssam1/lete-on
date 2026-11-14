@@ -1,7 +1,7 @@
 import{buildCareerThinkingSlides}from'./deck-career-thinking.js?v=20261105-career-reading-science';
 import{buildElectricityThinkingSlides}from'./deck-electricity-thinking.js?v=20261104-student-science-language';
 import{buildCombustionThinkingSlides}from'./deck-combustion-thinking.js?v=20261108-comparison-material-language';
-import{buildSeasonThinkingSlides}from'./deck-season-thinking.js?v=20261104-season-class';
+import{buildSeasonThinkingSlides}from'./deck-season-thinking.js?v=20261115-observation-question-context';
 import{buildEarthMotionThinkingSlides}from'./deck-earth-motion-thinking.js?v=20261104-earth-motion-class';
 import{buildPlantStructureThinkingSlides}from'./deck-plant-structure-thinking.js?v=20261108-grade3-class-guidance';
 import{buildMotionThinkingSlides}from'./deck-motion-thinking.js?v=20261105-sound-motion-photo-language';

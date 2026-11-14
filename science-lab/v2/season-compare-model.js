@@ -1,5 +1,5 @@
 // 교재의 연습 자료와 출처가 있는 계산 자료를 비교한다. 학생의 직접 측정 결과는 생성하지 않는다.
-import{workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261104-season-book';
+import{workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261115-observation-question-context';
 import{seasonData,durationText}from'../data/activities/c22-s62-u01.observation.js';
 const day=JSON.parse(JSON.stringify(workbook.questions[16].table)),energy=JSON.parse(JSON.stringify(workbook.questions[90].table));
 const cases={

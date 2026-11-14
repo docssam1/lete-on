@@ -1,3 +1,4 @@
+import{withSeasonStandaloneContext}from'./standalone-question-context.js?v=20261115-observation-question-context';
 import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withSeasonReadableWorkbook}from'./c22-s62-u01.editorial.js?v=20261106-season-readable-workbook';
@@ -25475,4 +25476,5 @@ export const seasonConceptPriorWorkbook=withStudentGuideLanguage(studentGuidePri
 export const seasonReadablePriorWorkbook=withSeasonConceptLanguage(seasonConceptPriorWorkbook);
 export const grade6StudyNotesPriorWorkbook=withSeasonReadableWorkbook(seasonReadablePriorWorkbook);
 export const elementaryPromptPriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
-export const workbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
+export const observationContextPriorWorkbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
+export const workbook=withSeasonStandaloneContext(observationContextPriorWorkbook);

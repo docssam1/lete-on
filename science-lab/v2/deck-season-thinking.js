@@ -1,9 +1,9 @@
 import{findLifeItem}from'./book-life.js';
 import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
-import{workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261104-season-book';
+import{workbook}from'../data/book/c22-s62-u01.workbook.js?v=20261115-observation-question-context';
 import{seasonData,location,dataNotes}from'../data/activities/c22-s62-u01.observation.js';
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
-import{seasonCase}from'./season-compare-model.js';
+import{seasonCase}from'./season-compare-model.js?v=20261115-observation-question-context';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const p=s=>`<p>${esc(s)}</p>`;
 const classroomFigures={modelPreparation:'<figure class="ps-figure"><img src="../assets/activities/c22-s61-u04/model-preparation.webp" alt="태양 역할의 광원과 한 지역을 표시한 구 모형의 준비 장면"><figcaption>광원과 구 모형의 준비 예예요. 공전 실험에서는 자전축의 기울기와 방향을 조절할 수 있는 지구의를 준비해요.</figcaption></figure>'};
