@@ -17,6 +17,7 @@ import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js?v=20261
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
 import { bankLabel, groupLabel, examHeading, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
+import {sourceExamPaperHtml,sourceExamPrintLinks,sourcePaperMode} from './source-exam-paper.js?v=20261114-source-exam-print';
 import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeacherReview,needsSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js?v=20261108-source-schema';
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js?v=20261104-energy-class';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js?v=20261108-source-writing';
@@ -778,6 +779,10 @@ async function pageExam(u, mod, L, set, mode, isCurrent = () => true) {
     $app.innerHTML = assessmentPaperHtml({ unit:u, bank:BANK[u], list, form:set, teacher:mode === 'teacher' });
     scrollTo(0,0); return;
   }
+  if (sourcePaperMode(mode) && list.every(q=>q.sourceRef?.type==='original')) {
+    $app.innerHTML = sourceExamPaperHtml({unit:u,set,bank:BANK[u],title,list,mode:sourcePaperMode(mode),renderItem:itemHtml});
+    scrollTo(0,0); return;
+  }
   const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261108-source-schema');
   if (!isCurrent()) return;
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC, heading, back: `#/${u}/exam/${set}`, tabs }); scrollTo(0, 0); return; }
@@ -785,7 +790,7 @@ async function pageExam(u, mod, L, set, mode, isCurrent = () => true) {
   if (!isCurrent()) return;
   const pool = [...similar, ...src, ...items];
   const twin = (it) => similar.find((s) => s.sourceRef?.of?.set === it.sourceRef.set && s.sourceRef?.of?.no === it.sourceRef.no);
-  const printLinks = (BANK[u]?.authored ? `<a class="btn" href="#/${u}/exam/${set}/paper">문제지 인쇄</a><a class="btn" href="#/${u}/exam/${set}/teacher">교사 해설</a>` : '')
+  const printLinks = (BANK[u]?.authored ? `<a class="btn" href="#/${u}/exam/${set}/paper">문제지 인쇄</a><a class="btn" href="#/${u}/exam/${set}/teacher">교사 해설</a>` : list.every(q=>q.sourceRef?.type==='original') ? sourceExamPrintLinks(u,set) : '')
     + (BANK[u]?.assessment ? `<a class="btn" href="#/${u}/check">선생님 확인</a>` : '');
   releasePage = mountDaily({ $app, u, store: `${u}:exam${set}`, stage: 'exam', heading, src: `${list[0].sourceRef.edition} · ${list.length}문항`, tabs:tabs+printLinks, tabLabel: BANK[u]?.formLabel || (BANK[u]?.groups ? '교재 묶음' : '세트'),
     title: title === label ? title : `${title} · ${label}`, ch, list, pool, misc: MISC, judge, twin,
