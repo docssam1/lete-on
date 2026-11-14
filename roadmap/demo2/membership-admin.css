@@ -11,3 +11,24 @@
 #kDialog select,#kDialog input,#kDialog textarea{font:inherit;font-size:14px;font-weight:400;border:1px solid #cbb9d6;border-radius:10px;padding:10px 12px;min-height:44px;background:#fff;color:#3c2a47;width:100%;box-sizing:border-box}#kDialog textarea{line-height:1.7;resize:vertical}
 .k-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.k-form-actions{display:flex;gap:12px}.k-form-actions button{margin-top:8px}
 @media(max-width:600px){.k-row{grid-template-columns:1fr}.k-head .member-secondary{width:100%}}
+/* 상담 자료 가져오기: 원문과 승인 동작을 구분한다. */
+.k-head-actions{display:flex;flex-wrap:wrap;gap:8px}
+#kImportDialog{box-sizing:border-box;width:min(880px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto;border:1px solid #d7c7df;border-radius:16px;padding:28px;color:#3c2a47;font:15px/1.7 Pretendard,sans-serif;background:#fff}
+#kImportDialog::backdrop{background:#32223e88;backdrop-filter:blur(3px)}
+#kImportDialog .ki-head{display:flex;justify-content:space-between;align-items:start;gap:16px;background:none;color:inherit}
+#kImportDialog h2{font-size:25px;line-height:1.4;letter-spacing:-.04em;margin:2px 0 12px}
+.ki-eyebrow{font-size:12px;font-weight:650;color:#725084;margin:0}.ki-intro{color:#786b82;max-width:65ch}
+.ki-steps{display:flex;flex-wrap:wrap;gap:8px 24px;padding:14px 0;margin:16px 0;border-top:1px solid #e3d8e9;border-bottom:1px solid #e3d8e9;font-size:13px;color:#725084}
+#kiControls{border:0;padding:0;margin:0;min-width:0}#kiControls:disabled{opacity:.6}
+.ki-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.ki-sources{display:grid;grid-template-columns:.9fr 1.2fr;gap:24px}.ki-sources>div{min-width:0}
+#kImportDialog .member-field{margin:16px 0}#kImportDialog input,#kImportDialog select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;border:1px solid #cbb9d6;border-radius:8px;padding:10px;font:inherit;font-size:14px;color:#3c2a47;background:#fff}
+#kImportDialog small{font-size:12px;color:#786b82;font-weight:400}#kImportDialog .member-secondary,#kImportDialog .member-primary{width:auto;min-height:44px;margin:0;padding:10px 16px;font-size:14px}
+.ki-inline{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.ki-google{margin:18px 0;padding:12px 16px;background:#f8f5fb;border:1px solid #e3d8e9;border-radius:10px}.ki-google p{font-size:13px;overflow-wrap:anywhere}.ki-google .member-secondary{margin:4px!important}
+#kImportDialog summary{cursor:pointer;min-height:28px;font-size:14px;font-weight:650}
+.ki-document-title{margin-top:24px;font-weight:650;overflow-wrap:anywhere}.ki-range{display:grid;grid-template-columns:100px 100px auto;align-items:end;justify-content:start;gap:12px}.ki-range .member-field{margin-bottom:0!important}
+.ki-preview{margin-top:18px;border-top:1px solid #e3d8e9;padding-top:16px}.ki-preview pre{max-height:240px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:16px;background:#faf8fc;font:13px/1.75 Pretendard,sans-serif;border-radius:8px}
+.ki-cost{font-size:13px;color:#786b82}.ki-confirm{display:flex;align-items:flex-start;gap:10px;font-size:13px;margin:20px 0;cursor:pointer}.ki-confirm input{width:20px!important;min-height:20px!important;height:20px;flex:0 0 20px;margin-top:2px;accent-color:#725084}
+#kiStatus{font-size:14px;min-height:24px;margin:16px 0;color:#285c49;overflow-wrap:anywhere}#kiStatus.ki-error{color:#a13d50}#kImportDialog [hidden]{display:none!important}
+#kImportDialog button:disabled{opacity:.5;cursor:not-allowed}#kImportDialog :focus-visible{outline:3px solid #725084;outline-offset:3px}
+@media(max-width:600px){#kImportDialog{padding:20px 16px}.ki-sources{grid-template-columns:1fr;gap:0}.ki-range{grid-template-columns:1fr 1fr}.ki-range>button{grid-column:1/-1}.k-head-actions{width:100%}.k-head-actions button{flex:1}#kiImport{width:100%!important}#kImportDialog h2{font-size:22px}}

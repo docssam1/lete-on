@@ -19,8 +19,15 @@ export function cleanEntry(raw={}){
   return {kind,stage,title,body,source,checked_on:checkedOn};
 }
 const ID = /^[a-f0-9-]{36}$/i;
+async function requestText(req,max){
+  if(Number(req.headers.get('content-length')||0)>max)throw new HttpError(413,'request_too_large');
+  const reader=req.body?.getReader();if(!reader)return '';
+  const decoder=new TextDecoder();let size=0,result='';
+  while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>max){await reader.cancel();throw new HttpError(413,'request_too_large');}result+=decoder.decode(value,{stream:true});}
+  return result+decoder.decode();
+}
 
-export function createHandler({service,now=()=>Date.now()}) {
+export function createHandler({service,now=()=>Date.now(),imports=null}) {
   async function admin(req){
     const token=(req.headers.get('authorization')||'').replace(/^Bearer\s+/i,'');
     if(!token)throw new HttpError(401,'admin_required');
@@ -44,10 +51,15 @@ export function createHandler({service,now=()=>Date.now()}) {
     if(req.method==='OPTIONS')return new Response(null,{status:204,headers:h});
     if(req.method!=='POST')return reply({error:'method_not_allowed'},405);
     try{
-      const raw=await req.text();if(raw.length>20000)throw new HttpError(413,'request_too_large');
+      const user=await admin(req);
+      const raw=await requestText(req,imports?8_000_000:60000);
       let b;try{b=JSON.parse(raw);}catch{throw new HttpError(400,'request_invalid');}
       if(!b||typeof b!=='object'||Array.isArray(b))throw new HttpError(400,'request_invalid');
-      await admin(req);
+      if(['drive-source','import-document'].includes(b.action)){
+        if(!imports)throw new HttpError(503,'import_not_configured');
+        return reply(await imports({body:b,user,recheck:()=>admin(req)}));
+      }
+      if(raw.length>20000)throw new HttpError(413,'request_too_large');
       const stamp=new Date(now()).toISOString();
       if(b.action==='list'){
         const status=STATUSES.includes(b.status)?b.status:'candidate';

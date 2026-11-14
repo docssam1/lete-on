@@ -28,6 +28,7 @@
   $('kFormTitle').textContent=r?'지식 고치기':'새 노하우 쓰기';$('kDialog').showModal();f.elements.title.focus();
  }
  document.addEventListener('roadmap-admin-ready',()=>{$('adminKnowledge').hidden=false;run(list);});
+ document.addEventListener('roadmap-knowledge-imported',()=>{tab='candidate';run(list);});
  document.addEventListener('roadmap-admin-signed-out',()=>{$('adminKnowledge').hidden=true;$('kList').replaceChildren();});
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;run(list);});
  $('kNew').onclick=()=>edit(null);
