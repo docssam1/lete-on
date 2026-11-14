@@ -1,3 +1,4 @@
+import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION}from'./biology-observation-photos.js?v=20261115-biology-observation-photos';
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
 const clone=value=>JSON.parse(JSON.stringify(value));
@@ -10,6 +11,26 @@ const waterNotice='연습을 위해 만든 자료예요. 실제 지역·인물�
 const altitudeTable={머리:['시각(KST)','고도'],행:[['10:15','41°'],['11:15','53°'],['12:15','62°'],['13:15','60°'],['14:15','49°']]};
 const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 관측하거나 정밀하게 계산한 천문 자료는 아니에요. 정확한 남중 시각은 따로 주어지지 않았어요.';
 const entries={
+ 's41-u04-b04':{
+  unit:'s41-u04',version:'20261108-biology-elementary-bank',currentVersion:BIOLOGY_OBSERVATION_PHOTO_VERSION,preserveDiagnosticVersion:true,
+  prompt:'확대 사진 두 장만 보고 생물의 실제 크기를 비교하려고 해요. 먼저 확인할 정보를 고르세요.',
+  fields:{prompt:'다음 두 사진만 보고 생물의 실제 크기를 비교하려고 해요. 먼저 확인할 정보를 고르세요.',observationPhotos:biologyObservationPhotos('mushroom','spirogyra')},
+ },
+ 's41-u04-b11':{
+  unit:'s41-u04',version:'20261108-biology-elementary-bank',currentVersion:BIOLOGY_OBSERVATION_PHOTO_VERSION,preserveDiagnosticVersion:true,
+  prompt:'해캄 사진에서 마디가 보였어요. 이 사진만 보고는 알 수 없는 것을 고르세요.',
+  fields:{observationPhotos:biologyObservationPhotos('spirogyra')},
+ },
+ 's41-u04-b12':{
+  unit:'s41-u04',version:'20261108-biology-elementary-bank',currentVersion:BIOLOGY_OBSERVATION_PHOTO_VERSION,preserveDiagnosticVersion:true,
+  prompt:'버섯 전체를 찍은 사진에서는 가는 실이 잘 보이지 않아요. 이 사진을 보고 알맞게 설명한 것을 고르세요.',
+  fields:{prompt:'다음 버섯 사진에서는 가는 실이 잘 보이지 않아요. 이 사진을 보고 알맞게 설명한 것을 고르세요.',observationPhotos:biologyObservationPhotos('mushroom')},
+ },
+ 's41-u04-b14':{
+  unit:'s41-u04',version:'20261108-biology-elementary-bank',currentVersion:BIOLOGY_OBSERVATION_PHOTO_VERSION,preserveDiagnosticVersion:true,
+  prompt:'사진에서 직접 본 생김새를 바르게 적은 문장 두 개를 고르세요.',
+  fields:{prompt:'다음 두 사진에서 직접 본 생김새를 바르게 적은 문장 두 개를 고르세요.',observationPhotos:biologyObservationPhotos('mushroom','spirogyra')},
+ },
  'c22-s62-u01-b030':{
   unit:'c22-s62-u01',version:'20261106-season-readable-workbook',currentVersion:OBSERVATION_CONTEXT_VERSION,
   prompt:'친구가 “표에서 12:15의 고도가 가장 높으니 정확히 그때 남중했어”라고 했어요. 이 기록만으로 그렇게 말할 수 있을까요?',
@@ -42,9 +63,10 @@ export function standaloneQuestionContexts(rows,unit){
  let changed=false;
  const next=rows.map(q=>{
   const entry=Object.hasOwn(entries,q.id)?entries[q.id]:null;
-  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==entry.version||q.prompt!==entry.prompt||q.givens!=null||q.figure||q.photoLabels||q.sourceContent||q.visualModel)return q;
+  if(!entry||entry.unit!==unit||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||(q.contentVersion||1)!==entry.version||q.prompt!==entry.prompt||q.givens!=null||q.figure||q.photoLabels||q.observationPhotos||q.sourceContent||q.visualModel)return q;
   changed=true;if(cache.has(q))return cache.get(q);
   const current={...q,...clone(entry.fields),contentVersion:entry.currentVersion||STANDALONE_CONTEXT_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
+  if(entry.preserveDiagnosticVersion&&q.diagnosticOverride?.version===(q.contentVersion||1))current.diagnosticOverride={...clone(q.diagnosticOverride),version:current.contentVersion};
   cache.set(q,current);return current;
  });
  return changed?next:rows;

@@ -1,2 +1,11 @@
 .bank-photo-figure{width:100%;max-width:630px;margin:16px auto;break-inside:avoid}.bank-photo-figure img{display:block;width:100%;height:auto}.bank-photo-labels{display:grid;grid-template-columns:repeat(var(--bank-photo-cols),minmax(0,1fr));gap:6px;margin-top:8px;text-align:center;font-weight:700}.bank-photo-figure small{display:block;color:#4c596c;font-size:13px;line-height:1.5;margin-top:6px}
 @media print{.bank-photo-figure{max-width:145mm;margin:3mm auto}.bank-photo-labels{font-size:10pt;margin-top:1mm}.bank-photo-figure small{font-size:8pt;margin-top:1mm}}
+/* Keep each original photograph intact, with its own label and attribution. */
+.observation-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:100%;max-width:760px;margin:16px auto}
+.observation-photos[data-photo-count="1"]{grid-template-columns:minmax(0,1fr);max-width:500px}
+.observation-photo{margin:0;min-width:0;break-inside:avoid}
+.observation-photo img{display:block;width:100%;height:auto;max-height:320px;object-fit:contain;background:#fff}
+.observation-photo figcaption{margin-top:8px;font-size:16px;line-height:1.5}
+.observation-photo small{display:block;font-size:14px;font-weight:400;overflow-wrap:anywhere}
+@media screen and (max-width:520px){.observation-photos{grid-template-columns:minmax(0,1fr)}}
+@media print{.observation-photos{gap:3mm;margin:3mm auto;max-width:145mm}.observation-photo img{max-height:45mm}.observation-photo figcaption{font-size:10pt;margin-top:1mm}.observation-photo small{font-size:8pt}}

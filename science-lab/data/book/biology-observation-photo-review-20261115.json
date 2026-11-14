@@ -1,0 +1,53 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "해캄·버섯 관찰의 근거 사진과 실제 크기 비교 자료",
+  "contentVersion": "20261115-biology-observation-photos",
+  "questions": ["s41-u04-b04", "s41-u04-b11", "s41-u04-b12", "s41-u04-b14"],
+  "photos": [
+    {
+      "path": "assets/book/s41-u04-spirogyra-reischig.jpg",
+      "creator": "Josef Reischig",
+      "source": "https://commons.wikimedia.org/wiki/File:Spirogyra_(248_00)_Native_preparation.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "width": 3749, "height": 2400, "bytes": 1700135,
+      "sha256": "aa69ab673362f8316cc3bf1e27f1fd969dfc97d05ed266edc6fdd12f2f7a761f",
+      "originalBytesUnchanged": true,
+      "directlyInspectedFeatures": ["긴 가닥", "가닥 안의 가로 경계", "초록색 부분"],
+      "manuallyVerifiedScaleBar": "0.1 mm",
+      "appleVision": {"computePolicy": "CPU-only", "frames": 1, "status": "ok", "recognizedLines": 1, "scaleBarReadCorrectly": false}
+    },
+    {
+      "path": "assets/book/s41-u04-mushroom-gills-rosser1954.jpg",
+      "creator": "Rosser1954",
+      "source": "https://commons.wikimedia.org/wiki/File:Pleurotus_ostreatus_(Oyster_Mushroom),_gills_from_below._Sycamore_tree_host.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "width": 3965, "height": 3122, "bytes": 2947699,
+      "sha256": "f1f68a4d90fd4df48a7df1a2449577bfb992db2eebfedff582ee041408fa6998",
+      "originalBytesUnchanged": true,
+      "directlyInspectedFeatures": ["갓 안쪽의 여러 주름", "아래에서 본 버섯 무리"],
+      "appleVision": {"computePolicy": "CPU-only", "frames": 1, "status": "ok", "recognizedLines": 0}
+    }
+  ],
+  "presentation": {
+    "oneOrTwoPhotographsPerQuestion": true,
+    "authorsSourcesAndLicenseLinksVisible": true,
+    "aspectRatiosPreserved": true,
+    "noRasterCompositionOrNewImageGeneration": true,
+    "priorPhotoRenderingsComparedAndUnchanged": 59,
+    "workbookFigureReplaced": "biologySpirogyra",
+    "allWorkbookQuestionsAndWritingAreasPreserved": 80,
+    "photoOnlyChangesDetectedInSavedPaperComparison": true,
+    "storedPaperPhotographsPreserved": true
+  },
+  "verification": {
+    "actualUnitLoaders": 32, "currentItemsCompared": 3179, "unchangedCurrentItems": 3175,
+    "originalQuestionsPreserved": 1763, "pairedRowsPreserved": true,
+    "answersExplanationsTaxonomyAndEffectiveDiagnosticsPreserved": true,
+    "fullSnapshotsChecked": 2795, "choiceOnlyDeltasChecked": 2,
+    "nativeTestFiles": 281, "nativeTests": 1485, "nativePassed": 1483, "nativeFailed": 0, "browserTestsSkipped": 2,
+    "bankAuditPassed": true, "taxonomyCheckPassed": true, "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": ["현행 원문 없는 세 단원과 전체 현행 판본 확보", "실제 PC·휴대폰·A4·음성·WebGL·3D 검수", "운영 메인 병합·배포"]
+}

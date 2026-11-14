@@ -1,5 +1,5 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
-import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
+import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-observation-photos';
 // Daily Test — 스스로 공부하기의 마지막 장면(MSG 초·과·심 「Daily Test 01–09 · 채점과 첨삭」을 참고해 이 사이트에 맞게 다시 만듦).
 //  · 왼쪽: 문항을 하나씩 풀고(이전·다음), 문항마다 「말로 답하기」(받아쓴 초안 → 고쳐서 넣기)와 「스스로 체크」(점수와 별개).
 //    답안 사진은 이 기기(IndexedDB)에만 보관 — 선생님께 자동으로 보내지 않는다.
@@ -11,7 +11,7 @@ import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './dail
 import {sourceFigureImageAttrs, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js?v=20261115-original-figure-resolution';
 import {isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview} from './source-content.js?v=20261108-source-schema';
 import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261115-legacy-question-snapshots';
-import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js?v=20261108-original-source';
+import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js?v=20261115-biology-observation-photos';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CIRC = ['①', '②', '③', '④', '⑤'];
@@ -76,7 +76,7 @@ function promptHtml(it, v, misc) {
     return `<input class="dt-blank" data-k="${i}" type="text" size="6" aria-label="빈칸 ${i + 1}" placeholder="${CIRC[i]}" value="${esc(cur)}">`;
   });
 }
-const figHtml = (it) => it.photoLabels ? photoFigureHtml(it) : (it.figure ? `<figure class="dt-fig"><img ${sourceFigureImageAttrs(it.figure)} alt="${esc(it.figureNote || '문항 그림')}"></figure>` : '');
+const figHtml = (it) => (it.observationPhotos||it.photoLabels) ? photoFigureHtml(it) : (it.figure ? `<figure class="dt-fig"><img ${sourceFigureImageAttrs(it.figure)} alt="${esc(it.figureNote || '문항 그림')}"></figure>` : '');
 const givensHtml = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || `<p class="dt-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : `<b>${esc(k === '보기' ? '〈보기〉' : k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : typeof v === 'object' ? JSON.stringify(v) : v)}</p>`).join('') : '';
 
 function formatAnswer(it, v) {
