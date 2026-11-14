@@ -7,10 +7,10 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 22 released editions remain reachable in exactly one advertised course', () => {
+test('all 23 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,22);
-  assert.equal(new Set(visible).size,22);
+  assert.equal(visible.length,23);
+  assert.equal(new Set(visible).size,23);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
@@ -44,11 +44,18 @@ test('actual final-round naming is preserved', () => {
 });
 
 // A new Won high-entry paper must never replace the existing middle-entry IDs.
-test('Won common1 and middle21 expose their own four editions with separate time and scope', () => {
+test('Won common1 and middle21 expose five common1 and four middle21 editions with separate time and scope', () => {
  const cm=nav.examsFor('WM','common1-basic',mocks),middle=nav.examsFor('WM','middle21-basic',mocks);
- assert.equal(cm.length,4);assert.equal(middle.length,4);
+ assert.equal(cm.length,5);assert.equal(middle.length,4);
  assert.ok(cm.every(e=>e.id.startsWith('wm-common1-basic-')&&e.questionCount===50&&e.durationMinutes===180&&e.sectionMinutes.ALG===90&&e.sectionMinutes.GEO===90&&e.breakMinutes===20));
  assert.ok(middle.every(e=>e.durationMinutes===140&&e.sectionMinutes.ALG===70));
  assert.deepEqual(cm.map(e=>nav.selectionForExam(e.id)),cm.map(()=>({program:'WM',course:'common1-basic'})));
  assert.ok(cm.every(e=>/중2-1.*중3-1/.test(e.scope)&&/확률/.test(e.scope)));
+});
+
+test('Won final round follows rounds 1–4 within the common1 course',()=>{
+ const cm=nav.examsFor('WM','common1-basic',mocks);
+ assert.deepEqual(cm.map(e=>nav.roundLabel(e)),['1회','2회','3회','4회','최종(마무리)']);
+ assert.equal(cm[4].id,'wm-common1-basic-final');
+ assert.equal(nav.examsFor('WM','middle21-basic',mocks).some(e=>e.id===cm[4].id),false);
 });
