@@ -22,6 +22,7 @@ const files = [
   ['promo/assets/logos/sm-transparent-v2.png', 'promo/assets/logos/sm-transparent-v2.png'],
 
   ['shared/app.css', 'shared/app.css'],
+  ['shared/self-check-comments.js', 'shared/self-check-comments.js'],
   ['data/public-exam-profiles.js', 'data/public-exam-profiles.js'],
   ['data/catalog.js', 'data/catalog.js'],
   ['data/academy-engagement.js', 'data/academy-engagement.js'],
