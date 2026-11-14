@@ -1,0 +1,30 @@
+.customer-counsel .cp-form, .customer-counsel .cp-previous {
+  margin-block: 1rem; padding: .95rem; border: 1px solid #dbd2ec; border-radius: 12px;
+  background: #faf8fe; color: #342b47;
+}
+.customer-counsel .cp-form h3, .customer-counsel .cp-form p, .customer-counsel .cp-previous p { margin: 0 0 .55rem; }
+.customer-counsel .cp-fields, .customer-counsel .cp-steps, .customer-counsel .cp-steps fieldset {
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem .65rem; min-width: 0;
+}
+.customer-counsel .cp-fields label, .customer-counsel .cp-steps label { display: grid; gap: .2rem; font-size: .86rem; font-weight: 650; min-width: 0; }
+.customer-counsel .cp-full, .customer-counsel .cp-steps small { grid-column: 1/-1; }
+.customer-counsel .cp-form :is(input,select) { width: 100%; min-width: 0; box-sizing: border-box; min-height: 44px; padding: .35rem .45rem; border: 1px solid #9687aa; border-radius: 6px; background: white; color: inherit; font: inherit; }
+.customer-counsel .cp-steps { margin-block: .8rem; }
+.customer-counsel .cp-steps fieldset { grid-template-columns: minmax(0,2fr) minmax(50px,1fr); padding: .5rem; border: 1px solid #ddd4e6; border-radius: 8px; }
+.customer-counsel .cp-steps legend { font-weight: 700; padding: 0 .25rem; }
+.customer-counsel .cp-save { min-height: 44px; padding: .45rem .85rem; border: 0; border-radius: 7px; background:#61477a; color: white; font: inherit; font-weight: 700; cursor:pointer; }
+.customer-counsel .cp-save:disabled { opacity:.75; cursor: default; }
+.customer-counsel .cp-status, .customer-counsel .cp-previous p { white-space: pre-line; overflow-wrap:anywhere; }
+.customer-counsel .cp-status:not(:empty), .customer-counsel .cp-previous p { margin: .55rem 0 0; }
+.customer-counsel .cp-form :focus-visible { outline: 3px solid #70518e; outline-offset: 2px; }
+@media (max-width: 640px) {
+  .customer-counsel .cp-steps, .customer-counsel .cp-fields { grid-template-columns:minmax(0,1fr); }
+  .customer-counsel .cp-save { width:100%; }
+}
+.cp-checklist { width: min(36rem,calc(100% - 1.5rem)); max-height: 88dvh; overflow-y:auto; box-sizing:border-box; border:1px solid #b8a9c9; border-radius:14px; background:white; padding:1rem; color:#342b47; }
+.cp-checklist::backdrop { background:rgb(25 17 40 / 55%); }
+.cp-checklist header { display:flex; justify-content:space-between; align-items:center; gap:.6rem; }
+.cp-checklist header h2 { margin:0; font-size:1.15rem; }
+.cp-checklist header button { min-width:44px; min-height:44px; border:1px solid #b8a9c9; background:white; color:inherit; border-radius:7px; cursor:pointer; }
+.cp-checklist .unit-checklist { margin:.7rem 0; }
+.cp-checklist [role=status] { margin: .4rem; font-size:.85rem; }
