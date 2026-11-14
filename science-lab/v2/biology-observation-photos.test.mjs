@@ -1,3 +1,4 @@
+import{BIOLOGY_OBSERVATION_CHOICE_VERSION}from'../data/book/standalone-question-context.js';
 import{thinkingCheckQuestion}from'./thinking-check-question.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{photoFigureHtml}from'./photo-figure.js';import{biologyObservationPhotos,withBiologyObservationArt,withBiologyObservationWorkbook,BIOLOGY_OBSERVATION_PHOTO_VERSION}from'../data/book/biology-observation-photos.js';
@@ -14,7 +15,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 test('four observation questions gain the correct photographs without changing any answer, effective diagnosis or historic response',async()=>{
  const before=JSON.stringify(prior),judge=await loadJudge(unit),changed=[];
  for(let i=0;i<prior.length;i++){
-  const old=prior[i],q=current.items[i];if(!ids.includes(q.id)){assert.deepEqual(q,old);continue;}changed.push(q.id);assert.equal(q.contentVersion,BIOLOGY_OBSERVATION_PHOTO_VERSION);
+  const old=prior[i],latest=current.items[i],q=latest.contentVersion===BIOLOGY_OBSERVATION_CHOICE_VERSION?questionAtVersion(latest,BIOLOGY_OBSERVATION_PHOTO_VERSION):latest;if(!ids.includes(q.id)){assert.deepEqual(q,old);continue;}changed.push(q.id);assert.equal(q.contentVersion,BIOLOGY_OBSERVATION_PHOTO_VERSION);
   const allowed=new Set(['prompt','observationPhotos','contentVersion','previousVersions','diagnosticOverride']);for(const k of new Set([...Object.keys(q),...Object.keys(old)]))if(!allowed.has(k))assert.deepEqual(q[k],old[k],q.id+' '+k);
   if(old.diagnosticOverride?.version===old.contentVersion)assert.deepEqual({...q.diagnosticOverride,version:old.contentVersion},old.diagnosticOverride);else assert.deepEqual(q.diagnosticOverride,old.diagnosticOverride);
   assert.deepEqual(questionMisconceptions(q,current.misc),questionMisconceptions(old,current.misc));

@@ -1,7 +1,24 @@
 import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION}from'./biology-observation-photos.js?v=20261115-biology-observation-photos';
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
+export const BIOLOGY_OBSERVATION_CHOICE_VERSION='20261115-biology-photo-observations';
 const clone=value=>JSON.parse(JSON.stringify(value));
+const priorBiologyChoices=['갓 안쪽에 여러 주름이 보였다.','이 버섯을 먹으면 모든 병이 낫는다.','이 세균은 누구에게나 해롭다.','이 사진 하나면 모든 균류를 분류할 수 있다.','한 가닥 안에 마디가 이어져 보였다.'];
+const priorBiologyExplanation='주름과 마디는 사진의 형태를 기록한 것입니다. 치료 효과·보편적 해로움·모든 생물의 분류는 추가 근거가 필요합니다.';
+const choiceCache=new WeakMap();
+// Keep the photographed version as a full snapshot before replacing its three inference distractors.
+export function biologyObservationChoiceItems(rows,unit){
+ if(unit!=='s41-u04'||!Array.isArray(rows))return rows;
+ let changed=false;
+ const next=rows.map(q=>{
+  if(q.id!=='s41-u04-b14'||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||q.contentVersion!==BIOLOGY_OBSERVATION_PHOTO_VERSION||q.prompt!=='다음 두 사진에서 직접 본 생김새를 바르게 적은 문장 두 개를 고르세요.'||JSON.stringify(q.choices)!==JSON.stringify(priorBiologyChoices)||q.explanation!==priorBiologyExplanation||JSON.stringify(q.observationPhotos)!==JSON.stringify(biologyObservationPhotos('mushroom','spirogyra'))||q.sourceContent)return q;
+  changed=true;if(choiceCache.has(q))return choiceCache.get(q);
+  const current={...q,choices:[q.choices[0],'이 버섯은 비가 온 다음 날 자랐다.','이 해캄이 살던 물은 깨끗했다.','이 해캄은 따뜻한 물에서 더 잘 자란다.',q.choices[4]],explanation:'버섯의 주름과 해캄의 마디는 사진에서 직접 볼 수 있어요. 비가 언제 왔는지, 물이 깨끗했는지, 어떤 물에서 더 잘 자라는지는 이 사진만으로 알 수 없어요.',contentVersion:BIOLOGY_OBSERVATION_CHOICE_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion,snapshotKind:'full-question'}]};
+  if(q.diagnosticOverride?.version===q.contentVersion)current.diagnosticOverride={...clone(q.diagnosticOverride),version:current.contentVersion};
+  choiceCache.set(q,current);return current;
+ });
+ return changed?next:rows;
+}
 const bacteriaFigure='assets/bank/s41-u04/s3-q11.webp';
 const bacteriaNote='세균의 네 가지 확대 사진. 오른쪽 위에는 초록색으로 표현된 길쭉한 막대 모양의 세균이 보입니다.';
 // The three existing rows from career question 18, shared without loading its full manuscript.
@@ -69,7 +86,7 @@ export function standaloneQuestionContexts(rows,unit){
   if(entry.preserveDiagnosticVersion&&q.diagnosticOverride?.version===(q.contentVersion||1))current.diagnosticOverride={...clone(q.diagnosticOverride),version:current.contentVersion};
   cache.set(q,current);return current;
  });
- return changed?next:rows;
+ return biologyObservationChoiceItems(changed?next:rows,unit);
 }
 export function withStandaloneContextClassroom(unit,mod){
  const items=standaloneQuestionContexts(mod.classroomItems,unit);

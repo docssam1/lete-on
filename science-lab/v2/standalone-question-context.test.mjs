@@ -1,3 +1,4 @@
+import{BIOLOGY_OBSERVATION_CHOICE_VERSION}from'../data/book/standalone-question-context.js';
 import{BIOLOGY_OBSERVATION_PHOTO_VERSION}from'../data/book/biology-observation-photos.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -43,7 +44,7 @@ test('three missing contexts preserve every answer boundary, previous presentati
   const mod=current[unit],judge=await loadJudge(unit);assert.equal(rows.length,mod.items.length);
   const immutable=structuredClone(rows);
   for(let i=0;i<rows.length;i++){
-   const old=rows[i],latest=mod.items[i],q=latest.contentVersion===BIOLOGY_OBSERVATION_PHOTO_VERSION?questionAtVersion(latest,latest.previousVersions.at(-1).version):latest;
+   const old=rows[i],latest=mod.items[i],photo=latest.contentVersion===BIOLOGY_OBSERVATION_CHOICE_VERSION?questionAtVersion(latest,BIOLOGY_OBSERVATION_PHOTO_VERSION):latest,q=photo.contentVersion===BIOLOGY_OBSERVATION_PHOTO_VERSION?questionAtVersion(photo,photo.previousVersions.at(-1).version):photo;
    if(!expected.includes(q.id)){assert.deepEqual(q,old);continue;}
    changed.push(q.id);assert.equal(q.contentVersion,STANDALONE_CONTEXT_VERSION);
    const {prompt:p1,givens:g1,figure:f1,figureNote:n1,contentVersion:v1,previousVersions:h1,...oldFields}=old;

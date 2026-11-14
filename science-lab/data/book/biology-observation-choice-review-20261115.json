@@ -1,0 +1,42 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "버섯·해캄 사진을 직접 관찰한 기록과 추측을 구별하는 보기",
+  "unit": "s41-u04",
+  "question": "s41-u04-b14",
+  "standard": "4과12-01",
+  "cacheVersion": "20261115-biology-photo-observations",
+  "editedDistractors": 3,
+  "explanationUpdated": true,
+  "preservation": {
+    "currentQuestions": 3179,
+    "currentQuestionsUnchanged": 3178,
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestionsUnchanged": 1512,
+    "correctChoicesAndAnswerContractsUnchanged": true,
+    "allTargetChoiceSubsetsCompared": 32,
+    "allThreePriorVersionsPreserved": true,
+    "fullSnapshots": 2796,
+    "legacyChoiceDeltas": 2,
+    "originalPhotoBytesAndLabelsPreserved": true,
+    "rawBankSupplementWorkbookAndArtUnchanged": true
+  },
+  "verification": {
+    "nativeTestFiles": 284,
+    "nativeTests": 1492,
+    "nativePassed": 1490,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "finalStrengthenedDailyTestsPassed": 2,
+    "priorContextExecutedSeparatelyFromGit": "03f9be0e2",
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "photosViewedAgain": 2,
+    "existingAppleVisionEvidenceReusedForUnchangedHashes": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": [
+    "현행 원문 없는 세 단원과 전체 현행 판본 확보",
+    "실제 PC·휴대폰·A4·음성·WebGL·3D 검수",
+    "운영 메인 병합·배포"
+  ]
+}

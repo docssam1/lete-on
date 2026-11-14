@@ -1,4 +1,4 @@
-import{withStandaloneContextClassroom}from'../data/book/standalone-question-context.js?v=20261115-biology-observation-photos';
+import{withStandaloneContextClassroom}from'../data/book/standalone-question-context.js?v=20261115-biology-photo-observations';
 import{withElementaryPromptClassroom}from'../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import {withLifeElementaryClassroom} from '../data/book/s31-u04.elementary.js?v=20261108-life-elementary';
 import{withLessonReferenceClassroom}from'../data/book/lesson-reference-data.js?v=20261115-standalone-model-data';
