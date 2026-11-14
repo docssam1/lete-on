@@ -1,5 +1,6 @@
 const clone=x=>JSON.parse(JSON.stringify(x));
 const own=(o,k)=>Object.hasOwn(o||{},k);
+const fullQuestionKeys=['id','status','sourceRef','taxonomy','prompt','responseContract','answerContract','explanation'];
 export const questionVersion=it=>it?.contentVersion||1;
 // 내용이 바뀐 문항에만 해당 버전의 진단 규칙을 적용한다. null은 예전 규칙의 제외다.
 export function questionMisconceptions(it,misc){
@@ -17,6 +18,9 @@ export function questionAtVersion(it,version){
   // A full snapshot also records absent fields; newer pictures or data must not leak into it.
   if(fields.snapshotKind==='full-question'){
    const{snapshotKind:__,...snapshot}=fields;presentation=clone(snapshot);
+  }else if(fields.id===it.id&&fullQuestionKeys.every(key=>own(fields,key))){
+   // Earlier writers copied the entire question before the explicit marker existed.
+   presentation=clone(fields);
   }else presentation={...presentation,...clone(fields)};
  }
  return{...presentation,contentVersion:version};

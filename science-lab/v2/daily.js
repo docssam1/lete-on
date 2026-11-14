@@ -10,7 +10,7 @@ import {photoFigureHtml} from './photo-figure.js?v=20261104-weather-class';
 import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js?v=20261108-source-schema';
 import {sourceFigureImageAttrs, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js?v=20261115-original-figure-resolution';
 import {isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview} from './source-content.js?v=20261108-source-schema';
-import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261115-standalone-question-context';
+import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261115-legacy-question-snapshots';
 import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js?v=20261108-original-source';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
