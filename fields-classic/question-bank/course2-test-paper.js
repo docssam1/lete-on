@@ -1,4 +1,5 @@
-import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261114a";
+import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261114b";
+import { mathText } from "./math-markup.js?v=20261027p";
 
 // 2과정 권별 테스트 시험지 보기·인쇄 — 원장 2026-11-14 「G4 테스트는 다시 만들어」.
 // 권마다 course2-test-originals/<권>.js 가 { perPage, meta:{course,book,title}, questions:[{ number, prompt, figure(), answer }] } 를 내보낸다.
@@ -11,10 +12,10 @@ const tag = COURSE2_TESTS[book] || (params.get("preview") === "1" && /^[ag][1-5]
 const original = tag ? await import(`./course2-test-originals/${book}.js?v=${tag}`).catch((error) => { console.error(error); return null; }) : null;
 
 function questionMarkup(question) {
-  const blank = (a) => `<span class="st-ans">${esc(a.label || "답")} <span aria-hidden="true">(</span><i></i><span aria-hidden="true">)</span>${a.unit ? esc(a.unit) : ""}</span>`;
+  const blank = (a) => `<span class="st-ans">${mathText(esc(a.label || "답"))} <span aria-hidden="true">(</span><i></i><span aria-hidden="true">)</span>${a.unit ? esc(a.unit) : ""}</span>`;
   const list = [].concat(question.answer || []);
   const answer = list.length ? `<p class="ut-q-ans${list.length > 1 ? " is-multi" : ""}">${list.map(blank).join("")}</p>` : "";
-  return `<section class="ut-q" aria-label="${question.number}번"><div class="ut-q-head"><b>${question.number}</b><p>${esc(question.prompt)}</p></div><div class="ut-q-fig">${question.figure ? question.figure() : ""}</div>${answer}</section>`;
+  return `<section class="ut-q" aria-label="${question.number}번"><div class="ut-q-head"><b>${question.number}</b><p>${question.mathPrompt ? mathText(esc(question.prompt)) : esc(question.prompt)}</p></div><div class="ut-q-fig">${question.figure ? question.figure() : ""}</div>${answer}</section>`;
 }
 function pagesMarkup() {
   const { questions, meta } = original;
