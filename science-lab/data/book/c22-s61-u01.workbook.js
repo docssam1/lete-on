@@ -1,3 +1,4 @@
+import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-material-observation-context';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withAcidFurtherReading}from'./c22-s61-u01.editorial.js?v=20261108-acid-further-reading';
 import{withAcidReadableWorkbook}from'./c22-s61-u01.editorial.js?v=20261106-acid-readable-workbook';
@@ -11421,4 +11422,5 @@ export const termParticlePriorWorkbook=withAcidStudentLanguage(acidClass20261104
 export const acidReadablePriorWorkbook=withTermParticleLanguage(termParticlePriorWorkbook);
 export const grade6StudyNotesPriorWorkbook=withAcidReadableWorkbook(acidReadablePriorWorkbook);
 export const furtherReadingPriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
-export const workbook=withAcidFurtherReading(furtherReadingPriorWorkbook);
+export const materialObservationPriorWorkbook=withAcidFurtherReading(furtherReadingPriorWorkbook);
+export const workbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);

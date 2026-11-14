@@ -1,3 +1,4 @@
+import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-material-observation-context';
 import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withCombustionReadableWorkbook}from'./c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook';
 import{withLearnerExplanations}from'./learner-explanations.js';
@@ -22196,4 +22197,5 @@ const baseWorkbook = {
 export const learnerPriorWorkbook=withCombustionEditorial(baseWorkbook);
 export const combustionReadablePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const elementaryPromptPriorWorkbook=withCombustionReadableWorkbook(combustionReadablePriorWorkbook);
-export const workbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
+export const materialObservationPriorWorkbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
+export const workbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);

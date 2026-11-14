@@ -1,4 +1,4 @@
-import{GEOLOGY_OBSERVATION_CONTEXT_VERSION}from'../data/book/standalone-question-context.js';
+import{MATERIAL_OBSERVATION_CONTEXT_VERSION}from'../data/book/standalone-question-context.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{withThink,loadJudge}from'./think-merge.js';import{biologyObservationChoiceItems,BIOLOGY_OBSERVATION_CHOICE_VERSION}from'../data/book/standalone-question-context.js';import{BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION}from'../data/book/biology-observation-photos.js';
 import{questionAtVersion,questionMisconceptions,pickedChoiceTexts,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{gradeDaily}from'./daily-grade.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';import{thinkingCheckQuestion}from'./thinking-check-question.js';import{teacherKeyHtml}from'./daily.js';
@@ -32,5 +32,5 @@ test('current learning, Daily, teacher keys and both question paper modes show t
  for(const html of outputs){for(const choice of q.choices)assert(html.includes(esc(choice)));for(const photo of q.observationPhotos)assert(html.includes('../'+photo.src));for(const choice of old.choices.slice(1,4))assert(!html.includes(esc(choice)));}
  const key=teacherKeyHtml({u:unit,ch:{title:mod.unit.title},list:[q],misc:mod.misc});assert(key.includes(esc(q.explanation)));assert(!key.includes(esc(old.explanation)));for(const photo of q.observationPhotos)assert(daily(q).includes('../'+photo.src));
 
- const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(index.includes('v2.js?v='+GEOLOGY_OBSERVATION_CONTEXT_VERSION));assert(code.includes('standalone-question-context.js?v='+GEOLOGY_OBSERVATION_CONTEXT_VERSION));assert(code.includes('revised-lesson.js?v='+GEOLOGY_OBSERVATION_CONTEXT_VERSION));
+ const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(index.includes('v2.js?v='+MATERIAL_OBSERVATION_CONTEXT_VERSION));assert(code.includes('standalone-question-context.js?v='+MATERIAL_OBSERVATION_CONTEXT_VERSION));assert(code.includes('revised-lesson.js?v='+MATERIAL_OBSERVATION_CONTEXT_VERSION));
 });

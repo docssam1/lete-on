@@ -1,4 +1,4 @@
-import{withSeasonStandaloneContext}from'../data/book/standalone-question-context.js';
+import{withSeasonStandaloneContext,withMaterialStandaloneContext}from'../data/book/standalone-question-context.js';
 import {withAcidFurtherReading} from '../data/book/c22-s61-u01.editorial.js';
 import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import {withElementaryQuestionPrompts} from '../data/book/elementary-question-prompts.js';
@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import {withGrade6StudyNotes,GRADE6_STUDY_NOTE_UNITS} from '../data/book/grade6-study-notes.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
+const withCurrentReferenceContext=book=>withMaterialStandaloneContext(withSeasonStandaloneContext(book));
 const counts=[7,7,8,10,8],books=[];
 for(const [i,unit]of GRADE6_STUDY_NOTE_UNITS.entries()){
  const {workbook,elementaryPromptPriorWorkbook,furtherReadingPriorWorkbook,grade6StudyNotesPriorWorkbook}=await import(`../data/book/${unit}.workbook.js`);
@@ -40,7 +41,7 @@ test('grade-six personal directions preserve all questions, upper learning and e
 
 test('actual four paper views show the reviewed directions and keep answer views and all other HTML identical',async()=>{
  for(const [current,prior,count]of books){
-  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withObservedPhotoAlt(withSeasonStandaloneContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(prior))))),art),expected=makeWorkbookPaper(withObservedPhotoAlt(withSeasonStandaloneContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(current))))),art);
+  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(prior))))),art),expected=makeWorkbookPaper(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(current))))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=actual.workbookPaper({mode});assert.equal(html,expected.workbookPaper({mode}));
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
@@ -50,7 +51,7 @@ test('actual four paper views show the reviewed directions and keep answer views
      const note=current[key][i].rail[j],old=prior[key][i].rail[j];
      if(note.text!==old.text){assert(html.includes(escape(note.text)));restored[key][i].rail[j].text=old.text;if(key==='pages')changed++;}
     }
-    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withObservedPhotoAlt(withSeasonStandaloneContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(restored))))),art).workbookPaper({mode}),before.workbookPaper({mode}));
+    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(restored))))),art).workbookPaper({mode}),before.workbookPaper({mode}));
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
    }
   }

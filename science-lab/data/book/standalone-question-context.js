@@ -2,6 +2,7 @@ import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERE
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
 export const BIOLOGY_OBSERVATION_CHOICE_VERSION='20261115-biology-photo-observations';
+export const MATERIAL_OBSERVATION_CONTEXT_VERSION='20261115-material-observation-context';
 export const GEOLOGY_OBSERVATION_CONTEXT_VERSION='20261115-geology-observation-context';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const priorBiologyChoices=['갓 안쪽에 여러 주름이 보였다.','이 버섯을 먹으면 모든 병이 낫는다.','이 세균은 누구에게나 해롭다.','이 사진 하나면 모든 균류를 분류할 수 있다.','한 가닥 안에 마디가 이어져 보였다.'];
@@ -29,7 +30,23 @@ const waterNotice='연습을 위해 만든 자료예요. 실제 지역·인물�
 const altitudeTable={머리:['시각(KST)','고도'],행:[['10:15','41°'],['11:15','53°'],['12:15','62°'],['13:15','60°'],['14:15','49°']]};
 const altitudeNotice='고도를 비교하는 연습용 기록이에요. 직접 관측하거나 정밀하게 계산한 천문 자료는 아니에요. 정확한 남중 시각은 따로 주어지지 않았어요.';
 const geologyHorizontal='assets/book/c22-s51-u01-source-horizontal.png',geologyBroken='assets/book/c22-s51-u01-source-broken.png';
+const preparationPhoto='assets/activities/c22-s51-u03/mixing-photo-v1.webp',environmentPicture='assets/activities/c22-s61-u01/environment.webp';
 const entries={
+ 'c22-s62-u02-b002':{
+  unit:'c22-s62-u02',version:'20261106-combustion-readable-workbook',currentVersion:MATERIAL_OBSERVATION_CONTEXT_VERSION,
+  prompt:'흰 가루가 담긴 사진 한 장만 있습니다. 사진을 읽는 방법으로 알맞은 것을 고르세요.',
+  fields:{prompt:'다음 사진의 흰 가루를 살펴보세요. 어떤 가루인지 알아보는 방법으로 알맞은 것을 고르세요.',figure:preparationPhoto,figureNote:'흰 가루 옆에 투명한 액체가 든 용기 두 개가 놓인 모습.'},
+ },
+ 'c22-s62-u02-b010':{
+  unit:'c22-s62-u02',version:'20261106-combustion-readable-workbook',currentVersion:MATERIAL_OBSERVATION_CONTEXT_VERSION,
+  prompt:'사진을 넘어 추가 확인이 필요한 주장을 모두 고르세요. (정답 3개)',
+  fields:{prompt:'다음 사진을 보고 한 말이에요. 더 확인해야 하는 말을 모두 고르세요. (정답 3개)',figure:preparationPhoto,figureNote:'흰 가루 옆에 투명한 액체가 든 용기 두 개가 놓인 모습.'},
+ },
+ 'c22-s61-u01-b078':{
+  unit:'c22-s61-u01',version:'20261104-acid-class',currentVersion:MATERIAL_OBSERVATION_CONTEXT_VERSION,preserveDiagnosticVersion:true,
+  prompt:'제공된 바다 설명 사진으로 할 수 있는 말과 활용을 모두 고르세요.',
+  fields:{prompt:'다음은 조개가 사는 바다 환경을 설명하는 그림이에요. 이 그림을 알맞게 활용한 것을 모두 고르세요. (정답 3개)',figure:environmentPicture,figureNote:'바닷속 바위에 조개류가 붙어 있고 주변에 해초가 보이는 설명 그림. 산성화 측정값이나 특정 장소의 피해를 기록한 자료는 아니에요.'},
+ },
  'c22-s51-u01-b001':{
   unit:'c22-s51-u01',version:'20261106-geology-readable-workbook',currentVersion:GEOLOGY_OBSERVATION_CONTEXT_VERSION,
   prompt:'절벽의 지층 사진을 관찰할 때 먼저 기록할 특징은 무엇인가요?',
@@ -98,7 +115,7 @@ const entries={
 };
 const cache=new WeakMap();
 export function standaloneQuestionContexts(rows,unit){
- if(!['s41-u04','c22-s62-u04','c22-s62-u01','c22-s42-u01','c22-s51-u01'].includes(unit)||!Array.isArray(rows))return rows;
+ if(!['s41-u04','c22-s62-u04','c22-s62-u01','c22-s42-u01','c22-s51-u01','c22-s62-u02','c22-s61-u01'].includes(unit)||!Array.isArray(rows))return rows;
  let changed=false;
  const next=rows.map(q=>{
   const entry=Object.hasOwn(entries,q.id)?entries[q.id]:null;
@@ -146,4 +163,17 @@ export function withGeologyStandaloneContext(workbook){
   changed=true;return {...q,prompt:entry.fields.prompt,figure:link[1]};
  });
  return changed?{...workbook,questions,figures}:workbook;
+}
+
+// Link only the reviewed authored exercises; the existing figures and answer contracts stay intact.
+export function withMaterialStandaloneContext(workbook){
+ if(!['c22-s62-u02','c22-s61-u01'].includes(workbook.unit)||!Array.isArray(workbook.questions))return workbook;
+ const links={'c22-s62-u02-w002':['c22-s62-u02-b002','book-preparation'],'c22-s62-u02-w010':['c22-s62-u02-b010','book-preparation'],'c22-s61-u01-w078':['c22-s61-u01-b078','environment']};let changed=false;
+ const questions=workbook.questions.map(q=>{
+  const link=links[q.id],entry=link&&entries[link[0]];
+  if(!entry||entry.unit!==workbook.unit||q.no!==Number(link[0].slice(-3))||(q.status&&q.status!=='authored')||(q.sourceRef&&q.sourceRef.type!=='authored')||q.prompt!==entry.prompt||q.figure||q.table||q.given||q.givens||!workbook.figures?.[link[1]]?.includes('../'+entry.fields.figure))return q;
+  if(workbook.unit==='c22-s62-u02'?(q.status!=='authored'||q.sourceRef?.type!=='authored'||q.origin!=='independently-authored-current-curriculum'):q.origin!=='previous128')return q;
+  changed=true;return {...q,prompt:entry.fields.prompt,figure:link[1]};
+ });
+ return changed?{...workbook,questions}:workbook;
 }
