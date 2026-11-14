@@ -66,7 +66,10 @@
   try{
    const data=await g.RoadmapMembership.counsel({action:'explain',...last});
    render(data);
-   for(const text of String(data.detail||'').split(/\n+/).filter(Boolean))detail.append(el('p',{},text));
+   for(const text of String(data.detail||'').split(/\n+/).filter(Boolean)){
+    const heading=text.trim().match(/^\*\*([^*]+)\*\*$/);
+    detail.append(el(heading?'h4':'p',{},heading?heading[1]:text));
+   }
    detail.hidden=false;moreStatus.textContent=data.reused?'앞서 정리한 설명을 다시 보여드립니다.':'현재 진도에 맞춘 추가 설명입니다. 자료의 출처와 함께 확인해 주세요.';
   }catch(e){moreStatus.textContent=messages[e.message]||'추가 설명을 가져오지 못했습니다. 자료 안내를 확인해 주세요.';}
   finally{lock(false);}
@@ -79,13 +82,14 @@
   if(!progress.value){
    try{
     const draft=JSON.parse(g.PlannerStorage.getItem('gfield.demo2.v1')||'null');
-    if(draft&&g.PlannerIntake)progress.value=clean(g.PlannerIntake.summary(draft.answers||{},draft.fields||{}).slice(1).map(r=>r.text).join('\n')).slice(0,2000);
+    if(draft&&g.PlannerIntake)progress.value=clean(g.PlannerIntake.summary(draft.answers||{},draft.fields||{}).slice(1).map(r=>String(r.text||'').trim()).filter(text=>text&&text!=='미선택').join('\n')).slice(0,2000);
    }catch{}
   }
   dialog.showModal();
   if(g.RoadmapGuest){form.hidden=true;status.textContent='자료 상담은 회원 로그인 후 이용할 수 있습니다.';contact.textContent='로그인하고 자료 상담하기';contact.href='account.html?next=planner.html';contact.removeAttribute('target');}
   else question.focus();
  };
+ doc.body.classList.add('customer-counsel-ready');
  doc.body.append(dialog);
  const contactLink=doc.querySelector('.docssam-contact-link');
  if(contactLink)contactLink.before(button);else doc.querySelector('.top')?.append(button);

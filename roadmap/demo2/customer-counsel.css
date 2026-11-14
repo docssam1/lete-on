@@ -25,9 +25,11 @@
 .customer-counsel .cc-next{font-size:14px;color:#52665f}
 .customer-counsel .cc-ai-hint{font-size:13px;color:#52665f;margin:10px 0}
 .customer-counsel .cc-detail{border-left:3px solid #38776d;padding:4px 0 4px 18px}
+.customer-counsel .cc-detail h4{margin:20px 0 8px}.customer-counsel .cc-detail h4:first-child{margin-top:8px}
 .customer-counsel .cc-contact{display:inline-flex;align-items:center;min-height:44px;font-size:14px;margin-top:12px}
 .customer-counsel [hidden]{display:none!important}
 @media(max-width:620px){
+ body.customer-counsel-ready.roadmap-studio.integrated-planner.premium-planner .top{flex-wrap:wrap;gap:8px}
  .customer-counsel{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);padding:22px 16px;border-radius:8px}
  .customer-counsel h2{font-size:23px}.customer-counsel .cc-header{gap:10px}
  .customer-counsel-open{font-size:13px;padding:8px 10px}.customer-counsel .cc-more{width:100%}
