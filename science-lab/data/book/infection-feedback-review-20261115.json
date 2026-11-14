@@ -1,0 +1,40 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "감염병과 건강한 생활의 현재 문제은행 해설 4곳",
+  "contentVersion": "20261115-infection-feedback",
+  "questions": ["c22-s32-u04-t01", "c22-s32-u04-t04", "c22-s32-u04-t09", "c22-s32-u04-t10"],
+  "changes": [
+    "눈병 전체를 감염병의 예로 묶지 않고 감기·인플루엔자로 예를 한정",
+    "손과 물건을 통한 이동은 가능성으로 설명",
+    "기침 예절의 효과를 침방울이 퍼지거나 손에 직접 묻는 것을 줄이는 것으로 설명",
+    "물·음식 관련 예방 행동의 역할을 위험 감소로 설명하며 비말·타액의 뜻을 함께 안내"
+  ],
+  "references": [
+    {"title": "교육부 고시 제2022-33호 별책9 과학과 교육과정 4과08-02 해설", "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0", "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790"},
+    {"title": "CDC: Pink Eye Causes and How It Spreads", "url": "https://www.cdc.gov/conjunctivitis/causes/index.html"},
+    {"title": "건강보험심사평가원: 알레르기성 결막염", "url": "https://www.korea.kr/news/policyNewsView.do?newsId=148901615"},
+    {"title": "질병관리청: 호흡기 감염병 예방을 위한 5대 예방수칙", "url": "https://www.kdca.go.kr/kdca/2853/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa2RjYSUyRjQ1JTJGMjE2NDk3JTJGYXJ0Y2xWaWV3LmRvJTNGcGFzc3dvcmQlM0QlMjZyZ3NCZ25kZVN0ciUzRCUyNmZpbmRPcG53cmQlM0QlMjZmaW5kV29yZCUzRCUyNnJnc0VuZGRlU3RyJTNEJTI2ZmluZFR5cGUlM0QlMjZmaW5kQ2xTZXElM0QlMjZwYWdlJTNEMjklMjY%3D"},
+    {"title": "질병관리청: 수인성·식품매개감염병 6대 예방수칙", "url": "https://www.kdca.go.kr/kdca/2854/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa2RjYSUyRjQ2JTJGMjE3OTk4JTJGYXJ0Y2xWaWV3LmRvJTNGcGFzc3dvcmQlM0QlMjZyZ3NCZ25kZVN0ciUzRCUyNmZpbmRPcG53cmQlM0QlMjZmaW5kV29yZCUzRCVFQyU4OCU5OCVFQyU5RCVCOCVFQyU4NCVCMSUyNnJnc0VuZGRlU3RyJTNEJTI2ZmluZFR5cGUlM0RzaiUyNmZpbmRDbFNlcSUzRCUyNnBhZ2UlM0QxJTI2"}
+  ],
+  "verification": {
+    "currentUnitQuestions": 92,
+    "unchangedUnitQuestions": 88,
+    "actualUnitLoaders": 32,
+    "currentItemsCompared": 3179,
+    "unchangedCurrentItems": 3175,
+    "originalQuestionsPreserved": 1763,
+    "changedFields": ["explanation", "contentVersion", "previousVersions"],
+    "promptsChoicesAnswersGradingAndGivenDataPreserved": true,
+    "savedExplanationsAndAttemptsPreserved": true,
+    "onlineFeedbackTeacherPrintDailyKeyAndStudentAnswerHidingChecked": true,
+    "nativeTestFiles": 277,
+    "nativeTests": 1473,
+    "nativePassed": 1471,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": ["현행 원문 없는 세 단원과 전체 현행 판본 확보", "실제 PC·휴대폰·A4·음성·WebGL·3D 검수", "운영 메인 병합·배포"]
+}

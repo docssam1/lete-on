@@ -989,3 +989,46 @@ export function withGrade3PracticeClassroom(unit,mod){
  const items=grade3PracticeCurrentItems(mod.classroomItems,unit);
  return items===mod.classroomItems?mod:{...mod,classroomItems:items};
 }
+
+// Keep the current explanation separate from saved versions of the same question.
+export const INFECTION_FEEDBACK_VERSION='20261115-infection-feedback';
+const infectionFeedback={
+ 'c22-s32-u04-t01':{
+  previousVersion:GRADE3_PRACTICE_LANGUAGE_VERSION,
+  prompt:'세균·바이러스 같은 병원체가 몸에 들어와 생기는 병을 ( ① )이라고 해요.',
+  previous:'감기·독감(인플루엔자)·눈병은 감염병이에요. 넘어져 다쳐서 아픈 것은 감염병이 아니에요.',
+  explanation:'감기와 독감(인플루엔자)은 병원체가 몸에 들어와 생기는 감염병이에요. 넘어져 다쳐서 아픈 것과 구별해요.',
+ },
+ 'c22-s32-u04-t04':{
+  previousVersion:1,
+  prompt:'기침이나 재채기를 할 때는 손바닥이 아니라 휴지나 ( ① ) 안쪽으로 입과 코를 가려요.',
+  previous:'손바닥으로 가리면 침방울이 손에 묻어 만지는 물건과 친구 손으로 다시 옮겨 가요.',
+  explanation:'손바닥으로 입을 가리면 침방울이 손에 묻을 수 있어요. 그 손으로 물건을 만지면 침방울에 든 병원체가 옮겨 갈 수 있으므로 휴지나 옷소매 안쪽으로 입과 코를 가려요.',
+ },
+ 'c22-s32-u04-t09':{
+  previousVersion:1,
+  prompt:'기침이나 재채기를 할 때의 행동으로 가장 알맞은 것은?',
+  previous:'옷소매 안쪽으로 가리면 침방울이 덜 퍼지고 손에도 묻지 않아요.',
+  explanation:'휴지나 옷소매 안쪽으로 입과 코를 가리면 침방울이 주위로 퍼지는 것을 줄일 수 있어요. 손바닥으로 가릴 때보다 손에 직접 묻는 것도 줄여요.',
+ },
+ 'c22-s32-u04-t10':{
+  previousVersion:1,
+  prompt:'감염병이 옮겨 가는 길과 예방 행동을 바르게 짝 지은 것은?',
+  previous:'물·음식으로 옮겨 가는 감염병은 끓인 물과 익힌 음식으로 막아요. 접촉은 손 씻기, 비말은 기침 예절, 공기는 환기, 타액은 자기 컵 쓰기예요.',
+  explanation:'안전한 물과 충분히 익힌 음식은 물·음식을 통한 감염 위험을 줄이는 데 도움이 돼요. 비말은 작은 침방울, 타액은 침을 뜻해요. 손 씻기·기침 예절·환기·각자 컵 쓰기도 함께 실천해요.',
+ },
+};
+const feedbackCache=new WeakMap();
+export function infectionFeedbackCurrentItems(rows,unit){
+ if(unit!=='c22-s32-u04'||!Array.isArray(rows))return rows;
+ let changed=false;
+ const next=rows.map(q=>{
+  const patch=infectionFeedback[q.id];
+  if(!patch||q.status!=='authored'||q.sourceRef?.type!=='authored-lesson'||(q.contentVersion||1)!==patch.previousVersion||q.prompt!==patch.prompt||q.explanation!==patch.previous)return q;
+  changed=true;
+  if(feedbackCache.has(q))return feedbackCache.get(q);
+  const current={...q,explanation:patch.explanation,contentVersion:INFECTION_FEEDBACK_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1}]};
+  feedbackCache.set(q,current);return current;
+ });
+ return changed?next:rows;
+}

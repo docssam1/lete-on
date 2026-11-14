@@ -5,7 +5,7 @@ import {withGrade3StudyNotes} from '../data/book/grade3-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-import {grade3PracticeCurrentItems,GRADE3_PRACTICE_LANGUAGE_VERSION as VERSION} from '../data/book/c22-s32-practice-language.js';
+import {grade3PracticeCurrentItems,INFECTION_FEEDBACK_VERSION,GRADE3_PRACTICE_LANGUAGE_VERSION as VERSION} from '../data/book/c22-s32-practice-language.js';
 import {ecologySoundCurrentItems} from './ecology-sound-question-language.js';
 import {withThink} from './think-merge.js';
 import {revisedClassroom} from './revised-lesson.js';
@@ -52,7 +52,7 @@ for(const c of cases){
   const before=await priorBank(unit),savedBefore=structuredClone(before),{items:current}=await actualBank(unit);
   assert.equal(current.length,c.bankCount);let changed=0;
   for(let i=0;i<before.length;i++){
-   const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);
+   const old=before[i],q=current[i],priorFeedback=q.contentVersion===INFECTION_FEEDBACK_VERSION?questionAtVersion(q,old.contentVersion||1):q;assert(priorFeedback);assert.deepEqual(withoutPresentation(priorFeedback),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);
    const ac=q.answerContract,values=ac.type==='single-choice'?[0,1,2,3,4]:ac.type==='multi-choice'?Array.from({length:32},(_,mask)=>[0,1,2,3,4].filter(n=>mask&(1<<n))):ac.type==='short-text'?[ac.answer,...(ac.accepted||[]),'다른 답']:ac.type==='written-explanation'?[ac.sample,'다른 설명']:ac.type==='cloze'?[ac.blanks.map(b=>b.answer),ac.blanks.map(()=>''),ac.blanks.map(()=>'다른 답')]:ac.type==='table-fill'?[ac.rows.map(r=>r.answer),ac.rows.map(r=>r.answer.map(()=>'')),ac.rows.map(r=>r.answer.map(()=>'다른 답'))]:[];
    for(const value of values)assert.deepEqual(gradeDaily(q,value),gradeDaily(old,value));
    if(q.prompt===old.prompt)continue;
