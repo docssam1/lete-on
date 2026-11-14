@@ -9,21 +9,44 @@
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="./math-markup.css?v=20261027n" />
   <link rel="stylesheet" href="./unit-test-solve.css?v=20261110t" />
-  <link rel="stylesheet" href="./selection-test-paper.css?v=20261114b" />
+  <link rel="stylesheet" href="./selection-test-paper.css?v=20261114c" />
 </head>
 <body>
-  <!-- 2과정 권별 테스트(우리 시험지, 원장 2026-11-14). course2-test-paper.js · course2-test-originals/<권>.js -->
+  <!-- 2과정 권별 테스트(우리 시험지, 원장 2026-11-14). 정답은 비공개 표 → 서버 함수 unit-test-answers(bookId course-02-…).
+       course2-test-paper.js · course2-test-originals/<권>.js -->
   <header class="ut-header">
     <a class="ut-back" href="./home.html"><span aria-hidden="true">←</span> 대문</a>
     <div class="ut-title"><span id="eyebrow">2과정</span><strong id="title">권별 테스트</strong></div>
-    <button type="button" id="printButton" class="ut-btn primary">시험지 인쇄</button>
+    <button type="button" id="printButton" class="ut-btn">시험지 인쇄</button>
   </header>
-  <main class="ut-main st-main">
+  <main class="ut-main">
     <section class="ut-paper" aria-label="권별 테스트 시험지">
-      <p class="ut-guide">인쇄해서 풀어요. 정답은 선생님 답안지로 확인합니다.</p>
+      <p class="ut-guide">인쇄하거나 공책에 풀고, 다 풀면 <b>답안 확인 및 채점하기</b>를 눌러 번호마다 ○ · ✕를 골라요.</p>
       <div id="pages" class="ut-pages"></div>
+      <div id="answerPages" class="ut-answer-print" aria-hidden="true"></div>
     </section>
+    <aside class="ut-sheet" aria-labelledby="sheetHeading">
+      <div class="ut-sheet-head">
+        <h2 id="sheetHeading">답안 확인 · 채점</h2>
+        <span id="sheetScore" role="status"></span>
+      </div>
+      <div id="checkStart" class="ut-check-start">
+        <p class="ut-sheet-help">문제를 다 풀었으면 눌러요. 정답을 보며 번호마다 <b>○</b> · <b>✕</b>를 누릅니다.</p>
+        <button type="button" id="checkButton" class="ut-btn primary ut-check-btn">답안 확인 및 채점하기</button>
+      </div>
+      <div id="checkPanel" class="ut-check" hidden>
+        <div class="ut-check-tools">
+          <button type="button" id="answerPrintButton" class="ut-btn" hidden>답안지 인쇄</button>
+          <span id="answerStatus" class="ut-answer-status" role="status"></span>
+        </div>
+        <ol id="sheet" class="ut-rows c2-rows"></ol>
+        <div class="ut-sheet-foot">
+          <p id="wrongList" class="ut-sheet-help"></p>
+          <button type="button" id="clearButton" class="ut-text-btn">○✕ 지우기</button>
+        </div>
+      </div>
+    </aside>
   </main>
-  <script type="module" src="./course2-test-paper.js?v=20261114b"></script>
+  <script type="module" src="./course2-test-paper.js?v=20261114c"></script>
 </body>
 </html>
