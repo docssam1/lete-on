@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <script src="./guard.js?v=20261111q"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>선발시험 시험지</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./unit-test-solve.css?v=20261110t" />
+  <link rel="stylesheet" href="./selection-test-paper.css?v=20261114a" />
+</head>
+<body>
+  <!-- 선발시험을 우리 시험지 모양으로 다시 짠 것(원장 2026-11-14). 원문 그림 쪽은 잠근 그대로. selection-test-paper.js -->
+  <header class="ut-header">
+    <a id="backLink" class="ut-back" href="./entrance.html"><span aria-hidden="true">←</span> 입학 모의고사</a>
+    <div class="ut-title"><span id="eyebrow">선발시험</span><strong id="title">선발시험 시험지</strong></div>
+    <a id="checkLink" class="ut-btn" href="./result-diagnosis.html">O/X 채점·진단</a>
+    <button type="button" id="printButton" class="ut-btn primary">시험지 인쇄</button>
+  </header>
+  <main class="ut-main st-main">
+    <section class="ut-paper" aria-label="선발시험 시험지">
+      <p class="ut-guide">인쇄해서 풀고, 다 풀면 <b>O/X 채점·진단</b>에서 번호마다 맞음·틀림을 골라요. 약한 유형은 유사문제로 다시 공부합니다.</p>
+      <div id="watermark" class="ut-watermark" aria-hidden="true"></div>
+      <div id="pages" class="ut-pages"></div>
+    </section>
+  </main>
+  <script type="module" src="./selection-test-paper.js?v=20261114a"></script>
+</body>
+</html>

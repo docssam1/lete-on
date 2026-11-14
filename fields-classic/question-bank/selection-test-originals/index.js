@@ -1,0 +1,5 @@
+// 우리 시험지로 다시 짠 선발시험 회차 목록(시험 id → 캐시 꼬리표). 새 회차를 끝내면 여기에 한 줄 더한다.
+// selection-test-paper.js(시험지 보기·인쇄)와 entrance.js(「시험지 인쇄」 단추)가 같이 본다.
+export const TYPESET_EXAMS = {
+  "k6-2023-02": "20261114a",
+};
