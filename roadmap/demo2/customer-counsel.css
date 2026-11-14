@@ -1,0 +1,35 @@
+.customer-counsel-open{font:inherit;font-size:14px;font-weight:650;min-height:44px;padding:8px 14px;border:1px solid #cfe0da;border-radius:6px;background:#edf7f5;color:#285c49;cursor:pointer;white-space:nowrap}
+.customer-counsel{box-sizing:border-box;width:min(720px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:28px;border:1px solid #cfe0da;border-radius:12px;background:#fff;color:#16302b;font:16px/1.8 Pretendard,sans-serif;overflow-y:auto}
+.customer-counsel::backdrop{background:rgba(22,48,43,.42)}
+.customer-counsel .cc-header{display:flex;align-items:flex-start;gap:20px;justify-content:space-between}
+.customer-counsel h2{font-size:27px;line-height:1.4;letter-spacing:-.04em;margin:0;font-weight:750;color:#16302b}
+.customer-counsel .cc-header button{font:inherit;min-height:44px;min-width:56px;padding:8px;border:1px solid #cfe0da;border-radius:6px;background:#fff;color:#285c49;cursor:pointer}
+.customer-counsel .cc-intro{color:#52665f;font-size:15px;margin:16px 0 24px}
+.customer-counsel .cc-form{display:grid;gap:18px}
+.customer-counsel label{display:grid;gap:8px;font-size:14px;font-weight:650}
+.customer-counsel textarea,.customer-counsel select{box-sizing:border-box;max-width:100%;width:100%;min-height:44px;font:inherit;font-size:15px;line-height:1.75;padding:10px 12px;border:1px solid #a9c3b7;border-radius:6px;background:white;color:#16302b}
+.customer-counsel textarea{resize:vertical}
+.customer-counsel .cc-primary{font:inherit;min-height:48px;padding:12px 20px;border:1px solid #285c49;border-radius:6px;background:#285c49;color:white;font-weight:650;cursor:pointer}
+.customer-counsel .cc-more{font:inherit;min-height:44px;padding:10px 18px;border:1px solid #285c49;background:#fff;color:#285c49;border-radius:6px;cursor:pointer;margin-top:20px}
+.customer-counsel button:disabled{opacity:.55;cursor:progress}
+.customer-counsel :focus-visible,.customer-counsel-open:focus-visible{outline:3px solid #38776d;outline-offset:3px}
+.customer-counsel .cc-status{font-size:14px;color:#285c49;min-height:24px;margin:12px 0}
+.customer-counsel .cc-result{border-top:1px solid #cfe0da;margin-top:24px;padding-top:24px}
+.customer-counsel h3{font-size:21px;line-height:1.45;margin:0 0 14px;letter-spacing:-.03em}
+.customer-counsel h4{font-size:17px;line-height:1.6;margin:0 0 10px;color:#16302b}
+.customer-counsel .cc-summary{padding:18px;background:#edf7f5;border-radius:6px;font-weight:600}
+.customer-counsel .cc-source{padding:22px 0;border-bottom:1px solid #cfe0da;overflow-wrap:anywhere}
+.customer-counsel .cc-source>p{white-space:pre-line;font-size:15px;margin:0 0 12px}
+.customer-counsel .cc-source .cc-source-note{font-size:12px;color:#52665f;line-height:1.8;margin-bottom:0}
+.customer-counsel a{color:#285c49;text-underline-offset:4px}
+.customer-counsel .cc-next{font-size:14px;color:#52665f}
+.customer-counsel .cc-ai-hint{font-size:13px;color:#52665f;margin:10px 0}
+.customer-counsel .cc-detail{border-left:3px solid #38776d;padding:4px 0 4px 18px}
+.customer-counsel .cc-contact{display:inline-flex;align-items:center;min-height:44px;font-size:14px;margin-top:12px}
+.customer-counsel [hidden]{display:none!important}
+@media(max-width:620px){
+ .customer-counsel{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);padding:22px 16px;border-radius:8px}
+ .customer-counsel h2{font-size:23px}.customer-counsel .cc-header{gap:10px}
+ .customer-counsel-open{font-size:13px;padding:8px 10px}.customer-counsel .cc-more{width:100%}
+}
+@media print{.customer-counsel,.customer-counsel-open{display:none!important}}
