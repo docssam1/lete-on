@@ -2,6 +2,7 @@
  'use strict';
  const A=RoadmapMembership,P=RoadmapPolicy,$=id=>document.getElementById(id),root=$('memberContent');
  const next=A.destination(new URLSearchParams(location.search).get('next'));
+ const adminIntent=new URLSearchParams(location.search).get('next')==='admin.html';
  let entryIntent='signup';
  let member=null,proof=null,email='',mode='signup',cooldown=0,timer=null,busy=false;
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,6 +18,11 @@
   root.querySelector('[name=identifier]').value=email;
   $('loginForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);run(async()=>{
    const identifier=String(f.get('identifier')).trim(),code=String(f.get('code'));
+   if(identifier.toUpperCase()==='DOCSSAM'){
+    // 같은 로그인 칸을 사용하되 관리자 승인은 기존 서버 인증으로만 확인한다.
+    await GFIELD_FIELDS_ADMIN_AUTH.signIn('DOCSSAM',code);
+    e.target.reset();location.assign('admin.html');return;
+   }
    const result=identifier.includes('@')?await A.call('login',{email:identifier.toLowerCase(),pin:code}):await A.call('review-login',{username:identifier,code});
    member=A.accept(result);e.target.reset();location.assign(next);
   });};
@@ -90,5 +96,8 @@
   }
  });
  document.addEventListener('click',e=>{const target=e.target.closest('[data-account-entry]');if(!target||busy)return;entryIntent=target.dataset.accountEntry;if(member)profile();else if(entryIntent==='login')login();else emailScreen('signup');});
- A.status().then(m=>{member=m;if(m)profile();else if(entryIntent==='login')login();else emailScreen('signup');}).catch(e=>{if(entryIntent==='login')login();else emailScreen('signup');announce(A.message(e),true);});
+ if(adminIntent){
+  entryIntent='login';
+  GFIELD_FIELDS_ADMIN_AUTH.getSession().then(s=>{if(s?.user?.app_metadata?.role==='admin')location.assign('admin.html');else login();}).catch(()=>login());
+ }else A.status().then(m=>{member=m;if(m)profile();else if(entryIntent==='login')login();else emailScreen('signup');}).catch(e=>{if(entryIntent==='login')login();else emailScreen('signup');announce(A.message(e),true);});
 })();
