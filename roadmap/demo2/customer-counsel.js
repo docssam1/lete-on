@@ -9,12 +9,15 @@
  const header=el('header',{class:'cc-header'});
  const close=el('button',{type:'button','aria-label':'자료 상담 닫기'},'닫기');
  header.append(el('h2',{id:'customerCounselTitle'},'지금 공부, 함께 살펴볼까요?'),close);
- const intro=el('p',{class:'cc-intro'},'궁금한 점과 현재 진도를 적어 주세요. 승인된 지필드 자료에서 관련 안내를 찾아드립니다.');
+ const intro=el('p',{class:'cc-intro'},'궁금한 점과 현재 진도를 적어 주세요. 학원 상담은 다닐 수 있는 지역도 함께 적으면 관련 지점과 과정을 찾아드립니다.');
  const form=el('form',{class:'cc-form'});
  const stageLabel=el('label',{},'학교 단계');
  const stage=el('select',{'aria-label':'학교 단계'});
  for(const [value,title]of [['preschool','유아'],['elementary','초등'],['middle','중등'],['high','고등']])stage.append(el('option',{value},title));
  stageLabel.append(stage);
+ const regionLabel=el('label',{},'통학 가능한 지역 · 수업 방식 (선택)');
+ const region=el('input',{type:'text',maxlength:'120',placeholder:'예: 부산 센텀·사직 / 목동 / 온라인만 희망'});
+ regionLabel.append(region);
  const progressLabel=el('label',{},'현재 진도와 풀이 모습');
  const progress=el('textarea',{rows:'3',maxlength:'2000',placeholder:'예: 중1-1 개념원리 3단원, 쎈 기본 문제는 혼자 풀고 함수에서 자주 막혀요.'});
  progressLabel.append(progress);
@@ -22,7 +25,7 @@
  const question=el('textarea',{rows:'3',maxlength:'1000',required:'',placeholder:'예: 선행을 이어가도 될까요? 지금은 어떤 공부를 보완하면 좋을까요?'});
  questionLabel.append(question);
  const submit=el('button',{type:'submit',class:'cc-primary'},'관련 자료 찾아보기');
- form.append(stageLabel,progressLabel,questionLabel,submit);
+ form.append(stageLabel,regionLabel,progressLabel,questionLabel,submit);
  const previous=el('div',{class:'cc-previous'});
  const includePrevious=el('input',{type:'checkbox'});
  const previousLabel=el('label',{class:'cc-use-previous',hidden:''});
@@ -31,7 +34,7 @@
  const status=el('p',{class:'cc-status',role:'status','aria-live':'polite'});
  const result=el('section',{class:'cc-result',hidden:'','aria-labelledby':'ccSummaryTitle'});
  const aiButton=el('button',{type:'button',class:'cc-more',hidden:''},'추가 설명 받기');
- const aiHint=el('p',{class:'cc-ai-hint',hidden:''},'추가 설명을 요청할 때만 질문·진도·관련 승인 자료를 AI에 보냅니다.');
+ const aiHint=el('p',{class:'cc-ai-hint',hidden:''},'추가 설명을 요청할 때만 질문·지역·진도·관련 승인 자료를 AI에 보냅니다.');
  const moreStatus=el('p',{class:'cc-status',role:'status','aria-live':'polite'});
  const detail=el('div',{class:'cc-detail',hidden:''});
  const contact=el('a',{href:'https://open.kakao.com/me/gfield',target:'_blank',rel:'noopener noreferrer',class:'cc-contact'},'독쌤에게 직접 상담하기');
@@ -50,7 +53,7 @@
   previousLabel.hidden=!saved;
  }
  function context(){
-  const value={question:clean(question.value),progress:clean(progress.value),stage:stage.value};
+  const value={question:clean(question.value),progress:clean(progress.value),region:clean(region.value),stage:stage.value};
   if(previousText&&includePrevious.checked){
    value.previous=clean(previousText).slice(0,600);
   }
@@ -63,7 +66,7 @@
   }catch{}
   return '';
  }
- const lock=value=>{busy=value;for(const n of [stage,progress,question,includePrevious,submit,aiButton])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
+ const lock=value=>{busy=value;for(const n of [stage,region,progress,question,includePrevious,submit,aiButton])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
  const messages={login_required:'로그인 후 자료 상담을 이용할 수 있습니다.',question_missing:'궁금한 내용을 조금 더 적어 주세요.',sources_missing:'추가 설명에 참고할 승인 자료를 찾지 못했습니다. 독쌤에게 직접 문의해 주세요.',ai_not_configured:'추가 설명 연결을 준비하고 있습니다. 아래 자료 안내를 먼저 확인해 주세요.',too_many_attempts:'오늘의 추가 설명 사용 횟수를 마쳤습니다. 자료 안내는 계속 이용할 수 있습니다.',ai_unavailable:'추가 설명을 가져오지 못했습니다. 자료 안내는 아래에서 계속 확인할 수 있습니다.'};
  function render(data,c){
   result.replaceChildren();detail.replaceChildren();detail.hidden=true;moreStatus.textContent='';
