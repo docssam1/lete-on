@@ -680,7 +680,9 @@ const weatherReadableQuestions={
   "explanation": "장소와 도구, 관측 시각과 안전을 정해요(ㄴ). 정한 때마다 실제 값과 단위를 적은 뒤(ㄱ), 어떤 변화가 있었는지 설명해요(ㄷ). 못 잰 때는 직접 재지 못했다고 남겨요."
  },
  "74": {
-  "prompt": "기온·습도·구름의 양을 관측할 빈 표를 만드세요. 날짜와 시각, 장소와 도구, 단위와 직접 재지 못한 까닭을 적을 칸을 넣으세요."
+  "prompt": "기온·습도·구름의 양을 관측할 빈 표를 만드세요. 날짜와 시각, 장소와 도구, 단위와 직접 재지 못한 까닭을 적을 칸을 넣으세요.",
+  "answer": "날짜·시각, 장소와 사용한 도구, 기온(℃)·습도(%)·구름의 양을 적을 칸을 만들어요. 직접 재지 못했을 때는 그 까닭을 적을 칸도 두고, 관측 결과를 적을 줄은 비워 두어요.",
+  "criteria": "기온(℃)·습도(%)·구름의 양, 날짜·시각·장소·도구와 직접 재지 못한 까닭을 적을 칸이 있는 빈 표를 그린다."
  },
  "75": {
   "explanation": "모래와 물의 온도를 잰 것과 공기 흐름을 직접 본 것은 다른 관찰이에요. 온도 값은 그대로 남기고 공기 흐름을 보지 못했다고 적어요. 다른 자료를 참고했다면 어디에서 보았는지도 적어요.",
@@ -712,7 +714,8 @@ const weatherReadableQuestions={
   "explanation": "눈에 보이지 않는 기체 상태의 물은 수증기예요(ㄱ). 컵 밖의 작은 물방울은 액체(ㄴ), 일부 구름의 얼음 알갱이는 고체예요(ㄷ)."
  },
  "96": {
-  "explanation": "이슬은 표면에, 안개는 지표 가까운 공기 중에, 구름은 높은 공중에 그려요. 물방울이 관련된 점은 같지만 위치가 달라요. 구름에는 얼음 알갱이가 있을 수도 있어요."
+  "explanation": "이슬은 표면에, 안개는 지표 가까운 공기 중에, 구름은 높은 공중에 그려요. 물방울이 관련된 점은 같지만 위치가 달라요. 구름에는 얼음 알갱이가 있을 수도 있어요.",
+  "criteria": "이슬은 물체 표면에, 안개는 지표 가까이, 구름은 높은 공중에 나타내고 이름표를 붙인다. 작은 물방울과 관련된 공통점과 맺힌 곳·떠 있는 곳의 차이를 한 가지씩 설명하면 인정한다. 구름에 얼음 알갱이가 있을 수 있다는 추가 설명도 인정한다."
  },
  "100": {
   "explanation": "기온만으로 실제 기압을 정할 수는 없어요. 같은 높이나 기준에서 잰 기압과 주변의 기압을 비교해야 어느 쪽이 높은지 알 수 있어요."
@@ -770,6 +773,27 @@ export function withWeatherReadableWorkbook(workbook){
  if(workbook.unit!=='c22-s52-u03')return workbook;
  const revise=(page,index)=>{const patch=weatherReadablePages[index+1];if(!patch)return page;const{blocks,...fields}=patch;return{...page,...fields,...(blocks?{blocks:page.blocks.map((block,i)=>blocks[i]?{...block,...blocks[i]}:block)}:{})};};
  return {...workbook,questions:workbook.questions.map(q=>weatherReadableQuestions[q.no]?{...q,...weatherReadableQuestions[q.no]}:q),pages:workbook.pages.map(revise),...(workbook.teacherStudentPages?{teacherStudentPages:workbook.teacherStudentPages.map(revise)}:{})};
+}
+
+export const WEATHER_DRAWING_CRITERIA_VERSION='20261115-drawing-answer-criteria';
+const weatherDrawingPrior={
+ 74:{prompt:'기온·습도·구름의 양을 관측할 빈 표를 만드세요. 날짜와 시각, 장소와 도구, 단위와 직접 재지 못한 까닭을 적을 칸을 넣으세요.',sample:'예시: 날짜/시각 | 위치/도구/노출 | 기온℃ | 습도% | 구름의 양/시야 | 미측정/이유. 빈 관측행3개 이상.',criterion:'요소3개·단위·시각/위치·3개빈행·미측정/이유.'},
+ 96:{prompt:'이슬·안개·구름의 관찰 위치를 간단한 그림과 이름표로 비교하세요. 공통점과 차이를 각각 한 가지 쓰세요.',sample:'예시: 풀 표면의 이슬, 지표 가까이 떠 있는 안개, 높은 공중 구름. 물방울이 관련된다는 공통점, 맺힘/떠 있음·높이의 차이. 구름에는 얼음 알갱이도 가능.',criterion:'세 위치 이름표·공통점/차이·수증기/물방울 구별.'}
+};
+const weatherDrawingCache=new WeakMap();
+export function weatherDrawingCriteriaCurrentItems(rows,unit='c22-s52-u03'){
+ if(unit!=='c22-s52-u03'||!Array.isArray(rows))return rows;let changed=false;
+ const clone=x=>JSON.parse(JSON.stringify(x));
+ const next=rows.map(q=>{
+  const no=q.workbookRef?.no,prior=weatherDrawingPrior[no],patch=weatherReadableQuestions[no],ac=q.answerContract;
+  if(!prior||q.id!=='c22-s52-u03-b'+String(no).padStart(3,'0')||q.workbookRef.id!=='c22-s52-u03-w'+String(no).padStart(3,'0')||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||q.sourceContent||q.contentVersion!==WEATHER_READABILITY_VERSION||q.prompt!==prior.prompt||ac?.type!=='written-explanation'||ac.sample!==prior.sample||JSON.stringify(ac.rubric?.required)!==JSON.stringify([prior.criterion]))return q;
+  changed=true;if(weatherDrawingCache.has(q))return weatherDrawingCache.get(q);
+  const current={...q,answerContract:{...clone(ac),sample:patch.answer||ac.sample,rubric:{...clone(ac.rubric),required:[patch.criteria]}},contentVersion:WEATHER_DRAWING_CRITERIA_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion,snapshotKind:'full-question'}]};
+  weatherDrawingCache.set(q,current);return current;
+ });return changed?next:rows;
+}
+export function withWeatherDrawingCriteriaClassroom(unit,mod){
+ const items=weatherDrawingCriteriaCurrentItems(mod.classroomItems,unit);return items===mod.classroomItems?mod:{...mod,classroomItems:items};
 }
 const weatherReadableBank={
  "c22-s52-u03-b003": {

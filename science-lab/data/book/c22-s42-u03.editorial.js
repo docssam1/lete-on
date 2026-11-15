@@ -119,6 +119,9 @@ export function withGasUpperScience(workbook){
 // Plain student language; keep the full earlier workbook and raw bank.
 export const GAS_READABILITY_VERSION='20261106-gas-readable-workbook';
 const gasReadablePatches={
+ "40": {
+  "answer": "연결부 밀봉 한 곳을 고치고, 같은 주머니·종이판·시작 상태·펌프 방법을 같게 둔다. 수정 전후 움직임을 같은 기준으로 비교한다."
+ },
  "1": {
   "prompt": "크기와 모양이 바뀌지 않는 같은 용기로 공기의 무게를 알아보려고 해요. 어떻게 비교하면 좋을까요?",
   "explanation": "같은 용기에 공기를 더 넣기 전과 후의 무게를 비교해요. 용기·마개·바깥 크기·저울은 같게 두어야 공기 때문에 달라진 무게를 알아볼 수 있어요. 따라서 셋째 보기가 알맞아요."

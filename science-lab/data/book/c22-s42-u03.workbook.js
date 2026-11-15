@@ -1,5 +1,5 @@
 import{withGasIndependentQuestionLinks}from'./c22-s42-u03.editorial.js?v=20261108-gas-workbook-links';
-import{withGasUpperScience,withGasReadableWorkbook}from'./c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook';
+import{withGasUpperScience,withGasReadableWorkbook}from'./c22-s42-u03.editorial.js?v=20261115-drawing-answer-criteria';
 import{withLearnerExplanations}from'./learner-explanations.js';
 import {withGasEditorial} from './c22-s42-u03.editorial.js';
 // 여러 가지 기체 — 편집 교재(문제집형 A4). scripts/gen-science-workbook-c22s42u03.mjs 가 만든다(직접 고치지 말 것).

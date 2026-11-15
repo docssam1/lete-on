@@ -76,3 +76,15 @@ test('optional previous result enters a follow-up request and internal Drive sou
  assert.match(received.context.previous,/함수 · 혼자 풀 수 있어요/);
  assert.doesNotMatch(JSON.stringify([received,data]),/internal-example|김하늘|010-1234/);
 });
+test('region is masked, bounded and isolated in optional explanation cache',async()=>{
+ let count=0,seen;
+ const service=fake(),h=createHandler({service,aiAvailable:true,ask:async input=>{count++;seen=input;return '설명';}});
+ await h(req('lookup',{region:'부산'})); assert.equal(count,0);
+ await h(req('explain',{region:'부산'}));
+ await h(req('explain',{region:'부산'})); assert.equal(count,1);
+ await h(req('explain',{region:'목동'})); assert.equal(count,2);
+ await h(req('explain',{region:'김하늘 010-1234-5678 '+ '가'.repeat(150)}));
+ assert.equal(seen.context.region.length,120);
+ assert.doesNotMatch(seen.context.region,/김하늘|010-1234/u);
+ assert.ok(seen.guidance.summary);
+});

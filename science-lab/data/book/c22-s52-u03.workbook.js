@@ -1,5 +1,5 @@
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
-import{withWeatherReadableWorkbook}from'./c22-s52-u03.editorial.js?v=20261106-weather-readable-workbook';
+import{withWeatherReadableWorkbook}from'./c22-s52-u03.editorial.js?v=20261115-drawing-answer-criteria';
 import{withObservationLanguage}from'./observation-language.js';
 import{withWeatherEditorial,withWeatherPhotoLabels}from'./c22-s52-u03.editorial.js?v=20261105-weather-photo-labels';
 // 날씨112문항. scripts/gen-science-workbook-c22s52u03.mjs가 생성.
