@@ -1,3 +1,4 @@
+import{withRepresentationReviewedWorkbook}from'../data/book/representation-question-review.js';
 import{withGrade6ReviewedWorkbook}from'../data/book/grade6-question-review.js';
 import{withReviewedWorkbookCriteria}from'../data/book/reviewed-question-criteria.js';
 import{withSeasonComparisonWorkbook}from'../data/book/c22-s62-u01.editorial.js';
@@ -45,7 +46,7 @@ test('grade-six personal directions preserve all questions, upper learning and e
 
 test('actual four paper views show the reviewed directions and keep answer views and all other HTML identical',async()=>{
  for(const [current,prior,count]of books){
-  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(prior))))),art),expected=makeWorkbookPaper(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(current))))),art);
+  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withRepresentationReviewedWorkbook(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(prior)))))),art),expected=makeWorkbookPaper(withRepresentationReviewedWorkbook(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(current)))))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=actual.workbookPaper({mode});assert.equal(html,expected.workbookPaper({mode}));
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
@@ -55,7 +56,7 @@ test('actual four paper views show the reviewed directions and keep answer views
      const note=current[key][i].rail[j],old=prior[key][i].rail[j];
      if(note.text!==old.text){assert(html.includes(escape(note.text)));restored[key][i].rail[j].text=old.text;if(key==='pages')changed++;}
     }
-    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(restored))))),art).workbookPaper({mode}),before.workbookPaper({mode}));
+    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withRepresentationReviewedWorkbook(withObservedPhotoAlt(withCurrentReferenceContext(withElementaryReadingDirections(withElementaryQuestionPrompts(withAcidFurtherReading(restored)))))),art).workbookPaper({mode}),before.workbookPaper({mode}));
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
    }
   }

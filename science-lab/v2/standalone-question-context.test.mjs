@@ -1,4 +1,5 @@
-const beforeGrade6Review=q=>q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
+const beforeRepresentation=q=>{if(q?.contentVersion!=='20261115-representation-response-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
+const beforeGrade6Review=item=>{const q=beforeRepresentation(item);return q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
 const beforeGrade4=q=>q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;

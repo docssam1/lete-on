@@ -1,3 +1,4 @@
+import{withRepresentationReviewedWorkbook}from'./representation-question-review.js?v=20261115-representation-response-review';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withMotionElectricalWorkbook}from'./motion-electricity-reference-context.js?v=20261115-motion-electricity-reference';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
@@ -15449,4 +15450,6 @@ export const grade6StudyNotesPriorWorkbook=withMotionReadableWorkbook(motionRead
 export const motionReferencePriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
 export const grade6ReviewPriorWorkbook=withMotionElectricalWorkbook(motionReferencePriorWorkbook);
 
-export const workbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+export const representationReviewPriorWorkbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+
+export const workbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);

@@ -1,3 +1,4 @@
+import{withRepresentationReviewedWorkbook}from'./representation-question-review.js?v=20261115-representation-response-review';
 import{withGrade5ReviewedWorkbook}from'./grade5-question-review.js?v=20261115-grade5-question-review';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withBodyReadableWorkbook}from'./c22-s51-u04.editorial.js?v=20261106-body-readable-workbook';
@@ -9239,4 +9240,6 @@ export const bodyReadablePriorWorkbook=withBodyUpperProgression(bodyUpperPriorWo
 export const grade5StudyNotesPriorWorkbook=withBodyReadableWorkbook(bodyReadablePriorWorkbook);
 export const grade5ReviewPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
 
-export const workbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);
+export const representationReviewPriorWorkbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);
+
+export const workbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);

@@ -1,3 +1,4 @@
+import{withRepresentationReviewedWorkbook}from'./representation-question-review.js?v=20261115-representation-response-review';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withSeasonComparisonWorkbook}from'./c22-s62-u01.editorial.js?v=20261115-season-comparison-conditions';
 import{withSeasonStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
@@ -25482,4 +25483,6 @@ export const observationContextPriorWorkbook=withElementaryQuestionPrompts(eleme
 export const seasonComparisonPriorWorkbook=withSeasonStandaloneContext(observationContextPriorWorkbook);
 export const grade6ReviewPriorWorkbook=withSeasonComparisonWorkbook(seasonComparisonPriorWorkbook);
 
-export const workbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+export const representationReviewPriorWorkbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+
+export const workbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
