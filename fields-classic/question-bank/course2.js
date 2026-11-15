@@ -15,7 +15,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const host = document.getElementById("books");
 const cards = await Promise.all(BOOKS.map(async (b) => {
   let proofs = [];
-  try { proofs = (await import(`./course2-proofs/${b.id}.js?v=20261115a`)).PROOFS || []; } catch { proofs = []; }
+  try { proofs = (await import(`./course2-proofs/${b.id}.js?v=20261115c`)).PROOFS || []; } catch { proofs = []; }
   const units = [...new Set(proofs.map((p) => p.unit))];
   const labs = LABS[b.id] || [];
   const rows = units.map((u) => {

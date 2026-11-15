@@ -358,6 +358,108 @@ const triArea = {
   },
 };
 
+// ── 6-2. 사다리꼴의 넓이: 똑같은 사다리꼴을 반 바퀴 돌려 붙이면 평행사변형 ──
+const trapArea = {
+  id: "trapezoid-area",
+  unit: U3,
+  title: "사다리꼴의 넓이는 왜 (윗변 + 아랫변) × 높이 ÷ 2일까",
+  vary: "다른 사다리꼴로",
+  params(seed) {
+    const c = pick([{ a: 4, b: 8, h: 6, off: 1.5 }, { a: 3, b: 9, h: 5, off: 4 }, { a: 6, b: 10, h: 6, off: 2 }, { a: 2, b: 8, h: 7, off: 3 }, { a: 5, b: 7, h: 4, off: 0.5 }], seed);
+    const u = 30, B = P(56, 300);
+    const A = P(B.x + c.off * u, B.y - c.h * u), D = P(A.x + c.a * u, A.y), Cc = P(B.x + c.b * u, B.y);
+    return { ...c, u, B, A, D, C: Cc, M: mid(Cc, D), area: ((c.a + c.b) * c.h) / 2 };
+  },
+  scenes: [
+    { say: (p) => `윗변 ${p.a}cm, 아랫변 ${p.b}cm, 높이 ${p.h}cm인 사다리꼴이에요. 윗변과 아랫변은 평행해요. 넓이는 어떻게 구할까요?`, line: (p) => `윗변 ${p.a}cm ∥ 아랫변 ${p.b}cm, 높이 ${p.h}cm`, why: "사다리꼴은 마주 보는 한 쌍의 변이 평행한 사각형", ms: 1800 },
+    { say: "똑같은 사다리꼴을 오른쪽 변의 가운데 점을 중심으로 반 바퀴 돌려 붙여요.", line: "돌린 사다리꼴의 아랫변은 위로, 윗변은 아래로 간다", why: "반 바퀴 돌리면 평행한 두 변이 자리를 바꾸고, 두 평행선 위에 그대로 이어진다", ms: 2600 },
+    { say: (p) => `두 조각이 빈틈없이 맞물려 평행사변형이 됐어요. 밑변은 아랫변과 윗변을 이은 ${p.a + p.b}cm, 높이는 그대로 ${p.h}cm예요.`, line: (p) => `평행사변형 = (${p.b} + ${p.a}) × ${p.h} = ${(p.a + p.b) * p.h}㎠`, why: "평행사변형의 넓이 = 밑변 × 높이", ms: 2400 },
+    { say: "처음 사다리꼴은 이 평행사변형의 꼭 절반이에요.", line: (p) => `사다리꼴 = (${p.a} + ${p.b}) × ${p.h} ÷ 2 = ${p.area}㎠`, why: "똑같은 사다리꼴 두 개로 평행사변형을 만들었다", ms: 2000 },
+    { say: "윗변을 점점 줄여 0으로 만들면 사다리꼴이 삼각형이 돼요. 그래도 같은 식이 맞아요: (0 + 아랫변) × 높이 ÷ 2.", line: "윗변이 0이면 삼각형: (0 + 밑변) × 높이 ÷ 2", why: "삼각형의 넓이 공식과 같다 — 사다리꼴 식이 더 넓은 경우를 다 덮는다", ms: 2800 },
+  ],
+  draw(f, k, p) {
+    const { A, B, D, M } = p, Cc = p.C;
+    const s0 = phase(k, 0), s1 = phase(k, 1), s2 = phase(k, 2), s3 = phase(k, 3), s4 = phase(k, 4);
+    const top = mid(A, D), A4 = lerp(A, top, s4), D4 = lerp(D, top, s4);
+    const copyOp = s4 > 0 ? 0 : 1 - 0.55 * s3;
+    if (s1 > 0 && copyOp > 0) {
+      const cp = [A, B, Cc, D].map((q) => rot(q, M, 180 * s1));
+      f.poly(cp, { fill: C.blueSoft, stroke: C.blue, w: 2.4, opacity: copyOp });
+      if (s1 > 0.95) {
+        f.label(P((Cc.x + cp[0].x) / 2, B.y + 22), `${p.a}cm`, { color: C.blue, size: 16, opacity: copyOp });
+        f.label(P((D.x + cp[1].x) / 2, A.y - 18), `${p.b}cm`, { color: C.blue, size: 16, opacity: copyOp });
+      }
+    }
+    f.poly([A4, B, Cc, D4], { draw: s0, fill: s3 > 0 ? C.orangeSoft : C.paper });
+    // 평행 표시
+    if (s4 < 1) chevron(f, mid(A4, D4), 0, { opacity: s0 * (1 - s4) });
+    chevron(f, mid(B, Cc), 0, { opacity: s0 });
+    // 높이
+    const H = P(A4.x, B.y);
+    f.seg(A4, H, { stroke: C.purple, w: 2.2, dash: "7 6", grow: clamp(s0 * 2 - 1), opacity: s0 > 0 ? 1 : 0 });
+    f.right(H, A4, Cc, { color: C.purple, opacity: clamp(s0 * 2 - 1) });
+    f.label(P(H.x - 30, (A4.y + H.y) / 2), `${p.h}cm`, { color: C.purple, size: 16, opacity: clamp(s0 * 2 - 1) });
+    if (s4 < 1) f.label(P(top.x, A.y - 18), s4 > 0 ? `윗변 ${Math.round(p.a * (1 - s4) * 10) / 10}cm` : `윗변 ${p.a}cm`, { size: 16, opacity: s1 > 0.95 && s4 === 0 ? 0 : 1 });
+    else f.label(P(top.x, A.y - 18), "윗변 0", { size: 16 });
+    f.label(P((B.x + Cc.x) / 2, B.y + 22), `아랫변 ${p.b}cm`, { size: 16 });
+    // 이어진 밑변
+    if (s2 > 0 && s4 === 0) {
+      const end = P(Cc.x + p.a * p.u, B.y);
+      f.seg(P(B.x, B.y + 48), P(end.x, B.y + 48), { stroke: C.orange, w: 3, grow: s2 });
+      f.seg(P(B.x, B.y + 40), P(B.x, B.y + 56), { stroke: C.orange, w: 3, opacity: s2 });
+      f.seg(P(end.x, B.y + 40), P(end.x, B.y + 56), { stroke: C.orange, w: 3, opacity: s2 });
+      f.label(P((B.x + end.x) / 2, B.y + 68), `${p.b} + ${p.a} = ${p.a + p.b}cm`, { color: "#b35f00", size: 16, opacity: s2 });
+    }
+    f.note(P(320, 390), `평행사변형 = (${p.b} + ${p.a}) × ${p.h} = ${(p.a + p.b) * p.h}㎠`, { opacity: s2 * (1 - s4), size: 18 });
+    f.note(P(320, 414), `사다리꼴 = (${p.a} + ${p.b}) × ${p.h} ÷ 2 = ${p.area}㎠`, { opacity: s3 * (1 - s4), size: 18, color: "#b35f00" });
+    if (s4 > 0) f.note(P(320, 414), `삼각형 = (0 + ${p.b}) × ${p.h} ÷ 2 = ${(p.b * p.h) / 2}㎠`, { opacity: s4, size: 18, color: "#b35f00" });
+  },
+};
+
+// ── 6-3. 마름모의 넓이: 대각선으로 잘라 삼각형 두 개 ───────────────
+const rhombusArea = {
+  id: "rhombus-area",
+  unit: U3,
+  title: "마름모의 넓이는 왜 두 대각선의 곱 ÷ 2일까",
+  vary: "다른 마름모·연 모양으로",
+  params(seed) {
+    const c = pick([{ p: 10, q1: 3, q2: 3 }, { p: 8, q1: 4, q2: 4 }, { p: 12, q1: 2.5, q2: 2.5 }, { p: 10, q1: 2, q2: 5 }, { p: 9, q1: 3, q2: 5 }], seed);
+    const u = 30, O = P(290, 188);
+    const L = P(O.x - (c.p * u) / 2, O.y), R = P(O.x + (c.p * u) / 2, O.y), T = P(O.x, O.y - c.q1 * u), Bt = P(O.x, O.y + c.q2 * u);
+    const q = c.q1 + c.q2, kite = c.q1 !== c.q2;
+    return { ...c, q, kite, O, L, R, T, Bt, top: (c.p * c.q1) / 2, bot: (c.p * c.q2) / 2, area: (c.p * q) / 2 };
+  },
+  scenes: [
+    { say: (p) => (p.kite ? `두 대각선이 수직으로 만나는 연 모양이에요. 가로 대각선 ${p.p}cm, 세로 대각선 ${p.q}cm. 넓이는?` : `마름모의 두 대각선은 수직으로 만나고 서로를 반으로 나눠요. 가로 대각선 ${p.p}cm, 세로 대각선 ${p.q}cm. 넓이는?`),
+      line: (p) => `대각선 ${p.p}cm와 ${p.q}cm, 수직으로 만남`, why: (p) => (p.kite ? "연 모양: 세로 대각선이 가로 대각선을 수직으로 반으로 나눈다" : "마름모: 네 변이 같아 두 대각선이 수직이고 서로를 반으로 나눈다"), ms: 2000 },
+    { say: "가로 대각선을 따라 잘라 위·아래 두 삼각형으로 나눠요.", line: "넓이 = 위 삼각형 + 아래 삼각형", why: "잘라도 넓이는 그대로", ms: 2200 },
+    { say: (p) => `두 삼각형의 밑변은 똑같이 가로 대각선 ${p.p}cm예요. 높이는 세로 대각선이 나눈 두 토막 ${p.q1}cm와 ${p.q2}cm예요.`, line: (p) => `위 = ${p.p} × ${p.q1} ÷ 2 = ${p.top}㎠, 아래 = ${p.p} × ${p.q2} ÷ 2 = ${p.bot}㎠`, why: "대각선이 수직이라 세로 대각선의 토막이 곧 높이 · 삼각형 = 밑변 × 높이 ÷ 2", ms: 2600 },
+    { say: (p) => `두 높이를 더하면 세로 대각선 전체 ${p.q}cm예요. 그래서 넓이는 ${p.p} × ${p.q} ÷ 2 = ${p.area}㎠. 둘러싼 직사각형의 꼭 절반이에요.`, line: (p) => `넓이 = ${p.p} × (${p.q1} + ${p.q2}) ÷ 2 = ${p.p} × ${p.q} ÷ 2 = ${p.area}㎠`, why: "밑변이 같은 두 삼각형은 높이를 더해 한 번에 계산할 수 있다", ms: 2600 },
+    { say: "세로 대각선이 어디서 나뉘든(마름모든 연 모양이든) 두 토막의 합은 늘 세로 대각선 전체예요. 「다른 마름모·연 모양으로」를 눌러 보세요.", line: "두 대각선이 수직이면 넓이 = 대각선 × 대각선 ÷ 2", why: "높이 두 토막의 합 = 세로 대각선", ms: 1600 },
+  ],
+  draw(f, k, p) {
+    const { O, L, R, T, Bt } = p;
+    const s0 = phase(k, 0), s1 = phase(k, 1), s2 = phase(k, 2), s3 = phase(k, 3);
+    const gap = 24 * s1 * (1 - s3), up = P(0, -gap), dn = P(0, gap);
+    if (s3 > 0) f.poly([P(L.x, T.y), P(R.x, T.y), P(R.x, Bt.y), P(L.x, Bt.y)], { fill: "none", stroke: C.orange, w: 2, dash: "7 5", opacity: s3 });
+    f.poly([T, R, L].map((q) => add(q, up)), { fill: s1 > 0 ? C.blueSoft : C.paper, stroke: C.ink, w: 2.4, draw: s0 });
+    f.poly([L, R, Bt].map((q) => add(q, dn)), { fill: s1 > 0 ? C.greenSoft : C.paper, stroke: C.ink, w: 2.4, draw: s0 });
+    // 대각선
+    f.seg(add(T, up), add(O, up), { stroke: C.purple, w: 2.2, dash: "7 6", opacity: clamp(s0 * 2 - 1) });
+    f.seg(add(O, dn), add(Bt, dn), { stroke: C.purple, w: 2.2, dash: "7 6", opacity: clamp(s0 * 2 - 1) });
+    f.seg(add(L, up), add(R, up), { stroke: s1 > 0 ? C.orange : C.purple, w: s1 > 0 ? 3 : 2.2, dash: s1 > 0 ? null : "7 6", opacity: clamp(s0 * 2 - 1) });
+    f.right(add(O, up), add(R, up), add(T, up), { color: C.purple, opacity: clamp(s0 * 2 - 1) });
+    if (!p.kite) [[T, R, up], [R, Bt, dn], [Bt, L, dn], [L, T, up]].forEach(([a, b, d]) => f.ticks(add(a, d), add(b, d), { opacity: s0 * (1 - s1) }));
+    // 길이 이름
+    f.label(P(R.x + 14, O.y - gap), `가로 ${p.p}cm`, { color: C.purple, size: 16, opacity: clamp(s0 * 2 - 1), anchor: "start" });
+    f.label(P(O.x + 24, (T.y + O.y) / 2 - gap), `${p.q1}cm`, { color: C.purple, size: 16, opacity: clamp(s0 * 2 - 1), anchor: "start" });
+    f.label(P(O.x + 24, (O.y + Bt.y) / 2 + gap), `${p.q2}cm`, { color: C.purple, size: 16, opacity: clamp(s0 * 2 - 1), anchor: "start" });
+    f.note(P(320, 380), `위 ${p.top}㎠ + 아래 ${p.bot}㎠`, { opacity: s2 * (1 - s3), size: 18 });
+    f.note(P(320, 380), `${p.p} × ${p.q} = ${p.p * p.q}㎠ (둘러싼 직사각형)`, { opacity: s3, size: 17, color: C.orange });
+    f.note(P(320, 410), `넓이 = ${p.p} × ${p.q} ÷ 2 = ${p.area}㎠`, { opacity: s3, size: 19, color: "#b35f00" });
+  },
+};
+
 // ── 7. 직각으로 꺾인 도형의 둘레: 변을 밀어 직사각형으로 ─────────────
 const stairs = {
   id: "staircase-perimeter",
@@ -476,4 +578,4 @@ const diagRect = {
   },
 };
 
-export const PROOFS = [squareFold, setSquare, parallelSum, zigzag, tapeFold, triArea, stairs, diagRect];
+export const PROOFS = [squareFold, setSquare, parallelSum, zigzag, tapeFold, triArea, trapArea, rhombusArea, stairs, diagRect];
