@@ -1,8 +1,8 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261108-source-schema';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261115-legacy-question-snapshots';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261115-practice-paper-figures';
-import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261115-practice-paper-figures';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261115-current-question-paper';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261115-current-question-paper';
 import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-comparison-photos';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
@@ -524,12 +524,14 @@ function pageBook(u, L, items, mode) {
   }
   const I = byId(items), show = mode === 'teacher';
   const kyo = items.filter((i) => i.taxonomy.track === '교과'), yeong = items.filter((i) => i.taxonomy.track === '영재성');
+  const currentBank=revisedTextbookUnits.has(u),sim=BOOKX.similar||[];
+  const questionRows=currentBank?[...new Map([...items,...sim].map(q=>[q.id,q])).values()]:[...kyo,...yeong];
   const h = L.explore?.home; let n = 0;
   const qs = (list) => list.map((it) => itemHtml(it, { print: true, show, no: ++n })).join('');
-  const answers = () => { let k = 0; return [...kyo, ...yeong].map((it) => { k++; const ac = it.answerContract;
+  const answers = () => { let k = 0; return questionRows.map((it) => { k++; const ac = it.answerContract;
     const a = ac.type === 'single-choice' ? CIRC[ac.answer] : ac.type === 'multi-choice' ? ac.answers.map((i) => CIRC[i]).join(', ') : ac.type === 'short-text' ? ac.answer : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(', ') : ac.type === 'table-fill' ? ac.rows.map((r) => `${r.label}: ${r.answer.join('·')}`).join(' / ') : ac.sample;
     return `<div class="q"><span class="no">${k}.</span> <b class="ans">${esc(a)}</b> — ${esc(it.explanation)}</div>`; }).join(''); };
-  const chapter = mode === 'answers' || !L.explain ? '' : `
+  const chapter = mode === 'answers' ? '' : currentBank ? `<section class="page"><h2>${esc(L.title)} — 문제</h2><p>${show?'교사용 · 문제와 해설':'이름 ____________________'}</p>${qs(questionRows)}</section>` : !L.explain ? '' : `
     <section class="page"><h2>${esc(L.title)} — 개념 정리</h2>
       <p class="analogy">${esc(L.explain.analogy)}</p>
       ${L.explain.cards.map((id) => itemHtml(I[id], { print: true, show })).join('')}
@@ -544,13 +546,13 @@ function pageBook(u, L, items, mode) {
     <section class="page page-break rep-print"><h2>탐구보고서</h2>${L.report.sections.map((s) => `<h3>${esc(s.label)}</h3><div class="ans-line"></div><div class="ans-line"></div>`).join('')}</section>
     <section class="page page-break"><h2>문제 — 교과</h2>${qs(kyo)}</section>
     <section class="page page-break"><h2>문제 — 영재성</h2>${qs(yeong)}</section>`;
-  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [];
-  const typed = mode !== 'answers' && tx && sim.length ? tx.elements.map((e) => `<section class="page page-break"><h2>유형별 문제 — ${esc(e.name)}</h2>
+  const tx = BOOKX.taxonomy;
+  const typed = !currentBank && mode !== 'answers' && tx && sim.length ? tx.elements.map((e) => `<section class="page page-break"><h2>유형별 문제 — ${esc(e.name)}</h2>
       ${tx.types.filter((t) => t.element === e.id).map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s, { print: true, show, no: ++n })).join('')}`).join('')}</section>`).join('') : '';
   const simAns = () => { let k = kyo.length + yeong.length; return sim.map((it) => { k++; const ac = it.answerContract;
     const a = ac.type === 'single-choice' ? CIRC[ac.answer] : ac.type === 'multi-choice' ? ac.answers.map((i) => CIRC[i]).join(', ') : ac.type === 'short-text' ? ac.answer : ac.sample;
     return `<div class="q"><span class="no">${k}.</span> <b class="ans">${esc(a)}</b> — ${esc(it.explanation)}</div>`; }).join(''); };
-  const tail = mode === 'student' ? '' : `<section class="page page-break"><h2>정답·해설</h2>${answers()}${simAns()}</section>`;
+  const tail = mode === 'student' ? '' : `<section class="page page-break"><h2>정답·해설</h2>${answers()}${currentBank?'':simAns()}</section>`;
   $app.innerHTML = `<div class="book"><div class="wrap no-print print-bar">
       <a class="btn" href="#/${u}/print/student" style="display:inline-flex;align-items:center;text-decoration:none">학생용</a>
       <a class="btn" href="#/${u}/print/teacher" style="display:inline-flex;align-items:center;text-decoration:none">교사용</a>
