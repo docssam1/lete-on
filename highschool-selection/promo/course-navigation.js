@@ -6,6 +6,7 @@
     'sh-selection-r01':'SH:high-selection', 'sh-selection-r02':'SH:high-selection',
     'sh-selection-r03':'SH:high-selection', 'sh-selection-r04':'SH:high-selection',
     'sh-selection-r05':'SH:high-selection',
+    'dp-middle22-transfer-r01':'DP:middle-transfer',
     'dp-common1-v14-pilot':'DP:common1-basic', 'dp-common1-r02':'DP:common1-basic',
     'wm-middle21-basic-mixed-r01':'WM:middle21-basic', 'wm-middle21-basic-mixed-r02':'WM:middle21-basic',
     'wm-middle21-basic-mixed-r03':'WM:middle21-basic', 'wm-middle21-basic-mixed-r04':'WM:middle21-basic',

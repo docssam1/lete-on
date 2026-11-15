@@ -3,7 +3,7 @@
   // Official intake facts are scoped by branch, course and cohort. They do not
   // change releases, student grants, answer keys or automatic pass decisions.
   root.HIGHSELECT_OFFICIAL_EXAM_SPECS = {
-    checkedAt: "2026-11-06",
+    checkedAt: "2026-11-15",
     courses: {
       "SH:high-selection": {
         branch: "대치", cohort: "2026년 고등과정 시작반 편입",
@@ -11,6 +11,13 @@
         durationState: "owner-confirmed", durationConfirmedAt: "2026-11-06", mockDurationMinutes: 110,
         sourceUrl: "https://blog.naver.com/sharpedu/224086447021",
         note: "대치 고등 시작반 · 110분"
+      },
+      "DP:middle-transfer": {
+        branch: "대치 중등관", cohort: "중2-2 편입 대비 보유 원본 재구성",
+        scope: "중1-1~중2-1 전 범위(일차함수까지)", scopeState: "source-paper",
+        durationMinutes: 150, questionCount: 30, durationState: "official",
+        sourceUrl: "https://blog.naver.com/dpmath/224408399028",
+        note: "중등관 대수까지 150분 · 실제 입반 범위는 지원 반 진도별 확인"
       },
       "DP:common1-basic": {
         branch: "대치", cohort: "2026년 12월 개강",

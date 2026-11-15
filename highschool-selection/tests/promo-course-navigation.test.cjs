@@ -7,19 +7,23 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 23 released editions remain reachable in exactly one advertised course', () => {
+test('all 24 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,23);
-  assert.equal(new Set(visible).size,23);
+  assert.equal(visible.length,24);
+  assert.equal(new Set(visible).size,24);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
-test('Dolpa exposes the available common1 banner first without suggesting other levels are released', () => {
+test('Dolpa keeps common1 and middle transfer papers in their own available courses', () => {
   const dp = nav.coursesFor(programs.find(p => p.code === 'DP'),mocks);
   assert.equal(dp[0].id,'common1-basic');
   assert.equal(dp[0].exams.length,2);
-  assert.ok(dp.slice(1).every(c => c.exams.length === 0));
+  assert.ok(dp.filter(c => !['common1-basic','middle-transfer'].includes(c.id)).every(c => c.exams.length === 0));
   assert.equal(nav.examsFor('DP','common2-basic',mocks).length,0);
+  const transfer=nav.examsFor('DP','middle-transfer',mocks);
+  assert.deepEqual(transfer.map(e=>e.id),['dp-middle22-transfer-r01']);
+  assert.match(transfer[0].scope,/중1-1~중2-1/);
+  assert.deepEqual(nav.selectionForExam(transfer[0].id),{program:'DP',course:'middle-transfer'});
 });
 
 test('Deepthink starting and prehigh editions never cross course boundaries', () => {

@@ -7,11 +7,11 @@ require("../data/public-exam-profiles.js");
 const policy = require("../data/standard-exam-policy.js");
 const specs = globalThis.HIGHSELECT_OFFICIAL_EXAM_SPECS;
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
-const keyFor = e => e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
+const keyFor = e => e.id === "dp-middle22-transfer-r01" ? "DP:middle-transfer" : e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
 
 test("every released mock agrees with its own branch/course time and count", () => {
-  assert.equal(mocks.length, 23);
-  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 920);
+  assert.equal(mocks.length, 24);
+  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 950);
   mocks.forEach(e => {
     const s = specs.courses[keyFor(e)];
     assert.ok(s, e.id);
@@ -65,3 +65,10 @@ test("Deepthink current prehigh scope excludes the old extra middle3 range", () 
   assert.equal(specs.courses["DG:middle1"].durationMinutes, 70);
   assert.match(specs.courses["DG:middle1"].note, /A·B형과 구분/);
 });
+
+ test("Dolpa middle transfer uses middle-branch timing without treating its source range as every class range",()=>{
+ const transfer=specs.courses["DP:middle-transfer"];
+ assert.equal(transfer.branch,"대치 중등관");assert.equal(transfer.durationMinutes,150);
+ assert.equal(transfer.scopeState,"source-paper");assert.match(transfer.note,/진도별 확인/);
+ assert.notEqual(transfer.scope,specs.courses["DP:common1-basic"].scope);
+ });
