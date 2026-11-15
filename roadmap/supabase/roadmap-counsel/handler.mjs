@@ -50,6 +50,7 @@ export function createHandler({service,ask,aiAvailable=false,now=()=>Date.now()}
    };
    const context={question:sanitize(b.question).slice(0,1000),progress:sanitize(b.progress),region:sanitize(b.region).slice(0,120),stage:['preschool','elementary','middle','high'].includes(b.stage)?b.stage:'all'};
    context.completedBooks=sanitize(b.completedBooks).slice(0,600);
+   context.currentBooks=sanitize(b.currentBooks).slice(0,600);
    context.soloRange=sanitize(b.soloRange).slice(0,600);
    if(typeof b.previous==='string'&&b.previous.trim())context.previous=sanitize(b.previous).slice(0,600);
    if(context.question.length<2)throw new HttpError(400,'question_missing');

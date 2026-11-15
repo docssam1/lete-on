@@ -15,6 +15,11 @@ function consult(context, rows=notes) {
  const selected=selectKnowledge(rows,context);
  return {...answerFromSources(selected,context),ids:selected.map(row=>row.id)};
 }
+test('current-book preparation informs source and course selection without general progress',()=>{
+ const result=consult({question:'KMO 수업 어디서 시작하나요?',region:'부산',currentBooks:'중등 개념을 배우는 중, 기초가 약해요.'});
+ assert.ok(result.ids.includes('stages'));
+ assert.match(result.explanation,/기초: 중등 과정 정리/u);
+});
 test('region field routes 부산, 창원 and 대구 to their approved local course paragraphs',()=>{
  for(const [region,wanted,unwanted] of [['부산','부산 센텀','창원 중동'],['창원','창원 중동·반송','부산 센텀'],['대구','대구 수성','부산 사직']]) {
   const result=consult({question:'KMO 수업은 어디에서 하나요?',region});

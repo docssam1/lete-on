@@ -74,7 +74,7 @@
   function draft(ctx, data, day, anchor) {
     const I=g.PlannerIntake, a=data?.answers || {}, fields={...data?.fields,pendingStatus:data?.pendingStatus};
     const actual=I && g.PlannerCurriculum?.actual(I.effective(a),'school',fields);
-    const progress=text(ctx.progress), q=text(ctx.question);
+    const progress=[text(ctx.currentBooks),text(ctx.progress)].filter(Boolean).join('\n'), q=text(ctx.question);
     const rawBooks=[...(g.GFIELD_MATH_BOOKS || []).map(b=>b.title),...(I?.thinking || []),
       ...(I?.schoolBooks || []),...(I?.deepBooks || []),'기본정석','실력정석','수학의 정석','개념원리','디딤돌 응용','고쟁이','쎈','RPM'];
     const bookIn = value => foundIn(value,rawBooks) || (/쎈/.test(value)?'쎈':'');
@@ -142,20 +142,33 @@
   }
   // Re-read inside the same owner's lock: adjacent tabs adding the same
   // confirmed assignment get the same result without appending a second pair.
-  async function save(input, owner) {
+  async function saveBatch(inputs, owner) {
     const write=()=>{
       if (g.RoadmapGuest || !owner || owner!==g.RoadmapMember?.user_id) throw Error('학생 계정을 다시 확인해 주세요.');
+      if (!Array.isArray(inputs) || !inputs.length || inputs.length>4) throw Error('보완할 범위를 먼저 확인해 주세요.');
       const today=g.PlannerWeeklyModel.today(), anchor=anchorDate();
-      const plan={...input,id:g.crypto.randomUUID(),book:text(input.book),unit:text(input.unit)};
-      if (!valid(plan) || plan.practice < today || (anchor && plan.practice < anchor)) throw Error('교재·단원과 보완일, 문제 수를 확인해 주세요.');
-      const limits=dates(plan.practice,anchor);
-      if (plan.recheck < limits.min || plan.recheck > limits.max) throw Error('재점검일은 보완 학습 다음 주에서 골라 주세요.');
-      const plans=saved(), found=plans.find(p=>samePlan(p,plan,anchor));
-      if (found) return {plan:found,duplicate:true};
-      g.PlannerStorage.setItem(key,JSON.stringify({version:1,plans:[...plans,plan]}));
-      return {plan,duplicate:false};
+      const prepared=inputs.map(input=>{
+        const plan={id:g.crypto.randomUUID(),track:input.track,book:text(input.book),unit:text(input.unit),practice:input.practice,recheck:input.recheck,practiceCount:input.practiceCount,recheckCount:input.recheckCount};
+        if (!valid(plan) || plan.practice < today || (anchor && plan.practice < anchor)) throw Error('교재·단원과 보완일, 문제 수를 확인해 주세요.');
+        const limits=dates(plan.practice,anchor);
+        if (plan.recheck < limits.min || plan.recheck > limits.max) throw Error('재점검일은 보완 학습 다음 주에서 골라 주세요.');
+        return plan;
+      });
+      const plans=saved(),results=[];let added=0;
+      for(const plan of prepared){
+        const found=plans.find(p=>samePlan(p,plan,anchor));
+        if(found)results.push({plan:found,duplicate:true});
+        else{plans.push(plan);results.push({plan,duplicate:false});added++;}
+      }
+      if(added)g.PlannerStorage.setItem(key,JSON.stringify({version:1,plans}));
+      return results;
     };
     return g.navigator?.locks ? g.navigator.locks.request('gfield.counsel-plan.'+owner,write) : write();
+  }
+  async function save(input,owner){return (await saveBatch([input],owner))[0];}
+  function defaultDates(){
+    const day=g.PlannerWeeklyModel.today(),anchor=anchorDate(),practice=anchor&&anchor>day?anchor:day;
+    return {practice,recheck:g.PlannerWeeklyModel.addDays(practice,7),...dates(practice,anchor)};
   }
   function mount(host,ctx) {
     if (!host) return;
@@ -300,5 +313,5 @@
     }
   }
 
-  g.RoadmapCounselPlan=Object.freeze({key,saved,item,weekItems,draft,obviousLearning,samePlan,previousSummary,renderPrevious,mount,save,openChecklist});
+  g.RoadmapCounselPlan=Object.freeze({key,saved,item,weekItems,draft,obviousLearning,samePlan,previousSummary,renderPrevious,mount,save,saveBatch,defaultDates,dateBounds:practice=>dates(practice,anchorDate()),openChecklist});
 })(typeof window==='undefined'?globalThis:window);

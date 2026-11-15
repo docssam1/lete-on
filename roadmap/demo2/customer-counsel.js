@@ -22,7 +22,10 @@
  const progress=el('textarea',{rows:'3',maxlength:'2000',placeholder:'예: 중1-1 개념원리 3단원, 쎈 기본 문제는 혼자 풀고 함수에서 자주 막혀요.'});
  progressLabel.append(progress);
  const preparation=el('details',{class:'cc-preparation'});
- preparation.append(el('summary',{},'마친 교재·혼자 풀 수 있는 범위 (선택)'));
+ preparation.append(el('summary',{},'현재·마친 교재와 혼자 풀 수 있는 범위 (선택)'));
+ const currentLabel=el('label',{},'현재 공부 중인 교재와 범위');
+ const currentBooks=el('textarea',{rows:'2',maxlength:'600',placeholder:'예: Ray A3-3 규칙 찾기, 소마셈 P2'});
+ currentLabel.append(currentBooks);preparation.append(currentLabel);
  const booksLabel=el('label',{},'마친 교재와 범위');
  const completedBooks=el('textarea',{rows:'2',maxlength:'600',placeholder:'예: 쎈 중3-2까지. 심화 문제는 일부 남았어요.'});
  booksLabel.append(completedBooks);
@@ -50,6 +53,7 @@
  let busy=false,last=null,opened=false,generation=0;
  let displayedRevision='',previousText='';
  let showEvidence=()=>{};
+ let somaAssessment=null,somaMessage='',somaOwner='';
  const member=()=>g.RoadmapMember?.user_id;
  function refreshPrevious(){
   previous.replaceChildren();
@@ -62,7 +66,7 @@
   previousLabel.hidden=!saved;
  }
  function context(){
-  const value={question:clean(question.value),progress:clean(progress.value),region:clean(region.value),completedBooks:clean(completedBooks.value),soloRange:clean(soloRange.value),stage:stage.value};
+  const value={question:clean(question.value),progress:clean(progress.value),region:clean(region.value),currentBooks:clean(currentBooks.value),completedBooks:clean(completedBooks.value),soloRange:clean(soloRange.value),stage:stage.value};
   if(previousText&&includePrevious.checked){
    value.previous=clean(previousText).slice(0,600);
   }
@@ -75,7 +79,7 @@
   }catch{}
   return '';
  }
- const lock=value=>{busy=value;for(const n of [stage,region,progress,completedBooks,soloRange,question,includePrevious,submit,aiButton,...result.querySelectorAll('.cc-followup input,.cc-followup textarea,.cc-followup button')])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
+ const lock=value=>{busy=value;for(const n of [stage,region,progress,currentBooks,completedBooks,soloRange,question,includePrevious,submit,aiButton,...result.querySelectorAll('.cc-followup input,.cc-followup textarea,.cc-followup button,.cs-assessment input,.cs-assessment select,.cs-assessment button')])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
  const messages={login_required:'로그인 후 자료 상담을 이용할 수 있습니다.',question_missing:'궁금한 내용을 조금 더 적어 주세요.',sources_missing:'추가 설명에 참고할 승인 자료를 찾지 못했습니다. 독쌤에게 직접 문의해 주세요.',ai_not_configured:'추가 설명 연결을 준비하고 있습니다. 아래 자료 안내를 먼저 확인해 주세요.',too_many_attempts:'오늘의 추가 설명 사용 횟수를 마쳤습니다. 자료 안내는 계속 이용할 수 있습니다.',ai_unavailable:'추가 설명을 가져오지 못했습니다. 자료 안내는 아래에서 계속 확인할 수 있습니다.'};
  function render(data,c){
   result.replaceChildren();detail.replaceChildren();detail.hidden=true;moreStatus.textContent='';
@@ -103,14 +107,26 @@
     if(data.explanation)result.append(cited(data.explanation,sources.map(r=>r.id)));
    }
   }
-  if(!count&&(c.completedBooks||c.soloRange)){
+  if(!count&&(c.currentBooks||c.completedBooks||c.soloRange)){
    const applied=el('div',{class:'cc-applied'});
    applied.append(el('p',{},'이번 안내에 함께 반영했어요.'));
+   if(c.currentBooks)applied.append(el('p',{},'현재 교재 · '+c.currentBooks));
    if(c.completedBooks)applied.append(el('p',{},'마친 교재 · '+c.completedBooks));
    if(c.soloRange)applied.append(el('p',{},'독립 풀이 범위 · '+c.soloRange));
    result.append(applied);
   }
-  if(!count&&data.followup?.fields?.length){
+  const somaHost=el('div'),owner=member(),viewGeneration=generation;
+  const somaHandled=!count&&g.RoadmapCounselSoma?.mount(somaHost,{...c,sources,somaAssessment:somaOwner===owner?somaAssessment:null,somaMessage:somaOwner===owner?somaMessage:''},{
+   openSource:id=>showEvidence(sources.findIndex(r=>r.id===id)),
+   onProfile:(assessment,summary,message)=>{
+    if(viewGeneration!==generation||owner!==member())return;
+    somaAssessment=assessment;somaMessage=message;somaOwner=owner;
+    currentBooks.value=clean(summary.currentBooks||currentBooks.value);soloRange.value=clean(summary.soloRange||soloRange.value);
+    last=null;refreshPrevious();const next=context();last=next;render(data,next);
+   }
+  });
+  if(somaHandled)result.append(somaHost);
+  if(!count&&!somaHandled&&data.followup?.fields?.length){
    const follow=el('form',{class:'cc-followup'}),answers=new Map();
    follow.append(el('h4',{},'시작할 과정을 더 좁혀볼까요?'),el('p',{},data.followup.message));
    for(const field of data.followup.fields){
@@ -135,7 +151,7 @@
   }
   const plan=el('div',{class:'cc-plan'});
   result.append(plan);
-  if(!count&&sources.length)g.RoadmapCounselPlan?.mount(plan,{...c,sources});
+  if(!count&&!somaHandled&&sources.length)g.RoadmapCounselPlan?.mount(plan,{...c,sources});
   if(sources.length){
    related.append(el('summary',{},'상담 근거 자료 '+sources.length+'건 보기'));
    for(const [i,r]of sources.entries()){
@@ -148,7 +164,7 @@
    }
    result.append(related);
   }
-  if(data.next&&!count&&!plan.childElementCount)result.append(el('p',{class:'cc-next'},data.next));
+  if(data.next&&!count&&!somaHandled&&!plan.childElementCount)result.append(el('p',{class:'cc-next'},data.next));
   result.hidden=false;aiButton.hidden=!data.aiAvailable;aiHint.hidden=!data.aiAvailable;
   displayedRevision=data.revision||'';
   return count;
@@ -197,6 +213,7 @@
   finally{if(request===generation)lock(false);}
  };
  function invalidate(){
+  if(arguments[0]?.target&&form.contains(arguments[0].target)){somaAssessment=null;somaMessage='';}
   generation++;last=null;result.hidden=true;aiButton.hidden=true;aiHint.hidden=true;detail.hidden=true;moreStatus.textContent='';
   status.textContent='입력한 조건으로 자료를 다시 찾아보세요.';
  }
@@ -205,6 +222,8 @@
  dialog.addEventListener('close',()=>{generation++;if(busy){lock(false);moreStatus.textContent='';status.textContent='';}});
  close.onclick=()=>dialog.close();
  button.onclick=()=>{
+  if(somaOwner&&somaOwner!==member()){somaAssessment=null;somaMessage='';for(const field of [currentBooks,completedBooks,soloRange,progress,question,region])field.value='';opened=false;invalidate();}
+  somaOwner=member()||'';
   refreshPrevious();
   if(!opened){stage.value=g.RoadmapMember?.school||'elementary';opened=true;}
   if(!progress.value){

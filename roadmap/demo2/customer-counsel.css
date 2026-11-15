@@ -52,3 +52,21 @@
 .cc-interview-card p{margin:6px 0}
 .cc-interview-links a{display:inline-block;padding:6px 0}
 .cc-interview-practice{background:#f4f8f6;border-radius:6px;padding:10px 12px}
+.customer-counsel .cs-soma{border-top:1px solid #cfe0da;padding-top:20px;margin-top:20px;min-width:0}
+.customer-counsel .cs-table-scroll{max-width:100%;overflow-x:auto;border:1px solid #cfe0da;border-radius:8px;margin:12px 0}
+.customer-counsel .cs-table-scroll table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px;line-height:1.65}
+.customer-counsel .cs-table-scroll caption{text-align:left;padding:12px;font-weight:650;background:#edf7f5}
+.customer-counsel .cs-table-scroll th,.customer-counsel .cs-table-scroll td{padding:10px;border:1px solid #dce6e1;text-align:left;vertical-align:top}
+.customer-counsel .cs-table-scroll th{background:#f4f8f6}
+.customer-counsel .cs-note{font-size:13px;color:#52665f}
+.customer-counsel .cs-assessment{display:grid;gap:16px;margin-top:22px}
+.customer-counsel .cs-assessment fieldset{min-width:0;margin:0;padding:14px;border:1px solid #cfe0da;border-radius:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.customer-counsel .cs-assessment legend{font-size:15px;font-weight:650;padding:0 5px}
+.customer-counsel .cs-assessment fieldset label:last-child{grid-column:1/-1}
+.customer-counsel .cs-dates{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.customer-counsel .cs-dates input{box-sizing:border-box;width:100%;min-width:0;min-height:44px;font:inherit;padding:8px;border:1px solid #a9c3b7;border-radius:6px}
+.customer-counsel .cs-needs{border-left:3px solid #a9c3b7;padding-left:14px;font-size:14px;overflow-wrap:anywhere}
+.customer-counsel .cs-needs strong{display:block}
+.customer-counsel .cs-status{font-size:14px;white-space:pre-line}
+.customer-counsel .cs-checklist{font:inherit;min-height:44px;padding:10px 14px;border:1px solid #285c49;color:#285c49;border-radius:6px;background:white;cursor:pointer}
+@media(max-width:480px){.customer-counsel .cs-assessment fieldset,.customer-counsel .cs-dates{grid-template-columns:minmax(0,1fr)}}
