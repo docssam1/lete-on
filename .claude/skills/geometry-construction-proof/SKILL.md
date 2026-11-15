@@ -5,7 +5,7 @@ description: 지필드 사고력 수학 2과정 이상 「그림으로 따져 �
 
 # 그림으로 따져 보기 — 기하 논증과 작도
 
-기준 코드는 `fields-classic/question-bank/proof-board.js`(엔진·그림 도구)와 `course2-proofs/g1~g5.js`(권별 논증)다. 문서와 코드가 다르면 **코드가 맞다**. 첫 작도 본보기는 `course2-proofs/g4.js`의 `sssTri`(세 변으로 삼각형 작도, id `construct-sss`).
+기준 코드는 `fields-classic/question-bank/proof-board.js`(엔진·그림 도구)와 `course2-proofs/g1~g5.js`(권별 논증)다. 문서와 코드가 다르면 **코드가 맞다**. 작도 본보기는 `course2-proofs/g4.js`의 셋: `sssTri`(세 변으로 삼각형, `construct-sss` — 주어진 막대에서 길이를 재어 옮기는 꼴) · `perpBisector`(수직이등분선) · `angleBisector`(각의 이등분선 — 세 변 합동을 근거로 접기). 막대 없이 컴퍼스를 그 자리에서 벌려 긋는 장면은 같은 파일의 `swingArc(f, k, i, c, r, from, to, color)`, 자를 대고 긋는 장면은 `ruleLine(f, k, i, a, b)`을 쓴다. 그림이 한쪽에 몰리면 점들의 테두리를 재어 종이 가운데로 옮기고 크기를 맞춘다(`angleBisector.params`).
 
 ## 왜 이렇게 만드나(원장 결정, 2026-11-15)
 - 2과정은 1과정보다 발달 단계가 높다. 1과정 판서는 「해 보니 그렇다」, 2과정은 **「왜 반드시 그런가」**를 그림으로 따진다.

@@ -689,4 +689,168 @@ const sssTri = {
   },
 };
 
-export const PROOFS = [sssTri, squareFold, setSquare, parallelSum, zigzag, tapeFold, triArea, trapArea, rhombusArea, stairs, diagRect];
+// 컴퍼스로 호 하나 긋는 장면 i: 벌리기(0~0.25) → 돌려 긋기(0.3~0.9) → 컴퍼스 사라짐(0.9~1). 장면이 지나면 호만 남는다
+function swingArc(f, k, i, c, r, from, to, color) {
+  const t = clamp(k - i), draw = k > i + 1 ? 1 : clamp((t - 0.3) / 0.6);
+  if (k >= i) f.arcPath(c, r, from, to, { stroke: color, w: 2.2, draw });
+  if (k >= i && k <= i + 1) {
+    const op = 1 - clamp((t - 0.9) / 0.1);
+    if (t < 0.3) f.compass(c, r * (0.25 + 0.75 * clamp(t / 0.25)), from, { opacity: op });
+    else f.compass(c, r, from + (to - from) * draw, { opacity: op });
+  }
+}
+// 자를 대고 a→b 선 긋기(장면 i): 자 놓기 → 긋기 → 자 치우기
+function ruleLine(f, k, i, a, b, o = {}) {
+  const t = clamp(k - i);
+  if (k >= i && k <= i + 1) f.ruler(a, b, { opacity: clamp(t * 5) * (1 - clamp((t - 0.85) / 0.15)), margin: 10, side: o.side || 1 });
+  if (k >= i) f.seg(a, b, { stroke: o.stroke || C.ink, w: o.w || 2.6, grow: k > i + 1 ? 1 : clamp((t - 0.15) / 0.6), opacity: o.opacity ?? 1 });
+}
+
+// ── 작도. 선분의 수직이등분선(원장 2026-11-15 「각의 이등분선·수직이등분선 작도도 만들어」) ─────────────
+const perpBisector = {
+  id: "construct-perpendicular-bisector",
+  unit: U1,
+  title: "선분의 수직이등분선 작도하기",
+  vary: "다른 선분으로",
+  width: 640,
+  height: 470,
+  params(seed) {
+    const c = pick([{ L: 260, tilt: 0, k: 0.75 }, { L: 240, tilt: 18, k: 0.8 }, { L: 280, tilt: -14, k: 0.68 }, { L: 220, tilt: 32, k: 0.9 }], seed);
+    const M = P(320, 238), A = polar(M, c.L / 2, 180 + c.tilt), B = polar(M, c.L / 2, c.tilt);
+    const th = c.tilt, r = c.L * c.k, al = Math.acos(c.L / 2 / r) / RAD;
+    const Pp = polar(A, r, th + al), Q = polar(A, r, th - al);
+    const ext = (a, b, d) => add(b, mul(sub(b, a), d / Math.hypot(b.x - a.x, b.y - a.y)));
+    return { ...c, M, A, B, th, r, al, P: Pp, Q, P2: ext(Q, Pp, 40), Q2: ext(Pp, Q, 40), small: c.L * 0.4 };
+  },
+  scenes: [
+    { say: "선분 AB가 있어요. AB를 똑같이 둘로 나누면서 AB와 수직으로 만나는 선을 자와 컴퍼스로 그려 봐요.", line: "선분 AB의 한가운데를 수직으로 지나는 선을 찾자", ms: 1800 },
+    { say: "컴퍼스를 AB의 반보다 조금 길게 벌려 A에 꽂고, 선분 위아래를 지나는 호를 그어요.", line: "A를 중심으로 호(반지름은 AB의 반보다 길게)", why: "반보다 짧으면 두 호가 만나지 않는다 — 마지막 장면에서 확인", ms: 3000 },
+    { say: "벌린 길이를 그대로 두고 B에 꽂아 같은 호를 그어요. 두 호가 위아래 두 점 P, Q에서 만나요.", line: "같은 반지름으로 B에서 호 → 교점 P, Q", why: "벌린 길이를 바꾸지 않았으니 PA = PB, QA = QB", ms: 3000 },
+    { say: "자를 대고 P와 Q를 이어요. 이 선이 AB와 만나는 점을 M이라 해요.", line: "직선 PQ를 긋고, AB와 만나는 점 M", ms: 2000 },
+    { say: "왜 이 선일까요? P와 Q는 A와 B에서 똑같이 떨어져 있어요. 그래서 직선 PQ로 종이를 접으면 A가 B에 꼭 겹쳐요.", line: "직선 PQ로 접으면 A가 B에 꼭 겹친다", why: "P·Q가 A·B에서 같은 거리라서, 접는 선 PQ에 대해 A와 B가 마주 본다", ms: 3200 },
+    { say: "겹쳤으니 AM과 MB는 길이가 같고, M에서 생긴 두 각도 같아요. 두 각을 합하면 180°이니 하나는 90°예요.", line: "AM = MB, ∠AMP = ∠BMP = 90° → 수직이등분선", why: "접어서 겹친 길이·각은 같다, 한 직선 위 두 각의 합은 180°", ms: 2600 },
+    { say: "컴퍼스를 AB의 반보다 짧게 벌리면 어떻게 될까요? A와 B에서 그은 호가 서로 닿지 않아 P, Q를 찾을 수 없어요.", line: "반지름이 AB의 반보다 짧으면 두 호가 만나지 않는다", why: "두 반지름을 더해도 AB보다 짧다", ms: 3000 },
+  ],
+  draw(f, k, p) {
+    const { A, B, M, th, r, al, P: Pp, Q } = p;
+    const bad = phase(k, 6), keep = 1 - clamp(bad * 3);
+    f.seg(A, B, { stroke: C.ink, w: 3.4, grow: clamp(phase(k, 0) * 1.4) });
+    f.dot(A, { opacity: clamp(phase(k, 0) * 3) }).dot(B, { opacity: clamp(phase(k, 0) * 2 - 0.5) });
+    f.label(polar(A, 24, 180 + th), "A", { size: 19, write: clamp(phase(k, 0) * 3) }).label(polar(B, 24, th), "B", { size: 19, write: clamp(phase(k, 0) * 2 - 0.6) });
+    if (bad <= 0) {
+      swingArc(f, k, 1, A, r, th - al - 16, th + al + 16, C.green);
+      swingArc(f, k, 2, B, r, 180 + th + al + 16, 180 + th - al - 16, C.blue);
+    }
+    const pq = clamp((k - 2.85) * 6);
+    if (pq > 0 && keep > 0) {
+      f.dot(Pp, { fill: C.purple, opacity: Math.min(pq, keep) }).dot(Q, { fill: C.purple, opacity: Math.min(pq, keep) });
+      f.label(polar(Pp, 24, th + 30), "P", { size: 19, color: C.purple, opacity: keep, write: pq }).label(polar(Q, 24, th - 30), "Q", { size: 19, color: C.purple, opacity: keep, write: pq });
+    }
+    if (keep > 0) ruleLine(f, k, 3, p.P2, p.Q2, { stroke: C.purple, w: 2.8, opacity: keep });
+    const mm = phase(k, 3, 0.7, 1);
+    if (mm > 0 && keep > 0) f.dot(M, { r: 5, fill: C.red, opacity: Math.min(mm, keep) }).label(add(M, polar(P(0, 0), 22, th - 45)), "M", { size: 18, color: C.red, opacity: keep, write: mm });
+    // 4. 같은 거리 표시 → 접기
+    const eq = phase(k, 4, 0, 0.35), fl = phase(k, 4, 0.4, 1);
+    if (eq > 0 && keep > 0) {
+      [[Pp, A], [Pp, B], [Q, A], [Q, B]].forEach(([u, v]) => { f.seg(u, v, { stroke: C.orange, w: 1.8, dash: "6 5", opacity: eq * keep * 0.9 }); f.ticks(u, v, { color: C.orange, opacity: eq * keep }); });
+    }
+    if (fl > 0 && keep > 0) {
+      const A2 = fold(A, Pp, Q, fl);
+      f.poly([A2, Pp, Q], { fill: C.orangeSoft, stroke: C.orange, w: 2, opacity: keep, fillOpacity: 0.55 });
+      f.seg(A2, M, { stroke: C.red, w: 4, opacity: keep });
+      f.dot(A2, { fill: C.orange, opacity: keep });
+    }
+    // 5. 같은 길이·직각
+    const fin = phase(k, 5);
+    if (fin > 0 && keep > 0) {
+      f.ticks(A, M, { n: 2, color: C.red, opacity: fin * keep }).ticks(M, B, { n: 2, color: C.red, opacity: fin * keep });
+      f.right(M, Pp, B, { size: 16, color: C.red, opacity: fin * keep });
+      f.note(P(320, 444), "AM = MB, AB ⟂ PQ", { opacity: fin * keep, color: C.red });
+    }
+    // 6. 반지름이 짧으면
+    if (bad > 0) {
+      const g = clamp(bad * 1.4 - 0.3), sr = p.small;
+      f.arcPath(A, sr, th - 70, th + 70, { stroke: C.green, w: 2.4, draw: g });
+      f.arcPath(B, sr, 180 + th + 70, 180 + th - 70, { stroke: C.blue, w: 2.4, draw: g });
+      const gl = polar(A, sr, th), gr = polar(B, sr, 180 + th);
+      f.seg(gl, gr, { stroke: C.red, w: 3, dash: "5 4", opacity: clamp(bad * 3 - 2) });
+      f.label(add(mid(gl, gr), P(0, 28)), "닿지 않아요", { size: 17, color: C.red, write: clamp(bad * 3 - 2) });
+    }
+  },
+};
+
+// ── 작도. 각의 이등분선 ─────────────
+const angleBisector = {
+  id: "construct-angle-bisector",
+  unit: U1,
+  title: "각의 이등분선 작도하기",
+  vary: "다른 각으로",
+  width: 640,
+  height: 470,
+  params(seed) {
+    const c = pick([{ ang: 70, tilt: 8 }, { ang: 110, tilt: 4 }, { ang: 50, tilt: 14 }, { ang: 90, tilt: -6 }, { ang: 130, tilt: 0 }], seed);
+    // 그림 전체(두 변 끝·P)를 종이 가운데에 크게 놓는다
+    const t2 = c.tilt + c.ang, half0 = Math.sin((c.ang / 2) * RAD), d0 = (r) => {
+      const h = r * half0, r2 = Math.max(h * 1.35, r * 0.55);
+      return { r2, d: r * Math.cos((c.ang / 2) * RAD) + Math.sqrt(r2 * r2 - h * h) };
+    };
+    const raw = (O, len, r1) => { const { r2, d } = d0(r1); return { O, X: polar(O, len, c.tilt), Y: polar(O, len, t2), r1, r2, d }; };
+    const g0 = raw(P(0, 0), 380, 190), pts = [g0.O, g0.X, g0.Y, polar(g0.O, g0.d + 70, c.tilt + c.ang / 2)];
+    const xs = pts.map((q) => q.x), ys = pts.map((q) => q.y), w = Math.max(...xs) - Math.min(...xs), h = Math.max(...ys) - Math.min(...ys);
+    const sc = Math.min(1, 540 / w, 370 / h), cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2;
+    const O = P(320 - cx * sc, 240 - cy * sc), g = raw(O, 380 * sc, 190 * sc);
+    const A = polar(O, g.r1, c.tilt), B = polar(O, g.r1, t2), Pp = polar(O, g.d, c.tilt + c.ang / 2);
+    return { ...c, t2, O, X: g.X, Y: g.Y, r1: g.r1, r2: g.r2, A, B, P: Pp, Rend: polar(O, g.d + 70 * sc, c.tilt + c.ang / 2) };
+  },
+  scenes: [
+    { say: (p) => `각 XOY가 있어요(${p.ang}°). 이 각을 똑같이 둘로 나누는 선을 자와 컴퍼스로 그려 봐요.`, line: "∠XOY를 똑같이 둘로 나누는 선을 찾자", ms: 1800 },
+    { say: "컴퍼스를 꼭짓점 O에 꽂고 두 변을 지나는 호를 그어요. 두 변과 만나는 점을 A, B라 해요.", line: "O를 중심으로 호 → 두 변 위의 점 A, B", why: "같은 반지름이니 OA = OB", ms: 3000 },
+    { say: "이번엔 A에 꽂고 각의 안쪽에 호를 그어요.", line: "A를 중심으로 각 안쪽에 호", ms: 2600 },
+    { say: "벌린 길이를 그대로 두고 B에 꽂아 호를 그어요. 두 호가 만나는 점이 P예요.", line: "같은 반지름으로 B에서 호 → 교점 P", why: "같은 반지름이니 AP = BP", ms: 2600 },
+    { say: "자를 대고 O에서 P를 지나는 선을 그어요.", line: "반직선 OP를 긋는다", ms: 1800 },
+    { say: "왜 이 선이 각을 반으로 나눌까요? 삼각형 OAP와 OBP는 세 변이 같아요. OA = OB, AP = BP, OP는 같이 쓰니까요. 그래서 OP로 접으면 꼭 겹쳐요.", line: "삼각형 OAP를 OP로 접으면 OBP에 꼭 겹친다", why: "세 변이 같은 삼각형은 모양과 크기가 같다(세 변으로 삼각형 작도에서 본 것)", ms: 3400 },
+    { say: "겹쳤으니 O에서 생긴 두 각은 크기가 같아요. OP가 각 XOY를 똑같이 둘로 나눈 거예요.", line: (p) => `∠XOP = ∠YOP = ${p.ang / 2}° → 각의 이등분선`, why: "접어서 겹친 각은 크기가 같다", ms: 2400 },
+  ],
+  draw(f, k, p) {
+    const { O, X, Y, A, B, r1, r2, P: Pp, tilt, t2, ang } = p;
+    const s0 = phase(k, 0);
+    f.seg(O, X, { stroke: C.ink, w: 3, grow: clamp(s0 * 1.5) }).seg(O, Y, { stroke: C.ink, w: 3, grow: clamp(s0 * 1.5 - 0.3) });
+    f.dot(O, { opacity: clamp(s0 * 3) });
+    f.label(add(O, P(-6, 22)), "O", { size: 19, write: clamp(s0 * 3) });
+    f.label(polar(X, 20, tilt - 90), "X", { size: 19, write: clamp(s0 * 2 - 0.6) }).label(polar(Y, 22, t2 + 20), "Y", { size: 19, write: clamp(s0 * 2 - 0.8) });
+    if (s0 > 0.6 && k < 6) f.arc(O, X, Y, { r: 38, color: C.soft, fillOpacity: 0.15, opacity: clamp(s0 * 3 - 2) * (1 - phase(k, 6)) });
+    swingArc(f, k, 1, O, r1, tilt - 10, t2 + 10, C.green);
+    const ab = clamp((k - 1.85) * 6);
+    if (ab > 0) {
+      f.dot(A, { fill: C.green, opacity: ab }).dot(B, { fill: C.green, opacity: ab });
+      f.label(polar(A, 22, tilt - 70), "A", { size: 18, color: C.green, write: ab }).label(polar(B, 22, t2 + 70), "B", { size: 18, color: C.green, write: ab });
+    }
+    const dA = dirDeg(A, Pp), dB = dirDeg(B, Pp);
+    swingArc(f, k, 2, A, r2, dA - 22, dA + 22, C.blue);
+    swingArc(f, k, 3, B, r2, dB + 22, dB - 22, C.blue);
+    const pp = clamp((k - 3.85) * 6);
+    if (pp > 0) f.dot(Pp, { fill: C.purple, opacity: pp }).label(polar(Pp, 22, tilt + ang / 2 + 90), "P", { size: 19, color: C.purple, write: pp });
+    ruleLine(f, k, 4, O, p.Rend, { stroke: C.purple, w: 2.8, side: -1 });
+    // 5. 같은 변 표시 → 접기
+    const eq = phase(k, 5, 0, 0.35), fl = phase(k, 5, 0.4, 1);
+    if (eq > 0) {
+      f.poly([O, A, Pp], { fill: C.orangeSoft, stroke: "none", opacity: eq * 0.8 }).poly([O, B, Pp], { fill: C.blueSoft, stroke: "none", opacity: eq * 0.8 });
+      f.ticks(O, A, { color: C.green, opacity: eq }).ticks(O, B, { color: C.green, opacity: eq });
+      f.seg(A, Pp, { stroke: C.blue, w: 1.8, dash: "6 5", opacity: eq }).seg(B, Pp, { stroke: C.blue, w: 1.8, dash: "6 5", opacity: eq });
+      f.ticks(A, Pp, { n: 2, color: C.blue, opacity: eq }).ticks(B, Pp, { n: 2, color: C.blue, opacity: eq });
+    }
+    if (fl > 0) {
+      const A2 = fold(A, O, Pp, fl);
+      f.poly([O, A2, Pp], { fill: C.orangeSoft, stroke: C.orange, w: 2.2, fillOpacity: 0.7 });
+      f.dot(A2, { fill: C.orange });
+    }
+    // 6. 같은 두 각
+    const fin = phase(k, 6);
+    if (fin > 0) {
+      f.wedge(O, tilt, ang / 2, { r: 58, color: C.red, fillOpacity: 0.28, opacity: fin, label: `${ang / 2}°`, labelR: 84, size: 16 });
+      f.wedge(O, tilt + ang / 2, ang / 2, { r: 58, color: C.red, fillOpacity: 0.28, opacity: fin, label: `${ang / 2}°`, labelR: 84, size: 16 });
+    }
+  },
+};
+
+export const PROOFS = [sssTri, perpBisector, angleBisector, squareFold, setSquare, parallelSum, zigzag, tapeFold, triArea, trapArea, rhombusArea, stairs, diagRect];
