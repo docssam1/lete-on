@@ -28,8 +28,8 @@ export function academyContext({question = '', progress = '', region = ''} = {})
  const where = /학원|수업|과정|어디|어느\s*(?:곳|지점|반)|지점|입반|다닐|추천|대비.*할|온라인|대면/u.test(q);
  if (!brand && !(contest && where)) return null;
  if (/기출|정답|문항/u.test(q) && !/학원|수업|입반|지점/u.test(q)) return null;
- const onlineText = q.replace(/온라인\s*(?:말고|제외|빼고|불가|안\s*돼|안\s*되)/gu, '대면');
- const online = /온라인/u.test(onlineText) || (!/대면|오프라인/u.test(q) && /온라인만|온라인\s*희망/u.test(tidy(region)));
+ const noOnline = /온라인\s*(?:말고|제외|빼고|불가|안|싫|하지\s*않|어려)/u.test(q);
+ const online = !noOnline && (/온라인/u.test(q) || (!/대면|오프라인/u.test(q) && /온라인만|온라인\s*희망/u.test(tidy(region))));
  const places = regionsIn(q).length ? regionsIn(q) : regionsIn(region).length ? regionsIn(region) : regionsIn(p);
  return {brand, online, places, q, progress: p};
 }
@@ -78,6 +78,11 @@ function courseGuidance(rows, progress) {
 export function academyAnswer(rows, context) {
  const route = academyContext(context);
  if (!route || !rows.some(row => ['mk','cms','providers'].includes(providerKind(row)))) return null;
+ if (route.online && route.brand) return {
+  summary: '해당 학원의 온라인 과정 개설 여부는 현재 승인 자료에서 확인되지 않아요. 원하는 지점에 온라인 수업 가능 여부와 현재 모집 과정을 확인해 주세요.',
+  explanation: courseGuidance(rows, route.progress),
+  next: '온라인 수업이 꼭 필요하다면 가능한 수업 방식과 현재 교재·진도를 함께 알려주세요.'
+ };
  const places = route.places, summary = [];
  for (const row of rows) {
   const kind = providerKind(row), parts = blocks(row);

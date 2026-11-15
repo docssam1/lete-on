@@ -31,6 +31,12 @@ test('online request overrides local preference; negative online request remains
  assert.equal(online.ids[0],'providers'); assert.match(online.summary,/프라이빗노트·위너스KMO/u);
  assert.doesNotMatch(online.summary,/부산|대치|센텀/u);
  assert.equal(consult({question:'온라인 말고 KMO 학원 어디?',region:'부산'}).ids[0],'mk');
+ assert.doesNotMatch(consult({question:'온라인 말고 KMO 학원 어디?',region:'온라인만 희망, 부산'}).summary,/프라이빗노트/u);
+});
+test('online availability is not inferred for a named local academy',()=>{
+ for(const question of ['MK 온라인 수업은요?','EMS 온라인 수업은요?']) {
+  assert.match(consult({question,region:'부산'}).summary,/온라인 과정 개설 여부.*확인되지/u);
+ }
 });
 test('CMS and EMS route to one academy note and an actually documented branch',()=>{
  for(const question of ['EMS 수업 어디에서 하나요?','CMS 경시관은요?','KMO 학원 추천']) {
