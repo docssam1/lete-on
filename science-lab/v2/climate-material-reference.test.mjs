@@ -1,5 +1,5 @@
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
-import{workbook,climateMaterialPriorWorkbook as prior}from'../data/book/c22-s42-u04.workbook.js';
+import{climateContextPriorWorkbook as workbook,climateMaterialPriorWorkbook as prior}from'../data/book/c22-s42-u04.workbook.js';
 import{CLIMATE_MATERIAL_REFERENCE_VERSION as version,climateHouseHeightReference,climateHouseHeightCondition,climateHeatwaveReadingNotes,withClimateMaterialReferences}from'../data/book/c22-s42-u04.rail-notes.js';
 import{revisedTextbookPaper}from'./revised-textbook.js';import{withThink}from'./think-merge.js';
 const unit='c22-s42-u04',houseTitle='어느 집이 먼저 물에 닿았나요?',heatTitle='표가 말해 주는 것과 말해 주지 않는 것';
@@ -35,7 +35,9 @@ test('both actual climate workbook routes put the compact height table on the re
 test('the shared loader refreshes the generated climate manuscript while the existing photo cache stays independent',async()=>{
  const url=new URL('./revised-textbook.js',import.meta.url),context=vm.createContext({structuredClone}),cache=new Map();let fresh=0,stale=0;
  async function synthetic(ns){const m=new vm.SyntheticModule(Object.keys(ns),function(){for(const[k,v]of Object.entries(ns))this.setExport(k,v);},{context});await m.link(()=>{});await m.evaluate();return m;}
- const m=new vm.SourceTextModule(fs.readFileSync(url,'utf8'),{context,identifier:url.href,importModuleDynamically:async spec=>{const target=new URL(spec,url);if(target.pathname.endsWith('/'+unit+'.workbook.js')){if(target.searchParams.get('v')===version)fresh++;else{stale++;return synthetic({workbook:prior});}}return import(target.href);}});
+ const m=new vm.SourceTextModule(fs.readFileSync(url,'utf8'),{context,identifier:url.href,importModuleDynamically:async spec=>{const target=new URL(spec,url);if(target.pathname.endsWith('/'+unit+'.workbook.js')){if(target.searchParams.get('v')===CLIMATE_CONTEXT_VERSION)fresh++;else{stale++;return synthetic({workbook:prior});}}return import(target.href);}});
  await m.link(async spec=>{const target=new URL(spec,url);if(!cache.has(target.href))cache.set(target.href,await synthetic(await import(target.href)));return cache.get(target.href);});await m.evaluate();const paper=await m.namespace.revisedTextbookPaper(unit);assert(paper.workbookPaper({mode:'student'}).includes(climateHouseHeightCondition));assert.equal(fresh,1);assert.equal(stale,0);
  const app=fs.readFileSync(new URL('./v2.js',import.meta.url),'utf8'),active=app.match(/revised-textbook\.js\?v=([^'\"]+)/)?.[1];assert(active);assert(app.includes('./revised-lesson.js?v='+active));assert(fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8').includes('./revised-textbook.js?v='+active));assert(fs.readFileSync(new URL('./index.html',import.meta.url),'utf8').includes('&book='+active));
 });
+
+import{CLIMATE_CONTEXT_VERSION}from'../data/book/climate-workbook-context.js';

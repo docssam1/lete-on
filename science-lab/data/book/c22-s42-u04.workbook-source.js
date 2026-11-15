@@ -10485,4 +10485,6 @@ export const climateUpperPriorWorkbook=withStudentGuideLanguage(studentGuidePrio
 export const climateReadablePriorWorkbook=withClimateUpperScience(climateUpperPriorWorkbook);
 export const climateStudyNotesPriorWorkbook=withClimateReadableWorkbook(climateReadablePriorWorkbook);
 export const climateMaterialPriorWorkbook=withGrade4StudyNotes(climateStudyNotesPriorWorkbook);
-export const workbook=withClimateMaterialReferences(climateMaterialPriorWorkbook);
+export const climateContextPriorWorkbook=withClimateMaterialReferences(climateMaterialPriorWorkbook);
+export const workbook=withClimateWorkbookContext(climateContextPriorWorkbook);
+import{withClimateWorkbookContext}from'./climate-workbook-context.js?v=20261115-climate-workbook-context';

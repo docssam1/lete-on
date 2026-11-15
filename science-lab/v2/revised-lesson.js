@@ -55,7 +55,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261115-ecology-food-web-material&soundDirections=20261115-sound-workbook-directions&skyDirections=20261115-sky-workbook-directions&skyResponse=20261115-sky-response-review&gasContext=20261115-gas-workbook-context&gasPhoto=20261115-gas-photo-context';
+import {revisedTextbook} from './revised-textbook.js?v=20261115-ecology-food-web-material&soundDirections=20261115-sound-workbook-directions&skyDirections=20261115-sky-workbook-directions&skyResponse=20261115-sky-response-review&gasContext=20261115-gas-workbook-context&gasPhoto=20261115-gas-photo-context&climateContext=20261115-climate-workbook-context';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';
