@@ -7696,7 +7696,11 @@ function rampCount(threadId, lv, count){
 function visibleKey(p){
   if(!p) return null;
   if(p.widget==='rodNumeral') return 'rod:'+JSON.stringify(p.expr)+':'+(p.level||'');
-  if(W2_C0&&p.widget==='cubes'&&p.tex) return 'cubes:'+String(p.tex).replace(/\s+/g,'');
+  /* C0는 블록 식을 가르기 그림(위 = 전체, 아래 = 아는 수 + 빈칸)으로 인쇄한다 — 4−□=1과 4=□+1이 같은 그림이 된다. */
+  if(W2_C0&&p.widget==='cubes'&&p.cubes&&Number.isFinite(p.cubes.moveTo)&&Number.isFinite(p.answer)){
+    const whole=p.cubes.moveTo;
+    return p.answer===whole?'bondw:'+(p.cubes.piles||[]).join(','):'bond:'+whole+':'+(whole-p.answer);
+  }
   if(W2_C0&&p.widget==='g13OrdPaint'&&Array.isArray(p.rows)) return 'ord:'+p.total+':'+p.rows.map(r=>r.kind+r.n+r.from).sort().join('|');
   return null;
 }
@@ -9492,7 +9496,7 @@ ${round.html}
     if(chk) items.push(chk);
     const wsId = opts.standard ? ('S-' + c + '-' + sessionNo + (amount !== 1 ? '-x' + amount : ''))
       : 'W' + w + '-' + c + (k === 2 ? '-2' : '');
-    const title = (course.title && (course.title.ko || course.title)) || c;
+    const title = (course.title && (pickL(course.title) || course.title.ko || course.title)) || c;
     const weekLabel = (() => {
       const m = /^(\d{4})-W(\d{2})$/.exec(w); if(!m) return w;
       const jan4 = new Date(Date.UTC(+m[1], 0, 4)); const day = (jan4.getUTCDay() + 6) % 7;
