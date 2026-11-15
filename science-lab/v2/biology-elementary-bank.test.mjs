@@ -1,3 +1,6 @@
+import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
+// This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
+const beforeGrade4=q=>q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import{BIOLOGY_PEER_OPINIONS_VERSION,BIOLOGY_ELEMENTARY_BANK_VERSION as peerPriorVersion}from'../data/book/s41-u04.editorial.js';
 import{BIOLOGY_OBSERVATION_CHOICE_VERSION}from'../data/book/standalone-question-context.js';
 import{BIOLOGY_OBSERVATION_PHOTO_VERSION}from'../data/book/biology-observation-photos.js';
@@ -34,7 +37,7 @@ async function actualBank(){
 const withoutPresentation=q=>Object.fromEntries(Object.entries(q).filter(([key])=>!['prompt','givens','contentVersion','previousVersions'].includes(key)));
 
 test('actual bank loader preserves every answer boundary and saved presentation when prompts change',async()=>{
-  const before=await priorBank(),savedBefore=structuredClone(before),{items:actual}=await actualBank(),current=actual.map(q=>q.contentVersion===BIOLOGY_PEER_OPINIONS_VERSION?questionAtVersion(q,peerPriorVersion):q);
+  const before=await priorBank(),savedBefore=structuredClone(before),{items:actual}=await actualBank(),current=actual.map(beforeGrade4).map(q=>q.contentVersion===BIOLOGY_PEER_OPINIONS_VERSION?questionAtVersion(q,peerPriorVersion):q);
   assert.equal(current.length,76);let changed=0;
   for(let i=0;i<before.length;i++){
     const old=before[i],latest=current[i],photo=latest.contentVersion===BIOLOGY_OBSERVATION_CHOICE_VERSION?questionAtVersion(latest,BIOLOGY_OBSERVATION_PHOTO_VERSION):latest,q=[STANDALONE_CONTEXT_VERSION,BIOLOGY_OBSERVATION_PHOTO_VERSION].includes(photo.contentVersion)?questionAtVersion(photo,photo.previousVersions.at(-1).version):photo;assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(q.contentVersion!==LESSON_REFERENCE_DATA_VERSION)assert.deepEqual(q.givens,old.givens);

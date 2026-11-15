@@ -1,3 +1,4 @@
+import{grade4QuestionReview}from'../data/book/grade4-question-review.js';
 import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items as raw}from'../data/units/s41-u04.js';import{items as think}from'../data/units/s41-u04.think.js';
@@ -35,7 +36,7 @@ test('biology readable overlay excludes original, similar, other units and unexp
  assert.equal(biologyReadableCurrentItems(baseline,'other'),baseline);assert.equal(biologyReadableCurrentItems(null,unit),null);
 });
 test('biology repeated classroom and daily pool share current objects with their own choice order',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),readable=biologyReadableCurrentItems(baseline,unit),current=standaloneQuestionContexts(biologyElementaryCurrentItems(readable,unit),unit),daily=classroomQuestions(second,current);let linked=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),readable=biologyReadableCurrentItems(baseline,unit),current=grade4QuestionReview(standaloneQuestionContexts(biologyElementaryCurrentItems(readable,unit),unit),unit),daily=classroomQuestions(second,current);let linked=0;
  for(const q of first.classroomItems.filter(q=>readable.find(x=>x.id===q.id)?.contentVersion===BIOLOGY_READABILITY_VERSION)){
   linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);
   const old=readable.find(x=>x.id===q.id),restored=questionAtVersion(q,BIOLOGY_READABILITY_VERSION);for(const [key,value]of Object.entries(old))assert.deepEqual(restored[key],value);

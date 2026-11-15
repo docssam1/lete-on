@@ -1,3 +1,4 @@
+import{withGrade4ReviewedWorkbook}from'./grade4-question-review.js?v=20261115-grade4-question-review';
 import{withBiologyOpinionWorkbook}from'./s41-u04.editorial.js?v=20261115-biology-peer-opinions';
 import{withBiologyObservationWorkbook,withBiologyReferenceWorkbook,withBiologyComparisonWorkbook}from'./biology-observation-photos.js?v=20261115-biology-comparison-photos';
 import{withObservationLanguage}from'./observation-language.js';
@@ -7329,4 +7330,6 @@ export const biologyObservationPriorWorkbook=withBiologyStarterReading(biologySt
 export const biologyReferencePriorWorkbook=withBiologyObservationWorkbook(biologyObservationPriorWorkbook);
 export const biologyComparisonPriorWorkbook=withBiologyReferenceWorkbook(biologyReferencePriorWorkbook);
 export const biologyOpinionPriorWorkbook=withBiologyComparisonWorkbook(biologyComparisonPriorWorkbook);
-export const workbook=withBiologyOpinionWorkbook(biologyOpinionPriorWorkbook);
+export const grade4ReviewPriorWorkbook=withBiologyOpinionWorkbook(biologyOpinionPriorWorkbook);
+
+export const workbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);

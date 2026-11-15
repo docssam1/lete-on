@@ -6,7 +6,7 @@ import {revisedClassroom,classroomQuestions} from './revised-lesson.js';
 import {questionAtVersion,questionVersion} from './question-revision.js';
 import {lookupRecordQuestion} from './check.js';
 import {withThink} from './think-merge.js';
-import {workbook as gasWorkbook,gasLinkPriorWorkbook} from '../data/book/c22-s42-u03.workbook.js';
+import {grade4ReviewPriorWorkbook as gasWorkbook,gasLinkPriorWorkbook} from '../data/book/c22-s42-u03.workbook.js';
 import {art as gasArt} from '../data/book/c22-s42-u03.workbook-art.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
 import {withGasIndependentQuestionLinks} from '../data/book/c22-s42-u03.editorial.js';

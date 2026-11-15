@@ -1,9 +1,12 @@
+import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
+// This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
+const beforeGrade4=q=>q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-import {workbook,ecologyElementaryPriorWorkbook as prior} from '../data/book/c22-s42-u02.workbook.js';
+import {grade4ReviewPriorWorkbook as workbook,ecologyElementaryPriorWorkbook as prior} from '../data/book/c22-s42-u02.workbook.js';
 import {ecologyElementaryCurrentItems,ECOLOGY_ELEMENTARY_VERSION} from '../data/book/c22-s42-u02.elementary.js';
 import {ecologyReadableCurrentItems} from '../data/book/c22-s42-u02.editorial.js';
 import {ecologySoundCurrentItems} from './ecology-sound-question-language.js';
@@ -37,7 +40,7 @@ test('ecology directions preserve all question requirements, answer modes and up
 });
 
 test('actual ecology bank retains grading and every historical presentation when prompts change',async()=>{
- const before=await priorBank(),snapshot=structuredClone(before),{items:current,source,similar}=await actualBank();
+ const before=await priorBank(),snapshot=structuredClone(before),{items:actualCurrent,source,similar}=await actualBank();const current=actualCurrent.map(beforeGrade4);
  assert.equal(current.length,92);let changed=0;
  for(let i=0;i<before.length;i++){
   const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);

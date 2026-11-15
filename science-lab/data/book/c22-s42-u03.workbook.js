@@ -1,3 +1,4 @@
+import{withGrade4ReviewedWorkbook}from'./grade4-question-review.js?v=20261115-grade4-question-review';
 import{withGasIndependentQuestionLinks}from'./c22-s42-u03.editorial.js?v=20261108-gas-workbook-links';
 import{withGasUpperScience,withGasReadableWorkbook}from'./c22-s42-u03.editorial.js?v=20261115-drawing-answer-criteria';
 import{withLearnerExplanations}from'./learner-explanations.js';
@@ -8784,4 +8785,6 @@ export const learnerPriorWorkbook=withGasEditorial(baseWorkbook);
 export const gasUpperPriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const gasReadablePriorWorkbook=withGasUpperScience(gasUpperPriorWorkbook);
 export const gasLinkPriorWorkbook=withGasReadableWorkbook(gasReadablePriorWorkbook);
-export const workbook=withGasIndependentQuestionLinks(gasLinkPriorWorkbook);
+export const grade4ReviewPriorWorkbook=withGasIndependentQuestionLinks(gasLinkPriorWorkbook);
+
+export const workbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
