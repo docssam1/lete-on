@@ -7,10 +7,10 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 26 released editions remain reachable in exactly one advertised course', () => {
+test('all 27 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,26);
-  assert.equal(new Set(visible).size,26);
+  assert.equal(visible.length,27);
+  assert.equal(new Set(visible).size,27);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
@@ -81,4 +81,15 @@ test('Eden elementary-entry and common1 papers remain separate despite sharing a
  assert.match(middle[0].scope,/초5.*초6/);assert.ok(common.every(e=>/중2.*중3/.test(e.scope)));
  assert.equal(middle[0].pageCount,10);assert.equal(middle[0].answerPageCount,10);assert.equal(middle[0].analysisPageCount,3);
  assert.deepEqual(nav.selectionForExam(middle[0].id),{program:'ED',course:'middle1'});
+});
+
+test('Won middle31 transfer is distinct from middle22 and common1',()=>{
+ const transfer=nav.examsFor('WM','middle31-basic',mocks);
+ assert.deepEqual(transfer.map(e=>e.id),['wm-middle31-basic-r01']);
+ const e=transfer[0];assert.deepEqual(nav.selectionForExam(e.id),{program:'WM',course:'middle31-basic'});
+ assert.match(e.scope,/중2-1 대수 심화형.*중2-2 기하 심화형.*확률 포함/);
+ assert.equal(e.questionCount,50);assert.equal(e.durationMinutes,140);
+ assert.deepEqual(e.sectionMinutes,{ALG:70,GEO:70});assert.equal(e.breakMinutes,20);
+ assert.deepEqual([e.pageCount,e.answerPageCount,e.analysisPageCount],[16,17,5]);
+ for(const course of ['middle21-basic','middle22-basic','common1-basic','middle-transfer'])assert.ok(nav.examsFor('WM',course,mocks).every(x=>x.id!==e.id));
 });
