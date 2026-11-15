@@ -3,6 +3,7 @@ import { unitParts, partProblems } from "./study-map.js?v=20261111c";
 import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261114a";
 import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261111f";
+import { course2Html } from "./course2-list.js?v=20261115a";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
 // 권 · 단원을 고르면 본책 번호판(차시마다 활동 · 확인 · 연습 · 도전)이 나온다. 모르는 번호를 누르고 「유사문제 만들기」 →
@@ -29,12 +30,14 @@ function firstPlace() {
   if (book && book.units[Number(match[2])]) return { bookId: book.id, unit: Number(match[2]) };
   return { bookId: CURRICULUM[0].id, unit: 0 };
 }
-const view = { ...firstPlace(), picked: new Map() };   // picked: 번호 열쇠 → pick 한 줄
+const COURSES = [{ id: "1", label: "1과정" }, { id: "2", label: "2과정" }, { id: "3", label: "3과정" }];
+const view = { ...firstPlace(), course: COURSES.some((c) => c.id === params.get("course")) ? params.get("course") : "1", picked: new Map() };   // picked: 번호 열쇠 → pick 한 줄
 const activeBook = () => CURRICULUM.find((book) => book.id === view.bookId);
 
 function syncAddress() {
   const next = new URLSearchParams(location.search);
   next.set("book", view.bookId); next.set("unit", String(view.unit));
+  if (view.course === "1") next.delete("course"); else next.set("course", view.course);
   history.replaceState(null, "", `?${next}`);
 }
 
@@ -75,7 +78,29 @@ function renderDock() {
     title: `${book.label} ${view.unit + 1}단원 · 오답 유사문제`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit) })}` }) : "./index.html";
 }
 
-function show() { renderTabs(); renderNumbers(); renderDock(); syncAddress(); }
+// 과정: 1과정은 본책 번호 → 유사문제, 2과정은 권마다 그림으로 따져 보기·직접 해 보기·권별 테스트(course2-list.js), 3과정은 준비 중
+let course2Cache = null;
+async function renderCourse() {
+  const c = view.course, one = c === "1";
+  $("courseTabs").innerHTML = COURSES.map((x) => `<button type="button" role="radio" data-course="${x.id}" aria-checked="${x.id === c}">${x.label}</button>`).join("");
+  $("brandCourse").textContent = `GIFTED MATH BANK · ${c}과정`;
+  ["smBookRow", "smUnitRow", "numberList"].forEach((id) => { $(id).hidden = !one; });
+  $("dock").hidden = !one;
+  $("coursePanel").hidden = one;
+  $("smHeading").textContent = one ? "틀렸거나 모르는 번호를 골라요" : c === "2" ? "2과정 · 권을 골라요" : "3과정 · 준비 중";
+  $("smLead").textContent = one ? "본책에서 틀렸거나 막힌 번호를 누르면 같은 유형의 새 문제가 나와요. 새 문제를 풀어 보고 본책 문제를 다시 풀어요."
+    : c === "2" ? "단원마다 「그림으로 따져 보기」로 왜 그런지 보고, 권을 다 배우면 권별 테스트를 풀어요. 본책 번호로 고르는 유사문제는 2과정도 준비하고 있어요."
+    : "지금은 1과정·2과정을 공부할 수 있어요.";
+  if (c === "2") $("coursePanel").innerHTML = course2Cache || (course2Cache = await course2Html());
+  else if (c === "3") $("coursePanel").innerHTML = `<p class="st-empty">3과정 문제는 준비하고 있어요.</p>`;
+}
+function show() { renderCourse(); if (view.course === "1") { renderTabs(); renderNumbers(); renderDock(); } syncAddress(); }
+$("courseTabs").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-course]");
+  if (!button || button.dataset.course === view.course) return;
+  view.course = button.dataset.course; view.picked.clear();
+  show();
+});
 
 $("bookTabs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-book]");
