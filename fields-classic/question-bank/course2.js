@@ -1,5 +1,5 @@
 // 2과정 기하 첫 화면. 권마다 course2-proofs/<권>.js(그림 논증)·체험(c2-lab)·권별 테스트(course2-test-originals/index.js)를 모아 보여 준다.
-import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115a";
+import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115b";
 const BOOKS = [
   { id: "g1", name: "G1", title: "돌리기와 뒤집기" },
   { id: "g2", name: "G2", title: "도형분할과 넓이" },

@@ -8,6 +8,8 @@ const pick = (list, seed) => list[seed % list.length];
 const r0 = (v) => Math.round(v);
 const nf = (v) => (Number.isInteger(v) ? String(v) : String(Math.round(v * 10) / 10));
 const bottomNote = (f, text, o = {}) => f.note(P(320, 412), text, o);
+// 아래 식 한 줄을 장면 i에서 들이고 장면 j에서 내보낸다(두 줄이 겹쳐 보이지 않게: 앞 줄이 먼저 빠지고 새 줄이 들어온다)
+const swap = (k, i, j = 99) => phase(k, i, 0.3, 1) * (1 - phase(k, j, 0, 0.3));
 // 두 점 사이를 곧은 선 대신 휘어진 선으로(같은 짝 잇기)
 function curve(a, b, bend, n = 24) {
   const m = mid(a, b), d = sub(b, a), l = Math.hypot(d.x, d.y) || 1, c = add(m, P((-d.y / l) * bend, (d.x / l) * bend));
@@ -164,7 +166,6 @@ const halfTurn = {
     f.seg(P(O.x, T - 8), P(O.x, B + 8), { stroke: C.purple, w: 2, dash: "7 6", opacity: 0.35 + 0.65 * Math.max(s1 * (1 - s2), 0) });
     f.seg(P(L - 8, O.y), P(Rr + 8, O.y), { stroke: C.teal, w: 2, dash: "7 6", opacity: 0.35 + 0.65 * Math.max(s2 * (1 - s3), 0) });
     f.dot(O, { r: 5 });
-    f.label(add(O, P(-14, 14)), "ㅇ", { size: 15 });
     // 지금 모양: 처음 → 세로 거울 → 가로 거울
     const vA = O, vB = add(O, P(0, 10)), hA = O, hB = add(O, P(10, 0));
     const cur = shape.map((q) => fold(fold(q, vA, vB, s1), hA, hB, s2));
@@ -240,7 +241,7 @@ const netOpp = {
     // 접기 정도와 보는 방향
     const ft = ease(clamp((k - 4) / 0.72));
     const xr = clamp((k - 4.72) / 0.2);
-    const flat = { psi: -12, phi: 62, sc: 62 }, cube = { psi: -36, phi: 28, sc: 108 };
+    const flat = { psi: -12, phi: 62, sc: 78 }, cube = { psi: -36, phi: 28, sc: 132 };
     const vw = { psi: flat.psi + (cube.psi - flat.psi) * ft - 32 * s5, phi: flat.phi + (cube.phi - flat.phi) * ft, sc: flat.sc + (cube.sc - flat.sc) * ft };
     const colored = (i) => (sym[i] === "s" ? clamp(s3 * 2) : clamp(s2 * 2.2 - (sym[i] === "t" ? 1.1 : 0)));
     if (netOp > 0) {
@@ -253,9 +254,10 @@ const netOpp = {
           if (g <= 0) return;
           const a = res.center(run[0]), b = res.center(run[2]), mm = res.center(run[1]);
           const col = j === 0 ? C.red : C.blue;
-          f.path(curve(a, b, -46), { stroke: col, w: 3, dash: "7 6", draw: g, opacity: fade });
+          const bend = j === 0 ? -58 : 58, cv = curve(a, b, bend), top = cv[12], out = sub(top, mid(a, b)), ol = Math.hypot(out.x, out.y) || 1;
+          f.path(cv, { stroke: col, w: 3, dash: "7 6", draw: g, opacity: fade });
           f.dot(mm, { r: 4, fill: C.soft, opacity: g * fade });
-          f.label(add(mid(a, b), P(0, -40)), "한 칸 건너", { size: 14, color: col, opacity: g * fade });
+          f.label(add(top, mul(out, 16 / ol)), "한 칸 건너", { size: 14, color: col, opacity: g * fade });
         });
       }
       // 접은 뒤: 짝끼리 잇기
@@ -268,12 +270,12 @@ const netOpp = {
     }
     if (demoOp > 0) {
       const dt = ease(clamp((k - 1 - 0.3) / 0.55));
-      const res = drawNet(f, STRIP, dt, { psi: -28, phi: 30, sc: 96, cx: 320, cy: 200, opacity: demoOp, style: (i) => ({ sym: i === STRIP.root ? null : "o", colored: 1 }) });
+      const res = drawNet(f, STRIP, dt, { psi: -28, phi: 30, sc: 120, cx: 320, cy: 190, opacity: demoOp, style: (i) => ({ sym: i === STRIP.root ? null : "o", colored: 1 }) });
       if (res && dt > 0.95) {
         const ends = [0, 1, 2].filter((i) => i !== STRIP.root);
         const a = res.center(ends[0]), b = res.center(ends[1]);
         f.seg(a, b, { stroke: C.red, w: 3, dash: "5 5", opacity: demoOp * clamp((dt - 0.95) * 20) });
-        f.label(P(320, 360), "양 끝 칸이 마주 본다", { size: 18, color: C.red, opacity: demoOp * clamp((dt - 0.95) * 20) });
+        f.label(P(320, 372), "양 끝 칸이 마주 본다", { size: 18, color: C.red, opacity: demoOp * clamp((dt - 0.95) * 20) });
       }
     }
     if (k >= 5 || (k > 4.85)) bottomNote(f, "○끼리 · △끼리 · □끼리 마주 본다", { opacity: clamp((k - 4.85) / 0.15), size: 19 });
@@ -315,7 +317,7 @@ const painted = {
       if (cnt === 0 && s4 <= 0) continue;
       let op = s0 > 0 ? 1 : 0, dx = 0, dy = 0, dz = 0;
       if (cnt > 0) {
-        const pp = pop[sceneOf[cnt]] * 0.32 + s4 * 1.4;
+        const pp = pop[sceneOf[cnt]] * 0.26 + s4 * 1.4;
         dx = sg(x) * pp; dy = sg(y) * pp; dz = sg(z) * pp;
         op = 1 - s4;
         if (op <= 0.01) continue;
@@ -410,10 +412,10 @@ const parallel = {
     f.wedge(B, phi, 180 - phi, { r, color: C.blue, label: lab("㉢", p.a), labelR: 62, size: 16, opacity: phase(k, 2, 0.85, 1) });
     // ㉣(동측내각)
     f.wedge(B, 0, phi, { r, color: C.orange, label: lab("㉣", p.d), labelR: 62, size: 16, opacity: s4, labelColor: "#b35f00" });
-    if (s4 > 0) f.wedge(B, phi + 180, 180, { r: r + 22, color: C.purple, fillOpacity: 0, w: 2.4, opacity: s4 * (1 - phase(k, 5)) });
+    if (s4 > 0) f.wedge(B, phi + 180, 180, { r: r + 46, color: C.purple, fillOpacity: 0, w: 2.4, opacity: s4 * (1 - phase(k, 5)) });
     f.dot(T).dot(B);
-    if (s3 > 0) bottomNote(f, `엇각: ㉢ = ㉡ = ㉠ = ${p.a}°`, { opacity: s3 * (1 - s4) });
-    if (s4 > 0) bottomNote(f, `㉠ + ㉣ = ㉡ + ㉣ = 곧은 선 = 180°`, { opacity: s4 });
+    bottomNote(f, `엇각: ㉢ = ㉡ = ㉠ = ${p.a}°`, { opacity: swap(k, 3, 4) });
+    bottomNote(f, `㉠ + ㉣ = ㉡ + ㉣ = 곧은 선 = 180°`, { opacity: swap(k, 4) });
   },
 };
 
@@ -447,7 +449,7 @@ const exteriorTri = {
     const cA = dirDeg(Cc, A), beta = dirDeg(B, A);
     const lo = clamp(s0 * 2 - 1);
     // ㉣ 외각, ㉢
-    f.wedge(Cc, 0, cA, { r: 50, color: C.orange, fillOpacity: 0.22, label: s5 > 0 ? `㉣ ${p.d}°` : "㉣", labelR: 76, opacity: lo, labelColor: "#b35f00" });
+    f.wedge(Cc, 0, cA, { r: 50, color: C.orange, fillOpacity: 0.22, label: s5 > 0 ? `㉣ ${p.d}°` : "㉣", labelR: 94, opacity: lo, labelColor: "#b35f00" });
     f.wedge(Cc, cA, 180 - cA, { r: 32, color: C.blue, label: "㉢", labelR: 50, opacity: lo * (1 - 0.6 * mv) });
     // ㉡ at B, ㉠ at A
     f.wedge(B, 0, beta, { r: 34, color: C.green, label: s5 > 0 ? `㉡ ${p.b}°` : "㉡", labelR: s5 > 0 ? 64 : 52, opacity: lo, fillOpacity: 0.3 * (1 - 0.5 * mv) });
@@ -464,16 +466,16 @@ const exteriorTri = {
       f.seg(sub(Cc, polar(P(0, 0), 60, beta)), Cc, { stroke: C.teal, w: 2, dash: "4 6", opacity: pl * 0.5 * (1 - s5) });
       void M;
       if (mv > 0) {
-        f.wedge(lerp(B, Cc, mv), 0, beta, { r: 44, color: C.green, fillOpacity: 0.4, label: mv > 0.9 ? "㉡" : "", labelR: 60, size: 15 });
-        f.wedge(rot(A, M, 180 * mv), st + 180 * mv, sp, { r: 44, color: C.red, fillOpacity: 0.4, label: mv > 0.9 ? "㉠" : "", labelR: 60, size: 15 });
+        f.wedge(lerp(B, Cc, mv), 0, beta, { r: 46, color: C.green, fillOpacity: 0.45 });
+        f.wedge(rot(A, M, 180 * mv), st + 180 * mv, sp, { r: 46, color: C.red, fillOpacity: 0.45 });
         if (mv < 1) f.dot(M, { r: 4, fill: C.red, opacity: Math.sin(mv * Math.PI) });
       }
     }
     f.label(add(A, P(0, -20)), "ㄱ").label(add(B, P(-16, 14)), "ㄴ").label(add(Cc, P(-6, 20)), "ㄷ").label(add(E, P(0, 20)), "ㄹ", { opacity: s0 });
-    if (s1 > 0 && s2 < 1) bottomNote(f, "㉢ + ㉣ = 180°", { opacity: s1 * (1 - s2) });
-    if (s2 > 0 && s3 < 1) bottomNote(f, "㉠ + ㉡ + ㉢ = 180°", { opacity: s2 * (1 - s3) });
-    if (s3 > 0 && s5 < 1) bottomNote(f, "㉣ = 180° − ㉢ = ㉠ + ㉡", { opacity: s3 * (1 - s5) });
-    if (s5 > 0) bottomNote(f, `㉣ = ${p.a}° + ${p.b}° = ${p.d}°`, { opacity: s5 });
+    bottomNote(f, "㉢ + ㉣ = 180°", { opacity: swap(k, 1, 2) });
+    bottomNote(f, "㉠ + ㉡ + ㉢ = 180°", { opacity: swap(k, 2, 3) });
+    bottomNote(f, "㉣ = 180° − ㉢ = ㉠ + ㉡", { opacity: swap(k, 3, 5) });
+    bottomNote(f, `㉣ = ${p.a}° + ${p.b}° = ${p.d}°`, { opacity: swap(k, 5) });
   },
 };
 
@@ -517,16 +519,16 @@ const parallelogram = {
     f.right(H, A, Cc, { opacity: s1, color: C.purple });
     f.label(add(mid(A, H), P(18, 0)), `${nf(p.h)}cm`, { size: 16, color: C.purple, opacity: s1 * (1 - s4), anchor: "start" });
     // 밑변 길이
-    f.label(add(mid(B, Cc), P(0, 24)), `밑변 ${nf(p.b)}cm`, { size: 16, opacity: clamp(s0 * 2 - 1) * (1 - s4) });
+    f.label(add(mid(H, Cc), P(0, 26)), `밑변 ${nf(p.b)}cm`, { size: 16, opacity: clamp(s0 * 2 - 1) * (1 - phase(k, 4, 0, 0.3)) });
     if (s4 > 0) {
       const R1 = H, R2 = add(H, P(p.b * u, 0));
-      f.label(add(mid(R1, R2), P(0, 24)), `가로 ${nf(p.b)}cm`, { size: 16, opacity: s4 });
+      f.label(add(mid(R1, R2), P(0, 36)), `가로 ${nf(p.b)}cm`, { size: 16, opacity: phase(k, 4, 0.3, 1) });
       f.label(add(P(R2.x, (R2.y + A.y) / 2), P(14, 0)), `세로 ${nf(p.h)}cm`, { size: 16, opacity: s4, anchor: "start" });
     }
     // 같은 변 표시(장면 4)
-    f.ticks(A, B, { n: 2, opacity: s3 * (1 - s4), color: C.orange }).ticks(D, Cc, { n: 2, opacity: s3 * (1 - s4), color: C.orange });
+    f.ticks(piece[0], piece[1], { n: 2, opacity: s3 * (1 - s4), color: C.orange }).ticks(D, Cc, { n: 2, opacity: s3 * (1 - s4), color: C.orange });
     f.label(add(A, P(-4, -18)), "ㄱ").label(add(B, P(-16, 12)), "ㄴ", { opacity: 1 - s3 }).label(add(Cc, P(4, 18)), "ㄷ").label(add(D, P(12, -14)), "ㄹ");
-    f.label(add(H, P(0, 20)), "ㅁ", { opacity: s1 * (1 - s4), color: C.purple });
+    f.label(add(H, P(-12, 18)), "ㅁ", { opacity: s1 * (1 - s4), color: C.purple });
     if (s4 > 0) bottomNote(f, `평행사변형 넓이 = 직사각형 넓이 = ${nf(p.b)} × ${nf(p.h)} = ${nf(p.area)}㎠`, { opacity: s4, size: 19 });
   },
 };
@@ -538,7 +540,7 @@ const triArea = {
   title: "삼각형의 넓이는 왜 밑변 × 높이 ÷ 2일까",
   vary: "다른 삼각형으로",
   params(seed) {
-    const [b, h, s, s2] = pick([[6, 4, 2, 8], [5, 5, 4, -2], [7, 3, 1, 8.5], [6, 5, 6, 1], [8, 3, 3, -2]], seed), u = 34;
+    const [b, h, s, s2] = pick([[6, 4, 2, 8], [5, 5, 4, -2], [7, 3, 1, 8.5], [6, 5, 6, 1], [8, 3, 3, -2]], seed), u = 38;
     const lo = Math.min(0, s2), hi = Math.max(b + s, s2), X0 = 320 - ((lo + hi) * u) / 2 - 10, Y0 = 320;
     const at = (x, y) => P(X0 + x * u, Y0 - y * u);
     return { b, h, s, s2, u, at, area: (b * h) / 2 };
@@ -577,8 +579,9 @@ const triArea = {
     f.label(add(mid(B, Cc), P(0, 22)), `${nf(b)}cm`, { size: 16, opacity: clamp(s0 * 2 - 1) });
     f.label(add(A, P(0, -18)), "ㄱ").label(add(B, P(-14, 12)), "ㄴ").label(add(Cc, P(12, 14)), "ㄷ");
     if (s1 > 0 && s1 < 1) f.dot(M, { r: 4.5, fill: C.orange });
-    if (s2p > 0 && s3 < 1) bottomNote(f, `평행사변형 ${nf(b)} × ${nf(h)} = ${nf(b * h)} → 삼각형 ${nf(b * h)} ÷ 2 = ${nf(p.area)}㎠`, { opacity: s2p * (1 - s3), size: 19 });
-    if (s3 > 0) bottomNote(f, `넓이는 그대로 ${nf(b)} × ${nf(h)} ÷ 2 = ${nf(p.area)}㎠`, { opacity: s3, size: 19 });
+    bottomNote(f, `평행사변형 ${nf(b)} × ${nf(h)} = ${nf(b * h)} → 삼각형 ${nf(b * h)} ÷ 2 = ${nf(p.area)}㎠`, { opacity: swap(k, 2, 3), size: 19 });
+    bottomNote(f, `넓이는 그대로 ${nf(b)} × ${nf(h)} ÷ 2 = ${nf(p.area)}㎠`, { opacity: swap(k, 3), size: 19 });
+    void s2p;
     void s4;
   },
 };
@@ -596,7 +599,7 @@ const perpDiag = {
       { l: 4, r: 4, t: 4, d: 4, name: "정사각형" },
       { l: 2, r: 6, t: 4, d: 2, name: "사각형" },
       { l: 2, r: 5, t: 3, d: 3, name: "연 모양 사각형" },
-    ], seed), u = 28;
+    ], seed), u = 30;
     const w = s.l + s.r, hh = s.t + s.d;
     const O = P(240 - ((s.r - s.l) * u) / 2, 205 - ((s.d - s.t) * u) / 2);
     const U = P(O.x, O.y - s.t * u), D = P(O.x, O.y + s.d * u), L = P(O.x - s.l * u, O.y), R = P(O.x + s.r * u, O.y);
@@ -627,13 +630,16 @@ const perpDiag = {
     f.seg(U, D, { stroke: C.ink, w: 2, dash: "6 5", opacity: clamp(s0 * 2 - 1) });
     f.right(O, R, U, { opacity: clamp(s0 * 2 - 1) * (1 - s2) });
     // 길이 표시
-    f.label(P(mid(K.dl, K.dr).x, K.dl.y + 22), `${p.w}cm`, { size: 16, opacity: s1 });
-    f.label(P(K.dr.x + 14, mid(K.ur, K.dr).y), `${p.hh}cm`, { size: 16, opacity: s1, anchor: "start" });
+    const by = K.dl.y + 46, rx = K.dr.x + 60;
+    f.seg(P(K.dl.x, by), P(K.dr.x, by), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(K.dl.x, by - 6), P(K.dl.x, by + 6), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(K.dr.x, by - 6), P(K.dr.x, by + 6), { stroke: C.orange, w: 1.6, opacity: s1 });
+    f.seg(P(rx, K.ur.y), P(rx, K.dr.y), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(rx - 6, K.ur.y), P(rx + 6, K.ur.y), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(rx - 6, K.dr.y), P(rx + 6, K.dr.y), { stroke: C.orange, w: 1.6, opacity: s1 });
+    f.label(P((K.dl.x + K.dr.x) / 2, by), `${p.w}cm`, { size: 16, opacity: s1, color: "#b35f00" });
+    f.label(P(rx, (K.ur.y + K.dr.y) / 2), `${p.hh}cm`, { size: 16, opacity: s1, color: "#b35f00" });
     f.label(add(U, P(0, -18)), "ㄱ").label(add(L, P(-16, 0)), "ㄴ").label(add(D, P(0, 18)), "ㄷ").label(add(R, P(16, 0)), "ㄹ");
-    const x = 450;
+    const x = 628;
     if (s4 > 0) {
-      f.note(P(x, 150), `직사각형 ${p.w} × ${p.hh} = ${p.w * p.hh}`, { anchor: "start", size: 18, opacity: s4 });
-      f.note(P(x, 190), `사각형 = 그 절반`, { anchor: "start", size: 18, opacity: s4, color: C.purple });
+      f.note(P(x, 34), `직사각형 ${p.w} × ${p.hh} = ${p.w * p.hh}`, { anchor: "end", size: 18, opacity: s4 });
+      f.note(P(x, 64), `사각형 = 그 절반`, { anchor: "end", size: 18, opacity: s4, color: C.purple });
       bottomNote(f, `${p.w} × ${p.hh} ÷ 2 = ${nf(p.area)}㎠`, { opacity: s4 });
     }
   },
