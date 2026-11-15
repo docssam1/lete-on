@@ -1,3 +1,4 @@
+import{wireBookChoices}from'./book-choice.js?v=20261115-book-multi-choice';
 // 살아 있는 교재: renderChapter(..., { live:true }) 로 그린 쪽들에 생명을 넣는다.
 //  · 첫 쪽 그림 자리의 실제 영상이 쪽 안에서 재생
 //  · [data-pop] 버튼 → 3D 장면·체험 실험실이 누른 자리에서 책 밖으로 튀어나옴(닫으면 3D 정리)
@@ -14,7 +15,8 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
   bindings.get(root)?.();
   const workspace = lab ? createLabWorkspace(root, { title: title || '3D 체험 실험실', mount: lab }) : null;
   const releaseReading = wireReading(root, { openLab: from => panel?.open('lab', from) || workspace?.open(from) });
-  const release = () => { releaseReading(); workspace?.dispose(); };
+  const releaseChoices=wireBookChoices(root,{misc,onAnswer});
+  const release = () => { releaseChoices(); releaseReading(); workspace?.dispose(); };
   bindings.set(root, release);
   const chips = misc?.bookChips || null;
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
@@ -68,16 +70,6 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
       pop.remove(); onAnswer?.('blank', { chip: a, ok, picked: bt.dataset.v });
     }));
   }));
-  root.querySelectorAll('.bk-choices[data-key]').forEach((ol) => {
-    const key = ol.dataset.key.split(',').filter(Boolean).map(Number); if (!key.length) return;
-    ol.querySelectorAll('li').forEach((li) => li.addEventListener('click', (e) => {
-      e.stopPropagation(); if (ol.dataset.done) return; ol.dataset.done = '1';
-      const j = +li.dataset.j; ol.querySelectorAll('li').forEach((x) => { if (key.includes(+x.dataset.j)) x.classList.add('ok'); });
-      if (!key.includes(j)) { li.classList.add('no'); const m = misc?.distractors?.[ol.dataset.id]?.[j], M = m && misc.misconceptions[m];
-        if (M) { const d = document.createElement('div'); d.className = 'bk-fix'; d.innerHTML = `<span class="mis-tag">${esc(M.label)}</span> ${M.fix}`; ol.after(d); } }
-      onAnswer?.('item', { id: ol.dataset.id, ok: key.includes(j), picked: j, el: ol });
-    }));
-  });
   return release;
 }
 

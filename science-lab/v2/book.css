@@ -353,3 +353,27 @@
 .bk-render { margin: 0; } .bk-render img { width: 100%; height: auto; display: block; border-radius: 1.6mm; }
 .bk-art.wide .bk-render img { max-height: none; }
 @media (max-width: 700px) { .bk:not(.a4) .bk-two.art-w { grid-template-columns: 1fr; } }
+
+/* Live book controls use the existing paper typography and stay out of print. */
+@media screen {
+ .bk.live .bk-choice-page { aspect-ratio:auto; min-height:297mm; overflow:visible; }
+ .bv[data-layout="phone"] .bk.live .bk-choice-page { min-height:0; }
+ .bk.live .bk-choices li.bk-choice-row { padding:0; margin-block:8px; }
+ .bk.live .bk-choice-option { box-sizing:border-box; display:block; width:100%; min-height:var(--gf-control-min-size,44px); padding:8px 4px; border:0; background:transparent; color:inherit; font:inherit; line-height:inherit; text-align:left; cursor:pointer; overflow-wrap:anywhere; }
+ .bk.live label.bk-choice-option { display:flex; align-items:flex-start; gap:8px; }
+ .bk.live .bk-choice-text { min-width:0; }
+ .bk.live .bk-choice-option > span:first-child:not(.bk-choice-text),.bk.live .bk-choice-text > span:first-child { margin-inline-end:1.2mm; }
+ .bk.live .bk-choice-input { flex:none; width:20px; height:20px; margin:3px 0 0; accent-color:var(--gf-action,#2456c4); }
+ .bk.live .bk-choices li.bk-selected { background:var(--gf-selected,#eaf0ff); box-shadow:inset 0 0 0 2px var(--gf-action,#2456c4); }
+ .bk.live .bk-choice-option:focus-visible,.bk.live .bk-choice-input:focus-visible,.bk.live .bk-choice-check:focus-visible { outline:3px solid var(--gf-focus,#2456c4); outline-offset:2px; }
+ .bk.live .bk-choice-tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:8px 0 12px; }
+ .bk.live .bk-choice-tools p { flex:1 1 160px; margin:0; }
+ .bk.live .bk-choice-check { min-height:var(--gf-control-min-size,44px); padding:8px 14px; border:1px solid var(--gf-action,#2456c4); border-radius:6px; background:var(--gf-action,#2456c4); color:#fff; font:inherit; cursor:pointer; }
+ .bk.live .bk-choice-check:disabled { opacity:.55; cursor:default; }
+ .bk.live .bk-choice-option:disabled { color:inherit; opacity:1; cursor:default; }
+}
+@media print {
+ .bk-choice-tools,.bk-choice-input { display:none !important; }
+ .bk-choice-option,.bk-choice-text { display:contents !important; }
+ .bk-choice-option { font:inherit !important; line-height:inherit !important; color:inherit !important; text-align:inherit !important; }
+}

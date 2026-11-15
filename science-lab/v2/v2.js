@@ -679,11 +679,12 @@ async function pageLabBook(u, mod, mode, pageNo = 1, seg = 'lab-book') {
   const bookMod = await BOOK().then(m=>seg==='lab-book'?revisedTextbook(u,m):m).catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
   const teacherEd = mode === 'teacher';
-  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js?terms=20261108-opening-warmup-label'), import('./book-view.js')]);
+  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js?terms=20261108-opening-warmup-label'), import('./book-view.js?v=20261115-book-multi-choice')]);
   if (stale()) return;
   const L = seg === 'records-book' && mod.lesson?.explore?.records ? { ...mod.lesson, engage: { ...mod.lesson.engage, scene: null }, explore: { ...mod.lesson.explore, lab: mod.lesson.explore.records } } : mod.lesson;
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
   const onAnswer = (kind, p) => {
+    if(teacherEd)return;
     if (kind === 'item' && I[p.id]) record(du(u), I[p.id], 'book', p.ok, { picked: p.picked }, MISC);
     if (kind === 'blank' && MISC) { const pseudo = { id: `book:${p.chip}`, taxonomy: { element: MISC.misconceptions[MISC.bookChips?.[p.chip]?.[1]]?.element } };
       record(du(u), pseudo, 'book-concept', p.ok, { chip: p.ok ? null : p.chip, revealed: p.revealed }, MISC); }
