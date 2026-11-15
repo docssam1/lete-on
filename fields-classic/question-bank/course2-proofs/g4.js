@@ -3,7 +3,7 @@
 // 본책은 활동에서 각을 재고 길이를 구해 확인한다. 여기서는 접기·평행선·옮기기를 근거로 한 줄씩 쌓고,
 // 「다른 …으로」를 눌러 크기·방향·모양이 달라도 같은 논증이 통한다는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 // 엇각은 G4 전체에서 같은 몸짓으로 보인다: 각을 가로지르는 선을 따라 밀어 올리고(동위각) 반 바퀴 돌린다(맞꼭지각).
-import { C, P, add, sub, mul, lerp, mid, dirDeg, polar, rot, fold, angleAt, clamp, phase } from "../proof-board.js";
+import { C, P, add, sub, mul, lerp, mid, dist, dirDeg, polar, rot, fold, angleAt, clamp, phase } from "../proof-board.js";
 
 const U1 = "1단원 · 특수각과 도형의 복원";
 const U2 = "2단원 · 평행선과 색종이 접기";
@@ -578,4 +578,115 @@ const diagRect = {
   },
 };
 
-export const PROOFS = [squareFold, setSquare, parallelSum, zigzag, tapeFold, triArea, trapArea, rhombusArea, stairs, diagRect];
+// ── 작도. 세 변의 길이로 삼각형 그리기(원장 2026-11-15 「유클리드 기하나 작도」) ─────────────
+// 컴퍼스가 실제로 길이를 재어 옮기고 호를 긋는다. 왜 세 변이면 삼각형이 하나로 정해지는지(뒤집으면 꼭 겹친다),
+// 언제는 그릴 수 없는지(짧은 두 변의 합이 긴 변보다 짧으면 두 호가 만나지 않는다)까지 장면으로 따진다.
+const SSS = [[7, 5, 6], [8, 6, 4], [6, 6, 6], [7, 4, 5], [6, 4, 4]];
+function sssGeo(a, b, c, u = 34) {
+  const B = P(320 - (a * u) / 2, 292), Cc = P(B.x + a * u, B.y);
+  const x = (a * a + c * c - b * b) / (2 * a), y = Math.sqrt(Math.max(c * c - x * x, 0));
+  return { B, C: Cc, A: P(B.x + x * u, B.y - y * u), A2: P(B.x + x * u, B.y + y * u) };
+}
+const sssTri = {
+  id: "construct-sss",
+  unit: U1,
+  title: "세 변의 길이로 삼각형 작도하기",
+  vary: "다른 세 길이로",
+  width: 640,
+  height: 470,
+  params(seed) {
+    const [a, b, c] = pick(SSS, seed), u = 34;
+    const g = sssGeo(a, b, c, u);
+    // 주어진 세 막대(왼쪽 위): 빨강 a, 파랑 b, 초록 c
+    const sticks = [[a, C.red, "가"], [b, C.blue, "나"], [c, C.green, "다"]].map(([len, color, name], i) => ({ len, color, name, S: P(46, 38 + i * 30), E: P(46 + len * u, 38 + i * 30) }));
+    // 그릴 수 없는 경우: 가장 긴 a는 그대로, 나머지 둘을 줄여 합이 a보다 짧게
+    const bad = { b: Math.round(a * 0.35 * 2) / 2, c: Math.round(a * 0.4 * 2) / 2 };
+    return { a, b, c, u, ...g, sticks, bad, angA: dirDeg(g.B, g.A), angC: dirDeg(g.C, g.A) };
+  },
+  scenes: [
+    { say: (p) => `세 막대의 길이가 ${p.a}cm, ${p.b}cm, ${p.c}cm예요. 이 세 길이를 세 변으로 하는 삼각형을 자와 컴퍼스만으로 그려 봐요.`, line: (p) => `세 변 ${p.a}cm · ${p.b}cm · ${p.c}cm`, ms: 2200 },
+    { say: "자를 대고 곧은 선을 긋고, 그 위에 점 B를 찍어요.", line: "자로 직선을 긋고 점 B", ms: 1800 },
+    { say: (p) => `컴퍼스를 빨간 막대 길이(${p.a}cm)만큼 벌려 B에 꽂고, 직선과 만나는 곳에 표시해요. 그 점이 C예요.`, line: (p) => `선분 BC = ${p.a}cm`, why: "컴퍼스는 벌린 길이를 그대로 옮긴다", ms: 3600 },
+    { say: (p) => `이번엔 초록 막대 길이(${p.c}cm)로 벌려 B에 꽂고 위쪽에 호를 그어요. 남은 꼭짓점 A는 B에서 ${p.c}cm 떨어져 있어야 하니까, 이 호 위 어딘가에 있어요.`, line: (p) => `A는 B에서 ${p.c}cm인 호 위에 있다`, why: "원 위의 점은 모두 중심에서 같은 거리", ms: 3600 },
+    { say: (p) => `파란 막대 길이(${p.b}cm)로 벌려 C에 꽂고 호를 그어요. A는 C에서도 ${p.b}cm 떨어져 있어야 해요.`, line: (p) => `A는 C에서 ${p.b}cm인 호 위에도 있다`, why: "같은 까닭 — 원 위의 점은 중심에서 같은 거리", ms: 3600 },
+    { say: "두 호가 만나는 점이 바로 A예요. 두 조건을 한꺼번에 만족하는 점은 여기뿐이에요. A와 B, A와 C를 이으면 삼각형 완성!", line: (p) => `두 호의 교점 A → 세 변이 ${p.a}·${p.b}·${p.c}cm인 삼각형 ABC`, why: "두 조건을 함께 만족하는 점은 두 호의 교점", ms: 2600 },
+    { say: "직선 아래쪽에도 두 호가 만나는 점이 있어요. 그 점으로 그린 삼각형을 직선 BC를 따라 접어 올리면 처음 삼각형에 꼭 겹쳐요.", line: "아래 교점으로 그려도 뒤집으면 꼭 겹친다", why: "세 변의 길이가 정해지면 삼각형의 모양과 크기는 하나뿐", ms: 3600 },
+    { say: (p) => `그런데 늘 그릴 수 있을까요? 두 막대를 ${p.bad.b}cm, ${p.bad.c}cm로 줄여 보면, 두 호가 서로 닿지 않아요. 짧은 두 변을 더해도 ${p.a}cm에 못 미치기 때문이에요.`, line: (p) => `${p.bad.b} + ${p.bad.c} < ${p.a} 이면 두 호가 만나지 않는다 → 삼각형이 안 된다`, why: "삼각형이 되려면 짧은 두 변의 합이 가장 긴 변보다 길어야 한다", ms: 3800 },
+  ],
+  draw(f, k, p) {
+    const { u, B, C: Cp, A, A2, sticks } = p;
+    const s = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => phase(k, i));
+    const live = (i) => k >= i && k <= i + 1;                  // 그 장면 동안만 컴퍼스·자를 보인다
+    const fadeOut = (i) => (live(i) ? 1 - clamp((k - i - 0.9) / 0.1) : 0);
+    const bad = s[7];
+    // 주어진 세 막대
+    sticks.forEach((st, i) => {
+      const to = i === 1 ? p.bad.b : i === 2 ? p.bad.c : st.len, len = st.len + (to - st.len) * bad, E = P(st.S.x + len * u, st.S.y);
+      f.seg(st.S, E, { stroke: st.color, w: 6, grow: clamp(s[0] * 1.6 - i * 0.25) });
+      f.dot(st.S, { r: 3.5, fill: st.color, opacity: clamp(s[0] * 3 - i * 0.5) }).dot(E, { r: 3.5, fill: st.color, opacity: clamp(s[0] * 1.6 - i * 0.25) >= 1 ? 1 : 0 });
+      f.label(P(E.x + 14, st.S.y), `${bad > 0.5 ? to : st.len}cm`, { anchor: "start", size: 16, color: st.color, write: clamp(s[0] * 1.6 - i * 0.25 - 0.3) });
+    });
+    // 1. 자로 직선
+    const L0 = P(B.x - 46, B.y), L1 = P(Cp.x + 70, B.y);
+    f.ruler(L0, L1, { opacity: live(1) ? clamp(s[1] * 4) * fadeOut(1) : 0, margin: 6, side: -1 });
+    f.seg(L0, L1, { stroke: C.ink, w: 2, grow: clamp(s[1] * 1.4 - 0.2) });
+    f.dot(B, { opacity: clamp(s[1] * 3 - 2) }).label(P(B.x - 8, B.y + 22), "B", { size: 19, write: clamp(s[1] * 3 - 2) });
+    // 컴퍼스로 막대 길이를 재어 중심으로 옮긴 뒤 from°→to°로 호를 긋는 한 장면(t: 그 장면 진행)
+    const compassMove = (t, stick, center, r, from, to, i) => {
+      if (!live(i)) return;
+      const pick1 = clamp(t / 0.3), move = clamp((t - 0.3) / 0.25), swing = clamp((t - 0.55) / 0.4);
+      if (t < 0.3) f.compass(stick.S, (0.15 + 0.85 * pick1) * r, 0, { opacity: fadeOut(i) });
+      else if (t < 0.55) f.compass(lerp(stick.S, center, move), r, from * move, { opacity: fadeOut(i) });
+      else f.compass(center, r, from + (to - from) * swing, { opacity: fadeOut(i) });
+    };
+    // 2. B에서 a만큼 → C
+    const tick = 9;
+    compassMove(s[2], sticks[0], B, p.a * u, tick, -tick, 2);
+    f.arcPath(B, p.a * u, tick, -tick, { stroke: C.red, w: 2.2, draw: clamp((s[2] - 0.55) / 0.4) });
+    f.dot(Cp, { opacity: clamp(s[2] * 8 - 7.2) }).label(P(Cp.x + 8, Cp.y + 22), "C", { size: 19, write: clamp(s[2] * 8 - 7.2) });
+    // 3. B 중심 반지름 c 호(위)
+    const cr = (bad > 0 ? p.c + (p.bad.c - p.c) * bad : p.c) * u, br = (bad > 0 ? p.b + (p.bad.b - p.b) * bad : p.b) * u;
+    const up1 = [p.angA + 20, p.angA - 20];
+    compassMove(s[3], sticks[2], B, p.c * u, up1[0], up1[1], 3);
+    if (bad <= 0) f.arcPath(B, cr, up1[0], up1[1], { stroke: C.green, w: 2.2, draw: clamp((s[3] - 0.55) / 0.4) });
+    // 4. C 중심 반지름 b 호(위)
+    const up2 = [p.angC - 20, p.angC + 20];
+    compassMove(s[4], sticks[1], Cp, p.b * u, up2[0], up2[1], 4);
+    if (bad <= 0) f.arcPath(Cp, br, up2[0], up2[1], { stroke: C.blue, w: 2.2, draw: clamp((s[4] - 0.55) / 0.4) });
+    // 5. 교점 A, 삼각형
+    const tri = s[5], show = bad <= 0 ? 1 : 1 - clamp(bad * 3);
+    if (tri > 0 && show > 0) {
+      f.poly([A, B, Cp], { fill: C.greenSoft, stroke: "none", opacity: Math.min(tri, show) * 0.9 });
+      f.seg(A, B, { stroke: C.green, w: 3.4, grow: clamp(tri * 1.6 - 0.3), opacity: show });
+      f.seg(A, Cp, { stroke: C.blue, w: 3.4, grow: clamp(tri * 1.6 - 0.45), opacity: show });
+      f.seg(B, Cp, { stroke: C.red, w: 3.4, opacity: show });
+      f.dot(A, { r: 5.5, fill: C.purple, opacity: Math.min(clamp(tri * 4), show) });
+      f.label(P(A.x, A.y - 22), "A", { size: 19, write: clamp(tri * 4 - 0.5), opacity: show });
+    }
+    // 6. 아래 교점 → 접어 올리면 겹친다
+    const low = s[6];
+    if (low > 0 && show > 0) {
+      const dn1 = [-p.angA - 20, -p.angA + 20], dn2 = [-p.angC + 20, -p.angC - 20];
+      const arcT = clamp(low / 0.35);
+      f.arcPath(B, p.c * u, dn1[0], dn1[1], { stroke: C.green, w: 2, draw: arcT, opacity: show });
+      f.arcPath(Cp, p.b * u, dn2[0], dn2[1], { stroke: C.blue, w: 2, draw: arcT, opacity: show });
+      const up = clamp((low - 0.45) / 0.5), A3 = fold(A2, B, Cp, up);
+      f.poly([A2, B, Cp], { fill: "none", stroke: C.soft, w: 1.6, dash: "6 5", opacity: clamp(low * 3 - 1) * show * (1 - up * 0.4) });
+      f.poly([A3, B, Cp], { fill: C.orangeSoft, stroke: C.orange, w: 2.6, opacity: clamp(low * 3 - 1) * show, fillOpacity: 0.7 });
+      f.label(P(A2.x, A2.y + 22), "A′", { size: 18, color: C.orange, opacity: clamp(low * 3 - 1) * show * (1 - up) });
+    }
+    // 7. 그릴 수 없는 경우
+    if (bad > 0) {
+      const g = clamp(bad * 1.4 - 0.3);
+      f.arcPath(B, cr, 100, -10, { stroke: C.green, w: 2.4, draw: g });
+      f.arcPath(Cp, br, 80, 190, { stroke: C.blue, w: 2.4, draw: g });
+      f.seg(B, P(B.x + cr, B.y), { stroke: C.green, w: 4, opacity: g });
+      f.seg(Cp, P(Cp.x - br, Cp.y), { stroke: C.blue, w: 4, opacity: g });
+      const gapL = P(B.x + cr, B.y), gapR = P(Cp.x - br, Cp.y);
+      f.seg(P(gapL.x, gapL.y + 14), P(gapR.x, gapR.y + 14), { stroke: C.red, w: 2.4, dash: "5 4", opacity: clamp(bad * 3 - 2) });
+      f.label(P((gapL.x + gapR.x) / 2, B.y + 36), "닿지 않아요", { size: 17, color: C.red, write: clamp(bad * 3 - 2) });
+    }
+  },
+};
+
+export const PROOFS = [sssTri, squareFold, setSquare, parallelSum, zigzag, tapeFold, triArea, trapArea, rhombusArea, stairs, diagRect];

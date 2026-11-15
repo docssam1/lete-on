@@ -43,8 +43,11 @@ const n1 = (v) => (Math.round(v * 10) / 10).toString();
 const escText = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
 // ── 그림 그리기(문자열을 모아 한 번에 넣는다) ──
+let figN = 0;
 export function figure() {
   const out = [];
+  const uid = `pf${(figN += 1)}`;
+  let clipN = 0;
   const st = ({ stroke = C.ink, w = 2.4, dash, opacity = 1, fill = "none", fillOpacity } = {}) =>
     `stroke="${stroke}" stroke-width="${w}" fill="${fill}"${fillOpacity != null ? ` fill-opacity="${fillOpacity}"` : ""}${dash ? ` stroke-dasharray="${dash}"` : ""}${opacity < 1 ? ` opacity="${n1(Math.max(0, opacity))}"` : ""} stroke-linejoin="round" stroke-linecap="round"`;
   const drawn = (draw) => (draw != null && draw < 1 ? ` pathLength="1" stroke-dasharray="1" stroke-dashoffset="${n1(1 - draw)}"` : "");
@@ -109,9 +112,68 @@ export function figure() {
       }
       return f;
     },
-    label(p, text, { size = 17, color = C.ink, weight = 700, anchor = "middle", opacity = 1, halo = true } = {}) {
+    // 글자는 판서와 같은 손글씨(FC Hand, 원장 2026-11-15 「Manim보다 우리 손글씨 식이 낫지 않아?」). 손글씨 글꼴은 같은 크기에서 작아 보여 1.3배로 쓴다.
+    // write(0~1)를 주면 펜이 왼쪽부터 써 나가듯 드러난다.
+    label(p, text, { size = 17, color = C.ink, weight = 700, anchor = "middle", opacity = 1, halo = true, write, font = "hand" } = {}) {
+      if (opacity <= 0 || write === 0) return f;
+      const hand = font === "hand", fs = hand ? size * 1.3 : size;
+      let clip = "";
+      if (write != null && write < 1) {
+        const w = String(text).length * fs * 0.62 + 8, x0 = anchor === "middle" ? p.x - w / 2 : anchor === "end" ? p.x - w : p.x - 4;
+        const id = `${uid}c${(clipN += 1)}`;
+        out.push(`<clipPath id="${id}"><rect x="${n1(x0)}" y="${n1(p.y - fs)}" width="${n1(w * clamp(write))}" height="${n1(fs * 2)}"/></clipPath>`);
+        clip = ` clip-path="url(#${id})"`;
+      }
+      out.push(`<text x="${n1(p.x)}" y="${n1(p.y)}" text-anchor="${anchor}" dominant-baseline="central" font-size="${n1(fs)}" font-weight="${hand ? 400 : weight}"${hand ? ` class="pf-hand"` : ""} fill="${color}"${halo ? ` stroke="${C.paper}" stroke-width="${hand ? 5 : 4}" paint-order="stroke"` : ""}${opacity < 1 ? ` opacity="${n1(opacity)}"` : ""}${clip}>${escText(text)}</text>`);
+      return f;
+    },
+    // ── 작도 도구(원장 2026-11-15 「유클리드 기하나 작도」) ──
+    // 원호: 중심 c, 반지름 r, from°에서 to°까지(수학 방향). draw(0~1)만큼만 그린다 — 컴퍼스 연필 끝이 지나간 자리
+    arcPath(c, r, from, to, o = {}) {
+      if (o.opacity === 0) return f;
+      const t = o.draw == null ? 1 : clamp(o.draw);
+      if (t <= 0) return f;
+      const end = from + (to - from) * t, n = Math.max(2, Math.ceil(Math.abs(end - from) / 3));
+      const pts = []; for (let i = 0; i <= n; i += 1) pts.push(polar(c, r, from + ((end - from) * i) / n));
+      out.push(`<polyline points="${pts.map((q) => `${n1(q.x)},${n1(q.y)}`).join(" ")}" ${st({ w: 2, ...o, fill: "none" })}/>`);
+      return f;
+    },
+    // 컴퍼스: 바늘은 c, 연필 끝은 c에서 r만큼 deg° 방향. 두 다리 길이는 같고 손잡이는 위쪽으로 선다
+    compass(c, r, deg, { opacity = 1, leg = 150 } = {}) {
       if (opacity <= 0) return f;
-      out.push(`<text x="${n1(p.x)}" y="${n1(p.y)}" text-anchor="${anchor}" dominant-baseline="central" font-size="${size}" font-weight="${weight}" fill="${color}"${halo ? ` stroke="#fff" stroke-width="4" paint-order="stroke"` : ""}${opacity < 1 ? ` opacity="${n1(opacity)}"` : ""}>${escText(text)}</text>`);
+      const tip = polar(c, r, deg), m = mid(c, tip), half = Math.max(r / 2, 1);
+      const L = Math.max(leg, half * 1.12), h = Math.sqrt(Math.max(L * L - half * half, 1));
+      const u = P((tip.x - c.x) / (2 * half), (tip.y - c.y) / (2 * half));
+      let nrm = P(u.y, -u.x); if (nrm.y > 0) nrm = P(-nrm.x, -nrm.y);
+      if (m.y + nrm.y * h < 24) nrm = P(-nrm.x, -nrm.y);   // 위가 모자라면(종이 위쪽 막대를 잴 때) 손잡이를 아래로
+      const hinge = add(m, mul(nrm, h)), top = add(hinge, mul(nrm, 22));
+      const near = (a, b, d) => add(a, mul(sub(b, a), d / Math.max(dist(a, b), 1)));
+      const pencil0 = near(tip, hinge, 34), lead = near(tip, hinge, 12);
+      const op = opacity < 1 ? ` opacity="${n1(opacity)}"` : "";
+      out.push(`<g class="pf-compass"${op}>`
+        + `<line x1="${n1(hinge.x)}" y1="${n1(hinge.y)}" x2="${n1(c.x)}" y2="${n1(c.y)}" stroke="#7d8597" stroke-width="5" stroke-linecap="round"/>`
+        + `<line x1="${n1(hinge.x)}" y1="${n1(hinge.y)}" x2="${n1(pencil0.x)}" y2="${n1(pencil0.y)}" stroke="#7d8597" stroke-width="5" stroke-linecap="round"/>`
+        + `<line x1="${n1(pencil0.x)}" y1="${n1(pencil0.y)}" x2="${n1(lead.x)}" y2="${n1(lead.y)}" stroke="#f2b632" stroke-width="7" stroke-linecap="butt"/>`
+        + `<line x1="${n1(lead.x)}" y1="${n1(lead.y)}" x2="${n1(tip.x)}" y2="${n1(tip.y)}" stroke="#3a3f4c" stroke-width="3" stroke-linecap="round"/>`
+        + `<line x1="${n1(hinge.x)}" y1="${n1(hinge.y)}" x2="${n1(top.x)}" y2="${n1(top.y)}" stroke="#4b5366" stroke-width="7" stroke-linecap="round"/>`
+        + `<circle cx="${n1(hinge.x)}" cy="${n1(hinge.y)}" r="6" fill="#4b5366"/>`
+        + `<circle cx="${n1(c.x)}" cy="${n1(c.y)}" r="2.6" fill="#3a3f4c"/></g>`);
+      return f;
+    },
+    // 자: a→b 직선 옆에 놓인 반투명 자(양쪽으로 margin만큼 더 길게). side 1 = a→b 진행 방향의 왼쪽(화면 위쪽)
+    ruler(a, b, { opacity = 1, margin = 34, side = 1, width = 30 } = {}) {
+      if (opacity <= 0) return f;
+      const d = sub(b, a), l = Math.max(Math.hypot(d.x, d.y), 1), u = P(d.x / l, d.y / l);
+      let nrm = P(u.y, -u.x); if (side < 0) nrm = P(-nrm.x, -nrm.y);
+      const p0 = sub(a, mul(u, margin)), p1 = add(b, mul(u, margin));
+      const q0 = add(p0, mul(nrm, 3)), q1 = add(p1, mul(nrm, 3)), q2 = add(p1, mul(nrm, 3 + width)), q3 = add(p0, mul(nrm, 3 + width));
+      let marks = "";
+      const total = l + margin * 2;
+      for (let s = 0, i = 0; s <= total; s += 12, i += 1) {
+        const m0 = add(q0, mul(u, s)), m1 = add(m0, mul(nrm, i % 5 === 0 ? 11 : 6));
+        marks += `<line x1="${n1(m0.x)}" y1="${n1(m0.y)}" x2="${n1(m1.x)}" y2="${n1(m1.y)}" stroke="#7a6a3c" stroke-width="1.2"/>`;
+      }
+      out.push(`<g class="pf-ruler"${opacity < 1 ? ` opacity="${n1(opacity)}"` : ""}><polygon points="${[q0, q1, q2, q3].map((q) => `${n1(q.x)},${n1(q.y)}`).join(" ")}" fill="#f6e7b0" fill-opacity="0.78" stroke="#c9ad5c" stroke-width="1.5" stroke-linejoin="round"/>${marks}</g>`);
       return f;
     },
     // 그림 속 식 한 줄(아래쪽 흰 띠)
