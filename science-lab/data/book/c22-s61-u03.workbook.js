@@ -1,3 +1,4 @@
+import{withPlantContextWorkbook}from'./plant-workbook-context.js?v=20261116-plant-workbook-context';
 import{withRepresentationReviewedWorkbook}from'./representation-question-review.js?v=20261115-representation-response-review';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
@@ -14609,4 +14610,5 @@ export const grade6ReviewPriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPrio
 
 export const representationReviewPriorWorkbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
 
-export const workbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const plantContextPriorWorkbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const workbook=withPlantContextWorkbook(plantContextPriorWorkbook);

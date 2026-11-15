@@ -1,7 +1,7 @@
 // Explicit contract for authored plant practice; no network, storage or score writer.
 import {checkPlantStructureResponse} from './plant-structure-response.mjs';
 const empty=v=>v==null||typeof v==='string'&&!v.trim()||Array.isArray(v)&&v.length===0;
-const same=(a,b)=>Array.isArray(a)&&a.length===b.length&&a.every((x,i)=>x===b[i]);
+const same=(a,b)=>Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((x,i)=>x===b[i]);
 const sequence=v=>{
  if(Array.isArray(v))return v.every(x=>typeof x==='string'&&/^[ㄱ-ㅎ]$/.test(x))?v:null;
  if(typeof v!=='string')return null;
@@ -23,6 +23,6 @@ export function checkAuthoredPlantResponse(q,value){
  if(empty(value))return {status:'empty'};
  if(c.teacherRequired)return {status:'review'};
  if(c.kind==='ordered-label-parts')return {status:same(parts(value,c.answers.length),c.answers)?'correct':'wrong'};
- if(c.kind==='ordered-label-sequence')return {status:same(sequence(value),c.sequence)?'correct':'wrong'};
+ if(c.kind==='ordered-label-sequence'){const orders=Array.isArray(c.sequences)?c.sequences:[c.sequence];return {status:orders.some(order=>same(sequence(value),order))?'correct':'wrong'};}
  return checkPlantStructureResponse(q,value);
 }

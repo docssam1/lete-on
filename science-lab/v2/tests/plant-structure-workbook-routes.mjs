@@ -1,6 +1,7 @@
+const beforePlantContext=q=>{if(q?.contentVersion!=='20261116-plant-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 const beforeRepresentation=q=>{if(q?.contentVersion!=='20261115-representation-response-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import{questionAtVersion as reviewQuestionAtVersion}from'../question-revision.js';
-const beforeGrade6Review=item=>{const q=beforeRepresentation(item);return q?.contentVersion==='20261115-grade6-question-review'?reviewQuestionAtVersion(q,q.previousVersions.at(-1).version):q;};
+const beforeGrade6Review=item=>{const q=beforeRepresentation(beforePlantContext(item));return q?.contentVersion==='20261115-grade6-question-review'?reviewQuestionAtVersion(q,q.previousVersions.at(-1).version):q;};
 import fs from'node:fs';import vm from'node:vm';import assert from'node:assert/strict';import{pathToFileURL,fileURLToPath}from'node:url';import path from'node:path';
 const root=path.resolve(fileURLToPath(new URL('../../../',import.meta.url))),load=p=>import(pathToFileURL(root+'/'+p)),src=fs.readFileSync(root+'/science-lab/v2/v2.js','utf8'),textbook=await load('science-lab/v2/revised-textbook.js'),revised=await load('science-lab/v2/revised-lesson.js'),{renderChapter}=await load('science-lab/v2/book.js'),book=await load('science-lab/data/book/c22-s61-u03.book.js'),lesson={title:'식물의 구조와 기능'};
 const{BANK,READY}=await load('science-lab/v2/units-index.js');

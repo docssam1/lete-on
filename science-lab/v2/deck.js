@@ -10,7 +10,7 @@ import{buildAcidThinkingSlides}from'./deck-acid-thinking.js?v=20261104-acid-clas
 // GFIELD 실험 과학 영재 — 화면 수업 자료(교안). 교재와 같은 chapter 데이터를 16:9 슬라이드로 보여 준다.
 //  teach(가르치기·강사용): 클릭/→/스페이스로 빈칸 답이 차례로 열리고, N으로 강사 발문 노트, F로 전체 화면.
 //  self (스스로 공부하기·학생용): 내 생각을 쓰고 '예시 답 보기', 확인 문제는 눌러서 바로 채점.
-import { judgeText, judgeShort, judgeItem } from './judge.js?v=20261104-season-book';
+import { judgeText, judgeShort, judgeItem } from './judge.js?v=20261104-season-book&plantContext=20261116-plant-workbook-context';
 import {deckPredictionKey,deckSlideRecordKey,deckQuestionSnapshot,judgeDeckCloze,withVersionedQuestionSlides} from './deck-answer-state.js?v=20261105-ecology-sound-bank';
 import { loadJudge } from './think-merge.js';
 import { mountMagnetBattle } from './magnet-battle.js';

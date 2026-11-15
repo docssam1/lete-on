@@ -2,7 +2,7 @@ import{checkSeasonResponse}from'../bank/season-response.mjs';
 import{checkSourceResponse}from'../bank/source-response.mjs';
 import{checkAuthoredEarthMotionResponse}from'../bank/earth-motion-authored-response.mjs';
 import{checkEarthMotionResponse}from'../bank/earth-motion-response.mjs';
-import{checkAuthoredPlantResponse}from'../bank/plant-structure-authored-response.mjs';
+import{checkAuthoredPlantResponse}from'../bank/plant-structure-authored-response.mjs?v=20261116-plant-workbook-context';
 import{checkAuthoredMotionResponse}from'../bank/motion-authored-response.mjs';
 // 쓰기 답 로컬 판정 — API 없이 기기 안에서. 아이에게 "예시 답과 비슷한가요?"를 묻지 않는다(원장 2026-09-30).
 //

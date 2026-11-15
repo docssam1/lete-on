@@ -1,3 +1,4 @@
+import{plantContextItems}from'../data/book/plant-workbook-context.js';
 import{representationQuestionReview}from'../data/book/representation-question-review.js';
 const beforeRepresentation=q=>{if(q?.contentVersion!=='20261115-representation-response-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
@@ -16,7 +17,7 @@ test('원래128객체 중117개는 같고11개는 표현·답·응답 계약과 
  const priorItems=plantStructureCurrentItems(items);
  assert.deepEqual(PLANT_STRUCTURE_CHANGED_NUMBERS,[33,42,55,56,108,114,119,120,121,122,125]);assert.equal(priorItems.filter((q,i)=>q===items[i]).length,117);
  for(const q of priorItems.filter(q=>q.contentVersion)){const old=items.find(r=>r.id===q.id),{version,...saved}=q.previousVersions[0];assert.equal(version,1);assert.deepEqual(saved,old);const restored=questionAtVersion(q,1);for(const k of Object.keys(old))assert.deepEqual(restored[k],old[k]);assert.equal(q.contentVersion,PLANT_STRUCTURE_QUESTION_VERSION);assert.deepEqual(JSON.parse(JSON.stringify(q)),q);const w=plantStructureReadablePriorWorkbook.questions.find(w=>w.id===q.bookQuestionId);assert.equal(q.prompt,w.prompt);assert.equal(q.explanation,w.explanation);assert.deepEqual(q.answerContract.plantAuthoredContract,w.responseContract);if(q.choices)assert.deepEqual(q.choices,w.choices);}
- assert.deepEqual(mod.classroomItems,representationQuestionReview(grade6QuestionReview(plantStructureReadableCurrentItems(priorItems,unit.id),unit.id),unit.id));assert(plantStructureCurrentItems(mod.classroomItems).every((q,i)=>q===mod.classroomItems[i]));assert(plantStructureCurrentItems(priorItems).every((q,i)=>q===priorItems[i]));for(const[no,a]of[[114,'광합성'],[120,'증산 작용'],[121,'뿌리']])assert.equal(byNo(no).answerContract.answer,a);
+ assert.deepEqual(mod.classroomItems,plantContextItems(representationQuestionReview(grade6QuestionReview(plantStructureReadableCurrentItems(priorItems,unit.id),unit.id),unit.id),unit.id));assert(plantStructureCurrentItems(mod.classroomItems).every((q,i)=>q===mod.classroomItems[i]));assert(plantStructureCurrentItems(priorItems).every((q,i)=>q===priorItems[i]));for(const[no,a]of[[114,'광합성'],[120,'증산 작용'],[121,'뿌리']])assert.equal(byNo(no).answerContract.answer,a);
  assert.equal(byNo(114).taxonomy.type,'T07');assert.equal(byNo(120).taxonomy.type,'T09');assert.equal(byNo(121).taxonomy.type,'T03');
  for(const mode of['student','teacher','answers','quick']){const h=bankPaper({unit,items,source,similar,mode});assert.equal((h.match(/data-paper-item=/g)||[]).length,278);assert(!/\[object Object\]/.test(h));if(mode==='teacher')assert(h.includes('선인장의 가시 모양 잎'));}
 });

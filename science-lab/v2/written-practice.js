@@ -1,6 +1,6 @@
 // 학습용 서술형: 쓰기 → 기기 안에서 판정(v2/judge.js + data/units/<u>.judge.js) → 풀이. 저장·전송하지 않는다.
 // 아이에게 "예시 답과 비슷한가요?"를 맡기지 않는다(원장 2026-09-30). 규칙으로 가릴 수 없는 답·종이 답은 선생님 확인.
-import { judgeText,judgeItem } from './judge.js?v=20261108-source-writing';
+import { judgeText,judgeItem } from './judge.js?v=20261108-source-writing&plantContext=20261116-plant-workbook-context';
 import {contentUnitOfItem} from './content-unit.js';
 import { loadJudge } from './think-merge.js';
 const TABLES = new Map();

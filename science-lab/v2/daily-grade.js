@@ -5,7 +5,7 @@
 //  · 서술: 단원 판정표(data/units/<u>.judge.js)로 핵심 생각이 모두 있으면 ○, 오개념 문장이면 ✕, 그 밖(일부·다른 말)은 「검토 필요」.
 //  · 「검토 필요」는 점수와 분모에서 뺀다. 빈칸은 「안 푼 문항」.
 //  · 스스로 체크(자신 있어요/헷갈려요)는 채점과 따로 두고 점수에 넣지 않는다.
-import { judgeText, judgeShort, judgeItem, norm } from './judge.js?v=20261108-source-schema';
+import { judgeText, judgeShort, judgeItem, norm } from './judge.js?v=20261108-source-schema&plantContext=20261116-plant-workbook-context';
 
 const blank = (v) => v == null || (Array.isArray(v) ? v.every((x) => blank(x)) : !String(v).trim());
 
