@@ -1,3 +1,4 @@
+import{withSeasonComparisonWorkbook}from'./c22-s62-u01.editorial.js?v=20261115-season-comparison-conditions';
 import{withSeasonStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
 import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
@@ -25477,4 +25478,5 @@ export const seasonReadablePriorWorkbook=withSeasonConceptLanguage(seasonConcept
 export const grade6StudyNotesPriorWorkbook=withSeasonReadableWorkbook(seasonReadablePriorWorkbook);
 export const elementaryPromptPriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
 export const observationContextPriorWorkbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
-export const workbook=withSeasonStandaloneContext(observationContextPriorWorkbook);
+export const seasonComparisonPriorWorkbook=withSeasonStandaloneContext(observationContextPriorWorkbook);
+export const workbook=withSeasonComparisonWorkbook(seasonComparisonPriorWorkbook);

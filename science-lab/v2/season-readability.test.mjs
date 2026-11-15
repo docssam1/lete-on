@@ -1,3 +1,4 @@
+import{seasonComparisonCurrentItems}from'../data/book/c22-s62-u01.editorial.js';
 import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import{elementaryPromptCurrentItems}from'../data/book/elementary-question-prompts.js';
 import {seasonPairCurrentItems} from './season-pair-language.js';
@@ -43,6 +44,6 @@ test('readable-stage samples and current answer keys retain strict automatic gra
  for(const html of Object.values(workbook.figures).filter(x=>x.includes('season-quick-grid')))for(const m of html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[^<]*<\/td><td>([\s\S]*?)<\/td><\/tr>/g)){const q=workbook.questions[Number(m[1])-1];if(q.responseContract.kind==='single-choice')assert([q.answer,'①②③④⑤'[q.key]].includes(m[2]));else if(!['written','draw'].includes(q.form))assert.equal(m[2],q.answer);}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,standaloneQuestionContexts(elementaryPromptCurrentItems(seasonPairCurrentItems(current,unit),unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>questionAtVersion(mod.classroomItems.find(q=>q.id===id),SEASON_READABILITY_VERSION)?.contentVersion===SEASON_READABILITY_VERSION).length,9);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,seasonComparisonCurrentItems(standaloneQuestionContexts(elementaryPromptCurrentItems(seasonPairCurrentItems(current,unit),unit),unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>questionAtVersion(mod.classroomItems.find(q=>q.id===id),SEASON_READABILITY_VERSION)?.contentVersion===SEASON_READABILITY_VERSION).length,9);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/season-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,114);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

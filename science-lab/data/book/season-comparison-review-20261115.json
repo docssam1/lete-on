@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-15",
+  "unit": "c22-s62-u01",
+  "version": "20261115-season-comparison-conditions",
+  "priorCandidate": "ac6d6c7425419db81b7b9a5d2847297032a25a9d",
+  "curriculum": {
+    "standard": "6과13-02",
+    "source": "교육부 고시 제2022-33호 별책9 과학과 교육과정",
+    "documentSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "scope": "계절별 태양의 남중 고도와 낮의 길이 관계를 자료에 근거하여 추론한다."
+  },
+  "changes": {
+    "68": "계절 비교의 대상을 남중 고도로 명시하고 해설에도 같은 지역/날짜별 남중 조건을 둔다.",
+    "80": "같은 날짜·시각으로 읽힐 문장을 날짜별 남중 고도 비교로 고친다. 같은 장소·남중 조건과 직접 잰 값/계산한 값 구별을 발문과 교사 예시 답에 맞춘다.",
+    "114": "벽에 직각으로 들어온다는 혼동을 일으킬 표현을 우리나라에서 태양이 남중할 때 남쪽 창문으로 들어오는 조건으로 바꾼다."
+  },
+  "preserved": {
+    "automaticAnswersAndDecisions": true,
+    "teacherReviewRequired": true,
+    "rubrics": true,
+    "oldVersions": 8,
+    "sourceProvenance": true,
+    "allPagesWritingSpaceAndExistingImages": true,
+    "quickKeysByteIdentical": true
+  },
+  "validation": {
+    "nativeFiles": 297,
+    "nativeTests": 1535,
+    "passed": 1533,
+    "failed": 0,
+    "browserSkipped": 2,
+    "currentResponseCases": 26,
+    "all32VocabularySetsUnchanged": true,
+    "workbookAndBankPrintModesCompared": 8,
+    "decks": 64,
+    "slides": 3048,
+    "changedSlides": 0,
+    "actualBrowserAndA4Reviewed": false,
+    "deployed": false
+  },
+  "additionalReview": "응답 부분에 조건이 담긴16문항의 발문·부분 응답·예시 답 대응을 검토했다.355개 전체 과학/의미 검수 완료는 아니다.",
+  "newImagesOrPaidApis": false,
+  "evidence": "science-question-review/phase417/"
+}

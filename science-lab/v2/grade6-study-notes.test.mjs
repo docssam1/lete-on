@@ -1,3 +1,4 @@
+import{withSeasonComparisonWorkbook}from'../data/book/c22-s62-u01.editorial.js';
 import{withMotionElectricalWorkbook}from'../data/book/motion-electricity-reference-context.js';
 import{withSeasonStandaloneContext,withMaterialStandaloneContext}from'../data/book/standalone-question-context.js';
 import {withAcidFurtherReading} from '../data/book/c22-s61-u01.editorial.js';
@@ -9,7 +10,7 @@ import assert from 'node:assert/strict';
 import {withGrade6StudyNotes,GRADE6_STUDY_NOTE_UNITS} from '../data/book/grade6-study-notes.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
-const withCurrentReferenceContext=book=>withMotionElectricalWorkbook(withMaterialStandaloneContext(withSeasonStandaloneContext(book)));
+const withCurrentReferenceContext=book=>withSeasonComparisonWorkbook(withMotionElectricalWorkbook(withMaterialStandaloneContext(withSeasonStandaloneContext(book))));
 const counts=[7,7,8,10,8],books=[];
 for(const [i,unit]of GRADE6_STUDY_NOTE_UNITS.entries()){
  const {workbook,motionReferencePriorWorkbook,elementaryPromptPriorWorkbook,furtherReadingPriorWorkbook,grade6StudyNotesPriorWorkbook}=await import(`../data/book/${unit}.workbook.js`);

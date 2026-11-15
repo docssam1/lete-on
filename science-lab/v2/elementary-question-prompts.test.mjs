@@ -1,3 +1,4 @@
+import{SEASON_COMPARISON_VERSION}from'../data/book/c22-s62-u01.editorial.js';
 import{BATTERY_POLARITY_CARD_VERSION}from'../data/book/battery-polarity-card.js';
 import{MOTION_ELECTRICITY_REFERENCE_VERSION}from'../data/book/motion-electricity-reference-context.js';
 import{OBSERVATION_CONTEXT_VERSION,MATERIAL_OBSERVATION_CONTEXT_VERSION}from'../data/book/standalone-question-context.js';
@@ -112,7 +113,7 @@ test('bank paper modules bypass cached former workbook URLs and load the revised
    const target=new URL(spec,url);if(cache.has(target.href))return cache.get(target.href);
    let ns=await import(target.href);
    if(target.pathname.endsWith(`/${unit}.workbook.js`)){
-    if(target.search.includes(unit==='c22-s62-u01'?OBSERVATION_CONTEXT_VERSION:unit==='c22-s62-u02'?MATERIAL_OBSERVATION_CONTEXT_VERSION:BATTERY_POLARITY_CARD_VERSION))freshReads++;
+    if(target.search.includes(unit==='c22-s62-u01'?SEASON_COMPARISON_VERSION:unit==='c22-s62-u02'?MATERIAL_OBSERVATION_CONTEXT_VERSION:BATTERY_POLARITY_CARD_VERSION))freshReads++;
     else {staleReads++;ns={...ns,workbook:ns.elementaryPromptPriorWorkbook};}
    }
    const mod=new vm.SyntheticModule(Object.keys(ns),function(){for(const [key,value]of Object.entries(ns))this.setExport(key,value);},{context});cache.set(target.href,mod);await mod.link(()=>{});return mod;

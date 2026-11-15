@@ -4440,3 +4440,49 @@ const seasonReadableCache=new WeakMap();
 export function seasonReadableCurrentItems(rows,unit){
  if(unit!=='c22-s62-u01'||!Array.isArray(rows))return rows;let changed=false;const next=rows.map(question=>{const patch=seasonReadableBank[question.id];if(!patch||question.status!=='authored'||question.sourceRef?.type!=='authored-supplement'||(question.contentVersion||1)!==seasonReadablePriorVersions[question.id])return question;changed=true;if(seasonReadableCache.has(question))return seasonReadableCache.get(question);const clone=value=>JSON.parse(JSON.stringify(value)),current={...question,...clone(patch),contentVersion:SEASON_READABILITY_VERSION,previousVersions:[...(question.previousVersions?clone(question.previousVersions):[]),{...clone(question),version:question.contentVersion||1}]};seasonReadableCache.set(question,current);return current;});return changed?next:rows;
 }
+
+export const SEASON_COMPARISON_VERSION='20261115-season-comparison-conditions';
+export const seasonComparisonEdits={
+ 68:{priorVersion:'20261104-season-book',
+  previousPrompt:'같은 도시의 계절별 고도를 비교할 때는 지역을 (1) 두고 (2)를 달리한 자료를 모아요. 두 칸은 같게/날짜 중 알맞게 쓰세요.',
+  prompt:'계절에 따른 태양의 남중 고도를 비교하려고 해요. 지역은 (1) 두고 (2)를 달리한 자료를 모아요. 보기: 같게 · 날짜',
+  previousExplanation:'지역은 같게 두고 날짜를 달리해야 계절에 따른 차이를 살필 수 있어요. 서로 다른 도시의 수치를 계절 차이만으로 설명하지 않아요.',
+  explanation:'같은 지역에서 날짜별 태양의 남중 고도를 비교해요. 하루 중 태양 고도가 가장 높을 때의 값을 써야 하루 동안의 변화와 계절에 따른 차이를 구별할 수 있어요.'},
+ 80:{priorVersion:SEASON_READABILITY_VERSION,
+  previousPrompt:'친구가 모은 계절 자료를 비교할 빈 표를 그리세요. 같은 장소와 날짜, 시각인지와 출처, 어떤 종류의 자료인지 확인할 칸을 만드세요.',
+  prompt:'계절별 태양의 남중 고도를 비교할 빈 표를 그리세요. 장소·날짜·한국 시각·출처를 적고, 같은 장소의 남중 고도인지 확인할 칸을 만드세요. 직접 잰 값과 계산한 값을 구별할 칸도 넣으세요.',
+  previousAnswer:'각 자료의 장소와 좌표, 날짜와 한국 시각인지, 고도를 구한 시각과 출처를 적을 칸을 만들어요. 계산한 값인지 직접 잰 값인지도 구별해요. 같은 조건끼리 연결하고 장소나 시각이 다른 자료는 따로 표시해요.',
+  answer:'장소·날짜·한국 시각·출처를 적을 칸과, 각 날짜에 태양이 남중했는지 확인할 칸을 만들어요. 직접 잰 값인지 계산한 값인지도 표시해요. 같은 장소의 남중 고도를 날짜별로 비교하고, 남중할 때가 아닌 자료는 따로 표시해요.'},
+ 114:{priorVersion:SEASON_READABILITY_VERSION,
+  previousPrompt:'남쪽 벽의 같은 창문으로 남중 무렵 햇빛이 벽에 직각으로 들어와요. 창문 아래쪽 높이와 수평 바닥은 같고 가리는 물체는 없어요. 알맞은 설명을 고르세요.',
+  prompt:'우리나라에서 태양이 남중할 때, 남쪽을 향한 벽의 같은 창문으로 햇빛이 들어와요. 창문 아래쪽 높이는 같고 바닥은 수평이며 햇빛을 가리는 물체는 없어요. 알맞은 설명을 고르세요.'}
+};
+const seasonComparisonCache=new WeakMap();
+function comparisonMatches(q,edit){return q.prompt===edit.previousPrompt&&(!edit.previousExplanation||q.explanation===edit.previousExplanation)&&(!edit.previousAnswer||q.responseContract?.sample===edit.previousAnswer);}
+function comparisonFields(q,edit){
+ const next={...q,prompt:edit.prompt};if(edit.explanation)next.explanation=edit.explanation;
+ if(edit.answer){next.responseContract={...clone(q.responseContract),sample:edit.answer};}
+ return next;
+}
+export function seasonComparisonCurrentItems(rows,unit='c22-s62-u01'){
+ if(unit!=='c22-s62-u01'||!Array.isArray(rows))return rows;let changed=false;
+ const next=rows.map(q=>{
+  const no=Number(q.id?.replace(/^c22-s62-u01-b/,'')),edit=seasonComparisonEdits[no];
+  if(!edit||q.id!=='c22-s62-u01-b'+String(no).padStart(3,'0')||q.bookQuestionId!=='c22-s62-u01-w'+String(no).padStart(3,'0')||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||q.sourceContent||q.contentVersion!==edit.priorVersion||!comparisonMatches(q,edit)||edit.answer&&(q.answerContract?.sample!==edit.previousAnswer||q.answerContract?.seasonContract?.sample!==edit.previousAnswer))return q;
+  changed=true;if(seasonComparisonCache.has(q))return seasonComparisonCache.get(q);
+  const current={...comparisonFields(q,edit),contentVersion:SEASON_COMPARISON_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion,snapshotKind:'full-question'}]};
+  if(edit.answer)current.answerContract={...clone(q.answerContract),sample:edit.answer,seasonContract:{...clone(q.answerContract.seasonContract),sample:edit.answer}};
+  if(q.diagnosticOverride?.version===q.contentVersion)current.diagnosticOverride={...clone(q.diagnosticOverride),version:SEASON_COMPARISON_VERSION};
+  seasonComparisonCache.set(q,current);return current;
+ });return changed?next:rows;
+}
+export function withSeasonComparisonClassroom(unit,mod){
+ const items=seasonComparisonCurrentItems(mod.classroomItems,unit);return items===mod.classroomItems?mod:{...mod,classroomItems:items};
+}
+export function withSeasonComparisonWorkbook(workbook){
+ if(workbook?.unit!=='c22-s62-u01'||!Array.isArray(workbook.questions))return workbook;let changed=false;
+ const questions=workbook.questions.map(q=>{
+  const edit=seasonComparisonEdits[q.no];if(!edit||q.id!=='c22-s62-u01-w'+String(q.no).padStart(3,'0')||q.sourceRef?.type!=='authored'||q.contentVersion||!comparisonMatches(q,edit)||edit.answer&&q.answer!==edit.previousAnswer)return q;
+  changed=true;const next=comparisonFields(q,edit);if(edit.answer)next.answer=edit.answer;return next;
+ });return changed?{...workbook,questions}:workbook;
+}

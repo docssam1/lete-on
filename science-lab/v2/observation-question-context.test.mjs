@@ -1,9 +1,10 @@
+import{seasonComparisonCurrentItems,seasonComparisonEdits,SEASON_COMPARISON_VERSION}from'../data/book/c22-s62-u01.editorial.js';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import{createHash}from'node:crypto';
 import{standaloneQuestionContexts,withSeasonStandaloneContext,OBSERVATION_CONTEXT_VERSION}from'../data/book/standalone-question-context.js';
 import{items as seasonRaw}from'../data/units/c22-s62-u01.js';import{items as skyRaw}from'../data/units/c22-s42-u01.js';import{items as skyThink}from'../data/units/c22-s42-u01.think.js';
 import{seasonCurrentItems}from'./season-question-language.js';import{seasonReadableCurrentItems}from'../data/book/c22-s62-u01.editorial.js';import{seasonPairCurrentItems}from'./season-pair-language.js';import{elementaryPromptCurrentItems}from'../data/book/elementary-question-prompts.js';
 import{magnetSkyCurrentItems}from'./magnet-sky-question-language.js';import{skyReadableCurrentItems}from'../data/book/c22-s42-u01.rail-notes.js';import{lessonReferenceItems}from'../data/book/lesson-reference-data.js';
-import{workbook,observationContextPriorWorkbook}from'../data/book/c22-s62-u01.workbook.js';import{withThink,loadJudge}from'./think-merge.js';import{revisedClassroom}from'./revised-lesson.js';import{revisedTextbookPaper}from'./revised-textbook.js';
+import{seasonComparisonPriorWorkbook as workbook,observationContextPriorWorkbook}from'../data/book/c22-s62-u01.workbook.js';import{withThink,loadJudge}from'./think-merge.js';import{revisedClassroom}from'./revised-lesson.js';import{revisedTextbookPaper}from'./revised-textbook.js';
 import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,questionMisconceptions}from'./question-revision.js';import{gradeDaily}from'./daily-grade.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';
 import*as presentation from'./source-presentation.js';import*as content from'./source-content.js';import{writtenPracticeHtml}from'./written-practice.js';import{seasonAnswerHint}from'./season-answer-hint.js';
 const code=fs.readFileSync(new URL('./v2.js',import.meta.url),'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a);
@@ -15,9 +16,9 @@ const imagePath='assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg',esc=s=>String
 test('two missing observation contexts preserve all contracts, earlier versions, saved answers and retake history',async()=>{
  const changed=[];
  for(const[u,rows]of Object.entries(prior)){
-  const before=JSON.stringify(rows),mod=current[u],judge=await loadJudge(u);assert.deepEqual(mod.items,standaloneQuestionContexts(rows,u));
+  const before=JSON.stringify(rows),mod=current[u],judge=await loadJudge(u);assert.deepEqual(mod.items,seasonComparisonCurrentItems(standaloneQuestionContexts(rows,u),u));const stageItems=mod.items.map(q=>q.contentVersion===SEASON_COMPARISON_VERSION?questionAtVersion(q,seasonComparisonEdits[q.workbookRef.no].priorVersion):q);
   for(let i=0;i<rows.length;i++){
-   const old=rows[i],q=mod.items[i];if(!ids.includes(q.id)){assert.deepEqual(q,old);continue;}changed.push(q.id);
+   const old=rows[i],q=stageItems[i];if(!ids.includes(q.id)){assert.deepEqual(q,old);continue;}changed.push(q.id);
    assert.equal(q.contentVersion,OBSERVATION_CONTEXT_VERSION);assert.deepEqual(q.answerContract,old.answerContract);assert.deepEqual(q.responseContract,old.responseContract);assert.equal(q.explanation,old.explanation);assert.deepEqual(q.taxonomy,old.taxonomy);assert.deepEqual(q.sourceRef,old.sourceRef);
    assert.deepEqual(questionAtVersion(q,old.contentVersion||1),{...old,contentVersion:old.contentVersion||1});
    assert.deepEqual(questionMisconceptions(q,mod.misc),questionMisconceptions(old,mod.misc));
