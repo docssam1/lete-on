@@ -28,3 +28,13 @@ test('actual classroom and shared print router show revised choices with answer 
  for(const q of revised){assert(student.includes(esc(q.prompt)));for(const c of q.choices||[])assert(student.includes(esc(c)));assert(teacher.includes(esc(q.explanation)));assert(!student.includes(esc(q.explanation)));}
  const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8'),lessonCode=fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8');assert(index.includes('&bank='+code.match(/earth-sea-choice-review\.js\?v=([^'"]+)/)[1]));assert(code.includes('./revised-lesson.js?v='+code.match(/earth-sea-choice-review\.js\?v=([^'"]+)/)[1]));assert(lessonCode.includes('earth-sea-choice-review.js?v='+code.match(/earth-sea-choice-review\.js\?v=([^'"]+)/)[1]));assert(code.split('\n').find(l=>l.trimStart().startsWith("'"+unit+"':")).includes('earth-sea-choice-review.js?v='+code.match(/earth-sea-choice-review\.js\?v=([^'"]+)/)[1]));
 });
+test('current tide wrong-answer feedback explains water-height change while preserving diagnosis and correct answers',async()=>{
+ const{classify}=await import('./progress.js'),raw=await import('../data/units/c22-s32-u02.think.js'),rawBefore=structuredClone(raw.misc);await withThink(unit,{});assert.deepEqual(raw.misc,rawBefore);
+ const q=mod.items.find(q=>q.id===unit+'-t04'),judge=await loadJudge(unit),ctx=vm.createContext({MISC:mod.misc,esc});
+ const why=new vm.Script(code.slice(code.indexOf('function whyHtml('),code.indexOf('// ctx ='))+';whyHtml').runInContext(ctx);
+ for(const value of [['파도','썰물'],['밀물','파도'],['파도','파도']]){
+  const r=gradeDaily(q,value,{misc:mod.misc,judge});assert.equal(r.status,'wrong');const diagnosis=classify(q,mod.misc,false,r.detail);assert.deepEqual(diagnosis.m,['N05']);const html=why(q,false,{m:diagnosis.m});assert(html.includes(mod.misc.misconceptions.N05.fix));assert(html.includes('같은 바닷가'));assert(html.includes('물 높이'));assert(html.includes('파도'));assert(!/하루.{0,8}두/.test(html));
+ }
+ const r=gradeDaily(q,['밀물','썰물'],{misc:mod.misc,judge});assert.equal(r.status,'correct');assert.deepEqual(classify(q,mod.misc,true,r.detail).m,[]);assert(why(q,true,r.detail).includes(esc(q.explanation)));
+ const merge=fs.readFileSync(new URL('./think-merge.js',import.meta.url),'utf8'),index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(code.includes('think-merge.js?v=20261115-curriculum-area&feedback=20261115-earth-sea-feedback'));assert(index.includes('&feedback=20261115-earth-sea-feedback'));
+});

@@ -12,7 +12,7 @@ import { pageHome } from './home.js?v=20261115-curriculum-area';
 import { escapeInApp } from './inapp.js';
 import { SEMS, BANK, READY } from './units-index.js?v=20261115-curriculum-area';
 import { placeLabel, placeNow } from './curriculum-place.js?v=20261104-career-labels';
-import { withThink, loadJudge } from './think-merge.js?v=20261115-curriculum-area';
+import { withThink, loadJudge } from './think-merge.js?v=20261115-curriculum-area&feedback=20261115-earth-sea-feedback';
 import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js?v=20261114-source-integration';
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
