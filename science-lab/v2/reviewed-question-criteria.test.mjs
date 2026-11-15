@@ -82,6 +82,6 @@ test('current classroom, Daily and printed keys share the same version and retai
   assert(!student.includes('class="ed-key"'));
  }
  assert(found>=142);
- const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8'),shared=fs.readFileSync(new URL('./revised-textbook.js',import.meta.url),'utf8'),lesson=fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8');assert(index.includes('&book='+version));assert(shared.includes(".includes(unit)?'"+version+"'"));assert(lesson.includes('reviewed-question-criteria.js?v='+version));
+ const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8'),shared=fs.readFileSync(new URL('./revised-textbook.js',import.meta.url),'utf8'),lesson=fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8');const activeTextbookVersion=code.match(/revised-textbook\.js\?v=([^'"]+)/)[1];assert(index.includes('&book='+activeTextbookVersion));assert(shared.includes(".includes(unit)?'"+version+"'"));assert(lesson.includes('reviewed-question-criteria.js?v='+version));
  for(const unit of units)assert(code.split('\n').find(l=>l.startsWith(" '"+unit+"':")).includes('reviewed-question-criteria.js?v='+version));
 });
