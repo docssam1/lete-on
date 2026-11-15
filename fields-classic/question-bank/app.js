@@ -3790,7 +3790,8 @@ function initControls() {
     const back = document.createElement("a");
     back.className = "back-link student-back";
     back.href = studentBack || $("startLink").href;
-    back.textContent = studentBack ? "← 번호 고르기로" : "← 처음 화면";
+    // 돌아갈 곳에 맞춘 이름(입학 모의고사·진단 화면에서 온 유사문제도 이 단추로 돌아간다)
+    back.textContent = !studentBack ? "← 처음 화면" : studentBack.startsWith("./entrance.html") ? "← 입학 모의고사" : studentBack.startsWith("./result-diagnosis.html") ? "← 진단 결과" : "← 번호 고르기로";
     document.querySelector(".header-links").prepend(back);
     // 머리줄의 작은 글은 선생님용 안내(「… 맞춤 학습지를 만듭니다」)라 학생 화면에서는 학생이 할 일로 바꾼다
     const lead = document.querySelector(".app-header .brand-block span");
@@ -3925,6 +3926,9 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
   }
   renderTypeTree();
   updateSummary();
+  // 학생 풀이 화면으로 바로(입학 모의고사 유사문제, 원장 2026-11-15): as=student&build=1이면 고른 유형으로 곧장 학습지를 만든다.
+  // 아래 시작 화면 주소 처리까지 끝난 뒤에 만든다.
+  if (asStudent && params.get("build") === "1" && state.selected.type.size) setTimeout(() => buildQuestions(), 0);
 })();
 
 // 시작 화면(start.html)에서 넘어오는 주소. 고를 것을 미리 골라 두어 학생·선생님이 긴 목록을 헤매지 않게 한다.

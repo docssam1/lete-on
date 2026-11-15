@@ -180,13 +180,21 @@ export function analyzeExamResults(exam, responses = {}) {
   };
 }
 
-export function remediationUrl(typeIds, student = "DEMO", count) {
+// options.asStudent — 학생이 바로 한 문제씩 푸는 화면(문제은행 학생 화면 as=student&build=1, 원장 2026-11-15 「학생 풀이 화면으로」).
+//   title: 학습지 머리 글, back: 「돌아가기」 주소. 없으면 예전처럼 원장 쪽 편집 화면(유형이 미리 체크된 1단계).
+export function remediationUrl(typeIds, student = "DEMO", count, options = {}) {
   const uniqueTypeIds = [...new Set(typeIds)].filter((id) => typeById(id));
   const params = new URLSearchParams({ student, mode: "type", types: uniqueTypeIds.join(",") });
   const targetCount = Number.isFinite(Number(count))
     ? Math.max(1, Math.min(50, Number(count)))
     : Math.max(10, Math.min(30, uniqueTypeIds.length * 5));
   params.set("count", String(targetCount));
+  if (options.asStudent) {
+    params.set("as", "student");
+    params.set("build", "1");
+    if (options.title) params.set("title", options.title);
+    if (options.back) params.set("back", options.back);
+  }
   return `./index.html?${params.toString()}`;
 }
 

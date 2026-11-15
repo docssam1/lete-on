@@ -6,11 +6,15 @@ import {
   remediationUrl,
   resultStorageKey,
   stageLabelForExam
-} from "./result-diagnosis-data.js?v=20261111g";
+} from "./result-diagnosis-data.js?v=20261115a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
+// 입학 모의고사(entrance.html)에서 학생이 들어오면 as=student — 유사문제를 학생 풀이 화면으로 연다(원장 2026-11-15)
+const asStudent = params.get("as") === "student";
+// 화면 글에 회사·상품 이름(더 클래식)을 쓰지 않는다
+const plain = (label) => String(label ?? "").replace(/더\s*클래식\s*/gu, "");
 const initialExam = RESULT_EXAM_BY_ID.get(params.get("exam")) || RESULT_EXAM_GROUPS[0].exams[0];
 let activeGroupId = RESULT_EXAM_GROUPS.find((group) => group.exams.some((exam) => exam.id === initialExam.id))?.id || RESULT_EXAM_GROUPS[0].id;
 let exam = RESULT_EXAM_BY_ID.get(initialExam.id);
@@ -21,6 +25,7 @@ $("studentName").textContent = `${student} 학생`;
 $("printStudent").textContent = `${student} 학생`;
 $("printWatermark").innerHTML = Array.from({ length: 6 }, () => `<span>${student} 학생 · GFIELD</span>`).join("");
 $("backToBank").href = `./index.html?student=${encodeURIComponent(student)}`;
+if (asStudent) { $("backToBank").href = `./entrance.html?student=${encodeURIComponent(student)}`; $("backToBank").textContent = "입학 모의고사"; }
 $("groupSelect").innerHTML = RESULT_EXAM_GROUPS.map((group) => `<option value="${group.id}">${group.label} · ${group.exams.length}종</option>`).join("");
 $("groupSelect").value = activeGroupId;
 
@@ -58,7 +63,7 @@ function setExam(nextExam) {
 
 function renderExamOptions() {
   const group = groupById(activeGroupId);
-  $("examSelect").innerHTML = group.exams.map((item) => `<option value="${item.id}">${item.label} · ${item.questions.length}문항</option>`).join("");
+  $("examSelect").innerHTML = group.exams.map((item) => `<option value="${item.id}">${plain(item.label)} · ${item.questions.length}문항</option>`).join("");
   if (!group.exams.some((item) => item.id === exam.id)) exam = RESULT_EXAM_BY_ID.get(group.exams[0].id);
   $("examSelect").value = exam.id;
 }
@@ -86,7 +91,7 @@ function textbookSummary(references) {
 function renderDiagnosis(analysis) {
   $("diagnosisPanel").hidden = !diagnosisOpen;
   if (!diagnosisOpen) return;
-  $("diagnosisTitle").textContent = `${exam.label} · ${analysis.correct}/${analysis.total}문항`;
+  $("diagnosisTitle").textContent = `${plain(exam.label)} · ${analysis.correct}/${analysis.total}문항`;
   $("diagnosisMessage").textContent = analysis.wrong
     ? `오답 ${analysis.wrong}문항을 ${analysis.weakTypes.length}개 세부 유형으로 정리했습니다.`
     : "오답이 없습니다. 다음 시험이나 더 높은 난이도로 이어가세요.";
@@ -113,7 +118,8 @@ function selectedWeakTypeIds() {
 function updateRemediationLink() {
   const typeIds = selectedWeakTypeIds();
   const link = $("remediationLink");
-  link.href = typeIds.length ? remediationUrl(typeIds, student, Number($("remediationCount").value)) : "#";
+  link.href = typeIds.length ? remediationUrl(typeIds, student, Number($("remediationCount").value),
+    asStudent ? { asStudent: true, title: `${plain(exam.label)} · 약점 유사문제`, back: `./result-diagnosis.html?${new URLSearchParams({ exam: exam.id, student, as: "student" })}` } : {}) : "#";
   link.classList.toggle("is-disabled", !typeIds.length);
   link.setAttribute("aria-disabled", String(!typeIds.length));
 }
@@ -122,7 +128,7 @@ function render() {
   renderExamOptions();
   const analysis = analyzeExamResults(exam, responses);
   $("examStage").textContent = `${exam.resultGroupLabel || groupById(activeGroupId).label} · ${stageLabelForExam(exam)}`;
-  $("examTitle").textContent = exam.label;
+  $("examTitle").textContent = plain(exam.label);
   $("answeredCount").textContent = `${analysis.answered} / ${analysis.total}`;
   $("correctCount").textContent = String(analysis.correct);
   $("wrongCount").textContent = String(analysis.wrong);
