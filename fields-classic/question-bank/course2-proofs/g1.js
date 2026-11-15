@@ -403,6 +403,6 @@ const tilted = {
   },
 };
 
-export const G1_PROOFS = [triSum, isosceles, regular, exterior, clock, midSquare, twoCircles, tilted];
+export const PROOFS = [triSum, isosceles, regular, exterior, clock, midSquare, twoCircles, tilted];
 // 쓰지 않는 도구를 지우지 않게(다른 권 논증에서 쓴다)
 void sub; void mul; void dist;

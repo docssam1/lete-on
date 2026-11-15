@@ -57,3 +57,7 @@ body.is-embed .pr-main { grid-template-columns: 1fr; padding: 8px; }
   .pf-say { font-size: 15.5px; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+.pr-books { display: flex; gap: 4px; flex-wrap: wrap; }
+.pr-books a { padding: 6px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); text-decoration: none; font-weight: 700; font-size: 13px; }
+.pr-books a[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+@media (max-width: 980px) { .pr-books { flex: none; flex-wrap: nowrap; } }
