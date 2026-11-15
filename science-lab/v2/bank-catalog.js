@@ -1,4 +1,4 @@
-import { revisedTextbookUnits } from './revised-textbook.js?v=20261105-workbook-answer-language&unitImports=20261116-lazy-unit-imports';
+import { revisedTextbookUnits } from './revised-textbook.js?v=20261105-workbook-answer-language&unitImports=20261116-lazy-unit-imports&railNotes=20261116-upper-notes';
 import { SEMS_2022, bankFor2022, assessmentsFor2022 } from './curriculum-2022.js?v=20261104-career-class';
 import { groupLabel } from './source-presentation.js';
 

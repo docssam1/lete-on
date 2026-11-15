@@ -8505,6 +8505,204 @@ const review={
      "value": "처음 생각과 확인한 근거"
     }
    ]
+  },
+  {
+   "previous": {
+    "section": "함께 생각하기 7",
+    "title": "별자리 이름보다 위치를 보아요",
+    "blocks": [
+     {
+      "type": "example",
+      "question": "두 계절 화면의 별 점 개수가 달라요. 공전 속도가 바뀌었다는 근거일까요?",
+      "steps": [
+       [
+        "가시성 조건",
+        "달 밝기·대기 표시·확대율 등도 살펴요."
+       ],
+       [
+        "같은 대상 찾기",
+        "이름표 숫자 대신 같은 별무리의 배열과 위치를 비교해요."
+       ],
+       [
+        "설명 범위",
+        "점 개수 하나로 공전 중단이나 속도 변화를 결정하지 않아요."
+       ]
+      ],
+      "answer": "비교 조건과 별무리 위치를 근거로 공전과 밤의 시선 관계를 설명해요."
+     },
+     {
+      "type": "field",
+      "title": "내 말로 다시 설명하기",
+      "hint": "조건은 맞췄지만 실제 위치 기록이 빠진 자료에 무엇을 보완할까요?",
+      "lines": 6,
+      "draw": false
+     }
+    ],
+    "rail": [
+     {
+      "title": "핵심 정리",
+      "text": "별자리 명칭보다 관측 조건과 같은 별무리의 위치를 살펴요."
+     },
+     {
+      "title": "더 알아보기",
+      "text": "현대 천문학의 별자리 88개는 하늘 전체를 빠짐없이 구분한 영역이에요."
+     },
+     {
+      "title": "내가 정리할 것",
+      "text": "이름을 몰라도 같은 별무리를 찾을 방법을 써요.",
+      "write": 5
+     }
+    ],
+    "kind": "worked",
+    "lead": "",
+    "layout": "earth-motion-workbook"
+   },
+   "questions": [],
+   "fields": [
+    {
+     "path": [
+      "blocks",
+      0,
+      "steps",
+      0,
+      0
+     ],
+     "previous": "가시성 조건",
+     "value": "별이 보이는 조건"
+    }
+   ]
+  },
+  {
+   "previous": {
+    "section": "근거로 설명하고 고치기 · 113~114",
+    "title": "하루 위치 변화의 원인",
+    "blocks": [
+     {
+      "type": "questions",
+      "ids": [
+       "c22-s61-u04-w113",
+       "c22-s61-u04-w114"
+      ]
+     }
+    ],
+    "rail": [
+     {
+      "title": "핵심 정리",
+      "text": "자료의 시간 범위와 현상을 읽고 원인을 연결해요."
+     },
+     {
+      "title": "더 알아보기",
+      "text": "일주 운동은 한 시간에 대략 15도이지만 이 단원에서는 각도 계산을 필수로 하지 않아요."
+     },
+     {
+      "title": "내가 정리할 것",
+      "text": "하루 동안 달라진 모습을 비교했나요, 계절이 달라졌을 때를 비교했나요? 그 차이를 설명하는 지구 운동의 이름을 확인해요.",
+      "write": 5
+     }
+    ],
+    "kind": "practice",
+    "lead": "",
+    "layout": "earth-motion-workbook"
+   },
+   "questions": [
+    {
+     "id": "c22-s61-u04-w113",
+     "no": 113,
+     "section": 8,
+     "sectionTitle": "근거로 설명하고 고치기",
+     "bookResponseForm": "single",
+     "form": "choice",
+     "type": "T01",
+     "topic": "근거로 설명하고 고치기",
+     "prompt": "관찰과 원인 설명이 알맞게 이어진 것을 고르세요.",
+     "answer": "⑤ 같은 날 남쪽 태양의 위치 변화 → 지구 자전과 연결",
+     "explanation": "자료의 시간 범위와 현상을 읽고 원인을 연결해요. 하루 변화·계절 차이·같은 순간 지역 차이는 서로 다른 조건을 포함해요.",
+     "misconception": "관측 조건·보인 사실·모형으로 설명한 원인을 구별해요.",
+     "origin": "independently-authored-current-curriculum",
+     "status": "authored",
+     "standard": "6과12-02",
+     "sourceRef": {
+      "type": "authored",
+      "curriculum": "2022 개정",
+      "course": "6-1",
+      "unit": "Ⅳ. 지구의 운동",
+      "originalExam": false
+     },
+     "evidence": {
+      "actualStudentObservation": false,
+      "actualPlanetariumCalculation": false,
+      "dataKind": "authored-practice-or-specified-model"
+     },
+     "choices": [
+      "같은 날 남쪽 태양의 위치 변화 → 공전 주기를 하루로 확정",
+      "계절별 같은 시각 별무리 차이 → 자전 방향이 반대로 바뀜",
+      "광원을 향한 면과 반대 면의 차이 → 달이 매일 빛을 가림",
+      "같은 별무리의 한 시간 위치 차이 → 별자리 모양이 매번 재생성됨",
+      "같은 날 남쪽 태양의 위치 변화 → 지구 자전과 연결"
+     ],
+     "key": 4,
+     "responseContract": {
+      "kind": "single-choice",
+      "answer": 4
+     },
+     "formLabel": "객관식",
+     "criteria": "선택할 문장: 같은 날 남쪽 태양의 위치 변화 → 지구 자전과 연결 발문에서 정한 관점·조건을 유지한 선택인지 확인한다."
+    },
+    {
+     "id": "c22-s61-u04-w114",
+     "no": 114,
+     "section": 8,
+     "sectionTitle": "근거로 설명하고 고치기",
+     "bookResponseForm": "single",
+     "form": "choice",
+     "type": "T13",
+     "topic": "근거로 설명하고 고치기",
+     "prompt": "친구의 설명 카드에 “지구가 돌아서 다르다”만 적혀 있습니다. 근거를 가장 잘 보완한 문장을 고르세요.",
+     "answer": "① 같은 장소·시각의 두 계절 별무리 차이를 태양 둘레 공전과 연결한다.",
+     "explanation": "무엇을 비교했고 어느 위치가 달라졌는지와 자전·공전 중 어느 운동으로 설명하는지를 말해야 해요. 단순히 지구가 돈다고만 쓰면 두 운동을 구별할 수 없어요.",
+     "misconception": "관측 조건·보인 사실·모형으로 설명한 원인을 구별해요.",
+     "origin": "independently-authored-current-curriculum",
+     "status": "authored",
+     "standard": "6과12-03",
+     "sourceRef": {
+      "type": "authored",
+      "curriculum": "2022 개정",
+      "course": "6-1",
+      "unit": "Ⅳ. 지구의 운동",
+      "originalExam": false
+     },
+     "evidence": {
+      "actualStudentObservation": false,
+      "actualPlanetariumCalculation": false,
+      "dataKind": "authored-practice-or-specified-model"
+     },
+     "choices": [
+      "같은 장소·시각의 두 계절 별무리 차이를 태양 둘레 공전과 연결한다.",
+      "두 날짜 모두 밤 9시이므로 별무리 차이는 공전과 무관하다고 한다.",
+      "축 중심 회전과 태양 둘레 이동을 모두 하루 운동으로 합친다.",
+      "다른 방향의 별무리도 남쪽 하늘과 같은 조건으로 비교했다고 쓴다.",
+      "공전 위치만 바꾼 카드 모형으로 실제 지구 자전을 측정했다고 쓴다."
+     ],
+     "key": 0,
+     "responseContract": {
+      "kind": "single-choice",
+      "answer": 0
+     },
+     "formLabel": "객관식",
+     "criteria": "선택할 문장: 같은 장소·시각의 두 계절 별무리 차이를 태양 둘레 공전과 연결한다. 발문에서 정한 관점·조건을 유지한 선택인지 확인한다."
+    }
+   ],
+   "fields": [
+    {
+     "path": [
+      "rail",
+      1,
+      "text"
+     ],
+     "previous": "일주 운동은 한 시간에 대략 15도이지만 이 단원에서는 각도 계산을 필수로 하지 않아요.",
+     "value": "지구는 약 24시간 동안 한 바퀴인 360°를 자전하므로 한 시간에 약 15°를 돌아요. 별의 일주 운동을 더 자세히 나타낼 때 이 자전 각도를 이용해요."
+    }
+   ]
   }
  ]
 };

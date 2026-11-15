@@ -2,12 +2,12 @@ import{earthMotionContextItems}from'../data/book/earth-motion-workbook-context.j
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
 import{earthMotionPairCurrentItems}from'./earth-motion-pair-language.js?v=20261108-earth-motion-pair-language';
 import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261115-grade6-question-review';
-import{workbook as currentWorkbook}from'../data/book/c22-s61-u04.workbook.js?v=20261116-earth-motion-workbook-context';
+import{workbook as currentWorkbook}from'../data/book/c22-s61-u04.workbook.js?v=20261116-earth-motion-workbook-context&railNotes=20261116-upper-notes';
 import{earthMotionReadableCurrentItems}from'../data/book/c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook';
 import{observationCurrentItems}from'../data/book/observation-language.js';
 import{bankBook}from'../data/book/c22-s61-u04.bank-book.js';
 import{items}from'../data/units/c22-s61-u04.js';
-import{observationPriorWorkbook as workbook}from'../data/book/c22-s61-u04.workbook.js?v=20261116-earth-motion-workbook-context';
+import{observationPriorWorkbook as workbook}from'../data/book/c22-s61-u04.workbook.js?v=20261116-earth-motion-workbook-context&railNotes=20261116-upper-notes';
 import{earthMotionCurrentItems,EARTH_MOTION_CHANGED_NUMBERS}from'./earth-motion-question-language.js?v=20261104-earth-motion-questions';
 import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261108-learning-note-roles';
 const clone=x=>JSON.parse(JSON.stringify(x));

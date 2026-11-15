@@ -1,4 +1,4 @@
-import{withEnergyContextWorkbook}from'./energy-workbook-context.js?v=20261116-energy-workbook-context';
+import{withEnergyContextWorkbook}from'./energy-workbook-context.js?v=20261116-energy-workbook-context&railNotes=20261116-upper-notes';
 import{withGrade5ReviewedWorkbook}from'./grade5-question-review.js?v=20261115-grade5-question-review';
 import{withReviewedWorkbookCriteria}from'./reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';

@@ -1,4 +1,4 @@
-import{withEarthMotionContextWorkbook}from'./earth-motion-workbook-context.js?v=20261116-earth-motion-workbook-context';
+import{withEarthMotionContextWorkbook}from'./earth-motion-workbook-context.js?v=20261116-earth-motion-workbook-context&railNotes=20261116-upper-notes';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withEarthMotionReadableWorkbook}from'./c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook';
