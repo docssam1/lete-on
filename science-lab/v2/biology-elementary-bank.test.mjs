@@ -1,6 +1,7 @@
+import{BIOLOGY_EXAMPLE_VERSION}from'../data/book/biology-example-card.js';
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
-const beforeGrade4=q=>q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;
+const beforeGrade4=item=>{const q=item.contentVersion===BIOLOGY_EXAMPLE_VERSION?questionAtVersion(item,item.previousVersions.at(-1).version):item;return q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
 import{BIOLOGY_PEER_OPINIONS_VERSION,BIOLOGY_ELEMENTARY_BANK_VERSION as peerPriorVersion}from'../data/book/s41-u04.editorial.js';
 import{BIOLOGY_OBSERVATION_CHOICE_VERSION}from'../data/book/standalone-question-context.js';
 import{BIOLOGY_OBSERVATION_PHOTO_VERSION}from'../data/book/biology-observation-photos.js';

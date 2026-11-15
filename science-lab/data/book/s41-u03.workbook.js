@@ -1,3 +1,4 @@
+import{withGrade4WorkbookDirections}from'./grade4-workbook-directions.js?v=20261115-grade4-workbook-directions';
 import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withVolcanoReferenceWorkbook}from'./volcano-reference-context.js?v=20261115-volcano-reference-context';
 import{withLandObservationWorkbook}from'./land-observation-context.js?v=20261115-land-observation-context';
@@ -7464,4 +7465,5 @@ export const landObservationPriorWorkbook=withGrade4StudyNotes(landStudyNotesPri
 export const volcanoReferencePriorWorkbook=withLandObservationWorkbook(landObservationPriorWorkbook);
 export const materialReadingPriorWorkbook=withVolcanoReferenceWorkbook(volcanoReferencePriorWorkbook);
 
-export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const contextDirectionsPriorWorkbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const workbook=withGrade4WorkbookDirections(contextDirectionsPriorWorkbook);

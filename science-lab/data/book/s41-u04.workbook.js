@@ -1,3 +1,5 @@
+import{withBiologyExampleWorkbook}from'./biology-example-card.js?v=20261115-biology-example-card';
+import{withGrade4WorkbookDirections}from'./grade4-workbook-directions.js?v=20261115-grade4-workbook-directions';
 import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withGrade4ReviewedWorkbook}from'./grade4-question-review.js?v=20261115-grade4-question-review';
 import{withBiologyOpinionWorkbook}from'./s41-u04.editorial.js?v=20261115-biology-peer-opinions';
@@ -7335,4 +7337,6 @@ export const grade4ReviewPriorWorkbook=withBiologyOpinionWorkbook(biologyOpinion
 
 export const materialReadingPriorWorkbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
 
-export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const contextDirectionsPriorWorkbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const biologyExamplePriorWorkbook=withGrade4WorkbookDirections(contextDirectionsPriorWorkbook);
+export const workbook=withBiologyExampleWorkbook(biologyExamplePriorWorkbook);

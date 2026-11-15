@@ -44,7 +44,7 @@ test('biology repeated classroom and daily pool share current objects with their
  assert.equal(linked,10);
  const q=current.find(q=>q.id==='s41-u04-b41');assert.equal(q.answerContract.answer,0);assert.equal(q.choices[0],'항생제 개발에 그 물질의 성질을 연구한다.');assert(q.explanation.includes('첫째 보기'));
 });
-import{workbook,biologyReadablePriorWorkbook}from'../data/book/s41-u04.workbook.js';
+import{contextDirectionsPriorWorkbook as workbook,biologyReadablePriorWorkbook}from'../data/book/s41-u04.workbook.js';
 import{art,biologyReadablePriorArt}from'../data/book/s41-u04.workbook-art.js';
 import{revisedTextbookPaper}from'./revised-textbook.js';
 test('current yeast blank and all answer presentations agree while the earlier question and quick table survive',async()=>{

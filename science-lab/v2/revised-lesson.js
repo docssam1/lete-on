@@ -3,7 +3,7 @@ import{withRepresentationClassroom}from'../data/book/representation-question-rev
 import{withMaterialReadingClassroom}from'../data/book/material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withGrade6QuestionReviewClassroom}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
 import{withGrade5QuestionReviewClassroom}from'../data/book/grade5-question-review.js?v=20261115-grade5-question-review';
-import{withGrade4QuestionReviewClassroom}from'../data/book/grade4-question-review.js?v=20261115-grade4-question-review';
+import{withGrade4QuestionReviewClassroom}from'../data/book/grade4-question-review.js?v=20261115-grade4-question-review&biology=20261115-biology-example-card';
 import{withReviewedCriteriaClassroom}from'../data/book/reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withLinkedWorkbookAnswersClassroom}from'../data/book/linked-workbook-answers.js?v=20261115-linked-workbook-answers';
 import{withWeatherDrawingCriteriaClassroom}from'../data/book/c22-s52-u03.editorial.js?v=20261115-drawing-answer-criteria';
@@ -55,7 +55,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261115-infection-workbook-directions&soundDirections=20261115-sound-workbook-directions';
+import {revisedTextbook} from './revised-textbook.js?v=20261115-grade4-workbook-directions&soundDirections=20261115-sound-workbook-directions';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';

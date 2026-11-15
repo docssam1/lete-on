@@ -1,3 +1,4 @@
+import{withBiologyExampleArt}from'./biology-example-card.js?v=20261115-biology-example-card';
 import{withBiologyObservationArt,withBiologyReferenceArt,withBiologyComparisonArt}from'./biology-observation-photos.js?v=20261115-biology-comparison-photos';
 // 검수한 다양한 생물 교재에 실제 사용하는 그림만 분리한다. 원래 수업과 기록은 그대로 둔다.
 export const biologyReadablePriorArt={
@@ -23,4 +24,5 @@ export const biologyReadablePriorArt={
 import{biologyReadableFigures}from'./s41-u04.editorial.js?v=20261106-biology-readable-workbook';
 export const biologyComparisonPriorArt=withBiologyReferenceArt(withBiologyObservationArt(biologyReadableFigures(biologyReadablePriorArt)));
 
-export const art=withBiologyComparisonArt(biologyComparisonPriorArt);
+export const biologyExamplePriorArt=withBiologyComparisonArt(biologyComparisonPriorArt);
+export const art=withBiologyExampleArt(biologyExamplePriorArt);

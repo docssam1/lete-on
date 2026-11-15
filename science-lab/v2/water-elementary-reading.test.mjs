@@ -3,7 +3,7 @@ import {withGrade4StudyNotes} from '../data/book/grade4-study-notes.js';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-import {workbook,waterElementaryPriorWorkbook as prior} from '../data/book/s41-u02.workbook.js';
+import {contextDirectionsPriorWorkbook as workbook,waterElementaryPriorWorkbook as prior} from '../data/book/s41-u02.workbook.js';
 import {waterElementaryCurrentItems,WATER_ELEMENTARY_VERSION} from '../data/book/s41-u02.elementary.js';
 import {withThink} from './think-merge.js';
 import {revisedClassroom} from './revised-lesson.js';
