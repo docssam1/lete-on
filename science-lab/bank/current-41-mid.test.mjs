@@ -13,5 +13,5 @@ test('74창작 발문·여섯기준·설계/실제시험과 독립짝 형식을 
 });
 test('원전사2·그림맵1·그림14 동결과 네인쇄모드의124객체/키분리를 확인한다',()=>{
  const f=read('source-freeze-20261018.json');assert.equal(f.fileCount,17);for(const[p,h]of Object.entries(f.sha256))assert.equal(createHash('sha256').update(readFileSync(new URL('./work/s41mid/'+p,import.meta.url))).digest('hex'),h);assert.equal(new Set(source.map(q=>q.figure).filter(Boolean)).size,14);for(const mode of['student','teacher','answers','quick']){const h=bankPaper({unit,items,source,similar,mode});assert.equal((h.match(/data-paper-item=/g)||[]).length,124);assert(!h.includes('[object Object]'));assert(h.includes('원문 세트1의15번'));if(mode==='student')assert(!h.includes('class="mid-key"'));if(mode==='teacher'||mode==='answers'){assert.equal((h.match(/class="mid-key"/g)||[]).length,124);assert(h.includes('인쇄된 공식 답 참고'));}}
- const h=curriculumBankHtml(BANK);assert(h.includes('data-assessment="c22-s41-mid"'));assert(h.includes('#/c22-s41-mid/print/student'));assert(h.includes('보충 24'));assert(h.includes('원문1개 자동 채점 보류'));
+ const h=curriculumBankHtml(BANK);assert(h.includes('data-assessment="c22-s41-mid"'));assert(h.includes('#/c22-s41-mid/print/student'));assert(h.includes('연습 문제 24개'));assert(h.includes('선생님과 확인할 원문 문제 1개'));
 });

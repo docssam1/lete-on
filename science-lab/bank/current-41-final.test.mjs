@@ -15,5 +15,5 @@ test('조건·미확인·실제 수행 구별과 답 위치·출처 구분을 �
 });
 test('네 인쇄 모드의104객체/번호는 같고 학생용에서 정답·해설을 노출하지 않는다',()=>{
  for(const mode of['student','teacher','answers','quick']){const h=bankPaper({unit,items,mode});assert.equal((h.match(/data-paper-item=/g)||[]).length,104);assert(!h.includes('[object Object]'));assert(h.includes('기말 원문 시험지는 확인한 원자료 위치에 없어 준비 중'));assert.equal((h.match(/class="f41-key"/g)||[]).length,['teacher','answers'].includes(mode)?104:0);assert(h.includes('학교별 공식 시험 범위'));}
- const h=curriculumBankHtml(BANK);assert(h.includes('data-assessment="c22-s41-fin"'));assert(h.includes('전체104문항집'));assert(h.includes('창작 104문항'));
+ const h=curriculumBankHtml(BANK);assert(h.includes('data-assessment="c22-s41-fin"'));assert(h.includes('전체104문항집'));assert(h.includes('연습 문제 104개'));
 });
