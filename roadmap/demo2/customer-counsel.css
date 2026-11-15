@@ -39,6 +39,14 @@
 .customer-counsel .cc-use-previous{display:flex;align-items:center;gap:10px;min-height:44px}
 .cc-use-previous input{width:20px;height:20px;accent-color:#285c49}
 .customer-counsel .cc-references{border-top:1px solid #cfe0da;margin-top:18px}
+.customer-counsel .cc-citation{font:inherit;font-size:13px;min-height:44px;padding:4px 8px;border:0;background:transparent;color:#285c49;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.customer-counsel .cc-preparation>summary{min-height:44px;cursor:pointer;color:#285c49;font-size:14px;font-weight:650}
+.customer-counsel .cc-preparation label+label{margin-top:14px}
+.customer-counsel .cc-followup{display:grid;gap:14px;margin:24px 0;padding:18px;border:1px solid #cfe0da;border-radius:8px;background:#f4f8f6}
+.customer-counsel .cc-followup h4,.customer-counsel .cc-followup p{margin:0}
+.customer-counsel .cc-applied{border-left:3px solid #a9c3b7;padding-left:14px;font-size:14px;overflow-wrap:anywhere}
+.customer-counsel .cc-applied p{margin:6px 0}
+.customer-counsel .cc-source-note a{box-sizing:border-box;display:inline-flex;align-items:center;min-height:44px;padding:6px 8px 6px 0}
 .cc-references>summary{padding:12px 2px;cursor:pointer;font-weight:650;color:#285c49}
 .cc-interview-card{margin:15px 0;padding:16px;border:1px solid #cfe0da;border-radius:8px;overflow-wrap:anywhere}
 .cc-interview-card p{margin:6px 0}

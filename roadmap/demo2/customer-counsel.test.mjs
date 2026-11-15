@@ -88,3 +88,15 @@ test('region is masked, bounded and isolated in optional explanation cache',asyn
  assert.doesNotMatch(seen.context.region,/김하늘|010-1234/u);
  assert.ok(seen.guidance.summary);
 });
+test('follow-up book and solo-range fields are masked, bounded and change the explanation cache',async()=>{
+ const service=fake();let count=0,seen;
+ const h=createHandler({service,aiAvailable:true,ask:async input=>{count++;seen=input;return '설명 [1]';}});
+ await h(req('lookup',{completedBooks:'쎈 중3-2',soloRange:'기하 힌트 필요'}));assert.equal(count,0);
+ await h(req('explain',{completedBooks:'쎈 중3-2',soloRange:'기하 힌트 필요'}));
+ await h(req('explain',{completedBooks:'쎈 중3-2',soloRange:'기하 힌트 필요'}));assert.equal(count,1);
+ await h(req('explain',{completedBooks:'쎈 중3-2',soloRange:'기하 혼자 해결'}));assert.equal(count,2);
+ await h(req('explain',{completedBooks:'쎈 중2-2',soloRange:'기하 혼자 해결'}));assert.equal(count,3);
+ await h(req('explain',{completedBooks:'김하늘 010-1234-5678 '+ '가'.repeat(700),soloRange:'김하늘 a@b.com '+ '나'.repeat(700)}));
+ assert.equal(seen.context.completedBooks.length,600);assert.equal(seen.context.soloRange.length,600);
+ assert.doesNotMatch(JSON.stringify(seen),/김하늘|010-1234|a@b.com/u);
+});

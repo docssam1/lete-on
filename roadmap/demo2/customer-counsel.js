@@ -21,11 +21,19 @@
  const progressLabel=el('label',{},'현재 진도와 풀이 모습');
  const progress=el('textarea',{rows:'3',maxlength:'2000',placeholder:'예: 중1-1 개념원리 3단원, 쎈 기본 문제는 혼자 풀고 함수에서 자주 막혀요.'});
  progressLabel.append(progress);
+ const preparation=el('details',{class:'cc-preparation'});
+ preparation.append(el('summary',{},'마친 교재·혼자 풀 수 있는 범위 (선택)'));
+ const booksLabel=el('label',{},'마친 교재와 범위');
+ const completedBooks=el('textarea',{rows:'2',maxlength:'600',placeholder:'예: 쎈 중3-2까지. 심화 문제는 일부 남았어요.'});
+ booksLabel.append(completedBooks);
+ const soloLabel=el('label',{},'도움 없이 혼자 풀 수 있는 범위');
+ const soloRange=el('textarea',{rows:'2',maxlength:'600',placeholder:'예: 식·함수는 혼자 풀고 기하 증명은 힌트가 필요해요.'});
+ soloLabel.append(soloRange);preparation.append(booksLabel,soloLabel);
  const questionLabel=el('label',{},'어떤 점이 궁금하세요?');
  const question=el('textarea',{rows:'3',maxlength:'1000',required:'',placeholder:'예: 선행을 이어가도 될까요? 지금은 어떤 공부를 보완하면 좋을까요?'});
  questionLabel.append(question);
  const submit=el('button',{type:'submit',class:'cc-primary'},'관련 자료 찾아보기');
- form.append(stageLabel,regionLabel,progressLabel,questionLabel,submit);
+ form.append(stageLabel,regionLabel,progressLabel,preparation,questionLabel,submit);
  const previous=el('div',{class:'cc-previous'});
  const includePrevious=el('input',{type:'checkbox'});
  const previousLabel=el('label',{class:'cc-use-previous',hidden:''});
@@ -41,6 +49,7 @@
  dialog.append(header,intro,previous,form,status,result,aiButton,aiHint,moreStatus,detail,contact);
  let busy=false,last=null,opened=false,generation=0;
  let displayedRevision='',previousText='';
+ let showEvidence=()=>{};
  const member=()=>g.RoadmapMember?.user_id;
  function refreshPrevious(){
   previous.replaceChildren();
@@ -53,7 +62,7 @@
   previousLabel.hidden=!saved;
  }
  function context(){
-  const value={question:clean(question.value),progress:clean(progress.value),region:clean(region.value),stage:stage.value};
+  const value={question:clean(question.value),progress:clean(progress.value),region:clean(region.value),completedBooks:clean(completedBooks.value),soloRange:clean(soloRange.value),stage:stage.value};
   if(previousText&&includePrevious.checked){
    value.previous=clean(previousText).slice(0,600);
   }
@@ -66,30 +75,75 @@
   }catch{}
   return '';
  }
- const lock=value=>{busy=value;for(const n of [stage,region,progress,question,includePrevious,submit,aiButton])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
+ const lock=value=>{busy=value;for(const n of [stage,region,progress,completedBooks,soloRange,question,includePrevious,submit,aiButton,...result.querySelectorAll('.cc-followup input,.cc-followup textarea,.cc-followup button')])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
  const messages={login_required:'로그인 후 자료 상담을 이용할 수 있습니다.',question_missing:'궁금한 내용을 조금 더 적어 주세요.',sources_missing:'추가 설명에 참고할 승인 자료를 찾지 못했습니다. 독쌤에게 직접 문의해 주세요.',ai_not_configured:'추가 설명 연결을 준비하고 있습니다. 아래 자료 안내를 먼저 확인해 주세요.',too_many_attempts:'오늘의 추가 설명 사용 횟수를 마쳤습니다. 자료 안내는 계속 이용할 수 있습니다.',ai_unavailable:'추가 설명을 가져오지 못했습니다. 자료 안내는 아래에서 계속 확인할 수 있습니다.'};
  function render(data,c){
   result.replaceChildren();detail.replaceChildren();detail.hidden=true;moreStatus.textContent='';
   const sources=data.sources||[],interviews=el('div',{class:'cc-interviews'});
+  const related=el('details',{class:'cc-references'}),evidence=new Map();
+  showEvidence=i=>{const article=evidence.get(sources[i]?.id);if(!article)return;related.open=true;article.scrollIntoView({block:'nearest'});article.focus({preventScroll:true});};
+  function cited(text,ids=[],className=''){
+   const p=el('p',className?{class:className}:{},text);
+   for(const id of [...new Set(ids)]){
+    const i=sources.findIndex(source=>source.id===id);if(i<0)continue;
+    const link=el('button',{type:'button',class:'cc-citation','aria-label':sources[i].title+' 근거 보기'},'['+(i+1)+'] 근거');
+    link.onclick=()=>showEvidence(i);
+    p.append(doc.createTextNode(' '),link);
+   }
+   return p;
+  }
   const count=g.RoadmapCounselInterview?.render(interviews,c.question,{...c,sources,schoolName:selectedSchool()})||0;
   result.append(el('h3',{id:'ccSummaryTitle'},count?'학교별 면접·기출 자료':'먼저 이렇게 살펴보세요'));
   if(count)result.append(interviews);
   if(sources.length||!count){
-   if(data.summary)result.append(el('p',{class:'cc-summary'},data.summary));
-   if(data.explanation)result.append(el('p',{},data.explanation));
+   if(data.paragraphs?.length){
+    for(const [i,p]of data.paragraphs.entries())result.append(cited(p.text,p.sourceIds,i===0?'cc-summary':''));
+   }else{
+    if(data.summary)result.append(cited(data.summary,sources.slice(0,1).map(r=>r.id),'cc-summary'));
+    if(data.explanation)result.append(cited(data.explanation,sources.map(r=>r.id)));
+   }
+  }
+  if(!count&&(c.completedBooks||c.soloRange)){
+   const applied=el('div',{class:'cc-applied'});
+   applied.append(el('p',{},'이번 안내에 함께 반영했어요.'));
+   if(c.completedBooks)applied.append(el('p',{},'마친 교재 · '+c.completedBooks));
+   if(c.soloRange)applied.append(el('p',{},'독립 풀이 범위 · '+c.soloRange));
+   result.append(applied);
+  }
+  if(!count&&data.followup?.fields?.length){
+   const follow=el('form',{class:'cc-followup'}),answers=new Map();
+   follow.append(el('h4',{},'시작할 과정을 더 좁혀볼까요?'),el('p',{},data.followup.message));
+   for(const field of data.followup.fields){
+    if(!['completedBooks','soloRange'].includes(field.key))continue;
+    const label=el('label',{},field.label),input=el('textarea',{rows:'2',maxlength:'600',required:'',placeholder:field.placeholder||''});
+    input.oninput=()=>input.setCustomValidity('');
+    label.append(input);follow.append(label);answers.set(field.key,input);
+   }
+   const areaLabel=el('label',{},'통학 가능한 동네·지점 (선택)');
+   const area=el('input',{type:'text',maxlength:'120',placeholder:'예: 부산 사직까지 다닐 수 있어요.'});
+   areaLabel.append(area);follow.append(areaLabel,el('button',{type:'submit',class:'cc-primary'},'답변 반영해 다시 안내받기'));
+   follow.onsubmit=event=>{
+    event.preventDefault();if(busy)return;
+    for(const input of answers.values())input.setCustomValidity(input.value.trim()?'':'교재나 풀이 범위를 적어 주세요.');
+    if(!follow.reportValidity())return;
+    if(answers.has('completedBooks'))completedBooks.value=clean(answers.get('completedBooks').value).trim();
+    if(answers.has('soloRange'))soloRange.value=clean(answers.get('soloRange').value).trim();
+    if(area.value.trim())region.value=clean(area.value).trim();
+    lookup();
+   };
+   result.append(follow);
   }
   const plan=el('div',{class:'cc-plan'});
   result.append(plan);
   if(!count&&sources.length)g.RoadmapCounselPlan?.mount(plan,{...c,sources});
   if(sources.length){
-   const related=el('details',{class:'cc-references'});
    related.append(el('summary',{},'상담 근거 자료 '+sources.length+'건 보기'));
    for(const [i,r]of sources.entries()){
-    const item=el('article',{class:'cc-source'});
+    const item=el('article',{class:'cc-source',tabindex:'-1'});evidence.set(r.id,item);
     item.append(el('h4',{},(i+1)+'. '+r.title),el('p',{},r.body));
     const source=el('p',{class:'cc-source-note'},[r.source||'원장님 승인 자료',r.checked_on?'자료 확인 '+r.checked_on:''].filter(Boolean).join(' · '));
-    const url=(r.source||'').match(/https:\/\/[^\s]+/);
-    if(url)source.append(doc.createTextNode(' '),el('a',{href:url[0],target:'_blank',rel:'noopener noreferrer'},'출처 열기'));
+    const urls=[...new Set((r.source||'').match(/https:\/\/[^\s<>"'()[\]{}]+/g)||[])];
+    for(const [j,url]of urls.entries())source.append(doc.createTextNode(' '),el('a',{href:url,target:'_blank',rel:'noopener noreferrer'},urls.length===1?'원문 열기':'원문 '+(j+1)+' 열기'));
     item.append(source);related.append(item);
    }
    result.append(related);
@@ -128,7 +182,15 @@
    detail.replaceChildren();
    for(const text of String(data.detail||'').split(/\n+/).filter(Boolean)){
     const heading=text.trim().match(/^\*\*([^*]+)\*\*$/);
-    detail.append(el(heading?'h4':'p',{},heading?heading[1]:text));
+    const paragraph=el(heading?'h4':'p');
+    for(const part of (heading?heading[1]:text).split(/(\[\d+\])/g)){
+     const i=part.match(/^\[(\d+)\]$/)?.[1];
+     if(i&&data.sources[Number(i)-1]){
+      const cite=el('button',{type:'button',class:'cc-citation','aria-label':data.sources[Number(i)-1].title+' 근거 보기'},part+' 근거');
+      cite.onclick=()=>showEvidence(Number(i)-1);paragraph.append(cite);
+     }else paragraph.append(doc.createTextNode(part));
+    }
+    detail.append(paragraph);
    }
    detail.hidden=false;moreStatus.textContent=data.reused?'앞서 정리한 설명을 다시 보여드립니다.':'현재 진도에 맞춘 추가 설명입니다. 자료의 출처와 함께 확인해 주세요.';
   }catch(e){if(request===generation&&owner===member())moreStatus.textContent=messages[e.message]||'추가 설명을 가져오지 못했습니다. 자료 안내를 확인해 주세요.';}
