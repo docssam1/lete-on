@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "incomplete-sixteen-original-diagnoses-repaired",
+  "status": "incomplete-forty-nine-original-diagnoses-repaired",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -68,12 +68,8 @@
       "requirement": "Original-question misconception diagnosis",
       "status": "incomplete",
       "cliExitCode": 1,
-      "missingInActualRuntime": 185,
+      "missingInActualRuntime": 152,
       "units": [
-        {
-          "unit": "c22-s61-u04",
-          "missing": 33
-        },
         {
           "unit": "c22-s62-u01",
           "missing": 60
@@ -87,12 +83,13 @@
           "missing": 49
         }
       ],
-      "evidence": "Five geology originals and eleven mixture originals now have versioned rules for62wrong choices.20of the initial221rows explicitly require teacher review;185automatic-source diagnoses remain missing. The whole required CLI still exits1. Registered source text, keys and figures remain unchanged.",
+      "evidence": "Five geology, eleven mixture and33earth-motion automatic originals now have versioned review rules:143wrong-choice links and12typed concept rules.20of the initial221rows require explicit teacher review;152automatic-source diagnoses remain missing. The required whole CLI still exits1. Registered source text, keys and figures remain unchanged.",
       "initialAbsentRules": 221,
       "explicitTeacherReviewCasesAmongInitialRows": 20,
       "automaticQuestionsOriginallyNeedingDiagnosis": 201,
-      "automaticQuestionsConnected": 16,
-      "wrongChoiceLinksAdded": 62
+      "automaticQuestionsConnected": 49,
+      "wrongChoiceLinksAdded": 143,
+      "typedConceptRulesAdded": 12
     },
     {
       "requirement": "Referenced images exist and current source images are reviewed",
@@ -116,7 +113,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "475 native344files/1682tests/1680pass/2browser skip. Eleven mixture revisions add22full snapshots, preserving registered versions and proven legacy unversioned attempts; the earlier five geology revisions remain identical."
+      "evidence": "476 native345files/1687tests/1685pass/2browser skip. Thirty-three earth-motion revisions add66full snapshots, preserving registered versions and proven legacy unversioned attempts; all sixteen prior geology/mixture revisions remain identical. Full snapshot total3436plus2legacy deltas."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -153,27 +150,27 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstUnit": "c22-s61-u04",
-    "missingAutomaticOriginalDiagnostics": 33,
-    "remainingAcrossFourUnits": 185,
+    "firstUnit": "c22-s62-u01",
+    "missingAutomaticOriginalDiagnostics": 60,
+    "remainingAcrossThreeUnits": 152,
     "requirements": [
-      "Read each original prompt and answer structure before mapping review concepts.",
-      "The existing shared source reviser currently produces choice diagnostics; extend it to explicit typed rules for short-text originals while preserving the sixteen existing revisions.",
-      "Keep reviewed original text, figures and answer keys unchanged.",
+      "Read original prompts, materials and specialized season answer contracts before mapping review concepts.",
+      "Preserve all49existing source revisions and their choice/typed diagnostics.",
+      "Keep reviewed original text, figures, grading and answer keys unchanged.",
       "Preserve registered versions, unversioned attempts and prior diagnoses.",
-      "Validate explicit teacher-review contracts rather than automatically judging held originals.",
-      "Keep the global audit failing until remaining actual links are implemented."
+      "Validate explicit teacher-review contracts and never automatically judge held originals.",
+      "Keep the global audit failing until all actual missing links are implemented."
     ]
   },
-  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json",
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/",
   "productFilesChanged": true,
   "paidApiCalls": 0,
   "cloudWrites": 0,
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "94f3b34a501abad5c28729e8c63553266f78f1a0",
-  "latestPhase": 475,
+  "latestFollowupBaseline": "fc59594e11898cd17e6997be328f63b7974e42e9",
+  "latestPhase": 476,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -209,6 +206,27 @@
     "nativeFail": 0,
     "browserSkip": 2,
     "sourceFiguresViewedAndCpuOcr": 2,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup476": {
+    "automaticEarthSourceRevisions": 33,
+    "choiceQuestions": 21,
+    "wrongChoiceLinks": 81,
+    "typedConceptRules": 12,
+    "typedRulePolicy": "Revisit the question concept for a wrong nonempty answer; no specific false belief inferred from generic wrong text. Correct and blank responses receive no automatic diagnosis.",
+    "fullSnapshotsAdded": 66,
+    "allFullSnapshotsNow": 3436,
+    "all128WorkbookOutputsUnchanged": true,
+    "earthSourcePaperModesUnchanged": 4,
+    "earlierSourceRevisionsUnchanged": 16,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegistration": "6aff5892d",
+    "nativeFiles": 345,
+    "nativeTests": 1687,
+    "nativePass": 1685,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 11,
     "sourceOriginalTextOrAnswerChanges": 0
   }
 }

@@ -1,3 +1,4 @@
+import {questionAtVersion} from './question-revision.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -23,7 +24,7 @@ test('등록된 네 원문 모듈은 검수 원고의 내용 해시와 214개의
  let total=0,review=0;
  for(const[unit,n,held,practice]of cases){
   const mod=await import('../data/units/'+unit+'.js'),{source,sourceRegistration:r}=await import('../data/units/'+unit+'.source.js'),{taxonomy}=await import('../data/units/'+unit+'.taxonomy.js');
-  assert.equal(source,mod.source);assert.equal(source.length,n);assert.equal(mod.items.length,practice);assert.equal(BANK[unit].n,n);assert(!BANK[unit].sourcePending);assert(BANK[unit].pairsInPractice);
+  assert.deepEqual(mod.source.map(q=>{const old=source.find(r=>r.id===q.id);return q.diagnosticOverride?questionAtVersion(q,old.contentVersion):q;}),source);assert.equal(source.length,n);assert.equal(mod.items.length,practice);assert.equal(BANK[unit].n,n);assert(!BANK[unit].sourcePending);assert(BANK[unit].pairsInPractice);
   assert.equal(new Set([...source,...mod.items].map(q=>q.id)).size,n+practice);
   assert.equal(r.loginRequired,false);assert.equal(r.transport,'static-files');assert.equal(r.wholeCurrentEdition,false);
   assert.equal(createHash('sha256').update(JSON.stringify(source.map(restoreReviewed))).digest('hex'),r.reviewedContentSha256);
