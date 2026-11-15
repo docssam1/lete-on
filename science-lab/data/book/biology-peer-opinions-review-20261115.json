@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-15",
+  "unit": "s41-u04",
+  "version": "20261115-biology-peer-opinions",
+  "priorCandidate": "e23d7411a69b0b87b19af0c482a8a318ab85c0ca",
+  "currentQuestion": "s41-u04-b63",
+  "workbookQuestion": "s41-u04-w069",
+  "curriculum": {
+    "standard": "4과12-03",
+    "source": "교육부 고시 제2022-33호 별책9 과학과 교육과정",
+    "documentSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "scope": "생명과학 이용 사례 자료를 만들어 공유하는 활동이며 외래어 피드백의 암기를 요구하지 않는다."
+  },
+  "problem": "현재 문항은 피드백만 자동 인정하여 의견·질문·조언 같은 쉬운 표현을 교사 검토로 넘겼다.",
+  "changes": {
+    "prompt": "친구가 소개 자료를 보고 고칠 점과 궁금한 점을 말해 주었어요. 빈칸을 채우세요. “친구의 [ ]을 듣고 자료를 고쳐요.”",
+    "primaryAnswer": "의견",
+    "accepted": [
+      "의견",
+      "질문",
+      "조언",
+      "생각",
+      "말",
+      "피드백"
+    ],
+    "oldPrimaryStillAccepted": true,
+    "newVocabularyOutsideThisQuestion": false,
+    "oldQuestionVersionsRegraded": false,
+    "currentTaxonomyChanges": [
+      "concept",
+      "inquirySkill"
+    ],
+    "workbookSourceProvenanceUnchanged": true,
+    "quickTableCell": 69
+  },
+  "validation": {
+    "nativeFiles": 296,
+    "nativeTests": 1532,
+    "passed": 1530,
+    "failed": 0,
+    "browserSkipped": 2,
+    "oldVersionsPreserved": 3,
+    "oldResponsesCompared": 18,
+    "all32VocabularySetsUnchanged": true,
+    "gradingFunctionByteIdentical": true,
+    "workbookAndBankPrintOutputsCompared": 12,
+    "decks": 64,
+    "slides": 3048,
+    "changedSlides": 0,
+    "actualBrowserAndA4Reviewed": false,
+    "deployed": false
+  },
+  "newImagesOrPaidApis": false,
+  "evidence": "science-question-review/phase416/"
+}

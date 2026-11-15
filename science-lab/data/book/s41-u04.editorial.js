@@ -815,3 +815,36 @@ export function withBiologyElementaryBankClassroom(unit,mod){
  const items=biologyElementaryCurrentItems(mod.classroomItems,unit);
  return items===mod.classroomItems?mod:{...mod,classroomItems:items};
 }
+
+
+export const BIOLOGY_PEER_OPINIONS_VERSION='20261115-biology-peer-opinions';
+export const biologyPeerOpinion={
+ previousPrompt:'친구가 자료를 보고 고칠 점이나 궁금한 점을 말해 주었어요. 이렇게 받은 의견을 무엇이라고 하나요?',
+ prompt:'친구가 소개 자료를 보고 고칠 점과 궁금한 점을 말해 주었어요. 빈칸을 채우세요. “친구의 [ ]을 듣고 자료를 고쳐요.”',
+ answer:'의견',accepted:['의견','질문','조언','생각','말','피드백'],
+ explanation:'친구가 말한 고칠 점이나 궁금한 점을 듣고, 설명을 보완해요. 의견, 질문, 조언처럼 뜻이 맞는 말로 쓸 수 있어요.',
+ criteria:'의견·질문·조언·생각·말처럼 이 상황에서 뜻이 맞는 표현을 인정해요. 피드백이라고 쓴 답도 인정해요.'
+};
+const biologyPeerOpinionCache=new WeakMap(),opinionClone=x=>JSON.parse(JSON.stringify(x));
+export function biologyOpinionCurrentItems(rows,unit){
+ if(unit!=='s41-u04'||!Array.isArray(rows))return rows;
+ let changed=false;const next=rows.map(q=>{
+  if(q.id!=='s41-u04-b63'||q.status!=='authored'||q.sourceRef?.type!=='authored-supplement'||q.contentVersion!==BIOLOGY_ELEMENTARY_BANK_VERSION||q.prompt!==biologyPeerOpinion.previousPrompt||q.responseContract!=='short-text'||q.answerContract?.type!=='short-text'||q.answerContract.answer!=='피드백'||JSON.stringify(q.answerContract.accepted)!=='["피드백"]'||q.taxonomy?.standard!=='4과12-03'||q.sourceContent)return q;
+  changed=true;if(biologyPeerOpinionCache.has(q))return biologyPeerOpinionCache.get(q);
+  const current={...q,prompt:biologyPeerOpinion.prompt,explanation:biologyPeerOpinion.explanation,answerContract:{...opinionClone(q.answerContract),answer:biologyPeerOpinion.answer,accepted:[...biologyPeerOpinion.accepted],vocabulary:['피드백']},taxonomy:{...q.taxonomy,concept:'친구의 의견을 듣고 자료 보완하기',inquirySkill:'친구가 제안한 고칠 점과 질문을 자료 보완에 연결한다.'},contentVersion:BIOLOGY_PEER_OPINIONS_VERSION,previousVersions:[...(q.previousVersions?opinionClone(q.previousVersions):[]),{...opinionClone(q),version:q.contentVersion,snapshotKind:'full-question'}]};
+  biologyPeerOpinionCache.set(q,current);return current;
+ });return changed?next:rows;
+}
+export function withBiologyOpinionClassroom(unit,mod){
+ const items=biologyOpinionCurrentItems(mod.classroomItems,unit);return items===mod.classroomItems?mod:{...mod,classroomItems:items};
+}
+export function withBiologyOpinionWorkbook(workbook){
+ if(workbook?.unit!=='s41-u04'||!Array.isArray(workbook.questions))return workbook;
+ const row='<tr><th scope="row">69</th><td>단답</td><td>피드백</td></tr>',quick=workbook.figures?.['quick-55'];
+ if(typeof quick!=='string'||quick.split(row).length!==2)return workbook;
+ let changed=false;const questions=workbook.questions.map(q=>{
+  if(q.id!=='s41-u04-w069'||q.no!==69||q.form!=='short'||q.sourceId!=='s41-u04-b63'||q.sourcePool!=='items'||q.sourceRef?.type!=='authored-supplement'||q.prompt!==biologyPeerOpinion.previousPrompt||q.answer!=='피드백'||JSON.stringify(q.accepted)!=='["피드백"]'||q.contentVersion)return q;
+  changed=true;return{...q,prompt:biologyPeerOpinion.prompt,answer:biologyPeerOpinion.answer,accepted:[...biologyPeerOpinion.accepted],explanation:biologyPeerOpinion.explanation,criteria:biologyPeerOpinion.criteria};
+ });
+ return changed?{...workbook,questions,figures:{...workbook.figures,'quick-55':quick.replace(row,row.replace('피드백','의견'))}}:workbook;
+}

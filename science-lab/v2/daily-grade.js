@@ -14,7 +14,8 @@ export function vocabOf(pool, misc) {
   const V = new Set();
   for (const C of Object.values(misc?.cloze || {})) for (const opts of C.options || []) for (const o of opts) V.add(norm(o));
   for (const [, [opts]] of Object.entries(misc?.bookChips || {})) for (const o of opts || []) V.add(norm(o));
-  for (const it of pool) if (it.answerContract?.type === 'short-text') for (const a of [it.answerContract.answer, ...(it.answerContract.accepted || [])]) V.add(norm(a));
+  // Common wording accepted by one question need not become a wrong-answer term for every other question.
+  for (const it of pool) if (it.answerContract?.type === 'short-text') { const ac=it.answerContract,answers=Array.isArray(ac.vocabulary)?ac.vocabulary:[ac.answer,...(ac.accepted||[])];for(const a of answers)V.add(norm(a)); }
   return V;
 }
 
