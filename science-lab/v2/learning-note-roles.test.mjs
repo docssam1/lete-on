@@ -1,3 +1,4 @@
+import{withSoundComparisonWorkbook}from'../data/book/c22-s32-practice-language.js';
 import{withEarthSeaLinkedWorkbook}from'../data/book/earth-sea-choice-review.js';
 import{withMaterialReadingWorkbook}from'../data/book/material-reading-criteria.js';import{withEarthSeaStandaloneContext}from'../data/book/standalone-question-context.js';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
@@ -91,7 +92,7 @@ test('grade-three study notes preserve every question, extension concept, writin
 
 test('actual grade-three papers display the simpler notes while answer and quick views stay identical',async()=>{
  for(const [current,prior]of studyBooks){
-  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior))),art);
+  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior)))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert(html===oldPaper.workbookPaper({mode}),current.unit+' '+mode+' unchanged');

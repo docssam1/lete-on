@@ -986,7 +986,7 @@ export function withGrade3PracticeWorkbook(workbook){
 }
 
 export function withGrade3PracticeClassroom(unit,mod){
- const items=grade3PracticeCurrentItems(mod.classroomItems,unit);
+ const items=soundComparisonQuestionReview(grade3PracticeCurrentItems(mod.classroomItems,unit),unit);
  return items===mod.classroomItems?mod:{...mod,classroomItems:items};
 }
 
@@ -1031,4 +1031,340 @@ export function infectionFeedbackCurrentItems(rows,unit){
   feedbackCache.set(q,current);return current;
  });
  return changed?next:rows;
+}
+
+// Ask for a comparison method when correct choices include both changed and fixed conditions.
+export const SOUND_COMPARISON_VERSION='20261115-sound-comparison-prompt';
+const soundComparisonPatches={
+  "c22-s32-u03-b22": {
+    "bank": {
+      "id": "c22-s32-u03-b22",
+      "status": "authored",
+      "sourceRef": {
+        "type": "authored-supplement",
+        "edition": "GFIELD 소리의 성질 보충",
+        "course": "초등3-2"
+      },
+      "taxonomy": {
+        "curriculum": "2022 개정",
+        "grade": 3,
+        "semester": 2,
+        "unit": "u03",
+        "area": "운동과 에너지",
+        "element": "E7",
+        "type": "T16",
+        "topic": "같은 조건의 세기 비교",
+        "concept": "같은 물체·듣는 위치에서 두드리는 정도를 바꾸어 소리의 크고 작음을 비교한다.",
+        "inquirySkill": "같은 조건 비교",
+        "format": "선택형",
+        "level": "기본",
+        "track": "교과",
+        "standard": "4과07-02"
+      },
+      "prompt": "북을 두드리는 정도에 따른 소리의 세기를 비교해요. 같게 할 조건 두 가지를 고르세요. (정답 2개)",
+      "givens": null,
+      "choices": [
+        "두드리는 정도만 바꾸어 비교한다.",
+        "북 종류와 듣는 거리를 모두 바꾼다.",
+        "매번 다른 소리를 듣고 같은 값으로 쓴다.",
+        "같은 북과 같은 듣는 위치를 쓴다.",
+        "처음 예상에 맞는 기록만 남긴다."
+      ],
+      "responseContract": "multi-choice",
+      "answerContract": {
+        "type": "multi-choice",
+        "answers": [
+          0,
+          3
+        ]
+      },
+      "explanation": "다른 조건을 같게 하여 두드리는 정도의 영향을 살펴요. 관찰 결과는 예상과 달라도 그대로 기록해요.",
+      "evidence": {
+        "checkedBy": "창작 문항 검수",
+        "date": "2026-10-17",
+        "gates": [
+          "science",
+          "answer"
+        ],
+        "against": "교육부 성취기준과 확인한 이론·실험 본문",
+        "note": "가상 자료의 해석·학습 응답이며 실제 학생 수행 증거가 아니다."
+      },
+      "contentVersion": "20261108-grade3-practice-language",
+      "previousVersions": [
+        {
+          "id": "c22-s32-u03-b22",
+          "status": "authored",
+          "sourceRef": {
+            "type": "authored-supplement",
+            "edition": "GFIELD 소리의 성질 보충",
+            "course": "초등3-2"
+          },
+          "taxonomy": {
+            "curriculum": "2022 개정",
+            "grade": 3,
+            "semester": 2,
+            "unit": "u03",
+            "area": "운동과 에너지",
+            "element": "E7",
+            "type": "T16",
+            "topic": "같은 조건의 세기 비교",
+            "concept": "같은 물체·듣는 위치에서 두드리는 정도를 바꾸어 소리의 크고 작음을 비교한다.",
+            "inquirySkill": "같은 조건 비교",
+            "format": "선택형",
+            "level": "기본",
+            "track": "교과",
+            "standard": "4과07-02"
+          },
+          "prompt": "세기 비교를 공정하게 할 조건을 고르세요. (정답 2개)",
+          "givens": null,
+          "choices": [
+            "두드리는 정도만 바꾸어 비교한다.",
+            "북 종류와 듣는 거리를 모두 바꾼다.",
+            "매번 다른 소리를 듣고 같은 값으로 쓴다.",
+            "같은 북과 같은 듣는 위치를 쓴다.",
+            "처음 예상에 맞는 기록만 남긴다."
+          ],
+          "responseContract": "multi-choice",
+          "answerContract": {
+            "type": "multi-choice",
+            "answers": [
+              0,
+              3
+            ]
+          },
+          "explanation": "다른 조건을 같게 하여 두드리는 정도의 영향을 살펴요. 관찰 결과는 예상과 달라도 그대로 기록해요.",
+          "evidence": {
+            "checkedBy": "창작 문항 검수",
+            "date": "2026-10-17",
+            "gates": [
+              "science",
+              "answer"
+            ],
+            "against": "교육부 성취기준과 확인한 이론·실험 본문",
+            "note": "가상 자료의 해석·학습 응답이며 실제 학생 수행 증거가 아니다."
+          },
+          "version": 1
+        }
+      ]
+    },
+    "workbook": {
+      "id": "c22-s32-u03-w022",
+      "no": 22,
+      "form": "multi",
+      "topic": "소리의 세기",
+      "prompt": "북을 두드리는 정도에 따른 소리의 세기를 비교해요. 같게 할 조건 두 가지를 고르세요. (정답 2개)",
+      "answer": "①, ④",
+      "explanation": "다른 조건을 같게 하여 두드리는 정도의 영향을 살펴요. 관찰 결과는 예상과 달라도 그대로 기록해요.",
+      "misconception": "듣는 거리도 소리 크기에 영향을 줄 수 있어요. 같은 조건에서 비교해요.",
+      "criteria": "비교 조건과 자료에 맞는 근거를 설명하면 같은 뜻의 답도 인정해요.",
+      "choices": [
+        "두드리는 정도만 바꾸어 비교한다.",
+        "북 종류와 듣는 거리를 모두 바꾼다.",
+        "매번 다른 소리를 듣고 같은 값으로 쓴다.",
+        "같은 북과 같은 듣는 위치를 쓴다.",
+        "처음 예상에 맞는 기록만 남긴다."
+      ],
+      "key": [
+        0,
+        3
+      ],
+      "sourceId": "c22-s32-u03-b22",
+      "sourceRef": {
+        "type": "authored-supplement",
+        "edition": "GFIELD 소리의 성질 보충",
+        "course": "초등3-2"
+      },
+      "sourceContract": {
+        "type": "multi-choice",
+        "answers": [
+          0,
+          3
+        ]
+      },
+      "sourceGivens": null,
+      "sourceExplanation": "다른 조건을 같게 하여 두드리는 정도의 영향을 살펴요. 관찰 결과는 예상과 달라도 그대로 기록해요.",
+      "standard": "4과07-02"
+    },
+    "fields": {
+      "prompt": "북을 두드리는 정도에 따른 소리의 세기를 비교해요. 알맞은 비교 방법 두 가지를 고르세요. (정답 2개)",
+      "explanation": "같은 북을 같은 자리에서 듣고, 두드리는 정도만 바꾸어 비교해요. 그러면 두드리는 정도에 따라 소리가 얼마나 크고 작게 들리는지 알아볼 수 있어요."
+    }
+  },
+  "c22-s32-u03-b46": {
+    "bank": {
+      "id": "c22-s32-u03-b46",
+      "status": "authored",
+      "sourceRef": {
+        "type": "authored-supplement",
+        "edition": "GFIELD 소리의 성질 보충",
+        "course": "초등3-2"
+      },
+      "taxonomy": {
+        "curriculum": "2022 개정",
+        "grade": 3,
+        "semester": 2,
+        "unit": "u03",
+        "area": "운동과 에너지",
+        "element": "E8",
+        "type": "T19",
+        "topic": "물질을 통한 전달 관찰",
+        "concept": "공기·물·고체 등 여러 물질을 통한 전달 현상을 경로와 관찰 조건으로 설명한다.",
+        "inquirySkill": "전달 경로 관찰",
+        "format": "선택형",
+        "level": "기본",
+        "track": "교과",
+        "standard": "4과07-03"
+      },
+      "prompt": "소리가 여러 물질을 통해 전해지는 것을 바르게 설명한 두 가지를 고르세요. (정답 2개)",
+      "givens": null,
+      "choices": [
+        "공기 이외의 물질은 소리를 못 전한다.",
+        "공기·물·나무 등으로 전해질 수 있다.",
+        "비교한 경로와 관찰 결과를 함께 적는다.",
+        "자료를 본 것만으로 직접 실험한 셈이다.",
+        "잘 들린 물질은 언제나 더 높은 음이다."
+      ],
+      "responseContract": "multi-choice",
+      "answerContract": {
+        "type": "multi-choice",
+        "answers": [
+          1,
+          2
+        ]
+      },
+      "explanation": "여러 물질이 소리를 전할 수 있음을 실제 조건·근거로 살펴요. 자료 문제를 맞힌 것을 직접 수행으로 바꾸어 세지 않아요.",
+      "evidence": {
+        "checkedBy": "창작 문항 검수",
+        "date": "2026-10-17",
+        "gates": [
+          "science",
+          "answer"
+        ],
+        "against": "교육부 성취기준과 확인한 이론·실험 본문",
+        "note": "가상 자료의 해석·학습 응답이며 실제 학생 수행 증거가 아니다."
+      },
+      "contentVersion": "20261108-grade3-practice-language",
+      "previousVersions": [
+        {
+          "id": "c22-s32-u03-b46",
+          "status": "authored",
+          "sourceRef": {
+            "type": "authored-supplement",
+            "edition": "GFIELD 소리의 성질 보충",
+            "course": "초등3-2"
+          },
+          "taxonomy": {
+            "curriculum": "2022 개정",
+            "grade": 3,
+            "semester": 2,
+            "unit": "u03",
+            "area": "운동과 에너지",
+            "element": "E8",
+            "type": "T19",
+            "topic": "물질을 통한 전달 관찰",
+            "concept": "공기·물·고체 등 여러 물질을 통한 전달 현상을 경로와 관찰 조건으로 설명한다.",
+            "inquirySkill": "전달 경로 관찰",
+            "format": "선택형",
+            "level": "기본",
+            "track": "교과",
+            "standard": "4과07-03"
+          },
+          "prompt": "여러 물질을 통한 전달을 살피는 타당한 설명을 고르세요. (정답 2개)",
+          "givens": null,
+          "choices": [
+            "공기 이외의 물질은 소리를 못 전한다.",
+            "공기·물·나무 등으로 전해질 수 있다.",
+            "비교한 경로와 관찰 결과를 함께 적는다.",
+            "자료를 본 것만으로 직접 실험한 셈이다.",
+            "잘 들린 물질은 언제나 더 높은 음이다."
+          ],
+          "responseContract": "multi-choice",
+          "answerContract": {
+            "type": "multi-choice",
+            "answers": [
+              1,
+              2
+            ]
+          },
+          "explanation": "여러 물질이 소리를 전할 수 있음을 실제 조건·근거로 살펴요. 자료 문제를 맞힌 것을 직접 수행으로 바꾸어 세지 않아요.",
+          "evidence": {
+            "checkedBy": "창작 문항 검수",
+            "date": "2026-10-17",
+            "gates": [
+              "science",
+              "answer"
+            ],
+            "against": "교육부 성취기준과 확인한 이론·실험 본문",
+            "note": "가상 자료의 해석·학습 응답이며 실제 학생 수행 증거가 아니다."
+          },
+          "version": 1
+        }
+      ]
+    },
+    "workbook": {
+      "id": "c22-s32-u03-w046",
+      "no": 46,
+      "form": "multi",
+      "topic": "여러 물질의 전달",
+      "prompt": "소리가 여러 물질을 통해 전해지는 것을 바르게 설명한 두 가지를 고르세요. (정답 2개)",
+      "answer": "②, ③",
+      "explanation": "공기·물·나무처럼 여러 물질을 통한 소리 전달 현상을 관찰할 수 있어요. 실제 비교한 연결 경로와 결과를 함께 남겨야 하며, 고체를 댔다는 이유만으로 공기를 통한 경로를 제외하거나 잘 들림을 높은 음과 같게 읽지 않아요.",
+      "misconception": "소리는 공기뿐 아니라 고체·액체를 통해서도 전달될 수 있어요.",
+      "criteria": "비교 조건과 자료에 맞는 근거를 설명하면 같은 뜻의 답도 인정해요.",
+      "choices": [
+        "공기가 소리를 전하면 고체나 액체는 소리를 전할 수 없다.",
+        "공기·물·나무 같은 여러 물질로 소리가 전해질 수 있다.",
+        "비교한 물질의 연결 경로와 관찰 결과를 함께 기록한다.",
+        "나무를 댄 조건에서 들리면 주변 공기를 통한 경로는 전혀 없다.",
+        "더 잘 들린 물질은 전달한 소리의 높낮이도 언제나 더 높다."
+      ],
+      "key": [
+        1,
+        2
+      ],
+      "sourceId": "c22-s32-u03-b46",
+      "sourceRef": {
+        "type": "authored-supplement",
+        "edition": "GFIELD 소리의 성질 보충",
+        "course": "초등3-2"
+      },
+      "sourceContract": {
+        "type": "multi-choice",
+        "answers": [
+          1,
+          2
+        ]
+      },
+      "sourceGivens": null,
+      "sourceExplanation": "공기·물·나무처럼 여러 물질을 통한 소리 전달 현상을 관찰할 수 있어요. 실제 비교한 연결 경로와 결과를 함께 남겨야 하며, 고체를 댔다는 이유만으로 공기를 통한 경로를 제외하거나 잘 들림을 높은 음과 같게 읽지 않아요.",
+      "standard": "4과07-03"
+    },
+    "fields": {
+      "prompt": "여러 물질을 통한 소리 전달을 알아보려고 해요. 알맞은 설명이나 관찰 방법 두 가지를 고르세요. (정답 2개)",
+      "explanation": "공기·물·나무 등 여러 물질을 통해 소리가 전달될 수 있어요. 관찰할 때는 어떤 물질을 통해 소리를 들었는지와 들린 소리를 함께 적어요."
+    }
+  }
+};
+const sameSound=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const soundComparisonCache=new WeakMap();
+export function soundComparisonQuestionReview(rows,unit){
+ if(unit!=='c22-s32-u03'||!Array.isArray(rows))return rows;
+ let changed=false;
+ const next=rows.map(q=>{
+  const p=soundComparisonPatches[q.id];
+  if(!p||!sameSound(q,p.bank))return q;
+  changed=true;if(soundComparisonCache.has(q))return soundComparisonCache.get(q);
+  const current={...q,...clone(p.fields),contentVersion:SOUND_COMPARISON_VERSION,previousVersions:[...clone(q.previousVersions||[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
+  soundComparisonCache.set(q,current);return current;
+ });
+ return changed?next:rows;
+}
+export function withSoundComparisonWorkbook(workbook){
+ if(workbook?.unit!=='c22-s32-u03'||!Array.isArray(workbook.questions))return workbook;
+ let changed=false;const questions=workbook.questions.map(q=>{
+  const p=Object.values(soundComparisonPatches).find(p=>p.workbook.id===q.id);
+  if(!p||!sameSound(q,p.workbook))return q;
+  changed=true;return{...q,...clone(p.fields)};
+ });
+ return changed?{...workbook,questions}:workbook;
 }
