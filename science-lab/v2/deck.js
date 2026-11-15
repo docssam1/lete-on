@@ -1,3 +1,4 @@
+import{questionMisconceptions}from'./question-revision.js?v=20261115-legacy-question-snapshots';
 import{buildCareerThinkingSlides}from'./deck-career-thinking.js?v=20261105-career-reading-science';
 import{buildElectricityThinkingSlides}from'./deck-electricity-thinking.js?v=20261104-student-science-language';
 import{buildCombustionThinkingSlides}from'./deck-combustion-thinking.js?v=20261108-comparison-material-language';
@@ -642,8 +643,8 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     let tries = 0, over = false;
     G.say(multi ? 'dk-choose-multi' : cue(V, 'dk-choose'));
     // 힌트는 '어떤 생각을 했는지' 되묻기만 한다. 교정 문장(fix)은 개념을 말하므로 정답을 드러낼 수 있어 풀고 난 뒤에 보여 준다.
-    const fixes = [];
-    const hintFor = (js) => { const d = misc?.distractors?.[s.item] || {}; for (const j of js) { const m = misc?.misconceptions?.[d[j]]; if (m) { fixes.push(m.fix); return `혹시 이렇게 생각했나요? — ${esc(m.label)}. 보기를 하나씩 다시 읽어 봐요.`; } }
+    const fixes = [], diagnostic=questionMisconceptions(similar.find(q=>q.id===s.item),misc);
+    const hintFor = (js) => { const d = diagnostic?.distractors?.[s.item] || {}; for (const j of js) { const m = diagnostic?.misconceptions?.[d[j]]; if (m) { fixes.push(m.fix); return `혹시 이렇게 생각했나요? — ${esc(m.label)}. 보기를 하나씩 다시 읽어 봐요.`; } }
       return '문제에서 묻는 것이 무엇인지 다시 읽고, 보기마다 조건을 하나씩 살펴봐요.'; };
     const finish = async (ok) => {
       over = true; ol.querySelectorAll('button').forEach((b) => { b.disabled = true; b.classList.toggle('ok', key.includes(+b.dataset.j)); });
