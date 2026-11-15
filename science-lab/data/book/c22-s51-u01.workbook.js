@@ -7738,4 +7738,6 @@ export const grade5StudyNotesPriorWorkbook=withGeologyReadableWorkbook(geologyRe
 export const geologyObservationPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
 export const materialReadingPriorWorkbook=withGeologyStandaloneContext(geologyObservationPriorWorkbook);
 
-export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const geologyResponsePriorWorkbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const workbook=withGeologyResponseWorkbook(geologyResponsePriorWorkbook);
+import{withGeologyResponseWorkbook}from'./geology-response-review.js?v=20261115-geology-response-review';

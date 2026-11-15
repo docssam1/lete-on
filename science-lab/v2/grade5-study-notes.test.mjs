@@ -1,3 +1,4 @@
+import{withGeologyResponseWorkbook}from'../data/book/geology-response-review.js';
 import{withRepresentationReviewedWorkbook}from'../data/book/representation-question-review.js';
 import{withMaterialReadingWorkbook}from'../data/book/material-reading-criteria.js';
 import{withGrade5ReviewedWorkbook}from'../data/book/grade5-question-review.js';
@@ -41,11 +42,11 @@ test('grade-five personal directions preserve all questions, upper learning and 
  }
 });
 
-test('actual four paper views show the reviewed directions and keep answer views and all other HTML identical',async()=>{
+test('the historical note stage preserves its other HTML and all four actual views include subsequent reviewed criteria and directions',async()=>{
  for(const [current,prior,count]of books){
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(prior)))))),art),expected=makeWorkbookPaper(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(current)))))),art);
   for(const mode of ['student','teacher','answers','quick']){
-   const html=actual.workbookPaper({mode});assert.equal(html,expected.workbookPaper({mode}));
+   const latest=current.unit==='c22-s51-u01'?makeWorkbookPaper(withElementaryReadingDirections(withGeologyResponseWorkbook(withMaterialReadingWorkbook(withGeologyStandaloneContext(current)))),art):expected;assert.equal(actual.workbookPaper({mode}),latest.workbookPaper({mode}));const html=expected.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
    else{
     let changed=0;const restored=structuredClone(current);

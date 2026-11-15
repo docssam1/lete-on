@@ -1,3 +1,4 @@
+import{withGeologyResponseWorkbook}from'../data/book/geology-response-review.js';
 import{withEcologyWorkbookDirections}from'../data/book/ecology-workbook-directions.js';
 import{withGrade4WorkbookDirections}from'../data/book/grade4-workbook-directions.js';
 import{withBiologyExampleWorkbook}from'../data/book/biology-example-card.js';
@@ -13,7 +14,7 @@ const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=
 
 test('twenty-two current workbook criteria change only teacher guidance, preserving all student questions, materials and quick keys',async()=>{
  let changed=0;
- for(const unit of units){const{contextDirectionsPriorWorkbook,workbook:currentWorkbook,soundComparisonPriorWorkbook,earthSeaLinkedPriorWorkbook,materialReadingPriorWorkbook:before}=await import('../data/book/'+unit+'.workbook.js'),{art}=await import('../data/book/'+unit+'.workbook-art.js');const workbook=contextDirectionsPriorWorkbook||earthSeaLinkedPriorWorkbook||soundComparisonPriorWorkbook||currentWorkbook;assert.deepEqual({...workbook,questions:before.questions},before);assert.equal(workbook.questions.length,before.questions.length);
+ for(const unit of units){const{geologyResponsePriorWorkbook,contextDirectionsPriorWorkbook,workbook:currentWorkbook,soundComparisonPriorWorkbook,earthSeaLinkedPriorWorkbook,materialReadingPriorWorkbook:before}=await import('../data/book/'+unit+'.workbook.js'),{art}=await import('../data/book/'+unit+'.workbook-art.js');const workbook=geologyResponsePriorWorkbook||contextDirectionsPriorWorkbook||earthSeaLinkedPriorWorkbook||soundComparisonPriorWorkbook||currentWorkbook;assert.deepEqual({...workbook,questions:before.questions},before);assert.equal(workbook.questions.length,before.questions.length);
   for(let i=0;i<workbook.questions.length;i++){const q=workbook.questions[i],old=before.questions[i];assert.deepEqual({...q,criteria:old.criteria},old);if(q.criteria!==old.criteria){changed++;for(const patch of[{prompt:old.prompt+' future'},{contentVersion:'future'},{status:'source'},{sourceContent:{blocks:[]}},{sourceRef:{type:'original'}},{key:'future-key'},{figure:'future.jpg'}]){const input={...before,questions:before.questions.map(w=>w.id===old.id?{...w,...patch}:w)},out=withMaterialReadingWorkbook(input);assert.equal(out.questions[i],input.questions[i]);}}}
   assert.equal(withMaterialReadingWorkbook(workbook),workbook);const oldPaper=makeWorkbookPaper(withCurrentDirections(withEcologyWorkbookDirections(withMaterialReadingWorkbook(withBiologyExampleWorkbook(withGrade4WorkbookDirections(withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withObservedPhotoAlt(withElementaryReadingDirections(before))))))))))),art),paper=await revisedTextbookPaper(unit);for(const mode of['student','quick'])assert.equal(paper.workbookPaper({mode}),oldPaper.workbookPaper({mode}));
   const teacher=paper.workbookPaper({mode:'teacher'}),student=paper.workbookPaper({mode:'student'});for(let i=0;i<workbook.questions.length;i++)if(workbook.questions[i].criteria!==before.questions[i].criteria){assert(teacher.includes(esc(workbook.questions[i].criteria)));assert(!student.includes(esc(workbook.questions[i].criteria)));}
@@ -34,6 +35,6 @@ test('actual shared classroom, bank prints and current cache expose the same rev
 
 import{withSkyWorkbookDirections}from'../data/book/sky-workbook-directions.js';
 import{withEcologyMaterialWorkbook}from'../data/book/ecology-material-context.js';
-const withCurrentDirections=w=>withSkyResponseWorkbook(withEcologyMaterialWorkbook(withSkyWorkbookDirections(w)));
+const withCurrentDirections=w=>withGeologyResponseWorkbook(withSkyResponseWorkbook(withEcologyMaterialWorkbook(withSkyWorkbookDirections(w))));
 
 import{withSkyResponseWorkbook}from'../data/book/sky-response-review.js';

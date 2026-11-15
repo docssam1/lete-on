@@ -448,7 +448,7 @@ const geologyReadablePriorVersions={
  "c22-s51-u01-b096": "20261105-geology-student-language"
 };
 const geologyReadableCache=new WeakMap();
-export function geologyReadableCurrentItems(rows,unit){
+export function geologyReadableLanguageItems(rows,unit){
  if(unit!=='c22-s51-u01'||!Array.isArray(rows))return rows;
  let changed=false;
  const next=rows.map(question=>{
@@ -461,3 +461,6 @@ export function geologyReadableCurrentItems(rows,unit){
   geologyReadableCache.set(question,current);return current;
  });return changed?next:rows;
 }
+
+import{geologyResponseItems}from'./geology-response-review.js?v=20261115-geology-response-review';
+export function geologyReadableCurrentItems(rows,unit){return geologyResponseItems(geologyReadableLanguageItems(rows,unit),unit);}
