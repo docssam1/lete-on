@@ -1,3 +1,4 @@
+import{linkedWorkbookAnswers}from'../data/book/linked-workbook-answers.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s52-u01.js';import{similar}from'../data/units/c22-s52-u01.similar.js';import{observationCurrentItems}from'../data/book/observation-language.js';
@@ -31,8 +32,8 @@ test('mixture readability guards original, similar, review, future and other uni
  assert.equal(mixtureReadableCurrentItems(baseline,'other'),baseline);assert.equal(mixtureReadableCurrentItems(null,unit),null);
 });
 test('mixture bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=mixtureReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===MIXTURE_READABILITY_VERSION)changed++;}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=linkedWorkbookAnswers(mixtureReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,MIXTURE_READABILITY_VERSION))changed++;}
  assert.equal(changed,16);assert.equal(first.classroomItems.length,16);
 });
 test('mixture preserves prior figures and answers while explaining the actual separation steps',()=>{

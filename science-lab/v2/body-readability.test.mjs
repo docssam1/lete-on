@@ -1,3 +1,4 @@
+import{linkedWorkbookAnswers}from'../data/book/linked-workbook-answers.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s51-u04.js';import{similar}from'../data/units/c22-s51-u04.similar.js';import{observationCurrentItems}from'../data/book/observation-language.js';
@@ -31,8 +32,8 @@ test('body readability guards original, similar, review, future and other unit q
  assert.equal(bodyReadableCurrentItems(baseline,'other'),baseline);assert.equal(bodyReadableCurrentItems(null,unit),null);
 });
 test('body bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=bodyReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===BODY_READABILITY_VERSION)changed++;}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=linkedWorkbookAnswers(bodyReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,BODY_READABILITY_VERSION))changed++;}
  assert.equal(changed,16);assert.equal(first.classroomItems.length,16);
 });
 test('body keeps raw and prior fields, model limits and walking comparison times',()=>{

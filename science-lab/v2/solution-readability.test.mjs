@@ -1,3 +1,4 @@
+import{linkedWorkbookAnswers}from'../data/book/linked-workbook-answers.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s51-u03.js';import{similar}from'../data/units/c22-s51-u03.similar.js';import{solutionCurrentItems}from'./solution-question-language.js';
@@ -31,8 +32,8 @@ test('solution readability guards original, similar, review, future and other un
  assert.equal(solutionReadableCurrentItems(baseline,'other'),baseline);assert.equal(solutionReadableCurrentItems(null,unit),null);
 });
 test('solution bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=solutionReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===SOLUTION_READABILITY_VERSION)changed++;}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=linkedWorkbookAnswers(solutionReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,SOLUTION_READABILITY_VERSION))changed++;}
  assert.equal(changed,16);assert.equal(first.classroomItems.length,16);
 });
 test('solution keeps all raw and prior fields, weight vocabulary and the melting distinction',()=>{
