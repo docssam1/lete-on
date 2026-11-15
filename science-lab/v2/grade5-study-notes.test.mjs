@@ -1,3 +1,4 @@
+import{withMixtureContextWorkbook}from'../data/book/mixture-workbook-context.js';
 import{withBodyContextWorkbook}from'../data/book/body-workbook-context.js';
 import{withSolutionContextWorkbook}from'../data/book/solution-workbook-context.js';
 import{withLightContextWorkbook}from'../data/book/light-workbook-context.js';
@@ -49,7 +50,7 @@ test('the historical note stage preserves its other HTML and all four actual vie
  for(const [current,prior,count]of books){
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(prior)))))),art),expected=makeWorkbookPaper(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(current)))))),art);
   for(const mode of ['student','teacher','answers','quick']){
-   const latest=current.unit==='c22-s51-u04'?makeWorkbookPaper(withElementaryReadingDirections(withBodyContextWorkbook(withRepresentationReviewedWorkbook(withGrade5ReviewedWorkbook(current)))),art):current.unit==='c22-s51-u01'?makeWorkbookPaper(withElementaryReadingDirections(withGeologyResponseWorkbook(withMaterialReadingWorkbook(withGeologyStandaloneContext(current)))),art):current.unit==='c22-s51-u02'?makeWorkbookPaper(withElementaryReadingDirections(withLightContextWorkbook(current)),art):current.unit==='c22-s51-u03'?makeWorkbookPaper(withElementaryReadingDirections(withSolutionContextWorkbook(withGrade5ReviewedWorkbook(current))),art):expected;assert.equal(actual.workbookPaper({mode}),latest.workbookPaper({mode}));const html=expected.workbookPaper({mode});
+   const latest=current.unit==='c22-s52-u01'?makeWorkbookPaper(withElementaryReadingDirections(withMixtureContextWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(current)))),art):current.unit==='c22-s51-u04'?makeWorkbookPaper(withElementaryReadingDirections(withBodyContextWorkbook(withRepresentationReviewedWorkbook(withGrade5ReviewedWorkbook(current)))),art):current.unit==='c22-s51-u01'?makeWorkbookPaper(withElementaryReadingDirections(withGeologyResponseWorkbook(withMaterialReadingWorkbook(withGeologyStandaloneContext(current)))),art):current.unit==='c22-s51-u02'?makeWorkbookPaper(withElementaryReadingDirections(withLightContextWorkbook(current)),art):current.unit==='c22-s51-u03'?makeWorkbookPaper(withElementaryReadingDirections(withSolutionContextWorkbook(withGrade5ReviewedWorkbook(current))),art):expected;assert.equal(actual.workbookPaper({mode}),latest.workbookPaper({mode}));const html=expected.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
    else{
     let changed=0;const restored=structuredClone(current);
@@ -88,10 +89,10 @@ test('mixture bank print imports the reviewed personal directions even when the 
  }
  const module=new vm.SourceTextModule(source,{context,identifier:url.href});
  await module.link(async spec=>{
-  if(spec.startsWith('../data/book/c22-s52-u01.workbook.js')&&spec!=='../data/book/c22-s52-u01.workbook.js?v=20261115-grade5-question-review'){oldCacheReads++;return synthetic({workbook:prior});}
+  if(spec.startsWith('../data/book/c22-s52-u01.workbook.js')&&spec!=='../data/book/c22-s52-u01.workbook.js?v=20261115-grade5-question-review&mixtureContext=20261116-mixture-workbook-context'){oldCacheReads++;return synthetic({workbook:prior});}
   return synthetic({...await import(new URL(spec,url).href)});
  });await module.evaluate();assert.equal(oldCacheReads,0);
- const paper=makeWorkbookPaper(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(current)))),{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
+ const paper=makeWorkbookPaper(withMixtureContextWorkbook(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(current))))),{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
  for(const mode of ['student','teacher','answers','quick'])assert.equal(module.namespace.mixtureBankPaperHtml({mode}),paper.workbookPaper({mode}));
  const html=module.namespace.mixtureBankPaperHtml({mode:'student'});
  assert(html.includes('분리하기 전과 뒤의 무게를 비교할 때 확인할 조건을 쓰세요.'));

@@ -14,7 +14,7 @@ import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),start=code.indexOf('const UNITS = ')+14,end=code.indexOf('\n// 문제은행만',start),expression='('+code.slice(start,end).trim().replace(/;$/,'')+')';
 const loaders=new vm.Script(expression,{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
-const beforeGrade5=q=>q.contentVersion==='20261115-grade5-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
+const beforeGrade5=q=>q.contentVersion==='20261116-mixture-workbook-context'?(questionAtVersion(q,version)||q):q.contentVersion==='20261115-grade5-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 const mods=new Map(await Promise.all(units.map(async unit=>[unit,await loaders[unit]()] )));
 const previous=q=>questionAtVersion(q,q.previousVersions.at(-1).version);
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -76,7 +76,7 @@ test('current classroom, Daily and printed keys share the same version and retai
  let found=0;
  for(const unit of units){
   const mod=mods.get(unit),book=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,book),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]),student=mod.bankPaper({...mod,mode:'student'}),teacher=mod.bankPaper({...mod,mode:'teacher'});
-  for(const q of mod.items.filter(q=>q.contentVersion===version)){
+  for(const q of mod.items.filter(q=>beforeGrade5(q).contentVersion===version)){
    for(const list of[classroom.classroomItems,pool]){const displayed=list.find(x=>x.id===q.id);if(displayed){assert.deepEqual(displayed,q);found++;}}
    if(q.answerContract.rubric){const criterion=q.answerContract.rubric.required[0];assert(teacher.includes(escape(criterion)),q.id);assert(!student.includes(escape(criterion)),q.id);}
   }
