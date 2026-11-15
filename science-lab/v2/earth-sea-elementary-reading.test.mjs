@@ -1,5 +1,5 @@
 import{withEarthSeaLinkedWorkbook}from'../data/book/earth-sea-choice-review.js';
-const beforeEarthSeaChoice=q=>{if(!['20261115-earth-sea-choice-review','20261115-earth-sea-linked-choice-review'].includes(q?.contentVersion))return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
+const beforeEarthSeaChoice=q=>{while(['20261115-earth-sea-choice-review','20261115-earth-sea-linked-choice-review','20261115-earth-sea-safety-feedback'].includes(q?.contentVersion)){const{version,snapshotKind,...previous}=q.previousVersions.at(-1);q=previous;}return q;};
 const beforeMaterialReading=q=>q?.contentVersion==='20261115-material-reading-criteria'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import{EARTH_SURFACE_PHOTO_VERSION,withEarthSeaStandaloneContext}from'../data/book/standalone-question-context.js';
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';

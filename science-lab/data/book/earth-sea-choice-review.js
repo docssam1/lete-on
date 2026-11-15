@@ -1,3 +1,40 @@
+export const EARTH_SEA_SAFETY_VERSION='20261115-earth-sea-safety-feedback';
+export const earthSeaSafetyMisconceptions={
+  "ES_TASTE": {
+    "label": "실험에서 남은 물질은 맛보지 않아요",
+    "element": "E3",
+    "terms": [
+      "맛보기"
+    ],
+    "fix": "소금처럼 보여도 실험에서 남은 물질은 먹거나 맛보지 않아요. 충분히 식힌 뒤 눈으로 관찰해요."
+  },
+  "ES_HEAT": {
+    "label": "가열을 멈춰도 접시는 뜨거울 수 있어요",
+    "element": "E3",
+    "terms": [
+      "가열",
+      "식힘"
+    ],
+    "fix": "가열을 멈춰도 접시는 뜨거울 수 있어요. 맨손으로 만지지 않고 충분히 식힌 뒤 선생님의 안내에 따라 다루어요."
+  },
+  "ES_DISTANCE": {
+    "label": "보호 안경과 관찰 거리를 함께 지켜요",
+    "element": "E3",
+    "terms": [
+      "보호 안경",
+      "관찰 거리"
+    ],
+    "fix": "보호 안경을 쓰고 선생님이 정한 거리에서 관찰해요. 장갑이나 보호 안경을 써도 뜨거운 접시 가까이에 얼굴을 대지 않아요."
+  },
+  "ES_EQUIPMENT": {
+    "label": "가열 기구는 선생님이 다루어요",
+    "element": "E3",
+    "terms": [
+      "가열 기구"
+    ],
+    "fix": "가열 기구는 선생님이 다루어요. 잘 보이지 않아도 직접 기구를 조절하지 말고 선생님께 알려요."
+  }
+};
 export const EARTH_SEA_LINKED_REVIEW_VERSION='20261115-earth-sea-linked-choice-review';
 export const EARTH_SEA_CHOICE_VERSION='20261115-earth-sea-choice-review';
 export const EARTH_SEA_CHOICE_UNITS=['c22-s32-u02'];
@@ -2786,7 +2823,7 @@ export function earthSeaChoiceReview(rows,unit){
   const current={...q,...clone(p.fields),...(q.diagnosticOverride?.version===(q.contentVersion||1)?{diagnosticOverride:{...clone(q.diagnosticOverride),version:p.currentVersion||EARTH_SEA_CHOICE_VERSION}}:{}),contentVersion:p.currentVersion||EARTH_SEA_CHOICE_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
   cache.set(q,current);return current;
  });
- return changed?next:rows;
+ return earthSeaSafetyReview(changed?next:rows,unit);
 }
 export function withEarthSeaChoiceClassroom(unit,mod){
  if(!mod?.classroomItems)return mod;
@@ -2878,4 +2915,247 @@ export function withEarthSeaLinkedWorkbook(workbook){
   changed=true;return {...q,...Object.fromEntries(Object.entries(p.fields).map(([key,[,value]])=>[key,clone(value)]))};
  });
  return changed?{...workbook,questions}:workbook;
+}
+
+const safetyPatches={
+  "c22-s32-u02-b28": {
+    "previous": {
+      "id": "c22-s32-u02-b28",
+      "status": "authored",
+      "sourceRef": {
+        "type": "authored-supplement",
+        "edition": "GFIELD 지구와 바다 창작 학습",
+        "course": "초등3-2"
+      },
+      "taxonomy": {
+        "curriculum": "2022 개정",
+        "grade": 3,
+        "semester": 2,
+        "unit": "u02",
+        "area": "지구와 우주",
+        "element": "E3",
+        "type": "T04",
+        "format": "선택형",
+        "level": "기본",
+        "track": "교과",
+        "standard": "4과06-02"
+      },
+      "prompt": "바닷물을 가열해 남긴 물질을 다루는 방법은 무엇인가요?",
+      "givens": null,
+      "choices": [
+        "소금처럼 흰색이면 식기 전에 조금 맛을 보아도 된다.",
+        "가열을 멈췄으면 접시를 바로 맨손으로 만져도 된다.",
+        "장갑을 끼면 보호 안경 없이 가까이에서 보아도 된다.",
+        "남은 것이 안 보이면 끓는 접시 위로 얼굴을 가까이 댄다.",
+        "먹거나 맛보지 않고 관찰한다."
+      ],
+      "responseContract": "single-choice",
+      "answerContract": {
+        "type": "single-choice",
+        "answer": 4,
+        "accepted": [
+          4
+        ]
+      },
+      "explanation": "남은 물질은 식힌 뒤 교사 안내에 따라 눈으로 관찰해요. 흰색이라고 먹어도 되는 것은 아니며 가열을 멈춰도 기구가 뜨거울 수 있어요. 보호 안경과 정해진 관찰 거리를 지켜요.",
+      "evidence": {
+        "checkedBy": "창작 학습 문항 검수",
+        "date": "2026-10-17",
+        "gates": [
+          "science",
+          "answer"
+        ],
+        "against": "교육부 성취기준·이론/실험 본문·해양환경 공식 자료",
+        "note": "가상 자료는 실제 관찰값이 아니며 원문 문항이나 공식 배점이 아니다."
+      },
+      "contentVersion": "20261115-earth-sea-linked-choice-review",
+      "previousVersions": [
+        {
+          "id": "c22-s32-u02-b28",
+          "status": "authored",
+          "sourceRef": {
+            "type": "authored-supplement",
+            "edition": "GFIELD 지구와 바다 창작 학습",
+            "course": "초등3-2"
+          },
+          "taxonomy": {
+            "curriculum": "2022 개정",
+            "grade": 3,
+            "semester": 2,
+            "unit": "u02",
+            "area": "지구와 우주",
+            "element": "E3",
+            "type": "T04",
+            "format": "선택형",
+            "level": "기본",
+            "track": "교과",
+            "standard": "4과06-02"
+          },
+          "prompt": "바닷물을 가열해 남긴 물질을 다루는 방법은 무엇인가요?",
+          "givens": null,
+          "choices": [
+            "짠지 확인하려고 직접 맛본다.",
+            "뜨거운 접시를 맨손으로 잡는다.",
+            "남은 가루를 바람에 세게 분다.",
+            "집에서 혼자 불을 켜서 반복한다.",
+            "먹거나 맛보지 않고 관찰한다."
+          ],
+          "responseContract": "single-choice",
+          "answerContract": {
+            "type": "single-choice",
+            "answer": 4,
+            "accepted": [
+              4
+            ]
+          },
+          "explanation": "먹거나 맛보지 않고 관찰한다.",
+          "evidence": {
+            "checkedBy": "창작 학습 문항 검수",
+            "date": "2026-10-17",
+            "gates": [
+              "science",
+              "answer"
+            ],
+            "against": "교육부 성취기준·이론/실험 본문·해양환경 공식 자료",
+            "note": "가상 자료는 실제 관찰값이 아니며 원문 문항이나 공식 배점이 아니다."
+          },
+          "version": 1,
+          "snapshotKind": "full-question"
+        }
+      ]
+    },
+    "distractors": {
+      "0": "ES_TASTE",
+      "1": "ES_HEAT",
+      "2": "ES_DISTANCE",
+      "3": "ES_DISTANCE"
+    }
+  },
+  "c22-s32-u02-b35": {
+    "previous": {
+      "id": "c22-s32-u02-b35",
+      "status": "authored",
+      "sourceRef": {
+        "type": "authored-supplement",
+        "edition": "GFIELD 지구와 바다 창작 학습",
+        "course": "초등3-2"
+      },
+      "taxonomy": {
+        "curriculum": "2022 개정",
+        "grade": 3,
+        "semester": 2,
+        "unit": "u02",
+        "area": "지구와 우주",
+        "element": "E3",
+        "type": "T05",
+        "format": "선택형",
+        "level": "기본",
+        "track": "교과",
+        "standard": "4과06-02"
+      },
+      "prompt": "교사가 가열하는 모습을 관찰할 때 알맞은 행동은 무엇인가요?",
+      "givens": null,
+      "choices": [
+        "가열을 멈추면 바로 접시를 맨손으로 들어 옮긴다.",
+        "보호 안경을 쓰고 정한 거리에서 본다.",
+        "보호 안경을 썼으면 끓는 접시 위로 얼굴을 가까이 댄다.",
+        "잘 안 보이면 교사에게 알리지 않고 가열 기구를 조절한다.",
+        "남은 것이 소금처럼 보이면 손가락으로 찍어 맛본다."
+      ],
+      "responseContract": "single-choice",
+      "answerContract": {
+        "type": "single-choice",
+        "answer": 1,
+        "accepted": [
+          1
+        ]
+      },
+      "explanation": "교사가 가열을 맡고 학생은 보호 안경과 정해진 거리를 지켜 관찰해요. 안 보이거나 조작이 필요하면 교사에게 알려요. 보호 안경이 뜨거운 기구를 만지거나 얼굴을 가까이 대도 된다는 뜻은 아니에요.",
+      "evidence": {
+        "checkedBy": "창작 학습 문항 검수",
+        "date": "2026-10-17",
+        "gates": [
+          "science",
+          "answer"
+        ],
+        "against": "교육부 성취기준·이론/실험 본문·해양환경 공식 자료",
+        "note": "가상 자료는 실제 관찰값이 아니며 원문 문항이나 공식 배점이 아니다."
+      },
+      "contentVersion": "20261115-earth-sea-linked-choice-review",
+      "previousVersions": [
+        {
+          "id": "c22-s32-u02-b35",
+          "status": "authored",
+          "sourceRef": {
+            "type": "authored-supplement",
+            "edition": "GFIELD 지구와 바다 창작 학습",
+            "course": "초등3-2"
+          },
+          "taxonomy": {
+            "curriculum": "2022 개정",
+            "grade": 3,
+            "semester": 2,
+            "unit": "u02",
+            "area": "지구와 우주",
+            "element": "E3",
+            "type": "T05",
+            "format": "선택형",
+            "level": "기본",
+            "track": "교과",
+            "standard": "4과06-02"
+          },
+          "prompt": "교사가 가열하는 모습을 관찰할 때 알맞은 행동은 무엇인가요?",
+          "givens": null,
+          "choices": [
+            "끓는 접시 위로 얼굴을 가까이 댄다.",
+            "보호 안경을 쓰고 정한 거리에서 본다.",
+            "다 쓰고 바로 뜨거운 접시를 잡는다.",
+            "남은 물질을 손가락으로 찍어 먹는다.",
+            "안 보이면 혼자 가열 기구를 조절한다."
+          ],
+          "responseContract": "single-choice",
+          "answerContract": {
+            "type": "single-choice",
+            "answer": 1,
+            "accepted": [
+              1
+            ]
+          },
+          "explanation": "보호 안경을 쓰고 정한 거리에서 본다.",
+          "evidence": {
+            "checkedBy": "창작 학습 문항 검수",
+            "date": "2026-10-17",
+            "gates": [
+              "science",
+              "answer"
+            ],
+            "against": "교육부 성취기준·이론/실험 본문·해양환경 공식 자료",
+            "note": "가상 자료는 실제 관찰값이 아니며 원문 문항이나 공식 배점이 아니다."
+          },
+          "version": 1,
+          "snapshotKind": "full-question"
+        }
+      ]
+    },
+    "distractors": {
+      "0": "ES_HEAT",
+      "2": "ES_DISTANCE",
+      "3": "ES_EQUIPMENT",
+      "4": "ES_TASTE"
+    }
+  }
+};
+const safetyCache=new WeakMap();
+export function earthSeaSafetyReview(rows,unit){
+ if(unit!=='c22-s32-u02'||!Array.isArray(rows))return rows;
+ let changed=false;
+ const next=rows.map(q=>{
+  const p=safetyPatches[q.id];
+  if(!p||!same(q,p.previous))return q;
+  changed=true;
+  if(safetyCache.has(q))return safetyCache.get(q);
+  const current={...q,contentVersion:EARTH_SEA_SAFETY_VERSION,diagnosticOverride:{version:EARTH_SEA_SAFETY_VERSION,distractors:clone(p.distractors)},previousVersions:[...clone(q.previousVersions||[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
+  safetyCache.set(q,current);return current;
+ });
+ return changed?next:rows;
 }

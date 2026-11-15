@@ -1,4 +1,4 @@
-import{withEarthSeaChoiceClassroom}from'../data/book/earth-sea-choice-review.js?v=20261115-earth-sea-linked-choice-review';
+import{withEarthSeaChoiceClassroom}from'../data/book/earth-sea-choice-review.js?v=20261115-earth-sea-linked-choice-review&safety=20261115-earth-sea-safety-feedback';
 import{withRepresentationClassroom}from'../data/book/representation-question-review.js?v=20261115-representation-response-review';
 import{withMaterialReadingClassroom}from'../data/book/material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withGrade6QuestionReviewClassroom}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';

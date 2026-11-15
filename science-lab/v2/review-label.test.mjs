@@ -21,9 +21,9 @@ test('all five real bank builders and the biology supplement reproduce the revie
 test('current online correction and Daily teacher keys show the same grammatical labels while answer contracts and diagnosis mappings stay intact',async()=>{
  const whyCode=code.slice(code.indexOf('function whyHtml('),code.indexOf('// ctx = { u, stage }')),anchors=[['c22-s42-u01','M01','달의 모양과 표면을 다시 살펴봐요'],['s41-u04','M14','관찰과 추론의 구별을 다시 살펴봐요']];let labelsShown=0;
  for(const unit of units){assert(code.includes(unit+'.misc.js?v=20261115-review-label-particles'));const mod=await loaders[unit](),pool=[...mod.items,...(mod.similar||[]),...(mod.source||[])],before=JSON.stringify(mod.misc),misc=mod.misc;
-  const why=new vm.Script(whyCode+';whyHtml').runInContext(vm.createContext({esc,MISC:misc}));
+  const why=new vm.Script(whyCode+';whyHtml').runInContext(vm.createContext({esc,MISC:misc,questionMisconceptions}));
   for(const[id,m]of Object.entries(misc.misconceptions)){
-   const row=Object.entries(misc.distractors||{}).find(([qid,choices])=>pool.some(q=>q.id===qid)&&Object.values(choices).includes(id));
+   const row=pool.map(q=>[q.id,questionMisconceptions(q,misc)?.distractors?.[q.id]||{}]).find(([,choices])=>Object.values(choices).includes(id));
    if(!row)continue;const q=pool.find(q=>q.id===row[0]),picked=Number(Object.keys(row[1]).find(k=>row[1][k]===id));
    assert(why(q,false,{picked}).includes(esc(m.label)));const html=teacherKeyHtml({u:unit,ch:{title:unit},list:[q],misc});if(!q.diagnosticOverride)assert(html.includes(esc(m.label)));labelsShown++;
    const vocabulary=vocabOf(pool,misc),r=gradeDaily(q,picked,{misc:questionMisconceptions(q,misc),vocab:vocabulary});assert(['wrong','review'].includes(r.status));

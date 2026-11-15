@@ -74,6 +74,6 @@ test('classroom, Daily and real bank print output use the current examples witho
  }
  assert(selected>14);
  const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8'),lesson=fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8');
- const currentVersion=code.match(/revised-lesson\.js\?v=([^'"]+)/)[1];assert(index.includes('&book='+currentVersion));assert(code.includes('revised-lesson.js?v='+currentVersion));assert(lesson.includes('linked-workbook-answers.js?v='+version));
+ const currentVersion=code.match(/revised-lesson\.js\?v=([^'"]+)/)[1];const entry=new URLSearchParams(index.match(/src="\.\/v2\.js\?([^"]+)/)[1]),lessonParams=new URLSearchParams('v='+currentVersion);assert.equal(entry.get('book'),lessonParams.get('v'));for(const[key,value]of lessonParams)if(key!=='v')assert.equal(entry.get(key),value);assert(code.includes('revised-lesson.js?v='+currentVersion));assert(lesson.includes('linked-workbook-answers.js?v='+version));
  for(const unit of units){const line=code.split('\n').find(l=>l.startsWith(" '"+unit+"':"));assert(line.includes('linked-workbook-answers.js?v='+version));}
 });

@@ -7,7 +7,7 @@ import {items as think} from '../data/units/c22-s32-u04.think.js';
 import {grade3PracticeCurrentItems,infectionFeedbackCurrentItems,INFECTION_FEEDBACK_VERSION} from '../data/book/c22-s32-practice-language.js';
 import {lessonReferenceItems} from '../data/book/lesson-reference-data.js';
 import {withThink} from './think-merge.js';
-import {questionAtVersion,questionVersion,restoreDailyQuestions,restartCurrentQuestion} from './question-revision.js';
+import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion} from './question-revision.js';
 import {gradeDaily,vocabOf} from './daily-grade.js';
 import {snapshotDailyPaper,resolveDailyPaper} from './daily-paper-state.js';
 import {teacherKeyHtml} from './daily.js';
@@ -56,7 +56,7 @@ test('four infection explanations change without changing questions, answer boun
 
 test('online, printed teacher feedback and Daily use the reviewed explanations while student print hides them',()=>{
  const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- const context=vm.createContext({...presentation,...content,writtenPracticeHtml,seasonAnswerHint,FIG:{},MISC:null,CIRC:['①','②','③','④','⑤'],esc});
+ const context=vm.createContext({...presentation,...content,writtenPracticeHtml,seasonAnswerHint,FIG:{},MISC:null,questionMisconceptions,CIRC:['①','②','③','④','⑤'],esc});
  const item=new vm.Script(source.slice(source.indexOf('function blanksHtml('),source.indexOf('let FIG ='))+';itemHtml').runInContext(context);
  const feedback=new vm.Script(source.slice(source.indexOf('function whyHtml('),source.indexOf('// ctx = '))+';whyHtml').runInContext(context);
  for(const q of reviewed){
