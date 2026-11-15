@@ -1,3 +1,4 @@
+import{withSoundWorkbookDirections}from'./sound-workbook-directions.js?v=20261115-sound-workbook-directions';
 import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import{withGrade3PracticeWorkbook,withSoundComparisonWorkbook}from'./c22-s32-practice-language.js?v=20261108-grade3-material-language&sound=20261115-sound-comparison-prompt';
@@ -7761,4 +7762,5 @@ export const soundStudyNotesPriorWorkbook=withGrade3PracticeWorkbook(soundElemen
 export const materialReadingPriorWorkbook=withGrade3StudyNotes(soundStudyNotesPriorWorkbook);
 
 export const soundComparisonPriorWorkbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
-export const workbook=withSoundComparisonWorkbook(soundComparisonPriorWorkbook);
+export const soundDirectionsPriorWorkbook=withSoundComparisonWorkbook(soundComparisonPriorWorkbook);
+export const workbook=withSoundWorkbookDirections(soundDirectionsPriorWorkbook);

@@ -1,3 +1,4 @@
+import{withSoundWorkbookDirections}from'../data/book/sound-workbook-directions.js';
 import{withSoundComparisonWorkbook}from'../data/book/c22-s32-practice-language.js';
 import{withEarthSeaLinkedWorkbook}from'../data/book/earth-sea-choice-review.js';
 import{withMaterialReadingWorkbook}from'../data/book/material-reading-criteria.js';import{withEarthSeaStandaloneContext}from'../data/book/standalone-question-context.js';
@@ -92,13 +93,14 @@ test('grade-three study notes preserve every question, extension concept, writin
 
 test('actual grade-three papers display the simpler notes while answer and quick views stay identical',async()=>{
  for(const [current,prior]of studyBooks){
+  const pageCurrent=withSoundWorkbookDirections(withSoundComparisonWorkbook(withMaterialReadingWorkbook(current)));
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior)))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert(html===oldPaper.workbookPaper({mode}),current.unit+' '+mode+' unchanged');
    else{
-    for(let i=0;i<current.pages.length;i++)for(let j=0;j<(current.pages[i].rail||[]).length;j++){
-     const note=current.pages[i].rail[j],old=prior.pages[i].rail[j];if(note.text!==old.text)assert(html.includes(escape(note.text)),current.unit+' '+mode+' current note');
+    for(let i=0;i<pageCurrent.pages.length;i++)for(let j=0;j<(pageCurrent.pages[i].rail||[]).length;j++){
+     const note=pageCurrent.pages[i].rail[j],old=prior.pages[i].rail[j];if(note.text!==old.text)assert(html.includes(escape(note.text)),current.unit+' '+mode+' current note');
     }
    }
   }
