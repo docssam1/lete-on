@@ -1,3 +1,4 @@
+import{withEarthMotionContextWorkbook}from'./earth-motion-workbook-context.js?v=20261116-earth-motion-workbook-context';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withEarthMotionReadableWorkbook}from'./c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook';
@@ -19676,4 +19677,5 @@ export const earthMotionReadablePriorWorkbook=withStudentGuideLanguage(studentGu
 export const grade6StudyNotesPriorWorkbook=withEarthMotionReadableWorkbook(earthMotionReadablePriorWorkbook);
 export const grade6ReviewPriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
 
-export const workbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+export const earthMotionContextPriorWorkbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+export const workbook=withEarthMotionContextWorkbook(earthMotionContextPriorWorkbook);
