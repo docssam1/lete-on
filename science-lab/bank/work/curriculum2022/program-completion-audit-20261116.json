@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "incomplete-forty-nine-original-diagnoses-repaired",
+  "status": "incomplete-one-hundred-nine-original-diagnoses-repaired",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -68,12 +68,8 @@
       "requirement": "Original-question misconception diagnosis",
       "status": "incomplete",
       "cliExitCode": 1,
-      "missingInActualRuntime": 152,
+      "missingInActualRuntime": 92,
       "units": [
-        {
-          "unit": "c22-s62-u01",
-          "missing": 60
-        },
         {
           "unit": "c22-s62-u02",
           "missing": 43
@@ -83,13 +79,13 @@
           "missing": 49
         }
       ],
-      "evidence": "Five geology, eleven mixture and33earth-motion automatic originals now have versioned review rules:143wrong-choice links and12typed concept rules.20of the initial221rows require explicit teacher review;152automatic-source diagnoses remain missing. The required whole CLI still exits1. Registered source text, keys and figures remain unchanged.",
+      "evidence": "Five geology, eleven mixture,33earth-motion and60season automatic originals now have versioned review rules:264wrong-choice links and41typed concept rules.20of the initial221rows require explicit teacher review;92automatic-source diagnoses remain missing. The required whole CLI still exits1. Registered source text, keys and figures remain unchanged.",
       "initialAbsentRules": 221,
       "explicitTeacherReviewCasesAmongInitialRows": 20,
       "automaticQuestionsOriginallyNeedingDiagnosis": 201,
-      "automaticQuestionsConnected": 49,
-      "wrongChoiceLinksAdded": 143,
-      "typedConceptRulesAdded": 12
+      "automaticQuestionsConnected": 109,
+      "wrongChoiceLinksAdded": 264,
+      "typedConceptRulesAdded": 41
     },
     {
       "requirement": "Referenced images exist and current source images are reviewed",
@@ -113,7 +109,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "476 native345files/1687tests/1685pass/2browser skip. Thirty-three earth-motion revisions add66full snapshots, preserving registered versions and proven legacy unversioned attempts; all sixteen prior geology/mixture revisions remain identical. Full snapshot total3436plus2legacy deltas."
+      "evidence": "477 native346files/1692tests/1690pass/2browser skip. Sixty season revisions add120full snapshots, preserving registered versions and proven legacy unversioned attempts; all49prior source revisions remain identical. Full snapshot total3556plus2legacy deltas."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -150,27 +146,27 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstUnit": "c22-s62-u01",
-    "missingAutomaticOriginalDiagnostics": 60,
-    "remainingAcrossThreeUnits": 152,
+    "firstUnit": "c22-s62-u02",
+    "missingAutomaticOriginalDiagnostics": 43,
+    "remainingAcrossTwoUnits": 92,
     "requirements": [
-      "Read original prompts, materials and specialized season answer contracts before mapping review concepts.",
-      "Preserve all49existing source revisions and their choice/typed diagnostics.",
+      "Read original prompts, materials and specialized source response contracts before mapping combustion review concepts.",
+      "Preserve all109existing source revisions and their choice/typed diagnostics.",
       "Keep reviewed original text, figures, grading and answer keys unchanged.",
       "Preserve registered versions, unversioned attempts and prior diagnoses.",
       "Validate explicit teacher-review contracts and never automatically judge held originals.",
       "Keep the global audit failing until all actual missing links are implemented."
     ]
   },
-  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/",
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/",
   "productFilesChanged": true,
   "paidApiCalls": 0,
   "cloudWrites": 0,
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "fc59594e11898cd17e6997be328f63b7974e42e9",
-  "latestPhase": 476,
+  "latestFollowupBaseline": "cb2fa4c7af27a33bca92bc634e71f4931badfbae",
+  "latestPhase": 477,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -227,6 +223,33 @@
     "nativeFail": 0,
     "browserSkip": 2,
     "sourceFiguresViewedAndCpuOcr": 11,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup477": {
+    "automaticSeasonSourceRevisions": 60,
+    "choiceQuestions": 31,
+    "wrongChoiceLinks": 121,
+    "typedConceptRules": 29,
+    "newReviewConcepts": [
+      "M14 experiment parts and natural counterparts",
+      "M15 seasonal day length in Korea",
+      "M16 solar culmination and shadows in Korea",
+      "M17 orbital direction and viewing direction"
+    ],
+    "fullSnapshotsAdded": 120,
+    "allFullSnapshotsNow": 3556,
+    "all128WorkbookOutputsUnchanged": true,
+    "seasonSourcePaperModesUnchanged": 4,
+    "earlierSourceRevisionsUnchanged": 49,
+    "priorThirteenMiscDefinitionsAndTablesPreserved": true,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegistration": "6aff5892d",
+    "nativeFiles": 346,
+    "nativeTests": 1692,
+    "nativePass": 1690,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 24,
     "sourceOriginalTextOrAnswerChanges": 0
   }
 }
