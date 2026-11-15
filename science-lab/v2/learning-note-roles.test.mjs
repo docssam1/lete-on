@@ -1,3 +1,4 @@
+import{withInfectionWorkbookDirections}from'../data/book/infection-workbook-directions.js';
 import{withEarthSeaWorkbookDirections}from'../data/book/earth-sea-workbook-directions.js';
 import{withSoundWorkbookDirections}from'../data/book/sound-workbook-directions.js';
 import{withSoundComparisonWorkbook}from'../data/book/c22-s32-practice-language.js';
@@ -16,7 +17,7 @@ import {workbook as life,lifeStudyNotesPriorWorkbook as priorLife} from '../data
 import {materialReadingPriorWorkbook as material,materialStudyNotesPriorWorkbook as priorMaterial} from '../data/book/c22-s32-u01.workbook.js';
 import {earthSurfacePhotoPriorWorkbook as earthSea,earthSeaStudyNotesPriorWorkbook as priorEarthSea} from '../data/book/c22-s32-u02.workbook.js';
 import {materialReadingPriorWorkbook as sound,soundStudyNotesPriorWorkbook as priorSound} from '../data/book/c22-s32-u03.workbook.js';
-import {workbook as infection,infectionStudyNotesPriorWorkbook as priorInfection} from '../data/book/c22-s32-u04.workbook.js';
+import {infectionDirectionsPriorWorkbook as infection,infectionStudyNotesPriorWorkbook as priorInfection} from '../data/book/c22-s32-u04.workbook.js';
 const roles={'핵심 정리':'summary','더 알아보기':'extension','내가 정리할 것':'personal','지도 메모':'teacher'};
 const notes=html=>[...html.matchAll(/<section class="ed-note(?: ed-teacher-note)?"(?: data-note-role="([^"]+)")?><h3>(.*?)<\/h3>/g)].map(m=>({role:m[1]||'',title:m[2]}));
 const studyBooks=[[force,priorForce],[animal,priorAnimal],[plant,priorPlant],[life,priorLife],[material,priorMaterial],[earthSea,priorEarthSea],[sound,priorSound],[infection,priorInfection]];
@@ -94,7 +95,7 @@ test('grade-three study notes preserve every question, extension concept, writin
 
 test('actual grade-three papers display the simpler notes while answer and quick views stay identical',async()=>{
  for(const [current,prior]of studyBooks){
-  const pageCurrent=withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(current))))));
+  const pageCurrent=withInfectionWorkbookDirections(withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(current)))))));
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior)))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});
