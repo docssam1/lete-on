@@ -32,7 +32,7 @@
       preparation: ["응시 학년보다 지원 과정명을 먼저 확정", "시작반과 중간 편입을 구분해 해당 회차의 범위·마지막 단원을 확인", "기본 정확도 뒤에 조건 결합·그래프·경우 나누기 연습", "수업 속도·과제·보충 방식은 지원할 지점과 반에 직접 확인"],
       courses: [
         { id: "middle1", label: "중1 과정 입학", scope: "초등 누적 · 회차별 확인", status: "guide" },
-        { id: "common1-basic", label: "공통수학1 기본", scope: "중2·중3 전 과정 · 대치 2026년 12월 개강", status: "guide" },
+        { id: "common1-basic", label: "공통수학1 기본 · 중등관", scope: "대치 중등관 · 중2·중3 전 과정 · 현 초6 12월 개강", status: "guide" },
         { id: "common2-basic", label: "공통수학2 기본", scope: "지원 반의 공식 진도표·종료 단원 확인", status: "guide" },
         { id: "common1-skill", label: "공통수학1 실력", scope: "회차별 공식 범위", status: "guide" },
         { id: "common2-skill", label: "공통수학2 실력", scope: "회차별 공식 범위", status: "guide" },

@@ -11,9 +11,9 @@
   const WM_ALGEBRA = blog('wonmath563', '224440523829');
   const records = {
     'DP:middle1': { pattern: '중1.*(?:입학|시작|신규)|중1-1', links: [] },
-    'DP:common1-basic': { pattern: '공(?:통수학|수)\\s*1\\s*기본', entryScope: '중2·중3 전 과정', links: [
-      { label: '중등관 모집·입반 안내', url: DP_MIDDLE, note: '대치 중등관 · 12월 개강 · 시험 150분' },
-      { label: '제로관 모집·입반 안내', url: DP_ZERO, note: '대치 제로관 · 12월 개강 · 기본과정 시험 120분' }
+    'DP:common1-basic': { pattern: '공(?:통수학|수)\\s*1\\s*기본', branch: '대치 중등관', checkedAt: '2026-11-16', level: '현 초6 · 12월 개강반', entryScope: '중2·중3 전 과정', links: [
+      { label: '중등관 모집·입반 안내', url: DP_MIDDLE, note: '대치 중등관 · 현 초6 · 시험 150분' },
+      { label: '제로관 별도 모집 안내', url: DP_ZERO, note: '대치 제로관 · 별도 모집 · 기본과정 시험 120분' }
     ] },
     'DP:common2-basic': { pattern: '공(?:통수학|수)\\s*2\\s*기본', links: [{ label: '제로관 모집·입반 안내', url: DP_ZERO, note: '대치 제로관 · 기본과정 시험 120분 · 범위는 지원 반 확인' }] },
     'DP:common1-skill': { pattern: '공(?:통수학|수)\\s*1\\s*실력', links: [{ label: '제로관 모집·입반 안내', url: DP_ZERO, note: '대치 제로관 · 실력과정 시험 150분' }] },

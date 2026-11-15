@@ -10,8 +10,8 @@ const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const keyFor = e => e.id === "wm-middle31-basic-r01" ? "WM:middle31-basic" : e.id === "wm-middle22-basic-r01" ? "WM:middle22-basic" : e.id === "ed-middle1-authored-r01" ? "ED:middle1" : e.id.startsWith("dp-middle22-transfer-") ? "DP:middle-transfer" : e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
 
 test("every released mock agrees with its own branch/course time and count", () => {
-  assert.equal(mocks.length, 30);
-  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1190);
+  assert.equal(mocks.length, 34);
+  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1310);
   mocks.forEach(e => {
     const s = specs.courses[keyFor(e)];
     assert.ok(s, e.id);
@@ -84,6 +84,15 @@ test("Deepthink current prehigh scope excludes the old extra middle3 range", () 
  assert.equal(transfer.scopeState,"source-paper");assert.match(transfer.note,/진도별 확인/);
  assert.notEqual(transfer.scope,specs.courses["DP:common1-basic"].scope);
  });
+
+test('Dolpa common1 basic timing is bound to the middle campus rather than Zero basic admissions',()=>{
+ const common=specs.courses['DP:common1-basic'];
+ assert.equal(common.branch,'대치 중등관');
+ assert.equal(common.durationMinutes,150);assert.equal(common.questionCount,30);
+ assert.match(common.scope,/중2.*중3/);
+ assert.equal(common.sourceUrl,'https://blog.naver.com/dpmath/224407474293');
+ assert.notEqual(common.sourceUrl,'https://blog.naver.com/dpmath/224426268104');
+});
 
 test('Eden middle1 entry uses elementary scope and its own official source',()=>{
  const m=specs.courses['ED:middle1'],c=specs.courses['ED:high-advance'];assert.match(m.scope,/초5.*초6/);assert.match(m.branch,/초등관/);

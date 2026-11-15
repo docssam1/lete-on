@@ -20,11 +20,11 @@
         note: "중등관 대수까지 150분 · 실제 입반 범위는 지원 반 진도별 확인"
       },
       "DP:common1-basic": {
-        branch: "대치", cohort: "2026년 12월 개강",
+        branch: "대치 중등관", cohort: "현 초6 · 2026년 12월 10일 개강",
         scope: "중2·중3 전 과정", durationMinutes: 150, questionCount: 30,
         durationState: "official",
         sourceUrl: "https://blog.naver.com/dpmath/224407474293",
-        note: "대치 · 2026년 12월 개강 기준"
+        note: "대치 중등관 · 현 초6 · 12월 개강"
       },
       "WM:middle21-basic": {
         branch: "대치", cohort: "2026년 10월 개강",
