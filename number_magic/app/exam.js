@@ -9496,7 +9496,7 @@ ${round.html}
     if(chk) items.push(chk);
     const wsId = opts.standard ? ('S-' + c + '-' + sessionNo + (amount !== 1 ? '-x' + amount : ''))
       : 'W' + w + '-' + c + (k === 2 ? '-2' : '');
-    const title = (course.title && (course.title.ko || course.title)) || c;
+    const title = (course.title && (pickL(course.title) || course.title.ko || course.title)) || c;
     const weekLabel = (() => {
       const m = /^(\d{4})-W(\d{2})$/.exec(w); if(!m) return w;
       const jan4 = new Date(Date.UTC(+m[1], 0, 4)); const day = (jan4.getUTCDay() + 6) % 7;
