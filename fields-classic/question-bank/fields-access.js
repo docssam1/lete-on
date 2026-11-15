@@ -4,7 +4,10 @@ import { loggedIn, memberCall } from "./study-progress.js?v=20261111p";
 //   둘러보기(로그인 안 함)      → 1권 1단원(한 주 = 1·2차시)만
 //   가입 회원 · 체험(14일)      → 시작 권 하나(fields-membership.js)
 //   가입 회원 · 정식(원장 승인) → 시작 권부터 한 달에 1권씩 + 추가 요청으로 원장이 더 연 권
-//   원장이 직접 만든 옛 승인번호(회원 표에 없음)·선생님 → 전부
+//   GM 열기 방식(원장 2026-11-14 「gm과정을 권별 이나 기간 둘로 나눠 관리」, 서버 표 fields_gm_plans)이 있으면 그 방식이 먼저:
+//     권별 → 원장이 고른 권만 · 기간 → 시작일~끝나는 날, 한 달에 1권씩
+//   원장이 직접 만든 승인번호(모의고사 회원 등)는 방식이 없으면 GM이 닫혀 있다(reason gm_none → 둘러보기처럼 1권 1단원만)
+//   선생님 → 전부. 서버가 GM 상태를 주지 않은 옛 로그인(member 없음)만 예전처럼 전부 연다(새로 확인하면 바뀐다)
 // 서버(fields-auth)는 체험이 끝났거나 멈춘 회원의 로그인을 막는다. 화면은 여기서 권·단원을 막는다.
 // 회원 정식 승인·다음 권 요청은 카톡으로 하고(원장 2026-10-29), 서버에는 「요청함」 표시만 남긴다.
 export const KAKAO = "https://open.kakao.com/me/gfield";
@@ -24,7 +27,7 @@ export function viewer() {
   return { kind: "member", name: me.name, member: me.member };
 }
 
-// 이 권(·단원)을 공부할 수 있나 → { ok, why: preview | book | trial_expired | paused }
+// 이 권(·단원)을 공부할 수 있나 → { ok, why: preview | gm_none | book | trial_expired | paused | period_ended | not_started }
 export function canStudy(bookId, unitIndex = null) {
   const who = viewer();
   if (who.kind === "admin" || who.kind === "legacy") return { ok: true, who };
@@ -33,6 +36,10 @@ export function canStudy(bookId, unitIndex = null) {
     return { ok, why: ok ? "" : "preview", who, partial: bookId === PREVIEW.book };
   }
   const m = who.member;
+  if (!m.open && m.reason === "gm_none") {
+    const ok = bookId === PREVIEW.book && (unitIndex === null || Number(unitIndex) === PREVIEW.unit);
+    return { ok, why: ok ? "" : "gm_none", who, partial: bookId === PREVIEW.book };
+  }
   if (!m.open) return { ok: false, why: m.reason || "paused", who };
   return { ok: (m.books || []).includes(bookId), why: "book", who };
 }
@@ -44,7 +51,7 @@ export function canRetry(bookId, unitIndex = null) {
   const gate = canStudy(bookId, unitIndex);
   if (!gate.ok) return gate;
   const who = gate.who;
-  const paid = who.kind === "admin" || who.kind === "legacy" || (who.kind === "member" && who.member.open && who.member.status !== "trial");
+  const paid = who.kind === "admin" || who.kind === "legacy" || (who.kind === "member" && who.member.open && (Boolean(who.member.plan) || who.member.status === "approved"));
   return paid ? gate : { ok: false, why: "retry", who };
 }
 export const isPaid = () => canRetry(PREVIEW.book, PREVIEW.unit).why !== "retry";
@@ -70,6 +77,8 @@ export async function askOnKakao(kind, note) {
   const who = viewer();
   const text = kind === "book"
     ? `[다음 권 추가 요청] 아이 이름: ${who.name || ""}${note ? ` · ${note}` : ""}`
+    : kind === "extend" ? `[이용 기간 연장 요청] 아이 이름: ${who.name || ""}`
+    : kind === "gm" ? `[스스로 공부(GM 과정) 열기 요청] 아이 이름: ${who.name || ""}`
     : `[정규회원 승인 요청] 아이 이름: ${who.name || ""}`;
   try { await navigator.clipboard?.writeText(text); } catch {}
   window.open(KAKAO, "_blank", "noopener");
@@ -93,6 +102,14 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
     <h2>강사용 교안은 승인된 강사만 열 수 있어요</h2>
     <p>원장님께 「강사용 교안」 권한을 받은 승인번호로 로그인해 주세요.${who.kind !== "preview" ? " 지금 로그인한 승인번호에는 이 권한이 없어요." : ""}</p>
     <div class="fa-actions"><a class="fa-btn primary" href="${login}">승인번호로 로그인 ›</a><a class="fa-btn" href="./start.html">학생 화면으로</a></div></div>`;
+  if (why === "gm_none") return `<div class="fa-lock"><p class="fa-kick">스스로 공부</p>
+    <h2>스스로 공부는 아직 열리지 않았어요</h2>
+    <p>이 승인번호로는 지금 <b>1권 1단원(한 주 분량)</b>까지 둘러볼 수 있어요. 스스로 공부를 이어서 하려면 원장님께 카톡으로 요청해 주세요.</p>
+    <div class="fa-actions"><button type="button" class="fa-btn primary" data-fa="gm">스스로 공부 열기 요청(카톡) ›</button></div><p class="fa-small" data-fa-msg></p></div>`;
+  if (why === "period_ended" || why === "not_started") return `<div class="fa-lock"><p class="fa-kick">이용 기간</p>
+    <h2>${why === "not_started" ? `${m?.plan?.startsOn ? esc(day(m.plan.startsOn)) : "정한 날"}부터 열려요` : "이용 기간이 끝났어요"}</h2>
+    <p>${why === "not_started" ? "원장님이 정해 둔 시작일이 되면 같은 승인번호로 바로 공부할 수 있어요." : `${m?.endsOn ? `${esc(day(m.endsOn))}까지였어요. ` : ""}이어서 공부하려면 카톡으로 연장을 요청해 주세요.`}</p>
+    ${why === "period_ended" ? `<div class="fa-actions"><button type="button" class="fa-btn primary" data-fa="extend">이용 기간 연장 요청(카톡) ›</button></div><p class="fa-small" data-fa-msg></p>` : ""}</div>`;
   if (why === "preview") return `<div class="fa-lock"><p class="fa-kick">둘러보기</p>
     <h2>둘러보기는 1권 1단원(한 주 분량)까지예요</h2>
     <p>이메일로 가입하며 승인번호를 정하면 <b>2주 동안 체험</b>할 수 있어요. 체험이 끝난 뒤에는 정규회원으로 이어서 공부해요.</p>
@@ -102,7 +119,12 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
     <p>정규회원 승인은 카톡으로 요청해 주세요. 승인되면 같은 승인번호로 이어서 공부해요.</p>
     <div class="fa-actions"><button type="button" class="fa-btn primary" data-fa="regular">정규회원 승인 요청(카톡) ›</button></div><p class="fa-small" data-fa-msg></p></div>`;
   // 회원인데 아직 안 열린 권
-  const trial = m?.status === "trial";
+  const picked = m?.plan?.mode === "book";
+  if (picked) return `<div class="fa-lock"><p class="fa-kick">${esc(BOOK_LABEL(bookId))}</p>
+    <h2>${esc(BOOK_LABEL(bookId))}은 아직 열리지 않았어요</h2>
+    <p>지금 열린 권은 <b>${esc((m.books || []).map(BOOK_LABEL).join(" · ") || "없음")}</b>이에요. 다른 권이 필요하면 카톡으로 요청해 주세요.</p>
+    <div class="fa-actions"><button type="button" class="fa-btn primary" data-fa="book" data-book="${esc(bookId)}">${esc(BOOK_LABEL(bookId))} 열어 달라고 요청(카톡) ›</button></div><p class="fa-small" data-fa-msg></p></div>`;
+  const trial = m?.status === "trial" && !m?.plan;
   const upTo = m?.upTo ? BOOK_LABEL(m.upTo) : "";
   const asked = m?.bookRequestedAt ? `<p class="fa-small">${day(m.bookRequestedAt)}에 추가 요청을 보냈어요. 원장님이 열어 주시면 바로 보여요.</p>` : "";
   return `<div class="fa-lock"><p class="fa-kick">${esc(BOOK_LABEL(bookId))}</p>
@@ -116,7 +138,7 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
 export function wireAccess(root) {
   root.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-fa]");
-    if (!button || !["book", "regular"].includes(button.dataset.fa)) return;
+    if (!button || !["book", "regular", "extend", "gm"].includes(button.dataset.fa)) return;
     const box = button.closest(".fa-lock, .fa-banner");
     const msg = box?.querySelector("[data-fa-msg]");
     await askOnKakao(button.dataset.fa, button.dataset.book ? `${BOOK_LABEL(button.dataset.book)} 열어 주세요` : "");
@@ -131,7 +153,12 @@ export function accessBanner() {
   if (who.kind === "preview") return `<div class="fa-banner"><span><b>둘러보기</b> · 1권 1단원(한 주 분량)까지 열려 있어요</span><a class="fa-btn small primary" href="./signup.html">이메일로 가입하고 2주 체험 ›</a></div>`;
   if (who.kind !== "member" || !who.member.open) return "";
   const m = who.member;
-  if (m.status === "trial") {
+  // 기간으로 열어 둔 회원: 끝나는 날이 2주 안이면 알려 준다
+  if (m.plan?.mode === "period" && m.endsOn && daysLeft(`${m.endsOn}T23:59:59+09:00`) <= 14) {
+    const left = daysLeft(`${m.endsOn}T23:59:59+09:00`);
+    return `<div class="fa-banner"><span><b>이용 기간</b> · ${left > 1 ? `${left}일 남았어요` : "오늘까지예요"}(${day(m.endsOn)}까지)</span><button type="button" class="fa-btn small primary" data-fa="extend">연장 요청(카톡) ›</button><small data-fa-msg></small></div>`;
+  }
+  if (m.status === "trial" && !m.plan) {
     const left = daysLeft(m.trialUntil);
     return `<div class="fa-banner"><span><b>체험 중</b> · ${left ? `${left}일 남았어요` : "오늘까지예요"}(${day(m.trialUntil)}까지) · ${esc(BOOK_LABEL(m.upTo))}</span>${m.approvalRequestedAt ? `<small>정규회원 요청을 보냈어요</small>` : `<button type="button" class="fa-btn small primary" data-fa="regular">정규회원 승인 요청(카톡) ›</button>`}<small data-fa-msg></small></div>`;
   }

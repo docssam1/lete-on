@@ -1,7 +1,7 @@
 // Generated from approved public channels. Do not add post bodies or personal data.
 globalThis.HIGHSELECT_ACADEMY_NOTICES = {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-13",
+  "checkedAt": "2026-11-14",
   "policy": {
     "branches": [
       "대치",
@@ -19,81 +19,81 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "dg-bundang-tests",
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=bundang",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "dg-daechi-seminars",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "dg-daechi-tests",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "dp-blog",
       "academy": "DP",
       "branch": "title",
       "url": "https://blog.naver.com/dpmath",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "ed-blog",
       "academy": "ED",
       "branch": "대치",
       "url": "https://blog.naver.com/edenmath",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "sh-blog",
       "academy": "SH",
       "branch": "대치",
       "url": "https://blog.naver.com/sharpedu",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "sm-blog",
       "academy": "SM",
       "branch": "대치",
       "url": "https://blog.naver.com/won1934",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     },
     {
       "id": "wm-blog",
       "academy": "WM",
       "branch": "대치",
       "url": "https://blog.naver.com/wonmath563",
-      "checkedAt": "2026-11-13",
+      "checkedAt": "2026-11-14",
       "status": "ok",
-      "lastSuccessAt": "2026-11-13"
+      "lastSuccessAt": "2026-11-14"
     }
   ],
   "items": [
@@ -331,12 +331,12 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DP",
       "branch": "대치",
       "category": "admission",
-      "title": "[대치 중등관] 초6, 12월 개강안내",
+      "title": "[대치 중등관]초6, 12월 개강안내",
       "url": "https://blog.naver.com/dpmath/224407474293",
       "publishedAt": "2026-10-16",
       "eventDate": null,
       "scheduleText": "",
-      "revision": "e76156ea857e7c1e"
+      "revision": "a1b850e8e5f93a19"
     },
     {
       "id": "wm-blog-224443076138-대치",
@@ -441,19 +441,6 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "eventDate": null,
       "scheduleText": "",
       "revision": "a6707835d926ebd1"
-    },
-    {
-      "id": "dp-blog-224416048124-분당",
-      "sourceId": "dp-blog",
-      "academy": "DP",
-      "branch": "분당",
-      "category": "test",
-      "title": "[분당관] 정규반 진도 및 신규 개강 안내(9/19~)",
-      "url": "https://blog.naver.com/dpmath/224416048124",
-      "publishedAt": "2026-09-18",
-      "eventDate": null,
-      "scheduleText": "",
-      "revision": "95074db1b4c6d3c5"
     },
     {
       "id": "sm-blog-224405751994-대치",

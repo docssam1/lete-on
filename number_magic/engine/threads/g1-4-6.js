@@ -823,7 +823,7 @@
     const extra = (skin !== 'circle' && preset.length)
       ? T(` 한 가지는 이미 있어요. ${rows}가지를 더 찾아요!`, ` One way is already there. Find ${rows} more!`, ` 已经有一种了，再找${rows}种！`) : T('', '', '');
     return base(T(pr.ko + extra.ko, pr.en + extra.en, pr.zh + extra.zh), 'splitDraw', T0, {
-      skin, total: T0, rows, preset, parts, distinct: ordered ? 'ordered' : 'unordered', e, colors, keyFields: ['skin', 'total', 'rows', 'preset', 'parts', 'distinct', 'e', 'colors'],
+      skin, total: T0, rows, preset, parts, distinct: ordered ? 'ordered' : 'unordered', e, colors, keyFields: ['skin', 'total', 'rows', 'preset', 'parts', 'distinct', 'e'],
       printAsk: T(pp.ko + extra.ko, pp.en + extra.en, pp.zh + extra.zh)
     });
   };

@@ -143,11 +143,17 @@ function renderAcademyControls(c,value=null,{jump=false}={}){
 function academyMonthPlan(ref,c,fields={}){
  if(!ref||!Number.isFinite(c?.now)||!['fields-e1','soma'].includes(ref.id))return [];
  const main=[ref.main,...ref.parallel],groups=ref.id==='soma'?[{id:'main',title:'소마 A반',tracks:main.filter(t=>!t.source||t.source.caseId===ref.source?.caseId)},...main.filter(t=>t.source&&t.source.caseId!==ref.source?.caseId).map((t,i)=>({id:'example'+i,title:t.title,tracks:[t]}))]:[{id:'main',title:ref.label,tracks:[...main.filter(t=>t.title==='수업 횟수·시간'),...main.filter(t=>t.title!=='수업 횟수·시간')]}];
+ const current=global.PLANNER_SOMA_CURRENT;
+ if(ref.id==='soma'&&current)groups.unshift({id:current.source.caseId,title:current.title,tracks:current.tracks,fixedStartYear:current.startYear});
  return groups.map(group=>{
   const tracks=group.tracks.map(t=>({...t,blocks:t.blocks.filter(b=>b.kind!=='sequence'&&Number.isInteger(b.start)&&Number.isInteger(b.end)&&b.end>b.start)})).filter(t=>t.blocks.length),periods=tracks.flatMap(t=>t.blocks);
   if(!periods.length)return null;
   const start=Math.min(...periods.map(b=>b.start)),end=Math.max(...periods.map(b=>b.end));
-  const months=Array.from({length:end-start},(_,i)=>({at:start+i,...calendarAt(c.now,start+i-c.now,fields),current:Math.floor(c.now)===start+i}));
+  const months=Array.from({length:end-start},(_,i)=>{
+   const at=start+i,base={at,...calendarAt(c.now,at-c.now,fields),current:Math.floor(c.now)===at};
+   if(group.fixedStartYear){const year=group.fixedStartYear+Math.floor(at/12),month=at%12+1,age=5+Math.floor(at/12);return {...base,year,month,quarter:Math.floor((month-1)/3)+1,grade:age+'세',label:year+'년 '+age+'세 '+month+'월',current:false};}
+   return base;
+  });
   const rows=tracks.map(t=>({title:t.title,cells:months.map(month=>{const index=t.blocks.findIndex(b=>b.start<=month.at&&b.end>month.at),b=t.blocks[index];return {start:month.at,end:month.at+1,span:1,label:b?.label||'',note:b?.note||'',kind:b?.kind||'empty',index,sourceStart:b?.start??null,sourceEnd:b?.end??null,sourceRow:b?.sourceRow||''};}).reduce((cells,cell)=>{const last=cells.at(-1);if(last&&last.index===cell.index){last.end=cell.end;last.span++;}else cells.push({...cell});return cells;},[])}));
   const years=months.reduce((list,m)=>{const key=Math.floor(m.at/12),last=list.at(-1);if(last&&last.key===key)last.end=m.at+1;else list.push({key,year:m.year,start:m.at,end:m.at+1});return list;},[]);
   return {id:group.id,title:group.title,start,end,months,rows,years};

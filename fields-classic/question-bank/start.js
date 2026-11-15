@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261111c";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261111p";
-import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261111p";
+import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261114a";
 import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261111f";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 

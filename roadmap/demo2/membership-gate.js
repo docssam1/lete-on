@@ -5,7 +5,7 @@
  // Looking around without an account is the one door that needs no session. It is asked for by name
  // (planner.html?guest=1), opens with nothing read or stored, and keeps the member-only rooms closed.
  // Its script is fetched only then, so the page still starts with the three membership scripts alone.
- const guestAsked=/(?:^\?|&)guest=1(?:&|$)/.test(location.search),TOUR_SRC='planner-guest.js?v=20261111-guest2',CONSULT_SRC='planner-consult.js?v=20261112-consult1';
+ const guestAsked=/(?:^\?|&)guest=1(?:&|$)/.test(location.search),TOUR_SRC='planner-guest.js?v=20261111-guest2',CONSULT_SRC='planner-consult.js?v=20261113-copy2';
  const loadOne=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=()=>resolve();s.onerror=()=>reject(new Error(`자료 파일을 불러오지 못했습니다: ${src}`));document.body.appendChild(s);});
  const SCRIPT_TIMEOUT_MS=30000;
  let phase='계정 확인',loaded=0,failed=false;

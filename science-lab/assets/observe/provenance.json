@@ -1671,11 +1671,11 @@
     768,
     1024
    ],
-   "crop": null,
+   "crop": "가운데를 가로 4:3로 자름 [0, 224, 768, 800]",
    "width": 768,
-   "height": 1024,
-   "bytes": 218162,
-   "sha256": "ce0892df44580d946a89718e457bb1da1520ee08eb7637219bcca7f40617fe36",
+   "height": 576,
+   "bytes": 113858,
+   "sha256": "0983c798d533eb9d0df328584bcaca714c17d2debb4be869ae4a3b884723287c",
    "reviewed": "2026-11-07, 실제 이미지 눈으로 확인(Claude)",
    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/514431377/original.jpg",
    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/514431377/large.jpg",
@@ -1794,6 +1794,627 @@
    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
    "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
    "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "marsilea-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/380363715-1741-4ab9-bad6-28f3327b95a7",
+   "edan_id": "ld1-1643408532374-1643408593741-0",
+   "title": "Marsilea quadrifolia L.",
+   "scientific_names": [
+    "Marsilea quadrifolia L."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan",
+    "Okinawa"
+   ],
+   "file": "marsilea-2.jpg",
+   "name": "네가래 식물 표본",
+   "visible_features": "종이에 눌러 말린 네가래 — 잎자루 끝의 네 잎과 땅속줄기가 한눈에 보여요.",
+   "original_size": [
+    6740,
+    8991
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-01444625.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 235349,
+   "sha256": "11154a790cd3b749491a23a53f8e8614a3cce6a801912818d6d637104adc3ec3",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "ceratophyllum-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/397443ea6-9cd7-4779-bbc4-d48ade4bfd7e",
+   "edan_id": "ld1-1643409877537-1643409900203-0",
+   "title": "Ceratophyllum demersum L.",
+   "scientific_names": [
+    "Ceratophyllum demersum L."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan",
+    "Okinawa"
+   ],
+   "file": "ceratophyllum-2.jpg",
+   "name": "붕어마름 식물 표본",
+   "visible_features": "종이에 눌러 말린 붕어마름 — 마디마다 돌려난 가는 잎 다발이 보여요.",
+   "original_size": [
+    6812,
+    8873
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-00053858.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 279030,
+   "sha256": "738152eb9e4335b626c8c614d0fa3a9de1e2b7d5221d8a3d98ed92231964b16d",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "alisma-3",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/35a69fd62-5cb0-4610-8eaf-2868ab07d786",
+   "edan_id": "ld1-1643407637785-1643407682760-0",
+   "title": "Alisma canaliculatum A. Braun & C.D. Bouché",
+   "scientific_names": [
+    "Alisma canaliculatum A. Braun & C.D. Bouché"
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan",
+    "Okinawa"
+   ],
+   "file": "alisma-3.jpg",
+   "name": "택사(Alisma canaliculatum) 식물 표본",
+   "visible_features": "뿌리·잎·꽃대까지 한 포기 전체를 눌러 말린 택사 — 길쭉한 잎과 가지 친 꽃대가 보여요.",
+   "original_size": [
+    6823,
+    8921
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-03828999.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 285910,
+   "sha256": "3087fd3bf680a429f1bd9596cdbae4e3cb023a5d843b52409db907d601df0fab",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "typha-3",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/372e5a2a7-18ee-48ce-a620-d77e0dddc970",
+   "edan_id": "ld1-1643408359214-1643408374810-0",
+   "title": "Typha orientalis C. Presl",
+   "scientific_names": [
+    "Typha orientalis C. Presl"
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "typha-3.jpg",
+   "name": "부들(Typha orientalis) 식물 표본",
+   "visible_features": "길게 잘라 눌러 말린 부들 잎과 이삭 — 잎이 길고 나란한 맥을 가졌어요.",
+   "original_size": [
+    6756,
+    8931
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-00620435.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 275260,
+   "sha256": "415affc78061c72bba98bcf915120899c1e03bd4f07093c66aff1ca7cf3dd01c",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "hydrilla-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/3a4e4775f-9157-49d0-98a2-f91fa7b847bb",
+   "edan_id": "ld1-1643407637785-1643407689043-0",
+   "title": "Hydrilla verticillata (L. f.) Royle",
+   "scientific_names": [
+    "Hydrilla verticillata (L. f.) Royle"
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "hydrilla-2.jpg",
+   "name": "검정말 식물 표본",
+   "visible_features": "종이에 눌러 말린 검정말 — 줄기 마디마다 좁은 잎이 돌려 붙은 모습이 보여요.",
+   "original_size": [
+    6767,
+    9020
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-03832063.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 285086,
+   "sha256": "215dc349570d38fbbfcfa779e153c47d8690bc8b36ce338ca3f08cbcab4eda42",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "lily-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/3261615ca-07a0-45ef-9264-5080a2e423ef",
+   "edan_id": "ld1-1643407637785-1643407676685-0",
+   "title": "Nymphaea tetragona Georgi",
+   "scientific_names": [
+    "Nymphaea tetragona Georgi"
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "lily-2.jpg",
+   "name": "수련(Nymphaea tetragona) 식물 표본",
+   "visible_features": "둥근 잎의 갈라진 틈, 긴 잎자루, 꽃이 함께 눌러 말린 수련 표본이에요.",
+   "original_size": [
+    6793,
+    8932
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-03725420.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 257820,
+   "sha256": "2438dac3473100b7ecc46365d0eafe215b1ad401b0a9d5b5590c4367fdfbb83a",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "hyacinth-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/32c59dd1a-030e-4f90-9885-aaefbc546232",
+   "edan_id": "ld1-1643407637785-1643407689959-1",
+   "title": "Eichhornia crassipes (Mart.) Solms",
+   "scientific_names": [
+    "Eichhornia crassipes (Mart.) Solms"
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan",
+    "Okinawa"
+   ],
+   "file": "hyacinth-2.jpg",
+   "name": "부레옥잠 식물 표본",
+   "visible_features": "둥근 잎과 부푼 잎자루, 수염뿌리가 보이는 부레옥잠 표본이에요.",
+   "original_size": [
+    6761,
+    8917
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-03839089.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 260889,
+   "sha256": "2ad74e623ef8eeaf7d5f6a7c80d88b3aaa6ab1694ff1610f5d76ca71dfad1d67",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "alt-entire-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/3764dc7e6-1a79-42bd-a985-027242e42b01",
+   "edan_id": "ld1-1643408614113-1643408631983-0",
+   "title": "Diospyros kaki Thunb.",
+   "scientific_names": [
+    "Diospyros kaki Thunb."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "alt-entire-2.jpg",
+   "name": "감나무 식물 표본",
+   "visible_features": "가지를 따라 잎이 하나씩 엇갈려 붙은(어긋나기) 감나무 가지 표본이에요. 잎 가장자리가 밋밋해요.",
+   "original_size": [
+    6765,
+    9006
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-03131905.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 252209,
+   "sha256": "f88f5472e49255ac27f144da91cefbc3986a0e591c8e690ec07d4c529677a9fe",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "opp-serrate-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/33a28299d-a291-49c3-a15e-5103d4afc619",
+   "edan_id": "ld1-1643410472959-1643410554092-0",
+   "title": "Perilla frutescens (L.) Britton",
+   "scientific_names": [
+    "Perilla frutescens (L.) Britton"
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "opp-serrate-2.jpg",
+   "name": "들깨류(Perilla frutescens) 식물 표본",
+   "visible_features": "줄기의 같은 마디에 잎이 두 장씩 마주 붙은 들깨류 표본 — 톱니 가장자리가 보여요.",
+   "original_size": [
+    6731,
+    8964
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-02817225.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 282862,
+   "sha256": "ea936be3d44eba17543b4f420d5fddb380d695d6c0b8c21676454ee5742fb6ff",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "whorl-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/36e3a3a3b-1d63-426f-b58f-c90062dbe636",
+   "edan_id": "ld1-1643408696072-1643408762451-0",
+   "title": "Galium aparine L.",
+   "scientific_names": [
+    "Galium aparine L."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "whorl-2.jpg",
+   "name": "갈퀴덩굴 식물 표본",
+   "visible_features": "가는 줄기 마디마다 좁은 잎 모양이 여럿 둘러난 갈퀴덩굴 표본이에요.",
+   "original_size": [
+    6810,
+    9013
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-02698316.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 294837,
+   "sha256": "917cf191c907e13789101048e2f19fbdf58f30302e5218c6f0668b00fb372a08",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "rosette-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/330bcdf92-c0e4-431d-941d-d7d40d41e1aa",
+   "edan_id": "ld1-1643408783796-1643408809155-1",
+   "title": "Taraxacum officinale G.H. Weber ex F.H. Wigg.",
+   "scientific_names": [
+    "Taraxacum officinale G.H. Weber ex F.H. Wigg."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan",
+    "Okinawa"
+   ],
+   "file": "rosette-2.jpg",
+   "name": "서양민들레 식물 표본",
+   "visible_features": "뿌리 위에서 잎이 둥글게 퍼져 나온(뭉쳐나기) 민들레 한 포기 표본 — 깊게 갈라진 잎과 꽃대가 보여요.",
+   "original_size": [
+    7140,
+    9099
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-02170622.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 263269,
+   "sha256": "db3c2d0ac1d930c3fcc47f38292d1b7af2611d0afbbd7114087e1ebce122da74",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "lk-robinia-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/355511435-9466-49d9-8f16-27ef1d6c7756",
+   "edan_id": "ld1-1643407485191-1643407495237-0",
+   "title": "Robinia pseudoacacia L.",
+   "scientific_names": [
+    "Robinia pseudoacacia L."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "lk-robinia-2.jpg",
+   "name": "아까시나무 식물 표본",
+   "visible_features": "깃꼴겹잎과 꽃송이가 함께 눌린 아까시나무 가지 — 둥근 작은잎을 셀 수 있어요.",
+   "original_size": [
+    6797,
+    8952
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-02325548-000002.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 297672,
+   "sha256": "31395ca9c42ec864c71cafba802162fa84b68fe5f47fd28264e7c9e3637b1c82",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "lk-wisteria-3",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/379e26a98-b35b-4d6a-8988-1333acbd9713",
+   "edan_id": "ld1-1643407485191-1643407495114-1",
+   "title": "Wisteria floribunda (Willd.) DC.",
+   "scientific_names": [
+    "Rehsonia nipponica Stritch",
+    "Wisteria floribunda (Willd.) DC."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Saitama",
+    "Japan"
+   ],
+   "file": "lk-wisteria-3.jpg",
+   "name": "등나무(Wisteria floribunda) 식물 표본",
+   "visible_features": "끝이 뾰족한 작은잎이 깃꼴로 늘어선 등나무 겹잎 표본이에요.",
+   "original_size": [
+    6749,
+    8965
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-02324869-000004.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 266167,
+   "sha256": "fc073c39d3c3e521776c4a6ee0d7b74f35ad92971ffb7574fc7689baf1ed470d",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "lk-cherry-3",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/3308fc551-bb32-4c53-ac3e-80e9da1f5988",
+   "edan_id": "ld1-1643407637785-1643407654720-0",
+   "title": "Prunus yedoensis Matsum.",
+   "scientific_names": [
+    "Prunus yedoensis Matsum."
+   ],
+   "place": [
+    "Asia-Temperate",
+    "Japan"
+   ],
+   "file": "lk-cherry-3.jpg",
+   "name": "왕벚나무(Prunus × yedoensis) 식물 표본",
+   "visible_features": "가지에 어긋나게 붙은 왕벚나무 잎 표본 — 잎끝 쪽이 넓은 잎 모양을 볼 수 있어요.",
+   "original_size": [
+    6759,
+    9000
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-03718513.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 231594,
+   "sha256": "f092a834f77be3b469ed96b9fa12de98ede0267f53fea398843cc5d769ddb82f",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "lk-zelkova-3",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/3baaffdeb-4708-4b38-9006-2f10048b8bed",
+   "edan_id": "ld1-1643410167033-1643410213355-1",
+   "title": "Zelkova serrata (Thunb.) Makino",
+   "scientific_names": [
+    "Zelkova serrata (Thunb.) Makino"
+   ],
+   "place": [
+    "Asia-Temperate",
+    "South Korea"
+   ],
+   "file": "lk-zelkova-3.jpg",
+   "name": "느티나무 식물 표본(한국 채집)",
+   "visible_features": "한국에서 채집해 눌러 말린 느티나무 가지 — 굵은 톱니가 있는 홑잎이 어긋나게 붙어 있어요.",
+   "original_size": [
+    6806,
+    8974
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-03415700.jpg",
+   "crop": "가로 4:3로 자름 — 식물이 가장 빽빽한 부분, 오른쪽 색 눈금표·라벨 영역 제외(우리 실사 사진 규격: 가로형)",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 245565,
+   "sha256": "4d3cb73f5fcc91b0c85612133c8a82712c58eb54c44a82510d312058c8f894b4",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "scallop-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/338896c88-782c-4b1d-b687-287ec2cd1426",
+   "edan_id": "ld1-1643411155021-1643411158030-0",
+   "title": "Argopecten irradians taylorae",
+   "scientific_names": [
+    "Argopecten irradians taylorae Petuch, 1987"
+   ],
+   "place": [
+    "United States",
+    "Florida",
+    "North Atlantic Ocean"
+   ],
+   "file": "scallop-2.jpg",
+   "name": "해만가리비(Argopecten irradians taylorae) 박물관 표본",
+   "visible_features": "껍데기 두 장의 겉과 속을 함께 찍은 표본 — 부채살 골과 꼭지 옆 귀, 3 cm 눈금자가 보여요.",
+   "original_size": [
+    5496,
+    4968
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-ArgopectenirradianstayloraeUSNM859901.jpg",
+   "crop": "가운데를 가로 4:3로 자름 [0, 423, 5496, 4545]",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 204892,
+   "sha256": "8ebbc7725cdb38d81cf20e91a9ed43198a47ce7a8ce4c3030ba0fd6551fca941",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "woodlouse-3",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/36305e7a1-4679-41c3-8311-32606334ffa8",
+   "edan_id": "ld1-1643411685324-1643411728450-1",
+   "title": "Porcellio scaber",
+   "scientific_names": [
+    "Porcellio scaber Latreille, 1804"
+   ],
+   "place": [
+    "United States",
+    "Madison County",
+    "Virginia"
+   ],
+   "file": "woodlouse-3.jpg",
+   "name": "쥐며느리(Porcellio scaber) 박물관 표본",
+   "visible_features": "위에서 본 쥐며느리 표본과 1 cm 눈금 — 등판 마디와 더듬이가 보여요.",
+   "original_size": [
+    4016,
+    2616
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-usnm87263dorsal6x-000001.jpg",
+   "crop": null,
+   "width": 1400,
+   "height": 912,
+   "bytes": 70253,
+   "sha256": "69da0cea5accc2d9f750d1998c4fef1cf0c06c794c2619fa00786f74505be519",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
+  }
+ ],
+ [
+  "worm-2",
+  {
+   "source": "Smithsonian NMNH Open Access",
+   "record": "http://n2t.net/ark:/65665/3b083d9d3-bafc-42e0-9c1f-16e1666f2f17",
+   "edan_id": "ld1-1643412280722-1643412346816-1",
+   "title": "Lumbricus terrestris",
+   "scientific_names": [
+    "Lumbricus terrestris Linnaeus, 1758"
+   ],
+   "place": [
+    "District of Columbia",
+    "United States"
+   ],
+   "file": "worm-2.jpg",
+   "name": "지렁이(Lumbricus terrestris) 박물관 표본",
+   "visible_features": "알코올에 보관한 지렁이 표본 — 몸의 고리 마디가 보여요. 원본 사진의 4 cm 눈금은 가로로 자르며 빠졌어요.",
+   "original_size": [
+    2464,
+    2616
+   ],
+   "download_url": "https://smithsonian-open-access.s3-us-west-2.amazonaws.com/media/nmnh/NMNH-usnm21124-000001.jpg",
+   "crop": "가운데를 가로 4:3로 자름 [0, 384, 2464, 2232]",
+   "width": 1600,
+   "height": 1200,
+   "bytes": 93092,
+   "sha256": "ed2dfb1636344d1c825ee4530c70a9a3e42444fcd84feb6e983cd93086bdefd9",
+   "retrieved": "2026-11-15",
+   "reviewed": "2026-11-15, 실제 이미지 눈으로 확인(Claude)",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "Smithsonian Open Access 메타데이터의 metadata_usage.access=CC0, media usage.access=CC0"
   }
  ]
 ]

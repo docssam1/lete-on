@@ -32,7 +32,12 @@
     for (const key of textFields) {
       if (typeof value[key] === 'string' && value[key]) item[key] = value[key].slice(0, 1600);
     }
-    const parents = item.kind === 'mock' ? references(value.reviewOf, item.id) : [];
+    if (item.kind === 'book' && id(value.counselId) && ['practice','recheck'].includes(value.counselStep) &&
+      item.id === JSON.stringify(['counsel',value.counselId,value.counselStep])) {
+      item.counselId = value.counselId;
+      item.counselStep = value.counselStep;
+    }
+    const parents = item.kind === 'mock' || item.counselStep === 'recheck' ? references(value.reviewOf, item.id) : [];
     if (parents.length) item.reviewOf = parents;
     if (validDay(value.date)) item.date = value.date;
     if (Number.isInteger(value.questionNumber) && value.questionNumber >= 1 && value.questionNumber <= 30) {
@@ -60,7 +65,7 @@
           const when = mark[2];
           const row = validDay(when) && when > mark[0] && when < days.addDays(mark[0], 7)
             ? [mark[0], mark[1], when] : [mark[0], mark[1]];
-          const parents = item.kind === 'mock' ? references(mark[3], item.id) : [];
+          const parents = item.kind === 'mock' || item.counselStep === 'recheck' ? references(mark[3], item.id) : [];
           if (parents.length) {
             row[2] = markedOn(row);
             row[3] = parents;
@@ -134,13 +139,17 @@
     const settled = new Map();
     const byId = new Map(entries.map(entry => [entry.item.id, entry.item]));
     for (const {item, marks} of entries) {
-      if (item.kind !== 'mock' || !item.paperId) continue;
+      if (!(item.kind === 'mock' && item.paperId) && item.counselStep !== 'recheck') continue;
       for (const mark of marks) {
         const day = markedOn(mark);
         if (!mark[3] || !(mark[1] & SOLO) || day >= nextWeekStart) continue;
         for (const id of mark[3]) {
           const original = byId.get(id);
-          if (original?.kind !== 'mock' || original.unitId !== item.unitId || !original.paperId || original.paperId === item.paperId) continue;
+          if (original?.unitId !== item.unitId) continue;
+          const matches = item.counselStep === 'recheck'
+            ? original.counselStep === 'practice' && original.counselId === item.counselId
+            : original.kind === 'mock' && original.paperId && original.paperId !== item.paperId;
+          if (!matches) continue;
           if (!settled.has(id) || day > settled.get(id)) settled.set(id, day);
         }
       }

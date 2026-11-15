@@ -5,45 +5,74 @@
   <script src="./guard.js?v=20261111q"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
-  <title>선생님 보기</title>
+  <title>관리자</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./my-study.css?v=20261111p" />
+  <link rel="stylesheet" href="./my-study.css?v=20261114a" />
 </head>
 <body>
   <header class="ms-header">
     <a class="ms-back" href="./home.html"><span aria-hidden="true">←</span> 대문</a>
-    <div class="ms-title"><span>GIFTED MATH BANK · 스스로 공부</span><strong>선생님 보기</strong></div>
+    <div class="ms-title"><span>GIFTED MATH BANK</span><strong>관리자</strong></div>
     <!-- 시험지를 짜는 문제은행과 강사용 교안은 여기서 들어간다(원장 2026-11-10: 학생 화면의 문제은행은 「모르는 문제 유사문제」) -->
     <nav class="ms-tools" aria-label="원장 도구"><a class="ms-btn" href="./index.html">문제은행 · 시험지 만들기</a><a class="ms-btn" href="./start.html?as=class">강사용 교안</a></nav>
     <div class="ms-who" id="who"></div>
   </header>
   <main class="ms-main">
     <p id="status" class="ms-note" role="status">불러오는 중…</p>
-    <nav class="ms-books" id="books" aria-label="교재 고르기" hidden></nav>
-    <section class="ms-members ms-access" id="accessBox" hidden>
-      <h2>접속한 회원 <small id="accessCount"></small></h2>
-      <div class="ms-members-filter" id="accessFilter" role="group" aria-label="접속 고르기">
-        <button type="button" data-filter="now">지금 접속</button><button type="button" data-filter="today" class="is-on">오늘</button><button type="button" data-filter="week">7일</button><button type="button" data-filter="all">전체</button>
+    <!-- 원장 2026-11-14 「어드민 좀 쉽게」: 한 화면에 탭 — GM 회원 · 모의고사 회원 · 접속·학습 상황 -->
+    <nav class="ad-tabs" id="tabs" role="tablist" aria-label="관리 메뉴" hidden>
+      <button type="button" role="tab" id="tab-gm" data-tab="gm" aria-controls="pane-gm" aria-selected="true">GM 회원 <small id="gmCount"></small></button>
+      <button type="button" role="tab" id="tab-mock" data-tab="mock" aria-controls="pane-mock" aria-selected="false">모의고사 회원 <small id="mockCount"></small></button>
+      <button type="button" role="tab" id="tab-study" data-tab="study" aria-controls="pane-study" aria-selected="false">접속·학습 상황</button>
+    </nav>
+
+    <section class="ad-pane" id="pane-gm" role="tabpanel" aria-labelledby="tab-gm" hidden>
+      <div class="ad-bar">
+        <input type="search" id="gmSearch" placeholder="이름·이메일 찾기" aria-label="회원 찾기" />
+        <div class="ms-members-filter" id="gmFilter" role="group" aria-label="회원 고르기"></div>
+        <button type="button" class="ms-btn primary" id="gmNew">+ 새 회원</button>
       </div>
-      <div class="ms-table-wrap"><table class="ms-table ms-members-table ms-access-table" id="accessTable"></table></div>
-      <p class="ms-note" id="accessMsg" role="status"></p>
-    </section>
-    <section class="ms-members ms-admin-log" id="adminLog" hidden></section>
-    <section class="ms-members" id="membersBox" hidden>
-      <h2>회원 관리 <small id="membersCount"></small></h2>
-      <div class="ms-members-filter" id="membersFilter" role="group" aria-label="회원 고르기">
-        <button type="button" data-filter="ask" class="is-on">요청 있음</button><button type="button" data-filter="trial">체험 중</button><button type="button" data-filter="ended">체험 끝</button><button type="button" data-filter="approved">정식</button><button type="button" data-filter="paused">멈춤</button><button type="button" data-filter="all">전체</button>
+      <div class="ad-split">
+        <ul class="ad-list" id="gmList" aria-label="회원"></ul>
+        <aside class="ad-detail" id="gmDetail" aria-live="polite"></aside>
       </div>
-      <div class="ms-table-wrap"><table class="ms-table ms-members-table" id="membersTable"></table></div>
-      <p class="ms-note" id="membersMsg" role="status"></p>
+      <p class="ms-note" id="gmMsg" role="status"></p>
     </section>
-    <section class="ms-summary" id="summary" hidden></section>
-    <section class="ms-class" id="classBox" hidden>
-      <h2>학생별 진도 <small id="classCount"></small></h2>
-      <div class="ms-table-wrap"><table class="ms-table" id="classTable"></table></div>
+
+    <section class="ad-pane" id="pane-mock" role="tabpanel" aria-labelledby="tab-mock" hidden>
+      <div class="ad-bar">
+        <input type="search" id="mockSearch" placeholder="이름 찾기" aria-label="학생 찾기" />
+        <div class="ms-members-filter" id="mockFilter" role="group" aria-label="학생 고르기"></div>
+        <button type="button" class="ms-btn primary" id="mockNew">+ 학생 추가</button>
+      </div>
+      <div class="ad-split">
+        <ul class="ad-list" id="mockList" aria-label="모의고사 학생"></ul>
+        <aside class="ad-detail" id="mockDetail" aria-live="polite"></aside>
+      </div>
+      <p class="ms-note" id="mockMsg" role="status"></p>
+      <p class="ms-note">회차별 안내·과제·교재와 자료실은 <a href="../admin.html">모의고사 콘텐츠 편집</a>에서 바꿔요(GitHub 저장).</p>
     </section>
-    <section class="ms-weak" id="weak" hidden></section>
+
+    <section class="ad-pane" id="pane-study" role="tabpanel" aria-labelledby="tab-study" hidden>
+      <section class="ms-members ms-access" id="accessBox" hidden>
+        <h2>접속한 회원 <small id="accessCount"></small></h2>
+        <div class="ms-members-filter" id="accessFilter" role="group" aria-label="접속 고르기">
+          <button type="button" data-filter="now">지금 접속</button><button type="button" data-filter="today" class="is-on">오늘</button><button type="button" data-filter="week">7일</button><button type="button" data-filter="all">전체</button>
+        </div>
+        <div class="ms-table-wrap"><table class="ms-table ms-members-table ms-access-table" id="accessTable"></table></div>
+        <p class="ms-note" id="accessMsg" role="status"></p>
+      </section>
+      <p id="classStatus" class="ms-note" role="status"></p>
+      <nav class="ms-books" id="books" aria-label="교재 고르기" hidden></nav>
+      <section class="ms-summary" id="summary" hidden></section>
+      <section class="ms-class" id="classBox" hidden>
+        <h2>학생별 진도 <small id="classCount"></small></h2>
+        <div class="ms-table-wrap"><table class="ms-table" id="classTable"></table></div>
+      </section>
+      <section class="ms-weak" id="weak" hidden></section>
+      <section class="ms-members ms-admin-log" id="adminLog" hidden></section>
+    </section>
   </main>
-  <script type="module" src="./teacher.js?v=20261111p"></script>
+  <script type="module" src="./teacher.js?v=20261114a"></script>
 </body>
 </html>

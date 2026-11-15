@@ -10,6 +10,8 @@
   if(!r.ok){const e=new Error(data.error||data.error_code||'request_failed');e.status=r.status;throw e;}return data;
  }
  async function call(action,body={},proof,options={}){return request('/functions/v1/roadmap-members',{action,...body},proof?{Authorization:'Bearer '+proof}:session?{'x-roadmap-session':session.token}:{},options);}
+ async function consultDraft(body){if(!session)throw Object.assign(new Error('login_required'),{status:401});return request('/functions/v1/roadmap-consult-ai',{action:'draft',...body},{'x-roadmap-session':session.token},{timeoutMs:120000});}
+ async function counsel(body){if(!session)throw Object.assign(new Error('login_required'),{status:401});return request('/functions/v1/roadmap-counsel',body,{'x-roadmap-session':session.token},{timeoutMs:75000});}
  function clear(){session=null;try{g.sessionStorage.removeItem(STORE);}catch{}}
  function accept(data){
   if(!/^[a-f0-9]{64}$/.test(data.token||'')||!data.member?.user_id)throw new Error('session_invalid');
@@ -34,5 +36,5 @@
   login_required:'다시 로그인해 주세요.',member_missing:'가입된 로드맵 회원이 없습니다. 먼저 회원 정보를 등록해 주세요.',
   storage_unavailable:'로그인 저장을 사용할 수 없습니다. 브라우저의 저장 공간 설정을 확인해 주세요.',admin_required:'관리자 계정으로 로그인해 주세요.'};
  const message=e=>messages[e?.message]||(e?.status===429?messages.too_many_attempts:e?.status===401?'인증번호가 맞지 않거나 만료되었습니다. 다시 확인해 주세요.':'연결을 확인한 뒤 다시 시도해 주세요.');
- g.RoadmapMembership={call,accept,status,verify,closeProof,logout,clear,destination,message};
+ g.RoadmapMembership={call,consultDraft,counsel,accept,status,verify,closeProof,logout,clear,destination,message};
 })(window);

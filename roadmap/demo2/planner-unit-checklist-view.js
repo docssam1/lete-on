@@ -103,14 +103,16 @@
   function checklist(model) {
     const rows = model.rows || [];
     const isReview = row => row.review || row.reviewOf?.length;
-    const reviewRows = rows.filter(isReview);
-    const otherRows = rows.filter(row => !isReview(row));
+    const reviewRows = rows.filter(row => isReview(row) && !row.counselId);
+    const otherRows = rows.filter(row => !isReview(row) && !row.counselId);
+    const upcoming = model.counselUpcoming || [];
     const notices = (model.notices || []).filter(Boolean);
     return `<section class="uc-week" aria-label="이번 주 체크리스트"><div class="uc-heading"><h3>이번 주 체크리스트</h3><small>${escape(weekLabel(model.weekStart))}</small></div>
-      ${group('다시 풀 단원',reviewRows,'review',model.readOnly)}${group('교재 범위',otherRows.filter(row => row.kind === 'book'),'book',model.readOnly)}${group('기출 문항',otherRows.filter(row => row.kind === 'mock'),'mock',model.readOnly)}
+      ${group('상담에서 정한 공부',rows.filter(row=>row.counselId),'counsel',model.readOnly)}${group('다시 풀 단원',reviewRows,'review',model.readOnly)}${group('교재 범위',otherRows.filter(row => row.kind === 'book'),'book',model.readOnly)}${group('기출 문항',otherRows.filter(row => row.kind === 'mock'),'mock',model.readOnly)}
       ${!rows.length && !notices.length ? '<p class="uc-note">학습 시작일과 사용 중인 교재를 확인하면 이번 주 공부할 범위를 정할 수 있어요.</p>' : ''}
       ${notices.length ? `<ul class="uc-notices">${notices.map(note => `<li>${escape(note)}</li>`).join('')}</ul>` : ''}
-      ${manualForm(model.manualBooks,model.readOnly)}</section>${reviews(model.nextReview || [], model.nextWeekStart)}`;
+      ${manualForm(model.manualBooks,model.readOnly)}</section>${reviews(model.nextReview || [], model.nextWeekStart)}
+      ${upcoming.length ? '<section class="uc-review"><h3>예정된 상담 학습</h3><ul>'+upcoming.map(task=>'<li><strong>'+escape(task.date+' · '+task.title)+'</strong><span>'+escape(task.detail)+'</span></li>').join('')+'</ul></section>' : ''}`;
   }
 
   function markup(model) {
@@ -216,5 +218,5 @@
     if (!mounted.has(host)) bind(host);
   }
 
-  g.PlannerUnitChecklistView = Object.freeze({render, markup});
+  g.PlannerUnitChecklistView = Object.freeze({render, markup, checklist});
 })(typeof window === 'object' ? window : globalThis);
