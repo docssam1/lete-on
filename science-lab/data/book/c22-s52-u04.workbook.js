@@ -1,3 +1,4 @@
+import{withGrade5ReviewedWorkbook}from'./grade5-question-review.js?v=20261115-grade5-question-review';
 import{withReviewedWorkbookCriteria}from'./reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withEnergyReadableWorkbook}from'./c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook';
@@ -11146,4 +11147,6 @@ const baseWorkbook = {
 export const energyReadablePriorWorkbook=withEnergyEditorial(baseWorkbook);
 export const grade5StudyNotesPriorWorkbook=withEnergyReadableWorkbook(energyReadablePriorWorkbook);
 export const reviewedCriteriaPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
-export const workbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
+export const grade5ReviewPriorWorkbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
+
+export const workbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);

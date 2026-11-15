@@ -1,3 +1,4 @@
+import{withGrade5ReviewedWorkbook}from'./grade5-question-review.js?v=20261115-grade5-question-review';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withSolutionReadableWorkbook}from'./c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
@@ -8554,4 +8555,6 @@ const baseWorkbook = {
 
 export const solutionReadablePriorWorkbook=withWorkbookAnswerLanguage(withSolutionStudentLanguage(withSolutionBodyLanguage(withStudentOpeningLanguage(withSolutionRails(baseWorkbook)))));
 export const grade5StudyNotesPriorWorkbook=withSolutionReadableWorkbook(solutionReadablePriorWorkbook);
-export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+export const grade5ReviewPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+
+export const workbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);

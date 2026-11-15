@@ -1,3 +1,4 @@
+import{withGrade5ReviewedWorkbook}from'./grade5-question-review.js?v=20261115-grade5-question-review';
 import{withReviewedWorkbookCriteria}from'./reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withWeatherReadableWorkbook}from'./c22-s52-u03.editorial.js?v=20261115-drawing-answer-criteria';
@@ -11059,4 +11060,6 @@ export const weatherPhotoPriorWorkbook=withObservationLanguage(observationPriorW
 export const weatherReadablePriorWorkbook=withWeatherPhotoLabels(weatherPhotoPriorWorkbook);
 export const grade5StudyNotesPriorWorkbook=withWeatherReadableWorkbook(weatherReadablePriorWorkbook);
 export const reviewedCriteriaPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
-export const workbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
+export const grade5ReviewPriorWorkbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
+
+export const workbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);

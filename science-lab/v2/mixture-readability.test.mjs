@@ -1,3 +1,4 @@
+import{grade5QuestionReview}from'../data/book/grade5-question-review.js';
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import{linkedWorkbookAnswers}from'../data/book/linked-workbook-answers.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
@@ -6,7 +7,7 @@ import{items}from'../data/units/c22-s52-u01.js';import{similar}from'../data/unit
 import{mixtureReadableCurrentItems,MIXTURE_READABILITY_VERSION}from'../data/book/c22-s52-u01.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s52-u01.book.js';
-import{workbook,mixtureReadablePriorWorkbook}from'../data/book/c22-s52-u01.workbook.js';
+import{grade5ReviewPriorWorkbook as workbook,mixtureReadablePriorWorkbook}from'../data/book/c22-s52-u01.workbook.js';
 const unit='c22-s52-u01',baseline=observationCurrentItems(items,unit);
 test('mixture current presentations preserve scoring, every old field and saved responses',()=>{
  const before=structuredClone(baseline),current=mixtureReadableCurrentItems(baseline,unit);let changed=0;
@@ -33,7 +34,7 @@ test('mixture readability guards original, similar, review, future and other uni
  assert.equal(mixtureReadableCurrentItems(baseline,'other'),baseline);assert.equal(mixtureReadableCurrentItems(null,unit),null);
 });
 test('mixture bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=reviewedQuestionCriteria(linkedWorkbookAnswers(mixtureReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=grade5QuestionReview(reviewedQuestionCriteria(linkedWorkbookAnswers(mixtureReadableCurrentItems(baseline,unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,MIXTURE_READABILITY_VERSION))changed++;}
  assert.equal(changed,16);assert.equal(first.classroomItems.length,16);
 });

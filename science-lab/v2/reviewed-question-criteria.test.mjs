@@ -14,6 +14,7 @@ import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),start=code.indexOf('const UNITS = ')+14,end=code.indexOf('\n// 문제은행만',start),expression='('+code.slice(start,end).trim().replace(/;$/,'')+')';
 const loaders=new vm.Script(expression,{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
+const beforeGrade5=q=>q.contentVersion==='20261115-grade5-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 const mods=new Map(await Promise.all(units.map(async unit=>[unit,await loaders[unit]()] )));
 const previous=q=>questionAtVersion(q,q.previousVersions.at(-1).version);
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -21,8 +22,8 @@ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 test('130 current criteria and twelve choice phrasings preserve keys, teacher review, every saved version and source material',async()=>{
  let criteria=0,choices=0;
  for(const unit of units){
-  const mod=mods.get(unit),judge=await loadJudge(unit),{workbook}=await import('../data/book/'+unit+'.workbook.js');
-  for(const q of mod.items.filter(q=>q.contentVersion===version)){
+  const mod=mods.get(unit),judge=await loadJudge(unit),{grade5ReviewPriorWorkbook:priorGrade5,workbook:liveWorkbook}=await import('../data/book/'+unit+'.workbook.js'),workbook=priorGrade5||liveWorkbook;
+  for(const q of mod.items.map(beforeGrade5).filter(q=>q.contentVersion===version)){
    const old=previous(q),w=workbook.questions.find(w=>w.id===q.workbookRef.id);assert(old);assert.equal(q.prompt,w.prompt);
    const isChoice=q.answerContract.type==='single-choice';
    if(isChoice){choices++;assert.equal(q.choices[q.answerContract.answer],w.choices[w.key]);assert.deepEqual(q.answerContract,old.answerContract);for(let i=0;i<q.choices.length;i++)if(i!==q.answerContract.answer)assert.equal(q.choices[i],old.choices[i]);}
@@ -45,10 +46,10 @@ test('130 current criteria and twelve choice phrasings preserve keys, teacher re
 test('39 workbook criteria change no student question, answer, page, figure, writing space or quick key',async()=>{
  let changed=0;
  for(const unit of units.filter(u=>u!=='c22-s51-u02')){
-  const {workbook,reviewedCriteriaPriorWorkbook:old}=await import('../data/book/'+unit+'.workbook.js');assert(old);
+  const {grade5ReviewPriorWorkbook,workbook:liveWorkbook,reviewedCriteriaPriorWorkbook:old}=await import('../data/book/'+unit+'.workbook.js'),workbook=grade5ReviewPriorWorkbook||liveWorkbook;assert(old);
   for(let i=0;i<workbook.questions.length;i++){const q=workbook.questions[i],before=old.questions[i];assert.deepEqual({...q,criteria:before.criteria},before);if(q.criteria!==before.criteria)changed++;}
   for(const k of Object.keys(old).filter(k=>k!=='questions'))assert.deepEqual(workbook[k],old[k]);
-  const {art}=await import('../data/book/'+unit+'.workbook-art.js'),paper=await revisedTextbookPaper(unit),before=makeWorkbookPaper(withObservedPhotoAlt(withElementaryReadingDirections(old)),art);
+  const {art}=await import('../data/book/'+unit+'.workbook-art.js'),paper=makeWorkbookPaper(withObservedPhotoAlt(withElementaryReadingDirections(workbook)),art),before=makeWorkbookPaper(withObservedPhotoAlt(withElementaryReadingDirections(old)),art);
   for(const mode of['student','quick'])assert.equal(paper.workbookPaper({mode}),before.workbookPaper({mode}));
  }
  assert.equal(changed,39);

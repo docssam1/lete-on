@@ -6,7 +6,7 @@ import{items}from'../data/units/c22-s52-u02.js';import{similar}from'../data/unit
 import{heatReadableCurrentItems,HEAT_READABILITY_VERSION}from'../data/book/c22-s52-u02.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s52-u02.book.js';
-import{workbook,heatReadablePriorWorkbook}from'../data/book/c22-s52-u02.workbook.js';
+import{grade5ReviewPriorWorkbook as workbook,heatReadablePriorWorkbook}from'../data/book/c22-s52-u02.workbook.js';
 import{heatEnergyCurrentItems}from'./heat-energy-question-language.js';import{items as energy}from'../data/units/c22-s52-u04.js';import*as misc from'../data/units/c22-s52-u02.misc.js';import{questionMisconceptions}from'./question-revision.js';
 const unit='c22-s52-u02',baseline=observationCurrentItems(heatEnergyCurrentItems(items,unit),unit);
 test('heat current presentations preserve scoring, every old field and saved responses',()=>{

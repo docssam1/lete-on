@@ -1,3 +1,4 @@
+import{grade5QuestionReview}from'../data/book/grade5-question-review.js';
 import{linkedWorkbookAnswers}from'../data/book/linked-workbook-answers.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
@@ -5,7 +6,7 @@ import{items}from'../data/units/c22-s51-u04.js';import{similar}from'../data/unit
 import{bodyReadableCurrentItems,BODY_READABILITY_VERSION}from'../data/book/c22-s51-u04.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s51-u04.book.js';
-import{workbook,bodyReadablePriorWorkbook}from'../data/book/c22-s51-u04.workbook.js';
+import{grade5ReviewPriorWorkbook as workbook,bodyReadablePriorWorkbook}from'../data/book/c22-s51-u04.workbook.js';
 const unit='c22-s51-u04',baseline=observationCurrentItems(items,unit);
 test('body current presentations preserve scoring, every old field and saved responses',()=>{
  const before=structuredClone(baseline),current=bodyReadableCurrentItems(baseline,unit);let changed=0;
@@ -32,7 +33,7 @@ test('body readability guards original, similar, review, future and other unit q
  assert.equal(bodyReadableCurrentItems(baseline,'other'),baseline);assert.equal(bodyReadableCurrentItems(null,unit),null);
 });
 test('body bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=linkedWorkbookAnswers(bodyReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=grade5QuestionReview(linkedWorkbookAnswers(bodyReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,BODY_READABILITY_VERSION))changed++;}
  assert.equal(changed,16);assert.equal(first.classroomItems.length,16);
 });

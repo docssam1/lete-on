@@ -1,3 +1,4 @@
+import{grade5QuestionReview}from'../data/book/grade5-question-review.js';
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import{weatherDrawingCriteriaCurrentItems}from'../data/book/c22-s52-u03.editorial.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
@@ -6,7 +7,7 @@ import{items}from'../data/units/c22-s52-u03.js';import{similar}from'../data/unit
 import{weatherReadableCurrentItems,WEATHER_READABILITY_VERSION}from'../data/book/c22-s52-u03.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s52-u03.book.js';
-import{workbook,weatherReadablePriorWorkbook}from'../data/book/c22-s52-u03.workbook.js';
+import{grade5ReviewPriorWorkbook as workbook,weatherReadablePriorWorkbook}from'../data/book/c22-s52-u03.workbook.js';
 import*as misc from'../data/units/c22-s52-u03.misc.js';import{questionMisconceptions}from'./question-revision.js';
 const unit='c22-s52-u03',baseline=observationCurrentItems(items,unit);
 test('weather current presentations preserve scoring, every old field and saved responses',()=>{
@@ -34,7 +35,7 @@ test('weather readability guards original, similar, review, future and other uni
  assert.equal(weatherReadableCurrentItems(baseline,'other'),baseline);assert.equal(weatherReadableCurrentItems(null,unit),null);
 });
 test('weather bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=reviewedQuestionCriteria(weatherDrawingCriteriaCurrentItems(weatherReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=grade5QuestionReview(reviewedQuestionCriteria(weatherDrawingCriteriaCurrentItems(weatherReadableCurrentItems(baseline,unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===WEATHER_READABILITY_VERSION||q.previousVersions?.some(p=>p.version===WEATHER_READABILITY_VERSION))changed++;}
  assert.equal(changed,6);assert.equal(first.classroomItems.length,16);
 });
