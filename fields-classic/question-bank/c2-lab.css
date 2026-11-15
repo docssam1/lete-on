@@ -41,3 +41,7 @@ body.is-embed .lab-main { padding-top: 10px; }
   .lab-head { padding: 8px 12px; }
   .lab-note { font-size: 15px; }
 }
+/* 컴퍼스 작도: 판서와 같은 종이 + 손글씨 */
+@font-face { font-family: 'FC Hand'; src: url('./assets/fonts/nm-lesson-hand.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+.lab-paper { background: #fbfaf6; border-radius: 14px; }
+.lab-hand { font-family: 'FC Hand', 'Nanum Pen Script', cursive; }
