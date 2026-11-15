@@ -33,7 +33,6 @@ const CONSENT_VERSION = "fields-2026-10-29-v1";
 const PRODUCT_IDS = new Set(["개념완성", "연산연습", "진단모의고사", "진단약점클리닉", "킬러문항",
   "실전모의고사1회", "실전모의고사2회", "실전모의고사3회", "실전모의고사4회", "실전모의고사5회", "실전모의고사6회",
   "파이널모의고사1회", "파이널모의고사2회", "파이널모의고사3회", "마무리점검", "강사용교안",
-  "레이키즈", // 빠져 있어서 관리자 화면 「모의고사 회원」 탭에서 회차를 누르면 레이키즈 권한이 지워졌다(2026-11-15 고침)
   "초1입학모의고사", "초2입학모의고사"]); // 입학 모의고사(원장 2026-11-15 「초1 모의고사를 등록 안되어 있는데 초2하고」)
 const cleanPermissions = (v: unknown) => Array.isArray(v) ? [...new Set(v.map(String).filter((id) => PRODUCT_IDS.has(id)))] : [];
 const cleanDate = (v: unknown) => { const d = String(v ?? ""); return /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(`${d}T00:00:00Z`)) ? d : null; };
@@ -272,9 +271,11 @@ Deno.serve(async (req: Request) => {
     }
     if (action === "admin-account-set") {
       const child = cleanName(body.child);
-      await accountRow(child);
+      const current = await accountRow(child);
       const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
-      if (Array.isArray(body.permissions)) patch.permissions = cleanPermissions(body.permissions);
+      // 이 목록에 없는 권한(다른 프로그램 것, 예: 레이키즈)은 건드리지 않고 그대로 둔다(2026-11-15 — 예전에는 회차를 누르면 지워졌다)
+      const others = (Array.isArray(current.permissions) ? current.permissions : []).map(String).filter((id: string) => !PRODUCT_IDS.has(id));
+      if (Array.isArray(body.permissions)) patch.permissions = [...new Set([...cleanPermissions(body.permissions), ...others])];
       if (body.type === "internal" || body.type === "online") patch.student_type = body.type;
       if (typeof body.active === "boolean") patch.active = body.active;
       const { error } = await service.from("fields_access_accounts").update(patch).eq("student_name", child);

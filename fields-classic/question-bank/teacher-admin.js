@@ -39,7 +39,7 @@ const PRODUCTS = [
   { id: "마무리점검", name: "마무리 점검" },
   // 입학 모의고사(원장 2026-11-15 「초1 모의고사를 등록 안되어 있는데 초2하고」) — 필즈 대비 묶음과 따로 파는 것이라 「모든 회차 열기」·온라인 추가에 넣지 않고 한 명씩 켠다
   { id: "초1입학모의고사", name: "초1 입학 모의고사", manualOnly: true }, { id: "초2입학모의고사", name: "초2 입학 모의고사", manualOnly: true },
-  { id: "강사용교안", name: "강사용 교안", manualOnly: true, other: true }, { id: "레이키즈", name: "레이키즈 학습", manualOnly: true, other: true },
+  { id: "강사용교안", name: "강사용 교안", manualOnly: true, other: true },
 ];
 const MOCK_IDS = PRODUCTS.filter((p) => !p.other).map((p) => p.id);
 

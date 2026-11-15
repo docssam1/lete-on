@@ -33,7 +33,6 @@ const PRODUCT_IDS = new Set([
   "초1입학모의고사", // 입학 모의고사(원장 2026-11-15 「초1 모의고사를 등록 안되어 있는데 초2하고」)
   "초2입학모의고사",
   "강사용교안", // 스스로 공부 강사용 교안(원장 2026-11-11)
-  "레이키즈", // 소마 레이키즈 학습 sm/ (원장 2026-11-12 「원생만 · 학부모가 필즈와 같은 방법으로 로그인」)
 ]);
 
 class HttpError extends Error {
@@ -212,7 +211,14 @@ Deno.serve(async (req: Request) => {
       const student = normalizeName(body.student);
       if (!validName(student)) throw new HttpError(400, "학생 이름을 확인해 주세요.");
       const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
-      if (Array.isArray(body.permissions)) patch.permissions = normalizePermissions(body.permissions);
+      if (Array.isArray(body.permissions)) {
+        // 이 목록에 없는 권한(다른 프로그램 것)은 지우지 않고 그대로 둔다(2026-11-15)
+        const { data: current, error: currentError } = await service.from("fields_access_accounts")
+          .select("permissions").eq("student_name", student).maybeSingle();
+        if (currentError) throw new Error(currentError.message);
+        const others = (Array.isArray(current?.permissions) ? current.permissions : []).map(String).filter((id: string) => !PRODUCT_IDS.has(id));
+        patch.permissions = Array.from(new Set([...normalizePermissions(body.permissions), ...others]));
+      }
       if (body.studentType === "internal" || body.studentType === "online") patch.student_type = body.studentType;
       if (typeof body.active === "boolean") patch.active = body.active;
       const { data, error } = await service.from("fields_access_accounts")
