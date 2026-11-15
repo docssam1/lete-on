@@ -1,13 +1,13 @@
-import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js?v=20261115-motion-electricity-reference';
+import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js?v=20261115-battery-polarity-card';
 import{elementaryPromptCurrentItems}from'../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{electricityPairCurrentItems}from'./electricity-pair-language.js?v=20261108-electricity-pair-language';
 import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261108-earth-motion-pair-language';
-import{workbook as currentWorkbook}from'../data/book/c22-s62-u03.workbook.js?v=20261115-motion-electricity-reference';
+import{workbook as currentWorkbook}from'../data/book/c22-s62-u03.workbook.js?v=20261115-battery-polarity-card';
 import{electricityReadableCurrentItems}from'../data/book/c22-s62-u03.editorial.js?v=20261106-electricity-readable-workbook';
 import{withStudentScienceLanguage}from'../data/book/student-science-language.js';
 import{bankBook}from'../data/book/c22-s62-u03.bank-book.js';
 import{items}from'../data/units/c22-s62-u03.js';
-import{electricityReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u03.workbook.js?v=20261115-motion-electricity-reference';
+import{electricityReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u03.workbook.js?v=20261115-battery-polarity-card';
 import{electricityCurrentItems,ELECTRICITY_CHANGED_NUMBERS}from'./electricity-question-language.js?v=20261106-electricity-readable-workbook';
 import{electricityLanguage}from'../data/book/c22-s62-u03.editorial.js?v=20261104-electricity-book';
 import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261108-learning-note-roles';

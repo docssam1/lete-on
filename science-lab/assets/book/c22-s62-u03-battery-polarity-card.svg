@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="540" viewBox="0 0 1100 270" role="img" aria-labelledby="title desc">
+ <title id="title">전지 두 개의 극과 연결선이 표시된 그림 카드</title>
+ <desc id="desc">전지 가의 왼쪽은 양극, 오른쪽은 음극입니다. 전지 나의 왼쪽은 음극, 오른쪽은 양극입니다. 가의 오른쪽 음극과 나의 왼쪽 음극 사이에 연결선이 있습니다. 실제 전지를 연결한 사진이 아닙니다.</desc>
+ <rect width="1100" height="270" fill="#fff"/>
+ <g font-family="Pretendard, Apple SD Gothic Neo, sans-serif" fill="#25382c" text-anchor="middle">
+  <rect x="60" y="40" width="350" height="134" rx="12" fill="#f5f8f4" stroke="#879b88" stroke-width="2"/>
+  <rect x="690" y="40" width="350" height="134" rx="12" fill="#f5f8f4" stroke="#879b88" stroke-width="2"/>
+  <text x="235" y="119" font-size="34" font-weight="650">전지 가</text>
+  <text x="865" y="119" font-size="34" font-weight="650">전지 나</text>
+  <g font-family="Arial, sans-serif" font-size="48" font-weight="600">
+   <text x="106" y="121" data-pole="a-left-positive">+</text>
+   <text x="364" y="121" data-pole="a-right-negative">−</text>
+   <text x="736" y="121" data-pole="b-left-negative">−</text>
+   <text x="994" y="121" data-pole="b-right-positive">+</text>
+  </g>
+  <path d="M410 107 H690" stroke="#59665b" stroke-width="4" fill="none" data-connection="a-right-negative-to-b-left-negative"/>
+  <circle cx="410" cy="107" r="5" fill="#59665b"/><circle cx="690" cy="107" r="5" fill="#59665b"/>
+  <text x="550" y="150" font-size="24" fill="#526354">연결선</text>
+  <text x="550" y="232" font-size="26" fill="#526354">그림 카드 · 실제로 연결하지 않아요.</text>
+ </g>
+</svg>

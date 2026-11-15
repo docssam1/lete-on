@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-15",
+  "unit": "c22-s62-u03",
+  "version": "20261115-battery-polarity-card",
+  "priorCandidate": "c7ce8d543758109836c557b7244a3ae0115b9ad6",
+  "questions": {
+    "workbook": "c22-s62-u03-w048",
+    "current": "c22-s62-u03-b048",
+    "original": false
+  },
+  "problem": "같은 극끼리 이은 두 전지 카드에서 고칠 곳을 묻지만 문제·지면 어디에도 그 카드가 없었다.",
+  "resolution": "전지 가(+/−)와 나(−/+)의 극 위치 및 가운데 연결선을 표시한 카드 자료를 추가한다. 직렬연결이 되도록 고친 모습을 그리게 발문을 맞춘다.",
+  "curriculum": {
+    "standard": "6과15-02",
+    "source": "교육부 고시 제2022-33호 별책9 과학과 교육과정",
+    "documentSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790"
+  },
+  "asset": {
+    "path": "assets/book/c22-s62-u03-battery-polarity-card.svg",
+    "kind": "지필드 작성 극 표시 카드/SVG",
+    "sha256": "3f79fc052b84106ac79916d90fdb0a8a1d9030a71ef48e3bb41b3cdcb24ac899",
+    "actualPhysicalConnection": false,
+    "photograph": false,
+    "nativePreview": {
+      "width": 2200,
+      "height": 540,
+      "webKitLoaded": false,
+      "manuallyReviewed": true
+    },
+    "appleVision": {
+      "compute": "CPU-only",
+      "frames": 1,
+      "lines": 4,
+      "status": "ok",
+      "allPolaritySymbolsRecognized": false
+    }
+  },
+  "preserved": [
+    "예시 답·해설·판단 기준·응답 계약·분류",
+    "120mm 그림 칸·설명3줄·기존 쪽/오른쪽 정리",
+    "이전 두 내용 버전·저장 답·보관 시험지·명시적 다시 풀기",
+    "기존 이미지 파일과 원문/짝 문항"
+  ],
+  "validation": {
+    "nativeFiles": 295,
+    "nativeTests": 1529,
+    "passed": 1527,
+    "failed": 0,
+    "browserSkipped": 2,
+    "oldVersionsCompared": 2,
+    "writtenResponsesCompared": 3,
+    "workbookAndBankPrintModesCompared": 8,
+    "quickPrintByteIdentical": true,
+    "decksCompared": 64,
+    "slidesCompared": 3048,
+    "allSlidesByteIdentical": true,
+    "all355SemanticReviewComplete": false,
+    "actualBrowserAndA4Reviewed": false,
+    "deployed": false
+  },
+  "reviewEvidence": "science-question-review/phase414/"
+}

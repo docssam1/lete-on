@@ -1,8 +1,9 @@
+import{BATTERY_POLARITY_CARD_VERSION,batteryPolarityCardEntries}from'./battery-polarity-card.js?v=20261115-battery-polarity-card';
 import{MOTION_ELECTRICITY_REFERENCE_VERSION,motionElectricityReferenceEntries}from'./motion-electricity-reference-context.js?v=20261115-motion-electricity-reference';
 import{volcanoReferenceEntries}from'./volcano-reference-context.js?v=20261115-volcano-reference-context';
 import{landObservationEntries}from'./land-observation-context.js?v=20261115-land-observation-context';
 export const EARTH_SURFACE_PHOTO_VERSION='20261115-earth-surface-photo';
-export const REFERENCE_CONTEXT_CACHE_VERSION=MOTION_ELECTRICITY_REFERENCE_VERSION;
+export const REFERENCE_CONTEXT_CACHE_VERSION=BATTERY_POLARITY_CARD_VERSION;
 import{biologyObservationPhotos,BIOLOGY_OBSERVATION_PHOTO_VERSION,BIOLOGY_REFERENCE_PHOTO_VERSION,BIOLOGY_COMPARISON_VERSION,BIOLOGY_COMPARISON_PROMPTS,BIOLOGY_SHAPES_NOTE}from'./biology-observation-photos.js?v=20261115-biology-comparison-photos';
 export const STANDALONE_CONTEXT_VERSION='20261115-standalone-question-context';
 export const OBSERVATION_CONTEXT_VERSION='20261115-observation-question-context';
@@ -38,6 +39,7 @@ const geologyHorizontal='assets/book/c22-s51-u01-source-horizontal.png',geologyB
 const preparationPhoto='assets/activities/c22-s51-u03/mixing-photo-v1.webp',environmentPicture='assets/activities/c22-s61-u01/environment.webp';
 export const earthSurfacePhoto=Object.freeze({figure:'assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg',figureNote:'아폴로17호가 촬영한 지구. 아프리카와 주변 바다, 표면을 가리는 구름이 보입니다.',photoLabels:['우주에서 촬영한 지구'],photoCredit:'사진: NASA/JSC · Apollo17 · AS17-148-22727'});
 const entries={
+ ...batteryPolarityCardEntries,
  ...motionElectricityReferenceEntries,
  'c22-s32-u02-b20':{unit:'c22-s32-u02',version:1,currentVersion:EARTH_SURFACE_PHOTO_VERSION,prompt:'구름 때문에 일부 표면이 가려진 사진을 읽는 방법은 무엇인가요?',previousChoices:['흰 곳은 모두 육지라고 정해 놓는다.','안 보이는 곳에는 표면이 없다고 한다.','구름의 넓이를 바다 넓이라고 바꾼다.','한쪽 반구로 지구 전체를 확정한다.','가려진 곳은 다른 자료로 더 확인한다.'],fields:{...earthSurfacePhoto,prompt:'다음 지구 사진에는 구름에 가린 곳이 있어요. 가려진 곳을 더 알아보는 방법을 고르세요.',explanation:'구름에 가려 안 보이는 곳은 아직 표면을 확인하지 못한 부분이에요. 육지나 바다로 임의로 넣지 않고 다른 사진·지도 등으로 확인해요. 확대와 복사만으로 가려진 정보가 생기지는 않아요.'}},
  'c22-s32-u02-b24':{unit:'c22-s32-u02',version:'20261108-earth-sea-elementary',currentVersion:EARTH_SURFACE_PHOTO_VERSION,prompt:'구름이 많은 지구 사진 한 장만 보고 육지와 바다의 넓이를 알아내기 어려운 까닭을 쓰세요. 더 알아볼 방법도 설명해 보세요.',fields:{...earthSurfacePhoto,prompt:'다음 지구 사진 한 장만으로 육지와 바다의 넓이를 비교하기 어려운 까닭을 쓰세요. 더 알아볼 방법도 쓰세요.',explanation:'한 장의 사진에는 지구 뒤쪽이 빠지고 구름에 가린 부분도 있을 수 있어요. 사진을 크게 인쇄하는 것으로 해결하지 않고 전체 표면을 다룬 자료와 범례·설명을 함께 확인해요.'}},

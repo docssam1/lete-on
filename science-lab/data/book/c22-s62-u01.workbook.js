@@ -1,4 +1,4 @@
-import{withSeasonStandaloneContext}from'./standalone-question-context.js?v=20261115-motion-electricity-reference';
+import{withSeasonStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
 import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withSeasonReadableWorkbook}from'./c22-s62-u01.editorial.js?v=20261106-season-readable-workbook';
