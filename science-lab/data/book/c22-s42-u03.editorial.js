@@ -482,7 +482,7 @@ const gasReadableBank={
  }
 };
 const gasReadableCache=new WeakMap();
-export function gasReadableCurrentItems(rows,unit){
+export function gasReadableLanguageItems(rows,unit){
  if(unit!=='c22-s42-u03'||!Array.isArray(rows))return rows;
  let changed=false;
  const next=rows.map(question=>{
@@ -525,3 +525,6 @@ export function withGasIndependentQuestionLinks(wb){
  });
  return changed?{...wb,questions}:wb;
 }
+
+import{gasPhotoItems}from'./gas-photo-context.js?v=20261115-gas-photo-context';
+export function gasReadableCurrentItems(rows,unit){return gasPhotoItems(gasReadableLanguageItems(rows,unit),unit);}

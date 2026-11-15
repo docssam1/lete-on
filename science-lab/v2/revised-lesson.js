@@ -55,7 +55,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261115-ecology-food-web-material&soundDirections=20261115-sound-workbook-directions&skyDirections=20261115-sky-workbook-directions&skyResponse=20261115-sky-response-review&gasContext=20261115-gas-workbook-context';
+import {revisedTextbook} from './revised-textbook.js?v=20261115-ecology-food-web-material&soundDirections=20261115-sound-workbook-directions&skyDirections=20261115-sky-workbook-directions&skyResponse=20261115-sky-response-review&gasContext=20261115-gas-workbook-context&gasPhoto=20261115-gas-photo-context';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';
@@ -227,7 +227,7 @@ export function withOptionalClassroomRecords(unit,lesson){
 import{biologyReadableCurrentItems}from'../data/book/s41-u04.editorial.js?v=20261106-biology-opening-guide';
 import{skyReadableCurrentItems}from'../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook';
 import{ecologyReadableCurrentItems}from'../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';
-import{gasReadableCurrentItems}from'../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook';
+import{gasReadableCurrentItems}from'../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook&photo=20261115-gas-photo-context';
 
 import{climateReadableCurrentItems}from'../data/book/c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook';
 

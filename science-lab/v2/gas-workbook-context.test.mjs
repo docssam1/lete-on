@@ -1,6 +1,6 @@
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
 import{withGasContextWorkbook,GAS_CONTEXT_VERSION as version}from'../data/book/gas-workbook-context.js';
-import{workbook,gasContextPriorWorkbook as prior}from'../data/book/c22-s42-u03.workbook.js';
+import{gasPhotoPriorWorkbook as workbook,gasContextPriorWorkbook as prior}from'../data/book/c22-s42-u03.workbook.js';
 import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
 const unit='c22-s42-u03',id=unit+'-w055',esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 

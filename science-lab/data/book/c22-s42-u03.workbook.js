@@ -8788,5 +8788,7 @@ export const gasLinkPriorWorkbook=withGasReadableWorkbook(gasReadablePriorWorkbo
 export const grade4ReviewPriorWorkbook=withGasIndependentQuestionLinks(gasLinkPriorWorkbook);
 
 export const gasContextPriorWorkbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
-export const workbook=withGasContextWorkbook(gasContextPriorWorkbook);
+export const gasPhotoPriorWorkbook=withGasContextWorkbook(gasContextPriorWorkbook);
+export const workbook=withGasPhotoWorkbook(gasPhotoPriorWorkbook);
 import{withGasContextWorkbook}from'./gas-workbook-context.js?v=20261115-gas-workbook-context';
+import{withGasPhotoWorkbook}from'./gas-photo-context.js?v=20261115-gas-photo-context';

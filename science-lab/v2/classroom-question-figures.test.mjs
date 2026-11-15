@@ -3,18 +3,19 @@ import{withThink}from'./think-merge.js';import{revisedTextbookUnits}from'./revis
 const code=fs.readFileSync(new URL('./v2.js',import.meta.url),'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,new URL('./v2.js',import.meta.url)).href)}).runInContext(vm.createContext({withThink}));
 
 test('all 32 student and teacher decks show every required question image exactly once, including both bacteria questions',async()=>{
- let decks=0,slides=0,pictures=0;const bacteria=[],geology=[];
+ let decks=0,slides=0,pictures=0;const bacteria=[],geology=[],gas=[];
  for(const unit of revisedTextbookUnits){const data=await loaders[unit](),mod=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(mod,[...(data.similar||[]),...(data.items||[])]),before=JSON.stringify({mod,pool});
   for(const mode of ['self','teach']){const deck=buildSlides(mod.chapter,mod.art,mod.plan,pool,mode);decks++;slides+=deck.length;
    for(const slide of deck){if(!slide.item)continue;const q=pool.find(q=>q.id===slide.item);assert(q);const images=q.observationPhotos?.map(p=>p.src)||[q.figure].filter(Boolean);if(!images.length)continue;pictures++;
     const sources=[...slide.body.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/g)].map(m=>m[1]);for(const src of images)assert.equal(sources.filter(s=>s==='../'+src).length,1,unit+' '+mode+' '+q.id);
+    if(q.id==='c22-s42-u03-b42')gas.push([mode,q.id]);
     if(q.id==='c22-s51-u01-b001')geology.push([mode,q.id]);
     if(['s41-u04-b09','s41-u04-b16'].includes(q.id)){bacteria.push([mode,q.id]);assert(slide.body.indexOf('<img')<slide.body.indexOf('dk-ans'));assert(slide.body.includes(q.figureNote));if(mode==='self')assert(!slide.body.includes('dk-ans rv'));else assert(slide.body.includes('dk-ans rv'));}
    }
   }
   assert.equal(JSON.stringify({mod,pool}),before,unit+' mutated classroom data');
  }
- assert.equal(decks,64);assert.equal(slides,3048);assert.equal(pictures,16);assert.deepEqual(geology,[['self','c22-s51-u01-b001'],['teach','c22-s51-u01-b001']]);assert.deepEqual(bacteria,[['self','s41-u04-b09'],['self','s41-u04-b16'],['teach','s41-u04-b09'],['teach','s41-u04-b16']]);
+ assert.equal(decks,64);assert.equal(slides,3048);assert.equal(pictures,18);assert.deepEqual(gas,[['self','c22-s42-u03-b42'],['teach','c22-s42-u03-b42']]);assert.deepEqual(geology,[['self','c22-s51-u01-b001'],['teach','c22-s51-u01-b001']]);assert.deepEqual(bacteria,[['self','s41-u04-b09'],['self','s41-u04-b16'],['teach','s41-u04-b09'],['teach','s41-u04-b16']]);
 });
 
 test('native source images, HD copies, labeled photos and custom classroom figures keep prompts, tables, keys and response controls',()=>{
