@@ -74,3 +74,37 @@ test('a local academy route does not replace concept or exam-paper questions',()
  assert.equal(consult({question:'경시 정수론 합동식',region:'부산'}).ids[0],'math');
  assert.equal(consult({question:'KMO 기출 문제 어디?',region:'부산'}).ids[0],'paper');
 });
+test('a customer-friendly explanation cites selected approved notes and asks for the two missing details',()=>{
+ const result=consult({question:'KMO 학원 어디?',region:'부산',progress:'중등 완료, 경시 처음'});
+ assert.match(result.paragraphs[0].text,/부산 센텀.*경시 입문/u);
+ assert.ok(result.paragraphs.some(p=>p.text.includes('부산 사직')));
+ assert.ok(result.paragraphs.some(p=>p.text.includes('입문 단계의 핵심')));
+ for(const p of result.paragraphs)for(const id of p.sourceIds)assert.ok(result.ids.includes(id));
+ assert.deepEqual(result.followup.fields.map(f=>f.key),['completedBooks','soloRange']);
+});
+test('follow-up locality and independent-solving evidence narrow the branch and add foundation support',()=>{
+ const result=consult({question:'부산에서 KMO 학원 어디?',region:'부산 사직',progress:'중등 완료, 경시 처음',completedBooks:'쎈 중3-2 완료',soloRange:'식·함수는 혼자 풀고 기하 증명은 힌트가 필요해요.'});
+ assert.match(result.summary,/부산 사직/u);assert.doesNotMatch(result.summary,/부산 센텀/u);
+ assert.match(result.explanation,/도움이 필요한 단원.*기초/u);
+ assert.equal(result.followup,null);
+ assert.doesNotMatch(result.explanation,/2차 대비:|입반할 수|합격/u);
+});
+test('only missing follow-up details are asked again; solving without help does not imply a weakness',()=>{
+ const base={question:'KMO 수업 어디?',region:'부산',progress:'중등 완료, 경시 처음',completedBooks:'쎈 중3-2'};
+ assert.deepEqual(consult(base).followup.fields.map(f=>f.key),['soloRange']);
+ for(const soloRange of ['힌트 없이 혼자 풀어요.','도움은 필요 없어요.','어려운 문제도 도움 없이 풀어요.']) {
+  const result=consult({...base,soloRange});
+  assert.equal(result.followup,null);assert.doesNotMatch(result.explanation,/도움이 필요한 단원/u);
+ }
+});
+test('course citations disappear with archived notes and an unverified locality is not invented',()=>{
+ const rows=notes.filter(r=>r.id!=='stages');
+ const result=consult({question:'KMO 학원 어디?',region:'부산 기장',progress:'경시 처음',soloRange:'기하에 힌트가 필요해요.'},rows);
+ assert.ok(!result.paragraphs.some(p=>p.sourceIds.includes('stages')));
+ assert.doesNotMatch(result.summary,/기장.{0,5}(?:지점|MK)/u);
+});
+test('reported contest-course completion refines the stage, while a book title alone does not establish readiness',()=>{
+ const base={question:'KMO 학원 어디?',region:'부산',progress:'중등수학 완료',soloRange:'기하·정수 기본 문제를 혼자 풀어요.'};
+ assert.match(consult({...base,completedBooks:'KMO 경시 입문 완료'}).explanation,/기본: 영역별 기본서/u);
+ assert.doesNotMatch(consult({...base,completedBooks:'KMO 2차 대비 문제집'}).explanation,/2차 대비: 서술/u);
+});
