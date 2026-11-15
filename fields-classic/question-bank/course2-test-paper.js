@@ -1,4 +1,5 @@
-import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115c";
+import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115d";
+import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261115a";
 import { mathText } from "./math-markup.js?v=20261027p";
 
 // 2과정 권별 테스트 시험지 보기·인쇄 — 원장 2026-11-14 「G4 테스트는 다시 만들어」.
@@ -9,8 +10,11 @@ const $ = (id) => document.getElementById(id);
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const params = new URLSearchParams(location.search);
 const book = String(params.get("book") || "").toLowerCase();
-const tag = COURSE2_TESTS[book] || (params.get("preview") === "1" && /^[ag][1-5]$/.test(book) ? String(Date.now()) : "");
-const original = tag ? await import(`./course2-test-originals/${book}.js?v=${tag}`).catch((error) => { console.error(error); return null; }) : null;
+// 3과정도 같은 화면(?course=3&book=a1, 원장 2026-11-15 「다른 과정 권별은 폴더에 있잖아」) — 파일은 course3-test-originals/, 정답 bookId course-03-<권>
+const course = params.get("course") === "3" ? 3 : 2;
+const TESTS = course === 3 ? COURSE3_TESTS : COURSE2_TESTS;
+const tag = TESTS[book] || (params.get("preview") === "1" && /^[ag][1-5]$/.test(book) ? String(Date.now()) : "");
+const original = tag ? await import(`./course${course}-test-originals/${book}.js?v=${tag}`).catch((error) => { console.error(error); return null; }) : null;
 
 function questionMarkup(question) {
   const blank = (a) => `<span class="st-ans">${mathText(esc(a.label || "답"))} <span aria-hidden="true">(</span><i></i><span aria-hidden="true">)</span>${a.unit ? esc(a.unit) : ""}</span>`;
@@ -33,14 +37,14 @@ function pagesMarkup() {
 // ── 답안 확인 · 채점(○✕는 이 기기에만 기억)
 const ANSWER_API = "https://fgahqumaldheqettmvqg.supabase.co/functions/v1/unit-test-answers";
 const student = params.get("student") || "DEMO";
-const storageKey = `fields-classic-course2-test:${student}:${book}`;
+const storageKey = course === 3 ? `fields-classic-course3-test:${student}:${book}` : `fields-classic-course2-test:${student}:${book}`;
 const load = () => { try { return JSON.parse(localStorage.getItem(storageKey) || "{}") || {}; } catch { return {}; } };
 const sheet = load();
 const save = () => { try { localStorage.setItem(storageKey, JSON.stringify(sheet)); } catch { /* 저장 안 되는 기기 */ } };
 let answers = null;
 async function loadAnswers() {
   try {
-    const response = await fetch(ANSWER_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bookId: `course-02-${book}` }) });
+    const response = await fetch(ANSWER_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bookId: `course-0${course}-${book}` }) });
     if (!response.ok) return null;
     return (await response.json()).answers || null;
   } catch { return null; }
