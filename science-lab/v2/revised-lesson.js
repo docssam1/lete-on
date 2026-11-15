@@ -1,17 +1,50 @@
-import{withCareerContextClassroom}from'../data/book/career-workbook-context.js?v=20261116-career-workbook-context';
-import{withElectricityContextClassroom}from'../data/book/electricity-workbook-context.js?v=20261116-electricity-workbook-context';
-import{withCombustionContextClassroom}from'../data/book/combustion-workbook-context.js?v=20261116-combustion-workbook-context';
-import{withSeasonContextClassroom}from'../data/book/season-workbook-context.js?v=20261116-season-workbook-context';
-import{withEarthMotionContextClassroom}from'../data/book/earth-motion-workbook-context.js?v=20261116-earth-motion-workbook-context';
-import{withPlantContextClassroom}from'../data/book/plant-workbook-context.js?v=20261116-plant-workbook-context';
-import{withMotionContextClassroom}from'../data/book/motion-workbook-context.js?v=20261116-motion-workbook-context';
-import{withAcidContextClassroom}from'../data/book/acid-workbook-context.js?v=20261116-acid-workbook-context';
-import{withEnergyContextClassroom}from'../data/book/energy-workbook-context.js?v=20261116-energy-workbook-context';
-import{withHeatContextClassroom}from'../data/book/heat-workbook-context.js?v=20261116-heat-workbook-context';
-import{withWeatherContextClassroom}from'../data/book/weather-workbook-context.js?v=20261116-weather-workbook-context';
-import{withMixtureContextClassroom}from'../data/book/mixture-workbook-context.js?v=20261116-mixture-workbook-context';
-import{withBodyContextClassroom}from'../data/book/body-workbook-context.js?v=20261115-body-workbook-context';
-import{withSolutionContextClassroom}from'../data/book/solution-workbook-context.js?v=20261115-solution-workbook-context';
+const unchangedClassroomItems=(rows,unit)=>rows;
+const classroomReadingDefaults={biologyReadableCurrentItems:unchangedClassroomItems,skyReadableCurrentItems:unchangedClassroomItems,ecologyReadableCurrentItems:unchangedClassroomItems,gasReadableCurrentItems:unchangedClassroomItems,climateReadableCurrentItems:unchangedClassroomItems,geologyReadableCurrentItems:unchangedClassroomItems,lightReadableCurrentItems:unchangedClassroomItems,solutionReadableCurrentItems:unchangedClassroomItems,bodyReadableCurrentItems:unchangedClassroomItems,mixtureReadableCurrentItems:unchangedClassroomItems,heatReadableCurrentItems:unchangedClassroomItems,weatherReadableCurrentItems:unchangedClassroomItems,energyReadableCurrentItems:unchangedClassroomItems,acidReadableCurrentItems:unchangedClassroomItems,motionReadableCurrentItems:unchangedClassroomItems,plantStructureReadableCurrentItems:unchangedClassroomItems,earthMotionReadableCurrentItems:unchangedClassroomItems,seasonReadableCurrentItems:unchangedClassroomItems,combustionReadableCurrentItems:unchangedClassroomItems,electricityReadableCurrentItems:unchangedClassroomItems,careerReadableCurrentItems:unchangedClassroomItems};
+const classroomReadingLoaders={
+"s41-u04":()=>import("../data/book/s41-u04.editorial.js?v=20261106-biology-opening-guide").then(module=>({biologyReadableCurrentItems:module.biologyReadableCurrentItems})),
+"c22-s42-u01":()=>import("../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook").then(module=>({skyReadableCurrentItems:module.skyReadableCurrentItems})),
+"c22-s42-u02":()=>import("../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook").then(module=>({ecologyReadableCurrentItems:module.ecologyReadableCurrentItems})),
+"c22-s42-u03":()=>import("../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook&photo=20261115-gas-photo-context").then(module=>({gasReadableCurrentItems:module.gasReadableCurrentItems})),
+"c22-s42-u04":()=>import("../data/book/c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook").then(module=>({climateReadableCurrentItems:module.climateReadableCurrentItems})),
+"c22-s51-u01":()=>import("../data/book/c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook&review=20261115-geology-response-review").then(module=>({geologyReadableCurrentItems:module.geologyReadableCurrentItems})),
+"c22-s51-u02":()=>import("../data/book/c22-s51-u02.editorial.js?v=20261106-light-readable-workbook").then(module=>({lightReadableCurrentItems:module.lightReadableCurrentItems})),
+"c22-s51-u03":()=>import("../data/book/c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook").then(module=>({solutionReadableCurrentItems:module.solutionReadableCurrentItems})),
+"c22-s51-u04":()=>import("../data/book/c22-s51-u04.editorial.js?v=20261106-body-readable-workbook").then(module=>({bodyReadableCurrentItems:module.bodyReadableCurrentItems})),
+"c22-s52-u01":()=>import("../data/book/c22-s52-u01.editorial.js?v=20261106-mixture-readable-workbook").then(module=>({mixtureReadableCurrentItems:module.mixtureReadableCurrentItems})),
+"c22-s52-u02":()=>import("../data/book/c22-s52-u02.editorial.js?v=20261106-heat-readable-workbook").then(module=>({heatReadableCurrentItems:module.heatReadableCurrentItems})),
+"c22-s52-u03":()=>import("../data/book/c22-s52-u03.editorial.js?v=20261106-weather-readable-workbook").then(module=>({weatherReadableCurrentItems:module.weatherReadableCurrentItems})),
+"c22-s52-u04":()=>import("../data/book/c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook").then(module=>({energyReadableCurrentItems:module.energyReadableCurrentItems})),
+"c22-s61-u01":()=>import("../data/book/c22-s61-u01.editorial.js?v=20261106-acid-readable-workbook").then(module=>({acidReadableCurrentItems:module.acidReadableCurrentItems})),
+"c22-s61-u02":()=>import("../data/book/c22-s61-u02.editorial.js?v=20261106-motion-readable-workbook").then(module=>({motionReadableCurrentItems:module.motionReadableCurrentItems})),
+"c22-s61-u03":()=>import("../data/book/c22-s61-u03.editorial.js?v=20261106-plant-structure-readable-workbook").then(module=>({plantStructureReadableCurrentItems:module.plantStructureReadableCurrentItems})),
+"c22-s61-u04":()=>import("../data/book/c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook").then(module=>({earthMotionReadableCurrentItems:module.earthMotionReadableCurrentItems})),
+"c22-s62-u01":()=>import("../data/book/c22-s62-u01.editorial.js?v=20261106-season-readable-workbook").then(module=>({seasonReadableCurrentItems:module.seasonReadableCurrentItems})),
+"c22-s62-u02":()=>import("../data/book/c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook").then(module=>({combustionReadableCurrentItems:module.combustionReadableCurrentItems})),
+"c22-s62-u03":()=>import("../data/book/c22-s62-u03.editorial.js?v=20261106-electricity-readable-workbook").then(module=>({electricityReadableCurrentItems:module.electricityReadableCurrentItems})),
+"c22-s62-u04":()=>import("../data/book/c22-s62-u04.editorial.js?v=20261107-career-readable-workbook").then(module=>({careerReadableCurrentItems:module.careerReadableCurrentItems})),
+};
+async function classroomReadingFor(unit){return{...classroomReadingDefaults,...(classroomReadingLoaders[unit]?await classroomReadingLoaders[unit]():{})};}
+
+const unchangedClassroom=(unit,book)=>book;
+const classroomContextDefaults={withCareerContextClassroom:unchangedClassroom,withElectricityContextClassroom:unchangedClassroom,withCombustionContextClassroom:unchangedClassroom,withSeasonContextClassroom:unchangedClassroom,withEarthMotionContextClassroom:unchangedClassroom,withPlantContextClassroom:unchangedClassroom,withMotionContextClassroom:unchangedClassroom,withAcidContextClassroom:unchangedClassroom,withEnergyContextClassroom:unchangedClassroom,withHeatContextClassroom:unchangedClassroom,withWeatherContextClassroom:unchangedClassroom,withMixtureContextClassroom:unchangedClassroom,withBodyContextClassroom:unchangedClassroom,withSolutionContextClassroom:unchangedClassroom};
+const classroomContextLoaders={
+"c22-s62-u04":()=>import("../data/book/career-workbook-context.js?v=20261116-career-workbook-context").then(module=>({withCareerContextClassroom:module.withCareerContextClassroom})),
+"c22-s62-u03":()=>import("../data/book/electricity-workbook-context.js?v=20261116-electricity-workbook-context").then(module=>({withElectricityContextClassroom:module.withElectricityContextClassroom})),
+"c22-s62-u02":()=>import("../data/book/combustion-workbook-context.js?v=20261116-combustion-workbook-context").then(module=>({withCombustionContextClassroom:module.withCombustionContextClassroom})),
+"c22-s62-u01":()=>import("../data/book/season-workbook-context.js?v=20261116-season-workbook-context").then(module=>({withSeasonContextClassroom:module.withSeasonContextClassroom})),
+"c22-s61-u04":()=>import("../data/book/earth-motion-workbook-context.js?v=20261116-earth-motion-workbook-context").then(module=>({withEarthMotionContextClassroom:module.withEarthMotionContextClassroom})),
+"c22-s61-u03":()=>import("../data/book/plant-workbook-context.js?v=20261116-plant-workbook-context").then(module=>({withPlantContextClassroom:module.withPlantContextClassroom})),
+"c22-s61-u02":()=>import("../data/book/motion-workbook-context.js?v=20261116-motion-workbook-context").then(module=>({withMotionContextClassroom:module.withMotionContextClassroom})),
+"c22-s61-u01":()=>import("../data/book/acid-workbook-context.js?v=20261116-acid-workbook-context").then(module=>({withAcidContextClassroom:module.withAcidContextClassroom})),
+"c22-s52-u04":()=>import("../data/book/energy-workbook-context.js?v=20261116-energy-workbook-context").then(module=>({withEnergyContextClassroom:module.withEnergyContextClassroom})),
+"c22-s52-u02":()=>import("../data/book/heat-workbook-context.js?v=20261116-heat-workbook-context").then(module=>({withHeatContextClassroom:module.withHeatContextClassroom})),
+"c22-s52-u03":()=>import("../data/book/weather-workbook-context.js?v=20261116-weather-workbook-context").then(module=>({withWeatherContextClassroom:module.withWeatherContextClassroom})),
+"c22-s52-u01":()=>import("../data/book/mixture-workbook-context.js?v=20261116-mixture-workbook-context").then(module=>({withMixtureContextClassroom:module.withMixtureContextClassroom})),
+"c22-s51-u04":()=>import("../data/book/body-workbook-context.js?v=20261115-body-workbook-context").then(module=>({withBodyContextClassroom:module.withBodyContextClassroom})),
+"c22-s51-u03":()=>import("../data/book/solution-workbook-context.js?v=20261115-solution-workbook-context").then(module=>({withSolutionContextClassroom:module.withSolutionContextClassroom})),
+};
+async function classroomContextFor(unit){return{...classroomContextDefaults,...(classroomContextLoaders[unit]?await classroomContextLoaders[unit]():{})};}
+
 import{withEarthSeaChoiceClassroom}from'../data/book/earth-sea-choice-review.js?v=20261115-earth-sea-linked-choice-review&safety=20261115-earth-sea-safety-feedback';
 import{withRepresentationClassroom}from'../data/book/representation-question-review.js?v=20261115-representation-response-review';
 import{withMaterialReadingClassroom}from'../data/book/material-reading-criteria.js?v=20261115-material-reading-criteria';
@@ -47,80 +80,80 @@ import{earthSeaReasoningCurrentItems}from'../data/book/c22-s32-u02.rail-notes.js
 import{withEarthSeaElementaryClassroom}from'../data/book/c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary';
 import{termParticleCurrentItems,guidanceParticleCurrentItems}from'../data/book/term-particle-language.js?v=20261105-guidance-particles';
 import{observationCurrentItems}from'../data/book/observation-language.js';
-import{mountCareerCompare}from'./lab-career-compare.js?v=20261115-standalone-question-context';
-import{careerCompareValues,validCareerCompareRow}from'./career-compare-model.js?v=20261115-standalone-question-context';
-import{inquiry as careerInquiry}from'../data/activities/c22-s62-u04.inquiry.js?v=20261104-career-class';
-import{mountElectricityCompare}from'./lab-electricity-compare.js?v=20261104-student-science-language';
-import{electricityCompareValues,validElectricityCompareRow}from'./electricity-compare-model.js?v=20261104-student-science-language';
+
+import{careerCompareValues,validCareerCompareRow}from'./classroom-record-readers.js?v=20261116-lazy-unit-imports';
+import{careerRecordInquiry as careerInquiry}from'./classroom-record-readers.js?v=20261116-lazy-unit-imports';
+
+import{electricityCompareValues,validElectricityCompareRow}from'./classroom-record-readers.js?v=20261116-lazy-unit-imports';
 import{inquiry as electricityInquiry}from'../data/activities/c22-s62-u03.inquiry.js?v=20261104-electricity-class';
-import{mountCombustionCompare}from'./lab-combustion-compare.js?v=20261108-comparison-material-language';
-import{combustionCompareValues,validCombustionCompareRow}from'./combustion-compare-model.js';
+
+import{combustionCompareValues,validCombustionCompareRow}from'./classroom-record-readers.js?v=20261116-lazy-unit-imports';
 import{inquiry as combustionInquiry}from'../data/activities/c22-s62-u02.inquiry.js?v=20261104-combustion-class';
-import{mountSeasonCompare}from'./lab-season-compare.js?v=20261115-observation-question-context';
-import{seasonCompareValues,validSeasonCompareRow}from'./season-compare-model.js?v=20261115-observation-question-context';
+
+import{seasonCompareValues,validSeasonCompareRow}from'./classroom-record-readers.js?v=20261116-lazy-unit-imports';
 import{inquiry as seasonInquiry}from'../data/activities/c22-s62-u01.inquiry.js?v=20261104-season-class';
-import{mountEarthMotionCompare}from'./lab-earth-motion-compare.js?v=20261104-earth-motion-class';
+
 import{earthMotionCompareValues,validEarthMotionCompareRow}from'./earth-motion-compare-model.js';
 import{inquiry as earthMotionInquiry}from'../data/activities/c22-s61-u04.inquiry.js?v=20261104-earth-motion-class';
-import{mountPlantStructureCompare}from'./lab-plant-structure-compare.js?v=20261108-grade3-class-guidance';
+
 import{plantStructureCompareValues,validPlantStructureCompareRow}from'./plant-structure-compare-model.js';
 import{inquiry as plantStructureInquiry}from'../data/activities/c22-s61-u03.inquiry.js?v=20261104-plant-structure-class';
-import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
+
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261115-ecology-food-web-material&soundDirections=20261115-sound-workbook-directions&skyDirections=20261115-sky-workbook-directions&skyResponse=20261115-sky-response-review&gasContext=20261115-gas-workbook-context&gasPhoto=20261115-gas-photo-context&climateContext=20261115-climate-workbook-context&geologyReview=20261115-geology-response-review&lightContext=20261115-light-workbook-context&solutionContext=20261115-solution-workbook-context&bodyContext=20261115-body-workbook-context&mixtureContext=20261116-mixture-workbook-context&weatherContext=20261116-weather-workbook-context&heatContext=20261116-heat-workbook-context&energyContext=20261116-energy-workbook-context&acidContext=20261116-acid-workbook-context&motionContext=20261116-motion-workbook-context&plantContext=20261116-plant-workbook-context&earthMotionContext=20261116-earth-motion-workbook-context&seasonContext=20261116-season-workbook-context&combustionContext=20261116-combustion-workbook-context&electricityContext=20261116-electricity-workbook-context&careerContext=20261116-career-workbook-context';
+import {revisedTextbook} from './revised-textbook.js?v=20261115-ecology-food-web-material&soundDirections=20261115-sound-workbook-directions&skyDirections=20261115-sky-workbook-directions&skyResponse=20261115-sky-response-review&gasContext=20261115-gas-workbook-context&gasPhoto=20261115-gas-photo-context&climateContext=20261115-climate-workbook-context&geologyReview=20261115-geology-response-review&lightContext=20261115-light-workbook-context&solutionContext=20261115-solution-workbook-context&bodyContext=20261115-body-workbook-context&mixtureContext=20261116-mixture-workbook-context&weatherContext=20261116-weather-workbook-context&heatContext=20261116-heat-workbook-context&energyContext=20261116-energy-workbook-context&acidContext=20261116-acid-workbook-context&motionContext=20261116-motion-workbook-context&plantContext=20261116-plant-workbook-context&earthMotionContext=20261116-earth-motion-workbook-context&seasonContext=20261116-season-workbook-context&combustionContext=20261116-combustion-workbook-context&electricityContext=20261116-electricity-workbook-context&careerContext=20261116-career-workbook-context&unitImports=20261116-lazy-unit-imports';
 import {FORCE_PREDICTIONS} from './force-model.js';
-import {mountAnimalCompare} from './lab-animal-compare.js';
+
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';
-import {mountPlantCompare} from './lab-plant-compare.js';
+
 import {leafRowValues,validLeafCompareRow} from './plant-classify.js';
-import {mountLifeCompare} from './lab-life-compare.js?v=20261108-comparison-activity-guidance';
+
 import {lifeCompareValues,validLifeCompareRow} from './life-compare-model.js';
-import {mountEcologyCompare} from './lab-ecology-compare.js?v=20261108-comparison-activity-guidance';
+
 import {ecologyCompareValues,validEcologyCompareRow} from './ecology-compare-model.js';
-import {mountMaterialCompare} from './lab-material-compare.js?v=20261108-grade3-class-guidance';
+
 import {materialCompareValues,validMaterialCompareRow} from './material-compare-model.js';
-import {mountEarthSeaCompare} from './lab-earth-sea-compare.js?v=20261108-comparison-activity-guidance';
+
 import {earthSeaCompareValues,validEarthSeaCompareRow} from './earth-sea-compare-model.js';
-import {mountSoundCompare} from './lab-sound-compare.js?v=20261108-comparison-activity-guidance';
+
 import {soundCompareValues,validSoundCompareRow} from './sound-compare-model.js';
-import {mountInfectionCompare} from './lab-infection-compare.js?v=20261108-comparison-activity-guidance';
+
 import {infectionCompareValues,validInfectionCompareRow} from './infection-compare-model.js';
-import {mountClimateCompare} from './lab-climate-compare.js?v=20261108-comparison-activity-guidance';
+
 import {climateCompareValues,validClimateCompareRow} from './climate-compare-model.js';
-import {mountSkyCompare} from './lab-sky-compare.js?v=20261108-comparison-activity-guidance';
+
 import {skyCompareValues,validSkyCompareRow} from './sky-compare-model.js';
-import {mountWaterCompare} from './lab-water-compare.js?v=20261108-comparison-material-language';
+
 import {waterCompareValues,validWaterCompareRow} from './water-compare-model.js';
-import {mountSolutionCompare} from './lab-solution-compare.js?v=20261108-solution-learning-language';
+
 import {solutionCompareValues,validSolutionCompareRow} from './solution-compare-model.js';
-import {mountGroundCompare} from './lab-ground-compare.js?v=20261108-comparison-material-language';
+
 import {groundCompareValues,validGroundCompareRow} from './ground-compare-model.js';
-import {mountBiologyCompare} from './lab-biology-compare.js';
+
 import {biologyCompareValues,validBiologyCompareRow,biologyBreadProgress} from './biology-compare-model.js';
-import {mountMagnetCompare} from './lab-magnet-compare.js?v=20261108-comparison-material-language';
+
 import {magnetCompareValues,validMagnetCompareRow,magnetTowerProgress} from './magnet-compare-model.js';
-import {mountGasCompare} from './lab-gas-compare.js';
+
 import {gasCompareValues,validGasCompareRow} from './gas-compare-model.js';
-import {mountGeologyCompare} from './lab-geology-compare.js';
+
 import {geologyCompareValues,validGeologyCompareRow} from './geology-compare-model.js';
-import {mountLightCompare} from './lab-light-compare.js';
+
 import {lightCompareValues,validLightCompareRow} from './light-compare-model.js';
-import {mountMixtureCompare} from './lab-mixture-compare.js?v=20261104-table-fix';
+
 import {mixtureCompareValues,validMixtureCompareRow} from './mixture-compare-model.js';
-import {mountBodyCompare} from './lab-body-compare.js';
+
 import {bodyCompareValues,validBodyCompareRow} from './body-compare-model.js';
-import {mountHeatCompare} from './lab-heat-compare.js';
+
 import {heatCompareValues,validHeatCompareRow} from './heat-compare-model.js';
-import {mountWeatherCompare} from './lab-weather-compare.js?v=20261104-weather-class';
+
 import {weatherCompareValues,validWeatherCompareRow} from './weather-compare-model.js';
-import {mountEnergyCompare} from './lab-energy-compare.js?v=20261104-energy-class';
+
 import {energyCompareValues,validEnergyCompareRow} from './energy-compare-model.js';
-import{mountAcidCompare}from'./lab-acid-compare.js?v=20261104-acid-class';
+
 import{acidCompareValues,validAcidCompareRow}from'./acid-compare-model.js';
-import{inquiry as acidInquiry}from'../data/activities/c22-s61-u01.inquiry.js?v=20261104-acid-class';
-const comparisonMounts={'career-compare':mountCareerCompare,'electricity-compare':mountElectricityCompare,'combustion-compare':mountCombustionCompare,'season-compare':mountSeasonCompare,'earth-motion-compare':mountEarthMotionCompare,'plant-structure-compare':mountPlantStructureCompare,'motion-compare':mountMotionCompare,'acid-compare':mountAcidCompare,'energy-compare':mountEnergyCompare,'weather-compare':mountWeatherCompare,'heat-compare':mountHeatCompare,'mixture-compare':mountMixtureCompare,'body-compare':mountBodyCompare,'light-compare':mountLightCompare,'geology-compare':mountGeologyCompare,'gas-compare':mountGasCompare,'magnet-compare':mountMagnetCompare,'biology-compare':mountBiologyCompare,'ground-compare':mountGroundCompare,'water-compare':mountWaterCompare,'solution-compare':mountSolutionCompare,'sky-compare':mountSkyCompare,'climate-compare':mountClimateCompare,'infection-compare':mountInfectionCompare,'animal-compare':mountAnimalCompare,'plant-compare':mountPlantCompare,'life-compare':mountLifeCompare,'ecology-compare':mountEcologyCompare,'material-compare':mountMaterialCompare,'earth-sea-compare':mountEarthSeaCompare,'sound-compare':mountSoundCompare};
+import{acidRecordInquiry as acidInquiry}from'./classroom-record-readers.js?v=20261116-lazy-unit-imports';
+const comparisonMounts={'career-compare':()=>import("./lab-career-compare.js?v=20261115-standalone-question-context").then(module=>module.mountCareerCompare),'electricity-compare':()=>import("./lab-electricity-compare.js?v=20261104-student-science-language").then(module=>module.mountElectricityCompare),'combustion-compare':()=>import("./lab-combustion-compare.js?v=20261108-comparison-material-language").then(module=>module.mountCombustionCompare),'season-compare':()=>import("./lab-season-compare.js?v=20261115-observation-question-context").then(module=>module.mountSeasonCompare),'earth-motion-compare':()=>import("./lab-earth-motion-compare.js?v=20261104-earth-motion-class").then(module=>module.mountEarthMotionCompare),'plant-structure-compare':()=>import("./lab-plant-structure-compare.js?v=20261108-grade3-class-guidance").then(module=>module.mountPlantStructureCompare),'motion-compare':()=>import("./lab-motion-compare.js?v=20261104-motion-class").then(module=>module.mountMotionCompare),'acid-compare':()=>import("./lab-acid-compare.js?v=20261104-acid-class").then(module=>module.mountAcidCompare),'energy-compare':()=>import("./lab-energy-compare.js?v=20261104-energy-class").then(module=>module.mountEnergyCompare),'weather-compare':()=>import("./lab-weather-compare.js?v=20261104-weather-class").then(module=>module.mountWeatherCompare),'heat-compare':()=>import("./lab-heat-compare.js").then(module=>module.mountHeatCompare),'mixture-compare':()=>import("./lab-mixture-compare.js?v=20261104-table-fix").then(module=>module.mountMixtureCompare),'body-compare':()=>import("./lab-body-compare.js").then(module=>module.mountBodyCompare),'light-compare':()=>import("./lab-light-compare.js").then(module=>module.mountLightCompare),'geology-compare':()=>import("./lab-geology-compare.js").then(module=>module.mountGeologyCompare),'gas-compare':()=>import("./lab-gas-compare.js").then(module=>module.mountGasCompare),'magnet-compare':()=>import("./lab-magnet-compare.js?v=20261108-comparison-material-language").then(module=>module.mountMagnetCompare),'biology-compare':()=>import("./lab-biology-compare.js").then(module=>module.mountBiologyCompare),'ground-compare':()=>import("./lab-ground-compare.js?v=20261108-comparison-material-language").then(module=>module.mountGroundCompare),'water-compare':()=>import("./lab-water-compare.js?v=20261108-comparison-material-language").then(module=>module.mountWaterCompare),'solution-compare':()=>import("./lab-solution-compare.js?v=20261108-solution-learning-language").then(module=>module.mountSolutionCompare),'sky-compare':()=>import("./lab-sky-compare.js?v=20261108-comparison-activity-guidance").then(module=>module.mountSkyCompare),'climate-compare':()=>import("./lab-climate-compare.js?v=20261108-comparison-activity-guidance").then(module=>module.mountClimateCompare),'infection-compare':()=>import("./lab-infection-compare.js?v=20261108-comparison-activity-guidance").then(module=>module.mountInfectionCompare),'animal-compare':()=>import("./lab-animal-compare.js").then(module=>module.mountAnimalCompare),'plant-compare':()=>import("./lab-plant-compare.js").then(module=>module.mountPlantCompare),'life-compare':()=>import("./lab-life-compare.js?v=20261108-comparison-activity-guidance").then(module=>module.mountLifeCompare),'ecology-compare':()=>import("./lab-ecology-compare.js?v=20261108-comparison-activity-guidance").then(module=>module.mountEcologyCompare),'material-compare':()=>import("./lab-material-compare.js?v=20261108-grade3-class-guidance").then(module=>module.mountMaterialCompare),'earth-sea-compare':()=>import("./lab-earth-sea-compare.js?v=20261108-comparison-activity-guidance").then(module=>module.mountEarthSeaCompare),'sound-compare':()=>import("./lab-sound-compare.js?v=20261108-comparison-activity-guidance").then(module=>module.mountSoundCompare)};
 const lessons = new Map([
  ['c22-s62-u04',()=>import('../data/book/c22-s62-u04.thinking-lesson.js?v=20261104-student-science-language')],
  ['c22-s62-u03',()=>import('../data/book/c22-s62-u03.thinking-lesson.js?v=20261104-student-science-language')],
@@ -158,12 +191,16 @@ const lessons = new Map([
 export async function revisedClassroom(unit, mod) {
  const load = lessons.get(unit);
  if (!load) return mod;
- const [book, lesson] = await Promise.all([
+ const [book, lesson, contexts, readings] = await Promise.all([
   mod.chapter?.revisedCurriculumWorkbook ? mod : revisedTextbook(unit, mod),
   load(),
+  classroomContextFor(unit),
+  classroomReadingFor(unit),
  ]);
+ const {biologyReadableCurrentItems,skyReadableCurrentItems,ecologyReadableCurrentItems,gasReadableCurrentItems,climateReadableCurrentItems,geologyReadableCurrentItems,lightReadableCurrentItems,solutionReadableCurrentItems,bodyReadableCurrentItems,mixtureReadableCurrentItems,heatReadableCurrentItems,weatherReadableCurrentItems,energyReadableCurrentItems,acidReadableCurrentItems,motionReadableCurrentItems,plantStructureReadableCurrentItems,earthMotionReadableCurrentItems,seasonReadableCurrentItems,combustionReadableCurrentItems,electricityReadableCurrentItems,careerReadableCurrentItems}=readings;
+ const {withCareerContextClassroom,withElectricityContextClassroom,withCombustionContextClassroom,withSeasonContextClassroom,withEarthMotionContextClassroom,withPlantContextClassroom,withMotionContextClassroom,withAcidContextClassroom,withEnergyContextClassroom,withHeatContextClassroom,withWeatherContextClassroom,withMixtureContextClassroom,withBodyContextClassroom,withSolutionContextClassroom}=contexts;
  if(lesson.lab&&!Object.hasOwn(comparisonMounts,lesson.lab.kind))throw Error('수업 비교 활동이 연결되지 않았습니다.');
- const classroomLab=lesson.lab?{...lesson.lab,mount:comparisonMounts[lesson.lab.kind]}:undefined;
+ const classroomLab=lesson.lab?{...lesson.lab,mount:await comparisonMounts[lesson.lab.kind]()} :undefined;
  return withCareerContextClassroom(unit,withElectricityContextClassroom(unit,withCombustionContextClassroom(unit,withSeasonContextClassroom(unit,withEarthMotionContextClassroom(unit,withPlantContextClassroom(unit,withMotionContextClassroom(unit,withAcidContextClassroom(unit,withEnergyContextClassroom(unit,withHeatContextClassroom(unit,withWeatherContextClassroom(unit,withMixtureContextClassroom(unit,withBodyContextClassroom(unit,withSolutionContextClassroom(unit,withEarthSeaChoiceClassroom(unit,withRepresentationClassroom(unit,withMaterialReadingClassroom(unit,withGrade6QuestionReviewClassroom(unit,withGrade5QuestionReviewClassroom(unit,withGrade4QuestionReviewClassroom(unit,withReviewedCriteriaClassroom(unit,withLinkedWorkbookAnswersClassroom(unit,withWeatherDrawingCriteriaClassroom(unit,withSeasonComparisonClassroom(unit,withBiologyOpinionClassroom(unit,withStandaloneContextClassroom(unit,withElementaryPromptClassroom(unit,withLifeElementaryClassroom(unit,withLessonReferenceClassroom(unit,withEcologyElementaryClassroom(unit,await withVersionedClassroomQuestions(unit,withBiologyElementaryBankClassroom(unit,withLandElementaryClassroom(unit,withWaterElementaryClassroom(unit,withMagnetElementaryClassroom(unit,withGrade3PracticeClassroom(unit,withEarthSeaElementaryClassroom(unit,withLearnerClassGuidance(withSolutionLearnerCues(withComparisonLearnerCues({...book, chapter:{...book.chapter, ...lesson.chapter,revisedThinkingClassroom:true}, plan:lesson.plan, classroomItems:earthMotionPairCurrentItems(seasonPairCurrentItems(combustionPairCurrentItems(electricityPairCurrentItems(careerReadableCurrentItems(electricityReadableCurrentItems(combustionReadableCurrentItems(seasonReadableCurrentItems(earthMotionReadableCurrentItems(plantStructureReadableCurrentItems(motionReadableCurrentItems(acidReadableCurrentItems(energyReadableCurrentItems(weatherReadableCurrentItems(heatReadableCurrentItems(mixtureReadableCurrentItems(bodyReadableCurrentItems(solutionReadableCurrentItems(lightReadableCurrentItems(geologyReadableCurrentItems(climateReadableCurrentItems(gasReadableCurrentItems(ecologyReadableCurrentItems(skyReadableCurrentItems(biologyReadableCurrentItems(landReasoningCurrentItems(magnetReasoningCurrentItems(earthSeaReasoningCurrentItems(guidanceParticleCurrentItems(termParticleCurrentItems(observationCurrentItems(lesson.classroomItems||lesson.checks,unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),unit),classroomLab}))))))))))))))))))))))))))))))))))))))));
 }
 
@@ -238,41 +275,3 @@ export function withOptionalClassroomRecords(unit,lesson){
  if(unit!=='c22-s51-u03'||!lesson?.explore?.lab||lesson.explore.records)return lesson;
  return {...lesson,explore:{...lesson.explore,records:{...lesson.explore.lab,title:'실제 용액 탐구 기록(선택)',note:'직접 비교·조사·자료 제작·실제 전달과 받은 의견을 따로 남길 때 써요. 예전에 쓴 기록도 그대로 있어요.'}}};
 }
-import{biologyReadableCurrentItems}from'../data/book/s41-u04.editorial.js?v=20261106-biology-opening-guide';
-import{skyReadableCurrentItems}from'../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook';
-import{ecologyReadableCurrentItems}from'../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';
-import{gasReadableCurrentItems}from'../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook&photo=20261115-gas-photo-context';
-
-import{climateReadableCurrentItems}from'../data/book/c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook';
-
-import{geologyReadableCurrentItems}from'../data/book/c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook&review=20261115-geology-response-review';
-
-import{lightReadableCurrentItems}from'../data/book/c22-s51-u02.editorial.js?v=20261106-light-readable-workbook';
-
-import{solutionReadableCurrentItems}from'../data/book/c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook';
-
-import{bodyReadableCurrentItems}from'../data/book/c22-s51-u04.editorial.js?v=20261106-body-readable-workbook';
-
-import{mixtureReadableCurrentItems}from'../data/book/c22-s52-u01.editorial.js?v=20261106-mixture-readable-workbook';
-
-import{heatReadableCurrentItems}from'../data/book/c22-s52-u02.editorial.js?v=20261106-heat-readable-workbook';
-
-import{weatherReadableCurrentItems}from'../data/book/c22-s52-u03.editorial.js?v=20261106-weather-readable-workbook';
-
-import{energyReadableCurrentItems}from'../data/book/c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook';
-
-import{acidReadableCurrentItems}from'../data/book/c22-s61-u01.editorial.js?v=20261106-acid-readable-workbook';
-
-import{motionReadableCurrentItems}from'../data/book/c22-s61-u02.editorial.js?v=20261106-motion-readable-workbook';
-
-import{plantStructureReadableCurrentItems}from'../data/book/c22-s61-u03.editorial.js?v=20261106-plant-structure-readable-workbook';
-
-import{earthMotionReadableCurrentItems}from'../data/book/c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook';
-
-import{seasonReadableCurrentItems}from'../data/book/c22-s62-u01.editorial.js?v=20261106-season-readable-workbook';
-
-import{combustionReadableCurrentItems}from'../data/book/c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook';
-
-import{electricityReadableCurrentItems}from'../data/book/c22-s62-u03.editorial.js?v=20261106-electricity-readable-workbook';
-
-import{careerReadableCurrentItems}from'../data/book/c22-s62-u04.editorial.js?v=20261107-career-readable-workbook';
