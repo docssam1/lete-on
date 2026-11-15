@@ -10,6 +10,7 @@
     'dp-common1-v14-pilot':'DP:common1-basic', 'dp-common1-r02':'DP:common1-basic',
     'wm-middle21-basic-mixed-r01':'WM:middle21-basic', 'wm-middle21-basic-mixed-r02':'WM:middle21-basic',
     'wm-middle21-basic-mixed-r03':'WM:middle21-basic', 'wm-middle21-basic-mixed-r04':'WM:middle21-basic',
+    'wm-middle21-basic-final':'WM:middle21-basic',
     'wm-middle22-basic-r01':'WM:middle22-basic',
     'wm-middle31-basic-r01':'WM:middle31-basic',
     'wm-common1-basic-r01':'WM:common1-basic', 'wm-common1-basic-r02':'WM:common1-basic',
