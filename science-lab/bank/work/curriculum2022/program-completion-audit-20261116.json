@@ -19,7 +19,8 @@
       "studentPages": 2476,
       "displayFormatsPerUnit": 8,
       "allThreeRailRolesPerPage": true,
-      "limit": "Structure and generated HTML only; raw form codes alone do not identify display formats."
+      "limit": "Structure and generated HTML only; raw form codes alone do not identify display formats.",
+      "latestDirectionCorrection": "483: infection w033 asks for a word from its word-only options; all answer contracts, pages and other workbook fields unchanged."
     },
     {
       "requirement": "Elementary language, scientific correctness, and meaningful advanced notes",
@@ -69,7 +70,20 @@
       "pendingPractice": 312,
       "wholeCurrentOriginalEditionsComplete": false,
       "newOriginalsRegisteredThisAudit": 0,
-      "additionalDriveSearchWasNotExhaustive": true
+      "additionalDriveSearchWasNotExhaustive": true,
+      "additionalDriveCoverage483": {
+        "scienceNamedFolderPages": 2,
+        "scienceNamedFolders": 104,
+        "scienceQueryHasNextPage": false,
+        "revisionNamedFolderPages": 4,
+        "revisionNamedFolders": 400,
+        "revisionQueryHasNextPage": true,
+        "semesterFolderCandidates": 26,
+        "additionalScienceSemesterFoldersRead": 6,
+        "additionalScienceChapterFoldersRead": 42,
+        "wholeDriveOrAllPdfBodiesExhausted": false,
+        "newOriginalSourcesRegistered": 0
+      }
     },
     {
       "requirement": "Original-question misconception diagnosis",
@@ -209,19 +223,19 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstIssue": "Recheck authoritative current-source material for the three pending units",
-    "pendingUnits": [
-      "c22-s32-u02",
-      "c22-s32-u04",
-      "c22-s62-u04"
+    "firstIssue": "Continue independent review of the actual infection workbook questions with their displayed materials",
+    "unit": "c22-s32-u04",
+    "notYetReadWithAllFieldsAndMaterials": [
+      "17-21",
+      "37-64",
+      "73-80"
     ],
     "requirements": [
-      "Use existing registered project/Drive locations and permitted read-only connected-source metadata or PDF reading; record the actual search coverage.",
-      "Do not treat earlier limited folder searches as exhaustive, repeat the unresolved source-location question unnecessarily, or register authored practice as found originals.",
-      "Preserve all201source diagnostics,3741full snapshots, the comparison condition, selected-unit loading and teacher/student result-table separation.",
-      "Keep actual PC/mobile/keyboard/A4/audio/WebGL validation pending while browser access remains restricted."
-    ],
-    "defaultForcePathNativeReviewClosed": true
+      "Read current exported questions and supplied contexts/figures rather than old source literals alone.",
+      "Preserve answer contracts, stored question versions, source distinctions, all201source diagnostics,3741full snapshots and classroom teacher/student separation.",
+      "For source discovery, keep the remaining revision-folder page cursor; title queries and copies are not whole-current-edition coverage. Do not repeat the unanswered location question.",
+      "Actual PC/mobile/keyboard/A4/audio/WebGL and v1 checks remain pending while browser access is restricted."
+    ]
   },
   "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json; phase482: force-classroom-before.json, route-tests-before.log, route-tests.log, combined-route-tests.log, primary-classroom-audit.json, preservation-result.json, native-suite-result.json, required-cli-checks.json",
   "productFilesChanged": true,
@@ -230,8 +244,8 @@
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "4b328b5b694091ae9084e60c2dfe6354e63b8cee",
-  "latestPhase": 482,
+  "latestFollowupBaseline": "656adeb0b67771fe606e4a84be355b7928d7c7ef",
+  "latestPhase": 483,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -486,5 +500,44 @@
     "allRequiredCliExitCodes": 0,
     "newImagesOrOcrRuns": 0,
     "actualWebGLStarted": false
+  },
+  "followup483": {
+    "scope": "Read-only source discovery and one authored workbook direction",
+    "sourceCoverage": {
+      "scienceNamedFolderPages": 2,
+      "scienceNamedFolders": 104,
+      "scienceQueryHasNextPage": false,
+      "revisionNamedFolderPages": 4,
+      "revisionNamedFolders": 400,
+      "revisionQueryHasNextPage": true,
+      "semesterFolderCandidates": 26,
+      "additionalScienceSemesterFoldersRead": 6,
+      "additionalScienceChapterFoldersRead": 42,
+      "wholeDriveOrAllPdfBodiesExhausted": false,
+      "newOriginalSourcesRegistered": 0
+    },
+    "question": "c22-s32-u04-w033",
+    "before": "기호를 골라 쓰세요",
+    "after": "알맞은 말을 골라 쓰세요",
+    "workbookOnlyPromptChanged": true,
+    "bankQuestionsAndVersionsUnchanged": true,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "paperModesOnlyPromptChanged": 2,
+    "native": {
+      "files": 351,
+      "tests": 1711,
+      "pass": 1709,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "fullSnapshotsPreserved": 3741,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "newImagesOrOcr": 0,
+    "deployed": false,
+    "privateEvidence": "phase483/"
   }
 }

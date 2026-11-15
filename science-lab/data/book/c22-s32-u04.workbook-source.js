@@ -1,6 +1,6 @@
 import{withInfectionWorkbookDirections}from'./infection-workbook-directions.js?v=20261115-infection-workbook-directions';
 import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
-import{withGrade3PracticeWorkbook}from'./c22-s32-practice-language.js?v=20261108-grade3-material-language';
+import{withGrade3PracticeWorkbook}from'./c22-s32-practice-language.js?v=20261108-grade3-material-language&infectionWordAnswer=20261116-infection-word-answer';
 import{withInfectionLearnerReasoning}from'./c22-s32-u04.rail-notes.js?v=20261105-infection-learner-reasoning';
 import {withStudentOpeningLanguage} from './student-opening-language.js';
 import {withInfectionRails,withInfectionUpperScience} from './c22-s32-u04.rail-notes.js?v=20261105-infection-upper-science';
