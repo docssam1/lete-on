@@ -1,3 +1,4 @@
+import{withElectricityContextWorkbook}from'./electricity-workbook-context.js?v=20261116-electricity-workbook-context';
 import{withRepresentationReviewedWorkbook}from'./representation-question-review.js?v=20261115-representation-response-review';
 import{withBatteryPolarityCardWorkbook}from'./battery-polarity-card.js?v=20261115-battery-polarity-card';
 import{withMotionElectricalWorkbook}from'./motion-electricity-reference-context.js?v=20261115-motion-electricity-reference';
@@ -21275,4 +21276,5 @@ export const electricityReferencePriorWorkbook=withElementaryQuestionPrompts(ele
 export const batteryPolarityPriorWorkbook=withMotionElectricalWorkbook(electricityReferencePriorWorkbook);
 export const representationReviewPriorWorkbook=withBatteryPolarityCardWorkbook(batteryPolarityPriorWorkbook);
 
-export const workbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const electricityContextPriorWorkbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const workbook=withElectricityContextWorkbook(electricityContextPriorWorkbook);
