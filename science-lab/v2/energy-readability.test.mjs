@@ -1,3 +1,4 @@
+import{energyContextItems}from'../data/book/energy-workbook-context.js';
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
@@ -5,7 +6,7 @@ import{items}from'../data/units/c22-s52-u04.js';import{similar}from'../data/unit
 import{energyReadableCurrentItems,ENERGY_READABILITY_VERSION}from'../data/book/c22-s52-u04.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s52-u04.book.js';
-import{workbook,energyReadablePriorWorkbook}from'../data/book/c22-s52-u04.workbook.js';
+import{energyContextPriorWorkbook as workbook,energyReadablePriorWorkbook}from'../data/book/c22-s52-u04.workbook.js';
 import*as misc from'../data/units/c22-s52-u04.misc.js';import{questionMisconceptions}from'./question-revision.js';
 import{heatEnergyCurrentItems}from'./heat-energy-question-language.js';
 const unit='c22-s52-u04',baseline=heatEnergyCurrentItems(items,unit);
@@ -35,7 +36,7 @@ test('energy readability guards original, similar, review, future and other unit
  assert.equal(energyReadableCurrentItems(baseline,'other'),baseline);assert.equal(energyReadableCurrentItems(null,unit),null);
 });
 test('energy bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=reviewedQuestionCriteria(energyReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=energyContextItems(reviewedQuestionCriteria(energyReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,ENERGY_READABILITY_VERSION))changed++;}
  assert.equal(changed,7);assert.equal(first.classroomItems.length,16);
 });
