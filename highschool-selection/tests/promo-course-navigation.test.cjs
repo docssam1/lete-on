@@ -7,10 +7,10 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 24 released editions remain reachable in exactly one advertised course', () => {
+test('all 25 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,24);
-  assert.equal(new Set(visible).size,24);
+  assert.equal(visible.length,25);
+  assert.equal(new Set(visible).size,25);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
@@ -62,4 +62,12 @@ test('Won final round follows rounds 1–4 within the common1 course',()=>{
  assert.deepEqual(cm.map(e=>nav.roundLabel(e)),['1회','2회','3회','4회','최종(마무리)']);
  assert.equal(cm[4].id,'wm-common1-basic-final');
  assert.equal(nav.examsFor('WM','middle21-basic',mocks).some(e=>e.id===cm[4].id),false);
+});
+
+test('Eden elementary-entry and common1 papers remain separate despite sharing a 100-minute duration',()=>{
+ const middle=nav.examsFor('ED','middle1',mocks),common=nav.examsFor('ED','high-advance',mocks);
+ assert.deepEqual(middle.map(e=>e.id),['ed-middle1-authored-r01']);assert.equal(common.length,2);
+ assert.match(middle[0].scope,/초5.*초6/);assert.ok(common.every(e=>/중2.*중3/.test(e.scope)));
+ assert.equal(middle[0].pageCount,10);assert.equal(middle[0].answerPageCount,10);assert.equal(middle[0].analysisPageCount,3);
+ assert.deepEqual(nav.selectionForExam(middle[0].id),{program:'ED',course:'middle1'});
 });

@@ -44,6 +44,13 @@
         sourceUrl: "https://blog.naver.com/wonmath563/224443076138",
         note: "대치 · 2026년 12월 개강 기준 · 중2-1 입반 시험과 구분"
       },
+      "ED:middle1": {
+        branch: "대치 초등관", cohort: "보유 중1(1-1) 신규 시작반 대비",
+        scope: "초5·초6 전 과정", durationMinutes: 100, questionCount: 30,
+        durationState: "official", checkedAt: "2026-11-15",
+        sourceUrl: "https://blog.naver.com/edenmath/224367798692",
+        note: "초등관 1-1 신규 개강 안내 기준 · 지필드 자체 제작 대비"
+      },
       "ED:high-advance": {
         branch: "대치", cohort: "2026년 12월 공통수학1 기본반 개강",
         scope: "중2·중3 전 과정", durationMinutes: 100, questionCount: 30,
