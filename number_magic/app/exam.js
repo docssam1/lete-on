@@ -7261,8 +7261,10 @@ function proportionalSplit(weights, total){
 
 /* 중복 거르기 묶음(2026-11-15) — 고등 과정 한 주 학습지는 여러 학습 묶음(세션)을 합친 것이라,
    세션마다 따로 거르면 같은 문제가 같은 주의 다른 날에 다시 나왔다(C59 2회 로그 문제가 세 번).
-   합친 주간 학습지(compactHigh)는 과정 전체를 한 묶음으로 거른다. 풀이 모자라면 세션 안에서만 거른다. */
-function dedupeGroupKey(x){return x&&x.compactHigh&&x.courseKey?'course:'+x.courseKey:(x&&x.sourceSession)||'';}
+   합친 주간 학습지(compactHigh)는 과정 전체를 한 묶음으로 거른다. 어느 유형이든 풀이 모자라면(C37 1회 MD78)
+   그 학습지 전체를 예전처럼 세션 안에서만 거르는 방식으로 처음부터 다시 만든다(renderMixedSheet·편집기 mountRounds). */
+let DEDUPE_SESSION_ONLY=false;
+function dedupeGroupKey(x){return !DEDUPE_SESSION_ONLY&&x&&x.compactHigh&&x.courseKey?'course:'+x.courseKey:(x&&x.sourceSession)||'';}
 
 /* 세션(또는 편지함 봉투)의 드릴 목록을 목표 총 문항 수로 나눠 문제를 만든다.
    items: [{thread, level, wordType?, seed, n?|count?|weight?}] — 순서 그대로
@@ -7306,7 +7308,17 @@ function pageCapacityFor(items){
    buildMixedProblemSet)은 이 경로에서 더는 쓰지 않는다 — 함수 자체는 다른
    호출부(있다면)를 위해 그대로 둔다. */
 function renderMixedSheet(items, envelopeCode, opts){
-  return withC0(items.find(it=>it.c0)?.c0,()=>withCompactHighPrint(opts.compactHigh || items.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(items,envelopeCode,opts))));
+  const run=list=>withC0(list.find(it=>it.c0)?.c0,()=>withCompactHighPrint(opts.compactHigh || list.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(list,envelopeCode,opts))));
+  if(DEDUPE_SESSION_ONLY||!items.some(it=>it.compactHigh&&it.courseKey)) return run(items);
+  /* 먼저 한 주 전체로 거르는 판을 복사본으로 만들어 본다 — 그리기가 항목에 재현 기록(덮어쓰기·건너뛰기)을 남기므로
+     실패한 판의 기록이 원본에 묻지 않게. 되면 그 기록을 원본에 옮기고, 막히면 원본으로 예전 방식 그대로 만든다. */
+  const trial=JSON.parse(JSON.stringify(items));
+  try{ const out=run(trial); trial.forEach((t,i)=>Object.assign(items[i],t)); return out; }
+  catch(e){
+    if(!(e&&e.code==='NM_UNIQUE_POOL_EXHAUSTED')) throw e;
+    DEDUPE_SESSION_ONLY=true;
+    try{ return run(items); } finally{ DEDUPE_SESSION_ONLY=false; }
+  }
 }
 function renderMixedSheetBody(items, envelopeCode, opts){
   // Freeze the old practice/teaching pool first. New pictured examples may not
@@ -7336,19 +7348,13 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     if(!seenGroups.has(source))seenGroups.set(source,new Set());
     if(!seenGroups.has(week))seenGroups.set(week,new Set());
     const seenSession=seenGroups.get(source),seenWeek=seenGroups.get(week);
-    let seen=seenWeek;
+    const seen=seenWeek;
     let candidateSeen=new Set(seen);
-    let seenBefore=new Set(seen);
+    const seenBefore=new Set(seen);
     let r = null, initialExhausted = null, usedItem = it;
     const renderFirst=()=>renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true, editorialC4,suppressPictureWorked:opts.suppressPictureWorked,pictureTeachingKeys:opts.pictureTeachingKeys });
     try {
-      try { r = renderFirst(); }
-      catch(e) {
-        /* 한 주 전체로는 문항이 모자라는 유형이면 예전처럼 그 학습 묶음 안에서만 겹치지 않게 한다. */
-        if(!(e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED') || seenWeek === seenSession) throw e;
-        seen=seenSession;candidateSeen=new Set(seen);seenBefore=new Set(seen);
-        r = renderFirst();
-      }
+      r = renderFirst();
     } catch(e) {
       /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
          아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
@@ -9670,7 +9676,7 @@ ${answerSectionsHtml}`;
       seed: it.seed || NM_RNG.newCode(),
       topicName: it.topicName, grade: it.grade, schoolTier:it.schoolTier,
       kind:it.kind,mode:it.mode,variant:it.variant,pacing:it.pacing,noTeach:it.noTeach,
-      magicUnit:it.magicUnit,sourceSession:it.sourceSession,courseKey:it.courseKey,legacySession:it.legacySession,
+      magicUnit:it.magicUnit,sourceSession:it.sourceSession,courseKey:it.courseKey,compactHigh:it.compactHigh,legacySession:it.legacySession,
       compactHigh:it.compactHigh,skipConcept:it.skipConcept,levelOnly:it.levelOnly,levelConcept:it.levelConcept,levelTitle:it.levelTitle,
       creative:it.creative,role:it.role,threadMix:it.threadMix,subLabel:it.subLabel,sessionLabel:it.sessionLabel,
       overrides: Object.assign({}, it.overrides || {}),
@@ -9925,20 +9931,25 @@ ${answerSectionsHtml}`;
       return mountRounds();
     }
     function mountRounds(){
+      /* 인쇄(renderMixedSheet)와 같은 규칙: 주 전체로 거르다 막히면 세션 안에서만 거르는 방식으로 다시 */
+      const failed=mountRoundsOnce();
+      if(failed&&!DEDUPE_SESSION_ONLY&&rounds.some(r=>r.compactHigh&&r.courseKey)){
+        DEDUPE_SESSION_ONLY=true;
+        try{ finishMount(mountRoundsOnce()); } finally{ DEDUPE_SESSION_ONLY=false; }
+      } else finishMount(failed);
+    }
+    function finishMount(failed){
+      const print=overlay.querySelector('#nm-pe-print'),copy=overlay.querySelector('#nm-pe-copy');
+      if(print) print.disabled=failed;
+      if(copy) copy.disabled=failed;
+      updateCodeLine();
+    }
+    function mountRoundsOnce(){
       const groups=new Map();
       let failed=false;
       rounds.forEach((r,idx)=>{
-        const key=r.sourceSession||'',week=dedupeGroupKey(r);
-        if(!groups.has(key))groups.set(key,new Set());
-        if(!groups.has(week))groups.set(week,new Set());
-        const add=set=>set.forEach(k=>{groups.get(key).add(k);groups.get(week).add(k);});
-        try{
-          /* 인쇄 쪽(renderMixedSheetBody)과 같은 규칙 — 주 전체로 거르고, 모자라면 학습 묶음 안에서만 */
-          let tried=new Set(groups.get(week));
-          try{ mountRoundWithExclusions(idx,tried); }
-          catch(e){ if(!(e&&e.code==='NM_UNIQUE_POOL_EXHAUSTED')||week===key) throw e; tried=new Set(groups.get(key)); mountRoundWithExclusions(idx,tried); }
-          add(tried);
-        }
+        const key=dedupeGroupKey(r);if(!groups.has(key))groups.set(key,new Set());
+        try{ mountRoundWithExclusions(idx,groups.get(key)); }
         catch(error){
           if(error.code!=='NM_UNIQUE_POOL_EXHAUSTED') throw error;
           failed=true;r.__code='';
@@ -9947,10 +9958,7 @@ ${answerSectionsHtml}`;
           roundEl.removeAttribute('data-code');bindRoundHeadControls(idx);
         }
       });
-      const print=overlay.querySelector('#nm-pe-print'),copy=overlay.querySelector('#nm-pe-copy');
-      if(print) print.disabled=failed;
-      if(copy) copy.disabled=failed;
-      updateCodeLine();
+      return failed;
     }
     function mountRoundWithExclusions(idx,seen){
       const roundEl = overlay.querySelector(`.nm-pe-round[data-round="${idx}"]`);
