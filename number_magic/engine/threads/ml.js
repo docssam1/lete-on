@@ -113,6 +113,9 @@ NM_TGEN['ml_jumpTT'] = function(params, rng) {
   };
 };
 
+/* 숫자 뒤 은/는 — 끝자리 소리(영·일·삼·육·칠·팔은 받침) */
+const eunNeun = n => /[013678]$/.test(String(n)) ? '은' : '는';
+
 NM_TGEN['ml2_tt25'] = function(params, rng) {
   const tables = params.tables || [2, 3];
   const t      = pick(rng, tables);
@@ -121,21 +124,20 @@ NM_TGEN['ml2_tt25'] = function(params, rng) {
 
   /* 랜덤으로 t×n 또는 n×t 순서 선택 */
   const flip = R(rng, 0, 1) === 1;
-  const tex  = flip
-    ? `${n} \\times ${t} = \\square`
-    : `${t} \\times ${n} = \\square`;
+  const a = flip ? n : t, b = flip ? t : n;   /* 보이는 순서 */
+  const tex  = `${a} \\times ${b} = \\square`;
 
   return {
     prompt: {
-      ko: `${t} × ${n}은 얼마일까요?`,
-      en: `What is ${t} times ${n}?`,
-      zh: `${t}×${n}等于多少？`
+      ko: `${a} × ${b}${eunNeun(b)} 얼마일까요?`,
+      en: `What is ${a} times ${b}?`,
+      zh: `${a}×${b}等于多少？`
     },
     tex,
     answer,
     answerType: 'number',
     widget: 'array',
-    array: { n: answer, rows: t },
+    array: { n: answer, rows: a },   /* 보이는 식의 앞 수 = 줄 수 — 같은 식이면 같은 문항(중복 거르기가 잡도록, 2026-11-15) */
     solution: [
       { tex: `${t} \\times ${n} = \\square`, blank: answer }
     ]
@@ -150,9 +152,8 @@ NM_TGEN['ml3_tt69'] = function(params, rng) {
   const answer = t * n;
 
   const flip = R(rng, 0, 1) === 1;
-  const tex  = flip
-    ? `${n} \\times ${t} = \\square`
-    : `${t} \\times ${n} = \\square`;
+  const a = flip ? n : t, b = flip ? t : n;   /* 보이는 순서 */
+  const tex  = `${a} \\times ${b} = \\square`;
 
   /* 6~9단은 더 작은 아는 곱에서 옮겨간다: n이 짝수면 절반을 곱해 두 배,
      홀수면 한 묶음 적은 곱에 t를 한 번 더 더한다 */
@@ -178,15 +179,15 @@ NM_TGEN['ml3_tt69'] = function(params, rng) {
 
   return {
     prompt: {
-      ko: `${t} × ${n}은 얼마일까요?`,
-      en: `What is ${t} times ${n}?`,
-      zh: `${t}×${n}等于多少？`
+      ko: `${a} × ${b}${eunNeun(b)} 얼마일까요?`,
+      en: `What is ${a} times ${b}?`,
+      zh: `${a}×${b}等于多少？`
     },
     tex,
     answer,
     answerType: 'number',
     widget: 'array',
-    array: { n: answer, rows: t },
+    array: { n: answer, rows: a },   /* 보이는 식의 앞 수 = 줄 수 — 같은 식이면 같은 문항(중복 거르기가 잡도록, 2026-11-15) */
     solution
   };
 };
