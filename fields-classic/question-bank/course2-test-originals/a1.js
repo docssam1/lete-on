@@ -29,7 +29,7 @@ function stacks(cols, { step = 26, s = 20, rise = 24, x0 = 18, base, label }) {
   }).join("");
 }
 // 둥근 상자 속 글줄(①② 조건, 수열)
-const noteBox = (lines, { size = 14, width = 400 } = {}) =>
+const noteBox = (lines, { size = 13, width = 400 } = {}) =>
   `<div style="display:grid;place-items:center;width:100%"><div style="width:min(100%,${width}px);padding:10px 16px;border:1.5px solid ${UT.soft};border-radius:10px;background:#fdfbf5">${lines.map((l) => `<p style="margin:0;font-size:${size}px;font-weight:700;line-height:1.75;color:${INK};word-break:keep-all">${l}</p>`).join("")}</div></div>`;
 // 점선 길이 표시(a→b 를 잇는 볼록한 곡선, bend 가 음수면 위로)
 const arc = (x1, y1, x2, y2, bend) => `<path d="M${f(x1)} ${f(y1)} Q${f((x1 + x2) / 2)} ${f((y1 + y2) / 2 + bend * 2)} ${f(x2)} ${f(y2)}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`;
@@ -116,22 +116,23 @@ const q8 = () => svg(236, 270, "평형을 이룬 양팔 저울 세 개",
   + balance(118, 216, [["square"]], [["star", "triangle"]], { s: 22 }), 250);
 function q9() {
   const h = 24;
-  const bar = (x, y, n, w, mark) => Array.from({ length: n }, (_, i) => cell(x + i * w, y, w, h, mark, { fill: UT.greenSoft, stroke: UT.green, width: 1.4 })).join("");
+  const bar = (x, y, n, w, mark) => Array.from({ length: n }, (_, i) => cell(x + i * w, y, w, h, "", { fill: UT.greenSoft, stroke: UT.green, width: 1.4 })
+    + ringed(x + i * w + w / 2, y + h / 2, mark === "㉠" ? "ㄱ" : "ㄴ", { r: 8, size: 10 })).join("");
   // (1) ㉠ 4개 = ㉡ 3개, ㉠과 ㉡을 이은 길이 42cm
-  const a1 = 36, b1 = 48, y1 = 18, rx1 = 236;
+  const a1 = 36, b1 = 48, y1 = 18, rx1 = 206;
   let out = word(14, y1 + 4, "(1)", 13) + bar(32, y1, 4, a1, "㉠") + bar(32, y1 + h, 3, b1, "㉡")
     + bar(rx1, y1 + 18, 1, a1, "㉠") + bar(rx1 + a1, y1 + 18, 1, b1, "㉡")
     + blank(rx1 + 5, y1 - 14) + word(rx1 + 33, y1 - 4, "cm", 12, "start") + blank(rx1 + a1 + 18, y1 - 14) + word(rx1 + a1 + 46, y1 - 4, "cm", 12, "start")
     + arc(rx1, y1 + 18, rx1 + a1, y1 + 18, -7) + arc(rx1 + a1, y1 + 18, rx1 + a1 + b1, y1 + 18, -7)
     + arc(rx1, y1 + 18 + h, rx1 + a1 + b1, y1 + 18 + h, 9) + word(rx1 + (a1 + b1) / 2, y1 + 18 + h + 26, "42cm", 13);
   // (2) ㉠ 2개 = ㉡ 3개, ㉠이 ㉡보다 5cm 김
-  const a2 = 72, b2 = 48, y2 = 150, rx2 = 236;
+  const a2 = 72, b2 = 48, y2 = 150, rx2 = 206;
   out += word(14, y2 + 4, "(2)", 13) + bar(32, y2, 2, a2, "㉠") + bar(32, y2 + h, 3, b2, "㉡")
     + bar(rx2, y2, 1, a2, "㉠") + bar(rx2, y2 + h, 1, b2, "㉡")
     + arc(rx2, y2, rx2 + a2, y2, -9) + blank(rx2 + a2 / 2 - 13, y2 - 30) + word(rx2 + a2 / 2 + 17, y2 - 20, "cm", 12, "start")
     + arc(rx2 + b2, y2 + h, rx2 + a2, y2 + h, 5) + word(rx2 + a2 + 4, y2 + h + 12, "5cm", 12, "start")
     + arc(rx2, y2 + 2 * h, rx2 + b2, y2 + 2 * h, 8) + blank(rx2 + b2 / 2 - 13, y2 + 2 * h + 18) + word(rx2 + b2 / 2 + 17, y2 + 2 * h + 28, "cm", 12, "start");
-  return svg(370, 252, "두 막대의 길이를 비교한 그림 두 개", out, 370);
+  return svg(318, 252, "두 막대의 길이를 비교한 그림 두 개", out, 330);
 }
 const q10 = () => noteBox(["① A의 4배는 B의 5배와 같습니다.", "② 두 수 A, B의 합은 54입니다."]);
 const q12 = () => noteBox(["① A의 4배는 B의 5배와 같습니다.", "② B의 3배는 C의 4배와 같습니다.", "③ 세 수 A, B, C의 합은 60입니다."]);
