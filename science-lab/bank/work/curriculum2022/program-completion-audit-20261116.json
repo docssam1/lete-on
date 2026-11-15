@@ -25,7 +25,18 @@
     {
       "requirement": "Elementary language, scientific correctness, and meaningful advanced notes",
       "status": "partially-reviewed",
-      "evidence": "Unit review history through472; all pages have the three rail roles. This is not independent proof of every scientific statement."
+      "evidence": "Unit review history through472; all pages have the three rail roles. This is not independent proof of every scientific statement.",
+      "latestSpecificReview484": {
+        "unit": "c22-s32-u04",
+        "questionRanges": [
+          "17-21",
+          "37-64",
+          "73-80"
+        ],
+        "questions": 41,
+        "finding": "q38 now explicitly compares final marked state after round3; answer and contract retained",
+        "wholeUnitComplete": false
+      }
     },
     {
       "requirement": "Primary v2 lessons teach connected thinking rather than report entry",
@@ -121,7 +132,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "482 native351files/1711tests/1709pass/2browser skip. All201source revisions,3741full snapshots plus2legacy deltas, raw/item/misc hashes,24source paper modes and128workbook outputs remain unchanged. The teacher classroom result table now receives empty rows without reading the student store in all32routes. Student force rows, actual report state, table formatting and release callbacks remain intact."
+      "evidence": "484 native351files/1711tests/1709pass/2browser skip. All201source revisions,3741full snapshots plus2legacy deltas, raw/item/misc hashes and24source papers are preserved. Only authored infection workbook q38.prompt changes; other31books and126paper outputs match,2outputs change only that direction. Teacher/student model record separation remains tested."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -223,18 +234,15 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstIssue": "Continue independent review of the actual infection workbook questions with their displayed materials",
-    "unit": "c22-s32-u04",
-    "notYetReadWithAllFieldsAndMaterials": [
-      "17-21",
-      "37-64",
-      "73-80"
+    "firstIssue": "Review Earth and sea workbook additional materials and questions49-80 against the displayed contexts",
+    "unit": "c22-s32-u02",
+    "questionRanges": [
+      "49-80"
     ],
     "requirements": [
-      "Read current exported questions and supplied contexts/figures rather than old source literals alone.",
-      "Preserve answer contracts, stored question versions, source distinctions, all201source diagnostics,3741full snapshots and classroom teacher/student separation.",
-      "For source discovery, keep the remaining revision-folder page cursor; title queries and copies are not whole-current-edition coverage. Do not repeat the unanswered location question.",
-      "Actual PC/mobile/keyboard/A4/audio/WebGL and v1 checks remain pending while browser access is restricted."
+      "Use actual exported questions and supplied maps/images; do not judge stale source literals alone.",
+      "Preserve authored/original distinctions, answer contracts, stored question versions, all201source diagnostics,3741full snapshots and teacher/student record separation.",
+      "Pending original-source editions and actual PC/mobile/keyboard/A4/audio/WebGL/v1 verification remain incomplete."
     ]
   },
   "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json; phase482: force-classroom-before.json, route-tests-before.log, route-tests.log, combined-route-tests.log, primary-classroom-audit.json, preservation-result.json, native-suite-result.json, required-cli-checks.json",
@@ -244,8 +252,8 @@
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "656adeb0b67771fe606e4a84be355b7928d7c7ef",
-  "latestPhase": 483,
+  "latestFollowupBaseline": "7f0cb99b423fb53776df9bb7195bf63a7720d99b",
+  "latestPhase": 484,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -539,5 +547,37 @@
     "newImagesOrOcr": 0,
     "deployed": false,
     "privateEvidence": "phase483/"
+  },
+  "followup484": {
+    "scope": "41 named infection workbook questions reviewed with displayed contexts; clarify final marked state in question38",
+    "unit": "c22-s32-u04",
+    "reviewedQuestionRanges": [
+      "17-21",
+      "37-64",
+      "73-80"
+    ],
+    "reviewedQuestions": 41,
+    "wholeUnitIndependentReviewComplete": false,
+    "onlyChangedQuestionField": "c22-s32-u04-w038.prompt",
+    "answerContractsAndBankVersionsUnchanged": true,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "paperModesOnlyPromptChanged": 2,
+    "nativeSceneImagesViewed": 2,
+    "newImagesAndOcr": 0,
+    "native": {
+      "files": 351,
+      "tests": 1711,
+      "pass": 1709,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "fullSnapshotsPreserved": 3741,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "deployed": false,
+    "privateEvidence": "phase484/"
   }
 }
