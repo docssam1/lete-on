@@ -10,9 +10,8 @@ export function bankAnswerText(contract){
 }
 export function bankPromptHtml(text,contract,{show=false,only=false}={}){
  if(contract.type!=='cloze'||only)return esc(text);
- let index=0;
  return esc(text).replace(/\(\s*([①②③④⑤⑥⑦⑧⑨⑩])\s*\)/g,(match,label)=>{
-  const blank=contract.blanks[index],key=index++;if(!blank)return match;
+  const key=circles.indexOf(label),blank=contract.blanks[key];if(!blank)return match;
   return `<span class="bank-blank-label">${label}</span> <span class="bank-print-blank${show?' bank-print-answer':''}" data-bank-blank="${key}">${show?esc(blank.answer):'&nbsp;'}</span>`;
  });
 }

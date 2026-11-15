@@ -21,6 +21,14 @@ export function sourceTableHtml(value) {
   return `<table class="tbl source-table">${value.caption ? `<caption>${esc(value.caption)}</caption>` : ''}<thead><tr>${headers.map((h) => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${value.행.map((row) => `<tr>${headers.map((_, i) => `<td>${esc(row[i] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
 }
 
+// Keep each numbered workbook part on its own line, with its printed number.
+export function sourcePartHtml(item, key, value) {
+  if (item?.status !== 'authored' || !['authored-supplement', 'authored-pair'].includes(item.sourceRef?.type) || !item.workbookRef?.id || !['문항', '소문항'].includes(key)) return null;
+  const parts = Array.isArray(value) ? value : typeof value === 'string' ? value.split('\n') : [];
+  if (parts.length < 2 || !parts.every(part => typeof part === 'string' && /^\(\d+\)\s*/.test(part))) return null;
+  return `<ol class="source-part-list" aria-label="부분별 문제">${parts.map(part => `<li>${esc(part)}</li>`).join('')}</ol>`;
+}
+
 // 원문에서 지정한 선택지 밑줄만 안전하게 복원한다. 지정이 없는 기존 문항의 HTML은 같다.
 export function sourceChoiceHtml(item, choice, index) {
   const text=String(choice??''), terms=item?.choiceUnderlines?.[index];

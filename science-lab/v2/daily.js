@@ -8,7 +8,7 @@ import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-comparison-p
 //  · 기록: 문항마다 처음 채점한 답만 진단 기록(progress.js)에 남긴다. 규칙으로 못 가린 쓰기 답은 「선생님 확인」(check.js)에 모인다.
 //  · 아무것도 서버로 보내지 않는다(채점 계약 승인 전 — GRADING-CONTRACT-DRAFT.md).
 import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js?v=20261115-biology-peer-opinions';
-import {sourceFigureImageAttrs, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js?v=20261115-original-figure-resolution';
+import {sourceFigureImageAttrs, sourceCaption, sourceTableHtml, sourcePartHtml, sourceChoiceHtml } from './source-presentation.js?v=20261115-question-part-lines';
 import {isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview} from './source-content.js?v=20261108-source-schema';
 import {questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,isPreviousQuestion,restartCurrentQuestion} from './question-revision.js?v=20261115-legacy-question-snapshots';
 import {snapshotDailyPaper,resolveDailyPaper,startDailyPaper,dailyReviewSlide,dailyPhotoKey} from './daily-paper-state.js?v=20261115-biology-observation-photos';
@@ -69,15 +69,16 @@ function fieldsHtml(it, v, misc) {
 function promptHtml(it, v, misc) {
   const ac = it.answerContract;
   if (ac.type !== 'cloze') return esc(it.prompt);
-  const C = misc?.cloze?.[it.id]; let k = 0;
-  return esc(it.prompt).replace(/\( [①②③④⑤] \)/g, () => {
-    const i = k++, cur = v?.[i] ?? '';
+  const C = misc?.cloze?.[it.id];
+  return esc(it.prompt).replace(/\(\s*([①②③④⑤])\s*\)/g, (match, symbol) => {
+    const i = CIRC.indexOf(symbol), cur = v?.[i] ?? '';
+    if (!ac.blanks[i]) return match;
     if (C?.options?.[i]) return `<select class="dt-blank" data-k="${i}" aria-label="빈칸 ${i + 1}"><option value="">${CIRC[i]} 고르기</option>${[...C.options[i]].sort().map((o) => `<option${cur === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
     return `<input class="dt-blank" data-k="${i}" type="text" size="6" aria-label="빈칸 ${i + 1}" placeholder="${CIRC[i]}" value="${esc(cur)}">`;
   });
 }
 const figHtml = (it) => (it.observationPhotos||it.photoLabels) ? photoFigureHtml(it) : (it.figure ? `<figure class="dt-fig"><img ${sourceFigureImageAttrs(it.figure)} alt="${esc(it.figureNote || '문항 그림')}"></figure>` : '');
-const givensHtml = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || `<p class="dt-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : `<b>${esc(k === '보기' ? '〈보기〉' : k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : typeof v === 'object' ? JSON.stringify(v) : v)}</p>`).join('') : '';
+const givensHtml = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || sourcePartHtml(it, k, v) || `<p class="dt-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : `<b>${esc(k === '보기' ? '〈보기〉' : k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : typeof v === 'object' ? JSON.stringify(v) : v)}</p>`).join('') : '';
 
 function formatAnswer(it, v) {
   const ac = it.answerContract;
@@ -189,7 +190,7 @@ function mountDailySession(ctx,session){
       const cur = new Set([].concat(S.answers[it.id] ?? []).map(Number)), i = +b.dataset.i; cur.has(i) ? cur.delete(i) : cur.add(i); b.setAttribute('aria-pressed', String(cur.has(i))); set([...cur].sort());
     }));
     $q.querySelectorAll('[data-f=text]').forEach((el) => el.addEventListener('input', () => set(el.value)));
-    $q.querySelectorAll('.dt-blank').forEach((el) => el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => { const a = [...(S.answers[it.id] || [])]; a[+el.dataset.k] = el.value; set(a); }));
+    $q.querySelectorAll('.dt-blank').forEach((el) => el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => { if(!active||locked)return;const a = [...(S.answers[it.id] || [])]; a[+el.dataset.k] = el.value; set(a); $q.querySelectorAll(`.dt-blank[data-k="${el.dataset.k}"]`).forEach(peer => { peer.value = el.value; }); }));
     $q.querySelectorAll('.dt-tbl select').forEach((el) => el.addEventListener('change', () => { const a = (S.answers[it.id] || ac.rows.map(() => [])).map((r) => [...r]); a[+el.dataset.r][+el.dataset.c] = el.value; set(a); }));
     $q.querySelectorAll('[data-self]').forEach((b) => b.addEventListener('click', () => { if(!active||locked)return;S.self[it.id] = S.self[it.id] === b.dataset.self ? undefined : b.dataset.self; save(); $q.querySelectorAll('[data-self]').forEach((x) => x.setAttribute('aria-pressed', String(S.self[it.id] === x.dataset.self))); }));
     // 말로 답하기: 받아쓴 초안 → 아이가 고친다 → 「넣기」. 고르기 문항은 「2번」·「②」·보기 글로 고른다.

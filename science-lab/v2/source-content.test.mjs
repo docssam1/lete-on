@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {SOURCE_CONTENT_VERSION,isStructuredSource,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview,wireSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js';
-import {sourceFigureImageAttrs,sourceCaption,sourceTableHtml,sourceChoiceHtml} from './source-presentation.js';
+import {sourceFigureImageAttrs,sourceCaption,sourceTableHtml,sourcePartHtml,sourceChoiceHtml} from './source-presentation.js';
 import {photoFigureHtml} from './photo-figure.js';
 import {seasonAnswerHint} from './season-answer-hint.js';
 import {gradeDaily,summarize} from './daily-grade.js';
@@ -89,7 +89,7 @@ test('교사 확인 선택·쓰기 답은 수업에서 자동 정오 표시 없�
  const old=fixture();old.sourceContentVersion='future';const card=cardFor(old);assert(!wireSourceTeacherReview(card,old));assert.deepEqual(card.dataset,{});
 });
 
-const shared={sourceFigureImageAttrs,sourcePrintReviewHtml,esc,sourceCaption,CIRC:['①','②','③','④','⑤'],photoFigureHtml,seasonAnswerHint,sourceTableHtml,sourceChoiceHtml,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview,isStructuredSource};
+const shared={sourceFigureImageAttrs,sourcePrintReviewHtml,esc,sourceCaption,CIRC:['①','②','③','④','⑤'],photoFigureHtml,seasonAnswerHint,sourceTableHtml,sourcePartHtml,sourceChoiceHtml,sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,sourceAnswerText,sourceReviewPromptHtml,needsSourceTeacherReview,isStructuredSource};
 function itemRenderer(){
  const source=fs.readFileSync(new URL('./v2.js',import.meta.url),'utf8');
  const snippet=source.slice(source.indexOf('function blanksHtml('),source.indexOf('let FIG ='));

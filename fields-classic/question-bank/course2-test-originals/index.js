@@ -2,4 +2,5 @@
 export const COURSE2_TESTS = {
   g4: "20261114a",
   a5: "20261114a",
+  g1: "20261114a",
 };

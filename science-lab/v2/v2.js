@@ -16,7 +16,7 @@ import { withThink, loadJudge } from './think-merge.js?v=20261115-curriculum-are
 import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js?v=20261114-source-integration';
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
-import {sourceFigureImageAttrs, bankLabel, groupLabel, examHeading, sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js?v=20261115-original-figure-resolution';
+import {sourceFigureImageAttrs, bankLabel, groupLabel, examHeading, sourceCaption, sourceTableHtml, sourcePartHtml, sourceChoiceHtml } from './source-presentation.js?v=20261115-question-part-lines';
 import {sourceExamPaperHtml,sourceExamPrintLinks,sourcePaperMode,wireSourceExamPaper} from './source-exam-paper.js?v=20261115-print-images';
 import {originalSourceTwin} from './original-source-pairs.js?v=20261114-source-integration';
 import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeacherReview,needsSourceTeacherReview,sourcePrintReviewHtml} from './source-content.js?v=20261108-source-schema';
@@ -52,7 +52,7 @@ const UNITS = {
  'c22-s42-mid':async()=>({...(await import('../data/units/c22-s42-mid.js')),...(await import('../data/units/c22-s42-mid.similar.js')),...(await import('../data/units/c22-s42-mid.taxonomy.js')),misc:await import('../data/units/c22-s42-mid.misc.js')}),
  'c22-s41-fin':async()=>({...(await import('../data/units/c22-s41-fin.js')),...(await import('../data/units/c22-s41-fin.similar.js')),...(await import('../data/units/c22-s41-fin.taxonomy.js')),misc:await import('../data/units/c22-s41-fin.misc.js')}),
  'c22-s41-mid':async()=>({...(await import('../data/units/c22-s41-mid.js')),...(await import('../data/units/c22-s41-mid.similar.js')),...(await import('../data/units/c22-s41-mid.source.js')),...(await import('../data/units/c22-s41-mid.taxonomy.js')),misc:await import('../data/units/c22-s41-mid.misc.js')}),
- 'c22-s42-u04':async()=>{const data=await withThink('c22-s42-u04',{...(await import('../data/units/c22-s42-u04.js?v=20261115-curriculum-area')),...(await import('../data/units/c22-s42-u04.lesson.js')),...(await import('../data/units/c22-s42-u04.similar.js?v=20261115-curriculum-area')),...(await import('../data/units/c22-s42-u04.source.js?v=20261115-curriculum-area')),...(await import('../data/units/c22-s42-u04.taxonomy.js?v=20261115-curriculum-area')),misc:await import('../data/units/c22-s42-u04.misc.js?v=20261115-review-label-particles')});const {climateReadableCurrentItems}=await import('../data/book/c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook');return {...data,bankPaper:(await import('./climate-bank-paper.js?v=20261108-bank-print-ready')).climateBankPaperHtml,wireBankPaper:(await import('./climate-bank-paper.js?v=20261108-bank-print-ready')).wireClimateBankPaper,items:(await import('../data/book/lesson-reference-data.js?v=20261115-standalone-model-data')).lessonReferenceItems(climateReadableCurrentItems(data.items,'c22-s42-u04'),'c22-s42-u04')};},
+ 'c22-s42-u04':async()=>{const data=await withThink('c22-s42-u04',{...(await import('../data/units/c22-s42-u04.js?v=20261115-curriculum-area')),...(await import('../data/units/c22-s42-u04.lesson.js')),...(await import('../data/units/c22-s42-u04.similar.js?v=20261115-curriculum-area')),...(await import('../data/units/c22-s42-u04.source.js?v=20261115-curriculum-area')),...(await import('../data/units/c22-s42-u04.taxonomy.js?v=20261115-curriculum-area')),misc:await import('../data/units/c22-s42-u04.misc.js?v=20261115-review-label-particles')});const {climateReadableCurrentItems}=await import('../data/book/c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook');return {...data,bankPaper:(await import('./climate-bank-paper.js?v=20261115-question-part-lines')).climateBankPaperHtml,wireBankPaper:(await import('./climate-bank-paper.js?v=20261115-question-part-lines')).wireClimateBankPaper,items:(await import('../data/book/lesson-reference-data.js?v=20261115-standalone-model-data')).lessonReferenceItems(climateReadableCurrentItems(data.items,'c22-s42-u04'),'c22-s42-u04')};},
  'c22-s42-u03':async()=>{const mod={...(await import('../data/units/c22-s42-u03.js')),...(await import('../data/units/c22-s42-u03.lesson.js')),...(await import('../data/units/c22-s42-u03.similar.js')),...(await import('../data/units/c22-s42-u03.source.js')),...(await import('../data/units/c22-s42-u03.taxonomy.js')),misc:await import('../data/units/c22-s42-u03.misc.js?v=20261115-review-label-particles')};return{...mod,bankPaper:(await import('./gas-bank-paper.js?v=20261108-bank-print-ready')).gasBankPaperHtml,wireBankPaper:(await import('./gas-bank-paper.js?v=20261108-bank-print-ready')).wireGasBankPaper,items:(await import('../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook')).gasReadableCurrentItems(mod.items,'c22-s42-u03')};},
  'c22-s42-u02':async()=>{const mod=await withThink('c22-s42-u02',{...(await import('../data/units/c22-s42-u02.js')),...(await import('../data/units/c22-s42-u02.lesson.js')),...(await import('../data/units/c22-s42-u02.similar.js')),...(await import('../data/units/c22-s42-u02.source.js')),...(await import('../data/units/c22-s42-u02.taxonomy.js')),misc:await import('../data/units/c22-s42-u02.misc.js?v=20261115-review-label-particles')});return{...mod,bankPaper:(await import('./ecology-bank-paper.js?v=20261108-bank-print-ready')).ecologyBankPaperHtml,wireBankPaper:(await import('./ecology-bank-paper.js?v=20261108-bank-print-ready')).wireEcologyBankPaper,items:(await import('../data/book/lesson-reference-data.js?v=20261115-standalone-model-data')).lessonReferenceItems((await import('../data/book/c22-s42-u02.elementary.js?v=20261108-ecology-elementary')).ecologyElementaryCurrentItems((await import('../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook')).ecologyReadableCurrentItems((await import('./ecology-sound-question-language.js?v=20261105-ecology-sound-bank')).ecologySoundCurrentItems(mod.items,'c22-s42-u02'),'c22-s42-u02'),'c22-s42-u02'),'c22-s42-u02')};},
  'c22-s42-u01':async()=>{const mod=await withThink('c22-s42-u01',{...(await import('../data/units/c22-s42-u01.js')),...(await import('../data/units/c22-s42-u01.lesson.js')),...(await import('../data/units/c22-s42-u01.similar.js')),...(await import('../data/units/c22-s42-u01.source.js')),...(await import('../data/units/c22-s42-u01.taxonomy.js')),misc:await import('../data/units/c22-s42-u01.misc.js?v=20261115-review-label-particles')});return {...mod,bankPaper:(await import('./sky-bank-paper.js?v=20261115-original-figure-resolution')).skyBankPaperHtml,wireBankPaper:(await import('./sky-bank-paper.js?v=20261115-original-figure-resolution')).wireSkyBankPaper,items:(await import('../data/book/standalone-question-context.js?v=20261115-battery-polarity-card')).standaloneQuestionContexts((await import('../data/book/lesson-reference-data.js?v=20261115-standalone-model-data')).lessonReferenceItems((await import('../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook')).skyReadableCurrentItems((await import('./magnet-sky-question-language.js?v=20261105-magnet-sky-student-language')).magnetSkyCurrentItems(mod.items,'c22-s42-u01'),'c22-s42-u01'),'c22-s42-u01'),'c22-s42-u01')};},
@@ -134,9 +134,9 @@ function teacher(el, lines, { big = false, slot = null } = {}) {
 
 // ── 문항 렌더러 (화면·교재 공용) ──
 function blanksHtml(text, blanks, { print, show }) {
-  let i = 0;
-  return esc(text).replace(/\( [①②③④⑤] \)/g, () => {
-    const b = blanks[i], k = i++;
+  return esc(text).replace(/\(\s*([①②③④⑤])\s*\)/g, (match, symbol) => {
+    const k = CIRC.indexOf(symbol), b = blanks[k];
+    if (!b) return match;
     if (print) return show ? `<span class="blank-print ans">${esc(b.answer)}</span>` : '<span class="blank-print">&nbsp;</span>';
     return `<button type="button" class="blank" data-k="${k}" aria-label="빈칸 ${k + 1}, 눌러서 열기">?</button>`;
   });
@@ -147,7 +147,7 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const ac = it.answerContract, lv = `<span class="level"${it.sourceRef?.label ? ` title="${esc(it.sourceRef.edition)} · ${esc(it.sourceRef.section)}"` : ''}>${it.sourceRef?.type === 'original' ? esc(sourceCaption(it.sourceRef)) : `${esc(it.taxonomy.track)} · ${esc(it.taxonomy.level)}`}</span>`;
   const fig = it.visualModel?.kind === 'authored-svg' ? `<div class="fig">${FIG[it.visualModel.figure] || ''}</div>` : '';
   const srcFig = (it.observationPhotos||it.photoLabels) ? photoFigureHtml(it) : it.figure ? `<figure class="src-fig"><img ${sourceFigureImageAttrs(it.figure)} alt="${esc(it.figureNote || '문항 그림')}" loading="lazy"></figure>` : '';   // 원문 그림은 지문 뒤(시험지 순서)
-  const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || (v && typeof v === 'object' && !Array.isArray(v)
+  const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || sourcePartHtml(it, k, v) || (v && typeof v === 'object' && !Array.isArray(v)
     ? `<table class="tbl"><thead><tr>${Object.keys(v).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody><tr>${Object.values(v).map((c) => `<td>${esc([].concat(c).join(', '))}</td>`).join('')}</tr></tbody></table>`
     : `<p class="lead">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b> ' : `<b>${esc(k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`)).join('') : '';
   const sourceContext=sourceBlocksHtml(it,'context'),sourceMaterial=sourceBlocksHtml(it,'material'),sourceReview=needsSourceTeacherReview(it),showAnswer=show&&!sourceReview,showWrittenAnswer=show&&(!sourceReview||!it.sourceRef.reviewOnly);
@@ -206,13 +206,13 @@ function wireItem(card, it, onDone, ctx) {
     card.querySelectorAll('.chip-row').forEach((row) => row.querySelectorAll('.chip').forEach((ch) => ch.addEventListener('click', () => {
       if (row.dataset.done) return; row.dataset.done = 1;
       const k = +row.dataset.k, v = ch.dataset.v, ok = ac.blanks[k].accepted.includes(v) || ac.blanks[k].answer === v; got[k] = ok;
-      const b = card.querySelector(`.blank[data-k="${k}"]`); b.innerHTML = ok ? esc(v) : `<s>${esc(v)}</s> ${esc(ac.blanks[k].answer)}`; b.classList.add('open', ok ? 'right' : 'wrong');
+      card.querySelectorAll(`.blank[data-k="${k}"]`).forEach(b => { b.innerHTML = ok ? esc(v) : `<s>${esc(v)}</s> ${esc(ac.blanks[k].answer)}`; b.classList.add('open', ok ? 'right' : 'wrong'); });
       ch.classList.add(ok ? 'right' : 'wrong'); if (!ok) row.querySelector(`.chip[data-v="${CSS.escape(ac.blanks[k].answer)}"]`)?.classList.add('right');
       if (Object.keys(got).length === ac.blanks.length) { const wrong = Object.entries(got).filter(([, o]) => !o).map(([i]) => +i), all = !wrong.length;
         const codes = wrong.map((k) => Array.isArray(CZ.wrong) ? CZ.wrong[k] : CZ.wrong).filter(Boolean);
         $why.hidden = false; $why.innerHTML = whyHtml(it, all, { m: codes }); done(all, { wrongBlanks: wrong, picked: null }); }
     })));
-  } else card.querySelectorAll('.blank').forEach((b) => b.addEventListener('click', () => { b.textContent = ac.blanks[+b.dataset.k].answer; b.classList.add('open'); if ([...card.querySelectorAll('.blank')].every((x) => x.classList.contains('open'))) done(true, { revealed: true }); }));
+  } else card.querySelectorAll('.blank').forEach((b) => b.addEventListener('click', () => { card.querySelectorAll(`.blank[data-k="${b.dataset.k}"]`).forEach(peer => { peer.textContent = ac.blanks[+b.dataset.k].answer; peer.classList.add('open'); }); if ([...card.querySelectorAll('.blank')].every((x) => x.classList.contains('open'))) done(true, { revealed: true }); }));
   if (ac.type === 'single-choice') {
     const $why = card.querySelector('.why');
     card.querySelectorAll('.choice').forEach((btn) => btn.addEventListener('click', () => {
@@ -749,7 +749,7 @@ async function pageDaily(u, mod, L, mode) {
   let list = ch.check ? [...new Set([...(ch.check || []), ...(ch.formative?.items || [])])].map(bySrc).filter(Boolean) : [];
   if (!list.length) list = [...(L.evaluate?.items || []), ...(L.explain?.miniTest || [])].map((id) => I[id]).filter(Boolean);
   if (!list.length) { $app.innerHTML = '<main class="wrap"><p>이 단원의 Daily Test는 준비 중이에요.</p></main>'; return; }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261115-biology-peer-opinions');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261115-question-part-lines');
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};
   const pool = [...similar, ...items];
@@ -787,7 +787,7 @@ async function pageExam(u, mod, L, set, mode, isCurrent = () => true) {
     releasePage = wireSourceExamPaper($app);
     scrollTo(0,0); return;
   }
-  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261115-biology-peer-opinions');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js?v=20261115-question-part-lines');
   if (!isCurrent()) return;
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC, heading, back: `#/${u}/exam/${set}`, tabs }); scrollTo(0, 0); return; }
   const judge = (await loadJudge(du(u))) || {};

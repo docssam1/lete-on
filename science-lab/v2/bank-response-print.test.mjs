@@ -19,8 +19,8 @@ test('all twenty cloze and table-fill questions have printable response areas an
   for(const q of data.items.filter(q=>['cloze','table-fill'].includes(q.answerContract.type))){
    count++;const ac=q.answerContract,s=student.get(q.id),t=teacher.get(q.id),a=answers.get(q.id),k=quickEntries.get(q.id);assert(s&&t&&a&&k,q.id);
    if(ac.type==='cloze'){
-    assert.equal((s.match(/data-bank-blank=/g)||[]).length,ac.blanks.length,q.id+' student blanks');
-    assert.equal((t.match(/data-bank-blank=/g)||[]).length,ac.blanks.length,q.id+' teacher blanks');
+    const positions=[...q.prompt.matchAll(/\(\s*([①②③④⑤⑥⑦⑧⑨⑩])\s*\)/g)].map(m=>'①②③④⑤⑥⑦⑧⑨⑩'.indexOf(m[1]));
+    for(const html of[s,t])assert.deepEqual([...html.matchAll(/data-bank-blank="(\d+)"/g)].map(m=>Number(m[1])),positions,q.id+' printed label to answer mapping');
     assert(!/class="bank-print-blank bank-print-answer"/.test(s));
     for(const b of ac.blanks){assert(t.includes(escape(b.answer)),q.id+' teacher answer');assert(a.includes(escape(b.answer)),q.id+' answer-only key');assert(k.includes(escape(b.answer)),q.id+' quick key');}
    }else{

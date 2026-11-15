@@ -1,5 +1,5 @@
 import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
-import {bankAnswerText,bankPromptHtml,bankResponseTableHtml} from './bank-response-print.js?v=20261108-bank-answer-formats';
+import {bankAnswerText,bankPromptHtml,bankResponseTableHtml} from './bank-response-print.js?v=20261115-question-part-lines';
 // 기후변화 연계 발췌 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
 import {sourceCaption,sourceTableHtml} from './source-presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
