@@ -1,8 +1,8 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261108-source-schema';
 import{pickedChoiceTexts,questionAtVersion}from'./question-revision.js?v=20261115-legacy-question-snapshots';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261115-season-comparison-conditions';
-import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261115-season-comparison-conditions';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261115-practice-paper-figures';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261115-practice-paper-figures';
 import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-comparison-photos';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
@@ -23,7 +23,7 @@ import {sourceBlocksHtml,sourceChoiceTableHtml,sourceAnswerHint,wireSourceTeache
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js?v=20261104-energy-class';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js?v=20261108-source-writing';
 import { readingHtml } from './reading.js';
-import { practicePaperHtml } from './practice-paper.js';
+import { practicePaperHtml } from './practice-paper.js?v=20261115-practice-paper-figures';
 import { wireReading } from './reading-live.js';
 import { loadLife, lifeRows } from './life-records.js';
 import { loadAnimal, animalReportSections } from './animal-records.js';

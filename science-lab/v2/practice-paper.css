@@ -1,5 +1,9 @@
 .bank-practice-paper .q { position: relative; line-height: 1.65; }
 .bank-practice-paper .practice-given { padding: 8px; background: #f3f5f8; }
+.bank-practice-paper .practice-figure { margin: 8px 0; break-inside: avoid; }
+.bank-practice-paper .practice-figure img { display: block; max-width: 100%; max-height: 62mm; width: auto; height: auto; object-fit: contain; }
+.bank-practice-paper .practice-table { margin: 8px 0; max-width: 100%; overflow-x: auto; }
+.bank-practice-paper .practice-table .tbl { width: 100%; }
 .bank-practice-paper .practice-key { border-top: 1px solid #bbb; margin-top: 6px; }
 .bank-print-watermark { display: none; position: fixed; top: 48%; left: 15%; transform: rotate(-30deg); font-size: 48px; font-weight: 800; opacity: .06; pointer-events: none; white-space: nowrap; }
 @media print {
@@ -11,4 +15,5 @@
   .bank-practice-paper .q { font-size: 10.5pt; line-height: 1.6; margin-bottom: 10px; }
   .bank-practice-paper .q p { margin: 5px 0; }
   .bank-practice-paper .q .practice-given { font-size: 10pt; }
+  .bank-practice-paper .practice-table { overflow: visible; }
 }
