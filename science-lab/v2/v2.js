@@ -1,8 +1,8 @@
 import{seasonAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{judgeItem}from'./judge.js?v=20261108-source-schema';
 import{pickedChoiceTexts,questionAtVersion,questionMisconceptions}from'./question-revision.js?v=20261115-legacy-question-snapshots';
-import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261115-grade4-workbook-directions&soundDirections=20261115-sound-workbook-directions';
-import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261115-grade4-workbook-directions&soundDirections=20261115-sound-workbook-directions&safety=20261115-earth-sea-safety-feedback&sound=20261115-sound-comparison-prompt';
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261115-ecology-workbook-directions&soundDirections=20261115-sound-workbook-directions';
+import {revisedClassroom,classroomTableData,classroomQuestions,withOptionalClassroomRecords} from './revised-lesson.js?v=20261115-ecology-workbook-directions&soundDirections=20261115-sound-workbook-directions&safety=20261115-earth-sea-safety-feedback&sound=20261115-sound-comparison-prompt';
 import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-comparison-photos';
 // docssam 과학 탐구 랩 v2 — 교과 연결 사고력 수업·교재와 선택 활동 기록.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.

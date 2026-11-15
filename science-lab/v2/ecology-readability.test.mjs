@@ -5,7 +5,7 @@ import{ecologyReadableCurrentItems,ECOLOGY_READABILITY_VERSION}from'../data/book
 import{ecologyElementaryCurrentItems}from'../data/book/c22-s42-u02.elementary.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u02.book.js';
-import{workbook,ecologyReadablePriorWorkbook}from'../data/book/c22-s42-u02.workbook.js';import{revisedTextbookPaper}from'./revised-textbook.js';
+import{contextDirectionsPriorWorkbook as workbook,ecologyReadablePriorWorkbook}from'../data/book/c22-s42-u02.workbook.js';import{revisedTextbookPaper}from'./revised-textbook.js';
 const unit='c22-s42-u02',baseline=ecologySoundCurrentItems([...raw,...think],unit);
 test('ecology readable questions preserve grading, every old field and saved written/choice answers',()=>{
  const before=structuredClone(baseline),current=ecologyReadableCurrentItems(baseline,unit);let changed=0;
