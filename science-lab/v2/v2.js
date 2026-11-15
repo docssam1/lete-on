@@ -161,7 +161,8 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
     if(!print&&it.sourceChoiceTable&&sourceContext!==null)body+='<p class="why" hidden></p>';
   } else if (ac.type === 'multi-choice') {
     body = print ? `<div>${it.choices.map((c, i) => `<div${showAnswer && ac.answers.includes(i) ? ' class="ans"' : ''}>${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</div>`).join('')}</div>`
-      : `<p class="lead">${ac.answers.length}개를 고르세요.</p><div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}" aria-pressed="false">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`;
+      : sourceReview ? `<p class="lead">${ac.answers.length}개를 고르세요.</p><div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}" aria-pressed="false">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p class="why" hidden></p>`
+      : `<p class="lead">${ac.answers.length}개를 고른 뒤 확인을 눌러요.</p><div class="choices" role="group" aria-label="답 고르기">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}" aria-pressed="false">${CIRC[i]} ${sourceChoiceHtml(it,c,i)}</button>`).join('')}</div><p data-choice-status role="status" aria-live="polite">아직 고른 답이 없어요.</p><button type="button" class="btn" data-act="check-multi" disabled>선택한 답 확인</button><p class="why" hidden></p>`;
   } else if (ac.type === 'short-text') {
     const hint=sourceAnswerHint(it)||seasonAnswerHint(ac);
     body = print ? (showAnswer ? `<p class="ans">${esc(ac.answer)}</p>` : '<div class="ans-line"></div>')
@@ -224,16 +225,21 @@ function wireItem(card, it, onDone, ctx) {
     }));
   }
   if (ac.type === 'multi-choice') {
-    const $why = card.querySelector('.why'), picked = new Set();
+    const $why = card.querySelector('.why'), picked = new Set(), check = card.querySelector('[data-act=check-multi]'), status = card.querySelector('[data-choice-status]');
     card.querySelectorAll('.choice').forEach((btn) => btn.addEventListener('click', () => {
       if (card.dataset.done) return; const i = +btn.dataset.i;
       picked.has(i) ? picked.delete(i) : picked.add(i); btn.classList.toggle('sel', picked.has(i)); btn.setAttribute('aria-pressed', picked.has(i));
-      if (picked.size < ac.answers.length) return;
-      card.dataset.done = 1; const ok = ac.answers.every((a) => picked.has(a));
-      card.querySelectorAll('.choice').forEach((b) => { const k = +b.dataset.i; if (ac.answers.includes(k)) b.classList.add('right'); else if (picked.has(k)) b.classList.add('wrong'); });
+      check.disabled = !picked.size;
+      status.textContent = picked.size ? `${picked.size}개를 골랐어요. 답을 바꾸거나 확인을 눌러요.` : '아직 고른 답이 없어요.';
+    }));
+    check.addEventListener('click', () => {
+      if (card.dataset.done || !picked.size) return;
+      card.dataset.done = 1; const ok = picked.size === ac.answers.length && ac.answers.every((a) => picked.has(a));
+      card.querySelectorAll('.choice').forEach((b) => { const k = +b.dataset.i; b.disabled = true; if (ac.answers.includes(k)) b.classList.add('right'); else if (picked.has(k)) b.classList.add('wrong'); });
+      check.disabled = true; status.textContent = ok ? '고른 답을 모두 맞혔어요.' : '고른 답을 확인했어요. 아래 설명을 살펴봐요.';
       const pk = [...picked].filter((k) => !ac.answers.includes(k));
       $why.hidden = false; $why.innerHTML = whyHtml(it, ok, { picked: pk }); done(ok, { picked: pk });
-    }));
+    });
   }
   if (ac.type === 'short-text') {
     const $in = card.querySelector('input'), $why = card.querySelector('.why');
