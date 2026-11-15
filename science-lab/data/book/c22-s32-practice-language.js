@@ -1,3 +1,4 @@
+import{soundLinkedExplanationReview}from'./sound-linked-explanations.js?v=20261115-sound-linked-explanations';
 import{soundNoisePracticeReview}from'./sound-noise-practice.js?v=20261115-sound-noise-practice';
 export{withSoundNoiseContext}from'./sound-noise-practice.js?v=20261115-sound-noise-practice';
 // Elementary directions for reviewed authored questions. Preserve every answer contract.
@@ -1359,7 +1360,7 @@ export function soundComparisonQuestionReview(rows,unit){
   const current={...q,...clone(p.fields),contentVersion:SOUND_COMPARISON_VERSION,previousVersions:[...clone(q.previousVersions||[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};
   soundComparisonCache.set(q,current);return current;
  });
- return soundNoisePracticeReview(changed?next:rows,unit);
+ return soundLinkedExplanationReview(soundNoisePracticeReview(changed?next:rows,unit),unit);
 }
 export function withSoundComparisonWorkbook(workbook){
  if(workbook?.unit!=='c22-s32-u03'||!Array.isArray(workbook.questions))return workbook;
