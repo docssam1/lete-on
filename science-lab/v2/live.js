@@ -1,4 +1,4 @@
-import{wireBookChoices}from'./book-choice.js?v=20261115-book-multi-choice';
+import{wireBookChoices}from'./book-choice.js?v=20261115-book-multi-choice&noise=20261115-sound-noise-practice';
 // 살아 있는 교재: renderChapter(..., { live:true }) 로 그린 쪽들에 생명을 넣는다.
 //  · 첫 쪽 그림 자리의 실제 영상이 쪽 안에서 재생
 //  · [data-pop] 버튼 → 3D 장면·체험 실험실이 누른 자리에서 책 밖으로 튀어나옴(닫으면 3D 정리)
@@ -11,11 +11,11 @@ const bindings = new WeakMap();
 
 // misc: 오개념표(data/units/<u>.misc.js) — 있으면 개념 정리 빈칸이 낱말 칩이 되고, 확인 문제를 틀리면 교정 상자(.bk-fix)가 붙는다. onAnswer(kind, payload)는 기록용.
 // panel: 교재 보기(book-view.js)의 오른쪽 살아 있는 화면 — panel.open(kind, from, data)가 true면 거기서 보이고 화면을 바꾸지 않는다.
-export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null, panel = null } = {}) {
+export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null, questions = null, panel = null } = {}) {
   bindings.get(root)?.();
   const workspace = lab ? createLabWorkspace(root, { title: title || '3D 체험 실험실', mount: lab }) : null;
   const releaseReading = wireReading(root, { openLab: from => panel?.open('lab', from) || workspace?.open(from) });
-  const releaseChoices=wireBookChoices(root,{misc,onAnswer});
+  const releaseChoices=wireBookChoices(root,{misc,onAnswer,questions});
   const release = () => { releaseChoices(); releaseReading(); workspace?.dispose(); };
   bindings.set(root, release);
   const chips = misc?.bookChips || null;

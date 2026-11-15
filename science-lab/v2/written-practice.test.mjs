@@ -53,7 +53,7 @@ test('local judging has no network or persistent student-data writer, and no chi
   const code = await readFile(new URL('./written-practice.js', import.meta.url), 'utf8');
   assert.doesNotMatch(code, /\b(?:fetch|record|onDone|XMLHttpRequest|WebSocket)\s*\(|\b(?:localStorage|sessionStorage|indexedDB)\b/);
   assert.doesNotMatch(code, /data-writing-criterion/);
-  assert.match(code, /judgeText\(text, key/);
+  assert.match(code, /judgeText\(text, ac\.reviewRequired \? null : key/);
   const renderer = await readFile(new URL('./v2.js', import.meta.url), 'utf8');
   assert.match(renderer, /ac\.type === 'written-explanation'\) wireWrittenPractice\(card, it\)/);
   const render = new vm.Script(renderer.slice(renderer.indexOf('function itemHtml('),renderer.indexOf('let FIG ='))+'\nitemHtml').runInContext(vm.createContext({...sourceContent,...sourcePresentation,CIRC:['①','②','③','④','⑤'],esc:s=>String(s??''),MISC:null,FIG:{},writtenPracticeHtml}));
@@ -89,6 +89,7 @@ test('source writing follows its teacher-review contract while ordinary writing 
     sample:'연습용 예시',rubric:{required:['이 문제에서 확인할 생각'],pass:'선생님과 확인해요.'}}};
   const ordinary=card();wire(ordinary,item);ordinary.input.value='내 생각';await ordinary.check.fire('click');
   assert.equal(legacyLoads,1);assert.equal(ordinary.judgment.className,'writing-judge ok');
+  const manual=card();wire(manual,{...item,answerContract:{...item.answerContract,reviewRequired:true}});manual.input.value='내 생각';await manual.check.fire('click');assert.equal(manual.judgment.className,'writing-judge review');assert(manual.judgment.innerHTML.includes('선생님과 함께 확인해요'));assert(!manual.judgment.innerHTML.includes('맞았어요'));
   const source={...item,answerContract:{...item.answerContract,reviewRequired:true,
     sourceResponseContract:{kind:'written-explanation',teacherRequired:true,sample:'연습용 예시',required:['이 문제에서 확인할 생각'],exactStringScoring:false}}};
   for(const value of ['내 생각','연습용 예시','전혀 다른 설명']){

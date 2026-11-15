@@ -98,12 +98,12 @@ export function wireWrittenPractice(card, item) {
     if (!text && paper.checked) { opened = true; say('review', '<b>종이 답은 선생님이 확인해요.</b> 풀이를 읽어 보세요.'); if (select('solution')) tabs[1].focus(); return; }
     if (!text) { status.textContent = '먼저 내 생각을 써 보세요.'; input.focus(); return; }
     if(!ac.sourceResponseContract)await tableFor(item.id); tries++;
-    last = (ac.sourceResponseContract||ac.motionContract||ac.plantAuthoredContract||ac.earthAuthoredContract||ac.earthMotionContract||ac.seasonContract)?judgeItem({text,ac}):judgeText(text, key, { tries }); built = false;
+    last = (ac.sourceResponseContract||ac.motionContract||ac.plantAuthoredContract||ac.earthAuthoredContract||ac.earthMotionContract||ac.seasonContract)?judgeItem({text,ac}):judgeText(text, ac.reviewRequired ? null : key, { tries }); built = false;
     const r = last;
     if (r.st === 'ok') { opened = true; say('ok', '<b>✓ 맞았어요!</b> 풀이도 읽어 보세요.'); if (select('solution')) tabs[1].focus(); return; }
     if (r.st === 'review') {
       opened = true;
-      say('review', ac.sourceResponseContract ? '<b>이 답은 선생님과 함께 확인해요.</b> 풀이도 읽어 보세요.' : r.why === 'unsure' ? `<b>선생님이 한 번 더 볼게요.</b> 풀이를 읽고 ‘${esc(r.missing[0]?.t || '')}’이(가) 내 답에 있는지 확인해 보세요.` : '<b>잘 썼어요!</b> 이 답은 선생님이 확인할게요. 풀이도 읽어 보세요.');
+      say('review', (ac.sourceResponseContract || ac.reviewRequired) ? '<b>이 답은 선생님과 함께 확인해요.</b> 풀이도 읽어 보세요.' : r.why === 'unsure' ? `<b>선생님이 한 번 더 볼게요.</b> 풀이를 읽고 ‘${esc(r.missing[0]?.t || '')}’이(가) 내 답에 있는지 확인해 보세요.` : '<b>잘 썼어요!</b> 이 답은 선생님이 확인할게요. 풀이도 읽어 보세요.');
       if (select('solution')) tabs[1].focus(); return;
     }
     const hint = r.st === 'wrong' ? `<b>혹시 이렇게 생각했나요?</b> ${esc(r.wrong?.say || '')}` : `<b>${r.st === 'part' ? '좋아요, 조금만 더!' : '다시 써 볼까요?'}</b> ${esc(r.missing[0]?.ask || '문제가 묻는 것을 다시 읽어 봐요.')}`;

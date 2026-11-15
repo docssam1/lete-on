@@ -1,7 +1,8 @@
+import{questionMisconceptions}from'./question-revision.js?v=20261104-energy-class';
 const controllers=new WeakMap();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-export function wireBookChoices(root,{misc=null,onAnswer=null}={}){
+export function wireBookChoices(root,{misc=null,onAnswer=null,questions=null}={}){
  const releases=[];
  root.querySelectorAll('.bk-choices[data-key]').forEach(ol=>{
   const previous=controllers.get(ol);previous?.release();
@@ -18,7 +19,7 @@ export function wireBookChoices(root,{misc=null,onAnswer=null}={}){
    ol.dataset.done='1';const ok=selected.length===key.length&&key.every(j=>selected.includes(j)),wrong=selected.filter(j=>!key.includes(j));
    rows.forEach(li=>{const j=Number(li.dataset.j);li.classList.remove('bk-selected');if(key.includes(j))li.classList.add('ok');else if(selected.includes(j))li.classList.add('no');});controls.forEach(c=>{c.disabled=true;});
    if(check){check.disabled=true;status.textContent=ok?'맞았어요.':`다시 살펴봐요. 정답은 ${key.map(j=>j+1).join(', ')}번이에요.`;}
-   const codes=new Set(wrong.map(j=>misc?.distractors?.[ol.dataset.id]?.[j]).filter(Boolean)),fixes=[...codes].map(id=>misc?.misconceptions?.[id]).filter(Boolean);
+   const effective=questionMisconceptions(questions?.[ol.dataset.id],misc),codes=new Set(wrong.map(j=>effective?.distractors?.[ol.dataset.id]?.[j]).filter(Boolean)),fixes=[...codes].map(id=>effective?.misconceptions?.[id]).filter(Boolean);
    if(fixes.length){const d=ol.ownerDocument.createElement('div');d.className='bk-fix';d.innerHTML=fixes.map(m=>`<span class="mis-tag">${esc(m.label)}</span> ${m.fix}`).join(' ');(tools||ol).after(d);}
    onAnswer?.('item',{id:ol.dataset.id,ok,picked:multi?(ok?selected:wrong):selected[0],...(multi?{selected:[...selected]}:{}),el:ol});
   };

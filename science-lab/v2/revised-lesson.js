@@ -19,7 +19,7 @@ import{withBiologyElementaryBankClassroom}from'../data/book/s41-u04.editorial.js
 import{withLandElementaryClassroom}from'../data/book/s41-u03.elementary.js?v=20261108-land-elementary';
 import{withWaterElementaryClassroom}from'../data/book/s41-u02.elementary.js?v=20261108-water-elementary';
 import{withMagnetElementaryClassroom}from'../data/book/s41-u01.elementary.js?v=20261108-magnet-elementary';
-import{withGrade3PracticeClassroom}from'../data/book/c22-s32-practice-language.js?v=20261108-grade3-material-language&sound=20261115-sound-comparison-prompt';
+import{withGrade3PracticeClassroom}from'../data/book/c22-s32-practice-language.js?v=20261108-grade3-material-language&sound=20261115-sound-comparison-prompt&noise=20261115-sound-noise-practice';
 import{earthMotionPairCurrentItems}from'./earth-motion-pair-language.js?v=20261108-earth-motion-pair-language';
 import{seasonPairCurrentItems}from'./season-pair-language.js?v=20261108-season-pair-language';
 import{combustionPairCurrentItems}from'./combustion-pair-language.js?v=20261108-combustion-pair-language';
@@ -55,7 +55,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261115-sound-comparison-prompt';
+import {revisedTextbook} from './revised-textbook.js?v=20261115-sound-noise-practice';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';

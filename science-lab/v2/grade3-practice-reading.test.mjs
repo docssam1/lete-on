@@ -1,3 +1,4 @@
+import{SOUND_NOISE_PRACTICE_VERSION}from'../data/book/sound-noise-practice.js';
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import {materialEarthCurrentItems} from '../data/book/material-earth-student-language.js';
 import test from 'node:test';
@@ -52,7 +53,7 @@ for(const c of cases){
   const before=await priorBank(unit),savedBefore=structuredClone(before),{items:current}=await actualBank(unit);
   assert.equal(current.length,c.bankCount);let changed=0;
   for(let i=0;i<before.length;i++){
-   const old=before[i],latest=current[i],q=latest.contentVersion===SOUND_COMPARISON_VERSION?questionAtVersion(latest,VERSION):latest,priorFeedback=q.contentVersion===INFECTION_FEEDBACK_VERSION?questionAtVersion(q,old.contentVersion||1):q;assert(priorFeedback);assert.deepEqual(withoutPresentation(priorFeedback),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);
+   const old=before[i],latest=current[i],q=latest.contentVersion===SOUND_NOISE_PRACTICE_VERSION?questionAtVersion(latest,latest.previousVersions.at(-1).version):latest.contentVersion===SOUND_COMPARISON_VERSION?questionAtVersion(latest,VERSION):latest,priorFeedback=q.contentVersion===INFECTION_FEEDBACK_VERSION?questionAtVersion(q,old.contentVersion||1):q;assert(priorFeedback);assert.deepEqual(withoutPresentation(priorFeedback),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);
    const ac=q.answerContract,values=ac.type==='single-choice'?[0,1,2,3,4]:ac.type==='multi-choice'?Array.from({length:32},(_,mask)=>[0,1,2,3,4].filter(n=>mask&(1<<n))):ac.type==='short-text'?[ac.answer,...(ac.accepted||[]),'다른 답']:ac.type==='written-explanation'?[ac.sample,'다른 설명']:ac.type==='cloze'?[ac.blanks.map(b=>b.answer),ac.blanks.map(()=>''),ac.blanks.map(()=>'다른 답')]:ac.type==='table-fill'?[ac.rows.map(r=>r.answer),ac.rows.map(r=>r.answer.map(()=>'')),ac.rows.map(r=>r.answer.map(()=>'다른 답'))]:[];
    for(const value of values)assert.deepEqual(gradeDaily(q,value),gradeDaily(old,value));
    if(q.prompt===old.prompt)continue;
@@ -78,7 +79,7 @@ for(const c of cases){
  test(unit+' classroom and bank share revised wording and original response contracts',async()=>{
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items,source=[],similar=[]}=await actualBank(unit);
   const bank=new Map([...source,...similar,...items].map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,12);
-  assert.equal(mod.classroomItems.map(q=>q.contentVersion===SOUND_COMPARISON_VERSION?questionAtVersion(q,VERSION):q).filter(q=>q.contentVersion===VERSION).length,c.classChanges);
+  assert.equal(mod.classroomItems.map(q=>q.contentVersion===SOUND_NOISE_PRACTICE_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q).map(q=>q.contentVersion===SOUND_COMPARISON_VERSION?questionAtVersion(q,VERSION):q).filter(q=>q.contentVersion===VERSION).length,c.classChanges);
   for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
   const {workbook}=await import('../data/book/'+unit+'.workbook.js');
   if(unit!=='c22-s32-u04'){

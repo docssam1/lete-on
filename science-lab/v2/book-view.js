@@ -4,7 +4,7 @@
 //    영상은 대기 사진을 바로 보이고 소리 없이 저절로 재생(움직임 줄이기 설정이면 멈춘 채 ▶). 실험실은 쪽을 넘겨도 그대로 이어진다.
 //  · 휴대폰: 한 쪽씩 읽기(글자 크기 그대로 줄바꿈). 영상은 쪽 안에서 재생, 실험실은 누르면 전체 화면.
 //  · 인쇄: 모든 쪽을 A4로 차례대로(보기 틀·오른쪽 화면은 숨김).
-import { wireLive } from './live.js?v=20261115-book-multi-choice';
+import { wireLive } from './live.js?v=20261115-book-multi-choice&noise=20261115-sound-noise-practice';
 import { fitPages } from './book.js';
 import { pauseLearningMedia } from './media-session.js';
 
@@ -28,7 +28,7 @@ function liveOf(page) {
   return out.map((x, i) => ({ ...x, id: x.k === 'video' ? `video:${x.src}` : x.k, n: i }));
 }
 
-export function mountBookView($app, { u, bookHtml, title, teacher = false, page = 1, scene, lab, misc, onAnswer, guide = null, sayFor = null, backHref, printHref = null }) {
+export function mountBookView($app, { u, bookHtml, title, teacher = false, page = 1, scene, lab, misc, onAnswer, questions = null, guide = null, sayFor = null, backHref, printHref = null }) {
   $app.innerHTML = `<div class="bv ${teacher ? 'bv-teacher' : 'bv-student'}">
     <header class="bv-top no-print">
       <a class="bv-back" href="${esc(backHref)}">‹ 처음으로</a>
@@ -204,7 +204,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
       return true;
     },
   };
-  const release = wireLive(bk, { scene, lab, title, misc, onAnswer: (kind, p) => { onAnswer?.(kind, p); react(kind, p); }, panel });
+  const release = wireLive(bk, { scene, lab, title, misc, questions, onAnswer: (kind, p) => { onAnswer?.(kind, p); react(kind, p); }, panel });
 
   // ── 독쌤(학생용만): 쪽마다 한 가지만 말한다 ────────────────────────────
   let sayTimer = 0;
