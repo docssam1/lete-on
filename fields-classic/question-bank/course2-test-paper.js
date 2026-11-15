@@ -1,4 +1,4 @@
-import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115d";
+import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115e";
 import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261115a";
 import { mathText } from "./math-markup.js?v=20261027p";
 
