@@ -1,5 +1,14 @@
 # 과학 탐구 랩: GPT 인수인계서 (2026-09-22부터 1주일)
 
+## §481 · 2026-11-16 · 원문 복습 자료 단원별 읽기·동기 검토 API 보존
+
+- 통합d3a7655c / 검토f9257531 다음.6단원의main이모두871,733byte reviewed-source-diagnostics.js전체를읽던구조를나눴다. bank/source-diagnostics/<unit>.js6개는그단원의기존revision객체만가지며source-diagnostic-reviser.js의공유factory를쓴다. 앱의6main은해당단원모듈만import하고,전체검토도구용reviewed-source-diagnostics.js는6모듈의동기API를그대로중계한다. root의10개main참조와진입cache,조건검사의cache참조도20261116-source-diagnostics-per-unit로맞춘다. 문항의contentVersion은바꾸지않았다.
+- factory는단원별WeakMap을갖고요청단원·정확한이전전체객체를확인한뒤기존진단/조건과전체snapshot을같은순서로만든다. 잘못된단원·미래필드/버전·반복/처리된배열·빈값은기존보호를유지한다. 전체중계는own키만확인하므로prototype이름을단원으로호출해도다른함수가실행되지않는다. 중계·단원API·실제root의201문항결과/질문객체와raw불변성을검사했다.
+- static JS의존그래프에서각main은자기단원자료1개와공유reviser1개만읽고전체중계/다른단원자료가없다. 복습코드byte는지층19,433(97.8%감소),혼합물37,554(95.7%),지구155,963(82.1%),계절257,619(70.4%),연소176,163(79.8%),전기206,356(76.3%)다. 이는복습JS원문byte이고전체앱크기·전송압축·실제네트워크시간/브라우저체감속도는측정하지않았다. 단원을고르기전root의static그래프에는이자료가없으며기존8MiB초기예산을지킨다.
+- 변경전baseline.json의6root source/raw/items/misc와24문항집출력hash,static의존그래프를봉인했다. 변경후6revision객체가옛전체데이터와같고201개현재source·모든이력·보충조건과raw/items/misc hash가같다. 그래프에서복습모듈/main을제외한모든URL/byte/hash도같다.32교재128HTML과문항집24모드가같고은행3,179/원문1,763/비슷한문제1,512를유지한다. 원고/그림/정답/용어·채점·진단내용은수정하지않았다.
+- 새2검사와모든관련검사41개가통과했다. 최종native350파일1,708검사중1,706통과/실패0/브라우저2skip이다. full snapshot3,741개/legacy delta2개와자동진단201/미연결0을유지한다. bank/written감사·taxonomy/build --check·전체misc-audit모두exit0이다. 새이미지/3D/OCR은없다. QA는phase481/baseline.json·split-modules.json·loading-tests.log·preservation-result.json·native-suite-result.json·required-cli-checks.json이다. 다음검수가git show로옛전체literal을대조할때는마지막일체형d3a7655c를기준으로쓴다. 새중계모듈은상대import가있어data URL로직접읽지않는다.
+- 다음은아직별도확인이남은s31-u01의기본수업경로다. 실제단원/route/단계객체부터읽고기록앱·보고서기본진입인지또는교과사고수업인지판단한다. 실제PC/폰/A4/음성/WebGL·원문3단원/현행전체판본·나머지독립내용검수·운영main/배포는남아목표active다. 원자료·다른작업본·미커밋/output을보존한다. 브라우저우회·유료/생성API·Drive쓰기·정리/삭제·main병합/배포는없다.
+
 ## §480 · 2026-11-16 · 전지 밝기 원문의 비교 조건 보충·옛 질문/답안 보존
 
 - 통합51a05010 / 검토8b9d175b 다음. 원문c22-s62-u03-o1-05의 실제 그림에 두 스위치가 열려 있으므로, 현재 sourceContextBlocks에 ‘보충 조건: 두 스위치를 모두 닫았을 때 전구의 밝기를 비교해요.’ 한 줄을 추가했다. 원래 발문·그림·정답·해설·출처/등록digest와 raw .source.js는 그대로다. 본래 원문에 이 문장이 있었다고 하지 않고 보충임을 표시한다. sourceContentVersion/원문 표시는 유지하며 현재 문항 contentVersion은20261116-electricity-source-condition이다.

@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "source-condition-clarified-program-incomplete",
+  "status": "per-unit-review-loading-program-incomplete",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -100,7 +100,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "480 native349files/1706tests/1704pass/2browser skip. The electricity comparison condition adds one full diagnostic-version snapshot; full snapshot total3741plus2legacy deltas. Registered/unversioned/diagnostic questions and frozen papers restore without the new condition. All201prior diagnostic presentations and the other200current revisions are preserved."
+      "evidence": "481 native350files/1708tests/1706pass/2browser skip. All six revision data objects,201current source revisions and their history hashes remain identical to480. Full snapshots remain3741plus2legacy deltas. Registered raw questions, items and runtime misc and24source paper modes match baseline hashes; all128workbook outputs remain identical."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -127,6 +127,61 @@
       "mainMerged": false,
       "deployed": false,
       "releaseReady": false
+    },
+    {
+      "requirement": "Selected-unit loading of reviewed source diagnostic data",
+      "status": "native-module-graph-proven",
+      "units": 6,
+      "previousDiagnosticScriptBytesPerUnit": 871733,
+      "afterDiagnosticScriptBytesPerUnit": [
+        {
+          "unit": "c22-s51-u01",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 19433,
+          "reductionPercent": 97.8,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s52-u01",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 37554,
+          "reductionPercent": 95.7,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s61-u04",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 155963,
+          "reductionPercent": 82.1,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s62-u01",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 257619,
+          "reductionPercent": 70.4,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s62-u02",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 176163,
+          "reductionPercent": 79.8,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s62-u03",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 206356,
+          "reductionPercent": 76.3,
+          "otherStaticDependenciesUnchanged": true
+        }
+      ],
+      "initialStaticRootLoadsNoReviewData": true,
+      "synchronousReviewToolApiPreserved": true,
+      "uncompressedJavaScriptBytes": true,
+      "actualNetworkTimingMeasured": false,
+      "actualBrowserVerified": false
     }
   ],
   "requiredCliChecks": {
@@ -137,31 +192,24 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstIssue": "Reduce per-unit loading of the all-unit reviewed source diagnostic registry",
-    "registryBytes": 871733,
+    "firstIssue": "Review the s31-u01 default primary lesson path separately",
     "requirements": [
-      "Preserve all201diagnostic presentations, the current comparison condition and all3741full snapshots while reducing unnecessary unit data loading.",
-      "Keep exact whole-source guards, idempotence and legacy-unversioned restoration intact.",
-      "Keep all required CLI checks passing without exemptions or audit changes.",
-      "Continue independent content review, missing original editions and required actual runtime/print validation."
+      "Inspect the actual unit mapping, default route and lesson/stage objects before deciding whether the remaining default path teaches connected thinking or opens a record/report app.",
+      "Use native routing and lesson evidence where permitted; keep actual PC/mobile/keyboard/print/audio/WebGL flow verification explicitly pending while browser access is restricted.",
+      "Preserve all201source diagnostics,3741full snapshots, current comparison condition and selected-unit module loading.",
+      "Continue independent content review and the three missing current original editions without inventing source material."
     ],
-    "conditionIssueClosedNatively": {
-      "id": "c22-s62-u03-o1-05",
-      "labelledCurrentContext": true,
-      "rawOriginalRetained": true,
-      "oldAnswersAndDiagnosesRetained": true,
-      "actualBrowserOrPrintVerified": false
-    }
+    "perUnitRegistryLoadingClosedNatively": true
   },
-  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json",
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json",
   "productFilesChanged": true,
   "paidApiCalls": 0,
   "cloudWrites": 0,
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "51a0501024ad86400dd7f75123762e8c5ef4b98a",
-  "latestPhase": 480,
+  "latestFollowupBaseline": "d3a7655c759897cca7f466bb4b36952c464b48f5",
+  "latestPhase": 481,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -327,5 +375,69 @@
     "allRequiredCliExitCodes": 0,
     "newImagesOrOcrRuns": 0,
     "registeredSourceContentHashUnchanged": true
+  },
+  "followup481": {
+    "unitDataModules": 6,
+    "sharedReviserModules": 1,
+    "synchronousCompatibilityApiPreserved": true,
+    "revisionDataObjectsUnchanged": 6,
+    "currentSourceRevisionsUnchanged": 201,
+    "all3741FullSnapshotsPreserved": true,
+    "currentComparisonConditionUnchanged": true,
+    "all128WorkbookOutputsUnchanged": true,
+    "all24SourcePaperModesUnchanged": true,
+    "rawSourcesItemsAndRuntimeMiscHashesUnchanged": true,
+    "perUnitDiagnosticScriptBytes": [
+      {
+        "unit": "c22-s51-u01",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 19433,
+        "reductionPercent": 97.8,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s52-u01",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 37554,
+        "reductionPercent": 95.7,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s61-u04",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 155963,
+        "reductionPercent": 82.1,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s62-u01",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 257619,
+        "reductionPercent": 70.4,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s62-u02",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 176163,
+        "reductionPercent": 79.8,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s62-u03",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 206356,
+        "reductionPercent": 76.3,
+        "otherStaticDependenciesUnchanged": true
+      }
+    ],
+    "nativeFiles": 350,
+    "nativeTests": 1708,
+    "nativePass": 1706,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "allRequiredCliExitCodes": 0,
+    "newImagesOrOcrRuns": 0,
+    "actualNetworkTimingMeasured": false
   }
 }

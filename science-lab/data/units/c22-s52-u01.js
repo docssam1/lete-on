@@ -1,4 +1,4 @@
-import {reviewedSourceDiagnostics} from '../../bank/reviewed-source-diagnostics.js?v=20261116-mixture-source-diagnostics';
+import {reviewedSourceDiagnostics} from '../../bank/source-diagnostics/c22-s52-u01.js?v=20261116-source-diagnostics-per-unit';
 import {source as registeredSource} from './c22-s52-u01.source.js';
 export const unit = {
   "id": "c22-s52-u01",
