@@ -2,8 +2,8 @@
 //  54·55 생활 속의 숫자(길거리 그림에서 숫자 찾기 — 그림은 원본 장면을 코드로 다시 그림)
 //  56 큐브 세기(10개 묶고 남은 것 세기: 보기 13, 문제 15·17·20 — 원본 주머니 그림에서 셈)
 //  57 「큐브 세기」 활동: 주머니에서 큐브를 꺼내 세고 수 카드 가져가기, 나 대 독쌤
-import { esc, scene, icon, cube, bagSvg, bagCubes, group10, findAll, numCard, onHit, pad, countSay } from "../numbers.js?v=20261115b";
-import { kid } from "../art.js?v=20261115b";
+import { esc, scene, icon, cube, bagSvg, bagCubes, group10, findAll, numCard, onHit, pad, countSay } from "../numbers.js?v=20261115c";
+import { kid } from "../art.js?v=20261115c";
 
 // ── 54쪽 길거리(채소 가게·과일 가게·빨간 자동차) ──
 const T = (x, y, s, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle", rot = 0 } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" ${rot ? `transform="rotate(${rot} ${x} ${y})"` : ""}>${t}</text>`;
@@ -135,26 +135,27 @@ async function p57(ctx) {
 
   const taken = {};              // n → "me" | "doc"
   const draw = () => {
-    const cards = Array.from({ length: 20 }, (_, i) => { const n = i + 1, x = 470 + (i % 10) * 42, y = 70 + Math.floor(i / 10) * 56, who = taken[n];
-      return numCard(x, y, n, { w: 38, h: 50, font: 22, fill: who === "me" ? "#d8f7e2" : who === "doc" ? "#dbe8ff" : "#fffbe0", stroke: who === "me" ? "#2fb67c" : who === "doc" ? "#2a6fc4" : "#e6c84a", cls: who ? "taken" : "nm-hit nm-pickcard", attrs: `data-n="${n}"` }); }).join("");
-    return `${bagSvg(180, 260, 260, "#e8604f", { cls: "nm-hit nm-bagbtn" })}<g class="cards">${cards}</g>
-      <g class="pile"></g><text x="470" y="34" font-size="22" font-weight="800" fill="#4a5a78">수 카드</text>
-      <text x="40" y="460" font-size="24" font-weight="800" fill="#2fb67c">나 ${Object.values(taken).filter((w) => w === "me").length}장</text>
-      <text x="200" y="460" font-size="24" font-weight="800" fill="#2a6fc4">독쌤 ${Object.values(taken).filter((w) => w === "doc").length}장</text>`;
+    // 원장 2026-11-15 「그림 작어」: 카드 5×4를 크게, 큐브도 크게(손가락으로 누르기 쉽게)
+    const cards = Array.from({ length: 20 }, (_, i) => { const n = i + 1, x = 570 + (i % 5) * 78, y = 60 + Math.floor(i / 5) * 86, who = taken[n];
+      return numCard(x, y, n, { w: 70, h: 78, font: 34, fill: who === "me" ? "#d8f7e2" : who === "doc" ? "#dbe8ff" : "#fffbe0", stroke: who === "me" ? "#2fb67c" : who === "doc" ? "#2a6fc4" : "#e6c84a", cls: who ? "taken" : "nm-hit nm-pickcard", attrs: `data-n="${n}"` }); }).join("");
+    return `${bagSvg(110, 100, 170, "#e8604f", { cls: "nm-hit nm-bagbtn" })}<g class="cards">${cards}</g>
+      <g class="pile"></g><text x="534" y="24" font-size="20" font-weight="800" fill="#4a5a78">수 카드</text>
+      <text x="230" y="60" font-size="26" font-weight="800" fill="#2fb67c">나 ${Object.values(taken).filter((w) => w === "me").length}장</text>
+      <text x="370" y="60" font-size="26" font-weight="800" fill="#2a6fc4">독쌤 ${Object.values(taken).filter((w) => w === "doc").length}장</text>`;
   };
   const free = () => Array.from({ length: 20 }, (_, i) => i + 1).filter((n) => !taken[n]);
   const rnd = (a) => a[Math.floor(Math.random() * a.length)];
   const spill = (svg, n) => {
     const g = svg.querySelector(".pile"); g.innerHTML = "";
-    bagCubes(n, 690, 330, { gap: 56, seed: n }).forEach((c, i) => {
+    bagCubes(n, 270, 330, { gap: 86, seed: n }).forEach((c, i) => {
       const el = document.createElementNS("http://www.w3.org/2000/svg", "g"); el.setAttribute("class", "nm-hit nm-cnt"); el.dataset.i = i;
-      el.innerHTML = cube(c.x, c.y, 44, c.c); el.style.opacity = "0"; el.style.transition = "opacity .25s"; g.append(el);
+      el.innerHTML = `<rect x="${c.x - 42}" y="${c.y - 42}" width="84" height="84" fill="transparent"/>${cube(c.x, c.y, 66, c.c)}`; el.style.opacity = "0"; el.style.transition = "opacity .25s"; g.append(el);
       setTimeout(() => { el.style.opacity = "1"; }, 60 * i);
     });
   };
   for (let turn = 0; turn < 6; turn++) {
     const mine = turn % 2 === 0;
-    const svg = scene(ctx, "0 0 940 480", draw());
+    const svg = scene(ctx, "0 0 960 480", draw());
     if (mine) {
       ctx.dock.innerHTML = `<p class="sm-docknote">👉 주머니를 눌러 큐브를 꺼내요</p>`;
       ctx.guide.say("내 차례예요! 주머니를 눌러요.");
@@ -201,7 +202,7 @@ async function p57(ctx) {
     }
   }
   const me = Object.values(taken).filter((w) => w === "me").length, doc = Object.values(taken).filter((w) => w === "doc").length;
-  scene(ctx, "0 0 940 480", draw());
+  scene(ctx, "0 0 960 480", draw());
   if (me > doc) { ctx.fx.sound.fanfare(); ctx.fx.cheer(null, { big: true }); await ctx.guide.praise("카드를 더 많이 가져갔어요! 내가 이겼어요!"); }
   else if (me === doc) await ctx.guide.say("카드 수가 같아요. 비겼어요!");
   else await ctx.guide.encourage("이번엔 독쌤이 이겼어요. 다음엔 꼭 이길 거예요!");

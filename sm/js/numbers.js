@@ -1,7 +1,7 @@
 // A1-2 3·4단원(수와 숫자의 탄생 · 큰 수, 작은 수) 공용 부품 — 원본 54~96쪽 활동을 화면으로.
 //  모두 SVG 한 장(무대를 꽉 채움)에 그리고, 5세가 손가락으로 누르기만 하면 되게 만든다.
 //  독쌤 말은 정해진 문장만 쓴다(바뀌는 수는 화면에 크게 보이고, 소리는 「하나·둘…」 세기 말만) → 모두 독쌤 목소리로 미리 만든다.
-import { svgScene } from "./scale2d.js?v=20261115b";
+import { svgScene } from "./scale2d.js?v=20261115c";
 
 export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const scene = (ctx, vb, body) => { ctx.stage.innerHTML = svgScene(vb, body); return ctx.stage.querySelector("svg"); };
@@ -235,7 +235,7 @@ export async function colorN(ctx, { svg, slots, n, kind = "circle", size = 46, c
 // ── 선으로 잇기(원본 67·88·95쪽) ─────────────────────────────────────────
 //  left/right: [{id, x, y, html}] (html = SVG 그림), dotL/dotR: 점 위치는 x±dx. pairs: { leftId: rightId }
 //  왼쪽을 누르고 오른쪽을 누르면 선이 그어진다. 틀리면 선이 흔들리다 사라진다.
-export async function matchLines(ctx, { vb, left, right, pairs, dx = 70, back = "", say = "같은 것끼리 선으로 이어요. 왼쪽을 누르고 오른쪽을 눌러요!", wrongSay = "다시 세어 볼까요?" }) {
+export async function matchLines(ctx, { vb, left, right, pairs, dx = 70, back = "", multi = false, say = "같은 것끼리 선으로 이어요. 왼쪽을 누르고 오른쪽을 눌러요!", wrongSay = "다시 세어 볼까요?" }) {
   const svg = scene(ctx, vb, `${back}<g class="nm-lines"></g>${left.map((l) => `<g class="nm-hit nm-L" data-id="${l.id}">${l.html}<circle cx="${l.x + dx}" cy="${l.y}" r="11" fill="#25324a"/></g>`).join("")}${right.map((r) => `<g class="nm-hit nm-R" data-id="${r.id}">${r.html}<circle cx="${r.x - dx}" cy="${r.y}" r="11" fill="#25324a"/></g>`).join("")}`);
   const lines = svg.querySelector(".nm-lines"); const done = new Set(); let pick = null;
   ctx.guide.say(say);
@@ -244,12 +244,12 @@ export async function matchLines(ctx, { vb, left, right, pairs, dx = 70, back = 
       const isL = g.classList.contains("nm-L"), id = g.dataset.id;
       if (isL) { if (done.has(id)) return; svg.querySelectorAll(".nm-L").forEach((x) => x.classList.remove("nm-sel")); g.classList.add("nm-sel"); pick = id; ctx.fx.sound.tap(); return; }
       if (!pick) { ctx.guide.encourage("왼쪽부터 먼저 눌러요."); return; }
-      if ([...done].some((l) => pairs[l] === id)) return;
+      if (!multi && [...done].some((l) => pairs[l] === id)) return;   // multi: 오른쪽 하나에 왼쪽 여럿(원본 20쪽 이름 잇기)
       const L = left.find((x) => x.id === pick), Rr = right.find((x) => x.id === id);
       const ln = svgEl("line", { x1: L.x + dx, y1: L.y, x2: Rr.x - dx, y2: Rr.y, stroke: "#e8417f", "stroke-width": 7, "stroke-linecap": "round" });
       lines.append(ln);
       if (pairs[pick] === id) {
-        done.add(pick); svg.querySelector(`.nm-L[data-id="${pick}"]`).classList.replace("nm-sel", "nm-ok"); g.classList.add("nm-ok"); pick = null;
+        done.add(pick); svg.querySelector(`.nm-L[data-id="${pick}"]`).classList.replace("nm-sel", "nm-ok"); if (!multi) g.classList.add("nm-ok"); pick = null;
         ctx.fx.sound.pop(); ctx.fx.burstAt(g, { power: 0.6 });
         if (done.size === left.length) { off(); resolve(); }
       } else {

@@ -1,12 +1,22 @@
-// 레이키즈 책들. A1-2는 3·4단원만(원장 2026-11-13 「ray 1-2의 3,4단원만 하자」), A1-3은 4단원 전부.
+// 레이키즈 책들. A1-2는 3·4단원(원장 2026-11-13)에 1·2단원을 더함(원장 2026-11-15 「1,2단원도 만들어」), A1-3은 4단원 전부.
 //  차시 id는 책 사이에서 겹치지 않게 한다(A1-2는 a12-로 시작). lessons/<id>.js 가 화면을 만든다.
 export const BOOK_A12 = {
   id: "a1-2",
   short: "A1-2",
   title: "레이키즈 A1-2",
-  note: "3·4단원",
+  note: "1~4단원",
   color: "#13a38b",
   units: [
+    { n: 1, title: "도형 마을", emoji: "🔺", color: "#ff8a3c", sessions: [
+      { id: "a12-u1-s1", label: "1차시", pages: "8~13쪽", ready: true },
+      { id: "a12-u1-s2", label: "2차시", pages: "14~18쪽", ready: true },
+      { id: "a12-u1-s3", label: "3차시", pages: "19~28쪽", ready: true }
+    ] },
+    { n: 2, title: "입체도형", emoji: "🧊", color: "#2f7de1", sessions: [
+      { id: "a12-u2-s1", label: "1차시", pages: "32~35쪽", ready: true },
+      { id: "a12-u2-s2", label: "2차시", pages: "36~41쪽", ready: true },
+      { id: "a12-u2-s3", label: "3차시", pages: "42~50쪽", ready: true }
+    ] },
     { n: 3, title: "수와 숫자의 탄생", emoji: "🔢", color: "#2fb67c", sessions: [
       { id: "a12-u3-s1", label: "1차시", pages: "54~57쪽", ready: true },
       { id: "a12-u3-s2", label: "2차시", pages: "58~63쪽", ready: true },

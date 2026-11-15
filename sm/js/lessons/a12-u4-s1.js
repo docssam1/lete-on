@@ -3,8 +3,8 @@
 //  80·81 수민 큐브 10 · 정민 큐브 8 → 개수만큼 색칠, 더 많은 쪽 · 더 큰 수 ○
 //  82·83 「큰 수 찾기」 파란 큐브와 빨간 큐브를 하나씩 짝지어 더 큰 수 ○ (보기 3·4, 활동판 A 6장)
 //  84 풍선 두 수 중 큰 수 ○ (4·15·20), 작은 수 △ (10·2·11)
-import { esc, scene, icon, cube, bagSvg, colorN, onHit, pad, pickArt, countSay, pairUp } from "../numbers.js?v=20261115b";
-import { kid } from "../art.js?v=20261115b";
+import { esc, scene, icon, cube, bagSvg, colorN, onHit, pad, pickArt, countSay, pairUp } from "../numbers.js?v=20261115c";
+import { kid } from "../art.js?v=20261115c";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle", extra = "" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" ${extra}>${t}</text>`;
 const SUMIN = { hair: "bob", hairColor: "#a0522d", shirt: "#c0392b", bottom: "#7a2a22" };
@@ -20,14 +20,15 @@ const CANDY_C = ["red", "orange", "orange", "red", "green", "green", "red", "ora
 // ── 78쪽 수민 5 · 정민 7 ──
 async function p78(ctx) {
   await ctx.source("78");
-  const A = candySpots(5, 600, 172, 62), B = candySpots(7, 600, 442, 62);
-  const svg = scene(ctx, "0 0 900 590", `${person(SUMIN, 240, 50, 120, "수민")}${jar(600, 155, 230)}${A.map((p, i) => `<g class="nm-hit nm-cd" data-j="a" data-i="${i}">${icon("candy", p.x, p.y, 56, CANDY_C[i])}</g>`).join("")}
-    ${person(JEONGMIN, 240, 320, 120, "정민")}${jar(600, 425, 230)}${B.map((p, i) => `<g class="nm-hit nm-cd" data-j="b" data-i="${i}">${icon("candy", p.x, p.y, 56, CANDY_C[i + 3])}</g>`).join("")}<g class="nm-marks"></g>`);
-  for (const [j, n, who] of [["a", 5, "수민이의 사탕을 하나씩 눌러서 세어 봐요."], ["b", 7, "이번엔 정민이의 사탕을 세어 봐요."]]) {
+  // 원장 2026-11-15 「그림 작어 사탕 못 눌러」: 한 병씩 크게 보이고, 사탕마다 손가락 크기의 누르는 자리를 둔다
+  for (const [j, n, who, look, name, off0] of [["a", 5, "수민이의 사탕을 하나씩 눌러서 세어 봐요.", SUMIN, "수민", 0], ["b", 7, "이번엔 정민이의 사탕을 세어 봐요.", JEONGMIN, "정민", 3]]) {
+    const spots = candySpots(n, 300, 310, 96);
+    const svg = scene(ctx, "0 0 560 480", `${person(look, 62, 8, 96, name)}${jar(310, 255, 420)}${spots.map((p, i) => `<g class="nm-hit nm-cd" data-i="${i}"><circle cx="${p.x}" cy="${p.y}" r="50" fill="transparent"/>${icon("candy", p.x, p.y, 88, CANDY_C[i + off0])}</g>`).join("")}<g class="nm-marks"></g>`);
+    const marks = svg.querySelector(".nm-marks");
     ctx.guide.say(who);
     ctx.dock.innerHTML = `<div class="nm-padwrap"><div class="nm-ask"><span class="nm-count">0</span>개</div></div>`;
     let k = 0;
-    await new Promise((r) => { const off = onHit(svg, `.nm-cd[data-j="${j}"]`, (el) => { if (el.dataset.done) return; el.dataset.done = "1"; k++; el.classList.add("nm-counted"); el.style.opacity = ".55"; ctx.dock.querySelector(".nm-count").textContent = k; ctx.fx.sound.pop(); countSay(ctx, k); if (k === n) { off(); r(); } }); });
+    await new Promise((r) => { const off = onHit(svg, ".nm-cd", (el) => { if (el.dataset.done) return; el.dataset.done = "1"; k++; const p = spots[Number(el.dataset.i)]; el.style.opacity = ".6"; marks.insertAdjacentHTML("beforeend", `<circle cx="${p.x + 30}" cy="${p.y - 30}" r="18" fill="#2fb67c" stroke="#fff" stroke-width="3"/><text x="${p.x + 30}" y="${p.y - 23}" text-anchor="middle" font-size="20" font-weight="900" fill="#fff">${k}</text>`); ctx.dock.querySelector(".nm-count").textContent = k; ctx.fx.sound.pop(); countSay(ctx, k); if (k === n) { off(); r(); } }); });
     await ctx.wait(500);
     await ctx.guide.praise(j === "a" ? "수민이는 사탕 5개!" : "정민이는 사탕 7개!");
   }
@@ -62,17 +63,18 @@ async function p79(ctx) {
 }
 
 // ── 80·81쪽 큐브의 개수 ──
-const SUMIN_CUBES = [[3, 0], [4, 1], [3, 2]].flatMap(([n, r]) => Array.from({ length: n }, (_, c) => ({ x: 560 + (c - (n - 1) / 2) * 60, y: 100 + r * 56 })));
-const JM_CUBES = [[540, 330], [610, 320], [500, 380], [570, 390], [640, 380], [530, 440], [600, 450], [670, 430]].map(([x, y]) => ({ x, y }));
 async function p80(ctx) {
   await ctx.source("80");
-  const svg = scene(ctx, "0 0 900 520", `${person(SUMIN, 200, 30, 110, "수민")}${bagSvg(570, 150, 300, "#e8604f")}${SUMIN_CUBES.map((c, i) => `<g class="nm-hit nm-cc" data-j="a" data-i="${i}">${cube(c.x, c.y, 44, "blue")}</g>`).join("")}
-    ${person(JEONGMIN, 200, 290, 110, "정민")}${bagSvg(590, 400, 300, "#3d6fc4")}${JM_CUBES.map((c, i) => `<g class="nm-hit nm-cc" data-j="b" data-i="${i}">${cube(c.x, c.y, 44, "red")}</g>`).join("")}`);
-  for (const [j, n, msg] of [["a", 10, "수민이의 큐브를 하나씩 눌러서 세어 봐요."], ["b", 8, "정민이의 큐브도 세어 봐요."]]) {
+  // 한 주머니씩 크게(큐브마다 손가락 크기의 누르는 자리)
+  const A = [[3, 0], [4, 1], [3, 2]].flatMap(([n, r]) => Array.from({ length: n }, (_, c) => [330 + (c - (n - 1) / 2) * 96, 190 + r * 92]));
+  const B = [[240, 195], [350, 180], [460, 200], [190, 295], [300, 290], [415, 300], [270, 390], [390, 390]];
+  for (const [j, n, msg, look, name, bag, col, pts] of [["a", 10, "수민이의 큐브를 하나씩 눌러서 세어 봐요.", SUMIN, "수민", "#e8604f", "blue", A], ["b", 8, "정민이의 큐브도 세어 봐요.", JEONGMIN, "정민", "#3d6fc4", "red", B]]) {
+    const svg = scene(ctx, "0 0 640 490", `${person(look, 62, 4, 96, name)}${bagSvg(330, 290, 560, bag)}${pts.map(([x, y], i) => `<g class="nm-hit nm-cc" data-i="${i}"><rect x="${x - 46}" y="${y - 46}" width="92" height="92" fill="transparent"/>${cube(x, y, 72, col)}</g>`).join("")}<g class="nm-marks"></g>`);
+    const marks = svg.querySelector(".nm-marks");
     ctx.guide.say(msg);
     ctx.dock.innerHTML = `<div class="nm-padwrap"><div class="nm-ask"><span class="nm-count">0</span>개</div></div>`;
     let k = 0;
-    await new Promise((r) => { const off = onHit(svg, `.nm-cc[data-j="${j}"]`, (el) => { if (el.dataset.done) return; el.dataset.done = "1"; k++; el.style.opacity = ".5"; ctx.dock.querySelector(".nm-count").textContent = k; ctx.fx.sound.pop(); countSay(ctx, k); if (k === n) { off(); r(); } }); });
+    await new Promise((r) => { const off = onHit(svg, ".nm-cc", (el) => { if (el.dataset.done) return; el.dataset.done = "1"; k++; const [x, y] = pts[Number(el.dataset.i)]; el.style.opacity = ".55"; marks.insertAdjacentHTML("beforeend", `<circle cx="${x + 30}" cy="${y - 32}" r="18" fill="#2fb67c" stroke="#fff" stroke-width="3"/><text x="${x + 30}" y="${y - 25}" text-anchor="middle" font-size="20" font-weight="900" fill="#fff">${k}</text>`); ctx.dock.querySelector(".nm-count").textContent = k; ctx.fx.sound.pop(); countSay(ctx, k); if (k === n) { off(); r(); } }); });
     await ctx.wait(400);
   }
   await ctx.guide.praise("수민이는 큐브 10개, 정민이는 8개예요!");

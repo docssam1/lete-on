@@ -1,8 +1,8 @@
 // 홈: 로그인 확인 → 교재별 구분 상자(A1-2 · A1-3) 안에 단원 지도
-import { gate, logout } from "./access.js?v=20261115b";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261115b";
-import { BOOKS, findBook } from "./book.js?v=20261115b";
-import { readLesson } from "./progress.js?v=20261115b";
+import { gate, logout } from "./access.js?v=20261115c";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261115c";
+import { BOOKS, findBook } from "./book.js?v=20261115c";
+import { readLesson } from "./progress.js?v=20261115c";
 
 const app = document.getElementById("app");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
