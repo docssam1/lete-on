@@ -1,16 +1,18 @@
-import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{execFileSync}from'node:child_process';
+import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{withThink}from'./think-merge.js';import{BANK}from'./units-index.js';import{revisedTextbookUnits}from'./revised-textbook.js';import{withOptionalClassroomRecords}from'./revised-lesson.js';import{practicePaperHtml}from'./practice-paper.js';import{photoFigureHtml}from'./photo-figure.js';import{writtenPracticeHtml}from'./written-practice.js';import{seasonAnswerHint}from'./season-answer-hint.js';import*as presentation from'./source-presentation.js';import*as content from'./source-content.js';
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
 const units=['c22-s32-u01','s41-u01','s31-u01','s31-u02','s31-u03','s31-u04','c22-s32-u03','s41-u02','s41-u03'],counts=[146,170,80,80,80,105,146,158,162],esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),ids=html=>[...html.matchAll(/data-id="([^"]+)"/g)].map(x=>x[1]);
 const selected=m=>m.lesson.includePairedItems?[...m.items,...(m.similar||[])]:m.lesson.reusePairedItems?m.similar||[]:m.items;
-function context(mod,source=code){
+const functions=source=>({itemRenderer:source.slice(source.indexOf('function blanksHtml('),source.indexOf('let FIG =')),pageBook:source.slice(source.indexOf('function pageBook('),source.indexOf('// GFIELD 실험 과학 영재'))});
+function context(mod,source=functions(code)){
  const ctx=vm.createContext({...presentation,...content,photoFigureHtml,writtenPracticeHtml,seasonAnswerHint,FIG:mod.figures||{},MISC:mod.misc,BANK,BOOKX:{taxonomy:mod.taxonomy,similar:mod.similar,source:mod.source||[],items:mod.items,guidance:mod.unit?.sources?.guidance},$app:{innerHTML:''},revisedTextbookUnits,practicePaperHtml,byId:rows=>Object.fromEntries(rows.map(q=>[q.id,q])),CIRC:['①','②','③','④','⑤'],esc,store:{get(){throw Error('unexpected stored answer read');},set(){throw Error('unexpected stored answer write');}}});
- new vm.Script(source.slice(source.indexOf('function blanksHtml('),source.indexOf('let FIG ='))).runInContext(ctx);
- new vm.Script(source.slice(source.indexOf('function pageBook('),source.indexOf('// GFIELD 실험 과학 영재'))).runInContext(ctx);
+ new vm.Script(source.itemRenderer).runInContext(ctx);
+ new vm.Script(source.pageBook).runInContext(ctx);
  return ctx;
 }
 function route(ctx,u,mod,mode){const start=code.indexOf("  if(a==='workbook'&&mod.workbookPaper)"),end=code.indexOf("  if (a === 'lab-book')",start),branch=new vm.Script('(function(u,mod,L,items,a,b){'+code.slice(start,end)+'})').runInContext(ctx);branch(u,mod,withOptionalClassroomRecords(u,mod.lesson),mod.items,'print',mode);return ctx.$app.innerHTML;}
-const prior=execFileSync('git',['show','940f99ac24ab40b8b3c01b9fa5479bae7a4b9731:science-lab/v2/v2.js'],{encoding:'utf8'});
+const fixture=JSON.parse(fs.readFileSync(new URL('./tests/fixtures/current-paper-before-deduplication.json',import.meta.url),'utf8')),prior=fixture.functions;
+for(const[name,source]of Object.entries(prior))assert.equal(createHash('sha256').update(source).digest('hex'),fixture.functionSha256[name]);
 
 test('all nine actual generic print branches keep every distinct selected and paired question exactly once',async()=>{
  let total=0;

@@ -1,4 +1,4 @@
-import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{execFileSync}from'node:child_process';
+import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{withThink}from'./think-merge.js';import{BANK}from'./units-index.js';import{practicePaperHtml,practiceAnswer}from'./practice-paper.js';
 const appUrl=new URL('./v2.js',import.meta.url),code=fs.readFileSync(appUrl,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,appUrl).href)}).runInContext(vm.createContext({withThink})),unit='c22-s32-u02',mod=await loaders[unit](),ids=[unit+'-b20',unit+'-b24'],photos=mod.items.filter(q=>ids.includes(q.id)),pageSource=code.slice(code.indexOf('function pageBook('),code.indexOf('// GFIELD 실험 과학 영재')),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function page(renderer,name=unit,data=mod){const ctx=vm.createContext({BANK,practicePaperHtml:renderer,BOOKX:data,$app:{innerHTML:''},esc,store:{get(){throw Error('unexpected stored answer read');},set(){throw Error('unexpected stored answer write');}}}),render=new vm.Script(pageSource+';pageBook').runInContext(ctx);return mode=>{render(name,data.lesson,data.items,mode);return ctx.$app.innerHTML;};}
@@ -14,7 +14,7 @@ test('the actual fallback question-paper path prints both Earth photographs in s
   for(const q of mod.items)for(const t of Object.values(q.givens||{}).filter(v=>v?.머리&&v?.행))for(const value of [...t.머리,...t.행.flat()])assert(html.includes(esc(value)));
  }
  assert.deepEqual(mod.items,before);
- const oldSource=execFileSync('git',['show','23049c6a870d85b8ccceda5fff11d6428b88d8b4:science-lab/v2/practice-paper.js'],{encoding:'utf8'}),old=new vm.Script(oldSource.replaceAll('export function ','function ')+';practicePaperHtml').runInContext(vm.createContext({}));
+ const fixture=JSON.parse(fs.readFileSync(new URL('./tests/fixtures/practice-paper-before-figures.json',import.meta.url),'utf8')),oldSource=fixture.source;assert.equal(createHash('sha256').update(oldSource).digest('hex'),fixture.sourceSha256);const old=new vm.Script(oldSource.replaceAll('export function ','function ')+';practicePaperHtml').runInContext(vm.createContext({}));
  assert(!page(old)('student').includes('earth-apollo17-nasa.jpg'));assert.equal(render('answers'),page(old)('answers'));
 });
 
