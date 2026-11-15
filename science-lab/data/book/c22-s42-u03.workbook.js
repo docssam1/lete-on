@@ -8787,4 +8787,6 @@ export const gasReadablePriorWorkbook=withGasUpperScience(gasUpperPriorWorkbook)
 export const gasLinkPriorWorkbook=withGasReadableWorkbook(gasReadablePriorWorkbook);
 export const grade4ReviewPriorWorkbook=withGasIndependentQuestionLinks(gasLinkPriorWorkbook);
 
-export const workbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
+export const gasContextPriorWorkbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
+export const workbook=withGasContextWorkbook(gasContextPriorWorkbook);
+import{withGasContextWorkbook}from'./gas-workbook-context.js?v=20261115-gas-workbook-context';

@@ -2,7 +2,7 @@ import test from'node:test';import assert from'node:assert/strict';
 import{items as baseline}from'../data/units/c22-s42-u03.js';import{gasReadableCurrentItems,GAS_READABILITY_VERSION}from'../data/book/c22-s42-u03.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u03.book.js';
-import{workbook,gasReadablePriorWorkbook,gasLinkPriorWorkbook}from'../data/book/c22-s42-u03.workbook.js';
+import{gasContextPriorWorkbook as workbook,gasReadablePriorWorkbook,gasLinkPriorWorkbook}from'../data/book/c22-s42-u03.workbook.js';
 const unit='c22-s42-u03';
 test('gas readable presentations keep scoring and every old field and answer snapshot',()=>{
  const before=structuredClone(baseline),current=gasReadableCurrentItems(baseline,unit);let changed=0;
