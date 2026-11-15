@@ -16,18 +16,18 @@ test('reviewed guidance changes only labels and explanation sentences, leaving g
  }assert.equal(changed,6);
 });
 
-test('all 93 linked current/source/paired questions keep grading and diagnosis codes while actual feedback and teacher keys use clearer guidance',async()=>{
- let questions=0,cases=0,feedback=0;const pools={items:0,source:0,similar:0};
+test('all 96 linked current/source/paired questions keep grading and diagnosis codes while actual feedback and teacher keys use clearer guidance',async()=>{
+ let questions=0,cases=0,feedback=0;const newlyLinkedElectricitySources=[],pools={items:0,source:0,similar:0};
  for(const[unit,ids]of Object.entries(bindings)){
   const mod=await loaders[unit](),raw=await import('../data/units/'+unit+'.misc.js'),before={...mod.misc,misconceptions:{...mod.misc.misconceptions,...Object.fromEntries(ids.map(id=>[id,raw.misconceptions[id]]))}},judge=await loadJudge(unit),vocab=vocabOf(mod.items,mod.misc),why=new vm.Script(code.slice(code.indexOf('function whyHtml('),code.indexOf('// ctx ='))+';whyHtml').runInContext(vm.createContext({MISC:mod.misc,esc,questionMisconceptions}));assert.deepEqual(withReadableRemediation(unit,before),mod.misc);
   for(const pool of Object.keys(pools))for(const q of mod[pool]){
-   const effective=questionMisconceptions(q,mod.misc);if(!ids.some(id=>bearers(effective)[id]?.has(q.id)))continue;questions++;pools[pool]++;
+   const effective=questionMisconceptions(q,mod.misc);if(!ids.some(id=>bearers(effective)[id]?.has(q.id)))continue;questions++;pools[pool]++;if(unit==='c22-s62-u03'&&pool==='source'&&q.contentVersion==='20261116-electricity-source-diagnostics')newlyLinkedElectricitySources.push(q.id);
    const ac=q.answerContract,values=q.choices?(ac.type==='multi-choice'?Array.from({length:1<<q.choices.length},(_,m)=>q.choices.flatMap((_,i)=>m&(1<<i)?[i]:[])):q.choices.map((_,i)=>i)):ac.type==='cloze'?[ac.blanks.map(b=>b.answer),ac.blanks.map(()=> '다른 답')]:['',ac.sample||ac.answer||ac.answers||'설명한 답','다른 답'];
    for(const value of values){const x=gradeDaily(q,value,{misc:before,judge,vocab}),y=gradeDaily(q,value,{misc:mod.misc,judge,vocab});assert.deepEqual(y,x);cases++;const dx=classify(q,before,y.status==='correct',y.detail),dy=classify(q,mod.misc,y.status==='correct',y.detail);assert.deepEqual(dy,dx);if(y.status==='wrong'&&dy.m.some(id=>ids.includes(id))){const html=why(q,false,{...y.detail,m:dy.m});for(const id of dy.m.filter(id=>ids.includes(id))){assert(html.includes(esc(mod.misc.misconceptions[id].label)));assert(html.includes(mod.misc.misconceptions[id].fix));}feedback++;}
    }
   }
   for(const id of ids){const q=mod.items.find(q=>Object.values(questionMisconceptions(q,mod.misc).distractors?.[q.id]||{}).includes(id));assert(q);const key=teacherKeyHtml({u:unit,ch:{title:unit},list:[q],misc:mod.misc});assert(key.includes(esc(mod.misc.misconceptions[id].label)));}
  }
- assert.equal(questions,93);assert.deepEqual(pools,{items:63,source:14,similar:16});assert(cases>300);assert(feedback>100);
+ assert.equal(questions,96);assert.deepEqual(pools,{items:63,source:17,similar:16});assert.deepEqual(newlyLinkedElectricitySources.sort(),['c22-s62-u03-o1-09','c22-s62-u03-o2-10','c22-s62-u03-o4-12']);assert(cases>300);assert(feedback>100);
  const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(code.includes('student-remediation.js?v='+version));assert(index.includes('&remediation='+version));
 });

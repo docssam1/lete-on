@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "incomplete-one-hundred-fifty-two-original-diagnoses-repaired",
+  "status": "diagnostic-mappings-covered-program-incomplete",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -66,22 +66,17 @@
     },
     {
       "requirement": "Original-question misconception diagnosis",
-      "status": "incomplete",
-      "cliExitCode": 1,
-      "missingInActualRuntime": 49,
-      "units": [
-        {
-          "unit": "c22-s62-u03",
-          "missing": 49
-        }
-      ],
-      "evidence": "Five geology, eleven mixture,33earth-motion,60season and43combustion automatic originals now have versioned review rules:370wrong-choice links and56typed concept rules.20of the initial221rows require explicit teacher review;49electricity automatic-source diagnoses remain missing. The required whole CLI still exits1. Registered source text, keys and figures remain unchanged.",
+      "status": "native-covered-runtime-unverified",
+      "cliExitCode": 0,
+      "missingInActualRuntime": 0,
+      "units": [],
+      "evidence": "All201automatic originals initially missing diagnosis rules now have versioned review mappings:492wrong-choice links and74typed concept rules.20of the initial221rows require explicit teacher review. The unmodified whole required CLI exits0 with no errors. Source text, keys, figures and grading remain unchanged. Coverage does not prove every original question condition or actual student/browser behavior.",
       "initialAbsentRules": 221,
       "explicitTeacherReviewCasesAmongInitialRows": 20,
       "automaticQuestionsOriginallyNeedingDiagnosis": 201,
-      "automaticQuestionsConnected": 152,
-      "wrongChoiceLinksAdded": 370,
-      "typedConceptRulesAdded": 56
+      "automaticQuestionsConnected": 201,
+      "wrongChoiceLinksAdded": 492,
+      "typedConceptRulesAdded": 74
     },
     {
       "requirement": "Referenced images exist and current source images are reviewed",
@@ -105,7 +100,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "478 native347files/1697tests/1695pass/2browser skip. Forty-three combustion revisions add86full snapshots, preserving registered versions and proven legacy unversioned attempts; all109prior source revisions remain identical. Full snapshot total3642plus2legacy deltas."
+      "evidence": "479 native348files/1702tests/1700pass/2browser skip. Forty-nine electricity revisions add98full snapshots, preserving registered versions and proven legacy unversioned attempts; all152prior source revisions remain identical. Full snapshot total3740plus2legacy deltas."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -138,31 +133,29 @@
     "bankAudit": 0,
     "taxonomyCheck": 0,
     "writtenAudit": 0,
-    "misconceptionAudit": 1,
+    "misconceptionAudit": 0,
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstUnit": "c22-s62-u03",
-    "missingAutomaticOriginalDiagnostics": 49,
-    "remainingAcrossOneUnit": 49,
+    "firstIssue": "c22-s62-u03-o1-05 switch closure condition",
+    "evidence": "The registered diagram shows two open switches and the prompt asks which lamp is brighter without explicitly saying to close the switches. Native student print also contains no closure condition. Original question and key were preserved in479.",
     "requirements": [
-      "Read original prompts, circuit diagrams and specialized source response contracts before mapping electricity review concepts.",
-      "Preserve all152existing source revisions and their choice/typed diagnostics.",
-      "Keep reviewed original text, figures, grading and answer keys unchanged.",
-      "Preserve registered versions, unversioned attempts and prior diagnoses.",
-      "Validate explicit teacher-review contracts and never automatically judge held originals.",
-      "Keep the global audit failing until all actual missing links are implemented."
+      "Clarify the intended closed-switch comparison in a separately identified current presentation while preserving the raw original, registered/unversioned attempts and grading history; verify the scope before editing.",
+      "Preserve all201existing source revisions and their choice/typed diagnostics.",
+      "Keep all required CLI checks passing without exemptions or audit changes.",
+      "Reduce per-unit loading of the871108-byte all-unit review registry if feasible without weakening exact source guards.",
+      "Continue independent content review, missing original editions and required actual runtime/print validation."
     ]
   },
-  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/",
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/",
   "productFilesChanged": true,
   "paidApiCalls": 0,
   "cloudWrites": 0,
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "b6f7e95cdb2faa28a1d16468bbcf6e66e568b05e",
-  "latestPhase": 478,
+  "latestFollowupBaseline": "7bef364bd10d01d22108c150bfefeba1ef304196",
+  "latestPhase": 479,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -268,5 +261,37 @@
     "browserSkip": 2,
     "sourceFiguresViewedAndCpuOcr": 12,
     "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup479": {
+    "automaticElectricitySourceRevisions": 49,
+    "choiceQuestions": 31,
+    "wrongChoiceLinks": 122,
+    "typedConceptRules": 18,
+    "newReviewConcepts": [
+      "M19 battery orientation and electromagnet poles",
+      "M20 powered appliances versus hand tools",
+      "M21 battery count and connection method"
+    ],
+    "fullSnapshotsAdded": 98,
+    "allFullSnapshotsNow": 3740,
+    "all128WorkbookOutputsUnchanged": true,
+    "electricitySourcePaperModesUnchanged": 4,
+    "earlierSourceRevisionsUnchanged": 152,
+    "priorSeventeenRuntimeAndRawMiscDefinitionsPreserved": true,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegistration": "6aff5892d",
+    "nativeFiles": 348,
+    "nativeTests": 1702,
+    "nativePass": 1700,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 11,
+    "sourceOriginalTextOrAnswerChanges": 0,
+    "readableRemediationQuestionCoverage": 96,
+    "newSourceQuestionsInReadableRemediation": [
+      "c22-s62-u03-o1-09",
+      "c22-s62-u03-o2-10",
+      "c22-s62-u03-o4-12"
+    ]
   }
 }
