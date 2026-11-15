@@ -212,3 +212,31 @@ CC0 법문 URL은 같지만 각 사진의 지정 근거는 아래 개별 페이�
 | `centipede-2.jpg` | 왕지네(Scolopendra mutilans) — 일본 숲 바닥 낙엽 위의 왕지네 — 붉은 머리, 마디마다 노란 다리 1쌍이 보여요. 실제 길이는 재지 않았어요. | [hanwen-zhang](https://www.inaturalist.org/observations/62aadefa-dddb-4fdd-852e-0355fd253812) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×683 · 265740 B |
 | `lk-zelkova-2.jpg` | 느티나무(Zelkova serrata) — 가지의 잎 — 일본에서 찍은 느티나무 가지 — 어긋나게 붙은 홑잎과 가장자리 톱니가 보여요. | [renshuchu](https://www.inaturalist.org/observations/b2a73379-8d73-42b0-95a8-d529259d0b37) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×768 · 252504 B |
 | `woodlouse-2.jpg` | 쥐며느리(Porcellio scaber) — 자와 함께 — 일본에서 찍은 쥐며느리를 자(cm) 옆에서 본 모습 — 몸길이가 1 cm 남짓이에요(자 눈금으로 어림, 정밀하게 잰 값은 아님). | [konoda](https://www.inaturalist.org/observations/299d2029-99ac-4c62-99b4-d6b1cc7f3059) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×657 · 97710 B |
+
+## 4차 — 2026-11-15 (Claude, 스미스소니언 박물관 표본 사진)
+
+- 출처: 스미스소니언 국립자연사박물관(NMNH)의 공개 자료(Smithsonian Open Access). 기록마다 `metadata_usage.access = CC0`이고 사진(media)도 `usage.access = CC0`인 것만 골랐다. 메타데이터와 사진은 공개 S3 버킷 `smithsonian-open-access`(us-west-2)에서 받았다.
+- 식물은 **눌러 말린 식물 표본(herbarium sheet)**, 동물은 **눈금자를 함께 찍은 박물관 표본**이다. 야외 사진과 달리 한 장에 몸 전체·잎 배열이 다 보이고 크기를 어림할 수 있어, 관찰 그림·검색표 연습에 쓴다.
+- 일본·한국 채집 표본을 먼저 골랐다(느티나무는 한국 채집). 편집은 크기 줄이기·압축뿐.
+- 동정은 박물관 기록의 학명을 따른다(이 세션에서 따로 동정하지 않음).
+
+| 파일 | 무엇 | 출처 | 라이선스 | 규격 |
+|---|---|---|---|---|
+| `marsilea-2.jpg` | 네가래 식물 표본 — 종이에 눌러 말린 네가래 — 잎자루 끝의 네 잎과 땅속줄기가 한눈에 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/380363715-1741-4ab9-bad6-28f3327b95a7) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1049×1400 · 165287 B |
+| `ceratophyllum-2.jpg` | 붕어마름 식물 표본 — 종이에 눌러 말린 붕어마름 — 마디마다 돌려난 가는 잎 다발이 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/397443ea6-9cd7-4779-bbc4-d48ade4bfd7e) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1075×1400 · 211672 B |
+| `alisma-3.jpg` | 택사(Alisma canaliculatum) 식물 표본 — 뿌리·잎·꽃대까지 한 포기 전체를 눌러 말린 택사 — 길쭉한 잎과 가지 친 꽃대가 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/35a69fd62-5cb0-4610-8eaf-2868ab07d786) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1071×1400 · 184795 B |
+| `typha-3.jpg` | 부들(Typha orientalis) 식물 표본 — 길게 잘라 눌러 말린 부들 잎과 이삭 — 잎이 길고 나란한 맥을 가졌어요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/372e5a2a7-18ee-48ce-a620-d77e0dddc970) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1059×1400 · 157341 B |
+| `hydrilla-2.jpg` | 검정말 식물 표본 — 종이에 눌러 말린 검정말 — 줄기 마디마다 좁은 잎이 돌려 붙은 모습이 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/3a4e4775f-9157-49d0-98a2-f91fa7b847bb) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1050×1400 · 227757 B |
+| `lily-2.jpg` | 수련(Nymphaea tetragona) 식물 표본 — 둥근 잎의 갈라진 틈, 긴 잎자루, 꽃이 함께 눌러 말린 수련 표본이에요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/3261615ca-07a0-45ef-9264-5080a2e423ef) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1065×1400 · 164869 B |
+| `hyacinth-2.jpg` | 부레옥잠 식물 표본 — 둥근 잎과 부푼 잎자루, 수염뿌리가 보이는 부레옥잠 표본이에요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/32c59dd1a-030e-4f90-9885-aaefbc546232) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1062×1400 · 211935 B |
+| `alt-entire-2.jpg` | 감나무 식물 표본 — 가지를 따라 잎이 하나씩 엇갈려 붙은(어긋나기) 감나무 가지 표본이에요. 잎 가장자리가 밋밋해요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/3764dc7e6-1a79-42bd-a985-027242e42b01) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1052×1400 · 203911 B |
+| `opp-serrate-2.jpg` | 들깨류(Perilla frutescens) 식물 표본 — 줄기의 같은 마디에 잎이 두 장씩 마주 붙은 들깨류 표본 — 톱니 가장자리가 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/33a28299d-a291-49c3-a15e-5103d4afc619) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1051×1400 · 150844 B |
+| `whorl-2.jpg` | 갈퀴덩굴 식물 표본 — 가는 줄기 마디마다 좁은 잎 모양이 여럿 둘러난 갈퀴덩굴 표본이에요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/36e3a3a3b-1d63-426f-b58f-c90062dbe636) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1058×1400 · 229340 B |
+| `rosette-2.jpg` | 서양민들레 식물 표본 — 뿌리 위에서 잎이 둥글게 퍼져 나온(뭉쳐나기) 민들레 한 포기 표본 — 깊게 갈라진 잎과 꽃대가 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/330bcdf92-c0e4-431d-941d-d7d40d41e1aa) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1099×1400 · 214908 B |
+| `lk-robinia-2.jpg` | 아까시나무 식물 표본 — 깃꼴겹잎과 꽃송이가 함께 눌린 아까시나무 가지 — 둥근 작은잎을 셀 수 있어요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/355511435-9466-49d9-8f16-27ef1d6c7756) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1063×1400 · 199722 B |
+| `lk-wisteria-3.jpg` | 등나무(Wisteria floribunda) 식물 표본 — 끝이 뾰족한 작은잎이 깃꼴로 늘어선 등나무 겹잎 표본이에요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/379e26a98-b35b-4d6a-8988-1333acbd9713) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1054×1400 · 176807 B |
+| `lk-cherry-3.jpg` | 왕벚나무(Prunus × yedoensis) 식물 표본 — 가지에 어긋나게 붙은 왕벚나무 잎 표본 — 잎끝 쪽이 넓은 잎 모양을 볼 수 있어요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/3308fc551-bb32-4c53-ac3e-80e9da1f5988) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1051×1400 · 190235 B |
+| `lk-zelkova-3.jpg` | 느티나무 식물 표본(한국 채집) — 한국에서 채집해 눌러 말린 느티나무 가지 — 굵은 톱니가 있는 홑잎이 어긋나게 붙어 있어요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/3baaffdeb-4708-4b38-9006-2f10048b8bed) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1062×1400 · 174848 B |
+| `scallop-2.jpg` | 해만가리비(Argopecten irradians taylorae) 박물관 표본 — 껍데기 두 장의 겉과 속을 함께 찍은 표본 — 부채살 골과 꼭지 옆 귀, 3 cm 눈금자가 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/338896c88-782c-4b1d-b687-287ec2cd1426) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1400×1266 · 185445 B |
+| `woodlouse-3.jpg` | 쥐며느리(Porcellio scaber) 박물관 표본 — 위에서 본 쥐며느리 표본과 1 cm 눈금 — 등판 마디와 더듬이가 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/36305e7a1-4679-41c3-8311-32606334ffa8) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1400×912 · 70253 B |
+| `worm-2.jpg` | 지렁이(Lumbricus terrestris) 박물관 표본 — 알코올에 보관한 지렁이 표본과 4 cm 눈금 — 몸의 고리 마디가 보여요. | [Smithsonian NMNH](http://n2t.net/ark:/65665/3b083d9d3-bafc-42e0-9c1f-16e1666f2f17) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1319×1400 · 81301 B |
