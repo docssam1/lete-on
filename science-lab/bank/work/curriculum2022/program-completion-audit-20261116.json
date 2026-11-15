@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "incomplete-five-original-diagnoses-repaired",
+  "status": "incomplete-sixteen-original-diagnoses-repaired",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -68,12 +68,8 @@
       "requirement": "Original-question misconception diagnosis",
       "status": "incomplete",
       "cliExitCode": 1,
-      "missingInActualRuntime": 196,
+      "missingInActualRuntime": 185,
       "units": [
-        {
-          "unit": "c22-s52-u01",
-          "missing": 11
-        },
         {
           "unit": "c22-s61-u04",
           "missing": 33
@@ -91,12 +87,12 @@
           "missing": 49
         }
       ],
-      "evidence": "The old audit required automatic maps on20 originals whose explicit reviewed contracts require teacher judgment. The auditor now validates those actual modes and rejects automatic rules on them. Five geology originals now have versioned rules for19wrong choices; their raw registered source remains byte-identical.196automatic-source diagnostics remain missing; required CLI still exits1.",
+      "evidence": "Five geology originals and eleven mixture originals now have versioned rules for62wrong choices.20of the initial221rows explicitly require teacher review;185automatic-source diagnoses remain missing. The whole required CLI still exits1. Registered source text, keys and figures remain unchanged.",
       "initialAbsentRules": 221,
       "explicitTeacherReviewCasesAmongInitialRows": 20,
       "automaticQuestionsOriginallyNeedingDiagnosis": 201,
-      "automaticQuestionsConnected": 5,
-      "wrongChoiceLinksAdded": 19
+      "automaticQuestionsConnected": 16,
+      "wrongChoiceLinksAdded": 62
     },
     {
       "requirement": "Referenced images exist and current source images are reviewed",
@@ -120,7 +116,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "474 native343files/1678tests/1676pass/2browser skip. Five source revisions carry10full snapshots: original registered versions and proven legacy unversioned aliases. All old presentations and diagnoses are preserved."
+      "evidence": "475 native344files/1682tests/1680pass/2browser skip. Eleven mixture revisions add22full snapshots, preserving registered versions and proven legacy unversioned attempts; the earlier five geology revisions remain identical."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -157,15 +153,16 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstUnit": "c22-s52-u01",
-    "missingAutomaticOriginalDiagnostics": 11,
-    "remainingAcrossFiveUnits": 196,
+    "firstUnit": "c22-s61-u04",
+    "missingAutomaticOriginalDiagnostics": 33,
+    "remainingAcrossFourUnits": 185,
     "requirements": [
-      "Read each original prompt and wrong option before choosing a misconception.",
-      "Keep reviewed original text, figures and answer keys intact.",
-      "Use per-question versions and preserve old saved presentations and diagnoses.",
-      "Validate explicit teacher-review contracts without turning them into automatic right/wrong judgments.",
-      "Keep genuine missing mappings as failures until the actual links exist."
+      "Read each original prompt and answer structure before mapping review concepts.",
+      "The existing shared source reviser currently produces choice diagnostics; extend it to explicit typed rules for short-text originals while preserving the sixteen existing revisions.",
+      "Keep reviewed original text, figures and answer keys unchanged.",
+      "Preserve registered versions, unversioned attempts and prior diagnoses.",
+      "Validate explicit teacher-review contracts rather than automatically judging held originals.",
+      "Keep the global audit failing until remaining actual links are implemented."
     ]
   },
   "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json",
@@ -175,8 +172,8 @@
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "c29e50b6b3b9e2a5dcb6a7f57cf65fa0eafbc12e",
-  "latestPhase": 474,
+  "latestFollowupBaseline": "94f3b34a501abad5c28729e8c63553266f78f1a0",
+  "latestPhase": 475,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -192,6 +189,26 @@
     "browserSkip": 2,
     "sourcePicturesViewed": 2,
     "sourcePicturesCpuOcr": 2,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup475": {
+    "automaticMixtureSourceRevisions": 11,
+    "wrongChoiceLinks": 43,
+    "newReviewConcept": "M08 magnetic separation and remaining materials",
+    "grammarLabelCorrections": 2,
+    "fullSnapshotsAdded": 22,
+    "allFullSnapshotsNow": 3370,
+    "all128WorkbookOutputsUnchanged": true,
+    "mixtureSourcePaperModesUnchanged": 4,
+    "earlierGeologyRevisionsUnchanged": 5,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstNonemptyRegistration": "68318a1c6",
+    "nativeFiles": 344,
+    "nativeTests": 1682,
+    "nativePass": 1680,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 2,
     "sourceOriginalTextOrAnswerChanges": 0
   }
 }

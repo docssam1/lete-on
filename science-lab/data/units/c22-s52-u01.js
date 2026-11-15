@@ -1,3 +1,5 @@
+import {reviewedSourceDiagnostics} from '../../bank/reviewed-source-diagnostics.js?v=20261116-mixture-source-diagnostics';
+import {source as registeredSource} from './c22-s52-u01.source.js';
 export const unit = {
   "id": "c22-s52-u01",
   "course": "5-2",
@@ -5785,4 +5787,5 @@ export const items = [
   }
 ];
 export {mixtureBankPaperHtml as bankPaper,wireMixtureBankPaper as wireBankPaper} from '../../v2/mixture-bank-paper.js';
-export {source,sourceRegistration} from './c22-s52-u01.source.js';
+export {sourceRegistration} from './c22-s52-u01.source.js';
+export const source=reviewedSourceDiagnostics('c22-s52-u01',registeredSource);

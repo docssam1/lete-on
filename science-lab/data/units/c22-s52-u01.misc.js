@@ -1,6 +1,6 @@
 export const misconceptions = {
   "M01": {
-    "label": "혼합물과 분리의 목적를 확인해요",
+    "label": "혼합물과 분리의 목적을 확인해요",
     "terms": [
       "혼합물과 분리의 목적"
     ],
@@ -40,7 +40,7 @@ export const misconceptions = {
     "element": "E5"
   },
   "M06": {
-    "label": "증발·회수와 실제 기록를 확인해요",
+    "label": "증발·회수와 실제 기록을 확인해요",
     "terms": [
       "증발·회수와 실제 기록"
     ],
@@ -54,6 +54,15 @@ export const misconceptions = {
     ],
     "fix": "대상·성질·기여·지역 조건·출처와 실제 전달/의견/수정을 구별해요.",
     "element": "E7"
+  },
+  "M08": {
+    "label": "자석을 이용한 분리와 순서를 확인해요",
+    "terms": [
+      "자석을 이용한 분리",
+      "분리한 뒤 남은 물질"
+    ],
+    "fix": "철가루와 철로 된 클립은 자석에 붙는 성질을 이용해 분리해요. 분리한 뒤 남은 물질과 다음에 쓸 도구를 확인해요.",
+    "element": "E1"
   }
 };
 export const typed = {
@@ -428,6 +437,9 @@ export const remedy = {
     "step": 3
   },
   "M07": {
+    "step": 3
+  },
+  "M08": {
     "step": 3
   }
 };
