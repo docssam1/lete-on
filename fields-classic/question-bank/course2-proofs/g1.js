@@ -403,6 +403,152 @@ const tilted = {
   },
 };
 
-export const PROOFS = [triSum, isosceles, regular, exterior, clock, midSquare, twoCircles, tilted];
+
+// ── 0-1. 접어서 자른 구멍: 펼치면 왜 거울처럼 생길까 ─────────────
+const foldCut = {
+  id: "fold-cut-symmetry",
+  unit: "1단원 · 색종이 접기와 뒤집기",
+  title: "접어서 자르면 펼친 모양이 왜 대칭일까",
+  vary: "다른 구멍으로",
+  params(seed) {
+    // 4분의 1로 접은 조각(오른쪽 위) 안의 구멍. touch: 접는 선에 걸침
+    const holes = [
+      { pts: [[60, 50], [120, 40], [95, 110]], touch: false },
+      { pts: [[-14, 60], [40, 40], [40, 100]], touch: "v" },
+      { pts: [[70, 100], [130, 120], [80, 150]], touch: false },
+      { pts: [[50, -14], [100, -14], [75, 40]], touch: "h" },
+    ];
+    return pick(holes, seed);
+  },
+  scenes: [
+    { say: "정사각형 색종이를 반으로 두 번 접으면 4장이 겹쳐요. 겹친 채로 구멍을 하나 오려 봐요.", line: "4장이 겹친 채로 한 번에 잘린다", why: "겹친 종이는 가위에 함께 잘린다", ms: 2200 },
+    { say: "세로 접는 선을 따라 한 번 펼쳐요. 구멍이 어디에 생기나요?", line: "펼친 쪽 구멍 = 세로 접는 선에 비친 모양", why: "접혀 있던 종이가 접는 선을 축으로 넘어간다(뒤집기)", ms: 2200 },
+    { say: "가로 접는 선을 따라 한 번 더 펼쳐요.", line: "아래 두 구멍 = 가로 접는 선에 비친 모양", why: "같은 까닭: 가로 접는 선을 축으로 뒤집혔다", ms: 2200 },
+    { say: (p) => (p.touch ? "접는 선에 걸친 구멍은 펼치면 거울 모양과 이어져 하나가 돼요. 그래서 구멍 수가 줄어요." : "펼친 모양은 세로선·가로선 모두에 대해 거울처럼 같아요. 구멍은 겹친 장 수만큼 4개."),
+      line: (p) => (p.touch ? "접는 선에 걸친 구멍은 둘이 이어져 하나로 → 구멍 2개" : "접는 선에 닿지 않은 구멍 하나 → 4개"), why: "한 번 펼칠 때마다 거울 모양이 하나씩 더 생긴다", ms: 1600 },
+  ],
+  draw(f, k, p) {
+    const O = P(320, 210), S = 170;   // 큰 정사각형: 가운데 O, 반 변 S
+    const s0 = phase(k, 0), s1 = phase(k, 1), s2 = phase(k, 2), s3 = phase(k, 3);
+    const hole = p.pts.map(([x, y]) => P(O.x + x, O.y - S + y));   // 오른쪽 위 조각 기준(위 왼쪽 모서리 = O.x, O.y-S)
+    const vA = P(O.x, 0), vB = P(O.x, 440), hA = P(0, O.y), hB = P(640, O.y);
+    const quarter = [P(O.x, O.y - S), P(O.x + S, O.y - S), P(O.x + S, O.y), P(O.x, O.y)];
+    f.poly([P(O.x - S, O.y - S), P(O.x + S, O.y - S), P(O.x + S, O.y + S), P(O.x - S, O.y + S)], { fill: "none", stroke: C.line, w: 1.5, dash: "6 6" });
+    const pieces = [];
+    const flipV = (pts) => pts.map((q) => fold(q, vA, vB, s1));
+    const flipH = (pts) => pts.map((q) => fold(q, hA, hB, s2));
+    // 아래 두 장(가로선으로 펼침) → 위 두 장 중 왼쪽(세로선으로 펼침) → 오른쪽 위
+    if (s2 > 0) { pieces.push([flipH(quarter), flipH(hole), true]); pieces.push([flipH(flipV(quarter)), flipH(flipV(hole)), true]); }
+    if (s1 > 0) pieces.push([flipV(quarter), flipV(hole), s1 > 0.5]);
+    pieces.push([quarter, hole, false]);
+    pieces.forEach(([q, h, back]) => {
+      f.poly(q, { fill: back ? C.back : "#fde9b8", stroke: C.ink, w: 2 });
+      f.poly(h, { fill: "#fff", stroke: C.red, w: 2, opacity: s0 });
+    });
+    f.seg(P(O.x, O.y - S - 14), P(O.x, O.y + S + 14), { stroke: C.orange, w: 2.4, dash: "8 6", opacity: 0.4 + 0.6 * s1 });
+    f.seg(P(O.x - S - 14, O.y), P(O.x + S + 14, O.y), { stroke: C.blue, w: 2.4, dash: "8 6", opacity: 0.4 + 0.6 * s2 });
+    f.label(P(O.x, O.y - S - 26), "세로 접는 선", { size: 14, color: C.orange, opacity: s1 });
+    f.label(P(O.x + S + 30, O.y - 16), "가로 접는 선", { size: 14, color: C.blue, opacity: s2, anchor: "start" });
+    if (s3 > 0) bottomNote(f, p.touch ? "접는 선에 걸치면 이어져서 2개" : "구멍 1개 → 펼치면 4개", { opacity: s3 });
+  },
+};
+
+// ── 0-2. 거울에 비친 시계: 진짜 시각 + 거울 속 시각 = 12시 ──────────
+const mirrorClock = {
+  id: "mirror-clock",
+  unit: "1단원 · 색종이 접기와 뒤집기",
+  title: "거울에 비친 시계로 진짜 시각을 왜 알 수 있을까",
+  vary: "다른 시각으로",
+  params(seed) {
+    const [h, m] = pick([[3, 10], [2, 25], [7, 40], [10, 50], [4, 15]], seed);
+    const real = h * 60 + m, mir = (720 - real) % 720;
+    return { h, m, mh: Math.floor(mir / 60) || 12, mm: mir % 60, real, mir };
+  },
+  scenes: [
+    { say: (p) => `시계가 ${p.h}시 ${p.m}분을 가리켜요. 거울은 시계의 세로 가운데 선(12와 6을 잇는 선)을 축으로 왼쪽과 오른쪽을 바꿔요.`, line: (p) => `진짜 시각 ${p.h}시 ${p.m}분`, ms: 1800 },
+    { say: "바늘을 거울처럼 세로선에 대해 뒤집어요. 12에서 시계 방향으로 잰 각은, 거울 속에서는 시계 반대 방향으로 같은 크기가 돼요.", line: "거울 속 바늘 = 12에서 반대 방향으로 같은 각", why: "뒤집기는 12–6 선을 사이에 두고 같은 거리에 놓는다", ms: 2600 },
+    { say: "그래서 각 바늘이 12에서 간 각과 거울 속 바늘이 간 각을 더하면 딱 한 바퀴예요.", line: "진짜 각 + 거울 속 각 = 360° (한 바퀴)", why: "같은 크기를 양쪽으로 갔으니 합하면 한 바퀴", ms: 2000 },
+    { say: (p) => `시계에서 한 바퀴는 12시간이에요. 거울 속 ${p.mh}시 ${p.mm}분을 보면 진짜 시각은 12시 − ${p.mh}시 ${p.mm}분 = ${p.h}시 ${p.m}분.`, line: (p) => `진짜 시각 = 12시 − 거울 속 시각 (${p.mh}시 ${p.mm}분)`, why: "시침 한 바퀴 = 12시간", ms: 2000 },
+  ],
+  draw(f, k, p) {
+    const O = P(320, 215), Rr = 165;
+    const s0 = phase(k, 0), s1 = phase(k, 1), s2 = phase(k, 2), s3 = phase(k, 3);
+    const cw = (deg) => 90 - deg;
+    f.circle(O, Rr + 10, { fill: "#fff", w: 3 });
+    for (let i = 0; i < 12; i += 1) {
+      f.seg(polar(O, Rr + 4, cw(i * 30)), polar(O, Rr - 12, cw(i * 30)), { w: 3 });
+      f.label(polar(O, Rr - 32, cw(i * 30)), String(i || 12), { size: 18, halo: false });
+    }
+    f.seg(P(O.x, O.y - Rr - 26), P(O.x, O.y + Rr + 26), { stroke: C.teal, w: 3, dash: "10 6", opacity: s0 });
+    const mA = p.m * 6, hA = (p.h % 12) * 30 + p.m / 2;
+    const top = P(O.x, 0), bot = P(O.x, 440);
+    const tipM = polar(O, Rr - 26, cw(mA)), tipH = polar(O, Rr - 76, cw(hA));
+    // 진짜 바늘(흐려진다) + 거울 속 바늘(뒤집히며 넘어간다)
+    f.seg(O, tipH, { w: 9, stroke: C.ink, opacity: 1 - 0.65 * s1 });
+    f.seg(O, tipM, { w: 5, stroke: C.blue, opacity: 1 - 0.65 * s1 });
+    if (s1 > 0) {
+      f.seg(O, fold(tipH, top, bot, s1), { w: 9, stroke: C.purple });
+      f.seg(O, fold(tipM, top, bot, s1), { w: 5, stroke: C.purple });
+    }
+    // 각 표시: 진짜 분침 각(오른쪽으로), 거울 분침 각(왼쪽으로)
+    if (s2 > 0) {
+      f.wedge(O, cw(mA), mA, { r: 52, color: C.blue, fillOpacity: 0.18, opacity: s2 * (1 - s3), label: `${mA}°`, labelR: 74 });
+      f.wedge(O, 90, mA, { r: 70, color: C.purple, fillOpacity: 0.12, opacity: s2 * (1 - s3), label: `${mA}°`, labelR: 92 });
+    }
+    f.dot(O, { r: 7 });
+    f.note(P(O.x - 230, 70), `진짜 ${p.h}:${String(p.m).padStart(2, "0")}`, { color: C.blue, opacity: 1 - 0.3 * s1, anchor: "start", size: 20 });
+    f.note(P(O.x + 230, 70), `거울 ${p.mh}:${String(p.mm).padStart(2, "0")}`, { color: C.purple, opacity: s1, anchor: "end", size: 20 });
+    if (s3 > 0) bottomNote(f, `${p.mh}시 ${p.mm}분 + ${p.h}시 ${p.m}분 = 12시`, { opacity: s3 });
+  },
+};
+
+// ── 0-3. 뒤집기 두 번 = 반 바퀴 돌리기 ─────────────────────────
+const twoFlips = {
+  id: "two-flips-half-turn",
+  unit: "2단원 · 숫자판 돌리기",
+  title: "두 번 뒤집으면 왜 반 바퀴 돌린 것과 같을까",
+  vary: "다른 모양으로",
+  params(seed) {
+    const shapes = [
+      [[0, 0], [70, 0], [70, 22], [24, 22], [24, 46], [56, 46], [56, 66], [24, 66], [24, 110], [0, 110]],   // F
+      [[0, 0], [24, 0], [24, 86], [70, 86], [70, 110], [0, 110]],   // L
+      [[0, 0], [66, 0], [66, 60], [24, 60], [24, 110], [0, 110]],   // P 비슷한 깃발
+      [[0, 0], [24, 0], [24, 40], [76, 40], [76, 64], [24, 64], [24, 110], [0, 110]],   // ㅏ
+    ];
+    return { pts: pick(shapes, seed) };
+  },
+  scenes: [
+    { say: "오른쪽 위에 모양이 있어요. 빨간 점 하나를 따라가 봐요. 먼저 세로선을 축으로 뒤집어요(왼쪽과 오른쪽이 바뀜).", line: "1번 뒤집기: 왼쪽 ↔ 오른쪽", why: "세로선에 대한 거울", ms: 2400 },
+    { say: "이번에는 가로선을 축으로 뒤집어요(위와 아래가 바뀜).", line: "2번 뒤집기: 위 ↔ 아래", why: "가로선에 대한 거울", ms: 2400 },
+    { say: "처음 모양을 두 선이 만나는 점을 중심으로 반 바퀴 돌려 봐요. 두 번 뒤집은 모양에 꼭 겹쳐요.", line: "뒤집기 2번 = 반 바퀴(180°) 돌리기", why: "두 번 뒤집으면 왼쪽↔오른쪽, 위↔아래가 모두 바뀐다 = 반 바퀴", ms: 2800 },
+    { say: "그래서 숫자판이나 카드를 반 바퀴 돌리면, 좌우로 뒤집고 다시 위아래로 뒤집은 것과 같아요.", line: "반 바퀴 돌리기는 두 번 뒤집기로 바꿔 생각할 수 있다", why: "모든 점이 같은 자리로 간다", ms: 1600 },
+  ],
+  draw(f, k, p) {
+    const O = P(320, 220), base = P(O.x + 60, O.y - 160);
+    const s0 = phase(k, 0), s1 = phase(k, 1), s2 = phase(k, 2), s3 = phase(k, 3);
+    const A = p.pts.map(([x, y]) => P(base.x + x, base.y + y)), dot = P(base.x + 12, base.y + 12);
+    const vA = P(O.x, 0), vB = P(O.x, 440), hA = P(0, O.y), hB = P(640, O.y);
+    f.seg(P(O.x, 30), P(O.x, 410), { stroke: C.orange, w: 2.4, dash: "8 6" });
+    f.seg(P(110, O.y), P(530, O.y), { stroke: C.blue, w: 2.4, dash: "8 6" });
+    f.dot(O, { r: 5 });
+    f.poly(A, { fill: C.greenSoft, stroke: C.green, w: 2.4 }); f.dot(dot, { fill: C.red, r: 6 });
+    const B = A.map((q) => fold(q, vA, vB, s0)), bd = fold(dot, vA, vB, s0);
+    if (s0 > 0) { f.poly(B, { fill: C.orangeSoft, stroke: C.orange, w: 2.4 }); f.dot(bd, { fill: C.red, r: 6 }); }
+    if (s1 > 0) {
+      const Cc = B.map((q) => fold(q, hA, hB, s1)), cd = fold(bd, hA, hB, s1);
+      f.poly(Cc, { fill: C.blueSoft, stroke: C.blue, w: 2.4 }); f.dot(cd, { fill: C.red, r: 6 });
+    }
+    if (s2 > 0) {
+      const Dd = A.map((q) => rot(q, O, 180 * s2)), dd = rot(dot, O, 180 * s2);
+      f.poly(Dd, { fill: "none", stroke: C.purple, w: 3, dash: "7 5" }); f.dot(dd, { fill: C.purple, r: 4 });
+      f.label(add(O, P(-26, -26)), "↻", { size: 26, opacity: Math.sin(Math.PI * s2) });
+    }
+    f.label(P(O.x + 24, 40), "세로선", { size: 14, color: C.orange, anchor: "start" });
+    f.label(P(530, O.y - 16), "가로선", { size: 14, color: C.blue, anchor: "end" });
+    if (s3 > 0) bottomNote(f, "뒤집기 + 뒤집기 = 반 바퀴 돌리기", { opacity: s3 });
+  },
+};
+
+export const PROOFS = [foldCut, mirrorClock, twoFlips, triSum, isosceles, regular, exterior, clock, midSquare, twoCircles, tilted];
 // 쓰지 않는 도구를 지우지 않게(다른 권 논증에서 쓴다)
 void sub; void mul; void dist;
