@@ -1,6 +1,6 @@
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
-const beforeGrade4=q=>q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;
+const beforeGrade4=item=>{const q=item.contentVersion===ECOLOGY_MATERIAL_VERSION?questionAtVersion(item,item.previousVersions.at(-1).version):item;return q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -73,3 +73,5 @@ test('classroom, workbook and bank share revised wording and explicitly label mo
  for(const q of workbook.questions.filter(q=>q.sourceRef?.type==='similar'))assert.deepEqual(q,prior.questions.find(p=>p.id===q.id));
  for(const q of items.filter(q=>[unit+'-b47',unit+'-b50',unit+'-b67'].includes(q.id)))assert.deepEqual(q,(await priorBank()).find(old=>old.id===q.id));
 });
+
+import{ECOLOGY_MATERIAL_VERSION}from'../data/book/ecology-material-context.js';

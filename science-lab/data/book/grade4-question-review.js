@@ -394,7 +394,7 @@ export function grade4QuestionReview(rows,unit){
   const current={...q,...fields,contentVersion:GRADE4_REVIEW_VERSION,previousVersions:[...(q.previousVersions?clone(q.previousVersions):[]),{...clone(q),version:q.contentVersion,snapshotKind:'full-question'}]};
   cache.set(q,current);return current;
  });
- return biologyExampleItems(changed?next:rows,unit);
+ return ecologyMaterialItems(biologyExampleItems(changed?next:rows,unit),unit);
 }
 export function withGrade4ReviewedWorkbook(workbook){
  if(!workbookUnits.has(workbook?.unit)||!Array.isArray(workbook.questions))return workbook;
@@ -412,3 +412,4 @@ export function withGrade4QuestionReviewClassroom(unit,mod){
  return classroomItems===mod.classroomItems?mod:{...mod,classroomItems};
 }
 import{biologyExampleItems}from'./biology-example-card.js?v=20261115-biology-example-card';
+import{ecologyMaterialItems}from'./ecology-material-context.js?v=20261115-ecology-food-web-material';

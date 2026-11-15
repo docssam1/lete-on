@@ -4,7 +4,7 @@ import{magnetSkyCurrentItems}from'./magnet-sky-question-language.js';
 import{skyReadableCurrentItems,SKY_READABILITY_VERSION}from'../data/book/c22-s42-u01.rail-notes.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u01.book.js';
-import{workbook,skyReadablePriorWorkbook}from'../data/book/c22-s42-u01.workbook.js';import{revisedTextbookPaper}from'./revised-textbook.js';
+import{contextDirectionsPriorWorkbook as workbook,skyReadablePriorWorkbook}from'../data/book/c22-s42-u01.workbook.js';import{revisedTextbookPaper}from'./revised-textbook.js';
 const unit='c22-s42-u01',baseline=magnetSkyCurrentItems([...raw,...think],unit);
 test('sky readable prompts preserve grading and every earlier field and saved response',()=>{
  const before=structuredClone(baseline),current=skyReadableCurrentItems(baseline,unit);let changed=0;

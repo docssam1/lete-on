@@ -9194,4 +9194,6 @@ export const skyReadablePriorWorkbook=withWorkbookAnswerLanguage(withMagnetSkySt
 export const nightMoonTimePriorWorkbook=withSkyReadableWorkbook(skyReadablePriorWorkbook);
 export const materialReadingPriorWorkbook=withNightMoonTimeReference(nightMoonTimePriorWorkbook);
 
-export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const contextDirectionsPriorWorkbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
+export const workbook=withSkyWorkbookDirections(contextDirectionsPriorWorkbook);
+import{withSkyWorkbookDirections}from'./sky-workbook-directions.js?v=20261115-sky-workbook-directions';

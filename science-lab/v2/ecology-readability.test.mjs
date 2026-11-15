@@ -32,7 +32,7 @@ test('ecology readability excludes originals, similar, other units and future ve
  assert.equal(ecologyReadableCurrentItems(baseline,'other'),baseline);assert.equal(ecologyReadableCurrentItems(null,unit),null);
 });
 test('ecology classroom and Daily share six revised objects and retain each presentation answer position',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),prior=ecologyReadableCurrentItems(baseline,unit),current=ecologyElementaryCurrentItems(prior,unit),daily=classroomQuestions(second,current);let linked=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),prior=ecologyReadableCurrentItems(baseline,unit),current=ecologyMaterialItems(ecologyElementaryCurrentItems(prior,unit),unit),daily=classroomQuestions(second,current);let linked=0;
  for(const q of first.classroomItems.filter(q=>q.contentVersion===ECOLOGY_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===ECOLOGY_READABILITY_VERSION))){linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);assert.deepEqual(questionAtVersion(q,ECOLOGY_READABILITY_VERSION).prompt,prior.find(x=>x.id===q.id).prompt);}
  assert.equal(linked,6);const q=current.find(q=>q.id==='c22-s42-u02-b78');assert.equal(q.answerContract.answer,1);assert(q.choices[1].includes('서로의 까닭'));assert(q.explanation.includes('둘째 보기'));assert.equal(workbook.questions.find(q=>q.no===63).key,4);
 });
@@ -43,3 +43,5 @@ test('the current card-count blank agrees with all answer modes and keeps earlie
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(ecologyReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['key','responseContract'].includes(k)))assert.deepEqual(workbook.questions[i][key],ecologyReadablePriorWorkbook.questions[i][key]);
  const paper=await revisedTextbookPaper(unit);for(const mode of['teacher','answers','quick'])assert(paper.workbookPaper({mode}).includes(q.answer),mode);assert(!paper.workbookPaper({mode:'student'}).includes(q.answer));
 });
+
+import{ecologyMaterialItems}from'../data/book/ecology-material-context.js';

@@ -7970,4 +7970,6 @@ import{withEcologyReadableWorkbook}from'./c22-s42-u02.editorial.js?v=20261106-ec
 export const materialReadingPriorWorkbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
 
 export const contextDirectionsPriorWorkbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
-export const workbook=withEcologyWorkbookDirections(contextDirectionsPriorWorkbook);
+export const ecologyMaterialPriorWorkbook=withEcologyWorkbookDirections(contextDirectionsPriorWorkbook);
+export const workbook=withEcologyMaterialWorkbook(ecologyMaterialPriorWorkbook);
+import{withEcologyMaterialWorkbook}from'./ecology-material-context.js?v=20261115-ecology-food-web-material';
