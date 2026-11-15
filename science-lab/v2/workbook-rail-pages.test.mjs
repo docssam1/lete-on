@@ -7,7 +7,7 @@ import {withMatchedWorkbookRails} from '../data/book/workbook-rail-pages.js';
 import {workbook as materials} from '../data/book/c22-s32-u01.workbook.js';
 import {workbook as magnets} from '../data/book/s41-u01.workbook.js';
 import {workbook as earthSea} from '../data/book/c22-s32-u02.workbook.js';
-import {workbook as solution} from '../data/book/c22-s51-u03.workbook.js';
+import {solutionContextPriorWorkbook as solution} from '../data/book/c22-s51-u03.workbook.js';
 import {MATERIAL_RAIL_NOTES} from '../data/book/c22-s32-u01.rail-notes.js';
 import {MAGNET_RAIL_NOTES} from '../data/book/s41-u01.rail-notes.js';
 import {EARTH_SEA_RAIL_NOTES} from '../data/book/c22-s32-u02.rail-notes.js';

@@ -8557,4 +8557,6 @@ export const solutionReadablePriorWorkbook=withWorkbookAnswerLanguage(withSoluti
 export const grade5StudyNotesPriorWorkbook=withSolutionReadableWorkbook(solutionReadablePriorWorkbook);
 export const grade5ReviewPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
 
-export const workbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);
+export const solutionContextPriorWorkbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);
+export const workbook=withSolutionContextWorkbook(solutionContextPriorWorkbook);
+import{withSolutionContextWorkbook}from'./solution-workbook-context.js?v=20261115-solution-workbook-context';
