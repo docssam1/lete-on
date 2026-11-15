@@ -129,16 +129,16 @@ function compare(a, b) {
  return b.score - a.score || String(b.row.updated_at || '').localeCompare(String(a.row.updated_at || '')) ||
   String(a.row.id || '').localeCompare(String(b.row.id || ''));
 }
-export function selectKnowledge(rows, {question, progress = '', region = '', completedBooks = '', soloRange = '', stage = 'all', previous = ''}) {
+export function selectKnowledge(rows, {question, progress = '', currentBooks = '', region = '', completedBooks = '', soloRange = '', stage = 'all', previous = ''}) {
  const q = normal(clean(question)), names = namedIn(q), keywords = terms(q);
  const recall = previous && followUp.test(q) && !names.length ? normal(clean(previous, 600)) : '';
- const context = terms(normal(clean(progress)));
+ const context = terms(normal(clean(progress + ' ' + currentBooks)));
  const books = TEXTBOOKS.filter(word => q.includes(word));
  const recallWords = terms(recall);
  const isRecallOnly = recall && keywords.every(word => retestReference.test(word) || /볼까요|주세요|한번|어디/u.test(word));
  const rule = scoringRule(q), domain = examDomain(q);
  const eligible = rows.filter(row => row.status === 'approved' && (row.stage === 'all' || stage === 'all' || row.stage === stage));
- const academies = academySources(eligible, {question, progress, region, completedBooks, soloRange});
+ const academies = academySources(eligible, {question, progress:[progress,currentBooks].filter(Boolean).join('\n'), region, completedBooks, soloRange});
  if (academies?.length) return academies;
  const documents = eligible
   .filter(row => !domain || matchesExam(domain, row))
@@ -203,9 +203,9 @@ export function selectKnowledge(rows, {question, progress = '', region = '', com
  return ranked.filter(item => item.score >= ranked[0].score * 0.65).slice(0, 3).map(item => item.row);
 }
 
-export function answerFromSources(rows, {question = '', progress = '', region = '', completedBooks = '', soloRange = ''} = {}) {
+export function answerFromSources(rows, {question = '', progress = '', currentBooks = '', region = '', completedBooks = '', soloRange = ''} = {}) {
  if (!rows.length) return {summary:'이 질문에 답할 수 있는 승인 자료를 아직 찾지 못했어요.', explanation:'현재 교재와 단원, 가장 궁금한 점을 적어 주세요.', next:'독쌤에게 직접 물어보실 수도 있어요.'};
- const academy = academyAnswer(rows, {question, progress, region, completedBooks, soloRange});
+ const academy = academyAnswer(rows, {question, progress:[progress,currentBooks].filter(Boolean).join('\n'), region, completedBooks, soloRange});
  if (academy) return academy;
  const q = normal(question), rule = scoringRule(q), keywords = terms(q);
  const lines = passages(rows[0].body);

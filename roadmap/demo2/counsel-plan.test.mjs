@@ -109,3 +109,17 @@ test('save survives reopening; same-week duplicate and cross-account edits canno
   await assert.rejects(model.save({...input,practice:add(-1)},'alpha'),/보완일/);
   await assert.rejects(model.save({...input,practiceCount:0},'alpha'),/문제 수/);
 });
+test('a batch is atomic, deduplicates its own entries and preserves prior dates and marks',async()=>{
+ setupStudent('batch-alpha');
+ const second={...input,book:'소마셈 P2',unit:'가르기',track:'arithmetic'};
+ await assert.rejects(model.saveBatch([input,{...second,recheck:add(14)}],'batch-alpha'),/다음 주/);
+ assert.equal(model.saved().length,0);
+ const first=await model.saveBatch([input,second,input],'batch-alpha');
+ assert.equal(model.saved().length,2);assert.equal(first.filter(r=>r.duplicate).length,1);
+ const repeat=await model.saveBatch([{...input,practiceCount:7},second],'batch-alpha');
+ assert.ok(repeat.every(r=>r.duplicate));assert.equal(repeat[0].plan.practiceCount,3);
+ await assert.rejects(model.saveBatch(Array.from({length:5},()=>input),'batch-alpha'),/보완할 범위/);
+ await assert.rejects(model.saveBatch([input],'another-account'),/학생 계정/);
+ assert.equal(model.saved().length,2);
+ assert.equal(model.weekItems(model.saved(),checks.weekStart(day),null).length,2);
+});

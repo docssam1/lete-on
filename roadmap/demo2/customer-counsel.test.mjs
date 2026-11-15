@@ -100,3 +100,13 @@ test('follow-up book and solo-range fields are masked, bounded and change the ex
  assert.equal(seen.context.completedBooks.length,600);assert.equal(seen.context.soloRange.length,600);
  assert.doesNotMatch(JSON.stringify(seen),/김하늘|010-1234|a@b.com/u);
 });
+test('current books are masked and bounded, enter optional explanation, and isolate the cache without paid lookup',async()=>{
+ let calls=0,seen;const service=fake();
+ const h=createHandler({service,aiAvailable:true,ask:async input=>{calls++;seen=input;return '설명';}});
+ await h(req('lookup',{currentBooks:'Ray A3-3'}));assert.equal(calls,0);
+ await h(req('explain',{currentBooks:'Ray A3-3'}));
+ await h(req('explain',{currentBooks:'Ray A3-3'}));assert.equal(calls,1);
+ await h(req('explain',{currentBooks:'소마셈 P2'}));assert.equal(calls,2);
+ await h(req('explain',{currentBooks:'김하늘 010-1234-5678 '+ '가'.repeat(700)}));
+ assert.equal(seen.context.currentBooks.length,600);assert.doesNotMatch(seen.context.currentBooks,/김하늘|010-1234/u);
+});
