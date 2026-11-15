@@ -48,7 +48,7 @@ export function createHandler({service,ask,aiAvailable=false,now=()=>Date.now()}
    const sanitize=value=>{
     let text=clean(value);if(member.student_name?.length>=2)text=text.split(member.student_name).join('학생');return text;
    };
-   const context={question:sanitize(b.question).slice(0,1000),progress:sanitize(b.progress),stage:['preschool','elementary','middle','high'].includes(b.stage)?b.stage:'all'};
+   const context={question:sanitize(b.question).slice(0,1000),progress:sanitize(b.progress),region:sanitize(b.region).slice(0,120),stage:['preschool','elementary','middle','high'].includes(b.stage)?b.stage:'all'};
    if(typeof b.previous==='string'&&b.previous.trim())context.previous=sanitize(b.previous).slice(0,600);
    if(context.question.length<2)throw new HttpError(400,'question_missing');
    const rows=await approved(),sources=selectKnowledge(rows,context);
@@ -66,7 +66,7 @@ export function createHandler({service,ask,aiAvailable=false,now=()=>Date.now()}
     const work=(async()=>{
      const {data:allowed}=await checked(service.rpc('roadmap_counsel_take_daily',{p_subject:await hash(member.user_id),p_limit:40}));
      if(allowed!==true)throw new HttpError(429,'too_many_attempts');
-     const detail=clean(await ask({context,sources:approvedSources}),6000);
+     const detail=clean(await ask({context,sources:approvedSources,guidance:answer}),6000);
      if(!detail)throw new HttpError(502,'ai_empty');
      if(cache.size>=64)cache.delete(cache.keys().next().value);
      cache.set(key,{text:detail,expires:now()+300000});return detail;
