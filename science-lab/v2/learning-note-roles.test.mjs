@@ -1,3 +1,4 @@
+import{withEarthSeaWorkbookDirections}from'../data/book/earth-sea-workbook-directions.js';
 import{withSoundWorkbookDirections}from'../data/book/sound-workbook-directions.js';
 import{withSoundComparisonWorkbook}from'../data/book/c22-s32-practice-language.js';
 import{withEarthSeaLinkedWorkbook}from'../data/book/earth-sea-choice-review.js';
@@ -93,7 +94,7 @@ test('grade-three study notes preserve every question, extension concept, writin
 
 test('actual grade-three papers display the simpler notes while answer and quick views stay identical',async()=>{
  for(const [current,prior]of studyBooks){
-  const pageCurrent=withSoundWorkbookDirections(withSoundComparisonWorkbook(withMaterialReadingWorkbook(current)));
+  const pageCurrent=withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(current))))));
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior)))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});

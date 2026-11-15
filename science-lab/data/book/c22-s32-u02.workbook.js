@@ -1,3 +1,4 @@
+import{withEarthSeaWorkbookDirections}from'./earth-sea-workbook-directions.js?v=20261115-earth-sea-workbook-directions';
 import{withEarthSeaLinkedWorkbook}from'./earth-sea-choice-review.js?v=20261115-earth-sea-linked-choice-review';
 import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withEarthSeaStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
@@ -7928,4 +7929,5 @@ export const materialReadingPriorWorkbook=withEarthSeaStandaloneContext(earthSur
 
 export const earthSeaLinkedPriorWorkbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);
 
-export const workbook=withEarthSeaLinkedWorkbook(earthSeaLinkedPriorWorkbook);
+export const earthSeaDirectionsPriorWorkbook=withEarthSeaLinkedWorkbook(earthSeaLinkedPriorWorkbook);
+export const workbook=withEarthSeaWorkbookDirections(earthSeaDirectionsPriorWorkbook);
