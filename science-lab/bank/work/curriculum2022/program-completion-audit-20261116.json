@@ -1,0 +1,176 @@
+{
+  "date": "2026-11-16",
+  "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
+  "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
+  "status": "incomplete-new-diagnostic-gap-verified",
+  "checks": [
+    {
+      "requirement": "2022 curriculum placement and clear separation from2015",
+      "status": "native-proven",
+      "evidence": "32 canonical placements through curriculum-2022.js and placeOf; friendly lesson titles are separate from canonical unit titles.",
+      "actualNavigationVerified": false
+    },
+    {
+      "requirement": "Substantial student workbooks with varied response formats and right-hand learning sections",
+      "status": "native-proven",
+      "units": 32,
+      "semesters": 8,
+      "questions": 3080,
+      "studentPages": 2476,
+      "displayFormatsPerUnit": 8,
+      "allThreeRailRolesPerPage": true,
+      "limit": "Structure and generated HTML only; raw form codes alone do not identify display formats."
+    },
+    {
+      "requirement": "Elementary language, scientific correctness, and meaningful advanced notes",
+      "status": "partially-reviewed",
+      "evidence": "Unit review history through472; all pages have the three rail roles. This is not independent proof of every scientific statement."
+    },
+    {
+      "requirement": "Primary v2 lessons teach connected thinking rather than report entry",
+      "status": "partially-proven",
+      "explicitComparisonPrimaryLessons": 31,
+      "defaultPathRequiresSeparateReview": [
+        "s31-u01"
+      ],
+      "actualLessonFlowVerified": false
+    },
+    {
+      "requirement": "Student-accessible original questions and current-edition coverage",
+      "status": "incomplete",
+      "transport": "existing static files accessible without login",
+      "currentPractice": 3179,
+      "relatedOriginals": 1763,
+      "similar": 1512,
+      "sourcePending": [
+        {
+          "unit": "c22-s32-u02",
+          "title": "지구와 바다",
+          "practice": 92
+        },
+        {
+          "unit": "c22-s32-u04",
+          "title": "감염병과 건강한 생활",
+          "practice": 92
+        },
+        {
+          "unit": "c22-s62-u04",
+          "title": "과학과 나의 진로",
+          "practice": 128
+        }
+      ],
+      "pendingPractice": 312,
+      "wholeCurrentOriginalEditionsComplete": false,
+      "newOriginalsRegisteredThisAudit": 0,
+      "additionalDriveSearchWasNotExhaustive": true
+    },
+    {
+      "requirement": "Original-question misconception diagnosis",
+      "status": "incomplete",
+      "cliExitCode": 1,
+      "missingInActualRuntime": 221,
+      "units": [
+        {
+          "unit": "c22-s51-u01",
+          "missing": 11
+        },
+        {
+          "unit": "c22-s52-u01",
+          "missing": 15
+        },
+        {
+          "unit": "c22-s61-u04",
+          "missing": 36
+        },
+        {
+          "unit": "c22-s62-u01",
+          "missing": 63
+        },
+        {
+          "unit": "c22-s62-u02",
+          "missing": 44
+        },
+        {
+          "unit": "c22-s62-u03",
+          "missing": 52
+        }
+      ],
+      "evidence": "Required misc-audit.mjs errors were independently checked against actual root source pools and questionMisconceptions. No blanket exemption or invented mappings applied."
+    },
+    {
+      "requirement": "Referenced images exist and current source images are reviewed",
+      "status": "native-proven-for-stated-scope",
+      "scope": "128 workbook outputs and64 lesson slide arrays/3048 slides",
+      "currentBitmapFiles": 192,
+      "references": 1052,
+      "missing": 0,
+      "unchangedFromPriorImageReviewHashes": 184,
+      "additionalOrChangedImagesViewedThisAudit": 8,
+      "newSourceImageOcrRuns": 4,
+      "reusedMatchingCpuOcrRecords": 4,
+      "limit": "Does not prove rendered crops, print legibility, all source-exam figures, or every scientific inference."
+    },
+    {
+      "requirement": "Local fonts and font/image readiness for print",
+      "status": "native-proven-for-stated-scope",
+      "evidence": "471 local stylesheet/font audit;472 1018 Hangul in both local faces; existing font/image readiness tests",
+      "actualFontRenderingAndA4Verified": false
+    },
+    {
+      "requirement": "Saved records, old questions and grading preserved",
+      "status": "native-tested-runtime-unverified",
+      "evidence": "472 full native suite1674tests/1672pass/2browser skip and preserved source invariants; no product edits this audit."
+    },
+    {
+      "requirement": "v1 folder navigation and full experiment flow",
+      "status": "not-verified-in-actual-browser",
+      "evidence": "Existing folder source and prior checks do not replace required actual navigation with saved progress."
+    },
+    {
+      "requirement": "PC/mobile, keyboard, student/teacher answer visibility and actual A4/PDF",
+      "status": "not-verified",
+      "evidence": "Browser access remains restricted with prior permission question pending. No workaround or alternative HTML rendering used."
+    },
+    {
+      "requirement": "Audio/WebGL/3D runtime checks",
+      "status": "not-verified",
+      "planUnits": 44,
+      "runtimeChecks": 0,
+      "runtimeVerified": false,
+      "limit": "check-science-3d --plan started no browser/server and is not a successful3D runtime check."
+    },
+    {
+      "requirement": "Operational integration and deployment",
+      "status": "not-complete",
+      "draftPr": 1337,
+      "mainMerged": false,
+      "deployed": false,
+      "releaseReady": false
+    }
+  ],
+  "requiredCliChecks": {
+    "bankAudit": 0,
+    "taxonomyCheck": 0,
+    "writtenAudit": 0,
+    "misconceptionAudit": 1,
+    "threeDPlan": 0
+  },
+  "nextLocalWork": {
+    "firstUnit": "c22-s51-u01",
+    "missingOriginalDiagnostics": 11,
+    "requirements": [
+      "Read each question and each wrong option before assigning an existing misconception.",
+      "Do not change original prompts, figures or reviewed answers.",
+      "Preserve stored question versions and previous diagnostic behavior.",
+      "Keep missing mappings as failures until the actual links exist; do not exempt all originals.",
+      "Continue the remaining five units after this unit."
+    ]
+  },
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json",
+  "productFilesChanged": false,
+  "paidApiCalls": 0,
+  "cloudWrites": 0,
+  "browserStarted": false,
+  "goalAchieved": false,
+  "goalAtImpasse": false
+}
