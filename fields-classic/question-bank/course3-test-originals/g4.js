@@ -250,7 +250,22 @@ function q13() {
     + arcAt(o, x, y, 34) + small(at(o, 50, 6), "30°", 11.5, UT.red)
     + name(o, "O", -10, 3) + name(x, "X", 4, 13) + name(y, "Y", 8, -6) + name(p, "P", 10, 0) + name(q, "Q", 0, 13) + name(r, "R", -4, -12), 300);
 }
-/*NEW q14*/
+function q14() {
+  // 다리 놓기: 학교는 위 강가에서 200, 집은 아래 강가에서 400, 강 폭 300, 동서로 800 (수학 좌표, 단위 m)
+  const S = P(0, 900), H = P(800, 0), top = 700, bot = 400;
+  const { T, h } = fit([P(-160, 0), P(1000, 960)], { w: 290, maxH: 210, pad: 18 });
+  const [s, hh] = [S, H].map(T);
+  const r1 = T(P(-160, top)), r2 = T(P(1000, bot));
+  const river = `<rect x="${f(r1.x)}" y="${f(r1.y)}" width="${f(r2.x - r1.x)}" height="${f(r2.y - r1.y)}" fill="${tint.blue}"/>`
+    + seg(T(P(-160, top)), T(P(1000, top)), { stroke: UT.blue, width: 1.4 }) + seg(T(P(-160, bot)), T(P(1000, bot)), { stroke: UT.blue, width: 1.4 });
+  const dash = { dash: "4 4", width: 1.2 };
+  const sTop = T(P(0, top)), sBot = T(P(0, bot)), o = T(P(0, 0)), hBank = T(P(800, bot));
+  return svg(290, h, "강을 사이에 둔 학교와 집",
+    river + seg(s, sTop, dash) + seg(sBot, o, dash) + seg(o, hh, dash) + seg(hh, hBank, dash) + rightAt(o, sBot, hh, 7)
+    + small(P(s.x - 22, (s.y + sTop.y) / 2 + 4), "200m", 11.5) + small(P(hh.x + 24, (hh.y + hBank.y) / 2 + 4), "400m", 11.5)
+    + small(P((o.x + hh.x) / 2, o.y + 14), "800m", 11.5) + small(P(T(P(930, 0)).x, (r1.y + r2.y) / 2 + 4), "300m", 11.5)
+    + dot(s, 3) + dot(hh, 3) + small(P(s.x + 22, s.y + 4), "학교", 12) + small(P(hh.x + 2, hh.y + 17), "집", 12), 290);
+}
 function q15() {
   // ∠C = 2∠B, AC 12 — ∠B를 조금씩 바꿔 가며 이등분선이 만든 DC가 8이 되는 모양을 찾는다(길이는 그림 속에 적지 않음)
   const shape = (b) => { const C = P(0, 0), A = pol(180 - 2 * b, 12), B = meet(A, pol(180 + b, 1, A), C, P(-1, 0)), D = meet(A, lerp(B, C, len(A, B) / (len(A, B) + 12)), B, C); return { A, B, C, D }; };
@@ -264,7 +279,16 @@ function q15() {
     + along(c, a, "12㎝", 14) + along(c, d, "8㎝", -13)
     + name(a, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(d, "D", -2, 13), 290);
 }
-/*NEW q16*/
+function q16() {
+  // 직각이등변삼각형 ABC(AC = BC, ∠C = 90°), AD = AC, DE ⊥ AB, CE = 6
+  const a = 6 / (Math.SQRT2 - 1), B = P(0, 0), C = P(a, 0), A = P(a, a), D = lerp(A, B, 1 / Math.SQRT2), E = P(a - 6, 0);
+  const { T, h } = fit([A, B, C], { w: 240, maxH: 210, pad: 24 });
+  const [aa, b, c, d, e] = [A, B, C, D, E].map(T);
+  return svg(240, h, "직각이등변삼각형 ABC와 선분 AE, DE",
+    poly([aa, b, c], { fill: tint.yellow }) + poly([b, d, e], { fill: SHADE, stroke: UT.orange }) + poly([aa, b, c]) + seg(aa, e) + seg(d, e)
+    + rightAt(c, aa, b, 9) + rightAt(d, b, e, 8) + along(c, e, "6㎝", -13)
+    + name(aa, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(d, "D", -10, -6) + name(e, "E", 0, 13), 240);
+}
 function q17() {
   // 평행사변형: AD 18, DC 12, ∠A 64°. 각 A의 이등분선 위의 H에서 DE ⊥ AH
   const A = P(0, 0), D = P(18, 0), B = pol(-64, 12), C = P(B.x + 18, B.y);
@@ -287,7 +311,19 @@ function q18() {
     poly([a, b, c, d], { fill: tint.yellow }) + seg(c, e) + rightAt(e, b, c, 8) + bisectDots(c, b, d, 26)
     + name(a, "A", -6, -9) + name(d, "D", 8, -8) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(e, "E", -11, -3), 270);
 }
-/*NEW q19*/
+function q19() {
+  // △ABC에서 ∠B, ∠C의 이등분선에 A에서 내린 수선의 발 P, Q (삼각형 모양은 대강 — 길이는 글에만)
+  const B = P(0, 0), C = P(10, 0), A = P(4.4, 6.2);
+  const Bd = lerp(A, C, len(A, B) / (len(A, B) + len(B, C))), Cd = lerp(A, B, len(A, C) / (len(A, C) + len(B, C)));
+  const foot = (p, a, b) => { const dx = b.x - a.x, dy = b.y - a.y, t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy); return lerp(a, b, t); };
+  const Pp = foot(A, B, Bd), Q = foot(A, C, Cd);
+  const { T, h } = fit([A, B, C], { w: 290, maxH: 200, pad: 24 });
+  const [a, b, c, bd, cd, p, q] = [A, B, C, Bd, Cd, Pp, Q].map(T);
+  return svg(290, h, "삼각형 ABC와 두 각의 이등분선, 점 A에서 내린 수선 AP, AQ",
+    poly([a, b, c], { fill: tint.green }) + seg(b, bd) + seg(c, cd) + seg(a, p) + seg(a, q) + seg(p, q, { stroke: UT.orange, width: 1.8 })
+    + bisectDots(b, a, c, 20) + bisectDots(c, a, b, 20) + rightAt(p, a, b, 7) + rightAt(q, a, c, 7)
+    + name(a, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(p, "P", 6, 13, 12) + name(q, "Q", -6, 13, 12), 290);
+}
 
 // ── 4단원 회전변환
 function q20() {
@@ -314,7 +350,17 @@ function q21() {
     + arcAt(ff, a, d, 16, "67°", { lr: 30 }) + arcAt(d, ff, e, 20, "45°", { lr: 34 }) + arcAt(e, ff, d, 14)
     + name(a, "A", -9, -7) + name(b, "B", -10, 5) + name(c, "C", 10, 5) + name(d, "D", 9, -7) + name(e, "E", 0, 13) + name(ff, "F", -11, 0), 230);
 }
-/*NEW q22*/
+function q22() {
+  // 정사각형, E는 BC 위, F는 ∠DAE의 이등분선과 CD가 만나는 점(그림 칸에 맞춘 크기)
+  const A = P(0, 10), B = P(0, 0), C = P(10, 0), D = P(10, 10), E = P(7.5, 0);
+  const ang = (q) => Math.atan2(q.y - A.y, q.x - A.x) / R, F = meet(A, pol((ang(E) + ang(D)) / 2, 1, A), C, D);
+  const { T, h } = fit([A, B, C, D], { w: 230, maxH: 210, pad: 26 });
+  const [a, b, c, d, e, ff] = [A, B, C, D, E, F].map(T);
+  return svg(230, h, "정사각형 ABCD와 선분 AE, AF",
+    poly([a, b, c, d], { fill: tint.blue }) + seg(a, e) + seg(a, ff) + bisectDots(a, e, d, 22)
+    + along(b, e, "9㎝", -13) + along(d, ff, "6㎝", -17)
+    + name(a, "A", -9, -7) + name(b, "B", -10, 5) + name(c, "C", 10, 5) + name(d, "D", 9, -7) + name(e, "E", 0, 13) + name(ff, "F", 11, 0), 230);
+}
 function q23() {
   // 정삼각형 안의 점 P: BP 4, CP 2√3 — 한 변을 조금씩 바꿔 가며 AP가 2가 되는 크기를 찾는다
   const place = (s) => { const px = (16 - 12 + s * s) / (2 * s); return { s, Pp: P(px, Math.sqrt(Math.max(0, 16 - px * px))), A: P(s / 2, s * Math.sqrt(3) / 2) }; };
@@ -328,5 +374,58 @@ function q23() {
     + along(a, p, "2", 9) + along(b, p, "4", 11) + along(p, c, "2√3", 16)
     + name(a, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(p, "P", -10, 2), 240);
 }
-/*NEW q24*/
-/*NEW q25*/
+function q24() {
+  // AB 8, BC 7, ∠B 60°. F는 삼각형 안의 한 점(페르마포인트 자리가 아닌 아무 점)
+  const B = P(0, 0), C = P(7, 0), A = pol(60, 8), F = P(3.3, 2.1);
+  const { T, h } = fit([A, B, C], { w: 250, maxH: 210, pad: 24 });
+  const [a, b, c, ff] = [A, B, C, F].map(T);
+  const dash = { dash: "4 3", width: 1.2 };
+  return svg(250, h, "삼각형 ABC와 내부의 점 F",
+    poly([a, b, c], { fill: tint.purple }) + seg(ff, a, dash) + seg(ff, b, dash) + seg(ff, c, dash) + dot(ff, 2.4)
+    + arcAt(b, c, a, 18, "60°", { lr: 32 }) + along(b, a, "8", 12) + along(c, b, "7", 13)
+    + name(a, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(ff, "F", 9, -6, 12), 250);
+}
+function q25() {
+  // 한 변 10인 정삼각형 ABC, 변 BC 아래쪽의 점 D: ∠ADB = ∠ADC = 60°, AD 11 (D가 BC에 가까워 각 글자는 글에만 둔다)
+  const s = 10, B = P(0, 0), C = P(s, 0), A = P(s / 2, s * Math.sqrt(3) / 2), O = P(s / 2, s / (2 * Math.sqrt(3))), r = s / Math.sqrt(3);
+  let lo = -150, hi = -30;
+  for (let i = 0; i < 60; i += 1) { const m = (lo + hi) / 2; if (len(A, pol(m, r, O)) < 11) hi = m; else lo = m; }
+  const D = pol(lo, r, O);
+  const { T, h } = fit([A, B, C, D], { w: 240, maxH: 220, pad: 24 });
+  const [a, b, c, d] = [A, B, C, D].map(T);
+  return svg(240, h, "정삼각형 ABC와 점 D",
+    poly([a, b, c], { fill: tint.yellow }) + poly([b, d, c], { fill: "none" }) + seg(a, d)
+    + arcAt(d, a, b, 11) + arcAt(d, a, c, 14)
+    + along(b, a, "10㎝", 14) + along(a, d, "11㎝", 22)
+    + name(a, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(d, "D", 0, 14), 240);
+}
+
+const Q = (number, prompt, figure, answer = { label: "답" }) => ({ number, prompt, figure, answer });
+const unit = (u, label = "답") => ({ label, unit: u });
+export const questions = [
+  Q(1, "다음 그림의 직각삼각형 ABC에서 (선분 AB) = 16㎝, (선분 AC) = 20㎝, 점 M은 선분 BC의 중점입니다. 꼭짓점 A에서 선분 BC에 내린 수선의 발을 H라 하고, 점 M을 지나 선분 AH와 평행한 직선이 선분 AC와 만나는 점을 D라 할 때, △DHC의 넓이는 얼마입니까?", q1, unit("㎠")),
+  Q(2, "그림과 같이 선분 AB와 선분 DC가 평행인 사다리꼴 ABCD의 꼭짓점 B를 지나고 선분 AD와 평행인 직선과, 점 D를 지나고 선분 AC에 평행인 직선의 교점을 E라 합니다. (선분 DC) = 12㎝, (선분 AB) = 18㎝, △EDC = 30㎠일 때, △DAC의 넓이는 얼마입니까?", q2, unit("㎠")),
+  Q(3, "다음 그림의 △ABC에서 △PAB : △PAC : △PBC = 4 : 5 : 6일 때, 다음을 구하시오.", q3, [{ label: "(1) (선분 BD) : (선분 DC) =" }, { label: "(2) (선분 AP) : (선분 PD) =" }]),
+  Q(4, "다음 그림의 삼각형 ABC에서 (선분 BD) : (선분 DC) = (선분 AF) : (선분 FB) = (선분 CE) : (선분 EA) = 1 : 3일 때, (1) (선분 BQ) : (선분 QR) : (선분 RE)를 구하시오. (2) △PQR의 넓이는 △ABC의 넓이의 몇 배입니까?", q4, [{ label: "(1)" }, { label: "(2)", unit: "배" }]),
+  Q(5, "다음 △ABC에서 (선분 AF) = (선분 FC), (선분 BD) : (선분 DC) = 2 : 5, △EBD = 4㎠일 때, △ABC의 넓이를 구하시오.", q5, unit("㎠")),
+  Q(6, "다음 그림에서 점 C, E는 각각 선분 BF, 선분 AC의 중점이고, (선분 BD) = 24㎝일 때, 선분 AD의 길이를 구하시오.", q6, unit("㎝")),
+  Q(7, "평행사변형 ABCD의 넓이는 56㎠이고, (선분 AE) : (선분 ED) = 1 : 3일 때, 다음을 구하시오. (1) (선분 EF) : (선분 FC) (2) △EFD의 넓이는 얼마입니까?", q7, [{ label: "(1)" }, { label: "(2)", unit: "㎠" }]),
+  Q(8, "다음 그림은 정사각형 ABCD의 네 변을 4등분한 것입니다. 다음을 구하시오. (1) (선분 EP) : (선분 PQ) : (선분 QF) (2) △APQ : □ABCD", q8, [{ label: "(1)" }, { label: "(2)" }]),
+  Q(9, "다음 그림에서 선분 AD의 길이를 구하시오.", q9, unit("㎝")),
+  Q(10, "다음 그림에서 사각형 ABCD는 한 변의 길이가 10㎝인 정사각형입니다. △AFD의 넓이가 △EBF의 넓이보다 10㎠ 더 넓을 때, 선분 AF의 길이를 구하시오.", q10, unit("㎝")),
+  Q(11, "정사각형 ABCD에서 점 M, N은 각각 선분 BC, 선분 CD의 중점입니다. 다음 물음에 답하시오. (1) △ABC : △QCN은 얼마입니까? (2) □APND : △PBM은 얼마입니까?", q11, [{ label: "(1)" }, { label: "(2)" }]),
+  Q(12, "다음 그림에서 (선분 BE) : (선분 EC) = 4 : 3, (선분 GF) : (선분 FE) = 5 : 4일 때, 다음을 구하시오. (1) (선분 BF) : (선분 FA) (2) (선분 GA) : (선분 AC) (3) △ABC : △GEC", q12, [{ label: "(1)" }, { label: "(2)" }, { label: "(3)" }]),
+  Q(13, "그림과 같이 점 O를 교점으로 하는 30°의 각을 이루는 반직선 OX, OY가 있습니다. 두 반직선의 내부에 (선분 OP) = 8㎝인 정점 P를 정하고 반직선 OX, OY 위를 움직이는 동점 Q, R을 생각할 때, △PQR의 둘레의 최소 길이는 얼마입니까?", q13, unit("㎝")),
+  Q(14, "다음 그림과 같이 집은 강 아래쪽 강가에서 400m, 학교는 강 위쪽 강가에서 200m 떨어져 있고, 집과 학교는 동서로 800m 떨어져 있으며, 강의 폭은 300m입니다. 집에서 학교까지 가장 짧은 길로 갈 수 있게 강을 가로질러 수직으로 다리를 놓을 때, 집에서 학교까지 가는 최단 거리는 몇 m입니까? (단, 양쪽 강가는 서로 평행하고, 다리의 폭은 생각하지 않습니다.)", q14, unit("m")),
+  Q(15, "다음 그림의 △ABC에서 ∠A의 이등분선이 선분 BC와 만나는 점을 D라 합니다. ∠C = 2∠B, (선분 AC) = 12㎝, (선분 DC) = 8㎝일 때, 선분 AB의 길이를 구하시오.", q15, unit("㎝")),
+  Q(16, "다음 그림의 △ABC는 (선분 AC) = (선분 BC)인 직각이등변삼각형입니다. (선분 AC) = (선분 AD), 선분 DE ⊥ 선분 AB, (선분 CE) = 6㎝일 때, △BDE의 넓이를 구하시오.", q16, unit("㎠")),
+  Q(17, "다음 그림과 같은 평행사변형 ABCD에서 각 A의 이등분선과 선분 DE가 수직으로 만납니다. 선분 BE의 길이를 구하시오.", q17, unit("㎝")),
+  Q(18, "그림과 같은 사다리꼴 ABCD에서 선분 CE는 각 C의 이등분선이고, 선분 CE ⊥ 선분 AB, (선분 AE) : (선분 EB) = 1 : 3, △EBC = 18㎠일 때, □AECD의 넓이를 구하시오.", q18, unit("㎠")),
+  Q(19, "△ABC의 ∠B, ∠C의 이등분선에 점 A에서 내린 수선의 발을 각각 P, Q라 하고, (선분 PQ) = 5㎝, △ABC의 둘레의 길이가 42㎝라 할 때, 선분 BC의 길이는 얼마입니까?", q19, unit("㎝")),
+  Q(20, "다음 그림과 같은 직사각형 ABCD에서 점 M은 선분 AB의 중점이고, (선분 BE) = (선분 BC)입니다. ∠BEM = 24°일 때, ∠BCE의 크기를 구하시오.", q20, unit("°")),
+  Q(21, "다음 그림에서 사각형 ABCD는 정사각형입니다. 각 FED의 크기를 구하시오.", q21, unit("°")),
+  Q(22, "정사각형 ABCD에서 선분 BC 위의 한 점 E에 대하여 ∠DAE의 이등분선이 선분 CD와 만나는 점을 F라 합니다. (선분 DF) = 6㎝, (선분 BE) = 9㎝일 때, 정사각형의 한 변의 길이를 구하시오.", q22, unit("㎝")),
+  Q(23, "그림과 같이 정삼각형 ABC의 내부에 (선분 AP) = 2, (선분 BP) = 4, (선분 CP) = 2√3을 만족하는 점 P가 있습니다. 이 정삼각형의 한 변 AB의 길이는 얼마입니까?", q23),
+  Q(24, "다음 그림의 △ABC에서 내부의 점 F에 대하여 (선분 AF) + (선분 BF) + (선분 CF)의 값을 가장 작게 하는 점 F를 △ABC의 페르마포인트라고 합니다. (선분 AB) = 8, (선분 BC) = 7, ∠B = 60°일 때, (선분 AF) + (선분 BF) + (선분 CF)의 최솟값을 구하시오.", q24),
+  Q(25, "다음 그림에서 삼각형 ABC는 한 변의 길이가 10㎝인 정삼각형이고, 점 D는 변 BC를 사이에 두고 점 A의 반대쪽에 있습니다. ∠ADB = ∠ADC = 60°, (선분 AD) = 11㎝일 때, (선분 BD) + (선분 DC)의 값을 구하시오.", q25, unit("㎝")),
+];
