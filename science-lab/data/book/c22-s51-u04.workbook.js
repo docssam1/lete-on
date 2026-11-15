@@ -9242,4 +9242,6 @@ export const grade5ReviewPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPrio
 
 export const representationReviewPriorWorkbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);
 
-export const workbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const bodyContextPriorWorkbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const workbook=withBodyContextWorkbook(bodyContextPriorWorkbook);
+import{withBodyContextWorkbook}from'./body-workbook-context.js?v=20261115-body-workbook-context';
