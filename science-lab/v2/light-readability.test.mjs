@@ -5,7 +5,7 @@ import{items}from'../data/units/c22-s51-u02.js';import{similar}from'../data/unit
 import{lightReadableCurrentItems,LIGHT_READABILITY_VERSION}from'../data/book/c22-s51-u02.editorial.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s51-u02.book.js';
-import{workbook,lightReadablePriorWorkbook}from'../data/book/c22-s51-u02.workbook.js';
+import{lightContextPriorWorkbook as workbook,lightReadablePriorWorkbook}from'../data/book/c22-s51-u02.workbook.js';
 const unit='c22-s51-u02',baseline=lightCurrentItems(items);
 test('light current presentations preserve scoring, every old field and saved responses',()=>{
  const before=structuredClone(baseline),current=lightReadableCurrentItems(baseline,unit);let changed=0;

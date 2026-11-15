@@ -6685,4 +6685,6 @@ const baseWorkbook = {
 export const lightPicturePriorWorkbook=withLightStudentLanguage(withLightEditorial(baseWorkbook));
 export const lightReadablePriorWorkbook=withLightPictureGuide(lightPicturePriorWorkbook);
 export const grade5StudyNotesPriorWorkbook=withLightReadableWorkbook(lightReadablePriorWorkbook);
-export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+export const lightContextPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+export const workbook=withLightContextWorkbook(lightContextPriorWorkbook);
+import{withLightContextWorkbook}from'./light-workbook-context.js?v=20261115-light-workbook-context';

@@ -1,3 +1,4 @@
+import{withLightContextWorkbook}from'../data/book/light-workbook-context.js';
 import{withGeologyResponseWorkbook}from'../data/book/geology-response-review.js';
 import{withRepresentationReviewedWorkbook}from'../data/book/representation-question-review.js';
 import{withMaterialReadingWorkbook}from'../data/book/material-reading-criteria.js';
@@ -14,8 +15,8 @@ import {revisedTextbookPaper} from './revised-textbook.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
 const counts=[6,4,5,5,3,5,6,7],books=[];
 for(const [i,unit]of GRADE5_STUDY_NOTE_UNITS.entries()){
- const {workbook,grade5StudyNotesPriorWorkbook,geologyObservationPriorWorkbook,reviewedCriteriaPriorWorkbook,grade5ReviewPriorWorkbook}=await import(`../data/book/${unit}.workbook.js`);
- books.push([geologyObservationPriorWorkbook||reviewedCriteriaPriorWorkbook||grade5ReviewPriorWorkbook||workbook,grade5StudyNotesPriorWorkbook,counts[i]]);
+ const {workbook,lightContextPriorWorkbook,grade5StudyNotesPriorWorkbook,geologyObservationPriorWorkbook,reviewedCriteriaPriorWorkbook,grade5ReviewPriorWorkbook}=await import(`../data/book/${unit}.workbook.js`);
+ books.push([lightContextPriorWorkbook||geologyObservationPriorWorkbook||reviewedCriteriaPriorWorkbook||grade5ReviewPriorWorkbook||workbook,grade5StudyNotesPriorWorkbook,counts[i]]);
 }
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function changes(old,current,path=[]){
@@ -46,7 +47,7 @@ test('the historical note stage preserves its other HTML and all four actual vie
  for(const [current,prior,count]of books){
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(prior)))))),art),expected=makeWorkbookPaper(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(current)))))),art);
   for(const mode of ['student','teacher','answers','quick']){
-   const latest=current.unit==='c22-s51-u01'?makeWorkbookPaper(withElementaryReadingDirections(withGeologyResponseWorkbook(withMaterialReadingWorkbook(withGeologyStandaloneContext(current)))),art):expected;assert.equal(actual.workbookPaper({mode}),latest.workbookPaper({mode}));const html=expected.workbookPaper({mode});
+   const latest=current.unit==='c22-s51-u01'?makeWorkbookPaper(withElementaryReadingDirections(withGeologyResponseWorkbook(withMaterialReadingWorkbook(withGeologyStandaloneContext(current)))),art):current.unit==='c22-s51-u02'?makeWorkbookPaper(withElementaryReadingDirections(withLightContextWorkbook(current)),art):expected;assert.equal(actual.workbookPaper({mode}),latest.workbookPaper({mode}));const html=expected.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
    else{
     let changed=0;const restored=structuredClone(current);
