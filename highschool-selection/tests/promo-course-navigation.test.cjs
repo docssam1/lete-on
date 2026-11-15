@@ -7,23 +7,27 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 33 released editions remain reachable in exactly one advertised course', () => {
+test('all 34 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,33);
-  assert.equal(new Set(visible).size,33);
+  assert.equal(visible.length,34);
+  assert.equal(new Set(visible).size,34);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
 test('Dolpa keeps common1 and middle transfer papers in their own available courses', () => {
   const dp = nav.coursesFor(programs.find(p => p.code === 'DP'),mocks);
   assert.equal(dp[0].id,'common1-basic');
-  assert.equal(dp[0].exams.length,3);
-  assert.deepEqual(dp[0].exams.map(e=>e.id),['dp-common1-v14-pilot','dp-common1-r02','dp-common1-r03']);
-  assert.deepEqual(dp[0].exams.map(e=>nav.roundLabel(e)),['1회','2회','3회']);
+  assert.equal(dp[0].exams.length,4);
+  assert.deepEqual(dp[0].exams.map(e=>e.id),['dp-common1-v14-pilot','dp-common1-r02','dp-common1-r03','dp-common1-r04']);
+  assert.deepEqual(dp[0].exams.map(e=>nav.roundLabel(e)),['1회','2회','3회','4회']);
   const r03=dp[0].exams[2];
   assert.deepEqual(nav.selectionForExam(r03.id),{program:'DP',course:'common1-basic'});
   assert.match(r03.scope,/중2-1~중3-2/);
   assert.deepEqual([r03.questionCount,r03.durationMinutes,r03.pageCount,r03.answerPageCount,r03.analysisPageCount],[30,150,16,15,4]);
+  const r04=dp[0].exams[3];
+  assert.deepEqual(nav.selectionForExam(r04.id),{program:'DP',course:'common1-basic'});
+  assert.match(r04.scope,/중2-1~중3-2/);
+  assert.deepEqual([r04.questionCount,r04.durationMinutes,r04.pageCount,r04.answerPageCount,r04.analysisPageCount],[30,150,16,15,4]);
   assert.ok(dp.filter(c => !['common1-basic','middle-transfer'].includes(c.id)).every(c => c.exams.length === 0));
   assert.equal(nav.examsFor('DP','common2-basic',mocks).length,0);
   const transfer=nav.examsFor('DP','middle-transfer',mocks);
