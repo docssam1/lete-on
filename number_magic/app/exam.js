@@ -7259,6 +7259,13 @@ function proportionalSplit(weights, total){
   return base;
 }
 
+/* 중복 거르기 묶음(2026-11-15) — 고등 과정 한 주 학습지는 여러 학습 묶음(세션)을 합친 것이라,
+   세션마다 따로 거르면 같은 문제가 같은 주의 다른 날에 다시 나왔다(C59 2회 로그 문제가 세 번).
+   합친 주간 학습지(compactHigh)는 과정 전체를 한 묶음으로 거른다. 어느 유형이든 풀이 모자라면(C37 1회 MD78)
+   그 학습지 전체를 예전처럼 세션 안에서만 거르는 방식으로 처음부터 다시 만든다(renderMixedSheet·편집기 mountRounds). */
+let DEDUPE_SESSION_ONLY=false;
+function dedupeGroupKey(x){return !DEDUPE_SESSION_ONLY&&x&&x.compactHigh&&x.courseKey?'course:'+x.courseKey:(x&&x.sourceSession)||'';}
+
 /* 세션(또는 편지함 봉투)의 드릴 목록을 목표 총 문항 수로 나눠 문제를 만든다.
    items: [{thread, level, wordType?, seed, n?|count?|weight?}] — 순서 그대로
    유지(드릴A 문항이 먼저, 그다음 드릴B …). 반환 built[i] = {item, count, problems, code}
@@ -7301,7 +7308,17 @@ function pageCapacityFor(items){
    buildMixedProblemSet)은 이 경로에서 더는 쓰지 않는다 — 함수 자체는 다른
    호출부(있다면)를 위해 그대로 둔다. */
 function renderMixedSheet(items, envelopeCode, opts){
-  return withC0(items.find(it=>it.c0)?.c0,()=>withCompactHighPrint(opts.compactHigh || items.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(items,envelopeCode,opts))));
+  const run=list=>withC0(list.find(it=>it.c0)?.c0,()=>withCompactHighPrint(opts.compactHigh || list.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(list,envelopeCode,opts))));
+  if(DEDUPE_SESSION_ONLY||!items.some(it=>it.compactHigh&&it.courseKey)) return run(items);
+  /* 먼저 한 주 전체로 거르는 판을 복사본으로 만들어 본다 — 그리기가 항목에 재현 기록(덮어쓰기·건너뛰기)을 남기므로
+     실패한 판의 기록이 원본에 묻지 않게. 되면 그 기록을 원본에 옮기고, 막히면 원본으로 예전 방식 그대로 만든다. */
+  const trial=JSON.parse(JSON.stringify(items));
+  try{ const out=run(trial); trial.forEach((t,i)=>Object.assign(items[i],t)); return out; }
+  catch(e){
+    if(!(e&&e.code==='NM_UNIQUE_POOL_EXHAUSTED')) throw e;
+    DEDUPE_SESSION_ONLY=true;
+    try{ return run(items); } finally{ DEDUPE_SESSION_ONLY=false; }
+  }
 }
 function renderMixedSheetBody(items, envelopeCode, opts){
   // Freeze the old practice/teaching pool first. New pictured examples may not
@@ -7327,14 +7344,17 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       if(mg){ mg.__magic = { item:it, roundNo:rounds.length + 1 };mg.sourceSession=it.sourceSession;mg.sessionLabel=it.sessionLabel;rounds.push(mg); }
       return;
     }
-    const source=it.sourceSession||'';
+    const source=it.sourceSession||'',week=dedupeGroupKey(it);
     if(!seenGroups.has(source))seenGroups.set(source,new Set());
-    const seen=seenGroups.get(source);
+    if(!seenGroups.has(week))seenGroups.set(week,new Set());
+    const seenSession=seenGroups.get(source),seenWeek=seenGroups.get(week);
+    const seen=seenWeek;
     let candidateSeen=new Set(seen);
     const seenBefore=new Set(seen);
     let r = null, initialExhausted = null, usedItem = it;
+    const renderFirst=()=>renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true, editorialC4,suppressPictureWorked:opts.suppressPictureWorked,pictureTeachingKeys:opts.pictureTeachingKeys });
     try {
-      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true, editorialC4,suppressPictureWorked:opts.suppressPictureWorked,pictureTeachingKeys:opts.pictureTeachingKeys });
+      r = renderFirst();
     } catch(e) {
       /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
          아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
@@ -7369,8 +7389,8 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       if((!r || !r.problems.some(p => p.word)) && exhausted) throw exhausted;
     }
     if(it.optionalWord && (!r || !r.problems.some(p => p.word))){ droppedWord = true; return; }
-    candidateSeen.forEach(key=>seen.add(key));
-    r.sourceSession=it.sourceSession;r.sessionLabel=it.sessionLabel;
+    candidateSeen.forEach(key=>{seenSession.add(key);seenWeek.add(key);});
+    r.sourceSession=it.sourceSession;r.courseKey=it.courseKey;r.compactHigh=it.compactHigh;r.sessionLabel=it.sessionLabel;
     r.__redo = { item:usedItem, count:usedItem.count || perTypeCount, roundNo:rounds.length + 1, seenBefore };
     rounds.push(r);
   });
@@ -7672,6 +7692,14 @@ function rampCount(threadId, lv, count){
    않는다. 섞인 회차에는 램프(뒤쪽 난이도 상승)를 걸지 않는다 — 점검은 실력을
    재는 자리지 한 단계 올려 보는 자리가 아니고, 섞인 상태에서 '뒤 N문항'이라는
    말 자체가 성립하지 않는다. */
+/* 눈에 보이는 모양의 열쇠 — 데이터 열쇠(problemKey)는 다르지만 아이 눈에는 같은 문항을 가린다. null이면 따로 보지 않는다. */
+function visibleKey(p){
+  if(!p) return null;
+  if(p.widget==='rodNumeral') return 'rod:'+JSON.stringify(p.expr)+':'+(p.level||'');
+  if(W2_C0&&p.widget==='cubes'&&p.tex) return 'cubes:'+String(p.tex).replace(/\s+/g,'');
+  if(W2_C0&&p.widget==='g13OrdPaint'&&Array.isArray(p.rows)) return 'ord:'+p.total+':'+p.rows.map(r=>r.kind+r.n+r.from).sort().join('|');
+  return null;
+}
 function buildProblems(threadId, lv, count, seed, overrides, mix, exclude){
   const rng = NM_RNG.mulberry32(seed);
   const problems = [];
@@ -7715,6 +7743,29 @@ function buildProblems(threadId, lv, count, seed, overrides, mix, exclude){
     np.__slot=idx;
     np.__uniqueKey=problemKey(np);
     problems[idx]=np;
+  }
+  /* 보이는 모양이 같은 문항(2026-11-15) — 데이터는 달라도 종이·화면에서 똑같이 보이는 문항(막대 기호 보기 순서,
+     C0의 블록·몇째 칠하기)이 한 회차에 겹치지 않게, 아직 안 나온 모양이 있으면 그것으로 바꾼다.
+     모양 수보다 문항이 많으면(막대 기호 9개·12문항) 모든 모양이 한 번씩 나온 뒤에만 겹친다. 시드에서 정해져 다시 만들어도 같다. */
+  const visSeen=new Set();
+  for(let idx=0;idx<problems.length;idx++){
+    const v=visibleKey(problems[idx]);
+    if(!v) continue;
+    if(visSeen.has(v)){
+      const wasRamp=!!problems[idx].__ramp;
+      const src=useMix?mix[idx%mix.length]:{t:threadId,lv:wasRamp?rampLv:lv};
+      const unavailable=new Set([...problems.map(problemKey),...(exclude||[])]);
+      for(let attempt=0;attempt<96;attempt++){
+        const replacement=NM_RNG.hashSeed(seed+'#vis#'+idx+'#'+attempt).toString(36);
+        const cand=generateProblem(src.t,src.lv,NM_RNG.mulberry32(NM_RNG.hashSeed(replacement+'#'+idx)));
+        const cv=visibleKey(cand);
+        if(!cv||visSeen.has(cv)||unavailable.has(problemKey(cand))) continue;
+        if(wasRamp) cand.__ramp=true;
+        cand.__slot=idx;cand.__uniqueKey=problemKey(cand);
+        problems[idx]=cand;resolvedOverrides[idx]=replacement;break;
+      }
+    }
+    visSeen.add(visibleKey(problems[idx]));
   }
   // Commit the shared reservation only after the entire round succeeded.
   if(exclude) problems.forEach(p=>exclude.add(problemKey(p)));
@@ -9625,7 +9676,7 @@ ${answerSectionsHtml}`;
       seed: it.seed || NM_RNG.newCode(),
       topicName: it.topicName, grade: it.grade, schoolTier:it.schoolTier,
       kind:it.kind,mode:it.mode,variant:it.variant,pacing:it.pacing,noTeach:it.noTeach,
-      magicUnit:it.magicUnit,sourceSession:it.sourceSession,courseKey:it.courseKey,legacySession:it.legacySession,
+      magicUnit:it.magicUnit,sourceSession:it.sourceSession,courseKey:it.courseKey,compactHigh:it.compactHigh,legacySession:it.legacySession,
       compactHigh:it.compactHigh,skipConcept:it.skipConcept,levelOnly:it.levelOnly,levelConcept:it.levelConcept,levelTitle:it.levelTitle,
       creative:it.creative,role:it.role,threadMix:it.threadMix,subLabel:it.subLabel,sessionLabel:it.sessionLabel,
       overrides: Object.assign({}, it.overrides || {}),
@@ -9814,7 +9865,7 @@ ${answerSectionsHtml}`;
           const baseline=buildProblems(r.thread,r.level,r.__problems.length,NM_RNG.hashSeed(r.seed),null,r.threadMix);
           const unavailable=new Set([
             ...baseline.map(problemKey),
-            ...rounds.filter(x=>!r.sourceSession||x.sourceSession===r.sourceSession).flatMap(x=>x.__uniqueKeys||((x.__problems||[]).map(problemKey)))
+            ...rounds.filter(x=>!dedupeGroupKey(r)||dedupeGroupKey(x)===dedupeGroupKey(r)).flatMap(x=>x.__uniqueKeys||((x.__problems||[]).map(problemKey)))
           ]);
           const src=r.threadMix&&r.threadMix.length?r.threadMix[slotIndex%r.threadMix.length]
             :{t:r.thread,lv:baseline[slotIndex].__ramp?rampLevelFor(r.thread,r.level):r.level};
@@ -9880,10 +9931,24 @@ ${answerSectionsHtml}`;
       return mountRounds();
     }
     function mountRounds(){
+      /* 인쇄(renderMixedSheet)와 같은 규칙: 주 전체로 거르다 막히면 세션 안에서만 거르는 방식으로 다시 */
+      const failed=mountRoundsOnce();
+      if(failed&&!DEDUPE_SESSION_ONLY&&rounds.some(r=>r.compactHigh&&r.courseKey)){
+        DEDUPE_SESSION_ONLY=true;
+        try{ finishMount(mountRoundsOnce()); } finally{ DEDUPE_SESSION_ONLY=false; }
+      } else finishMount(failed);
+    }
+    function finishMount(failed){
+      const print=overlay.querySelector('#nm-pe-print'),copy=overlay.querySelector('#nm-pe-copy');
+      if(print) print.disabled=failed;
+      if(copy) copy.disabled=failed;
+      updateCodeLine();
+    }
+    function mountRoundsOnce(){
       const groups=new Map();
       let failed=false;
       rounds.forEach((r,idx)=>{
-        const key=r.sourceSession||'';if(!groups.has(key))groups.set(key,new Set());
+        const key=dedupeGroupKey(r);if(!groups.has(key))groups.set(key,new Set());
         try{ mountRoundWithExclusions(idx,groups.get(key)); }
         catch(error){
           if(error.code!=='NM_UNIQUE_POOL_EXHAUSTED') throw error;
@@ -9893,10 +9958,7 @@ ${answerSectionsHtml}`;
           roundEl.removeAttribute('data-code');bindRoundHeadControls(idx);
         }
       });
-      const print=overlay.querySelector('#nm-pe-print'),copy=overlay.querySelector('#nm-pe-copy');
-      if(print) print.disabled=failed;
-      if(copy) copy.disabled=failed;
-      updateCodeLine();
+      return failed;
     }
     function mountRoundWithExclusions(idx,seen){
       const roundEl = overlay.querySelector(`.nm-pe-round[data-round="${idx}"]`);
