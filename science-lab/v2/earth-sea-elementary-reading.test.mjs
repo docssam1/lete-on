@@ -1,3 +1,4 @@
+const beforeEarthSeaChoice=q=>{if(q?.contentVersion!=='20261115-earth-sea-choice-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 const beforeMaterialReading=q=>q?.contentVersion==='20261115-material-reading-criteria'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import{EARTH_SURFACE_PHOTO_VERSION,withEarthSeaStandaloneContext}from'../data/book/standalone-question-context.js';
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
@@ -47,7 +48,7 @@ test('Earth-and-sea reading edits preserve workbook grading, pictures and all fo
 });
 
 test('actual bank loader preserves every answer boundary and saved presentation when prompts change',async()=>{
-  const before=await priorBank(),savedBefore=structuredClone(before),{items:latest}=await actualBank(),current=latest.map(beforeMaterialReading).map(q=>q.contentVersion===EARTH_SURFACE_PHOTO_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q);
+  const before=await priorBank(),savedBefore=structuredClone(before),{items:latest}=await actualBank(),current=latest.map(beforeEarthSeaChoice).map(beforeMaterialReading).map(q=>q.contentVersion===EARTH_SURFACE_PHOTO_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q);
   assert.equal(current.length,92);let changed=0;
   for(let i=0;i<before.length;i++){
     const old=before[i],q=current[i];assert.deepEqual(withoutPresentation(q),withoutPresentation(old));assert.deepEqual(questionAtVersion(q,old.contentVersion||1).givens,old.givens);if(![LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION].includes(q.contentVersion))assert.deepEqual(q.givens,old.givens);
