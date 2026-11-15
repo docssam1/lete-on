@@ -1,3 +1,4 @@
+import{workbook as currentWorkbook}from'../data/book/c22-s62-u02.workbook.js';
 import test from 'node:test';import assert from 'node:assert/strict';
 import {items as raw} from '../data/units/c22-s62-u02.js';
 import {combustionCurrentItems} from './combustion-question-language.js';
@@ -39,6 +40,6 @@ test('classroom and print share all70 current pairs and preserve the legacy figu
  const mod=await revisedClassroom('c22-s62-u02',book),pool=classroomQuestions(mod,raw);assert.equal(mod.classroomItems.filter(isReadableCombustionPair).length,70);
  for(const q of pairs){const lesson=mod.classroomItems.find(x=>x.id===q.id),printed=currentCombustionBankBook.questions.find(x=>x.id===q.id);for(const key of ['prompt','choices','explanation','responseContract','answerContract']){assert.deepEqual(lesson[key],q[key]);assert.deepEqual(printed[key]??null,q[key]??null);}assert.equal(pool.find(x=>x.id===q.id),lesson);assert.notEqual(printed.explanation,combustionBankBook.questions.find(x=>x.id===q.id).explanation);}
  assert.deepEqual(currentCombustionBankBook.figureModels,combustionBankBook.figureModels);
- for(const key of Object.keys(combustionBankBook.figures).filter(k=>!k.includes('-quick-')))assert.equal(currentCombustionBankBook.figures[key],combustionBankBook.figures[key]);
+ for(const key of Object.keys(combustionBankBook.figures).filter(k=>!k.includes('-quick-')))assert.equal(currentCombustionBankBook.figures[key],currentWorkbook.figures[key]??combustionBankBook.figures[key]);
  const teacher=bankPaper({mode:'teacher'});for(const q of pairs)assert(teacher.includes(q.explanation));const student=bankPaper({mode:'student'});assert(!/class="ed-key"|class="ed-solution"/.test(student));
 });
