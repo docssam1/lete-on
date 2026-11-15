@@ -1,3 +1,4 @@
+import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import{linkedWorkbookAnswers}from'../data/book/linked-workbook-answers.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
@@ -33,7 +34,7 @@ test('heat readability guards original, similar, review, future and other unit q
  assert.equal(heatReadableCurrentItems(baseline,'other'),baseline);assert.equal(heatReadableCurrentItems(null,unit),null);
 });
 test('heat bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=linkedWorkbookAnswers(heatReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=reviewedQuestionCriteria(linkedWorkbookAnswers(heatReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,HEAT_READABILITY_VERSION)){assert.equal(repeated,q);changed++;}}
  assert.equal(changed,6);assert.equal(first.classroomItems.length,16);
 });

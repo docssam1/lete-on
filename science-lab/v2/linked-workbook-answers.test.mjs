@@ -22,7 +22,7 @@ test('four actual bank loaders align fourteen reviewed workbook samples while pr
  let changed=0,oldVersions=0;
  for(const unit of units){
   const mod=loaded.get(unit),judge=await loadJudge(unit),{workbook}=await import('../data/book/'+unit+'.workbook.js');
-  const current=mod.items.filter(q=>q.contentVersion===version);
+  const current=mod.items.map(q=>questionAtVersion(q,version)).filter(Boolean);
   assert.deepEqual(current.map(q=>q.workbookRef.no),expected[unit]);
   for(const q of current){
    changed++;
@@ -48,7 +48,7 @@ test('four actual bank loaders align fourteen reviewed workbook samples while pr
 
 test('alignment is limited to the exact reviewed authored question, source link, sample and version',()=>{
  for(const unit of units){
-  const q=loaded.get(unit).items.find(q=>q.contentVersion===version),old=questionAtVersion(q,previousVersion(unit)),before=structuredClone(old);
+  const q=loaded.get(unit).items.find(q=>questionAtVersion(q,version)),old=questionAtVersion(q,previousVersion(unit)),before=structuredClone(old);
   const once=linkedWorkbookAnswers([old],unit);assert.equal(once[0].contentVersion,version);assert.equal(linkedWorkbookAnswers(once,unit),once);assert.equal(linkedWorkbookAnswers([old],unit)[0],once[0]);
   for(const patch of[{id:'other'},{contentVersion:'future'},{status:'review'},{sourceRef:{type:'original'}},{sourceRef:{type:'similar'}},{sourceContent:{}},{prompt:'other'},{workbookRef:{...old.workbookRef,id:'other'}},{workbookRef:{...old.workbookRef,unit:'other'}},{workbookRef:{...old.workbookRef,no:999}},{responseContract:'short-text'},{answerContract:{...old.answerContract,sample:'already edited'}}]){
    const rows=[{...old,...patch}];assert.equal(linkedWorkbookAnswers(rows,unit),rows);
@@ -63,7 +63,7 @@ test('classroom, Daily and real bank print output use the current examples witho
  let selected=0;
  for(const unit of units){
   const mod=loaded.get(unit),raw=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,raw),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]);
-  for(const q of mod.items.filter(q=>q.contentVersion===version)){
+  for(const q of mod.items.filter(q=>questionAtVersion(q,version))){
    const old=questionAtVersion(q,previousVersion(unit));
    for(const rows of[classroom.classroomItems,pool]){const found=rows.find(x=>x.id===q.id);if(found){assert.deepEqual(found,q);selected++;}}
    const student=mod.bankPaper({...mod,items:[q],similar:[],source:[],mode:'student'}),teacher=mod.bankPaper({...mod,items:[q],similar:[],source:[],mode:'teacher'});
@@ -74,6 +74,6 @@ test('classroom, Daily and real bank print output use the current examples witho
  }
  assert(selected>14);
  const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8'),lesson=fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8');
- assert(index.includes('&book='+version));assert(code.includes('revised-lesson.js?v='+version));assert(lesson.includes('linked-workbook-answers.js?v='+version));
+ const currentVersion=code.match(/revised-lesson\.js\?v=([^'"]+)/)[1];assert(index.includes('&book='+currentVersion));assert(code.includes('revised-lesson.js?v='+currentVersion));assert(lesson.includes('linked-workbook-answers.js?v='+version));
  for(const unit of units){const line=code.split('\n').find(l=>l.startsWith(" '"+unit+"':"));assert(line.includes('linked-workbook-answers.js?v='+version));}
 });

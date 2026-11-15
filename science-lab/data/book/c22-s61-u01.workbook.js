@@ -1,3 +1,4 @@
+import{withReviewedWorkbookCriteria}from'./reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
 import{withAcidFurtherReading}from'./c22-s61-u01.editorial.js?v=20261108-acid-further-reading';
@@ -11423,4 +11424,5 @@ export const acidReadablePriorWorkbook=withTermParticleLanguage(termParticlePrio
 export const grade6StudyNotesPriorWorkbook=withAcidReadableWorkbook(acidReadablePriorWorkbook);
 export const furtherReadingPriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
 export const materialObservationPriorWorkbook=withAcidFurtherReading(furtherReadingPriorWorkbook);
-export const workbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);
+export const reviewedCriteriaPriorWorkbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);
+export const workbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);

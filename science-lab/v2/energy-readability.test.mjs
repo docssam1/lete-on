@@ -1,3 +1,4 @@
+import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items}from'../data/units/c22-s52-u04.js';import{similar}from'../data/units/c22-s52-u04.similar.js';import{observationCurrentItems}from'../data/book/observation-language.js';
@@ -34,8 +35,8 @@ test('energy readability guards original, similar, review, future and other unit
  assert.equal(energyReadableCurrentItems(baseline,'other'),baseline);assert.equal(energyReadableCurrentItems(null,unit),null);
 });
 test('energy bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=energyReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===ENERGY_READABILITY_VERSION)changed++;}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=reviewedQuestionCriteria(energyReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,ENERGY_READABILITY_VERSION))changed++;}
  assert.equal(changed,7);assert.equal(first.classroomItems.length,16);
 });
 test('energy aligns sixteen contexts, both changed short answers and the actual quick key',()=>{

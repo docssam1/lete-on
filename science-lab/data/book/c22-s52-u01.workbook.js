@@ -1,3 +1,4 @@
+import{withReviewedWorkbookCriteria}from'./reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withMixtureReadableWorkbook}from'./c22-s52-u01.editorial.js?v=20261106-mixture-readable-workbook';
 import{withObservationLanguage}from'./observation-language.js';
@@ -8727,4 +8728,5 @@ const baseWorkbook = {
 export const observationPriorWorkbook=withMixtureEditorial(baseWorkbook);
 export const mixtureReadablePriorWorkbook=withObservationLanguage(observationPriorWorkbook);
 export const grade5StudyNotesPriorWorkbook=withMixtureReadableWorkbook(mixtureReadablePriorWorkbook);
-export const workbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+export const reviewedCriteriaPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
+export const workbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
