@@ -53,7 +53,7 @@ test('all eleven bank revisions retain grading, effective diagnostics and every 
   const raw=await import(`../data/units/${unit}.js`),misc=await import(`../data/units/${unit}.misc.js`),prior=pipelines[unit](raw.items),saved=structuredClone(prior),current=elementaryPromptCurrentItems(prior,unit);
   for(let i=0;i<prior.length;i++){
    const q=current[i],old=prior[i];if(q===old)continue;changed++;
-   assert.equal(q.contentVersion,ELEMENTARY_PROMPT_VERSION);
+   assert.equal(questionAtVersion(q,ELEMENTARY_PROMPT_VERSION).contentVersion,ELEMENTARY_PROMPT_VERSION);
    for(const key of Object.keys(old).filter(k=>!versioned.has(k)))assert.deepEqual(q[key],old[key],q.id+' '+key);
    if(old.diagnosticOverride?.version===old.contentVersion)assert.deepEqual({...q.diagnosticOverride,version:old.diagnosticOverride.version},old.diagnosticOverride);
    else assert.equal(q.diagnosticOverride,old.diagnosticOverride);
@@ -83,7 +83,7 @@ test('actual unit loaders, classrooms, web workbooks and both paper sets share t
   const data=await loaders[unit](),book=await import(`../data/book/${unit}.book.js`),classroom=await revisedClassroom(unit,book),web=await revisedTextbook(unit,book),paper=await revisedTextbookPaper(unit);
   for(const [no,edit]of Object.entries(ELEMENTARY_PROMPT_EDITS[unit])){
    const q=data.items.find(q=>q.bookQuestionId===`${unit}-w${no.padStart(3,'0')}`);changed++;assert(q);
-   assert.equal(q.prompt,edit.prompt);assert.equal(q.contentVersion,ELEMENTARY_PROMPT_VERSION);assert.deepEqual(classroom.classroomItems.find(it=>it.id===q.id),q);
+   assert.equal(q.prompt,edit.prompt);assert.equal(questionAtVersion(q,ELEMENTARY_PROMPT_VERSION).contentVersion,ELEMENTARY_PROMPT_VERSION);assert.deepEqual(classroom.classroomItems.find(it=>it.id===q.id),q);
    assert.equal(web.workbook.questions.find(it=>it.id===q.bookQuestionId).prompt,q.prompt);
    for(const mode of ['student','teacher']){assert(paper.workbookPaper({mode}).includes(esc(edit.prompt)));assert(data.bankPaper({mode}).includes(esc(edit.prompt)));}
   }
@@ -113,7 +113,7 @@ test('bank paper modules bypass cached former workbook URLs and load the revised
    const target=new URL(spec,url);if(cache.has(target.href))return cache.get(target.href);
    let ns=await import(target.href);
    if(target.pathname.endsWith(`/${unit}.workbook.js`)){
-    if(target.search.includes(unit==='c22-s62-u02'?'20261115-grade6-question-review':'20261115-representation-response-review'))freshReads++;
+    if(target.search.includes(unit==='c22-s62-u01'?'20261116-season-workbook-context':unit==='c22-s62-u02'?'20261115-grade6-question-review':'20261115-representation-response-review'))freshReads++;
     else {staleReads++;ns={...ns,workbook:ns.elementaryPromptPriorWorkbook};}
    }
    const mod=new vm.SyntheticModule(Object.keys(ns),function(){for(const [key,value]of Object.entries(ns))this.setExport(key,value);},{context});cache.set(target.href,mod);await mod.link(()=>{});return mod;

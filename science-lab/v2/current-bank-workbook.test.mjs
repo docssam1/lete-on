@@ -1,3 +1,4 @@
+import{withSeasonContextBankWorkbook}from'../data/book/season-workbook-context.js';
 import {EARTH_MOTION_PAIR_LANGUAGE_VERSION} from './earth-motion-pair-language.js';
 import {SEASON_PAIR_LANGUAGE_VERSION} from './season-pair-language.js';
 import test from 'node:test';
@@ -21,7 +22,7 @@ test('five print books use640 current workbook questions, retain237 pair IDs and
  for(const c of cases){
   const before=clone(c.prior),itemsBefore=clone(c.items),bookBefore=clone(c.workbook),byItem=new Map(c.items.map(q=>[q.id,q]));
   assert.equal(c.current.presentationVersion,CURRENT_BANK_WORKBOOK_VERSION);assert.equal(c.current.questions.length,c.count);
-  for(const key of ['pages','teacherStudentPages','teacherPages','quickPages','title','unit'])assert.deepEqual(c.current[key],c.prior[key]);
+  const expectedPages=withSeasonContextBankWorkbook(c.prior);for(const key of ['pages','teacherStudentPages','teacherPages','quickPages','title','unit'])assert.deepEqual(c.current[key],expectedPages[key]);assert.equal(withSeasonContextBankWorkbook(c.current),c.current);
   for(let i=0;i<c.prior.questions.length;i++){
    const old=c.prior.questions[i],q=c.current.questions[i],item=byItem.get(old.sourceItemId),w=c.workbook.questions.find(w=>w.id===old.sourceBookQuestionId);
    assert.equal(q.id,old.id);assert.equal(q.no,old.no);assert.equal(q.sourceItemId,old.sourceItemId);assert.equal(q.sourceBookQuestionId,old.sourceBookQuestionId);assert.deepEqual(q.sourceRef,old.sourceRef);
@@ -40,7 +41,7 @@ test('five print books use640 current workbook questions, retain237 pair IDs and
    assert.equal(q.contentVersion,item.contentVersion||1);assert.deepEqual(q.answerContract,item.answerContract);assert.deepEqual(q.responseContract,item.responseContract);
    if(w.figure)assert.equal(c.current.figures[w.figure],c.workbook.figures[w.figure]);
   }
-  assert.deepEqual(currentBankWorkbook(c.prior,c.workbook,c.items),c.current);assert.deepEqual(c.prior,before);assert.deepEqual(c.items,itemsBefore);assert.deepEqual(c.workbook,bookBefore);
+  assert.deepEqual(withSeasonContextBankWorkbook(currentBankWorkbook(c.prior,c.workbook,c.items)),c.current);assert.deepEqual(c.prior,before);assert.deepEqual(c.items,itemsBefore);assert.deepEqual(c.workbook,bookBefore);
  }
  assert.equal(matched,640);assert.equal(paired,237);assert.equal(revisedPairs,237);
 });

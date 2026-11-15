@@ -1,3 +1,5 @@
+import{seasonContextItems}from'../data/book/season-workbook-context.js';
+const beforeSeasonContext=q=>{if(q?.contentVersion!=='20261116-season-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -14,7 +16,7 @@ import {renderChapter} from './book.js';
 
 const unit='c22-s62-u01',url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a);
 const loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
-const mod=await loaders[unit](),changed=mod.items.filter(q=>q.contentVersion===version),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mod=await loaders[unit](),changed=mod.items.map(beforeSeasonContext).filter(q=>q.contentVersion===version),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const values=q=>q.choices?q.choices.map((_,i)=>i):q.answerContract.type==='short-text'?['','같게 / 날짜','날짜 / 같게','같게 / 시각','다른 답']:['',q.answerContract.sample,'그림과 설명'];
 
 test('season comparison revisions preserve automatic decisions, diagnostics and every saved presentation',()=>{

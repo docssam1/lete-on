@@ -1,3 +1,4 @@
+import{withSeasonContextWorkbook}from'./season-workbook-context.js?v=20261116-season-workbook-context';
 import{withRepresentationReviewedWorkbook}from'./representation-question-review.js?v=20261115-representation-response-review';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withSeasonComparisonWorkbook}from'./c22-s62-u01.editorial.js?v=20261115-season-comparison-conditions';
@@ -25485,4 +25486,5 @@ export const grade6ReviewPriorWorkbook=withSeasonComparisonWorkbook(seasonCompar
 
 export const representationReviewPriorWorkbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
 
-export const workbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const seasonContextPriorWorkbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
+export const workbook=withSeasonContextWorkbook(seasonContextPriorWorkbook);
