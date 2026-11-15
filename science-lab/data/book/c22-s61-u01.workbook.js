@@ -1,3 +1,4 @@
+import{withAcidContextWorkbook}from'./acid-workbook-context.js?v=20261116-acid-workbook-context';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withReviewedWorkbookCriteria}from'./reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
@@ -11428,4 +11429,5 @@ export const materialObservationPriorWorkbook=withAcidFurtherReading(furtherRead
 export const reviewedCriteriaPriorWorkbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);
 export const grade6ReviewPriorWorkbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
 
-export const workbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+export const acidContextPriorWorkbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
+export const workbook=withAcidContextWorkbook(acidContextPriorWorkbook);

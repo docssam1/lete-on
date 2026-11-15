@@ -14,7 +14,7 @@ import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),start=code.indexOf('const UNITS = ')+14,end=code.indexOf('\n// 문제은행만',start),expression='('+code.slice(start,end).trim().replace(/;$/,'')+')';
 const loaders=new vm.Script(expression,{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
-const beforeGrade5=q=>['20261116-mixture-workbook-context','20261116-weather-workbook-context','20261116-heat-workbook-context','20261116-energy-workbook-context'].includes(q.contentVersion)?(questionAtVersion(q,version)||q):q.contentVersion==='20261115-grade5-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
+const beforeGrade5=q=>['20261116-mixture-workbook-context','20261116-weather-workbook-context','20261116-heat-workbook-context','20261116-energy-workbook-context','20261116-acid-workbook-context'].includes(q.contentVersion)?(questionAtVersion(q,version)||q):q.contentVersion==='20261115-grade5-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 const mods=new Map(await Promise.all(units.map(async unit=>[unit,await loaders[unit]()] )));
 const previous=q=>questionAtVersion(q,q.previousVersions.at(-1).version);
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -22,7 +22,7 @@ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 test('130 current criteria and twelve choice phrasings preserve keys, teacher review, every saved version and source material',async()=>{
  let criteria=0,choices=0;
  for(const unit of units){
-  const mod=mods.get(unit),judge=await loadJudge(unit),{grade5ReviewPriorWorkbook:priorGrade5,workbook:liveWorkbook}=await import('../data/book/'+unit+'.workbook.js'),workbook=priorGrade5||liveWorkbook;
+  const mod=mods.get(unit),judge=await loadJudge(unit),{grade6ReviewPriorWorkbook:priorGrade6,grade5ReviewPriorWorkbook:priorGrade5,workbook:liveWorkbook}=await import('../data/book/'+unit+'.workbook.js'),workbook=priorGrade6||priorGrade5||liveWorkbook;
   for(const q of mod.items.map(beforeGrade5).filter(q=>q.contentVersion===version)){
    const old=previous(q),w=workbook.questions.find(w=>w.id===q.workbookRef.id);assert(old);assert.equal(q.prompt,w.prompt);
    const isChoice=q.answerContract.type==='single-choice';
