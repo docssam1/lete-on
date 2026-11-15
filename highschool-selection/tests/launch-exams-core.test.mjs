@@ -1,6 +1,14 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {evaluateResponse,makeReport,publicQuestions,publicExam,documentPages,validGrant,fixedEqual,applyReview,makeSelfReport} from '../../supabase/functions/highselect-exams/core.mjs';
+import {evaluateResponse,makeReport,publicQuestions,publicExam,documentPages,documentAssetFunction,validGrant,fixedEqual,applyReview,makeSelfReport} from '../../supabase/functions/highselect-exams/core.mjs';
 const q=(spec,number=1)=>({number,responseType:spec.type||'input',classification:{domain:'기하',majorUnit:'도형',detailType:'길이'},spec});
+test('large protected documents can route pages across bundles while existing editions keep their routes',()=>{
+ const e={assetFunctions:{paper:'paper-bundle',answers:['answers-a','answers-a','answers-b'],analysis:'analysis-bundle'}};
+ assert.equal(documentAssetFunction(e,'paper',3),'paper-bundle');
+ assert.equal(documentAssetFunction(e,'answers',0),'answers-a');assert.equal(documentAssetFunction(e,'answers',2),'answers-b');
+ assert.equal(documentAssetFunction(e,'analysis',0),'analysis-bundle');
+ assert.equal(documentAssetFunction({assetFunction:'legacy-bundle'},'paper',0),'legacy-bundle');
+ assert.equal(documentAssetFunction({},'paper',0),'highselect-exams');
+});
 test('fractions, decimals, radicals, units and ratios accept equivalent notation without evaluating code',()=>{
  assert.equal(evaluateResponse('0.5',q({type:'input',mode:'fraction-equivalent',answers:['1/2']})),'correct');
  assert.equal(evaluateResponse('sqrt(12)/2',q({type:'input',mode:'quadratic-surd-equivalent',answers:['sqrt(3)']})),'correct');

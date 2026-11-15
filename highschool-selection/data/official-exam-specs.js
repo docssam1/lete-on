@@ -35,6 +35,24 @@
         sourceUrl: "https://blog.naver.com/wonmath563/224393421982",
         note: "대치 · 2026년 10월 개강 기준 · 휴식 20분 별도"
       },
+      "WM:middle22-basic": {
+        branch: "대치", cohort: "2026년 9월 중2-2 기본반 편입",
+        scope: "중2-1 대수 기본형 / 중1-2 기하 심화형 · 통계 제외",
+        durationMinutes: 140, questionCount: 50,
+        sectionCounts: { ALG: 25, GEO: 25 }, sectionMinutes: { ALG: 70, GEO: 70 }, breakMinutes: 10,
+        durationState: "official", checkedAt: "2026-11-15",
+        sourceUrl: "https://blog.naver.com/wonmath563/224364373777",
+        note: "대치 · 2026년 9월 편입전형 기준 · 휴식 10분 별도"
+      },
+      "WM:middle31-basic": {
+        branch: "대치", cohort: "2026년 10월 중3-1 기본반 편입",
+        scope: "중2-1 대수 심화형 / 중2-2 기하 심화형 · 확률 포함",
+        durationMinutes: 140, questionCount: 50,
+        sectionCounts: { ALG: 25, GEO: 25 }, sectionMinutes: { ALG: 70, GEO: 70 }, breakMinutes: 20,
+        durationState: "official", checkedAt: "2026-11-15", scopeRevisedAt: "2026-09-03",
+        sourceUrl: "https://blog.naver.com/wonmath563/224397883830",
+        note: "대치 · 2026년 10월 편입전형의 수정 범위 · 휴식 20분 별도"
+      },
       "WM:common1-basic": {
         branch: "대치", cohort: "2026년 12월 개강",
         scope: "중2-1·중3-1 대수 / 중2-2·중3-2 기하 · 확률 포함",
