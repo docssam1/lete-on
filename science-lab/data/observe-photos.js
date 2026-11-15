@@ -100,6 +100,6 @@ export const PHOTO_SERIES = {
   ],
   'worm': [
     { n: 1, cap: '젖은 흙 위 지렁이' },
-    { n: 2, cap: '박물관 표본 — 4 cm 눈금' },
+    { n: 2, cap: '박물관 표본 — 몸의 고리 마디' },
   ],
 };
