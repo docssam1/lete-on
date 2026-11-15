@@ -32,9 +32,14 @@ const card = (exam) => {
     <span class="en-acts">${paper ? `<a class="ms-btn" href="${esc(paper)}">시험지 인쇄</a>` : ""}<a class="ms-btn primary" href="${esc(diagnose)}">O/X 채점·진단</a><a class="ms-btn" href="${esc(remediationUrl(typeIdsOf(exam), student))}">유사문제 풀기</a></span></li>`;
 };
 
-$("groups").insertAdjacentHTML("beforeend", `
+// ?only=k | g1 — 모의고사 서재의 「초1 입학 모의고사」·「초2 입학 모의고사」 카드에서 들어올 때 그 묶음만(원장 2026-11-15)
+const ONLY = { k: GROUPS[0], g1: GROUPS[1] }[params.get("only")];
+const shown = ONLY ? [ONLY] : GROUPS;
+if (ONLY) { const name = `${ONLY.title.replace(" 대비", "")} 모의고사`; document.title = name; const h = document.querySelector(".ms-title strong"); if (h) h.textContent = name;
+  const back = $("backHome"); back.href = "../program/"; back.innerHTML = `<span aria-hidden="true">←</span> 모의고사 서재`; }
+$("groups").insertAdjacentHTML("beforeend", `${ONLY ? "" : `
   <section class="en-group en-online"><h2>선발 대비 모의고사 <small>온라인으로 풀고 바로 채점</small></h2>
-    <a class="ms-btn primary" href="../mock/index.html">모의고사 풀러 가기 ›</a></section>
-  ${GROUPS.filter((g) => g.exams.length).map((g) => `<section class="en-group"><h2>${esc(g.title)} <small>${esc(g.sub)} · ${g.exams.length}회</small></h2>
+    <a class="ms-btn primary" href="../mock/index.html">모의고사 풀러 가기 ›</a></section>`}
+  ${shown.filter((g) => g.exams.length).map((g) => `<section class="en-group"><h2>${esc(g.title)} <small>${esc(g.sub)} · ${g.exams.length}회</small></h2>
     <ul class="en-list">${g.exams.map(card).join("")}</ul></section>`).join("")}`);
-if (params.get("student")) $("backHome").href = `./home.html?${new URLSearchParams({ student: params.get("student") })}`;
+if (params.get("student") && !ONLY) $("backHome").href = `./home.html?${new URLSearchParams({ student: params.get("student") })}`;

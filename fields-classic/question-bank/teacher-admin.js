@@ -36,9 +36,12 @@ const PRODUCTS = [
   { id: "진단약점클리닉", name: "진단 + 약점 클리닉", manualOnly: true, grants: ["진단모의고사"] }, { id: "킬러문항", name: "킬러문항" },
   ...[1, 2, 3, 4, 5, 6].map((n) => ({ id: `실전모의고사${n}회`, name: `실전 ${n}회` })),
   ...[1, 2, 3].map((n) => ({ id: `파이널모의고사${n}회`, name: `파이널 ${n}회` })),
-  { id: "마무리점검", name: "마무리 점검" }, { id: "강사용교안", name: "강사용 교안", manualOnly: true },
+  { id: "마무리점검", name: "마무리 점검" },
+  // 입학 모의고사(원장 2026-11-15 「초1 모의고사를 등록 안되어 있는데 초2하고」) — 필즈 대비 묶음과 따로 파는 것이라 「모든 회차 열기」·온라인 추가에 넣지 않고 한 명씩 켠다
+  { id: "초1입학모의고사", name: "초1 입학 모의고사", manualOnly: true }, { id: "초2입학모의고사", name: "초2 입학 모의고사", manualOnly: true },
+  { id: "강사용교안", name: "강사용 교안", manualOnly: true, other: true }, { id: "레이키즈", name: "레이키즈 학습", manualOnly: true, other: true },
 ];
-const MOCK_IDS = PRODUCTS.filter((p) => p.id !== "강사용교안").map((p) => p.id);
+const MOCK_IDS = PRODUCTS.filter((p) => !p.other).map((p) => p.id);
 
 let accounts = [];
 let onChange = () => {};
@@ -295,11 +298,11 @@ function renderMockDetail() {
   box.innerHTML = `<header class="ad-who"><div><h3>${esc(a.name)}</h3><small>${a.type === "online" ? "온라인" : "재원생"} · ${esc(ago(a.lastSeen))}</small></div><span class="ms-status ${a.active ? "is-approved" : "is-paused"}">${a.active ? "사용 중" : "사용 중지"}</span></header>
     ${mockView.code?.name === a.name ? codeBox(mockView.code.code) : ""}
     <section class="ad-block"><h4>모의고사 회차 <small>누르면 바로 저장</small></h4>
-      <div class="ad-products" role="group" aria-label="회차">${PRODUCTS.filter((p) => p.id !== "강사용교안").map((p) => `<button type="button" data-product="${esc(p.id)}" aria-pressed="${on.has(p.id)}"${a.active ? "" : " disabled"}>${esc(p.name)}</button>`).join("")}</div>
+      <div class="ad-products" role="group" aria-label="회차">${PRODUCTS.filter((p) => !p.other).map((p) => `<button type="button" data-product="${esc(p.id)}" aria-pressed="${on.has(p.id)}"${a.active ? "" : " disabled"}>${esc(p.name)}</button>`).join("")}</div>
       <div class="ad-mini"><button type="button" data-all="on"${a.active ? "" : " disabled"}>모든 회차 열기</button><button type="button" data-all="off"${a.active ? "" : " disabled"}>모든 회차 닫기</button></div>
     </section>
     <section class="ad-block"><h4>그 밖의 권한</h4>
-      <div class="ad-products"><button type="button" data-product="강사용교안" aria-pressed="${on.has("강사용교안")}"${a.active ? "" : " disabled"}>강사용 교안</button></div>
+      <div class="ad-products">${PRODUCTS.filter((p) => p.other).map((p) => `<button type="button" data-product="${esc(p.id)}" aria-pressed="${on.has(p.id)}"${a.active ? "" : " disabled"}>${esc(p.name)}</button>`).join("")}</div>
       <p class="ad-help">스스로 공부(GM 과정)는 「GM 회원」 탭에서 열어요 — 지금 <b>${esc(gmState(a).text)}</b>.</p>
     </section>
     <section class="ad-block"><h4>승인번호</h4>
