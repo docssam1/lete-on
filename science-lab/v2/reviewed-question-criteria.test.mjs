@@ -14,7 +14,7 @@ import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),start=code.indexOf('const UNITS = ')+14,end=code.indexOf('\n// 문제은행만',start),expression='('+code.slice(start,end).trim().replace(/;$/,'')+')';
 const loaders=new vm.Script(expression,{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
-const beforeGrade5=q=>q.contentVersion==='20261116-mixture-workbook-context'?(questionAtVersion(q,version)||q):q.contentVersion==='20261115-grade5-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
+const beforeGrade5=q=>['20261116-mixture-workbook-context','20261116-weather-workbook-context'].includes(q.contentVersion)?(questionAtVersion(q,version)||q):q.contentVersion==='20261115-grade5-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 const mods=new Map(await Promise.all(units.map(async unit=>[unit,await loaders[unit]()] )));
 const previous=q=>questionAtVersion(q,q.previousVersions.at(-1).version);
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

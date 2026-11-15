@@ -11062,4 +11062,6 @@ export const grade5StudyNotesPriorWorkbook=withWeatherReadableWorkbook(weatherRe
 export const reviewedCriteriaPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
 export const grade5ReviewPriorWorkbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
 
-export const workbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);
+export const weatherContextPriorWorkbook=withGrade5ReviewedWorkbook(grade5ReviewPriorWorkbook);
+export const workbook=withWeatherContextWorkbook(weatherContextPriorWorkbook);
+import{withWeatherContextWorkbook}from'./weather-workbook-context.js?v=20261116-weather-workbook-context';
