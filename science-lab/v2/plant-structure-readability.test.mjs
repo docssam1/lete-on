@@ -1,7 +1,9 @@
+import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
+const beforeGrade6Review=q=>q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import test from 'node:test';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {items} from '../data/units/c22-s61-u03.js';import {source} from '../data/units/c22-s61-u03.source.js';import {similar} from '../data/units/c22-s61-u03.similar.js';import * as misc from '../data/units/c22-s61-u03.misc.js';
 import {plantStructureCurrentItems} from './plant-structure-question-language.js';
-import {plantStructureReadableCurrentItems,PLANT_STRUCTURE_READABILITY_VERSION} from '../data/book/c22-s61-u03.editorial.js';import {workbook,plantStructureReadablePriorWorkbook} from '../data/book/c22-s61-u03.workbook.js';
+import {plantStructureReadableCurrentItems,PLANT_STRUCTURE_READABILITY_VERSION} from '../data/book/c22-s61-u03.editorial.js';import {grade6ReviewPriorWorkbook as workbook,plantStructureReadablePriorWorkbook} from '../data/book/c22-s61-u03.workbook.js';
 import {gradeDaily} from './daily-grade.js';import {questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts} from './question-revision.js';
 import {revisedClassroom,classroomQuestions} from './revised-lesson.js';import * as book from '../data/book/c22-s61-u03.book.js';
 const unit='c22-s61-u03',prior=plantStructureCurrentItems(items),current=plantStructureReadableCurrentItems(prior,unit);
@@ -37,6 +39,6 @@ test('current sample wording changes no grading rules and quick keys match all f
  const core=JSON.stringify({pages:workbook.pages.map(p=>p.blocks),questions:workbook.questions.map(q=>({prompt:q.prompt,explanation:q.explanation}))});assert(!/호흡|물관|체관|삼투|엽록체/.test(core));for(const q of current){const c=q.answerContract.plantAuthoredContract,w=workbook.questions.find(w=>w.id===q.bookQuestionId),value=c.kind==='single-choice'?c.answer:c.kind==='multi-choice'?c.answers:c.kind==='ordered-label-parts'?c.answers:c.kind==='ordered-label-sequence'?c.sequence:w.answer;assert.equal(gradeDaily(q,value).status,c.teacherRequired?'review':'correct');}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,current);assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===PLANT_STRUCTURE_READABILITY_VERSION).length,10);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,grade6QuestionReview(current,unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>beforeGrade6Review(mod.classroomItems.find(q=>q.id===id)).contentVersion===PLANT_STRUCTURE_READABILITY_VERSION).length,10);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/plant-structure-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,77);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

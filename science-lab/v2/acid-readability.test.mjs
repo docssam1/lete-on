@@ -1,3 +1,5 @@
+import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
+const beforeGrade6Review=q=>q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import test from 'node:test';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
@@ -39,6 +41,6 @@ test('current sample wording changes no grading rules and quick keys match all f
  const core=JSON.stringify({pages:workbook.pages.map(p=>p.blocks),questions:workbook.questions.map(q=>({prompt:q.prompt,explanation:q.explanation}))});assert(!/pH|중성|중화|이온/.test(core));
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,reviewedQuestionCriteria(standaloneQuestionContexts(current,unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>questionAtVersion(mod.classroomItems.find(q=>q.id===id),ACID_READABILITY_VERSION)).length,6);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,grade6QuestionReview(reviewedQuestionCriteria(standaloneQuestionContexts(current,unit),unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>questionAtVersion(mod.classroomItems.find(q=>q.id===id),ACID_READABILITY_VERSION)).length,6);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/acid-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,86);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

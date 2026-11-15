@@ -1,3 +1,4 @@
+const beforeGrade6Review=q=>q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
 const beforeGrade4=q=>q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;
@@ -19,7 +20,7 @@ import {careerCurrentItems} from './career-question-language.js';
 import {careerReadableCurrentItems,careerReadableWorkbookBeforeContext} from '../data/book/c22-s62-u04.editorial.js';
 import {guidanceParticleCurrentItems} from '../data/book/term-particle-language.js';
 import {lessonReferenceItems} from '../data/book/lesson-reference-data.js';
-import {workbook,careerReadablePriorWorkbook} from '../data/book/c22-s62-u04.workbook.js';
+import {grade6ReviewPriorWorkbook as workbook,careerReadablePriorWorkbook} from '../data/book/c22-s62-u04.workbook.js';
 import {withThink,loadJudge} from './think-merge.js';
 import {revisedClassroom} from './revised-lesson.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
@@ -48,7 +49,7 @@ test('three missing contexts preserve every answer boundary, previous presentati
   const mod=current[unit],judge=await loadJudge(unit);assert.equal(rows.length,mod.items.length);
   const immutable=structuredClone(rows);
   for(let i=0;i<rows.length;i++){
-   const old=rows[i],stage=beforeGrade4(mod.items[i]),latest=stage.contentVersion===BIOLOGY_PEER_OPINIONS_VERSION?questionAtVersion(stage,peerPriorVersion):stage,photo=latest.contentVersion===BIOLOGY_OBSERVATION_CHOICE_VERSION?questionAtVersion(latest,BIOLOGY_OBSERVATION_PHOTO_VERSION):latest,q=photo.contentVersion===BIOLOGY_OBSERVATION_PHOTO_VERSION?questionAtVersion(photo,photo.previousVersions.at(-1).version):photo;
+   const old=rows[i],stage=beforeGrade4(beforeGrade6Review(mod.items[i])),latest=stage.contentVersion===BIOLOGY_PEER_OPINIONS_VERSION?questionAtVersion(stage,peerPriorVersion):stage,photo=latest.contentVersion===BIOLOGY_OBSERVATION_CHOICE_VERSION?questionAtVersion(latest,BIOLOGY_OBSERVATION_PHOTO_VERSION):latest,q=photo.contentVersion===BIOLOGY_OBSERVATION_PHOTO_VERSION?questionAtVersion(photo,photo.previousVersions.at(-1).version):photo;
    if(!expected.includes(q.id)){assert.deepEqual(q,old);continue;}
    changed.push(q.id);assert.equal(q.contentVersion,STANDALONE_CONTEXT_VERSION);
    const {prompt:p1,givens:g1,figure:f1,figureNote:n1,contentVersion:v1,previousVersions:h1,...oldFields}=old;

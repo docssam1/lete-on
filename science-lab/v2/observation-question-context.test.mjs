@@ -1,3 +1,5 @@
+import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
+const beforeGrade6Review=q=>q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import{seasonComparisonCurrentItems,seasonComparisonEdits,SEASON_COMPARISON_VERSION}from'../data/book/c22-s62-u01.editorial.js';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import{createHash}from'node:crypto';
 import{standaloneQuestionContexts,withSeasonStandaloneContext,OBSERVATION_CONTEXT_VERSION}from'../data/book/standalone-question-context.js';
@@ -16,7 +18,7 @@ const imagePath='assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg',esc=s=>String
 test('two missing observation contexts preserve all contracts, earlier versions, saved answers and retake history',async()=>{
  const changed=[];
  for(const[u,rows]of Object.entries(prior)){
-  const before=JSON.stringify(rows),mod=current[u],judge=await loadJudge(u);assert.deepEqual(mod.items,seasonComparisonCurrentItems(standaloneQuestionContexts(rows,u),u));const stageItems=mod.items.map(q=>q.contentVersion===SEASON_COMPARISON_VERSION?questionAtVersion(q,seasonComparisonEdits[q.workbookRef.no].priorVersion):q);
+  const before=JSON.stringify(rows),mod=current[u],judge=await loadJudge(u);assert.deepEqual(mod.items,grade6QuestionReview(seasonComparisonCurrentItems(standaloneQuestionContexts(rows,u),u),u));const stageItems=mod.items.map(beforeGrade6Review).map(q=>q.contentVersion===SEASON_COMPARISON_VERSION?questionAtVersion(q,seasonComparisonEdits[q.workbookRef.no].priorVersion):q);
   for(let i=0;i<rows.length;i++){
    const old=rows[i],q=stageItems[i];if(!ids.includes(q.id)){assert.deepEqual(q,old);continue;}changed.push(q.id);
    assert.equal(q.contentVersion,OBSERVATION_CONTEXT_VERSION);assert.deepEqual(q.answerContract,old.answerContract);assert.deepEqual(q.responseContract,old.responseContract);assert.equal(q.explanation,old.explanation);assert.deepEqual(q.taxonomy,old.taxonomy);assert.deepEqual(q.sourceRef,old.sourceRef);

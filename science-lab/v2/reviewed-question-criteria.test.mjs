@@ -46,7 +46,7 @@ test('130 current criteria and twelve choice phrasings preserve keys, teacher re
 test('39 workbook criteria change no student question, answer, page, figure, writing space or quick key',async()=>{
  let changed=0;
  for(const unit of units.filter(u=>u!=='c22-s51-u02')){
-  const {grade5ReviewPriorWorkbook,workbook:liveWorkbook,reviewedCriteriaPriorWorkbook:old}=await import('../data/book/'+unit+'.workbook.js'),workbook=grade5ReviewPriorWorkbook||liveWorkbook;assert(old);
+  const {grade6ReviewPriorWorkbook,grade5ReviewPriorWorkbook,workbook:liveWorkbook,reviewedCriteriaPriorWorkbook:old}=await import('../data/book/'+unit+'.workbook.js'),workbook=grade6ReviewPriorWorkbook||grade5ReviewPriorWorkbook||liveWorkbook;assert(old);
   for(let i=0;i<workbook.questions.length;i++){const q=workbook.questions[i],before=old.questions[i];assert.deepEqual({...q,criteria:before.criteria},before);if(q.criteria!==before.criteria)changed++;}
   for(const k of Object.keys(old).filter(k=>k!=='questions'))assert.deepEqual(workbook[k],old[k]);
   const {art}=await import('../data/book/'+unit+'.workbook-art.js'),paper=makeWorkbookPaper(withObservedPhotoAlt(withElementaryReadingDirections(workbook)),art),before=makeWorkbookPaper(withObservedPhotoAlt(withElementaryReadingDirections(old)),art);

@@ -1,3 +1,4 @@
+import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withReviewedWorkbookCriteria}from'./reviewed-question-criteria.js?v=20261115-reviewed-answer-criteria';
 import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
 import{withGrade6StudyNotes}from'./grade6-study-notes.js?v=20261108-grade6-study-notes';
@@ -11425,4 +11426,6 @@ export const grade6StudyNotesPriorWorkbook=withAcidReadableWorkbook(acidReadable
 export const furtherReadingPriorWorkbook=withGrade6StudyNotes(grade6StudyNotesPriorWorkbook);
 export const materialObservationPriorWorkbook=withAcidFurtherReading(furtherReadingPriorWorkbook);
 export const reviewedCriteriaPriorWorkbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);
-export const workbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
+export const grade6ReviewPriorWorkbook=withReviewedWorkbookCriteria(reviewedCriteriaPriorWorkbook);
+
+export const workbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);

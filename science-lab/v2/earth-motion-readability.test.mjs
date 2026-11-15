@@ -1,8 +1,10 @@
+import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
+const beforeGrade6Review=q=>q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import {earthMotionPairCurrentItems} from './earth-motion-pair-language.js';
 import test from 'node:test';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {items,source,similar} from '../data/units/c22-s61-u04.js';import * as misc from '../data/units/c22-s61-u04.misc.js';
 import {earthMotionCurrentItems} from './earth-motion-question-language.js';
-import {earthMotionReadableCurrentItems,EARTH_MOTION_READABILITY_VERSION} from '../data/book/c22-s61-u04.editorial.js';import {workbook,earthMotionReadablePriorWorkbook} from '../data/book/c22-s61-u04.workbook.js';
+import {earthMotionReadableCurrentItems,EARTH_MOTION_READABILITY_VERSION} from '../data/book/c22-s61-u04.editorial.js';import {grade6ReviewPriorWorkbook as workbook,earthMotionReadablePriorWorkbook} from '../data/book/c22-s61-u04.workbook.js';
 import {gradeDaily} from './daily-grade.js';import {questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts} from './question-revision.js';
 import {revisedClassroom,classroomQuestions} from './revised-lesson.js';import * as book from '../data/book/c22-s61-u04.book.js';
 import{observationCurrentItems}from'../data/book/observation-language.js';
@@ -43,6 +45,6 @@ test('current sample wording and the repaired learner drawing retain strict auto
  for(const html of Object.values(workbook.figures).filter(x=>x.includes('earth-quick-grid')))for(const m of html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[^<]*<\/td><td>([\s\S]*?)<\/td><\/tr>/g)){const q=workbook.questions[Number(m[1])-1];if(q.form==='choice')assert([q.answer,'①②③④⑤'[q.key]].includes(m[2]));else if(!['written','draw'].includes(q.form))assert.equal(m[2],q.answer);}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,earthMotionPairCurrentItems(current,unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>mod.classroomItems.find(q=>q.id===id).contentVersion===EARTH_MOTION_READABILITY_VERSION).length,10);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,grade6QuestionReview(earthMotionPairCurrentItems(current,unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>beforeGrade6Review(mod.classroomItems.find(q=>q.id===id)).contentVersion===EARTH_MOTION_READABILITY_VERSION).length,10);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/earth-motion-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,106);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

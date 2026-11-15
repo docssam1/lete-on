@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {withThink} from './think-merge.js';
 import {SEASON_COMPARISON_VERSION as version,seasonComparisonEdits as edits,seasonComparisonCurrentItems,withSeasonComparisonWorkbook} from '../data/book/c22-s62-u01.editorial.js';
-import {workbook,seasonComparisonPriorWorkbook as priorWorkbook} from '../data/book/c22-s62-u01.workbook.js';
+import {grade6ReviewPriorWorkbook as workbook,seasonComparisonPriorWorkbook as priorWorkbook} from '../data/book/c22-s62-u01.workbook.js';
 import {gradeDaily,vocabOf} from './daily-grade.js';
 import {questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion} from './question-revision.js';
 import {snapshotDailyPaper,resolveDailyPaper} from './daily-paper-state.js';

@@ -1,3 +1,6 @@
+import{questionAtVersion}from'./question-revision.js';
+import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
+const beforeGrade6Review=q=>q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import test from'node:test';
 import assert from'node:assert/strict';
 import fs from'node:fs';
@@ -39,6 +42,7 @@ test('미래 문제 조사·토의와 다양한 진로의 과학을17활동으�
 });
 
 test('16확인은 두 성취기준 각8·8형식 각2이며 교재의 답과 버전을 그대로 쓴다',()=>{
+ const priorReviewPool=pool.map(beforeGrade6Review);
  const list=mod.chapter.check.map(id=>pool.find(q=>q.id===id));assert.equal(list.length,16);assert.equal(list.filter(q=>q.responseContract.teacherRequired).length,4);
  assert.deepEqual(Object.values(list.reduce((a,q)=>(a[q.bookResponseForm]=(a[q.bookResponseForm]||0)+1,a),{})),Array(8).fill(2));
  assert.deepEqual(Object.values(list.reduce((a,q)=>{const s=workbook.questions.find(w=>w.id===q.bookQuestionId).standard;a[s]=(a[s]||0)+1;return a;},{})),[8,8]);
@@ -46,7 +50,7 @@ test('16확인은 두 성취기준 각8·8형식 각2이며 교재의 답과 버
  for(const[n,a]of Object.entries(answers))assert.equal(gradeDaily(list.find(q=>q.id.endsWith('b'+n.padStart(3,'0'))),a).status,'correct',n);
  for(const q of list.filter(q=>q.responseContract.teacherRequired))assert.equal(gradeDaily(q,q.responseContract.sample).status,'review');
  for(const answer of[['35','7'],['35℃','7분'],['35℃','7W']])assert.equal(gradeDaily(list.find(q=>q.id.endsWith('b123')),answer).status,'wrong');
- assert.equal(pool.filter(q=>['20261104-career-book','20261104-student-science-language'].includes(q.contentVersion)||q.previousVersions?.some(p=>['20261104-career-book','20261104-student-science-language'].includes(p.version))).length,74);assert.equal(pool.filter(q=>q.contentVersion==='20261107-career-readable-workbook').length,109);assert.equal(pool.filter(q=>q.contentVersion==='20261115-standalone-question-context').length,1);assert.equal(pool.filter(q=>q.previousVersions?.some(p=>p.version==='20261107-career-readable-workbook')).length,1);
+ assert.equal(priorReviewPool.filter(q=>['20261104-career-book','20261104-student-science-language'].includes(q.contentVersion)||q.previousVersions?.some(p=>['20261104-career-book','20261104-student-science-language'].includes(p.version))).length,74);assert.equal(priorReviewPool.filter(q=>q.contentVersion==='20261107-career-readable-workbook').length,109);assert.equal(priorReviewPool.filter(q=>q.contentVersion==='20261115-standalone-question-context').length,1);assert.equal(priorReviewPool.filter(q=>q.previousVersions?.some(p=>p.version==='20261107-career-readable-workbook')).length,1);
 });
 
 test('8자료는 현재 정보·예상·측정/작동·조건과 직업 속 과학을 실제 조사와 구별한다',()=>{

@@ -1,3 +1,4 @@
+import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withCareerReadableWorkbook}from'./c22-s62-u04.editorial.js?v=20261115-standalone-question-context';
 import{withGuidanceParticles}from'./term-particle-language.js?v=20261105-guidance-particles';
 import{withLearnerExplanations}from'./learner-explanations.js';
@@ -21613,4 +21614,6 @@ export const learnerPriorWorkbook=withStudentScienceLanguage(workbook20261104);
 export const guidanceParticlePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const careerReadingPriorWorkbook=withGuidanceParticles(guidanceParticlePriorWorkbook);
 export const careerReadablePriorWorkbook=withCareerReadingScience(careerReadingPriorWorkbook);
-export const workbook=withCareerReadableWorkbook(careerReadablePriorWorkbook);
+export const grade6ReviewPriorWorkbook=withCareerReadableWorkbook(careerReadablePriorWorkbook);
+
+export const workbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);

@@ -1,3 +1,4 @@
+import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withMaterialStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
 import{withElementaryQuestionPrompts}from'./elementary-question-prompts.js?v=20261108-elementary-question-prompts';
 import{withCombustionReadableWorkbook}from'./c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook';
@@ -22198,4 +22199,6 @@ export const learnerPriorWorkbook=withCombustionEditorial(baseWorkbook);
 export const combustionReadablePriorWorkbook=withLearnerExplanations(learnerPriorWorkbook);
 export const elementaryPromptPriorWorkbook=withCombustionReadableWorkbook(combustionReadablePriorWorkbook);
 export const materialObservationPriorWorkbook=withElementaryQuestionPrompts(elementaryPromptPriorWorkbook);
-export const workbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);
+export const grade6ReviewPriorWorkbook=withMaterialStandaloneContext(materialObservationPriorWorkbook);
+
+export const workbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
