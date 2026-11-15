@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "incomplete-new-diagnostic-gap-verified",
+  "status": "incomplete-five-original-diagnoses-repaired",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -68,34 +68,35 @@
       "requirement": "Original-question misconception diagnosis",
       "status": "incomplete",
       "cliExitCode": 1,
-      "missingInActualRuntime": 221,
+      "missingInActualRuntime": 196,
       "units": [
         {
-          "unit": "c22-s51-u01",
+          "unit": "c22-s52-u01",
           "missing": 11
         },
         {
-          "unit": "c22-s52-u01",
-          "missing": 15
-        },
-        {
           "unit": "c22-s61-u04",
-          "missing": 36
+          "missing": 33
         },
         {
           "unit": "c22-s62-u01",
-          "missing": 63
+          "missing": 60
         },
         {
           "unit": "c22-s62-u02",
-          "missing": 44
+          "missing": 43
         },
         {
           "unit": "c22-s62-u03",
-          "missing": 52
+          "missing": 49
         }
       ],
-      "evidence": "Required misc-audit.mjs errors were independently checked against actual root source pools and questionMisconceptions. No blanket exemption or invented mappings applied."
+      "evidence": "The old audit required automatic maps on20 originals whose explicit reviewed contracts require teacher judgment. The auditor now validates those actual modes and rejects automatic rules on them. Five geology originals now have versioned rules for19wrong choices; their raw registered source remains byte-identical.196automatic-source diagnostics remain missing; required CLI still exits1.",
+      "initialAbsentRules": 221,
+      "explicitTeacherReviewCasesAmongInitialRows": 20,
+      "automaticQuestionsOriginallyNeedingDiagnosis": 201,
+      "automaticQuestionsConnected": 5,
+      "wrongChoiceLinksAdded": 19
     },
     {
       "requirement": "Referenced images exist and current source images are reviewed",
@@ -119,7 +120,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "472 full native suite1674tests/1672pass/2browser skip and preserved source invariants; no product edits this audit."
+      "evidence": "474 native343files/1678tests/1676pass/2browser skip. Five source revisions carry10full snapshots: original registered versions and proven legacy unversioned aliases. All old presentations and diagnoses are preserved."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -156,21 +157,41 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstUnit": "c22-s51-u01",
-    "missingOriginalDiagnostics": 11,
+    "firstUnit": "c22-s52-u01",
+    "missingAutomaticOriginalDiagnostics": 11,
+    "remainingAcrossFiveUnits": 196,
     "requirements": [
-      "Read each question and each wrong option before assigning an existing misconception.",
-      "Do not change original prompts, figures or reviewed answers.",
-      "Preserve stored question versions and previous diagnostic behavior.",
-      "Keep missing mappings as failures until the actual links exist; do not exempt all originals.",
-      "Continue the remaining five units after this unit."
+      "Read each original prompt and wrong option before choosing a misconception.",
+      "Keep reviewed original text, figures and answer keys intact.",
+      "Use per-question versions and preserve old saved presentations and diagnoses.",
+      "Validate explicit teacher-review contracts without turning them into automatic right/wrong judgments.",
+      "Keep genuine missing mappings as failures until the actual links exist."
     ]
   },
   "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json",
-  "productFilesChanged": false,
+  "productFilesChanged": true,
   "paidApiCalls": 0,
   "cloudWrites": 0,
   "browserStarted": false,
   "goalAchieved": false,
-  "goalAtImpasse": false
+  "goalAtImpasse": false,
+  "latestFollowupBaseline": "c29e50b6b3b9e2a5dcb6a7f57cf65fa0eafbc12e",
+  "latestPhase": 474,
+  "followup474": {
+    "automaticSourceRevisions": 5,
+    "wrongChoiceLinks": 19,
+    "legacySnapshotsAdded": 10,
+    "all128WorkbookOutputsUnchanged": true,
+    "geologySourcePaperModesUnchanged": 4,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegisteredCommit": "0bbdeee44",
+    "nativeFiles": 343,
+    "nativeTests": 1678,
+    "nativePass": 1676,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourcePicturesViewed": 2,
+    "sourcePicturesCpuOcr": 2,
+    "sourceOriginalTextOrAnswerChanges": 0
+  }
 }

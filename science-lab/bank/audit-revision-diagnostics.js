@@ -1,3 +1,4 @@
+import {needsSourceTeacherReview} from '../v2/source-content.js';
 // 현재 문항의 진단은 원래 문항의 보기·답이 아닌 해당 버전의 계약과 대조한다.
 export function auditRevisionDiagnostics(rows,byId,misconceptions){
  const errors=[],used=new Map();
@@ -17,4 +18,21 @@ export function auditRevisionDiagnostics(rows,byId,misconceptions){
   }
  }
  return{errors,used};
+}
+
+// A closed-form original can deliberately require a teacher's judgment. Check
+// the actual contract and suppression of automatic rules; original status alone
+// never exempts a question from diagnostic coverage.
+export function auditSourceReviewDiagnostics(q,misc){
+ const ac=q.answerContract||{};
+ if(q.sourceRef?.type!=='original'||!['single-choice','multi-choice','short-text'].includes(ac.type))return null;
+ const contracts=['sourceResponseContract','earthMotionContract','seasonContract'].filter(key=>ac[key]).map(key=>({key,contract:ac[key]}));
+ if(ac.reviewRequired!==true&&!contracts.some(({contract:c})=>c.teacherRequired===true||['written-explanation','teacher-review'].includes(c.kind)))return null;
+ const errors=[],entry=contracts[0],c=entry?.contract;
+ let valid=contracts.length===1&&needsSourceTeacherReview(q)&&c.teacherRequired===true;
+ if(entry?.key==='sourceResponseContract')valid&&=c.kind==='written-explanation'&&c.exactStringScoring===false&&Array.isArray(c.required)&&c.required.length>0&&c.required.every(x=>typeof x==='string'&&x.trim());
+ else valid&&=c?.kind==='teacher-review'&&typeof(c.reason??c.heldReason)==='string'&&(c.reason??c.heldReason).trim().length>0&&c.exactStringScoring!==true;
+ if(!valid)errors.push(`${q.id}: 교사 확인 원문의 검토 계약이 불완전함`);
+ for(const key of['distractors','typed','cloze','cells'])if(misc?.[key]?.[q.id]!=null)errors.push(`${q.id}: 교사 확인 원문에 자동 진단 ${key}가 있음`);
+ return{errors};
 }

@@ -1,3 +1,5 @@
+import {reviewedSourceDiagnostics} from '../../bank/reviewed-source-diagnostics.js?v=20261116-geology-source-diagnostics';
+import {source as registeredSource} from './c22-s51-u01.source.js';
 export const unit = {
   "id": "c22-s51-u01",
   "course": "5-1",
@@ -5202,4 +5204,5 @@ export const items = [
   }
 ];
 export {geologyBankPaperHtml as bankPaper,wireGeologyBankPaper as wireBankPaper} from '../../v2/geology-bank-paper.js';
-export {source,sourceRegistration} from './c22-s51-u01.source.js';
+export {sourceRegistration} from './c22-s51-u01.source.js';
+export const source=reviewedSourceDiagnostics('c22-s51-u01',registeredSource);
