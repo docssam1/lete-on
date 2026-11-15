@@ -1,3 +1,4 @@
+import{withClimateMaterialReferences}from'../data/book/c22-s42-u04.rail-notes.js';
 import{withVolcanoReferenceWorkbook}from'../data/book/volcano-reference-context.js';
 import{withLandObservationWorkbook}from'../data/book/land-observation-context.js';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
@@ -6,11 +7,11 @@ import assert from 'node:assert/strict';
 import {withGrade4StudyNotes,GRADE4_STUDY_NOTE_UNITS} from '../data/book/grade4-study-notes.js';
 import {workbook as water,waterStudyNotesPriorWorkbook as priorWater} from '../data/book/s41-u02.workbook.js';
 import {landObservationPriorWorkbook as land,landStudyNotesPriorWorkbook as priorLand} from '../data/book/s41-u03.workbook.js';
-import {workbook as climate,climateStudyNotesPriorWorkbook as priorClimate} from '../data/book/c22-s42-u04.workbook.js';
+import {climateMaterialPriorWorkbook as climate,climateStudyNotesPriorWorkbook as priorClimate} from '../data/book/c22-s42-u04.workbook.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
 
-const withCurrentReferences=w=>withVolcanoReferenceWorkbook(withLandObservationWorkbook(w));
+const withCurrentReferences=w=>withClimateMaterialReferences(withVolcanoReferenceWorkbook(withLandObservationWorkbook(w)));
 const books=[[water,priorWater,14],[land,priorLand,18],[climate,priorClimate,20]];
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function changes(old,current,path=[]){

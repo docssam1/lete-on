@@ -5,7 +5,7 @@ import{items}from'../data/units/c22-s42-u04.js';import{similar}from'../data/unit
 import{climateReadableCurrentItems,CLIMATE_READABILITY_VERSION}from'../data/book/c22-s42-u04.rail-notes.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u04.book.js';
-import{workbook,climateReadablePriorWorkbook}from'../data/book/c22-s42-u04.workbook.js';
+import{climateMaterialPriorWorkbook as workbook,climateReadablePriorWorkbook}from'../data/book/c22-s42-u04.workbook.js';
 const unit='c22-s42-u04',baseline=(await withThink(unit,{items,similar})).items;
 test('climate current presentations preserve scoring, every old field and saved responses',()=>{
  const before=structuredClone(baseline),current=climateReadableCurrentItems(baseline,unit);let changed=0;
@@ -37,7 +37,7 @@ test('climate bank, recurring classroom and Daily use the same eleven current pr
  assert.equal(changed,11);assert.equal(first.classroomItems.length,12);assert.equal(first.classroomItems[0],baseline.find(q=>q.id==='c22-s42-u04-t01'));
  const t08=current.find(q=>q.id==='c22-s42-u04-t08');assert(t08.explanation.startsWith('이 모형에서'));assert(!t08.explanation.includes('땅의 높이가 정해요'));
 });
-test('climate workbook preserves all grading/source fields, optional upper rails and model data',()=>{
+test('the climate readability stage preserves all grading/source fields, optional upper rails and model data',()=>{
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(climateReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['id','no','form','key','responseContract','taxonomy'].includes(k)))assert.deepEqual(workbook.questions[i][key],climateReadablePriorWorkbook.questions[i][key]);
  const reviewedNotes=withGrade4StudyNotes(climateReadablePriorWorkbook);
  for(const key of['pages','teacherStudentPages'])for(let i=0;i<workbook[key].length;i++){assert.deepEqual(workbook[key][i].rail,reviewedNotes[key][i].rail);assert.equal(workbook[key][i].kind,climateReadablePriorWorkbook[key][i].kind);}

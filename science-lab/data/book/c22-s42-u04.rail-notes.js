@@ -774,3 +774,38 @@ export function climateReadableCurrentItems(rows,unit){
   climateReadableCache.set(question,current);return current;
  });return changed?next:rows;
 }
+
+
+export const CLIMATE_MATERIAL_REFERENCE_VERSION='20261115-climate-material-reference';
+export const climateHouseHeightReference={
+ type:'table',heads:['집','A','B','C','D','E'],
+ rows:[['땅 높이(cm)','4.5','1.5','2.5','3.5','6']]
+};
+export const climateHouseHeightCondition='17~19번 모형 자료: 다섯 집은 같은 물과 이어져 있고 방파제는 없어요. 물과 땅의 높이는 같은 기준에서 잰 모형 값이에요.';
+export const climateHeatwaveReadingNotes=[
+ '상위 학습 · 5~6학년에서는 기온·강수량 등 기상 요소를 조사하고 자료에서 규칙성을 찾아요. 하루하루의 기록을 함께 보면 평균만으로는 알 수 없는 날마다의 차이도 살펴볼 수 있어요.',
+ '표에서 평균 폭염 일수가 어떻게 달라졌는지 쓰세요. 이 표만으로 특정한 날에 폭염이 있었는지도 알 수 있는지 설명해요.'
+];
+export function withClimateMaterialReferences(workbook){
+ if(workbook?.unit!=='c22-s42-u04'||!Array.isArray(workbook.pages))return workbook;
+ const exact=(a,b)=>JSON.stringify(a)===JSON.stringify(b),ids=n=>n.map(x=>'c22-s42-u04-w'+String(x).padStart(3,'0'));
+ const houseIds=ids([17,18,19]),heatIds=ids([27,28]);
+ const source=workbook.pages.find(p=>p.title==='해안 마을 모형으로 실험해요');
+ const table=source?.blocks.find(b=>b.type==='table');
+ const knownSource=exact(table?.heads,['집','자리','땅 높이(모형 값)'])&&exact(table?.rows?.map(r=>[r[0],r[2]]),[['A','4.5 cm'],['B','1.5 cm'],['C','2.5 cm'],['D','3.5 cm'],['E','6 cm']]);
+ const heatRows=[['1991~2000년','8일'],['2001~2010년','11일'],['2011~2020년','15일']];
+ const oldUpper='상위 학습 · 중학교의 효율적인 전기 사용에서는 소비 전력과 사용 방법을 함께 살펴요. 스위치를 끈 횟수만으로 사용 전력량이나 온실 기체 배출의 감소량을 바로 계산할 수는 없어요.';
+ const oldSelf='표에서 직접 알게 된 변화를 쓰세요. 쓴 전기의 양을 알려면 어떤 자료가 더 필요한지도 적으세요.';
+ let changed=false;
+ const pages=rows=>rows?.map(page=>{
+  if(knownSource&&page.title==='어느 집이 먼저 물에 닿았나요?'&&page.blocks?.length===2&&page.blocks[0].type==='diagram'&&page.blocks[0].key==='start'&&exact(page.blocks[1],{type:'questions',ids:houseIds})){
+   changed=true;return{...page,blocks:[page.blocks[0],{type:'text',text:climateHouseHeightCondition},structuredClone(climateHouseHeightReference),page.blocks[1]]};
+  }
+  if(page.title==='표가 말해 주는 것과 말해 주지 않는 것'&&exact(page.blocks?.[0],{type:'table',heads:['기간','한 해 평균 폭염 일수(가상 학습값)'],rows:heatRows})&&exact(page.blocks?.[1],{type:'questions',ids:heatIds})&&page.rail?.[1]?.title==='더 알아보기'&&page.rail[1].text===oldUpper&&page.rail?.[2]?.title==='내가 정리할 것'&&page.rail[2].text===oldSelf){
+   changed=true;return{...page,rail:page.rail.map((note,i)=>i===1||i===2?{...note,text:climateHeatwaveReadingNotes[i-1]}:note)};
+  }
+  return page;
+ });
+ const student=pages(workbook.pages),teacher=pages(workbook.teacherStudentPages);
+ return changed?{...workbook,pages:student,...(teacher?{teacherStudentPages:teacher}:{})}:workbook;
+}

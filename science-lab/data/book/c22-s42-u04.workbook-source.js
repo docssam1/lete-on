@@ -1,3 +1,4 @@
+import{withClimateMaterialReferences}from'./c22-s42-u04.rail-notes.js?v=20261115-climate-material-reference';
 import{withGrade4StudyNotes}from'./grade4-study-notes.js?v=20261108-grade4-study-notes';
 import{withClimateReadableWorkbook}from'./c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook';
 import{withClimateUpperScience}from'./c22-s42-u04.rail-notes.js?v=20261105-climate-upper-science';
@@ -10483,4 +10484,5 @@ export const studentGuidePriorWorkbook=withStudentOpeningLanguage(withClimateRai
 export const climateUpperPriorWorkbook=withStudentGuideLanguage(studentGuidePriorWorkbook);
 export const climateReadablePriorWorkbook=withClimateUpperScience(climateUpperPriorWorkbook);
 export const climateStudyNotesPriorWorkbook=withClimateReadableWorkbook(climateReadablePriorWorkbook);
-export const workbook=withGrade4StudyNotes(climateStudyNotesPriorWorkbook);
+export const climateMaterialPriorWorkbook=withGrade4StudyNotes(climateStudyNotesPriorWorkbook);
+export const workbook=withClimateMaterialReferences(climateMaterialPriorWorkbook);
