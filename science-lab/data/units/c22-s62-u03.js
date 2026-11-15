@@ -1,4 +1,4 @@
-import {reviewedSourceDiagnostics} from '../../bank/reviewed-source-diagnostics.js?v=20261116-electricity-source-diagnostics';
+import {reviewedSourceDiagnostics} from '../../bank/reviewed-source-diagnostics.js?v=20261116-electricity-source-condition';
 import {source as registeredSource} from './c22-s62-u03.source.js';
 import {unit as pairedUnit,items as pairedItems} from './c22-s62-u03.paired.js';
 import {taxonomy} from './c22-s62-u03.taxonomy.js?v=20261114-source-integration';

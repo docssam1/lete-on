@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "diagnostic-mappings-covered-program-incomplete",
+  "status": "source-condition-clarified-program-incomplete",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -70,7 +70,7 @@
       "cliExitCode": 0,
       "missingInActualRuntime": 0,
       "units": [],
-      "evidence": "All201automatic originals initially missing diagnosis rules now have versioned review mappings:492wrong-choice links and74typed concept rules.20of the initial221rows require explicit teacher review. The unmodified whole required CLI exits0 with no errors. Source text, keys, figures and grading remain unchanged. Coverage does not prove every original question condition or actual student/browser behavior.",
+      "evidence": "All201automatic originals initially missing diagnosis rules retain versioned review mappings:492wrong-choice links and74typed concept rules.20of the initial221rows require explicit teacher review. The unmodified whole required CLI exits0 with no errors. Registered raw originals and keys remain unchanged; one current electricity presentation has a labelled comparison condition and a distinct version. Coverage does not prove all scientific statements or actual student/browser behavior.",
       "initialAbsentRules": 221,
       "explicitTeacherReviewCasesAmongInitialRows": 20,
       "automaticQuestionsOriginallyNeedingDiagnosis": 201,
@@ -100,7 +100,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "479 native348files/1702tests/1700pass/2browser skip. Forty-nine electricity revisions add98full snapshots, preserving registered versions and proven legacy unversioned attempts; all152prior source revisions remain identical. Full snapshot total3740plus2legacy deltas."
+      "evidence": "480 native349files/1706tests/1704pass/2browser skip. The electricity comparison condition adds one full diagnostic-version snapshot; full snapshot total3741plus2legacy deltas. Registered/unversioned/diagnostic questions and frozen papers restore without the new condition. All201prior diagnostic presentations and the other200current revisions are preserved."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -137,25 +137,31 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstIssue": "c22-s62-u03-o1-05 switch closure condition",
-    "evidence": "The registered diagram shows two open switches and the prompt asks which lamp is brighter without explicitly saying to close the switches. Native student print also contains no closure condition. Original question and key were preserved in479.",
+    "firstIssue": "Reduce per-unit loading of the all-unit reviewed source diagnostic registry",
+    "registryBytes": 871733,
     "requirements": [
-      "Clarify the intended closed-switch comparison in a separately identified current presentation while preserving the raw original, registered/unversioned attempts and grading history; verify the scope before editing.",
-      "Preserve all201existing source revisions and their choice/typed diagnostics.",
+      "Preserve all201diagnostic presentations, the current comparison condition and all3741full snapshots while reducing unnecessary unit data loading.",
+      "Keep exact whole-source guards, idempotence and legacy-unversioned restoration intact.",
       "Keep all required CLI checks passing without exemptions or audit changes.",
-      "Reduce per-unit loading of the871108-byte all-unit review registry if feasible without weakening exact source guards.",
       "Continue independent content review, missing original editions and required actual runtime/print validation."
-    ]
+    ],
+    "conditionIssueClosedNatively": {
+      "id": "c22-s62-u03-o1-05",
+      "labelledCurrentContext": true,
+      "rawOriginalRetained": true,
+      "oldAnswersAndDiagnosesRetained": true,
+      "actualBrowserOrPrintVerified": false
+    }
   },
-  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/",
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json",
   "productFilesChanged": true,
   "paidApiCalls": 0,
   "cloudWrites": 0,
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "7bef364bd10d01d22108c150bfefeba1ef304196",
-  "latestPhase": 479,
+  "latestFollowupBaseline": "51a0501024ad86400dd7f75123762e8c5ef4b98a",
+  "latestPhase": 480,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -293,5 +299,33 @@
       "c22-s62-u03-o2-10",
       "c22-s62-u03-o4-12"
     ]
+  },
+  "followup480": {
+    "currentQuestion": "c22-s62-u03-o1-05",
+    "conditionVersion": "20261116-electricity-source-condition",
+    "addedCondition": "보충 조건: 두 스위치를 모두 닫았을 때 전구의 밝기를 비교해요.",
+    "rawOriginalPromptFigureAndKeyChanged": false,
+    "currentPromptUnchanged": true,
+    "addedContextBlocks": 1,
+    "fullSnapshotsAdded": 1,
+    "allFullSnapshotsNow": 3741,
+    "priorDiagnosticPresentationsPreserved": 201,
+    "otherCurrentSourceRevisionsUnchanged": 200,
+    "all128WorkbookOutputsUnchanged": true,
+    "sourcePaperChanges": {
+      "student": 1,
+      "teacher": 1,
+      "answers": 0,
+      "quick": 0
+    },
+    "allOtherSourcePaperMarkupUnchanged": true,
+    "nativeFiles": 349,
+    "nativeTests": 1706,
+    "nativePass": 1704,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "allRequiredCliExitCodes": 0,
+    "newImagesOrOcrRuns": 0,
+    "registeredSourceContentHashUnchanged": true
   }
 }

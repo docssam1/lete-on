@@ -21883,6 +21883,13 @@ const revisions={
     },
     "typed": {
      "any": "M21"
+    },
+    "clarification": {
+     "version": "20261116-electricity-source-condition",
+     "context": {
+      "type": "text",
+      "text": "보충 조건: 두 스위치를 모두 닫았을 때 전구의 밝기를 비교해요."
+     }
     }
    },
    {
@@ -28425,6 +28432,11 @@ export function reviewedSourceDiagnostics(unit,rows){
   // events omitted presentationVersion before a question had revision history.
   if(revision.legacyUnversioned&&!history.length&&(q.contentVersion||1)!==1)history.push(snapshot(1));
   history.push(snapshot(q.contentVersion||1));
-  const current={...q,contentVersion:revision.version,diagnosticOverride:{version:revision.version,distractors:patch.distractors?clone(patch.distractors):null,typed:patch.typed?clone(patch.typed):null,cloze:null,cells:null},previousVersions:history};cache.set(q,current);return current;
+  let current={...q,contentVersion:revision.version,diagnosticOverride:{version:revision.version,distractors:patch.distractors?clone(patch.distractors):null,typed:patch.typed?clone(patch.typed):null,cloze:null,cells:null},previousVersions:history};
+  if(patch.clarification){
+   const previous={...clone(current),version:current.contentVersion,snapshotKind:'full-question'},c=patch.clarification;
+   current={...current,contentVersion:c.version,sourceContextBlocks:[...clone(current.sourceContextBlocks),clone(c.context)],diagnosticOverride:{...current.diagnosticOverride,version:c.version},previousVersions:[...history,previous]};
+  }
+  cache.set(q,current);return current;
  });return changed?next:rows;
 }
