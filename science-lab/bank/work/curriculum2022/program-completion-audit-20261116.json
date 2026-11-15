@@ -2,7 +2,7 @@
   "date": "2026-11-16",
   "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
   "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
-  "status": "per-unit-review-loading-program-incomplete",
+  "status": "primary-thinking-configurations-checked-teacher-tables-separated-program-incomplete",
   "checks": [
     {
       "requirement": "2022 curriculum placement and clear separation from2015",
@@ -28,12 +28,19 @@
     },
     {
       "requirement": "Primary v2 lessons teach connected thinking rather than report entry",
-      "status": "partially-proven",
+      "status": "native-route-and-configuration-proven-runtime-unverified",
       "explicitComparisonPrimaryLessons": 31,
-      "defaultPathRequiresSeparateReview": [
+      "defaultPathRequiresSeparateReview": [],
+      "actualLessonFlowVerified": false,
+      "defaultForceModelPrimaryLessons": 1,
+      "totalPrimaryThinkingConfigurations": 32,
+      "defaultPathNativeRouteReviewed": [
         "s31-u01"
       ],
-      "actualLessonFlowVerified": false
+      "studentAndTeacherDecks": 64,
+      "slides": 3048,
+      "actualDefaultForceModelVerified": false,
+      "evidence": "All32actual revised classroom objects and64buildSlides outputs are thinking configurations with no mandatory report/record mount or report links. The real first-unit start/class functions select forceThinking before legacy forcework, preserve optional records-book access, use the existing force fallback and support second-session/resume navigation. Native route calls and model-mount arguments were checked without starting a browser/WebGL."
     },
     {
       "requirement": "Student-accessible original questions and current-edition coverage",
@@ -100,7 +107,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "481 native350files/1708tests/1706pass/2browser skip. All six revision data objects,201current source revisions and their history hashes remain identical to480. Full snapshots remain3741plus2legacy deltas. Registered raw questions, items and runtime misc and24source paper modes match baseline hashes; all128workbook outputs remain identical."
+      "evidence": "482 native351files/1711tests/1709pass/2browser skip. All201source revisions,3741full snapshots plus2legacy deltas, raw/item/misc hashes,24source paper modes and128workbook outputs remain unchanged. The teacher classroom result table now receives empty rows without reading the student store in all32routes. Student force rows, actual report state, table formatting and release callbacks remain intact."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -182,6 +189,16 @@
       "uncompressedJavaScriptBytes": true,
       "actualNetworkTimingMeasured": false,
       "actualBrowserVerified": false
+    },
+    {
+      "requirement": "Teacher classroom result tables do not read student model records",
+      "status": "native-function-proven",
+      "scope": "pageLabClass myLab result-table callback only; intentional teacher assessment/review paths are unchanged",
+      "units": 32,
+      "teacherStoreReadsInCheckedCallback": 0,
+      "teacherStoreWritesInCheckedCallback": 0,
+      "studentForceRecordsAndReportStatePreserved": true,
+      "actualBrowserVerified": false
     }
   ],
   "requiredCliChecks": {
@@ -192,24 +209,29 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstIssue": "Review the s31-u01 default primary lesson path separately",
-    "requirements": [
-      "Inspect the actual unit mapping, default route and lesson/stage objects before deciding whether the remaining default path teaches connected thinking or opens a record/report app.",
-      "Use native routing and lesson evidence where permitted; keep actual PC/mobile/keyboard/print/audio/WebGL flow verification explicitly pending while browser access is restricted.",
-      "Preserve all201source diagnostics,3741full snapshots, current comparison condition and selected-unit module loading.",
-      "Continue independent content review and the three missing current original editions without inventing source material."
+    "firstIssue": "Recheck authoritative current-source material for the three pending units",
+    "pendingUnits": [
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s62-u04"
     ],
-    "perUnitRegistryLoadingClosedNatively": true
+    "requirements": [
+      "Use existing registered project/Drive locations and permitted read-only connected-source metadata or PDF reading; record the actual search coverage.",
+      "Do not treat earlier limited folder searches as exhaustive, repeat the unresolved source-location question unnecessarily, or register authored practice as found originals.",
+      "Preserve all201source diagnostics,3741full snapshots, the comparison condition, selected-unit loading and teacher/student result-table separation.",
+      "Keep actual PC/mobile/keyboard/A4/audio/WebGL validation pending while browser access remains restricted."
+    ],
+    "defaultForcePathNativeReviewClosed": true
   },
-  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json",
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json; phase482: force-classroom-before.json, route-tests-before.log, route-tests.log, combined-route-tests.log, primary-classroom-audit.json, preservation-result.json, native-suite-result.json, required-cli-checks.json",
   "productFilesChanged": true,
   "paidApiCalls": 0,
   "cloudWrites": 0,
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "d3a7655c759897cca7f466bb4b36952c464b48f5",
-  "latestPhase": 481,
+  "latestFollowupBaseline": "4b328b5b694091ae9084e60c2dfe6354e63b8cee",
+  "latestPhase": 482,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -439,5 +461,30 @@
     "allRequiredCliExitCodes": 0,
     "newImagesOrOcrRuns": 0,
     "actualNetworkTimingMeasured": false
+  },
+  "followup482": {
+    "primaryThinkingConfigurations": 32,
+    "dedicatedComparisonMounts": 31,
+    "existingDefaultForceMounts": 1,
+    "studentAndTeacherDecks": 64,
+    "slides": 3048,
+    "defaultStartClassSessionResumeRoutesChecked": true,
+    "teacherSavedResultTableReadReproducedBeforeFix": true,
+    "teacherClassroomResultTableEmptyWithoutStudentStoreRead": true,
+    "studentForceRowsAndOldReportStatePreserved": true,
+    "forceClassroomDataUnchanged": true,
+    "all201SourceRevisionsUnchanged": true,
+    "all3741FullSnapshotsPreserved": true,
+    "all128WorkbookOutputsUnchanged": true,
+    "all24SourcePaperModesUnchanged": true,
+    "perUnitSourceLoadingPreserved": true,
+    "nativeFiles": 351,
+    "nativeTests": 1711,
+    "nativePass": 1709,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "allRequiredCliExitCodes": 0,
+    "newImagesOrOcrRuns": 0,
+    "actualWebGLStarted": false
   }
 }

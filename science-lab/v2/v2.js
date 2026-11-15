@@ -726,7 +726,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
   const trackHandle=handle=>{const track=h=>{if(!h?.dispose)return;if(released)h.dispose();else handles.push(h);};if(handle?.then)Promise.resolve(handle).then(track);else track(handle);return handle;};
   if (released || location.hash !== requestedHash) return;
   renderDeck($app, { u, ch: chapter, art, plan, media, similar: classroomItems, mode, idx, misc: MISC, ix, ...visits,
-    myLab: () => classroomTableData(u,classLab,store.get(u)[classRowsKey] || []),
+    myLab: () => classroomTableData(u,classLab,mode === 'self' ? store.get(u)[classRowsKey] || [] : []),
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene || L.explore.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     mountModel: (el, o={}) => {
       const config=L.explore.modelLab, rowsKey=config.rowsKey||'labRows';

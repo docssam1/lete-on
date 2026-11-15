@@ -1,5 +1,15 @@
 # 과학 탐구 랩 인수인계 — Claude → GPT(Codex) · 2026-10-20
 
+## §482 · 2026-11-16 · 첫 단원 기본 사고력 경로 확인·교사용 결과표의 학생 기록 분리
+
+- 통합4b328b5b / 검토4efd775d 다음. s31-u01의classroomLab이없는것은누락이아니었다. 실제revisedClassroom은forceThinking/revisedThinkingClassroom=true이고buildSlides가forcework보다먼저사고력덱을선택한다. 기본L.explore.lab.kind=force와labRows,4열변환을쓰며예상→비교조건→수평모형→자료해석→저울/도구적용으로이어진다. 실제첫화면·pageLabClass함수의스스로/가르치기·2차시recall·저장열람위치재개를NodeVM에서확인했다. 전용비교앱을추가하거나옛보고서/실제활동교재를지우지않았다.
+- 현재32교실객체와64학생/교사덱3,048장을실제buildSlides로구성해보고서링크·records mount가필수수업에없음을확인했다.31개전용비교mount+기존수평모형fallback1개다. 실제WebGL·브라우저조작은시작하지않았으므로32단원실제사용흐름완료로표시하지않는다.
+- 검사중교사용결과표에도저장된학생모형행을읽는경로를재현했다. 힘덱에는교사모드에도dk-mylab자리가있고실제deck.labTable이pageLabClass.myLab을호출하면기존에는store.get을읽었다. 현재는myLab이mode===self일때만개인행을읽고그외에는빈행을준다. 학생의labRows/사용자정의rowsKey·별도실제활동report·일부저장패치·해제뒤늦은콜백보호는유지한다. 교사의의도된채점/확인화면을막는변경이아니며수업결과표에만적용한다. index진입cache는classroomTables=20261116-teacher-result-table로덧붙였다.
+- 새3검사는실제BOOKS/UNITS/RECORDS_BOOKS와start/class함수·buildSlides·deck.labTable을사용한다. 기존수평기록을넣었을때수정전교사표읽기두검사실패/기본수업한검사통과를재현했고,수정후32단원교사표의저장읽기/쓰기0·빈행을확인한다. 학생표는같은행을올바른열로표시하고학생mount와기록/보고서를보존하며해제뒤콜백은저장하지않는다. 관련기존힘/열람검사합14개와별도결합경로4개가통과했다.
+- 기존tests/revised-routes.mjs는가르치기인자의myLab에서학생행을기대하고같은가르치기인자로학생mount를호출하던부분이있었다. 교사용빈표·읽기/쓰기0·기록불변을먼저확인한뒤교사mount를해제하고실제self경로로전환해학생표와기록을검사하도록바로잡았다. 원래12단원의일부저장·옛보고서/관찰키·Daily/선택기록교재·해제검사는유지한다. 첫전체실행의이한건실패는native-test-initial.log에보존한다.
+- 최종native351파일1,711검사중1,709통과/실패0/브라우저2skip이다. bank/written감사·taxonomy/build --check·전체misc-audit모두exit0이다. 201source수정/전체사본3,741개와legacy delta2개·보충조건·6단원데이터객체와raw/items/misc hash·원문문항집24모드·교재128HTML이같고은행3,179/원문1,763/비슷한문제1,512도유지한다. 힘교실객체도검사전JSON과같으며수업원고/그림/채점/용어는바꾸지않았다. 새그림·3D/OCR실행은없다. QA는phase482/force-classroom-before.json·route-tests-before.log·route-tests.log·combined-route-tests.log·primary-classroom-audit.json·preservation-result.json·native-suite-result.json·required-cli-checks.json이다.
+- 다음은현재원문이없는지구와바다/감염병과건강한생활/과학과나의진로의기존자료위치를읽기전용으로다시확인하는일이다. 이전일부폴더검색을전체검색으로확대하지않고미응답질문을반복하거나창작을발견원문으로세지않는다. 실제PC/폰/A4/음성/WebGL·원문3단원/현행전체판본·나머지독립내용검수·운영main/배포는남아목표active다. 원자료·다른작업본·미커밋/output을보존한다. 브라우저우회·유료/생성API·Drive쓰기·정리/삭제·main병합/배포는없다.
+
 ## §481 · 2026-11-16 · 원문 복습 자료 단원별 읽기·동기 검토 API 보존
 
 - 통합d3a7655c / 검토f9257531 다음.6단원의main이모두871,733byte reviewed-source-diagnostics.js전체를읽던구조를나눴다. bank/source-diagnostics/<unit>.js6개는그단원의기존revision객체만가지며source-diagnostic-reviser.js의공유factory를쓴다. 앱의6main은해당단원모듈만import하고,전체검토도구용reviewed-source-diagnostics.js는6모듈의동기API를그대로중계한다. root의10개main참조와진입cache,조건검사의cache참조도20261116-source-diagnostics-per-unit로맞춘다. 문항의contentVersion은바꾸지않았다.
