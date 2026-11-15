@@ -7,10 +7,10 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 27 released editions remain reachable in exactly one advertised course', () => {
+test('all 28 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,27);
-  assert.equal(new Set(visible).size,27);
+  assert.equal(visible.length,28);
+  assert.equal(new Set(visible).size,28);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
@@ -48,9 +48,9 @@ test('actual final-round naming is preserved', () => {
 });
 
 // A new Won high-entry paper must never replace the existing middle-entry IDs.
-test('Won common1 and middle21 expose five common1 and four middle21 editions with separate time and scope', () => {
+test('Won common1 and middle21 expose five common1 and five middle21 editions with separate time and scope', () => {
  const cm=nav.examsFor('WM','common1-basic',mocks),middle=nav.examsFor('WM','middle21-basic',mocks);
- assert.equal(cm.length,5);assert.equal(middle.length,4);
+ assert.equal(cm.length,5);assert.equal(middle.length,5);
  assert.ok(cm.every(e=>e.id.startsWith('wm-common1-basic-')&&e.questionCount===50&&e.durationMinutes===180&&e.sectionMinutes.ALG===90&&e.sectionMinutes.GEO===90&&e.breakMinutes===20));
  assert.ok(middle.every(e=>e.durationMinutes===140&&e.sectionMinutes.ALG===70));
  assert.deepEqual(cm.map(e=>nav.selectionForExam(e.id)),cm.map(()=>({program:'WM',course:'common1-basic'})));
@@ -92,4 +92,16 @@ test('Won middle31 transfer is distinct from middle22 and common1',()=>{
  assert.deepEqual(e.sectionMinutes,{ALG:70,GEO:70});assert.equal(e.breakMinutes,20);
  assert.deepEqual([e.pageCount,e.answerPageCount,e.analysisPageCount],[16,17,5]);
  for(const course of ['middle21-basic','middle22-basic','common1-basic','middle-transfer'])assert.ok(nav.examsFor('WM',course,mocks).every(x=>x.id!==e.id));
+});
+
+
+test('Won middle21 final follows four original rounds with its own protected page counts',()=>{
+ const middle=nav.examsFor('WM','middle21-basic',mocks);
+ assert.deepEqual(middle.map(e=>nav.roundLabel(e)),['1회','2회','3회','4회','최종(마무리)']);
+ const final=middle[4];assert.equal(final.id,'wm-middle21-basic-final');
+ assert.equal(final.questionCount,50);assert.equal(final.durationMinutes,140);
+ assert.deepEqual(final.sectionMinutes,{ALG:70,GEO:70});assert.equal(final.breakMinutes,20);
+ assert.deepEqual([final.pageCount,final.answerPageCount,final.analysisPageCount],[19,20,5]);
+ assert.deepEqual(nav.selectionForExam(final.id),{program:'WM',course:'middle21-basic'});
+ for(const course of ['common1-basic','middle22-basic','middle31-basic','middle-transfer'])assert.ok(nav.examsFor('WM',course,mocks).every(e=>e.id!==final.id));
 });
