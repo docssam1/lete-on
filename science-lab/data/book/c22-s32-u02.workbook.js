@@ -1,3 +1,4 @@
+import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withEarthSeaStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
 import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
@@ -7922,4 +7923,6 @@ export const earthSeaReasoningPriorWorkbook=withWorkbookAnswerLanguage(withMater
 export const earthSeaElementaryPriorWorkbook=withEarthSeaLearnerReasoning(earthSeaReasoningPriorWorkbook);
 export const earthSeaStudyNotesPriorWorkbook=withEarthSeaElementaryWorkbook(earthSeaElementaryPriorWorkbook);
 export const earthSurfacePhotoPriorWorkbook=withGrade3StudyNotes(earthSeaStudyNotesPriorWorkbook);
-export const workbook=withEarthSeaStandaloneContext(earthSurfacePhotoPriorWorkbook);
+export const materialReadingPriorWorkbook=withEarthSeaStandaloneContext(earthSurfacePhotoPriorWorkbook);
+
+export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);

@@ -35,7 +35,7 @@ async function actualBank(unit){
 for(const c of cases){
  const {unit}=c;
  test(unit+' clearer directions preserve all workbook answers, figures and paper modes',async()=>{
-  const mod=await import('../data/book/'+unit+'.workbook.js'),wb=mod.workbook,prior=mod[c.prior];
+  const mod=await import('../data/book/'+unit+'.workbook.js'),wb=mod.materialReadingPriorWorkbook||mod.workbook,prior=mod[c.prior];
   assert.equal(wb.questions.length,80);
   assert.equal(wb.questions.filter((q,i)=>q.prompt!==prior.questions[i].prompt).length,c.wbChanges);
   const expectedNotes=withGrade3StudyNotes(prior);

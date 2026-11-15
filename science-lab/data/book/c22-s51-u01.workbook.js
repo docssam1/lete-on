@@ -1,3 +1,4 @@
+import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withGeologyStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
 import{withGrade5StudyNotes}from'./grade5-study-notes.js?v=20261108-grade5-study-notes';
 import{withGeologyReadableWorkbook}from'./c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook';
@@ -7735,4 +7736,6 @@ const baseWorkbook = {
 export const geologyReadablePriorWorkbook=withGeologyStudentLanguage(withGeologyEditorial(baseWorkbook));
 export const grade5StudyNotesPriorWorkbook=withGeologyReadableWorkbook(geologyReadablePriorWorkbook);
 export const geologyObservationPriorWorkbook=withGrade5StudyNotes(grade5StudyNotesPriorWorkbook);
-export const workbook=withGeologyStandaloneContext(geologyObservationPriorWorkbook);
+export const materialReadingPriorWorkbook=withGeologyStandaloneContext(geologyObservationPriorWorkbook);
+
+export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);

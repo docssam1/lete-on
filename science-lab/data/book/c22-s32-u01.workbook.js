@@ -1,3 +1,4 @@
+import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
 import{withGrade3PracticeWorkbook}from'./c22-s32-practice-language.js?v=20261108-grade3-material-language';
 import{withMaterialPhotoLanguage,withMaterialLearnerReasoning}from'./c22-s32-u01.rail-notes.js?v=20261105-material-learner-reasoning';
@@ -7994,4 +7995,6 @@ export const materialPhotoPriorWorkbook=withWorkbookAnswerLanguage(withMaterialE
 export const materialReasoningPriorWorkbook=withMaterialPhotoLanguage(materialPhotoPriorWorkbook);
 export const materialElementaryPriorWorkbook=withMaterialLearnerReasoning(materialReasoningPriorWorkbook);
 export const materialStudyNotesPriorWorkbook=withGrade3PracticeWorkbook(materialElementaryPriorWorkbook);
-export const workbook=withGrade3StudyNotes(materialStudyNotesPriorWorkbook);
+export const materialReadingPriorWorkbook=withGrade3StudyNotes(materialStudyNotesPriorWorkbook);
+
+export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);

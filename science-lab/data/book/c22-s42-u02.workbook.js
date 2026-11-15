@@ -1,3 +1,4 @@
+import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withGrade4ReviewedWorkbook}from'./grade4-question-review.js?v=20261115-grade4-question-review';
 import{withEcologyPhotoLanguage}from'./c22-s42-u02.workbook-art.js?v=20261105-ecology-photo-language';
 import{withObservationLanguage}from'./observation-language.js';
@@ -7965,4 +7966,6 @@ export const grade4ReviewPriorWorkbook=withEcologyElementaryWorkbook(ecologyElem
 import{withEcologyElementaryWorkbook}from'./c22-s42-u02.elementary.js?v=20261108-ecology-elementary';
 import{withEcologyReadableWorkbook}from'./c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook';
 
-export const workbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
+export const materialReadingPriorWorkbook=withGrade4ReviewedWorkbook(grade4ReviewPriorWorkbook);
+
+export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);

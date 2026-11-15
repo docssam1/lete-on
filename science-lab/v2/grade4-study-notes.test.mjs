@@ -1,3 +1,4 @@
+import{withMaterialReadingWorkbook}from'../data/book/material-reading-criteria.js';
 import{withClimateMaterialReferences}from'../data/book/c22-s42-u04.rail-notes.js';
 import{withVolcanoReferenceWorkbook}from'../data/book/volcano-reference-context.js';
 import{withLandObservationWorkbook}from'../data/book/land-observation-context.js';
@@ -11,7 +12,7 @@ import {climateMaterialPriorWorkbook as climate,climateStudyNotesPriorWorkbook a
 import {revisedTextbookPaper} from './revised-textbook.js';
 import {makeWorkbookPaper} from './revised-workbook-paper.js';
 
-const withCurrentReferences=w=>withClimateMaterialReferences(withVolcanoReferenceWorkbook(withLandObservationWorkbook(w)));
+const withCurrentReferences=w=>withMaterialReadingWorkbook(withClimateMaterialReferences(withVolcanoReferenceWorkbook(withLandObservationWorkbook(w))));
 const books=[[water,priorWater,14],[land,priorLand,18],[climate,priorClimate,20]];
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function changes(old,current,path=[]){

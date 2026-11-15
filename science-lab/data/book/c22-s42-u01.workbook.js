@@ -1,3 +1,4 @@
+import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withNightMoonTimeReference}from'./c22-s42-u01.rail-notes.js?v=20261115-night-moon-time-reference';
 import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
 import {withMagnetSkyStudentLanguage} from './magnet-sky-student-language.js';
@@ -9191,4 +9192,6 @@ const baseWorkbook = {
 
 export const skyReadablePriorWorkbook=withWorkbookAnswerLanguage(withMagnetSkyStudentLanguage(withNightBodyLanguage(withStudentOpeningLanguage(withNightSkyRails(baseWorkbook)))));
 export const nightMoonTimePriorWorkbook=withSkyReadableWorkbook(skyReadablePriorWorkbook);
-export const workbook=withNightMoonTimeReference(nightMoonTimePriorWorkbook);
+export const materialReadingPriorWorkbook=withNightMoonTimeReference(nightMoonTimePriorWorkbook);
+
+export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);

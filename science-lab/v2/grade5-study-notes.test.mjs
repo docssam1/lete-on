@@ -1,3 +1,4 @@
+import{withMaterialReadingWorkbook}from'../data/book/material-reading-criteria.js';
 import{withGrade5ReviewedWorkbook}from'../data/book/grade5-question-review.js';
 import{withReviewedWorkbookCriteria}from'../data/book/reviewed-question-criteria.js';
 import{withGeologyStandaloneContext}from'../data/book/standalone-question-context.js';
@@ -41,7 +42,7 @@ test('grade-five personal directions preserve all questions, upper learning and 
 
 test('actual four paper views show the reviewed directions and keep answer views and all other HTML identical',async()=>{
  for(const [current,prior,count]of books){
-  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(prior)))),art),expected=makeWorkbookPaper(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(current)))),art);
+  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(prior))))),art),expected=makeWorkbookPaper(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(current))))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=actual.workbookPaper({mode});assert.equal(html,expected.workbookPaper({mode}));
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
@@ -51,7 +52,7 @@ test('actual four paper views show the reviewed directions and keep answer views
      const note=current[key][i].rail[j],old=prior[key][i].rail[j];
      if(note.text!==old.text){assert(html.includes(escape(note.text)));restored[key][i].rail[j].text=old.text;if(key==='pages')changed++;}
     }
-    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(restored)))),art).workbookPaper({mode}),before.workbookPaper({mode}));
+    assert.equal(changed,count);assert.equal(makeWorkbookPaper(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(withElementaryReadingDirections(withGeologyStandaloneContext(restored))))),art).workbookPaper({mode}),before.workbookPaper({mode}));
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
    }
   }
@@ -85,7 +86,7 @@ test('mixture bank print imports the reviewed personal directions even when the 
   if(spec.startsWith('../data/book/c22-s52-u01.workbook.js')&&spec!=='../data/book/c22-s52-u01.workbook.js?v=20261115-grade5-question-review'){oldCacheReads++;return synthetic({workbook:prior});}
   return synthetic({...await import(new URL(spec,url).href)});
  });await module.evaluate();assert.equal(oldCacheReads,0);
- const paper=makeWorkbookPaper(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(current)),{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
+ const paper=makeWorkbookPaper(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(current))),{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
  for(const mode of ['student','teacher','answers','quick'])assert.equal(module.namespace.mixtureBankPaperHtml({mode}),paper.workbookPaper({mode}));
  const html=module.namespace.mixtureBankPaperHtml({mode:'student'});
  assert(html.includes('분리하기 전과 뒤의 무게를 비교할 때 확인할 조건을 쓰세요.'));
