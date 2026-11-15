@@ -1,7 +1,8 @@
+const beforeCareerContext=q=>{if(q?.contentVersion!=='20261116-career-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 const beforeRepresentation=q=>{if(q?.contentVersion!=='20261115-representation-response-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import{questionAtVersion}from'./question-revision.js';
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
-const beforeGrade6Review=item=>{const q=beforeRepresentation(item);return q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
+const beforeGrade6Review=item=>{const q=beforeRepresentation(beforeCareerContext(item));return q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
 import test from'node:test';
 import assert from'node:assert/strict';
 import fs from'node:fs';

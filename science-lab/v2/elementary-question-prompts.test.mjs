@@ -113,7 +113,7 @@ test('bank paper modules bypass cached former workbook URLs and load the revised
    const target=new URL(spec,url);if(cache.has(target.href))return cache.get(target.href);
    let ns=await import(target.href);
    if(target.pathname.endsWith(`/${unit}.workbook.js`)){
-    if(target.search.includes(unit==='c22-s62-u03'?'20261116-electricity-workbook-context':unit==='c22-s62-u01'?'20261116-season-workbook-context':unit==='c22-s62-u02'?'20261116-combustion-workbook-context':'20261115-representation-response-review'))freshReads++;
+    if(target.search.includes(unit==='c22-s62-u04'?'20261116-career-workbook-context':unit==='c22-s62-u03'?'20261116-electricity-workbook-context':unit==='c22-s62-u01'?'20261116-season-workbook-context':unit==='c22-s62-u02'?'20261116-combustion-workbook-context':'20261115-representation-response-review'))freshReads++;
     else {staleReads++;ns={...ns,workbook:ns.elementaryPromptPriorWorkbook};}
    }
    const mod=new vm.SyntheticModule(Object.keys(ns),function(){for(const [key,value]of Object.entries(ns))this.setExport(key,value);},{context});cache.set(target.href,mod);await mod.link(()=>{});return mod;

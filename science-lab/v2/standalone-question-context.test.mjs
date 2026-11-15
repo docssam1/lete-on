@@ -1,6 +1,7 @@
+const beforeCareerContext=q=>{if(q?.contentVersion!=='20261116-career-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import{BIOLOGY_EXAMPLE_VERSION}from'../data/book/biology-example-card.js';
 const beforeRepresentation=q=>{if(q?.contentVersion!=='20261115-representation-response-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
-const beforeGrade6Review=item=>{const q=beforeRepresentation(item);return q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
+const beforeGrade6Review=item=>{const q=beforeRepresentation(beforeCareerContext(item));return q?.contentVersion==='20261115-grade6-question-review'?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
 const beforeGrade4=item=>{const q=item.contentVersion===BIOLOGY_EXAMPLE_VERSION?questionAtVersion(item,item.previousVersions.at(-1).version):item;return q.contentVersion===GRADE4_REVIEW_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;};
