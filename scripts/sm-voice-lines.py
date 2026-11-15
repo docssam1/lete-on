@@ -39,7 +39,7 @@ def key(text):
 # ── 문장 모으기: 변수·삼항식으로 넘기는 말까지(제목·이름표 같은 글은 . ! ?로 끝나지 않아 빠진다) ──
 LIT = re.compile(r'"((?:[^"\\\n]|\\.)*)"|\'((?:[^\'\\\n]|\\.)*)\'|`([^`]*)`')
 NOT_SPOKEN_KEY = re.compile(r"\b(?:title|subtitle|doneTitle|doneText|name|label|page|mark|aria-label)\s*:\s*$")
-SPOKEN_FILES = ["js/lesson.js", "js/maze.js", "js/numbers.js", "js/lessons/*.js"]
+SPOKEN_FILES = ["js/lesson.js", "js/maze.js", "js/numbers.js", "js/shapes.js", "js/lessons/*.js"]
 
 
 def sentences():
