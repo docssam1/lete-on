@@ -7,20 +7,19 @@ const read=file=>readFileSync(new URL(file,import.meta.url),'utf8');
 for(const file of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-soma-current.js','planner-academy-data.js','planner-transition.js','planner-academy-stories.js'])vm.runInContext(read(file),context,{filename:file});
 const C=w.PLANNER_SOMA_CURRENT,S=w.PlannerAcademyStories,T=w.PlannerTransition;
 const plain=value=>JSON.parse(JSON.stringify(value));
-test('5세 관찰은 A1-2로 2주이며 세 시작 과정과 A3-3반 실제 운영표를 구분한다',()=>{
+test('현재 5세 운영표이며 A3-3은 교재 진도이고 레벨·반 선택을 만들지 않는다',()=>{
  assert.equal(C.observation.weeks,2);assert.equal(C.observation.book,'Ray Kids A1-2');
- assert.deepEqual(plain(C.observation.next),['A1-3','A2-3','A3-3']);
+ assert.equal(C.currentTextbook,'Ray A3-3');assert.equal(C.levelGrouping,false);
+ assert.equal(C.observation.next,undefined);assert.equal(C.confirmedEntry,undefined);
  const html=S.detail('ray-observation');
- for(const text of ['작년과 비슷','A1-2','A1-3','A2-3','A3-3','2026년 5세 A3-3반 월별 로드맵'])assert.ok(html.includes(text),text);
- assert.doesNotMatch(html,/RAY B1-2|출발점이 앞섭|RAY B 전체 약 5개월|Premier 초급/u);
- assert.equal(S.raySchedule().confirmed,true);
- for(const id of ['a13','a23']){
-  const plan=S.raySchedule(id);assert.equal(plan.confirmed,false);assert.equal(plan.months,null);assert.equal(plan.blocks.length,0);
-  const detail=S.detail('ray-observation',id);assert.match(detail,/월별 운영표는 아직 확인되지/u);assert.doesNotMatch(detail,/<table>/u);
- }
+ for(const text of ['작년과 비슷','A1-2','별도 레벨 구분 없음','Ray A3-3 교재','2026년 현재 5세 소마 월별 로드맵'])assert.ok(html.includes(text),text);
+ assert.doesNotMatch(html,/data-ast-ray|A[123]-3반|A1-3|A2-3|상위반|RAY B1-2/u);
+ assert.equal(S.raySchedule().confirmed,true);assert.equal(S.raySchedule().cohort,'현재 5세');
+ assert.equal(S.raySchedule().branch,undefined);assert.equal(S.rayPaths,undefined);
+ assert.equal(S.raySchedule().tracks.length,4);
 });
 test('사진의 사고력·부교재·연산·도형 월 경계를 추정 없이 보존한다',()=>{
- assert.equal(C.start,10);assert.equal(C.end,32);assert.equal(S.raySchedule('a33').months,22);
+ assert.equal(C.start,10);assert.equal(C.end,32);assert.equal(S.raySchedule().months,22);
  const ranges=C.tracks.map(t=>t.blocks.map(b=>[b.label,b.start,b.end]));
  assert.deepEqual(plain(ranges[0]),[['Ray Kids A단계',10,14],['Ray B단계',14,22],['Premier 라이즈',22,32]]);
  assert.deepEqual(plain(ranges[1]),[['키즈 팩토 기본 (A·B·C)',15,20],['초등 팩토 LV.1 기본+응용 (A·B·C)',20,29],['디딤돌 2-1',29,32]]);
@@ -39,5 +38,5 @@ test('현재 5세 표는 월별 비교에 독립된 네 축으로 나오며 이�
  for(const row of current.rows)assert.equal(row.cells.reduce((sum,c)=>sum+c.span,0),22);
  assert.equal(JSON.stringify(legacy),before);assert.ok(plans.some(p=>p.id==='main'));
  const html=read('planner.html');assert.ok(html.indexOf('planner-soma-current.js')<html.indexOf('planner-academy-data.js'));
- assert.match(T.renderAcademyMonthCourse(legacy,{now:10}),/2026년 5세 소마 A3-3반/u);
+ assert.match(T.renderAcademyMonthCourse(legacy,{now:10}),/2026년 현재 5세 소마/u);
 });
