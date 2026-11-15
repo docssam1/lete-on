@@ -31,8 +31,8 @@ test('sky readability leaves originals, similar, other units and unexpected vers
  const rows=[{...old,status:'review'}];assert.equal(skyReadableCurrentItems(rows,unit),rows);assert.equal(skyReadableCurrentItems(baseline,'other'),baseline);assert.equal(skyReadableCurrentItems(null,unit),null);
 });
 test('sky repeated classroom and daily pool use the same three revised question objects',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=skyReadableCurrentItems(baseline,unit),daily=classroomQuestions(second,current);let linked=0;
- for(const q of first.classroomItems.filter(q=>q.contentVersion===SKY_READABILITY_VERSION)){linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);}
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=skyResponseItems(skyReadableCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let linked=0;
+ for(const q of first.classroomItems.filter(q=>q.contentVersion===SKY_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===SKY_READABILITY_VERSION))){linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);}
  assert.equal(linked,3);
 });
 test('the pointer-star question gives Korean names without changing the English labels or answer position',async()=>{
@@ -42,3 +42,5 @@ test('the pointer-star question gives Korean names without changing the English 
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(skyReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['key','responseContract'].includes(k)))assert.deepEqual(workbook.questions[i][key],skyReadablePriorWorkbook.questions[i][key]);
  const paper=await revisedTextbookPaper(unit);for(const mode of['teacher','answers'])assert(paper.workbookPaper({mode}).includes(q.answer));assert(paper.workbookPaper({mode:'student'}).includes('북극성(Polaris)'));
 });
+
+import{skyResponseItems}from'../data/book/sky-response-review.js';

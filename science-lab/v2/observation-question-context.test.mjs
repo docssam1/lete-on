@@ -20,7 +20,7 @@ const imagePath='assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg',esc=s=>String
 test('two missing observation contexts preserve all contracts, earlier versions, saved answers and retake history',async()=>{
  const changed=[];
  for(const[u,rows]of Object.entries(prior)){
-  const before=JSON.stringify(rows),mod=current[u],judge=await loadJudge(u);assert.deepEqual(mod.items,representationQuestionReview(grade6QuestionReview(seasonComparisonCurrentItems(standaloneQuestionContexts(rows,u),u),u),u));const stageItems=mod.items.map(beforeGrade6Review).map(q=>q.contentVersion===SEASON_COMPARISON_VERSION?questionAtVersion(q,seasonComparisonEdits[q.workbookRef.no].priorVersion):q);
+  const before=JSON.stringify(rows),mod=current[u],judge=await loadJudge(u);assert.deepEqual(mod.items,skyResponseItems(representationQuestionReview(grade6QuestionReview(seasonComparisonCurrentItems(standaloneQuestionContexts(rows,u),u),u),u),u));const stageItems=mod.items.map(beforeSkyResponse).map(beforeGrade6Review).map(q=>q.contentVersion===SEASON_COMPARISON_VERSION?questionAtVersion(q,seasonComparisonEdits[q.workbookRef.no].priorVersion):q);
   for(let i=0;i<rows.length;i++){
    const old=rows[i],q=stageItems[i];if(!ids.includes(q.id)){assert.deepEqual(q,old);continue;}changed.push(q.id);
    assert.equal(q.contentVersion,OBSERVATION_CONTEXT_VERSION);assert.deepEqual(q.answerContract,old.answerContract);assert.deepEqual(q.responseContract,old.responseContract);assert.equal(q.explanation,old.explanation);assert.deepEqual(q.taxonomy,old.taxonomy);assert.deepEqual(q.sourceRef,old.sourceRef);
@@ -60,3 +60,6 @@ test('the existing lunar photo is visible in standalone learning, Daily and the 
  for(const html of [item(q),item(q,{print:true}),daily(q)]){assert(html.includes('../'+imagePath));assert(!html.includes(esc(q.explanation)));}
  for(const mode of ['student','teacher','answers','quick']){const mod=current['c22-s42-u01'],html=mod.bankPaper({...mod,mode});assert(!/undefined|\[object Object\]/.test(html));if(mode==='student'||mode==='teacher'){const at=html.indexOf('data-paper-item="'+q.id+'"'),end=html.indexOf('</article>',at),card=html.slice(at,end);assert(card.includes('../'+imagePath));if(mode==='student')assert(!card.includes('sky-key'));}}
 });
+
+import{skyResponseItems,SKY_RESPONSE_VERSION}from'../data/book/sky-response-review.js';
+const beforeSkyResponse=q=>q.contentVersion===SKY_RESPONSE_VERSION?questionAtVersion(q,q.previousVersions.at(-1).version):q;

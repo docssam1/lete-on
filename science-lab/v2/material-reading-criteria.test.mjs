@@ -34,4 +34,6 @@ test('actual shared classroom, bank prints and current cache expose the same rev
 
 import{withSkyWorkbookDirections}from'../data/book/sky-workbook-directions.js';
 import{withEcologyMaterialWorkbook}from'../data/book/ecology-material-context.js';
-const withCurrentDirections=w=>withEcologyMaterialWorkbook(withSkyWorkbookDirections(w));
+const withCurrentDirections=w=>withSkyResponseWorkbook(withEcologyMaterialWorkbook(withSkyWorkbookDirections(w)));
+
+import{withSkyResponseWorkbook}from'../data/book/sky-response-review.js';

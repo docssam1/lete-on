@@ -383,6 +383,7 @@ const cache=new WeakMap();
 const clone=value=>JSON.parse(JSON.stringify(value));
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 export function grade4QuestionReview(rows,unit){
+ if(unit==='c22-s42-u01')return skyResponseItems(rows,unit);
  if(!GRADE4_REVIEW_UNITS.includes(unit)||!Array.isArray(rows))return rows;
  let changed=false;
  const next=rows.map(q=>{
@@ -413,3 +414,4 @@ export function withGrade4QuestionReviewClassroom(unit,mod){
 }
 import{biologyExampleItems}from'./biology-example-card.js?v=20261115-biology-example-card';
 import{ecologyMaterialItems}from'./ecology-material-context.js?v=20261115-ecology-food-web-material';
+import{skyResponseItems}from'./sky-response-review.js?v=20261115-sky-response-review';
