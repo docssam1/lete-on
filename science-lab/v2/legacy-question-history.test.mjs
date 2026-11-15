@@ -25,7 +25,7 @@ for(const data of units)for(const q of [...data.mod.items,...(data.mod.similar||
 }
 
 test('all stored full snapshots restore exactly their own fields while the two legacy deltas retain their context',()=>{
- assert.equal(units.length,32);assert.equal(full.length,3023);assert.equal(partial.length,2);
+ assert.equal(units.length,32);assert.equal(full.length,3059);assert.equal(partial.length,2);
  assert.deepEqual(partial.map(({q,snapshot})=>[q.id,Object.keys(snapshot)]),[['c22-s32-u03-b25',['version','choices']],['c22-s32-u03-b41',['version','choices']]]);
  for(const {q,snapshot}of full){
   const before=JSON.stringify(q),restored=questionAtVersion(q,snapshot.version);

@@ -1,4 +1,5 @@
-const beforeEarthSeaChoice=q=>{if(q?.contentVersion!=='20261115-earth-sea-choice-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
+import{withEarthSeaLinkedWorkbook}from'../data/book/earth-sea-choice-review.js';
+const beforeEarthSeaChoice=q=>{if(!['20261115-earth-sea-choice-review','20261115-earth-sea-linked-choice-review'].includes(q?.contentVersion))return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 const beforeMaterialReading=q=>q?.contentVersion==='20261115-material-reading-criteria'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
 import{EARTH_SURFACE_PHOTO_VERSION,withEarthSeaStandaloneContext}from'../data/book/standalone-question-context.js';
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
@@ -42,7 +43,7 @@ test('Earth-and-sea reading edits preserve workbook grading, pictures and all fo
   const paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
     const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-    if(mode==='student'||mode==='teacher')for(const q of withEarthSeaStandaloneContext(workbook).questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
+    if(mode==='student'||mode==='teacher')for(const q of withEarthSeaLinkedWorkbook(withEarthSeaStandaloneContext(workbook)).questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
 });
@@ -78,7 +79,7 @@ test('actual bank loader preserves every answer boundary and saved presentation 
 test('classroom questions use the same revised bank prompts while retaining their contracts',async()=>{
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items}=await actualBank();
   const bank=new Map(items.map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,12);
-  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===EARTH_SEA_ELEMENTARY_VERSION).length,6);
+  assert.equal(mod.classroomItems.map(beforeEarthSeaChoice).filter(q=>q.contentVersion===EARTH_SEA_ELEMENTARY_VERSION).length,6);
   for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
   for(const q of currentWorkbook.questions.filter(q=>q.sourceId))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
 });

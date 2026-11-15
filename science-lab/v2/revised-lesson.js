@@ -1,4 +1,4 @@
-import{withEarthSeaChoiceClassroom}from'../data/book/earth-sea-choice-review.js?v=20261115-earth-sea-choice-review';
+import{withEarthSeaChoiceClassroom}from'../data/book/earth-sea-choice-review.js?v=20261115-earth-sea-linked-choice-review';
 import{withRepresentationClassroom}from'../data/book/representation-question-review.js?v=20261115-representation-response-review';
 import{withMaterialReadingClassroom}from'../data/book/material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withGrade6QuestionReviewClassroom}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
@@ -55,7 +55,7 @@ import{mountMotionCompare}from'./lab-motion-compare.js?v=20261104-motion-class';
 import{motionCompareValues,validMotionCompareRow}from'./motion-compare-model.js';
 import{inquiry as motionInquiry}from'../data/activities/c22-s61-u02.inquiry.js?v=20261104-motion-class';
 // 검수한 사고력 수업만 선택 적용한다. 원래 실제 활동·기록 교재는 그대로 둔다.
-import {revisedTextbook} from './revised-textbook.js?v=20261115-earth-sea-choice-review';
+import {revisedTextbook} from './revised-textbook.js?v=20261115-earth-sea-linked-choice-review';
 import {FORCE_PREDICTIONS} from './force-model.js';
 import {mountAnimalCompare} from './lab-animal-compare.js';
 import {classifyRowValues,validClassifyRow} from './animal-classify.js';
