@@ -18,7 +18,7 @@ const COURSE3 = [["a1", "A1", "나머지정리와 지렛대의 원리"], ["a2", 
 const LABS = {
   g1: [["3단원 · 360도와 정다각형", "angles", "각 떼어 모으기"], ["3단원 · 360도와 정다각형", "clock", "시계 바늘 각"], ["4단원 · 삼각형과 사각형", "dots", "점판 위 정사각형"]],
 };
-const PROOF_TAG = "20261115c";
+const PROOF_TAG = "20261115e";
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const testLink = (id, course = 2) => ((course === 3 ? COURSE3_TESTS : COURSE2_TESTS)[id] ? `<a class="c2-test" href="./course2-test-paper.html?${course === 3 ? "course=3&" : ""}book=${id}">권별 테스트 풀기</a>` : `<span class="c2-test is-off">권별 테스트 준비 중</span>`);
 // 시험지 파일의 meta.title(본책 제목) — 등록된 권만 읽는다
