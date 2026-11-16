@@ -7,10 +7,10 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 35 released editions remain reachable in exactly one advertised course', () => {
+test('all 36 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,35);
-  assert.equal(new Set(visible).size,35);
+  assert.equal(visible.length,36);
+  assert.equal(new Set(visible).size,36);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
 
@@ -81,14 +81,21 @@ test('Won final round follows rounds 1–4 within the common1 course',()=>{
  assert.equal(nav.examsFor('WM','middle21-basic',mocks).some(e=>e.id===cm[4].id),false);
 });
 
-test('Won middle22 transfer opens only under middle22 with its own scope and ten-minute break',()=>{
+test('Won middle22 transfer preserves historical R1 and adds the latest-timetable R2',()=>{
  const transfer=nav.examsFor('WM','middle22-basic',mocks);
- assert.deepEqual(transfer.map(e=>e.id),['wm-middle22-basic-r01']);
+ assert.deepEqual(transfer.map(e=>e.id),['wm-middle22-basic-r01','wm-middle22-basic-mixed-r02']);
  assert.deepEqual(nav.selectionForExam(transfer[0].id),{program:'WM',course:'middle22-basic'});
  assert.match(transfer[0].scope,/중2-1 대수 기본형.*중1-2 기하 심화형.*통계 제외/);
  assert.equal(transfer[0].questionCount,50);assert.equal(transfer[0].durationMinutes,140);
  assert.equal(transfer[0].breakMinutes,10);assert.deepEqual(transfer[0].sectionMinutes,{ALG:70,GEO:70});
  assert.deepEqual([transfer[0].pageCount,transfer[0].answerPageCount,transfer[0].analysisPageCount],[19,20,5]);
+ const r2=transfer[1];
+ assert.deepEqual(nav.selectionForExam(r2.id),{program:'WM',course:'middle22-basic'});
+ assert.deepEqual([r2.questionCount,r2.pageCount,r2.answerPageCount,r2.analysisPageCount],[50,23,22,5]);
+ assert.deepEqual(r2.sectionMinutes,{ALG:70,GEO:70});
+ assert.equal(r2.durationMinutes,140);assert.equal(r2.totalWindowMinutes,160);
+ assert.equal(r2.breakMinutes,20);assert.equal(r2.pauseLabel,'교시 사이');
+ for(const c of ['middle21-basic','common1-basic','middle31-basic','middle-transfer'])assert.ok(nav.examsFor('WM',c,mocks).every(e=>e.id!==r2.id));
  for(const c of ['middle21-basic','common1-basic','middle31-basic','middle-transfer'])assert.ok(nav.examsFor('WM',c,mocks).every(e=>e.id!==transfer[0].id));
 });
 

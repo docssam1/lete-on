@@ -10,10 +10,10 @@ const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const keyFor = e => e.id === "wm-middle31-basic-r01" ? "WM:middle31-basic" : e.id === "wm-middle22-basic-r01" ? "WM:middle22-basic" : e.id === "ed-middle1-authored-r01" ? "ED:middle1" : e.id.startsWith("dp-middle22-transfer-") ? "DP:middle-transfer" : e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
 
 test("every released mock agrees with its own branch/course time and count", () => {
-  assert.equal(mocks.length, 35);
-  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1340);
+  assert.equal(mocks.length, 36);
+  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1390);
   mocks.forEach(e => {
-    const s = specs.courses[keyFor(e)];
+    const s = specs.editions?.[e.id] || specs.courses[keyFor(e)];
     assert.ok(s, e.id);
     assert.match(s.branch, /대치/);
     if (s.durationState === "official") {
@@ -32,6 +32,15 @@ test("every released mock agrees with its own branch/course time and count", () 
       assert.equal(e.durationMinutes, Object.values(s.sectionMinutes).reduce((a,b) => a+b, 0));
     }
   });
+});
+
+test('December middle22 R2 uses published endpoints without relabeling the entire gap as official rest',()=>{
+ const e=mocks.find(e=>e.id==='wm-middle22-basic-mixed-r02'),s=specs.editions[e.id];
+ assert.equal(s.sourceUrl,'https://blog.naver.com/wonmath563/224470731361');
+ assert.equal(e.totalWindowMinutes,160);assert.equal(e.pauseLabel,'교시 사이');
+ assert.equal(s.officialRestRowMinutes,10);assert.equal(s.unlabelledInterSectionMinutes,10);
+ assert.equal(e.durationMinutes+e.breakMinutes,e.totalWindowMinutes);
+ assert.equal(mocks.find(e=>e.id==='wm-middle22-basic-r01').breakMinutes,10);
 });
 
 test("Won basic courses retain different ranges and durations after the October revision", () => {
