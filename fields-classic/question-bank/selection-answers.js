@@ -42,3 +42,33 @@ export function selectionVideoHref(examId, number, { student = "학생", title =
   return `../video-viewer/?${p}`;
 }
 export const selectionVideoFrom = (examId, number) => SELECTION_VIDEOS[examId]?.[number]?.from || "";
+
+// 답 그림(원장 2026-11-16 「답안은 텍스트 위주보다 이미지 또는 식 형태」): 답 기록의 answerVisual을 작은 그림으로.
+//   grid  {rows:[["3","1"],["7","5"]]} — 칸 배치 · shape {shapes:[{shape,fill}]} — 모양 답 · stack {shape,count,fill} — 쌓은 모양 · list {items:[…]}
+const escV = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const FILL = { white: "#fff", black: "#22302a", gray: "#b9b3a6" };
+function shapeSvg(shape, fill = "white", size = 30) {
+  const f = FILL[fill] || FILL.white, s = size, h = s / 2, st = `fill="${f}" stroke="#22302a" stroke-width="2"`;
+  const body = {
+    circle: `<circle cx="${h}" cy="${h}" r="${h - 2}" ${st}/>`,
+    triangle: `<polygon points="${h},2 ${s - 2},${s - 3} 2,${s - 3}" ${st}/>`,
+    square: `<rect x="3" y="3" width="${s - 6}" height="${s - 6}" ${st}/>`,
+    diamond: `<polygon points="${h},2 ${s - 2},${h} ${h},${s - 2} 2,${h}" ${st}/>`,
+    star: `<polygon points="${[...Array(10)].map((_, i) => { const r = i % 2 ? h * 0.42 : h - 2, a = -Math.PI / 2 + i * Math.PI / 5; return `${(h + r * Math.cos(a)).toFixed(1)},${(h + r * Math.sin(a)).toFixed(1)}`; }).join(" ")}" ${st}/>`,
+    heart: `<path d="M${h} ${s - 4} C${-2} ${h} ${4} ${2} ${h} ${h - 3} C${s - 4} ${2} ${s + 2} ${h} ${h} ${s - 4}Z" ${st}/>`,
+  }[shape];
+  return body ? `<svg class="sa-shape" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" aria-hidden="true">${body}</svg>` : "";
+}
+export function answerVisualMarkup(v) {
+  if (!v || typeof v !== "object") return "";
+  if (v.kind === "grid" && Array.isArray(v.rows)) {
+    return `<table class="sa-grid">${v.rows.slice(0, 8).map((row) => `<tr>${(Array.isArray(row) ? row : []).slice(0, 8).map((c) => `<td${c === "" || c == null ? ' class="is-empty"' : ""}>${escV(c)}</td>`).join("")}</tr>`).join("")}</table>`;
+  }
+  if (v.kind === "shape" && Array.isArray(v.shapes)) return `<span class="sa-shapes">${v.shapes.slice(0, 6).map((x) => shapeSvg(x.shape, x.fill)).join("")}</span>`;
+  if (v.kind === "stack") return `<span class="sa-stack">${Array.from({ length: Math.min(8, Number(v.count) || 1) }, () => shapeSvg(v.shape, v.fill, 26)).join("")}</span>`;
+  if (v.kind === "list" && Array.isArray(v.items)) return `<span class="sa-list">${v.items.slice(0, 6).map((x) => `<b>${escV(x)}</b>`).join("")}</span>`;
+  return "";
+}
+// 답 그림이 목록이면 답 글과 같은 말이 두 번 나오므로 목록만 보인다(원장 2026-11-16 「식 형태」).
+export const isListVisual = (v) => !!(v && v.kind === "list" && Array.isArray(v.items) && v.items.length);
+export const workMarkup = (work) => (Array.isArray(work) && work.length ? `<div class="sa-work">${work.slice(0, 8).map((line) => `<p>${escV(line)}</p>`).join("")}</div>` : "");

@@ -51,3 +51,16 @@ body.sol-steps .st-sol-steps { display: block; }
 .st-video small { color: #56627f; font-weight: 500; }
 .st-same-paper { margin: -6px 0 12px; font: 600 13px 'Pretendard', sans-serif; color: #243184; }
 @media print { .st-video, .st-same-paper { display: none !important; } }
+/* 답 그림·식(원장 2026-11-16 「이미지 또는 식 형태」) */
+.st-ans-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.st-sol-brief p { margin: 4px 0 0 !important; font-size: 13px !important; }
+.sa-work { margin: 4px 0 0; padding: 6px 10px; border-left: 3px solid #1f6b4a; background: rgba(31, 107, 74, .06); }
+.sa-work p { margin: 0 !important; font-family: 'FC Serif', serif; font-size: 15px !important; font-weight: 600; line-height: 1.7; letter-spacing: .01em; color: #22302a; }
+.sa-grid { border-collapse: collapse; }
+.sa-grid td { width: 30px; height: 30px; border: 1.5px solid #22302a; text-align: center; font: 700 15px 'FC Serif', serif; color: #1f6b4a; background: #fff; }
+.sa-grid td.is-empty { background: #ece6d8; }
+.sa-shapes, .sa-stack { display: inline-flex; gap: 4px; align-items: center; }
+.sa-list { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.sa-stack { flex-direction: column; gap: 0; }
+.sa-list b { padding: 2px 8px; border: 1px solid #c9bfa8; border-radius: 4px; font: 700 13px 'FC Serif', serif; }
+@media print { .sa-work { background: none; } }

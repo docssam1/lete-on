@@ -5,6 +5,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 // 원장 결정 「모두에게 열기」에 따라 로그인 없이 내준다. 막을 때는 OPEN_ACCESS 를 false 로 두고 다시 배포한다.
 // v3(2026-11-14): 2과정 권별 테스트(bookId course-02-g4 · course-02-a5 …)도 받는다.
 // v4(2026-11-16): 선발시험(입학 모의고사) 정답도 받는다 — bookId selection-<시험 id>(원장 「답안이 없어」).
+// v6(2026-11-16): 식 풀이 work·답 그림 answerVisual도 내보낸다(원장 「이미지 또는 식 형태」).
 // v5(2026-11-16): 풀이 두 단계 brief(간단히 보기)·steps(설명 보기)도 내보낸다(원장 「풀이를 써야돼 … 간단히 보기와 설명보기」).
 const OPEN_ACCESS = true;
 
@@ -63,6 +64,8 @@ Deno.serve(async (req: Request) => {
       text: entry?.text || "", visual: entry?.visual || null,
       ...(entry?.brief ? { brief: clean(entry.brief, 400) } : {}),
       ...(Array.isArray(entry?.steps) && entry.steps.length ? { steps: entry.steps.slice(0, 8).map((step: unknown) => clean(step, 300)) } : {}),
+      ...(Array.isArray(entry?.work) && entry.work.length ? { work: entry.work.slice(0, 8).map((line: unknown) => clean(line, 160)) } : {}),
+      ...(entry?.answerVisual && typeof entry.answerVisual === "object" && JSON.stringify(entry.answerVisual).length <= 2000 ? { answerVisual: entry.answerVisual } : {}),
     }]));
     return json(req, { bookId, answers, updatedAt: data.updated_at });
   } catch {

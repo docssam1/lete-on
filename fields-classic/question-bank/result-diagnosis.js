@@ -9,7 +9,7 @@ import {
 } from "./result-diagnosis-data.js?v=20261116d";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { hasBank } from "./entrance-products.js?v=20261116b";
-import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom } from "./selection-answers.js?v=20261116b";
+import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom, answerVisualMarkup, workMarkup, isListVisual } from "./selection-answers.js?v=20261116d";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -26,7 +26,7 @@ let lastAnalysis = null;
 let answerKey = null, answerKeyExam = "";
 async function fetchAnswerKey() {
   const id = exam.id;
-  answerKeyExam = id; answerKey = null;
+  answerKeyExam = id; answerKey = null; openSteps.clear();
   const answers = await loadSelectionAnswers(id);
   if (exam.id === id && answers) { answerKey = answers; render(); }
 }
@@ -85,22 +85,32 @@ function renderExamOptions() {
   $("examSelect").value = exam.id;
 }
 
-// 정답 + 풀이(간단히 · 설명 보기, 원장 2026-11-16) — 풀이가 있으면 접어 둔다
+// 정답 + 풀이(간단히 · 설명 보기, 원장 2026-11-16). 정답이 있는 시험은 한 문항을 가로 한 줄로 —
+// 번호·유형·정답 | 풀이(식) | O X (원장 2026-11-16 「답안과 풀이도 ox 안해도 한번에 볼 수 있도록 · ox는 가로로」).
+// 간단히 보기와 식은 늘 펼쳐 두고, 설명 보기는 하나씩 또는 「설명 모두 펼치기」로 연다. O/X를 눌러도 열린 것은 그대로.
+let allSteps = false;
+const openSteps = new Set();
 function keyMarkup(key, number) {
+  return `<em class="response-key">정답${isListVisual(key.answerVisual) ? "" : ` ${escapeHtml(key.text)}`}${answerVisualMarkup(key.answerVisual)}</em>`;
+}
+function solutionMarkup(key, number) {
   const brief = key.brief ? `<p><b>간단히</b> ${escapeHtml(key.brief)}</p>` : "";
-  const steps = key.steps?.length ? `<details><summary>설명 보기</summary><ol>${key.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol></details>` : "";
+  const open = allSteps || openSteps.has(String(number)) ? " open" : "";
+  const steps = key.steps?.length ? `<details class="response-steps" data-number="${number}"${open}><summary>설명 보기</summary><ol>${key.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol></details>` : "";
   const href = selectionVideoHref(exam.id, number, { student, title: `${plain(exam.label)} ${number}번 해설` });
   const video = href ? `<a class="response-video" href="${escapeHtml(href)}" target="_blank" rel="noopener" title="${escapeHtml(selectionVideoFrom(exam.id, number))}">해설 영상</a>` : "";
-  return `<em class="response-key">정답 ${escapeHtml(key.text)}</em>${brief || steps ? `<details class="response-sol"><summary>풀이 보기</summary>${brief}${steps}</details>` : ""}${video}`;
+  return brief || key.work?.length || steps || video ? `<div class="response-sol">${brief}${workMarkup(key.work)}${steps}${video}</div>` : "";
 }
 
 function responseRow(question) {
   const classification = question.classification;
   const result = responses[question.number];
   const typeLabel = question.note || classification?.detailedTypeLabel || "유형 확인 필요";
+  const key = answerKey?.[question.number];
   return `<article class="response-row ${result ? `is-${result}` : ""}">
     <span>${String(question.number).padStart(2, "0")}</span>
-    <div class="response-copy"><strong>${typeLabel}</strong><small>${classification?.majorDomainLabel || "미분류"} · ${classification?.minorDomain || "미분류"}</small>${answerKey?.[question.number] ? keyMarkup(answerKey[question.number], question.number) : ""}</div>
+    <div class="response-copy"><strong>${typeLabel}</strong><small>${classification?.majorDomainLabel || "미분류"} · ${classification?.minorDomain || "미분류"}</small>${key ? keyMarkup(key, question.number) : ""}</div>
+    ${key ? solutionMarkup(key, question.number) : ""}
     <div class="ox-buttons" role="group" aria-label="${question.number}번 결과">
       <button type="button" data-number="${question.number}" data-result="correct" class="${result === "correct" ? "active" : ""}" aria-pressed="${result === "correct"}">O</button>
       <button type="button" data-number="${question.number}" data-result="incorrect" class="${result === "incorrect" ? "active" : ""}" aria-pressed="${result === "incorrect"}">X</button>
@@ -197,7 +207,15 @@ function render() {
   $("correctCount").textContent = String(analysis.correct);
   $("wrongCount").textContent = String(analysis.wrong);
   $("progressBar").style.width = `${analysis.total ? (analysis.answered / analysis.total) * 100 : 0}%`;
+  const hasKey = !!answerKey && answerKeyExam === exam.id;
+  $("responseGrid").classList.toggle("has-key", hasKey);
+  $("stepsToggle").hidden = !hasKey || !Object.values(answerKey || {}).some((key) => key?.steps?.length);
+  $("stepsToggle").textContent = allSteps ? "설명 모두 접기" : "설명 모두 펼치기";
+  $("stepsToggle").setAttribute("aria-pressed", String(allSteps));
   $("responseGrid").innerHTML = exam.questions.map(responseRow).join("");
+  $("responseGrid").querySelectorAll("details.response-steps").forEach((box) => box.addEventListener("toggle", () => {
+    if (box.open) openSteps.add(box.dataset.number); else openSteps.delete(box.dataset.number);
+  }));
   $("responseGrid").querySelectorAll("button[data-result]").forEach((button) => button.addEventListener("click", () => {
     responses[button.dataset.number] = button.dataset.result;
     diagnosisOpen = false;
@@ -208,6 +226,12 @@ function render() {
   $("showResult").disabled = !analysis.complete;
   renderDiagnosis(analysis);
 }
+
+$("stepsToggle").addEventListener("click", () => {
+  allSteps = !allSteps;
+  openSteps.clear();
+  render();
+});
 
 $("groupSelect").addEventListener("change", () => {
   activeGroupId = $("groupSelect").value;

@@ -46,7 +46,20 @@
 /* 선발시험 번호마다 정답(원장 2026-11-16 「답안이 없어」) */
 .response-key{display:block;margin-top:6px;padding:4px 6px;border-radius:4px;background:#eef4fb;color:var(--navy);font-size:10px;font-style:normal;font-weight:900;line-height:1.45;word-break:keep-all}
 @media print{.response-key{background:none;padding:0}}
-.response-sol{margin-top:4px;font-size:10px;line-height:1.5}.response-sol summary{color:var(--blue);font-weight:900;cursor:pointer}.response-sol p{margin:4px 0 0;color:var(--ink);font-weight:700;word-break:keep-all}.response-sol p b{color:var(--green);margin-right:3px}.response-sol details{margin-top:4px}.response-sol details summary{color:var(--muted)}.response-sol ol{margin:4px 0 0;padding-left:16px;color:var(--ink);font-weight:600;word-break:keep-all}
+.response-sol{font-size:11px;line-height:1.5}.response-sol summary{color:var(--blue);font-weight:900;cursor:pointer}.response-sol>p{margin:0;color:var(--ink);font-weight:700;word-break:keep-all}.response-sol>p b{color:var(--green);margin-right:4px}.response-steps{margin-top:5px}.response-steps ol{margin:4px 0 0;padding-left:18px;color:var(--ink);font-weight:600;word-break:keep-all}.response-steps li+li{margin-top:2px}
 @media print{.response-sol{display:none}}
-.response-video{display:inline-block;margin-top:4px;margin-left:6px;color:var(--blue);font-size:10px;font-weight:900;text-decoration:none}
+.response-video{display:inline-block;margin-top:5px;color:var(--blue);font-size:10px;font-weight:900;text-decoration:none}
 @media print{.response-video{display:none}}
+.response-key .sa-grid{display:table;margin:4px 0 2px;border-collapse:collapse}.response-key .sa-shapes,.response-key .sa-stack{display:inline-flex;margin-left:6px;vertical-align:middle}.response-key .sa-grid td{width:18px;height:18px;border:1px solid #33454f;text-align:center;font-size:10px;background:#fff}.response-key .sa-grid td.is-empty{background:#e7ecef}.response-key .sa-shape{width:18px;height:18px}.response-key .sa-stack{display:inline-flex;flex-direction:column}.response-key .sa-list{display:flex;flex-direction:column;margin-top:2px}.response-key .sa-list b{font-weight:900}.response-sol .sa-work{margin-top:4px;padding:4px 6px;border-left:2px solid var(--green);background:#f2f8f5}.response-sol .sa-work p{margin:0;font-size:11px;font-weight:900}
+
+/* 정답이 있는 시험(선발시험): 한 문항 = 가로 한 줄 — 번호 | 유형·정답 | 풀이(식) | O X (원장 2026-11-16) */
+.exam-heading{flex-wrap:wrap}.steps-toggle{min-height:34px;padding:0 14px;border:1px solid var(--navy);border-radius:5px;background:#fff;color:var(--navy);font-size:11px;font-weight:900;cursor:pointer}.steps-toggle[aria-pressed=true]{background:var(--navy);color:#fff}.steps-toggle:focus-visible{outline:3px solid rgba(22,135,188,.28);outline-offset:2px}
+.response-grid.has-key{grid-template-columns:1fr}
+.response-grid.has-key .response-row{grid-template-columns:34px minmax(170px,240px) minmax(0,1fr) 132px;grid-template-rows:auto;gap:0 18px;align-items:start;min-height:0;padding:14px 18px}
+.response-grid.has-key .response-row>span{grid-row:auto;padding-top:2px;font-size:14px}
+.response-grid.has-key .response-copy strong{font-size:11px}
+.response-grid.has-key .response-key{font-size:12px}
+.response-grid.has-key .response-sol .sa-work{margin-top:5px}.response-grid.has-key .response-sol .sa-work p{font-size:12px;line-height:1.6}
+.response-grid.has-key .ox-buttons{align-self:start;grid-template-columns:1fr 1fr}.response-grid.has-key .ox-buttons button{height:40px;font-size:14px}
+@media(max-width:800px){.response-grid.has-key .response-row{grid-template-columns:30px minmax(0,1fr) 108px;gap:8px 10px;padding:12px}.response-grid.has-key .response-sol{grid-column:2/-1;grid-row:2}.response-grid.has-key .ox-buttons{grid-column:3;grid-row:1}}
+@media print{.steps-toggle{display:none}}
