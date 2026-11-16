@@ -1,8 +1,9 @@
 // 교재 원문은 실제 쪽수·문항 번호로, 기존 단원평가는 기존 세트 표기로 보여 준다.
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-export const bankLabel = (bank) => bank?.label || '단원평가';
+export const assessmentTitle = (title) => String(title || '학습 평가').replace(/\s*·\s*창작$/, '');
+export const bankLabel = (bank) => bank?.assessment && bank?.authored ? assessmentTitle(bank.label) : bank?.label || '단원평가';
 export const groupLabel = (bank, n) => bank?.groups?.[n] || `세트${n}`;
-export const examHeading = (bank, n) => bank?.label ? `${bank.label} · ${groupLabel(bank, n)}` : `단원평가 세트${n}`;
+export const examHeading = (bank, n) => bank?.label ? `${bankLabel(bank)} · ${groupLabel(bank, n)}` : `단원평가 세트${n}`;
 export const sourceCaption = (ref) => ref?.label ? `${ref.label} · ${ref.page}쪽 ${ref.originalNo}번` : `단원평가 세트${ref?.set} · ${ref?.no}번`;
 // Use a reviewed native-resolution copy while retaining the original path and layout as fallback.
 const nativeSourceFigures = {

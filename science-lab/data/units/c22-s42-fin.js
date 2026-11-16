@@ -1,3 +1,4 @@
+import {reviewedAssessmentItems} from './reviewed-assessment-language.js?v=20261116-assessment-language';
 export const unit = {
   "id": "c22-s42-fin",
   "course": "4-2",
@@ -30,7 +31,7 @@ export const unit = {
     "performanceNote": "실제 관찰·설계·제작·조사·실천·소통은 별도 확인한다."
   }
 };
-export const items = [
+const authoredItems = [
   {
     "id": "c22-s42-fin-f1-01",
     "status": "authored",
@@ -5865,4 +5866,5 @@ export const items = [
     }
   }
 ];
-export {assessment42BankPaperHtml as bankPaper,wireAssessment42BankPaper as wireBankPaper} from '../../v2/assessment42-bank-paper.js';
+export const items=reviewedAssessmentItems(authoredItems);
+export {assessment42BankPaperHtml as bankPaper,wireAssessment42BankPaper as wireBankPaper} from '../../v2/assessment42-bank-paper.js?v=20261116-assessment-language';
