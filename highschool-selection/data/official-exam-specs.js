@@ -4,6 +4,7 @@
   // change releases, student grants, answer keys or automatic pass decisions.
   root.HIGHSELECT_OFFICIAL_EXAM_SPECS = {
     checkedAt: "2026-11-15",
+    editions: {"wm-middle22-basic-mixed-r02": {"branch": "대치", "durationState": "official", "durationMinutes": 140, "questionCount": 50, "sectionCounts": {"ALG": 25, "GEO": 25}, "sectionMinutes": {"ALG": 70, "GEO": 70}, "breakMinutes": 20, "pauseLabel": "교시 사이", "totalWindowMinutes": 160, "officialRestRowMinutes": 10, "unlabelledInterSectionMinutes": 10, "scope": "중2-1 대수 기본형 / 중1-2 기하 심화형 · 통계 제외", "sourceUrl": "https://blog.naver.com/wonmath563/224470731361", "checkedAt": "2026-11-16", "note": "2026년12월 편입 공지의 시작·종료 시각과 교시간격을 적용. 교시간격20분은 공식 휴식행10분과 구분한다."}},
     courses: {
       "SH:high-selection": {
         branch: "대치", cohort: "2026년 고등과정 시작반 편입",

@@ -39,11 +39,11 @@
   </main>
   <footer class="footer"><div class="shell"><span>LETE-ON · 초중고 입학 테스트 대비</span><a href="../login.html?v=wm-final-20261114">배정받은 시험 입장</a></div></footer>
   <script src="../data/public-exam-profiles.js?v=wm-final-20261114"></script>
-  <script src="../data/academy-engagement.js?v=dolpa-common1-final-20261116"></script>
-  <script src="../data/available-mocks.js?v=dolpa-common1-final-20261116"></script>
-  <script src="../data/official-exam-specs.js?v=dolpa-common1-final-20261116"></script>
-  <script src="../data/course-admissions.js?v=dolpa-common1-final-20261116"></script>
-  <script src="./course-navigation.js?v=dolpa-common1-final-20261116"></script>
+  <script src="../data/academy-engagement.js?v=won-middle22-r02-20261116"></script>
+  <script src="../data/available-mocks.js?v=won-middle22-r02-20261116"></script>
+  <script src="../data/official-exam-specs.js?v=won-middle22-r02-20261116"></script>
+  <script src="../data/course-admissions.js?v=won-middle22-r02-20261116"></script>
+  <script src="./course-navigation.js?v=won-middle22-r02-20261116"></script>
   <script>
     'use strict';
     const data=HIGHSELECT_PUBLIC_PROFILES;
@@ -82,7 +82,7 @@
     const mocks=HIGHSELECT_AVAILABLE_MOCKS;
     const navigation=HIGHSELECT_PROMO_NAV;
     const courseExams=(program,course)=>navigation.examsFor(program,course,mocks);
-    const mockTime=e=>e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · 휴식 ${e.breakMinutes}분 별도`:(e.durationMinutes?e.durationMinutes+'분':'');
+    const mockTime=e=>e.pauseLabel?`총 ${e.totalWindowMinutes}분 · 대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · ${e.pauseLabel} ${e.breakMinutes}분`:e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · 휴식 ${e.breakMinutes}분 별도`:(e.durationMinutes?e.durationMinutes+'분':'');
     const examHref=e=>'../login.html?v=wm-final-20261114&exam='+encodeURIComponent(e.id);
     function academyLogo(program){
       return `<span class="academy-mark ${program.code==='DP'?'academy-mark-clear':''}"><img src="./assets/logos/${academyLogos[program.code]}" alt="" decoding="async"></span>`;
@@ -102,7 +102,7 @@
         const ready=exams.length>0;
         const guide=Boolean(HIGHSELECT_COURSE_ADMISSIONS.forCourse(program.code,course.id));
         const first=exams[0];
-        return `<a class="course-banner ${ready?'is-ready':'is-preparing'}" href="${esc(route(program.code,course.id))}" data-course="${esc(course.id)}"><div class="course-banner-top"><span class="course-state">${ready?'모의고사 응시 가능':guide?'모집·레벨 안내':'모의고사 준비 중'}</span>${ready?`<span class="course-count">${exams.length}회</span>`:''}</div><h3>${esc(course.label)}</h3><p>${esc(ready?first.scope:course.scope)}</p>${ready?`<div class="course-banner-spec"><span>${first.questionCount}문항</span><span>${esc(mockTime(first))}</span></div>${courseArt()}`:''}<span class="course-banner-action">${ready?'회차 선택':guide?'입반 기준 확인':'과정 안내'}<span aria-hidden="true">↗</span></span></a>`;
+        return `<a class="course-banner ${ready?'is-ready':'is-preparing'}" href="${esc(route(program.code,course.id))}" data-course="${esc(course.id)}"><div class="course-banner-top"><span class="course-state">${ready?'모의고사 응시 가능':guide?'모집·레벨 안내':'모의고사 준비 중'}</span>${ready?`<span class="course-count">${exams.length}회</span>`:''}</div><h3>${esc(course.label)}</h3><p>${esc(ready?first.scope:course.scope)}</p>${ready?`<div class="course-banner-spec"><span>${first.questionCount}문항</span><span>${esc(new Set(exams.map(mockTime)).size>1?'회차별로 다름':mockTime(first))}</span></div>${courseArt()}`:''}<span class="course-banner-action">${ready?'회차 선택':guide?'입반 기준 확인':'과정 안내'}<span aria-hidden="true">↗</span></span></a>`;
       };
       const tiles=courses.filter(c=>c.exams.length).map(tile).join('');
       const pending=courses.filter(c=>!c.exams.length);
@@ -129,7 +129,7 @@
       const official=HIGHSELECT_OFFICIAL_EXAM_SPECS.courses[program.code+':'+course.id];
       const scope=first?.scope||course.scope;
       const basis=official?`<p class="scope-note">${esc(official.note)} <a href="${esc(safeUrl(official.sourceUrl))}" target="_blank" rel="noopener noreferrer">공식 안내 <span class="sr-only">새 창</span></a></p>`:'';
-      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><div class="course-detail-toolbar">${first&&guide?'<button class="admission-jump" type="button" data-admission-jump>모집·레벨 확인 ↓</button>':`<span>${first?'모의고사 응시 가능':guide?'모집·레벨 안내':'모의고사 준비 중'}</span>`}<a href="${route(program.code)}">과정 바꾸기</a></div><h1 id="selected-course-title" tabindex="-1">${esc(course.label)}</h1><p class="course-scope">${esc(scope)}</p>${first?`<dl class="course-specs${first.sectionMinutes?' has-section-time':''}"><div><dt>문항</dt><dd>${first.questionCount}문항</dd></div><div><dt>시험시간</dt><dd>${esc(mockTime(first))}</dd></div><div><dt>공개 회차</dt><dd>${exams.length}회</dd></div></dl>`:''}</div>${first?'':renderAdmission(program,course)}${first?`<div class="round-picker" aria-labelledby="round-list-title"><div class="small-section-head"><h2 id="round-list-title">회차를 선택하세요.</h2><span>O/X 자가채점</span></div>${roundCards(exams)}</div>`:`<div class="course-empty"><h2>이 과정의 모의고사는 준비 중입니다.</h2><a class="button" href="${route(program.code)}">다른 과정 보기</a></div>`}${first?renderAdmission(program,course):''}${basis}</section>`;
+      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><div class="course-detail-toolbar">${first&&guide?'<button class="admission-jump" type="button" data-admission-jump>모집·레벨 확인 ↓</button>':`<span>${first?'모의고사 응시 가능':guide?'모집·레벨 안내':'모의고사 준비 중'}</span>`}<a href="${route(program.code)}">과정 바꾸기</a></div><h1 id="selected-course-title" tabindex="-1">${esc(course.label)}</h1><p class="course-scope">${esc(scope)}</p>${first?`<dl class="course-specs${first.sectionMinutes?' has-section-time':''}"><div><dt>문항</dt><dd>${first.questionCount}문항</dd></div><div><dt>시험시간</dt><dd>${esc(new Set(exams.map(mockTime)).size>1?'회차별로 다름':mockTime(first))}</dd></div><div><dt>공개 회차</dt><dd>${exams.length}회</dd></div></dl>`:''}</div>${first?'':renderAdmission(program,course)}${first?`<div class="round-picker" aria-labelledby="round-list-title"><div class="small-section-head"><h2 id="round-list-title">회차를 선택하세요.</h2><span>O/X 자가채점</span></div>${roundCards(exams)}</div>`:`<div class="course-empty"><h2>이 과정의 모의고사는 준비 중입니다.</h2><a class="button" href="${route(program.code)}">다른 과정 보기</a></div>`}${first?renderAdmission(program,course):''}${basis}</section>`;
     }
     function render(){
       const params=new URLSearchParams(location.hash.slice(1));

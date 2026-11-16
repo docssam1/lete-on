@@ -32,7 +32,7 @@
  $('past-results').onclick=run(async event=>{const b=event.target.closest('[data-result]');if(b){const data=await api('attempt',{query:{id:b.dataset.result}});displayReport(data.report,data.id||b.dataset.result);}});
  const assetLabels={paper:'시험지',answers:'정답·풀이',analysis:'학습분석지'};
  const assetAction=kind=>kind==='paper'?'manifest':kind;
- function timeLabel(e){return e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분${e.breakMinutes?' · 휴식 '+e.breakMinutes+'분 별도':''}`:(e.durationMinutes?e.durationMinutes+'분':'');}
+ function timeLabel(e){return e.pauseLabel?`총 ${e.totalWindowMinutes}분 · 대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · ${e.pauseLabel} ${e.breakMinutes}분`:e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분${e.breakMinutes?' · 휴식 '+e.breakMinutes+'분 별도':''}`:(e.durationMinutes?e.durationMinutes+'분':'');}
  const draftKey=()=>`highselectDraft:${token.slice(0,16)}:${current.exam.id}:${current.exam.version}`;
  const readingKey=()=>`highselectReading:${token.slice(0,16)}:${current.exam.id}:${current.exam.version}`;
  function rememberReading(){
