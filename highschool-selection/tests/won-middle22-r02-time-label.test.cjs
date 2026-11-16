@@ -19,5 +19,19 @@ test('entry and round cards distinguish R2 gap from R1 official rest',()=>{
 
 test("entry script invalidates the previous timing formatter cache",()=>{
  const html=fs.readFileSync(path.join(root,"public/exam-entry.html"),"utf8");
- assert.match(html,/exams\/app\.js\?v=won-middle22-r02-20261116/);
+ assert.match(html,/exams\/app\.js\?v=won-middle22-r03-20261116/);
+});
+
+test('third round uses the same confirmed clock window without changing the first two editions',()=>{
+ const fresh=exams.find(e=>e.id==='wm-middle22-basic-mixed-r03');
+ assert.equal(fresh.questionCount,50);
+ assert.equal(fresh.durationMinutes,140);
+ assert.deepEqual(fresh.sectionMinutes,{ALG:70,GEO:70});
+ for(const format of [entryTime,promoTime]){
+  assert.match(format(fresh),/총 160분/);
+  assert.match(format(fresh),/교시 사이 20분/);
+  assert.doesNotMatch(format(fresh),/휴식 20분/);
+ }
+ assert.equal(exams.find(e=>e.id==='wm-middle22-basic-r01').breakMinutes,10);
+ assert.equal(exams.find(e=>e.id==='wm-middle22-basic-mixed-r02').pageCount,23);
 });
