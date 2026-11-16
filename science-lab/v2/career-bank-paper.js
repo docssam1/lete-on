@@ -1,12 +1,12 @@
-import{careerContextItems}from'../data/book/career-workbook-context.js?v=20261116-career-workbook-context';
+import{careerContextItems}from'../data/book/career-workbook-context.js?v=20261116-career-workbook-context&temperatureCondition=20261116-career-temperature-condition';
 import{representationQuestionReview}from'../data/book/representation-question-review.js?v=20261115-representation-response-review';
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
 import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js?v=20261115-battery-polarity-card';
 import{currentBankWorkbook}from'./current-bank-workbook.js?v=20261115-grade6-question-review';
-import{workbook as currentWorkbook}from'../data/book/c22-s62-u04.workbook.js?v=20261116-career-workbook-context';
+import{workbook as currentWorkbook}from'../data/book/c22-s62-u04.workbook.js?v=20261116-career-workbook-context&temperatureCondition=20261116-career-temperature-condition';
 import{careerReadableCurrentItems}from'../data/book/c22-s62-u04.editorial.js?v=20261107-career-readable-workbook';
 import{guidanceParticleCurrentItems}from'../data/book/term-particle-language.js?v=20261105-guidance-particles';
-import{careerReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261116-career-workbook-context';
+import{careerReadablePriorWorkbook as workbook}from'../data/book/c22-s62-u04.workbook.js?v=20261116-career-workbook-context&temperatureCondition=20261116-career-temperature-condition';
 import{items}from'../data/units/c22-s62-u04.js';
 import{careerCurrentItems}from'./career-question-language.js?v=20261107-career-readable-workbook';
 import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261108-learning-note-roles';

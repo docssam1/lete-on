@@ -45,6 +45,15 @@
         "questions": 32,
         "specificTeacherFeedbackFields": 58,
         "wholeUnitComplete": false
+      },
+      "latestSpecificReview486": {
+        "unit": "c22-s62-u04",
+        "questionRanges": [
+          "97-128"
+        ],
+        "questions": 32,
+        "finding": "q123 now says same type of thermometer as its provided condition; quantities and contracts unchanged",
+        "wholeUnitComplete": false
       }
     },
     {
@@ -141,7 +150,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "485 native351files/1711tests/1709pass/2browser skip. All201source revisions,3741full snapshots plus2legacy deltas, raw/item/misc hashes and24source papers are preserved. Only32authored Earth/sea workbook misconception notes and26teacher criteria change. All prompts/choices/answers/contracts/pages and31other books remain exact.126paper modes including target student/quick match;2teacher/answers modes change only reviewed feedback. Teacher/student model record separation remains tested."
+      "evidence": "486 native352files/1714tests/1712pass/2browser skip. All201source revisions, raw/item/misc hashes and24source papers are preserved. All3742full snapshots restore exact fields, including the one added career q123 correction snapshot;2legacy deltas retain context. Old bank presentation matches a pre-edit capture, grading/units/M17 diagnoses and old/no-version saved answers and frozen papers are preserved. Only one current bank explanation and2workbook explanation fields change;126paper modes match."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -243,17 +252,13 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstIssue": "Review actual career workbook questions97-128 with their everyday-life/job materials and response criteria",
-    "unit": "c22-s62-u04",
-    "actualWorkbookQuestions": 128,
-    "actualStudentPages": 127,
-    "questionRanges": [
-      "97-128"
-    ],
+    "firstIssue": "Audit response instructions against actual choices, per-part answers and blanks across all32workbooks, then manually inspect flagged items with materials",
+    "units": 32,
     "requirements": [
-      "Read current exported questions and supplied materials; retain canonical 2022 curriculum wording.",
-      "Preserve originals versus authored practice, all answer contracts and saved versions,201source diagnostic revisions,3741full snapshots and teacher/student records.",
-      "Original-source editions and actual PC/mobile/keyboard/A4/audio/WebGL/v1 checks remain incomplete."
+      "Use current exported questions, displayed options/givens, linked figures and response contracts.",
+      "Treat missing labels detected by text as a candidate only; image labels may require native viewing or Apple Vision OCR.",
+      "Preserve original/authored distinction, keys and old versions,201source diagnostic revisions,3742full snapshots and2legacy deltas, teacher/student records.",
+      "Current-edition originals and actual PC/mobile/keyboard/A4/audio/WebGL/v1 checks remain incomplete."
     ]
   },
   "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json; phase482: force-classroom-before.json, route-tests-before.log, route-tests.log, combined-route-tests.log, primary-classroom-audit.json, preservation-result.json, native-suite-result.json, required-cli-checks.json",
@@ -263,8 +268,8 @@
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "b1bdc1163bdc0e664ed1bf624ad6f1f2db7526a2",
-  "latestPhase": 485,
+  "latestFollowupBaseline": "0b832812c95ac643310b121d0d76a3d0f5109c55",
+  "latestPhase": 486,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -625,5 +630,50 @@
     "cloudWrites": 0,
     "deployed": false,
     "privateEvidence": "phase485/"
+  },
+  "followup486": {
+    "scope": "Career questions97-128 with four tables; align q123 explanation with same-type thermometer givens",
+    "unit": "c22-s62-u04",
+    "questionsReviewed": 32,
+    "wholeUnitIndependentReviewComplete": false,
+    "question": "c22-s62-u04-b123",
+    "newVersion": "20261116-career-temperature-condition",
+    "workbookChangedFields": [
+      "explanation",
+      "criteria"
+    ],
+    "answersChoicesPromptsGivensAndContractsUnchanged": true,
+    "otherCareerItemsUnchanged": 127,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "changedPaperModes": [
+      "teacher",
+      "answers"
+    ],
+    "bankPaperModesUnchanged": [
+      "student",
+      "quick"
+    ],
+    "changedBankPaperModes": [
+      "teacher",
+      "answers"
+    ],
+    "newFullSnapshots": 1,
+    "fullSnapshotsNow": 3742,
+    "legacyDeltas": 2,
+    "oldBankPresentationMatchesCapturedBefore": true,
+    "native": {
+      "files": 352,
+      "tests": 1714,
+      "pass": 1712,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "deployed": false,
+    "privateEvidence": "phase486/"
   }
 }

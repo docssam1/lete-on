@@ -1,3 +1,4 @@
+import{careerTemperatureItems}from'./career-temperature-condition.js?v=20261116-career-temperature-condition';
 export const CAREER_CONTEXT_VERSION='20261116-career-workbook-context';
 // Apply only to the exact reviewed current manuscript and bank snapshots.
 const review={
@@ -40898,7 +40899,7 @@ const bankCache=new WeakMap();
 export function careerContextItems(rows,unit){
  if(unit!=='c22-s62-u04'||!Array.isArray(rows))return rows;let changed=false;
  const next=rows.map(q=>{const patch=bankPatches.find(p=>same(p.previous,q));if(!patch)return q;changed=true;if(bankCache.has(q))return bankCache.get(q);
- const current={...q,...clone(patch.fields),contentVersion:CAREER_CONTEXT_VERSION,previousVersions:[...clone(q.previousVersions||[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};bankCache.set(q,current);return current;});return changed?next:rows;
+ const current={...q,...clone(patch.fields),contentVersion:CAREER_CONTEXT_VERSION,previousVersions:[...clone(q.previousVersions||[]),{...clone(q),version:q.contentVersion||1,snapshotKind:'full-question'}]};bankCache.set(q,current);return current;});return careerTemperatureItems(changed?next:rows,unit);
 }
 export function withCareerContextClassroom(unit,book){
  const rows=careerContextItems(book?.classroomItems,unit);return rows===book?.classroomItems?book:{...book,classroomItems:rows};

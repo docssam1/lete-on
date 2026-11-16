@@ -1,4 +1,5 @@
-import{withCareerContextWorkbook}from'./career-workbook-context.js?v=20261116-career-workbook-context';
+import{withCareerTemperatureWorkbook}from'./career-temperature-condition.js?v=20261116-career-temperature-condition';
+import{withCareerContextWorkbook}from'./career-workbook-context.js?v=20261116-career-workbook-context&temperatureCondition=20261116-career-temperature-condition';
 import{withRepresentationReviewedWorkbook}from'./representation-question-review.js?v=20261115-representation-response-review';
 import{withGrade6ReviewedWorkbook}from'./grade6-question-review.js?v=20261115-grade6-question-review';
 import{withCareerReadableWorkbook}from'./c22-s62-u04.editorial.js?v=20261115-standalone-question-context';
@@ -21621,4 +21622,5 @@ export const grade6ReviewPriorWorkbook=withCareerReadableWorkbook(careerReadable
 export const representationReviewPriorWorkbook=withGrade6ReviewedWorkbook(grade6ReviewPriorWorkbook);
 
 export const careerContextPriorWorkbook=withRepresentationReviewedWorkbook(representationReviewPriorWorkbook);
-export const workbook=withCareerContextWorkbook(careerContextPriorWorkbook);
+export const careerTemperaturePriorWorkbook=withCareerContextWorkbook(careerContextPriorWorkbook);
+export const workbook=withCareerTemperatureWorkbook(careerTemperaturePriorWorkbook);
