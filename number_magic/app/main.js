@@ -7716,7 +7716,7 @@ function mzArticles(){ return (window.NM_MAGAZINE && window.NM_MAGAZINE.articles
 function mzRich(text){ return window.NM_MAGAZINE && typeof NM_MAGAZINE.rich === 'function' ? NM_MAGAZINE.rich(text) : esc(String(text || '')).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
 function mzReferences(article){
   return (article.references || []).filter(r => /^https:\/\//.test(r.url || ''))
-    .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.label)}</a>`).join(' · ');
+    .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r[S.lang]||r.label)}</a>`).join(' · ');
 }
 function mzRead(id){ return !!((S.magazine||{}).read||{})[id]; }
 function mzMarkRead(id){

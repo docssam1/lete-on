@@ -2349,6 +2349,7 @@ function examLang(){
 }
 /* main.js의 lk(ko,en,zh)와 같은 꼴 — 그쪽 관례를 그대로 쓴다(새 관례를 만들지 않음). */
 function lk(ko, en, zh){ const l = examLang(); return l === 'en' ? en : l === 'zh' ? zh : ko; }
+if(window.NM_TEX) window.NM_TEX.lang = examLang;   /* 식 안 한국어 설명을 학습지 언어로(engine/tex-i18n.js) */
 
 /* 학생 이름(프로필) — 인쇄 워터마크용. 앱 상태가 없는 페이지(drill.html)에서도
    같은 저장본을 읽으므로 로그인해 쓰던 브라우저면 이름이 나온다. 없으면 빈 문자열. */
@@ -2863,7 +2864,7 @@ function w2MagazinePick(items, band, code){
 function escMz(t){ return window.NM_MAGAZINE && typeof NM_MAGAZINE.rich === 'function' ? NM_MAGAZINE.rich(t) : esc(String(t == null ? '' : t)).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
 function magazineReferences(art){
   return (art.references || []).filter(r => /^https:\/\//.test(r.url || ''))
-    .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.label)}</a>`).join(' · ');
+    .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r[examLang()]||r.label)}</a>`).join(' · ');
 }
 function magazineSparkHtml(art){
   if(!art.spark) return '';
@@ -7307,6 +7308,21 @@ function pageCapacityFor(items){
    문항 수다, §2-1). 예전의 최대잉여법 비례 배분(proportionalSplit/
    buildMixedProblemSet)은 이 경로에서 더는 쓰지 않는다 — 함수 자체는 다른
    호출부(있다면)를 위해 그대로 둔다. */
+/* 쪽 맞춤(2026-11-16) — 영어·중국어 글이 한국어보다 길어 A4 아래로 넘치는 쪽만, 머리·바닥은 두고
+   본문을 조금씩(96%→80%) 줄여 한 쪽에 들어가게 한다. 넘치지 않는 쪽은 손대지 않는다. 답 쪽은 따로 나눈다. */
+function fitOverflowingPages(sheet){
+  [...sheet.children].forEach(page=>{
+    if(page.classList.contains('nm-answer-page')||page.classList.contains('nm-answer-continuation'))return;
+    const parts=[...page.children].filter(el=>!el.matches('.nm-w2-head,.nm-w2-foot'));
+    if(!parts.length)return;
+    parts.forEach(el=>{el.style.zoom='';});
+    if(page.scrollHeight<=page.clientHeight+2)return;
+    for(const z of [.96,.92,.88,.84,.8]){
+      parts.forEach(el=>{el.style.zoom=z;});
+      if(page.scrollHeight<=page.clientHeight+2)break;
+    }
+  });
+}
 function renderMixedSheet(items, envelopeCode, opts){
   const run=list=>withC0(list.find(it=>it.c0)?.c0,()=>withCompactHighPrint(opts.compactHigh || list.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(list,envelopeCode,opts))));
   if(DEDUPE_SESSION_ONLY||!items.some(it=>it.compactHigh&&it.courseKey)) return run(items);
@@ -7604,7 +7620,11 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
   printImages.forEach(img=>{img.loading='eager';});
   const ready=Promise.all([fontsReady,...printImages.map(img=>img.decode?img.decode().catch(()=>{}):Promise.resolve())]);
   window.NM_LAST_PRINT_READY=ready;
+  fitOverflowingPages(sheet);
+  const refit=()=>{if(sheet.isConnected&&printMedia.matches)requestAnimationFrame(()=>fitOverflowingPages(sheet));};
+  printMedia.addEventListener('change',refit);
   ready.then(()=>{
+    fitOverflowingPages(sheet);
     paginateAnswers();
     if(!window.NM_NO_AUTOPRINT)setTimeout(()=>window.print(),350);
   });
@@ -9483,11 +9503,11 @@ ${round.html}
       const d0 = { t:wordItem.t, lv:wordItem.lv };
       const seen = {}; seen[d0.t] = true; const alts = [];
       const push = d => { if(seen[d.t]) return; seen[d.t] = true;
-        alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t,d.lv) }); };
+        alts.push({ thread:d.t, level:d.lv, topicName:lk('문장제','Word problems','应用题') + ' · ' + thName(d.t,d.lv) }); };
       session.drills.slice(1).forEach(push);
       course.sessions.forEach(s => { if(s !== session && !s.test) (s.drills||[]).forEach(push); });
       items.push({ thread:d0.t, level:d0.lv, n:wordItem.count || 6, count:wordItem.count || 6, wordType:'all', optionalWord:true,
-        seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t,d0.lv), wordAlts:alts });
+        seed:seedOf(seedWeek + 'wp', 0), topicName:lk('문장제','Word problems','应用题') + ' · ' + thName(d0.t,d0.lv), wordAlts:alts });
     }
     items.push(...R.stretch);
     /* 단계 점검 — 과정 3개마다(2026-09-16, 원장 "학습지 모드에도 단계마다 넣어").

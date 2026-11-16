@@ -28,10 +28,20 @@
     return tex.replace(/\u0000(\d+)\u0000/g, (m, i) => store[+i]);
   }
 
+  /* 영어·중국어 학습지(2026-11-16) — 식 안의 한국어 설명(\text{…})을 그 언어로 바꾼다.
+     사전은 engine/tex-i18n.js(window.NM_TEX_I18N), 지금 언어는 그리는 쪽이 api.lang 으로 알려 준다. */
+  function localize(s) {
+    const lang = typeof api.lang === 'function' ? api.lang() : 'ko';
+    const dict = typeof window !== 'undefined' && window.NM_TEX_I18N;
+    if (lang === 'ko' || !dict || !/[\uac00-\ud7a3]/.test(s)) return s;
+    return dict.apply(s, lang);
+  }
+
   function tidy(tex) {
     if (tex == null) return tex;
     let s = String(tex);
     if (!s) return s;
+    s = localize(s);
     const store = [];
     s = protect(s, store);
 
@@ -65,7 +75,7 @@
     return restore(s, store);
   }
 
-  const api = { tidy };
+  const api = { tidy, lang: null };
   if (typeof window !== 'undefined') window.NM_TEX = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();
