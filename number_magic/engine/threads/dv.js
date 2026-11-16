@@ -1243,13 +1243,14 @@
       };
     }
     if (mode === 'multiples') {                      /* 배수를 차례로 */
-      /* 2~15의 배수를 4~6개 — 스무 문항이 서로 겹치지 않을 만큼 경우의 수를 둔다 */
-      const n = R(rng, 2, 15), k = R(rng, 4, 6);
+      /* 2~25의 배수를 4~6개. 같은 수의 배수는 칸 수만 달라도 아이에게 같은 문제로 보여(C17 2주차 「5의 배수」 두 번)
+         수(n)로만 겹침을 가린다 — 그래서 수를 2~25로 넓혀 스무 문항이 겹치지 않게 한다(2026-11-16). */
+      const n = R(rng, 2, 25), k = R(rng, 4, 6);
       const ms = []; for (let i=1;i<=k;i++) ms.push(n*i);
       return {
         prompt: { ko: `${n}의 배수를 작은 것부터 ${k}개 쓰세요.`, en: `Write the first ${k} multiples of ${n}.`, zh: `从小到大写出${n}的前${k}个倍数。` },
         tex: `${n}\\text{의 배수} = ${ms.map(function(){ return '\\square'; }).join(',\\,')}`,
-        answer: ms, answerType: 'number', widget: 'numpad',
+        answer: ms, answerType: 'number', widget: 'numpad', __uniqueKey: 'dv20-multiples:' + n,
         solution: [{ tex: `${n} \\times 1,\\, ${n} \\times 2,\\, \\ldots` },
                    { tex: `${n}\\text{의 배수} = ${ms.map(function(){ return '\\square'; }).join(',\\,')}`, blank: ms }]
       };
