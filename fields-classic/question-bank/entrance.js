@@ -64,10 +64,14 @@ const ONLY = ONE_GROUP ? { ...ONE_GROUP, exams: [ONE] } : { k: GROUPS[0], g1: GR
 const shown = ONLY ? [ONLY] : GROUPS;
 if (ONLY) { const name = ONE ? plain(ONE.label) : `${ONLY.title.replace(" 대비", "")} 모의고사`; document.title = name; const h = document.querySelector(".ms-title strong"); if (h) h.textContent = name;
   const back = $("backHome"); back.href = "../program/"; back.innerHTML = `<span aria-hidden="true">←</span> 모의고사 서재`; }
+// 아이가 승인받은 회차만 보인다(원장 2026-11-16 「아이가 신청한 모의고사만 보이도록」) — 잠긴 카드도 보이지 않는다.
+const visible = shown.map((g) => ({ ...g, exams: g.exams.filter((exam) => !lockedExam(exam)) })).filter((g) => g.exams.length);
 $("groups").insertAdjacentHTML("beforeend", `${ONLY || !canDiagnostic ? "" : `
   <section class="en-group en-online"><h2>선발 대비 모의고사 <small>온라인으로 풀고 바로 채점</small></h2>
     <a class="ms-btn primary" href="../mock/index.html">모의고사 풀러 가기 ›</a></section>`}
-  ${shown.filter((g) => g.exams.length).map((g) => `<section class="en-group"><h2>${esc(g.title)} <small>${esc(g.sub)}${ONE ? "" : ` · ${g.exams.length}회`}</small></h2>
+  ${visible.length || (canDiagnostic && !ONLY) ? "" : `<section class="en-group"><h2>${me ? "승인된 모의고사가 아직 없어요" : "승인번호로 로그인해 주세요"}</h2>
+    <p class="en-lock-note">${me ? "원장님께 신청한 모의고사가 승인되면 여기에 보여요." : "신청한 모의고사는 로그인하면 보여요."}</p>${me ? "" : `<a class="ms-btn primary" href="./login.html?${esc(new URLSearchParams({ next: `entrance.html${location.search}` }))}">승인번호로 로그인</a>`}</section>`}
+  ${visible.map((g) => `<section class="en-group"><h2>${esc(g.title)} <small>${esc(g.sub)}${ONE ? "" : ` · ${g.exams.length}회`}</small></h2>
     <ul class="en-list">${g.exams.map(card).join("")}</ul></section>`).join("")}`);
 if (params.get("student") && !ONLY) $("backHome").href = `./home.html?${new URLSearchParams({ student: params.get("student") })}`;
 

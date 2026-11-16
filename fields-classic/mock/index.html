@@ -286,14 +286,14 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
       <div class="gate-logo"><span>G</span>FIELD 지필드 영재교육</div>
       <div class="gate-kicker">FIELDS THE CLASSIC · 선발 진단</div>
       <div class="gate-title">필즈 선발 대비 모의고사</div>
-      <p class="gate-desc">학생 이름을 입력하면 진단이 시작됩니다.<br>입력한 이름은 결과지 워터마크로만 사용됩니다.</p>
+      <p class="gate-desc">학생 이름과 승인번호를 입력하면 진단이 시작됩니다.<br>입력한 이름은 결과지 워터마크로만 사용됩니다.</p>
       <div class="gate-form">
         <input id="nameInp" type="text" placeholder="학생 이름 입력" autocomplete="off" onkeydown="if(event.key==='Enter')enterGate()">
-        <input id="codeInp" type="text" placeholder="승인번호 (약점 처방전 이용 시)" autocomplete="off" onkeydown="if(event.key==='Enter')enterGate()">
+        <input id="codeInp" type="text" placeholder="승인번호" autocomplete="off" onkeydown="if(event.key==='Enter')enterGate()">
         <button class="gate-btn" onclick="enterGate()">진단 시작하기 →</button>
       </div>
       <div id="gateError" class="gate-error"></div>
-      <div class="gate-note">진단은 승인번호 없이도 볼 수 있습니다. 약점 처방전은 승인번호로 확인합니다.<br>입력한 이름은 서버에 저장되지 않습니다.</div>
+      <div class="gate-note">진단 모의고사를 승인받은 승인번호로 들어올 수 있습니다. 약점 처방전은 「진단 + 약점 클리닉」 승인이 있을 때 열립니다.<br>입력한 이름은 서버에 저장되지 않습니다.</div>
     </div>
   </div>
 </div>
@@ -440,7 +440,7 @@ async function lookupByCode(code,name){
     const payload=await response.json();
     if(!response.ok||!payload.token)return null;
     sessionStorage.setItem('gfield_fields_session',payload.token);
-    return {name:payload.name,perms:payload.permissions||[]};
+    return {name:payload.name,perms:payload.permissions||[],type:payload.type||''};
   }catch(error){return null}
 }
 
@@ -450,7 +450,7 @@ async function lookupBySession(token){
     const response=await fetch(FIELDS_AUTH_URL,{method:'POST',headers:{'Content-Type':'application/json','x-fields-session':token},body:JSON.stringify({action:'session'}),cache:'no-store'});
     const payload=await response.json();
     if(!response.ok||!payload.ok)return null;
-    return {name:payload.name,perms:payload.permissions||[]};
+    return {name:payload.name,perms:payload.permissions||[],type:payload.type||''};
   }catch(error){return null}
 }
 
@@ -460,12 +460,17 @@ async function enterGate(){
   const typedCode=document.getElementById('codeInp')?.value||'';
   let sessionToken='';try{sessionToken=sessionStorage.getItem('gfield_fields_session')||''}catch(e){}
   const found=typedCode.trim()?await lookupByCode(typedCode,v):await lookupBySession(sessionToken);
-  if(typedCode.trim()&&!found){
-    document.getElementById('gateError').textContent='올바르지 않은 승인번호입니다. 비워 두면 진단만 볼 수 있습니다.';
+  // 진단도 승인이 있어야 연다(원장 2026-11-16 「진단도 승인 있어야 열리게 막아 아이가 신청한 모의고사만 보이도록」).
+  // 예전에는 승인번호를 비워 두면 진단은 열렸다.
+  if(!found){
+    document.getElementById('gateError').textContent=typedCode.trim()?'올바르지 않은 승인번호입니다.':'승인번호를 입력해 주세요.';
     return;
   }
-  // 승인번호가 없으면 진단은 그대로 열되 권한은 비운다(기존 이용자를 막지 않는다).
-  studentPerms=found?found.perms:[];
+  if(found.type!=='admin'&&!found.perms.includes('진단모의고사')&&!found.perms.includes('진단약점클리닉')){
+    document.getElementById('gateError').textContent='진단 모의고사 승인이 필요해요. 원장님께 승인을 요청해 주세요.';
+    return;
+  }
+  studentPerms=found.perms;
   studentName=found?.name||v;
   document.body.dataset.printWatermark=`${studentName} 학생 · GFIELD\A${studentName} 학생 · GFIELD\A${studentName} 학생 · GFIELD`;
   document.getElementById('accessGate').style.display='none';
