@@ -11,7 +11,6 @@
   --green: #66d49b;
   --blue: #5b8cf5;
   --lilac: #c4a8f5;
-  --coral: #ff9f7a;
   --sans: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 
@@ -70,10 +69,7 @@ body.hm {
 .hm-card.green img { width: 66%; right: 0; bottom: -2%; }
 .hm-card.blue { background: var(--blue); }
 .hm-card.lilac { background: var(--lilac); }
-.hm-card.coral { background: var(--coral); }
-.hm-card:nth-child(5) { --tilt: -3deg; --delay: 0.45s; }
-.hm-card .hm-paper.hm-geo { right: 6%; bottom: 5%; width: 62%; }
-.hm-card .hm-paper { position: absolute; right: -2%; bottom: -6%; width: 56%; height: auto; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.hm-card .hm-paper { position: absolute; right: -4%; bottom: -6%; width: 70%; height: auto; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .hm-card:nth-child(4) { --tilt: 5deg; --delay: 0.35s; margin-top: 18px; }
 .hm-card:hover .hm-paper, .hm-card:focus-visible .hm-paper { transform: scale(1.05) rotate(-3deg); }
 /* 기울기·순서는 자리로(카드 순서를 바꿔도 부채꼴이 그대로) */
@@ -118,8 +114,6 @@ body.hm {
   .hm-card { width: min(340px, 100%); max-width: none; flex: none; aspect-ratio: 17 / 11; }
   .hm-card:nth-child(2), .hm-card:nth-child(4) { margin-top: 0; }
   .hm-card .hm-paper { width: 44%; right: -2%; bottom: -10%; }
-  .hm-card .hm-paper.hm-geo { width: 38%; right: 6%; bottom: 6%; }
-  .hm-card:nth-child(5) { margin-top: 0; }
   .hm-card img { width: 52%; right: -4%; bottom: -10%; }
   .hm-card.green img { width: 44%; right: 2%; bottom: -6%; }
   .hm-screen { border-radius: 16px; }

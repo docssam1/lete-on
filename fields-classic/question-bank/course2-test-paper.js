@@ -12,6 +12,8 @@ const params = new URLSearchParams(location.search);
 const book = String(params.get("book") || "").toLowerCase();
 // 3과정도 같은 화면(?course=3&book=a1, 원장 2026-11-15 「다른 과정 권별은 폴더에 있잖아」) — 파일은 course3-test-originals/, 정답 bookId course-03-<권>
 const course = params.get("course") === "3" ? 3 : 2;
+// 뒤로 = 사고력 문제은행의 그 과정 탭(원장 2026-11-16 「2과정은 사고력 안에 있어야지」)
+document.querySelector(".ut-back")?.setAttribute("href", `./similar.html?course=${course}`);
 const TESTS = course === 3 ? COURSE3_TESTS : COURSE2_TESTS;
 const tag = TESTS[book] || (params.get("preview") === "1" && /^[ag][1-5]$/.test(book) ? String(Date.now()) : "");
 const original = tag ? await import(`./course${course}-test-originals/${book}.js?v=${tag}`).catch((error) => { console.error(error); return null; }) : null;
