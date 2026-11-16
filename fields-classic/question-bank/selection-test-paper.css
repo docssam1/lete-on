@@ -31,3 +31,17 @@
   .st-answer-sheet:not([hidden]) { display: block; margin: 0 auto 18px; padding: 18px 22px; max-width: 210mm; background: var(--paper, #fdfbf5); border: 1px solid var(--line, #ddd3bf); box-shadow: 0 6px 20px rgba(20, 30, 70, .08); }
 }
 @media print { body:not(.print-answers) .st-answer-sheet { display: none !important; } }
+
+/* 풀이 두 단계(원장 2026-11-16 「간단히 보기와 설명보기」) — 고른 단계만 화면·답안지 인쇄에 나온다 */
+.st-sol-brief, .st-sol-steps { display: none; }
+body.sol-brief .st-sol-brief { display: block; }
+body.sol-steps .st-sol-steps { display: block; }
+.st-ans-text { font-weight: 700; }
+.st-sol-brief { margin: 4px 0 0 !important; font-size: 13px !important; color: #3c3a33; }
+.st-sol-brief b { margin-right: 4px; color: #1f6b4a; font-family: 'Pretendard', sans-serif; font-size: 11px; }
+.st-sol-steps { margin: 6px 0 0; padding-left: 18px; font-family: 'FC Serif', serif; font-size: 13px; line-height: 1.6; color: #3c3a33; }
+.st-sol-steps li + li { margin-top: 2px; }
+.st-sol-modes { display: flex; gap: 6px; justify-content: flex-end; margin: 0 0 10px; }
+.st-sol-modes button { min-height: 36px; padding: 0 14px; border: 1px solid #c7d6ee; border-radius: 999px; background: #fff; color: #1b2340; font: 600 13px 'Pretendard', sans-serif; cursor: pointer; }
+.st-sol-modes button[aria-pressed="true"] { border-color: #243184; background: #243184; color: #fff; }
+@media print { .st-sol-modes { display: none !important; } }

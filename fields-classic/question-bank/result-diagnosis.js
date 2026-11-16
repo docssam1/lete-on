@@ -85,13 +85,20 @@ function renderExamOptions() {
   $("examSelect").value = exam.id;
 }
 
+// 정답 + 풀이(간단히 · 설명 보기, 원장 2026-11-16) — 풀이가 있으면 접어 둔다
+function keyMarkup(key) {
+  const brief = key.brief ? `<p><b>간단히</b> ${escapeHtml(key.brief)}</p>` : "";
+  const steps = key.steps?.length ? `<details><summary>설명 보기</summary><ol>${key.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol></details>` : "";
+  return `<em class="response-key">정답 ${escapeHtml(key.text)}</em>${brief || steps ? `<details class="response-sol"><summary>풀이 보기</summary>${brief}${steps}</details>` : ""}`;
+}
+
 function responseRow(question) {
   const classification = question.classification;
   const result = responses[question.number];
   const typeLabel = question.note || classification?.detailedTypeLabel || "유형 확인 필요";
   return `<article class="response-row ${result ? `is-${result}` : ""}">
     <span>${String(question.number).padStart(2, "0")}</span>
-    <div class="response-copy"><strong>${typeLabel}</strong><small>${classification?.majorDomainLabel || "미분류"} · ${classification?.minorDomain || "미분류"}</small>${answerKey?.[question.number] ? `<em class="response-key">정답 ${escapeHtml(answerKey[question.number].text)}</em>` : ""}</div>
+    <div class="response-copy"><strong>${typeLabel}</strong><small>${classification?.majorDomainLabel || "미분류"} · ${classification?.minorDomain || "미분류"}</small>${answerKey?.[question.number] ? keyMarkup(answerKey[question.number]) : ""}</div>
     <div class="ox-buttons" role="group" aria-label="${question.number}번 결과">
       <button type="button" data-number="${question.number}" data-result="correct" class="${result === "correct" ? "active" : ""}" aria-pressed="${result === "correct"}">O</button>
       <button type="button" data-number="${question.number}" data-result="incorrect" class="${result === "incorrect" ? "active" : ""}" aria-pressed="${result === "incorrect"}">X</button>

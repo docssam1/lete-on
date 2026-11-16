@@ -76,6 +76,13 @@ if (locked) {
   $("answerPrintButton").addEventListener("click", () => { document.body.classList.add("print-answers"); window.print(); });
   window.addEventListener("afterprint", () => document.body.classList.remove("print-answers"));
 }
+let solMode = "brief";
+function setSolMode(mode) {
+  solMode = mode;
+  document.body.classList.toggle("sol-brief", mode === "brief" || mode === "steps");
+  document.body.classList.toggle("sol-steps", mode === "steps");
+  document.querySelectorAll("[data-sol]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.sol === mode)));
+}
 // 정답 보기 · 답안지 인쇄 — 한 번 받으면 화면 위쪽에 펼친다(인쇄 때는 「답안지 인쇄」만 정답 쪽을 찍는다)
 async function showAnswers() {
   const panel = $("answerSheet");
@@ -85,8 +92,19 @@ async function showAnswers() {
   const answers = await loadSelectionAnswers(exam.id);
   $("answerButton").disabled = false;
   if (!answers) { $("answerButton").textContent = "정답을 불러오지 못했어요 · 다시 누르기"; return; }
-  const items = original.questions.map((q) => `<section class="ut-ans-item"><b>${q.number}</b><div><p>${esc(answers[q.number]?.text || "")}</p></div></section>`).join("");
-  panel.innerHTML = `<header class="ut-test-run"><span>${esc(groupOf(exam))} · ${esc(plain(exam.label))}</span><span>정답</span></header><h2 class="ut-ans-title">${esc(plain(exam.label))} · 정답</h2><div class="ut-ans-grid">${items}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>정답</span></footer>`;
+  // 풀이 두 단계(원장 2026-11-16 「간단히 보기와 설명보기」): 본책 학습지의 「답 확인 → 풀이」처럼 정답 아래에 붙인다.
+  // 위의 고르기(정답만 · 간단히 보기 · 설명 보기)가 화면과 「답안지 인쇄」를 함께 정한다(body 클래스 sol-brief · sol-steps).
+  const hasSolutions = original.questions.some((q) => answers[q.number]?.brief || answers[q.number]?.steps);
+  const items = original.questions.map((q) => {
+    const a = answers[q.number] || {};
+    const brief = a.brief ? `<p class="st-sol-brief"><b>간단히</b> ${esc(a.brief)}</p>` : "";
+    const steps = a.steps?.length ? `<ol class="st-sol-steps">${a.steps.map((step) => `<li>${esc(step)}</li>`).join("")}</ol>` : "";
+    return `<section class="ut-ans-item"><b>${q.number}</b><div><p class="st-ans-text">${esc(a.text || "")}</p>${brief}${steps}</div></section>`;
+  }).join("");
+  const modes = hasSolutions ? `<div class="st-sol-modes" role="group" aria-label="풀이 보기">${[["none", "정답만"], ["brief", "간단히 보기"], ["steps", "설명 보기"]].map(([id, label]) => `<button type="button" data-sol="${id}" aria-pressed="${solMode === id}">${label}</button>`).join("")}</div>` : "";
+  panel.innerHTML = `${modes}<header class="ut-test-run"><span>${esc(groupOf(exam))} · ${esc(plain(exam.label))}</span><span>정답</span></header><h2 class="ut-ans-title">${esc(plain(exam.label))} · 정답${hasSolutions ? " · 풀이" : ""}</h2><div class="ut-ans-grid">${items}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>정답</span></footer>`;
+  panel.querySelectorAll("[data-sol]").forEach((button) => button.addEventListener("click", () => setSolMode(button.dataset.sol)));
+  setSolMode(solMode);
   panel.hidden = false;
   $("answerButton").textContent = "정답 접기";
   $("answerPrintButton").hidden = false;
