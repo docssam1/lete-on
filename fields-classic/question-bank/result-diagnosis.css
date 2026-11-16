@@ -63,3 +63,4 @@
 .response-grid.has-key .ox-buttons{align-self:start;grid-template-columns:1fr 1fr}.response-grid.has-key .ox-buttons button{height:40px;font-size:14px}
 @media(max-width:800px){.response-grid.has-key .response-row{grid-template-columns:30px minmax(0,1fr) 108px;gap:8px 10px;padding:12px}.response-grid.has-key .response-sol{grid-column:2/-1;grid-row:2}.response-grid.has-key .ox-buttons{grid-column:3;grid-row:1}}
 @media print{.steps-toggle{display:none}}
+.response-key .sa-cols{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}.response-key .sa-col{display:inline-flex;gap:4px}.response-key .sa-col i{font-style:normal;color:var(--muted)}.response-key .sa-col table{border-collapse:collapse}.response-key .sa-col td{width:13px;height:18px;text-align:center;font-size:12px;font-weight:900}.response-key .sa-col tr.res td{border-top:2px solid var(--navy);color:var(--green)}.response-key .sa-col td.op{color:var(--green)}

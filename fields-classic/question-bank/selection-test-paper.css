@@ -64,3 +64,12 @@ body.sol-steps .st-sol-steps { display: block; }
 .sa-stack { flex-direction: column; gap: 0; }
 .sa-list b { padding: 2px 8px; border: 1px solid #c9bfa8; border-radius: 4px; font: 700 13px 'FC Serif', serif; }
 @media print { .sa-work { background: none; } }
+
+/* 세로셈 답 그림 */
+.sa-cols { display: inline-flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.sa-col { display: inline-flex; align-items: flex-start; gap: 6px; }
+.sa-col i { font: 700 13px 'FC Serif', serif; font-style: normal; color: #5f6b64; padding-top: 4px; }
+.sa-col table { border-collapse: collapse; }
+.sa-col td { width: 20px; height: 26px; text-align: center; font: 700 18px 'FC Serif', serif; color: #1f2a24; }
+.sa-col td.op { color: #1f6b4a; }
+.sa-col tr.res td { border-top: 2px solid #22302a; color: #1f6b4a; }

@@ -66,6 +66,16 @@ export function answerVisualMarkup(v) {
   }
   if (v.kind === "shape" && Array.isArray(v.shapes)) return `<span class="sa-shapes">${v.shapes.slice(0, 6).map((x) => shapeSvg(x.shape, x.fill)).join("")}</span>`;
   if (v.kind === "stack") return `<span class="sa-stack">${Array.from({ length: Math.min(8, Number(v.count) || 1) }, () => shapeSvg(v.shape, v.fill, 26)).join("")}</span>`;
+  // 세로셈(원장 2026-11-16 「식 형태」): sums = [{ label?, rows: ["955", "55"], op: "+", result: "1010" }]
+  if (v.kind === "column" && Array.isArray(v.sums)) {
+    return `<span class="sa-cols">${v.sums.slice(0, 3).map((sum) => {
+      const rows = (Array.isArray(sum.rows) ? sum.rows : []).slice(0, 4).map(String), result = String(sum.result ?? "");
+      const width = Math.max(result.length, ...rows.map((r) => r.length));
+      const cells = (value) => [...value.padStart(width, " ")].map((c) => `<td>${c.trim() ? escV(c) : ""}</td>`).join("");
+      const body = rows.map((r, i) => `<tr><td class="op">${i === rows.length - 1 ? escV(sum.op || "+") : ""}</td>${cells(r)}</tr>`).join("");
+      return `<span class="sa-col">${sum.label ? `<i>${escV(sum.label)}</i>` : ""}<table>${body}<tr class="res"><td class="op"></td>${cells(result)}</tr></table></span>`;
+    }).join("")}</span>`;
+  }
   if (v.kind === "list" && Array.isArray(v.items)) return `<span class="sa-list">${v.items.slice(0, 6).map((x) => `<b>${escV(x)}</b>`).join("")}</span>`;
   return "";
 }

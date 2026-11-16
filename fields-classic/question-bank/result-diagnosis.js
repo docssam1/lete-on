@@ -9,7 +9,7 @@ import {
 } from "./result-diagnosis-data.js?v=20261116d";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { hasBank } from "./entrance-products.js?v=20261116b";
-import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom, answerVisualMarkup, workMarkup, isListVisual } from "./selection-answers.js?v=20261116d";
+import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom, answerVisualMarkup, workMarkup, isListVisual } from "./selection-answers.js?v=20261116e";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
