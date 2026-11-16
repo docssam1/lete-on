@@ -87,8 +87,17 @@ html[data-nm-bg="challenge"]  body::before{background-image:url(../assets/stages
 .nm-brand{min-width:0;max-width:100%;font-weight:900;font-size:16px;color:var(--blue)}
 .nm-top-right{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:12px;min-width:0;max-width:100%}
 .nm-coins{font-size:14px;font-weight:800;color:var(--gold-deep)}
+/* 무료 체험 — 「가입하면 저장」(원장 2026-11-16 과정 저장·문자 전송은 가입) */
+.nm-preview-pill{min-height:32px;padding:4px 12px;border:1.5px solid #c9a227;border-radius:99px;background:#fff6dc;color:#5a430c;font:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+.nm-preview-pill:hover{background:#ffefc0}
+.nm-preview-pill .nm-pp-short{display:none}
+@media(max-width:480px){.nm-preview-pill .nm-pp-long{display:none}.nm-preview-pill .nm-pp-short{display:inline}.nm-preview-pill{padding:4px 10px}}
+.nm-preview-pill:focus-visible{outline:3px solid #2a6df4;outline-offset:2px}
+.nm-trial-save p{margin:0;line-height:1.6;word-break:keep-all}
+.nm-notify-card #nmTrialSignup{display:block;margin-top:10px}
+.nm-toast.ok.nm-carried-toast{max-width:min(92vw,520px);border-radius:16px;text-align:center;word-break:keep-all}
 .nm-coins b{color:var(--ink)}
-.nm-lang{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer}
+.nm-lang{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;white-space:nowrap}
 
 /* ── 리빙맵 (이 화면만 스크롤 허용) ── */
 .nm-map{flex:1;min-height:0;overflow-y:auto;padding:8px 16px 40px}

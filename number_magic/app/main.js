@@ -305,12 +305,49 @@ const SLOT_COUNT=3, SLOT_ACTIVE_KEY=REVIEW?'nm_review_active_slot_'+review.usern
 // Each tab may save only the profile and revision it actually loaded. A sibling
 // switch or a newer write in another tab must never be overwritten by stale S.
 let stateStorageRaw=null,stateStorageSlot=null,stateStorageReady=false,stateStorageBlocked=false;
+/* 체험 → 가입 이어 담기(원장 2026-11-16 「과정 저장·문자 전송은 가입하도록」).
+   무료 체험 기록은 그 방문 동안만 남는다(access.js freshPreviewVisit). 체험 화면 안의 「가입하고 저장」을 누르거나
+   하거나 옷장에서 로그인한 그 탭(sessionStorage 표시 nm_preview_carry_v1 — 체험으로 연 탭에 붙고 탭을 닫으면 사라짐)에서
+   가입·로그인한 계정에 기록이 아직 없을 때만
+   체험 기록을 그 계정으로 옮긴다. 다른 탭·다른 날·기록이 이미 있는 계정에는 옮기지 않는다(남의 기록이 섞이지 않게).
+   옮긴 체험 원본은 _previous 한 칸에 보관하고 지운다(두 계정에 두 번 담기지 않게). */
+const PREVIEW_CARRY_KEY='nm_preview_carry_v1';
+let previewCarried=false;
+const PREVIEW_MODE=!REVIEW&&window.NM_ENTRY?.mode==='preview';
+if(PREVIEW_MODE)try{sessionStorage.setItem(PREVIEW_CARRY_KEY,String(Date.now()));}catch(e){}
+function carryPreviewIntoAccount(raw){
+  let at=0;
+  try{at=Number(sessionStorage.getItem(PREVIEW_CARRY_KEY))||0;sessionStorage.removeItem(PREVIEW_CARRY_KEY);}catch(e){return raw;}
+  if(raw!==null||!at)return raw;
+  try{
+    const src=NM_LEARNER_STORAGE.PREVIEW_KEY,previewRaw=localStorage.getItem(src);
+    const state=previewRaw&&JSON.parse(previewRaw);
+    if(!state||typeof state!=='object'||Array.isArray(state)||!state.onboarded)return raw;
+    // 소유·승인 표시는 옮기지 않는다 — 새 계정의 이용권·연락처는 서버가 정한다.
+    ['cloudOwnerId','cloudLinked','guardianManaged','account','notifyReg','notifyBannerLater','adminPlan'].forEach(k=>delete state[k]);
+    const carried=JSON.stringify(state);
+    localStorage.setItem(KEY,carried);
+    if(localStorage.getItem(KEY)!==carried)return raw;
+    const statsFrom='nm_thread_stats_v1_scope_preview',statsTo='nm_thread_stats_v1_scope_'+encodeURIComponent('guardian:'+stateOwnerId+':local');
+    const stats=localStorage.getItem(statsFrom);
+    if(stats!==null&&localStorage.getItem(statsTo)===null)localStorage.setItem(statsTo,stats);
+    [src,statsFrom].forEach(k=>{const v=localStorage.getItem(k);if(v!==null){localStorage.setItem(k+'_previous',v);localStorage.removeItem(k);}});
+    previewCarried=true;
+    return carried;
+  }catch(e){return raw;}
+}
+/* 체험 화면에서 가입으로 — 지금까지 한 것을 가입한 계정으로 이어 담는다(위 carryPreviewIntoAccount). */
+function startSignupFromPreview(){
+  if(PREVIEW_MODE)try{sessionStorage.setItem(PREVIEW_CARRY_KEY,String(Date.now()));}catch(e){}
+  stopVoice();guardianEntry=true;guardianContactEditing=false;render();
+}
 function load(){
   let raw=null;
   try{
     const selected=REVIEW?{ok:true,raw:localStorage.getItem(KEY)}:NM_LEARNER_STORAGE.read(localStorage,stateOwnerId);
     if(!selected.ok){stateStorageReady=false;return defaults();}
     raw=selected.raw;
+    if(!REVIEW&&stateOwnerId)raw=carryPreviewIntoAccount(raw);
     stateStorageRaw=raw;stateStorageSlot=localStorage.getItem(SLOT_ACTIVE_KEY);stateStorageReady=true;
     const r=JSON.parse(raw);
     if(r&&typeof r==='object'&&!Array.isArray(r)){
@@ -1341,12 +1378,14 @@ function render(){
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
+      ${PREVIEW_MODE?`<button class="nm-preview-pill" id="previewSignupBtn" title="${S.lang==='ko'?'무료 체험 기록은 이번 방문에만 남아요. 가입하면 저장돼요.':S.lang==='en'?'Trial progress lasts only this visit. Register to save it.':'免费体验记录只保留本次访问，注册后即可保存。'} aria-label="${S.lang==='ko'?'가입하면 기록 저장':S.lang==='en'?'Register to save progress':'注册后保存记录'}"><span class="nm-pp-long">${S.lang==='ko'?'가입하면 저장':S.lang==='en'?'Register to save':'注册后保存'}</span><span class="nm-pp-short">${S.lang==='ko'?'가입':S.lang==='en'?'Sign up':'注册'}</span></button>`:''}
       <span class="nm-coins">🪙 <b>${S.coins}</b></span>
       <button class="nm-attendance-open" id="attendanceBtn" aria-label="${S.lang==='ko'?'출석 도장':S.lang==='en'?'Attendance stamps':'出勤印章'}">${S.lang==='ko'?'출석':S.lang==='en'?'Stamps':'出勤'}</button>
       <button class="nm-lang" id="langBtn">${t('langName')}</button>
     </div>
   </div><div id="screen"></div>`;
   $('#langBtn').onclick=cycleLang;
+  if(PREVIEW_MODE)$('#previewSignupBtn').onclick=startSignupFromPreview;
   $('#attendanceBtn').onclick=e=>showAttendanceBook(e.currentTarget);
   $('#charChipBtn').onclick=()=>{S.view='closet';save();render();};
   if(S.view==='town')screenTown();
@@ -1378,16 +1417,24 @@ function cycleLang(){stopVoice();const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.
    ============================================================ */
 function screenGuardianEntry(){
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
-  $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('학습 화면으로','Learning screen','学习界面')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1><div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div><div id="nm-account-slot"></div></div>`;
+  const fromTrial=PREVIEW_MODE&&!guardianAuth?.peek();
+  $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('학습 화면으로','Learning screen','学习界面')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1>${fromTrial?`<div class="nm-idcard nm-trial-save"><p>${lk('무료 체험 기록은 이번 방문에만 남아요. 보호자 이메일로 가입하면 지금까지 한 기록이 저장되고, 매주 학습지 링크를 문자로 받을 수 있어요.','Free-trial progress lasts only this visit. Register with a guardian email to save what you have done so far and get the weekly worksheet link by text.','免费体验记录只保留本次访问。用监护人邮箱注册后，目前的学习记录会被保存，并可每周通过短信收到学习单链接。')}</p></div>`:''}<div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div><div id="nm-account-slot"></div></div>`;
   const canContinue=()=>stateStorageReady&&!learnerTransition&&!!stateOwnerId&&guardianAuth?.peek()?.user.id===stateOwnerId&&!guardianAuth.requiresPassword()&&membership?.contactReady();
   if(!canContinue())$('#nmGuardBack').textContent=lk('승인·로그인으로','Approval / login','审批·登录');
-  $('#nmGuardBack').onclick=()=>{if(!canContinue()){location.assign('access.html');return;}guardianEntry=false;S.view='title';render();};
+  if(fromTrial)$('#nmGuardBack').textContent=lk('체험으로 돌아가기','Back to the trial','返回体验');
+  $('#nmGuardBack').onclick=()=>{
+    if(!canContinue()){
+      if(PREVIEW_MODE&&!guardianAuth?.peek()){guardianEntry=false;render();return;}
+      location.assign('access.html');return;
+    }
+    guardianEntry=false;S.view='title';render();};
   renderIdCard();renderAccountCard();
 }
 function refreshEntryContinue(){
   const b=document.getElementById('nmGuardBack');if(!b)return;
   const ready=stateStorageReady&&!learnerTransition&&!!stateOwnerId&&guardianAuth?.peek()?.user.id===stateOwnerId&&!guardianAuth.requiresPassword()&&membership?.contactReady();
-  b.textContent=ready?(S.lang==='ko'?'학습 화면으로':S.lang==='en'?'Learning screen':'学习界面'):(S.lang==='ko'?'승인·로그인으로':S.lang==='en'?'Approval / login':'审批·登录');
+  const trial=PREVIEW_MODE&&!guardianAuth?.peek();
+  b.textContent=ready?(S.lang==='ko'?'학습 화면으로':S.lang==='en'?'Learning screen':'学习界面'):trial?(S.lang==='ko'?'체험으로 돌아가기':S.lang==='en'?'Back to the trial':'返回体验'):(S.lang==='ko'?'승인·로그인으로':S.lang==='en'?'Approval / login':'审批·登录');
 }
 function screenWelcome(){
   const scr=$('#screen');
@@ -1418,7 +1465,7 @@ function screenWelcome(){
       b.onclick=()=>{ ob.avatar=b.dataset.av; stepAvatar(); };
     });
     $('#obAvNext').onclick=()=>{ if(ob.avatar) stepGrade(); };
-    $('#obGuardian').onclick=()=>{guardianEntry=true;render();};
+    $('#obGuardian').onclick=startSignupFromPreview;
   }
 
   /* 2단계 — 학년(2026-09-16 원장 "나이도 입력해야 돼").
@@ -8592,6 +8639,13 @@ function renderNotifyCard(){
   const guardian=guardianAuth&&guardianAuth.peek();
   if(!guardian||(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())||!S.cloudLinked||S.cloudOwnerId!==guardian.user.id){
     div.textContent=lk('문자 알림은 보호자 이메일과 학생 기록을 연결한 뒤 등록할 수 있어요.','Connect a guardian email and learner profile before registering text alerts.','关联监护人邮箱和学生记录后，即可登记短信通知。');
+    if(PREVIEW_MODE&&!guardian){
+      /* 무료 체험 — 문자 받기와 기록 저장은 가입한 보호자만(원장 2026-11-16). */
+      div.textContent=lk('무료 체험 중이에요. 매주 학습지 문자를 받거나 기록을 저장하려면 보호자 이메일로 가입해 주세요.','You are on the free trial. Register with a guardian email to get weekly worksheet texts and save progress.','目前为免费体验。注册监护人邮箱后，才能每周接收学习单短信并保存记录。');
+      const go=document.createElement('button');go.className='nm-btn';go.id='nmTrialSignup';
+      go.textContent=lk('가입하고 저장하기','Register and save','注册并保存');go.onclick=startSignupFromPreview;
+      div.appendChild(go);
+    }
     slot.appendChild(div);return;
   }
   if(membership){
@@ -8677,7 +8731,7 @@ function renderAccountCard(){
   if(REVIEW)return;
   const slot=$('#nm-account-slot');
   if(!slot)return;
-  if(membership&&!guardianAuth?.peek()&&(S.guardianManaged||S.account?.status!=='active')){
+  if(membership&&!guardianAuth?.peek()&&(PREVIEW_MODE||S.guardianManaged||S.account?.status!=='active')){
     const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
     slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이메일 가입 · 이용권','Email registration · Membership','邮箱注册 · 使用权')}</div><p>${lk('위에서 이메일로 로그인해 주세요. 처음 가입하면 30일 체험하고, 이후에는 6개월·1년 이용권을 학원에서 승인해 드려요.','Sign in above with your email. New registration includes a 30-day trial; your academy then approves a 6-month or 1-year plan.','请在上方使用邮箱登录。首次注册可体验30天，之后由学院开通6个月或1年使用权。')}</p></div>`;
     return;
@@ -8919,7 +8973,9 @@ function renderIdCard(){
   const ko=S.lang==='ko', en=S.lang==='en';
   const guardian=guardianAuth&&guardianAuth.peek();
   if(!guardian){
-    slot.innerHTML=`<div class="nm-idcard">${ko?'학습 기록은 이 기기에 저장돼요. 보호자 이메일을 인증하면 기록을 연결할 수 있어요.':en?'Learning records are saved on this device. Verify a guardian email to connect them.':'学习记录保存在本设备上。验证监护人邮箱后即可关联记录。'}</div>`;
+    slot.innerHTML=`<div class="nm-idcard">${PREVIEW_MODE
+      ?(ko?'무료 체험 기록은 이번 방문에만 남아요. 위에서 보호자 이메일로 가입하면 지금까지 한 기록이 저장돼요.':en?'Free-trial progress lasts only this visit. Register with a guardian email above to save what you have done so far.':'免费体验记录只保留本次访问。在上方用监护人邮箱注册后，目前的学习记录会被保存。')
+      :(ko?'학습 기록은 이 기기에 저장돼요. 보호자 이메일을 인증하면 기록을 연결할 수 있어요.':en?'Learning records are saved on this device. Verify a guardian email to connect them.':'学习记录保存在本设备上。验证监护人邮箱后即可关联记录。')}</div>`;
     return;
   }
   if(guardianAuth.requiresPassword&&guardianAuth.requiresPassword()){
@@ -9130,6 +9186,12 @@ function screenWorksheetHelper(wsId){
   renderMath(scr);
 }
 
+/* 체험 기록을 가입한 계정으로 옮겼다는 알림 — 짧은 toast(1.1초)로는 못 읽어서 따로 5초 둔다. */
+function showCarriedNotice(){
+  const el=document.createElement('div');el.className='nm-toast ok nm-carried-toast';el.setAttribute('role','status');
+  el.textContent=S.lang==='en'?'Your free-trial progress is now saved to this account.':S.lang==='zh'?'免费体验期间的记录已保存到此账号。':'무료 체험하며 한 기록을 이 계정에 저장했어요.';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),5000);
+}
 /* A deliberate login/preview entry opens the mode selector. Reloads are handled
    by entry.js and always return to approval/login. */
 function maybeShowTitle(){
@@ -9146,6 +9208,7 @@ function boot(){
   if(guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink()){guardianEntry=!S.onboarded;S.view='closet';}
   else maybeShowTitle();
   render();
+  if(previewCarried)showCarriedNotice();
   const details=$('.nm-closet-settings');if(details&&guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink())details.open=true;
   reverifyAccountIfNeeded(); // 승인번호 회수 동기화 — 실패해도 조용히 무시(오프라인에서 안 잠금)
 }
