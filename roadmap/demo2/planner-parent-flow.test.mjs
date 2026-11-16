@@ -52,6 +52,9 @@ test('unlisted Soma or arithmetic books remain actual reports without claiming a
  const a=F.build({grade:'pre',age:'5',thinking:{book:'Ray A3-3',range:'규칙 찾기'},calc:{book:'소마셈 P2',range:'10 가르기'}});
  assert.equal(a.thinkingExperience,'unknown');assert.equal(a.calc,'unknown');assert.equal(a.parentFlow.actualBooks.thinking,'');assert.equal(a.parentFlow.actualBooks.calc,'');assert.equal(a.parentFlow.academyReports.thinking.book,'Ray A3-3');assert.equal(a.parentFlow.academyReports.calc.book,'소마셈 P2');
  assert.equal(I.firstMissing(a,{...fields,grade:'pre'}),undefined);
+ const reported=F.build({grade:'3',school:{stage:'e:4-1',book:'소마 학원 교재',range:'3/6단원'}});
+ assert.equal(reported.parentFlow.ranges.school,'');assert.equal(reported.parentFlow.academyReports.school.range,'3/6단원');
+ assert.equal(reported[I.progressKey('schoolStatus')],undefined);assert.equal(F.inputModel(reported).school.range,'3/6단원');
 });
 test('explicit numerator and denominator change remaining amount, never mastery',()=>{
  const a=F.build({...input(),school:{stage:'e:4-1',book:'디딤돌 응용',range:'3/6단원'}});
