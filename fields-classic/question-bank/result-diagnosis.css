@@ -42,3 +42,7 @@
 .pass-ladder li.is-here{background:#f0f8f4;border-color:var(--green)}
 @media(max-width:800px){.pass-ladder li{grid-template-columns:1fr auto}.pass-ladder em{grid-column:1/-1;text-align:left}}
 @media print{.diagnosis-score>b{color:#000}.pass-ladder li{break-inside:avoid}}
+
+/* 선발시험 번호마다 정답(원장 2026-11-16 「답안이 없어」) */
+.response-key{display:block;margin-top:6px;padding:4px 6px;border-radius:4px;background:#eef4fb;color:var(--navy);font-size:10px;font-style:normal;font-weight:900;line-height:1.45;word-break:keep-all}
+@media print{.response-key{background:none;padding:0}}

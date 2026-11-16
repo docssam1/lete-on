@@ -2,11 +2,13 @@ import { EXAMS } from "./source-data.js?v=20261111g";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { productForExam, openExamIds } from "./entrance-products.js?v=20261116b";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
+import { loadSelectionAnswers } from "./selection-answers.js?v=20261116a";
 
 // 선발시험 시험지(다시 짠 것) 보기·인쇄 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 권별 테스트(unit-test-viewer.js)와 같은 방식: 문제 글·수·배치는 원문 그대로, 글꼴·색·그림은 우리 것.
 // 회차마다 selection-test-originals/<시험 id>.js 가 { perPage, questions:[{ number, prompt, figure(), answer:{label,unit}|null }] } 를 내보낸다.
-// 원본 이미지 보기(selection-test-viewer.js)는 잠근 그대로다. 정답은 여기 없다 — 채점은 「O/X 채점·진단」(result-diagnosis.html).
+// 원본 이미지 보기(selection-test-viewer.js)는 잠근 그대로다. 정답은 git에 없다 — 「정답 보기」를 누를 때 비공개 표에서 받아(selection-answers.js)
+// 화면에 펼치고 「답안지 인쇄」로 정답만 인쇄한다(원장 2026-11-16 「답안이 없어」). 채점은 「O/X 채점·진단」(result-diagnosis.html).
 // 다시 짠 회차 목록은 selection-test-originals/index.js.
 
 const $ = (id) => document.getElementById(id);
@@ -69,5 +71,25 @@ if (locked) {
   $("pages").innerHTML = pagesMarkup();
   if (student) $("watermark").innerHTML = Array.from({ length: 4 }, () => `<span>${esc(student)} · GFIELD · ${esc(student)} · GFIELD · ${esc(student)}</span>`).join("");
   $("printButton").addEventListener("click", () => window.print());
+  $("answerButton").hidden = false;
+  $("answerButton").addEventListener("click", showAnswers);
+  $("answerPrintButton").addEventListener("click", () => { document.body.classList.add("print-answers"); window.print(); });
+  window.addEventListener("afterprint", () => document.body.classList.remove("print-answers"));
+}
+// 정답 보기 · 답안지 인쇄 — 한 번 받으면 화면 위쪽에 펼친다(인쇄 때는 「답안지 인쇄」만 정답 쪽을 찍는다)
+async function showAnswers() {
+  const panel = $("answerSheet");
+  if (!panel.hidden) { panel.hidden = true; $("answerButton").textContent = "정답 보기"; return; }
+  $("answerButton").disabled = true;
+  $("answerButton").textContent = "정답을 불러오는 중…";
+  const answers = await loadSelectionAnswers(exam.id);
+  $("answerButton").disabled = false;
+  if (!answers) { $("answerButton").textContent = "정답을 불러오지 못했어요 · 다시 누르기"; return; }
+  const items = original.questions.map((q) => `<section class="ut-ans-item"><b>${q.number}</b><div><p>${esc(answers[q.number]?.text || "")}</p></div></section>`).join("");
+  panel.innerHTML = `<header class="ut-test-run"><span>${esc(groupOf(exam))} · ${esc(plain(exam.label))}</span><span>정답</span></header><h2 class="ut-ans-title">${esc(plain(exam.label))} · 정답</h2><div class="ut-ans-grid">${items}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>정답</span></footer>`;
+  panel.hidden = false;
+  $("answerButton").textContent = "정답 접기";
+  $("answerPrintButton").hidden = false;
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 if (exam) $("checkLink").href = `./result-diagnosis.html?${new URLSearchParams({ exam: exam.id, student: student || "DEMO" })}`;

@@ -4,6 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 // 정답은 fields_unit_test_answer_keys 에만 있고 git·공개 파일에는 없다. 워밍업 정답(golden-bell-answers)과 같이
 // 원장 결정 「모두에게 열기」에 따라 로그인 없이 내준다. 막을 때는 OPEN_ACCESS 를 false 로 두고 다시 배포한다.
 // v3(2026-11-14): 2과정 권별 테스트(bookId course-02-g4 · course-02-a5 …)도 받는다.
+// v4(2026-11-16): 선발시험(입학 모의고사) 정답도 받는다 — bookId selection-<시험 id>(원장 「답안이 없어」).
 const OPEN_ACCESS = true;
 
 const ALLOWED_ORIGINS = new Set([
@@ -50,7 +51,7 @@ Deno.serve(async (req: Request) => {
   try {
     const body = await req.json();
     const bookId = String(body?.bookId || "");
-    if (!/^(book-[0-9]{2}|course-0[23]-[ag][1-5])$/u.test(bookId)) return json(req, { error: "book_invalid" }, 400);
+    if (!/^(book-[0-9]{2}|course-0[23]-[ag][1-5]|selection-(k[67]|g1)-[0-9]{4}-[0-9]{2})$/u.test(bookId)) return json(req, { error: "book_invalid" }, 400);
     const service = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data, error } = await service.from("fields_unit_test_answer_keys").select("payload,updated_at").eq("book_id", bookId).maybeSingle();
     if (error) return json(req, { error: "lookup_failed" }, 503);

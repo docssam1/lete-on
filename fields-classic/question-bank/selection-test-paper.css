@@ -24,3 +24,10 @@
 /* 2과정 권별 테스트 채점 칸: 유사문제 칸이 없어 세 칸 */
 .c2-rows { margin: 0; padding: 0; list-style: none; }
 .c2-rows .ut-row { grid-template-columns: 26px minmax(0, 1fr) auto; }
+
+/* 정답 보기(원장 2026-11-16 「답안이 없어」): 화면에서는 시험지 위에 종이 한 장으로 펼치고,
+   인쇄는 「답안지 인쇄」(body.print-answers)일 때만 — unit-test-solve.css의 답안지 인쇄 규칙을 그대로 쓴다. */
+@media screen {
+  .st-answer-sheet:not([hidden]) { display: block; margin: 0 auto 18px; padding: 18px 22px; max-width: 210mm; background: var(--paper, #fdfbf5); border: 1px solid var(--line, #ddd3bf); box-shadow: 0 6px 20px rgba(20, 30, 70, .08); }
+}
+@media print { body:not(.print-answers) .st-answer-sheet { display: none !important; } }

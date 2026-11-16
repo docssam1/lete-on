@@ -9,6 +9,7 @@ import {
 } from "./result-diagnosis-data.js?v=20261116d";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { hasBank } from "./entrance-products.js?v=20261116b";
+import { loadSelectionAnswers } from "./selection-answers.js?v=20261116a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -19,7 +20,16 @@ const asStudent = params.get("as") === "student";
 // 보충 학습지는 고르기 없이 「틀린 문항마다 같은 유형 1문제씩」만. 권한이 있으면(또는 원장 쪽 문제은행에서 열면) 예전처럼 고른다.
 if (asStudent && loggedIn()) await checkSession();
 const simpleOnly = asStudent && !hasBank(loggedIn());
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 let lastAnalysis = null;
+// 선발시험은 번호마다 정답을 같이 보여 준다(원장 2026-11-16 「답안이 없어」) — 비공개 표에서 받아 온다(selection-answers.js)
+let answerKey = null, answerKeyExam = "";
+async function fetchAnswerKey() {
+  const id = exam.id;
+  answerKeyExam = id; answerKey = null;
+  const answers = await loadSelectionAnswers(id);
+  if (exam.id === id && answers) { answerKey = answers; render(); }
+}
 // 화면 글에 회사·상품 이름(더 클래식)을 쓰지 않는다
 const plain = (label) => String(label ?? "").replace(/더\s*클래식\s*/gu, "");
 const initialExam = RESULT_EXAM_BY_ID.get(params.get("exam")) || RESULT_EXAM_GROUPS[0].exams[0];
@@ -81,7 +91,7 @@ function responseRow(question) {
   const typeLabel = question.note || classification?.detailedTypeLabel || "유형 확인 필요";
   return `<article class="response-row ${result ? `is-${result}` : ""}">
     <span>${String(question.number).padStart(2, "0")}</span>
-    <div class="response-copy"><strong>${typeLabel}</strong><small>${classification?.majorDomainLabel || "미분류"} · ${classification?.minorDomain || "미분류"}</small></div>
+    <div class="response-copy"><strong>${typeLabel}</strong><small>${classification?.majorDomainLabel || "미분류"} · ${classification?.minorDomain || "미분류"}</small>${answerKey?.[question.number] ? `<em class="response-key">정답 ${escapeHtml(answerKey[question.number].text)}</em>` : ""}</div>
     <div class="ox-buttons" role="group" aria-label="${question.number}번 결과">
       <button type="button" data-number="${question.number}" data-result="correct" class="${result === "correct" ? "active" : ""}" aria-pressed="${result === "correct"}">O</button>
       <button type="button" data-number="${question.number}" data-result="incorrect" class="${result === "incorrect" ? "active" : ""}" aria-pressed="${result === "incorrect"}">X</button>
@@ -170,6 +180,7 @@ function updateRemediationLink() {
 
 function render() {
   renderExamOptions();
+  if (answerKeyExam !== exam.id) fetchAnswerKey();
   const analysis = analyzeExamResults(exam, responses);
   $("examStage").textContent = `${exam.resultGroupLabel || groupById(activeGroupId).label} · ${stageLabelForExam(exam)}`;
   $("examTitle").textContent = plain(exam.label);
