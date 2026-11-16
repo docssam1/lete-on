@@ -97,8 +97,8 @@
       "middle-transfer": Object.freeze({ targetQuestionCount: 30, responseMix: responseMix(0, 30, 0, "verified", "중2-2 원본 응답 형식 검수") })
     }),
     WM: Object.freeze({
-      "middle22-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
-      "middle31-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "middle22-basic": Object.freeze({ targetQuestionCount: 50, responseMix: UNKNOWN_RESPONSE_MIX }),
+      "middle31-basic": Object.freeze({ targetQuestionCount: 50, responseMix: UNKNOWN_RESPONSE_MIX }),
       "middle2-dual": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
       "common2-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),
       "algebra-basic": Object.freeze({ targetQuestionCount: null, responseMix: UNKNOWN_RESPONSE_MIX }),

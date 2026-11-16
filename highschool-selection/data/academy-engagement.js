@@ -32,7 +32,7 @@
       preparation: ["응시 학년보다 지원 과정명을 먼저 확정", "시작반과 중간 편입을 구분해 해당 회차의 범위·마지막 단원을 확인", "기본 정확도 뒤에 조건 결합·그래프·경우 나누기 연습", "수업 속도·과제·보충 방식은 지원할 지점과 반에 직접 확인"],
       courses: [
         { id: "middle1", label: "중1 과정 입학", scope: "초등 누적 · 회차별 확인", status: "guide" },
-        { id: "common1-basic", label: "공통수학1 기본", scope: "중2·중3 전 과정 · 대치 2026년 12월 개강", status: "guide" },
+        { id: "common1-basic", label: "공통수학1 기본 · 중등관", scope: "대치 중등관 · 중2·중3 전 과정 · 현 초6 12월 개강", status: "guide" },
         { id: "common2-basic", label: "공통수학2 기본", scope: "지원 반의 공식 진도표·종료 단원 확인", status: "guide" },
         { id: "common1-skill", label: "공통수학1 실력", scope: "회차별 공식 범위", status: "guide" },
         { id: "common2-skill", label: "공통수학2 실력", scope: "회차별 공식 범위", status: "guide" },
@@ -55,8 +55,8 @@
       preparation: ["대수와 기하를 따로 시간 재서 점검", "심화 문제를 정확한 풀이 과정으로 완성", "한 영역의 약점이 전체 합격을 가리지 않도록 과락 위험 교정", "기본반·실력 듀얼과 신입·중간 편입을 구분하고 반별 운영 방식을 확인"],
       courses: [
         { id: "middle21-basic", label: "중2-1 기본반 신입", scope: "중1 대수·기하 · 통계 제외", status: "guide" },
-        { id: "middle22-basic", label: "중2-2 기본반 편입", scope: "지원 회차의 대수·기하 범위 확인", status: "guide" },
-        { id: "middle31-basic", label: "중3-1 기본반 편입", scope: "지원 회차의 대수·기하 범위 확인", status: "guide" },
+        { id: "middle22-basic", label: "중2-2 기본반 편입", scope: "중2-1 대수 기본형 · 중1-2 기하 심화형, 통계 제외", status: "guide" },
+        { id: "middle31-basic", label: "중3-1 기본반 편입", scope: "중2-1 대수 심화형 · 중2-2 기하 심화형, 확률 포함", status: "guide" },
         { id: "middle2-dual", label: "중2 심화듀얼반", scope: "입반 범위·지원 기준은 공식 공지 확인", status: "guide" },
         { id: "middle-transfer", label: "중등 기본반 편입", scope: "과정·회차별 대수·기하", status: "guide" },
         { id: "common1-basic", label: "공통수학1 기본반 입학", scope: "중2·중3 대수·기하 · 확률 포함 · 각 90분", status: "guide" },

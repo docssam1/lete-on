@@ -33,6 +33,7 @@ test('a shared official timetable belongs only to its own academy and supported 
   const links=admissions.forCourse('DP','common1-basic').links;
   assert.ok(links.some(x=>x.note.includes('중등관')&&x.note.includes('150분')));
   assert.ok(links.some(x=>x.note.includes('제로관')&&x.note.includes('120분')));
+  assert.ok(links.find(x=>x.url===zero.url).label.includes('별도'));
 });
 
 test('admission guidance cannot enable an unprepared course application or sale', () => {

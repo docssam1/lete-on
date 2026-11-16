@@ -11,9 +11,9 @@
   const WM_ALGEBRA = blog('wonmath563', '224440523829');
   const records = {
     'DP:middle1': { pattern: '중1.*(?:입학|시작|신규)|중1-1', links: [] },
-    'DP:common1-basic': { pattern: '공(?:통수학|수)\\s*1\\s*기본', entryScope: '중2·중3 전 과정', links: [
-      { label: '중등관 모집·입반 안내', url: DP_MIDDLE, note: '대치 중등관 · 12월 개강 · 시험 150분' },
-      { label: '제로관 모집·입반 안내', url: DP_ZERO, note: '대치 제로관 · 12월 개강 · 기본과정 시험 120분' }
+    'DP:common1-basic': { pattern: '공(?:통수학|수)\\s*1\\s*기본', branch: '대치 중등관', checkedAt: '2026-11-16', level: '현 초6 · 12월 개강반', entryScope: '중2·중3 전 과정', links: [
+      { label: '중등관 모집·입반 안내', url: DP_MIDDLE, note: '대치 중등관 · 현 초6 · 시험 150분' },
+      { label: '제로관 별도 모집 안내', url: DP_ZERO, note: '대치 제로관 · 별도 모집 · 기본과정 시험 120분' }
     ] },
     'DP:common2-basic': { pattern: '공(?:통수학|수)\\s*2\\s*기본', links: [{ label: '제로관 모집·입반 안내', url: DP_ZERO, note: '대치 제로관 · 기본과정 시험 120분 · 범위는 지원 반 확인' }] },
     'DP:common1-skill': { pattern: '공(?:통수학|수)\\s*1\\s*실력', links: [{ label: '제로관 모집·입반 안내', url: DP_ZERO, note: '대치 제로관 · 실력과정 시험 150분' }] },
@@ -22,8 +22,8 @@
     'DP:middle-transfer': { pattern: '중등관.*진도|중[123].*편입', links: [{ label: '중등관 진도·입반 안내', url: blog('dpmath', '224408399028'), note: '대치 중등관 · 지원 반의 진도·결원 확인' }] },
     'WM:middle21-basic': { pattern: '중2\\s*[-·]\\s*1\\s*기본', entryScope: '중1 대수·기하 · 통계 제외', links: [{ label: '모집·입반 안내', url: blog('wonmath563', '224393421982'), note: '대치 · 2026년 10월 개강 공지' }] },
     'WM:common1-basic': { pattern: '공(?:통수학|수)\\s*1\\s*기본', entryScope: '중2·중3 대수·기하 · 확률 포함', links: [{ label: '모집·입반 안내', url: blog('wonmath563', '224443076138'), note: '대치 · 2026년 12월 개강 공지' }] },
-    'WM:middle22-basic': { pattern: '중2\\s*[-·]\\s*2\\s*기본', links: [{ label: '편입 안내', url: blog('wonmath563', '224364373777'), note: '대치 · 2026년 9월 공지 · 범위는 회차별 확인' }] },
-    'WM:middle31-basic': { pattern: '중3\\s*[-·]\\s*1\\s*기본', links: [{ label: '편입 안내', url: blog('wonmath563', '224397883830'), note: '대치 · 2026년 10월 공지 · 범위는 회차별 확인' }] },
+    'WM:middle22-basic': { pattern: '중2\\s*[-·]\\s*2\\s*기본', entryScope: '중2-1 대수 기본형 / 중1-2 기하 심화형 · 통계 제외', checkedAt: '2026-11-15', links: [{ label: '편입 안내', url: blog('wonmath563', '224364373777'), note: '대치 · 2026년 9월 편입 기준 · 25+25문항 · 각70분 · 휴식10분' }] },
+    'WM:middle31-basic': { pattern: '중3\\s*[-·]\\s*1\\s*기본', entryScope: '중2-1 대수 심화형 / 중2-2 기하 심화형 · 확률 포함', checkedAt: '2026-11-15', links: [{ label: '편입 안내', url: blog('wonmath563', '224397883830'), note: '대치 · 2026년 10월 편입 기준 · 9월3일 범위 수정 · 각70분 · 휴식20분' }] },
     'WM:middle-transfer': { pattern: '중[23].*(?:기본|편입|심화)', links: [] },
     'WM:middle2-dual': { pattern: '중2\\s*[-·]?\\s*심화\\s*듀얼', links: [{ label: '편입 안내', url: blog('wonmath563', '224429755520'), note: '대치 · 2026년 11월 공지' }] },
     'WM:common2-basic': { pattern: '공(?:통수학|수)\\s*2\\s*기본', entryScope: '시험 범위는 해당 회차 원문 확인', level: '공통수학1 기본과 중등 기하 심화 학습자를 위한 과정', links: [{ label: '편입·지원 기준', url: blog('wonmath563', '224391221213'), note: '대치 · 2026년 10월 개강 공지' }] },

@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.95.3';
 import bank from './bank-private.json' with {type:'json'};
-import {publicExam,publicQuestions,documentPages,makeSelfReport,applyReview,validGrant,fixedEqual} from './core.mjs';
+import {publicExam,publicQuestions,documentPages,documentAssetFunction,makeSelfReport,applyReview,validGrant,fixedEqual} from './core.mjs';
 const origins=new Set(['https://lete-on.gfieldacademy.net','https://docssam1.github.io','http://127.0.0.1:8879']);
 const encoder=new TextEncoder();
 const hex=(bytes:ArrayBuffer)=>Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
@@ -42,7 +42,7 @@ Deno.serve(async req=>{
    return json(req,{token,expiresAt:expires,name:found.name});
   }
   if(action==='logout'&&req.method==='POST'){const s=await student(req);checked(await db.from('highselect_sessions').update({expires_at:new Date().toISOString()}).eq('token_hash',s.hash));return json(req,{ok:true});}
-  if(action==='admin-list'&&req.method==='GET'){await admin(req);const students=checked(await db.from('highselect_students').select('id,name,active,exam_grants,expires_at,created_at').eq('is_test',false).order('created_at',{ascending:false}).limit(200));return json(req,{exams:bank.exams.map(publicExam),students});}
+  if(action==='admin-list'&&req.method==='GET'){await admin(req);const students=checked(await db.from('highselect_students').select('id,name,active,exam_grants,expires_at,created_at').eq('is_test',false).order('created_at',{ascending:false}).limit(200));return json(req,{exams:bank.exams.map(publicExam),students,referenceMaterials:bank.adminReferences||[]});}
   if(action==='admin-grant'&&req.method==='POST'){
    const by=await admin(req),b=await body(req),name=String(b.name||'').normalize('NFC').trim();
    const grants=Array.isArray(b.exams)?[...new Set(b.exams)]:[];if(!name||name.length>80||grants.length<1||grants.some(x=>!bank.exams.some(e=>e.id===x)))fail('grant_invalid');
@@ -81,7 +81,7 @@ Deno.serve(async req=>{
   if(['manifest','answers','analysis'].includes(action)&&req.method==='GET'){
    const kind=action==='manifest'?'paper':action,assets=documentPages(e,kind);if(!assets?.length)fail('pages_unavailable',404);
    const exp=Math.floor(Date.now()/1000)+600;const pages=await Promise.all(assets.map(async(_:string,i:number)=>{
-    const q=new URLSearchParams({action:'asset',exam:e.id,sub:s.hash,kind,page:String(i+1),exp:String(exp),sig:await signature([e.id,s.hash,kind,i+1,exp].join('|'))});return {number:i+1,url:(Deno.env.get('SUPABASE_URL')||url.origin).replace(/\/$/,'')+'/functions/v1/'+(e.assetFunctions?.[kind]||e.assetFunction||'highselect-exams')+'?'+q};
+    const q=new URLSearchParams({action:'asset',exam:e.id,sub:s.hash,kind,page:String(i+1),exp:String(exp),sig:await signature([e.id,s.hash,kind,i+1,exp].join('|'))});return {number:i+1,url:(Deno.env.get('SUPABASE_URL')||url.origin).replace(/\/$/,'')+'/functions/v1/'+documentAssetFunction(e,kind,i)+'?'+q};
    }));return json(req,{exam:publicExam(e),questions:publicQuestions(e),pages,expiresAt:new Date(exp*1000).toISOString()});
   }
   if(action==='submit'&&req.method==='POST'){

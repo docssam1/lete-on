@@ -7,11 +7,11 @@ require("../data/public-exam-profiles.js");
 const policy = require("../data/standard-exam-policy.js");
 const specs = globalThis.HIGHSELECT_OFFICIAL_EXAM_SPECS;
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
-const keyFor = e => e.id === "dp-middle22-transfer-r01" ? "DP:middle-transfer" : e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
+const keyFor = e => e.id === "wm-middle31-basic-r01" ? "WM:middle31-basic" : e.id === "wm-middle22-basic-r01" ? "WM:middle22-basic" : e.id === "ed-middle1-authored-r01" ? "ED:middle1" : e.id.startsWith("dp-middle22-transfer-") ? "DP:middle-transfer" : e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
 
 test("every released mock agrees with its own branch/course time and count", () => {
-  assert.equal(mocks.length, 24);
-  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 950);
+  assert.equal(mocks.length, 34);
+  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1310);
   mocks.forEach(e => {
     const s = specs.courses[keyFor(e)];
     assert.ok(s, e.id);
@@ -57,6 +57,18 @@ test("Hwangso uses the owner-confirmed time while unconfirmed branches stay sepa
   assert.equal(dg.durationMinutes, null);
 });
 
+test("Won transfer levels keep their different geometry scopes and breaks", () => {
+  const m22=specs.courses['WM:middle22-basic'],m31=specs.courses['WM:middle31-basic'];
+  assert.match(m22.scope,/중2-1 대수 기본형.*중1-2 기하 심화형.*통계 제외/);
+  assert.match(m31.scope,/중2-1 대수 심화형.*중2-2 기하 심화형.*확률 포함/);
+  for(const s of [m22,m31]){
+    assert.equal(s.questionCount,50);assert.deepEqual(s.sectionCounts,{ALG:25,GEO:25});
+    assert.deepEqual(s.sectionMinutes,{ALG:70,GEO:70});assert.equal(s.durationMinutes,140);
+  }
+  assert.equal(m22.breakMinutes,10);assert.equal(m31.breakMinutes,20);
+  assert.equal(m31.scopeRevisedAt,'2026-09-03');assert.notEqual(m22.sourceUrl,m31.sourceUrl);
+});
+
 test("Deepthink current prehigh scope excludes the old extra middle3 range", () => {
   assert.equal(specs.courses["DG:pre-high1"].scope, "공통수학1 + 공통수학2 도형의 방정식");
   const dg = globalThis.HIGHSELECT_PUBLIC_PROFILES.profiles.find(p => p.code === "DG");
@@ -72,3 +84,17 @@ test("Deepthink current prehigh scope excludes the old extra middle3 range", () 
  assert.equal(transfer.scopeState,"source-paper");assert.match(transfer.note,/진도별 확인/);
  assert.notEqual(transfer.scope,specs.courses["DP:common1-basic"].scope);
  });
+
+test('Dolpa common1 basic timing is bound to the middle campus rather than Zero basic admissions',()=>{
+ const common=specs.courses['DP:common1-basic'];
+ assert.equal(common.branch,'대치 중등관');
+ assert.equal(common.durationMinutes,150);assert.equal(common.questionCount,30);
+ assert.match(common.scope,/중2.*중3/);
+ assert.equal(common.sourceUrl,'https://blog.naver.com/dpmath/224407474293');
+ assert.notEqual(common.sourceUrl,'https://blog.naver.com/dpmath/224426268104');
+});
+
+test('Eden middle1 entry uses elementary scope and its own official source',()=>{
+ const m=specs.courses['ED:middle1'],c=specs.courses['ED:high-advance'];assert.match(m.scope,/초5.*초6/);assert.match(m.branch,/초등관/);
+ assert.equal(m.durationMinutes,100);assert.equal(m.questionCount,30);assert.notEqual(m.sourceUrl,c.sourceUrl);
+});
