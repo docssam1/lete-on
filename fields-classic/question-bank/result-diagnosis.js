@@ -6,12 +6,12 @@ import {
   remediationUrl,
   resultStorageKey,
   stageLabelForExam
-} from "./result-diagnosis-data.js?v=20261115a";
+} from "./result-diagnosis-data.js?v=20261116b";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
-// 입학 모의고사(entrance.html)에서 학생이 들어오면 as=student — 유사문제를 학생 풀이 화면으로 연다(원장 2026-11-15)
+// 입학 모의고사(entrance.html)에서 들어오면 as=student — 약점 유사문제를 문제은행 시험지로 바로 연다(원장 2026-11-16)
 const asStudent = params.get("as") === "student";
 // 화면 글에 회사·상품 이름(더 클래식)을 쓰지 않는다
 const plain = (label) => String(label ?? "").replace(/더\s*클래식\s*/gu, "");
@@ -119,7 +119,7 @@ function updateRemediationLink() {
   const typeIds = selectedWeakTypeIds();
   const link = $("remediationLink");
   link.href = typeIds.length ? remediationUrl(typeIds, student, Number($("remediationCount").value),
-    asStudent ? { asStudent: true, title: `${plain(exam.label)} · 약점 유사문제`, back: `./result-diagnosis.html?${new URLSearchParams({ exam: exam.id, student, as: "student" })}` } : {}) : "#";
+    asStudent ? { paper: true, title: `${plain(exam.label)} · 약점 유사문제` } : {}) : "#";
   link.classList.toggle("is-disabled", !typeIds.length);
   link.setAttribute("aria-disabled", String(!typeIds.length));
 }

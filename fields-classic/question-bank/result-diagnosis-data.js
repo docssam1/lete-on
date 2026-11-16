@@ -180,8 +180,8 @@ export function analyzeExamResults(exam, responses = {}) {
   };
 }
 
-// options.asStudent — 학생이 바로 한 문제씩 푸는 화면(문제은행 학생 화면 as=student&build=1, 원장 2026-11-15 「학생 풀이 화면으로」).
-//   title: 학습지 머리 글, back: 「돌아가기」 주소. 없으면 예전처럼 원장 쪽 편집 화면(유형이 미리 체크된 1단계).
+// options.paper — 문제은행 시험지로 바로(원장 2026-11-16 「문제은행식으로 시험지 형태로 나와야지」): build=1이면 고른 유형으로
+//   문제를 만들어 곧장 3단계(시험지 미리보기·인쇄)를 연다. title: 시험지 머리 글. 없으면 예전처럼 유형이 미리 체크된 1단계.
 export function remediationUrl(typeIds, student = "DEMO", count, options = {}) {
   const uniqueTypeIds = [...new Set(typeIds)].filter((id) => typeById(id));
   const params = new URLSearchParams({ student, mode: "type", types: uniqueTypeIds.join(",") });
@@ -189,11 +189,10 @@ export function remediationUrl(typeIds, student = "DEMO", count, options = {}) {
     ? Math.max(1, Math.min(50, Number(count)))
     : Math.max(10, Math.min(30, uniqueTypeIds.length * 5));
   params.set("count", String(targetCount));
-  if (options.asStudent) {
-    params.set("as", "student");
+  if (options.paper) {
     params.set("build", "1");
+    params.set("form", "exam");   // 본문 꼴 = 시험지형(이번 한 번만, 저장된 선택은 그대로)
     if (options.title) params.set("title", options.title);
-    if (options.back) params.set("back", options.back);
   }
   return `./index.html?${params.toString()}`;
 }

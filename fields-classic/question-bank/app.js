@@ -3926,9 +3926,9 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
   }
   renderTypeTree();
   updateSummary();
-  // 학생 풀이 화면으로 바로(입학 모의고사 유사문제, 원장 2026-11-15): as=student&build=1이면 고른 유형으로 곧장 학습지를 만든다.
-  // 아래 시작 화면 주소 처리까지 끝난 뒤에 만든다.
-  if (asStudent && params.get("build") === "1" && state.selected.type.size) setTimeout(() => buildQuestions(), 0);
+  // build=1이면 고른 유형으로 곧장 만든다(입학 모의고사 유사문제, 원장 2026-11-16 「문제은행식으로 시험지 형태로」):
+  // 선생님 쪽은 2단계 편집을 건너뛰고 3단계 시험지(미리보기·인쇄)로, 학생 화면(as=student)은 문제로. 아래 주소 처리가 끝난 뒤에.
+  if (params.get("build") === "1" && state.selected.type.size) setTimeout(() => { if (asStudent) buildQuestions(); else if (makeQuestions()) showWorksheet(); }, 0);
 })();
 
 // 시작 화면(start.html)에서 넘어오는 주소. 고를 것을 미리 골라 두어 학생·선생님이 긴 목록을 헤매지 않게 한다.

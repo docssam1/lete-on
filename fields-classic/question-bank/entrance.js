@@ -1,5 +1,5 @@
 import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES } from "./source-data.js?v=20261111g";
-import { remediationUrl } from "./result-diagnosis-data.js?v=20261115a";
+import { remediationUrl } from "./result-diagnosis-data.js?v=20261116b";
 import { loggedIn } from "./study-progress.js?v=20261111p";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
 
@@ -27,8 +27,8 @@ const GROUPS = [
 const card = (exam) => {
   const n = (exam.questions || []).length;
   const diagnose = `./result-diagnosis.html?${new URLSearchParams({ exam: exam.id, student, as: "student" })}`;
-  // 유사문제는 학생 풀이 화면으로 바로(원장 2026-11-15) — 돌아가기는 이 화면
-  const similar = remediationUrl(typeIdsOf(exam), student, undefined, { asStudent: true, title: `${plain(exam.label)} · 유사문제`, back: `./entrance.html${location.search}` });
+  // 유사문제는 문제은행 시험지로 바로(원장 2026-11-16 「문제은행식으로 시험지 형태로」)
+  const similar = remediationUrl(typeIdsOf(exam), student, undefined, { paper: true, title: `${plain(exam.label)} · 유사문제` });
   const paper = TYPESET_EXAMS[exam.id] ? `./selection-test-paper.html?${new URLSearchParams({ exam: exam.id, ...(params.get("student") ? { student: params.get("student") } : {}) })}` : "";
   return `<li class="en-exam"><b>${esc(plain(exam.label))}</b><small>${n}문항</small>
     <span class="en-acts">${paper ? `<a class="ms-btn" href="${esc(paper)}">시험지 인쇄</a>` : ""}<a class="ms-btn primary" href="${esc(diagnose)}">O/X 채점·진단</a><a class="ms-btn" href="${esc(similar)}">유사문제 풀기</a></span></li>`;
