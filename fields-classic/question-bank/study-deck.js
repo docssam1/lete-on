@@ -1,4 +1,5 @@
 import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261111c";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261116a";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -159,7 +160,10 @@ export function sessionPrintHref(book, unitIndex, part, bellData, link) {
   const sheet = link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~book` });
   const presheet = part > 1 ? link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~daily` }) : "";
   const parts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problems}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
-  return link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
+  // 2과정처럼 워밍업 권이 없는 책은 표지에 쓸 권 이름을 주소로 넘긴다(golden-bell.js printSessionBook)
+  const topics = book.course ? course2ConceptSlides(book.id, unitIndex, part).filter((slide) => slide.kind === "concept").map((slide) => slide.lesson.title) : [];
+  const named = book.course ? { blabel: book.label, btitle: book.title, bcourse: `course-0${book.course}`, ...(topics.length ? { topics: topics.join("|") } : {}) } : {};
+  return link("golden-bell.html", { book: book.id, sessionbook: "1", ...named, lessons: lessons.map((lesson) => lesson.id).join(","),
     label: `${unitIndex + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: parts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });
 }
 // 유형 목록에서 n문제: 유형이 많으면 고르게 건너뛰며, 적으면 돌아가며 한 번 더
@@ -174,6 +178,8 @@ export function buildSessionSlides(book, unitIndex, part, bellData) {
   const list = [{ kind: "cover" }];
   // 2차시부터: 지난 차시 데일리 테스트로 시작한다(원장 2026-10-29 「데일리 테스트는 다음날이야」)
   if (part > 1 && sessionTypes(unit, part - 1).length) list.push({ kind: "daily", testPart: part - 1 });
+  // 2과정: 워밍업 자료가 없어 그림으로 따져 보기(개념 장) → 직접 해 보기(게임 장)로 개념을 연다(course2-deck.js)
+  if (book.course) list.push(...course2ConceptSlides(book.id, unitIndex, part));
   for (const lesson of lessons) {
     const key = `${book.id}/${lesson.id}`;
     // 손글씨 판서가 있으면 그 판서(덱 안에서 직접 그림), 없으면 워밍업 개념 화면(창)
@@ -196,7 +202,7 @@ export function buildSessionSlides(book, unitIndex, part, bellData) {
   }
   for (const block of sessionBlocks(unit, part)) list.push({ kind: "board", block });
   if (sessionTypes(unit, part).length) list.push({ kind: "homework" }, ...(part === parts ? [{ kind: "test" }] : []));
-  if (part === parts && unitIndex === book.units.length - 1 && book.source.unitTestQuestions?.length) list.push({ kind: "booktest" });
+  if (part === parts && unitIndex === book.units.length - 1 && (book.source.unitTestQuestions?.length || book.source.unitTestPaper)) list.push({ kind: "booktest" });
   list.push({ kind: "end" });
   // 같은 종류가 여러 장이면 「2 / 3」을 붙인다
   for (const [kind] of PHASES) {
@@ -216,6 +222,11 @@ export function slideLine(slide, { book, unitIndex, part = 1, hasConcept = true 
   // 표지 말: 2차시부터 지난 차시 데일리 테스트로 시작, 마지막 차시는 단원 평가로 끝
   const first = part > 1 ? `먼저 ${part - 1}차시 데일리 테스트를 보고, ` : "";
   const ending = last ? "오늘의 과제를 하고 단원 평가까지 봐요." : "오늘의 과제까지 해요.";
+  if (slide.kind === "cover" && book.course) return voiceLine("cover", hasConcept
+    ? `오늘은 ${unit.label} ${part}차시예요. ${first}그림으로 왜 그런지 따져 보고, 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
+    : `오늘은 ${unit.label} ${part}차시예요. ${first}본책 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
+  if (slide.kind === "concept" && slide.native?.mount === "mountDeckProof") return voiceLine("concept", `${slide.lesson.title}? 그림으로 한 장면씩 따져 봐요. 오른쪽에 까닭이 쌓여요.`);
+  if (slide.kind === "game" && slide.native?.mount === "mountDeckLab") return voiceLine("game", `${slide.title}이에요. 점수는 없어요. 직접 움직여 보고 다음을 눌러요.`);
   if (slide.kind === "cover") return voiceLine("cover", hasConcept
     ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고, 게임과 워밍업으로 익힌 다음 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
     : `오늘은 ${unit.label} ${part}차시예요. ${first}본책 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);

@@ -1437,7 +1437,7 @@ function printBookCover(book, lessons, { includeAnswers = false, style = coverSt
     <header class="gold-print-cover-head"><span>${session ? "STUDY BOOK" : "WARM-UP"}</span><strong>${escapeAttribute(courseLabel)} · ${session ? escapeAttribute(session.label) : "워밍업"}</strong></header>
     <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${session ? `${escapeAttribute(session.label)} 교재` : lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "워밍업 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
     <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(session ? session.range : range)}</p><span>${session ? escapeAttribute(session.parts) : includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
-    <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>
+    ${!lessons.length && session ? (session.topics?.length ? `<section class="gold-print-cover-concepts"><h2>그림으로 따져 보기</h2><ol>${session.topics.map((topic, k) => `<li><span>${String(k + 1).padStart(2, "0")}</span><div><strong>${escapeAttribute(topic)}</strong></div></li>`).join("")}</ol></section>` : "") : `<section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>`}
     <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · ${session ? `${escapeAttribute(session.label)} 교재` : "개념 학습 교재"}</footer>
   </article>`;
 }
@@ -1732,9 +1732,12 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
 // 표지(워밍업 교재와 같은 「도형 배경」) → (2차시부터 &presheet) 지난 차시 데일리 테스트 → 그 차시 워밍업 학습마다 개념·워밍업 쪽 → 본책 · 오늘의 과제 → (마지막 차시) 단원 평가.
 // 덱(study.html)의 차시 순서 그대로다. 정답·풀이는 넣지 않는다.
 async function printSessionBook() {
-  const book = activeBook();
+  let book = activeBook();
+  // 워밍업 자료가 없는 권(2과정 G1 등): 표지에 쓸 권 이름만 주소로 받는다(study-deck.js sessionPrintHref의 &blabel=&btitle=&bcourse=)
+  if ((book === UNAVAILABLE_BOOK || !book.lessons?.length) && params.get("btitle")) book = { id: params.get("book") || "", courseId: params.get("bcourse") || null, label: params.get("blabel") || "", title: params.get("btitle"), lessons: [] };
   const lessons = (params.get("lessons") || "").split(",").map((id) => book.lessons.find((lesson) => lesson.id === id)).filter(Boolean);
-  const session = { label: params.get("label") || "", range: params.get("range") || "", parts: params.get("parts") || "" };
+  // &topics=제목|제목: 워밍업 대신 그 차시에 따져 볼 것(2과정 그림 논증) — 표지의 「유형과 핵심 개념」 자리에 쓴다
+  const session = { label: params.get("label") || "", range: params.get("range") || "", parts: params.get("parts") || "", topics: (params.get("topics") || "").split("|").filter(Boolean) };
   const root = $("goldPrintRoot");
   $("printStatus").textContent = "한 차시 교재를 묶고 있어요.";
   try {

@@ -1,4 +1,5 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
+import { COURSE2_G1_TYPE_ROWS } from "./course2-g1-generators.js?v=20261116a";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1116,6 +1117,9 @@ Object.assign(TYPES.find((item) => item.id === "cryptarithm-multi-symbol-carry")
 Object.assign(TYPES.find((item) => item.id === "subtract-to-repeated-number-b8"), {
   label: "두 자리 도형 수에서 한 자리 도형 수를 빼 반복수 만들기"
 });
+
+// 2과정 G1 유형(course2-g1-generators.js). 문제은행 유형 고르기에도 「2과정 G1」 출처로 함께 보인다.
+TYPES.push(...COURSE2_G1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G1 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -4396,6 +4400,72 @@ export const CURRICULUM = [
     }
   };
 });
+
+// ── 2과정 G1 「돌리기와 뒤집기」 본책(N30 신판) — 1과정과 같은 꼴(원장 2026-11-16 「1과정에 비해 너무 조잡스러워 … 교재 인쇄도 없고 흐름도 달라」 → 한 권 시범).
+// 본책 172문항을 번호마다 유형 하나에 잇는다. 1과정 생성기로 같은 풀이가 되는 번호는 1과정 유형, 나머지는 2과정 G1 생성기(course2-g1-generators.js).
+// 행: [묶음("activity"|"check"|"practice"|"advanced"), 묶음 번호, 문항 번호들, 유형 id]
+const c2Refs = (rows) => {
+  const out = {};
+  for (const [section, group, numbers, typeId] of rows) {
+    const stage = { activity: "concept", check: "type", practice: "practice", advanced: "advanced" }[section];
+    const refs = out[typeId] || (out[typeId] = { concept: [], type: [], practice: [], advanced: [] });
+    refs[stage].push(problemNumbers(section, group, numbers));
+  }
+  return Object.freeze(out);
+};
+const c2Unit = (label, activities, checks, advanced, practice, rows) => {
+  const typeStudyRefs = c2Refs(rows);
+  return detailedStagedUnit(label, Object.keys(typeStudyRefs), activities, checks, advanced, practice, typeStudyRefs);
+};
+const C2_G1_UNITS = [
+  c2Unit("색종이 접기와 뒤집기", [3, 5, 3], [4, 3, 4], 5, 21, [
+    ["activity", 1, [1, 2, 3], "three-fold-cut-line-book4"],
+    ["check", 1, [1], "fold-punch-shape-count"], ["check", 1, [2], "fold-hole-count"], ["check", 1, [3], "fold-diagonal-hole-count"], ["check", 1, [4], "practice-three-fold-hole-count"],
+    ["activity", 2, [1], "c2-symmetry-axis-count"], ["activity", 2, [2], "shape-flip-composition"], ["activity", 2, [3], "c2-digital-mirror-count"], ["activity", 2, [4, 5], "c2-mirror-digital-clock"],
+    ["check", 2, [1, 2], "digital-flip-addition-horizontal"], ["check", 2, [3], "digital-transform-arithmetic"],
+    ["activity", 3, [1], "time-add-subtract-base60-b7"], ["activity", 3, [2, 3], "elapsed-time-analog-b7"],
+    ["check", 3, [1, 2], "mirror-clock-reading-b7"], ["check", 3, [3, 4], "mirror-clock-elapsed-b7"],
+    ["advanced", 1, [1], "c2-digital-mirror-count"], ["advanced", 1, [2, 4], "mirror-symmetric-clock-b7"], ["advanced", 1, [3], "mirror-clock-reading-b7"], ["advanced", 1, [5], "c2-clock-hand-angle"],
+    ["practice", 1, [1], "fold-cut-unfold-two-draw"], ["practice", 1, [2], "fold-cut-piece-count"], ["practice", 1, [3, 4, 5], "three-fold-cut-line-book4"],
+    ["practice", 1, [6], "fold-punch-shape-count"], ["practice", 1, [7], "fold-hole-count"], ["practice", 1, [8], "fold-diagonal-hole-count"], ["practice", 1, [9], "practice-three-fold-hole-count"],
+    ["practice", 1, [10], "shape-mirror-direction"], ["practice", 1, [11, 12], "c2-mirror-digital-clock"], ["practice", 1, [13, 14], "digital-flip-addition-horizontal"], ["practice", 1, [15], "digital-transform-arithmetic"],
+    ["practice", 1, [16, 17, 20], "elapsed-time-analog-b7"], ["practice", 1, [18, 19], "mirror-clock-reading-b7"], ["practice", 1, [21], "mirror-clock-elapsed-b7"]
+  ]),
+  c2Unit("숫자판 돌리기", [3, 3], [4, 3], 5, 16, [
+    ["activity", 1, [1], "shape-flip-composition"], ["activity", 1, [2, 3], "shape-rotate-flip-grid"],
+    ["check", 1, [1], "rotational-partition-four"], ["check", 1, [2], "shape-quarter-half-turn"], ["check", 1, [3, 4], "shape-rotate-flip-grid"],
+    ["activity", 2, [1], "shape-flip-composition"], ["activity", 2, [2, 3], "digital-grid-upright-after-moves"],
+    ["check", 2, [1], "digital-transform-addition"], ["check", 2, [2, 3], "digital-transform-arithmetic"],
+    ["advanced", 1, [1, 2], "digital-transform-arithmetic"], ["advanced", 1, [3, 4], "c2-digital-half-turn-count"], ["advanced", 1, [5], "digital-grid-upright-after-moves"],
+    ["practice", 1, [1], "shape-quarter-half-turn"], ["practice", 1, [2], "shape-flip-composition"], ["practice", 1, [3, 4, 8, 9], "shape-rotate-flip-grid"],
+    ["practice", 1, [5], "rotational-partition-two"], ["practice", 1, [6, 7], "rotational-partition-four"], ["practice", 1, [10], "digital-transform-board-sum"],
+    ["practice", 1, [11, 12, 13], "digital-grid-upright-after-moves"], ["practice", 1, [14], "digital-transform-addition"], ["practice", 1, [15, 16], "digital-transform-arithmetic"]
+  ]),
+  c2Unit("360도와 정다각형", [6, 4], [4, 4], 6, 24, [
+    ["activity", 1, [1], "c2-circle-sector-angle"], ["activity", 1, [2], "c2-triangle-angle"], ["activity", 1, [3, 4], "c2-regular-polygon-angle"], ["activity", 1, [5, 6], "c2-joined-polygon-angle"],
+    ["check", 1, [1, 2, 3, 4], "c2-clock-hand-angle"],
+    ["activity", 2, [1, 2, 3, 4], "c2-circle-radius-perimeter"],
+    ["check", 2, [1, 2, 3, 4], "c2-inscribed-midpoint"],
+    ["advanced", 1, [1], "c2-inscribed-midpoint"], ["advanced", 1, [2], "c2-joined-polygon-angle"], ["advanced", 1, [3], "c2-regular-polygon-angle"], ["advanced", 1, [4, 5], "c2-triangle-angle"], ["advanced", 1, [6], "c2-clock-hand-angle"],
+    ["practice", 1, [1, 2, 3], "c2-circle-sector-angle"], ["practice", 1, [4, 5], "c2-triangle-angle"], ["practice", 1, [6, 7, 8], "c2-regular-polygon-angle"], ["practice", 1, [9, 10, 11, 12], "c2-joined-polygon-angle"],
+    ["practice", 1, [13, 14, 15, 16], "c2-clock-hand-angle"], ["practice", 1, [17, 18, 19, 20], "c2-circle-radius-perimeter"], ["practice", 1, [21, 22, 23, 24], "c2-inscribed-midpoint"]
+  ]),
+  c2Unit("삼각형과 사각형", [4, 6], [5, 4], 6, 17, [
+    ["activity", 1, [1], "c2-grid-right-triangle-count"], ["activity", 1, [2], "regular-triangle-grid-count-book5"], ["activity", 1, [3, 4], "c2-circle-point-triangles"],
+    ["check", 1, [1, 2, 3, 4, 5], "c2-dot-triangle-count"],
+    ["activity", 2, [1, 2], "c2-quad-inclusion"], ["activity", 2, [3], "c2-dot-square-count"], ["activity", 2, [4, 5, 6], "c2-rectangle-grid-count"],
+    ["check", 2, [1, 2], "square-grid-count-book5"], ["check", 2, [3, 4], "c2-rectangle-grid-count"],
+    ["advanced", 1, [1], "c2-circle-point-triangles"], ["advanced", 1, [2], "c2-rectangle-grid-count"], ["advanced", 1, [3], "oblique-square-grid-area"], ["advanced", 1, [4], "square-grid-count-book5"], ["advanced", 1, [5, 6], "polygon-border-point-count-b7"],
+    ["practice", 1, [1], "c2-grid-right-triangle-count"], ["practice", 1, [2], "regular-triangle-grid-count-book5"], ["practice", 1, [3, 4], "c2-circle-point-triangles"], ["practice", 1, [5, 7, 8], "c2-dot-triangle-count"],
+    ["practice", 1, [6], "oblique-square-grid-area"], ["practice", 1, [9, 10], "c2-dot-square-count"], ["practice", 1, [11, 12, 14, 17], "c2-rectangle-grid-count"], ["practice", 1, [13, 15, 16], "square-grid-count-book5"]
+  ])
+];
+// 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
+export const COURSE2_CURRICULUM = [
+  { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
+    source: { textbook: "2과정 G1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g1", goldenBellIncluded: false } }
+];
+export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 
 export const typeById = (id) => byId[id];
 

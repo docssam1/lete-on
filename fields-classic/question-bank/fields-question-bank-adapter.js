@@ -8,12 +8,13 @@ import {
   DIAGNOSTIC_EXAM_TYPES,
   FINAL_EXAM_TYPES,
   CURRICULUM,
+  COURSE2_CURRICULUM,
   SOURCE_QUESTION_INDEX,
   TEXTBOOK_STAGES,
   questionClassificationForType,
   representativeConceptForType,
   textbookGuideForType
-} from "./source-data.js?v=20261111g";
+} from "./source-data.js?v=20261116g1";
 import { defineQuestionBankAdapter } from "./question-bank-adapter.js?v=20260918a";
 
 export const FIELDS_QUESTION_BANK_ADAPTER = defineQuestionBankAdapter({
@@ -30,6 +31,7 @@ export const FIELDS_QUESTION_BANK_ADAPTER = defineQuestionBankAdapter({
     diagnosticExamTypes: DIAGNOSTIC_EXAM_TYPES,
     finalExamTypes: FINAL_EXAM_TYPES,
     curriculum: CURRICULUM,
+    course2Curriculum: COURSE2_CURRICULUM,
     textbookStages: TEXTBOOK_STAGES
   },
   services: {

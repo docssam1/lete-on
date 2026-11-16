@@ -1,8 +1,9 @@
-import { CURRICULUM } from "./source-data.js?v=20261111g";
+import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM } from "./source-data.js?v=20261116g1";
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261111c";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261111p";
-import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261114a";
-import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261111f";
+import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261116g1";
+import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261116g2";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261116a";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -20,6 +21,9 @@ const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
+// 2과정(?course=2, 원장 2026-11-16 「이 과정이 1과정에 비해 너무 조잡스러워 … 교재 인쇄도 없고 흐름도 달라」): 같은 화면·같은 차시 카드에 2과정 권만 보인다
+const COURSE = params.get("course") === "2" ? 2 : 1;
+const CURRICULUM = COURSE === 2 ? COURSE2_CURRICULUM : COURSE1_BOOKS;
 const hasBook = CURRICULUM.some((book) => book.id === params.get("book"));
 const view = {
   bookId: hasBook ? params.get("book") : CURRICULUM[0].id,
@@ -34,7 +38,7 @@ let goldenBell = null; // { books, flows, flowTitles, activities } — 크기가
 let bellReady = null;  // 그 불러오기 Promise(교재 인쇄 주소를 만들 때 기다린다)
 
 function link(page, entries) {
-  const url = new URLSearchParams({ student, ...entries });
+  const url = new URLSearchParams({ student, ...(COURSE === 2 && ["start.html", "similar.html"].includes(page) ? { course: "2" } : {}), ...entries });
   return `./${page}?${url}`;
 }
 const bankLink = (entries) => link("index.html", { mode: "curriculum", book: view.bookId, ...entries });
@@ -48,6 +52,7 @@ function syncAddress(push = false) {
   if (view.step === 2) next.set("unit", String(view.unit)); else next.delete("unit");
   if (view.door === "test") next.set("door", "test"); else next.delete("door");
   if (view.mode === "class") next.set("as", "class"); else next.delete("as");
+  if (COURSE === 2) next.set("course", "2");
   const query = next.toString();
   history[push ? "pushState" : "replaceState"]({ step: view.step }, "", query ? `?${query}` : location.pathname);
 }
@@ -121,7 +126,7 @@ function renderSelfUnits(book) {
     const test = isClass() ? null : readRecord(student, "test", key);
     const locked = !gateOf(book.id, index).ok;
     return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
-  }).join("")}${!isClass() && book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
+  }).join("")}${!isClass() && book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}${!isClass() && book.source.unitTestPaper && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(book.source.unitTestPaper)}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · 25문제 · 답안 확인 및 채점</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
 const studyLink = (bookId, unitIndex, part, last = 0) => link("study.html", { book: bookId, unit: String(unitIndex), part: String(part), ...(last ? { s: String(last) } : {}), ...(isClass() ? { as: "class" } : {}) });
 // 한 차시 교재 인쇄 주소와 그 차시 학습 묶음 — 덱과 같은 것(study-deck.js sessionPrintHref · sessionLessons)
@@ -147,7 +152,7 @@ let weekRows = loadLocalAll().records.filter((row) => row.student_name === stude
 const startedBook = (bookId) => weekRows.some((row) => row.key.startsWith(`${bookId}-u`));
 function latestPlace() {
   const row = [...weekRows].sort((a, b) => b.at.localeCompare(a.at))[0];
-  const match = row && /^(book-\d+)-u(\d+)$/.exec(row.key);
+  const match = row && /^((?:book|course)-[\w-]+?)-u(\d+)$/.exec(row.key);
   const book = match && bookById(match[1]);
   if (!book || !book.units[Number(match[2])]) return null;
   const unit = Number(match[2]), { count } = unitParts(book.units[unit]);
@@ -164,7 +169,7 @@ function firstPlace() {
   return { book: CURRICULUM[0], unit: 0, part: 1, last: 0, chosen: false };
 }
 function renderQuick() {
-  $("quickStart").hidden = view.mode === "class";
+  $("quickStart").hidden = view.mode === "class" || COURSE === 2;
   const now = latestPlace(), first = firstPlace();
   const cont = $("quickContinue");
   cont.hidden = !now;
@@ -239,16 +244,19 @@ function renderParts() {
   const result = isClass() ? null : readRecord(student, "test", `${book.id}-u${view.unit}`);
   const sessions = Array.from({ length: count }, (_, k) => {
     const part = k + 1, lessons = goldenBell ? sessionLessons(book, view.unit, goldenBell, part) : [];
+    const proofs = book.course ? course2ConceptSlides(book.id, view.unit, part) : [];
     const daily = part > 1 && !isClass() ? readRecord(student, "test", `${book.id}-u${view.unit}-d${part - 1}`) : null;
     const lastPart = part === count;
     // 2차시부터 맨 앞에 지난 차시 데일리 테스트(원장 2026-10-29 「데일리 테스트는 다음날이야」), 마지막 차시 끝에 단원 평가
     const steps = [
       ...(part > 1 ? [[`데일리 테스트`, daily ? `${part - 1}차시 복습 4문제 · ${daily.right} / ${daily.total}` : `${part - 1}차시 복습 4문제 · ○✕`]] : []),
       ...(lessons.length ? [["개념 → 게임 → 워밍업", lessons.map((lesson) => lesson.title).join(" · ")]] : []),
+      ...(proofs.length ? [[proofs.some((slide) => slide.kind === "game") ? "따져 보기 → 해 보기" : "그림으로 따져 보기", proofs.map((slide) => slide.kind === "game" ? `직접 해 보기(${slide.lesson.title})` : slide.lesson.title).join(" · ")]] : []),
       ["공부하기", isClass() ? `본책 ${problemCount(unit, part)}문항 · 한 문제씩 화면에` : `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사문제`],
       ["오늘의 과제", "칠판에 적힌 과제 · 집에서"],
       ...(lastPart ? [["단원 평가", result ? `10문제 · ${result.right} / ${result.total}` : "10문제 · ○✕ 진단 · 약점 유형"]] : []),
-      ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : [])
+      ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : []),
+      ...(lastPart && last && book.source.unitTestPaper ? [["권별 테스트", `${book.label} 25문제 · ${book.units.length}단원을 마치면`]] : [])
     ];
     const on = week?.part === part;
     const { bookPrint } = goldenBell ? sessionLinks(book, view.unit, part) : {};
@@ -259,7 +267,7 @@ function renderParts() {
     return `<section class="st-session${on ? " is-on" : ""}"><h4>${part}차시</h4>
       <ol class="st-week">${steps.map(([label, note], i) => `<li><b>${i + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>
       <a class="st-week-start st-btn${isClass() || on || (!week && part === 1) ? " primary" : ""}" data-start="${book.id}|${view.unit}|${part}|${on ? week.last || 1 : ""}" href="${esc(studyLink(book.id, view.unit, part, on ? week.last || 1 : 0))}">${part}차시 ${startWord} ›</a>
-      ${goldenBell ? `<a class="st-session-print${wantPrint ? " is-wanted" : ""}" href="${esc(bookPrint)}" target="_blank" rel="noopener">${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}개념 · 워밍업 · 본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
+      ${goldenBell ? `<a class="st-session-print${wantPrint ? " is-wanted" : ""}" href="${esc(bookPrint)}" target="_blank" rel="noopener">${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}${book.course ? "" : "개념 · 워밍업 · "}본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
   });
   // 단원마다 「오답 유사문제」(원장 2026-11-10 「유료 회원일 때는 각 단원에서 선택하여 다시 풀기」) — 정식 회원이 아니면 눌렀을 때 안내가 나온다
   const retry = isClass() ? "" : `<a class="st-retry" href="${esc(link("similar.html", { book: book.id, unit: String(view.unit) }))}"><b>오답 유사문제</b><span>이 단원 본책에서 틀렸거나 모르는 번호를 골라 같은 유형의 새 문제로 다시 풀어요</span>${isPaid() ? "" : `<em class="st-lock-tag">정규회원</em>`}<i aria-hidden="true">›</i></a>`;
@@ -280,6 +288,16 @@ function renderStudy() {
 // ── 유사문제 만들기 ──
 function renderTest() {
   const book = activeBook();
+  // 2과정: 권별 테스트는 우리 시험지(course2-test-paper.html), 권별 테스트 유사문제는 아직 없다
+  const testCards = document.querySelectorAll("#testPanel .st-test:not(.is-main)");
+  testCards[1].hidden = Boolean(book.course);
+  if (book.course) {
+    testCards[0].querySelector("p").textContent = "권별 테스트 시험지 25문제를 풀고 「답안 확인 및 채점하기」로 채점해요.";
+    testCards[0].querySelector(".st-meta").textContent = "시험지 25문항 · 인쇄 가능";
+    $("unitTestSource").href = book.source.unitTestPaper;
+    $("similarLink").href = link("similar.html", { book: book.id });
+    return;
+  }
   const questions = book.source.unitTestQuestions || [];
   const verified = questions.filter((question) => question.verified).length;
   $("unitTestFreshMeta").textContent = verified === questions.length
@@ -328,6 +346,11 @@ $("studentName").textContent = student;
 if (view.mode === "class" && !((await checkSession()) && canTeach())) {
   lockPage("teach", { here: `start.html${location.search}` });
   await new Promise(() => {});
+}
+if (COURSE === 2) {
+  document.querySelector(".st-brand > span").textContent = "GIFTED MATH BANK · 2과정";
+  $("todayHeading").textContent = "2과정 어느 권을 공부할까요?";
+  $("pickTitle").textContent = "권 고르기 · 권을 누르면 단원과 차시가 나와요";
 }
 if (view.mode === "class") {
   document.body.classList.add("is-class");

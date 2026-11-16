@@ -1,9 +1,9 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
+import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261116g1";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261111c";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261111f";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116g2";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
-import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261114a";
+import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261116g1";
 import { planStatus, dayLabel } from "./study-plan.js?v=20261111f";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
@@ -35,7 +35,7 @@ const params = new URLSearchParams(location.search);
 const classMode = params.get("as") === "class";
 const student = classMode ? "수업" : params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const book = CURRICULUM.find((entry) => entry.id === params.get("book")) || CURRICULUM[0];
+const book = bookById(params.get("book")) || CURRICULUM[0];   // 2과정 권(COURSE2_CURRICULUM)도 연다
 const unitIndex = Math.min(Math.max(Number(params.get("unit")) || 0, 0), book.units.length - 1);
 const unit = book.units[unitIndex];
 const parts = sessionCount(unit);
@@ -49,7 +49,7 @@ const pref = (() => { try { return { ...PREF_START, ...JSON.parse(localStorage.g
 const savePref = () => { try { localStorage.setItem(prefKey, JSON.stringify(pref)); } catch {} };
 
 // 강사용 교안에서 여는 차시 덱·차시 고르기는 계속 수업용으로
-const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries, ...(classMode && ["study.html", "start.html"].includes(page) ? { as: "class" } : {}) })}`;
+const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries, ...(classMode && ["study.html", "start.html"].includes(page) ? { as: "class" } : {}), ...(book.course && ["start.html", "similar.html"].includes(page) ? { course: String(book.course) } : {}) })}`;
 const phaseNo = (kind) => PHASES.findIndex(([id]) => id === kind) + 1;
 
 let slides = [{ kind: "cover" }];
@@ -138,9 +138,9 @@ function bookTestMarkup() {
   return `<div class="sd-cover sd-booktest">
     <p class="sd-cover-kick">${esc(book.label)} 마무리 · ${book.units.length}단원을 다 공부했으면</p>
     <h1>${esc(book.label)} 권별 테스트</h1>
-    <p class="sd-cover-lead">원문 시험지 ${book.source.unitTestQuestions.length}문제를 풀고 ○✕로 채점하면 유형별로 진단해 주고, 약점 유형을 다시 공부해요.</p>
+    <p class="sd-cover-lead">${book.source.unitTestPaper ? "시험지 25문제를 풀고 「답안 확인 및 채점하기」로 채점해요." : `원문 시험지 ${book.source.unitTestQuestions.length}문제를 풀고 ○✕로 채점하면 유형별로 진단해 주고, 약점 유형을 다시 공부해요.`}</p>
     <ol class="sd-unit-results">${rows}</ol>
-    <a class="sd-btn primary" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">권별 테스트 풀기 →</a>
+    <a class="sd-btn primary" href="${esc(book.source.unitTestPaper || link("unit-test-viewer.html", { book: book.id }))}">권별 테스트 풀기 →</a>
   </div>`;
 }
 
@@ -475,7 +475,8 @@ async function mountNative(slide, intro = Promise.resolve(), atEnd = false) {
     host.className = "sd-board-host";
     wrap.append(host);
     // 강사용 교안은 강사가 설명하므로 독쌤을 세우지 않고 판서를 넓게 쓴다
-    if (!classMode) {
+    // 그림 논증(2과정)은 오른쪽에 「따져 보기」 칸이 있어 독쌤을 세우지 않는다(presenter: false)
+    if (!classMode && game.presenter !== false) {
       wrap.classList.add("has-presenter");
       presenter = makePresenter();
       wrap.append(presenter.el);
@@ -488,7 +489,7 @@ async function mountNative(slide, intro = Promise.resolve(), atEnd = false) {
     // 장 안내 말(intro)이 끝난 뒤에 말한다 — 판서 첫 말이 안내 말을 끊거나 겹치지 않게
     // 게임은 id 없이 말한다 → 글로 id를 만들어 녹음을 찾는다(목록: tools/export-study-voice.mjs). 녹음이 없으면 기기 음성
     say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId || (slide.kind === "game" && text ? voiceLine("game", text).id : null)); },
-    board: game.board, lesson: slide.lesson,
+    board: game.board, lesson: slide.lesson, ...(game.tool ? { tool: game.tool } : {}),
     // 판서는 덱 아래 「다음 / 뒤로」로 장면을 넘긴다(판서 안 ‹ › 는 뺌 — 원장 2026-11-11 「화살표와 다음의 용도 때문에 헷갈려」)
     ...(game.board ? { deckNav: true, atEnd, onStep: () => { if (slides[index] === slide) setNextLabel(); } } : {}),
     onDone: () => { if (slide.kind === "game") gameFinished(); if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
@@ -694,7 +695,8 @@ function show({ atEnd = false } = {}) {
   $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
   // 게임 장에서는 게임 안의 「다음 문제」 하나만(원장 2026-11-01 「다음 버튼이 2개라 불편해」) — 다 하면 다시 보인다. 그만두려면 머리줄 「게임 건너뛰기」
-  $("nextBtn").hidden = slide.kind === "game" && !gamesDone.has(index);
+  // 체험(2과정 직접 해 보기)은 점수가 없어 끝이 없다 — 「다음」을 처음부터 보인다
+  $("nextBtn").hidden = slide.kind === "game" && !gamesDone.has(index) && !slide.native?.tool;
   sheetAt = null;
   setNextLabel();
   $("count").textContent = `${index + 1} / ${slides.length}`;
@@ -731,7 +733,7 @@ const gamesDone = new Set();
 function gameFinished() { gamesDone.add(index); $("nextBtn").hidden = false; }
 function next() {
   cancelAuto();
-  if (slides[index]?.kind === "game" && !gamesDone.has(index)) return;   // 키보드 → 도 게임 중에는 게임 안에서
+  if (slides[index]?.kind === "game" && !gamesDone.has(index) && !slides[index].native?.tool) return;   // 키보드 → 도 게임 중에는 게임 안에서(체험은 끝이 없어 넘어간다)
   if (!$("sheet").hidden) { closeSheet(); return; }
   if (sheetHasNext()) { sheetGo("next"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("next"); return; }

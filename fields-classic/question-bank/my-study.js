@@ -1,4 +1,4 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261111g";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261116g1";
 import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261111p";
 import { planStatus, planLine } from "./study-plan.js?v=20261111f";
 

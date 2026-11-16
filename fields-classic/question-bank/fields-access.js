@@ -31,6 +31,11 @@ export function viewer() {
 export function canStudy(bookId, unitIndex = null) {
   const who = viewer();
   if (who.kind === "admin" || who.kind === "legacy") return { ok: true, who };
+  // 2과정 권(course-02-…, 시범 2026-11-16): 1단원은 누구나 둘러보기, 나머지는 GM 열린 권에 그 권이 있을 때(관리자 화면에서 권별로 켠다)
+  if (String(bookId).startsWith("course-")) {
+    const ok = unitIndex === null || Number(unitIndex) === 0 || (who.kind === "member" && who.member.open && (who.member.books || []).includes(bookId));
+    return { ok, why: ok ? "" : who.kind === "member" ? "book" : "preview", who, partial: true };
+  }
   if (who.kind === "preview") {
     const ok = bookId === PREVIEW.book && (unitIndex === null || Number(unitIndex) === PREVIEW.unit);
     return { ok, why: ok ? "" : "preview", who, partial: bookId === PREVIEW.book };

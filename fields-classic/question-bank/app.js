@@ -1,5 +1,5 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261111g";
-import { GENERATORS } from "./generators.js?v=20261101n";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261116g1";
+import { GENERATORS } from "./generators.js?v=20261116g1";
 import { saveRecord } from "./study-progress.js?v=20261111p";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
@@ -28,8 +28,11 @@ const {
   diagnosticExamTypes: DIAGNOSTIC_EXAM_TYPES,
   finalExamTypes: FINAL_EXAM_TYPES,
   curriculum: CURRICULUM,
+  course2Curriculum: COURSE2_CURRICULUM = [],
   textbookStages: TEXTBOOK_STAGES
 } = FIELDS_QUESTION_BANK_ADAPTER.catalog;
+// 2과정 권(본책 번호판·차시 학습지)도 같은 이름표로 찾는다. 1과정 권 목록(CURRICULUM) 화면에는 섞지 않는다.
+const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 const { types: TYPES, sourceItems: SOURCE_QUESTION_INDEX, typeById } = FIELDS_QUESTION_BANK_ADAPTER;
 const {
   questionClassificationForType,
@@ -43,8 +46,8 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261111f");
-  const entries = sessionSheetEntries(CURRICULUM.find((entry) => entry.id === params.get("book")), Number(unitText), Number(partText), kind);
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261116g2");
+  const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
 const student = params.get("student") || "DEMO";
@@ -299,7 +302,7 @@ function unitTestPreviewContext(anchor) {
   const separator = key.lastIndexOf(":");
   const bookId = key.slice(0, separator);
   const number = Number(key.slice(separator + 1));
-  const book = CURRICULUM.find((entry) => entry.id === bookId);
+  const book = bookById(bookId);
   const question = book?.source.unitTestQuestions?.find((entry) => entry.number === number);
   if (!book || !question?.verified) return null;
   const matrixConcepts = {
@@ -884,7 +887,7 @@ function setCurriculumStage(stageId) {
   });
   for (const key of [...state.selected.curriculum]) {
     const [bookId, indexText, typeId] = key.split(":");
-    const book = CURRICULUM.find((item) => item.id === bookId);
+    const book = bookById(bookId);
     const unit = book?.units[Number(indexText)];
     if (!book || !unit || !isSelectableCurriculumType(typeById(typeId), book, unit, stageId)) {
       state.selected.curriculum.delete(key);
@@ -981,7 +984,7 @@ function selectedReferences() {
     const result = [];
     for (const key of state.selected.curriculum) {
       const [bookId, indexText, typeId] = key.split(":");
-      const book = CURRICULUM.find((item) => item.id === bookId);
+      const book = bookById(bookId);
       const unit = book?.units[Number(indexText)];
       if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book, unit)) {
         const stage = activeTextbookStage();
@@ -1001,7 +1004,7 @@ function selectedReferences() {
       const separator = key.lastIndexOf(":");
       const bookId = key.slice(0, separator);
       const number = Number(key.slice(separator + 1));
-      const book = CURRICULUM.find((item) => item.id === bookId);
+      const book = bookById(bookId);
       const question = book?.source.unitTestQuestions?.find((item) => item.number === number);
       const type = typeById(question?.typeId);
       if (book && question?.verified && isSelectableType(type)) {
@@ -3271,6 +3274,8 @@ function visualMarkup(visual) {
   if (visual.kind === "book8") return `<div class="visual book08-visual">${book08Markup(visual)}</div>`;
   if (visual.kind === "book9") return `<div class="visual book09-visual">${book09Markup(visual)}</div>`;
   if (visual.kind === "book10") return `<div class="visual book10-visual">${book10Markup(visual)}</div>`;
+  // 2과정(course2-g1-generators.js): 생성기가 그림(SVG)과 보기 목록을 html로 만든다
+  if (visual.kind === "c2") return `<div class="visual c2-visual">${visual.html}</div>`;
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
@@ -3528,11 +3533,11 @@ function bindStudentChecks(grid) {
 function worksheetTitleText() {
   if (studentTitle) return studentTitle;
   if (asStudent && studentRef) {
-    const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
+    const book = bookById(state.curriculumBookId);
     return `${book ? `${book.label} · ` : ""}${studentRef} 유사문제`;
   }
   if (state.mode === "curriculum" && state.selected.unitTest.size && !state.selected.curriculum.size) {
-    const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
+    const book = bookById(state.curriculumBookId);
     if (book) return `${book.label} 권별테스트 유사문제`;
   }
   return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "단원 학습지" : "유형별 맞춤 학습지";
@@ -3578,7 +3583,7 @@ function renderWorksheet() {
     </article>`;
   });
   const info = printTemplateInfo(title);
-  const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+  const book = state.mode === "curriculum" ? bookById(state.curriculumBookId) : null;
   const { lead, grid } = layoutWorksheetPages({ cards: questionCards, questions: state.questions, settings: state.printTemplate, info, book });
   const section = $("worksheetSection");
   section.className = ["worksheet-section", ...printTemplateClasses(state.printTemplate)].join(" ");
@@ -3743,7 +3748,7 @@ function renderTestPanel() {
 
 // 표지·내지·바닥글에 쓸 공개 정보. 교재 단원 학습지면 그 권의 제목과 번호를 쓴다.
 function printTemplateInfo(title) {
-  const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+  const book = state.mode === "curriculum" ? bookById(state.curriculumBookId) : null;
   const middles = [...new Set(state.questions.map((question) => question.type.middle))];
   return {
     title: book ? book.title : title,
@@ -3763,7 +3768,7 @@ function mountPrintTemplate() {
     printTemplatePanel = mountPrintTemplatePanel($("printTemplatePanel"), state.printTemplate, info, (settings, { textOnly }) => {
       // 표지 글자만 바뀌면 문항 쪽은 그대로 두고 표지만 다시 그린다.
       if (!textOnly) return renderWorksheet();
-      const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+      const book = state.mode === "curriculum" ? bookById(state.curriculumBookId) : null;
       $("printTemplateLead").innerHTML = layoutWorksheetPages({ cards: [], questions: state.questions, settings, info: printTemplateInfo(worksheetTitleText()), book }).lead;
     });
   }
@@ -3951,7 +3956,7 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
 // 검증 게이트는 그대로다 — 준비되지 않은 유형·문항은 고르지 않는다.
 (function preselectCurriculum() {
   if (params.get("mode") !== "curriculum") return;
-  const book = CURRICULUM.find((item) => item.id === params.get("book"));
+  const book = bookById(params.get("book"));
   if (!book) return;
   state.curriculumBookId = book.id;
   const stageId = params.get("stage");
