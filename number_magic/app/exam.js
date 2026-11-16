@@ -2443,7 +2443,8 @@ const W2_KID_COPY = {
 };
 function pickL(field){
   if(!field) return '';
-  const l=examLang(),value=typeof field==='string'?field:field[l]||field.ko||field.en||'';
+  /* 영어·중국어에서 일부러 비운 칸('')은 비운 채로 — 예전엔 한국어로 돌아가 영어 학습지에 「가지」「개」가 찍혔다(2026-11-16). */
+  const l=examLang(),value=typeof field==='string'?field:(l!=='ko'&&typeof field[l]==='string'&&field.ko!=null)?field[l]:field[l]||field.ko||field.en||'';
   return l==='ko'&&typeof value==='string'?(W2_KID_COPY[value]||value):value;
 }
 /* 보기(선택지) 한 벌 고르기 — WP 스레드는 {ko:[],en:[],zh:[]}로 주고, 옛 형태(배열)도
@@ -3610,7 +3611,7 @@ function scatterPlotHtml(p, teacher,drawnPoints){
     <tr><th>x</th>${points.map(pt=>`<td>${esc(String(pt[0]))}</td>`).join('')}</tr>
     <tr><th>y</th>${points.map(pt=>`<td>${esc(String(pt[1]))}</td>`).join('')}</tr>
   </tbody></table>`:'';
-  return `<div class="nm-scatter${sp.mode==='plot'?' nm-scatter-plot':''}" data-scatter-mode="${esc(sp.mode||'read')}">${table}<div class="nm-scatter-graph">${graphSvg(g)}<div class="nm-scatter-axis-labels"><span>y · ${esc(sp.yLabel||'')}</span><span>x · ${esc(sp.xLabel||'')}</span></div></div></div>`;
+  return `<div class="nm-scatter${sp.mode==='plot'?' nm-scatter-plot':''}" data-scatter-mode="${esc(sp.mode||'read')}">${table}<div class="nm-scatter-graph">${graphSvg(g)}<div class="nm-scatter-axis-labels"><span>y · ${esc(scatterAxisLabel(sp.yLabel))}</span><span>x · ${esc(scatterAxisLabel(sp.xLabel))}</span></div></div></div>`;
 }
 
 function scatterAnswerKeyHtml(problems){
@@ -6745,14 +6746,23 @@ function applyTrainColor(problems, item){
   });
 }
 
+/* 산점도 축 이름(생성기 engine/threads/mid15.js 는 한국어 글로 준다) — 영어·중국어 판에서 옮긴다. */
+const SCATTER_AXIS_L={'x 자료':['x data','x数据'],'y 자료':['y data','y数据'],'첫째 변량':['first variable','第一个变量'],'둘째 변량':['second variable','第二个变量']};
+function scatterAxisLabel(t){ const v=SCATTER_AXIS_L[t]; return v?lk(t,v[0],v[1]):String(t||''); }
 function drawingTableHtml(problem, solved){
   return `<table class="nm-draw-table"><tbody><tr><th>x</th>${problem.xValues.map(x=>`<td>${esc(String(x))}</td>`).join('')}</tr><tr><th>y</th>${problem.yValues.map(y=>`<td>${solved?esc(String(y)):'&nbsp;'}</td>`).join('')}</tr></tbody></table>`;
+}
+/* 그래프 그리기 쪽의 영어·중국어 글(data/graph-drawing.js text) — 한국어면 null(원래 한국어 자료를 그대로 쓴다). */
+function drawingText(mode, variant){
+  const l=examLang(),api=window.NM_GRAPH_DRAWING;
+  return l==='ko'||!api||typeof api.text!=='function'?null:api.text(mode,variant,l);
 }
 function drawingAnswerKeyHtml(round){
   const pages=[];
   for(let start=0;start<round.problems.length;start+=6){
     const group=round.problems.slice(start,start+6);
-    pages.push(`<div class="nm-w2-page nm-draw-answer-page">${w2AnswerKeyHeadHtml(round.code)}<h4>${esc(round.thName)} · 완성 그림과 비교</h4><div class="nm-draw-rubric">${group[0].rubric.map(x=>esc(x)).join('<br>')}</div><div class="nm-draw-key-grid">${group.map((p,i)=>`<div class="nm-draw-key-item"><div><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,true)}${graphSvg(p.solutionGraph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>직접 그리기 · 표의 수와 점의 위치, 그래프 모양을 비교해요.</span></div></div>`);
+    const tr=drawingText(group[0].mode,group[0].variant);
+    pages.push(`<div class="nm-w2-page nm-draw-answer-page">${w2AnswerKeyHeadHtml(round.code)}<h4>${esc(round.thName)} · ${esc(lk('완성 그림과 비교','compare with the finished graph','与完成图对比'))}</h4><div class="nm-draw-rubric">${(tr?tr.rubric:group[0].rubric).map(x=>esc(x)).join('<br>')}</div><div class="nm-draw-key-grid">${group.map((p,i)=>`<div class="nm-draw-key-item"><div><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,true)}${graphSvg(p.solutionGraph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>${esc(lk('직접 그리기 · 표의 수와 점의 위치, 그래프 모양을 비교해요.','Draw it yourself · Compare the table values, the point positions and the shape of the graph.','动手画 · 对比表中的数、点的位置和图像的形状。'))}</span></div></div>`);
   }
   return pages.join('');
 }
@@ -6761,18 +6771,19 @@ function renderDrawingRound(item, opts){
   if(!api) throw new Error('그래프 그리기 자료를 불러오지 못했습니다.');
   const count=item.count||opts.count||6;
   const problems=api.makeSet({mode:item.mode,variant:item.variant,count,seed:item.seed,exclude:opts.exclude});
-  const lesson=api.lesson(item.mode,item.variant);
+  const tr=drawingText(item.mode,item.variant);
+  const lesson=tr?Object.assign({},api.lesson(item.mode,item.variant),tr):api.lesson(item.mode,item.variant);
   const exampleKey=api.getProblemKey(lesson.example);
   const showLesson=!item.noTeach&&(!opts.exclude||!opts.exclude.has(exampleKey));
   if(showLesson&&opts.exclude) opts.exclude.add(exampleKey);
   const code=`DRAW-${item.mode}-${item.variant||'basic'}-${count}-${item.seed}`;
-  const headItem=Object.assign({},item,{topicName:item.topicName||lesson.title,codeLabel:'직접 그리기',subLabel:'연필·자 준비 · 표 → 점 → 그래프 · 완성 그림과 비교'});
+  const headItem=Object.assign({},item,{topicName:(tr?tr.title:item.topicName)||lesson.title,codeLabel:lk('직접 그리기','Draw it yourself','动手画'),subLabel:lk('연필·자 준비 · 표 → 점 → 그래프 · 완성 그림과 비교','Pencil and ruler · table → points → graph · compare with the finished graph','准备铅笔和尺子 · 表 → 点 → 图像 · 与完成图对比')});
   const pages=[];
   if(showLesson){
-    pages.push(`<div class="nm-w2-page nm-draw-teaching">${w2HeadHtml(headItem,code,'개념',null,opts)}<div class="nm-draw-lesson"><h3>왜 이렇게 그릴까요?</h3><p>${esc(lesson.why)}</p><ol>${lesson.steps.map(s=>`<li>${escEmph(s)}</li>`).join('')}</ol><p><b>기억할 팁</b> ${esc(lesson.tip)}</p><p><b>주의</b> ${esc(lesson.caution)}</p><div class="nm-draw-example"><b>방법을 보는 예시</b><div class="nm-w2-tex" data-tex="${esc(lesson.example.tex)}"></div>${drawingTableHtml(lesson.example,true)}${graphSvg(lesson.example.solutionGraph)}</div></div><div class="nm-w2-foot"><span>${esc(code)} · 예시를 본 뒤 다음 장은 스스로 그립니다.</span></div></div>`);
+    pages.push(`<div class="nm-w2-page nm-draw-teaching">${w2HeadHtml(headItem,code,lk('개념','Concept','概念'),null,opts)}<div class="nm-draw-lesson"><h3>${esc(lk('왜 이렇게 그릴까요?','Why do we draw it this way?','为什么这样画？'))}</h3><p>${esc(lesson.why)}</p><ol>${lesson.steps.map(s=>`<li>${escEmph(s)}</li>`).join('')}</ol><p><b>${esc(lk('기억할 팁','Tip','记住'))}</b> ${esc(lesson.tip)}</p><p><b>${esc(lk('주의','Watch out','注意'))}</b> ${esc(lesson.caution)}</p><div class="nm-draw-example"><b>${esc(lk('방법을 보는 예시','Worked example','示范例题'))}</b><div class="nm-w2-tex" data-tex="${esc(lesson.example.tex)}"></div>${drawingTableHtml(lesson.example,true)}${graphSvg(lesson.example.solutionGraph)}</div></div><div class="nm-w2-foot"><span>${esc(code)} · ${esc(lk('예시를 본 뒤 다음 장은 스스로 그립니다.','After the example, draw the next page on your own.','看完例题后，下一页自己画。'))}</span></div></div>`);
   }
   for(let start=0;start<problems.length;start+=6){
-    pages.push(`<div class="nm-w2-page nm-draw-practice">${w2HeadHtml(headItem,code,`${start/6+1}/${Math.ceil(count/6)}`,null,opts)}<div class="nm-w2-instr">y값을 표에 쓰고 점을 찍은 뒤 그래프를 그리세요. 모눈 한 칸은 1입니다.</div><div class="nm-draw-grid">${problems.slice(start,start+6).map((p,i)=>`<div class="nm-w2-item nm-draw-item"><div class="nm-draw-title"><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,false)}${graphSvg(p.graph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>${esc(code)} · 직접 그리기 / 완성 그림과 비교</span></div></div>`);
+    pages.push(`<div class="nm-w2-page nm-draw-practice">${w2HeadHtml(headItem,code,`${start/6+1}/${Math.ceil(count/6)}`,null,opts)}<div class="nm-w2-instr">${esc(lk('y값을 표에 쓰고 점을 찍은 뒤 그래프를 그리세요. 모눈 한 칸은 1입니다.','Write the y-values in the table, plot the points, then draw the graph. One grid square is 1.','把y值填进表格，标出各点后画出图像。每一小格是1。'))}</div><div class="nm-draw-grid">${problems.slice(start,start+6).map((p,i)=>`<div class="nm-w2-item nm-draw-item"><div class="nm-draw-title"><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,false)}${graphSvg(p.graph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>${esc(code)} · ${esc(lk('직접 그리기 / 완성 그림과 비교','Draw it yourself / compare with the finished graph','动手画 / 与完成图对比'))}</span></div></div>`);
   }
   return {html:pages.join(''),problems,code,thName:headItem.topicName,thread:item.thread,level:item.level,drawing:true,guidedProblems:[],pageSizes:[...(showLesson?[0]:[]),...Array.from({length:Math.ceil(count/6)},(_,i)=>Math.min(6,count-i*6))]};
 }
@@ -7868,7 +7879,7 @@ function stageCheckItem(course, courseKey, seedBase){
   return {
     thread: mix[0].t, level: mix[0].lv, threadMix: mix, noTeach: true,
     n: mix.length, count: mix.length,
-    topicName: '단계 점검 · 과정 ' + (n - 2) + '~' + n,
+    topicName: lk('단계 점검 · 과정 ','Stage check · Courses ','阶段检查 · 课程 ') + (n - 2) + '~' + n,
     instr: { ko:'지금까지 배운 것을 모아서 풀어 보세요. 새로 배우는 것은 없어요.',
              en:'A round-up of everything so far. Nothing new here.',
              zh:'把学过的内容集中做一遍，没有新内容。' },
@@ -7897,7 +7908,7 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
     if(!first)first=child;
     const sourceItems=source.test?(source.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,
       seed:(sk+courseKey+'h'+lesson.index+(opts.standard?'':'k'+k)+'s'+index+'test'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
-      topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+(((window.NM_THREADS||{})[d.t]||{}).name?.ko||d.t)}))
+      topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+(pickL(((window.NM_THREADS||{})[d.t]||{}).name)||d.t)}))
       :child.items.filter(it=>!String(it.seed||'').endsWith('stagechk'));
     sourceItems.forEach(it=>items.push({...it,sourceSession:courseKey+'-S'+(index+1),courseKey,legacySession:index+1,
       compactHigh:true,sessionLabel:lk('학습 '+(index+1),'Study '+(index+1),'学习 '+(index+1))}));

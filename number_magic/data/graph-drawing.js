@@ -166,5 +166,51 @@ function lesson(mode, variant) {
   return Object.assign({title:TITLE[mode],source:SOURCES[mode],example:createProblem(mode,c,'GD-example-' + mode + '-' + variant,variant)},content);
 }
 
-w.NM_GRAPH_DRAWING = Object.freeze({version:2,modes:MODES,makeSet,lesson,getProblemKey});
+
+/* 영어·중국어 판(2026-11-16) — 한국어 자료(위 TITLE·rubrics·lesson)는 그대로 두고, 같은 순서로 옮긴 글.
+   exam.js 가 학습지 언어가 ko 가 아닐 때 text(mode, variant, lang)로 받아 쓴다. */
+const I18N = {
+  en: {
+    title:{direct:'Draw a direct-variation graph', inverse:'Draw an inverse-variation graph', linear:'Draw a linear-function graph', quadratic:'Draw a quadratic-function graph'},
+    common:['Do the y-values in the table satisfy the equation?', 'Are the points plotted on the right grid marks, with the x-axis (across) and y-axis (up) kept apart?'],
+    rubric:{
+      inverse:['Did you plot all 3 points with x<0 and all 3 points with x>0?', 'Did you draw the two curves in quadrants 1 and 3 when a>0, or quadrants 2 and 4 when a<0?', 'Is each curve smooth, without joining across the origin or touching the x-axis or y-axis?'],
+      quadratic:['Did you find the vertex and the axis of symmetry, and plot the matching symmetric points?', 'Did you draw a smooth parabola opening the way the sign of a says?'],
+      linear:['Did you check the x-intercept and the y-intercept?', 'Did you draw one straight line through the plotted points?'],
+      direct:['Did you draw one straight line through the origin and the plotted points?']
+    },
+    lesson:{
+      direct:{why:'All the points that satisfy the direct variation y=ax lie on a straight line through the origin.',steps:['Put each x from the table into the equation to find y.','Plot the origin and the points from the table.','Use a ruler to draw a straight line through the points.'],tip:'Divide a point’s y-coordinate by its x-coordinate to get the constant a. You cannot divide when x=0.',caution:'Don’t stop at the dots. The graph is a straight line that keeps going beyond the points you plotted.'},
+      inverse:{why:'In the inverse variation y=a/x, the product xy of a point’s two coordinates is always a. The points on each side make one curve.',steps:['Put each non-zero x into the equation to find y.','Plot 3 points with negative x and 3 points with positive x.','Join the points on each side smoothly to make two curves.'],tip:'x-coordinate × y-coordinate of a point = the constant a. Example: (−2, 3) gives a=−6.',caution:'a>0 means quadrants 1 and 3; a<0 means quadrants 2 and 4. Don’t join the two curves through the origin, and the curves never touch the x-axis or y-axis.'},
+      linear:{why:'All the points that satisfy the linear function y=ax+b lie on one straight line. The two intercepts are clues to where the line is.',steps:['Find the y-intercept when x=0 and the x-intercept when y=0.','Find the y-values for the table and plot the points.','Draw a straight line through the two intercepts and the points.'],tip:'The y-intercept is b and the x-intercept is −b/a. Plot them as the points (0,b) and (−b/a,0).',caution:'The x- and y-intercepts are numbers; what you plot on the graph are points with coordinates.'},
+      quadratic:{why:'The graph of a quadratic function is a parabola with the same shape on both sides of its axis of symmetry. x-values the same distance from the vertex give the same y.',steps:['Find the vertex and the axis of symmetry from the equation.','Fill in the table and plot points on both sides of the vertex.','Use the symmetry to join the points in a smooth parabola.'],tip:'The vertex of y=a(x−p)²+q is (p,q) and its axis of symmetry is x=p. For y=ax², (p,q)=(0,0).',tipBasic:'The vertex of y=ax² is (0,0) and its axis of symmetry is x=0. Two points whose x-values differ only in sign have the same y.',caution:'Don’t join the points with a bent line. It is a parabola that opens up when a>0 and down when a<0.'}
+    }
+  },
+  zh: {
+    title:{direct:'动手画正比例函数图像', inverse:'动手画反比例函数图像', linear:'动手画一次函数图像', quadratic:'动手画二次函数图像'},
+    common:['表中的y值满足给出的式子吗？', '分清横轴x和纵轴y，把点准确标在刻度上了吗？'],
+    rubric:{
+      inverse:['x<0的3个点和x>0的3个点都标出来了吗？', 'a>0时在第一、三象限，a<0时在第二、四象限画出两支曲线了吗？', '每一支都连得平滑，没有穿过原点相连，也没有碰到x轴、y轴吗？'],
+      quadratic:['找到顶点和对称轴，并正确标出对称的点了吗？', '按照a的符号画出开口方向正确、平滑的抛物线了吗？'],
+      linear:['确认x轴截距和y轴截距了吗？', '画出一条经过所标各点的直线了吗？'],
+      direct:['画出一条经过原点和所标各点的直线了吗？']
+    },
+    lesson:{
+      direct:{why:'满足正比例函数y=ax的点都在一条经过原点的直线上。',steps:['把表中的x代入式子求y。','标出原点和表中的点。','用尺子画一条经过这些点的直线。'],tip:'一个点的y坐标除以x坐标就是比例系数a。但x=0时不能除。',caution:'不要只标点就结束。图像是一条延伸到所标点之外的直线。'},
+      inverse:{why:'在反比例函数y=a/x中，一个点的两个坐标之积xy总等于a。两边的点各自组成一条曲线。',steps:['把不为0的x代入式子求y。','标出x为负数的3个点和x为正数的3个点。','把每一边的点平滑地连起来，画成两支曲线。'],tip:'一个点的x坐标 × y坐标 = 比例系数a。例：(−2, 3)时a=−6。',caution:'a>0在第一、三象限，a<0在第二、四象限。两支曲线不在原点处相连，也不碰到x轴、y轴。'},
+      linear:{why:'满足一次函数y=ax+b的点都在一条直线上。两个截距是找到直线位置的线索。',steps:['求x=0时的y轴截距和y=0时的x轴截距。','求出表中的y值并标出各点。','画一条经过两个截距和各点的直线。'],tip:'y轴截距是b，x轴截距是−b/a。把截距标成点(0,b)和(−b/a,0)。',caution:'x轴截距和y轴截距是数，在图上标出的是有坐标的点。'},
+      quadratic:{why:'二次函数的图像是以对称轴为界、两边形状相同的抛物线。与顶点距离相同的x对应相同的y。',steps:['从式子中找出顶点和对称轴。','填好表格，标出顶点两边的点。','利用对称性把各点连成平滑的抛物线。'],tip:'y=a(x−p)²+q的顶点是(p,q)，对称轴是x=p。y=ax²时(p,q)=(0,0)。',tipBasic:'y=ax²的顶点是(0,0)，对称轴是x=0。x只是符号相反的两个点，y相同。',caution:'不要用折线连点。a>0时开口向上，a<0时开口向下。'}
+    }
+  }
+};
+function text(mode, variant, lang) {
+  const T = I18N[lang];
+  if (!T || !MODES.includes(mode)) return null;
+  const L = Object.assign({}, T.lesson[mode]);
+  if (mode === 'quadratic' && (variant || 'basic') === 'basic') L.tip = L.tipBasic;
+  delete L.tipBasic;
+  return Object.assign({title:T.title[mode], rubric:T.common.concat(T.rubric[mode])}, L);
+}
+
+w.NM_GRAPH_DRAWING = Object.freeze({version:2,modes:MODES,makeSet,lesson,getProblemKey,text});
 })(typeof window !== 'undefined' ? window : globalThis);
