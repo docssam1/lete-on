@@ -47,8 +47,10 @@
       lastItem = view.index.items.get(id);
     }
     const preferred = String(view.props.semester || '').replace(/^초\s*/, '');
-    const unit = lastItem?.unit || view.index.units.get(view.props.unitId) ||
-      view.props.catalog.units.find(item => item.semester === preferred) || view.props.catalog.units[0];
+    const requested=view.index.units.get(view.props.unitId);
+    const last=lastItem?.unit;
+    const unit = requested || (last&&(!preferred||last.semester===preferred)?last:null) ||
+      view.props.catalog.units.find(item => item.semester === preferred) || last || view.props.catalog.units[0];
     view.unit = unit;
     view.set = lastItem?.set || 'm';
   }
@@ -311,6 +313,7 @@
       views.set(host, view);
       bind(view);
     }
+    if(props.scopeRequest&&props.scopeRequest!==view.props?.scopeRequest)view.unit=null;
     view.props = {...props};
     view.index = index(props.catalog);
     update(view, props.attempts || []);

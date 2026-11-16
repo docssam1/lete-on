@@ -11,8 +11,8 @@
  let phase='계정 확인',loaded=0,failed=false;
  const pending=new Set();
  const message=text=>{if(box&&!failed)box.textContent=text;};
- function loadScripts(){
-  const placeholders=[...document.querySelectorAll('script[data-member-src]')],total=placeholders.length;
+ function loadScripts(list=null){
+  const placeholders=(list||[...document.querySelectorAll('script[data-member-src]')]).filter(p=>p.dataset.memberLoaded!=='1'),total=placeholders.length;
   message(`학습 자료를 준비하고 있습니다. 0/${total}`);
   // Dynamic classic scripts with async=false download together but execute in
   // insertion order. Do not await each append: that serializes 100+ requests.
@@ -21,7 +21,7 @@
    const s=document.createElement('script'),src=placeholder.dataset.memberSrc;
    let timer,done=false;
    const cleanup=()=>{clearTimeout(timer);s.onload=null;s.onerror=null;pending.delete(cancel);};
-   const finish=error=>{if(done)return;done=true;cleanup();if(error){s.remove();reject(error);}else{loaded++;message(`학습 자료를 준비하고 있습니다. ${loaded}/${total}`);resolve();}};
+   const finish=error=>{if(done)return;done=true;cleanup();if(error){s.remove();reject(error);}else{loaded++;placeholder.dataset.memberLoaded='1';message(`학습 자료를 준비하고 있습니다. ${loaded}/${total}`);resolve();}};
    const cancel=()=>{if(done)return;done=true;cleanup();s.remove();reject(new Error('자료 불러오기를 중단했습니다.'));};
    pending.add(cancel);
    s.async=false;s.src=src;
@@ -29,6 +29,12 @@
    s.onerror=()=>finish(new Error(`자료 파일을 불러오지 못했습니다: ${src}`));
    timer=setTimeout(()=>finish(new Error(`자료 파일의 응답 시간이 초과되었습니다: ${src}`)),SCRIPT_TIMEOUT_MS);
    document.body.appendChild(s);
+  })));
+ }
+ function loadStyles(){
+  return Promise.all([...document.querySelectorAll('link[data-member-href]')].filter(n=>n.dataset.memberHref&&!n.href).map(n=>new Promise((resolve,reject)=>{
+   const timer=setTimeout(()=>reject(new Error('화면 스타일의 응답 시간이 초과되었습니다.')),SCRIPT_TIMEOUT_MS);
+   n.onload=()=>{clearTimeout(timer);resolve();};n.onerror=()=>{clearTimeout(timer);reject(new Error('화면 스타일을 불러오지 못했습니다.'));};n.href=n.dataset.memberHref;
   })));
  }
  try{
@@ -43,7 +49,7 @@
    const search=tour.tourSearch(location.search);
    if(window.history&&location.search!==search)window.history.replaceState(null,'','planner.html'+search);
    phase='학습 자료 불러오기';
-   await loadScripts();
+   await Promise.all([loadScripts(),loadStyles()]);
    document.documentElement.classList.remove('member-checking');box.remove();
    tour.start(window);
    return;
@@ -55,17 +61,27 @@
   window.RoadmapMember=Object.freeze({user_id:consult?consult.owner:member.user_id,student_name:consult?consult.name:member.student_name,school:member.school,grade:member.grade,age:member.age,review:member.review===true,consult:!!consult});
   phase='저장된 학습 정보 준비';message('저장된 학습 정보를 준비하고 있습니다.');
   if(!consult)await window.RoadmapCloud?.prepare(member);
-  phase='학습 자료 불러오기';
-  await loadScripts();
-  phase='학습 화면 준비';message('학습 화면을 열고 있습니다.');
-  if(consult)window.RoadmapConsult.mount(document);else await window.RoadmapCloud?.mount();
-  const name=document.getElementById('name');if(name&&(consult||!name.value))name.value=consult?consult.name:member.student_name;
-  document.documentElement.classList.remove('member-checking');box.remove();
-  const link=document.createElement('a');link.className='member-account-link';link.href=destination;link.textContent='내 계정';link.setAttribute('aria-label',member.review?'계정 확인과 로그아웃':'학생 정보와 로그인 번호·수신 동의 관리');
-  const menu=document.querySelector('.prn-global-body')||document.querySelector('.top');menu?.appendChild(link);
+  let fullPromise;
+  const loadFull=()=>fullPromise||(fullPromise=(async()=>{
+   phase='학습 자료 불러오기';await Promise.all([loadScripts(),loadStyles()]);
+   phase='학습 화면 준비';message('학습 화면을 열고 있습니다.');
+   if(consult)window.RoadmapConsult.mount(document);else await window.RoadmapCloud?.mount();
+   const name=document.getElementById('name');if(name&&(consult||!name.value))name.value=consult?consult.name:member.student_name;
+   document.documentElement.classList.remove('member-checking');box.remove();
+   const link=document.createElement('a');link.className='member-account-link';link.href=destination;link.textContent='내 계정';link.setAttribute('aria-label',member.review?'계정 확인과 로그아웃':'학생 정보와 로그인 번호·수신 동의 관리');
+   const menu=document.querySelector('.prn-global-body')||document.querySelector('.top');menu?.appendChild(link);
+  })());
   // Returning from bfcache must not resurrect a signed-out student's screen.
   window.addEventListener('pageshow',async e=>{if(!e.persisted)return;document.documentElement.classList.add('member-checking');try{const m=await A.status();if(!m||m.user_id!==member.user_id){location.replace(destination);return;}document.documentElement.classList.remove('member-checking');}catch{location.replace(destination);}});
   document.addEventListener('visibilitychange',async()=>{if(document.hidden)return;try{const m=await A.status();if(!m||m.user_id!==member.user_id){document.documentElement.classList.add('member-checking');location.replace(destination);}}catch(e){if(e.status===401){document.documentElement.classList.add('member-checking');location.replace(destination);}}});
+  const early=[...document.querySelectorAll('script[data-member-src]')].filter(p=>p.dataset.parentBoot!==undefined);
+  const direct=/(?:[?&])(?:tools|guest|academy|admissions|view|weekly|checklist|assessment|goal|ox|case|senior)=/.test(location.search);
+  if(!consult&&!direct&&early.length){
+   phase='현재 공부 입력 준비';await loadScripts(early);
+   let saved;try{saved=JSON.parse(window.PlannerStorage.getItem('gfield.demo2.v1')||'null');}catch{}
+   await window.RoadmapParentBoot.mount({loadFull,member,saved});
+   document.documentElement.classList.remove('member-checking');box.remove();
+  }else await loadFull();
  }catch(error){
   failed=true;for(const cancel of [...pending])cancel();
   document.documentElement.classList.add('member-checking');

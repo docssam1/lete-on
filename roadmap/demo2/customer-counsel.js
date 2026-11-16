@@ -53,7 +53,7 @@
  let busy=false,last=null,opened=false,generation=0;
  let displayedRevision='',previousText='';
  let showEvidence=()=>{};
- let somaAssessment=null,somaMessage='',somaOwner='';
+ let somaOwner='';
  const member=()=>g.RoadmapMember?.user_id;
  function refreshPrevious(){
   previous.replaceChildren();
@@ -79,7 +79,7 @@
   }catch{}
   return '';
  }
- const lock=value=>{busy=value;for(const n of [stage,region,progress,currentBooks,completedBooks,soloRange,question,includePrevious,submit,aiButton,...result.querySelectorAll('.cc-followup input,.cc-followup textarea,.cc-followup button,.cs-assessment input,.cs-assessment select,.cs-assessment button')])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
+ const lock=value=>{busy=value;for(const n of [stage,region,progress,currentBooks,completedBooks,soloRange,question,includePrevious,submit,aiButton,...result.querySelectorAll('.cc-followup input,.cc-followup textarea,.cc-followup button')])n.disabled=value;dialog.setAttribute('aria-busy',String(value));};
  const messages={login_required:'로그인 후 자료 상담을 이용할 수 있습니다.',question_missing:'궁금한 내용을 조금 더 적어 주세요.',sources_missing:'추가 설명에 참고할 승인 자료를 찾지 못했습니다. 독쌤에게 직접 문의해 주세요.',ai_not_configured:'추가 설명 연결을 준비하고 있습니다. 아래 자료 안내를 먼저 확인해 주세요.',too_many_attempts:'오늘의 추가 설명 사용 횟수를 마쳤습니다. 자료 안내는 계속 이용할 수 있습니다.',ai_unavailable:'추가 설명을 가져오지 못했습니다. 자료 안내는 아래에서 계속 확인할 수 있습니다.'};
  function render(data,c){
   result.replaceChildren();detail.replaceChildren();detail.hidden=true;moreStatus.textContent='';
@@ -115,16 +115,8 @@
    if(c.soloRange)applied.append(el('p',{},'독립 풀이 범위 · '+c.soloRange));
    result.append(applied);
   }
-  const somaHost=el('div'),owner=member(),viewGeneration=generation;
-  const somaHandled=!count&&g.RoadmapCounselSoma?.mount(somaHost,{...c,sources,somaAssessment:somaOwner===owner?somaAssessment:null,somaMessage:somaOwner===owner?somaMessage:''},{
-   openSource:id=>showEvidence(sources.findIndex(r=>r.id===id)),
-   onProfile:(assessment,summary,message)=>{
-    if(viewGeneration!==generation||owner!==member())return;
-    somaAssessment=assessment;somaMessage=message;somaOwner=owner;
-    currentBooks.value=clean(summary.currentBooks||currentBooks.value);soloRange.value=clean(summary.soloRange||soloRange.value);
-    last=null;refreshPrevious();const next=context();last=next;render(data,next);
-   }
-  });
+  const somaHost=el('div');
+  const somaHandled=!count&&g.RoadmapCounselSoma?.mount(somaHost,{...c,sources},{openSource:id=>showEvidence(sources.findIndex(r=>r.id===id))});
   if(somaHandled)result.append(somaHost);
   if(!count&&!somaHandled&&data.followup?.fields?.length){
    const follow=el('form',{class:'cc-followup'}),answers=new Map();
@@ -213,7 +205,6 @@
   finally{if(request===generation)lock(false);}
  };
  function invalidate(){
-  if(arguments[0]?.target&&form.contains(arguments[0].target)){somaAssessment=null;somaMessage='';}
   generation++;last=null;result.hidden=true;aiButton.hidden=true;aiHint.hidden=true;detail.hidden=true;moreStatus.textContent='';
   status.textContent='입력한 조건으로 자료를 다시 찾아보세요.';
  }
@@ -222,7 +213,7 @@
  dialog.addEventListener('close',()=>{generation++;if(busy){lock(false);moreStatus.textContent='';status.textContent='';}});
  close.onclick=()=>dialog.close();
  button.onclick=()=>{
-  if(somaOwner&&somaOwner!==member()){somaAssessment=null;somaMessage='';for(const field of [currentBooks,completedBooks,soloRange,progress,question,region])field.value='';opened=false;invalidate();}
+  if(somaOwner&&somaOwner!==member()){for(const field of [currentBooks,completedBooks,soloRange,progress,question,region])field.value='';opened=false;invalidate();}
   somaOwner=member()||'';
   refreshPrevious();
   if(!opened){stage.value=g.RoadmapMember?.school||'elementary';opened=true;}
