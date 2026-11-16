@@ -214,9 +214,11 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
 
   if (mode === 'changeBaseProduct') {
     // Distinct prime bases keep the two individual logs non-integer.
+    /* 한 주에 이 단계가 여러 번 나와도 겹치지 않게 넓힌 범위(2026-11-16, C59 2주차에서 48가지가 모자랐다).
+       b는 a의 거듭제곱이 아닌 수만 — 그래야 두 로그가 각각 정수가 아니어서 밑변환을 써야 한다. N은 2만 아래. */
     const a = pick(rng, [2, 3, 5, 7]);
-    const b = pick(rng, [2, 3, 5, 7].filter(v => v !== a));
-    const n = R(rng, 2, 5), N = Math.pow(a, n);
+    const b = pick(rng, [2, 3, 4, 5, 6, 7, 8, 9].filter(v => v !== a && Math.abs(Math.log(v) / Math.log(a) - Math.round(Math.log(v) / Math.log(a))) > 1e-9));
+    const n = R(rng, 2, {2: 6, 3: 6, 5: 5, 7: 4}[a]), N = Math.pow(a, n);
     return {
       prompt: {ko:'밑변환 공식으로 두 로그의 밑을 같게 바꾸어 곱을 구하세요.',
         en:'Use change of base to give both logarithms the same base, then find the product.',

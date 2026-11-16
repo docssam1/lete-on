@@ -935,7 +935,7 @@ window.NM_MAGAZINE = {
   "age": [
     "senior"
   ],
-  "references": [{"label":"국립경주박물관 · 얼굴무늬 수막새 · 공공누리1","url":"https://gyeongju.museum.go.kr/kor/html/sub04/0402.html?mng_no=395&mode=V"},
+  "references": [{"label":"국립경주박물관 · 얼굴무늬 수막새 · 공공누리1","en":"Gyeongju National Museum · Roof-end tile with face design · KOGL Type 1","zh":"国立庆州博物馆 · 人面纹瓦当 · 韩国公共许可第1类","url":"https://gyeongju.museum.go.kr/kor/html/sub04/0402.html?mng_no=395&mode=V"},
     {
       "label": "Wolfram · Circumcircle",
       "url": "https://mathworld.wolfram.com/Circumcircle.html"
@@ -946,7 +946,7 @@ window.NM_MAGAZINE = {
 ]};
 /* Original illustrated articles: see docs/math-story-sources-20261025.md. */
 const l3=(ko,en,zh)=>({ko,en,zh});
-const ref=(label,url)=>({label,url});
+const ref=(label,url,en,zh)=>(en?{label,url,en,zh}:{label,url});   /* 한국어 자료 이름은 en·zh 로 함께 적어 영어·중국어 판에 쓴다 */
 const section=(h,p,art)=>({h,p,art});
 const strip=(x,y,w,h,n,k,colors)=>Array.from({length:n},(_,i)=>box(x+i*w/n,y,w/n,h,i<k?(colors?.[i]||C.ok):C.mist,C.sub)).join('');
 const cup=(x,y,amount)=>'<path d="M '+x+' '+y+' l 8 38 h 26 l 8 -38 Z" fill="'+C.cream+'" stroke="'+C.sub+'" stroke-width="2"/>'+'<path d="M '+(x+4)+' '+(y+15)+' l 5 21 h 24 l 5 -21 Z" fill="'+C.ok+'"/>'+T(x+21,y+61,16,C.ink,amount);
@@ -984,7 +984,7 @@ const articles=[
  ],close:l3('해 보기 · 같은 크기의 종이 빵 3개를 4명에게 나눠 보세요. 한 명의 몫은 빵 한 개의 얼마일까요?','Try it · Share three equal paper buns among four people. What fraction of one bun does each person get?','动手试试 · 把三个同样大的纸面包平均分给四个人，每人的份额是一个面包的几分之几？'),
  challenge:{prompt:l3('같은 빵 3개를 4명이 똑같이 나눠요. 한 명의 몫을 구하고, 잘라 낸 한 조각을 1/12개라고 불러도 되는지 설명해요.','Share three identical buns equally among four people. Find each share and explain why one cut piece is not 1/12 of a bun.','三个同样大的面包平均分给四个人。求每人的份额，并解释为什么切出的一小块不是1/12个面包。'),hint:l3('각 빵을 똑같이 네 조각으로 나누고, 한 명이 각 빵에서 한 조각씩 받게 해 보세요.','Quarter each bun. Let each person take one quarter from each of the three buns.','把每个面包平均切成四份，每人从三个面包中各拿一份。'),reason:l3('기준은 빵 한 개입니다. 한 조각은 ¼개이고 한 명은 세 조각, 곧 ¾개를 받아요. 네 명의 몫 ¾개씩을 합치면 3개가 됩니다. 열두 조각은 빵 세 개 전체를 센 수예요.','The whole is one bun. Each cut piece is 1/4, so three pieces give each person 3/4. Four shares of 3/4 total three buns. Twelve counts pieces across all three buns, not pieces in one bun.','单位是一个面包。每小块是1/4个，每人拿三块，共3/4个。四份3/4合起来是三个面包。十二块是三个面包的总块数，不是一个面包的块数。')},
   source:l3('창작 나눠 먹기 활동입니다. 학습을 이해하는 순서이며, 분수와 나눗셈의 역사적 선후를 단정하지 않습니다.','An original sharing activity. This is a learning sequence, not a claim about which idea appeared first in history.','这是原创分享活动，说明学习上的联系，不断言分数和除法在历史上的先后。'),
- references:[ref('EBS · 분수와 소수','https://livedown2.ebs.co.kr/ebsvod/elmt/live/%EC%B4%88%EB%93%B1%EB%A7%8C%EC%A0%90%EC%99%95_%EC%88%98%ED%95%993-1_4%EC%A3%BC%EC%B0%A8.pdf')]
+ references:[ref('EBS · 분수와 소수','https://livedown2.ebs.co.kr/ebsvod/elmt/live/%EC%B4%88%EB%93%B1%EB%A7%8C%EC%A0%90%EC%99%95_%EC%88%98%ED%95%993-1_4%EC%A3%BC%EC%B0%A8.pdf','EBS · Fractions and Decimals (Korean)','EBS · 分数与小数（韩文）')]
 },
 { id:'mz-two-divisions',no:10,age:['senior'],fit:{units:[],threads:['FR7','FR11','FR12']},
  kicker:l3('나눗셈의 두 뜻','Two meanings of division','除法的两种含义'),
@@ -998,7 +998,7 @@ const articles=[
  section(l3('같은 주스, 다른 답의 역할','The answer has a different job','数字相同，意义也可能不同'),l3('‘3명에게’는 <b>사람 수</b>, ‘¼L씩’은 <b>한 몫의 양</b>이에요. 식을 쓰기 전에 답을 ‘한 명당 몇 L’ 또는 ‘몇 컵’으로 말해 보세요. 같은 ¾L에서 시작했어도 묻는 양이 달라 답의 단위도 달라집니다.','“Three people” gives <b>the number of shares</b>; “1/4 L each” gives <b>the amount per share</b>. Say the answer’s job before calculating: litres per person, or cups. The same starting volume can support different questions and answer units.','“三个人”给出<b>份数</b>，“每份1/4升”给出<b>每份量</b>。计算前先说清要找每人多少升，还是多少杯。同样从3/4升出发，问题和答案的单位都可能不同。'),fig(T(160,35,22,C.ink,'3/4 L ÷ 3 = 1/4 L')+line(20,59,300,59,C.grey,1.5)+T(160,99,22,C.ink,'(3/4 L) ÷ (1/4 L) = 3')))
  ],close:l3('해 보기 · 주스 ½L를 한 컵에 ¼L씩 담으면 몇 컵일까요? 종이띠에 1L를 정하고 ¼L 눈금을 그려 설명해 보세요.','Try it · How many 1/4-L cups can you fill with 1/2 L? Draw a strip for 1 L and mark the quarters to explain.','动手试试 · 半升果汁，每杯装1/4升，能装几杯？用一条纸带表示1升，画出每1/4升的刻度来说明。'),
  challenge:{prompt:l3('주스 ½L로 두 문제를 만드세요. ① 두 명에게 똑같이 나누기 ② ¼L씩 컵에 담기. 각 식과 답의 단위를 설명해 보세요.','Make two questions about 1/2 L: share equally between two people, and fill cups with 1/4 L each. Write both divisions and explain the answer units.','用1/2升果汁提出两个问题：①平均分给两个人；②每杯装1/4升。写出两个除法算式，并说明答案的单位。'),hint:l3('첫 물음은 한 명의 양을, 둘째 물음은 컵 수를 찾아요.','The first seeks the amount per person; the second seeks the cup count.','第一个问题求每人的量，第二个求杯数。'),reason:l3('① ½L ÷ 2 = ¼L, 한 명당 ¼L예요. ② ½L ÷ ¼L = 2, 두 컵이에요. 양은 둘 다 ½L 그대로이고, 모르는 것이 한 몫의 양인지 몫 수인지가 다릅니다.','First, 1/2 L ÷ 2 = 1/4 L per person. Second, (1/2 L) ÷ (1/4 L) = 2 cups. The total stays 1/2 L; the unknown is either the size of a share or the number of shares.','①1/2升 ÷ 2 = 1/4升，即每人1/4升。②(1/2升) ÷ (1/4升) = 2，即两杯。总量一直是1/2升，不同的是要求每份量还是份数。')},
-  source:l3('등분제는 분할 모델, 포함제는 측정 모델로 설명할 수 있습니다. 주스 그림과 수치는 이해를 위한 창작 예입니다.','Equal sharing is a partition model; counting equal portions is a measurement model. The juice examples and illustrations are original teaching models.','平均分可用分割模型解释，按每份量求份数可用测量模型解释。果汁的图和数值为原创教学示例。'),references:[ref('KERIS · 초등 수학 내용 전문성 향상','https://contents2.kocw.or.kr/KOCW/data/keris/2020/keris1/keris2/7.pdf')]
+  source:l3('등분제는 분할 모델, 포함제는 측정 모델로 설명할 수 있습니다. 주스 그림과 수치는 이해를 위한 창작 예입니다.','Equal sharing is a partition model; counting equal portions is a measurement model. The juice examples and illustrations are original teaching models.','平均分可用分割模型解释，按每份量求份数可用测量模型解释。果汁的图和数值为原创教学示例。'),references:[ref('KERIS · 초등 수학 내용 전문성 향상','https://contents2.kocw.or.kr/KOCW/data/keris/2020/keris1/keris2/7.pdf','KERIS · Elementary math content expertise (Korean)','KERIS · 小学数学内容专业提升（韩文）')]
 },
 { id:'mz-gauss-pairs',no:11,age:['mid','senior'],fit:{units:[],threads:['AD7','MD40','MD42','MD149','MD150']},
  kicker:l3('가우스와 수열','Gauss and sums','高斯与求和'),
@@ -1012,7 +1012,7 @@ const articles=[
  section(l3('수의 개수가 홀수여도 될까요','Does an odd number of terms break it?','有奇数个数还能配对吗？'),l3('1부터 9까지는 합이 10인 짝 네 개와 가운데 5가 남아요. 그래서 10 × 4 + 5 = 45예요. 또는 같은 계단 두 벌로 9 × 10 = 90칸을 만들고 반으로 나눠도 됩니다. <b>두 설명이 같은 답으로 만나요.</b>','For 1 to 9, four pairs sum to 10 and the middle 5 remains: 4 × 10 + 5 = 45. Alternatively, two staircases form 9 × 10 = 90 cells; take half. <b>The two explanations agree.</b>','把1到9配对，得到四对和为10的数，中间剩5，所以4 × 10 + 5 = 45。也可以用两组阶梯拼成9 × 10 = 90格，再取一半。<b>两种解释得到同一答案。</b>'),fig(T(160,32,23,C.ink,'4 × 10 + 5 = 45')+line(20,58,300,58,C.grey,1.5)+T(160,103,23,C.ink,'(9 × 10) ÷ 2 = 45')))
  ],close:l3('해 보기 · 1부터 20까지의 합을 짝짓기로 구해 보세요. 한 짝의 합과 짝의 개수를 먼저 말해 보세요.','Try it · Pair the numbers from 1 to 20. First explain the sum of each pair and how many pairs there are.','动手试试 · 用首尾配对求1到20的和。先说每对的和是多少，一共有几对。'),
  challenge:{prompt:l3('1부터 20까지 더한 뒤, 1부터 21까지도 구해 보세요. 짝짓기에서 남는 수가 있는지 설명하고 두 답의 차이도 확인해요.','Find the sums from 1 to 20 and from 1 to 21. Explain whether pairing leaves a middle term, then check the difference between the sums.','分别求1到20与1到21的和。解释配对后有没有剩下中间的数，再检查两次结果的差。'),hint:l3('1~20은 합이 21인 짝이 열 개예요. 1~21은 합이 22인 짝 열 개와 가운데 수가 남아요.','For 1–20 there are ten pairs of 21. For 1–21 there are ten pairs of 22 and a middle term.','1到20可配成十对，每对和为21；1到21可配成十对，每对和为22，中间还剩一个数。'),reason:l3('1~20은 21 × 10 = 210입니다. 1~21은 22 × 10 + 11 = 231이에요. 차이는 새로 더한 21이므로, 원래 합에 마지막 수를 더한 결과와도 일치합니다.','The first sum is 21 × 10 = 210. The second is 22 × 10 + 11 = 231. Their difference is the new term 21, agreeing with adding 21 to the first sum.','第一个和是21 × 10 = 210；第二个是22 × 10 + 11 = 231。差是新加的21，也与在第一个和上加21的结果相同。')},
-  source:l3('가우스와 관련해 널리 소개되는 수열의 합 주제를 창작 예로 풀었습니다. 어린 시절 일화의 대사나 세부 상황을 역사적 사실로 재현하지 않았습니다.','An original pairing activity on sums associated with Gauss. It does not reconstruct dialogue or details of the childhood anecdote as historical fact.','本篇以常与高斯联系的求和主题设计原创配对活动，不把童年轶事的对白或细节当作史实重现。'),references:[ref('MacTutor · Gauss','https://mathshistory.st-andrews.ac.uk/Biographies/Gauss/'),ref('자음과모음 · 가우스와 수열의 합','https://www.jamomall.com/goods/goods_view.php?goodsNo=4002')]
+  source:l3('가우스와 관련해 널리 소개되는 수열의 합 주제를 창작 예로 풀었습니다. 어린 시절 일화의 대사나 세부 상황을 역사적 사실로 재현하지 않았습니다.','An original pairing activity on sums associated with Gauss. It does not reconstruct dialogue or details of the childhood anecdote as historical fact.','本篇以常与高斯联系的求和主题设计原创配对活动，不把童年轶事的对白或细节当作史实重现。'),references:[ref('MacTutor · Gauss','https://mathshistory.st-andrews.ac.uk/Biographies/Gauss/'),ref('자음과모음 · 가우스와 수열의 합','https://www.jamomall.com/goods/goods_view.php?goodsNo=4002','Jaeum & Moeum · Gauss and the sum of a sequence (Korean)','Jaeum & Moeum · 高斯与数列求和（韩文）')]
 },
 { id:'mz-leibniz-binary',no:12,age:['mid','senior'],fit:{units:[],threads:['NS1','NS5','MD10','MD36']},
  kicker:l3('라이프니츠와 수 표현','Leibniz and numerals','莱布尼茨与记数'),
