@@ -46,3 +46,8 @@ body.sol-steps .st-sol-steps { display: block; }
 .st-sol-modes button[aria-pressed="true"] { border-color: #243184; background: #243184; color: #fff; }
 @media print { .st-sol-modes { display: none !important; } }
 @media print { body.sol-steps .st-answer-sheet .ut-ans-grid { columns: 1; } body.sol-steps .st-answer-sheet .ut-ans-item { break-inside: auto; } body.sol-steps .st-sol-steps li { break-inside: avoid; } }
+/* 해설 영상(같은 문제가 이미 해설 영상이 있을 때) — 화면에만 */
+.st-video { display: inline-flex; gap: 6px; align-items: baseline; margin-top: 6px; padding: 4px 10px; border: 1px solid #c7d6ee; border-radius: 999px; color: #243184; font: 700 12px 'Pretendard', sans-serif; text-decoration: none; }
+.st-video small { color: #56627f; font-weight: 500; }
+.st-same-paper { margin: -6px 0 12px; font: 600 13px 'Pretendard', sans-serif; color: #243184; }
+@media print { .st-video, .st-same-paper { display: none !important; } }

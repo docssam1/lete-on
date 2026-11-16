@@ -16,3 +16,29 @@ export function loadSelectionAnswers(examId) {
   }
   return cache.get(examId);
 }
+
+// 같은 문제가 이미 해설 영상이 있는 시험지에 들어 있을 때(원장 2026-11-16 「실전·파이널·최종 쪽 모의고사를 봐 · 동일한 시험지가 있을꺼야」
+// → 「영상 연결 + 글 풀이」). 원본 쪽 그림을 눈으로 대조해 같은 문제로 확인한 것만 둔다. 정답은 여기 없다.
+//   7세 4차 = 실전 모의고사 2회(20문항 차례까지 같음, 영상 하나에 문항 시각 없음)
+//   7세 1차 3·4·13·15·18번 = 진단 모의고사 16·17·18·19·24번(문항 시각 있음 — mock/index.html EXPLAIN_TS)
+//   7세 6차 19·20번 = 실전 모의고사 1회 19·20번
+// 프리미어 활용·파이널·최종 15회는 문장으로 전부 대조해 같은 문제가 없었다.
+const MOCK2 = "https://www.youtube.com/watch?v=S-P096L75ps";
+const MOCK1 = "https://www.youtube.com/watch?v=41mXpws-gng";
+const DIAG = "https://www.youtube.com/watch?v=DRVcC6pCZcw";
+const diag = (no, start) => ({ url: DIAG, start, from: `진단 모의고사 ${no}번` });
+export const SELECTION_VIDEOS = Object.freeze({
+  "k7-2022-08": Object.fromEntries(Array.from({ length: 20 }, (_, i) => [i + 1, { url: MOCK2, start: 0, from: `실전 모의고사 2회 ${i + 1}번` }])),
+  "k6-2023-02": { 3: diag(16, 729), 4: diag(17, 775), 13: diag(18, 827), 15: diag(19, 876), 18: diag(24, 1144) },
+  "k7-2022-12": { 19: { url: MOCK1, start: 0, from: "실전 모의고사 1회 19번" }, 20: { url: MOCK1, start: 0, from: "실전 모의고사 1회 20번" } },
+});
+// 같은 시험지 전체가 겹칠 때 시험지 머리에 한 줄
+export const SELECTION_SAME_PAPER = Object.freeze({ "k7-2022-08": "실전 모의고사 2회" });
+export function selectionVideoHref(examId, number, { student = "학생", title = "" } = {}) {
+  const v = SELECTION_VIDEOS[examId]?.[number];
+  if (!v) return "";
+  const p = new URLSearchParams({ video: v.url, title: title || `${number}번 해설`, student });
+  if (v.start) p.set("start", String(v.start));
+  return `../video-viewer/?${p}`;
+}
+export const selectionVideoFrom = (examId, number) => SELECTION_VIDEOS[examId]?.[number]?.from || "";

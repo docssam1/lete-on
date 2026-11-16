@@ -2,7 +2,7 @@ import { EXAMS } from "./source-data.js?v=20261111g";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { productForExam, openExamIds } from "./entrance-products.js?v=20261116b";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
-import { loadSelectionAnswers } from "./selection-answers.js?v=20261116a";
+import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom, SELECTION_SAME_PAPER } from "./selection-answers.js?v=20261116b";
 
 // 선발시험 시험지(다시 짠 것) 보기·인쇄 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 권별 테스트(unit-test-viewer.js)와 같은 방식: 문제 글·수·배치는 원문 그대로, 글꼴·색·그림은 우리 것.
@@ -99,10 +99,12 @@ async function showAnswers() {
     const a = answers[q.number] || {};
     const brief = a.brief ? `<p class="st-sol-brief"><b>간단히</b> ${esc(a.brief)}</p>` : "";
     const steps = a.steps?.length ? `<ol class="st-sol-steps">${a.steps.map((step) => `<li>${esc(step)}</li>`).join("")}</ol>` : "";
-    return `<section class="ut-ans-item"><b>${q.number}</b><div><p class="st-ans-text">${esc(a.text || "")}</p>${brief}${steps}</div></section>`;
+    const href = selectionVideoHref(exam.id, q.number, { student: student || "학생", title: `${plain(exam.label)} ${q.number}번 해설` });
+    const video = href ? `<a class="st-video" href="${esc(href)}" target="_blank" rel="noopener">해설 영상 <small>${esc(selectionVideoFrom(exam.id, q.number))}${SELECTION_SAME_PAPER[exam.id] ? "" : "과 같은 문제"}</small></a>` : "";
+    return `<section class="ut-ans-item"><b>${q.number}</b><div><p class="st-ans-text">${esc(a.text || "")}</p>${brief}${steps}${video}</div></section>`;
   }).join("");
   const modes = hasSolutions ? `<div class="st-sol-modes" role="group" aria-label="풀이 보기">${[["none", "정답만"], ["brief", "간단히 보기"], ["steps", "설명 보기"]].map(([id, label]) => `<button type="button" data-sol="${id}" aria-pressed="${solMode === id}">${label}</button>`).join("")}</div>` : "";
-  panel.innerHTML = `${modes}<header class="ut-test-run"><span>${esc(groupOf(exam))} · ${esc(plain(exam.label))}</span><span>정답</span></header><h2 class="ut-ans-title">${esc(plain(exam.label))} · 정답${hasSolutions ? " · 풀이" : ""}</h2><div class="ut-ans-grid">${items}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>정답</span></footer>`;
+  panel.innerHTML = `${modes}<header class="ut-test-run"><span>${esc(groupOf(exam))} · ${esc(plain(exam.label))}</span><span>정답</span></header><h2 class="ut-ans-title">${esc(plain(exam.label))} · 정답${hasSolutions ? " · 풀이" : ""}</h2>${SELECTION_SAME_PAPER[exam.id] ? `<p class="st-same-paper">이 시험지는 ${esc(SELECTION_SAME_PAPER[exam.id])}와 같은 시험지예요. 번호마다 「해설 영상」으로 그 회차 해설을 볼 수 있어요(번호도 같아요).</p>` : ""}<div class="ut-ans-grid">${items}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>정답</span></footer>`;
   panel.querySelectorAll("[data-sol]").forEach((button) => button.addEventListener("click", () => setSolMode(button.dataset.sol)));
   setSolMode(solMode);
   panel.hidden = false;
