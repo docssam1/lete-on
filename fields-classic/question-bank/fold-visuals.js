@@ -145,6 +145,9 @@ export function foldDiagonalGridMarkup(visual) {
   return `<svg class="fold-diag-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="대각선 접기 수 색종이 문제">${parts}</svg>`;
 }
 
+// 색종이 한 장이 어느 문항에서나 같은 크기로 보이게(원장 2026-11-16 「색종이 크기도 다르고 이상해」): 폭 = 뷰박스 폭 × 종이 한 변 80px ÷ 그림 속 종이 한 변
+export const FOLD_PAPER_PX = 80;
+export const foldWidthStyle = (viewWidth, paperUnits) => `style="width:min(100%,${Math.round((viewWidth * FOLD_PAPER_PX) / paperUnits)}px)"`;
 export function foldCutPiecesMarkup(visual) {
   const { foldLine, foldArrow } = foldGeometryHelpers();
   const n = visual.stages.length;
@@ -168,7 +171,7 @@ export function foldCutPiecesMarkup(visual) {
     shift += size + 12;
     if (index < n - 1) { parts += foldStepArrowSvg(shift, 6 + size / 2); shift += gap; }
   });
-  return `<svg class="fold-pieces-svg" viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="색종이 접어 자르기 조각 개수 문제">${parts}</svg>`;
+  return `<svg class="fold-pieces-svg" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="색종이 접어 자르기 조각 개수 문제">${parts}</svg>`;
 }
 
 export function foldTwoDiagonalGridMarkup(visual) {
@@ -314,5 +317,5 @@ export function paperFoldMarkup(visual) {
     return piece;
   }).join("");
 
-  return `<svg class="paper-fold-svg" viewBox="0 0 ${width} ${SIZE + 8}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
+  return `<svg class="paper-fold-svg" ${foldWidthStyle(width, SIZE)} viewBox="0 0 ${width} ${SIZE + 8}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
 }

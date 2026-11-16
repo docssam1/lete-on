@@ -6,7 +6,7 @@ import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261101m";
+import { book04Markup } from "./book04-renderers.js?v=20261116g7";
 import { book05Markup } from "./book05-renderers.js?v=20261101m";
 import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
@@ -17,7 +17,7 @@ import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup } from "./fold-visuals.js?v=20261027a";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle } from "./fold-visuals.js?v=20261116g7";
 
 const {
   ageStages: AGE_STAGES,
@@ -2701,7 +2701,7 @@ function foldPunchMarkup(visual) {
     shift += size + 12;
     if (index < n - 1) { parts += foldStepArrowSvg(shift, 6 + size / 2); shift += gap; }
   });
-  return `<svg class="fold-punch-svg" viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="반원·원 펀치 문제">${parts}</svg>`;
+  return `<svg class="fold-punch-svg" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="반원·원 펀치 문제">${parts}</svg>`;
 }
 
 function foldStackMarkup(visual) {
@@ -2815,7 +2815,7 @@ function foldCutUnfoldDrawMarkup(visual) {
     parts += `<line x1="${shift + line * size / 4}" y1="${top}" x2="${shift + line * size / 4}" y2="${top + size}" stroke="#f9d978" stroke-width="1" stroke-dasharray="4 3"/>`;
     parts += `<line x1="${shift}" y1="${top + line * size / 4}" x2="${shift + size}" y2="${top + line * size / 4}" stroke="#f9d978" stroke-width="1" stroke-dasharray="4 3"/>`;
   }
-  return `<svg class="fold-cut-draw-svg" viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="색종이를 접어 자른 뒤 펼친 모양 그리기">${parts}</svg>`;
+  return `<svg class="fold-cut-draw-svg" ${foldWidthStyle(shift + size + 8, size)} viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="색종이를 접어 자른 뒤 펼친 모양 그리기">${parts}</svg>`;
 }
 
 
@@ -3681,8 +3681,12 @@ function fitOneUp() {
   // 그다음 그림만 판 너비까지 키운다 — 그림이 이 화면의 주인공(frontend-design 「한 곳에만 힘을」)
   if (visual) {
     // 판 안에서 그림 조각이 서로 겹치거나 넘치면 거기서 멈춘다(보기 모눈이 좁은 칸에 눌려 겹치던 것)
-    const room = () => [visual, ...visual.querySelectorAll("*")].every((el) => !el.clientWidth || el.scrollWidth <= el.clientWidth);
-    search(visual, 0.4, 2.6, () => room() && fits());   // 좁은 칸(과제 칠판 옆)에서는 그림을 줄여서라도 겹치지 않게
+    // SVG 안의 글자(<text>)는 제 상자보다 넓게 재져 늘 「넘친다」로 나왔다 — 그림 속은 빼고 본다(세 번 접기 그림이 반으로 줄던 것)
+    const room = () => [visual, ...visual.querySelectorAll("*:not(svg *)")].every((el) => !el.clientWidth || el.scrollWidth <= el.clientWidth);
+    // 색종이 접기 그림은 키우지 않는다 — 그림마다 배율이 달라 색종이 한 장의 크기가 문항마다 달라졌다(원장 2026-11-16 「스스로 풀기도 크기도 다르고」).
+    // 그림 자체가 색종이 한 장을 같은 크기로 그리므로(fold-visuals.js foldWidthStyle) 넘칠 때만 줄인다.
+    const paper = visual.querySelector(".paper-fold-svg, .fold-punch-svg, .fold-pieces-svg, .fold-cut-draw-svg, .b4-fold-process");
+    search(visual, 0.4, paper ? 1 : 2.6, () => room() && fits());   // 좁은 칸(과제 칠판 옆)에서는 그림을 줄여서라도 겹치지 않게
   }
 }
 
