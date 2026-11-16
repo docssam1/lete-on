@@ -105,6 +105,7 @@ jobs:
           mkdir -p _site/vocab-quiz
           mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
+          cp config.js _site/config.js
           cp -R boarding-school-math/. _site/boarding-school-math/
           cp -R fields-classic/. _site/fields-classic/
           cp -R hselementary/. _site/hselementary/
@@ -165,7 +166,6 @@ jobs:
           cp -R world-explorer/. _site/world-explorer/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/
           cp gfield-on-admin.html _site/gfield-on-admin.html
-          cp config.js _site/config.js
           cp .github/pages-index.html _site/index.html
           cp reading-world/robots.txt _site/robots.txt
       - name: Configure Pages
