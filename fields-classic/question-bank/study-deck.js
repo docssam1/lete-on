@@ -1,5 +1,5 @@
-import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261111c";
-import { course2ConceptSlides } from "./course2-deck.js?v=20261116a";
+import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261116a";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261116b";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -223,10 +223,12 @@ export function slideLine(slide, { book, unitIndex, part = 1, hasConcept = true 
   const first = part > 1 ? `먼저 ${part - 1}차시 데일리 테스트를 보고, ` : "";
   const ending = last ? "오늘의 과제를 하고 단원 평가까지 봐요." : "오늘의 과제까지 해요.";
   if (slide.kind === "cover" && book.course) return voiceLine("cover", hasConcept
-    ? `오늘은 ${unit.label} ${part}차시예요. ${first}그림으로 왜 그런지 따져 보고, 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
+    ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고 게임으로 익힌 다음, 그림으로 왜 그런지 따져 보고 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
     : `오늘은 ${unit.label} ${part}차시예요. ${first}본책 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
   if (slide.kind === "concept" && slide.native?.mount === "mountDeckProof") return voiceLine("concept", `${slide.lesson.title}? 그림으로 한 장면씩 따져 봐요. 오른쪽에 까닭이 쌓여요.`);
-  if (slide.kind === "game" && slide.native?.mount === "mountDeckLab") return voiceLine("game", `${slide.title}이에요. 점수는 없어요. 직접 움직여 보고 다음을 눌러요.`);
+  if (slide.kind === "game" && slide.native?.mount === "mountDeckLab") return voiceLine("game", slide.native.tool === "geo"
+    ? `${slide.title}이에요. 접을 쪽을 눌러 직접 접고 펼쳐 봐요. 다 하면 다음을 눌러요.`
+    : `${slide.title}이에요. 점수는 없어요. 직접 움직여 보고 다음을 눌러요.`);
   if (slide.kind === "cover") return voiceLine("cover", hasConcept
     ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고, 게임과 워밍업으로 익힌 다음 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
     : `오늘은 ${unit.label} ${part}차시예요. ${first}본책 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);

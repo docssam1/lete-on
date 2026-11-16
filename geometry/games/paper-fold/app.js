@@ -9,6 +9,8 @@ validateLevels();
 
 const $ = (selector) => document.querySelector(selector);
 const params = new URLSearchParams(location.search);
+// 지필드 스스로 공부 덱 안에 열릴 때(&embed=1): 앞으로 가기·회사 이름·함께하기/배틀 줄을 숨긴다(덱 머리줄이 대신한다)
+if (params.get("embed") === "1") document.documentElement.classList.add("is-embed");
 const embedded = params.get("embedded") === "1" && window.parent !== window;
 const sessionSeed = params.get("seed") || String(Date.now());
 const queueRandom = seededRandom(sessionSeed);

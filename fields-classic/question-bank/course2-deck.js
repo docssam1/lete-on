@@ -2,20 +2,25 @@
 // 1과정 차시 = 개념 판서 → 게임 → 워밍업 → 본책. 2과정은 워밍업 자료(골든벨 원본)가 없으므로 개념 판서 자리에 그림 논증, 게임 자리에 체험을 둔다.
 // 차시마다 무엇을 보여 줄지는 아래 SESSION_CONCEPTS(본책 활동 묶음과 같은 내용으로 골랐다). 논증 그림은 course2-proofs/<권>.js, 체험은 c2-lab.html.
 import { mountProof } from "./proof-board.js?v=20261115c";
+import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261116a";
+import { BOARDS } from "./concept-boards.js?v=20261103d";
 
 const PROOF_TAGS = { g1: "20261115a" };   // proof.js의 BOOKS 꼬리표와 같게
-const DECK = { module: "./course2-deck.js?v=20261116a" };
+const DECK = { module: "./course2-deck.js?v=20261116b" };
 
-// 권/단원 → 차시마다 [["proof", 논증 id, 제목] | ["lab", 도구, 이름]]
+// 권/단원 → 차시마다 [["board", 1과정 판서 열쇠] | ["proof", 논증 id, 제목] | ["lab", 도구, 이름] | ["geo", 지오메트리 게임 주소, 이름]]
+// board: 1과정에서 같은 내용을 가르치는 손글씨 판서와 그 판서의 게임을 그대로 쓴다(원장 2026-11-16 「설명도 없어」) — 2과정 본책 문제가 그 위에 쌓인다.
+// geo: 지오메트리 게임(원장 2026-11-16 「지오메트리의 색종이 게임 이상의 질이 나와야 돼」)
 export const SESSION_CONCEPTS = Object.freeze({
   "course-02-g1/0": [
-    [["proof", "fold-cut-symmetry", "접어서 자르면 펼친 모양이 왜 대칭일까"]],
-    [],
-    [["proof", "mirror-clock", "거울에 비친 시계로 진짜 시각을 왜 알 수 있을까"], ["lab", "clock", "시계 바늘 각"]]
+    [["board", "book-04/fold-cut-source"], ["board", "book-04/fold-hole-count"], ["geo", "../../geometry/games/paper-fold/index.html", "색종이 접어 자르기 게임"],
+      ["proof", "fold-cut-symmetry", "접어서 자르면 펼친 모양이 왜 대칭일까"]],
+    [["board", "book-01/mirror-reflection"], ["board", "book-04/digital-flip-source"]],
+    [["board", "book-07/elapsed-time"], ["proof", "mirror-clock", "거울에 비친 시계로 진짜 시각을 왜 알 수 있을까"], ["lab", "clock", "시계 바늘 각"]]
   ],
   "course-02-g1/1": [
-    [["proof", "two-flips-half-turn", "두 번 뒤집으면 왜 반 바퀴 돌린 것과 같을까"]],
-    []
+    [["board", "book-04/flip-rotate-source"], ["proof", "two-flips-half-turn", "두 번 뒤집으면 왜 반 바퀴 돌린 것과 같을까"]],
+    [["board", "book-01/digital-turn-flip"]]
   ],
   "course-02-g1/2": [
     [["proof", "triangle-sum", "삼각형의 세 각을 모으면 왜 180°일까"], ["lab", "angles", "각 떼어 모으기"], ["proof", "isosceles-base", "이등변삼각형의 두 밑각은 왜 같을까"],
@@ -33,9 +38,17 @@ const shortBook = (bookId) => bookId.replace(/^course-0\d-/u, "");
 export function course2ConceptSlides(bookId, unitIndex, part) {
   const items = SESSION_CONCEPTS[`${bookId}/${unitIndex}`]?.[part - 1] || [];
   const book = shortBook(bookId);
-  return items.map(([kind, id, title]) => kind === "proof"
-    ? { kind: "concept", lesson: { id, title }, native: { ...DECK, css: "./proof.css?v=20261115c", mount: "mountDeckProof", board: `${book}/${id}`, presenter: false, doneSay: null } }
-    : { kind: "game", lesson: { id: `lab-${id}`, title }, title: `${title} 체험`, native: { ...DECK, css: "./course2-deck.css?v=20261116a", mount: "mountDeckLab", tool: id, doneSay: null } });
+  return items.flatMap(([kind, id, title]) => {
+    if (kind === "board") {
+      const [fromBook, lessonId] = id.split("/");
+      const lesson = { id: lessonId, title: BOARDS[id]?.title || "개념", bookId: fromBook };
+      const games = (STUDY_GAMES[id] || []).map((game) => ({ kind: "game", lesson, native: game, title: game.title }));
+      return [{ kind: "concept", lesson, native: { ...STUDY_BOARDS[id], board: id } }, ...games];
+    }
+    if (kind === "proof") return [{ kind: "concept", lesson: { id, title }, native: { ...DECK, css: "./proof.css?v=20261115c", mount: "mountDeckProof", board: `${book}/${id}`, presenter: false, doneSay: null } }];
+    if (kind === "geo") return [{ kind: "game", lesson: { id: `geo-${title}`, title }, title, native: { ...DECK, css: "./course2-deck.css?v=20261116a", mount: "mountDeckLab", tool: "geo", src: id, doneSay: null } }];
+    return [{ kind: "game", lesson: { id: `lab-${id}`, title }, title: `${title} 체험`, native: { ...DECK, css: "./course2-deck.css?v=20261116a", mount: "mountDeckLab", tool: id, doneSay: null } }];
+  });
 }
 
 // 덱 안 그림 논증: proof-board의 mountProof를 그대로 쓴다(덱 아래 「다음 장면 →」이 step을 부른다)
@@ -59,7 +72,8 @@ export function mountDeckProof(host, { board, deckNav = true, atEnd = false, onS
 }
 
 // 덱 안 체험: c2-lab.html을 머리줄 없이(&embed=1) 창으로 연다. 점수가 없으니 다 하면 「다음」으로 넘어간다.
-export function mountDeckLab(host, { tool = "angles" } = {}) {
-  host.innerHTML = `<iframe class="c2-deck-lab" title="체험" src="./c2-lab.html?tool=${encodeURIComponent(tool)}&embed=1"></iframe>`;
+export function mountDeckLab(host, { tool = "angles", src = "" } = {}) {
+  const url = src ? `${src}${src.includes("?") ? "&" : "?"}embed=1` : `./c2-lab.html?tool=${encodeURIComponent(tool)}&embed=1`;
+  host.innerHTML = `<iframe class="c2-deck-lab" title="체험" src="${url}"></iframe>`;
   return { dispose() {} };
 }

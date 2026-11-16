@@ -1,7 +1,8 @@
 // 연습 공방을 학생 차시 덱(study.html)에 띄운다 — 그림이 문제은행 화면의 styles.css를 써서, 덱 글꼴·배색과 섞이지 않게 창(iframe) 안에서 돈다.
 // 창이 보내는 말(fc-drill say)은 독쌤 말풍선으로, 「끝」(done)은 덱의 다음 장 넘김으로 이어 준다.
 export function mountDrill(host, { say = () => {}, onDone = () => {}, lesson } = {}) {
-  const book = new URLSearchParams(location.search).get("book") || "";
+  // 2과정 덱은 1과정 판서·게임을 빌려 쓴다 — 그때는 그 판서의 권(lesson.bookId)으로 연습 게임을 고른다
+  const book = lesson?.bookId || new URLSearchParams(location.search).get("book") || "";
   const frame = document.createElement("iframe");
   frame.className = "drill-frame";
   frame.title = "연습 게임";

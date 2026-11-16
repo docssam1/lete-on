@@ -1,6 +1,6 @@
 import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261116g1";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261111c";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116g2";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261116a";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116h2";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261116g1";
@@ -489,7 +489,7 @@ async function mountNative(slide, intro = Promise.resolve(), atEnd = false) {
     // 장 안내 말(intro)이 끝난 뒤에 말한다 — 판서 첫 말이 안내 말을 끊거나 겹치지 않게
     // 게임은 id 없이 말한다 → 글로 id를 만들어 녹음을 찾는다(목록: tools/export-study-voice.mjs). 녹음이 없으면 기기 음성
     say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId || (slide.kind === "game" && text ? voiceLine("game", text).id : null)); },
-    board: game.board, lesson: slide.lesson, ...(game.tool ? { tool: game.tool } : {}),
+    board: game.board, lesson: slide.lesson, ...(game.tool ? { tool: game.tool } : {}), ...(game.src ? { src: game.src } : {}),
     // 판서는 덱 아래 「다음 / 뒤로」로 장면을 넘긴다(판서 안 ‹ › 는 뺌 — 원장 2026-11-11 「화살표와 다음의 용도 때문에 헷갈려」)
     ...(game.board ? { deckNav: true, atEnd, onStep: () => { if (slides[index] === slide) setNextLabel(); } } : {}),
     onDone: () => { if (slide.kind === "game") gameFinished(); if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }

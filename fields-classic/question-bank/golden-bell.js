@@ -8,7 +8,7 @@ import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-gu
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261116g7";
+import { book04Markup } from "./book04-renderers.js?v=20261116g9";
 import { book05Markup } from "./book05-renderers.js?v=20261101m";
 import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";

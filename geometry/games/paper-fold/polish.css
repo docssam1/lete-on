@@ -503,3 +503,6 @@ body.embedded .connect-card .paper-diagram {
   .reverse-choice { min-height: 76px; }
   .reverse-choice .reverse-diagram { width: min(100%, 66px); height: auto; }
 }
+
+/* 덱 안(&embed=1): 머리줄(앞으로 가기·이름·함께하기/배틀)은 덱 머리줄이 대신한다 */
+.is-embed .topbar .exit, .is-embed .topbar .brand, .is-embed .play-mode-links { visibility: hidden; }

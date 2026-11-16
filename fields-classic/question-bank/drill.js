@@ -10,7 +10,7 @@ import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261103d";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 import * as B2 from "./book02-visuals.js?v=20261027b";
-import * as FOLD from "./fold-visuals.js?v=20261116g7";
+import * as FOLD from "./fold-visuals.js?v=20261116g8";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
 
 // 유형 → 문제 만들기: 공방 전용(make) · 문제은행 생성기(generator) · 쌓기나무 엔진(worksheetCode, 문제은행 화면과 같은 부르기)

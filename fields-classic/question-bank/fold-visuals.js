@@ -148,6 +148,29 @@ export function foldDiagonalGridMarkup(visual) {
 // 색종이 한 장이 어느 문항에서나 같은 크기로 보이게(원장 2026-11-16 「색종이 크기도 다르고 이상해」): 폭 = 뷰박스 폭 × 종이 한 변 80px ÷ 그림 속 종이 한 변
 export const FOLD_PAPER_PX = 80;
 export const foldWidthStyle = (viewWidth, paperUnits) => `style="width:min(100%,${Math.round((viewWidth * FOLD_PAPER_PX) / paperUnits)}px)"`;
+
+// ── 겹친 종이와 장면 이름(원장 2026-11-16 「색종이를 접을 때 겹친 부분이 보여야 되는 거 아니야? · 설명도 없어」) ──
+// index번 접은 종이는 2^index겹 — 뒤 겹을 오른쪽 아래로 조금씩 비켜 그려 두께가 보이게 한다(지오메트리 색종이 게임 paper-stack-layer와 같은 생각, 최대 3장).
+// 접어 넘길 쪽은 옅게 칠해 「이쪽이 넘어간다」를 보인다. 장면 아래에는 「처음 · 1번 접음 · 2겹」 이름.
+const LAYER_BACK = "#eda59d", LAYER_EDGE = "#c9776f", FLAP = "#fff0ee";
+export function foldStageSvg(polygon, { shift, top, size, index = 0, fold = null }) {
+  const { KEEP, clip } = foldGeometryHelpers();
+  const pts = (poly, d = 0) => poly.map((p) => `${(shift + p.x * size + d).toFixed(1)},${(top + p.y * size + d).toFixed(1)}`).join(" ");
+  const back = Math.min(3, 2 ** index - 1);
+  let out = "";
+  for (let k = back; k >= 1; k -= 1) out += `<polygon points="${pts(polygon, k * 2.6)}" fill="${LAYER_BACK}" stroke="${LAYER_EDGE}" stroke-width="1.2" stroke-linejoin="round"/>`;
+  out += `<polygon points="${pts(polygon)}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2" stroke-linejoin="round"/>`;
+  if (fold && KEEP[fold]) {
+    const flap = clip(polygon, (p) => -KEEP[fold](p));
+    if (flap.length >= 3) out += `<polygon points="${pts(flap)}" fill="${FLAP}" opacity="0.7"/>`;
+  }
+  return out;
+}
+export const FOLD_CAPTION_SPACE = 24;
+export function foldCaptionSvg(cx, y, index, extra = "") {
+  const words = index === 0 ? "처음" : `${index}번 접음 · ${2 ** index}겹`;
+  return `<text x="${cx.toFixed(1)}" y="${y.toFixed(1)}" font-size="13" font-weight="800" text-anchor="middle" fill="#7a4a44" font-family="'Noto Sans KR',sans-serif">${extra ? `${words} · ${extra}` : words}</text>`;
+}
 export function foldCutPiecesMarkup(visual) {
   const { foldLine, foldArrow } = foldGeometryHelpers();
   const n = visual.stages.length;
@@ -157,7 +180,7 @@ export function foldCutPiecesMarkup(visual) {
   let parts = "";
   visual.stages.forEach((stage, index) => {
     const points = stage.polygon.map((p) => `${(shift + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ");
-    parts += `<polygon points="${points}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    parts += foldStageSvg(stage.polygon, { shift, top: 6, size, index, fold: stage.fold }) + foldCaptionSvg(shift + size / 2, 6 + size + 22, index, stage.fold ? "" : "자르기");
     if (stage.fold) {
       const segment = foldLine(stage.polygon, stage.fold);
       if (segment) parts += `<line x1="${(shift + segment[0].x * size).toFixed(1)}" y1="${(6 + segment[0].y * size).toFixed(1)}" x2="${(shift + segment[1].x * size).toFixed(1)}" y2="${(6 + segment[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
@@ -171,7 +194,7 @@ export function foldCutPiecesMarkup(visual) {
     shift += size + 12;
     if (index < n - 1) { parts += foldStepArrowSvg(shift, 6 + size / 2); shift += gap; }
   });
-  return `<svg class="fold-pieces-svg" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="색종이 접어 자르기 조각 개수 문제">${parts}</svg>`;
+  return `<svg class="fold-pieces-svg" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16 + FOLD_CAPTION_SPACE}" role="img" aria-label="색종이 접어 자르기 조각 개수 문제">${parts}</svg>`;
 }
 
 export function foldTwoDiagonalGridMarkup(visual) {
@@ -277,7 +300,8 @@ export function paperFoldMarkup(visual) {
     const shift = offset;
     offset += SIZE + GAP;
     const points = stage.polygon.map((p) => `${(shift + p.x * SIZE).toFixed(1)},${(4 + p.y * SIZE).toFixed(1)}`).join(" ");
-    let piece = `<polygon points="${points}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    let piece = foldStageSvg(stage.polygon, { shift, top: 4, size: SIZE, index, fold: stage.fold });
+    piece += foldCaptionSvg(shift + SIZE / 2, 4 + SIZE + 20, index, stage.fold ? "" : "구멍");
     if (stage.fold) {
       const segment = foldLine(stage.polygon, stage.fold);
       if (segment) {
@@ -317,5 +341,5 @@ export function paperFoldMarkup(visual) {
     return piece;
   }).join("");
 
-  return `<svg class="paper-fold-svg" ${foldWidthStyle(width, SIZE)} viewBox="0 0 ${width} ${SIZE + 8}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
+  return `<svg class="paper-fold-svg" ${foldWidthStyle(width, SIZE)} viewBox="0 0 ${width} ${SIZE + 8 + FOLD_CAPTION_SPACE}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
 }

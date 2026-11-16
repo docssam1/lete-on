@@ -6,7 +6,7 @@ import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261116g7";
+import { book04Markup } from "./book04-renderers.js?v=20261116g9";
 import { book05Markup } from "./book05-renderers.js?v=20261101m";
 import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
@@ -17,7 +17,7 @@ import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle } from "./fold-visuals.js?v=20261116g7";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE } from "./fold-visuals.js?v=20261116g8";
 
 const {
   ageStages: AGE_STAGES,
@@ -46,7 +46,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261116g2");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261116h2");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
@@ -2669,8 +2669,7 @@ function foldPunchMarkup(visual) {
   let shift = 6;
   let parts = "";
   visual.stages.forEach((stage, index) => {
-    const points = stage.polygon.map((p) => `${(shift + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ");
-    parts += `<polygon points="${points}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    parts += foldStageSvg(stage.polygon, { shift, top: 6, size, index, fold: stage.fold }) + foldCaptionSvg(shift + size / 2, 6 + size + 22, index, stage.fold ? "" : "펀치");
     if (stage.fold) {
       const segment = foldLine(stage.polygon, stage.fold);
       if (segment) parts += `<line x1="${(shift + segment[0].x * size).toFixed(1)}" y1="${(6 + segment[0].y * size).toFixed(1)}" x2="${(shift + segment[1].x * size).toFixed(1)}" y2="${(6 + segment[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
@@ -2701,7 +2700,7 @@ function foldPunchMarkup(visual) {
     shift += size + 12;
     if (index < n - 1) { parts += foldStepArrowSvg(shift, 6 + size / 2); shift += gap; }
   });
-  return `<svg class="fold-punch-svg" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="반원·원 펀치 문제">${parts}</svg>`;
+  return `<svg class="fold-punch-svg" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16 + FOLD_CAPTION_SPACE}" role="img" aria-label="반원·원 펀치 문제">${parts}</svg>`;
 }
 
 function foldStackMarkup(visual) {
@@ -2792,7 +2791,7 @@ function foldCutUnfoldDrawMarkup(visual) {
   let shift = 7;
   let parts = "";
   visual.stages.forEach((stage, index) => {
-    parts += `<polygon points="${polygonPoints(stage.polygon, shift)}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    parts += foldStageSvg(stage.polygon, { shift, top, size, index, fold: stage.fold }) + foldCaptionSvg(shift + size / 2, top + size + 22, index, stage.fold ? "" : "자르기");
     if (stage.fold) {
       const segment = foldLine(stage.polygon, stage.fold);
       if (segment) parts += `<line x1="${(shift + segment[0].x * size).toFixed(1)}" y1="${(top + segment[0].y * size).toFixed(1)}" x2="${(shift + segment[1].x * size).toFixed(1)}" y2="${(top + segment[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
@@ -2810,12 +2809,12 @@ function foldCutUnfoldDrawMarkup(visual) {
   shift += size + 10;
   parts += foldStepArrowSvg(shift, top + size / 2);
   shift += 42;
-  parts += `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#fff" stroke="#a99f8d" stroke-width="2"/>`;
+  parts += `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#fff" stroke="#a99f8d" stroke-width="2"/>` + `<text x="${(shift + size / 2).toFixed(1)}" y="${(top + size + 22).toFixed(1)}" font-size="13" font-weight="800" text-anchor="middle" fill="#7a4a44" font-family="'Noto Sans KR',sans-serif">펼친 모양 그리기</text>`;
   for (let line = 1; line < 4; line += 1) {
     parts += `<line x1="${shift + line * size / 4}" y1="${top}" x2="${shift + line * size / 4}" y2="${top + size}" stroke="#f9d978" stroke-width="1" stroke-dasharray="4 3"/>`;
     parts += `<line x1="${shift}" y1="${top + line * size / 4}" x2="${shift + size}" y2="${top + line * size / 4}" stroke="#f9d978" stroke-width="1" stroke-dasharray="4 3"/>`;
   }
-  return `<svg class="fold-cut-draw-svg" ${foldWidthStyle(shift + size + 8, size)} viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="색종이를 접어 자른 뒤 펼친 모양 그리기">${parts}</svg>`;
+  return `<svg class="fold-cut-draw-svg" ${foldWidthStyle(shift + size + 8, size)} viewBox="0 0 ${shift + size + 8} ${size + 14 + FOLD_CAPTION_SPACE}" role="img" aria-label="색종이를 접어 자른 뒤 펼친 모양 그리기">${parts}</svg>`;
 }
 
 
