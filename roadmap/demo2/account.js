@@ -23,8 +23,9 @@
     await GFIELD_FIELDS_ADMIN_AUTH.signIn('DOCSSAM',code);
     e.target.reset();location.assign('admin.html');return;
    }
+   globalThis.RoadmapSpeed?.mark('login_start');
    const result=identifier.includes('@')?await A.call('login',{email:identifier.toLowerCase(),pin:code}):await A.call('review-login',{username:identifier,code});
-   member=A.accept(result);e.target.reset();location.assign(next);
+   member=A.accept(result);globalThis.RoadmapSpeed?.mark('login_verified');e.target.reset();location.assign(next);
   });};
  }
  function reviewProfile(){

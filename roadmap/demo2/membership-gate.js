@@ -68,6 +68,7 @@
    return;
   }
   if(!member){location.replace(destination);return;}
+  window.RoadmapSpeed?.mark('member_verified');
   // 컨설팅 모드: 서버가 확인한 검수 계정(review)만. 학생마다 저장 소유자를 나누고, 계정 클라우드 저장은 쓰지 않는다.
   let consult=null;
   if(member.review===true){phase='컨설팅 모드 준비';await loadOne(CONSULT_SRC);consult=window.RoadmapConsult.prepare(member);}
@@ -75,7 +76,7 @@
   phase='저장된 학습 정보 준비';message('저장된 학습 정보를 준비하고 있습니다.');
   // Public code can download while this verified owner's cloud state is prepared.
   // No saved-plan read, form mount or protected-screen reveal precedes hydration.
-  const cloudReady=consult?Promise.resolve():window.RoadmapCloud?.prepare(member,startup?.plan);
+  const cloudReady=Promise.resolve(consult?undefined:window.RoadmapCloud?.prepare(member,startup?.plan)).then(()=>window.RoadmapSpeed?.mark('plan_ready'));
   let fullPromise;
   const loadFull=()=>fullPromise||(fullPromise=(async()=>{
    phase='학습 자료 불러오기';await Promise.all([loadScripts(),loadStyles()]);
@@ -96,7 +97,8 @@
    let saved;try{saved=JSON.parse(window.PlannerStorage.getItem('gfield.demo2.v1')||'null');}catch{}
    await window.RoadmapParentBoot.mount({loadFull,member,saved});
    document.documentElement.classList.remove('member-checking');box.remove();
-  }else {await cloudReady;await loadFull();}
+   window.RoadmapSpeed?.ready('input_ready','#parentBoot');
+  }else {await cloudReady;await loadFull();window.RoadmapSpeed?.ready('input_ready','#journeyMap');}
  }catch(error){
   failed=true;for(const cancel of [...pending])cancel();
   document.documentElement.classList.add('member-checking');

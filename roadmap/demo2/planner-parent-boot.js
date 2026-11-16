@@ -7,11 +7,13 @@ async function mount({loadFull,member,saved}){
  doc.body.classList.add('parent-boot');doc.body.append(host);
  const entry=host.querySelector('section');
  const open=async(next,advanced,study=false)=>{
+  g.RoadmapSpeed?.mark('roadmap_start');if(study)g.RoadmapSpeed?.mark('study_start');
   const current=await g.RoadmapMembership.status();
   if(!current||current.user_id!==member.user_id)throw Error('로그인 상태가 바뀌었어요. 내 계정에서 다시 확인해 주세요.');
   g.RoadmapParentPending={answers:next,advanced:!!advanced,study,saved};
   try{await loadFull();}catch(error){const retry=doc.createElement('button');retry.type='button';retry.textContent='새로고침 후 다시 열기';retry.onclick=()=>location.reload();entry.append(retry);throw error;}
   doc.body.classList.remove('parent-boot');host.remove();
+  g.RoadmapSpeed?.ready('roadmap_ready','#journeyMap,.parent-own-learning');
  };
  if(saved?.completed){
   const summary=g.PlannerIntake.summary(saved.answers||{},saved.fields||{}).filter(r=>['school','deepBook','thinking','calc'].includes(r.key));

@@ -1476,8 +1476,9 @@ function drawJourney(){
  }
 }
 async function startParentStudy(){
+ globalThis.RoadmapSpeed?.mark('study_start');
  const b=$('journeyMap').querySelector('[data-parent-study]');if(b)b.disabled=true;
- try{await PlannerWeeklyPlanner.startForStudy();openWeeklyCheck(true);document.body.classList.add('parent-studying');const host=$('plannerUnitChecklist');if(host&&!host.querySelector('.parent-own-learning'))host.insertAdjacentHTML('afterbegin',PF.renderLearning(answers,intakeFields()));const target=host?.querySelector('.parent-own-learning');if(target){target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'start'});}}catch(error){if(b){b.disabled=false;const p=document.createElement('p');p.setAttribute('role','alert');p.textContent=error.message;b.after(p);}}
+ try{await PlannerWeeklyPlanner.startForStudy();openWeeklyCheck(true);document.body.classList.add('parent-studying');const host=$('plannerUnitChecklist');if(host&&!host.querySelector('.parent-own-learning'))host.insertAdjacentHTML('afterbegin',PF.renderLearning(answers,intakeFields()));const target=host?.querySelector('.parent-own-learning');if(target){target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'start'});}globalThis.RoadmapSpeed?.ready('study_ready','.parent-own-learning');}catch(error){if(b){b.disabled=false;const p=document.createElement('p');p.setAttribute('role','alert');p.textContent=error.message;b.after(p);}}
 }
 $('journeyMap').addEventListener('change',event=>{
  const toggle=event.target.closest('[data-parent-support]');if(!toggle||!answers.parentFlow)return;

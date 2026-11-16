@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fgahqumaldheqettmvqg.supabase.co" crossorigin>
+<script>
+(()=>{const q=new URLSearchParams(location.search);if(q.get('speed')!=='1'||q.has('guest'))return;window.RoadmapSpeed={active:true,queue:[],mark(name){this.queue.push({name,at:performance.timeOrigin+performance.now()});},ready(name,selector){this.queue.push({name,selector});}};const s=document.createElement('script');s.src='roadmap-speed.js?v=20261116-mobile1';document.head.append(s);})();
+</script>
 <title>나의 성장 로드맵</title>
 <style>
 :root{--ink:#2a1f4d;--sub:#6b6290;--line:#e6dff5;--p:#6d3fd6;--pl:#efe8fd;--bg1:#f7f3fd;--bg2:#efe7fb;--card:#ffffffee;--shadow:0 10px 30px rgba(84,52,160,.12)}
@@ -418,14 +421,14 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <script type="text/plain" data-member-src="planner-weekly-planner.js?v=20261116-current1"></script>
 <script type="text/plain" data-member-src="planner-exam-season.js?v=20261110-parent2"></script>
 <script type="text/plain" data-member-src="planner-parent-flow.js?v=20261116-current2" data-parent-boot></script>
-<script type="text/plain" data-member-src="planner-parent-boot.js?v=20261116-current1" data-parent-boot></script>
-<script type="text/plain" data-member-src="planner-ui.js?v=20261116-speed1"></script>
+<script type="text/plain" data-member-src="planner-parent-boot.js?v=20261116-mobile1" data-parent-boot></script>
+<script type="text/plain" data-member-src="planner-ui.js?v=20261116-mobile1"></script>
 <script type="text/plain" data-member-src="counsel-interview.js?v=20261114-followup2"></script>
 <script type="text/plain" data-member-src="counsel-plan.js?v=20261116-current1"></script>
 <script type="text/plain" data-member-src="counsel-soma.js?v=20261116-current1"></script>
 <script type="text/plain" data-member-src="customer-counsel.js?v=20261116-current2"></script>
 <script src="membership-api.js?v=20261116-speed1"></script>
 <script src="membership-cloud.js?v=20261116-speed1"></script>
-<script src="membership-gate.js?v=20261116-speed1"></script>
+<script src="membership-gate.js?v=20261116-mobile1"></script>
 </body>
 </html>
