@@ -194,8 +194,23 @@
     return url;
   }
   function grant(mode, userId) { sessionStorage.setItem('nm_entry_once_v1', JSON.stringify({mode:mode,at:Date.now(),userId:userId||null})); }
+  /* 무료 체험은 기록을 남기지 않는다(원장 2026-11-16 「로그인 없이 들어갈 수 있지만 과정 저장·문자 전송은 가입하도록」).
+     같은 탭 안(새로고침·학습지 QR로 다시 들어옴)에서는 이어서 하고, 새로 찾아오면 처음부터다.
+     지난 체험 기록은 지우지 않고 _previous 한 칸에 옮겨 둔다(앱은 읽지 않음, 만일을 위한 보관). */
+  function freshPreviewVisit() {
+    if (sessionStorage.getItem('nm_preview_visit_v1')) return;
+    var keys = ['nm_preview_state_v1', 'nm_thread_stats_v1_scope_preview'];
+    keys.forEach(function (k) {
+      var raw = localStorage.getItem(k);
+      if (raw === null) return;
+      localStorage.setItem(k + '_previous', raw);
+      localStorage.removeItem(k);
+    });
+    localStorage.removeItem('nm_preview_carry_v1'); // 지난 방문의 「가입 시작」 표시도 새 방문에는 넘기지 않는다
+    sessionStorage.setItem('nm_preview_visit_v1', String(Date.now()));
+  }
   $('preview-link').addEventListener('click', function(ev){
-    try { grant('preview'); } catch(e) { ev.preventDefault(); setStatus(T[lang].storage,'err'); }
+    try { freshPreviewVisit(); grant('preview'); } catch(e) { ev.preventDefault(); setStatus(T[lang].storage,'err'); }
   });
   function apply() {
     var d = T[lang];
