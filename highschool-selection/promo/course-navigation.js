@@ -11,7 +11,7 @@
     'dp-middle22-transfer-r03':'DP:middle-transfer',
     'dp-middle22-transfer-r04':'DP:middle-transfer',
     'dp-middle22-transfer-final':'DP:middle-transfer',
-    'dp-common1-v14-pilot':'DP:common1-basic', 'dp-common1-r02':'DP:common1-basic', 'dp-common1-r03':'DP:common1-basic', 'dp-common1-r04':'DP:common1-basic',
+    'dp-common1-v14-pilot':'DP:common1-basic', 'dp-common1-r02':'DP:common1-basic', 'dp-common1-r03':'DP:common1-basic', 'dp-common1-r04':'DP:common1-basic', 'dp-common1-final':'DP:common1-basic',
     'wm-middle21-basic-mixed-r01':'WM:middle21-basic', 'wm-middle21-basic-mixed-r02':'WM:middle21-basic',
     'wm-middle21-basic-mixed-r03':'WM:middle21-basic', 'wm-middle21-basic-mixed-r04':'WM:middle21-basic',
     'wm-middle21-basic-final':'WM:middle21-basic',
