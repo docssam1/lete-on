@@ -484,9 +484,7 @@ const CONCEPT_PAGES="../assets/concept/";
 const ALL=["개념완성","연산연습","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
   "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","마무리점검","초1입학모의고사1차","초1입학모의고사2차","초1입학모의고사3차","초1입학모의고사4차","초1입학모의고사6차","초2입학모의고사1차","초2입학모의고사2차","초2입학모의고사3차","초2입학모의고사4차","자료실"];
-// 입학 모의고사는 회차별 승인(원장 2026-11-16) — 서재 카드는 두 장이고, 그 묶음의 회차가 하나라도 열려 있으면 열린다
-const ENTRANCE_KEYS={"초1입학모의고사":["초1입학모의고사1차", "초1입학모의고사2차", "초1입학모의고사3차", "초1입학모의고사4차", "초1입학모의고사6차"],"초2입학모의고사":["초2입학모의고사1차", "초2입학모의고사2차", "초2입학모의고사3차", "초2입학모의고사4차"]};
-const hasPerm=(key)=>ENTRANCE_KEYS[key]?ENTRANCE_KEYS[key].some(id=>S.perms.includes(id)):S.perms.includes(key);
+const hasPerm=(key)=>S.perms.includes(key);
 const PRODUCTS=[
   {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,pageSegments:[{base:"../assets/concept/vol1/",count:19},{base:"../assets/concept/vol2/",count:19},{base:"../assets/concept/vol3/",count:16},{base:"../assets/concept/vol4/",count:10},{base:"../assets/concept/final/",count:11}],pageExt:"jpg",pagePrefix:"",
    chapters:[
@@ -512,9 +510,17 @@ const PRODUCTS=[
   // 그 자리를 새 원본 「마무리 점검」이 대신한다. 강의가 없는 시험지라 영상이 없고,
   // 채점하면 문항마다 글 해설이 붙은 결과표가 나온다.
   {key:"마무리점검",name:"마무리 점검",desc:"시험 직전 최종 점검 · 채점하면 문항별 해설",icon:"🏁",theme:"theme-final",type:"mock",hasVideo:false,mockUrl:"../mock/final.html"},
-  // 입학 모의고사(원장 2026-11-15) — 선발시험을 우리 시험지로 다시 짠 것: 시험지 인쇄 · O/X 채점·진단 · 유사문제(문제은행 entrance.html)
-  {key:"초1입학모의고사",name:"초1 입학 모의고사",desc:"7세 선발시험 · 승인된 회차만 · 시험지 인쇄 · O/X 채점·진단",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,mockUrl:"../question-bank/entrance.html?only=k"},
-  {key:"초2입학모의고사",name:"초2 입학 모의고사",desc:"초1 선발시험 · 승인된 회차만 · 시험지 인쇄 · O/X 채점·진단",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,mockUrl:"../question-bank/entrance.html?only=g1"},
+  // 입학 모의고사 — 회차마다 카드 하나·승인 하나(원장 2026-11-16 「승인도 회차별로」 · 이름표 ../question-bank/entrance-products.js)
+  // 카드를 누르면 그 회차만 보이는 입학 모의고사 화면(시험지 인쇄 · O/X 채점·진단 · 유사문제 만들기)
+  {key:"초1입학모의고사1차",name:"7세 1차 선발시험",desc:"초1 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초1 입학 대비",mockUrl:"../question-bank/entrance.html?exam=k6-2023-02"},
+  {key:"초1입학모의고사2차",name:"7세 2차 선발시험",desc:"초1 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초1 입학 대비",mockUrl:"../question-bank/entrance.html?exam=k7-2022-04"},
+  {key:"초1입학모의고사3차",name:"7세 3차 선발시험",desc:"초1 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초1 입학 대비",mockUrl:"../question-bank/entrance.html?exam=k7-2022-06"},
+  {key:"초1입학모의고사4차",name:"7세 4차 선발시험",desc:"초1 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초1 입학 대비",mockUrl:"../question-bank/entrance.html?exam=k7-2022-08"},
+  {key:"초1입학모의고사6차",name:"7세 6차 선발시험",desc:"초1 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초1 입학 대비",mockUrl:"../question-bank/entrance.html?exam=k7-2022-12"},
+  {key:"초2입학모의고사1차",name:"초1 1차 선발시험",desc:"초2 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초2 입학 대비",mockUrl:"../question-bank/entrance.html?exam=g1-2022-03"},
+  {key:"초2입학모의고사2차",name:"초1 2차 선발시험",desc:"초2 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초2 입학 대비",mockUrl:"../question-bank/entrance.html?exam=g1-2022-05"},
+  {key:"초2입학모의고사3차",name:"초1 3차 선발시험",desc:"초2 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초2 입학 대비",mockUrl:"../question-bank/entrance.html?exam=g1-2019-08"},
+  {key:"초2입학모의고사4차",name:"초1 4차 선발시험",desc:"초2 입학 대비 · 시험지 인쇄 · O/X 채점·진단 · 유사문제",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,entrance:"초2 입학 대비",mockUrl:"../question-bank/entrance.html?exam=g1-2022-02"},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
  // cover는 서재/쇼케이스의 3D 책 앞면(coverMarkup)에만 쓰인다. 뷰어 본문은 pagesBase로
@@ -786,7 +792,7 @@ const GF={
       </div>`;
     });
     // 입학 모의고사는 로드맵 차례 밖 — 열린 것만 맨 아래에 붙인다(원장 2026-11-15)
-    ["초1입학모의고사","초2입학모의고사"].map(k=>PRODUCTS.find(x=>x.key===k)).filter(pOk).forEach(p=>{
+    PRODUCTS.filter(x=>x.entrance).filter(pOk).forEach(p=>{
       html+=`<div class="tl-item done"><div class="tl-line"></div><div class="tl-node">✓</div><div class="tl-card" onclick="GF.openFromTimeline('${p.key}')"><div class="tl-step">입학 대비</div><div class="tl-name">${p.name}</div><div class="tl-desc">${p.desc}</div><span class="tl-status done">학습 가능</span></div></div>`;
     });
     html+='</div>';
@@ -1081,6 +1087,8 @@ function programGroups(){
     {id:"diagnostic",icon:"🔍",title:"진단모의고사",sub:"진단 및 분석",kind:"products",items:[diagnostic],kicker:"DIAGNOSTIC",head:"진단모의고사",desc:"진단지는 선택 후 별도 모의고사 화면으로 이동합니다."},
     {id:"practice",icon:"📝",title:"실전 모의고사",sub:"1회~6회",kind:"products",items:practice,kicker:"PRACTICE",head:"실전 모의고사",desc:"각 회차를 확인하고 권한이 있는 회차만 학습할 수 있습니다."},
     {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~3회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."},
+    {id:"entrance-k",icon:"🎒",title:"초1 입학 모의고사",sub:"7세 선발시험 5회",kind:"products",items:PRODUCTS.filter(p=>p.entrance==="초1 입학 대비"),kicker:"ENTRANCE",head:"초1 입학 모의고사",desc:"회차마다 따로 승인돼요. 열린 회차는 시험지 인쇄 · O/X 채점·진단 · 유사문제를 쓸 수 있어요."},
+    {id:"entrance-g1",icon:"🎒",title:"초2 입학 모의고사",sub:"초1 선발시험 4회",kind:"products",items:PRODUCTS.filter(p=>p.entrance==="초2 입학 대비"),kicker:"ENTRANCE",head:"초2 입학 모의고사",desc:"회차마다 따로 승인돼요. 열린 회차는 시험지 인쇄 · O/X 채점·진단 · 유사문제를 쓸 수 있어요."},
     {id:"finalcheck",icon:"🏁",title:"마무리 점검",sub:"시험 직전 최종 점검",kind:"products",items:[finalCheck],kicker:"LAST CHECK",head:"마무리 점검",desc:"채점하면 문항마다 해설이 붙은 결과표가 나옵니다. 이 시험지에는 해설 강의가 없습니다."}
   ];
   const mainGroups=groups.filter(g=>g.product||g.items?.some(Boolean));
