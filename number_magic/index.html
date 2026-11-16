@@ -64,7 +64,28 @@ location.replace('access.html'+(q.toString()?'?'+q.toString():''));}catch(e){}})
 </head>
 <body>
 
-<div id="app"></div>
+<div id="app"><div class="nm-boot" role="status" aria-live="polite">
+<style>/* 여는 동안 보이는 화면(2026-11-16, 원장 「좀 빠르게」) — 스크립트 400여 개를 받는 동안 빈 화면 대신.
+   main.js 가 첫 화면을 그리며 #app 을 통째로 바꾸므로 따로 지우지 않아도 사라진다. */
+.nm-boot{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(120% 90% at 50% 30%,#1a4048 0%,#102e34 60%,#0b2227 100%);color:#e9d39a;font-family:Georgia,'Times New Roman',serif;text-align:center;padding:24px}
+.nm-boot-title{font-size:clamp(30px,8vw,46px);line-height:1.05;letter-spacing:.5px}
+.nm-boot-title i{font-size:.6em;font-style:italic;margin-right:.15em}
+.nm-boot-ko{font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:17px;color:#d8c48d;letter-spacing:2px}
+.nm-boot-bar{width:min(240px,62vw);height:4px;border-radius:4px;background:rgba(233,211,154,.18);overflow:hidden;margin-top:10px}
+.nm-boot-bar span{display:block;height:100%;width:4%;background:#e9d39a;border-radius:4px;transition:width .3s ease}
+.nm-boot-msg{font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:13px;color:rgba(233,211,154,.75)}
+@media (prefers-reduced-motion:reduce){.nm-boot-bar span{transition:none}}
+</style>
+<div class="nm-boot-title">Numbers<br><i>of</i>Magic</div>
+<div class="nm-boot-ko">수의 마법</div>
+<div class="nm-boot-bar" aria-hidden="true"><span></span></div>
+<div class="nm-boot-msg">마법 책을 펼치는 중…</div>
+</div></div>
+<script>/* 막대는 받은 스크립트 수만큼 찬다(가짜 시간 막대가 아니다). 앱이 그려지면 멈춘다. */
+(function(){try{var t=setInterval(function(){var b=document.querySelector('.nm-boot-bar span');if(!b){clearInterval(t);return;}
+var all=Math.max(document.querySelectorAll('script[src]').length,400),got=performance.getEntriesByType('resource').filter(function(e){return e.initiatorType==='script';}).length;
+b.style.width=Math.min(96,4+92*got/all)+'%';},250);}catch(e){}})();
+</script>
 
 <!-- 데이터 → 엔진 → 본체 순서 -->
 <!-- 1. 레거시 generator 엔진 (pair10, move10, ...) -->
