@@ -136,6 +136,8 @@ const state = {
 };
 // 시작 화면의 「수업형」은 교재형 본문(?form=lesson)으로 연다. 이번 한 번만이고 저장된 선택은 바꾸지 않는다.
 if (PRINT_TEMPLATE_OPTIONS.form.some((option) => option.id === params.get("form"))) state.printTemplate.form = params.get("form");
+// 단 수도 주소로 한 번만(입학 모의고사 유사문제 시험지 = 2단 쪽당 4문항, 원장 2026-11-16 「4문제씩 정렬」)
+if (PRINT_TEMPLATE_OPTIONS.cols?.some((option) => option.id === params.get("cols"))) state.printTemplate.cols = params.get("cols");
 // 학생 화면은 표지·내지 없이 문제만(저장된 인쇄 양식은 바꾸지 않는다 — 패널을 건드리지 않으면 저장되지 않는다).
 if (asStudent) state.printTemplate = { ...state.printTemplate, cover: "none", unit: "none", form: "basic", cols: "1" };
 // 학생 덱의 「인쇄해서 풀기」는 표지를 붙인다(&cover=b, 원장 2026-10-29 「표지도 만들라고」). 이 학습지에만 — 저장하지 않는다.

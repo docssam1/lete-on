@@ -6,7 +6,7 @@ import {
   remediationUrl,
   resultStorageKey,
   stageLabelForExam
-} from "./result-diagnosis-data.js?v=20261116b";
+} from "./result-diagnosis-data.js?v=20261116c";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);

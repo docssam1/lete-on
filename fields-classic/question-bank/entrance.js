@@ -1,5 +1,5 @@
 import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES } from "./source-data.js?v=20261111g";
-import { remediationUrl } from "./result-diagnosis-data.js?v=20261116b";
+import { remediationUrl } from "./result-diagnosis-data.js?v=20261116c";
 import { loggedIn } from "./study-progress.js?v=20261111p";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
 

@@ -192,6 +192,7 @@ export function remediationUrl(typeIds, student = "DEMO", count, options = {}) {
   if (options.paper) {
     params.set("build", "1");
     params.set("form", "exam");   // 본문 꼴 = 시험지형(이번 한 번만, 저장된 선택은 그대로)
+    params.set("cols", "2");      // 2단 · 쪽당 4문항(원장 2026-11-16 「4문제씩 정렬」)
     if (options.title) params.set("title", options.title);
   }
   return `./index.html?${params.toString()}`;
