@@ -24,7 +24,7 @@
  const preparation=el('details',{class:'cc-preparation'});
  preparation.append(el('summary',{},'현재·마친 교재와 혼자 풀 수 있는 범위 (선택)'));
  const currentLabel=el('label',{},'현재 공부 중인 교재와 범위');
- const currentBooks=el('textarea',{rows:'2',maxlength:'600',placeholder:'예: Ray A3-3 규칙 찾기, 소마셈 P2'});
+ const currentBooks=el('textarea',{rows:'2',maxlength:'600',placeholder:'예: 디딤돌 4-1 분수, 현재 연산 교재의 나눗셈 단원'});
  currentLabel.append(currentBooks);preparation.append(currentLabel);
  const booksLabel=el('label',{},'마친 교재와 범위');
  const completedBooks=el('textarea',{rows:'2',maxlength:'600',placeholder:'예: 쎈 중3-2까지. 심화 문제는 일부 남았어요.'});
