@@ -7,12 +7,19 @@ import {
   resultStorageKey,
   stageLabelForExam
 } from "./result-diagnosis-data.js?v=20261116d";
+import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
+import { hasBank } from "./entrance-products.js?v=20261116b";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 // 입학 모의고사(entrance.html)에서 들어오면 as=student — 약점 유사문제를 문제은행 시험지로 바로 연다(원장 2026-11-16)
 const asStudent = params.get("as") === "student";
+// 등급(원장 2026-11-16 「등급에 따라 오답문제만 1문제씩 · 문제은행 서비스는 추가 유료서비스」): 학생 쪽에서 문제은행 권한이 없으면
+// 보충 학습지는 고르기 없이 「틀린 문항마다 같은 유형 1문제씩」만. 권한이 있으면(또는 원장 쪽 문제은행에서 열면) 예전처럼 고른다.
+if (asStudent && loggedIn()) await checkSession();
+const simpleOnly = asStudent && !hasBank(loggedIn());
+let lastAnalysis = null;
 // 화면 글에 회사·상품 이름(더 클래식)을 쓰지 않는다
 const plain = (label) => String(label ?? "").replace(/더\s*클래식\s*/gu, "");
 const initialExam = RESULT_EXAM_BY_ID.get(params.get("exam")) || RESULT_EXAM_GROUPS[0].exams[0];
@@ -133,6 +140,7 @@ function renderDiagnosis(analysis) {
     <td>${row.number}번</td><td class="${row.result === "correct" ? "result-o" : "result-x"}">${row.result === "correct" ? "O" : "X"}</td>
     <td>${row.domainLabel}</td><td>${row.middle}</td><td>${row.typeLabel}</td><td>${row.difficulty === "actual" ? "실제 출제" : row.difficulty}</td>
   </tr>`).join("");
+  lastAnalysis = analysis;
   $("remediationTypes").innerHTML = analysis.weakTypes.map((row, index) => `<label class="remediation-choice"><input type="checkbox" value="${row.id}" ${index < 6 ? "checked" : ""}><span><strong>${row.label}</strong><small>${row.wrongNumbers.join(", ")}번 오답</small></span></label>`).join("");
   updateRemediationLink();
   $("remediationTypes").querySelectorAll("input").forEach((input) => input.addEventListener("change", updateRemediationLink));
@@ -143,8 +151,17 @@ function selectedWeakTypeIds() {
 }
 
 function updateRemediationLink() {
-  const typeIds = selectedWeakTypeIds();
   const link = $("remediationLink");
+  if (simpleOnly) {
+    // 틀린 문항마다 1문제(같은 유형) — 문항 수 = 문제 수, 난이도는 원본과 같게
+    const wrong = (lastAnalysis?.questionResults || []).filter((row) => row.result === "incorrect");
+    link.href = wrong.length ? remediationUrl(wrong.map((row) => row.typeId), student, wrong.length, { paper: true, level: "actual", title: `${plain(exam.label)} · 오답 유사문제` }) : "#";
+    link.textContent = wrong.length ? `오답 유사문제 ${wrong.length}문제 만들기` : "틀린 문항이 없어요";
+    link.classList.toggle("is-disabled", !wrong.length);
+    link.setAttribute("aria-disabled", String(!wrong.length));
+    return;
+  }
+  const typeIds = selectedWeakTypeIds();
   link.href = typeIds.length ? remediationUrl(typeIds, student, Number($("remediationCount").value),
     asStudent ? { paper: true, level: $("remediationLevel").value, title: `${plain(exam.label)} · 약점 유사문제` } : {}) : "#";
   link.classList.toggle("is-disabled", !typeIds.length);
@@ -192,7 +209,13 @@ $("showResult").addEventListener("click", () => {
 $("printResult").addEventListener("click", () => window.print());
 $("remediationCount").addEventListener("change", updateRemediationLink);
 $("remediationLevel").addEventListener("change", updateRemediationLink);
-if (!asStudent) $("remediationLevel").closest("label").hidden = true;   // 원장 쪽은 문제은행 1단계에서 난이도를 고른다
+if (!asStudent) { const l = $("remediationLevel").closest("label"); l.hidden = true; l.style.display = "none"; }
+if (simpleOnly) {
+  $("remediationHead").textContent = "오답 유사문제";
+  $("remediationLead").textContent = "틀린 문항마다 같은 유형으로 1문제씩 만들어 시험지로 인쇄해요. 문항·문제 수·난이도를 골라 만드는 문제은행은 추가 서비스예요.";
+  // hidden 속성은 화면 CSS(label display)가 덮으므로 style로 숨긴다
+  [$("remediationTypes"), $("remediationCountLabel"), $("remediationLevel").closest("label")].forEach((el) => { el.hidden = true; el.style.display = "none"; });
+}   // 원장 쪽은 문제은행 1단계에서 난이도를 고른다
 
 updateUrl();
 render();

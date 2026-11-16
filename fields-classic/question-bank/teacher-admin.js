@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { memberCall } from "./study-progress.js?v=20261111p";
 import { FIELDS_BOOKS, membershipSummary, directSummary } from "./gm-plan.js?v=20261114a";
-import { ENTRANCE_PRODUCTS } from "./entrance-products.js?v=20261116a";
+import { ENTRANCE_PRODUCTS, BANK_ID } from "./entrance-products.js?v=20261116b";
 
 // 관리자 화면(원장 2026-11-14 「모의고사 회원도 있고 gm 관리 과정 회원도 있겠지? 어드민 좀 쉽게 조작할 수 있도록 바꾸고
 // 그리고 gm과정을 권별 이나 기간 둘로 나눠 관리할 수 있도록」):
@@ -42,6 +42,7 @@ const PRODUCTS = [
   // 「모든 회차 열기」·온라인 추가에 넣지 않고 한 명씩 켠다. 화면에서는 따로 「입학 모의고사」 칸에 둔다.
   ...ENTRANCE_PRODUCTS.map((p) => ({ id: p.id, name: p.name.replace(/^초[12] 입학 · /u, ""), manualOnly: true, entrance: p.group })),
   { id: "강사용교안", name: "강사용 교안", manualOnly: true, other: true },
+  { id: BANK_ID, name: "입학 문제은행(추가 서비스)", manualOnly: true, other: true },   // 원장 2026-11-16 「문제은행 서비스는 추가 유료서비스」
 ];
 const MOCK_IDS = PRODUCTS.filter((p) => !p.other && !p.entrance).map((p) => p.id);   // 필즈 대비 회차(입학 모의고사는 따로 센다)
 

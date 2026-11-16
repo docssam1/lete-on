@@ -2,7 +2,7 @@ import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, typeById } from "./source
 import { remediationUrl } from "./result-diagnosis-data.js?v=20261116d";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
-import { productForExam, openExamIds } from "./entrance-products.js?v=20261116a";
+import { productForExam, openExamIds, hasBank } from "./entrance-products.js?v=20261116b";
 
 // 입학 모의고사 고르기(원장 2026-11-14). 시험은 문제은행에 이미 있는 것 그대로(source-data.js):
 //   초1 입학 대비 = 7세 선발시험, 초2 입학 대비 = 초1 선발시험(원본 이미지·유형 대조가 끝난 것), 실전·파이널 모의고사.
@@ -17,6 +17,7 @@ const params = new URLSearchParams(location.search);
 if (loggedIn()) await checkSession();   // 권한은 서버 값으로(이 탭에 적힌 것을 믿지 않는다)
 const me = loggedIn();
 const open = openExamIds(me);
+const bank = hasBank(me);   // 문제은행(추가 서비스) — 없으면 유사문제는 진단 뒤 오답 1문제씩만
 const student = params.get("student") || (me && me.type !== "admin" ? me.name : "") || "DEMO";
 const plain = (label) => String(label).replace(/^더\s*클래식\s*/u, "");
 const typeIdsOf = (exam) => (exam.questions || []).map((q) => (typeof q === "string" ? q : q?.typeId)).filter(Boolean);
@@ -40,7 +41,8 @@ const card = (exam) => {
   const diagnose = `./result-diagnosis.html?${new URLSearchParams({ exam: exam.id, student, as: "student" })}`;
   const paper = TYPESET_EXAMS[exam.id] ? `./selection-test-paper.html?${new URLSearchParams({ exam: exam.id, ...(params.get("student") ? { student: params.get("student") } : {}) })}` : "";
   return `<li class="en-exam"><b>${esc(plain(exam.label))}</b><small>${n}문항</small>
-    <span class="en-acts">${paper ? `<a class="ms-btn" href="${esc(paper)}">시험지 인쇄</a>` : ""}<a class="ms-btn primary" href="${esc(diagnose)}">O/X 채점·진단</a><button type="button" class="ms-btn" data-similar="${esc(exam.id)}">유사문제 만들기</button></span></li>`;
+    <span class="en-acts">${paper ? `<a class="ms-btn" href="${esc(paper)}">시험지 인쇄</a>` : ""}<a class="ms-btn primary" href="${esc(diagnose)}">O/X 채점·진단</a>${bank ? `<button type="button" class="ms-btn" data-similar="${esc(exam.id)}">문제은행 · 유사문제 만들기</button>` : ""}</span>
+    ${bank ? "" : `<span class="en-lock-note">채점·진단 뒤 틀린 문항마다 유사문제 1문제씩 · 문항·문제 수·난이도를 고르는 문제은행은 추가 서비스예요</span>`}</li>`;
 };
 
 // ?exam=<id> — 모의고사 서재(필즈 더 클래식 대비 과정)의 회차 카드에서 들어올 때 그 회차 하나만(원장 2026-11-16 「승인도 회차별로」)

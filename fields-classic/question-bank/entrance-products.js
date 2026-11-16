@@ -13,6 +13,11 @@ export const ENTRANCE_PRODUCTS = Object.freeze([
   { id: "초2입학모의고사3차", name: "초2 입학 · 초1 3차", examId: "g1-2019-08", group: "g1" },
   { id: "초2입학모의고사4차", name: "초2 입학 · 초1 4차", examId: "g1-2022-02", group: "g1" },
 ]);
+// 문제은행(추가 유료 서비스, 원장 2026-11-16 「등급에 따라 오답문제만 1문제씩 · 문제은행 서비스는 추가 유료서비스」):
+//   기본(회차 승인만) = O/X 진단 뒤 틀린 문항마다 같은 유형 유사문제 1문제씩(result-diagnosis.js)
+//   문제은행 권한 있음 = 문항 고르기 · 문제 수 · 난이도를 정해 유사문제 시험지 만들기(entrance.js 고르기 창), 승인된 회차에서만
+export const BANK_ID = "입학문제은행";
+export const hasBank = (account) => Boolean(account) && (account.type === "admin" || (account.permissions || []).includes(BANK_ID));
 export const productForExam = (examId) => ENTRANCE_PRODUCTS.find((p) => p.examId === examId) || null;
 
 // 이 탭의 로그인(같은 승인번호 세션 gfield_fields_session — 모의고사 서재·스스로 공부와 같다)으로 열린 회차.
