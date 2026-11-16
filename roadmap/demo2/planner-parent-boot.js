@@ -15,7 +15,7 @@ async function mount({loadFull,member,saved}){
   doc.body.classList.remove('parent-boot');host.remove();
   g.RoadmapSpeed?.ready('roadmap_ready','#journeyMap,.parent-own-learning');
  };
- if(saved?.completed){
+ if(saved?.completed&&g.PlannerParentFlow.inputModel(saved.answers||{},member).age){
   const summary=g.PlannerIntake.summary(saved.answers||{},saved.fields||{}).filter(r=>['school','deepBook','thinking','calc'].includes(r.key));
   const h=doc.createElement('h2');h.textContent='현재 공부에서 이어서 학습해요.';entry.append(h);
   for(const row of summary){const p=doc.createElement('p');p.textContent=row.label+' · '+row.text;entry.append(p);}

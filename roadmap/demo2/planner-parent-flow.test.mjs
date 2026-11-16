@@ -72,3 +72,15 @@ test('academy textbooks and reference stages never become independent study assi
  const a=F.build({grade:'pre',age:'5',thinking:{book:'Ray A3-3'}});const markup=F.renderLearning(a,fields);
  assert.doesNotMatch(markup,/Ray A3-3|소마셈|더클래식/u);assert.match(markup,/fields-classic\/question-bank\/home.html/);assert.match(markup,/number_magic\/index.html/);
 });
+test('age changes the language and order, while a young advanced learner keeps every curriculum choice',()=>{
+ const young=F.ageCopy('5','pre'),low=F.ageCopy('9','2'),upper=F.ageCopy('12','5'),middle=F.ageCopy('15','8'),high=F.ageCopy('18','11');
+ assert.match(young.intro,/수 놀이/);assert.equal(young.order[0],'thinking');assert.equal(low.order[1],'calc');assert.match(upper.intro,/앞선 과정/);assert.match(middle.intro,/개념·유형/);assert.match(high.intro,/과목/);
+ assert.equal(new Set([young.solo,low.solo,upper.solo,middle.solo,high.solo]).size,5);
+ const a=F.build({...input(),grade:'pre',age:'5',school:{stage:'h:공통수학1',book:'기본정석'}});assert.equal(a.schoolHigh,'공통수학1');assert.equal(a.parentFlow.currentAge,'5');
+});
+test('an actual age is retained separately from school grade and is never guessed from an old preschool age',()=>{
+ const a=F.build({...input(),age:'10'});assert.equal(F.inputModel(a).age,'10');assert.equal(F.inputModel({grade:'3',age:'5'}).age,'');
+ const edited=F.build({...input(),age:'11'},a);assert.equal(edited.parentFlow.currentAge,'11');assert.equal(edited.school,a.school);assert.equal(edited.schoolBook,a.schoolBook);
+ assert.throws(()=>F.build({...input(),age:'99'}),/나이/);
+ for(const age of ['3','8']){const early=F.build({grade:'pre',age,thinking:{book:'수 놀이 활동'}});assert.equal(I.firstMissing(early,{...fields,grade:'pre'}),undefined);}
+});

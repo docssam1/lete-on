@@ -46,8 +46,8 @@ function applyLevel(){
 }
 function read(){ const on=state.hwOn==='1'; return {band:$('band').value,grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
   hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1',kmo:state.kmo,hiScope:state.hiScope}; }
-function draw(){
-  drawJourney();
+function draw(options){
+  if(options?.journey!==false)drawJourney();
   const currentOptions=read();if(answers.parentFlow){currentOptions.hw='none';currentOptions.gifted=false;currentOptions.hwDeep=false;currentOptions.hwMid=false;}
   const profile=I.profile(answers,intakeFields(),currentOptions);drawIntake(profile);if(I.sourceMode(answers,intakeFields())){drawSourceProfile(profile);return;}
   const o=currentOptions, plan=I.buildPlan(answers,intakeFields(),o); lastPlan=plan; const nm=$('name').value.trim()||'우리 아이';
@@ -197,7 +197,7 @@ function finish(restoring=false){
   if(back.flow==='language')openLanguage(languageState.active,back.page);else if(back.flow==='reference')openReferencePlan();else if(back.flow==='career')openCareer(back.page);else if(back.flow==='transition')openTransition(back.page);else if(back.flow==='progression')openProgress(back.page);else if(back.flow==='goal-curriculum')openGoalCurriculum();else if(back.flow==='learning-evidence')openLearningEvidence(back.page);else if(back.flow==='curriculum')openCurriculum();else if(back.flow==='pathway-plan'&&pathwayTrail.length)openPathwayPlan(back.page);else if(back.flow==='pathway'&&pathwayTrail.length)openPathway(pathwayActiveId||pathwayTrail.at(-1));else if(back.flow==='college')openCollege(back.page);else if(back.flow==='school-goal')openSchoolGoal();else if(back.flow==='science')openScience(true,scienceState.enabled,back.page);else openOverview(['home','school','study','goals'].includes(back.page)?back.page:'home');
   saveRoadmapMode();saveDraft();mobileWorkspace('result');return;
  }
- if(!restoring){roadmapMode='standard';standardAccepted=false;}draw();showStandard(false);
+ if(!restoring){roadmapMode='standard';standardAccepted=false;}draw(answers.parentFlow?{journey:false}:undefined);showStandard(false);
 }
 function saveRoadmapMode(){PlannerStorage.setItem('gfield.demo2.roadmap-mode.v1',JSON.stringify({version:1,mode:roadmapMode,pattern:standardPattern,accepted:standardAccepted,signature:JSON.stringify(answers)}));}
 function showStandard(remember=true){document.body.classList.remove('parent-studying');if(historyState.active)closeHistory(false);leavePathway();document.body.classList.remove('questioning');$('conversation').hidden=true;roadmapMode='standard';workspaceView='map';showView('vmap');drawJourney();mobileWorkspace('result');if(remember)saveRoadmapMode();}
@@ -1533,7 +1533,7 @@ $('seniorLibraryClose').onclick=()=>$('seniorLibraryDialog').close();
 $('seniorLibraryDialog').addEventListener('close',()=>{if(window.PlannerDirectLinks?.resolve(window.location?.href)?.kind==='library')clearSeniorDirectUrl();});
 $('seniorLibraryContent').onclick=e=>{if(window.PlannerDirectLinks?.handleCopy(e))return;const filter=e.target.closest('[data-history-filter]');if(filter){const id=filter.dataset.historyFilter;for(const group of $('seniorLibraryContent').querySelectorAll('[data-case-group]'))group.hidden=id!=='all'&&group.dataset.caseGroup!==id;for(const button of $('seniorLibraryContent').querySelectorAll('[data-history-filter]'))button.setAttribute('aria-pressed',String(button===filter));return;}if(e.target.closest('[data-classroom-open]')){$('seniorLibraryDialog').close();showClassroom();return;}if(e.target.closest('[data-study-open]')){$('seniorLibraryDialog').close();showStudy();return;}if(!e.target.closest('[data-history-case]'))return;$('seniorLibraryDialog').close();handleHistoryClick(e);};
 $('openCase').onclick=openSeniorLibrary;
-hwOptions(); applyLevel();const parentPending=window.RoadmapParentPending;delete window.RoadmapParentPending;if(parentPending?.answers){if(parentPending.saved)restoreDraft();applyCurrentStudy(parentPending.answers);}else if(parentPending?.advanced){draw();ask('grade');}else if(!restoreDraft()){draw();if(Y.result(personalityState))openPersonality();else showWelcome();}
+hwOptions(); applyLevel();const parentPending=window.RoadmapParentPending;delete window.RoadmapParentPending;if(parentPending?.answers){const unchanged=parentPending.saved?.completed&&parentPending.saved.answers?.parentFlow&&JSON.stringify(parentPending.saved.answers)===JSON.stringify(parentPending.answers);const restored=parentPending.saved?restoreDraft():false;if(!restored||!unchanged||!completed)applyCurrentStudy(parentPending.answers);}else if(parentPending?.advanced){draw();ask('grade');}else if(!restoreDraft()){draw();if(Y.result(personalityState))openPersonality();else showWelcome();}
 if(parentPending?.study)Promise.resolve().then(startParentStudy);
 if(completed&&restoredRoadmapMode?.signature===JSON.stringify(answers)&&restoredRoadmapMode.mode==='custom')roadmapMode='custom';
 if(!parentPending&&(!completed||roadmapMode==='custom'||['reference','science','college','language','learning-evidence'].includes(restoredFlow?.mode))){

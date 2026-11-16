@@ -8,9 +8,11 @@ body.parent-boot>:not(#parentBoot):not(script):not(#memberGate){display:none!imp
 #parentBoot>header>a{margin-left:auto;color:#5b3e72;font-size:14px}
 .parent-current-form{font-size:15px;line-height:1.6;text-align:left;color:#35283e;max-width:960px;margin:auto}
 .parent-intro{margin:0 0 22px;color:#66586f}
+.parent-current-form h2{font-size:22px;line-height:1.45;letter-spacing:-.035em;margin:0 0 10px}
+.parent-age-intake{padding-bottom:24px;margin-bottom:26px;border-bottom:1px solid #ddd5e3}.parent-age-intake>label{max-width:240px}
 .parent-current-form label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;min-width:0}
 .parent-current-form label span{font-size:12px;font-weight:400;color:#817489}
-.parent-current-form input,.parent-current-form select,.parent-current-form textarea{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #c9bdcf;border-radius:8px;background:#fff;color:#35283e;font:inherit;font-weight:400;box-shadow:none}
+.parent-current-form input,.parent-current-form select,.parent-current-form textarea{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #c9bdcf;border-radius:8px;background:#fff;color:#35283e;font:inherit;font-size:16px;font-weight:400;box-shadow:none}
 .parent-current-form textarea{resize:vertical}
 .parent-current-form [hidden]{display:none!important}
 .parent-student{display:flex;gap:16px;margin-bottom:22px}.parent-student>label{flex:0 1 200px}
@@ -22,7 +24,7 @@ body.parent-boot>:not(#parentBoot):not(script):not(#memberGate){display:none!imp
 .parent-current-form fieldset[data-parent-axis=thinking] .parent-current-row, .parent-current-form fieldset[data-parent-axis=calc] .parent-current-row{grid-template-columns:2fr 1fr}
 .parent-solo{margin:12px 0 20px}
 button.parent-primary{border:0;border-radius:10px;min-height:48px;padding:13px 24px;background:#64457c;color:white;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 3px 0 #463053}
-.parent-current-form>button.parent-primary{width:100%}.parent-current-form button:disabled{opacity:.65;cursor:wait}
+.parent-current-form button.parent-primary{width:100%}.parent-current-form button:disabled{opacity:.65;cursor:wait}
 .parent-form-error{color:#963d46;min-height:1em;margin:8px 0}
 .parent-form-note,.parent-result-note{font-size:12px;line-height:1.65;color:#776a80}
 .parent-advanced{border:0;background:transparent;color:#6f5c7d;text-decoration:underline;font:inherit;font-size:12px;padding:8px 0;min-height:44px;cursor:pointer}

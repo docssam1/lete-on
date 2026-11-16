@@ -209,6 +209,7 @@ function summary(a,fields){a=effective(a);const status=k=>fields.pendingStatus?.
 // Each subject resolves independently. An original-only answer never replaces
 // the other subjects with the original demo's limited curriculum.
 function hasAnswer(a,fields,key){
+ if(a.parentFlow?.version===1&&key==='age'&&['3','4','5','6','7','8'].includes(String(a.age)))return true;
  if(a.parentFlow?.version===1&&['schoolBook','deepBook'].includes(key)&&a[key]==='unknown')return true;
  if(key==='deepStage'&&!seniorIntake(a,fields)&&a.deepBook&&a.deepCourse&&!special(a.deepCourse)&&!bookList(a.deepCourse,'deep').includes(a.deepBook))return false;
  if(key==='deepExtra'&&a.deepExtra===undefined)return true; // Existing single-depth records remain valid.
