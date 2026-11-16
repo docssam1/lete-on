@@ -29,7 +29,18 @@ const GROUPS = [
   { title: "파이널 모의고사", sub: "시험 직전", exams: FINAL_EXAM_TYPES },
 ];
 const ALL = GROUPS.flatMap((g) => g.exams);
-const lockedExam = (exam) => Boolean(productForExam(exam.id)) && !open.has(exam.id);
+// 실전·파이널도 회차마다 승인된 것만(원장 2026-11-16 「왜 실전모의고사와 파이널 모의고사 쪽도 열리지」) —
+// 승인 이름은 관리자 「모의고사 회원」 탭과 같은 실전모의고사N회 · 파이널모의고사N회. 관리자는 다 열림.
+const perms = new Set(me?.permissions || []);
+const isAdmin = me?.type === "admin";
+const mockProductOf = (id) => { const m = /^(mock|final)-(\d+)$/.exec(id); return m ? `${m[1] === "mock" ? "실전" : "파이널"}모의고사${m[2]}회` : null; };
+const lockedExam = (exam) => {
+  if (productForExam(exam.id)) return !open.has(exam.id);
+  const product = mockProductOf(exam.id);
+  return Boolean(product) && !isAdmin && !perms.has(product);
+};
+// 온라인 진단 모의고사(../mock/)는 진단모의고사 승인(또는 진단 + 약점 클리닉)이 있을 때만 길을 보인다.
+const canDiagnostic = isAdmin || perms.has("진단모의고사") || perms.has("진단약점클리닉");
 
 const card = (exam) => {
   const n = (exam.questions || []).length;
@@ -53,7 +64,7 @@ const ONLY = ONE_GROUP ? { ...ONE_GROUP, exams: [ONE] } : { k: GROUPS[0], g1: GR
 const shown = ONLY ? [ONLY] : GROUPS;
 if (ONLY) { const name = ONE ? plain(ONE.label) : `${ONLY.title.replace(" 대비", "")} 모의고사`; document.title = name; const h = document.querySelector(".ms-title strong"); if (h) h.textContent = name;
   const back = $("backHome"); back.href = "../program/"; back.innerHTML = `<span aria-hidden="true">←</span> 모의고사 서재`; }
-$("groups").insertAdjacentHTML("beforeend", `${ONLY ? "" : `
+$("groups").insertAdjacentHTML("beforeend", `${ONLY || !canDiagnostic ? "" : `
   <section class="en-group en-online"><h2>선발 대비 모의고사 <small>온라인으로 풀고 바로 채점</small></h2>
     <a class="ms-btn primary" href="../mock/index.html">모의고사 풀러 가기 ›</a></section>`}
   ${shown.filter((g) => g.exams.length).map((g) => `<section class="en-group"><h2>${esc(g.title)} <small>${esc(g.sub)}${ONE ? "" : ` · ${g.exams.length}회`}</small></h2>
