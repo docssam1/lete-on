@@ -24,7 +24,7 @@
    if(!r.saved)throw Error('plan_invalid');remote={...r,document};enabled=true;consentPending=false;await baseline(r,document);dirty=canonical(snapshot())!==canonical(document);setMode(dirty?'saving':'saved');if(dirty)timer=setTimeout(()=>flush(),1800);
   }catch{setMode('offline');}finally{busy=false;}
  }
- async function prepare(member){owner=member.user_id;try{base=JSON.parse(storage('sessionStorage')?.getItem(metaKey())||'null')||read(metaKey());}catch{base=read(metaKey());}const local=snapshot();try{const r=await g.RoadmapMembership.call('plan-get',{},undefined,{timeoutMs:8000});remote=r.plan;if(!remote){base=null;setMode('local');return;}
+ async function prepare(member,preloaded){owner=member.user_id;try{base=JSON.parse(storage('sessionStorage')?.getItem(metaKey())||'null')||read(metaKey());}catch{base=read(metaKey());}const local=snapshot();try{const loaded=preloaded?await preloaded:null;if(loaded?.failed)throw Error('plan_unavailable');const r=loaded?loaded.value:await g.RoadmapMembership.call('plan-get',{},undefined,{timeoutMs:8000});remote=r.plan;if(!remote){base=null;setMode('local');return;}
   if(!safeDocument(remote.document))throw Error('plan_invalid');enabled=true;
   const localHash=await digest(local),remoteHash=await digest(remote.document);
   if(localHash===remoteHash){await baseline(remote,local);setMode('saved');}

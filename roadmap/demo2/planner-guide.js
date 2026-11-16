@@ -13,15 +13,24 @@
 (function(global){
  'use strict';
  const frames=Object.freeze({
-  listen:'docssam-math-A1-mouth-closed.png',
-  think:'docssam-math-B2-puzzled-thinking.png',
-  encourage:'docssam-math-B4-encourage.png',
-  praise:'docssam-math-B3-praise.png',
-  happy:'docssam-math-B5-happy-thumbs-up.png'
+  listen:'docssam-listen.webp',
+  think:'docssam-think.webp',
+  encourage:'docssam-encourage.webp',
+  praise:'docssam-praise.webp',
+  happy:'docssam-happy.webp'
  });
  const states=new WeakMap();
  const scriptURL=typeof document!=='undefined'&&document.currentScript?.src;
- const assetRoot=scriptURL?new URL('../v31/assets/math-docssam/',scriptURL).href:'../v31/assets/math-docssam/';
+ const assetRoot=scriptURL?new URL('assets/guide/',scriptURL).href:'assets/guide/';
+ const ready=new Map();
+ function showImage(state,src){
+  state.imageWanted=src;
+  if((state.img.src||state.img.getAttribute('src'))===src)return;
+  // Decode off-screen; retain the already painted expression until its replacement
+  // is ready. A late download must never overwrite a more recent expression.
+  if(!ready.has(src))ready.set(src,new Promise(resolve=>{const image=new global.Image();image.onload=async()=>{try{await image.decode();}catch{}resolve(true);};image.onerror=()=>resolve(false);image.src=src;}));
+  ready.get(src).then(ok=>{if(ok&&state.imageWanted===src)state.img.setAttribute('src',src);else if(!ok)ready.delete(src);});
+ }
  let sequence=0;
 
  function hosts(root){
@@ -44,7 +53,7 @@
   // The closed-mouth face is a static reading cue, never simulated speech.
   const frame=opened?'listen':state.expression;
   const src=assetRoot+frames[frame];
-  if(img.getAttribute('src')!==src)img.setAttribute('src',src);
+  showImage(state,src);
   bubble.hidden=!opened;
   button.hidden=!hasText;
   button.textContent=opened?'안내 접기':'다시 보기';
@@ -65,7 +74,7 @@
   const doc=guide.ownerDocument;
   const oldImage=guide.querySelector('img');
   const portrait=doc.createElement('span');portrait.className='planner-guide-portrait';portrait.setAttribute('aria-hidden','true');
-  const img=oldImage||doc.createElement('img');img.alt='';img.classList.add('planner-guide-image');img.width=1024;img.height=1536;img.decoding='async';
+  const img=oldImage||doc.createElement('img');img.alt='';img.classList.add('planner-guide-image');img.width=320;img.height=480;img.decoding='async';
   if(oldImage)oldImage.replaceWith(portrait);else guide.prepend(portrait);
   portrait.append(img);
   const meta=doc.createElement('div');meta.className='planner-guide-meta';

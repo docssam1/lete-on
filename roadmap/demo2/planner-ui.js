@@ -79,15 +79,20 @@ function draw(){
 }
 // 3D 맵: three.js(map3d.js, 수의 나라와 같은 three · 아이 캐릭터). WebGL 이 없으면 CSS 맵.
 let map3d=null, mapBusy=null, mapNext=null, map3dFailed=false;
+function mapIsVisible(){const r=$('map').getBoundingClientRect();return !document.hidden&&r.width>0&&r.height>0&&r.bottom>0&&r.top<innerHeight;}
 function drawMap(ms){
-  if(!completed)return;
+  mapNext=ms;
+  // A hidden legacy map must not fetch Three.js, build a canvas or compete with
+  // the current-study screen. Keep its newest data for when it is actually seen.
+  if(!completed||!mapIsVisible())return;
   if(map3dFailed){ $('map').innerHTML='<p class="map-unavailable">3D를 불러오지 못했어요. 위 갈림길과 아래 이정표에서 같은 경로를 확인할 수 있어요.</p>'; return; }
-  mapNext=ms; if(mapBusy) return;
+  if(mapBusy) return;
   mapBusy=(async()=>{ while(mapNext){ const d=mapNext; mapNext=null;
-    try{ if(!map3d){ const mod=await import('./map3d.js'); map3d=await mod.mountMap3D($('map'),d,{onSelect:openCourse}); if(!map3d) throw new Error('no webgl'); } else await map3d.update(d); }
+    try{ if(!map3d){ const mod=await import('./map3d.js');if(!mapIsVisible()){mapNext=d;break;} map3d=await mod.mountMap3D($('map'),d,{onSelect:openCourse}); if(!map3d) throw new Error('no webgl'); } else await map3d.update(d); }
     catch(e){ console.warn('[map3d]',e); map3dFailed=true; $('map').innerHTML='<p class="map-unavailable">3D를 불러오지 못했어요. 위 갈림길과 아래 이정표에서 같은 경로를 확인할 수 있어요.</p>'; break; } }
     mapBusy=null; })();
 }
+if(typeof IntersectionObserver==='function')new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)&&mapNext&&!mapBusy)drawMap(mapNext);}).observe($('map'));
 let lastPlan=null;
 function showView(v){ document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===v));const exploring=v==='vmap'&&!!(flowMode||caseActive||studyActive);document.body.classList.toggle('exploring',exploring);$('pathwayCoach').hidden=!exploring;if(v==='vmap'&&map3dFailed) P.bindMap($('map')); }
 document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.addEventListener('click',()=>{showView('vmap');setWorkspaceView(({vmap:'map',vplan:'table',vrep:'records'})[b.dataset.v]);mobileWorkspace('result');}));

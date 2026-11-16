@@ -143,6 +143,8 @@ jobs:
           cp -R promo/popcorn-lab/. _site/promo/popcorn-lab/
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
+          # Keep the protected entry small and avoid 100+ ordered script requests.
+          node roadmap/demo2/tools/build-delivery.cjs _site/roadmap/demo2
           cp -R science-lab/. _site/science-lab/
           # 소마 레이키즈 학습(원장 2026-11-12 「lete-on 최상위 sm/」) — 원본 스캔·정답·설계 문서는 올리지 않는다
           cp -R sm/. _site/sm/

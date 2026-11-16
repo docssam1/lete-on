@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const source = readFileSync(new URL('./account-reel.js', import.meta.url), 'utf8');
 const settle = () => new Promise(resolve => setImmediate(resolve));
-function fixture({ preference, reduced = false, storageBlocked = false, playback } = {}) {
+function fixture({ preference, reduced = false, storageBlocked = false, playback, start = true } = {}) {
   class Events {
     constructor() { this.listeners = new Map(); this.hidden = false; this.attributes = {}; }
     addEventListener(type, fn) { this.listeners.set(type, [...(this.listeners.get(type) || []), fn]); }
@@ -37,13 +37,17 @@ function fixture({ preference, reduced = false, storageBlocked = false, playback
     setItem: (key, val) => { if (storageBlocked) throw new Error('denied'); store.set(key, val); }
   };
   vm.runInNewContext(source, { window, document, IntersectionObserver, localStorage });
+  // Most playback tests explicitly press Play after the click-to-play mount.
+  if(start && !reduced)nodes['#reelPlay'].emit('click');
   const gesture = (type = 'click', target, key) => document.emit(type, { isTrusted: true, target: { closest: () => target }, key });
   return { video, nodes, document, motion, store, gesture, intersect: value => observe([{ isIntersecting: value }]) };
 }
 const denied = () => Promise.reject(Object.assign(new Error('autoplay denied'), { name: 'NotAllowedError' }));
 
-test('audible autoplay starts at moderate volume when permitted', async () => {
-  const f = fixture(); await settle();
+test('only the explicit play control starts the film, with the selected moderate sound', async () => {
+  const f = fixture({ start: false }); await settle();
+  assert.deepEqual(f.video.calls, []); f.gesture(); await settle(); assert.deepEqual(f.video.calls, []);
+  f.nodes['#reelPlay'].emit('click'); await settle();
   assert.deepEqual(f.video.calls, [false]);
   assert.equal(f.video.volume, .3);
   assert.equal(f.nodes['#reelSound'].attributes['aria-pressed'], 'true');

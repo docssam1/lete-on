@@ -12,7 +12,9 @@
   const soundKey = 'gfield.roadmap.intro.sound';
   let soundWanted = true;
   try { soundWanted = localStorage.getItem(soundKey) !== 'off'; } catch {}
-  let wanted = !reduced.matches;
+  // Login and the current-study form take priority over an unsolicited video.
+  // preload=none keeps the film off the network until an explicit play action.
+  let wanted = false;
   let visible = true;
   let failed = false;
   let pendingSound = false;

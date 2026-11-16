@@ -19,7 +19,17 @@
   try{g.sessionStorage.setItem(STORE,JSON.stringify(session));}catch{clear();throw new Error('storage_unavailable');}
   return data.member;
  }
- async function status(){if(!session)return null;try{return(await call('status')).member;}catch(e){if(e.status===401)clear();throw e;}}
+ async function status(){if(!session)return null;const token=session.token;try{const r=await call('status');if(session?.token!==token)throw Object.assign(new Error('login_required'),{status:401});return r.member;}catch(e){if(e.status===401&&session?.token===token)clear();throw e;}}
+ async function startup(){
+  if(!session)return {member:null};
+  const token=session.token;
+  // Both endpoints independently verify this session on the server. The plan
+  // stays private until status confirms the same session and owner below.
+  const plan=call('plan-get',{},undefined,{timeoutMs:8000}).then(value=>({value}),()=>({failed:true}));
+  const member=await status();
+  if(!session||session.token!==token)throw Object.assign(new Error('login_required'),{status:401});
+  return {member,plan};
+ }
  async function verify(email,code){
   const data=await request('/auth/v1/verify',{email:email.trim().toLowerCase(),token:code.trim(),type:'email'});
   if(!data.access_token)throw new Error('email_required');return data.access_token;
@@ -36,5 +46,5 @@
   login_required:'다시 로그인해 주세요.',member_missing:'가입된 로드맵 회원이 없습니다. 먼저 회원 정보를 등록해 주세요.',
   storage_unavailable:'로그인 저장을 사용할 수 없습니다. 브라우저의 저장 공간 설정을 확인해 주세요.',admin_required:'관리자 계정으로 로그인해 주세요.'};
  const message=e=>messages[e?.message]||(e?.status===429?messages.too_many_attempts:e?.status===401?'인증번호가 맞지 않거나 만료되었습니다. 다시 확인해 주세요.':'연결을 확인한 뒤 다시 시도해 주세요.');
- g.RoadmapMembership={call,consultDraft,counsel,accept,status,verify,closeProof,logout,clear,destination,message};
+ g.RoadmapMembership={call,consultDraft,counsel,accept,status,startup,verify,closeProof,logout,clear,destination,message};
 })(window);

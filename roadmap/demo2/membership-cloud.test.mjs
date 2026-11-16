@@ -15,6 +15,14 @@ function harness({remote=null,base=null,local=null,fail=false}={}){
 }
 const hash=async d=>Buffer.from(await webcrypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(d)))).toString('hex');
 test('existing device data is opt-in and never uploaded on startup',async()=>{const h=harness({local:{'gfield.demo2.v1':'existing'}});await h.C.prepare({user_id:'owner'});assert.equal(h.C.status().enabled,false);assert.equal(h.C.snapshot()['gfield.demo2.v1'],'existing');assert.equal(h.calls.length,1);});
+test('a startup plan is hydrated for the verified owner without a duplicate fetch or upload',async()=>{
+ const h=harness();await h.C.prepare({user_id:'owner'},Promise.resolve({value:{plan:{revision:3,document:{'gfield.demo2.v1':'restored'},updatedAt:'2026-11-16'}}}));
+ assert.equal(h.C.snapshot()['gfield.demo2.v1'],'restored');assert.equal(h.C.status().revision,3);assert.equal(h.calls.length,0);
+});
+test('a failed startup read retains device work without silently uploading or fetching twice',async()=>{
+ const h=harness({local:{'gfield.demo2.v1':'unsent'}});await h.C.prepare({user_id:'owner'},Promise.resolve({failed:true}));
+ assert.equal(h.C.snapshot()['gfield.demo2.v1'],'unsent');assert.equal(h.C.status().mode,'unavailable');assert.equal(h.calls.length,0);
+});
 test('a new device restores before the planner starts, without other owners or auth material',async()=>{const h=harness({remote:{revision:3,document:{'gfield.demo2.v1':'account'},updatedAt:'2026-11-03'}});h.localStorage.setItem('gfield.demo2.saved.member.other.v1','secret');h.sessionStorage.setItem('gfield.roadmap.member.session.v1','session');await h.C.prepare({user_id:'owner'});assert.equal(h.C.snapshot()['gfield.demo2.v1'],'account');assert.equal(Object.keys(h.C.snapshot()).length,1);assert.equal(h.C.status().revision,3);assert.equal(h.C.safeDocument({'gfield.demo2.member.other.v1':'x'}),false);});
 test('different unbased local and account plans cause a conflict without writes',async()=>{const h=harness({local:{'gfield.demo2.v1':'device'},remote:{revision:2,document:{'gfield.demo2.v1':'account'}}});await h.C.prepare({user_id:'owner'});assert.equal(h.C.status().conflict,true);assert.equal(h.C.snapshot()['gfield.demo2.v1'],'device');assert.equal(h.calls.filter(c=>c.action==='plan-save').length,0);});
 test('offline edits survive, retry with the same revision, and handle a concurrent change',async()=>{const d={'gfield.demo2.v1':'base'},h=harness({local:d,remote:{revision:2,document:d}});await h.C.prepare({user_id:'owner'});h.setOffline(true);h.C.changed('gfield.demo2.v1','offline');await h.C.flush();assert.equal(h.C.snapshot()['gfield.demo2.v1'],'offline');assert.equal(h.C.status().mode,'offline');h.setOffline(false);await h.C.flush();assert.equal(h.remote().document['gfield.demo2.v1'],'offline');assert.equal(h.C.status().mode,'saved');});

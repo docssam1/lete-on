@@ -6,10 +6,10 @@ const read=n=>fs.readFileSync(new URL(n,import.meta.url),'utf8');
 const API=read('membership-api.js'),STORAGE=read('planner-storage.js');
 const local=new Map();
 function store(map=new Map()){return {getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,String(v)),removeItem:k=>map.delete(k)};}
-function api({saved=null,reply={},status=200}={}){
+function api({saved=null,reply={},status=200,respond}={}){
  const sessionStorage=store(new Map(saved?[['gfield.roadmap.member.session.v1',JSON.stringify(saved)]]:[]));const calls=[];
  const window={sessionStorage,location:{href:'https://lete-on.gfieldacademy.net/roadmap/demo2/account.html',origin:'https://lete-on.gfieldacademy.net'}};
- vm.runInNewContext(API,{window,URL,AbortSignal,Date,fetch:async(url,opts)=>{calls.push({url,opts});return {ok:status<400,status,json:async()=>reply};}});
+ vm.runInNewContext(API,{window,URL,AbortSignal,Date,fetch:async(url,opts)=>{calls.push({url,opts});return respond?respond(url,opts):{ok:status<400,status,json:async()=>reply};}});
  return {A:window.RoadmapMembership,calls,sessionStorage};
 }
 test('missing or expired local session is not treated as approval',async()=>{
@@ -22,6 +22,23 @@ test('every restored session is verified by server; 401 clears it',async()=>{
 });
 test('transient server errors never grant offline access',async()=>{
  const h=api({saved:{token:'a'.repeat(64),expiresAt:'2099-01-01'},status:503});await assert.rejects(h.A.status());
+});
+test('startup overlaps two independently authenticated reads without returning a member before verification',async()=>{
+ const pending=[],h=api({saved:{token:'a'.repeat(64),expiresAt:'2099-01-01'},respond:(url,opts)=>new Promise(resolve=>pending.push({action:JSON.parse(opts.body).action,resolve}))});
+ let opened=false;const startup=h.A.startup().then(r=>{opened=true;return r;});assert.equal(pending.length,2);
+ pending.find(x=>x.action==='plan-get').resolve({ok:true,status:200,json:async()=>({plan:null})});await Promise.resolve();assert.equal(opened,false);
+ pending.find(x=>x.action==='status').resolve({ok:true,status:200,json:async()=>({member:{user_id:'verified-owner'}})});
+ const result=await startup;assert.equal(result.member.user_id,'verified-owner');assert.equal((await result.plan).value.plan,null);assert.ok(h.calls.every(c=>c.opts.headers['x-roadmap-session']==='a'.repeat(64)));
+});
+test('a successful plan response cannot authorize an invalid session or replace a newly accepted login',async()=>{
+ const pending=[],h=api({saved:{token:'a'.repeat(64),expiresAt:'2099-01-01'},respond:(url,opts)=>new Promise(resolve=>pending.push({action:JSON.parse(opts.body).action,resolve}))});
+ const startup=h.A.startup();pending.find(x=>x.action==='plan-get').resolve({ok:true,status:200,json:async()=>({plan:{document:{}}})});
+ h.A.accept({token:'b'.repeat(64),expiresAt:'2099-01-01',member:{user_id:'new-owner'}});
+ pending.find(x=>x.action==='status').resolve({ok:false,status:401,json:async()=>({error:'login_required'})});await assert.rejects(startup);
+ assert.equal(JSON.parse(h.sessionStorage.getItem('gfield.roadmap.member.session.v1')).token,'b'.repeat(64));
+});
+test('startup with no valid local session performs no member or plan request',async()=>{
+ const h=api();assert.equal((await h.A.startup()).member,null);assert.equal(h.calls.length,0);
 });
 test('email proof and membership session use separate headers',async()=>{
  const h=api({saved:{token:'a'.repeat(64),expiresAt:'2099-01-01'}});

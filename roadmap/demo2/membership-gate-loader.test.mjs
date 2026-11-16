@@ -5,12 +5,12 @@ import {readFileSync} from 'node:fs';
 const code=readFileSync(new URL('./membership-gate.js',import.meta.url),'utf8');
 const defer=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
-function harness(count=3,early=0){
+function harness(count=3,early=0,delivery={}){
  const auth=defer(),prepare=defer(),scripts=[],events=[],timers=new Map(),classes=new Set(['member-checking']);let next=0;
  const node=tag=>({tag,children:[],textContent:'',removed:false,append(...x){this.children.push(...x);},appendChild(x){this.children.push(x);},replaceChildren(){this.children=[];},remove(){this.removed=true;},setAttribute(){}});
  const box=node('status'),name={value:''},menu=node('menu');
  const placeholders=Array.from({length:count},(_,i)=>({dataset:{memberSrc:`part-${i}.js`,...(i<early?{parentBoot:''}:{})}}));
- const document={hidden:false,documentElement:{classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}},getElementById:id=>id==='memberGateStatus'?box:name,querySelector:()=>menu,querySelectorAll:selector=>selector.startsWith('link')?[]:placeholders,createElement:node,addEventListener(){},body:{appendChild(s){scripts.push(s);events.push(`request:${s.src}`);}}};
+ const document={hidden:false,documentElement:{dataset:delivery,classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}},getElementById:id=>id==='memberGateStatus'?box:name,querySelector:()=>menu,querySelectorAll:selector=>selector.startsWith('link')?[]:placeholders,createElement:node,addEventListener(){},body:{appendChild(s){scripts.push(s);events.push(`request:${s.src}`);}}};
  const location={search:'',replace:x=>events.push('redirect:'+x),reload:()=>events.push('reload')};
  const window={PlannerStorage:{getItem:()=>null},RoadmapParentBoot:{mount:args=>{events.push('compact-entry');window.bootOptions=args;}},RoadmapCloud:{prepare:()=>{events.push('prepare');return prepare.promise;},mount:()=>events.push('mount')},addEventListener(){}};
  const result=vm.runInNewContext(code,{document,window,location,RoadmapMembership:{status:()=>auth.promise},setTimeout:(f,ms)=>{const id=++next;timers.set(id,{f,ms});return id;},clearTimeout:id=>timers.delete(id)});
@@ -69,4 +69,21 @@ test('a requested study deep link opens its full tools without showing a second 
 });
 test('failure of a compact dependency keeps the protected screen closed and never fetches tools',async()=>{
  const h=harness(5,2);await start(h);h.scripts[0].onerror();await h.result;assert.equal(h.classes.has('member-checking'),true);assert.equal(h.scripts.length,2);assert.equal(h.events.includes('compact-entry'),false);
+});
+test('verified entry assets download during cloud preparation but never mount before hydration',async()=>{
+ const h=harness(8,2);h.auth.resolve({user_id:'synthetic'});await tick();
+ assert.equal(h.scripts.length,2);h.scripts.forEach(s=>s.onload());await tick();
+ assert.equal(h.events.includes('compact-entry'),false);assert.equal(h.classes.has('member-checking'),true);
+ h.prepare.resolve();await h.result;assert.equal(h.events.includes('compact-entry'),true);
+});
+test('staged delivery loads one entry bundle and one ordered runtime bundle, each only once',async()=>{
+ const h=harness(125,7,{entryBundle:'planner-entry.hash.js',runtimeBundle:'planner-runtime.hash.js'});
+ await start(h);assert.equal(h.scripts.length,1);assert.equal(h.scripts[0].src,'planner-entry.hash.js');h.scripts[0].onload();await h.result;
+ assert.equal(h.events.includes('compact-entry'),true);const full=h.window.bootOptions.loadFull();await tick();
+ assert.equal(h.scripts.length,2);assert.equal(h.scripts[1].src,'planner-runtime.hash.js');assert.equal(h.scripts[1].async,false);h.scripts[1].onload();await full;
+ await h.window.bootOptions.loadFull();assert.equal(h.scripts.length,2);assert.equal(h.events.filter(e=>e==='mount').length,1);
+});
+test('an entry bundle error keeps member data closed and does not request the runtime bundle',async()=>{
+ const h=harness(125,7,{entryBundle:'planner-entry.hash.js',runtimeBundle:'planner-runtime.hash.js'});await start(h);h.scripts[0].onerror();await h.result;
+ assert.equal(h.classes.has('member-checking'),true);assert.equal(h.events.includes('compact-entry'),false);assert.equal(h.scripts.length,1);
 });
