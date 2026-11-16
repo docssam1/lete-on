@@ -1,12 +1,12 @@
 import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, typeById } from "./source-data.js?v=20261111g";
 import { remediationUrl } from "./result-diagnosis-data.js?v=20261116d";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
-import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
+import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261116a";
 import { productForExam, openExamIds, hasBank } from "./entrance-products.js?v=20261116b";
 
 // 입학 모의고사 고르기(원장 2026-11-14). 시험은 문제은행에 이미 있는 것 그대로(source-data.js):
 //   초1 입학 대비 = 7세 선발시험, 초2 입학 대비 = 초1 선발시험(원본 이미지·유형 대조가 끝난 것), 실전·파이널 모의고사.
-//   「O/X 채점·진단」 → result-diagnosis.html?exam=  (약점 유형 → 유사문제, 7세 선발시험은 합격 가능 반)
+//   「O/X 채점·진단」 → result-diagnosis.html?exam=  (약점 유형 → 유사문제, 선발시험은 합격 가능 반)
 //   「유사문제 만들기」 → 고르기 창(원장 2026-11-16 「문제별로 선택 · 문제 수 조절 · 더 어렵게 쉽게」) → 문제은행 시험지(3단계, 인쇄)
 //   「시험지 인쇄」    → 우리 시험지 모양으로 다시 짠 선발시험(selection-test-paper.html, 원장 2026-11-14) — 다시 짠 회차만
 // 선발시험(초1·초2 입학 대비)은 회차별 승인(원장 2026-11-16 「승인도 회차별로」, entrance-products.js) — 승인된 회차만 열린다.

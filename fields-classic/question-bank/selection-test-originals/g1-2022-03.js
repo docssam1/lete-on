@@ -2,7 +2,7 @@
 // 문제 글·수·배치는 원문(assets/selection-tests/g1-2022-03) 그대로, 그림은 우리 색표로 새로 그렸다. 정답은 두지 않는다.
 // 원문은 한 쪽에 네 문제(왼쪽 1·2, 오른쪽 3·4) — perPage 4. 답 칸이 두 줄인 문항(9·15·19)은 그림 아래에 답 줄을 직접 그린다.
 // 8번 가위는 단순한 그림으로 바꿨다. 20번 하늘색 상자는 우리 종이색 상자로 바꿨다.
-import { UT, esc, text, svg, box, line, conditionsBox, shape, ringed, cell, equation, equationWidth, balance, caption, f1 } from "./kit.js?v=20261114a";
+import { UT, esc, text, svg, box, line, conditionsBox, shape, ringed, cell, equation, equationWidth, balance, caption, f1, dim, DIM } from "./kit.js?v=20261116a";
 
 export const perPage = 4;
 
@@ -109,20 +109,18 @@ const q14 = () => {
   return svg(230, 230, "도형 표", out, 240);
 };
 
-// 15. 두 막대
+// 15. 두 막대 — 길이 표시는 스킬 gfield-textbook-design 4-3(위 32cm 전체, 아래 두 막대 각각 빈 칸 + cm)
 const q15 = () => {
   const A = UT.yellowSoft, B = UT.greenSoft;
-  const ga = 280 / 3, gb = 280 / 5;
+  const ga = 280 / 3, gb = 280 / 5, w = DIM.edge;
   let out = "";
-  for (let i = 0; i < 3; i += 1) out += cell(20 + i * ga, 8, ga, 38, "㉠", { fill: A, stroke: UT.ink });
-  for (let i = 0; i < 5; i += 1) out += cell(20 + i * gb, 46, gb, 38, "㉡", { fill: B, stroke: UT.ink });
+  for (let i = 0; i < 3; i += 1) out += cell(20 + i * ga, 8, ga, 38, "㉠", { fill: A, stroke: UT.ink, width: w });
+  for (let i = 0; i < 5; i += 1) out += cell(20 + i * gb, 46, gb, 38, "㉡", { fill: B, stroke: UT.ink, width: w });
   const x0 = 96;
-  out += `<path d="M${x0} 136 Q${f1(x0 + (ga + gb) / 2)} 104 ${f1(x0 + ga + gb)} 136" fill="none" stroke="${UT.line}" stroke-width="1.2" stroke-dasharray="4 3"/>` + `<rect x="${f1(x0 + (ga + gb) / 2 - 26)}" y="110" width="52" height="16" fill="#fff"/>` + text(x0 + (ga + gb) / 2, 118, "32cm", { size: 14, weight: 600 });
-  out += cell(x0, 136, ga, 38, "㉠", { fill: A, stroke: UT.ink }) + cell(x0 + ga, 136, gb, 38, "㉡", { fill: B, stroke: UT.ink });
-  out += `<path d="M${x0} 174 Q${f1(x0 + ga / 2)} 196 ${f1(x0 + ga)} 174" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>` + `<path d="M${f1(x0 + ga)} 174 Q${f1(x0 + ga + gb / 2)} 196 ${f1(x0 + ga + gb)} 174" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`;
-  out += box(x0 + ga / 2 - 22, 190, 34, 30, { fill: "#fff", stroke: UT.ink, width: 1.4, radius: 1 }) + text(x0 + ga / 2 + 26, 210, "cm", { size: 14, weight: 600 });
-  out += box(x0 + ga + gb / 2 - 14, 190, 34, 30, { fill: "#fff", stroke: UT.ink, width: 1.4, radius: 1 }) + text(x0 + ga + gb / 2 + 34, 210, "cm", { size: 14, weight: 600 });
-  return svg(320, 226, "두 막대의 길이 비교", out, 320);
+  out += dim(x0, 136, x0 + ga + gb, 136, -24, "32cm");
+  out += cell(x0, 136, ga, 38, "㉠", { fill: A, stroke: UT.ink, width: w }) + cell(x0 + ga, 136, gb, 38, "㉡", { fill: B, stroke: UT.ink, width: w });
+  out += dim(x0, 174, x0 + ga, 174, 18, "", { blank: true }) + dim(x0 + ga, 174, x0 + ga + gb, 174, 18, "", { blank: true });
+  return svg(320, 232, "두 막대의 길이 비교", out, 320);
 };
 
 // 16. 도형 식 상자

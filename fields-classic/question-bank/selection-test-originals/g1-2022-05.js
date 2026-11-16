@@ -2,7 +2,7 @@
 // 문제 글·수·배치는 원문(assets/selection-tests/g1-2022-05) 그대로, 그림은 우리 색표로 새로 그렸다. 정답은 두지 않는다.
 // 원문은 한 쪽에 네 문제(왼쪽 1·2, 오른쪽 3·4) — perPage 4. 답 칸이 그림 안에 있는 문항(5·7·8·10·12)은 원문처럼 「답」 줄이 없다.
 // 15번 가위는 단순한 그림으로 바꿨다. 원문 글 속 도형 ◎·▣·◈ 는 그림에서 같은 모양으로 그렸다.
-import { UT, esc, text, svg, box, line, conditionsBox, shape, ringed, cell, equation, equationWidth, balance, caption, f1 } from "./kit.js?v=20261114a";
+import { UT, esc, text, svg, box, line, conditionsBox, shape, ringed, cell, equation, equationWidth, balance, caption, f1, dim, DIM } from "./kit.js?v=20261116a";
 
 export const perPage = 4;
 
@@ -63,16 +63,6 @@ function curveArrow(x1, y1, qx, qy, x2, y2, color = UT.crease) {
 const paper = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${UT.paper}" stroke="${UT.paperLine}" stroke-width="1.6"/>`;
 const dashed = (x1, y1, x2, y2, color = UT.crease) => line(x1, y1, x2, y2, { stroke: color, width: 1.3, dash: "4 3" });
 const stepArrow = (x, y) => `<polygon points="${x},${y - 4} ${x + 10},${y - 4} ${x + 10},${y - 9} ${x + 18},${y} ${x + 10},${y + 9} ${x + 10},${y + 4} ${x},${y + 4}" fill="${UT.yellowSoft}" stroke="${UT.line}" stroke-width="1.2"/>`;
-// 치수 표시(점선 호 + 글자)
-function dimArc(x1, y1, x2, y2, bend, label, { lx, ly } = {}) {
-  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-  const nx = -(y2 - y1), ny = x2 - x1, len = Math.hypot(nx, ny) || 1;
-  const qx = mx + nx / len * bend, qy = my + ny / len * bend;
-  const tx = lx ?? (mx + nx / len * bend * 0.55), ty = ly ?? (my + ny / len * bend * 0.55);
-  const w = String(label).length * 8.5 + 10;
-  return `<path d="M${f1(x1)} ${f1(y1)} Q${f1(qx)} ${f1(qy)} ${f1(x2)} ${f1(y2)}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="4 3"/>`
-    + (label ? `<rect x="${f1(tx - w / 2)}" y="${f1(ty - 9)}" width="${f1(w)}" height="18" fill="#fff"/>${text(tx, ty, label, { size: 14, weight: 600 })}` : "");
-}
 
 // 2. 키 비교(말한 것 + 차례 표)
 const q2 = () => {
@@ -133,17 +123,15 @@ const q11 = () => {
   return svg(160, 148, "도형 덧셈식", out, 200);
 };
 
-// 12. 두 막대(㉠ 1개 = ㉡ 3개, 합 28cm)
+// 12. 두 막대(㉠ 1개 = ㉡ 3개, 합 28cm) — 길이 표시는 스킬 gfield-textbook-design 4-3
 const q12 = () => {
-  const A = UT.yellowSoft, B = UT.greenSoft, ga = 225, gb = 75, x0 = 14;
-  let out = cell(x0, 6, ga, 36, "㉠", { fill: A, stroke: UT.ink });
-  for (let i = 0; i < 3; i += 1) out += cell(x0 + i * gb, 42, gb, 36, "㉡", { fill: B, stroke: UT.ink });
+  const A = UT.yellowSoft, B = UT.greenSoft, ga = 225, gb = 75, x0 = 14, w = DIM.edge;
+  let out = cell(x0, 6, ga, 36, "㉠", { fill: A, stroke: UT.ink, width: w });
+  for (let i = 0; i < 3; i += 1) out += cell(x0 + i * gb, 42, gb, 36, "㉡", { fill: B, stroke: UT.ink, width: w });
   const y = 150;
-  out += dimArc(x0, y, x0 + ga, y, -30, "") + dimArc(x0 + ga, y, x0 + ga + gb, y, -24, "");
-  out += box(x0 + ga / 2 - 30, 106, 34, 28, { fill: "#fff", stroke: UT.ink, width: 1.4, radius: 1 }) + text(x0 + ga / 2 + 20, 121, "cm", { size: 14, weight: 600 });
-  out += box(x0 + ga + gb / 2 - 26, 106, 34, 28, { fill: "#fff", stroke: UT.ink, width: 1.4, radius: 1 }) + text(x0 + ga + gb / 2 + 24, 121, "cm", { size: 14, weight: 600 });
-  out += cell(x0, y, ga, 36, "㉠", { fill: A, stroke: UT.ink }) + cell(x0 + ga, y, gb, 36, "㉡", { fill: B, stroke: UT.ink });
-  out += dimArc(x0, y + 36, x0 + ga + gb, y + 36, 34, "28cm", { lx: x0 + (ga + gb) / 2, ly: y + 36 + 20 });
+  out += dim(x0, y, x0 + ga, y, -30, "", { blank: true }) + dim(x0 + ga, y, x0 + ga + gb, y, -16, "", { blank: true });
+  out += cell(x0, y, ga, 36, "㉠", { fill: A, stroke: UT.ink, width: w }) + cell(x0 + ga, y, gb, 36, "㉡", { fill: B, stroke: UT.ink, width: w });
+  out += dim(x0, y + 36, x0 + ga + gb, y + 36, 24, "28cm");
   return svg(330, 232, "두 막대의 길이 비교", out, 330);
 };
 
@@ -189,17 +177,17 @@ const q17 = () => {
   return svg(330, 130, "모양 쌓기 규칙", out, 330);
 };
 
-// 19. 직각으로 꺾인 도형
+// 19. 직각으로 꺾인 도형 — 길이 표시는 스킬 gfield-textbook-design 4-3(바깥 곡선 점선, 글자 자리에서 끊음)
 const q19 = () => {
   const s = 17, ox = 56, oy = 36;
   const P = (x, y) => [ox + x * s, oy + y * s];
   const pts = [[0, 0], [9, 0], [9, 3.2], [5, 3.2], [5, 7.2], [13, 7.2], [13, 10], [0, 10]].map(([x, y]) => P(x, y));
-  let out = `<polygon points="${pts.map(([x, y]) => `${f1(x)},${f1(y)}`).join(" ")}" fill="${UT.blueSoft}" stroke="${UT.ink}" stroke-width="1.8" stroke-linejoin="round"/>`;
-  out += dimArc(...P(0, 0), ...P(9, 0), -22, "9cm");
-  out += dimArc(...P(0, 10), ...P(0, 0), -26, "10cm");
-  out += dimArc(...P(5, 7.2), ...P(13, 7.2), -20, "8cm");
-  out += dimArc(...P(13, 10), ...P(0, 10), -24, "13cm");
-  return svg(300, 238, "직각으로 꺾인 도형", out, 300);
+  let out = `<polygon points="${pts.map(([x, y]) => `${f1(x)},${f1(y)}`).join(" ")}" fill="${UT.blueSoft}" stroke="${UT.ink}" stroke-width="${DIM.edge}" stroke-linejoin="round"/>`;
+  out += dim(...P(0, 0), ...P(9, 0), -22, "9cm");
+  out += dim(...P(0, 10), ...P(0, 0), -36, "10cm");
+  out += dim(...P(5, 7.2), ...P(13, 7.2), -20, "8cm");
+  out += dim(...P(13, 10), ...P(0, 10), -24, "13cm");
+  return svg(300, 248, "직각으로 꺾인 도형", out, 300);
 };
 
 // 20. 규칙 표

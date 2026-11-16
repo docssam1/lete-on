@@ -1,8 +1,8 @@
 // 7세 3차 선발시험(k7-2022-06) 원문을 우리 시험지로 다시 짠 것 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 문제 글·수·배치는 원문(assets/selection-tests/k7-2022-06) 그대로, 그림은 우리 색표로 새로 그렸다. 정답은 두지 않는다.
 // 5번 큐브 사진은 개수(5×4)만 같게 단순한 그림으로 바꿨다.
-import { conditionsBox } from "./kit.js?v=20261114a";
-import { ringSquares, splitTree, cellShape, runners, numTable, sumTables, shapeRow, arrowRule, foldPaper, ringBoxes, shapeSumTable, equationBoxes, squareGrowth, balances, shapeEquations, numberLine, stoneTriangles, cubes } from "./k7-parts.js?v=20261114a";
+import { conditionsBox } from "./kit.js?v=20261116a";
+import { ringSquares, splitTree, cellShape, runners, numTable, sumTables, shapeRow, arrowRule, foldPaper, ringBoxes, shapeSumTable, equationBoxes, squareGrowth, balances, shapeEquations, numberLine, stoneTriangles, cubes } from "./k7-parts.js?v=20261116a";
 
 export const perPage = 2;
 

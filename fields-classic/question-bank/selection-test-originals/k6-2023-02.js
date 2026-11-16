@@ -1,7 +1,7 @@
 // 7세 1차 선발시험(k6-2023-02) 원문을 우리 시험지로 다시 짠 것 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 문제 글·수·배치는 원문(assets/selection-tests/k6-2023-02) 그대로, 그림은 우리 색표로 새로 그렸다. 정답은 두지 않는다.
 // 2번 사탕 그림은 사탕 수만 같게 단순한 그림으로 바꿨다.
-import { UT, text, svg, line, cardsRow, conditionsBox, shape, ringed, cell, disc, mark, frame, blockArrow, arrow, plusMark, equation, balance, stone, caption, f1 } from "./kit.js?v=20261114a";
+import { UT, text, svg, line, cardsRow, conditionsBox, shape, ringed, cell, disc, mark, frame, blockArrow, arrow, plusMark, equation, balance, stone, caption, f1 } from "./kit.js?v=20261116a";
 
 export const perPage = 2;
 

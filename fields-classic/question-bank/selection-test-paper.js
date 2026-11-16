@@ -1,7 +1,7 @@
 import { EXAMS } from "./source-data.js?v=20261111g";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { productForExam, openExamIds } from "./entrance-products.js?v=20261116b";
-import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
+import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261116a";
 import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom, SELECTION_SAME_PAPER, answerVisualMarkup, workMarkup, isListVisual } from "./selection-answers.js?v=20261116e";
 
 // 선발시험 시험지(다시 짠 것) 보기·인쇄 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.

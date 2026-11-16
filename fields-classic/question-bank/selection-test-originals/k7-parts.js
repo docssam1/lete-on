@@ -1,6 +1,6 @@
 // 7세 2차·3차 선발시험(k7-2022-04 · k7-2022-06)이 같이 쓰는 그림 조각 — 두 회차는 문제 꼴이 같고 수만 다르다.
 // 공용 도구(kit.js)는 건드리지 않고 여기서만 더한다. 정답은 두지 않는다.
-import { UT, esc, text, svg, line, box, cardsRow, shape, ringed, cell, disc, frame, blockArrow, arrow, balance, stone, caption, f1 } from "./kit.js?v=20261114a";
+import { UT, esc, text, svg, line, box, cardsRow, shape, ringed, cell, disc, frame, blockArrow, arrow, balance, stone, caption, f1, dim, dimText, DIM } from "./kit.js?v=20261116a";
 
 const GRAY = "#f3efe6";
 
@@ -224,16 +224,11 @@ export function shapeEquations(rows) {
 export function numberLine(px, above, below) {
   const map = (x) => 30 + (x - 289) * 580 / 994;
   const X = px.map(map), y = 120, names = ["A", "B", "C", "D", "E", "F"];
-  let out = line(X[0], y, X[5], y, { width: 2 });
-  const arc = (a, b, ry, up, label) => {
-    const x1 = X[a], x2 = X[b], mx = (x1 + x2) / 2, ty = up ? y - ry : y + ry;
-    let s = `<path d="M${f1(x1)} ${y} A${f1((x2 - x1) / 2)} ${ry} 0 0 ${up ? 1 : 0} ${f1(x2)} ${y}" fill="none" stroke="${UT.line}" stroke-width="1.2" stroke-dasharray="4 3"/>`;
-    if (label === "□") s += `<rect x="${f1(mx - 18)}" y="${f1(ty - 12)}" width="36" height="24" fill="#fff" stroke="${UT.ink}" stroke-width="1.4"/>`;
-    else s += `<rect x="${f1(mx - 16)}" y="${f1(ty - 10)}" width="32" height="20" fill="#fff"/>` + text(mx, ty + 1, label, { size: 16, weight: 600 });
-    return s;
-  };
+  let out = line(X[0], y, X[5], y, { width: DIM.edge + 0.2 });
+  // 점 사이 거리: 바깥 곡선 점선 + 가운데 빈자리에 수(스킬 gfield-textbook-design 4-3)
+  const arc = (a, b, ry, up, label) => dim(X[a], y, X[b], y, up ? -ry : ry, label === "□" ? "" : label, { blank: label === "□", unit: "", boxW: 34, boxH: 24 });
   out += above.map(([a, b, ry, v]) => arc(a, b, ry, true, v)).join("") + below.map(([a, b, ry, v]) => arc(a, b, ry, false, v)).join("");
-  out += X.map((x, i) => `<circle cx="${f1(x)}" cy="${y}" r="4.5" fill="${UT.ink}"/>` + text(x + (i === 0 ? -6 : 6), y + 16, names[i], { size: 13, weight: 600 })).join("");
+  out += X.map((x, i) => `<circle cx="${f1(x)}" cy="${y}" r="4.5" fill="${UT.ink}"/>` + dimText(x + (i === 0 ? -6 : 6), y + 17, names[i], { size: 14 })).join("");
   return svg(640, 250, "수직선 위 여섯 점", out, 620);
 }
 

@@ -1,7 +1,7 @@
 // 7세 4차 선발시험(k7-2022-08) 원문을 우리 시험지로 다시 짠 것 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 문제 글·수·배치는 원문(assets/selection-tests/k7-2022-08) 그대로, 그림은 우리 색표로 새로 그렸다. 정답은 두지 않는다.
 // 10번 큐브 사진은 개수만 같게 단순한 큐브 그림으로 바꿨다. 9번 글의 「알맞을 수」는 「알맞은 수」로 바로잡았다.
-import { UT, text, svg, line, cardsRow, conditionsBox, shape, cell, disc, frame, blockArrow, balance, stone, caption, equation, f1 } from "./kit.js?v=20261114a";
+import { UT, text, svg, line, cardsRow, conditionsBox, shape, cell, disc, frame, blockArrow, balance, stone, caption, equation, f1, dim, dimText, DIM } from "./kit.js?v=20261116a";
 
 export const perPage = 2;
 
@@ -213,15 +213,10 @@ const q18 = () => {
 // 19. 수직선 위 거리
 const q19 = () => {
   const y = 120, P = { A: 30, B: 96, C: 184, D: 272, E: 521, F: 576 };
-  const arc = (a, b, h, label, up = true) => {
-    const x1 = P[a], x2 = P[b], mx = (x1 + x2) / 2, cy = up ? y - h : y + h, py = up ? y - h / 2 : y + h / 2;
-    const path = `<path d="M${x1} ${y} Q${mx} ${cy} ${x2} ${y}" fill="none" stroke="${UT.line}" stroke-width="1.2" stroke-dasharray="4 3"/>`;
-    if (label === "box") return path + `<rect x="${mx - 16}" y="${py - 30}" width="32" height="22" fill="#fff" stroke="${UT.ink}" stroke-width="1.4"/>`;
-    const w = String(label).length * 10 + 10;
-    return path + `<rect x="${mx - w / 2}" y="${py - 11}" width="${w}" height="22" fill="#fff"/>` + text(mx, py, label, { size: 16, weight: 600 });
-  };
+  // 점 사이 거리: 바깥 곡선 점선 + 가운데 빈자리에 수(스킬 gfield-textbook-design 4-3). h 는 예전 곡선 조절점 높이라 꼭대기는 h ÷ 2.
+  const arc = (a, b, h, label, up = true) => dim(P[a], y, P[b], y, up ? -h / 2 : h / 2, label === "box" ? "" : String(label), { blank: label === "box", unit: "", boxW: 34, boxH: 24 });
   let out = arc("A", "D", 100, 43) + arc("C", "E", 100, 52) + arc("E", "F", 50, "box") + arc("A", "C", 90, 25, false) + arc("B", "D", 100, 29, false) + arc("B", "F", 200, 79, false);
-  out += line(P.A, y, P.F, y, { width: 2 }) + Object.entries(P).map(([k, x]) => `<circle cx="${x}" cy="${y}" r="4" fill="${UT.ink}"/>` + text(x - 8, y + 14, k, { size: 13, weight: 600 })).join("");
+  out += line(P.A, y, P.F, y, { width: DIM.edge + 0.2 }) + Object.entries(P).map(([k, x]) => `<circle cx="${x}" cy="${y}" r="4" fill="${UT.ink}"/>` + dimText(x - 8, y + 15, k, { size: 14 })).join("");
   return svg(606, 230, "수직선 위 여섯 점", out, 600);
 };
 

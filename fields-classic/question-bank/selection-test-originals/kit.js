@@ -117,3 +117,40 @@ export const stone = (cx, cy, black, r = 9) => `<circle cx="${f1(cx)}" cy="${f1(
 
 // 「1번째」 같은 작은 꼬리표
 export const caption = (x, y, value, size = 12) => text(x, y, value, { size, weight: 600, fill: UT.ink });
+
+// ── 길이 표시(스킬 gfield-textbook-design 4-3 「시험지 수학 도형의 치수·각 표시」, 원장 2026-11-16)
+// 두 끝을 잇는 가는 바깥 곡선 점선 + 그 가운데 빈자리에 숫자·단위(또는 빈 답 칸 + 단위). 글자 자리에서는 점선을 실제로 끊는다
+// (흰 판으로 덮지 않는다 — 색칠한 도형 위에서도 깨끗하게). bend 는 곡선 꼭대기가 두 끝을 이은 선에서 떨어진 거리,
+// 부호는 (x1,y1)→(x2,y2) 진행 방향의 오른쪽(+)·왼쪽(−) — 왼쪽에서 오른쪽으로 그은 가로선이면 + 가 아래, − 가 위.
+export const DIM = Object.freeze({ stroke: UT.line, width: 0.6, dash: "3 2.4", edge: 0.95, font: "'FC Serif','Noto Serif KR',serif" });
+export const dimText = (x, y, value, { size = 15, anchor = "middle" } = {}) =>
+  `<text x="${f1(x)}" y="${f1(y)}" text-anchor="${anchor}" dominant-baseline="central" style="font-family:${DIM.font};font-size:${size}px;font-weight:400;fill:${UT.ink};text-anchor:${anchor};dominant-baseline:central;letter-spacing:0">${esc(value)}</text>`;
+export function dim(x1, y1, x2, y2, bend, label = "", { blank = false, unit = "cm", size = 15, boxW = 30, boxH = 26, gap = 5 } = {}) {
+  const len = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / len, ny = (x2 - x1) / len;
+  const cx = (x1 + x2) / 2 + nx * bend * 2, cy = (y1 + y2) / 2 + ny * bend * 2;
+  const at = (t) => [(1 - t) ** 2 * x1 + 2 * (1 - t) * t * cx + t * t * x2, (1 - t) ** 2 * y1 + 2 * (1 - t) * t * cy + t * t * y2];
+  const [mx0, my0] = at(0.5);
+  // 글자 자리(가운데 맞춤 상자)
+  const textW = (value) => [...String(value)].reduce((w, ch) => w + (/[0-9]/.test(ch) ? 0.58 : /[mwMW]/.test(ch) ? 0.88 : /[a-z]/i.test(ch) ? 0.6 : 0.95) * size, 0);
+  const unitW = blank && unit ? textW(unit) + 4 : 0;
+  const w = blank ? boxW + unitW : textW(label), h = blank ? boxH : size * 1.15;
+  // 짧은 구간(글자 폭이 구간의 60%를 넘으면)은 점선을 끊으면 끝만 남으므로, 점선은 그대로 두고 글자를 곡선 꼭대기 바로 바깥에 둔다.
+  const outside = (w + gap * 2) > len * 0.6, sgn = Math.sign(bend) || 1;
+  const reach = Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2 + 3;
+  const ax = outside ? mx0 + nx * sgn * reach : mx0, ay = outside ? my0 + ny * sgn * reach : my0;
+  let body = "";
+  if (blank) {
+    const bx = ax - w / 2;
+    body = `<rect x="${f1(bx)}" y="${f1(ay - boxH / 2)}" width="${boxW}" height="${boxH}" fill="#fff" stroke="${UT.ink}" stroke-width="${DIM.edge}"/>` + (unit ? dimText(bx + boxW + 4, ay + 1, unit, { size, anchor: "start" }) : "");
+  } else if (label) body = dimText(ax, ay + 1, label, { size });
+  // 점선이 글자 상자(+gap)에 들어가는 구간을 찾아 그 부분만 뺀다
+  const inside = (t) => { const [px, py] = at(t); return Math.abs(px - ax) <= w / 2 + gap && Math.abs(py - ay) <= h / 2 + gap; };
+  let t0 = 0.5, t1 = 0.5;
+  if (body && !outside) { while (t0 > 0 && inside(t0 - 0.002)) t0 -= 0.002; while (t1 < 1 && inside(t1 + 0.002)) t1 += 0.002; }
+  const piece = (ta, tb) => {
+    const [sx, sy] = at(ta), [ex, ey] = at(tb);
+    const qx = x1 * (1 - ta) * (1 - tb) + cx * ((1 - ta) * tb + ta * (1 - tb)) + x2 * ta * tb, qy = y1 * (1 - ta) * (1 - tb) + cy * ((1 - ta) * tb + ta * (1 - tb)) + y2 * ta * tb;
+    return `<path d="M${f1(sx)} ${f1(sy)} Q${f1(qx)} ${f1(qy)} ${f1(ex)} ${f1(ey)}" fill="none" stroke="${DIM.stroke}" stroke-width="${DIM.width}" stroke-dasharray="${DIM.dash}" stroke-linecap="round"/>`;
+  };
+  return (body && !outside ? piece(0, t0) + piece(t1, 1) : piece(0, 1)) + body;
+}

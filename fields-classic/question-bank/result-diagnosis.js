@@ -126,13 +126,15 @@ function textbookSummary(references) {
 
 // 합격 가능 반(원장 2026-11-16 「초1 모의고사 30점 주1회 낮은반 · 50 주1회 높은반 · 65 E2 · 80 E1 합격 가능」):
 // 초1 입학 대비 = 7세 선발시험(stage k…). 점수는 100점 만점(맞은 문항 ÷ 전체). 낮은 줄부터.
+// 원장 2026-11-16 「초1 선발 나머지 회차도 합격 가능 반 기준 넣어」 → 초1 선발시험(stage g1…, 초2 입학 대비)도 같은 줄.
 const PASS_LINES = [
   { score: 30, label: "주1회 낮은반" },
   { score: 50, label: "주1회 높은반" },
   { score: 65, label: "E2" },
   { score: 80, label: "E1" },
 ];
-const passLinesFor = (item) => (String(item?.stage || "").startsWith("k") ? PASS_LINES : null);
+const passGrade = (item) => { const stage = String(item?.stage || ""); return stage.startsWith("k") ? "초1" : stage.startsWith("g1") ? "초2" : ""; };
+const passLinesFor = (item) => (passGrade(item) ? PASS_LINES : null);
 function renderPass(analysis) {
   const lines = passLinesFor(exam);
   $("passSection").hidden = !lines;
@@ -142,7 +144,7 @@ function renderPass(analysis) {
   const reached = lines.filter((line) => score >= line.score).at(-1);
   const toGo = (line) => Math.ceil((line.score - score) / per);
   $("passVerdict").textContent = reached ? `${reached.label} 합격 가능` : `${lines[0].label}까지 ${toGo(lines[0])}문항`;
-  $("passNote").textContent = `초1 입학 기준 · 한 문항 ${Math.round(per * 10) / 10}점`;
+  $("passNote").textContent = `${passGrade(exam)} 입학 기준 · 한 문항 ${Math.round(per * 10) / 10}점`;
   $("passLadder").innerHTML = [...lines].reverse().map((line) => {
     const ok = score >= line.score;
     const here = reached === line;

@@ -1,7 +1,7 @@
 // 초1 4차 선발시험(g1-2022-02) 원문을 우리 시험지로 다시 짠 것 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 문제 글·수·배치는 원문(assets/selection-tests/g1-2022-02) 그대로, 그림은 우리 색표로 새로 그렸다. 정답은 두지 않는다.
 // 10번은 원문 문제지에도 「주어진 수」 목록이 빠져 있다(G1-2022-02-SOURCE-PRE-AUDIT.md) — 원문 그대로 두고 지어 넣지 않았다.
-import { UT, text, svg, line, box, conditionsBox, cardsRow, shape, ringed, cell, balance, stone, caption, f1 } from "./kit.js?v=20261114a";
+import { UT, text, svg, line, box, conditionsBox, cardsRow, shape, ringed, cell, balance, stone, caption, f1 } from "./kit.js?v=20261116a";
 
 export const perPage = 4;
 

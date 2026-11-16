@@ -1,7 +1,7 @@
 // 초1 3차 선발시험(g1-2019-08) 원문을 우리 시험지로 다시 짠 것 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
 // 문제 글·수·배치는 원문(assets/selection-tests/g1-2019-08) 그대로, 그림은 우리 색표로 새로 그렸다. 정답은 두지 않는다.
 // 원문에 답 칸 줄이 없는 회차라 답 줄도 두지 않았다(그림 속 빈 칸에 쓰는 문항은 그대로).
-import { UT, esc, text, svg, line, box, conditionsBox, shape, ringed, cell, disc, blockArrow, arrow, balance, caption, f1 } from "./kit.js?v=20261114a";
+import { UT, esc, text, svg, line, box, conditionsBox, shape, ringed, cell, disc, blockArrow, arrow, balance, caption, f1, dim, DIM } from "./kit.js?v=20261116a";
 
 export const perPage = 4;
 
@@ -20,8 +20,6 @@ function curvedArrow(x1, y1, cx, cy, x2, y2, color = UT.arrow) {
 function digitRow(cols, y, row, { s = 28, size = 17, stroke = UT.box } = {}) {
   return row.map((v, i) => (v === "box" ? box(cols[i] - s / 2, y - s / 2, s, s, { fill: "#fff", stroke, radius: 2 }) : v === "" ? "" : text(cols[i], y + 1, v, { size, weight: 600 }))).join("");
 }
-const dashed = (d) => `<path d="${d}" fill="none" stroke="${UT.line}" stroke-width="1.3" stroke-dasharray="4 3"/>`;
-const label = (x, y, value, size = 14) => `<rect x="${x - value.length * size * 0.32 - 4}" y="${y - size * 0.7}" width="${value.length * size * 0.64 + 8}" height="${size * 1.4}" fill="#fff"/>${text(x, y, value, { size, weight: 600 })}`;
 
 // 3. 저울 셋
 const q3 = () => {
@@ -64,21 +62,19 @@ const q8 = () => {
 
 // 9. ㉠막대·㉡막대
 const q9 = () => {
-  const bar = (x, y, w, h, value, fill) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${UT.line}" stroke-width="1.5"/>` + ringed(x + w / 2, y + h / 2, value);
+  const bar = (x, y, w, h, value, fill) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${UT.line}" stroke-width="${DIM.edge}"/>` + ringed(x + w / 2, y + h / 2, value);
   let out = [0, 1, 2, 3].map((i) => bar(50 + i * 65, 4, 65, 40, "ㄱ", UT.yellowSoft)).join("") + bar(50, 44, 260, 40, "ㄴ", UT.greenSoft);
   out += bar(20, 176, 65, 38, "ㄱ", UT.yellowSoft) + bar(85, 176, 260, 38, "ㄴ", UT.greenSoft);
-  out += dashed("M20 176 Q52 150 85 176") + dashed("M85 176 Q215 122 345 176") + dashed("M20 214 Q182 254 345 214");
-  out += box(26, 112, 32, 30, { fill: "#fff", stroke: UT.box, radius: 2 }) + text(76, 128, "cm", { size: 15, weight: 600 });
-  out += box(196, 104, 32, 30, { fill: "#fff", stroke: UT.box, radius: 2 }) + text(246, 120, "cm", { size: 15, weight: 600 });
-  out += label(182, 236, "35cm", 15);
+  // 길이 표시: 위는 두 막대 각각(빈 칸 + cm), 아래는 전체 35cm(스킬 gfield-textbook-design 4-3)
+  out += dim(20, 176, 85, 176, -18, "", { blank: true }) + dim(85, 176, 345, 176, -34, "", { blank: true }) + dim(20, 214, 345, 214, 22, "35cm");
   return svg(360, 252, "막대 그림", out, 340);
 };
 
 // 10. 정사각형 ㉮㉯㉰㉱
 const q10 = () => {
-  const sq = (x, y, w, mark) => `<rect x="${x}" y="${y}" width="${w}" height="${w}" fill="#fff" stroke="${UT.ink}" stroke-width="1.5"/>` + ringed(x + w / 2, y + w / 2, mark);
+  const sq = (x, y, w, mark) => `<rect x="${x}" y="${y}" width="${w}" height="${w}" fill="#fff" stroke="${UT.ink}" stroke-width="${DIM.edge}"/>` + ringed(x + w / 2, y + w / 2, mark);
   let out = sq(76, 6, 150, "가") + sq(226, 6, 100, "나") + sq(226, 106, 50, "다") + sq(276, 106, 50, "라");
-  out += dashed("M76 6 Q46 81 76 156") + label(40, 81, "12cm", 14);
+  out += dim(76, 156, 76, 6, -32, "12cm");
   return svg(334, 162, "정사각형 네 개", out, 330);
 };
 
@@ -137,9 +133,9 @@ const q15 = () => {
 // 16. 정사각형으로 만든 직사각형
 const q16 = () => {
   const s = 30, x = 50, y = 4;
-  const sq = (px, py, w, fill = "#fff") => `<rect x="${px}" y="${py}" width="${w}" height="${w}" fill="${fill}" stroke="${UT.ink}" stroke-width="1.5"/>`;
+  const sq = (px, py, w, fill = "#fff") => `<rect x="${px}" y="${py}" width="${w}" height="${w}" fill="${fill}" stroke="${UT.ink}" stroke-width="${DIM.edge}"/>`;
   let out = sq(x, y, 5 * s) + sq(x + 5 * s, y, 2 * s) + sq(x + 5 * s, y + 2 * s, 2 * s) + sq(x + 5 * s, y + 4 * s, s) + sq(x + 6 * s, y + 4 * s, s, UT.shade);
-  out += dashed(`M${x} ${y + 5 * s} Q${x + 3.5 * s} ${y + 5 * s + 44} ${x + 7 * s} ${y + 5 * s}`) + label(x + 3.5 * s, y + 5 * s + 26, "35cm", 15);
+  out += dim(x, y + 5 * s, x + 7 * s, y + 5 * s, 22, "35cm");
   return svg(310, 190, "정사각형으로 만든 직사각형", out, 300);
 };
 
