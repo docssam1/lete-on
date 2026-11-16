@@ -1,5 +1,5 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261116h5";
-import { GENERATORS } from "./generators.js?v=20261116h5";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261116h6";
+import { GENERATORS } from "./generators.js?v=20261116h6";
 import { saveRecord } from "./study-progress.js?v=20261111p";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
@@ -46,7 +46,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261116h5");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261116h6");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
@@ -1197,7 +1197,7 @@ function makeQuestions() {
     window.alert("문항을 끝까지 만들지 못했습니다. 같은 선택으로 다시 생성해 주세요.");
     return false;
   }
-  state.questions = questions;
+  state.questions = params.get("lead") === "1" ? withLeadSteps(questions) : questions;
   coverFresh = true;
   return true;
 }
@@ -1409,7 +1409,29 @@ function moveQuestion(fromIndex, toIndex) {
   refreshQuestions();
 }
 
+// 앞 단계(원장 2026-11-16 「접힌 부분 위치 찾기」 → 「그래」): 거꾸로 해결하기 문제(펼친 모양 → 접힌 종이에 자른 선)의 유사문제를 풀 때
+// 같은 접기로 「다 접은 종이가 펼친 종이의 몇 번 칸인지」를 먼저 묻고 바로 그 문제로 간다. 그림·접는 차례가 그 문제와 똑같다(foldSeq).
+const LEAD_STEPS = Object.freeze({ "c2-reverse-fold-line": "c2-fold-region-find", "c2-reverse-fold-shape": "c2-fold-region-find", "c2-reverse-fold-two": "c2-fold-region-find" });
+function leadStepFor(problem, index) {
+  const leadId = LEAD_STEPS[problem?.type?.id];
+  const folds = problem?.meta?.folds;
+  if (!leadId || !Array.isArray(folds)) return null;
+  const item = typeById(leadId);
+  const lead = item && generatedProblem(item, index, problem.reference, null, 0, problem.generationDifficulty, null, null, { foldSeq: folds });
+  if (!lead) return null;
+  if (problem.studyStage) applyStudyStage(lead, problem.studyStage, problem.bookRef ? `${problem.bookRef} 앞 단계` : "앞 단계");
+  lead.unitIndex = problem.unitIndex;
+  lead.leadStep = true;
+  return lead;
+}
+// 유사문제 학습지(&lead=1 — 덱의 유사문제 창·오답 유사문제)는 거꾸로 문제마다 앞 단계를 붙인다
+function withLeadSteps(questions) {
+  return questions.flatMap((problem, index) => { const lead = leadStepFor(problem, index); return lead ? [lead, problem] : [problem]; });
+}
+
 function replaceQuestion(index) {
+  // 앞 단계(위치 찾기)는 다음 거꾸로 문제의 접기를 그대로 따르므로, 앞 단계에서 누르면 둘을 함께 새로 만든다
+  if (state.questions[index]?.leadStep && state.questions[index + 1]) return replaceQuestion(index + 1);
   const current = state.questions[index];
   if (!current) return;
   if (current.generationCase?.mode === "source") return;
@@ -1430,6 +1452,12 @@ function replaceQuestion(index) {
   if (current.studyStage) applyStudyStage(replacement, current.studyStage, current.bookRef);
   replacement.unitIndex = current.unitIndex;
   state.questions[index] = replacement;
+  // 거꾸로 문제면 같은 접기의 앞 단계(위치 찾기)를 바로 앞에 둔다 — 이미 앞 단계가 있으면 새 접기에 맞춰 바꾼다
+  const lead = leadStepFor(replacement, index);
+  if (lead) {
+    if (state.questions[index - 1]?.leadStep) state.questions[index - 1] = lead;
+    else state.questions.splice(index, 0, lead);
+  }
   refreshQuestions();
 }
 

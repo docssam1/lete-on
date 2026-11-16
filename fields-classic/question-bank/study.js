@@ -1,6 +1,6 @@
-import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261116h5";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261116h5";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116h5";
+import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261116h6";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261116h6";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116h6";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261116g1";
@@ -757,7 +757,7 @@ function openSheet(button) {
   button.classList.add("is-seen");
   try { localStorage.setItem(seenKey, JSON.stringify([...seen])); } catch {}
   $("sheetTitle").textContent = `${ref} · 유사문제`;
-  $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: button.dataset.type, stage: button.dataset.stage, count: "1", build: "1", as: "student", embed: "1", ref: `${unitIndex + 1}단원 ${ref}` });
+  $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: button.dataset.type, stage: button.dataset.stage, count: "1", build: "1", as: "student", embed: "1", lead: "1", ref: `${unitIndex + 1}단원 ${ref}` });
   $("sheet").hidden = false;
   $("sheetClose").focus({ preventScroll: true });
   const line = sheetLine(ref);

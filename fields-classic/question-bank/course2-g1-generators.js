@@ -713,15 +713,17 @@ const c2ReverseFoldTwo = (o) => c2ReverseFoldCutGen({ ...o, folds: 2, mode: o.di
 
 // 18. 접힌 부분 위치 찾기 — 거꾸로 해결하기의 ② 단계만 따로(원장 2026-11-16 「접힌 부분 위치 찾기」):
 // 접는 차례를 보고, 다 접은 종이가 펼친 종이의 몇 번 칸에 놓이는지 고른다. 칸 = 다 접은 모양을 마지막 접는 선부터 거울에 비춰 붙인 조각들.
-function c2FoldRegionFind({ difficulty = 2 }) {
+// foldSeq: 거꾸로 문제의 앞 단계로 쓸 때(app.js LEAD_STEPS) 그 문제와 똑같은 접기·방향으로 그린다
+function c2FoldRegionFind({ difficulty = 2, foldSeq = null }) {
   const { KEEP, MIRROR, clip, foldLine, foldArrow } = foldGeometryHelpers();
-  const count = difficulty <= 1 ? 2 : 3;
-  const folds = sample(REVERSE_FOLDS[count]);
+  const lead = Array.isArray(foldSeq) && foldSeq.length >= 2;
+  const count = lead ? foldSeq.length : difficulty <= 1 ? 2 : 3;
+  const folds = lead ? foldSeq : sample(REVERSE_FOLDS[count]);
   const square = [P(0, 0), P(1, 0), P(1, 1), P(0, 1)];
   const stages = [square];
   for (const f of folds) stages.push(clip(stages[stages.length - 1], KEEP[f]));
   // 늘 같은 쪽(왼쪽 위)이 남지 않게 그림 전체를 돌리거나 뒤집는다(정사각형의 여덟 가지 대칭 중 하나)
-  const T = sample([(q) => q, (q) => P(1 - q.y, q.x), (q) => P(1 - q.x, 1 - q.y), (q) => P(q.y, 1 - q.x), (q) => P(1 - q.x, q.y), (q) => P(q.x, 1 - q.y), (q) => P(q.y, q.x), (q) => P(1 - q.y, 1 - q.x)]);
+  const T = lead ? (q) => q : sample([(q) => q, (q) => P(1 - q.y, q.x), (q) => P(1 - q.x, 1 - q.y), (q) => P(q.y, 1 - q.x), (q) => P(1 - q.x, q.y), (q) => P(q.x, 1 - q.y), (q) => P(q.y, q.x), (q) => P(1 - q.y, 1 - q.x)]);
   const last = stages[stages.length - 1];
   let pieces = [{ poly: last, home: true }];
   for (const f of [...folds].reverse()) pieces = [...pieces, ...pieces.map((piece) => ({ poly: piece.poly.map(MIRROR[f]), home: false }))];
@@ -751,7 +753,9 @@ function c2FoldRegionFind({ difficulty = 2 }) {
   shift += big + 8;
   const html = svg(shift, size + top + 8 + FOLD_CAPTION_SPACE, body, "접는 차례와 펼친 종이의 칸").replace('<svg class="c2-fig"', `<svg class="c2-fig fold-cut-draw-svg" ${foldWidthStyle(shift, size)}`);
   return {
-    prompt: `정사각형 색종이를 그림처럼 ${count}번 접었습니다. 다 접은 종이(${2 ** count}겹)는 펼친 종이의 몇 번 칸에 놓여 있나요?`,
+    prompt: lead
+      ? `먼저 다음 문제의 접기를 살펴봐요. 다 접은 종이(${2 ** count}겹)는 펼친 종이의 몇 번 칸에 놓여 있나요?`
+      : `정사각형 색종이를 그림처럼 ${count}번 접었습니다. 다 접은 종이(${2 ** count}겹)는 펼친 종이의 몇 번 칸에 놓여 있나요?`,
     visual: { kind: "c2", subtype: "fold-region", html, items: pieces.map((_, k) => String(k + 1)) },
     answer: String(answer),
     solution: `접을 때 움직이지 않는 쪽은 제자리에 남습니다. 첫 번째 접기에서 남는 쪽, 그 안에서 두 번째 접기에서 남는 쪽${count === 3 ? ", 세 번째 접기에서 남는 쪽" : ""}을 차례로 좁혀 가면 ${answer}번 칸입니다.`,

@@ -1,8 +1,8 @@
-import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261116h5";
-import { unitParts, partProblems } from "./study-map.js?v=20261116h5";
+import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261116h6";
+import { unitParts, partProblems } from "./study-map.js?v=20261116h6";
 import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261116g1";
-import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261116h5";
+import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261116h6";
 import { course2Html, course3Html } from "./course2-list.js?v=20261116g1";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
@@ -78,7 +78,7 @@ function renderDock() {
   const make = $("makeLink");
   make.setAttribute("aria-disabled", String(!size));
   make.textContent = size ? `유사문제 만들기 · ${size}문제` : "유사문제 만들기";
-  make.href = size ? link("index.html", { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), build: "1", as: "student",
+  make.href = size ? link("index.html", { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), build: "1", as: "student", lead: "1",
     title: `${book.label} ${view.unit + 1}단원 · 오답 유사문제`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit), ...(book.course ? { course: String(book.course) } : {}) })}` }) : "./index.html";
 }
 

@@ -1,5 +1,5 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
-import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261116h5";
+import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261116h6";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
