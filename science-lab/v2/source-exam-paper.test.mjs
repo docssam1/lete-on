@@ -74,11 +74,11 @@ test('이전 형식의 자동 판정 보류 원문도 확정 답 대신 검토 �
 });
 
 async function exam(mode,bank={},mod={}){
- const state={daily:0,key:0,authored:0,judge:0,scroll:0},app={innerHTML:''},list=[fixture()];
+ const state={daily:0,key:0,authored:0,wired:0,judge:0,scroll:0},app={innerHTML:''},list=[fixture()];
  const ctx=context({$app:app,BANK:{'fixture-unit':bank},assessmentPool,assessmentRelated,sourceExamPaperHtml,sourceExamPrintLinks,sourcePaperMode,wireSourceExamPaper:()=>()=>{},scrollTo:()=>state.scroll++,releasePage:()=>{},loadJudge:async()=>{state.judge++;return{};},du:x=>x,wireItem:()=>{}});
  const start=src.indexOf('async function pageExam('),end=src.indexOf('\n// 문제은행 전체 차례',start);
  const dynamic=async(spec)=>{
-  const values=spec.startsWith('./daily.js')?{mountDaily:args=>{state.daily++;state.args=args;return()=>{};},teacherKeyHtml:()=>{state.key++;return'기존 교사 답안';}}:{assessmentPaperHtml:()=>{state.authored++;return'기존 창작 문제지';}};
+  const values=spec.startsWith('./daily.js')?{mountDaily:args=>{state.daily++;state.args=args;return()=>{};},teacherKeyHtml:()=>{state.key++;return'기존 교사 답안';}}:spec.startsWith('./assessment-shared-template.js')?{wireAssessmentStudentExam:()=>{state.wired++;return()=>{};}}:{assessmentPaperHtml:()=>{state.authored++;return'기존 창작 문제지';}};
   const module=new vm.SyntheticModule(Object.keys(values),function(){for(const[k,v]of Object.entries(values))this.setExport(k,v);},{context:ctx});
   await module.link(()=>{});await module.evaluate();return module;
  };
@@ -89,14 +89,14 @@ async function exam(mode,bank={},mod={}){
 test('실제 원문 인쇄 라우트는 풀이·채점·저장을 시작하지 않고 문제지만 연다',async()=>{
  for(const mode of ['paper','paper-teacher']){
   const r=await exam(mode);
-  assert(r.html.includes('source-exam-paper'));assert.equal(r.daily,0);assert.equal(r.key,0);assert.equal(r.judge,0);assert.equal(r.scroll,1);
+  assert(r.html.includes('source-exam-paper'));assert.equal(r.daily,0);assert.equal(r.wired,0);assert.equal(r.key,0);assert.equal(r.judge,0);assert.equal(r.scroll,1);
   assert.equal(r.html.includes('가상 해설 문장'),mode==='paper-teacher');
  }
  const normal=await exam();assert.equal(normal.daily,1);
  assert(normal.args.tabs.includes('#/fixture-unit/exam/2/paper"'));assert(normal.args.tabs.includes('#/fixture-unit/exam/2/paper-teacher"'));
  const teacher=await exam('teacher');assert.equal(teacher.key,1);assert.equal(teacher.html,'기존 교사 답안');
  const authored=await exam('paper',{authored:1},{source:[],items:[{...fixture(),status:'authored',sourceRef:{type:'authored-assessment',set:2,no:3}}]});
- assert.equal(authored.authored,1);assert.equal(authored.html,'기존 창작 문제지');
+ assert.equal(authored.authored,1);assert.equal(authored.wired,1);assert.equal(authored.html,'기존 창작 문제지');
  let legacy=0;const specific=await exam('paper',{assessment51Print:true},{bankPaper:()=>{legacy++;return'기존 전용 문제지';}});
  assert.equal(legacy,1);assert.equal(specific.html,'기존 전용 문제지');
 });

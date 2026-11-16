@@ -1,9 +1,11 @@
+import {assessmentStudentExam,wireAssessmentStudentExam} from './assessment-shared-template.js?v=20261116-shared-exam-template';
 import {assessmentStudentPages} from './assessment-print-layout.js?v=20261116-assessment-language';
 // 네 단원 창작 기말104개를 학습 화면과 같은 객체·번호로 인쇄한다.
 import{sourceTableHtml,assessmentTitle}from'./source-presentation.js?v=20261116-assessment-language';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),circ='①②③④⑤';
 export const final41Answer=a=>a.type==='single-choice'?circ[a.answer]:a.type==='multi-choice'?a.answers.map(i=>circ[i]).join(', '):a.sample??a.answer;
-export function finalBankPaperHtml({unit,items,mode='student'}){
+export function finalBankPaperHtml({unit,items,mode='student',cols='1',pageNo=true}){
+ if(mode==='student')return assessmentStudentExam({unit,items,course:'초등 과학 4-1',title:unit.title,scope:unit.assessment.scope,prefix:'f41',cols,pageNo});
  const show=mode!=='student',only=mode==='answers',quick=mode==='quick';let number=0;
  const given=v=>sourceTableHtml(v?.caption==='가상 관찰 자료'?{...v,caption:'자료'}:v)||`<p>${esc(Array.isArray(v)?v.join(' / '):v)}</p>`;
  const card=q=>{const a=q.answerContract,n=++number,form=q.sourceRef.set===1?'A':'B';return `<article class="f41-question" data-paper-item="${esc(q.id)}"><p class="f41-prompt"><b>${n}.</b> ${esc(q.prompt)}</p>${show?`<p class="f41-ref">${form}형 ${q.sourceRef.no}번</p>`:''}${!only&&q.givens?Object.entries(q.givens).map(([k,v])=>`<div class="f41-given">${v?.머리?'':`<b>${esc(k)}</b>`}${given(v)}</div>`).join(''):''}${!only&&q.choices?`<div class="f41-choices">${q.choices.map((c,i)=>`<p>${circ[i]} ${esc(c)}</p>`).join('')}</div>`:''}${show?`<div class="f41-key"><p><b>${a.type==='written-explanation'?'예시 답':'정답'}:</b> ${esc(final41Answer(a))}</p><p>${esc(q.explanation)}</p>${a.rubric?`<p><b>확인 기준:</b> ${a.rubric.required.map(esc).join(' / ')}. 다른 타당한 표현은 선생님이 확인합니다.</p>`:''}</div>`:a.type==='short-text'?'<div class="f41-answer-line"></div>':a.type==='written-explanation'?'<div class="f41-answer-line"></div>'.repeat(3):''}</article>`;};
@@ -12,6 +14,7 @@ export function finalBankPaperHtml({unit,items,mode='student'}){
  return `<div class="final41-bank-paper gfield-ui"><nav class="f41-tools no-print" aria-label="기말평가 인쇄 도구"><a class="btn" href="#/${unit.id}/exam/1">A형 풀기</a><a class="btn" href="#/${unit.id}/exam/2">B형 풀기</a>${[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']].map(([m,l])=>`<a class="btn" href="#/${unit.id}/print/${m}"${m===mode?' aria-current="page"':''}>${l}</a>`).join('')}<button class="btn primary" data-f41-print disabled>A4 인쇄</button><p role="status" data-print-status>글꼴을 준비하고 있어요.</p></nav><div class="f41-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="f41-paper">${show?heading:''}${body}</main></div>`;
 }
 export function wireFinalBankPaper(root){
+ if(root.querySelector('.science-exam'))return wireAssessmentStudentExam(root);
  let active=true;const button=root.querySelector('[data-f41-print]'),status=root.querySelector('[data-print-status]');
  document.fonts.ready.then(()=>{if(!active||!root.isConnected)return;const overflow=[...root.querySelectorAll('.f41-question')].some(el=>el.scrollWidth>el.clientWidth+2);if(overflow){status.textContent='문항이 화면 밖으로 넘쳐요. 화면을 다시 열어 확인해 주세요.';return;}button.disabled=false;status.textContent='글꼴과 문항이 준비되었습니다.';}).catch(()=>{if(active&&root.isConnected)status.textContent='글꼴을 준비하지 못했어요. 다시 열어 주세요.';});
  const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};

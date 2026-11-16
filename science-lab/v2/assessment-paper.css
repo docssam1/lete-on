@@ -1,3 +1,4 @@
+@import url('./assessment-shared-template.css?v=20261116-shared-exam-template');
 @import url('./assessment-print-layout.css?v=20261116-assessment-language');
 .assessment-paper .ap-intro{font-size:14px;margin-bottom:16px}.assessment-paper .ap-intro p{margin:4px 0}
 @media print{@page assessment-a{size:A4;margin:16mm}@page assessment-b{size:A4;margin:16mm}.assessment-paper.ap-form-1{page:assessment-a}.assessment-paper.ap-form-2{page:assessment-b}.assessment-paper .ap-intro{font-family:Pretendard,sans-serif;font-size:9pt;break-inside:avoid}}

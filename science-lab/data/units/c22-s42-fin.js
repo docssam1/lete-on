@@ -5867,4 +5867,4 @@ const authoredItems = [
   }
 ];
 export const items=reviewedAssessmentItems(authoredItems);
-export {assessment42BankPaperHtml as bankPaper,wireAssessment42BankPaper as wireBankPaper} from '../../v2/assessment42-bank-paper.js?v=20261116-assessment-language';
+export {assessment42BankPaperHtml as bankPaper,wireAssessment42BankPaper as wireBankPaper} from '../../v2/assessment42-bank-paper.js?v=20261116-shared-exam-template';

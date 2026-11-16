@@ -1,9 +1,11 @@
+import {assessmentStudentExam,wireAssessmentStudentExam} from './assessment-shared-template.js?v=20261116-shared-exam-template';
 import {assessmentStudentPages} from './assessment-print-layout.js?v=20261116-assessment-language';
 // 두 단원 창작 중간72개를 학습 화면과 같은 객체·번호로 인쇄한다.
 import{sourceTableHtml,assessmentTitle}from'./source-presentation.js?v=20261116-assessment-language';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),circ='①②③④⑤';
 export const assessment42Answer=a=>a.type==='single-choice'?circ[a.answer]:a.type==='multi-choice'?a.answers.map(i=>circ[i]).join(', '):a.sample??a.answer;
-export function assessment42BankPaperHtml({unit,items,mode='student'}){
+export function assessment42BankPaperHtml({unit,items,mode='student',cols='1',pageNo=true}){
+ if(mode==='student')return assessmentStudentExam({unit,items,course:'초등 과학 4-2',title:unit.title,scope:unit.assessment.scope,prefix:'a42',cols,pageNo});
  const show=mode!=='student',only=mode==='answers',quick=mode==='quick';let number=0;
  const given=v=>sourceTableHtml(v?.caption==='가상 관찰 자료'?{...v,caption:'자료'}:v)||`<p>${esc(Array.isArray(v)?v.join(' / '):v)}</p>`;
  const card=q=>{const a=q.answerContract,n=++number,form=q.sourceRef.set===1?'A':'B';return `<article class="a42-question" data-paper-item="${esc(q.id)}"><p class="a42-prompt"><b>${n}.</b> ${esc(q.prompt)}</p>${show?`<p class="a42-ref">${form}형 ${q.sourceRef.no}번</p>`:''}${!only&&q.givens?Object.entries(q.givens).map(([k,v])=>`<div class="a42-given">${v?.머리?'':`<b>${esc(k)}</b>`}${given(v)}</div>`).join(''):''}${!only&&q.choices?`<div class="a42-choices">${q.choices.map((c,i)=>`<p>${circ[i]} ${esc(c)}</p>`).join('')}</div>`:''}${show?`<div class="a42-key"><p><b>${a.type==='written-explanation'?'예시 답':'정답'}:</b> ${esc(assessment42Answer(a))}</p><p>${esc(q.explanation)}</p>${a.rubric?`<p><b>확인 기준:</b> ${a.rubric.required.map(esc).join(' / ')}. 다른 타당한 표현은 선생님이 확인합니다.</p>`:''}</div>`:a.type==='short-text'?'<div class="a42-answer-line"></div>':a.type==='written-explanation'?'<div class="a42-answer-line"></div>'.repeat(3):''}</article>`;};
@@ -12,6 +14,7 @@ export function assessment42BankPaperHtml({unit,items,mode='student'}){
  return `<div class="assessment42-bank-paper gfield-ui"><nav class="a42-tools no-print" aria-label="학기평가 인쇄 도구"><a class="btn" href="#/${unit.id}/exam/1">A형 풀기</a><a class="btn" href="#/${unit.id}/exam/2">B형 풀기</a>${[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']].map(([m,l])=>`<a class="btn" href="#/${unit.id}/print/${m}"${m===mode?' aria-current="page"':''}>${l}</a>`).join('')}<button class="btn primary" data-a42-print disabled>A4 인쇄</button><p role="status" data-print-status>글꼴을 준비하고 있어요.</p></nav><div class="a42-watermark" aria-hidden="true">GFIELD · 지필드</div><main class="a42-paper">${show?heading:''}${body}</main></div>`;
 }
 export function wireAssessment42BankPaper(root){
+ if(root.querySelector('.science-exam'))return wireAssessmentStudentExam(root);
  let active=true;const button=root.querySelector('[data-a42-print]'),status=root.querySelector('[data-print-status]');
  document.fonts.ready.then(()=>{if(!active||!root.isConnected)return;const overflow=[...root.querySelectorAll('.a42-question')].some(el=>el.scrollWidth>el.clientWidth+2);if(overflow){status.textContent='문항이 화면 밖으로 넘쳐요. 화면을 다시 열어 확인해 주세요.';return;}button.disabled=false;status.textContent='글꼴과 문항이 준비되었습니다.';}).catch(()=>{if(active&&root.isConnected)status.textContent='글꼴을 준비하지 못했어요. 다시 열어 주세요.';});
  const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};

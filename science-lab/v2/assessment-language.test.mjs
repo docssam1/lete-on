@@ -44,8 +44,8 @@ test('the actual unit loader and both paper routes use the revised item while st
    const html=mod.bankPaper({...mod,mode});assert.deepEqual([...html.matchAll(/data-paper-item="([^"]+)"/g)].map(m=>m[1]),ids);
    assert(!html.includes('창작 학습 평가'));assert(!html.includes('<caption>가상 관찰 자료</caption>'));
    if(mode==='student'){
-    assert(!html.includes('class="a42-key"'));assert(!html.includes('class="f41-key"'));assert(!html.includes('공식 배점표'));assert(!html.includes('지필 응답과 저장'));assert(!html.includes('· 창작'));assert(html.includes('이름 ____________________'));assert(html.includes(' · A형</h1>'));assert(html.includes(' · B형</h1>'));
-    const pages=html.split('<section class="exam-page"').slice(1);assert.equal(pages.length,mod.items.length/2);
+    assert(!html.includes('class="a42-key"'));assert(!html.includes('class="f41-key"'));assert(!html.includes('공식 배점표'));assert(!html.includes('지필 응답과 저장'));assert(!html.includes('· 창작'));assert(html.includes('class="sheet-fields"'));assert(html.includes(' · A형</h1>'));assert(html.includes(' · B형</h1>'));
+    const pages=html.split('<section class="sheet exam-page"').slice(1);assert.equal(pages.length,mod.items.length/2);
     for(const page of pages)assert.equal((page.split('</footer>')[0].match(/data-paper-item=/g)||[]).length,2);
    }
   }

@@ -1,3 +1,4 @@
+@import url('./assessment-shared-template.css?v=20261116-shared-exam-template');
 @import url('./assessment-print-layout.css?v=20261116-assessment-language');
 .f41-tools{display:flex;flex-wrap:wrap;gap:8px;padding:16px;max-width:1000px;margin:auto}.f41-tools .btn{min-height:44px}.f41-tools p{width:100%;margin:0;color:var(--gf-muted)}
 .f41-figure{display:block;max-width:100%;max-height:76mm;width:auto;height:auto;margin:12px auto;object-fit:contain}.f41-figure.f41-tall{max-height:none}

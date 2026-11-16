@@ -5809,4 +5809,4 @@ export const items = [
     }
   }
 ];
-export {finalBankPaperHtml as bankPaper,wireFinalBankPaper as wireBankPaper} from '../../v2/final41-bank-paper.js?v=20261116-assessment-language';
+export {finalBankPaperHtml as bankPaper,wireFinalBankPaper as wireBankPaper} from '../../v2/final41-bank-paper.js?v=20261116-shared-exam-template';
