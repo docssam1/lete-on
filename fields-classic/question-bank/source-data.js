@@ -1,5 +1,5 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
-import { COURSE2_G1_TYPE_ROWS } from "./course2-g1-generators.js?v=20261116a";
+import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261116h4";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1951,7 +1951,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "number-baseball-b10": "0S 0B인 숫자를 먼저 지우고, 자리까지 맞는 숫자와 자리만 다른 숫자를 나눕니다.",
   "most-frequent-digit-b10": "각 숫자가 일·십·백의 자리에 나타나는 횟수를 따로 세어 더합니다.",
   "digit-occurrence-range-b10": "목표 숫자가 각 자리에 오는 수를 세고 두 자리에 함께 오는 수도 확인합니다.",
-  "positive-range-number-digit-count-b10": "한 자리·두 자리·세 자리 구간으로 나누어 쓰인 숫자 수를 더합니다."
+  "positive-range-number-digit-count-b10": "한 자리·두 자리·세 자리 구간으로 나누어 쓰인 숫자 수를 더합니다.",
+  ...COURSE2_G1_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4419,14 +4420,15 @@ const c2Unit = (label, activities, checks, advanced, practice, rows) => {
 };
 const C2_G1_UNITS = [
   c2Unit("색종이 접기와 뒤집기", [3, 5, 3], [4, 3, 4], 5, 21, [
-    ["activity", 1, [1, 2, 3], "three-fold-cut-line-book4"],
+    // 활동 1 = 거꾸로 해결하기: 펼친 모양을 보고 접힌 종이에 자른 선분(01·02)·모양(03)을 그린다
+    ["activity", 1, [1, 2], "c2-reverse-fold-line"], ["activity", 1, [3], "c2-reverse-fold-shape"],
     ["check", 1, [1], "fold-punch-shape-count"], ["check", 1, [2], "fold-hole-count"], ["check", 1, [3], "fold-diagonal-hole-count"], ["check", 1, [4], "practice-three-fold-hole-count"],
     ["activity", 2, [1], "c2-symmetry-axis-count"], ["activity", 2, [2], "shape-flip-composition"], ["activity", 2, [3], "c2-digital-mirror-count"], ["activity", 2, [4, 5], "c2-mirror-digital-clock"],
     ["check", 2, [1, 2], "digital-flip-addition-horizontal"], ["check", 2, [3], "digital-transform-arithmetic"],
     ["activity", 3, [1], "time-add-subtract-base60-b7"], ["activity", 3, [2, 3], "elapsed-time-analog-b7"],
     ["check", 3, [1, 2], "mirror-clock-reading-b7"], ["check", 3, [3, 4], "mirror-clock-elapsed-b7"],
     ["advanced", 1, [1], "c2-digital-mirror-count"], ["advanced", 1, [2, 4], "mirror-symmetric-clock-b7"], ["advanced", 1, [3], "mirror-clock-reading-b7"], ["advanced", 1, [5], "c2-clock-hand-angle"],
-    ["practice", 1, [1], "fold-cut-unfold-two-draw"], ["practice", 1, [2], "fold-cut-piece-count"], ["practice", 1, [3, 4, 5], "three-fold-cut-line-book4"],
+    ["practice", 1, [1], "fold-cut-unfold-two-draw"], ["practice", 1, [2], "fold-cut-piece-count"], ["practice", 1, [3, 4], "c2-reverse-fold-line"], ["practice", 1, [5], "c2-reverse-fold-two"],
     ["practice", 1, [6], "fold-punch-shape-count"], ["practice", 1, [7], "fold-hole-count"], ["practice", 1, [8], "fold-diagonal-hole-count"], ["practice", 1, [9], "practice-three-fold-hole-count"],
     ["practice", 1, [10], "shape-mirror-direction"], ["practice", 1, [11, 12], "c2-mirror-digital-clock"], ["practice", 1, [13, 14], "digital-flip-addition-horizontal"], ["practice", 1, [15], "digital-transform-arithmetic"],
     ["practice", 1, [16, 17, 20], "elapsed-time-analog-b7"], ["practice", 1, [18, 19], "mirror-clock-reading-b7"], ["practice", 1, [21], "mirror-clock-elapsed-b7"]

@@ -1,4 +1,4 @@
-import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, typeById } from "./source-data.js?v=20261116g1";
+import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, typeById } from "./source-data.js?v=20261116h4";
 import { remediationUrl } from "./result-diagnosis-data.js?v=20261116d";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261116a";

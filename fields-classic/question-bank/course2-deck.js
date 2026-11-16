@@ -6,15 +6,16 @@ import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261116a";
 import { BOARDS } from "./concept-boards.js?v=20261103d";
 
 const PROOF_TAGS = { g1: "20261115a" };   // proof.js의 BOOKS 꼬리표와 같게
-const DECK = { module: "./course2-deck.js?v=20261116b" };
+const DECK = { module: "./course2-deck.js?v=20261116h3" };
 
 // 권/단원 → 차시마다 [["board", 1과정 판서 열쇠] | ["proof", 논증 id, 제목] | ["lab", 도구, 이름] | ["geo", 지오메트리 게임 주소, 이름]]
 // board: 1과정에서 같은 내용을 가르치는 손글씨 판서와 그 판서의 게임을 그대로 쓴다(원장 2026-11-16 「설명도 없어」) — 2과정 본책 문제가 그 위에 쌓인다.
 // geo: 지오메트리 게임(원장 2026-11-16 「지오메트리의 색종이 게임 이상의 질이 나와야 돼」)
 export const SESSION_CONCEPTS = Object.freeze({
   "course-02-g1/0": [
-    [["board", "book-04/fold-cut-source"], ["board", "book-04/fold-hole-count"], ["geo", "../../geometry/games/paper-fold/index.html", "색종이 접어 자르기 게임"],
-      ["proof", "fold-cut-symmetry", "접어서 자르면 펼친 모양이 왜 대칭일까"]],
+    // 1차시 = 거꾸로 해결하기(원장 2026-11-16 「색종이 접기는 거꾸로 해결하기인 거 알지?」): 접어 자르기 → 종이가 모인 칸 찾기 → 접는 방법 거꾸로 찾기 게임 → 왜 대칭인지 → 구멍 세기
+    [["board", "book-04/fold-cut-source"], ["board", "book-04/fold-position-source"], ["geo", "../../geometry/games/paper-fold/index.html?level=3", "접는 방법 거꾸로 찾기 게임"],
+      ["proof", "fold-cut-symmetry", "접어서 자르면 펼친 모양이 왜 대칭일까"], ["board", "book-04/fold-hole-count"]],
     [["board", "book-01/mirror-reflection"], ["board", "book-04/digital-flip-source"]],
     [["board", "book-07/elapsed-time"], ["proof", "mirror-clock", "거울에 비친 시계로 진짜 시각을 왜 알 수 있을까"], ["lab", "clock", "시계 바늘 각"]]
   ],

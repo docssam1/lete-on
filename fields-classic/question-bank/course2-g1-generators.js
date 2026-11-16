@@ -3,6 +3,8 @@
 // 본책 문항 번호마다 어느 생성기를 쓰는지는 source-data.js COURSE2_CURRICULUM의 typeStudyRefs. 1과정 생성기로 같은 풀이가 되는 번호는 1과정 유형을 그대로 쓴다.
 // 답은 모두 그림을 만든 수에서 계산한다(세는 문제는 하나씩 세어 본다 — 공식만 믿지 않는다).
 
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261116g8";
+
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
 const shuffle = (items) => {
@@ -615,13 +617,111 @@ function c2RectangleGridCount({ difficulty = 2 }) {
   return problem({ prompt, subtype: "rectangle-count", html: svg(cols * s + pad * 2, rows * s + pad * 2, body, `${rows}×${cols} 모눈`), answer: `${answer}개`, solution, family: `rectangle-${kind}`, meta: { rows, cols, kind, answer } });
 }
 
+
+// 17. 거꾸로 해결하기 — 펼친 모양을 보고 접힌 색종이 위에 자른 선을 그린다(본책 1단원 활동 1 · 연습 3~5, 원장 2026-11-16 「색종이 접기는 거꾸로 해결하기인 거 알지?」).
+// 접을 때 움직이지 않는 쪽은 제자리에 있으므로, 펼치기 = 마지막 접는 선부터 차례로 거울에 비춰 붙이기(MIRROR). 답은 그렇게 만든 그림에서 거꾸로 읽는다.
+const REVERSE_FOLDS = { 3: [["v", "h", "d1"], ["d1", "d2", "v"], ["v", "vq", "h"]], 2: [["v", "h"], ["d1", "d2"], ["v", "vq"]] };
+const area = (poly) => Math.abs(poly.reduce((t, p, i) => { const q = poly[(i + 1) % poly.length]; return t + p.x * q.y - q.x * p.y; }, 0)) / 2;
+const lerpP = (a, b, t) => P(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+// 다각형을 꺾은 선(edge i 위 a → 안쪽 점들 → edge j 위 b)으로 둘로 나눈다
+function splitPolygon(poly, i, a, inner, j, b) {
+  const n = poly.length, walk = (from, to) => { const out = []; for (let k = (from + 1) % n; ; k = (k + 1) % n) { out.push(poly[k]); if (k === to) break; } return out; };
+  return [[a, ...inner, b, ...walk(j, i)], [b, ...[...inner].reverse(), a, ...walk(i, j)]];
+}
+function c2ReverseFoldCutGen({ difficulty = 2, folds: foldCount = null, mode = null }) {
+  const { KEEP, MIRROR, clip, foldLine, foldArrow } = foldGeometryHelpers();
+  const count = foldCount || (difficulty <= 1 ? 2 : 3);
+  const kind = mode || (difficulty >= 3 ? "shape" : "line");
+  const folds = sample(REVERSE_FOLDS[count]);
+  const square = [P(0, 0), P(1, 0), P(1, 1), P(0, 1)];
+  const stages = [square];
+  for (const f of folds) stages.push(clip(stages[stages.length - 1], KEEP[f]));
+  const last = stages[stages.length - 1];
+  // 자르는 선: 서로 다른 두 변 위의 점(꼭짓점 피함). 모양이면 안쪽 점 하나를 더 거쳐 꺾는다.
+  const n = last.length;
+  const i = randomInt(0, n - 1); let j = (i + randomInt(1, n - 1)) % n;
+  const a = lerpP(last[i], last[(i + 1) % n], sample([0.25, 0.5, 0.75])), b = lerpP(last[j], last[(j + 1) % n], sample([0.25, 0.5, 0.75]));
+  const center = P(last.reduce((t, p) => t + p.x, 0) / n, last.reduce((t, p) => t + p.y, 0) / n);
+  const inner = kind === "shape" ? [lerpP(lerpP(a, b, 0.5), center, sample([0.45, 0.6]))] : [];
+  const [p1, p2] = splitPolygon(last, i, a, inner, j, b);
+  const removed = area(p1) <= area(p2) ? p1 : p2;
+  if (area(removed) < 0.004 || Math.abs(area(p1) - area(p2)) < 1e-6) return null;
+  // 펼치기: 마지막 접는 선부터 거울에 비춰 붙인다
+  let pieces = [removed], cuts = [[a, ...inner, b]];
+  for (const f of [...folds].reverse()) {
+    pieces = [...pieces, ...pieces.map((poly) => poly.map(MIRROR[f]))];
+    cuts = [...cuts, ...cuts.map((line) => line.map(MIRROR[f]))];
+  }
+  // 그림
+  const size = 100, top = 6, gap = 44;
+  const fold = (stage, f, shift) => {
+    let out = "";
+    const seg = foldLine(stage, f);
+    if (seg) out += `<line x1="${f1(shift + seg[0].x * size)}" y1="${f1(top + seg[0].y * size)}" x2="${f1(shift + seg[1].x * size)}" y2="${f1(top + seg[1].y * size)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+    const arrow = foldArrow(stage, f);
+    if (arrow) out += foldArrowSvg(arrow.from, arrow.to, shift, top, size);
+    return out;
+  };
+  const poly2 = (poly, shift, attrs) => `<polygon points="${poly.map((q) => `${f1(shift + q.x * size)},${f1(top + q.y * size)}`).join(" ")}" ${attrs}/>`;
+  const path2 = (line, shift, attrs) => `<polyline points="${line.map((q) => `${f1(shift + q.x * size)},${f1(top + q.y * size)}`).join(" ")}" fill="none" ${attrs}/>`;
+  let shift = 8, body = "";
+  folds.forEach((f, index) => {
+    body += foldStageSvg(stages[index], { shift, top, size, index, fold: f }) + fold(stages[index], f, shift) + foldCaptionSvg(shift + size / 2, top + size + 22, index);
+    shift += size + 10; body += foldStepArrowSvg(shift, top + size / 2); shift += gap;
+  });
+  const drawAt = shift;
+  body += foldStageSvg(last, { shift, top, size, index: count }) + foldCaptionSvg(shift + size / 2, top + size + 22, count, "여기에 그리기");
+  shift += size + 10; body += foldStepArrowSvg(shift, top + size / 2); shift += gap;
+  const openAt = shift;
+  body += `<rect x="${openAt}" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`
+    + pieces.map((poly) => poly2(poly, openAt, `fill="#fff"`)).join("")   // 접는 선을 사이에 둔 조각은 한 구멍 — 선은 자른 자리에만 긋는다
+    + cuts.map((line) => path2(line, openAt, `stroke="#b03a5b" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"`)).join("")
+    + `<text x="${f1(openAt + size / 2)}" y="${top + size + 22}" font-size="13" font-weight="800" text-anchor="middle" fill="#7a4a44" font-family="'Noto Sans KR',sans-serif">펼친 모양</text>`;
+  shift += size + 8;
+  const html = svg(shift, size + top + 8 + FOLD_CAPTION_SPACE, body, "접은 색종이와 펼친 모양").replace('<svg class="c2-fig"', `<svg class="c2-fig fold-cut-draw-svg" ${foldWidthStyle(shift, size)}`);
+  // 정답 그림: ① 펼친 종이에 접는 선 ② 종이가 모인 칸(색) ③ 그 칸 안의 자른 선 ④ 접힌 종이 위의 자른 선
+  const creases = [];
+  stages.slice(0, -1).forEach((stage, k) => { const seg = foldLine(stage, folds[k]); if (!seg) return; let segs = [seg]; for (const f of folds.slice(0, k).reverse()) segs = [...segs, ...segs.map((s2) => s2.map(MIRROR[f]))]; creases.push(...segs); });
+  const A = 8, B = A + size + 50;
+  let ans = `<rect x="${A}" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`
+    + poly2(last, A, `fill="#ffe98a" opacity="0.85"`)
+    + creases.map(([u, v]) => `<line x1="${f1(A + u.x * size)}" y1="${f1(top + u.y * size)}" x2="${f1(A + v.x * size)}" y2="${f1(top + v.y * size)}" stroke="#d4756c" stroke-width="1.3" stroke-dasharray="5 4"/>`).join("")
+    + pieces.map((poly) => poly2(poly, A, `fill="#fff"`)).join("")
+    + cuts.map((line) => path2(line, A, `stroke="#b03a5b" stroke-width="1.5" stroke-linejoin="round"`)).join("")
+    + path2([a, ...inner, b], A, `stroke="#c0392b" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"`)
+    + `<text x="${A + size / 2}" y="${top + size + 22}" font-size="13" font-weight="800" text-anchor="middle" fill="#7a4a44" font-family="'Noto Sans KR',sans-serif">모인 칸(노랑) 찾기</text>`
+    + foldStepArrowSvg(A + size + 10, top + size / 2)
+    + foldStageSvg(last, { shift: B, top, size, index: count })
+    + path2([a, ...inner, b], B, `stroke="#c0392b" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"`)
+    + `<text x="${B + size / 2}" y="${top + size + 22}" font-size="13" font-weight="800" text-anchor="middle" fill="#7a4a44" font-family="'Noto Sans KR',sans-serif">접힌 종이에 옮기기</text>`;
+  const ansHtml = svg(B + size + 14, size + top + 8 + FOLD_CAPTION_SPACE, ans, "거꾸로 찾은 자른 선");
+  return {
+    prompt: kind === "shape"
+      ? `정사각형 색종이를 ${count}번 접은 뒤, 접힌 종이 위에 모양을 그려 그 선을 따라 잘랐습니다. 펼쳤더니 오른쪽과 같았습니다. 접힌 색종이 위에 자른 모양을 그리세요.`
+      : `정사각형 색종이를 ${count}번 접은 뒤, 접힌 종이 위에 선분 하나를 긋고 따라 잘랐습니다. 펼쳤더니 오른쪽과 같았습니다. 접힌 색종이 위에 그은 선분을 그리세요.`,
+    visual: { kind: "c2", subtype: "reverse-fold-cut", html },
+    answer: "그림 답안",
+    answerVisual: { kind: "c2", subtype: "reverse-fold-cut", html: ansHtml },
+    responseKind: "drawing",
+    solution: `거꾸로 생각합니다. ① 펼친 종이에 접는 선을 접은 차례대로 그려 칸을 나눕니다. ② 마지막에 종이가 모인 칸(접힌 모양과 같은 칸)을 찾습니다. ③ 펼친 모양에서 그 칸 안에 있는 자른 선만 봅니다. ④ 그 선을 접힌 종이 위 같은 자리에 그립니다. 펼친 모양의 자른 선이 접는 선마다 거울처럼 되풀이되는 것은, 그 선 하나가 ${2 ** count}겹을 한꺼번에 잘랐기 때문입니다.`,
+    meta: { family: `reverse-fold-${kind}`, folds, count, answer: "그림 답안" }
+  };
+}
+const c2ReverseFoldLine = (o) => c2ReverseFoldCutGen({ ...o, folds: 3, mode: "line" });
+const c2ReverseFoldShape = (o) => c2ReverseFoldCutGen({ ...o, folds: 3, mode: "shape" });
+const c2ReverseFoldTwo = (o) => c2ReverseFoldCutGen({ ...o, folds: 2, mode: o.difficulty >= 3 ? "shape" : "line" });
+
 export const COURSE2_G1_GENERATORS = {
+  c2ReverseFoldLine, c2ReverseFoldShape, c2ReverseFoldTwo,
   c2DigitalMirrorCount, c2DigitalHalfTurnCount, c2MirrorDigitalClock, c2SymmetryAxisCount, c2CircleSectorAngle, c2TriangleAngle,
   c2RegularPolygonAngle, c2JoinedPolygonAngle, c2ClockHandAngle, c2CircleRadiusPerimeter, c2InscribedMidpoint,
   c2GridRightTriangleCount, c2CirclePointTriangles, c2DotTriangleCount, c2QuadInclusion, c2DotSquareCount, c2RectangleGridCount
 };
 // 유형 표(source-data.js가 TYPES에 붙인다): [id, 영역, 중분류, 이름, 생성기]
 export const COURSE2_G1_TYPE_ROWS = [
+  ["c2-reverse-fold-line", "geometry", "색종이 접기", "펼친 모양을 보고 접힌 종이에 자른 선분 그리기(거꾸로)", "c2ReverseFoldLine"],
+  ["c2-reverse-fold-shape", "geometry", "색종이 접기", "펼친 모양을 보고 접힌 종이에 자른 모양 그리기(거꾸로)", "c2ReverseFoldShape"],
+  ["c2-reverse-fold-two", "geometry", "색종이 접기", "두 번 접어 자른 모양을 거꾸로 찾기", "c2ReverseFoldTwo"],
   ["c2-digital-mirror-count", "number", "디지털 숫자 대칭", "거울에 비추어도 같은 디지털 수 세기", "c2DigitalMirrorCount"],
   ["c2-digital-half-turn-count", "number", "디지털 숫자 대칭", "반 바퀴 돌려도 같은 디지털 수 세기", "c2DigitalHalfTurnCount"],
   ["c2-mirror-digital-clock", "geometry", "거울 시계", "거울에 비친 디지털 시계의 실제 시각", "c2MirrorDigitalClock"],
@@ -640,3 +740,27 @@ export const COURSE2_G1_TYPE_ROWS = [
   ["c2-dot-square-count", "geometry", "도형 세기", "점판에서 정사각형 세기", "c2DotSquareCount"],
   ["c2-rectangle-grid-count", "geometry", "도형 세기", "모눈에서 사각형 세기", "c2RectangleGridCount"]
 ];
+
+// 유형마다 「핵심 방법」 한 줄(학습지 문항 머리의 풀이 원리 칸 — source-data.js TEXTBOOK_CONCEPT_GUIDES에 합친다)
+export const COURSE2_G1_GUIDES = Object.freeze({
+  "c2-reverse-fold-line": "거꾸로 생각합니다 — 펼친 종이에 접는 선을 차례대로 그려 칸을 나누고, 종이가 모인 칸 안의 자른 선만 접힌 종이에 옮깁니다.",
+  "c2-reverse-fold-shape": "거꾸로 생각합니다 — 접는 선으로 칸을 나누고, 종이가 모인 칸 안에 있는 자른 모양만 골라 접힌 종이에 옮깁니다.",
+  "c2-reverse-fold-two": "두 번 접으면 4겹 — 접는 선 두 개로 네 칸을 나누고, 종이가 모인 한 칸의 자른 선만 접힌 종이에 옮깁니다.",
+  "c2-digital-mirror-count": "거울에 비치면 숫자의 차례가 거꾸로 되고 2와 5가 바뀝니다. 앞뒤 자리를 짝지어 셉니다.",
+  "c2-digital-half-turn-count": "반 바퀴 돌리면 차례가 거꾸로 되고 6과 9가 바뀝니다. 앞뒤 자리를 짝지어 셉니다.",
+  "c2-mirror-digital-clock": "거울 속 시계를 다시 좌우로 뒤집어(거꾸로) 원래 시각을 읽습니다.",
+  "c2-symmetry-axis-count": "접어서 완전히 겹치는 선만 대칭축입니다. 도형마다 세어 더합니다.",
+  "c2-circle-sector-angle": "원의 가운데를 한 바퀴 도는 각은 360°입니다.",
+  "c2-triangle-angle": "삼각형의 세 각을 모으면 180°, 이등변삼각형은 두 밑각이 같습니다.",
+  "c2-regular-polygon-angle": "한 꼭짓점에서 대각선을 그어 삼각형으로 나누면 내각의 합 = 180 × (변의 수 − 2)입니다.",
+  "c2-joined-polygon-angle": "한 점을 도는 각 360°에서 두 정다각형의 한 내각을 뺍니다.",
+  "c2-clock-hand-angle": "긴바늘은 1분에 6°, 짧은바늘은 1분에 0.5°씩 돕니다.",
+  "c2-circle-radius-perimeter": "원의 가운데에서 원 위까지는 모두 반지름이라 길이가 같습니다.",
+  "c2-inscribed-midpoint": "직사각형의 대각선은 원의 지름, 가운데 점을 이은 선은 대각선의 반 = 반지름입니다.",
+  "c2-grid-right-triangle-count": "작은 삼각형 하나짜리부터 크기별로 나누어 빠짐없이 셉니다.",
+  "c2-circle-point-triangles": "꼭대기 점을 정하고 양쪽으로 같은 칸만큼 떨어진 두 점을 고릅니다.",
+  "c2-dot-triangle-count": "같은 길이가 어느 두 변인지 세 경우로 나누어 셉니다.",
+  "c2-quad-inclusion": "정사각형 ⊂ 직사각형·마름모 ⊂ 평행사변형 ⊂ 사다리꼴 — 안쪽은 바깥이라 할 수 있지만 거꾸로는 안 됩니다.",
+  "c2-dot-square-count": "반듯한 정사각형을 크기별로 세고, 그 안에 든 기울어진 정사각형을 더합니다.",
+  "c2-rectangle-grid-count": "가로선 두 개와 세로선 두 개를 고르면 사각형 하나가 생깁니다."
+});

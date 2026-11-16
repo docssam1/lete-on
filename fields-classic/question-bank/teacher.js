@@ -1,4 +1,4 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261116g1";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261116h4";
 import { checkSession, loadClass, logout, weekRate, memberCall } from "./study-progress.js?v=20261111p";
 import { initAdmin } from "./teacher-admin.js?v=20261116a";
 import { initAccess, refreshAccess, setRecords } from "./teacher-access.js?v=20261116a";
