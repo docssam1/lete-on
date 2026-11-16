@@ -38,6 +38,7 @@ on:
       - 'world-explorer/**'
       - 'yubin-yujun-store/**'
       - 'gfield-on-admin.html'
+      - 'config.js'
       - '.github/pages-index.html'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
@@ -164,6 +165,7 @@ jobs:
           cp -R world-explorer/. _site/world-explorer/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/
           cp gfield-on-admin.html _site/gfield-on-admin.html
+          cp config.js _site/config.js
           cp .github/pages-index.html _site/index.html
           cp reading-world/robots.txt _site/robots.txt
       - name: Configure Pages

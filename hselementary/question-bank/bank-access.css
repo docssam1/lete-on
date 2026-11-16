@@ -1,0 +1,12 @@
+.bank-access-gate[hidden]{display:none}
+.bank-access-gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(243,245,244,.97)}
+.bank-access-card{width:min(420px,100%);padding:28px;border:1px solid #aebcbd;border-radius:4px;background:#fff;color:#17333f;box-shadow:0 16px 42px rgba(19,43,54,.15)}
+.bank-access-card h2{margin:8px 0;font-size:22px}
+.bank-access-card p{color:#52666c;font-size:13px;line-height:1.6}
+.bank-access-card label{display:block;margin:18px 0 6px;font-size:12px;font-weight:800}
+.bank-access-card input{width:100%;min-height:44px;padding:0 12px;border:1px solid #aebcbd;border-radius:2px;font:inherit;letter-spacing:.12em}
+.bank-access-card button{width:100%;min-height:44px;margin-top:10px;border:0;border-radius:2px;background:#1f607d;color:#fff;font:inherit;font-weight:800;cursor:pointer}
+.bank-access-card button:disabled{opacity:.6;cursor:wait}
+.bank-access-message{min-height:20px;margin-bottom:0}
+.bank-access-message[data-state="error"]{color:#a2382a}
+.bank-access-message[data-state="success"]{color:#246b5c}

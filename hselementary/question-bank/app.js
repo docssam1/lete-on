@@ -3,7 +3,8 @@
   const generatorApi = window.HSE_GENERATORS;
   const mathNotation = window.HSE_MATH_NOTATION;
   const identityApi = window.HSE_IDENTITY;
-  if (!curriculum || !generatorApi || !mathNotation || !identityApi) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
+  const bankAccess = window.HSE_BANK_ACCESS;
+  if (!curriculum || !generatorApi || !mathNotation || !identityApi || !bankAccess) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
 
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
@@ -402,13 +403,30 @@
     renderSummary();
   }
 
+  function updateApprovalButtons() {
+    $("gradeFilter").querySelectorAll("button[data-grade]").forEach(button => {
+      button.disabled = ![1, 2].some(term => bankAccess.canAccess(Number(button.dataset.grade), term));
+    });
+    $("termFilter").querySelectorAll("button[data-term]").forEach(button => {
+      button.disabled = !bankAccess.canAccess(state.grade, Number(button.dataset.term));
+    });
+  }
+
   function bindSegment(containerId, dataKey, stateKey, transform = value => value) {
     $(containerId).addEventListener("click", event => {
       const button = event.target.closest(`button[data-${dataKey}]`);
-      if (!button) return;
-      state[stateKey] = transform(button.dataset[dataKey]);
+      if (!button || button.disabled) return;
+      const nextValue = transform(button.dataset[dataKey]);
+      if ((stateKey === "grade" && ![1, 2].some(term => bankAccess.canAccess(nextValue, term)))
+        || (stateKey === "term" && !bankAccess.canAccess(state.grade, nextValue))) return;
+      state[stateKey] = nextValue;
+      if (stateKey === "grade" && !bankAccess.canAccess(state.grade, state.term)) {
+        state.term = bankAccess.allowedPairs().find(pair => pair.grade === state.grade)?.term ?? state.term;
+        refreshSegments("termFilter", "term", state.term);
+      }
       refreshSegments(containerId, dataKey, state[stateKey]);
       if (stateKey === "grade" || stateKey === "term") {
+        updateApprovalButtons();
         state.unitId = "";
         renderUnitOptions();
         renderCatalog();
@@ -416,10 +434,11 @@
         renderCatalog();
       }
     });
+    updateApprovalButtons();
   }
 
   function buildQuestions() {
-    const selected = selectedQuestionTypes().filter(type => type?.generator && !type.reviewLocked);
+    const selected = selectedQuestionTypes().filter(type => type?.generator && !type.reviewLocked && bankAccess.canAccess(type.grade, type.term));
     if (!selected.length) return;
     const plannedTypes = plannedQuestionTypes(selected);
     if (!plannedTypes.length) return;
@@ -975,6 +994,25 @@
   const params = new URLSearchParams(location.search);
   const requestedDifficulty = Number(params.get("difficulty"));
   if ([-1, 0, 1].includes(requestedDifficulty)) state.difficulty = requestedDifficulty;
+  const initialPair = bankAccess.firstAllowedPair();
+  if (initialPair) {
+    state.grade = initialPair.grade;
+    state.term = initialPair.term;
+    refreshSegments("gradeFilter", "grade", state.grade);
+    refreshSegments("termFilter", "term", state.term);
+  }
+  updateApprovalButtons();
+  document.addEventListener("hse-bank-access-ready", () => {
+    const pair = bankAccess.firstAllowedPair();
+    if (!pair) return;
+    state.grade = pair.grade;
+    state.term = pair.term;
+    refreshSegments("gradeFilter", "grade", state.grade);
+    refreshSegments("termFilter", "term", state.term);
+    updateApprovalButtons();
+    renderUnitOptions();
+    renderCatalog();
+  });
   const identity = identityApi.resolve({
     session: window.HSELEMENTARY_SESSION || window.GFIELD_SESSION,
     access: window.HSELEMENTARY_ACCESS,
@@ -990,7 +1028,7 @@
   studentNameInput.dataset.nameEditPermission = identity.canEditName ? "granted" : "locked";
   studentNameInput.title = identity.canEditName ? "관리자가 학생 이름 변경을 허용했습니다." : "로그인한 이름이 자동으로 적용됩니다.";
   const reviewType = sourceQuestionType(typeById.get(params.get("type")));
-  if (reviewType?.generator && !reviewType.reviewLocked) {
+  if (reviewType?.generator && !reviewType.reviewLocked && bankAccess.canAccess(reviewType.grade, reviewType.term)) {
     state.level = "simwha";
     state.grade = reviewType.grade;
     state.term = reviewType.term;

@@ -9,14 +9,20 @@ const directory = path.resolve(process.argv[2] || "");
 if (!process.argv[2] || !fs.existsSync(path.join(directory, "index.html"))) throw new Error("Pass the staged question-bank directory.");
 const indexPath = path.join(directory, "index.html");
 const html = fs.readFileSync(indexPath, "utf8");
-const pattern = /<script defer src="(\.\/[^"?]+\.js)(?:\?[^"#]*)?"><\/script>/g;
+const pattern = /<script defer src="(\.\/[^"?]+\.js|\.\.\/\.\.\/config\.js)(?:\?[^"#]*)?"><\/script>/g;
 const matches = [...html.matchAll(pattern)];
 const allScripts = [...html.matchAll(/<script\b[^>]*>/g)];
-if (!matches.length || matches.length !== allScripts.length) throw new Error("Scripts must be local deferred scripts with no inline scripts.");
+if (!matches.length || matches.length !== allScripts.length) throw new Error("Scripts must be local deferred scripts or the staged root config.js, with no inline scripts.");
 const entries = matches.map(match => {
-  const name = match[1].slice(2);
-  if (path.basename(name) !== name) throw new Error(`Script must be alongside index.html: ${name}`);
-  const code = fs.readFileSync(path.join(directory, name), "utf8");
+  const source = match[1];
+  const isRootConfig = source === "../../config.js";
+  const name = isRootConfig ? source : source.slice(2);
+  if (!isRootConfig && path.basename(name) !== name) throw new Error(`Script must be alongside index.html: ${name}`);
+  const scriptPath = path.resolve(directory, name);
+  if (isRootConfig && path.relative(path.resolve(directory, "../.."), scriptPath) !== "config.js") {
+    throw new Error(`Root config path resolves outside the staged site: ${source}`);
+  }
+  const code = fs.readFileSync(scriptPath, "utf8");
   new vm.Script(code, { filename: name });
   const start = code.replace(/^\uFEFF/, "").replace(/^(?:(?:\s+)|(?:\/\/[^\n]*(?:\n|$))|(?:\/\*[\s\S]*?\*\/))*/, "");
   const iife = /^(?:\(function\b|\(\(\)|\(\s*async\b|!function\b)/.test(start);
