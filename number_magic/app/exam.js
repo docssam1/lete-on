@@ -7735,6 +7735,10 @@ function visibleKey(p){
   if(W2_C0&&p.widget==='g13OrdPaint'&&Array.isArray(p.rows)) return 'ord:'+p.total+':'+p.rows.map(r=>r.kind+r.n+r.from).sort().join('|');
   return null;
 }
+/* 눈에 보이는 모양이 다 나온 뒤 이어 낼 다음 단계(2026-11-16) — 막대 기호 읽기는 1~9 아홉 가지뿐이라
+   C0 7주차 12문항에서 세 개가 되풀이됐다. 주마다 60문항 약속(데이터 v1은 얼려 둠)은 지키고, 남는 자리는
+   같은 유형의 다음 단계(막대 기호 덧셈, 합 9 이하)로 채운다. */
+const VISIBLE_NEXT_LEVEL={'NL61@6':7};
 function buildProblems(threadId, lv, count, seed, overrides, mix, exclude){
   const rng = NM_RNG.mulberry32(seed);
   const problems = [];
@@ -7760,8 +7764,10 @@ function buildProblems(threadId, lv, count, seed, overrides, mix, exclude){
     const others=new Set(problems.map(problemKey));
     let np=problems[idx];
     if(resolvedOverrides[idx]){
-      const orng=NM_RNG.mulberry32(NM_RNG.hashSeed(String(resolvedOverrides[idx])+'#'+idx));
-      np=drawUnique(src.t,src.lv,orng,others);
+      /* 끝의 _L7 = 다음 단계로 바꿔 낸 자리(VISIBLE_NEXT_LEVEL) — 시드는 그 앞부분만 쓴다. */
+      const ov=String(resolvedOverrides[idx]),olv=/_L(\d+)$/.exec(ov);
+      const orng=NM_RNG.mulberry32(NM_RNG.hashSeed(ov.replace(/_L\d+$/,'')+'#'+idx));
+      np=drawUnique(src.t,olv?+olv[1]:src.lv,orng,others);
     }
     if(exclude && exclude.has(problemKey(np))){
       const unavailable=new Set([...others,...exclude]);
@@ -7792,12 +7798,13 @@ function buildProblems(threadId, lv, count, seed, overrides, mix, exclude){
       const unavailable=new Set([...problems.map(problemKey),...(exclude||[])]);
       for(let attempt=0;attempt<96;attempt++){
         const replacement=NM_RNG.hashSeed(seed+'#vis#'+idx+'#'+attempt).toString(36);
-        const cand=generateProblem(src.t,src.lv,NM_RNG.mulberry32(NM_RNG.hashSeed(replacement+'#'+idx)));
+        const nextLv=attempt>=48&&!useMix?VISIBLE_NEXT_LEVEL[src.t+'@'+src.lv]:null;
+        const cand=generateProblem(src.t,nextLv||src.lv,NM_RNG.mulberry32(NM_RNG.hashSeed(replacement+'#'+idx)));
         const cv=visibleKey(cand);
         if(!cv||visSeen.has(cv)||unavailable.has(problemKey(cand))) continue;
         if(wasRamp) cand.__ramp=true;
         cand.__slot=idx;cand.__uniqueKey=problemKey(cand);
-        problems[idx]=cand;resolvedOverrides[idx]=replacement;break;
+        problems[idx]=cand;resolvedOverrides[idx]=nextLv?replacement+'_L'+nextLv:replacement;break;
       }
     }
     visSeen.add(visibleKey(problems[idx]));
@@ -7835,7 +7842,7 @@ function parseWorksheetCode(code){
       if(skip>MAX_UNIQUE_SKIP) return null;
       guideSkips[parseInt(gsm[1],10)]=skip;continue;
     }
-    const om = seg.match(/^(\d+)\.([a-z0-9]+)$/i);
+    const om = seg.match(/^(\d+)\.([a-z0-9]+(?:_L\d+)?)$/i);
     if(om) overrides[parseInt(om[1],10)] = om[2];
   }
   if(Object.keys(overrides).length) result.overrides = overrides;
