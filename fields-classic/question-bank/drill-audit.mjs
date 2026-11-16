@@ -31,6 +31,11 @@ for (const cur of CURRICULUM.filter((b) => /^book-\d\d$/.test(b.id))) {
 }
 // 덱 전용 학습(워밍업 자료가 없는 차시, study-deck.js DECK_LESSONS)도 덱에 있다
 for (const key of Object.keys((await import("./study-deck.js")).DECK_LESSONS)) lessonKeys.add(key);
+// 2과정 덱의 연습 게임(course2-deck.js SESSION_CONCEPTS의 ["drill", 열쇠, 이름])
+for (const [deckKey, parts] of Object.entries((await import("./course2-deck.js")).SESSION_CONCEPTS)) {
+  const bookId = deckKey.split("/")[0];
+  for (const items of parts) for (const [kind, id] of items) if (kind === "drill") lessonKeys.add(`${bookId}/${id}`);
+}
 let checked = 0;
 for (const [key, types] of Object.entries(DRILL_RECIPES)) {
   if (!lessonKeys.has(key)) fails.push(`${key}: 학생 덱에 없는 차시`);
