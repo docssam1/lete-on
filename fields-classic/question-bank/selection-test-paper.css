@@ -45,3 +45,4 @@ body.sol-steps .st-sol-steps { display: block; }
 .st-sol-modes button { min-height: 36px; padding: 0 14px; border: 1px solid #c7d6ee; border-radius: 999px; background: #fff; color: #1b2340; font: 600 13px 'Pretendard', sans-serif; cursor: pointer; }
 .st-sol-modes button[aria-pressed="true"] { border-color: #243184; background: #243184; color: #fff; }
 @media print { .st-sol-modes { display: none !important; } }
+@media print { body.sol-steps .st-answer-sheet .ut-ans-grid { columns: 1; } body.sol-steps .st-answer-sheet .ut-ans-item { break-inside: auto; } body.sol-steps .st-sol-steps li { break-inside: avoid; } }
