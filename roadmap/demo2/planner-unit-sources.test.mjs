@@ -7,7 +7,7 @@ const window = {}, cx = vm.createContext({window, Date});
 for (const script of ['planner-levels','planner','demo-content','planner-intake','planner-progression',
   'planner-book-catalog','planner-book-checks','planner-high-study','planner-curriculum','planner-mock-evidence',
   'planner-mock-schedule','planner-mock-library-data','planner-mock-library','planner-mock-scopes','planner-mock-matching',
-  'planner-mock-items-data','planner-mock-items','planner-mock-feedback','planner-mock-books','planner-weekly-model','planner-unit-sources']) {
+  'planner-mock-items-data','planner-mock-items','planner-mock-feedback','planner-mock-books','planner-weekly-model','planner-parent-flow','planner-unit-sources']) {
   vm.runInContext(readFileSync(new URL(script+'.js',import.meta.url),'utf8'),cx,{filename:script});
 }
 const {PlannerUnitSources: adapter, PlannerBookChecks: books, PlannerMockItems: q, PlannerMockLibrary: papers,
@@ -117,4 +117,20 @@ test('a studied but dependent question yields one fresh same-scope alternate and
   const changed=adapter.reviewWork(groups,{...ctx,answers:{...a,schoolHigh:'미적분Ⅰ'}});
   assert.ok(!changed.items.some(i=>i.kind==='book'));
   assert.equal(adapter.reviewWork([{unitId:'c1-poly',items:[books[0]]}],ctx).items.length,0);
+});
+
+test('current-study ranges reach the checklist without requiring another range form',()=>{
+ const answers={...elem,parentFlow:{version:1,ranges:{school:'약수와 배수 12~15쪽'},actualBooks:{school:'디딤돌 기본+응용'},statuses:{school:'progress'}}};
+ const r=adapter.build({answers,fields,weekStart:start,today:start});assert.ok(r.items.some(i=>i.unitLabel==='약수와 배수 12~15쪽'));
+ assert.equal(r.items.filter(i=>i.track==='curriculum').length,1);
+});
+test('unclassified reported books receive literal own-range tasks rather than another book edition',()=>{
+ const answers={...elem,schoolCourse:'unknown',schoolBook:'unknown',thinkingExperience:'unknown',thinking:'unknown',calc:'unknown',parentFlow:{version:1,actualBooks:{thinking:'내 사고력 교재',calc:'현재 연산 교재'},ranges:{thinking:'규칙 찾기',calc:'10 가르기'},statuses:{thinking:'progress',calc:'progress'}}};
+ const r=adapter.build({answers,fields,weekStart:start,today:start});assert.ok(r.items.some(i=>i.title==='내 사고력 교재'&&i.unitLabel==='규칙 찾기'));assert.ok(r.items.some(i=>i.title==='현재 연산 교재'&&i.unitLabel==='10 가르기'));
+ assert.ok(r.items.every(i=>!i.editionId));
+});
+
+test('legacy academy titles are suppressed from study without rewriting their saved report',()=>{
+ const answers={...elem,thinkingExperience:'unknown',thinking:'unknown',calc:'unknown',parentFlow:{version:1,actualBooks:{thinking:'Ray A3-3',calc:'소마셈 P2'},ranges:{thinking:'규칙 찾기',calc:'10 가르기'},statuses:{thinking:'progress',calc:'progress'}}};
+ const before=JSON.stringify(answers),r=adapter.build({answers,fields,weekStart:start,today:start});assert.ok(!r.items.some(i=>/Ray|소마셈/u.test(i.title)));assert.equal(JSON.stringify(answers),before);
 });

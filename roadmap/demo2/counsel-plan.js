@@ -46,7 +46,9 @@
         : plan.unit+' · 처음 푸는 유사문제 '+n+'개를 골라 힌트 없이 풀고 방법을 설명해 보세요.',
       ...(practice ? {} : {reviewOf:[bookId]})};
   }
+  const studyPlans=plans=>plans.filter(plan=>!g.PlannerParentFlow?.isAcademyBook(plan.book));
   function weekItems(plans,start,records) {
+    plans=studyPlans(plans);
     const end=g.PlannerWeeklyModel.addDays(start,6);
     const entries=new Map((records?.entries || []).map(row=>[row.item.id,row.marks]));
     return plans.flatMap(plan=>Object.keys(steps).flatMap(step=>{
@@ -107,7 +109,7 @@
   const formatStatus = flags => flags & 2 ? '혼자 풀 수 있어요' : flags & 1 ? '공부했어요 · 혼자 풀기는 미확인' : '미기록';
   function previousSummary() {
     if (g.RoadmapGuest || !g.RoadmapMember?.user_id) return '';
-    const plans=saved();
+    const plans=studyPlans(saved());
     if (!plans.length) return '';
     const recentMarks=new Map(g.PlannerUnitChecks.restore(read(unitKey)?.records).entries.map(e=>[e.item.id,e.marks.at(-1)]));
     const markFor=(plan,step)=>recentMarks.get(item(plan,step).id);
@@ -149,6 +151,7 @@
       const today=g.PlannerWeeklyModel.today(), anchor=anchorDate();
       const prepared=inputs.map(input=>{
         const plan={id:g.crypto.randomUUID(),track:input.track,book:text(input.book),unit:text(input.unit),practice:input.practice,recheck:input.recheck,practiceCount:input.practiceCount,recheckCount:input.recheckCount};
+        if(g.PlannerParentFlow?.isAcademyBook(plan.book))throw Error('학원 교재는 참고 자료로만 두고 지필드 학습 범위로 연결해 주세요.');
         if (!valid(plan) || plan.practice < today || (anchor && plan.practice < anchor)) throw Error('교재·단원과 보완일, 문제 수를 확인해 주세요.');
         const limits=dates(plan.practice,anchor);
         if (plan.recheck < limits.min || plan.recheck > limits.max) throw Error('재점검일은 보완 학습 다음 주에서 골라 주세요.');
@@ -259,10 +262,11 @@
     const day=g.PlannerWeeklyModel.today(), start=g.PlannerUnitChecks.weekStart(day,anchorDate());
     const value=read(unitKey) || {};
     const records=g.PlannerUnitChecks.restore(value.records);
-    const plans=saved(), tasks=weekItems(plans,start,records);
+    const plans=studyPlans(saved()), tasks=weekItems(plans,start,records);
     const future=plans.flatMap(plan=>Object.keys(steps).map(step=>item(plan,step)))
       .filter(task=>task.date>g.PlannerWeeklyModel.addDays(start,6)).sort((a,b)=>a.date.localeCompare(b.date));
-    const view=g.PlannerUnitChecks.view(records,{weekStart:start,items:tasks});
+    const activeRecords={...records,entries:records.entries.filter(row=>!g.PlannerParentFlow?.isAcademyBook(row.item.bookName||row.item.title))};
+    const view=g.PlannerUnitChecks.view(activeRecords,{weekStart:start,items:tasks});
     view.rows=view.rows.filter(row=>row.counselId);
     view.nextReview=view.nextReview.map(group=>({...group,items:group.items.filter(row=>row.counselId)})).filter(group=>group.items.length);
     Object.assign(view,{counselUpcoming:future,readOnly:start>day});
@@ -309,9 +313,9 @@
       if (standalone?.open && [key,unitKey].some(name=>event.key?.endsWith(name.slice('gfield.demo2.'.length)))) drawStandalone();
     });
     if (new URLSearchParams(g.location.search).get('checklist')==='1') {
-      try { if (!read('gfield.demo2.v1')?.completed && saved().length) openChecklist(); } catch {}
+      try { if (!read('gfield.demo2.v1')?.completed && studyPlans(saved()).length) openChecklist(); } catch {}
     }
   }
 
-  g.RoadmapCounselPlan=Object.freeze({key,saved,item,weekItems,draft,obviousLearning,samePlan,previousSummary,renderPrevious,mount,save,saveBatch,defaultDates,dateBounds:practice=>dates(practice,anchorDate()),openChecklist});
+  g.RoadmapCounselPlan=Object.freeze({studyPlans,key,saved,item,weekItems,draft,obviousLearning,samePlan,previousSummary,renderPrevious,mount,save,saveBatch,defaultDates,dateBounds:practice=>dates(practice,anchorDate()),openChecklist});
 })(typeof window==='undefined'?globalThis:window);

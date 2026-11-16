@@ -26,11 +26,21 @@
       arithmetic: a.calcStatus === 'progress' && !fields.pendingStatus?.calcStatus ? calc : '',
       thinking: a.thinkingStatus === 'progress' && !fields.pendingStatus?.thinkingStatus ? thinking : ''
     };
-    return Object.keys(trackNames).flatMap(track => {
+    const result=Object.keys(trackNames).flatMap(track => {
       const assigned = week?.tracks?.[track];
       const rows = assigned ? (assigned.pace ? assigned.items : []) : [{title: current[track]}];
       return (rows || []).filter(row => usable(row.title) && !g.PlannerIntake.special(row.title)).map(row => ({track, name: row.title}));
     });
+    // A reported book absent from the catalogue is still usable for study.
+    // Keep its range literal; do not borrow another edition's chapter/page map.
+    const parent=a.parentFlow?.version===1?a.parentFlow:null;
+    for(const [role,track]of [['school','curriculum'],['deep','curriculum'],['thinking','thinking'],['calc','arithmetic']]){
+      const title=parent?.actualBooks?.[role];
+      const unknown=role==='thinking'?a.thinkingExperience==='unknown':role==='calc'?a.calc==='unknown':a[role+'Book']==='unknown';
+      if(!title||!unknown||g.PlannerParentFlow?.isAcademyBook(title)||parent.statuses?.[role]!=='progress')continue;
+      result.push({track,name:(role==='deep'?'심화·활용 · ':'')+title,parentRole:role,direct:true});
+    }
+    return result;
   }
 
   function bookItem(track, bookName, u, detail, url) {
@@ -83,8 +93,9 @@
     const items = [], notices = [], manualBooks = [];
     const mastered = new Set(ctx.mastered || []);
     for (const book of booksFor(ctx.answers, ctx.fields, ctx.week, ctx.actual)) {
+      if(g.PlannerParentFlow?.isAcademyBook(book.name))continue;
       let candidates = [];
-      if (book.track === 'curriculum') candidates = schoolCandidates(book, ctx);
+      if (book.track === 'curriculum'&&!book.direct) candidates = schoolCandidates(book, ctx);
       if (book.track === 'arithmetic') {
         const topic = g.PlannerIntake.calc.find(([title]) => compact(title) === compact(book.name))?.[1];
         if (topic) candidates = [bookItem(book.track, book.name,
@@ -93,8 +104,18 @@
       const identity = bookIdentity(book,ctx.actual);
       for (const item of candidates) item.id = key('book',book.track,identity,item.unitId);
       const bookId = key('range',book.track,identity);
-      const range = typeof ctx.manualRanges?.[bookId] === 'string' ? ctx.manualRanges[bookId].trim().slice(0,120) : '';
+      let reported='';
+      const a=g.PlannerIntake.effective(ctx.answers||{}),ranges=a.parentFlow?.version===1?a.parentFlow.ranges||{}:{};
+      if(book.parentRole)reported=ranges[book.parentRole]||'';
+      if(book.track==='curriculum'&&sameSchoolBook(book.name,ctx.actual)&&!ctx.actual?.done)reported=ranges.school||'';
+      const currentCalc=a.calc==='advanced'?g.Planner.CALC[+a.calcExact]?.[0]:a.calc;
+      const currentThinking=a.thinking==='advanced'?g.Planner.COMP[+a.compExact]?.[0]:a.thinking;
+      if(book.track==='arithmetic'&&a.calcStatus==='progress'&&currentCalc&&compact(book.name).includes(compact(currentCalc)))reported=ranges.calc||'';
+      if(book.track==='thinking'&&a.thinkingStatus==='progress'&&currentThinking&&compact(book.name).includes(compact(currentThinking)))reported=ranges.thinking||'';
+      if(g.PlannerParentFlow?.fraction(reported))reported='';
+      const range = (typeof ctx.manualRanges?.[bookId] === 'string' ? ctx.manualRanges[bookId].trim() : reported).slice(0,120);
       manualBooks.push({id:bookId, title:book.name, track:book.track, range});
+      if((book.direct||a.parentFlow?.version===1&&book.track==='thinking')&&!range&&!candidates.length)candidates=[bookItem(book.track,book.name,{id:key('current-scope',bookId),title:'현재 공부하는 범위'},'지금 펼쳐 둔 교재의 소단원에서 개념과 대표 문제를 풀고, 혼자 풀이 이유 설명하기 · 단원·쪽수 확인 전')];
       if (range) {
         const match = candidates.find(row => compact(row.unitLabel) === compact(range));
         const u = {id:match?.unitId || key('own',bookId,range),title:range};

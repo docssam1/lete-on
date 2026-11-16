@@ -5,15 +5,16 @@ import {readFileSync} from 'node:fs';
 const code=readFileSync(new URL('./membership-gate.js',import.meta.url),'utf8');
 const defer=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
-function harness(count=3){
+function harness(count=3,early=0){
  const auth=defer(),prepare=defer(),scripts=[],events=[],timers=new Map(),classes=new Set(['member-checking']);let next=0;
  const node=tag=>({tag,children:[],textContent:'',removed:false,append(...x){this.children.push(...x);},appendChild(x){this.children.push(x);},replaceChildren(){this.children=[];},remove(){this.removed=true;},setAttribute(){}});
  const box=node('status'),name={value:''},menu=node('menu');
- const document={hidden:false,documentElement:{classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}},getElementById:id=>id==='memberGateStatus'?box:name,querySelector:()=>menu,querySelectorAll:()=>Array.from({length:count},(_,i)=>({dataset:{memberSrc:`part-${i}.js`}})),createElement:node,addEventListener(){},body:{appendChild(s){scripts.push(s);events.push(`request:${s.src}`);}}};
+ const placeholders=Array.from({length:count},(_,i)=>({dataset:{memberSrc:`part-${i}.js`,...(i<early?{parentBoot:''}:{})}}));
+ const document={hidden:false,documentElement:{classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}},getElementById:id=>id==='memberGateStatus'?box:name,querySelector:()=>menu,querySelectorAll:selector=>selector.startsWith('link')?[]:placeholders,createElement:node,addEventListener(){},body:{appendChild(s){scripts.push(s);events.push(`request:${s.src}`);}}};
  const location={search:'',replace:x=>events.push('redirect:'+x),reload:()=>events.push('reload')};
- const window={RoadmapCloud:{prepare:()=>{events.push('prepare');return prepare.promise;},mount:()=>events.push('mount')},addEventListener(){}};
+ const window={PlannerStorage:{getItem:()=>null},RoadmapParentBoot:{mount:args=>{events.push('compact-entry');window.bootOptions=args;}},RoadmapCloud:{prepare:()=>{events.push('prepare');return prepare.promise;},mount:()=>events.push('mount')},addEventListener(){}};
  const result=vm.runInNewContext(code,{document,window,location,RoadmapMembership:{status:()=>auth.promise},setTimeout:(f,ms)=>{const id=++next;timers.set(id,{f,ms});return id;},clearTimeout:id=>timers.delete(id)});
- return {auth,prepare,scripts,events,timers,box,classes,result,window};
+ return {auth,prepare,scripts,events,timers,box,classes,result,window,location};
 }
 async function start(h){h.auth.resolve({user_id:'synthetic',student_name:'테스트'});await tick();h.prepare.resolve();await tick();}
 test('authentication and storage must finish before any downloads; all 114 requests are then appended together',async()=>{
@@ -54,4 +55,18 @@ test('consult mode opens only for a server-verified review account, splits the o
 test('an ordinary member never loads the consult script',async()=>{
  const h=harness(1);await start(h);for(const s of h.scripts)s.onload();await h.result;
  assert.equal(h.scripts.some(s=>/planner-consult/.test(s.src)),false);assert.equal(h.window.RoadmapMember.consult,false);
+});
+
+test('compact entry fetches only its authenticated dependencies until a result is requested',async()=>{
+ const h=harness(8,2);assert.equal(h.scripts.length,0);await start(h);assert.equal(h.scripts.length,2);
+ h.scripts.forEach(s=>s.onload());await h.result;assert.equal(h.classes.has('member-checking'),false);assert.ok(h.events.includes('compact-entry'));assert.equal(h.events.includes('mount'),false);
+ const full=h.window.bootOptions.loadFull();assert.equal(h.scripts.length,8);assert.deepEqual(h.scripts.map(s=>s.src),Array.from({length:8},(_,i)=>`part-${i}.js`));h.scripts.slice(2).forEach(s=>s.onload());await full;
+ assert.equal(h.events.filter(e=>e==='mount').length,1);await h.window.bootOptions.loadFull();assert.equal(h.scripts.length,8);
+});
+test('a requested study deep link opens its full tools without showing a second intake',async()=>{
+ const h=harness(4,2);h.location.search='?checklist=1';await start(h);assert.equal(h.scripts.length,4);h.scripts.forEach(s=>s.onload());await h.result;
+ assert.equal(h.events.includes('compact-entry'),false);assert.ok(h.events.includes('mount'));
+});
+test('failure of a compact dependency keeps the protected screen closed and never fetches tools',async()=>{
+ const h=harness(5,2);await start(h);h.scripts[0].onerror();await h.result;assert.equal(h.classes.has('member-checking'),true);assert.equal(h.scripts.length,2);assert.equal(h.events.includes('compact-entry'),false);
 });

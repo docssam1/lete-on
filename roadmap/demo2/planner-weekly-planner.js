@@ -173,5 +173,24 @@
     host.scrollIntoView({block: 'start'});
   }
 
-  g.PlannerWeeklyPlanner = Object.freeze({mount, open});
+  // One explicit "학습하기" action starts an absent program. Reuse an existing
+  // program (including a future start) and re-read inside the account lock.
+  async function startForStudy() {
+    const owner=g.RoadmapMember?.user_id;
+    if(g.RoadmapGuest||!owner||!intake)throw Error('현재 공부를 확인한 뒤 회원 계정으로 시작해 주세요.');
+    await lock(()=>{
+      if(owner!==g.RoadmapMember?.user_id||g.RoadmapGuest)throw Error('학생 계정을 다시 확인해 주세요.');
+      read(false);
+      if(program)return;
+      const targets=Object.fromEntries(model.TRACKS.map(track=>{
+        const row=intake.tracks[track],block=row.blocks.find(b=>b.start<=0&&b.end>0);
+        return [track,!block?0:track==='arithmetic'?calcDays:g.PlannerTransition.classBaseline(block.title)?.sessions||1];
+      }));
+      const next=model.start(model.today(),targets),id=g.crypto.randomUUID();
+      const text=JSON.stringify({version:1,program:next,courses:intake,calendarId:id});
+      storage.setItem(key,text);storedText=text;program=next;courses=intake;calendarId=id;
+    });
+    render();
+  }
+  g.PlannerWeeklyPlanner = Object.freeze({mount, open, startForStudy});
 })(window);

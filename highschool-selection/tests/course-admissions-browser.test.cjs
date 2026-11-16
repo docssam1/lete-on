@@ -44,7 +44,7 @@ test('notice filters follow course routes and can be changed on academy and home
     await page.goto(server.base+'promo/#academy=DP&course=common1-basic');
     await page.locator('[data-admission-jump]').click();
     assert.equal(await page.locator('#admission-title').evaluate(e=>document.activeElement===e),true);
-    assert.equal(await page.locator('.round-card').count(),4);
+    assert.equal(await page.locator('.round-card').count(),5);
     await page.goto(server.base+'promo/#academy=WM&course=algebra-direct');
     assert.match(await page.locator('#notice-title').innerText(),/실력직행/);
     const titles=await page.locator('#academy-notice-board .news-content h3').allTextContents();

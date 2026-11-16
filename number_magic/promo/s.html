@@ -31,7 +31,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Hahmlet:wght@400;500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&display=swap">
+<!-- 구글 글꼴은 그리기를 막지 않게 늦게 붙인다(2026-11-16) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Hahmlet:wght@400;500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Hahmlet:wght@400;500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&display=swap"></noscript>
 <link rel="preload" as="image" href="../assets/promo/video/poster-15s-vertical.jpg">
 <script>
 /* 한·영·중: 첫 그림 전에 언어를 정한다(?lang= → localStorage → navigator.language). 본문 사전은 문서 끝에. */
@@ -313,7 +314,7 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
     <section class="slide hero on" id="s0" data-title="우리 아이, 지금 속도로 어디까지 갈 수 있을까요?" data-i18n-attr="data-title:t0">
       <img class="poster" src="../assets/promo/video/poster-15s-vertical.jpg" alt="속도 비교 진단 카드 — 초5 중등 수학올림피아드 수준, 초6 수학올림피아드 수준, 이과 최상위권 중 지금 속도가 어디인지 보여 주는 화면" data-i18n-attr="alt:poster.alt" width="1080" height="1920" fetchpriority="high">
       <video id="reel" muted loop playsinline preload="metadata" poster="../assets/promo/video/poster-15s-vertical.jpg" aria-label="Numbers of Magic 15초 쇼릴 — 진단, 로드맵, 마을, 이야기, 독셈, 3D 개념, 학습지" data-i18n-attr="aria-label:reel.label">
-        <source src="../assets/promo/video/showreel-15s-vertical.mp4" type="video/mp4">
+        <source src="../assets/promo/video/showreel-15s-vertical-720.mp4" type="video/mp4" media="(max-width: 900px)"><source src="../assets/promo/video/showreel-15s-vertical.mp4" type="video/mp4">
       </video>
       <button class="play" id="play" type="button" aria-label="영상 재생" data-i18n-attr="aria-label:play">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
@@ -451,7 +452,7 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
           <span class="lbl" data-i18n="full.lbl">전체 영상 · 2:10 · 소리 있음</span>
           <span class="vcap" id="vcap" aria-hidden="true"></span>
           <video id="fullv" preload="none" playsinline poster="../assets/promo/shots/village.webp" aria-label="Numbers of Magic 전체 쇼릴 영상, 2분 10초" data-i18n-attr="aria-label:full.label">
-            <source src="../assets/promo/video/showreel-full.mp4" type="video/mp4">
+            <source src="../assets/promo/video/showreel-full-720.mp4" type="video/mp4" media="(max-width: 900px)"><source src="../assets/promo/video/showreel-full.mp4" type="video/mp4">
           </video>
           <button class="go" id="fullgo" type="button" aria-label="전체 영상 재생" data-i18n-attr="aria-label:full.play"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span></button>
         </div>

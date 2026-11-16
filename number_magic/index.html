@@ -2,6 +2,14 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script>/* 빠른 길(2026-11-16, 원장 「처음 오픈될 때 로딩 시간」) — 로그인 표가 없으면 아래 스타일·스크립트를 받기 전에
+   바로 책 표지(access.html)로 보낸다. 판단은 app/entry.js 와 같다(표가 없으면 그쪽도 같은 곳으로 보낸다).
+   표가 있거나 보호자 로그인 돌아오기·자동 검사 브라우저면 손대지 않고 entry.js 가 그대로 정한다. */
+(function(){try{var p=new URLSearchParams(location.search);
+if(navigator.webdriver||sessionStorage.getItem('nm_entry_once_v1')||p.get('auth')==='1'||/^#(?:.*&)?(?:access_token|code)=/.test(location.hash))return;
+var q=new URLSearchParams();['ws','lang'].forEach(function(n){if(p.get(n))q.set(n,p.get(n));});
+location.replace('access.html'+(q.toString()?'?'+q.toString():''));}catch(e){}})();
+</script>
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="assets/app-icons/apple-touch-icon.png">

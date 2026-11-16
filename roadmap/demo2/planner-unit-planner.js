@@ -172,16 +172,17 @@
     lastCounselText = counseling && storage.getLatestItem(counseling.key);
     let plans = [];
     if (counseling) {
-      try { plans = counseling.saved(); } catch { source.notices.push('상담 일정을 읽지 못했어요. 다시 불러와 주세요.'); }
+      try { plans = counseling.studyPlans(counseling.saved()); } catch { source.notices.push('상담 일정을 읽지 못했어요. 다시 불러와 주세요.'); }
       source.items.unshift(...counseling.weekItems(plans,weekStart,records));
     }
-    const initial = checks.view(records,{weekStart,items:source.items});
+    const studyRecords={...records,entries:records.entries.filter(row=>!g.PlannerParentFlow?.isAcademyBook(row.item.bookName||row.item.title))};
+    const initial = checks.view(studyRecords,{weekStart,items:source.items});
     const due = byUnit(initial.rows.filter(row=>row.review && !row.solo));
     const reviewWork = (groups,start,usedPaperIds) => groups.length
       ? g.PlannerUnitSources.reviewWork(groups,{...inputs,weekStart:start,usedPaperIds})
       : {items:[],notices:[]};
     const current = reviewWork(due,weekStart,usedBefore(weekStart));
-    const view = current.items.length ? checks.view(records,{weekStart,items:[...current.items,...source.items]}) : initial;
+    const view = current.items.length ? checks.view(studyRecords,{weekStart,items:[...current.items,...source.items]}) : initial;
     const future = reviewWork(view.nextReview,view.nextWeekStart,usedBefore(view.nextWeekStart));
     view.nextReview = view.nextReview.map(group=>({...group,practice:future.items.filter(item=>item.unitId===group.unitId)}));
     const futureTasks = plans.flatMap(plan => ['practice','recheck'].map(step => counseling.item(plan,step)))

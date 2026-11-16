@@ -98,7 +98,7 @@ function order(a,fields){a=effective(a);
  if(a.deepCourse==='high'){list.push('deepExtra');if(a.deepExtra==='yes')list.push('deepExtraStage','deepExtraBook','deepExtraStatus');}
  list.push('calc');if(a.calc==='advanced')list.push('calcExact');if(a.calc==='high')list.push('calcHigh');if(!special(a.calc))list.push('calcStatus');
  if(senior)addThinking();
- const y=age(a,fields);if(y>=6&&y<=9&&['A','B'].includes(fields.band))list.push('hw');if(+gradeChoice(a,fields)<7||gradeChoice(a,fields)==='pre'||!gradeChoice(a,fields))list.push('gifted');return list;
+ const y=age(a,fields);if(y>=6&&y<=9&&['A','B'].includes(fields.band))list.push('hw');if(+gradeChoice(a,fields)<7||gradeChoice(a,fields)==='pre'||!gradeChoice(a,fields))list.push('gifted');return a.parentFlow?.version===1?list.filter(k=>!['hw','gifted','preDone'].includes(k)):list;
 }
 // Curriculum standards come from the existing four BAND rules and buildD.
 // The broader book guide is a reference list, not a replacement for those rules.
@@ -209,6 +209,7 @@ function summary(a,fields){a=effective(a);const status=k=>fields.pendingStatus?.
 // Each subject resolves independently. An original-only answer never replaces
 // the other subjects with the original demo's limited curriculum.
 function hasAnswer(a,fields,key){
+ if(a.parentFlow?.version===1&&['schoolBook','deepBook'].includes(key)&&a[key]==='unknown')return true;
  if(key==='deepStage'&&!seniorIntake(a,fields)&&a.deepBook&&a.deepCourse&&!special(a.deepCourse)&&!bookList(a.deepCourse,'deep').includes(a.deepBook))return false;
  if(key==='deepExtra'&&a.deepExtra===undefined)return true; // Existing single-depth records remain valid.
  if(fields.pendingStatus?.[key])return false;const q=questions(a,fields)[key];return !!q&&q[2].some(([v])=>String(key==='grade'?gradeChoice(a,fields):a[key])===String(v));

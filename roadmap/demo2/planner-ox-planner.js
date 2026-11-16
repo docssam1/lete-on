@@ -89,7 +89,7 @@
       const day=today();
       schedules(bank,g.PlannerOxModel.state(bank,attempts,day).tasks);
       if (dock.open) {
-        g.PlannerOxView.render(body,{catalog:bank,attempts,day,commit,semester:options.context?.actual?.stage,onGraph:showGraph});
+        g.PlannerOxView.render(body,{catalog:bank,attempts,day,commit,semester:options.context?.actual?.stage,scopeRequest:options.scopeRequest,onGraph:showGraph});
         if (queueRequested) {queueRequested=false;g.PlannerOxView.openQueue(body);}
       }
     } catch {
@@ -132,5 +132,6 @@
   g.addEventListener('storage',event=>{if(event.key?.endsWith('.assessment-results.v1'))refresh();});
   g.addEventListener('focus',refresh);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
-  g.PlannerOxPlanner=Object.freeze({mount,open,isElementary});
+  function openForStage(stage){if(!/^[1-6]-[12]$/.test(stage))return;options={...options,scopeRequest:(options.scopeRequest||0)+1,context:{...options.context,actual:{stage,book:'지필드 단원평가',done:false,scopeOnly:true}}};open();}
+  g.PlannerOxPlanner=Object.freeze({mount,open,openForStage,isElementary});
 })(window);
