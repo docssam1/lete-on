@@ -45,15 +45,15 @@
   const evidence=source(ctx);if(!host||!evidence)return false;
   const doc=g.document,el=(tag,attrs={},text)=>{const n=doc.createElement(tag);for(const [key,value]of Object.entries(attrs))n.setAttribute(key,value);if(text!=null)n.textContent=text;return n;};
   host.replaceChildren();host.className='cs-soma';
-  const title=el('h3',{},'현재 5세 소마 · 월별 흐름');
-  host.append(title,el('p',{},'2026년 현재 5세 운영표입니다. Ray A3-3은 교재 진도이며 별도 반 레벨이 아닙니다. 우리 아이의 실제 학습 범위와 아래 참고 일정을 나누어 봅니다.'));
+  const title=el('h3',{},'참고용 · 현재 5세 소마 월별 운영표');
+  host.append(title,el('p',{},'2026년 현재 5세의 학원 운영 사례입니다. Ray A3-3은 교재 진도이며 별도 반 레벨이 아닙니다. 이 표를 아이의 필수 진도나 부족 판단 기준으로 쓰지 않습니다.'));
   const scroll=el('div',{class:'cs-table-scroll',tabindex:'0',role:'region','aria-label':'현재 5세 소마 월별 흐름 표. 좌우로 이동할 수 있습니다.'});
   const table=el('table');table.append(el('caption',{},'사고력·부교재·연산·도형 · 2026.11~2028.08'));
   const head=el('thead'),hr=el('tr');for(const text of ['기간','사고력','부교재','연산','도형'])hr.append(el('th',{scope:'col'},text));head.append(hr);table.append(head);
   const body=el('tbody');for(const row of monthlyRows()){const tr=el('tr');tr.append(el('th',{scope:'row'},row.period));for(const cell of row.cells)tr.append(el('td',{},cell));body.append(tr);}table.append(body);scroll.append(table);host.append(scroll);
   const note=el('p',{class:'cs-note'},'—는 원표에 표시되지 않은 구간입니다. 표의 마지막 달을 교재 완료월로 보지 않습니다. 연산의 B5~B8은 원표 표기이며, 소마연산 3학년은 교재 이름입니다.');
   const cite=el('button',{type:'button',class:'cc-citation'},'운영표 근거 보기');cite.onclick=()=>openSource?.(evidence.id);note.append(cite);host.append(note);
-  const form=el('form',{class:'cs-assessment'});form.append(el('h4',{},'우리 아이는 지금 어디까지 혼자 하나요?'),el('p',{},'쓰고 있는 교재의 단원·쪽수를 적고 풀이 모습을 골라 주세요. 미학습·미확인은 부족으로 단정하지 않아요.'));
+  const form=el('form',{class:'cs-assessment'});form.append(el('h4',{},'우리 아이는 지금 어디까지 혼자 하나요?'),el('p',{},'쓰고 있는 교재의 단원·쪽수와 풀이 모습을 알려주세요. 아래 입력한 범위로 이번 주 보완을 정해요. 학원 참고표보다 느리다는 이유로 부족으로 보지 않아요.'));
   const controls=new Map(),initial=prefill(ctx);
   for(const axis of axes){
    const row=initial.find(r=>r.id===axis.id),fields=el('fieldset');fields.append(el('legend',{},axis.label));

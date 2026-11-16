@@ -1332,7 +1332,7 @@ function drawJourney(){
   const currentGrade=I.gradeChoice(answers,intakeFields()),stage=currentGrade==='pre'?'preschool':Number(currentGrade)<=6?'elementary':'middle';
   if(window.PlannerCounsellingUpdates){$('workspace-panel-map').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.render(stage,{compact:true}));$('workspace-panel-records').insertAdjacentHTML('beforeend',window.PlannerCounsellingUpdates.render(stage,{excludeCommon:true}));$('workspace-panel-records').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.renderCommon(currentGrade,{hwangso:answers.hw==='1'}));}
   const academyComparison=G.comparison(answers,intakeFields());
-  $('workspace-panel-table').insertAdjacentHTML('afterbegin',T.renderAcademyMonthly(T.academyReferences(academyComparison,'school',academyLines),academyComparison,intakeFields()));
+  $('workspace-panel-table').insertAdjacentHTML('beforeend',T.renderAcademyMonthly(T.academyReferences(academyComparison,'school',academyLines),academyComparison,intakeFields()));
   $('workspace-panel-table').insertAdjacentHTML('beforeend',preschoolDetailHtml());
   const standardLevels=G.renderStandardComparison(G.comparison(answers,intakeFields()),progression?.target);
   if(standardLevels){
