@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f2f5f6" />
   <title>시험 결과 O/X 진단</title>
   <link rel="stylesheet" href="./math-markup.css?v=20261027n" />
-  <link rel="stylesheet" href="./result-diagnosis.css?v=20261111h" />
+  <link rel="stylesheet" href="./result-diagnosis.css?v=20261116a" />
 </head>
 <body>
   <div class="print-watermark" id="printWatermark" aria-hidden="true"></div>
@@ -51,11 +51,15 @@
     <section id="diagnosisPanel" class="diagnosis-panel" hidden aria-labelledby="diagnosisTitle">
       <header class="diagnosis-summary">
         <div><span>DIAGNOSIS</span><h2 id="diagnosisTitle"></h2><p id="diagnosisMessage"></p><small id="printStudent"></small></div>
-        <div class="diagnosis-score"><strong id="scoreValue">0점</strong><button id="printResult" type="button">결과 인쇄</button></div>
+        <div class="diagnosis-score"><strong id="scoreValue">0점</strong><b id="passVerdict" hidden></b><button id="printResult" type="button">결과 인쇄</button></div>
       </header>
 
       <div class="diagnosis-layout">
         <div class="diagnosis-main">
+          <section id="passSection" class="analysis-section" hidden>
+            <div class="section-title"><h3>합격 가능 반</h3><span id="passNote"></span></div>
+            <ol id="passLadder" class="pass-ladder"></ol>
+          </section>
           <section class="analysis-section">
             <div class="section-title"><h3>영역별 결과</h3><span>대분류 기준</span></div>
             <div id="domainAnalysis" class="domain-analysis"></div>
@@ -81,6 +85,6 @@
     </section>
   </main>
 
-  <script type="module" src="./result-diagnosis.js?v=20261116c"></script>
+  <script type="module" src="./result-diagnosis.js?v=20261116d"></script>
 </body>
 </html>

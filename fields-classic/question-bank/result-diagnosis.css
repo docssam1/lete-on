@@ -29,3 +29,16 @@
 .gm-word small { margin-left: .04em; font-size: .68em; font-weight: 600; }
 .result-header .gm-word { display: inline; margin: 0; font-size: 10px; color: inherit; }
 .result-header .gm-word small { font-size: .7em; }
+
+/* 합격 가능 반(원장 2026-11-16) — 위가 높은 반. 넘은 줄은 초록, 지금 자리는 굵게 */
+.diagnosis-score>b{color:#fff;font-size:11px;font-weight:900}
+.pass-ladder{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.pass-ladder li{display:grid;grid-template-columns:120px 90px 1fr;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--line);background:#fff}
+.pass-ladder b{font-size:12px}
+.pass-ladder span{color:var(--muted);font-size:9px;font-weight:800}
+.pass-ladder em{color:var(--muted);font-size:10px;font-style:normal;font-weight:900;text-align:right}
+.pass-ladder li.is-ok{border-left-color:var(--green)}
+.pass-ladder li.is-ok em{color:var(--green)}
+.pass-ladder li.is-here{background:#f0f8f4;border-color:var(--green)}
+@media(max-width:800px){.pass-ladder li{grid-template-columns:1fr auto}.pass-ladder em{grid-column:1/-1;text-align:left}}
+@media print{.diagnosis-score>b{color:#000}.pass-ladder li{break-inside:avoid}}

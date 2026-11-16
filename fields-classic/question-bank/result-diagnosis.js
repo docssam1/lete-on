@@ -88,6 +88,32 @@ function textbookSummary(references) {
   return labels.join(" / ") + (references.length > 3 ? ` 외 ${references.length - 3}곳` : "");
 }
 
+// 합격 가능 반(원장 2026-11-16 「초1 모의고사 30점 주1회 낮은반 · 50 주1회 높은반 · 65 E2 · 80 E1 합격 가능」):
+// 초1 입학 대비 = 7세 선발시험(stage k…). 점수는 100점 만점(맞은 문항 ÷ 전체). 낮은 줄부터.
+const PASS_LINES = [
+  { score: 30, label: "주1회 낮은반" },
+  { score: 50, label: "주1회 높은반" },
+  { score: 65, label: "E2" },
+  { score: 80, label: "E1" },
+];
+const passLinesFor = (item) => (String(item?.stage || "").startsWith("k") ? PASS_LINES : null);
+function renderPass(analysis) {
+  const lines = passLinesFor(exam);
+  $("passSection").hidden = !lines;
+  $("passVerdict").hidden = !lines;
+  if (!lines) return;
+  const score = analysis.score, per = analysis.total ? 100 / analysis.total : 5;
+  const reached = lines.filter((line) => score >= line.score).at(-1);
+  const toGo = (line) => Math.ceil((line.score - score) / per);
+  $("passVerdict").textContent = reached ? `${reached.label} 합격 가능` : `${lines[0].label}까지 ${toGo(lines[0])}문항`;
+  $("passNote").textContent = `초1 입학 기준 · 한 문항 ${Math.round(per * 10) / 10}점`;
+  $("passLadder").innerHTML = [...lines].reverse().map((line) => {
+    const ok = score >= line.score;
+    const here = reached === line;
+    return `<li class="${ok ? "is-ok" : ""}${here ? " is-here" : ""}"><b>${line.label}</b><span>${line.score}점 이상</span><em>${ok ? (here ? "합격 가능 · 지금 여기" : "합격 가능") : `${toGo(line)}문항 더`}</em></li>`;
+  }).join("");
+}
+
 function renderDiagnosis(analysis) {
   $("diagnosisPanel").hidden = !diagnosisOpen;
   if (!diagnosisOpen) return;
@@ -96,6 +122,7 @@ function renderDiagnosis(analysis) {
     ? `오답 ${analysis.wrong}문항을 ${analysis.weakTypes.length}개 세부 유형으로 정리했습니다.`
     : "오답이 없습니다. 다음 시험이나 더 높은 난이도로 이어가세요.";
   $("scoreValue").textContent = `${analysis.score}점`;
+  renderPass(analysis);
   $("domainAnalysis").innerHTML = analysis.domainStats.map((row) => `<div class="domain-row"><span>${row.label}</span><i><b style="width:${row.correctRate}%"></b></i><em>${row.correct}/${row.total}</em></div>`).join("");
   $("weakTypeList").innerHTML = analysis.weakTypes.length ? analysis.weakTypes.map((row) => `<article class="weak-type">
     <div><h4>${row.label}</h4><p>${row.domainLabel} · ${row.middle} · 대표 개념: ${row.representativeConceptLabel}<br>${textbookSummary(row.textbookReferences)}</p>
