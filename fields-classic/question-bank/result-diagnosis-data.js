@@ -193,6 +193,8 @@ export function remediationUrl(typeIds, student = "DEMO", count, options = {}) {
     params.set("build", "1");
     params.set("form", "exam");   // 본문 꼴 = 시험지형(이번 한 번만, 저장된 선택은 그대로)
     params.set("cols", "2");      // 2단 · 쪽당 4문항(원장 2026-11-16 「4문제씩 정렬」)
+    // 난이도(원장 2026-11-16 「더 어렵게 쉽게」): basic 더 쉽게 · actual 원본과 같게 · advanced 더 어렵게 — 문제은행 1단계의 난이도 단추와 같은 값
+    if (["basic", "actual", "advanced"].includes(options.level)) params.set("level", options.level);
     if (options.title) params.set("title", options.title);
   }
   return `./index.html?${params.toString()}`;

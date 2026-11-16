@@ -3917,6 +3917,12 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
     ...(params.get("types") || "").split(",")
   ].map((id) => id.trim()).filter(Boolean);
   if (!requested.length) return;
+  // 난이도도 주소로(입학 모의고사 유사문제 고르기, 원장 2026-11-16 「더 어렵게 쉽게」) — 1단계 난이도 단추와 같은 값
+  const level = params.get("level");
+  if (["basic", "actual", "advanced"].includes(level)) {
+    state.difficulty = level;
+    $("difficultyChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.level === level));
+  }
   setMode("type");
   state.selected.type.clear();
   requested.forEach((typeId) => {

@@ -6,7 +6,7 @@ import {
   remediationUrl,
   resultStorageKey,
   stageLabelForExam
-} from "./result-diagnosis-data.js?v=20261116c";
+} from "./result-diagnosis-data.js?v=20261116d";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -146,7 +146,7 @@ function updateRemediationLink() {
   const typeIds = selectedWeakTypeIds();
   const link = $("remediationLink");
   link.href = typeIds.length ? remediationUrl(typeIds, student, Number($("remediationCount").value),
-    asStudent ? { paper: true, title: `${plain(exam.label)} · 약점 유사문제` } : {}) : "#";
+    asStudent ? { paper: true, level: $("remediationLevel").value, title: `${plain(exam.label)} · 약점 유사문제` } : {}) : "#";
   link.classList.toggle("is-disabled", !typeIds.length);
   link.setAttribute("aria-disabled", String(!typeIds.length));
 }
@@ -191,6 +191,8 @@ $("showResult").addEventListener("click", () => {
 });
 $("printResult").addEventListener("click", () => window.print());
 $("remediationCount").addEventListener("change", updateRemediationLink);
+$("remediationLevel").addEventListener("change", updateRemediationLink);
+if (!asStudent) $("remediationLevel").closest("label").hidden = true;   // 원장 쪽은 문제은행 1단계에서 난이도를 고른다
 
 updateUrl();
 render();

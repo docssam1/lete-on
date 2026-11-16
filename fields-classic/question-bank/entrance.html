@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#ffffff" />
   <title>입학 모의고사</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./my-study.css?v=20261114c" />
+  <link rel="stylesheet" href="./my-study.css?v=20261116a" />
 </head>
 <body>
   <header class="ms-header">
@@ -19,6 +19,17 @@
   <main class="ms-main en-main" id="groups">
     <p class="ms-note">시험지를 풀고 나서 번호마다 맞았는지(O) 틀렸는지(X)만 고르면, 약한 유형을 찾아 같은 유형의 유사문제를 만들어 줘요.</p>
   </main>
-  <script type="module" src="./entrance.js?v=20261116c"></script>
+  <!-- 유사문제 고르기(원장 2026-11-16 「문제별로 선택도 가능하고 문제 수도 조절 · 난이도도 더 어렵게 쉽게」) — entrance.js -->
+  <dialog id="similarDialog" class="en-sim" aria-labelledby="simTitle">
+    <header><h2 id="simTitle">유사문제</h2><button id="simClose" type="button" class="ms-btn" aria-label="닫기">닫기</button></header>
+    <section><h3>문항 고르기 <span><button id="simAll" type="button">모두 고르기</button><button id="simNone" type="button">모두 빼기</button></span></h3>
+      <div id="simNumbers" class="en-sim-numbers"></div></section>
+    <section><h3>문제 수</h3>
+      <div class="en-sim-row"><input id="simCount" type="number" min="1" max="50" value="20" inputmode="numeric" aria-label="문제 수"><span>문제</span>
+        <span id="simCounts" class="en-sim-chips"><button type="button" data-count="same">고른 문항 수만큼</button><button type="button" data-count="10">10</button><button type="button" data-count="20">20</button><button type="button" data-count="30">30</button><button type="button" data-count="40">40</button></span></div></section>
+    <section><h3>난이도</h3><div id="simLevels" class="en-sim-chips"></div></section>
+    <footer><p id="simSummary"></p><a id="simMake" class="ms-btn primary" href="#">시험지 만들기 ›</a></footer>
+  </dialog>
+  <script type="module" src="./entrance.js?v=20261116d"></script>
 </body>
 </html>

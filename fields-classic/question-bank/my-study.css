@@ -383,3 +383,29 @@ tr.is-done td { color: var(--muted); }
 .en-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .en-acts .ms-btn { min-height: 38px; padding: 4px 12px; font-size: 13.5px; }
 @media (max-width: 560px) { .en-online { grid-template-columns: 1fr; } }
+/* 회차별 승인(원장 2026-11-16) — 승인 안 된 회차 */
+.en-exam.is-locked { background: var(--bg); border-style: dashed; }
+.en-exam.is-locked b { color: var(--muted); }
+.en-lock-note { color: var(--muted); font-size: 12.5px; }
+/* 유사문제 고르기 창(원장 2026-11-16 「문제별로 선택 · 문제 수 · 더 어렵게 쉽게」) */
+.en-sim { width: min(760px, calc(100vw - 24px)); max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); color: var(--ink); box-shadow: var(--card-shadow); }
+.en-sim::backdrop { background: rgba(20, 27, 93, .28); }
+.en-sim > header, .en-sim > section, .en-sim > footer { padding: 14px 20px; }
+.en-sim > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); }
+.en-sim h2 { margin: 0; font-size: 19px; }
+.en-sim h3 { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 10px; font-size: 15px; }
+.en-sim h3 span { display: flex; gap: 6px; }
+.en-sim h3 button, .en-sim-chips button { min-height: 34px; padding: 4px 12px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
+.en-sim-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.en-sim-chips button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: #fff; }
+.en-sim-numbers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; max-height: 300px; overflow: auto; }
+.en-sim-q { display: grid; grid-template-columns: 20px 26px 1fr; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 8px; cursor: pointer; font-size: 13.5px; }
+.en-sim-q:hover { background: var(--accent-soft); }
+.en-sim-q input { width: 18px; height: 18px; accent-color: var(--accent); }
+.en-sim-q b { color: var(--accent); }
+.en-sim-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.en-sim-row input { width: 78px; min-height: 38px; padding: 4px 10px; border: 1px solid var(--line-strong); border-radius: 10px; font: inherit; font-size: 16px; }
+.en-sim > footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); background: var(--bg); }
+.en-sim > footer p { margin: 0; color: var(--muted); font-size: 13px; }
+.en-sim > footer .ms-btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+@media (max-width: 560px) { .en-sim-numbers { grid-template-columns: 1fr; } .en-sim > footer { flex-direction: column; align-items: stretch; } }

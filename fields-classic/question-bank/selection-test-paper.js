@@ -1,5 +1,6 @@
 import { EXAMS } from "./source-data.js?v=20261111g";
-import { loggedIn } from "./study-progress.js?v=20261111p";
+import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
+import { productForExam, openExamIds } from "./entrance-products.js?v=20261116a";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
 
 // 선발시험 시험지(다시 짠 것) 보기·인쇄 — 원장 2026-11-14 「선발시험을 우리 시험지 모양으로 다시 짜서 인쇄하게 하기」.
@@ -11,6 +12,8 @@ import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261114c";
 const $ = (id) => document.getElementById(id);
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const params = new URLSearchParams(location.search);
+// 회차별 승인(원장 2026-11-16 「승인도 회차별로」): 로그인했으면 서버에 세션·권한을 다시 묻고, 그 회차가 열려 있어야 시험지를 그린다
+if (loggedIn()) await checkSession();
 const me = loggedIn();
 const student = params.get("student") || (me && me.type !== "admin" ? me.name : "") || "";
 const plain = (label) => String(label).replace(/^더\s*클래식\s*/u, "");
@@ -44,7 +47,15 @@ function pagesMarkup() {
   return pages.map((group, index) => `<article class="ut-test-page ${per === 2 ? "st-two" : ""}" aria-label="${index + 1}쪽">${head(index)}<div class="ut-test-body">${group.map(questionMarkup).join("")}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>${index + 1}</span></footer></article>`).join("");
 }
 
-if (!exam || !original) {
+const locked = exam && productForExam(exam.id) && !openExamIds(me).has(exam.id);
+if (locked) {
+  document.title = "선발시험 시험지";
+  $("title").textContent = plain(exam.label);
+  const next = `selection-test-paper.html${location.search}`;
+  $("pages").innerHTML = `<p class="st-empty">이 회차는 승인을 받아야 열려요. ${me ? "원장님께 이 회차 승인을 요청해 주세요." : `<a href="./login.html?${new URLSearchParams({ next })}">승인번호로 로그인</a>`} · <a href="./entrance.html">입학 모의고사로 돌아가기</a></p>`;
+  $("printButton").hidden = true;
+  $("checkLink").hidden = true;
+} else if (!exam || !original) {
   document.title = "선발시험 시험지";
   $("title").textContent = exam ? plain(exam.label) : "선발시험 시험지";
   $("pages").innerHTML = `<p class="st-empty">${exam ? "이 회차 시험지는 아직 우리 시험지로 옮기는 중이에요." : "등록되지 않은 시험지입니다."} <a href="./entrance.html">입학 모의고사로 돌아가기</a></p>`;

@@ -190,9 +190,16 @@ const PRODUCTS = [
   {id:"파이널모의고사2회", name:"파이널모의고사 2회"},
   {id:"파이널모의고사3회", name:"파이널모의고사 3회"},
   {id:"마무리점검",      name:"마무리 점검 (시험 직전 최종 점검)"},
-  // 입학 모의고사(원장 2026-11-15 「초1 모의고사를 등록 안되어 있는데 초2하고」) — 필즈 대비 묶음과 따로라 한 명씩 켠다
-  {id:"초1입학모의고사",  name:"초1 입학 모의고사 (7세 선발시험)", manualOnly:true},
-  {id:"초2입학모의고사",  name:"초2 입학 모의고사 (초1 선발시험)", manualOnly:true},
+  // 입학 모의고사는 회차별(원장 2026-11-16 「승인도 회차별로」, question-bank/entrance-products.js와 같은 이름) — 한 명씩 켠다
+  {id:"초1입학모의고사1차", name:"초1 입학 · 7세 1차", manualOnly:true},
+  {id:"초1입학모의고사2차", name:"초1 입학 · 7세 2차", manualOnly:true},
+  {id:"초1입학모의고사3차", name:"초1 입학 · 7세 3차", manualOnly:true},
+  {id:"초1입학모의고사4차", name:"초1 입학 · 7세 4차", manualOnly:true},
+  {id:"초1입학모의고사6차", name:"초1 입학 · 7세 6차", manualOnly:true},
+  {id:"초2입학모의고사1차", name:"초2 입학 · 초1 1차", manualOnly:true},
+  {id:"초2입학모의고사2차", name:"초2 입학 · 초1 2차", manualOnly:true},
+  {id:"초2입학모의고사3차", name:"초2 입학 · 초1 3차", manualOnly:true},
+  {id:"초2입학모의고사4차", name:"초2 입학 · 초1 4차", manualOnly:true},
   // 스스로 공부의 강사용 교안(start.html?as=class)을 여는 권한(원장 2026-11-11 「승인 권한에 따라 다르도록」) — 한 명씩 손으로만 켠다
   {id:"강사용교안",      name:"강사용 교안", manualOnly:true},
   // 소마 레이키즈 학습(sm/)을 여는 권한(원장 2026-11-12 「원생만 · 학부모가 필즈와 같은 방법으로 로그인」) — 한 명씩 손으로 켠다

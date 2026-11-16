@@ -483,7 +483,10 @@ body.in-viewer{overflow:hidden}
 const CONCEPT_PAGES="../assets/concept/";
 const ALL=["개념완성","연산연습","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
-  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","마무리점검","초1입학모의고사","초2입학모의고사","자료실"];
+  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","마무리점검","초1입학모의고사1차","초1입학모의고사2차","초1입학모의고사3차","초1입학모의고사4차","초1입학모의고사6차","초2입학모의고사1차","초2입학모의고사2차","초2입학모의고사3차","초2입학모의고사4차","자료실"];
+// 입학 모의고사는 회차별 승인(원장 2026-11-16) — 서재 카드는 두 장이고, 그 묶음의 회차가 하나라도 열려 있으면 열린다
+const ENTRANCE_KEYS={"초1입학모의고사":["초1입학모의고사1차", "초1입학모의고사2차", "초1입학모의고사3차", "초1입학모의고사4차", "초1입학모의고사6차"],"초2입학모의고사":["초2입학모의고사1차", "초2입학모의고사2차", "초2입학모의고사3차", "초2입학모의고사4차"]};
+const hasPerm=(key)=>ENTRANCE_KEYS[key]?ENTRANCE_KEYS[key].some(id=>S.perms.includes(id)):S.perms.includes(key);
 const PRODUCTS=[
   {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,pageSegments:[{base:"../assets/concept/vol1/",count:19},{base:"../assets/concept/vol2/",count:19},{base:"../assets/concept/vol3/",count:16},{base:"../assets/concept/vol4/",count:10},{base:"../assets/concept/final/",count:11}],pageExt:"jpg",pagePrefix:"",
    chapters:[
@@ -510,8 +513,8 @@ const PRODUCTS=[
   // 채점하면 문항마다 글 해설이 붙은 결과표가 나온다.
   {key:"마무리점검",name:"마무리 점검",desc:"시험 직전 최종 점검 · 채점하면 문항별 해설",icon:"🏁",theme:"theme-final",type:"mock",hasVideo:false,mockUrl:"../mock/final.html"},
   // 입학 모의고사(원장 2026-11-15) — 선발시험을 우리 시험지로 다시 짠 것: 시험지 인쇄 · O/X 채점·진단 · 유사문제(문제은행 entrance.html)
-  {key:"초1입학모의고사",name:"초1 입학 모의고사",desc:"7세 선발시험 5회 · 시험지 인쇄 · O/X 채점·진단",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,mockUrl:"../question-bank/entrance.html?only=k"},
-  {key:"초2입학모의고사",name:"초2 입학 모의고사",desc:"초1 선발시험 4회 · 시험지 인쇄 · O/X 채점·진단",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,mockUrl:"../question-bank/entrance.html?only=g1"},
+  {key:"초1입학모의고사",name:"초1 입학 모의고사",desc:"7세 선발시험 · 승인된 회차만 · 시험지 인쇄 · O/X 채점·진단",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,mockUrl:"../question-bank/entrance.html?only=k"},
+  {key:"초2입학모의고사",name:"초2 입학 모의고사",desc:"초1 선발시험 · 승인된 회차만 · 시험지 인쇄 · O/X 채점·진단",icon:"🎒",theme:"theme-mock",type:"mock",hasVideo:false,mockUrl:"../question-bank/entrance.html?only=g1"},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
  // cover는 서재/쇼케이스의 3D 책 앞면(coverMarkup)에만 쓰인다. 뷰어 본문은 pagesBase로
@@ -811,7 +814,7 @@ const GF={
     document.getElementById("headerBadge").textContent="필즈 대비 과정";
     const g=document.getElementById("mainGrid");g.innerHTML="";
     PRODUCTS.forEach(p=>{
-      const ok=S.perms.includes(p.key);
+      const ok=hasPerm(p.key);
       const el=document.createElement("div");
       el.className="product-card "+p.theme+(ok?" unlocked":" locked");
       const actionLabel=p.type==="folder"?"📂 목록 보기":p.type==="mock"?"🔍 진단 시작":"📖 학습 시작";
@@ -1005,7 +1008,7 @@ function coverMarkup(ch,decorative=false){
     ? `<img src="${h(src)}" alt="${decorative?"":h(ch.title)}" loading="lazy" onerror="this.hidden=true">`
     : "";
 }
-function pOk(p){return !!p&&!p.comingSoon&&S.perms.includes(p.key)}
+function pOk(p){return !!p&&!p.comingSoon&&hasPerm(p.key)}
 function lessonKey(p){return p?.lessons?.[0]?.key||""}
 function archiveFolderNames(){
   const names=[];

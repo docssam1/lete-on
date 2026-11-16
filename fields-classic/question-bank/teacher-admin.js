@@ -1,6 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261111g";
 import { memberCall } from "./study-progress.js?v=20261111p";
 import { FIELDS_BOOKS, membershipSummary, directSummary } from "./gm-plan.js?v=20261114a";
+import { ENTRANCE_PRODUCTS } from "./entrance-products.js?v=20261116a";
 
 // 관리자 화면(원장 2026-11-14 「모의고사 회원도 있고 gm 관리 과정 회원도 있겠지? 어드민 좀 쉽게 조작할 수 있도록 바꾸고
 // 그리고 gm과정을 권별 이나 기간 둘로 나눠 관리할 수 있도록」):
@@ -37,11 +38,12 @@ const PRODUCTS = [
   ...[1, 2, 3, 4, 5, 6].map((n) => ({ id: `실전모의고사${n}회`, name: `실전 ${n}회` })),
   ...[1, 2, 3].map((n) => ({ id: `파이널모의고사${n}회`, name: `파이널 ${n}회` })),
   { id: "마무리점검", name: "마무리 점검" },
-  // 입학 모의고사(원장 2026-11-15 「초1 모의고사를 등록 안되어 있는데 초2하고」) — 필즈 대비 묶음과 따로 파는 것이라 「모든 회차 열기」·온라인 추가에 넣지 않고 한 명씩 켠다
-  { id: "초1입학모의고사", name: "초1 입학 모의고사", manualOnly: true }, { id: "초2입학모의고사", name: "초2 입학 모의고사", manualOnly: true },
+  // 입학 모의고사는 회차별(원장 2026-11-16 「승인도 회차별로」, entrance-products.js) — 필즈 대비 묶음과 따로 파는 것이라
+  // 「모든 회차 열기」·온라인 추가에 넣지 않고 한 명씩 켠다. 화면에서는 따로 「입학 모의고사」 칸에 둔다.
+  ...ENTRANCE_PRODUCTS.map((p) => ({ id: p.id, name: p.name.replace(/^초[12] 입학 · /u, ""), manualOnly: true, entrance: p.group })),
   { id: "강사용교안", name: "강사용 교안", manualOnly: true, other: true },
 ];
-const MOCK_IDS = PRODUCTS.filter((p) => !p.other).map((p) => p.id);
+const MOCK_IDS = PRODUCTS.filter((p) => !p.other && !p.entrance).map((p) => p.id);   // 필즈 대비 회차(입학 모의고사는 따로 센다)
 
 let accounts = [];
 let onChange = () => {};
@@ -277,7 +279,7 @@ function renderMockList() {
     const n = a.permissions.filter((id) => MOCK_IDS.includes(id)).length;
     return `<li><button type="button" data-name="${esc(a.name)}" aria-pressed="${a.name === mockView.selected}">
       <span class="ad-row-top"><b>${esc(a.name)}</b><span class="ms-status ${a.active ? (n ? "is-approved" : "is-off") : "is-paused"}">${a.active ? `${n}/${MOCK_IDS.length} 회차` : "사용 중지"}</span></span>
-      <small>${a.type === "online" ? "온라인" : "재원생"} · ${esc(ago(a.lastSeen))}${a.permissions.includes("강사용교안") ? " · 강사용 교안" : ""}</small></button></li>`;
+      <small>${a.type === "online" ? "온라인" : "재원생"} · ${esc(ago(a.lastSeen))}${a.permissions.includes("강사용교안") ? " · 강사용 교안" : ""}${(() => { const n = a.permissions.filter((id) => ENTRANCE_PRODUCTS.some((p) => p.id === id)).length; return n ? ` · 입학 ${n}회` : ""; })()}</small></button></li>`;
   }).join("") || `<li class="ad-empty">해당하는 학생이 없어요.</li>`;
   $("mockCount").textContent = `${mockAccounts().length}`;
 }
@@ -298,8 +300,11 @@ function renderMockDetail() {
   box.innerHTML = `<header class="ad-who"><div><h3>${esc(a.name)}</h3><small>${a.type === "online" ? "온라인" : "재원생"} · ${esc(ago(a.lastSeen))}</small></div><span class="ms-status ${a.active ? "is-approved" : "is-paused"}">${a.active ? "사용 중" : "사용 중지"}</span></header>
     ${mockView.code?.name === a.name ? codeBox(mockView.code.code) : ""}
     <section class="ad-block"><h4>모의고사 회차 <small>누르면 바로 저장</small></h4>
-      <div class="ad-products" role="group" aria-label="회차">${PRODUCTS.filter((p) => !p.other).map((p) => `<button type="button" data-product="${esc(p.id)}" aria-pressed="${on.has(p.id)}"${a.active ? "" : " disabled"}>${esc(p.name)}</button>`).join("")}</div>
+      <div class="ad-products" role="group" aria-label="회차">${PRODUCTS.filter((p) => !p.other && !p.entrance).map((p) => `<button type="button" data-product="${esc(p.id)}" aria-pressed="${on.has(p.id)}"${a.active ? "" : " disabled"}>${esc(p.name)}</button>`).join("")}</div>
       <div class="ad-mini"><button type="button" data-all="on"${a.active ? "" : " disabled"}>모든 회차 열기</button><button type="button" data-all="off"${a.active ? "" : " disabled"}>모든 회차 닫기</button></div>
+    </section>
+    <section class="ad-block"><h4>입학 모의고사 <small>회차별 · 누르면 바로 저장</small></h4>
+      ${[["k", "초1 입학 대비"], ["g1", "초2 입학 대비"]].map(([g, label]) => `<p class="ad-help">${label}</p><div class="ad-products" role="group" aria-label="${label}">${PRODUCTS.filter((p) => p.entrance === g).map((p) => `<button type="button" data-product="${esc(p.id)}" aria-pressed="${on.has(p.id)}"${a.active ? "" : " disabled"}>${esc(p.name)}</button>`).join("")}</div>`).join("")}
     </section>
     <section class="ad-block"><h4>그 밖의 권한</h4>
       <div class="ad-products">${PRODUCTS.filter((p) => p.other).map((p) => `<button type="button" data-product="${esc(p.id)}" aria-pressed="${on.has(p.id)}"${a.active ? "" : " disabled"}>${esc(p.name)}</button>`).join("")}</div>
