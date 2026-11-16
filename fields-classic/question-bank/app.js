@@ -3778,6 +3778,9 @@ function openAnswers() {
     const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
     return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
+  // 답안지 머리 = 그 시험지 제목(인쇄해서 문제지와 짝을 맞추게 — 원장 2026-11-16 「인쇄해야지」)
+  const head = document.querySelector("#answerDialog .dialog-head h2");
+  if (head) head.textContent = `${worksheetTitleText()} · 답안지`;
   $("answerDialog").showModal();
 }
 
