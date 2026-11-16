@@ -50,7 +50,10 @@ function labText(){
 }
 function syncLabs(){if(lab)lab.setActive(!document.hidden&&view==='labs'&&(!narrow.matches||level==='middle'));if(highLab)highLab.setActive(!document.hidden&&view==='labs'&&(!narrow.matches||level==='high'));}
 function play(v){const p=v.play();if(p)p.catch(()=>syncMedia());}
-function mediaSource(v,name,poster){const src='../assets/promo/video/'+name;if(v.getAttribute('src')!==src){v.src=src;if(poster)v.poster='../assets/promo/video/'+poster;v.load();}}
+/* 휴대폰(폭 900px 이하)이나 데이터 절약 모드면 같은 영상의 720p 가벼운 판을 쓴다(2026-11-16, 원장 「광고에 소개 부분 로딩」).
+   원본(1080p)은 그대로 두고 PC 에서 쓴다 — 가벼운 판은 원본을 줄인 사본이다(파일 이름 끝 -720). */
+function lightMedia(){try{const c=navigator.connection;return matchMedia('(max-width:900px)').matches||!!(c&&(c.saveData||/(^|-)(2g|3g)$/.test(c.effectiveType||'')));}catch(e){return false;}}
+function mediaSource(v,name,poster){if(lightMedia())name=name.replace(/\.mp4$/,'-720.mp4');const src='../assets/promo/video/'+name;if(v.getAttribute('src')!==src){v.src=src;if(poster)v.poster='../assets/promo/video/'+poster;v.load();}}
 function syncMedia(){
  $('#teaserPlay').textContent=teaser.paused?'▶':'Ⅱ';$('#teaserPlay').setAttribute('aria-label',teaser.paused?tr('미리보기 재생','Play preview','播放预览'):tr('미리보기 일시정지','Pause preview','暂停预览'));
  $('#teaserSound').textContent=teaser.muted?'×♪':'♪';$('#teaserSound').setAttribute('aria-label',teaser.muted?tr('배경음 켜기','Unmute preview','开启预览声音'):tr('배경음 끄기','Mute preview','关闭预览声音'));

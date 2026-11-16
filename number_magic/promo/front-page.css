@@ -31,7 +31,7 @@
 .closed-book{filter:drop-shadow(9px 22px 24px #0008);transform:none;transition:filter .4s}
 .closed-book:hover{transform:none;filter:drop-shadow(9px 25px 30px #0009)}
 .book-pages{inset:5px -6px -6px 8px;transform:none;border:1px solid #c7aa6b;border-radius:4px 10px 9px 3px;background:repeating-linear-gradient(0deg,#b49b68 0 1px,#e5d3a6 1px 2px);box-shadow:2px 3px 0 #123728}
-.book-cover-face{padding:17% 12% 12% 18%;background:#092d20 url('../assets/promo/grimoire-emerald.webp') center/100% 100% no-repeat;border:1px solid #baa36b70;border-radius:5px 10px 9px 5px;box-shadow:inset 1px 1px 1px #f8e7b144,inset -2px -2px 3px #07191088;transform:none}
+.book-cover-face{padding:17% 12% 12% 18%;background:#092d20 url('../assets/promo/grimoire-emerald.webp?v=20261116-light') center/100% 100% no-repeat;border:1px solid #baa36b70;border-radius:5px 10px 9px 5px;box-shadow:inset 1px 1px 1px #f8e7b144,inset -2px -2px 3px #07191088;transform:none}
 .book-cover-face:before{display:none}
 .cover-title{margin-top:12%;font-weight:600;color:#f0d596;text-shadow:0 1px 0 #fff0c455,0 2px 2px #010d08,0 5px 15px #010d0866}
 .cover-edition{font-size:clamp(9px,1vw,12px);color:#f5dfb4}
