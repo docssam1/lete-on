@@ -36,6 +36,15 @@
         "questions": 41,
         "finding": "q38 now explicitly compares final marked state after round3; answer and contract retained",
         "wholeUnitComplete": false
+      },
+      "latestSpecificReview485": {
+        "unit": "c22-s32-u02",
+        "questionRanges": [
+          "49-80"
+        ],
+        "questions": 32,
+        "specificTeacherFeedbackFields": 58,
+        "wholeUnitComplete": false
       }
     },
     {
@@ -132,7 +141,7 @@
     {
       "requirement": "Saved records, old questions and grading preserved",
       "status": "native-tested-runtime-unverified",
-      "evidence": "484 native351files/1711tests/1709pass/2browser skip. All201source revisions,3741full snapshots plus2legacy deltas, raw/item/misc hashes and24source papers are preserved. Only authored infection workbook q38.prompt changes; other31books and126paper outputs match,2outputs change only that direction. Teacher/student model record separation remains tested."
+      "evidence": "485 native351files/1711tests/1709pass/2browser skip. All201source revisions,3741full snapshots plus2legacy deltas, raw/item/misc hashes and24source papers are preserved. Only32authored Earth/sea workbook misconception notes and26teacher criteria change. All prompts/choices/answers/contracts/pages and31other books remain exact.126paper modes including target student/quick match;2teacher/answers modes change only reviewed feedback. Teacher/student model record separation remains tested."
     },
     {
       "requirement": "v1 folder navigation and full experiment flow",
@@ -234,15 +243,17 @@
     "threeDPlan": 0
   },
   "nextLocalWork": {
-    "firstIssue": "Review Earth and sea workbook additional materials and questions49-80 against the displayed contexts",
-    "unit": "c22-s32-u02",
+    "firstIssue": "Review actual career workbook questions97-128 with their everyday-life/job materials and response criteria",
+    "unit": "c22-s62-u04",
+    "actualWorkbookQuestions": 128,
+    "actualStudentPages": 127,
     "questionRanges": [
-      "49-80"
+      "97-128"
     ],
     "requirements": [
-      "Use actual exported questions and supplied maps/images; do not judge stale source literals alone.",
-      "Preserve authored/original distinctions, answer contracts, stored question versions, all201source diagnostics,3741full snapshots and teacher/student record separation.",
-      "Pending original-source editions and actual PC/mobile/keyboard/A4/audio/WebGL/v1 verification remain incomplete."
+      "Read current exported questions and supplied materials; retain canonical 2022 curriculum wording.",
+      "Preserve originals versus authored practice, all answer contracts and saved versions,201source diagnostic revisions,3741full snapshots and teacher/student records.",
+      "Original-source editions and actual PC/mobile/keyboard/A4/audio/WebGL/v1 checks remain incomplete."
     ]
   },
   "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json; phase482: force-classroom-before.json, route-tests-before.log, route-tests.log, combined-route-tests.log, primary-classroom-audit.json, preservation-result.json, native-suite-result.json, required-cli-checks.json",
@@ -252,8 +263,8 @@
   "browserStarted": false,
   "goalAchieved": false,
   "goalAtImpasse": false,
-  "latestFollowupBaseline": "7f0cb99b423fb53776df9bb7195bf63a7720d99b",
-  "latestPhase": 484,
+  "latestFollowupBaseline": "b1bdc1163bdc0e664ed1bf624ad6f1f2db7526a2",
+  "latestPhase": 485,
   "followup474": {
     "automaticSourceRevisions": 5,
     "wrongChoiceLinks": 19,
@@ -579,5 +590,40 @@
     "cloudWrites": 0,
     "deployed": false,
     "privateEvidence": "phase484/"
+  },
+  "followup485": {
+    "scope": "Earth and sea questions49-80 reviewed with displayed materials; specific teacher feedback only",
+    "unit": "c22-s32-u02",
+    "questionsReviewed": 32,
+    "wholeUnitIndependentReviewComplete": false,
+    "misconceptionsChanged": 32,
+    "criteriaChanged": 26,
+    "answersChoicesPromptsAndContractsUnchanged": true,
+    "otherQuestionFieldsAndAllPagesUnchanged": true,
+    "futureQuestionVariantsProtected": 128,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "changedPaperModes": [
+      "teacher",
+      "answers"
+    ],
+    "studentAndQuickOutputsUnchanged": true,
+    "nativeImageViewed": 1,
+    "officialSourceTextPagesRead": 3,
+    "newImagesAndOcr": 0,
+    "native": {
+      "files": 351,
+      "tests": 1711,
+      "pass": 1709,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "fullSnapshotsPreserved": 3741,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "deployed": false,
+    "privateEvidence": "phase485/"
   }
 }

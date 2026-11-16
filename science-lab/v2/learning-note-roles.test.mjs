@@ -93,10 +93,10 @@ test('grade-three study notes preserve every question, extension concept, writin
  assert.equal(withGrade3StudyNotes(futureExample),futureExample);
 });
 
-test('actual grade-three papers display the simpler notes while answer and quick views stay identical',async()=>{
+test('actual grade-three papers display the simpler notes with current question feedback and unchanged quick keys',async()=>{
  for(const [current,prior]of studyBooks){
   const pageCurrent=withInfectionWorkbookDirections(withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(current)))))));
-  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior)))),art);
+  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withEarthSeaWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior))))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert(html===oldPaper.workbookPaper({mode}),current.unit+' '+mode+' unchanged');

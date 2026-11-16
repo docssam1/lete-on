@@ -1,4 +1,4 @@
-import{withEarthSeaWorkbookDirections}from'./earth-sea-workbook-directions.js?v=20261115-earth-sea-workbook-directions';
+import{withEarthSeaWorkbookDirections}from'./earth-sea-workbook-directions.js?v=20261115-earth-sea-workbook-directions&feedback=20261116-earth-sea-workbook-feedback';
 import{withEarthSeaLinkedWorkbook}from'./earth-sea-choice-review.js?v=20261115-earth-sea-linked-choice-review';
 import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
 import{withEarthSeaStandaloneContext}from'./standalone-question-context.js?v=20261115-battery-polarity-card';
