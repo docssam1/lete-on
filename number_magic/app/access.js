@@ -206,6 +206,7 @@
       localStorage.setItem(k + '_previous', raw);
       localStorage.removeItem(k);
     });
+    localStorage.removeItem('nm_preview_carry_v1'); // 지난 방문의 「가입 시작」 표시도 새 방문에는 넘기지 않는다
     sessionStorage.setItem('nm_preview_visit_v1', String(Date.now()));
   }
   $('preview-link').addEventListener('click', function(ev){
