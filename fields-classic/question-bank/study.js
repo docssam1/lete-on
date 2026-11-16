@@ -1,6 +1,6 @@
-import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261116h4";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261116a";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116h3";
+import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261116h5";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261116h5";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116h5";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261116g1";

@@ -2,19 +2,19 @@
 // 1과정 차시 = 개념 판서 → 게임 → 워밍업 → 본책. 2과정은 워밍업 자료(골든벨 원본)가 없으므로 개념 판서 자리에 그림 논증, 게임 자리에 체험을 둔다.
 // 차시마다 무엇을 보여 줄지는 아래 SESSION_CONCEPTS(본책 활동 묶음과 같은 내용으로 골랐다). 논증 그림은 course2-proofs/<권>.js, 체험은 c2-lab.html.
 import { mountProof } from "./proof-board.js?v=20261115c";
-import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261116a";
+import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261116h5";
 import { BOARDS } from "./concept-boards.js?v=20261103d";
 
 const PROOF_TAGS = { g1: "20261115a" };   // proof.js의 BOOKS 꼬리표와 같게
-const DECK = { module: "./course2-deck.js?v=20261116h3" };
+const DECK = { module: "./course2-deck.js?v=20261116h5" };
 
-// 권/단원 → 차시마다 [["board", 1과정 판서 열쇠] | ["proof", 논증 id, 제목] | ["lab", 도구, 이름] | ["geo", 지오메트리 게임 주소, 이름]]
+// 권/단원 → 차시마다 [["board", 1과정 판서 열쇠] | ["drill", 열쇠, 이름] | ["proof", 논증 id, 제목] | ["lab", 도구, 이름] | ["geo", 지오메트리 게임 주소, 이름]]
 // board: 1과정에서 같은 내용을 가르치는 손글씨 판서와 그 판서의 게임을 그대로 쓴다(원장 2026-11-16 「설명도 없어」) — 2과정 본책 문제가 그 위에 쌓인다.
 // geo: 지오메트리 게임(원장 2026-11-16 「지오메트리의 색종이 게임 이상의 질이 나와야 돼」)
 export const SESSION_CONCEPTS = Object.freeze({
   "course-02-g1/0": [
     // 1차시 = 거꾸로 해결하기(원장 2026-11-16 「색종이 접기는 거꾸로 해결하기인 거 알지?」): 접어 자르기 → 종이가 모인 칸 찾기 → 접는 방법 거꾸로 찾기 게임 → 왜 대칭인지 → 구멍 세기
-    [["board", "book-04/fold-cut-source"], ["board", "book-04/fold-position-source"], ["geo", "../../geometry/games/paper-fold/index.html?level=3", "접는 방법 거꾸로 찾기 게임"],
+    [["board", "book-04/fold-cut-source"], ["board", "book-04/fold-position-source"], ["drill", "fold-region", "접힌 부분 위치 찾기"], ["geo", "../../geometry/games/paper-fold/index.html?level=3", "접는 방법 거꾸로 찾기 게임"],
       ["proof", "fold-cut-symmetry", "접어서 자르면 펼친 모양이 왜 대칭일까"], ["board", "book-04/fold-hole-count"]],
     [["board", "book-01/mirror-reflection"], ["board", "book-04/digital-flip-source"]],
     [["board", "book-07/elapsed-time"], ["proof", "mirror-clock", "거울에 비친 시계로 진짜 시각을 왜 알 수 있을까"], ["lab", "clock", "시계 바늘 각"]]
@@ -45,6 +45,11 @@ export function course2ConceptSlides(bookId, unitIndex, part) {
       const lesson = { id: lessonId, title: BOARDS[id]?.title || "개념", bookId: fromBook };
       const games = (STUDY_GAMES[id] || []).map((game) => ({ kind: "game", lesson, native: game, title: game.title }));
       return [{ kind: "concept", lesson, native: { ...STUDY_BOARDS[id], board: id } }, ...games];
+    }
+    // drill: 이 권의 연습 게임(drill-recipes.js의 「권/열쇠」) — 2과정 유형으로 연습·실전·도전
+    if (kind === "drill") {
+      const lesson = { id, title, bookId };
+      return (STUDY_GAMES[`${bookId}/${id}`] || []).map((game) => ({ kind: "game", lesson, native: game, title: `${title} 게임` }));
     }
     if (kind === "proof") return [{ kind: "concept", lesson: { id, title }, native: { ...DECK, css: "./proof.css?v=20261115c", mount: "mountDeckProof", board: `${book}/${id}`, presenter: false, doneSay: null } }];
     if (kind === "geo") return [{ kind: "game", lesson: { id: `geo-${title}`, title }, title, native: { ...DECK, css: "./course2-deck.css?v=20261116a", mount: "mountDeckLab", tool: "geo", src: id, doneSay: null } }];

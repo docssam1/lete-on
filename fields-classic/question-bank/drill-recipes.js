@@ -46,6 +46,8 @@ export const DRILL_RECIPES = Object.freeze({
   "book-04/digital-flip-source": ["digital-transform-arithmetic", "digital-grid-transform"],
   "book-04/flip-rotate-source": ["shape-quarter-half-turn", "shape-mirror-direction"],
   "book-04/fold-position-source": ["fold-number-grid-two-orthogonal"],
+  // 2과정 G1 1단원(거꾸로 해결하기의 ② 단계): 다 접은 종이가 펼친 종이의 몇 번 칸에 있나 — 덱 course2-deck.js의 ["drill", …]
+  "course-02-g1/fold-region": ["c2-fold-region-find"],
   "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
   "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
   "book-04/cube-min-count": ["cube-count-solid", "cube-minimum-from-solid"],
