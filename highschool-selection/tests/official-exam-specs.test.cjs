@@ -10,8 +10,8 @@ const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const keyFor = e => e.id === "wm-middle31-basic-r01" ? "WM:middle31-basic" : e.id === "wm-middle22-basic-r01" ? "WM:middle22-basic" : e.id === "ed-middle1-authored-r01" ? "ED:middle1" : e.id.startsWith("dp-middle22-transfer-") ? "DP:middle-transfer" : e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
 
 test("every released mock agrees with its own branch/course time and count", () => {
-  assert.equal(mocks.length, 36);
-  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1390);
+  assert.equal(mocks.length, 37);
+  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1440);
   mocks.forEach(e => {
     const s = specs.editions?.[e.id] || specs.courses[keyFor(e)];
     assert.ok(s, e.id);
