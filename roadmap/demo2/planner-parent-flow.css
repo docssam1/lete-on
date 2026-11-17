@@ -179,3 +179,5 @@ body.questioning #conversation:has(#questionOptions>.parent-slides)>:not(#questi
 #questionOptions .parent-slides button:disabled{cursor:default}
 @media(max-height:720px) and (max-width:700px){#questionOptions .parent-slides .parent-slide-stops button{min-height:28px;padding:2px 4px}#questionOptions .parent-slides .parent-primary,#questionOptions .parent-slides [data-slide-back]{min-height:44px}#questionOptions .parent-slides [data-slide-summary]>button{padding-block:7px}#questionOptions .parent-slides .parent-advanced{min-height:26px;padding:3px 0}#questionOptions .parent-slides [data-slide-note],#questionOptions .parent-slides .parent-slide-extra{min-height:36px}}
 #questionOptions .parent-slides .parent-slide-footer>nav>button{grid-column:auto;grid-row:auto}
+/* Runtime CSS may already be loaded when a bundle fails. Keep boot in one column. */
+body.parent-slide-open #parentBoot{grid-template-columns:minmax(0,1fr)!important}
