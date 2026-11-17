@@ -71,16 +71,44 @@ function renderNumbers() {
   $("numberList").innerHTML = sessions || `<p class="st-empty">이 단원의 본책 번호를 준비하고 있어요.</p>`;
 }
 
+// 시험지 짜기(원장 2026-11-17): 번호마다 문제 수(1~3) · 난이도(더 쉽게 / 본책과 같게 / 더 어렵게) · 미리보기 →
+// 「시험지 만들기」는 문제은행 3단계 시험지(미리보기·답안 보기·문제 인쇄, index.html &paper=1)를 새 창으로, 「화면에서 풀기」는 한 문제씩 푸는 학생 화면.
+const opts = { each: 1, level: "actual" };
+function pickParams() {
+  const book = activeBook();
+  const total = Math.min(MAX * 3, view.picked.size * opts.each);
+  return { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), each: String(opts.each), level: opts.level, build: "1",
+    title: `${book.label} ${view.unit + 1}단원 · 오답 유사문제`, total };
+}
 function renderDock() {
   const book = activeBook(), size = view.picked.size;
-  $("pickSummary").textContent = size ? `${book.label} ${view.unit + 1}단원 · ${size}문제 골랐어요${size >= MAX ? ` (한 번에 ${MAX}문제까지)` : ""}` : "틀렸거나 모르는 번호를 눌러요";
-  $("clearPicks").hidden = !size;
+  const total = size * opts.each;
+  $("pickSummary").textContent = size ? `${book.label} ${view.unit + 1}단원 · 번호 ${size}개 · ${total}문제${size >= MAX ? ` (번호는 한 번에 ${MAX}개까지)` : ""}` : "틀렸거나 모르는 번호를 눌러요";
+  ["clearPicks", "previewBtn", "solveLink", "pickOptions"].forEach((id) => { $(id).hidden = !size; });
+  document.querySelectorAll("#pickOptions [data-each]").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.each) === opts.each)));
+  document.querySelectorAll("#pickOptions [data-level]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.level === opts.level)));
   const make = $("makeLink");
   make.setAttribute("aria-disabled", String(!size));
-  make.textContent = size ? `유사문제 만들기 · ${size}문제` : "유사문제 만들기";
-  make.href = size ? link("index.html", { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), build: "1", as: "student", lead: "1",
-    title: `${book.label} ${view.unit + 1}단원 · 오답 유사문제`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit), ...(book.course ? { course: String(book.course) } : {}) })}` }) : "./index.html";
+  make.textContent = size ? `시험지 만들기 · ${total}문제` : "시험지 만들기";
+  const { total: _t, ...base } = pickParams();
+  const back = `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit), ...(book.course ? { course: String(book.course) } : {}) })}`;
+  make.href = size ? link("index.html", { ...base, paper: "1", form: "exam", cols: "2" }) : "./index.html";
+  $("solveLink").href = size ? link("index.html", { ...base, as: "student", lead: "1", back }) : "./index.html";
+  if (!$("previewPanel").hidden) refreshPreview();
 }
+let previewTimer = 0;
+function refreshPreview() {
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => {
+    if (!view.picked.size) { $("previewPanel").hidden = true; return; }
+    const { total, ...base } = pickParams();
+    $("previewFrame").src = link("index.html", { ...base, paper: "1", form: "exam", cols: "2", preview: "1" });
+  }, 250);
+}
+document.querySelectorAll("#pickOptions [data-each]").forEach((b) => b.addEventListener("click", () => { opts.each = Number(b.dataset.each); renderDock(); }));
+document.querySelectorAll("#pickOptions [data-level]").forEach((b) => b.addEventListener("click", () => { opts.level = b.dataset.level; renderDock(); }));
+$("previewBtn").addEventListener("click", () => { $("previewPanel").hidden = false; refreshPreview(); $("previewPanel").scrollIntoView({ behavior: "smooth", block: "start" }); });
+$("previewClose").addEventListener("click", () => { $("previewPanel").hidden = true; $("previewFrame").removeAttribute("src"); });
 
 // 과정: 1과정은 본책 번호 → 유사문제, 2과정은 권마다 그림으로 따져 보기·직접 해 보기·권별 테스트(course2-list.js), 3과정은 권별 테스트
 let course2Cache = null, course3Cache = null;
