@@ -84,3 +84,45 @@ test('an actual age is retained separately from school grade and is never guesse
  assert.throws(()=>F.build({...input(),age:'99'}),/나이/);
  for(const age of ['3','8']){const early=F.build({grade:'pre',age,thinking:{book:'수 놀이 활동'}});assert.equal(I.firstMissing(early,{...fields,grade:'pre'}),undefined);}
 });
+
+test('preschool book picker is short and unique without excluding an advanced current book',()=>{
+ const small=F.thinkingChoices('5','pre');
+ assert.deepEqual(Array.from(small,r=>r[1]),['킨더팩토','키즈팩토','초등팩토','PRE 1031']);
+ const all=F.thinkingChoices('5','pre',true),names=Array.from(all,r=>r[1]);
+ assert.equal(names.length,new Set(names).size);assert.ok(names.includes('1031 중급'));
+ assert.ok(F.thinkingChoices('5','pre',false,'1031 중급').some(r=>r[1]==='1031 중급'));
+ assert.equal(F.resolveBook('thinking','x:4').stored,'x:4');
+});
+test('verified book levels are optional and unsupported editions have no invented choices',()=>{
+ assert.deepEqual(Array.from(F.thinkingLevels('킨더팩토')),['A','B','C','D']);
+ assert.ok(F.thinkingLevels('키즈팩토').includes('원리 B'));assert.ok(F.thinkingLevels('키즈팩토').includes('기본 A'));
+ assert.equal(F.thinkingLevels('내 사고력 책').length,0);
+});
+test('thinking level and independent observations roundtrip separately from studied fractions',()=>{
+ const a=F.build({grade:'pre',age:'5',thinking:{book:'키즈팩토',level:'원리 B',range:'3/6단원',independent:'규칙은 혼자, 도형은 도움'}});
+ const m=F.inputModel(a);assert.equal(m.thinking.level,'원리 B');assert.equal(m.thinking.independent,'규칙은 혼자, 도형은 도움');assert.equal(m.thinking.range,'3/6단원');
+ assert.equal(I.progressValue(a,'thinkingStatus').done,3);assert.equal(a.mastery,undefined);assert.equal(a.score,undefined);
+ const html=F.renderLearning(a,fields);assert.match(html,/키즈팩토 · 원리 B · 3\/6단원/);assert.match(html,/혼자 푸는 범위\(입력\)/);
+ const model=F.automatic(a,fields,w.PlannerStandard.model(a,fields));assert.match(F.renderResult(model),/원리 B/);
+});
+test('changing a volume or custom book discards the previous scope evidence but preserves other settings',()=>{
+ const base={grade:'pre',age:'5',thinking:{book:'키즈팩토',level:'원리 A',range:'3/6단원',independent:'수 비교'}};
+ const a=F.build(base);a.parentFlow.enabled.science=false;
+ const b=F.build({...base,thinking:{book:'키즈팩토',level:'원리 B'}},a);
+ assert.equal(I.progressValue(b,'thinkingStatus'),null);assert.equal(b.parentFlow.independentRanges.thinking,'');assert.equal(b.parentFlow.enabled.science,false);
+ const custom=F.build({...base,thinking:{book:'지금 쓰는 다른 책',level:'2권',independent:'조건 읽기'}},a);
+ assert.equal(custom.parentFlow.actualBooks.thinking,'지금 쓰는 다른 책');assert.equal(custom.parentFlow.bookLevels.thinking,'2권');
+ assert.equal(custom.mastery,undefined);
+});
+test('academy levels restore for reference but never enter personal thinking assignments',()=>{
+ const a=F.build({grade:'pre',age:'5',thinking:{book:'소마 Ray',level:'A3-3',range:'규칙',independent:'수 세기'}});
+ const m=F.inputModel(a);assert.equal(m.thinking.level,'A3-3');assert.equal(m.thinking.independent,'수 세기');
+ assert.equal(F.thinkingStudy(a).book,'');assert.doesNotMatch(F.renderLearning(a,fields),/A3-3|소마 Ray/);
+});
+
+test('finishing a named volume never claims that the whole thinking series is complete',()=>{
+ const a=F.build({grade:'pre',age:'5',thinking:{book:'키즈팩토',level:'원리 B',status:'done',range:'3/6단원'}});
+ assert.equal(a.thinkingStatus,'progress');assert.equal(a.parentFlow.statuses.thinking,'done');assert.equal(F.inputModel(a).thinking.status,'done');assert.equal(I.progressValue(a,'thinkingStatus'),null);
+ assert.match(F.renderLearning(a,fields),/다음에 공부할 범위를 확인/);
+ const all=F.build({grade:'pre',age:'5',thinking:{book:'키즈팩토',status:'done'}});assert.equal(all.thinkingStatus,'done');
+});
