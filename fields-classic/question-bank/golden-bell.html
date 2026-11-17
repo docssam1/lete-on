@@ -5,8 +5,10 @@
   <script src="./guard.js?v=20261111q"></script>
   <!-- 차시 교재 인쇄 창(?sessionbook=1)은 교재를 다 짤 때까지 워밍업 학습 첫 화면을 감추고 안내 한 줄만 보인다
        (원장 2026-11-17 「인쇄할 때 베이지색 문제은행 같은 화면이 잠깐 나왔다 사라져」 — 3초쯤 비쳤다). golden-bell.js showSessionBookDone이 걷는다 -->
-  <script>(function(){try{if(new URLSearchParams(location.search).get("sessionbook")==="1"){var h=document.documentElement;h.classList.add("sb-booting");setTimeout(function(){h.classList.remove("sb-booting")},30000)}}catch(e){}})();</script>
-  <style>html.sb-booting body{visibility:hidden}html.sb-booting::after{content:"교재를 만들고 있어요…";position:fixed;inset:0;display:grid;place-items:center;background:#f2f6fd;color:#1b2340;font:600 18px/1.5 "Pretendard","Noto Sans KR",system-ui,sans-serif;z-index:2147483647}@media print{html.sb-booting::after{display:none}html.sb-booting body{visibility:visible}}</style>
+  <script>(function(){try{var q=new URLSearchParams(location.search),h=document.documentElement;if(q.get("sessionbook")==="1"){h.classList.add("sb-booting");setTimeout(function(){h.classList.remove("sb-booting")},30000)}
+  /* 덱 안 창(&embed=1)도 덱 모양(applyEmbed)이 입혀질 때까지 감춘다 — 느린 인터넷에서 워밍업 첫 화면이 몇 초 비쳤다(원장 2026-11-17 「스스로 공부하기에서도 그래」) */
+  if(q.get("embed")==="1"&&window.parent!==window){h.classList.add("gb-booting");setTimeout(function(){h.classList.remove("gb-booting")},20000)}}catch(e){}})();</script>
+  <style>html.sb-booting body{visibility:hidden}html.sb-booting::after{content:"교재를 만들고 있어요…";position:fixed;inset:0;display:grid;place-items:center;background:#f2f6fd;color:#1b2340;font:600 18px/1.5 "Pretendard","Noto Sans KR",system-ui,sans-serif;z-index:2147483647}@media print{html.sb-booting::after{display:none}html.sb-booting body{visibility:visible}}html.gb-booting body{visibility:hidden}html.gb-booting,html.gb-booting body{background:transparent!important}</style>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f5f7f4" />
   <title>워밍업 학습</title>
@@ -92,6 +94,6 @@
   <script src="../../geometry/worksheet/generators.js?v=20261101n"></script>
   <script src="../../geometry/worksheet/render.js?v=20260904a"></script>
   <script src="./vendor/qrcode.js?v=2.0.4"></script>
-  <script type="module" src="./golden-bell.js?v=20261117e"></script>
+  <script type="module" src="./golden-bell.js?v=20261117f"></script>
 </body>
 </html>

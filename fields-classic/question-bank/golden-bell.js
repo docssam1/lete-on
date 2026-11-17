@@ -2236,6 +2236,7 @@ function embedChunks() {
   return pages;
 }
 function applyEmbed() {
+  document.documentElement.classList.remove("gb-booting");
   document.body.dataset.embedView = embed.view;
   const key = `${state.lessonId}:${state.phase}:${flowStep(state.bookId, activeLesson()) || ""}`;
   if (key !== embed.key) { embed.key = key; embed.page = embed.startAtEnd ? Infinity : 0; embed.startAtEnd = false; }
