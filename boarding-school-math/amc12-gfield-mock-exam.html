@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="지필드가 직접 만든 AMC 12 범위 25문항, 75분 개념 모의고사입니다. 다섯 영역의 풀이를 돌아봅니다.">
+  <title>AMC 12 범위 지필드 모의고사 · G·MAP</title>
+  <link rel="stylesheet" href="./gfield-tokens.css?v=20260918-1">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
+  <link rel="stylesheet" href="./grade7-ns-a-mock-exam.css?v=20261104-2">
+  <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
+</head>
+<body class="gfield-ui mock-exam-page">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <header class="mock-header">
+    <a class="mock-brand" href="./boarding-roadmap.html?grade=10"><b>G·MAP</b><span>나의 성장 로드맵</span></a>
+    <a id="amc12-mock-back" href="./boarding-roadmap.html?grade=10#competition-diagnostic">10학년 로드맵으로</a>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="mock-intro">
+      <div><p class="mock-kicker">GFIELD · 자체 제작 · AMC 12 범위</p><h1>개념을 연결하는<br><span>지필드 수학 모의고사</span></h1><p>다섯 영역 25문항을 풀고 풀이와 다시 볼 개념을 확인해요.</p></div>
+      <aside class="mock-spec"><div><strong>25</strong><span>문항</span></div><div><strong>75</strong><span>분</span></div><p>대수 · 함수·삼각함수 · 정수론 · 기하 · 경우의 수</p><p class="mock-source-note">모든 문항은 지필드가 새로 만들었습니다. 공식 AMC 문항·성적·등급이나 AIME 자격으로 환산하지 않아요.</p><a class="mock-standard-link" href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer">MAA AMC 12 공식 범위·형식 ↗</a>
+        <a class="mock-standard-link" href="https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/" target="_blank" rel="noopener noreferrer">MAA 공식 시험 규정 ↗</a>
+        <p id="amc12-source-paper-note" class="mock-source-note" hidden></p>
+      </aside>
+    </section>
+    <section id="mock-start-panel" class="mock-start-panel" aria-labelledby="mock-instructions-title">
+      <div><p class="mock-kicker">시작 전에</p><h2 id="mock-instructions-title">종이와 연필을 준비해 주세요</h2><p>25문항을 75분 동안 풀어요. 각 문항에서 A–E 중 하나를 고릅니다. 답을 고친 뒤 제출할 수 있고, 제출 전에는 정답과 풀이가 보이지 않습니다. 이름이나 학교 성적은 입력하지 않아요. 결과 요약은 이 기기에만 저장됩니다.</p></div>
+      <ul><li>종이에 풀이 과정을 적고 선택한 답을 화면에 표시해요.</li><li>AMC 12 실전 조건에 맞추려면 계산기 없이 풀어요. 실제 응시 규정은 해당 연도 MAA 안내를 확인하세요.</li><li>제출 뒤 이번 지필드 문항의 맞힌 수, 영역별 결과, 문항 풀이를 확인해요.</li></ul>
+      <button id="mock-start" class="primary-action" type="button">지필드 모의고사 시작</button>
+    </section>
+    <section id="mock-exam-panel" class="mock-exam-panel" hidden aria-labelledby="mock-question-title">
+      <div class="mock-toolbar"><div><strong id="mock-progress">0 / 25 응답</strong><span>원하는 순서로 풀고 답을 선택하세요.</span></div><div class="mock-timer"><span>남은 시간</span><strong id="mock-timer" role="timer" aria-live="off">75:00</strong></div></div>
+      <div id="mock-question-list" class="mock-question-list"></div>
+      <div class="mock-submit-row"><p id="mock-submit-note">답을 고르지 않은 문항은 미응답으로 제출됩니다.</p><button id="mock-submit" class="primary-action" type="button">답안 제출</button></div>
+    </section>
+    <section id="mock-results" class="mock-results" hidden aria-labelledby="mock-results-title" aria-live="polite"></section>
+    <aside class="mock-boundary"><strong>결과 해석</strong><p>이 결과는 지필드가 만든 한 회차 문항에서 확인한 학습 단서입니다. 실제 AMC 12 점수·등급·학년 수준·AIME 자격을 판정하지 않으며, 별도 검토와 파일럿 전에는 다른 지필드 회차와 점수를 등급처럼 비교하지 않습니다.</p></aside>
+  </main>
+  <footer><span>G·MAP · 지필드 자체 AMC 12 범위 모의고사</span><a href="./boarding-roadmap.html?grade=10#competition-diagnostic">로드맵으로 돌아가기</a></footer>
+    <script src="./shared/boarding-content-translations.js?v=20261114-2"></script>
+  <script src="./shared/boarding-content-i18n.js?v=20261114-2"></script>
+<script src="./shared/math-inline.js?v=20261114-2"></script>
+  <script src="./shared/gmap-local-learning-record.js?v=20261104-4"></script>
+  <script src="./amc12-gfield-mock-bank.js?v=20261104-4"></script>
+  <script src="./grade7-ns-a-mock-exam.js?v=20261104-9"></script>
+  <script src="./amc12-gfield-mock-exam.js?v=20261104-1"></script>
+  <script src="./shared/boarding-study-return.js?v=20261114-3"></script>
+</body>
+</html>

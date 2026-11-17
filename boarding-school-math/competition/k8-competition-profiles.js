@@ -9,8 +9,8 @@
   "use strict";
 
   const verified = "2026-08-28";
-  const source = function (authority, url, documentRevision) {
-    return Object.freeze({ authority, url, documentRevision, lastVerified: verified });
+  const source = function (authority, url, documentRevision, lastVerified) {
+    return Object.freeze({ authority, url, documentRevision, lastVerified: lastVerified || verified });
   };
 
   const profiles = Object.freeze([
@@ -31,13 +31,16 @@
         Object.freeze({ grades: Object.freeze([11, 12]), questionCount: 30, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 10, maxScore: 120 })
       ]),
       rankingSeparatesStudentGrades: true,
+      percentileBasis: "within-grade",
+      percentileRegions: Object.freeze(["state", "nationwide"]),
       wrongAnswerPenalty: false,
       calculatorAllowed: false,
       curriculumIsGeneralGuideline: true,
       sources: Object.freeze([
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/", "current web page; revision date not stated"),
+        source("Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/pdf-exams/", "official prior-year student test PDFs grouped by grade pair", "2026-11-02"),
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/", "official two-grade curriculum guideline bands"),
-        source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/", "current scoring page; revision date not stated")
+        source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/", "current scoring page; grade-specific state and nationwide rankings/percentiles, revision date not stated", "2026-11-03")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
     }),
@@ -80,7 +83,7 @@
     Object.freeze({
       id: "maa-amc-8",
       programId: "amc-8",
-      officialEligibility: Object.freeze({ gradeMaximum: 8, ageExclusiveMaximum: 15.5 }),
+      officialEligibility: Object.freeze({ gradeMaximum: 8, ageLimitYears: 15.5, ageBoundaryRequiresConfirmation: true }),
       gfieldPreparationGrades: Object.freeze([6, 7, 8]),
       preparationBandIsOfficial: false,
       durationMinutes: 40,
@@ -103,8 +106,9 @@
         ])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-03"),
         source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
+        source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02"),
         source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf", "2026 AMC 8 teacher manual")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
@@ -112,7 +116,7 @@
     Object.freeze({
       id: "maa-amc-10",
       programId: "amc-10",
-      officialEligibility: Object.freeze({ gradeMaximum: 10, ageExclusiveMaximum: 17.5 }),
+      officialEligibility: Object.freeze({ gradeMaximum: 10, ageLimitYears: 17.5, ageBoundaryRequiresConfirmation: true }),
       gfieldPreparationGrades: Object.freeze([9, 10]),
       preparationBandIsOfficial: false,
       durationMinutes: 75,
@@ -124,15 +128,16 @@
         excludes: Object.freeze(["trigonometry", "advanced-algebra", "advanced-geometry"])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-03"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
+        source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
     }),
     Object.freeze({
       id: "maa-amc-12",
       programId: "amc-12",
-      officialEligibility: Object.freeze({ gradeMaximum: 12, ageExclusiveMaximum: 19.5 }),
+      officialEligibility: Object.freeze({ gradeMaximum: 12, ageLimitYears: 19.5, ageBoundaryRequiresConfirmation: true }),
       gfieldPreparationGrades: Object.freeze([11, 12]),
       preparationBandIsOfficial: false,
       durationMinutes: 75,
@@ -144,8 +149,9 @@
         excludes: Object.freeze(["calculus"])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-03"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
+        source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
     })

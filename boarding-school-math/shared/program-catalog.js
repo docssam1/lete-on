@@ -11,8 +11,8 @@
   if (!contract) throw new Error("GFIELDMathContract must load before program-catalog.js");
 
   const verified = "2026-08-28";
-  const source = function (authority, url, documentRevision) {
-    return Object.freeze({ authority, url, documentRevision: documentRevision || "current official page; revision date not stated", lastVerified: verified });
+  const source = function (authority, url, documentRevision, lastVerified) {
+    return Object.freeze({ authority, url, documentRevision: documentRevision || "current official page; revision date not stated", lastVerified: lastVerified || verified });
   };
 
   const catalog = {
@@ -57,6 +57,7 @@
         profileId: "math-kangaroo-usa-k12",
         sources: [
           source("Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/"),
+          source("Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/pdf-exams/"),
           source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/"),
           source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/")
         ],
@@ -79,13 +80,14 @@
         title: { ko: "AMC 8 준비", en: "AMC 8 Preparation", "zh-Hans": "AMC 8 备考" },
         pathway: "competition",
         grades: [6, 7, 8],
-        officialEligibility: "Grade 8 or below and under 15.5 years of age on competition day",
+        officialEligibility: "Grade 8 or below; confirm the current age boundary with MAA",
         preparationBandNotOfficial: true,
         profileId: "maa-amc-8",
         competitionSequence: Object.freeze({ previousProgramId: null, nextProgramId: "amc-10" }),
         sources: [
-          source("Mathematical Association of America", "https://maa.org/student-programs/amc/"),
+          source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle rechecked", "2026-11-02"),
           source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"),
+          source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02"),
           source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf", "2026 AMC 8 teacher manual")
         ],
         status: { state: "active", reason: "Eligibility and scope metadata are official; grades 6–8 are GFIELD's preparation band, not an MAA placement rule, and no original-content availability is claimed." }
@@ -95,13 +97,14 @@
         title: { ko: "AMC 10 준비", en: "AMC 10 Preparation", "zh-Hans": "AMC 10 备考" },
         pathway: "competition",
         grades: [9, 10],
-        officialEligibility: "Grade 10 or below and under 17.5 years of age on competition day",
+        officialEligibility: "Grade 10 or below; confirm the current age boundary with MAA",
         preparationBandNotOfficial: true,
         profileId: "maa-amc-10",
         competitionSequence: Object.freeze({ previousProgramId: "amc-8", nextProgramId: "amc-12" }),
         sources: [
-          source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
-          source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
+          source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle rechecked", "2026-11-02"),
+          source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
+          source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02")
         ],
         status: { state: "active", reason: "Eligibility and scope metadata are official; grades 9–10 are GFIELD's preparation band, not an MAA placement rule, and no original-content availability is claimed." }
       },
@@ -110,13 +113,14 @@
         title: { ko: "AMC 12 준비", en: "AMC 12 Preparation", "zh-Hans": "AMC 12 备考" },
         pathway: "competition",
         grades: [11, 12],
-        officialEligibility: "Grade 12 or below and under 19.5 years of age on competition day",
+        officialEligibility: "Grade 12 or below; confirm the current age boundary with MAA",
         preparationBandNotOfficial: true,
         profileId: "maa-amc-12",
         competitionSequence: Object.freeze({ previousProgramId: "amc-10", nextProgramId: null }),
         sources: [
-          source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
-          source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
+          source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle rechecked", "2026-11-02"),
+          source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
+          source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02")
         ],
         status: { state: "active", reason: "Eligibility and scope metadata are official; grades 11–12 are GFIELD's preparation band, not an MAA placement rule, and no original-content availability is claimed." }
       }

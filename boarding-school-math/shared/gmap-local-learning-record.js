@@ -9,10 +9,34 @@
   const SETTINGS_KEY = `${VERSION}:plan-settings`;
   const PRACTICE_KEY = `${VERSION}:practice`;
   const ASSESSMENT_KEY = `${VERSION}:external-assessment`;
+  const ASSESSMENT_HISTORY_KEY = `${VERSION}:external-assessment-history`;
+  const MAX_ASSESSMENT_RECORDS = 30;
   const GRADE6_DIAGNOSTIC_KEY = `${VERSION}:grade6-diagnostic-evidence`;
   const COMPETITION_KEY = `${VERSION}:competition-evidence`;
   const COMPETITION_SERIES_KEY = `${VERSION}:competition-first-attempts-v2`;
+  const COMPETITION_DIAGNOSTIC_HISTORY_KEY = `${VERSION}:competition-diagnostic-history-v1`;
+  const GFIELD_MOCK_RESULT_HISTORY_KEY = `${VERSION}:gfield-mock-result-history-v1`;
   const MAX_COMPETITION_FORMS = 8;
+  const MAX_COMPETITION_DIAGNOSTICS = 50;
+  const MAX_GFIELD_MOCK_RESULTS = 20;
+  const GFIELD_MOCK_RESULT_RULES = Object.freeze({
+    "gfield-grade7-ns-a-mock-v1": Object.freeze({ formVersion: "2026-11-03-v1", title: "7.NS.A 유리수 연산", clusterId: "7.NS.A", prefix: "ns-a-m", standards: ["7.NS.A.1", "7.NS.A.2", "7.NS.A.3"], itemsPerStandard: [5, 5, 4] }),
+    "gfield-grade7-rp-a-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "7.RP.A 비와 비례 관계", clusterId: "7.RP.A", prefix: "rp-a-m", standards: ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"], itemsPerStandard: [4, 5, 5] }),
+    "gfield-grade7-amc8-style-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "지필드 AMC 8 스타일 모의고사 · 1회", clusterId: "AMC8", prefix: "amc8-g7-m", standards: ["수 감각·비율", "대수·규칙", "기하·좌표", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5] }),
+    "gfield-grade7-amc8-style-mock-v2": Object.freeze({ formVersion: "2026-11-04-v2", title: "지필드 AMC 8 스타일 모의고사 · 2회", clusterId: "AMC8", prefix: "amc8-g7-v2-m", gradeRange: Object.freeze({ min: 6, max: 8 }), standards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"] }),
+    "gfield-amc10-concept-mock-v1": Object.freeze({
+      formVersion: "2026-11-04-v4", title: "지필드 AMC 10 범위 모의고사 · 1회", clusterId: "AMC10", prefix: "amc10-m", gradeRange: Object.freeze({ min: 7, max: 10 }),
+      standards: ["대수", "정수론", "기하", "경우의 수", "확률"],
+      formVersions: Object.freeze({
+        "2026-11-04-v4": Object.freeze({ itemsPerStandard: [5, 4, 6, 5, 5], itemStandards: ["대수", "기하", "기하", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률"] }),
+        "2026-11-04-v3": Object.freeze({ itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률"] }),
+        "2026-11-04-v2": Object.freeze({ itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "대수", "대수", "대수", "대수", "정수론", "정수론", "정수론", "정수론", "정수론", "기하", "기하", "기하", "기하", "기하", "경우의 수", "경우의 수", "경우의 수", "경우의 수", "경우의 수", "확률", "확률", "확률", "확률", "확률"] })
+      })
+    }),
+    "gfield-amc12-concept-mock-v1": Object.freeze({ formVersion: "2026-11-04-v2", previousFormVersions: ["2026-11-04-v1"], title: "지필드 AMC 12 범위 개념 모의고사 · 1회", clusterId: "AMC12", prefix: "amc12-gfield-m", gradeRange: Object.freeze({ min: 7, max: 12 }), standards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수"] })
+  });
+  const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석", functions: "함수와 그래프" });
+  const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);
   const REVIEWED_2019_G6_SOURCE_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
   const REVIEWED_2019_G6_AXIS_BY_QUESTION = Object.freeze([
     "number-operations", "data-probability", "geometry-spatial", "combinatorics-logic", "number-operations",
@@ -77,36 +101,64 @@
       attempted: summary.attempted,
       itemCount: Number.isInteger(summary.itemCount) && summary.itemCount > 0 ? summary.itemCount : 0,
       firstCorrect: Number.isInteger(summary.firstCorrect) && summary.firstCorrect >= 0 ? summary.firstCorrect : 0,
-      accuracy: Number.isInteger(summary.accuracy) && summary.accuracy >= 0 && summary.accuracy <= 100 ? summary.accuracy : null,
       complete: summary.complete === true,
-      readinessBand: typeof summary.readinessBand === "string" ? summary.readinessBand : "collecting",
-      strengthAxis: typeof summary.strengthAxis === "string" && AXIS_PRIORITIES[summary.strengthAxis] ? summary.strengthAxis : null,
-      priorityAxis: typeof summary.priorityAxis === "string" && AXIS_PRIORITIES[summary.priorityAxis] ? summary.priorityAxis : null,
       recordedAt: new Date().toISOString()
     };
   }
+  function sanitizedLegacyAssessment(value) {
+    if (!object(value) || !object(value.source) || !object(value.scores) || !["school-placement", "map-growth", "ctp", "ssat", "isee"].includes(value.source.id)) return null;
+    const legacyIsee = value.source.id === "isee";
+    return {
+      schemaVersion: value.schemaVersion,
+      legacyEvidence: true,
+      source: { id: String(value.source.id).slice(0, 32), label: String(value.source.label || "외부 평가").slice(0, 100), role: String(value.source.role || "").slice(0, 40) },
+      testDate: typeof value.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value.testDate) ? value.testDate : null,
+      grade: Number.isInteger(value.grade) && value.grade >= 3 && value.grade <= 12 ? value.grade : null,
+      scores: {
+        metric: !legacyIsee && Number.isFinite(value.scores.metric) ? value.scores.metric : null,
+        rit: Number.isFinite(value.scores.rit) ? value.scores.rit : null,
+        percentile: Number.isFinite(value.scores.percentile) ? value.scores.percentile : null,
+        scaleScore: Number.isFinite(value.scores.scaleScore) ? value.scores.scaleScore : null,
+        stanine: !legacyIsee && Number.isFinite(value.scores.stanine) ? value.scores.stanine : null,
+        schoolCut: Number.isFinite(value.scores.schoolCut) ? value.scores.schoolCut : null
+      },
+      needsIseeStanines: legacyIsee,
+      savedAt: typeof value.savedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.savedAt) ? value.savedAt : null
+    };
+  }
+  function sanitizedTestLevel(value, sourceId) {
+    const levels = sourceId === "ssat"
+      ? ["ssat-elementary-3", "ssat-elementary-4", "ssat-middle", "ssat-upper"]
+      : sourceId === "isee"
+        ? ["isee-primary-2", "isee-primary-3", "isee-primary-4", "isee-lower", "isee-middle", "isee-upper"]
+        : [];
+    return typeof value === "string" && levels.includes(value) ? value : null;
+  }
   function sanitizedAssessment(value) {
-    if (!object(value) || value.schemaVersion !== "gfield-external-math-evidence-v1" || !object(value.source) || !object(value.recommendedStart) || !object(value.primaryPriority) || !object(value.plan)) return null;
-    const domains = Array.isArray(value.priorityDomains) ? value.priorityDomains.slice(0, 2).map(function (domain) {
-      if (!object(domain) || typeof domain.label !== "string" || typeof domain.clusterId !== "string" || !Number.isFinite(domain.percent)) return null;
-      return { id: String(domain.id || "").slice(0, 32), label: domain.label.slice(0, 80), clusterId: domain.clusterId.slice(0, 32), percent: domain.percent };
+    if (object(value) && value.schemaVersion === "gfield-external-math-evidence-v1") return sanitizedLegacyAssessment(value);
+    if (!object(value) || !["gfield-external-math-evidence-v2", "gfield-external-math-evidence-v3"].includes(value.schemaVersion) || !object(value.source) || !object(value.currentCourse) || !object(value.recommendedStart) || !object(value.plan)) return null;
+    const domains = Array.isArray(value.domainComparisons) ? value.domainComparisons.slice(0, 6).map(function (domain) {
+      if (!object(domain) || typeof domain.label !== "string" || (domain.clusterId !== null && typeof domain.clusterId !== "string") || !Number.isFinite(domain.percent)) return null;
+      return { id: String(domain.id || "").slice(0, 32), label: domain.label.slice(0, 80), clusterId: domain.clusterId === null ? null : domain.clusterId.slice(0, 32), percent: domain.percent };
     }).filter(Boolean) : [];
     return {
       schemaVersion: value.schemaVersion,
       source: { id: String(value.source.id || "").slice(0, 32), label: String(value.source.label || "").slice(0, 100), role: String(value.source.role || "").slice(0, 40) },
       testDate: typeof value.testDate === "string" ? value.testDate : null,
       grade: Number.isInteger(value.grade) ? value.grade : null,
-      band: typeof value.band === "string" ? value.band : null,
-      confidence: typeof value.confidence === "string" ? value.confidence : null,
+      band: null,
+      confidence: "not-calculated",
       placementState: typeof value.placementState === "string" ? value.placementState : null,
       officialPlacement: false,
-      targetCandidate: value.targetCandidate === true,
-      scores: object(value.scores) ? { metric: Number.isFinite(value.scores.metric) ? value.scores.metric : null, metricLabel: String(value.scores.metricLabel || "입력 점수").slice(0, 80), rit: Number.isFinite(value.scores.rit) ? value.scores.rit : null, scaleScore: Number.isFinite(value.scores.scaleScore) ? value.scores.scaleScore : null, stanine: Number.isFinite(value.scores.stanine) ? value.scores.stanine : null, percentile: Number.isFinite(value.scores.percentile) ? value.scores.percentile : null, schoolCut: Number.isFinite(value.scores.schoolCut) ? value.scores.schoolCut : null, clearsEnteredCut: value.scores.clearsEnteredCut === true ? true : value.scores.clearsEnteredCut === false ? false : null } : null,
+      targetCandidate: value.targetCandidate === true && value.source.id === "school-placement" && value.scores && value.scores.clearsEnteredCut === true,
+      scores: object(value.scores) ? { metric: Number.isFinite(value.scores.metric) ? value.scores.metric : null, metricLabel: String(value.scores.metricLabel || "입력 점수").slice(0, 80), rit: Number.isFinite(value.scores.rit) ? value.scores.rit : null, scaleScore: Number.isFinite(value.scores.scaleScore) ? value.scores.scaleScore : null, stanine: Number.isFinite(value.scores.stanine) ? value.scores.stanine : null, quantStanine: Number.isFinite(value.scores.quantStanine) ? value.scores.quantStanine : null, mathStanine: Number.isFinite(value.scores.mathStanine) ? value.scores.mathStanine : null, percentile: Number.isFinite(value.scores.percentile) ? value.scores.percentile : null, schoolCut: Number.isFinite(value.scores.schoolCut) ? value.scores.schoolCut : null, clearsEnteredCut: value.scores.clearsEnteredCut === true ? true : value.scores.clearsEnteredCut === false ? false : null, normGroup: typeof value.scores.normGroup === "string" ? value.scores.normGroup.slice(0, 80) : null, testLevel: sanitizedTestLevel(value.scores.testLevel, value.source.id), season: typeof value.scores.season === "string" ? value.scores.season.slice(0, 12) : null, normYear: value.schemaVersion === "gfield-external-math-evidence-v3" && ["2020", "2025"].includes(String(value.scores.normYear || "")) ? String(value.scores.normYear) : null, instructionalWeeks: value.schemaVersion === "gfield-external-math-evidence-v3" && Number.isInteger(value.scores.instructionalWeeks) && value.scores.instructionalWeeks >= 1 && value.scores.instructionalWeeks <= 40 ? value.scores.instructionalWeeks : null } : null,
+      currentCourse: { id: String(value.currentCourse.id || "").slice(0, 40), label: String(value.currentCourse.label || "").slice(0, 80), publicLearning: value.currentCourse.publicLearning === true },
       recommendedStart: { id: String(value.recommendedStart.id || "").slice(0, 40), label: String(value.recommendedStart.label || "").slice(0, 80), publicLearning: value.recommendedStart.publicLearning === true },
       targetCourse: object(value.targetCourse) ? { id: String(value.targetCourse.id || "").slice(0, 40), label: String(value.targetCourse.label || "").slice(0, 80) } : null,
       route: Array.isArray(value.route) ? value.route.slice(0, 8).map(function (course) { return object(course) ? { id: String(course.id || "").slice(0, 40), label: String(course.label || "").slice(0, 80), stage: String(course.stage || "").slice(0, 80), publicLearning: course.publicLearning === true } : null; }).filter(Boolean) : [],
-      primaryPriority: { label: String(value.primaryPriority.label || "").slice(0, 80), axis: String(value.primaryPriority.axis || "").slice(0, 40), clusterId: String(value.primaryPriority.clusterId || "").slice(0, 32), percent: Number.isFinite(value.primaryPriority.percent) ? value.primaryPriority.percent : null },
-      priorityDomains: domains,
+      primaryPriority: null,
+      priorityDomains: [],
+      domainComparisons: domains,
       plan: { weeks: Number(value.plan.weeks) || null, studyDaysPerWeek: Number(value.plan.studyDaysPerWeek) || null, minutesPerDay: Number(value.plan.minutesPerDay) || null, problemCountPerDay: Number(value.plan.problemCountPerDay) || null },
       materialState: typeof value.materialState === "string" ? value.materialState : null,
       decisionNotice: typeof value.decisionNotice === "string" ? value.decisionNotice.slice(0, 240) : null,
@@ -144,6 +196,44 @@
       },
       priorities: priorities,
       recordedAt: typeof value.recordedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.recordedAt) ? value.recordedAt : new Date().toISOString()
+    };
+  }
+  function sanitizedGfieldMockResult(value) {
+    if (!object(value) || value.schemaVersion !== "gfield-mock-result-v1" || !Number.isInteger(value.grade) || !object(value.score) || !Array.isArray(value.standards) || !Array.isArray(value.reviewFocuses)) return null;
+    const rules = GFIELD_MOCK_RESULT_RULES[value.examId];
+    if (!rules) return null;
+    const versionRules = rules.formVersions ? rules.formVersions[value.formVersion] : value.formVersion === rules.formVersion || (rules.previousFormVersions || []).includes(value.formVersion) ? rules : null;
+    if (!versionRules) return null;
+    if (rules.gradeRange ? value.grade < rules.gradeRange.min || value.grade > rules.gradeRange.max : value.grade !== 7) return null;
+    const itemsPerStandard = versionRules.itemsPerStandard || rules.itemsPerStandard;
+    const itemStandards = versionRules.itemStandards || rules.itemStandards;
+    const itemCount = itemsPerStandard.reduce(function (sum, count) { return sum + count; }, 0);
+    const standards = value.standards.slice(0, rules.standards.length).map(function (entry, index) {
+      if (!object(entry) || entry.id !== rules.standards[index] || !Number.isInteger(entry.correct) || !Number.isInteger(entry.total) || entry.total !== itemsPerStandard[index] || entry.correct < 0 || entry.correct > entry.total) return null;
+      return { id: entry.id, correct: entry.correct, total: entry.total };
+    }).filter(Boolean);
+    if (standards.length !== rules.standards.length || standards.reduce(function (sum, entry) { return sum + entry.total; }, 0) !== itemCount) return null;
+    if (!Number.isInteger(value.score.correct) || value.score.correct < 0 || value.score.correct > itemCount || !Number.isInteger(value.score.answered) || value.score.answered < 0 || value.score.answered > itemCount || value.score.answered < value.score.correct || standards.reduce(function (sum, entry) { return sum + entry.correct; }, 0) !== value.score.correct) return null;
+    const focusIds = new Set();
+    const reviewFocuses = value.reviewFocuses.slice(0, itemCount).map(function (focus) {
+      if (!object(focus) || typeof focus.itemId !== "string" || typeof focus.standard !== "string" || typeof focus.label !== "string" || !focus.label.trim() || focus.label.length > 100) return null;
+      const match = new RegExp("^" + rules.prefix + "(\\d{2})$").exec(focus.itemId);
+      const index = match ? Number(match[1]) - 1 : -1;
+      const expectedStandard = index >= 0 && index < itemCount
+        ? itemStandards ? itemStandards[index] : rules.standards.find(function (standard, standardIndex) { return index >= itemsPerStandard.slice(0, standardIndex).reduce(function (sum, count) { return sum + count; }, 0) && index < itemsPerStandard.slice(0, standardIndex + 1).reduce(function (sum, count) { return sum + count; }, 0); })
+        : null;
+      if (index < 0 || index >= itemCount || focus.standard !== expectedStandard || focusIds.has(focus.itemId)) return null;
+      focusIds.add(focus.itemId);
+      return { itemId: focus.itemId, standard: focus.standard, label: focus.label.trim() };
+    }).filter(Boolean);
+    if (reviewFocuses.length !== value.reviewFocuses.length) return null;
+    return {
+      schemaVersion: "gfield-mock-result-v1", id: typeof value.id === "string" && /^mock-[a-z0-9-]{8,48}$/.test(value.id) ? value.id : `mock-${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}`,
+      examId: value.examId, examTitle: rules.title, clusterId: rules.clusterId, formVersion: value.formVersion, grade: value.grade,
+      score: { correct: value.score.correct, answered: value.score.answered, total: itemCount },
+      standards: standards,
+      reviewFocuses: reviewFocuses,
+      completedAt: typeof value.completedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.completedAt) ? value.completedAt : new Date().toISOString()
     };
   }
   function sanitizedCompetitionEvidence(value) {
@@ -309,6 +399,62 @@
       recordedAt: typeof value.recordedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.recordedAt) ? value.recordedAt : new Date().toISOString()
     };
   }
+  function sanitizedCompetitionDiagnostic(value) {
+    if (!object(value) || value.schemaVersion !== "gfield-competition-diagnostic-v1" || !["amc8", "amc10", "amc12", "aime", "kangaroo", "sasmo"].includes(value.programId) || !Number.isInteger(value.grade) || value.grade < 3 || value.grade > 12 || (value.programId === "amc8" && (value.grade < 6 || value.grade > 8)) || (value.programId === "amc10" && (value.grade < 7 || value.grade > 10)) || (value.programId === "amc12" && value.grade < 8) || (value.programId === "aime" && value.grade < 8) || !object(value.summary) || !Array.isArray(value.domains) || !Array.isArray(value.reasons)) return null;
+    const summary = value.summary;
+    if (value.officialPercentile != null && (value.programId !== "kangaroo" || !Number.isFinite(value.officialPercentile) || value.officialPercentile < 0 || value.officialPercentile > 100)) return null;
+    if (!["itemCount", "correct", "wrong", "blank", "unmarked", "attempted", "domainClassified", "reasonClassified"].every(function (key) { return Number.isInteger(summary[key]) && summary[key] >= 0; })) return null;
+    if (summary.itemCount < 1 || summary.itemCount > 30 || summary.correct + summary.wrong + summary.blank + summary.unmarked !== summary.itemCount || summary.attempted !== summary.correct + summary.wrong || summary.domainClassified > summary.itemCount || summary.reasonClassified > summary.wrong) return null;
+    const legacyAmc8Domains = value.programId === "amc8" && value.domains.length === 4;
+    const domains = value.domains.slice(0, 6).map(function (domain) {
+      if (!object(domain) || !Object.prototype.hasOwnProperty.call(COMPETITION_DOMAIN_LABELS, domain.id) || !["attempted", "correct", "wrong", "blank"].every(function (key) { return Number.isInteger(domain[key]) && domain[key] >= 0; }) || domain.attempted !== domain.correct + domain.wrong || domain.attempted + domain.blank > summary.itemCount) return null;
+      const rate = domain.attempted >= 3 ? Math.round(domain.correct / domain.attempted * 100) : null;
+      const name = domain.id === "number" && value.programId === "amc8" && !legacyAmc8Domains ? "수·비례·추정" : COMPETITION_DOMAIN_LABELS[domain.id];
+      return { id: domain.id, name: name, attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank, rate: rate, evidence: domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정" };
+    }).filter(Boolean);
+    const reasons = value.reasons.slice(0, 5).map(function (reason) {
+      return object(reason) && COMPETITION_REASON_IDS.has(reason.id) && Number.isInteger(reason.count) && reason.count > 0 && reason.count <= summary.wrong ? { id: reason.id, count: reason.count } : null;
+    }).filter(Boolean);
+    const domainIds = domains.map(function (domain) { return domain.id; }).sort();
+    const expectedLegacyDomainIds = ["algebra", "counting", "geometry", "number"];
+    const expectedAmc8DomainIds = expectedLegacyDomainIds.concat(["data"]).sort();
+    const validLegacyDomains = value.domains.length === 4 && domainIds.join("|") === expectedLegacyDomainIds.join("|");
+    const validAmc8Domains = value.programId === "amc8" && value.domains.length === 5 && domainIds.join("|") === expectedAmc8DomainIds.join("|");
+    const validSixDomains = value.domains.length === 6 && domainIds.join("|") === expectedAmc8DomainIds.concat(["functions"]).sort().join("|");
+    if ((!validLegacyDomains && !validAmc8Domains && !validSixDomains) || domains.length !== value.domains.length || reasons.length !== value.reasons.length || new Set(domains.map(function (domain) { return domain.id; })).size !== domains.length) return null;
+    if (domains.reduce(function (total, domain) { return total + domain.attempted + domain.blank; }, 0) !== summary.domainClassified || domains.reduce(function (total, domain) { return total + domain.correct; }, 0) > summary.correct || domains.reduce(function (total, domain) { return total + domain.wrong; }, 0) > summary.wrong || domains.reduce(function (total, domain) { return total + domain.blank; }, 0) > summary.blank || reasons.reduce(function (total, reason) { return total + reason.count; }, 0) !== summary.reasonClassified) return null;
+    return {
+      schemaVersion: "gfield-competition-diagnostic-v1",
+      id: typeof value.id === "string" && /^[a-zA-Z0-9_-]{1,80}$/.test(value.id) ? value.id : `${value.programId}-${value.grade}-${Date.now()}`,
+      programId: value.programId,
+      programTitle: String(value.programTitle || value.programId.toUpperCase()).slice(0, 40),
+      grade: value.grade,
+      paperLabel: typeof value.paperLabel === "string" ? value.paperLabel.trim().slice(0, 80) : "",
+      ...(object(value.paper) && ["amc8", "amc10", "amc12", "aime"].includes(value.programId)
+        && Number.isInteger(value.paper.year) && value.paper.year >= 1950 && value.paper.year <= 2100
+        && typeof value.paper.form === "string" && /^(?:|A|B|C|D|I|II)$/.test(value.paper.form)
+        ? { paper: { year: value.paper.year, form: value.paper.form,
+          ...(summary.unmarked === 0 && Number.isFinite(value.paper.points) && value.paper.points >= 0
+            && value.paper.max === (value.programId === "amc8" ? 25 : value.programId === "aime" ? 15 : 150)
+            && value.paper.points <= value.paper.max && Number.isInteger(value.paper.points * 2)
+            ? { points: value.paper.points, max: value.paper.max } : {}) } } : {}),
+      examDate: typeof value.examDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value.examDate) && !Number.isNaN(Date.parse(`${value.examDate}T00:00:00Z`)) && new Date(`${value.examDate}T00:00:00Z`).toISOString().slice(0, 10) === value.examDate ? value.examDate : null,
+      officialPercentile: value.programId === "kangaroo" && Number.isFinite(value.officialPercentile) ? value.officialPercentile : null,
+      summary: { itemCount: summary.itemCount, correct: summary.correct, wrong: summary.wrong, blank: summary.blank, unmarked: summary.unmarked, attempted: summary.attempted, domainClassified: summary.domainClassified, reasonClassified: summary.reasonClassified, accuracy: summary.attempted >= 3 ? Math.round(summary.correct / summary.attempted * 100) : null },
+      domains: domains,
+      reasons: reasons,
+      ...(Array.isArray(value.concepts) && value.concepts.length <= 200 && new Set(value.concepts.map(function (row) { return row && row.id; })).size === value.concepts.length
+        && value.concepts.every(function (row) { return object(row) && typeof row.id === "string" && /^[a-z0-9-]{1,80}$/.test(row.id)
+          && ["correct", "wrong", "blank"].every(function (key) { return Number.isInteger(row[key]) && row[key] >= 0 && row[key] <= summary[key]; })
+          && row.correct + row.wrong + row.blank > 0; })
+        ? { concepts: value.concepts.map(function (row) { return { id: row.id, correct: row.correct, wrong: row.wrong, blank: row.blank }; }) } : {}),
+      ...(Array.isArray(value.blankReasons) && value.blankReasons.length <= 3 && new Set(value.blankReasons.map(function (row) { return row && row.id; })).size === value.blankReasons.length
+        && value.blankReasons.every(function (row) { return object(row) && ["time", "skipped", "could-not-start"].includes(row.id) && Number.isInteger(row.count) && row.count > 0; })
+        && value.blankReasons.reduce(function (sum, row) { return sum + row.count; }, 0) <= summary.blank
+        ? { blankReasons: value.blankReasons.map(function (row) { return { id: row.id, count: row.count }; }) } : {}),
+      savedAt: typeof value.savedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.savedAt) ? value.savedAt : new Date().toISOString()
+    };
+  }
   function create(storage) {
     const store = storage || browserStorage();
     function read(key) { return store ? safeParse(store.getItem(key), {}) : {}; }
@@ -356,13 +502,93 @@
       return true;
     }
     function loadAssessmentEvidence() { return sanitizedAssessment(read(ASSESSMENT_KEY)); }
+    function loadAssessmentEvidenceHistory() {
+      const raw = read(ASSESSMENT_HISTORY_KEY);
+      if (!object(raw) || raw.schemaVersion !== "gfield-external-assessment-history-v1" || !Array.isArray(raw.records)) {
+        const previous = sanitizedAssessment(read(ASSESSMENT_KEY));
+        if (previous && !previous.legacyEvidence) {
+          write(ASSESSMENT_HISTORY_KEY, { schemaVersion: "gfield-external-assessment-history-v1", records: [previous] });
+          return [previous];
+        }
+        return [];
+      }
+      return raw.records.slice(0, MAX_ASSESSMENT_RECORDS).map(sanitizedAssessment).filter(function (entry) { return entry && !entry.legacyEvidence; })
+        .sort(function (a, b) { return String(b.testDate || "").localeCompare(String(a.testDate || "")) || String(b.savedAt || "").localeCompare(String(a.savedAt || "")); });
+    }
+    function loadLatestAssessmentEvidence(grade) {
+      if (!Number.isInteger(grade)) return null;
+      return loadAssessmentEvidenceHistory().find(function (entry) { return entry.grade === grade; }) || null;
+    }
     function saveAssessmentEvidence(evidence) {
       const sanitized = sanitizedAssessment(evidence);
-      if (!sanitized) return false;
+      if (!sanitized || sanitized.legacyEvidence) return false;
+      const history = loadAssessmentEvidenceHistory();
+      const identity = [sanitized.source.id, sanitized.grade, sanitized.testDate].join(":");
+      const next = history.filter(function (entry) { return [entry.source.id, entry.grade, entry.testDate].join(":") !== identity; });
+      next.unshift(sanitized);
+      write(ASSESSMENT_HISTORY_KEY, { schemaVersion: "gfield-external-assessment-history-v1", records: next.slice(0, MAX_ASSESSMENT_RECORDS) });
       write(ASSESSMENT_KEY, sanitized);
       return true;
     }
-    function clearAssessmentEvidence() { if (!store) return false; store.removeItem(ASSESSMENT_KEY); return true; }
+    function clearAssessmentEvidence() { if (!store) return false; store.removeItem(ASSESSMENT_KEY); store.removeItem(ASSESSMENT_HISTORY_KEY); return true; }
+    function loadGfieldMockResultHistory(examId) {
+      const saved = read(GFIELD_MOCK_RESULT_HISTORY_KEY);
+      if (saved.schemaVersion !== "gfield-mock-result-history-v1" || !Array.isArray(saved.records)) return [];
+      return saved.records.slice(0, MAX_GFIELD_MOCK_RESULTS).map(sanitizedGfieldMockResult).filter(function (entry) { return entry && (!examId || entry.examId === examId); }).sort(function (a, b) { return String(b.completedAt).localeCompare(String(a.completedAt)); });
+    }
+    function saveGfieldMockResult(result) {
+      const sanitized = sanitizedGfieldMockResult(result);
+      if (!store || !sanitized) return false;
+      const records = loadGfieldMockResultHistory().filter(function (entry) { return entry.id !== sanitized.id; });
+      records.unshift(sanitized);
+      write(GFIELD_MOCK_RESULT_HISTORY_KEY, { schemaVersion: "gfield-mock-result-history-v1", records: records.slice(0, MAX_GFIELD_MOCK_RESULTS) });
+      return sanitized;
+    }
+    function removeGfieldMockResult(id) {
+      if (!store || typeof id !== "string") return false;
+      const records = loadGfieldMockResultHistory().filter(function (entry) { return entry.id !== id; });
+      write(GFIELD_MOCK_RESULT_HISTORY_KEY, { schemaVersion: "gfield-mock-result-history-v1", records: records });
+      return true;
+    }
+    function clearGfieldMockResultHistory() { if (!store) return false; store.removeItem(GFIELD_MOCK_RESULT_HISTORY_KEY); return true; }
+    function loadCompetitionDiagnosticHistory(grade, programId) {
+      const saved = read(COMPETITION_DIAGNOSTIC_HISTORY_KEY);
+      if (saved.schemaVersion !== "gfield-competition-diagnostic-history-v1" || !Array.isArray(saved.records)) return [];
+      return saved.records.slice(0, MAX_COMPETITION_DIAGNOSTICS).map(sanitizedCompetitionDiagnostic).filter(function (entry) {
+        return entry && (!Number.isInteger(grade) || entry.grade === grade) && (!programId || entry.programId === programId);
+      }).sort(function (a, b) {
+        const aHasDate = Boolean(a.examDate); const bHasDate = Boolean(b.examDate);
+        if (aHasDate !== bHasDate) return aHasDate ? -1 : 1;
+        return String(b.examDate || b.savedAt).localeCompare(String(a.examDate || a.savedAt)) || String(b.savedAt).localeCompare(String(a.savedAt));
+      });
+    }
+    function saveCompetitionDiagnostic(record) {
+      const sanitized = sanitizedCompetitionDiagnostic(record);
+      if (!sanitized) return false;
+      const records = loadCompetitionDiagnosticHistory();
+      function identityFor(entry) {
+        if (!entry.examDate) return null;
+        let paper = entry.paper;
+        if (!paper) {
+          const match = /^(\d{4}) (AMC 8|AMC 10|AMC 12|AIME)(?: ([ABCD]|I|II))?$/.exec(entry.paperLabel);
+          const titles = { amc8: "AMC 8", amc10: "AMC 10", amc12: "AMC 12", aime: "AIME" };
+          if (match && titles[entry.programId] === match[2]) paper = { year: Number(match[1]), form: match[3] || "" };
+        }
+        return [entry.grade, entry.programId, entry.examDate, paper ? "paper:" + paper.year + ":" + paper.form : "memo:" + entry.paperLabel].join(":");
+      }
+      const identity = identityFor(sanitized);
+      const next = records.filter(function (entry) { return !identity || identityFor(entry) !== identity; });
+      next.unshift(sanitized);
+      write(COMPETITION_DIAGNOSTIC_HISTORY_KEY, { schemaVersion: "gfield-competition-diagnostic-history-v1", records: next.slice(0, MAX_COMPETITION_DIAGNOSTICS) });
+      return sanitized;
+    }
+    function removeCompetitionDiagnostic(id) {
+      if (!store || typeof id !== "string") return false;
+      const records = loadCompetitionDiagnosticHistory().filter(function (entry) { return entry.id !== id; });
+      write(COMPETITION_DIAGNOSTIC_HISTORY_KEY, { schemaVersion: "gfield-competition-diagnostic-history-v1", records: records });
+      return true;
+    }
+    function clearCompetitionDiagnosticHistory() { if (!store) return false; store.removeItem(COMPETITION_DIAGNOSTIC_HISTORY_KEY); return true; }
     function loadGrade6DiagnosticEvidence() { return sanitizedGrade6DiagnosticEvidence(read(GRADE6_DIAGNOSTIC_KEY)); }
     function saveGrade6DiagnosticEvidence(evidence) {
       const sanitized = sanitizedGrade6DiagnosticEvidence(evidence);
@@ -418,7 +644,7 @@
       store.removeItem(COMPETITION_SERIES_KEY);
       return true;
     }
-    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
+    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, loadAssessmentEvidenceHistory: loadAssessmentEvidenceHistory, loadLatestAssessmentEvidence: loadLatestAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadGfieldMockResultHistory: loadGfieldMockResultHistory, saveGfieldMockResult: saveGfieldMockResult, removeGfieldMockResult: removeGfieldMockResult, clearGfieldMockResultHistory: clearGfieldMockResultHistory, loadCompetitionDiagnosticHistory: loadCompetitionDiagnosticHistory, saveCompetitionDiagnostic: saveCompetitionDiagnostic, removeCompetitionDiagnostic: removeCompetitionDiagnostic, clearCompetitionDiagnosticHistory: clearCompetitionDiagnosticHistory, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
   }
   function priorityForAxis(axis) { return AXIS_PRIORITIES[axis] || null; }
   return Object.freeze({ VERSION: VERSION, AXIS_PRIORITIES: AXIS_PRIORITIES, priorityForAxis: priorityForAxis, create: create, storage: create() });

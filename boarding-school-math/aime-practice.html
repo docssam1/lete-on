@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="지필드가 직접 만든 AIME형 정수 답안 연습입니다. 공식 시험, 점수 진단, 자격 판정이 아닙니다.">
+  <title>AIME형 풀이 연습 · G·MAP</title>
+  <link rel="stylesheet" href="./gfield-tokens.css?v=20260918-1">
+  <link rel="stylesheet" href="./competition-practice.css?v=20260918-2">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
+  <link rel="stylesheet" href="./aime-practice.css?v=20261103-5">
+  <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
+</head>
+<body class="gfield-ui aime-practice-page">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <header class="site-header">
+    <a class="brand" id="aime-brand-route" href="./boarding-roadmap.html?grade=8"><b>G·MAP</b><span>개념부터 경시까지</span></a>
+    <nav aria-label="주요 탐색"><a id="aime-nav-route" href="./boarding-roadmap.html?grade=8">8학년 성장 지도</a><a href="./concept-learning.html">개념 학습</a><a href="./amc10-practice.html?grade=8" id="aime-amc-route">AMC 10 개념 연습</a></nav>
+    <a class="back-link" id="aime-back-route" href="./boarding-roadmap.html?grade=8#annual-plan">로드맵으로</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="practice-intro">
+      <div>
+        <p class="eyebrow">GFIELD ORIGINAL · 정수 답안 심화 연습</p>
+        <h1>AIME형 풀이 <span>연습</span></h1>
+        <p>대수·정수론·기하·경우의 수 문제를 풀고, 답에 이르는 생각을 설명해요. 기초 개념에서 여러 개념을 연결하는 지필드 창작 문항을 단계별로 연습합니다.</p>
+      </div>
+      <aside class="release-note">
+        <strong>지필드 자체 제작 · 학습용</strong>
+        <p>모든 문항은 새로 작성했습니다. 공식 AIME 문항·모의고사·경시 등급이나 자격 진단이 아니며, 답을 저장하거나 학생을 평가하지 않습니다.</p>
+        <a href="https://maa.org/maa-invitational-competitions/" target="_blank" rel="noopener noreferrer">MAA AIME 답안 형식·대회 안내 ↗</a>
+        <small>답안 입력은 AIME의 정수 응답 방식(0–999)을 참고했습니다. 공식 시험의 문항 수나 시간 운영을 재현하지 않습니다.</small>
+      </aside>
+    </section>
+
+    <section id="source-paper-context" class="practice-method" hidden aria-label="앞서 푼 AIME 원본">
+      <h2>앞서 푼 AIME 원본</h2>
+      <p id="source-paper-summary"></p>
+      <a id="source-paper-link" href="https://live.poshenloh.com/past-contests">원본 답안·풀이 다시 보기 ↗</a>
+      <a id="source-review-link" href="./competition-paper-review.html">원본 복습 결과로 돌아가기 →</a>
+    </section>
+
+    <section class="practice-method" aria-labelledby="method-title">
+      <h2 id="method-title">개념 → 유형 → 연결 → 실전</h2>
+      <ol><li>개념을 말로 설명해요</li><li>조건에 맞는 풀이를 찾아요</li><li>서로 다른 영역을 연결해요</li><li>준비되면 공식 자료를 별도로 살펴봐요</li></ol>
+      <p>여기서는 개념·유형·연결을 연습합니다. 실제 응시 자격은 학년이나 이 연습 결과로 정하지 않으며, 해당 연도 대회 안내를 확인해야 합니다.</p>
+      <details class="practice-reflection"><summary>풀이 뒤에 한 번 더 생각하기</summary><ul><li>왜 이 방법을 골랐나요?</li><li>다른 방법으로도 풀 수 있나요?</li><li>조건 하나를 바꾸면 무엇이 달라지나요?</li><li>숫자가 바뀌어도 같은 생각이 통하나요?</li></ul></details>
+    </section>
+
+    <section class="bank-toolbar" aria-label="연습 진행 상태">
+      <div><strong id="practice-count">문항</strong><span> · 답과 풀이 이유를 함께 살펴보세요.</span></div>
+      <div class="progress-summary"><strong id="practice-progress">0</strong><span>연습한 문항</span></div>
+    </section>
+
+    <section class="aime-layout">
+      <aside class="domain-sidebar" aria-labelledby="filter-heading">
+        <p class="section-number">01</p><h2 id="filter-heading">문항 골라 보기</h2>
+        <h3>수학 영역</h3><div id="domain-filters" class="domain-filters" role="group" aria-label="수학 영역 필터"></div>
+        <h3>풀이 단계</h3><div id="stage-filters" class="domain-filters" role="group" aria-label="풀이 단계 필터"></div>
+        <p class="scope-note">‘개념 → 유형 → 연결’ 순으로 사고를 확장하는 학습 흐름입니다. 문항 정답률이나 필터 선택은 진단 결과가 아닙니다.</p>
+      </aside>
+      <section class="aime-workspace" aria-labelledby="items-heading">
+        <div class="workspace-heading"><div><p class="section-number">02</p><h2 id="items-heading">문제와 풀이</h2></div><button id="reset-practice" type="button">입력 지우기</button></div>
+        <div id="aime-items" class="problem-list"></div>
+      </section>
+    </section>
+
+    <aside class="practice-boundary"><strong>이 연습은 학생의 실력·학년·과목 배치나 AIME 응시 자격을 판정하지 않습니다.</strong><span>정답 확인은 자기 점검용입니다. 학습 경로는 학교에서 배우는 과목과 풀이 설명을 선생님과 함께 살펴 정하세요.</span></aside>
+  </main>
+  <footer><span>G·MAP · GFIELD original AIME-style practice</span><a id="aime-footer-route" href="./boarding-roadmap.html?grade=8">8학년 로드맵으로 돌아가기</a></footer>
+    <script src="./shared/boarding-content-translations.js?v=20261117-1"></script>
+  <script src="./shared/boarding-content-i18n.js?v=20261114-2"></script>
+<script src="./shared/math-inline.js?v=20261114-2"></script>
+  <script src="./competition/aime-concept-practice-bank.js?v=20261117-1"></script>
+  <script src="./competition/aime-concept-practice-extension.js?v=20261105-10"></script>
+  <script src="./aime-practice.js?v=20261104-4"></script>
+  <script src="./shared/boarding-study-return.js?v=20261114-2"></script>
+</body>
+</html>

@@ -149,13 +149,16 @@ const PORTRAIT = { talk: "docssam-guide.webp", think: "docssam-thinking.webp", p
 // 휴대폰에서는 작은 전신 대신 동그란 얼굴(원장 2026-11-01 「사람이 작아지는 게 아니라 얼굴만 나오는 거잖아」) — 같은 틀로 자른 수학 독쌤 그림을 쓴다
 const FACE_PORTRAIT = { talk: "A1-mouth-closed.webp", think: "B2-puzzled-thinking.webp", praise: "B5-happy-thumbs-up.webp" };
 let lastLine = null;
+const preloadGuide = [...Object.values(PORTRAIT).map((n) => `./${n}`), ...Object.values(FACE_PORTRAIT).map((n) => `./assets/docssam-math/${n}`)].map((src) => { const img = new Image(); img.src = src; return img; });
 // spoken: 말풍선 글과 다르게 읽을 때(단원 평가 결과 — 약한 유형 이름은 말풍선에만)
 function say(text, mood = "talk", voiceId = null, spoken = text) {
   lastLine = [spoken, mood, voiceId];
   $("guideSay").textContent = text;
   $("talk").dataset.mood = mood;
-  $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
-  $("walkerFace").src = `./assets/docssam-math/${FACE_PORTRAIT[mood] || FACE_PORTRAIT.talk}`;
+  // 같은 그림이면 src를 다시 넣지 않는다(다시 넣으면 한 번 비었다가 그려져 깜빡였다) — 그림은 처음에 미리 받아 둔다(preloadGuide)
+  const body = `./${PORTRAIT[mood] || PORTRAIT.talk}`, face = `./assets/docssam-math/${FACE_PORTRAIT[mood] || FACE_PORTRAIT.talk}`;
+  if ($("walkerImg").getAttribute("src") !== body) $("walkerImg").src = body;
+  if ($("walkerFace").getAttribute("src") !== face) $("walkerFace").src = face;
   presenter?.mood(mood);
   const bubble = $("talk");
   bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
@@ -358,6 +361,48 @@ function gestureFor(text, mood) {
   if (/봐요|보세요|여기|이제|먼저|짜잔/.test(t)) return ["point", "present", 800];
   return null;
 }
+// 입 모양(반·크게·오)과 눈 감기를 A1(입 다문 그림)에 맞춘 조각으로 — 얼굴 칸에서 가장 잘 겹치는 자리를 찾고, 맞춘 뒤 달라진 곳만 흐린 타원으로 오린다
+const PRESENTER_PATCHES = { half: "mouth", open: "mouth", o: "mouth", blink: "eyes" };
+async function buildPatches(imgs, bob, patches) {
+  try {
+    await Promise.all([...imgs.values()].map((img) => img.decode()));
+    const W = 475, H = 720;
+    const pixels = (img) => { const c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, W, H); return g.getImageData(0, 0, W, H).data; };
+    const lum = (d, x, y) => { const o = (y * W + x) * 4; return d[o] * 0.3 + d[o + 1] * 0.59 + d[o + 2] * 0.11; };
+    const base = pixels(imgs.get(FACES.closed));
+    for (const [key, part] of Object.entries(PRESENTER_PATCHES)) {
+      const img = imgs.get(FACES[key]);
+      const other = pixels(img);
+      let best = [0, 0, Infinity];
+      for (let dy = -10; dy <= 10; dy += 1) for (let dx = -10; dx <= 10; dx += 1) {
+        let sum = 0;
+        for (let y = 90; y < 220; y += 3) for (let x = 150; x < 300; x += 3) sum += Math.abs(lum(base, x, y) - lum(other, x + dx, y + dy));
+        if (sum < best[2]) best = [dx, dy, sum];
+      }
+      const [dx, dy] = best;
+      const [y0, y1] = part === "mouth" ? [150, 212] : [95, 172];
+      let minX = Infinity, maxX = -1, minY = Infinity, maxY = -1;
+      for (let y = y0; y < y1; y += 1) for (let x = 150; x < 300; x += 1) {
+        if (Math.abs(lum(base, x, y) - lum(other, x + dx, y + dy)) > 40) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y); }
+      }
+      if (maxX < 0) continue;
+      const pad = 7;
+      const canvas = document.createElement("canvas");
+      canvas.width = W; canvas.height = H; canvas.className = "sd-pres-patch";
+      const g = canvas.getContext("2d");
+      g.filter = `blur(${pad / 2}px)`;
+      g.fillStyle = "#000";
+      g.beginPath();
+      g.ellipse((minX + maxX) / 2, (minY + maxY) / 2, (maxX - minX) / 2 + pad, (maxY - minY) / 2 + pad, 0, 0, Math.PI * 2);
+      g.fill();
+      g.filter = "none";
+      g.globalCompositeOperation = "source-in";
+      g.drawImage(img, -dx, -dy, W, H);
+      bob.append(canvas);
+      patches.set(key, canvas);
+    }
+  } catch {}
+}
 let presenter = null;
 function makePresenter() {
   const aside = document.createElement("aside");
@@ -366,9 +411,20 @@ function makePresenter() {
   // 그림을 미리 다 불러 둔다(바꿔 낄 때 깜빡이지 않게)
   aside.innerHTML = `<span class="sd-pres-shadow"></span><div class="sd-pres-act"><div class="sd-pres-bob">${Object.values(FACES).map((name) => `<img src="${FACE(name)}" data-face="${name}" alt="" width="475" height="720" decoding="async" />`).join("")}</div></div>`;
   const act = aside.querySelector(".sd-pres-act");
+  const bob = aside.querySelector(".sd-pres-bob");
   const imgs = new Map([...aside.querySelectorAll("img")].map((img) => [img.dataset.face, img]));
-  let shown = "";
-  const show = (key) => { const name = FACES[key] || key; if (name === shown) return; imgs.get(shown)?.classList.remove("on"); imgs.get(name)?.classList.add("on"); shown = name; };
+  // 입·눈 조각(원장 2026-11-17 「그래도 캐릭터가 깜빡인다」): 10장은 입만 다른 게 아니라 몸 전체가 조금씩 달라(입 벌린 그림은 20%가 다름)
+  // 말할 때 0.08초마다 통째로 바꿔 끼우면 몸이 떨렸다. 입 모양·눈 감기는 A1 위에 맞춰 옮긴(±10px) 입·눈 둘레만 오려 얹는다(buildPatches).
+  // 조각이 준비되기 전에는 예전처럼 통째로 바꾼다. 몸짓(가리킴·갸웃·칭찬)은 자세가 바뀌는 것이라 통째로 그대로.
+  const patches = new Map();
+  let shown = "", shownPatch = "";
+  const show = (key) => {
+    const patch = patches.has(key) ? key : "";
+    const name = patch ? FACES.closed : (FACES[key] || key);
+    if (name !== shown) { imgs.get(shown)?.classList.remove("on"); imgs.get(name)?.classList.add("on"); shown = name; }
+    if (patch !== shownPatch) { patches.get(shownPatch)?.classList.remove("on"); patches.get(patch)?.classList.add("on"); shownPatch = patch; }
+  };
+  buildPatches(imgs, bob, patches);
   let mood = "talk", talk = null, gesture = null, gestureUntil = 0, lastText = "";
   let mouthTimer = 0, blinkTimer = 0, idleTimer = 0, calmTimer = 0, blinking = false, settled = "closed";
   const kick = (motion) => { if (!motion || reducedMotion) return; delete act.dataset.motion; void act.offsetWidth; act.dataset.motion = motion; };

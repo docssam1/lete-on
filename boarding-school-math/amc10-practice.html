@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AMC 10 공식 범위를 참고해 GFIELD가 새로 만든 대수·정수론·기하·경우의 수 연습입니다. 공식 진단이나 점수 예측이 아닙니다.">
+  <title>AMC 10 개념 연결 연습 · G·MAP</title>
+  <link rel="stylesheet" href="./gfield-tokens.css?v=20260918-1">
+  <link rel="stylesheet" href="./competition-practice.css?v=20260918-2">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-1">
+  <link rel="stylesheet" href="./amc10-practice.css?v=20261103-5">
+  <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
+</head>
+<body class="gfield-ui amc10-practice-page">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <header class="site-header">
+    <a class="brand" id="amc10-brand-route" href="./boarding-roadmap.html?grade=7"><b>G·MAP</b><span>개념부터 경시까지</span></a>
+    <nav aria-label="주요 탐색"><a id="amc10-nav-route" href="./boarding-roadmap.html?grade=7">7학년 성장 지도</a><a href="./concept-learning.html">개념 학습</a><a id="amc10-review-route" href="./competition-paper-review.html?grade=7&program=amc10">기출 문항별 복습</a></nav>
+    <a class="back-link" id="amc10-back-route" href="./boarding-roadmap.html?grade=7#annual-plan">로드맵으로</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="practice-intro">
+      <div>
+        <p class="eyebrow">GFIELD ORIGINAL · GRADE 7+ ENRICHMENT</p>
+        <h1>AMC 10 개념 연결 <span>연습</span></h1>
+        <p>대수·정수론·기하·경우의 수에서 개념을 꺼내 쓰고, 풀이 이유를 설명해요. 쉬운 문제부터 여러 개념을 잇는 문제까지 단계별로 풀어요.</p>
+      </div>
+      <aside class="release-note">
+        <strong>GFIELD 자체 제작 · 연습용</strong>
+        <p>공식 주제 범위만 참고해 새로 작성한 문항입니다. AMC 기출, 공식 모의고사, 등급·자격 진단이 아닙니다.</p>
+        <a href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer">MAA 공식 AMC 범위·형식 보기 ↗</a>
+      </aside>
+    </section>
+
+    <section class="practice-method" aria-labelledby="method-title">
+      <h2 id="method-title">개념 → 유형 → 연결 → 실전</h2>
+      <ol><li>개념을 설명해요</li><li>한 영역씩 풀어요</li><li>서로 다른 개념을 연결해요</li><li>준비가 되면 공식 기출로 시간을 재요</li></ol>
+      <p>이 페이지에서는 앞의 세 단계를 연습합니다. 실전 기출은 <a id="amc10-method-review-route" href="./competition-paper-review.html?grade=7&program=amc10">별도 복습 경로</a>에서 다뤄요.</p>
+      <details class="practice-reflection"><summary>풀이 뒤에 한 번 더 생각하기</summary><ul><li>왜 이 방법을 골랐나요?</li><li>다른 방법으로도 풀 수 있나요?</li><li>조건 하나를 바꾸면 무엇이 달라지나요?</li><li>숫자가 바뀌어도 같은 생각이 통하나요?</li></ul></details>
+    </section>
+    <section id="targeted-practice-note" class="targeted-practice-note" aria-live="polite" hidden><div><strong>원본 복습에서 이어진 영역 연습</strong><p id="targeted-practice-description"></p></div><a id="targeted-practice-return" href="./competition-paper-review.html?grade=7&program=amc10">원본 복습으로 돌아가기 →</a><a id="targeted-source-paper" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer" hidden>원본 문제·답·풀이 다시 열기 ↗</a></section>
+
+    <section class="bank-toolbar" aria-label="연습 진행 상태">
+      <div><strong id="practice-count">문항</strong><span> · 정답을 확인하고 풀이 과정을 읽어 보세요.</span></div>
+      <div class="progress-summary"><strong id="practice-progress">0 / 12</strong><span>정답 확인</span></div>
+    </section>
+
+    <section class="amc10-layout">
+      <aside class="domain-sidebar" aria-labelledby="domain-heading">
+        <p class="section-number">01</p><h2 id="domain-heading">영역별 보기</h2>
+        <div id="domain-filters" class="domain-filters" role="group" aria-label="영역 필터"></div>
+        <p class="scope-note">MAA가 안내하는 AMC 10 범위를 참고해 구성했어요. 삼각함수나 고급 대수·기하는 넣지 않았습니다.</p>
+      </aside>
+      <section class="amc10-workspace" aria-labelledby="items-heading">
+        <div class="workspace-heading"><div><p class="section-number">02</p><h2 id="items-heading">문항과 풀이</h2></div><button id="reset-practice" type="button">선택 지우기</button></div>
+        <div id="amc10-items" class="problem-list"></div>
+      </section>
+    </section>
+
+    <aside class="practice-boundary"><strong>이 연습으로 학생의 실력이나 다음 과목을 판정하지 않습니다.</strong><span>점수·등급·예선 통과 예측은 제공하지 않아요. 학생의 준비도는 풀이 설명과 학교 진도, 교사의 검토를 함께 보고 판단합니다.</span></aside>
+  </main>
+
+  <footer><span>G·MAP · GFIELD original AMC 10 topic practice</span><a id="amc10-footer-route" href="./boarding-roadmap.html?grade=7">7학년 로드맵으로 돌아가기</a></footer>
+    <script src="./shared/boarding-content-translations.js?v=20261114-2"></script>
+  <script src="./shared/boarding-content-i18n.js?v=20261114-2"></script>
+<script src="./competition/amc10-concept-practice-bank.js?v=20261105-10"></script>
+  <script src="./shared/math-inline.js?v=20261114-2"></script>
+  <script src="./amc10-practice.js?v=20261104-7"></script>
+  <script src="./shared/boarding-study-return.js?v=20261114-2"></script>
+</body>
+</html>

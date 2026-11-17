@@ -1,0 +1,41 @@
+.sat-foundation-practice-page .practice-intro{grid-template-columns:minmax(0,1fr) minmax(280px,380px)}
+.sat-foundation-practice-page .practice-intro h1 span{color:var(--blue)}
+.sat-foundation-practice-page .release-note a{color:var(--blue);font-size:13px;font-weight:800}
+.sat-foundation-practice-page .release-note small{display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);line-height:1.5}
+.sat-foundation-practice-page .practice-method{margin:28px 0 8px;padding:20px 24px;border:1px solid var(--line);background:#fff}
+.sat-foundation-practice-page .practice-method h2{margin:0 0 12px;font-size:20px}
+.sat-foundation-practice-page .practice-method ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;list-style:none;padding:0;margin:0}
+.sat-foundation-practice-page .practice-method li{padding:8px 14px 8px 0;font-size:14px;font-weight:800}
+.sat-foundation-practice-page .practice-method li+li{padding-left:22px;border-left:1px solid var(--line)}
+.sat-foundation-practice-page .practice-method>p{margin:12px 0 0;color:var(--muted);font-size:13px}
+.sat-foundation-practice-page .bank-toolbar{margin-bottom:0}
+.sat-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:36px;padding-top:30px}
+.sat-domain-sidebar{position:sticky;top:96px;align-self:start}
+.sat-domain-sidebar h2,.sat-workspace h2{margin:0;font-size:24px}
+.sat-domain-filters{display:grid;gap:7px;margin:18px 0}
+.sat-domain-filter{min-height:42px;padding:8px 12px;text-align:left;border:1px solid var(--control);background:#fff;color:var(--ink);font-weight:750;cursor:pointer}
+.sat-domain-filter[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue)}
+.sat-workspace .workspace-heading{align-items:center}
+.sat-workspace .workspace-heading button{min-height:40px;padding:7px 12px;border:1px solid var(--control);background:#fff;color:var(--ink);cursor:pointer}
+.sat-workspace .problem-list{grid-template-columns:1fr;gap:14px}
+.sat-workspace .problem-card{padding:20px 22px}
+.sat-workspace .problem-card::after{content:none}
+.sat-workspace .problem-meta{align-items:center}
+.sat-workspace .problem-prompt{min-height:0;margin:10px 0 16px;font-size:18px}
+.sat-workspace .choices{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.sat-workspace .choice{grid-template-columns:25px minmax(0,1fr);min-height:48px;padding:6px 8px}
+.sat-workspace .choice-mark{width:24px;height:24px}
+.sat-workspace .choice-value{justify-content:center;text-align:center}
+.sat-workspace .problem-card[data-answered="true"] .choice{cursor:default}
+.sat-workspace .feedback{min-height:24px}
+.sat-workspace .worked-solution{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.sat-workspace .worked-solution summary{width:max-content;max-width:100%;cursor:pointer;color:var(--blue);font-size:14px;font-weight:850}
+.sat-workspace .worked-solution ol{margin:12px 0;padding-left:24px}
+.sat-workspace .worked-solution li{margin:5px 0;font-family:var(--serif);line-height:1.6}
+.sat-workspace .connection-question{margin:10px 0 0;padding:12px 14px;border-left:3px solid #d17c52;background:#fff7f2;font-size:14px}
+.sat-foundation-practice-page .math-fraction{font-size:1.03em;min-width:1.45em}
+@media(max-width:900px){.sat-foundation-practice-page .practice-intro{grid-template-columns:minmax(0,1fr);gap:20px;padding-top:48px}}
+@media(max-width:850px){.sat-layout{grid-template-columns:1fr;gap:12px}.sat-domain-sidebar{position:static}.sat-domain-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.sat-foundation-practice-page .practice-intro h1{font-size:clamp(30px,8vw,36px);line-height:1.18}.sat-foundation-practice-page .practice-intro h1 span{display:block;white-space:nowrap}.sat-foundation-practice-page .practice-method{padding:16px}.sat-foundation-practice-page .practice-method ol{grid-template-columns:1fr 1fr}.sat-foundation-practice-page .practice-method li+li{padding-left:0;border-left:0}.sat-domain-filters{grid-template-columns:1fr 1fr}.sat-workspace .choices{grid-template-columns:1fr}.sat-workspace .choice{grid-template-columns:32px minmax(0,1fr)}.sat-workspace .choice-value{justify-content:start;text-align:left}}
+@page{size:A4;margin:14mm}
+@media print{.sat-foundation-practice-page .site-header,.sat-foundation-practice-page .practice-method,.sat-foundation-practice-page .bank-toolbar,.sat-domain-sidebar,.sat-workspace .workspace-heading button,.sat-foundation-practice-page footer{display:none!important}.sat-foundation-practice-page main{max-width:none;padding:0}.sat-foundation-practice-page .practice-intro{display:block;padding:0 0 8mm;border:0}.sat-foundation-practice-page .practice-intro h1{font-size:25pt}.sat-foundation-practice-page .practice-intro>div>p:last-child{font-size:10pt}.sat-foundation-practice-page .release-note{margin-top:4mm;padding:4mm}.sat-layout{display:block;padding:0}.sat-workspace .workspace-heading{padding:0 0 5mm}.sat-workspace .problem-list{display:block}.sat-workspace .problem-card{break-inside:avoid;page-break-inside:avoid;padding:5mm}.sat-workspace .choices{grid-template-columns:repeat(5,minmax(0,1fr))}.sat-foundation-practice-page .practice-boundary{break-inside:avoid}}

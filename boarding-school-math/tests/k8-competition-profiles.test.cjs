@@ -26,9 +26,17 @@ test("Math Kangaroo covers grades 1-12 with paired papers but separate student-g
   assert.equal(profile.responseType, "multiple-choice");
   assert.equal(profile.kindergartenMayEnterGrade1Paper, true);
   assert.equal(profile.rankingSeparatesStudentGrades, true);
+  assert.equal(profile.percentileBasis, "within-grade");
+  assert.deepEqual(profile.percentileRegions, ["state", "nationwide"]);
+  assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/" && row.lastVerified === "2026-11-03" && /grade-specific state and nationwide/.test(row.documentRevision);
+  }));
   assert.equal(profile.wrongAnswerPenalty, false);
   assert.equal(profile.calculatorAllowed, false);
   assert.equal(profile.curriculumIsGeneralGuideline, true);
+  assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://mathkangaroo.org/mks/practice/pdf-exams/" && row.lastVerified === "2026-11-02" && /prior-year student test PDFs/.test(row.documentRevision);
+  }));
   profile.paperBands.forEach(function (band) {
     const recomputed = band.scoreTiers.reduce(function (sum, points) {
       return sum + points * band.questionsPerTier;
@@ -67,7 +75,7 @@ test("SASMO keeps K2 separate from the current grade 1-12 format and recomputes 
 
 test("AMC 8 current eligibility, format, and internal preparation band stay distinct", function () {
   const profile = data.profiles.find(function (row) { return row.programId === "amc-8"; });
-  assert.deepEqual(profile.officialEligibility, { gradeMaximum: 8, ageExclusiveMaximum: 15.5 });
+  assert.deepEqual(profile.officialEligibility, { gradeMaximum: 8, ageLimitYears: 15.5, ageBoundaryRequiresConfirmation: true });
   assert.deepEqual(profile.gfieldPreparationGrades, [6, 7, 8]);
   assert.equal(profile.preparationBandIsOfficial, false);
   assert.equal(profile.questionCount, 25);
@@ -82,15 +90,21 @@ test("AMC 8 current eligibility, format, and internal preparation band stay dist
     "pythagorean-theorem", "spatial-visualization", "graphs-tables", "beginning-algebra"
   ]);
   assert.equal(Object.hasOwn(profile, "contentAvailability"), false);
+  assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf" && row.lastVerified === "2026-11-02" && /official scoring/.test(row.documentRevision);
+  }));
 });
 
 test("AMC 10 and AMC 12 preserve separate official eligibility and scope contracts", function () {
   const amc10 = data.profiles.find(function (row) { return row.programId === "amc-10"; });
   const amc12 = data.profiles.find(function (row) { return row.programId === "amc-12"; });
-  assert.deepEqual(amc10.officialEligibility, { gradeMaximum: 10, ageExclusiveMaximum: 17.5 });
-  assert.deepEqual(amc12.officialEligibility, { gradeMaximum: 12, ageExclusiveMaximum: 19.5 });
+  assert.deepEqual(amc10.officialEligibility, { gradeMaximum: 10, ageLimitYears: 17.5, ageBoundaryRequiresConfirmation: true });
+  assert.deepEqual(amc12.officialEligibility, { gradeMaximum: 12, ageLimitYears: 19.5, ageBoundaryRequiresConfirmation: true });
   assert.deepEqual(amc10.gfieldPreparationGrades, [9, 10]);
   assert.deepEqual(amc12.gfieldPreparationGrades, [11, 12]);
+  for (const profile of [amc10, amc12]) assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf" && row.lastVerified === "2026-11-02";
+  }));
   assert.deepEqual([amc10.questionCount, amc10.durationMinutes], [25, 75]);
   assert.deepEqual([amc12.questionCount, amc12.durationMinutes], [25, 75]);
   assert.equal(amc10.officialScope.excludes.includes("trigonometry"), true);
@@ -106,6 +120,7 @@ test("competition sources are HTTPS and original problem publication remains per
   const expectedSources = {
     "math-kangaroo-usa-k12": [
       ["Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/"],
+      ["Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/pdf-exams/"],
       ["Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/"],
       ["Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/"]
     ],
@@ -113,15 +128,18 @@ test("competition sources are HTTPS and original problem publication remains per
     "maa-amc-8": [
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/"],
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"],
+      ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf"],
       ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf"]
     ],
     "maa-amc-10": [
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/"],
-      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"]
+      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"],
+      ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf"]
     ],
     "maa-amc-12": [
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/"],
-      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"]
+      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"],
+      ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf"]
     ]
   };
   data.profiles.forEach(function (profile) {
@@ -129,12 +147,23 @@ test("competition sources are HTTPS and original problem publication remains per
     profile.sources.forEach(function (source) {
       assert.match(source.url, /^https:\/\//);
       assert.ok(source.documentRevision);
-      assert.equal(source.lastVerified, "2026-08-28");
+      const currentMaaOverview = source.authority === "Mathematical Association of America" && source.url === "https://maa.org/student-programs/amc/";
+      const currentMaaRules = source.authority === "Mathematical Association of America" && source.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf";
+      const currentKangarooArchive = source.authority === "Math Kangaroo USA" && source.url === "https://mathkangaroo.org/mks/practice/pdf-exams/";
+      const currentKangarooScoring = source.authority === "Math Kangaroo USA" && source.url === "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/";
+      assert.equal(source.lastVerified, currentKangarooScoring || currentMaaOverview ? "2026-11-03" : currentMaaRules || currentKangarooArchive ? "2026-11-02" : "2026-08-28");
+      if (currentMaaOverview) assert.match(source.documentRevision, /dates, format and age\/grade limits rechecked/);
+      if (currentMaaRules) assert.match(source.documentRevision, /updated 2026-10-30/);
     });
     assert.equal(profile.contentRights.originalProblems, "permission-required");
     assert.equal(profile.contentRights.publicUse, "metadata-and-links-only");
   });
   catalog.programs.filter(function (program) { return program.pathway === "competition"; }).forEach(function (program) {
     assert.deepEqual(program.sources.map(function (row) { return [row.authority, row.url]; }), expectedSources[program.profileId]);
+    if (program.profileId.startsWith("maa-amc-")) {
+      assert.ok(program.sources.some(function (row) {
+        return row.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf" && row.lastVerified === "2026-11-02";
+      }));
+    }
   });
 });

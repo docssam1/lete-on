@@ -3,19 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="공식 범위와 형식을 참고한 GFIELD 자체 Grade 6 경시 기초 연습. 실제 기출 진단과는 분리됩니다.">
+  <meta name="description" content="공식 출제 범위를 참고한 GFIELD 자체 Grade 6 경시 유형 연습. 공식 대회 진단이나 점수 예측이 아닙니다.">
   <title>경시 문제 유형 · G·MAP</title>
   <link rel="stylesheet" href="./gfield-tokens.css?v=20260918-1">
   <link rel="stylesheet" href="./competition-practice.css?v=20260918-2">
   <link rel="stylesheet" href="./competition-diagnostic.css?v=20260918-2">
   <link rel="stylesheet" href="./shared/gmap-local-question-coach.css?v=20260918-1">
+  <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
 </head>
 <body class="gfield-ui">
   <a class="skip-link" href="#main">본문으로 건너뛰기</a>
   <header class="site-header">
     <a class="brand" href="./index.html"><b>G·MAP</b><span id="brand-slogan">개념부터 경시까지</span></a>
     <nav aria-label="주요 탐색"><a id="nav-home" href="./index.html">홈</a><a id="nav-curriculum" href="./catalog.html">미국 교육과정</a><a id="nav-past-papers" href="./sasmo.html">연도별 기출</a></nav>
-    <div class="header-controls"><label><span id="locale-label">언어</span><select id="locale-select"><option value="ko">한국어</option><option value="en">English</option><option value="en-SG">Singapore · English</option><option value="zh-Hans">简体中文</option></select></label><button id="print-button" type="button">인쇄</button></div>
+    <div class="header-controls"><label><span id="locale-label">언어</span><select id="locale-select" data-content-original><option value="ko">한국어</option><option value="en">English</option><option value="en-SG">Singapore · English</option><option value="zh-Hans">简体中文</option></select></label><button id="print-button" type="button">인쇄</button></div>
   </header>
 
   <main id="main" tabindex="-1">
@@ -30,7 +31,7 @@
         <button type="button" role="tab" data-audience="teacher" aria-selected="false">교사용</button>
       </div>
       <div class="toolbar-status">
-        <a class="results-jump" id="results-jump" href="#diagnostic-results"><span id="results-jump-label">예비 진단 보기</span><strong id="results-jump-count">0 / 10</strong></a>
+        <a class="results-jump" id="results-jump" href="#diagnostic-results"><span id="results-jump-label">연습 기록 보기</span><strong id="results-jump-count">0 / 10</strong></a>
         <div class="progress-summary"><strong id="progress-label">0 / 10</strong><span id="progress-copy">푼 문제</span></div>
       </div>
     </section>
@@ -54,20 +55,23 @@
 
     <section class="diagnostic-results" id="diagnostic-results" aria-labelledby="diagnostic-heading">
       <header class="diagnostic-heading-row">
-        <div><p class="section-number">03</p><h2 id="diagnostic-heading">GFIELD 예비 진단</h2><p id="diagnostic-intro">첫 응답을 기준으로 강점과 보완 영역을 분석합니다.</p></div>
-        <span class="diagnostic-state" id="diagnostic-state">근거 수집 중</span>
+        <div><p class="section-number">03</p><h2 id="diagnostic-heading">GFIELD 연습 기록</h2><p id="diagnostic-intro">이 세트에서 처음 고른 답과 다시 볼 문항을 확인해요.</p></div>
+        <span class="diagnostic-state" id="diagnostic-state">연습 중</span>
       </header>
-      <p class="diagnostic-boundary" id="diagnostic-boundary">이 결과는 자체 연습 기록이며, 실제 대회 점수·수상 등급·학교 배치 결과가 아닙니다.</p>
+      <p class="diagnostic-boundary" id="diagnostic-boundary">자체 제작 연습 기록입니다. 공식 대회 진단이나 점수·수상·배치 예측 자료로 사용할 수 없습니다.</p>
       <div id="diagnostic-content" aria-live="polite"></div>
     </section>
   </main>
 
   <footer><span>G·MAP · GFIELD original competition practice</span><a id="footer-return" href="./index.html">전체 학습 경로로 돌아가기</a></footer>
-  <script src="./shared/geometry-worksheet-render.js?v=20260918-1"></script>
+    <script src="./shared/boarding-content-translations.js?v=20261114-2"></script>
+  <script src="./shared/boarding-content-i18n.js?v=20261114-2"></script>
+<script src="./shared/geometry-worksheet-render.js?v=20260918-1"></script>
   <script src="./competition/grade6-competition-type-bank.js?v=20261003-1"></script>
   <script src="./competition/competition-practice-analysis.js?v=20260918-2"></script>
-  <script src="./shared/gmap-local-learning-record.js?v=20260921-1"></script>
+  <script src="./shared/gmap-local-learning-record.js?v=20261104-4"></script>
   <script src="./competition-practice.js?v=20261003-1"></script>
   <script src="./shared/gmap-local-question-coach.js?v=20260918-1"></script>
+  <script src="./shared/boarding-study-return.js?v=20261114-2"></script>
 </body>
 </html>

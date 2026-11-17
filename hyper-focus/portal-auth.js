@@ -206,6 +206,7 @@
   }
 
   async function signIn(name, code) {
+    root.GFieldHFReportAccess?.clear();
     try {
       return isSupabaseEnabled() ? await remoteSignIn(name, code) : await legacySignIn(name, code);
     } catch (error) {
@@ -215,6 +216,7 @@
   }
 
   function current() {
+    if (root.GFieldHFReportAccess?.active()) return root.GFieldHFReportAccess.current();
     const session = remoteSession || safeSessionRead();
     if (!session || !session.role) return null;
     if (isSupabaseEnabled()) return session.backend === "supabase" ? session : null;
@@ -229,6 +231,7 @@
   }
 
   async function ready() {
+    if (root.GFieldHFReportAccess?.active()) return root.GFieldHFReportAccess.ready();
     if (!isSupabaseEnabled()) return current();
     try {
       const client = await root.GFieldHFSupabase.ready();
@@ -261,6 +264,7 @@
   }
 
   async function signOut() {
+    root.GFieldHFReportAccess?.clear();
     if (isSupabaseEnabled()) {
       try {
         const client = await root.GFieldHFSupabase.ready();
@@ -271,6 +275,7 @@
   }
 
   async function client() {
+    if (root.GFieldHFReportAccess?.active()) return null;
     return isSupabaseEnabled() ? root.GFieldHFSupabase.ready() : null;
   }
 

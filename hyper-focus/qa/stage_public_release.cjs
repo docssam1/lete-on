@@ -21,6 +21,7 @@ const LEGACY_RUNTIME=Object.freeze([
 ]);
 // Explicit current additions approved for this HF release; must be committed by the release owner for CI.
 const APPROVED_ADDITIONS=Object.freeze([
+ 'report-access.js',
  'program-selector.css','type-access-catalog.js','type-access.js','type-admin.html','type-admin.css','type-admin.js',
  'mock/practice-content-client.js','mock/practice-public-catalog.js','mock/secure-practice-loader.js',
  ...CHALLENGE_PUBLIC.map(file=>'challenge/'+file)

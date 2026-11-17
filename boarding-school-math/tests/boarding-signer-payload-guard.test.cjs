@@ -129,6 +129,30 @@ test("signer guard accepts one internally bound answer-free public and automatic
   assert.equal(result.privateSpec.scoringMode, "automatic");
 });
 
+test("the existing signer accepts a Grade 7 unit-screener binding without a new signing service", async function () {
+  const module = await guard();
+  const input = itemInput();
+  input.row.targetGrade = "7";
+  input.publicPayload.targetGrade = 7;
+  input.publicPayload.domainId = "G7-NS";
+  input.publicPayload.clusterId = "7.NS.A";
+  input.publicPayload.skillId = "rational-number-operations";
+  input.publicPayload.assessmentBinding = {
+    blueprintId: "asm-bdg-grade7-nsa-screener-v1",
+    blueprintVersion: 1,
+    blueprintContractSha256: "e".repeat(64),
+    purpose: "unit-screener",
+    slotId: "slot-bdg-g7-ns-a-01",
+    unitId: "ccss-7-ns-a",
+    standardRange: "7.NS.A.1-3",
+  };
+  input.privatePayload.solutionRef = "private://grade7-nsa/item-1";
+  const result = module.validateSignerItemPayloads(input);
+  assert.equal(result.publicItem.assessmentBinding.purpose, "unit-screener");
+  assert.equal(result.publicItem.targetGrade, 7);
+  assert.equal(result.publicItem.visibilityClass, "authenticated-assessment");
+});
+
 test("signer guard rejects row visibility drift and recursive or textual answer leaks", async function () {
   const module = await guard();
   const visibilityDrift = itemInput();

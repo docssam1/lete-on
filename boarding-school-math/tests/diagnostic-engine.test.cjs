@@ -30,14 +30,19 @@ function item(index, overrides) {
 }
 
 function blueprint(count, purpose) {
+  const activePurpose = purpose || "course-placement";
   return {
     schemaVersion: engine.SCHEMA_VERSION,
     id: `asm-bdg-grade6-entry-v1`,
     programId: "us-core-k8",
     targetGrade: 6,
     version: 1,
-    purpose: purpose || "course-placement",
-    items: Array.from({ length: count }, function (_, index) { return item(index + 1); })
+    purpose: activePurpose,
+    items: Array.from({ length: count }, function (_, index) {
+      return item(index + 1, activePurpose === "unit-screener"
+        ? { slotId: `slot-bdg-test-${String(index + 1).padStart(2, "0")}` }
+        : undefined);
+    })
   };
 }
 
@@ -403,6 +408,19 @@ test("screeners and competition benchmarks cannot be mislabeled as placement rep
     const perfect = attemptFor(source, function (sourceItem) { return { awardedPoints: sourceItem.maxPoints }; });
     assert.throws(function () { engine.analyzeAttempt(source, perfect, policy(), {}); }, /cannot produce a placement review/);
   });
+});
+
+test("unit screeners require unique immutable slot bindings", function () {
+  const source = blueprint(12, "unit-screener");
+  assert.equal(engine.validateBlueprint(source), true);
+
+  const missing = blueprint(12, "unit-screener");
+  delete missing.items[0].slotId;
+  assert.throws(function () { engine.validateBlueprint(missing); }, /require slotId/);
+
+  const duplicate = blueprint(12, "unit-screener");
+  duplicate.items[1].slotId = duplicate.items[0].slotId;
+  assert.throws(function () { engine.validateBlueprint(duplicate); }, /slot ids contains duplicates/);
 });
 
 test("independent randomized totals match the engine for 100 complete result sets", function () {
