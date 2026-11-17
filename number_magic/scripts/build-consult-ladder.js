@@ -8,7 +8,7 @@
    기적의 계산법 권별 주제(data/placement-books.js 의 coverage — 출판사 주제 메타데이터와 우리 유형을
    이어 둔 것)를 뼈대로 쓴다: 예비초등 1~5권 → 초등 1~12권 = 17단계.
    소마셈 2019년 발행본 P~D 46권(soma-p-2019.js·book-volume-topics.js)과 두뇌로 과정 1~25(dunoro-courses.js)도
-   같은 꼴로 사다리를 만든다(원장 2026-11-17 「대응 해야지 · 로드맵 진도 다 줬잖아」). 구몬·원리셈은 권별 진도표가 없어 아직 없다.
+   같은 꼴로 사다리를 만든다(원장 2026-11-17 「대응 해야지 · 로드맵 진도 다 줬잖아」). 구몬수학 6A~F도 단계 순서대로 넣었다(2026-11-17). 원리셈은 권별 진도표가 없어 아직 없다.
    단계마다
      - 그 단계에서 새로 나오는 유형(앞 단계에 없던 스레드) 먼저, 많아야 6개
      - 이름은 우리 유형 이름(NM_THREADS, 3개 언어)
@@ -136,8 +136,27 @@ const somaRows = [];
 /* 두뇌로 과정 1~25 (dunoro-courses.js — 과정표에 적힌 연산을 우리 유형으로 옮긴 것) */
 const dunoroRows = W.NM_DUNORO_COURSES.courses.map(c => ({ id: 'dunoro-' + c.course, group: 'level-' + c.level, volume: c.course,
   title: L3('과정 ' + c.course, 'Course ' + c.course, '课程' + c.course), topic: String(c.topics || ''), refs: c.refs }));
-const ladders = { miracle: buildLadder(miracleRows), soma: buildLadder(somaRows), dunoro: buildLadder(dunoroRows) };
-const ladder = [].concat(ladders.miracle, ladders.soma, ladders.dunoro);
+/* 구몬수학 6A~F (원장 2026-11-17 「구몬은 A부터 알파벳 순서대로 1학년 2학년 이런 과정」).
+   단계 이름·순서와 학년 기준: 교원구몬 「구몬수학 인정테스트」의 우수회원(현재 학년보다 2단계 이상 앞선 회원) 학습단계
+   초1 C↑ · 초2 D↑ · 초3 E↑ · 초4 F↑ → 학년 기준 A = 초1, B = 초2, C = 초3, D = 초4, E = 초5, F = 초6.
+   단계별 주제는 공식 목록을 찾지 못해 공개 설명(나무위키 「구몬」, 해외 Kumon 단계 안내)의 짧은 요약으로 적었다 — 우리 유형 대응은 우리 판단.
+   G 이상(중학)은 상담 범위 밖이라 진단 평가로 보낸다. */
+const kumonRows = [
+  ['6A', '10까지 수 세기', ['NL1@1', 'NL1@2']],
+  ['5A', '50까지 수 읽기 · 수표', ['NL4@1', 'NL7@1', 'NL1@2']],
+  ['4A', '100까지 수 읽기·쓰기 · 이어 쓰기', ['NL4@1', 'NL7@1', 'NL2@2']],
+  ['3A', '덧셈 시작(+1~+3)', ['AD1@1', 'NL2@2', 'NL2@3']],
+  ['2A', '덧셈(+4~+10) · 10의 보수', ['AD1@1', 'NS3@2', 'AD2@1', 'NL6@1']],
+  ['A', '큰 수 덧셈 · 뺄셈 시작', ['SB1@1', 'AD2@1', 'SB2@1', 'AD3@1', 'SB3@1', 'AD10@1']],
+  ['B', '세로셈 덧셈·뺄셈(두·세 자리, 받아올림·받아내림)', ['AD5@1', 'AD5@3', 'SB4@1', 'SB4@2', 'AD6@2', 'SB6@1']],
+  ['C', '곱셈구구 · 곱셈 · 간단한 나눗셈', ['ML2@3', 'ML3@3', 'ML4@1', 'ML6@1', 'ML7@1', 'DV2@1']],
+  ['D', '여러 자리 곱셈·나눗셈 · 분수와 약분', ['ML8@1', 'DV3@1', 'DV4@1', 'ML9@1', 'DV5@1', 'FR5@1']],
+  ['E', '분수의 덧셈·뺄셈·곱셈·나눗셈', ['FR2@1', 'FR4@1', 'FR3@1', 'FR6@1', 'FR7@1', 'DV7@1']],
+  ['F', '사칙 혼합 · 소수와 소수의 사칙', ['MX1@1', 'DC1@1', 'DC2@1', 'DC3@1', 'FR7@3', 'MX1@2']]
+].map(([lv, topic, refs], i) => ({ id: 'kumon-' + lv.toLowerCase(), group: /A$/.test(lv) && lv !== 'A' ? 'pre' : 'elem', volume: i + 1,
+  title: L3(lv + ' 단계', 'Level ' + lv, lv + '阶段'), topic, refs }));
+const ladders = { miracle: buildLadder(miracleRows), soma: buildLadder(somaRows), dunoro: buildLadder(dunoroRows), kumon: buildLadder(kumonRows) };
+const ladder = [].concat(ladders.miracle, ladders.soma, ladders.dunoro, ladders.kumon);
 const courses = {};
 courseList.forEach(({ key, n, c }) => { courses[key] = { n, order: c.order ?? n, tier: c.tier, title: c.title }; });
 
@@ -153,6 +172,6 @@ if(process.argv.includes('--check')){
 fs.writeFileSync(OUT, body);
 const missing = ladder.flatMap(st => st.skills.filter(k => !k.course).map(k => st.id + ' ' + k.ref));
 const noEx = ladder.flatMap(st => st.skills.filter(k => !k.example).map(k => st.id + ' ' + k.ref));
-console.log(`기적 ${ladders.miracle.length} · 소마셈 ${ladders.soma.length} · 두뇌로 ${ladders.dunoro.length}단계 · 기술 ${ladder.reduce((a, s) => a + s.skills.length, 0)} · ${(body.length / 1024).toFixed(1)}KB`);
+console.log(`기적 ${ladders.miracle.length} · 소마셈 ${ladders.soma.length} · 두뇌로 ${ladders.dunoro.length} · 구몬 ${ladders.kumon.length}단계 · 기술 ${ladder.reduce((a, s) => a + s.skills.length, 0)} · ${(body.length / 1024).toFixed(1)}KB`);
 if(missing.length) console.log('과정 없음:', missing.join(' | '));
 if(noEx.length) console.log('예시 없음:', noEx.join(' | '));
