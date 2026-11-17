@@ -11,7 +11,7 @@ async function mount({loadFull,member,saved}){
   const current=await g.RoadmapMembership.status();
   if(!current||current.user_id!==member.user_id)throw Error('로그인 상태가 바뀌었어요. 내 계정에서 다시 확인해 주세요.');
   g.RoadmapParentPending={answers:next,advanced:!!advanced,study,saved};
-  try{await loadFull();}catch(error){const retry=doc.createElement('button');retry.type='button';retry.textContent='새로고침 후 다시 열기';retry.onclick=()=>location.reload();entry.append(retry);throw error;}
+  try{await loadFull();}catch(error){const retry=doc.createElement('button');retry.type='button';retry.textContent='새로고침 후 다시 열기';retry.onclick=()=>location.reload();retry.dataset.parentRetry='true';entry.querySelector('[data-parent-retry]')?.remove();(entry.querySelector('.parent-slide-footer')||entry).append(retry);throw error;}
   doc.body.classList.remove('parent-boot','parent-slide-open');host.remove();
   g.RoadmapSpeed?.ready('roadmap_ready','#journeyMap,.parent-own-learning');
  };
