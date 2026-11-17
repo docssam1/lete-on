@@ -127,3 +127,42 @@
 
 /* 월별 계획 표: 좁은 휴대폰(320~360px)에서 3칸이 상자보다 넓어 오른쪽이 잘리던 것 — 칸 최소 폭을 풀어 글이 줄바꿈되게(2026-11-01) */
 @media(max-width:550px){.pd-calendar th,.pd-calendar td{min-width:0;padding:10px 6px}.pd-calendar-table{max-height:none}}
+/* 8세 이하 · 소마·필즈 반별 연산 진도 비교 그래프(2026-11-17, app/academy-compare.js) — 색은 이 화면의 초록 잉크 결에 맞추고, 반 줄만 주황 */
+.pd-compare{margin:22px 0;padding:18px 16px;border:1px solid #ced8d0;border-radius:12px;background:#fff}
+.pd-compare h3{font-size:17px;margin:0 0 6px}
+.ac-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.ac-group{font-size:12px;font-weight:700;color:#526d68;letter-spacing:.04em;margin-right:2px}
+.ac-group:not(:first-child){margin-left:8px}
+.ac-chip{min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid #ced8d0;background:#f5f6ef;color:#193b3c;font:inherit;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.ac-chip small{font-size:11px;font-weight:600;color:#7a6a52;background:#efe6d6;border-radius:999px;padding:1px 6px}
+.ac-chip[aria-pressed="true"]{background:#c4581d;border-color:#c4581d;color:#fff}
+.ac-chip[aria-pressed="true"] small{background:rgba(255,255,255,.22);color:#fff}
+.ac-chip:focus-visible,.ac-scroll:focus-visible{outline:3px solid #e9b26d;outline-offset:2px}
+.ac-say{margin:4px 0 12px;font-size:15.5px;line-height:1.65;color:#193b3c}
+.ac-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:#3c5552;margin:0 0 8px}
+.ac-legend span{display:inline-flex;align-items:center;gap:7px}
+.ac-key{display:inline-block;width:24px;border-top:3px solid #c4581d}
+.ac-key.kid{border-top-color:#1f7a55}.ac-key.kid.dash{border-top-style:dashed}.ac-key.other{border-top:2px solid #c5cfca}
+.ac-ring{display:inline-block;width:11px;height:11px;border-radius:50%;border:2px solid #193b3c}
+.ac-scroll{overflow-x:auto;border:1px solid #e1e7e2;border-radius:10px;background:#fbfcf9}
+.ac-svg{display:block}
+.ac-svg text{font-family:inherit;font-size:12px;fill:#193b3c}
+.ac-axis{fill:#526d68!important}.ac-axis.yr{font-weight:700;fill:#193b3c!important}
+.ac-grid{stroke:#e1e7e2;stroke-width:1}.ac-grid.yr{stroke:#b9c6bf}
+.ac-other{fill:none;stroke:#c5cfca;stroke-width:1.5;stroke-linejoin:round}
+.ac-class{fill:none;stroke:#c4581d;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.ac-class-dot{fill:#c4581d;stroke:#fff;stroke-width:2}
+.ac-tag{font-weight:700;font-size:11.5px!important;fill:#8e3f14!important;paint-order:stroke;stroke:#fbfcf9;stroke-width:4px}
+.ac-kid{fill:none;stroke:#1f7a55;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.ac-kid-dot{fill:#193b3c;stroke:#fff;stroke-width:2}
+.ac-meet{fill:#fff;stroke:#193b3c;stroke-width:2}
+.ac-today{stroke:#193b3c;stroke-width:1}.ac-today-t{font-weight:700}
+.ac-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0}
+.ac-two>div{border:1px solid #ced8d0;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;background:#f5f6ef}
+.ac-two span{font-size:14.5px;line-height:1.6;color:#3c5552}.ac-two span b{color:#193b3c}
+.ac-table>summary{min-height:44px;cursor:pointer;font-weight:700;display:flex;align-items:center}
+@media(max-width:550px){.pd-compare{padding:14px 12px}.ac-say{font-size:15px}}
+.ac-swipe{margin:0 0 6px;font-size:12.5px;color:#526d68;text-align:center}
+.ac-plot{position:relative}
+.ac-yaxis{position:absolute;left:1px;top:1px;background:linear-gradient(90deg,#fbfcf9 78%,rgba(251,252,249,0));border-radius:10px 0 0 10px;pointer-events:none}
+.ac-yaxis text{font-family:inherit;font-size:12px}

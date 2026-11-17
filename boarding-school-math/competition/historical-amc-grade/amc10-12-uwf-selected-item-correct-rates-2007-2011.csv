@@ -1,0 +1,105 @@
+program,year,form,question,cohort_grade_group,respondent_count,correct_response_percent,topic_summary,statistic_scope,source_table,source_url
+amc10,2007,B,3,9-10,79,20.25,Algebra: distance/rate and averages,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,7,9-10,79,17.72,Geometry: pentagon angle measure,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,8,9-10,79,12.66,Counting principles,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,16,9-10,79,37.97,Algebra: percentages and averages,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,17,9-10,79,12.66,Geometry: equilateral triangles and perpendiculars,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,6,9-10,79,72.15,Algebra: inequalities,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,4,9-10,79,62.03,Geometry: triangle angle in a circle,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,1,9-10,79,60.76,Algebra/geometry: rectangle area,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,9,9-10,79,59.49,Counting principles,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,14,9-10,79,58.23,Algebra: percentages,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,2,9-10,79,53.16,Algebra: function operation/relation,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2007,B,5,9-10,79,41.77,Logic: conditional statements,Selected questions only; UWF test-center cohort; not national,5a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,3,9-10,92,22.83,Algebra: roots and exponents,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,5,9-10,92,31.52,Algebra: functions and relations,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,9,9-10,92,13.04,Algebra: quadratic equations,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,10,9-10,92,11.96,Geometry: circles and lines,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,1,9-10,92,88.04,Counting,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,12,9-10,92,72.83,Algebra: distance/rate/time,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,2,9-10,92,67.39,Counting,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,4,9-10,92,64.13,Algebra: ratio and proportion,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,7,9-10,92,54.35,Geometry: equilateral triangles,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2008,B,8,9-10,92,46.74,Algebra: ratio and proportion,Selected questions only; UWF test-center cohort; not national,5b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,8,9-10,78,28,Algebra: percentages,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,9,9-10,78,28,Geometry: intersecting-line angles,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,10,9-10,78,36,Geometry: right-triangle lengths,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,15,9-10,78,35,Algebra: ratio and proportion,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,2,9-10,78,82,Arithmetic: compound fractions,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,4,9-10,78,65,Geometry: rectangle and congruent isosceles triangles,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,6,9-10,78,63,Algebra: products and sums,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,1,9-10,78,62,Algebra: cost problem,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,3,9-10,78,60,Algebra: proportion,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,11,9-10,78,49,Discrete math: palindromes,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,5,9-10,78,49,Algebra: percentages and fractions,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2009,B,7,9-10,78,40,Algebra: order of operations,Selected questions only; UWF test-center cohort; not national,5c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,2,9-10,117,80,Algebra: fractions and percentages,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,1,9-10,117,79,Algebra: order of operations,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,7,9-10,117,55,Geometry: rectangle and isosceles-triangle area,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,6,9-10,117,55,Geometry: circle angle measure,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,3,9-10,117,51,Counting,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,15,9-10,117,44,Counting,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,4,9-10,117,38,Algebra: relations,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,5,9-10,117,37,Counting,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,8,9-10,117,27,Algebra: divisors and multiples,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,9,9-10,117,37,Algebra: order of operations,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,10,9-10,117,31,Algebra: distance/rate/time,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2010,B,12,9-10,117,14,Algebra: ratio and percentages,Selected questions only; UWF test-center cohort; not national,5d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,2,9-10,121,78,Algebra: averages and extrema,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,1,9-10,121,76,Algebra: fraction addition,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,3,9-10,121,60,Geometry: rectangle minimum area,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,6,9-10,121,52,Algebra: fraction applications,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,8,9-10,121,50,Logic: conditional statements,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,4,9-10,121,34,Algebra: fraction applications,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,5,9-10,121,29,Algebra: digits and products,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,7,9-10,121,31,Geometry: angles and fractions,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,10,9-10,121,16,Algebra: ratios,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,11,9-10,121,7,Counting,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,15,9-10,121,14,Algebra: defined relations,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc10,2011,B,18,9-10,121,7,Geometry: rectangle angle measure,Selected questions only; UWF test-center cohort; not national,5e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,2,11-12,72,32,Algebra: average distance/rate/time,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,8,11-12,72,26,Algebra: addition applications,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,9,11-12,72,33,Algebra: function operations,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,4,11-12,72,85,Algebra: ratio and proportion,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,5,11-12,72,75,Algebra: ratio and inequalities,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,12,11-12,72,74,Algebra: percentages,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,10,11-12,72,72,Algebra: percentages,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,6,11-12,72,72,Geometry: triangle perimeter,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,1,11-12,72,72,Algebra/geometry: rectangle area,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,3,11-12,72,68,Geometry: circle and inscribed triangle,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2007,B,11,11-12,72,58,Geometry: quadrilateral angles,Selected questions only; UWF test-center cohort; not national,6a,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,9,11-12,53,22,"Geometry: circle, line, midpoint, and length",Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,2,11-12,53,87,Counting,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,1,11-12,53,87,Counting,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,6,11-12,53,81,Algebra: distance/rate/time,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,4,11-12,53,79,Algebra/geometry: circle and ratio,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,3,11-12,53,74,Algebra: fraction applications,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,7,11-12,53,68,Algebra: defined relations,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,5,11-12,53,64,Algebra: ratio and fractions,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2008,B,8,11-12,53,52,Algebra: proportion,Selected questions only; UWF test-center cohort; not national,6b,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,7,11-12,67,39,Algebra: percentage applications,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,11,11-12,67,12,Algebra: percentages and fractions,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,1,11-12,67,79,Algebra: cost problem,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,5,11-12,67,75,Algebra: products and sums,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,4,11-12,67,75,Geometry: rectangle and congruent triangles,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,2,11-12,67,67,Algebra: ratios,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,8,11-12,67,60,Algebra: ratio and fractions,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,3,11-12,67,52,Algebra: percentages and inequalities,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,15,11-12,67,48,Algebra: exponents and inequalities,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2009,B,6,11-12,67,43,Algebra: order of operations,Selected questions only; UWF test-center cohort; not national,6c,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,3,11-12,129,36,Algebra: cost problem,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,6,11-12,129,33,Algebra: percentage applications,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,8,11-12,129,24,Counting,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,10,11-12,129,21,Counting,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,2,11-12,129,81,Geometry: rectangle area,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,1,11-12,129,74,Algebra: percentages,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,7,11-12,129,56,Algebra: distance/rate/time and averages,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,5,11-12,129,52,Algebra: order of operations,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2010,B,4,11-12,129,43,Counting,Selected questions only; UWF test-center cohort; not national,6d,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2011,B,1,11-12,162,83,Algebra: fraction addition,Selected questions only; UWF test-center cohort; not national,6e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2011,B,2,11-12,162,72,Algebra: averages,Selected questions only; UWF test-center cohort; not national,6e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2011,B,3,11-12,162,46,Algebra: fractions and averages,Selected questions only; UWF test-center cohort; not national,6e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2011,B,4,11-12,162,36,"Algebra: products, sums, and digits",Selected questions only; UWF test-center cohort; not national,6e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2011,B,5,11-12,162,25,Algebra: least common multiple,Selected questions only; UWF test-center cohort; not national,6e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2011,B,10,11-12,162,12,Geometry: rectangle angle measure,Selected questions only; UWF test-center cohort; not national,6e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf
+amc12,2011,B,11,11-12,162,16,Geometry: coordinates and distances,Selected questions only; UWF test-center cohort; not national,6e,https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf

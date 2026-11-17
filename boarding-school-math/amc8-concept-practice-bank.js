@@ -1,0 +1,257 @@
+(function (root) {
+  "use strict";
+
+  // Independent GFIELD-authored practice. Kept separate from the timed 25-item mock form.
+  const items = [
+    {
+      id: "amc8-g7-practice-fraction-01",
+      domain: "number",
+      sourceConcepts: ["fraction", "ratio-and-proportion"],
+      standard: "수 감각·비율",
+      focus: "분수로 양을 맞추어 계산하기",
+      stage: "개념 연결",
+      prompt: "반죽 2/3회분을 만들 때 밀가루 1 1/2컵이 필요합니다. 같은 반죽 5회분을 만들려면 밀가루가 몇 컵 필요한가요?",
+      choices: ["10 1/2컵", "11 1/4컵", "12컵", "9 3/4컵", "10 1/4컵"],
+      answer: 1,
+      hint: "먼저 반죽 1회분에 필요한 양을 구한 다음 5를 곱해요.",
+      solution: ["2/3회분에 1 1/2컵이 필요하므로 1회분은 1 1/2 ÷ 2/3 = 9/4컵입니다.", "5회분에 필요한 양은 9/4 × 5 = 45/4컵입니다.", "45/4 = 11 1/4이므로 11 1/4컵입니다."],
+      connection: "반죽을 2배로 만들면 밀가루도 정확히 2배가 되는 이유를 비례식으로 설명해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-casework-01",
+      domain: "counting",
+      sourceConcepts: ["casework", "digits", "place-value", "parity", "multiplication-principle"],
+      standard: "경우의 수·확률",
+      focus: "짝수인 세 자리 수를 경우로 나누어 세기",
+      stage: "유형",
+      prompt: "숫자 1, 2, 3, 4 중 서로 다른 세 숫자를 골라 세 자리 수를 만듭니다. 짝수인 수는 모두 몇 개인가요?",
+      choices: ["8개", "10개", "12개", "16개", "24개"],
+      answer: 2,
+      hint: "짝수가 되려면 일의 자리에 올 수 있는 숫자부터 정해요.",
+      solution: ["짝수의 일의 자리는 2 또는 4이므로 2가지입니다.", "일의 자리를 정한 뒤 백의 자리는 남은 3가지, 십의 자리는 남은 2가지입니다.", "따라서 2 × 3 × 2 = 12개입니다."],
+      connection: "숫자를 반복해서 쓸 수 있게 바꾸면 세 자리 짝수는 몇 개가 되는지 비교해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-optimization-01",
+      domain: "number",
+      sourceConcepts: ["optimization", "inequality", "casework"],
+      standard: "수 감각·비율",
+      focus: "합이 정해진 두 정수의 곱을 가장 크게 만들기",
+      stage: "연결",
+      prompt: "합이 25인 두 양의 정수의 곱이 가장 클 때, 그 곱은 얼마인가요?",
+      choices: ["143", "144", "150", "156", "169"],
+      answer: 3,
+      hint: "합이 같은 두 수는 서로 가까울수록 곱이 커집니다. 25에 가까운 두 정수를 살펴보세요.",
+      solution: ["25에 가장 가까운 두 양의 정수는 12와 13입니다.", "두 수가 11과 14처럼 더 멀어지면 곱은 154로 작아집니다. 양의 정수 쌍을 12와 13에서 가장 가깝게 나누었으므로 최댓값입니다.", "12 × 13 = 156입니다."],
+      connection: "두 수를 실수로 허용하면 최댓값이 어떻게 달라지는지 말해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-place-value-01",
+      domain: "number",
+      sourceConcepts: ["digits", "place-value", "linear-equation"],
+      standard: "수 감각·비율",
+      focus: "십의 자리와 일의 자리 조건을 식으로 나타내기",
+      stage: "유형",
+      prompt: "어떤 두 자리 수에서 십의 자리 숫자는 일의 자리 숫자보다 3 크고, 두 숫자의 합은 11입니다. 원래 수는 무엇인가요?",
+      choices: ["47", "74", "65", "83", "92"],
+      answer: 1,
+      hint: "일의 자리 숫자를 x라 두면 십의 자리 숫자는 x + 3입니다.",
+      solution: ["일의 자리 숫자를 x라 하면 십의 자리 숫자는 x + 3입니다.", "x + (x + 3) = 11이므로 2x = 8, x = 4입니다.", "십의 자리 숫자는 7이므로 원래 수는 74입니다."],
+      connection: "두 자리 수 74를 7과 4의 합으로만 보지 말고 자릿값을 사용해 70 + 4로 나타내 보세요."
+    },
+    {
+      id: "amc8-g7-practice-rate-01",
+      domain: "number",
+      sourceConcepts: ["distance-rate-and-time", "rate", "relative-speed", "ratio-and-proportion"],
+      standard: "수 감각·비율",
+      focus: "상대 속력으로 만나는 시각 구하기",
+      stage: "연결",
+      prompt: "자전거가 오전 8시에 시속 12km로 출발했습니다. 같은 길에서 달리기가 30분 뒤 시속 18km로 출발했습니다. 달리기는 몇 시에 자전거를 따라잡나요?",
+      choices: ["오전 9:00", "오전 9:20", "오전 9:30", "오전 10:00", "오전 10:30"],
+      answer: 2,
+      hint: "달리기가 출발할 때 자전거는 이미 6km 앞서 있습니다. 두 사람 사이의 거리는 매시간 몇 km 줄어드나요?",
+      solution: ["자전거는 30분 동안 12 × 1/2 = 6km 앞서갑니다.", "달리기는 매시간 자전거보다 18 − 12 = 6km 더 가므로, 6km 차이를 따라잡는 데 1시간이 걸립니다.", "달리기는 오전 8시 30분에 출발했으므로 오전 9시 30분에 따라잡습니다."],
+      connection: "두 사람의 속력이 같다면 출발 시각을 바꾸어도 따라잡을 수 있을까요?"
+    },
+    {
+      id: "amc8-g7-practice-logic-01",
+      domain: "counting",
+      sourceConcepts: ["logical-deduction", "casework"],
+      standard: "경우의 수·확률",
+      focus: "순서 조건을 이어서 결론 내리기",
+      stage: "유형",
+      prompt: "A, B, C, D가 월요일부터 목요일까지 하루씩 발표합니다. A는 B보다 먼저, D는 B보다 나중에 발표합니다. C는 월요일도 목요일도 아닙니다. 반드시 목요일에 발표하는 사람은 누구인가요?",
+      choices: ["A", "B", "C", "D", "정할 수 없음"],
+      answer: 3,
+      hint: "A, B, D의 순서는 A보다 B가 뒤이고, D는 B보다도 뒤입니다.",
+      solution: ["A가 B보다 먼저이고 D가 B보다 나중이므로 A, B, D는 이 순서대로 발표합니다.", "C는 목요일에 발표할 수 없으므로 목요일 자리는 A, B, D 중 한 명이 차지합니다. 이 순서를 유지하면 D가 가장 늦은 발표자입니다.", "따라서 D가 반드시 목요일에 발표합니다."],
+      connection: "C가 월요일이 될 수 없다는 조건을 지우면, 나머지 발표 순서는 몇 가지가 가능한지 직접 나열해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-parity-01",
+      domain: "number",
+      sourceConcepts: ["parity", "logical-deduction"],
+      standard: "수 감각·비율",
+      focus: "합의 짝수·홀수와 홀수 항의 개수 연결하기",
+      stage: "개념 연결",
+      prompt: "정수 네 개의 합이 홀수입니다. 네 정수 중 홀수의 개수는 어떻게 될 수 있나요?",
+      choices: ["0개", "1개", "1개 또는 3개", "2개", "4개"],
+      answer: 2,
+      hint: "짝수는 합의 짝수·홀수 성질을 바꾸지 않습니다. 홀수를 몇 개 더해야 전체 합이 홀수가 될까요?",
+      solution: ["홀수와 짝수를 더할 때 홀수의 개수가 홀수이면 전체 합은 홀수입니다.", "정수 네 개 중 홀수 개수는 0, 1, 2, 3, 4 중 하나입니다.", "따라서 홀수는 1개 또는 3개입니다."],
+      connection: "네 수의 합이 짝수라면 홀수의 개수는 어떻게 달라지나요?"
+    },
+    {
+      id: "amc8-g7-practice-triangle-area-01",
+      domain: "geometry",
+      sourceConcepts: ["triangle-area", "area-ratio", "ratio-and-proportion"],
+      standard: "기하·공간",
+      focus: "같은 높이를 가진 삼각형의 넓이 비",
+      stage: "연결",
+      prompt: "삼각형 ABC의 넓이는 48cm²입니다. 점 D는 변 AB 위에 있고 AD와 DB의 길이 비는 1:3입니다. 삼각형 ACD의 넓이는 얼마인가요?",
+      choices: ["10cm²", "12cm²", "16cm²", "24cm²", "36cm²"],
+      answer: 1,
+      hint: "두 삼각형 ACD와 BCD는 밑변의 비가 AD:DB이고 높이가 같습니다.",
+      solution: ["AD:DB = 1:3이므로 AD:AB = 1:4입니다.", "삼각형 ACD와 ABC는 같은 높이를 가지므로 넓이의 비는 밑변의 비와 같습니다.", "삼각형 ACD의 넓이는 48 × 1/4 = 12cm²입니다."],
+      connection: "점 D를 AB의 중점으로 옮기면 삼각형 ACD의 넓이는 어떻게 바뀌나요?"
+    },
+    {
+      id: "amc8-g7-practice-circle-area-01",
+      domain: "geometry",
+      sourceConcepts: ["circle-area", "area-ratio", "ratio-and-proportion"],
+      standard: "기하·공간",
+      focus: "두 원의 넓이 차를 비로 나타내기",
+      stage: "유형",
+      prompt: "반지름이 3cm와 5cm인 두 원은 같은 중심을 가집니다. 작은 원 바깥쪽 고리의 넓이는 큰 원 넓이의 얼마인가요?",
+      choices: ["9/25", "16/25", "3/5", "4/5", "16/9"],
+      answer: 1,
+      hint: "고리의 넓이는 큰 원 넓이에서 작은 원 넓이를 뺀 값입니다.",
+      solution: ["큰 원의 넓이는 25πcm²이고 작은 원의 넓이는 9πcm²입니다.", "고리의 넓이는 25π − 9π = 16πcm²입니다.", "큰 원 넓이에 대한 비는 16π/25π = 16/25입니다."],
+      connection: "반지름을 모두 2배로 바꾸어도 고리와 큰 원의 넓이 비가 같은 이유는 무엇인가요?"
+    },
+    {
+      id: "amc8-g7-practice-percent-01",
+      domain: "number",
+      sourceConcepts: ["percentage", "fraction", "multiplication-principle"],
+      standard: "수 감각·비율",
+      focus: "연속된 백분율 변화",
+      stage: "연결",
+      prompt: "가격을 20% 내린 뒤, 내린 가격에서 10% 올렸습니다. 처음 가격보다 최종 가격은 몇 퍼센트 낮나요?",
+      choices: ["8%", "10%", "12%", "15%", "18%"],
+      answer: 2,
+      hint: "처음 가격을 100으로 두고 변화율을 차례대로 적용해요.",
+      solution: ["처음 가격을 100으로 두면 20% 내린 가격은 80입니다.", "80에서 10% 올리면 88입니다.", "100보다 12 낮으므로 처음보다 12% 낮습니다."],
+      connection: "처음 가격을 얼마로 정해도 변화율이 같은 이유를 곱셈으로 설명해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-mean-01",
+      domain: "number",
+      sourceConcepts: ["mean", "linear-equation", "data-and-graph-interpretation"],
+      standard: "자료와 통계",
+      focus: "평균 변화에서 빠진 자료 찾기",
+      stage: "개념 연결",
+      prompt: "다섯 수의 평균은 12입니다. 수 하나를 더했더니 여섯 수의 평균이 14가 되었습니다. 더한 수는 얼마인가요?",
+      choices: ["20", "22", "24", "26", "28"],
+      answer: 2,
+      hint: "평균에 자료 개수를 곱해 두 묶음의 합을 구해요.",
+      solution: ["처음 다섯 수의 합은 5 × 12 = 60입니다.", "여섯 수의 합은 6 × 14 = 84입니다.", "더한 수는 84 − 60 = 24입니다."],
+      connection: "새 자료가 기존 평균보다 클 때 평균이 올라가는 이유를 설명해 보세요."
+    },
+    {
+      id: "amc8-g7-practice-area-decomposition-01",
+      domain: "geometry",
+      sourceConcepts: ["area", "area-decomposition", "rectangle"],
+      standard: "기하·공간",
+      focus: "큰 직사각형에서 빈 부분 빼기",
+      stage: "유형",
+      prompt: "가로 12cm, 세로 8cm인 직사각형의 한쪽 모서리에서 4cm × 3cm 직사각형을 잘라 냈습니다. 남은 도형의 넓이는 얼마인가요?",
+      choices: ["72cm²", "76cm²", "80cm²", "84cm²", "96cm²"],
+      answer: 3,
+      hint: "처음 직사각형의 넓이에서 잘라 낸 부분의 넓이를 빼요.",
+      solution: ["처음 직사각형의 넓이는 12 × 8 = 96cm²입니다.", "잘라 낸 부분의 넓이는 4 × 3 = 12cm²입니다.", "남은 넓이는 96 − 12 = 84cm²입니다."],
+      connection: "잘라 낸 위치를 바꾸어도 남은 넓이가 같은 이유는 무엇인가요?"
+    },
+    {
+      id: "amc8-g7-practice-modular-01",
+      domain: "number",
+      sourceConcepts: ["modular-arithmetic", "pattern-recognition", "exponent"],
+      standard: "정수·자료 해석",
+      focus: "거듭제곱 나머지의 반복 찾기",
+      stage: "연결",
+      prompt: "3²⁰²⁶을 7로 나눈 나머지는 얼마인가요?",
+      choices: ["1", "2", "3", "4", "6"],
+      answer: 3,
+      hint: "3의 거듭제곱을 7로 나눈 나머지를 차례로 적어 반복 주기를 찾아요.",
+      solution: ["나머지는 3, 2, 6, 4, 5, 1의 순서로 6개마다 반복됩니다.", "2026을 6으로 나눈 나머지는 4입니다.", "따라서 네 번째 나머지인 4입니다."],
+      connection: "지수가 2027로 바뀌면 반복에서 어느 나머지를 사용하나요?"
+    },
+    {
+      id: "amc8-g7-practice-estimation-01",
+      domain: "number",
+      sourceConcepts: ["estimation", "whole-number-operations", "multiplication-principle"],
+      standard: "수 감각·비율",
+      focus: "곱의 크기를 가까운 수로 어림하기",
+      stage: "개념",
+      prompt: "49 × 21에 가장 가까운 어림값은 무엇인가요?",
+      choices: ["800", "900", "1,000", "1,100", "1,200"],
+      answer: 2,
+      hint: "49와 21을 곱하기 쉬운 가까운 수로 바꾸어요.",
+      solution: ["49는 50에 가깝고 21은 20에 가깝습니다.", "50 × 20 = 1,000입니다.", "실제 곱은 1,029이므로 가장 가까운 어림값은 1,000입니다."],
+      connection: "49 × 21을 정확히 계산한 값과 어림값의 차이는 얼마인가요?"
+    },
+    {
+      id: "amc8-g7-practice-sequence-01",
+      domain: "counting",
+      sourceConcepts: ["arithmetic-sequence", "pattern-recognition", "linear-equation"],
+      standard: "대수·규칙",
+      focus: "등차수열의 항 구하기",
+      stage: "유형",
+      prompt: "수열 3, 7, 11, 15, …의 20번째 항은 무엇인가요?",
+      choices: ["75", "77", "79", "81", "83"],
+      answer: 2,
+      hint: "첫 항부터 20번째 항까지 공차가 몇 번 더해지는지 세어요.",
+      solution: ["첫 항은 3이고 공차는 4입니다.", "20번째 항은 3 + 19 × 4입니다.", "3 + 76 = 79입니다."],
+      connection: "n번째 항을 n을 사용한 식으로 나타내 보세요."
+    },
+    {
+      id: "amc8-g7-practice-probability-01",
+      domain: "counting",
+      sourceConcepts: ["basic-probability", "combinations", "multiplication-principle"],
+      standard: "경우의 수·확률",
+      focus: "비복원 추출에서 같은 색 뽑기",
+      stage: "개념 연결",
+      prompt: "빨간 구슬 3개와 파란 구슬 2개가 있습니다. 구슬 두 개를 차례로 꺼내고 다시 넣지 않을 때, 두 개 모두 빨간 구슬일 확률은 얼마인가요?",
+      choices: ["1/10", "1/5", "3/10", "2/5", "1/2"],
+      answer: 2,
+      hint: "첫 번째 빨간 구슬을 꺼낸 뒤, 남은 구슬 수와 빨간 구슬 수를 다시 세어요.",
+      solution: ["첫 번째 구슬이 빨간색일 확률은 3/5입니다.", "첫 번째가 빨간색이면 남은 빨간 구슬은 2개, 전체는 4개이므로 두 번째도 빨간색일 확률은 2/4입니다.", "두 사건의 확률을 곱하면 3/5 × 2/4 = 3/10입니다."],
+      connection: "첫 번째 구슬을 꺼낸 뒤 다시 넣으면 확률이 어떻게 달라지나요?"
+    },
+    {
+      id: "amc8-g7-practice-perimeter-01",
+      domain: "geometry",
+      sourceConcepts: ["perimeter", "rectangle", "linear-equation"],
+      standard: "기하·공간",
+      focus: "둘레에서 직사각형의 변 길이 구하기",
+      stage: "개념 연결",
+      prompt: "직사각형의 둘레는 34cm이고 한 변은 11cm입니다. 이웃한 변의 길이는 몇 cm인가요?",
+      choices: ["5cm", "6cm", "7cm", "8cm", "9cm"],
+      answer: 1,
+      hint: "마주 보는 변의 길이가 같으므로 둘레에서 같은 변 두 개씩을 빼요.",
+      solution: ["둘레는 길이 두 개와 너비 두 개의 합이므로 2 × (11 + x) = 34입니다.", "양변을 2로 나누면 11 + x = 17입니다.", "따라서 이웃한 변은 6cm입니다."],
+      connection: "둘레를 유지하면서 두 변의 길이를 1cm씩 바꾸면 다른 변은 어떻게 바뀌어야 하나요?"
+    }
+  ];
+
+  root.GFIELDAMC8ConceptPractice = Object.freeze({
+    title: "AMC 8 개념 연결 연습",
+    sourceUrl: "https://maa.org/student-programs/amc/",
+    items: Object.freeze(items.map(function (item) {
+      return Object.freeze(Object.assign({}, item, {
+        sourceConcepts: Object.freeze(item.sourceConcepts),
+        choices: Object.freeze(item.choices),
+        solution: Object.freeze(item.solution)
+      }));
+    }))
+  });
+})(typeof window !== "undefined" ? window : globalThis);

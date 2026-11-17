@@ -33,8 +33,9 @@
 <script src="../../config.js"></script>
 <script src="../supabase-config.js?v=hf-supabase-live-20260903a"></script>
 <script src="../supabase-client.js"></script>
-<script src="../portal-auth.js?v=hf-supabase-live-20260903a"></script>
-<script src="../type-access-catalog.js"></script><script src="../type-access.js"></script>
+<script src="../report-access.js?v=20261117-report-basic"></script>
+<script src="../portal-auth.js?v=20261117-report-basic"></script>
+<script src="../type-access-catalog.js"></script><script src="../type-access.js?v=20261117-report-basic"></script>
 <script src="./access-policy.js?v=hf-practice-safe-20260903a"></script>
 <script src="./secure-practice-loader.js"></script>
 <script>
@@ -52,6 +53,7 @@
   const storedAccess=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG);
   const portalSession=window.HFPracticeBootstrap.teacherPreview?null:await window.GFieldHFPortalAuth?.ready();
   const remoteMode=!window.HFPracticeBootstrap.teacherPreview&&Boolean(window.GFieldHFPortalAuth?.isSupabaseEnabled());
+  const reportMode=portalSession?.backend==='hs-report';
   const remoteExam=remoteMode&&mode==='exam';
   const requestedStudent=remoteMode?'':HFMock.safeStudent(params.get('student'));
   const seed=remoteExam?null:HFMock.normalizeSeed(params.get('seed')||HFMock.makeSeed());
@@ -64,6 +66,7 @@
     if(href){empty.appendChild(document.createElement('br'));const link=document.createElement('a');link.href=href;link.textContent=label||'돌아가기';empty.appendChild(link)}
     sheet.appendChild(empty);pages.replaceChildren(sheet);document.getElementById('answerBtn').style.display='none';document.getElementById('regenBtn').style.display='none';
   }
+  if(reportMode&&mode!=='practice'){showState('자료실 연결은 하이퍼포커스 기본 학습 전용입니다. 모의고사 승인은 별도입니다.','../diagnosis.html','하이퍼포커스로 돌아가기');return}
   if(remoteMode&&!portalSession){showState('승인번호 로그인이 필요합니다.','../?login=1','승인번호로 로그인');return}
   if(remoteMode&&mode==='practice'&&!window.GFieldHFPortalAuth.canAccess(portalSession,'hyperfocus')){showState('이 맞춤 문제지를 볼 수 있는 학습 권한이 없습니다.','../diagnosis.html?section=similar','맞춤 학습으로 돌아가기');return}
   if(remoteExam&&(!secureMockEnabled||typeof secureMock?.loadExam!=='function'||typeof secureMock?.loadAnswers!=='function'||!secureFlow)){
@@ -78,7 +81,7 @@
   const practiceIdentity=useTypeAccess?window.HFTypeAccess?.watermarkIdentity?.():null;
   const portalPaid=window.GFieldHFPortalAuth?.canAccess(portalSession,'hyperfocus-extra')||window.GFieldHFPortalAuth?.canAccess(portalSession,'problem-bank');
   const paidPracticeReady=HFAccessPolicy.paidPracticeReady();
-  const accessTier=paidPracticeReady&&(remoteMode?portalPaid:(portalPaid||storedAccess.paid))?'paid':'free';
+  const accessTier=!reportMode&&paidPracticeReady&&(remoteMode?portalPaid:(portalPaid||storedAccess.paid))?'paid':'free';
   function hasPracticeTypeAccess(){const current=useTypeAccess?window.HFTypeAccess?.watermarkIdentity?.():null;return !useTypeAccess||(current?.studentId===practiceIdentity?.studentId&&current?.name===practiceIdentity?.name&&typeIds.length>0&&typeIds.every(id=>window.HFTypeAccess?.allowType(id,{paid:accessTier==='paid'})===true));}
   function guardPractice(){if(hasPracticeTypeAccess())return true;showState('선택한 유형의 이용 승인이 없거나 만료되었습니다.','../diagnosis.html?section=similar','맞춤 학습으로 돌아가기');return false;}
   if(!guardPractice())return;

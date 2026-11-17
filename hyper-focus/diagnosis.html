@@ -12,8 +12,9 @@
 <script src="./data.js"></script>
 <script src="./supabase-config.js?v=hf-supabase-live-20260903a"></script>
 <script src="./supabase-client.js"></script>
-<script src="./portal-auth.js?v=hf-supabase-live-20260903a"></script>
-<script src="./type-access-catalog.js"></script><script src="./type-access.js"></script>
+<script src="./report-access.js?v=20261117-report-basic"></script>
+<script src="./portal-auth.js?v=20261117-report-basic"></script>
+<script src="./type-access-catalog.js"></script><script src="./type-access.js?v=20261117-report-basic"></script>
 <script src="./assets/kr_font.js"></script>
 <script src="./mock/access-policy.js?v=hf-practice-safe-20260903a"></script>
 <script src="./mock/variation-bank.js"></script>
@@ -525,6 +526,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
     <div class="brand-tag-p2">지필드 영재교육</div>
     <h1>프리미어 유형 체크리스트</h1>
     <div id="studentInfoDisplay"></div>
+    <button id="reportApprovalHistory" class="btn-action btn-action-outline" type="button" hidden onclick="window.GFieldHFReportAccess.clear();location.href='./?login=1'">기존 승인번호 기록 보기</button>
   </div>
   <div class="p2-body">
     <div class="action-btns">
@@ -692,7 +694,7 @@ async function checkAuth(){
   if(!member||member.role!=='student'||!(member.permissions||[]).includes('hyperfocus')){alert('학생 이름과 승인번호가 일치하지 않거나 이용 권한이 없습니다.');return}
   currentBackend=member.backend||'legacy';currentUserId=member.userId||'';currentApprovalCode=currentBackend==='legacy'?(member.code||code.toUpperCase()):'';currentPermissions=member.permissions;
   if(currentBackend==='supabase')window.HFTypeAccess?.ready().catch(()=>{});
-  currentUserKey=currentBackend==='supabase'?`gfield_hf_user_${currentUserId}`:approvalKey(currentApprovalCode);
+  currentUserKey=currentBackend==='hs-report'?`gfield_hf_report_${currentUserId}`:currentBackend==='supabase'?`gfield_hf_user_${currentUserId}`:approvalKey(currentApprovalCode);
   document.getElementById('studentName').value=member.name;
   let migrated=false;
   if(currentBackend==='supabase'){
@@ -709,7 +711,7 @@ async function checkAuth(){
     try{localStorage.setItem(currentUserKey,JSON.stringify(studentHistory));sessionStorage.setItem('gfield_hf_name',member.name);sessionStorage.removeItem('gfield_hf_code')}catch(e){}
   }else{
     let stored=readJSON(currentUserKey);
-    if(!Array.isArray(stored)){stored=migrateLegacyPhoneHistory(member.name,currentUserKey);migrated=Array.isArray(stored)}
+    if(!Array.isArray(stored)&&currentBackend==='legacy'){stored=migrateLegacyPhoneHistory(member.name,currentUserKey);migrated=Array.isArray(stored)}
     studentHistory=Array.isArray(stored)?stored:[];
     try{sessionStorage.setItem('gfield_hf_code',currentApprovalCode);sessionStorage.setItem('gfield_hf_name',member.name)}catch(e){}
   }
@@ -717,7 +719,8 @@ async function checkAuth(){
   const intro=document.getElementById('introPreview');if(intro)intro.style.display='none';
   buildDiagnosisSelector();
   const p1=document.getElementById('page1');p1.classList.remove('active');p1.style.display='none';document.getElementById('page2').style.display='block';
-  document.getElementById('studentInfoDisplay').textContent=`학생: ${member.name}  |  승인번호 확인 완료${canUsePaidHF()?'  |  추가 문제 이용 가능':hasPaidHF()?'  |  추가 문제 서버 준비 중':''}`;
+  document.getElementById('studentInfoDisplay').textContent=`학생: ${member.name}  |  ${currentBackend==='hs-report'?'황소 리포트 연결 · 기록은 이 기기에 저장':'승인번호 확인 완료'}${canUsePaidHF()?'  |  추가 문제 이용 가능':hasPaidHF()?'  |  추가 문제 서버 준비 중':''}`;
+  document.getElementById('reportApprovalHistory').hidden=currentBackend!=='hs-report';
   updateAttemptButtons();
   if(migrated)alert('이 기기에 저장된 기존 전화번호 기반 진도를 승인번호 기록으로 복사했습니다. 기존 기록은 별도로 그대로 보존됩니다.');
   if(studentHistory.length>=3)alert('이미 최대 응시 횟수(3회)를 모두 완료하셨습니다. 이전 결과를 불러와 확인해 주세요.');
@@ -732,6 +735,7 @@ async function submitNewAttempt(){
   if(studentHistory.length>=3){alert('총 3회 응시 제한을 초과했습니다.');return}
   submissionInFlight=true;
   try{
+    if(currentBackend==='hs-report'&&!(await window.GFieldHFPortalAuth.ready()))return;
     const sortedIds=Array.from(selectedSet).sort((a,b)=>a-b);
     const name=document.getElementById('studentName').value.trim();
     let rate=Math.round(((54-sortedIds.length)/54)*100);
@@ -771,6 +775,7 @@ function worksheetAvailability(typeId){
 function setWorksheetDifficulty(typeId,difficulty){const available=worksheetAvailability(typeId);if(!available[difficulty])return;worksheetDifficultyByType.set(typeId,difficulty);renderSimilarUI()}
 function openWorksheetBuilder(){setView('similar');document.getElementById('view-similar')?.scrollIntoView({behavior:'smooth',block:'start'})}
 async function createSelectedWorksheet(){
+  if(currentBackend==='hs-report'&&window.GFIELD_HF_SUPABASE_CONFIG?.features?.securePracticeDelivery!==true){const notice=document.getElementById('worksheet-build-status');if(notice)notice.textContent='유사문항은 현재 검수 대기 중입니다. 진단·교재·결과 인쇄는 이용할 수 있습니다.';return;}
   const ids=Array.from(selectedSet).sort((a,b)=>a-b);
   const status=document.getElementById('worksheet-build-status');
   if(currentBackend==='supabase'){try{await window.HFTypeAccess?.ready();}catch(_){}}
@@ -782,9 +787,10 @@ async function createSelectedWorksheet(){
   try{HFAccessPolicy.validatePracticeRequest({countPerType:count,difficulty:'same',accessTier:paid?'paid':'free'})}catch(error){if(status)status.textContent=String(error.message||error);return}
   for(const id of ids){const difficulty=worksheetDifficultyByType.get(id)||'same';if(!worksheetAvailability(id)[difficulty]){if(status)status.textContent=`유형 ${String(id).padStart(2,'0')}의 선택 난이도는 아직 검수 완료된 문제가 없습니다.`;return}}
   const levels=ids.map(id=>`${id}:${worksheetDifficultyByType.get(id)||'same'}`).join(',');
-  const url=new URL('./mock/viewer.html',location.href);url.searchParams.set('mode','practice');if(currentBackend==='legacy')url.searchParams.set('student',document.getElementById('studentName').value.trim()||'학생');url.searchParams.set('types',ids.join(','));url.searchParams.set('levels',levels);url.searchParams.set('count',String(count));url.searchParams.set('seed',String(Date.now()));if(currentBackend==='supabase')location.href=url;else window.open(url,'_blank','noopener');
+  const url=new URL('./mock/viewer.html',location.href);url.searchParams.set('mode','practice');if(currentBackend==='legacy')url.searchParams.set('student',document.getElementById('studentName').value.trim()||'학생');url.searchParams.set('types',ids.join(','));url.searchParams.set('levels',levels);url.searchParams.set('count',String(count));url.searchParams.set('seed',String(Date.now()));if(currentBackend==='supabase'||currentBackend==='hs-report')location.href=url;else window.open(url,'_blank','noopener');
 }
 async function renderSimilarUI(){
+  const reportHeld=currentBackend==='hs-report'&&window.GFIELD_HF_SUPABASE_CONFIG?.features?.securePracticeDelivery!==true;
   const container=document.getElementById('similar-list');
   const ids=Array.from(selectedSet).sort((a,b)=>a-b);
   if(!ids.length){container.innerHTML='<p style="text-align:center;color:#888;padding:24px">먼저 틀린 유형을 선택해 주세요.</p>';return}
@@ -800,7 +806,7 @@ async function renderSimilarUI(){
   const unsupported=ids.filter(id=>!Object.values(worksheetAvailability(id)).some(Boolean));
   const paid=canUsePaidHF();
   const countControl=paid?`<label for="worksheet-count">유형당 문항</label><input id="worksheet-count" type="number" min="2" max="${HFAccessPolicy.PAID_PER_DIFFICULTY}" value="2" inputmode="numeric" style="width:68px;padding:9px;border:1px solid #cbd5df;border-radius:8px">`:'';
-  container.innerHTML=`<div class="worksheet-type-list">${rows}</div><div class="worksheet-build-actions">${countControl}<button type="button" class="worksheet-build-btn" ${unsupported.length?'disabled':''} onclick="createSelectedWorksheet()">${paid?'선택 난이도로 자동 시험지 만들기':'유형당 2문항 자동 시험지 만들기'}</button><div class="worksheet-build-status" id="worksheet-build-status">${unsupported.length?`아직 시험지 연결이 준비되지 않은 유형: ${unsupported.map(id=>String(id).padStart(2,'0')).join(', ')}`:paid?'추가 문제 권한이 확인되었습니다.':hasPaidHF()?'추가 문제는 비공개 서버 전달 준비 중이며 현재는 2문항만 이용할 수 있습니다.':'3번째 문제부터는 유료 추가 문제입니다.'}</div></div>`;
+  container.innerHTML=`<div class="worksheet-type-list">${rows}</div><div class="worksheet-build-actions">${countControl}<button type="button" class="worksheet-build-btn" ${(unsupported.length||reportHeld)?'disabled':''} onclick="createSelectedWorksheet()">${reportHeld?'유사문항 검수 대기':paid?'선택 난이도로 자동 시험지 만들기':'유형당 2문항 자동 시험지 만들기'}</button><div class="worksheet-build-status" id="worksheet-build-status">${reportHeld?'유사문항은 현재 검수 대기 중입니다. 진단·교재·결과 인쇄는 이용할 수 있습니다.':unsupported.length?`아직 시험지 연결이 준비되지 않은 유형: ${unsupported.map(id=>String(id).padStart(2,'0')).join(', ')}`:paid?'추가 문제 권한이 확인되었습니다.':hasPaidHF()?'추가 문제는 비공개 서버 전달 준비 중이며 현재는 2문항만 이용할 수 있습니다.':'3번째 문제부터는 유료 추가 문제입니다.'}</div></div>`;
 }
 function toggleAllAccordions(){const cards=document.querySelectorAll('#resultListBox .res-card');const allOpen=[...cards].every(c=>c.classList.contains('open'));cards.forEach(c=>c.classList.toggle('open',!allOpen));}
 function escapeHTML(v){return String(v??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))}

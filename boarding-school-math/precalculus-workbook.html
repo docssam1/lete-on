@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="지필드 Precalculus 원본 수업과 교사용 풀이를 A4로 인쇄합니다.">
+  <title>Precalculus 단원 교재 · GFIELD Math</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./gfield-tokens.css?v=20260906-1">
+  <link rel="stylesheet" href="./academy-ui.css">
+  <link rel="stylesheet" href="./algebra1-workbook.css?v=20261103-4">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
+</head>
+<body class="algebra1-workbook-page precalculus-workbook-page">
+  <a class="skip-link" href="#workbook-pages">본문으로 바로가기</a>
+  <header class="workbook-header screen-only">
+    <a href="./boarding-roadmap.html?grade=10#annual-plan">← 학습 로드맵으로</a>
+    <span>GFIELD MATH</span>
+  </header>
+  <main>
+    <section class="workbook-controls screen-only" aria-labelledby="workbook-title">
+      <div class="controls-heading"><p>지필드 자체 과정 · 학교 선수 조건에 맞춰 선택</p><h1 id="workbook-title">Precalculus 단원 교재</h1><span>단원과 학생용·교사용 자료를 고른 뒤 A4로 저장하거나 출력하세요.</span></div>
+      <div class="controls-row">
+        <label for="unit-select">출력할 단원<select id="unit-select"><option value="all">전체 과정</option></select></label>
+        <label for="edition-select">자료 종류<select id="edition-select"><option value="student">학생용 · 풀이 공간</option><option value="teacher">교사용 · 정답과 풀이</option></select></label>
+        <button id="print-workbook" type="button" disabled>준비 중…</button>
+      </div>
+      <p id="workbook-status" role="status" aria-live="polite"></p>
+    </section>
+    <div id="workbook-pages" class="workbook-pages" tabindex="-1" aria-label="인쇄할 교재"></div>
+  </main>
+  <script src="./curriculum/precalculus-course.js?v=20261103-2"></script>
+  <script src="./shared/math-inline.js?v=20261103-17"></script>
+  <script src="./algebra1-workbook.js?v=20261103-5"></script>
+  <script src="./shared/boarding-study-return.js?v=20261114-2"></script>
+</body>
+</html>

@@ -32,7 +32,7 @@ const AGES = ['k5', 'k6', 'k7', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'm'];
 const AGE_ANCHOR = { k5: 0, k6: 1, k7: 3, g1: 5, g2: 7, g3: 9, g4: 11, g5: 13, g6: 15 };
 /* 권별 진도표가 있는 교재 = 그 교재 사다리로 묻는다(기적의 계산법 · 소마셈 2019 · 두뇌로).
    나머지(구몬·원리셈·그 밖·안 함)는 기적의 계산법 사다리를 학교 진도 대신 쓰고 나이·학년으로 시작 단계를 잡는다. */
-const MAPPED = { miracle: 'miracle', soma: 'soma', dunoro: 'dunoro' };
+const MAPPED = { miracle: 'miracle', soma: 'soma', dunoro: 'dunoro', kumon: 'kumon' };
 
 function data(){ return root.NM_CONSULT_LADDER; }
 let current = null;   // 지금 상태의 사다리 — 아래 함수들이 state 를 받을 때마다 맞춘다

@@ -1407,6 +1407,7 @@ function render(){
   else if(S.view==='checkup')screenCheckup();
   else if(S.view==='placement')screenPlacement();
   else if(S.view==='startpick')screenStartPick();
+  else if(S.view==='startchoice')screenStartChoice();
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
   else if(S.view==='gradecourse')screenGradeCourse();
   else if(S.view==='mailbox')screenMailbox();
@@ -1647,6 +1648,9 @@ function screenWelcome(){
     S.onboarded = true;
     if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
+    /* 처음 들어오면 시작 방법부터(원장 2026-11-17 「처음에는 진단하고 … 일정 안내」 → 「진단하여 진행할까요 아니면 지금 배운
+       교재 이후부터 학습할까요를 안내해야지」): 진단하고 시작 / 하던 교재 다음부터 — screenStartChoice. */
+    if(!(S.placement&&S.placement.course)&&window.NM_PLACEMENT_UI){S.view='startchoice';save();render();return;}
     render();
   }
 
@@ -5824,6 +5828,66 @@ function placementAgeNoteHtml(d,lk){
    늘어놓는다. 예시 문제는 고정 시드(pick+과정키)라 새로고침해도 같은
    문제 — "미리보기"라는 인상을 주려는 것이지 실제로 풀 필요는 없다.
    ============================================================ */
+/* ============================================================
+   처음 시작 고르기(2026-11-17, 원장 「진단하여 진행할까요 아니면 지금 배운 교재 이후부터 학습할까요를 안내해야지」)
+   ① 진단하고 시작 → startPlacement()(결과에 과정마다 끝나는 날짜 · 8세 이하 소마·필즈 비교 그래프)
+   ② 하던 교재 다음부터 → 교재(기적의 계산법·소마셈·두뇌로·구몬수학)와 끝낸 권(단계)을 고르면
+      그다음 권의 새 계산이 처음 나오는 과정부터 시작(data/consult-ladder.js — 시작점 상담과 같은 단계표).
+      저장은 「학년으로 골라 바로 시작」과 같은 꼴(S.placement.self) + source:'book'.
+   ============================================================ */
+const START_BOOKS=[['miracle','기적의 계산법','Miracle Calculation','奇迹计算法'],['soma','소마셈','Soma-sem','Soma算'],['dunoro','두뇌로','Dunoro','Dunoro'],['kumon','구몬수학','Kumon Math','公文数学']];
+let startChoice={open:false,book:'',step:''};
+function loadConsultLadder(done){
+  if(window.NM_CONSULT_LADDER)return done();
+  const el=document.createElement('script');el.src='data/consult-ladder.js?v=20261117-kumon1';el.onload=done;el.onerror=done;document.head.appendChild(el);
+}
+function bookStartCourse(book,stepId){
+  const L=(window.NM_CONSULT_LADDER||{}).ladders||{},steps=L[book]||[],i=steps.findIndex(x=>x.id===stepId);if(i<0)return null;
+  const num=k=>Number(String(k||'').slice(1)),keys=Object.keys(window.NM_COURSES||{}).filter(k=>/^C\d+$/.test(k)&&!window.NM_COURSES[k].comingSoon).map(num).sort((a,b)=>a-b);
+  const done=Math.max(...steps[i].skills.map(k=>num(k.course)).filter(n=>Number.isFinite(n)),0);
+  const next=steps[i+1]?steps[i+1].skills.map(k=>num(k.course)).filter(n=>Number.isFinite(n)&&n>=0):[];
+  /* 다음 권의 새 계산 가운데 가장 앞 과정. 다음 권이 없으면 끝낸 권 가장 뒤 과정의 다음 과정. */
+  let n=next.length?Math.min(...next):done+1;
+  if(!keys.includes(n))n=keys.find(k=>k>=n)??keys[keys.length-1];
+  return {key:'C'+n,next:steps[i+1]||null,step:steps[i]};
+}
+function screenStartChoice(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen'),ko=S.lang==='ko',en=S.lang==='en',lk=(k,e,z)=>ko?k:en?e:z,tr=o=>o?(ko?o.ko:en?o.en:o.zh)||o.ko:'';
+  const c=startChoice,LD=(window.NM_CONSULT_LADDER||{}).ladders||{};
+  const steps=c.book&&LD[c.book]?LD[c.book]:[];
+  const pick=c.book&&c.step?bookStartCourse(c.book,c.step):null;
+  const course=pick?(window.NM_COURSES||{})[pick.key]:null;
+  const bookPanel=!c.open?'':`<div class="nm-sc-book">
+      <label class="nm-sc-l">${lk('지금까지 한 연산 교재','Arithmetic book used so far','目前用过的运算教材')}
+        <select id="scBook"><option value="">${lk('교재를 골라 주세요','Choose a book','请选择教材')}</option>${START_BOOKS.map(b=>`<option value="${b[0]}"${c.book===b[0]?' selected':''}>${esc(lk(b[1],b[2],b[3]))}</option>`).join('')}</select></label>
+      ${c.book?(steps.length?`<label class="nm-sc-l">${lk('마지막으로 끝낸 권(단계)','Last finished volume (level)','最后完成的册（阶段）')}
+        <select id="scStep"><option value="">${lk('끝낸 권을 골라 주세요','Choose the finished volume','请选择完成的册')}</option>${steps.map(x=>`<option value="${esc(x.id)}"${c.step===x.id?' selected':''}>${esc(tr(x.title)+(x.topic?' · '+x.topic:''))}</option>`).join('')}</select></label>`:`<p class="nm-sc-note">${lk('교재 단계표를 불러오는 중이에요…','Loading the book levels…','正在加载教材阶段…')}</p>`):''}
+      ${pick&&course?`<div class="nm-sc-result"><span>${lk('여기서부터 시작해요','Start here','从这里开始')}</span><b>${lk('과정','Course','课程')} ${pick.key.slice(1)} · ${esc(L(course.title))}</b>
+        ${pick.next?`<small>${esc(lk('다음 권 「'+tr(pick.next.title)+'」의 새 계산이 처음 나오는 과정이에요.','The first course with the new calculations of the next volume ('+tr(pick.next.title)+').','下一册「'+tr(pick.next.title)+'」新计算首次出现的课程。'))}</small>`:`<small>${lk('끝낸 권 다음 과정이에요.','The course after the finished volume.','完成册之后的课程。')}</small>`}
+        <button class="nm-btn" id="scBookGo">${lk('이 과정부터 시작하기','Start from this course','从这个课程开始')}</button></div>`:''}
+      <p class="nm-sc-note">${lk('교재의 권과 우리 과정은 내용이 정확히 같지 않아요. 헷갈리면 진단하고 시작하는 쪽이 정확해요. 시작한 뒤에도 언제든 진단할 수 있어요.','Book volumes and app courses are not identical. If unsure, the check is more accurate. You can take the check any time later.','教材册与本应用课程并非完全一致。不确定时先测评更准确。开始后也可随时测评。')}</p>
+    </div>`;
+  scr.innerHTML=`<div class="nm-sc">
+    <h1 class="nm-sc-h">${lk('어떻게 시작할까요?','How shall we start?','怎么开始呢？')}</h1>
+    <p class="nm-sc-sub">${lk('처음 한 번만 고르면 돼요.','You only choose this once.','只需选择一次。')}</p>
+    <button class="nm-sc-card main" id="scDiag"><b>${lk('진단하고 시작하기','Check first, then start','先测评再开始')}</b>
+      <span>${lk('20문항으로 지금 수준을 확인하고, 어느 과정에서 시작해 언제 어디까지 끝나는지 일정을 알려 드려요. 8세 이하는 소마·필즈 반 진도와 견주는 그래프도 보여 드려요.','20 questions find the right course and show when each stage finishes. For age 8 and under you also get a graph compared with SOMA and Fields classes.','用20道题确认水平，告诉你从哪门课程开始、何时完成到哪里。8岁以下还会显示与SOMA·Fields班进度比较的图表。')}</span></button>
+    <button class="nm-sc-card" id="scBookOpen" aria-expanded="${c.open}"><b>${lk('지금 하던 교재 다음부터 시작하기','Continue after the book you finished','从已学教材之后开始')}</b>
+      <span>${lk('기적의 계산법·소마셈·두뇌로·구몬수학에서 끝낸 권을 고르면 그다음 과정부터 바로 시작해요.','Pick the volume finished in Miracle Calculation, Soma-sem, Dunoro or Kumon and start right after it.','选择在奇迹计算法、Soma算、Dunoro或公文数学中完成的册，直接从下一课程开始。')}</span></button>
+    ${bookPanel}
+    <button class="nm-sc-later" id="scLater">${lk('나중에 정하고 마을 구경하기','Decide later and explore the village','以后再定，先逛村庄')}</button>
+  </div>`;
+  $('#scDiag').onclick=()=>{startChoice={open:false,book:'',step:''};startPlacement();};
+  $('#scBookOpen').onclick=()=>{c.open=!c.open;if(c.open)loadConsultLadder(()=>screenStartChoice());screenStartChoice();};
+  $('#scLater').onclick=()=>{S.view='town';save();render();};
+  const sb=$('#scBook');if(sb)sb.onchange=()=>{c.book=sb.value;c.step='';loadConsultLadder(()=>screenStartChoice());screenStartChoice();};
+  const ss=$('#scStep');if(ss)ss.onchange=()=>{c.step=ss.value;screenStartChoice();const r=$('#scBookGo');if(r)r.scrollIntoView({block:'nearest'});};
+  const go=$('#scBookGo');if(go&&pick)go.onclick=()=>{
+    S.placement={at:Date.now(),course:pick.key,self:true,source:'book',book:c.book,stepId:c.step,asked:0,correct:0,profile:[],weak:[],slow:[]};
+    startChoice={open:false,book:'',step:''};S._diag=null;S._roadFocus=pick.key;S.view='courseroad';save();render();
+  };
+}
 function screenStartPick(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;

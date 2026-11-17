@@ -1,0 +1,21 @@
+year,contest,population,participants,perfect_scores,score_20_or_higher,mean_score,statistic,source_status,source_url
+2002,AMC8,Global,157778,126,,11.09,whole-cohort-summary,MAA-2006-AMC8-annual-report-Table-1,https://studylib.net/doc/28486602/618492772-2006-amc-8-summary
+2003,AMC8,Global,158309,192,,10.27,whole-cohort-summary,MAA-2006-AMC8-annual-report-Table-1-corrected-from-table-column-alignment,https://studylib.net/doc/28486602/618492772-2006-amc-8-summary
+2004,AMC8,Global,154590,50,,9.94,whole-cohort-summary,MAA-2004-AMC8-national-statistics-and-2006-report-Table-1-column-alignment,https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions
+2005,AMC8,Global,143428,77,2548,9.835,whole-cohort-summary,MAA-2006-AMC8-annual-report-Table-1,https://studylib.net/doc/28486602/618492772-2006-amc-8-summary
+2006,AMC8,Global,147210,289,4428,10.14,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2007,AMC8,Global,150618,129,3593,9.87,whole-cohort-summary,MAA-2008-AMC8-annual-report-Table-1,https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america
+2008,AMC8,Global,148731,334,8575,11.45,whole-cohort-summary,MAA-2008-AMC8-annual-report-Table-1-and-8,https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america
+2009,AMC8,Global,150733,163,3450,10.28,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2010,AMC8,Global,153211,499,5849,9.98,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2011,AMC8,Global,152745,284,6709,10.76,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2012,AMC8,Global,150360,213,6438,10.66,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2013,AMC8,Global,149709,369,6531,10.70,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2014,AMC8,Global,144737,256,6950,11.44,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2015,AMC8,Global,149844,94,2669,8.55,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2016,AMC8,United States and Canada,108227,268,3104,9.36,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2017,AMC8,United States and Canada,81386,56,1185,9.05,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2018,AMC8,United States and Canada,98389,45,866,8.51,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2019,AMC8,United States and Canada,94634,151,2958,9.43,whole-cohort-summary,99CEF-primary-analysis-report-reproducing-annual-competition-statistics,https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf
+2020,AMC8,United States,,,,10.01,whole-cohort-average,MAA-Wisconsin-section-newsletter-reporting-national-US-average,https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf
+2020,AMC8,Contest Score Report scope not stated,56136,57,,10.00,whole-cohort-score-report,secondary-reproduction-of-MAA-Contest-Score-Report-image,https://www.testdaily.cn/52247/

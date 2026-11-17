@@ -32,7 +32,7 @@
   ]);
   const EVIDENCE_TYPES = Object.freeze(["diagnostic", "unit-mastery", "retention-check", "teacher-review"]);
   const ITEM_FIELDS = Object.freeze([
-    "itemId", "unitId", "clusterId", "standardRange", "skillId", "domainId", "maxPoints", "responseType", "difficulty", "scoringMode", "reviewState"
+    "slotId", "itemId", "unitId", "clusterId", "standardRange", "standardFocus", "skillId", "domainId", "maxPoints", "responseType", "difficulty", "scoringMode", "reviewState"
   ]);
   const BLUEPRINT_FIELDS = Object.freeze(["schemaVersion", "id", "programId", "targetGrade", "version", "purpose", "items"]);
   const ATTEMPT_FIELDS = Object.freeze([
@@ -128,10 +128,17 @@
     const field = `items[${index}]`;
     if (!isRecord(item)) fail(`${field} must be an object`);
     assertKnownFields(item, ITEM_FIELDS, field);
+    if (item.slotId != null) requireText(item.slotId, `${field}.slotId`, /^slot-bdg-[a-z0-9-]{4,64}$/);
     requireText(item.itemId, `${field}.itemId`, /^qst-bnk-[a-z0-9]{16}$/);
     requireText(item.unitId, `${field}.unitId`, /^[a-z0-9][a-z0-9-]{2,127}$/);
     requireText(item.clusterId, `${field}.clusterId`, /^[A-Za-z0-9][A-Za-z0-9._:-]{1,63}$/);
     requireText(item.standardRange, `${field}.standardRange`, /^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/);
+    if (item.standardFocus != null) {
+      requireText(item.standardFocus, `${field}.standardFocus`, /^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/);
+      if (item.standardFocus !== item.clusterId && !item.standardFocus.startsWith(`${item.clusterId}.`)) {
+        fail(`${field}.standardFocus must belong to its cluster`);
+      }
+    }
     requireText(item.skillId, `${field}.skillId`, /^[a-z0-9][a-z0-9:-]{2,127}$/);
     requireText(item.domainId, `${field}.domainId`, /^[A-Za-z0-9][A-Za-z0-9._:-]{1,63}$/);
     if (!Number.isInteger(item.maxPoints) || item.maxPoints < 1 || item.maxPoints > 4) fail(`${field}.maxPoints must be 1-4`);
@@ -161,6 +168,10 @@
     }
     blueprint.items.forEach(validateItem);
     assertUnique(blueprint.items.map(function (item) { return item.itemId; }), "blueprint item ids");
+    if (blueprint.purpose === "unit-screener") {
+      if (blueprint.items.some(function (item) { return !item.slotId; })) fail("unit-screener items require slotId");
+      assertUnique(blueprint.items.map(function (item) { return item.slotId; }), "unit-screener slot ids");
+    }
     const clusterLineage = new Map();
     blueprint.items.forEach(function (item) {
       const lineage = `${item.unitId}|${item.domainId}|${item.standardRange}`;
@@ -553,6 +564,135 @@
     });
   }
 
+  function analyzeUnitScreener(blueprint, attempt) {
+    if (!isRecord(blueprint) || blueprint.purpose !== "unit-screener") fail("analyzeUnitScreener requires a unit-screener blueprint");
+    validateAttempt(blueprint, attempt);
+    if (blueprint.items.some(function (item) { return !item.standardFocus; })) {
+      fail("unit-screener analysis requires standardFocus on every item");
+    }
+
+    const resultByItemId = new Map(attempt.itemResults.map(function (result) { return [result.itemId, result]; }));
+    const focusMap = new Map();
+    const overallDifficulty = Object.fromEntries(DIFFICULTIES.map(function (difficulty) {
+      return [difficulty, { earnedPoints: 0, maxPoints: 0, itemCount: 0 }];
+    }));
+
+    function newFocus(item) {
+      return {
+        standardFocus: item.standardFocus,
+        unitId: item.unitId,
+        clusterId: item.clusterId,
+        standardRange: item.standardRange,
+        domainId: item.domainId,
+        skillIds: new Set(),
+        earnedPoints: 0,
+        maxPoints: 0,
+        itemCount: 0,
+        errorCounts: {},
+        difficultyEvidence: Object.fromEntries(DIFFICULTIES.map(function (difficulty) {
+          return [difficulty, { earnedPoints: 0, maxPoints: 0, itemCount: 0 }];
+        }))
+      };
+    }
+
+    function add(bucket, item, result) {
+      bucket.earnedPoints += result.awardedPoints;
+      bucket.maxPoints += item.maxPoints;
+      bucket.itemCount += 1;
+      if (result.errorType) bucket.errorCounts[result.errorType] = (bucket.errorCounts[result.errorType] || 0) + 1;
+      const difficulty = bucket.difficultyEvidence[item.difficulty];
+      difficulty.earnedPoints += result.awardedPoints;
+      difficulty.maxPoints += item.maxPoints;
+      difficulty.itemCount += 1;
+    }
+
+    function freezeDifficulty(value) {
+      return Object.freeze(Object.fromEntries(DIFFICULTIES.map(function (difficulty) {
+        const row = value[difficulty];
+        return [difficulty, Object.freeze({
+          earnedPoints: row.earnedPoints,
+          maxPoints: row.maxPoints,
+          itemCount: row.itemCount,
+          percentage: row.maxPoints ? round1(100 * row.earnedPoints / row.maxPoints) : null
+        })];
+      })));
+    }
+
+    const itemFeedback = blueprint.items.map(function (item) {
+      const result = resultByItemId.get(item.itemId);
+      if (!focusMap.has(item.standardFocus)) focusMap.set(item.standardFocus, newFocus(item));
+      const focus = focusMap.get(item.standardFocus);
+      if (focus.unitId !== item.unitId || focus.clusterId !== item.clusterId || focus.domainId !== item.domainId) {
+        fail("unit-screener standardFocus lineage must be consistent");
+      }
+      focus.skillIds.add(item.skillId);
+      add(focus, item, result);
+      const difficulty = overallDifficulty[item.difficulty];
+      difficulty.earnedPoints += result.awardedPoints;
+      difficulty.maxPoints += item.maxPoints;
+      difficulty.itemCount += 1;
+      const outcomeCode = result.awardedPoints === item.maxPoints ? "full-credit" : result.awardedPoints > 0 ? "partial-credit" : "no-credit";
+      const commentCode = result.awardedPoints === item.maxPoints ? "secure" : result.errorType;
+      return Object.freeze({
+        slotId: item.slotId,
+        itemId: item.itemId,
+        standardFocus: item.standardFocus,
+        difficulty: item.difficulty,
+        earnedPoints: result.awardedPoints,
+        maxPoints: item.maxPoints,
+        outcomeCode,
+        errorType: result.errorType || null,
+        commentCode,
+        comment: FEEDBACK[commentCode]
+      });
+    });
+
+    const focuses = Array.from(focusMap.values()).map(function (focus) {
+      return Object.freeze({
+        standardFocus: focus.standardFocus,
+        unitId: focus.unitId,
+        clusterId: focus.clusterId,
+        standardRange: focus.standardRange,
+        domainId: focus.domainId,
+        skillIds: Object.freeze(Array.from(focus.skillIds).sort()),
+        earnedPoints: focus.earnedPoints,
+        maxPoints: focus.maxPoints,
+        itemCount: focus.itemCount,
+        percentage: round1(100 * focus.earnedPoints / focus.maxPoints),
+        errorCounts: Object.freeze(Object.assign({}, focus.errorCounts)),
+        difficultyEvidence: freezeDifficulty(focus.difficultyEvidence),
+        minimumObservationsMet: focus.itemCount >= 2,
+        evidenceState: "reviewed-observation-count-only-no-mastery-threshold"
+      });
+    }).sort(function (left, right) { return left.standardFocus.localeCompare(right.standardFocus, "en", { numeric: true }); });
+
+    const earnedPoints = itemFeedback.reduce(function (sum, row) { return sum + row.earnedPoints; }, 0);
+    const maxPoints = itemFeedback.reduce(function (sum, row) { return sum + row.maxPoints; }, 0);
+    const missingObservationFocusIds = focuses.filter(function (focus) { return !focus.minimumObservationsMet; }).map(function (focus) { return focus.standardFocus; });
+
+    return Object.freeze({
+      schemaVersion: SCHEMA_VERSION,
+      blueprintId: blueprint.id,
+      blueprintVersion: blueprint.version,
+      purpose: blueprint.purpose,
+      learnerId: attempt.learnerId,
+      score: Object.freeze({ earnedPoints, maxPoints, percentage: round1(100 * earnedPoints / maxPoints) }),
+      difficultyEvidence: freezeDifficulty(overallDifficulty),
+      focuses: Object.freeze(focuses),
+      itemFeedback: Object.freeze(itemFeedback),
+      interpretation: Object.freeze({
+        state: missingObservationFocusIds.length ? "insufficient-reviewed-observations" : "ready-for-teacher-interpretation",
+        missingObservationFocusIds: Object.freeze(missingObservationFocusIds),
+        masteryThresholdApproved: false,
+        automaticPrescription: false,
+        coursePlacement: false,
+        promotionDecision: false,
+        competitionScorePrediction: false,
+        teacherConfirmationRequired: true
+      })
+    });
+  }
+
   return Object.freeze({
     SCHEMA_VERSION,
     PURPOSE_RULES,
@@ -565,6 +705,7 @@
     validateBlueprint,
     validatePolicy,
     validateAttempt,
-    analyzeAttempt
+    analyzeAttempt,
+    analyzeUnitScreener
   });
 });

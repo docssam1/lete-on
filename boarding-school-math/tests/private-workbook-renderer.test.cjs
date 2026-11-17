@@ -106,7 +106,7 @@ test("private renderer keeps teacher-only content out of student output and incl
 });
 
 test("renderer converts declared 32/12 allocations with a multi-page closing into physical Letter PDF pages", async function () {
-  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-renderer-pagination-"));
+  const temporaryRoot = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "gfield-private-renderer-pagination-"));
   const inputRoot = path.join(temporaryRoot, "input");
   const outputRoot = path.join(temporaryRoot, "output");
   fs.mkdirSync(inputRoot);
@@ -225,8 +225,8 @@ test("private renderer constructs a labeled right-triangle SVG only from semanti
 });
 
 test("renderer command requires one explicit external root, unit, locale, and output root", function () {
-  const privateRoot = path.resolve(os.tmpdir(), "gfield-private-authoring");
-  const outputRoot = path.resolve(os.tmpdir(), "gfield-private-output");
+  const privateRoot = path.resolve(fs.realpathSync(os.tmpdir()), "gfield-private-authoring");
+  const outputRoot = path.resolve(fs.realpathSync(os.tmpdir()), "gfield-private-output");
   assert.deepEqual(
     renderer.parseArguments([
       "--root", privateRoot,
@@ -247,7 +247,7 @@ test("renderer command requires one explicit external root, unit, locale, and ou
 });
 
 test("renderer accepts only validator-approved canonical or nonzero revision draft filenames", function () {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-renderer-filenames-"));
+  const tempRoot = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "gfield-private-renderer-filenames-"));
   const originalPreflightOverride = process.env.GFIELD_ALLOW_PRIVATE_WORKBOOK_PREFLIGHT;
   try {
     const canonical = "grade6-rp-a-unit-workbook-draft.json";
@@ -295,7 +295,7 @@ test("renderer fails closed when canonical and revision RPA drafts both resolve 
 });
 
 test("renderer rejects output roots inside any Git-marked directory and unsafe existing path entries", function () {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-renderer-"));
+  const tempRoot = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "gfield-private-renderer-"));
   try {
     const privateRoot = path.join(tempRoot, "private-authoring");
     const gitRoot = path.join(tempRoot, "git-marked");
@@ -326,7 +326,7 @@ test("renderer rejects output roots inside any Git-marked directory and unsafe e
 });
 
 test("renderer removes only its student output if the paired teacher output write fails", function () {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-renderer-pair-"));
+  const tempRoot = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "gfield-private-renderer-pair-"));
   const studentPath = path.join(tempRoot, "student.html");
   const teacherPath = path.join(tempRoot, "teacher.html");
   try {
@@ -350,7 +350,7 @@ test("renderer removes only its student output if the paired teacher output writ
 });
 
 test("renderer never replaces an existing output owned by another invocation", function () {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-renderer-exclusive-"));
+  const tempRoot = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "gfield-private-renderer-exclusive-"));
   const outputPath = path.join(tempRoot, "teacher.html");
   try {
     fs.writeFileSync(outputPath, "other invocation", "utf8");

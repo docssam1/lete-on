@@ -87,11 +87,13 @@ function stepById(p){ return p && p.stepId ? (R.ladderFor(p).find(s => s.id === 
 const VOLUME_GROUPS = {
   miracle: [['elem-2021', '초등 (2021판)', 'Elementary (2021 edition)', '小学（2021版）'], ['pre-2023', '예비초등 (2023판)', 'Pre-school (2023 edition)', '学前（2023版）']],
   soma: ['P', 'K', 'A', 'B', 'C', 'D'].map(g => [g, '소마셈 ' + g, 'Soma-sem ' + g, 'Soma-sem ' + g]),
+  kumon: [['pre', '유아 단계 6A~2A', 'Pre-K levels 6A–2A', '幼儿阶段6A～2A'], ['elem', '초등 단계 A~F (A = 1학년 기준)', 'Elementary levels A–F (A ≈ grade 1)', '小学阶段A～F（A≈1年级）']],
   dunoro: [['level-1', 'Level 1 · 과정 1~10', 'Level 1 · courses 1–10', 'Level 1 · 课程1～10'], ['level-2', 'Level 2 · 과정 11~16', 'Level 2 · courses 11–16', 'Level 2 · 课程11～16'], ['level-3', 'Level 3 · 과정 17~25', 'Level 3 · courses 17–25', 'Level 3 · 课程17～25']]
 };
 const VOLUME_NOTE = {
   miracle: ['다른 판(구판)이면 주제가 가장 비슷한 권을 골라 주세요.', 'If you have another edition, pick the volume with the closest topic.', '如果是其他版本，请选主题最接近的一册。'],
   soma: ['2019년 발행본 기준이에요. 다른 발행본이면 주제가 가장 비슷한 권을 골라 주세요.', 'Based on the 2019 publication. For another printing, pick the volume with the closest topic.', '以2019年出版为准。其他版本请选主题最接近的一册。'],
+  kumon: ['지금 하는 구몬수학 단계를 골라 주세요. 중학 단계(G 이상)를 하고 있으면 연산 진단 평가가 더 정확해요.', 'Pick the Kumon Math level your child is on now. If it is a middle-school level (G or later), the arithmetic check is more accurate.', '请选择目前在做的公文数学阶段。若已在初中阶段（G以上），运算测评更准确。'],
   dunoro: ['교재 표지의 과정 번호를 골라 주세요.', 'Pick the course number printed on the book.', '请选择教材封面上的课程编号。']
 };
 

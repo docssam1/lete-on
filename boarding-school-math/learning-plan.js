@@ -5,7 +5,9 @@
   const localRecord = window.GFIELDLocalLearningRecord;
   const catalog = window.GFIELDSASMOMockCatalog;
   const readiness = window.GFIELDSASMOMockReadiness;
-  if (!engine || !localRecord) throw new Error("GFIELD learner plan dependencies did not load");
+  const placementPlan = window.GFIELDGrade6PlacementPlan;
+  const roadmapEngine = window.GFIELDRoadmapPaceEngine;
+  if (!engine || !localRecord || !placementPlan || !roadmapEngine) throw new Error("GFIELD learner plan dependencies did not load");
 
   const pageQuery = new URLSearchParams(window.location.search);
   const runtimeToken = pageQuery.get("runtime") === "local-private" ? pageQuery.get("token") : null;
@@ -19,10 +21,21 @@
     ratio: Object.freeze({ label: "비와 비례", clusterId: "6.RP.A", errorType: "concept-gap", difficulty: "core" }),
     algebra: Object.freeze({ label: "식과 방정식", clusterId: "6.EE.B", errorType: "representation-error", difficulty: "core" })
   });
+  const grade7PriorityProfiles = Object.freeze({
+    "rational-add": Object.freeze({ label: "유리수 더하기·빼기", clusterId: "7.NS.A", errorType: "concept-gap", difficulty: "core" }),
+    "rational-multiply": Object.freeze({ label: "유리수 곱하기·나누기", clusterId: "7.NS.A", errorType: "representation-error", difficulty: "core" }),
+    "rational-decimal": Object.freeze({ label: "분수와 소수 표현", clusterId: "7.NS.A", errorType: "concept-gap", difficulty: "core" }),
+    "rational-context": Object.freeze({ label: "유리수 문장제", clusterId: "7.NS.A", errorType: "strategy-gap", difficulty: "core" })
+  });
   const goalId = document.getElementById("goal-id");
   const targetDate = document.getElementById("target-date");
   const studyDays = document.getElementById("study-days");
   const minutesPerDay = document.getElementById("minutes-per-day");
+  const roadmapLocale = document.getElementById("roadmap-locale");
+  const roadmapObservations = document.getElementById("roadmap-observations");
+  const roadmapRetention = document.getElementById("roadmap-retention");
+  const paperMarks = new Map();
+  let currentPlan = null;
 
   function isoDate(offsetDays) {
     const date = new Date();
@@ -30,10 +43,22 @@
     date.setDate(date.getDate() + offsetDays);
     return date.toISOString().slice(0, 10);
   }
-  function selectedPriorityKey() { return document.querySelector('input[name="priority"]:checked').value; }
+  function isGrade7Goal() { return goalId.value === "school-g7-nsa"; }
+  function activePriorityName() { return isGrade7Goal() ? "priority-g7" : "priority-g6"; }
+  function selectedPriorityKey() { return document.querySelector(`input[name="${activePriorityName()}"]:checked`).value; }
   function selectedPriority() {
     const value = selectedPriorityKey();
-    return priorityProfiles[value];
+    return (isGrade7Goal() ? grade7PriorityProfiles : priorityProfiles)[value];
+  }
+  function syncPriorityFields() {
+    const grade7 = isGrade7Goal();
+    const grade6Fieldset = document.getElementById("grade6-priorities");
+    const grade7Fieldset = document.getElementById("grade7-priorities");
+    grade6Fieldset.hidden = grade7;
+    grade7Fieldset.hidden = !grade7;
+    grade6Fieldset.querySelectorAll("input").forEach(function (input) { input.disabled = grade7; });
+    grade7Fieldset.querySelectorAll("input").forEach(function (input) { input.disabled = !grade7; });
+    text("priority-legend", grade7 ? "학습할 개념을 골라요" : "현재 가장 먼저 보완할 영역");
   }
   function linkedCompetitionEvidence() {
     if (goalId.value !== "sasmo-primary6" || typeof localRecord.storage.loadCompetitionEvidence !== "function") return null;
@@ -110,13 +135,161 @@
   }
   function text(nodeId, value) { document.getElementById(nodeId).textContent = value; }
   function plural(value, singular, pluralLabel) { return `${value}${value === 1 ? singular : pluralLabel}`; }
+  function roadmapText(ko, en, zh) {
+    return roadmapLocale.value === "en" ? en : roadmapLocale.value === "zh-Hans" ? zh : ko;
+  }
+  function domainLabel(domainId) {
+    const labels = {
+      "G6-RP": ["비와 비례", "Ratios & proportional reasoning", "比与比例"],
+      "G6-NS": ["수 체계", "The Number System", "数与运算"],
+      "G6-EE": ["식과 방정식", "Expressions & equations", "代数"],
+      "G6-G": ["기하", "Geometry", "几何与测量"],
+      "G6-SP": ["통계", "Statistics", "统计"],
+      "number-operations": ["수와 연산", "Number & operations", "数与运算"],
+      "patterns-algebra": ["규칙과 대수", "Patterns & algebra", "规律与代数"],
+      "geometry-spatial": ["기하와 공간", "Geometry & spatial", "几何与空间"],
+      "data-probability": ["자료와 가능성", "Data & probability", "数据与概率"],
+      "combinatorics-logic": ["조합과 논리", "Combinatorics & logic", "组合与逻辑"],
+      "problem-solving-strategies": ["문제 해결 전략", "Problem-solving strategies", "问题解决策略"]
+    };
+    const row = labels[domainId] || [domainId, domainId, domainId];
+    return roadmapLocale.value === "en" ? row[1] : roadmapLocale.value === "zh-Hans" ? row[2] : row[0];
+  }
+  function paperProfile() {
+    if (goalId.value === "sasmo-primary6") {
+      const form = catalog.getForm("sasmo-2019-g6-baseline-a");
+      return {
+        id: "sasmo-primary6-25",
+        label: roadmapText("SASMO Primary 6 · 25문항", "SASMO Primary 6 · 25 items", "SASMO Primary 6 · 25题"),
+        entries: form.items.map(function (item) { return { id: `sasmo-${item.questionNumber}`, number: item.questionNumber, domainId: item.axisId }; })
+      };
+    }
+    return {
+      id: goalId.value === "promotion-g6" ? "promotion-g6-42" : "school-g6-42",
+      label: roadmapText("Grade 6 · 42문항 설계 슬롯", "U.S. Grade 6 · 42 planned slots", "六年级 · 42个规划题位"),
+      entries: placementPlan.plan.slots.map(function (slot, index) { return { id: `${goalId.value}-${slot.slotId}`, number: index + 1, domainId: slot.domainId }; })
+    };
+  }
+  function markFor(profile, entry, index) {
+    const key = `${profile.id}:${entry.id}`;
+    if (!paperMarks.has(key)) paperMarks.set(key, ![2, 5, 8, 11].includes(index % 13));
+    return paperMarks.get(key);
+  }
+  function paperResults(profile) {
+    return profile.entries.map(function (entry, index) {
+      return { id: entry.id, domainId: domainLabel(entry.domainId), correct: markFor(profile, entry, index) };
+    });
+  }
+  function renderPaperMarks(profile, roadmap) {
+    const host = document.getElementById("paper-ox-grid");
+    host.replaceChildren();
+    profile.entries.forEach(function (entry, index) {
+      const correct = markFor(profile, entry, index);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "paper-mark";
+      button.dataset.mark = correct ? "O" : "X";
+      button.innerHTML = `<b>${String(entry.number).padStart(2, "0")} · ${correct ? "O" : "X"}</b><small>${domainLabel(entry.domainId)}</small>`;
+      button.setAttribute("aria-label", roadmapText(`${entry.number}번 ${domainLabel(entry.domainId)} ${correct ? "O" : "X"}. 눌러서 바꾸기`, `Item ${entry.number}, ${domainLabel(entry.domainId)}, ${correct ? "O" : "X"}. Press to change.`, `第${entry.number}题，${domainLabel(entry.domainId)}，${correct ? "O" : "X"}。按下可更改。`));
+      button.addEventListener("click", function () {
+        paperMarks.set(`${profile.id}:${entry.id}`, !correct);
+        renderRoadmap(currentPlan);
+      });
+      host.append(button);
+    });
+    text("paper-ox-summary", `${roadmap.summary.correct} O · ${roadmap.summary.total - roadmap.summary.correct} X`);
+  }
+  function renderRoadmap(plan) {
+    if (!plan) return;
+    currentPlan = plan;
+    const grade7 = isGrade7Goal();
+    document.getElementById("grade7-plan-notice").hidden = !grade7;
+    document.querySelector(".roadmap-controls").hidden = grade7;
+    document.querySelector(".roadmap-layout").hidden = grade7;
+    document.getElementById("paper-ox-panel").hidden = grade7 || document.body.dataset.audience !== "teacher";
+    if (grade7) {
+      text("roadmap-title", "7.NS.A 학습 주제를 고르세요.");
+      text("roadmap-intro-copy", "학생이 선택한 개념을 공개 워크북과 학습 시간에 연결합니다.");
+      return;
+    }
+    text("roadmap-title", roadmapText("점수 한 번으로 진도를 바꾸지 않아요.", "One score does not set the speed. Build a stable route to the goal.", "一次成绩不决定提速，先稳定，再走向目标。"));
+    text("roadmap-intro-copy", roadmapText("종이 진단에 O/X를 표시해 보세요. 다시 확인한 뒤 학습 시간이나 목표일을 조정할 수 있어요.", "Mark a paper test with O/X. Hold the current pace after the first result, then choose time, frequency, or a new target date after a stable recheck.", "纸笔诊断只需标记O/X。第一次结果后先保持当前进度，复测稳定后再选择增加时间、频次或调整目标日期。"));
+    text("roadmap-curriculum-label", roadmapText("교육과정 기준", "Curriculum path", "课程体系"));
+    text("roadmap-observations-label", roadmapText("누적 관찰", "Observed attempts", "累计观察"));
+    text("roadmap-retention-label", roadmapText("재확인에서도 유지됨", "Stable on recheck", "复测结果稳定"));
+    text("roadmap-retention-help", roadmapText("두 번째 관찰부터 선택", "Available from the second observation", "从第二次观察开始选择"));
+    const observationCopy = roadmapLocale.value === "en"
+      ? ["1 · First diagnostic", "2 · Recheck", "3 · Trend check"]
+      : roadmapLocale.value === "zh-Hans"
+        ? ["1次 · 首次诊断", "2次 · 复测", "3次 · 趋势确认"]
+        : ["1회 · 첫 진단", "2회 · 재확인", "3회 · 추세 확인"];
+    Array.from(roadmapObservations.options).forEach(function (option, index) { option.textContent = observationCopy[index]; });
+    text("roadmap-stage-title", roadmapText("현재 → 안정화 → 목표 경로", "Current → stabilize → target route", "当前 → 稳定 → 目标路径"));
+    document.getElementById("roadmap-canvas").setAttribute("aria-label", roadmapText("현재 수준에서 안정화 구간을 거쳐 시간 또는 학습 횟수를 조정하는 3D 학습 경로", "A 3D learning route from the current level through stabilization to time or frequency adjustments", "从当前阶段经过稳定期，再调整学习时间或频次的3D学习路径"));
+    text("roadmap-axis-current", roadmapText("현재", "Current", "当前"));
+    text("roadmap-axis-stable", roadmapText("안정화", "Stabilize", "稳定"));
+    text("roadmap-axis-branch", roadmapText("선택", "Choose", "选择"));
+    text("roadmap-axis-target", roadmapText("목표", "Target", "目标"));
+    text("roadmap-interaction", roadmapText("3D 지도가 보이면 마우스나 손가락으로 돌려 보세요. 파란 길은 선택 경로입니다.", "If the 3D map appears, drag to rotate it. The blue road shows the selected route.", "如果显示 3D 地图，可以拖动旋转。蓝色路径是当前选择的路线。"));
+    text("roadmap-current-label", roadmapText("현재 학습량", "Current load", "当前学习量"));
+    text("roadmap-required-label", roadmapText("필요 학습량", "Required load", "所需学习量"));
+    text("roadmap-stabilization-label", roadmapText("안정화 기간", "Stabilization", "稳定期"));
+    text("roadmap-decision-label", roadmapText("권장 경로", "Recommended route", "建议路径"));
+    text("roadmap-decision-help", roadmapText("실제 배정은 재확인 결과와 교사 확인 뒤 확정합니다.", "Confirm an actual assignment only after the recheck and teacher review.", "实际安排须在复测和教师确认后确定。"));
+    text("paper-ox-label", roadmapText("종이 진단 O/X 입력 보기", "Open paper-test O/X marks", "查看纸笔诊断O/X录入"));
+    text("paper-ox-notice-label", roadmapText("설명용 가상 입력", "Demonstration marks", "演示用模拟录入"));
+    text("paper-ox-notice-copy", roadmapText("선택한 시험의 공개 메타데이터에 맞춰 칸 수와 영역을 구성합니다. 문항·정답은 이 화면에 넣지 않으며 실제 학생 기록으로 저장하지 않습니다.", "The number of cells and domains follows the selected assessment's public metadata. No question, answer, or student record is stored here.", "题位数量和领域依据所选测评的公开元数据。此页面不放入题目或答案，也不保存真实学生记录。"));
+    const profile = paperProfile();
+    const model = roadmapEngine.buildRoadmap({
+      locale: roadmapLocale.value,
+      goalId: plan.goal.id,
+      weeksAvailable: plan.calendar.calendarWeeks,
+      studyDaysPerWeek: plan.availability.studyDaysPerWeek,
+      minutesPerDay: plan.availability.minutesPerDay,
+      observationCount: Number(roadmapObservations.value),
+      retentionPassed: roadmapRetention.checked,
+      results: paperResults(profile)
+    });
+    text("roadmap-curriculum", model.curriculum.label);
+    text("roadmap-paper-name", profile.label);
+    text("roadmap-score", `${model.summary.correct} / ${model.summary.total}`);
+    text("roadmap-lock-state", model.stability.accelerationLocked ? roadmapText("속도 조정 잠금", "Pace change locked", "暂不提速") : roadmapText("속도 조정 가능", "Pace change available", "可以调整进度"));
+    document.getElementById("roadmap-lock-state").style.color = model.stability.accelerationLocked ? "#b42332" : "#16734b";
+    text("roadmap-comment", model.comment);
+    text("roadmap-current-pace", roadmapText(`주 ${model.pace.currentCapacity}블록`, `${model.pace.currentCapacity} blocks/wk`, `每周${model.pace.currentCapacity}课时`));
+    text("roadmap-required-pace", roadmapText(`주 ${model.pace.requiredPace}블록`, `${model.pace.requiredPace} blocks/wk`, `每周${model.pace.requiredPace}课时`));
+    text("roadmap-stabilization", model.stability.stabilizationWeeks ? roadmapText(`${model.stability.stabilizationWeeks}주`, `${model.stability.stabilizationWeeks} weeks`, `${model.stability.stabilizationWeeks}周`) : roadmapText("확인 완료", "Confirmed", "已确认"));
+    text("roadmap-decision", model.stability.accelerationLocked ? roadmapText(`먼저 ${model.stability.stabilizationWeeks}주 유지 · 이후 ${model.decision}`, `Hold for ${model.stability.stabilizationWeeks} weeks first. Then: ${model.decision}`, `先保持${model.stability.stabilizationWeeks}周，再执行：${model.decision}`) : model.decision);
+    const branches = document.getElementById("roadmap-branches");
+    branches.replaceChildren();
+    model.pace.options.forEach(function (option, index) {
+      const row = document.createElement("div");
+      row.className = `roadmap-branch${option.id === model.pace.selectedOptionId ? " selected" : ""}`;
+      row.innerHTML = `<span class="branch-mark">${index + 1}</span><div><b>${option.label}</b><small>${roadmapText(`주 ${option.studyDaysPerWeek}일 · 하루 ${option.minutesPerDay}분`, `${option.studyDaysPerWeek} days/wk · ${option.minutesPerDay} min/day`, `每周${option.studyDaysPerWeek}次 · 每次${option.minutesPerDay}分钟`)}</small></div><strong>${option.feasible ? roadmapText("가능", "Enough", "可行") : roadmapText("부족", "Short", "不足")}</strong>`;
+      branches.append(row);
+    });
+    const comparison = document.getElementById("level-comparison");
+    comparison.replaceChildren();
+    model.comparison.forEach(function (entry) {
+      const cell = document.createElement("div");
+      cell.innerHTML = `<span>${entry.label}</span><strong>${entry.levelLabel}</strong><small>${entry.value}</small>`;
+      comparison.append(cell);
+    });
+    renderPaperMarks(profile, model);
+    roadmapRetention.disabled = Number(roadmapObservations.value) < 2;
+    if (roadmapRetention.disabled) roadmapRetention.checked = false;
+    window.GFIELDLatestRoadmapModel = model;
+    window.dispatchEvent(new CustomEvent("gfield-roadmap-update", { detail: model }));
+  }
   function renderToday(plan) {
     text("today-minutes", `${plan.today.totalMinutes}분`);
     text("today-problems", `${plan.today.totalProblemCount}문항 내외`);
+    text("today-plan-note", isGrade7Goal() ? "개념을 설명하고 적용하는 데 필요한 시간을 먼저 확보해요. 문항 수는 학습 시간에 맞춘 참고량이에요." : "문항 수를 고정하지 않습니다. 개념 결손이면 설명 시간을 늘리고, 계산 실수면 짧은 연습을 늘립니다.");
     const competition = linkedCompetitionEvidence();
+    const assessmentEvidence = linkedAssessmentEvidence();
     const grade6Diagnostic = linkedGrade6DiagnosticEvidence();
     const scoreOnlyPaper = competition && ["legacy-unreviewed", "legacy-diagnostic-superseded", "taxonomy-review-pending"].includes(competition.diagnosticState);
-    text("today-description", grade6Diagnostic && grade6Diagnostic.priorities.length ? `${plan.priorities[0].label}의 ${plan.priorities[0].errorLabel}에 맞춘 오늘의 계획입니다. 학생 응답이나 정답은 학습계획에 저장하지 않습니다.` : scoreOnlyPaper ? `이 기출 기록은 점수만 연결합니다. ${plan.priorities[0].label} 학습은 현재 선택 또는 별도 유형 점검에 따르며, 검수 중인 영역 판정으로 확정한 약점이 아닙니다.` : competition && !competition.priorityAxis ? `${plan.priorities[0].label} 유지 학습을 위한 오늘의 계획입니다. 이 기출에서는 자동 확정할 약점이 없었습니다.` : `${plan.priorities[0].label} 약점에 맞춘 오늘의 계획입니다. 실제 진단 뒤에는 최대 두 약점만 함께 배정합니다.`);
+    text("today-description", isGrade7Goal() ? `선택한 학습 주제는 ${plan.priorities[0].label}입니다. 진단 전 계획이며 약점이나 학년 수준을 판정하지 않습니다.` : grade6Diagnostic && grade6Diagnostic.priorities.length ? `${plan.priorities[0].label}의 ${plan.priorities[0].errorLabel}에 맞춘 오늘의 계획입니다. 학생 응답이나 정답은 학습계획에 저장하지 않습니다.` : scoreOnlyPaper ? `이 기출 기록은 점수만 연결합니다. ${plan.priorities[0].label} 학습은 현재 선택 또는 별도 유형 점검에 따르며, 검수 중인 영역 판정으로 확정한 약점이 아닙니다.` : assessmentEvidence ? `${plan.priorities[0].label}을(를) 직접 선택한 학습 영역으로 삼은 계획입니다. 외부 성적표만으로 약점이나 배정을 자동 판정하지 않습니다.` : competition && !competition.priorityAxis ? `${plan.priorities[0].label} 유지 학습을 위한 오늘의 계획입니다. 이 기출에서는 자동 확정할 약점이 없었습니다.` : `${plan.priorities[0].label} 선택 영역에 맞춘 계획 예시입니다. 실제 진단 뒤에는 근거가 있는 항목만 조정합니다.`);
     const host = document.getElementById("today-blocks");
     host.replaceChildren();
     plan.today.blocks.forEach(function (block, index) {
@@ -142,7 +315,12 @@
     host.replaceChildren();
     if (document.body.dataset.audience !== "teacher") return;
     text("teacher-pack-state", `${plan.priorities[0].label} · ${plan.materials.clusterId} 수업 세트`);
-    const resources = [
+    const resources = isGrade7Goal() ? [
+      ["학생용 개념", "7.NS.A 단원 워크북 안의 개념 설명과 예시", plan.materials.studentConceptHref, "개념 설명 열기"],
+      ["교사용 지도서", "36문항 전체의 정답·풀이·관찰 포인트", plan.materials.teacherWorkbookHref, "교사용 지도서 열기"],
+      ["학생용 워크북", "정답을 분리한 36문항 연습", plan.materials.studentWorkbookHref, "학생용 워크북 열기"],
+      ["재확인 워크북", "8문항 재확인 자료 · 개인 진단 대체 아님", plan.materials.teacherWorkbookHref.replace("mode=workbook", "mode=recheck"), "재확인 자료 열기"]
+    ] : [
       ["학생용 개념", "학생이 먼저 읽는 모델·대표 예제", plan.materials.studentConceptHref, "학생용 개념 열기"],
       ["교사용 지도서", "36문항 전체의 정답·풀이·관찰 포인트", plan.materials.teacherWorkbookHref, "교사용 지도서 열기"],
       ["학생용 워크북", "정답을 분리한 36문항 수업·독립 연습", plan.materials.studentWorkbookHref, "학생용 워크북 열기"],
@@ -193,7 +371,18 @@
       list.append(item);
     });
   }
+  function renderStudyLoop() {
+    const steps = isGrade7Goal()
+      ? [["개념 선택", "직접 고른 주제의 모델과 예제"], ["이유 설명", "풀이가 왜 맞는지 말해요"], ["워크북 연습", "공개 7.NS.A 문제에 적용해요"], ["단원 진단", "개인 진단은 검수 중이에요"], ["다시 풀기", "시간을 두고 배운 개념을 확인해요"]]
+      : [["진단", "영역·유형·오류 원인 확인"], ["개념 교재", "모델·대표 예제·핵심 언어"], ["교사 수업", "수업 워크북과 관찰 포인트"], ["가정 학습", "약점 보완과 혼합 연습"], ["재확인", "1·3·7·14일 뒤 유지 확인"]];
+    text("loop-title", isGrade7Goal() ? "개념을 익히고 이유를 설명해요." : "진단 뒤에는 이렇게 공부해요.");
+    steps.forEach(function (step, index) {
+      text(`loop-step-${index + 1}-title`, step[0]);
+      text(`loop-step-${index + 1}-copy`, step[1]);
+    });
+  }
   function render(plan) {
+    const grade7Goal = isGrade7Goal();
     const competitionEvidence = linkedCompetitionEvidence();
     const competitionSeries = linkedCompetitionSeries();
     const trend = competitionPrediction(competitionSeries);
@@ -205,22 +394,24 @@
     const competitionTaxonomyPending = Boolean(competitionEvidence && competitionEvidence.diagnosticState === "taxonomy-review-pending");
     const competitionScoreOnly = competitionLegacy || competitionTaxonomyPending;
     const evidence = grade6Diagnostic || assessmentEvidence || competitionEvidence;
-    text("priority-legend", competitionScoreOnly ? "영역 판정 전 직접 선택할 학습 영역" : "현재 가장 먼저 보완할 영역");
-    text("teacher-title", competitionScoreOnly ? "선택한 영역을 한 수업 세트로 엽니다." : "한 약점 군을 한 수업 세트로 엽니다.");
+    text("priority-legend", grade7Goal ? "학습할 개념을 골라요" : competitionScoreOnly ? "영역 판정 전 직접 선택할 학습 영역" : "현재 가장 먼저 보완할 영역");
+    text("teacher-title", grade7Goal || competitionScoreOnly ? "선택한 영역의 수업 자료" : "지금 볼 영역의 수업 자료");
     text("goal-program", plan.goal.label);
     text("plan-title", `${plan.calendar.calendarWeeks}주 학습 계획`);
-    const scheduleCopy = `${plan.calendar.calendarWeeks}주 동안 주 ${plan.availability.studyDaysPerWeek}일, 하루 ${plan.availability.minutesPerDay}분을 기준으로 설계했습니다. 수업 결석과 복습 여유를 고려해 전체 시간의 80%만 배정합니다.`;
-    text("plan-description", grade6Diagnostic ? `${scheduleCopy} 교사 검토가 끝난 Grade 6 42문항 진단의 점수 요약과 우선 약점을 반영했습니다. 학생 응답, 정답, 풀이 원문은 이 계획에 저장하지 않습니다.` : assessmentEvidence ? `${scheduleCopy} ${assessmentEvidence.source.label} 결과와 영역별 약점을 반영해 ${assessmentEvidence.recommendedStart.label}에서 시작하는 G·MAP 진도를 구성했습니다.` : competitionEvidence ? competitionScoreOnly ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70은 점수 이력으로만 연결했습니다. 영역 분류는 재검수 대상이어서 자동 약점 처방에 사용하지 않습니다.` : competitionPriorityConfirmed ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70과 영역별 약점을 반영해 오늘의 우선 학습을 골랐습니다.` : `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70을 연결했습니다. 충분한 약점 신호가 없어 현재 선택한 영역을 유지 학습으로 구성합니다.` : scheduleCopy);
+    const scheduleCopy = `주 ${plan.availability.studyDaysPerWeek}일, 하루 ${plan.availability.minutesPerDay}분을 기준으로 했어요. 빠진 수업과 복습을 위해 시간의 80%만 계획에 넣었어요.`;
+    text("plan-description", grade7Goal ? `${scheduleCopy} 학습 주제는 직접 선택합니다. 개인 진단과 결과 기반 수준 비교는 검수 중입니다.` : grade6Diagnostic ? `${scheduleCopy} 교사 검토가 끝난 Grade 6 42문항 진단의 점수 요약과 우선 약점을 반영했습니다. 학생 응답, 정답, 풀이 원문은 이 계획에 저장하지 않습니다.` : assessmentEvidence ? `${scheduleCopy} ${assessmentEvidence.source.label}의 입력 점수를 참고란에 연결했습니다. 현재·목표 과정과 학습 영역은 사용자가 선택하며, 외부 점수로 약점이나 배정을 자동 판정하지 않습니다.` : competitionEvidence ? competitionScoreOnly ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70은 점수 이력으로만 연결했습니다. 영역 분류는 재검수 대상이어서 자동 약점 처방에 사용하지 않습니다.` : competitionPriorityConfirmed ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70과 영역별 약점을 반영해 오늘의 우선 학습을 골랐습니다.` : `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70을 연결했습니다. 충분한 약점 신호가 없어 현재 선택한 영역을 유지 학습으로 구성합니다.` : scheduleCopy);
     text("days-remaining", plural(plan.calendar.daysRemaining, "일", "일"));
     text("study-day-count", plural(plan.calendar.studyDays, "일", "일"));
     text("capacity-minutes", `${plan.calendar.usableMinutes.toLocaleString("ko-KR")}분`);
     const state = document.getElementById("plan-state");
-    state.textContent = grade6Diagnostic ? "42문항 진단 연결" : assessmentEvidence ? "학교 평가 연결" : competitionScoreOnly ? "기출 점수 연결" : competitionEvidence ? "기출 진단 연결" : "진단 연결 전";
+    state.textContent = grade7Goal ? "단원 학습 계획 · 진단 검수 중" : grade6Diagnostic ? "42문항 진단 연결" : assessmentEvidence ? "학교 평가 연결" : competitionScoreOnly ? "기출 점수 연결" : competitionEvidence ? "기출 진단 연결" : "진단 결과 없음";
     state.className = `state-chip ${evidence ? "connected" : "waiting"}`;
-    text("prediction-title", grade6Diagnostic ? "42문항 진단이 오늘의 개념과 문제 수로 이어졌습니다." : assessmentEvidence ? "학교 평가 결과가 오늘의 학습에 반영되었습니다." : competitionScoreOnly ? "기출 점수만 학습계획에 연결했습니다." : competitionEvidence ? "검증된 기출 결과가 오늘의 학습에 반영되었습니다." : "예상 성적은 진단 후 계산합니다.");
-    text("prediction-copy", grade6Diagnostic ? `${grade6Diagnostic.score.earnedPoints} / ${grade6Diagnostic.score.maxPoints}점 · ${grade6Diagnostic.score.percentage}% · ${grade6Diagnostic.priorities.length ? `우선 보완 ${plan.priorities[0].label}` : "자동 확인된 약점 없음"}. 이 결과는 학교의 공식 배정·승급 판정이나 실전 예상 점수가 아닙니다.` : assessmentEvidence ? `${assessmentEvidence.source.label} · G·MAP 권장 시작 ${assessmentEvidence.recommendedStart.label} · 우선 보완 ${plan.priorities[0].label}. 이는 학교의 공식 배정이 아니며, 실전 예상 점수는 별도의 최초 모의 기록이 쌓인 뒤 계산합니다.` : competitionEvidence ? `실제 점수 ${competitionEvidence.score.rawScore} / 70 · ${competitionScoreOnly ? `영역 판정 재검수 중 · ${plan.priorities[0].label} 학습` : competitionPriorityConfirmed ? `우선 보완 ${plan.priorities[0].label}` : `자동 확정 약점 없음 · ${plan.priorities[0].label} 유지 학습`}. ${scoreOutlook}` : `${plan.diagnostic.actionLabel}의 최초 응시 결과와 이후 실전 모의 기록이 있어야 점수 범위와 신뢰도를 계산합니다.`);
+    text("prediction-label", grade7Goal ? "진단 진행 상태" : "예상 점수");
+    text("prediction-title", grade7Goal ? "7.NS.A 개인 진단은 검수 중입니다." : grade6Diagnostic ? "42문항 진단이 오늘의 개념과 문제 수로 이어졌습니다." : assessmentEvidence ? "학교 평가 결과가 오늘의 학습에 반영되었습니다." : competitionScoreOnly ? "기출 점수만 학습계획에 연결했습니다." : competitionEvidence ? "검증된 기출 결과가 오늘의 학습에 반영되었습니다." : "예상 성적은 진단 후 계산합니다.");
+    text("prediction-copy", grade7Goal ? "현재는 공개 단원 워크북과 직접 고른 학습 주제로 계획을 만듭니다. 성적·등급·경시 수준은 추정하지 않습니다." : grade6Diagnostic ? `${grade6Diagnostic.score.earnedPoints} / ${grade6Diagnostic.score.maxPoints}점 · ${grade6Diagnostic.score.percentage}% · ${grade6Diagnostic.priorities.length ? `우선 보완 ${plan.priorities[0].label}` : "자동 확인된 약점 없음"}. 이 결과는 학교의 공식 배정·승급 판정이나 실전 예상 점수가 아닙니다.` : assessmentEvidence ? `${assessmentEvidence.source.label} · 현재 과정 ${assessmentEvidence.currentCourse.label} · 학습 영역 ${plan.priorities[0].label} (직접 선택). 학교의 공식 배정이나 약점 판정이 아니며, 실전 예상 점수도 계산하지 않습니다.` : competitionEvidence ? `실제 점수 ${competitionEvidence.score.rawScore} / 70 · ${competitionScoreOnly ? `영역 판정 재검수 중 · ${plan.priorities[0].label} 학습` : competitionPriorityConfirmed ? `우선 보완 ${plan.priorities[0].label}` : `자동 확정 약점 없음 · ${plan.priorities[0].label} 유지 학습`}. ${scoreOutlook}` : `${plan.diagnostic.actionLabel}의 최초 응시 결과와 이후 실전 모의 기록이 있어야 점수 범위와 신뢰도를 계산합니다.`);
     const diagnosticAction = document.getElementById("diagnostic-action");
-    if (grade6Diagnostic) diagnosticAction.href = "./diagnostic.html?runtime=local-qa";
+    if (grade7Goal) diagnosticAction.href = document.body.dataset.audience === "teacher" ? plan.materials.teacherWorkbookHref : plan.materials.studentWorkbookHref;
+    else if (grade6Diagnostic) diagnosticAction.href = "./diagnostic.html?runtime=local-qa";
     else if (assessmentEvidence) diagnosticAction.href = "./assessment-entry.html";
     else if (competitionEvidence && privateRuntime) {
       const returnUrl = new URL("./sasmo-real-paper.html", window.location.href);
@@ -230,10 +421,12 @@
       returnUrl.searchParams.set("audience", document.body.dataset.audience === "teacher" ? "teacher" : "student");
       diagnosticAction.href = returnUrl.href;
     } else diagnosticAction.href = competitionEvidence ? "./sasmo-real-paper.html" : plan.diagnostic.actionHref;
-    diagnosticAction.textContent = grade6Diagnostic ? "42문항 진단 결과 다시 보기" : assessmentEvidence ? "학교 평가 결과 다시 보기" : competitionEvidence ? "SASMO 기출 진단 다시 열기" : `${plan.diagnostic.actionLabel} 시작`;
+    diagnosticAction.textContent = grade7Goal ? document.body.dataset.audience === "teacher" ? "7.NS.A 교사용 지도서 열기" : "7.NS.A 학생용 워크북 열기" : grade6Diagnostic ? "42문항 진단 결과 다시 보기" : assessmentEvidence ? "학교 평가 결과 다시 보기" : competitionEvidence ? "SASMO 기출 진단 다시 열기" : `${plan.diagnostic.actionLabel} 시작`;
     renderCompetitionReviewQueue(competitionEvidence);
     renderToday(plan);
     renderTeacherPack(plan);
+    renderStudyLoop();
+    renderRoadmap(plan);
   }
   function applyAudienceMode() {
     const query = new URLSearchParams(window.location.search);
@@ -246,6 +439,7 @@
     const runtimeQuery = privateRuntime ? `&runtime=local-private&token=${encodeURIComponent(privateRuntime.token)}` : "";
     document.body.dataset.audience = audience;
     teacherSection.hidden = audience !== "teacher";
+    document.getElementById("paper-ox-panel").hidden = audience !== "teacher";
     studentLink.href = `./learning-plan.html?audience=student${goalQuery}${runtimeQuery}`;
     teacherLink.href = `./learning-plan.html?audience=teacher${goalQuery}${runtimeQuery}#teacher-pack`;
     if (audience === "teacher") {
@@ -256,11 +450,11 @@
       teacherLink.removeAttribute("aria-current");
     }
     if (audience === "teacher") {
-      text("plan-audience-eyebrow", "TEACHER · G·MAP LESSON PATH");
-      document.getElementById("plan-audience-title").innerHTML = '<span class="headline-line">진단 근거로</span><span class="headline-line accent">오늘의 수업을</span><span class="headline-line accent">설계합니다.</span>';
-      text("plan-audience-description", "학생의 현재 과정과 약점 유형을 확인하고 수업 시간에 맞춰 강사용 교안, 학생용 워크북, 숙제와 재확인을 한 수업 세트로 구성합니다.");
-      text("plan-setup-title", "학생의 수업 조건을 입력하세요.");
-      document.querySelector("#plan-form .primary-action").textContent = "학생 수업 계획 계산";
+      text("plan-audience-eyebrow", "수업 자료");
+      document.getElementById("plan-audience-title").innerHTML = '<span class="headline-line">수업 시간에 맞는</span><span class="headline-line">자료를 고르세요.</span>';
+      text("plan-audience-description", "수업 시간과 학생이 공부할 영역을 정해 주세요. 교안과 워크북을 함께 볼 수 있어요.");
+      text("plan-setup-title", "오늘 수업을 준비해 볼까요?");
+      document.querySelector("#plan-form .primary-action").textContent = "수업 자료 보기";
       const todaySection = document.querySelector(".today-section");
       todaySection.parentNode.insertBefore(teacherSection, todaySection);
       teacherSection.classList.add("audience-primary");
@@ -276,7 +470,8 @@
     if (settings.targetDate && settings.targetDate >= targetDate.min) targetDate.value = settings.targetDate;
     if (settings.studyDays && settings.studyDays >= 1 && settings.studyDays <= 7) studyDays.value = String(settings.studyDays);
     if (settings.minutesPerDay && settings.minutesPerDay >= 20 && settings.minutesPerDay <= 180) minutesPerDay.value = String(settings.minutesPerDay);
-    if (settings.priority && priorityProfiles[settings.priority]) document.querySelector(`input[name="priority"][value="${settings.priority}"]`).checked = true;
+    if (settings.priority && priorityProfiles[settings.priority]) document.querySelector(`input[name="priority-g6"][value="${settings.priority}"]`).checked = true;
+    if (settings.priority && grade7PriorityProfiles[settings.priority]) document.querySelector(`input[name="priority-g7"][value="${settings.priority}"]`).checked = true;
   }
   function applyAssessmentSchedule() {
     if (new URLSearchParams(window.location.search).get("fromAssessment") !== "external") return;
@@ -285,7 +480,7 @@
     goalId.value = "school-g6";
     if ([3, 4, 5, 6].includes(evidence.plan.studyDaysPerWeek)) studyDays.value = String(evidence.plan.studyDaysPerWeek);
     if ([30, 45, 60, 75, 90].includes(evidence.plan.minutesPerDay)) minutesPerDay.value = String(evidence.plan.minutesPerDay);
-    targetDate.value = isoDate(Math.max(7, evidence.plan.weeks * 7));
+    if (Number.isInteger(evidence.plan.weeks) && evidence.plan.weeks > 0) targetDate.value = isoDate(Math.max(7, evidence.plan.weeks * 7));
   }
   document.getElementById("plan-form").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -296,11 +491,21 @@
     localRecord.storage.savePlanSettings({ goalId: plan.goal.id, targetDate: targetDate.value, studyDays: Number(studyDays.value), minutesPerDay: Number(minutesPerDay.value), priority: selectedPriorityKey() });
     render(plan);
   });
+  goalId.addEventListener("change", syncPriorityFields);
+  roadmapLocale.addEventListener("change", function () { renderRoadmap(currentPlan); });
+  roadmapObservations.addEventListener("change", function () {
+    if (Number(roadmapObservations.value) < 2) roadmapRetention.checked = false;
+    renderRoadmap(currentPlan);
+  });
+  roadmapRetention.addEventListener("change", function () { renderRoadmap(currentPlan); });
   targetDate.min = isoDate(1);
   targetDate.value = isoDate(56);
+  const requestedLocale = new URLSearchParams(window.location.search).get("locale");
+  if (["ko", "en", "zh-Hans"].includes(requestedLocale)) roadmapLocale.value = requestedLocale;
   applyAudienceMode();
   restoreSettings();
   setInitialGoalFromQuery();
   applyAssessmentSchedule();
+  syncPriorityFields();
   render(createPlan());
 })();

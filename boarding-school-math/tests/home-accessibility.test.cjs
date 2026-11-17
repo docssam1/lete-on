@@ -111,5 +111,6 @@ test("official source links are external, isolated, and never embedded", async f
   assert.match(await page.locator("#goal-primary").getAttribute("href"), /program=kangaroo/);
   await page.locator('[data-goal="amc"]').click();
   assert.match(await page.locator("#goal-primary").getAttribute("href"), /program=amc8/);
+  assert.match(await page.locator("#goal-eligibility").innerText(), /공식 G8 이하.*연령 기준은 현재 MAA 안내 확인/);
   await page.close();
 });

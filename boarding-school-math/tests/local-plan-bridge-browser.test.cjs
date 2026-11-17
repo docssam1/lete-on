@@ -33,7 +33,7 @@ test("the retired local SASMO set survives regression reload but cannot prescrib
   await page.reload({ waitUntil: "networkidle" });
   assert.equal(await page.locator('[data-item-id="sasmo-g6-model-01"] .choice.wrong').count(), 1);
   await page.goto(`${baseUrl}learning-plan.html?goal=sasmo-primary6`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#plan-state").innerText(), "진단 연결 전");
+  assert.equal(await page.locator("#plan-state").innerText(), "진단 결과 없음");
   assert.equal(await page.locator("#diagnostic-action").getAttribute("href"), "./sasmo-real-paper.html?audience=student");
   assert.doesNotMatch(await page.locator("#plan-description").innerText(), /유형 점검/);
   await page.goto(`${baseUrl}competition-practice.html?program=sasmo-g6&audience=teacher&locale=ko&mode=foundation-preview`, { waitUntil: "networkidle" });
