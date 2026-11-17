@@ -39,20 +39,20 @@
     }),
     7: Object.freeze({
       0: Object.freeze([Object.freeze({ title: "지필드 Algebra 1 원본 수업·A4 교재", url: "./algebra1-workbook.html" })]),
-      1: Object.freeze([Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" }), Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=7" }), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
+      1: Object.freeze([Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" }), Object.freeze({ title: "지필드 AMC 10 개념 연결 연습", url: "./amc10-practice.html?grade=7" }), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([Object.freeze({ title: "지필드 SAT Math 기초 연결 연습 · 자체 20문항", url: "./sat-foundation-practice.html?grade=7" }), Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),
     8: Object.freeze({
       0: Object.freeze([algebra2Reference, Object.freeze({ title: "Khan Academy Algebra 2 참고", url: "https://www.khanacademy.org/math/algebra2" })]),
-      1: Object.freeze([geometryReference, Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=8" }), amc12TopicPractice(8), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
+      1: Object.freeze([geometryReference, Object.freeze({ title: "지필드 AMC 10 개념 연결 연습", url: "./amc10-practice.html?grade=8" }), amc12TopicPractice(8), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=8" }), maaAime2027Reference, satFoundationReview(8), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 기출·안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board Bluebook 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),
     9: Object.freeze({
       0: Object.freeze([Object.freeze({ title: "지필드 Algebra 2 개념 복습 · 현재 과목일 때 선택", url: "./algebra2-workbook.html" })]),
       1: Object.freeze([Object.freeze({ title: "지필드 Geometry 개념 연결 · 현재 과목일 때 선택", url: "./geometry-workbook.html" }), Object.freeze({ title: "지필드 Algebra 2 개념 복습 · 필요한 단원 선택", url: "./algebra2-workbook.html" })]),
-      2: Object.freeze([Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=9" }), amc12TopicPractice(9), satFoundationReview(9), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      2: Object.freeze([Object.freeze({ title: "지필드 AMC 10 개념 연결 연습", url: "./amc10-practice.html?grade=9" }), amc12TopicPractice(9), satFoundationReview(9), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "지필드 Precalculus 원본 수업 · 선수 조건 확인 후 선택", url: "./precalculus-workbook.html" })])
     }),
     10: Object.freeze({
@@ -78,7 +78,7 @@
     8: Object.freeze({
       stageNotes: Object.freeze({ 2: "AIME형 문제를 공부하는 것과 실제 응시는 달라요. 미국·캐나다의 2027 AIME는 만 13세 이상과 AMC 10 100점 또는 AMC 12 85점 등 자격 기준을 적용해요. 다른 연도·지역은 MAA 안내를 확인하세요." }),
       0: Object.freeze([geometryReference]),
-      1: Object.freeze([Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=8" }), amc12TopicPractice(8), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
+      1: Object.freeze([Object.freeze({ title: "지필드 AMC 10 개념 연결 연습", url: "./amc10-practice.html?grade=8" }), amc12TopicPractice(8), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([algebra2Reference, Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=8" }), maaAime2027Reference])
     }),
     9: Object.freeze({
@@ -86,7 +86,7 @@
       0: Object.freeze([algebra2Reference]),
       1: Object.freeze([geometryReference, annualPlanResourceLinks[9][1][1]]),
       2: Object.freeze([
-        Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=9" }),
+        Object.freeze({ title: "지필드 AMC 10 개념 연결 연습", url: "./amc10-practice.html?grade=9" }),
         amc12TopicPractice(9),
         satFoundationReview(9),
         Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" }),

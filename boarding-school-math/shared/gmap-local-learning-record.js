@@ -35,7 +35,7 @@
     }),
     "gfield-amc12-concept-mock-v1": Object.freeze({ formVersion: "2026-11-04-v2", previousFormVersions: ["2026-11-04-v1"], title: "지필드 AMC 12 범위 개념 모의고사 · 1회", clusterId: "AMC12", prefix: "amc12-gfield-m", gradeRange: Object.freeze({ min: 7, max: 12 }), standards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수"] })
   });
-  const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
+  const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석", functions: "함수와 그래프" });
   const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);
   const REVIEWED_2019_G6_SOURCE_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
   const REVIEWED_2019_G6_AXIS_BY_QUESTION = Object.freeze([
@@ -406,7 +406,7 @@
     if (!["itemCount", "correct", "wrong", "blank", "unmarked", "attempted", "domainClassified", "reasonClassified"].every(function (key) { return Number.isInteger(summary[key]) && summary[key] >= 0; })) return null;
     if (summary.itemCount < 1 || summary.itemCount > 30 || summary.correct + summary.wrong + summary.blank + summary.unmarked !== summary.itemCount || summary.attempted !== summary.correct + summary.wrong || summary.domainClassified > summary.itemCount || summary.reasonClassified > summary.wrong) return null;
     const legacyAmc8Domains = value.programId === "amc8" && value.domains.length === 4;
-    const domains = value.domains.slice(0, 5).map(function (domain) {
+    const domains = value.domains.slice(0, 6).map(function (domain) {
       if (!object(domain) || !Object.prototype.hasOwnProperty.call(COMPETITION_DOMAIN_LABELS, domain.id) || !["attempted", "correct", "wrong", "blank"].every(function (key) { return Number.isInteger(domain[key]) && domain[key] >= 0; }) || domain.attempted !== domain.correct + domain.wrong || domain.attempted + domain.blank > summary.itemCount) return null;
       const rate = domain.attempted >= 3 ? Math.round(domain.correct / domain.attempted * 100) : null;
       const name = domain.id === "number" && value.programId === "amc8" && !legacyAmc8Domains ? "수·비례·추정" : COMPETITION_DOMAIN_LABELS[domain.id];
@@ -420,7 +420,8 @@
     const expectedAmc8DomainIds = expectedLegacyDomainIds.concat(["data"]).sort();
     const validLegacyDomains = value.domains.length === 4 && domainIds.join("|") === expectedLegacyDomainIds.join("|");
     const validAmc8Domains = value.programId === "amc8" && value.domains.length === 5 && domainIds.join("|") === expectedAmc8DomainIds.join("|");
-    if ((!validLegacyDomains && !validAmc8Domains) || domains.length !== value.domains.length || reasons.length !== value.reasons.length || new Set(domains.map(function (domain) { return domain.id; })).size !== domains.length) return null;
+    const validSixDomains = value.domains.length === 6 && domainIds.join("|") === expectedAmc8DomainIds.concat(["functions"]).sort().join("|");
+    if ((!validLegacyDomains && !validAmc8Domains && !validSixDomains) || domains.length !== value.domains.length || reasons.length !== value.reasons.length || new Set(domains.map(function (domain) { return domain.id; })).size !== domains.length) return null;
     if (domains.reduce(function (total, domain) { return total + domain.attempted + domain.blank; }, 0) !== summary.domainClassified || domains.reduce(function (total, domain) { return total + domain.correct; }, 0) > summary.correct || domains.reduce(function (total, domain) { return total + domain.wrong; }, 0) > summary.wrong || domains.reduce(function (total, domain) { return total + domain.blank; }, 0) > summary.blank || reasons.reduce(function (total, reason) { return total + reason.count; }, 0) !== summary.reasonClassified) return null;
     return {
       schemaVersion: "gfield-competition-diagnostic-v1",
@@ -429,11 +430,28 @@
       programTitle: String(value.programTitle || value.programId.toUpperCase()).slice(0, 40),
       grade: value.grade,
       paperLabel: typeof value.paperLabel === "string" ? value.paperLabel.trim().slice(0, 80) : "",
+      ...(object(value.paper) && ["amc8", "amc10", "amc12", "aime"].includes(value.programId)
+        && Number.isInteger(value.paper.year) && value.paper.year >= 1950 && value.paper.year <= 2100
+        && typeof value.paper.form === "string" && /^(?:|A|B|C|D|I|II)$/.test(value.paper.form)
+        ? { paper: { year: value.paper.year, form: value.paper.form,
+          ...(summary.unmarked === 0 && Number.isFinite(value.paper.points) && value.paper.points >= 0
+            && value.paper.max === (value.programId === "amc8" ? 25 : value.programId === "aime" ? 15 : 150)
+            && value.paper.points <= value.paper.max && Number.isInteger(value.paper.points * 2)
+            ? { points: value.paper.points, max: value.paper.max } : {}) } } : {}),
       examDate: typeof value.examDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value.examDate) && !Number.isNaN(Date.parse(`${value.examDate}T00:00:00Z`)) && new Date(`${value.examDate}T00:00:00Z`).toISOString().slice(0, 10) === value.examDate ? value.examDate : null,
       officialPercentile: value.programId === "kangaroo" && Number.isFinite(value.officialPercentile) ? value.officialPercentile : null,
       summary: { itemCount: summary.itemCount, correct: summary.correct, wrong: summary.wrong, blank: summary.blank, unmarked: summary.unmarked, attempted: summary.attempted, domainClassified: summary.domainClassified, reasonClassified: summary.reasonClassified, accuracy: summary.attempted >= 3 ? Math.round(summary.correct / summary.attempted * 100) : null },
       domains: domains,
       reasons: reasons,
+      ...(Array.isArray(value.concepts) && value.concepts.length <= 200 && new Set(value.concepts.map(function (row) { return row && row.id; })).size === value.concepts.length
+        && value.concepts.every(function (row) { return object(row) && typeof row.id === "string" && /^[a-z0-9-]{1,80}$/.test(row.id)
+          && ["correct", "wrong", "blank"].every(function (key) { return Number.isInteger(row[key]) && row[key] >= 0 && row[key] <= summary[key]; })
+          && row.correct + row.wrong + row.blank > 0; })
+        ? { concepts: value.concepts.map(function (row) { return { id: row.id, correct: row.correct, wrong: row.wrong, blank: row.blank }; }) } : {}),
+      ...(Array.isArray(value.blankReasons) && value.blankReasons.length <= 3 && new Set(value.blankReasons.map(function (row) { return row && row.id; })).size === value.blankReasons.length
+        && value.blankReasons.every(function (row) { return object(row) && ["time", "skipped", "could-not-start"].includes(row.id) && Number.isInteger(row.count) && row.count > 0; })
+        && value.blankReasons.reduce(function (sum, row) { return sum + row.count; }, 0) <= summary.blank
+        ? { blankReasons: value.blankReasons.map(function (row) { return { id: row.id, count: row.count }; }) } : {}),
       savedAt: typeof value.savedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.savedAt) ? value.savedAt : new Date().toISOString()
     };
   }
@@ -548,8 +566,18 @@
       const sanitized = sanitizedCompetitionDiagnostic(record);
       if (!sanitized) return false;
       const records = loadCompetitionDiagnosticHistory();
-      const identity = sanitized.examDate ? [sanitized.grade, sanitized.programId, sanitized.examDate, sanitized.paperLabel].join(":") : null;
-      const next = records.filter(function (entry) { return !identity || [entry.grade, entry.programId, entry.examDate, entry.paperLabel].join(":") !== identity; });
+      function identityFor(entry) {
+        if (!entry.examDate) return null;
+        let paper = entry.paper;
+        if (!paper) {
+          const match = /^(\d{4}) (AMC 8|AMC 10|AMC 12|AIME)(?: ([ABCD]|I|II))?$/.exec(entry.paperLabel);
+          const titles = { amc8: "AMC 8", amc10: "AMC 10", amc12: "AMC 12", aime: "AIME" };
+          if (match && titles[entry.programId] === match[2]) paper = { year: Number(match[1]), form: match[3] || "" };
+        }
+        return [entry.grade, entry.programId, entry.examDate, paper ? "paper:" + paper.year + ":" + paper.form : "memo:" + entry.paperLabel].join(":");
+      }
+      const identity = identityFor(sanitized);
+      const next = records.filter(function (entry) { return !identity || identityFor(entry) !== identity; });
       next.unshift(sanitized);
       write(COMPETITION_DIAGNOSTIC_HISTORY_KEY, { schemaVersion: "gfield-competition-diagnostic-history-v1", records: next.slice(0, MAX_COMPETITION_DIAGNOSTICS) });
       return sanitized;

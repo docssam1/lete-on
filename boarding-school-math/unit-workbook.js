@@ -123,7 +123,14 @@
     candidates.forEach(function(textNode){const fragment=document.createDocumentFragment();appendMathText(fragment,textNode.nodeValue);textNode.replaceWith(fragment);});
   }
   function setUrl() {
-    const url=new URL(location.href); url.search="";
+    const url=new URL(location.href);
+    const study=url.searchParams.get("study");
+    const studyGrade=url.searchParams.get("studyGrade");
+    url.search="";
+    if(study==="1"){
+      url.searchParams.set("study","1");
+      if(studyGrade) url.searchParams.set("studyGrade",studyGrade);
+    }
     Object.entries(state).forEach(function(entry){ if(["selected","correct","cluster","standard"].includes(entry[0])) return; url.searchParams.set(entry[0],entry[1]); });
     url.searchParams.set("cluster",state.cluster);
     if(state.standard) url.searchParams.set("standard",state.standard); else url.searchParams.delete("standard");

@@ -229,7 +229,7 @@ test("Grade 7 plan keeps Algebra 1 acceleration separate from school Geometry, A
 });
 
 test("competition options follow grade and keep advanced AMC paths optional", function () {
-  assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
+  assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo", "amc8"]);
   [
     [5, "grades-5-6"], [6, "grades-5-6"], [7, "grades-7-8"], [8, "grades-7-8"],
     [9, "grades-9-10"], [10, "grades-9-10"], [11, "grades-11-12"], [12, "grades-11-12"]
@@ -238,7 +238,7 @@ test("competition options follow grade and keep advanced AMC paths optional", fu
   });
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc8"; }));
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc10" && entry.optional === true; }));
-  assert.ok(!roadmap.competitionOptions(7).some(function (entry) { return entry.id === "aime"; }));
+  assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "aime" && entry.optional === true; }));
   assert.deepEqual(roadmap.competitionOptions(8).find(function (entry) { return entry.id === "aime"; }), { id: "aime", title: "AIME 문항 복습", itemCount: 15, optional: true });
   assert.ok(!roadmap.competitionOptions(10).some(function (entry) { return entry.id === "amc8"; }));
   [11, 12].forEach(function (grade) {

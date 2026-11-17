@@ -347,6 +347,17 @@ test("saved AMC 8 diagnostics accept the five official-scope groups without expo
   assert.equal(saved.domains[1].name, "수·비례·추정");
   assert.equal(saved.domains[4].name, "그래프·표 해석");
   assert.equal(store.loadCompetitionDiagnosticHistory(7, "amc8")[0].domains.length, 5);
+  ["amc8", "amc10", "amc12", "aime"].forEach(function (program) {
+    const modern = JSON.parse(JSON.stringify(diagnostic));
+    modern.id = "six-domains-" + program;
+    modern.programId = program;
+    modern.grade = 8;
+    modern.domains.push({ id: "functions", attempted: 0, correct: 0, wrong: 0, blank: 0 });
+    const result = store.saveCompetitionDiagnostic(modern);
+    assert.equal(result.domains.length, 6);
+    assert.equal(result.domains[5].name, "함수와 그래프");
+    assert.equal(store.loadCompetitionDiagnosticHistory(8, program)[0].domains.length, 6);
+  });
   const invalidOtherContest = JSON.parse(JSON.stringify(diagnostic));
   invalidOtherContest.id = "diag-amc10-five-domains";
   invalidOtherContest.programId = "amc10";
@@ -696,4 +707,29 @@ test("first verified paper is retained once and only catalog-matched forms enter
   assert.doesNotMatch(storage.getItem("gmap-local-learning-record-v1:competition-first-attempts-v2"), /answerValue|privateScoring|sourceLocator/);
   assert.equal(store.clearCompetitionEvidence(), true);
   assert.deepEqual(store.loadCompetitionEvidenceSeries(), []);
+});
+
+test("concept and unanswered-reason totals survive safely, while malformed optional profiles are dropped",function(){
+ const store=records.create(memoryStorage());
+ const input={schemaVersion:"gfield-competition-diagnostic-v1",id:"profile-safe",programId:"amc10",programTitle:"AMC 10",grade:9,paperLabel:"2025 AMC 10 A",examDate:"2026-11-15",
+  summary:{itemCount:25,correct:3,wrong:2,blank:1,unmarked:19,attempted:5,domainClassified:0,reasonClassified:0},
+  domains:["algebra","number","geometry","counting","data","functions"].map(id=>({id,attempted:0,correct:0,wrong:0,blank:0})),reasons:[],
+  concepts:[{id:"fraction",correct:1,wrong:1,blank:1,answer:"private",questionNumber:7}],blankReasons:[{id:"time",count:1}]};
+ let saved=store.saveCompetitionDiagnostic(input);
+ assert.deepEqual(saved.concepts,[{id:"fraction",correct:1,wrong:1,blank:1}]);assert.deepEqual(saved.blankReasons,[{id:"time",count:1}]);
+ assert.doesNotMatch(JSON.stringify(saved),/private|questionNumber|"answer"/);
+ saved=store.saveCompetitionDiagnostic({...input,concepts:[{id:"fraction",correct:4,wrong:0,blank:0}],blankReasons:[{id:"time",count:2}]});
+ assert.equal('concepts' in saved,false);assert.equal('blankReasons' in saved,false);
+});
+
+test("partial records retain canonical year/form and distinct papers on the same day never collide on memo",function(){
+ const store=records.create(memoryStorage());
+ const input={schemaVersion:"gfield-competition-diagnostic-v1",id:"year-2025",programId:"amc10",programTitle:"AMC 10",grade:9,paperLabel:"Same note",examDate:"2026-11-16",
+  paper:{year:2025,form:"A",points:150,max:150},summary:{itemCount:25,correct:1,wrong:0,blank:0,unmarked:24,attempted:1,domainClassified:0,reasonClassified:0},
+  domains:["algebra","number","geometry","counting","data","functions"].map(id=>({id,attempted:0,correct:0,wrong:0,blank:0})),reasons:[]};
+ const saved=store.saveCompetitionDiagnostic(input);assert.deepEqual(saved.paper,{year:2025,form:"A"});
+ store.saveCompetitionDiagnostic({...input,id:"year-2024",paper:{year:2024,form:"A"}});
+ assert.equal(store.loadCompetitionDiagnosticHistory(9,"amc10").length,2);
+ store.saveCompetitionDiagnostic({...input,id:"renamed",paperLabel:"A different note"});
+ const rows=store.loadCompetitionDiagnosticHistory(9,"amc10");assert.equal(rows.length,2);assert.equal(rows.find(r=>r.paper.year===2025).paperLabel,"A different note");
 });

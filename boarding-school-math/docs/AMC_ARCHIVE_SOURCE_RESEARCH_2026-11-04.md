@@ -942,3 +942,25 @@ The 2012 AMC 10B response subset therefore remains 10/25 questions from Illustra
 ### 2026-11-08 · 2018 AMC 10B/12B score-mean discrepancy
 
 Rechecked the active 2018 B-form overall-mean references against independent historical tables. For AMC 10B, sources give 57.81 ([Think Matrix](https://www.think-matrix.com/math_planet/awards_setting_and_historical_result), [Ivy Track](https://www.ivytrack.org/forum.php?action=printable&mod=viewthread&tid=19383)) and 57.82 ([Hanlin](https://www.hanlin.com/archives/59055), [MT100](https://www.mt100edu.com/h/576.html)). For AMC 12B, sources give 57.81 (Think Matrix), 57.85 (Ivy Track and Math Gold Medalist), and 57.86 (Hanlin and MT100). The original MAA score reports were not recovered. Removed both disputed means from the active reference while retaining the separately corroborated published cutoff/top-score markers; the UI labels the means as held pending a primary source. Do not use either disputed mean as a grade comparison or merge across source populations.
+
+
+## 2026-11-15 · 2021 fall score-report recovery and score-range coverage
+
+Recovered the MAA Contest Score Report images reproduced in [TestDaily's 2021 fall analysis](https://www.testdaily.cn/55839/). Inspected report title/graph images 55842/55843 (AMC12 A/B) and 55853/55854 (AMC10 A/B), then the numerical strips 55844/55845/55855/55856. Titles identify 2021; the article distinguishes the November administration and the reports say Data as of 2/6/2022. Runtime catalog codes C/D map to fall A/B, while A/B retain spring identity. Apple Vision VNRecognizeTextRequest candidates and visual checks were used together; no other OCR engine was used.
+
+| Paper | Top25 / Top50 / Top75 | Mean / SD | Students / Schools | Perfect scores |
+| --- | --- | --- | --- | --- |
+| 2021 fall AMC10 A (C) | 75 / 57 / 45 | 59.48 / 23.31 | 29,264 / 1,594 | 5 |
+| 2021 fall AMC10 B (D) | 72 / 54 / 40.5 | 56.34 / 24.24 | 25,270 / 1,410 | 2 |
+| 2021 fall AMC12 A (C) | 75 / 60 / 48 | 63.56 / 24.45 | 20,876 / 1,508 | 6 |
+| 2021 fall AMC12 B (D) | 69 / 54 / 43.5 | 57.18 / 23.69 | 18,884 / 1,396 | 18 |
+
+The AMC12 B report also directly establishes its previously held top1 cutoff at 130.5. Reports do not identify geographic scope: retain their whole-report population, without calling it a grade norm or combining with separately labeled grade/region tables.
+
+Preserved a material field conflict. The AMC10 Top2.5 column says 96 on both forms, coinciding with AIME entry cutoffs and reversing order relative to separately corroborated top5 award lines of 100.5. Do not install 96 as a 2.5% distribution boundary. AMC12 reports print 91.5/84 under Top5, also matching AIME entry cutoffs; retain the previously corroborated top5 award lines of 111/103.5 separately. The data source notes and CSV make the distinction explicit; no intermediate 2.5% or 10% boundaries were generated.
+
+Transcription/provenance: `competition/historical-amc-grade/amc10-12-2021-fall-score-report-recovered.csv` records printed entry-line fields, retained award lines, direct image URLs, image SHA-256, canonical/source forms and report date. Original strip images, Vision candidates and their hashes are in `output/qa/20261115-paper-score-range/source-evidence/`.
+
+Rechecked the public MAA EduView report: its current year selector offers school years 2023–2026. A request for schoolyear=2022 returned the default 2026 view, so it is not evidence for AIME2022. The active 99CEF 2017 AMC8 report URL returned 404 through web retrieval. Search excerpts/award-recipient lists and duplicated secondary tables were not used to invent full score distributions. These gaps remain open.
+
+Coverage is now reproducible with `node scripts/audit-paper-score-coverage.cjs --check`; the CSV is `competition/historical-amc-grade/score-distribution-coverage-by-paper.csv`. Of 268 catalog papers, 79 have at least one published threshold in the active whole-cohort cutoff data; 28 have all seven supported thresholds. Fifteen AMC8 papers separately have reported exact score-frequency rows (their source population is kept separate from cutoff-report populations). Missing thresholds remain missing; some no-cutoff papers have means or separate frequency data, so they must not be described as having no statistical data at all.

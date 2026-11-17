@@ -4,7 +4,7 @@ const test = require("node:test");
 const reference = require("../competition/amc-score-distribution-reference.js");
 
 test("MAA same-form AMC references are available for the published AMC 8 seasons", function () {
-  assert.deepEqual(Object.keys(reference.entries.amc8), ["2010", "2018", "2019", "2022", "2023", "2024", "2025", "2026"]);
+  assert.deepEqual(Object.keys(reference.entries.amc8), ["2010", "2011", "2016", "2018", "2019", "2020", "2022", "2023", "2024", "2025", "2026"]);
   assert.deepEqual(
     [2018, 2019].map(function (year) {
       const row = reference.referenceFor("amc8", year, "");
@@ -74,24 +74,24 @@ test("MAA AMC 10 and AMC 12 references distinguish year and A/B form", function 
   assert.equal(reference.referenceFor("amc12", 2006, "A").top1, undefined);
   assert.deepEqual([reference.referenceFor("amc12", 2010, "A").average, reference.referenceFor("amc12", 2010, "B").average], [62.5, 59.8]);
   assert.equal(reference.referenceFor("amc12", 2016, "A").top1, 111);
-  assert.equal(reference.referenceFor("amc12", 2016, "B").average, 68.65);
+  assert.equal(reference.referenceFor("amc12", 2016, "B").average, undefined);
   assert.match(reference.referenceFor("amc12", 2016, "B").corroboratingSourceUrl, /mathgoldmedalist\.com/);
   assert.equal(reference.referenceFor("amc10", 2017, "A").top1, 127.5);
-  assert.equal(reference.referenceFor("amc10", 2020, "B").students, undefined);
+  assert.equal(reference.referenceFor("amc10", 2020, "B").students, 26553);
   assert.deepEqual(
     [reference.referenceFor("amc12", 2018, "B").top1, reference.referenceFor("amc12", 2018, "B").top5, reference.referenceFor("amc12", 2018, "B").average],
-    [126, 99, 57.85]
+    [126, 99, undefined]
   );
   assert.equal(reference.referenceFor("amc10", 2021, "A").displayLabel, "봄 AMC 10 A");
   assert.equal(reference.referenceFor("amc10", 2021, "C").displayLabel, "가을 AMC 10 A");
   assert.equal(reference.referenceFor("amc10", 2021, "D").top1, 120);
-  assert.equal(reference.referenceFor("amc10", 2021, "C").average, undefined);
+  assert.equal(reference.referenceFor("amc10", 2021, "C").average, 59.48);
   assert.equal(reference.referenceFor("amc12", 2021, "C").top1, 130.5);
-  assert.equal(reference.referenceFor("amc12", 2021, "C").average, undefined);
-  assert.equal(reference.referenceFor("amc12", 2021, "D").top1, undefined);
+  assert.equal(reference.referenceFor("amc12", 2021, "C").average, 63.56);
+  assert.equal(reference.referenceFor("amc12", 2021, "D").top1, 130.5);
   assert.equal(reference.referenceFor("amc12", 2021, "D").top5, 103.5);
-  assert.equal(reference.referenceFor("amc12", 2021, "D").average, undefined);
-  assert.equal(reference.referenceFor("amc12", 2021, "D").students, undefined);
+  assert.equal(reference.referenceFor("amc12", 2021, "D").average, 57.18);
+  assert.equal(reference.referenceFor("amc12", 2021, "D").students, 18884);
 });
 
 test("AMC references keep known fields, order reported cutoffs, and identify their sources", function () {
@@ -111,4 +111,23 @@ test("AMC references keep known fields, order reported cutoffs, and identify the
   }
   assert.equal(reference.referenceFor("aime", 2025, "I"), null);
   assert.equal(reference.referenceFor("amc12", 2025, "C"), null);
+});
+
+
+test("recovered 2021 fall report fields retain paper and source identity without importing mislabeled AIME lines", function () {
+ const expected = {
+  amc10: {C:[75,57,45,59.48,23.31,29264,1594,5],D:[72,54,40.5,56.34,24.24,25270,1410,2]},
+  amc12: {C:[75,60,48,63.56,24.45,20876,1508,6],D:[69,54,43.5,57.18,23.69,18884,1396,18]}
+ };
+ for (const program of Object.keys(expected)) for (const form of Object.keys(expected[program])) {
+  const row = reference.referenceFor(program,2021,form);
+  assert.deepEqual([row.top25,row.top50,row.top75,row.average,row.standardDeviation,row.students,row.schools,row.perfectScores],expected[program][form]);
+  assert.equal(row.reportAsOf,"2022-02-06");
+  assert.match(row.sourceUrl,/testdaily.cn\/55839/);
+  assert.match(row.scoreReportImageUrl,/202409292055/);
+  assert.match(row.sourceNote,/Apple Vision/);
+  assert.match(row.sourceNote,/AIME/);
+  assert.equal(row.top2_5,undefined);
+  assert.equal(row.top10,undefined);
+ }
 });

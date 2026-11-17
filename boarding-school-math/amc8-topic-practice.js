@@ -27,7 +27,28 @@
   const requestedMockConcepts = Array.from(new Set((params.get("mockConcepts") || "").split(",").filter(function (id) { return /^[a-z0-9-]{1,64}$/.test(id); })));
   const practiceConcepts = Array.from(new Set(requestedConcepts.concat(requestedMockConcepts)));
   const conceptLabels = window.GFIELDAMC8ConceptLabels || {};
-  const state = { activeDomains: new Set(requestedDomains), solved: new Set() };
+  const progressStorage = window.GFIELDLocalLearningRecord.storage;
+  const progressId = "amc8-topic-grade" + grade;
+  const validItemIds = new Set(practiceItems.map(function (item) { return item.id; }));
+  let savedAttempts = {};
+  let storageError = false;
+  try { savedAttempts = progressStorage.loadPractice(progressId).attempts; }
+  catch (_error) { storageError = true; }
+  const state = {
+    activeDomains: new Set(requestedDomains),
+    solved: new Set(Object.keys(savedAttempts).filter(function (id) { return validItemIds.has(id) && savedAttempts[id].solved; }))
+  };
+  function saveResponse(item, choiceIndex, correct) {
+    try {
+      const attempts = progressStorage.loadPractice(progressId).attempts;
+      const previous = attempts[item.id] || { responses: [] };
+      attempts[item.id] = { responses: previous.responses.concat([{ answerId: "ABCDE"[choiceIndex], correct: correct }]), solved: correct || previous.solved === true };
+      progressStorage.savePractice(progressId, attempts, null);
+      savedAttempts = attempts;
+    } catch (_error) {
+      document.getElementById("topic-save-status").textContent = "이번 연습 기록을 저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.";
+    }
+  }
   const $ = function (id) { return document.getElementById(id); };
 
   function itemDomain(item) {
@@ -135,6 +156,7 @@
         button.addEventListener("click", function () {
           if (state.solved.has(item.id)) return;
           const correct = choiceIndex === item.answer;
+          saveResponse(item, choiceIndex, correct);
           button.classList.add(correct ? "correct" : "wrong");
           if (correct) {
             state.solved.add(item.id); card.dataset.solved = "true";
@@ -145,6 +167,11 @@
           }
           $("topic-progress").textContent = `${visibleItems().filter(function (entry) { return state.solved.has(entry.id); }).length} / ${visibleItems().length}`;
         });
+        const previous = savedAttempts[item.id];
+        if (previous && !previous.solved && previous.responses.some(function (response) { return response.answerId === "ABCDE"[choiceIndex]; })) {
+          button.disabled = true;
+          button.classList.add("wrong");
+        }
         choices.append(button);
       });
       if (state.solved.has(item.id)) {
@@ -203,5 +230,10 @@
     const domainIntro = chosenNames.length ? `${chosenNames.join("·")} 영역의 창작 문제도 함께 살펴볼 수 있어요.` : "문제를 풀고 풀이에서 개념이 연결되는 지점을 확인해요.";
     $("topic-intro-copy").textContent = `${mockWrongQuestions.length ? `지필드 모의고사 오답·미응답: ${questionLabel(mockWrongQuestions)}. ` : ""}${sourceYear ? `${sourceYear} AMC 8 원본 복습에서 이어서. ` : ""}${conceptCopy}${domainIntro}`;
   }
+  const saveStatus = document.createElement("p");
+  saveStatus.id = "topic-save-status";
+  saveStatus.setAttribute("role", "status");
+  saveStatus.textContent = storageError ? "연습 기록을 읽지 못했어요. 브라우저 저장 설정을 확인해 주세요." : "연습 기록은 이 브라우저에 저장돼요.";
+  $("topic-progress").closest(".topic-toolbar").after(saveStatus);
   renderFilters(); renderItems();
 })();

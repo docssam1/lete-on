@@ -2,7 +2,10 @@
   "use strict";
 
   function append(target, value) {
-    const text = String(value == null ? "" : value);
+    const sourceText = String(value == null ? "" : value);
+    const i18n = root.GFIELDContentI18n;
+    const initialLength = i18n ? target.childNodes.length : 0;
+    const text = i18n ? i18n.text(sourceText) : sourceText;
     const parenthesized = "\\((?:[^()]|\\([^()]*\\))*\\)";
     const absoluteValue = "\\|[^|]+\\|";
     const algebraicTerm = "(?:\\d+(?:\\.\\d+)?π?[A-Za-z]?|π[A-Za-z]?|[A-Za-z])";
@@ -34,6 +37,7 @@
       cursor = fraction.lastIndex;
     }
     if (cursor < text.length) target.append(document.createTextNode(text.slice(cursor)));
+    if (i18n) i18n.trackMath(target, sourceText, Array.from(target.childNodes).slice(initialLength));
     return target;
   }
 

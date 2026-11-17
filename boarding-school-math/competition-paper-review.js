@@ -19,6 +19,7 @@
   const answerChoices = [{ id: "", title: "미입력" }, { id: "A", title: "A" }, { id: "B", title: "B" }, { id: "C", title: "C" }, { id: "D", title: "D" }, { id: "E", title: "E" }];
   let scoreHistory = [];
   let lastDiagnostic = null;
+  let lastOverviewContext = null;
   let lastAutoGradeSummary = null;
   let lastSavedDiagnosticId = null;
   let savedDiagnosticAnnouncementVersion = 0;
@@ -67,7 +68,7 @@
   function renderOfficialPaperSources(format) {
     const section = $("official-paper-sources");
     const picker = $("amc-archive-picker");
-    if (!paperLibrary || !format) { section.hidden = true; picker.hidden = true; return; }
+    if (!paperLibrary || !format) { section.hidden = true; picker.hidden = true; if (window.GFIELDPaperBookReader) window.GFIELDPaperBookReader.selectPaper(null); return; }
     const archive = paperLibrary.archiveFor(format.id);
     picker.hidden = !archive;
     if (archive) {
@@ -94,7 +95,11 @@
         $("archive-open-link").href = paperLibrary.archiveRoute(format.id, year, form);
         $("archive-open-link").textContent = `${label} · ${meta && meta.sourceStatus === "third-party-reproduction" ? "자료 출처" : "온라인 회차"} ↗`;
         $("archive-print-link").href = paperLibrary.printRoute(format.id, year, form);
-        $("archive-print-link").textContent = `${label} · 시험지 PDF 인쇄 ↗`;
+        $("archive-print-link").textContent = "원본 파일 열기 ↗";
+        if (window.GFIELDPaperBookReader) {
+          const canonical = window.GFIELDPaperLearningProfileUI.identityLabel({ programId: format.id, paper: { year: year, form: form } });
+          window.GFIELDPaperBookReader.selectPaper({ grade: grade, programId: format.id, year: year, form: form, title: canonical && meta ? canonical.replace(format.title, meta.title) : label });
+        }
         $("archive-answer-link").href = paperLibrary.answerRoute(format.id, year, form);
         $("archive-answer-link").textContent = `${label} · 정답표 ↗`;
         $("archive-solutions-link").href = paperLibrary.solutionsRoute(format.id, year, form);
@@ -139,7 +144,7 @@
         } else if (meta && meta.sourceStatus === "third-party-reproduction") {
           archiveNote.textContent = "2026 A형의 공개 시험지·답안·풀이는 Think Academy 자료입니다. MAA/LIVE 공식 색인에 실린 회차가 아니며, GFIELD는 시험 내용을 복사하지 않고 원문 링크와 답안 키만 연결합니다.";
         } else {
-          archiveNote.textContent = "연도별 자료에서 선택한 원본 시험지예요. 시험지 PDF·정답표·전문 풀이를 열고, 아래 문항별 링크에서 개념과 해설을 확인하세요.";
+          archiveNote.textContent = "시험지를 펼쳐 화면에서 읽거나 인쇄하세요. 답안 입력 후 공개 정답표와 대조하고 해설을 확인할 수 있어요.";
         }
       };
       const renderArchiveRoute = function () {
@@ -175,7 +180,7 @@
       renderArchiveRoute();
     }
     section.hidden = !archive;
-    if (!archive) return;
+    if (!archive) { if (window.GFIELDPaperBookReader) window.GFIELDPaperBookReader.selectPaper(null); return; }
   }
   function syncReasonField(row, status) {
     const number = row.querySelector('[data-field="status"]').dataset.question;
@@ -277,7 +282,7 @@
     $("answer-entry-guide").hidden = !format || !["amc8", "amc10", "amc12", "aime"].includes(format.id);
     $("answer-entry-guide").querySelector("strong").textContent = "답을 입력하고 공개 정답표와 대조해요";
     $("answer-entry-guide").querySelector("p").textContent = programId === "aime"
-      ? "각 문항에 내가 쓴 정수 답(0–999)을 입력하고 ‘정답표 대조’를 누르면 해당 회차의 공개 답안 키로 자동 채점합니다. 빈칸은 미응답으로 처리하며, 답과 진단은 이 화면에서만 사용합니다."
+      ? "각 문항에 내가 쓴 정수 답(0–999)을 입력하고 ‘정답표 대조’를 누르면 해당 회차의 공개 답안 키로 자동 채점합니다. 빈칸은 미응답으로 처리합니다. 시험지를 펼쳐 풀 때 답안은 이 탭에 임시 저장됩니다."
       : "A–E에서 고른 답을 입력하고 ‘정답표 대조’를 누르면 해당 회차의 공개 답안 키로 자동 채점합니다. 빈칸은 미응답으로 처리하며, 풀이 영역과 오답 이유는 결과 화면에서 직접 조정할 수 있어요.";
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
@@ -285,6 +290,7 @@
     document.querySelector(".review-related").hidden = !format;
     updateReviewSourceNote(format);
     updateUrl();
+    renderSavedDiagnosticHistory();
   }
   function renderMarks() {
     lastAutoGradeSummary = null;
@@ -416,6 +422,7 @@
     }
     updateProgress();
     resetReport();
+    document.dispatchEvent(new Event("gfield:paper-marks-ready"));
   }
   function updateProgress() {
     const marked = Array.from($("paper-mark-list").querySelectorAll('[data-field="status"]')).filter(function (node) { return node.value !== "unmarked"; }).length;
@@ -598,26 +605,34 @@
     history.forEach(function (record) {
       const card = document.createElement("article"); card.className = "saved-diagnostic-entry";
       const heading = document.createElement("div"); heading.className = "saved-diagnostic-entry-heading";
-      const title = document.createElement("h3"); title.textContent = `${record.programTitle} · Grade ${record.grade}`;
-      const date = document.createElement("time"); date.textContent = record.examDate || "날짜 미입력"; if (record.examDate) date.dateTime = record.examDate;
+      const identity = window.GFIELDPaperLearningProfileUI.identityLabel(record);
+      const title = document.createElement("h3"); title.textContent = `${identity || record.programTitle} · Grade ${record.grade}`;
+      const date = document.createElement("time"); date.textContent = `응시 날짜 · ${record.examDate || "날짜 미입력"}`; if (record.examDate) date.dateTime = record.examDate;
       heading.append(title, date);
       const meta = document.createElement("p");
       const completion = record.summary.unmarked ? `일부 입력 ${record.summary.itemCount - record.summary.unmarked}/${record.summary.itemCount} · ` : `전체 입력 ${record.summary.itemCount}/${record.summary.itemCount} · `;
-      meta.textContent = `${record.paperLabel ? `${record.paperLabel} · ` : ""}${completion}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}${record.officialPercentile == null ? "" : ` · 성적표 Grade ${record.grade} 전국 백분위 ${record.officialPercentile}%`}`;
+      meta.textContent = `${completion}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}${record.officialPercentile == null ? "" : ` · 성적표 Grade ${record.grade} 전국 백분위 ${record.officialPercentile}%`}`;
+      if (record.paperLabel) {
+        const memoLabel = document.createElement("span"); memoLabel.textContent = "메모";
+        const memo = document.createElement("span"); memo.textContent = record.paperLabel; memo.dataset.paperMemo = ""; memo.dataset.contentOriginal = "";
+        meta.prepend(memoLabel, document.createTextNode(" · "), memo, document.createTextNode(" · "));
+      }
       const domainHost = document.createElement("div"); domainHost.className = "saved-diagnostic-entry-domains"; domainHost.dataset.domainCount = String(record.domains.length);
       record.domains.forEach(function (domain) {
         const item = document.createElement("div");
         const label = document.createElement("strong"); label.textContent = domain.name;
-        const value = document.createElement("span"); value.textContent = domain.attempted ? `${domain.correct}/${domain.attempted}${domain.rate === null ? "" : ` · ${domain.rate}%`}` : "—";
-        const note = document.createElement("small"); note.textContent = `${domain.evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
+        const marked = domain.attempted + domain.blank;
+        const value = document.createElement("span"); value.textContent = marked ? `${domain.correct}/${marked}${marked < 3 ? "" : ` · ${Math.round(domain.correct / marked * 100)}%`}` : "—";
+        const note = document.createElement("small"); note.textContent = `미응답 포함${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
         item.append(label, value, note); domainHost.append(item);
       });
       const reasonSummary = document.createElement("p");
       reasonSummary.textContent = `오답 이유 분류 ${record.summary.reasonClassified}/${record.summary.wrong}${record.reasons.length ? ` · ${record.reasons.map(function (reason) { const label = reasons.find(function (entry) { return entry.id === reason.id; }); return `${label ? label.title : "기타"} ${reason.count}`; }).join(" · ")}` : ""}`;
       const remove = document.createElement("button"); remove.type = "button"; remove.className = "saved-diagnostic-remove"; remove.dataset.removeDiagnostic = record.id; remove.textContent = "이 기록 삭제";
       remove.setAttribute("aria-label", `${record.programTitle} Grade ${record.grade} ${record.examDate || "날짜 미입력"} 복습 요약 삭제`);
-      card.append(heading, meta, domainHost, reasonSummary, remove); host.append(card);
+      card.append(heading, meta, window.GFIELDPaperLearningProfileUI.card(record, history), domainHost, reasonSummary, remove); host.append(card);
     });
+    window.GFIELDPaperLearningProfileUI.accumulated(history, { grade: grade, programId: programId, asOf: localToday() });
   }
   function clearHistoryMessages() { historySuccessVersion += 1; clearAlert("score-history-error"); $("score-history-status").textContent = ""; }
   function historyError(message) { $("score-history-status").textContent = ""; showAlert("score-history-error", message); }
@@ -693,7 +708,7 @@
     } finally { event.target.value = ""; }
   });
   $("history-clear").addEventListener("click", function () {
-    if (!scoreHistory.length || !window.confirm("이 화면에 불러온 모든 회차 기록을 비울까요? 저장한 JSON 파일은 그대로 남습니다.")) return;
+    if (!scoreHistory.length || !window.confirm(window.GFIELDContentI18n.text("이 화면에 불러온 모든 회차 기록을 비울까요? 저장한 JSON 파일은 그대로 남습니다."))) return;
     scoreHistory = []; renderHistory(); clearHistoryMessages(); historySuccess("화면 기록을 비웠어요."); $("history-program").focus();
   });
   } else {
@@ -1306,7 +1321,7 @@
     if (result.counts.blank > 0) {
       const blankReasonHeading = document.createElement("h3"); blankReasonHeading.textContent = `미응답 이유 · ${result.blankReasonClassified}/${result.counts.blank}개 공란 분류`; reasonHost.append(blankReasonHeading);
       const blankReasonNote = document.createElement("p"); blankReasonNote.className = "report-evidence-note";
-      blankReasonNote.textContent = "이번 화면에서 선택한 미응답 이유예요. 저장된 복습 요약에는 포함하지 않습니다.";
+      blankReasonNote.textContent = "직접 선택한 미응답 이유예요. 결과를 저장하면 누적 진단에도 반영해요.";
       reasonHost.append(blankReasonNote);
       if (result.blankReasons.length) result.blankReasons.forEach(function (reason) {
         const row = document.createElement("p"); row.textContent = `${reason.name} · ${reason.count}문항`; reasonHost.append(row);
@@ -1364,12 +1379,49 @@
         strategyList.append(item);
       });
     }
+    lastOverviewContext = {
+      result: result,
+      programId: selectedFormat().id,
+      grade: grade,
+      year: selectedYear,
+      form: selectedForm,
+      title: selectedFormat().id === "aime" ? "AIME" : selectedFormat().title,
+      reference: selectedFormat().id === "aime" ? cohort : amcCohort,
+      sourceUrl: $(selectedFormat().id === "aime" ? "aime-cohort-source" : "amc-cohort-source").getAttribute("href"),
+      bands: selectedFormat().id === "aime" ? aimeReference && aimeReference.bands : amcReference && amcReference.bands
+    };
+    refreshScoreOverview();
     $("save-diagnostic").hidden = !localRecords;
     if (!$("save-diagnostic").disabled) $("diagnostic-save-status").textContent = "";
     document.querySelector(".review-report").hidden = false;
     document.querySelector(".review-layout").classList.remove("is-empty");
     $("report-title").focus();
   }
+  function refreshScoreOverview() {
+    if (!lastOverviewContext) return;
+    const range = window.GFIELDPaperScoreRange;
+    const context = lastOverviewContext;
+    const format = paperLibrary && paperLibrary.formatFor(context.programId, context.year, context.form);
+    const records = localRecords ? localRecords.storage.loadCompetitionDiagnosticHistory(grade, context.programId) : [];
+    const attempts = records.map(function (record) { return range.attemptFromDiagnostic(record, paperLibrary); }).filter(Boolean);
+    const current = context.result.scoreEstimate;
+    if (context.result.complete && current && format) attempts.push({ programId: context.programId, grade: grade, year: context.year, form: context.form,
+      points: current.points, max: current.max, scoringKey: range.scoringKey(format), examDate: $("review-exam-date").value, savedAt: "~current", complete: true });
+    const asOf = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    const forecast = range.forecast(attempts, { programId: context.programId, grade: grade, max: format && format.scoring && format.scoring.max,
+      scoringKey: range.scoringKey(format), asOf: asOf });
+    window.GFIELDPaperScoreOverview.render(Object.assign({}, context, { forecast: forecast, examDate: $("review-exam-date").value }));
+    window.GFIELDPaperLearningProfileUI.current({ programId: context.programId, grade: grade, domains: context.result.domains,
+      concepts: collectConceptEvidence(context.programId, context.year, context.form) });
+  }
+  function localToday() { return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()); }
+  function collectConceptEvidence(program, year, form) {
+    return window.GFIELDPaperLearningProfile.conceptsFromMarks(readMarks(), function (number) {
+      return itemConceptReference ? itemConceptReference.referenceFor(program, year, form, number) : null;
+    });
+  }
+  document.addEventListener("gfield:paper-answers-restored", updateProgress);
+  $("review-exam-date").addEventListener("change", function () { if (!document.querySelector(".review-report").hidden) refreshScoreOverview(); });
   $("review-grade").addEventListener("change", function (event) { grade = Number(event.target.value); $("review-paper-label").value = ""; $("review-paper-label").dataset.archiveDefault = ""; renderSettings(); renderMarks(); $("official-percentile").value = ""; });
   $("review-program").addEventListener("change", function (event) { programId = event.target.value; $("review-paper-label").value = ""; $("review-paper-label").dataset.archiveDefault = ""; renderSettings(); renderMarks(); $("official-percentile").value = ""; });
   $("review-paper-label").addEventListener("input", function () { resetReport("내용이 바뀌었어요"); });
@@ -1409,11 +1461,15 @@
     const record = localRecords.storage.saveCompetitionDiagnostic({
       schemaVersion: "gfield-competition-diagnostic-v1", id: makeHistoryId(), programId: format.id, programTitle: format.title,
       grade: grade, paperLabel: $("review-paper-label").value.trim(), examDate: examDate,
+      paper: paperLibrary && paperLibrary.archiveFor(format.id) ? { year: Number($("archive-year").value), form: $("archive-form").value || "",
+        ...(lastDiagnostic.complete && lastDiagnostic.scoreEstimate ? { points: lastDiagnostic.scoreEstimate.points, max: lastDiagnostic.scoreEstimate.max } : {}) } : null,
       officialPercentile: format.id === "kangaroo" && $("official-percentile").value !== "" ? Number($("official-percentile").value) : null,
       summary: { itemCount: lastDiagnostic.itemCount, correct: lastDiagnostic.counts.correct, wrong: lastDiagnostic.counts.wrong, blank: lastDiagnostic.counts.blank,
         unmarked: lastDiagnostic.counts.unmarked, attempted: lastDiagnostic.attempted, domainClassified: lastDiagnostic.domainClassified, reasonClassified: lastDiagnostic.reasonClassified },
       domains: lastDiagnostic.domains.map(function (domain) { return { id: domain.id, attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank }; }),
-      reasons: lastDiagnostic.reasons.map(function (reason) { return { id: reason.id, count: reason.count }; })
+      reasons: lastDiagnostic.reasons.filter(function (reason) { return reason.count > 0; }).map(function (reason) { return { id: reason.id, count: reason.count }; }),
+      concepts: collectConceptEvidence(format.id, Number($("archive-year").value), $("archive-form").value || ""),
+      blankReasons: lastDiagnostic.blankReasons.filter(function (reason) { return reason.count > 0; }).map(function (reason) { return { id: reason.id, count: reason.count }; })
     });
     const amcResultDisclosure = format.id === "kangaroo" && $("official-percentile").value !== ""
       ? "Math Kangaroo 성적표의 학년별 전국 백분위도 함께 저장했어요."
@@ -1424,6 +1480,7 @@
     $("diagnostic-save-status").textContent = record ? `${record.programTitle} · Grade ${record.grade} 복습 요약을 이 기기에 저장했어요. 정답·오답·미응답 수와 영역별 합계를 저장합니다. ${amcResultDisclosure} 문항별 답과 번호는 저장하지 않습니다.` : "저장하지 못했어요. 입력한 학년과 문항 결과를 확인해 주세요.";
     $("save-diagnostic").disabled = Boolean(record);
     renderSavedDiagnosticHistory();
+    refreshScoreOverview();
   });
   $("saved-diagnostic-list").addEventListener("click", function (event) {
     const button = event.target.closest("[data-remove-diagnostic]");
@@ -1448,6 +1505,7 @@
       else announceDiagnosticSaveStatus(message);
     }
     renderSavedDiagnosticHistory();
+    if (!document.querySelector(".review-report").hidden) refreshScoreOverview();
     const nextRemoveButtons = Array.from($("saved-diagnostic-list").querySelectorAll(".saved-diagnostic-remove"));
     if (nextRemoveButtons.length) nextRemoveButtons[Math.min(removedIndex, nextRemoveButtons.length - 1)].focus();
     else $("review-program").focus();

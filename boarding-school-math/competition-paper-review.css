@@ -280,3 +280,5 @@ body.academy-page.page-paper-review { color: #182230; background: #f5f6f8; backg
   .amc-grade-reference-row { grid-template-columns: minmax(82px, 1fr) auto; gap: 6px 9px; }
   .amc-grade-reference-track { grid-column: 1 / -1; }
 }
+
+@media screen and (min-width: 901px) { .saved-diagnostic-entry-domains[data-domain-count="6"] { grid-template-columns: repeat(6,minmax(0,1fr)); } }

@@ -10,14 +10,31 @@
   <link rel="stylesheet" href="./academy-ui.css">
   <link rel="stylesheet" href="./boarding-roadmap.css?v=20261104-6">
   <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
+  <link rel="stylesheet" href="./boarding-study.css?v=20261114-2">
+  <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
 </head>
 <body class="academy-page page-boarding-roadmap">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
   <header class="site-header boarding-header">
-    <a class="brand" href="./index.html" aria-label="G·MAP 홈"><span class="brand-mark" aria-hidden="true">G</span><span>G·<strong>MAP</strong></span></a>
-    <nav aria-label="주요 탐색"><a href="./boarding-roadmap.html" aria-current="page">학년별 성장 지도</a><a href="./learning-plan.html">학습 계획</a><a href="./concept-learning.html">개념 학습</a></nav>
+    <a class="brand" href="#my-study" aria-label="내 공부 홈"><span class="brand-mark" aria-hidden="true">G</span><span>G·<strong>MAP</strong></span></a>
+    <nav aria-label="주요 탐색"><a href="#my-study" data-study-view="home">내 공부</a><a href="#grade-map" data-study-view="curriculum">교과</a><a href="#study-contests" data-study-view="contests">경시</a></nav>
+    <label class="study-language"><span id="study-language-label">언어</span><select id="study-locale" data-content-original><option value="ko">한국어</option><option value="en">English</option><option value="zh-Hans">中文（新加坡）</option></select></label>
   </header>
   <main id="main" tabindex="-1" class="gfield-ui">
+    <section id="my-study" class="study-shell" aria-labelledby="study-home-title">
+      <div class="study-heading"><div><h1 id="study-home-title">내 공부</h1><p>교과와 경시, 내가 고른 순서대로 공부해요.</p></div><a class="study-link" href="#study-add">공부 담기</a></div>
+      <p id="study-status" class="study-status" role="status"></p>
+      <div class="study-layout"><div>
+        <div id="study-current"></div>
+        <details class="study-detail"><summary>열어 본 공부</summary><ul id="study-history" class="study-history"></ul></details>
+        <p class="study-muted">목록과 순서는 이 브라우저에 저장돼요.</p>
+      </div><aside class="study-panel" aria-labelledby="study-queue-title"><h2 id="study-queue-title">내가 담은 공부</h2><ol id="study-queue" class="study-queue"></ol><p id="study-queue-empty" class="study-muted">공부할 단원이나 경시를 담아 보세요.</p></aside></div>
+      <section id="study-add" class="study-panel study-detail" aria-labelledby="study-add-title"><h2 id="study-add-title">무엇을 공부할까요?</h2>
+        <div class="study-fields"><label>공부 종류<select id="study-kind"><option value="curriculum">교과 단원</option><option value="contest">경시 기출</option><option value="topic">경시 주제</option></select></label><label id="study-grade-field">학년·과정<select id="study-grade"><option value="6">Grade 6</option><option value="7">Grade 7</option><option value="course">Algebra · Geometry · Precalculus</option></select></label><label id="study-program-field" hidden>대회<select id="study-program"><option value="amc8">AMC 8</option><option value="amc10">AMC 10</option><option value="amc12">AMC 12</option><option value="aime">AIME</option><option value="kangaroo">매쓰 캥거루</option></select></label><label id="study-year-field" hidden>연도<select id="study-year"></select></label><label id="study-form-field" hidden>시험형<select id="study-form"></select></label></div>
+        <ul id="study-catalog" class="study-catalog"></ul>
+      </section>
+    </section>
+    <section id="study-contests" class="study-shell" aria-labelledby="study-contests-title" hidden><div class="study-heading"><div><h1 id="study-contests-title">경시 공부</h1><p>대회 기출과 공부하고 싶은 주제를 골라 담아요.</p></div></div><div id="study-contest-picker"></div></section>
     <section class="boarding-intro" aria-labelledby="boarding-title"><div class="boarding-shell">
       <p class="boarding-kicker">보딩스쿨 수학 · 학년별 보기</p>
       <h1 id="boarding-title">3–12학년 수학, 한눈에 보기</h1>
@@ -159,11 +176,18 @@
     <section class="boarding-close"><div class="boarding-shell"><div><p class="boarding-kicker">학습 계획</p><h2>다음 학습을 정할 때</h2><p>지필드 모의고사에서 실제로 푼 문항을 바탕으로 다음 연습을 정해요.</p></div><a id="boarding-learning-plan-link-bottom" href="./learning-plan.html">학습 계획 보기 →</a></div></section>
   </main>
   <footer class="site-footer"><span>G·MAP · 보딩스쿨 수학 성장 지도</span><span><a href="./index.html">홈</a> · <a href="./learning-plan.html">학습 계획</a></span></footer>
-  <script src="./shared/gmap-local-learning-record.js?v=20261104-4"></script>
-  <script src="./learning/boarding-grade-roadmap.js?v=20261104-2"></script>
+    <script src="./shared/boarding-content-translations.js?v=20261114-2"></script>
+  <script src="./shared/boarding-content-i18n.js?v=20261114-2"></script>
+<script src="./shared/gmap-local-learning-record.js?v=20261114-1"></script>
+  <script src="./learning/boarding-grade-roadmap.js?v=20261114-1"></script>
   <script src="./curriculum/course-pathways.js?v=20261103-13"></script>
   <script src="./curriculum/algebra-1-course.js?v=20261103-8"></script>
-  <script src="./shared/math-inline.js?v=20261103-17"></script>
+  <script src="./shared/math-inline.js?v=20261114-2"></script>
   <script src="./boarding-roadmap.js?v=20261104-7"></script>
+  <script src="./competition/amc-original-paper-library.js?v=20261108-1"></script>
+  <script src="./shared/boarding-study-plan.js?v=20261114-1"></script>
+  <script src="./shared/boarding-study-locale.js?v=20261114-1"></script>
+  <script src="./boarding-study.js?v=20261114-4"></script>
+  <script src="./shared/boarding-study-return.js?v=20261114-3"></script>
 </body>
 </html>

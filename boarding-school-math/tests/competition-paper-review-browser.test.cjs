@@ -43,7 +43,7 @@ test("AMC original answer-key comparison is explicit, source-linked, and preserv
   assert.equal(await page.locator('[data-question="1"][data-field="status"]').inputValue(), "correct");
   assert.equal(await page.locator('[data-question="3"][data-field="status"]').inputValue(), "wrong");
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.match(await page.locator("#answer-key-result-note").innerText(), /LIVE 공개 정답표로 25문항을 대조/);
+  assert.match(await page.locator("#answer-key-result-note").innerText(), /LIVE by Po-Shen Loh · 공개 답안 페이지로 25문항을 대조/);
   assert.equal(await page.locator("#answer-key-result-note a").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2025A/answers");
   assert.match(await page.locator("#report-review-items-list").innerText(), /3번 · 오답 · 내 답 A · 정답 D/);
   assert.deepEqual(errors, []);
@@ -87,7 +87,7 @@ test("2004 AMC 8 historical response reference skips the bad first row and shows
   assert.match(await page.locator("#report-review-items-note").innerText(), /학년별 비교나 현재 기준은 아닙니다/);
   assert.match(await page.locator("#report-review-items-list").innerText(), /2번 · 오답 · 내 답 A · 정답 B/);
   assert.match(await page.locator("#report-review-items-list").innerText(), /2004 응답 집계 · 전체 응답 154,590명 · 정답률 44\.49% · A 선택 6\.20%/);
-  assert.equal(await page.locator("#report-review-items-list .report-review-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2004/problem/2");
+  assert.equal(await page.locator('#report-review-items-list .report-review-source-link[href*="/problem/"]').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2004/problem/2");
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -99,11 +99,11 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   await page.goto(`${url}?grade=7&program=amc8&year=2023`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#archive-year option").count(), 41);
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
-  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*온라인 회차/);
+  assert.match(await page.locator("#archive-open-link").textContent(), /2023 AMC 8.*온라인 회차/);
   assert.equal(await page.locator("#archive-print-link").getAttribute("href"), "https://live.poshenloh.com/images/past-contests/pdf/amc8-2023-exam.pdf");
   assert.equal(await page.locator("#archive-answer-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/answers");
   assert.equal(await page.locator("#archive-solutions-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/solutions");
-  assert.match(await page.locator("#archive-route-note").innerText(), /41회 중 선택한 원본/);
+  assert.match(await page.locator("#archive-route-note").innerText(), /시험지를 펼쳐 화면에서 읽거나 인쇄/);
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("target"), "_blank");
   await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
@@ -120,7 +120,7 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   assert.doesNotMatch(saved, /answer|responses|questionNumber/i);
   await page.locator("#review-program").selectOption("amc10");
   await page.locator("#archive-year").selectOption("2021");
-  assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형", "B형", "C형", "D형"]);
+  assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형 · 봄 (자료 코드 A)", "B형 · 봄 (자료 코드 B)", "A형 · 가을 (자료 코드 C)", "B형 · 가을 (자료 코드 D)"]);
   await page.locator("#archive-form").selectOption("D");
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D");
   assert.equal(await page.locator("#archive-print-link").getAttribute("href"), "https://live.poshenloh.com/images/past-contests/pdf/amc10-2021D-exam.pdf");
@@ -137,16 +137,17 @@ test("2010 AMC 8 shows linked source concepts, permits domain overrides, and rep
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8&year=2010`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".mark-concept-suggestion").count(), 25);
-  assert.equal(await page.locator('[data-question="20"] .mark-concept-suggestion').innerText(), "개념 포함배제·최소공배수 · 교사 검토 분류 · LIVE 출처");
-  assert.equal(await page.locator('[data-question="20"] .mark-concept-suggestion a').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2010/problem/20");
+  assert.equal(await page.locator('.paper-mark-row:has([data-question="20"]) .mark-concept-suggestion').textContent(), "개념 포함배제·최소공배수 · 교사 검토 분류 · LIVE 출처");
+  assert.equal(await page.locator('.paper-mark-row:has([data-question="20"]) .mark-concept-suggestion a').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2010/problem/20");
   assert.equal(await page.locator('[data-question="20"][data-field="domain"]').inputValue(), "counting");
   await page.locator('[data-question="20"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="20"][data-field="reason"]').selectOption("concept");
-  await page.locator('[data-question="23"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="23"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="23"][data-field="domain"]').selectOption("number");
+  await page.locator('[data-question="23"][data-field="status"]').selectOption("correct");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-domains").innerText(), /LIVE 문항 개념 자료 25개가 연결되어 있어요\. 이 중 1문항은 제안 영역을 사용했고 1문항은 직접 분류/);
-  assert.match(await page.locator("#report-review-items-list").innerText(), /20번 · 오답 · 답 미입력 · 포함배제·최소공배수 · 경우의 수·확률 · 개념/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /20번 · 오답 · 답 미입력[\s\S]*포함배제·최소공배수 · 경우의 수와 확률 · 개념/);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();
@@ -158,17 +159,17 @@ test("early and current AMC 8 years both load item-level concepts and source rou
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8&year=1985`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".mark-concept-suggestion").count(), 25);
-  assert.equal(await page.locator('[data-question="1"] .mark-concept-suggestion').innerText(), "개념 분수 · 원본 태그 기반 영역 제안 · LIVE 출처");
+  assert.equal(await page.locator('.paper-mark-row:has([data-question="1"]) .mark-concept-suggestion').textContent(), "개념 분수 · 원본 태그 기반 영역 제안 · LIVE 출처");
   assert.equal(await page.locator('[data-question="1"][data-field="domain"]').inputValue(), "number");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-domains").innerText(), /LIVE 문항 개념 자료 25개가 연결되어 있어요\. 이 중 1문항은 제안 영역을 사용했고 0문항은 직접 분류/);
-  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 답 미입력 · 분수 · 수·비례·추정 · 개념/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 답 미입력[\s\S]*분수[\s\S]*수와 정수의 성질 · 개념/);
   await page.goto(`${url}?grade=7&program=amc8&year=2026`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".mark-concept-suggestion").count(), 25);
-  assert.equal(await page.locator('[data-question="25"] .mark-concept-suggestion a').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2026/problem/25");
-  assert.equal(await page.locator('[data-question="25"][data-field="domain"]').inputValue(), "counting");
+  assert.equal(await page.locator('.paper-mark-row:has([data-question="25"]) .mark-concept-suggestion a').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2026/problem/25");
+  assert.equal(await page.locator('[data-question="25"][data-field="domain"]').inputValue(), "geometry");
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();
@@ -177,7 +178,7 @@ test("early and current AMC 8 years both load item-level concepts and source rou
 test("AMC 12 archive picker reaches the earliest listed year", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=10&program=amc12&year=1950`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#archive-year option").count(), 76);
+  assert.equal(await page.locator("#archive-year option").count(), 77);
   assert.equal(await page.locator("#archive-year").inputValue(), "1950");
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc12/1950");
   assert.equal(await page.locator(".paper-mark-row").count(), 50);
@@ -193,7 +194,7 @@ test("AMC 12 archive picker reaches the earliest listed year", async function ()
   assert.equal(await page.locator(".paper-mark-row").count(), 25);
   assert.equal(await page.locator("#archive-form-field").isHidden(), true);
   await page.locator("#archive-year").selectOption("2021");
-  assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형", "B형", "C형", "D형"]);
+  assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형 · 봄 (자료 코드 A)", "B형 · 봄 (자료 코드 B)", "A형 · 가을 (자료 코드 C)", "B형 · 가을 (자료 코드 D)"]);
   await page.close();
 });
 
@@ -208,12 +209,12 @@ test("complete AMC papers compare only with the matching MAA year and form cohor
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
-  assert.match(await page.locator("#amc-cohort-summary").innerText(), /응시 학년 Grade 10 · 2025 AMC 12 B · 114 \/ 150점 · MAA 전체 응시자 기준/);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2025 AMC 12 B · Grade 10로 입력한 점수 114 \/ 150 · 공개된 해당 회차 전체 응시자 기준/);
   const bands = page.locator("#amc-cohort-bands .paper-question-band");
   assert.equal(await bands.count(), 7);
   assert.match(await bands.nth(3).innerText(), /상위 10% 기준[\s\S]*109\.5 \/ 150[\s\S]*기준점 이상/);
   assert.match(await bands.nth(2).innerText(), /상위 5% 기준[\s\S]*127\.5 \/ 150[\s\S]*기준점 미만/);
-  assert.match(await page.locator("#amc-cohort-stats").innerText(), /MAA 보고서 표본 16,432명/);
+  assert.match(await page.locator("#amc-cohort-stats").innerText(), /전체 응시 16,432명/);
   assert.equal(await page.locator("#amc-cohort-source").getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81058&viewClicked=true");
   assert.match(await page.locator("#amc-cohort-reference").innerText(), /학년별 순위·등급/);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
@@ -231,9 +232,9 @@ test("Grade 9 AMC 10 review shows the matching 2025 A cohort and rejects grade-r
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
-  assert.match(await page.locator("#amc-cohort-summary").innerText(), /응시 학년 Grade 9 · 2025 AMC 10 A · 150 \/ 150점 · MAA 전체 응시자 기준/);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2025 AMC 10 A · Grade 9로 입력한 점수 150 \/ 150 · 공개된 해당 회차 전체 응시자 기준/);
   assert.match(await page.locator("#amc-cohort-bands").innerText(), /상위 1% 기준[\s\S]*136\.5 \/ 150[\s\S]*기준점 이상/);
-  assert.match(await page.locator("#amc-cohort-stats").innerText(), /MAA 보고서 표본 31,600명 · 학교 1,956곳/);
+  assert.match(await page.locator("#amc-cohort-stats").innerText(), /전체 응시 31,600명 · 학교 1,956곳/);
   assert.match(await page.locator("#amc-cohort-reference").innerText(), /응시 학년별 순위·등급/);
   assert.equal(await page.locator("#amc-cohort-source").getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81054&viewClicked=true");
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
@@ -252,7 +253,7 @@ test("AMC result explains when grade comparison is unavailable and hides the not
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
-  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2026 AMC 8 · 25 \/ 25점/);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2026 AMC 8 · Grade 7로 입력한 점수 25 \/ 25/);
   assert.equal(await page.locator("#amc-grade-comparison-unavailable").isVisible(), true);
   assert.match(await page.locator("#amc-grade-comparison-unavailable").innerText(), /학년별 비교 자료는 이 화면에 연결되어 있지 않습니다/);
   await page.locator("#archive-year").selectOption("2022");
@@ -260,7 +261,7 @@ test("AMC result explains when grade comparison is unavailable and hides the not
     await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.equal(await page.locator("#amc-cohort-reference").isHidden(), true);
+  assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
   assert.equal(await page.locator("#amc-grade-reference").isVisible(), true);
   assert.equal(await page.locator("#amc-grade-comparison-unavailable").isHidden(), true);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [1280, 1280]);
@@ -279,7 +280,7 @@ test("AMC 12 original review routes into the complete GFIELD mock and then match
   await page.locator('[data-question="5"][data-field="reason"]').selectOption("concept");
   await page.getByRole("button", { name: "결과 보기" }).click();
   const href = await page.locator("#report-follow-up-link").getAttribute("href");
-  assert.equal(href, "./amc12-gfield-mock-exam.html?grade=10&domains=functions&sourceYear=2025&sourceForm=A&sourceQuestions=5");
+  assert.equal(href, "./amc12-gfield-mock-exam.html?grade=10&domains=functions&sourceYear=2025&sourceForm=A&sourceQuestions=5&sourceConcepts=geometric-sequence%2Carea-ratio");
   await page.goto(new URL(href, url).toString(), { waitUntil: "networkidle" });
   assert.match(await page.locator("#amc12-source-paper-note").innerText(), /2025 AMC 12 A형 원본 다음/);
   assert.equal(await page.locator("#amc12-mock-back").getAttribute("href"), "http://127.0.0.1:" + new URL(url).port + "/boarding-school-math/competition-paper-review.html?grade=10&program=amc12&year=2025&form=A");
@@ -306,15 +307,18 @@ test("AMC 12 original review routes into the complete GFIELD mock and then match
   assert.match(nextStudy, /sourceQuestions=5/);
   assert.match(nextStudy, /mockWrongQuestions=4/);
   await page.goto(new URL(nextStudy, url).toString(), { waitUntil: "networkidle" });
-  assert.match(await page.locator("#targeted-practice-description").innerText(), /지필드 모의고사에서 틀리거나 비워 둔 4번 문항 · 2025 AMC 12 A 원본에서 표시한 5번 문항 이후 기하 영역/);
-  assert.equal(await page.locator(".problem-card").count(), 3);
-  assert.equal(await page.locator("#practice-progress").innerText(), "0 / 3");
-  await page.locator('#problem-amc12-g9-geometry-01 [data-choice="4"]').click();
-  assert.match(await page.locator("#problem-amc12-g9-geometry-01 .feedback").innerText(), /정답이 아니에요/);
-  await page.locator('#problem-amc12-g9-geometry-01 [data-choice="3"]').click();
-  assert.match(await page.locator("#problem-amc12-g9-geometry-01 .feedback").innerText(), /맞았어요/);
-  await page.locator("#problem-amc12-g9-geometry-01 .worked-solution summary").nth(1).click();
-  assert.match(await page.locator("#problem-amc12-g9-geometry-01 .worked-solution").nth(1).innerText(), /반지름은\s+15\s+2\s+입니다/);
+  assert.match(await page.locator("#targeted-practice-description").innerText(), /지필드 모의고사에서 틀리거나 비워 둔 4번 문항 · 2025 AMC 12 A 원본에서 표시한 5번 문항 이후 원본 풀이 개념.*연결된 GFIELD 창작 문항/);
+  assert.equal(await page.locator(".problem-card").count(), 2);
+  assert.equal(await page.locator("#practice-progress").innerText(), "0 / 2");
+  const firstPractice = page.locator(".problem-card").first();
+  const practiceId = await firstPractice.getAttribute("data-item-id");
+  const answer = await page.evaluate((id) => GFIELDAMC12ConceptPractice.items.find((item) => item.id === id).answer, practiceId);
+  await firstPractice.locator(`[data-choice="${(answer + 1) % 5}"]`).click();
+  assert.match(await firstPractice.locator(".feedback").innerText(), /정답이 아니에요/);
+  await firstPractice.locator(`[data-choice="${answer}"]`).click();
+  assert.match(await firstPractice.locator(".feedback").innerText(), /맞았어요/);
+  await firstPractice.locator(".worked-solution summary").first().click();
+  assert.ok((await firstPractice.locator(".worked-solution").first().innerText()).length > 30);
   await page.goto(`${new URL("./amc12-practice.html", url)}?grade=10&sourceYear=2021&sourceForm=D`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#targeted-practice-description").innerText(), /2021 AMC 12 D 원본/);
   assert.equal(await page.locator("body").evaluate((node) => node.scrollWidth <= node.clientWidth), true);
@@ -359,16 +363,22 @@ test("AMC 8 yearly original review flows through a full mock into diagnosed GFIE
   assert.equal(followUpUrl.searchParams.get("sourceQuestions"), "4,7");
   assert.equal(followUpUrl.searchParams.get("mockWrongQuestions"), "5,16");
   await page.goto(new URL(followUp, url).href, { waitUntil: "networkidle" });
-  assert.equal(await page.locator(".problem-card").count(), 10);
-  assert.match(await page.locator("#topic-intro-copy").innerText(), /지필드 모의고사 5, 16번.*2023 AMC 8 원본 복습.*그래프·표 해석·수·비례·추정/);
-  assert.match(await page.locator("#topic-source-summary").innerText(), /2023 AMC 8.*지필드 모의고사 5, 16번/);
+  assert.equal(await page.locator(".problem-card").count(), 12);
+  assert.match(await page.locator("#topic-intro-copy").innerText(), /지필드 모의고사 오답·미응답: 문항 5, 16번.*2023 AMC 8 원본 복습.*그래프·표 해석·수·비례·추정/);
+  assert.match(await page.locator("#topic-source-summary").innerText(), /2023 AMC 8.*지필드 모의고사 다시 보기: 문항 5, 16번/);
   assert.equal(await page.locator("#topic-source-paper-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
   assert.equal(await page.locator("#topic-return-link").getAttribute("href"), "./competition-paper-review.html?grade=7&program=amc8&year=2023");
-  const firstTopicItem = page.locator('.problem-card[data-item-id="amc8-g7-v2-m01"]');
-  await firstTopicItem.locator('[data-choice="0"]').click();
+  const firstTopicItem = page.locator("#topic-items .problem-card").first();
+  const firstTopicId = await firstTopicItem.getAttribute("data-item-id");
+  const topicAnswer = await page.evaluate(function (id) {
+    const items = GFIELDGrade7UnitMock.items.concat(GFIELDAMC8ConceptPractice.items, GFIELDAMC8ConceptPracticeExtension.items);
+    return items.find(function (item) { return item.id === id; }).answer;
+  }, firstTopicId);
+  await firstTopicItem.locator('[data-choice="' + topicAnswer + '"]').click();
   assert.equal(await firstTopicItem.getAttribute("data-solved"), "true");
   await firstTopicItem.locator(".worked-solution summary").click();
-  assert.match(await firstTopicItem.locator(".worked-solution").innerText(), /1,000/);
+  assert.equal(await firstTopicItem.locator(".worked-solution").evaluate(function (node) { return node.open; }), true);
+  assert.ok((await firstTopicItem.locator(".worked-solution").innerText()).length > 40);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();
@@ -416,8 +426,8 @@ test("AMC 10 original review leads to a full mock and mock practice uses its ind
   assert.equal(next.searchParams.get("sourceQuestions"), "3,8");
   assert.equal(next.searchParams.get("mockWrongQuestions"), "3");
   await page.goto(new URL(nextStudy, url).href, { waitUntil: "networkidle" });
-  assert.equal(await page.locator(".problem-card").count(), 3);
-  assert.match(await page.locator("#targeted-practice-description").innerText(), /지필드 모의고사 3번.*2021 AMC 10 D 원본에서 표시한 3, 8번 문항 이후 기하 영역/);
+  assert.equal(await page.locator(".problem-card").count(), 1);
+  assert.match(await page.locator("#targeted-practice-description").innerText(), /지필드 모의고사 3번.*2021 AMC 10 D 원본에서 표시한 3, 8번 문항 이후 원본 풀이 개념.*연결된 GFIELD 창작 문항/);
   assert.equal(await page.locator("#targeted-practice-return").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10&year=2021&form=D");
   assert.equal(await page.locator("#targeted-source-paper").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D");
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
@@ -430,9 +440,11 @@ test("AMC 10 direct filtering keeps the 2021 D paper route and links back to its
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${url.replace("competition-paper-review.html", "amc10-practice.html")}?grade=9&domains=number,algebra&sourceYear=2021&sourceForm=D&sourceQuestions=3,8`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator(".problem-card").count(), 6);
-  assert.equal(await page.locator("#practice-count").innerText(), "6문항");
-  assert.equal(await page.locator("#practice-progress").innerText(), "0 / 6");
+  assert.equal(await page.locator(".problem-card").count(), await page.evaluate(function () {
+    return GFIELDAMC10ConceptPractice.items.filter(function (item) { return ["대수", "정수론"].includes(item.domain); }).length;
+  }));
+  assert.equal(await page.locator("#practice-count").innerText(), `${await page.locator(".problem-card").count()}문항`);
+  assert.equal(await page.locator("#practice-progress").innerText(), `0 / ${await page.locator(".problem-card").count()}`);
   assert.equal(await page.locator("#targeted-practice-note").isVisible(), true);
   assert.match(await page.locator("#targeted-practice-description").innerText(), /2021 AMC 10 D 원본에서 표시한 3, 8번 문항 이후 정수론·대수 영역/);
   assert.equal(await page.locator("#targeted-practice-return").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10&year=2021&form=D");
@@ -440,9 +452,9 @@ test("AMC 10 direct filtering keeps the 2021 D paper route and links back to its
   assert.equal(await page.locator("#targeted-source-paper").isVisible(), true);
   const firstNumberItem = page.locator('.problem-card[data-item-id="amc10-g7-number-01"]');
   await firstNumberItem.locator('[data-choice="3"]').click();
-  assert.equal(await page.locator("#practice-progress").innerText(), "1 / 6");
+  assert.equal(await page.locator("#practice-progress").innerText(), `1 / ${await page.locator(".problem-card").count()}`);
   await page.getByRole("button", { name: "선택 지우기" }).click();
-  assert.equal(await page.locator("#practice-progress").innerText(), "0 / 6");
+  assert.equal(await page.locator("#practice-progress").innerText(), `0 / ${await page.locator(".problem-card").count()}`);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();
@@ -459,15 +471,16 @@ test("users can save an answer-free AMC review summary without turning it into r
   assert.equal(await page.locator("#archive-year").inputValue(), "2026");
   await page.locator("#archive-year").selectOption("2023");
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
-  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*온라인 회차/);
+  assert.match(await page.locator("#archive-open-link").textContent(), /2023 AMC 8.*온라인 회차/);
   assert.equal(await page.locator("#review-paper-label").inputValue(), "2023 AMC 8");
-  assert.deepEqual(await page.locator('[data-question="1"][data-field="domain"] option').allTextContents(), ["영역 선택", "식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
+  assert.deepEqual(await page.locator('[data-question="1"][data-field="domain"] option').allTextContents(), ["영역 선택", "식과 대수 관계", "수와 정수의 성질", "기하 도형과 측정", "경우의 수와 확률", "자료와 통계", "함수와 그래프"]);
   await page.locator("#review-exam-date").fill("2026-10-29");
   await page.locator("#review-paper-label").fill("Practice A");
   await page.locator('[data-question="1"][data-field="answer"]').selectOption("C");
   assert.match(await page.locator("#mark-progress").innerText(), /답 입력 1문제/);
-  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="2"][data-field="domain"]').selectOption("geometry");
   await page.locator('[data-question="2"][data-field="reason"]').selectOption("reading");
@@ -482,11 +495,11 @@ test("users can save an answer-free AMC review summary without turning it into r
   assert.equal(await page.locator("#save-diagnostic").isDisabled(), true);
   assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
   const savedDomains = page.locator(".saved-diagnostic-entry-domains > div");
-  assert.equal(await savedDomains.count(), 5);
-  assert.match(await page.locator(".saved-diagnostic-entry-domains").innerText(), /그래프·표 해석/);
+  assert.equal(await savedDomains.count(), 6);
+  assert.match(await page.locator(".saved-diagnostic-entry-domains").innerText(), /함수와 그래프/);
   await page.setViewportSize({ width: 1440, height: 1000 });
   const desktopDomainRows = await savedDomains.evaluateAll((nodes) => nodes.map((node) => { const rect = node.getBoundingClientRect(); return { y: rect.y, width: rect.width }; }));
-  assert.ok(Math.max(...desktopDomainRows.map((entry) => entry.y)) - Math.min(...desktopDomainRows.map((entry) => entry.y)) < 2 && desktopDomainRows.every((entry) => entry.width >= 150), `all five saved areas share a readable desktop row: ${JSON.stringify(desktopDomainRows)}`);
+  assert.ok(Math.max(...desktopDomainRows.map((entry) => entry.y)) - Math.min(...desktopDomainRows.map((entry) => entry.y)) < 2 && desktopDomainRows.every((entry) => entry.width >= 150), `all six saved areas share a readable desktop row: ${JSON.stringify(desktopDomainRows)}`);
   await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(await page.locator("#saved-diagnostic-list").getAttribute("aria-live"), null);
   assert.match(await page.locator(".saved-diagnostic-entry").innerText(), /일부 입력 3\/25/);
@@ -504,14 +517,15 @@ test("users can save an answer-free AMC review summary without turning it into r
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   const raw = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
   assert.doesNotMatch(raw, /responses|answer|correct-answer/);
-  assert.doesNotMatch(raw, /skipped|could-not-start|시간 부족/);
+  assert.deepEqual(JSON.parse(raw).records[0].blankReasons, [{ id: "skipped", count: 1 }]);
   await page.locator("#review-exam-date").fill("2026-10-30");
   await page.locator("#review-paper-label").fill(`Practice B-${"X".repeat(69)}`);
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
-  await page.locator('[data-question="2"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="2"][data-field="domain"]').selectOption("algebra");
+  await page.locator('[data-question="2"][data-field="status"]').selectOption("correct");
   await page.locator('[data-question="3"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="3"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="3"][data-field="reason"]').selectOption("calculation");
@@ -552,8 +566,9 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.equal(await page.locator("#mark-progress").innerText(), "0 / 25문제 채점 확인 · 답 입력 0문제");
   assert.deepEqual(await page.locator('[data-question="1"][data-field="answer"] option').allTextContents(), ["미입력", "A", "B", "C", "D", "E"]);
   assert.equal(await page.locator('[data-field="status"]').first().inputValue(), "unmarked");
-  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="2"][data-field="answer"]').selectOption("D");
   await page.locator('[data-question="2"][data-field="domain"]').selectOption("algebra");
@@ -565,7 +580,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.match(await page.locator("#report-intro").innerText(), /22문제는 표시하지 않았습니다/);
   assert.match(await page.locator("#score-estimate-note").innerText(), /원본 점수는 모든 문항을 표시한 뒤 계산해요/);
   assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
-  assert.match(await page.locator("#report-domains h3").innerText(), /직접 분류한 영역 · 2\/25문항/);
+  assert.match(await page.locator("#report-domains h3").innerText(), /풀이 영역 · 3\/25문항/);
   assert.match(await page.locator("#report-reasons h3").first().innerText(), /1\/1개 분류/);
   assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=7&program=amc8#grade-map");
   assert.equal(await page.locator("#report-roadmap-link").innerText(), "선택한 Grade 7 학습 경로 보기 →");
@@ -621,8 +636,9 @@ test("AIME review opens year/form archive, captures integer answers, and stays s
   await page.locator("#review-paper-label").fill("2026 AIME II");
   await page.locator("#review-exam-date").fill("2026-11-03");
   for (let question = 1; question <= 15; question += 1) {
-    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("wrong");
     await page.locator(`[data-question="${question}"][data-field="domain"]`).selectOption("algebra");
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
   }
   await page.locator('[data-question="1"][data-field="answer"]').fill("999");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
@@ -640,18 +656,19 @@ test("AIME review opens year/form archive, captures integer answers, and stays s
   assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
   const saved = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
   assert.match(saved, /\"programId\":\"aime\"/);
-  assert.doesNotMatch(saved, /responses|questionNumber|answerKey|999|sourceQuestions/);
+  assert.doesNotMatch(saved, /responses|questionNumber|answerKey|"999"|:\s*999[,}\]]|sourceQuestions/);
   const followUpHref = await page.locator("#report-follow-up-link").getAttribute("href");
   await page.goto(new URL(followUpHref, url).href, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#source-paper-context").isVisible(), true);
   assert.equal(await page.locator("#source-paper-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/aime/2026II");
-  assert.equal(await page.locator(".problem-card").count(), 7);
-  assert.equal(await page.locator("#practice-count").innerText(), "7문항");
+  assert.equal(await page.locator(".problem-card").count(), 8);
+  assert.equal(await page.locator("#practice-count").innerText(), "8문항");
   await page.goto(`${url}?grade=9&program=aime`, { waitUntil: "networkidle" });
   await page.locator("#review-paper-label").fill("2026 개인 연습 세트");
   await page.locator("#review-exam-date").fill("2026-11-03");
-  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.getByRole("button", { name: "결과 보기" }).click();
   await page.locator("#save-diagnostic").click();
   await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=8&program=aime#competition-diagnostic`, { waitUntil: "networkidle" });
@@ -716,9 +733,9 @@ test("paper review links a low-evidence area comparison to the specific wrong qu
     await page.locator(`[data-question="${question}"][data-field="domain"]`).selectOption(domain);
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.match(await page.locator("#report-next").innerText(), /표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 수·비례·추정 0\/3입니다/);
+  assert.match(await page.locator("#report-next").innerText(), /표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 수와 정수의 성질 0\/3입니다/);
   const reviewItems = page.locator("#report-review-items-list");
-  assert.match(await reviewItems.innerText(), /1번 · 오답 · 답 미입력 · 수·비례·추정[\s\S]*3번 · 오답 · 답 미입력 · 수·비례·추정/);
+  assert.match(await reviewItems.innerText(), /1번 · 오답 · 답 미입력.*수와 정수의 성질[\s\S]*3번 · 오답 · 답 미입력.*수와 정수의 성질/);
   assert.equal(await reviewItems.locator("li").count(), 3);
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await reviewItems.locator("li").count(), 3, "repeated submit replaces the result list instead of duplicating it");
@@ -727,7 +744,7 @@ test("paper review links a low-evidence area comparison to the specific wrong qu
 
 test("complete AMC 10 marks show the raw-score estimate without a qualification claim", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url}?grade=9&program=amc10`, { waitUntil: "networkidle" });
+  await page.goto(`${url}?grade=9&program=amc10&year=2025&form=A`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#official-paper-sources").isVisible(), true);
   assert.equal(await page.locator("#review-paper-label").inputValue(), "2025 AMC 10 A");
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2025A");
@@ -757,8 +774,8 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   assert.equal(await page.locator("#report-roadmap-link").getAttribute("aria-describedby"), "report-roadmap-note");
   assert.equal(await page.locator("#score-estimate-note").isHidden(), true);
   assert.match(await page.locator("#score-estimate").innerText(), /공식 성적과 응시 자격/);
-  assert.equal(await page.locator("#score-estimate a").getAttribute("href"), "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf");
-  assert.equal(await page.locator("#score-estimate a").innerText(), "MAA 2026–27 공식 채점 안내 ↗");
+  assert.equal(await page.locator("#score-estimate a:not([hidden])").getAttribute("href"), "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf");
+  assert.equal(await page.locator("#score-estimate a:not([hidden])").innerText(), "MAA 2026–27 공식 채점 안내 ↗");
   assert.match(await page.locator("#score-estimate").innerText(), /해당 연도·지역의 MAA 안내/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
   await page.locator("#review-grade").selectOption("8");
@@ -843,7 +860,7 @@ test("deleting the last saved contest summary without an open result returns foc
 
 test("contest review opens the selected grade map from its result link", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url}?grade=9&program=amc10`, { waitUntil: "networkidle" });
+  await page.goto(`${url}?grade=9&program=amc10&year=2025&form=A`, { waitUntil: "networkidle" });
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.getByRole("button", { name: "결과 보기" }).click();
   await page.locator("#report-roadmap-link").click();
@@ -860,11 +877,11 @@ test("contest review opens the selected grade map from its result link", async f
 
 test("browser back restores the selected grade and competition", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7&program=amc8#grade-map`, { waitUntil: "networkidle" });
   await page.locator("#next-grade").click();
-  await page.waitForURL(/boarding-roadmap\.html\?grade=8$/);
+  await page.waitForURL(/boarding-roadmap\.html\?grade=8#grade-map$/);
   await page.goBack();
-  await page.waitForURL(/boarding-roadmap\.html\?grade=7&program=amc8$/);
+  await page.waitForURL(/boarding-roadmap\.html\?grade=7&program=amc8#grade-map$/);
   assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=7&program=amc8");
   assert.match(await page.locator("#grade-map-title").innerText(), /7학년 수학/);
   await page.close();
@@ -1046,7 +1063,7 @@ test("blank response reason is captured separately and never shown as an answer 
   await row.locator('[data-field="domain"]').selectOption("number");
   await row.locator('[data-field="reason"]').selectOption("skipped");
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 답 미입력 · 수·비례·추정 · 건너뜀/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 답 미입력[\s\S]*수와 정수의 성질 · 건너뜀/);
   assert.match(await page.locator("#report-reasons").innerText(), /미응답 이유 · 1\/1개 공란 분류/);
   assert.match(await page.locator("#report-reasons").innerText(), /건너뜀 · 1문항/);
   assert.doesNotMatch(await page.locator("#report-reasons").innerText(), /오답 이유/);

@@ -180,13 +180,13 @@ test("AMC 12 scores respect the selected historical paper format", function () {
   ahsme1975[0] = entry("correct");
   ahsme1975[1] = entry("wrong");
   assert.deepEqual(analyze(ahsme1975, 30, "amc12", paperLibrary.formatFor("amc12", 1975)).scoreEstimate,
-    { points: 4, max: 150, label: "AHSME 원본 점수" });
+    { points: 4, max: 150, label: "AHSME 원본 점수", adjustmentNote: "", adjustmentSourceUrl: "" });
 
   const ahsme1977 = Array.from({ length: 30 }, function () { return entry("blank"); });
   ahsme1977[0] = entry("correct");
   ahsme1977[1] = entry("wrong");
   assert.deepEqual(analyze(ahsme1977, 30, "amc12", paperLibrary.formatFor("amc12", 1977)).scoreEstimate,
-    { points: 33, max: 150, label: "AHSME 원본 점수" });
+    { points: 33, max: 150, label: "AHSME 원본 점수", adjustmentNote: "", adjustmentSourceUrl: "" });
 });
 
 test("rejects mismatched paper size and unknown marks", function () {

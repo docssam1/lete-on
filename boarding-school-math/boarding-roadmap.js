@@ -399,7 +399,7 @@
         }
         const remove = document.createElement("button"); remove.type = "button"; remove.className = "journey-mock-remove"; remove.textContent = "이 기기의 모의고사 기록 지우기";
         remove.addEventListener("click", function () {
-          if (!window.confirm("이 기기에 저장된 지필드 모의고사 기록을 모두 지울까요?")) return;
+          if (!window.confirm(window.GFIELDContentI18n.text("이 기기에 저장된 지필드 모의고사 기록을 모두 지울까요?"))) return;
           localRecords.storage.clearGfieldMockResultHistory();
           renderOwnPracticeEntry();
         });
