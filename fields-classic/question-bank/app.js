@@ -82,6 +82,7 @@ const inDeck = oneUp && params.get("deck") === "1";
 if (inDeck) document.body.classList.add("as-deck");
 // 오답 유사문제 화면 안의 미리보기 창(similar.js, &preview=1): 시험지 종이만 보이게 — 머리줄·인쇄 양식·문제마다 편집 단추를 감춘다
 if (params.get("preview") === "1" && parent !== window) document.body.classList.add("bank-preview");
+if (params.get("side") === "1" && parent !== window) document.body.classList.add("bank-side");   // 오답 유사문제 오른쪽 시험지: 문제마다 ↻(같은 유형 새 문제)만 남긴다
 if (params.get("peek") === "1" && parent !== window) document.body.classList.add("bank-peek");   // 번호 아래 한 문제 미리 보기: 시험지 머리도 감춘다
 if (inDeck) window.addEventListener("message", (event) => {
   if (event.origin !== location.origin || event.source !== parent || event.data?.type !== "fc-study" || event.data.cmd !== "oneup") return;
@@ -1218,6 +1219,7 @@ function regenerateQuestions() {
 // ── 단계 화면: 1 범위 선택 · 2 상세 편집 · 3 인쇄 설정 ──
 let coverFresh = false;
 function setStepView(step) {
+  document.documentElement.classList.remove("bank-booting");
   $("builderPanel").hidden = step !== 1;
   $("editorSection").hidden = step !== 2;
   $("worksheetSection").hidden = step !== 3;
@@ -4090,3 +4092,5 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
     if (printNow) document.fonts.ready.then(() => setTimeout(() => window.print(), 400));
   }
 })();
+// 문제를 못 만들었으면(고른 것이 없거나 준비 안 된 유형) 감춘 화면을 바로 걷는다 — 주소 처리(setTimeout 0 포함)가 끝난 뒤
+setTimeout(() => document.documentElement.classList.remove("bank-booting"), 60);

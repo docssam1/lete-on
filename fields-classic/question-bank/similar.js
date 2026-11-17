@@ -96,8 +96,38 @@ function renderDock() {
   const back = `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit), ...(book.course ? { course: String(book.course) } : {}) })}`;
   make.href = size ? link("index.html", { ...base, paper: "1", form: "exam", cols: "2" }) : "./index.html";
   $("solveLink").href = size ? link("index.html", { ...base, as: "student", lead: "1", back }) : "./index.html";
+  if (wide.matches) {
+    $("previewBtn").hidden = true;
+    make.textContent = size ? `시험지 인쇄 · ${total}문제` : "시험지 인쇄";
+    refreshPaper();
+  }
   if (!$("previewPanel").hidden) refreshPreview();
 }
+// 넓은 화면(1100px 이상): 오른쪽 시험지 칸 — 번호·문제 수·난이도를 바꾸면 다시 만들고, 문제마다 ↻로 그 문제만 바꾼다(index.html &side=1).
+// 「시험지 인쇄」·「답안 보기」·「모두 새 문제」는 이 칸 안의 시험지 단추를 누른다 — 보이는 그대로 인쇄된다.
+const wide = window.matchMedia("(min-width: 1100px)");
+let paperTimer = 0, paperSrc = "";
+const paperDoc = () => { try { const doc = $("paperFrame").contentDocument; return doc?.getElementById("worksheetSection") && !doc.getElementById("worksheetSection").hidden ? doc : null; } catch { return null; } };
+function refreshPaper() {
+  clearTimeout(paperTimer);
+  paperTimer = setTimeout(() => {
+    const size = view.picked.size;
+    $("paperEmpty").hidden = Boolean(size);
+    $("paperFrame").hidden = !size;
+    ["paperRenew", "paperAnswers"].forEach((id) => { $(id).disabled = !size; });
+    $("paperOpen").setAttribute("aria-disabled", String(!size));
+    $("paperMeta").textContent = size ? `번호 ${size}개 · ${size * opts.each}문제 · ${{ basic: "더 쉽게", actual: "본책과 같게", advanced: "더 어렵게" }[opts.level]}` : "번호를 고르면 만들어져요";
+    if (!size) { paperSrc = ""; $("paperFrame").removeAttribute("src"); return; }
+    const { total, ...base } = pickParams();
+    const src = link("index.html", { ...base, paper: "1", form: "exam", cols: "2", preview: "1", side: "1" });
+    $("paperOpen").href = link("index.html", { ...base, paper: "1", form: "exam", cols: "2" });
+    if (src !== paperSrc) { paperSrc = src; $("paperFrame").src = src; }
+  }, 300);
+}
+$("paperRenew").addEventListener("click", () => paperDoc()?.getElementById("regenerateButton")?.click());
+$("paperAnswers").addEventListener("click", () => paperDoc()?.getElementById("answerButton")?.click());
+$("paperOpen").addEventListener("click", (event) => { if (!view.picked.size) event.preventDefault(); });
+wide.addEventListener("change", () => { closePeek(true); renderDock(); });
 let previewTimer = 0;
 function refreshPreview() {
   clearTimeout(previewTimer);
@@ -158,6 +188,7 @@ $("numberList").addEventListener("click", (event) => {
   button.setAttribute("aria-pressed", String(view.picked.has(key)));
   renderDock();
   // 번호를 고르면 그 번호 줄 아래가 미끄러져 열리며 같은 유형 문제를 보여 준다(원장 2026-11-17 「문항 번호를 클릭하면 아래 그 유형 문제가 보이게 · 창이 슬라이드 되면서」)
+  if (wide.matches) return;   // 넓은 화면은 오른쪽 시험지에 바로 들어간다
   if (view.picked.has(key)) openPeek(button);
   else if (peek.key === key) closePeek();
 });
@@ -225,7 +256,12 @@ function openPeek(button) {
   if (top > window.scrollY + 40) setTimeout(() => window.scrollTo({ top, behavior: reduceMotion() ? "auto" : "smooth" }), 120);
 }
 $("clearPicks").addEventListener("click", () => { view.picked.clear(); renderNumbers(); renderDock(); });
-$("makeLink").addEventListener("click", (event) => { if (!view.picked.size) event.preventDefault(); });
+$("makeLink").addEventListener("click", (event) => {
+  if (!view.picked.size) { event.preventDefault(); return; }
+  // 넓은 화면은 오른쪽에 보이는 시험지를 그대로 인쇄(↻로 바꾼 문제 그대로)
+  const doc = wide.matches ? paperDoc() : null;
+  if (doc) { event.preventDefault(); doc.getElementById("printButton")?.click(); }
+});
 
 $("studentName").textContent = student;
 $("introLink").href = link("home.html", {});
@@ -239,3 +275,5 @@ if (loggedIn()) await checkSession();
 }
 wireAccess(document.body);
 show();
+// 오른쪽 시험지 칸 높이 = 화면 − 아래 줄 높이(아래 줄이 두 줄·세 줄로 바뀌어도 가리지 않게)
+try { new ResizeObserver(() => document.documentElement.style.setProperty("--dock-h", `${$("dock").offsetHeight}px`)).observe($("dock")); } catch {}
