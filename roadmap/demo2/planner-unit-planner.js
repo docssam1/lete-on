@@ -238,7 +238,7 @@
     const item = model.rows.find(row=>row.id===input?.id);
     const book = model.manualBooks.find(row=>row.id===input?.bookId);
     const manual = event.type==='planner-unit-range';
-    if (manual ? !book || typeof input.range!=='string' : !item || !['studied','solo'].includes(input?.field) || typeof input?.value!=='boolean') return;
+    if (manual ? !book || typeof input.range!=='string' : !item || !['studied','solo','completed'].includes(input?.field) || typeof input?.value!=='boolean') return;
     const persist = () => {
       if (checks.weekStart(g.PlannerWeeklyModel.today(),program?.startDate)!==model.weekStart) {
         draw('새 주가 시작됐어요. 이번 주 목록을 확인해 주세요.');
