@@ -19,6 +19,12 @@
   const requestEpoch=epoch;
   const run=(async()=>{
    try{
+    if(root.GFieldHFReportAccess?.active()){
+     const report=await root.GFieldHFReportAccess.ready();
+     if(!report||requestEpoch!==epoch)throw Error('report_access_denied');
+     verified={studentId:report.userId,name:report.name,keys:new Set(),base:new Set(['hyperfocus']),validUntil:Math.min(Date.now()+60000,Date.parse(report.expiresAt))};
+     schedule();notify('verified');return status();
+    }
     if(root.GFieldHFSupabase?.enabled()!==true)throw Error('server_disabled');
     const client=await root.GFieldHFSupabase.ready();if(!client)throw Error('server_missing');
     if(!listener&&client.auth?.onAuthStateChange){listener=true;client.auth.onAuthStateChange((event,session)=>{if(event==='TOKEN_REFRESHED')Promise.resolve().then(()=>refresh());else if(['SIGNED_OUT','USER_UPDATED'].includes(event))clear('session-changed');else if(event==='SIGNED_IN'&&verified&&verified.studentId!==session?.user?.id)clear('session-changed');});}
