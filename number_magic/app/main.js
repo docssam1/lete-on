@@ -6451,7 +6451,7 @@ function screenMailbox(){
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
         <div class="nm-card-h">🔒 ${lk('가입·이용기간을 확인해 주세요','Check registration and membership','请确认注册和使用期限')}</div>
-        <p class="nm-wsh-sentence">${lk('가입 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월·1년 이용을 승인해요.','Registration includes a 30-day trial. Your academy can then approve 6 months or 1 year.','注册后可体验30天，之后可由学院开通6个月或1年。')}</p>
+        <p class="nm-wsh-sentence">${lk('지금은 무료 베타 서비스예요. 보호자 이메일로 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 써요.','Free beta service. Sign up with a parent email to register, save progress and get weekly text messages free for 1 month from sign-up.','目前为免费公测服务。用家长邮箱注册后，自注册日起1个月内可免费登记信息、保存学习记录并接收每周短信。')}</p>
         <button class="nm-btn full" id="mbGate">${lk('가입·이용 상태 보기','View registration and membership','查看注册及使用状态')}</button>
       </div>
     </div>`;
@@ -8760,17 +8760,17 @@ function renderAccountCard(){
   if(!slot)return;
   if(membership&&!guardianAuth?.peek()&&(PREVIEW_MODE||S.guardianManaged||S.account?.status!=='active')){
     const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
-    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이메일 가입 · 이용권','Email registration · Membership','邮箱注册 · 使用权')}</div><p>${lk('위에서 이메일로 로그인해 주세요. 처음 가입하면 30일 체험하고, 이후에는 6개월·1년 이용권을 학원에서 승인해 드려요.','Sign in above with your email. New registration includes a 30-day trial; your academy then approves a 6-month or 1-year plan.','请在上方使用邮箱登录。首次注册可体验30天，之后由学院开通6个月或1年使用权。')}</p></div>`;
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이메일 가입 · 이용권','Email registration · Membership','邮箱注册 · 使用权')}</div><p>${lk('위에서 이메일로 로그인해 주세요. 지금은 무료 베타 서비스라, 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 써요.','Sign in above with your email. During the free beta, sign-up gives you registration, saved progress and weekly text messages free for 1 month from sign-up.','请在上方使用邮箱登录。免费公测期间，注册后自注册日起1个月内可免费登记信息、保存学习记录并接收每周短信。')}</p></div>`;
     return;
   }
   const ko=S.lang==='ko', en=S.lang==='en';
   if(membership&&guardianAuth?.peek()){
     const state=membership.snapshot(),m=state.membership;
     const lk=(a,b,c)=>ko?a:en?b:c;
-    const label=!m?lk('가입 정보 확인','Checking registration','确认注册信息'):m.status==='trial'?lk('30일 무료 체험','30-day free trial','30天免费体验'):m.status==='paid'?(m.plan==='six_month'?lk('6개월 이용권','6-month plan','6个月使用权'):lk('1년 이용권','1-year plan','1年使用权')):m.status==='revoked'?lk('이용권 해지','Plan revoked','使用权已撤销'):lk('이용 기간 만료','Access period ended','使用期已结束');
+    const label=!m?lk('가입 정보 확인','Checking registration','确认注册信息'):m.status==='trial'?lk('무료 베타 · 1개월','Free beta · 1 month','免费公测 · 1个月'):m.status==='paid'?(m.plan==='six_month'?lk('6개월 이용권','6-month plan','6个月使用权'):lk('1년 이용권','1-year plan','1年使用权')):m.status==='revoked'?lk('이용권 해지','Plan revoked','使用权已撤销'):lk('이용 기간 만료','Access period ended','使用期已结束');
     const end=m&&(m.status==='trial'?m.trialEndsAt:m.endsAt);
     const until=end?new Date(end).toLocaleString(ko?'ko-KR':en?'en-US':'zh-CN',{timeZone:'Asia/Seoul'}):'';
-    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${esc(label)}</div>${until?`<p>${lk('이용 기한','Valid until','有效期至')}: ${esc(until)} (KST)</p>`:''}<p>${lk('정식 이용권은 6개월·1년 중 학원에서 승인해 드려요. 학습 기록은 이용 기간이 끝나도 보존돼요.','Your academy approves a 6-month or 1-year plan. Study records are kept after access ends.','学院可开通6个月或1年使用权。使用期结束后仍保留学习记录。')}</p><button class="nm-btn ghost" id="nmMemberRefresh">${lk('이용권 다시 확인','Refresh membership','刷新使用权')}</button></div>`;
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${esc(label)}</div>${until?`<p>${lk('이용 기한','Valid until','有效期至')}: ${esc(until)} (KST)</p>`:''}<p>${lk('지금은 무료 베타 서비스예요. 가입일부터 1개월 동안 학습 기록 저장과 매주 문자 안내가 무료예요. 학습 기록은 기간이 끝나도 보존돼요.','Free beta service: saved progress and weekly text messages are free for 1 month from sign-up. Study records are kept after that.','目前为免费公测服务：自注册日起1个月内免费保存学习记录并接收每周短信。期满后仍保留学习记录。')}</p><button class="nm-btn ghost" id="nmMemberRefresh">${lk('이용권 다시 확인','Refresh membership','刷新使用权')}</button></div>`;
     $('#nmMemberRefresh').onclick=()=>membership.refresh(true);return;
   }
   const acc=S.account||{status:'trial'};
@@ -8929,7 +8929,7 @@ function renderGuardianCard(){
     return;
   }
   slot.innerHTML=`<div class="nm-idcard nm-guard-card"><div class="nm-idcard-t">${lk('보호자 이메일로 기록 연결','Connect records with a guardian email','用监护人邮箱关联记录')}</div>
-    <p>${lk('학생마다 이메일을 따로 사용해요. 형제는 보호자 전화번호가 같아도 돼요. 가입 후 30일 동안 체험할 수 있어요.','Use a separate email for each learner. Siblings may share a guardian phone. Registration includes a 30-day trial.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。注册后可体验30天。')}</p>
+    <p>${lk('학생마다 이메일을 따로 사용해요. 형제는 보호자 전화번호가 같아도 돼요. 지금은 무료 베타 서비스라 가입일부터 1개월 동안 학습 기록 저장·매주 문자 안내가 무료예요.','Use a separate email for each learner. Siblings may share a guardian phone. During the free beta, saved progress and weekly text messages are free for 1 month from sign-up.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。免费公测期间，自注册日起1个月内免费保存学习记录并接收每周短信。')}</p>
     <div class="nm-guard-field"><label for="nmGuardEmail">${lk('보호자 이메일','Guardian email','监护人邮箱')}</label>
     <input id="nmGuardEmail" type="email" autocomplete="email" placeholder="name@example.com"></div>
     <section class="nm-guard-sec" aria-labelledby="nmGuardLoginTitle"><h4 id="nmGuardLoginTitle">${lk('비밀번호가 있어요','I already have a password','我已有密码')}</h4>
@@ -9099,7 +9099,7 @@ function screenExam(){
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
         <div class="nm-card-h">🔒 ${ko?'가입·이용기간을 확인해 주세요':en?'Check registration and membership':'请确认注册和使用期限'}</div>
-        <p class="nm-wsh-sentence">${ko?'이메일 인증 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월 또는 1년 이용을 승인해요.':en?'Verify your email for a 30-day trial. Your academy can then approve 6 months or 1 year.':'验证邮箱后可体验30天，之后可由学院批准6个月或1年的使用期。'}</p>
+        <p class="nm-wsh-sentence">${ko?'지금은 무료 베타 서비스예요. 이메일 인증으로 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 써요.':en?'Free beta service. Verify your email to sign up — registration, saved progress and weekly text messages are free for 1 month from sign-up.':'目前为免费公测服务。验证邮箱注册后，自注册日起1个月内可免费登记信息、保存学习记录并接收每周短信。'}</p>
         <button class="nm-btn full" id="examGate">${ko?'가입·이용 상태 보기':en?'View registration and membership':'查看注册及使用状态'}</button>
       </div>
     </div>`;
