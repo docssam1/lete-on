@@ -39,10 +39,8 @@ const server = http.createServer((req, res) => {
   const scan = await page.evaluate(() => {
     const neg = v => Array.isArray(v) ? v.some(neg) : typeof v === 'number' && v < 0;
     const canNeg = q => neg(q.answer) || (Array.isArray(q.steps) && q.steps.some(s => neg(s.blank)));
-    /* 알고 있는 예외(2026-11-17) — 초등 단계 풀이에 음수 단계가 섞이는 내용 오류. 빼기 키 문제가 아니라(단계 위젯은 그 단계 답이
-       음수면 키를 낸다) 문제를 고쳐야 할 일이라 따로 둔다: AD2 L2 「7 + 2 + 6」을 「7 + 3 + −1 + 6」으로, CH7 L1 「17²」을 50 기준
-       「25 − 33 = −8」로 풀게 한다. 생성기를 고치면 여기서 지운다. */
-    const KNOWN = new Set(['AD2@2', 'CH7@1']);
+    /* 예외 없음 — AD2 L2·CH7 L1 의 음수 단계는 2026-11-17 생성기에서 고쳤다(초등 풀이에 음수가 나오면 여기서 실패). */
+    const KNOWN = new Set();
     const bad = [], gensWithNeg = new Set();
     let levels = 0, negLevels = 0;
     for(const id of Object.keys(NM_THREADS)) for(const lv of NM_THREADS[id].levels || []){

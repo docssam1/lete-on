@@ -462,8 +462,11 @@ NM_TGEN['adv_nearSquare'] = function (params, rng) {
      조합이라 한 장 중복률이 35%대였다(연산문제-감사.md와 같은 원인) — "근처"라는
      취지를 지키는 선에서 폭을 넓혔다(anchor별로 상대폭이 비슷하게 유지되도록). */
   const aMax = A === 50 ? 33 : A === 100 ? 40 : 42;
+  /* 50 기준은 아래쪽을 26까지만(2026-11-17, 원장 「17 제곱 풀이 중간에는 −8이 나와 … 초등학생 풀이에서」) —
+     앞자리 25 − 차가 0 아래로 가면 음수가 나온다. 100·1000 기준은 앞자리가 늘 양수라 그대로. */
+  const aMin = A === 50 ? -24 : -aMax;
   let a;
-  do { a = R(rng, -aMax, aMax); } while (a === 0);
+  do { a = R(rng, aMin, aMax); } while (a === 0);
   const x = A + a;
   const base = (A * A) / P;
   const mult = (2 * A) / P;
@@ -481,12 +484,12 @@ NM_TGEN['adv_nearSquare'] = function (params, rng) {
     answer, answerType: 'steps', widget: 'steps',
     steps: [
       { tex: `${base} ${a >= 0 ? '+' : '-'} ${mult} \\times ${Math.abs(a)} = \\square`, blank: front },
-      { tex: `${par(a)}^2 = \\square`, blank: aSq },
+      { tex: `${Math.abs(a)}^2 = \\square`, blank: aSq },   /* 떨어진 만큼(양수)의 제곱 — (−5)² 꼴로 쓰지 않는다 */
       { tex: `${front} \\times ${P} + ${aSq} = \\square`, blank: answer }
     ],
     solution: [
       { tex: `${base} ${a >= 0 ? '+' : '-'} ${mult} \\times ${Math.abs(a)} = \\square`, blank: front },
-      { tex: `${par(a)}^2 = \\square`, blank: aSq },
+      { tex: `${Math.abs(a)}^2 = \\square`, blank: aSq },
       { tex: `${front} \\times ${P} + ${aSq} = \\square`, blank: answer }
     ]
   };
