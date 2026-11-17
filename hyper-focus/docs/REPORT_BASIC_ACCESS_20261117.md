@@ -1,4 +1,4 @@
-# 황소 리포트 → 기본 하이퍼포커스 연결 (로컬 검수안, 미배포)
+# 황소 리포트 → 기본 하이퍼포커스 연결 (검증 및 배포 현황)
 
 ## 사용자 요구와 이전 동작
 - 황소 리포트 자료실 승인 학생이 기본 하이퍼포커스를 별도 승인번호 없이 이용.
@@ -24,23 +24,17 @@
 - 기존 기록이 자동 합쳐지거나 기기 간 동기화되지는 않는다. 이름만으로 병합하지 않는다.
 - 구식 비밀번호 로그인만 사용하여 등록 기기/학부모 인증이 없는 학생은 자료실 인증을 먼저 마쳐야 한다.
 
-## 검증 상태
-- main handoff/session/router 보안 단위테스트 35개 통과.
-- HF 독립 VM/정적 회귀 10개 통과: 토큰회전, fragment 제거, paid scope 거절, 실패시 다른 학생 fallback 차단, clear race, 이름만 진입 거절, 별도 기록 키, 검수대기 게이트 보존 및 paid 범위 차단.
-- 기존 Supabase foundation 테스트 통과. HTML inline JS, JS syntax, git diff-check 통과.
-- 기존 secure-mock-ui 테스트 1개는 미변경 HEAD에서도 동일하게 실패(`viewer: secure-mock.js 연결 누락`), 현재 동적 loader와 오래된 정적 assertion의 불일치.
-- 실제 Chromium 실행은 환경의 socket() Operation not permitted로 일반/승격 둘 다 불가. 브라우저 렌더·실학생 end-to-end·실DB SQL 적용 검증은 **미완료**.
-- 아직 DB 적용/Edge 배포/커밋/푸시 없음. git push 사전확인은 GitHub 인증 미존재로 실패.
+## 검증 및 배포 현황
+- v2 Mac 실제 Chrome 포함 HF 11/11, main handoff/session/router 35/35 통과.
+- 기존 hs-auth-session, graduated-parent-auth 7개 시나리오, PGlite 실제 로컬 SQL + Edge PIN 회귀검사 통과.
+- 격리 mock 양성 검사: 자동 진단, UUID 로컬 기록, 기존 기록 보존, 정답 해설 54개 인쇄 준비, 모바일, 유사문항 검수대기, 모의고사 차단 확인.
+- main SQL additive 적용 완료. handoff 행 0, RLS 및 서비스 역할 전용 권한 확인, 기존 학생 데이터 변경 0.
+- 기존 hs-parent-auth v9 원본 비교와 롤백 사본 확보 후 v10 배포 완료. verify_jwt:false이며 issue는 내부 JWT 검증, consume/resume은 opaque credential 검증.
+- live 음성/부정입력·CORS smoke 9/9 통과. HF 프로젝트 DB/Auth/Edge 신규 변경 없음.
+- 실제 학생의 양성 end-to-end는 미실시. 실제 사용자 세션과 권한을 변경하지 않았으며 격리된 mock 검증을 실제 계정 성공으로 주장하지 않는다.
+- 교재 PDF 전체 생성은 별도 실사용 확인 대상이며 정답 해설 인쇄 준비와 함수 연결을 검증했다.
+- 유사문항 검수대기는 유지한다. 모의고사와 유료 추가 권한을 확대하지 않는다.
+- lete-on 프런트엔드 코드 main 반영: 018d99a30. 자료실 프런트엔드는 그 뒤에 게시하고 공개 자산을 재검증한다.
 
-## 배포 전 게이트
-1. 브라우저 실행 가능한 환경에서 로컬 API mock으로 진단/해설/인쇄/유사문항 검수대기/모의 차단/이탈·재시도 검증.
-2. 별도 테스트 계정으로 실제 main 세션·기기·권한 검사 및 one-use/만료/권한회수 검증 (실학생 권한 변경 금지).
-3. main SQL 서비스 역할 전용 실행권한 확인 후 Edge 배포; 기존 데이터 불변 확인.
-4. 양쪽 저장소 최신 main 대비 diff 확인/승인된 push 경로 확보.
-5. HF static 먼저, report static 나중 배포하여 초기 실패시 기존 GF 로그인은 유지.
-6. 실배포 주소 재검증 전 완료라고 보고하지 않는다.
-
-## 배포 준비 갱신
-- Mac 실제 Chrome에서 v1 11/11, 자료실 33/33 통과. 엔드포인트 재사용 v2는 재검수 예정.
-- main handoff 테이블/RPC additive 적용 완료, 행0, RLS와 서비스전용권한 확인. 기존학생데이터 변경0.
-- 별도 Edge 생성은 Supabase 함수 개수 제한으로 거절. 요금제/지출한도 변경 없이 기존 hs-parent-auth에 명시 scope 분기 2줄만 추가하는 안으로 전환. 원본 v9 롤백 사본 확보.
+## 남은 실사용 확인 경계
+승인된 실제 사용자 브라우저에서 자료실 카드부터 양성 연결을 확인할 수 있다. 테스트를 위해 실제 학생 권한, 계정, 성적 또는 기존 진도를 변경하지 않는다. 기존 승인번호 로그인은 유지한다.
