@@ -67,7 +67,7 @@ window.NM_UNITS['C-24'] = {
       { tex:'9 \\times 11 = \\square', answer:99,
         hint:{ ko:'가운데 10, 10²−1=?', en:'Middle 10, 10²−1=?', zh:'中间数10，10²−1=？' } },
       { tex:'14 \\times 16 = \\square', answer:224,
-        hint:{ ko:'가운데 15, 15²=225, −1=?', en:'Middle 15, 15²=225, −1=?', zh:'中间数15，15²=225，−1=？' } }
+        hint:{ ko:'가운데 15, 15²=225, 225−1=?', en:'Middle 15, 15²=225, 225−1=?', zh:'中间数15，15²=225，225−1=？' } }
     ],
     open:{ ko:'19×21을 이 마법으로 풀고, 타일 그림으로 왜 1이 남는지 설명해 봐요.',
       en:'Solve 19×21 with this magic, and use the tile picture to explain the leftover 1.',
