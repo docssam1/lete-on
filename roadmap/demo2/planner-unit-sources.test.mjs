@@ -134,3 +134,16 @@ test('legacy academy titles are suppressed from study without rewriting their sa
  const answers={...elem,thinkingExperience:'unknown',thinking:'unknown',calc:'unknown',parentFlow:{version:1,actualBooks:{thinking:'Ray A3-3',calc:'소마셈 P2'},ranges:{thinking:'규칙 찾기',calc:'10 가르기'},statuses:{thinking:'progress',calc:'progress'}}};
  const before=JSON.stringify(answers),r=adapter.build({answers,fields,weekStart:start,today:start});assert.ok(!r.items.some(i=>/Ray|소마셈/u.test(i.title)));assert.equal(JSON.stringify(answers),before);
 });
+
+test('thinking book volume scopes weekly work and never converts a parent observation into mastery',()=>{
+ const make=level=>window.PlannerParentFlow.build({grade:'pre',age:'5',thinking:{book:'키즈팩토',level,range:'규칙 찾기 12~15쪽',independent:'수 비교는 혼자'}});
+ const first=build({answers:make('원리 A')}),item=first.items.find(i=>i.track==='thinking');
+ assert.ok(item);assert.match(item.title,/원리 A/);assert.match(item.detail,/수 비교는 혼자/);assert.equal(item.unitLabel,'규칙 찾기 12~15쪽');assert.equal(item.mastered,undefined);
+ const again=build({answers:JSON.parse(JSON.stringify(make('원리 A')))}).items.find(i=>i.track==='thinking');assert.equal(again.id,item.id);
+ const changed=build({answers:make('원리 B')}).items.find(i=>i.track==='thinking');assert.notEqual(changed.id,item.id);
+});
+
+test('a finished thinking volume supplies no new assignments for that series until the next scope is entered',()=>{
+ const done=window.PlannerParentFlow.build({grade:'pre',age:'5',thinking:{book:'키즈팩토',level:'원리 B',status:'done'}});
+ assert.equal(build({answers:done}).items.filter(i=>i.track==='thinking').length,0);
+});

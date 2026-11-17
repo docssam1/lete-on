@@ -7,9 +7,9 @@ const nav = require('../promo/course-navigation.js');
 const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
-test('all 38 released editions remain reachable in exactly one advertised course', () => {
+test('all 42 released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,38);
+  assert.equal(visible.length,42);
   assert.equal(new Set(visible).size,visible.length);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
@@ -83,7 +83,7 @@ test('Won final round follows rounds 1–4 within the common1 course',()=>{
 
 test('Won middle22 transfer preserves historical R1 and adds the latest-timetable R2',()=>{
  const transfer=nav.examsFor('WM','middle22-basic',mocks);
- assert.deepEqual(transfer.map(e=>e.id),['wm-middle22-basic-r01','wm-middle22-basic-mixed-r02','wm-middle22-basic-mixed-r03','wm-middle22-basic-mixed-r04']);
+ assert.deepEqual(transfer.map(e=>e.id),['wm-middle22-basic-r01','wm-middle22-basic-mixed-r02','wm-middle22-basic-mixed-r03','wm-middle22-basic-mixed-r04','wm-middle22-basic-mixed-final']);
  assert.deepEqual(nav.selectionForExam(transfer[0].id),{program:'WM',course:'middle22-basic'});
  assert.match(transfer[0].scope,/중2-1 대수 기본형.*중1-2 기하 심화형.*통계 제외/);
  assert.equal(transfer[0].questionCount,50);assert.equal(transfer[0].durationMinutes,140);
@@ -109,13 +109,24 @@ test('Eden elementary-entry and common1 papers remain separate despite sharing a
 
 test('Won middle31 transfer is distinct from middle22 and common1',()=>{
  const transfer=nav.examsFor('WM','middle31-basic',mocks);
- assert.deepEqual(transfer.map(e=>e.id),['wm-middle31-basic-r01']);
+ assert.deepEqual(transfer.map(e=>e.id),['wm-middle31-basic-r01','wm-middle31-basic-r02','wm-middle31-basic-r03','wm-middle31-basic-r04']);
  const e=transfer[0];assert.deepEqual(nav.selectionForExam(e.id),{program:'WM',course:'middle31-basic'});
  assert.match(e.scope,/중2-1 대수 심화형.*중2-2 기하 심화형.*확률 포함/);
  assert.equal(e.questionCount,50);assert.equal(e.durationMinutes,140);
  assert.deepEqual(e.sectionMinutes,{ALG:70,GEO:70});assert.equal(e.breakMinutes,20);
  assert.deepEqual([e.pageCount,e.answerPageCount,e.analysisPageCount],[16,17,5]);
  for(const course of ['middle21-basic','middle22-basic','common1-basic','middle-transfer'])assert.ok(nav.examsFor('WM',course,mocks).every(x=>x.id!==e.id));
+});
+
+test('Won middle31 round 2 retains its own probability scope, official rest and protected documents',()=>{
+ const e=nav.examsFor('WM','middle31-basic',mocks).find(e=>e.id==='wm-middle31-basic-r02');
+ assert.ok(e);assert.deepEqual(nav.selectionForExam(e.id),{program:'WM',course:'middle31-basic'});
+ assert.match(e.scope,/중2-1 대수 심화형.*중2-2 기하 심화형.*확률 포함/);
+ assert.deepEqual([e.questionCount,e.pageCount,e.answerPageCount,e.analysisPageCount],[50,22,28,5]);
+ assert.deepEqual(e.sectionMinutes,{ALG:70,GEO:70});assert.equal(e.pauseLabel,'휴식');
+ assert.equal(e.breakMinutes,20);assert.equal(e.durationMinutes,140);assert.equal(e.totalWindowMinutes,160);
+ for(const course of ['middle21-basic','middle22-basic','common1-basic','middle-transfer'])assert.ok(nav.examsFor('WM',course,mocks).every(x=>x.id!==e.id));
+ assert.ok(!['questions','answers','pages','answerPages'].some(key=>key in e));
 });
 
 

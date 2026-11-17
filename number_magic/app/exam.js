@@ -5355,6 +5355,28 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
    · 답이 [계수, 근호 안]인데 answerShape 가 없는 경우(MD16 등, tex 가 `\square\sqrt{\square}` 꼴) —
      fmtAns 로 "3, 2"라고 찍히던 것을 3√2 로(정답지에서만 처리, 생성기·앱 채점은 그대로).
    · 문장제(p.wordUnit)는 단위를 붙인다("80장"). answerNote 가 있는 WP 스레드는 원래대로. */
+/* 태블릿 펜 채점(2026-11-16, 원장 「태블릿에서 펜으로 풀고 바로 채점」 → 「주간 학습지 그대로」).
+   글씨를 읽어 채점할 수 있는 문항만 정답을 칸에 실어 둔다 — 답이 정수(또는 빈칸마다 정수)인 문항.
+   분수·식·그림·고르기·문장 답은 싣지 않는다(학습지 펜 화면에서 정답을 보여 주고 O/X로 스스로 표시).
+   이 학습지의 맨 뒤에 이미 정답지가 인쇄되므로 정답을 칸에 싣는 것은 새로 드러내는 것이 아니다.
+   읽는 쪽: app/pen-sheet.js. 인쇄·PDF에는 아무 영향이 없는 데이터 속성이다. */
+function penAnswerSpec(p, layoutType){
+  if(!p || p.graph || p.drawing || p.answerShape || p.answerRelationTex || p.__process || layoutType === 'train') return null;
+  const ints = v => Array.isArray(v) ? (v.length && v.every(x => Number.isInteger(x)) ? v : null) : (Number.isInteger(v) ? [v] : null);
+  if(p.word){
+    const t = p.wordAnswerTex != null ? String(p.wordAnswerTex).trim() : null;
+    if(t != null) return /^-?\d+$/.test(t) ? {a:[Number(t)], w:1} : null;
+    const a = ints(p.answer); return a && a.length === 1 ? {a, w:1} : null;
+  }
+  if(p.choices || p.options || /paint|match|dotToDot|split|group|tapMake|Rep$|compare|choice|order/i.test(p.widget || '')) return null;
+  const a = ints(p.answer);
+  return a && a.length <= 4 ? {a} : null;
+}
+function penAnswerAttr(h, p, layoutType){
+  let spec = null; try{ spec = penAnswerSpec(p, layoutType); }catch(e){}
+  const self = esc(JSON.stringify(spec || {self:1})).replace(/"/g, "&quot;");
+  return h.replace(/^(\s*<div\b)/, `$1 data-pen-ans="${self}"`);
+}
 function w2AnswerValueHtml(p){
   /* 분수·소수 문장제(2026-09-08): 빈칸 값(분자 2)이 아니라 온전한 값(2/3 · 1.2)을 적는다 —
      문장제 답은 "몇 m"이지 "빈칸에 들어갈 수"가 아니다. */
@@ -7181,6 +7203,7 @@ function renderRoundPagesBody(item, opts){
       if(isFirstRamp) rampTagged = true;
       let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp, layout.type, num - 1, problems.length,
         !!(opts.editorialC4 && examLang() === 'ko'),levelPrintCondition(item.thread,item.level)); num++;
+      h = penAnswerAttr(h, p, layout.type);
       if(item.c0&&/g13Count|mysteryBox|pairUp|bondNum|overlapSum|gridSum|crossPlace|pyramid|treeFill|vertexSum|shapeEq|ruleTable|numberBond|tapMake|Paint|paint|split|Split|Group|group|match|Match|Rep|dotToDot/.test(p.widget||''))h=h.replace('class="nm-w2-item','class="nm-w2-item nm-c0-draw');
       if(item.c0&&(p.widget==='numberTrain'||p.widget==='g13Order'||p.widget==='gridSum'||p.widget==='splitDraw'&&p.skin==='cake'||p.widget==='numberBond'&&/무당벌레/.test(p.prompt?.ko||'')))h=h.replace('class="nm-w2-item','class="nm-w2-item nm-c0-wide');
       if(partialCol){

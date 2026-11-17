@@ -39,6 +39,10 @@
   .ws-tool-embed .ws-bar{display:none}
   .ws-tool-embed>.nm-print-sheet{margin-top:0}
   .ws-bar .ws-ghost{margin-left:0;background:#fffaf0;color:#2f6f4e;border:1px solid #cfe0d5}
+  /* 태블릿 펜으로 풀기(2026-11-16, app/pen-sheet.js) — 인쇄 단추 앞 */
+  .ws-bar .ws-pen{background:#243184}
+  .ws-bar .ws-pen[aria-pressed=true]{background:#141b5d}
+  .ws-bar .ws-pen + button{margin-left:0}
   /* 화면에서도 학습지를 그대로 보여 준다(2026-09-07, 원장 "먼저 html이 나오고 저장 또는 인쇄가
      되어야 하는데 인쇄 페이지가 먼저 뜨고 html은 스크롤이 안 돼"). 예전엔 인쇄 대화상자가 뜬 뒤
      A4 폭(210mm=794px) 시트가 폰 화면(390px) 밖으로 넘쳐 내용을 확인할 수 없었다.
@@ -167,7 +171,7 @@
 <script src="app/paper-examples.js?v=20261112-draw-shapes"></script>
 <script src="engine/c0-cognitive.js?v=20261112-draw-shapes"></script>
 <script src="app/c0-paper.js?v=20261112-ineq"></script>
-<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261116-rod"></script>
+<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261116-pen1"></script><script src="app/pen-sheet.js?v=20261116-pen1"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -320,6 +324,7 @@
   var fontsReady = window.NM_LAST_PRINT_READY || ((document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve());
   var timeout = new Promise(function(r){ setTimeout(r, 8000); });
   Promise.race([fontsReady, timeout]).then(function(){ setTimeout(function(){ window.NM_WS_READY = true;
+    if(window.NM_PEN_SHEET && q.get('auto') !== '0') NM_PEN_SHEET.mount();
     if(location.hash === '#nm-paper-tool'){
       var tool = document.getElementById('nm-paper-tool');
       if(tool){

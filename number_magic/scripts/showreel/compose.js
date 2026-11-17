@@ -38,7 +38,7 @@ const VOICE_FALLBACK = ['omnivoice-rec', 'omnivoice', NAR.voice];
 const VOICE_FX = process.argv.includes('--dry') ? '' : ',highpass=f=70,equalizer=f=5200:t=q:w=1.1:g=1.8,aecho=0.9:0.55:31|57|89:0.15|0.11|0.07';
 const NOBED = process.argv.includes('--no-bed');
 const INTRO = path.join(L.APP, 'assets/gemini_generated_video_c12e6123.mp4');
-const HOOK = { ko:'우리 아이,\n**지금 속도**로 어디까지 갈 수 있을까요?', en:"How far can your child go at today's pace?" };
+const HOOK = { ko:'우리 아이,\n**지금 속도**는 어느 수준일까요?', en:"Where does your child's pace stand today?" };   // 2026-11-17 원장 「지금 현재의 속도는 어느 수준일까요」 — 다음에 영상을 다시 만들 때 반영
 const FOOT = { ko:'참고용 비교 · 결과를 약속하지 않습니다 · 연산 트랙 기준', en:'For reference only · no outcomes promised · arithmetic track' };
 
 /* 토막: seg(파일 seg-<이름>.mp4 또는 file), in/out(초), xf(이 토막으로 들어오는 전환·길이), n(내레이션 줄 = 묶음 머리), at(시작 여유),
