@@ -1,7 +1,7 @@
 import { frac } from "./math-markup.js?v=20261027p";
 import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261101m";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261101m";
-import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261028s";
+import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261117a";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261028s";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261101m";
@@ -17,7 +17,7 @@ import { book09Markup } from "./book09-renderers.js?v=20261029t";
 import { book10Markup } from "./book10-renderers.js?v=20261101m";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20261101m";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
-import { importSessionPages } from "./session-book-sheet.js?v=20261117b";
+import { importSessionPages, sessionAnswerPages } from "./session-book-sheet.js?v=20261117d";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261110m";
 import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261110m";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
@@ -1731,6 +1731,28 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
 // ?sessionbook=1&book=&lessons=id,id&label=1단원 1차시&range=…&parts=…&sheet=<문제은행 학습지 주소>[&preview=1]
 // 표지(워밍업 교재와 같은 「도형 배경」) → (2차시부터 &presheet) 지난 차시 데일리 테스트 → 그 차시 워밍업 학습마다 개념·워밍업 쪽 → 본책 · 오늘의 과제 → (마지막 차시) 단원 평가.
 // 덱(study.html)의 차시 순서 그대로다. 정답·풀이는 넣지 않는다.
+// 인쇄 창 화면(원장 2026-11-17 「인쇄 후 스스로 공부하기 창으로 돌아갈 수 있도록 · 문제은행과 같은 창에 멈춰 있어」):
+// 뒤의 워밍업 화면 대신 「교재 인쇄」 안내 한 장을 덮고, 인쇄가 끝나면(afterprint) 이 창을 닫아 공부 창으로 돌아간다.
+// 덱·시작 화면이 새 창으로 열었으므로 닫으면 그 창이 보인다. 닫히지 않는 브라우저면 「스스로 공부로 돌아가기」 단추로 돌아간다.
+function backToStudy() {
+  try { window.close(); } catch {}
+  setTimeout(() => {
+    if (window.closed) return;
+    if (history.length > 1) history.back();
+    else location.assign(`./start.html?student=${encodeURIComponent(student)}`);
+  }, 300);
+}
+function showSessionBookDone() {
+  if (document.querySelector(".sb-done")) return;
+  const panel = document.createElement("div");
+  panel.className = "sb-done";
+  panel.innerHTML = `<div class="sb-done-card" role="dialog" aria-labelledby="sbDoneTitle"><p class="sb-done-kick">교재 인쇄</p><h2 id="sbDoneTitle">${escapeAttribute(params.get("label") || "")} 교재</h2><p>인쇄 창에서 프린터를 고르고 「인쇄」를 눌러요. 인쇄가 끝나면 이 창은 닫히고 공부하던 창으로 돌아가요.</p><div class="sb-done-actions"><button type="button" class="sb-done-back">스스로 공부로 돌아가기</button><button type="button" class="sb-done-print">다시 인쇄</button></div></div>`;
+  panel.querySelector(".sb-done-back").addEventListener("click", backToStudy);
+  panel.querySelector(".sb-done-print").addEventListener("click", () => window.print());
+  document.body.append(panel);
+  window.addEventListener("afterprint", () => { if (params.get("preview") !== "1") backToStudy(); });
+}
+
 async function printSessionBook() {
   let book = activeBook();
   // 워밍업 자료가 없는 권(2과정 G1 등): 표지에 쓸 권 이름만 주소로 받는다(study-deck.js sessionPrintHref의 &blabel=&btitle=&bcourse=)
@@ -1744,9 +1766,14 @@ async function printSessionBook() {
     const cover = printBookCover(book, lessons, { includeAnswers: false, style: "concept", includeGames: false, session });
     const sameOrigin = (url) => url && new URL(url, location.href).origin === location.origin;
     // 데일리 테스트(&presheet=, 2차시부터 표지 바로 뒤)·본책·과제·단원 평가(&sheet=)도 워밍업과 같은 교재 꼴 쪽으로 짠다(session-book-sheet.js importSessionPages)
-    const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve("");
-    const [daily, sheet] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet"))]);
-    root.innerHTML = cover + daily + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet;
+    const none = { pages: "", answers: [] };
+    const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve(none);
+    // 맨 뒤 정답(원장 2026-11-17 「뒤에 답안도 인쇄 되어야지」): 워밍업 정답(비공개 답안 서버, 「모두에게 열기」) + 데일리·본책·과제·평가 정답
+    const [daily, sheet, warmAnswers] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet")),
+      lessons.length ? ensureProtectedBook(book.id).catch(() => false) : Promise.resolve(false)]);
+    const warmAnswerPages = warmAnswers ? lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: true })).join("") : "";
+    const answerPages = warmAnswerPages + sessionAnswerPages([...daily.answers, ...sheet.answers], { book, session, student });
+    root.innerHTML = cover + daily.pages + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet.pages + answerPages;
     if (document.fonts?.ready) await document.fonts.ready;
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode().catch(() => null)));
     compactGoldenBellPrint(root);
@@ -1760,6 +1787,7 @@ async function printSessionBook() {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     document.documentElement.dataset.sessionBook = "ready";
     $("printStatus").textContent = "한 차시 교재가 준비됐어요.";
+    showSessionBookDone();
     if (params.get("preview") !== "1") window.print();
   } catch (error) {
     console.error("session book failed", error);

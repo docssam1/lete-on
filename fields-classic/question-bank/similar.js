@@ -1,6 +1,6 @@
 import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261117a";
 import { unitParts, partProblems } from "./study-map.js?v=20261117a";
-import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261111p";
+import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261116g1";
 import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261117a";
 import { course2Html, course3Html } from "./course2-list.js?v=20261116g1";

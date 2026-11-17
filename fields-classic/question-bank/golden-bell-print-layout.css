@@ -178,3 +178,20 @@
 .tb-session-page .tb-concept .textbook-concept-tutorial li>b{font-size:11px}
 .tb-session-page .tb-concept .textbook-concept-tutorial li strong{font-size:11.5px}
 .tb-session-page .tb-concept .textbook-concept-tutorial li p{font-size:11px}
+/* 정답 쪽(맨 뒤) — 글 정답은 한 줄, 그림 정답은 그림째 */
+.tb-answer-page .tb-answer-item{padding:1.4mm 0 2mm}
+.tb-answer-page .tb-answer-item>p.tb-ans{margin:0;font-size:12px;font-weight:700;line-height:1.5}
+.tb-answer-page .tb-ans-visual{min-height:0!important;max-height:62mm;padding:1mm}
+.tb-answer-page .tb-ans-visual .student-answer{display:grid;gap:1mm;justify-items:center;margin:0;padding:0;border:0;background:none}
+.tb-answer-page .tb-ans-visual .student-answer>span{font-size:11px;font-weight:700}
+/* 인쇄 창 화면: 뒤의 워밍업 화면 대신 안내 한 장(인쇄에는 안 나옴) */
+.sb-done{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-left,0px));background:#f2f6fd}
+.sb-done-card{width:min(460px,100%);padding:26px 26px 22px;border:1px solid #e0e9f8;border-radius:16px;background:#fff;color:#1b2340;box-shadow:0 18px 50px rgba(36,49,132,.14);font-family:'Pretendard','Noto Sans KR',system-ui,sans-serif}
+.sb-done-kick{margin:0;color:#243184;font-size:12px;font-weight:700;letter-spacing:.08em}
+.sb-done-card h2{margin:6px 0 0;font-size:22px}
+.sb-done-card p{margin:10px 0 0;line-height:1.6;font-size:15px}
+.sb-done-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.sb-done-actions button{min-height:46px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer}
+.sb-done-back{border:0;background:#243184;color:#fff}
+.sb-done-print{border:1px solid #c9d6ef;background:#fff;color:#243184}
+@media print{.sb-done{display:none!important}}
