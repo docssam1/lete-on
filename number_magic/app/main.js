@@ -1647,6 +1647,9 @@ function screenWelcome(){
     S.onboarded = true;
     if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
+    /* 처음 들어오면 진단부터(원장 2026-11-17 「사용자가 바로 들어가서 처음에는 진단하고 언제 어디가 끝나는 일정인지 안내」).
+       진단 결과에 과정마다 끝나는 날짜와(8세 이하면) 소마·필즈 비교 그래프가 나온다. 진단 화면의 닫기로 마을에 갈 수 있다. */
+    if(!(S.placement&&S.placement.course)&&window.NM_PLACEMENT_UI){startPlacement();return;}
     render();
   }
 
