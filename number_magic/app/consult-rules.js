@@ -4,11 +4,13 @@
    → 「상담 버전」 → 「응 그렇게 만들어」.
 
    문제를 풀게 하지 않는다. 보호자의 답만으로 다음에 무엇을 물을지·어디서 시작할지 정한다. AI·서버 없음.
-   단계표는 data/consult-ladder.js(기적의 계산법 권별 주제 17단계 → 우리 유형·과정).
+   단계표는 data/consult-ladder.js(교재별 사다리 → 우리 유형·과정).
 
    답 하나 = 기술(ref)마다 good(잘해요) · shaky(헷갈려요) · notyet(아직 안 배웠어요) · unsure(잘 모르겠어요).
    더 묻는 규칙
-     1) 처음 물을 단계 = 지금 하는 권(막 시작했으면 앞 권도 먼저). 기적의 계산법이 아니면 나이·학년으로 정한다.
+     1) 처음 물을 단계 = 지금 하는 권(막 시작했으면 앞 권도 먼저). 사다리는 교재마다 따로 — 기적의 계산법 17단계,
+        소마셈 2019 P~D 46권, 두뇌로 과정 1~25(원장 2026-11-17 「대응 해야지」). 진도표가 없는 교재(구몬·원리셈 등)와
+        교재 안 함은 기적의 계산법 사다리에서 나이·학년으로 시작 단계를 정한다.
      2) 「잘 모르겠어요」인데 예시 문제가 있으면 → 아이에게 그 문제를 내 보게 한다(맞힘·오래 걸림·틀림·못 해 봄).
         모두 세 문제까지, 높은 단계부터 단계마다 하나씩.
      3) 물은 가장 높은 단계가 다 「잘해요」면 → 한 단계 위를 묻는다(위로 셋까지).
@@ -16,9 +18,10 @@
      5) 단계는 모두 다섯 번까지만 묻는다. 앞에서 답한 기술은 다시 묻지 않는다.
      6) 마지막에 한 번, 계산할 때 손가락으로 세거나 오래 걸리는지 묻는다.
    결과
-     - 시작 과정 = 헷갈리는 기술이 처음 나오는 과정 중 가장 앞. 헷갈리는 게 없으면 안 배운 기술(잘하는 것보다 뒤의 것)이
-       처음 나오는 과정. 그것도 없으면 잘하는 것 가운데 가장 뒤 과정의 다음 과정.
-     - 잘하는 것보다 앞 과정의 「안 배움」은 시작점을 끌어내리지 않고 「빈틈」으로 따로 알린다.
+     - 과정 단위로 본다: 약한 과정 = 헷갈리는 기술이 있거나 답한 기술의 절반 이상이 안 배운 것. 시작 = 약한 과정 중 가장 앞
+       (우리 과정 차례는 교재 차례와 다를 수 있어서 — 구구단 과정 4가 세 자리 덧뺄 과정 5·6보다 앞). 약한 과정이 없으면
+       잘하는 것 가운데 가장 뒤 과정의 다음 과정.
+     - 잘하는 것이 대부분인 과정에 섞인 「안 배움」과 시작보다 앞의 「안 배움」은 시작점을 끌어내리지 않고 「빈틈」으로 따로 알린다.
      - 「잘 모르겠어요」로 남은 것이 있으면 문제로 확인하는 진단(연산 진단 평가)을 권한다.
    ============================================================ */
 (function(root){
@@ -27,20 +30,25 @@ const MAX_STEPS = 5, MAX_UP = 3, MAX_DOWN = 2, MAX_PROBES = 3;
 const AGES = ['k5', 'k6', 'k7', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'm'];
 /* 나이·학년 → 처음 물을 단계(0~4 예비초등 1~5권, 5~16 초등 1~12권). 학년마다 기적 초등 두 권 중 앞 권. */
 const AGE_ANCHOR = { k5: 0, k6: 1, k7: 3, g1: 5, g2: 7, g3: 9, g4: 11, g5: 13, g6: 15 };
+/* 권별 진도표가 있는 교재 = 그 교재 사다리로 묻는다(기적의 계산법 · 소마셈 2019 · 두뇌로).
+   나머지(구몬·원리셈·그 밖·안 함)는 기적의 계산법 사다리를 학교 진도 대신 쓰고 나이·학년으로 시작 단계를 잡는다. */
+const MAPPED = { miracle: 'miracle', soma: 'soma', dunoro: 'dunoro' };
 
 function data(){ return root.NM_CONSULT_LADDER; }
-function ladder(){ return data().ladder; }
+let current = null;   // 지금 상태의 사다리 — 아래 함수들이 state 를 받을 때마다 맞춘다
+function use(state){ const p = state && state.profile; current = data().ladders[(p && MAPPED[p.book]) || 'miracle']; return current; }
+function ladder(){ return current || data().ladders.miracle; }
+function ladderFor(p){ return data().ladders[(p && MAPPED[p.book]) || 'miracle']; }
 function courseOrder(key){ const c = key && data().courses[key]; return c ? c.order : Infinity; }
 
 function newState(){
-  return { profile: { age: null, book: null, edition: null, volume: null, progress: null },
+  return { profile: { age: null, book: null, stepId: null, progress: null },
     asked: [], answers: {}, probes: {}, fingers: null, probeAsked: [] };
 }
 function anchor(p){
   if(!p || p.age === 'm') return null;
-  if(p.book === 'miracle' && Number.isInteger(p.volume)){
-    const id = (p.edition === 'pre' ? 'pre-2023-v' : 'elem-2021-v') + p.volume;
-    const i = ladder().findIndex(s => s.id === id);
+  if(MAPPED[p.book] && p.stepId){
+    const i = ladderFor(p).findIndex(s => s.id === p.stepId);
     if(i >= 0) return i;
   }
   return Object.prototype.hasOwnProperty.call(AGE_ANCHOR, p.age) ? AGE_ANCHOR[p.age] : null;
@@ -48,7 +56,7 @@ function anchor(p){
 function initialSteps(p){
   const a = anchor(p);
   if(a == null) return [];
-  return p.book === 'miracle' && p.progress === 'start' && a > 0 ? [a - 1, a] : [a];
+  return MAPPED[p.book] && p.progress === 'start' && a > 0 ? [a - 1, a] : [a];
 }
 /* 기술 상태 — 아이에게 내 본 결과가 있으면 그것이 먼저 */
 function status(state, ref){
@@ -72,10 +80,11 @@ function allGood(state, i){ const ks = skillsOf(i); return ks.length > 0 && ks.e
    이미 다 답한 단계는 묻지 않고 「물은 것」으로 친다(state.asked 에 넣는다). */
 function next(state){
   const p = state.profile;
+  use(state);
   if(!p.age) return { type: 'age' };
   if(p.age !== 'm' && !p.book) return { type: 'book' };
-  if(p.book === 'miracle' && !Number.isInteger(p.volume)) return { type: 'volume' };
-  if(p.book === 'miracle' && !p.progress) return { type: 'progress' };
+  if(MAPPED[p.book] && !p.stepId) return { type: 'volume' };
+  if(MAPPED[p.book] && !p.progress) return { type: 'progress' };
   if(p.age === 'm') return { type: 'done' };
   const init = initialSteps(p);
   for(const i of init){
@@ -109,6 +118,7 @@ function next(state){
 }
 
 function answerSkills(state, step, map){
+  use(state);
   Object.keys(map).forEach(ref => { state.answers[ref] = map[ref]; });
   if(!state.asked.includes(step)) state.asked.push(step);
 }
@@ -117,21 +127,33 @@ function answerProbe(state, ref, value){ state.probes[ref] = value; if(!state.pr
 /* 결과 */
 function result(state){
   const p = state.profile;
+  use(state);
   if(p.age === 'm') return { middle: true };
   const seen = new Map();
   state.asked.slice().sort((a, b) => a - b).forEach(i => skillsOf(i).forEach(k => { if(!seen.has(k.ref)) seen.set(k.ref, Object.assign({ step: i }, k)); }));
   const list = [...seen.values()].map(k => Object.assign(k, { status: status(state, k.ref) })).filter(k => k.status);
   const by = s => list.filter(k => k.status === s);
   const good = by('good'), shaky = by('shaky').concat(by('slow')), notyet = by('notyet'), unknown = by('unknown');
-  const goodMax = good.reduce((m, k) => Math.max(m, courseOrder(k.course) === Infinity ? -1 : courseOrder(k.course)), -1);
-  const gaps = notyet.filter(k => courseOrder(k.course) < goodMax);
-  const ahead = notyet.filter(k => courseOrder(k.course) >= goodMax);
   const minBy = arr => arr.filter(k => k.course).sort((a, b) => courseOrder(a.course) - courseOrder(b.course))[0] || null;
+  /* 과정 단위로 본다(2026-11-17) — 우리 과정 차례는 교재 차례와 다를 수 있다(구구단 과정 4가 세 자리 덧뺄 과정 5·6보다 앞).
+     약한 과정 = 헷갈리는 기술이 있거나, 답한 기술의 절반 이상이 안 배운 것. 시작 = 약한 과정 중 가장 앞.
+     잘하는 것이 대부분인 과정에 섞인 「안 배움」 하나는 시작점을 끌어내리지 않고 「빈틈」으로만. */
+  const groups = new Map();
+  list.filter(k => k.course && k.status !== 'unknown').forEach(k => { if(!groups.has(k.course)) groups.set(k.course, []); groups.get(k.course).push(k); });
+  const weak = [...groups.entries()].filter(([, ks]) => ks.some(k => k.status === 'shaky' || k.status === 'slow') ||
+    ks.filter(k => k.status === 'notyet').length >= ks.length / 2).map(([c]) => c).sort((a, b) => courseOrder(a) - courseOrder(b));
   let start = null, reason = null;
-  const s1 = minBy(shaky), s2 = minBy(ahead);
-  if(s1){ start = s1.course; reason = { kind: 'shaky', skill: s1 }; }
-  else if(s2){ start = s2.course; reason = { kind: 'new', skill: s2 }; }
+  if(weak.length){
+    start = weak[0];
+    const inStart = list.filter(k => k.course === start);
+    const sk = inStart.find(k => k.status === 'shaky' || k.status === 'slow');
+    reason = sk ? { kind: 'shaky', skill: sk } : { kind: 'new', skill: inStart.find(k => k.status === 'notyet') };
+  }
+  const gaps = notyet.filter(k => !weak.includes(k.course) || (start && courseOrder(k.course) < courseOrder(start)));
+  const ahead = notyet.filter(k => !gaps.includes(k));
+  if(start){ /* 위에서 정함 */ }
   else if(good.length){
+    const goodMax = good.reduce((m, k) => Math.max(m, courseOrder(k.course) === Infinity ? -1 : courseOrder(k.course)), -1);
     const keys = Object.keys(data().courses).sort((a, b) => courseOrder(a) - courseOrder(b));
     const top = keys.find(k => courseOrder(k) === goodMax);
     const after = keys[keys.indexOf(top) + 1];
@@ -146,7 +168,7 @@ function result(state){
     needCheck: unknown.length > 0 };
 }
 
-const api = { AGES, MAX_STEPS, newState, anchor, initialSteps, next, answerSkills, answerProbe, status, result };
+const api = { AGES, MAX_STEPS, MAPPED, newState, anchor, initialSteps, next, answerSkills, answerProbe, status, result, ladderFor };
 root.NM_CONSULT_RULES = api;
 if(typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

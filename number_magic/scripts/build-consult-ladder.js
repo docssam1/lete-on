@@ -7,6 +7,8 @@
    상담판(consult.html)은 문제를 풀게 하지 않고 보호자에게 묻는다. 묻는 기술의 차례는
    기적의 계산법 권별 주제(data/placement-books.js 의 coverage — 출판사 주제 메타데이터와 우리 유형을
    이어 둔 것)를 뼈대로 쓴다: 예비초등 1~5권 → 초등 1~12권 = 17단계.
+   소마셈 2019년 발행본 P~D 46권(soma-p-2019.js·book-volume-topics.js)과 두뇌로 과정 1~25(dunoro-courses.js)도
+   같은 꼴로 사다리를 만든다(원장 2026-11-17 「대응 해야지 · 로드맵 진도 다 줬잖아」). 구몬·원리셈은 권별 진도표가 없어 아직 없다.
    단계마다
      - 그 단계에서 새로 나오는 유형(앞 단계에 없던 스레드) 먼저, 많아야 6개
      - 이름은 우리 유형 이름(NM_THREADS, 3개 언어)
@@ -45,12 +47,18 @@ const TH = W.NM_THREADS, COURSES = W.NM_COURSES, BOOKS = W.NM_PLACEMENT_BOOKS, T
 const courseList = Object.keys(COURSES).filter(k => /^C\d+$/.test(k))
   .map(k => ({ key: k, n: +k.slice(1), c: COURSES[k] }))
   .sort((a, b) => (a.c.order ?? a.n) - (b.c.order ?? b.n));
+/* 회차 드릴에 없으면 창의 칸(회차 creative)에서 처음 나오는 과정 — placement-plan.js locate() 와 같은 차례 */
 function firstCourse(t, lv){
-  const hit = pred => courseList.find(({ c }) => (c.sessions || []).some(s => (s.drills || []).some(d => !d.review && pred(d))));
-  const exact = hit(d => d.t === t && d.lv === lv);
-  if(exact) return { key: exact.key, exact: true };
-  const any = hit(d => d.t === t);
-  return any ? { key: any.key, exact: false } : null;
+  const hit = (pred, col) => courseList.find(({ c }) => (c.sessions || []).some(s => (s[col] || []).some(d => !d.review && pred(d))));
+  for(const col of ['drills', 'creative']){
+    const exact = hit(d => d.t === t && d.lv === lv, col);
+    if(exact) return { key: exact.key, exact: true };
+  }
+  for(const col of ['drills', 'creative']){
+    const any = hit(d => d.t === t, col);
+    if(any) return { key: any.key, exact: false };
+  }
+  return null;
 }
 
 /* 예시 문제 — 보호자가 아이에게 그대로 내 볼 짧은 식 하나. 그림 위젯만 있는 유형은 예시 없음.
@@ -92,30 +100,50 @@ function example(t, lv){
   return best;
 }
 
-const steps = BOOKS.getSteps('miracle').filter(s => /^(pre-2023|elem-2021)-v\d+$/.test(s.id));
-const seenThreads = new Set(), ladder = [];
-for(const s of steps){
-  const m = /^(pre-2023|elem-2021)-v(\d+)$/.exec(s.id);
-  const refs = (s.coverage || []).map(r => { const [t, lv] = r.split('@'); return { t, lv: +lv }; });
-  const byThread = new Map();
-  refs.forEach(r => { if(TH[r.t] && (!byThread.has(r.t) || byThread.get(r.t) < r.lv)) byThread.set(r.t, r.lv); });
-  const all = [...byThread.entries()].map(([t, lv]) => ({ t, lv, isNew: !seenThreads.has(t) }));
-  all.forEach(x => seenThreads.add(x.t));
-  const picked = all.filter(x => x.isNew).concat(all.filter(x => !x.isNew)).slice(0, 6);
-  const skills = picked.map(({ t, lv }) => {
-    const th = TH[t], lvObj = (th.levels || []).find(l => l.id === lv) || {};
-    const fc = firstCourse(t, lv);
-    return { ref: t + '@' + lv, name: th.name, level: lvObj.label || null,
-      course: fc ? fc.key : null, example: example(t, lv) };
+/* 교재마다 사다리 하나. 행 = { id, group, volume, title(3개 언어 이름), topic(한국어 주제 — 교재가 공개한 짧은 주제 요약), refs } */
+function buildLadder(rows){
+  const seen = new Set();
+  return rows.map(row => {
+    const byThread = new Map();
+    row.refs.forEach(r => { const [t, lv] = r.split('@'); if(TH[t] && (!byThread.has(t) || byThread.get(t) < +lv)) byThread.set(t, +lv); });
+    const all = [...byThread.entries()].map(([t, lv]) => ({ t, lv, isNew: !seen.has(t) }));
+    all.forEach(x => seen.add(x.t));
+    const picked = all.filter(x => x.isNew).concat(all.filter(x => !x.isNew)).slice(0, 6);
+    const skills = picked.map(({ t, lv }) => {
+      const th = TH[t], lvObj = (th.levels || []).find(l => l.id === lv) || {};
+      const fc = firstCourse(t, lv);
+      return { ref: t + '@' + lv, name: th.name, level: lvObj.label || null, course: fc ? fc.key : null, example: example(t, lv) };
+    });
+    return { id: row.id, group: row.group, volume: row.volume, title: row.title, topic: row.topic, skills };
   });
-  ladder.push({ id: s.id, book: m[1], volume: +m[2], label: s.label, skills });
 }
+const L3 = (ko, en, zh) => ({ ko, en, zh });
+/* 기적의 계산법 — 예비초등 2023판 1~5권 → 초등 2021판 1~12권 (placement-books.js 권별 coverage) */
+const miracleRows = BOOKS.getSteps('miracle').filter(s => /^(pre-2023|elem-2021)-v\d+$/.test(s.id)).map(s => {
+  const m = /^(pre-2023|elem-2021)-v(\d+)$/.exec(s.id), v = +m[2], pre = m[1] === 'pre-2023';
+  return { id: s.id, group: m[1], volume: v,
+    title: pre ? L3('예비초등 ' + v + '권', 'Pre-school vol. ' + v, '学前第' + v + '册') : L3('초등 ' + v + '권', 'Elementary vol. ' + v, '小学第' + v + '册'),
+    topic: (String(s.label.ko).split('—')[1] || '').trim(), refs: s.coverage || [] };
+});
+/* 소마셈 2019년 발행본 P1~P8 → K → A → B → C → D1~D6 (soma-p-2019.js · book-volume-topics.js) */
+const somaRows = [];
+[['P', 'NM_SOMA_P_2019'], ['K', 'NM_SOMA_K_2019'], ['A', 'NM_SOMA_A_2019'], ['B', 'NM_SOMA_B_2019'], ['C', 'NM_SOMA_C_2019'], ['D', 'NM_SOMA_D_2019']].forEach(([stage, key]) => {
+  const d = W[key];
+  if(!d) throw new Error('소마셈 표 없음: ' + key);
+  d.courses.forEach(c => somaRows.push({ id: 'soma-' + stage.toLowerCase() + '-v' + c.course, group: stage, volume: c.course,
+    title: L3(stage + c.course + '권', 'Vol. ' + stage + c.course, stage + c.course + '册'), topic: String(c.topics || ''), refs: c.refs }));
+});
+/* 두뇌로 과정 1~25 (dunoro-courses.js — 과정표에 적힌 연산을 우리 유형으로 옮긴 것) */
+const dunoroRows = W.NM_DUNORO_COURSES.courses.map(c => ({ id: 'dunoro-' + c.course, group: 'level-' + c.level, volume: c.course,
+  title: L3('과정 ' + c.course, 'Course ' + c.course, '课程' + c.course), topic: String(c.topics || ''), refs: c.refs }));
+const ladders = { miracle: buildLadder(miracleRows), soma: buildLadder(somaRows), dunoro: buildLadder(dunoroRows) };
+const ladder = [].concat(ladders.miracle, ladders.soma, ladders.dunoro);
 const courses = {};
 courseList.forEach(({ key, n, c }) => { courses[key] = { n, order: c.order ?? n, tier: c.tier, title: c.title }; });
 
 const body = '/* 자동 생성 — node scripts/build-consult-ladder.js (손으로 고치지 않는다).\n' +
-  '   기적의 계산법 권별 주제 → 우리 유형·예시 문제·처음 나오는 과정. 예시는 우리 생성기 문제다(교재 문항 아님). */\n' +
-  'window.NM_CONSULT_LADDER = ' + JSON.stringify({ version: 1, ladder, courses }) + ';\n';
+  '   기적의 계산법·소마셈(2019)·두뇌로 권별 주제 → 우리 유형·예시 문제·처음 나오는 과정. 예시는 우리 생성기 문제다(교재 문항 아님). */\n' +
+  'window.NM_CONSULT_LADDER = ' + JSON.stringify({ version: 2, ladders, courses }) + ';\n';
 
 if(process.argv.includes('--check')){
   const now = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8') : '';
@@ -125,6 +153,6 @@ if(process.argv.includes('--check')){
 fs.writeFileSync(OUT, body);
 const missing = ladder.flatMap(st => st.skills.filter(k => !k.course).map(k => st.id + ' ' + k.ref));
 const noEx = ladder.flatMap(st => st.skills.filter(k => !k.example).map(k => st.id + ' ' + k.ref));
-console.log(`단계 ${ladder.length} · 기술 ${ladder.reduce((a, s) => a + s.skills.length, 0)} · ${(body.length / 1024).toFixed(1)}KB`);
+console.log(`기적 ${ladders.miracle.length} · 소마셈 ${ladders.soma.length} · 두뇌로 ${ladders.dunoro.length}단계 · 기술 ${ladder.reduce((a, s) => a + s.skills.length, 0)} · ${(body.length / 1024).toFixed(1)}KB`);
 if(missing.length) console.log('과정 없음:', missing.join(' | '));
 if(noEx.length) console.log('예시 없음:', noEx.join(' | '));

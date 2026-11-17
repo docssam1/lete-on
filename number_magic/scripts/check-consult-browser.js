@@ -21,7 +21,7 @@ catch(e){ fails.push('data/consult-ladder.js 가 낡았다 — node scripts/buil
 global.window = global;
 require(path.join(ROOT, 'data/consult-ladder.js'));
 const R = require(path.join(ROOT, 'app/consult-rules.js'));
-const LAD = global.NM_CONSULT_LADDER.ladder, idx = id => LAD.findIndex(s => s.id === id);
+const LADS = global.NM_CONSULT_LADDER.ladders, LAD = LADS.miracle, idx = id => LAD.findIndex(s => s.id === id);
 function run(profile, answer, probe){
   const s = R.newState(); Object.assign(s.profile, profile);
   const log = [];
@@ -29,7 +29,7 @@ function run(profile, answer, probe){
     const q = R.next(s);
     if(q.type === 'done') break;
     if(q.type === 'skills'){
-      const m = {}; LAD[q.step].skills.filter(k => !s.answers[k.ref]).forEach(k => { m[k.ref] = answer(k, q.step); });
+      const m = {}; R.ladderFor(s.profile)[q.step].skills.filter(k => !s.answers[k.ref]).forEach(k => { m[k.ref] = answer(k, q.step); });
       R.answerSkills(s, q.step, m); log.push(q.why + ':' + q.step);
     } else if(q.type === 'probe'){ R.answerProbe(s, q.ref, probe ? probe(q.ref) : 'wrong'); log.push('probe'); }
     else if(q.type === 'fingers'){ s.fingers = 'no'; log.push('fingers'); }
@@ -38,32 +38,47 @@ function run(profile, answer, probe){
   return { s, log, r: R.result(s) };
 }
 const v3 = idx('elem-2021-v3'), v4 = idx('elem-2021-v4');
-let x = run({ age: 'g2', book: 'miracle', edition: 'elem', volume: 3, progress: 'middle' },
+let x = run({ age: 'g2', book: 'miracle', stepId: 'elem-2021-v3', progress: 'middle' },
   (k, st) => k.ref.startsWith('SB4') ? 'shaky' : st <= v3 ? 'good' : 'notyet');
 ok(x.r.start === 'C3' && x.r.reason.kind === 'shaky', '규칙: 기적 3권 중간·받아내림 헷갈림 → 과정 3 이어야 함 (' + x.r.start + ')');
 ok(!x.log.some(l => l.startsWith('up') || l.startsWith('down')), '규칙: 섞인 답이면 위아래로 더 묻지 않아야 함');
-x = run({ age: 'g2', book: 'miracle', edition: 'elem', volume: 3, progress: 'end' }, (k, st) => st <= v4 ? 'good' : 'notyet');
+x = run({ age: 'g2', book: 'miracle', stepId: 'elem-2021-v3', progress: 'end' }, (k, st) => st <= v4 ? 'good' : 'notyet');
 ok(x.log.filter(l => l.startsWith('up')).length >= 1, '규칙: 다 잘하면 한 단계 위를 물어야 함');
 ok(x.r.start === 'C8' && x.r.reason.kind === 'new', '규칙: 4권까지 잘함 → 5권 첫 내용(과정 8) (' + x.r.start + ')');
 x = run({ age: 'g1', book: 'none' }, () => 'shaky');
 ok(x.log.filter(l => l.startsWith('down')).length === 2, '규칙: 다 헷갈리면 아래로 두 번까지 (' + x.log + ')');
 ok(x.s.asked.length <= R.MAX_STEPS, '규칙: 단계는 다섯 번까지');
-x = run({ age: 'g3', book: 'miracle', edition: 'elem', volume: 5, progress: 'start' }, () => 'unsure');
+x = run({ age: 'g3', book: 'miracle', stepId: 'elem-2021-v5', progress: 'start' }, () => 'unsure');
 ok(x.log.filter(l => l === 'probe').length <= 3, '규칙: 아이에게 내 볼 문제는 세 개까지 (' + x.log.filter(l => l === 'probe').length + ')');
 ok(x.s.asked.length <= R.MAX_STEPS, '규칙: 모르겠어요가 많아도 단계는 다섯 번까지');
 ok(x.r.needCheck, '규칙: 확인 못 한 것이 남으면 진단을 권해야 함');
-x = run({ age: 'g2', book: 'miracle', edition: 'elem', volume: 3, progress: 'middle' }, () => 'unsure', () => 'right');
+x = run({ age: 'g2', book: 'miracle', stepId: 'elem-2021-v3', progress: 'middle' }, () => 'unsure', () => 'right');
 ok(x.r.good.length > 0 && x.r.unknown.length > 0, '규칙: 내 봐서 맞힌 것은 잘해요로, 안 내 본 것은 확인 필요로');
 x = run({ age: 'm' }, () => 'good');
 ok(x.r.middle && x.log.length === 0, '규칙: 중학생 이상은 묻지 않고 진단으로');
 x = run({ age: 'k5', book: 'none' }, () => 'good');
 ok(!!x.r.start, '규칙: 5세 다 잘함 → 시작 과정이 있어야 함');
 /* 빈틈: 잘하는 것보다 앞 과정의 「안 배움」은 시작점을 끌어내리지 않는다 */
-x = run({ age: 'g2', book: 'miracle', edition: 'elem', volume: 3, progress: 'middle' }, k => k.ref.startsWith('EL1') ? 'notyet' : 'good');
+x = run({ age: 'g2', book: 'miracle', stepId: 'elem-2021-v3', progress: 'middle' }, k => k.ref.startsWith('EL1') ? 'notyet' : 'good');
 ok(!x.r.notyet.some(k => k.ref.startsWith('ML')), '규칙: 잘하는 구구단은 안 배움에 들지 않음');
 ok(x.r.start !== 'C0' && x.r.start !== 'C1', '규칙: 앞 과정의 안 배움 하나로 시작점이 내려가면 안 됨 (' + x.r.start + ')');
+/* 소마셈·두뇌로 = 그 교재 사다리로 묻는다(원장 2026-11-17 「대응 해야지」) */
+const sLad = LADS.soma, sIdx = id => sLad.findIndex(s => s.id === id);
+x = run({ age: 'g2', book: 'soma', stepId: 'soma-b-v2', progress: 'middle' }, (k, st) => k.ref.startsWith('SB4') ? 'shaky' : st <= sIdx('soma-b-v2') ? 'good' : 'notyet');
+ok(x.s.asked.includes(sIdx('soma-b-v2')), '규칙: 소마셈 B2 를 고르면 B2 단계부터 물어야 함');
+ok(x.r.start === 'C3', '규칙: 소마셈 B2·두 자리 뺄셈 헷갈림 → 과정 3 (' + x.r.start + ')');
+x = run({ age: 'g2', book: 'soma', stepId: 'soma-b-v4', progress: 'end' }, (k, st) => st <= sIdx('soma-b-v4') ? 'good' : 'notyet');
+ok(x.log.some(l => l.startsWith('up')), '규칙: 소마셈 B4 끝·다 잘함 → 위(B5 곱셈)를 물어야 함');
+ok(x.r.start === 'C4' || x.r.start === 'C7', '규칙: 소마셈 B4 끝 → 곱셈 시작 과정 (' + x.r.start + ')');
+const dLad = LADS.dunoro, dIdx = id => dLad.findIndex(s => s.id === id);
+x = run({ age: 'g3', book: 'dunoro', stepId: 'dunoro-11', progress: 'middle' }, (k, st) => st < dIdx('dunoro-11') ? 'good' : k.ref.startsWith('ML8') ? 'shaky' : 'good');
+ok(x.r.start === 'C9', '규칙: 두뇌로 과정 11·두 자리×두 자리 헷갈림 → 과정 9 (' + x.r.start + ')');
+x = run({ age: 'g1', book: 'kumon' }, () => 'good');
+ok(R.ladderFor({ book: 'kumon' }) === LAD && x.s.asked.includes(5), '규칙: 구몬은 기적의 계산법 사다리에서 나이로 시작');
+['soma', 'dunoro', 'miracle'].forEach(b => LADS[b].forEach(st => ok(st.skills.length > 0 && st.title && st.title.ko, '단계표: ' + st.id + ' 기술·이름 없음')));
+ok(LADS.soma.length === 46 && LADS.dunoro.length === 25 && LAD.length === 17, '단계표: 소마셈 46 · 두뇌로 25 · 기적 17 이어야 함');
 /* 모든 기술은 과정이 있다 */
-LAD.forEach(st => st.skills.forEach(k => ok(!!k.course, '단계표: ' + st.id + ' ' + k.ref + ' 과정 없음')));
+['miracle', 'soma', 'dunoro'].forEach(b => LADS[b].forEach(st => st.skills.forEach(k => ok(!!k.course, '단계표: ' + st.id + ' ' + k.ref + ' 과정 없음'))));
 
 /* ② 화면 */
 const { chromium } = require('./lib/playwright');
@@ -97,12 +112,20 @@ const server = http.createServer((req, res) => {
     await page.click('[data-act=begin]'); await check('age');
     // 예비초등 권 이름 확인을 위해 뒤로 갔다 오기
     await page.click('[data-act=age][data-v=g1]'); await page.click('[data-act=book][data-v=miracle]'); await check('volume'); await shot('1-volume');
-    const preTitle = await page.$eval('.vol[data-ed=pre] b', e => e.textContent);
+    const preTitle = await page.$eval('.vol[data-v="pre-2023-v1"] b', e => e.textContent);
     ok(/예비|Pre|学前/.test(preTitle), tag + ': 예비초등 권 이름이 「' + preTitle + '」');
     await page.click('[data-act=back]'); await page.click('[data-act=back]');
     ok(await page.evaluate(() => NM_CONSULT_UI.current && NM_CONSULT_UI.current.type) === 'age', tag + ': 이전 단추가 나이 질문으로 돌아가지 않음');
+    // 소마셈·두뇌로 권 고르기 화면도 열어 본다
+    await page.click('[data-act=age][data-v=g2]'); await page.click('[data-act=book][data-v=soma]');
+    ok(await page.$$eval('.vol', v => v.length) === 46, tag + ': 소마셈 권 46개가 보여야 함');
+    await check('volume-soma'); await shot('1b-soma');
+    await page.click('[data-act=back]'); await page.click('[data-act=book][data-v=dunoro]');
+    ok(await page.$$eval('.vol', v => v.length) === 25, tag + ': 두뇌로 과정 25개가 보여야 함');
+    await check('volume-dunoro');
+    await page.click('[data-act=back]'); await page.click('[data-act=back]');
     await page.click('[data-act=age][data-v=g2]'); await page.click('[data-act=book][data-v=miracle]');
-    await page.click('[data-act=volume][data-ed=elem][data-v="3"]'); await page.click('[data-act=progress][data-v=middle]');
+    await page.click('[data-act=volume][data-v="elem-2021-v3"]'); await page.click('[data-act=progress][data-v=middle]');
     let sawProbe = false, sawSkills = false;
     for(let g = 0; g < 12; g++){
       const t = await page.evaluate(() => NM_CONSULT_UI.current && NM_CONSULT_UI.current.type);

@@ -76,14 +76,24 @@ function courseTitle(key){
   return c ? t('과정 ', 'Course ', '课程') + c.n + ' · ' + L(c.title) : '';
 }
 function stepTopic(st){
-  if(lang === 'ko') return (L(st.label).split('—')[1] || '').trim();
+  if(lang === 'ko' && st.topic) return st.topic;
   const names = []; st.skills.forEach(k => { const n = L(k.name); if(!names.includes(n)) names.push(n); });
   return names.slice(0, 3).join(' · ');
 }
-function volumeTitle(st){
-  return st.book === 'pre-2023' ? t('예비초등 ' + st.volume + '권', 'Pre-school vol. ' + st.volume, '学前第' + st.volume + '册')
-    : t('초등 ' + st.volume + '권', 'Elementary vol. ' + st.volume, '小学第' + st.volume + '册');
-}
+function volumeTitle(st){ return L(st.title); }
+const mappedBook = b => !!(R.MAPPED && R.MAPPED[b]);
+function stepById(p){ return p && p.stepId ? (R.ladderFor(p).find(s => s.id === p.stepId) || null) : null; }
+/* 권 고르기 묶음 — 교재마다 실제 교재 표기대로 */
+const VOLUME_GROUPS = {
+  miracle: [['elem-2021', '초등 (2021판)', 'Elementary (2021 edition)', '小学（2021版）'], ['pre-2023', '예비초등 (2023판)', 'Pre-school (2023 edition)', '学前（2023版）']],
+  soma: ['P', 'K', 'A', 'B', 'C', 'D'].map(g => [g, '소마셈 ' + g, 'Soma-sem ' + g, 'Soma-sem ' + g]),
+  dunoro: [['level-1', 'Level 1 · 과정 1~10', 'Level 1 · courses 1–10', 'Level 1 · 课程1～10'], ['level-2', 'Level 2 · 과정 11~16', 'Level 2 · courses 11–16', 'Level 2 · 课程11～16'], ['level-3', 'Level 3 · 과정 17~25', 'Level 3 · courses 17–25', 'Level 3 · 课程17～25']]
+};
+const VOLUME_NOTE = {
+  miracle: ['다른 판(구판)이면 주제가 가장 비슷한 권을 골라 주세요.', 'If you have another edition, pick the volume with the closest topic.', '如果是其他版本，请选主题最接近的一册。'],
+  soma: ['2019년 발행본 기준이에요. 다른 발행본이면 주제가 가장 비슷한 권을 골라 주세요.', 'Based on the 2019 publication. For another printing, pick the volume with the closest topic.', '以2019年出版为准。其他版本请选主题最接近的一册。'],
+  dunoro: ['교재 표지의 과정 번호를 골라 주세요.', 'Pick the course number printed on the book.', '请选择教材封面上的课程编号。']
+};
 
 /* ---------- 화면 ---------- */
 function progressBar(){
@@ -117,27 +127,26 @@ function viewAge(){
 }
 function viewBook(){
   return '<div class="card"><h2>' + t('지금 하는 연산 교재가 있나요?', 'Is your child using an arithmetic workbook now?', '孩子现在在用计算教材吗？') + '</h2>' +
-    '<p class="lead">' + t('기적의 계산법이면 권별 주제로 바로 맞춰 볼게요. 다른 교재면 나이에 맞춰 할 줄 아는 계산을 여쭤볼게요.',
-      'For Miracle Calculation we match by volume. For other books we ask about calculations by age.',
-      '如果是奇迹计算法，我们按册对照；其他教材则按年龄询问会做的计算。') + '</p>' +
+    '<p class="lead">' + t('기적의 계산법·소마셈·두뇌로는 권(과정)별 진도로 바로 맞춰 볼게요. 다른 교재면 나이·학년에 맞춰 할 줄 아는 계산을 여쭤볼게요.',
+      'For Miracle Calculation, Soma-sem and Dunoro we match by volume (course). For other books we ask about calculations by age or grade.',
+      '奇迹计算法、Soma-sem和두뇌로按册（课程）进度对照；其他教材则按年龄、年级询问会做的计算。') + '</p>' +
     chips(BOOKS.map(b => [b[0], b[1], b[2], b[3]]), state.profile.book, 'book') + navBar() + '</div>';
 }
 function viewVolume(){
-  const vols = D.ladder;
-  const group = (book, title) => '<p class="group-t">' + title + '</p><div class="vols">' +
-    vols.filter(s => s.book === book).map(s => '<button class="vol" data-act="volume" data-ed="' + (book === 'pre-2023' ? 'pre' : 'elem') + '" data-v="' + s.volume + '"><b>' + esc(volumeTitle(s)) + '</b><span>' + esc(stepTopic(s)) + '</span></button>').join('') + '</div>';
-  return '<div class="card"><h2>' + t('지금 몇 권을 하고 있나요?', 'Which volume is your child on now?', '现在在学第几册？') + '</h2>' +
-    group('elem-2021', t('초등 (2021판)', 'Elementary (2021 edition)', '小学（2021版）')) +
-    group('pre-2023', t('예비초등 (2023판)', 'Pre-school (2023 edition)', '学前（2023版）')) +
-    '<p class="note">' + t('다른 판(구판)이면 주제가 가장 비슷한 권을 골라 주세요.', 'If you have another edition, pick the volume with the closest topic.', '如果是其他版本，请选主题最接近的一册。') + '</p>' + navBar() + '</div>';
+  const book = state.profile.book, vols = R.ladderFor(state.profile);
+  const group = g => '<p class="group-t">' + esc(tr3(g.slice(1))) + '</p><div class="vols">' +
+    vols.filter(s => s.group === g[0]).map(s => '<button class="vol" data-act="volume" data-v="' + esc(s.id) + '"><b>' + esc(volumeTitle(s)) + '</b><span>' + esc(stepTopic(s)) + '</span></button>').join('') + '</div>';
+  const title = book === 'dunoro' ? t('지금 몇 과정을 하고 있나요?', 'Which course is your child on now?', '现在在学第几个课程？') : t('지금 몇 권을 하고 있나요?', 'Which volume is your child on now?', '现在在学第几册？');
+  return '<div class="card"><h2>' + title + '</h2>' + (VOLUME_GROUPS[book] || []).map(group).join('') +
+    '<p class="note">' + esc(tr3(VOLUME_NOTE[book] || VOLUME_NOTE.miracle)) + '</p>' + navBar() + '</div>';
 }
 function viewProgress(){
-  return '<div class="card"><h2>' + t('그 권은 어디쯤 하고 있나요?', 'How far into that volume?', '这一册学到哪里了？') + '</h2>' +
+  return '<div class="card"><h2>' + (state.profile.book === 'dunoro' ? t('그 과정은 어디쯤 하고 있나요?', 'How far into that course?', '这个课程学到哪里了？') : t('그 권은 어디쯤 하고 있나요?', 'How far into that volume?', '这一册学到哪里了？')) + '</h2>' +
     chips(PROGRESS, state.profile.progress, 'progress') + navBar() + '</div>';
 }
 let draft = {};
 function viewSkills(q){
-  const st = D.ladder[q.step];
+  const st = R.ladderFor(state.profile)[q.step];
   const ks = st.skills.filter(k => !state.answers[k.ref] || draft[k.ref] !== undefined);
   const why = q.why === 'up' ? t('잘하신다니 한 단계 위도 여쭤볼게요', 'Doing well — let\'s check one step up', '掌握得不错，再看看上一级')
     : q.why === 'down' ? t('기초를 한 단계 아래에서 확인할게요', 'Let\'s check the basics one step down', '再往下确认一下基础')
@@ -155,7 +164,7 @@ function viewSkills(q){
 }
 let shown = false;
 function viewProbe(q){
-  const k = D.ladder[q.step].skills.find(x => x.ref === q.ref);
+  const k = R.ladderFor(state.profile)[q.step].skills.find(x => x.ref === q.ref);
   return '<div class="card"><span class="why">' + t('정보가 조금 더 필요해요', 'A little more information, please', '还需要一点信息') + '</span>' +
     '<h2>' + t('아이에게 이 문제를 말로 내 보세요', 'Ask your child this problem out loud', '请口头给孩子出这道题') + '</h2>' +
     '<p class="note">' + esc(skillTitle(k)) + '</p>' +
@@ -202,7 +211,7 @@ function summaryText(r){
   const p = state.profile, lines = [];
   lines.push(t('[수의 마법 시작점 상담]', '[Numbers of Magic · starting-point check]', '[数的魔法 · 起点咨询]'));
   lines.push(t('나이', 'Age', '年龄') + ': ' + ageLabel(p.age) + (p.book ? ' · ' + t('교재', 'Book', '教材') + ': ' + bookLabel(p.book) : '') +
-    (p.book === 'miracle' && p.volume ? ' ' + volumeTitle({ book: p.edition === 'pre' ? 'pre-2023' : 'elem-2021', volume: p.volume }) + (p.progress ? ' (' + tr3(PROGRESS.find(x => x[0] === p.progress).slice(1)) + ')' : '') : ''));
+    (mappedBook(p.book) && stepById(p) ? ' ' + volumeTitle(stepById(p)) + (p.progress ? ' (' + tr3(PROGRESS.find(x => x[0] === p.progress).slice(1)) + ')' : '') : ''));
   if(r.middle){ lines.push(t('중학생 이상 — 연산 진단 평가로 확인 예정', 'Middle school or older — to be checked with the diagnostic test', '初中及以上——将用计算诊断测评确认')); return lines.join('\n'); }
   if(r.start) lines.push(t('추천 시작', 'Suggested start', '推荐开始') + ': ' + courseTitle(r.start));
   const add = (label, arr) => { if(arr.length) lines.push(label + ': ' + arr.map(skillTitle).join(', ')); };
@@ -279,8 +288,8 @@ document.addEventListener('click', e => {
   if(act === 'begin') go('flow');
   else if(act === 'back') { draft = {}; shown = false; back(); }
   else if(act === 'age') go('flow', () => { p.age = v; if(v === 'm'){ p.book = null; } });
-  else if(act === 'book') go('flow', () => { p.book = v; if(v !== 'miracle'){ p.volume = null; p.edition = null; p.progress = null; } });
-  else if(act === 'volume') go('flow', () => { p.edition = b.dataset.ed; p.volume = +v; });
+  else if(act === 'book') go('flow', () => { if(p.book !== v){ p.stepId = null; p.progress = null; } p.book = v; });
+  else if(act === 'volume') go('flow', () => { p.stepId = v; });
   else if(act === 'progress') go('flow', () => { p.progress = v; });
   else if(act === 'skill'){
     draft[b.dataset.ref] = v;
