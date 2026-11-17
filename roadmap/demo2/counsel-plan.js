@@ -106,7 +106,7 @@
     const practice=anchor && anchor > day ? anchor : day;
     return {book, unit, track, practice, practiceCount:3, recheck:g.PlannerWeeklyModel.addDays(practice,7), recheckCount:2};
   }
-  const formatStatus = flags => flags & 2 ? '혼자 풀 수 있어요' : flags & 1 ? '공부했어요 · 혼자 풀기는 미확인' : '미기록';
+  const formatStatus = flags => flags & 2 ? '학습 완료' : flags & 1 ? '다시 확인할 학습' : '미기록';
   function previousSummary() {
     if (g.RoadmapGuest || !g.RoadmapMember?.user_id) return '';
     const plans=studyPlans(saved());

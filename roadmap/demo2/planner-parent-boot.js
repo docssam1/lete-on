@@ -19,6 +19,7 @@ async function mount({loadFull,member,saved}){
   const summary=g.PlannerIntake.summary(saved.answers||{},saved.fields||{}).filter(r=>['school','deepBook','thinking','calc'].includes(r.key));
   const h=doc.createElement('h2');h.textContent='현재 공부에서 이어서 학습해요.';entry.append(h);
   for(const row of summary){const p=doc.createElement('p');p.textContent=row.label+' · '+row.text;entry.append(p);}
+  entry.insertAdjacentHTML('beforeend',g.PlannerParentFlow.balanceNotice(saved.answers||{}));
   const study=doc.createElement('button');study.type='button';study.className='parent-primary';study.textContent='학습하기';
   const map=doc.createElement('button');map.type='button';map.className='parent-advanced';map.textContent='전체 로드맵 보기';
   const change=doc.createElement('details'),label=doc.createElement('summary'),form=doc.createElement('div');label.textContent='현재 공부 바꾸기';change.append(label,form);

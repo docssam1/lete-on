@@ -28,12 +28,12 @@ test('signed session differences rise and fall with a dashed zero baseline, and 
   assert.match(html, /밀렸던 1회를 모두 따라잡았어요/);
   assert.doesNotMatch(html, /wt-marker" data-wt-week="3"/);
 });
-test('a units view distinguishes pending units and solo evidence from session counts', () => {
+test('a units view distinguishes pending units and completed learning from session counts', () => {
   const html = render([0, -2, 0], 'units');
   assert.match(html, /단원 보완 흐름/);
   assert.match(html, /보완할 단원 0개/);
   assert.match(html, /지난 기록보다 보완할 단원이 2개 줄었어요/);
-  assert.match(html, /혼자 푼 항목이 있는 단원/);
+  assert.match(html, /학습을 완료한 항목이 있는 단원/);
   assert.doesNotMatch(html, /누적 차이|계획선|주간 점검 열기/);
 });
 test('new learners may open a clearly labeled sample with no observed points or progress stamps', () => {

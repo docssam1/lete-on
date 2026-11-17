@@ -139,3 +139,21 @@ test('a recheck already scheduled as practice keeps its remediation links and ap
   const after = mark(before,same[0],'solo',true,next);
   assert.deepEqual(inspect(after,'2026-11-22',[]).rows,[]);
 });
+
+test('one completion control saves and restores without migrating or losing the old two-flag history',()=>{
+ const legacy=mark(mark(null,algebra,'studied'),question,'solo'),before=copy(legacy);
+ const completed=mark(legacy,arithmetic,'completed');
+ assert.deepEqual(legacy,before);assert.equal(completed.entries.length,3);
+ assert.deepEqual(inspect(completed).rows.map(r=>[r.id,r.completed]),[[algebra.id,false],[question.id,true],[arithmetic.id,true]]);
+ assert.deepEqual(M.restore(completed),completed);assert.deepEqual(completed.entries.slice(0,2),legacy.entries);
+ assert.ok(inspect(completed,next,[]).rows.every(row=>row.id!==arithmetic.id));
+});
+test('undoing completion carries that range to next week and a linked completion resolves only its own review',()=>{
+ let state=mark(null,question,'completed');state=mark(state,question,'completed',false);
+ assert.equal(inspect(state).rows.find(r=>r.id===question.id).completed,false);
+ const due=inspect(state,next,[]);assert.deepEqual(due.rows.map(r=>r.id),[question.id]);
+ const alternate={...question,id:'mock-2024-3:9',title:'2024 고1 3월 9번',paperId:'2024-3',questionNumber:9,reviewOf:[question.id]};
+ state=mark(state,alternate,'completed',true,next);assert.equal(inspect(state,next,[]).nextReview.length,0);
+ state=mark(state,alternate,'completed',false,next);assert.equal(inspect(state,next,[]).nextReview.length,1);
+ assert.equal(mark(null,algebra,'completed',false).entries.length,0);
+});

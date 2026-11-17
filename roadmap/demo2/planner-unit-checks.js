@@ -83,7 +83,7 @@
 
   function update(raw, {weekStart: start, item: input, field, value, day = days.today()} = {}) {
     const state = restore(raw), item = source(input);
-    if (!validDay(start) || !item || !['studied', 'solo'].includes(field) || typeof value !== 'boolean') return state;
+    if (!validDay(start) || !item || !['studied', 'solo', 'completed'].includes(field) || typeof value !== 'boolean') return state;
     const index = state.entries.findIndex(entry => entry.item.id === item.id);
     const entry = state.entries[index] || {item, marks: []};
     if (item.unitId !== entry.item.unitId || item.kind !== entry.item.kind) return state;
@@ -92,7 +92,9 @@
     const current = entry.marks.findLast(inWeek);
     const old = current?.[1] || 0;
     const bit = field === 'studied' ? STUDIED : SOLO;
-    const bits = value ? old | bit : old & ~bit;
+    // One public completion control. Preserve the v1 flags and old unresolved
+    // practice records; unchecking completion explicitly requests another pass.
+    const bits = field === 'completed' ? (value ? STUDIED | SOLO : old ? STUDIED : 0) : value ? old | bit : old & ~bit;
     if (bits === old) return state;
     const marks = entry.marks.filter(mark => !inWeek(mark));
     if (bits) {
@@ -171,7 +173,7 @@
     for (const item of sources.values()) {
       const {bits, review, dueWeek, rechecked} = past.get(item.id) || {bits: 0, review: false, dueWeek: ''};
       const solo = !!(bits & SOLO), studied = !!(bits & STUDIED);
-      rows.push({...item, studied, solo, review, dueWeek});
+      rows.push({...item, studied, solo, completed:solo, review, dueWeek});
       if (solo || rechecked || (!studied && !review)) continue;
       if (!groups.has(item.unitId)) {
         groups.set(item.unitId, {unitId: item.unitId, unitLabel: item.unitLabel || item.title, dueWeek: nextWeekStart, items: []});

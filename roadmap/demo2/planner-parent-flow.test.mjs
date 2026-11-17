@@ -126,3 +126,42 @@ test('finishing a named volume never claims that the whole thinking series is co
  assert.match(F.renderLearning(a,fields),/다음에 공부할 범위를 확인/);
  const all=F.build({grade:'pre',age:'5',thinking:{book:'키즈팩토',status:'done'}});assert.equal(all.thinkingStatus,'done');
 });
+
+test('thinking balance notices compare actual course intervals on each axis, independently of age',()=>{
+ const current={...input(),school:{stage:'e:1-1',book:'디딤돌 응용'},thinking:{book:'1031 중급'},calc:{book:'기적의 계산법 1권'}};
+ const a=F.build({...current,age:'10'}),before=JSON.stringify(a),m=F.thinkingBalance(a);
+ assert.deepEqual(plain(m.ahead.map(row=>row.axis)),['school','calc']);assert.ok(m.ahead.every(row=>row.samples>=3));
+ const young=F.build({...current,age:'5',grade:'pre'});
+ assert.deepEqual(plain(F.thinkingBalance(young)),plain(m));assert.equal(JSON.stringify(a),before);
+ const html=F.balanceNotice(a);assert.match(html,/교과·연산보다 앞서/);assert.match(html,/1031 중급/);assert.match(html,/1-1/);assert.match(html,/일정은 자동으로 바꾸지/);
+ assert.doesNotMatch(html,/몇 개월|개월 뒤|상위.*%/);
+});
+test('balance notice clears when curriculum and arithmetic have caught up, and reports only the lagging axis',()=>{
+ const current={...input(),school:{stage:'e:6-2',book:'디딤돌 응용'},thinking:{book:'1031 중급'},calc:{book:'기적의 계산법 2권'}};
+ assert.deepEqual(plain(F.thinkingBalance(F.build(current)).ahead.map(row=>row.axis)),['calc']);
+ const caught=F.build({...current,calc:{book:'기적의 계산법 12권'}});
+ assert.equal(F.balanceNotice(caught),'');
+ const normal=F.build({...current,school:{stage:'e:3-1',book:'디딤돌 응용'},thinking:{book:'키즈팩토'},calc:{book:'기적의 계산법 6권'}});
+ assert.equal(F.balanceNotice(normal),'');
+});
+test('missing, unlisted, and academy reference scopes never invent a thinking-balance judgment',()=>{
+ assert.equal(F.balanceNotice(F.build({...input(),thinking:{book:'확인 전의 사고력 교재'}})),'');
+ assert.equal(F.balanceNotice(F.build({...input(),thinking:{book:'소마 Ray A3-3'}})),'');
+ const unknown=F.build({...input(),school:{stage:'unknown'},thinking:{book:'1031 중급'},calc:{book:'직접 쓰는 계산책'}});
+ assert.equal(F.balanceNotice(unknown),'');
+ assert.equal(F.balanceNotice({}),'');
+});
+test('the same balance notice follows the submitted current study into result and learning screens',()=>{
+ const a=F.build({...input(),school:{stage:'e:1-1',book:'디딤돌 응용'},thinking:{book:'1031 중급'},calc:{book:'기적의 계산법 2권'}});
+ const model=F.automatic(a,fields,w.PlannerStandard.model(a,fields));
+ assert.match(F.renderResult(model),/class="parent-balance"/);assert.match(F.renderLearning(a,fields),/class="parent-balance"/);
+ assert.equal(F.renderResult(model).split('class="parent-balance"').length,2);
+});
+
+test('an older saved semester can still be compared and notice content is escaped',()=>{
+ const legacy={grade:'3',school:'1-1',schoolBook:'디딤돌 응용',thinking:'1031 초급',calc:'기적의 계산법 2권'};
+ assert.ok(F.thinkingBalance(legacy).ahead.some(row=>row.axis==='school'));
+ const a=F.build({...input(),school:{stage:'e:1-1',book:'디딤돌 응용'},thinking:{book:'1031 중급'},calc:{book:'기적의 계산법 2권'}});
+ a.parentFlow.actualBooks.thinking='<img src=x onerror=alert(1)>';
+ assert.doesNotMatch(F.balanceNotice(a),/<img/);assert.match(F.balanceNotice(a),/&lt;img/);
+});

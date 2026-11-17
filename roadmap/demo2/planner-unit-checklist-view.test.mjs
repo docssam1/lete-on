@@ -21,9 +21,9 @@ test('current stage character uses child artwork and within-stage solo progress 
   assert.match(html,/의대 준비 · 수학 교과 경로/);
   assert.match(html,/다음 과정 <strong>공통수학2/);
   assert.doesNotMatch(markup({route:{stages:[]},rows:[]}),/다음 과정/);
-  assert.match(html,/data-uc-percent="50"/);
-  assert.match(html,/data-uc-field="studied" data-uc-id="book"[^>]+ checked/);
-  assert.doesNotMatch(html,/data-uc-field="solo" data-uc-id="book"[^>]+ checked/);
+  assert.match(html,/data-uc-percent="50"/);assert.doesNotMatch(html,/data-uc-field="(?:studied|solo)"/);assert.equal((html.match(/data-uc-field="completed"/g)||[]).length,2);
+  assert.match(html,/data-uc-field="completed" data-uc-id="paper:q7"[^>]+ checked/);
+  assert.doesNotMatch(html,/data-uc-field="completed" data-uc-id="book"[^>]+ checked/);
   const changed = markup({...model, rows:[{...book,solo:true},mock]});
   assert.match(changed,/data-stage-id="high" aria-current="step"/);
   assert.match(changed,/data-uc-percent="100"/);

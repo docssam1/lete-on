@@ -69,3 +69,7 @@ button.parent-primary{border:0;border-radius:10px;min-height:48px;padding:13px 2
 .parent-current-form fieldset[data-parent-axis=thinking] .parent-range{display:flex;align-items:stretch;gap:6px}
 .parent-current-form fieldset[data-parent-axis=thinking] .parent-range input{max-width:none;margin:0}
 @media(max-width:600px){.parent-current-form fieldset[data-parent-axis=thinking] .parent-current-row{grid-template-columns:1fr}}
+
+/* A factual current-course notice; never a fixed overlay or an age ranking. */
+.parent-balance{margin:16px 0;padding:14px 16px;border:1px solid #b6a0c6;border-left:4px solid #76528b;border-radius:10px;background:#f7f3fa;color:#483455;overflow-wrap:anywhere}
+.parent-balance strong{display:block;font-size:15px;line-height:1.6}.parent-balance p,.parent-own-learning .parent-balance p{margin:8px 0;font-size:14px;line-height:1.7;color:#594665}.parent-balance small{display:block;font-size:12px;line-height:1.6;color:#6b5877}
