@@ -665,8 +665,7 @@ function coverMarkup() {
     <h1>${esc(unit.label)}</h1>
     <p class="sd-cover-lead">${classMode ? "왼쪽 수업 차례대로 진행해요. 차례를 누르면 그 장으로 바로 가요." : "섬을 따라 한 곳씩 가 봐요."}</p>
     <ol class="sd-plan" style="--n:${planPhases(counts).length}">${planPhases(counts).map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
-    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>${classMode ? "수업 시작 →" : "출발하기 →"}</button>
-  </div>`;
+  </div>`;   // 표지 가운데 「출발하기」 단추는 뺐다 — 아래 줄 단추 하나로(원장 2026-11-17 「출발하기 버튼 하나만 통일해줘」)
 }
 function boardMarkup(block) {
   return `<p class="sd-board-help">본책을 펴서 <b>${esc(block.label)}</b> 문제를 풀어요. 모르는 번호를 누르면 같은 유형의 유사문제가 나와요.</p>
