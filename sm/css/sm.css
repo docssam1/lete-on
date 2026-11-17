@@ -563,3 +563,18 @@ button { font: inherit; color: inherit; }
 .u2-ask { width: 100%; display: flex; justify-content: center; }
 .u2-bub { display: inline-flex; align-items: center; gap: 12px; padding: 8px 18px 8px 10px; border-radius: 999px; background: #fff; box-shadow: var(--shadow); font-size: 22px; font-weight: 800; }
 @media (max-height: 560px) { .u2-bub { font-size: 17px; padding: 4px 12px 4px 6px; } .u2-bub svg { width: 40px; height: 40px; } }
+
+/* 이메일 가입(signup.html) · 로그인 화면의 가입 안내 */
+.sm-join { margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.sm-link { font-size: 18px; font-weight: 700; color: var(--blue-dark); }
+.sm-signup .sm-card { width: min(560px, 100%); }
+.sm-signup .step-title { margin: 0 0 6px; font-size: 22px; font-weight: 900; }
+.sm-signup .kids { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; }
+.sm-signup .kid-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 16px; background: #f4f8ff; font-size: 20px; font-weight: 800; }
+.sm-signup .kid-row .sm-btn { min-height: 46px; font-size: 16px; padding: 0 14px; }
+.sm-signup .consent { display: flex; flex-direction: column; gap: 8px; font-size: 17px; }
+.sm-signup .consent label { display: flex; gap: 8px; align-items: flex-start; }
+.sm-signup .consent input { width: 22px; height: 22px; margin-top: 2px; }
+.sm-signup details { font-size: 15px; color: var(--ink2); background: #f7f9fc; border-radius: 12px; padding: 8px 12px; }
+.sm-signup details dl { margin: 8px 0 0; } .sm-signup details dt { font-weight: 800; margin-top: 6px; } .sm-signup details dd { margin: 2px 0 0; }
+.sm-signup .done-code { font-size: 34px; font-weight: 900; letter-spacing: 2px; color: var(--blue-dark); text-align: center; padding: 10px; border: 3px dashed #9cb8de; border-radius: 16px; }

@@ -3,8 +3,8 @@
 //  15 「도형 릴레이」 활동: 점판에서 여러 가지 세모 3개, 네모 3개 만들기(앵글렉스 대신 점 잇기)
 //  16 범인을 찾아라: 감시 카메라 그림자 = 사다리꼴 + 직각삼각형 · 17 「도형 그림자」 카드 게임(도형 카드 A1-2-2, 그림자 카드 A1-2-3)
 //  18 그림자 카드 세 장 — (1) 동그라미+세모 (2) 세모+네모 (3) 동그라미+네모+평행사변형
-import { scene, onHit } from "../numbers.js?v=20261115c";
-import { shape, shapeFriend, dotShapes, paintByRule, chooseAll, shadowOf, shapeCard, simplePoly } from "../shapes.js?v=20261115c";
+import { scene, onHit } from "../numbers.js?v=20261117a";
+import { shape, shapeFriend, dotShapes, paintByRule, chooseAll, shadowOf, shapeCard, simplePoly } from "../shapes.js?v=20261117a";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 // ── 14쪽 ──

@@ -1,7 +1,7 @@
 // A1-2 1단원(도형 마을)·2단원(입체도형) 평면 부품 — 원본 8~50쪽 활동을 화면으로.
 //  도형 그림, 점 이어 도형 만들기, 여럿 고르기, 규칙대로 색칠, 마을(칸)로 보내기, 겹친 도형 그림자, 동그라미 그리기.
 //  독쌤 말은 정해진 문장만(바뀌는 수·이름을 넣지 않음) → 모두 독쌤 목소리로 미리 만든다.
-import { scene, onHit, esc } from "./numbers.js?v=20261115c";
+import { scene, onHit, esc } from "./numbers.js?v=20261117a";
 
 const sleep = (ctx, ms) => ctx.wait(ms);
 const svgEl = (tag, attrs = {}) => { const el = document.createElementNS("http://www.w3.org/2000/svg", tag); for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v); return el; };

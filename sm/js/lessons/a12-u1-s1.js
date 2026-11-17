@@ -2,8 +2,8 @@
 //  8 소마 나라 세 마을(호호 = 동그라미, 송송 = 세모, 토토 = 네모) · 9 도형과 마을 잇기(세모→송송, 네모→토토, 동그라미→호호)
 //  10 이사 온 도형(빨간 사다리꼴·초록 직각삼각형·주황 동그라미) · 11·12 도형 스티커를 마을에 붙이기 + 동그라미·세모·네모 뜻
 //  13 이사 온 도형과 마을 잇기. 도형 스티커(A1-2-1)는 책에 없는 스티커지라 여러 모양 도형을 코드로 그렸다.
-import { scene, onHit, matchLines } from "../numbers.js?v=20261115c";
-import { shape, shapeFriend, villageArt, VILLAGE, FAMILY, sortToBins } from "../shapes.js?v=20261115c";
+import { scene, onHit, matchLines } from "../numbers.js?v=20261117a";
+import { shape, shapeFriend, villageArt, VILLAGE, FAMILY, sortToBins } from "../shapes.js?v=20261117a";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 const KEYS = ["round", "tri", "quad"];

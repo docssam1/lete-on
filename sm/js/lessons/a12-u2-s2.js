@@ -3,9 +3,9 @@
 //  37 사각뿔·원뿔: 뿔 모양 · 올릴 수 없음 · 위에서 보면 네모·동그라미
 //  38 「입체도형 수수께끼」 4문제 · 39 기둥/뿔/공 모양으로 나누기
 //  40 똑같이 쌓기(판·원기둥·원판·정육면체, 원뿔·연필 모양은 필요 없음) · 41 「모양을 만들자!」 기억하여 쌓기 3판
-import { scene, onHit } from "../numbers.js?v=20261115c";
-import { solidIcon, sortToBins, chooseAll, solidArt } from "../shapes.js?v=20261115c";
-import { createSolidStage, solidTools } from "../solids3d.js?v=20261115c";
+import { scene, onHit } from "../numbers.js?v=20261117a";
+import { solidIcon, sortToBins, chooseAll, solidArt } from "../shapes.js?v=20261117a";
+import { createSolidStage, solidTools } from "../solids3d.js?v=20261117a";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 // 동물 얼굴(원본 36~39쪽 말하는 동물들) — 코드로 그림
