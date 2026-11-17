@@ -73,3 +73,109 @@ button.parent-primary{border:0;border-radius:10px;min-height:48px;padding:13px 2
 /* A factual current-course notice; never a fixed overlay or an age ranking. */
 .parent-balance{margin:16px 0;padding:14px 16px;border:1px solid #b6a0c6;border-left:4px solid #76528b;border-radius:10px;background:#f7f3fa;color:#483455;overflow-wrap:anywhere}
 .parent-balance strong{display:block;font-size:15px;line-height:1.6}.parent-balance p,.parent-own-learning .parent-balance p{margin:8px 0;font-size:14px;line-height:1.7;color:#594665}.parent-balance small{display:block;font-size:12px;line-height:1.6;color:#6b5877}
+
+/* Current study interview: one question canvas, one advancing route graphic.
+   Existing lavender brand, system Korean type, 44px controls, no heavy artwork. */
+body.parent-slide-open{overflow:hidden}
+body.parent-slide-open #parentBoot{height:100dvh;max-width:1160px;padding:20px 24px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:16px}
+body.parent-slide-open #parentBoot>header{margin:0;padding:0 0 12px;border-bottom:1px solid #d7ccdf;align-items:center;gap:12px}
+body.parent-slide-open #parentBoot>header h1{font-size:24px}
+body.parent-slide-open #parentBoot>section{min-height:0}
+#parentBoot[data-slide-editing=true]>section>:not(details){display:none}
+#parentBoot[data-slide-editing=true]>section>details{height:100%;margin:0;display:flex;flex-direction:column}
+#parentBoot[data-slide-editing=true]>section>details>summary{min-height:40px;line-height:40px;flex:none}
+#parentBoot[data-slide-editing=true]>section>details>div{height:calc(100% - 40px)}
+.parent-current-form.parent-slides{height:min(720px,calc(100dvh - 160px));min-height:0;max-width:none}
+body.parent-slide-open .parent-current-form.parent-slides{height:100%}
+.parent-slides .parent-slide-layout{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(0,1.4fr);height:100%;min-height:0;border:1px solid #dacfe2;border-radius:16px;overflow:hidden;background:#fff}
+.parent-slides .parent-slide-graphic{min-width:0;background:#eee7f4;padding:36px 24px;display:flex;flex-direction:column;justify-content:center;color:#4b315e;overflow:hidden}
+.parent-slide-brand>span{font-size:14px;font-weight:600}.parent-slide-brand>strong{display:block;font-size:clamp(28px,3vw,38px);line-height:1.3;letter-spacing:-.05em;margin:18px 0}.parent-slide-brand>p{font-size:14px;color:#665471;margin:0}
+.parent-slide-map{display:block;width:100%;height:auto;overflow:visible;margin:28px 0 16px}
+.parent-slide-map path{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:5px}.parent-slide-map .parent-slide-road{stroke:#d1c0de}.parent-slide-map .parent-slide-road-fill{stroke:#74508e}.parent-slide-map circle{fill:#fff;stroke:#9d83af;stroke-width:2px}.parent-slide-map .is-past circle{fill:#9270a9;stroke:#9270a9}.parent-slide-map .is-current circle{fill:#68437e;stroke:#fff;stroke-width:4px}.parent-slide-map text{fill:#69497f;font-size:12px;font-weight:700;text-anchor:middle;font-family:inherit}.parent-slide-map :is(.is-current,.is-past) text{fill:white}
+.parent-slides .parent-slide-stops{display:flex;list-style:none;margin:0;padding:0;flex-wrap:wrap;gap:4px}.parent-slide-stops li{flex:1 0 auto}.parent-slides .parent-slide-stops button{border:0;background:transparent;color:#5d4470;font:inherit;font-size:13px;min-height:44px;padding:6px 8px;border-radius:5px;cursor:pointer}.parent-slides .parent-slide-stops button[aria-current=step]{background:#68437e;color:white;font-weight:700}.parent-slides .parent-slide-stops button:disabled{opacity:.7;cursor:default}
+.parent-slide-graphic-note{font-size:14px;line-height:1.7;margin:20px 0 0;min-height:48px;overflow-wrap:anywhere}
+.parent-slides .parent-slide-workspace{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0;min-width:0}
+.parent-slides .parent-slide-viewport{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;min-height:0;padding:32px 32px 16px;scroll-padding-block:16px}
+.parent-slides .parent-slide-question{font-size:25px;line-height:1.4;margin:0 0 8px;letter-spacing:-.04em;outline:0}
+.parent-slides .parent-slide-hint{color:#6a5875;font-size:14px;line-height:1.7;margin:0 0 22px;max-width:50ch}
+.parent-slides .parent-age-intake{padding:0;margin:0;border:0}.parent-slides .parent-age-intake>label{max-width:none}
+.parent-slides .parent-age-intake>h2,.parent-slides .parent-age-intake>.parent-intro,.parent-slides [data-parent-study-section]>h2,.parent-slides [data-parent-study-section]>.parent-intro,.parent-slides .parent-form-note{display:none}
+.parent-slides [data-parent-study-section],.parent-slides .parent-current-rows{display:contents}
+.parent-slides [data-parent-study-section][hidden]{display:none!important}
+.parent-slides .parent-student{margin:0}.parent-slides .parent-student>label{flex:1}
+.parent-slides fieldset{padding:0;border:0;margin:0}.parent-slides fieldset>legend{display:none}
+.parent-slides .parent-current-row,.parent-slides fieldset[data-parent-axis=thinking] .parent-current-row,.parent-slides fieldset[data-parent-axis=calc] .parent-current-row{display:flex;flex-direction:column;gap:14px}
+.parent-slides .parent-current-row>label{grid-column:auto!important;grid-row:auto!important;font-size:14px}
+.parent-slides .parent-current-row>.parent-range{display:flex;flex-direction:column;align-items:stretch;gap:6px}.parent-slides .parent-range input{max-width:none;margin:0}
+.parent-slides input,.parent-slides select{min-height:48px;font-size:16px}.parent-slides textarea{min-height:100px;font-size:16px;resize:vertical}
+.parent-slides .parent-thinking-note{display:none}
+.parent-slides[data-slide-detail=false] .parent-current-row>.parent-range,.parent-slides[data-slide-detail=false] .parent-thinking-independent{display:none!important}
+.parent-slides[data-slide-detail=true] .parent-current-row>label:not(.parent-range):not(.parent-thinking-independent){display:none!important}
+.parent-slides .parent-slide-extra,.parent-slides [data-slide-note]{display:inline-flex;align-items:center;min-height:44px;border:0;padding:8px 0;background:transparent;font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;color:#69457f;cursor:pointer;margin-top:8px}
+.parent-slides .parent-slide-footer{padding:12px 32px 16px;border-top:1px solid #e4dbe9;min-width:0;background:white}
+.parent-slide-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;color:#756180;line-height:1.5;margin-bottom:10px}.parent-slide-meta [data-slide-count]{font-size:13px;font-weight:700;color:#624177;white-space:nowrap}
+.parent-slides .parent-slide-footer>nav{display:grid;grid-template-columns:80px minmax(0,1fr);gap:12px}
+.parent-slides [data-slide-back]{font:inherit;min-height:48px;border:1px solid #b49dc3;border-radius:8px;background:white;color:#654379;cursor:pointer}
+.parent-slides button.parent-primary{min-height:48px;padding:11px 16px;box-shadow:none;border-radius:8px}
+.parent-slides .parent-form-error{font-size:13px;line-height:1.5;margin:8px 0 0;min-height:0}.parent-slides .parent-form-error:empty{display:none}
+.parent-slides .parent-advanced{margin-top:4px;padding:5px 0;min-height:32px}
+.parent-slides [data-slide-summary]{display:grid;gap:4px}
+.parent-slides [data-slide-summary]>button{display:grid;grid-template-columns:75px minmax(0,1fr) 26px;align-items:center;gap:8px;width:100%;padding:10px 0;min-height:44px;text-align:left;border:0;border-bottom:1px solid #e6dfea;background:transparent;color:#50365f;font:inherit;font-size:14px;cursor:pointer}
+.parent-slides [data-slide-summary] span{overflow-wrap:anywhere;color:#66526f;font-size:13px}.parent-slides [data-slide-summary] small{font-size:12px;color:#755b85}
+.parent-slides .parent-balance{padding:10px 12px;margin:12px 0}.parent-slides .parent-balance>p,.parent-slides .parent-balance>small{display:none}.parent-slides .parent-balance>strong{font-size:14px}
+.parent-slides[data-slide-detail=false] .parent-solo{display:none}
+.parent-slides[data-slide-detail=true] [data-slide-summary],.parent-slides[data-slide-detail=true] [data-slide-note],.parent-slides[data-slide-detail=true] [data-parent-balance]{display:none}
+.parent-slides .parent-solo{margin:0}
+.parent-slides :is(button,input,select,textarea):focus-visible{outline:3px solid #9a76b2;outline-offset:3px}
+@media(max-width:700px){
+ body.parent-slide-open #parentBoot{padding:12px;gap:10px}body.parent-slide-open #parentBoot>header{padding-bottom:10px;gap:8px}body.parent-slide-open #parentBoot>header h1{font-size:20px;width:100%}body.parent-slide-open #parentBoot>header>a{font-size:13px;margin-left:0}body.parent-slide-open #parentBoot>header>a:last-child{margin-left:auto}
+ .parent-current-form.parent-slides{height:min(730px,calc(100dvh - 130px))}
+ .parent-slides .parent-slide-layout{grid-template-columns:1fr;grid-template-rows:114px minmax(0,1fr);border-radius:12px}
+ .parent-slides .parent-slide-graphic{display:block;padding:6px 12px;position:relative}
+ .parent-slides .parent-slide-brand,.parent-slides .parent-slide-graphic-note{display:none}
+ .parent-slides .parent-slide-map{width:100%;height:65px;margin:0;transform:none}
+ .parent-slides .parent-slide-stops{flex-wrap:nowrap;gap:0;justify-content:space-between}.parent-slides .parent-slide-stops li{flex:0 1 auto}.parent-slides .parent-slide-stops button{font-size:12px;min-height:36px;padding:4px 6px;white-space:nowrap}
+ .parent-slides .parent-slide-viewport{padding:20px 18px 12px}
+ .parent-slides .parent-slide-question{font-size:22px}.parent-slides .parent-slide-hint{font-size:13px;line-height:1.6;margin-bottom:16px}
+ .parent-slides .parent-current-row,.parent-slides fieldset[data-parent-axis=thinking] .parent-current-row,.parent-slides fieldset[data-parent-axis=calc] .parent-current-row{gap:12px}
+ .parent-slides .parent-slide-footer{padding:10px 18px 14px}.parent-slide-meta>span:last-child{display:none}
+}
+@media(max-height:720px) and (max-width:700px){
+ body.parent-slide-open #parentBoot{gap:6px;padding:8px}body.parent-slide-open #parentBoot>header h1{font-size:18px;width:auto}body.parent-slide-open #parentBoot>header>a{font-size:12px;min-height:24px}body.parent-slide-open #parentBoot>header>a:first-of-type{display:none}
+ .parent-slides .parent-slide-layout{grid-template-rows:80px minmax(0,1fr)}.parent-slides .parent-slide-map{height:44px}.parent-slides .parent-slide-stops button{min-height:28px;padding:2px 4px}
+ .parent-slides .parent-slide-viewport{padding:14px}.parent-slides .parent-slide-question{font-size:20px}.parent-slides .parent-slide-hint{font-size:12px;margin-bottom:10px}
+ .parent-slides .parent-current-row,.parent-slides fieldset[data-parent-axis=thinking] .parent-current-row{gap:8px}.parent-slides .parent-current-row>label{gap:3px;font-size:13px}.parent-slides input,.parent-slides select{min-height:44px;padding:8px 10px}
+ .parent-slides .parent-slide-footer{padding:8px 14px}.parent-slide-meta{margin-bottom:6px}.parent-slides .parent-slide-extra,.parent-slides [data-slide-note]{min-height:36px;margin-top:2px}.parent-slides button.parent-primary,.parent-slides [data-slide-back]{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){.parent-slides *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.parent-slides[data-slide-detail=false] .parent-slide-status{display:none!important}
+.parent-slides[data-slide-detail=true] .parent-current-row>.parent-slide-status:not([hidden]){display:flex!important}
+.parent-slide-symbol{width:156px;height:156px;margin:0 auto 12px;order:1}.parent-slide-symbol>svg{display:block;width:100%;height:100%}
+.parent-slide-brand{order:0}.parent-slide-map{order:2}.parent-slide-stops{order:3}.parent-slide-graphic-note{order:4}
+@media(max-width:700px){.parent-slides .parent-slide-layout{grid-template-rows:128px minmax(0,1fr)}.parent-slides .parent-slide-graphic{display:grid;grid-template-columns:76px minmax(0,1fr);grid-template-rows:74px 42px;align-items:center;gap:0 6px}.parent-slide-symbol{width:76px;height:76px;margin:0;grid-column:1;grid-row:1;order:0}.parent-slides .parent-slide-map{grid-column:2;grid-row:1;height:70px}.parent-slides .parent-slide-stops{grid-column:1/-1;grid-row:2}}
+@media(max-height:720px) and (max-width:700px){.parent-slides .parent-slide-layout{grid-template-rows:88px minmax(0,1fr)}.parent-slides .parent-slide-graphic{grid-template-columns:54px minmax(0,1fr);grid-template-rows:46px 30px}.parent-slide-symbol{width:54px;height:54px}.parent-slides .parent-slide-map{height:44px}}
+.parent-slides .parent-slide-question{word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+@media(max-height:720px) and (max-width:700px){.parent-slides[data-slide=review] .parent-slide-hint{display:none}.parent-slides[data-slide=review] .parent-slide-viewport{padding-bottom:8px}.parent-slides .parent-advanced{min-height:26px;line-height:1.5;margin-top:0;padding:3px 0}}
+@media(max-height:720px) and (max-width:700px){.parent-slides [data-slide-summary]>button{padding-block:7px}}
+/* The same focused canvas when changing answers inside the full planner. */
+body.questioning:has(#questionOptions>.parent-slides){overflow:hidden}
+body.roadmap-studio.integrated-planner.questioning #conversation:has(#questionOptions>.parent-slides){position:fixed!important;inset:76px 16px 16px!important;z-index:40;display:block!important;height:auto!important;max-height:none!important;max-width:1160px;width:auto;margin:0 auto!important;padding:0!important;overflow:visible!important;background:transparent;border:0;border-radius:0;box-shadow:none}
+body.questioning #conversation:has(#questionOptions>.parent-slides)>:not(#questionOptions){display:none!important}
+#questionOptions:has(>.parent-slides){display:block!important;height:100%;margin:0;padding:0;overflow:visible}
+#questionOptions>.parent-current-form.parent-slides{height:100%}
+@media(max-width:700px){body.roadmap-studio.integrated-planner.questioning #conversation:has(#questionOptions>.parent-slides){inset:56px 10px 10px!important}}
+@media(max-height:720px) and (max-width:700px){.parent-slides[data-slide=review] .parent-balance{margin-block:6px}}
+/* Isolate the interview from the older planner's generic choice-card buttons. */
+#questionOptions .parent-slides button{font:inherit;min-height:44px;padding:8px;border:0;border-radius:5px;background:transparent;color:#654379;box-shadow:none;text-align:center;line-height:1.5;white-space:normal;word-break:normal;overflow:visible;cursor:pointer;transform:none}
+#questionOptions .parent-slides button span{margin:0;font:inherit;color:inherit}
+#questionOptions .parent-slides .parent-slide-stops button{min-height:36px;padding:4px 6px;font-size:12px;white-space:nowrap}
+#questionOptions .parent-slides .parent-slide-stops button[aria-current=step]{background:#68437e;color:#fff;font-weight:700}
+#questionOptions .parent-slides .parent-primary{display:block;min-height:48px;padding:11px 16px;background:#64457c;color:#fff;border:0;border-radius:8px;font-weight:700;text-align:center}
+#questionOptions .parent-slides [data-slide-back]{min-height:48px;border:1px solid #b49dc3;border-radius:8px;background:#fff;color:#654379}
+#questionOptions .parent-slides [data-slide-summary]>button{display:grid;grid-template-columns:75px minmax(0,1fr) 26px;align-items:center;gap:8px;min-height:44px;padding:10px 0;width:100%;text-align:left;border-radius:0;border:0;border-bottom:1px solid #e6dfea;font-size:14px;color:#50365f;background:transparent}
+#questionOptions .parent-slides [data-slide-summary]>button span{font-size:13px;color:#66526f;overflow-wrap:anywhere}
+#questionOptions .parent-slides :is(.parent-slide-extra,[data-slide-note],.parent-advanced){min-height:44px;padding:8px 0;border:0;border-radius:0;text-decoration:underline;text-underline-offset:4px;font-size:14px;text-align:left;background:transparent;color:#69457f}
+#questionOptions .parent-slides .parent-advanced{min-height:32px;font-size:12px}
+#questionOptions .parent-slides button:disabled{cursor:default}
+@media(max-height:720px) and (max-width:700px){#questionOptions .parent-slides .parent-slide-stops button{min-height:28px;padding:2px 4px}#questionOptions .parent-slides .parent-primary,#questionOptions .parent-slides [data-slide-back]{min-height:44px}#questionOptions .parent-slides [data-slide-summary]>button{padding-block:7px}#questionOptions .parent-slides .parent-advanced{min-height:26px;padding:3px 0}#questionOptions .parent-slides [data-slide-note],#questionOptions .parent-slides .parent-slide-extra{min-height:36px}}
+#questionOptions .parent-slides .parent-slide-footer>nav>button{grid-column:auto;grid-row:auto}

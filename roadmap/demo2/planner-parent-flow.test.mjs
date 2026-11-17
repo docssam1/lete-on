@@ -165,3 +165,13 @@ test('an older saved semester can still be compared and notice content is escape
  a.parentFlow.actualBooks.thinking='<img src=x onerror=alert(1)>';
  assert.doesNotMatch(F.balanceNotice(a),/<img/);assert.match(F.balanceNotice(a),/&lt;img/);
 });
+
+test('the focused interview starts with age and grade, then follows each age-specific learning order',()=>{
+ for(const [age,grade,order]of [['5','pre',['thinking','calc','school','deep']],['10','3',['school','deep','thinking','calc']],['14','7',['school','deep','thinking','calc']]]){
+  const steps=F.slidePlan(age,grade);
+  assert.deepEqual(plain(steps.map(s=>s.id)),['age','grade',...order,'review']);
+  assert.equal(new Set(steps.map(s=>s.id)).size,7);assert.ok(steps.every(s=>s.label&&s.title));
+ }
+ assert.match(F.slidePlan('5','pre')[2].title,/수 놀이/);
+ assert.match(F.slidePlan('14','7')[2].title,/교과 개념·유형/);
+});

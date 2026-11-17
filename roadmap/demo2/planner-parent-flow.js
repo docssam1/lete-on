@@ -131,6 +131,74 @@ function balanceNotice(a){const m=thinkingBalance(a);if(!m.ahead.length)return '
  const areas=m.ahead.map(row=>row.label).join('·');
  return `<aside class="parent-balance" aria-label="교과·연산과 사고력 진도 균형"><strong>사고력 진도가 ${esc(areas)}보다 앞서 있어요</strong><p>현재 사고력은 ${esc(m.book)}이고, ${m.ahead.map(row=>esc(row.label+'는 '+row.current)).join(', ')}입니다. 참고 진도표의 과정 순서에서 차이가 확인돼요.</p><p>사고력 진도를 더 늘리기 전에 현재 ${esc(areas)}의 개념·계산을 먼저 확인해 주세요. 필요한 기초를 함께 보완하고, 실제 풀이를 보며 사고력 속도를 조절하세요.</p><small>참고표에 따른 균형 점검 안내입니다. 성적·능력 판정이 아니며 일정은 자동으로 바꾸지 않아요.</small></aside>`;
 }
+function slidePlan(age,grade){
+ const copy=ageCopy(age,grade);
+ return [{id:'age',label:'나이',title:'현재 나이를 알려주세요.'},{id:'grade',label:'학년',title:'현재 학교 단계·학년을 알려주세요.'},...copy.order.map(id=>{const label=copy.labels[id].replace(/\s*\([^)]*\)/g,''),particle=(label.charCodeAt(label.length-1)-44032)%28===0?'는':'은';return {id,label:({school:'교과',deep:'응용·심화',thinking:'사고력',calc:'연산'})[id],title:label+particle+' 지금 무엇을 공부하나요?'};}),{id:'review',label:'로드맵',title:'입력한 공부를 확인해요.'}];
+}
+/* One stable viewport: native inputs stay mounted so back/next never drops an answer.
+ * Graphics represent input steps, not learning attainment. No image or motion library. */
+function mountSlides(form){
+ const doc=g.document,f=form.elements,age=form.querySelector('.parent-age-intake'),study=form.querySelector('[data-parent-study-section]'),grade=form.querySelector('.parent-student'),error=form.querySelector('[role=alert]');
+ const shell=doc.createElement('div');shell.className='parent-slide-layout';
+ const graphic=doc.createElement('aside');graphic.className='parent-slide-graphic';graphic.setAttribute('aria-label','로드맵 입력 과정');
+ const workspace=doc.createElement('div');workspace.className='parent-slide-workspace';
+ const viewport=doc.createElement('div');viewport.className='parent-slide-viewport';
+ const heading=doc.createElement('h2');heading.className='parent-slide-question';heading.tabIndex=-1;
+ const hint=doc.createElement('p');hint.className='parent-slide-hint';
+ const review=doc.createElement('section');review.dataset.slidePage='review';review.className='parent-slide-review';
+ review.innerHTML='<div data-slide-summary></div><button type="button" data-slide-note>도움이 필요한 부분도 입력</button>';
+ review.append(form.querySelector('[data-parent-balance]'),form.querySelector('.parent-solo'));
+ const footer=doc.createElement('footer');footer.className='parent-slide-footer';
+ footer.innerHTML='<div class="parent-slide-meta"><span data-slide-count role="status" aria-live="polite"></span><span>입력한 답은 돌아가서 바꿀 수 있어요.</span></div><nav aria-label="질문 이동"><button type="button" data-slide-back>이전</button><button type="button" data-slide-next class="parent-primary">다음</button></nav>';
+ const submit=form.querySelector('[type=submit]');footer.querySelector('nav').append(submit);footer.append(error);
+ const advanced=form.querySelector('.parent-advanced');if(advanced)footer.append(advanced);
+ age.dataset.slidePage='age';grade.dataset.slidePage='grade';
+ for(const axis of ['school','deep','thinking','calc']){const row=form.querySelector('[data-parent-axis='+axis+']');row.dataset.slidePage=axis;f[axis+'Status'].closest('label').classList.add('parent-slide-status');row.insertAdjacentHTML('beforeend','<button type="button" class="parent-slide-extra" data-slide-extra="'+axis+'">진도·단원·쪽수 입력</button>');}
+ viewport.append(heading,hint,age,study,review);workspace.append(viewport,footer);shell.append(graphic,workspace);form.prepend(shell);form.classList.add('parent-slides');form.noValidate=true;
+ let current='age',detail=false,animation=null;const visited=new Set(['age']);
+ const plan=()=>slidePlan(f.age.value,f.grade.value);
+ const inputSummary=()=>['school','deep','thinking','calc'].map(id=>{const stage=f[id+'Stage']?.selectedOptions[0]?.textContent,book=f[id+'Book'].value;return {id,label:({school:'교과',deep:'응용·심화',thinking:'사고력',calc:'연산'})[id],text:!book||['none','unknown'].includes(book)?'입력하지 않음':[(id==='school'||id==='deep')&&stage&&!['none','unknown'].includes(f[id+'Stage'].value)?stage:'',book,id==='thinking'?f.thinkingLevel.value:''].filter(Boolean).join(' · ')};});
+ // Reuse the approved 1.4KB assets/ui/roadmap-glass.svg inline.
+ const illustrationId='entry-'+formSequence+'-';
+ const art="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 96 96\" fill=\"none\">\n<defs><linearGradient id=\"top\" x1=\"12\" y1=\"20\" x2=\"79\" y2=\"72\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#E9F7FF\"/><stop offset=\"1\" stop-color=\"#9AB7FF\"/></linearGradient><linearGradient id=\"side\" x1=\"20\" y1=\"54\" x2=\"76\" y2=\"92\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#6F9AEF\"/><stop offset=\"1\" stop-color=\"#4B3EAC\"/></linearGradient><linearGradient id=\"pin\" x1=\"48\" y1=\"8\" x2=\"72\" y2=\"42\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#B7EAFF\"/><stop offset=\".5\" stop-color=\"#72B6FF\"/><stop offset=\"1\" stop-color=\"#6F65D9\"/></linearGradient></defs>\n<ellipse cx=\"48\" cy=\"82\" rx=\"34\" ry=\"8\" fill=\"#080F39\" opacity=\".25\"/>\n<path d=\"M12 53 46 35 84 53V67L50 87 12 67Z\" fill=\"url(#side)\" stroke=\"#D5DEFF\" stroke-opacity=\".5\"/>\n<path d=\"m12 53 34-19 38 19-34 20Z\" fill=\"url(#top)\" stroke=\"#EDF9FF\"/>\n<path d=\"M50 73v13M13 56l36 19\" stroke=\"#EBF5FF\" stroke-opacity=\".7\"/>\n<path d=\"m25 55 13 7 13-7-10-6 15-9\" stroke=\"#7774CA\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n<path d=\"M73 23c0 11-14 25-14 25S45 34 45 23a14 14 0 0 1 28 0Z\" fill=\"url(#pin)\" stroke=\"#E6F4FF\"/>\n<circle cx=\"59\" cy=\"23\" r=\"5\" fill=\"#F0FAFF\"/>\n<path d=\"M49 20c1-5 5-8 10-8M19 51l25-14\" stroke=\"white\" stroke-width=\"2\" stroke-linecap=\"round\" opacity=\".8\"/>\n<circle cx=\"27\" cy=\"54\" r=\"4\" fill=\"#FEFDFF\" stroke=\"#9A8BE8\"/>\n</svg>";
+ const graphicMarkup=(steps,index)=>{
+  const y=[76,48,68,38,66,32,55],points=y.map((v,i)=>[24+i*45,v]);
+  const path='M '+points.map(p=>p.join(',')).join(' L ');
+  return '<div class="parent-slide-symbol" aria-hidden="true">'+art.replace(/id="([^"]+)"/g,(_,id)=>'id="'+illustrationId+id+'"').replace(/url\(#([^)]*)\)/g,(_,id)=>'url(#'+illustrationId+id+')')+'</div><div class="parent-slide-brand"><span>우리 아이 공부 지도</span><strong>현재 공부가<br>다음 배움으로</strong><p>입력한 공부에서 출발해요.</p></div><svg class="parent-slide-map" viewBox="0 0 320 110" aria-hidden="true" focusable="false"><path class="parent-slide-road" d="'+path+'"/><path class="parent-slide-road-fill" d="'+path+'" pathLength="100" style="stroke-dasharray:'+index/6*100+' 100"/>'+points.map(([x,y],i)=>'<g class="'+(i===index?'is-current':i<index?'is-past':'')+'"><circle cx="'+x+'" cy="'+y+'" r="'+(i===index?16:11)+'"/><text x="'+x+'" y="'+(y+4)+'">'+(i+1)+'</text></g>').join('')+'</svg><ol class="parent-slide-stops">'+steps.map((s,i)=>'<li><button type="button" data-slide-go="'+s.id+'"'+(!visited.has(s.id)?' disabled':'')+(current===s.id?' aria-current="step"':'')+'>'+esc(s.label)+'</button></li>').join('')+'</ol><p class="parent-slide-graphic-note">입력한 공부가 지도에 담겨요.</p>';
+ };
+ const boot=form.closest('#parentBoot'),details=form.closest('details');
+ const fitBoot=()=>{if(!boot)return;const open=!details||details.open;doc.body.classList.toggle('parent-slide-open',open);boot.dataset.slideEditing=String(!!details&&open);if(open)g.scrollTo({top:0,behavior:'instant'});};
+ if(details)details.addEventListener('toggle',fitBoot);fitBoot();
+ function show(focus=true,motion=true){
+  const steps=plan(),index=Math.max(0,steps.findIndex(s=>s.id===current)),step=steps[index];current=step.id;visited.add(current);form.dataset.slide=current;form.dataset.slideDetail=String(detail);study.hidden=false;
+  for(const page of form.querySelectorAll('[data-slide-page]'))page.hidden=page.dataset.slidePage!==current;
+  heading.textContent=detail?current==='review'?'도움이 필요한 부분이 있나요?':'배운 단원·쪽수를 알려주세요.':step.title;
+  hint.textContent=current==='age'?'연령에 맞는 질문으로 지금 하는 공부를 확인할게요.':current==='grade'?'실제 학년을 골라 주세요. 선행 진도는 다음 질문에서 따로 받아요.':current==='review'?(detail?'선택 입력이에요. 비워 두어도 괜찮아요.':'국어·과학과 진학 준비는 결과에서 함께 연결해요.'):detail?'아는 범위만 적어 주세요. 건너뛰어도 괜찮아요.':'지금 하는 항목만 알려주세요. 모르면 다음으로 넘어가도 괜찮아요.';
+  graphic.innerHTML=graphicMarkup(steps,index);graphic.querySelector('.parent-slide-graphic-note').textContent=current==='age'||current==='grade'?'아이의 현재 모습부터 확인해요.':current==='review'?'입력한 공부가 로드맵의 출발점입니다.':inputSummary().find(r=>r.id===current)?.text||'';
+  review.querySelector('[data-slide-summary]').innerHTML=inputSummary().map(row=>'<button type="button" data-slide-edit="'+row.id+'"><b>'+esc(row.label)+'</b><span>'+esc(row.text)+'</span><small>수정</small></button>').join('');
+  const back=footer.querySelector('[data-slide-back]'),next=footer.querySelector('[data-slide-next]');back.disabled=index===0&&!detail;next.hidden=current==='review'&&!detail;submit.hidden=current!=='review'||detail;
+  next.textContent=detail?'입력 마치기':current==='review'?'다음':index===steps.length-2?'입력 내용 확인':'다음';
+  footer.querySelector('[data-slide-count]').textContent=(index+1)+' / '+steps.length+' · '+(detail?'범위 입력':step.label);if(advanced)advanced.hidden=current!=='review'||detail;
+  const extra=form.querySelector('[data-slide-extra="'+current+'"]');if(extra)extra.hidden=detail||form.querySelector('[data-parent-axis='+current+']').dataset.active!=='true';
+  error.textContent='';viewport.scrollTop=0;
+  animation?.cancel();if(motion&&!g.matchMedia('(prefers-reduced-motion: reduce)').matches&&viewport.animate)animation=viewport.animate([{opacity:0,transform:'translateY(36px)'},{opacity:1,transform:'translateY(0)'}],{duration:320,easing:'cubic-bezier(.2,.7,.2,1)'});
+  if(focus)heading.focus({preventScroll:true});
+ }
+ function next(){
+  if(form.dataset.busy)return;
+  if(current==='age'&&!f.age.value){error.textContent='현재 나이를 선택해 주세요.';f.age.focus();return;}
+  if(current==='grade'&&!f.grade.value){error.textContent='현재 학년을 선택해 주세요.';f.grade.focus();return;}
+  if(current==='thinking'&&['__custom','__activity'].includes(f.thinkingChoice.value)&&!f.thinkingBook.value.trim()){error.textContent='사고력 교재 이름이나 하고 있는 활동을 적어 주세요.';f.thinkingBook.focus();return;}
+  if(detail){detail=false;show();return;}
+  const steps=plan(),i=steps.findIndex(s=>s.id===current);if(i<steps.length-1){current=steps[i+1].id;show();}
+ }
+ footer.querySelector('[data-slide-next]').onclick=next;
+ footer.querySelector('[data-slide-back]').onclick=()=>{if(detail)detail=false;else{const steps=plan(),i=steps.findIndex(s=>s.id===current);current=steps[Math.max(0,i-1)].id;}show();};
+ form.addEventListener('click',event=>{const go=event.target.closest('[data-slide-go],[data-slide-edit]');if(go&&!go.disabled){current=go.dataset.slideGo||go.dataset.slideEdit;detail=false;show();}if(event.target.closest('[data-slide-extra],[data-slide-note]')){detail=true;show();}});
+ const refreshExtra=()=>{const extra=form.querySelector('[data-slide-extra="'+current+'"]');if(extra)extra.hidden=detail||form.querySelector('[data-parent-axis='+current+']').dataset.active!=='true';};
+ form.addEventListener('change',()=>{if(current==='age'||current==='grade')show(false,false);refreshExtra();});form.addEventListener('input',refreshExtra);
+ form._parentSlides={next,isReview:()=>current==='review'&&!detail};show(false,false);
+}
 let formSequence=0;
 function mount(host,{answers={},member={},onSubmit,onAdvanced}={}){
  const formId='parent-current-'+(++formSequence),booksId=axis=>formId+'-books-'+axis;
@@ -191,7 +259,8 @@ function mount(host,{answers={},member={},onSubmit,onAdvanced}={}){
  const adapt=()=>{const selected=!!f.age.value,copy=ageCopy(f.age.value,f.grade.value);form.querySelector('[data-parent-study-section]').hidden=!selected;form.querySelector('[data-parent-age-copy]').textContent=copy.intro;form.dataset.ageTier=copy.tier;form.querySelector('.parent-solo').firstChild.textContent=copy.soloLabel+' ';f.solo.placeholder=copy.solo;for(const axis of copy.order){const row=form.querySelector('[data-parent-axis="'+axis+'"]');row.querySelector('legend').textContent=copy.labels[axis];form.querySelector('[data-parent-book-label="'+axis+'"]').firstChild.textContent=axis==='thinking'?'교재 이름 또는 활동':copy.bookLabel;f[axis+'Book'].placeholder=axis==='thinking'?'예: 지금 쓰는 교재 · 규칙 찾기 놀이':copy.book;f[axis+'Range'].placeholder=axis==='thinking'?'예: 규칙 찾기 12~15쪽 · 3/6단원':copy.range;form.querySelector('.parent-current-rows').append(row);}updateThinkingPicker();};adapt();f.age.addEventListener('change',adapt);f.grade.addEventListener('change',adapt);
  form.querySelector('.parent-advanced')?.addEventListener('click',()=>onAdvanced());
  form.addEventListener('change',updateBalance);form.addEventListener('input',updateBalance);updateBalance();
- form.onsubmit=async event=>{event.preventDefault();if(form.dataset.busy)return;const input=readCurrent();const error=form.querySelector('[role=alert]');try{if(!input.age)throw Error('현재 나이를 먼저 알려주세요.');if(['__custom','__activity'].includes(thinkingMode)&&!f.thinkingBook.value.trim())throw Error('사고력 교재 이름이나 하고 있는 활동을 적어 주세요.');const next=build(input,answers);form.dataset.busy='1';const locks=[...form.querySelectorAll('button,input,select,textarea')].map(n=>[n,n.disabled]);form._parentLocks=locks;for(const [n]of locks)n.disabled=true;error.textContent='입력한 공부에서 이어지는 계획을 준비하고 있어요.';await onSubmit(next,input);}catch(e){delete form.dataset.busy;for(const [n,disabled]of form._parentLocks||[])n.disabled=disabled;error.textContent=e.message||'입력한 범위를 다시 확인해 주세요.';error.focus();}};
+ form.onsubmit=async event=>{event.preventDefault();if(form.dataset.busy)return;if(form._parentSlides&&!form._parentSlides.isReview()){form._parentSlides.next();return;}const input=readCurrent();const error=form.querySelector('[role=alert]');try{if(!input.age)throw Error('현재 나이를 먼저 알려주세요.');if(['__custom','__activity'].includes(thinkingMode)&&!f.thinkingBook.value.trim())throw Error('사고력 교재 이름이나 하고 있는 활동을 적어 주세요.');const next=build(input,answers);form.dataset.busy='1';const locks=[...form.querySelectorAll('button,input,select,textarea')].map(n=>[n,n.disabled]);form._parentLocks=locks;for(const [n]of locks)n.disabled=true;error.textContent='입력한 공부에서 이어지는 계획을 준비하고 있어요.';await onSubmit(next,input);}catch(e){delete form.dataset.busy;for(const [n,disabled]of form._parentLocks||[])n.disabled=disabled;error.textContent=e.message||'입력한 범위를 다시 확인해 주세요.';error.focus();}};
+ mountSlides(form);
  return form;
 }
 function automatic(a,fields,standard,{language,science}={}){
@@ -215,5 +284,5 @@ function renderLearning(a,fields){
  const elementary=/^[1-6]-[12]$/.test(stage||''),thinking=thinkingStudy(a);
  return `<section class="parent-own-learning" aria-label="지필드 학습하기"><header><h2>현재 범위에서 학습하기</h2><button type="button" data-parent-result>전체 로드맵으로</button></header><p>현재 개념과 풀이 범위에 맞는 지필드 문제로 연습하고, 부족한 유형을 다시 확인해요.</p>${balanceNotice(a)}<div class="parent-learning-areas"><article><h3>교과 확인·보완</h3><p>${esc(stage||'현재 개념 범위 확인')}${p.ranges.school?' · '+esc(p.ranges.school):''}</p>${elementary?`<button type="button" data-parent-unit-bank="${esc(stage)}">지필드 단원 문제 풀기</button>`:'<a href="../../number_magic/index.html">지필드 개념·수학 학습</a>'}</article><article><h3>사고력</h3>${thinking.book?`<p>${esc([thinking.book,thinking.level,thinking.range].filter(Boolean).join(' · '))}</p>${thinking.independent?'<p>혼자 푸는 범위(입력) · '+esc(thinking.independent)+'</p>':''}`:''}<p>${thinking.level&&thinking.status==='done'?'이 단계·권은 마쳤어요. 다음에 공부할 범위를 확인해 주세요.':'조건 이해 · 풀이 설명 · 부족 유형 연습'}</p><a href="../../fields-classic/question-bank/home.html">지필드 사고력 학습</a></article><article><h3>연산</h3><p>원리 확인 · 계산 연습 · 틀린 유형 재점검</p><a href="../../number_magic/index.html">지필드 연산 학습</a></article></div><p class="parent-result-note">학습을 마치면 아래에서 완료를 체크하세요. 진도와 점검 결과에 따라 다음 공부를 조정합니다.</p></section>`;
 }
-g.PlannerParentFlow=Object.freeze({preferences,ageCopy,memberGrade,stageValue,stages,thinkingBooks,thinkingChoices,thinkingLevels,calcBooks,build,isAcademyBook,resolveBook,fraction,inputModel,thinkingStudy,thinkingBalance,balanceNotice,mount,automatic,renderResult,renderLearning});
+g.PlannerParentFlow=Object.freeze({preferences,ageCopy,memberGrade,stageValue,stages,thinkingBooks,thinkingChoices,thinkingLevels,calcBooks,build,isAcademyBook,resolveBook,fraction,inputModel,thinkingStudy,thinkingBalance,balanceNotice,slidePlan,mount,automatic,renderResult,renderLearning});
 })(typeof window==='undefined'?globalThis:window);
