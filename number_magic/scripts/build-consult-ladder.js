@@ -136,11 +136,14 @@ const somaRows = [];
 /* 두뇌로 과정 1~25 (dunoro-courses.js — 과정표에 적힌 연산을 우리 유형으로 옮긴 것) */
 const dunoroRows = W.NM_DUNORO_COURSES.courses.map(c => ({ id: 'dunoro-' + c.course, group: 'level-' + c.level, volume: c.course,
   title: L3('과정 ' + c.course, 'Course ' + c.course, '课程' + c.course), topic: String(c.topics || ''), refs: c.refs }));
-/* 구몬수학 6A~F (원장 2026-11-17 「구몬은 A부터 알파벳 순서대로 1학년 2학년 이런 과정」).
-   단계 이름·순서와 학년 기준: 교원구몬 「구몬수학 인정테스트」의 우수회원(현재 학년보다 2단계 이상 앞선 회원) 학습단계
-   초1 C↑ · 초2 D↑ · 초3 E↑ · 초4 F↑ → 학년 기준 A = 초1, B = 초2, C = 초3, D = 초4, E = 초5, F = 초6.
-   단계별 주제는 공식 목록을 찾지 못해 공개 설명(나무위키 「구몬」, 해외 Kumon 단계 안내)의 짧은 요약으로 적었다 — 우리 유형 대응은 우리 판단.
-   G 이상(중학)은 상담 범위 밖이라 진단 평가로 보낸다. */
+/* 구몬수학 6A~F (원장 2026-11-17 「구몬은 A부터 알파벳 순서대로 1학년 2학년 이런 과정」 · 공식 안내 kumon.co.kr/Subject/Math).
+   공식: 유아 수 개념부터 고등 미적분까지 24단계 — 구몬수학 6A~I · 구몬수학 플러스 J~SS. 6A~4A 수의 기본(숫자 읽기·수 배열),
+   3A~F 자연수·분수·소수 사칙연산, G~I 문자식·방정식·함수. 인정테스트 「자기 학년 기준」 유아 2A · 초1 A · 초2 B · 초3 C
+   (우수회원 = 2단계 이상 앞섬: 초1 C↑ · 초2 D↑ · 초3 E↑ · 초4 F↑) → D = 초4, E = 초5, F = 초6.
+   단계 안 세부 주제는 공식 목록이 없어 공개 설명(나무위키 「구몬」, 해외 Kumon 단계 안내)의 짧은 요약 — 우리 유형 대응은 우리 판단.
+   G 이상(중등 대수)은 상담 범위 밖이라 진단 평가로 보낸다. */
+const KUMON_GRADE = { '6A': ['유아', 'Pre-K', '幼儿'], '5A': ['유아', 'Pre-K', '幼儿'], '4A': ['유아', 'Pre-K', '幼儿'], '3A': ['유아', 'Pre-K', '幼儿'], '2A': ['유아', 'Pre-K', '幼儿'],
+  A: ['초1', 'Gr 1', '小1'], B: ['초2', 'Gr 2', '小2'], C: ['초3', 'Gr 3', '小3'], D: ['초4', 'Gr 4', '小4'], E: ['초5', 'Gr 5', '小5'], F: ['초6', 'Gr 6', '小6'] };
 const kumonRows = [
   ['6A', '10까지 수 세기', ['NL1@1', 'NL1@2']],
   ['5A', '50까지 수 읽기 · 수표', ['NL4@1', 'NL7@1', 'NL1@2']],
@@ -154,7 +157,7 @@ const kumonRows = [
   ['E', '분수의 덧셈·뺄셈·곱셈·나눗셈', ['FR2@1', 'FR4@1', 'FR3@1', 'FR6@1', 'FR7@1', 'DV7@1']],
   ['F', '사칙 혼합 · 소수와 소수의 사칙', ['MX1@1', 'DC1@1', 'DC2@1', 'DC3@1', 'FR7@3', 'MX1@2']]
 ].map(([lv, topic, refs], i) => ({ id: 'kumon-' + lv.toLowerCase(), group: /A$/.test(lv) && lv !== 'A' ? 'pre' : 'elem', volume: i + 1,
-  title: L3(lv + ' 단계', 'Level ' + lv, lv + '阶段'), topic, refs }));
+  title: L3(lv + ' 단계 (' + KUMON_GRADE[lv][0] + ' 기준)', 'Level ' + lv + ' (' + KUMON_GRADE[lv][1] + ')', lv + '阶段（' + KUMON_GRADE[lv][2] + '）'), topic, refs }));
 const ladders = { miracle: buildLadder(miracleRows), soma: buildLadder(somaRows), dunoro: buildLadder(dunoroRows), kumon: buildLadder(kumonRows) };
 const ladder = [].concat(ladders.miracle, ladders.soma, ladders.dunoro, ladders.kumon);
 const courses = {};

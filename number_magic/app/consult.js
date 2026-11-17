@@ -93,7 +93,7 @@ const VOLUME_GROUPS = {
 const VOLUME_NOTE = {
   miracle: ['다른 판(구판)이면 주제가 가장 비슷한 권을 골라 주세요.', 'If you have another edition, pick the volume with the closest topic.', '如果是其他版本，请选主题最接近的一册。'],
   soma: ['2019년 발행본 기준이에요. 다른 발행본이면 주제가 가장 비슷한 권을 골라 주세요.', 'Based on the 2019 publication. For another printing, pick the volume with the closest topic.', '以2019年出版为准。其他版本请选主题最接近的一册。'],
-  kumon: ['지금 하는 구몬수학 단계를 골라 주세요. 중학 단계(G 이상)를 하고 있으면 연산 진단 평가가 더 정확해요.', 'Pick the Kumon Math level your child is on now. If it is a middle-school level (G or later), the arithmetic check is more accurate.', '请选择目前在做的公文数学阶段。若已在初中阶段（G以上），运算测评更准确。'],
+  kumon: ['구몬 기준 학년은 유아 2A · 초1 A · 초2 B · 초3 C예요. 지금 하는 단계를 골라 주세요. 문자식·방정식 단계(G 이상)를 하고 있으면 연산 진단 평가가 더 정확해요.', 'Kumon’s grade standard: Pre-K 2A · Gr 1 A · Gr 2 B · Gr 3 C. Pick the level your child is on now. From level G (equations and algebra) the arithmetic check is more accurate.', '公文的年级标准：幼儿2A · 小1 A · 小2 B · 小3 C。请选择目前在做的阶段。若已在G以上（文字式·方程），运算测评更准确。'],
   dunoro: ['교재 표지의 과정 번호를 골라 주세요.', 'Pick the course number printed on the book.', '请选择教材封面上的课程编号。']
 };
 
