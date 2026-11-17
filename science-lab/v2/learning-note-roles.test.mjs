@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';
 import{withInfectionWorkbookDirections}from'../data/book/infection-workbook-directions.js';
 import{withEarthSeaWorkbookDirections}from'../data/book/earth-sea-workbook-directions.js';
 import{withSoundWorkbookDirections}from'../data/book/sound-workbook-directions.js';
@@ -96,7 +97,7 @@ test('grade-three study notes preserve every question, extension concept, writin
 test('actual grade-three papers display the simpler notes with current question feedback and unchanged quick keys',async()=>{
  for(const [current,prior]of studyBooks){
   const pageCurrent=withInfectionWorkbookDirections(withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(current)))))));
-  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(withEarthSeaWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior))))),art);
+  const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(await reviewStudentWorkbook(current.unit,withEarthSeaWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior)))))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert(html===oldPaper.workbookPaper({mode}),current.unit+' '+mode+' unchanged');

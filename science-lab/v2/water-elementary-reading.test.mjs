@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook,reviewTextTree}from'./student-language-review.js';
 import test from 'node:test';
 import {withGrade4StudyNotes} from '../data/book/grade4-study-notes.js';
 import assert from 'node:assert/strict';
@@ -33,10 +34,10 @@ test('Water state-change reading edits preserve workbook grading, pictures and a
   assert.deepEqual(workbook.teacherPages,prior.teacherPages);
   assert.deepEqual(workbook.figures,prior.figures);
   for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(workbook.questions[i]),withoutPresentation(prior.questions[i]));
-  const paper=await revisedTextbookPaper(unit);
+  const visible=await reviewStudentWorkbook(unit,workbook),paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
     const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-    if(mode==='student'||mode==='teacher')for(const q of workbook.questions)for(const text of q.prompt.split(/\[\s*\]|\(\s*\)/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
+    if(mode==='student'||mode==='teacher')for(const q of visible.questions)for(const text of q.prompt.split(/\[\s*\]|\(\s*\)/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
 });

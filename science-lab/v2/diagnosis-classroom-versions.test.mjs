@@ -1,3 +1,4 @@
+import{reviewStudentModule}from'./student-language-review.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -18,7 +19,7 @@ function actualLoaders(context){
 }
 function routeHarness(unit,{book,hash='#/'+unit+'/diagnose'}={}){
  let rendered=null,bookLoads=0;
- const context=vm.createContext({
+ const context=vm.createContext({reviewStudentModule,
   routeRevision:0,location:{hash,replace(value){this.hash=value;}},releasePage(){},stopTeacher(){},stepGuide:null,
   withThink,revisedClassroom,classroomQuestions,withOptionalClassroomRecords,revisedTextbookUnits,
   BANK:{},$app:{},FIG:{},BOOKX:{},MISC:null,
@@ -35,7 +36,7 @@ function renderDiagnosis(args,{events=[],repeat=false}={}){
  const [unit]=args,saved=globalThis.localStorage,before=JSON.stringify(events);
  globalThis.localStorage={getItem:()=>JSON.stringify({[unit]:events}),setItem(){writes++;throw Error('diagnosis must not write answers');}};
  const pool=args[4]||[...(args.book.similar||[]),...(args.book.source||[]),...(args[2]||[])];
- const context=vm.createContext({
+ const context=vm.createContext({reviewStudentModule,
   pickedChoiceTexts,questionAtVersion,revisedTextbookUnits,analyze,
   remedyItems:(...values)=>{const rows=remedyItems(...values);remedial.push(...rows);return rows;},
   MISC:args.misc,BOOKX:args.book,du:x=>x,esc:escape,CIRC:['①','②','③','④','⑤'],

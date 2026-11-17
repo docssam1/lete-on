@@ -1,3 +1,5 @@
+import{reviewStudentWorkbook,reviewTextTree}from'./student-language-review.js';
+const unitForLanguage=w=>w.unit;
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{SOUND_WORKBOOK_DIRECTIONS_VERSION as version,withSoundWorkbookDirections}from'../data/book/sound-workbook-directions.js';import{workbook,soundDirectionsPriorWorkbook as before}from'../data/book/c22-s32-u03.workbook.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';import{makeWorkbookPaper}from'./revised-workbook-paper.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 const copy=x=>JSON.parse(JSON.stringify(x)),indices=[0,3,4,6,10,11,13,21,39,41,42],text=workbook.pages,oldText=before.pages,unit='c22-s32-u03';
@@ -15,7 +17,7 @@ test('the real student and teacher workbooks receive the same eleven-page direct
 });
 
 test('actual student and teacher print and web-book routes expose the updated directions, and answer/quick keys remain identical',async()=>{
- const paper=await revisedTextbookPaper(unit),{art}=await import('../data/book/'+unit+'.workbook-art.js'),oldPaper=makeWorkbookPaper(withObservedPhotoAlt(withElementaryReadingDirections(before)),art),raw=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,raw);
+ const paper=await revisedTextbookPaper(unit),{art}=await import('../data/book/'+unit+'.workbook-art.js'),oldPaper=makeWorkbookPaper(await reviewStudentWorkbook(unitForLanguage(withObservedPhotoAlt(withElementaryReadingDirections(before))),withObservedPhotoAlt(withElementaryReadingDirections(before))),art),raw=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,raw);
  const updated=changes(before,workbook).filter(p=>p[0]==='pages').map(p=>at(workbook,p));for(const mode of['student','teacher']){const print=paper.workbookPaper({mode}),web=renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true});for(const s of updated){assert(print.includes(esc(s)),mode+' print '+s);assert(web.includes(esc(s)),mode+' web '+s);}assert(!print.includes(esc(oldText[6].blocks[2].hint)));}
  for(const mode of['answers','quick'])assert.equal(paper.workbookPaper({mode}),oldPaper.workbookPaper({mode}));
 });

@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{workbook as w}from'../data/book/c22-s51-u02.workbook.js';
 import{LIGHT_RAIL_NOTES,LIGHT_EXAMPLES,withLightEditorial}from'../data/book/c22-s51-u02.editorial.js';
@@ -12,5 +13,5 @@ test('워밍업·사진과 설명 그림의 경로·어둠상자/반사/굴절/�
  assert(w.pages[0].blocks.some(b=>b.type==='field'&&b.title==='워밍업'));assert.deepEqual(w.pages[1].blocks.find(b=>b.type==='table').rows.map(r=>r[0]),['물체를 보기 위해 빛이 필요함','빛의 직진·반사·굴절','거울과 렌즈의 쓰임새']);assert(LIGHT_EXAMPLES[25].answer.includes('아래 거울 → 위 거울 → 눈'));assert(LIGHT_EXAMPLES[30].answer.includes('굴절'));for(const key of['sourcePencil','sourceCoin','sourceMirror','sourceLens'])assert(w.figures[key].includes('<img'));assert(!w.figures.sourceLens.includes('25쪽'));assert(w.pages[25].blocks.some(b=>b.type==='field'&&b.draw));
 });
 test('웹과 인쇄4종은 같은80문항을 쓰고 원래 수업/기록 자료는 보존한다',async()=>{
- const original=await import('../data/book/c22-s51-u02.book.js'),merged=await revisedTextbook(w.unit,original);assert.equal(merged.plan,original.plan);assert.equal(merged.chapter.book,'지필드 교과 연결 사고력');assert.deepEqual(merged.chapter.pages,w.pages);const p=await revisedTextbookPaper(w.unit),student=p.workbookPaper({mode:'student'}),teacher=p.workbookPaper({mode:'teacher'});assert.equal((student.match(/class="ed-question"/g)||[]).length,80);assert.equal((teacher.match(/class="ed-key"/g)||[]).length,80);assert(!/class="ed-key"|class="ed-solution"/.test(student));assert(!teacher.includes('duplex-blank'));assert(!student.includes('AI 실사형 설명 이미지'));
+ const original=await import('../data/book/c22-s51-u02.book.js'),merged=await revisedTextbook(w.unit,original);assert.equal(merged.plan,original.plan);assert.equal(merged.chapter.book,'지필드 교과 연결 사고력');assert.deepEqual(merged.chapter.pages,(await reviewStudentWorkbook(w.unit,w)).pages);const p=await revisedTextbookPaper(w.unit),student=p.workbookPaper({mode:'student'}),teacher=p.workbookPaper({mode:'teacher'});assert.equal((student.match(/class="ed-question"/g)||[]).length,80);assert.equal((teacher.match(/class="ed-key"/g)||[]).length,80);assert(!/class="ed-key"|class="ed-solution"/.test(student));assert(!teacher.includes('duplex-blank'));assert(!student.includes('AI 실사형 설명 이미지'));
 });

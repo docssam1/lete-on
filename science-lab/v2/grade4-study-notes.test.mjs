@@ -1,3 +1,5 @@
+import{reviewStudentWorkbook,reviewTextTree}from'./student-language-review.js';
+const unitForLanguage=w=>w.unit;
 import{withClimateWorkbookContext}from'../data/book/climate-workbook-context.js';
 import{withGrade4WorkbookDirections}from'../data/book/grade4-workbook-directions.js';
 import{withMaterialReadingWorkbook}from'../data/book/material-reading-criteria.js';
@@ -45,7 +47,7 @@ test('the historical note stage preserves its other HTML and all four actual vie
  for(const [current,prior,count]of books){
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),actual=await revisedTextbookPaper(current.unit),before=makeWorkbookPaper(withCurrentReferences(withElementaryReadingDirections(prior)),art),expected=makeWorkbookPaper(withCurrentReferences(withElementaryReadingDirections(current)),art);
   for(const mode of ['student','teacher','answers','quick']){
-   const latest=makeWorkbookPaper(withElementaryReadingDirections(withClimateWorkbookContext(withCurrentReferences(current))),art);assert.equal(actual.workbookPaper({mode}),latest.workbookPaper({mode}));const html=expected.workbookPaper({mode});
+   const latest=makeWorkbookPaper(await reviewStudentWorkbook(unitForLanguage(withElementaryReadingDirections(withClimateWorkbookContext(withCurrentReferences(current)))),withElementaryReadingDirections(withClimateWorkbookContext(withCurrentReferences(current)))),art);assert.equal(actual.workbookPaper({mode}),latest.workbookPaper({mode}));const html=expected.workbookPaper({mode});
    if(mode==='answers'||mode==='quick')assert.equal(html,before.workbookPaper({mode}));
    else{
     let changed=0;const restored=structuredClone(current);

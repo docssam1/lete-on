@@ -1,3 +1,4 @@
+import {reviewStudentWorkbook} from './student-language-review.js?v=20261117-student-language-review';
 import{GRADE4_WORKBOOK_DIRECTIONS_VERSION,GRADE4_WORKBOOK_DIRECTIONS_UNITS}from'../data/book/grade4-workbook-directions.js?v=20261115-grade4-workbook-directions';
 
 
@@ -63,7 +64,7 @@ async function data(unit) {
  if (!cache.has(unit)) cache.set(unit, Promise.all([
   import(`../data/book/${unit}.workbook.js?v=${version}${['c22-s52-u04','c22-s61-u04'].includes(unit)?'&railNotes=20261116-upper-notes':''}${unit==='c22-s32-u04'?'&infectionWordAnswer=20261116-infection-word-answer-and-count':''}${unit==='c22-s32-u02'?'&earthSeaFeedback=20261116-earth-sea-workbook-feedback':''}${unit==='c22-s62-u04'?'&temperatureCondition=20261116-career-temperature-condition':''}`),
   import(`../data/book/${unit}.workbook-art.js?v=${version}`),
- ]).then(([{workbook}, {art}])=>({workbook:withObservedPhotoAlt(withElementaryReadingDirections(workbook)),art})));
+ ]).then(async ([{workbook}, {art}])=>({workbook:await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),art})));
  return cache.get(unit);
 }
 export async function revisedTextbook(unit, mod) {

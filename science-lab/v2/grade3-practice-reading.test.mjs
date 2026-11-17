@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';
 import{SOUND_LINKED_EXPLANATION_VERSION}from'../data/book/sound-linked-explanations.js';
 import{SOUND_NOISE_PRACTICE_VERSION}from'../data/book/sound-noise-practice.js';
 import {LESSON_REFERENCE_DATA_VERSION,LESSON_STANDALONE_DATA_VERSION} from '../data/book/lesson-reference-data.js';
@@ -43,10 +44,10 @@ for(const c of cases){
   const expectedNotes=withGrade3StudyNotes(prior);
   for(const key of Object.keys(prior).filter(k=>k!=='questions'))assert.deepEqual(wb[key],expectedNotes[key]);
   for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(wb.questions[i]),withoutPresentation(prior.questions[i]));
-  const paper=await revisedTextbookPaper(unit);
+  const visible=await reviewStudentWorkbook(unit,mod.workbook),paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-   if(mode==='student'||mode==='teacher')for(const q of mod.workbook.questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(escape(text)),q.id);
+   if(mode==='student'||mode==='teacher')for(const q of visible.questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(escape(text)),q.id);
    if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
  });

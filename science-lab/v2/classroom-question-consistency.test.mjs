@@ -1,3 +1,4 @@
+import{reviewStudentModule}from'./student-language-review.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -19,7 +20,7 @@ async function actualLoaders(context){
 }
 async function teacherUnit(unit){
  const source=await readFile(new URL('./v2.js',import.meta.url),'utf8'),start=source.indexOf('async function pageCheck('),end=source.indexOf('async function pageStart(',start);
- const context=vm.createContext({withThink,revisedClassroom,classroomQuestions,BANK:{},$app:{}}),loaders=await actualLoaders(context);
+ const context=vm.createContext({reviewStudentModule,withThink,revisedClassroom,classroomQuestions,BANK:{},$app:{}}),loaders=await actualLoaders(context);
  context.UNITS=loaders;context.BOOKS=Object.fromEntries(cases.map(([u])=>[u,()=>import('../data/book/'+u+'.book.js')]));
  let loaded;
  const checkModule=new vm.SyntheticModule(['records','renderCheck'],function(){

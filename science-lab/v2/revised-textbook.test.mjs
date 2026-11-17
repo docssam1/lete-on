@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';
 import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js';
 import test from 'node:test';
@@ -50,8 +51,9 @@ for(const unit of revisedTextbookUnits){
   const original=await import(`../data/book/${unit}.book.js`);
   const merged=await revisedTextbook(unit,original);
   assert.equal(merged.plan,original.plan);
-  assert.deepEqual(merged.chapter.questions,wb.questions);
-  assert.deepEqual(merged.chapter.pages,withObservedPhotoAlt(withElementaryReadingDirections(wb)).pages);
+  const language=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(wb)));
+  assert.deepEqual(merged.chapter.questions,language.questions);
+  assert.deepEqual(merged.chapter.pages,language.pages);
   assert.equal(merged.chapter.revisedCurriculumWorkbook,true);
   assert.equal(merged.chapter.book,'지필드 교과 연결 사고력');
   const html=renderChapter(merged.chapter,merged.art,[],{live:true});

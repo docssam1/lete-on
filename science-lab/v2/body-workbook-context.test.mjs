@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
 import{workbook,bodyContextPriorWorkbook as prior}from'../data/book/c22-s51-u04.workbook.js';import{withBodyContextWorkbook,BODY_CONTEXT_VERSION as version}from'../data/book/body-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
 const unit='c22-s51-u04',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -6,8 +7,8 @@ test('actual body workbook routes provide consistent pump conditions and assess 
  const pump=q(workbook,48);assert(!pump.prompt.includes('같은 간격'));assert(pump.prompt.includes('때마다 이동하는 물의 양은 같았어요'));assert(pump.prompt.includes('10초 동안 누르는 횟수만 늘렸다면'));assert.equal(pump.answer,q(prior,48).answer);assert(!q(workbook,4).prompt.includes('표'));assert(!q(workbook,57).prompt.includes('관찰한 것'));assert(q(workbook,57).prompt.includes('모형과 연습 자료'));
  assert(q(workbook,45).criteria.includes('넣었다면'));assert(!q(workbook,50).criteria.includes('안전'));assert(q(workbook,56).criteria.includes('계획을 덧붙였다면'));assert(!q(workbook,95).criteria.includes('재전달'));
  const book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js')),paper=await revisedTextbookPaper(unit);
- for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
-  for(const no of[4,48,57]){const item=q(workbook,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
+ const visible=await reviewStudentWorkbook(unit,workbook);for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
+  for(const no of[4,48,57]){const item=q(visible,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
   for(const no of[45,50,56,95])assert.equal(html.includes(esc(q(workbook,no).criteria)),mode==='teacher');
  assert(html.includes('55번에서 고른 자료가 알맞은 까닭'));assert(!html.includes('풍선 모형에서 직접 본 변화를 써요'));
  }
