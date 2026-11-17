@@ -480,3 +480,11 @@ body.is-class .sd-next { min-width: 190px; font-size: 17px; }
 /* 도착 장: 다음 공부 날(진도표가 있을 때) */
 .sd-end-next { margin: 8px 0 0; font-size: 17px; color: var(--ink, #2a2440); }
 .sd-end-next b { font-weight: 700; }
+
+/* 차시 시작 전 「교재를 인쇄할까요?」(원장 2026-11-17 「스스로 학습 시 수업 시작 전 교재 인쇄 팝업」) */
+.sd-ask { width: min(460px, calc(100vw - 32px)); padding: 24px 24px 20px; border: 1px solid #ddd3f0; border-radius: 16px; background: #fff; color: #1b2340; box-shadow: 0 18px 50px rgba(70, 48, 122, 0.25); }
+.sd-ask::backdrop { background: rgba(40, 26, 80, 0.42); }
+.sd-ask h2 { margin: 0; font-size: 21px; }
+.sd-ask p { margin: 10px 0 0; line-height: 1.6; font-size: 15px; }
+.sd-ask-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+.sd-ask-actions .sd-btn { justify-content: center; min-height: 46px; }

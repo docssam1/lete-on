@@ -1,6 +1,6 @@
-import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261116h6";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261116h6";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261116h6";
+import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261117a";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261117a";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261117a";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261116g1";
@@ -896,6 +896,32 @@ window.addEventListener("keydown", (event) => {
 $("stage").addEventListener("pointerdown", () => { if (autoTimer) cancelAuto(); });
 
 // &at=game 처럼 장 종류로 열기(첫 화면 「사고력 게임」 카드) — 덱 길이가 바뀌어도 그 종류의 첫 장으로 간다. 없으면 &s=장 번호
+// ── 차시를 시작하기 전에 「교재를 인쇄할까요?」(원장 2026-11-17 「스스로 학습 시 수업 시작 전 교재 인쇄 팝업 뜨도록」) ──
+// 스스로 공부(학생 덱)에서 차시를 첫 장부터 열 때마다 묻는다 — 이어서 하기(중간 장)·강사용 교안은 묻지 않는다.
+// 답은 이 기기에 차시마다 기억해 같은 차시를 다시 열 때는 묻지 않는다. 「인쇄」를 골랐으면 권 표시(gm-print-ask:<학생>:<권>)도 남겨
+// 시작 화면 차시 카드의 교재 인쇄 단추를 초록으로 강조한다(start.js).
+const PRINT_ASK_KEY = `gm-print-ask:${student}:${book.id}:u${unitIndex}p${part}`;
+function printAnswer(value) {
+  try {
+    if (value) {
+      localStorage.setItem(PRINT_ASK_KEY, value);
+      if (value === "print") localStorage.setItem(`gm-print-ask:${student}:${book.id}`, "print");
+    }
+    return localStorage.getItem(PRINT_ASK_KEY) || "";
+  } catch { return value || ""; }
+}
+function askPrint() {
+  if (classMode || index !== 0 || printAnswer()) return;
+  const href = sessionPrintHref(book, unitIndex, part, bellData, link);
+  if (!href) return;
+  const dialog = $("printAsk");
+  $("printAskText").textContent = `${book.label} ${unitIndex + 1}단원 ${part}차시를 시작해요. 종이 교재를 인쇄해서 같이 공부할까요? 「인쇄하고 시작」을 누르면 이 차시 교재가 새 창에 열리고, 이 창에서는 공부가 시작돼요.`;
+  $("printAskYes").onclick = () => { printAnswer("print"); window.open(href, "_blank", "noopener"); dialog.close(); };
+  $("printAskNo").onclick = () => { printAnswer("screen"); dialog.close(); };
+  // Esc로 닫으면 답을 적지 않는다(다음에 다시 묻는다)
+  try { dialog.showModal(); } catch { dialog.setAttribute("open", ""); }
+}
+
 function startIndex() {
   const at = slides.findIndex((slide) => slide.kind === params.get("at"));
   if (at >= 0) return at;
@@ -921,6 +947,7 @@ loadGoldenBell().then((data) => {
   ready = true;
   index = startIndex();
   show();
+  askPrint();
 }).catch(() => {
   // 골든벨을 못 불러와도 본책 번호판은 쓸 수 있다
   bellData = null;
@@ -929,5 +956,6 @@ loadGoldenBell().then((data) => {
   index = startIndex();
   show();
   say(FIXED_LINES.bellLoadFail.text, "think", FIXED_LINES.bellLoadFail.id);
+  askPrint();
 });
 }

@@ -11,14 +11,15 @@ async function mount({loadFull,member,saved}){
   const current=await g.RoadmapMembership.status();
   if(!current||current.user_id!==member.user_id)throw Error('로그인 상태가 바뀌었어요. 내 계정에서 다시 확인해 주세요.');
   g.RoadmapParentPending={answers:next,advanced:!!advanced,study,saved};
-  try{await loadFull();}catch(error){const retry=doc.createElement('button');retry.type='button';retry.textContent='새로고침 후 다시 열기';retry.onclick=()=>location.reload();entry.append(retry);throw error;}
-  doc.body.classList.remove('parent-boot');host.remove();
+  try{await loadFull();}catch(error){const retry=doc.createElement('button');retry.type='button';retry.textContent='새로고침 후 다시 열기';retry.onclick=()=>location.reload();retry.dataset.parentRetry='true';entry.querySelector('[data-parent-retry]')?.remove();(entry.querySelector('.parent-slide-footer')||entry).append(retry);throw error;}
+  doc.body.classList.remove('parent-boot','parent-slide-open');host.remove();
   g.RoadmapSpeed?.ready('roadmap_ready','#journeyMap,.parent-own-learning');
  };
  if(saved?.completed&&g.PlannerParentFlow.inputModel(saved.answers||{},member).age){
   const summary=g.PlannerIntake.summary(saved.answers||{},saved.fields||{}).filter(r=>['school','deepBook','thinking','calc'].includes(r.key));
   const h=doc.createElement('h2');h.textContent='현재 공부에서 이어서 학습해요.';entry.append(h);
   for(const row of summary){const p=doc.createElement('p');p.textContent=row.label+' · '+row.text;entry.append(p);}
+  entry.insertAdjacentHTML('beforeend',g.PlannerParentFlow.balanceNotice(saved.answers||{}));
   const study=doc.createElement('button');study.type='button';study.className='parent-primary';study.textContent='학습하기';
   const map=doc.createElement('button');map.type='button';map.className='parent-advanced';map.textContent='전체 로드맵 보기';
   const change=doc.createElement('details'),label=doc.createElement('summary'),form=doc.createElement('div');label.textContent='현재 공부 바꾸기';change.append(label,form);

@@ -163,3 +163,18 @@
 }
 .gold-print-status:empty { display: none; }
 @media print { .gold-print-status { display: none; } }
+
+/* 한 차시 교재의 데일리·본책·과제·단원 평가 쪽(session-book-sheet.js importSessionPages, 원장 2026-11-17 「시험지 형태가 아니라」):
+   문제은행 카드에서 꺼낸 그림을 워밍업 문항 칸에 담는다 — 카드 상자(테두리·여백·최소 높이)는 지운다 */
+.tb-session-page .question-card.tb-q{position:static;display:block;min-height:0!important;height:auto!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;overflow:visible}
+.tb-session-page .tb-q>.visual{margin:0 auto}
+.tb-session-page .tb-concept-item>.gold-print-visual{min-height:0;max-height:none;padding:2mm 3mm;border-color:#cfe0d4;background:#f4f8f5}
+.tb-session-page .tb-concept .textbook-concept-tutorial{margin:0;border:0;background:none}
+.tb-session-page .tb-concept-item>h2 span{min-width:11mm}
+.tb-session-page .gold-print-head dd.tb-score{text-align:right}
+.tb-session-page .tb-concept>div,.tb-session-page .tb-concept .tb-q{width:100%}
+.tb-session-page .tb-concept .textbook-concept-tutorial>header span{font-size:10.5px}
+.tb-session-page .tb-concept .textbook-concept-tutorial>header strong{font-size:13px}
+.tb-session-page .tb-concept .textbook-concept-tutorial li>b{font-size:11px}
+.tb-session-page .tb-concept .textbook-concept-tutorial li strong{font-size:11.5px}
+.tb-session-page .tb-concept .textbook-concept-tutorial li p{font-size:11px}

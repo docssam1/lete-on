@@ -40,7 +40,11 @@
       if(!title||!unknown||g.PlannerParentFlow?.isAcademyBook(title)||parent.statuses?.[role]!=='progress')continue;
       result.push({track,name:(role==='deep'?'심화·활용 · ':'')+title,parentRole:role,direct:true});
     }
-    return result;
+    const detail=g.PlannerParentFlow?.thinkingStudy(a);
+    return result.filter(book=>!(book.track==='thinking'&&detail?.book&&detail.level&&detail.status==='done'&&compact(book.name).includes(compact(detail.book)))).map(book=>{
+      if(book.track!=='thinking'||!detail?.book||a.thinkingStatus!=='progress'||!compact(book.name).includes(compact(detail.book)))return book;
+      return {...book,name:[book.name,detail.level].filter(Boolean).join(' · '),parentRole:'thinking',independent:detail.independent};
+    });
   }
 
   function bookItem(track, bookName, u, detail, url) {
@@ -114,7 +118,7 @@
       if(book.track==='thinking'&&a.thinkingStatus==='progress'&&currentThinking&&compact(book.name).includes(compact(currentThinking)))reported=ranges.thinking||'';
       if(g.PlannerParentFlow?.fraction(reported))reported='';
       const range = (typeof ctx.manualRanges?.[bookId] === 'string' ? ctx.manualRanges[bookId].trim() : reported).slice(0,120);
-      manualBooks.push({id:bookId, title:book.name, track:book.track, range});
+      manualBooks.push({id:bookId, title:book.name, track:book.track, range, ...(book.independent?{independent:book.independent}:{})});
       if((book.direct||a.parentFlow?.version===1&&book.track==='thinking')&&!range&&!candidates.length)candidates=[bookItem(book.track,book.name,{id:key('current-scope',bookId),title:'현재 공부하는 범위'},'지금 펼쳐 둔 교재의 소단원에서 개념과 대표 문제를 풀고, 혼자 풀이 이유 설명하기 · 단원·쪽수 확인 전')];
       if (range) {
         const match = candidates.find(row => compact(row.unitLabel) === compact(range));
@@ -133,6 +137,8 @@
       if (item) items.push(item);
       else notices.push(trackNames[book.track] + ' · ' + book.name + '에서 이번 주 공부할 단원이나 쪽수를 직접 추가하세요.');
     }
+    // Parent observations are context, not grading or an independent/mastered check.
+    for(const item of items){const book=manualBooks.find(b=>b.title===item.bookName);if(book?.independent)item.detail+=' · 혼자 푸는 범위(입력): '+book.independent;}
     return {items, notices, manualBooks};
   }
 

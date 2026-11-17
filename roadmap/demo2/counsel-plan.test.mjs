@@ -67,7 +67,7 @@ test('dated items use the real weekly checklist, including unmet work after a mi
   records=mark(records,next,tasks[0],'solo',false);
   assert.equal(checks.view(records,{weekStart:next,items:tasks}).nextReview.length,1);
   const markup=globalThis.PlannerUnitChecklistView.markup({...checks.view(records,{weekStart:week,items:first}),counselUpcoming:tasks});
-  for(const label of ['공부했어요','혼자 풀 수 있어요','상담에서 정한 공부','예정된 상담 학습','2026-11-19','2개']) assert.ok(markup.includes(label),label);
+  for(const label of ['학습 완료','상담에서 정한 공부','예정된 상담 학습','2026-11-19','2개']) assert.ok(markup.includes(label),label);
   assert.deepEqual(model.weekItems([fixed],'2026-11-23',records).map(i=>i.counselStep),['recheck']);
 });
 
@@ -94,7 +94,7 @@ test('save survives reopening; same-week duplicate and cross-account edits canno
   const start=checks.weekStart(day);
   const stored=checks.update(null,{weekStart:start,item:task,field:'studied',value:true,day});
   globalThis.PlannerStorage.setItem('gfield.demo2.unit-checklist.v1',JSON.stringify({records:stored}));
-  assert.ok(model.previousSummary().includes('공부했어요 · 혼자 풀기는 미확인'));
+  assert.ok(model.previousSummary().includes('다시 확인할 학습'));
   assert.ok(model.previousSummary().includes('재점검 2문제 · 미기록'));
   await model.save({...input,unit:'나머지정리'},'alpha');
   assert.match(model.previousSummary(),/이차방정식/);

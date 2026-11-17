@@ -8,7 +8,7 @@ import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-gu
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261116g9";
+import { book04Markup } from "./book04-renderers.js?v=20261117a";
 import { book05Markup } from "./book05-renderers.js?v=20261101m";
 import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
@@ -17,7 +17,7 @@ import { book09Markup } from "./book09-renderers.js?v=20261029t";
 import { book10Markup } from "./book10-renderers.js?v=20261101m";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20261101m";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
-import { importQuestionSheet } from "./session-book-sheet.js?v=20261029z";
+import { importSessionPages } from "./session-book-sheet.js?v=20261117b";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261110m";
 import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261110m";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
@@ -1742,17 +1742,17 @@ async function printSessionBook() {
   $("printStatus").textContent = "한 차시 교재를 묶고 있어요.";
   try {
     const cover = printBookCover(book, lessons, { includeAnswers: false, style: "concept", includeGames: false, session });
-    root.innerHTML = cover + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("");
+    const sameOrigin = (url) => url && new URL(url, location.href).origin === location.origin;
+    // 데일리 테스트(&presheet=, 2차시부터 표지 바로 뒤)·본책·과제·단원 평가(&sheet=)도 워밍업과 같은 교재 꼴 쪽으로 짠다(session-book-sheet.js importSessionPages)
+    const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve("");
+    const [daily, sheet] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet"))]);
+    root.innerHTML = cover + daily + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet;
     if (document.fonts?.ready) await document.fonts.ready;
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode().catch(() => null)));
     compactGoldenBellPrint(root);
     renumberPrintPages(root);
-    const sameOrigin = (url) => url && new URL(url, location.href).origin === location.origin;
-    // 2차시부터: 표지 바로 뒤에 지난 차시 데일리 테스트(&presheet=)
-    if (sameOrigin(params.get("presheet"))) root.firstElementChild.after(await importQuestionSheet(params.get("presheet")));
-    if (sameOrigin(params.get("sheet"))) root.append(await importQuestionSheet(params.get("sheet")));
     document.body.classList.add("session-book");
-    // 워밍업 쪽은 종이 여백 11mm로, 문제은행 학습지 쪽은 여백 0으로 설계됐다 — 한 묶음에서는 종이 여백을 0으로 두고 워밍업 쪽에 11mm를 준다
+    // 종이 여백은 0, 모든 쪽(워밍업·본책·과제·평가 모두 워밍업 꼴)에 11mm 흰 테두리
     const pageStyle = document.createElement("style");
     pageStyle.textContent = "@media print{@page{size:A4 portrait;margin:0}.session-book .gold-print-root>.gold-print-page{box-sizing:border-box;width:210mm;min-height:296mm;margin:0;border:11mm solid #fff}.session-book .session-sheet{width:210mm}}";
     document.head.append(pageStyle);

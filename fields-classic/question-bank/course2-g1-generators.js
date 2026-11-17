@@ -3,7 +3,7 @@
 // 본책 문항 번호마다 어느 생성기를 쓰는지는 source-data.js COURSE2_CURRICULUM의 typeStudyRefs. 1과정 생성기로 같은 풀이가 되는 번호는 1과정 유형을 그대로 쓴다.
 // 답은 모두 그림을 만든 수에서 계산한다(세는 문제는 하나씩 세어 본다 — 공식만 믿지 않는다).
 
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261116g8";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261117a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -736,9 +736,7 @@ function c2FoldRegionFind({ difficulty = 2, foldSeq = null }) {
   let shift = 8, body = "";
   folds.forEach((f, index) => {
     const stage = stages[index], seg = foldLine(stage, f)?.map(T), arrow = foldArrow(stage, f);
-    const flap = clip(stage, (q) => -KEEP[f](q)).map(T);
     body += foldStageSvg(stage.map(T), { shift, top, size, index })
-      + (flap.length >= 3 ? `<polygon points="${flap.map((q) => `${f1(shift + q.x * size)},${f1(top + q.y * size)}`).join(" ")}" fill="#fff0ee" opacity="0.7"/>` : "")
       + (seg ? `<line x1="${f1(shift + seg[0].x * size)}" y1="${f1(top + seg[0].y * size)}" x2="${f1(shift + seg[1].x * size)}" y2="${f1(top + seg[1].y * size)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>` : "")
       + (arrow ? foldArrowSvg(T(arrow.from), T(arrow.to), shift, top, size) : "") + foldCaptionSvg(shift + size / 2, top + size + 22, index);
     shift += size + 10; body += foldStepArrowSvg(shift, top + size / 2); shift += gap;

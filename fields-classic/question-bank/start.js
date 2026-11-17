@@ -1,9 +1,9 @@
-import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM } from "./source-data.js?v=20261116h6";
-import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261116h6";
+import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM } from "./source-data.js?v=20261117a";
+import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261117a";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261111p";
 import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261116g1";
-import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261116h6";
-import { course2ConceptSlides } from "./course2-deck.js?v=20261116h6";
+import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261117a";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261117a";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -186,8 +186,7 @@ function renderQuick() {
   $("pickTitle").textContent = "권 고르기 · 권을 누르면 단원과 차시가 나와요";
 }
 
-// 차시 공부를 연다. 그 권을 처음 시작하고 아직 묻지 않았으면 「교재를 인쇄할까요?」를 먼저 묻는다.
-let asking = null;
+// 차시 공부를 연다.
 async function startSession(target) {
   const [bookId, unitText, partText, lastText] = String(target).split("|");
   const book = bookById(bookId), unit = Number(unitText) || 0, part = Number(partText) || 1, last = Number(lastText) || 0;
@@ -197,28 +196,9 @@ async function startSession(target) {
     return go(2);
   }
   const href = studyLink(book.id, unit, part, last);
-  if (view.mode === "class" || startedBook(book.id) || printPref(book.id)) return location.assign(href);
-  try { await bellReady; } catch {}
-  const links = goldenBell ? sessionLinks(book, unit, part) : null;
-  if (!links) return location.assign(href);
-  asking = { book, href, print: links.bookPrint };
-  $("printAskText").textContent = `${book.label}을 처음 시작해요. 종이 교재를 인쇄해서 같이 공부할까요? 「인쇄하고 시작」을 누르면 ${unit + 1}단원 ${part}차시 교재가 새 창에 열리고, 이 창에서는 공부가 시작돼요.`;
-  $("printAsk").showModal();
+  // 「교재를 인쇄할까요?」는 덱이 차시를 시작할 때마다 묻는다(study.js askPrint, 원장 2026-11-17) — 여기서 또 묻지 않는다
+  return location.assign(href);
 }
-$("printAskYes").addEventListener("click", () => {
-  if (!asking) return;
-  printPref(asking.book.id, "print");
-  window.open(asking.print, "_blank", "noopener");
-  $("printAsk").close();
-  location.assign(asking.href);
-});
-$("printAskNo").addEventListener("click", () => {
-  if (!asking) return;
-  printPref(asking.book.id, "screen");
-  $("printAsk").close();
-  location.assign(asking.href);
-});
-$("printAsk").addEventListener("close", () => { asking = null; });
 document.addEventListener("click", (event) => {
   const target = event.target.closest("[data-start]");
   if (!target || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return;

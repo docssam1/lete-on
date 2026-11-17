@@ -42,7 +42,7 @@
         '<td>' + actual + '</td><td>' + gap + '</td></tr>';
     }).join('');
     const title = units ? '주차별 단원 기록' : '주차별 횟수';
-    const headers = units ? ['혼자 푼 항목이 있는 단원', '남은 보완'] : ['목표', '실제', '누적 차이'];
+    const headers = units ? ['학습을 완료한 항목이 있는 단원', '남은 보완'] : ['목표', '실제', '누적 차이'];
     return '<details class="wt-data"' + (open ? ' open' : '') + '><summary data-wt-focus="table">' + title + ' 보기</summary>' +
       '<table aria-label="' + title + '"><thead><tr><th scope="col">주차·시작일</th>' +
       headers.map(text => '<th scope="col">' + text + '</th>').join('') + '</tr></thead><tbody>' +
@@ -108,7 +108,7 @@
   function example(units, route, open) {
     const gaps = units ? [0, -2, 0] : [1, -2, -1, 0];
     const points = gaps.map((gap, index) => ({weekNumber: index + 1, status: 'recorded', gap}));
-    const exampleText = units ? '처음엔 보완할 단원이 없었어요. 2주차에 두 단원이 남았고, 3주차에 두 단원을 모두 혼자 풀었어요.' :
+    const exampleText = units ? '처음엔 보완할 단원이 없었어요. 2주차에 두 단원이 남았고, 3주차에 두 단원 학습을 모두 마쳤어요.' :
       '매주 5회가 목표인 예에서 실제로 6회, 2회, 6회, 6회 공부했어요. 1회 앞섰다가 2회 밀렸고, 4주차에 계획을 따라잡았어요.';
     return '<details class="wt-example"' + (open ? ' open' : '') + '><summary data-wt-focus="example">그래프 예시 보기</summary>' +
       '<p class="wt-method"><strong>예시</strong> · ' + exampleText + '</p>' + chart(points, points.at(-1), route, units, true) + '</details>';
@@ -150,7 +150,7 @@
     if (hasRecord && !showChart) note = '표시된 기간에는 저장한 기록이 없어요.';
     const button = units ? '' : '<button type="button" class="wt-open" data-wt-focus="open" data-weekly-open>' +
       (hasProgram ? '주간 점검 열기' : '시작일·목표 정하기') + '</button>';
-    const method = units ? '공부했지만 혼자 풀기 어려운 단원이 남으면 점이 내려가고, 보완을 마치면 위로 올라와요.' :
+    const method = units ? '다시 확인할 단원이 남으면 점이 내려가고, 학습을 완료하면 위로 올라와요.' :
       '주간 점검에 저장한 실제 학습 횟수에서 그 주 목표를 빼고 누적해요. 미기록 주는 계산에서 제외해요.';
     return '<section class="wt-card" data-wt-track="' + track + '" aria-label="' + title + '"><div class="wt-head"><h3>' + title + '</h3>' + select +
       '</div>' + detail + (note ? '<p class="wt-note">' + note + '</p>' : '') +

@@ -3,7 +3,7 @@
   'use strict';
 
   const mounted = new WeakSet();
-  const checkLabels = { studied: '공부했어요', solo: '혼자 풀 수 있어요' };
+  const checkLabels = { completed: '학습 완료' };
   const tracks = { curriculum: '교과', arithmetic: '연산', thinking: '사고력' };
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]
@@ -33,7 +33,7 @@
   function routeMap(route = {}, rows, weekStart) {
     const stages = Array.isArray(route.stages) ? route.stages : [];
     const current = stages.find(stage => stage.current);
-    const solo = rows.filter(row => row.solo).length;
+    const solo = rows.filter(row => row.completed ?? row.solo).length;
     const percent = rows.length ? Math.round(solo / rows.length * 100) : 0;
     return `<section data-uc-week="${escape(weekStart)}" class="uc-route" aria-label="우리 아이의 전체 경로"><div class="uc-heading"><h2>우리 아이의 전체 경로</h2>
         <small>${route.goalTitle ? escape(route.goalTitle) + ' · ' : ''}수학 교과 경로</small></div>
@@ -42,7 +42,7 @@
       ${stages.length ? `<ol class="uc-road" aria-label="학습 단계">${stages.map(stage => `<li data-stage-id="${escape(stage.id)}"${stage === current ? ' aria-current="step"' : ''}>
         ${stage === current ? student(route, percent) : ''}<span class="uc-node" aria-hidden="true"></span>
         <span class="uc-stop-name">${stage === current ? '<b>현재 위치</b>' : ''}${escape(stage.title)}</span></li>`).join('')}</ol>` : ''}
-      ${rows.length ? `<p class="uc-progress">이번 주 혼자 풀 수 있는 항목 <strong>${solo} / ${rows.length}</strong>${current ? '<span>체크할 때마다 현재 단계 안에서 캐릭터가 움직여요.</span>' : ''}</p>` : ''}</section>`;
+      ${rows.length ? `<p class="uc-progress">이번 주 완료 항목 <strong>${solo} / ${rows.length}</strong>${current ? '<span>체크할 때마다 현재 단계 안에서 캐릭터가 움직여요.</span>' : ''}</p>` : ''}</section>`;
   }
 
   function questionLink(value) {
@@ -53,7 +53,7 @@
   }
 
   function checkbox(row, key, disabled) {
-    return `<label class="uc-check"><input type="checkbox" data-uc-field="${key}" data-uc-id="${escape(row.id)}" aria-label="${escape(row.title + ' ' + (row.unitLabel || '') + ' · ' + checkLabels[key])}"${row[key] ? ' checked' : ''}${disabled ? ' disabled' : ''}><span>${checkLabels[key]}</span></label>`;
+    return `<label class="uc-check"><input type="checkbox" data-uc-field="${key}" data-uc-id="${escape(row.id)}" aria-label="${escape(row.title + ' ' + (row.unitLabel || '') + ' · ' + checkLabels[key])}"${(row.completed ?? row.solo) ? ' checked' : ''}${disabled ? ' disabled' : ''}><span>${checkLabels[key]}</span></label>`;
   }
 
   function taskRow(row, disabled) {
@@ -65,7 +65,7 @@
     return `<li class="uc-task" data-uc-kind="${row.kind === 'mock' ? 'mock' : 'book'}" data-uc-row="${escape(row.id)}">
       <div class="uc-task-copy">${meta.length ? `<small>${escape(meta.join(' · '))}</small>` : ''}<strong>${escape(row.title)}</strong>
         ${detail ? `<p>${escape(detail)}</p>` : ''}${url ? `<a href="${escape(url)}" target="_blank" rel="noopener noreferrer">기출 원문 열기<span class="uc-aria"> (새 창)</span></a>` : ''}</div>
-      <div class="uc-marks">${checkbox(row, 'studied', disabled)}${checkbox(row, 'solo', disabled)}</div></li>`;
+      <div class="uc-marks">${checkbox(row, 'completed', disabled)}</div></li>`;
   }
 
   function group(title, rows, key, disabled) {
@@ -97,7 +97,7 @@
     return `<section class="uc-review" aria-label="다음 주 보완 일정"><div class="uc-heading"><h3>다음 주 보완 일정</h3><small>${escape(weekLabel(nextWeekStart))}</small></div>
       ${groups.length ? `<ul>${groups.map(entry => `<li><strong>${escape(entry.unitLabel || entry.items[0]?.unitLabel || entry.items[0]?.title)}</strong>
         ${entry.practice?.length ? `<ul class="uc-practice">${entry.practice.map(practiceTask).join('')}</ul>` :
-          `<span>${escape(entry.items.map(item => [item.title, item.detail].filter(Boolean).join(' · ')).join(' / '))}</span>`}</li>`).join('')}</ul>` : '<p>공부한 항목에서 ‘혼자 풀 수 있어요’가 비어 있으면 다음 주에 다시 풀도록 여기에 담겨요.</p>'}</section>`;
+          `<span>${escape(entry.items.map(item => [item.title, item.detail].filter(Boolean).join(' · ')).join(' / '))}</span>`}</li>`).join('')}</ul>` : '<p>완료 체크를 해제한 항목과 이전에 남긴 보완 항목을 다음 주에 다시 확인해요.</p>'}</section>`;
   }
 
   function checklist(model) {

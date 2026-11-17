@@ -1473,6 +1473,8 @@ function drawJourney(){
   $('workspace-panel-map').insertAdjacentHTML('afterbegin',PF.renderResult(auto));
   $('workspace-panel-table').insertAdjacentHTML('beforeend','<details class="parent-reference-fold"><summary>참고용 학원 운영표 보기</summary>'+T.renderAcademyMonthly(T.academyReferences(G.comparison(answers,intakeFields()),'school',academyLines),G.comparison(answers,intakeFields()),intakeFields())+'</details>');
   $('journeyTitle').textContent='현재 공부에서 대학 진학까지';
+ }else if(completed&&!flowMode){
+  $('workspace-panel-map').insertAdjacentHTML('afterbegin',PF.balanceNotice(answers));
  }
 }
 async function startParentStudy(){
