@@ -1,5 +1,5 @@
 import { EXAMS } from "./source-data.js?v=20261117a";
-import { loggedIn, checkSession } from "./study-progress.js?v=20261111p";
+import { loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { productForExam, openExamIds } from "./entrance-products.js?v=20261116b";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261116a";
 import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom, SELECTION_SAME_PAPER, answerVisualMarkup, workMarkup, isListVisual } from "./selection-answers.js?v=20261116e";

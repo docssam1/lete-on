@@ -14,17 +14,19 @@ async function request(path, body, token = "") {
 }
 
 export async function ensureFieldsSession(student) {
-  const existing = sessionStorage.getItem(SESSION_KEY) || "";
+  // 학생 로그인은 기기(localStorage)에도 남는다(study-progress.js, 원장 2026-11-17)
+  const existing = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY) || "";
   if (existing) {
     try {
       await request("fields-auth", { action: "session" }, existing);
       return existing;
     } catch {
       sessionStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(SESSION_KEY);
     }
   }
   const code = sessionStorage.getItem("gf_c") || "";
-  const name = sessionStorage.getItem("gf_n") || student || "";
+  const name = sessionStorage.getItem("gf_n") || localStorage.getItem("gf_n") || student || "";
   if (!code || !name) throw new Error("login_required");
   const result = await request("fields-auth", { action: "login", code, name });
   sessionStorage.setItem(SESSION_KEY, result.token);

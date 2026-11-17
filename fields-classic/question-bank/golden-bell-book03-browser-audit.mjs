@@ -29,7 +29,8 @@ function errorsFor(page) {
 async function unlockConcept(page, lesson) {
   const experience = page.locator(".progressive-concept, .guided-concept");
   assert.equal(await experience.count(), 1, `${lesson.id}: concept experience missing`);
-  assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${lesson.id}: source opened before concept completion`);
+  // 개념 확인은 고를 수 있는 연습이라 워밍업 문항은 처음부터 열려 있다(golden-bell.js conceptReady — 「Concept checks are optional practice」)
+  assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${lesson.id}: source step should be open (concept is optional)`);
   const steps = lesson.experience.beats.length;
   for (let index = 1; index < steps; index += 1) {
     const next = experience.locator('[data-experience-action="next"]');

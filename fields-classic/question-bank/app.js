@@ -1,6 +1,6 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261117a";
 import { GENERATORS } from "./generators.js?v=20261117a";
-import { saveRecord } from "./study-progress.js?v=20261111p";
+import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
@@ -80,6 +80,10 @@ const oneUp = document.body.classList.contains("as-embed");
 // 스스로 공부 덱의 공부하기 장(study.js sheetUrl &deck=1): 문제 넘기기는 덱 아래 「다음 문제 →」 하나로 — 여기는 번호만 보인다
 const inDeck = oneUp && params.get("deck") === "1";
 if (inDeck) document.body.classList.add("as-deck");
+// 오답 유사문제 화면 안의 미리보기 창(similar.js, &preview=1): 시험지 종이만 보이게 — 머리줄·인쇄 양식·문제마다 편집 단추를 감춘다
+if (params.get("preview") === "1" && parent !== window) document.body.classList.add("bank-preview");
+if (params.get("side") === "1" && parent !== window) document.body.classList.add("bank-side");   // 오답 유사문제 오른쪽 시험지: 문제마다 ↻(같은 유형 새 문제)만 남긴다
+if (params.get("peek") === "1" && parent !== window) document.body.classList.add("bank-peek");   // 번호 아래 한 문제 미리 보기: 시험지 머리도 감춘다
 if (inDeck) window.addEventListener("message", (event) => {
   if (event.origin !== location.origin || event.source !== parent || event.data?.type !== "fc-study" || event.data.cmd !== "oneup") return;
   oneUpAt += event.data.go === "prev" ? -1 : 1;
@@ -1215,6 +1219,7 @@ function regenerateQuestions() {
 // ── 단계 화면: 1 범위 선택 · 2 상세 편집 · 3 인쇄 설정 ──
 let coverFresh = false;
 function setStepView(step) {
+  document.documentElement.classList.remove("bank-booting");
   $("builderPanel").hidden = step !== 1;
   $("editorSection").hidden = step !== 2;
   $("worksheetSection").hidden = step !== 3;
@@ -4042,6 +4047,11 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
         generationOptions
       });
     }
+    // 오답 유사문제 시험지 짜기(원장 2026-11-17): &each=N 번호마다 N문제(1~3) · &level=basic|advanced 본책 단계보다 한 칸 쉽게/어렵게
+    const each = Math.max(1, Math.min(3, Number(params.get("each")) || 1));
+    const shift = { basic: -1, advanced: 1 }[params.get("level")] || 0;
+    if (shift) refs.forEach((ref) => { ref.difficulty = Math.max(1, Math.min(3, ref.difficulty + shift)); });
+    if (each > 1) refs.splice(0, refs.length, ...refs.flatMap((ref) => Array.from({ length: each }, () => ({ ...ref }))));
     if (refs.length) {
       state.picks = refs.slice(0, MAX_QUESTIONS);
       picked = state.picks.length;
@@ -4075,8 +4085,12 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
   renderCurriculum();
   updateSummary();
   if (picked && params.get("build") === "1") {
-    buildQuestions();
+    // &paper=1: 선생님 쪽 문제은행처럼 3단계 시험지(미리보기·답안 보기·문제 인쇄)로 바로 — 오답 유사문제 「시험지 만들기」
+    if (params.get("paper") === "1" && !asStudent) { if (makeQuestions()) showWorksheet(); }
+    else buildQuestions();
     // 인쇄해서 풀기: 글꼴·그림이 자리 잡은 뒤 인쇄 창
     if (printNow) document.fonts.ready.then(() => setTimeout(() => window.print(), 400));
   }
 })();
+// 문제를 못 만들었으면(고른 것이 없거나 준비 안 된 유형) 감춘 화면을 바로 걷는다 — 주소 처리(setTimeout 0 포함)가 끝난 뒤
+setTimeout(() => document.documentElement.classList.remove("bank-booting"), 60);

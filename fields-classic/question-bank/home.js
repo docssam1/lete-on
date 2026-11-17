@@ -1,7 +1,7 @@
 // 첫 화면(home.html): 카드 주소에 학생 이름(?student=) 이어 붙이기 · 이어서 하기 한 줄 · 로그인 글자 · 숏릴 자막 · 멈춤 단추.
 import { createTimeline, stagger, splitText } from "./vendor/animejs-4.5.0/anime.esm.min.js";
 import { setIcon } from "./ui-icons.js?v=20261105b";
-import { loggedIn, loadLocalAll } from "./study-progress.js?v=20261111p";
+import { loggedIn, loadLocalAll } from "./study-progress.js?v=20261117a";
 import { canTeach } from "./fields-access.js?v=20261116g1";
 
 // 인트로(원장 2026-11-04 「인트로에 필요 없어?」 — 영상 1 「로고·인트로는 Anime.js」, 스킬 web-ui-library-picks):

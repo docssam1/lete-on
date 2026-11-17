@@ -1,4 +1,4 @@
-import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
+import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261117a";
 import { KAKAO } from "./fields-access.js?v=20261116g1";
 
 // 승인(로그인) 페이지(원장 2026-10-27): 승인번호 + 이름 → 학생은 스스로 공부 첫 화면, 관리자(DOCSSAM)는 선생님 보기.
