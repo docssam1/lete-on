@@ -395,3 +395,23 @@ body.sm:has(#pickOptions:not([hidden])) { padding-bottom: 150px; }
 .sm-peek.ready iframe { min-height: 0; }
 @media (max-width: 640px) { .sm-peek { margin-left: 0; } }
 @media (prefers-reduced-motion: reduce) { .sm-peek { transition: none; } }
+
+/* 넓은 화면: 왼쪽 번호 고르기 | 오른쪽 시험지 전체(원장 2026-11-17 「오른쪽에 시험지 전체가 보이고」) — similar.js refreshPaper */
+.sm-paper { display: none; }
+@media (min-width: 1100px) {
+  body.sm .st-main { max-width: 1640px; grid-template-columns: minmax(0, 1fr) minmax(500px, 46%); align-items: start; }
+  body.sm .st-main > .st-access, body.sm .st-main > .sm-preview { grid-column: 1 / -1; }
+  body.sm #previewBtn { display: none; }
+  .sm-paper { position: sticky; top: 16px; display: grid; grid-template-rows: auto minmax(0, 1fr); height: calc(100vh - 32px - var(--dock-h, 112px)); min-height: 420px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 6px 16px rgba(30, 99, 200, .12); overflow: hidden; }
+  .sm-paper-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: #f6f9ff; }
+  .sm-paper-head > div:first-child { display: grid; gap: 1px; min-width: 0; }
+  .sm-paper-head strong { font-size: 17px; }
+  .sm-paper-head span { font-size: 13px; color: var(--muted); }
+  .sm-paper-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sm-paper-tools .st-btn { min-height: 38px; padding: 0 12px; font-size: 13.5px; }
+  .sm-paper-tools .st-btn:disabled, .sm-paper-tools .st-btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+  .sm-paper-empty { display: grid; place-content: center; gap: 8px; padding: 24px; text-align: center; color: var(--muted); }
+  .sm-paper-empty b { font-size: 17px; line-height: 1.6; color: var(--ink); }
+  .sm-paper iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+}
+.sm-paper-empty[hidden], .sm-paper iframe[hidden] { display: none !important; }

@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#ffffff" />
   <title>Gifted Math 사고력 문제은행</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./start.css?v=20261117c" />
+  <link rel="stylesheet" href="./start.css?v=20261117e" />
   <link rel="stylesheet" href="./course2.css?v=20261115c" />
 </head>
 <body class="sm">
@@ -42,6 +42,15 @@
       <div id="numberList" class="sm-numbers" aria-live="polite"></div>
       <div id="coursePanel" class="sm-course-panel c2-books" hidden></div>
     </section>
+    <!-- 넓은 화면: 오른쪽에 시험지 전체(원장 2026-11-17 「시험지가 아래 보이니까 창이 길어 안 보여 · 오른쪽에 시험지 전체가 보이고 문항 교체도 문제별로」) -->
+    <aside class="sm-paper" id="paperPanel" aria-label="시험지">
+      <div class="sm-paper-head">
+        <div><strong>시험지</strong><span id="paperMeta">번호를 고르면 만들어져요</span></div>
+        <div class="sm-paper-tools"><button type="button" class="st-btn" id="paperRenew" disabled>모두 새 문제</button><button type="button" class="st-btn" id="paperAnswers" disabled>답안 보기</button><a class="st-btn" id="paperOpen" href="./index.html" target="_blank" rel="noopener" aria-disabled="true">새 창</a></div>
+      </div>
+      <div class="sm-paper-empty" id="paperEmpty"><b>왼쪽에서 틀린 번호를 누르면<br />여기에 시험지가 만들어져요.</b><span>문제마다 ↻를 누르면 그 문제만 새로 바뀌어요.</span></div>
+      <iframe id="paperFrame" title="시험지" hidden></iframe>
+    </aside>
     <!-- 고른 번호로 시험지 짜기(원장 2026-11-17 「원래 있는 문제은행처럼 미리보기도 되고 … 난이도 조절도 하고 문항수도 조절하여 출제」) -->
     <section class="sm-preview" id="previewPanel" hidden aria-label="미리보기">
       <div class="sm-preview-head"><strong>미리보기</strong><span>고른 번호마다 만들어질 문제예요. 시험지를 만들 때마다 숫자가 새로 바뀌어요.</span><button type="button" class="st-btn" id="previewClose">닫기</button></div>
@@ -62,6 +71,6 @@
       <a class="st-btn primary" id="makeLink" href="./index.html" aria-disabled="true" target="_blank" rel="noopener">시험지 만들기</a>
     </div>
   </div>
-  <script type="module" src="./similar.js?v=20261117c"></script>
+  <script type="module" src="./similar.js?v=20261117d"></script>
 </body>
 </html>

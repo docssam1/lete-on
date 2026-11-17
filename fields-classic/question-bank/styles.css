@@ -1816,7 +1816,8 @@ body.as-embed.in-class{--emb:#243184;--emb-deep:#141b5d;--emb-soft:#eaf3ff;--emb
   body.bank-preview .worksheet-actions,
   body.bank-preview #printTemplatePanel,
   body.bank-preview #printTemplateLead,
-  body.bank-preview [data-question-action],
+  body.bank-preview:not(.bank-side) [data-question-action],
+  body.bank-side [data-question-action]:not([data-question-action="replace"]),
   body.bank-preview [data-drag-handle] { display: none !important; }
   body.bank-peek .worksheet-head, body.bank-peek #watermark { display: none !important; }
   body.bank-peek, body.bank-peek .app-main, body.bank-peek main { padding-top: 0 !important; margin-top: 0 !important; }
