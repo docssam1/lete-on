@@ -8,7 +8,8 @@ import { book01Markup } from "./book01-renderers.js";
 
 const transform = book01Markup({ kind: "book1", subtype: "shape-transform", size: 2, source: [[0, 0]], operations: ["rotate-left", "rotate-right"], options: [] });
 assert.doesNotMatch(transform, /¼|1\s*\/\s*4/u);
-assert.match(transform, /시계 방향으로 반의 반 바퀴/u);
+// 움직임 말(「시계 방향으로 반의 반 바퀴」)은 문제 글에만 둔다 — 그림에서 되풀이하던 설명은 뺐다(커밋 5bce56e98 「도형 움직이기 그림에서 문제 글과 겹치는 설명 빼기」)
+assert.doesNotMatch(transform, /반의 반 바퀴/u);
 
 const modules = process.env.CODEX_NODE_MODULES || path.join(process.env.USERPROFILE, ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules");
 const { chromium } = await import(pathToFileURL(path.join(modules, "playwright/index.mjs")).href);

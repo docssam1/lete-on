@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { GOLDEN_BELL_BOOKS } from './golden-bell-data.js';
+import { GOLDEN_BELL_BOOKS } from './golden-bell-library.js';   // 화면과 같은 판(원본 대조로 더한 문항 포함)
 
 const modules = process.env.CODEX_NODE_MODULES || path.join(process.env.USERPROFILE, '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const { chromium } = await import(pathToFileURL(path.join(modules, 'playwright/index.mjs')).href);
@@ -19,7 +19,7 @@ try {
       page.on('pageerror', error => errors.push(error.message));
       page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
       page.on('requestfailed', request => errors.push(request.failure()?.errorText));
-      await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=DEMO&book=${book.id}`, { waitUntil: 'networkidle' });
+      await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=DEMO&codes=1&book=${book.id}`, { waitUntil: 'networkidle' });
       let pagedLessons = 0;
       let markers = 0;
       for (const lesson of book.lessons) {
