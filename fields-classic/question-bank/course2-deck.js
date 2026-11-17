@@ -2,11 +2,11 @@
 // 1과정 차시 = 개념 판서 → 게임 → 워밍업 → 본책. 2과정은 워밍업 자료(골든벨 원본)가 없으므로 개념 판서 자리에 그림 논증, 게임 자리에 체험을 둔다.
 // 차시마다 무엇을 보여 줄지는 아래 SESSION_CONCEPTS(본책 활동 묶음과 같은 내용으로 골랐다). 논증 그림은 course2-proofs/<권>.js, 체험은 c2-lab.html.
 import { mountProof } from "./proof-board.js?v=20261115c";
-import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261116h6";
+import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261117a";
 import { BOARDS } from "./concept-boards.js?v=20261103d";
 
 const PROOF_TAGS = { g1: "20261115a" };   // proof.js의 BOOKS 꼬리표와 같게
-const DECK = { module: "./course2-deck.js?v=20261116h6" };
+const DECK = { module: "./course2-deck.js?v=20261117a" };
 
 // 권/단원 → 차시마다 [["board", 1과정 판서 열쇠] | ["drill", 열쇠, 이름] | ["proof", 논증 id, 제목] | ["lab", 도구, 이름] | ["geo", 지오메트리 게임 주소, 이름]]
 // board: 1과정에서 같은 내용을 가르치는 손글씨 판서와 그 판서의 게임을 그대로 쓴다(원장 2026-11-16 「설명도 없어」) — 2과정 본책 문제가 그 위에 쌓인다.

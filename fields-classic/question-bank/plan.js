@@ -1,6 +1,6 @@
-import { CURRICULUM } from "./source-data.js?v=20261116h6";
+import { CURRICULUM } from "./source-data.js?v=20261117a";
 import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261111p";
-import { sessionCount } from "./study-deck.js?v=20261116h6";
+import { sessionCount } from "./study-deck.js?v=20261117a";
 import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261111f";
 
 // 학습 진도표 화면 — 계산은 study-plan.js. 계획은 학생 기록 plan/main 에 둔다(이 기기 + 로그인하면 서버).

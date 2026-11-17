@@ -221,7 +221,7 @@ async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson 
   if (gameId === "drill") {
     // 연습 공방은 창(iframe) 안에서 돈다. 마지막 「골든벨 문제로」를 누르면 골든벨 문제 칸으로 간다.
     if (!document.querySelector('link[data-drill-css]')) document.head.insertAdjacentHTML("beforeend", '<link rel="stylesheet" href="./game-drill.css?v=20261110h" data-drill-css>');
-    const { mountDrill } = await import("./game-drill.js?v=20261116h6");
+    const { mountDrill } = await import("./game-drill.js?v=20261117a");
     return mountDrill(host, { lesson, onDone: () => onQuestions?.() });
   }
   if (gameId === "turn-clock") {

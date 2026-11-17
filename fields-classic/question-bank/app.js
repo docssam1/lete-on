@@ -1,12 +1,12 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261116h6";
-import { GENERATORS } from "./generators.js?v=20261116h6";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261117a";
+import { GENERATORS } from "./generators.js?v=20261117a";
 import { saveRecord } from "./study-progress.js?v=20261111p";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261103b";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261116g9";
+import { book04Markup } from "./book04-renderers.js?v=20261117a";
 import { book05Markup } from "./book05-renderers.js?v=20261101m";
 import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
@@ -17,7 +17,7 @@ import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE } from "./fold-visuals.js?v=20261116g8";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE } from "./fold-visuals.js?v=20261117a";
 
 const {
   ageStages: AGE_STAGES,
@@ -46,7 +46,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261116h6");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261117a");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }

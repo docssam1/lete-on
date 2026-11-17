@@ -1,4 +1,4 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261116h6";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261117a";
 import { saveRecord } from "./study-progress.js?v=20261111p";
 import { mathText } from "./math-markup.js?v=20261027p";
 

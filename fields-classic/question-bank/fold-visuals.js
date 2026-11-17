@@ -149,26 +149,15 @@ export function foldDiagonalGridMarkup(visual) {
 export const FOLD_PAPER_PX = 80;
 export const foldWidthStyle = (viewWidth, paperUnits) => `style="width:min(100%,${Math.round((viewWidth * FOLD_PAPER_PX) / paperUnits)}px)"`;
 
-// ── 겹친 종이와 장면 이름(원장 2026-11-16 「색종이를 접을 때 겹친 부분이 보여야 되는 거 아니야? · 설명도 없어」) ──
-// index번 접은 종이는 2^index겹 — 뒤 겹을 오른쪽 아래로 조금씩 비켜 그려 두께가 보이게 한다(지오메트리 색종이 게임 paper-stack-layer와 같은 생각, 최대 3장).
-// 접어 넘길 쪽은 옅게 칠해 「이쪽이 넘어간다」를 보인다. 장면 아래에는 「처음 · 1번 접음 · 2겹」 이름.
-const LAYER_BACK = "#eda59d", LAYER_EDGE = "#c9776f", FLAP = "#fff0ee";
-export function foldStageSvg(polygon, { shift, top, size, index = 0, fold = null }) {
-  const { KEEP, clip } = foldGeometryHelpers();
-  const pts = (poly, d = 0) => poly.map((p) => `${(shift + p.x * size + d).toFixed(1)},${(top + p.y * size + d).toFixed(1)}`).join(" ");
-  const back = Math.min(3, 2 ** index - 1);
-  let out = "";
-  for (let k = back; k >= 1; k -= 1) out += `<polygon points="${pts(polygon, k * 2.6)}" fill="${LAYER_BACK}" stroke="${LAYER_EDGE}" stroke-width="1.2" stroke-linejoin="round"/>`;
-  out += `<polygon points="${pts(polygon)}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2" stroke-linejoin="round"/>`;
-  if (fold && KEEP[fold]) {
-    const flap = clip(polygon, (p) => -KEEP[fold](p));
-    if (flap.length >= 3) out += `<polygon points="${pts(flap)}" fill="${FLAP}" opacity="0.7"/>`;
-  }
-  return out;
+// ── 장면 이름(원장 2026-11-16 「설명도 없어」) ──
+// 겹을 뒤로 비켜 그리던 것은 뺐다(원장 2026-11-17 「말로 안 되는 왜 접은 쪽도 겹치냐 다시 돌려놔」) — 종이는 한 장 모양 그대로.
+export function foldStageSvg(polygon, { shift, top, size }) {
+  const pts = polygon.map((p) => `${(shift + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ");
+  return `<polygon points="${pts}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
 }
 export const FOLD_CAPTION_SPACE = 24;
 export function foldCaptionSvg(cx, y, index, extra = "") {
-  const words = index === 0 ? "처음" : `${index}번 접음 · ${2 ** index}겹`;
+  const words = index === 0 ? "처음" : `${index}번 접음`;
   return `<text x="${cx.toFixed(1)}" y="${y.toFixed(1)}" font-size="13" font-weight="800" text-anchor="middle" fill="#7a4a44" font-family="'Noto Sans KR',sans-serif">${extra ? `${words} · ${extra}` : words}</text>`;
 }
 export function foldCutPiecesMarkup(visual) {
