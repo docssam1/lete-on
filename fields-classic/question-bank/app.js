@@ -1219,6 +1219,7 @@ function regenerateQuestions() {
 // ── 단계 화면: 1 범위 선택 · 2 상세 편집 · 3 인쇄 설정 ──
 let coverFresh = false;
 function setStepView(step) {
+  document.documentElement.classList.remove("bank-booting");
   $("builderPanel").hidden = step !== 1;
   $("editorSection").hidden = step !== 2;
   $("worksheetSection").hidden = step !== 3;
@@ -4091,3 +4092,5 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
     if (printNow) document.fonts.ready.then(() => setTimeout(() => window.print(), 400));
   }
 })();
+// 문제를 못 만들었으면(고른 것이 없거나 준비 안 된 유형) 감춘 화면을 바로 걷는다 — 주소 처리(setTimeout 0 포함)가 끝난 뒤
+setTimeout(() => document.documentElement.classList.remove("bank-booting"), 60);
