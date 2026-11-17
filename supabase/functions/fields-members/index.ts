@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { FieldsAccessError, resolveFieldsSession } from "../_shared/fields-admin-access.js";
 import { FIELDS_BOOKS, TRIAL_DAYS, membershipSummary, directSummary } from "../_shared/fields-membership.js";
+import { SmError, handleSm } from "../_shared/sm-accounts.js";
 
 // 지필드 사고력 수학 스스로 공부 — 회원 가입·승인번호·요청·관리(원장 2026-10-29).
 //  학부모: 이메일 인증(Supabase Auth 인증번호 메일, Authorization: Bearer <access token>) 뒤
@@ -27,6 +28,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://docssam1.github.io",
   "http://127.0.0.1:8767", "http://localhost:8767",
   "http://127.0.0.1:8793", "http://localhost:8793",
+  "http://127.0.0.1:8779", "http://localhost:8779",   // 레이키즈 로컬 점검
 ]);
 const CONSENT_VERSION = "fields-2026-10-29-v1";
 // 모의고사(필즈 더 클래식 대비 과정) 회차 권한 이름 — fields-approval-admin의 PRODUCT_IDS와 같게 둔다
@@ -125,6 +127,9 @@ Deno.serve(async (req: Request) => {
   try {
     const body = await req.json().catch(() => ({}));
     const action = String(body?.action || "");
+
+    // ── 레이키즈 전용 계정(원장 2026-11-17, _shared/sm-accounts.js) — 필즈 계정과 표가 따로다 ──
+    if (action.startsWith("sm-")) return json(req, await handleSm(service, req, body, action));
 
     // ── 학부모(이메일 인증) ──
     if (["register", "mine", "reissue"].includes(action)) {
@@ -341,7 +346,7 @@ Deno.serve(async (req: Request) => {
     }
     throw new HttpError(400, "action_invalid");
   } catch (error) {
-    if (error instanceof HttpError || error instanceof FieldsAccessError) return json(req, { error: error.message }, (error as any).status);
+    if (error instanceof HttpError || error instanceof FieldsAccessError || error instanceof SmError) return json(req, { error: error.message }, (error as any).status);
     console.error("fields_members_failed", error instanceof Error ? error.message : error);
     return json(req, { error: "request_failed" }, 500);
   }

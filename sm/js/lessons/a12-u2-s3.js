@@ -2,10 +2,10 @@
 //  42 구→수박, 정육면체→주사위, 원기둥→통조림 · 43 정육면체→선물 상자, 원기둥→양초, 구→축구공
 //  44 다른 하나(주사위·지구본·고깔모자) · 45 규칙 색칠(기둥 파랑·뿔 노랑·공 초록) · 46 기둥→①, 뿔→③ · 47 공 모양 → 노란 구
 //  48 필요한 것 모두(사각뿔·정육면체·원기둥·판) · 49 주어진 도형을 모두 쓴 모양 → ③ · 50 펼친 그림을 접어 주사위 만들기
-import { scene, onHit, matchLines } from "../numbers.js?v=20261115c";
-import { solidArt, solidIcon, objIcon, OBJ_PIC, chooseAll, paintByRule } from "../shapes.js?v=20261115c";
-import { createSolidStage, createCubeNet, createTetraNet, solidTools } from "../solids3d.js?v=20261115c";
-import { kid } from "../art.js?v=20261115c";
+import { scene, onHit, matchLines } from "../numbers.js?v=20261117a";
+import { solidArt, solidIcon, objIcon, OBJ_PIC, chooseAll, paintByRule } from "../shapes.js?v=20261117a";
+import { createSolidStage, createCubeNet, createTetraNet, solidTools } from "../solids3d.js?v=20261117a";
+import { kid } from "../art.js?v=20261117a";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 const stage3d = (ctx) => { ctx.stage.innerHTML = `<div style="position:absolute;inset:0"></div>`; return ctx.stage.firstElementChild; };
