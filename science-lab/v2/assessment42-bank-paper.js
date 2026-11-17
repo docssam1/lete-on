@@ -1,4 +1,4 @@
-import {assessmentStudentExam,wireAssessmentStudentExam} from './assessment-shared-template.js?v=20261116-shared-exam-template';
+import {assessmentStudentExam,wireAssessmentStudentExam} from './assessment-shared-template.js?v=20261116-shared-exam-template&givenLabels=20261117-exam-given-labels';
 import {assessmentStudentPages} from './assessment-print-layout.js?v=20261116-assessment-language';
 // 두 단원 창작 중간72개를 학습 화면과 같은 객체·번호로 인쇄한다.
 import{sourceTableHtml,assessmentTitle}from'./source-presentation.js?v=20261116-assessment-language';

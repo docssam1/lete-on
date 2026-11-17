@@ -15,6 +15,8 @@ test('science uses the existing GFIELD page builder for both column counts and k
   assert.equal((html.match(/class="workspace ap-writing"/g)||[]).length,items.filter(q=>q.answerContract.type==='written-explanation').length);
   assert.equal((html.match(/class="answer-line(?: ap-short)?"/g)||[]).length,items.filter(q=>q.answerContract.type!=='written-explanation').length);
   for(const q of m.questions){assert(!('answerContract' in q));assert(!('explanation' in q));assert(!('evidence' in q));assert.equal(q.points,null);}
+  assert(html.includes('<b>보기</b>'));assert(html.includes('<b>자료</b>'));assert(!html.includes('<b>연습 자료</b>'));
+  assert.equal(m.questions.find(q=>q.id==='c22-s42-fin-f1-03').givens['보기'],items.find(q=>q.id==='c22-s42-fin-f1-03').givens['연습 자료']);assert.equal(m.questions.find(q=>q.id==='c22-s42-fin-f1-20').givens['자료'],items.find(q=>q.id==='c22-s42-fin-f1-20').givens['연습 자료']);
   assert(!html.includes('class="ap-key"'));assert(!html.includes('class="a42-key"'));assert(html.includes('data-exam-cols="2"'));assert(html.includes('data-exam-page-no'));
  }
  assert.deepEqual(items,saved);

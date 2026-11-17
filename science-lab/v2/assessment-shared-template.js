@@ -5,9 +5,14 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const settings=m=>({cover:'none',unit:'none',form:'exam',cols:m.cols==='2'?'2':'1',pageNo:m.pageNo!==false});
 const adapter=questions=>questions.map(q=>({type:{id:q.id,middle:'과학',label:'과학'}}));
 const info={title:'과학 평가',footLabel:'GFIELD · 지필드'};
+function givenLabel(label,value){
+ if(!['연습 자료','연습자료'].includes(label))return label;
+ const text=Array.isArray(value)?value.join(' / '):typeof value==='string'?value:'';
+ return /(?:^|[\n/])\s*ㄱ[ .]/.test(text)&&/(?:^|[\n/])\s*ㄴ[ .]/.test(text)?'보기':'자료';
+}
 function modelOf({unit,items,course,title,scope=[],form=null,prefix='ap',cols='1',pageNo=true}){
  return {unit:typeof unit==='string'?unit:unit.id,course,title:assessmentTitle(title||unit.title),scope,form,prefix,cols:cols==='2'?'2':'1',pageNo,
-  questions:items.map((q,i)=>({id:q.id,no:prefix==='ap'?q.sourceRef.no:i+1,set:q.sourceRef.set,prompt:q.prompt,givens:Object.fromEntries(Object.entries(q.givens||{}).map(([k,v])=>[k==='가상 관찰 자료'?'자료':k,v?.caption==='가상 관찰 자료'?{...v,caption:'자료'}:v])),choices:q.choices,responseForm:q.answerContract.type,points:Number.isFinite(q.points)&&q.points>0?q.points:null}))};
+  questions:items.map((q,i)=>({id:q.id,no:prefix==='ap'?q.sourceRef.no:i+1,set:q.sourceRef.set,prompt:q.prompt,givens:Object.fromEntries(Object.entries(q.givens||{}).map(([k,v])=>[k==='가상 관찰 자료'?'자료':Object.hasOwn(q.givens,givenLabel(k,v))?k:givenLabel(k,v),v?.caption==='가상 관찰 자료'?{...v,caption:'자료'}:v])),choices:q.choices,responseForm:q.answerContract.type,points:Number.isFinite(q.points)&&q.points>0?q.points:null}))};
 }
 export function initialExamGroups(model){
  const questions=model.questions,grid=layoutWorksheetPages({cards:questions.map((_,i)=>`<i data-exam-index="${i}"></i>`),questions:adapter(questions),settings:settings(model),info,book:null}).grid;
@@ -15,7 +20,7 @@ export function initialExamGroups(model){
 }
 function material(givens){return Object.entries(givens||{}).map(([label,value])=>{
  const table=sourceTableHtml(value?.caption==='가상 관찰 자료'?{...value,caption:'자료'}:value);
- return `<div class="exam-material">${table||`<b>${esc(label)}</b><p>${esc(Array.isArray(value)?value.join('\n'):value)}</p>`}</div>`;
+ return `<div class="exam-material">${table||`<b>${esc(givenLabel(label,value))}</b><p>${esc(Array.isArray(value)?value.join('\n'):value)}</p>`}</div>`;
 }).join('');}
 function card(q){return `<article class="q-item question-card" data-paper-item="${esc(q.id)}"><div class="q-head"><span class="q-num">${esc(q.no)}.</span><span class="q-pts">[${q.points??'　'}점]</span></div><p class="q-stem">${esc(q.prompt)}</p>${material(q.givens)}${q.choices?`<ol class="exam-choices">${q.choices.map((c,i)=>`<li><span>${'①②③④⑤'[i]}</span>${esc(c)}</li>`).join('')}</ol>`:''}${q.responseForm==='written-explanation'?'<div class="workspace ap-writing" aria-label="답 쓰는 칸"></div>':`<p class="answer-line${q.responseForm==='short-text'?' ap-short':''}">답 <i></i></p>`}</article>`;}
 function heading(m,group){const form=group[0]?.set===2?'B형':'A형',allPoints=group.every(q=>q.points!=null),sum=allPoints?group.reduce((s,q)=>s+q.points,0):'';

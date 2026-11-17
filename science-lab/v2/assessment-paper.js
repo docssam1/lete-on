@@ -1,4 +1,4 @@
-import {assessmentStudentExam} from './assessment-shared-template.js?v=20261116-shared-exam-template';
+import {assessmentStudentExam} from './assessment-shared-template.js?v=20261116-shared-exam-template&givenLabels=20261117-exam-given-labels';
 import {assessmentStudentPages} from './assessment-print-layout.js?v=20261116-assessment-language';
 import { sourceTableHtml, groupLabel, assessmentTitle } from './source-presentation.js?v=20261116-assessment-language';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
