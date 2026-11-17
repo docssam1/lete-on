@@ -17,6 +17,7 @@ const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const MAX = 20;   // 한 번에 만드는 문제 수(학습지 한 장 분량)
+const peek = { el: null, key: "", button: null };   // 번호 아래 같은 유형 문제 칸(openPeek)
 const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries })}`;
 
 // 처음 보여 줄 곳: 주소(?book=&unit=) → 이 기기에서 가장 최근에 공부한 단원 → 1권 1단원
@@ -53,6 +54,7 @@ function renderTabs() {
 
 // 번호판: 차시마다 한 묶음, 그 안에 활동 · 확인 · 연습 · 도전 줄
 function renderNumbers() {
+  closePeek(true);
   const book = activeBook(), unit = book.units[view.unit];
   // 오답 유사문제는 정식 회원 것(fields-access.js canRetry) — 둘러보기·체험은 안내 카드
   const gate = canRetry(book.id, view.unit);
@@ -155,7 +157,73 @@ $("numberList").addEventListener("click", (event) => {
   else if (view.picked.size < MAX) view.picked.set(key, button.dataset.pick);
   button.setAttribute("aria-pressed", String(view.picked.has(key)));
   renderDock();
+  // 번호를 고르면 그 번호 줄 아래가 미끄러져 열리며 같은 유형 문제를 보여 준다(원장 2026-11-17 「문항 번호를 클릭하면 아래 그 유형 문제가 보이게 · 창이 슬라이드 되면서」)
+  if (view.picked.has(key)) openPeek(button);
+  else if (peek.key === key) closePeek();
 });
+// 미리 보기 칸(번호 줄 아래 하나) — 문제은행 시험지 종이를 한 문제만(index.html &preview=1&peek=1)
+const reduceMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+function closePeek(now = false) {
+  const el = peek.el;
+  peek.el = null; peek.key = "";
+  if (!el) return;
+  if (now || reduceMotion()) { el.remove(); return; }
+  el.classList.remove("open");
+  setTimeout(() => el.remove(), 320);
+}
+function peekSrc(button) {
+  const book = activeBook();
+  return link("index.html", { mode: "curriculum", book: book.id, picks: button.dataset.pick, level: opts.level, build: "1", paper: "1", form: "exam", cols: "1",
+    title: `${button.getAttribute("aria-label")} · 유사문제`, preview: "1", peek: "1", r: String(Date.now() % 100000) });
+}
+function fitPeekFrame(frame) {
+  const fit = () => {
+    try {
+      const doc = frame.contentDocument, sheet = doc?.getElementById("worksheetSection");
+      if (!sheet || sheet.hidden) return;
+      frame.style.height = `${Math.min(1400, Math.max(220, sheet.getBoundingClientRect().height + 8))}px`;
+      frame.closest(".sm-peek")?.classList.add("ready");
+    } catch {}
+  };
+  frame.addEventListener("load", () => {
+    fit();
+    try { new ResizeObserver(fit).observe(frame.contentDocument.body); } catch { [300, 900, 1800].forEach((ms) => setTimeout(fit, ms)); }
+  });
+}
+function openPeek(button) {
+  const block = button.closest(".sm-block");
+  if (!block) return;
+  const label = button.getAttribute("aria-label");
+  if (peek.el && peek.el.previousElementSibling === block) {
+    // 같은 줄이면 칸은 그대로 두고 문제만 바꾼다
+    peek.key = button.dataset.key;
+    peek.el.querySelector("b").textContent = label;
+    peek.el.classList.remove("ready");
+    peek.el.querySelector("iframe").src = peekSrc(button);
+    peek.button = button;
+    return;
+  }
+  closePeek(true);
+  const el = document.createElement("div");
+  el.className = "sm-peek";
+  el.innerHTML = `<div class="sm-peek-in"><div class="sm-peek-head"><span><b></b> 같은 유형 문제</span><button type="button" class="st-btn" data-peek="again">다른 문제</button><button type="button" class="st-btn" data-peek="close" aria-label="닫기">닫기</button></div>
+    <p class="sm-peek-wait">문제를 만드는 중…</p><iframe title="같은 유형 문제 미리 보기"></iframe></div>`;
+  el.querySelector("b").textContent = label;
+  const frame = el.querySelector("iframe");
+  fitPeekFrame(frame);
+  frame.src = peekSrc(button);
+  block.after(el);
+  peek.el = el; peek.key = button.dataset.key; peek.button = button;
+  el.addEventListener("click", (event) => {
+    const act = event.target.closest("[data-peek]")?.dataset.peek;
+    if (act === "close") closePeek();
+    if (act === "again" && peek.button) { el.classList.remove("ready"); frame.src = peekSrc(peek.button); }
+  });
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("open")));
+  // 고른 번호 줄이 화면 위쪽에 오게(열린 칸이 아래 단추 줄에 가리지 않게)
+  const top = block.getBoundingClientRect().top + window.scrollY - 80;
+  if (top > window.scrollY + 40) setTimeout(() => window.scrollTo({ top, behavior: reduceMotion() ? "auto" : "smooth" }), 120);
+}
 $("clearPicks").addEventListener("click", () => { view.picked.clear(); renderNumbers(); renderDock(); });
 $("makeLink").addEventListener("click", (event) => { if (!view.picked.size) event.preventDefault(); });
 

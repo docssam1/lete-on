@@ -380,3 +380,18 @@ body.sm:has(#pickOptions:not([hidden])) { padding-bottom: 150px; }
   body.sm:has(#pickOptions:not([hidden])) { padding-bottom: 260px; }
   .sm-opt button { padding: 0 9px; }
 }
+
+/* 번호 아래 미끄러져 열리는 같은 유형 문제(원장 2026-11-17 「창이 슬라이드 되면서」) — similar.js openPeek */
+.sm-peek { display: grid; grid-template-rows: 0fr; margin: 0 0 0 68px; transition: grid-template-rows .32s ease, margin .32s ease; }
+.sm-peek.open { grid-template-rows: 1fr; margin-top: 10px; margin-bottom: 4px; }
+.sm-peek-in { min-height: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #fff; box-shadow: 0 6px 16px rgba(30, 99, 200, .10); }
+.sm-peek-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); background: #f6f9ff; }
+.sm-peek-head span { flex: 1; min-width: 0; font-size: 14px; color: var(--muted); }
+.sm-peek-head b { color: var(--ink); font-weight: 700; }
+.sm-peek-head .st-btn { min-height: 36px; padding: 0 12px; font-size: 13.5px; }
+.sm-peek-wait { margin: 0; padding: 18px 16px; font-size: 14px; color: var(--muted); }
+.sm-peek.ready .sm-peek-wait { display: none; }
+.sm-peek iframe { display: block; width: 100%; height: 0; border: 0; }
+.sm-peek.ready iframe { min-height: 0; }
+@media (max-width: 640px) { .sm-peek { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { .sm-peek { transition: none; } }
