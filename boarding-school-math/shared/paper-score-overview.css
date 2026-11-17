@@ -1,0 +1,53 @@
+.review-layout:has(.review-report:not([hidden])) { grid-template-columns: minmax(0, 1fr); }
+.paper-score-overview { margin: 24px 0; padding: 24px; border: 1px solid #d9cce6; border-radius: 12px; background: #fff; }
+.paper-score-overview h3 { margin: 0; font-size: 24px; letter-spacing: -.03em; }
+.paper-score-paper { margin: 8px 0 20px; color: #675375; }
+.paper-score-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 20px; margin: 0 0 24px; }
+.paper-score-fact { min-width: 0; border-top: 2px solid #bca3d0; padding-top: 14px; }
+.paper-score-fact dt { color: #65586d; font-size: 14px; }
+.paper-score-fact dd { margin: 9px 0; font-size: clamp(21px, 3vw, 30px); line-height: 1.4; font-weight: 750; color: #493063; overflow-wrap: anywhere; }
+.paper-score-fact p, .paper-score-note, .paper-score-legend { margin: 8px 0; font-size: 14px; line-height: 1.6; color: #665e6d; }
+.paper-score-fact a, .paper-score-grade a { display: inline-flex; align-items: center; min-height: 44px; color: #60418f; font-weight: 650; }
+.paper-score-chart { border-top: 1px solid #e7e0ec; padding-top: 20px; }
+.paper-score-chart h4, .paper-score-grade h4 { margin: 0 0 8px; font-size: 18px; }
+.paper-score-rows { list-style: none; padding: 0; margin: 16px 0; display: grid; gap: 8px; }
+.paper-score-row { display: grid; grid-template-columns: 130px minmax(40px, 1fr) 95px 90px; align-items: center; gap: 12px; padding: 10px; border-radius: 7px; font-size: 14px; }
+.paper-score-row.is-current { background: #f1eaf7; outline: 1px solid #c8b4d9; }
+.paper-score-rail { display: block; position: relative; height: 16px; background: #f1eef5; border-radius: 3px; }
+.paper-score-threshold { display: block; height: 100%; background: #c1a6d5; border-radius: 3px; }
+.paper-score-marker { position: absolute; width: 3px; height: 24px; top: -4px; background: #342344; transform: translateX(-50%); }
+.paper-score-threshold-value { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.paper-score-reached { color: #5b4d66; }
+.paper-score-grade { border-top: 1px solid #e7e0ec; padding-top: 20px; margin-top: 20px; }
+.paper-score-grade-row { padding: 10px 0; }
+.paper-score-grade-row p { margin: 0; line-height: 1.6; font-size: 15px; }
+.paper-score-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.paper-score-actions a { display: inline-flex; align-items: center; min-height: 44px; padding: 9px 14px; border: 1px solid #c8b4d9; border-radius: 8px; color: #553574; text-decoration: none; font-weight: 700; }
+.paper-score-actions a:last-child { background: #60418f; color: #fff; }
+.paper-score-overview a:focus-visible { outline: 3px solid #60418f; outline-offset: 3px; }
+@media(max-width:600px) {
+  .paper-score-overview { padding: 16px; }
+  .paper-score-facts { grid-template-columns: minmax(0,1fr); gap: 16px; }
+  .paper-score-row { grid-template-columns: minmax(0,1fr) auto; gap: 9px; padding: 10px 8px; }
+  .paper-score-rail { grid-row: 2; grid-column: 1/-1; }
+  .paper-score-reached { grid-column: 2; font-size: 12px; }
+  .paper-score-threshold-value { grid-column: 2; grid-row: 1; font-size: 13px; }
+}
+@media print {
+  .paper-score-actions { display: none; }
+  .paper-score-overview { break-inside: avoid; }
+}
+.paper-score-grade-context { display: block; margin-top: 5px; line-height: 1.6; color: #675d6f; }
+.paper-score-bounds { font-weight: 750; color: #493063 !important; }
+.paper-score-intervals, .paper-score-forecast { border-top: 1px solid #e7e0ec; margin-top: 20px; padding-top: 18px; }
+.paper-score-overview summary { min-height: 44px; padding-block: 12px; cursor: pointer; color: #60418f; font-weight: 700; }
+.paper-score-intervals table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.paper-score-intervals caption { padding: 10px 0; text-align: left; color: #675d6f; }
+.paper-score-intervals th, .paper-score-intervals td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #e7e0ec; overflow-wrap: anywhere; }
+.paper-score-intervals tbody th { font-weight: 500; }
+.paper-score-intervals tr.is-current { background: #f1eaf7; }
+.paper-score-forecast h4 { margin: 0; font-size: 18px; }
+.paper-score-forecast-value { margin: 12px 0; color: #493063; font-size: 25px; font-weight: 750; }
+.paper-score-forecast li { margin-block: 8px; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+@media(max-width:600px) { .paper-score-intervals th, .paper-score-intervals td { padding-inline: 4px; font-size: 12px; } }
+.paper-score-attempt-date { margin: -12px 0 20px; font-size: 14px; color: #675375; }

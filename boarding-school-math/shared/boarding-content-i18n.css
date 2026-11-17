@@ -1,0 +1,14 @@
+.boarding-content-language { display: inline-flex; align-items: center; margin-left: auto; }
+.boarding-content-language select { font: inherit; min-height: 44px; max-width: 180px; padding: 8px 10px; border: 1px solid #c9b8da; border-radius: 8px; background: white; color: #493362; }
+.boarding-content-language select:focus-visible { outline: 3px solid #79529d; outline-offset: 3px; }
+html[lang="zh-Hans"] body { word-break: normal; }
+html[lang="en"] .map-head > div, html[lang="zh-Hans"] .map-head > div { min-width: 0; }
+html[lang="en"] .map-head h2, html[lang="zh-Hans"] .map-head h2 { overflow-wrap: anywhere; }
+html[lang="en"] .progress-summary strong { white-space: nowrap; }
+@media(max-width:760px) {
+  header:has(> .boarding-content-language) { flex-wrap: wrap; gap: 12px; }
+  header > .boarding-content-language { flex-shrink: 0; }
+  html[lang="en"] header nav, html[lang="zh-Hans"] header nav { flex-wrap: wrap; }
+  html[lang="en"] .boarding-kicker { letter-spacing: 0; }
+}
+@media print { .boarding-content-language { display: none !important; } }

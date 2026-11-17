@@ -29,6 +29,7 @@ This release adds a Grade 6 bridge made of 30 GFIELD-original multiple-choice it
 - [x] Student mode hides teacher solutions; teacher mode shows the exact answer, worked solution, and misconception cue.
 - [x] Desktop, 390 px mobile, and A4 print rendering have focused browser coverage.
 - [x] Home routes for Grade 6 SASMO, Math Kangaroo, and AMC open the corresponding type bank.
+- [x] Public practice records retain item-level first response and retry count only; they do not expose a readiness band, domain aggregate, strength/priority label, or automatic learning prescription.
 
 ## Still locked
 
@@ -36,3 +37,5 @@ This release adds a Grade 6 bridge made of 30 GFIELD-original multiple-choice it
 - Automatic domain diagnosis and clinic prescription based on these 30 pilot items.
 - Random variants and full printable workbooks. Those require separate answer-cardinality, wording, and A4 gates.
 - Other grades and AMC 10/12 item banks.
+
+The Grade 7 roadmap links to the existing Grade 6 AMC 8 scope-practice set as optional GFIELD-authored practice. It is not a Grade 7 diagnostic or an official AMC mock. See [AMC competition diagnostic gates](./AMC_COMPETITION_DIAGNOSTIC_GATES_2026-10-29.md) for the separate work required before offering a formal diagnostic.

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Grade 3–12 보딩스쿨 수학의 개념 연결과 다음 학습 경로를 살펴보는 G·MAP 지도">
+  <title>보딩스쿨 수학 성장 지도 | G·MAP</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./gfield-tokens.css">
+  <link rel="stylesheet" href="./academy-ui.css">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261104-6">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
+  <link rel="stylesheet" href="./boarding-study.css?v=20261114-2">
+  <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
+</head>
+<body class="academy-page page-boarding-roadmap">
+  <a class="skip-link" href="#main">본문으로 바로가기</a>
+  <header class="site-header boarding-header">
+    <a class="brand" href="#my-study" aria-label="내 공부 홈"><span class="brand-mark" aria-hidden="true">G</span><span>G·<strong>MAP</strong></span></a>
+    <nav aria-label="주요 탐색"><a href="#my-study" data-study-view="home">내 공부</a><a href="#grade-map" data-study-view="curriculum">교과</a><a href="#study-contests" data-study-view="contests">경시</a></nav>
+    <label class="study-language"><span id="study-language-label">언어</span><select id="study-locale" data-content-original><option value="ko">한국어</option><option value="en">English</option><option value="zh-Hans">中文（新加坡）</option></select></label>
+  </header>
+  <main id="main" tabindex="-1" class="gfield-ui">
+    <section id="my-study" class="study-shell" aria-labelledby="study-home-title">
+      <div class="study-heading"><div><h1 id="study-home-title">내 공부</h1><p>교과와 경시, 내가 고른 순서대로 공부해요.</p></div><a class="study-link" href="#study-add">공부 담기</a></div>
+      <p id="study-status" class="study-status" role="status"></p>
+      <div class="study-layout"><div>
+        <div id="study-current"></div>
+        <details class="study-detail"><summary>열어 본 공부</summary><ul id="study-history" class="study-history"></ul></details>
+        <p class="study-muted">목록과 순서는 이 브라우저에 저장돼요.</p>
+      </div><aside class="study-panel" aria-labelledby="study-queue-title"><h2 id="study-queue-title">내가 담은 공부</h2><ol id="study-queue" class="study-queue"></ol><p id="study-queue-empty" class="study-muted">공부할 단원이나 경시를 담아 보세요.</p></aside></div>
+      <section id="study-add" class="study-panel study-detail" aria-labelledby="study-add-title"><h2 id="study-add-title">무엇을 공부할까요?</h2>
+        <div class="study-fields"><label>공부 종류<select id="study-kind"><option value="curriculum">교과 단원</option><option value="contest">경시 기출</option><option value="topic">경시 주제</option></select></label><label id="study-grade-field">학년·과정<select id="study-grade"><option value="6">Grade 6</option><option value="7">Grade 7</option><option value="course">Algebra · Geometry · Precalculus</option></select></label><label id="study-program-field" hidden>대회<select id="study-program"><option value="amc8">AMC 8</option><option value="amc10">AMC 10</option><option value="amc12">AMC 12</option><option value="aime">AIME</option><option value="kangaroo">매쓰 캥거루</option></select></label><label id="study-year-field" hidden>연도<select id="study-year"></select></label><label id="study-form-field" hidden>시험형<select id="study-form"></select></label></div>
+        <ul id="study-catalog" class="study-catalog"></ul>
+      </section>
+    </section>
+    <section id="study-contests" class="study-shell" aria-labelledby="study-contests-title" hidden><div class="study-heading"><div><h1 id="study-contests-title">경시 공부</h1><p>대회 기출과 공부하고 싶은 주제를 골라 담아요.</p></div></div><div id="study-contest-picker"></div></section>
+    <section class="boarding-intro" aria-labelledby="boarding-title"><div class="boarding-shell">
+      <p class="boarding-kicker">보딩스쿨 수학 · 학년별 보기</p>
+      <h1 id="boarding-title">3–12학년 수학, 한눈에 보기</h1>
+      <p>학년을 고르면 배울 내용과 연습 자료를 볼 수 있어요.</p>
+      <div class="boarding-intro-actions"><a href="#grade-map">학년 선택</a><a id="boarding-learning-plan-link" href="./learning-plan.html">학습 계획</a></div>
+    </div></section>
+
+    <nav class="roadmap-shortcuts" aria-label="성장 지도 바로가기">
+      <a href="#grade-map" data-roadmap-target="grade-map" aria-current="location">성장 지도</a>
+      <a href="#annual-plan" data-roadmap-target="annual-plan">월별 계획</a>
+      <a href="#grade-comparison" data-roadmap-target="grade-comparison">학년 비교</a>
+      <a href="#competition-diagnostic" data-roadmap-target="competition-diagnostic">모의고사</a>
+    </nav>
+
+    <section class="grade-map boarding-shell" id="grade-map" aria-labelledby="grade-map-title">
+      <div class="map-head"><div><p class="boarding-kicker">01 · 학년</p><h2 id="grade-map-title">7학년 수학 한눈에</h2></div><p>다른 학년도 눌러 보세요.</p></div>
+      <details class="grade-track" aria-label="학년 선택" open><summary>다른 학년 보기</summary><div id="grade-buttons" class="grade-buttons"></div></details>
+      <div class="journey-layout">
+        <article class="journey-main" aria-labelledby="grade-title">
+          <div class="journey-heading"><div><span id="grade-label" class="grade-chip">7학년</span><h3 id="grade-title">유리수에서 Algebra 1로</h3></div><span id="source-chip" class="source-chip">학습 예시</span></div>
+          <p id="grade-core" class="grade-core"></p>
+          <div class="stage-map" aria-label="개념 학습 경로">
+            <div class="stage-map-scene">
+              <div id="grade7-road-intro" class="grade7-road-intro" hidden><div><span>7학년 · 개념 연결 예시</span><h4>개념 지점을 골라 보세요</h4></div><p id="grade7-position">지점을 고르면 확인 질문과 자료를 볼 수 있어요.</p></div>
+              <div id="stage-map-markers" class="stage-map-markers" role="group" aria-label="지도에서 학습 단계를 고르기"></div>
+            </div>
+            <ol id="stage-list" class="stage-list" aria-label="선택한 학년의 학습 단계"></ol>
+          </div>
+          <div class="grade-focus" aria-label="학교 수학과 선택 학습"><p>이 학년에서 볼 것</p><div id="grade-focus-list" class="grade-focus-list"></div></div>
+          <div class="concept-bridge"><span>개념 연결</span><strong id="grade-bridge"></strong></div>
+          <div class="stage-detail" aria-live="polite">
+            <span id="stage-number">단계 1</span><h4 id="stage-title"></h4><p id="stage-copy"></p>
+            <div id="grade7-stage-check" class="grade7-stage-check" hidden>
+              <strong>확인 질문</strong><ol id="grade7-stage-questions"></ol>
+              <div id="grade7-stage-references" class="grade7-stage-references" hidden>
+                <a href="https://www.thecorestandards.org/Math/Content/7/NS/" target="_blank" rel="noopener noreferrer" aria-label="CCSS 7.NS.A 기준 (새 창에서 열림)">CCSS 7.NS.A 기준 ↗</a>
+              </div>
+            </div>
+            <details id="stage-external-resources" class="stage-external-resources" hidden>
+              <summary>단계별 참고 자료</summary><p id="stage-external-resource-note" hidden></p><ul id="stage-external-resource-list"></ul>
+            </details>
+            <a id="grade7-stage-resource" class="grade7-stage-resource" href="#grade-practice" hidden></a>
+            <p id="grade7-no-resource" class="grade7-no-resource" hidden>이 구간의 공개 자료는 아직 없어요.</p>
+          </div>
+          <section id="grade7-branches" class="grade7-branches" aria-labelledby="grade7-branches-title" hidden><div class="grade7-branches-heading"><h4 id="grade7-branches-title">원할 때 더 살펴보기</h4><p>학교 수학과 별개로 고르는 연습이에요.</p></div><div class="grade7-branch-list"><a id="grade7-contest-branch" href="./competition-practice.html?program=amc8"><span>경시 · 선택</span><strong id="grade7-contest-title">6학년 기초 연결 · AMC 8 유형 연습</strong><small id="grade7-contest-copy">GFIELD 자체 10문항으로 유형을 살펴봐요. 공식 점수 진단은 아니에요.</small></a><details><summary><span>SAT · 맛보기</span><strong>대수·기하·자료 해석</strong><small>학교에서 배운 개념을 다른 표현으로 읽어 봐요.</small></summary><p>문제의 조건을 식·도형·표와 연결해 이유를 설명해 보세요. 정식 SAT 진단이나 응시 계획을 뜻하지 않아요.</p><a class="grade7-sat-foundation-link" href="./sat-foundation-practice.html?grade=7">지필드 SAT Math 네 영역 기초 연습 · 20문항 →</a></details></div></section>
+        </article>
+        <aside class="journey-side" aria-labelledby="check-title">
+          <p class="boarding-kicker">내 학습 경로</p><h3 id="check-title">어디쯤인지 함께 확인해요</h3>
+          <div class="journey-position-card"><span id="journey-practice-label">지필드 자체 모의고사</span><strong id="journey-practice-title">우리 모의고사를 풀어 봐요</strong><p id="journey-practice-copy">지필드 모의고사를 풀고, 결과를 다음 복습에 연결해요.</p><a id="journey-practice-link" href="./grade7-ns-a-mock-exam.html">모의고사 시작 <span aria-hidden="true">→</span></a></div>
+          <section id="journey-mock-history" class="journey-mock-history" aria-live="polite" hidden></section>
+          <div id="journey-next-preview" class="journey-next-preview" aria-live="polite">
+            <span id="journey-selected-label">지도에서 선택</span><strong id="journey-selected-title">개념 지점을 눌러 보세요</strong>
+            <div class="journey-next-stop" id="journey-next-stop" hidden><span>다음으로 볼 개념</span><strong id="journey-next-title"></strong><button id="journey-next-button" class="journey-next-button" type="button">이 구간 미리보기 →</button></div>
+            <p id="journey-route-end" hidden>이 학년의 개념 연결 예시를 모두 살펴봤어요. 다음에 배울 내용은 실제 풀이를 확인한 뒤 정해요.</p>
+          </div>
+          <p id="grade-note" class="grade-note">아직 진단 결과가 없어요. 실제 풀이를 보고 다음 단계를 정해요.</p>
+          <div id="grade-practice" class="grade-practice" hidden>
+            <h4>지금 풀어 볼 수 있어요</h4>
+            <p>배운 개념을 문제로 확인해 보세요.</p>
+            <div id="grade-practice-links" class="grade-practice-links"></div>
+            <details id="grade-practice-more" hidden><summary>다른 단원도 보기</summary><div id="grade-practice-more-links" class="grade-practice-links"></div></details>
+          </div>
+          <div class="journey-actions"><button id="previous-grade" type="button">← 이전 학년</button><button id="next-grade" type="button">다음 학년 →</button></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="annual-plan boarding-shell" id="annual-plan" aria-labelledby="annual-plan-title">
+      <div class="map-head"><div><p class="boarding-kicker">연간 학습 흐름</p><h2 id="annual-plan-title">7학년 · 12개월 예시</h2></div><p id="annual-plan-note">월별 흐름은 실제 진도와 아이의 이해도에 맞춰 조정해요.</p></div>
+      <ol id="annual-plan-periods" class="annual-plan-periods" aria-label="선택한 학년의 연간 학습 단계"></ol>
+      <p id="annual-plan-empty" class="annual-plan-empty" hidden>이 학년은 월별 계획 자료가 아직 없어요. 위의 개념 단계를 참고해 주세요.</p>
+    </section>
+
+    <section id="course-path-selector" class="course-path-selector boarding-shell" aria-labelledby="course-path-title">
+      <div class="map-head"><div><p class="boarding-kicker">과목별 이어보기</p><h2 id="course-path-title">지금 듣는 과목에서 이어지는 길</h2></div><p>학년만으로 과목을 정하지 않아요. 현재 수강 과목을 고르면 앞뒤 과정 선택지가 보여요.</p></div>
+      <label class="course-current-select" for="current-course-select">현재 수강 과목<select id="current-course-select"><option value="">과목을 선택해 주세요</option></select></label>
+      <div id="course-path-cards" class="course-path-cards" aria-live="polite">
+        <article class="course-path-card"><span>지나온 과정</span><h3>과목 선택 후 표시</h3><p>앞선 과목을 직접 선택해요.</p></article>
+        <article class="course-path-card is-current"><span>현재 과정</span><h3>과목을 선택해 주세요</h3><p>현재 수강 중인 과목을 기준으로 이어 봐요.</p></article>
+        <article class="course-path-card"><span>다음 과정</span><h3>과목 선택 후 표시</h3><p>학교 과정에 맞는 다음 선택지를 골라요.</p></article>
+      </div>
+      <p class="course-path-notice" id="course-path-notice">과목 순서는 학교와 수강 선택에 따라 달라요. 여기서 고른 경로는 학습 기록이나 배정에 저장되지 않아요.</p>
+    </section>
+
+    <section id="algebra1-course" class="algebra1-course boarding-shell" aria-labelledby="algebra1-course-title">
+      <div class="map-head"><div><p class="boarding-kicker">지필드 자체 과정 · Algebra 1</p><h2 id="algebra1-course-title">식에서 함수와 모델링까지</h2></div><p id="algebra1-course-scope"></p></div>
+      <div class="algebra1-course-actions"><a class="algebra1-workbook-link" href="./algebra1-workbook.html">Algebra 1 단원 교재 인쇄 · PDF 저장</a><span>지필드 수업·연습 문제를 A4로 출력해요.</span></div>
+      <div id="algebra1-unit-list" class="algebra1-unit-list"></div>
+      <article class="algebra1-starter" aria-labelledby="algebra1-starter-title"><div><p class="boarding-kicker">첫 수업 · 지필드 원본</p><h3 id="algebra1-starter-title"></h3><p id="algebra1-starter-prompt"></p></div><ol id="algebra1-starter-steps"></ol><details><summary>검산과 한 걸음 더</summary><p id="algebra1-starter-check"></p><p id="algebra1-starter-extension"></p></details><p class="algebra1-original-note" id="algebra1-original-note"></p><div class="algebra1-standard-sources"><span>학습 범위 기준 보기</span><a id="algebra1-standard-source-algebra" target="_blank" rel="noopener noreferrer">대수 ↗</a><a id="algebra1-standard-source-functions" target="_blank" rel="noopener noreferrer">함수 ↗</a></div></article>
+    </section>
+
+    <section class="concept-flow-section boarding-shell" aria-labelledby="concept-flow-title">
+      <div class="map-head"><div><p class="boarding-kicker">개념 연결 예시</p><h2 id="concept-flow-title">배운 개념은 이렇게 이어져요</h2></div><p>학생의 위치 진단이 아니라, 여러 단원에서 쓸 수 있는 연결 지도예요.</p></div>
+      <p class="concept-flow-intro">문제 풀이법을 먼저 외우기보다, 각 단계의 개념을 설명하고 다음 단계에서 어떻게 쓰이는지 찾아보세요.</p>
+      <div id="concept-flow-list" class="concept-flow-list"></div>
+      <section class="competition-study-sequence" aria-labelledby="competition-study-title">
+        <div class="competition-study-heading"><h3 id="competition-study-title">공식 기출로 수준을 확인하고, 지필드 모의고사로 보완해요</h3><p>먼저 실제 대회 원본을 시간에 맞춰 풀고, 공식 해설과 목표 기준을 확인한 다음 지필드 진단으로 이어가요.</p></div>
+        <nav class="competition-original-papers" aria-label="대회별 연도 원본 시험지"><a id="competition-amc-original-route" href="./competition-paper-review.html?grade=7&amp;program=amc8"><span>AMC · 연도별 기출</span><strong>시험지 선택 · 답안 입력 · 풀이 확인</strong></a><a href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer"><span>AMC 공식 안내</span><strong>범위와 응시 자격 확인 ↗</strong></a><a href="https://maa.org/maa-invitational-competitions/" target="_blank" rel="noopener noreferrer"><span>AIME</span><strong>초청 대회 안내 ↗</strong></a><a id="competition-kangaroo-original-route" href="https://mathkangaroo.org/mks/practice/grades-7-8/" target="_blank" rel="noopener noreferrer"><span>Math Kangaroo · Grade 7–8</span><strong>연도별 원본 시험지 ↗</strong></a></nav>
+        <ol>
+          <li><span aria-hidden="true">1</span><div><h4>목표 대회 원본을 풀어요</h4><p>공식 시험 시간과 조건을 맞춰 풀고, 정답 수와 막힌 문항 번호를 확인해요. AMC 점수 기준은 같은 연도·시험형 자료와 대조해요.</p><a id="competition-paper-review-route" href="./competition-paper-review.html?grade=7&amp;program=amc8">원본 답안 입력 · 결과 확인</a></div></li>
+          <li><span aria-hidden="true">2</span><div><h4>공식 해설로 풀이를 분석해요</h4><p>정답 여부와 함께 어떤 개념을 놓쳤는지, 풀이가 어디서 길어졌는지 기록해요.</p></div></li>
+          <li><span aria-hidden="true">3</span><div><h4>지필드 모의고사로 약점을 찾아요</h4><p>문항별 결과와 풀이 이유를 보고, 다시 익힐 개념과 유형을 정해요.</p></div></li>
+          <li><span aria-hidden="true">4</span><div><h4>개념을 보완하고 새 문제로 확인해요</h4><p>지필드 학습 자료로 약한 부분을 보완한 뒤, 다른 원본 회차나 지필드 모의고사로 다시 풀어 봐요.</p></div></li>
+        </ol>
+        <p class="competition-interest-note">수학이 재미없어졌다면 문제 수부터 늘리지 말고, “왜 그렇게 생각했어?”, “다른 방법도 있을까?”를 다시 물으며 진도와 양을 조절해요.</p>
+      </section>
+    </section>
+
+    <section id="grade-comparison" class="grade-comparison boarding-shell" aria-labelledby="grade-comparison-title">
+      <div class="map-head"><div><p class="boarding-kicker">학년 비교</p><h2 id="grade-comparison-title">두 학년의 배움 나란히 보기</h2></div><p>학년별 학습 흐름과 지필드 모의고사·자료를 나란히 봐요. 일부는 가속 학습 예시이며 학생의 현재 수준 판정이 아니에요.</p></div>
+      <div class="grade-comparison-controls"><label for="comparison-grade">비교할 학년<select id="comparison-grade"><option value="">학년 선택</option></select></label><p id="comparison-note" aria-live="polite">현재 선택한 학년과 비교할 학년을 고르면 배움의 연결을 보여 드려요.</p></div>
+      <div id="comparison-table" class="comparison-table" role="group" aria-labelledby="grade-comparison-title" hidden>
+        <div class="comparison-desktop-view"><article class="comparison-column"><p class="comparison-grade-label" id="comparison-current-label"></p><h3 id="comparison-current-title"></h3><p id="comparison-current-core"></p><dl id="comparison-current-tracks"></dl></article>
+          <article class="comparison-column"><p class="comparison-grade-label" id="comparison-target-label"></p><h3 id="comparison-target-title"></h3><p id="comparison-target-core"></p><dl id="comparison-target-tracks"></dl></article>
+          <p class="comparison-bridge"><strong>개념 연결</strong><span id="comparison-bridge-copy"></span></p></div>
+        <div id="comparison-mobile-view" class="comparison-mobile-view"></div>
+      <section id="comparison-practice-pair" class="comparison-practice-pair" aria-labelledby="comparison-practice-heading"><div class="comparison-pair-heading"><p class="boarding-kicker">지필드 자체 문항</p><h3 id="comparison-practice-heading">학년별 모의고사와 학습 자료</h3><p>진단은 지필드가 만든 모의고사 응시 결과로 이어가요. 실제 문항과 기준이 다른 점수는 가져오지 않아요.</p></div><div class="comparison-pair-columns own-practice-columns"><article><span id="comparison-practice-current-label"></span><h4 id="comparison-practice-current-title"></h4><ul id="comparison-practice-current-links" class="own-practice-links"></ul></article><article><span id="comparison-practice-target-label"></span><h4 id="comparison-practice-target-title"></h4><ul id="comparison-practice-target-links" class="own-practice-links"></ul></article></div><p class="comparison-pair-note">학년별 학습 흐름은 나란히 볼 수 있어요. 점수 등급 비교는 공통 기준으로 검토한 지필드 모의고사가 있을 때만 결과에 표시해요.</p></section>
+      </div>
+      <p class="comparison-boundary">학년 자료를 나란히 보여 주는 계획 예시예요. 실제 수업 순서·학생의 현재 위치·배정 과목을 판단하지 않아요.</p>
+    </section>
+
+    <section class="level-section boarding-shell" aria-labelledby="level-title"><div class="map-head"><div><p class="boarding-kicker">02 · 학습 기준</p><h2 id="level-title">어디서 시작할까요?</h2></div><p>학생이 푼 문제를 보고 골라요.</p></div>
+      <div class="level-grid"><article><span>01 · 기초 보완</span><h3>개념 다시 보기</h3><p id="level-repair"></p><small>개념을 설명하기 어렵다면 여기서 시작</small></article><article><span>02 · 학년 학습</span><h3>새 문제에 쓰기</h3><p id="level-secure"></p><small>혼자 풀고 며칠 뒤 다시 확인</small></article><article><span>03 · 선택 심화</span><h3>다음 개념 연결</h3><p id="level-extend"></p><small>기초가 익숙하고 더 배우고 싶을 때</small></article></div>
+      <p class="level-boundary"><strong>진단 결과가 없어서</strong> 학생의 등급은 표시하지 않아요.</p>
+    </section>
+
+    <section class="route-section boarding-shell" aria-labelledby="route-title"><div class="map-head"><div><p class="boarding-kicker">03 · 다음 학습</p><h2 id="route-title">다음에는 뭘 배울까요?</h2></div><p>관심 있는 방향을 눌러 시작 전에 확인할 내용을 보세요.</p></div>
+      <div class="route-layout is-empty"><div id="route-buttons" class="route-buttons" aria-label="학습 예시 선택"></div><article class="route-explanation" aria-live="polite" hidden><span id="route-status">선택 전</span><h3 id="route-name">학습 방향</h3><p id="route-description"></p><div id="route-check-block" hidden><strong>먼저 확인할 것</strong><p id="route-check"></p></div><small>비교용 예시예요. 학습 계획에 반영되지 않아요.</small></article></div>
+    </section>
+
+    <section class="competition-section boarding-shell" id="competition-diagnostic" aria-labelledby="competition-title"><div class="map-head"><div><p class="boarding-kicker">04 · 경시</p><h2 id="competition-title">지필드 모의고사 · 경시 연습</h2></div><p>지필드가 직접 만든 모의고사를 풀고, 문항별 결과와 오답 이유로 다음 연습을 정해요.</p></div>
+      <div id="competition-own-mocks" class="competition-own-mocks" aria-label="지필드 자체 수학 모의고사"><article><span>GRADE 7 · 단원 모의고사</span><h3>유리수 연산 · 7.NS.A</h3><p>14문항 · 40분. 문항별 응답과 기준별 결과를 확인해요.</p><a href="./grade7-ns-a-mock-exam.html">지필드 모의고사 풀기 →</a></article><article><span>GRADE 7 · 단원 모의고사</span><h3>비와 비례 관계 · 7.RP.A</h3><p>14문항 · 40분. 비례 관계와 백분율 적용을 확인해요.</p><a href="./grade7-rp-a-mock-exam.html">지필드 모의고사 풀기 →</a></article><article><span>GRADE 7 · AMC 8 스타일 모의고사</span><h3>문제 해결 진단 · 2회</h3><p>25문항 · 40분. 다섯 영역을 섞어 풀고 영역별 결과를 확인해요.</p><a href="./amc8-grade7-mock-exam.html">지필드 경시 모의고사 풀기 →</a></article><article><span>AMC 8 · 유형 연습</span><h3>문제 해결 전략 살펴보기</h3><p>지필드 창작 문항으로 여러 경시 유형을 연습해요. 공식 AMC 점수나 대회 등급으로 환산하지 않아요.</p><a href="./competition-practice.html?program=amc8">지필드 유형 연습 열기 →</a></article></div>
+      <article id="competition-amc8-mock-route" class="competition-own-mock-feature" hidden><span>AMC 8 · 자체 모의고사</span><h3>문제 해결 모의 연습 · 2회</h3><p>25문항 · 40분. 다섯 영역의 풀이를 확인하고 틀린 영역의 창작 연습으로 이어가요.</p><a href="./amc8-grade7-mock-exam.html">지필드 AMC 8 범위 모의고사 풀기 →</a></article>
+      <article id="competition-amc12-mock-route" class="competition-own-mock-feature" hidden><span>GRADE 10 · AMC 12 범위</span><h3>개념 연결 진단 · 1회</h3><p>25문항 · 75분. 대수·함수·삼각함수·정수론·기하·경우의 수를 확인하고 풀이와 약점 영역을 살펴봐요.</p><a href="./amc12-gfield-mock-exam.html">지필드 AMC 12 범위 모의고사 풀기 →</a></article>
+      <article id="competition-amc10-mock-route" class="competition-own-mock-feature" hidden><span>GRADE 9 · AMC 10 범위</span><h3>개념 연결 모의고사 · 1회</h3><p>25문항 · 75분. 대수·정수론·기하·경우의 수·확률을 풀고, 이번 회차의 결과와 해설을 살펴봐요.</p><a href="./amc10-gfield-mock-exam.html?grade=9">지필드 AMC 10 범위 모의고사 풀기 →</a></article>
+      <p id="competition-own-mocks-empty" class="competition-own-mocks-empty" hidden>이 학년용 지필드 모의고사를 준비하고 있어요.</p>
+    </section>
+
+    <section class="boarding-close"><div class="boarding-shell"><div><p class="boarding-kicker">학습 계획</p><h2>다음 학습을 정할 때</h2><p>지필드 모의고사에서 실제로 푼 문항을 바탕으로 다음 연습을 정해요.</p></div><a id="boarding-learning-plan-link-bottom" href="./learning-plan.html">학습 계획 보기 →</a></div></section>
+  </main>
+  <footer class="site-footer"><span>G·MAP · 보딩스쿨 수학 성장 지도</span><span><a href="./index.html">홈</a> · <a href="./learning-plan.html">학습 계획</a></span></footer>
+    <script src="./shared/boarding-content-translations.js?v=20261114-2"></script>
+  <script src="./shared/boarding-content-i18n.js?v=20261114-2"></script>
+<script src="./shared/gmap-local-learning-record.js?v=20261114-1"></script>
+  <script src="./learning/boarding-grade-roadmap.js?v=20261114-1"></script>
+  <script src="./curriculum/course-pathways.js?v=20261103-13"></script>
+  <script src="./curriculum/algebra-1-course.js?v=20261103-8"></script>
+  <script src="./shared/math-inline.js?v=20261114-2"></script>
+  <script src="./boarding-roadmap.js?v=20261104-7"></script>
+  <script src="./competition/amc-original-paper-library.js?v=20261108-1"></script>
+  <script src="./shared/boarding-study-plan.js?v=20261114-1"></script>
+  <script src="./shared/boarding-study-locale.js?v=20261114-1"></script>
+  <script src="./boarding-study.js?v=20261114-4"></script>
+  <script src="./shared/boarding-study-return.js?v=20261114-3"></script>
+</body>
+</html>

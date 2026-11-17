@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Grade 6–7 단원 워크북 문항을 골라 교사용 A4 시험지를 만드는 화면">
+  <title>문제 선택·시험지 편집 | GFIELD Math</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./gfield-tokens.css">
+  <link rel="stylesheet" href="./unit-workbook.css?v=20261023-1">
+  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261103-2">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
+</head>
+<body class="gfield-ui page-paper-builder">
+  <a class="skip-link" href="#builder-main">본문으로 바로가기</a>
+  <header class="builder-header">
+    <a class="builder-brand" href="./catalog.html?role=teacher">GFIELD <strong>MATH</strong></a>
+    <span>교사용 · 시험지 만들기</span>
+    <a href="./catalog.html?role=teacher">교과 목록</a>
+  </header>
+  <main id="builder-main">
+    <div class="builder-title">
+      <div><p>6–7학년 · 자체 제작 학습 자료</p><h1>문제 찾고 시험지 만들기</h1><span>공개 워크북이나 지필드 Algebra 1에서 골라 A4 시험지를 만들어요.</span></div>
+      <button id="jump-to-sheet" type="button" disabled>출력 미리보기</button>
+    </div>
+    <div class="builder-layout">
+      <aside class="filter-pane" aria-labelledby="filter-title">
+        <h2 id="filter-title">문제 찾기</h2><p id="inventory-count">공개 워크북 432문항 · Algebra 1 64문항</p>
+        <label for="grade-filter">학년<select id="grade-filter"><option value="6">Grade 6</option><option value="7" selected>Grade 7</option></select></label>
+        <label for="unit-filter">단원<select id="unit-filter"></select></label>
+        <details id="strand-filter-disclosure" class="strand-filter-disclosure" open>
+          <summary><span>세부 주제</span><span id="strand-filter-current"></span></summary>
+          <div id="strand-filters" class="strand-filters" role="group" aria-label="세부 단원"></div>
+        </details>
+        <div id="source-note" class="filter-note">공개 단원 워크북 문항입니다. 7.NS.A는 검수 시안이며, 비공개 진단 문항은 포함하지 않아요.</div>
+      </aside>
+      <section class="list-pane" aria-labelledby="list-title">
+        <div class="list-toolbar"><div><h2 id="list-title" tabindex="-1">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">현재 목록 모두 담기</button></div>
+        <div class="search-controls">
+          <label for="item-search">이 단원에서 검색<input id="item-search" type="search" placeholder="예: 단위율, 그래프, 퍼센트" autocomplete="off"></label>
+          <label for="level-filter">수준<select id="level-filter"><option value="all">전체</option><option value="foundation">기초</option><option value="core">기본</option><option value="advanced">심화</option></select></label>
+        </div>
+        <p id="selection-status" class="selection-status" role="status" aria-live="polite">시험지에 담은 문제 0개</p>
+        <div class="item-list-head" aria-hidden="true"><span>선택</span><span>문항 · 단원</span><span>수준</span></div>
+        <div id="item-list" class="item-list"></div>
+      </section>
+      <aside class="editor-pane" aria-labelledby="preview-title">
+        <div class="preview-panel">
+          <div class="pane-heading"><h2 id="preview-title">문제 미리보기</h2><span id="preview-index">문제 선택</span></div>
+          <div id="item-preview" class="item-preview"><p>목록에서 문항을 누르면 여기에 표시됩니다.</p></div>
+        </div>
+        <div class="paper-settings" id="paper-settings">
+          <div class="pane-heading"><h2 id="selected-items-heading" tabindex="-1">담은 문제</h2><div class="selected-summary"><span id="selected-count">0문항</span><button id="clear-selected" type="button" disabled>모두 빼기</button></div></div>
+          <label for="paper-title">시험명<input id="paper-title" type="text" maxlength="60" value="Grade 7 비례관계 확인 평가"></label>
+          <div class="setting-pair"><label for="paper-course">과정<input id="paper-course" type="text" maxlength="35" value="Grade 7 · 비례관계"></label><label for="paper-round">회차<input id="paper-round" type="number" min="1" max="99" value="1"></label></div>
+          <div class="setting-pair"><label for="paper-date">날짜<input id="paper-date" type="text" maxlength="30" placeholder="예: 2026. 10. 23."></label><label for="paper-time">시험 시간<input id="paper-time" type="number" min="1" max="180" value="20"></label></div>
+          <fieldset class="output-control"><legend>출력할 문서</legend><label><input type="radio" name="output-kind" value="questions" checked><span>문제지</span></label><label><input type="radio" name="output-kind" value="answers"><span>교사용 정답지</span></label></fieldset>
+          <fieldset class="cover-control"><legend>표지</legend>
+            <label><input type="radio" name="cover-style" value="none" checked><span class="cover-swatch swatch-none" aria-hidden="true"></span><span>없음</span></label>
+            <label><input type="radio" name="cover-style" value="formal"><span class="cover-swatch swatch-formal" aria-hidden="true"></span><span>정식 시험</span></label>
+            <label><input type="radio" name="cover-style" value="blue"><span class="cover-swatch swatch-blue" aria-hidden="true"></span><span>블루 라인</span></label>
+            <label><input type="radio" name="cover-style" value="geometry"><span class="cover-swatch swatch-geometry" aria-hidden="true"></span><span>기하 도형</span></label>
+          </fieldset>
+          <div id="selected-items" class="selected-items"><p>목록에서 문항을 선택하세요.</p></div>
+          <p id="builder-message" class="builder-message" role="status" aria-live="polite"></p>
+          <button id="print-paper" class="print-button" type="button" disabled>A4 시험지 인쇄·PDF</button>
+          <p id="print-status" class="print-status" role="status" aria-live="polite"></p>
+        </div>
+      </aside>
+    </div>
+    <button id="mobile-builder-action" class="mobile-builder-action" type="button" aria-controls="paper-settings" hidden>시험지 편집 · 0문항</button>
+    <section id="sheet-section" class="sheet-section" aria-labelledby="sheet-heading" hidden>
+      <div class="sheet-heading"><div><p>출력 미리보기</p><h2 id="sheet-heading">A4 시험지</h2></div><span id="page-count">본문 1쪽</span></div>
+      <div id="paper-pages" class="paper-pages"></div>
+    </section>
+  </main>
+  <template id="question-page-template">
+    <div class="print-sheet question-page">
+      <div class="sheet-watermark" aria-hidden="true">GFIELD</div>
+      <div class="sheet-topline"><strong>GFIELD MATH</strong><span class="sheet-course-code"></span></div>
+      <h2 class="sheet-title"></h2>
+      <div class="sheet-fields"><span>이름 <i></i></span><span>날짜 <b class="sheet-date"></b></span><span>시간 <b class="sheet-time"></b></span><span>총점 <b class="sheet-points"></b></span></div>
+      <p class="sheet-instruction">문제를 읽고 답을 쓰거나 고르세요. 풀이가 필요하면 아래 빈칸을 사용하세요.</p>
+      <div class="sheet-questions"></div>
+      <div class="sheet-footer"><span>GFIELD Math · 자체 제작 문항</span><span class="sheet-page-number"></span></div>
+    </div>
+  </template>
+  <script src="./learning/grade6-rp-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-rp-a-unit-workbook.js?v=20260909-2"></script>
+  <script src="./learning/grade6-ns-a-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-b-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-b-unit-workbook.js?v=20260909-1"></script>
+  <script src="../geometry/worksheet/render.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-c-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-c-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-a-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-b-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-b-unit-workbook.js?v=20260909-2"></script>
+  <script src="./learning/grade6-ee-c-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-c-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-g-a-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-g-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-sp-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-sp-b-unit-workbook.js?v=20261003-1"></script>
+  <script src="./learning/grade7-rp-a-unit-workbook.js?v=20261103-2"></script>
+  <script src="./learning/grade7-ns-a-unit-workbook.js?v=20261014-1"></script>
+  <script src="./curriculum/algebra-1-course.js?v=20261103-1"></script>
+  <script src="./shared/math-inline.js?v=20261103-17"></script>
+  <script src="./teacher-paper-builder.js?v=20261103-5"></script>
+</body>
+</html>

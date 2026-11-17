@@ -1,0 +1,32 @@
+.paper-learning-profile { margin-block: 24px; }
+.paper-learning-profile h3 { font-size: 21px; margin: 0 0 16px; }
+.paper-learning-profile h4, .saved-paper-learning-profile h4 { font-size: 16px; margin: 0 0 10px; }
+.paper-profile-strengths { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; margin-block: 16px; }
+.paper-profile-strengths > section { min-width: 0; padding-top: 12px; border-top: 2px solid #c8b4d9; }
+.paper-profile-strengths p, .paper-profile-strengths li { font-size: 14px; line-height: 1.6; }
+.paper-profile-strengths ul { list-style: none; margin: 0; padding: 0; }
+.paper-profile-strengths li strong, .paper-profile-strengths li span { display: block; }
+.paper-profile-strengths li { margin-block: 8px; }
+.paper-profile-note { color: #655d6e; font-size: 13px; line-height: 1.7; margin-block: 10px; }
+.paper-profile-score { font-size: 19px; color: #493063; font-weight: 750; margin-bottom: 8px; }
+.paper-profile-band, .paper-profile-forecast-label { font-size: 14px; line-height: 1.6; }
+.paper-profile-forecast-label strong { display: block; color: #493063; }
+.paper-learning-profile summary, .saved-paper-learning-profile summary { padding-block: 12px; min-height: 44px; cursor: pointer; color: #60418f; font-weight: 700; }
+.paper-profile-practice { display: inline-flex; align-items: center; min-height: 44px; color: #60418f; font-weight: 650; margin-right: 10px; }
+.paper-profile-concepts ul, .paper-recurring-concepts ul { list-style: none; padding: 0; }
+.paper-profile-concepts li, .paper-recurring-concepts li { padding-block: 8px; border-bottom: 1px solid #e7e0ec; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 14px; font-size: 14px; overflow-wrap: anywhere; }
+.paper-cumulative-group { border-block-start: 1px solid #d9cce6; padding-block: 10px 16px; }
+.paper-cumulative-group > summary { font-size: 18px; }
+.paper-profile-domain-list { list-style: none; padding: 0; margin-block: 20px; }
+.paper-profile-domain-list li { padding-block: 12px; border-bottom: 1px solid #e7e0ec; display: grid; grid-template-columns: minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr); gap: 8px; font-size: 14px; }
+.paper-profile-domain-list p { grid-column: 1 / -1; margin: 0; }
+.paper-profile-domain-list [data-state="strength"] > :last-of-type { color: #493063; }
+.paper-profile-timeline ol { padding-left: 22px; }
+.paper-profile-timeline li { padding: 10px 0; border-bottom: 1px solid #e7e0ec; font-size: 14px; line-height: 1.7; }
+.paper-profile-timeline p { margin: 4px 0; }
+.paper-learning-profile a:focus-visible, .paper-learning-profile summary:focus-visible, .saved-paper-learning-profile a:focus-visible { outline: 3px solid #60418f; outline-offset: 3px; }
+@media(max-width:600px) { .paper-profile-strengths { gap: 12px; } .paper-profile-strengths li strong { overflow-wrap: anywhere; } .paper-profile-domain-list li { grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) minmax(0,.8fr); font-size: 12px; } .paper-profile-concepts li, .paper-recurring-concepts li { font-size: 13px; } }
+@media print { .paper-profile-practice { display:none; } }
+.paper-profile-attempt-date { display: block; margin-top: 5px; font-size: 13px; color: #655d6e; }
+.saved-diagnostic-entry-heading h3 { min-width: 0; overflow-wrap: anywhere; }
+[data-paper-memo] { overflow-wrap: anywhere; }

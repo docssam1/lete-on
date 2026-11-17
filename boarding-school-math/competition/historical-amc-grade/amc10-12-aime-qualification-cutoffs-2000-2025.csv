@@ -1,0 +1,105 @@
+year,administration,contest,form,aime_cutoff,score_scale,source_url,source_status,notes
+2000,regular,AMC10,single,110,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,Single form before A/B split
+2000,regular,AMC12,single,92,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,Single form before A/B split
+2001,regular,AMC10,single,116,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,Single form before A/B split
+2001,regular,AMC12,single,84,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,Single form before A/B split
+2002,regular,AMC10,A,115,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2002,regular,AMC10,B,118,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2002,regular,AMC12,A,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2002,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2003,regular,AMC10,A,119,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2003,regular,AMC10,B,121,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2003,regular,AMC12,A,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2003,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2004,regular,AMC10,A,110,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2004,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2004,regular,AMC12,A,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2004,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2005,regular,AMC10,A,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2005,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2005,regular,AMC12,A,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2005,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2006,regular,AMC10,A,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2006,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2006,regular,AMC12,A,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2006,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2007,regular,AMC10,A,117,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2007,regular,AMC10,B,115.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2007,regular,AMC12,A,97.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2007,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2008,regular,AMC10,A,117,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2008,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2008,regular,AMC12,A,97.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2008,regular,AMC12,B,97.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2009,regular,AMC10,A,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2009,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2009,regular,AMC12,A,97.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2009,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2010,regular,AMC10,A,118.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2010,regular,AMC10,B,118.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2010,regular,AMC12,A,88.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2010,regular,AMC12,B,88.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2011,regular,AMC10,A,117,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2011,regular,AMC10,B,117,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2011,regular,AMC12,A,93,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2011,regular,AMC12,B,97.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2012,regular,AMC10,A,115.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2012,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2012,regular,AMC12,A,94.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2012,regular,AMC12,B,99,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2013,regular,AMC10,A,108,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2013,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2013,regular,AMC12,A,88.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2013,regular,AMC12,B,93,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2014,regular,AMC10,A,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2014,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2014,regular,AMC12,A,93,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2014,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2015,regular,AMC10,A,106.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2015,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2015,regular,AMC12,A,99,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2015,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2016,regular,AMC10,A,110,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2016,regular,AMC10,B,110,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2016,regular,AMC12,A,92,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2016,regular,AMC12,B,100,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2017,regular,AMC10,A,112.5,150,https://ivyleaguecenter.org/2017/02/23/2017-amc-1012-a-aime-cutoff-scores/,secondary-historical-transcription,
+2017,regular,AMC10,B,120,150,https://ivyleaguecenter.org/2017/03/01/2017-amc-10b12b-aime-cutoff-scores/,secondary-historical-transcription,
+2017,regular,AMC12,A,96,150,https://ivyleaguecenter.org/2017/02/23/2017-amc-1012-a-aime-cutoff-scores/,secondary-historical-transcription,
+2017,regular,AMC12,B,100.5,150,https://ivyleaguecenter.org/2017/03/01/2017-amc-10b12b-aime-cutoff-scores/,secondary-historical-transcription,
+2018,regular,AMC10,A,111,150,https://ivyleaguecenter.org/2018/03/02/2018-amc-10-12-aime-cutoff-scores/,secondary-historical-transcription,2018 final results comparison table
+2018,regular,AMC10,B,108,150,https://ivyleaguecenter.org/2018/03/02/2018-amc-10-12-aime-cutoff-scores/,secondary-historical-transcription,2018 final results comparison table
+2018,regular,AMC12,A,93,150,https://ivyleaguecenter.org/2018/03/02/2018-amc-10-12-aime-cutoff-scores/,secondary-historical-transcription,2018 final results comparison table
+2018,regular,AMC12,B,99,150,https://ivyleaguecenter.org/2018/03/02/2018-amc-10-12-aime-cutoff-scores/,secondary-historical-transcription,2018 final results comparison table
+2019,regular,AMC10,A,103.5,150,https://ivyleaguecenter.org/2019/03/06/2019-aime-qualification-scores/,secondary-historical-transcription,2019 contemporaneous AIME qualification notice
+2019,regular,AMC10,B,108,150,https://ivyleaguecenter.org/2019/03/06/2019-aime-qualification-scores/,secondary-historical-transcription,2019 contemporaneous AIME qualification notice
+2019,regular,AMC12,A,84,150,https://ivyleaguecenter.org/2019/03/06/2019-aime-qualification-scores/,secondary-historical-transcription,2019 contemporaneous AIME qualification notice
+2019,regular,AMC12,B,94.5,150,https://ivyleaguecenter.org/2019/03/06/2019-aime-qualification-scores/,secondary-historical-transcription,2019 contemporaneous AIME qualification notice
+2020,regular,AMC10,A,103.5,150,https://areteem.org/blog/2020-aime-cutoffs-released/,secondary-historical-transcription,2020 contemporaneous notice reporting MAA cutoff and distinction release
+2020,regular,AMC10,B,102,150,https://areteem.org/blog/2020-aime-cutoffs-released/,secondary-historical-transcription,2020 contemporaneous notice reporting MAA cutoff and distinction release
+2020,regular,AMC12,A,87,150,https://areteem.org/blog/2020-aime-cutoffs-released/,secondary-historical-transcription,2020 contemporaneous notice reporting MAA cutoff and distinction release
+2020,regular,AMC12,B,87,150,https://areteem.org/blog/2020-aime-cutoffs-released/,secondary-historical-transcription,2020 contemporaneous notice reporting MAA cutoff and distinction release
+2021,spring,AMC10,A,103.5,150,https://ivyleaguecenter.org/2021/03/02/2021-aime-qualification-scores/,secondary-historical-transcription,2021 spring A/B; contemporaneous result table. Page has stale 2020 AIME dates in one explanatory sentence; cutoff table and final administration schedule are distinct.
+2021,spring,AMC10,B,102,150,https://ivyleaguecenter.org/2021/03/02/2021-aime-qualification-scores/,secondary-historical-transcription,2021 spring A/B; contemporaneous result table. Page has stale 2020 AIME dates in one explanatory sentence; cutoff table and final administration schedule are distinct.
+2021,spring,AMC12,A,93,150,https://ivyleaguecenter.org/2021/03/02/2021-aime-qualification-scores/,secondary-historical-transcription,2021 spring A/B; contemporaneous result table. Page has stale 2020 AIME dates in one explanatory sentence; cutoff table and final administration schedule are distinct.
+2021,spring,AMC12,B,91.5,150,https://ivyleaguecenter.org/2021/03/02/2021-aime-qualification-scores/,secondary-historical-transcription,2021 spring A/B; contemporaneous result table. Page has stale 2020 AIME dates in one explanatory sentence; cutoff table and final administration schedule are distinct.
+2021,fall,AMC10,A,96,150,https://ivyleaguecenter.org/2022/01/01/2021-fall-aime-qualification-scores-2/,secondary-historical-transcription,2021 fall public A/B forms; LIVE canonical C/D; contemporaneous qualification result table.
+2021,fall,AMC10,B,96,150,https://ivyleaguecenter.org/2022/01/01/2021-fall-aime-qualification-scores-2/,secondary-historical-transcription,2021 fall public A/B forms; LIVE canonical C/D; contemporaneous qualification result table.
+2021,fall,AMC12,A,91.5,150,https://ivyleaguecenter.org/2022/01/01/2021-fall-aime-qualification-scores-2/,secondary-historical-transcription,2021 fall public A/B forms; LIVE canonical C/D; contemporaneous qualification result table.
+2021,fall,AMC12,B,84,150,https://ivyleaguecenter.org/2022/01/01/2021-fall-aime-qualification-scores-2/,secondary-historical-transcription,2021 fall public A/B forms; LIVE canonical C/D; contemporaneous qualification result table.
+2022,regular,AMC10,A,93,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2022,regular,AMC10,B,94.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2022,regular,AMC12,A,93,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2022,regular,AMC12,B,85.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2023,regular,AMC10,A,103.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2023,regular,AMC10,B,105,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2023,regular,AMC12,A,85.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2023,regular,AMC12,B,88.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2024,regular,AMC10,A,94.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2024,regular,AMC10,B,105,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2024,regular,AMC12,A,76.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,MAA revised initial cutoff 85.5 to 76.5
+2024,regular,AMC12,B,88.5,150,https://ivyleaguecenter.org/2016/01/23/1487/,secondary-historical-transcription,
+2025,regular,AMC10,A,105,150,https://areteem.org/blog/aime-cutoffs-and-amc-10-12-awards/,secondary-crosschecked-with-MAA-announcement,
+2025,regular,AMC10,B,99,150,https://areteem.org/blog/aime-cutoffs-and-amc-10-12-awards/,secondary-crosschecked-with-MAA-announcement,
+2025,regular,AMC12,A,96,150,https://areteem.org/blog/aime-cutoffs-and-amc-10-12-awards/,secondary-crosschecked-with-MAA-announcement,
+2025,regular,AMC12,B,100.5,150,https://areteem.org/blog/aime-cutoffs-and-amc-10-12-awards/,secondary-crosschecked-with-MAA-announcement,

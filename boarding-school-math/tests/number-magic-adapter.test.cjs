@@ -9,13 +9,14 @@ const courses = require("../../number_magic/data/courses.js");
 const result = adapter.adapt(threads, courses.COURSE_SPEC);
 
 test("configured elementary and middle tiers plus locked unassigned threads enter the lineage", function () {
-  // The reviewed 2026-10-03 source snapshot includes the expanded elementary
+  // The reviewed 2026-11-17 source snapshot includes the expanded elementary
   // concept catalogue, WP2/WP6/WP7–WP10 language-reasoning threads, the locked
   // middle1 MD47–MD51 sequence, and later review-only threads. Keep the totals
   // explicit so a future upstream catalogue change cannot be silently absorbed.
-  assert.equal(result.summary.threads, 189);
-  assert.equal(result.summary.levels, 643);
-  assert.equal(result.summary.excludedOutOfScope, 119);
+  assert.equal(result.summary.threads, 240);
+  assert.equal(result.summary.publishable, 0, "catalogue expansion cannot unlock unreviewed source content");
+  assert.equal(result.summary.levels, 973);
+  assert.equal(result.summary.excludedOutOfScope, 112);
   assert.equal(result.threadRows.some(function (row) { return row.legacyThreadId === "MD21"; }), false);
   assert.equal(result.threadRows.some(function (row) { return row.legacyThreadId === "MD43"; }), false);
   assert.equal(result.threadRows.some(function (row) { return row.legacyThreadId === "MD47"; }), true);
@@ -35,10 +36,10 @@ test("legacy Korean English Chinese labels survive locale normalization", functi
 });
 
 test("unresolved source lineage stays visible instead of being guessed", function () {
-  assert.equal(result.summary.unitLinked, 104);
-  assert.equal(result.summary.conceptOnly, 85);
+  assert.equal(result.summary.unitLinked, 115);
+  assert.equal(result.summary.conceptOnly, 125);
   assert.equal(result.summary.needsUnitMapping, 0);
-  assert.equal(result.summary.standardsPending, 189);
+  assert.equal(result.summary.standardsPending, 240);
   assert.equal(
     result.summary.unitLinked + result.summary.conceptOnly + result.summary.needsUnitMapping,
     result.summary.threads
@@ -62,7 +63,7 @@ test("unresolved source lineage stays visible instead of being guessed", functio
   const levelCounts = new Map(result.threadRows.map(function (row) {
     return [row.legacyThreadId, row.levelCount];
   }));
-  assert.equal(levelCounts.get("NS1"), 6);
+  assert.equal(levelCounts.get("NS1"), 7);
   assert.equal(levelCounts.get("AD3"), 6);
   assert.equal(levelCounts.get("AD4"), 5);
 
@@ -70,7 +71,7 @@ test("unresolved source lineage stays visible instead of being guessed", functio
   assert.ok(md47, "the locked middle1 expression thread must remain in the K–8 lineage");
   assert.equal(md47.mappingState, "unit-linked");
   assert.equal(md47.unit, "M-47");
-  assert.deepEqual(md47.legacyCourseIds, ["C29"]);
+  assert.deepEqual(md47.legacyCourseIds, ["C31"]);
 });
 
 test("no legacy item becomes public before provenance and standards review", function () {
