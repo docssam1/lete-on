@@ -274,6 +274,22 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   .sd-talk p { font-size: 13.5px; line-height: 1.35; }
   .sd-talk-ctl button { min-width: 30px; min-height: 28px; }
 }
+/* 가로로 든 태블릿·폴드(폭 761px 이상 · 높이 500px 이하, 원장 2026-11-17 「정확히 가로 화면 기준으로 맞춰지도록」): 휴대폰 가로처럼 위·아래 줄을 한 줄로 줄여 장에 높이를 준다 */
+@media (max-height: 500px) and (min-width: 761px) {
+  body.sd { grid-template-rows: 44px minmax(0, 1fr) auto; }
+  .sd-top { padding-top: 4px; }
+  .sd-pill { min-height: 34px; }
+  .sd-step { min-height: 28px; }
+  .sd-main { padding: 4px calc(var(--frame-x) + 2px) 4px; }
+  .sd-slide-head { padding: 4px 14px 3px; }
+  .sd-slide-head h2 { font-size: 15px; }
+  .sd-slide-body { padding: 6px 12px; }
+  .sd-bar { padding-top: 2px; padding-bottom: calc(4px + env(safe-area-inset-bottom)); }
+  .sd-guide-img { left: -4px; width: 44px; }
+  .sd-talk { margin-left: 40px; }
+  .sd-talk p { -webkit-line-clamp: 1; }
+  .sd-btn { min-height: 38px; }
+}
 
 /* ── 공부하기·과제·단원 평가: 문제은행 학생 화면을 장 안에(원장 2026-10-27 「공부하기에 문제 나오게」) ── */
 .sd-slide-body.is-work { padding: 0; overflow: hidden; }
