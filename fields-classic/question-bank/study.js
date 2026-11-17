@@ -1,7 +1,7 @@
 import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261117a";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261117a";
 import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261117a";
-import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261111p";
+import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261117a";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261116g1";
 import { planStatus, dayLabel } from "./study-plan.js?v=20261111f";

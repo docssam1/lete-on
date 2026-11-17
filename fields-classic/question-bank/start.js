@@ -1,6 +1,6 @@
 import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM } from "./source-data.js?v=20261117a";
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261117a";
-import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261111p";
+import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261117a";
 import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261116g1";
 import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261117a";
 import { course2ConceptSlides } from "./course2-deck.js?v=20261117a";

@@ -1,6 +1,6 @@
 import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261117a";
 import { unitParts, partProblems } from "./study-map.js?v=20261117a";
-import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261111p";
+import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261116g1";
 import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261117a";
 import { course2Html, course3Html } from "./course2-list.js?v=20261116g1";
@@ -17,6 +17,7 @@ const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const MAX = 20;   // 한 번에 만드는 문제 수(학습지 한 장 분량)
+const peek = { el: null, key: "", button: null };   // 번호 아래 같은 유형 문제 칸(openPeek)
 const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries })}`;
 
 // 처음 보여 줄 곳: 주소(?book=&unit=) → 이 기기에서 가장 최근에 공부한 단원 → 1권 1단원
@@ -53,6 +54,7 @@ function renderTabs() {
 
 // 번호판: 차시마다 한 묶음, 그 안에 활동 · 확인 · 연습 · 도전 줄
 function renderNumbers() {
+  closePeek(true);
   const book = activeBook(), unit = book.units[view.unit];
   // 오답 유사문제는 정식 회원 것(fields-access.js canRetry) — 둘러보기·체험은 안내 카드
   const gate = canRetry(book.id, view.unit);
@@ -71,16 +73,44 @@ function renderNumbers() {
   $("numberList").innerHTML = sessions || `<p class="st-empty">이 단원의 본책 번호를 준비하고 있어요.</p>`;
 }
 
+// 시험지 짜기(원장 2026-11-17): 번호마다 문제 수(1~3) · 난이도(더 쉽게 / 본책과 같게 / 더 어렵게) · 미리보기 →
+// 「시험지 만들기」는 문제은행 3단계 시험지(미리보기·답안 보기·문제 인쇄, index.html &paper=1)를 새 창으로, 「화면에서 풀기」는 한 문제씩 푸는 학생 화면.
+const opts = { each: 1, level: "actual" };
+function pickParams() {
+  const book = activeBook();
+  const total = Math.min(MAX * 3, view.picked.size * opts.each);
+  return { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), each: String(opts.each), level: opts.level, build: "1",
+    title: `${book.label} ${view.unit + 1}단원 · 오답 유사문제`, total };
+}
 function renderDock() {
   const book = activeBook(), size = view.picked.size;
-  $("pickSummary").textContent = size ? `${book.label} ${view.unit + 1}단원 · ${size}문제 골랐어요${size >= MAX ? ` (한 번에 ${MAX}문제까지)` : ""}` : "틀렸거나 모르는 번호를 눌러요";
-  $("clearPicks").hidden = !size;
+  const total = size * opts.each;
+  $("pickSummary").textContent = size ? `${book.label} ${view.unit + 1}단원 · 번호 ${size}개 · ${total}문제${size >= MAX ? ` (번호는 한 번에 ${MAX}개까지)` : ""}` : "틀렸거나 모르는 번호를 눌러요";
+  ["clearPicks", "previewBtn", "solveLink", "pickOptions"].forEach((id) => { $(id).hidden = !size; });
+  document.querySelectorAll("#pickOptions [data-each]").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.each) === opts.each)));
+  document.querySelectorAll("#pickOptions [data-level]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.level === opts.level)));
   const make = $("makeLink");
   make.setAttribute("aria-disabled", String(!size));
-  make.textContent = size ? `유사문제 만들기 · ${size}문제` : "유사문제 만들기";
-  make.href = size ? link("index.html", { mode: "curriculum", book: book.id, picks: [...view.picked.values()].join("|"), build: "1", as: "student", lead: "1",
-    title: `${book.label} ${view.unit + 1}단원 · 오답 유사문제`, back: `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit), ...(book.course ? { course: String(book.course) } : {}) })}` }) : "./index.html";
+  make.textContent = size ? `시험지 만들기 · ${total}문제` : "시험지 만들기";
+  const { total: _t, ...base } = pickParams();
+  const back = `./similar.html?${new URLSearchParams({ student, book: book.id, unit: String(view.unit), ...(book.course ? { course: String(book.course) } : {}) })}`;
+  make.href = size ? link("index.html", { ...base, paper: "1", form: "exam", cols: "2" }) : "./index.html";
+  $("solveLink").href = size ? link("index.html", { ...base, as: "student", lead: "1", back }) : "./index.html";
+  if (!$("previewPanel").hidden) refreshPreview();
 }
+let previewTimer = 0;
+function refreshPreview() {
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => {
+    if (!view.picked.size) { $("previewPanel").hidden = true; return; }
+    const { total, ...base } = pickParams();
+    $("previewFrame").src = link("index.html", { ...base, paper: "1", form: "exam", cols: "2", preview: "1" });
+  }, 250);
+}
+document.querySelectorAll("#pickOptions [data-each]").forEach((b) => b.addEventListener("click", () => { opts.each = Number(b.dataset.each); renderDock(); }));
+document.querySelectorAll("#pickOptions [data-level]").forEach((b) => b.addEventListener("click", () => { opts.level = b.dataset.level; renderDock(); }));
+$("previewBtn").addEventListener("click", () => { $("previewPanel").hidden = false; refreshPreview(); $("previewPanel").scrollIntoView({ behavior: "smooth", block: "start" }); });
+$("previewClose").addEventListener("click", () => { $("previewPanel").hidden = true; $("previewFrame").removeAttribute("src"); });
 
 // 과정: 1과정은 본책 번호 → 유사문제, 2과정은 권마다 그림으로 따져 보기·직접 해 보기·권별 테스트(course2-list.js), 3과정은 권별 테스트
 let course2Cache = null, course3Cache = null;
@@ -127,7 +157,73 @@ $("numberList").addEventListener("click", (event) => {
   else if (view.picked.size < MAX) view.picked.set(key, button.dataset.pick);
   button.setAttribute("aria-pressed", String(view.picked.has(key)));
   renderDock();
+  // 번호를 고르면 그 번호 줄 아래가 미끄러져 열리며 같은 유형 문제를 보여 준다(원장 2026-11-17 「문항 번호를 클릭하면 아래 그 유형 문제가 보이게 · 창이 슬라이드 되면서」)
+  if (view.picked.has(key)) openPeek(button);
+  else if (peek.key === key) closePeek();
 });
+// 미리 보기 칸(번호 줄 아래 하나) — 문제은행 시험지 종이를 한 문제만(index.html &preview=1&peek=1)
+const reduceMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+function closePeek(now = false) {
+  const el = peek.el;
+  peek.el = null; peek.key = "";
+  if (!el) return;
+  if (now || reduceMotion()) { el.remove(); return; }
+  el.classList.remove("open");
+  setTimeout(() => el.remove(), 320);
+}
+function peekSrc(button) {
+  const book = activeBook();
+  return link("index.html", { mode: "curriculum", book: book.id, picks: button.dataset.pick, level: opts.level, build: "1", paper: "1", form: "exam", cols: "1",
+    title: `${button.getAttribute("aria-label")} · 유사문제`, preview: "1", peek: "1", r: String(Date.now() % 100000) });
+}
+function fitPeekFrame(frame) {
+  const fit = () => {
+    try {
+      const doc = frame.contentDocument, sheet = doc?.getElementById("worksheetSection");
+      if (!sheet || sheet.hidden) return;
+      frame.style.height = `${Math.min(1400, Math.max(220, sheet.getBoundingClientRect().height + 8))}px`;
+      frame.closest(".sm-peek")?.classList.add("ready");
+    } catch {}
+  };
+  frame.addEventListener("load", () => {
+    fit();
+    try { new ResizeObserver(fit).observe(frame.contentDocument.body); } catch { [300, 900, 1800].forEach((ms) => setTimeout(fit, ms)); }
+  });
+}
+function openPeek(button) {
+  const block = button.closest(".sm-block");
+  if (!block) return;
+  const label = button.getAttribute("aria-label");
+  if (peek.el && peek.el.previousElementSibling === block) {
+    // 같은 줄이면 칸은 그대로 두고 문제만 바꾼다
+    peek.key = button.dataset.key;
+    peek.el.querySelector("b").textContent = label;
+    peek.el.classList.remove("ready");
+    peek.el.querySelector("iframe").src = peekSrc(button);
+    peek.button = button;
+    return;
+  }
+  closePeek(true);
+  const el = document.createElement("div");
+  el.className = "sm-peek";
+  el.innerHTML = `<div class="sm-peek-in"><div class="sm-peek-head"><span><b></b> 같은 유형 문제</span><button type="button" class="st-btn" data-peek="again">다른 문제</button><button type="button" class="st-btn" data-peek="close" aria-label="닫기">닫기</button></div>
+    <p class="sm-peek-wait">문제를 만드는 중…</p><iframe title="같은 유형 문제 미리 보기"></iframe></div>`;
+  el.querySelector("b").textContent = label;
+  const frame = el.querySelector("iframe");
+  fitPeekFrame(frame);
+  frame.src = peekSrc(button);
+  block.after(el);
+  peek.el = el; peek.key = button.dataset.key; peek.button = button;
+  el.addEventListener("click", (event) => {
+    const act = event.target.closest("[data-peek]")?.dataset.peek;
+    if (act === "close") closePeek();
+    if (act === "again" && peek.button) { el.classList.remove("ready"); frame.src = peekSrc(peek.button); }
+  });
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("open")));
+  // 고른 번호 줄이 화면 위쪽에 오게(열린 칸이 아래 단추 줄에 가리지 않게)
+  const top = block.getBoundingClientRect().top + window.scrollY - 80;
+  if (top > window.scrollY + 40) setTimeout(() => window.scrollTo({ top, behavior: reduceMotion() ? "auto" : "smooth" }), 120);
+}
 $("clearPicks").addEventListener("click", () => { view.picked.clear(); renderNumbers(); renderDock(); });
 $("makeLink").addEventListener("click", (event) => { if (!view.picked.size) event.preventDefault(); });
 

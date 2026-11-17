@@ -43,8 +43,29 @@ function cardItem(card) {
     return w > 0 && h > 0 && w / h > 2.3;
   }) || Boolean(rest.querySelector(".b4-fold-line-problem,.fold-sequence,.b4-fold-sequence"));
   const book = /^본책\s+(\S+)\s+(\S+?)번/u.exec(ref);
-  return { ref, kind: kindOf(ref), stage: book?.[1] || "", no: book?.[2] || "", block: book ? `${book[1]} ${book[2].split("-")[0]}` : "", type, prompt, tutorial,
-    visual: rest.innerHTML.trim(), answer: Boolean(card.querySelector(".answer-line")), wide };
+  const finish = (answerHtml, answerVisual) => ({ ref, kind: kindOf(ref), stage: book?.[1] || "", no: book?.[2] || "", block: book ? `${book[1]} ${book[2].split("-")[0]}` : "", type, prompt, tutorial,
+    visual: rest.innerHTML.trim(), answer: Boolean(card.querySelector(".answer-line")), wide, answerHtml, answerVisual });
+  // 정답(뒤쪽 정답 쪽에 싣는다, 원장 2026-11-17 「뒤에 답안도 인쇄 되어야지」): 카드의 손글씨 정답 칸 그대로.
+  // 인쇄 교재에는 고르기 보기가 없으므로 「3번 (8)」은 값 「8」만 남긴다(보기가 그림 자체인 문제는 「3번」 그대로).
+  const answerBox = card.querySelector(".student-answer")?.cloneNode(true);
+  answerBox?.querySelector(":scope > strong")?.remove();
+  const answerVisual = Boolean(answerBox?.querySelector("svg,img,.visual"));
+  let answerHtml = answerBox ? answerBox.innerHTML.trim() : "";
+  // 「1번」처럼 번호만 있는 고르기 정답: 인쇄 교재에는 보기가 없으니 그 보기 그림을 정답 칸에 옮긴다(app.js pickTilesOf와 같은 찾기)
+  const pickNo = !answerVisual && /^(?:<span[^>]*>)?\s*(\d+번)\s*(?:<\/span>)?$/u.exec(answerHtml)?.[1];
+  if (pickNo) {
+    const labels = [...card.querySelectorAll(".choice-buttons [data-choice]")].map((button) => button.dataset.choice);
+    const visual = card.querySelector(".visual");
+    let tile = null;
+    if (visual && labels.length > 1) for (const box of visual.querySelectorAll("*")) {
+      if (box.closest(".print-draw") || box.children.length !== labels.length) continue;
+      const kids = [...box.children];
+      if (kids.every((kid, k) => kid.textContent.includes(labels[k]))) { tile = kids[labels.indexOf(pickNo)] || null; break; }
+    }
+    if (tile) return finish(tile.outerHTML, true);
+  }
+  if (!answerVisual) answerHtml = answerHtml.replace(/^(?:<span[^>]*>)?\s*\d+번\s*\(([^()]+)\)\s*(?:<\/span>)?$/u, "$1");
+  return finish(answerHtml, answerVisual);
 }
 
 const KIND = {
@@ -85,7 +106,13 @@ export async function importSessionPages(url, { book, session, student = "" }) {
     items.forEach((item) => { if (groups.at(-1)?.kind !== item.kind) groups.push({ kind: item.kind, items: [] }); groups.at(-1).items.push(item); });
     const unitWord = String(session.label || "").split(" ")[0];
     const wm = `${escText(student)} · GFIELD`;
-    return groups.map((group) => {
+    // 정답 쪽 항목(묶음 이름 · 번호 · 정답) — printSessionBook이 모아 맨 뒤에 한 묶음으로 싣는다(sessionAnswerPages)
+    const ANSWER_LABEL = { daily: "데일리", book: "본책", homework: "과제", unittest: "평가" };
+    const answers = groups.flatMap((group) => group.items.map((item, index) => ({
+      no: group.kind === "book" ? (item.no || index + 1) : index + 1,
+      label: group.kind === "book" && item.stage ? `본책 ${item.stage}` : ANSWER_LABEL[group.kind],
+      html: item.answerHtml, visual: item.answerVisual, scope })));
+    const pages = groups.map((group) => {
       const meta = KIND[group.kind];
       const n = group.items.length;
       const title = group.kind === "daily" ? `${unitWord} · ${group.items[0].ref}` : group.kind === "unittest" ? `${unitWord} · 단원 평가` : `${session.label} · ${group.kind === "book" ? "본책" : "오늘의 과제"}`;
@@ -106,7 +133,18 @@ export async function importSessionPages(url, { book, session, student = "" }) {
       }).join("");
       return `<article class="gold-print-page source-practice-print tb-session-page" data-print-book="${escText(book.id)}" data-print-lesson="session-${group.kind}" data-print-part="original-1" data-watermark="${wm}">${head}${lead}<section class="gold-print-block">${blocks}</section><footer class="gold-print-footer">${escText(book.label)} · ${escText(session.range)}</footer></article>`;
     }).join("");
+    return { pages, answers };
   } finally {
     frame.remove();
   }
+}
+
+// 정답 쪽(맨 뒤): 데일리·본책·과제·평가 정답을 한 묶음으로, 워밍업과 같은 두 단 쪽에. 그림 정답(나누는 선 등)은 그림째.
+export function sessionAnswerPages(answers, { book, session, student = "" }) {
+  const list = answers.filter((answer) => answer.html);
+  if (!list.length) return "";
+  const items = list.map((answer) => `<section class="gold-print-source-item tb-answer-item"><h2><span>${escText(answer.no)}</span>${escText(answer.label)}</h2>${answer.visual
+    ? `<div class="gold-print-visual tb-ans-visual"><div class="${answer.scope}"><div class="question-card tb-q"><div class="student-answer">${answer.html}</div></div></div></div>`
+    : `<p class="tb-ans">${answer.html}</p>`}</section>`).join("");
+  return `<article class="gold-print-page source-practice-print tb-session-page tb-answer-page" data-print-book="${escText(book.id)}" data-print-lesson="session-answers" data-print-part="original-1" data-watermark="${escText(student)} · GFIELD"><header class="gold-print-head"><div><span>ANSWERS · 정답</span><h1>${escText(book.label)} ${escText(session.label)} · 정답</h1></div><dl><div><dt>이름</dt><dd>${escText(student)}</dd></div></dl></header><p class="gold-print-concept"><strong>정답</strong><br>데일리 테스트 · 본책 · 오늘의 과제${list.some((a) => a.label === "평가") ? " · 단원 평가" : ""} 정답이에요. 다 풀고 나서 맞춰 봐요.</p><section class="gold-print-block">${items}</section><footer class="gold-print-footer">${escText(book.label)} · ${escText(session.range)} · 정답</footer></article>`;
 }
