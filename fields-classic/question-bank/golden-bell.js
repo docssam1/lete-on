@@ -1743,6 +1743,7 @@ function backToStudy() {
   }, 300);
 }
 function showSessionBookDone() {
+  document.documentElement.classList.remove("sb-booting");
   if (document.querySelector(".sb-done")) return;
   const panel = document.createElement("div");
   panel.className = "sb-done";
@@ -1791,6 +1792,7 @@ async function printSessionBook() {
     if (params.get("preview") !== "1") window.print();
   } catch (error) {
     console.error("session book failed", error);
+    document.documentElement.classList.remove("sb-booting");
     document.documentElement.dataset.sessionBook = "failed";
     $("printStatus").textContent = "교재를 준비하지 못했어요. 새로고침해 주세요.";
   }
