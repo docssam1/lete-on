@@ -1586,7 +1586,7 @@ EL1:{ name:{ko:'역연산으로 빈칸 찾기',en:'Missing Number by Inverse Ope
            concept:{ko:'곱셈식의 □는 나눗셈으로, 나눗셈식의 □는 곱셈이나 나눗셈으로 되짚어요 — □÷6=23은 6×23=138, 138÷□=6은 138÷6=23이에요.',
              en:'A blank in a multiplication is found by dividing; in a division, by multiplying or dividing: □÷6=23 gives 6×23=138, and 138÷□=6 gives 138÷6=23.',
              zh:'乘法里的□用除法找，除法里的□用乘法或除法找——□÷6=23是6×23=138，138÷□=6是138÷6=23。'}},
-          {id:7,offLadder:true,label:{ko:'4학년: 분수·소수 □',en:'Grade 4: fraction & decimal blanks',zh:'四年级：分数·小数□'},params:{mode:'g4'},
+          {id:7,offLadder:true,label:{ko:'4학년: 분수·소수 빈칸 채우기',en:'Grade 4: fraction & decimal blanks',zh:'四年级：分数·小数填空'},params:{mode:'g4'},
            concept:{ko:'분모가 같은 분수와 소수에서도 역연산은 똑같아요. □−2/9=3 7/9은 3 7/9+2/9=4예요. □.6+1.3=10.9는 10.9−1.3=9.6이라 □는 9예요.',
              en:'Inverse operations work the same with like fractions and decimals: □−2/9 = 3 7/9 gives 3 7/9 + 2/9 = 4, and □.6+1.3=10.9 gives 10.9−1.3 = 9.6, so the blank is 9.',
              zh:'同分母分数和小数也一样用逆运算：□−2/9=3又7/9是3又7/9+2/9=4；□.6+1.3=10.9是10.9−1.3=9.6，所以□是9。'}},
