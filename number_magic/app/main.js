@@ -5457,6 +5457,7 @@ function screenPlacement(){
   if(S._diag.phase==='setup')assessmentChooseMethod=false;
   ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
     chooseMethod:assessmentChooseMethod,checkHistory:()=>S.achievementChecks||[],
+    speedHistory:()=>S.speedChecks||[],onSpeed:rec=>{S.speedChecks=(S.speedChecks||[]).concat(rec).slice(-12);save();}, /* 1분 계산 속도 기록(2026-11-18) — 진단을 새로 해도 남는다 */
     onAttemptStart:()=>{assessmentChooseMethod=false;},
     onMethodChoose:phase=>{assessmentChooseMethod=false;S._diag.phase=phase;S._diag.questionStartedAt=Date.now();save();render();},
     planSettings:Object.assign({speed:S.roadSpeed||1,pace:S.roadPace||'p2'},(S.roadCadenceChosen||S.adminPlan)?{cadence:S.roadCadence||'w1'}:{}), /* 직접 고르지 않았으면 과정별 기본(초등 주1·중고등 표준)을 로드맵이 정한다 */

@@ -46,6 +46,7 @@
       ctx.chooseMethod=false;ctx.onAttemptStart?.();
       // A new seed is needed even when a learner restarts within the same millisecond.
       fresh.seed=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+      if(d.speedRuns)fresh.speedRuns=d.speedRuns;
       Object.keys(d).forEach(key=>delete d[key]);Object.assign(d,fresh);redraw();
     };
     const restart=reset=>{
@@ -385,6 +386,87 @@
         onOnline:()=>{d.phase='question';d.questionStartedAt=Date.now();redraw();},
         onSubmit:()=>{ctx.onResult(d.result,d);redraw();}});
     }
+    /* ── 1분 계산 속도(2026-11-18, app/speed-check.js) — 진도는 바꾸지 않고 기록만 남긴다 ── */
+    const SC=window.NM_SPEED_CHECK;
+    const speedHistory=()=>{const h=typeof ctx.speedHistory==='function'?ctx.speedHistory():d.speedRuns;return Array.isArray(h)?h:[];};
+    const speedSetFor=()=>{if(!SC||!d.result)return null;const p=paths&&paths.recommend(d.plan,d.result,d.selection);return p&&p.main?SC.setFor(p.main.course):null;};
+    /* 진행 중인 1분은 d.speedLive 에 둔다 — 앱이 화면을 다시 그려도(render) 같은 문제·같은 남은 시간으로 이어진다. */
+    const stopSpeedTimer=()=>{clearInterval(window.__nmSpeedTimer);window.__nmSpeedTimer=null;if(document.onkeydown&&document.onkeydown.__nmSpeed)document.onkeydown=null;};
+    function speed(){
+      const set=speedSetFor();
+      stopSpeedTimer();
+      if(!set){delete d.speedLive;d.phase='result';redraw();return;}
+      const name=l(SC.SETS[set]),live=d.speedLive&&d.speedLive.set===set?d.speedLive:null;
+      const back=()=>{stopSpeedTimer();delete d.speedLive;d.phase='result';redraw();};
+      const finish=()=>{
+        stopSpeedTimer();const run=d.speedLive;delete d.speedLive;
+        if(run){const rec=Object.assign(SC.summarize(run.set,run.log,SC.SECONDS),{at:Date.now(),course:run.course||null});
+          if(typeof ctx.onSpeed==='function')ctx.onSpeed(rec);else d.speedRuns=(d.speedRuns||[]).concat(rec).slice(-12);}
+        d.speedJust=true;d.phase='result';redraw();
+      };
+      if(live&&Date.now()>=live.end){finish();return;}
+      shell(t('1분 계산 속도','1-minute speed check','1分钟计算速度'),`<header class="pd-header"><p class="pd-kicker">${t('1분 계산 속도','1-minute speed check','1分钟计算速度')}</p><h1>${escape(name)}</h1><p>${t('1분 동안 할 수 있는 만큼 풀어요. 답을 다 쓰면 바로 다음 문제로 넘어가요. 틀려도 멈추지 말고 계속 풀어요.','Solve as many as you can in one minute. When the answer is written, the next problem appears. Keep going even after a mistake.','1分钟内尽量多做。写完答案自动进入下一题，做错也继续。')}</p></header>
+        <section class="pd-speed-run" id="pdSpeedRun"></section>`,'speed');
+      const box=$('#pdSpeedRun');
+      if(!live){
+        box.innerHTML=`<div class="pd-speed-ready"><button type="button" class="pd-primary" id="pdSpeedGo">${t('시작','Start','开始')}</button><button type="button" class="pd-text-button" id="pdSpeedBack">${t('결과로 돌아가기','Back to results','返回结果')}</button></div>`;
+        $('#pdSpeedBack').onclick=back;
+        $('#pdSpeedGo').onclick=()=>{
+          const seed=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6),now=Date.now(),p=paths&&paths.recommend(d.plan,d.result,d.selection);
+          d.speedLive={set,list:SC.make(set,seed,90),i:0,log:[],typed:'',start:now,end:now+SC.SECONDS*1000,shown:now,course:p&&p.main?p.main.course:null};
+          speed();
+        };
+        return;
+      }
+      const keys=['1','2','3','4','5','6','7','8','9',set==='integer'?'−':'','0','⌫'];
+      box.innerHTML=`<div class="pd-speed-top"><span id="pdSpeedLeft"></span><small>${t('초','sec','秒')}</small><progress id="pdSpeedBar" max="${SC.SECONDS}" value="${SC.SECONDS}"></progress><b id="pdSpeedCount"></b><small>${t('개','solved','题')}</small></div>
+        <div class="pd-speed-q" aria-live="polite"><span id="pdSpeedQ"></span><span>=</span><output id="pdSpeedA" class="pd-speed-a"></output></div>
+        <div class="pd-keypad pd-speed-keys">${keys.map(k=>k?`<button type="button" data-skey="${k}">${k}</button>`:'<span></span>').join('')}</div>
+        <button type="button" class="pd-text-button" id="pdSpeedStop">${t('그만하기 · 기록 안 남김','Stop · do not save','停止 · 不保存')}</button>`;
+      const correctCount=()=>live.log.filter(x=>String(x.v).replace(/−/g,'-')===String(x.a)).length;
+      const paint=()=>{const q=live.list[live.i];$('#pdSpeedQ').textContent=q?q.q:'';$('#pdSpeedA').textContent=live.typed;$('#pdSpeedCount').textContent=String(correctCount());
+        const left=Math.max(0,Math.ceil((live.end-Date.now())/1000));$('#pdSpeedLeft').textContent=String(left);$('#pdSpeedBar').value=left;};
+      const press=k=>{
+        if(d.speedLive!==live||Date.now()>=live.end)return;
+        if(k==='⌫')live.typed=live.typed.slice(0,-1);
+        else if(k==='−'||k==='-')live.typed=live.typed.startsWith('−')?live.typed.slice(1):'−'+live.typed;
+        else if(/^\d$/.test(k))live.typed+=k;
+        else return;
+        const q=live.list[live.i],want=SC.answerText(q.a);
+        if(live.typed.replace(/^−/,'').length&&live.typed.length>=want.length){
+          live.log.push({q:q.q,a:q.a,v:live.typed,ms:Date.now()-live.shown});
+          live.i++;live.typed='';live.shown=Date.now();
+          if(live.i>=live.list.length)live.list=live.list.concat(SC.make(set,live.start+'-'+live.i,60)); /* 1분 안에 다 풀면 더 만든다 */
+        }
+        paint();
+      };
+      all('[data-skey]').forEach(b=>b.onclick=()=>press(b.dataset.skey));
+      const onKey=e=>{if(d.phase!=='speed'||d.speedLive!==live){stopSpeedTimer();return;}if(/^\d$/.test(e.key)||e.key==='Backspace'||e.key==='-'){e.preventDefault();press(e.key==='Backspace'?'⌫':e.key);}};
+      onKey.__nmSpeed=true;document.onkeydown=onKey;
+      $('#pdSpeedStop').onclick=back;
+      paint();
+      window.__nmSpeedTimer=setInterval(()=>{if(d.speedLive!==live||!$('#pdSpeedLeft')){clearInterval(window.__nmSpeedTimer);return;}if(Date.now()>=live.end){finish();return;}paint();},200);
+    }
+    function speedCard(rec,result){
+      const set=speedSetFor();if(!set)return null;
+      const runs=speedHistory().filter(x=>x&&x.set===set),last=runs[runs.length-1],prev=runs[runs.length-2];
+      const pace=SC.itemPace(result.profile),bandName={previous:t('이전','Earlier','此前'),current:t('선택한 범위','Selected scope','所选范围'),next:t('다음','Next','后续')};
+      const paceLine=Object.keys(bandName).filter(b=>pace[b]).map(b=>bandName[b]+' '+pace[b].median+t('초','s','秒')).join(' · ');
+      const box=document.createElement('section');box.className='pd-speed';box.id='pdSpeed';
+      const date=x=>new Date(x.at).toLocaleDateString(lang==='ko'?'ko-KR':lang==='zh'?'zh-CN':'en-US');
+      box.innerHTML=`<h2>${t('계산 속도','Calculation speed','计算速度')}</h2>`+
+        (paceLine?`<p class="pd-note">${t('20문항에서 맞힌 문제를 푸는 데 보통 걸린 시간','Typical time on correctly answered questions','20题中答对题目的一般用时')}: ${escape(paceLine)}</p>`:'')+
+        (last?`<div class="pd-speed-score"><b>${last.correct}</b><span>${t('1분에 맞힌 개수','correct in 1 minute','1分钟答对')}</span>${prev?`<em>${t('지난번','Last time','上次')} ${prev.correct}${t('개','','题')} → ${last.correct-prev.correct>=0?'+':''}${last.correct-prev.correct}</em>`:''}</div>
+          <p>${escape(l(SC.SETS[set]))} · ${t('푼 문제','Attempted','做题')} ${last.attempted} · ${t('정확도','Accuracy','正确率')} ${last.accuracy}% ${last.medianSec!=null?' · '+t('한 문제 보통','Typical per problem','每题一般')+' '+last.medianSec+t('초','s','秒'):''}</p>
+          ${last.slow.length?`<p class="pd-note">${t('오래 걸린 셈','Slowest','用时最长')}: ${last.slow.map(x=>escape(x.q)+' = '+x.a+' ('+x.sec+t('초','s','秒')+')').join(' · ')}</p>`:''}
+          ${last.wrong.length?`<p class="pd-note">${t('틀린 셈','Mistakes','做错')}: ${last.wrong.slice(0,6).map(x=>escape(x.q)+' = '+x.a).join(' · ')}</p>`:''}
+          ${runs.length>1?`<p class="pd-note">${t('기록','History','记录')}: ${runs.slice(-5).map(x=>date(x)+' '+x.correct+t('개','','题')).join(' · ')}</p>`:''}`
+        :`<p>${t('진단 결과에 맞는 기본 셈 「','Solve the basic facts “','按测评结果，做1分钟基础计算「')}${escape(l(SC.SETS[set]))}${t('」'+(((l(SC.SETS[set]).slice(-1).charCodeAt(0)-0xac00)%28)?'을':'를')+' 1분 동안 풀어, 아는 계산이 손에 붙었는지 봐요.','” for one minute to see how automatic they are.','」，看看已会的计算是否熟练。')}</p>`)+
+        `<button type="button" class="pd-secondary" id="pdSpeedOpen">${last?t('다시 재기 · 1분','Measure again · 1 min','再测一次 · 1分钟'):t('1분 계산 속도 재기','Start the 1-minute check','开始1分钟速度测试')}</button>
+        <p class="pd-note">${t('속도는 진도를 바꾸지 않아요. 몇 주 뒤 같은 셈으로 다시 재면 손에 붙는 정도를 견줄 수 있어요.','Speed does not change the starting course. Measure again in a few weeks to compare.','速度不改变学习进度。几周后用同样的计算再测，可以比较熟练程度。')}</p>`;
+      box.querySelector('#pdSpeedOpen').onclick=()=>{d.phase='speed';redraw();};
+      return box;
+    }
     function result() {
       if (!paths) { shell(t('학습 경로 확인','Study pathway','学习路径'),`<p role="alert">${t('학습 경로 자료를 불러오지 못했습니다. 새로고침해 주세요.','Study pathway data could not be loaded. Please reload.','未能加载学习路径资料，请刷新。')}</p>`, 'result');return; }
       const result=d.result, path=paths.recommend(d.plan,result,d.selection), rec=path.main, course=(window.NM_COURSES||{})[rec.course];
@@ -461,11 +543,12 @@
       $('#pdRoad').textContent=t('로드맵에서 본진도 보기','See main study on the roadmap','在路线图查看主要进度');
       $('#pdAgain').textContent=t('다시 시험보기','Take again','重新测评');
       $('#pdRoad').onclick=()=>ctx.seeCourse(rec.course);$('#pdPick').onclick=ctx.pick;$('#pdAgain').onclick=()=>restart(false);
+      if(SC&&d.responseSource!=='paper-marks'){const card=speedCard(rec,result);if(card){$('.pd-bands').after(card);if(d.speedJust){d.speedJust=false;card.scrollIntoView({block:'start'});}}}
     }
     if(ctx.chooseMethod&&d.plan&&['question','paper'].includes(d.phase)){
       shell(t('시험 이어하기','Continue assessment','继续测评'),'<header class="pd-header"><h1>'+t('어떻게 풀까요?','How would you like to answer?','选择作答方式')+'</h1><p>'+t('이전에 열었던 시험이 있어요. 문제와 기록은 그대로 두고 풀이 방식을 골라 주세요.','An assessment is already open. Keep its questions and records and choose how to continue.','已有进行中的测评，保留原题与记录，选择继续作答方式。')+'</p></header><button type="button" class="pd-primary pd-paper" id="pdResumeOnline">'+t('화면에서 직접 풀기','Answer on screen','在屏幕上直接作答')+'</button><button type="button" class="pd-secondary pd-paper" id="pdResumePaper">'+t('종이로 푼 답 ○·X 채점','Mark paper answers ○/X','纸上答案○/X评分')+'</button>','resume');
       $('#pdResumeOnline').onclick=()=>ctx.onMethodChoose('question');$('#pdResumePaper').onclick=()=>ctx.onMethodChoose('paper');
-    }else if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='paper')paper();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
+    }else if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='paper')paper();else if(d.phase==='speed'&&d.result)speed();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
   }
   window.NM_PLACEMENT_UI = { version: VERSION, initial, render, parseNumber, readValues };
 })();

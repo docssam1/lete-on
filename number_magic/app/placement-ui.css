@@ -166,3 +166,25 @@
 .ac-plot{position:relative}
 .ac-yaxis{position:absolute;left:1px;top:1px;background:linear-gradient(90deg,#fbfcf9 78%,rgba(251,252,249,0));border-radius:10px 0 0 10px;pointer-events:none}
 .ac-yaxis text{font-family:inherit;font-size:12px}
+
+/* 1분 계산 속도(2026-11-18, app/speed-check.js) */
+.nm-placement .pd-speed{margin:22px 0;padding:18px;border:1px solid #c7d6ca;border-radius:14px;background:#fff}
+.nm-placement .pd-speed h2{font-size:20px;margin:0 0 8px}
+.nm-placement .pd-speed p{margin:8px 0}
+.nm-placement .pd-speed-score{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px}
+.nm-placement .pd-speed-score b{font-size:44px;font-variant-numeric:tabular-nums;color:var(--pd-ink)}
+.nm-placement .pd-speed-score span{font-size:14px;color:#55756b}
+.nm-placement .pd-speed-score em{font-style:normal;font-weight:700;color:#426c5c;font-size:14px}
+.nm-placement .pd-speed-run{display:grid;justify-items:center;gap:10px;padding:10px 0}
+.nm-placement .pd-speed-ready{display:grid;gap:10px;width:min(320px,100%)}
+.nm-placement .pd-speed-top{display:flex;align-items:baseline;gap:6px;width:min(420px,100%);font-variant-numeric:tabular-nums}
+.nm-placement .pd-speed-top span,.nm-placement .pd-speed-top b{font-size:30px;font-weight:800}
+.nm-placement .pd-speed-top progress{flex:1;height:10px;margin:0 8px}
+.nm-placement .pd-speed-q{display:flex;align-items:center;justify-content:center;gap:14px;font-family:Fredoka,Pretendard,sans-serif;font-size:clamp(36px,9vw,56px);font-variant-numeric:tabular-nums;min-height:84px}
+.nm-placement .pd-speed-a{min-width:2.4ch;border-bottom:3px solid #a6bbad;text-align:center}
+.nm-placement .pd-speed-keys{grid-template-columns:repeat(3,76px);margin:6px auto}
+.nm-placement .pd-speed-keys button{height:56px;font-size:26px!important}
+/* 재는 동안은 안내 글·위 메뉴를 감춰 휴대폰에서도 자판이 한 화면에 들어오게 */
+.nm-placement[data-pd-view="speed"]:has(.pd-speed-keys) :is(.pd-flow,.pd-session-tools,.pd-header>p:not(.pd-kicker)){display:none}
+.nm-placement[data-pd-view="speed"]:has(.pd-speed-keys) .pd-header{padding:8px 0 4px}
+.nm-placement[data-pd-view="speed"]:has(.pd-speed-keys) .pd-header h1{font-size:22px}
