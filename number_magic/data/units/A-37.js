@@ -34,7 +34,7 @@ window.NM_UNITS['A-37'] = {
         result:{ ko:'4.2-1.7=2.5 ✓', en:'4.2−1.7=2.5 ✓', zh:'4.2-1.7=2.5 ✓' },
         book:null }
     ],
-    rule:{ ko:'① 소수 부분(십분의 자리) 빼기  ② 부족하면 자연수에서 1 빌리기  ③ 자연수 부분 빼기 (빌렸으면 1 더 빼기)',
+    rule:{ ko:'① 소수 부분(소수 첫째 자리) 빼기  ② 부족하면 자연수에서 1 빌리기  ③ 자연수 부분 빼기 (빌렸으면 1 더 빼기)',
       en:'① Subtract tenths  ② Borrow 1 from integer if needed  ③ Subtract integers (minus the borrow)',
       zh:'①减十分位 ②不够减时从整数借1 ③减整数（借了就多减1）' }
   },
