@@ -24,6 +24,8 @@
     e.target.reset();location.assign('admin.html');return;
    }
    globalThis.RoadmapSpeed?.mark('login_start');
+   if(identifier.includes('@')&&!/^[0-9]{8,12}$/.test(code))throw Object.assign(new Error('이메일 계정의 로그인 번호는 숫자 8~12자리입니다.'),{local:true});
+   if(!identifier.includes('@')&&!/^[0-9]{4,12}$/.test(code.trim()))throw Object.assign(new Error('승인번호는 숫자 4~12자리입니다.'),{local:true});
    const result=identifier.includes('@')?await A.call('login',{email:identifier.toLowerCase(),pin:code}):await A.call('review-login',{username:identifier,code});
    member=A.accept(result);globalThis.RoadmapSpeed?.mark('login_verified');e.target.reset();location.assign(next);
   });};
@@ -61,7 +63,7 @@
   school.onchange=options;options();if(m)level.value=m.school==='preschool'?m.age:m.grade;
  }
  const readProfile=f=>({studentName:f.get('studentName'),guardianPhone:f.get('guardianPhone'),school:f.get('school'),age:f.get('school')==='preschool'?Number(f.get('level')):null,grade:f.get('school')!=='preschool'?Number(f.get('level')):null});
- function checkPin(f){if(f.get('pin')!==f.get('pinAgain')){const e=new Error('로그인 번호가 서로 다릅니다.');e.local=true;throw e;}return f.get('pin');}
+ function checkPin(f){if(f.get('pin')!==f.get('pinAgain')){const e=new Error('로그인 번호가 서로 다릅니다.');e.local=true;throw e;}const pin=f.get('pin');if(typeof pin!=='string'||!/^\d{8,12}$/.test(pin)||/^(\d)\1+$/.test(pin)||['12345678','87654321','01234567'].includes(pin))throw Object.assign(new Error('숫자 8~12자리로 정하고, 같은 숫자 반복이나 단순한 연속 번호는 피해주세요.'),{local:true});return pin;}
  function registration(){
   screen('학생의 현재 정보를 알려주세요.',`<p class="member-lead">${esc(email)} · 이메일 인증 완료</p><form id="profileForm">${schoolFields()}${pinFields()}${P.checks()}<button class="member-primary">무료로 로드맵 시작하기</button></form>`);fillSchool();
   $('profileForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('pin')!==f.get('pinAgain')){announce('로그인 번호가 서로 다릅니다.',true);return;}run(async()=>{
@@ -71,7 +73,7 @@
  }
  function emailWelcome(){screen('가입한 계정을 찾았습니다.',`<p class="member-lead">${esc(member.student_name)} 학생의 로드맵을 이어서 살펴보세요.</p><button class="member-primary" data-action="email-login">로드맵 이어보기</button><button class="member-link" data-action="set-pin">로그인 번호 다시 정하기</button>`);}
  function resetPin(){screen('새 로그인 번호를 정해 주세요.',`<p class="member-lead">${esc(email)} · 이메일 인증 완료</p><form id="pinForm">${pinFields()}<p class="member-note">변경하면 이전 번호와 기존 로그인은 종료됩니다.</p><button class="member-primary">로그인 번호 변경</button></form>`);
-  $('pinForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('pin')!==f.get('pinAgain')){announce('로그인 번호가 서로 다릅니다.',true);return;}run(async()=>{member=A.accept(await A.call('reset-pin',{pin:f.get('pin')},proof));e.target.reset();await A.closeProof(proof);proof=null;complete('로그인 번호를 변경했습니다.');});};
+  $('pinForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('pin')!==f.get('pinAgain')){announce('로그인 번호가 서로 다릅니다.',true);return;}run(async()=>{member=A.accept(await A.call('reset-pin',{pin:checkPin(f)},proof));e.target.reset();await A.closeProof(proof);proof=null;complete('로그인 번호를 변경했습니다.');});};
  }
  function complete(title){screen(title,`<p class="member-lead">${esc(member.student_name)} 학생의 학습 로드맵을 만들어 보세요.</p><a class="member-primary" href="${esc(next)}">로드맵으로 가기 <span aria-hidden="true">→</span></a><button class="member-link" data-action="profile">내 계정 확인</button>`);}
  function profile(){if(member.review){reviewProfile();return;}email=member.email;

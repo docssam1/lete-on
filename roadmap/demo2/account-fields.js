@@ -56,6 +56,7 @@
   }
   return `${name}${object(name)} 다시 확인해 주세요.`;
  }
+ function validNewPin(value){return typeof value==='string' && /^\d{8,12}$/.test(value) && !/^(\d)\1+$/.test(value) && !['12345678','87654321','01234567'].includes(value);}
  function mount(win){
   const doc=win&&win.document,root=doc&&doc.getElementById('memberContent');
   if(!root||typeof root.addEventListener!=='function')return null;
@@ -87,7 +88,8 @@
    note.textContent=text;field.setAttribute('aria-invalid','true');describe(field,note.id,true);
   }
   /* The two login numbers are compared as they are typed, so the difference is named under the second one. */
-  function matchPins(form){
+  function validateNewPin(field){if(field.name==='pin'&&field.getAttribute('autocomplete')==='new-password')field.setCustomValidity(field.value&&!validNewPin(field.value)?'숫자 8~12자리로 정하고, 같은 숫자 반복이나 단순한 연속 번호는 피해주세요.':'');}
+ function matchPins(form){
    const pin=form&&form.elements&&form.elements.pin,again=form&&form.elements&&form.elements.pinAgain;if(!pin||!again)return;
    again.setCustomValidity(again.value&&pin.value!==again.value?'로그인 번호가 서로 다릅니다.':'');
    if(again.hasAttribute('aria-invalid')||(again.value&&!again.validity.valid&&again.value.length>=pin.value.length))show(again);
@@ -107,7 +109,7 @@
   },true);
   root.addEventListener('input',e=>{
    if(!isField(e.target))return;
-   meter(e.target);matchPins(e.target.form);
+   validateNewPin(e.target);meter(e.target);matchPins(e.target.form);
    if(e.target.hasAttribute('aria-invalid'))show(e.target);
   });
   root.addEventListener('change',e=>{if(isField(e.target)&&e.target.hasAttribute('aria-invalid'))show(e.target);});
@@ -117,5 +119,5 @@
   });
   return {show};
  }
- return {object,pinStrength,messageFor,mount};
+ return {object,pinStrength,validNewPin,messageFor,mount};
 });
