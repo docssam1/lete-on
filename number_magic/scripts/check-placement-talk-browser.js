@@ -42,6 +42,8 @@ const pick = (p, key, val) => p.click(`[data-pick="${key}"][data-val="${val}"]`)
     /* ① 시작 고르기 — 교재 길 */
     let { ctx, p, errors } = await enter(b, base, lang, width);
     assert.equal(await p.locator('.nm-sc-picks button').count(), 2, tag + ' 첫 질문 단추 둘');
+    /* 글꼴: 저장소의 Pretendard 가변 글꼴이 실제로 그려지는지(CDN·기기 글꼴로 빠지지 않게) */
+    assert.ok(await p.evaluate(async () => { await document.fonts.ready; return [...document.fonts].some(f => f.family.replace(/["']/g, '') === 'Pretendard' && f.status === 'loaded'); }), tag + ' Pretendard 글꼴 불러옴');
     await shot(p, 'start-1-' + tag);
     await pick(p, 'way', 'book'); await p.waitForSelector('[data-pick="book"]');
     await pick(p, 'book', 'kumon'); await p.waitForSelector('[data-pick="step"]', { timeout: 10000 });
