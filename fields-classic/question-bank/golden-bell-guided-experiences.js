@@ -129,7 +129,9 @@ function doubleFoldVisual(phase) {
 function equalLineVisual(phase, model) {
   const compare = ["compare", "solve"].includes(phase);
   const solved = phase === "solve";
-  return `<div class="guided-line-visual ${phase}"><div class="guided-line-cross"><span class="top">${solved ? model.answer : "?"}</span><span class="left">${model.left}</span><span class="center">${model.center}</span><span class="right">${model.right}</span><span class="bottom">${model.bottom}</span></div><p>${phase === "center" ? `가운데 ${model.center}은 두 줄에 함께 있어요.` : compare ? `${model.left} + ${model.right} = ${model.left + model.right}　·　${solved ? `${model.answer} + ${model.bottom} = ${model.left + model.right}` : `? + ${model.bottom} = ${model.left + model.right}`}` : "가로줄과 세로줄을 찾아요."}</p></div>`;
+  // 답 서버를 못 받았을 때도 그림이 「undefined」가 되지 않게 — 다른 두 개념 그림처럼 모델 수로 채운다.
+  const answer = Number.isFinite(model.answer) ? model.answer : model.left + model.right - model.bottom;
+  return `<div class="guided-line-visual ${phase}"><div class="guided-line-cross"><span class="top">${solved ? answer : "?"}</span><span class="left">${model.left}</span><span class="center">${model.center}</span><span class="right">${model.right}</span><span class="bottom">${model.bottom}</span></div><p>${phase === "center" ? `가운데 ${model.center}은 두 줄에 함께 있어요.` : compare ? `${model.left} + ${model.right} = ${model.left + model.right}　·　${solved ? `${answer} + ${model.bottom} = ${model.left + model.right}` : `? + ${model.bottom} = ${model.left + model.right}`}` : "가로줄과 세로줄을 찾아요."}</p></div>`;
 }
 
 function lineCardPlacementVisual(phase, model) {
