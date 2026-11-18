@@ -1,8 +1,8 @@
-import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM } from "./source-data.js?v=20261117a";
+import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM } from "./source-data.js?v=20261118a";
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261117b";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261117a";
-import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261116g1";
-import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261117b";
+import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261118a";
+import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261118a";
 import { course2ConceptSlides } from "./course2-deck.js?v=20261117b";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
@@ -125,7 +125,7 @@ function renderSelfUnits(book) {
     const key = `${book.id}-u${index}`, rate = isClass() ? 0 : weekRate(readRecord(student, "week", key), readRecord(student, "test", key));
     const test = isClass() ? null : readRecord(student, "test", key);
     const locked = !gateOf(book.id, index).ok;
-    return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
+    return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${count}차시 · 교재 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
   }).join("")}${!isClass() && book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}${!isClass() && book.source.unitTestPaper && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(book.source.unitTestPaper)}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · 25문제 · 답안 확인 및 채점</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
 const studyLink = (bookId, unitIndex, part, last = 0) => link("study.html", { book: bookId, unit: String(unitIndex), part: String(part), ...(last ? { s: String(last) } : {}), ...(isClass() ? { as: "class" } : {}) });
@@ -232,7 +232,7 @@ function renderParts() {
       ...(part > 1 ? [[`데일리 테스트`, daily ? `${part - 1}차시 복습 4문제 · ${daily.right} / ${daily.total}` : `${part - 1}차시 복습 4문제 · ○✕`]] : []),
       ...(lessons.length ? [["개념 → 게임 → 워밍업", lessons.map((lesson) => lesson.title).join(" · ")]] : []),
       ...(proofs.length ? [[proofs.some((slide) => slide.kind === "game") ? "따져 보기 → 해 보기" : "그림으로 따져 보기", proofs.map((slide) => slide.kind === "game" ? `직접 해 보기(${slide.lesson.title})` : slide.lesson.title).join(" · ")]] : []),
-      ["공부하기", isClass() ? `본책 ${problemCount(unit, part)}문항 · 한 문제씩 화면에` : `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사문제`],
+      ["공부하기", isClass() ? `교재 ${problemCount(unit, part)}문항 · 한 문제씩 화면에` : `교재 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사문제`],
       ["오늘의 과제", "칠판에 적힌 과제 · 집에서"],
       ...(lastPart ? [["단원 평가", result ? `10문제 · ${result.right} / ${result.total}` : "10문제 · ○✕ 진단 · 약점 유형"]] : []),
       ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : []),
@@ -247,10 +247,10 @@ function renderParts() {
     return `<section class="st-session${on ? " is-on" : ""}"><h4>${part}차시</h4>
       <ol class="st-week">${steps.map(([label, note], i) => `<li><b>${i + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>
       <a class="st-week-start st-btn${isClass() || on || (!week && part === 1) ? " primary" : ""}" data-start="${book.id}|${view.unit}|${part}|${on ? week.last || 1 : ""}" href="${esc(studyLink(book.id, view.unit, part, on ? week.last || 1 : 0))}">${part}차시 ${startWord} ›</a>
-      ${goldenBell ? `<a class="st-session-print${wantPrint ? " is-wanted" : ""}" href="${esc(bookPrint)}" target="_blank" rel="noopener">${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}${book.course ? "" : "개념 · 워밍업 · "}본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
+      ${goldenBell ? `<a class="st-session-print${wantPrint ? " is-wanted" : ""}" href="${esc(bookPrint)}" target="_blank" rel="noopener">${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}${book.course ? "" : "개념 · 워밍업 · "}공부하기 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
   });
   // 단원마다 「오답 유사문제」(원장 2026-11-10 「유료 회원일 때는 각 단원에서 선택하여 다시 풀기」) — 정식 회원이 아니면 눌렀을 때 안내가 나온다
-  const retry = isClass() ? "" : `<a class="st-retry" href="${esc(link("similar.html", { book: book.id, unit: String(view.unit) }))}"><b>오답 유사문제</b><span>이 단원 본책에서 틀렸거나 모르는 번호를 골라 같은 유형의 새 문제로 다시 풀어요</span>${isPaid() ? "" : `<em class="st-lock-tag">정규회원</em>`}<i aria-hidden="true">›</i></a>`;
+  const retry = isClass() ? "" : `<a class="st-retry" href="${esc(link("similar.html", { book: book.id, unit: String(view.unit) }))}"><b>오답 유사문제</b><span>이 단원 교재에서 틀렸거나 모르는 번호를 골라 같은 유형의 새 문제로 다시 풀어요</span>${isPaid() ? "" : `<em class="st-lock-tag">정규회원</em>`}<i aria-hidden="true">›</i></a>`;
   $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>${retry}`;
 }
 
@@ -261,7 +261,7 @@ function renderStudy() {
   // 강사용: 본책 단원과 짝이 없는 워밍업 학습은 여기서 수업 화면으로 바로 연다(차시 교안에는 들어가지 않는다)
   if (!isClass() || !goldenBell) return;
   const { rest } = lessonsByUnit(book, goldenBell.books.find((entry) => entry.id === book.id));
-  if (rest.length) $("unitList").insertAdjacentHTML("beforeend", `<section class="st-rest"><h3>그 밖의 워밍업 <small>본책 단원과 짝이 없는 학습 ${rest.length}개 · 수업 화면으로 열려요</small></h3>
+  if (rest.length) $("unitList").insertAdjacentHTML("beforeend", `<section class="st-rest"><h3>그 밖의 워밍업 <small>교재 단원과 짝이 없는 학습 ${rest.length}개 · 수업 화면으로 열려요</small></h3>
     <div class="st-rest-links">${rest.map((lesson) => `<a href="${esc(bellLink({ lesson: lesson.id }))}">${esc(lesson.title)}</a>`).join("")}</div></section>`);
 }
 

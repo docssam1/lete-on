@@ -1382,9 +1382,9 @@ const stageReferences = ({ concept = [], type: typeRefs = [], practice = [], adv
 // 유형에서는 그 발판 없이 직접 적용하게 한다. 연습과 심화는 구조 난이도를 높인다.
 export const TEXTBOOK_STAGES = Object.freeze([
   { id: "concept", label: "개념", sourceLabel: "활동·예시", difficulty: 1, description: "핵심 원리와 풀이 발판을 보고 시작합니다." },
-  { id: "type", label: "유형", sourceLabel: "본책 확인", difficulty: 1, description: "같은 원리를 발판 없이 직접 적용합니다." },
-  { id: "practice", label: "연습", sourceLabel: "본책 연습", difficulty: 2, description: "수와 표현이 달라진 누적 문제를 풉니다." },
-  { id: "advanced", label: "심화", sourceLabel: "본책 도전", difficulty: 3, description: "조건과 풀이 단계를 결합한 문제를 풉니다." }
+  { id: "type", label: "유형", sourceLabel: "교재 확인", difficulty: 1, description: "같은 원리를 발판 없이 직접 적용합니다." },
+  { id: "practice", label: "연습", sourceLabel: "교재 연습", difficulty: 2, description: "수와 표현이 달라진 누적 문제를 풉니다." },
+  { id: "advanced", label: "심화", sourceLabel: "교재 도전", difficulty: 3, description: "조건과 풀이 단계를 결합한 문제를 풉니다." }
 ]);
 
 const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({

@@ -1,9 +1,9 @@
-import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261117a";
+import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261118a";
 import { unitParts, partProblems } from "./study-map.js?v=20261117b";
 import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261117a";
-import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261116g1";
-import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261117b";
-import { course2Html, course3Html } from "./course2-list.js?v=20261116g1";
+import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261118a";
+import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261118a";
+import { course2Html, course3Html } from "./course2-list.js?v=20261118a";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).
 // 권 · 단원을 고르면 본책 번호판(차시마다 활동 · 확인 · 연습 · 도전)이 나온다. 모르는 번호를 누르고 「유사문제 만들기」 →
@@ -65,12 +65,12 @@ function renderNumbers() {
     const part = k + 1, option = partPickOption(book.id, view.unit, part);
     const rows = partProblems(unit, part).map((block) => `<div class="sm-block"><span>${esc(block.label)}</span><div class="sm-nums">${block.numbers.map(({ n, typeId, stage }) => {
       const key = `${part}:${block.section}:${block.group}:${n}`;
-      const pick = pickOf(typeId, stage, `본책 ${refOf(block, n)}`, view.unit, option);
+      const pick = pickOf(typeId, stage, `교재 ${refOf(block, n)}`, view.unit, option);
       return `<button type="button" data-key="${esc(key)}" data-pick="${esc(pick)}" aria-pressed="${view.picked.has(key)}" aria-label="${esc(`${refOf(block, n)}`)}">${n}</button>`;
     }).join("")}</div></div>`).join("");
     return rows ? `<section class="sm-part"><h3>${part}차시</h3>${rows}</section>` : "";
   }).join("");
-  $("numberList").innerHTML = sessions || `<p class="st-empty">이 단원의 본책 번호를 준비하고 있어요.</p>`;
+  $("numberList").innerHTML = sessions || `<p class="st-empty">이 단원의 교재 문제 번호를 준비하고 있어요.</p>`;
 }
 
 // 시험지 짜기(원장 2026-11-17): 번호마다 문제 수(1~3) · 난이도(더 쉽게 / 본책과 같게 / 더 어렵게) · 미리보기 →
@@ -116,7 +116,7 @@ function refreshPaper() {
     $("paperFrame").hidden = !size;
     ["paperRenew", "paperAnswers"].forEach((id) => { $(id).disabled = !size; });
     $("paperOpen").setAttribute("aria-disabled", String(!size));
-    $("paperMeta").textContent = size ? `번호 ${size}개 · ${size * opts.each}문제 · ${{ basic: "더 쉽게", actual: "본책과 같게", advanced: "더 어렵게" }[opts.level]}` : "번호를 고르면 만들어져요";
+    $("paperMeta").textContent = size ? `번호 ${size}개 · ${size * opts.each}문제 · ${{ basic: "더 쉽게", actual: "교재와 같게", advanced: "더 어렵게" }[opts.level]}` : "번호를 고르면 만들어져요";
     if (!size) { paperSrc = ""; $("paperFrame").removeAttribute("src"); return; }
     const { total, ...base } = pickParams();
     const src = link("index.html", { ...base, paper: "1", form: "exam", cols: "2", preview: "1", side: "1" });
@@ -152,8 +152,8 @@ async function renderCourse() {
   if (!board) $("dock").hidden = true;
   $("coursePanel").hidden = one;
   $("smHeading").textContent = one ? "틀렸거나 모르는 번호를 골라요" : c === "2" ? "2과정 · 틀렸거나 모르는 번호를 골라요" : "3과정 · 권을 골라요";
-  $("smLead").textContent = one ? "본책에서 틀렸거나 막힌 번호를 누르면 같은 유형의 새 문제가 나와요. 새 문제를 풀어 보고 본책 문제를 다시 풀어요."
-    : c === "2" ? "본책 번호를 누르면 같은 유형의 새 문제가 나와요(지금은 G1). 아래 권마다 「그림으로 따져 보기」와 권별 테스트가 있어요."
+  $("smLead").textContent = one ? "교재에서 틀렸거나 막힌 번호를 누르면 같은 유형의 새 문제가 나와요. 새 문제를 풀어 보고 교재 문제를 다시 풀어요."
+    : c === "2" ? "교재 문제 번호를 누르면 같은 유형의 새 문제가 나와요(지금은 G1). 아래 권마다 「그림으로 따져 보기」와 권별 테스트가 있어요."
     : "권을 다 배우면 권별 테스트를 풀고 번호마다 ○ · ✕로 채점해요. 그림으로 따져 보기와 유사문제는 3과정도 준비하고 있어요.";
   if (c === "2") $("coursePanel").innerHTML = course2Cache || (course2Cache = await course2Html());
   else if (c === "3") $("coursePanel").innerHTML = course3Cache || (course3Cache = await course3Html());

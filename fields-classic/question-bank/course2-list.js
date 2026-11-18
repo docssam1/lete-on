@@ -50,7 +50,7 @@ export async function course2Html({ algebra = true } = {}) {
       return `<li><span class="c2-unit">${esc(u)}</span><div class="c2-chips">${ps.map((p) => `<a class="c2-chip is-proof" href="./proof.html?book=${b.id}&id=${p.id}">${esc(p.title)}</a>`).join("")}${lab.map((l) => `<a class="c2-chip is-lab" href="./c2-lab.html?tool=${l[1]}">직접 해 보기 · ${esc(l[2])}</a>`).join("")}</div></li>`;
     }).join("");
     // 본책을 1과정처럼 옮긴 권(원장 2026-11-16, G1 시범): 차시 공부(시작 화면 → 차시 덱 · 차시 교재 인쇄)로 가는 길
-    const study = STUDY_BOOKS.has(b.id) ? `<a class="c2-test is-study" href="./start.html?course=2&book=course-02-${b.id}">본책 차시 공부</a>` : "";
+    const study = STUDY_BOOKS.has(b.id) ? `<a class="c2-test is-study" href="./start.html?course=2&book=course-02-${b.id}">차시 공부</a>` : "";
     return `<section class="c2-book"><header><span class="c2-name">${b.name}</span><h2>${esc(b.title)}</h2>${study}${testLink(b.id)}</header>${rows ? `<ol class="c2-units">${rows}</ol>` : `<p class="c2-empty">그림으로 따져 보기를 준비하고 있어요.</p>`}</section>`;
   }));
   const alg = algebra ? (await Promise.all(ALGEBRA.map((b) => testCard(b, 2, true)))).join("") : "";

@@ -33,7 +33,7 @@ export const FIXED_LINES = Object.freeze({
   bellDone: voiceLine("bell", "워밍업 문제를 다 풀었어요! 정말 잘했어요. 다음으로 넘어가요."),
   gameDone: voiceLine("game", "게임을 끝까지 해냈어요! 결과를 보고 다음으로 가요."),
   nativeDone: voiceLine("game", "게임을 끝까지 해냈어요! 이제 워밍업 문제로 가요."),
-  bellLoadFail: voiceLine("cover", "워밍업 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 본책 문제는 지금도 풀 수 있어요."),
+  bellLoadFail: voiceLine("cover", "워밍업 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 교재 문제는 지금도 풀 수 있어요."),
   // 단원 평가·권별 테스트 전 팝업(원장 2026-10-29 「데일리 테스트 결과와 약점 유형이 누적되고 … 평가 보기 전 팝업」)
   gateTest: voiceLine("test", "단원 평가를 보기 전에 데일리 테스트에서 틀린 약점 유형을 먼저 공부해 봐요. 바로 봐도 돼요."),
   gateBook: voiceLine("booktest", "권별 테스트를 보기 전에 그동안 틀린 약점 유형을 먼저 공부해 봐요. 바로 봐도 돼요."),
@@ -43,8 +43,8 @@ export const FIXED_LINES = Object.freeze({
 // 숫자가 바뀌는 말 — 경우가 정해져 있어 음성 목록(tools/export-study-voice.mjs)이 다 펼쳐 녹음한다
 // 본책 번호 이름: 활동 1-3번 · 연습 7번
 export const refOf = (block, n) => block.label.includes(" ") ? `${block.label}-${n}번` : `${block.label} ${n}번`;
-export const SHEET_BACK = voiceLine("board", "좋아요. 이제 본책으로 돌아가서 그 문제를 다시 풀어 봐요.");
-export const sheetLine = (ref) => voiceLine("board", `${ref}과 같은 유형의 문제예요. 이 문제를 먼저 풀고 본책 문제를 다시 풀어 봐요.`);
+export const SHEET_BACK = voiceLine("board", "좋아요. 이제 교재로 돌아가서 그 문제를 다시 풀어 봐요.");
+export const sheetLine = (ref) => voiceLine("board", `${ref}과 같은 유형의 문제예요. 이 문제를 먼저 풀고 교재 문제를 다시 풀어 봐요.`);
 // 단원 평가 결과: 점수만 말한다. 약한 유형 이름은 경우가 너무 많아 말풍선 글에만 쓴다(study.js)
 export const testResultLine = (total, right) => right >= total
   ? voiceLine("test", `${total}문제를 모두 맞았어요! 정말 잘했어요.`)
@@ -132,7 +132,7 @@ export function sessionBookPicks(unit, unitIndex, part, bookId = "") {
   const last = part === sessionCount(unit);
   const option = partPickOption(bookId, unitIndex, part);
   const picks = [];
-  for (const block of sessionBlocks(unit, part)) for (const { n, typeId, stage } of block.numbers) picks.push(pickOf(typeId, stage, `본책 ${refOf(block, n)}`, unitIndex, option));
+  for (const block of sessionBlocks(unit, part)) for (const { n, typeId, stage } of block.numbers) picks.push(pickOf(typeId, stage, `교재 ${refOf(block, n)}`, unitIndex, option));
   for (const typeId of sessionTypes(unit, part)) picks.push(pickOf(typeId, "practice", "오늘의 과제", unitIndex, option));
   if (last) for (const typeId of unitTestTypes(unit)) picks.push(pickOf(typeId, "advanced", "단원 평가", unitIndex));
   return picks.join("|");
@@ -150,7 +150,7 @@ export function sessionSheetEntries(book, unitIndex, part, kind) {
   const unit = book?.units[unitIndex];
   if (!unit || !(part >= 1 && part <= sessionCount(unit))) return null;
   if (kind === "daily") return part > 1 ? { picks: sessionDailyPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트` } : null;
-  return { picks: sessionBookPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 본책과 과제` };
+  return { picks: sessionBookPicks(unit, unitIndex, part, book.id), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 교재 문제와 과제` };
 }
 export function sessionPrintHref(book, unitIndex, part, bellData, link) {
   const unit = book.units[unitIndex], lastPart = part === sessionCount(unit);
@@ -159,7 +159,7 @@ export function sessionPrintHref(book, unitIndex, part, bellData, link) {
   const sheetBase = { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1" };
   const sheet = link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~book` });
   const presheet = part > 1 ? link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~daily` }) : "";
-  const parts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problems}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
+  const parts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `교재 ${problems}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
   // 2과정처럼 워밍업 권이 없는 책은 표지에 쓸 권 이름을 주소로 넘긴다(golden-bell.js printSessionBook)
   const topics = book.course ? course2ConceptSlides(book.id, unitIndex, part).filter((slide) => slide.kind === "concept").map((slide) => slide.lesson.title) : [];
   const named = book.course ? { blabel: book.label, btitle: book.title, bcourse: `course-0${book.course}`, ...(topics.length ? { topics: topics.join("|") } : {}) } : {};
@@ -223,20 +223,20 @@ export function slideLine(slide, { book, unitIndex, part = 1, hasConcept = true 
   const first = part > 1 ? `먼저 ${part - 1}차시 데일리 테스트를 보고, ` : "";
   const ending = last ? "오늘의 과제를 하고 단원 평가까지 봐요." : "오늘의 과제까지 해요.";
   if (slide.kind === "cover" && book.course) return voiceLine("cover", hasConcept
-    ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고 게임으로 익힌 다음, 그림으로 왜 그런지 따져 보고 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
-    : `오늘은 ${unit.label} ${part}차시예요. ${first}본책 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
+    ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고 게임으로 익힌 다음, 그림으로 왜 그런지 따져 보고 교재 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
+    : `오늘은 ${unit.label} ${part}차시예요. ${first}교재 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
   if (slide.kind === "concept" && slide.native?.mount === "mountDeckProof") return voiceLine("concept", `${slide.lesson.title}? 그림으로 한 장면씩 따져 봐요. 오른쪽에 까닭이 쌓여요.`);
   if (slide.kind === "game" && slide.native?.mount === "mountDeckLab") return voiceLine("game", slide.native.tool === "geo"
     ? `${slide.title}이에요. 접을 쪽을 눌러 직접 접고 펼쳐 봐요. 다 하면 다음을 눌러요.`
     : `${slide.title}이에요. 점수는 없어요. 직접 움직여 보고 다음을 눌러요.`);
   if (slide.kind === "cover") return voiceLine("cover", hasConcept
-    ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고, 게임과 워밍업으로 익힌 다음 본책 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
-    : `오늘은 ${unit.label} ${part}차시예요. ${first}본책 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
+    ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고, 게임과 워밍업으로 익힌 다음 교재 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
+    : `오늘은 ${unit.label} ${part}차시예요. ${first}교재 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
   if (slide.kind === "concept") return voiceLine("concept", slide.native ? `${slide.lesson.title} 개념이에요. 칠판을 봐요.` : `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`);
   // 이름이 이미 「… 게임」으로 끝나면(연습 게임 · 디지털 숫자 게임 · 뒤집고 돌리기 게임 — 2026-11-10 「공방」을 「게임」으로) 「게임」을 한 번 더 붙이지 않는다
   if (slide.kind === "game") return voiceLine("game", `${slide.title}${slide.title.endsWith("게임") ? "" : " 게임"}이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`);
   if (slide.kind === "bell") return voiceLine("bell", `${bellLabel(slide)} 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.`);
-  if (slide.kind === "board") return voiceLine("board", `본책 ${slide.block.label} 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 유사 문제를 풀어 봐요.`);
+  if (slide.kind === "board") return voiceLine("board", `교재 ${slide.block.label} 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 유사 문제를 풀어 봐요.`);
   if (slide.kind === "homework") return voiceLine("homework", "오늘의 과제예요. 칠판에 적힌 대로 인쇄해서 집에서 풀고, 다 풀면 화면에서 답을 확인해요.");
   if (slide.kind === "daily") return voiceLine("test", `데일리 테스트예요. 지난 시간에 배운 것으로 ${DAILY_COUNT === 4 ? "네" : DAILY_COUNT} 문제를 풀어요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요.`);
   if (slide.kind === "test") return voiceLine("test", "단원 평가예요. 이 단원에서 배운 것으로 열 문제를 풀어요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요. 약한 유형은 다시 공부해요.");
