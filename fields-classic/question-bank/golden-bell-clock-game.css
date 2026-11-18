@@ -175,3 +175,9 @@
   .gold-hands-on .cg-level-name { max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .gold-hands-on .cg-track { order: 5; flex-basis: 100%; }
 }
+/* 할 일 팝업(golden-bell-clock-game.js popMission): 가운데 크게 → 시계 위 제자리로. 누르기는 막지 않는다 */
+.gold-hands-on .cg-mission-dim { position: absolute; inset: 0; z-index: 6; border-radius: 22px; background: rgba(23, 38, 52, .28); pointer-events: none; }
+.gold-hands-on .cg-mission-pop { position: absolute; top: 46%; left: 50%; z-index: 7; width: max-content; max-width: min(92%, 760px); padding: 24px 38px; border: 3px solid var(--cg-gold); border-radius: 22px; background: #fff; box-shadow: 0 22px 60px rgba(29, 52, 70, .35); color: var(--cg-ink); font-size: 38px; font-weight: 900; line-height: 1.45; text-align: center; word-break: keep-all; transform: translate(-50%, -50%); transform-origin: center; pointer-events: none; }
+.gold-hands-on .cg-mission-pop b { padding: 0 6px; border-radius: 8px; }
+.gold-hands-on .cg-mission-pop b.cw { color: var(--cg-cw); background: #e8f1fd; }
+.gold-hands-on .cg-mission-pop b.ccw { color: #b85d0d; background: #fdf0e3; }

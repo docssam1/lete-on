@@ -3,7 +3,7 @@ import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts, paperCells } from "./golden-bell-hands-on-folding.js?v=20261023t";
 import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue, unfoldTargets, unfoldStageDone, orderedClues, currentClueIndex } from "./golden-bell-hands-on-models.js?v=20261023t";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261023t";
-import { mountClockGame } from "./golden-bell-clock-game.js?v=20261110m";
+import { mountClockGame } from "./golden-bell-clock-game.js?v=20261118b";
 import { mountLevelGame } from "./golden-bell-level-game.js?v=20261110m";
 import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261110m";
 

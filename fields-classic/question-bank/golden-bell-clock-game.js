@@ -139,7 +139,37 @@ export function mountClockGame(host, { single = true, onQuestions = null, onComp
     })[problem.stage]);
     renderChrome();
     renderControls();
-    if (saved.intro) showLevelIntro();
+    if (saved.intro) showLevelIntro(); else popMission();
+  }
+
+  // 할 일 한 줄을 먼저 가운데 크게 띄웠다가 제자리(시계 위)로 날아가 앉힌다(원장 2026-11-18 「지시 내용이 잘 안 보여 · 팝업처럼 뜬 다음 지금 위치에 있도록」).
+  // 덱 안에서는 칸 전체에 배율(zoom)이 걸려 있어 화면 크기(getBoundingClientRect)와 CSS 크기가 다르다 — 옮길 거리는 그 비율로 나눈다.
+  let popAnim = null;
+  function popMission() {
+    const target = $("[data-clock-mission]");
+    root.querySelectorAll(".cg-mission-pop, .cg-mission-dim").forEach((el) => el.remove());
+    popAnim?.cancel?.(); target.style.visibility = "";
+    if (!target.animate || matchMedia("(prefers-reduced-motion: reduce)").matches || !target.textContent.trim()) return;
+    const dim = document.createElement("div"); dim.className = "cg-mission-dim"; dim.setAttribute("aria-hidden", "true");
+    const pop = document.createElement("div"); pop.className = "cg-mission-pop"; pop.setAttribute("aria-hidden", "true"); pop.innerHTML = target.innerHTML;
+    root.append(dim, pop);
+    target.style.visibility = "hidden";
+    const from = pop.getBoundingClientRect(), to = target.getBoundingClientRect();
+    const z = from.width / (pop.offsetWidth || from.width) || 1;
+    const dx = (to.left + to.width / 2 - (from.left + from.width / 2)) / z, dy = (to.top + to.height / 2 - (from.top + from.height / 2)) / z;
+    const scale = Math.min(1, to.width / from.width);
+    const done = () => { pop.remove(); dim.remove(); target.style.visibility = ""; };
+    const key = problem;
+    dim.animate([{ opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 1, offset: 0.72 }, { opacity: 0 }], { duration: 2600, easing: "ease", fill: "forwards" });
+    popAnim = pop.animate([
+      { transform: "translate(-50%, -50%) scale(.6)", opacity: 0 },
+      { transform: "translate(-50%, -50%) scale(1.04)", opacity: 1, offset: 0.1 },
+      { transform: "translate(-50%, -50%) scale(1)", opacity: 1, offset: 0.16 },
+      { transform: "translate(-50%, -50%) scale(1)", opacity: 1, offset: 0.72 },
+      { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scale})`, opacity: 1 }
+    ], { duration: 2600, easing: "cubic-bezier(.3,.7,.3,1)", fill: "forwards" });
+    popAnim.onfinish = () => { if (problem === key) done(); else { pop.remove(); dim.remove(); } };
+    popAnim.oncancel = () => { pop.remove(); dim.remove(); };
   }
 
   function showLevelIntro() {
@@ -328,6 +358,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, onComp
       // 레벨을 다 푼 뒤 지도를 닫으면 결과 화면으로 돌아간다(진행은 다시 저장하지 않는다).
       if (root.dataset.phase === "done" && finishHtml) { $("[data-clock-overlay]").innerHTML = finishHtml; $("[data-clock-overlay] button")?.focus({ preventScroll: true }); return; }
       $("[data-clock-overlay]").hidden = true;
+      if (d.clockGo !== undefined) popMission();
       root.querySelector("[data-clock-turn='1']:not(:disabled),.cg-card:not(:disabled),.cg-pick:not(:disabled),[data-clock-next]")?.focus({ preventScroll: true });
     } else if (d.clockLevels !== undefined) {
       showLevelMap();
