@@ -23,6 +23,7 @@ on:
       - 'highschool-selection/scripts/stage-public-intro.cjs'
       - 'geometry/**'
       - 'hyper-focus/**'
+      - 'math-skill-map/public-recovery.html'
       - 'number_magic/**'
       - 'personality/**'
       - 'premier/**'
@@ -90,6 +91,9 @@ jobs:
           mkdir -p _site/hselementary
           mkdir -p _site/hsmiddle
           mkdir -p _site/geometry
+          # Publish only the verified recovered snapshot; preserve private/research source files.
+          mkdir -p _site/math-skill-map
+          cp math-skill-map/public-recovery.html _site/math-skill-map/index.html
           mkdir -p _site/number_magic
           mkdir -p _site/w
           mkdir -p _site/app

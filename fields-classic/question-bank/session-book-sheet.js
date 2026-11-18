@@ -112,8 +112,16 @@ export async function importSessionPages(url, { book, session, student = "" }) {
       no: group.kind === "book" ? (item.no || index + 1) : index + 1,
       label: group.kind === "book" && item.stage ? `공부하기 ${item.stage}` : ANSWER_LABEL[group.kind],
       html: item.answerHtml, visual: item.answerVisual, scope })));
+    // 오늘의 과제 앞에는 간지 한 장 「워크북」(원장 2026-11-18 「과제 인쇄시 워크북이라고 간지 넣어줘」) — 수업 쪽과 집에서 풀 쪽을 나눈다.
+    // 안내 문장은 넣지 않는다(원장 2026-11-18 「모두 6문제예요 이런 거 하지 마」) — 제목·권·차시·이름·푼 날만. 문항이 없는 쪽이라 쪽 채우기(compactGoldenBellPrint)가 건드리지 않고, 쪽 번호는 붙는다.
+    const workbookDivider = () => `<article class="gold-print-page tb-divider" data-print-book="${escText(book.id)}" data-print-lesson="session-workbook" data-print-part="divider" data-watermark="${wm}">
+      <div class="tb-divider-body"><span class="tb-divider-kick">WORKBOOK</span><h1>워크북</h1>
+        <p class="tb-divider-sub">${escText(book.label)} · ${escText(session.label)} · 오늘의 과제</p>
+        <dl class="tb-divider-meta"><div><dt>이름</dt><dd>${escText(student)}</dd></div><div><dt>푼 날</dt><dd></dd></div></dl></div>
+      <footer class="gold-print-footer">${escText(book.label)} · ${escText(session.label)} · 워크북</footer></article>`;
     const pages = groups.map((group) => {
       const meta = KIND[group.kind];
+      const divider = group.kind === "homework" ? workbookDivider() : "";
       const n = group.items.length;
       const title = group.kind === "daily" ? `${unitWord} · ${group.items[0].ref}` : group.kind === "unittest" ? `${unitWord} · 단원 평가` : `${session.label} · ${group.kind === "book" ? "공부하기" : "오늘의 과제"}`;
       const head = `<header class="gold-print-head"><div><span>${meta.kick}</span><h1>${escText(book.label)} ${escText(title)}</h1></div><dl><div><dt>이름</dt><dd>${escText(student)}</dd></div>${meta.score ? `<div><dt>맞은 개수</dt><dd class="tb-score">/ ${n}</dd></div>` : "<div><dt>날짜</dt><dd></dd></div>"}</dl></header>`;
@@ -131,7 +139,7 @@ export async function importSessionPages(url, { book, session, student = "" }) {
         const answer = item.answer ? `<span class="gold-print-answer"><b>답</b><i></i></span>` : "";
         return `${concept}<section class="gold-print-source-item tb-item${item.wide ? " full-width-exercise" : ""}"><h2><span>${escText(number)}</span>${escText(label)}</h2><p>${item.prompt}</p>${visual}${answer}</section>`;
       }).join("");
-      return `<article class="gold-print-page source-practice-print tb-session-page" data-print-book="${escText(book.id)}" data-print-lesson="session-${group.kind}" data-print-part="original-1" data-watermark="${wm}">${head}${lead}<section class="gold-print-block">${blocks}</section><footer class="gold-print-footer">${escText(book.label)} · ${escText(session.range)}</footer></article>`;
+      return `${divider}<article class="gold-print-page source-practice-print tb-session-page" data-print-book="${escText(book.id)}" data-print-lesson="session-${group.kind}" data-print-part="original-1" data-watermark="${wm}">${head}${lead}<section class="gold-print-block">${blocks}</section><footer class="gold-print-footer">${escText(book.label)} · ${escText(session.range)}</footer></article>`;
     }).join("");
     return { pages, answers };
   } finally {

@@ -178,6 +178,16 @@
 .tb-session-page .tb-concept .textbook-concept-tutorial li>b{font-size:11px}
 .tb-session-page .tb-concept .textbook-concept-tutorial li strong{font-size:11.5px}
 .tb-session-page .tb-concept .textbook-concept-tutorial li p{font-size:11px}
+/* 오늘의 과제 앞 간지 「워크북」(session-book-sheet.js workbookDivider) — 표지와 같은 종이·깊은 초록, 쪽 가운데보다 조금 위 */
+.tb-divider{display:grid;grid-template-rows:minmax(0,1fr) auto;background:#fff;color:#182230}
+.tb-divider-body{align-self:center;margin-bottom:28mm;padding:0 14mm;border-left:2.4mm solid #16734b}
+.tb-divider-kick{display:block;color:#16734b;font-size:13pt;font-weight:900;letter-spacing:.18em}
+.tb-divider h1{margin:3mm 0 4mm;font-size:46pt;line-height:1.05;letter-spacing:0}
+.tb-divider-sub{margin:0 0 14mm;color:#566274;font-size:12pt;font-weight:800}
+.tb-divider-meta{display:grid;grid-template-columns:repeat(2,minmax(0,62mm));gap:10mm;margin:0}
+.tb-divider-meta div{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:3mm}
+.tb-divider-meta dt{color:#566274;font-size:9pt;font-weight:800}
+.tb-divider-meta dd{min-height:7mm;margin:0;padding:0 1mm 1mm;border-bottom:.3mm solid #617184;font-size:11pt;font-weight:800;text-align:center}
 /* 정답 쪽(맨 뒤) — 글 정답은 한 줄, 그림 정답은 그림째 */
 .tb-answer-page .tb-answer-item{padding:1.4mm 0 2mm}
 .tb-answer-page .tb-answer-item>p.tb-ans{margin:0;font-size:12px;font-weight:700;line-height:1.5}
