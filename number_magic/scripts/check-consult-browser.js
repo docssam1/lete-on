@@ -78,9 +78,11 @@ x = run({ age: 'g1', book: 'wolli' }, () => 'good');
 ok(R.ladderFor({ book: 'wolli' }) === LAD && x.s.asked.includes(5), '규칙: 원리셈은 기적의 계산법 사다리에서 나이로 시작');
 /* 구몬수학 6A~F = 그 단계표로 묻는다(원장 2026-11-17 「A부터 알파벳 순서대로 1학년 2학년」) */
 const kLad = LADS.kumon, kIdx = id => kLad.findIndex(s => s.id === id);
-ok(kLad.map(s => s.id).join() === ['6a','5a','4a','3a','2a','a','b','c','d','e','f'].map(v => 'kumon-' + v).join(), '단계표: 구몬 6A~F 차례');
-x = run({ age: 'g2', book: 'kumon', stepId: 'kumon-b', progress: 'end' }, (k, st) => st <= kIdx('kumon-b') ? 'good' : 'notyet');
-ok(x.s.asked.includes(kIdx('kumon-b')), '규칙: 구몬 B 를 고르면 B 단계부터 물어야 함');
+/* 진도체크표(2026-11-18 원장 사진): 단계 6A~I 차례, 단계마다 교재 번호 1부터 200까지 빈틈 없이 이어진다 */
+ok([...new Set(kLad.map(s => s.group))].join() === '6A,5A,4A,3A,2A,A,B,C,D,E,F,G,H,I', '단계표: 구몬 6A~I 차례');
+[...new Set(kLad.map(s => s.group))].forEach(g => { const rs = kLad.filter(s => s.group === g).map(s => /(\d+)~(\d+)/.exec(s.title.ko)); ok(+rs[0][1] === 1 && +rs[rs.length - 1][2] === 200 && rs.every((r, i) => !i || +r[1] === +rs[i - 1][2] + 1), '단계표: 구몬 ' + g + ' 교재 번호 1~200 빈틈'); });
+x = run({ age: 'g2', book: 'kumon', stepId: 'kumon-b-101', progress: 'end' }, (k, st) => st <= kIdx('kumon-b-101') ? 'good' : 'notyet');
+ok(x.s.asked.includes(kIdx('kumon-b-101')), '규칙: 구몬 B 101~200 을 고르면 그 구간부터 물어야 함');
 ok(x.r.start === 'C4', '규칙: 구몬 B 끝·곱셈 안 배움 → 구구단 과정 4 (' + x.r.start + ')');
 ['soma', 'dunoro', 'miracle', 'kumon'].forEach(b => LADS[b].forEach(st => ok(st.skills.length > 0 && st.title && st.title.ko, '단계표: ' + st.id + ' 기술·이름 없음')));
 ok(LADS.soma.length === 46 && LADS.dunoro.length === 25 && LAD.length === 17, '단계표: 소마셈 46 · 두뇌로 25 · 기적 17 이어야 함');
