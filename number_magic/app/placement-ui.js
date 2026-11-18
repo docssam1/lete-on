@@ -275,6 +275,7 @@
         if(history.length){const saved=document.createElement('details');saved.className='pd-check-history';saved.innerHTML='<summary>'+t('지난 성취도 점검 기록','Previous achievement checks','以往掌握情况检测记录')+'</summary><ul>'+history.slice(-6).reverse().map(x=>'<li>'+escape(new Date(x.at).toLocaleDateString(lang==='ko'?'ko-KR':lang==='zh'?'zh-CN':'en-US'))+' · '+escape(stageLabel(stages.find(stage=>stage.id===x.baselineId)||{id:'unknown',kind:'foundation',label:t('저장한 범위','Saved scope','已保存范围')}))+' · '+escape(x.bands.current.correct)+' / '+escape(x.bands.current.asked)+' · '+t(x.source==='paper-marks'?'보호자 ○·X 기록':'화면에서 직접 풂',x.source==='paper-marks'?'Parent-marked ○/X':'Answered on screen',x.source==='paper-marks'?'家长○/X记录':'屏幕直接作答')+'</li>').join('')+'</ul>';$('.pd-header').after(saved);}
       }
       $('#pdStart').textContent=t('화면에서 20문항 풀기','Answer 20 questions on screen','在屏幕上完成20题');
+      if(d.formMode){const back=document.createElement('button');back.type='button';back.className='pd-text-button pd-form-mode';back.textContent=t('하나씩 물어보며 고르기','Choose one question at a time','逐个问答选择');back.onclick=()=>{d.formMode=false;try{localStorage.setItem('nm_pd_form','0');}catch(_){}redraw();};$('.pd-header').after(back);}
       if(baseline){
         const print=document.createElement('details');print.id='pdPrintOptions';print.className='pd-print-options';print.innerHTML='<summary>'+t('종이로 풀기 · 인쇄와 채점','Use paper · print and mark','纸上作答 · 打印与评分')+'</summary><p class="pd-note">'+t('종이로 푼 답을 보호자가 답지와 비교해 ○·X로 기록해요. 화면에서 풀 때는 답을 직접 입력하면 됩니다.','A parent can compare paper answers with the key and mark ○/X. On screen, enter answers directly.','家长对照答案，将纸上作答结果标为○/X；在屏幕作答时直接输入答案。')+'</p>';$('#pdStart').after(print);const paperNote=$('#pdPaper').nextElementSibling;print.append($('#pdPaper'));if(paperNote?.classList.contains('pd-note'))print.append(paperNote);
         const answers=document.createElement('button');answers.type='button';answers.id='pdPaperAnswers';answers.className='pd-secondary pd-paper';
@@ -310,6 +311,112 @@
         catch(_){$('#pdSetupError').textContent=t('이 범위를 안전하게 구성하지 못했습니다. 출발점을 바꿔 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成此范围，请更改起点。');$('#pdStart').disabled=false;return false;}
       };
       $('#pdStart').onclick=()=>begin('question');
+      /* ── 대화형 기준 고르기(2026-11-18 원장 「박스로 길게 말고 대화형으로 하나씩 보여 주는 것 · 선택하도록」
+         「어디부터 시작할까요? 같은 말 쓰지 말고」 「너무 ai야」) — 위 양식과 같은 상태(s)를 하나씩 묻고 단추로 고른다.
+         긴 양식은 「한 화면에서 모두 고르기」(d.formMode)로 그대로 남는다. ── */
+      /* 고르는 방식은 이 기기에 기억한다(nm_pd_form = '1' 한 화면 양식 / '0' 대화형) */
+      if(d.formMode===undefined){try{d.formMode=localStorage.getItem('nm_pd_form')==='1';}catch(_){d.formMode=false;}}
+      if(!d.formMode)talk();
+      function talk(){
+        const done=[];let ask=null;
+        const levelNow=calendar.toLevel?calendar.toLevel(s,now):'';
+        const levelOpts=calendar.levelOptions(t);
+        if(!profileReady)ask={key:'level',q:t('아이는 지금 몇 살인가요? 학교에 다니면 학년을 골라 주세요.','How old is the child? Choose the grade if in school.','孩子现在几岁？上学的话请选年级。'),opts:levelOpts};
+        else done.push({key:'level',q:t('아이는 지금 몇 살인가요?','How old is the child?','孩子现在几岁？'),a:(levelOpts.find(x=>x[0]===levelNow)||[,''])[1]});
+        const ROUTES=[['age',t('배운 범위로 말할게요','I will say what was studied','按学过的范围说')],['book',t('끝낸 교재로 말할게요','I will name the finished book','按完成的教材说')],['unlearned',t('아직 안 배웠어요','Not learned yet','还没学过')]];
+        if(!ask&&!s.talkRoute)ask={key:'route',q:t('연산은 어디까지 해 봤나요?','How far has the child gone in arithmetic?','运算学到哪里了？'),opts:ROUTES};
+        else if(!ask)done.push({key:'route',q:t('연산은 어디까지 해 봤나요?','How far has the child gone in arithmetic?','运算学到哪里了？'),a:ROUTES.find(x=>x[0]===s.route)[1]});
+        const BANDS=[['foundation',t('수 세기·가르기 같은 유아 셈','Early number sense','幼儿数感')],['elementary',t('초등 연산','Elementary arithmetic','小学运算')],['middle',t('중학교 수학','Middle-school math','初中数学')],['high',t('고등학교 수학','High-school math','高中数学')]];
+        if(!ask&&s.route==='age'){
+          if(!s.talkBand)ask={key:'band',q:t('요즘 배우는 건 어느 쪽인가요?','What is being studied these days?','最近在学哪一类？'),opts:BANDS,current:s.studyBand};
+          else{done.push({key:'band',q:t('요즘 배우는 건 어느 쪽인가요?','What is being studied these days?','最近在学哪一类？'),a:BANDS.find(x=>x[0]===s.studyBand)[1]});
+            const inBand=stages.filter(x=>bandOf(x)===s.studyBand);
+            if(!s.talkStage)ask={key:'stage',q:t('그중 지금 배우고 있는 걸 골라 주세요.','Pick what is being studied now.','请选出现在正在学的内容。'),
+              note:gradeStage&&bandOf(gradeStage)===s.studyBand?t('학년에 맞는 곳에 표시해 두었어요.','The one for the current grade is marked.','已标出与年级相符的内容。'):'',
+              opts:inBand.map(x=>[x.id,stageLabel(x)]),current:candidate,long:true};
+            else done.push({key:'stage',q:t('그중 지금 배우고 있는 걸 골라 주세요.','Pick what is being studied now.','请选出现在正在学的内容。'),a:baseline?stageLabel(baseline):''});
+          }
+        }
+        if(!ask&&s.route==='book'&&books){
+          for(let i=0;i<s.completedBooks.length&&!ask;i++){
+            const row=s.completedBooks[i],n=s.completedBooks.length>1?' ('+(i+1)+')':'';
+            const qBook=i?t('또 어떤 교재를 했나요?','Which other book?','还学了哪本教材？'):t('어떤 연산 교재를 했나요?','Which arithmetic book?','学了哪本运算教材？');
+            if(!row.series){ask={key:'series:'+i,q:qBook,opts:books.series.map(b=>[b.id,l(b.label)])};break;}
+            done.push({key:'series:'+i,q:qBook,a:l((books.series.find(b=>b.id===row.series)||{}).label||row.series)+n});
+            const steps=books.getSteps(row.series,row.editionId);
+            const qStep=t('마지막으로 끝낸 권은 어디인가요?','Which volume was finished last?','最后完成的是哪一册？');
+            if(!row.step){
+              const opts=row.series==='dunoro'
+                ?steps.filter(st=>books.getBookCourses('dunoro',st.id).length).flatMap(st=>books.getBookCourses('dunoro',st.id).map(c=>['c'+c,t('과정','Course','课程')+' '+c]))
+                :steps.map(st=>[st.id,l(st.label)]);
+              ask={key:'step:'+i,q:qStep,opts,long:true};break;
+            }
+            const stepRow=steps.find(st=>st.id===row.step);
+            done.push({key:'step:'+i,q:qStep,a:row.series==='dunoro'&&row.bookCourseNumber?t('과정','Course','课程')+' '+row.bookCourseNumber:stepRow?l(stepRow.label):row.step});
+          }
+          if(!ask&&!s.talkBooksDone&&s.completedBooks.length<8)ask={key:'more',q:t('다른 연산 교재도 했나요?','Any other arithmetic book?','还学过其他运算教材吗？'),opts:[['no',t('아니요, 이게 다예요','No, that is all','没有了')],['yes',t('네, 더 있어요','Yes, another one','有，还有')]]};
+          else if(!ask&&s.talkBooksDone)done.push({key:'more',q:t('다른 연산 교재도 했나요?','Any other arithmetic book?','还学过其他运算教材吗？'),a:t('아니요, 이게 다예요','No, that is all','没有了')});
+          if(!ask&&booksReady&&bookSources.length>1){
+            const qf=t('이번 문제는 어느 교재에 맞출까요?','Which book should the questions follow?','这次题目按哪本教材出？');
+            const fo=(mayMix?[['all',t('함께 섞어서','Mix them','混合出题')]]:[]).concat(bookSources.map(x=>[x.key,x.label]));
+            if(!focus&&!s.baselineId)ask={key:'focus',q:qf,opts:fo};
+            else if(focus)done.push({key:'focus',q:qf,a:(fo.find(x=>x[0]===focus.key)||[,focus.label||''])[1]});
+          }
+          if(!ask&&booksReady&&!bookPlan&&!baseline)ask={key:'stage',q:t('끝낸 교재와 가장 가까운 걸 골라 주세요.','Pick the topic closest to the finished book.','请选出与完成教材最接近的内容。'),opts:stages.map(x=>[x.id,stageLabel(x)]),long:true};
+        }
+        /* 창 하나에 한 질문(원장 2026-11-18 「창에 한 질문씩 나와서 클릭할 수 있도록」) — 지난 답은 쌓지 않고 「이전 질문」으로 되돌린다. */
+        const last=done[done.length-1];
+        let html='<section class="pd-ask" aria-live="polite"><div class="pd-ask-top">'+(last?'<button type="button" class="pd-ask-back" data-undo="'+last.key+'">'+t('이전 질문','Previous question','上一题')+'</button>':'<span></span>')+
+          '<span class="pd-ask-step">'+t((done.length+1)+'번째 질문','Question '+(done.length+1),'第'+(done.length+1)+'题')+'</span></div>';
+        /* 단추 글 「과정 1 · 100까지의 수…」는 가운뎃점 앞을 작은 머리로 나눠 두 줄로(frontend-design: 가운뎃점 잇기는 흔한 생성 화면) */
+        const pickLabel=label=>{const m=String(label).match(/^(.{1,14}?) · (.+)$/);return m?'<small>'+escape(m[1])+'</small><b>'+escape(m[2])+'</b>':'<b>'+escape(label)+'</b>';};
+        if(ask){
+          html+='<h2 class="pd-ask-q">'+escape(ask.q)+'</h2>'+(ask.note?'<p class="pd-talk-note">'+escape(ask.note)+'</p>':'')+
+            '<div class="pd-picks'+(ask.long?' long':'')+'" role="group" aria-label="'+escape(ask.q)+'">'+ask.opts.map(o=>'<button type="button" data-pick="'+escape(ask.key)+'" data-val="'+escape(o[0])+'"'+(ask.current===o[0]?' class="is-hint"':'')+'>'+pickLabel(o[1])+'</button>').join('')+'</div>';
+        }else if(baseline){
+          const scopeShort=String(scopeText).replace(/ · /,' ');
+          html+='<h2 class="pd-ask-q">'+escape(achievement?t(scopeShort+' 범위로 20문제를 풀어요.','20 questions on '+scopeShort+'.','按'+scopeShort+'做20道题。'):t(scopeShort+'에 맞춰 20문제를 풀어요.','20 questions around '+scopeShort+'.','按'+scopeShort+'做20道题。'))+'</h2>'+
+            '<p class="pd-talk-note">'+(achievement?'':t('쉬운 문제 6개, 지금 배우는 문제 10개, 다음 문제 4개예요. ','6 easier, 10 current, 4 next. ','简单6道、当前10道、后续4道。'))+t('어린아이는 문제를 읽어 줘도 돼요. 답이나 세는 방법만 알려 주지 마세요.','You may read the questions aloud; just do not hint at the answer.','可以为幼儿读题，但不要提示答案或数法。')+'</p>'+
+            '<p id="pdSetupError" class="pd-error" role="alert"></p><button class="pd-primary" id="pdStart">'+t('화면에서 풀기','Answer on screen','在屏幕上作答')+'</button>'+
+            '<div class="pd-talk-paper"><a class="pd-secondary pd-paper" id="pdPaper" href="placement-sheet.html?'+escape(paperQuery)+'" target="_blank" rel="noopener">'+t('종이로 인쇄해서 풀기','Print and solve on paper','打印后在纸上作答')+'</a><button type="button" class="pd-secondary pd-paper" id="pdPaperAnswers">'+t('종이로 푼 답 ○·X 체크','Mark paper answers ○/X','勾选纸上答案○/X')+'</button></div>';
+        }else html+='<h2 class="pd-ask-q">'+escape(setupHint||t('조금만 더 알려 주세요.','Tell us a little more.','请再告诉我们一些。'))+'</h2><p id="pdSetupError" class="pd-error" role="alert"></p><button class="pd-primary" id="pdStart" disabled>'+t('화면에서 풀기','Answer on screen','在屏幕上作答')+'</button>';
+        html+='</section><button type="button" class="pd-text-button pd-form-mode" id="pdFormMode">'+t('한 화면에서 모두 고르기','Choose everything on one page','在一页中全部选择')+'</button>';
+        const keepPurposes=$('.pd-purposes');
+        shell(t('학습 시작점 찾기','Find your starting point','找到学习起点'),html,'setup');
+        if(keepPurposes){const top=$('.pd-ask');top.before(keepPurposes);all('[data-purpose]').forEach(button=>button.onclick=()=>{d.purpose=button.dataset.purpose;redraw();});}
+        $('#pdFormMode').onclick=()=>{d.formMode=true;try{localStorage.setItem('nm_pd_form','1');}catch(_){}redraw();};
+        if($('#pdStart'))$('#pdStart').onclick=()=>begin('question');
+        if($('#pdPaper'))$('#pdPaper').onclick=e=>{if(!begin('paper'))e.preventDefault();};
+        if($('#pdPaperAnswers'))$('#pdPaperAnswers').onclick=()=>begin('paper');
+        const resetRow=row=>{row.series='';row.step='';row.bookCourseNumber=null;row.editionId='';row.bookStatus='';};
+        all('[data-pick]').forEach(b=>b.onclick=()=>{
+          const key=b.dataset.pick,v=b.dataset.val;
+          if(key==='level'){const p=calendar.fromLevel(v,now);if(p)Object.assign(s,p);s.gradeInferred=false;if(!s.baselineId&&s.scopeSource!=='manual')s.studyBand='';}
+          else if(key==='route'){s.route=v;s.talkRoute=true;s.baselineId='';s.scopeSource='';s.talkBand=false;s.talkStage=false;s.talkBooksDone=false;}
+          else if(key==='band'){s.studyBand=v;s.talkBand=true;s.talkStage=false;s.baselineId='';s.scopeSource='manual';}
+          else if(key==='stage'){s.baselineId=v;s.scopeSource='manual';s.talkStage=true;}
+          else if(key.startsWith('series:')){const row=s.completedBooks[+key.slice(7)];resetRow(row);row.series=v;row.editionId=/^soma-[pkabcd]$/.test(v)?'2019':'';s.baselineId='';s.bookFocus='';}
+          else if(key.startsWith('step:')){const row=s.completedBooks[+key.slice(5)];
+            if(row.series==='dunoro'){const n=Number(v.slice(1)),st=books.getSteps('dunoro').find(x=>books.getBookCourses('dunoro',x.id).includes(n));row.step=st?st.id:'';row.bookCourseNumber=st?n:null;}
+            else{row.step=v;row.bookCourseNumber=null;}
+            row.bookStatus=row.step?'completed':'';s.baselineId='';s.bookFocus='';}
+          else if(key==='more'){if(v==='yes')s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});else s.talkBooksDone=true;}
+          else if(key==='focus'){s.bookFocus=v;s.baselineId='';}
+          redraw();
+        });
+        all('[data-undo]').forEach(b=>b.onclick=()=>{
+          const key=b.dataset.undo;
+          if(key==='level'){s.age='';s.birthYear=null;s.profileGrade='';s.entryYear=null;s.profileAt=null;}
+          else if(key==='route'){s.talkRoute=false;}
+          else if(key==='band'){s.talkBand=false;s.talkStage=false;s.baselineId='';}
+          else if(key==='stage'){s.talkStage=false;s.baselineId='';}
+          else if(key.startsWith('series:')){const i=+key.slice(7);if(i>0)s.completedBooks.splice(i,1);else resetRow(s.completedBooks[0]);s.talkBooksDone=false;s.baselineId='';s.bookFocus='';}
+          else if(key.startsWith('step:')){const row=s.completedBooks[+key.slice(5)];row.step='';row.bookCourseNumber=null;row.bookStatus='';s.talkBooksDone=false;s.baselineId='';s.bookFocus='';}
+          else if(key==='more'){s.talkBooksDone=false;}
+          else if(key==='focus'){s.bookFocus='';s.baselineId='';}
+          redraw();
+        });
+      }
     }
     const tokens = (n,symbol='●') => `<div class="pd-objects" aria-label="${escape(t('수량 그림','Quantity picture','数量图'))}">${Array.from({length:n},()=>`<span class="pd-object${symbol==='●'?' pd-orb':''}" aria-hidden="true">${symbol==='●'?'':art(symbol)}</span>`).join('')}</div>`;
     function question() {

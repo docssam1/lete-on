@@ -2,12 +2,15 @@
 'use strict';
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
 const {chromium}=require('./lib/playwright');
+/* 2026-11-18 진단 기준 고르기의 기본이 대화형이 되었다 — 이 검사는 한 화면 양식(nm_pd_form=1)을 본다. 대화형은 check-placement-talk-browser.js */
+const formCtx=async(br,o)=>{const c=await br.newContext(o);await c.addInitScript(()=>{try{localStorage.setItem('nm_pd_form','1');}catch(e){}});return c;};
+
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_DIAG_ARTIFACTS;
 if(!OUT||!path.isAbsolute(OUT)||(process.platform==='win32'&&!/^[E]:[\\/]/i.test(OUT))||path.resolve(OUT)===path.parse(path.resolve(OUT)).root)throw Error('Set NM_DIAG_ARTIFACTS to a dedicated absolute directory (E: on Windows)');fs.mkdirSync(OUT,{recursive:true});
 const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.woff2':'font/woff2','.webp':'image/webp','.png':'image/png'};
 const server=http.createServer((req,res)=>{const file=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).pipe(res);});
 const seed=lang=>({lang,onboarded:true,name:'진단 검수',view:'placement',avatar:{kind:'boy'},character:{number:3,color:'gold'},coins:321,progress:{'A-02':{introSeen:true,steps:{}}},account:{status:'active'},r0BannerSeen:true,roadSpeed:.85,roadAmount:1.5,roadCadence:'w1',roadManual:false,cloudLinked:false});
-async function context(browser,base,width,lang){const ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await ctx.route('**/*',r=>new URL(r.request().url()).origin===base&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort());await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));},seed(lang));return ctx;}
+async function context(browser,base,width,lang){const ctx=await formCtx(browser,{viewport:{width,height:900},reducedMotion:'reduce'});await ctx.route('**/*',r=>new URL(r.request().url()).origin===base&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort());await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));},seed(lang));return ctx;}
 async function openDiagnostic(page){
  await page.waitForSelector('#pdLevel,#pdStart,#pdSkip,#pdResumeOnline,#townCourseRoad,#ttGame',{timeout:30000});
  // An unfinished online check asks before continuing (app/placement-ui.js).

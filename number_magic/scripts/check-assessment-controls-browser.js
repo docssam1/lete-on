@@ -2,6 +2,9 @@
 // Exercise online answers, explicit paper entry, resume, reset and separate achievement history.
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict');
 const {chromium}=require('./lib/playwright');
+/* 2026-11-18 진단 기준 고르기의 기본이 대화형이 되었다 — 이 검사는 한 화면 양식(nm_pd_form=1)을 본다. 대화형은 check-placement-talk-browser.js */
+const formCtx=async(br,o)=>{const c=await br.newContext(o);await c.addInitScript(()=>{try{localStorage.setItem('nm_pd_form','1');}catch(e){}});return c;};
+
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_ASSESSMENT_ARTIFACTS||'/tmp/nm-assessment-controls-20261023';
 const bridge=`window.__ASSESS={reset:()=>{checkAttendance();S._diag=NM_PLACEMENT_UI.initial();assessmentChooseMethod=false;S.placement={course:'C5',session:1,self:true,baselineId:'c5'};S.achievementChecks=[];S.view='placement';render();},start:()=>startPlacement(),state:()=>JSON.parse(JSON.stringify({run:S._diag,placement:S.placement,checks:S.achievementChecks,age:S.schoolAge,coins:S.coins,progress:S.progress,speed:S.roadSpeed,amount:S.roadAmount}))};`;
 const server=http.createServer((req,res)=>{
@@ -23,7 +26,7 @@ async function answer(p){
  fs.mkdirSync(OUT,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
  const b=await chromium.launch({args:['--disable-webgl','--disable-webgl2']}),report=[];
  try{for(const [width,lang,band,baseline]of [[390,'ko','middle','c29'],[1280,'ko','high','c41'],[390,'en','foundation','f-split9'],[390,'zh','middle','c32']].filter(([w,l])=>!process.env.NM_ASSESSMENT_CASE||process.env.NM_ASSESSMENT_CASE===w+'-'+l)){
-  const c=await b.newContext({viewport:{width,height:850},reducedMotion:'reduce'}),p=await c.newPage(),errors=[];
+  const c=await formCtx(b,{viewport:{width,height:850},reducedMotion:'reduce'}),p=await c.newPage(),errors=[];
   p.on('pageerror',e=>errors.push(e.message));
   await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());
   await c.route('**/functions/v1/nm-review',r=>r.fulfill({json:{scope:'learning_review',username:'assessment-fixture',token:'a'.repeat(64),expiresAt:new Date(Date.now()+7200000).toISOString()}}));

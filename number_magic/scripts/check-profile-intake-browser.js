@@ -2,6 +2,9 @@
 // Real onboarding → diagnosis → calendar transitions. Network writes are blocked.
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict');
 const {chromium}=require('./lib/playwright');
+/* 2026-11-18 진단 기준 고르기의 기본이 대화형이 되었다 — 이 검사는 한 화면 양식(nm_pd_form=1)을 본다. 대화형은 check-placement-talk-browser.js */
+const formCtx=async(br,o)=>{const c=await br.newContext(o);await c.addInitScript(()=>{try{localStorage.setItem('nm_pd_form','1');}catch(e){}});return c;};
+
 const {onboard}=require('./lib/nm-onboard');
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_PROFILE_ARTIFACTS||'/tmp/nm-profile-intake-20261023';
 const bridge=`
@@ -22,7 +25,7 @@ const server=http.createServer((req,res)=>{
  fs.mkdirSync(OUT,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
  const browser=await chromium.launch({args:['--disable-webgl','--disable-webgl2']}),report=[];
  try{for(const [width,lang]of [[390,'ko'],[1280,'ko'],[390,'en'],[390,'zh']]){
-  const c=await browser.newContext({viewport:{width,height:667},reducedMotion:'reduce'}),p=await c.newPage(),errors=[];
+  const c=await formCtx(browser,{viewport:{width,height:667},reducedMotion:'reduce'}),p=await c.newPage(),errors=[];
   p.on('pageerror',e=>errors.push(e.message));
   await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());
   await c.route('**/auth/v1/token?grant_type=password',r=>r.fulfill({json:{access_token:'fixture-token',refresh_token:'fixture-refresh',expires_in:3600,user:{id:'profile-fixture-owner',email:'guardian@example.test'}}}));
