@@ -206,7 +206,7 @@
 .sb-done-print{border:1px solid #c9d6ef;background:#fff;color:#243184}
 @media print{.sb-done{display:none!important}}
 /* ▼ 시안 「고정 두 단」(golden-bell.html?sessionbook=1&layout=grid, 원장 2026-11-18 Typst 시험지 사진 「이렇게 깔끔하게」):
-   판 짜는 방식만 그 사진에서 가져온다 — 쪽마다 같은 두 단 + 가운데 세로줄, 문제 사이를 고르게 벌려 아래까지 채움(풀이 자리),
+   판 짜는 방식만 그 사진에서 가져온다 — 쪽마다 같은 두 단(가운데 세로줄은 원장 2026-11-18 「세로선만 빼」로 뺌), 문제 사이를 고르게 벌려 아래까지 채움(풀이 자리),
    머리 = 권·차시 제목 + 오른쪽 표식, 바닥 = 쪽 번호를 바깥쪽으로. 그림·강조는 우리 풀컬러 그대로. 운영 인쇄(기본)는 바뀌지 않는다. */
 @media print {
   .tb-grid .gold-print-page:after { display: none; }
@@ -223,7 +223,6 @@
     flex: 1 0 auto; grid-auto-rows: auto; align-content: stretch; align-items: stretch; gap: 0 6mm; margin-top: 3mm;
   }
   .tb-grid .compact-exercise-page:not(.tb-answer-page) > .gold-print-exercise-grid > * { position: relative; }
-  .tb-grid .compact-exercise-page:not(.tb-answer-page) > .gold-print-exercise-grid > .tb-col-left::after { content: ""; position: absolute; top: 0; bottom: 0; right: -3mm; border-right: .3mm solid #d6cdb8; }
   .tb-grid .compact-exercise-page:not(.tb-answer-page) > .gold-print-exercise-grid > .gold-print-source-item { align-content: start; border-bottom: 0; padding: 2mm 0 4mm; }
   .tb-grid .compact-exercise-page:not(.tb-answer-page) > .gold-print-exercise-grid > .full-width-exercise { border-top: .3mm solid #d6cdb8; }
   .tb-grid .compact-exercise-page:not(.tb-answer-page) > .gold-print-exercise-grid > .full-width-exercise:first-child { border-top: 0; }

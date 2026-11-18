@@ -99,7 +99,9 @@ function digitalTransformMarkup(visual) {
 
 function digitalRuleBoardMarkup(visual) {
   const numbers = visual.digits.map((value) => `<span>${digitalNumber(value)}<b>${value}</b></span>`).join("");
-  return `<div class="b1-digital-rule-board" role="img" aria-label="디지털 숫자를 ${operationShort(visual.operation)} 전의 모습"><div class="b1-digital-rule-numbers ${visual.grouped ? "grouped" : ""}">${numbers}</div><strong>판 전체를 ${operationShort(visual.operation)}</strong><small>켜진 선과 자리 순서를 함께 움직이세요.</small></div>`;
+  // 그림 밑 설명 줄(「판 전체를 반 바퀴 · 켜진 선과 자리 순서를 함께 움직이세요」)은 뺐다 — 문제 글이 이미 무엇을 할지 말하고,
+  // 0~9 한 자리 판에서는 틀린 말이었고, 종이에서는 움직일 수 없다(원장 2026-11-18 「왜 이런 표현이 있어」).
+  return `<div class="b1-digital-rule-board" role="img" aria-label="디지털 숫자를 ${operationShort(visual.operation)} 전의 모습"><div class="b1-digital-rule-numbers ${visual.grouped ? "grouped" : ""}">${numbers}</div></div>`;
 }
 
 function mirrorCompassMarkup(visual) {
