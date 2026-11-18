@@ -21,7 +21,7 @@ catch(e){ fails.push('data/consult-ladder.js 가 낡았다 — node scripts/buil
 global.window = global;
 require(path.join(ROOT, 'data/consult-ladder.js'));
 const R = require(path.join(ROOT, 'app/consult-rules.js'));
-const LADS = global.NM_CONSULT_LADDER.ladders, LAD = LADS.miracle, idx = id => LAD.findIndex(s => s.id === id);
+const D = global.NM_CONSULT_LADDER, LADS = global.NM_CONSULT_LADDER.ladders, LAD = LADS.miracle, idx = id => LAD.findIndex(s => s.id === id);
 function run(profile, answer, probe){
   const s = R.newState(); Object.assign(s.profile, profile);
   const log = [];
@@ -78,9 +78,33 @@ x = run({ age: 'g1', book: 'wolli' }, () => 'good');
 ok(R.ladderFor({ book: 'wolli' }) === LAD && x.s.asked.includes(5), '규칙: 원리셈은 기적의 계산법 사다리에서 나이로 시작');
 /* 구몬수학 6A~F = 그 단계표로 묻는다(원장 2026-11-17 「A부터 알파벳 순서대로 1학년 2학년」) */
 const kLad = LADS.kumon, kIdx = id => kLad.findIndex(s => s.id === id);
-ok(kLad.map(s => s.id).join() === ['6a','5a','4a','3a','2a','a','b','c','d','e','f'].map(v => 'kumon-' + v).join(), '단계표: 구몬 6A~F 차례');
-x = run({ age: 'g2', book: 'kumon', stepId: 'kumon-b', progress: 'end' }, (k, st) => st <= kIdx('kumon-b') ? 'good' : 'notyet');
-ok(x.s.asked.includes(kIdx('kumon-b')), '규칙: 구몬 B 를 고르면 B 단계부터 물어야 함');
+/* 진도체크표(2026-11-18 원장 사진): 단계 6A~I → 고등 J~O → SM · SP 차례, 단계마다 교재 번호 1부터 끝까지 빈틈 없이 이어진다.
+   끝 번호는 200(SM 은 진도체크표대로 80, SP 는 우리 앱에 있는 1~40까지 — 41~90 이항정리·확률은 없음). SV·SS 는 줄이 없다. */
+ok([...new Set(kLad.map(s => s.group))].join() === '6A,5A,4A,3A,2A,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,SM,SP', '단계표: 구몬 6A~I · J~O · SM · SP 차례');
+const kEnd = { SM: 80, SP: 40 };
+[...new Set(kLad.map(s => s.group))].forEach(g => { const rs = kLad.filter(s => s.group === g).map(s => /(\d+)~(\d+)/.exec(s.title.ko)); ok(+rs[0][1] === 1 && +rs[rs.length - 1][2] === (kEnd[g] || 200) && rs.every((r, i) => !i || +r[1] === +rs[i - 1][2] + 1), '단계표: 구몬 ' + g + ' 교재 번호 빈틈'); });
+/* 고등 단계는 고등 과정(C38~C73)으로 잇는다 */
+kLad.filter(s => /^(J|K|L|M|N|O|SM|SP)$/.test(s.group)).forEach(s => s.skills.forEach(k => ok(/^C(3[89]|[4-6]\d|7[0-3])$/.test(k.course || ''), '단계표: ' + s.id + ' ' + k.ref + ' 고등 과정 아님(' + k.course + ')')));
+/* 회차까지(2026-11-18 「구몬 진도로는 우리 과정도 세분화」): 단계마다 다음 시작 { 과정, 회차 } — 회차는 그 과정 안 */
+['miracle', 'soma', 'dunoro', 'kumon'].forEach(b => LADS[b].forEach(st => { const a = st.after, c = a && D.courses[a.course];
+  ok(!!c && !c.soon && a.session >= 1 && a.session <= c.s.length, '단계표: ' + st.id + ' 다음 시작 회차 이상(' + JSON.stringify(a) + ')'); }));
+/* 건너뛴 앞 회차는 정말 다 아는 것 — refineStart 를 따로 손으로 재현 */
+{ let finer = 0;
+  ['miracle', 'soma', 'dunoro', 'kumon'].forEach(b => LADS[b].forEach((st, i) => { const a = st.after, nx = LADS[b][i + 1];
+    if(a.session <= 1) return; finer++;
+    /* 건너뛴 앞 회차에 다음 단계에서 처음 나오는 계산(이 과정이 처음인 것)이 있으면 안 된다 */
+    const skipped = D.courses[a.course].s.slice(0, a.session - 1).flat();
+    (nx ? nx.skills : []).filter(k => k.course === a.course).forEach(k => ok(!skipped.includes(k.ref) || LADS[b].slice(0, i + 1).some(p => p.skills.some(q => q.ref === k.ref)),
+      '회차: ' + st.id + ' 다음 시작이 새 계산 ' + k.ref + ' 를 건너뜀')); }));
+  ok(finer >= 3, '회차: 과정 안 회차로 잘게 잡힌 단계가 있어야 함(' + finer + ')');
+  const r = R.refineStart(D.courses, 'C36', R.knownMap([]));
+  ok(r.course === 'C36' && r.session === 1, '회차: 아무것도 모르면 그 과정 1회차'); }
+{ const s1 = D.courses.C1.s[0], known = R.knownMap(s1), r = R.refineStart(D.courses, 'C1', known);
+  ok(r.session >= 2 && !D.courses.C1.s[r.session - 1].every(x => s1.includes(x)), '회차: 1회차 내용을 다 알면 2회차 이후부터 (' + r.session + ')'); }
+/* 고등 학습 묶음 과정은 묶음 번호(b)를 단계표에 싣는다 */
+ok(Array.isArray(D.courses.C40.b) && D.courses.C40.b.length === D.courses.C40.s.length, '단계표: 고등 과정 학습 묶음 번호');
+x = run({ age: 'g2', book: 'kumon', stepId: 'kumon-b-101', progress: 'end' }, (k, st) => st <= kIdx('kumon-b-101') ? 'good' : 'notyet');
+ok(x.s.asked.includes(kIdx('kumon-b-101')), '규칙: 구몬 B 101~200 을 고르면 그 구간부터 물어야 함');
 ok(x.r.start === 'C4', '규칙: 구몬 B 끝·곱셈 안 배움 → 구구단 과정 4 (' + x.r.start + ')');
 ['soma', 'dunoro', 'miracle', 'kumon'].forEach(b => LADS[b].forEach(st => ok(st.skills.length > 0 && st.title && st.title.ko, '단계표: ' + st.id + ' 기술·이름 없음')));
 ok(LADS.soma.length === 46 && LADS.dunoro.length === 25 && LAD.length === 17, '단계표: 소마셈 46 · 두뇌로 25 · 기적 17 이어야 함');

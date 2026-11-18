@@ -36,3 +36,8 @@ test('the helper changes no request and keeps no value',()=>{
  assert.match(read('account.html'),/<script src="account-fields\.js\?v=[^"]+"><\/script>/);
  const css=read('account-landing.css');assert.match(css,/\.member-field-error\{/);assert.match(css,/\.member-strength\[data-level="3"\]/);
 });
+
+test('new-number prevalidation is identical to the server without changing existing credentials',async()=>{
+ const {validPin}=await import('../../supabase/functions/roadmap-members/handler.mjs');
+ for(const pin of ['', '1234','12345678','87654321','01234567','99999999','58294716','123456789','12121212','01012345678','20150304','1234567890123','12ab5678'])assert.equal(M.validNewPin(pin),validPin(pin),pin);
+});

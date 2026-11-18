@@ -147,3 +147,34 @@ test('a finished thinking volume supplies no new assignments for that series unt
  const done=window.PlannerParentFlow.build({grade:'pre',age:'5',thinking:{book:'키즈팩토',level:'원리 B',status:'done'}});
  assert.equal(build({answers:done}).items.filter(i=>i.track==='thinking').length,0);
 });
+
+test('unlisted academy materials stay reference-only on every study axis and preserve their exact input',()=>{
+ const F=window.PlannerParentFlow;
+ for(const axis of ['school','deep','thinking','calc'])for(const name of ['CMS 자체 교재','씨매스 자체 교재','우리반 비밀노트']){
+  const input={grade:'3',[axis]:{stage:'e:4-1',book:name,source:'academy',range:'1~10쪽',level:'2권'}};
+  const answers=F.build(input),before=JSON.stringify(answers);
+  assert.equal(answers.parentFlow.academyReports[axis].book,name);
+  const result=adapter.build({answers,fields,weekStart:start,today:start});
+  assert.equal(result.items.some(x=>x.bookName===name),false);
+  assert.equal(result.manualBooks.some(x=>x.title===name),false);
+  assert.equal(JSON.stringify(answers),before);
+  assert.equal(F.inputModel(answers).sources[axis],'academy');
+ }
+});
+test('explicit personal custom books remain usable while unrecognized academy source survives a roundtrip',()=>{
+ const F=window.PlannerParentFlow, input={grade:'3',thinking:{book:'수학 탐험 노트',source:'personal',range:'1~10쪽'}};
+ const a=F.build(input), result=adapter.build({answers:a,fields,weekStart:start,today:start});assert.ok(result.items.some(x=>x.bookName==='수학 탐험 노트'));
+ const b=F.build({...input,thinking:{...input.thinking,source:'academy'}},a);
+ assert.equal(b.parentFlow.actualBooks.thinking,'');
+ assert.equal(F.inputModel(b).thinking.range,'1~10쪽');
+ const c=F.build(F.inputModel(b),b);assert.equal(c.parentFlow.actualBooks.thinking,'');
+ assert.equal(c.parentFlow.academyReports.thinking.book,'수학 탐험 노트');
+});
+test('explicit personal choice wins over a title heuristic while legacy unknown academy names remain safe',()=>{
+ const F=window.PlannerParentFlow;
+ for(const source of ['personal',undefined]){
+  const answers=F.build({grade:'3',thinking:{book:'CMS 자체 교재',source,range:'1~10쪽'}});
+  const result=adapter.build({answers,fields,weekStart:start,today:start});
+  assert.equal(result.items.some(x=>x.bookName==='CMS 자체 교재'),source==='personal');
+ }
+});

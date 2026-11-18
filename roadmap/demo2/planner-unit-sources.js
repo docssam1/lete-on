@@ -37,7 +37,7 @@
     for(const [role,track]of [['school','curriculum'],['deep','curriculum'],['thinking','thinking'],['calc','arithmetic']]){
       const title=parent?.actualBooks?.[role];
       const unknown=role==='thinking'?a.thinkingExperience==='unknown':role==='calc'?a.calc==='unknown':a[role+'Book']==='unknown';
-      if(!title||!unknown||g.PlannerParentFlow?.isAcademyBook(title)||parent.statuses?.[role]!=='progress')continue;
+      if(!title||!unknown||parent.bookSources?.[role]==='academy'||parent.bookSources?.[role]!=='personal'&&g.PlannerParentFlow?.isAcademyBook(title)||parent.statuses?.[role]!=='progress')continue;
       result.push({track,name:(role==='deep'?'심화·활용 · ':'')+title,parentRole:role,direct:true});
     }
     const detail=g.PlannerParentFlow?.thinkingStudy(a);
@@ -97,7 +97,7 @@
     const items = [], notices = [], manualBooks = [];
     const mastered = new Set(ctx.mastered || []);
     for (const book of booksFor(ctx.answers, ctx.fields, ctx.week, ctx.actual)) {
-      if(g.PlannerParentFlow?.isAcademyBook(book.name))continue;
+      if(ctx.answers.parentFlow?.bookSources?.[book.parentRole]!=='personal'&&g.PlannerParentFlow?.isAcademyBook(book.name))continue;
       let candidates = [];
       if (book.track === 'curriculum'&&!book.direct) candidates = schoolCandidates(book, ctx);
       if (book.track === 'arithmetic') {

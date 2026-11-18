@@ -75,6 +75,13 @@ function courseTitle(key){
   const c = key && D.courses[key];
   return c ? t('과정 ', 'Course ', '课程') + c.n + ' · ' + L(c.title) : '';
 }
+/* 과정 안 어디부터(2026-11-18) — 고등 학습 묶음 과정은 「학습 묶음 N」, 나머지는 「N회차」 */
+function sessionTitle(key, session){
+  const c = key && D.courses[key];
+  if(!c || !session) return '';
+  const b = c.b ? c.b[session - 1] : null;
+  return b ? t('학습 묶음 ' + b + '부터', 'from study bundle ' + b, '从学习组' + b + '开始') : t(session + '회차부터', 'from lesson ' + session, '从第' + session + '课次开始');
+}
 function stepTopic(st){
   if(lang === 'ko' && st.topic) return st.topic;
   const names = []; st.skills.forEach(k => { const n = L(k.name); if(!names.includes(n)) names.push(n); });
@@ -87,13 +94,16 @@ function stepById(p){ return p && p.stepId ? (R.ladderFor(p).find(s => s.id === 
 const VOLUME_GROUPS = {
   miracle: [['elem-2021', '초등 (2021판)', 'Elementary (2021 edition)', '小学（2021版）'], ['pre-2023', '예비초등 (2023판)', 'Pre-school (2023 edition)', '学前（2023版）']],
   soma: ['P', 'K', 'A', 'B', 'C', 'D'].map(g => [g, '소마셈 ' + g, 'Soma-sem ' + g, 'Soma-sem ' + g]),
-  kumon: [['pre', '유아 단계 6A~2A', 'Pre-K levels 6A–2A', '幼儿阶段6A～2A'], ['elem', '초등 단계 A~F (A = 1학년 기준)', 'Elementary levels A–F (A ≈ grade 1)', '小学阶段A～F（A≈1年级）']],
+  kumon: [['6A', '6A 단계 (유아 기준)', 'Level 6A (Pre-K)', '6A阶段（幼儿）'], ['5A', '5A 단계 (유아 기준)', 'Level 5A (Pre-K)', '5A阶段（幼儿）'], ['4A', '4A 단계 (유아 기준)', 'Level 4A (Pre-K)', '4A阶段（幼儿）'], ['3A', '3A 단계 (유아 기준)', 'Level 3A (Pre-K)', '3A阶段（幼儿）'], ['2A', '2A 단계 (유아 기준)', 'Level 2A (Pre-K)', '2A阶段（幼儿）'], ['A', 'A 단계 (초1 기준)', 'Level A (Gr 1)', 'A阶段（小1）'], ['B', 'B 단계 (초2 기준)', 'Level B (Gr 2)', 'B阶段（小2）'], ['C', 'C 단계 (초3 기준)', 'Level C (Gr 3)', 'C阶段（小3）'], ['D', 'D 단계 (초4 기준)', 'Level D (Gr 4)', 'D阶段（小4）'], ['E', 'E 단계 (초5 기준)', 'Level E (Gr 5)', 'E阶段（小5）'], ['F', 'F 단계 (초6 기준)', 'Level F (Gr 6)', 'F阶段（小6）'], ['G', 'G 단계 (중1 기준)', 'Level G (Gr 7)', 'G阶段（初1）'], ['H', 'H 단계 (중2 기준)', 'Level H (Gr 8)', 'H阶段（初2）'], ['I', 'I 단계 (중3 기준)', 'Level I (Gr 9)', 'I阶段（初3）'],
+    ['J', 'J 단계 (고등)', 'Level J (high school)', 'J阶段（高中）'], ['K', 'K 단계 (고등)', 'Level K (high school)', 'K阶段（高中）'], ['L', 'L 단계 (고등)', 'Level L (high school)', 'L阶段（高中）'],
+    ['M', 'M 단계 (고등)', 'Level M (high school)', 'M阶段（高中）'], ['N', 'N 단계 (고등)', 'Level N (high school)', 'N阶段（高中）'], ['O', 'O 단계 (고등)', 'Level O (high school)', 'O阶段（高中）'],
+    ['SM', 'SM 단계 (행렬·함수)', 'Level SM (matrices, functions)', 'SM阶段（矩阵·函数）'], ['SP', 'SP 단계 (순열·조합)', 'Level SP (permutations, combinations)', 'SP阶段（排列·组合）']],
   dunoro: [['level-1', 'Level 1 · 과정 1~10', 'Level 1 · courses 1–10', 'Level 1 · 课程1～10'], ['level-2', 'Level 2 · 과정 11~16', 'Level 2 · courses 11–16', 'Level 2 · 课程11～16'], ['level-3', 'Level 3 · 과정 17~25', 'Level 3 · courses 17–25', 'Level 3 · 课程17～25']]
 };
 const VOLUME_NOTE = {
   miracle: ['다른 판(구판)이면 주제가 가장 비슷한 권을 골라 주세요.', 'If you have another edition, pick the volume with the closest topic.', '如果是其他版本，请选主题最接近的一册。'],
   soma: ['2019년 발행본 기준이에요. 다른 발행본이면 주제가 가장 비슷한 권을 골라 주세요.', 'Based on the 2019 publication. For another printing, pick the volume with the closest topic.', '以2019年出版为准。其他版本请选主题最接近的一册。'],
-  kumon: ['구몬 기준 학년은 유아 2A · 초1 A · 초2 B · 초3 C예요. 지금 하는 단계를 골라 주세요. 문자식·방정식 단계(G 이상)를 하고 있으면 연산 진단 평가가 더 정확해요.', 'Kumon’s grade standard: Pre-K 2A · Gr 1 A · Gr 2 B · Gr 3 C. Pick the level your child is on now. From level G (equations and algebra) the arithmetic check is more accurate.', '公文的年级标准：幼儿2A · 小1 A · 小2 B · 小3 C。请选择目前在做的阶段。若已在G以上（文字式·方程），运算测评更准确。'],
+  kumon: ['구몬 진도체크표의 단계와 교재 번호로 골라 주세요(유아 2A · 초1 A · 초2 B · 초3 C 기준). 고등 J~O · SM · SP 1~40은 우리 고등 과정에 맞춰 두었어요. SV(벡터) · SP 41~90(이항정리·확률) · SS(통계)는 수의 마법에 없는 내용이에요.', 'Pick the Kumon level and worksheet numbers from the progress chart (Pre-K 2A · Gr 1 A · Gr 2 B · Gr 3 C). High-school J–O, SM and SP 1–40 are matched to our high-school courses. SV (vectors), SP 41–90 (binomial theorem, probability) and SS (statistics) are not in Numbers of Magic.', '请按公文进度表选择阶段和教材编号（幼儿2A · 小1 A · 小2 B · 小3 C）。高中J～O、SM、SP 1～40已对应本应用的高中课程。SV（向量）、SP 41～90（二项式定理·概率）、SS（统计）不在数的魔法范围内。'],
   dunoro: ['교재 표지의 과정 번호를 골라 주세요.', 'Pick the course number printed on the book.', '请选择教材封面上的课程编号。']
 };
 
@@ -215,7 +225,7 @@ function summaryText(r){
   lines.push(t('나이', 'Age', '年龄') + ': ' + ageLabel(p.age) + (p.book ? ' · ' + t('교재', 'Book', '教材') + ': ' + bookLabel(p.book) : '') +
     (mappedBook(p.book) && stepById(p) ? ' ' + volumeTitle(stepById(p)) + (p.progress ? ' (' + tr3(PROGRESS.find(x => x[0] === p.progress).slice(1)) + ')' : '') : ''));
   if(r.middle){ lines.push(t('중학생 이상 — 연산 진단 평가로 확인 예정', 'Middle school or older — to be checked with the diagnostic test', '初中及以上——将用计算诊断测评确认')); return lines.join('\n'); }
-  if(r.start) lines.push(t('추천 시작', 'Suggested start', '推荐开始') + ': ' + courseTitle(r.start));
+  if(r.start) lines.push(t('추천 시작', 'Suggested start', '推荐开始') + ': ' + courseTitle(r.start) + ' · ' + sessionTitle(r.start, r.session));
   const add = (label, arr) => { if(arr.length) lines.push(label + ': ' + arr.map(skillTitle).join(', ')); };
   add(t('잘해요', 'Confident', '熟练'), r.good);
   add(t('헷갈려요', 'Mixed up', '容易错'), r.shaky);
@@ -236,6 +246,7 @@ function viewResult(){
   }
   const pace = paceText(r);
   return '<div class="start"><p class="kicker">' + t('추천 시작 과정', 'Suggested starting course', '推荐起始课程') + '</p><h2>' + esc(courseTitle(r.start) || t('더 확인이 필요해요', 'Needs a closer look', '需要进一步确认')) + '</h2>' +
+    (r.start ? '<p class="at">' + esc(sessionTitle(r.start, r.session)) + (r.session > 1 ? ' · ' + esc(t('앞 회차는 이미 잘하는 내용이에요.', 'earlier lessons are already solid.', '前面的课次已经熟练。')) : '') + '</p>' : '') +
     '<p>' + esc(reasonText(r)) + '</p>' + (pace ? '<p>' + esc(pace) + '</p>' : '') + '</div>' +
     '<div class="card"><ul class="list">' +
       itemList(r.shaky, 't-shaky', t('먼저 다질 것', 'Firm up first', '先巩固')) +
