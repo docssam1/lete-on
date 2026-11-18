@@ -183,9 +183,7 @@
 .tb-divider-body{align-self:center;margin-bottom:28mm;padding:0 14mm;border-left:2.4mm solid #16734b}
 .tb-divider-kick{display:block;color:#16734b;font-size:13pt;font-weight:900;letter-spacing:.18em}
 .tb-divider h1{margin:3mm 0 4mm;font-size:46pt;line-height:1.05;letter-spacing:0}
-.tb-divider-sub{margin:0 0 8mm;color:#566274;font-size:12pt;font-weight:800}
-.tb-divider-notes{margin:0 0 12mm;padding:0;list-style:none;font-size:11.5pt;font-weight:700;line-height:1.9}
-.tb-divider-notes li::before{content:"";display:inline-block;width:2.4mm;height:2.4mm;margin-right:3mm;border-radius:50%;background:#16734b;vertical-align:.4mm}
+.tb-divider-sub{margin:0 0 14mm;color:#566274;font-size:12pt;font-weight:800}
 .tb-divider-meta{display:grid;grid-template-columns:repeat(2,minmax(0,62mm));gap:10mm;margin:0}
 .tb-divider-meta div{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:3mm}
 .tb-divider-meta dt{color:#566274;font-size:9pt;font-weight:800}
