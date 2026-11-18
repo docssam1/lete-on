@@ -4,6 +4,11 @@
    ★ 유닛 화면은 스크롤 없이 한 화면에 맞춤(height:100dvh 고정)
    ★ 숫자패드 ✓ 줄까지 항상 화면 안에 들어오도록 축소
    ============================================================ */
+/* 글꼴(2026-11-18, 원장 「폰트 좀 잘 구현해봐」): Pretendard를 CDN(굵기마다 따로 큰 파일, 끊기면 기기 기본 글꼴) 대신
+   저장소의 가변 글꼴 한 파일로 — 모든 굵기(650 같은 중간 굵기도)가 한 파일, 오프라인 앱에서도 같은 글꼴. 기기에 깔려 있으면 그것부터. */
+@font-face{font-family:'Pretendard';font-style:normal;font-weight:45 920;font-display:swap;
+  src:local('Pretendard Variable'),url('../assets/fonts/pretendard-var.woff2') format('woff2-variations'),url('../assets/fonts/pretendard-var.woff2') format('woff2')}
+
 :root{
   --blue:#16417C;--blue-deep:#0E2C57;--gold:#EAC996;--gold-deep:#C9A063;--gold-bright:#F5D98B;
   --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
@@ -28,7 +33,7 @@ html[data-nm-band="young"]{--nm-fs-body:17px;--nm-fs-num:1.35em;--nm-btn-h:52px;
 html[data-nm-band="senior"]{--nm-fs-body:14.5px;--nm-fs-num:1em;--nm-btn-h:42px;--nm-lh:1.6}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:'Pretendard',sans-serif;color:var(--ink);
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-synthesis:none;color:var(--ink);
   background:radial-gradient(900px 500px at 30% -10%,#eef3fb,transparent 60%),var(--paper);
   overflow:hidden;
   /* isolation — 아래 ::before(사진)가 body 자신의 배경 위에 그려지게 한다.
@@ -4079,69 +4084,40 @@ body.nm-review-mode .nm-title3d{top:48px}
 .nm-town-illustrated #townFountain{display:none}
 .nm-town-tool-list a.nm-town-credits{font-size:12px;color:#5a6b80;text-decoration:none;justify-content:center}
 /* 처음 시작 고르기(2026-11-17, screenStartChoice) */
-/* 시작 고르기(2026-11-18 원장 「더 디자인 해」) — 흐린 마을 위 한 장의 종이. 남색 = 추천 길, 금색 = 교재 길. */
-.nm-sc{width:100%;max-width:620px;margin:0 auto;padding:26px 16px 48px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box;min-width:0}
-.nm-sc-head{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:end;margin-bottom:4px}
-.nm-sc-numi{width:84px;height:84px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 50% 38%,#fff 0 55%,#E9F0FA 56% 100%);box-shadow:var(--shadow-card);animation:nmScFloat 3.6s ease-in-out infinite}
-.nm-sc-numi>*{max-width:72px;max-height:72px}
-.nm-sc-bubble{position:relative;background:rgba(255,255,255,.94);border-radius:22px 22px 22px 6px;padding:14px 18px 15px;box-shadow:0 14px 34px -22px rgba(14,44,87,.55);backdrop-filter:blur(6px)}
-.nm-sc-hi{margin:0;font-family:var(--font-game);font-size:15px;color:var(--gold-deep);letter-spacing:.01em}
-.nm-sc-h{margin:2px 0 4px;font-family:var(--font-game);font-weight:400;font-size:clamp(24px,5.4vw,30px);line-height:1.2;color:var(--blue-deep);text-wrap:balance}
-.nm-sc-sub{margin:0;color:var(--sub);font-weight:600;font-size:13.5px;line-height:1.5}
-.nm-sc-card{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:18px 16px 18px 18px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 12px 30px -22px rgba(14,44,87,.55);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;min-width:0}
-.nm-sc-card:hover{transform:translateY(-2px);box-shadow:0 18px 36px -22px rgba(14,44,87,.6);border-color:var(--gold-deep)}
-.nm-sc-card:active{transform:translateY(0)}
-.nm-sc-card.main{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-deep) 100%);border-color:transparent;color:#fff}
-.nm-sc-card.main:hover{border-color:var(--gold)}
-.nm-sc-ico{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.12);color:var(--gold);box-shadow:inset 0 0 0 1.5px rgba(234,201,150,.55)}
-.nm-sc-ico svg{width:32px;height:32px}
-.nm-sc-ico.book{background:#FBF3E4;color:var(--wood);box-shadow:inset 0 0 0 1.5px #EBD7B3}
-.nm-sc-body{display:flex;flex-direction:column;gap:5px;min-width:0}
-.nm-sc-body b{font-family:var(--font-game);font-weight:400;font-size:20px;line-height:1.25}
-.nm-sc-desc{font-size:14px;line-height:1.55;font-weight:600;color:var(--sub)}
-.nm-sc-card.main .nm-sc-desc{color:#D5E0F1}
-.nm-sc-tag{align-self:flex-start;font-size:11.5px;font-weight:800;letter-spacing:.06em;color:var(--blue-deep);background:var(--gold);border-radius:999px;padding:2px 9px}
-.nm-sc-chips{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0;padding:0}
-.nm-sc-chips li{font-size:12px;font-weight:700;line-height:1;padding:6px 9px;border-radius:999px;background:#F3F1EC;color:var(--sub)}
-.nm-sc-card.main .nm-sc-chips li{background:rgba(255,255,255,.12);color:#EEF3FB}
-.nm-sc-arrow{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#F3F1EC;color:var(--blue);transition:transform .2s ease}
-.nm-sc-arrow svg{width:18px;height:18px}
-.nm-sc-card.main .nm-sc-arrow{background:var(--gold);color:var(--blue-deep)}
-.nm-sc-card[aria-expanded="true"] .nm-sc-arrow{transform:rotate(90deg)}
-.nm-sc-card:focus-visible,.nm-sc-later:focus-visible,.nm-sc select:focus-visible,.nm-sc-go:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-/* 교재 길 — 펼치면 카드와 고르기 칸이 한 덩어리 */
-.nm-sc-group{display:flex;flex-direction:column;min-width:0}
-.nm-sc-group.open .nm-sc-card{border-color:var(--gold-deep);border-bottom-left-radius:0;border-bottom-right-radius:0;box-shadow:none;transform:none}
-.nm-sc-book{background:#FFFDF8;border:1.5px solid var(--gold-deep);border-top:1px dashed #E2CBA4;border-radius:0 0 22px 22px;padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px;min-width:0;box-shadow:0 18px 34px -26px rgba(14,44,87,.5)}
-.nm-sc-l{display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:800;color:var(--ink);min-width:0}
-.nm-sc-l{position:relative;padding-left:34px}
-.nm-sc-n{position:absolute;left:0;top:-1px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-game);font-size:13px;background:#F1E6D1;color:var(--wood-lo)}
-.nm-sc-n.done{background:var(--blue);color:#fff}
-.nm-sc select{width:100%;min-width:0;min-height:48px;border-radius:14px;border:1.5px solid #D9D3C7;padding:0 12px;font:inherit;font-size:15px;font-weight:600;color:var(--ink);background:#fff;text-overflow:ellipsis}
-.nm-sc-result{display:flex;flex-direction:column;gap:10px;margin-left:34px}
-.nm-sc-ticket{position:relative;background:var(--blue-deep);color:#fff;border-radius:18px;padding:16px 18px 16px;overflow:hidden}
-.nm-sc-ticket::after{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(234,201,150,.28),transparent 70%)}
-.nm-sc-kick{display:block;font-size:12px;font-weight:800;letter-spacing:.05em;color:var(--gold)}
-.nm-sc-course{display:flex;flex-direction:column;gap:2px;margin:6px 0 10px}
-.nm-sc-cno{font-family:var(--font-game);font-weight:400;font-size:28px;line-height:1.1;color:#fff}
-.nm-sc-course strong{font-size:15.5px;font-weight:700;color:#DCE6F5}
-.nm-sc-at{display:inline-block;font-size:13.5px;font-weight:800;color:var(--blue-deep);background:var(--gold);border-radius:999px;padding:5px 12px}
-.nm-sc-why{margin:0;font-size:13px;line-height:1.55;color:var(--sub);font-weight:600}
-.nm-sc-go{width:100%}
-.nm-sc-note{margin:0;font-size:12.5px;color:#8a92a3;line-height:1.55}
-.nm-sc-later{align-self:center;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:999px;color:var(--sub);font:inherit;font-weight:700;font-size:14px;padding:10px 18px;cursor:pointer;margin-top:4px}
-.nm-sc-later svg{width:18px;height:18px}
-.nm-sc-later:hover{color:var(--blue);border-color:var(--gold-deep)}
-@keyframes nmScFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-@media (prefers-reduced-motion:reduce){.nm-sc-numi{animation:none}.nm-sc-card,.nm-sc-arrow{transition:none}}
-@media (max-width:480px){
-  .nm-sc{padding:18px 14px 40px;gap:12px}
-  .nm-sc-head{grid-template-columns:64px 1fr;gap:10px}
-  .nm-sc-numi{width:64px;height:64px}.nm-sc-numi>*{max-width:54px;max-height:54px}
-  .nm-sc-card{grid-template-columns:auto 1fr;gap:12px;padding:16px 14px}
-  .nm-sc-arrow{display:none}
-  .nm-sc-ico{width:48px;height:48px;border-radius:15px}.nm-sc-ico svg{width:26px;height:26px}
-  .nm-sc-ico{align-self:start}
-  .nm-sc-body b{font-size:18px}
-  .nm-sc-result{margin-left:0}
-}
+/* 시작 고르기(2026-11-18) — 창 하나에 한 질문. 고르면 다음 질문, 「이전 질문」으로 되돌림.
+   원장 「촌스러워」(둥근 게임 글꼴 질문·금색 알약·테두리 상자 줄) → 조용하게: 글꼴은 Pretendard 하나, 질문은 굵기·크기·자간으로만,
+   선택지는 테두리 없는 옅은 판, 강조는 남색 하나(시작 단추). 금색·게임 글꼴·알약을 쓰지 않는다.
+   색: 글 #14213A · 보조 #667085 · 판 #F2F4F7 · 판 눌림 #E7EBF1 · 남색 #16417C. 한국어 줄 바꿈 keep-all. */
+.nm-sc{width:100%;max-width:520px;margin:0 auto;padding:36px 16px 48px;box-sizing:border-box;min-width:0;word-break:keep-all;overflow-wrap:anywhere}
+.nm-sc-card1{background:#fff;border-radius:28px;padding:22px 24px 26px;box-shadow:0 24px 60px -32px rgba(20,33,58,.45);display:flex;flex-direction:column;gap:18px}
+.nm-sc-top{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:28px}
+.nm-sc-back{border:0;background:none;color:#667085;font:inherit;font-weight:600;font-size:14px;padding:4px 0;cursor:pointer}
+.nm-sc-back:hover{color:#14213A}
+.nm-sc-prog{display:flex;gap:3px;width:84px}
+.nm-sc-prog i{flex:1;height:3px;border-radius:2px;background:#E4E7EC}
+.nm-sc-prog i.on{background:#16417C}
+.nm-sc-q{margin:4px 0 0;font-family:'Pretendard',sans-serif;font-weight:700;font-size:clamp(22px,5.6vw,27px);line-height:1.36;letter-spacing:-.025em;color:#14213A;text-wrap:balance}
+.nm-sc-note{margin:-8px 0 2px;font-size:14.5px;line-height:1.6;color:#667085;letter-spacing:-.01em;max-width:42ch}
+.nm-sc-picks{display:grid;grid-template-columns:1fr;gap:8px}
+.nm-sc-picks.long{max-height:min(54vh,470px);overflow-y:auto;padding:0 2px;margin:0 -2px}
+.nm-sc-picks button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:60px;padding:15px 18px;border:0;border-radius:16px;background:#F2F4F7;color:#14213A;font:inherit;text-align:left;cursor:pointer;transition:background-color .12s}
+.nm-sc-picks button b{font-weight:650;font-size:16.5px;line-height:1.35;letter-spacing:-.015em}
+.nm-sc-picks button small{font-size:13.5px;line-height:1.45;color:#667085;font-weight:500}
+.nm-sc-picks button:hover{background:#EAEDF2}
+.nm-sc-picks button:active{background:#DFE4EB}
+.nm-sc-picks .nm-sc-start{align-items:center;justify-content:center;background:#16417C;color:#fff;font-weight:700;font-size:16.5px}
+.nm-sc-picks .nm-sc-start:hover{background:#0F3263}
+.nm-sc-picks #scDiagInstead{align-items:center;justify-content:center;background:none;color:#667085;font-weight:600;font-size:15px;min-height:48px}
+.nm-sc-picks #scDiagInstead:hover{color:#14213A;background:#F2F4F7}
+.nm-sc-top[hidden]{display:none}
+.nm-sc-place{display:flex;flex-direction:column;gap:6px;padding:4px 0 8px;border-bottom:1px solid #E4E7EC}
+.nm-sc-place small{font-size:13px;font-weight:600;color:#667085;letter-spacing:.01em}
+.nm-sc-place b{font-weight:700;font-size:clamp(20px,5vw,23px);line-height:1.35;letter-spacing:-.02em;color:#16417C}
+.nm-sc-place span{font-size:15px;font-weight:600;color:#14213A}
+.nm-sc-later{display:block;margin:18px auto 0;background:none;border:0;color:#667085;font:inherit;font-weight:600;font-size:14px;padding:10px;cursor:pointer}
+.nm-sc-later:hover{color:#14213A}
+.nm-sc-picks button:focus-visible,.nm-sc-back:focus-visible,.nm-sc-later:focus-visible{outline:2px solid #16417C;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.nm-sc-picks button{transition:none}}
+@media (max-width:480px){.nm-sc{padding:20px 12px 40px}.nm-sc-card1{padding:20px 18px 22px;border-radius:24px}}
+
+
