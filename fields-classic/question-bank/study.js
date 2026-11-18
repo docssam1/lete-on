@@ -645,8 +645,7 @@ function slideHead(slide) {
   const title = slideTitle(slide);
   // 게임은 건너뛸 수 있다(원장 2026-10-29 「게임은 넘어갈 수 있고」) — 이어진 게임 장을 다 넘어 워밍업으로
   // 판서는 「다음 장면」으로 한 장면씩 넘기고, 통째로 넘기려면 「건너뛰기」(원장 2026-11-11 「건너뛰기로 이름 바꿔」)
-  const skip = slide.kind === "game" ? `<button type="button" class="sd-skip" data-act="skip-games">게임 건너뛰기 ›</button>`
-    : slide.kind === "concept" && slide.native?.board ? `<button type="button" class="sd-skip" data-act="skip-board">건너뛰기 ›</button>` : "";
+  const skip = slide.kind === "concept" && slide.native?.board ? `<button type="button" class="sd-skip" data-act="skip-board">건너뛰기 ›</button>` : "";
   const print = WORK_KINDS.includes(slide.kind) ? `<a class="sd-skip sd-print" href="${esc(sheetUrl(slide, { print: true }))}" target="_blank" rel="noopener">인쇄해서 풀기</a>` : "";
   return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>${print}`;
 }
@@ -753,9 +752,9 @@ function show({ atEnd = false } = {}) {
   $("prevBtn").disabled = index === 0;
   $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
-  // 게임 장에서는 게임 안의 「다음 문제」 하나만(원장 2026-11-01 「다음 버튼이 2개라 불편해」) — 다 하면 다시 보인다. 그만두려면 머리줄 「게임 건너뛰기」
-  // 체험(2과정 직접 해 보기)은 점수가 없어 끝이 없다 — 「다음」을 처음부터 보인다
-  $("nextBtn").hidden = slide.kind === "game" && !gamesDone.has(index) && !slide.native?.tool;
+  // 게임 장도 아래 단추는 늘 보인다(원장 2026-11-18 「공부하기로 화면이 안 넘어가는 것 같아」 — 게임을 다 할 때까지 「다음」을 숨겨 두어
+  // 머리줄의 작은 「게임 건너뛰기」를 못 찾으면 멈춘 것처럼 보였다). 게임을 마치기 전에는 「게임 건너뛰기 →」, 마치면 「다음 →」(setNextLabel)
+  $("nextBtn").hidden = false;
   sheetAt = null;
   setNextLabel();
   $("count").textContent = `${index + 1} / ${slides.length}`;
@@ -785,14 +784,15 @@ function setNextLabel() {
   const board = boardSteps();
   $("prevBtn").textContent = board?.hasPrev() ? "‹ 앞 장면" : "‹ 뒤로";
   const grade = !classMode && sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
-  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? (classMode ? "수업 시작 →" : "출발하기 →") : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : board?.hasNext() ? "다음 장면 →" : "다음 →";
+  $("nextBtn").querySelector(".sd-next-text").textContent = gameOpen() ? "게임 건너뛰기 →" : slide?.kind === "cover" ? (classMode ? "수업 시작 →" : "출발하기 →") : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : board?.hasNext() ? "다음 장면 →" : "다음 →";
 }
 function sheetGo(go) { document.getElementById("workFrame")?.contentWindow?.postMessage({ type: "fc-study", cmd: "oneup", go }, location.origin); }
 const gamesDone = new Set();
-function gameFinished() { gamesDone.add(index); $("nextBtn").hidden = false; }
-function next() {
+function gameFinished() { gamesDone.add(index); setNextLabel(); }
+const gameOpen = () => slides[index]?.kind === "game" && !gamesDone.has(index) && !slides[index].native?.tool;   // 체험(2과정 직접 해 보기)은 끝이 없어 늘 「다음」
+function next(event) {
   cancelAuto();
-  if (slides[index]?.kind === "game" && !gamesDone.has(index) && !slides[index].native?.tool) return;   // 키보드 → 도 게임 중에는 게임 안에서(체험은 끝이 없어 넘어간다)
+  if (gameOpen()) { if (event?.type === "click") skipGames(); return; }   // 키보드 → 는 게임 안에서 쓰므로 넘기지 않는다 — 단추를 눌렀을 때만 이어진 게임을 넘어 워밍업으로
   if (!$("sheet").hidden) { closeSheet(); return; }
   if (sheetHasNext()) { sheetGo("next"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("next"); return; }
