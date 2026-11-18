@@ -5124,7 +5124,8 @@ function trainCellPlan(p, idx, n){
     fill:cpFill(x.orig != null ? x.orig : x.tex, x.blank) }));
   let ans = true;
   const last = src[src.length - 1];
-  if(!bare && /\\square/.test(raw)) ans = false;               /* 문제 식 안에 이미 답 칸(몫 ⋯ 나머지·AD9 두 식) */
+  /* 문제 식 안에 이미 답 칸(몫 ⋯ 나머지·AD9 두 식·0.3 + 0.□ = 1) — 단계 없는 칸(bare)도 같다(2026-11-18, 홀로 선 「= □」 줄을 뺌) */
+  if(/\\square/.test(raw)) ans = false;
   else if(last && /\\square/.test(last.tex) && 'blank' in last
     && (JSON.stringify(last.blank) === JSON.stringify(p.answer) || (!Array.isArray(last.blank) && typeof p.answer === 'number' && cpNear(+last.blank, p.answer)))) ans = false;
   return { raw, bare, steps, ans, value:V, from: fromSteps ? 'steps' : 'solution' };
@@ -5167,7 +5168,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       const askP = askObj ? pickL(askObj) : '';
       /* 원래 식과 같은 값인 줄만 "=" 로 잇는다 — 곁 계산은 화살표(trainStepChains, 채운 줄로 판정) */
       const Vp = cpEval(String(P.expr).split('=').pop());
-      const lines = P.lines.map((t, li) =>
+      /* 원래 식을 그대로 되풀이하는 줄(「= 0.2 + 0.8 = 1」)은 뺀다(2026-11-18, 원장 「어색한 식」) — 빈칸이 든 줄은 늘 남긴다 */
+      const sameAsExpr = li => !/\\square/.test(String(P.lines[li])) && cpSameTex(P.chain[li], P.expr);
+      const lines = P.lines.map((t, li) => sameAsExpr(li) ? '' :
         `<div class="nm-w2-train-step">${trainStepChains({ tex:P.chain[li] }, Vp) ? TRAIN_EQUAL : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(String(t)))}"></span></div>`).join('');
       return `<div class="${cls} nm-w2-item-train nm-w2-item-process" data-process="${P.form}"${slotAttrP}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askP ? `<div class="nm-print-ask nm-w2-process-ask">${esc(askP)}</div>` : ''}
   <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(trainDisplay(P.expr))}"></span></div>
@@ -6532,6 +6535,8 @@ function applyPartialBlanks(problems, layoutType, item){
    찾고, 회차 전체에 쓸 줄이 없으면 손대지 않고 NM_PROCESS_LOG 에 남긴다(가짜 빈칸 금지).
    Training Course(layout.type === 'train')에서만 부른다.
    ============================================================ */
+/* 두 식이 글자로 같은지(띄어쓰기·\displaystyle 무시) */
+function cpSameTex(a, b){ const n = t => String(t || '').replace(/\\displaystyle|\s+/g, ''); return n(a) === n(b); }
 function cpCfg(){ return (window.NM_CREATIVE_PROCESS && window.NM_CREATIVE_PROCESS.cfg) || null; }
 function cpOf(threadId, level){
   return window.NM_CREATIVE_PROCESS ? window.NM_CREATIVE_PROCESS.of(threadId, level)
