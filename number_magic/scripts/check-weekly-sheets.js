@@ -72,6 +72,13 @@ server.listen(0, async () => {
       });
       await tag.evaluate(e => e.remove()); await page.emulateMedia({ media:'screen' });
       if(over.length) bad.push(`${c} k${k}: 지면 넘침 ${over.slice(0, 4).join(', ')}${over.length > 4 ? ` 외 ${over.length - 4}` : ''}`);
+      /* 빈 장(2026-11-18) — 머리(이름·제목)와 쪽 번호만 있고 문항·개념·예시가 하나도 없는 장. 문장제만인 회차의 첫 장이
+         드릴 머리 높이로 재여 문항 0줄로 찍힌 적이 있다(과정 16). */
+      const empty = await page.evaluate(() => [...document.querySelectorAll('.nm-print-sheet .nm-w2-page')].map((p, i) => {
+        const body = [...p.children].filter(e => !/nm-w2-(wm|head|foot)\b/.test(e.className || ''));
+        return body.some(e => (e.innerText || '').trim() || e.querySelector('svg,img,canvas')) ? 0 : i + 1;
+      }).filter(Boolean));
+      if(empty.length) bad.push(`${c} k${k}: 빈 장 ${empty.join(', ')}쪽`);
       const keyOverflow=await page.locator('.nm-print-answer-key .nm-ak-item').evaluateAll(items=>items.filter(e=>e.scrollWidth>e.clientWidth+3).length);
       if(keyOverflow)bad.push(`${c} k${k}: 정답 ${keyOverflow}칸 가로 넘침`);
       if(bad.length===before)ok++;

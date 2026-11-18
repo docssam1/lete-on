@@ -7045,8 +7045,10 @@ function renderRoundPagesBody(item, opts){
   /* 가르치지 않는 회차(점검)·문장제만인 회차는 첫 장 머리가 잰 드릴 머리와 다르다 — 점검은 머리가 없고(가득 찬 장과 같다),
      문장제만인 회차는 말→식→답 예시 하나(실측 71mm + 지시문 6mm, C8 DV12 L1 senior). 잰 첫 장 값이 없을 때
      그대로 두면 판정표 줄 수가 그대로 나가 카드가 칸을 넘었다(C8 DV12 6장 +2mm). */
-  const plainFirst = (noTeach || (wordOnly && headBand && headBand[0] == null)) && headBand && headBand[3]
-    ? headBand[3] - (wordOnly ? 80 * fsR * (young ? 1.28 : 1) : 0) : null;
+  /* 문장제만인 회차는 잰 드릴 머리(개념·예시·따라 풀기)가 있어도 그 값을 쓰지 않는다(2026-11-18) — 머리가 예시 하나뿐이거나
+     예시조차 없는데 드릴 머리 높이로 재서 첫 장에 문항이 0줄로 잡혔다(과정 16 문장제: 이름 칸만 있는 빈 장). */
+  const plainFirst = (noTeach || wordOnly) && headBand && headBand[3]
+    ? headBand[3] - (wordOnly && exampleHtml ? 80 * fsR * (young ? 1.28 : 1) : 0) : null;
   if(plainFirst != null && firstRows > 0){
     let avail = plainFirst;
     if(problems.length <= firstRows * layout.cols) avail -= (window.NM_PRINT_HEAD_QR || 0);
@@ -7066,7 +7068,8 @@ function renderRoundPagesBody(item, opts){
     const cap1 = firstRows * layout.cols;
     if(midPage && cap1 > 0 && cap1 < Math.min(6, problems.length)) firstRows = 0;
   }
-  if((pictureWorked&&exampleHtml)||(['DC3','MD118'].includes(item.thread)&&!noTeach))firstRows=0;
+  /* DC3·MD118은 따라 풀기가 높아 첫 장에 문항을 싣지 않는다 — 문장제만인 회차는 따라 풀기가 없어 빈 장이 됐다(C23 DC3, 2026-11-18) */
+  if((pictureWorked&&exampleHtml)||(['DC3','MD118'].includes(item.thread)&&!noTeach&&!wordOnly))firstRows=0;
   const firstCap = firstRows * layout.cols;
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
