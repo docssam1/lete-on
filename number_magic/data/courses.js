@@ -1154,7 +1154,10 @@ function buildCourses(NM_THREADS){
     // The cumulative boss retains previously learned threads not practised here.
     const pool = spec.assessmentPins ? spec.assessmentPins.map(raw=>{
       const d=parsePin(raw);
-      if(!sessions.some(s=>(s.drills||[]).concat(s.creative||[]).some(p=>p.t===d.t&&p.lv===d.pin)))
+      /* 스레드 표(threads.js) 없이 제목만 쓰려고 이 파일을 부른 화면(characters.html)에서는 회차 드릴이 모두 빠지고
+         (위 perSession 의 NM_THREADS 걸러내기) 레벨도 1로 잘린다 — 그때 이 검사는 편성이 아니라 빠진 표를 탓하게 된다
+         (2026-11-18 「Untaught assessment C71 MD44@4」). 표에 있는 스레드만 검사한다. 표를 불러오면 검사는 그대로다. */
+      if(NM_THREADS[d.t]&&!sessions.some(s=>(s.drills||[]).concat(s.creative||[]).some(p=>p.t===d.t&&p.lv===d.pin)))
         throw new Error('Untaught assessment C'+spec.id+' '+raw);
       return {t:d.t,lv:d.pin,n:spec.assessmentCount||8};
     }) : poolThreads.map(t => ({t, lv:courseLevel[t] || homeLevel[t], n: spec.boss ? 6 : 8}));
