@@ -48,3 +48,11 @@ test('an admin destination uses the ordinary login form and reuses an existing a
  assert.deepEqual(existing.calls.at(-1),['assign','admin.html']);
  const html=read('admin.html');assert.doesNotMatch(html,/adminLoginForm|관리자 승인번호/);assert.match(html,/account.html\?next=admin.html/);
 });
+
+test('email login rejects short numbers before the API while existing review numbers retain their range',async()=>{
+ for(const identifier of ['parent@example.com','review-user']){
+  const h=await setup();h.click('login');h.node('loginForm').onsubmit({preventDefault(){},target:{data:{identifier,code:'1234'},reset(){}}});await tick();
+  assert.equal(h.calls.some(x=>x[0]==='login'),false);
+  assert.equal(h.calls.some(x=>x[0]==='review-login'),identifier==='review-user');
+ }
+});
