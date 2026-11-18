@@ -3570,7 +3570,7 @@ function worksheetTitleText() {
   }
   if (state.mode === "curriculum" && state.selected.unitTest.size && !state.selected.curriculum.size) {
     const book = bookById(state.curriculumBookId);
-    if (book) return `${book.label} 권별테스트 유사문제`;
+    if (book) return `${book.label} 권별 테스트 유사문제`;
   }
   return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "단원 학습지" : "유형별 맞춤 학습지";
 }
