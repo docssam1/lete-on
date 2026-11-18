@@ -33,8 +33,8 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
        별도 변형으로 쓴다(9 x 2 = 18개). 답의 의미와 난이도는 그대로다. */
     const blankFirst = R(rng, 0, 1) === 1;
     const digitTex = blankFirst
-      ? `\\square + ${a} = 10 \\;(\\text{십분의 자리})`
-      : `${a} + \\square = 10 \\;(\\text{십분의 자리})`;
+      ? `\\square + ${a} = 10 \\;(\\text{0.1이 몇 개})`
+      : `${a} + \\square = 10 \\;(\\text{0.1이 몇 개})`;
     const decimalTex = blankFirst
       ? `0.\\square + 0.${a} = 1`
       : `0.${a} + 0.\\square = 1`;
@@ -60,7 +60,7 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
     const b    = 100 - a;
     const aStr = String(a).padStart(2, '0');
     return {
-      prompt: { ko: `1을 만드는 짝꿍을 찾아요 (백분의 자리)`,
+      prompt: { ko: `1을 만드는 짝꿍을 찾아요 (소수 둘째 자리)`,
                 en: `Find the partner that makes 1 (hundredths)`,
                 zh: `找出凑成1的伙伴（百分位）` },
       tex:        `0.${aStr} + \\dfrac{\\square}{100} = 1`,
@@ -68,7 +68,7 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
       answerType: 'steps',
       widget:     'numpad',
       steps: [
-        { tex: `${a} + \\square = 100 \\;(\\text{백분의 자리})`, blank: b },
+        { tex: `${a} + \\square = 100 \\;(\\text{0.01이 몇 개})`, blank: b },
         { tex: `0.${aStr} + \\dfrac{\\square}{100} = 1`,          blank: b }
       ]
     };
@@ -210,7 +210,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
           answerType: 'steps',
           widget:     'vertical',
           steps: [
-            { tex: `${a} + ${b} = \\square \\;(\\text{십분의 자리 합})`, blank: sum  },
+            { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum  },
             { tex: `0.${a} + 0.${b} = \\dfrac{\\square}{10}`, blank: sum }
           ]
         };
@@ -249,7 +249,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
     const bStr = String(b).padStart(2, '0');
     return {
       prompt: {
-        ko: `소수 두 자리 덧셈: 백분의 자리까지 맞춰요`,
+        ko: `소수 두 자리 덧셈: 소수 둘째 자리까지 맞춰요`,
         en: `Add 2-place decimals: line up to hundredths`,
         zh: `两位小数加法：对齐到百分位`
       },
@@ -271,7 +271,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
     const bStr = String(b).padStart(2, '0');
     return {
       prompt: {
-        ko: `소수 두 자리 뺄셈: 백분의 자리까지 맞춰요`,
+        ko: `소수 두 자리 뺄셈: 소수 둘째 자리까지 맞춰요`,
         en: `Subtract 2-place decimals: line up to hundredths`,
         zh: `两位小数减法：对齐到百分位`
       },
@@ -1085,7 +1085,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${a} + ${b} = \\square \\;(\\text{십분의 자리})`, blank: sum },
+        { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum },
         { tex: `0.\\square`,                                         blank: sum }
       ]
     };

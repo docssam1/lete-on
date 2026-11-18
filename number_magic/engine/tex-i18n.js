@@ -260,6 +260,7 @@
     '일의 자리': { en: 'ones place', zh: '个位' }, '십의 자리': { en: 'tens place', zh: '十位' },
     '십분의 자리': { en: 'tenths place', zh: '十分位' }, '백분의 자리': { en: 'hundredths place', zh: '百分位' },
     '십분의 자리 합': { en: 'sum of the tenths place', zh: '十分位之和' },
+    '0.1이 몇 개': { en: 'how many 0.1s', zh: '几个0.1' }, '0.01이 몇 개': { en: 'how many 0.01s', zh: '几个0.01' }, '소수 첫째 자리': { en: 'tenths place', zh: '十分位' }, '소수 둘째 자리': { en: 'hundredths place', zh: '百分位' },
     '(일의 자리)': { en: '(ones place)', zh: '(个位)' }, '(십의 자리)': { en: '(tens place)', zh: '(十位)' }, '(가운데 자리)': { en: '(middle place)', zh: '(中间位)' },
     '(일)': { en: '(ones)', zh: '(个位)' }, '(만)': { en: '(ten-thousands)', zh: '(万位)' }, '(천)': { en: '(thousands)', zh: '(千位)' },
     '(백, X)': { en: '(hundreds, cross)', zh: '(百位，交叉)' }, '(십, X)': { en: '(tens, cross)', zh: '(十位，交叉)' }, '(천, X)': { en: '(thousands, cross)', zh: '(千位，交叉)' },

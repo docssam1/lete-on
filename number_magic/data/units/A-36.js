@@ -34,7 +34,7 @@ window.NM_UNITS['A-36'] = {
         result:{ ko:'1.7+2.5=4.2 ✓', en:'1.7+2.5=4.2 ✓', zh:'1.7+2.5=4.2 ✓' },
         book:null }
     ],
-    rule:{ ko:'① 소수 부분(십분의 자리)끼리 더한다  ② 합이 10 이상이면 자연수 자리로 올린다  ③ 자연수 부분끼리 더하고 올림 수를 더한다',
+    rule:{ ko:'① 소수 부분(소수 첫째 자리)끼리 더한다  ② 합이 10 이상이면 자연수 자리로 올린다  ③ 자연수 부분끼리 더하고 올림 수를 더한다',
       en:'① Add decimal (tenths) parts  ② If ≥10 (i.e. ≥1.0), carry to the integer  ③ Add integers and the carry',
       zh:'①小数（十分位）部分相加 ②若≥10（即≥1.0）则进位到整数位 ③整数部分相加再加进位数' }
   },
@@ -46,7 +46,7 @@ window.NM_UNITS['A-36'] = {
       { tex:'3+0.7=\\square', answer:3.7, hint:{ ko:'3에 0.7을 더해요', en:'3 plus 0.7', zh:'3加0.7' } }
     ],
     open:{ ko:'소수 덧셈에서 소수점 자리를 맞춰야 하는 이유를 설명해봐요.', en:'Explain why you must align decimal points when adding decimals.', zh:'说说小数加法中为什么要对齐小数点。' },
-    openHint:{ ko:'소수점 자리를 맞추지 않으면 십분의 자리와 일의 자리를 혼동해서 틀린 답이 나와요.', en:'Without alignment, you\'d add tenths to ones, giving the wrong answer.', zh:'不对齐小数点，十分位和个位就会混淆，得到错误答案。' }
+    openHint:{ ko:'소수점 자리를 맞추지 않으면 소수 첫째 자리와 일의 자리를 헷갈려서 틀린 답이 나와요.', en:'Without alignment, you\'d add tenths to ones, giving the wrong answer.', zh:'不对齐小数点，十分位和个位就会混淆，得到错误答案。' }
   },
 
   lab:{ generator:'addDecimal', level:'main', count:4,

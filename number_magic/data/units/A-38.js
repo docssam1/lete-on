@@ -46,7 +46,7 @@ window.NM_UNITS['A-38'] = {
       { tex:'4.7-0.8=\\square', answer:3.9, hint:{ ko:'0.7-0.8 → 빌림: 1.7-0.8=0.9, 4-1=3 → 3.9', en:'Borrow: 1.7−0.8=0.9, 4−1=3: 3.9', zh:'借位：1.7-0.8=0.9，4-1=3：3.9' } }
     ],
     open:{ ko:'소수 혼합 계산에서 소수점 자리를 맞추는 것이 왜 중요한지 예를 들어 설명해봐요.', en:'Give an example to show why aligning decimal points is crucial in mixed decimal calculations.', zh:'举例说明为什么在小数混合运算中对齐小数点很重要。' },
-    openHint:{ ko:'소수점을 맞추지 않으면 일의 자리를 십분의 자리로 착각해서 값이 10배 차이 날 수 있어요.', en:'Without alignment, you might confuse ones with tenths — a factor-of-10 error.', zh:'不对齐小数点，可能把个位当十分位，结果差10倍。' }
+    openHint:{ ko:'소수점을 맞추지 않으면 일의 자리를 소수 첫째 자리로 착각해서 값이 10배 차이 날 수 있어요.', en:'Without alignment, you might confuse ones with tenths — a factor-of-10 error.', zh:'不对齐小数点，可能把个位当十分位，结果差10倍。' }
   },
 
   lab:{ generator:'addSubDecimal', level:'main', count:4,

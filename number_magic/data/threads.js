@@ -1548,7 +1548,7 @@ DC5:{ name:{ko:'소수를 나누기',en:'Decimal division',zh:'小数除法'}, g
 
 /* ── EL 초등 신규 5종 (과정-로드맵.md §3 Level1~2 신규 소요, 2026-08-25 Phase 1) ── */
 DC6:{ name:{ko:'소수의 짝꿍(1·10 만들기)',en:'Decimal bonds to 1 & 10',zh:'小数的伙伴(凑1与凑10)'}, gen:'dc6_decBond', prereq:['DC1','NS4'],
-  concept:{ko:'더해서 10이 되는 짝을 소수에도 그대로 씁니다. 0.3의 1 짝꿍은 0.7이고, 0.35의 1 짝꿍은 0.65예요. 세로셈을 하지 않아도 십분의 자리끼리 10, 백분의 자리끼리 100을 채우면 바로 보여요.',
+  concept:{ko:'더해서 10이 되는 짝을 소수에도 그대로 씁니다. 0.3의 1 짝꿍은 0.7이고, 0.35의 1 짝꿍은 0.65예요. 세로셈을 하지 않아도 소수 첫째 자리끼리 10, 소수 둘째 자리끼리 100을 채우면 바로 보여요.',
     en:'The pairs that make 10 work for decimals too. The partner of 0.3 to reach 1 is 0.7, and of 0.35 it is 0.65. You do not need column subtraction — fill the tenths to 10, the hundredths to 100, and the answer appears.',
     zh:'凑十的数对同样适用于小数。0.3凑成1的伙伴是0.7，0.35的是0.65。不用竖式，把十分位凑到10、百分位凑到100，答案就出来了。'},
   widgets:['numpad','steps'],
