@@ -24,7 +24,7 @@ const escText = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ 
 const DROP = ".question-edit-tools,.question-top,.question-style-tags,.study-stage-banner,.question-reference,.textbook-concept-tutorial,.question-prompt,.choice-buttons,.answer-line,.concept-worked-solution,.student-check,.question-concept,.concept-guide,details";
 function kindOf(ref) {
   if (/데일리 테스트/u.test(ref)) return "daily";
-  if (/^본책/u.test(ref)) return "book";
+  if (/^(본책|교재)/u.test(ref)) return "book";
   if (/오늘의 과제/u.test(ref)) return "homework";
   if (/단원 평가/u.test(ref)) return "unittest";
   return "book";
@@ -42,7 +42,7 @@ function cardItem(card) {
     const [, , w, h] = svg.getAttribute("viewBox").split(/[\s,]+/u).map(Number);
     return w > 0 && h > 0 && w / h > 2.3;
   }) || Boolean(rest.querySelector(".b4-fold-line-problem,.fold-sequence,.b4-fold-sequence"));
-  const book = /^본책\s+(\S+)\s+(\S+?)번/u.exec(ref);
+  const book = /^(?:본책|교재)\s+(\S+)\s+(\S+?)번/u.exec(ref);
   const finish = (answerHtml, answerVisual) => ({ ref, kind: kindOf(ref), stage: book?.[1] || "", no: book?.[2] || "", block: book ? `${book[1]} ${book[2].split("-")[0]}` : "", type, prompt, tutorial,
     visual: rest.innerHTML.trim(), answer: Boolean(card.querySelector(".answer-line")), wide, answerHtml, answerVisual });
   // 정답(뒤쪽 정답 쪽에 싣는다, 원장 2026-11-17 「뒤에 답안도 인쇄 되어야지」): 카드의 손글씨 정답 칸 그대로.
@@ -70,7 +70,7 @@ function cardItem(card) {
 
 const KIND = {
   daily: { kick: "DAILY TEST · 데일리 테스트", score: true, lead: (n) => `지난 차시에 배운 것을 ${n}문제로 확인해요. 다 풀고 맞은 개수를 위에 적어요.`, leadTitle: "어제 배운 것 확인" },
-  book: { kick: "BOOK · 본책" },
+  book: { kick: "STUDY · 공부하기" },
   homework: { kick: "HOMEWORK · 오늘의 과제", lead: () => "오늘 배운 유형을 한 문제씩 다시 풀어 봐요.", leadTitle: "집에서 한 번 더" },
   unittest: { kick: "UNIT TEST · 단원 평가", score: true, lead: (n) => `이 단원에서 배운 것을 ${n}문제로 확인해요. 다 풀고 맞은 개수를 위에 적어요.`, leadTitle: "단원 마무리" }
 };
@@ -107,15 +107,15 @@ export async function importSessionPages(url, { book, session, student = "" }) {
     const unitWord = String(session.label || "").split(" ")[0];
     const wm = `${escText(student)} · GFIELD`;
     // 정답 쪽 항목(묶음 이름 · 번호 · 정답) — printSessionBook이 모아 맨 뒤에 한 묶음으로 싣는다(sessionAnswerPages)
-    const ANSWER_LABEL = { daily: "데일리", book: "본책", homework: "과제", unittest: "평가" };
+    const ANSWER_LABEL = { daily: "데일리", book: "공부하기", homework: "과제", unittest: "평가" };
     const answers = groups.flatMap((group) => group.items.map((item, index) => ({
       no: group.kind === "book" ? (item.no || index + 1) : index + 1,
-      label: group.kind === "book" && item.stage ? `본책 ${item.stage}` : ANSWER_LABEL[group.kind],
+      label: group.kind === "book" && item.stage ? `공부하기 ${item.stage}` : ANSWER_LABEL[group.kind],
       html: item.answerHtml, visual: item.answerVisual, scope })));
     const pages = groups.map((group) => {
       const meta = KIND[group.kind];
       const n = group.items.length;
-      const title = group.kind === "daily" ? `${unitWord} · ${group.items[0].ref}` : group.kind === "unittest" ? `${unitWord} · 단원 평가` : `${session.label} · ${group.kind === "book" ? "본책" : "오늘의 과제"}`;
+      const title = group.kind === "daily" ? `${unitWord} · ${group.items[0].ref}` : group.kind === "unittest" ? `${unitWord} · 단원 평가` : `${session.label} · ${group.kind === "book" ? "공부하기" : "오늘의 과제"}`;
       const head = `<header class="gold-print-head"><div><span>${meta.kick}</span><h1>${escText(book.label)} ${escText(title)}</h1></div><dl><div><dt>이름</dt><dd>${escText(student)}</dd></div>${meta.score ? `<div><dt>맞은 개수</dt><dd class="tb-score">/ ${n}</dd></div>` : "<div><dt>날짜</dt><dd></dd></div>"}</dl></header>`;
       const lead = meta.lead ? `<p class="gold-print-concept"><strong>${meta.leadTitle}</strong><br>${meta.lead(n)}</p>` : "";
       const seenBlocks = new Set();
@@ -146,5 +146,5 @@ export function sessionAnswerPages(answers, { book, session, student = "" }) {
   const items = list.map((answer) => `<section class="gold-print-source-item tb-answer-item"><h2><span>${escText(answer.no)}</span>${escText(answer.label)}</h2>${answer.visual
     ? `<div class="gold-print-visual tb-ans-visual"><div class="${answer.scope}"><div class="question-card tb-q"><div class="student-answer">${answer.html}</div></div></div></div>`
     : `<p class="tb-ans">${answer.html}</p>`}</section>`).join("");
-  return `<article class="gold-print-page source-practice-print tb-session-page tb-answer-page" data-print-book="${escText(book.id)}" data-print-lesson="session-answers" data-print-part="original-1" data-watermark="${escText(student)} · GFIELD"><header class="gold-print-head"><div><span>ANSWERS · 정답</span><h1>${escText(book.label)} ${escText(session.label)} · 정답</h1></div><dl><div><dt>이름</dt><dd>${escText(student)}</dd></div></dl></header><p class="gold-print-concept"><strong>정답</strong><br>데일리 테스트 · 본책 · 오늘의 과제${list.some((a) => a.label === "평가") ? " · 단원 평가" : ""} 정답이에요. 다 풀고 나서 맞춰 봐요.</p><section class="gold-print-block">${items}</section><footer class="gold-print-footer">${escText(book.label)} · ${escText(session.range)} · 정답</footer></article>`;
+  return `<article class="gold-print-page source-practice-print tb-session-page tb-answer-page" data-print-book="${escText(book.id)}" data-print-lesson="session-answers" data-print-part="original-1" data-watermark="${escText(student)} · GFIELD"><header class="gold-print-head"><div><span>ANSWERS · 정답</span><h1>${escText(book.label)} ${escText(session.label)} · 정답</h1></div><dl><div><dt>이름</dt><dd>${escText(student)}</dd></div></dl></header><p class="gold-print-concept"><strong>정답</strong><br>데일리 테스트 · 공부하기 · 오늘의 과제${list.some((a) => a.label === "평가") ? " · 단원 평가" : ""} 정답이에요. 다 풀고 나서 맞춰 봐요.</p><section class="gold-print-block">${items}</section><footer class="gold-print-footer">${escText(book.label)} · ${escText(session.range)} · 정답</footer></article>`;
 }

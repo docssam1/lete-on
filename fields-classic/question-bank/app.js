@@ -1,4 +1,4 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261117a";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261118a";
 import { GENERATORS } from "./generators.js?v=20261117a";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
@@ -46,7 +46,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261117a");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261118b");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
@@ -663,8 +663,8 @@ function studyReferenceLabel(references = []) {
       : `${twoDigits(reference.from)}~${twoDigits(reference.to)}`;
     if (reference.section === "activity") return `활동 ${twoDigits(reference.group)} 본문 ${range}`;
     if (reference.section === "check") return `활동 ${twoDigits(reference.group)} 확인 ${range}`;
-    if (reference.section === "practice") return `본책 연습 ${range}`;
-    return `본책 도전 ${range}`;
+    if (reference.section === "practice") return `교재 연습 ${range}`;
+    return `교재 도전 ${range}`;
   }).join(" · ");
 }
 

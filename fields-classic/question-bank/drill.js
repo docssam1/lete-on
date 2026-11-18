@@ -4,7 +4,7 @@
 //  · 세 단계: 연습(난이도 1) → 실전(2) → 도전(3). 단계마다 세 문제, 차시에 붙인 유형을 번갈아 낸다(drill-recipes.js).
 //  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고르고, 가쿠로는 칸에 수 카드를 놓는다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
-import { typeById } from "./source-data.js?v=20261117a";
+import { typeById } from "./source-data.js?v=20261118a";
 import { GENERATORS } from "./generators.js?v=20261117a";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261117a";
@@ -182,10 +182,10 @@ async function main() {
         <div class="dr-right"><div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div>${st.phase === "done" ? "" : '<button type="button" class="dr-skip" data-dr="skip">건너뛰기 ›</button>'}</div></div>
       <p class="dr-kind">${esc(p.type.label)}</p>
       <div class="dr-card"><p class="dr-prompt">${esc(plain(p.prompt)).replaceAll("\n", "<br>")}</p>${p.shape.kind !== "grid" ? visualOf(p.visual) : st.reveal ? visualOf(p.answerVisual) : gridBoard(p.shape)}</div>
-      ${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
+      <div class="dr-side">${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
       ${st.phase === "done"
         ? `<div class="dr-actions"><button type="button" class="dr-btn primary" data-dr="next">${nextLabel()} →</button></div>`
-        : pad(p.shape)}
+        : pad(p.shape)}</div>
     </div>`;
   }
   // 가쿠로 판: 빈칸은 누르는 단추, 주어진 수는 굵게, 오른쪽에 가로 합 · 아래에 세로 합
@@ -312,7 +312,7 @@ function fitFrame() {
   const root = document.getElementById("drill");
   if (!root || parent === window) return;
   const fits = () => document.documentElement.scrollHeight <= innerHeight + 1 && document.documentElement.scrollWidth <= innerWidth + 1;
-  let lo = 0.55, hi = 1.6;
+  let lo = 0.42, hi = 1.6;   // 가로로 든 태블릿(덱 칸 높이 260쯤)에서 고르기 그림 넷은 0.55로도 넘쳤다(2026-11-17)
   root.style.zoom = "";
   if (fits()) lo = 1; else hi = 1;
   for (let step = 0; step < 7; step += 1) {
