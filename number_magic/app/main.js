@@ -5866,26 +5866,56 @@ function screenStartChoice(){
   const steps=c.book&&LD[c.book]?LD[c.book]:[];
   const pick=c.book&&c.step?bookStartCourse(c.book,c.step):null;
   const course=pick?(window.NM_COURSES||{})[pick.key]:null;
-  const bookPanel=!c.open?'':`<div class="nm-sc-book">
-      <label class="nm-sc-l">${lk('지금까지 한 연산 교재','Arithmetic book used so far','目前用过的运算教材')}
+  /* 2026-11-18 원장 「더 디자인 해」 — 누미가 묻는 머리, 그림 타일·특징 칩이 있는 두 갈래 카드, 교재 고르기는 번호 단계 + 출발 표 */
+  const ic=d=>`<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  const IC={
+    compass:'<circle cx="12" cy="12" r="8.5"/><path d="M15.2 8.8l-1.9 4.5-4.5 1.9 1.9-4.5z"/>',
+    books:'<path d="M4.5 19.5V5.5a1 1 0 0 1 1-1h3v15h-3a1 1 0 0 1-1-1z"/><path d="M8.5 4.5h3.5v15H8.5"/><path d="M13.2 5.6l3.2-.9 3.4 13.6-3.2.8z"/>',
+    map:'<path d="M9 5.5L3.5 7.5v11L9 16.5l6 2 5.5-2v-11L15 7.5z"/><path d="M9 5.5v11M15 7.5v11"/>',
+    arrow:'<path d="M9 6l6 6-6 6"/>'
+  };
+  const name=String(S.name||'').trim();
+  const numi=window.renderNumiChar?window.renderNumiChar(S.character,64,{mood:'happy'}):'';
+  const chips=list=>`<ul class="nm-sc-chips">${list.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+  const stepLabel=(n,text,done)=>`<span class="nm-sc-n${done?' done':''}" aria-hidden="true">${n}</span>${text}`;
+  const atText=pick?(pick.bundle?lk('학습 묶음 '+pick.bundle+'부터','From study bundle '+pick.bundle,'从学习组'+pick.bundle+'开始'):lk(pick.session+'회차부터','From lesson '+pick.session,'从第'+pick.session+'课次开始')):'';
+  const bookPanel=!c.open?'':`<div class="nm-sc-book" id="scBookPanel">
+      <label class="nm-sc-l">${stepLabel(1,lk('지금까지 한 연산 교재','Arithmetic book used so far','目前用过的运算教材'),!!c.book)}
         <select id="scBook"><option value="">${lk('교재를 골라 주세요','Choose a book','请选择教材')}</option>${START_BOOKS.map(b=>`<option value="${b[0]}"${c.book===b[0]?' selected':''}>${esc(lk(b[1],b[2],b[3]))}</option>`).join('')}</select></label>
-      ${c.book?(steps.length?`<label class="nm-sc-l">${lk('마지막으로 끝낸 권(단계)','Last finished volume (level)','最后完成的册（阶段）')}
+      ${c.book?(steps.length?`<label class="nm-sc-l">${stepLabel(2,lk('마지막으로 끝낸 권(단계)','Last finished volume (level)','最后完成的册（阶段）'),!!c.step)}
         <select id="scStep"><option value="">${lk('끝낸 권을 골라 주세요','Choose the finished volume','请选择完成的册')}</option>${steps.map(x=>`<option value="${esc(x.id)}"${c.step===x.id?' selected':''}>${esc(tr(x.title)+(x.topic?' · '+x.topic:''))}</option>`).join('')}</select></label>`:`<p class="nm-sc-note">${lk('교재 단계표를 불러오는 중이에요…','Loading the book levels…','正在加载教材阶段…')}</p>`):''}
-      ${pick&&course?`<div class="nm-sc-result"><span>${lk('여기서부터 시작해요','Start here','从这里开始')}</span><b>${lk('과정','Course','课程')} ${pick.key.slice(1)} · ${esc(L(course.title))}</b>
-        <em class="nm-sc-at">${pick.bundle?lk('학습 묶음 '+pick.bundle+'부터','From study bundle '+pick.bundle,'从学习组'+pick.bundle+'开始'):lk(pick.session+'회차부터','From lesson '+pick.session,'从第'+pick.session+'课次开始')}${pick.session>1?' · '+lk('앞 회차는 하던 교재에서 이미 한 내용이에요.','Earlier lessons repeat what the book already covered.','前面的课次是教材里已经学过的内容。'):''}</em>
-        ${pick.next?`<small>${esc(lk('다음 권 「'+tr(pick.next.title)+'」의 새 계산이 처음 나오는 과정이에요.','The first course with the new calculations of the next volume ('+tr(pick.next.title)+').','下一册「'+tr(pick.next.title)+'」新计算首次出现的课程。'))}</small>`:`<small>${lk('끝낸 권 다음 과정이에요.','The course after the finished volume.','完成册之后的课程。')}</small>`}
-        <button class="nm-btn" id="scBookGo">${lk('이 과정부터 시작하기','Start from this course','从这个课程开始')}</button></div>`:''}
-      <p class="nm-sc-note">${lk('교재의 권과 우리 과정은 내용이 정확히 같지 않아요. 헷갈리면 진단하고 시작하는 쪽이 정확해요. 시작한 뒤에도 언제든 진단할 수 있어요.','Book volumes and app courses are not identical. If unsure, the check is more accurate. You can take the check any time later.','教材册与本应用课程并非完全一致。不确定时先测评更准确。开始后也可随时测评。')}</p>
+      ${pick&&course?`<div class="nm-sc-result">
+        <div class="nm-sc-ticket"><span class="nm-sc-kick">${lk('여기서부터 시작해요','Start here','从这里开始')}</span>
+          <div class="nm-sc-course"><b class="nm-sc-cno">${lk('과정','Course','课程')} ${pick.key.slice(1)}</b><strong>${esc(L(course.title))}</strong></div>
+          <span class="nm-sc-at">${atText}</span></div>
+        <p class="nm-sc-why">${pick.session>1?esc(lk('앞 회차는 하던 교재에서 이미 한 내용이라 건너뛰어요. ','Earlier lessons repeat what the book covered, so they are skipped. ','前面的课次是教材里已学过的内容，因此跳过。')):''}${pick.next?esc(lk('다음 권 「'+tr(pick.next.title)+'」의 새 계산이 처음 나오는 과정이에요.','The first course with the new calculations of the next volume ('+tr(pick.next.title)+').','下一册「'+tr(pick.next.title)+'」新计算首次出现的课程。')):lk('끝낸 권 다음 과정이에요.','The course after the finished volume.','完成册之后的课程。')}</p>
+        <button class="nm-btn nm-sc-go" id="scBookGo">${lk('이 과정부터 시작하기','Start from this course','从这个课程开始')}</button></div>`:''}
+      <p class="nm-sc-note">${lk('교재의 권과 우리 과정은 내용이 정확히 같지 않아요. 헷갈리면 진단하고 시작하는 쪽이 정확해요.','Book volumes and app courses are not identical. If unsure, the check is more accurate.','教材册与本应用课程并非完全一致。不确定时先测评更准确。')}</p>
     </div>`;
   scr.innerHTML=`<div class="nm-sc">
-    <h1 class="nm-sc-h">${lk('어떻게 시작할까요?','How shall we start?','怎么开始呢？')}</h1>
-    <p class="nm-sc-sub">${lk('처음 한 번만 고르면 돼요.','You only choose this once.','只需选择一次。')}</p>
-    <button class="nm-sc-card main" id="scDiag"><b>${lk('진단하고 시작하기','Check first, then start','先测评再开始')}</b>
-      <span>${lk('20문항으로 지금 수준을 확인하고, 어느 과정에서 시작해 언제 어디까지 끝나는지 일정을 알려 드려요. 8세 이하는 소마·필즈 반 진도와 견주는 그래프도 보여 드려요.','20 questions find the right course and show when each stage finishes. For age 8 and under you also get a graph compared with SOMA and Fields classes.','用20道题确认水平，告诉你从哪门课程开始、何时完成到哪里。8岁以下还会显示与SOMA·Fields班进度比较的图表。')}</span></button>
-    <button class="nm-sc-card" id="scBookOpen" aria-expanded="${c.open}"><b>${lk('지금 하던 교재 다음부터 시작하기','Continue after the book you finished','从已学教材之后开始')}</b>
-      <span>${lk('기적의 계산법·소마셈·두뇌로·구몬수학에서 끝낸 권을 고르면 그다음 과정부터 바로 시작해요.','Pick the volume finished in Miracle Calculation, Soma-sem, Dunoro or Kumon and start right after it.','选择在奇迹计算法、Soma算、Dunoro或公文数学中完成的册，直接从下一课程开始。')}</span></button>
+    <header class="nm-sc-head">
+      <div class="nm-sc-numi" aria-hidden="true">${numi}</div>
+      <div class="nm-sc-bubble"><p class="nm-sc-hi">${esc(name?lk(name+', 반가워요!','Nice to meet you, '+name+'!',name+'，你好！'):lk('반가워요!','Nice to meet you!','你好！'))}</p>
+        <h1 class="nm-sc-h">${lk('어디서부터 시작할까요?','Where shall we start?','从哪里开始呢？')}</h1>
+        <p class="nm-sc-sub">${lk('처음 한 번만 고르면 돼요. 나중에 언제든 바꿀 수 있어요.','Choose once. You can change it any time.','只需选择一次，以后随时可以更改。')}</p></div>
+    </header>
+    <button class="nm-sc-card main" id="scDiag">
+      <span class="nm-sc-ico">${ic(IC.compass)}</span>
+      <span class="nm-sc-body"><span class="nm-sc-tag">${lk('추천','Recommended','推荐')}</span>
+        <b>${lk('진단하고 시작하기','Check first, then start','先测评再开始')}</b>
+        <span class="nm-sc-desc">${lk('지금 수준을 확인하고, 어느 과정에서 시작해 언제 어디까지 끝나는지 일정을 알려 드려요.','We find the right course and show when each stage finishes.','确认水平，告诉你从哪门课程开始、何时完成到哪里。')}</span>
+        ${chips([lk('20문항','20 questions','20道题'),lk('끝나는 날까지 일정표','Schedule to the finish','完成时间表'),lk('1분 계산 속도','1-minute speed check','1分钟计算速度'),lk('8세 이하 소마·필즈 반 비교','Under 8: SOMA·Fields comparison','8岁以下：SOMA·Fields比较')])}</span>
+      <span class="nm-sc-arrow">${ic(IC.arrow)}</span></button>
+    <div class="nm-sc-group${c.open?' open':''}">
+    <button class="nm-sc-card" id="scBookOpen" aria-expanded="${c.open}" aria-controls="scBookPanel">
+      <span class="nm-sc-ico book">${ic(IC.books)}</span>
+      <span class="nm-sc-body"><b>${lk('하던 교재 다음부터 시작하기','Continue after your book','从已学教材之后开始')}</b>
+        <span class="nm-sc-desc">${lk('끝낸 권을 고르면 그다음 과정·회차부터 바로 시작해요. 문제는 풀지 않아요.','Pick the finished volume and start right after it — no test.','选择完成的册，直接从下一课程开始，不用做题。')}</span>
+        ${chips(START_BOOKS.map(b=>lk(b[1],b[2],b[3])))}</span>
+      <span class="nm-sc-arrow">${ic(IC.arrow)}</span></button>
     ${bookPanel}
-    <button class="nm-sc-later" id="scLater">${lk('나중에 정하고 마을 구경하기','Decide later and explore the village','以后再定，先逛村庄')}</button>
+    </div>
+    <button class="nm-sc-later" id="scLater">${ic(IC.map)}${lk('나중에 정하고 마을 구경하기','Decide later and explore the village','以后再定，先逛村庄')}</button>
   </div>`;
   $('#scDiag').onclick=()=>{startChoice={open:false,book:'',step:''};startPlacement();};
   $('#scBookOpen').onclick=()=>{c.open=!c.open;if(c.open)loadConsultLadder(()=>screenStartChoice());screenStartChoice();};
