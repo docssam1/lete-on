@@ -418,7 +418,11 @@ function makePresenter() {
   // 조각이 준비되기 전에는 예전처럼 통째로 바꾼다. 몸짓(가리킴·갸웃·칭찬)은 자세가 바뀌는 것이라 통째로 그대로.
   const patches = new Map();
   let shown = "", shownPatch = "";
+  // 자세가 다른 그림(B1~B5: 가리킴·갸웃·칭찬·격려·엄지)으로 통째로 바꾸지 않는다(원장 2026-11-18 「왜 같은 장면에서 다른 장면이 나오지?」 —
+  // 말 첫머리·가만히 있을 때마다 다른 자세 그림이 끼어들어 한 장면 안에서 사람이 바뀐 것처럼 보였다). 늘 A1 한 자세 + 입·눈 조각, 몸짓은 CSS 움직임만.
+  const POSE_KEYS = new Set(["point", "think", "smile", "cheer", "thumbs"]);
   const show = (key) => {
+    if (POSE_KEYS.has(key)) key = "closed";
     const patch = patches.has(key) ? key : "";
     const name = patch ? FACES.closed : (FACES[key] || key);
     if (name !== shown) { imgs.get(shown)?.classList.remove("on"); imgs.get(name)?.classList.add("on"); shown = name; }
