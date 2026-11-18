@@ -41,6 +41,7 @@ function load(){
 }
 
 const W = load();
+if(!W.NM_HIGH_PACING) vm.runInContext(fs.readFileSync(path.join(ROOT, 'data/high-pacing.js'), 'utf8'), W);
 const TH = W.NM_THREADS, COURSES = W.NM_COURSES, BOOKS = W.NM_PLACEMENT_BOOKS, TGEN = W.NM_TGEN, RNG = W.NM_RNG;
 
 /* 과정 차례 — order 순. 첫 등장 = 회차 드릴(복습 표시 제외)에서 그 유형·레벨이 처음 나오는 과정 */
@@ -141,10 +142,14 @@ const dunoroRows = W.NM_DUNORO_COURSES.courses.map(c => ({ id: 'dunoro-' + c.cou
    공식 안내(kumon.co.kr/Subject/Math): 24단계 — 구몬수학 6A~I · 구몬수학 플러스 J~SS. 인정테스트 「자기 학년 기준」
    유아 2A · 초1 A · 초2 B · 초3 C(→ D 초4 · E 초5 · F 초6 · G~I 중학). 단계마다 교재 1~200번.
    한 줄 = 그 단계의 교재 번호 구간 하나(진도체크표의 「교재 내용」을 짧게 묶음). 우리 유형 대응은 우리 판단.
-   J~SS(고등)는 상담 범위 밖이라 진단 평가로 보낸다. */
+   고등(구몬수학 플러스, 원장 2026-11-18 「우리도 고등 과정 있는 거 아니야?」): J~O(진도체크표 J~O) · SM 1~80 · SP 1~40은
+   우리 고등 과정(공통수학1·2 · 대수 · 미적분Ⅰ, C38~C73) 유형에 맞췄다. N 뒤쪽·O는 미적분Ⅱ(초월함수) 내용이라 우리에게 가장
+   가까운 미적분Ⅰ 유형으로 잇는다. 우리 앱에 없는 내용 — SV(벡터) · SP 41~90(이항정리·확률) · SS(통계) — 은 줄로 만들지 않는다. */
 const KUMON_GRADE = { '6A': ['유아', 'Pre-K', '幼儿'], '5A': ['유아', 'Pre-K', '幼儿'], '4A': ['유아', 'Pre-K', '幼儿'], '3A': ['유아', 'Pre-K', '幼儿'], '2A': ['유아', 'Pre-K', '幼儿'],
   A: ['초1', 'Gr 1', '小1'], B: ['초2', 'Gr 2', '小2'], C: ['초3', 'Gr 3', '小3'], D: ['초4', 'Gr 4', '小4'], E: ['초5', 'Gr 5', '小5'], F: ['초6', 'Gr 6', '小6'],
-  G: ['중1', 'Gr 7', '初1'], H: ['중2', 'Gr 8', '初2'], I: ['중3', 'Gr 9', '初3'] };
+  G: ['중1', 'Gr 7', '初1'], H: ['중2', 'Gr 8', '初2'], I: ['중3', 'Gr 9', '初3'],
+  J: ['고등', 'High school', '高中'], K: ['고등', 'High school', '高中'], L: ['고등', 'High school', '高中'], M: ['고등', 'High school', '高中'],
+  N: ['고등', 'High school', '高中'], O: ['고등', 'High school', '高中'], SM: ['고등', 'High school', '高中'], SP: ['고등', 'High school', '高中'] };
 const kumonRows = [
   ['6A', '1~200', '10까지 수 세기 · 숫자 읽기 · 동그라미 수', ['NL1@1', 'NL1@2']],
   ['5A', '1~200', '30까지 숫자 읽기 · 50까지 수 배열', ['NL4@1', 'NL7@1', 'NL1@2']],
@@ -172,17 +177,73 @@ const kumonRows = [
   ['H', '1~110', '이원·삼원 연립방정식 · 방정식의 응용', ['MD63@2', 'MD63@3', 'MD72@1']],
   ['H', '111~200', '단항식·다항식 계산 · 곱셈 공식 · 인수분해', ['MD11@1', 'MD13@1', 'MD19@1', 'MD19@3', 'MD20@2']],
   ['I', '1~100', '제곱근 · 이차방정식 · 부등식', ['MD15@1', 'MD17@1', 'MD66@1', 'MD66@3', 'MD64@2']],
-  ['I', '101~200', '일차함수와 그래프 · 이차함수와 그래프', ['MD65@3', 'MD74@2', 'MD78@2', 'MD67@2']]
+  ['I', '101~200', '일차함수와 그래프 · 이차함수와 그래프', ['MD65@3', 'MD74@2', 'MD78@2', 'MD67@2']],
+  ['J', '1~60', '식의 계산 · 인수분해', ['MD21@3', 'MD22@3', 'MD91@2', 'MD25@2']],
+  ['J', '61~110', '분수식 · 무리수 · 이차방정식', ['MD130@2', 'MD132@2', 'MD28@3']],
+  ['J', '111~150', '이차방정식과 복소수 · 판별식 · 근과 계수의 관계 · 연립방정식', ['MD95@2', 'MD97@2', 'MD26@2', 'MD27@2', 'MD104@2']],
+  ['J', '151~200', '다항식의 나눗셈 · 나머지정리 · 인수정리 · 항등식·부등식의 증명', ['MD21@3', 'MD24@2', 'MD93@2', 'MD23@2', 'MD126@2']],
+  ['K', '1~100', '이차함수의 그래프 · 최대·최소 · 이차부등식', ['MD99@2', 'MD100@2', 'MD29@2']],
+  ['K', '101~120', '고차함수 · 고차방정식과 고차부등식', ['MD101@2', 'MD102@2']],
+  ['K', '121~170', '분수함수 · 무리함수와 그 방정식·부등식', ['MD131@2', 'MD133@2', 'MD130@2', 'MD132@2']],
+  ['K', '171~200', '지수함수 · 지수방정식과 지수부등식', ['MD36@2', 'MD136@2', 'MD52@2', 'MD54@1']],
+  ['L', '1~30', '로그의 계산 · 로그함수 · 로그방정식과 로그부등식', ['MD37@2', 'MD38@2', 'MD138@2', 'MD53@2', 'MD54@2']],
+  ['L', '31~110', '극한과 도함수 · 접선 · 극대·극소 · 최대·최소 · 방정식·부등식 활용', ['MD43@2', 'MD44@2', 'MD45@2', 'MD60@2', 'MD157@2', 'MD158@2']],
+  ['L', '111~200', '부정적분과 정적분 · 넓이 · 부피 · 속도와 거리', ['MD46@2', 'MD159@2', 'MD61@2', 'MD62@2']],
+  ['M', '1~100', '점과 직선 · 원 · 자취 · 부등식의 영역', ['MD31@2', 'MD32@2', 'MD33@2', 'MD34@2', 'MD35@2', 'MD119@2']],
+  ['M', '101~150', '삼각함수의 성질 · 그래프 · 삼각방정식과 삼각부등식', ['MD140@2', 'MD39@2', 'MD142@2', 'MD143@2', 'MD57@2', 'MD144@2']],
+  ['M', '151~200', '삼각함수의 덧셈정리 · 사인법칙과 코사인법칙 · 삼각형의 넓이', ['MD55@2', 'MD56@2', 'MD145@2']],
+  ['N', '1~60', '등차·등비수열 · 여러 가지 수열 · 점화식 · 수학적 귀납법', ['MD40@2', 'MD41@2', 'MD42@2', 'MD149@2', 'MD152@2', 'MD153@2']],
+  ['N', '61~200', '수열의 극한과 급수 · 함수의 극한과 연속 · 여러 가지 미분법', ['MD43@3', 'MD58@2', 'MD59@2', 'MD44@3', 'MD154@2']],
+  ['O', '1~50', '접선과 법선 · 증가·감소와 극값 · 최대·최소 · 미분의 응용', ['MD45@2', 'MD156@2', 'MD60@2', 'MD157@3', 'MD158@3']],
+  ['O', '51~200', '부정적분 · 치환·부분적분 · 정적분 · 넓이·부피 · 속도와 거리 · 미분방정식', ['MD46@3', 'MD159@3', 'MD61@2', 'MD62@3']],
+  ['SM', '1~40', '행렬의 덧셈·뺄셈·곱셈 · 역행렬 · 연립일차방정식과 행렬', ['MD30@2', 'MD30@3']],
+  ['SM', '41~80', '함수 · 일차변환', ['MD127@2', 'MD128@2', 'MD129@2']],
+  ['SP', '1~40', '경우의 수 · 순열 · 조합', ['MD110@2', 'MD111@3', 'MD112@2', 'MD113@2', 'MD114@2']]
 ].map(([lv, range, topic, refs], i) => ({ id: 'kumon-' + lv.toLowerCase() + '-' + range.split('~')[0], group: lv, volume: i + 1,
   title: L3(lv + ' ' + range + ' (' + KUMON_GRADE[lv][0] + ' 기준)', 'Level ' + lv + ' ' + range + ' (' + KUMON_GRADE[lv][1] + ')', lv + ' ' + range + '（' + KUMON_GRADE[lv][2] + '）'), topic, refs }));
 const ladders = { miracle: buildLadder(miracleRows), soma: buildLadder(somaRows), dunoro: buildLadder(dunoroRows), kumon: buildLadder(kumonRows) };
 const ladder = [].concat(ladders.miracle, ladders.soma, ladders.dunoro, ladders.kumon);
+/* 과정마다 회차별 새 드릴(복습 제외) s, 고등 학습 묶음 번호 b(studyPlan 과정만 — 화면에 「학습 묶음 N」으로) */
+const HP = W.NM_HIGH_PACING;
 const courses = {};
-courseList.forEach(({ key, n, c }) => { courses[key] = { n, order: c.order ?? n, tier: c.tier, title: c.title }; });
+courseList.forEach(({ key, n, c }) => {
+  const ss = c.sessions || [];
+  courses[key] = { n, order: c.order ?? n, tier: c.tier, title: c.title,
+    s: ss.map(x => (x.drills || []).filter(d => !d.review).map(d => d.t + '@' + d.lv)) };
+  if(c.comingSoon) courses[key].soon = true;
+  if(c.studyPlan && HP) courses[key].b = ss.map((_, i) => HP.lessonIndex(c, i + 1) + 1);
+});
+/* 「이 권(단계)까지 끝냈어요」 다음 시작점 — 단계마다 after = { course, session }(원장 2026-11-18 「구몬 진도로는 우리 과정도 세분화」).
+   과정 = 다음 단계의 새 계산이 처음 나오는 과정 가운데 가장 앞(다음 단계가 없으면 끝낸 단계 가장 뒤 과정의 다음 과정).
+   회차 = 그 과정에서 끝낸 단계까지의 기술·앞 과정 내용만 있는 앞 회차를 건너뛴 첫 회차(app/consult-rules.js refineStart). */
+const { refineStart, knownMap } = require('../app/consult-rules.js');
+const ready = courseList.filter(({ key }) => !courses[key].soon);
+const orderOf = k => courses[k] ? courses[k].order : Infinity;
+function addAfter(steps, rows){
+  steps.forEach((st, i) => {
+    const next = steps[i + 1];
+    const known = knownMap(rows.slice(0, i + 1).flatMap(r => r.refs).filter(r => TH[r.split('@')[0]]));
+    /* 다음 단계의 기술 가운데 끝낸 단계까지 아직 안 나온 것(같은 유형이면 더 높은 레벨)만 본다 — 다음 권에 다시 나오는
+       앞 권 계산이 시작점을 끌어내리지 않게. 모두 이미 나온 것이면 다음 단계 기술 전부로. */
+    let key = null;
+    if(next){
+      const fresh = next.skills.filter(k => { const j = k.ref.lastIndexOf('@'); return !(known.get(k.ref.slice(0, j)) >= +k.ref.slice(j + 1)); });
+      const ks = (fresh.length ? fresh : next.skills).map(k => k.course).filter(k => courses[k]);
+      if(ks.length) key = ks.sort((a, b) => orderOf(a) - orderOf(b))[0];
+    }
+    if(!key){
+      const done = Math.max(-1, ...st.skills.map(k => orderOf(k.course)).filter(Number.isFinite));
+      key = (ready.find(x => orderOf(x.key) > done) || ready[ready.length - 1]).key;
+    }
+    if(courses[key].soon) key = (ready.find(x => orderOf(x.key) >= orderOf(key)) || ready[ready.length - 1]).key;
+    st.after = refineStart(courses, key, known);
+  });
+}
+addAfter(ladders.miracle, miracleRows); addAfter(ladders.soma, somaRows); addAfter(ladders.dunoro, dunoroRows); addAfter(ladders.kumon, kumonRows);
 
 const body = '/* 자동 생성 — node scripts/build-consult-ladder.js (손으로 고치지 않는다).\n' +
   '   기적의 계산법·소마셈(2019)·두뇌로 권별 주제 → 우리 유형·예시 문제·처음 나오는 과정. 예시는 우리 생성기 문제다(교재 문항 아님). */\n' +
-  'window.NM_CONSULT_LADDER = ' + JSON.stringify({ version: 2, ladders, courses }) + ';\n';
+  'window.NM_CONSULT_LADDER = ' + JSON.stringify({ version: 3, ladders, courses }) + ';\n';
 
 if(process.argv.includes('--check')){
   const now = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8') : '';

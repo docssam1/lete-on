@@ -5839,17 +5839,24 @@ const START_BOOKS=[['miracle','기적의 계산법','Miracle Calculation','奇�
 let startChoice={open:false,book:'',step:''};
 function loadConsultLadder(done){
   if(window.NM_CONSULT_LADDER)return done();
-  const el=document.createElement('script');el.src='data/consult-ladder.js?v=20261118-kumon4';el.onload=done;el.onerror=done;document.head.appendChild(el);
+  const el=document.createElement('script');el.src='data/consult-ladder.js?v=20261118-session1';el.onload=done;el.onerror=done;document.head.appendChild(el);
 }
 function bookStartCourse(book,stepId){
-  const L=(window.NM_CONSULT_LADDER||{}).ladders||{},steps=L[book]||[],i=steps.findIndex(x=>x.id===stepId);if(i<0)return null;
-  const num=k=>Number(String(k||'').slice(1)),keys=Object.keys(window.NM_COURSES||{}).filter(k=>/^C\d+$/.test(k)&&!window.NM_COURSES[k].comingSoon).map(num).sort((a,b)=>a-b);
+  const LD=window.NM_CONSULT_LADDER||{},steps=(LD.ladders||{})[book]||[],i=steps.findIndex(x=>x.id===stepId);if(i<0)return null;
+  const num=k=>Number(String(k||'').slice(1)),C=window.NM_COURSES||{};
+  /* 단계표가 미리 계산한 다음 시작점(과정 + 회차, scripts/build-consult-ladder.js addAfter) — 2026-11-18 회차까지 잘게 */
+  const at=steps[i].after;
+  if(at&&C[at.course]&&!C[at.course].comingSoon){
+    const n=C[at.course].sessions.length,session=Math.min(Math.max(1,at.session||1),n);
+    const lc=LD.courses&&LD.courses[at.course],bundle=lc&&lc.b?lc.b[session-1]:null;
+    return {key:at.course,session,bundle,next:steps[i+1]||null,step:steps[i]};
+  }
+  const keys=Object.keys(C).filter(k=>/^C\d+$/.test(k)&&!C[k].comingSoon).map(num).sort((a,b)=>a-b);
   const done=Math.max(...steps[i].skills.map(k=>num(k.course)).filter(n=>Number.isFinite(n)),0);
   const next=steps[i+1]?steps[i+1].skills.map(k=>num(k.course)).filter(n=>Number.isFinite(n)&&n>=0):[];
-  /* 다음 권의 새 계산 가운데 가장 앞 과정. 다음 권이 없으면 끝낸 권 가장 뒤 과정의 다음 과정. */
   let n=next.length?Math.min(...next):done+1;
   if(!keys.includes(n))n=keys.find(k=>k>=n)??keys[keys.length-1];
-  return {key:'C'+n,next:steps[i+1]||null,step:steps[i]};
+  return {key:'C'+n,session:1,bundle:null,next:steps[i+1]||null,step:steps[i]};
 }
 function screenStartChoice(){
   if(townCleanup){townCleanup();townCleanup=null;}
@@ -5864,6 +5871,7 @@ function screenStartChoice(){
       ${c.book?(steps.length?`<label class="nm-sc-l">${lk('마지막으로 끝낸 권(단계)','Last finished volume (level)','最后完成的册（阶段）')}
         <select id="scStep"><option value="">${lk('끝낸 권을 골라 주세요','Choose the finished volume','请选择完成的册')}</option>${steps.map(x=>`<option value="${esc(x.id)}"${c.step===x.id?' selected':''}>${esc(tr(x.title)+(x.topic?' · '+x.topic:''))}</option>`).join('')}</select></label>`:`<p class="nm-sc-note">${lk('교재 단계표를 불러오는 중이에요…','Loading the book levels…','正在加载教材阶段…')}</p>`):''}
       ${pick&&course?`<div class="nm-sc-result"><span>${lk('여기서부터 시작해요','Start here','从这里开始')}</span><b>${lk('과정','Course','课程')} ${pick.key.slice(1)} · ${esc(L(course.title))}</b>
+        <em class="nm-sc-at">${pick.bundle?lk('학습 묶음 '+pick.bundle+'부터','From study bundle '+pick.bundle,'从学习组'+pick.bundle+'开始'):lk(pick.session+'회차부터','From lesson '+pick.session,'从第'+pick.session+'课次开始')}${pick.session>1?' · '+lk('앞 회차는 하던 교재에서 이미 한 내용이에요.','Earlier lessons repeat what the book already covered.','前面的课次是教材里已经学过的内容。'):''}</em>
         ${pick.next?`<small>${esc(lk('다음 권 「'+tr(pick.next.title)+'」의 새 계산이 처음 나오는 과정이에요.','The first course with the new calculations of the next volume ('+tr(pick.next.title)+').','下一册「'+tr(pick.next.title)+'」新计算首次出现的课程。'))}</small>`:`<small>${lk('끝낸 권 다음 과정이에요.','The course after the finished volume.','完成册之后的课程。')}</small>`}
         <button class="nm-btn" id="scBookGo">${lk('이 과정부터 시작하기','Start from this course','从这个课程开始')}</button></div>`:''}
       <p class="nm-sc-note">${lk('교재의 권과 우리 과정은 내용이 정확히 같지 않아요. 헷갈리면 진단하고 시작하는 쪽이 정확해요. 시작한 뒤에도 언제든 진단할 수 있어요.','Book volumes and app courses are not identical. If unsure, the check is more accurate. You can take the check any time later.','教材册与本应用课程并非完全一致。不确定时先测评更准确。开始后也可随时测评。')}</p>
@@ -5884,8 +5892,11 @@ function screenStartChoice(){
   const sb=$('#scBook');if(sb)sb.onchange=()=>{c.book=sb.value;c.step='';loadConsultLadder(()=>screenStartChoice());screenStartChoice();};
   const ss=$('#scStep');if(ss)ss.onchange=()=>{c.step=ss.value;screenStartChoice();const r=$('#scBookGo');if(r)r.scrollIntoView({block:'nearest'});};
   const go=$('#scBookGo');if(go&&pick)go.onclick=()=>{
-    S.placement={at:Date.now(),course:pick.key,self:true,source:'book',book:c.book,stepId:c.step,asked:0,correct:0,profile:[],weak:[],slow:[]};
-    startChoice={open:false,book:'',step:''};S._diag=null;S._roadFocus=pick.key;S.view='courseroad';save();render();
+    S.placement={at:Date.now(),course:pick.key,session:pick.session,self:true,source:'book',book:c.book,stepId:c.step,asked:0,correct:0,profile:[],weak:[],slow:[]};
+    startChoice={open:false,book:'',step:''};S._diag=null;
+    /* 회차까지 학습 위치로 — 저장하지 못하는 체험·학원 진도에서는 과정만(시작점 표시) 남는다 */
+    if(!S.adminPlan)applyLearningSettings({courseKey:pick.key,sessionIndex:pick.session});
+    S._roadFocus=pick.key;S.view='courseroad';save();render();
   };
 }
 function screenStartPick(){

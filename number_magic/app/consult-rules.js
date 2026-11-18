@@ -124,6 +124,29 @@ function answerSkills(state, step, map){
 }
 function answerProbe(state, ref, value){ state.probes[ref] = value; if(!state.probeAsked.includes(ref)) state.probeAsked.push(ref); }
 
+/* 과정 안 회차까지(원장 2026-11-18 「구몬 진도로는 우리 과정도 세분화 되지 않아?」).
+   시작 과정의 앞 회차가 이미 아는 것만 있으면 건너뛰어 「과정 N · M회차」로 잡는다. 회차를 건너뛰는 조건 =
+   그 회차의 새 드릴(복습 표시 아님)이 모두 ① 아는 기술(같은 유형, 레벨이 같거나 낮음)이거나
+   ② 시작 과정보다 앞 과정에서 이미 나온 것(같은 유형, 레벨이 같거나 낮음). 처음 만나는 모르는 회차에서 멈춘다.
+   시작 과정 밖으로는 넘기지 않는다(과정을 다 알면 그 과정 1회차 — 과정은 시작 규칙이 이미 정했다).
+   courses = 단계표의 courses({order, s:[[ '유형@레벨', … ] 회차마다]}), known = Map(유형 → 아는 가장 높은 레벨). */
+function refineStart(courses, startKey, known){
+  const keys = Object.keys(courses).filter(k => courses[k].s).sort((a, b) => courses[a].order - courses[b].order);
+  const ci = keys.indexOf(startKey);
+  if(ci < 0) return { course: startKey, session: 1 };
+  const seen = new Map(), lvOf = r => { const i = r.lastIndexOf('@'); return [r.slice(0, i), +r.slice(i + 1)]; };
+  keys.slice(0, ci).forEach(k => courses[k].s.forEach(ss => ss.forEach(r => { const [t, lv] = lvOf(r); if(!(seen.get(t) >= lv)) seen.set(t, lv); })));
+  const knows = r => { const [t, lv] = lvOf(r); return known.get(t) >= lv || seen.get(t) >= lv; };
+  const S = courses[startKey].s;
+  for(let j = 0; j < S.length; j++) if(!S[j].length || !S[j].every(knows)) return { course: startKey, session: j + 1 };
+  return { course: startKey, session: 1 };
+}
+function knownMap(refs){
+  const m = new Map();
+  refs.forEach(r => { const i = r.lastIndexOf('@'), t = r.slice(0, i), lv = +r.slice(i + 1); if(!(m.get(t) >= lv)) m.set(t, lv); });
+  return m;
+}
+
 /* 결과 */
 function result(state){
   const p = state.profile;
@@ -163,12 +186,13 @@ function result(state){
     start = first ? first.course : null; reason = { kind: 'unknown' };
   }
   const slowAny = by('slow').length > 0;
-  return { start, reason, good, shaky, notyet: ahead, gaps, unknown,
+  const session = start && data().courses[start] && data().courses[start].s ? refineStart(data().courses, start, knownMap(good.map(k => k.ref))).session : 1;
+  return { start, session, reason, good, shaky, notyet: ahead, gaps, unknown,
     pace: state.fingers === 'often' || slowAny ? 'slow' : state.fingers === 'sometimes' ? 'some' : 'ok',
     needCheck: unknown.length > 0 };
 }
 
-const api = { AGES, MAX_STEPS, MAPPED, newState, anchor, initialSteps, next, answerSkills, answerProbe, status, result, ladderFor };
+const api = { AGES, MAX_STEPS, MAPPED, newState, anchor, initialSteps, next, answerSkills, answerProbe, status, result, ladderFor, refineStart, knownMap };
 root.NM_CONSULT_RULES = api;
 if(typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
