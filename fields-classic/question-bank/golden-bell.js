@@ -1754,6 +1754,19 @@ function showSessionBookDone() {
   window.addEventListener("afterprint", () => { if (params.get("preview") !== "1") backToStudy(); });
 }
 
+// 시안 판: 두 단 중 왼쪽 칸 문제에 표시를 달아 가운데 세로줄을 그 칸 오른쪽 선으로 그린다(온 폭 문제가 있는 줄은 선이 끊긴다).
+function markGridColumns(root) {
+  // 칸은 줄 순서로 채워진다(왼쪽 → 오른쪽 → 다음 줄). 온 폭 문제는 새 줄을 차지하고 다음 문제는 다시 왼쪽에서 시작한다.
+  root.querySelectorAll(".gold-print-exercise-grid").forEach((grid) => {
+    let column = 0;
+    [...grid.children].forEach((item) => {
+      if (item.classList.contains("full-width-exercise")) { column = 0; return; }
+      item.classList.toggle("tb-col-left", column === 0);
+      column = 1 - column;
+    });
+  });
+}
+
 async function printSessionBook() {
   let book = activeBook();
   // 워밍업 자료가 없는 권(2과정 G1 등): 표지에 쓸 권 이름만 주소로 받는다(study-deck.js sessionPrintHref의 &blabel=&btitle=&bcourse=)
@@ -1775,10 +1788,15 @@ async function printSessionBook() {
     const warmAnswerPages = warmAnswers ? lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: true })).join("") : "";
     const answerPages = warmAnswerPages + sessionAnswerPages([...daily.answers, ...sheet.answers], { book, session, student });
     root.innerHTML = cover + daily.pages + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet.pages + answerPages;
+    // &layout=grid: 시안 — 쪽마다 같은 두 단 + 가운데 세로줄, 문제 사이를 고르게 벌려 쪽을 채움(원장 2026-11-18 Typst 시험지 사진 「이렇게 깔끔하게」).
+    // 쪽 나누기도 이 판으로 재므로 compact 전에 붙인다.
+    const gridLook = params.get("layout") === "grid";
+    if (gridLook) root.classList.add("tb-grid");
     if (document.fonts?.ready) await document.fonts.ready;
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode().catch(() => null)));
     compactGoldenBellPrint(root);
     renumberPrintPages(root);
+    if (gridLook) markGridColumns(root);
     document.body.classList.add("session-book");
     // 종이 여백은 0, 모든 쪽(워밍업·본책·과제·평가 모두 워밍업 꼴)에 11mm 흰 테두리
     const pageStyle = document.createElement("style");
