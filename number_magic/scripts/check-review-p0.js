@@ -82,7 +82,11 @@ const server=http.createServer((req,res)=>{
    if(im){eq(fr.answer,Math.floor(+im[1]/+im[2]),'Improper to mixed quotient');ok(fr.steps.every(s=>/\\square/.test(s.tex)),'Keep both quotient/mixed steps incomplete');ok(/= \\square \\cdots/.test(fr.steps[0].tex),'Quotient must not be prefilled');}
    else{const m=fr.tex.match(/^(\d+)\\frac\{(\d+)\}\{(\d+)\}/);eq(fr.answer,+m[1]*+m[3]+ +m[2],'Mixed to improper numerator');ok(fr.steps.at(-1).tex.includes('\\frac{\\square}'),'Final numerator must not be prefilled');}
    const dc=gen('DC1',1,seed),m=dc.tex.match(/^0\.(\d) ([+-]) 0\.(\d)/);
-   eq(dc.answer,m[2]==='+'?+m[1]+ +m[3]:+m[1]- +m[3],'Decimal tenths arithmetic');
+   /* 2026-11-18: 답은 소수 모양 빈칸(0.□·1.□·□)에 들어가는 수 — 빈칸에 답을 넣은 식이 맞아야 한다 */
+   {const full=dc.tex.replace('\\square',String(dc.answer)).match(/^([\d.]+) ([+-]) ([\d.]+) = ([\d.]+)$/);
+    ok(full,'Decimal tenths answer fills a decimal-shaped blank: '+dc.tex);
+    eq(Math.round((full[2]==='+'?+full[1]+ +full[3]:+full[1]- +full[3])*10),Math.round(+full[4]*10),'Decimal tenths arithmetic');
+    ok(!/dfrac/.test(dc.tex),'Decimal answers are not written as fractions');}
    if(m[2]==='+'&&dc.answer>=10)eq(dc.steps.at(-1).tex,dc.tex,'Carry step does not print the decimal answer');
    const gp=gen('MD69',3,seed),x=+gp.tex.match(/x = (-?\d+)/)[1];
    eq(gp.graph.pts.length,0,'Graph reading must not label the answer coordinate');

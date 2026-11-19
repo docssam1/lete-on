@@ -27,6 +27,7 @@ on:
       - 'number_magic/**'
       - 'personality/**'
       - 'premier/**'
+      - 'programs/**'
       - 'promo/hwangso-last-month/**'
       - 'popcorn/**'
       - 'promo/popcorn-lab/**'
@@ -147,6 +148,8 @@ jobs:
           test ! -e _site/premier/qa
           cp -R promo/hwangso-last-month/. _site/promo/hwangso-last-month/
           cp -R promo/popcorn-lab/. _site/promo/popcorn-lab/
+          mkdir -p _site/programs
+          cp -R programs/. _site/programs/
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
           # Keep the protected entry small and avoid 100+ ordered script requests.
