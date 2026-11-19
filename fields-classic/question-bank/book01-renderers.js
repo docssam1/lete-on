@@ -84,7 +84,8 @@ function digitalDigit(value) {
   return `<svg class="b1-digit" viewBox="0 0 45 74" role="img" aria-label="디지털 숫자 ${value}">${Object.entries(SEGMENT_PATHS).map(([name, path]) => `<path class="${segments.includes(name) ? "on" : ""}" d="${path}"/>`).join("")}</svg>`;
 }
 
-function digitalNumber(value) {
+// 다른 그림(워밍업 개념 카드 등)에서도 같은 디지털 숫자를 쓰게 내보낸다
+export function digitalNumber(value) {
   return String(value).split("").map((digit) => digitalDigit(Number(digit))).join("");
 }
 

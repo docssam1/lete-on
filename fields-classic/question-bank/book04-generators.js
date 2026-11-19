@@ -755,10 +755,10 @@ function circularSeatBlankBook4({ difficulty = 2 }) {
     const next = solution[(index + 1) % count];
     rules.push({ kind: "clockwise", first: next, second: name, text: `${topic(next)} ${name}의 시계 방향 바로 옆에 앉아 있습니다.` });
     const previous = solution[(index - 1 + count) % count];
-    rules.push({ kind: "between", first: previous, second: next, middle: name, text: `${previous}와 ${next} 사이에 ${subjectOf(name)} 앉아 있습니다.` });
+    rules.push({ kind: "between", first: previous, second: next, middle: name, text: `${withOf(previous)} ${next} 사이에 ${subjectOf(name)} 앉아 있습니다.` });
     if (count % 2 === 0 && index < count / 2) {
       const opposite = solution[(index + count / 2) % count];
-      rules.push({ kind: "opposite", first: name, second: opposite, text: `${withOf(name)} ${opposite}는 마주 보고 있습니다.` });
+      rules.push({ kind: "opposite", first: name, second: opposite, text: `${withOf(name)} ${topic(opposite)} 마주 보고 있습니다.` });
     }
   });
   const matches = (order, rule) => {

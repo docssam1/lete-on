@@ -555,7 +555,7 @@ function fixedValueOrderAssignmentBook9({ difficulty = 2 }) {
   const order = shuffle(Array.from({ length: names.length }, (_, index) => index));
   const assigned = Object.fromEntries(names.map((name, index) => [name, values[order[index]]]));
   const sortedNames = names.slice().sort((a,b) => assigned[a] - assigned[b]);
-  const conditions = sortedNames.slice(0, -1).map((name, index) => `${topic(sortedNames[index + 1])} ${name}보다 ${assigned[sortedNames[index + 1]] - assigned[name]}만큼 큽니다.`);
+  const conditions = sortedNames.slice(0, -1).map((name, index) => `${sortedNames[index + 1]}의 값은 ${name}의 값보다 ${assigned[sortedNames[index + 1]] - assigned[name]} 큽니다.`);
   const target = sample(names);
   return book9Problem({
     prompt: `서로 다른 값 ${values.join(", ")}을 조건에 맞게 한 번씩 정했습니다. ${target}의 값을 구하세요.`,

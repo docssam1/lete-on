@@ -689,7 +689,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     scope: "global-type-id",
     sharedByDesign: true,
     beats: Object.freeze([
-      beat("list-card-values", "쓸 수 카드를 확인해요", "주어진 수 카드를 한 번씩만 쓰도록 사용 전 목록을 적고 놓은 카드는 지웁니다."),
+      beat("list-card-values", "쓸 수 있는 카드를 확인해요", "주어진 수 카드를 한 번씩만 쓰도록 사용 전 목록을 적고 놓은 카드는 지웁니다."),
       beat("complete-tight-row", "조건이 적은 줄부터 채워요", "빈칸이 적거나 가능한 두 수가 바로 정해지는 가로줄부터 합에 맞게 채웁니다."),
       beat("cross-check-columns", "세로 합과 함께 확인해요", "놓은 수가 세로 합에도 맞는지 확인하고 남은 카드를 다음 칸에 넣습니다.")
     ]),
@@ -962,7 +962,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
   "equal-part-shaded-fraction": sourceLesson(
     "concept:geometry:equal-parts-fraction",
     [
-      beat("count-equal-whole", "전체를 같은 부분으로 세요", "도형 전체가 몇 개의 같은 크기 부분으로 나뉘었는지 먼저 셉니다."),
+      beat("count-equal-whole", "같은 크기 부분이 몇 개인지 세요", "도형 전체가 몇 개의 같은 크기 부분으로 나뉘었는지 먼저 셉니다."),
       beat("count-shaded-parts", "색칠한 부분을 세요", "전체와 같은 단위로 색칠된 부분의 수를 세어 분자에 해당하는 수를 정합니다."),
       beat("write-fraction-order", "전체와 색칠한 부분을 분수로 써요", "전체 부분 수를 아래에, 색칠한 부분 수를 위에 써서 분수로 나타내고 그림과 다시 대조합니다.")
     ],
