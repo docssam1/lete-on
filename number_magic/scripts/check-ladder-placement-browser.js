@@ -5,12 +5,15 @@
  * 외부 요청 없음. usage: node scripts/check-ladder-placement-browser.js */
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
 const {chromium}=require('./lib/playwright');
+/* 2026-11-18 진단 기준 고르기의 기본이 대화형이 되었다 — 이 검사는 한 화면 양식(nm_pd_form=1)을 본다. 대화형은 check-placement-talk-browser.js */
+const formCtx=async(br,o)=>{const c=await br.newContext(o);await c.addInitScript(()=>{try{localStorage.setItem('nm_pd_form','1');}catch(e){}});return c;};
+
 const ROOT=path.resolve(__dirname,'../..');
 const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.woff2':'font/woff2','.webp':'image/webp','.png':'image/png'};
 const server=http.createServer((req,res)=>{const file=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).pipe(res);});
 const seed=lang=>({lang,onboarded:true,name:'사다리 검수',view:'placement',avatar:{kind:'boy'},character:{number:3,color:'gold'},coins:50,progress:{},account:{status:'active'},r0BannerSeen:true,cloudLinked:false});
 async function open(browser,base,width,lang){
- const ctx=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+ const ctx=await formCtx(browser,{viewport:{width,height:844},reducedMotion:'reduce'});
  await ctx.route('**/*',r=>new URL(r.request().url()).origin===base&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort());
  await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));},seed(lang));
  const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -59,7 +62,7 @@ const overflow=page=>page.evaluate(()=>document.documentElement.scrollWidth>inne
    assert.deepEqual(errors,[]);report.push({width,lang,ladders:3,onlineAllUnknown:'step 1',paperStart:'step 3',externalWrites:0});await ctx.close();
   }
   // 인쇄 시험지: 채점 칸이 시험지보다 위, 칸마다 정답
-  const ctx=await browser.newContext({viewport:{width:390,height:844}}),page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const ctx=await formCtx(browser,{viewport:{width:390,height:844}}),page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/number_magic/placement-sheet.html?ladder=a7&l=ko&seed=check');await page.waitForFunction(()=>window.NM_WS_READY===true,null,{timeout:90000});
   assert.equal(await page.locator('.pl-q').count(),20);
   assert(await page.evaluate(()=>!!(document.getElementById('plScore').compareDocumentPosition(document.querySelector('.nm-print-sheet'))&Node.DOCUMENT_POSITION_FOLLOWING)),'marking box precedes the printed pages');

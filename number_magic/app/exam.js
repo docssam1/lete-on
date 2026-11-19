@@ -5124,7 +5124,8 @@ function trainCellPlan(p, idx, n){
     fill:cpFill(x.orig != null ? x.orig : x.tex, x.blank) }));
   let ans = true;
   const last = src[src.length - 1];
-  if(!bare && /\\square/.test(raw)) ans = false;               /* 문제 식 안에 이미 답 칸(몫 ⋯ 나머지·AD9 두 식) */
+  /* 문제 식 안에 이미 답 칸(몫 ⋯ 나머지·AD9 두 식·0.3 + 0.□ = 1) — 단계 없는 칸(bare)도 같다(2026-11-18, 홀로 선 「= □」 줄을 뺌) */
+  if(/\\square/.test(raw)) ans = false;
   else if(last && /\\square/.test(last.tex) && 'blank' in last
     && (JSON.stringify(last.blank) === JSON.stringify(p.answer) || (!Array.isArray(last.blank) && typeof p.answer === 'number' && cpNear(+last.blank, p.answer)))) ans = false;
   return { raw, bare, steps, ans, value:V, from: fromSteps ? 'steps' : 'solution' };
@@ -5167,7 +5168,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       const askP = askObj ? pickL(askObj) : '';
       /* 원래 식과 같은 값인 줄만 "=" 로 잇는다 — 곁 계산은 화살표(trainStepChains, 채운 줄로 판정) */
       const Vp = cpEval(String(P.expr).split('=').pop());
-      const lines = P.lines.map((t, li) =>
+      /* 원래 식을 그대로 되풀이하는 줄(「= 0.2 + 0.8 = 1」)은 뺀다(2026-11-18, 원장 「어색한 식」) — 빈칸이 든 줄은 늘 남긴다 */
+      const sameAsExpr = li => !/\\square/.test(String(P.lines[li])) && cpSameTex(P.chain[li], P.expr);
+      const lines = P.lines.map((t, li) => sameAsExpr(li) ? '' :
         `<div class="nm-w2-train-step">${trainStepChains({ tex:P.chain[li] }, Vp) ? TRAIN_EQUAL : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(String(t)))}"></span></div>`).join('');
       return `<div class="${cls} nm-w2-item-train nm-w2-item-process" data-process="${P.form}"${slotAttrP}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askP ? `<div class="nm-print-ask nm-w2-process-ask">${esc(askP)}</div>` : ''}
   <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(trainDisplay(P.expr))}"></span></div>
@@ -5426,8 +5429,10 @@ function w2AnswerKeyItemsHtml(problems, numStart){
        사슬은 길어 한 줄을 통째로 쓴다(.nm-ak-item-chain). 클래스는 그대로 .nm-ak-item — 문항 수 = 정답 수 검사 유지. */
     if(p.__process){
       const P = p.__process;
+      /* 학습지에서 뺀 줄(맨 위 식을 그대로 되풀이하는 줄)은 정답지에서도 뺀다(2026-11-18, C16 독셈) */
       const chainParts = [P.expr].concat(P.chain.map((l, li) => li === P.line
-        ? P.lines[li].replace(/\\square/, `\\mathbf{${fmtAns(P.value)}}`) : l));
+        ? P.lines[li].replace(/\\square/, `\\mathbf{${fmtAns(P.value)}}`) : l)
+        .filter((l, li) => li === P.line || /\\square/.test(String(P.lines[li])) || !cpSameTex(P.chain[li], P.expr)));
       return `<div class="nm-ak-item nm-ak-item-chain" data-process="${P.form}">(${base+i+1}) <b class="nm-ak-process-val">${esc(String(fmtAns(P.value)))}</b>`
         + ` <span class="nm-ak-process-chain">${chainParts.map(tex=>`<span class="nm-ak-process-step"><span class="nm-w2-tex" data-tex="${esc(texDisplay(tex))}"></span></span>`).join('<span>⇒</span>')}</span></div>`;
     }
@@ -6034,6 +6039,14 @@ function w2NeighborExampleHtml(p){
   // Extra, manually selected NL levels keep their existing paper path until their widget has a reviewed example.
   return window.NM_PAPER_EXAMPLES.supports(p)?window.NM_PAPER_EXAMPLES.html(p,w2PaperExampleKit()):'';
 }
+/* 풀이 줄 가운데 맨 위 식을 그대로 되풀이하는 줄(2026-11-18) — 나머지 나눗셈 따라 풀기가
+   `386 ÷ 4 = □ ⋯ 2` → `386 = 4 × □ + 2` → `386 ÷ 4 = □ ⋯ 2`로 같은 몫을 세 번 쓰게 했다(C16 3일차).
+   맨 위 식이 이미 있으니 그 줄은 뺀다. 다 빠지면(풀이가 그 줄 하나) 그대로 둔다. */
+function w2DropHeadRepeat(steps, headTex){
+  if(!Array.isArray(steps) || !String(headTex || '').trim()) return steps || [];
+  const kept = steps.filter(s => !cpSameTex(String(s && s.tex || ''), headTex));
+  return kept.length ? kept : steps;
+}
 function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = drawUnique(threadId, level, rng, exclude, 12, exactSkip);
@@ -6089,7 +6102,7 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
     const completedTex = p.completedTex || (bare ? String(p.tex || '')
       : fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p))));
     const completedHtml = String(completedTex).trim() ? `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>` : "";
-    const stepParts = stepSrc.filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==String(p.tex||'').trim()).map(s => {
+    const stepParts = w2DropHeadRepeat(stepSrc.filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==String(p.tex||'').trim()), p.tex).map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
       const t = ('blank' in s && /\\square/.test(String(s.tex||''))) ? fixNegSigns(texSubstituteAnswer(String(s.tex||''), s.blank)) : String(s.tex||'');
       return `<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span>`;
@@ -6157,7 +6170,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     const c0Beads=W2_C0&&window.NM_C0_CONCRETE&&NM_C0_CONCRETE.html(p,false,threadId,examLang());
     const qTex = c0Beads?'':raw;   /* 그림의 답칸과 같은 식을 반복하지 않는다. */
     const qHtml = qTex.trim() ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>` : '';
-    const teachingSteps=(stepSrc||[]).filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==raw.trim());
+    const teachingSteps=w2DropHeadRepeat((stepSrc||[]).filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==raw.trim()), raw);
     const chainHtml = c0Beads?'':(teachingSteps.length)
       ? teachingSteps.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
           .join('<span class="nm-w2-guide-arrow">→</span>')
@@ -6532,6 +6545,8 @@ function applyPartialBlanks(problems, layoutType, item){
    찾고, 회차 전체에 쓸 줄이 없으면 손대지 않고 NM_PROCESS_LOG 에 남긴다(가짜 빈칸 금지).
    Training Course(layout.type === 'train')에서만 부른다.
    ============================================================ */
+/* 두 식이 글자로 같은지(띄어쓰기·\displaystyle 무시) */
+function cpSameTex(a, b){ const n = t => String(t || '').replace(/\\displaystyle|\s+/g, ''); return n(a) === n(b); }
 function cpCfg(){ return (window.NM_CREATIVE_PROCESS && window.NM_CREATIVE_PROCESS.cfg) || null; }
 function cpOf(threadId, level){
   return window.NM_CREATIVE_PROCESS ? window.NM_CREATIVE_PROCESS.of(threadId, level)
@@ -7040,8 +7055,10 @@ function renderRoundPagesBody(item, opts){
   /* 가르치지 않는 회차(점검)·문장제만인 회차는 첫 장 머리가 잰 드릴 머리와 다르다 — 점검은 머리가 없고(가득 찬 장과 같다),
      문장제만인 회차는 말→식→답 예시 하나(실측 71mm + 지시문 6mm, C8 DV12 L1 senior). 잰 첫 장 값이 없을 때
      그대로 두면 판정표 줄 수가 그대로 나가 카드가 칸을 넘었다(C8 DV12 6장 +2mm). */
-  const plainFirst = (noTeach || (wordOnly && headBand && headBand[0] == null)) && headBand && headBand[3]
-    ? headBand[3] - (wordOnly ? 80 * fsR * (young ? 1.28 : 1) : 0) : null;
+  /* 문장제만인 회차는 잰 드릴 머리(개념·예시·따라 풀기)가 있어도 그 값을 쓰지 않는다(2026-11-18) — 머리가 예시 하나뿐이거나
+     예시조차 없는데 드릴 머리 높이로 재서 첫 장에 문항이 0줄로 잡혔다(과정 16 문장제: 이름 칸만 있는 빈 장). */
+  const plainFirst = (noTeach || wordOnly) && headBand && headBand[3]
+    ? headBand[3] - (wordOnly && exampleHtml ? 80 * fsR * (young ? 1.28 : 1) : 0) : null;
   if(plainFirst != null && firstRows > 0){
     let avail = plainFirst;
     if(problems.length <= firstRows * layout.cols) avail -= (window.NM_PRINT_HEAD_QR || 0);
@@ -7061,7 +7078,8 @@ function renderRoundPagesBody(item, opts){
     const cap1 = firstRows * layout.cols;
     if(midPage && cap1 > 0 && cap1 < Math.min(6, problems.length)) firstRows = 0;
   }
-  if((pictureWorked&&exampleHtml)||(['DC3','MD118'].includes(item.thread)&&!noTeach))firstRows=0;
+  /* DC3·MD118은 따라 풀기가 높아 첫 장에 문항을 싣지 않는다 — 문장제만인 회차는 따라 풀기가 없어 빈 장이 됐다(C23 DC3, 2026-11-18) */
+  if((pictureWorked&&exampleHtml)||(['DC3','MD118'].includes(item.thread)&&!noTeach&&!wordOnly))firstRows=0;
   const firstCap = firstRows * layout.cols;
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —

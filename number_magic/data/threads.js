@@ -1548,7 +1548,7 @@ DC5:{ name:{ko:'소수를 나누기',en:'Decimal division',zh:'小数除法'}, g
 
 /* ── EL 초등 신규 5종 (과정-로드맵.md §3 Level1~2 신규 소요, 2026-08-25 Phase 1) ── */
 DC6:{ name:{ko:'소수의 짝꿍(1·10 만들기)',en:'Decimal bonds to 1 & 10',zh:'小数的伙伴(凑1与凑10)'}, gen:'dc6_decBond', prereq:['DC1','NS4'],
-  concept:{ko:'더해서 10이 되는 짝을 소수에도 그대로 씁니다. 0.3의 1 짝꿍은 0.7이고, 0.35의 1 짝꿍은 0.65예요. 세로셈을 하지 않아도 십분의 자리끼리 10, 백분의 자리끼리 100을 채우면 바로 보여요.',
+  concept:{ko:'더해서 10이 되는 짝을 소수에도 그대로 씁니다. 0.3의 1 짝꿍은 0.7이고, 0.35의 1 짝꿍은 0.65예요. 세로셈을 하지 않아도 소수 첫째 자리끼리 10, 소수 둘째 자리끼리 100을 채우면 바로 보여요.',
     en:'The pairs that make 10 work for decimals too. The partner of 0.3 to reach 1 is 0.7, and of 0.35 it is 0.65. You do not need column subtraction — fill the tenths to 10, the hundredths to 100, and the answer appears.',
     zh:'凑十的数对同样适用于小数。0.3凑成1的伙伴是0.7，0.35的是0.65。不用竖式，把十分位凑到10、百分位凑到100，答案就出来了。'},
   widgets:['numpad','steps'],
@@ -1586,7 +1586,7 @@ EL1:{ name:{ko:'역연산으로 빈칸 찾기',en:'Missing Number by Inverse Ope
            concept:{ko:'곱셈식의 □는 나눗셈으로, 나눗셈식의 □는 곱셈이나 나눗셈으로 되짚어요 — □÷6=23은 6×23=138, 138÷□=6은 138÷6=23이에요.',
              en:'A blank in a multiplication is found by dividing; in a division, by multiplying or dividing: □÷6=23 gives 6×23=138, and 138÷□=6 gives 138÷6=23.',
              zh:'乘法里的□用除法找，除法里的□用乘法或除法找——□÷6=23是6×23=138，138÷□=6是138÷6=23。'}},
-          {id:7,offLadder:true,label:{ko:'4학년: 분수·소수 □',en:'Grade 4: fraction & decimal blanks',zh:'四年级：分数·小数□'},params:{mode:'g4'},
+          {id:7,offLadder:true,label:{ko:'4학년: 분수·소수 빈칸 채우기',en:'Grade 4: fraction & decimal blanks',zh:'四年级：分数·小数填空'},params:{mode:'g4'},
            concept:{ko:'분모가 같은 분수와 소수에서도 역연산은 똑같아요. □−2/9=3 7/9은 3 7/9+2/9=4예요. □.6+1.3=10.9는 10.9−1.3=9.6이라 □는 9예요.',
              en:'Inverse operations work the same with like fractions and decimals: □−2/9 = 3 7/9 gives 3 7/9 + 2/9 = 4, and □.6+1.3=10.9 gives 10.9−1.3 = 9.6, so the blank is 9.',
              zh:'同分母分数和小数也一样用逆运算：□−2/9=3又7/9是3又7/9+2/9=4；□.6+1.3=10.9是10.9−1.3=9.6，所以□是9。'}},

@@ -4,6 +4,9 @@
 // No email, SMS, real profile write, publishing or runtime style injection.
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict');
 const {chromium}=require('./lib/playwright');
+/* 2026-11-18 진단 기준 고르기의 기본이 대화형이 되었다 — 이 검사는 한 화면 양식(nm_pd_form=1)을 본다. 대화형은 check-placement-talk-browser.js */
+const formCtx=async(br,o)=>{const c=await br.newContext(o);await c.addInitScript(()=>{try{localStorage.setItem('nm_pd_form','1');}catch(e){}});return c;};
+
 const {execFileSync}=require('node:child_process');
 const ROOT=path.resolve(__dirname,'../..');
 const OUT=process.env.NM_EVIDENCE_DIR||'/tmp/nm-roadmap-design';
@@ -50,7 +53,7 @@ async function openFixture(browser,base,{course,width,height,lang='ko'}){
   const schoolAge=course==='C1'?{entryYear:2028,birthYear:2021,profileGrade:'pre'}:course==='C29'?{entryYear:2020,birthYear:2013,profileGrade:'m1'}:course==='C58'?{entryYear:2017,birthYear:2010,profileGrade:'h1'}:{entryYear:2016,birthYear:2009,profileGrade:'h2'};
   const settings={profileName:name,version:7,courseKey:course,sessionIndex:1,speed:1,amount:1,cadence:'w2',entryYear:schoolAge.entryYear,startDate:'2026-10-24',updatedAt:'2026-10-24T00:00:00.000Z'};
   const original={name,lang,onboarded:true,cloudLinked:true,cloudOwnerId:owner,view:'courseroad',roadView:'road',progress:{'A-02':{done:true,steps:{stamp:true}}},coins:17,account:{status:'active'},placement:{course,self:true},schoolAge,character:{number:3,color:'blue',hat:'none'},avatar:{id:'legacy',kind:'boy',look:'boy',name:'',outfit:'original'}};
-  const ctx=await browser.newContext({viewport:{width,height},reducedMotion:'reduce'}),page=await ctx.newPage(),errors=[],requests=[],blocked=[];
+  const ctx=await formCtx(browser,{viewport:{width,height},reducedMotion:'reduce'}),page=await ctx.newPage(),errors=[],requests=[],blocked=[];
   page.on('pageerror',e=>errors.push(e.message));
   await ctx.route('**/*',r=>{if(r.request().url().startsWith(base+'/')&&r.request().method()==='GET')return r.continue();blocked.push({method:r.request().method(),url:r.request().url()});return r.abort();});
   await ctx.addInitScript(({key,state})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(state));},{key:'nm_learner_state_v1_'+encodeURIComponent(owner),state:original});

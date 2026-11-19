@@ -5466,7 +5466,7 @@ function screenPlacement(){
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
   if(S._diag.phase==='setup')assessmentChooseMethod=false;
-  ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
+  ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,character:S.character,
     chooseMethod:assessmentChooseMethod,checkHistory:()=>S.achievementChecks||[],
     speedHistory:()=>S.speedChecks||[],onSpeed:rec=>{S.speedChecks=(S.speedChecks||[]).concat(rec).slice(-12);save();}, /* 1분 계산 속도 기록(2026-11-18) — 진단을 새로 해도 남는다 */
     onAttemptStart:()=>{assessmentChooseMethod=false;},
@@ -5871,38 +5871,62 @@ function bookStartCourse(book,stepId){
   return {key:'C'+n,session:1,bundle:null,next:steps[i+1]||null,step:steps[i]};
 }
 function screenStartChoice(){
+  /* 창 하나에 한 질문(원장 2026-11-18 「대화형으로 하나씩」 「너무 ai야」 「창에 한 질문씩 나와서 클릭할 수 있도록」).
+     고르면 다음 질문, 「이전 질문」으로 되돌림. 진단 기준 고르기(placement-ui.js talk)와 같은 꼴. */
   if(townCleanup){townCleanup();townCleanup=null;}
   const scr=$('#screen'),ko=S.lang==='ko',en=S.lang==='en',lk=(k,e,z)=>ko?k:en?e:z,tr=o=>o?(ko?o.ko:en?o.en:o.zh)||o.ko:'';
   const c=startChoice,LD=(window.NM_CONSULT_LADDER||{}).ladders||{};
   const steps=c.book&&LD[c.book]?LD[c.book]:[];
   const pick=c.book&&c.step?bookStartCourse(c.book,c.step):null;
   const course=pick?(window.NM_COURSES||{})[pick.key]:null;
-  const bookPanel=!c.open?'':`<div class="nm-sc-book">
-      <label class="nm-sc-l">${lk('지금까지 한 연산 교재','Arithmetic book used so far','目前用过的运算教材')}
-        <select id="scBook"><option value="">${lk('교재를 골라 주세요','Choose a book','请选择教材')}</option>${START_BOOKS.map(b=>`<option value="${b[0]}"${c.book===b[0]?' selected':''}>${esc(lk(b[1],b[2],b[3]))}</option>`).join('')}</select></label>
-      ${c.book?(steps.length?`<label class="nm-sc-l">${lk('마지막으로 끝낸 권(단계)','Last finished volume (level)','最后完成的册（阶段）')}
-        <select id="scStep"><option value="">${lk('끝낸 권을 골라 주세요','Choose the finished volume','请选择完成的册')}</option>${steps.map(x=>`<option value="${esc(x.id)}"${c.step===x.id?' selected':''}>${esc(tr(x.title)+(x.topic?' · '+x.topic:''))}</option>`).join('')}</select></label>`:`<p class="nm-sc-note">${lk('교재 단계표를 불러오는 중이에요…','Loading the book levels…','正在加载教材阶段…')}</p>`):''}
-      ${pick&&course?`<div class="nm-sc-result"><span>${lk('여기서부터 시작해요','Start here','从这里开始')}</span><b>${lk('과정','Course','课程')} ${pick.key.slice(1)} · ${esc(L(course.title))}</b>
-        <em class="nm-sc-at">${pick.bundle?lk('학습 묶음 '+pick.bundle+'부터','From study bundle '+pick.bundle,'从学习组'+pick.bundle+'开始'):lk(pick.session+'회차부터','From lesson '+pick.session,'从第'+pick.session+'课次开始')}${pick.session>1?' · '+lk('앞 회차는 하던 교재에서 이미 한 내용이에요.','Earlier lessons repeat what the book already covered.','前面的课次是教材里已经学过的内容。'):''}</em>
-        ${pick.next?`<small>${esc(lk('다음 권 「'+tr(pick.next.title)+'」의 새 계산이 처음 나오는 과정이에요.','The first course with the new calculations of the next volume ('+tr(pick.next.title)+').','下一册「'+tr(pick.next.title)+'」新计算首次出现的课程。'))}</small>`:`<small>${lk('끝낸 권 다음 과정이에요.','The course after the finished volume.','完成册之后的课程。')}</small>`}
-        <button class="nm-btn" id="scBookGo">${lk('이 과정부터 시작하기','Start from this course','从这个课程开始')}</button></div>`:''}
-      <p class="nm-sc-note">${lk('교재의 권과 우리 과정은 내용이 정확히 같지 않아요. 헷갈리면 진단하고 시작하는 쪽이 정확해요. 시작한 뒤에도 언제든 진단할 수 있어요.','Book volumes and app courses are not identical. If unsure, the check is more accurate. You can take the check any time later.','教材册与本应用课程并非完全一致。不确定时先测评更准确。开始后也可随时测评。')}</p>
-    </div>`;
-  scr.innerHTML=`<div class="nm-sc">
-    <h1 class="nm-sc-h">${lk('어떻게 시작할까요?','How shall we start?','怎么开始呢？')}</h1>
-    <p class="nm-sc-sub">${lk('처음 한 번만 고르면 돼요.','You only choose this once.','只需选择一次。')}</p>
-    <button class="nm-sc-card main" id="scDiag"><b>${lk('진단하고 시작하기','Check first, then start','先测评再开始')}</b>
-      <span>${lk('20문항으로 지금 수준을 확인하고, 어느 과정에서 시작해 언제 어디까지 끝나는지 일정을 알려 드려요. 8세 이하는 소마·필즈 반 진도와 견주는 그래프도 보여 드려요.','20 questions find the right course and show when each stage finishes. For age 8 and under you also get a graph compared with SOMA and Fields classes.','用20道题确认水平，告诉你从哪门课程开始、何时完成到哪里。8岁以下还会显示与SOMA·Fields班进度比较的图表。')}</span></button>
-    <button class="nm-sc-card" id="scBookOpen" aria-expanded="${c.open}"><b>${lk('지금 하던 교재 다음부터 시작하기','Continue after the book you finished','从已学教材之后开始')}</b>
-      <span>${lk('기적의 계산법·소마셈·두뇌로·구몬수학에서 끝낸 권을 고르면 그다음 과정부터 바로 시작해요.','Pick the volume finished in Miracle Calculation, Soma-sem, Dunoro or Kumon and start right after it.','选择在奇迹计算法、Soma算、Dunoro或公文数学中完成的册，直接从下一课程开始。')}</span></button>
-    ${bookPanel}
-    <button class="nm-sc-later" id="scLater">${lk('나중에 정하고 마을 구경하기','Decide later and explore the village','以后再定，先逛村庄')}</button>
-  </div>`;
-  $('#scDiag').onclick=()=>{startChoice={open:false,book:'',step:''};startPlacement();};
-  $('#scBookOpen').onclick=()=>{c.open=!c.open;if(c.open)loadConsultLadder(()=>screenStartChoice());screenStartChoice();};
+  /* 창 하나에 한 질문(원장 2026-11-18 「창에 한 질문씩 나와서 클릭할 수 있도록」) — 지난 답은 쌓지 않고 「← 이전」. */
+  /* 단추 = 굵은 한 줄 + (있으면) 작은 둘째 줄. 가운뎃점(·)으로 잇지 않는다(frontend-design 「흔한 생성 화면」). */
+  const picks=(key,opts,long)=>`<div class="nm-sc-picks${long?' long':''}">${opts.map(o=>`<button type="button" data-pick="${key}" data-val="${esc(o[0])}"><b>${esc(o[1])}</b>${o[2]?`<small>${esc(o[2])}</small>`:''}</button>`).join('')}</div>`;
+  let q='',body='',back='',no=1,note='';
+  if(!c.open){
+    q=lk('진단부터 할까요, 하던 교재 다음부터 이어 갈까요?','Take the check first, or continue after the book you finished?','先做测评，还是从已学教材之后继续？');
+    body=picks('way',[['diag',lk('진단부터 할게요','Check first','先测评'),lk('20문제를 풀고 시작 과정을 정해요','20 questions decide the starting stage','做20道题，确定起始课程')],['book',lk('하던 교재 다음부터 할게요','Continue after my book','从已学教材之后继续'),lk('끝낸 권을 고르면 바로 시작해요','Pick the last finished volume and start','选好已完成的一册就开始')]]);
+    note=lk('진단을 하면 어느 과정에서 시작해 언제 어디까지 끝나는지 일정표가 나와요.','The check also gives a schedule of when each stage finishes.','测评后会给出从哪门课程开始、何时完成的时间表。');
+  }else if(!c.book){
+    no=2;back='way';q=lk('어떤 연산 교재를 했나요?','Which arithmetic book?','学了哪本运算教材？');
+    body=picks('book',START_BOOKS.map(b=>[b[0],lk(b[1],b[2],b[3])]));
+  }else if(!steps.length){
+    no=3;back='book';q=lk('교재 차례를 불러오고 있어요…','Loading the book list…','正在加载教材目录…');
+  }else if(!c.step){
+    no=3;back='book';q=lk('마지막으로 끝낸 권은 어디인가요?','Which volume was finished last?','最后完成的是哪一册？');
+    body=picks('step',steps.map(x=>[x.id,tr(x.title),x.topic||'']),true);
+    note=lk(START_BOOKS.find(b=>b[0]===c.book)[1],START_BOOKS.find(b=>b[0]===c.book)[2],START_BOOKS.find(b=>b[0]===c.book)[3]);
+  }else if(pick&&course){
+    no=4;back='step';
+    const at=pick.bundle?lk('학습 묶음 '+pick.bundle,'study bundle '+pick.bundle,'学习组'+pick.bundle):lk(pick.session+'회차','lesson '+pick.session,'第'+pick.session+'课次');
+    q=lk('여기서 시작하면 돼요.','Start here.','从这里开始。');
+    /* 시작 자리는 한 덩어리로 — 과정 번호(작게) · 과정 이름(크게) · 회차 */
+    var place=`<div class="nm-sc-place"><small>${lk('과정 ','Course ','课程')}${pick.key.slice(1)}</small><b>${esc(L(course.title))}</b><span>${esc(lk(at+'부터',at,at+'起'))}</span></div>`;
+    note=(pick.session>1?lk('앞 회차는 교재에서 이미 한 내용이에요. ','Earlier lessons repeat what the book covered. ','前面的课次是教材里已学过的内容。'):'')+(pick.next?lk('다음 권 「'+tr(pick.next.title)+'」에서 새로 배우는 계산이 여기서 처음 나와요.','The new calculations of the next volume ('+tr(pick.next.title)+') start here.','下一册「'+tr(pick.next.title)+'」的新计算从这里开始。'):'');
+    body=place+`<div class="nm-sc-picks"><button type="button" class="nm-sc-start" id="scBookGo">${lk('여기서 시작할게요','Start here','从这里开始')}</button><button type="button" id="scDiagInstead">${lk('그래도 진단해 볼게요','Take the check instead','还是先测评')}</button></div>`;
+  }
+  /* 위 줄: 왼쪽 「이전 질문」, 오른쪽 4칸 진행 막대(교재 길은 실제로 네 질문 — 첫 질문에서는 길이 정해지지 않아 안 그림) */
+  const prog=c.open?`<span class="nm-sc-prog" role="img" aria-label="${lk(no+'번째 질문, 모두 4개',`Question ${no} of 4`,`第${no}题，共4题`)}">${[1,2,3,4].map(i=>`<i${i<=no?' class="on"':''}></i>`).join('')}</span>`:'';
+  const html=`${back||prog?`<div class="nm-sc-top">`:'<div class="nm-sc-top" hidden>'}${back?`<button type="button" class="nm-sc-back" data-undo="${back}">${lk('이전 질문','Previous question','上一题')}</button>`:'<span></span>'}${prog}</div>
+    <h1 class="nm-sc-q">${esc(q)}</h1>${note?`<p class="nm-sc-note">${esc(note)}</p>`:''}${body}`;
+  scr.innerHTML=`<div class="nm-sc"><section class="nm-sc-card1" aria-live="polite">${html}</section>
+    <button class="nm-sc-later" id="scLater">${lk('나중에 정하고 마을로 가기','Decide later and go to the village','以后再定，先去村庄')}</button></div>`;
+  const toDiag=()=>{startChoice={open:false,book:'',step:''};startPlacement();};
   $('#scLater').onclick=()=>{S.view='town';save();render();};
-  const sb=$('#scBook');if(sb)sb.onchange=()=>{c.book=sb.value;c.step='';loadConsultLadder(()=>screenStartChoice());screenStartChoice();};
-  const ss=$('#scStep');if(ss)ss.onchange=()=>{c.step=ss.value;screenStartChoice();const r=$('#scBookGo');if(r)r.scrollIntoView({block:'nearest'});};
+  if($('#scDiagInstead'))$('#scDiagInstead').onclick=toDiag;
+  scr.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.pick,v=b.dataset.val;
+    if(k==='way'){if(v==='diag'){toDiag();return;}c.open=true;}
+    else if(k==='book'){c.book=v;c.step='';loadConsultLadder(()=>screenStartChoice());}
+    else if(k==='step')c.step=v;
+    screenStartChoice();
+    scr.scrollTop=0;
+  });
+  scr.querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.undo;
+    if(k==='way'){c.open=false;c.book='';c.step='';}else if(k==='book'){c.book='';c.step='';}else if(k==='step')c.step='';
+    screenStartChoice();
+  });
   const go=$('#scBookGo');if(go&&pick)go.onclick=()=>{
     S.placement={at:Date.now(),course:pick.key,session:pick.session,self:true,source:'book',book:c.book,stepId:c.step,asked:0,correct:0,profile:[],weak:[],slow:[]};
     startChoice={open:false,book:'',step:''};S._diag=null;

@@ -2,6 +2,9 @@
 // Full local UI + actual auth/membership clients; API fixtures only. No email, text or production record writes.
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict');
 const {chromium}=require('./lib/playwright');
+/* 2026-11-18 진단 기준 고르기의 기본이 대화형이 되었다 — 이 검사는 한 화면 양식(nm_pd_form=1)을 본다. 대화형은 check-placement-talk-browser.js */
+const formCtx=async(br,o)=>{const c=await br.newContext(o);await c.addInitScript(()=>{try{localStorage.setItem('nm_pd_form','1');}catch(e){}});return c;};
+
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_CONSENT_ARTIFACTS||'/tmp/nm-consent-grade-music-20261023';
 const VERSION='2026-10-22-v1',OWNER='consent-fixture-owner';
 const server=http.createServer((req,res)=>{
@@ -15,7 +18,7 @@ const server=http.createServer((req,res)=>{
  fs.mkdirSync(OUT,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
  const b=await chromium.launch({args:['--autoplay-policy=no-user-gesture-required','--disable-webgl','--disable-webgl2']}),report=[];
  try{for(const [width,lang]of [[390,'ko'],[1280,'ko'],[390,'en'],[390,'zh']]){
-  const c=await b.newContext({viewport:{width,height:850},reducedMotion:'reduce'}),p=await c.newPage(),errors=[],calls=[];let version=null,registered=true,sms=true;
+  const c=await formCtx(b,{viewport:{width,height:850},reducedMotion:'reduce'}),p=await c.newPage(),errors=[],calls=[];let version=null,registered=true,sms=true;
   p.setDefaultTimeout(12000);p.on('pageerror',e=>errors.push(e.message));await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());
   await c.route('**/auth/v1/token?grant_type=password',r=>r.fulfill({json:{access_token:'consent-fixture-token',refresh_token:'consent-fixture-refresh',expires_in:3600,user:{id:OWNER,email:'guardian@example.test'}}}));
   await c.route('**/functions/v1/nm-membership',r=>{const d=r.request().postDataJSON();calls.push(d);if(d.action==='register_contact'){version=d.privacyVersion;sms=d.smsConsent;registered=true;return r.fulfill({json:{ok:true}});}return r.fulfill({json:{membership:{userId:OWNER,status:'trial',canUse:true,trialEndsAt:new Date(Date.now()+86400000).toISOString(),serverNow:new Date().toISOString()},contact:{registered,smsConsent:sms,phoneMasked:'010-****-1234',privacyVersion:version,consentedAt:version?new Date().toISOString():null}}});});

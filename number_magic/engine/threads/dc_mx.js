@@ -33,8 +33,8 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
        별도 변형으로 쓴다(9 x 2 = 18개). 답의 의미와 난이도는 그대로다. */
     const blankFirst = R(rng, 0, 1) === 1;
     const digitTex = blankFirst
-      ? `\\square + ${a} = 10 \\;(\\text{십분의 자리})`
-      : `${a} + \\square = 10 \\;(\\text{십분의 자리})`;
+      ? `\\square + ${a} = 10 \\;(\\text{0.1이 몇 개})`
+      : `${a} + \\square = 10 \\;(\\text{0.1이 몇 개})`;
     const decimalTex = blankFirst
       ? `0.\\square + 0.${a} = 1`
       : `0.${a} + 0.\\square = 1`;
@@ -60,7 +60,7 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
     const b    = 100 - a;
     const aStr = String(a).padStart(2, '0');
     return {
-      prompt: { ko: `1을 만드는 짝꿍을 찾아요 (백분의 자리)`,
+      prompt: { ko: `1을 만드는 짝꿍을 찾아요 (소수 둘째 자리)`,
                 en: `Find the partner that makes 1 (hundredths)`,
                 zh: `找出凑成1的伙伴（百分位）` },
       tex:        `0.${aStr} + \\dfrac{\\square}{100} = 1`,
@@ -68,7 +68,7 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
       answerType: 'steps',
       widget:     'numpad',
       steps: [
-        { tex: `${a} + \\square = 100 \\;(\\text{백분의 자리})`, blank: b },
+        { tex: `${a} + \\square = 100 \\;(\\text{0.01이 몇 개})`, blank: b },
         { tex: `0.${aStr} + \\dfrac{\\square}{100} = 1`,          blank: b }
       ]
     };
@@ -157,7 +157,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
     const steps = [
       { tex: `${num(a)} \\times ${M} = \\square`, blank: a },
       { tex: `${num(b)} \\times ${M} = \\square`, blank: b },
-      { tex: `${a} ${op} ${b} = \\square \\;(\\times ${M}\\text{ 계산})`, blank: res },
+      { tex: `${a} ${op} ${b} = \\square \\;(${M}\\text{배 한 수로 계산})`, blank: res },
       { tex, blank: res }
     ];
     return {
@@ -193,7 +193,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
           answerType: 'steps',
           widget:     'vertical',
           steps: [
-            { tex: `${a} + ${b} = \\square \\;(\\times 10\\text{ 계산})`, blank: sum },
+            { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum },
             { tex: `0.${a} + 0.${b} = 0.\\square`,                        blank: sum }
           ]
         };
@@ -205,13 +205,15 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
             en: `1-place decimal addition with carry into ones`,
             zh: `一位小数进位加法`
           },
-          tex:        `0.${a} + 0.${b} = \\dfrac{\\square}{10}`,
-          answer:     sum,                    /* 정수: 십분의 자리 합 */
+          /* 답은 소수 모양 1.□ (2026-11-18 원장 「어색한 식」 — 소수 단원에서 □/10 분수로 쓰게 하지 않는다) */
+          /* 합이 꼭 1이면 1.0이 아니라 □ = 1 */
+          tex:        sum === 10 ? `0.${a} + 0.${b} = \\square` : `0.${a} + 0.${b} = 1.\\square`,
+          answer:     sum === 10 ? 1 : sum - 10,   /* 정수: 소수 첫째 자리 숫자 */
           answerType: 'steps',
           widget:     'vertical',
           steps: [
-            { tex: `${a} + ${b} = \\square \\;(\\text{십분의 자리 합})`, blank: sum  },
-            { tex: `0.${a} + 0.${b} = \\dfrac{\\square}{10}`, blank: sum }
+            { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum  },
+            { tex: sum === 10 ? `0.${a} + 0.${b} = \\square` : `0.${a} + 0.${b} = 1.\\square`, blank: sum === 10 ? 1 : sum - 10 }
           ]
         };
       }
@@ -231,7 +233,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
         answerType: 'steps',
         widget:     'vertical',
         steps: [
-          { tex: `${a} - ${b} = \\square \\;(\\times 10\\text{ 계산})`, blank: diff },
+          { tex: `${a} - ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: diff },
           { tex: `0.${a} - 0.${b} = 0.\\square`,                         blank: diff }
         ]
       };
@@ -242,46 +244,53 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
   const op = pick(rng, ['+', '-']);
 
   if (op === '+') {
-    const a    = R(rng, 10, 89);
-    const b    = R(rng, 10, 89);
-    const sum  = a + b;                /* 백분의 자리 합 */
+    /* 답은 소수 모양 0.□ / 1.□ (2026-11-18 원장 「어색한 식」 — □/100 분수로 쓰게 하지 않는다).
+       0.70처럼 끝이 0인 수·답(1.10)과, 1 이상인데 빈칸이 한 자리가 되는 답(1.05)은 다시 뽑는다. */
+    let a, b;
+    do { a = R(rng, 10, 89); b = R(rng, 10, 89); }
+    while (a % 10 === 0 || b % 10 === 0 || (a + b) % 10 === 0 || (a + b >= 100 && (a + b) % 100 < 10));
+    const sum  = a + b;                /* 0.01이 몇 개 */
     const aStr = String(a).padStart(2, '0');
     const bStr = String(b).padStart(2, '0');
+    const head = sum >= 100 ? '1.' : '0.';
+    const ans  = sum >= 100 ? sum - 100 : sum;
     return {
       prompt: {
-        ko: `소수 두 자리 덧셈: 백분의 자리까지 맞춰요`,
+        ko: `소수 두 자리 덧셈: 소수 둘째 자리까지 맞춰요`,
         en: `Add 2-place decimals: line up to hundredths`,
         zh: `两位小数加法：对齐到百分位`
       },
-      tex:        `0.${aStr} + 0.${bStr} = \\dfrac{\\square}{100}`,
-      answer:     sum,
+      tex:        `0.${aStr} + 0.${bStr} = ${head}\\square`,
+      answer:     ans,
       answerType: 'steps',
       widget:     'vertical',
       steps: [
-        { tex: `${a} + ${b} = \\square \\;(\\times 100\\text{ 계산})`, blank: sum },
-        { tex: `\\dfrac{\\square}{100}`,                                 blank: sum }
+        { tex: `${a} + ${b} = \\square \\;(\\text{0.01이 몇 개})`, blank: sum },
+        { tex: `0.${aStr} + 0.${bStr} = ${head}\\square`,           blank: ans }
       ]
     };
   } else {
     /* 뺄셈: a > b 보장 */
-    const a    = R(rng, 21, 99);
-    const b    = R(rng, 10, a - 1);
+    let a, b;
+    do { a = R(rng, 21, 99); b = R(rng, 10, a - 1); }
+    while (a % 10 === 0 || b % 10 === 0 || (a - b) % 10 === 0);   /* 끝이 0인 수·답(0.70, 0.20)은 다시 뽑는다 */
     const diff = a - b;
     const aStr = String(a).padStart(2, '0');
     const bStr = String(b).padStart(2, '0');
     return {
       prompt: {
-        ko: `소수 두 자리 뺄셈: 백분의 자리까지 맞춰요`,
+        ko: `소수 두 자리 뺄셈: 소수 둘째 자리까지 맞춰요`,
         en: `Subtract 2-place decimals: line up to hundredths`,
         zh: `两位小数减法：对齐到百分位`
       },
-      tex:        `0.${aStr} - 0.${bStr} = \\dfrac{\\square}{100}`,
+      /* 답은 소수 모양 0.□ / 0.0□ (2026-11-18) */
+      tex:        `0.${aStr} - 0.${bStr} = ${diff < 10 ? '0.0' : '0.'}\\square`,
       answer:     diff,
       answerType: 'steps',
       widget:     'vertical',
       steps: [
-        { tex: `${a} - ${b} = \\square \\;(\\times 100\\text{ 계산})`, blank: diff },
-        { tex: `\\dfrac{\\square}{100}`,                                  blank: diff }
+        { tex: `${a} - ${b} = \\square \\;(\\text{0.01이 몇 개})`, blank: diff },
+        { tex: `0.${aStr} - 0.${bStr} = ${diff < 10 ? '0.0' : '0.'}\\square`, blank: diff }
       ]
     };
   }
@@ -1085,7 +1094,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${a} + ${b} = \\square \\;(\\text{십분의 자리})`, blank: sum },
+        { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum },
         { tex: `0.\\square`,                                         blank: sum }
       ]
     };

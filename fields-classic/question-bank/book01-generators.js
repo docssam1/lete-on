@@ -867,7 +867,7 @@ function relativeOrderLogicBook1({ difficulty = 2 }) {
       const after = before === first ? second : first;
       validClues.push({ text: `${topicOf(ORDER_NAMES[before])} ${ORDER_NAMES[after]}보다 앞에 있습니다.`, test: (candidate) => position(candidate, before) < position(candidate, after), direct: false });
       const gap = Math.abs(position(solution, first) - position(solution, second)) - 1;
-      if (gap <= 2) validClues.push({ text: `${withOf(ORDER_NAMES[first])} ${ORDER_NAMES[second]} 사이에는 ${gap}명이 있습니다.`, test: (candidate) => Math.abs(position(candidate, first) - position(candidate, second)) - 1 === gap, direct: false });
+      if (gap <= 2) validClues.push({ text: gap === 0 ? `${withOf(ORDER_NAMES[first])} ${topicOf(ORDER_NAMES[second])} 바로 붙어 있습니다.` : `${withOf(ORDER_NAMES[first])} ${ORDER_NAMES[second]} 사이에는 ${gap}명이 있습니다.`, test: (candidate) => Math.abs(position(candidate, first) - position(candidate, second)) - 1 === gap, direct: false });
     }
   }
   let pool = shuffle(validClues.filter((clue) => difficulty === 1 || !clue.direct));

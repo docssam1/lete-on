@@ -1,0 +1,102 @@
+# 독쌤 음성 — 빠진 공부 대사 만들기 (2026-11-18, 원장 「이제 음성 넣자」)
+#
+# 「본책」을 「교재」로 바꾸며(2026-11-18) 글이 바뀐 덱·판서 대사와 그 전부터 빠져 있던 줄을 독쌤 목소리로 만든다.
+# 참조 = 이미 사이트에 올라가 있는 독쌤 목소리 파일 하나(소개 대사 diag, 원래 빠르기 V1, 8.7초, 글이 정확).
+# 원장 녹음 원본은 공개 저장소에 두지 않으므로 쓰지 않는다 — 누미 새 목소리(omnivoice-nm-numi.yml)와 같은 방법.
+# 공부 대사라 --speed 0.8(SLOW·NATIVE 이름) — 맥·PC 에서 만들던 것과 같은 파일 이름이 된다.
+# 이미 있는 파일은 건너뛰므로 빠진 줄만 만든다. 받아 적어 원문과 견주어(CER) 넘지 못한 줄은 올리지 않는다.
+# 결과는 따로 떨어진 브랜치 docssam-voice-candidate 에만 올린다. 앱에 넣는 일은 그 브랜치에서 파일을 가져와서 한다.
+# GPU 가 없어 CPU 로 돌므로 조각으로 나눠 병렬로 돈다. 구글 키는 쓰지 않는다.
+name: OmniVoice — 독쌤 빠진 공부 대사
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: '시험용: 조각마다 앞에서 N줄만(0 = 전부)'
+        default: '0'
+
+concurrency:
+  group: omnivoice-docssam-deck
+  cancel-in-progress: false
+
+jobs:
+  gen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: torch(CPU) · OmniVoice 설치
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install --upgrade pip
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install omnivoice soundfile librosa
+      - name: 참조 음성 준비
+        run: |
+          mkdir -p work
+          ffmpeg -v error -y -i science-lab/audio/docssam/diag-f2b5031ee4.mp3 -ac 1 -ar 24000 work/ref.wav
+          printf '%s' "이 책은 채점만 하지 않아. 네가 어떤 보기를 골랐는지 기억해서, 왜 틀렸는지 한 문장으로 바로 알려 줘. 같은 실수가 또 나오면 그게 진짜 약점이야." > work/ref.txt
+      - name: 조각 ${{ matrix.shard }}/12
+        run: |
+          if [ "${{ inputs.limit }}" != "0" ]; then
+            python3 - <<'PY'
+          import re
+          p = "scripts/omnivoice-docssam.py"; s = open(p, encoding="utf-8").read()
+          s = s.replace('k, n = map(int, a.shard.split("/")); todo = todo[k::n]', 'k, n = map(int, a.shard.split("/")); todo = todo[k::n][:int("${{ inputs.limit }}")]')
+          open(p, "w", encoding="utf-8").write(s)
+          PY
+          fi
+          python scripts/omnivoice-docssam.py --device cpu --ref work/ref.wav --ref-ready --ref-text-file work/ref.txt \
+            --speed 0.8 --out part --work-dir work --shard ${{ matrix.shard }}/12
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docssam-part-${{ matrix.shard }}
+          path: part/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  collect:
+    needs: gen
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { pattern: docssam-part-*, path: parts }
+      - name: 모아서 후보 브랜치에 올리기
+        run: |
+          mkdir -p candidate/docssam
+          find parts -name '*.mp3' -exec cp {} candidate/docssam/ \;
+          python3 - <<'PY'
+          import glob, json, base64, os
+          r = {}
+          for f in glob.glob("parts/**/report*.json", recursive=True):
+              r.update(json.load(open(f, encoding="utf-8")))
+          json.dump(r, open("candidate/docssam/report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          bad = [v for v in r.values() if not v["ok"]]
+          print(f"report: {len(r)}줄, 뺀 것 {len(bad)}줄")
+          for v in bad[:60]: print(f"  ✗ CER {v['cer']}: {v['text']}  →  {v['asr']}")
+          # 듣기 페이지: 참조 + 만든 줄 전부(파일 하나에 소리가 다 들어 있다)
+          b64 = lambda f: base64.b64encode(open(f, "rb").read()).decode("ascii")
+          ref = "science-lab/audio/docssam/diag-f2b5031ee4.mp3"
+          rows = "".join(f'<div class="c"><b>{v["id"]} · CER {v["cer"]}</b><audio controls preload="none" src="data:audio/mpeg;base64,{b64(os.path.join("candidate/docssam", k))}"></audio><p>{v["text"]}</p></div>'
+                         for k, v in sorted(r.items(), key=lambda kv: kv[1]["id"]) if v["ok"] and os.path.exists(os.path.join("candidate/docssam", k)))
+          open("candidate/docssam/듣기.html", "w", encoding="utf-8").write(f'<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>독쌤 새 공부 대사</title><style>body{{font:15px/1.6 system-ui,sans-serif;max-width:820px;margin:0 auto;padding:16px;background:#f2f6fd;color:#1b2340}}.c{{background:#fff;border:1px solid #e0e9f8;border-radius:12px;padding:10px 12px;margin:10px 0}}.c.o{{background:#fff8e6}}audio{{width:100%}}b{{font-size:12px;color:#243184}}p{{margin:4px 0 0;font-size:13px}}</style><h1>독쌤 새 공부 대사</h1><div class="c o"><b>참조(사이트에 있던 독쌤 목소리)</b><audio controls src="data:audio/mpeg;base64,{b64(ref)}"></audio></div>{rows}')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan docssam-voice-candidate
+          git rm -rq --cached .
+          git add candidate
+          git commit -qm "독쌤 빠진 공부 대사 후보 (자동 생성)"
+          git push -f origin HEAD:refs/heads/docssam-voice-candidate
