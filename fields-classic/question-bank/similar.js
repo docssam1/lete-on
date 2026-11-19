@@ -1,8 +1,8 @@
 import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261118a";
-import { unitParts, partProblems } from "./study-map.js?v=20261118b";
+import { unitParts, partProblems } from "./study-map.js?v=20261119a";
 import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261118a";
-import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261118b";
+import { pickOf, refOf, partPickOption } from "./study-deck.js?v=20261119a";
 import { course2Html, course3Html } from "./course2-list.js?v=20261118a";
 
 // 모르는 문제 유사문제(similar.html, 원장 2026-11-10 「문제은행은 모르는 문제 유사문제 만들기로 학생 모드에 있어야 돼」).

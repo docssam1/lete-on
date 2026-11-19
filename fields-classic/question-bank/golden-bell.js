@@ -1,11 +1,11 @@
 import { frac } from "./math-markup.js?v=20261027p";
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261101m";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261119a";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261101m";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261117a";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261028s";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261118g";
-import { book01Markup } from "./book01-renderers.js?v=20261118i";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261119a";
+import { book01Markup } from "./book01-renderers.js?v=20261119a";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
 import { book04Markup } from "./book04-renderers.js?v=20261117a";
@@ -19,7 +19,7 @@ import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay }
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
 import { importSessionPages, sessionAnswerPages } from "./session-book-sheet.js?v=20261118f";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261118b";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261118b";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261119a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261028w";
@@ -281,12 +281,15 @@ function experienceClockMarkup(experience, sceneState = state.experience) {
   }).join("");
   const labels = [[12, 120, 30], [3, 180, 94], [6, 120, 154], [9, 60, 94]];
   const trace = beat.action === "transform" ? clockArcPath(start, beat.quarterTurns) : "";
-  return `<div class="experience-clock" data-experience-step="${step}" data-current-value="${current}"><svg viewBox="0 0 240 180" role="img" aria-label="${start}에서 출발해 ${current}을 가리키는 시계 바늘"><circle class="experience-clock-face" cx="120" cy="90" r="66" />${ticks}<g class="experience-clock-labels">${labels.map(([value, x, y]) => `<text x="${x}" y="${y}">${value}</text>`).join("")}</g>${trace}<g class="experience-clock-hand ${animate ? "is-moving" : ""}" style="--from-angle:${fromRotation}deg;--to-angle:${toRotation}deg"><line x1="120" y1="90" x2="120" y2="44" /><circle cx="120" cy="90" r="6" /></g><text class="experience-clock-current" x="120" y="176">지금 바늘: ${current}</text></svg><p class="experience-caption" aria-live="polite">${beat.caption}</p></div>`;
+  return `<div class="experience-clock" data-experience-step="${step}" data-current-value="${current}"><svg viewBox="0 0 240 180" role="img" aria-label="${start}에서 출발해 ${numberObject(current)} 가리키는 시계 바늘"><circle class="experience-clock-face" cx="120" cy="90" r="66" />${ticks}<g class="experience-clock-labels">${labels.map(([value, x, y]) => `<text x="${x}" y="${y}">${value}</text>`).join("")}</g>${trace}<g class="experience-clock-hand ${animate ? "is-moving" : ""}" style="--from-angle:${fromRotation}deg;--to-angle:${toRotation}deg"><line x1="120" y1="90" x2="120" y2="44" /><circle cx="120" cy="90" r="6" /></g><text class="experience-clock-current" x="120" y="176">지금 바늘: ${current}</text></svg><p class="experience-caption" aria-live="polite">${beat.caption}</p></div>`;
 }
 
+// 숫자 뒤 「을/를」: 끝자리를 읽은 소리로 고른다(2·4·5·9는 받침 없음 → 를, 나머지 → 을). 「6를」을 막는다.
+const numberObject = (value) => `${value}${[2, 4, 5, 9].includes(Math.abs(Number(value)) % 10) ? "를" : "을"}`;
+
 function clockExperienceSummaryMarkup(experience) {
-  const landing = (turns) => clockValueAfterQuarterTurns(experience.start, turns);
-  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> ${experience.start}에서 시작해 시계 방향으로 한 바퀴는 ${landing(4)}, 반 바퀴는 ${landing(2)}를 가리킵니다. 시계 반대 방향으로 반 바퀴 돌려도 ${landing(-2)}를 가리킵니다. 반의 반 바퀴는 시계 방향 ${landing(1)}·반대 방향 ${landing(-1)}를 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
+  const landing = (turns) => numberObject(clockValueAfterQuarterTurns(experience.start, turns));
+  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> ${experience.start}에서 시작해 시계 방향으로 한 바퀴는 ${landing(4)}, 반 바퀴는 ${landing(2)} 가리킵니다. 시계 반대 방향으로 반 바퀴 돌려도 ${landing(-2)} 가리킵니다. 반의 반 바퀴는 시계 방향으로 ${landing(1)}, 반대 방향으로 ${landing(-1)} 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
 }
 
 function experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled }) {

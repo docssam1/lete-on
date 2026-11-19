@@ -1,11 +1,12 @@
 // 분수는 빗금 대신 위아래로 쓴다.
 const fractionText = (text) => mathText(text);   // 공통 수식(math-markup.js): 빗금 분수·거듭제곱을 수식으로
 import { mathText } from "./math-markup.js?v=20261027p";
+import { digitalNumber } from "./book01-renderers.js?v=20261119a";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
 import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book09Markup } from "./book09-renderers.js?v=20261029t";
-import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261101m";
+import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261119a";
 import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20261023h";
 import { renderBook07Guided } from "./golden-bell-book07-guided.js?v=20260918a";
 import { renderBook08Guided } from "./golden-bell-book08-guided.js?v=20260918a";
@@ -241,14 +242,15 @@ function mirrorDirectionVisual(phase) {
 }
 
 function digitalTransformVisual(phase, model) {
+  // 숫자는 디지털 숫자로 그린다(원장 2026-11-18 「개념에 디지털 수인데 그냥 아라비아 수가 써 있다」)
   const steps = [
-    ["source", model.source, "처음 숫자의 켜진 선을 봅니다."],
-    ["flip", model.flipped, "좌우로 뒤집으면 2와 5가 서로 바뀝니다."],
-    ["half", model.halfTurned, "반 바퀴에서는 위아래와 자리 순서도 함께 바뀝니다."],
-    ["equation", `${model.source} + ${model.flipped}`, "바뀐 수를 먼저 적고 계산합니다."]
+    ["source", digitalNumber(model.source), "처음 숫자의 켜진 선을 봅니다."],
+    ["flip", digitalNumber(model.flipped), "좌우로 뒤집으면 2와 5가 서로 바뀝니다."],
+    ["half", digitalNumber(model.halfTurned), "반 바퀴 돌리면 위아래와 좌우가 함께 바뀝니다."],
+    ["equation", `${digitalNumber(model.source)}<em>+</em>${digitalNumber(model.flipped)}`, "바뀐 수를 먼저 적고 계산합니다."]
   ];
   const active = Math.max(0, steps.findIndex(([name]) => name === phase));
-  return `<div class="guided-digital-transform ${phase}" role="img" aria-label="디지털 숫자의 선분을 움직여 뒤집고 돌리는 과정"><div>${steps.map(([name, value], index) => `<span class="${index <= active ? "visible" : ""}"><small>${index + 1}</small><b>${value}</b><i>${name === "source" ? "처음" : name === "flip" ? "좌우" : name === "half" ? "반 바퀴" : "계산"}</i></span>`).join("")}</div><p>${steps[active][2]}</p></div>`;
+  return `<div class="guided-digital-transform ${phase}" role="img" aria-label="디지털 숫자의 선분을 움직여 뒤집고 돌리는 과정"><div>${steps.map(([name, value], index) => `<span class="${index <= active ? "visible" : ""}"><small>${index + 1}</small><b>${value}</b><i>${name === "source" ? "처음" : name === "flip" ? "좌우로 뒤집기" : name === "half" ? "반 바퀴" : "계산"}</i></span>`).join("")}</div><p>${steps[active][2]}</p></div>`;
 }
 
 function sumGridPlacementVisual(phase) {
