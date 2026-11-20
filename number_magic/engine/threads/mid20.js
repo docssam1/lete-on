@@ -240,7 +240,7 @@ NM_TGEN['md126_absIneq'] = function (params, rng) {
            'For positive x, y with a fixed sum, the product is largest when the two terms are equal. Use the AM–GM inequality to find the greatest value M of xy.',
            '正数x、y的和一定时，两项相等时积最大。用算术平均与几何平均的关系求xy的最大值M。'),
         `x>0,\\ y>0,\\ ${terms([[a, 'x'], [b, 'y']])}=${S}\\ \\Rightarrow\\ xy:\\ M=\\square`, M, [
-          { tex:`${a === 1 ? 'x' : a + 'x'}\\times${b === 1 ? 'y' : b + 'y'}\\le\\left(\\dfrac{${S}}{2}\\right)^2=${S * S / 4}` },
+          { tex:`${a === 1 ? 'x' : a + 'x'}\\times ${b === 1 ? 'y' : b + 'y'}\\le\\left(\\dfrac{${S}}{2}\\right)^2=${S * S / 4}` },
           { tex:`xy\\le\\dfrac{${S * S / 4}}{${a * b}}=${M}` },
           { tex:`M=\\square`, blank:M }]);
     }

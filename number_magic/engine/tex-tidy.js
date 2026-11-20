@@ -37,6 +37,14 @@
     return dict.apply(s, lang);
   }
 
+  /* 뒤에 글자가 붙기 쉬운 연산 명령어와, 그 이름으로 시작하는 진짜 명령어 */
+  const OP_BASES = ['times', 'cdot', 'div', 'pm', 'mp', 'ge', 'le', 'ne', 'to', 'in'];
+  const OP_KNOWN = {};
+  ('times cdot cdots div divideontimes pm pmb pmatrix pmod mp ge geq geqq geqslant gets le leq leqq leqslant left leftarrow leftrightarrow ' +
+   'leftrightarrows leftharpoonup leftharpoondown leftleftarrows leftrightharpoons leftrightsquigarrow leftthreetimes leadsto lessgtr lesssim ' +
+   'lessapprox lessdot lesseqgtr lesseqqgtr ne neg neq nearrow newline nexists to top in inf infty int intercal intop injlim')
+    .split(' ').forEach(w => { OP_KNOWN[w] = 1; });
+
   function tidy(tex) {
     if (tex == null) return tex;
     let s = String(tex);
@@ -44,6 +52,14 @@
     s = localize(s);
     const store = [];
     s = protect(s, store);
+
+    /* 연산 명령어 뒤에 글자가 바로 붙으면(`\\timesx` · `\\gen^{2}`) KaTeX 가 모르는 명령으로 읽어 붉은 원문이 찍힌다(2026-11-20, 과정 34·54·69).
+       생성기가 `\\times${변수}` 처럼 이어 붙이는 곳이 많아 한 곳에서 막는다 — 실제 명령어(\\geq · \\left · \\int …)는 건드리지 않는다. */
+    s = s.replace(/\\([A-Za-z]+)/g, (m, w) => {
+      if (OP_KNOWN[w]) return m;
+      for (const base of OP_BASES) if (w.length > base.length && w.startsWith(base)) return '\\' + base + ' ' + w.slice(base.length);
+      return m;
+    });
 
     /* 이중부호는 변수 유무와 상관없이 틀린 표기다 — `a - -b` → `a + b`, `a + -b` → `a - b` */
     /* 원래 띄어쓰기를 따라간다 — `x--59` 는 `x+59`, `-3887 - -3888` 은 `-3887 + 3888` */
