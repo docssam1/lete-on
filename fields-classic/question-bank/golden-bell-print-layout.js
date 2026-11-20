@@ -43,14 +43,37 @@ function visualOverflows(question) {
     .some((box) => box.clientHeight && box.scrollHeight > box.clientHeight + 2);
 }
 
+// 문항이 실제로 차지하는 높이(칸 줄 높이로 늘어난 것 말고 속 내용 끝까지)
+function contentHeight(question) {
+  const top = question.getBoundingClientRect().top;
+  return Math.max(0, ...[...question.children].map((child) => child.getBoundingClientRect().bottom - top));
+}
+
+// 반 칸에서 그림 칸만 늘린 것과 한 줄 전체로 편 것 중 종이를 덜 쓰는 쪽(반 칸 = 폭 절반이니 높이가 두 배 안쪽이면 반 칸)
 function enlargeVisual(question) {
   if (!visualOverflows(question)) return;
   if (!question.classList.contains("full-width-exercise")) {
+    question.classList.add("print-visual-grow");
+    const halfHeight = contentHeight(question);
+    question.classList.remove("print-visual-grow");
     question.classList.add("full-width-exercise");
-    if (!visualOverflows(question)) { question.dataset.printWidened = "1"; return; }
+    if (!visualOverflows(question) && halfHeight > 2 * contentHeight(question)) { question.dataset.printWidened = "1"; return; }
     question.classList.remove("full-width-exercise");
   }
   question.classList.add("print-visual-grow");
+}
+
+// 늘린 그림 때문에 문제가 다음 쪽으로 밀려 앞 쪽이 비면(쪽만 늘고 한 문제만 남는 쪽) 그 그림만 조금(0.8배까지) 줄여 이 쪽에 남겨 본다.
+const KEEP_ZOOMS = [0.92, 0.85, 0.8];
+function zoomToStay(question, sheet) {
+  if (!question.classList.contains("print-visual-grow")) return false;
+  const boxes = [...question.querySelectorAll(".gold-print-visual > *")];
+  for (const zoom of KEEP_ZOOMS) {
+    boxes.forEach((box) => { box.dataset.printFit = String(zoom); [...box.children].forEach((child) => { child.style.zoom = String(zoom); }); });
+    if (contentFits(sheet)) return true;
+  }
+  boxes.forEach((box) => { delete box.dataset.printFit; [...box.children].forEach((child) => { child.style.zoom = ""; }); });
+  return false;
 }
 
 function packExercisePages(pages) {
@@ -87,7 +110,7 @@ function packExercisePages(pages) {
     grid.append(question);
     if (needsFullWidth(question)) question.classList.add("full-width-exercise");
     enlargeVisual(question);
-    if (!contentFits(sheet) && grid.children.length > 1) {
+    if (!contentFits(sheet) && grid.children.length > 1 && !zoomToStay(question, sheet)) {
       question.remove();
       if (isLast) sheet.querySelector(":scope > .gold-print-footer").replaceWith(regularFooter.cloneNode(true));
       nextSheet(isLast);
