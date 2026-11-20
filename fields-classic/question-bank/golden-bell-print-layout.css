@@ -228,3 +228,5 @@
   .tb-grid .compact-exercise-page:not(.tb-answer-page) > .gold-print-exercise-grid > .full-width-exercise:first-child { border-top: 0; }
   .tb-grid .gold-print-source-item > h2 span { background: #2f6b4a; border-radius: .6mm; }
 }
+/* 넘치는 그림은 줄이지 않고 칸을 그림만큼 늘린다(원장 2026-11-19 「구조를 바꿔 크게 만들어」, golden-bell-print-layout.js enlargeVisual) */
+.print-visual-grow>.gold-print-visual,.print-visual-grow>.gold-print-visual>:not(svg){max-height:none!important;height:auto!important;overflow:visible!important}
