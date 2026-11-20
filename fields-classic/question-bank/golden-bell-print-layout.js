@@ -36,6 +36,23 @@ function needsFullWidth(question) {
       || node.getBoundingClientRect().right > rect.right + 2));
 }
 
+// 그림이 정해진 칸 높이보다 크면(예전엔 통째로 줄였다 — 0.55배까지) 구조를 바꿔 크게 둔다(원장 2026-11-19 「구조를 바꿔 크게 만들어」):
+// ① 반 칸 문제는 한 줄 전체 폭으로 펴 보고 ② 그래도 넘치면 그림 칸 높이를 그림만큼 늘린다. 한 쪽에 다 못 들어가면 그때만 줄인다(fitClippedVisuals).
+function visualOverflows(question) {
+  return [...question.querySelectorAll(".gold-print-visual > *")]
+    .some((box) => box.clientHeight && box.scrollHeight > box.clientHeight + 2);
+}
+
+function enlargeVisual(question) {
+  if (!visualOverflows(question)) return;
+  if (!question.classList.contains("full-width-exercise")) {
+    question.classList.add("full-width-exercise");
+    if (!visualOverflows(question)) { question.dataset.printWidened = "1"; return; }
+    question.classList.remove("full-width-exercise");
+  }
+  question.classList.add("print-visual-grow");
+}
+
 function packExercisePages(pages) {
   const first = pages[0];
   const header = first.querySelector(":scope > .gold-print-head");
@@ -69,6 +86,7 @@ function packExercisePages(pages) {
     if (isLast) sheet.querySelector(":scope > .gold-print-footer").replaceWith(footer.cloneNode(true));
     grid.append(question);
     if (needsFullWidth(question)) question.classList.add("full-width-exercise");
+    enlargeVisual(question);
     if (!contentFits(sheet) && grid.children.length > 1) {
       question.remove();
       if (isLast) sheet.querySelector(":scope > .gold-print-footer").replaceWith(regularFooter.cloneNode(true));
@@ -84,6 +102,8 @@ function packExercisePages(pages) {
         grid.append(question);
       }
     }
+    // 늘린 그림 때문에 새 쪽에서도 넘치면 늘리기를 거두고 예전처럼 줄인다.
+    if (!contentFits(sheet) && question.classList.contains("print-visual-grow")) question.classList.remove("print-visual-grow");
     if (!contentFits(sheet)) throw new Error(`A print exercise does not fit A4 without clipping: ${question.dataset.printExerciseKey || "unknown"}`);
   }
   packed.forEach((page) => {

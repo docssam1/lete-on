@@ -107,6 +107,7 @@
   .b2-sequence section>div{gap:1mm}
   .b2-sequence section>div>span{min-width:7mm}
   .b2-sequence section>div>span>b{min-width:7mm;height:7mm;font-size:10pt}
+  .b2-sequence section>div>span>b:not(.shape):not(.stack):not(.grid){width:auto;padding:0 1.2mm;white-space:nowrap} /* 「2,4,6」이 좁은 칸에서 세 줄로 접혀 그림을 0.55배로 줄이던 것 */
   .b2-sequence section>div>span>b.shape{width:7mm;min-width:7mm}
   .b2-shape-icon{width:6.5mm;height:6.5mm}
   .b2-growth.drawn svg{max-width:32mm}
