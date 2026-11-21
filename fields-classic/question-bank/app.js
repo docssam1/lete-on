@@ -1,23 +1,23 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261118a";
-import { GENERATORS } from "./generators.js?v=20261119a";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261121a";
+import { GENERATORS } from "./generators.js?v=20261121a";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20261119a";
+import { book01Markup } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261117a";
+import { book04Markup } from "./book04-renderers.js?v=20261121a";
 import { book05Markup } from "./book05-renderers.js?v=20261101m";
 import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
 import { book08Markup } from "./book08-renderers.js?v=20261101m";
-import { book09Markup } from "./book09-renderers.js?v=20261029t";
+import { book09Markup } from "./book09-renderers.js?v=20261121c";
 import { book10Markup } from "./book10-renderers.js?v=20261101m";
-import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
+import { mock06Markup } from "./mock06-renderers.js?v=20261121a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE } from "./fold-visuals.js?v=20261117a";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldNumberStrip, foldNumberPaperSvg, foldNumberPolygonSvg, foldCreaseSvg, foldWordStrip } from "./fold-visuals.js?v=20261121a";
 
 const {
   ageStages: AGE_STAGES,
@@ -46,7 +46,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261119a");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261121a");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
@@ -2047,28 +2047,29 @@ function busStopsMarkup(visual) {
   return `<div class="bus-stops"><ul>${eventText}</ul>${visual.hintAfterFirst ? `<p>${visual.hintAfterFirst}</p>` : ""}</div>`;
 }
 
+// 대각선으로 한 번 접어 칠한 칸 자르기 — 처음(수 칸·접는 선·빨간 화살표) → 1번 접음 · 자르기(남은 삼각형에 칠한 칸). 분홍 색종이 기준(예전엔 초록 판 + 「한 번 접기」 글).
 function foldNumberCutSumMarkup(visual) {
-  const cell = 42;
-  const paperSize = visual.size * cell;
-  const gridLines = Array.from({ length: visual.size - 1 }, (_, index) => {
-    const point = (index + 1) * cell;
-    return `<path d="M${point} 0V${paperSize}M0 ${point}H${paperSize}"/>`;
+  const N = visual.size;
+  const S = 120;
+  const cell = S / N;
+  const main = visual.foldDirection === "main";
+  const rows = Array.from({ length: N }, (_, r) => visual.grid.slice(r * N, (r + 1) * N));
+  const square = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  // 칠한 칸이 있는 쪽이 남는다: 주대각선이면 오른쪽 위, 반대 대각선이면 왼쪽 위
+  const kept = main ? [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }] : [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }];
+  const arrow = main ? { from: { x: 1 / 3, y: 2 / 3 }, to: { x: 2 / 3, y: 1 / 3 } } : { from: { x: 2 / 3, y: 2 / 3 }, to: { x: 1 / 3, y: 1 / 3 } };
+  const crease = (x, y) => (main ? foldCreaseSvg(x, y, x + S, y + S) : foldCreaseSvg(x, y + S, x + S, y));
+  const shade = (x, y) => visual.foldMask.map(([row, column]) => {
+    const cx = x + column * cell;
+    const cy = y + row * cell;
+    if (main && row === column) return `<path d="M${cx} ${cy}H${cx + cell}V${cy + cell}Z" fill="#b03a5b"/>`;
+    if (!main && row + column === N - 1) return `<path d="M${cx} ${cy}H${cx + cell}L${cx} ${cy + cell}Z" fill="#b03a5b"/>`;
+    return `<rect x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="#b03a5b"/>`;
   }).join("");
-  const mainDiagonal = visual.foldDirection === "main";
-  const shaded = visual.foldMask.map(([row, column]) => {
-    const x = column * cell;
-    const y = row * cell;
-    if (mainDiagonal && row === column) return `<path d="M${x} ${y}H${x + cell}V${y + cell}Z"/>`;
-    if (!mainDiagonal && row + column === visual.size - 1) return `<path d="M${x} ${y}H${x + cell}L${x} ${y + cell}Z"/>`;
-    return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}"/>`;
-  }).join("");
-  const foldLine = mainDiagonal ? `M0 0L${paperSize} ${paperSize}` : `M0 ${paperSize}L${paperSize} 0`;
-  const foldArrow = mainDiagonal
-    ? `<path class="fold-arrow" d="M${paperSize - 30} 36Q${paperSize - 58} 58 ${paperSize - 82} 82"/><path class="fold-arrow-head" d="M${paperSize - 82} 82l12 -3l-4 12Z"/>`
-    : `<path class="fold-arrow" d="M${paperSize - 34} ${paperSize - 45}Q${paperSize - 60} ${paperSize - 78} ${paperSize - 93} ${paperSize - 88}"/><path class="fold-arrow-head" d="M${paperSize - 93} ${paperSize - 88}l12 -5l-4 12Z"/>`;
-  const paper = `<svg class="fold-cut-paper" viewBox="-8 -24 ${paperSize + 16} ${paperSize + 34}" role="img" aria-label="대각선으로 접고 칠한 부분을 자르는 색종이"><text x="${paperSize / 2}" y="-8">한 번 접기</text><rect width="${paperSize}" height="${paperSize}"/><g class="fold-cut-grid">${gridLines}</g><path class="fold-line" d="${foldLine}"/><g class="cut-shade">${shaded}</g>${foldArrow}</svg>`;
-  const numberGrid = `<div class="fold-cut-number-grid" style="--fold-size:${visual.size}">${visual.grid.map((value) => `<span>${value}</span>`).join("")}</div>`;
-  return `<div class="fold-number-cut-work">${paper}<b class="fold-process-arrow">→</b>${numberGrid}</div>`;
+  return `<div class="fold-number-cut-work">${foldNumberStrip([
+    { draw: (x, y) => foldNumberPolygonSvg(square, { shift: x, top: y, S, N, rows }) + crease(x, y), arrow },
+    { draw: (x, y) => foldNumberPolygonSvg(kept, { shift: x, top: y, S, N }) + shade(x, y), extra: "자르기" }
+  ], { S, label: "수가 쓰인 색종이를 대각선으로 한 번 접어 칠한 부분을 자르기", cls: "fold-number-svg" })}</div>`;
 }
 
 function equalLineSumEightCardsMarkup(visual) {
@@ -2380,8 +2381,16 @@ function g1SourceMarkup(visual) {
     return `<div class="g1-equation-panel">${visual.equations.map((equation) => `<p>${equation}</p>`).join("")}${visual.hint ? `<small>${visual.hint}</small>` : ""}</div>`;
   }
   if (visual.kind === "g1-fold-cut-pieces") {
-    const folds = visual.folds.map((fold, index) => `<section><i class="g1-fold-paper fold-${index + 1}"></i><b>${fold}</b></section><span>→</span>`).join("");
-    return `<div class="g1-fold-flow tone-${visual.paperTone}">${folds}<section><i class="g1-fold-paper cut cut-${visual.cutPattern} ${visual.folds.length === 1 ? "cut-once" : ""}"></i><b>${visual.cuts}</b></section></div>`;
+    // 접힌 모양 위에 자르는 선(대각선·가운데 선)을 그린다 — 접힌 직사각형의 두 대각선이면 펼쳐 7조각처럼 답과 같은 모양
+    const cutLines = (x, y, size, poly, box) => {
+      const P = (px, py) => `${(x + px * size).toFixed(1)} ${(y + py * size).toFixed(1)}`;
+      const seg = (a, b) => `<path d="M${P(a[0], a[1])}L${P(b[0], b[1])}" stroke="#b03a5b" stroke-width="2.6"/>`;
+      const mx = (box.x0 + box.x1) / 2; const my = (box.y0 + box.y1) / 2;
+      const d1 = seg([box.x0, box.y0], [box.x1, box.y1]); const d2 = seg([box.x0, box.y1], [box.x1, box.y0]);
+      const h = seg([box.x0, my], [box.x1, my]); const v = seg([mx, box.y0], [mx, box.y1]);
+      return { diagonal: d1 + d2, cross: h + v, "diagonal-middle": d1 + d2 + v, "cross-diagonal": h + v + d1 }[visual.cutPattern] || d1 + d2;
+    };
+    return `<div class="g1-fold-flow-strip">${foldWordStrip(visual.folds, { final: cutLines, finalExtra: "자르기", label: "색종이를 접어 선을 따라 자르기" })}</div>`;
   }
   if (visual.kind === "g1-repeated-digit-addition") {
     const resultText = String(visual.result).split("").join(" ");
@@ -2452,8 +2461,8 @@ function g1SourceMarkup(visual) {
     return `<svg class="g1-summer-square-composition" viewBox="0 0 ${width + 12} ${height + 12}" role="img" aria-label="정사각형을 붙여 만든 도형"><rect x="6" y="6" width="${width}" height="${height}"/><rect x="6" y="6" width="${leftTop}" height="${leftTop}"/><rect x="${6 + smallX}" y="6" width="${u}" height="${u}"/><rect x="${6 + smallX + u}" y="6" width="${u}" height="${u}"/><rect x="${6 + smallX}" y="${6 + u}" width="${u * 2}" height="${leftTop - u}"/><rect x="6" y="${6 + leftTop}" width="${rightX}" height="${rightX}"/><rect x="${6 + rightX}" y="6" width="${n * u}" height="${n * u}"/><rect class="target" x="${6 + rightX}" y="${6 + targetY}" width="${n * u}" height="${n * u}"/><text x="${6 + smallX + u / 2}" y="${6 + u * .68}">㉠</text><text x="${6 + rightX + n * u / 2}" y="${6 + targetY + n * u / 2 + 8}">㉡</text><text x="${6 + smallX + u / 2}" y="${6 + u + 15}" class="measure">${visual.unit}cm</text></svg>`;
   }
   if (visual.kind === "g1-summer-fold-cut-triangles") {
-    const diagonal = visual.diagonal === "left" ? "M18 68L68 16" : "M18 16L68 68";
-    return `<div class="g1-summer-fold-cut"><svg viewBox="0 0 130 130" role="img" aria-label="첫 번째 접기"><rect x="12" y="12" width="104" height="104"/><path class="dash" d="M64 12V116"/><path class="arrow" d="M98 58Q84 85 65 79"/><path class="arrow-head" d="M65 79l9-2-4 8z"/></svg><b>→</b><svg viewBox="0 0 82 130" role="img" aria-label="두 번째 접기"><rect x="8" y="12" width="60" height="104"/><path class="dash" d="M8 64H68"/><path class="arrow" d="M52 40Q39 56 44 77"/><path class="arrow-head" d="M44 77l-5-8 9 3z"/></svg><b>→</b><svg viewBox="0 0 84 130" role="img" aria-label="대각선 자르기"><text x="9" y="19">✂</text><rect x="18" y="22" width="50" height="72"/><path class="seam" d="M43 22V94"/><path class="cut" d="${diagonal}"/></svg></div>`;
+    const diagonal = visual.diagonal === "left" ? "M18 68L62.2 22" : "M23.8 22L68 68"; // 원본 선 그대로, 종이(위 끝 22) 밖으로 나가는 부분만 잘라 냄
+    return `<div class="g1-summer-fold-cut"><figure><svg viewBox="0 0 130 130" role="img" aria-label="첫 번째 접기"><rect x="12" y="12" width="104" height="104"/><path class="dash" d="M64 12V116"/><path class="arrow" d="M98 58Q84 85 65 79"/><path class="arrow-head" d="M65 79l9-2-4 8z"/></svg><figcaption>처음</figcaption></figure><svg class="step" viewBox="0 0 34 14" aria-hidden="true"><path d="M0 7H24" stroke="#95a5a6" stroke-width="3"/><polygon points="34,7 24,0 24,14" fill="#95a5a6"/></svg><figure><svg viewBox="0 0 82 130" role="img" aria-label="두 번째 접기"><rect x="8" y="12" width="60" height="104"/><path class="dash" d="M8 64H68"/><path class="arrow" d="M52 40Q39 56 44 77"/><path class="arrow-head" d="M44 77l-5-8 9 3z"/></svg><figcaption>1번 접음</figcaption></figure><svg class="step" viewBox="0 0 34 14" aria-hidden="true"><path d="M0 7H24" stroke="#95a5a6" stroke-width="3"/><polygon points="34,7 24,0 24,14" fill="#95a5a6"/></svg><figure><svg viewBox="0 0 84 130" role="img" aria-label="대각선 자르기"><rect x="18" y="22" width="50" height="72"/><path class="seam" d="M43 22V94"/><path class="cut" d="${diagonal}"/></svg><figcaption>2번 접음 · 자르기</figcaption></figure></div>`;
   }
   if (visual.kind === "g1-summer-four-symbol-relation") {
     return `<div class="g1-summer-four-symbol"><p>☆ + □ = ◇</p><p>☆ + ☆ + ☆ = ○ + ○ + ○ + ○</p><p>☆ + ☆ = ◇ + ○</p></div>`;
@@ -2516,12 +2525,11 @@ function g1SourceMarkup(visual) {
     return `<svg class="g1-fall-stacked-squares" viewBox="0 0 230 145" role="img" aria-label="크기가 다른 정사각형 네 개"><rect x="8" y="8" width="120" height="120"/><rect x="128" y="8" width="80" height="80"/><rect x="128" y="88" width="40" height="40"/><rect x="168" y="88" width="40" height="40"/><text x="68" y="72">가</text><text x="168" y="52">나</text><text x="148" y="113">다</text><text x="188" y="113">라</text><path d="M8 136H128"/><text x="68" y="143" class="measure">${visual.big}cm</text></svg>`;
   }
   if (visual.kind === "g1-fall-three-fold-crease-cut") {
-    const diagonal = visual.diagonal === "up" ? "M20 100L100 20" : "M20 20L100 100";
-    const otherDiagonal = visual.diagonal === "up" ? "M20 20L100 100" : "M20 100L100 20";
-    const panels = [`<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="M10 60H110"/><path class="arrow" d="M88 35Q60 50 60 76"/></svg>`, `<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="M60 10V110"/><path class="arrow" d="M88 55Q70 67 53 61"/></svg>`];
-    if (visual.folds >= 3) panels.push(`<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="${diagonal}"/><path class="arrow" d="M82 84Q63 70 54 53"/></svg>`);
-    if (visual.folds >= 4) panels.push(`<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="${otherDiagonal}"/><path class="arrow" d="M38 84Q57 70 66 53"/></svg>`);
-    return `<div class="g1-fall-crease-cut">${panels.map((panel, index) => `${index ? "<b>→</b>" : ""}${panel}`).join("")}</div>`;
+    // 아래로 → 왼쪽으로 → (대각선) → (다른 대각선) 접는 흐름. 펼친 뒤의 접힌 선은 문제의 답이라 그리지 않는다.
+    const first = visual.diagonal === "up" ? "대각선-오름" : "대각선-내림";
+    const second = visual.diagonal === "up" ? "대각선-내림" : "대각선-오름";
+    const words = ["아래로", "왼쪽으로", first, second].slice(0, visual.folds);
+    return `<div class="g1-fold-flow-strip">${foldWordStrip(words, { label: `색종이를 ${visual.folds}번 접기` })}</div>`;
   }
   if (visual.kind === "g1-fall-triple-share") {
     return `<div class="g1-fall-triple-share"><strong>모두 ${visual.total}장</strong><div><section><b>${visual.largerName}</b><span>□ □ □</span></section><section><b>${visual.smallerName}</b><span>□</span></section></div></div>`;
@@ -2617,81 +2625,47 @@ function cryptarithmVerticalMarkup(visual) {
 function foldNumberGridMarkup(visual) {
   const N = 4;
   const cell = 30;
-  const size = N * cell;
-  const numberGrid = (grid, ox, oy, dim, showNumbers) => {
-    let out = `<rect x="${ox}" y="${oy}" width="${dim.w * cell}" height="${dim.h * cell}" fill="${showNumbers ? "#f9c8c4" : "#fbdad6"}" stroke="#e8968f" stroke-width="2"/>`;
-    for (let k = 1; k < dim.w; k += 1) out += `<line x1="${ox + k * cell}" y1="${oy}" x2="${ox + k * cell}" y2="${oy + dim.h * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
-    for (let k = 1; k < dim.h; k += 1) out += `<line x1="${ox}" y1="${oy + k * cell}" x2="${ox + dim.w * cell}" y2="${oy + k * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
-    if (showNumbers) {
-      for (let r = 0; r < dim.h; r += 1) for (let c = 0; c < dim.w; c += 1) {
-        out += `<text x="${ox + c * cell + cell / 2}" y="${oy + r * cell + cell / 2 + 5}" text-anchor="middle" font-size="18" font-weight="600" fill="#333">${grid[r][c]}</text>`;
-      }
-    }
-    return out;
-  };
-
-  const origin = 8;
-  const midY = visual.hDir === "up" ? origin : origin + size / 2;
-  const cutX = visual.vDir === "left" ? origin : origin + size / 2;
-  const first = numberGrid(visual.grid, origin, origin, { w: N, h: N }, true)
-    + `<line x1="${origin}" y1="${origin + size / 2}" x2="${origin + size}" y2="${origin + size / 2}" stroke="#775052" stroke-width="2" stroke-dasharray="5 4"/>`;
-  const second = numberGrid([], origin, midY, { w: N, h: 2 }, false)
-    + `<line x1="${origin + size / 2}" y1="${midY}" x2="${origin + size / 2}" y2="${midY + size / 2}" stroke="#775052" stroke-width="2" stroke-dasharray="5 4"/>`;
-  const third = numberGrid([], cutX, midY, { w: 2, h: 2 }, false)
-    + visual.cells.map(({ r, c }) => `<rect x="${cutX + c * cell}" y="${midY + r * cell}" width="${cell}" height="${cell}" fill="#b03a5b"/>`).join("");
-  const steps = [
-    { label: visual.hDir === "up" ? "아래쪽을 위로 접어요" : "위쪽을 아래로 접어요", picture: first },
-    { label: visual.vDir === "left" ? "오른쪽을 왼쪽으로 접어요" : "왼쪽을 오른쪽으로 접어요", picture: second },
-    { label: "진한 색 부분을 잘라요", picture: third },
-    { label: "펼쳐서 잘린 칸을 찾아요", picture: numberGrid(visual.grid, origin, origin, { w: N, h: N }, true) }
+  const up = visual.hDir === "up";      // 아래쪽을 위로 → 위 반쪽이 남는다
+  const left = visual.vDir === "left";  // 오른쪽을 왼쪽으로 → 왼 반쪽이 남는다
+  const hy = up ? 0 : 2;                // 한 번 접은 뒤 남는 반쪽의 윗줄(칸)
+  const qx = left ? 0 : 2;
+  const stages = [
+    { draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, w: N, h: N, rows: visual.grid }) + foldCreaseSvg(x, y + 2 * cell, x + N * cell, y + 2 * cell),
+      arrow: { from: { x: 0.5, y: up ? 0.75 : 0.25 }, to: { x: 0.5, y: up ? 0.25 : 0.75 } } },
+    { draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, y0: hy, w: N, h: 2 }) + foldCreaseSvg(x + 2 * cell, y + hy * cell, x + 2 * cell, y + (hy + 2) * cell),
+      arrow: { from: { x: left ? 0.75 : 0.25, y: (hy + 1) / N }, to: { x: left ? 0.25 : 0.75, y: (hy + 1) / N } } },
+    { draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, x0: qx, y0: hy, w: 2, h: 2 })
+        + visual.cells.map(({ r, c }) => `<rect x="${x + (qx + c) * cell}" y="${y + (hy + r) * cell}" width="${cell}" height="${cell}" fill="#b03a5b"/>`).join(""),
+      extra: "자르기" }
   ];
-  return `<div class="fold-number-steps" data-fold-horizontal="${visual.hDir}" data-fold-vertical="${visual.vDir}">${steps.map((step, index) => `<figure><figcaption>${index + 1}. ${step.label}</figcaption><svg class="fold-number-svg" viewBox="0 0 ${size + 16} ${size + 16}" role="img" aria-label="${step.label}">${step.picture}</svg></figure>`).join("")}</div>`;
+  return `<div class="fold-number-steps" data-fold-horizontal="${visual.hDir}" data-fold-vertical="${visual.vDir}">${foldNumberStrip(stages, { S: N * cell, label: "수가 쓰인 색종이를 두 번 접어 색칠한 부분을 자르기" })}</div>`;
 }
 
+// 목표 합 색칠: 수가 보이도록 뒤로 두 번 접는다 — 접은 뒤에도 남은 칸의 수가 보인다
 function foldNumberInverseMarkup(visual) {
   const N = 4;
   const cell = 30;
-  const size = N * cell;
-  const top = 6;
-  let x = 8;
-  const rect = (rows, ox, oy, cellSize, showNumbers) => {
-    const h = rows.length;
-    const w = rows[0].length;
-    let out = `<rect x="${ox}" y="${oy}" width="${w * cellSize}" height="${h * cellSize}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2.2"/>`;
-    for (let k = 1; k < w; k += 1) out += `<line x1="${ox + k * cellSize}" y1="${oy}" x2="${ox + k * cellSize}" y2="${oy + h * cellSize}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
-    for (let k = 1; k < h; k += 1) out += `<line x1="${ox}" y1="${oy + k * cellSize}" x2="${ox + w * cellSize}" y2="${oy + k * cellSize}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
-    if (showNumbers) {
-      for (let r = 0; r < h; r += 1) for (let c = 0; c < w; c += 1) {
-        out += `<text x="${ox + c * cellSize + cellSize / 2}" y="${oy + r * cellSize + cellSize / 2 + 5}" text-anchor="middle" font-size="15" font-weight="600" fill="#333">${rows[r][c]}</text>`;
-      }
-    }
-    return out;
-  };
-
-  let parts = rect(visual.grid, x, top, cell, true);
-  parts += `<line x1="${x + 2 * cell}" y1="${top}" x2="${x + 2 * cell}" y2="${top + size}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
-  parts += `<line x1="${x}" y1="${top + 2 * cell}" x2="${x + size}" y2="${top + 2 * cell}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
-  x += size + 14;
-  parts += foldStepArrowSvg(x, top + size / 2);
-  x += 44;
-
-  const mid = visual.firstFold === "h"
-    ? [visual.grid[visual.packetRow], visual.grid[visual.packetRow + 1]]
-    : visual.grid.map((row) => [row[visual.packetCol], row[visual.packetCol + 1]]);
-  const midW = visual.firstFold === "h" ? N : 2;
-  const midTop = visual.firstFold === "h" ? top + cell : top;
-  parts += rect(mid, x, midTop, cell, true);
-  x += midW * cell + 14;
-  parts += foldStepArrowSvg(x, top + size / 2);
-  x += 44;
-
-  const packet = [
-    [visual.grid[visual.packetRow][visual.packetCol], visual.grid[visual.packetRow][visual.packetCol + 1]],
-    [visual.grid[visual.packetRow + 1][visual.packetCol], visual.grid[visual.packetRow + 1][visual.packetCol + 1]]
+  const S = N * cell;
+  const g = visual.grid;
+  const pr = visual.packetRow;
+  const pc = visual.packetCol;
+  const sub = (r0, c0, h, w) => Array.from({ length: h }, (_, r) => Array.from({ length: w }, (_, c) => g[r0 + r][c0 + c]));
+  const hFirst = visual.firstFold === "h";
+  const hLine = (x, y, y0, x0 = 0, w = N) => foldCreaseSvg(x + x0 * cell, y + y0 * cell, x + (x0 + w) * cell, y + y0 * cell);
+  const vLine = (x, y, x0, y0 = 0, h = N) => foldCreaseSvg(x + x0 * cell, y + y0 * cell, x + x0 * cell, y + (y0 + h) * cell);
+  // 남는 쪽: 가로 접기면 packetRow 쪽 반, 세로 접기면 packetCol 쪽 반
+  const hArrow = (y0, h) => ({ from: { x: 0.5, y: (pr === 0 ? y0 + h * 0.75 : y0 + h * 0.25) / N }, to: { x: 0.5, y: (pr === 0 ? y0 + h * 0.25 : y0 + h * 0.75) / N } });
+  const vArrow = (x0, w) => ({ from: { x: (pc === 0 ? x0 + w * 0.75 : x0 + w * 0.25) / N, y: 0 }, to: { x: (pc === 0 ? x0 + w * 0.25 : x0 + w * 0.75) / N, y: 0 } });
+  const mid = hFirst ? { x0: 0, y0: pr, w: N, h: 2 } : { x0: pc, y0: 0, w: 2, h: N };
+  const at = (arrow, y) => ({ from: { ...arrow.from, y: arrow.from.y || y }, to: { ...arrow.to, y: arrow.to.y || y } });
+  const stages = [
+    { draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, w: N, h: N, rows: g }) + (hFirst ? hLine(x, y, 2) : vLine(x, y, 2)),
+      arrow: hFirst ? hArrow(0, N) : at(vArrow(0, N), 0.5) },
+    { draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, ...mid, rows: sub(mid.y0, mid.x0, mid.h, mid.w) }) + (hFirst ? vLine(x, y, 2, pr, 2) : hLine(x, y, 2, pc, 2)),
+      arrow: hFirst ? at(vArrow(0, N), (pr + 1) / N) : { from: { x: (pc + 1) / N, y: pr === 0 ? 0.75 : 0.25 }, to: { x: (pc + 1) / N, y: pr === 0 ? 0.25 : 0.75 } } },
+    { draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, x0: pc, y0: pr, w: 2, h: 2, rows: sub(pr, pc, 2, 2) }) }
   ];
-  parts += rect(packet, x, top + cell, cell + 6, true);
-
-  return `<svg class="fold-inverse-svg" viewBox="0 0 ${x + 2 * (cell + 6) + 10} ${size + 16}" role="img" aria-label="목표 합이 되게 색칠하기 문제">${parts}</svg>`;
+  return foldNumberStrip(stages, { S, label: "목표 합이 되게 색칠하기 문제", cls: "fold-inverse-svg" });
 }
 
 function foldPunchMarkup(visual) {
@@ -2757,7 +2731,7 @@ function foldUnfoldChoiceMarkup(visual) {
   const square = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
   let x = 6;
   const top = 6;
-  let parts = `<polygon points="${square.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  let parts = `<polygon points="${square.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>` + foldCaptionSvg(x + size / 2, top + size + 22, 0);
   const seg1 = foldLine(square, visual.directions[0]);
   if (seg1) parts += `<line x1="${(x + seg1[0].x * size).toFixed(1)}" y1="${(top + seg1[0].y * size).toFixed(1)}" x2="${(x + seg1[1].x * size).toFixed(1)}" y2="${(top + seg1[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
   const arrow1 = foldArrow(square, visual.directions[0]);
@@ -2767,7 +2741,7 @@ function foldUnfoldChoiceMarkup(visual) {
   x += 42;
 
   const half = clip(square, { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y }[visual.directions[0]]);
-  parts += `<polygon points="${half.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  parts += `<polygon points="${half.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>` + foldCaptionSvg(x + size / 2, top + size + 22, 1, visual.directions.length === 1 ? "자르기" : "");
   // 한 번 접기(1권 2단원 1차시): 둘째 접기 없이 반쪽에 자를 곳만 칠한다
   if (visual.directions.length === 1) {
     parts += `<polygon points="${visual.cut.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#b03a5b"/>`;
@@ -2782,13 +2756,13 @@ function foldUnfoldChoiceMarkup(visual) {
   x += 42;
 
   const quad = clip(half, { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y }[visual.directions[1]]);
-  parts += `<polygon points="${quad.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  parts += `<polygon points="${quad.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>` + foldCaptionSvg(x + size / 2, top + size + 22, 2, "자르기");
   parts += `<polygon points="${visual.cut.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#b03a5b"/>`;
 
   return foldUnfoldChoiceFinish(visual, parts, x, size, square);
 }
 function foldUnfoldChoiceFinish(visual, parts, x, size, square) {
-  const stageSvg = `<svg class="fold-unfold-stage-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="색종이 접기 단계">${parts}</svg>`;
+  const stageSvg = `<svg class="fold-unfold-stage-svg" ${foldWidthStyle(x + size + 10, size)} viewBox="0 0 ${x + size + 10} ${size + 16 + FOLD_CAPTION_SPACE}" role="img" aria-label="색종이 접기 단계">${parts}</svg>`;
   // 보기의 접은 선: 접은 방향만(한 번 접기면 한 줄)
   const lines = new Set(visual.directions);
   const optionSvg = visual.options.map((opt, index) => {

@@ -310,7 +310,8 @@ function numberSequenceMarkup(visual) {
 
 function logicCluesMarkup(visual) {
   const header = visual.items.length ? `<div class="b1-logic-tags">${visual.names.map((name) => `<span>${esc(name)}</span>`).join("")}${visual.items.map((item) => `<i>${esc(item)}</i>`).join("")}</div>` : "";
-  return `<div class="b1-logic-clues">${header}<ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
+  // 조건 상자 = 원탁·아파트 자리 정하기와 같은 꼴(초록 동그라미 번호, 원장 2026-11-21 「앞·뒤 순서 문제도 같은 상자로」)
+  return `<div class="b1-logic-clues">${header}${visual.clues.map((clue, index) => `<p><b>${index + 1}</b>${esc(clue)}</p>`).join("")}</div>`;
 }
 
 // ── 권별테스트(단원 테스트) 원본 구조 그림 ────────────────────────────────

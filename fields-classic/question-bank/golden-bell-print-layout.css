@@ -230,3 +230,11 @@
 }
 /* 넘치는 그림은 줄이지 않고 칸을 그림만큼 늘린다(원장 2026-11-19 「구조를 바꿔 크게 만들어」, golden-bell-print-layout.js enlargeVisual) */
 .print-visual-grow>.gold-print-visual,.print-visual-grow>.gold-print-visual>:not(svg){max-height:none!important;height:auto!important;overflow:visible!important}
+/* 차시 교재에서 다음 묶음이 앞 쪽 남은 자리에서 시작할 때의 묶음 제목 칸(golden-bell-print-layout.js packExercisePages) */
+.tb-section-start{margin-top:2mm;padding-top:3mm!important;border-top:.5mm solid #2f6b4a!important}
+.tb-section-start .tb-section-title{display:flex;align-items:baseline;gap:3mm;margin:0 0 2mm}
+.tb-section-start .tb-section-title span{color:#16734b;font-size:8pt;font-weight:900;letter-spacing:.06em;white-space:nowrap}
+.tb-section-start .tb-section-title b{color:#182230;font-size:12pt;font-weight:800}
+.tb-section-start.at-top{margin-top:0;padding-top:0!important;border-top:0!important}
+.tb-section-start.at-top .tb-section-title{display:none}
+.tb-section-part{padding-top:1mm!important;border-bottom:0!important}

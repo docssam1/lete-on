@@ -1,3 +1,4 @@
+import { foldWordStrip } from "./fold-visuals.js?v=20261121a";
 const SHAPE_GLYPHS = Object.freeze({
   circle: "●",
   triangle: "▲",
@@ -71,9 +72,16 @@ function relativeNumberGridMarkup(visual) {
   return `<div class="m6-relative-grid"><ol>${visual.clues.map((clue) => `<li>${clue}</li>`).join("")}</ol><div>${Array.from({ length: 9 }, () => "<span></span>").join("")}</div></div>`;
 }
 
+// 위로 → 왼쪽으로 → 대각선으로 접은 흐름 한 줄(색종이 그림 기준: 분홍 종이·빨간 굽은 화살표·회색 장면 화살표·장면 이름, 원장 2026-11-21)
+// 마지막 접힌 삼각형 위의 선은 예전 그림과 같은 자리(삼각형 틀의 position 비율)에 긋는다.
 function foldLineUnfoldMarkup(visual) {
-  const p = Math.round(visual.position * 100);
-  return `<div class="m6-fold-line-sequence"><svg viewBox="0 0 126 126" aria-label="위로 접기"><rect x="12" y="12" width="102" height="102"/><path class="dash" d="M12 63H114"/><path class="arrow" d="M63 99V38m0 0-11 13m11-13 11 13"/></svg><b>→</b><svg viewBox="0 0 146 92" aria-label="왼쪽으로 접기"><rect x="8" y="8" width="130" height="76"/><path class="dash" d="M73 8V84"/><path class="arrow" d="M115 46H34m0 0 13-11M34 46l13 11"/></svg><b>→</b><svg viewBox="0 0 100 100" aria-label="대각선으로 접기"><rect x="8" y="8" width="84" height="84"/><path class="dash" d="M8 8L92 92"/><path class="arrow" d="M32 30l39 39m0 0-17-3m17 3-3-17"/></svg><b>→</b><svg viewBox="0 0 100 100" aria-label="접힌 삼각형의 선"><path d="M10 10V90H90Z"/><path class="cut" d="M10 ${p}H${p}V90"/></svg></div>`;
+  const t = (Math.round(visual.position * 100) - 10) / 80;
+  const lines = (x, y, size, poly, box) => {
+    const X = (u) => (x + (box.x0 + u * (box.x1 - box.x0)) * size).toFixed(1);
+    const Y = (v) => (y + (box.y0 + v * (box.y1 - box.y0)) * size).toFixed(1);
+    return `<path d="M${X(0)} ${Y(t)}H${X(t)}V${Y(1)}" fill="none" stroke="#b03a5b" stroke-width="2.6"/>`;
+  };
+  return `<div class="m6-fold-line-strip">${foldWordStrip(["위로", "왼쪽으로", "대각선-내림"], { final: lines, label: "색종이를 위로, 왼쪽으로, 대각선으로 접고 선 긋기" })}</div>`;
 }
 
 function foldLineAnswerMarkup(visual) {
