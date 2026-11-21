@@ -4601,21 +4601,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-71-original",sourceItemLabel:"확인학습 71번 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:79,alternateSourcePdfPage:78,sourcePrintedPage:83,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2CoprimeCountSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:9,verifiedVariantTarget:9,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문과 같은 기약분수·자연수 곱 조건에서 식의 개수를 묻고 변형별 가능한 값을 독립 열거했습니다."});
   }
 
-  if (source52Unit2) for (const [id,reason] of [
-    ["5-2-u2-t4-2","연결한 83쪽 71번 원문은 식의 개수를 묻지만 현재 유형은 순서쌍을 모두 묻습니다. 같은 답 계약의 원문을 확인할 때까지 검수 대기합니다."],
-    ["5-2-u2-t1-3","연결한 77쪽 20번 원문은 주어진 분수의 자연수배를 묻지만 현재 유형은 곱의 결과가 자연수인 수를 묻습니다. 해당 유형에 맞는 원문을 확인할 때까지 검수 대기합니다."],
-    ["5-2-u2-t1-2","연결한 75쪽 6번 원문은 이동 거리를 묻지만 현재 연습은 시간만 묻습니다. 같은 유형의 원문과 답 계약을 다시 확인할 때까지 검수 대기합니다."],
-  ]) {
+  // 2026-11-21: 연결 원문과 답 형식이 달라 잠갔던 세 유형은 원문 유사문항 표시를 떼고, 독립 검산 후 창작 연습으로 연다.
+  if (source52Unit2) for (const id of ["5-2-u2-t4-2","5-2-u2-t1-3","5-2-u2-t1-2"]) {
     const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id===id);
-    if (type) Object.assign(type,{sourceVerified:false,reviewLocked:true,generationMode:"review-locked",implementationStatus:"review-locked",verifiedVariantCount:0,verifiedVariantTarget:0,reviewReason:reason});
-  }
-  if (source52Unit2) for (const [id, alternativeTypeId] of [
-    ["5-2-u2-t1-2", "5-2-u2-practice-6-distance-similar"],
-    ["5-2-u2-t1-3", "5-2-u2-practice-20-source-faithful-similar"],
-    ["5-2-u2-t4-2", "5-2-u2-practice-71-count-similar"]
-  ]) {
-    const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id===id);
-    if (type) type.alternativeTypeId=alternativeTypeId;
+    if (!type) continue;
+    const plain=value=>String(value||"").replace(/ · 유사문항$/,"").replace("기약분수의 곱 조건을 만족하는 순서쌍","기약분수의 곱 조건을 만족하는 (㉠, ㉡)의 짝");
+    Object.assign(type,{name:`${plain(type.name)} · 창작 연습`,label:`${plain(type.label||type.name)} · 창작 연습`,sourceItemLabel:"창작 연습(원본 문항 아님)",sourceSection:"creative-practice",sourceVerified:true,reviewLocked:false,publisherKeyVerified:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,creativePractice:true,reviewReason:"원본 교재 문항과 답 형식이 달라 원문 유사문항 표시를 떼고 창작 연습으로 분류했습니다. 문제와 풀이를 독립 계산으로 검산했습니다."});
+    delete type.sourceParentItemId; delete type.alternativeTypeId;
   }
   for (const [unitId,id,alternativeTypeId] of [
     ["5-2-u3","5-2-u3-t7-2","5-2-u3-e8-mission-5-rotated-number-synthetic"],
@@ -4934,6 +4926,44 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       if (!type.sourceVerified || type.reviewLocked || !type.sourceItemLabel?.includes("유사문항")) continue;
       if (!/유사문항|연습/.test(type.name)) type.name += " · 유사문항";
       if (type.label && !/유사문항|연습/.test(type.label)) type.label += " · 유사문항";
+    }
+  }
+
+  // 2026-11-21: 원본 교재 문항과 연결되지 않은 5-2 일반 유형 중 여러 표본을 독립 풀이로 검산하고
+  // 초등 표기로 풀이를 다듬은 유형만 '창작 연습'으로 연다. 목록에 없는 유형은 아래 규칙대로 잠긴다.
+  {
+    const creativePractice52 = new Set([
+      "5-2-u2-t4-3",
+      "5-2-u3-t4-2", "5-2-u3-t4-3", "5-2-u3-t5-3", "5-2-u3-t7-2", "5-2-u3-t8-2", "5-2-u3-t8-3",
+      "5-2-u4-t1-10", "5-2-u4-t1-11", "5-2-u4-t2-5", "5-2-u4-t2-8", "5-2-u4-t2-9", "5-2-u4-t2-11",
+      "5-2-u5-t1-4", "5-2-u5-t2", "5-2-u5-t2-3", "5-2-u5-t2-4", "5-2-u5-t3", "5-2-u5-t3-2", "5-2-u5-t3-4", "5-2-u5-t3-5",
+      "5-2-u5-t4", "5-2-u5-t4-5", "5-2-u5-t5", "5-2-u5-t5-2", "5-2-u5-t5-3", "5-2-u5-t5-5",
+      "5-2-u5-t6-2", "5-2-u5-t6-3", "5-2-u5-t6-4", "5-2-u5-t6-5",
+      "5-2-u6-t2-2", "5-2-u6-t3-4", "5-2-u6-t3-5", "5-2-u6-t3-6", "5-2-u6-t4-4", "5-2-u6-t4-5"
+    ]);
+    // 5-2-u3-t5는 그림에 정답 점이 미리 그려지고 좌표·대칭이동 같은 중학교 표기를 써서 잠금을 유지한다.
+    const grade52 = semesters.find(semester => semester.id === "5-2");
+    for (const type of grade52?.units.flatMap(unit => unit.subunits.flatMap(group => group.types)) || []) {
+      if (!creativePractice52.has(type.id) || type.sourceItemId) continue;
+      Object.assign(type, {
+        sourceItemId: `${type.id}-creative-practice`,
+        sourceItemLabel: "창작 연습(원본 문항 아님)",
+        sourceSection: "creative-practice",
+        sourceVerified: true,
+        reviewLocked: false,
+        publisherKeyVerified: false,
+        creativePractice: true,
+        reviewReason: "원본 교재 문항과 연결되지 않은 창작 연습입니다. 여러 표본을 독립 풀이로 검산하고 풀이를 초등 표기로 다듬어 공개했습니다."
+      });
+      const renamed = {
+        "5-2-u3-t4-3": "한 꼭짓점을 함께 쓰는 삼각형들의 높이",
+        "5-2-u3-t5-3": "도형의 대칭축 개수",
+        "5-2-u6-t4-5": "두 회전판 중 적어도 하나가 파란색에 멈출 가능성"
+      }[type.id];
+      if (renamed) { type.name = renamed; type.label = renamed; }
+      if (!/창작 연습/.test(type.name)) type.name += " · 창작 연습";
+      if (type.label && !/창작 연습/.test(type.label)) type.label += " · 창작 연습";
+      delete type.alternativeTypeId;
     }
   }
 
