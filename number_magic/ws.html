@@ -323,7 +323,9 @@
   /* 글꼴(Pretendard·Gowun Batang·KaTeX)이 다 내려온 뒤에 준비 표시 — PDF 생성기가 이 플래그를 기다린다 */
   var fontsReady = window.NM_LAST_PRINT_READY || ((document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve());
   var timeout = new Promise(function(r){ setTimeout(r, 8000); });
-  Promise.race([fontsReady, timeout]).then(function(){ setTimeout(function(){ window.NM_WS_READY = true;
+  Promise.race([fontsReady, timeout]).then(function(){ setTimeout(function(){
+   /* 사진 채점 시험판(2026-11-21, app/photo-grade.js): 주소에 marks=1 일 때만 받는다. 종이 귀퉁이 표시는 인쇄·PDF에도 찍혀야 하므로 준비 표시보다 먼저 단다 */
+   var ready = function(){ window.NM_WS_READY = true;
     if(window.NM_PEN_SHEET && q.get('auto') !== '0') NM_PEN_SHEET.mount();
     if(location.hash === '#nm-paper-tool'){
       var tool = document.getElementById('nm-paper-tool');
@@ -334,6 +336,12 @@
         window.scrollTo(0, window.scrollY + tool.getBoundingClientRect().top - offset);
       }
     }
+   };
+   if(q.get('marks') === '1'){
+     var ph = document.createElement('script'); ph.src = 'app/photo-grade.js?v=20261121-photo1';
+     ph.onload = function(){ try{ NM_PHOTO_GRADE.mount({ marksOnly: q.get('auto') === '0' }); }catch(e){} ready(); };
+     ph.onerror = ready; document.head.appendChild(ph);
+   } else ready();
   }, 300); });
   }
 })();
