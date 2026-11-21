@@ -41,7 +41,9 @@ function cardItem(card) {
   const wide = [...rest.querySelectorAll("svg[viewBox]")].some((svg) => {
     const [, , w, h] = svg.getAttribute("viewBox").split(/[\s,]+/u).map(Number);
     return w > 0 && h > 0 && w / h > 2.3;
-  }) || Boolean(rest.querySelector(".b4-fold-line-problem,.fold-sequence,.b4-fold-sequence"));
+  }) || Boolean(rest.querySelector(".b4-fold-line-problem,.fold-sequence,.b4-fold-sequence"))
+    // 조건 상자 + 그림이 나란한 문제(원탁·아파트 자리 정하기)는 늘 두 칸 — 반 칸에 들면 조건이 세 줄로 접혀 그림과 어긋난다(원장 2026-11-21)
+    || Boolean(rest.querySelector(".b4-seat-layout,.b9-apartment-wrap"));
   const book = /^(?:본책|교재)\s+(\S+)\s+(\S+?)번/u.exec(ref);
   const finish = (answerHtml, answerVisual) => ({ ref, kind: kindOf(ref), stage: book?.[1] || "", no: book?.[2] || "", block: book ? `${book[1]} ${book[2].split("-")[0]}` : "", type, prompt, tutorial,
     visual: rest.innerHTML.trim(), answer: Boolean(card.querySelector(".answer-line")), wide, answerHtml, answerVisual });

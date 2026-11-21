@@ -285,7 +285,8 @@ function logicMatrix(visual) {
 
 function apartment(visual) {
   if (visual.occupants) return `<div class="b9-apartment">${visual.occupants.map((name, index) => `<span class="${index === visual.targetIndex ? "target" : ""}">${esc(name)}</span>`).join("")}</div>`;
-  return `<div class="b9-apartment-wrap"><div class="b9-apartment">${Array.from({ length: 6 }, (_, index) => `<span class="${index === visual.targetIndex ? "target" : ""}">${index === visual.targetIndex ? "?" : ""}</span>`).join("")}</div><div class="b9-condition-list">${visual.conditions.map((condition, index) => `<p><b>${index + 1}</b>${esc(condition)}</p>`).join("")}</div></div>`;
+  // 조건 상자(왼쪽) + 집 그림(오른쪽) — 원탁 자리 정하기와 같은 꼴(원장 2026-11-21 「표 밀려 있고 그림과 배치 안 맞고」)
+  return `<div class="b9-apartment-wrap"><div class="b4-clue-panel">${visual.conditions.map((condition, index) => `<p><b>${index + 1}</b>${esc(condition)}</p>`).join("")}</div><div class="b9-apartment">${Array.from({ length: 6 }, (_, index) => `<span class="${index === visual.targetIndex ? "target" : ""}">${index === visual.targetIndex ? "?" : ""}</span>`).join("")}</div></div>`;
 }
 
 export function book09Markup(visual) {
