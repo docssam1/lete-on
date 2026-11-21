@@ -1,0 +1,104 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "땅의 변화 교재24·26번과 대응 창작 짝문항의 화산 사진·형성 자료",
+  "cacheVersion": "20261115-volcano-reference-context",
+  "standard": "4과11-02",
+  "curriculumBasis": "2022 개정 과학: 화산의 의미와 화산 분출물. 휴화산·활화산 등 상태 및 지진 발생 원인은 다루지 않음.",
+  "changedPairIds": [
+    "s41-u03-v026",
+    "s41-u03-v068"
+  ],
+  "changedWorkbookIds": [
+    "s41-u03-w024",
+    "s41-u03-w026"
+  ],
+  "reusedImage": {
+    "path": "assets/bank/s41-u03/s3-q06.webp",
+    "sha256": "8b2e7282864626ce7ff92c90ba72f28767e469853c07e7757776614a5b8c10d1",
+    "width": 523,
+    "height": 221,
+    "bytesUnchanged": true,
+    "labels": [
+      "킬라우에아산",
+      "베수비오산"
+    ]
+  },
+  "formationSources": [
+    {
+      "title": "Geology and History of Kīlauea",
+      "institution": "U.S. Geological Survey",
+      "url": "https://www.usgs.gov/volcanoes/kilauea/science/geology-and-history-kilauea",
+      "supports": "용암이 반복하여 흘러나와 쌓인 지형. 폭발적 분출도 있어 용암만으로 만들어졌다고 한정하지 않음."
+    },
+    {
+      "title": "Geology and Vulcanology",
+      "institution": "Vesuvius National Park",
+      "url": "https://www.parconazionaledelvesuvio.it/en/the-volcano/geology-and-vulcanology/",
+      "supports": "여러 차례 분출한 용암과 화산재 등 화산 분출물이 쌓여 이루어진 지형."
+    }
+  ],
+  "learningDistinction": "24번은 두 사진에서 보이는 생김새를 비교하고, 26번은 사진과 별도로 제공한 조사 자료로 두 산이 화산인 까닭을 판단한다. 사진만으로 형성 과정을 단정하지 않는다.",
+  "sidebarChange": {
+    "title": "내가 정리할 것",
+    "text": "사진에서 보이는 모습과 조사 자료로 알아본 형성 과정을 나누어 정리하세요.",
+    "studentTeacherNotesChangedEach": 1,
+    "writingLinesPreserved": true
+  },
+  "ocr": {
+    "engine": "Apple Vision",
+    "computePolicy": "CPU-only",
+    "files": 1,
+    "frames": 1,
+    "failures": 0,
+    "recognizedLines": 2,
+    "manualImageReview": true,
+    "note": "산 이름 두 개를 직접 대조했다. OCR이 삼각형 이름표 기호를 글자로 읽은 부분은 산 이름에 포함하지 않는다."
+  },
+  "preservation": {
+    "previousGit": "3622644bd6bd14607ea6879cf6737fb21d7e6df3",
+    "actualUnits": 32,
+    "currentQuestionsUnchanged": 3179,
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestions": 1512,
+    "pairedQuestionsUnchanged": 1510,
+    "changedPairs": [
+      "s41-u03-v026",
+      "s41-u03-v068"
+    ],
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3078,
+    "allKeysContractsChoiceOrdersPageStructuresWritingAreasAndOldFiguresPreserved": true,
+    "allChoiceAndEmptyResponseComparisons": 12,
+    "oldVersionsPreserved": 2,
+    "actualWorkbookPrintModesCompared": 4,
+    "genericQuestionStudentTeacherPrintsCompared": 4,
+    "printChangesLimitedToTwoPicturesOneFormationReferenceReviewedWordingAndOnePersonalNote": true,
+    "oneStudentTeacherPersonalNoteAligned": true,
+    "quickPrintByteIdentical": true,
+    "previousRevisionLoadersAndDecksExecutedFromGit": true,
+    "decks": 64,
+    "slides": 3048,
+    "allSlidesByteIdentical": true,
+    "pictureSlides": 16,
+    "rawSourcesAndQuestionWorkbookRendererCodeUnchanged": true,
+    "actualBrowserAndA4Reviewed": false
+  },
+  "nativeVerification": {
+    "testFiles": 290,
+    "tests": 1513,
+    "pass": 1511,
+    "fail": 0,
+    "browserSkipped": 2,
+    "newTargetedTests": 4,
+    "bankAudit": true,
+    "taxonomyCheck": true,
+    "syntaxCheck": true,
+    "diffCheck": true,
+    "fullHistoricSnapshots": 2810,
+    "choiceOnlyDeltas": 2
+  },
+  "newImages": 0,
+  "newOriginalQuestions": 0,
+  "browserAndA4Reviewed": false,
+  "deployed": false
+}

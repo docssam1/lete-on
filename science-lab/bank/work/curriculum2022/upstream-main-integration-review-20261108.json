@@ -1,0 +1,131 @@
+{
+  "phase": 385,
+  "date": "2026-11-08",
+  "candidateBaseline": "bd57cf67d0bcc614647977041aac2d2ddbdce2f2",
+  "reviewParent": "148cc1714aa46e512b3e5e68365748df0d9cd8fa",
+  "upstreamMain": "af4a5f50b4d2bb5c1310d529a79a12be3afd0ab6",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "현재 메인과 검토 브랜치의 실제 합성 충돌1곳을 해결하고 메인 변경을 검토 브랜치로 합치는 준비. 운영 main으로 검토본을 병합하거나 배포하는 작업이 아니다.",
+  "validation": {
+    "phase": 385,
+    "date": "2026-11-08",
+    "candidateBaseline": "bd57cf67d0bcc614647977041aac2d2ddbdce2f2",
+    "reviewParent": "148cc1714aa46e512b3e5e68365748df0d9cd8fa",
+    "upstreamMain": "af4a5f50b4d2bb5c1310d529a79a12be3afd0ab6",
+    "originalMergeTreeExitCode": 1,
+    "resolvedConflict": "science-lab/index.html",
+    "resolvedIndexKeepsBinderAndCurrentReportCss": true,
+    "upstreamScienceFiles": 18,
+    "upstreamScienceProductAndBinaryBlobsPreservedExactly": 16,
+    "upstreamHandoffAddedLinePreserved": true,
+    "all599IncomingRootPathsPreservedInPreparedReviewMerge": true,
+    "outsideScienceDifferenceFromCurrentMainRestrictedToProtectedScripts": 7,
+    "currentV2ProductAndWorkbookAssetsUnchanged": true,
+    "mainWorktreeHeadAndStatusUnchanged": true,
+    "workbookStructure": {
+      "units": 32,
+      "semesters": {
+        "6-2": 4,
+        "3-2": 4,
+        "4-1": 4,
+        "4-2": 4,
+        "5-1": 4,
+        "3-1": 4,
+        "5-2": 4,
+        "6-1": 4
+      },
+      "questions": 3080,
+      "studentPages": 2476,
+      "eightResponseFormsEveryUnit": true,
+      "threeRailRolesEveryStudentPage": true,
+      "studentAndTeacherFirstPageWarmupLabels": 64,
+      "noQuestionBlocksInFirstPages": true
+    },
+    "canonicalSources": {
+      "registeredQuestions": 1512,
+      "pendingUnits": 9,
+      "pendingUnitIds": [
+        "c22-s62-u04",
+        "c22-s62-u03",
+        "c22-s62-u02",
+        "c22-s62-u01",
+        "c22-s32-u02",
+        "c22-s32-u04",
+        "c22-s51-u01",
+        "c22-s52-u01",
+        "c22-s61-u04"
+      ]
+    },
+    "actualBrowserUsed": false,
+    "actualMobileA4AudioWebGLOr3DRuntimeVerified": false,
+    "mainMerged": false,
+    "deployed": false,
+    "goalAchieved": false
+  },
+  "nativeTests": {
+    "fullSuite": {
+      "exitCode": 0,
+      "files": 270,
+      "tests": 1449,
+      "suites": 0,
+      "pass": 1447,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "browserEnvironmentUnset": true,
+    "rootScienceTestsIncluded": 5,
+    "noProductTestsAddedOrWeakened": true
+  },
+  "mergePlan": {
+    "parents": [
+      "148cc1714aa46e512b3e5e68365748df0d9cd8fa",
+      "af4a5f50b4d2bb5c1310d529a79a12be3afd0ab6"
+    ],
+    "incomingRootPaths": 599,
+    "upstreamSciencePaths": [
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/assets/observe/SOURCES.md",
+      "science-lab/assets/observe/alisma-2.jpg",
+      "science-lab/assets/observe/centipede-2.jpg",
+      "science-lab/assets/observe/lk-cherry-2.jpg",
+      "science-lab/assets/observe/lk-wisteria-2.jpg",
+      "science-lab/assets/observe/lk-zelkova-2.jpg",
+      "science-lab/assets/observe/provenance.json",
+      "science-lab/assets/observe/typha-2.jpg",
+      "science-lab/assets/observe/woodlouse-2.jpg",
+      "science-lab/data/observe-photos.js",
+      "science-lab/data/park-map.js",
+      "science-lab/field.js",
+      "science-lab/index.html",
+      "science-lab/observe-sample.js",
+      "science-lab/park.js",
+      "science-lab/report.css",
+      "science-lab/tools/blender/park-map.py"
+    ],
+    "outsideScienceOwnDifferences": [
+      "scripts/check-science-3d.mjs",
+      "scripts/gen-science-workbook-c22s32u04.mjs",
+      "scripts/gen-science-workbook-c22s42u04.mjs",
+      "scripts/gen-science-workbook-lib.mjs",
+      "scripts/science-3d-plan.mjs",
+      "scripts/tests/science-3d-plan.test.mjs",
+      "scripts/tests/science-workbook-generation.test.mjs"
+    ],
+    "allOtherOutsideSciencePathsEqualObservedMain": true
+  },
+  "remainingGates": {
+    "canonicalOriginalSourcesPending": 9,
+    "desktopMobileAndA4Visuals": "unverified",
+    "audioAndWebGLRuntime": "unverified",
+    "mandatory3DRuntime": "unverified",
+    "curriculumMeaningReview": "scope remains limited; this structural audit does not certify every scientific statement",
+    "mainMergeAndDeployment": "not performed"
+  },
+  "actualBrowserUsed": false,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

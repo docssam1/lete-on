@@ -1,0 +1,612 @@
+{
+  "phase": 319,
+  "date": "2026-11-07",
+  "scope": "Current practice counts, dynamic print summaries and truthful source readiness; no new question or original source content.",
+  "priorLocalCommit": "5ba6a192195b93d73e5acf970cdbcdff04149f6d",
+  "reviewParent": "3d8d862db18fddd2f2f4329904e8ac8d1b15366e",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "catalogUnitsCorrected": 8,
+  "existingLessonQuestionsIncludedInCounts": 96,
+  "sourceQuestionCount": 1512,
+  "sourcePendingUnits": 9,
+  "pendingPracticeCount": 1253,
+  "sourceReadiness": {
+    "scope": "기존 과학 단원평가 정본 폴더의8학기 하위 목록과 관련4개 옛단원 폴더의PDF metadata만 읽음. Drive 전체 검색·PDF 본문 검수·현행 전체 원문 확보를 뜻하지 않음.",
+    "semesterFoldersListed": 8,
+    "legacyCandidateFolders": [
+      {
+        "semesterFolder": "6-1",
+        "legacyTopicFolderTitle": "Ⅱ. 지구와 달의 운동",
+        "examPdfFiles": 4,
+        "answerPdfFiles": 4,
+        "metadataReadOnly": true,
+        "questionContentReviewedThisPhase": false,
+        "canonicalSourceItemsAdded": 0
+      },
+      {
+        "semesterFolder": "6-2",
+        "legacyTopicFolderTitle": "Ⅰ. 전기의 이용",
+        "examPdfFiles": 4,
+        "answerPdfFiles": 4,
+        "metadataReadOnly": true,
+        "questionContentReviewedThisPhase": false,
+        "canonicalSourceItemsAdded": 0
+      },
+      {
+        "semesterFolder": "6-2",
+        "legacyTopicFolderTitle": "Ⅱ. 계절의 변화",
+        "examPdfFiles": 4,
+        "answerPdfFiles": 4,
+        "metadataReadOnly": true,
+        "questionContentReviewedThisPhase": false,
+        "canonicalSourceItemsAdded": 0
+      },
+      {
+        "semesterFolder": "6-2",
+        "legacyTopicFolderTitle": "Ⅲ. 연소와 소화",
+        "examPdfFiles": 4,
+        "answerPdfFiles": 4,
+        "metadataReadOnly": true,
+        "questionContentReviewedThisPhase": false,
+        "canonicalSourceItemsAdded": 0
+      }
+    ],
+    "canonicalSourcePendingUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "canonicalTitlesWithoutExactChildFolderMatch": [
+      "지구와 바다",
+      "감염병과 건강한 생활",
+      "지층과 화석",
+      "혼합물의 분리",
+      "과학과 나의 진로"
+    ],
+    "absenceScope": "이 정본 루트의8학기 직계 단원 폴더 제목에서 정확히 일치하는 항목을 확인하지 못함. 다른 Drive 위치에 자료가 없다는 뜻은 아님.",
+    "metadataOnlyPdfFiles": 32,
+    "rawFilesDownloaded": 0,
+    "newOcrRuns": 0,
+    "sourceQuestionContentRead": false,
+    "originalOrAnswerContentPublished": false,
+    "sourceFilesChanged": false,
+    "nextAction": "네 옛단원 원문과 공식 답의 본문을 대조하고 현행 성취기준별 사용 가능한 발췌를 판단. 폴더 제목만으로 전체 현행 원문으로 등록하지 않음."
+  },
+  "productionCountAudit": {
+    "units": [
+      {
+        "unit": "c22-s62-u04",
+        "source": 0,
+        "similar": 0,
+        "practice": 128,
+        "total": 128,
+        "catalogSupplement": 128,
+        "lessonSupplement": 0,
+        "paperLabel": "전체128문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s62-u03",
+        "source": 0,
+        "similar": 0,
+        "practice": 186,
+        "total": 186,
+        "catalogSupplement": 186,
+        "lessonSupplement": 0,
+        "paperLabel": "전체186문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s62-u02",
+        "source": 0,
+        "similar": 0,
+        "practice": 198,
+        "total": 198,
+        "catalogSupplement": 198,
+        "lessonSupplement": 0,
+        "paperLabel": "전체198문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s62-u01",
+        "source": 0,
+        "similar": 0,
+        "practice": 198,
+        "total": 198,
+        "catalogSupplement": 198,
+        "lessonSupplement": 0,
+        "paperLabel": "전체198문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s32-u01",
+        "source": 70,
+        "similar": 70,
+        "practice": 76,
+        "total": 216,
+        "catalogSupplement": 76,
+        "lessonSupplement": 12,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s32-u02",
+        "source": 0,
+        "similar": 0,
+        "practice": 92,
+        "total": 92,
+        "catalogSupplement": 92,
+        "lessonSupplement": 12,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "s41-u01",
+        "source": 80,
+        "similar": 80,
+        "practice": 90,
+        "total": 250,
+        "catalogSupplement": 90,
+        "lessonSupplement": 0,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s42-u01",
+        "source": 95,
+        "similar": 95,
+        "practice": 92,
+        "total": 282,
+        "catalogSupplement": 92,
+        "lessonSupplement": 12,
+        "paperLabel": "전체282문항집",
+        "headerModesChecked": 4
+      },
+      {
+        "unit": "c22-s51-u03",
+        "source": 75,
+        "similar": 75,
+        "practice": 96,
+        "total": 246,
+        "catalogSupplement": 96,
+        "lessonSupplement": 0,
+        "paperLabel": "전체246문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "s31-u01",
+        "source": 80,
+        "similar": 80,
+        "practice": 0,
+        "total": 160,
+        "catalogSupplement": 0,
+        "lessonSupplement": 0,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "s31-u02",
+        "source": 80,
+        "similar": 80,
+        "practice": 0,
+        "total": 160,
+        "catalogSupplement": 0,
+        "lessonSupplement": 0,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "s31-u03",
+        "source": 80,
+        "similar": 80,
+        "practice": 0,
+        "total": 160,
+        "catalogSupplement": 0,
+        "lessonSupplement": 0,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "s31-u04",
+        "source": 41,
+        "similar": 41,
+        "practice": 64,
+        "total": 146,
+        "catalogSupplement": 64,
+        "lessonSupplement": 0,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s42-u02",
+        "source": 70,
+        "similar": 70,
+        "practice": 92,
+        "total": 232,
+        "catalogSupplement": 92,
+        "lessonSupplement": 12,
+        "paperLabel": "전체232문항집",
+        "headerModesChecked": 4
+      },
+      {
+        "unit": "c22-s32-u03",
+        "source": 70,
+        "similar": 70,
+        "practice": 76,
+        "total": 216,
+        "catalogSupplement": 76,
+        "lessonSupplement": 12,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s32-u04",
+        "source": 0,
+        "similar": 0,
+        "practice": 92,
+        "total": 92,
+        "catalogSupplement": 92,
+        "lessonSupplement": 12,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s42-u04",
+        "source": 6,
+        "similar": 6,
+        "practice": 120,
+        "total": 132,
+        "catalogSupplement": 120,
+        "lessonSupplement": 12,
+        "paperLabel": "전체132문항집",
+        "headerModesChecked": 4
+      },
+      {
+        "unit": "s41-u02",
+        "source": 80,
+        "similar": 80,
+        "practice": 78,
+        "total": 238,
+        "catalogSupplement": 78,
+        "lessonSupplement": 0,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "s41-u03",
+        "source": 80,
+        "similar": 80,
+        "practice": 82,
+        "total": 242,
+        "catalogSupplement": 82,
+        "lessonSupplement": 0,
+        "paperLabel": null,
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "s41-u04",
+        "source": 75,
+        "similar": 75,
+        "practice": 76,
+        "total": 226,
+        "catalogSupplement": 76,
+        "lessonSupplement": 12,
+        "paperLabel": "전체226문항집",
+        "headerModesChecked": 3
+      },
+      {
+        "unit": "c22-s42-u03",
+        "source": 75,
+        "similar": 75,
+        "practice": 96,
+        "total": 246,
+        "catalogSupplement": 96,
+        "lessonSupplement": 0,
+        "paperLabel": "전체246문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s51-u01",
+        "source": 0,
+        "similar": 0,
+        "practice": 96,
+        "total": 96,
+        "catalogSupplement": 96,
+        "lessonSupplement": 0,
+        "paperLabel": "전체96문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s51-u02",
+        "source": 40,
+        "similar": 40,
+        "practice": 80,
+        "total": 160,
+        "catalogSupplement": 80,
+        "lessonSupplement": 0,
+        "paperLabel": "전체160문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s51-u04",
+        "source": 58,
+        "similar": 58,
+        "practice": 96,
+        "total": 212,
+        "catalogSupplement": 96,
+        "lessonSupplement": 0,
+        "paperLabel": "전체212문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s52-u01",
+        "source": 0,
+        "similar": 0,
+        "practice": 96,
+        "total": 96,
+        "catalogSupplement": 96,
+        "lessonSupplement": 0,
+        "paperLabel": "창작96문항 교재",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s52-u02",
+        "source": 75,
+        "similar": 75,
+        "practice": 104,
+        "total": 254,
+        "catalogSupplement": 104,
+        "lessonSupplement": 0,
+        "paperLabel": "전체254문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s52-u03",
+        "source": 57,
+        "similar": 57,
+        "practice": 112,
+        "total": 226,
+        "catalogSupplement": 112,
+        "lessonSupplement": 0,
+        "paperLabel": "전체226문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s52-u04",
+        "source": 11,
+        "similar": 11,
+        "practice": 112,
+        "total": 134,
+        "catalogSupplement": 112,
+        "lessonSupplement": 0,
+        "paperLabel": "전체134문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s61-u01",
+        "source": 69,
+        "similar": 69,
+        "practice": 128,
+        "total": 266,
+        "catalogSupplement": 128,
+        "lessonSupplement": 0,
+        "paperLabel": "전체266문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s61-u02",
+        "source": 70,
+        "similar": 70,
+        "practice": 128,
+        "total": 268,
+        "catalogSupplement": 128,
+        "lessonSupplement": 0,
+        "paperLabel": "전체268문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s61-u03",
+        "source": 75,
+        "similar": 75,
+        "practice": 128,
+        "total": 278,
+        "catalogSupplement": 128,
+        "lessonSupplement": 0,
+        "paperLabel": "전체278문항집",
+        "headerModesChecked": 0
+      },
+      {
+        "unit": "c22-s61-u04",
+        "source": 0,
+        "similar": 0,
+        "practice": 167,
+        "total": 167,
+        "catalogSupplement": 167,
+        "lessonSupplement": 0,
+        "paperLabel": "전체167문항집",
+        "headerModesChecked": 0
+      }
+    ],
+    "sourceCount": 1512,
+    "pending": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "pendingPracticeCount": 1253,
+    "productionUnitLoadersExecuted": 32,
+    "headerModesChecked": 15,
+    "studentReads": 0,
+    "studentWrites": 0,
+    "network": 0,
+    "browserVerified": false
+  },
+  "nativeValidation": {
+    "catalogUnitsChanged": 8,
+    "additionalExistingLessonQuestionsIncluded": 96,
+    "sourceCount": 1512,
+    "sourcePendingUnits": 9,
+    "pendingPracticeCount": 1253,
+    "printHeaderModesChanged": 15,
+    "all32WorkbookAndRuntimeUnitsUnchanged": true,
+    "all64ClassroomArraysUnchanged": true,
+    "all128WorkbookHtmlUnchanged": true,
+    "printHtmlChangedOnlyInCountSentence": true,
+    "allOtherCatalogMetadataPreserved": true,
+    "existingManualImageReviewsRevalidatedByHash": 185,
+    "newManualCoverageAdded": 0,
+    "syntaxFiles": 12,
+    "actualBrowserVerified": false,
+    "newOcr": 0,
+    "newBitmaps": 0,
+    "rendered": [
+      {
+        "unit": "s41-u04",
+        "mode": "student",
+        "before": "4845c239017fa545c9ba40e4a5ff2ff7a3dafa0e64e610f92aa7ea662f2f6e6e",
+        "after": "5e3a2a3e3d77989f737ec2e366806731909ade9b2762ff7c50cc79fef300b1eb",
+        "beforeHeader": "원문75 · 짝75 · 독립 보충64 =214문항.",
+        "afterHeader": "원문75 · 짝75 · 독립 보충76 =226문항."
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teacher",
+        "before": "455a76ff0f0431bd6fdbb20bae4d81b4c303641a17bf24d99362f5ac06ccf34c",
+        "after": "36e17fdfbe318763d2a961a4f0e85127d64d4814ce1593135ab8b51a1e04fc0d",
+        "beforeHeader": "원문75 · 짝75 · 독립 보충64 =214문항.",
+        "afterHeader": "원문75 · 짝75 · 독립 보충76 =226문항."
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "answers",
+        "before": "4c5e32b5afdb0256604ab66142fa5a2304beb504e91a6af236b0813c83de4bb2",
+        "after": "445982407f17ace36519c766464ac877024333f542b7aec75de95b6108bf6998",
+        "beforeHeader": "원문75 · 짝75 · 독립 보충64 =214문항.",
+        "afterHeader": "원문75 · 짝75 · 독립 보충76 =226문항."
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "student",
+        "before": "02510e8d9bd82ea72ded31fda74861004203441be86dc8c9a6e8d296d6f86a6d",
+        "after": "2d7dae9e795beba003aaaa4f0b2db1875a5bd04d5fc5be697e3bcf212af23985",
+        "beforeHeader": "원문95 · 짝95 · 독립 보충80 =270문항.",
+        "afterHeader": "원문95 · 짝95 · 독립 보충92 =282문항."
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher",
+        "before": "5fbc3855f9f90fe9e6e4c5000d910fb70b5048b5184dfa082b3cae9a6ca05d5a",
+        "after": "6cd62668e004ba570503ac17be4a61a6ea42ce21442f364d6d6f3005d0900873",
+        "beforeHeader": "원문95 · 짝95 · 독립 보충80 =270문항.",
+        "afterHeader": "원문95 · 짝95 · 독립 보충92 =282문항."
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "answers",
+        "before": "4ce71a7f5a1ae57fdcda6d11663e04dd5d1619d040bf23862046b2345be5b81d",
+        "after": "de0ab5cff74a894c156c4f3a4864b595d5421b56045e9ee10d4c2a3809ef7ee5",
+        "beforeHeader": "원문95 · 짝95 · 독립 보충80 =270문항.",
+        "afterHeader": "원문95 · 짝95 · 독립 보충92 =282문항."
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "quick",
+        "before": "1597f7407f17d16dea07ce82c578b7b33eb6f7fb3f15531a14abe500c654c407",
+        "after": "a398c706b2489ca76cc19119b0fca2f8e4b5d7e8819158a76cfe6b14b566a593",
+        "beforeHeader": "원문95 · 짝95 · 독립 보충80 =270문항.",
+        "afterHeader": "원문95 · 짝95 · 독립 보충92 =282문항."
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "student",
+        "before": "d8f661a9b1238ac8742749145128d956ea6f9873131619f17344ac23cbb15c67",
+        "after": "88a27dafce850db35448319b863b0c9cd4de297b3cf1dc76d426afe371282509",
+        "beforeHeader": "원문70 · 독립 짝70 · 현행 보충80 =220문항.",
+        "afterHeader": "원문70 · 독립 짝70 · 현행 보충92 =232문항."
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teacher",
+        "before": "dd1a7e782622b6d56fb723352d91a62f13b5184bace426e7398d965fa5a98ebc",
+        "after": "45b9503fe8526f222187d55e2c7c47e7b50155ec967d0ca6f827f902753bb65e",
+        "beforeHeader": "원문70 · 독립 짝70 · 현행 보충80 =220문항.",
+        "afterHeader": "원문70 · 독립 짝70 · 현행 보충92 =232문항."
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "answers",
+        "before": "c3fb763214b4dca383d4922439234b40d96802c46be59f093592182f45cbe556",
+        "after": "6c34c2f248bf873911bb3d40cb4217daf226fe7c6ef5e6070ab963f5cc333c0c",
+        "beforeHeader": "원문70 · 독립 짝70 · 현행 보충80 =220문항.",
+        "afterHeader": "원문70 · 독립 짝70 · 현행 보충92 =232문항."
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "quick",
+        "before": "051c5b23b64fdb302de73352b5005ef8ff18a8f78c4150e61554a03d9137bb60",
+        "after": "ef61ed168f12df995e79e5de0b281eb9655aae17807123023d82663142a5b3fc",
+        "beforeHeader": "원문70 · 독립 짝70 · 현행 보충80 =220문항.",
+        "afterHeader": "원문70 · 독립 짝70 · 현행 보충92 =232문항."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "student",
+        "before": "aeaac7fc53255e1015553a8d11d4a25ee22837d951fc13dd6f8783ab6f059377",
+        "after": "954a8287b3d31eb3378141cd4e2eb0b13e784fda20187336b7682e67d45f4918",
+        "beforeHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충108 =120문항.",
+        "afterHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충120 =132문항."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teacher",
+        "before": "aad7589ac2ff40dd2e090ecf7ecc481a680e9f887bf84f6b676daa9bf76e4264",
+        "after": "eebfaf91421ebf622b7452c3c3c2810fc53e451d8ad11771f78c72955d84c2fe",
+        "beforeHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충108 =120문항.",
+        "afterHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충120 =132문항."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "answers",
+        "before": "0e4208e13842b2ef444d98c11bf9e863563da9f568fbfd47f9aa0ad691ab7d9b",
+        "after": "741fcf3984101de8ec7b4592251723d35c2b5a271b58028b5272e9ff3eab8000",
+        "beforeHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충108 =120문항.",
+        "afterHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충120 =132문항."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "quick",
+        "before": "5cbe3cab2b09f0c51f8e4d217de5c3a601ebec3c3db37772c3602b9b14aee86f",
+        "after": "30fb7b1dc368b3fd3c3f8ed5ac3fd02b3fc7b08e7102d4a7c85d0d64ea8fad64",
+        "beforeHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충108 =120문항.",
+        "afterHeader": "옛단원 연계 원문6 · 독립 짝6 · 현행 보충120 =132문항."
+      }
+    ]
+  },
+  "tests": {
+    "total": 1308,
+    "pass": 1306,
+    "fail": 0,
+    "skip": 2
+  },
+  "allQuestionsAndSavedGradesUnchanged": true,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

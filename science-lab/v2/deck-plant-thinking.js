@@ -1,0 +1,34 @@
+import{findLifeItem}from'./book-life.js';
+import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
+import{LEAF_CASES,leafGroups,LEAF_LABELS,LEAF_SCALE_NOTE,LEAF_PHOTO_CREDIT}from'./plant-classify.js';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const p=s=>`<p>${esc(s)}</p>`;
+const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>`<${i?'td':'th scope="row"'}>${esc(v)}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table>`;
+export const LEAF_MEASUREMENT_EXAMPLE=Object.freeze([{name:'잎 가',cm:3},{name:'잎 나',cm:8},{name:'잎 다',cm:5},{name:'잎 라',cm:4}].map(Object.freeze));
+export function buildPlantThinkingSlides(ch,art,plan,pool,mode,ix){
+ ix ||=ch.plantInteraction;const teach=mode==='teach',S=[],phases=Object.fromEntries(plan.phases.map(x=>[x.id,x]));let ses=1;
+ const add=(id,phase,title,body,extra={})=>S.push({id,phase,phaseObj:phases[phase],title,body,kind:'read',ses,...extra});
+ const peek=text=>teach?`<div class="dk-ans rv">${esc(text)}</div>`:`<div class="dk-peekw"><button type="button" class="dk-peek">생각한 뒤 설명 보기</button><div class="dk-ans" hidden>${esc(text)}</div></div>`;
+ const photos=()=>`<div class="plant-thinking-photos">${LEAF_CASES.map(a=>`<figure><img src="${a.image}" alt="${esc(a.name)} 잎 관찰 자료"><figcaption>${esc(a.name)}</figcaption></figure>`).join('')}</div><p class="plant-thinking-credit">${esc(LEAF_PHOTO_CREDIT)}</p>`;
+ add('cover','open',ch.title,photos()+p('사진에서 보이는 잎의 특징과 직접 재어야 아는 특징을 구별해요. 식물의 생활과 특징을 물건의 기능에 연결해요.'));
+ if(teach)add('plan','open','잎 관찰·자료 비교·설계 수업 계획',`<ol class="dk-plan">${plan.phases.map(x=>`<li><b>${esc(x.name)}</b><span>${x.min}분</span><em>${esc(x.aim)}</em></li>`).join('')}</ol>`);
+ add('photos','open','사진만 보고 잎을 나눌 수 있을까요?',photos()+p('네 사진에서 잎의 가장자리를 살펴요. 화면에서 크게 보이는 잎이 실제로도 더 큰지 생각해요.'));
+ const options=ix.predict.options,pick=teach?`<ol class="dk-tally">${options.map((s,j)=>`<li data-j="${j}"><span class="dk-tn">${j+1}</span><span class="dk-tt">${esc(s)}</span><button type="button" data-t="-" aria-label="${j+1}번 한 명 빼기">−</button><b class="dk-tc">0</b><button type="button" data-t="+" aria-label="${j+1}번 한 명 더하기">+</button></li>`).join('')}</ol>`:`<ol class="dk-choices dk-mc predict">${options.map((s,j)=>`<li><button type="button" data-j="${j}"><span>${'①②③'[j]}</span>${esc(s)}</button></li>`).join('')}</ol>`;
+ add('predict','open',ix.predict.q,pick+p('처음 생각은 아직 채점하지 않아요. 두 기준에 필요한 자료를 비교한 뒤 다시 설명해요.'),{kind:'predict'});
+ add('design','observe','같은 네 잎, 기준마다 필요한 자료는?',table(['같게 둘 것','바꿀 것','살펴볼 결과'],[['네 잎 사진과 관찰 범위','가장자리 모양 ↔ 실제 길이','모둠과 판단에 더 필요한 자료']])+p('잎 가장자리가 톱니 모양인지 먼저 나누어요. 실제 길이 5 cm 이상인지로 기준을 바꾸면 사진만으로 알 수 있을까요?'),{standards:['4과03-01']});
+ add('lab','observe','잎 사진 비교 · 모양과 실제 크기',p('가장자리 기준으로 먼저 나눈 뒤 설명 자료를 열어요. 결과를 남기고 실제 길이 기준으로 바꾸어요. 자료가 부족하면 ‘자료 더 필요’를 골라도 좋아요.')+'<div data-mount="lab"></div>',{mount:'lab',kind:'lab',layout:'fieldwork'});
+ add('results','result','기준이 바뀌면 필요한 자료도 달라져요','<div class="dk-mylab" hidden></div>'+table(['잎 사진','톱니 모양인가?','실제 길이 5 cm 이상인가?'],LEAF_CASES.map(a=>[a.name,LEAF_LABELS[leafGroups('serrated')[a.id]],'자료 더 필요']))+peek(LEAF_SCALE_NOTE),{kind:'think'});
+ add('conclusion','result','처음 예상과 비교해 설명해요',p(ix.predict.q)+(teach?p('손들기 예상과 두 기준에서 확인한 범위를 연결해 설명하게 해요.'):'<div class="dk-card"><h3>자료 보기 전 내 예상</h3><p data-prediction-summary></p></div>')+peek('분류 기준을 정한 뒤 그 기준을 판단할 자료가 있는지 확인해요. 사진의 확대 크기를 실제 길이로 쓰지 않아요. 자료가 부족할 때 판단을 보류하는 것도 근거 있는 생각이에요.'),{kind:'think'});
+ ses=2;
+ add('recall','concept','좋은 분류 기준에는 무엇이 필요할까요?',table(['기준','확인할 것'],[['가장자리가 톱니 모양인가?','어느 잎의 가장자리를 관찰하는가?'],['실제 길이가 5 cm 이상인가?','같은 방법으로 잰 길이값과 단위가 있는가?'],['내가 예쁘다고 느끼는가?','사람마다 달라지는 느낌이 아닌가?']])+peek('관찰하거나 측정할 수 있는 한 기준을 일관되게 적용해요. 다른 기준의 분류가 곧 틀린 것은 아니에요. 이번에 정한 기준으로 나눈 모둠이에요. 기준을 바꾸면 결과도 달라질 수 있어요.'),{kind:'think',standards:['4과03-01']});
+ add('scope','concept','어느 부분을 관찰했나요?',photos()+p('딸기 사진은 가운데 크게 보이는 부분의 가장자리를 살펴요. 사진 가운데 부분과 사진 전체 모습을 혼동하면 서로 다른 특징을 비교할 수 있어요.')+peek('사진에서 관찰한 부분을 가리키고 같은 범위의 특징을 비교해요. 잎의 세부 분류 용어를 외우는 것보다 무엇을 보았는지 설명하는 것이 먼저예요.'),{kind:'think'});
+ add('own-criterion','concept','내 잎 분류 기준을 만들어 설명해요',photos()+p('앞의 두 기준과 다른 외형 기준을 하나 정해요. 두 모둠 이름을 붙이고 어느 잎을 어디에 놓을지 말이나 그림으로 설명해요. 사진으로 판단하기 어려운 잎에는 필요한 추가 자료를 제안해요.')+peek('예시와 같은 기준만 정답은 아니에요. 한 기준을 모든 잎에 일관되게 적용했는지, 관찰 범위가 같은지, 자료가 충분한지 친구와 확인해요.'),{kind:'think',standards:['4과03-01']});
+ add('measurements','concept','길이 자료가 생기면 어떻게 나눌까요?',p('아래는 연습을 위한 별도 가상 잎 자료예요. 앞의 네 식물 사진을 실제로 잰 값이 아니에요. 잎의 넓적한 부분을 밑에서 끝까지 같은 방법으로 재었다고 해요.')+table(['이름표','가상 측정 길이'],LEAF_MEASUREMENT_EXAMPLE.map(x=>[x.name,`${x.cm} cm`]))+peek('5 cm 이상은 잎 나·잎 다, 5 cm 미만은 잎 가·잎 라예요. 정확히 5 cm인 잎 다는 ‘이상’ 모둠에 넣어요. 이 값으로 앞의 사진 속 식물 길이를 정할 수는 없어요.'),{kind:'think'});
+ add('habitat','research','몸의 어느 부분이 어디에 있나요?',table(['식물 자료','환경과 생활','연결해 볼 특징'],[['부레옥잠','물에 떠서 살고 뿌리가 물속에 늘어짐','잎자루 속 공기 공간은 뜨는 데 도움'],['연','연못 바닥 진흙에 땅속줄기가 있고 다 자란 잎은 물 위로 올라옴','길게 뻗은 잎자루와 잎의 위치']])+p('모두 물가의 식물이라고 해서 같은 부분으로 뜨거나 뿌리 위치가 같다고 하지 않아요. 사진과 설명 자료에서 식물별 근거를 찾아요.'),{standards:['4과03-02']});
+ add('design-function','extend','식물 특징을 물건의 기능으로 연결해요',table(['해결할 불편','식물에서 얻은 힌트','내 설계에서 설명할 것'],[['덮개 표면에 물이 오래 남는 불편','연잎 위에서 물방울이 굴러가는 특징','덮개의 어느 부분에서 물이 잘 흘러가게 할지'],['붙였다 떼는 연결 부분 만들기','도꼬마리 열매의 갈고리 모양','맞물리는 부분과 붙였다 떼는 방법']])+p('실제 발명 역사를 설명하는 것이 아니라 내 설계 아이디어예요. 모양·장식만 닮은 것과 기능을 돕도록 이용한 것을 구별해요.'),{standards:['4과03-03']});
+ add('critique','extend','연잎 무늬만 그리면 물이 잘 굴러갈까요?',p('덮개에 연잎 그림을 그린 안과 물이 흘러가는 표면·기울기를 바꾼 안을 비교해요. 어떤 설계가 도움을 주는지 어떻게 확인할까요?')+peek('무늬가 닮았다는 이유만으로 젖지 않는 성능을 보장할 수 없어요. 같은 양의 물과 같은 사용 조건에서 남은 물 등을 비교할 방법을 정해요. 아직 시험하지 않았다면 예상이라고 밝혀요.'),{kind:'think'});
+ add('share','extend','친구의 질문을 듣고 설계를 다듬어요',p('해결할 불편, 이용한 식물 특징, 물건의 기능을 설명해요. 친구는 “어느 부분이 어떻게 돕나요?” “무엇을 비교하면 알 수 있나요?”를 물어요. 질문을 듣고 바꿀 점과 까닭을 말이나 그림으로 제안해요.')+p('실제로 나누지 않은 친구 의견은 지어 쓰지 않아요. 문제 정답만으로 실제 설계·협력적 소통을 완료했다고 처리하지 않아요.'),{standards:['4과03-03']});
+ [...ch.formative.items,...ch.check].forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`식물 사고력 문항 없음 ${key}`);add(`test${i+1}`,'check',`근거로 확인하기 ${i+1}/11`,thinkingCheckQuestion(q,i+1,teach),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
+ add('end','check','관찰·필요한 자료·생활·설계가 연결되었나요?',`<ul>${['같은 관찰 범위와 일관된 외형 기준','사진의 확대 크기와 실제 길이의 구별','식물별 환경·몸의 위치·생활의 관련','특징·기능·확인 방법을 연결한 설계'].map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`+p('실제 잎 관찰과 설계 기록을 더 남기고 싶다면 처음 화면의 선택 기록 기능을 이용해요.')+'<a class="btn" href="#/s31-u03/daily">Daily Test</a>',{kind:'end'});
+ S.forEach((s,i)=>s.n=i+1);return S;
+}

@@ -1,0 +1,24 @@
+import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
+import{workbook,lightContextPriorWorkbook as prior}from'../data/book/c22-s51-u02.workbook.js';import{withLightContextWorkbook,LIGHT_CONTEXT_VERSION as version}from'../data/book/light-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
+const unit='c22-s51-u02',q=(book,n)=>book.questions.find(q=>q.no===n),page=(book,n)=>book.pages.find(p=>p.blocks.some(b=>b.type==='questions'&&b.ids.includes('light-book-'+String(n).padStart(2,'0')))),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+test('actual light workbook routes supply qualitative ray observations and the referenced practice table beside the questions',async()=>{
+ const ray=q(workbook,45),source=q(prior,41),table=page(workbook,73).blocks.find(b=>b.type==='table');assert.equal(q(prior,45).given,undefined);assert(ray.prompt.startsWith('관찰 기록을 보고'));assert(ray.given[0].includes('연습용'));assert(ray.given[0].includes('위쪽으로'));assert(ray.criteria.includes('각도값이나 정확한 작도는 요구하지 않아요'));assert.deepEqual(table.rows[0].slice(1),source.given[1].replace('조명 꺼짐: ','').split(' / '));assert.deepEqual(table.rows[1].slice(1),source.given[2].replace('조명 켜짐: ','').split(' / '));
+ const raw=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit);
+ for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
+  const a=html.indexOf('data-question="light-book-45"');assert(a>=0);const item=html.slice(a,html.indexOf('</li>',a));assert(item.includes(esc(ray.given[0])));assert(item.includes('경로를완성할거울과시작빛'));assert.equal(item.includes('class="ed-key"'),mode==='teacher');
+  const pages=html.split('<section class="bk-page '),record=pages.find(p=>p.includes('data-question="light-book-73"'));assert(record.includes('연습용 관찰 표'));assert(record.indexOf('<table')<record.indexOf('data-question="light-book-73"'));for(const cell of['꺼짐','켜짐','안 보임','보임'])assert(record.includes('>'+cell+'<'));assert(html.includes(esc(q(workbook,40).prompt)));
+ }
+ assert(!q(workbook,52).criteria.includes('경로/사용 순서'));assert(q(workbook,71).criteria.includes('기록할 내용'));for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&lightContext='+version));
+});
+
+test('all answers, figures and response types remain intact and full material guards preserve future questions, tables and ray diagrams',()=>{
+ const saved=structuredClone(prior);assert.deepEqual(withLightContextWorkbook(prior),workbook);assert.deepEqual(prior,saved);assert.equal(withLightContextWorkbook(workbook),workbook);assert.equal(workbook.questions.length,80);assert.deepEqual(workbook.questions.filter((q,i)=>q!==prior.questions[i]).map(q=>q.no),[40,45,52,71]);
+ for(let i=0;i<80;i++){const a=workbook.questions[i],b=prior.questions[i];for(const key of new Set([...Object.keys(a),...Object.keys(b)]))if(!['prompt','given','criteria'].includes(key))assert.deepEqual(a[key],b[key]);}
+ for(const key of['figures','teacherPages','quickPages'])assert.equal(workbook[key],prior[key]);
+ for(const group of['pages','teacherStudentPages']){let changed=0;assert.equal(workbook[group].length,prior[group].length);for(let i=0;i<workbook[group].length;i++){const a=workbook[group][i],b=prior[group][i];if(a===b)continue;changed++;assert.deepEqual(a.rail[1],b.rail[1]);assert.deepEqual(a.rail.map(n=>n.write),b.rail.map(n=>n.write));if(a.title==='관찰 자료를 바르게 사용해요'){assert.deepEqual(a.blocks.slice(2),b.blocks);assert.deepEqual(a.rail,b.rail);}else assert.deepEqual(a.blocks,b.blocks);assert.deepEqual({...a,blocks:b.blocks,rail:b.rail},b);}assert.equal(changed,9);}
+ const future={...prior,questions:prior.questions.map(q=>({...q,contentVersion:'future'})),pages:prior.pages.map(p=>({...p,title:p.title+' future'})),teacherStudentPages:undefined};assert.equal(withLightContextWorkbook(future),future);
+ const figure={...prior,figures:{...prior.figures,mirrorTask:prior.figures.mirrorTask+' future'}};const figureResult=withLightContextWorkbook(figure);assert.equal(q(figureResult,45),q(figure,45));assert.equal(page(figureResult,45),page(figure,45));
+ const material={...prior,questions:prior.questions.map(q=>q.no===41?{...q,given:['future observations']}:q)};assert.equal(page(withLightContextWorkbook(material),73),page(material,73));
+ const supplied={...prior,pages:prior.pages.map(p=>p===page(prior,73)?{...p,blocks:[...p.blocks,{type:'table',heads:['existing'],rows:[['future']]}]}:p)};assert.equal(page(withLightContextWorkbook(supplied),73),page(supplied,73));
+});

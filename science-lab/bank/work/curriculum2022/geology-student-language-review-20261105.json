@@ -1,0 +1,895 @@
+{
+  "phase": 249,
+  "date": "2026-11-05",
+  "baseCommit": "f097211486df3195ef2a3a619e7e8f614de767b5",
+  "unit": "c22-s51-u01",
+  "version": "20261105-geology-student-language",
+  "scope": "Student-facing wording in the current geology workbook, current authored bank presentations and classroom checks. Retain generated source, all question contracts and old versions.",
+  "curriculum": {
+    "standards": [
+      "6과01-01",
+      "6과01-02",
+      "6과01-03"
+    ],
+    "source": "교육부 고시2022-33 별책9 과학과 교육과정; official locally extracted text reviewed in science-question-review/curriculum-standards/science-curriculum.txt",
+    "boundary": "Observe strata thickness/color and models of formation; introduce bent/broken appearances without teaching their mechanisms. Classify mudstone/sandstone/conglomerate by constituent grain size. Model fossil formation and infer past organisms/environments."
+  },
+  "changes": [
+    "Fix duplicated 지층 등 지층 in the fossil definition.",
+    "Make filled-in blank sentences grammatical: 생물의 생활 모습에 관한 자료 and 화석이 발견된 지층. Retain their original accepted answers.",
+    "Replace compressed titles and labels such as 미확인, 발견 맥락, 지층의 층·경계·색과 두께 with concrete observation instructions.",
+    "Retain five-choice orders and all answer positions in both bank and workbook; their order differs for some corresponding questions.",
+    "Keep simulated/example data separate from actual learner observations while using 학습용 자료 and 관찰 기록의 예.",
+    "Keep the original practical activity constraints; expand abbreviations such as 교사 준비 실온 재료 into student-facing sentences."
+  ],
+  "preservation": {
+    "workbookUnits": 32,
+    "workbookQuestions": 3080,
+    "changedBookQuestions": [
+      {
+        "id": "c22-s51-u01-w001",
+        "no": 1,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w002",
+        "no": 2,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w003",
+        "no": 3,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w004",
+        "no": 4,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w005",
+        "no": 5,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w006",
+        "no": 6,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w007",
+        "no": 7,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w008",
+        "no": 8,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w009",
+        "no": 9,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w010",
+        "no": 10,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w011",
+        "no": 11,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w015",
+        "no": 15,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w016",
+        "no": 16,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w017",
+        "no": 17,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w018",
+        "no": 18,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w021",
+        "no": 21,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w023",
+        "no": 23,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w026",
+        "no": 26,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w028",
+        "no": 28,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w031",
+        "no": 31,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w032",
+        "no": 32,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w033",
+        "no": 33,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w034",
+        "no": 34,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w035",
+        "no": 35,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w036",
+        "no": 36,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w037",
+        "no": 37,
+        "fields": [
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w038",
+        "no": 38,
+        "fields": [
+          "topic",
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w039",
+        "no": 39,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w040",
+        "no": 40,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w041",
+        "no": 41,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w042",
+        "no": 42,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w043",
+        "no": 43,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w046",
+        "no": 46,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w047",
+        "no": 47,
+        "fields": [
+          "choices"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w049",
+        "no": 49,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w052",
+        "no": 52,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w053",
+        "no": 53,
+        "fields": [
+          "topic",
+          "parts",
+          "given"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w054",
+        "no": 54,
+        "fields": [
+          "given"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w055",
+        "no": 55,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w056",
+        "no": 56,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w057",
+        "no": 57,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w058",
+        "no": 58,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w059",
+        "no": 59,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w060",
+        "no": 60,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w061",
+        "no": 61,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w062",
+        "no": 62,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w063",
+        "no": 63,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w064",
+        "no": 64,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w065",
+        "no": 65,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w066",
+        "no": 66,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w067",
+        "no": 67,
+        "fields": [
+          "topic",
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w069",
+        "no": 69,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w072",
+        "no": 72,
+        "fields": [
+          "topic",
+          "prompt",
+          "given"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w077",
+        "no": 77,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w078",
+        "no": 78,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "id": "c22-s51-u01-w079",
+        "no": 79,
+        "fields": [
+          "given"
+        ]
+      }
+    ],
+    "changedBookFieldCounts": {
+      "topic": 45,
+      "prompt": 17,
+      "choices": 8,
+      "given": 4,
+      "parts": 1
+    },
+    "changedSharedBodyPages": [
+      {
+        "collection": "pages",
+        "page": 3,
+        "title": "지층의 색과 두께, 모양을 관찰해요"
+      },
+      {
+        "collection": "pages",
+        "page": 4,
+        "title": "넣는 순서와 층의 위치를 비교해요"
+      },
+      {
+        "collection": "pages",
+        "page": 5,
+        "title": "지층이 쌓이는 모습을 모형으로 만들어요"
+      },
+      {
+        "collection": "pages",
+        "page": 6,
+        "title": "쌓는 것과 굳어지는 것은 달라요"
+      },
+      {
+        "collection": "pages",
+        "page": 7,
+        "title": "퇴적암을 이루는 알갱이를 관찰해요"
+      },
+      {
+        "collection": "pages",
+        "page": 8,
+        "title": "알갱이 크기로 이암·사암·역암을 분류해요"
+      },
+      {
+        "collection": "pages",
+        "page": 9,
+        "title": "화석에서 동물과 식물의 특징을 찾아요"
+      },
+      {
+        "collection": "pages",
+        "page": 10,
+        "title": "몸의 일부와 활동 흔적이 남은 화석"
+      },
+      {
+        "collection": "pages",
+        "page": 11,
+        "title": "화석의 생성 과정을 모형으로 표현해요"
+      },
+      {
+        "collection": "pages",
+        "page": 12,
+        "title": "화석 모형과 실제 화석을 비교해요"
+      },
+      {
+        "collection": "pages",
+        "page": 14,
+        "title": "화석이 소중한 까닭을 설명해요"
+      },
+      {
+        "collection": "pages",
+        "page": 15,
+        "title": "지층·퇴적암·화석에서 배운 것을 정리해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 3,
+        "title": "지층의 색과 두께, 모양을 관찰해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 4,
+        "title": "넣는 순서와 층의 위치를 비교해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 5,
+        "title": "지층이 쌓이는 모습을 모형으로 만들어요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 6,
+        "title": "쌓는 것과 굳어지는 것은 달라요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 7,
+        "title": "퇴적암을 이루는 알갱이를 관찰해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 8,
+        "title": "알갱이 크기로 이암·사암·역암을 분류해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 9,
+        "title": "화석에서 동물과 식물의 특징을 찾아요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 10,
+        "title": "몸의 일부와 활동 흔적이 남은 화석"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 11,
+        "title": "화석의 생성 과정을 모형으로 표현해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 12,
+        "title": "화석 모형과 실제 화석을 비교해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 14,
+        "title": "화석이 소중한 까닭을 설명해요"
+      },
+      {
+        "collection": "teacherStudentPages",
+        "page": 15,
+        "title": "지층·퇴적암·화석에서 배운 것을 정리해요"
+      }
+    ],
+    "changedBankItems": [
+      "c22-s51-u01-b001",
+      "c22-s51-u01-b002",
+      "c22-s51-u01-b003",
+      "c22-s51-u01-b004",
+      "c22-s51-u01-b005",
+      "c22-s51-u01-b006",
+      "c22-s51-u01-b007",
+      "c22-s51-u01-b008",
+      "c22-s51-u01-b009",
+      "c22-s51-u01-b010",
+      "c22-s51-u01-b011",
+      "c22-s51-u01-b012",
+      "c22-s51-u01-b013",
+      "c22-s51-u01-b014",
+      "c22-s51-u01-b015",
+      "c22-s51-u01-b016",
+      "c22-s51-u01-b017",
+      "c22-s51-u01-b018",
+      "c22-s51-u01-b019",
+      "c22-s51-u01-b020",
+      "c22-s51-u01-b021",
+      "c22-s51-u01-b022",
+      "c22-s51-u01-b023",
+      "c22-s51-u01-b024",
+      "c22-s51-u01-b025",
+      "c22-s51-u01-b026",
+      "c22-s51-u01-b027",
+      "c22-s51-u01-b028",
+      "c22-s51-u01-b029",
+      "c22-s51-u01-b030",
+      "c22-s51-u01-b031",
+      "c22-s51-u01-b032",
+      "c22-s51-u01-b035",
+      "c22-s51-u01-b038",
+      "c22-s51-u01-b039",
+      "c22-s51-u01-b041",
+      "c22-s51-u01-b042",
+      "c22-s51-u01-b043",
+      "c22-s51-u01-b044",
+      "c22-s51-u01-b045",
+      "c22-s51-u01-b046",
+      "c22-s51-u01-b047",
+      "c22-s51-u01-b048",
+      "c22-s51-u01-b049",
+      "c22-s51-u01-b050",
+      "c22-s51-u01-b051",
+      "c22-s51-u01-b052",
+      "c22-s51-u01-b053",
+      "c22-s51-u01-b054",
+      "c22-s51-u01-b055",
+      "c22-s51-u01-b056",
+      "c22-s51-u01-b057",
+      "c22-s51-u01-b058",
+      "c22-s51-u01-b059",
+      "c22-s51-u01-b060",
+      "c22-s51-u01-b061",
+      "c22-s51-u01-b062",
+      "c22-s51-u01-b063",
+      "c22-s51-u01-b064",
+      "c22-s51-u01-b065",
+      "c22-s51-u01-b066",
+      "c22-s51-u01-b067",
+      "c22-s51-u01-b068",
+      "c22-s51-u01-b069",
+      "c22-s51-u01-b070",
+      "c22-s51-u01-b071",
+      "c22-s51-u01-b072",
+      "c22-s51-u01-b073",
+      "c22-s51-u01-b074",
+      "c22-s51-u01-b075",
+      "c22-s51-u01-b076",
+      "c22-s51-u01-b077",
+      "c22-s51-u01-b078",
+      "c22-s51-u01-b079",
+      "c22-s51-u01-b080",
+      "c22-s51-u01-b081",
+      "c22-s51-u01-b082",
+      "c22-s51-u01-b083",
+      "c22-s51-u01-b084",
+      "c22-s51-u01-b085",
+      "c22-s51-u01-b086",
+      "c22-s51-u01-b087",
+      "c22-s51-u01-b088",
+      "c22-s51-u01-b089",
+      "c22-s51-u01-b090",
+      "c22-s51-u01-b091",
+      "c22-s51-u01-b092",
+      "c22-s51-u01-b093",
+      "c22-s51-u01-b094",
+      "c22-s51-u01-b095",
+      "c22-s51-u01-b096"
+    ],
+    "changedClassroomItems": [
+      "c22-s51-u01-b008",
+      "c22-s51-u01-b024",
+      "c22-s51-u01-b056",
+      "c22-s51-u01-b065",
+      "c22-s51-u01-b072",
+      "c22-s51-u01-b075",
+      "c22-s51-u01-b080",
+      "c22-s51-u01-b081",
+      "c22-s51-u01-b088",
+      "c22-s51-u01-b089",
+      "c22-s51-u01-b096",
+      "c22-s51-u01-b001",
+      "c22-s51-u01-b017",
+      "c22-s51-u01-b049"
+    ],
+    "changedFrames": [
+      {
+        "mode": "self",
+        "slide": "test1",
+        "item": "c22-s51-u01-b008"
+      },
+      {
+        "mode": "self",
+        "slide": "test2",
+        "item": "c22-s51-u01-b024"
+      },
+      {
+        "mode": "self",
+        "slide": "test4",
+        "item": "c22-s51-u01-b056"
+      },
+      {
+        "mode": "self",
+        "slide": "test5",
+        "item": "c22-s51-u01-b065"
+      },
+      {
+        "mode": "self",
+        "slide": "test6",
+        "item": "c22-s51-u01-b072"
+      },
+      {
+        "mode": "self",
+        "slide": "test7",
+        "item": "c22-s51-u01-b075"
+      },
+      {
+        "mode": "self",
+        "slide": "test8",
+        "item": "c22-s51-u01-b080"
+      },
+      {
+        "mode": "self",
+        "slide": "test9",
+        "item": "c22-s51-u01-b081"
+      },
+      {
+        "mode": "self",
+        "slide": "test10",
+        "item": "c22-s51-u01-b088"
+      },
+      {
+        "mode": "self",
+        "slide": "test11",
+        "item": "c22-s51-u01-b089"
+      },
+      {
+        "mode": "self",
+        "slide": "test12",
+        "item": "c22-s51-u01-b096"
+      },
+      {
+        "mode": "self",
+        "slide": "test13",
+        "item": "c22-s51-u01-b001"
+      },
+      {
+        "mode": "self",
+        "slide": "test14",
+        "item": "c22-s51-u01-b017"
+      },
+      {
+        "mode": "self",
+        "slide": "test16",
+        "item": "c22-s51-u01-b049"
+      },
+      {
+        "mode": "teach",
+        "slide": "test1",
+        "item": "c22-s51-u01-b008"
+      },
+      {
+        "mode": "teach",
+        "slide": "test2",
+        "item": "c22-s51-u01-b024"
+      },
+      {
+        "mode": "teach",
+        "slide": "test4",
+        "item": "c22-s51-u01-b056"
+      },
+      {
+        "mode": "teach",
+        "slide": "test5",
+        "item": "c22-s51-u01-b065"
+      },
+      {
+        "mode": "teach",
+        "slide": "test6",
+        "item": "c22-s51-u01-b072"
+      },
+      {
+        "mode": "teach",
+        "slide": "test7",
+        "item": "c22-s51-u01-b075"
+      },
+      {
+        "mode": "teach",
+        "slide": "test8",
+        "item": "c22-s51-u01-b080"
+      },
+      {
+        "mode": "teach",
+        "slide": "test9",
+        "item": "c22-s51-u01-b081"
+      },
+      {
+        "mode": "teach",
+        "slide": "test10",
+        "item": "c22-s51-u01-b088"
+      },
+      {
+        "mode": "teach",
+        "slide": "test11",
+        "item": "c22-s51-u01-b089"
+      },
+      {
+        "mode": "teach",
+        "slide": "test12",
+        "item": "c22-s51-u01-b096"
+      },
+      {
+        "mode": "teach",
+        "slide": "test13",
+        "item": "c22-s51-u01-b001"
+      },
+      {
+        "mode": "teach",
+        "slide": "test14",
+        "item": "c22-s51-u01-b017"
+      },
+      {
+        "mode": "teach",
+        "slide": "test16",
+        "item": "c22-s51-u01-b049"
+      }
+    ],
+    "changedFigureFrames": [
+      {
+        "mode": "self",
+        "slide": "value"
+      },
+      {
+        "mode": "teach",
+        "slide": "value"
+      }
+    ],
+    "htmlQuestionsVerified": 112,
+    "unchangedOtherWorkbooks": 31,
+    "paperProductsUnchanged": 125,
+    "slideArraysUnchanged": 62,
+    "sourceItemsPreserved": 1512,
+    "similarItemsPreserved": 1512,
+    "currentItems": 3179,
+    "classroomItems": 1635,
+    "selectedChecks": 490,
+    "allQuestionContractsAndHistoricalSnapshotsPreserved": true,
+    "allFigureTagsAttributesRailsWritingSpacePreserved": true,
+    "changedFigureTextBlocks": [
+      "geoPast",
+      "geoSources"
+    ],
+    "studentStorageAccessed": false,
+    "browserOrA4Verified": false
+  },
+  "nativeBankRenderer": {
+    "unit": "c22-s51-u01",
+    "currentItems": 96,
+    "source": 0,
+    "similar": 0,
+    "changed": 91,
+    "versionedFrames": 28,
+    "actualItemHtmlAndPrintExecuted": true,
+    "actualCurrentClassroomSnapshotMatched": true,
+    "browserVerified": false
+  },
+  "tests": {
+    "total": 840,
+    "passed": 838,
+    "failed": 0,
+    "skipped": 2,
+    "newTests": 2,
+    "syntaxCheckedFiles": 10,
+    "scope": "Answer positions, accepted short answers, multi-choice boundaries, written-review behavior; canonical-source exclusion, input immutability, old presentations/choices and restart grading/self-assessment history, future versions. Actual32-unit authored bank/classroom linkage passes.",
+    "existingTestUpdate": "The geology regressions now resolve version1 to assert every original field and ID order instead of equating current text with legacy text. Legacy paper snapshots remain read-only changed, partial legacy records unbound/read-only, and a fresh current paper editable. Original8 activity/report assertions remain."
+  },
+  "additionalChecks": {
+    "unchangedAssetHashes": 1249,
+    "generatedWorkbookBodyUnchanged": true,
+    "filledBlankSentencesManuallyRead": [
+      23,
+      43,
+      69,
+      78
+    ],
+    "otherUnitsAndSourceBanksExactlyPreserved": true
+  },
+  "qaNotes": [
+    "Manual reading of the first rewritten choices caught a changed noun with its old Korean particle; corrected 크기을 to 크기를 before final checks. Specific phrase edits run before the general 구성 알갱이 expansion.",
+    "The standalone native fixture compares empty source arrays across VM contexts by serialized value. The preservation audit permits only exact known figure text replacement on the two non-question value slides. Product behavior was not weakened to fit QA."
+  ],
+  "evidence": "science-question-review/phase249: before/after actual32-unit VM,32 workbook/128 paper/64 deck states, preservation-summary,182 native itemHtml online/print outputs, final tests, filled blank reading and asset/source hashes. Native HTML is not browser/A4 layout evidence.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mandatory3DRuntimeVerified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "remaining": "Other unit/teacher content review, actual PC/mobile/A4/audio/WebGL and mandatory3D gates, v1 consistency and main integration/deployment. This unit’s direct source/similar counts remain0 as before; no original tests were fabricated. Prior browser reauthorization has no observed reply and no browser workaround was used."
+}

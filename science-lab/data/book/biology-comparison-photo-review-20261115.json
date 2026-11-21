@@ -1,0 +1,109 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "생물 교재12·14번 및 대응 창작 짝의 곰팡이·생김새 비교 자료",
+  "cacheVersion": "20261115-biology-comparison-photos",
+  "standard": "4과12-01",
+  "pairs": [
+    "s41-u04-v031",
+    "s41-u04-v040"
+  ],
+  "workbookQuestions": [
+    "s41-u04-w012",
+    "s41-u04-w014"
+  ],
+  "existingFoodPhotos": [
+    {
+      "path": "assets/observe/mold-bread-1.jpg",
+      "size": 91694,
+      "sha256": "52e1999c7327d83ee4a10305c5fd1e4a29c80f4075351372a6de539420a58d36",
+      "width": 768,
+      "height": 576,
+      "vision": {
+        "computePolicy": "CPU-only",
+        "status": "ok",
+        "frames": 1,
+        "recognizedLines": 0
+      },
+      "bytesUnchanged": true
+    },
+    {
+      "path": "assets/observe/mold-orange-1.jpg",
+      "size": 135463,
+      "sha256": "88006056f43130ebb20985a9322d1cd3a423fe879d1708c835adee12df53b639",
+      "width": 1024,
+      "height": 768,
+      "vision": {
+        "computePolicy": "CPU-only",
+        "status": "ok",
+        "frames": 1,
+        "recognizedLines": 0
+      },
+      "bytesUnchanged": true
+    },
+    {
+      "path": "assets/observe/mold-rice-1.jpg",
+      "size": 91040,
+      "sha256": "1dc53dc9a501ee75319147e471e681987919ba1764a29738a095d3ec3af67bdf",
+      "width": 1024,
+      "height": 768,
+      "vision": {
+        "computePolicy": "CPU-only",
+        "status": "ok",
+        "frames": 1,
+        "recognizedLines": 0
+      },
+      "bytesUnchanged": true
+    }
+  ],
+  "existingShapeImage": {
+    "path": "assets/bank/s41-u04/s3-q11.webp",
+    "sha256": "0e25085d414a29f9a5fc462fcc863a4177787fb409b2e09e895e47b32aa304f0",
+    "bytesUnchanged": true,
+    "neutralCaptionWithoutAnswer": true
+  },
+  "manualReview": "빵의 흰 실/검은 점, 귤의 청록색/흰 둘레, 쌀알의 흰 부분/회녹색 점을 직접 보았다. 사진과 기존 메타데이터의 SHA가 일치한다. 사진의 종 이름이나 같은 조건에서 기른 결과로 표시하지 않는다. 확대 자료에는 공·막대·나선 모양이 보이고 정답이 표시되지 않는 설명을 쓴다.",
+  "gallery": "관찰 자료 폴더와 iNaturalist의 관찰 출처/CC0 주소를 허용하는 엄격한 경로 검사를 추가한다. 지필드 직접 촬영은 고유 표기로 구별하며 공개 라이선스를 새로 붙이지 않는다. 기존64개 사진/이름표 표시 결과는 같다. 세 장은 넓은 화면/인쇄3열, 휴대폰1열로 설정한다.",
+  "preservation": {
+    "priorPhotoOutputsByteIdentical": 64,
+    "maxPriorGalleryPhotos": 2,
+    "bankPrintOutputs": 4,
+    "decks": 64,
+    "slides": 3048,
+    "allSlidesByteIdentical": true,
+    "actualUnits": 32,
+    "currentQuestionsUnchanged": 3179,
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestions": 1512,
+    "pairedQuestionsUnchanged": 1510,
+    "changedPairs": [
+      "s41-u04-v031",
+      "s41-u04-v040"
+    ],
+    "allPairChoicesAndEmptyAnswerComparisons": 12,
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3078,
+    "changedWorkbookQuestions": [
+      "s41-u04-w012",
+      "s41-u04-w014"
+    ],
+    "onlyTwoWorkbookPromptsAndPictureBlocksChanged": true,
+    "allPageStructuresAnswerKeysChoiceOrdersWritingAreasAndOldFiguresPreserved": true,
+    "actualPrintPathsCompared": 8,
+    "previousContextPhotoHelperRendererWorkbookArtAndDeckExecutedFromGit": "6f8f344125",
+    "rawQuestionSourcePairAndWorkbookRendererCodeUnchanged": true,
+    "workbookAnswerAndQuickPrintsByteIdentical": true,
+    "bankQuickPrintByteIdentical": true,
+    "bankAnswerViewOnlyTwoPromptsChanged": true
+  },
+  "nativeSuite": {
+    "testFiles": 288,
+    "tests": 1505,
+    "passed": 1503,
+    "failed": 0,
+    "browserSkipped": 2
+  },
+  "actualBrowserAndA4Reviewed": false,
+  "newSourceOrImageAdded": false,
+  "qa": "science-question-review/phase407/",
+  "deployed": false
+}

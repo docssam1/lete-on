@@ -1,0 +1,119 @@
+{
+  "phase": 169,
+  "date": "2026-11-03",
+  "unit": "c22-s32-u04",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "f38fa8c10be9cbe673ea05406ed7746accebf47c",
+  "lesson": {
+    "studentSlides": 31,
+    "teacherSlides": 32,
+    "minutes": 80,
+    "checks": 12,
+    "criteria": {
+      "4과08-01": 4,
+      "4과08-02": 4,
+      "4과08-03": 4
+    },
+    "routeUnitsVerified": 9,
+    "classroomStorageKey": "infectionCompareRows",
+    "actualActivityKeyPreserved": "glitterRows",
+    "originalSelectedQuestionObjectsPreserved": true,
+    "learningSequence": [
+      "생활 사례·위험성과 도움 토의",
+      "같은 시작 조건에서 세 차례 두 규칙 비교",
+      "모형과 실제 감염 구별",
+      "여러 감염 과정과 생활 습관 연결",
+      "예방 수칙 공유·실천·실제 질문으로 보완"
+    ]
+  },
+  "curriculum": {
+    "localSource": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "extractedLines": [
+      573,
+      588
+    ],
+    "noDetailedImmunityInElementaryLesson": true
+  },
+  "healthSources": [
+    {
+      "title": "질병관리청 국가건강정보포털 · 손씻기",
+      "url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=6545",
+      "updated": "2026-04-15",
+      "checked": "2026-11-03",
+      "contentUsed": "위험 감소·물과 비누로30초 이상 꼼꼼하게 씻기"
+    },
+    {
+      "title": "질병관리청 호흡기감염병 예방수칙",
+      "url": "https://www.kdca.go.kr/kdca/2847/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa2RjYSUyRjQxJTJGMzEwMDQ4JTJGYXJ0Y2xWaWV3LmRvJTNG",
+      "checked": "2026-11-03",
+      "lines": [
+        560,
+        580
+      ],
+      "contentUsed": "손 씻기·기침 예절·안전한 환기·눈코입 접촉 줄이기. 접종 일정·개인 진단은 가져오지 않음"
+    }
+  ],
+  "tests": {
+    "total": 415,
+    "pass": 413,
+    "fail": 0,
+    "preexistingBrowserSkips": 2,
+    "log": "all-v2-tests.txt"
+  },
+  "actualBrowserCssVerified": false,
+  "newVisionRuns": 0,
+  "actualVisionReusedFromPhase": 168,
+  "newImageGeneration": 0,
+  "new3D": 0,
+  "newPaidApiCalls": 0,
+  "newPdfExports": 0,
+  "push": false,
+  "deploy": false,
+  "wholeProgramComplete": false,
+  "goalStatus": "active",
+  "remaining": [
+    "기후변화 등 미연결 학기 교재·수업",
+    "다른 교재의 인쇄 글꼴·배색 단계 적용",
+    "v1/v2 역할·교육과정·원문 요건·최신main 재대조",
+    "실제 브라우저/CSS/A4·소리·이전 답안 화면 검수"
+  ],
+  "qa": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase169",
+  "otherClassroomSlideArraysExactlyUnchanged": 22,
+  "previousWorkbookProductsExactlyUnchanged": 48,
+  "protectedOriginalFiles": 16,
+  "previousPdfsUnchanged": 8,
+  "reusedPhotos": [
+    {
+      "file": "science-lab/assets/book/c22-s32-u04-photo-glitter-shake.webp",
+      "sha256": "3e9e019f7d1788b055e77678d7446d34e8cf2cead2996f49e34f7b31c8728476",
+      "actualVisionReviewedInPhase": 168,
+      "bytesUnchanged": true
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u04-photo-doorknob.webp",
+      "sha256": "5c29647e92968b11e9c08539f02f9375e43c4f9aca35827905200e5a6696834c",
+      "actualVisionReviewedInPhase": 168,
+      "bytesUnchanged": true
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u04-photo-handwash.webp",
+      "sha256": "90bb3949d5394995dbc385acf462ac16a6bb513e86241c5b5762d1404d268d1e",
+      "actualVisionReviewedInPhase": 168,
+      "bytesUnchanged": true
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u04-photo-cough-kit.webp",
+      "sha256": "ad708270dd2203a9bf5b754b4ed9a5bc1ef53daac6110ac53934d05aac476b08",
+      "actualVisionReviewedInPhase": 168,
+      "bytesUnchanged": true
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u04-photo-ventilation.webp",
+      "sha256": "ea88c7701159a56f293a5141e6decc00f9fe299bc205e44d09e60eaeef5e64eb",
+      "actualVisionReviewedInPhase": 168,
+      "bytesUnchanged": true
+    }
+  ],
+  "modelNotStudentPerformance": true
+}

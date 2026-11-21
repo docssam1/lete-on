@@ -1,0 +1,281 @@
+{
+ "unit": "c22-s62-u01",
+ "curriculum": "2022 개정",
+ "grade": 6,
+ "semester": 2,
+ "title": "계절의 변화",
+ "area": "지구와 우주",
+ "standards": [
+  {
+   "code": "6과13-01",
+   "text": "태양 고도 측정기로 하루 동안 태양 고도, 그림자 길이, 기온을 측정하여 이들의 관계를 찾을 수 있다.",
+   "verified": true
+  },
+  {
+   "code": "6과13-02",
+   "text": "계절에 따른 태양의 남중 고도와 낮의 길이 사이의 관계를 자료에 근거하여 추론할 수 있다.",
+   "verified": true
+  },
+  {
+   "code": "6과13-03",
+   "text": "계절 변화의 원인을 지구의 자전축이 기울어진 채 공전하는 것으로 설명할 수 있다.",
+   "verified": true
+  }
+ ],
+ "standardsSource": "교육부 고시 제2022-33호 별책9 (13) 계절의 변화",
+ "standardsNote": "직접 측정·같은 장소의 계절 자료·기울어진 축과 공전을 연결한다. 두 반구 비교2개는 선택 확장이다.",
+ "elements": [
+  {
+   "id": "E1",
+   "name": "태양 고도와 하루 측정",
+   "desc": "측정기·그림자·기온의 기록과 관계를 비교해요."
+  },
+  {
+   "id": "E2",
+   "name": "계절별 남중 고도와 낮길이",
+   "desc": "같은 장소의 날짜별 계산 자료와 자료의 한계를 읽어요."
+  },
+  {
+   "id": "E3",
+   "name": "빛이 퍼진 넓이와 에너지",
+   "desc": "입사각과 같은 넓이가 받는 에너지를 비교해요."
+  },
+  {
+   "id": "E4",
+   "name": "자전축 모형과 계절 원인",
+   "desc": "축 방향을 유지한 공전으로 같은 지역의 차이를 설명해요."
+  }
+ ],
+ "types": [
+  {
+   "id": "T01",
+   "name": "태양 고도의 기준",
+   "desc": "수평면·빛 방향과 다른 각 구별",
+   "element": "E1",
+   "sourceCount": 7,
+   "similarCount": 7,
+   "authoredCount": 12,
+   "source": [
+    "1-1",
+    "1-2",
+    "2-1",
+    "2-3",
+    "3-1",
+    "4-1",
+    "4-5"
+   ]
+  },
+  {
+   "id": "T02",
+   "name": "측정기와 측정 조건",
+   "desc": "수평·수직·순서·반복·안전 확인",
+   "element": "E1",
+   "sourceCount": 4,
+   "similarCount": 4,
+   "authoredCount": 15,
+   "source": [
+    "1-3",
+    "2-2",
+    "3-2",
+    "4-2"
+   ]
+  },
+  {
+   "id": "T03",
+   "name": "하루 고도와 그림자",
+   "desc": "같은 막대의 시간별 관계 비교",
+   "element": "E1",
+   "sourceCount": 8,
+   "similarCount": 8,
+   "authoredCount": 16,
+   "source": [
+    "1-4",
+    "1-6",
+    "2-5",
+    "2-6",
+    "2-7",
+    "3-3",
+    "3-7",
+    "4-3"
+   ]
+  },
+  {
+   "id": "T04",
+   "name": "표와 그래프 읽기",
+   "desc": "자료의 축·단위·최댓값 범위 해석",
+   "element": "E1",
+   "sourceCount": 4,
+   "similarCount": 4,
+   "authoredCount": 14,
+   "source": [
+    "1-5",
+    "3-4",
+    "3-5",
+    "4-4"
+   ]
+  },
+  {
+   "id": "T05",
+   "name": "기온의 시간차",
+   "desc": "최고 고도와 최고 기온의 시점 구별",
+   "element": "E1",
+   "sourceCount": 3,
+   "similarCount": 3,
+   "authoredCount": 17,
+   "source": [
+    "1-7",
+    "2-4",
+    "3-6"
+   ]
+  },
+  {
+   "id": "T06",
+   "name": "계절별 남중 고도",
+   "desc": "같은 지역의 계절·경로 관계 분류",
+   "element": "E2",
+   "sourceCount": 8,
+   "similarCount": 8,
+   "authoredCount": 13,
+   "source": [
+    "1-8",
+    "1-13",
+    "2-8",
+    "2-14",
+    "3-10",
+    "3-11",
+    "4-7",
+    "4-18"
+   ]
+  },
+  {
+   "id": "T07",
+   "name": "낮길이와 계절 자료",
+   "desc": "날짜별 두 양 비교와 범위 추론",
+   "element": "E2",
+   "sourceCount": 6,
+   "similarCount": 6,
+   "authoredCount": 24,
+   "source": [
+    "1-9",
+    "2-9",
+    "3-8",
+    "3-9",
+    "3-12",
+    "4-9"
+   ]
+  },
+  {
+   "id": "T08",
+   "name": "빛과 단위면적 에너지",
+   "desc": "같은 양의 빛과 퍼진 넓이 비교",
+   "element": "E3",
+   "sourceCount": 7,
+   "similarCount": 7,
+   "authoredCount": 17,
+   "source": [
+    "1-10",
+    "2-11",
+    "2-12",
+    "3-13",
+    "3-15",
+    "4-10",
+    "4-11"
+   ]
+  },
+  {
+   "id": "T09",
+   "name": "가설과 변인 통제",
+   "desc": "달리할 조건·같게 할 조건 특정",
+   "element": "E3",
+   "sourceCount": 4,
+   "similarCount": 4,
+   "authoredCount": 10,
+   "source": [
+    "1-11",
+    "2-10",
+    "3-14",
+    "4-14"
+   ]
+  },
+  {
+   "id": "T10",
+   "name": "계절 원인 설명",
+   "desc": "축·공전·고도/낮길이·에너지 연결",
+   "element": "E4",
+   "sourceCount": 8,
+   "similarCount": 8,
+   "authoredCount": 18,
+   "source": [
+    "1-12",
+    "1-14",
+    "2-15",
+    "3-16",
+    "3-19",
+    "3-20",
+    "4-12",
+    "4-19"
+   ]
+  },
+  {
+   "id": "T11",
+   "name": "자전축 모형 비교",
+   "desc": "방향·같은 지역·남중 조건으로 비교",
+   "element": "E4",
+   "sourceCount": 7,
+   "similarCount": 7,
+   "authoredCount": 19,
+   "source": [
+    "3-17",
+    "3-18",
+    "4-13",
+    "4-15",
+    "4-16",
+    "4-17",
+    "4-20"
+   ]
+  },
+  {
+   "id": "T12",
+   "name": "자료의 한계와 생활 적용",
+   "desc": "주어진 근거와 없는 측정 결과 구별",
+   "element": "E2",
+   "sourceCount": 2,
+   "similarCount": 2,
+   "authoredCount": 21,
+   "source": [
+    "4-6",
+    "4-8"
+   ]
+  },
+  {
+   "id": "T13",
+   "name": "두 반구의 계절",
+   "desc": "같은 순간의 축 관계로 선택 확장",
+   "element": "E4",
+   "sourceCount": 0,
+   "similarCount": 0,
+   "authoredCount": 2,
+   "source": []
+  }
+ ],
+ "formats": [
+  "객관식",
+  "복수 선택",
+  "단답형",
+  "순서 배열",
+  "빈칸 넣기",
+  "연결하기",
+  "자료 해석",
+  "까닭 설명",
+  "그림·설계"
+ ],
+ "formatCounts": {
+  "short-text": 31,
+  "single-choice": 30,
+  "written-explanation": 5,
+  "multi-choice": 2
+ },
+ "sourceTotal": 68,
+ "authoredTotal": 198,
+ "note": "data/units/c22-s62-u01.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. types[].source는 원문의 세트·번호다 — 원문 문장은 data/units/c22-s62-u01.source.js에 있다."
+}

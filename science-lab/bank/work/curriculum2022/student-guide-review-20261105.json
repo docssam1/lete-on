@@ -1,0 +1,328 @@
+{
+  "phase": 263,
+  "date": "2026-11-05",
+  "baseCommit": "9712572a8e3c912b1f7937fb33f97b7575893eb7",
+  "version": "20261105-student-guide",
+  "scope": "Learner guide text and assessment section labels in6 workbooks.17 unique learner strings mirrored to teacher pages,34 fields. No questions, standards metadata, contracts, records or activity changes.",
+  "curriculum": {
+    "source": "교육부 고시2022-33 별책9",
+    "standards": [
+      "4과10-01~03",
+      "4과11-01~04",
+      "4과16-01~03",
+      "6과11-01~03",
+      "6과12-01~03",
+      "6과13-01~03"
+    ],
+    "basis": "Original official text locally read and matched to the existing activities. No change in content level or required performance."
+  },
+  "preservation": {
+    "units": [
+      {
+        "unit": "c22-s62-u01",
+        "fields": [
+          {
+            "path": "pages.132.section",
+            "before": "단원 수행평가 · 6과13-01",
+            "after": "단원 수행평가 A"
+          },
+          {
+            "path": "pages.133.section",
+            "before": "단원 수행평가 · 6과13-02",
+            "after": "단원 수행평가 B"
+          },
+          {
+            "path": "pages.134.section",
+            "before": "단원 수행평가 · 6과13-03",
+            "after": "단원 수행평가 C"
+          },
+          {
+            "path": "teacherStudentPages.132.section",
+            "before": "단원 수행평가 · 6과13-01",
+            "after": "단원 수행평가 A"
+          },
+          {
+            "path": "teacherStudentPages.133.section",
+            "before": "단원 수행평가 · 6과13-02",
+            "after": "단원 수행평가 B"
+          },
+          {
+            "path": "teacherStudentPages.134.section",
+            "before": "단원 수행평가 · 6과13-03",
+            "after": "단원 수행평가 C"
+          }
+        ]
+      },
+      {
+        "unit": "c22-s42-u04",
+        "fields": [
+          {
+            "path": "pages.30.blocks.2.text",
+            "before": "현행 교육과정의 사례·생활 영향·대응 실천을 중심으로 공부해요. 자료를 읽거나 계획을 만든 것과 실제로 해 본 것을 나누어 남겨요.",
+            "after": "기후변화가 우리 생활과 환경에 미치는 영향을 자료에서 찾아보아요. 대응 방법을 조사하고 생활에서 실천할 수 있는 일을 정해 해 보아요. 조사한 내용과 직접 실천한 일을 구별해 적어요."
+          },
+          {
+            "path": "teacherStudentPages.30.blocks.2.text",
+            "before": "현행 교육과정의 사례·생활 영향·대응 실천을 중심으로 공부해요. 자료를 읽거나 계획을 만든 것과 실제로 해 본 것을 나누어 남겨요.",
+            "after": "기후변화가 우리 생활과 환경에 미치는 영향을 자료에서 찾아보아요. 대응 방법을 조사하고 생활에서 실천할 수 있는 일을 정해 해 보아요. 조사한 내용과 직접 실천한 일을 구별해 적어요."
+          }
+        ]
+      },
+      {
+        "unit": "s41-u02",
+        "fields": [
+          {
+            "path": "pages.0.blocks.2.items.0",
+            "before": "4과10-01 물의 세 상태와 주변의 예",
+            "after": "물의 세 가지 상태를 알아보고 우리 주변에서 예를 찾아요."
+          },
+          {
+            "path": "pages.0.blocks.2.items.1",
+            "before": "4과10-02 다섯 상태 변화의 관찰",
+            "after": "물이 얼거나 얼음이 녹을 때, 물이 증발하거나 끓을 때, 수증기가 응결할 때의 변화를 관찰해요."
+          },
+          {
+            "path": "pages.0.blocks.2.items.2",
+            "before": "4과10-03 상태 변화를 이용하는 물 얻는 장치",
+            "after": "물의 상태 변화를 이용하여 물을 얻는 장치를 설계하고 만들어요."
+          },
+          {
+            "path": "teacherStudentPages.0.blocks.2.items.0",
+            "before": "4과10-01 물의 세 상태와 주변의 예",
+            "after": "물의 세 가지 상태를 알아보고 우리 주변에서 예를 찾아요."
+          },
+          {
+            "path": "teacherStudentPages.0.blocks.2.items.1",
+            "before": "4과10-02 다섯 상태 변화의 관찰",
+            "after": "물이 얼거나 얼음이 녹을 때, 물이 증발하거나 끓을 때, 수증기가 응결할 때의 변화를 관찰해요."
+          },
+          {
+            "path": "teacherStudentPages.0.blocks.2.items.2",
+            "before": "4과10-03 상태 변화를 이용하는 물 얻는 장치",
+            "after": "물의 상태 변화를 이용하여 물을 얻는 장치를 설계하고 만들어요."
+          }
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "fields": [
+          {
+            "path": "pages.0.blocks.2.items.0",
+            "before": "4과11-01 흐르는 물의 작용과 강 지형",
+            "after": "흐르는 물의 작용과 강 주변 지형의 특징을 연결해요."
+          },
+          {
+            "path": "pages.0.blocks.2.items.1",
+            "before": "4과11-02 화산·분출물과 모형 표현",
+            "after": "화산 활동으로 나오는 물질을 알아보고, 화산 활동을 모형으로 나타내요."
+          },
+          {
+            "path": "pages.0.blocks.2.items.2",
+            "before": "4과11-03 화성암 관찰과 분류",
+            "after": "현무암과 화강암을 관찰하고 특징에 따라 분류해요."
+          },
+          {
+            "path": "pages.0.blocks.2.items.3",
+            "before": "4과11-04 생활 영향 조사와 대처 실천",
+            "after": "화산 활동과 지진이 우리 생활에 미치는 영향을 조사하고 대처 방법을 실천해요."
+          },
+          {
+            "path": "teacherStudentPages.0.blocks.2.items.0",
+            "before": "4과11-01 흐르는 물의 작용과 강 지형",
+            "after": "흐르는 물의 작용과 강 주변 지형의 특징을 연결해요."
+          },
+          {
+            "path": "teacherStudentPages.0.blocks.2.items.1",
+            "before": "4과11-02 화산·분출물과 모형 표현",
+            "after": "화산 활동으로 나오는 물질을 알아보고, 화산 활동을 모형으로 나타내요."
+          },
+          {
+            "path": "teacherStudentPages.0.blocks.2.items.2",
+            "before": "4과11-03 화성암 관찰과 분류",
+            "after": "현무암과 화강암을 관찰하고 특징에 따라 분류해요."
+          },
+          {
+            "path": "teacherStudentPages.0.blocks.2.items.3",
+            "before": "4과11-04 생활 영향 조사와 대처 실천",
+            "after": "화산 활동과 지진이 우리 생활에 미치는 영향을 조사하고 대처 방법을 실천해요."
+          }
+        ]
+      },
+      {
+        "unit": "c22-s61-u03",
+        "fields": [
+          {
+            "path": "pages.91.section",
+            "before": "단원 수행평가 A · 6과11-01",
+            "after": "단원 수행평가 A"
+          },
+          {
+            "path": "pages.92.section",
+            "before": "단원 수행평가 B · 6과11-02",
+            "after": "단원 수행평가 B"
+          },
+          {
+            "path": "pages.93.section",
+            "before": "단원 수행평가 C · 6과11-03",
+            "after": "단원 수행평가 C"
+          },
+          {
+            "path": "teacherStudentPages.91.section",
+            "before": "단원 수행평가 A · 6과11-01",
+            "after": "단원 수행평가 A"
+          },
+          {
+            "path": "teacherStudentPages.92.section",
+            "before": "단원 수행평가 B · 6과11-02",
+            "after": "단원 수행평가 B"
+          },
+          {
+            "path": "teacherStudentPages.93.section",
+            "before": "단원 수행평가 C · 6과11-03",
+            "after": "단원 수행평가 C"
+          }
+        ]
+      },
+      {
+        "unit": "c22-s61-u04",
+        "fields": [
+          {
+            "path": "pages.118.section",
+            "before": "단원 수행평가 A · 6과12-01",
+            "after": "단원 수행평가 A"
+          },
+          {
+            "path": "pages.119.section",
+            "before": "단원 수행평가 B · 6과12-02",
+            "after": "단원 수행평가 B"
+          },
+          {
+            "path": "pages.120.section",
+            "before": "단원 수행평가 C · 6과12-03",
+            "after": "단원 수행평가 C"
+          },
+          {
+            "path": "teacherStudentPages.118.section",
+            "before": "단원 수행평가 A · 6과12-01",
+            "after": "단원 수행평가 A"
+          },
+          {
+            "path": "teacherStudentPages.119.section",
+            "before": "단원 수행평가 B · 6과12-02",
+            "after": "단원 수행평가 B"
+          },
+          {
+            "path": "teacherStudentPages.120.section",
+            "before": "단원 수행평가 C · 6과12-03",
+            "after": "단원 수행평가 C"
+          }
+        ]
+      }
+    ],
+    "all32StudentPagesNoSelectedTeacherCodeStrings": true,
+    "unchangedQuestions": 3080,
+    "unchangedWorkbooks": 26,
+    "unchangedProducts": 116,
+    "changedProducts": [
+      {
+        "unit": "c22-s62-u01",
+        "mode": "student",
+        "sha256": "37bd8e2bc5f66451838fe6931fd860407f59b4b7d9a5f4d2369bcc33b0245d9e"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "mode": "teacher",
+        "sha256": "eeca531f40b92d12278bc64e5808b46b74da41d9e326be2505c32d505acd40d9"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "student",
+        "sha256": "0f3f83bedc660a86034fed26604bee1fab345d5d7ce7bcfd9b3526b50e8514c7"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teacher",
+        "sha256": "b85d493f58f4cb831311fe96b53ff0f76ac9e3b5bfdc65e4f8e4ebb1b0c26f6b"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "student",
+        "sha256": "048eed94b673b8db04a3c5e98a42f3e066bde81f3719c357d1947b366e591471"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teacher",
+        "sha256": "4a8e052f2a7a3b09ccc56069f8961f4329f5d1ba946f6b36bc139dd950165855"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "student",
+        "sha256": "c82bac1f5f20309ab56efcf511fe4e7e4e661ae180cb9fa45c9a7006ea3f0f41"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teacher",
+        "sha256": "d68beceee43570731fe9bd8bb07ae255e370146dcc495cea18fb025e76ad946f"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "student",
+        "sha256": "34bcbffd7380d3daac70d0f425b79cbeb5b0bc2a007b9485f9703ee44bac4d13"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "mode": "teacher",
+        "sha256": "00a6d0fb2fa811c27d686a019f9b46be6989ab397abd1279e77a0ec4d48af332"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "mode": "student",
+        "sha256": "f3fc1f0f35dfca52c9fc2448eea84e3264ac0be1443a9f2fc31d8f62f861b60f"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "mode": "teacher",
+        "sha256": "d996772485450ee408bef917991510b9c574fc9318a035739081f45c082dc160"
+      }
+    ],
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbooks": 6,
+    "previousHelperBytesUnchanged": true,
+    "studentHTMLTextChecks": 6,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/c22-s42-u04.workbook.js",
+      "science-lab/data/book/c22-s61-u03.workbook.js",
+      "science-lab/data/book/c22-s61-u04.workbook.js",
+      "science-lab/data/book/c22-s62-u01.workbook.js",
+      "science-lab/data/book/s41-u02.workbook.js",
+      "science-lab/data/book/s41-u03.workbook.js",
+      "science-lab/data/book/student-opening-language.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/observation-language.test.mjs",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "tests": {
+    "total": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "existingBrowserSkips": 2,
+    "syntaxFiles": 10,
+    "command": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs"
+  },
+  "reviewBoundary": "Selected patterns only; not all terminology/curriculum semantics. 서식/서식지 are valid curriculum terms and retained. Unresolved display precision wording not edited.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase263",
+  "studentDataReads": 0,
+  "studentDataWrites": 0,
+  "networkInNativeValidation": 0,
+  "browserVerified": false,
+  "remaining": [
+    "Remaining explanations and teaching criteria, full curriculum/content review",
+    "Actual PC/phone/A4 font/reflow/clipping/voice/WebGL/mandatory3D gate",
+    "Main WIP preservation, integration and deployment"
+  ]
+}

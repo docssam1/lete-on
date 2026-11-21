@@ -1,0 +1,244 @@
+{
+  "phase": 277,
+  "date": "2026-11-05",
+  "title": "진로 단원의 읽기 자료와 문항에 맞춘 오른쪽 심화 과학",
+  "status": "verified-local-candidate-actual-render-gates-pending",
+  "baselineCommit": "e8ef4bade2c300ce8f83fe5055e326d48ecb576f",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / native Node/VM and read-only primary-source web research; no paid AI API delegation",
+  "skills": [
+    "instructional-design",
+    "ux-writing"
+  ],
+  "curriculum": {
+    "title": "교육부2022-33 별책9",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "extractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "codes": [
+      "9과03-01",
+      "9과03-02",
+      "9과08-01",
+      "9과08-03",
+      "9과10-01",
+      "9과10-02",
+      "9과10-03",
+      "9과10-04",
+      "9과12-01",
+      "9과14-02",
+      "9과14-03",
+      "9과14-04",
+      "9과17-01",
+      "12물리03-05",
+      "12역학03-05"
+    ]
+  },
+  "primarySources": [
+    {
+      "url": "https://extension.umn.edu/natural-resources/conservation/agricultural-soil-and-water/irrigation/soil-moisture-sensors-for-irrigation-scheduling",
+      "use": "Some moisture sensors use electrical properties; readings depend on soil and measurement depth. No inference about the specific RDA instrument; no irrigation thresholds or TDR travel-time assertion imported."
+    },
+    {
+      "url": "https://www.nikonusa.com/learn-and-explore/c/tips-and-techniques/understanding-shutter-speed",
+      "use": "Exposure duration and motion blur; no equipment recommendation or purchase."
+    },
+    {
+      "url": "https://www.yamaha.com/en/musical_instrument_guide/piano/maintenance/maintenance002.html",
+      "use": "Tuning adjusts pitch; no instrument operation task."
+    },
+    {
+      "url": "https://usa.yamaha.com/products/contents/musical_instrument_guide/piano/selection/selection002.html",
+      "use": "Digital tone generation and speakers; do not claim all digital pianos lack hammer actions."
+    },
+    {
+      "url": "https://www.sony-semicon.com/en/technology/is/index.html",
+      "use": "Image sensors transform incoming light into electrical signals; not a claim that the fictional practice sensor is this specific product."
+    }
+  ],
+  "reviewedPages": [
+    {
+      "page": 5,
+      "title": "가정에 따라 달라지는 기후 전망",
+      "upperBefore": "중학교에서는 그래프에서 변화의 경향을 읽어요. 온도가 높아지는 경향이 있어도 모든 날의 온도가 똑같이 오르는 것은 아니에요.",
+      "upperAfter": "중학교에서는 지구가 받는 태양 에너지와 밖으로 내보내는 에너지를 비교해요. 온실 효과와 기후변화를 설명하는 데 이 에너지의 균형이 쓰여요.",
+      "bodyBefore": "읽을 때의 범위: 특정 경로가 반드시 실현된다는 뜻은 아니며 여기서 실제 전망 수치를 제공하지 않아요.",
+      "bodyAfter": "같은 지역과 기간의 전망이라도 가정한 온실가스 배출량이 다르면 결과가 달라질 수 있어요."
+    },
+    {
+      "page": 37,
+      "title": "흙의 수분을 측정하는 농업 기술",
+      "upperBefore": "중학교에서는 빛의 반사와 흡수를 배워요. 차양의 재료와 놓는 방향은 빛이 들어오는 모습에 영향을 줘요.",
+      "upperAfter": "중학교에서는 전압·전류·저항의 관계를 배워요. 수분 센서 중에는 물의 양에 따라 전기적 성질이 달라지는 현상을 이용해 흙의 수분 상태를 알아보는 것이 있어요.",
+      "bodyBefore": "읽을 때의 범위: 해당 작물 사례를 모든 식물의 규칙으로 바꾸지 않아요. 비료·약품 사용이나 실제 기구 조작 지시는 다루지 않아요.",
+      "bodyAfter": "흙 속의 물은 깊이와 장소에 따라 다르게 분포할 수 있어요. 센서가 놓인 깊이와 흙의 종류를 함께 살펴 측정한 값의 뜻을 설명해 보아요."
+    },
+    {
+      "page": 43,
+      "title": "자료를 읽고 답해요",
+      "section": "과학으로 해결 방법 찾기 · 44",
+      "upperBefore": "중학교에서는 전기 회로에서 전압과 전류를 측정해요. 센서는 빛이나 온도 같은 상태를 측정할 수 있는 신호로 바꾸는 데 이용돼요.",
+      "upperAfter": "중학교에서는 물질을 겉모습만이 아니라 밀도·용해도·끓는점 같은 특성으로 구별해요. 분리배출 뒤의 선별 과정에서도 재료의 성질을 확인해야 해요."
+    },
+    {
+      "page": 45,
+      "title": "까닭을 설명해요",
+      "section": "과학으로 해결 방법 찾기 · 46",
+      "upperBefore": "중학교에서는 빛의 반사와 흡수를 배워요. 차양의 재료와 놓는 방향은 빛이 들어오는 모습에 영향을 줘요.",
+      "upperAfter": "중학교에서는 밀도와 용해도처럼 물질마다 다른 특성을 배워요. 재활용할 재료를 실제로 나누는 과정에도 이러한 성질의 차이를 이용할 수 있어요."
+    },
+    {
+      "page": 46,
+      "title": "그림으로 설명해요",
+      "section": "과학으로 해결 방법 찾기 · 47",
+      "upperBefore": "중학교에서는 전도·대류·복사로 열이 이동하는 방법을 비교해요. 그늘을 만드는 방법과 단열재로 열의 이동을 줄이는 방법은 작용이 달라요.",
+      "upperAfter": "중학교에서는 자기장 속에서 전류가 흐르는 코일이 힘을 받는 성질을 배워요. 전동기를 이용해 펌프를 돌리면 물을 보내는 장치로 연결할 수 있어요."
+    },
+    {
+      "page": 67,
+      "title": "악기수리원과 조율사가 하는 일",
+      "upperBefore": "중학교에서는 식물의 광합성과 호흡을 배워요. 농부는 식물이 자라는 데 필요한 여러 조건을 함께 살펴요.",
+      "upperAfter": "중학교에서는 1초 동안 진동한 횟수를 진동수라고 해요. 진동수가 클수록 음이 높아지므로, 조율사는 소리의 진동수를 비교해 음높이를 맞춰요."
+    },
+    {
+      "page": 75,
+      "title": "까닭을 설명해요",
+      "section": "관심 있는 직업 알아보기 · 78",
+      "upperBefore": "중학교에서는 식물의 광합성과 호흡을 배워요. 농부는 식물이 자라는 데 필요한 여러 조건을 함께 살펴요.",
+      "upperAfter": "중학교에서는 소리의 크기를 진폭과, 소리의 높낮이를 진동수와 관련지어 설명해요. 악기의 소리가 더 커진 것과 음이 더 높아진 것은 달라요."
+    },
+    {
+      "page": 81,
+      "title": "피아노 현의 진동과 소리",
+      "upperBefore": "중학교에서는 빛의 굴절과 렌즈의 작용을 배워요. 카메라 렌즈는 대상에서 온 빛으로 상을 맺는 데 이용돼요.",
+      "upperAfter": "고등학교에서는 현악기의 소리를 정상파로 설명해요. 줄을 따라 간 파동과 반사되어 돌아온 파동이 겹치면, 움직이지 않는 부분과 크게 떨리는 부분이 생겨요.",
+      "bodyBefore": "읽을 때의 범위: 모든 악기·전자 피아노가 같은 구조라는 뜻은 아니에요. 악기를 분해하거나 조정하는 활동을 요구하지 않아요.",
+      "bodyAfter": "피아노 현에서 시작된 진동이 울림판과 주변 공기로 어떻게 전달되는지 이어 설명해 보아요."
+    },
+    {
+      "page": 82,
+      "title": "사진을 기록하는 빛과 촬영 조건",
+      "upperBefore": "중학교에서는 물체가 움직이는 빠르기를 비교해요. 사진을 기록하는 동안 대상이 움직인 거리는 사진에 나타나는 모습과 관련돼요.",
+      "upperAfter": "중학교에서는 렌즈가 빛을 굴절시켜 상을 만드는 것을 배워요. 카메라 렌즈는 피사체에서 온 빛을 모아 필름이나 이미지 센서 위에 상을 만들어요.",
+      "bodyBefore": "읽을 때의 범위: 자료의3~5쪽 설명을 참고했어요.37쪽 전체 검토나 모든 카메라의 설정·성능 확인을 뜻하지 않으며 장비 구매·외부 업로드는 필요하지 않아요.",
+      "bodyAfter": "물체가 움직이는 동안 빛을 받으면 사진에 움직임의 흔적이 남을 수 있어요. 빛을 받는 시간과 물체의 움직임이 사진에 어떤 차이를 만드는지 생각해 보아요."
+    },
+    {
+      "page": 83,
+      "title": "알맞은 설명을 골라요",
+      "section": "직업 속 과학 찾기 · 81, 82",
+      "upperBefore": "중학교에서는 광합성에 필요한 물질과 산물을 확인하는 실험을 해요. 식물은 물과 이산화 탄소를 이용하여 양분을 만들어요.",
+      "upperAfter": "중학교에서는 빛의 경로로 상이 생기는 원리를 설명하고, 소리를 파동으로 배워요. 사진기의 상과 피아노의 소리를 빛의 굴절과 진동의 전달로 연결해 설명해 보아요."
+    },
+    {
+      "page": 87,
+      "title": "알맞은 설명을 모두 골라요",
+      "section": "직업 속 과학 찾기 · 90",
+      "upperBefore": "중학교에서는 진폭과 진동수로 소리의 특징을 구별해요. 더 큰 소리와 더 높은 소리는 같은 뜻이 아니에요.",
+      "upperAfter": "고등학교에서는 반도체 소자의 원리를 배워요. 디지털 카메라의 이미지 센서는 빛을 전기 신호로 바꾸어요. 빛을 받는 부분과 신호를 처리하는 부분이 함께 작동해 사진을 기록해요."
+    },
+    {
+      "page": 89,
+      "title": "자료를 읽고 답해요",
+      "section": "직업 속 과학 찾기 · 92",
+      "upperBefore": "중학교에서는 빛의 굴절과 렌즈의 작용을 배워요. 카메라 렌즈는 대상에서 온 빛으로 상을 맺는 데 이용돼요.",
+      "upperAfter": "고등학교에서는 빛과 물질의 상호작용을 이용하는 반도체 소자를 배워요. 이미지 센서는 빛을 전기 신호로 바꾸지만, 표시 단위와 변환 방식은 센서마다 다를 수 있어요."
+    },
+    {
+      "page": 90,
+      "title": "까닭을 설명해요",
+      "section": "직업 속 과학 찾기 · 93",
+      "upperBefore": "중학교에서는 물체가 움직이는 빠르기를 비교해요. 사진을 기록하는 동안 대상이 움직인 거리는 사진에 나타나는 모습과 관련돼요.",
+      "upperAfter": "중학교에서는 전기 에너지가 다른 형태의 에너지로 전환되는 것을 배워요. 전자 피아노의 스피커는 전기 신호에 따라 진동해 공기로 소리를 전달해요."
+    },
+    {
+      "page": 91,
+      "title": "까닭을 설명해요",
+      "section": "직업 속 과학 찾기 · 94",
+      "upperBefore": "중학교에서는 광합성에 필요한 물질과 산물을 확인하는 실험을 해요. 식물은 물과 이산화 탄소를 이용하여 양분을 만들어요.",
+      "upperAfter": "중학교에서는 물체가 반사한 빛과 물체의 색을 관련지어 배워요. 피사체에서 카메라로 들어오는 빛은 조명뿐 아니라 피사체가 어떤 빛을 반사하는지에 따라서도 달라져요."
+    },
+    {
+      "page": 112,
+      "title": "알맞은 설명을 골라요",
+      "section": "나의 진로와 과학 설명하기 · 113, 114",
+      "upperBefore": "중학교에서는 열의 이동을 여러 방식으로 설명해요. 요리와 건축은 서로 다른 일을 하면서도 열에 관한 과학을 이용해요.",
+      "upperAfter": "중학교에서는 빛의 굴절과 소리의 진동수를 배워요. 사진가는 렌즈로 상을 만들고, 조율사는 소리의 진동수를 비교해요. 서로 다른 일에 서로 다른 과학 개념이 쓰여요."
+    },
+    {
+      "page": 113,
+      "title": "여러 문제로 생각해요",
+      "section": "나의 진로와 과학 설명하기 · 115, 116, 117",
+      "upperBefore": "중학교에서는 재료의 밀도와 용해도 같은 성질을 배워요. 재료를 고르고 분리하는 여러 직업에서 이런 성질이 이용돼요.",
+      "upperAfter": "중학교에서는 온도를 물질 입자의 운동과 연결해 설명해요. 요리사가 잰 온도는 음식이 얼마나 따뜻한지 나타내며, 음높이를 나타내는 진동수나 흙의 수분 상태와는 다른 양이에요."
+    },
+    {
+      "page": 116,
+      "title": "자료를 읽고 답해요",
+      "section": "나의 진로와 과학 설명하기 · 123",
+      "upperBefore": "중학교에서는 자신의 진로에 필요한 과학 학습을 계획해요. 지금 알고 있는 개념과 더 배우고 싶은 개념을 연결해 볼 수 있어요.",
+      "upperAfter": "중학교에서는 열평형에 이르는 과정을 입자의 운동과 연결해요. 그늘은 직접 받는 태양빛을 줄이지만, 그늘 속 물체도 주변 공기와 열을 주고받아요."
+    },
+    {
+      "page": 117,
+      "title": "자료를 읽고 답해요",
+      "section": "나의 진로와 과학 설명하기 · 124",
+      "upperBefore": "중학교에서는 미래 사회에서 과학이 어떤 역할을 할지 토의해요. 여러 사람이 가진 지식과 과학이 함께 문제 해결에 쓰일 수 있어요.",
+      "upperAfter": "중학교에서는 소리가 물질을 통해 에너지를 전달하는 파동임을 배워요. 사진가가 다루는 빛과 조율사가 다루는 소리는 모두 파동으로 살펴볼 수 있지만, 전달되는 방식에는 차이가 있어요."
+    },
+    {
+      "page": 119,
+      "title": "까닭을 설명해요",
+      "section": "나의 진로와 과학 설명하기 · 126",
+      "upperBefore": "중학교에서는 진동수와 음높이의 관계를 배워요. 악기나 음향에 관심이 있으면 같은 음을 내는 여러 소리도 비교할 수 있어요.",
+      "upperAfter": "중학교에서는 광합성의 양이 빛의 세기와 온도 등 환경 요인에 따라 달라지는 것을 배워요. 흙의 수분을 재는 센서 하나가 식물에 필요한 모든 조건을 알려 주는 것은 아니에요."
+    }
+  ],
+  "verification": {
+    "studentPagesWithNewUpperScience": 19,
+    "studentReadingExplanationsRewritten": 4,
+    "mirroredStringChanges": 46,
+    "questionsPreserved": 3080,
+    "otherWorkbooksUnchanged": 31,
+    "paperProductsChanged": [
+      {
+        "unit": "c22-s62-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s62-u04",
+        "mode": "teacher"
+      }
+    ],
+    "paperProductsUnchanged": 126,
+    "slideArraysUnchanged": 64,
+    "runtimeUnitsUnchanged": 32,
+    "priorWorkbookNativeDeepEqual": true,
+    "oldEditorialBytesPreserved": true,
+    "historicalWorkbook20261104Unchanged": true,
+    "uniqueUpperNotes": {
+      "before": 64,
+      "after": 78
+    },
+    "currentPaperReviewMemoAbsent": true,
+    "actualBrowserVerified": false
+  },
+  "tests": {
+    "total": 1207,
+    "pass": 1205,
+    "fail": 0,
+    "skip": 2,
+    "syntaxFiles": 8
+  },
+  "workspace": {
+    "mainHeadUnchanged": true,
+    "mainStatusUnchanged": true,
+    "syntaxFiles": 8,
+    "otherTrackedScienceFilesUnchanged": 6422
+  },
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase277",
+  "actualBrowserVerified": false,
+  "actual3dVerified": false,
+  "mergedToMain": false,
+  "deployed": false
+}

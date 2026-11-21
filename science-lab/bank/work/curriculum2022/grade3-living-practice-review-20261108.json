@@ -1,0 +1,62 @@
+{
+  "phase": 362,
+  "date": "2026-11-08",
+  "scope": "Elementary directions for independently authored grade-three animal and plant workbook practice questions; preserve source-linked presentations and every response field.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "8344d75ed21d92437f10d17f95477062e3f8862d",
+    "reviewCommit": "1abb2d22e192d69e4e955f8a2084ade1885898f2"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "validation": {
+    "phase": 362,
+    "workbooksReviewed": 2,
+    "directionsChanged": 63,
+    "animalDirections": 31,
+    "plantDirections": 32,
+    "allOtherDataFilesByteEqual": 94,
+    "allNonPromptQuestionFieldsEqual": 160,
+    "sourceLinkedQuestionsByteEqual": 80,
+    "currentPaperModesMatch": 128,
+    "otherThirtyPaperModesByteEqual": 120,
+    "priorPaperModesRestorable": 128,
+    "allBankModesByteEqual": 84,
+    "bankAndClassroomDataUnchanged": true,
+    "newResponseContracts": 0,
+    "actualBrowserUsed": false
+  },
+  "nativeSuite": {
+    "testFiles": 261,
+    "exitCode": 0,
+    "tests": 1418,
+    "suites": 0,
+    "pass": 1416,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "preflight": {
+    "syntaxFiles": 6,
+    "diffCheck": true
+  },
+  "preservationPolicy": {
+    "priorWorkbooksExported": true,
+    "onlyReviewedQuestionPromptFieldsChanged": true,
+    "firstFortySourceLinkedQuestionsInEachBookUnchanged": true,
+    "allAnswerChoicesKeysExplanationsRubricsFiguresPagesAndBlankCountsUnchanged": true,
+    "bankAndClassroomPresentationsUnchanged": true,
+    "noCssOrFontChanges": true,
+    "versionedUnknownAndSourceQuestionsExcluded": true
+  },
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

@@ -1,0 +1,313 @@
+{
+  "phase": 165,
+  "date": "2026-11-02",
+  "unit": "c22-s32-u03",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "290ab02dc3c9374fbee7550ffd84c00ec9f39b09",
+  "workbook": {
+    "studentPages": 49,
+    "teacherFrontPages": 52,
+    "teacherNonblankFrontPages": 51,
+    "teacherTotalPages": 75,
+    "answerPages": 23,
+    "quickPages": 5,
+    "questions": 80,
+    "forms": 8,
+    "conceptPages": 14,
+    "examples": 9,
+    "largeDrawings": 6,
+    "rightRailsRewritten": 49
+  },
+  "curriculum": {
+    "core": [
+      "4과07-01",
+      "4과07-02",
+      "4과07-03"
+    ],
+    "optionalUpperConnection": {
+      "code": "9과10-04",
+      "title": "빛과 파동",
+      "url": "https://cdn.kosac.re.kr/files/legacy_data/jnrepo/upload/jnBrdBoard/202408/c4050496366f445a9ebd177519250d0a_1724130920897.pdf",
+      "pdfPage": 100
+    },
+    "upperIsRequiredAssessment": false
+  },
+  "assets": [
+    {
+      "file": "science-lab/assets/book/c22-s32-u03-photo-drum.webp",
+      "added": true,
+      "sha256": "144afc4194db7237b53c67bb0417482e983025b2b4c823b4a13b91095a36475e"
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u03-photo-ruler.webp",
+      "added": true,
+      "sha256": "c23f02d895dc0546cf6c35bb36efa74251e8e13e2983c4edfc8968c32fdc0570"
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u03-photo-chair.webp",
+      "added": true,
+      "sha256": "f9fac46cf65fdb8a2d457f66fa328e4a990438363375e905866cc77e25127d81"
+    }
+  ],
+  "integration": {
+    "existingProductsUnchanged": 40,
+    "revisedWorkbooks": 11,
+    "sourceQuestionsAndMainBlocksUnchanged": true,
+    "sourceAnswersAndQuickUnchanged": true,
+    "protectedOriginals": [
+      {
+        "file": "science-lab/data/units/c22-s32-u03.js",
+        "sha256": "1c567a56dbe6f85d3fc342a0784819d85f620b5f7c09049b85da255eb0d404bd",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u03.book.js",
+        "sha256": "fa76d561313da456e4497d6a0b13bfb5b1ae155ea15b434e47ba3bbd141453cc",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u03.records-book.js",
+        "sha256": "891c290da512a4ed6a3c94229aec8138178e90e3c811a08ab3ee038d11a6846d",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/ruler-model.js",
+        "sha256": "be8d1edbd2d12d2f1b478b4651a54bbae9a29030a0bbbe0776271e8495780508",
+        "unchanged": true
+      }
+    ],
+    "products": [
+      {
+        "mode": "student",
+        "pages": 49,
+        "images": 3,
+        "sha256": "159df7ae64f1773c2794b42ca1549a03ac030f4d4ed3e36606df13bc4d49c8b3",
+        "allAssetsResolve": true
+      },
+      {
+        "mode": "teacher",
+        "pages": 75,
+        "images": 3,
+        "sha256": "1c8f00fa4fe806ec78e47825afc7fe366153d53702f0de1df48ce8d33a37f755",
+        "allAssetsResolve": true
+      },
+      {
+        "mode": "answers",
+        "pages": 23,
+        "images": 0,
+        "sha256": "120cb159e65a4ba52775ae1eb9c234fa7b38aec5c66a26bf29531a8ccde10511",
+        "allAssetsResolve": true
+      },
+      {
+        "mode": "quick",
+        "pages": 5,
+        "images": 0,
+        "sha256": "dbb912750827f3a65ea34da733e3db2e2c613aeb64cb66472c678d0b936f3be4",
+        "allAssetsResolve": true
+      }
+    ],
+    "bankReviewPending": [
+      "c22-s32-u03-b25",
+      "c22-s32-u03-b41"
+    ]
+  },
+  "pdf": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 49,
+        "bytes": 2679016,
+        "sha256": "448550e9f71c625bfa30b22067b2cc4b924d4cbcb6dcc7833a29d26ffe1ba77c",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 75,
+        "bytes": 2756116,
+        "sha256": "70f64b4bd56a638f6a5c7ce59738e461584272b8a837074f4628d90a94ad544a",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 23,
+        "bytes": 137139,
+        "sha256": "49f29e808e7961f3462a76b0234cf822d128a32e59d0b617cf43ade1e8dba65a",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 5,
+        "bytes": 58903,
+        "sha256": "596bf586110e8d6db3c86db06cdb8fbf75b2aaaa16c2a334a710d04d180cb4be",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 160,
+    "solutionExpressions": 160,
+    "teacherAnswerStartsOnRecto": 53
+  },
+  "extra": {
+    "railTextsPresent": 300,
+    "drawingSpaces": [
+      {
+        "mode": "student",
+        "page": 44,
+        "widthMm": 139,
+        "heightMm": 187.37509444444447
+      },
+      {
+        "mode": "student",
+        "page": 45,
+        "widthMm": 139,
+        "heightMm": 187.37509444444447
+      },
+      {
+        "mode": "student",
+        "page": 46,
+        "widthMm": 139,
+        "heightMm": 187.37509444444447
+      },
+      {
+        "mode": "student",
+        "page": 47,
+        "widthMm": 139,
+        "heightMm": 187.37509444444447
+      },
+      {
+        "mode": "student",
+        "page": 48,
+        "widthMm": 139,
+        "heightMm": 187.37509444444447
+      },
+      {
+        "mode": "student",
+        "page": 49,
+        "widthMm": 139,
+        "heightMm": 187.37509444444447
+      },
+      {
+        "mode": "teacher",
+        "page": 46,
+        "widthMm": 139,
+        "heightMm": 199.50955638888888
+      },
+      {
+        "mode": "teacher",
+        "page": 47,
+        "widthMm": 139,
+        "heightMm": 199.50955638888888
+      },
+      {
+        "mode": "teacher",
+        "page": 48,
+        "widthMm": 139,
+        "heightMm": 199.50955638888888
+      },
+      {
+        "mode": "teacher",
+        "page": 49,
+        "widthMm": 139,
+        "heightMm": 199.50955638888888
+      },
+      {
+        "mode": "teacher",
+        "page": 50,
+        "widthMm": 139,
+        "heightMm": 199.50955638888888
+      },
+      {
+        "mode": "teacher",
+        "page": 51,
+        "widthMm": 139,
+        "heightMm": 199.50955638888888
+      }
+    ],
+    "quickAnswerCellsPresent": 240,
+    "appleVision": {
+      "photos": 3,
+      "photoWords": 0,
+      "studentPages": [
+        {
+          "page": 4,
+          "words": 187,
+          "lowConfidence": 99
+        },
+        {
+          "page": 6,
+          "words": 143,
+          "lowConfidence": 37
+        },
+        {
+          "page": 10,
+          "words": 153,
+          "lowConfidence": 55
+        },
+        {
+          "page": 29,
+          "words": 94,
+          "lowConfidence": 22
+        },
+        {
+          "page": 44,
+          "words": 84,
+          "lowConfidence": 34
+        },
+        {
+          "page": 49,
+          "words": 92,
+          "lowConfidence": 31
+        }
+      ],
+      "failed": 0,
+      "skipped": 0,
+      "review": "낮은 신뢰도 낱말은 원고·확대 지면과 대조했다. OCR 완전 일치를 주장하지 않는다."
+    },
+    "visualReview": {
+      "allPages": 152,
+      "contactSheets": 9,
+      "enlargedPages": 11,
+      "outsideOrClippedContentFound": false,
+      "browserVerified": false
+    }
+  },
+  "tests": {
+    "total": 384,
+    "passed": 382,
+    "failed": 0,
+    "skipped": 2,
+    "skipReason": "기존 실제 브라우저 검사"
+  },
+  "reviewRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase165",
+  "pdfDirectory": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/output/pdf/science-lab/20261102-sound-rails",
+  "scope": {
+    "rawBankEdited": false,
+    "oldSavedAnswersRegraded": false,
+    "newSoundThinkingClass": false,
+    "newAudio": false,
+    "newImages": false,
+    "paidApiCalls": 0,
+    "pushed": false,
+    "deployed": false,
+    "browserVerified": false,
+    "goalComplete": false
+  },
+  "remaining": [
+    "소리 수업의 조건별 실제 듣기 비교·사고력 전환",
+    "기존 은행 b25/b41의 과거 응답을 보존하는 보기 수정/버전 검토",
+    "실제 브라우저 화면·A4 인쇄 확인",
+    "최신 main 재대조와 전체 통합 검토",
+    "다른 학기 교재/수업 및 v1/v2 역할 정리"
+  ]
+}

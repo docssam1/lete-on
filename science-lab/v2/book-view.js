@@ -4,7 +4,7 @@
 //    영상은 대기 사진을 바로 보이고 소리 없이 저절로 재생(움직임 줄이기 설정이면 멈춘 채 ▶). 실험실은 쪽을 넘겨도 그대로 이어진다.
 //  · 휴대폰: 한 쪽씩 읽기(글자 크기 그대로 줄바꿈). 영상은 쪽 안에서 재생, 실험실은 누르면 전체 화면.
 //  · 인쇄: 모든 쪽을 A4로 차례대로(보기 틀·오른쪽 화면은 숨김).
-import { wireLive } from './live.js';
+import { wireLive } from './live.js?v=20261115-book-multi-choice&noise=20261115-sound-noise-practice';
 import { fitPages } from './book.js';
 import { pauseLearningMedia } from './media-session.js';
 
@@ -28,7 +28,7 @@ function liveOf(page) {
   return out.map((x, i) => ({ ...x, id: x.k === 'video' ? `video:${x.src}` : x.k, n: i }));
 }
 
-export function mountBookView($app, { u, bookHtml, title, teacher = false, page = 1, scene, lab, misc, onAnswer, guide = null, sayFor = null, backHref, printHref = null }) {
+export function mountBookView($app, { u, bookHtml, title, teacher = false, page = 1, scene, lab, misc, onAnswer, questions = null, guide = null, sayFor = null, backHref, printHref = null }) {
   $app.innerHTML = `<div class="bv ${teacher ? 'bv-teacher' : 'bv-student'}">
     <header class="bv-top no-print">
       <a class="bv-back" href="${esc(backHref)}">‹ 처음으로</a>
@@ -84,17 +84,20 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
 
   // ── 맞추기 ──────────────────────────────────────────────────────────
   function fit() {
-    if (!alive || mode === 'phone') { scaleEl.style.cssText = ''; sizer.style.cssText = ''; return; }
+    if (!alive || mode === 'phone') { space.classList.remove('bv-choice-scroll'); scaleEl.style.cssText = ''; sizer.style.cssText = ''; return; }
     const v = views[vi], n = v.pages.length, main = root.querySelector('.bv-main');
     // 가로 화면에서 오른쪽 화면이 있으면: 쪽 칸은 쪽 높이에 맞춘 폭만, 나머지는 살아 있는 화면
     if (split && !zoom) space.style.flex = `0 0 ${Math.round(Math.min((main.clientHeight - 20) / PH * PW + 28, main.clientWidth - 380))}px`;
     else space.style.flex = '';
     const W = space.clientWidth, H = space.clientHeight;
     const total = n * PW + (n - 1) * GAP;
+    const choicePage=v.pages.some(k=>pages[k].classList.contains('bk-choice-page'));
+    space.classList.toggle('bv-choice-scroll',choicePage);
+    const pageHeight=choicePage?Math.max(PH,...v.pages.map(k=>pages[k].scrollHeight)):PH;
     const s = zoom ? Math.max(0.3, Math.min((W - 40) / total, 2.4)) : Math.max(0.2, Math.min((W - 28) / total, (H - 20) / PH));
-    const w = total * s, h = PH * s;
-    sizer.style.cssText = `width:${Math.max(W, w)}px;height:${zoom ? h + 28 : H}px`;
-    scaleEl.style.cssText = `width:${total}px;height:${PH}px;transform:translate(${Math.max(0, (W - w) / 2)}px,${zoom ? 14 : Math.max(0, (H - h) / 2)}px) scale(${s})`;
+    const w = total * s, h = pageHeight * s, scrollChoice=choicePage&&h>H-20;
+    sizer.style.cssText = `width:${Math.max(W, w)}px;height:${zoom ? h + 28 : scrollChoice ? Math.max(H,h + 28) : H}px`;
+    scaleEl.style.cssText = `width:${total}px;height:${pageHeight}px;transform:translate(${Math.max(0, (W - w) / 2)}px,${zoom || scrollChoice ? 14 : Math.max(0, (H - h) / 2)}px) scale(${s})`;
     root.style.setProperty('--bv-scale', s.toFixed(3));
     guide?.arrange();
   }
@@ -201,7 +204,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
       return true;
     },
   };
-  const release = wireLive(bk, { scene, lab, title, misc, onAnswer: (kind, p) => { onAnswer?.(kind, p); react(kind, p); }, panel });
+  const release = wireLive(bk, { scene, lab, title, misc, questions, onAnswer: (kind, p) => { onAnswer?.(kind, p); react(kind, p); }, panel });
 
   // ── 독쌤(학생용만): 쪽마다 한 가지만 말한다 ────────────────────────────
   let sayTimer = 0;

@@ -1,0 +1,680 @@
+{
+  "phase": 304,
+  "date": "2026-11-06",
+  "unit": "c22-s51-u04",
+  "scope": "Elementary body-system questions and explanations; walking observation times; grading and saved histories preserved",
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 96,
+    "reviewedCurrentClassroomContexts": 16,
+    "changedWorkbookQuestions": 96,
+    "changedQuestionFields": 111,
+    "changedExplanations": 96,
+    "unchangedOtherAnswerLabels": 3080,
+    "currentAnswerChanges": [],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": [
+      {
+        "unit": "c22-s51-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "mode": "answers"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s51-u04-b001",
+      "c22-s51-u04-b002",
+      "c22-s51-u04-b003",
+      "c22-s51-u04-b004",
+      "c22-s51-u04-b005",
+      "c22-s51-u04-b006",
+      "c22-s51-u04-b007",
+      "c22-s51-u04-b008",
+      "c22-s51-u04-b009",
+      "c22-s51-u04-b010",
+      "c22-s51-u04-b011",
+      "c22-s51-u04-b012",
+      "c22-s51-u04-b013",
+      "c22-s51-u04-b014",
+      "c22-s51-u04-b015",
+      "c22-s51-u04-b016",
+      "c22-s51-u04-b017",
+      "c22-s51-u04-b018",
+      "c22-s51-u04-b019",
+      "c22-s51-u04-b020",
+      "c22-s51-u04-b021",
+      "c22-s51-u04-b022",
+      "c22-s51-u04-b023",
+      "c22-s51-u04-b024",
+      "c22-s51-u04-b025",
+      "c22-s51-u04-b026",
+      "c22-s51-u04-b027",
+      "c22-s51-u04-b028",
+      "c22-s51-u04-b029",
+      "c22-s51-u04-b030",
+      "c22-s51-u04-b031",
+      "c22-s51-u04-b032",
+      "c22-s51-u04-b033",
+      "c22-s51-u04-b034",
+      "c22-s51-u04-b035",
+      "c22-s51-u04-b036",
+      "c22-s51-u04-b037",
+      "c22-s51-u04-b038",
+      "c22-s51-u04-b039",
+      "c22-s51-u04-b040",
+      "c22-s51-u04-b041",
+      "c22-s51-u04-b042",
+      "c22-s51-u04-b043",
+      "c22-s51-u04-b044",
+      "c22-s51-u04-b045",
+      "c22-s51-u04-b046",
+      "c22-s51-u04-b047",
+      "c22-s51-u04-b048",
+      "c22-s51-u04-b049",
+      "c22-s51-u04-b050",
+      "c22-s51-u04-b051",
+      "c22-s51-u04-b052",
+      "c22-s51-u04-b053",
+      "c22-s51-u04-b054",
+      "c22-s51-u04-b055",
+      "c22-s51-u04-b056",
+      "c22-s51-u04-b057",
+      "c22-s51-u04-b058",
+      "c22-s51-u04-b059",
+      "c22-s51-u04-b060",
+      "c22-s51-u04-b061",
+      "c22-s51-u04-b062",
+      "c22-s51-u04-b063",
+      "c22-s51-u04-b064",
+      "c22-s51-u04-b065",
+      "c22-s51-u04-b066",
+      "c22-s51-u04-b067",
+      "c22-s51-u04-b068",
+      "c22-s51-u04-b069",
+      "c22-s51-u04-b070",
+      "c22-s51-u04-b071",
+      "c22-s51-u04-b072",
+      "c22-s51-u04-b073",
+      "c22-s51-u04-b074",
+      "c22-s51-u04-b075",
+      "c22-s51-u04-b076",
+      "c22-s51-u04-b077",
+      "c22-s51-u04-b078",
+      "c22-s51-u04-b079",
+      "c22-s51-u04-b080",
+      "c22-s51-u04-b081",
+      "c22-s51-u04-b082",
+      "c22-s51-u04-b083",
+      "c22-s51-u04-b084",
+      "c22-s51-u04-b085",
+      "c22-s51-u04-b086",
+      "c22-s51-u04-b087",
+      "c22-s51-u04-b088",
+      "c22-s51-u04-b089",
+      "c22-s51-u04-b090",
+      "c22-s51-u04-b091",
+      "c22-s51-u04-b092",
+      "c22-s51-u04-b093",
+      "c22-s51-u04-b094",
+      "c22-s51-u04-b095",
+      "c22-s51-u04-b096"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s51-u04-b030",
+      "c22-s51-u04-b036",
+      "c22-s51-u04-b047",
+      "c22-s51-u04-b065",
+      "c22-s51-u04-b073",
+      "c22-s51-u04-b081",
+      "c22-s51-u04-b004",
+      "c22-s51-u04-b010",
+      "c22-s51-u04-b039",
+      "c22-s51-u04-b072",
+      "c22-s51-u04-b076",
+      "c22-s51-u04-b088",
+      "c22-s51-u04-b001",
+      "c22-s51-u04-b007",
+      "c22-s51-u04-b012",
+      "c22-s51-u04-b024"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [],
+    "all78PagesRailsFiguresAndQuickTablesUnchanged": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorEditorialBytePrefixPreserved": true,
+    "choiceResponsesChecked": 31,
+    "explanationHtmlOccurrencesVerified": 192,
+    "syntaxFiles": 7,
+    "browserVerified": false
+  },
+  "validation": {
+    "tests": 1254,
+    "passed": 1252,
+    "failed": 0,
+    "skipped": 2,
+    "exitCode": 0,
+    "testFiles": 219,
+    "snapshot": {
+      "workbooks": 32,
+      "html": 128,
+      "slideArrays": 64,
+      "runtimeUnits": 32,
+      "studentStorageReads": 0,
+      "studentStorageWrites": 0,
+      "network": 0
+    },
+    "actualBrowserVerified": false
+  },
+  "evidence": {
+    "curriculum": {
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.txt",
+      "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "lines": [
+        764,
+        779
+      ],
+      "standards": [
+        "6과04-01",
+        "6과04-02",
+        "6과04-03"
+      ],
+      "scope": "뼈·근육의 관찰과 모형, 여러 기관의 위치·생김새·기능과 관계, 관련 질병과 건강한 생활 실천."
+    },
+    "sources": [
+      {
+        "title": "NIDDK Your Digestive System & How it Works",
+        "url": "https://www.niddk.nih.gov/health-information/digestive-diseases/digestive-system-how-it-works",
+        "readRanges": [
+          [
+            477,
+            484
+          ]
+        ],
+        "verified": "작은창자의 소화·영양소 흡수, 큰창자의 물 흡수와 흡수된 물질의 운반. 지방의 림프 운반 등 상위 세부 내용은 새로 넣지 않음."
+      },
+      {
+        "title": "NIDDK The Urinary Tract & How It Works",
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/urinary-tract-how-it-works",
+        "readRanges": [
+          [
+            209,
+            231
+          ]
+        ],
+        "verified": "콩팥의 오줌 생성, 오줌관·방광·요도의 역할과 경로. 뒤의 성인 수분량 안내는 적용하지 않음."
+      },
+      {
+        "title": "NHLBI How the Heart Works",
+        "url": "https://www.nhlbi.nih.gov/health/heart",
+        "readRanges": [
+          [
+            93,
+            95
+          ]
+        ],
+        "verified": "심장의 펌프 역할과 혈액을 통한 산소·영양소·이산화탄소 운반."
+      },
+      {
+        "title": "NHLBI How the Lungs Work",
+        "url": "https://www.nhlbi.nih.gov/health/lungs",
+        "readRanges": [
+          [
+            94,
+            100
+          ]
+        ],
+        "verified": "공기에서 혈액으로 산소 이동, 혈액의 이산화탄소 배출, 기관·가로막과 호흡 운동."
+      },
+      {
+        "title": "NHLBI What the Heart Looks Like",
+        "url": "https://www.nhlbi.nih.gov/health/heart/anatomy",
+        "readRanges": [
+          [
+            93,
+            94
+          ]
+        ],
+        "verified": "가슴 가운데 폐 근처의 심장 위치와 색으로 구별한 혈액 흐름 도해의 성격. 도해 색을 실제 혈액 색으로 여기지 않도록 설명함."
+      },
+      {
+        "title": "CDC Healthy Habits: Coughing and Sneezing",
+        "url": "https://www.cdc.gov/hygiene/about/coughing-and-sneezing.html",
+        "readRanges": [
+          [
+            24,
+            55
+          ]
+        ],
+        "verified": "입·코를 가리고 손 대신 팔꿈치 쪽으로 기침하기, 손씻기로 전파 줄이기. 수업 원고에 새로운 치료 지침을 넣지 않음."
+      }
+    ],
+    "readOn": "2026-11-06",
+    "new3d": 0,
+    "imagesDownloaded": 0
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1632,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 96,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideTwentyUnitPass": {
+      "units": 12,
+      "questions": 1448,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To304": 889
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase304",
+  "releaseGatesUnchanged": true,
+  "mainMerged": false,
+  "deployed": false
+}

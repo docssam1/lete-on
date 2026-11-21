@@ -1,0 +1,21 @@
+// 수업용 가상 자료의 조건/해석 비교. 실제 생물 성장의 예측기나 학생 관찰 기록이 아니다.
+const freeze=o=>{if(o&&typeof o==='object'){Object.values(o).forEach(freeze);Object.freeze(o);}return o;};
+export const LIFE_DATA_NOTICE='수업용 가상 자료예요. 수치·기간은 실제 측정 결과나 생물 성장의 확정 예측이 아니에요. 실제 관찰은 여러 날 돌보며 따로 확인해요.';
+export const LIFE_PLANS=freeze({fair:'계획 1',mixed:'계획 2'});
+export const LIFE_JUDGMENTS=freeze({yes:'한 조건의 영향을 비교할 수 있다',no:'다른 조건도 달라 구별하기 어렵다',unknown:'조건을 더 확인하고 판단하겠다'});
+export const LIFE_EXPERIMENTS=freeze({
+ 'germ-water':{title:'싹트기 · 물',question:'강낭콩의 싹트기에 물이 미치는 영향은?',stage:'씨앗의 싹트기',same:'같은 종류·비슷한 상태의 씨앗을 각각 5개, 같은 용기·솜·기간·그 밖의 환경',heads:['묶음','물','온도'],fair:[['가','마른 솜','20 ℃'],['나','알맞게 적신 솜','20 ℃']],mixed:[['가','마른 솜','10 ℃'],['나','알맞게 적신 솜','25 ℃']],period:'5일 뒤',resultHeads:['묶음','가상 자료의 싹튼 씨앗 수'],fairResults:[['가',0],['나',4]],mixedResults:[['가',0],['나',4]],count:true,summary:'이 가상 자료에서는 알맞게 물을 준 나에서 더 많은 씨앗이 싹텄어요.',confound:'물과 온도가 함께 달라 물의 영향만 구별하기 어려워요.'},
+ 'germ-temp':{title:'싹트기 · 온도',question:'강낭콩의 싹트기에 온도가 미치는 영향은?',stage:'씨앗의 싹트기',same:'같은 종류·비슷한 상태의 씨앗을 각각 5개, 같은 용기·솜·기간·그 밖의 환경',heads:['묶음','온도','물'],fair:[['가','15 ℃','알맞게 적신 솜'],['나','25 ℃','알맞게 적신 솜']],mixed:[['가','15 ℃','마른 솜'],['나','25 ℃','알맞게 적신 솜']],period:'5일 뒤',resultHeads:['묶음','가상 자료의 싹튼 씨앗 수'],fairResults:[['가',2],['나',4]],mixedResults:[['가',0],['나',4]],count:true,summary:'이 가상 자료에서는 더 따뜻한 나에서 싹튼 수가 많았어요. 어떤 온도에서나 더 뜨거울수록 좋다는 뜻은 아니에요.',confound:'온도와 물이 함께 달라 온도의 영향만 구별하기 어려워요.'},
+ 'grow-water':{title:'자람 · 물',question:'싹튼 강낭콩이 자라는 데 물은 어떤 영향을 줄까요?',stage:'싹튼 뒤의 자람',same:'같은 종류·비슷한 처음 크기의 강낭콩, 같은 화분·흙·온도·기간·그 밖의 조건',heads:['화분','물','빛'],fair:[['가','주지 않음','같은 밝은 곳'],['나','알맞게 줌','같은 밝은 곳']],mixed:[['가','주지 않음','빛을 가린 곳'],['나','알맞게 줌','밝은 곳']],period:'3일 뒤',resultHeads:['화분','가상 자료의 모습'],fairResults:[['가','잎과 줄기가 축 처짐'],['나','잎과 줄기가 싱싱함']],mixedResults:[['가','잎과 줄기가 축 처짐'],['나','잎과 줄기가 싱싱함']],summary:'이 가상 자료에서는 물을 준 나가 싱싱했어요. 실제로 기를 때는 기간·중단 기준과 실험 뒤 돌봄을 선생님과 정해요.',confound:'물과 빛이 함께 달라 물의 영향만 구별하기 어려워요.'},
+ 'grow-light':{title:'자람 · 햇빛',question:'싹튼 강낭콩이 자라는 데 햇빛은 어떤 영향을 줄까요?',stage:'싹튼 뒤의 자람',same:'같은 종류·비슷한 처음 크기의 강낭콩, 같은 화분·흙·알맞은 물·기간·그 밖의 조건',heads:['화분','빛','온도'],fair:[['가','밝은 곳','20 ℃'],['나','통풍되는 가리개로 빛을 가림','20 ℃']],mixed:[['가','밝은 곳','20 ℃'],['나','가리개로 빛을 가림','30 ℃']],period:'7일 뒤',resultHeads:['화분','가상 줄기 길이','잎 색·줄기 모습'],fairResults:[['가','12 cm','초록색 잎·비교적 굵은 줄기'],['나','17 cm','옅은 잎색·가늘고 긴 줄기']],mixedResults:[['가','12 cm','초록색 잎·비교적 굵은 줄기'],['나','17 cm','옅은 잎색·가늘고 긴 줄기']],summary:'나의 줄기가 더 길지만 잎색은 옅고 줄기는 가늘어요. 키만으로 더 튼튼하게 자랐다고 정하지 않아요.',confound:'빛과 온도가 함께 달라 빛의 영향만 구별하기 어려워요.'}
+});
+export function germinationCount(n){if(n===null)return'미관찰';if(!Number.isInteger(n)||n<0||n>5)throw Error('가상 자료의 씨앗 수를 확인해 주세요.');return`${n}개`;}
+export function lifeMaterial(experiment,plan){const c=LIFE_EXPERIMENTS[experiment];if(!c||!Object.hasOwn(LIFE_PLANS,plan))throw Error('비교할 조건을 확인해 주세요.');const results=JSON.parse(JSON.stringify(plan==='fair'?c.fairResults:c.mixedResults));if(c.count)for(const r of results)r[1]=germinationCount(r[1]);return{experiment,plan,conditions:JSON.parse(JSON.stringify(c[plan])),period:c.period,resultHeads:[...c.resultHeads],results,comparable:plan==='fair',summary:plan==='fair'?c.summary:c.confound};}
+export function lifeCompareRecord(experiment,plan,judgment){if(!Object.hasOwn(LIFE_JUDGMENTS,judgment))throw Error('자료를 열기 전 내 판단을 골라 주세요.');return{kind:'한살이 가상 자료 비교',experiment,plan,judgment,material:lifeMaterial(experiment,plan)};}
+export function validLifeCompareRow(r){if(!r||r.kind!=='한살이 가상 자료 비교'||!Object.hasOwn(LIFE_JUDGMENTS,r.judgment))return false;try{return JSON.stringify(r.material)===JSON.stringify(lifeMaterial(r.experiment,r.plan));}catch{return false;}}
+export const lifeCompareValues=r=>[LIFE_EXPERIMENTS[r.experiment].title,`${LIFE_PLANS[r.plan]} / 내 판단: ${LIFE_JUDGMENTS[r.judgment]}`,`${r.material.results.map(x=>x.join(': ')).join(' / ')} / ${r.material.summary}`];
+export function lifeComparisonProgress(rows){
+ const done=new Set((Array.isArray(rows)?rows:[]).filter(validLifeCompareRow).map(r=>`${r.experiment}/${r.plan}`)).size;
+ const total=Object.keys(LIFE_EXPERIMENTS).length*Object.keys(LIFE_PLANS).length;
+ return{done,total,complete:done===total};
+}

@@ -1,8 +1,8 @@
 // 단원 id → 「어느 교육과정의 몇 학년 몇 학기 몇 단원」. 홈·시작 화면·수업 표지가 모두 이 한 곳에서 이름을 읽는다.
 // 같은 「4-2 Ⅳ」라도 2022 개정(c22-s42-u04 기후변화)과 2015 교재(s42-u04 화산과 지진)는 다른 단원이다.
 // 2022 자리 → 내용 id 는 curriculum-2022.js CONTENT 가 정한다. 3-1·4-1처럼 예전 id를 2022 내용으로 쓰는 단원도 있어서 2022를 먼저 찾는다.
-import { SEMS_2022, contentId2022 } from './curriculum-2022.js';
-import { SEMS } from './units-index.js';
+import { SEMS_2022, contentId2022 } from './curriculum-2022.js?v=20261104-career-class';
+import { SEMS } from './units-index.js?v=20261104-career-labels';
 
 const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
 const semText = (sem) => sem.replace('-', '학년 ') + '학기';

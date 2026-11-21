@@ -1,0 +1,60 @@
+{
+  "phase": 361,
+  "date": "2026-11-08",
+  "scope": "Select current bank renderers and print preparation handlers explicitly instead of inheriting stale unit exports.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "46ee83d981d7ffb8f2493b3bf23a2fb5377bba56",
+    "reviewCommit": "63cf8878456f6dc8bde2833ec873ea61a3dc3ce2"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "regressionBefore": {
+    "tests": 2,
+    "fail": 2,
+    "actualBrowserUsed": false
+  },
+  "validation": {
+    "phase": 361,
+    "all32BankClassroomWorkbookDataFilesByteEqual": 96,
+    "independentDataBaselinePhase": 359,
+    "all21BankPrintModesByteEqual": 84,
+    "staleInheritedRenderersBefore": 8,
+    "staleInheritedHandlersBefore": 11,
+    "staleInheritedRoutesBefore": 11,
+    "staleInheritedRoutesAfter": 0,
+    "allCurrentHandlersAndRenderersMatchFreshImports": 21,
+    "nativeRouteStoragePreparationCases": 12,
+    "syntaxFiles": 5,
+    "diffCheck": true,
+    "simulatedCacheOnly": true,
+    "actualBrowserUsed": false
+  },
+  "nativeSuite": {
+    "testFiles": 260,
+    "exitCode": 0,
+    "tests": 1415,
+    "suites": 0,
+    "pass": 1413,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "preservationPolicy": {
+    "allQuestionDataAndGradingContractsUnchanged": true,
+    "allExistingPrintHtmlByteEqual": true,
+    "noManuscriptsCssFiguresOrPaginationChanges": true,
+    "existingStudentStorageAssertionsRetained": true,
+    "threeRouteFixturesAlsoCountAllFourPreparationCalls": true
+  },
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

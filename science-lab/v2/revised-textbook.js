@@ -1,22 +1,122 @@
-// 승인된 다섯 교재만 연결한다. 기존 수업·보고서·문제은행 모듈은 그대로 둔다.
-import {withPrintedWorkbook} from './revised-learning-book.js?v=20261025';
-import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261025';
-export const revisedTextbookUnits = new Set(["c22-s32-u01", "c22-s32-u02", "s41-u01", "c22-s42-u01", "c22-s51-u03"]);
+import {reviewStudentWorkbook} from './student-language-review.js?v=20261117-student-language-review';
+import{GRADE4_WORKBOOK_DIRECTIONS_VERSION,GRADE4_WORKBOOK_DIRECTIONS_UNITS}from'../data/book/grade4-workbook-directions.js?v=20261115-grade4-workbook-directions';
+
+
+
+import {withObservedPhotoAlt} from '../data/book/observation-language.js?v=20261108-motion-photo-alt';
+
+import{ELEMENTARY_PROMPT_UNITS,ELEMENTARY_PROMPT_VERSION}from'../data/book/elementary-question-prompts.js?v=20261108-elementary-question-prompts';
+import {GRADE3_STUDY_NOTES_VERSION,GRADE3_STUDY_NOTE_UNITS} from '../data/book/grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
+
+
+
+
+
+
+
+
+import{GRADE3_PRACTICE_LANGUAGE_VERSION,GRADE3_PRACTICE_UNITS,SOUND_COMPARISON_VERSION}from'../data/book/c22-s32-practice-language.js?v=20261108-grade3-material-language&sound=20261115-sound-comparison-prompt';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import{TERM_PARTICLE_UNITS,TERM_PARTICLE_VERSION,GUIDANCE_PARTICLE_UNITS,GUIDANCE_PARTICLE_VERSION}from'../data/book/term-particle-language.js?v=20261105-guidance-particles';
+
+
+import{LEARNER_EXPLANATIONS_UNITS,LEARNER_EXPLANATIONS_VERSION}from'../data/book/learner-explanations.js';
+import{OBSERVATION_LANGUAGE_UNITS,OBSERVATION_LANGUAGE_VERSION}from'../data/book/observation-language.js';
+import {WORKBOOK_ANSWER_LANGUAGE_UNITS,WORKBOOK_ANSWER_LANGUAGE_VERSION} from '../data/book/workbook-answer-language.js';
+import {STUDENT_OPENING_UNITS,STUDENT_GUIDE_UNITS,STUDENT_GUIDE_VERSION,ACTIVITY_GUIDE_UNITS,ACTIVITY_GUIDE_VERSION} from '../data/book/student-opening-language.js?v=20261105-activity-guide';
+// 검수한 교재만 연결한다. 기존 수업·보고서·문제은행 모듈은 그대로 둔다.
+import {withPrintedWorkbook} from './revised-learning-book.js?v=20261108-learning-note-roles';
+import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js?v=20261108-experience-warmups';
+import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-opening-warmup-label';
+export const revisedTextbookUnits = new Set(["c22-s62-u04", "c22-s62-u03", "c22-s62-u02", "c22-s62-u01", "c22-s32-u01", "c22-s32-u02", "s41-u01", "c22-s42-u01", "c22-s51-u03", "s31-u01", "s31-u02", "s31-u03", "s31-u04", "c22-s42-u02", "c22-s32-u03", "c22-s32-u04", "c22-s42-u04", "s41-u02", "s41-u03", "s41-u04", "c22-s42-u03", "c22-s51-u01", "c22-s51-u02", "c22-s51-u04", "c22-s52-u01", "c22-s52-u02", "c22-s52-u03", "c22-s52-u04", "c22-s61-u01", "c22-s61-u02", "c22-s61-u03", "c22-s61-u04"]);
 const cache = new Map();
 async function data(unit) {
  if (!revisedTextbookUnits.has(unit)) return null;
+ const version=unit==='c22-s62-u04'?(await import("../data/book/career-workbook-context.js?v=20261116-career-workbook-context&temperatureCondition=20261116-career-temperature-condition")).CAREER_CONTEXT_VERSION:unit==='c22-s62-u03'?(await import("../data/book/electricity-workbook-context.js?v=20261116-electricity-workbook-context")).ELECTRICITY_CONTEXT_VERSION:unit==='c22-s62-u02'?(await import("../data/book/combustion-workbook-context.js?v=20261116-combustion-workbook-context")).COMBUSTION_CONTEXT_VERSION:unit==='c22-s62-u01'?(await import("../data/book/season-workbook-context.js?v=20261116-season-workbook-context")).SEASON_CONTEXT_VERSION:unit==='c22-s61-u04'?(await import("../data/book/earth-motion-workbook-context.js?v=20261116-earth-motion-workbook-context")).EARTH_MOTION_CONTEXT_VERSION:unit==='c22-s61-u03'?(await import("../data/book/plant-workbook-context.js?v=20261116-plant-workbook-context")).PLANT_CONTEXT_VERSION:unit==='c22-s61-u02'?(await import("../data/book/motion-workbook-context.js?v=20261116-motion-workbook-context")).MOTION_CONTEXT_VERSION:unit==='c22-s61-u01'?(await import("../data/book/acid-workbook-context.js?v=20261116-acid-workbook-context")).ACID_CONTEXT_VERSION:unit==='c22-s52-u04'?(await import("../data/book/energy-workbook-context.js?v=20261116-energy-workbook-context")).ENERGY_CONTEXT_VERSION:unit==='c22-s52-u02'?(await import("../data/book/heat-workbook-context.js?v=20261116-heat-workbook-context")).HEAT_CONTEXT_VERSION:unit==='c22-s52-u03'?(await import("../data/book/weather-workbook-context.js?v=20261116-weather-workbook-context")).WEATHER_CONTEXT_VERSION:unit==='c22-s52-u01'?(await import("../data/book/mixture-workbook-context.js?v=20261116-mixture-workbook-context")).MIXTURE_CONTEXT_VERSION:unit==='c22-s51-u04'?(await import("../data/book/body-workbook-context.js?v=20261115-body-workbook-context")).BODY_CONTEXT_VERSION:unit==='c22-s51-u03'?(await import("../data/book/solution-workbook-context.js?v=20261115-solution-workbook-context")).SOLUTION_CONTEXT_VERSION:unit==='c22-s51-u02'?(await import("../data/book/light-workbook-context.js?v=20261115-light-workbook-context")).LIGHT_CONTEXT_VERSION:unit==='c22-s51-u01'?(await import("../data/book/geology-response-review.js?v=20261115-geology-response-review")).GEOLOGY_RESPONSE_VERSION:unit==='c22-s42-u04'?(await import("../data/book/climate-workbook-context.js?v=20261115-climate-workbook-context")).CLIMATE_CONTEXT_VERSION:unit==='c22-s42-u03'?(await import("../data/book/gas-photo-context.js?v=20261115-gas-photo-context")).GAS_PHOTO_VERSION:unit==='c22-s42-u01'?(await import("../data/book/sky-response-review.js?v=20261115-sky-response-review")).SKY_RESPONSE_VERSION:unit==='c22-s42-u02'?(await import("../data/book/ecology-material-context.js?v=20261115-ecology-food-web-material")).ECOLOGY_MATERIAL_VERSION:GRADE4_WORKBOOK_DIRECTIONS_UNITS.includes(unit)?GRADE4_WORKBOOK_DIRECTIONS_VERSION:unit==='c22-s32-u04'?(await import("../data/book/infection-workbook-directions.js?v=20261115-infection-workbook-directions")).INFECTION_WORKBOOK_DIRECTIONS_VERSION:unit==='c22-s32-u03'?(await import("../data/book/sound-workbook-directions.js?v=20261115-sound-workbook-directions")).SOUND_WORKBOOK_DIRECTIONS_VERSION:unit==='c22-s32-u02'?(await import("../data/book/earth-sea-workbook-directions.js?v=20261115-earth-sea-workbook-directions")).EARTH_SEA_WORKBOOK_DIRECTIONS_VERSION:["c22-s62-u04", "c22-s62-u03", "c22-s62-u01", "c22-s51-u04", "c22-s61-u02", "c22-s61-u03"].includes(unit)?'20261115-representation-response-review':["c22-s32-u01", "c22-s32-u02", "c22-s42-u01", "c22-s42-u02", "c22-s32-u03", "s41-u03", "s41-u04", "c22-s51-u01"].includes(unit)?'20261115-material-reading-criteria':["c22-s62-u04", "c22-s62-u02", "c22-s62-u01", "c22-s61-u01", "c22-s61-u02", "c22-s61-u03", "c22-s61-u04"].includes(unit)?'20261115-grade6-question-review':["c22-s51-u03", "c22-s51-u04", "c22-s52-u01", "c22-s52-u02", "c22-s52-u03", "c22-s52-u04"].includes(unit)?'20261115-grade5-question-review':['c22-s42-u02','s41-u04','c22-s42-u03'].includes(unit)?'20261115-grade4-question-review':['c22-s32-u01','s31-u02','s31-u03'].includes(unit)?'20261115-grade3-concrete-examples':["c22-s51-u02", "c22-s52-u01", "c22-s52-u02", "c22-s52-u03", "c22-s52-u04", "c22-s61-u01"].includes(unit)?'20261115-reviewed-answer-criteria':['c22-s52-u03','c22-s42-u03'].includes(unit)?'20261115-drawing-answer-criteria':unit==='c22-s62-u01'?'20261115-season-comparison-conditions':unit==='s41-u04'?'20261115-biology-peer-opinions':['c22-s51-u01','c22-s42-u03'].includes(unit)?'20261115-drawing-task-directions':unit==='c22-s62-u03'?'20261115-battery-polarity-card':unit==='c22-s42-u04'?'20261115-climate-material-reference':unit==='c22-s42-u01'?'20261115-night-moon-time-reference':['c22-s61-u02','c22-s62-u03'].includes(unit)?'20261115-motion-electricity-reference':unit==='c22-s32-u02'?'20261115-earth-surface-photo':unit==='s41-u03'?'20261115-volcano-reference-context':['c22-s62-u02','c22-s61-u01'].includes(unit)?'20261115-material-observation-context':unit==='c22-s51-u01'?'20261115-geology-observation-context':unit==='s41-u04'?'20261115-biology-comparison-photos':unit==='c22-s62-u01'?'20261115-observation-question-context':unit==='c22-s62-u04'?'20261115-standalone-question-context':unit==='c22-s61-u01'?(await import("../data/book/c22-s61-u01.editorial.js?v=20261108-acid-further-reading")).ACID_FURTHER_READING_VERSION:ELEMENTARY_PROMPT_UNITS.includes(unit)?ELEMENTARY_PROMPT_VERSION:GRADE6_STUDY_NOTE_UNITS.includes(unit)?GRADE6_STUDY_NOTES_VERSION:GRADE5_STUDY_NOTE_UNITS.includes(unit)?GRADE5_STUDY_NOTES_VERSION:GRADE4_STUDY_NOTE_UNITS.includes(unit)?GRADE4_STUDY_NOTES_VERSION:['c22-s32-u04','c22-s42-u04'].includes(unit)?'20261108-reviewed-workbook-source':GRADE3_STUDY_NOTE_UNITS.includes(unit)?GRADE3_STUDY_NOTES_VERSION:unit==='s31-u01'?(await import("../data/book/s31-u01.elementary.js?v=20261108-force-elementary")).FORCE_ELEMENTARY_VERSION:unit==='s31-u04'?(await import("../data/book/s31-u04.elementary.js?v=20261108-life-elementary")).LIFE_ELEMENTARY_VERSION:['s31-u02','s31-u03'].includes(unit)?(await import("../data/book/s31-living-practice-directions.js?v=20261108-grade3-living-directions")).GRADE3_LIVING_DIRECTIONS_VERSION:unit==='c22-s42-u02'?(await import("../data/book/c22-s42-u02.elementary.js?v=20261108-ecology-elementary")).ECOLOGY_ELEMENTARY_VERSION:unit==='c22-s42-u03'?(await import("../data/book/c22-s42-u03.editorial.js?v=20261108-gas-workbook-links")).GAS_WORKBOOK_LINK_VERSION:unit==='s41-u03'?(await import("../data/book/s41-u03.elementary.js?v=20261108-land-elementary")).LAND_ELEMENTARY_VERSION:unit==='s41-u02'?(await import("../data/book/s41-u02.elementary.js?v=20261108-water-elementary")).WATER_ELEMENTARY_VERSION:unit==='s41-u01'?(await import("../data/book/s41-u01.elementary.js?v=20261108-magnet-elementary")).MAGNET_ELEMENTARY_VERSION:GRADE3_PRACTICE_UNITS.includes(unit)?GRADE3_PRACTICE_LANGUAGE_VERSION:unit==='c22-s32-u02'?(await import("../data/book/c22-s32-u02.elementary.js?v=20261108-earth-sea-elementary")).EARTH_SEA_ELEMENTARY_VERSION:unit==='c22-s62-u04'?(await import("../data/book/c22-s62-u04.editorial.js?v=20261107-career-readable-workbook")).CAREER_READABILITY_VERSION:unit==='c22-s62-u03'?(await import("../data/book/c22-s62-u03.editorial.js?v=20261106-electricity-readable-workbook")).ELECTRICITY_READABILITY_VERSION:unit==='c22-s62-u02'?(await import("../data/book/c22-s62-u02.editorial.js?v=20261106-combustion-readable-workbook")).COMBUSTION_READABILITY_VERSION:unit==='c22-s62-u01'?(await import("../data/book/c22-s62-u01.editorial.js?v=20261106-season-readable-workbook")).SEASON_READABILITY_VERSION:unit==='c22-s61-u04'?(await import("../data/book/c22-s61-u04.editorial.js?v=20261106-earth-motion-readable-workbook")).EARTH_MOTION_READABILITY_VERSION:unit==='c22-s61-u03'?(await import("../data/book/c22-s61-u03.editorial.js?v=20261106-plant-structure-readable-workbook")).PLANT_STRUCTURE_READABILITY_VERSION:unit==='c22-s61-u02'?(await import("../data/book/c22-s61-u02.editorial.js?v=20261106-motion-readable-workbook")).MOTION_READABILITY_VERSION:unit==='c22-s61-u01'?(await import("../data/book/c22-s61-u01.editorial.js?v=20261106-acid-readable-workbook")).ACID_READABILITY_VERSION:unit==='c22-s52-u04'?(await import("../data/book/c22-s52-u04.editorial.js?v=20261106-energy-readable-workbook")).ENERGY_READABILITY_VERSION:unit==='c22-s52-u03'?(await import("../data/book/c22-s52-u03.editorial.js?v=20261106-weather-readable-workbook")).WEATHER_READABILITY_VERSION:unit==='c22-s52-u02'?(await import("../data/book/c22-s52-u02.editorial.js?v=20261106-heat-readable-workbook")).HEAT_READABILITY_VERSION:unit==='c22-s52-u01'?(await import("../data/book/c22-s52-u01.editorial.js?v=20261106-mixture-readable-workbook")).MIXTURE_READABILITY_VERSION:unit==='c22-s51-u04'?(await import("../data/book/c22-s51-u04.editorial.js?v=20261106-body-readable-workbook")).BODY_READABILITY_VERSION:unit==='c22-s51-u03'?(await import("../data/book/c22-s51-u03.rail-notes.js?v=20261106-solution-readable-workbook")).SOLUTION_READABILITY_VERSION:unit==='c22-s51-u02'?(await import("../data/book/c22-s51-u02.editorial.js?v=20261106-light-readable-workbook")).LIGHT_READABILITY_VERSION:unit==='c22-s51-u01'?(await import("../data/book/c22-s51-u01.editorial.js?v=20261106-geology-readable-workbook")).GEOLOGY_READABILITY_VERSION:unit==='c22-s42-u04'?(await import("../data/book/c22-s42-u04.rail-notes.js?v=20261106-climate-readable-workbook")).CLIMATE_READABILITY_VERSION:unit==='c22-s42-u03'?(await import("../data/book/c22-s42-u03.editorial.js?v=20261106-gas-readable-workbook")).GAS_READABILITY_VERSION:unit==='c22-s42-u02'?(await import("../data/book/c22-s42-u02.editorial.js?v=20261106-ecology-readable-workbook")).ECOLOGY_READABILITY_VERSION:unit==='c22-s42-u01'?(await import("../data/book/c22-s42-u01.rail-notes.js?v=20261106-sky-readable-workbook")).SKY_READABILITY_VERSION:unit==='s41-u04'?(await import("../data/book/s41-u04.editorial.js?v=20261108-elementary-starter-reading")).BIOLOGY_STARTER_VERSION:unit==='s41-u03'?(await import("../data/book/s41-u03.editorial.js?v=20261105-land-learner-reasoning")).LAND_REASONING_VERSION:unit==='s41-u02'?(await import("../data/book/s41-u02.editorial.js?v=20261105-water-learner-reasoning")).WATER_REASONING_VERSION:unit==='s41-u01'?(await import("../data/book/s41-u01.rail-notes.js?v=20261105-magnet-learner-reasoning")).MAGNET_REASONING_VERSION:unit==='c22-s32-u04'?(await import("../data/book/c22-s32-u04.rail-notes.js?v=20261105-infection-learner-reasoning")).INFECTION_REASONING_VERSION:unit==='c22-s32-u03'?(await import("../data/book/c22-s32-u03.rail-notes.js?v=20261105-sound-learner-reasoning")).SOUND_REASONING_VERSION:unit==='c22-s32-u02'?(await import("../data/book/c22-s32-u02.rail-notes.js?v=20261105-earth-sea-learner-reasoning")).EARTH_SEA_REASONING_VERSION:unit==='c22-s32-u01'?(await import("../data/book/c22-s32-u01.rail-notes.js?v=20261105-material-learner-reasoning")).MATERIAL_REASONING_VERSION:unit==='s31-u03'?(await import("../data/book/learner-explanations.js?v=20261105-plant-observation-questions")).PLANT_QUESTION_VERSION:unit==='s31-u02'?(await import("../data/book/learner-explanations.js?v=20261105-animal-question-language")).ANIMAL_QUESTION_VERSION:unit==='s31-u01'?(await import("../data/book/force-workbook-guidance.js?v=20261105-force-life-learner-reasoning")).FORCE_OBSERVATION_VERSION:unit==='s31-u04'?(await import("../data/book/learner-explanations.js?v=20261105-force-life-learner-reasoning")).LIFE_LEARNER_VERSION:unit==='c22-s32-u01'?(await import("../data/book/c22-s32-u01.rail-notes.js?v=20261105-material-water-photo-language")).MATERIAL_PHOTO_VERSION:unit==='s41-u02'?(await import("../data/book/s41-u02.editorial.js?v=20261105-material-water-photo-language")).WATER_PHOTO_VERSION:unit==='c22-s32-u03'?(await import("../data/book/c22-s32-u03.rail-notes.js?v=20261105-sound-motion-photo-language")).SOUND_PHOTO_VERSION:unit==='c22-s61-u02'?(await import("../data/book/c22-s61-u02.editorial.js?v=20261105-sound-motion-photo-language")).MOTION_PHOTO_VERSION:unit==='s41-u03'?(await import("../data/book/s41-u03.editorial.js?v=20261105-land-photo-language")).LAND_PHOTO_VERSION:unit==='c22-s42-u02'?(await import("../data/book/c22-s42-u02.workbook-art.js?v=20261105-ecology-photo-language")).ECOLOGY_PHOTO_VERSION:unit==='c22-s51-u02'?(await import("../data/book/c22-s51-u02.editorial.js?v=20261105-light-picture-guide")).LIGHT_PICTURE_VERSION:unit==='c22-s62-u04'?(await import("../data/book/c22-s62-u04.editorial.js?v=20261105-career-reading-science")).CAREER_READING_VERSION:ACTIVITY_GUIDE_UNITS.includes(unit)?ACTIVITY_GUIDE_VERSION:unit==='c22-s52-u03'?(await import("../data/book/c22-s52-u03.editorial.js?v=20261105-weather-photo-labels")).WEATHER_PHOTO_VERSION:unit==='c22-s62-u01'?(await import("../data/book/c22-s62-u01.editorial.js?v=20261105-season-concept-language")).SEASON_CONCEPT_VERSION:unit==='c22-s51-u04'?(await import("../data/book/c22-s51-u04.editorial.js?v=20261105-body-upper-progression")).BODY_UPPER_VERSION:unit==='c22-s32-u04'?(await import("../data/book/c22-s32-u04.rail-notes.js?v=20261105-infection-upper-science")).INFECTION_UPPER_VERSION:unit==='c22-s42-u04'?(await import("../data/book/c22-s42-u04.rail-notes.js?v=20261105-climate-upper-science")).CLIMATE_UPPER_VERSION:unit==='s41-u02'?(await import("../data/book/s41-u02.editorial.js?v=20261105-water-upper-science")).WATER_UPPER_VERSION:unit==='c22-s32-u03'?(await import("../data/book/c22-s32-u03.rail-notes.js?v=20261105-sound-upper-science")).SOUND_UPPER_VERSION:unit==='c22-s42-u03'?(await import("../data/book/c22-s42-u03.editorial.js?v=20261105-gas-upper-science")).GAS_UPPER_VERSION:unit==='s41-u03'?(await import("../data/book/s41-u03.editorial.js?v=20261105-land-upper-science")).LAND_UPPER_VERSION:STUDENT_GUIDE_UNITS.includes(unit)?STUDENT_GUIDE_VERSION:unit==='s41-u04'?(await import("../data/book/biology-student-language.js?v=20261105-biology-criteria")).BIOLOGY_CRITERIA_VERSION:GUIDANCE_PARTICLE_UNITS.includes(unit)?GUIDANCE_PARTICLE_VERSION:TERM_PARTICLE_UNITS.includes(unit)?TERM_PARTICLE_VERSION:unit==='s31-u01'?(await import("../data/book/force-workbook-guidance.js")).FORCE_GUIDANCE_VERSION:LEARNER_EXPLANATIONS_UNITS.includes(unit)?LEARNER_EXPLANATIONS_VERSION:OBSERVATION_LANGUAGE_UNITS.includes(unit)?OBSERVATION_LANGUAGE_VERSION:WORKBOOK_ANSWER_LANGUAGE_UNITS.includes(unit)?WORKBOOK_ANSWER_LANGUAGE_VERSION:unit==='c22-s61-u01'?'20261105-acid-student-language':unit==='s41-u04'?'20261105-biology-question-language':(unit==='c22-s32-u01'||unit==='c22-s32-u02')?'20261105-material-earth-student-language':(unit==='s41-u01'||unit==='c22-s42-u01')?'20261105-magnet-sky-student-language':unit==='c22-s51-u03'?'20261105-solution-student-language':(unit==='s41-u01'||unit==='c22-s42-u01')?'20261105-magnet-night-body-language':(unit==='c22-s32-u01'||unit==='c22-s32-u02')?'20261105-material-earth-body-language':unit==='c22-s51-u03'?'20261105-solution-body-language':(unit==='c22-s32-u02'||unit==='c22-s51-u03')?'20261105-earth-solution-rails':(unit==='c22-s32-u01'||unit==='s41-u01')?'20261105-material-magnet-rails':unit==='c22-s42-u01'?'20261105-night-sky-rails':STUDENT_OPENING_UNITS.includes(unit)?'20261105-student-opening':unit==='c22-s62-u04'?'20261104-student-science-language':unit==='c22-s62-u03'?'20261104-student-science-language':unit==='c22-s62-u02'?'20261104-combustion-book':unit==='c22-s62-u01'?'20261104-season-book':unit==='c22-s61-u04'?'20261104-earth-motion-questions':unit==='c22-s61-u03'?'20261104-earth-motion-book':unit==='c22-s61-u02'?'20261104-motion-book':unit==='c22-s61-u01'?'20261104-acid-book':unit==='c22-s52-u04'?'20261104-acid-book':unit==='c22-s52-u03'?'20261104-weather-book':unit==='c22-s52-u02'?'20261104-heat-book':unit==='c22-s52-u01'?'20261104-mixture-book':unit==='c22-s51-u04'?'20261104-body-book':unit==='c22-s51-u02'?'20261105-light-student-language':unit==='c22-s51-u01'?'20261105-geology-student-language':unit==='c22-s42-u03'?'20261104-gas-book':unit==='s41-u04'?'20261104-biology-student-language':unit==='s41-u03'?'20261103-land-book':unit==='s41-u02'?'20261103-water-book':unit==='c22-s42-u04'?'20261103-climate':'20261102';
  if (!cache.has(unit)) cache.set(unit, Promise.all([
-  import(`../data/book/${unit}.workbook.js?v=20261025`),
-  import(`../data/book/${unit}.workbook-art.js?v=20261025`),
- ]).then(([{workbook}, {art}])=>({workbook,art})));
+  import(`../data/book/${unit}.workbook.js?v=${version}${['c22-s52-u04','c22-s61-u04'].includes(unit)?'&railNotes=20261116-upper-notes':''}${unit==='c22-s32-u04'?'&infectionWordAnswer=20261116-infection-word-answer-and-count':''}${unit==='c22-s32-u02'?'&earthSeaFeedback=20261116-earth-sea-workbook-feedback':''}${unit==='c22-s62-u04'?'&temperatureCondition=20261116-career-temperature-condition':''}`),
+  import(`../data/book/${unit}.workbook-art.js?v=${version}`),
+ ]).then(async ([{workbook}, {art}])=>({workbook:await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),art})));
  return cache.get(unit);
 }
 export async function revisedTextbook(unit, mod) {
  const d=await data(unit); if(!d)return mod;
  const {chapter}=mod;
  const merged=withPrintedWorkbook({...mod,art:{...mod.art,...d.art},chapter:{...chapter,thinkWorkbook:true,editorial:false}},d.workbook);
- return {...merged,chapter:{...merged.chapter,revisedCurriculumWorkbook:true,workbookRoute:'workbook'}};
+ return {...merged,chapter:{...merged.chapter,revisedCurriculumWorkbook:true,workbookRoute:'workbook',...(unit==='c22-s61-u01'?{startNote:'지시약으로 용액을 분류하고 성질과 혼합 변화를 알아보아요. 생활 속 이용과 산성화의 환경 피해를 조사해 소개해요.'}:{})}};
 }
 export async function revisedTextbookPaper(unit) {
  const d=await data(unit);return d?makeWorkbookPaper(d.workbook,d.art):null;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import{GRADE4_STUDY_NOTE_UNITS,GRADE4_STUDY_NOTES_VERSION}from'../data/book/grade4-study-notes.js?v=20261108-grade4-study-notes';
+
+import{GRADE5_STUDY_NOTE_UNITS,GRADE5_STUDY_NOTES_VERSION}from'../data/book/grade5-study-notes.js?v=20261108-grade5-study-notes';
+
+import{GRADE6_STUDY_NOTE_UNITS,GRADE6_STUDY_NOTES_VERSION}from'../data/book/grade6-study-notes.js?v=20261108-grade6-study-notes';

@@ -1,0 +1,206 @@
+{
+  "phase": 241,
+  "date": "2026-11-05",
+  "baseCommit": "8185b0a879f891905dea958a6d83331e4a0bb285",
+  "unit": "s41-u04",
+  "scope": "41 workbook question presentations:35 topics,12 prompts,3 choice arrays and1 parts array;28 current online presentations including2 think items. Counts overlap.",
+  "changes": [
+    "Use features and habitats as the observation objective rather than a compressed classification label. Sorting existing organisms into supplied groups remains a way of organizing the given facts, without adding five-kingdom classification as a required outcome.",
+    "Explain biological pesticide use in familiar words while preserving the answer term 생물 농약.",
+    "Ask the protist cloze through named examples instead of the vague simple-organism definition; unify 생명과학 spacing.",
+    "Clarify the 전달 대상 short answer as a blank without altering its accepted answer."
+  ],
+  "changedFieldCounts": {
+    "topic": 35,
+    "prompt": 12,
+    "choices": 3,
+    "given": 0,
+    "parts": 1
+  },
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 31,
+    "questionsWithSameAnswersCriteriaExplanationsAndContracts": 3080,
+    "units": [
+      {
+        "unit": "s41-u04",
+        "workbookQuestionNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          16,
+          17,
+          19,
+          23,
+          26,
+          28,
+          34,
+          47,
+          48,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          76,
+          79
+        ],
+        "figureKeys": [],
+        "allOtherDataAndGeneratedSourcePreserved": true
+      }
+    ],
+    "runtimeVersioned": {
+      "s41-u04": [
+        "s41-u04-b22",
+        "s41-u04-b33",
+        "s41-u04-b34",
+        "s41-u04-b35",
+        "s41-u04-b36",
+        "s41-u04-b37",
+        "s41-u04-b38",
+        "s41-u04-b39",
+        "s41-u04-b40",
+        "s41-u04-b41",
+        "s41-u04-b42",
+        "s41-u04-b43",
+        "s41-u04-b44",
+        "s41-u04-b45",
+        "s41-u04-b46",
+        "s41-u04-b47",
+        "s41-u04-b48",
+        "s41-u04-b55",
+        "s41-u04-b57",
+        "s41-u04-b58",
+        "s41-u04-b59",
+        "s41-u04-b60",
+        "s41-u04-b61",
+        "s41-u04-b62",
+        "s41-u04-b63",
+        "s41-u04-b64",
+        "s41-u04-t03",
+        "s41-u04-t11"
+      ]
+    },
+    "allPageDataWritingSpaceFigureTagsAttributesAndNumericValuesPreserved": true,
+    "productsChanged": [
+      {
+        "unit": "s41-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "answers"
+      }
+    ],
+    "productsUnchanged": 125,
+    "slideArraysChanged": [
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "slides": 53
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "slides": 54
+      }
+    ],
+    "slideArraysUnchanged": 62,
+    "htmlChecks": [
+      {
+        "unit": "s41-u04",
+        "mode": "student",
+        "matchedPrompts": 41
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teacher",
+        "matchedPrompts": 41
+      }
+    ],
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/data/book/s41-u04.thinking-lesson.js",
+      "science-lab/data/book/s41-u04.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-biology-lesson.test.mjs",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "productionAudit": {
+    "units": [
+      {
+        "unit": "s41-u04",
+        "productionLoaderExecuted": true,
+        "baseItems": 64,
+        "loadedItems": 76,
+        "versioned": 28,
+        "source": 75,
+        "similar": 75,
+        "classroomChecks": 25,
+        "currentClassroomChecks": 8,
+        "poolAndChecksAgree": true
+      }
+    ],
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "tests": {
+    "total": 825,
+    "pass": 823,
+    "fail": 0,
+    "existingBrowserSkips": 2,
+    "newTests": 2,
+    "purpose": "Source/similar identity; unchanged answer contracts across all changed single/multi/short/written/cloze forms; cloze accepted/blank/known-wrong/unknown-review boundaries; complete old presentations and choice text/restart history.",
+    "threeDRuntimeExecuted": false
+  },
+  "sourceBasis": {
+    "title": "교육부2022-33 별책9 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+    "localText": "Previously verified curriculum-standards/science-curriculum.txt:4과12-01~03 and considerations",
+    "scope": "Observe fungi/protists/bacteria and explain features/habitats; research/present influences on daily life; create/share material introducing life-science uses. Bacteria via photographs/videos; uses at everyday-life level."
+  },
+  "editorialConnection": "Outer workbook presentation editor; current authored and think adapter used by actual unit loader and existing classroom pool. Original/source/similar banks and existing lesson plan/lab/report implementation remain unchanged.",
+  "cacheVersion": "20261105-biology-question-language",
+  "remaining": "Teacher explanation/rubric wording and curriculum suitability of vocabulary-only short questions, wider units and embedded image text as needed, actual PC/mobile/A4/audio/WebGL/mandatory3D gate, v1 consistency and main integration/deployment. Browser reauthorization response remains unobserved; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "evidence": "science-question-review/phase241:32 workbook/128 product/64 slide snapshots; actual unit loader in VM with zero storage/network;4 generated HTML fragments; nested-li-aware HTML parsing verifies changed prompts/choices/parts in each question. Initial regex verifier stopped at the first inner choice li and was corrected in QA only."
+}

@@ -1,0 +1,170 @@
+{
+  "phase": 230,
+  "date": "2026-11-05",
+  "baseCommit": "c5befd7c72a5de6390b85ae32834c40e2d45b52e",
+  "scope": "Related-standard links for the current acid workbook and classroom question adapter; no question-content or grading revision.",
+  "curriculumSource": "Education Ministry 2022-33 Annex 9, existing verified local HWP text",
+  "coverageAudit": {
+    "units": 32,
+    "questions": 3080,
+    "officialSections": 32,
+    "issues": [],
+    "allUnitsHaveEightResponseFormats": true,
+    "limitation": "Code existence, unit-title correspondence and referenced standard coverage only; this does not prove semantic accuracy of every question or classroom execution."
+  },
+  "schemaCorrection": "Initial reader omitted taxonomy.standard and falsely flagged 351 links. The corrected reader checks singular and plural standard fields at both actual locations. Only the acid workbook lacked links; its runtime links already existed.",
+  "changes": [
+    {
+      "no": 3,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 68,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 81,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 84,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 85,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 86,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 99,
+      "before": "6과09-04",
+      "after": [
+        "6과09-02",
+        "6과09-04"
+      ]
+    },
+    {
+      "no": 100,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 105,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01",
+        "6과09-02"
+      ]
+    },
+    {
+      "no": 121,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01"
+      ]
+    },
+    {
+      "no": 125,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01",
+        "6과09-02",
+        "6과09-03",
+        "6과09-04"
+      ]
+    },
+    {
+      "no": 127,
+      "before": "6과09-02",
+      "after": [
+        "6과09-01",
+        "6과09-02",
+        "6과09-03",
+        "6과09-04"
+      ]
+    }
+  ],
+  "preservation": {
+    "workbookQuestions": 128,
+    "runtimeQuestions": 128,
+    "allContentUnchangedExceptStandardFields": true,
+    "workbookPagesAndFiguresUnchanged": true,
+    "answersVersionsHistoryDiagnosticRulesUnchanged": true
+  },
+  "tests": {
+    "v1": {
+      "pass": 40,
+      "fail": 0
+    },
+    "v2": {
+      "pass": 812,
+      "fail": 0,
+      "skippedExistingBrowserChecks": 2
+    },
+    "bank": {
+      "pass": 299,
+      "fail": 0
+    },
+    "threeDPlanOnly": {
+      "pass": 5,
+      "fail": 0,
+      "runtimeVerified": false
+    },
+    "passedTotal": 1156
+  },
+  "snapshots": {
+    "baselineScienceFiles": 6334,
+    "unchangedScienceFiles": 6331,
+    "changedScienceFiles": [
+      "science-lab/data/book/c22-s61-u01.editorial.js",
+      "science-lab/v2/acid-question-language.js",
+      "science-lab/v2/revised-acid-lesson.test.mjs"
+    ],
+    "snapshotsUnchanged": {
+      "products": true,
+      "slides": true,
+      "career-items": true
+    }
+  },
+  "readonlyIntegrationAudit": {
+    "head": "c5befd7c72a5de6390b85ae32834c40e2d45b52e",
+    "upstream": "651c666c17739ddd1329038b6c4f91be1456fec4",
+    "proposedTree": "df9b673fc871ebb1d8fde8f0de5a9fbf006bb53b",
+    "conflicts": 0,
+    "overlappingPaths": [],
+    "actualMerge": false,
+    "note": "Pre-commit read-only proposal; final commit proposal is recorded in phase230 QA."
+  },
+  "browserAudioMobileWebGL": "Pending prior browser reauthorization; no browser/server run or circumvention.",
+  "status": {
+    "localVerified": true,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase230: curriculum-audit, baseline/current products and slides, acid-preservation, full test logs, readonly upstream audit."
+}

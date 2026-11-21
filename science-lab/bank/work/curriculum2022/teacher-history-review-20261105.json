@@ -1,0 +1,249 @@
+{
+  "phase": 246,
+  "date": "2026-11-05",
+  "baseCommit": "d8a2dbb36426c5ee6799df1610cf6fea54aafe74",
+  "scope": "Read back historical teacher-review questions and Daily revision grades using stored snapshots/version keys; replay choice-only deltas through later snapshots.",
+  "changes": [
+    "Prefer a stored question snapshot. Otherwise resolve explicit record/input-key versions, including numeric versions, and use version1 for unversioned legacy records. Recover stable IDs from existing item/Daily keys when needed.",
+    "If an explicit historical version cannot be resolved, do not substitute the current or a different old question. Keep the recorded response visible without fabricating an example answer.",
+    "Read history grades stored as either strings or status objects, falling back to the recorded first judgement.",
+    "Replay sparse old version deltas backward through later snapshots so a later prompt rewrite cannot leak into an earlier choice-only version."
+  ],
+  "preservation": {
+    "workbooksUnchanged": 32,
+    "allWorkbookQuestionsAndAnswersUnchanged": 3080,
+    "productsUnchanged": 128,
+    "slideArraysUnchanged": 64,
+    "runtimeUnitsUnchanged": 32,
+    "allCurrentBankItemsAndVersionsUnchanged": 3179,
+    "originalItemsUnchanged": 1512,
+    "similarItemsUnchanged": 1512,
+    "classroomItemsUnchanged": 1635,
+    "selectedCheckLinksUnchanged": 490,
+    "teacherHistoryAudit": {
+      "units": 32,
+      "currentPresentations": 3179,
+      "historicalPresentations": 580,
+      "fullPromptSnapshots": 578,
+      "choiceOnlyDeltas": 2,
+      "allPromptsMatched": true,
+      "studentStorageAccessed": false,
+      "browserVerified": false
+    },
+    "currentTeacherWriterExactlyUnchanged": true,
+    "dailyOutsideHistoryRenderingExactlyUnchanged": true,
+    "questionRevisionOutsideVersionResolverExactlyUnchanged": true,
+    "onlyExistingHeatTestBoundaryChanged": "Unknown explicit version with no snapshot is unavailable; unversioned legacy fallback remains covered.",
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/v2/check.js",
+      "science-lab/v2/daily.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/question-revision.js",
+      "science-lab/v2/question-revision.test.mjs",
+      "science-lab/v2/revised-heat-lesson.test.mjs",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "tests": {
+    "total": 836,
+    "pass": 834,
+    "fail": 0,
+    "existingBrowserSkips": 2,
+    "newTests": 4,
+    "purpose": "Snapshot/explicit/legacy/unknown/numeric teacher lookup; stable key recovery; actual history HTML and escaping with string/object grades; synthetic renderCheck teacher save/undo changes only its versioned key; real sparse sound-choice data plus a subsequent prompt revision replays old prompt/choices and archives them.",
+    "initialFindings": [
+      "The UI fixture initially recreated card objects on every query; it now returns the same synthetic nodes until a redraw. Product behavior was not changed for this fixture error.",
+      "The existing heat test expected a missing explicitly stamped current version to fall back to a supplied legacy question. It now asserts unavailable in that case while separately preserving the genuine unversioned legacy fallback. All other assertions remain unchanged.",
+      "The whole-bank audit identified two previousVersions entries that contain choices only. The audit treats these as deltas, and the resolver now uses the nearest later snapshot for fields that were unchanged at that time."
+    ],
+    "threeDRuntimeExecuted": false
+  },
+  "teacherHistoryAudit": {
+    "summary": {
+      "units": 32,
+      "currentPresentations": 3179,
+      "historicalPresentations": 580,
+      "fullPromptSnapshots": 578,
+      "choiceOnlyDeltas": 2,
+      "allPromptsMatched": true,
+      "studentStorageAccessed": false,
+      "browserVerified": false
+    },
+    "units": [
+      {
+        "unit": "c22-s62-u04",
+        "current": 128,
+        "historical": 113
+      },
+      {
+        "unit": "c22-s62-u03",
+        "current": 186,
+        "historical": 121
+      },
+      {
+        "unit": "c22-s62-u02",
+        "current": 198,
+        "historical": 38
+      },
+      {
+        "unit": "c22-s62-u01",
+        "current": 198,
+        "historical": 76
+      },
+      {
+        "unit": "c22-s32-u01",
+        "current": 76,
+        "historical": 15
+      },
+      {
+        "unit": "c22-s32-u02",
+        "current": 92,
+        "historical": 7
+      },
+      {
+        "unit": "s41-u01",
+        "current": 90,
+        "historical": 9
+      },
+      {
+        "unit": "c22-s42-u01",
+        "current": 92,
+        "historical": 7
+      },
+      {
+        "unit": "c22-s51-u03",
+        "current": 96,
+        "historical": 37
+      },
+      {
+        "unit": "s31-u01",
+        "current": 0,
+        "historical": 0
+      },
+      {
+        "unit": "s31-u02",
+        "current": 0,
+        "historical": 0
+      },
+      {
+        "unit": "s31-u03",
+        "current": 0,
+        "historical": 0
+      },
+      {
+        "unit": "s31-u04",
+        "current": 64,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s42-u02",
+        "current": 92,
+        "historical": 1
+      },
+      {
+        "unit": "c22-s32-u03",
+        "current": 76,
+        "historical": 3
+      },
+      {
+        "unit": "c22-s32-u04",
+        "current": 92,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s42-u04",
+        "current": 120,
+        "historical": 0
+      },
+      {
+        "unit": "s41-u02",
+        "current": 78,
+        "historical": 0
+      },
+      {
+        "unit": "s41-u03",
+        "current": 82,
+        "historical": 0
+      },
+      {
+        "unit": "s41-u04",
+        "current": 76,
+        "historical": 28
+      },
+      {
+        "unit": "c22-s42-u03",
+        "current": 96,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s51-u01",
+        "current": 96,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s51-u02",
+        "current": 80,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s51-u04",
+        "current": 96,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s52-u01",
+        "current": 96,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s52-u02",
+        "current": 104,
+        "historical": 2
+      },
+      {
+        "unit": "c22-s52-u03",
+        "current": 112,
+        "historical": 0
+      },
+      {
+        "unit": "c22-s52-u04",
+        "current": 112,
+        "historical": 1
+      },
+      {
+        "unit": "c22-s61-u01",
+        "current": 128,
+        "historical": 66
+      },
+      {
+        "unit": "c22-s61-u02",
+        "current": 128,
+        "historical": 38
+      },
+      {
+        "unit": "c22-s61-u03",
+        "current": 128,
+        "historical": 11
+      },
+      {
+        "unit": "c22-s61-u04",
+        "current": 167,
+        "historical": 7
+      }
+    ]
+  },
+  "dataFlow": "lookupRecordQuestion consumes saved snapshots/version stamps without writing records. Existing renderCheck writer remains byte-identical. The Daily component calls the exported pure revisionHistoryHtml; grading, input handlers, persistence and UI outside that block stay byte-identical except the resolver cache import.",
+  "cacheVersion": "20261105-history-review",
+  "historyScope": "Original paper composition is not inferred when absent. A stored snapshot is authoritative; a known version can be replayed from full snapshots/deltas. Unavailable versions show the existing response with no made-up current question or example answer.",
+  "remaining": "Other quality review and actual PC/mobile/A4/audio/WebGL/mandatory3D gate, v1 consistency and main integration/deployment. Prior browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "evidence": "science-question-review/phase246:32 native current-unit states,32 workbook/128 product/64 deck and all question data exact preservation; teacher lookup over3179 current and580 historical entries; synthetic-only teacher save/undo and grade HTML tests; final test log. No actual student storage was read."
+}

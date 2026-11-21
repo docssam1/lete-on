@@ -1,0 +1,212 @@
+{
+  "phase": 173,
+  "date": "2026-11-03",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "06b597fdbba3ee499137f2b35d775f166373b6a4",
+  "scope": "4-2 밤하늘 관찰 기본 수업·네 관찰 계획 비교·행성 모형·북쪽 별자리 연결",
+  "classroom": [
+    {
+      "unit": "c22-s42-u01",
+      "mode": "self",
+      "slides": 34,
+      "checks": 12,
+      "minutes": 80,
+      "allSelectedQuestionsExactlyPreserved": true
+    },
+    {
+      "unit": "c22-s42-u01",
+      "mode": "teach",
+      "slides": 35,
+      "checks": 12,
+      "minutes": 80,
+      "allSelectedQuestionsExactlyPreserved": true
+    }
+  ],
+  "curriculum": {
+    "document": "교육부2022-33 별책9 과학과 교육과정",
+    "localSourceSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "lines": [
+      653,
+      669
+    ],
+    "standards": [
+      "4과13-01",
+      "4과13-02",
+      "4과13-03"
+    ],
+    "checksPerStandard": 4,
+    "scope": [
+      "달 모양/표면·여러 날 관찰·미관찰과 제공 자료 구별",
+      "태양/행성 조사·실제 모형 제작·이름/순서·모형의 한계",
+      "별의 정의·북극성 주변 별자리·프로그램 설정과 실제 관찰 구별"
+    ],
+    "notBasicContent": [
+      "달 위상변화의 원인",
+      "행성 실제 크기/거리/질량/자전속도/대기성분의 구체적 물리량",
+      "계절별 별자리 연결"
+    ]
+  },
+  "comparison": {
+    "plans": 4,
+    "samePlanAsWorkbookPage6": true,
+    "a": "장소·시각·직접 관찰 종류를 맞춤",
+    "b": "저녁/새벽 시각 차이",
+    "c": "장소 차이",
+    "d": "예상 그림과 직접 관찰의 차이",
+    "requiresJudgmentBeforeReveal": true,
+    "initialJudgmentPreserved": true,
+    "allFourDistinctPlansForCompletion": true,
+    "noInventedMoonObservationResults": true,
+    "separateRowsKey": "skyCompareRows",
+    "originalMoonRowsAndActualSkyInquiryRecordsPreserved": true
+  },
+  "regressions": {
+    "otherClassroomSlideArraysUnchanged": 24,
+    "workbookProductsUnchanged": 52,
+    "protectedOriginalFilesUnchanged": 22,
+    "previousPdfHashesUnchanged": 12,
+    "currentRouteUnits": 11,
+    "rawBankItems": 80,
+    "thinkItems": 12,
+    "similarItems": 95,
+    "allSelectedQuestionObjectsPreserved": true,
+    "legacyDailyPaper": {
+      "legacyQuestions": 10,
+      "currentQuestions": 12,
+      "restoredSavedEntries": 10,
+      "readOnly": true,
+      "reason": "unbound",
+      "savedStateUnchanged": true,
+      "legacyIds": [
+        "c22-s42-u01-t06",
+        "c22-s42-u01-t08",
+        "c22-s42-u01-t09",
+        "c22-s42-u01-b33",
+        "c22-s42-u01-b61",
+        "c22-s42-u01-t12",
+        "c22-s42-u01-t07",
+        "c22-s42-u01-t10",
+        "c22-s42-u01-b66",
+        "c22-s42-u01-t11"
+      ],
+      "currentIds": [
+        "c22-s42-u01-b04",
+        "c22-s42-u01-b16",
+        "c22-s42-u01-b21",
+        "c22-s42-u01-b30",
+        "c22-s42-u01-b32",
+        "c22-s42-u01-b44",
+        "c22-s42-u01-b52",
+        "c22-s42-u01-b60",
+        "c22-s42-u01-b61",
+        "c22-s42-u01-t04",
+        "c22-s42-u01-b73",
+        "c22-s42-u01-b75"
+      ]
+    }
+  },
+  "sources": [
+    {
+      "url": "https://science.nasa.gov/moon/viewing-tips/",
+      "checked": "달의 반사광·명암/지형·여러 날/모양 관찰. 위상 원인은 기본 수업에 넣지 않음"
+    },
+    {
+      "url": "https://science.nasa.gov/solar-system/planets/",
+      "checked": "여덟 행성의 이름/순서·제공 카드의 보이는 대표 특징. 구체적 물리량 제외"
+    },
+    {
+      "url": "https://science.nasa.gov/solar-system/what-is-the-north-star-and-how-do-you-find-it/",
+      "checked": "북극성은 가장 밝은 별이 아니며 북쪽 길잡이. 북두칠성 국자 끝 두 별의 연장 방향 확인"
+    },
+    {
+      "url": "https://science.nasa.gov/eclipses/safety/",
+      "checked": "직접 태양 응시/비필터 광학기기 위험. 본 수업은 교사 선정 사진/영상으로만 태양을 살핌"
+    }
+  ],
+  "images": {
+    "reusedAssets": [
+      {
+        "file": "science-lab/assets/book/c22-s42-u01-moon-apollo8-nasa.jpg",
+        "sha256": "4484f496b1c18558a534e62465f1a26ac8cbb4eeea0460bfe7147daecdbed1d3",
+        "actualVisionReviewedInPhase": 173,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg",
+        "sha256": "e5fb78d33efb9a64cec032242d2df0f236bcc818e898f146328370de9bd09f76",
+        "actualVisionReviewedInPhase": 173,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s42-u01/sun-PIA17669.jpg",
+        "sha256": "4c6e67c863037bb5dbaac39b068a6f74f007d425e22e59917a327669c45a0061",
+        "actualVisionReviewedInPhase": 173,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/book/c22-s42-u01-photo-preparation.webp",
+        "sha256": "faaf55a705d43b950cb339b4af1f0149b24fc1d7dd057b7e79d51f66c48ba75a",
+        "actualVisionReviewedInPhase": 173,
+        "bytesUnchanged": true
+      },
+      {
+        "file": "science-lab/assets/book/c22-s42-u01-nasa-north-guide.jpg",
+        "sha256": "b6bf9120da82525148a3bf9041c2879b374b2f5a7b6cea45c6c7af267e2f7a02",
+        "actualVisionReviewedInPhase": 173,
+        "bytesUnchanged": true
+      }
+    ],
+    "types": [
+      "NASA 관측 사진3장",
+      "NASA 북극성 설명도1장",
+      "기존 모형 준비 설명 장면1장"
+    ],
+    "actualVisionRunPages": 5,
+    "directVisualReview": true,
+    "newImageGeneration": 0
+  },
+  "teacherAndLifecycle": {
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "restoreGetterCallbackCopiesPreserveOriginals": true,
+    "pauseInactiveDisposeIgnored": true,
+    "comparisonClicksDoNotAdvance": true,
+    "legacyBattleStateIgnored": true
+  },
+  "tests": {
+    "total": 443,
+    "pass": 441,
+    "fail": 0,
+    "preexistingBrowserSkips": 2,
+    "log": "all-v2-tests.txt"
+  },
+  "actualStudentStorageAccessed": false,
+  "browserVerified": false,
+  "browserCssAudioReviewPending": true,
+  "newPdfExports": 0,
+  "new3D": 0,
+  "newPaidApiCalls": 0,
+  "push": false,
+  "deploy": false,
+  "goalStatus": "active",
+  "wholeProgramComplete": false,
+  "remaining": [
+    "나머지 학기 교재·수업 보완",
+    "v1/v2 역할·교육과정·원문 요건·최신main 재대조",
+    "실제 브라우저/CSS/A4·소리·기록 복구 화면 검수"
+  ],
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase173",
+  "evidence": [
+    "baseline-slides.json",
+    "baseline-products.json",
+    "sky-self.json",
+    "sky-teach.json",
+    "integration-validation.json",
+    "routes-validation.json",
+    "assets.json",
+    "vision-log.txt",
+    "vision-review.json",
+    "all-v2-tests.txt",
+    "review.json"
+  ]
+}

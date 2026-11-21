@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-15",
+  "unit": "c22-s42-u04",
+  "version": "20261115-climate-material-reference",
+  "priorCandidate": "308c221cfc3538b70d2ec0cddd66a90b1f9814b5",
+  "curriculum": {
+    "source": "교육부 고시 제2022-33호 별책9 과학과 교육과정",
+    "documentSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "core": [
+      "4과16-02"
+    ],
+    "furtherReading": [
+      "6과06-01"
+    ]
+  },
+  "edits": [
+    {
+      "studentPage": 15,
+      "teacherStudentPage": 15,
+      "questions": [
+        17,
+        18,
+        19
+      ],
+      "problem": "높이표는13쪽에 있고15쪽에는 준비 그림만 있어 표를 찾는 위치가 불분명했다.",
+      "resolution": "13쪽의 기존 다섯 집 높이를 집 이름과 값의 두 줄 표로 반복하고 방파제 없음·같은 물·높이 기준 조건을 함께 제시한다.",
+      "newObservationOrNumericalValues": false
+    },
+    {
+      "studentPage": 22,
+      "teacherStudentPage": 22,
+      "questions": [
+        27,
+        28
+      ],
+      "problem": "평균 폭염 일수 표 옆의 더 알아보기·내가 정리할 것이 전등/전력량으로 잘못 연결됐다.",
+      "resolution": "5~6학년 기상 요소·자료의 규칙성으로 이어지는 읽을거리와 평균/특정한 날을 구별하는 정리 질문으로 맞춘다.",
+      "writingLinesPreserved": 4
+    }
+  ],
+  "allQuestionFieldsPreserved": true,
+  "allCurrentBankDataAndVersionsPreserved": true,
+  "questionCount": 3080,
+  "imagesModified": false,
+  "newOriginalQuestions": false,
+  "validation": {
+    "nativeFiles": 294,
+    "nativeTests": 1526,
+    "passed": 1524,
+    "failed": 0,
+    "browserSkipped": 2,
+    "actualWorkbookPrintOutputs": 8,
+    "answerAndQuickOutputsByteIdentical": true,
+    "decksCompared": 64,
+    "slidesCompared": 3048,
+    "allSlidesByteIdentical": true,
+    "generatorCheck": true,
+    "commonMaterialQuestionsCompared": 28,
+    "all355QuestionSemanticsComplete": false,
+    "actualBrowserAndA4Reviewed": false,
+    "deployed": false
+  },
+  "reviewEvidence": "science-question-review/phase413/"
+}

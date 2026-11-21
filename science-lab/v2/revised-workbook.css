@@ -298,3 +298,57 @@
 .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing.large{min-height:120mm;height:auto}
 .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing+.ed-lines{margin-top:3mm}
 @media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing.large{min-height:280px}}
+
+/* 초등 과학 문제집: 화면·인쇄의 본문은 같은 고딕체로 읽고, 개인 메모에만 손글씨를 쓴다.
+   단원별 인쇄 명조/손글씨 규칙보다 구체적으로 지정하되 지면과 필기 줄의 높이는 보존한다. */
+.bk-editorial.revised-workbook[data-unit]{--ed-reading:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;--ed-hand:Gaegu,Pretendard,sans-serif;font-family:var(--ed-reading)}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-main,.ed-rail){font-family:var(--ed-reading);font-weight:400;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-main h2{font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-main h3{font-family:var(--ed-reading);font-weight:600;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-qhead b,.bk-band-t,.bk-band-u){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.bk-band-no,.bk-pn){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-qhead span,.ed-table th){font-weight:600;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-field h3,.ed-note h3){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-note h3{font-size:10.5pt;line-height:1.4}
+.bk-editorial.revised-workbook[data-unit] .ed-field h3{font-size:11.5pt;line-height:1.4}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-opener .ed-field h3,.ed-note:last-child h3){font-family:var(--ed-hand);font-size:13pt;line-height:1.3}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-main{font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) :is(.ed-table,.ed-given,.ed-solution p){font-size:17px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note h3{font-size:18px}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-field h3{font-size:20px}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) :is(.ed-opener .ed-field h3,.ed-note:last-child h3){font-size:22px}
+}
+
+/* 현행 교재의 교사 메모/추가 칸이 있어도 개인 정리 제목에만 손글씨를 쓴다.
+   역할이 없는 기존 교재의 위치 기반 규칙은 그대로 둔다. */
+.bk-editorial.revised-workbook[data-unit] .ed-note[data-note-role] h3{font-family:var(--ed-reading);font-size:10.5pt;line-height:1.4;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-note[data-note-role="personal"] h3{font-family:var(--ed-hand);font-size:13pt;line-height:1.3}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note[data-note-role] h3{font-size:18px}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note[data-note-role="personal"] h3{font-size:22px}
+}
+
+/* 화면에서는 초등학생이 읽기 편한 크기로 본문·문제·보기를 함께 키운다.
+   글자가 늘어난 쪽은 내용만큼 길어지며, 인쇄의 A4 지면 규칙은 별도로 유지한다. */
+@media screen{
+ .bk-editorial.revised-workbook[data-unit] .ed-hint{color:#414b55}
+ .bk-editorial.revised-workbook[data-unit] .ed-qhead span{font-size:14px;line-height:1.5;font-weight:600}
+ .bk-editorial.revised-workbook[data-unit] .ed-choices li{line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] .ed-main h2{letter-spacing:normal;line-height:1.4}
+ .bk-editorial.revised-workbook[data-unit] .ed-question p{margin:.45em 0 .65em}
+}
+@media screen and (min-width:701px){
+ .bk-editorial.revised-workbook[data-unit] .bk-page{height:auto;min-height:297mm}
+ .bk-editorial.revised-workbook[data-unit] .ed-main{font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] :is(.ed-table,.ed-given,.ed-solution p){font-size:17px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit] :is(.ed-rail,.ed-hint){font-size:16px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit] .ed-main h2{letter-spacing:normal;line-height:1.4}
+ .bk-editorial.revised-workbook[data-unit] .ed-table th{font-weight:600}
+}
+
+/* 두 단원에 남은 작은 보기 글씨도 화면 본문과 같은 크기로 읽는다. */
+@media screen{
+ .bk-editorial.revised-workbook[data-unit] .ed-layout-two .ed-choices li{font-family:var(--ed-reading);font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] .ed-kicker{font-family:var(--ed-reading);font-size:15px;font-weight:600;letter-spacing:normal;line-height:1.5}
+}

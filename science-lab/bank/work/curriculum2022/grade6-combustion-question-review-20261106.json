@@ -1,0 +1,474 @@
+{
+  "date": "2026-11-06",
+  "unit": "c22-s62-u02",
+  "scope": "Elementary question wording, conditions and equivalent labels; preserve every scoring rule and prior version.",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "branch": "codex/science-workbook-integration-20261102",
+  "priorLocalCommit": "fc327d7cc30acdf3b371d1b122d02730304a695e",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "reviewParent": "5a0cf369ffaf5c530cbf16ee6dfa5e5ed108378b",
+  "workbookQuestionsRead": 128,
+  "workbookQuestionsEdited": 115,
+  "fieldsEdited": 285,
+  "explanationsEdited": 114,
+  "promptsEdited": 36,
+  "sampleOnlyContracts": 22,
+  "choiceAnswerLabelsUpdated": [
+    2,
+    82,
+    98,
+    113
+  ],
+  "quickAnswerFiguresChanged": 3,
+  "quickAnswerRowsChanged": 4,
+  "practicePresentationsEdited": 115,
+  "classroomChecksEdited": 11,
+  "independentPairedQuestionsPreserved": 70,
+  "sourceQuestions": 0,
+  "similarQuestions": 0,
+  "pages": 133,
+  "studentTeacherPagesEdited": [
+    2,
+    32,
+    33,
+    50,
+    65,
+    66,
+    80,
+    82,
+    114,
+    128,
+    130,
+    133
+  ],
+  "priorVersionRestorationVerified": true,
+  "allScoringRulesPreserved": true,
+  "legacyEditorReadsPriorWorkbookAndProtectsFutureVersions": true,
+  "independentBankPaperRetainsPriorEditorialStage": true,
+  "scienceEvidence": {
+    "curriculum": {
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "document": "교육부2022-33 별책9",
+      "codes": [
+        "6과14-01",
+        "6과14-02",
+        "6과14-03",
+        "6과14-04"
+      ],
+      "cachedTextSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "checkedLines": [
+        925,
+        944
+      ],
+      "scope": "전후 성질 비교,연소 공통현상과 조건,물/이산화탄소 확인,이산화탄소의 생태계 피해와 해결책.물리/화학변화 용어·그을음·혼합 반응 원리는 학생 본문에 추가하지 않음."
+    },
+    "sources": [
+      {
+        "url": "https://highschoolenergy.acs.org/how-do-we-use-energy/combustion-and-burning.html",
+        "read": "Safety23~24 and interpreting evidence120~133,146",
+        "supports": "촛농 상태와 연소 구별,산소/빛과열/물과이산화탄소,불꽃·뜨거운촛농 안전",
+        "notImported": "학생점화·유리/불꽃조작·재점화절차·분자/반응식·불완전연소·그을음"
+      },
+      {
+        "url": "https://teachchemistry.org/classroom-resources/observing-a-candle",
+        "read": "Objectives91,safety122~125,background139~148",
+        "supports": "초의 연소에 산소가 필요하고 물/이산화탄소가 생김,석회수의흐림반응",
+        "notImported": "기체분리의단순밀도주장·화학식/이온/침전원리·불꽃놀이/기체포집·새약품조제/가열절차"
+      },
+      {
+        "url": "https://www.chemistry.bristol.ac.uk/motm/cobalt-chloride/cobalt-chloridejs.htm",
+        "read": "Water-indicator paper paragraph30",
+        "supports": "물 존재에 따라 푸른 염화코발트종이가 분홍/붉은계열로변함",
+        "notImported": "수화물·분자구조·가열/재사용·촉매·의학/도핑"
+      },
+      {
+        "url": "https://oceanservice.noaa.gov/facts/acidification.html",
+        "read": "Body5,8~13",
+        "supports": "화석연료/이산화탄소흡수/바다성질/껍데기·골격·먹이관계 영향",
+        "notImported": "pH·수소/탄산이온·정밀증가수치·미래지역피해량"
+      },
+      {
+        "url": "https://www.fisheries.noaa.gov/insight/understanding-ocean-acidification",
+        "read": "Body421~425,429,444,447,452~453",
+        "supports": "일부생물영향/화석연료와이산화탄소,미국서해안2000년대중반과거패류사례,관측/경보로생산시기·들어오는바닷물관리",
+        "notImported": "오래된정책을현재정책으로인용·현재국내피해·금액/예측수치·독성/의학설명"
+      }
+    ],
+    "notUsedAsBodyEvidence": [
+      {
+        "url": "https://edu.rsc.org/experiments/identifying-the-products-of-combustion-demonstration/707.article",
+        "reason": "본문요청405;검색결과를본문검증으로세지않음"
+      }
+    ],
+    "newMeasurements": false,
+    "newExperimentProcedures": false
+  },
+  "nativeValidation": {
+    "priorNativeWorkbookPreserved": true,
+    "editorialBytePrefixPreserved": true,
+    "responseKeysChecked": 32,
+    "explanationsRendered": 228,
+    "syntaxFiles": 10,
+    "actualBrowserVerified": false
+  },
+  "preservation": {
+    "workbooks": 32,
+    "otherWorkbooksUnchanged": 31,
+    "questions": 3080,
+    "questionPatches": 115,
+    "bankPatches": 115,
+    "sampleOnlyContracts": 22,
+    "independentPairedQuestionsPreserved": 70,
+    "changedClassroomChecks": [
+      "c22-s62-u02-b001",
+      "c22-s62-u02-b019",
+      "c22-s62-u02-b030",
+      "c22-s62-u02-b031",
+      "c22-s62-u02-b041",
+      "c22-s62-u02-b053",
+      "c22-s62-u02-b056",
+      "c22-s62-u02-b059",
+      "c22-s62-u02-b081",
+      "c22-s62-u02-b094",
+      "c22-s62-u02-b096"
+    ],
+    "changedSlides": [
+      [
+        "self",
+        "test1"
+      ],
+      [
+        "self",
+        "test2"
+      ],
+      [
+        "self",
+        "test3"
+      ],
+      [
+        "self",
+        "test5"
+      ],
+      [
+        "self",
+        "test7"
+      ],
+      [
+        "self",
+        "test9"
+      ],
+      [
+        "self",
+        "test11"
+      ],
+      [
+        "self",
+        "test13"
+      ],
+      [
+        "self",
+        "test14"
+      ],
+      [
+        "self",
+        "test15"
+      ],
+      [
+        "self",
+        "test16"
+      ],
+      [
+        "teach",
+        "test1"
+      ],
+      [
+        "teach",
+        "test2"
+      ],
+      [
+        "teach",
+        "test3"
+      ],
+      [
+        "teach",
+        "test5"
+      ],
+      [
+        "teach",
+        "test7"
+      ],
+      [
+        "teach",
+        "test9"
+      ],
+      [
+        "teach",
+        "test11"
+      ],
+      [
+        "teach",
+        "test13"
+      ],
+      [
+        "teach",
+        "test14"
+      ],
+      [
+        "teach",
+        "test15"
+      ],
+      [
+        "teach",
+        "test16"
+      ]
+    ],
+    "changedHtml": [
+      {
+        "unit": "c22-s62-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "mode": "quick"
+      }
+    ],
+    "otherRuntimeUnitsPreserved": 31,
+    "mainScienceFilesPreserved": 2958,
+    "browserVerified": false
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "phase": 305,
+        "questions": 96,
+        "currentQuestionSha256": "34761681a0bb79de7752834f0cabb12fc1e67aaf611ede9970a7188d36d245e2"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "phase": 306,
+        "questions": 104,
+        "currentQuestionSha256": "fdd2a62e25e3d0044600bc110cac6e6939b3917125c86744cbd3e8720de8f9cf"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "phase": 307,
+        "questions": 112,
+        "currentQuestionSha256": "97645c2bb87f7962b93ee66fd5179d612e6c8b04a152447855493187958508ef"
+      },
+      {
+        "unit": "c22-s52-u04",
+        "phase": 308,
+        "questions": 112,
+        "currentQuestionSha256": "d0bd1ee47e2be29a97968f462cd7e8c33ee1925bfaceabd11facbb1145f6822e"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "phase": 310,
+        "questions": 128,
+        "currentQuestionSha256": "c7e6b3e3ea7f2daf07dae2a9d2cc984f3c74a09ed92fc67d1101ab7c36133291"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "phase": 311,
+        "questions": 128,
+        "currentQuestionSha256": "431ffb2786c5d189eae880e1550acdb6632fcc2ec6d9b40fc2ab78337660428e"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "phase": 312,
+        "questions": 128,
+        "currentQuestionSha256": "bf7ab6b858964739ae659dfc7cec19772a0e80beeaf9050a88865135ec671dba"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "phase": 313,
+        "questions": 128,
+        "currentQuestionSha256": "24d23b9ba2ce412607f287244cce4b8f5ea447bce33e0270d0a306f6adee3b75"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "phase": 314,
+        "questions": 128,
+        "currentQuestionSha256": "15c26b40abf763909080a13910b78b07fe5145918a22a1cb52ce158bb5a56290"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "phase": 315,
+        "questions": 128,
+        "currentQuestionSha256": "a4f28762edb8a23e39c43690d7f58a2acc452ada7793406dc4f6269ca8a82b84"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 2824,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 115,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideThirtyUnitPass": {
+      "units": 2,
+      "questions": 256,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To315": 1674
+  },
+  "tests": {
+    "total": 1294,
+    "pass": 1292,
+    "fail": 0,
+    "skip": 2
+  },
+  "goalAchieved": false,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "paidApiCalls": 0,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "nextUnit": "c22-s62-u03"
+}

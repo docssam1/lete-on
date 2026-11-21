@@ -1,0 +1,97 @@
+{
+  "phase": 369,
+  "date": "2026-11-08",
+  "purpose": "Make personal directions in three grade-four workbooks understandable to elementary pupils while retaining the science tasks and comparison boundaries.",
+  "units": [
+    {
+      "unit": "s41-u02",
+      "studentDirections": 14,
+      "teacherStudentDirections": 14
+    },
+    {
+      "unit": "s41-u03",
+      "studentDirections": 18,
+      "teacherStudentDirections": 18
+    },
+    {
+      "unit": "c22-s42-u04",
+      "studentDirections": 20,
+      "teacherStudentDirections": 20
+    }
+  ],
+  "allowedChanges": [
+    "pages[].rail[personal].text",
+    "teacherStudentPages[].rail[personal].text"
+  ],
+  "preservedCoreAndUpperNotes": {
+    "핵심 정리": {
+      "pages": 2476,
+      "teacherStudentPages": 2304
+    },
+    "더 알아보기": {
+      "pages": 2476,
+      "teacherStudentPages": 2304
+    }
+  },
+  "runtime": {
+    "phase": 369,
+    "allQuestionsUnchanged": 3080,
+    "unchangedDataFiles": 93,
+    "studentNoteChanges": 52,
+    "teacherStudentNoteChanges": 52,
+    "allOtherFieldsPreserved": true,
+    "unchangedCoreNotes": 4780,
+    "unchangedUpperNotes": 4780,
+    "workbookModesGenerated": 128,
+    "other29WorkbookModesIdentical": 116,
+    "allAnswerQuickModesIdentical": 64,
+    "allWorkbookModesRestoredByOnlyNoteText": 128,
+    "bankPrintModesIdentical": 84,
+    "priorWholeWorkbookAliasesPreserved": 3,
+    "generatorChecks": [
+      {
+        "unit": "c22-s32-u04",
+        "exitCode": 0,
+        "currentFileUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "exitCode": 0,
+        "currentFileUnchanged": true
+      }
+    ],
+    "actualBrowserUsed": false
+  },
+  "tests": {
+    "phase": 369,
+    "testFiles": 264,
+    "exitCode": 0,
+    "tests": 1430,
+    "pass": 1428,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0,
+    "duration_ms": 8848.102292
+  },
+  "syntaxChecked": [
+    "science-lab/data/book/c22-s42-u04.workbook-source.js",
+    "science-lab/data/book/c22-s42-u04.workbook.js",
+    "science-lab/data/book/s41-u02.workbook.js",
+    "science-lab/data/book/s41-u03.workbook.js",
+    "science-lab/v2/climate-readability.test.mjs",
+    "science-lab/v2/land-elementary-reading.test.mjs",
+    "science-lab/v2/revised-textbook.js",
+    "science-lab/v2/v2.js",
+    "science-lab/v2/water-elementary-reading.test.mjs",
+    "science-lab/data/book/grade4-study-notes.js",
+    "science-lab/v2/grade4-study-notes.test.mjs"
+  ],
+  "sourcePreservation": "Three prior whole-workbook exports equal the pre-edit canonical data. The climate generated entry was explicitly refreshed from its reviewed authoring source and both actual generator checks remain read-only and unchanged.",
+  "questionAndAnswerChanges": 0,
+  "newPrivateSourcesPublished": false,
+  "actualBrowserUsed": false,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

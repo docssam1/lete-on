@@ -1,0 +1,108 @@
+{
+  "phase": 359,
+  "date": "2026-11-08",
+  "scope": "Guard all twenty-one current bank print paths with actual font and image readiness, cleanup and pagination completion; remove the rejected image-label wording from visible bank descriptions.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "d0da63c01e024357340877980656e056689e6822",
+    "reviewCommit": "83cd5a4bf5e103d4011d4761e771dbbdeeae803c"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "regressionBefore": {
+    "tests": 3,
+    "pass": 0,
+    "fail": 3,
+    "meaningfulAssertionFailuresReproduced": true
+  },
+  "printPreparationValidation": {
+    "phase": 359,
+    "currentBankPrintHandlers": 21,
+    "paperModesCompared": 84,
+    "unchangedPaperModes": 58,
+    "allOtherPaperMarkupEqualAfterOnlyReviewedControlAndDescriptionChanges": 84,
+    "obsoleteImageLabelsRemaining": 0,
+    "unchangedBankClassroomWorkbookDataFiles": 96,
+    "guardedModeControls": 84,
+    "readyLifecycleCases": 21,
+    "fontAndImageFailureCases": 105,
+    "disposedPendingLoadCases": 21,
+    "postPreparationCases": 3,
+    "realBrowserUsed": false,
+    "actualPageLayoutVerified": false,
+    "releaseReady": false,
+    "goalAchieved": false
+  },
+  "originalSourceRegression": {
+    "phase": 359,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "currentNativeSuite": {
+    "tests": 1409,
+    "suites": 0,
+    "pass": 1407,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "exitCode": 0,
+    "testFiles": 258
+  },
+  "preflight": {
+    "syntaxFiles": 21,
+    "diffCheck": true,
+    "paginationImplementationsUnchanged": [
+      {
+        "file": "science-lab/v2/energy-bank-paper.js",
+        "paginationBodySha256": "dbca573d485f00fa6f8fec161e00538f4901e9368ba72acd5d9708ac34eae7dd",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/heat-bank-paper.js",
+        "paginationBodySha256": "1a1bb0b56b6c560da7251c9e82c7d007ec6bee797b00e1e1caa953a021bf0aba",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/weather-bank-paper.js",
+        "paginationBodySha256": "d3889a00e38488ad095f3db53e5f0fc3900c3a8c7635f73b5fd13ee51a22ef3d",
+        "unchanged": true
+      }
+    ],
+    "bankHeaderFilesWithOldPhraseRemaining": []
+  },
+  "preservationPolicy": {
+    "workbookPrintDefaultsPreserved": true,
+    "all32BankClassroomWorkbookDataUnchanged": true,
+    "allGradingContractsAndSavedAnswersUnchanged": true,
+    "existingPaginationImplementationsUnmodified": true,
+    "oldFiguresAndManuscriptMetadataRetained": true,
+    "onlyVisibleMixtureFigureLabelsChanged": true,
+    "readingFontRequestsMatchExistingFontFamilies": true,
+    "unusedSerifFontsNotRequiredByCurrentRevisedWorkbooks": true,
+    "printBlockedUntilPreparationCompletes": true,
+    "missingAssetsOrFontsDoNotEnablePrint": true,
+    "pendingListenersAndStaleCallbacksReleased": true
+  },
+  "visibleHeaderPhraseFilesUpdated": 6,
+  "mixtureLegacyFigureLabelsUpdated": 8,
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

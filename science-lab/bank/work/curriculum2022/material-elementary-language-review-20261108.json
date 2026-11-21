@@ -1,0 +1,102 @@
+{
+  "phase": 349,
+  "date": "2026-11-08",
+  "unit": "c22-s32-u01",
+  "scope": "Elementary wording for reviewed authored object-and-material questions, shared across workbook, actual bank loader and classroom.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "5430e4ac0060becfa151af361c34a4f9b0c5e6af",
+    "reviewCommit": "00e66fb5acd1064b3330bb4b5c2276ae6af77e77"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "readingValidation": {
+    "phase": 349,
+    "unit": "c22-s32-u01",
+    "workbookQuestions": 80,
+    "workbookPromptsChanged": 36,
+    "bankQuestions": 76,
+    "bankPromptsChanged": 32,
+    "classroomQuestions": 12,
+    "classroomPromptsChanged": 4,
+    "allOtherWorkbookQuestionFieldsUnchanged": true,
+    "allBankGradingAndFiguresUnchanged": true,
+    "workbookPagesRailsFiguresAndAnswersUnchanged": true,
+    "numeralsAndBlankCountsPreserved": true,
+    "gradingCases": 163,
+    "presentationVersions": 37,
+    "savedStates": 32,
+    "otherWorkbooksUnchanged": 31,
+    "originalsAdded": 0,
+    "actualBrowserUsed": false,
+    "releaseReady": false,
+    "goalAchieved": false
+  },
+  "originalSourceRegression": {
+    "phase": 349,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "previousGrade3UnitPreservation": [
+    {
+      "unit": "c22-s32-u03",
+      "bankQuestions": 76,
+      "currentPresentationsAndAllPreviousVersionsUnchanged": true
+    },
+    {
+      "unit": "c22-s32-u04",
+      "bankQuestions": 92,
+      "currentPresentationsAndAllPreviousVersionsUnchanged": true
+    }
+  ],
+  "questionPolicy": {
+    "authoredPromptsOnly": true,
+    "curriculumScienceTermsRetained": true,
+    "answerChoicesCriteriaAndPicturesUnchanged": true,
+    "measurementNumbersAndBlankCountsUnchanged": true,
+    "bankHistoryAppended": true,
+    "previousWorkbookExportRetained": true,
+    "futureOriginalSimilarAndOtherUnitRowsProtected": true,
+    "linkedWorkbookAndBankPromptsAligned": 40,
+    "classroomSimilarRowsUnchanged": 4,
+    "priorGrade3ContentVersionRetained": true,
+    "assetImportCacheVersionsUpdated": true
+  },
+  "typography": {
+    "existingReadableGothicAndLimitedPersonalHandwritingRetained": true,
+    "cssChangedThisStage": false,
+    "actualFontAndLayoutVisuallyVerified": false
+  },
+  "currentNativeSuite": {
+    "testFiles": 248,
+    "tests": 1376,
+    "pass": 1374,
+    "fail": 0,
+    "browserSkipped": 2
+  },
+  "syntaxFilesChecked": 8,
+  "originalUnits": 23,
+  "originalQuestions": 1512,
+  "sourcePendingUnits": 9,
+  "newOriginalsAdded": 0,
+  "newImageFiles": 0,
+  "newPdfFiles": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

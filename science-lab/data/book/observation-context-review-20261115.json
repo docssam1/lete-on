@@ -1,0 +1,49 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "밤하늘 사진과 계절의 고도표를 따로 풀 수 있는 문항에 연결",
+  "contentVersion": "20261115-observation-question-context",
+  "questions": ["c22-s42-u01-b02", "c22-s62-u01-b030"],
+  "discovery": {"actualUnitLoaders": 32, "textReferenceCandidatesWithoutSeparateFigureOrData": 94, "confirmedMissingContextsInThisChange": 2, "allCandidateMeaningsReviewed": false},
+  "lunarPhoto": {
+    "path": "assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg",
+    "sha256": "e5fb78d33efb9a64cec032242d2df0f236bcc818e898f146328370de9bd09f76",
+    "bytes": 255594,
+    "width": 1015,
+    "height": 1023,
+    "existingBytesPreserved": true,
+    "newImageGenerated": false,
+    "directlyInspected": true,
+    "primarySource": "https://science.nasa.gov/moon/lunar-craters/",
+    "credit": "NASA · Apollo 10 · Moltke",
+    "appleVision": {"computePolicy": "CPU-only", "frames": 1, "recognizedLines": 0, "status": "ok"}
+  },
+  "seasonAltitudeTable": {
+    "reusedFromQuestion": "c22-s62-u01-w028",
+    "attachedToWorkbookQuestion": "c22-s62-u01-w030",
+    "rows": [["10:15", "41°"], ["11:15", "53°"], ["12:15", "62°"], ["13:15", "60°"], ["14:15", "49°"]],
+    "fictionalPracticeNoticePreserved": true,
+    "exactTransitTimeNotSpecified": true,
+    "workbookAndBankPaperUseSameTable": true,
+    "writingLinesPreserved": 6
+  },
+  "verification": {
+    "actualUnitLoaders": 32,
+    "currentItemsCompared": 3179,
+    "unchangedCurrentItems": 3177,
+    "originalQuestionsPreserved": 1763,
+    "pairedRowsPreserved": true,
+    "answerContractsExplanationsAndTaxonomyPreserved": true,
+    "previousVersionsSavedAnswersAndGradingPreserved": true,
+    "fullSnapshotsChecked": 2791,
+    "choiceOnlyDeltasChecked": 2,
+    "nativeTestFiles": 280,
+    "nativeTests": 1482,
+    "nativePassed": 1480,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": ["현행 원문 없는 세 단원과 전체 현행 판본 확보", "실제 PC·휴대폰·A4·음성·WebGL·3D 검수", "운영 메인 병합·배포"]
+}

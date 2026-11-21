@@ -1,0 +1,408 @@
+{
+  "date": "2026-11-02",
+  "base": "5c615edfc079a59cd7ae2873166d0e019a8bd519",
+  "branch": "codex/science-workbook-integration-20261102",
+  "unit": "c22-s42-u02",
+  "status": "local integration candidate, no push or deployment",
+  "skills": [
+    "instructional-design (continued)",
+    "ux-writing (continued)"
+  ],
+  "curriculum": [
+    "4과14-01",
+    "4과14-02",
+    "4과14-03"
+  ],
+  "changes": [
+    "학생37/교사38장·120분·12확인 수업과 Daily 연결",
+    "승인한 풀밭 실사 스타일 그림과 가상 수치 표를 분리하여 비교",
+    "변화 전 설정을 읽고 세 생물의 수 변화를 먼저 예상한 뒤 모형 자료 열기",
+    "기준/여우가 없는 조건 두 가지를 모두 비교해야 자료 비교만 완료; 다른 두 조건 선택 비교",
+    "기존 생태계 조사·제작·토의·실천 기록49쪽과 meadowRows/ecologyInquiryRows 보존",
+    "둘째 수업 입구를 arrows(먹이그물·보전)에서 시작하도록 연결"
+  ],
+  "tests": {
+    "total": 355,
+    "passCount": 353,
+    "fail": 0,
+    "skipped": 2,
+    "skipReason": "existing isolated browser tests",
+    "slides": {
+      "units": [
+        {
+          "unit": "s31-u01",
+          "modes": {
+            "self": {
+              "slides": 26,
+              "checks": 11
+            },
+            "teach": {
+              "slides": 27,
+              "checks": 11
+            }
+          }
+        },
+        {
+          "unit": "s31-u02",
+          "modes": {
+            "self": {
+              "slides": 27,
+              "checks": 11
+            },
+            "teach": {
+              "slides": 28,
+              "checks": 11
+            }
+          }
+        },
+        {
+          "unit": "s31-u03",
+          "modes": {
+            "self": {
+              "slides": 27,
+              "checks": 11
+            },
+            "teach": {
+              "slides": 28,
+              "checks": 11
+            }
+          }
+        },
+        {
+          "unit": "s31-u04",
+          "modes": {
+            "self": {
+              "slides": 27,
+              "checks": 11
+            },
+            "teach": {
+              "slides": 28,
+              "checks": 11
+            }
+          }
+        },
+        {
+          "unit": "c22-s42-u02",
+          "modes": {
+            "self": {
+              "slides": 37,
+              "checks": 12,
+              "images": [
+                "../assets/book/ecology-20261028/habitat.jpg",
+                "../assets/book/ecology-20261028/meadow.jpg",
+                "../assets/book/ecology-20261028/rice.jpg",
+                "../assets/activities/c22-s42-u02/fungus-photo.webp",
+                "../assets/book/ecology-20261028/water-waste.jpg"
+              ]
+            },
+            "teach": {
+              "slides": 38,
+              "checks": 12,
+              "images": [
+                "../assets/book/ecology-20261028/habitat.jpg",
+                "../assets/book/ecology-20261028/meadow.jpg",
+                "../assets/book/ecology-20261028/rice.jpg",
+                "../assets/activities/c22-s42-u02/fungus-photo.webp",
+                "../assets/book/ecology-20261028/water-waste.jpg"
+              ]
+            }
+          }
+        },
+        {
+          "unit": "s41-u01",
+          "modes": {
+            "self": {
+              "slides": 27,
+              "checks": 6
+            },
+            "teach": {
+              "slides": 28,
+              "checks": 6
+            }
+          }
+        },
+        {
+          "unit": "c22-s32-u01",
+          "modes": {
+            "self": {
+              "slides": 22,
+              "checks": 2
+            },
+            "teach": {
+              "slides": 23,
+              "checks": 2
+            }
+          }
+        },
+        {
+          "unit": "c22-s32-u02",
+          "modes": {
+            "self": {
+              "slides": 22,
+              "checks": 2
+            },
+            "teach": {
+              "slides": 23,
+              "checks": 2
+            }
+          }
+        },
+        {
+          "unit": "c22-s42-u01",
+          "modes": {
+            "self": {
+              "slides": 22,
+              "checks": 2
+            },
+            "teach": {
+              "slides": 23,
+              "checks": 2
+            }
+          }
+        },
+        {
+          "unit": "c22-s51-u03",
+          "modes": {
+            "self": {
+              "slides": 86,
+              "checks": 16
+            },
+            "teach": {
+              "slides": 87,
+              "checks": 16
+            }
+          }
+        }
+      ],
+      "otherModesUnchanged": 18,
+      "reviewedSourceChanges": [
+        "scene: procedural animals replaced with approved meadow photo, with appearance/relationship distinction",
+        "lab: simulation replaced by prediction-before-reveal comparison using unchanged canonical numbers",
+        "plan: same 120 minutes; lab wording refers to comparison instead of watching simulation",
+        "roles: concise fungus photo caption",
+        "checks: vertical given lists via shared helper"
+      ]
+    },
+    "routes": {
+      "scope": "actual pageStart/pageLabClass/pageDaily/pageLabBook functions in Node vm; captured deck/view/Daily rendering; animal/plant/life/ecology comparison event handlers and actual BOOKS/RECORDS_BOOKS maps executed; not browser/layout validation",
+      "units": [
+        {
+          "unit": "s31-u01",
+          "startLinks": true,
+          "defaultThinkingClass": true,
+          "checksSharedWithDaily": 11,
+          "teacherStudentReads": 0,
+          "teacherStudentWrites": 0,
+          "studentStorageKey": "labRows",
+          "originalReportAndObservationStatePreserved": true,
+          "optionalRecordBookOriginal": true,
+          "releaseDisposesMountedActivities": true
+        },
+        {
+          "unit": "s31-u02",
+          "startLinks": true,
+          "defaultThinkingClass": true,
+          "checksSharedWithDaily": 11,
+          "teacherStudentReads": 0,
+          "teacherStudentWrites": 0,
+          "studentStorageKey": "animalCompareRows",
+          "originalReportAndObservationStatePreserved": true,
+          "optionalRecordBookOriginal": true,
+          "releaseDisposesMountedActivities": true
+        },
+        {
+          "unit": "s31-u03",
+          "startLinks": true,
+          "defaultThinkingClass": true,
+          "checksSharedWithDaily": 11,
+          "teacherStudentReads": 0,
+          "teacherStudentWrites": 0,
+          "studentStorageKey": "plantCompareRows",
+          "originalReportAndObservationStatePreserved": true,
+          "optionalRecordBookOriginal": true,
+          "releaseDisposesMountedActivities": true
+        },
+        {
+          "unit": "s31-u04",
+          "startLinks": true,
+          "defaultThinkingClass": true,
+          "checksSharedWithDaily": 11,
+          "teacherStudentReads": 0,
+          "teacherStudentWrites": 0,
+          "studentStorageKey": "lifeCompareRows",
+          "originalReportAndObservationStatePreserved": true,
+          "optionalRecordBookOriginal": true,
+          "releaseDisposesMountedActivities": true
+        },
+        {
+          "unit": "c22-s42-u02",
+          "startLinks": true,
+          "defaultThinkingClass": true,
+          "checksSharedWithDaily": 12,
+          "teacherStudentReads": 0,
+          "teacherStudentWrites": 0,
+          "studentStorageKey": "ecologyCompareRows",
+          "originalReportAndObservationStatePreserved": true,
+          "optionalRecordBookOriginal": true,
+          "releaseDisposesMountedActivities": true
+        }
+      ]
+    }
+  },
+  "data": {
+    "storageKey": "ecologyCompareRows",
+    "numbers": [
+      [
+        60,
+        12,
+        3
+      ],
+      [
+        28,
+        28,
+        0
+      ],
+      [
+        80,
+        0,
+        1
+      ],
+      [
+        30,
+        6,
+        2
+      ]
+    ],
+    "foodEdges": 6,
+    "originalSimilar": 70,
+    "originalItems": 80,
+    "rawBookPages": 10,
+    "optionalRecordBookPages": 49,
+    "rawSlides": [
+      22,
+      23
+    ],
+    "classChecks": 12,
+    "answerContractsUnchanged": true,
+    "protectedFiles": [
+      {
+        "file": "science-lab/data/book/c22-s42-u02.book.js",
+        "sha256": "a7700423cdb3dac112741a57ceeee637acfca3b2b6105660daea7df9bd0076fa"
+      },
+      {
+        "file": "science-lab/data/book/c22-s42-u02.records-book.js",
+        "sha256": "b06a86934f409dc725c66906a04da40127e38a94ce4d39fec955352ffdecbfe8"
+      },
+      {
+        "file": "science-lab/data/book/c22-s42-u02.workbook.js",
+        "sha256": "35fbbce50dadb4ea15d78358fdb57d85f6a649e400d832bc48e9ea99b37764f2"
+      },
+      {
+        "file": "science-lab/data/book/c22-s42-u02.workbook-art.js",
+        "sha256": "3e3d5fffc803850d8e38395081decc0ebd82c1b62393822defb85dbaf66f39ea"
+      },
+      {
+        "file": "science-lab/data/units/c22-s42-u02.lesson.js",
+        "sha256": "f5dee62b60178304007b0272cba7d183f4142a7c473040b3cd66c68d8d3617c2"
+      },
+      {
+        "file": "science-lab/data/units/c22-s42-u02.js",
+        "sha256": "c1300348b0ae2439c072177c3f97bed94421c3e33ae67a3c355d1a560beecf57"
+      },
+      {
+        "file": "science-lab/data/units/c22-s42-u02.similar.js",
+        "sha256": "83be21d8918e8a88e21dc3aa2d0509186dec15a8a8403c21a3c717aa3dcb689a"
+      },
+      {
+        "file": "science-lab/data/units/c22-s42-u02.records.js",
+        "sha256": "ac09ba46131c3e722b386f38aa6752a241d0a3d31e7adc3b36ab5cec49793fc6"
+      },
+      {
+        "file": "science-lab/scenes/meadow-model.js",
+        "sha256": "7acfee9ee98751d21b2ca9fae57f2751e6d942e5bbce89fe3e36011654e28a27"
+      },
+      {
+        "file": "science-lab/v2/lab-meadow.js",
+        "sha256": "9106fd7c7ca32191af9b8d8f0514e98de4991cbe13bbe3f044515c05ad59b817"
+      },
+      {
+        "file": "science-lab/assets/book/ecology-20261028/meadow.jpg",
+        "sha256": "5ddcdac89de29aea5988f7ea86eb75934309bdf77f41e525f5b8cca100339114"
+      },
+      {
+        "file": "science-lab/assets/book/ecology-20261028/habitat.jpg",
+        "sha256": "9063f3555089a4b8a3d4051412ac911638ed4aa239def7e51efd9bd7cd75079e"
+      },
+      {
+        "file": "science-lab/assets/book/ecology-20261028/rice.jpg",
+        "sha256": "76c41da5b969ced651e24994d51ac55e40800c0c428f9741286407421b6a5638"
+      },
+      {
+        "file": "science-lab/assets/book/ecology-20261028/water-waste.jpg",
+        "sha256": "f673838420a0ab8058707502c7b3b7571d7f77d8d5a4f8b5ddc9e8b6bc76c3b7"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s42-u02/fungus-photo.webp",
+        "sha256": "ca02e7ddd6b564977deb9bea326e918dd0b537a5ff3536fd1bfabe4f2a0cbcbb"
+      }
+    ]
+  },
+  "images": [
+    {
+      "file": "science-lab/assets/book/ecology-20261028/meadow.jpg",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "5ddcdac89de29aea5988f7ea86eb75934309bdf77f41e525f5b8cca100339114",
+      "ocrPage": 1
+    },
+    {
+      "file": "science-lab/assets/book/ecology-20261028/habitat.jpg",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "9063f3555089a4b8a3d4051412ac911638ed4aa239def7e51efd9bd7cd75079e",
+      "ocrPage": 2
+    },
+    {
+      "file": "science-lab/assets/book/ecology-20261028/rice.jpg",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "76c41da5b969ced651e24994d51ac55e40800c0c428f9741286407421b6a5638",
+      "ocrPage": 3
+    },
+    {
+      "file": "science-lab/assets/book/ecology-20261028/water-waste.jpg",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "f673838420a0ab8058707502c7b3b7571d7f77d8d5a4f8b5ddc9e8b6bc76c3b7",
+      "ocrPage": 4
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s42-u02/fungus-photo.webp",
+      "width": 391,
+      "height": 268,
+      "sha256": "ca02e7ddd6b564977deb9bea326e918dd0b537a5ff3536fd1bfabe4f2a0cbcbb",
+      "ocrPage": 5
+    }
+  ],
+  "appleVision": {
+    "actualImages": 5,
+    "failed": 0,
+    "skipped": 0,
+    "words": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "humanReviewed": true
+  },
+  "scope": "Actual page route functions and comparison component events in Node VM, with captured rendering adapters; not browser navigation or layout verification.",
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase161",
+  "apis": 0,
+  "newImages": 0,
+  "newPdf": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "next": "다섯 단원 교재·수업 연결은 로컬에서 완료. 최신 main 재대조·통합 검토·실제 브라우저 검증 및 다른 학기 작업이 남는다. 전체 프로그램 목표 active."
+}

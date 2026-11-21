@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "science-textbook-source-review/v1",
+  "date": "2026-11-15",
+  "unit": "c22-s51-u01",
+  "registration": {
+    "schemaVersion": "science-reviewed-source-registration/v1",
+    "unit": "c22-s51-u01",
+    "items": 17,
+    "teacherReview": 12,
+    "audience": "all-science-app-students",
+    "loginRequired": false,
+    "transport": "static-files",
+    "sourceScope": "legacy-textbook-current-core-extract",
+    "wholeCurrentEdition": false,
+    "runtimeRegistered": true,
+    "currentTaxonomyBound": true,
+    "pairedItemsBound": 17,
+    "reviewedContentSha256": "4bf68e3af61fa4b8fa61516d44f8a789c1ea0151ca261e94772be4555bb64a41",
+    "sourcePdfSha256": "5f54ce7a1e7435d9ac897e86085afe087190a80aaad550a9b020cc272154d23e",
+    "sourcePages": [
+      26,
+      27,
+      28,
+      29,
+      30,
+      33
+    ]
+  },
+  "groupCounts": [
+    10,
+    4,
+    1,
+    2
+  ],
+  "originalFigures": 10,
+  "figureChecksums": [
+    {
+      "path": "assets/bank/c22-s51-u01/p26-clay-model.png",
+      "page": 26,
+      "box": [
+        461,
+        575,
+        620,
+        704
+      ],
+      "sha256": "92d9350cea3b7f3533c917ad688bac6c0bf196c89860ef3e3934c44659abf65e"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p26-sand-gravel-model.png",
+      "page": 26,
+      "box": [
+        699,
+        532,
+        1101,
+        659
+      ],
+      "sha256": "7efd6b93e6d9df5803b1f121217499a12e50408433deac4dd674fa1815c1791d"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p27-three-sedimentary-rocks.png",
+      "page": 27,
+      "box": [
+        157,
+        309,
+        574,
+        447
+      ],
+      "sha256": "c2d85ffc459b8c9fd198ad0eb1893c238d6ead6c43bbbaa39de36cf4d9d26c7d"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p27-shell-fossil.png",
+      "page": 27,
+      "box": [
+        750,
+        272,
+        1057,
+        488
+      ],
+      "sha256": "0d467fbb5be29ab3c459deef4a106522862ee508f8d5e70b49fb962b711459a2"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p28-four-rock-photos.png",
+      "page": 28,
+      "box": [
+        209,
+        309,
+        553,
+        573
+      ],
+      "sha256": "eab087f8a088d93f833530519a2e962b53522bd8d2f34d0fd18d2148f2436a5e"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p29-fish-fern-fossils.png",
+      "page": 29,
+      "box": [
+        160,
+        385,
+        600,
+        552
+      ],
+      "sha256": "b1ceabaa3f89862e2114c650ab6506a4a08cea83c093b0a2aa3ef744bb17b22a"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p29-conglomerate-mudstone.png",
+      "page": 29,
+      "box": [
+        749,
+        382,
+        1094,
+        552
+      ],
+      "sha256": "23a06d30a6b9f63c084f8d4fae428b8c6e7910acdeca25fa5f9b4756de155f3b"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p29-fossil-sequence.png",
+      "page": 29,
+      "box": [
+        681,
+        1070,
+        1127,
+        1280
+      ],
+      "sha256": "e9694f1e2d99b912aec1ee4ce0e58fd429abe895ffd11a0fd41a552c8d7ad5b5"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p30-two-strata.png",
+      "page": 30,
+      "box": [
+        216,
+        340,
+        1059,
+        599
+      ],
+      "sha256": "a2bc14b774df3b390adc6005abfada4dbeef4bf04315059e17a1d717a3d91c5f"
+    },
+    {
+      "path": "assets/bank/c22-s51-u01/p33-compaction-cementation.png",
+      "page": 33,
+      "box": [
+        154,
+        351,
+        1125,
+        587
+      ],
+      "sha256": "083f3a04ca0898079b9dff5f1306b5788a513c6dd83e33482812c3e00ff55163"
+    }
+  ],
+  "originalPdfPagesInspected": 6,
+  "appleVisionSourcePages": 6,
+  "appleVisionFigures": 10,
+  "appleVisionFailures": 0,
+  "printedKeyTextDetectedInExtractedFigures": false,
+  "existingPracticeCount": 96,
+  "existingPracticePromptAnswerTaxonomyPreserved": true,
+  "currentOriginalSourceUnits": 29,
+  "currentOriginalSourceCount": 1763,
+  "noOriginalSourceUnits": [
+    "c22-s62-u04",
+    "c22-s32-u02",
+    "c22-s32-u04"
+  ],
+  "noOriginalSourcePracticeCount": 312,
+  "sourceReviewSources": [
+    "https://www.nps.gov/subjects/fossils/what-is-a-fossil.htm",
+    "https://www.nps.gov/fobu/planyourvisit/visitorcenterexhibits.htm"
+  ],
+  "excluded": [
+    "층리 전문 명칭·휴지기 원인 강제",
+    "알갱이 크기만으로 수심 확정",
+    "단층·습곡 생성 힘 필수 평가",
+    "연대를 특정 화석의 단순 일치로 확정",
+    "지질시대=1만 년 전이라는 옛 정의",
+    "칼·가열·액화수지/경화제 학생 제작 절차"
+  ],
+  "tests": {
+    "files": 274,
+    "total": 1466,
+    "passed": 1464,
+    "failed": 0,
+    "browserSkipped": 2
+  },
+  "combinedBankPrints": 113,
+  "nativeCombinedPrintModesChecked": 4,
+  "printImagesRequestedEagerly": true,
+  "fullCurrentEditionClaimed": false,
+  "browserVisualVerified": false,
+  "mainMerged": false,
+  "deployed": false,
+  "qa": "science-question-review/phase391",
+  "previousGoalTurnClassification": "progress"
+}

@@ -1,3 +1,4 @@
+import{reviewLabel}from'../science-lab/bank/review-label.mjs';
 // 현행4-1 생물 단원. 옛5-1 원문의 출처와 기존 효모빵 단원/기록은 별개로 보존한다.
 import {readFileSync,writeFileSync} from 'node:fs';
 import {join,resolve} from 'node:path';
@@ -36,7 +37,7 @@ const fixes=[
  '생물의 어떤 작용을 어떤 생활 문제 해결에 이용하는지 연결해요. 항생제와 백신은 같은 뜻이 아니며 실제 의약품을 만드는 활동이 아니에요.',
  '자료의 대상·내용·그림·출처를 확인해요. 발표자·역할·시간도 실제 계획에 고려할 수 있어요. 제작과 실제 공유는 따로 기록해요.',
 ];
-const newMis=Object.fromEntries(typeRows.map(([element,name],i)=>[`M${String(i+1).padStart(2,'0')}`,{label:`${name}를 다시 살펴봐요`,element,terms:[name],fix:fixes[i],step:i<8?2:4}]));Object.assign(newMis,sup.misconceptions);
+const newMis=Object.fromEntries(typeRows.map(([element,name],i)=>[`M${String(i+1).padStart(2,'0')}`,{label:reviewLabel(name),element,terms:[name],fix:fixes[i],step:i<8?2:4}]));Object.assign(newMis,sup.misconceptions);
 const required=Object.fromEntries(original.filter(q=>q.format==='서술형').map(q=>[`src:${q.key}`,[q.rubric[0].criterion]]));
 const judge=Object.fromEntries([...original.filter(q=>q.format==='서술형').map(q=>[`src:${q.key}`,{open:true,need:[],ex:{ok:[q.answer],part:[],no:[]},note:'인쇄 배점은 보존한다. 의미·대안·자료 오류는 교사 확인하며 단순 키워드로 자동 정답 처리하지 않는다.'}]),...pairs.filter(q=>q.kind==='wr').map(q=>[`sim:${q.key}`,{open:true,need:[],ex:{ok:[q.sample],part:[],no:[]},note:'설명과 근거의 타당성은 교사 확인. 공식 배점 없음.'}])]);
 const notes=Object.fromEntries(original.map(q=>[q.key,'옛5-1 교재에서 옮긴 자료이며 현행4-1 학습에 활용합니다. 관찰한 생물·표본의 범위로 읽고 모든 종류의 구조·서식 조건·영향을 단정하지 않습니다.']));

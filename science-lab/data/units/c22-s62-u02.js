@@ -1,0 +1,11 @@
+import {reviewedSourceDiagnostics} from '../../bank/source-diagnostics/c22-s62-u02.js?v=20261116-source-diagnostics-per-unit';
+import {source as registeredSource} from './c22-s62-u02.source.js';
+import {unit as pairedUnit,items as pairedItems} from './c22-s62-u02.paired.js';
+import {taxonomy} from './c22-s62-u02.taxonomy.js?v=20261114-source-integration';
+import {combustionAuthoredItems} from '../book/c22-s62-u02.combustion-items.js';
+export const unit={...pairedUnit,sources:{...pairedUnit.sources,scope:'옛단원 연계 원문49·독립 연습198=247문항. 현행 판본 전체 원문은 준비 중이다.',originalExamAvailable:true,sourceExcerptOnly:true}};
+const paired=pairedItems.map(q=>{if(!['c22-s62-u02-v012','c22-s62-u02-v044'].includes(q.id))return q;const choices=[...q.choices];choices[q.id.endsWith('012')?4:1]='일산화 탄소';return{...q,choices,contentVersion:'20261104-combustion-book',previousVersions:[{...JSON.parse(JSON.stringify(q)),version:1}]};});
+export const items=[...paired,...combustionAuthoredItems(taxonomy)];
+export {sourceRegistration} from './c22-s62-u02.source.js';
+export const source=reviewedSourceDiagnostics('c22-s62-u02',registeredSource);
+export const similar=[];

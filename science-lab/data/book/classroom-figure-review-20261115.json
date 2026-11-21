@@ -1,0 +1,38 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "수업 확인 문제에 이미 연결된 사진이 빠지는 표시 경로",
+  "cacheVersion": "20261115-classroom-question-figures",
+  "questions": ["s41-u04-b09", "s41-u04-b16"],
+  "discovery": {
+    "actualUnits": 32, "actualStudentAndTeacherDecks": 64, "slidesCompared": 3048,
+    "questionSlidesWithPictureData": 10, "missingPictureSlidesBefore": 4, "missingPictureSlidesAfter": 0
+  },
+  "rendering": {
+    "nativeFiguresAndAltTextDisplayed": true,
+    "nativeHigherResolutionCopyAttributesPreserved": true,
+    "labeledPhotographsAndObservationPhotoGroupsSupported": true,
+    "existingGeologyAndWeatherFigurePlacementPreserved": true,
+    "eachRequiredImageAppearsOnce": true,
+    "studentAnswerHidingAndTeacherExplanationPreserved": true
+  },
+  "preservation": {
+    "unchangedSlides": 3044,
+    "changedSlides": [
+      {"unit": "s41-u04", "mode": "self", "slide": "test12", "item": "s41-u04-b09"},
+      {"unit": "s41-u04", "mode": "self", "slide": "test16", "item": "s41-u04-b16"},
+      {"unit": "s41-u04", "mode": "teach", "slide": "test12", "item": "s41-u04-b09"},
+      {"unit": "s41-u04", "mode": "teach", "slide": "test16", "item": "s41-u04-b16"}
+    ],
+    "changedBodiesMatchPreviousAfterRemovingOnlyAddedFigure": true,
+    "nonBodySlideFieldsPreserved": true,
+    "questionDataVersionsAnswerContractsAndStorageKeysPreserved": true,
+    "imageBytesChanged": false,
+    "originalQuestionsAddedOrChanged": 0
+  },
+  "verification": {
+    "previousRevisionExecutedSeparately": "17c7fa5ed",
+    "nativeTestFiles": 282, "nativeTests": 1487, "nativePassed": 1485, "nativeFailed": 0, "browserTestsSkipped": 2,
+    "bankAuditPassed": true, "taxonomyCheckPassed": true, "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": ["현행 원문 없는 세 단원과 전체 현행 판본 확보", "실제 PC·휴대폰·A4·음성·WebGL·3D 검수", "운영 메인 병합·배포"]
+}

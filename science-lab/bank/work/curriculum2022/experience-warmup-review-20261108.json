@@ -1,0 +1,89 @@
+{
+  "phase": 383,
+  "date": "2026-11-08",
+  "candidateBaseline": "7cc392e1b3716993086e78045a58fe8f0808bc24",
+  "reviewParent": "5feac09599881ce2ec36ff0bd1096b6929baf2ba",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "32권의 첫 두 쪽과 워밍업을 읽고18도입 질문을 경험과 궁금한 점을 떠올리는 질문으로 풀었다. 생물의 한살이 첫 제목도 쉽게 정리했다.",
+  "validation": {
+    "phase": 383,
+    "date": "2026-11-08",
+    "baseline": "7cc392e1b3716993086e78045a58fe8f0808bc24",
+    "introUnitsInspected": 32,
+    "introPagesInventoried": 64,
+    "experienceWarmupUnits": 18,
+    "studentHintChanges": 18,
+    "explicitTeacherStudentHintChanges": 17,
+    "firstTitleChangesInModel": 1,
+    "teacherPrintUsesStudentFallbackForLife": true,
+    "allOtherWorkbookFieldsUnchanged": true,
+    "rawWorkbookExportsAndInputsUnchanged": true,
+    "questionsPreserved": 3080,
+    "unchangedUnitModels": 14,
+    "printModes": {
+      "unchanged": 92,
+      "changedWarmupOnly": 36
+    },
+    "webModes": {
+      "unchanged": 28,
+      "changedWarmupOnly": 36
+    },
+    "classroomDecks": {
+      "unchanged": 64,
+      "changedWarmupOnly": 0,
+      "slides": 3048
+    },
+    "exactOpeningFieldRoleUnitWordingAndFutureBoundariesVerified": true,
+    "noGradingOrStorageChanges": true,
+    "actualBrowserUsed": false,
+    "actualA4VisualInspection": false
+  },
+  "nativeTests": {
+    "relatedFiles": 4,
+    "relatedTestsPassed": 73,
+    "firstFullSuite": {
+      "exitCode": 1,
+      "files": 270,
+      "tests": 1449,
+      "suites": 0,
+      "pass": 1446,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "fullSuite": {
+      "exitCode": 0,
+      "files": 270,
+      "tests": 1449,
+      "suites": 0,
+      "pass": 1447,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "firstFailure": "기존5학년 개인 정리 인쇄 검사가 현재 안내 helper를 적용하지 않은 원고를 기대해, 이전/현재/복원 양쪽에 같은 helper를 적용하고 전체를 재실행했다.",
+    "directionsCoverageCountUpdated": {
+      "units": 21,
+      "pages": 49,
+      "studentFields": 89,
+      "questions": 3080
+    },
+    "browserEnvironmentUnset": true,
+    "syntaxFiles": 6
+  },
+  "preservation": {
+    "rawWorkbookExportsAndInputsUnchanged": true,
+    "questionsAnswersFiguresWritingSpaceRailsAndTeacherNotesUnchanged": true,
+    "other14UnitModelsUnchanged": true,
+    "all64ClassroomDecksUnchanged": true,
+    "assetsScenesReportsAndStorageCodeUnchanged": true
+  },
+  "actualBrowserUsed": false,
+  "actualA4VisualInspection": false,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

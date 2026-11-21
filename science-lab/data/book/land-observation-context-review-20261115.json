@@ -1,0 +1,111 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "땅의 변화1·9·10번과 전후 관찰 설명 그림",
+  "cacheVersion": "20261115-land-observation-context",
+  "standard": "4과11-01",
+  "curriculumScope": "흐르는 물에 의한 침식·운반·퇴적과 강 주변 지형. 별도 지구와 바다4과06의 제외 범위와 구별한다.",
+  "items": [
+    "s41-u03-b27",
+    "s41-u03-b30"
+  ],
+  "pair": "s41-u03-v001",
+  "workbookQuestions": [
+    "s41-u03-w001",
+    "s41-u03-w009",
+    "s41-u03-w010"
+  ],
+  "generatedAsset": {
+    "path": "assets/book/s41-u03-runoff-before-after-v1.png",
+    "bytes": 2999685,
+    "sha256": "9e96e161c6bca873b51919b8bd80aab044cd3a92c8ddd2fa0271b8d7ed30de8f",
+    "width": 1774,
+    "height": 887,
+    "toolMode": "built-in image_gen",
+    "prompt": "Use case: scientific-educational.\nAsset type: elementary science workbook reference image, a photorealistic two-panel explanation of a sand-tray erosion experiment, not documentary evidence.\nPrimary request: show the SAME sand hill in the SAME shallow rectangular grey tray before and after gently flowing water from the top. Two equal panels side by side, thin white gutter. No words, labels, letters, numbers, symbols, arrows, logos or watermark; all labels will be added in HTML.\nSubject and scientific invariants: the hill is at the rear of each tray, with a long gently sloping foreground and flat low area inside the tray at the front. LEFT BEFORE: uncut beige sandy soil surface, a small concentrated patch of turquoise colored sand ONLY on the upstream summit. Absolutely no turquoise grains down the slope or on the flat foreground in this panel. RIGHT AFTER: same tray, matching hill size and camera, a clearly visible narrow channel cut downward into the slope by flowing water, and a fan of transported turquoise grains mixed with beige sand accumulated on the low flat foreground inside the tray. Some turquoise sand remains near the summit and a discontinuous trace follows the channel down to the fan. The channel has visible recessed banks; the low deposit is distinct from the summit. Modest wetness and a little water may be visible at the bottom of the channel, without a large pond.\nComposition: paired close-up educational tabletop photographs at identical three-quarter elevated camera angles, landscape canvas, both complete trays fully inside the frame, plain bright neutral background. Match all unchanged objects, tray edges, viewpoint, scale and soft light between panels. No hands, people, beakers, rulers or invented measurement marks.\nStyle: realistic small-scale laboratory materials, actual granular sand texture and physically plausible wet soil; high detail, naturally lit, restrained colors, clear enough for a printed textbook. Do not make cartoons, line drawings, plastic toys, mountains, landscapes or glowing neon water.",
+    "purpose": "실사처럼 표현한 전후 설명 그림. 교재와 수업의 표시에서는 설명 그림으로 밝힌다.",
+    "manualReview": "왼쪽 색 모래는 언덕 위쪽에만 있고, 오른쪽에는 물길을 따라 아래쪽으로 옮겨진 색 모래와 평평한 곳의 모임이 보인다. 두 장면의 쟁반·방향·빛이 맞고 오른쪽 흙 표면에 파인 홈이 보인다. 글자·수치·측정 표식은 넣지 않는다.",
+    "vision": {
+      "computePolicy": "CPU-only",
+      "frames": 1,
+      "recognizedLines": 0,
+      "status": "ok"
+    }
+  },
+  "existingRiverImage": {
+    "path": "assets/bank/s41-u03/s3-q04.webp",
+    "sha256": "7721c8fc6ff9f8dd94ee0d130eba6184088460de9a272a49b21a94ce3516bbd4",
+    "bytesUnchanged": true,
+    "manualReview": "푸른 물, 물가의 밝은 부분, 나무와 드러난 물길을 확인한다. 보기의 큰 바위/모래밭 단정은 이 사진의 보이는 특징으로 바꾼다."
+  },
+  "wording": "그림에 없는 처음 표시한 높이 대신 처음 그림에 없던 홈을 비교하게 한다. 정답 위치·채점 계약은 그대로 두고 보기5문장·발문3개·해설2개를 자료에 맞춘다. 새 그림을 학생이 수행한 실험 사진이나 측정값으로 표시하지 않는다.",
+  "printLayout": "기존 쪽/필기 공간을 유지하며 해당 두 이미지의 인쇄 높이를38mm로 제한하고 원본 비율·전체 화면을 유지한다.",
+  "preservation": {
+    "previousGit": "3d2e802717",
+    "actualUnits": 32,
+    "currentQuestions": 3179,
+    "currentQuestionsUnchanged": 3177,
+    "changedItems": [
+      "s41-u03-b27",
+      "s41-u03-b30"
+    ],
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestions": 1512,
+    "pairedQuestionsUnchanged": 1511,
+    "changedPairs": [
+      "s41-u03-v001"
+    ],
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3077,
+    "allKeysContractsPageStructuresWritingAreasAndOldFiguresPreserved": true,
+    "allChoiceAndEmptyResponseComparisons": 18,
+    "oldVersionsPreserved": 4,
+    "actualWorkbookPrintModesCompared": 4,
+    "genericQuestionStudentTeacherPrintsCompared": 6,
+    "printChangesLimitedToRequiredFiguresReviewedWordingAndOneSummary": true,
+    "oneStudentTeacherSummaryAligned": true,
+    "quickPrintByteIdentical": true,
+    "decks": 64,
+    "slides": 3048,
+    "unchangedSlides": 3044,
+    "changedSlides": [
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "slide": "test1",
+        "item": "s41-u03-v001"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "slide": "test15",
+        "item": "s41-u03-b27"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "slide": "test1",
+        "item": "s41-u03-v001"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "slide": "test15",
+        "item": "s41-u03-b27"
+      }
+    ],
+    "otherSlideFieldsAndPriorRecordKeysPreserved": true,
+    "rawSourcesAndQuestionWorkbookRendererCodeUnchanged": true
+  },
+  "nativeSuite": {
+    "testFiles": 289,
+    "tests": 1509,
+    "passed": 1507,
+    "failed": 0,
+    "browserSkipped": 2
+  },
+  "actualBrowserAndA4Reviewed": false,
+  "newOriginalSourceAdded": false,
+  "qa": "science-question-review/phase408/",
+  "deployed": false,
+  "sidebarSummary": "연습9~10쪽의 핵심 정리 한 문장을 설명 그림에서 깎인 곳을 살피고 강 사진의 모습과 시간에 따른 변화량을 구별하는 내용으로 맞춘다. 학생/교사 쪽 구조와 개인 필기 공간은 유지한다."
+}

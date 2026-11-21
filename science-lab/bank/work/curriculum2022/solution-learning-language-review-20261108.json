@@ -1,0 +1,166 @@
+{
+  "phase": 325,
+  "date": "2026-11-08",
+  "scope": "Plain solution display data and directions, plus complete model-based comparison case coverage.",
+  "priorLocalCommit": "596e2907301d44b503b7c4ae572232c164c11925",
+  "reviewParent": "04a94b05d0eb1190d970bf178316e96128c41fbc",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "nativeValidation": {
+    "currentWorkbooksUnchanged": 32,
+    "currentWorkbookHtmlUnchanged": 128,
+    "currentRuntimeQuestionPoolsUnchanged": 32,
+    "otherClassroomUnitsUnchanged": 31,
+    "otherClassroomSlideArraysUnchanged": 62,
+    "changedSlides": [
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "masscheck"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "kind"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "temperature"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "firstclose"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "contact"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "conclusion"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "end"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "masscheck"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "kind"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "temperature"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "firstclose"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "contact"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "conclusion"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "end"
+      }
+    ],
+    "changedSlideCount": 14,
+    "changedSlideMarkupUnchanged": true,
+    "changedCues": {
+      "changedCues": [
+        "observe",
+        "communicate"
+      ],
+      "allOtherClassroomMetadataUnchanged": true
+    },
+    "solutionDisplayCasesReworded": 4,
+    "rawSolutionRecordVariantsPreservedByTests": 28,
+    "comparisonWidgetsExercised": 31,
+    "fullModelCaseSettings": 206,
+    "nativeWidgetStatesCompared": 618,
+    "priorCaseCoverageCorrection": {
+      "priorSettings": 203,
+      "omittedClimateLevels": [
+        2,
+        3,
+        4
+      ],
+      "currentClimateLevels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "allCaseSelectorsAndValuesNowComparedWithModelExports": true,
+      "missingAndUnknownControlsFailRegression": true
+    },
+    "modifiedWidgetKinds": [
+      "solution-compare"
+    ],
+    "modifiedCaseSettings": 7,
+    "changedWidgetStateCounts": {
+      "start": 7,
+      "shown": 7,
+      "record": 7
+    },
+    "other30WidgetsExactlyUnchanged": true,
+    "allCallbacksRowsProgressAndRestoreEqual": true,
+    "allHtmlTagsControlsImagesAndOptionValuesEqual": true,
+    "rawDataAndModelFilesUnchanged": 814,
+    "allQuestionsAnswersSavedGradesAndHistoryUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkCalls": 0,
+    "actualAudioPlays": 0,
+    "newRegressionTests": 5,
+    "syntaxFiles": 9,
+    "actualBrowserVerified": false,
+    "newOcrRuns": 0,
+    "newBitmaps": 0
+  },
+  "scopeCorrection": "Previous 203 settings omitted climate levels2/3/4; current coverage is206 and every selector/value is checked against model exports.",
+  "newQuestionContextsReviewed": 0,
+  "currentQuestionContextsPreviouslyReviewed": 3080,
+  "currentQuestionContextsPreviouslyModified": 1902,
+  "tests": {
+    "files": 239,
+    "total": 1328,
+    "pass": 1326,
+    "fail": 0,
+    "skip": 2,
+    "newTests": 5
+  },
+  "currentOriginalUnits": 23,
+  "currentOriginalQuestions": 1512,
+  "pendingOriginalUnits": 9,
+  "rawSourceAndPairBanksUnchanged": true,
+  "curriculumConceptsAndScienceClaimsUnchanged": true,
+  "allDataNumbersAndSavedMaterialSchemasPreserved": true,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

@@ -1,0 +1,96 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "지구와 바다9·35번에 기존 지구 사진 연결",
+  "cacheVersion": "20261115-earth-surface-photo",
+  "standard": "4과06-01",
+  "curriculumBasis": "2022 개정 초등 과학: 지구 표면의 육지와 바다 특징 비교 및 육지와 바다 면적 비교 활동. 비율은 정성적으로 다룬다.",
+  "image": {
+    "path": "assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg",
+    "sha256": "36dad3314b64319ea75465c4293719eb131d943566eb462e8bac3281e02c3bd4",
+    "width": 1920,
+    "height": 1920,
+    "bytesUnchanged": true,
+    "sourceUrl": "https://science.nasa.gov/earth/earth-observatory/the-blue-marble-from-apollo-17-1133/",
+    "credit": "NASA/JSC · Apollo17 · AS17-148-22727",
+    "sourceCheck": "NASA 원문은 달로 향하는 아폴로17호 승무원이 본 지구 사진으로 설명한다. 기존 사진·개념 지면의 출처 링크를 유지한다."
+  },
+  "learningDistinction": "사진에서 구름이 가린 곳과 한 방향에서 보이지 않는 뒤쪽을 구별한다. 한 장을 확대하거나 복사하여 지구 전체 면적을 알아냈다고 하지 않으며 정확한 비율 계산이나 현재 기상 자료로 쓰지 않는다.",
+  "changes": {
+    "workbook": [
+      "c22-s32-u02-w009",
+      "c22-s32-u02-w035"
+    ],
+    "bank": [
+      "c22-s32-u02-b20",
+      "c22-s32-u02-b24"
+    ],
+    "fields": "교재는 발문·기존 사진 key만, 은행은 발문·사진 표시·해설·이력만 바꾼다. 모든 보기·정답·응답 계약·쪽/필기 공간·오른쪽 정리·기존 개념 그림은 그대로다.",
+    "printPolicy": "문제 안의 이 지구 사진만 인쇄 최대 높이38mm로 제한하고 비율을 유지한다. 개념 지면의 기존 사진 크기는 바꾸지 않는다."
+  },
+  "ocr": {
+    "engine": "Apple Vision",
+    "computePolicy": "CPU-only",
+    "files": 1,
+    "frames": 1,
+    "failures": 0,
+    "recognizedLines": 0,
+    "manualReview": true,
+    "manualFindings": "육지·바다·흰 구름과 사진의 범위를 직접 확인했다. 인식0줄을 글자 없음의 증명으로 세지 않는다."
+  },
+  "preservation": {
+    "previousGit": "757ac92d05d89c75347f63e2b42c22eea4cbdb51",
+    "actualUnits": 32,
+    "currentQuestions": 3179,
+    "currentQuestionsUnchanged": 3177,
+    "changedItems": [
+      "c22-s32-u02-b20",
+      "c22-s32-u02-b24"
+    ],
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestionsUnchanged": 1512,
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3078,
+    "allKeysContractsChoiceOrdersPageStructuresWritingAreasFiguresAndSidebarsPreserved": true,
+    "answerComparisons": 9,
+    "oldVersionsPreserved": 3,
+    "actualWorkbookPrintModesCompared": 8,
+    "genericQuestionStudentTeacherPrintsCompared": 4,
+    "printChangesLimitedToTwoPicturesAndPromptsAndBankExplanations": true,
+    "workbookAnswerAndQuickModesByteIdentical": true,
+    "previousRevisionLoadersAndDecksExecutedFromGit": true,
+    "decks": 64,
+    "slides": 3048,
+    "allSlidesByteIdentical": true,
+    "pictureSlides": 16,
+    "rawSourcesAndQuestionWorkbookRendererCodeUnchanged": true,
+    "actualBrowserAndA4Reviewed": false
+  },
+  "verification": {
+    "testFiles": 291,
+    "tests": 1516,
+    "passed": 1514,
+    "failed": 0,
+    "browserSkipped": 2,
+    "newRegressionTests": 3,
+    "syntaxFiles": 18,
+    "bankAudit": true,
+    "taxonomyCheck": true,
+    "diffCheck": true,
+    "fullHistoricSnapshots": 2812,
+    "choiceOnlyDeltas": 2
+  },
+  "auditDispositions": [
+    {
+      "id": "s31-u01-w025",
+      "disposition": "보기 다섯 문장이 관찰 기록 자체이므로 별도 표 누락으로 판정하지 않음."
+    },
+    {
+      "id": "c22-s32-u02-w045",
+      "disposition": "동네 사진에 땅이 넓다는 조건이 발문에 제시된 자료 범위 비교 문제로 유지."
+    }
+  ],
+  "newImages": 0,
+  "newOriginalQuestions": 0,
+  "browserAndA4Reviewed": false,
+  "deployed": false
+}

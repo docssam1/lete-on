@@ -1,0 +1,48 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "복습 제목의 한국어 목적격 조사와 재생성 입력",
+  "cacheVersion": "20261115-review-label-particles",
+  "labels": {
+    "actualUnits": 32,
+    "total": 529,
+    "corrected": 60,
+    "unchanged": 469,
+    "correctionsByUnit": {
+      "c22-s42-u01": 15,
+      "c22-s42-u02": 13,
+      "c22-s42-u03": 11,
+      "c22-s42-u04": 9,
+      "s41-u04": 12
+    }
+  },
+  "generation": {
+    "labelBuildersUpdated": 5,
+    "biologySupplementLabelsUpdated": 5,
+    "staleScienceAndSocietyBankInputsCorrected": 4,
+    "wholeBankWritersExecuted": false,
+    "actualLabelDeclarationsVerifiedSeparately": true
+  },
+  "preservation": {
+    "currentQuestionsUnchanged": 3179,
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestionsUnchanged": 1512,
+    "actualResponseGradeComparisons": 28636,
+    "diagnosisIdsRulesAndOtherFieldsPreserved": true,
+    "currentPublishedCurriculumAreasUnchanged": true
+  },
+  "verification": {
+    "nativeTestFiles": 283,
+    "nativeTests": 1490,
+    "nativePassed": 1488,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": [
+    "현행 원문 없는 세 단원과 전체 현행 판본 확보",
+    "실제 PC·휴대폰·A4·음성·WebGL·3D 검수",
+    "운영 메인 병합·배포"
+  ]
+}

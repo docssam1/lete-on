@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // 과학 탐구 랩 3D 검사 — science-lab/3D-RULES.md 의 규칙을 실제 브라우저에서 확인한다.
 //
-//   node scripts/check-science-3d.mjs              # 전체(5실험 × 7화면)
+//   node scripts/check-science-3d.mjs              # 현행 수업 + 보존된 예전 3D 실험 화면
+//   node scripts/check-science-3d.mjs --plan       # 브라우저 없이 검사 대상/경로만 확인
 //   node scripts/check-science-3d.mjs s41-u03b     # 지정 단원만
 //   SHOTS=/tmp/3d node scripts/check-science-3d.mjs # 화면마다 캡처도 저장
 //
@@ -16,6 +17,12 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { SCIENCE_CHECK_UNITS, science3DPlan, science3DCases, science3DFullscreenCases } from './science-3d-plan.mjs';
+
+const args = process.argv.slice(2), selected = args.filter(arg => arg !== '--plan');
+const targetPlan = await science3DPlan(selected.length ? selected : SCIENCE_CHECK_UNITS);
+if (args.includes('--plan')) { console.log(JSON.stringify(targetPlan, null, 2)); process.exit(0); }
+const targetByUnit = new Map(targetPlan.targets.map(target => [target.unit, target]));
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let chromium;
@@ -26,9 +33,8 @@ catch {
   ({ chromium } = await import(pathToFileURL(modulePath).href));
 }
 
-// 3D 실험실이 있는 단원 — science-lab/v2/home.js 의 LABS 와 같아야 한다(새 실험을 넣으면 여기도)
-const ALL = ['c22-s42-u04', 'c22-s42-u01', 'c22-s42-u02', 'c22-s32-u04', 'c22-s32-u01', 'c22-s32-u02', 'c22-s32-u03', 's41-u04', 's31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
-const UNITS = process.argv.slice(2).length ? process.argv.slice(2) : ALL;
+// 실제 수업 모듈에서 만든 대상이며 홈의 추천 카드 개수와 분리한다.
+const UNITS = targetPlan.targets.map(target => target.unit);
 const labPath = u => `#/${u}/2/lab`;   // 2026-10-20부터 4-1 단원도 3D 실험이 기본(lab) — 기록 앱은 선택 기능
 const SHOTS = process.env.SHOTS || '';
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
@@ -43,7 +49,10 @@ const server = http.createServer((req, res) => {
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const BASE = `http://127.0.0.1:${server.address().port}/science-lab/v2/`;
 
-const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const liveBrowsers = new Set();
+const launchBrowser = async options => { const instance = await chromium.launch(options); liveBrowsers.add(instance); return instance; };
+try {
+const browser = await launchBrowser({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const fails = []; let checks = 0;
 const fail = (where, msg) => { fails.push(`${where}: ${msg}`); console.log(`  ✗ ${msg}`); };
 
@@ -175,7 +184,13 @@ async function ringTowerClicks(u) {
   }
   // 두 팀 대결(전자칠판·태블릿): 처음과 두 팀 확정 뒤 모두 — 두 팀의 번호 단추·표에 적기·기록 고르기·확정·O/X가 대결 칸 안쪽 스크롤 없이 보이고 실제로 눌리는지,
   // 팀 칸 아래가 잘리지 않는지, 누르는 칸이 44px 이상인지. 4:3·16:10·낮은 화면은 16:9 틀을 풀어 남은 높이를 쓰고 교사 노트를 접는다(2026-10-14 검수).
-  const n = await labSlide(u);
+  const n = await labSlide(u), currentModel = targetByUnit.get(u)?.classroomCases.find(c => c.mode === 'teach' && c.type === 'lab3d');
+  if (currentModel && !currentModel.battle) {
+    const { page, errs } = await open({ width: 1440, height: 900 }, currentModel.hash);
+    checks++;
+    if (await page.locator('[data-a=battle]').count()) fail(`${u} 현행 모형`, '사용하지 않는 대결 단추가 노출됨');
+    await done(`${u} 현행 모형`, page, errs);
+  } else {
   const battleAudit = (page) => page.evaluate(() => {
     const box = document.querySelector('.dk-magnet-battle'); if (!box) return ['대결 화면 없음'];
     const b = box.getBoundingClientRect(), out = [];
@@ -197,7 +212,7 @@ async function ringTowerClicks(u) {
     const where = `${u} 대결 ${vp.width}×${vp.height}${gl ? '' : ' 2D'}`; console.log(`  · ${where.slice(u.length + 1)}`);
     let br2 = null, page, errs;
     if (gl) ({ page, errs } = await open(vp, `#/${u}/lab-class/teach/${n}`));
-    else { br2 = await chromium.launch({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] }); page = await br2.newPage({ viewport: vp }); errs = []; page.on('pageerror', (e) => errs.push(e.message)); await page.goto(BASE + `#/${u}/lab-class/teach/${n}`, { waitUntil: 'networkidle' }); }
+    else { br2 = await launchBrowser({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] }); page = await br2.newPage({ viewport: vp }); errs = []; page.on('pageerror', (e) => errs.push(e.message)); await page.goto(BASE + `#/${u}/lab-class/teach/${n}`, { waitUntil: 'networkidle' }); }
     await page.waitForTimeout(1500);
     await page.getByRole('button', { name: /배틀/ }).first().click();
     await page.waitForFunction(() => document.querySelectorAll('.mb-team [data-act=record]').length === 2, null, { timeout: 30000 }).catch(() => {});
@@ -224,7 +239,8 @@ async function ringTowerClicks(u) {
     await shot(page, `${u}-대결 ${vp.width}${gl ? '' : ' 2D'}`);
     await done(where, page, errs); if (br2) await br2.close();
   }
-  const gl0 = await chromium.launch({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] });
+  }
+  const gl0 = await launchBrowser({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] });
   for (const [name, vp, touch] of [['2D 대체(PC)', { width: 1280, height: 860 }], ['2D 대체(폰)', { width: 390, height: 844 }, true]]) {
     const where = `${u} ${name}`; console.log(`  · ${name}`);
     const page = await gl0.newPage({ viewport: vp, hasTouch: !!touch }), errs = [];
@@ -343,7 +359,13 @@ async function tubeClicks(u) {
     await done(where, page, errs);
   }
   // 두 팀 배틀은 병 실험 그대로(배틀 문제가 병 기록에 묶여 있다) — 병 실험이 뜨고, 얼리는 동안 결론을 먼저 말하지 않는지
-  {
+  const currentModel = targetByUnit.get(u)?.classroomCases.find(c => c.mode === 'teach' && c.type === 'lab3d');
+  if (currentModel && !currentModel.battle) {
+    const { page, errs } = await open({ width: 1440, height: 900 }, currentModel.hash);
+    checks++;
+    if (await page.locator('[data-a=battle]').count()) fail(`${u} 현행 모형`, '사용하지 않는 대결 단추가 노출됨');
+    await done(`${u} 현행 모형`, page, errs);
+  } else {
     const where = `${u} 대결`; console.log('  · 대결(병)');
     const { page, errs } = await open({ width: 1440, height: 900 }, `#/${u}/lab-class/teach/${n}`); await page.waitForTimeout(1500);
     await page.getByRole('button', { name: /배틀/ }).first().click(); await page.waitForTimeout(800);
@@ -358,7 +380,7 @@ async function tubeClicks(u) {
     await shot(page, `${u}-대결`);
     await done(where, page, errs);
   }
-  const gl0 = await chromium.launch({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] });
+  const gl0 = await launchBrowser({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] });
   for (const [name, vp, touch] of [['2D 대체(PC)', { width: 1366, height: 768 }], ['2D 대체(폰)', { width: 390, height: 844 }, true]]) {
     const where = `${u} ${name}`; console.log(`  · ${name}`);
     const page = await gl0.newPage({ viewport: vp, hasTouch: !!touch }), errs = [];
@@ -373,6 +395,8 @@ async function tubeClicks(u) {
 }
 
 async function labSlide(u) {
+  const target = targetByUnit.get(u);
+  if (target?.current) return target.classroomCases.find(c => c.mode === 'teach' && c.type === 'lab3d')?.n || 0;
   const { page } = await open({ width: 1440, height: 900 }, `#/${u}/lab-class/teach/1`);
   await page.locator('.dk-foot').waitFor();
   const total = await page.locator('.dk-foot span:last-child').evaluate(e => Number(e.textContent.split('/')[1]));
@@ -388,19 +412,23 @@ async function labSlide(u) {
 
 for (const u of UNITS) {
   console.log(`\n■ ${u}`);
-  const n = await labSlide(u);
-  const cases = [
-    ['덱 실험 슬라이드', { width: 1440, height: 900 }, n ? `#/${u}/lab-class/teach/${n}` : null],
-    ['5단계 실험(PC)', { width: 1280, height: 860 }, labPath(u)],
-    ['5단계 실험(폰)', { width: 390, height: 844 }, labPath(u), true],
-    ['장면(PC)', { width: 1280, height: 860 }, `#/${u}/2/scene`],
-    ['장면(폰)', { width: 390, height: 844 }, `#/${u}/2/scene`, true],
-  ];
-  for (const [name, vp, hash, touch] of cases) {
+  const target = targetByUnit.get(u), n = await labSlide(u);
+  const cases = science3DCases(target, n);
+  for (const [name, vp, hash, touch, classroom] of cases) {
     const where = `${u} ${name}`; console.log(`  · ${name}`);
     if (!hash) { fail(where, '덱에서 「3D 실험실」 슬라이드를 찾지 못함'); continue; }
     const { page, errs } = await open(vp, hash, { touch });
-    judge(where, await waitFitted(page));
+    if (classroom) {
+      checks++;
+      const displayed = await page.locator('.dk-foot span:last-child').first().textContent();
+      if (!displayed?.trim().startsWith(classroom.n + ' /')) fail(where, '계획한 수업 화면과 다른 화면을 엶');
+      if (!classroom.battle && await page.locator('[data-a=battle]').count()) fail(where, '현재 수업에서 사용하지 않는 대결 단추가 노출됨');
+    }
+    if (classroom?.type === 'comparison2d') {
+      checks++;
+      await page.locator(classroom.widget).first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => fail(where, '예정한 자료 비교 조작부가 없음'));
+      if ((await probe(page)).length) fail(where, '2D 자료 비교 화면에 예기치 않은 3D 무대가 있음');
+    } else judge(where, await waitFitted(page));
     await shot(page, `${u}-${name}`);
     if (name === '5단계 실험(PC)') {
       if (u === 's41-u01') {
@@ -452,7 +480,7 @@ for (const u of UNITS) {
   if (u === 's41-u02') await tubeClicks(u);
   // 전체 화면(PC·폰 가로·덱): 조작판이 옆에 붙어 캔버스 비율이 크게 바뀐다.
   // 덱은 실험 칸 규칙(캔버스 높이 36cqw !important·격자)이 전체 화면에 남아 아래 절반이 비었던 적이 있다(2026-10-06) → 화면을 채우는지도 잰다
-  for (const [name, vp, touch, hash] of [['전체 화면(PC)', { width: 1280, height: 760 }], ['전체 화면(폰 가로)', { width: 844, height: 390 }, true], ['전체 화면(덱)', { width: 1440, height: 900 }, false, n ? `#/${u}/lab-class/teach/${n}` : null]]) {
+  for (const [name, vp, touch, hash] of science3DFullscreenCases(target, n)) {
     const where = `${u} ${name}`; console.log(`  · ${name}`);
     if (name === '전체 화면(덱)' && !hash) continue;
     const { page, errs } = await open(vp, hash || labPath(u), { touch });
@@ -478,6 +506,10 @@ for (const u of UNITS) {
   }
 }
 
-await browser.close(); server.close();
 console.log(`\n검사 ${checks}건 · 실패 ${fails.length}건`);
-if (fails.length) { console.log(fails.map((f) => '  - ' + f).join('\n')); process.exit(1); }
+if (fails.length) { console.log(fails.map((f) => '  - ' + f).join('\n')); process.exitCode = 1; }
+
+} finally {
+  await Promise.allSettled([...liveBrowsers].map(instance => instance.close()));
+  await new Promise(resolve => server.close(resolve));
+}

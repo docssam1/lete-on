@@ -1,0 +1,207 @@
+{
+  "phase": 253,
+  "date": "2026-11-05",
+  "baseCommit": "b92c2e84229c435a3d9c92ffbfe1dd109357099a",
+  "version": "20261105-force-guidance",
+  "scope": "Correct current printed teacher guidance for force-and-daily-life questions; no learner prompt, answer or scoring changes.",
+  "review": "Read all80 current workbook prompts and explanations with their guidance. Correct explicit answer-position contradictions and guidance describing a different task. Do not claim a complete curriculum conformity audit.",
+  "changes": {
+    "misconceptionQuestionNumbers": [
+      2,
+      3,
+      6,
+      15,
+      20,
+      21,
+      30,
+      36,
+      44,
+      55,
+      66,
+      70,
+      73,
+      75,
+      76
+    ],
+    "explanationQuestionNumbers": [
+      7,
+      10,
+      17,
+      20,
+      21,
+      23
+    ],
+    "details": [
+      "Replace cart/start advice on clay-box weight comparison with the actual equal-box/equal-clay/count conditions.",
+      "Replace generic motion/name-change or balance advice with the task-specific condition comparison, tool use, state naming or diagram task.",
+      "Fix wrong third/fourth/second choice references to actual fourth/third/first/first/third choices in questions10/17/20/21/23.",
+      "Use remaining four records rather than preceding four records in question7, whose exception is second."
+    ],
+    "appliedObjectCount": 19,
+    "sourceExplanationFieldsPreserved": true
+  },
+  "preservation": {
+    "questions": 3080,
+    "runtimeCurrent": 3179,
+    "runtimeSource": 1512,
+    "runtimeSimilar": 1512,
+    "classroom": 1635,
+    "selectedChecks": 490,
+    "allRuntimeAndHistoryExactlyUnchanged": true,
+    "allPriorWorkbookExactlyPreservedAs": "forceGuidancePriorWorkbook",
+    "questionsAndScoring": "All fields except current explanation/misconception/mis match baseline exactly.",
+    "rawAndCanonicalBanks": "No changes.",
+    "reports3DImagesRailsWritingSpace": "No changes.",
+    "sourceGeneratedWorkbookBody": "Exact bytes preserved outside the import and final wrapper/export."
+  },
+  "verification": {
+    "changedQuestionGuidance": [
+      {
+        "no": 2,
+        "fields": [
+          "misconception",
+          "mis"
+        ]
+      },
+      {
+        "no": 3,
+        "fields": [
+          "misconception",
+          "mis"
+        ]
+      },
+      {
+        "no": 6,
+        "fields": [
+          "misconception",
+          "mis"
+        ]
+      },
+      {
+        "no": 7,
+        "fields": [
+          "explanation"
+        ]
+      },
+      {
+        "no": 10,
+        "fields": [
+          "explanation"
+        ]
+      },
+      {
+        "no": 15,
+        "fields": [
+          "misconception",
+          "mis"
+        ]
+      },
+      {
+        "no": 17,
+        "fields": [
+          "explanation"
+        ]
+      },
+      {
+        "no": 20,
+        "fields": [
+          "explanation",
+          "misconception",
+          "mis"
+        ]
+      },
+      {
+        "no": 21,
+        "fields": [
+          "explanation",
+          "misconception",
+          "mis"
+        ]
+      },
+      {
+        "no": 23,
+        "fields": [
+          "explanation"
+        ]
+      },
+      {
+        "no": 30,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 36,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 44,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 55,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 66,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 70,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 73,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 75,
+        "fields": [
+          "misconception"
+        ]
+      },
+      {
+        "no": 76,
+        "fields": [
+          "misconception"
+        ]
+      }
+    ],
+    "changedHTML": [
+      "s31-u01:teacher",
+      "s31-u01:answers"
+    ],
+    "unchangedOtherWorkbooks": 31,
+    "allQuestionFieldsExceptCurrentGuidancePreserved": true,
+    "currentAndHistoricalRuntimeDataUnchanged": true,
+    "all64SlideArraysUnchanged": true,
+    "unchangedHTML": 126,
+    "changedHTMLCompleteTextAssertions": 42,
+    "browserVerified": false,
+    "checksUseIndividualSolutionSections": true,
+    "ordinalCorrectionsMatchActualKeys": 5,
+    "generatedWorkbookBodyBytesPreserved": true,
+    "priorWorkbookFullObjectPreserved": true,
+    "syntaxFiles": 4,
+    "regressions": {
+      "total": 842,
+      "passed": 840,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    }
+  },
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase253",
+  "remaining": "Actual PC/mobile/A4/WebGL and mandatory3D runtime gates, broader semantic/curriculum review, main integration and deployment remain open. No browser/server, paid API, merge, push or deploy was performed."
+}

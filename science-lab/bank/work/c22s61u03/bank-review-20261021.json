@@ -1,0 +1,238 @@
+{
+  "date": "2026-10-21",
+  "phase": 63,
+  "unitId": "c22-s61-u03",
+  "status": "local-bank-and-four-pdf-modes-validated",
+  "sourceQuestions": 75,
+  "independentPairs": 75,
+  "totalBankQuestions": 150,
+  "ownExplanations": 150,
+  "bankConnected": true,
+  "browserReviewCompleted": true,
+  "bankPaperConnected": true,
+  "lessonConnected": false,
+  "workbookConnected": false,
+  "currentEditionWholeSourceClaim": false,
+  "scope": "현행2022개정6-1Ⅲ 식물의 구조와 기능에 연결한 옛6-1Ⅳ 관련 발췌75와 독립짝75. 기본 사고력 수업과8형식 창작 교재 완료를 뜻하지 않는다.",
+  "grading": {
+    "sourceClosed": 66,
+    "sourceTeacherReview": 9,
+    "pairedClosed": 71,
+    "pairedTeacherReview": 4,
+    "closedTotal": 137,
+    "teacherReviewTotal": 13,
+    "sourceHolds": [
+      "3-16",
+      "3-20",
+      "4-10",
+      "4-13",
+      "4-14"
+    ],
+    "officialKeysPreserved": 75,
+    "studentOfficialHeldKeyVisible": false,
+    "orderedPartsSetsAndNegationChecked": true
+  },
+  "sourcePreservation": {
+    "sourceFreezeFile": "source-freeze.json",
+    "frozenFilesUnchanged": 22,
+    "approvedSourceImages": 14,
+    "questionFigureReferences": 22,
+    "privateOriginalPdfsHashed": 8,
+    "privateOriginalPdfPages": 22,
+    "historicalStageReportsUnchanged": true
+  },
+  "editorialCorrections": [
+    {
+      "target": "sim/paired.json:3-7.explanation",
+      "before": "나머지는 원자료에서 확인한 줄기 생김새와 맞아요.",
+      "after": "나머지는 각 식물의 줄기 생김새와 맞아요.",
+      "reason": "학생용 해설 문구 정리. 원자료의 원자 부분 문자열을 교육 범위 감사가 오검출한 문제도 피함. 보기/정답/자료 조건은 동일하며 검수 내용SHA를 갱신했다."
+    }
+  ],
+  "runtime": {
+    "questionViewsPCAnd390": 300,
+    "sourceQuestionViews": 150,
+    "pairQuestionViews": 150,
+    "teacherSetViews": 8,
+    "subunitViews": 10,
+    "orderedInputChecks": 4,
+    "catalogChecks": 2,
+    "finalPrintViews": 8,
+    "otherUnitSmokeViews": 12,
+    "remedyFlows": 2,
+    "printButtonClicks": 8,
+    "blockedImageFailureChecks": 1,
+    "pageErrors": 0,
+    "horizontalOverflowObserved": 0,
+    "brokenImagesOutsideIntentionalErrorTest": 0,
+    "studentHeldOfficialKeyLeaks": 0,
+    "serverReusedWithoutRestart": true,
+    "unchangedExistingStorageKeysChecked": 3
+  },
+  "pdf": {
+    "files": [
+      {
+        "mode": "student",
+        "file": "plant-structure-bank-student.pdf",
+        "pages": 70,
+        "sha256": "d7b8fc1b9728aa3d614f552b216e1ec83a666e1386720eee26fef9d8e46c240e",
+        "bytes": 4459577,
+        "allPagesA4": true,
+        "watermarkTextEveryPage": true
+      },
+      {
+        "mode": "teacher",
+        "file": "plant-structure-bank-teacher.pdf",
+        "pages": 87,
+        "sha256": "c9930ab5db5e96106858babe87fdb1d003675b91534fa5bfd3a42e15108da272",
+        "bytes": 4622223,
+        "allPagesA4": true,
+        "watermarkTextEveryPage": true
+      },
+      {
+        "mode": "answers",
+        "file": "plant-structure-bank-answers.pdf",
+        "pages": 42,
+        "sha256": "382b8bd81056a9e5b61ae03b7c0ab189416b56c5fca024ce3b3b0a4e95802c7d",
+        "bytes": 1865237,
+        "allPagesA4": true,
+        "watermarkTextEveryPage": true
+      },
+      {
+        "mode": "quick",
+        "file": "plant-structure-bank-quick.pdf",
+        "pages": 3,
+        "sha256": "834955b47a00f72d404b0f4c7a885526cd0b779b678991c98bb5fd98b504bfec",
+        "bytes": 233219,
+        "allPagesA4": true,
+        "watermarkTextEveryPage": true
+      }
+    ],
+    "totalPages": 202,
+    "studentQuestionNumbering": 150,
+    "teacherExplanationNumbering": 150,
+    "allPagesA4": true,
+    "watermarkEveryPage": true,
+    "contactSheetsDirectlyViewed": 13,
+    "selectedEnlargedPages": [
+      {
+        "mode": "student",
+        "page": 1
+      },
+      {
+        "mode": "student",
+        "page": 4
+      },
+      {
+        "mode": "student",
+        "page": 10
+      },
+      {
+        "mode": "student",
+        "page": 19
+      },
+      {
+        "mode": "student",
+        "page": 31
+      },
+      {
+        "mode": "student",
+        "page": 33
+      },
+      {
+        "mode": "student",
+        "page": 37
+      },
+      {
+        "mode": "student",
+        "page": 40
+      },
+      {
+        "mode": "student",
+        "page": 54
+      },
+      {
+        "mode": "student",
+        "page": 63
+      },
+      {
+        "mode": "student",
+        "page": 66
+      },
+      {
+        "mode": "teacher",
+        "page": 28
+      },
+      {
+        "mode": "teacher",
+        "page": 36
+      },
+      {
+        "mode": "teacher",
+        "page": 39
+      },
+      {
+        "mode": "answers",
+        "page": 19
+      },
+      {
+        "mode": "answers",
+        "page": 24
+      },
+      {
+        "mode": "quick",
+        "page": 1
+      },
+      {
+        "mode": "quick",
+        "page": 2
+      },
+      {
+        "mode": "quick",
+        "page": 3
+      }
+    ],
+    "studentOrderedPartAnswerLines": 20,
+    "studentKeysHidden": true,
+    "teacherOfficialReferenceForHeldItems": 5,
+    "allStudentExplanationsIndividuallyRereadInPdf": false,
+    "pageCountsFinalAfterEnglishContextLabelRemoval": true
+  },
+  "verification": {
+    "wholeSuite": {
+      "tests": 830,
+      "passed": 828,
+      "failed": 0,
+      "existingSkipped": 2
+    },
+    "plantRuntimeTests": 5,
+    "plantResponseTests": 9,
+    "preparationResponseProbes": 1339,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "priorTaxonomyFilesUnchanged": 55,
+    "misconceptionAuditPassed": true,
+    "writtenAudit": {
+      "questions": 986,
+      "rules": 27,
+      "passed": true
+    },
+    "diffCheckPassed": true,
+    "baselineFiles": 47,
+    "baselineFilesUnchanged": 39,
+    "baselineFilesIntentionallyChanged": 8,
+    "newPaidApiCalls": 0,
+    "privacyScanPrivatePathsOrDownloadTokensInNewPublicRuntime": 0
+  },
+  "reviewLimit": "300 automated question view visits and representative direct app captures;202 PDF layouts in13 contact sheets and19 selected enlarged PDF pages. Source and paired manuscript editorial review belongs to phases61/62; counts alone are not full editorial review.",
+  "nextWork": [
+    "현행6과11-01~03의 실제 관찰/기관 기능 실험/자료 제작·공유를 잇는 기본 사고력 수업",
+    "8형식 독립 창작 문항과 오른쪽 핵심·더 알아보기·메모를 갖춘 정식 교재",
+    "현행 판본 전체 원문 확보/대조 및 남은6학년 단원",
+    "전학년 잔여·v1 서류철·음성/3D 검수"
+  ],
+  "committed": false,
+  "pushed": false,
+  "deployed": false,
+  "overallGoalComplete": false
+}

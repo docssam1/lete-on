@@ -1,0 +1,556 @@
+{
+  "phase": 257,
+  "date": "2026-11-05",
+  "baseCandidate": "af1843efc77201b33b1280eca10ced3552815831",
+  "scope": "Read-only classification of82 main WIP differences with report-relocation and source-answer preservation proofs. No program changes or main overwrite.",
+  "classification": {
+    "remoteCommit": "feb08e8c5b51c0e521f4cb1ba12898702a8041e4",
+    "counts": {
+      "three-distinct-versions": 12,
+      "main-copy-equals-remote": 25,
+      "already-equal-to-remote-candidate": 39,
+      "unpublished-acid-variant": 6
+    },
+    "rows": [
+      {
+        "path": "science-lab/HANDOFF-GPT.md",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/HANDOFF.md",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s51-u01/layers-abc.svg",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s51-u01/strata-shapes.svg",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/assets/thumbs/c22-s32-u01.webp",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/assets/thumbs/c22-s32-u02.webp",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/assets/thumbs/c22-s32-u03.webp",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/assets/thumbs/c22-s32-u04.webp",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/BANK-HANDOFF.md",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/audit.mjs",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/audit.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/body.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/current-materials.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/judge.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/light.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/bank/misc-audit.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/book/c22-s32-u01.book.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/book/c22-s32-u02.book.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/book/c22-s32-u03.book.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/book/c22-s32-u04.book.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/book/c22-s42-u01.book.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/book/c22-s42-u02.book.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/book/c22-s42-u04.book.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s32-u01.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s32-u02.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s32-u03.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s32-u03.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s32-u04.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s42-u01.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s42-u02.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s42-u04.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s61-u01.js",
+        "category": "unpublished-acid-variant",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s61-u01.judge.js",
+        "category": "unpublished-acid-variant",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s61-u01.misc.js",
+        "category": "unpublished-acid-variant",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s61-u01.similar.js",
+        "category": "unpublished-acid-variant",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s61-u01.source.js",
+        "category": "unpublished-acid-variant",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/c22-s61-u01.taxonomy.js",
+        "category": "unpublished-acid-variant",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/s41-u01.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/s41-u02.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/s41-u03.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/data/units/s41-u04.lesson.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/intro/index.html",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/assessment-data.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/assessment51-bank-paper.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/bank-catalog.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/biology-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/body-bank-paper.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/book-editorial.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/book-handwriting.css",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/book.js",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/check.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/check.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/climate-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/content-unit.js",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/curriculum-2022.js",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/curriculum-2022.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/daily.css",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/daily.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/deck.js",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/earth-sea-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/ecology-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/energy-bank-paper.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/ground-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/heat-bank-paper.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/home.js",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/index.html",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/infection-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/judge.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/magnet-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/mounts.js",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/night-sky-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/photo-figure.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/plant-records.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/solution-bank-paper.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/solution-bank.test.mjs",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/sound-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/units-index.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/v2.css",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/v2.js",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/water-lesson.test.mjs",
+        "category": "already-equal-to-remote-candidate",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/weather-bank-paper.js",
+        "category": "main-copy-equals-remote",
+        "overwriteAuthorizedByThisAudit": false
+      },
+      {
+        "path": "science-lab/v2/written-practice.js",
+        "category": "three-distinct-versions",
+        "overwriteAuthorizedByThisAudit": false
+      }
+    ],
+    "safeAction": "Keep every current main WIP file intact. Use the isolated candidate for review; no whole-file overwrite or accepted-answer union was applied."
+  },
+  "preservedReportFiles": {
+    "reportBooksByteIdentical": 7,
+    "recordLessonsEquivalentAfterBindingRename": 7,
+    "recordLessonAlsoNeedsDeclarationWhitespaceNormalization": 1,
+    "decision": "The7 report books and8 lesson definitions are preserved under separate records-book/records files; do not reintroduce them as the default thinking workbook."
+  },
+  "recordRuntimeVerification": {
+    "units": 8,
+    "rows": [
+      {
+        "unit": "c22-s32-u01",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 8
+      },
+      {
+        "unit": "c22-s32-u02",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 8
+      },
+      {
+        "unit": "c22-s32-u03",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 9
+      },
+      {
+        "unit": "c22-s32-u04",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 9
+      },
+      {
+        "unit": "c22-s42-u01",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 11
+      },
+      {
+        "unit": "c22-s42-u02",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 11
+      },
+      {
+        "unit": "c22-s42-u04",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 11
+      },
+      {
+        "unit": "s41-u04",
+        "reportPreserved": true,
+        "recordConfigPreserved": true,
+        "activityBytesPreserved": true,
+        "recordBookDataPreserved": true,
+        "requiredReport": false,
+        "reportSections": 10
+      }
+    ],
+    "studentReads": 0,
+    "studentWrites": 0,
+    "network": 0,
+    "actualCurrentLoadersAndRecordBookMapExecuted": true,
+    "browserVerified": false
+  },
+  "sourcePreservation": {
+    "acidCanonicalSourceCount": 69,
+    "existingFrozenPrimaryArtifacts": 22,
+    "allFrozenArtifactHashesMatch": true,
+    "originalPromptChoicesAndOfficialAnswersVerified": true,
+    "automaticHoldKeys": [
+      "1-8",
+      "3-16",
+      "4-15"
+    ],
+    "heldOfficialKeys": "printedAnswerContract",
+    "heldChoiceLists": "givens.원문 선택지 when the current automatic choice input is intentionally absent",
+    "independentPairCount": 69,
+    "independentPairPromptsGivensChoicesAnswerContractsMatchMainWip": true,
+    "authoredQuestionCount": 128,
+    "limit": "Existing frozen/transcribed source evidence was checked; no fresh original-page visual review or browser execution. Raw source files were not edited."
+  },
+  "alternateAcceptedAnswers": {
+    "testedMainAcceptedInputs": 15,
+    "currentCorrect": 12,
+    "currentReview": 3,
+    "currentWrong": 0,
+    "decision": "The3 alternate inputs remain teacher-review cases. Do not union uncommitted accepted-answer lists or silently change source contracts/grading; preserve the local variants for deliberate source/response review."
+  },
+  "knownTreeComparison": {
+    "anchorTrees": 10,
+    "samePathMainWipBlobsMatchingAKnownTree": 25,
+    "method": "Bounded ls-tree queries against known commits; no recursive history scan and no restart of the previously stopped optional rev-list."
+  },
+  "threeWayCodeDecisions": "Retain current curriculum positions, printed-workbook renderer, ID-based question selection, withThink/loadJudge and preserved legacy mounts in the candidate. Report material remains in the separate records paths. Do not copy older whole-file removals over the thinking routes. The12 distinct versions comprise9 code files and3 historical handoffs; all main WIP remains intact.",
+  "protection": {
+    "mainComparedFilesUnchanged": 82,
+    "mainProtectedScienceFilesUnchanged": 2958,
+    "mainHeadUnchanged": true,
+    "candidateCodeChangesSinceLastFullTests": [],
+    "actualMainMutation": false
+  },
+  "qaCorrections": "The report-loader fixture was changed from a one-line regex/manual offset to the actual multiline map with measured prefix length, and biology uses its real inquiry.book.js path. Original choices on the held question are compared via their preserved labelled list. No product workaround or scope-reducing runtime gate was introduced.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase257",
+  "remaining": "Reconciliation evidence does not authorize overwriting main WIP. Final preservation choices, broader curriculum/meaning, v1 consistency, actualPC/mobile/A4/voice/WebGL and mandatory3D runtime gates, main integration and publication remain. Existing845-test code is unchanged; no broad repeat, browser/server, API, merge, push, deploy or cleanup."
+}

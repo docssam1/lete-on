@@ -172,3 +172,12 @@
 .dt-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .dt-tabs .btn { min-height: 36px; padding: 4px 12px; text-decoration: none; display: inline-flex; align-items: center; }
 .dt-twin .item { margin-top: 10px; }
+.dt-revision-frozen{border:0;padding:0;margin:0;min-width:0}
+
+.dt-revision-history{margin:12px 0;padding:12px;border-top:1px solid var(--line,#c9bda2);line-height:1.6}.dt-revision-history summary{cursor:pointer;font-weight:600;min-height:44px;padding:8px 0}.dt-revision-history li{margin:12px 0}.dt-revision-history p{margin:4px 0}
+
+.dt-paper-tools{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;color:#2a241c;background:#fdfbf5}
+.dt-paper-tools:empty{display:none}.dt-paper-tools p{flex-basis:100%;margin:0 0 4px;line-height:1.65}
+.dt-paper-tools button{min-height:44px;max-width:100%;white-space:normal}
+.dt-paper-tools+.dt-wrap .dt-grade:disabled{opacity:.5;cursor:default}
+@media print{.dt-paper-tools button{display:none}}

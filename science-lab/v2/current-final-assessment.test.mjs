@@ -45,8 +45,8 @@ test('40단일선택 위치·길이·60답 계약과 열린 설명의 교사 확
 });
 test('기말 인쇄 제목·학기·범위와 답 분리를 설정에서 읽고 3-1 기말은 유지한다',()=>{
  for(const form of[1,2]){const list=items.filter(q=>q.sourceRef.set===form);const args={unit:unit.id,bank:BANK[unit.id],list,form};const student=assessmentPaperHtml(args),teacher=assessmentPaperHtml({...args,teacher:true});
- assert(student.includes('기말평가 · 창작'));assert(student.includes('3학년 2학기'));assert(!student.includes('3학년 1학기'));assert(student.includes('학교별 공식 시험 범위와 별개'));assert(!student.includes('class="ap-key"'));assert.equal((teacher.match(/class="ap-key"/g)||[]).length,30);assert.equal((student.match(/class="ap-writing"/g)||[]).length,2);
+ assert(student.includes('기말평가') && !student.includes('· 창작'));assert(student.includes('3학년 2학기'));assert(!student.includes('3학년 1학기'));assert(!student.includes('학교별 공식 시험 범위와 별개'));assert(teacher.includes('학교별 공식 시험 범위와 별개'));assert(!student.includes('class="ap-key"'));assert.equal((teacher.match(/class="ap-key"/g)||[]).length,30);assert.equal((student.match(/class="workspace ap-writing"/g)||[]).length,2);
  const escaped=assessmentPaperHtml({...args,bank:{...BANK[unit.id],label:'<script>x</script>',scope:['<img>'],courseLabel:'<iframe>'}});assert(!escaped.includes('<script>'));assert(!escaped.includes('<img>'));assert(!escaped.includes('<iframe>'));
  }
- const old=assessmentPaperHtml({unit:'s31-fin',bank:BANK['s31-fin'],list:[],form:1});assert(old.includes('기말평가 · 창작'));assert(old.includes('3학년 1학기'));assert(old.includes('생물의 한살이'));assert(!old.includes('학교별 공식 시험 범위와 별개'));
+ const old=assessmentPaperHtml({unit:'s31-fin',bank:BANK['s31-fin'],list:[],form:1});assert(old.includes('기말평가'));assert(!old.includes('· 창작'));assert(old.includes('3학년 1학기'));assert(old.includes('생물의 한살이'));assert(!old.includes('학교별 공식 시험 범위와 별개'));
 });

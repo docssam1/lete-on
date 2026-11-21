@@ -1,0 +1,283 @@
+{
+  "phase": 323,
+  "date": "2026-11-08",
+  "scope": "Student classroom task directions rather than completion-processing language; 8 units and 13 content pages.",
+  "priorLocalCommit": "a1558d62b4c5976214c92fcc79d3a1e7449f218c",
+  "reviewParent": "41344e814290aaa61cc522f01438cf41e02abbce",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "nativeValidation": {
+    "currentUnitsScanned": 32,
+    "selfNonQuestionSlidesScanned": 1006,
+    "wordingCandidatesRead": 37,
+    "clarifiedCandidatePages": 13,
+    "retainedCandidatesWithSafetyOrEvidenceMeaning": 24,
+    "changedSlides": [
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "id": "make",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "id": "make",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "communicate",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "id": "end",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "communicate",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "id": "end",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "self",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teach",
+        "id": "share",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "self",
+        "id": "discuss",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teach",
+        "id": "discuss",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "self",
+        "id": "conclusion",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "self",
+        "id": "practice",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teach",
+        "id": "conclusion",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teach",
+        "id": "practice",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "id": "hillplan",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "id": "practice",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "id": "feedback",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "id": "hillplan",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "id": "practice",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "id": "feedback",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s52-u01",
+        "mode": "self",
+        "id": "separatorimprove",
+        "keys": [
+          "body"
+        ]
+      },
+      {
+        "unit": "c22-s52-u01",
+        "mode": "teach",
+        "id": "separatorimprove",
+        "keys": [
+          "body"
+        ]
+      }
+    ],
+    "changedSlideCount": 26,
+    "changedUnits": [
+      "s31-u04",
+      "c22-s32-u02",
+      "c22-s42-u01",
+      "c22-s42-u02",
+      "c22-s42-u04",
+      "s41-u03",
+      "c22-s52-u01",
+      "c22-s51-u03"
+    ],
+    "otherClassroomUnitsUnchanged": 24,
+    "otherSlideArraysUnchanged": 48,
+    "changedFields": [
+      "body"
+    ],
+    "allSlideMarkupControlsAndImageUrlsUnchanged": true,
+    "studentCompletionProcessingTextMatchesRemaining": 0,
+    "currentWorkbooksUnchanged": 32,
+    "currentWorkbookHtmlUnchanged": 128,
+    "currentRuntimeQuestionPoolsUnchanged": 32,
+    "rawDataModelsAndGuidanceHelperFilesUnchanged": 814,
+    "voiceCuesAndPlansUnchanged": true,
+    "allQuestionsAnswersSavedGradesAndHistoryUnchanged": true,
+    "newRegressionTests": 0,
+    "existingTestWordingFixturesUpdated": 4,
+    "syntaxFiles": 13,
+    "actualBrowserVerified": false,
+    "newOcrRuns": 0,
+    "newBitmaps": 0
+  },
+  "searchBoundary": "Self non-question slide body; nested comparison widgets and optional notebooks excluded.",
+  "retainedCandidateRationale": "Safety, missing-observation and evidence/source scope distinctions remain meaningful.",
+  "newQuestionContextsReviewed": 0,
+  "currentQuestionContextsPreviouslyReviewed": 3080,
+  "currentQuestionContextsPreviouslyModified": 1902,
+  "tests": {
+    "files": 237,
+    "total": 1323,
+    "pass": 1321,
+    "fail": 0,
+    "skip": 2,
+    "newTests": 0,
+    "existingWordingFixturesUpdated": 4
+  },
+  "currentOriginalUnits": 23,
+  "currentOriginalQuestions": 1512,
+  "pendingOriginalUnits": 9,
+  "rawSourceAndPairBanksUnchanged": true,
+  "curriculumConceptsAndScienceClaimsUnchanged": true,
+  "heatingEarthquakeAndSharingSafetyPreserved": true,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

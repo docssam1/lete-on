@@ -1,0 +1,124 @@
+{
+  "phase": 254,
+  "date": "2026-11-05",
+  "baseCommit": "8ec8e75bc08d671ede2ffd634603e4792909d299",
+  "version": "20261105-term-particles",
+  "scope": "Bounded current-wording audit across32 workbooks, followed by noun-particle corrections in acid and electricity. No new lesson content or scoring changes.",
+  "ordinalReview": {
+    "choiceAndMultiQuestionsSearched": 1114,
+    "additionalConfirmedErrors": 0,
+    "candidatesReviewed": [
+      "c22-s32-u02-w044: first/second experimental records, not choice numbers.",
+      "s31-u01-w003: first/second definitions, not choice numbers."
+    ],
+    "limitation": "Specified ordinal/choice markers only; not a full semantic proof for every explanation."
+  },
+  "particleReview": {
+    "wrongForms": [
+      "용액를",
+      "용액는",
+      "용액와",
+      "용액가",
+      "전기 회로을"
+    ],
+    "replacements": [
+      "용액을",
+      "용액은",
+      "용액과",
+      "용액이",
+      "전기 회로를"
+    ],
+    "workbookTextFields": 64,
+    "acidQuestionNumbers": [
+      5,
+      8,
+      9,
+      14,
+      16,
+      28,
+      29,
+      51,
+      83,
+      101,
+      108
+    ],
+    "electricityQuestionNumbers": [
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "acidFigure": "litmus caption text only; all HTML tags and attributes preserved.",
+    "implementation": "Apply a final presentation layer; correct only exact noun/particle patterns with a boundary. Keep old acidStudentLanguage/electricityLanguage builders unchanged to retain earlier presentations."
+  },
+  "history": {
+    "currentAcidItems": 11,
+    "classroomCopies": 11,
+    "previousVersions": "Full old objects appended with their original contentVersion; every earlier snapshot is unchanged.",
+    "diagnosticOverride": "Rebind only an override matching the replaced contentVersion; keep its diagnostic map and grading decisions.",
+    "canonicalOriginalAndSimilar": "Unchanged.",
+    "priorWorkbooks": "termParticlePriorWorkbook exposes each complete prior object. Native HEAD module reconstruction confirmed equality including own undefined fields.",
+    "tests": "Two lifecycle tests cover grade contracts, misconceptions, canonical exclusions, idempotence, future versions, all old records, old choice text and restart preservation. Existing acid regression retains its exact old-layer comparison through version resolution and separately checks the new current layer. Cross-call Daily/deck pool comparison uses full value equality; no runtime object cache was added.",
+    "fixtureFix": "Corrected a shadowed lookup variable in the new saved-choice test."
+  },
+  "verification": {
+    "workbookTextFields": 64,
+    "questionObjects": 27,
+    "acidOnlineItems": 11,
+    "classroomItems": 11,
+    "changedSlideFrames": 6,
+    "unchangedSlideArrays": 62,
+    "unchangedWorkbooks": 30,
+    "unchangedPrintedHTML": 124,
+    "allQuestionContractsPreserved": true,
+    "allCanonicalAndHistoricalRuntimePreserved": true,
+    "priorWorkbookObjectsEqualBaseline": true,
+    "generatedWorkbookBodyBytesPreserved": true,
+    "allFigureTagsAndAttributesPreserved": true,
+    "unchangedAssetHashes": 1249,
+    "nativeItemHtmlExecutions": 22,
+    "regressions": {
+      "total": 844,
+      "passed": 842,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    },
+    "browserVerified": false,
+    "priorComparison": "Native HEAD module reconstructed with actual unchanged dependencies; structuredClone preserves own undefined properties.",
+    "acidStudentTeacherQuestionNodes": 22,
+    "electricitySolutionNodes": 32,
+    "changedCompleteTextAssertions": 128,
+    "syntaxFiles": 9,
+    "customAcidBankPaperModes": 4,
+    "customPaperItemsPerMode": 266,
+    "customPaperCorrectedQuestionCardsVerified": 33
+  },
+  "preservation": {
+    "workbookUnits": 32,
+    "questions": 3080,
+    "currentRuntime": 3179,
+    "source": 1512,
+    "similar": 1512,
+    "classroom": 1635,
+    "selectedChecks": 490,
+    "other30Workbooks": "exact",
+    "canonicalAndAllPastRuntime": "exact",
+    "questionContractsAnswersCriteriaStandards": "exact",
+    "generatedWorkbookBodies": "exact outside import and final wrapper/export",
+    "photoPixelsGeometryWritingSpaceActivityReports3D": "unchanged"
+  },
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase254",
+  "stage": "Local candidate only. Browser/PC/mobile/A4/WebGL and required3D runtime gates, broader meaning review, main integration and deployment remain unverified. No browser/server, API, push, merge or deploy performed."
+}

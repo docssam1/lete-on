@@ -1,0 +1,266 @@
+{
+  "phase": 242,
+  "date": "2026-11-05",
+  "baseCommit": "56c1aa407a71b7db661934bb7cb7b1534f2d23e7",
+  "unit": "c22-s61-u01",
+  "scope": "36 workbook/current online question presentations;16 shared explanatory pages and core/self rails;5 figure resources including3 alt texts and quick-answer table;9 malformed classroom cues.",
+  "changes": [
+    "Use 용액 when referring to the compared liquids, 재료 for the protein rubbing distractor, and familiar wording for unknown properties and initial amounts.",
+    "Preserve the complete 20261104 workbook presentation under an explicit export before applying the new student layer; keep the earlier answer-revision adapter attached to that export.",
+    "Append the new display version after the prior answer corrections; advance only the diagnostic version tag so its existing content and effect still apply. The old adapter recognizes its ancestor version and does not roll new presentations backward.",
+    "Replace nine malformed title-plus-을 해 보아요 cues with complete observation/comparison questions."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 31,
+    "questionsWithSameAnswersCriteriaExplanationsAndContracts": 3080,
+    "questionNumbers": [
+      5,
+      8,
+      9,
+      11,
+      14,
+      16,
+      20,
+      23,
+      26,
+      27,
+      28,
+      29,
+      31,
+      32,
+      33,
+      34,
+      44,
+      47,
+      51,
+      53,
+      65,
+      68,
+      69,
+      71,
+      73,
+      81,
+      83,
+      84,
+      85,
+      101,
+      105,
+      108,
+      110,
+      113,
+      121,
+      123
+    ],
+    "pageChanges": [
+      {
+        "mode": "pages",
+        "pages": [
+          5,
+          7,
+          10,
+          11,
+          15,
+          20,
+          23,
+          25,
+          26,
+          28,
+          29,
+          55,
+          56,
+          69,
+          70,
+          82
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "pages": [
+          5,
+          7,
+          10,
+          11,
+          15,
+          20,
+          23,
+          25,
+          26,
+          28,
+          29,
+          55,
+          56,
+          69,
+          70,
+          82
+        ]
+      }
+    ],
+    "figureResources": [
+      "observe",
+      "litmus",
+      "phenol",
+      "mixing",
+      "acid-quick-56"
+    ],
+    "imageAttributeChangesOnlyAltIn": [
+      "observe",
+      "phenol",
+      "mixing"
+    ],
+    "allWritingSpacesQuestionReferencesQuantitiesImagesAndUpperGradeNotesPreserved": true,
+    "productsChanged": [
+      {
+        "unit": "c22-s61-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "mode": "quick"
+      }
+    ],
+    "productsUnchanged": 125,
+    "slideArraysChanged": [
+      {
+        "mode": "self",
+        "slides": 65,
+        "currentLanguageChecks": [
+          "c22-s61-u01-b008",
+          "c22-s61-u01-b023",
+          "c22-s61-u01-b028",
+          "c22-s61-u01-b033"
+        ]
+      },
+      {
+        "mode": "teach",
+        "slides": 66,
+        "currentLanguageChecks": [
+          "c22-s61-u01-b008",
+          "c22-s61-u01-b023",
+          "c22-s61-u01-b028",
+          "c22-s61-u01-b033"
+        ]
+      }
+    ],
+    "slideArraysUnchanged": 62,
+    "runtimeVersioned": [
+      "c22-s61-u01-b005",
+      "c22-s61-u01-b008",
+      "c22-s61-u01-b009",
+      "c22-s61-u01-b011",
+      "c22-s61-u01-b014",
+      "c22-s61-u01-b016",
+      "c22-s61-u01-b020",
+      "c22-s61-u01-b023",
+      "c22-s61-u01-b026",
+      "c22-s61-u01-b027",
+      "c22-s61-u01-b028",
+      "c22-s61-u01-b029",
+      "c22-s61-u01-b031",
+      "c22-s61-u01-b032",
+      "c22-s61-u01-b033",
+      "c22-s61-u01-b034",
+      "c22-s61-u01-b044",
+      "c22-s61-u01-b047",
+      "c22-s61-u01-b051",
+      "c22-s61-u01-b053",
+      "c22-s61-u01-b065",
+      "c22-s61-u01-b068",
+      "c22-s61-u01-b069",
+      "c22-s61-u01-b071",
+      "c22-s61-u01-b073",
+      "c22-s61-u01-b081",
+      "c22-s61-u01-b083",
+      "c22-s61-u01-b084",
+      "c22-s61-u01-b085",
+      "c22-s61-u01-b101",
+      "c22-s61-u01-b105",
+      "c22-s61-u01-b108",
+      "c22-s61-u01-b110",
+      "c22-s61-u01-b113",
+      "c22-s61-u01-b121",
+      "c22-s61-u01-b123"
+    ],
+    "priorVersionAndContractPreserved": true,
+    "htmlChecks": [
+      {
+        "mode": "student",
+        "workbookQuestions": 36,
+        "currentBankQuestions": 36,
+        "changedChoicesGivensPartsChecked": true
+      },
+      {
+        "mode": "teacher",
+        "workbookQuestions": 36,
+        "currentBankQuestions": 36,
+        "changedChoicesGivensPartsChecked": true
+      }
+    ],
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/data/book/c22-s61-u01.thinking-lesson.js",
+      "science-lab/data/book/c22-s61-u01.workbook.js",
+      "science-lab/v2/acid-question-language.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-acid-lesson.test.mjs",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "productionAudit": {
+    "unit": "c22-s61-u01",
+    "productionLoaderExecuted": true,
+    "baseItems": 128,
+    "loadedItems": 128,
+    "newLanguageVersions": 36,
+    "allHistoricalVersions": 64,
+    "source": 69,
+    "similar": 69,
+    "classroomPool": 128,
+    "activeChecks": 16,
+    "newLanguageChecks": 4,
+    "poolAndChecksAgree": true,
+    "earlierWorkbookAndCurrentItemsExactlyPreserved": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "tests": {
+    "total": 827,
+    "pass": 825,
+    "fail": 0,
+    "existingBrowserSkips": 2,
+    "newTests": 2,
+    "purpose": "Original/similar exclusion, every changed choice position and multi-selection alternative, accepted short answers, written review, exact diagnostic behavior, old answer fixes/standards, all historical snapshots and restart state across version1/20261104/current.",
+    "initialFindings": [
+      "Existing regression expected87 unchanged object references before the new display layer. Its original assertions still validate the frozen prior128 objects; the current layer is additionally compared directly with their adapted output.",
+      "A new history test initially used sample on a short-text item, yielding an impossible undefined response. It was corrected to use its real accepted answer; no product change was made for this fixture error."
+    ],
+    "threeDRuntimeExecuted": false
+  },
+  "sourceBasis": {
+    "title": "교육부2022-33 별책9 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+    "localText": "Previously verified curriculum-standards/science-curriculum.txt:6과09-01~04 and explanations",
+    "scope": "Classify solutions using indicator color changes; observe reactions with calcium carbonate/protein and changes when mixing; daily-life uses; environmental acidification materials/shared explanations. No new neutral/pH/neutralization/ion requirement."
+  },
+  "editorialConnection": "Preserve generated base and acidClass20261104Workbook; apply withAcidStudentLanguage externally. Actual unit loader and classroom pool compose acidStudentCurrentItems after acidCurrentItems. Raw banks, records, reports, existing models and3D mounts unchanged.",
+  "cacheVersion": "20261105-acid-student-language",
+  "remaining": "Teacher answer/explanation/rubric wording, remaining units and scientific-content review, image OCR only where bitmap text requires it, actual PC/mobile/A4/audio/WebGL/mandatory3D gate, v1 consistency and main integration/deployment. Browser reauthorization remains unobserved; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "evidence": "science-question-review/phase242:32-workbook/128-paper/64-deck snapshots; frozen earlier workbook/128 earlier current items exact; actual production loader in VM with zero storage/network;8 generated HTML fragments; nested-element question-specific prompt/choice/given/parts checks; final v2 log. Whole-program wording inventory is triage only: substring matches such as 상한 in 예상한 or 상한 음식 are not terminology errors."
+}

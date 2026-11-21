@@ -1,0 +1,70 @@
+{
+  "phase": 259,
+  "date": "2026-11-05",
+  "baseCommit": "3f4f6221cc58f185c938dc4d0fba600c8c65702c",
+  "version": "20261105-fullscreen-lifecycle",
+  "scope": "Fullscreen UI lifecycle; no geometry/content/report/assessment changes.",
+  "implementation": [
+    "Return an idempotent disposer and watch the open button for detach; remove fullscreenchange/keydown listeners and owned buttons.",
+    "Track host ownership with WeakMap, dispose prior mounts, and never restore detached old panels into reused host contents.",
+    "Keep other CSS overlays locked and avoid exiting native fullscreen owned by another screen or newer open session on the same host.",
+    "Track native ownership for Escape versus fallback and late canceled requests; integrate cleanup into mount3D disposal."
+  ],
+  "reproduction": {
+    "initialTestsFailingBeforeFix": 5,
+    "sameHostReuseFailingBeforeAdditionalFix": 1,
+    "boundary": "Actual function source evaluated in Node VM with manual tree/event objects and deferred promises; no browser."
+  },
+  "tests": {
+    "newFullscreenTests": 7,
+    "focusedPassed": 9,
+    "fullTotal": 1200,
+    "fullPassed": 1198,
+    "fullFailed": 0,
+    "existingBrowserSkips": 2,
+    "syntaxFiles": 3,
+    "command": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs"
+  },
+  "preservation": {
+    "workbooks": {
+      "identical": true,
+      "sha256": "d46ec51ce1434fd6d492b61119d173832110a572b19c3615b0dbe43284314c77",
+      "count": 32
+    },
+    "products": {
+      "identical": true,
+      "sha256": "9c307c8259e47ee3cd53aca1ffceeaeb3cb407c4133660acaad349a9a48ac7e1",
+      "count": 128
+    },
+    "slides": {
+      "identical": true,
+      "sha256": "a40bacc6248ae1ea16135207c9f34eedb400a530c5807e06233ff7e23d4bf625",
+      "count": 64
+    },
+    "runtime": {
+      "identical": true,
+      "sha256": "293f41c3b4188aef8b90316227c653c2602c3f3bfe519bfca9730523e9afd12b",
+      "count": 32
+    }
+  },
+  "unchangedAssetHashes": 1249,
+  "actualStudentReads": 0,
+  "actualStudentWrites": 0,
+  "network": 0,
+  "browserVerified": false,
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase259",
+  "remaining": [
+    "Actual PC/phone/A4/voice/WebGL and fullscreen delayed requests",
+    "Mandatory node scripts/check-science-3d.mjs failure0",
+    "Full educational/content and v1/v2 visual review",
+    "Main WIP preservation, integration and deployment"
+  ],
+  "actionsNotPerformed": [
+    "browser/server execution",
+    "API call",
+    "merge",
+    "push",
+    "deploy",
+    "cleanup"
+  ]
+}

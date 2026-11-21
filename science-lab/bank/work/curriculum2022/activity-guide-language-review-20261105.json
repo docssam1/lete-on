@@ -1,0 +1,147 @@
+{
+  "phase": 276,
+  "date": "2026-11-05",
+  "title": "힘과 열의 활동 안내를 교육과정 용어와 학생 문장으로 정리",
+  "status": "verified-local-candidate-actual-render-gates-pending",
+  "baselineCommit": "d50a8e9447e6f9581a9ffddb55852c049c587a12",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / native Node and VM; no AI API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design"
+  ],
+  "curriculum": {
+    "title": "교육부2022-33 별책9",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "extractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "codes": [
+      "4과01-02",
+      "4과01-03",
+      "6과07-03"
+    ],
+    "use": "수평잡기로 무게 비교하기; 저울 사용; 전도·대류·복사와 빛에 의한 열 이동 관찰"
+  },
+  "verification": {
+    "changedFields": [
+      {
+        "path": "s31-u01/pages/0/blocks/1/text",
+        "before": "공을 밀고, 수레를 당기고, 찰흙을 눌러 보아요. 물체의 움직임과 모양을 살피고, 수평과 저울로 무게를 비교해요. 생활 도구가 어떻게 도움을 주는지도 근거로 설명해요.",
+        "after": "공을 밀고, 수레를 당기고, 찰흙을 눌러 보아요. 물체의 움직임과 모양을 살피고, 수평잡기와 저울로 무게를 비교해요. 생활 도구가 어떻게 도움을 주는지도 근거로 설명해요."
+      },
+      {
+        "path": "s31-u01/pages/0/blocks/2/items/1",
+        "before": "같은 거리에서 수평으로 무게 비교",
+        "after": "받침점에서 같은 거리에 놓고 수평잡기로 무게 비교"
+      },
+      {
+        "path": "s31-u01/pages/0/rail/0/text",
+        "before": "힘을 주기 전과 뒤의 움직임·모양을 비교해요. 무게 비교에는 수평의 거리 조건과 저울의 값·단위를 근거로 써요.",
+        "after": "힘을 주기 전후의 움직임과 모양을 비교해요. 수평잡기로 무게를 비교할 때는 받침점에서 같은 거리에 놓아요. 저울의 값과 단위를 함께 읽어요."
+      },
+      {
+        "path": "s31-u01/pages/1/rail/0/text",
+        "before": "힘을 주기 전과 뒤의 움직임·모양을 비교해요. 무게 비교에는 수평의 거리 조건과 저울의 값·단위를 근거로 써요.",
+        "after": "힘을 주기 전후의 움직임과 모양을 비교해요. 수평잡기로 무게를 비교할 때는 받침점에서 같은 거리에 놓아요. 저울의 값과 단위를 함께 읽어요."
+      },
+      {
+        "path": "s31-u01/pages/16/title",
+        "before": "수평과 저울의 기초",
+        "after": "수평잡기와 저울의 기초"
+      },
+      {
+        "path": "s31-u01/pages/45/title",
+        "before": "수평과 저울의 순서",
+        "after": "수평잡기와 저울의 순서"
+      },
+      {
+        "path": "s31-u01/teacherStudentPages/0/blocks/1/text",
+        "before": "공을 밀고, 수레를 당기고, 찰흙을 눌러 보아요. 물체의 움직임과 모양을 살피고, 수평과 저울로 무게를 비교해요. 생활 도구가 어떻게 도움을 주는지도 근거로 설명해요.",
+        "after": "공을 밀고, 수레를 당기고, 찰흙을 눌러 보아요. 물체의 움직임과 모양을 살피고, 수평잡기와 저울로 무게를 비교해요. 생활 도구가 어떻게 도움을 주는지도 근거로 설명해요."
+      },
+      {
+        "path": "s31-u01/teacherStudentPages/0/blocks/2/items/1",
+        "before": "같은 거리에서 수평으로 무게 비교",
+        "after": "받침점에서 같은 거리에 놓고 수평잡기로 무게 비교"
+      },
+      {
+        "path": "s31-u01/teacherStudentPages/0/rail/0/text",
+        "before": "힘을 주기 전과 뒤의 움직임·모양을 비교해요. 무게 비교에는 수평의 거리 조건과 저울의 값·단위를 근거로 써요.",
+        "after": "힘을 주기 전후의 움직임과 모양을 비교해요. 수평잡기로 무게를 비교할 때는 받침점에서 같은 거리에 놓아요. 저울의 값과 단위를 함께 읽어요."
+      },
+      {
+        "path": "s31-u01/teacherStudentPages/1/rail/0/text",
+        "before": "힘을 주기 전과 뒤의 움직임·모양을 비교해요. 무게 비교에는 수평의 거리 조건과 저울의 값·단위를 근거로 써요.",
+        "after": "힘을 주기 전후의 움직임과 모양을 비교해요. 수평잡기로 무게를 비교할 때는 받침점에서 같은 거리에 놓아요. 저울의 값과 단위를 함께 읽어요."
+      },
+      {
+        "path": "s31-u01/teacherStudentPages/16/title",
+        "before": "수평과 저울의 기초",
+        "after": "수평잡기와 저울의 기초"
+      },
+      {
+        "path": "s31-u01/teacherStudentPages/45/title",
+        "before": "수평과 저울의 순서",
+        "after": "수평잡기와 저울의 순서"
+      },
+      {
+        "path": "c22-s52-u02/pages/1/blocks/0/rows/2/1",
+        "before": "고체·물·공기와 빛에서 열이 이동하는 모습 비교하기",
+        "after": "전도·대류·복사로 열이 이동하는 모습 비교하기"
+      },
+      {
+        "path": "c22-s52-u02/teacherStudentPages/1/blocks/0/rows/2/1",
+        "before": "고체·물·공기와 빛에서 열이 이동하는 모습 비교하기",
+        "after": "전도·대류·복사로 열이 이동하는 모습 비교하기"
+      }
+    ],
+    "questionsPreserved": 3080,
+    "unchangedWorkbooks": 30,
+    "changedPaperProducts": [
+      {
+        "unit": "s31-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "teacher"
+      }
+    ],
+    "unchangedPaperProducts": 124,
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "priorWorkbooksNativeDeepEqual": true,
+    "priorHelperBytesPreserved": true,
+    "teacherEntryTimingPreserved": true,
+    "chapterChanges": [
+      "startDescriptions[1]"
+    ],
+    "actualBrowserVerified": false
+  },
+  "tests": {
+    "total": 1207,
+    "pass": 1205,
+    "fail": 0,
+    "skip": 2,
+    "syntaxFiles": 8
+  },
+  "workspace": {
+    "mainHeadUnchanged": true,
+    "mainStatusUnchanged": true,
+    "officialCurriculumExtractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510"
+  },
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase276",
+  "actualBrowserVerified": false,
+  "actual3dVerified": false,
+  "mergedToMain": false,
+  "deployed": false
+}

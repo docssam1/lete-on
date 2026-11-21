@@ -1,0 +1,252 @@
+{
+  "unit": "c22-s62-u04",
+  "phase": 216,
+  "date": "2026-11-04",
+  "status": "reviewed-local-classroom",
+  "baseCommit": "206dfa3c85f8f8fa8d6826bb26773d3be91c6bdf",
+  "curriculum": "2022 개정",
+  "standards": [
+    "6과16-01",
+    "6과16-02"
+  ],
+  "curriculumSourceSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+  "curriculumSourceLines": [
+    966,
+    977
+  ],
+  "studentSlides": 58,
+  "teacherSlides": 59,
+  "directActivities": 17,
+  "comparisonCases": 8,
+  "checks": [
+    1,
+    19,
+    5,
+    7,
+    25,
+    27,
+    29,
+    31,
+    113,
+    116,
+    117,
+    120,
+    122,
+    123,
+    126,
+    127
+  ],
+  "checkForms": [
+    "single",
+    "blank",
+    "match",
+    "sequence",
+    "multiple",
+    "data",
+    "reason",
+    "draw-design",
+    "single",
+    "blank",
+    "match",
+    "sequence",
+    "multiple",
+    "data",
+    "reason",
+    "draw-design"
+  ],
+  "checkAuto": 12,
+  "checkTeacherReview": 4,
+  "versionedChecks": 12,
+  "currentItems": 128,
+  "currentVersions": 74,
+  "questionChanges": 0,
+  "questionVersion": "20261104-career-book",
+  "priorVersionsPreserved": true,
+  "phases": [
+    {
+      "id": "open",
+      "name": "워밍업과 질문",
+      "min": 10,
+      "aim": "관심 있는 일과 궁금한 점을 떠올려요."
+    },
+    {
+      "id": "current",
+      "name": "현재 자료 살펴보기",
+      "min": 30,
+      "aim": "자료에서 현재 나타나는 변화를 찾아요."
+    },
+    {
+      "id": "future",
+      "name": "미래 문제 예상하기",
+      "min": 25,
+      "aim": "현재 정보와 예상한 조건을 관련지어 설명해요."
+    },
+    {
+      "id": "solutions",
+      "name": "과학의 도움 토의하기",
+      "min": 35,
+      "aim": "해결 방법과 이용 조건을 비교하고 토의해요."
+    },
+    {
+      "id": "interests",
+      "name": "관심 있는 진로 찾기",
+      "min": 20,
+      "aim": "관심 있는 직업에서 하는 일을 알아보아요."
+    },
+    {
+      "id": "science",
+      "name": "직업 속 과학 알아보기",
+      "min": 65,
+      "aim": "빛·소리·식물 등의 과학을 관찰과 자료로 찾아요."
+    },
+    {
+      "id": "share",
+      "name": "나의 진로와 과학 설명하기",
+      "min": 25,
+      "aim": "조사한 내용을 소개하고 질문을 듣고 고쳐요."
+    },
+    {
+      "id": "check",
+      "name": "자료 비교와 확인",
+      "min": 40,
+      "aim": "여덟 자료와 열여섯 문제로 배운 내용을 확인해요."
+    }
+  ],
+  "minutes": 250,
+  "durationNote": "여러 차시에 나누는 250분 수업 예시예요. 앞부분과 뒷부분은 각각 여러 차시의 묶음이며 한 차시를 뜻하지 않아요. 자료와 기기의 사전 준비, 정리는 별도예요. 조사할 자료나 기기를 준비하기 어려우면 출처와 조건을 밝힌 제공 자료를 읽고 직접 활동과 구별해요.",
+  "predictionKey": "career-thinking-v1",
+  "warmupAutoGraded": false,
+  "rowsKey": "careerCompareRows",
+  "optionalRowsKey": "careerInquiryRows",
+  "reportRequired": false,
+  "sources": [
+    {
+      "id": "climate-scenario",
+      "title": "가정에 따라 달라지는 기후 전망",
+      "publisher": "국가가뭄정보포털",
+      "url": "https://www.drought.go.kr/menu/m30/m35_2.do",
+      "readOn": "2026-11-04",
+      "caption": "미래의 배출과 사회 변화에 관한 가정을 두고 기후를 전망하는 방법을 알아보아요.",
+      "scope": "미래의 배출과 사회 변화에 관한 가정을 두고 기후를 전망하는 방법을 알아보아요.",
+      "summary": "미래의 배출과 사회 변화에 관한 가정을 두고 기후를 전망하는 방법을 알아보아요."
+    },
+    {
+      "id": "agricultural-projections",
+      "title": "미래의 작물 재배지를 예상하는 연구",
+      "publisher": "농촌진흥청 국립원예특작과학원",
+      "published": "2025-01-09",
+      "url": "https://www.nihhs.go.kr/usr/nihhs/news_Press_view.do?dataNo=100000800416",
+      "readOn": "2026-11-04",
+      "caption": "차나무와 올리브의 미래 재배 적지를 기후변화 시나리오로 예상한 연구예요.",
+      "scope": "차나무와 올리브의 미래 재배 적지를 기후변화 시나리오로 예상한 연구예요.",
+      "summary": "차나무와 올리브의 미래 재배 적지를 기후변화 시나리오로 예상한 연구예요."
+    },
+    {
+      "id": "soil-measurement",
+      "title": "흙의 수분을 측정하는 농업 기술",
+      "publisher": "농촌진흥청",
+      "url": "https://www.rda.go.kr/middlePopOpenPopNongsaroDBView.do?no=2093",
+      "readOn": "2026-11-04",
+      "caption": "논콩의 과습 피해를 줄이는 설명에서 흙의 수분 감지기를 어떻게 이용하는지 살펴보아요.",
+      "scope": "논콩의 과습 피해를 줄이는 설명에서 흙의 수분 감지기를 어떻게 이용하는지 살펴보아요.",
+      "summary": "논콩의 과습 피해를 줄이는 설명에서 흙의 수분 감지기를 어떻게 이용하는지 살펴보아요."
+    },
+    {
+      "id": "piano-sound",
+      "title": "피아노 현의 진동과 소리",
+      "publisher": "Yamaha",
+      "published": "2021-10-19",
+      "url": "https://hub.yamaha.com/pianos/p-acoustic/how-does-a-piano-work/",
+      "readOn": "2026-11-04",
+      "caption": "해머가 현을 치고 현의 진동이 울림판으로 전달되는 어쿠스틱 피아노의 구조를 알아보아요.",
+      "scope": "해머가 현을 치고 현의 진동이 울림판으로 전달되는 어쿠스틱 피아노의 구조를 알아보아요.",
+      "summary": "해머가 현을 치고 현의 진동이 울림판으로 전달되는 어쿠스틱 피아노의 구조를 알아보아요."
+    },
+    {
+      "id": "career-tuner",
+      "title": "악기수리원과 조율사가 하는 일",
+      "publisher": "커리어넷",
+      "url": "https://www.career.go.kr/cnet/app/base/job/jobView.m?SEQ=347",
+      "readOn": "2026-11-04",
+      "caption": "악기의 소리를 점검하고 음높이를 맞추는 일을 살펴보아요. 여기서는 하는 일에 관한 설명을 읽어요.",
+      "scope": "악기의 소리를 점검하고 음높이를 맞추는 일을 살펴보아요. 여기서는 하는 일에 관한 설명을 읽어요.",
+      "summary": "악기의 소리를 점검하고 음높이를 맞추는 일을 살펴보아요. 여기서는 하는 일에 관한 설명을 읽어요."
+    },
+    {
+      "id": "camera-exposure",
+      "title": "사진을 기록하는 빛과 촬영 조건",
+      "publisher": "Nikon School",
+      "url": "https://static.nikonusa.com/pdf/nikonschool/sat.pdf",
+      "readOn": "2026-11-04",
+      "caption": "빛을 받아들이는 시간과 조리개를 조절하여 사진을 기록하는 원리를 알아보아요.",
+      "scope": "빛을 받아들이는 시간과 조리개를 조절하여 사진을 기록하는 원리를 알아보아요.",
+      "summary": "빛을 받아들이는 시간과 조리개를 조절하여 사진을 기록하는 원리를 알아보아요."
+    }
+  ],
+  "localWorkbookCount": 32,
+  "localClassroomCount": 32,
+  "fullClassroomPending": false,
+  "preservation": {
+    "protectedBaselineFiles": 6290,
+    "unchangedFiles": 6279,
+    "reviewedSharedChanges": [
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/curriculum-2022.js",
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-career-workbook.test.mjs",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/tests/career-workbook-routes.mjs",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/v2.js"
+    ],
+    "oldWorkbookHtmlPreserved": 128,
+    "oldClassroomArraysPreserved": 62,
+    "newClassroomArrays": 2,
+    "oldPdfsBytesPreserved": 94,
+    "authoringSourceHashesPreserved": 12,
+    "classroomSlides": 117,
+    "semanticTables": 44,
+    "scopedHeaders": 132,
+    "reusedPhotos": 2,
+    "svgInstances": 0,
+    "new3D": 0,
+    "newPaidApiCalls": 0,
+    "newPdf": 0,
+    "workbooks": 32,
+    "fullClassrooms": 32,
+    "newOcr": 0,
+    "browserVerified": false,
+    "mainIntegrated": false,
+    "published": false
+  },
+  "tests": {
+    "v2Tests": 789,
+    "v2Pass": 787,
+    "v2ExistingSkip": 2,
+    "bankPass": 299,
+    "totalPass": 1086,
+    "fail": 0
+  },
+  "actualBrowserVerified": false,
+  "actualMobileVerified": false,
+  "actualAudioVerified": false,
+  "new3D": 0,
+  "newImages": 0,
+  "newPdf": 0,
+  "newOcr": 0,
+  "paidApiCalls": 0,
+  "actualStudentStorageReads": 0,
+  "actualStudentStorageWrites": 0,
+  "mainIntegrated": false,
+  "published": false,
+  "qa": "science-question-review/phase216",
+  "next": [
+    "version-preserving language fixes for career and electricity questions",
+    "main integration",
+    "allowed browser/mobile/audio/WebGL checks and main pre3D gate",
+    "existing v1 scope"
+  ]
+}

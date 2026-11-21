@@ -1,0 +1,205 @@
+{
+  "phase": 204,
+  "protectedFiles": 1981,
+  "unchangedProtectedFiles": 1977,
+  "sharedDailyCacheOnlyChange": true,
+  "sharedRegistryCacheOnlyChanges": [
+    "science-lab/v2/home.js",
+    "science-lab/v2/bank-catalog.js",
+    "science-lab/v2/curriculum-place.js"
+  ],
+  "unchangedPriorPdfs": 72,
+  "unchangedWorkbookHtmlProducts": 108,
+  "unchangedOtherClassroomArrays": 52,
+  "integratedWorkbooks": 27,
+  "integratedFullClassrooms": 27,
+  "studentSlides": 62,
+  "teacherSlides": 63,
+  "phases": 13,
+  "minutes": 330,
+  "manualActivities": 17,
+  "comparisonCases": 8,
+  "checks": 16,
+  "originalAuthoredItems": 128,
+  "exactOriginalObjects": 117,
+  "versionedQuestions": 11,
+  "exactChecks": 11,
+  "versionedChecks": 5,
+  "changedAcceptedAnswerQuestions": [
+    114,
+    120,
+    121
+  ],
+  "sourceAndPairCounts": [
+    75,
+    75
+  ],
+  "sourceReviewOnly": 5,
+  "newCopiedSourceFiles": 6,
+  "originalQuestionPresentationsRetained": true,
+  "serializedCurrentPresentationsRetainDiagnosticRules": true,
+  "optionalRecords": 17,
+  "comparisonRowsKey": "plantStructureCompareRows",
+  "actualInquiryRowsKey": "plantStructureInquiryRows",
+  "priorBankOnlyDailyAvailable": false,
+  "newImages": 0,
+  "new3D": 0,
+  "newPdfs": 0,
+  "newPaidApiCalls": 0,
+  "newNativeVisionRuns": 0,
+  "browserVerified": false,
+  "unit": "c22-s61-u03",
+  "status": "local candidate verified in Node VM; actual browser verification pending",
+  "referencesReusedFrom": "phase203, same unit; no new external science references",
+  "htmlStructureReview": {
+    "classroom": {
+      "states": 125,
+      "tables": 24,
+      "scopeHeaders": 100
+    },
+    "comparison": {
+      "states": 16,
+      "tables": 16,
+      "scopeHeaders": 78
+    },
+    "reusedAssets": [
+      {
+        "src": "../assets/bank/c22-s61-u03/s3-q09.webp",
+        "path": "science-lab/assets/bank/c22-s61-u03/s3-q09.webp",
+        "sha256": "82e441605c32a0d7323a2432e847cdaf04b9cd39e109e943b61342033c1d06c9"
+      },
+      {
+        "src": "../assets/bank/c22-s61-u03/s4-q16.webp",
+        "path": "science-lab/assets/bank/c22-s61-u03/s4-q16.webp",
+        "sha256": "98454d5f839c9cbbe4117362861e367d09b18ca2240cb78c8b9c22c42e606caa"
+      },
+      {
+        "src": "../assets/book/c22-s61-u03-apple-higginson.jpg",
+        "path": "science-lab/assets/book/c22-s61-u03-apple-higginson.jpg",
+        "sha256": "d2e665ef4ab9ab613c5763748026cca1b80a33a8f704e6e85158653d7a7ebadf"
+      },
+      {
+        "src": "../assets/book/c22-s61-u03-onion-kot.jpg",
+        "path": "science-lab/assets/book/c22-s61-u03-onion-kot.jpg",
+        "sha256": "b5a7c77f488ea5e70fd177962760e933d30839276b22b8267f434ff558055800"
+      },
+      {
+        "src": "../assets/book/s31-u03-photo-lotus.webp",
+        "path": "science-lab/assets/book/s31-u03-photo-lotus.webp",
+        "sha256": "e9be247ef3bc544e3d2d684312e6857700399cdd54f12aca1bb806adc418bce2"
+      },
+      {
+        "src": "../assets/book/s31-u03-photo-observe.webp",
+        "path": "science-lab/assets/book/s31-u03-photo-observe.webp",
+        "sha256": "73fa65302eb90877a71cebaf08963bacc8d7c65233b719f44b0bd6085865ef63"
+      },
+      {
+        "src": "../assets/book/s31-u04-photo-seedling.webp",
+        "path": "science-lab/assets/book/s31-u04-photo-seedling.webp",
+        "sha256": "9ea4a501084f99d95ecb4ef6b73709f6834607b4abe449ceee9054e60f57930a"
+      }
+    ]
+  },
+  "classroomRoutes": {
+    "unit": "c22-s61-u03",
+    "startLinks": true,
+    "priorBankOnlyDailyWasUnavailable": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 16,
+    "legacyDailyQuestions": 0,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "plantStructureCompareRows",
+    "actualInquiryKey": "plantStructureInquiryRows",
+    "noMissingRecordsBookLink": true,
+    "originalReportAndObservationStatePreserved": true,
+    "missingOptionalReportSafelyRedirected": true,
+    "lateOptionalRecordCallbackCannotWrite": true,
+    "lateOptionalRecordHandleDisposed": true,
+    "noNew3D": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "lateReleasedCallbackCannotWrite": true,
+    "browserVerified": false
+  },
+  "deckEvents": {
+    "teacherMounts": 1,
+    "teacherPersonal": false,
+    "staleLegacyBattleIgnored": true,
+    "comparisonClickDoesNotAdvance": true,
+    "outsideClickAdvances": true,
+    "manualActivities": 17,
+    "noTimerOnActivity": true,
+    "explicitNextWorks": true,
+    "browserVerified": false
+  },
+  "questionDiagnostics": {
+    "oldVersionUsesOriginalRule": true,
+    "currentCorrectAnswersDoNotResolveOldMisconception": true,
+    "originalCorrectAnswersStillResolveOldMisconception": true,
+    "remedyPoolSeparatesVersions": true,
+    "teacherKeyUsesMatchingVersion": true,
+    "pickedTextsUseMatchingVersion": true,
+    "onlineCurriculumTermsAndUnitsStrict": true,
+    "deckTermsAndMatchingStrict": true,
+    "onlineGradedStates": 8,
+    "deckGradedStates": 7,
+    "syntheticProgressEvents": 15,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0
+  },
+  "workbookRoutes": {
+    "unit": "c22-s61-u03",
+    "actualStart": true,
+    "currentClassroomOffered": true,
+    "defaultRedirectToStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "actualBankPrintRouterBranch": 4,
+    "productionUnitLoaderExecuted": true,
+    "fullClassroomPending": false,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "tests": {
+    "v2": {
+      "total": 696,
+      "pass": 694,
+      "skip": 2,
+      "fail": 0
+    },
+    "bank": {
+      "total": 299,
+      "pass": 299,
+      "skip": 0,
+      "fail": 0
+    },
+    "bankAudit": "pass"
+  },
+  "assets": "7 existing assets reused, inspected in phase203; no new image/PDF/OCR run in phase204",
+  "nativeVisionReusedEvidence": {
+    "phase": 203,
+    "runs": 219,
+    "rerunHere": false
+  },
+  "legacyState": {
+    "priorBankOnlyDailyAvailable": false,
+    "legacyDailyQuestionCount": 0,
+    "savedExplicitPapers": "old paper, answers, grades and revision history restored read-only; explicit new attempt archives old state",
+    "sourceLessonExploreLabDefined": false,
+    "oldObservationRows": "test sentinel only; no claim this source lesson defined such a key"
+  },
+  "releaseCache": "20261104-plant-structure-class",
+  "pending": [
+    "5 units: 지구의 운동, 계절의 변화, 물질의 연소, 전기의 이용, 과학과 나의 진로",
+    "latest main integration",
+    "authorized actual browser/PC/mobile/audio/WebGL verification and main pre-3D gate",
+    "publication within authorized scope"
+  ],
+  "push": false,
+  "deployed": false,
+  "goalStatus": "active"
+}

@@ -1,0 +1,98 @@
+{
+  "phase": 386,
+  "date": "2026-11-08",
+  "candidateBaseline": "cdadf5c7b481376db1faf02a775002d08832ec6a",
+  "reviewParent": "f4b963bb19e86c9e9670f711d8f216b8eb828b4d",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "이미 준비한 네 단원의 현행 범위 원문 발췌214개와 그림69개를 현재 native 입력/채점/저장으로 재검사하고 로컬 비공개 이동 묶음으로 정리했다. 전체 현행 판본 원문 확보나 앱 등록 완료가 아니다.",
+  "privatePackage": {
+    "phase": 386,
+    "date": "2026-11-08",
+    "candidateBaseline": "cdadf5c7b481376db1faf02a775002d08832ec6a",
+    "units": 4,
+    "privateSourceItems": 214,
+    "privateFigureFiles": 69,
+    "automatic": 185,
+    "teacherReview": 29,
+    "filesInArchive": 84,
+    "archiveBytes": 13073309,
+    "archiveSha256": "2da49f8392e2680083bfdcb881d93524bd1f5bbb7812db485e9e6f5dec74cea4",
+    "manifestSha256": "f63c091314e9b702d66542dd052a6f3b4a16b0c45e444b4ee341d674b52937e2",
+    "nativeGradingCases": 3582,
+    "nativeSnapshotCases": 1293,
+    "originalPrivateInputsPreserved": 77,
+    "originalJsonAndModulesCopiedByteForByte": true,
+    "portableAssetMapHasOnlyPackageRelativeFiles": true,
+    "relocatedArchiveVerificationPassed": true,
+    "packageFilePermissions": "0600",
+    "runtimeOriginalsAdded": 0,
+    "contentsPublished": false,
+    "actualBrowserUsed": false,
+    "actualA4VisualInspection": false,
+    "releaseReady": false
+  },
+  "privatePackageName": "science-private-source-review-4units-214items.zip",
+  "sourceContentsOrOfficialAnswersOrImagesInPublicCommit": false,
+  "nativeReplay": {
+    "validatorScriptsReplayed": 4,
+    "allPassed": true,
+    "gradingCases": 3582,
+    "snapshotCases": 1293,
+    "automaticItems": 185,
+    "teacherReviewItems": 29,
+    "onlyOutputPathsAndRelativeHelperImportRelocated": true,
+    "priorValidatorInputsPreserved": true,
+    "packageRasterReferenceCompleteness": [
+      {
+        "unit": "c22-s61-u04",
+        "currentAndPriorRasterReferences": 13,
+        "allBound": true
+      },
+      {
+        "unit": "c22-s62-u01",
+        "currentAndPriorRasterReferences": 26,
+        "allBound": true
+      },
+      {
+        "unit": "c22-s62-u02",
+        "currentAndPriorRasterReferences": 14,
+        "allBound": true
+      },
+      {
+        "unit": "c22-s62-u03",
+        "currentAndPriorRasterReferences": 16,
+        "allBound": true
+      }
+    ]
+  },
+  "nativeProductSuite": {
+    "notRerunBecauseProductFilesUnchanged": true,
+    "lastFullPhase": 385,
+    "lastFullPass": 1447,
+    "lastFullBrowserSkip": 2
+  },
+  "preservation": {
+    "productFilesDataAssetsAndScenesUnchanged": true,
+    "allOriginalPrivateSourceJsonModulesAndPngInputsPreserved": 77,
+    "allPrivateOnlyRuntimeAndReleaseFlagsPreserved": true,
+    "priorSourceAndSavedAnswerContractsPreserved": true,
+    "originalOcrAndPdfFilesNotIncludedInArchive": true
+  },
+  "canonicalSourcesRuntime": {
+    "registeredUnits": 23,
+    "registeredQuestions": 1512,
+    "pendingUnits": 9,
+    "newSourceItemsRegistered": 0
+  },
+  "newOcrRuns": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "actualBrowserUsed": false,
+  "actualA4VisualInspection": false,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

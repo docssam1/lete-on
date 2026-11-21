@@ -34,7 +34,7 @@ test('존재하지 않는 원문이나 1:1 짝을 만들지 않고 실제 원문
  assert.equal(assessmentPool({source,items},BANK['s31-mid']),source);
  assert.deepEqual(assessmentPool({source,items:[{status:'verified',sourceRef:{type:'original'}},{status:'authored',sourceRef:{type:'authored-practice'}}]},BANK['s31-fin']),[]);
  for(const q of items){assert.equal(q.sourceRef.type,'authored-assessment');assert(!q.sourceRef.of);}
- const html=curriculumBankHtml(BANK);assert(html.includes('창작 60문항'));assert(html.includes('원문 1298문항'));assert(!html.includes('원문 491문항'));
+ const html=curriculumBankHtml(BANK);assert(html.includes('연습 문제 60개'));assert(html.includes('원문 문제 1763개'));assert(!html.includes('원문 문제 491개'));
 });
 
 test('고르기 정답 위치·길이와 모든 답 형식의 실제 판정을 검증한다',()=>{
@@ -54,6 +54,6 @@ test('기말·중간의 관련 학습은 해당 실제 단원으로 돌아간다
 });
 
 test('학생 문제지와 교사 해설은 답·쓰기 공간·출처를 구분한다',()=>{
- for(const form of[1,2]){const list=items.filter(q=>q.sourceRef.set===form),student=assessmentPaperHtml({unit:unit.id,bank:BANK[unit.id],list,form}),teacher=assessmentPaperHtml({unit:unit.id,bank:BANK[unit.id],list,form,teacher:true});assert.equal((student.match(/data-paper-item=/g)||[]).length,30);assert.equal((teacher.match(/class="ap-key"/g)||[]).length,30);assert(!student.includes('class="ap-key"'));assert.equal((student.match(/class="ap-writing"/g)||[]).length,2);assert.equal((student.match(/class="ap-short"/g)||[]).length,4);assert(student.includes('직접 작성한 평가'));assert(teacher.includes('공식 배점표로 사용하지'));assert(student.includes('GFIELD · 지필드'));}
+ for(const form of[1,2]){const list=items.filter(q=>q.sourceRef.set===form),student=assessmentPaperHtml({unit:unit.id,bank:BANK[unit.id],list,form}),teacher=assessmentPaperHtml({unit:unit.id,bank:BANK[unit.id],list,form,teacher:true});assert.equal((student.match(/data-paper-item=/g)||[]).length,30);assert.equal((teacher.match(/class="ap-key"/g)||[]).length,30);assert(!student.includes('class="ap-key"'));assert.equal((student.match(/class="workspace ap-writing"/g)||[]).length,2);assert.equal((student.match(/class="answer-line ap-short"/g)||[]).length,4);assert(!student.includes('직접 작성'));assert(teacher.includes('직접 작성한 학습용 평가'));assert(teacher.includes('공식 배점표로 사용하지'));assert(student.includes('GFIELD · 지필드'));}
  const q={...items[0],prompt:'<script>notExecutable</script>',choices:['<img onerror="1">']};const h=assessmentPaperHtml({unit:unit.id,bank:BANK[unit.id],list:[q],form:1});assert(!h.includes('<script>'));assert(!h.includes('<img'));assert(h.includes('&lt;script&gt;'));
 });

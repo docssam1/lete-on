@@ -1,0 +1,122 @@
+{
+  "phase": 367,
+  "date": "2026-11-08",
+  "scope": "Prevent two legacy workbook generators from replacing reviewed current manuscripts; provide read-only comparison and separate non-overwriting candidate output.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "9670ea5afc29f5f57464363948025a09c13580aa",
+    "reviewCommit": "bbefc60c8672446444dce9b6354076a97d6efa02"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "before": {
+    "virtualFsOnly": true,
+    "actualBrowserUsed": false,
+    "results": [
+      {
+        "unit": "c22-s32-u04",
+        "file": "gen-science-workbook-c22s32u04.mjs",
+        "error": null,
+        "virtualWrites": 1,
+        "currentQuestions": 80,
+        "generatedQuestions": 48,
+        "currentStudentPages": 54,
+        "generatedStudentPages": 20,
+        "generatedSourceSha256": "aa6da1278a02f0b71fb0df7c0e116a8d13d8a3db1bbc11598a2a63f3a36bfdb8",
+        "currentStudyNotesRetained": false,
+        "actualFilesWrittenByGenerator": 0
+      },
+      {
+        "unit": "c22-s42-u04",
+        "file": "gen-science-workbook-c22s42u04.mjs",
+        "error": null,
+        "virtualWrites": 1,
+        "currentQuestions": 80,
+        "generatedQuestions": 46,
+        "currentStudentPages": 52,
+        "generatedStudentPages": 20,
+        "generatedSourceSha256": "9aedc63d1f2c2f3d975edcb69b91685be93ea964de4a4a59e99f5184b858a0d5",
+        "currentStudyNotesRetained": false,
+        "actualFilesWrittenByGenerator": 0
+      }
+    ]
+  },
+  "actualCli": {
+    "actualCli": true,
+    "actualBrowserUsed": false,
+    "results": [
+      {
+        "unit": "c22-s32-u04",
+        "checkExitCode": 1,
+        "differentReported": true,
+        "candidateExitCode": 0,
+        "repeatExitCode": 0,
+        "repeatUnchanged": true,
+        "currentFileSha256": "d0bb90b3bc6c5d558a603f14db6161ab61b7212d8803ffe391b62c0b135d5f51",
+        "currentFileBytesPreserved": true,
+        "candidateSourceSha256": "bb673cfecbe71751054944b028f82ab11ec4b07905a05c3d85834afb58dab4a3",
+        "actualCurrentFileWrites": 0
+      },
+      {
+        "unit": "c22-s42-u04",
+        "checkExitCode": 1,
+        "differentReported": true,
+        "candidateExitCode": 0,
+        "repeatExitCode": 0,
+        "repeatUnchanged": true,
+        "currentFileSha256": "7fa194b42540e2593ba59ce095132fca35d710e8729725d5c5f96fd755b75930",
+        "currentFileBytesPreserved": true,
+        "candidateSourceSha256": "43a1a223f5124b77ece33134f294e4254792aeefd2065e6a27cd9e45396accf0",
+        "actualCurrentFileWrites": 0
+      }
+    ]
+  },
+  "runtime": {
+    "phase": 367,
+    "all32BankClassroomWorkbookDataFilesByteEqual": 96,
+    "allWorkbookQuestionsUnchanged": 3080,
+    "allWorkbookModesByteEqual": 128,
+    "allBankPrintModesByteEqual": 84,
+    "actualCliGeneratorsCompared": 2,
+    "actualCliCandidateCreationAndRepeatVerified": 2,
+    "currentWorkbooksNotOverwritten": true,
+    "virtualRaceAndExistingFileCasesVerified": true,
+    "actualBrowserUsed": false
+  },
+  "nativeSuite": {
+    "testFiles": 263,
+    "exitCode": 0,
+    "tests": 1426,
+    "suites": 0,
+    "pass": 1424,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "preflight": {
+    "syntaxFiles": 4,
+    "diffCheck": true
+  },
+  "preservationPolicy": {
+    "differentExistingFilesRejectedBeforeWrite": true,
+    "checkModeNeverWrites": true,
+    "separateCandidateCreationUsesExclusiveFileCreation": true,
+    "identicalCandidatesNotRewritten": true,
+    "concurrentNewFilesNotReplaced": true,
+    "currentWorkbooksAndPreviousExportsUnchanged": true,
+    "allRuntimeDataAndRenderingUnchanged": true,
+    "legacyCandidateTextNotPromotedToCurrentManuscripts": true,
+    "rejectedImageLabelRemovedFromCandidateDefault": true
+  },
+  "remainingGeneratorMigration": "The two legacy candidate manuscripts still have 48 and 46 questions; bringing their authoring sources up to the current 80-question editions remains separate work.",
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

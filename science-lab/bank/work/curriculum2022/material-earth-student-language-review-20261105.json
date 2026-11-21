@@ -1,0 +1,251 @@
+{
+  "phase": 240,
+  "date": "2026-11-05",
+  "baseCommit": "df321a63ab5b3b67ec27ce20fd1af58782541547",
+  "units": [
+    "c22-s32-u01",
+    "c22-s32-u02"
+  ],
+  "scope": "Student wording in27 workbook questions (18/9),22 current online questions (15/7),11 HTML figures (8/3), and removal of obsolete first-page sample glossaries.",
+  "changes": [
+    "Use materials/objects and actual conditions instead of sample shorthand.",
+    "Describe water heating and remaining substances using the elementary curriculum vocabulary.",
+    "Preserve quantities, choice positions, answers, assessment contracts and full previous presentations."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 30,
+    "questionsWithSameAnswersCriteriaExplanationsAndContracts": 3080,
+    "units": [
+      {
+        "unit": "c22-s32-u01",
+        "workbookQuestionNumbers": [
+          6,
+          7,
+          9,
+          10,
+          16,
+          17,
+          26,
+          32,
+          34,
+          36,
+          45,
+          46,
+          53,
+          54,
+          56,
+          66,
+          70,
+          71
+        ],
+        "figureKeys": [
+          "given-c22-s32-u01-b09",
+          "given-c22-s32-u01-b10",
+          "given-c22-s32-u01-b11",
+          "given-c22-s32-u01-b33",
+          "given-c22-s32-u01-b39",
+          "given-c22-s32-u01-b40",
+          "materialRepeatedTrials",
+          "materialSources"
+        ],
+        "allOtherDataAndGeneratedSourcePreserved": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "workbookQuestionNumbers": [
+          12,
+          15,
+          16,
+          17,
+          18,
+          26,
+          37,
+          57,
+          74
+        ],
+        "figureKeys": [
+          "earth-original",
+          "given-c22-s32-u02-b26",
+          "given-c22-s32-u02-b30"
+        ],
+        "allOtherDataAndGeneratedSourcePreserved": true
+      }
+    ],
+    "runtimeVersioned": {
+      "c22-s32-u01": [
+        "c22-s32-u01-b09",
+        "c22-s32-u01-b10",
+        "c22-s32-u01-b11",
+        "c22-s32-u01-b12",
+        "c22-s32-u01-b13",
+        "c22-s32-u01-b14",
+        "c22-s32-u01-b16",
+        "c22-s32-u01-b25",
+        "c22-s32-u01-b28",
+        "c22-s32-u01-b29",
+        "c22-s32-u01-b30",
+        "c22-s32-u01-b33",
+        "c22-s32-u01-b39",
+        "c22-s32-u01-b40",
+        "c22-s32-u01-b42"
+      ],
+      "c22-s32-u02": [
+        "c22-s32-u02-b26",
+        "c22-s32-u02-b29",
+        "c22-s32-u02-b30",
+        "c22-s32-u02-b34",
+        "c22-s32-u02-b36",
+        "c22-s32-u02-b37",
+        "c22-s32-u02-b38"
+      ]
+    },
+    "onlyFirstPageGlossaryRemovedOtherwisePagesWritingSpaceFigureTagsAttributesAndNumericValuesPreserved": true,
+    "productsChanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "answers"
+      }
+    ],
+    "productsUnchanged": 122,
+    "slideArraysChanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "slides": 31
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "slides": 32
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "slides": 33
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "slides": 34
+      }
+    ],
+    "slideArraysUnchanged": 60,
+    "htmlChecks": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student",
+        "matchedPrompts": 18
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher",
+        "matchedPrompts": 18
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "student",
+        "matchedPrompts": 9
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher",
+        "matchedPrompts": 9
+      }
+    ],
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/data/book/c22-s32-u01.thinking-lesson.js",
+      "science-lab/data/book/c22-s32-u01.workbook.js",
+      "science-lab/data/book/c22-s32-u02.thinking-lesson.js",
+      "science-lab/data/book/c22-s32-u02.workbook.js",
+      "science-lab/data/book/material-earth-body-language.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-earth-sea-lesson.test.mjs",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-material-lesson.test.mjs",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "productionAudit": {
+    "units": [
+      {
+        "unit": "c22-s32-u01",
+        "productionLoaderExecuted": true,
+        "baseItems": 64,
+        "loadedItems": 76,
+        "versioned": 15,
+        "source": 70,
+        "similar": 70,
+        "classroomChecks": 12,
+        "currentClassroomChecks": 4,
+        "poolAndChecksAgree": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "productionLoaderExecuted": true,
+        "baseItems": 80,
+        "loadedItems": 92,
+        "versioned": 7,
+        "source": 0,
+        "similar": 0,
+        "classroomChecks": 12,
+        "currentClassroomChecks": 1,
+        "poolAndChecksAgree": true
+      }
+    ],
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "tests": {
+    "total": 823,
+    "pass": 821,
+    "fail": 0,
+    "existingBrowserSkips": 2,
+    "newTests": 2,
+    "purpose": "All changed selection positions, multi-selection alternatives, accepted short answers, written review boundary, original/similar exclusion, full old-version restoration and restart history.",
+    "threeDRuntimeExecuted": false
+  },
+  "sourceBasis": {
+    "title": "교육부2022-33 별책9 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+    "localText": "Previously verified curriculum-standards/science-curriculum.txt:4과05 and4과06",
+    "scope": "Material properties/classification, three states and useful objects; atmosphere, land/sea, heating inland water and seawater, coastal landforms, tide height and tidal-flat conservation. No new state-change mechanism, erosion/transport/deposition or tide-cause requirement."
+  },
+  "editorialConnection": "Outer workbook editor and current authored presentation adapter; raw bank source, raw generated workbook data and original classroom plan/check data stay unchanged. Keep hooks after regeneration.",
+  "cacheVersion": "20261105-material-earth-student-language",
+  "remaining": "Wider question/teacher/classroom wording; actual desktop/mobile/A4/audio/WebGL/mandatory3D gate; v1 consistency and main integration/deployment. Earth unit original exam-source absence is preexisting and remains pending.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "evidence": "science-question-review/phase240:32 workbook/128 product/64 slide snapshots; zero-storage/network production-loader VM execution;8 generated HTML fragments; question-scoped prompt checks; final v2 test log. Initial audit compared a cross-realm empty array directly and was corrected to compare serialized source/similar data without changing production code."
+}

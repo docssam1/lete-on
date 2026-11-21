@@ -1,0 +1,226 @@
+{
+  "date": "2026-11-02",
+  "base": "a86aba4fcde39dc949e5c06495966ab5d9e093a5",
+  "branch": "codex/science-workbook-integration-20261102",
+  "scope": "s31-u01 default classroom, start, Daily and optional original records",
+  "status": "local candidate, no push or deployment",
+  "skills": [
+    "instructional-design (continued)",
+    "ux-writing (continued)"
+  ],
+  "curriculum": [
+    "4과01-01",
+    "4과01-02",
+    "4과01-03",
+    "4과01-04"
+  ],
+  "changes": [
+    "사고력 학생26/교사27장 수업 연결",
+    "원래 실제 활동·보고서 교재를 선택 경로로 연결",
+    "수업 확인11문항의 보기·설명 보완과 Daily 연결, 채점 계약 불변",
+    "네 자료 묶음을 코드 배열 대신 세로 목록으로 표시",
+    "모형 기록의 물체·위치·예상·관찰 열 대응 수정"
+  ],
+  "tests": {
+    "total": 322,
+    "passed": 320,
+    "failed": 0,
+    "skipped": 2,
+    "skipScope": "기존 브라우저 검사2개"
+  },
+  "slides": {
+    "units": [
+      {
+        "unit": "s31-u01",
+        "modes": {
+          "self": {
+            "slides": 26,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 27,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u02",
+        "modes": {
+          "self": {
+            "slides": 45,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 46,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u03",
+        "modes": {
+          "self": {
+            "slides": 45,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 46,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u04",
+        "modes": {
+          "self": {
+            "slides": 36,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 36,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "s41-u01",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s51-u03",
+        "modes": {
+          "self": {
+            "slides": 86,
+            "checks": 16
+          },
+          "teach": {
+            "slides": 87,
+            "checks": 16
+          }
+        }
+      }
+    ],
+    "otherModesUnchanged": 18,
+    "sourceForceMatchesExceptFourGivenListLayouts": 2
+  },
+  "routes": {
+    "scope": "actual pageStart/pageLabClass/pageDaily functions executed in Node vm with captured UI adapters; not browser/layout validation",
+    "startLinks": true,
+    "thinkingClassroom": true,
+    "revisedChecksInClassroomAndDaily": 11,
+    "teacherReadsStudentRows": 0,
+    "teacherWritesStudentRows": 0,
+    "studentUsesOriginalLabRowsKey": true,
+    "originalReportStatePreserved": true,
+    "correctResultColumns": true,
+    "optionalRecordBookUsesUnchangedOriginal": true
+  },
+  "preserved": [
+    "원래 force book·plan·lesson·report 계약·80개 similar 원본 파일",
+    "11문항 ID·정답·채점 계약·출처·분류",
+    "수평 모형 공식·개체 값·실제 기록 저장키 labRows",
+    "전체 workbook 데이터와 모든 이미지 원본",
+    "별도9단원18개 학생·교사 슬라이드 원고"
+  ],
+  "notVerified": "실제 브라우저 실행·그림 위치·인쇄 지면은 이번에 검증하지 않음. Node 함수 실행은 브라우저 검증이 아님.",
+  "apiCalls": 0,
+  "newImages": 0,
+  "newPdfs": 0,
+  "visionRunsThisPhase": 0,
+  "next": "다른3-1 단원의 실제 수업과 선택 기록 분리 및 최신 main 재대조·통합 검토. 전체 목표 active.",
+  "files": [
+    {
+      "path": "science-lab/data/book/s31-u01.thinking-lesson.js",
+      "sha256": "9c40d7973f864681970e76dee5f2a0be8eceb10a18a99871f337008165fc0e47"
+    },
+    {
+      "path": "science-lab/v2/deck-force-thinking.js",
+      "sha256": "7932a5ee28f13f7388eb7ac1729e2cb5b3c1a46911b2d57eba0bd515a7f90170"
+    },
+    {
+      "path": "science-lab/v2/deck-force-thinking.css",
+      "sha256": "7130205530d19297211e559ae6655cd8852cd8114344072e72efb395607172e4"
+    },
+    {
+      "path": "science-lab/v2/revised-lesson.js",
+      "sha256": "a038024959ac457bddbd5b698455e914d5e47d9ee2358f58d2789fdb96b99679"
+    },
+    {
+      "path": "science-lab/v2/revised-force-lesson.test.mjs",
+      "sha256": "dcf9863ac0246a28e6b851cbca51919cce7161b073825708ee5261b3fa4aa921"
+    },
+    {
+      "path": "science-lab/v2/deck.js",
+      "sha256": "810a464029efbde5c46189bb98b9a1e956b8b52d6d038fc8e7a2604f5be85098"
+    },
+    {
+      "path": "science-lab/v2/v2.js",
+      "sha256": "b8fa34711c7fa26ee2d47350b7a0e4309b27e2f5d3bd5683b650924a7d0a7240"
+    },
+    {
+      "path": "science-lab/v2/index.html",
+      "sha256": "a4dbc884ba74fd18e367a6d93966de5a893d08f60648a77200a4473e6f26265e"
+    }
+  ]
+}
