@@ -1,7 +1,7 @@
 // Generated from approved public channels. Do not add post bodies or personal data.
 globalThis.HIGHSELECT_ACADEMY_NOTICES = {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-21",
+  "checkedAt": "2026-11-22",
   "policy": {
     "branches": [
       "대치",
@@ -19,81 +19,81 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "dg-bundang-tests",
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=bundang",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "dg-daechi-seminars",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "dg-daechi-tests",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "dp-blog",
       "academy": "DP",
       "branch": "title",
       "url": "https://blog.naver.com/dpmath",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "ed-blog",
       "academy": "ED",
       "branch": "대치",
       "url": "https://blog.naver.com/edenmath",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "sh-blog",
       "academy": "SH",
       "branch": "대치",
       "url": "https://blog.naver.com/sharpedu",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "sm-blog",
       "academy": "SM",
       "branch": "대치",
       "url": "https://blog.naver.com/won1934",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     },
     {
       "id": "wm-blog",
       "academy": "WM",
       "branch": "대치",
       "url": "https://blog.naver.com/wonmath563",
-      "checkedAt": "2026-11-21",
+      "checkedAt": "2026-11-22",
       "status": "ok",
-      "lastSuccessAt": "2026-11-21"
+      "lastSuccessAt": "2026-11-22"
     }
   ],
   "items": [
@@ -180,6 +180,19 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "publishedAt": null,
       "eventDate": "2026-12-05",
       "scheduleText": "2026-12-05 · 13:00 / 15:00"
+    },
+    {
+      "id": "dp-blog-224486234102-대치",
+      "sourceId": "dp-blog",
+      "academy": "DP",
+      "branch": "대치",
+      "category": "test",
+      "title": "[대치 중등관]정규반 진도표(11/30~)",
+      "url": "https://blog.naver.com/dpmath/224486234102",
+      "publishedAt": "2026-11-21",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "e5a140f990785ae7"
     },
     {
       "id": "sm-blog-224484046937-대치",
@@ -440,19 +453,6 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "eventDate": null,
       "scheduleText": "10/17(토) · 예약기간 : 10/02(금) 오후 4시 ~ 10/16(금) 오후 4시 (이후 결원있을 경우 전화예약 가능)",
       "revision": "1af99b9fe9100335"
-    },
-    {
-      "id": "dp-blog-224408399028-대치",
-      "sourceId": "dp-blog",
-      "academy": "DP",
-      "branch": "대치",
-      "category": "test",
-      "title": "[대치 중등관] 정규반 진도표(9/19~)",
-      "url": "https://blog.naver.com/dpmath/224408399028",
-      "publishedAt": "2026-09-18",
-      "eventDate": null,
-      "scheduleText": "",
-      "revision": "a6707835d926ebd1"
     },
     {
       "id": "sm-blog-224405751994-대치",
