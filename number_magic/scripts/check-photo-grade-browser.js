@@ -5,6 +5,7 @@
 //  1 marks=1 이 없으면 귀퉁이 표시·단추·스크립트가 없다 / 있으면 쪽마다 표시 넷(왼쪽 위만 큼)과 「사진으로 채점」
 //  2 휴대폰 화면(줄여 보기)에서 잰 자리 좌표 = 넓은 화면에서 잰 좌표
 //  3 정답을 써서 기울여 찍은 사진 → 모두 ○ (C16 네모 칸 · C4 세로셈)
+//  0 위 막대에 이모지·주차 열쇠·과정 번호가 없다 · 맞은 답 동그라미 수 = 점수(쪽 위 「12/12」) · 틀림을 누르면 빗금
 //  4 틀린 답 → 「확인」 + 쓴 값대로 읽음 · 안 쓴 문항 → 「답 없음」 · ○/✕ 를 누르면 저장되고 새로고침 뒤에도 남음
 //  5 사진이 옆으로 누워도(90°) 같은 결과 · 귀퉁이 하나가 가려지면 다시 찍으라는 안내
 //  6 인쇄 화면: 귀퉁이 표시는 찍히고 채점 표시·단추는 안 나옴 · PDF 생성용(auto=0)은 표시만 있고 단추 없음
@@ -79,6 +80,9 @@ const gradable = r => r.items.filter(i => i.a && i.state !== 'self');
     assert.equal(await p.evaluate(() => !!window.NM_PHOTO_GRADE), false, 'script not loaded without marks=1');
     await open(p, 'w=2026-W39&c=C16&n=check&k=1&cad=w2&marks=1');
     assert.equal(await p.locator('#wsPhoto').count(), 1, 'photo button');
+    // 위 막대: 과정 이름만. 이모지·주차 열쇠·과정 번호·영문 상표가 보이지 않는다
+    const barText = await p.locator('#wsBar').innerText();
+    assert.ok(/소수의 덧셈과 뺄셈/.test(barText) && !/2026-W|C16\.|Numbers of Magic/.test(barText) && !/\p{Extended_Pictographic}/u.test(barText), 'clean top bar: ' + barText);
     const info = await p.evaluate(() => window.NM_PHOTO_GRADE._pages().map(pg => ({ idx: pg.idx, n: pg.geom.items.filter(i => i.a).length, marks: pg.el.querySelectorAll('.nm-ph-mark').length, big: pg.el.querySelectorAll('.nm-ph-mark.big.tl').length })));
     assert.ok(info.length >= 4 && info.every(i => i.marks === 4 && i.big === 1), 'four marks per page, big one top-left');
     const pageIdx = info.find(i => i.n >= 10).idx;
@@ -103,6 +107,7 @@ const gradable = r => r.items.filter(i => i.a && i.state !== 'self');
     assert.equal(r.quality.low, false, 'sharp photo is not flagged');
     report.c16 = { items: gradable(r).length, ms: r.ms, quality: r.quality };
     assert.equal(await p.locator('.nm-ph-ring').count(), gradable(r).length, 'a ring per correct answer');
+    assert.equal(await p.locator('.nm-ph-score').innerText(), gradable(r).length + '/' + gradable(r).length, 'score written on the page');
     if(out) await p.screenshot({ path: path.join(out, 'marks-c16.png') });
 
     // 4 틀린 답·빈칸
@@ -116,9 +121,10 @@ const gradable = r => r.items.filter(i => i.a && i.state !== 'self');
     assert.equal(await p.locator('.nm-ph-chip').count(), 1, 'one check chip'); assert.equal(await p.locator('.nm-ph-note').count(), 1, 'one no-answer note');
     await p.locator('.nm-ph-chip button.x').click();
     assert.equal(await p.locator('.nm-ph-chip[data-set=x]').count(), 1, 'marked wrong');
+    assert.equal(await p.locator('.nm-ph-slash').count(), 1, 'a slash on the wrong answer');
     await p.click('#wsPhoto'); const txt = await p.locator('.nm-ph-sheet').innerText();
     assert.ok(/틀림 1/.test(txt) && /답 없음 1/.test(txt) && !/확인할 것/.test(txt), 'summary: ' + txt.slice(0, 200));
-    assert.ok(!/[🖨✏️✅📷]/u.test(txt), 'no emoji in the panel');
+    assert.ok(!/\p{Extended_Pictographic}/u.test(txt), 'no emoji in the panel');
     if(out) await p.screenshot({ path: path.join(out, 'panel.png') });
     await p.locator('[data-close]').click(); assert.equal(await p.locator('.nm-ph-panel').isVisible(), false, 'panel closes');
     await p.reload(); await p.waitForFunction(() => window.NM_WS_READY && window.NM_PHOTO_GRADE, null, { timeout: 60000 });

@@ -282,8 +282,14 @@ function analyze(photo, geom, digits){
 
 /* ============================================================
    2. 학습지 화면에 붙이기
+   ------------------------------------------------------------
+   모양(2026-11-21, 원장 「이에 따른 디자인도」): 선생님이 빨간 색연필로 채점한 종이처럼.
+   · 색은 셋 — 먹(글) · 남색(누르는 것) · 빨강(채점 표시만). 이모지·말풍선·알약·그림자 상자를 쓰지 않는다.
+   · 맞은 답 = 손으로 그린 동그라미, 틀린 답 = 빗금, 쪽 오른쪽 위 = 「11/12」 + 밑줄 두 줄(선생님이 점수 적는 모양).
+   · 한 번에 할 일 하나: 목록에서 「찍기」 → 그 쪽으로 가서 표시를 보고 → 아래 줄의 「다음 쪽 찍기」.
    ============================================================ */
-let pages = [], saved = load(), panel = null;
+const INK = '#1b2340', SUB = '#6b7391', NAVY = '#243184', RED = '#d2372c', LINE = '#e6ebf5';
+let pages = [], saved = load(), panel = null, dock = null, input = null, target = null, busy = null;
 function load(){ try{ const v = JSON.parse(localStorage.getItem(KEY) || 'null'); if(v && v.pages) return v; }catch(e){} return { pages: {} }; }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(saved)); }catch(e){} }
 function css(){
@@ -293,30 +299,55 @@ function css(){
   .nm-ph-mark{position:absolute;width:0;height:0;border:${MARK / 2}px solid #000;z-index:3;pointer-events:none}
   .nm-ph-mark.big{border-width:${MARK_BIG / 2}px}
   .nm-ph-mark.tl{left:0;top:0}.nm-ph-mark.tr{right:0;top:0}.nm-ph-mark.br{right:0;bottom:0}.nm-ph-mark.bl{left:0;bottom:0}
-  .nm-ph-marks{position:absolute;inset:0;z-index:4;pointer-events:none}
-  .nm-ph-ring{position:absolute;border:calc(3px / var(--ws-zoom,1)) solid #d93025;border-radius:50%;transform:rotate(-6deg)}
-  .nm-ph-chip{position:absolute;pointer-events:auto;display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:10px;background:#fff;border:2px solid #c9731a;box-shadow:0 3px 10px rgba(20,27,64,.18);font:800 15px/1.2 Pretendard,system-ui,sans-serif;color:#1b2340;white-space:nowrap}
-  .nm-ph-chip canvas{height:34px;width:auto;border-radius:4px;background:#fff;border:1px solid #e0e9f8}
-  .nm-ph-chip button{min-width:38px;min-height:38px;border-radius:9px;border:1px solid #cfd8ea;background:#f2f6fd;font:800 17px/1 inherit;color:#1b2340;cursor:pointer}
-  .nm-ph-chip button.o i{display:block;width:18px;height:18px;margin:0 auto;border:3px solid currentColor;border-radius:50%;box-sizing:border-box}
-  .nm-ph-chip button.o{color:#d93025}.nm-ph-chip[data-set=o]{border-color:#d93025}.nm-ph-chip[data-set=x]{border-color:#1b2340}
-  .nm-ph-chip[data-set=o] button.o{background:#d93025;color:#fff;border-color:#d93025}.nm-ph-chip[data-set=x] button.x{background:#1b2340;color:#fff;border-color:#1b2340}
-  .nm-ph-note{position:absolute;font:700 13px/1.2 Pretendard,system-ui,sans-serif;color:#6b7391;background:rgba(255,255,255,.9);padding:2px 6px;border-radius:6px}
-  .nm-ph-panel{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(20,27,64,.38);font-family:Pretendard,system-ui,sans-serif}
-  .nm-ph-panel[hidden]{display:none}
-  .nm-ph-sheet{width:min(560px,100vw);max-height:86vh;overflow:auto;background:#fff;border-radius:18px 18px 0 0;padding:18px 16px calc(16px + env(safe-area-inset-bottom));color:#1b2340;box-shadow:0 -10px 40px rgba(20,27,64,.25)}
-  .nm-ph-sheet h3{margin:0 0 4px;font-size:19px;font-weight:800;letter-spacing:-.02em}
-  .nm-ph-sheet p{margin:0 0 12px;font-size:14px;line-height:1.55;color:#55607d;word-break:keep-all}
-  .nm-ph-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid #e9eef8}
-  .nm-ph-row b{font-size:16px;font-weight:800}.nm-ph-row small{display:block;font-size:13px;color:#6b7391;margin-top:2px}
+  .nm-ph-marks{position:absolute;inset:0;z-index:4;pointer-events:none;font-family:Pretendard,system-ui,sans-serif}
+  .nm-ph-ink{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+  .nm-ph-ink path{fill:none;stroke:${RED};stroke-linecap:round;stroke-linejoin:round}
+  .nm-ph-score{position:absolute;color:${RED};font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1;transform:rotate(-5deg);transform-origin:right top;padding-bottom:.18em;border-bottom:.09em solid ${RED};box-shadow:0 .16em 0 -.035em #fff,0 .25em 0 -.035em ${RED}}
+  .nm-ph-chip{position:absolute;pointer-events:auto;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;border-radius:12px;background:#fff;border:1px solid #cfd6e6;box-shadow:0 6px 18px rgba(27,35,64,.16);color:${INK};white-space:nowrap}
+  .nm-ph-chip canvas{height:40px;width:auto;max-width:96px;border-radius:6px;background:#fff;border:1px solid ${LINE}}
+  .nm-ph-chip dl{margin:0;display:grid;grid-template-columns:auto auto;gap:1px 8px;font-size:13px;line-height:1.25;color:${SUB};font-weight:600}
+  .nm-ph-chip dd{margin:0;font-size:16px;font-weight:800;color:${INK};font-variant-numeric:tabular-nums}
+  .nm-ph-chip button{width:42px;height:42px;padding:0;border-radius:10px;border:1px solid #cfd6e6;background:#fff;color:${INK};font:800 18px/1 Pretendard,system-ui,sans-serif;cursor:pointer}
+  .nm-ph-chip button.o i{display:block;width:19px;height:19px;margin:0 auto;border:3px solid ${RED};border-radius:50%;box-sizing:border-box}
+  .nm-ph-chip[data-set=o] button.o{background:${RED};border-color:${RED}}.nm-ph-chip[data-set=o] button.o i{border-color:#fff}
+  .nm-ph-chip[data-set=x] button.x{background:${INK};border-color:${INK};color:#fff}
+  .nm-ph-chip[data-set=o],.nm-ph-chip[data-set=x]{padding:4px;gap:4px;box-shadow:none;border-color:${LINE}}
+  .nm-ph-chip[data-set=o] canvas,.nm-ph-chip[data-set=o] dl,.nm-ph-chip[data-set=x] canvas,.nm-ph-chip[data-set=x] dl{display:none}
+  .nm-ph-chip[data-set=o] button,.nm-ph-chip[data-set=x] button{width:34px;height:34px}
+  .nm-ph-note{position:absolute;font-size:13px;font-weight:700;line-height:1.2;color:${SUB};white-space:nowrap}
+  .nm-ph-panel{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(27,35,64,.42);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .nm-ph-panel[hidden],.nm-ph-dock[hidden]{display:none}
+  .nm-ph-sheet{width:min(560px,100vw);max-height:88vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:22px 20px calc(18px + env(safe-area-inset-bottom));color:${INK};word-break:keep-all}
+  .nm-ph-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .nm-ph-top h3{margin:0;font-size:22px;font-weight:800;letter-spacing:-.03em}
+  .nm-ph-text{border:0;background:none;padding:10px 4px;font:700 15px/1 inherit;color:${SUB};cursor:pointer}
+  .nm-ph-how{display:flex;gap:16px;align-items:center;margin:14px 0 6px;padding:14px 16px;border-radius:14px;background:#f4f6fb}
+  .nm-ph-how svg{flex:0 0 auto}
+  .nm-ph-how p{margin:0;font-size:15px;line-height:1.5;font-weight:600;color:${INK}}
+  .nm-ph-how small{display:block;margin-top:4px;font-size:13px;font-weight:500;color:${SUB}}
+  .nm-ph-say{margin:12px 0 0;font-size:15px;line-height:1.5;font-weight:700;color:${RED}}
+  .nm-ph-day{margin:20px 0 2px;font-size:13px;font-weight:700;color:${SUB}}
+  .nm-ph-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid ${LINE}}
+  .nm-ph-day + .nm-ph-row{border-top:0}
   .nm-ph-row .grow{flex:1;min-width:0}
-  .nm-ph-btn{min-height:46px;padding:0 16px;border-radius:12px;border:0;background:#243184;color:#fff;font:800 15px/1 inherit;cursor:pointer}
-  .nm-ph-btn.ghost{background:#f2f6fd;color:#243184;border:1px solid #d5def0}
-  .nm-ph-warn{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:#fff4e5;color:#8a4b08;font-size:14px;line-height:1.5;word-break:keep-all}
-  .nm-ph-debug{width:100%;height:auto;margin-top:10px;border:1px solid #e0e9f8}
-  .ws-bar .ws-photo{background:#243184;margin-left:0}
+  .nm-ph-row b{display:block;font-size:17px;font-weight:700;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nm-ph-row small{display:block;margin-top:3px;font-size:13px;font-weight:500;color:${SUB}}
+  .nm-ph-row .pts{font-size:22px;font-weight:800;color:${RED};font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .nm-ph-btn{min-height:46px;min-width:72px;padding:0 18px;border-radius:12px;border:1px solid ${NAVY};background:${NAVY};color:#fff;font:700 15px/1 inherit;cursor:pointer}
+  .nm-ph-btn.quiet{background:#fff;color:${NAVY};border-color:#cfd6e6}
+  .nm-ph-btn:disabled{opacity:.55}
+  .nm-ph-btn:focus-visible,.nm-ph-text:focus-visible,.nm-ph-chip button:focus-visible{outline:3px solid #2a6df4;outline-offset:2px}
+  .nm-ph-foot{margin-top:14px;text-align:right}
+  .nm-ph-debug{width:100%;height:auto;margin-top:10px;border:1px solid ${LINE}}
+  .nm-ph-dock{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;align-items:center;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid ${LINE};box-shadow:0 -8px 24px rgba(27,35,64,.08);font-family:Pretendard,system-ui,sans-serif;color:${INK};word-break:keep-all}
+  .nm-ph-dock .grow{flex:1;min-width:0}
+  @media (max-width:560px){.nm-ph-dock{flex-wrap:wrap}.nm-ph-dock .grow{flex:1 1 100%}.nm-ph-dock .nm-ph-btn{flex:1}}
+  .nm-ph-dock b{display:block;font-size:16px;font-weight:800;letter-spacing:-.02em}
+  .nm-ph-dock small{display:block;margin-top:2px;font-size:13px;font-weight:500;color:${SUB}}
   body.nm-ph-measure>.nm-print-sheet .nm-w2-page{border-bottom:0!important}
-  @media print{.nm-ph-marks,.nm-ph-panel,.ws-photo{display:none!important}}`;
+  @media (prefers-reduced-motion:no-preference){ .nm-ph-ink path.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:nm-ph-draw .34s ease-out forwards;animation-delay:var(--d,0s)} }
+  @keyframes nm-ph-draw{to{stroke-dashoffset:0}}
+  @media print{.nm-ph-marks,.nm-ph-panel,.nm-ph-dock,.ws-photo{display:none!important}}`;
   document.head.appendChild(st);
 }
 /* 쪽마다 귀퉁이 표시를 단다(화면·인쇄 모두). 채점할 문항이 있는 쪽만 목록에 올린다. */
@@ -330,8 +361,9 @@ function setupPages(){
     if(!el.querySelector('.nm-ph-mark')) ['tl big', 'tr', 'br', 'bl'].forEach(c => { const m = document.createElement('i'); m.className = 'nm-ph-mark ' + c; m.setAttribute('aria-hidden', 'true'); el.appendChild(m); });
     const marks = document.createElement('div'); marks.className = 'nm-ph-marks'; el.appendChild(marks);
     const head = el.querySelector('.nm-w2-head'), T = e => e ? (e.innerText || '').replace(/\s+/g, ' ').trim() : '';
-    const day = T(head && head.querySelector('.nm-w2-study-day')), title = T(head && head.querySelector('.nm-w2-head-mid')), no = T(el.querySelector('.nm-w2-foot .nm-w2-pg'));
-    pages.push({ el, idx, its, marks, label: (day ? day + ' ' : '') + (no ? '· ' + no.replace(/\s*\/.*$/, '') + t('쪽', '', '页') : ''), title: title.replace(/^\d+일차(–\d+일차)?\s*/, ''), result: null, geom: null });
+    const day = T(head && head.querySelector('.nm-w2-study-day')), title = T(head && head.querySelector('.nm-w2-head-mid')).replace(/^\d+일차(–\d+일차)?\s*/, ''), no = T(el.querySelector('.nm-w2-foot .nm-w2-pg')).replace(/\s*\/.*$/, '');
+    const pageName = no ? t(no + '쪽', 'Page ' + no, '第' + no + '页') : String(pages.length + 1);
+    pages.push({ el, idx, its, marks, day, title, pageName, label: (day ? day + ' ' : '') + pageName, result: null, geom: null });
   });
   measure();
 }
@@ -354,7 +386,7 @@ function geometry(pg){
     const fb = [...e.querySelectorAll('.fbox')], ln = e.querySelector('.nm-print-word-blank,.nm-print-solve-ans'), bt = e.querySelector('.nm-print-vp-bot');
     let type = '', zones = [];
     if(fb.length){ type = 'fbox'; zones = fb.map(R); }
-    else if(ln){ const bl = ln.querySelectorAll('.nm-w2-blank,.nm-print-solve-line'); type = 'line'; const z = R(bl.length ? bl[bl.length - 1] : ln);   // 「식:」 칸이 아니라 마지막 「답:」 빈칸
+    else if(ln){ const bl2 = ln.querySelectorAll('.nm-w2-blank,.nm-print-solve-line'); type = 'line'; const z = R(bl2.length ? bl2[bl2.length - 1] : ln);   // 「식:」 칸이 아니라 마지막 「답:」 빈칸
       if(z.h < 0.02){ z.y = z.y + z.h - 0.04; z.h = 0.04; } zones = [z]; }
     else if(bt){ type = 'bottom'; zones = [R(bt)]; }
     return { a: spec && spec.a && zones.length ? spec.a : null, type, zones, rect: R(e) };
@@ -385,35 +417,61 @@ function tally(pg){
   st.forEach(s => { const v = s.set || (s.state === 'ok' ? 'o' : ''); if(s.state === 'self') self++; else if(s.state === 'blank') blank++; else if(v === 'o') ok++; else if(v === 'x') bad++; else check++; });
   return { ok, bad, check, blank, self, total: st.length - self };
 }
-/* 채점 표시를 학습지 쪽 위에 그린다 */
-function paint(pg, res){
+/* 손으로 그린 듯한 동그라미(끝이 살짝 겹친다)와 빗금 */
+function ringPath(cx, cy, rx, ry, seed){
+  const pts = [], n = 16, a0 = -2.0 + (seed % 5) * 0.12, sweep = Math.PI * 2 + 0.55;
+  for(let i = 0; i <= n; i++){ const a = a0 + sweep * i / n, k = 1 + 0.07 * Math.sin(i * 2.3 + seed * 1.7) + (i / n) * 0.06; pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]); }
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for(let i = 1; i < pts.length - 1; i++){ const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2; d += ` Q${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`; }
+  return d;
+}
+function slashPath(cx, cy, rx, ry, seed){
+  const k = 1.15 + (seed % 3) * 0.05; return `M${(cx - rx * k).toFixed(1)} ${(cy + ry * k).toFixed(1)} Q${(cx - rx * 0.1).toFixed(1)} ${(cy + ry * 0.25).toFixed(1)} ${(cx + rx * k).toFixed(1)} ${(cy - ry * k).toFixed(1)}`;
+}
+/* 채점 표시를 학습지 쪽 위에 그린다. fresh: 방금 채점한 것(동그라미가 그려지는 움직임 한 번) */
+function paint(pg, res, fresh){
   pg.marks.innerHTML = '';
   const st = (saved.pages[pg.idx] || {}).items; if(!st) return;
   const g = geometry(pg), base = pg.el.getBoundingClientRect(), zoom = pg.el.offsetWidth / (base.width || 1);
   const U = v => v * g.unitPx * zoom, ox = (g.tl[0] - base.left) * zoom, oy = (g.tl[1] - base.top) * zoom;
   const wz = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ws-zoom')) || 1;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'nm-ph-ink'); svg.setAttribute('viewBox', `0 0 ${pg.el.offsetWidth} ${pg.el.offsetHeight}`); svg.setAttribute('aria-hidden', 'true');
+  const sw = Math.min(6, 2.6 / wz); let order = 0;
+  const stroke = (d, cls) => { const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', d); p.setAttribute('stroke-width', String(sw)); p.setAttribute('class', cls + (fresh ? ' draw' : '')); svg.appendChild(p);
+    if(fresh){ p.style.setProperty('--len', '600'); p.style.setProperty('--d', (Math.min(order++, 14) * 0.05) + 's'); } };
+  pg.marks.appendChild(svg);
   st.forEach((s, i) => {
-    const it = g.items[i]; if(!it) return;
-    const z = it.zones[0] || it.rect, cx = ox + U(z.x + z.w / 2), cy = oy + U(z.y + z.h / 2);
-    if(s.state === 'self') return;
-    if(s.state === 'blank'){ const n = document.createElement('span'); n.className = 'nm-ph-note'; n.textContent = t('답 없음', 'No answer', '未作答'); n.style.zoom = String(1 / wz); n.style.left = ((ox + U(z.x)) * wz) + 'px'; n.style.top = ((oy + U(z.y + z.h) + 2) * wz) + 'px'; pg.marks.appendChild(n); return; }
-    if(s.state === 'ok'){ const r = document.createElement('i'); r.className = 'nm-ph-ring'; const rw = Math.max(34, U(z.w) + 16), rh = Math.max(30, U(z.h) + 14); r.style.cssText = `left:${cx - rw / 2}px;top:${cy - rh / 2}px;width:${rw}px;height:${rh}px`; pg.marks.appendChild(r); return; }
+    const it = g.items[i]; if(!it || s.state === 'self') return;
+    const z = it.zones[0] || it.rect, zl = it.zones[it.zones.length - 1] || z, cx = ox + U((z.x + zl.x + zl.w) / 2), cy = oy + U(z.y + z.h / 2);
+    const rx = Math.max(15 / wz, U(zl.x + zl.w - z.x) / 2 + 7), ry = Math.max(13 / wz, U(z.h) / 2 + 5);
+    if(s.state === 'blank'){ const n = document.createElement('span'); n.className = 'nm-ph-note'; n.textContent = t('답 없음', 'No answer', '未作答'); n.style.zoom = String(1 / wz); n.style.left = ((ox + U(z.x)) * wz) + 'px'; n.style.top = ((oy + U(z.y + z.h) + 3) * wz) + 'px'; pg.marks.appendChild(n); return; }
+    const verdict = s.set || (s.state === 'ok' ? 'o' : '');
+    if(verdict === 'o') stroke(ringPath(cx, cy, rx, ry, i + pg.idx), 'nm-ph-ring');
+    if(verdict === 'x') stroke(slashPath(cx, cy, rx, ry, i + pg.idx), 'nm-ph-slash');
+    if(s.state !== 'check') return;
     const chip = document.createElement('span'); chip.className = 'nm-ph-chip'; chip.dataset.set = s.set || ''; chip.dataset.i = String(i); chip.style.zoom = String(1 / wz);
     if(res && res.items[i] && res.items[i].crop) chip.appendChild(cropCanvas(res, res.items[i].crop));
-    const txt = document.createElement('span'); txt.textContent = t(`${s.read.join(', ')}로 읽음`, `read ${s.read.join(', ')}`, `读作 ${s.read.join(', ')}`); chip.appendChild(txt);
+    const dl = document.createElement('dl');
+    dl.innerHTML = `<dt>${t('정답', 'Answer', '答案')}</dt><dd>${it.a.join(', ')}</dd><dt>${t('읽은 값', 'Read as', '读作')}</dt><dd>${(s.read || []).map(v => v === '' ? '–' : v).join(', ')}</dd>`;
+    chip.appendChild(dl);
     chip.insertAdjacentHTML('beforeend', `<button type="button" class="o" aria-label="${t('맞음', 'Correct', '正确')}"><i></i></button><button type="button" class="x" aria-label="${t('틀림', 'Wrong', '错误')}">✕</button>`);
-    chip.onclick = e => { const b = e.target.closest('button'); if(!b) return; s.set = b.classList.contains('o') ? 'o' : 'x'; chip.dataset.set = s.set; save(); if(panel) renderPanel(); };
+    chip.onclick = e => { const b = e.target.closest('button'); if(!b) return; const v = b.classList.contains('o') ? 'o' : 'x'; s.set = s.set === v ? undefined : v; save(); paint(pg, pg.result); showDock(pg); if(panel && !panel.hidden) renderPanel(); };
     pg.marks.appendChild(chip);
     // 종이는 화면 폭에 맞춰 줄여(zoom) 보여 주므로 칩만 실제 크기로 키우고, 자리 값은 그만큼 나눈다. 오른쪽으로 넘치면 안으로 당긴다
     const left = Math.max(0, Math.min(ox + U(it.rect.x), pg.el.offsetWidth - chip.offsetWidth / wz - 4));
-    chip.style.left = (left * wz) + 'px'; chip.style.top = ((oy + U(z.y + z.h) + 4) * wz) + 'px';
+    chip.style.left = (left * wz) + 'px'; chip.style.top = ((oy + U(z.y + z.h) + 9) * wz) + 'px';
   });
+  // 점수: 쪽 오른쪽 위에 선생님이 적듯이
+  const c = tally(pg);
+  if(c.total){ const sc = document.createElement('span'); sc.className = 'nm-ph-score'; sc.textContent = c.ok + '/' + c.total; sc.setAttribute('aria-label', summary(pg));
+    sc.style.fontSize = (26 / wz) + 'px'; sc.style.right = U(0.035) + 'px'; sc.style.top = (oy + U(0.085)) + 'px'; pg.marks.appendChild(sc); }
 }
 const ERR = {
   marks: () => t('종이 네 귀퉁이의 검은 네모가 모두 보이게 다시 찍어 주세요.', 'Retake so all four black corner squares are visible.', '请重新拍摄，让纸张四角的黑色方块都入镜。'),
-  turn: () => t('귀퉁이 표시를 가리지 못했어요. 종이 전체가 나오게 다시 찍어 주세요.', 'Could not tell the corners apart. Retake with the whole page in view.', '无法分辨四角标记，请拍下整张纸。'),
+  turn: () => t('귀퉁이가 잘 안 보여요. 종이 전체가 나오게 다시 찍어 주세요.', 'The corners are hard to see. Retake with the whole page in view.', '四角不清楚，请拍下整张纸。'),
   far: () => t('종이가 너무 작게 찍혔어요. 더 가까이에서 찍어 주세요.', 'The page is too small in the photo. Move closer.', '纸张拍得太小，请靠近一些。'),
-  image: () => t('사진을 열지 못했어요. 다시 골라 주세요.', 'Could not open the photo. Choose it again.', '无法打开照片，请重新选择。')
+  image: () => t('사진을 열지 못했어요. 다시 골라 주세요.', 'Could not open the photo. Choose it again.', '无法打开照片，请重新选择。'),
+  load: () => t('채점 도구를 불러오지 못했어요. 인터넷을 확인하고 다시 해 주세요.', 'Could not load the grader. Check your connection and retry.', '无法加载评分工具，请检查网络后重试。')
 };
 async function gradePhoto(pg, file){
   const digits = await loadDigits();
@@ -426,49 +484,84 @@ async function gradePhoto(pg, file){
   res.ms = Math.round(performance.now() - t0);
   const prev = (saved.pages[pg.idx] || {}).items || [];
   saved.pages[pg.idx] = { at: Date.now(), quality: res.quality, ms: res.ms, items: res.items.map((r, i) => ({ state: r.state, read: r.read || [], conf: r.conf, set: r.state === 'check' && prev[i] && prev[i].state === 'check' && String(prev[i].read) === String(r.read) ? prev[i].set : undefined })) };
-  save(); pg.result = res; paint(pg, res);
+  save(); pg.result = res; paint(pg, res, true);
   return res;
+}
+/* 「틀림 1 · 확인할 것 2」 — 맞음 수는 점수(11/12)로 따로 보인다 */
+function detail(pg){
+  const c = tally(pg), parts = [];
+  if(c.bad) parts.push(t(`틀림 ${c.bad}`, `${c.bad} wrong`, `错误 ${c.bad}`));
+  if(c.check) parts.push(t(`확인할 것 ${c.check}`, `${c.check} to check`, `待确认 ${c.check}`));
+  if(c.blank) parts.push(t(`답 없음 ${c.blank}`, `${c.blank} blank`, `未作答 ${c.blank}`));
+  return parts.join(' · ');
 }
 function summary(pg){
   if(!saved.pages[pg.idx]) return '';
-  const c = tally(pg);
-  return t(`${c.total}문제 중 맞음 ${c.ok}` + (c.bad ? ` · 틀림 ${c.bad}` : '') + (c.check ? ` · 확인할 것 ${c.check}` : '') + (c.blank ? ` · 답 없음 ${c.blank}` : ''),
-    `${c.ok} of ${c.total} correct` + (c.bad ? ` · ${c.bad} wrong` : '') + (c.check ? ` · ${c.check} to check` : '') + (c.blank ? ` · ${c.blank} blank` : ''),
-    `${c.total}题中正确 ${c.ok}` + (c.bad ? ` · 错误 ${c.bad}` : '') + (c.check ? ` · 待确认 ${c.check}` : '') + (c.blank ? ` · 未作答 ${c.blank}` : ''));
+  const c = tally(pg), d = detail(pg);
+  return t(`${c.total}문제 중 ${c.ok}문제 맞음`, `${c.ok} of ${c.total} correct`, `${c.total}题中答对${c.ok}题`) + (d ? ' · ' + d : '');
 }
+const HOW_SVG = `<svg width="52" height="66" viewBox="0 0 52 66" aria-hidden="true"><rect x="7" y="6" width="38" height="54" rx="1.5" fill="#fff" stroke="${INK}" stroke-width="1.5"/><rect x="7" y="6" width="9" height="9" fill="${INK}"/><rect x="39" y="6" width="6" height="6" fill="${INK}"/><rect x="39" y="54" width="6" height="6" fill="${INK}"/><rect x="7" y="54" width="6" height="6" fill="${INK}"/><path d="M1 12V3a2 2 0 0 1 2-2h9M40 1h9a2 2 0 0 1 2 2v9M51 54v9a2 2 0 0 1-2 2h-9M12 65H3a2 2 0 0 1-2-2v-9" fill="none" stroke="${NAVY}" stroke-width="2" stroke-linecap="round"/></svg>`;
 function renderPanel(msg){
   if(!panel) return;
-  const sheet = panel.querySelector('.nm-ph-sheet');
-  sheet.innerHTML = `<h3>${t('사진으로 채점', 'Grade from a photo', '拍照评分')}</h3>
-    <p>${t('푼 쪽을 한 장씩 찍어요. 종이 네 귀퉁이의 검은 네모가 다 보이게, 밝은 곳에서 가까이. 사진은 이 기기 밖으로 나가지 않아요.', 'Photograph one solved page at a time, close up in good light, with all four black corner squares visible. Photos never leave this device.', '每次拍一页已完成的学习单：光线充足、靠近拍摄，四角黑色方块都要入镜。照片不会离开本设备。')}</p>
-    ${msg ? `<div class="nm-ph-warn" role="alert">${msg}</div>` : ''}
-    ${pages.map((pg, i) => `<div class="nm-ph-row"><div class="grow"><b>${pg.label || (i + 1)}</b> ${pg.title ? `<span>${pg.title}</span>` : ''}<small>${summary(pg) || t('아직 안 찍음', 'Not photographed yet', '尚未拍摄')}</small></div>
-      ${saved.pages[pg.idx] ? `<button type="button" class="nm-ph-btn ghost" data-go="${i}">${t('보기', 'View', '查看')}</button>` : ''}
-      <button type="button" class="nm-ph-btn" data-shoot="${i}">${saved.pages[pg.idx] ? t('다시 찍기', 'Retake', '重拍') : t('찍기', 'Take photo', '拍照')}</button></div>`).join('')}
-    <div class="nm-ph-row"><div class="grow"></div><button type="button" class="nm-ph-btn ghost" data-copy="1">${t('결과 복사', 'Copy results', '复制结果')}</button><button type="button" class="nm-ph-btn ghost" data-close="1">${t('닫기', 'Close', '关闭')}</button></div>`;
+  const sheet = panel.querySelector('.nm-ph-sheet'); let day = null;
+  const rows = pages.map((pg, i) => {
+    const head = pg.day && pg.day !== day ? `<div class="nm-ph-day">${pg.day}</div>` : ''; day = pg.day || day;
+    const done = !!saved.pages[pg.idx], c = done ? tally(pg) : null, d = done ? detail(pg) : '';
+    const right = busy === pg ? `<button type="button" class="nm-ph-btn" disabled>${t('읽는 중', 'Reading', '读取中')}</button>`
+      : done ? `<span class="pts" aria-label="${summary(pg)}">${c.ok}/${c.total}</span><button type="button" class="nm-ph-btn quiet" data-go="${i}">${t('보기', 'View', '查看')}</button>`
+      : `<button type="button" class="nm-ph-btn" data-shoot="${i}">${t('찍기', 'Take photo', '拍照')}</button>`;
+    return `${head}<div class="nm-ph-row"><div class="grow"><b>${pg.pageName} ${pg.title}</b><small>${done ? (d || t('모두 맞았어요', 'All correct', '全部正确')) : t('아직 안 찍었어요', 'Not photographed yet', '尚未拍摄')}${done ? ` <button type="button" class="nm-ph-text" data-shoot="${i}" style="padding:0 0 0 8px;font-size:13px">${t('다시 찍기', 'Retake', '重拍')}</button>` : ''}</small></div>${right}</div>`;
+  }).join('');
+  sheet.innerHTML = `<div class="nm-ph-top"><h3>${t('사진으로 채점', 'Grade from a photo', '拍照评分')}</h3><button type="button" class="nm-ph-text" data-close="1">${t('닫기', 'Close', '关闭')}</button></div>
+    <div class="nm-ph-how">${HOW_SVG}<p>${t('푼 쪽을 한 장씩 찍어 주세요. 네 귀퉁이의 검은 네모가 모두 보여야 해요.', 'Photograph one solved page at a time. All four black corner squares must be in view.', '请一页一页地拍。纸张四角的黑色方块都要拍进去。')}<small>${t('사진은 이 휴대폰에만 있고 어디로도 보내지 않아요.', 'Photos stay on this phone and are never sent anywhere.', '照片只保存在本机，不会发送到任何地方。')}</small></p></div>
+    ${msg ? `<p class="nm-ph-say" role="alert">${msg}</p>` : ''}
+    ${rows}
+    <div class="nm-ph-foot"><button type="button" class="nm-ph-text" data-copy="1">${t('결과 복사', 'Copy results', '复制结果')}</button></div>`;
   if(qs.get('debug') === '1'){ const last = pages.filter(p => p.result).pop(); if(last){ const cv = cropCanvas(last.result, { x: 0, y: 0, w: last.result.W, h: last.result.H }); cv.className = 'nm-ph-debug'; sheet.appendChild(cv); } }
 }
-function openPanel(){
-  if(panel){ panel.hidden = false; renderPanel(); return; }
-  panel = document.createElement('div'); panel.className = 'nm-ph-panel'; panel.innerHTML = '<div class="nm-ph-sheet" role="dialog" aria-modal="true"></div>';
-  const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.setAttribute('capture', 'environment'); input.hidden = true; input.id = 'nmPhotoInput'; panel.appendChild(input);
-  let target = null;
-  panel.onclick = e => {
-    if(e.target === panel){ panel.hidden = true; return; }
-    const b = e.target.closest('button'); if(!b) return;
-    if(b.dataset.close){ panel.hidden = true; }
-    else if(b.dataset.shoot != null){ target = pages[+b.dataset.shoot]; input.value = ''; input.click(); }
-    else if(b.dataset.go != null){ const pg = pages[+b.dataset.go]; panel.hidden = true; paint(pg, pg.result); pg.el.scrollIntoView({ block: 'start' }); }
-    else if(b.dataset.copy){ const txt = JSON.stringify({ sheet: KEY, pages: pages.map(pg => ({ label: pg.label, saved: saved.pages[pg.idx] || null, answers: pg.geom.items.map(i => i.a) })) }); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => { b.textContent = t('복사했어요', 'Copied', '已复制'); }, () => { prompt(t('아래 글을 복사해 주세요', 'Copy the text below', '请复制以下文字'), txt); }); }
-  };
+/* 아래 줄: 방금 본 쪽의 결과 + 다음에 할 일 하나 */
+function showDock(pg, note){
+  if(!saved.pages[pg.idx]){ if(dock) dock.hidden = true; return; }
+  if(!dock){ dock = document.createElement('div'); dock.className = 'nm-ph-dock'; document.body.appendChild(dock);
+    dock.onclick = e => { const b = e.target.closest('button'); if(!b) return; if(b.dataset.next != null) shoot(pages[+b.dataset.next]); else if(b.dataset.list) openPanel(); }; }
+  const c = tally(pg), d = detail(pg), nextIdx = pages.findIndex((p, i) => i > pages.indexOf(pg) && !saved.pages[p.idx]);
+  const sub = note || (c.check ? t('동그라미가 없는 답을 보고 맞음·틀림을 눌러 주세요.', 'For answers without a circle, tap correct or wrong.', '没有圆圈的答案，请点选对或错。') : d);
+  dock.innerHTML = `<div class="grow"><b>${t(`${c.total}문제 중 ${c.ok}문제 맞음`, `${c.ok} of ${c.total} correct`, `${c.total}题中答对${c.ok}题`)}</b>${sub ? `<small>${sub}</small>` : ''}</div>
+    <button type="button" class="nm-ph-btn quiet" data-list="1">${t('목록', 'List', '列表')}</button>
+    ${nextIdx >= 0 ? `<button type="button" class="nm-ph-btn" data-next="${nextIdx}">${t('다음 쪽 찍기', 'Next page', '拍下一页')}</button>` : ''}`;
+  dock.hidden = false;
+}
+function ensureInput(){
+  if(input) return;
+  input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.setAttribute('capture', 'environment'); input.hidden = true; input.id = 'nmPhotoInput'; document.body.appendChild(input);
   input.onchange = async () => {
     const f = input.files && input.files[0], pg = target; if(!f || !pg) return;
-    renderPanel(t('사진을 읽는 중…', 'Reading the photo…', '正在读取照片…'));
+    busy = pg; openPanel(); renderPanel();
     let res; try{ res = await gradePhoto(pg, f); }catch(e){ res = { error: e && e.message === 'image' ? 'image' : 'load' }; }
-    if(res.error){ renderPanel(res.error === 'load' ? t('채점 도구를 불러오지 못했어요. 인터넷을 확인하고 다시 해 주세요.', 'Could not load the grader. Check your connection and retry.', '无法加载评分工具，请检查网络后重试。') : ERR[res.error]()); return; }
-    renderPanel(res.quality.low ? t('사진이 흐리거나 멀어요. 잘못 읽은 것이 많으면 밝은 곳에서 더 가까이 다시 찍어 주세요.', 'The photo looks blurry or far away. If many answers were misread, retake closer in better light.', '照片较模糊或距离较远。如误读较多，请在明亮处靠近重拍。') : '');
+    busy = null;
+    if(res.error){ renderPanel(ERR[res.error]()); return; }
+    panel.hidden = true; goTo(pg);
+    showDock(pg, res.quality.low ? t('사진이 흐리거나 멀어요. 잘못 읽은 것이 많으면 더 가까이, 밝은 곳에서 다시 찍어 주세요.', 'The photo looks blurry or far away. If many answers were misread, retake closer in better light.', '照片较模糊或距离较远。如误读较多，请在明亮处靠近重拍。') : '');
   };
-  document.body.appendChild(panel); renderPanel();
+}
+function shoot(pg){ ensureInput(); target = pg; input.value = ''; input.click(); }
+/* 그 쪽으로 간다 — 붙어 있는 위 막대에 쪽 머리(점수)가 가리지 않게 막대 높이만큼 비켜서 */
+function goTo(pg){ const bar = document.getElementById('wsBar'), off = (bar ? bar.getBoundingClientRect().height : 0) + 8; window.scrollTo(0, window.scrollY + pg.el.getBoundingClientRect().top - off); }
+function openPanel(){
+  ensureInput();
+  if(!panel){
+    panel = document.createElement('div'); panel.className = 'nm-ph-panel'; panel.innerHTML = '<div class="nm-ph-sheet" role="dialog" aria-modal="true"></div>';
+    panel.onclick = e => {
+      if(e.target === panel){ panel.hidden = true; return; }
+      const b = e.target.closest('button'); if(!b) return;
+      if(b.dataset.close){ panel.hidden = true; }
+      else if(b.dataset.shoot != null){ shoot(pages[+b.dataset.shoot]); }
+      else if(b.dataset.go != null){ const pg = pages[+b.dataset.go]; panel.hidden = true; paint(pg, pg.result); goTo(pg); showDock(pg); }
+      else if(b.dataset.copy){ const txt = JSON.stringify({ sheet: KEY, pages: pages.map(pg => ({ label: pg.label, saved: saved.pages[pg.idx] || null, answers: pg.geom.items.map(i => i.a) })) }); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => { b.textContent = t('복사했어요', 'Copied', '已复制'); }, () => { prompt(t('아래 글을 복사해 주세요', 'Copy the text below', '请复制以下文字'), txt); }); }
+    };
+    document.body.appendChild(panel);
+  }
+  panel.hidden = false; renderPanel();
 }
 /* ws.html 이 학습지를 다 그린 뒤 부른다(주소에 marks=1 일 때). auto=0(PDF 생성)이면 표시만 달고 단추는 안 만든다. */
 function mount(opts){
@@ -479,6 +572,7 @@ function mount(opts){
   const b = document.createElement('button'); b.type = 'button'; b.id = 'wsPhoto'; b.className = 'ws-photo'; b.textContent = t('사진으로 채점', 'Grade from photo', '拍照评分');
   b.onclick = openPanel;
   host.insertBefore(b, document.getElementById('wsPrint') || null);
+  host.classList.add('has-photo');
   pages.forEach(pg => paint(pg, null));
   let rt = 0; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => pages.forEach(pg => paint(pg, pg.result)), 150); });
 }
