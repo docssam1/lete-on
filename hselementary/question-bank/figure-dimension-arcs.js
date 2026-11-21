@@ -60,6 +60,13 @@
     return segs;
   }
 
+  function pointToUser(svg, el, x, y) {
+    const m = el.getCTM && el.getCTM(), root = svg.getCTM && svg.getCTM();
+    if (!m || !root) return { x, y };
+    const pt = svg.createSVGPoint(); pt.x = x; pt.y = y;
+    return pt.matrixTransform(m).matrixTransform(root.inverse());
+  }
+
   function isDashed(el) {
     for (let n = el; n && n.getAttribute; n = n.parentNode) {
       const da = n.getAttribute('stroke-dasharray');
@@ -115,6 +122,28 @@
     const vb = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width ? svg.viewBox.baseVal : { x: 0, y: 0, width: +svg.getAttribute('width') || 0, height: +svg.getAttribute('height') || 0 };
     // 그림 전체를 가로지르는 틀·칸 경계선은 길이를 재는 변이 아니다.
     const isFrameLine = ([a, b]) => vb.width && vb.height && ((Math.abs(a.y - b.y) < 1 && Math.abs(b.x - a.x) >= vb.width * 0.9) || (Math.abs(a.x - b.x) < 1 && Math.abs(b.y - a.y) >= vb.height * 0.9));
+    // 변 위에서 다른 선이 끝나거나 점 표시가 있는 곳에서 변을 나눈 부분 구간도 후보로 둔다.
+    const dots = [...svg.querySelectorAll('circle')].filter(el => (+el.getAttribute('r') || 0) <= 6).map(el => pointToUser(svg, el, +el.getAttribute('cx') || 0, +el.getAttribute('cy') || 0));
+    const candidates = [...allSegs];
+    for (const seg of allSegs) {
+      const [a, b] = seg; const vx = b.x - a.x, vy = b.y - a.y, L2 = vx * vx + vy * vy;
+      if (L2 < 36 * 36) continue;
+      const ts = [];
+      const consider = p => {
+        const t = ((p.x - a.x) * vx + (p.y - a.y) * vy) / L2;
+        if (t <= 0.05 || t >= 0.95) return;
+        if (Math.abs((p.x - a.x) * vy - (p.y - a.y) * vx) / Math.sqrt(L2) > 1.5) return;
+        ts.push(t);
+      };
+      for (const other of allSegs) if (other !== seg) { consider(other[0]); consider(other[1]); }
+      for (const d of dots) consider(d);
+      const cuts = [0, ...[...new Set(ts.map(t => Math.round(t * 1000) / 1000))].sort((x, y) => x - y), 1];
+      if (cuts.length < 3) continue;
+      for (let i = 0; i + 1 < cuts.length; i += 1) {
+        const p = { x: a.x + cuts[i] * vx, y: a.y + cuts[i] * vy }, q = { x: a.x + cuts[i + 1] * vx, y: a.y + cuts[i + 1] * vy };
+        candidates.push([p, q, seg[2], seg]);
+      }
+    }
     let added = 0;
     for (const text of texts) {
       let tb; try { tb = boxOf(text, svg); } catch (e) { continue; }
@@ -122,11 +151,20 @@
       const c = { x: tb.x + tb.width / 2, y: tb.y + tb.height / 2 };
       const tol = Math.max(10, tb.height * 1.2);
       if (curvedDashed.some(b => Math.hypot(Math.max(b.x - c.x, 0, c.x - (b.x + b.width)), Math.max(b.y - c.y, 0, c.y - (b.y + b.height))) <= tol)) continue;
+      // 글자를 품은 칸(다른 선을 둘 이상 품은 사각형) 가운데 가장 작은 것: 그 칸 안의 선에만 붙인다.
+      let cell = null;
+      for (const el of svg.querySelectorAll('rect')) {
+        const r = rectInfo(el);
+        if (!(c.x > r.x && c.x < r.x + r.w && c.y > r.y && c.y < r.y + r.h)) continue;
+        const inside = allSegs.filter(([p, q, other]) => other !== el && Math.hypot(q.x - p.x, q.y - p.y) >= 12 && (p.x + q.x) / 2 > r.x + 2 && (p.x + q.x) / 2 < r.x + r.w - 2 && (p.y + q.y) / 2 > r.y + 2 && (p.y + q.y) / 2 < r.y + r.h - 2).length;
+        if (inside >= 2 && (!cell || r.w * r.h < cell.w * cell.h)) cell = r;
+      }
+      const inCell = ([p, q]) => !cell || ((p.x + q.x) / 2 > cell.x + 1 && (p.x + q.x) / 2 < cell.x + cell.w - 1 && (p.y + q.y) / 2 > cell.y + 1 && (p.y + q.y) / 2 < cell.y + cell.h - 1);
       let best = null;
-      for (const seg of allSegs) {
+      for (const seg of candidates) {
         const [a, b, el] = seg;
         const vx = b.x - a.x, vy = b.y - a.y, L = Math.hypot(vx, vy);
-        if (L < 18 || isFrameLine(seg)) continue;
+        if (L < 18 || isFrameLine(seg) || !inCell(seg)) continue;
         if (el.tagName.toLowerCase() === 'rect') {
           const r = rectInfo(el);
           if (r.w < 30 && r.h < 30) continue;
@@ -142,7 +180,8 @@
         const px = a.x + t * vx, py = a.y + t * vy;
         const d = Math.hypot(c.x - px, c.y - py);
         if (d > Math.max(34, tb.height * 2.4)) continue;
-        if (!best || d < best.d) best = { a, b, d, L, vx, vy, el, seg };
+        const score = d + Math.abs(t - 0.5) * 8;
+        if (!best || score < best.score) best = { a, b, d, L, vx, vy, el, seg: seg[3] || seg, sub: !!seg[3], score };
       }
       if (!best) continue;
       // 가장 가까운 선이 점선이면 그 점선이 이미 치수선이거나, 글자가 점선 자체의 길이를 나타낸다.
@@ -161,7 +200,8 @@
         });
         if (covered) continue;
       }
-      if (isTickedDimensionLine(best, allSegs)) {
+      const closedShape = ['polygon', 'rect'].includes(best.el.tagName.toLowerCase()) || /[Zz]/.test(best.el.getAttribute('d') || '');
+      if (!best.sub && !closedShape && isTickedDimensionLine(best, allSegs)) {
         best.el.setAttribute('stroke-dasharray', '4 3');
         best.el.style.strokeDasharray = '4 3';
         best.el.setAttribute('data-dimension-for', text.textContent.trim());
@@ -215,7 +255,6 @@
       }
     }
     // 이미 각호를 쓰는 그림은 원래 설계를 따른다. 각호가 하나도 없는 그림에만 각호를 더한다.
-    if (curved.length) return 0;
     const key = p => `${Math.round(p.x)},${Math.round(p.y)}`;
     const vertices = new Map();
     const add = (p, q) => { const k = key(p); if (!vertices.has(k)) vertices.set(k, { p, dirs: [] }); vertices.get(k).dirs.push(Math.atan2(q.y - p.y, q.x - p.x)); };
@@ -279,6 +318,8 @@
         return true;
       });
       if (hasArc) continue;
+      // 기존 각호가 고른 꼭짓점보다 글자에 더 가까우면 그 글자는 기존 호의 것이다.
+      if (curved.some(bx => Math.hypot(bx.x + bx.width / 2 - c.x, bx.y + bx.height / 2 - c.y) < best.dist * 1.05)) continue;
       const r = Math.max(8, Math.min(22, best.dist * 0.55));
       const p1 = { x: best.v.p.x + r * Math.cos(best.from), y: best.v.p.y + r * Math.sin(best.from) };
       const p2 = { x: best.v.p.x + r * Math.cos(best.to), y: best.v.p.y + r * Math.sin(best.to) };
@@ -312,7 +353,7 @@
     const previous = api.generate.bind(api);
     api.generate = (type, ...rest) => {
       const q = previous(type, ...rest);
-      if (!q || !type || !SCOPE.test(String(type.id || '')) || !document.body) return q;
+      if (!q || !type || !SCOPE.test(String(type.id || '')) || !document.body || target.HSE_FIGURE_DIMENSION_ARCS_DISABLED) return q;
       const out = { ...q };
       for (const key of ['prompt', 'answerVisual']) if (typeof out[key] === 'string') out[key] = transformHtml(out[key]);
       return out;
