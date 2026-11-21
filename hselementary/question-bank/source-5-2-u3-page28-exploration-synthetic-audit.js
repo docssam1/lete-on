@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const api=require('./source-5-2-u3-page28-exploration-synthetic.js');
 const inventory=require('./source-inventory/5-2-source-items.json');
 const original=inventory.sourceItems.find(x=>x.syntheticRuntimeTypeId===api.sourceItemId);
-assert.ok(original && original.implementationStatus==='review-locked');
+assert.ok(original && original.implementationStatus==='verified-local');
 const sub=(a,b)=>({x:a.x-b.x,y:a.y-b.y}),dot=(a,b)=>a.x*b.x+a.y*b.y,cross=(a,b)=>a.x*b.y-a.y*b.x,norm=a=>Math.hypot(a.x,a.y),near=(a,b)=>assert.ok(Math.abs(a-b)<1e-7,`${a} != ${b}`),angle=(a,v,b)=>{const u=sub(a,v),w=sub(b,v);return 180/Math.PI*Math.acos(Math.max(-1,Math.min(1,dot(u,w)/norm(u)/norm(w))))};
 for(let i=0;i<api.variants.length;i++){
  const v=api.variants[i],p=api.points(v),q=api.makeQuestion(i),{G,N,D,R,M,B}=p;

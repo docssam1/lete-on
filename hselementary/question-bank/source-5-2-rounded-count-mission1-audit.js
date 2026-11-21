@@ -12,11 +12,13 @@ const readinessRow = readiness.items.find(item => item.sourceItemId === mission.
 assert.ok(sourceRow, "the source-item ledger contains the Mission 1 crosswalk");
 assert.ok(readinessRow, "the readiness review contains the detailed Mission 1 record");
 assert.equal(sourceRow.sourceVerified, true);
-assert.equal(sourceRow.implementationStatus, "reviewed");
+assert.equal(sourceRow.implementationStatus, "verified-local");
+assert.equal(sourceRow.runtimeTypeId, "5-2-u1-e4-mission-1-rounded-count-original");
 assert.equal(readinessRow.sourceVerified, true);
 assert.equal(readinessRow.implementationStatus, "deployed-and-live-verified");
 assert.equal(readinessRow.publicDecision, "published");
-assert.equal(sourceInventory.integrity.readyItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "reviewed").length);
+assert.equal(sourceInventory.integrity.readyItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "ready").length);
+assert.equal(sourceInventory.integrity.reviewedItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "reviewed").length);
 assert.equal(sourceInventory.integrity.reviewLockedItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "review-locked").length);
 assert.equal(readiness.integrity.publicCandidateCount, readiness.items.filter(item => item.publicDecision !== "locked").length);
 assert.equal(readiness.integrity.reviewLockedCount, readiness.items.filter(item => item.publicDecision === "locked").length);
