@@ -79,6 +79,8 @@ function zoomToStay(question, sheet, { last = false } = {}) {
   return false;
 }
 
+const BACKFILL = false;
+
 function packExercisePages(pages) {
   const first = pages[0];
   const header = first.querySelector(":scope > .gold-print-head");
@@ -172,7 +174,8 @@ function packExercisePages(pages) {
       const lastChild = grid.lastElementChild;
       const orphan = lastChild?.classList.contains("tb-section-start") && lastChild.children.length <= 1 ? lastChild : null;
       orphan?.remove();
-      if (!orphan && !question.classList.contains("tb-concept-item") && !question.classList.contains("tb-section-start") && !question.classList.contains("tb-section-part")) backfill();
+      // 뒤 문제 당겨 채우기(backfill)는 쓰지 않는다 — 번호 차례가 바뀐다(원장 2026-11-21 「번호 차례는 지켜야지 당겨 채우기 꺼」)
+      if (BACKFILL && !orphan && !question.classList.contains("tb-concept-item") && !question.classList.contains("tb-section-start") && !question.classList.contains("tb-section-part")) backfill();
       if (isLast) sheet.querySelector(":scope > .gold-print-footer").replaceWith(regularFooter.cloneNode(true));
       nextSheet(isLast, pageOf(orphan || question));
       if (orphan) grid.append(orphan);
