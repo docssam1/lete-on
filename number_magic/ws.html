@@ -28,21 +28,25 @@
      (2026-09-07, 원장 "학습지 html까지는 나오는데 스크롤이 안 된다"). 여기서 되돌린다. */
   html,body{height:auto;min-height:100%;overflow:visible}
   body,.nm-print-sheet{margin:0;background:#f4efe6;font-family:Pretendard,'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
-  .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-    padding:10px 14px;background:#fffaf0;border-bottom:1px solid #e6dcc8}
-  .ws-bar b{font-size:15px}
-  .ws-bar .ws-sub{color:#6b6257;font-size:13px}
-  .ws-bar button{margin-left:auto;padding:10px 16px;border:0;border-radius:10px;background:#2f6f4e;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  /* 위 막대(2026-11-21 다시 짬, 원장 「AI 티가 나지 않게 · 이에 따른 디자인도」): 흰 바탕에 과정 이름만 크게. 이모지·내부 코드(2026-W47 · C4.)·영문 상표를 뺐다.
+     누르는 것은 남색 하나 — 주 단추 하나만 채우고 나머지는 테두리만. 사진 채점이 있으면 그것이 주 단추, 없으면 인쇄. */
+  .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    padding:10px 16px;background:#fff;border-bottom:1px solid #e6ebf5;color:#1b2340;-webkit-font-smoothing:antialiased}
+  .ws-bar .ws-head{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .ws-bar b{font-size:18px;font-weight:800;letter-spacing:-.025em;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ws-bar .ws-sub{color:#6b7391;font-size:13px;font-weight:500}
+  .ws-bar button{min-height:44px;padding:0 16px;border:1px solid #cfd6e6;border-radius:12px;background:#fff;color:#243184;font:700 15px/1 inherit;cursor:pointer}
+  .ws-bar button:focus-visible{outline:3px solid #2a6df4;outline-offset:2px}
+  .ws-bar #wsPrint,.ws-bar .ws-photo{background:#243184;border-color:#243184;color:#fff}
+  .ws-bar.has-photo #wsPrint{background:#fff;border-color:#cfd6e6;color:#243184}
+  .ws-bar button:disabled{opacity:.5}
   .ws-err{margin:40px auto;max-width:520px;padding:20px;background:#fff;border-radius:12px;color:#7a2e2e;line-height:1.6}
-  .ws-tools{min-height:44px;display:inline-flex;align-items:center;padding:8px;color:#2f6b4a;font-size:14px;text-underline-offset:3px}
+  .ws-tools{min-height:44px;display:inline-flex;align-items:center;padding:8px;color:#6b7391;font-size:14px;font-weight:600;text-underline-offset:3px}
   @media screen{body.ws-tool-page{background:#f1ece1!important}body.ws-tool-page::before,body.ws-tool-page::after{display:none!important}}
   .ws-tool-embed .ws-bar{display:none}
   .ws-tool-embed>.nm-print-sheet{margin-top:0}
-  .ws-bar .ws-ghost{margin-left:0;background:#fffaf0;color:#2f6f4e;border:1px solid #cfe0d5}
-  /* 태블릿 펜으로 풀기(2026-11-16, app/pen-sheet.js) — 인쇄 단추 앞 */
-  .ws-bar .ws-pen{background:#243184}
-  .ws-bar .ws-pen[aria-pressed=true]{background:#141b5d}
-  .ws-bar .ws-pen + button{margin-left:0}
+  /* 태블릿 펜으로 풀기(2026-11-16, app/pen-sheet.js) — 인쇄 단추 앞. 켜져 있으면 채운다 */
+  .ws-bar .ws-pen[aria-pressed=true]{background:#141b5d;border-color:#141b5d;color:#fff}
   /* 화면에서도 학습지를 그대로 보여 준다(2026-09-07, 원장 "먼저 html이 나오고 저장 또는 인쇄가
      되어야 하는데 인쇄 페이지가 먼저 뜨고 html은 스크롤이 안 돼"). 예전엔 인쇄 대화상자가 뜬 뒤
      A4 폭(210mm=794px) 시트가 폰 화면(390px) 밖으로 넘쳐 내용을 확인할 수 없었다.
@@ -64,10 +68,9 @@
 </head>
 <body>
 <div class="ws-bar" id="wsBar">
-  <b id="wsTitle">Numbers of Magic · 주간 학습지</b>
-  <span class="ws-sub" id="wsSub">불러오는 중…</span>
+  <div class="ws-head"><b id="wsTitle">주간 학습지</b><span class="ws-sub" id="wsSub">불러오는 중…</span></div>
   <a id="wsTools" class="ws-tools" href="paper-tools.html">교구 목록</a>
-  <button id="wsPrint" type="button">🖨 인쇄 · PDF로 저장</button>
+  <button id="wsPrint" type="button">인쇄하기</button>
 </div>
 <div id="wsBody"></div>
 
@@ -171,7 +174,7 @@
 <script src="app/paper-examples.js?v=20261112-draw-shapes"></script>
 <script src="engine/c0-cognitive.js?v=20261112-draw-shapes"></script>
 <script src="app/c0-paper.js?v=20261112-ineq"></script>
-<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261118-norepeat"></script><script src="app/pen-sheet.js?v=20261116-pen1"></script>
+<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261118-norepeat"></script><script src="app/pen-sheet.js?v=20261121-bar"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -194,8 +197,8 @@
   var lang = ['ko','en','zh'].indexOf(q.get('l')) >= 0 ? q.get('l') : 'ko';
   document.documentElement.lang = lang;
   function text(ko,en,zh){ return lang==='en'?en:lang==='zh'?zh:ko; }
-  document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + text('주간 학습지','Weekly worksheet','每周学习单');
-  document.getElementById('wsPrint').textContent = text('🖨 인쇄 · PDF로 저장','🖨 Print · Save as PDF','🖨 打印 · 另存为PDF');
+  document.getElementById('wsTitle').textContent = text('주간 학습지','Weekly worksheet','每周学习单');
+  var printBtn = document.getElementById('wsPrint'); printBtn.textContent = text('인쇄하기','Print','打印'); printBtn.title = text('인쇄 창에서 PDF로 저장할 수도 있어요','You can also save as PDF from the print dialog','也可在打印窗口另存为PDF');
   var toolList=document.getElementById('wsTools');toolList.textContent=text('교구 목록','Paper tools','纸教具目录');toolList.href='paper-tools.html?l='+lang;
   var w = (q.get('w') || isoWeekKey(new Date(Date.now() + 9*3600000))).trim();
   var c = (q.get('c') || '').trim();
@@ -304,7 +307,9 @@
   }
   if(personalPlan)window.NM_WS_ENVELOPE=wk;
   document.title = 'Numbers of Magic' + (name ? ' · ' + name : '') + ' — ' + wsId;
-  sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + (personalPlan?'':c+'. ') + title;
+  /* 막대에는 과정 이름과 이름·회차만. 주차 열쇠(2026-W47)·과정 번호(C4.) 같은 안쪽 표시는 보이지 않는다(쪽 제목 document.title 에는 남는다) */
+  document.getElementById('wsTitle').textContent = title;
+  sub.textContent = [name && name !== 'check' ? name : '', round && !compact ? text(round + '회차', 'Round ' + round, '第' + round + '次') : ''].filter(Boolean).join(' ') || text('주간 학습지','Weekly worksheet','每周学习单');
 
   try{
     NM_EXAM.renderPrintMulti(items, wsId, { mixed: 20, cover: cover, units: units, courseSessions: wk.courseSessions });
@@ -338,7 +343,7 @@
     }
    };
    if(q.get('marks') === '1'){
-     var ph = document.createElement('script'); ph.src = 'app/photo-grade.js?v=20261121-photo1';
+     var ph = document.createElement('script'); ph.src = 'app/photo-grade.js?v=20261121-photo2';
      ph.onload = function(){ try{ NM_PHOTO_GRADE.mount({ marksOnly: q.get('auto') === '0' }); }catch(e){} ready(); };
      ph.onerror = ready; document.head.appendChild(ph);
    } else ready();
