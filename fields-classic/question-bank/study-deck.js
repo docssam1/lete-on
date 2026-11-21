@@ -1,5 +1,5 @@
 import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261121a";
-import { course2ConceptSlides } from "./course2-deck.js?v=20261121a";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261121f";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -14,6 +14,7 @@ export const PHASES = Object.freeze([
   ["concept", "개념 배우기"],
   ["game", "게임하기"],
   ["bell", "워밍업"],
+  ["check", "개념 확인"],   // 2과정 개념 꾸러미의 마지막 장(DESIGN-COURSE2.md 4절 ⑥)
   ["board", "공부하기"],
   ["homework", "오늘의 과제"],
   ["test", "단원 평가"],
@@ -159,10 +160,13 @@ export function sessionPrintHref(book, unitIndex, part, bellData, link) {
   const sheetBase = { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1" };
   const sheet = link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~book` });
   const presheet = part > 1 ? link("index.html", { ...sheetBase, session: `${unitIndex}~${part}~daily` }) : "";
-  const parts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `교재 ${problems}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
   // 2과정처럼 워밍업 권이 없는 책은 표지에 쓸 권 이름을 주소로 넘긴다(golden-bell.js printSessionBook)
-  const topics = book.course ? course2ConceptSlides(book.id, unitIndex, part).filter((slide) => slide.kind === "concept").map((slide) => slide.lesson.title) : [];
-  const named = book.course ? { blabel: book.label, btitle: book.title, bcourse: `course-0${book.course}`, ...(topics.length ? { topics: topics.join("|") } : {}) } : {};
+  // 표지의 「따져 볼 것」: 개념 꾸러미가 있으면 꾸러미 제목, 없으면 개념 장 제목. 꾸러미가 있으면 「개념 정리」 쪽도 싣는다(&packs=)
+  const conceptSlides = book.course ? course2ConceptSlides(book.id, unitIndex, part) : [];
+  const checks = conceptSlides.filter((slide) => slide.kind === "check");
+  const topics = checks.length ? checks.map((slide) => slide.lesson.title) : conceptSlides.filter((slide) => slide.kind === "concept").map((slide) => slide.lesson.title);
+  const parts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), ...(checks.length ? [`개념 정리 ${checks.length}`] : []), `교재 ${problems}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
+  const named = book.course ? { blabel: book.label, btitle: book.title, bcourse: `course-0${book.course}`, ...(topics.length ? { topics: topics.join("|") } : {}), ...(checks.length ? { packs: `${book.id}~${unitIndex}~${part}` } : {}) } : {};
   return link("golden-bell.html", { book: book.id, sessionbook: "1", ...named, lessons: lessons.map((lesson) => lesson.id).join(","),
     label: `${unitIndex + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: parts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });
 }
@@ -225,6 +229,11 @@ export function slideLine(slide, { book, unitIndex, part = 1, hasConcept = true 
   if (slide.kind === "cover" && book.course) return voiceLine("cover", hasConcept
     ? `오늘은 ${unit.label} ${part}차시예요. ${first}개념을 배우고 게임으로 익힌 다음, 그림으로 왜 그런지 따져 보고 교재 문제를 풀어요. ${ending} 출발하기를 눌러 봐요.`
     : `오늘은 ${unit.label} ${part}차시예요. ${first}교재 문제를 풀고, ${ending} 출발하기를 눌러 봐요.`);
+  // 2과정 개념 꾸러미(course2-pack.js)
+  if (slide.pack === "recall") return voiceLine("concept", "먼저 앞에서 배운 것을 하나 되짚어 봐요. 답을 골라 봐요.");
+  if (slide.pack === "summary") return voiceLine("concept", "오늘 배운 것을 정리했어요. 하나씩 소리 내어 읽어 봐요.");
+  if (slide.pack === "example") return voiceLine("concept", "예제를 한 단계씩 풀어 봐요. 빈칸에 답을 쓰고 확인을 눌러요.");
+  if (slide.kind === "check") return voiceLine("check", "개념 확인 문제예요. 세 문제를 풀고 답 확인을 눌러 봐요.");
   if (slide.kind === "concept" && slide.native?.mount === "mountDeckProof") return voiceLine("concept", `${slide.lesson.title}? 그림으로 한 장면씩 따져 봐요. 오른쪽에 까닭이 쌓여요.`);
   if (slide.kind === "game" && slide.native?.mount === "mountDeckLab") return voiceLine("game", slide.native.tool === "geo"
     ? `${slide.title}이에요. 접을 쪽을 눌러 직접 접고 펼쳐 봐요. 다 하면 다음을 눌러요.`

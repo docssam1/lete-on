@@ -238,3 +238,20 @@
 .tb-section-start.at-top{margin-top:0;padding-top:0!important;border-top:0!important}
 .tb-section-start.at-top .tb-section-title{display:none}
 .tb-section-part{padding-top:1mm!important;border-bottom:0!important}
+
+/* 2과정 차시 교재 「개념 정리」 쪽(course2-pack-print.js) — 그림 왼쪽 · 정리 글 오른쪽, 교재 초록 색 */
+.tb-pack-row { display: grid; grid-template-columns: 62mm minmax(0, 1fr); gap: 5mm; align-items: start; }
+.tb-pack-row > .gold-print-visual.tb-pack-fig { min-height: 0; height: auto; padding: 1.5mm; }
+.tb-pack-fig svg { display: block; width: 100%; height: auto; max-height: 62mm; }
+.tb-pack-text { display: grid; gap: 2mm; font-size: 10.5pt; line-height: 1.55; word-break: keep-all; }
+.tb-pack-terms { margin: 0; display: grid; gap: 1mm; }
+.tb-pack-terms div { display: grid; grid-template-columns: auto 1fr; gap: 3mm; }
+.tb-pack-terms dt { font-weight: 800; color: #1e5a3f; white-space: nowrap; }
+.tb-pack-terms dd { margin: 0; }
+.tb-pack-facts { margin: 0; padding-left: 5mm; display: grid; gap: 1mm; }
+.tb-pack-facts li { font-weight: 600; }
+.tb-pack-pitfall { margin: 0; padding: 1.5mm 2.5mm; border-left: 1mm solid #c08a2e; background: #fbf5e8; font-size: 9.5pt; }
+.tb-pack-pitfall b { color: #8a5a10; }
+.tb-pack-prompt { margin: 0; font-weight: 700; }
+.tb-pack-steps { margin: 0; padding-left: 5mm; display: grid; gap: 2.5mm; }
+.tb-pack-blank { display: inline-block; min-width: 18mm; border-bottom: .3mm solid #2f3a35; margin: 0 1mm; height: 1.1em; vertical-align: bottom; }
