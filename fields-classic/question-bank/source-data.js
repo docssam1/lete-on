@@ -1,5 +1,6 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261121a";
+import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261121a";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1120,6 +1121,7 @@ Object.assign(TYPES.find((item) => item.id === "subtract-to-repeated-number-b8")
 
 // 2과정 G1 유형(course2-g1-generators.js). 문제은행 유형 고르기에도 「2과정 G1」 출처로 함께 보인다.
 TYPES.push(...COURSE2_G1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G1 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_G2_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G2 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -1952,7 +1954,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "most-frequent-digit-b10": "각 숫자가 일·십·백의 자리에 나타나는 횟수를 따로 세어 더합니다.",
   "digit-occurrence-range-b10": "목표 숫자가 각 자리에 오는 수를 세고 두 자리에 함께 오는 수도 확인합니다.",
   "positive-range-number-digit-count-b10": "한 자리·두 자리·세 자리 구간으로 나누어 쓰인 숫자 수를 더합니다.",
-  ...COURSE2_G1_GUIDES
+  ...COURSE2_G1_GUIDES,
+  ...COURSE2_G2_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4462,10 +4465,55 @@ const C2_G1_UNITS = [
     ["practice", 1, [6], "oblique-square-grid-area"], ["practice", 1, [9, 10], "c2-dot-square-count"], ["practice", 1, [11, 12, 14, 17], "c2-rectangle-grid-count"], ["practice", 1, [13, 15, 16], "square-grid-count-book5"]
   ])
 ];
+// 2과정 G2 「도형분할과 넓이」 본책 206문항 — 번호마다 유형 하나(1과정 유형 또는 course2-g2-generators.js). 교재 문장은 옮기지 않고 번호 ↔ 유형만 둔다.
+const C2_G2_UNITS = [
+  c2Unit("도형분할과 정사각형", [3, 6, 4], [4, 6, 6], 5, 25, [
+    ["activity", 1, [1, 2, 3], "c2-rearrange-square-side"],
+    ["check", 1, [1, 2, 3, 4], "rotational-partition-two"],
+    ["activity", 2, [1, 2], "unit-grid-area"], ["activity", 2, [3, 5], "c2-grid-square-areas"], ["activity", 2, [4, 6], "oblique-square-grid-area"],
+    ["check", 2, [1], "oblique-square-grid-area"], ["check", 2, [2], "unit-grid-area"], ["check", 2, [3], "c2-grid-square-areas"], ["check", 2, [4, 5], "c2-midpoint-nest-area"], ["check", 2, [6], "c2-side-split-square"],
+    ["activity", 3, [1, 2, 3, 4], "c2-regular-piece-area"],
+    ["check", 3, [1, 2, 4, 5, 6], "c2-midpoint-nest-area"], ["check", 3, [3], "c2-regular-piece-area"],
+    ["advanced", 1, [1], "c2-grid-square-areas"], ["advanced", 1, [2], "rotational-partition-two"], ["advanced", 1, [3], "c2-midpoint-nest-area"], ["advanced", 1, [4, 5], "rotational-partition-four"],
+    ["practice", 1, [1, 6], "rotational-partition-two"], ["practice", 1, [2], "rotational-partition-four"], ["practice", 1, [3, 4, 5], "c2-rearrange-square-side"],
+    ["practice", 1, [7, 8], "unit-grid-area"], ["practice", 1, [9, 10, 17], "c2-grid-square-areas"], ["practice", 1, [11, 12, 13], "oblique-square-grid-area"],
+    ["practice", 1, [14, 23, 24], "c2-midpoint-nest-area"], ["practice", 1, [15, 16], "c2-side-split-square"], ["practice", 1, [18, 19, 20, 21, 22, 25], "c2-regular-piece-area"]
+  ]),
+  c2Unit("피보나치 사각형", [6, 6], [4, 5], 5, 18, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6], "c2-fibonacci-rect"],
+    ["check", 1, [1, 2, 3, 4], "c2-fibonacci-rect"],
+    ["activity", 2, [1, 2, 3, 4, 5, 6], "c2-congruent-rect-perimeter"],
+    ["check", 2, [1, 2, 3, 4, 5], "c2-congruent-rect-perimeter"],
+    ["advanced", 1, [1, 2, 3], "c2-fibonacci-rect"], ["advanced", 1, [4, 5], "c2-congruent-rect-perimeter"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "c2-fibonacci-rect"], ["practice", 1, [11, 12, 13, 14, 15, 16, 17, 18], "c2-congruent-rect-perimeter"]
+  ]),
+  c2Unit("원과 삼각형의 둘레", [6, 7], [4, 3], 6, 23, [
+    ["activity", 1, [1, 2], "c2-inscribed-midpoint"], ["activity", 1, [3, 4], "c2-corner-quarter-circles"], ["activity", 1, [5, 6], "c2-circle-center-triangle"],
+    ["check", 1, [1, 2], "c2-circle-center-triangle"], ["check", 1, [3, 4], "c2-circle-diameter-chain"],
+    ["activity", 2, [1, 2, 3, 4], "c2-triangle-inequality"], ["activity", 2, [5, 6, 7], "c2-cut-triangle-perimeter"],
+    ["check", 2, [1, 2, 3], "c2-cut-triangle-perimeter"],
+    ["advanced", 1, [1], "c2-inscribed-midpoint"], ["advanced", 1, [2], "c2-circle-radius-perimeter"], ["advanced", 1, [3, 6], "c2-circle-diameter-chain"], ["advanced", 1, [4], "c2-cut-triangle-perimeter"], ["advanced", 1, [5], "c2-circle-center-triangle"],
+    ["practice", 1, [1, 3], "c2-circle-radius-perimeter"], ["practice", 1, [2, 14, 15], "c2-circle-diameter-chain"], ["practice", 1, [4, 5, 6], "c2-inscribed-midpoint"], ["practice", 1, [7, 8, 9], "c2-corner-quarter-circles"],
+    ["practice", 1, [10, 11, 12, 13], "c2-circle-center-triangle"], ["practice", 1, [16, 17, 18], "c2-triangle-inequality"], ["practice", 1, [19, 20, 21, 22, 23], "c2-cut-triangle-perimeter"]
+  ]),
+  c2Unit("360도와 나비각", [5, 4, 3], [4, 4, 4], 6, 24, [
+    ["activity", 1, [1], "c2-circle-sector-angle"], ["activity", 1, [2, 3, 4], "c2-regular-polygon-angle"], ["activity", 1, [5], "c2-exterior-walk"],
+    ["check", 1, [1, 3, 4], "c2-exterior-walk"], ["check", 1, [2], "c2-joined-polygon-angle"],
+    ["activity", 2, [1, 2, 3], "c2-butterfly-angle"], ["activity", 2, [4], "c2-star-angle-sum"],
+    ["check", 2, [1], "c2-butterfly-angle"], ["check", 2, [2, 3, 4], "c2-star-angle-sum"],
+    ["activity", 3, [1, 2], "c2-clock-hand-angle"], ["activity", 3, [3], "c2-hour-hand-moved"],
+    ["check", 3, [1, 3], "c2-hour-hand-moved"], ["check", 3, [2, 4], "c2-clock-hand-angle"],
+    ["advanced", 1, [1], "c2-hour-hand-moved"], ["advanced", 1, [2], "c2-clock-hand-angle"], ["advanced", 1, [3], "c2-exterior-walk"], ["advanced", 1, [4, 6], "c2-butterfly-angle"], ["advanced", 1, [5], "c2-star-angle-sum"],
+    ["practice", 1, [1, 15, 16, 17], "c2-star-angle-sum"], ["practice", 1, [2], "c2-regular-polygon-angle"], ["practice", 1, [3, 4], "c2-joined-polygon-angle"], ["practice", 1, [5, 6, 7, 8, 9], "c2-exterior-walk"],
+    ["practice", 1, [10, 11, 12, 13, 14], "c2-butterfly-angle"], ["practice", 1, [18, 19, 22, 24], "c2-clock-hand-angle"], ["practice", 1, [20, 21, 23], "c2-hour-hand-moved"]
+  ])
+];
 // 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
 export const COURSE2_CURRICULUM = [
   { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
-    source: { textbook: "2과정 G1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g1", goldenBellIncluded: false } }
+    source: { textbook: "2과정 G1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g1", goldenBellIncluded: false } },
+  { id: "course-02-g2", course: 2, label: "G2", title: "도형분할과 넓이", units: C2_G2_UNITS,
+    source: { textbook: "2과정 G2 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g2", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 

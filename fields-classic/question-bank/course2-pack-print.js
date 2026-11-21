@@ -1,7 +1,7 @@
 // 2과정 차시 교재의 「개념 정리」 쪽(DESIGN-COURSE2.md 5절) — 데일리 다음, 공부하기 앞.
 // 개념 꾸러미마다 정리 카드(그림 · 용어 · 성질 · 조심할 것) 한 칸 + 예제 빈칸 풀이 한 칸. 예제 답은 맨 뒤 정답 쪽에 싣는다.
 // 쪽 꼴은 차시 교재의 다른 쪽(session-book-sheet.js)과 같다 — tb-session-page 안 gold-print-source-item 칸이라 쪽 채우기(compactGoldenBellPrint)가 그대로 흘린다.
-import { packsFor } from "./course2-concepts/packs.js?v=20261121g";
+import { packsFor } from "./course2-concepts/packs.js?v=20261121h";
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const strip = (html) => String(html ?? "").replace(/<[^>]+>/g, "");
 const fig = (f) => f ? `<div class="gold-print-visual tb-pack-fig">${typeof f === "function" ? f() : f}</div>` : "";
