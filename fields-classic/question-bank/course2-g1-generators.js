@@ -3,7 +3,7 @@
 // 본책 문항 번호마다 어느 생성기를 쓰는지는 source-data.js COURSE2_CURRICULUM의 typeStudyRefs. 1과정 생성기로 같은 풀이가 되는 번호는 1과정 유형을 그대로 쓴다.
 // 답은 모두 그림을 만든 수에서 계산한다(세는 문제는 하나씩 세어 본다 — 공식만 믿지 않는다).
 
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261117a";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261121a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

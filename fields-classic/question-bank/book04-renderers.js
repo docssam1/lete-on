@@ -1,3 +1,4 @@
+import { foldNumberStrip, foldNumberPaperSvg, foldCreaseSvg } from "./fold-visuals.js?v=20261121a";
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -111,21 +112,70 @@ function foldBoard(rows, columns, values, { fold = null, target = null, cutCells
   return `<span class="b4-fold-board" style="--rows:${rows};--columns:${columns}">${cells}${overlay}</span>`;
 }
 
+// 수가 쓰인 색종이 접기 — 처음 → 1번 접음 → … · 자르기를 한 줄로(회색 화살표·빨간 굽은 화살표·장면 이름, 그림 속 「위쪽을 아래쪽으로」 글 없음)
+// 원장 2026-11-21 「색종이 단계 설명이 아니라 화살표잖아 · 우리가 설정한 기준 아닌 것 다 수정」
+const FOLD_KEEP = Object.freeze({
+  "오른쪽을 왼쪽으로": { axis: "v", keep: "start" },
+  "왼쪽을 오른쪽으로": { axis: "v", keep: "end" },
+  "아래쪽을 위쪽으로": { axis: "h", keep: "start" },
+  "위쪽을 아래쪽으로": { axis: "h", keep: "end" }
+});
 function foldedGrid(visual) {
+  const R = visual.grid.length;
+  const C = visual.grid[0].length;
+  const cell = 30;
   if (visual.reveal) {
-    return `<div class="b4-fold-answer"><small>펼쳐서 함께 잘린 칸</small>${foldBoard(visual.grid.length, visual.grid[0].length, visual.grid, { cutCells: visual.cutCells })}</div>`;
+    const cut = new Set((visual.cutCells || []).map(({ row, column }) => `${row}:${column}`));
+    const marks = (x, y) => [...cut].map((key) => { const [r, c] = key.split(":").map(Number); return `<rect x="${x + c * cell}" y="${y + r * cell}" width="${cell}" height="${cell}" fill="#b03a5b" fill-opacity=".55"/>`; }).join("");
+    return `<div class="b4-fold-answer"><small>펼쳐서 함께 잘린 칸</small>${foldNumberStrip([{ draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, w: C, h: R, rows: visual.grid }) + marks(x, y), index: 0, extra: "펼침" }], { W: C * cell, H: R * cell, label: "펼쳐서 함께 잘린 칸", cls: "fold-number-svg b4-fold-strip" })}</div>`;
   }
-  let rows = visual.grid.length;
-  let columns = visual.grid[0].length;
+  let region = { x0: 0, y0: 0, w: C, h: R };
   const stages = visual.folds.map((fold, index) => {
-    const values = index === 0 ? visual.grid : null;
-    const stage = `<figure><figcaption>${index ? `${index}번 접은 뒤` : "처음"}</figcaption>${foldBoard(rows, columns, values, { fold })}<small>${escapeHtml(fold.direction)}</small></figure>`;
-    if (fold.axis === "vertical") columns /= 2;
-    else rows /= 2;
-    return stage;
+    const rule = FOLD_KEEP[fold.direction] || { axis: fold.axis === "vertical" ? "v" : "h", keep: "start" };
+    const here = { ...region };
+    const next = { ...region };
+    let crease;
+    let arrow;
+    if (rule.axis === "v") {
+      next.w = here.w / 2;
+      if (rule.keep === "end") next.x0 = here.x0 + here.w / 2;
+      const mx = here.x0 + here.w / 2;
+      crease = (x, y) => foldCreaseSvg(x + mx * cell, y + here.y0 * cell, x + mx * cell, y + (here.y0 + here.h) * cell);
+      const cy = (here.y0 + here.h / 2) / R;
+      const away = (rule.keep === "end" ? here.x0 + here.w / 4 : here.x0 + here.w * 0.75) / C;
+      arrow = { from: { x: away, y: cy }, to: { x: 2 * mx / C - away, y: cy } };
+    } else {
+      next.h = here.h / 2;
+      if (rule.keep === "end") next.y0 = here.y0 + here.h / 2;
+      const my = here.y0 + here.h / 2;
+      crease = (x, y) => foldCreaseSvg(x + here.x0 * cell, y + my * cell, x + (here.x0 + here.w) * cell, y + my * cell);
+      const cx = (here.x0 + here.w / 2) / C;
+      const away = (rule.keep === "end" ? here.y0 + here.h / 4 : here.y0 + here.h * 0.75) / R;
+      arrow = { from: { x: cx, y: away }, to: { x: cx, y: 2 * my / R - away } };
+    }
+    region = next;
+    return { draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, x0: here.x0, y0: here.y0, w: here.w, h: here.h, rows: index === 0 ? visual.grid : null }) + crease(x, y), arrow };
   });
-  stages.push(`<figure><figcaption>접은 뒤</figcaption>${foldBoard(rows, columns, null, { target: visual.target })}<small>표시한 칸 자르기</small></figure>`);
-  return `<div class="b4-fold-sequence">${stages.join('<b class="b4-sequence-arrow">→</b>')}</div>`;
+  const last = region;
+  // 문제의 target은 접은 뒤 「바깥 가장자리부터 센」 자리(생성기 foldCoordinate)다 — 펼친 종이에서 같은 자리로 겹치는 칸 가운데
+  // 마지막에 남은 쪽(앞에 보이는 칸)을 찾아 칠한다. 남는 쪽이 아래·오른쪽이면 위·왼쪽으로 그리던 옛 그림은 표시 칸이 어긋났다.
+  const t = visual.target;
+  const folded = (r, c) => {
+    let row = r; let column = c; let rows = R; let columns = C;
+    for (const fold of visual.folds) {
+      if (fold.axis === "vertical") { column = Math.min(column, columns - 1 - column); columns /= 2; }
+      else { row = Math.min(row, rows - 1 - row); rows /= 2; }
+    }
+    return { row, column };
+  };
+  let mark = null;
+  if (t) for (let r = last.y0; r < last.y0 + last.h; r += 1) for (let c = last.x0; c < last.x0 + last.w; c += 1) {
+    const f = folded(r, c);
+    if (f.row === t.row && f.column === t.column) mark = { r, c };
+  }
+  stages.push({ draw: (x, y) => foldNumberPaperSvg({ shift: x, top: y, cell, x0: last.x0, y0: last.y0, w: last.w, h: last.h })
+    + (mark ? `<rect x="${x + mark.c * cell}" y="${y + mark.r * cell}" width="${cell}" height="${cell}" fill="#b03a5b"/>` : ""), extra: "자르기" });
+  return `<div class="b4-fold-sequence">${foldNumberStrip(stages, { W: C * cell, H: R * cell, label: "수가 쓰인 색종이를 접어 표시한 칸 자르기", cls: "fold-number-svg b4-fold-strip" })}</div>`;
 }
 
 const COLOR_CLASS = Object.freeze({ "빨강": "red", "노랑": "yellow", "초록": "green", "파랑": "blue" });
