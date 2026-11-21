@@ -1,10 +1,10 @@
 import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261121a";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261121a";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261121a";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261121g";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261117a";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261118a";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261121a";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261121g";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -93,11 +93,14 @@ function recordVisit() {
 // 문제은행 학생 화면 주소. 화면에서 풀 때는 embed, 인쇄할 때는 새 창에서 print=1
 function sheetUrl(slide, { print = false } = {}) {
   // 공부하기는 답 확인 때 정답만 손글씨로, 오늘의 과제는 손글씨 정답 + 풀이
-  const base = { mode: "curriculum", book: book.id, build: "1", as: "student", ...(slide.kind === "board" ? { hand: "1" } : slide.kind === "homework" ? { hand: "solve" } : {}) };
+  const base = { mode: "curriculum", book: book.id, build: "1", as: "student", ...(slide.kind === "board" || slide.kind === "check" ? { hand: "1" } : slide.kind === "homework" ? { hand: "solve" } : {}) };
   let entries;
   if (slide.kind === "board") {
     const picks = slide.block.numbers.map(({ n, typeId, stage }) => pickOf(typeId, stage, refOf(slide.block, n), unitIndex, partPickOption(book.id, unitIndex, part))).join("|");
     entries = { picks, title: `${book.label} ${unitIndex + 1}단원 · 교재 ${slide.block.label}` };
+  } else if (slide.kind === "check") {
+    // 2과정 개념 확인: 쉬움 · 교재와 같게 · 흔한 실수 세 문제(course2-concepts/<권>.js의 check)
+    entries = { picks: slide.check.map(([typeId, stage]) => pickOf(typeId, stage, "개념 확인", unitIndex, partPickOption(book.id, unitIndex, part))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · ${slide.title}` };
   } else if (slide.kind === "homework") {
     entries = { picks: todayTypes().map((typeId) => pickOf(typeId, "practice", "오늘의 과제", unitIndex, partPickOption(book.id, unitIndex, part))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 오늘의 과제` };
   } else if (slide.kind === "daily") {
@@ -598,11 +601,13 @@ function renderHead() {
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
 // 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
 const ISLANDS = [[15, 78], [35.5, 55], [52, 38.5], [73.5, 33.5], [87.6, 15.5]];
-const STATIONS = [["daily", "데일리 테스트"], ["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "오늘의 과제"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
+const STATIONS = [["daily", "데일리 테스트"], ["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "워밍업"], ["check", "개념 확인"], ["board", "공부하기"], ["homework", "오늘의 과제"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
 // 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있을 때만(2차시부터 맨 앞에 지난 차시 데일리, 마지막 차시 끝에 단원 평가)
 const OPTIONAL = ["daily", "test", "booktest"];
 const expectedOptional = (kind) => kind === "daily" ? part > 1 : kind === "test" ? part >= parts : false;
-const visibleStations = () => STATIONS.filter(([kind]) => !OPTIONAL.includes(kind) ? true : ready ? slides.some((slide) => slide.kind === kind) : expectedOptional(kind));
+// 2과정은 워밍업 대신 개념 확인(개념 꾸러미 ⑥), 1과정은 개념 확인 없이 워밍업
+const courseShown = (kind) => kind === "bell" ? !book?.course : kind === "check" ? Boolean(book?.course) && (!ready || slides.some((slide) => slide.kind === "check")) : true;
+const visibleStations = () => STATIONS.filter(([kind]) => courseShown(kind) && (!OPTIONAL.includes(kind) ? true : ready ? slides.some((slide) => slide.kind === kind) : expectedOptional(kind)));
 const stationOf = (slide) => Math.max(0, visibleStations().findIndex(([kind]) => kind === slide.kind));
 function renderSigns() {
   const slide = slides[index];
@@ -637,6 +642,7 @@ function slideTitle(slide) {
   if (slide.kind === "daily") return `${unitIndex + 1}단원 ${part - 1}차시 복습 · ${DAILY_COUNT}문제`;
   if (slide.kind === "test") return `${unitIndex + 1}단원 평가 · ${UNIT_TEST_COUNT}문제`;
   if (slide.kind === "booktest") return `${book.label} 권별 테스트`;
+  if (slide.kind === "check") return `${slide.lesson.title} · ${slide.check.length}문제`;
   return slide.kind === "game" ? slide.title : slide.lesson.title;
 }
 function slideHead(slide) {
@@ -650,19 +656,20 @@ function slideHead(slide) {
   return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>${print}`;
 }
 // 표지 공부 순서: 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있는 것만
-const planPhases = (counts) => PHASES.filter(([kind]) => !OPTIONAL.includes(kind) || (ready ? counts[kind] : expectedOptional(kind)));
+const planPhases = (counts) => PHASES.filter(([kind]) => courseShown(kind) && (!OPTIONAL.includes(kind) || (ready ? counts[kind] : expectedOptional(kind))));
 function coverMarkup() {
   const counts = {
     concept: slides.filter((s) => s.kind === "concept").length,
     game: slides.filter((s) => s.kind === "game").length,
     bell: slides.filter((s) => s.kind === "bell").reduce((sum, s) => sum + s.lesson.original.items.length, 0),
+    check: slides.filter((s) => s.kind === "check").reduce((sum, s) => sum + s.check.length, 0),
     board: slides.filter((s) => s.kind === "board").reduce((sum, s) => sum + s.block.numbers.length, 0),
     homework: slides.some((s) => s.kind === "homework") ? todayTypes().length : 0,
     daily: slides.some((s) => s.kind === "daily") ? DAILY_COUNT : 0,
     test: slides.some((s) => s.kind === "test") ? UNIT_TEST_COUNT : 0,
     booktest: slides.some((s) => s.kind === "booktest") ? book.source.unitTestQuestions.length : 0
   };
-  const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, board: `교재 ${counts.board}문제`, homework: `${counts.homework}문제 · 집에서`, daily: `${counts.daily}문제 · ○✕`, test: `${counts.test}문제 · ○✕ 진단`, booktest: `${counts.booktest}문제` };
+  const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, check: `${counts.check}문제`, board: `교재 ${counts.board}문제`, homework: `${counts.homework}문제 · 집에서`, daily: `${counts.daily}문제 · ○✕`, test: `${counts.test}문제 · ○✕ 진단`, booktest: `${counts.booktest}문제` };
   return `<div class="sd-cover">
     <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${classMode ? " 교안" : ""}${parts > 1 ? ` <small>(${parts}차시 중)</small>` : ""}</p>
     <h1>${esc(unit.label)}</h1>
@@ -685,6 +692,7 @@ function tallyMarkup(result, lastPart) {
   const items = [
     ["개념", n("concept"), "개"], ["게임", n("game"), "판"],
     ["워밍업", slides.filter((s) => s.kind === "bell").reduce((sum, s) => sum + s.lesson.original.items.length, 0), "문제"],
+    ["개념 확인", slides.filter((s) => s.kind === "check").reduce((sum, s) => sum + s.check.length, 0), "문제"],
     ["교재", slides.filter((s) => s.kind === "board").reduce((sum, s) => sum + s.block.numbers.length, 0), "문제"]
   ].filter(([, v]) => v);
   return `<div class="sd-tally">${result ? `<figure class="sd-tally-ring">${ringMarkup(result.right, result.total)}<figcaption>${lastPart ? "단원 평가" : "데일리 테스트"}</figcaption></figure>` : ""}
@@ -725,7 +733,7 @@ function endMarkup() {
 // 독쌤 말 { id, text } — id가 있으면 독쌤 복제 음성(없으면 기기 음성)
 const lineFor = (slide) => slide.kind === "cover" && !ready ? FIXED_LINES.loading : slideLine(slide, { book, unitIndex, part, hasConcept: slides.some((entry) => entry.kind === "concept") });
 
-const WORK_KINDS = ["board", "homework", "daily", "test"];
+const WORK_KINDS = ["board", "homework", "daily", "test", "check"];
 function show({ atEnd = false } = {}) {
   cancelAuto(); closeSheet(false); closeGate();
   const slide = slides[index];
@@ -886,7 +894,7 @@ function openWeakSheet(weak) {
 
 // ── 강사용 교안: 수업 차례(왼쪽) · 머리줄 도구 ─────────────────
 // 그 차시의 모든 장을 차례대로 적는다(학생 덱 윗줄은 여덟 곳만 보여 준다). 누르면 그 장으로. 표지·마침도 한 줄씩.
-const OUTLINE_LABEL = { cover: "표지", daily: "데일리 테스트", concept: "개념 판서", game: "게임", board: "교재", homework: "오늘의 과제", test: "단원 평가", booktest: "권별 테스트", end: "마침" };
+const OUTLINE_LABEL = { cover: "표지", daily: "데일리 테스트", concept: "개념 판서", game: "게임", check: "개념 확인", board: "교재", homework: "오늘의 과제", test: "단원 평가", booktest: "권별 테스트", end: "마침" };
 function renderOutline() {
   const rows = slides.map((slide, k) => {
     const label = slide.kind === "bell" ? bellLabel(slide) : OUTLINE_LABEL[slide.kind] || "";

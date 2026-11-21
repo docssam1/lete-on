@@ -1773,11 +1773,13 @@ async function printSessionBook() {
     const none = { pages: "", answers: [] };
     const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve(none);
     // 맨 뒤 정답(원장 2026-11-17 「뒤에 답안도 인쇄 되어야지」): 워밍업 정답(비공개 답안 서버, 「모두에게 열기」) + 데일리·본책·과제·평가 정답
-    const [daily, sheet, warmAnswers] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet")),
-      lessons.length ? ensureProtectedBook(book.id).catch(() => false) : Promise.resolve(false)]);
+    // 2과정 개념 꾸러미(&packs=권~단원~차시): 데일리 다음 「개념 정리」 쪽(course2-pack-print.js)
+    const packPages = params.get("packs") ? import("./course2-pack-print.js?v=20261121g").then((mod) => mod.packPrintPages(params.get("packs"), { book, session, student })).catch(() => none) : Promise.resolve(none);
+    const [daily, sheet, warmAnswers, concept] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet")),
+      lessons.length ? ensureProtectedBook(book.id).catch(() => false) : Promise.resolve(false), packPages]);
     const warmAnswerPages = warmAnswers ? lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: true })).join("") : "";
-    const answerPages = warmAnswerPages + sessionAnswerPages([...daily.answers, ...sheet.answers], { book, session, student });
-    root.innerHTML = cover + daily.pages + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet.pages + answerPages;
+    const answerPages = warmAnswerPages + sessionAnswerPages([...daily.answers, ...concept.answers, ...sheet.answers], { book, session, student });
+    root.innerHTML = cover + daily.pages + concept.pages + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet.pages + answerPages;
     // &layout=grid: 시안 — 쪽마다 같은 두 단, 문제 사이를 고르게 벌려 쪽을 채움(원장 2026-11-18 Typst 시험지 사진 「이렇게 깔끔하게」).
     // 쪽 나누기도 이 판으로 재므로 compact 전에 붙인다.
     const gridLook = params.get("layout") === "grid";
