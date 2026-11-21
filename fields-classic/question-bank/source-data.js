@@ -1,6 +1,7 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261121a";
 import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261121a";
+import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261121a";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1122,6 +1123,7 @@ Object.assign(TYPES.find((item) => item.id === "subtract-to-repeated-number-b8")
 // 2과정 G1 유형(course2-g1-generators.js). 문제은행 유형 고르기에도 「2과정 G1」 출처로 함께 보인다.
 TYPES.push(...COURSE2_G1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G1 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_G2_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G2 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_G3_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G3 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -1955,7 +1957,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "digit-occurrence-range-b10": "목표 숫자가 각 자리에 오는 수를 세고 두 자리에 함께 오는 수도 확인합니다.",
   "positive-range-number-digit-count-b10": "한 자리·두 자리·세 자리 구간으로 나누어 쓰인 숫자 수를 더합니다.",
   ...COURSE2_G1_GUIDES,
-  ...COURSE2_G2_GUIDES
+  ...COURSE2_G2_GUIDES,
+  ...COURSE2_G3_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4508,12 +4511,55 @@ const C2_G2_UNITS = [
     ["practice", 1, [10, 11, 12, 13, 14], "c2-butterfly-angle"], ["practice", 1, [18, 19, 22, 24], "c2-clock-hand-angle"], ["practice", 1, [20, 21, 23], "c2-hour-hand-moved"]
   ])
 ];
+// 2과정 G3 「정육면체와 각·넓이」 본책 198문항 — 번호마다 유형 하나. 교재 문장은 옮기지 않는다.
+const C2_G3_UNITS = [
+  c2Unit("도형 움직이기", [6, 3], [3, 2], 5, 14, [
+    ["activity", 1, [1, 2], "shape-flip-composition"], ["activity", 1, [3], "c2-symmetric-number-count"], ["activity", 1, [4, 5, 6], "digital-transform-arithmetic"],
+    ["check", 1, [1, 2, 3], "digital-transform-arithmetic"],
+    ["activity", 2, [1, 2, 3], "c2-symmetric-number-count"],
+    ["check", 2, [1, 2], "c2-symmetric-number-count"],
+    ["advanced", 1, [1, 3], "c2-symmetric-number-count"], ["advanced", 1, [2, 4], "digital-transform-arithmetic"], ["advanced", 1, [5], "c2-digital-mirror-count"],
+    ["practice", 1, [1], "shape-rotate-flip-grid"], ["practice", 1, [2, 3], "shape-flip-composition"], ["practice", 1, [4, 5, 6, 7, 8, 9, 10], "digital-transform-arithmetic"], ["practice", 1, [11, 12, 13, 14], "c2-symmetric-number-count"]
+  ]),
+  c2Unit("주사위와 쌓기나무", [2, 5, 3], [4, 4, 3], 5, 24, [
+    ["activity", 1, [1, 2], "c2-dice-hidden-sum"],
+    ["check", 1, [1, 2, 3, 4], "c2-cube-net-opposite"],
+    ["activity", 2, [1, 2], "c2-dice-roll"], ["activity", 2, [3, 4, 5], "c2-cube-net-opposite"],
+    ["check", 2, [1, 2, 3, 4], "c2-cube-net-opposite"],
+    ["activity", 3, [1, 2, 3], "cube-three-view-minmax"],
+    ["check", 3, [1, 2, 3], "cube-three-view-minmax"],
+    ["advanced", 1, [1, 2], "cube-three-view-minmax"], ["advanced", 1, [3], "c2-dice-hidden-sum"], ["advanced", 1, [4], "c2-dice-roll"], ["advanced", 1, [5], "cube-painted-faces"],
+    ["practice", 1, [1, 2], "c2-dice-hidden-sum"], ["practice", 1, [3, 4, 5, 6, 7, 8, 9, 10], "c2-cube-net-opposite"], ["practice", 1, [11, 12, 13], "c2-dice-roll"],
+    ["practice", 1, [14, 15, 16, 17, 18, 19], "c2-cube-net-opposite"], ["practice", 1, [20], "cube-three-views"], ["practice", 1, [21, 22, 23, 24], "cube-three-view-minmax"]
+  ]),
+  c2Unit("시계와 각", [5, 4, 4], [4, 4, 4], 6, 24, [
+    ["activity", 1, [1, 2, 3], "c2-triangle-angle"], ["activity", 1, [4, 5], "c2-regular-polygon-angle"],
+    ["check", 1, [1, 2, 3, 4], "c2-regular-polygon-angle"],
+    ["activity", 2, [1, 2, 3, 4], "c2-parallel-angle"],
+    ["check", 2, [1, 2, 3, 4], "c2-parallel-angle"],
+    ["activity", 3, [1, 4], "c2-clock-from-angle"], ["activity", 3, [2], "c2-clock-hand-angle"], ["activity", 3, [3], "c2-hour-hand-moved"],
+    ["check", 3, [1, 2, 3, 4], "c2-clock-from-angle"],
+    ["advanced", 1, [1, 2], "c2-clock-from-angle"], ["advanced", 1, [3], "c2-regular-polygon-angle"], ["advanced", 1, [4], "c2-joined-polygon-angle"], ["advanced", 1, [5, 6], "c2-parallel-angle"],
+    ["practice", 1, [1, 2, 3, 4, 5], "c2-triangle-angle"], ["practice", 1, [6, 7], "c2-regular-polygon-angle"], ["practice", 1, [8, 9, 10, 11, 12, 13], "c2-parallel-angle"],
+    ["practice", 1, [14, 16], "c2-clock-hand-angle"], ["practice", 1, [17, 18], "c2-hour-hand-moved"], ["practice", 1, [15, 19, 20, 21, 22, 23, 24], "c2-clock-from-angle"]
+  ]),
+  c2Unit("평면도형의 넓이", [4, 1, 6, 2], [4, 4, 4, 3], 6, 26, [
+    ["activity", 1, [1, 2, 3, 4], "c2-rhombus-area"], ["check", 1, [1, 2, 3, 4], "c2-rhombus-area"],
+    ["activity", 2, [1], "c2-parallelogram-area"], ["check", 2, [1, 2, 3, 4], "c2-parallelogram-area"],
+    ["activity", 3, [1, 2, 3, 4, 5, 6], "c2-triangle-area"], ["check", 3, [1, 2, 3, 4], "c2-triangle-area"],
+    ["activity", 4, [1, 2], "c2-trapezoid-area"], ["check", 4, [1, 2, 3], "c2-trapezoid-area"],
+    ["advanced", 1, [1, 6], "c2-trapezoid-area"], ["advanced", 1, [2], "c2-rhombus-area"], ["advanced", 1, [3, 4], "c2-triangle-area"], ["advanced", 1, [5], "c2-parallelogram-area"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6], "c2-rhombus-area"], ["practice", 1, [7, 8, 9, 10], "c2-parallelogram-area"], ["practice", 1, [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "c2-triangle-area"], ["practice", 1, [22, 23, 24, 25, 26], "c2-trapezoid-area"]
+  ])
+];
 // 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
 export const COURSE2_CURRICULUM = [
   { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
     source: { textbook: "2과정 G1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g1", goldenBellIncluded: false } },
   { id: "course-02-g2", course: 2, label: "G2", title: "도형분할과 넓이", units: C2_G2_UNITS,
-    source: { textbook: "2과정 G2 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g2", goldenBellIncluded: false } }
+    source: { textbook: "2과정 G2 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g2", goldenBellIncluded: false } },
+  { id: "course-02-g3", course: 2, label: "G3", title: "정육면체와 각·넓이", units: C2_G3_UNITS,
+    source: { textbook: "2과정 G3 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g3", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 
