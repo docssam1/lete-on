@@ -49,7 +49,7 @@
       <line x1="${right + 12}" y1="${top - 2}" x2="${backRight + 12}" y2="${backTop - 2}"/><text x="${right + 62}" y="${backTop - 9}" text-anchor="middle">3cm</text>
       <line x1="${backRight + 17}" y1="${backTop}" x2="${backRight + 17}" y2="${backBottom}"/><text x="${backRight + 29}" y="${(backTop + backBottom) / 2 + 4}">1cm</text>
     </g>`;
-    return `<svg class="source52-p49m5-diagram" viewBox="0 0 430 235" role="img" aria-label="5cm, 3cm, 1cm 변의 길이를 가진 직육면체 한 개" xmlns="http://www.w3.org/2000/svg"><g>${outline}</g>${dimensions}</svg>`;
+    return `<svg class="source52-p49m5-diagram" viewBox="0 0 452 235" role="img" aria-label="5cm, 3cm, 1cm 변의 길이를 가진 직육면체 한 개" xmlns="http://www.w3.org/2000/svg"><g>${outline}</g>${dimensions}</svg>`;
   }
 
   function arrangementTable() {

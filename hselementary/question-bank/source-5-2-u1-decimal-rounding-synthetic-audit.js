@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),api=require('./source-5-2-u1-decimal-rounding-synthetic.js');
 const source=require('./source-inventory/5-2-source-items.json').sourceItems.find(x=>x.sourceItemId==='5-2-u1-e2-example-4');
-assert.equal(source.implementationStatus,'review-locked');global.window={};require('./curriculum.js');require('./generators.js');api.install(window);
+assert.equal(source.implementationStatus,'verified-local');assert.equal(source.runtimeTypeId,'5-2-u1-e2-example-4-original');global.window={};require('./curriculum.js');require('./generators.js');api.install(window);
 const types=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(x=>x.types)));const type=types.find(x=>x.id===api.id);assert(type);assert.equal(window.HSE_GENERATORS.generatorKey(type),api.key);assert.equal(type.reviewLocked,false);
 let checked=0;for(let v=0;v<9;v++)for(const difficulty of [-1,0,1]){let q=api.makeQuestion(v,difficulty),p=q.questionModel,solutions=[];
  for(let a=1;a<=9;a++)for(let b=1;b<=9;b++)for(let c=1;c<=9;c++)if(a>b&&b>c&&a+b+c===p.sum&&Math.floor((100*a+10*b+c+50)/100)===p.target)solutions.push([a,b,c]);
