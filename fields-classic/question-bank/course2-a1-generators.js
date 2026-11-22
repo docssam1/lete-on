@@ -121,9 +121,14 @@ function c2FakeCoin({ difficulty = 2 }) {
   while (cap < n) { cap *= 3; k += 1; }
   const thing = sample(["금화", "구슬", "탁구공"]);
   const shown = Math.min(n, 12);
-  let body = `<path d="M 60 70 L 220 70 M 140 70 L 140 120 M 110 120 L 170 120" stroke="${INK}" stroke-width="2.4" fill="none"/>`
-    + `<path d="M 40 70 Q 60 96 80 70 M 200 70 Q 220 96 240 70" stroke="${INK}" stroke-width="1.8" fill="${SOFT}"/>`;
-  body += Array.from({ length: shown }, (_, i) => circle(270 + (i % 6) * 22, 50 + Math.floor(i / 6) * 22, 9, { fill: YELLOW })).join("");
+  // 양팔저울: 받침·기둥·가로대·줄·평평한 접시(곡선 없음 — 원장 2026-11-22 「양팔저울 곡선 넣지마」)
+  const tray = (x) => `<path d="M ${x} 40 L ${x - 36} 84 M ${x} 40 L ${x + 36} 84" stroke="#9aa39e" stroke-width="1.2" fill="none"/>`
+    + `<polygon points="${x - 38},84 ${x + 38},84 ${x + 31},92 ${x - 31},92" fill="${SOFT}" stroke="#4d6b5a" stroke-width="1.5" stroke-linejoin="round"/>`;
+  let body = `<polygon points="140,42 131,112 149,112" fill="#c9b48a" stroke="#7a6a4a" stroke-width="1.2" stroke-linejoin="round"/>`
+    + rect(104, 112, 72, 9, { fill: WOOD, color: "#7a6a4a", width: 1.2, rx: 4 })
+    + line(60, 40, 220, 40, { color: "#4d5a53", width: 4 }) + circle(140, 40, 4.5, { fill: "#f4b860", color: "#7a5a1e", width: 1.2 })
+    + tray(60) + tray(220);
+  body += Array.from({ length: shown }, (_, i) => circle(270 + (i % 6) * 22, 50 + Math.floor(i / 6) * 22, 9, { fill: YELLOW, color: "#b89a4a", width: 1.4 })).join("");
   if (n > shown) body += text(270 + 5 * 22, 104, `… 모두 ${n}개`, { size: 13, anchor: "end" });
   return problem({
     prompt: `모양이 같은 ${thing} ${n}개 가운데 1개만 다른 것보다 가볍습니다. 양팔저울로 가벼운 ${josa(thing, "을", "를")} 반드시 찾으려면 저울을 적어도 몇 번 써야 하나요?`,

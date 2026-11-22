@@ -22,8 +22,9 @@ const scaleEq = (cx, cy, left, right, size = 15, gapW = 34) => {
   out.push({ kind: "path", d: `M ${cx} ${cy} L ${cx - 24} ${cy + 64} L ${cx + 24} ${cy + 64} Z`, stroke: "gray", width: 3, quick: true });
   out.push({ kind: "line", x1: L[0], y1: L[1], x2: R[0], y2: R[1], color: "ink", width: 4 });
   for (const [[x, y], stuff, side] of [[L, left, "left"], [R, right, "right"]]) {
-    out.push({ kind: "line", x1: x, y1: y, x2: x, y2: y + 20, color: "gray", width: 2 });
-    out.push({ kind: "path", d: `M ${x - 92} ${y + 20} Q ${x} ${y + 66} ${x + 92} ${y + 20}`, stroke: "ink", width: 3 });
+    // 접시는 곡선 없이 평평한 판(원장 2026-11-22 「양팔저울 곡선 넣지마」): 줄 둘 + 납작한 사다리꼴
+    out.push({ kind: "path", d: `M ${x} ${y} L ${x - 92} ${y + 40} M ${x} ${y} L ${x + 92} ${y + 40}`, stroke: "gray", width: 2 });
+    out.push({ kind: "path", d: `M ${x - 92} ${y + 40} L ${x + 92} ${y + 40} L ${x + 80} ${y + 50} L ${x - 80} ${y + 50} Z`, stroke: "ink", width: 3 });
     const n = stuff.length, per = Math.min(n, 5);
     stuff.forEach((type, i) => { const row = Math.floor(i / 5), col = i % 5, m = Math.min(per, n - row * 5);
       const sx = x + (col - (m - 1) / 2) * gapW, sy = y + 38 - size - row * (size * 2 + 6);
