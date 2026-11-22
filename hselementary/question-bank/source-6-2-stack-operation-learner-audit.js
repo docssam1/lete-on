@@ -10,7 +10,7 @@ const read = file => fs.readFileSync(path.join(__dirname, file), "utf8");
 const SOURCES = [
   { sourceItemId: "6-2-u3-e1-example-2", key: "sourceGrade6SecondSpaceE1StackRemovalLabels",
     pools: [[[2,3,1],[0,2,2],[0,2,1]], [[3,3,1],[0,2,2],[0,2,1]], [[2,3,1],[0,2,2],[0,3,1]]],
-    columns: [[1,0],[2,0],[0,0],[1,1],[1,2],[2,1],[2,2]] },
+    columns: [[1,0],[0,0],[1,1],[2,1],[1,2],[2,0],[2,2]] },
   { sourceItemId: "6-2-u3-e1-mission-5", key: "sourceGrade6SecondSpaceE1StackAddViews",
     pools: [[[0,0,2],[3,2,1],[1,0,0]], [[0,0,3],[3,2,1],[1,0,0]], [[0,0,2],[4,2,1],[1,0,0]]],
     add: [[0,2,2],[1,1,1]], columns: [[0,2],[1,1]] },
@@ -147,9 +147,9 @@ function selfTest() {
     cases++;
   }
   const original = oracle(SOURCES[0],0);
-  assert.deepEqual(original.primary,[label(1),label(3),label(6)]); assert.deepEqual(original.secondary,[label(1),label(6)]);
+  assert.deepEqual(original.primary,[label(2),label(5),label(6)]); assert.deepEqual(original.secondary,[label(5),label(6)]);
   const topFiltered = original.trials.filter(trial => trial.qualifies && !trial.changesTop).map(trial => trial.label);
-  assert.deepEqual(topFiltered,[label(3)]); assert.throws(() => assert.deepEqual(topFiltered,original.primary));
+  assert.deepEqual(topFiltered,[label(2)]); assert.throws(() => assert.deepEqual(topFiltered,original.primary));
   assert.deepEqual(SOURCES[2].pools.map((_,v) => oracle(SOURCES[2],v).total),[11,12,12]);
   const context = {window:{HSE_GENERATORS:{names:[],generatorKey:()=>"",generate:()=>null}}};
   for (const file of ["source-6-2-stack-models.js","source-6-2-stack-operations.js","source-6-2-stack-operation-question-contracts.js","source-6-2-stack-operation-questions.js"]) vm.runInNewContext(read(file),context,{filename:file});

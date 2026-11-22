@@ -6,7 +6,7 @@
   "runtimeHashes": {
     "source-6-2-stack-models.js": "1dc519dd11912c75a6be7482c04f8558895d76c8a2eb5fa631a8309bfcaa9ff0",
     "source-6-2-stack-renderer.mjs": "23301742ad98d8d4e5fd298752f56bcea6288e4e483006572fd9e3ae26eae211",
-    "source-6-2-stack-operations.js": "075a6c654ff810e9f29d8a9e61af0be38915be0e3f2657418ae46d1188115425",
+    "source-6-2-stack-operations.js": "f135376d1140e206daa8e8f1efdf17ac7f9e7c62889fc1de1b6669af82ab7e8b",
     "source-6-2-stack-operation-review.html": "6e4af94ee02e9cbb66e9845f1ac3b9d142f10d31f33450e839272e20c300eb05"
   },
   "exportSettings": {
@@ -27,16 +27,16 @@
       "sourceItemId": "6-2-u3-e1-example-2",
       "variant": 0,
       "phase": "before",
-      "sha256": "3c4665fa94fa81e5dd255c573e32fe508365e9fb875689422b63e092900c9c08",
-      "byteLength": 87510,
+      "sha256": "4d59c49113c3e97ad0a1e641e039c39afd8a26807c1a19f4256bcd5d308995f4",
+      "byteLength": 87613,
       "glyphPixels": {
-        "1,2,0": 689,
-        "2,0,0": 707,
-        "0,1,0": 790,
-        "1,1,1": 857,
-        "1,1,2": 830,
-        "2,1,1": 867,
-        "2,0,2": 772
+        "1,2,0": 619,
+        "2,0,0": 795,
+        "0,1,0": 662,
+        "1,1,1": 748,
+        "1,1,2": 777,
+        "2,1,1": 776,
+        "2,0,2": 695
       }
     },
     {
@@ -44,16 +44,16 @@
       "sourceItemId": "6-2-u3-e1-example-2",
       "variant": 1,
       "phase": "before",
-      "sha256": "a74a6dce2116f2e96ddc64b99339839fa5be6a84c8266ce29ff941022d4b4108",
-      "byteLength": 89481,
+      "sha256": "95c91eb8edd5159755e0a5652a7919349aea89bc4d1ba8da178a64b504decd3c",
+      "byteLength": 90035,
       "glyphPixels": {
-        "1,2,0": 689,
-        "2,0,0": 707,
-        "0,2,0": 817,
-        "1,1,1": 857,
-        "1,1,2": 830,
-        "2,1,1": 867,
-        "2,0,2": 772
+        "1,2,0": 619,
+        "2,0,0": 795,
+        "0,2,0": 609,
+        "1,1,1": 748,
+        "1,1,2": 777,
+        "2,1,1": 776,
+        "2,0,2": 695
       }
     },
     {
@@ -61,16 +61,16 @@
       "sourceItemId": "6-2-u3-e1-example-2",
       "variant": 2,
       "phase": "before",
-      "sha256": "052dc6341c8ef2c86a72c811f5f9308198246a7dae6d43e8c24d832d42412db5",
-      "byteLength": 89177,
+      "sha256": "9c376de51db4569ead512318a87299cfea8727ead630bcdd3976ab493ac34c2c",
+      "byteLength": 89658,
       "glyphPixels": {
-        "1,2,0": 689,
-        "2,0,0": 707,
-        "0,1,0": 790,
-        "1,1,1": 846,
-        "1,2,2": 830,
-        "2,1,1": 867,
-        "2,0,2": 772
+        "1,2,0": 619,
+        "2,0,0": 795,
+        "0,1,0": 662,
+        "1,1,1": 768,
+        "1,2,2": 802,
+        "2,1,1": 776,
+        "2,0,2": 695
       }
     },
     {

@@ -7,7 +7,7 @@
   const models = typeof module !== "undefined" ? require("./source-6-2-stack-models.js") : window.HSE_SOURCE_GRADE6_STACK_MODELS;
   const definitions = freeze([
     {sourceItemId:"6-2-u3-e1-example-2",operation:"remove-one-labelled-top",requestedViews:["front","right"],
-      labelledColumns:[[1,0],[2,0],[0,0],[1,1],[1,2],[2,1],[2,2]],
+      labelledColumns:[[1,0],[0,0],[1,1],[2,1],[1,2],[2,0],[2,2]],
       pools:[[[2,3,1],[0,2,2],[0,2,1]],[[3,3,1],[0,2,2],[0,2,1]],[[2,3,1],[0,2,2],[0,3,1]]]},
     {sourceItemId:"6-2-u3-e1-mission-5",operation:"add-to-labelled-columns",requestedViews:["right"],givenViews:["top"],
       additions:[{column:[0,2],count:2},{column:[1,1],count:1}],
