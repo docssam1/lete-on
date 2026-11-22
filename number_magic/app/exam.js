@@ -1002,6 +1002,14 @@
      ⚠️ 선택자를 .nm-w2-abox.nm-w2-abox-big 로 — 아래쪽 .nm-w2-abox(14×8mm)가 같은 무게에 더 뒤라
      예전 14×11mm 는 한 번도 먹지 않았고 실제 칸은 14×8mm 였다. */
   .nm-w2-abox.nm-w2-abox-big { width:22mm; height:min(15mm, calc(100% - 1.5mm)); border:1.3px solid #333; border-radius:3px; display:inline-block; vertical-align:middle; margin:0 4px; flex:0 0 auto; }
+  /* 저학년(유아·1·2학년) 쓰는 칸은 공책 칸만 하게(2026-11-22, 원장 「한글 노트 정도의 글씨 크기 이상」「1학년도 같이 키워」):
+     유아·1학년 과정(C0~C2, 시트 nm-print-write-big) 1학년 16mm 이상, 유아는 c0-paper.js 에서 19mm 이상.
+     답 상자·세로셈 답 줄·문장제 답 줄·이해 쪽 답 상자. 다른 저학년 시트는 그대로(첫 장 줄 수 표가 이 과정 유형만 큰 칸으로 잰다) */
+  .nm-print-write-big .nm-w2-abox.nm-w2-abox-big { height:min(17mm, calc(100% - 1mm)); }
+  .nm-print-write-big .nm-w2-grid-vertical .nm-print-vp:not(.nm-print-vp-2row) .nm-print-vp-bot { min-height:16mm; }
+  .nm-print-write-big .nm-w2-page .nm-print-word-blank .nm-w2-blank, .nm-print-write-big .nm-w2-grid-word .nm-w2-blank { height:16mm; }
+  .nm-print-write-big .nm-lt-abox { min-height:16mm; }
+  .nm-lt-infant .nm-lt-abox, .nm-print-c0 .nm-lt-abox { min-height:19mm; }
   /* 줄이 낮은 쪽(첫 장 아래 줄 약 16mm)에서는 칸이 줄 높이를 넘지 않게 — 식 줄을 줄 높이만큼의 flex 로 두어
      칸 높이의 100% 가 줄 높이가 되게 한다. */
   .nm-w2-grid-big .nm-w2-item.nm-print-item > .nm-w2-big { display:flex; align-items:center; height:100%; gap:.28em; }
@@ -2386,6 +2394,8 @@ function printWatermarkHtml(){
 /* 중·고등 과정 학습지에 초등 단계의 창의 스레드가 실릴 때(C30·C31·C33·C34) 해요체 대신 합니다체.
    concept 에 koMid 가 있으면 그 문장을 쓴다. 급은 renderRoundPagesBody 가 회차 항목에서 정한다. */
 let W2_TIER = 'elem';
+/* 유아·1학년 과정(C0~C2, item.writeBig) 학습지를 그리는 중인가 — 쓰기 상자를 공책 칸 크기로(texDisplay, 2026-11-22) */
+let W2_YOUNG = false;
 let W2_C0 = null;
 function withC0(profile,render){const old=W2_C0;W2_C0=profile||null;try{return render();}finally{W2_C0=old;}}
 function pickConcept(c){ if(c && c.koMid && W2_TIER !== 'elem' && examLang() === 'ko') return c.koMid; return pickL(c); }
@@ -3259,6 +3269,8 @@ function schoolTierClass(threadId){ return ' nm-print-school-' + schoolTierOf(th
 function printAgeBand(config, problems){
   // Fractions keep mathematical typography even for a young accelerated learner.
   if((problems||[]).some(p=>/\\(?:[dt]?frac|sqrt)/.test(p.tex||'')))return 'senior';
+  /* 유아·1학년 과정(C0~C2)은 회차마다 글씨 밴드를 따로 고르지 않고 늘 큰 글씨(2026-11-22, 원장 「1학년도 같이 키워」) */
+  if(config && config.writeBig) return 'young';
   const g = config && config.grade;
   if(g){
     /* '1'~'12' 또는 '3A' 같은 학기 키 — 앞 숫자를 수로 읽는다('10'을 정규식 /^[12]/ 로 보면
@@ -4745,12 +4757,17 @@ const WRITE_BOX = '\\boxed{\\rule[-0.45em]{0pt}{1.5em}\\kern{0.4em}\\phantom{00}
 /* 따라 풀기 한 줄 칸(2026-11-21, 원장 「한 줄로 놓고 네모칸을 더 키워야 … 답 쓰는란이 너무 작은 것 같아」) —
    줄이 하나로 줄어든 만큼 칸을 키운다(높이 1.5em → 2em, 폭도 넓게). 한 줄 따라 풀기에서만 쓴다. */
 const WRITE_BOX_BIG = '\\boxed{\\rule[-0.7em]{0pt}{2em}\\kern{0.7em}\\phantom{00}\\kern{0.7em}}';
+/* 저학년 쓰기 칸(2026-11-22, 원장 「유아 단계에서는 한글 노트 정도의 글씨 크기 이상」 → 「고쳐 1학년도 같이 키워」) —
+   유아·1학년 과정(C0~C2, item.writeBig) 학습지의 □는 공책 칸만 하게: 높이 2.5em·폭 넓게 → 본문 글씨(19~24px)에서 16~20mm.
+   한 줄 따라 풀기의 큰 칸(WRITE_BOX_BIG)보다도 크므로 이 과정에서는 둘 다 이것을 쓴다.
+   다른 저학년(young) 학습지는 그대로 — 첫 장 줄 수 표(data/print-head.js)가 이 과정 유형만 큰 칸으로 잰다. */
+const WRITE_BOX_YOUNG = '\\boxed{\\rule[-0.85em]{0pt}{2.5em}\\kern{0.8em}\\phantom{00}\\kern{0.8em}}';
 /* 풀이 과정의 한 줄 식은 큰 네모가 글줄을 자르므로 같은 자리에 쓰기 밑줄을 둔다.
    분수 속 빈칸은 위치 구별이 중요해 기존 번호 상자를 유지한다. */
 const TRAIN_WRITE_LINE = '\\underline{\\phantom{0000}}';
 function trainTexDisplay(tex){
   const rendered = texDisplay(tex);
-  return /\\[dt]?frac/.test(String(tex)) ? rendered : rendered.split(WRITE_BOX).join(TRAIN_WRITE_LINE);
+  return /\\[dt]?frac/.test(String(tex)) ? rendered : rendered.split(WRITE_BOX_YOUNG).join(TRAIN_WRITE_LINE).split(WRITE_BOX).join(TRAIN_WRITE_LINE);
 }
 /* ── 분수 안의 빈칸 (2026-09-21, 원장 "단 분수인 경우 정확히 어디부터 쓰는지 가이드 선이
    있어야 돼 해당 박스를 표시하던지") ──
@@ -4798,7 +4815,7 @@ function texDisplay(tex, bigBox){
      이미 분명하고, 상자를 키우면 줄 높이만 늘어 인쇄 배치가 흔들린다. */
   const isFrac = hasNumberedBlanks({ tex: src }),innerBlank=fractionContainsBlank(src);
   let k = 0;
-  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : innerBlank ? WRITE_BOX_ROOM : bigBox === true ? WRITE_BOX_BIG : WRITE_BOX);
+  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : innerBlank ? WRITE_BOX_ROOM : W2_YOUNG ? WRITE_BOX_YOUNG : bigBox === true ? WRITE_BOX_BIG : WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
@@ -6413,6 +6430,10 @@ function preschoolNoteFigure(id,stage){
 }
 function renderMagicNotePage(item, opts){
   opts = opts || {};
+  const oldYoung = W2_YOUNG; W2_YOUNG = !!item.writeBig;
+  try{ return renderMagicNotePageBody(item, opts); } finally { W2_YOUNG = oldYoung; }
+}
+function renderMagicNotePageBody(item, opts){
   const u = (window.NM_UNITS || {})[item.magicUnit];
   if(!u || !u.discover) return null;
   const d = u.discover;
@@ -6900,7 +6921,8 @@ function ancientNumberIntroHtml(item,code,opts){
 function renderRoundPages(item, opts){
   opts=opts||{};
   const local=Object.assign({},opts,{exclude:new Set(opts.exclude||[])});
-  const result=withC0(item.c0,()=>withCompactHighPrint(item.compactHigh,()=>withPacingPrint(item.pacing,()=>renderRoundPagesBody(item,local))));
+  const oldYoung=W2_YOUNG;let result;
+  try{result=withC0(item.c0,()=>withCompactHighPrint(item.compactHigh,()=>withPacingPrint(item.pacing,()=>renderRoundPagesBody(item,local))));}finally{W2_YOUNG=oldYoung;}
   result.uniqueKeys=Array.from(local.exclude);
   if(opts.exclude) result.uniqueKeys.forEach(key=>opts.exclude.add(key));
   return result;
@@ -6932,6 +6954,7 @@ function renderRoundPagesBody(item, opts){
   /* 묶음 학습지는 장 전체의 밴드로 다시 짤 수 있게 opts.band 를 받는다(renderMixedSheetBody) */
   const band = opts.band || printAgeBand(item, problems);
   const young = band === 'young';
+  W2_YOUNG = !!item.writeBig;
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
   // 약수·배수 문장제는 맥락 두 줄과 풀이칸이 필요하다. 첫 쪽의 예시·따라 풀기 아래에는 두 문항만 둔다.
   if(item.thread==='WP11')Object.assign(layout,{cols:1,rows:4,perPage:4,firstRows:2,pitch:62});
@@ -6951,6 +6974,8 @@ function renderRoundPagesBody(item, opts){
   if(item.c0&&item.thread==='NS2')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
   // Six large answer slots and multi-row candle plates need the full writing width.
   if(item.c0&&problems.some(p=>(p.widget==='g13Order'||p.widget==='numberTrain')))Object.assign(layout,{cols:1,rows:3,perPage:3,firstRows:0,pitch:74});
+  // 유아 G1-10~12호(NL47~NL56)는 쓰는 칸이 19mm라(2026-11-22) 한 쪽 세 줄이면 칸을 넘친다 — 두 줄로
+  if(item.c0&&/^NL(4[7-9]|5[0-6])$/.test(item.thread)&&layout.type==='visual'&&layout.rows>2)Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:Math.min(layout.firstRows||0,1),pitch:100});
   if(item.c0&&problems.some(p=>p.widget==='gridSum'||p.widget==='splitDraw'&&p.skin==='cake'||p.widget==='numberBond'&&/무당벌레/.test(p.prompt?.ko||'')))Object.assign(layout,{cols:1,rows:2,perPage:2,firstRows:0,pitch:110});
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
@@ -7548,7 +7573,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
 
   if(opts.collectPictureBase)return new Set(rounds.flatMap(r=>[...(r.uniqueKeys||[]),...r.problems.map(problemKey)]));
   const sheet = document.createElement('div');
-  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]) + (editorialC4 ? ' nm-w2-course-c4' : '');
+  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]) + (editorialC4 ? ' nm-w2-course-c4' : '') + (items.some(it => it && it.writeBig) ? ' nm-print-write-big' : '');
   sheet.setAttribute('aria-hidden', 'true');
   sheet.setAttribute('lang', examLang());
   /* 문장제 회차가 빠졌다는 사실은 운영자에게만(2026-09-07) — 표지에 적지 않는다.
@@ -9516,14 +9541,14 @@ ${printWatermarkHtml()}
      "renderPrint는 같은 회차 렌더러를 쓰되 옵션이 바뀌지 않는다"). */
   renderPrint(config){
     const { thread, level, count, seed, wordType } = config;
-    const item = { thread, level, wordType, seed, topicName: config.topicName, grade: config.grade, noTeach:config.noTeach, creative:!!config.creative };
+    const item = { thread, level, wordType, seed, topicName: config.topicName, grade: config.grade, noTeach:config.noTeach, creative:!!config.creative, writeBig:!!config.writeBig };
     const round = renderRoundPages(item, { count });
 
     const old = document.querySelector('.nm-print-sheet');
     if(old) old.remove();
 
     const sheet = document.createElement('div');
-    sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(config, round.problems) + sheetOptClass() + schoolTierClass(config);
+    sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(config, round.problems) + sheetOptClass() + schoolTierClass(config) + (config.writeBig ? ' nm-print-write-big' : '');
     sheet.setAttribute('aria-hidden', 'true');
     /* 줄바꿈 규칙이 언어마다 다르다(인쇄 CSS의 [lang=] 절 참조) — 시트에 박아 둔다 */
     sheet.setAttribute('lang', examLang());
@@ -9666,6 +9691,8 @@ ${round.html}
     /* 학교 급(색)은 과정이 정한다 — 중등 과정의 복습 회차(초등 스레드)까지 같은 파란 띠(2026-09-18) */
     const schoolTier = SCHOOL_TIER_OF_COURSE[course.tier] || 'elem';
     items.forEach(it => { if(!it.schoolTier) it.schoolTier = schoolTier; });
+    /* 유아·1학년 과정(C0~C2)은 글씨 밴드가 mid 로 잡힌 회차도 쓰는 칸을 공책 칸만 하게(2026-11-22, 원장 「1학년도 같이 키워」) */
+    if(/^C[012]$/.test(c)) items.forEach(it => { it.writeBig = true; });
     return { wsId, session, items, cover, units, k, cad, title, courseSessions: course.sessions.filter(x => !x.test).length };
   },
 
