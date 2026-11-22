@@ -8,6 +8,7 @@ import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators
 import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261122e";
 import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261122f";
 import { COURSE2_A4_TYPE_ROWS, COURSE2_A4_GUIDES } from "./course2-a4-generators.js?v=20261122g";
+import { COURSE2_A5_TYPE_ROWS, COURSE2_A5_GUIDES } from "./course2-a5-generators.js?v=20261122h";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1136,6 +1137,7 @@ TYPES.push(...COURSE2_A1_TYPE_ROWS.map(([id, domain, middle, label, generator]) 
 TYPES.push(...COURSE2_A2_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A2 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_A3_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A3 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_A4_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A4 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A5_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A5 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -1976,7 +1978,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   ...COURSE2_A1_GUIDES,
   ...COURSE2_A2_GUIDES,
   ...COURSE2_A3_GUIDES,
-  ...COURSE2_A4_GUIDES
+  ...COURSE2_A4_GUIDES,
+  ...COURSE2_A5_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4801,6 +4804,44 @@ const C2_A4_UNITS = [
     ["practice", 1, [18, 21, 22, 23, 24, 25, 26, 27, 28], "c2-assume-solve"], ["practice", 1, [20], "c2-congruent-rect-perimeter"]
   ])
 ];
+// 2과정 A5 — 교재 번호마다 유형. 벤 그림·분수 거꾸로 풀기·간격은 1과정 7·8권 유형, 앞 권(A1~A4) 생성기, 나머지는 course2-a5-generators.js
+const C2_A5_UNITS = [
+  c2Unit("소인수분해", [8, 3, 5], [4, 3, 6], 6, 24, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6, 7, 8], "c2-divisibility-digits"], ["check", 1, [1, 2, 3, 4], "c2-divisibility-digits"],
+    ["activity", 2, [1, 2, 3], "c2-square-multiplier"], ["check", 2, [1], "c2-square-multiplier"], ["check", 2, [2, 3], "c2-consecutive-product"],
+    ["activity", 3, [1, 2, 3, 5], "c2-power-ten-zeros"], ["activity", 3, [4], "c2-factorial-zeros"], ["check", 3, [1, 2, 3, 4, 5, 6], "c2-factorial-zeros"],
+    ["advanced", 1, [1], "c2-factorial-zeros"], ["advanced", 1, [2, 3, 6], "c2-divisibility-digits"], ["advanced", 1, [4], "c2-square-multiplier"], ["advanced", 1, [5], "c2-consecutive-product"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "c2-divisibility-digits"], ["practice", 1, [12, 13, 17], "c2-square-multiplier"], ["practice", 1, [14, 15, 16], "c2-consecutive-product"],
+    ["practice", 1, [18], "c2-power-ten-zeros"], ["practice", 1, [19, 20, 21, 22, 23, 24], "c2-factorial-zeros"]
+  ]),
+  c2Unit("크기가 같은 분수", [7, 5, 2], [5, 4, 3], 5, 27, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6, 7], "c2-equivalent-condition"], ["check", 1, [1, 2, 3, 4, 5], "c2-equivalent-condition"],
+    ["activity", 2, [1, 2, 3, 4, 5], "c2-partial-fraction-sum"], ["check", 2, [1, 2, 3, 4], "c2-partial-fraction-sum"],
+    ["activity", 3, [1], "c2-repeating-decimal"], ["activity", 3, [2], "c2-improper-fraction"], ["check", 3, [1, 2, 3], "number-line-midpoint-book6"],
+    ["advanced", 1, [1, 2], "c2-equivalent-condition"], ["advanced", 1, [3, 4, 5], "c2-partial-fraction-sum"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "c2-equivalent-condition"], ["practice", 1, [12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "c2-partial-fraction-sum"],
+    ["practice", 1, [22], "c2-repeating-decimal"], ["practice", 1, [23, 24, 25, 26, 27], "number-line-midpoint-book6"]
+  ]),
+  c2Unit("포함과 배제", [6, 7, 6], [3, 4, 2], 5, 28, [
+    ["activity", 1, [1, 5, 6], "venn-union-total-b7"], ["activity", 1, [2], "venn-overlap-all-b7"], ["activity", 1, [3], "venn-neither-b7"], ["activity", 1, [4], "venn-overlap-with-neither-b7"],
+    ["check", 1, [1, 2, 3], "venn-overlap-with-neither-b7"],
+    ["activity", 2, [1, 2, 3, 4, 6], "sequential-fraction-remains-b8"], ["activity", 2, [5, 7], "sequential-fraction-consumption-b8"], ["check", 2, [1, 2, 3, 4], "c2-bounce-height"],
+    ["activity", 3, [1], "fraction-given-away-original-b8"], ["activity", 3, [2, 3, 4, 5, 6], "sequential-fraction-remains-b8"], ["check", 3, [1, 2], "c2-bounce-height"],
+    ["advanced", 1, [1, 2], "c2-bounce-height"], ["advanced", 1, [3], "sequential-fraction-consumption-b8"], ["advanced", 1, [4], "venn-union-total-b7"], ["advanced", 1, [5], "neither-set-count"],
+    ["practice", 1, [1, 4], "venn-union-total-b7"], ["practice", 1, [2, 3], "venn-overlap-all-b7"], ["practice", 1, [5, 6], "venn-neither-b7"], ["practice", 1, [7, 8, 9], "venn-overlap-with-neither-b7"],
+    ["practice", 1, [10, 16], "sequential-fraction-consumption-b8"], ["practice", 1, [11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25], "sequential-fraction-remains-b8"], ["practice", 1, [17, 18, 19, 26, 27, 28], "c2-bounce-height"]
+  ]),
+  c2Unit("변하지 않는 것 찾기", [6, 6, 8], [4, 4, 4], 7, 28, [
+    ["activity", 1, [1, 2, 5, 6], "equivalent-ratio-chain"], ["activity", 1, [3, 4], "bar-ratio-total-length"],
+    ["check", 1, [1], "closed-perimeter-object-count-b7"], ["check", 1, [2, 4], "c2-fraction-ratio-split"], ["check", 1, [3], "sequential-fraction-remains-b8"],
+    ["activity", 2, [1, 3], "c2-unit-fraction"], ["activity", 2, [2], "c2-equivalent-condition"], ["activity", 2, [4], "c2-ratio-difference"], ["activity", 2, [5, 6], "fraction-share-difference-b8"],
+    ["check", 2, [1, 2, 3, 4], "c2-pond-depth"],
+    ["activity", 3, [1, 2, 3, 4, 5, 6, 7, 8], "c2-invariant-ratio"], ["check", 3, [1, 2, 3, 4], "c2-invariant-ratio"],
+    ["advanced", 1, [1, 2, 4, 5, 6, 7], "c2-invariant-ratio"], ["advanced", 1, [3], "c2-pond-depth"],
+    ["practice", 1, [1, 2, 3, 4, 5, 8, 9], "equivalent-ratio-chain"], ["practice", 1, [6], "closed-perimeter-object-count-b7"], ["practice", 1, [7], "c2-ratio-difference"],
+    ["practice", 1, [10, 11, 12, 13], "c2-pond-depth"], ["practice", 1, [14, 15, 16], "fraction-share-difference-b8"], ["practice", 1, [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28], "c2-invariant-ratio"]
+  ])
+];
 // 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
 export const COURSE2_CURRICULUM = [
   { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
@@ -4820,7 +4861,9 @@ export const COURSE2_CURRICULUM = [
   { id: "course-02-a3", course: 2, label: "A3", title: "규칙성과 수열", units: C2_A3_UNITS,
     source: { textbook: "2과정 A3 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a3", goldenBellIncluded: false } },
   { id: "course-02-a4", course: 2, label: "A4", title: "마방진, 복면산과 비", units: C2_A4_UNITS,
-    source: { textbook: "2과정 A4 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a4", goldenBellIncluded: false } }
+    source: { textbook: "2과정 A4 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a4", goldenBellIncluded: false } },
+  { id: "course-02-a5", course: 2, label: "A5", title: "소인수분해와 비", units: C2_A5_UNITS,
+    source: { textbook: "2과정 A5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a5", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 // 진도표·「계획대로 가는지」가 잇는 권 차례 — 1과정 10권 뒤에 2과정을 기하·대수 번갈아 G1 → A1 → G2 → … → A5

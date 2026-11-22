@@ -5,7 +5,7 @@
 import { mathText } from "./math-markup.js?v=20261027p";
 // 꾸러미 글의 「3/5」·「2^3」을 수식으로 바꾼다(빗금 분수를 화면에 쓰지 않는다 — math-markup.js)
 const M = (html) => mathText(String(html ?? ""));
-const TAGS = { g1: "20261121g", g2: "20261121h", g3: "20261121i", g4: "20261122a", g5: "20261122b", a1: "20261122d", a2: "20261122e", a3: "20261122f", a4: "20261122g" };
+const TAGS = { g1: "20261121g", g2: "20261121h", g3: "20261121i", g4: "20261122a", g5: "20261122b", a1: "20261122d", a2: "20261122e", a3: "20261122f", a4: "20261122g", a5: "20261122h" };
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const norm = (s) => String(s ?? "").replace(/\s+/g, "").replace(/[°도]$/u, "").replace(/,/g, "").toLowerCase();
 

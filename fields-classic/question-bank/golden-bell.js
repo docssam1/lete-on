@@ -1774,7 +1774,7 @@ async function printSessionBook() {
     const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve(none);
     // 맨 뒤 정답(원장 2026-11-17 「뒤에 답안도 인쇄 되어야지」): 워밍업 정답(비공개 답안 서버, 「모두에게 열기」) + 데일리·본책·과제·평가 정답
     // 2과정 개념 꾸러미(&packs=권~단원~차시): 데일리 다음 「개념 정리」 쪽(course2-pack-print.js)
-    const packPages = params.get("packs") ? import("./course2-pack-print.js?v=20261122g").then((mod) => mod.packPrintPages(params.get("packs"), { book, session, student })).catch(() => none) : Promise.resolve(none);
+    const packPages = params.get("packs") ? import("./course2-pack-print.js?v=20261122h").then((mod) => mod.packPrintPages(params.get("packs"), { book, session, student })).catch(() => none) : Promise.resolve(none);
     const [daily, sheet, warmAnswers, concept] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet")),
       lessons.length ? ensureProtectedBook(book.id).catch(() => false) : Promise.resolve(false), packPages]);
     const warmAnswerPages = warmAnswers ? lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: true })).join("") : "";

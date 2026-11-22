@@ -72,6 +72,11 @@ export const DRILL_RECIPES = Object.freeze({
   "course-02-a4/crypt": ["two-digit-letter-cryptarithm", "cryptarithm-multi-symbol-carry"],
   "course-02-a4/gcdlcm": ["c2-gcd-word", "c2-lcm-word", "c2-ratio-gcd-lcm"],
   "course-02-a4/assume": ["c2-assume-solve", "c2-ratio-difference"],
+  // 2과정 A5 — 소인수분해·크기가 같은 분수·포함과 배제·변하지 않는 것
+  "course-02-a5/factor": ["c2-divisibility-digits", "c2-square-multiplier", "c2-factorial-zeros"],
+  "course-02-a5/fraction": ["c2-equivalent-condition", "c2-partial-fraction-sum"],
+  "course-02-a5/venn": ["venn-union-total-b7", "c2-bounce-height"],
+  "course-02-a5/invariant": ["c2-invariant-ratio", "c2-pond-depth"],
   "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
   "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
   "book-04/cube-min-count": ["cube-count-solid", "cube-minimum-from-solid"],
