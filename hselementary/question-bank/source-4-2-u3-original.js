@@ -23,7 +23,7 @@ function e11(p){const a1=p.kg*1000+p.g,a2=p.km*1000+p.m,a3=p.h*1000+p.mi*1000/60
  solution:ol([`(1) 1 g = 0.001 kg이므로 ${p.g} g = ${fd(p.g)} kg입니다. 따라서 ${p.kg} kg ${p.g} g = ${p.kg} + ${fd(p.g)} = ${fd(a1)} (kg)입니다.`,
   `(2) 1 m = 0.001 km이므로 ${p.m} m = ${fd(p.m)} km입니다. 따라서 ${p.km} km ${p.m} m = ${p.km} + ${fd(p.m)} = ${fd(a2)} (km)입니다.`,
   `(3) 1시간 = 60분을 똑같이 4로 나눈 하나는 15분이고, 1을 똑같이 4로 나눈 하나는 0.25이므로 15분 = 0.25시간입니다.`,
-  (q>1?`${p.mi}분은 15분의 ${q}배이므로 ${fd(q*250)}시간이고, `:'')+`${p.h}시간 ${p.mi}분 = ${p.h} + ${fd(q*250)} = ${fd(a3)} (시간)입니다.`])};}
+  (q>1?`${p.mi}분은 15분을 ${q}번 더한 시간이므로 ${fd(q*250)}시간이고, `:'')+`${p.h}시간 ${p.mi}분 = ${p.h} + ${fd(q*250)} = ${fd(a3)} (시간)입니다.`])};}
 
 // 예제 1-2: 두 소수 사이를 등분한 눈금
 function e12(p){const s=(p.b-p.a)/p.n,A=fd(p.a),B=fd(p.b);
@@ -56,7 +56,7 @@ function e13(p){const s=p.u*p.sideT;
 function e14(p){const b=p.L-p.R;let u=p.t,w=b;const st=[`${p.t}분 동안 탄 길이는 ${fd(p.L)} − ${fd(p.R)} = ${fd(b)} (cm)입니다.`];
  if(p.L%b!==0){u=p.t/2;w=b/2;st.push(`${p.t}분 동안 ${fd(b)} cm가 타므로 그 절반인 ${u}분 동안에는 ${fd(w)} cm씩 탑니다.`);}
  const k=p.L/w,T=u*k;
- st.push(`${fd(w)}${eul(fd(w))} ${k}번 더하면 ${fd(p.L)}이므로, 양초가 모두 타는 데는 ${u}분의 ${k}배인 ${T}분이 걸립니다.`);
+ st.push(`${fd(w)}${eul(fd(w))} ${k}번 더하면 ${fd(p.L)}이므로, 양초가 모두 타는 데는 ${u}분씩 ${k}번인 ${T}분이 걸립니다.`);
  st.push(`${T}분 = ${hm(T)}입니다.`);
  return {prompt:`<p>길이가 ${fd(p.L)} cm인 양초에 불을 붙이고 ${p.t}분 뒤에 양초의 길이를 재었더니 ${fd(p.R)} cm가 되었습니다. 이 양초 하나가 모두 타는 데 몇 시간 몇 분이 걸릴까요?</p><p>※ 조건 보충: 양초는 처음부터 끝까지 같은 빠르기로 탑니다.</p>`,
  answer:hm(T),solution:ol(st)};}
