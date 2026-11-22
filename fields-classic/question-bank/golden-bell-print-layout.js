@@ -167,6 +167,12 @@ function packExercisePages(pages) {
     if (needsFullWidth(question)) question.classList.add("full-width-exercise");
     enlargeVisual(question);
     const lastInSection = !queue.length || queue[0].classList.contains("tb-section-start");
+    // 그림이 든 「따라 풀기」가 이 쪽에 안 들어가면 그림을 빼고 「풀이」 칸으로 이 쪽에 남긴다(다음 쪽으로 넘기면 앞 쪽 아래가 빈다)
+    if (!contentFits(sheet) && grid.children.length > 1 && question.classList.contains("tb-nc-followitem") && question.querySelector(".tb-nc-follow-eqs.is-figure")) {
+      question.querySelector(".tb-nc-follow-eqs.is-figure").remove();
+      question.classList.add("tb-nc-blank");
+      question.querySelector(".tb-nc-follow-cap").textContent = "풀이";
+    }
     if (!contentFits(sheet) && grid.children.length > 1 && !zoomToStay(question, sheet, { last: lastInSection })) {
       question.remove();
       // 개념 정리의 빈 「풀이」 자리는 다음 쪽으로 넘기지 않고 뺀다(예제와 떨어진 빈 칸만 남으므로)

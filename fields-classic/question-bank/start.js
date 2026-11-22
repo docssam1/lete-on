@@ -2,8 +2,8 @@ import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM } from "./source-data.j
 import { lessonsByUnit, unitParts, partProblems, loadGoldenBell } from "./study-map.js?v=20261122w";
 import { readRecord, weekRate, loggedIn, checkSession, loadLocalAll, loadRecords } from "./study-progress.js?v=20261117a";
 import { canStudy, isPaid, lockCard, accessBanner, wireAccess, canTeach, lockPage } from "./fields-access.js?v=20261118a";
-import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261122w";
-import { course2ConceptSlides } from "./course2-deck.js?v=20261122w";
+import { sessionLessons, sessionPrintHref } from "./study-deck.js?v=20261122ze";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261122ze";
 import { playIntro, bindPress } from "./study-motion.js?v=20261105a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).

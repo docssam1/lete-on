@@ -1,6 +1,6 @@
 // 2과정 G5 「도형의 넓이와 비」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
-import { svg, text, line, poly, rect, dot, at, P, angleMark, dirOf, tick, regular, INK, GREEN, SOFT, MARK, YELLOW } from "./pack-kit.js?v=20261122w";
+import { svg, text, line, poly, rect, dot, at, P, angleMark, dirOf, tick, regular, INK, GREEN, SOFT, MARK, YELLOW } from "./pack-kit.js?v=20261122ze";
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const nm = (p, t, dx = 0, dy = 0) => text(p.x + dx, p.y + dy, t, { size: 14, weight: 700 });

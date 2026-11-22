@@ -2,14 +2,14 @@
 // 개념 꾸러미마다 정리 카드(그림 · 용어 · 성질 · 조심할 것) 한 칸 + 예제 빈칸 풀이 한 칸. 예제 답은 맨 뒤 정답 쪽에 싣는다.
 // 쪽 꼴은 차시 교재의 다른 쪽(session-book-sheet.js)과 같다 — tb-session-page 안 gold-print-source-item 칸이라 쪽 채우기(compactGoldenBellPrint)가 그대로 흘린다.
 import { mathText } from "./math-markup.js?v=20261122w";
-import { packsFor } from "./course2-concepts/packs.js?v=20261122w";
+import { packsFor } from "./course2-concepts/packs.js?v=20261122ze";
 const M = (html) => mathText(String(html ?? ""));
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const strip = (html) => String(html ?? "").replace(/<[^>]+>/g, "");
 const fig = (f) => f ? `<div class="gold-print-visual tb-pack-fig">${typeof f === "function" ? f() : f}</div>` : "";
 
 // 개념 정리 새 꼴(원장 2026-11-22 「이런 식의 교재 디자인 구성」 → 시범 → 「왼쪽 한 칸 더 연습 · 표 안에 식이 잘 나와야지 식이 한 개씩밖에 안 나와 · 너무 구식이야」):
-// 주소 &packlook=board일 때만. 스킬 gfield-textbook-design 4절 교재형 — 옅은 초록 개념 상자(왼쪽 굵은 띠) → 식 띠(식 한 줄을 통째로) → 연습 두 칸(한 번 풀기 | 단계 칸 예제).
+// 2과정 개념 정리의 기본 꼴(원장 2026-11-22 시범 확인, 예전 꼴은 주소 &packlook=classic). 스킬 gfield-textbook-design 4절 교재형 — 옅은 초록 개념 상자(왼쪽 굵은 띠) → 식 띠(식 한 줄을 통째로) → 연습 두 칸(한 번 풀기 | 단계 칸 예제).
 // 얇은 선·여백만, 큰 카드·칠판 틀·그라데이션 없음. 색은 인쇄 규칙(종이 · 깊은 초록 · 감색 점 강조).
 const CIRCLED = ["①", "②", "③", "④", "⑤", "⑥"];
 // 예제 아래 「따라 풀기」: 옅은 색 칸 — 따라 쓸 식 + 풀이 자리(쪽에 남는 자리만큼 늘린다, golden-bell-print-layout.js growFollow)
@@ -58,7 +58,8 @@ function boardItems(pack, k, answers) {
         <ol class="tb-nc-steps">${e.steps.map((step, i) => `<li><i class="tb-nc-no">${i + 1}</i><span class="tb-nc-q">${M(step.ask)}</span><span class="tb-nc-ans"></span>${step.unit ? `<span class="tb-nc-unit">${esc(step.unit)}</span>` : ""}</li>`).join("")}</ol></div>
     </div></section>`;
   // 정리 그림과 같은 그림(막대·그림)은 다시 그리지 않고 풀이 자리만
-  const drawn = (f) => (typeof f === "function" ? f() : String(f || ""));
+  // 그림마다 붙는 id(pk…)는 빼고 견준다 — 같은 그림 함수도 부를 때마다 id가 달라진다
+  const drawn = (f) => (typeof f === "function" ? f() : String(f || "")).replace(/\bpk[0-9a-z]+/g, "pk");
   // 따라 쓸 식·그림이 없으면 「풀이」 자리만(.tb-nc-blank) — 같은 쪽에 안 들어가면 빼서 빈 칸만 다음 쪽에 혼자 남지 않게(golden-bell-print-layout.js)
   const follow = !e.figure || (!equationLines(e.figure) && drawn(e.figure) === drawn(s.figure)) ? followBox(null) : followBox(e.figure);
   return concept + practice + follow;
@@ -71,7 +72,7 @@ export function packPrintPages(spec, { book, session, student = "", look = "" })
   const wm = `${esc(student)} · GFIELD`;
   const answers = [];
   const items = packs.map((pack, k) => {
-    if (look === "board") return boardItems(pack, k, answers);
+    if (look !== "classic") return boardItems(pack, k, answers);
     const s = pack.summary, e = pack.example;
     const summary = `<section class="gold-print-source-item full-width-exercise tb-item tb-pack-summary"><h2><span>개념 ${k + 1}</span>${esc(pack.title)}</h2>
       <div class="tb-pack-row">${fig(s.figure)}<div class="tb-pack-text">

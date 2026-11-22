@@ -1,17 +1,59 @@
 // 2과정 A5 「소인수분해와 비」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 분수·거듭제곱은 「3/5」「2^3」으로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, YELLOW, formulas, mathLabel } from "./pack-kit.js?v=20261122w";
+import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, YELLOW, formulas, mathLabel, SHADOW } from "./pack-kit.js?v=20261122ze";
 
 const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
-const figTree = () => svg(300, 150, text(150, 20, "72", { size: 18, weight: 700 }) + line(P(140, 30), P(110, 56)) + line(P(160, 30), P(190, 56))
-  + text(104, 66, "8", { size: 17 }) + text(196, 66, "9", { size: 17 }) + line(P(98, 76), P(80, 100)) + line(P(110, 76), P(126, 100)) + line(P(190, 76), P(176, 100)) + line(P(202, 76), P(218, 100))
-  + text(76, 110, "2 × 2", { size: 15 }) + text(130, 110, "2", { size: 15 }) + text(174, 110, "3", { size: 15 }) + text(222, 110, "3", { size: 15 }) + label(150, 138, "72 = 2^3 × 3^2"), "소인수분해 나무");
-const figVenn = () => svg(320, 150, rect(10, 10, 300, 130, { fill: "#fff" }) + circle(P(120, 75), 52, { fill: "rgba(230,239,232,.8)" }) + circle(P(195, 75), 52, { fill: "rgba(255,241,191,.7)" })
-  + text(95, 75, "11", { size: 16 }) + text(158, 75, "7", { size: 16, weight: 700 }) + text(222, 75, "8", { size: 16 }) + label(285, 128, "4", { anchor: "end" }) + label(80, 20, "축구 18") + label(240, 20, "야구 15"), "두 원이 겹친 그림");
-const figBounce = () => svg(320, 150, line(P(10, 130), P(310, 130), { color: "#9aa39e" }) + [81, 54, 36, 24].map((h, i) => rect(30 + i * 70, 130 - h * 1.3, 26, h * 1.3, { fill: i ? YELLOW : SOFT, width: 1.2 }) + text(43 + i * 70, 122 - h * 1.3, `${h}`, { size: 13 })).join(""), "튀어 오른 높이");
-const figPond = () => svg(300, 170, rect(20, 70, 260, 90, { fill: "#cfe3f3", color: "#7fa7c9", width: 1.2 }) + rect(90, 20, 14, 140, { fill: YELLOW, width: 1.2 }) + rect(190, 0, 14, 160, { fill: YELLOW, width: 1.2 }) + text(150, 112, "깊이 ?", { size: 15 }), "연못과 두 막대");
+// ── 그림(원장 2026-11-22 「SVG로 그림질 높여」 — 장면 그림은 손으로 다시) ──
+// 소인수분해 나무: 둥근 마디 + 가지, 다 쪼갠 소수는 초록 원
+const node = (x, y, v, prime = false) => (prime
+  ? circle(P(x, y), 15, { fill: SOFT, color: GREEN, width: 1.6 }) + text(x, y + 0.5, v, { size: 15, weight: 700, color: GREEN })
+  : rect(x - 19, y - 14, 38, 28, { fill: YELLOW, color: "#b89a4a", width: 1.4, rx: 14, shadow: true }) + text(x, y + 0.5, v, { size: 16, weight: 700 }));
+const twig = (a, b) => line(a, b, { color: "#9aa8a0", width: 1.6 });
+const figTree = () => svg(300, 176,
+  twig(P(150, 30), P(104, 70)) + twig(P(150, 30), P(196, 70)) + twig(P(104, 70), P(78, 112)) + twig(P(104, 70), P(130, 112)) + twig(P(196, 70), P(172, 112)) + twig(P(196, 70), P(222, 112))
+  + twig(P(78, 112), P(60, 148)) + twig(P(78, 112), P(96, 148))
+  + node(150, 26, "72") + node(104, 70, "8") + node(196, 70, "9") + node(78, 112, "4") + node(130, 112, "2", true) + node(172, 112, "3", true) + node(222, 112, "3", true)
+  + node(60, 150, "2", true) + node(96, 150, "2", true) + label(236, 156, "72 = 2^3 × 3^2", { size: 13, color: GREEN, weight: 700 }), "소인수분해 나무");
+// 두 원이 겹친 그림: 둥근 전체 판 + 반투명 두 원(겹친 곳이 진해짐)
+const figVenn = () => svg(320, 160,
+  rect(8, 8, 304, 144, { fill: "#f4f1e8", color: "#cfc6b0", width: 1.4, rx: 10 }) + label(26, 24, "전체 반", { anchor: "start", size: 11 })
+  + `<circle cx="122" cy="84" r="54" fill="#cfe5d5" fill-opacity=".75" stroke="${GREEN}" stroke-width="1.6"/>`
+  + `<circle cx="198" cy="84" r="54" fill="#fde3a0" fill-opacity=".7" stroke="#b89a4a" stroke-width="1.6"/>`
+  + text(96, 86, "11", { size: 17 }) + text(160, 86, "7", { size: 18, weight: 700, color: "#7a5a12" }) + text(226, 86, "8", { size: 17 })
+  + label(104, 22, "축구 18", { color: GREEN, weight: 700 }) + label(216, 22, "야구 15", { color: "#8a6a1e", weight: 700 })
+  + label(290, 136, "둘 다 안 함 4", { anchor: "end", size: 11 }), "두 원이 겹친 그림");
+// 튀어 오르는 공: 바닥 + 공이 지나간 길(점선 포물선, 높이가 2/3씩 줄어듦) + 높이 표시
+const figBounce = () => {
+  const ground = 132, k = 1.2, L = [40, 124, 194, 252, 298], hs = [81, 54, 36, 24, 16];
+  let body = rect(8, ground, 304, 9, { fill: "#e8e2d2", color: "none", width: 0, rx: 2 }) + line(P(8, ground), P(312, ground), { color: "#9a8f74", width: 1.4 });
+  const arc = (x0, x1, h) => `<path d="M ${x0} ${ground} Q ${(x0 + x1) / 2} ${ground - h * k * 2} ${x1} ${ground}" fill="none" stroke="#9aa8a0" stroke-width="1.4" stroke-dasharray="3 3"/>`;
+  body += line(P(L[0], ground - hs[0] * k), P(L[0], ground), { color: "#9aa8a0", width: 1.4, dash: "3 3" });
+  for (let i = 0; i < 4; i += 1) body += arc(L[i], L[i + 1], hs[i + 1]);
+  const tops = [[L[0], hs[0]], ...[1, 2, 3].map((i) => [(L[i - 1] + L[i]) / 2, hs[i]])];
+  tops.forEach(([x, h], i) => {
+    const y = ground - h * k;
+    body += line(P(x, y), P(x, ground), { color: i ? "#d8c58a" : "#8fb39c", width: 1.1 })
+      + `<circle cx="${x}" cy="${y}" r="6.5" fill="${i ? "#f4b860" : "#e58a5a"}" stroke="#8a4a2a" stroke-width="1.1" ${SHADOW}/>`
+      + text(x, y - 15, `${h}`, { size: 13, weight: 700, color: i ? "#7a5a12" : GREEN });
+  });
+  return svg(320, 156, `<g transform="translate(0,6)">${body}</g>` + label(250, 26, "튈 때마다 × 2/3", { size: 11 }), "튀어 오른 높이");
+};
+// 연못과 두 막대: 물(위가 밝은 그라데이션)·물결·바닥, 막대의 잠긴 부분은 물빛, 깊이 화살표
+const figPond = () => {
+  const top = 66, bottom = 150;
+  const stick = (x, y0, name, frac) => rect(x, y0, 14, bottom - y0, { fill: "#d9b37c", color: "#8a6a3b", width: 1.3, rx: 2, shadow: true })
+    + `<rect x="${x}" y="${top}" width="14" height="${bottom - top}" fill="#5f8fb8" fill-opacity=".28"/>`
+    + label(x + 7, y0 - 12, name, { size: 11 }) + label(x + 30, (top + bottom) / 2, frac, { size: 12, color: "#2f5f8a", anchor: "start", weight: 700 });
+  let body = rect(16, top, 268, bottom - top, { fill: "#cfe3f3", color: "none", width: 0, rx: 3 })
+    + `<path d="M 16 ${top} q 11 -5 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 24 0" fill="none" stroke="#7fa7c9" stroke-width="1.6"/>`
+    + rect(10, bottom, 280, 10, { fill: "#e8e2d2", color: "#9a8f74", width: 1.2, rx: 2 });
+  body += stick(112, 26, "짧은 막대", "1/3 잠김") + stick(212, 6, "긴 막대", "1/5 잠김");
+  body += line(P(34, top + 4), P(34, bottom - 4), { color: "#2f5f8a", width: 1.4 }) + `<path d="M 30 ${top + 10} L 34 ${top + 3} L 38 ${top + 10} M 30 ${bottom - 10} L 34 ${bottom - 3} L 38 ${bottom - 10}" fill="none" stroke="#2f5f8a" stroke-width="1.4"/>`
+    + text(44, (top + bottom) / 2, "깊이 ?", { size: 13, weight: 700, color: "#2f5f8a", anchor: "start" });
+  return svg(300, 188, `<g transform="translate(0,20)">${body}</g>`, "연못과 두 막대");
+};
 
 export const PACKS = {
   "0/1": [{

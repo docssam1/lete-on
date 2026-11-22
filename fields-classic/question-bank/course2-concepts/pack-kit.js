@@ -5,15 +5,45 @@ const R = Math.PI / 180;
 export const f1 = (v) => Math.round(v * 10) / 10;
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 export const P = (x, y) => ({ x, y });
-export const svg = (w, h, body, label = "그림") => `<svg viewBox="0 0 ${w} ${h}" width="${w}" role="img" aria-label="${esc(label)}" font-family="'FC Sans','Pretendard',sans-serif">${body}</svg>`;
+// 그림 다듬기(원장 2026-11-22 「SVG로 그림질 높여 · 촌스럽잖아」): 칠한 면은 위가 밝은 옅은 그라데이션, 선은 조금 가늘고 부드러운 잉크.
+// 그림마다 따로 id를 붙여(한 쪽에 그림이 여럿이어도 서로 안 섞임) defs를 넣는다. 도형 함수는 평소대로 색 이름을 넘기면 된다.
+const TONES = {
+  "#fff1bf": ["#fff8de", "#fde9a8"], // 노랑
+  "#e6efe8": ["#f1f7f2", "#d9e8dc"], // 옅은 초록
+  "#f9c8c4": ["#fcdcd8", "#f3b2ad"], // 분홍
+  "#cfe3f3": ["#e3f0fa", "#b7d4ec"], // 물
+  "#e8e2d2": ["#f3efe4", "#ddd4bf"], // 쓴 몫
+  "#f4f1e8": ["#faf8f2", "#ece6d6"], // 종이
+  "#d9b37c": ["#e8c999", "#c99b5c"], // 나무
+  "#fff": ["#ffffff", "#f4f6f3"], "#ffffff": ["#ffffff", "#f4f6f3"],
+};
+let svgSerial = 0;
+export function polish(body) {
+  const id = `pk${(svgSerial += 1).toString(36)}`;
+  const used = new Map();
+  let out = body.replace(/fill="(#[0-9a-fA-F]{3,6})"/g, (m, c) => {
+    const tone = TONES[c.toLowerCase()];
+    if (!tone) return m;
+    const key = c.toLowerCase();
+    if (!used.has(key)) used.set(key, `${id}g${used.size}`);
+    return `fill="url(#${used.get(key)})"`;
+  });
+  out = out.replace(/stroke="#24302b" stroke-width="2\.2"/g, 'stroke="#2b3a33" stroke-width="1.9"');
+  const grads = [...used].map(([c, gid]) => `<linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${TONES[c][0]}"/><stop offset="1" stop-color="${TONES[c][1]}"/></linearGradient>`).join("");
+  const shadow = `<filter id="${id}s" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.1" flood-color="#1e4631" flood-opacity=".16"/></filter>`;
+  return { id, body: `<defs>${grads}${shadow}</defs>${out.replaceAll("url(#SHADOW)", `url(#${id}s)`)}` };
+}
+// 그림자를 줄 요소에는 filter="url(#SHADOW)"를 붙인다(svg()가 그 그림의 그림자 id로 바꾼다)
+export const SHADOW = 'filter="url(#SHADOW)"';
+export const svg = (w, h, body, label = "그림") => `<svg viewBox="0 0 ${w} ${h}" width="${w}" role="img" aria-label="${esc(label)}" font-family="'FC Sans','Pretendard',sans-serif" style="overflow:visible">${polish(body).body}</svg>`;
 export const text = (x, y, value, { size = 16, anchor = "middle", color = INK, weight = 600 } = {}) =>
   `<text x="${f1(x)}" y="${f1(y)}" font-size="${size}" text-anchor="${anchor}" dominant-baseline="central" fill="${color}" font-weight="${weight}">${esc(value)}</text>`;
 export const line = (a, b, { color = INK, width = 2.2, dash = "" } = {}) =>
   `<line x1="${f1(a.x)}" y1="${f1(a.y)}" x2="${f1(b.x)}" y2="${f1(b.y)}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
 export const poly = (points, { fill = "none", color = INK, width = 2.2, dash = "" } = {}) =>
   `<polygon points="${points.map((p) => `${f1(p.x)},${f1(p.y)}`).join(" ")}" fill="${fill}" stroke="${color}" stroke-width="${width}" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
-export const rect = (x, y, w, h, { fill = "none", color = INK, width = 2.2, dash = "" } = {}) =>
-  `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" fill="${fill}" stroke="${color}" stroke-width="${width}"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
+export const rect = (x, y, w, h, { fill = "none", color = INK, width = 2.2, dash = "", rx = 0, shadow = false } = {}) =>
+  `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}"${rx ? ` rx="${rx}"` : ""} fill="${fill}" stroke="${color}" stroke-width="${width}" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ""}${shadow ? ` ${SHADOW}` : ""}/>`;
 export const circle = (c, r, { fill = "none", color = INK, width = 2.2, dash = "" } = {}) =>
   `<circle cx="${f1(c.x)}" cy="${f1(c.y)}" r="${f1(r)}" fill="${fill}" stroke="${color}" stroke-width="${width}"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
 export const dot = (p, r = 3.6, color = INK) => `<circle cx="${f1(p.x)}" cy="${f1(p.y)}" r="${r}" fill="${color}"/>`;
