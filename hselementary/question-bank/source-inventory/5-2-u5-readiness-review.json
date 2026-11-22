@@ -271,8 +271,8 @@
     "unclassifiedItems": 0,
     "calculationCheckedCount": 30,
     "visualOrConstructionLockedCount": 16,
-    "publicCandidateCount": 28,
-    "lockedCount": 16
+    "publicCandidateCount": 40,
+    "lockedCount": 4
   },
   "items": [
     {
@@ -1829,8 +1829,8 @@
     "calculationCheckedCount": 30,
     "visualOrConstructionLockedCount": 16,
     "nonUniqueCount": 0,
-    "publicCandidateCount": 28,
-    "lockedCount": 16,
+    "publicCandidateCount": 40,
+    "lockedCount": 4,
     "notes": [
       "5단원은 PDF 43쪽 단원 표지와 PDF 44~51쪽 문항으로 확정했습니다.",
       "개념탐구·예제·Mission의 각 번호를 하나의 세부 유형으로 기록했습니다.",

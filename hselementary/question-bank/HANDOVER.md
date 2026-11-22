@@ -15,7 +15,15 @@
 - 한 문항 쪽 맞춤(추가): 쪽 나눔 뒤 한 문항만 남은 쪽이 넘치면 4문항 고정 칸(`print-page--four-up`)과 2열(`print-page--paired`)을 차례로 풀고, 그래도 넘치면 문제 그림 최대 높이를 150mm(`print-page--fit`), 100mm(`print-page--fit-tight`)로 줄인다(비율 유지). 마지막까지 넘칠 때만 `print-page--oversize`를 붙인다.
 - 최종 인쇄 결과: 전 유형 3006개 186묶음 인쇄에서 문제지 93묶음 모두 DOM 쪽 수 = 실제 PDF 쪽 수, oversize 0, 가로 잘림 0, 쪽 밖 넘침 0. 남은 tallPage 표시 2건은 화면 폭(779px) 에뮬레이션에서만 2열이 되어 생기는 것이고 실제 PDF 쪽 수는 맞다.
 - 감사 기대값 정리: 2026-11-22 6학년 패치로 바뀐 표기에 감사 기대값이 따라오지 않아 실패하던 4개를 고쳤다(정답은 다시 계산해 맞음을 확인). ratio-percent(인상률 차 `%p`→`%`, 기름통 무게 단위 kg), fraction-division(넓이가 같은 삼각형 높이 대분수 `1 1/4`), volume-surface(흙 높이 정확한 값 `14.625`), space-solids-6-2(글로 조건을 주는 `footprint-total-methods`는 그림 검사 제외 — 원본에 없는 그림을 넣지 않는다). 남은 실패 중 source-item-taxonomy의 4-2-u4-t4-8은 실제 앱(플러그인 포함)에서 문제·정답 그림이 모두 생성됨을 확인했다(감사가 generators.js만 읽어서 생기는 실패).
-- 최종 Node 감사(재실행 목록 661개, Mac 환경 변수): 497개 통과(위 4개 정리 후 501개). 병합 전 main 통과 목록에서 빠진 것은 `source-5-2-u5-check113-arrow-practice-browser-audit.js` 1개뿐인데, 이는 `MAC_CHECK_OUTPUT`이 있을 때만 하는 풀이 PDF 4쪽 검사가 병합 전 main에서도 같은 3쪽으로 실패하는 것이다(정답·풀이 쪽은 2026-11-05부터 인쇄에서 이어 흐르게 되어 짧은 풀이 두 개가 한 장에 들어간다. 잘림 아님). 기준 목록은 이 검사를 건너뛴 실행이라 통과로 기록되어 있었다.
+- 공개 결정에 맞춘 감사 기대값 정리(13개): 검증 공개가 끝난 유형을 아직 잠금으로 기대하던 감사를 현재 결정에 맞췄다. 정답 검산은 각 원문 묶음 감사가 맡는다.
+  - 2026-11-22 공개 목록(`HSE_LOWER_RELEASE_20261122`)에 오른 유형은 잠금 검사에서 뺀다: source-4-2-line-graph-2, graph-polygon-taxonomy, source-5-1-rules-correspondence-e1(U3 공개 41·잠금 0).
+  - source-6-2-decimal-e1: 원장 sourceVerified 항목, 6학년 공개 목록, `창작 연습`으로 연 옛 일반 유형은 잠금 검사에서 뺀다.
+  - source-4-1-movement-3: 공개 잠금 사유에서 답을 숨긴 문구(5926e778)에 맞췄다.
+  - source-item-taxonomy: 6f2aeff8에서 공개한 4-2 개념탐구 4 Mission 3 플러그인을 읽고 공개 원문 수를 31로 맞췄다.
+  - source-5-2-u1-rounding-life-synthetic: 00b2beeb에서 검수 완료로 바뀐 장부 행(verified-local·public)에 맞췄다.
+  - 5-2-u5-readiness-review.json: 항목 결정(공개 40·잠금 4)과 어긋나던 요약 수(28·16)를 고쳐 p50·p51·p54·p54탐구·p55·e12e13m5 원장 감사 6개가 통과한다(같은 원장을 읽는 입체 감사 16개와 check108 py도 통과 확인).
+  - 남김: source-5-2-range-classification은 "옛 유형은 잠금 유지" 계약 전체가 바뀌어야 해서(기준 커밋만 옮겨도 다음 검사가 실패) 다시 쓰는 작업으로 남긴다.
+- 최종 Node 감사(재실행 목록 661개, Mac 환경 변수): 497개 통과, 위 기대값 정리 17개 반영 후 514개. 병합 전 main 통과 목록에서 빠진 것은 `source-5-2-u5-check113-arrow-practice-browser-audit.js` 1개뿐인데, 이는 `MAC_CHECK_OUTPUT`이 있을 때만 하는 풀이 PDF 4쪽 검사가 병합 전 main에서도 같은 3쪽으로 실패하는 것이다(정답·풀이 쪽은 2026-11-05부터 인쇄에서 이어 흐르게 되어 짧은 풀이 두 개가 한 장에 들어간다. 잘림 아님). 기준 목록은 이 검사를 건너뛴 실행이라 통과로 기록되어 있었다.
 
 ## 2026-11-22 — 4~6학년 잠금 유형 일괄 검수·공개 (Claude Code / Opus 5.5, Mac, 하위 에이전트 병렬)
 
