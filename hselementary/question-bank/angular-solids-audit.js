@@ -34,7 +34,7 @@ function expected(generated) {
     return (3 * sides) * (2 * sides);
   }
   if (kind === "pyramid-net-perimeter") return 2 * Math.abs(v[3] - v[4]);
-  if (kind === "equal-edge-sums") return 2 * (v[2] - v[1]);
+  if (kind === "equal-edge-sums") return v[2] - v[1];
   if (kind === "two-solid-totals") return (6 * v[0] + 2) + (4 * v[1] + 2);
   if (kind === "pyramid-edge-points") return v[0] + 1 + 2 * v[0] * (v[1] - 1);
   if (kind === "solid-edge-length-difference") return Math.abs((2 * v[0] * v[1] + v[0] * v[2]) - 2 * v[0] * v[3]);

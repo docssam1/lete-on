@@ -187,7 +187,7 @@
     const linked = !ready && Boolean(commonType?.generator && !commonType.reviewLocked);
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
-    const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
+    const sourceLabel = type.creativePractice ? "창작 연습 · " : type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
     const alternativeHint = !ready && !linked && availableAlternative(type) ? '<span class="tree-alternative-hint">유사문항 있음 · 눌러서 선택</span>' : '';
     return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready || linked ? "" : " is-pending") + (alternativeHint ? " has-alternative" : "") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + (alternativeHint ? ' 유사문항 있음' : '') + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
@@ -295,7 +295,9 @@
     const sourcePage = type.sourcePrintedPage !== undefined && type.sourcePrintedPage !== null && type.sourcePrintedPage !== ""
       ? ` · 교재 ${escapeHtml(type.sourcePrintedPage)}쪽`
       : "";
-    const source = type.sourceItemLabel
+    const source = type.creativePractice
+      ? "창작 연습 · 원본 교재 문항이 아니며 독립 검산을 거쳤습니다"
+      : type.sourceItemLabel
       ? `원문 ${escapeHtml(type.sourceItemLabel)}${sourcePage}`
       : `${type.grade}학년 ${type.term}학기 분류`;
     const sourceLine = type.sourceRelationship === "downstream-number-corrected-adaptation"
