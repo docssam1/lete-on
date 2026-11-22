@@ -74,6 +74,7 @@ function oracle(question, id) {
       const candidates = [];
       for (const whole of cards) for (const tenths of cards) for (const hundredths of cards) {
         if (new Set([whole, tenths, hundredths]).size !== 3) continue;
+        if (hundredths === 0) continue; // 소수 두 자리 수: 소수 둘째 자리 0 제외
         const value = whole * 100 + tenths * 10 + hundredths;
         if (lower < value && value <= upper) candidates.push({ whole, value });
       }

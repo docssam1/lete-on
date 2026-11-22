@@ -117,6 +117,8 @@
     const candidates = [];
     for (const integer of digits) for (const tenths of digits) for (const hundredths of digits) {
       if (new Set([integer, tenths, hundredths]).size !== 3) continue;
+      // 소수 두 자리 수는 소수 둘째 자리 숫자가 0이 아니다(예: 3.20은 3.2와 같은 소수 한 자리 수).
+      if (hundredths === 0) continue;
       const value = 100 * integer + 10 * tenths + hundredths;
       if (value > lowerHundredths && value <= upperHundredths) candidates.push({ integer, tenths, hundredths, value });
     }
@@ -127,6 +129,7 @@
     const solution = steps([
       ...(level === 2 ? [`㉠은 ${math(`${(upperHundredths - 10) / 100} + 0.1 = ${upperHundredths / 100}`)}입니다.`] : []),
       `숫자 카드는 각각 한 장이므로 정수 부분, 소수 첫째 자리, 소수 둘째 자리에 서로 다른 카드를 놓습니다. 카드의 순서를 바꾸면 다른 소수가 됩니다.`,
+      `소수 두 자리 수는 소수 둘째 자리 숫자가 0이 아니어야 하므로 소수 둘째 자리에는 0 카드를 놓지 않습니다.`,
       `${lowerHundredths / 100}보다 크고 ${upperHundredths / 100}보다 작거나 같은지 세 자리 배치마다 확인합니다. 경계의 왼쪽은 제외하고 오른쪽은 포함합니다.`,
       `${groupText}입니다. 정수 부분에 따라 나누어 세면 빠뜨리거나 중복하여 세지 않습니다.`,
       `따라서 ${math(groups.map(g => g.count).join(" + ") + " = " + candidates.length)}개입니다.`
