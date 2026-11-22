@@ -9,6 +9,8 @@
 - 인쇄 버튼: 모드 전환(보기 숨김·표시)을 먼저 하고 글꼴·쪽 보정을 기다린 뒤 인쇄한다(전환이 늦으면 감사·실사용에서 다른 보기가 인쇄되었다). 같은 문항이 두 번 뽑히는 슬롯은 버리고 번호를 다시 매긴다.
 - 6-2 학생 수 비교·설탕 나누어 담기 표는 2열 인쇄 칸에서 잘리지 않게 열 최소 폭을 풀었다.
 - 검증: CDP 헤드리스 Chrome으로 전 유형 3006개를 40개씩 묶어 문제·풀이 인쇄(186묶음)를 하고, 쪽 밖 넘침·가로 잘림·DOM 쪽 수와 실제 PDF 쪽 수를 비교했다(결과는 아래 후속 기록). Playwright 감사 재실행 목록(661개)은 병합 전 main에서 통과하던 것이 모두 통과한다. 출판사 심화 답지는 Drive에 없어 대조하지 못했다(publisherKeyVerified=false 유지).
+- Mac에서 감사 실행: 많은 감사가 Windows 기본값(`C:/Program Files/...chrome.exe`, codex 런타임 Playwright 경로, `127.0.0.1:8878` 등 고정 포트, `E:` 증거 폴더)을 쓴다. Mac에서는 환경 변수로 바꿔 실행한다: `HSE_PLAYWRIGHT_PATH`(playwright 모듈 경로), `HSE_CHROMIUM_EXECUTABLE`(Playwright Chromium 실행 파일), `HSE_URL`·`HSE_BASE_URL`·`HSE_BANK_URL`·`HSE_AUDIT_ORIGIN`(로컬 서버 주소), `HSE_SCREENSHOT_DIR`·`MAC_CHECK_OUTPUT`(저장소 밖 출력 폴더), `HSE_PDFINFO_EXECUTABLE`. 이렇게 실행하면 재실행 목록 661개 중 498개가 통과한다(병합 전 main과 같은 통과 목록에 환경 문제로 실패하던 102개 추가).
+- 남은 실패 163개(병합 전 main에서도 실패): ① Windows `E:`/`G:` 증거 폴더나 별도 봉인 보고서가 있어야 하는 증거 감사, ② 이번 공개 전의 잠금 상태(잠금 체크박스·미리보기 표시·공개/잠금 개수)를 고정한 감사, ③ curriculum.js+generators.js만 읽어 원문 플러그인 유형이 null이 되는 옛 일괄 감사, ④ 표기 차이만 다른 독립 검산(예: 정답 `1 1/4`와 검산 `5/4`, 정확한 값 `14.625`와 반올림 `14.63`, `%`와 `%p`). 표본으로 확인한 범위에서는 정답 내용 오류가 아니었다. 감사 기대값 정리는 별도 작업으로 남긴다.
 - 남은 사항: 감사 일부가 Windows 기본 출력 경로로 저장소 루트에 `E:/` 폴더를 만든다. 커밋하지 말 것(로컬 .git/info/exclude에 추가함).
 
 ## 2026-11-22 — 4~6학년 잠금 유형 일괄 검수·공개 (Claude Code / Opus 5.5, Mac, 하위 에이전트 병렬)
