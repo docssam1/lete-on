@@ -1,5 +1,5 @@
 // 2과정 개념 꾸러미 그림 도구 — 되짚기·정리·예제 카드의 SVG(워밍업 그림 색표: 잉크·초록·빨강 각 표시·연한 칠)
-import { mathText } from "../math-markup.js?v=20261122i";
+import { mathText } from "../math-markup.js?v=20261122w";
 export const INK = "#24302b", GREEN = "#2f6b52", SOFT = "#e6efe8", MARK = "#b4553f", PALE = "#f4f1e8", BLUE = "#2f5fb3", YELLOW = "#fff1bf", PINK = "#f9c8c4";
 const R = Math.PI / 180;
 export const f1 = (v) => Math.round(v * 10) / 10;

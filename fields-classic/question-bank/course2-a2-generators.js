@@ -1,7 +1,7 @@
 // 2과정 A2 「복제수와 님게임」 교재 유사문제 생성기. 약속은 G1~G5·A1 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 문제를 만든 수에서 계산한다. 큰 수는 BigInt로 셈한다.
 // 거듭제곱은 글 속에 「2^5」로 쓰면 화면·인쇄에서 수식으로 바뀐다(math-markup.js mathText).
-import { mathText } from "./math-markup.js?v=20261122i";
+import { mathText } from "./math-markup.js?v=20261122w";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

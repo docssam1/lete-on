@@ -8,7 +8,7 @@
 //   frac(1, part(1, 2))        분자·분모 안에 분수(연분수) — 안쪽은 part()
 //   pow(2, 3) · sqrt(16) · root(27, 3) · sub("a", 1)
 //   expr(3, "×", part(1, 2), "=", "□")   여러 조각을 한 줄 수식으로(기호는 연산자로)
-//   mathText("3/5 + 2^3 = n²")  글 속 빗금 분수·^ 거듭제곱(지수는 수·□·글자 하나)·²³ 글자를 수식으로(날짜처럼 빗금이 이어지면 그대로)
+//   mathText("3/5 + 2^3 = n²")  글 속 빗금 분수(□/○ 같은 빈칸 기호 분수도)·^ 거듭제곱(지수는 수·□·글자 하나)·²³ 글자를 수식으로(날짜처럼 빗금이 이어지면 그대로)
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const MATH = Symbol("math");
 const piece = (markup, said) => ({ [MATH]: markup, said });
@@ -53,12 +53,12 @@ export const expr = (...items) => wrap(`<mrow>${items.map(token).join("")}</mrow
 // 분자·분모 글: 수 하나·빈칸 □는 그대로, 괄호로 묶은 식((1×2) · (□ × (□ + 1)) 한 겹까지)은 바깥 괄호를 벗겨 한 줄 수식으로
 const inner = (text) => {
   const body = String(text).replace(/^\((.*)\)$/, "$1");
-  return /^(\d+|□)$/.test(body) ? body : rowPart(...body.split(/([×÷+\-−()])/).map((t) => t.trim()).filter(Boolean));
+  return /^(\d+|[□○△☆])$/.test(body) ? body : rowPart(...body.split(/([×÷+\-−()])/).map((t) => t.trim()).filter(Boolean));
 };
 const SUPERSCRIPT = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9" };
 export function mathText(html) {
   return String(html ?? "").split(/(<[^>]*>)/).map((chunk) => chunk.startsWith("<") ? chunk : chunk
-    .replace(/(^|[^\d/)])(\((?:[^()]|\([^()]*\))+\)|\d+|□)\/(\((?:[^()]|\([^()]*\))+\)|\d+|□)(?![\d/(])/g, (_, before, n, d) => `${before}${frac(inner(n), inner(d))}`)
+    .replace(/(^|[^\d/)])(\((?:[^()]|\([^()]*\))+\)|\d+|[□○△☆])\/(\((?:[^()]|\([^()]*\))+\)|\d+|[□○△☆])(?![\d/(])/g, (_, before, n, d) => `${before}${frac(inner(n), inner(d))}`)
     .replace(/(\d+|[A-Za-z])\^(\d+|□|[A-Za-z])(?![A-Za-z\d])/g, (_, base, exponent) => pow(base, exponent))
     .replace(/(\d+|[A-Za-z])([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (_, base, sup) => pow(base, [...sup].map((c) => SUPERSCRIPT[c]).join("")))).join("");
 }

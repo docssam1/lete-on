@@ -1,7 +1,7 @@
 // 2과정 A3 「규칙성과 수열」 교재 유사문제 생성기. 약속은 G1~G5·A1·A2 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 문제를 만든 수에서 직접 세거나 계산한다(규칙 식을 쓰더라도 작은 경우는 하나씩 세어 맞춘다).
 // 분수·거듭제곱은 글 속에 「3/5」「2^5」로 쓰면 화면·인쇄에서 수식으로 바뀐다(math-markup.js mathText).
-import { mathText } from "./math-markup.js?v=20261122i";
+import { mathText } from "./math-markup.js?v=20261122w";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

@@ -169,6 +169,8 @@ function packExercisePages(pages) {
     const lastInSection = !queue.length || queue[0].classList.contains("tb-section-start");
     if (!contentFits(sheet) && grid.children.length > 1 && !zoomToStay(question, sheet, { last: lastInSection })) {
       question.remove();
+      // 개념 정리의 빈 「풀이」 자리는 다음 쪽으로 넘기지 않고 뺀다(예제와 떨어진 빈 칸만 남으므로)
+      if (question.classList.contains("tb-nc-blank")) continue;
       // 묶음 제목 칸만 쪽 끝에 혼자 남기지 않는다 — 첫 문제와 함께 다음 쪽으로
       // (안내 칸·개념 그림이 함께 든 제목 칸은 그 자체로 내용이라 이 쪽에 남긴다)
       const lastChild = grid.lastElementChild;
@@ -209,6 +211,23 @@ function packExercisePages(pages) {
     page.dataset.printPart = parts[0];
   });
   pages.forEach((page) => page.remove());
+}
+
+// 개념 정리 쪽의 마지막 칸이 「따라 풀기」면, 쪽 아래 남는 자리를 그 풀이 자리로 채운다(원장 2026-11-22 「너무 비어 보여 · 따라 풀기 아래 옅은 색을 칠해줘」).
+function growFollow(scope) {
+  [...scope.children].forEach((page) => {
+    const work = page.querySelector(".gold-print-exercise-grid > :last-child .tb-nc-work");
+    if (!work || !contentFits(page)) return;
+    const mm = (n) => `${n}mm`;
+    const base = work.closest(".tb-nc-blank") ? 8 : 14;
+    let low = 0, high = 150;
+    for (let step = 0; step < 9; step += 1) {
+      const mid = (low + high) / 2;
+      work.style.minHeight = mm(base + mid);
+      if (contentFits(page)) low = mid; else high = mid;
+    }
+    work.style.minHeight = mm(base + Math.floor(low));
+  });
 }
 
 // A figure box has a fixed print height and hides overflow; shrink overflowing content to fit instead of cutting it off.
@@ -257,6 +276,7 @@ export function compactGoldenBellPrint(root) {
       packExercisePages(group);
     }
     fitClippedVisuals(copy);
+    growFollow(copy);
     const packed = [...copy.children];
     packed.forEach((page, index) => {
       if ((page.querySelector(".has-game-qr") || page.classList.contains("has-cover-games")) && !contentFits(page)) {

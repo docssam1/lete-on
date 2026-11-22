@@ -1,6 +1,6 @@
 // 2과정 G3 「정육면체와 각·넓이」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
-import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW } from "./pack-kit.js?v=20261122i";
+import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW } from "./pack-kit.js?v=20261122w";
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const C3 = (type) => [[type, "concept"], [type, "type"], [type, "advanced"]];
