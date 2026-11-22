@@ -141,7 +141,7 @@ function m4Fig(R,a,b){const u=Math.min(9,144/(a+b)),Ax=160,Tp=36,A=[Ax,Tp],F=[Ax
  return svg(300,B[1]+40,'한 변이 회전축 위에 있는 삼각형',o,300);}
 // ---------- Mission 5 ----------
 function m5Fig(){const Ax=200,Tp=40;let o=poly([[Ax-70,Tp],[Ax,Tp],[Ax,Tp+120],[Ax-70,Tp+120]],SHADE+';'+S)+line(Ax,Tp-30,Ax,Tp+150,'stroke:#222;stroke-width:1.2px')+
- `<path d="M${Ax+6} ${Tp-14}A9 4 0 1 1 ${Ax+9} ${Tp-9}" style="fill:none;stroke:#222;stroke-width:1px"/><path d="M${Ax+4} ${Tp-11}L${Ax+9} ${Tp-9}L${Ax+5} ${Tp-6}" style="fill:none;stroke:#222;stroke-width:1px"/>`+T(Ax+8,Tp-30,'ㄱ','start')+T(Ax+8,Tp+160,'ㄴ','start');
+ `<path d="M${Ax+6} ${Tp-14}A9 4 0 1 1 ${Ax+9} ${Tp-9}" style="fill:none;stroke:#222;stroke-width:1px"/><path d="M${Ax+4} ${Tp-11}L${Ax+9} ${Tp-9}L${Ax+5} ${Tp-6}" style="fill:none;stroke:#222;stroke-width:1px"/>`+T(Ax-14,Tp-14,'ㄱ','middle',15)+T(Ax-14,Tp+146,'ㄴ','middle',15);
  return svg(300,Tp+170,'한 변이 선분 ㄱㄴ 위에 있는 직사각형',o,300);}
 function sectorSvg(th){const R=70,cx=150,cy=92,rad=d=>d*Math.PI/180,a1=rad(-90),a2=rad(-90+th),p=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
  const [x1,y1]=p(R,a1),[x2,y2]=p(R,a2),[u1,v1]=p(18,a1),[u2,v2]=p(18,a2),lg=th>180?1:0,mid=rad(-90+th/2),[lx,ly]=p(34,mid);
