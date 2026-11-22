@@ -1,6 +1,6 @@
 // 2과정 G2 「도형분할과 넓이」 개념 꾸러미(DESIGN-COURSE2.md 4절) — 차시마다 되짚기 → 해 보기 → 따져 보기 → 정리 → 예제 → 개념 확인.
 // 열쇠 「단원 번호(0부터)/차시(1부터)」. 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
-import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, grid, dots, clock, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261122ze";
+import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, grid, dots, clock, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261122zf";
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const mid = (a, b) => P((a.x + b.x) / 2, (a.y + b.y) / 2);

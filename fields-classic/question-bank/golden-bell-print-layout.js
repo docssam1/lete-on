@@ -222,10 +222,21 @@ function packExercisePages(pages) {
 // 개념 정리 쪽의 마지막 칸이 「따라 풀기」면, 쪽 아래 남는 자리를 그 풀이 자리로 채운다(원장 2026-11-22 「너무 비어 보여 · 따라 풀기 아래 옅은 색을 칠해줘」).
 function growFollow(scope) {
   [...scope.children].forEach((page) => {
-    const work = page.querySelector(".gold-print-exercise-grid > :last-child .tb-nc-work");
+    let work = page.querySelector(".gold-print-exercise-grid > :last-child .tb-nc-work");
+    const last = page.querySelector(".gold-print-exercise-grid > :last-child");
+    // 개념 상자나 연습 칸으로 끝난 쪽(다음 칸이 다음 쪽으로 넘어감)은 남는 자리에 「메모」 칸을 둔다
+    if (!work && last?.matches(".tb-nc, .tb-nc-practice") && contentFits(page)) {
+      const memo = document.createElement("div");
+      memo.className = "tb-nc-follow tb-nc-memo";
+      memo.innerHTML = '<span class="tb-nc-follow-cap">메모</span><div class="tb-nc-work"></div>';
+      last.append(memo);
+      work = memo.querySelector(".tb-nc-work");
+      work.style.minHeight = "6mm";
+      if (!contentFits(page)) { memo.remove(); return; }
+    }
     if (!work || !contentFits(page)) return;
     const mm = (n) => `${n}mm`;
-    const base = work.closest(".tb-nc-blank") ? 6 : 14;
+    const base = work.closest(".tb-nc-blank, .tb-nc-memo") ? 6 : 14;
     let low = 0, high = 150;
     for (let step = 0; step < 9; step += 1) {
       const mid = (low + high) / 2;

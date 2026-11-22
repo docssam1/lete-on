@@ -1,7 +1,7 @@
 // 2과정 A3 「규칙성과 수열」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 분수는 「3/5」로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, line, grid, dot, P, INK, GREEN, SOFT, MARK, YELLOW, formulas, mathLabel } from "./pack-kit.js?v=20261122ze";
+import { svg, text, rect, circle, line, grid, dot, P, INK, GREEN, SOFT, MARK, YELLOW, formulas, mathLabel, card } from "./pack-kit.js?v=20261122zf";
 
 const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
@@ -23,7 +23,7 @@ const figPaths = (blocked = false) => () => {
   else body += [[1, 0, "1"], [2, 0, "1"], [3, 0, "1"], [0, 1, "1"], [0, 2, "1"], [1, 1, "2"], [2, 1, "3"], [3, 1, "4"], [1, 2, "3"], [2, 2, "6"], [3, 2, "10"]].map(([c, r, v]) => text(o.x + c * s + 12, o.y + r * s - 10, v, { size: 13, color: GREEN, weight: 700 })).join("");
   return svg(260, 150, body, "바둑판 길");
 };
-const figCards = () => svg(300, 70, ["1", "2", "3", "4"].map((v, i) => rect(20 + i * 56, 12, 44, 46, { fill: "#fff" }) + text(42 + i * 56, 35, v, { size: 20 })).join(""), "숫자 카드");
+const figCards = () => svg(300, 70, ["1", "2", "3", "4"].map((v, i) => card(20 + i * 56, 12, 44, 46, v, { size: 20 })).join(""), "숫자 카드");
 
 export const PACKS = {
   "0/1": [{

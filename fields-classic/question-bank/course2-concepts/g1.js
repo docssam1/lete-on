@@ -3,7 +3,7 @@
 // explore 항목은 course2-deck.js의 차시 항목과 같은 꼴: ["board", 1과정 판서] · ["drill", 열쇠, 이름] · ["lab", 도구, 이름] · ["geo", 주소, 이름]
 // proofs는 [course2-proofs/g1.js의 논증 id, 제목]. check는 [유형 id, 단계(concept 쉬움 · type 교재와 같게 · advanced 흔한 실수)].
 // 예제는 창작 문제다(교재 문항을 옮기지 않는다). 단계 답은 그림을 만든 수에서 직접 계산해 적었다.
-import { svg, text, line, poly, rect, circle, dot, at, P, arrow, sector, angleMark, dirOf, tick, regular, grid, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261122ze";
+import { svg, text, line, poly, rect, circle, dot, at, P, arrow, sector, angleMark, dirOf, tick, regular, grid, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261122zf";
 
 // ── 3단원 360도와 정다각형 · 1차시 그림 ──
 const C = P(150, 140);

@@ -156,3 +156,13 @@ export function mathLabel(x, y, value, { size = 16, anchor = "middle", color = I
   }
   return `<g role="img" aria-label="${esc(value)}">${out}</g>`;
 }
+
+// 칸 막대(띠 모형): 둥근 바깥 틀 + 가는 칸 선 + 그림자 — 막대 비교 그림은 이것으로 그린다
+export function barModel(x, y, n, { w = 26, h = 24, fill = SOFT, color = "#4d6b5a" } = {}) {
+  let body = rect(x, y, n * w, h, { fill, color, width: 1.4, rx: 4, shadow: true });
+  for (let i = 1; i < n; i += 1) body += line(P(x + i * w, y + 2), P(x + i * w, y + h - 2), { color, width: 0.9 });
+  return body;
+}
+// 둥근 카드(숫자 카드·요일 칸·식 카드)
+export const card = (x, y, w, h, value, { fill = "#fff", color = "#6d7a72", size = 16, weight = 700, ink = INK } = {}) =>
+  rect(x, y, w, h, { fill, color, width: 1.3, rx: 6, shadow: true }) + text(x + w / 2, y + h / 2 + 0.5, value, { size, weight, color: ink });

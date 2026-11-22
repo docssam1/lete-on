@@ -4,10 +4,10 @@
 import { mountProof } from "./proof-board.js?v=20261115c";
 import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261122w";
 import { BOARDS } from "./concept-boards.js?v=20261103d";
-import { packsFor } from "./course2-concepts/packs.js?v=20261122ze";
+import { packsFor } from "./course2-concepts/packs.js?v=20261122zf";
 
 const PROOF_TAGS = { g1: "20261115a", g2: "20261115a", g3: "20261115a", g4: "20261115g", g5: "20261115a" };   // proof.js의 BOOKS 꼬리표와 같게
-const DECK = { module: "./course2-deck.js?v=20261122ze" };
+const DECK = { module: "./course2-deck.js?v=20261122zf" };
 
 // 권/단원 → 차시마다 [["board", 1과정 판서 열쇠] | ["drill", 열쇠, 이름] | ["proof", 논증 id, 제목] | ["lab", 도구, 이름] | ["geo", 지오메트리 게임 주소, 이름]]
 // board: 1과정에서 같은 내용을 가르치는 손글씨 판서와 그 판서의 게임을 그대로 쓴다(원장 2026-11-16 「설명도 없어」) — 2과정 본책 문제가 그 위에 쌓인다.
