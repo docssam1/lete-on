@@ -4,275 +4,282 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>개념 쪽 시안 · 자리 이동 곱셈</title>
-<!-- 시안(2026-11-22, 원장 「내가 원하던 개념 페이지 디자인 구성 폰트 크기야 … 만들어봐 굵기까지 틀도」).
-     예전 교재의 구성(칠판 개념 상자 · 큰 예시 · 한 문제 해 보기 · 단계 따라 풀기 · 쪽 틀)만 따르고,
-     색·그림·캐릭터는 우리 것(따뜻한 종이 + 깊은 초록, 독쌤). 운영 학습지(exam.js)는 아직 그대로다. -->
+<!-- 시안 2판(2026-11-22, 원장 「너무 디자인이 원본하고 같아 우리만의 디자인으로 업그레이드해봐」).
+     생각 하나: 같은 「풀이 띠」가 쪽마다 비어 간다 — 예시(다 채움) → 따라 풀기(빈칸) → 혼자 풀기(모눈만) → 연습(답만).
+     쪽마다 머리에 오늘 공부 길(개념·따라 풀기·혼자 풀기·연습). 제목·번호는 명조, 규칙은 옅은 초록 + 왼쪽 굵은 띠
+     (gfield-textbook-design 교재형). 칠판·큰 캐릭터·둥근 모서리 틀·메모장 꼬리표는 쓰지 않는다.
+     문제는 지금 학습지(과정 26 1회차)의 것. 운영 학습지(exam.js)는 아직 그대로다. -->
 <style>
 @font-face{font-family:'Pretendard';src:url('../assets/fonts/pretendard-var.woff2') format('woff2');font-weight:45 920;font-display:block}
-:root{
-  --paper:#fdfbf5; --ink:#191511; --sub:#6f6556; --line:#c9bda2;
-  --green:#2f6b4a; --green-d:#1e4631; --green-l:#e9f0e7; --green-m:#cfe0cf;
-  --gold:#b8862a; --gold-l:#f6ecd4; --rust:#b4512e; --red:#c8372d;
-  --frame:#dfe9dc;
-}
+@font-face{font-family:'GF Serif';src:url('../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-700-normal.woff2') format('woff2');font-weight:700;font-display:block}
+@font-face{font-family:'GF Serif';src:url('../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-700-normal.woff2') format('woff2');font-weight:700;font-display:block;unicode-range:U+0000-00FF}
+@font-face{font-family:'GF Serif';src:url('../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-600-normal.woff2') format('woff2');font-weight:600;font-display:block}
+@font-face{font-family:'GF Serif';src:url('../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-600-normal.woff2') format('woff2');font-weight:600;font-display:block;unicode-range:U+0000-00FF}
+:root{--ink:#191511;--sub:#6f6556;--line:#e2d9c6;--line2:#c9bda2;--green:#2f6b4a;--green-d:#1e4631;--green-l:#eef4ec;
+  --gold:#a87c22;--gold-l:#f7efdc;--red:#c8372d;--grid:#e6dfd1;--paper:#fdfbf5}
 @page{size:A4;margin:0}
 *{box-sizing:border-box}
-html,body{margin:0;background:#8f9a8f}
-body{font-family:'Pretendard',sans-serif;color:var(--ink);font-synthesis:none;-webkit-font-smoothing:antialiased;
-  -webkit-print-color-adjust:exact;print-color-adjust:exact}
-.sheet{width:210mm;height:297mm;margin:8mm auto;background:#fff;position:relative;overflow:hidden;page-break-after:always;break-after:page}
+html,body{margin:0;background:#9aa39a}
+body{font-family:'Pretendard',sans-serif;color:var(--ink);font-synthesis:none;-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet{width:210mm;height:297mm;margin:8mm auto;background:#fff;position:relative;overflow:hidden;padding:12mm 14mm 16mm;display:flex;flex-direction:column;break-after:page}
 @media print{html,body{background:#fff}.sheet{margin:0}}
-.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.num{font-variant-numeric:tabular-nums}
+.serif{font-family:'GF Serif',serif}
 
-/* ── 쪽 틀: 옅은 초록 띠 + 흰 판(왼쪽 아래 크게 둥근 모서리) ── */
-.frame{position:absolute;inset:7mm;background:var(--frame);border-radius:3mm}
-.tab{position:absolute;left:9mm;top:3.2mm;display:flex;align-items:center;gap:3mm}
-.tab .series{font-size:19px;font-weight:700;color:var(--green-d);letter-spacing:-.02em}
-.tab .bar{width:1.4px;height:15px;background:var(--green)}
-.tab .course{font-size:19px;font-weight:700;color:var(--green);letter-spacing:-.02em}
-.tab .day{min-width:10mm;height:10mm;padding:0 2mm;border-radius:2mm 2mm 0 0;background:var(--green-d);color:#fff;
-  font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-left:1mm;align-self:flex-end;transform:translateY(1.4mm)}
-.who{position:absolute;right:9mm;top:4.6mm;display:flex;gap:6mm;font-size:12px;font-weight:600;color:var(--green-d)}
+/* 머리: 작은 글 한 줄 + 오늘 공부 길 */
+.hd{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:2.2mm;border-bottom:1.6px solid var(--ink)}
+.kick{font-size:12.5px;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:2mm;letter-spacing:.02em}
+.kick .brand{font-family:'GF Serif',serif;font-weight:700;font-size:15px;color:var(--green-d);letter-spacing:0}
+.kick .dot{width:1.1mm;height:1.1mm;border-radius:50%;background:var(--gold)}
+.who{display:flex;gap:6mm;font-size:12px;font-weight:600;color:var(--sub)}
 .who span{display:inline-flex;align-items:flex-end;gap:1.5mm}
-.who i{display:inline-block;width:26mm;border-bottom:1.2px solid var(--green-d);height:4mm}
+.who i{display:inline-block;width:28mm;border-bottom:1px solid var(--line2);height:4mm}
 .who i.s{width:14mm}
-.panel{position:absolute;left:4mm;right:4mm;top:14mm;bottom:4mm;background:#fff;
-  border:1.6mm solid var(--green);border-radius:1.5mm 1.5mm 1.5mm 20mm;padding:7mm 9mm 9mm}
-.panel.r{border-radius:1.5mm 1.5mm 20mm 1.5mm}
-.pno{position:absolute;bottom:2mm;width:11mm;height:11mm;border-radius:50%;background:var(--green-d);color:#fff;
-  font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.pno.l{left:3mm}.pno.r{right:3mm}
+.path{list-style:none;margin:3mm 0 0;padding:0;display:flex;align-items:center;gap:0;font-size:12px;font-weight:600;color:#a59a86}
+.path li{display:flex;align-items:center;gap:1.6mm}
+.path li + li::before{content:"";width:10mm;height:1.2px;background:var(--line2);margin:0 2.4mm}
+.path b{display:inline-flex;width:5.4mm;height:5.4mm;border-radius:50%;border:1.3px solid currentColor;align-items:center;justify-content:center;font-size:10.5px}
+.path li.done{color:var(--green)}
+.path li.now{color:var(--green-d);font-weight:700}
+.path li.now b{background:var(--green-d);border-color:var(--green-d);color:#fff}
 
-/* ── 칠판 개념 상자 ── */
-.board-row{position:relative;height:47mm;margin:0 0 6mm}
-.board-row img{position:absolute;left:-3mm;top:-3mm;height:52mm;z-index:2}
-.board{position:absolute;left:30mm;right:0;top:0;height:44mm;background:var(--green-d);border:1.4mm solid var(--gold);
-  border-radius:1.5mm;padding:4.5mm 7mm 4mm 10mm;color:#fff}
-.board h1{margin:0;font-size:29px;font-weight:700;letter-spacing:-.03em;line-height:1.2}
-.board hr{border:0;border-top:2px dotted rgba(255,255,255,.75);margin:3mm 0 2.6mm}
-.board p{margin:0;font-size:16.5px;font-weight:600;line-height:1.62;letter-spacing:-.01em}
-.board p b{color:#f3d58a;font-weight:700}
+/* 제목: 금색 큰 번호 + 명조 제목 */
+.title{display:flex;align-items:center;gap:5mm;margin:7mm 0 5mm}
+.title .no{font-family:'GF Serif',serif;font-weight:700;font-size:64px;line-height:.9;color:transparent;-webkit-text-stroke:1.4px var(--gold);letter-spacing:-.02em}
+.eyebrow{margin:0 0 1mm;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.14em}
+h1{margin:0;font-family:'GF Serif',serif;font-weight:700;font-size:34px;letter-spacing:-.02em;line-height:1.15}
+.lead{margin:1.6mm 0 0;font-size:15px;font-weight:500;color:var(--sub)}
 
-/* ── 예시: 네 칸 ── */
-.sec{display:flex;align-items:center;gap:2.5mm;margin:0 0 3.5mm;font-size:17px;font-weight:700;color:var(--green-d)}
-.sec::before{content:"";width:3.2mm;height:3.2mm;border-radius:.8mm;background:var(--green)}
-.steps4{display:grid;grid-template-columns:1fr 1fr;gap:4mm 6mm;margin:0 0 6mm}
-.step{border-top:1.4px solid var(--line);padding:2.6mm 1mm 0}
-.step h3{margin:0 0 2.4mm;font-size:14.5px;font-weight:700;color:var(--ink);display:flex;gap:2mm;align-items:center}
-.step h3 em{font-style:normal;display:inline-flex;width:6mm;height:6mm;border-radius:50%;background:var(--green);color:#fff;font-size:12px;align-items:center;justify-content:center}
-.big{font-size:36px;font-weight:500;letter-spacing:.02em;line-height:1.25}
-.g{color:var(--green);font-weight:700}.o{color:var(--gold);font-weight:700}.rd{color:var(--red);font-weight:700}.mute{color:#b9b0a1}
-.col{display:inline-grid;grid-auto-rows:auto;justify-items:end;font-size:34px;font-weight:500;line-height:1.18}
-.col .rule{width:100%;border-top:2px solid var(--ink);margin:1mm 0 .6mm}
-.side{display:flex;align-items:center;gap:5mm}
-.note{font-size:13px;font-weight:600;color:var(--sub);line-height:1.45}
-.note b{color:var(--gold)}
+/* 규칙: 옅은 초록 + 왼쪽 굵은 띠 */
+.rule{background:var(--green-l);border-left:2.2mm solid var(--green);border-radius:0 2mm 2mm 0;padding:4mm 6mm 3.4mm;margin:0 0 7mm}
+.rule-h{margin:0 0 2.4mm;font-family:'GF Serif',serif;font-weight:700;font-size:16px;color:var(--green-d)}
+.rule ol{list-style:none;margin:0;padding:0;display:grid;gap:2.2mm}
+.rule li{display:flex;align-items:baseline;gap:3.4mm;font-size:18px;font-weight:600;line-height:1.4}
+.rule li span.t{font-family:inherit;font-weight:600;font-size:inherit;color:inherit;width:auto;flex:1}
+.rule li span:first-child{font-family:'GF Serif',serif;font-weight:700;font-size:20px;color:var(--gold);width:5mm;flex:0 0 auto}
+.rule li b{color:var(--green-d);font-weight:700;box-shadow:inset 0 -.38em 0 #fbe7a9}
 
-/* ── 왜 그럴까 ── */
-.why{display:flex;gap:4mm;align-items:flex-start;border-top:2px solid var(--rust);padding:3mm 0 0;margin:0 0 6mm}
-.why .mk{flex:0 0 9mm;height:9mm;border-radius:2mm;background:var(--rust);color:#fff;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.why p{margin:0;font-size:15px;font-weight:500;line-height:1.6}
-.why .eq{font-size:18px;font-weight:600}
+/* 묶음 머리 */
+.sec{display:flex;align-items:center;gap:3mm;margin:0 0 3mm}
+.chip{font-size:12.5px;font-weight:700;color:#fff;background:var(--green);border-radius:1mm;padding:1mm 2.6mm;letter-spacing:.06em}
+.secnote{font-size:13px;font-weight:600;color:var(--sub)}
+.sec .q{font-size:22px;font-weight:600}
 
-/* ── 혼자 해 보기 ── */
-.try{border:1.4px solid var(--green);border-radius:3mm;background:var(--green-l);overflow:hidden}
-.try .lab{display:inline-flex;align-items:center;gap:2mm;background:var(--green);color:#fff;font-size:15px;font-weight:700;padding:2mm 5mm 2mm 4mm;border-radius:0 0 3mm 0}
-.try .lab img{height:7mm;margin:-1mm 0}
-.try .body{display:flex;align-items:center;justify-content:center;gap:4mm;padding:5mm 0 7mm}
+/* 풀이 띠: 예시 → 따라 풀기 → (혼자 풀기에서는 사라짐) */
+.strip{display:flex;align-items:stretch;gap:0}
+.tile{flex:1 1 auto;border:1.3px solid var(--line2);border-radius:2mm;padding:2.2mm 3mm 3mm;background:#fff;display:flex;flex-direction:column;gap:2mm;min-width:0}
+.tile em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--green);letter-spacing:.02em;white-space:nowrap}
+.tile .tv{font-size:23px;font-weight:500;white-space:nowrap;display:flex;align-items:center;gap:1.4mm;flex:1}
+.tile.end{border-color:var(--green);background:var(--paper)}
+.arr{flex:0 0 6mm;position:relative}
+.arr::before{content:"";position:absolute;left:1.2mm;right:1.6mm;top:50%;height:1.4px;background:var(--gold)}
+.arr::after{content:"";position:absolute;right:1.2mm;top:50%;width:2.2mm;height:2.2mm;border-top:1.4px solid var(--gold);border-right:1.4px solid var(--gold);transform:translateY(-50%) rotate(45deg)}
+.g{color:var(--green);font-weight:700}.o{color:var(--gold);font-weight:700}.rd{color:var(--red);font-weight:700}.mute{color:#bdb4a3}
 
-/* 숫자 한 자리씩 쓰는 칸 */
-.dg{display:inline-flex;gap:1.2mm;vertical-align:middle}
-.dg i{display:inline-block;width:10.5mm;height:12.5mm;border:1.4px solid var(--ink);border-radius:1mm;background:#fff}
-.dg.sm i{width:9mm;height:10.5mm}
+/* 모눈 + 왜 그럴까 */
+.two{display:grid;grid-template-columns:auto 1fr;gap:9mm;margin:7mm 0 7mm;align-items:start}
+.gridcard .cap,.why-h{margin:0 0 2.4mm;font-size:12.5px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+.mg{display:grid;grid-template-columns:repeat(4,10mm);grid-auto-rows:11mm;border-top:1px solid var(--grid);border-left:1px solid var(--grid);font-size:27px;font-weight:600}
+.mg i{font-style:normal;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--grid);border-bottom:1px solid var(--grid)}
+.mg i.op::before{content:"+";color:var(--ink);font-weight:500}
+.mg i.sum{border-top:2px solid var(--ink)}
+.side{margin:2mm 0 0;font-size:12.5px;font-weight:600;color:var(--gold)}
+.why{border-left:1.4px solid var(--gold);padding:0 0 0 5mm}
+.why p{margin:0 0 1.6mm;font-size:16px;font-weight:500;line-height:1.5}
+.why p.num{font-size:19px;font-weight:600}
+.why b{color:var(--green-d)}
 
-/* ── 따라 풀기 쪽 ── */
-.band{display:flex;align-items:center;height:11mm;border-radius:5.5mm;background:var(--green);color:#fff;padding:0 6mm 0 3mm;margin:0 0 5mm;gap:3mm}
-.band img{height:14mm;margin:-3mm 0 0}
-.band b{font-size:20px;font-weight:700;letter-spacing:-.02em}
-.band span{font-size:13px;font-weight:500;opacity:.9;margin-left:auto}
-.follow{border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);padding:3mm 0 3.5mm;margin:0 0 5mm}
-.follow + .follow{margin-top:-2.8mm;border-top:0}
-.follow h4{margin:0 0 2.5mm;font-size:30px;font-weight:500;letter-spacing:.02em}
-.follow .grid{display:grid;grid-template-columns:78mm 1fr;gap:6mm;align-items:center}
-.lines{display:grid;grid-auto-rows:13.5mm}
-.lines > div{display:flex;align-items:center;gap:2.4mm;border-bottom:1px dotted #d8b46a;font-size:24px;font-weight:500}
-.lines > div em{font-style:normal;display:inline-flex;width:7mm;height:7mm;border:1.6px solid var(--ink);border-radius:50%;font-size:14px;font-weight:700;align-items:center;justify-content:center}
-.lines small{font-size:13px;font-weight:600;color:var(--sub)}
-.vsum{display:grid;grid-template-columns:auto auto;column-gap:3mm;align-items:center;justify-content:start}
-.vsum .lbl{font-size:12.5px;font-weight:600;color:var(--sub);line-height:1.25}
-.vsum .rowr{display:flex;justify-content:flex-end;gap:1.2mm}
-.vsum .rowr.top{margin-bottom:1.6mm}
-.vsum .rl{grid-column:1;border-top:2px solid var(--ink);margin:2mm 0}
+/* 한 번 더 */
+.once{border:1.4px dashed var(--green);border-radius:2.4mm;margin:0;padding:3mm 6mm 6mm}
+.once legend{font-size:13px;font-weight:700;color:var(--green-d);padding:0 2mm}
+.once-b{display:flex;align-items:center;justify-content:center;gap:4mm;font-size:30px;font-weight:500}
 
-.practice{display:grid;grid-template-columns:1fr 1fr;column-gap:8mm}
-.pq{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:3mm;height:19.5mm;border-bottom:1px dotted var(--line)}
-.pq .n{font-size:14px;font-weight:700;color:var(--green-d)}
-.pq .e{display:flex;align-items:center;gap:2mm;font-size:25px;font-weight:500}
+/* 답 칸 */
+.dg{display:inline-flex;gap:1.1mm;vertical-align:middle}
+.dg i{display:inline-flex;align-items:center;justify-content:center;width:10.5mm;height:12.5mm;border:1.3px solid var(--ink);border-radius:1.2mm;background:#fff;font-style:normal}
+.dg.sm i{width:9mm;height:11mm}
+.dg i.z{border-style:dashed;border-color:var(--line2);color:#bdb4a3;font-size:20px}
 
-.follow h4 .tg{font-size:17px;font-weight:700;color:var(--green-d);margin-right:3mm;letter-spacing:0}
-.dg i.zero{border-style:dashed;border-color:#b9b0a1}
-.solos{display:grid;grid-template-columns:1fr 1fr;gap:0 8mm;margin:0 0 6mm}
-.solo{border-bottom:2px solid var(--gold);padding:3mm 0 3mm}
-.solo:nth-child(-n+2){border-top:2px solid var(--gold)}
-.solo .q{font-size:27px;font-weight:500;display:flex;align-items:baseline;gap:3mm}
-.solo .n,.pq .n{font-size:14px;font-weight:700;color:var(--green-d)}
-.solo .work{display:grid;grid-auto-rows:10mm;margin:1mm 0 2mm}
-.solo .work i{border-bottom:1px dotted #d8b46a}
-.solo .ans{display:flex;align-items:center;justify-content:flex-end;gap:2mm;font-size:20px;font-weight:500}
+/* 2·3쪽 */
+.h2row{display:flex;align-items:baseline;gap:4mm;margin:7mm 0 4mm;padding-bottom:2mm;border-bottom:1px solid var(--line)}
+h2{margin:0;font-family:'GF Serif',serif;font-weight:700;font-size:25px;color:var(--green-d)}
+.h2row p{margin:0;font-size:14px;font-weight:500;color:var(--sub)}
+.fps{display:flex;flex-direction:column;gap:9mm;flex:1}
+.fp-h{display:flex;align-items:baseline;gap:3mm;margin:0 0 2.4mm;font-size:26px;font-weight:600}
+.fp-h b{font-size:15px;font-weight:700;color:var(--green)}
+.fp .tile .tv{font-size:21px}
+.solos{display:grid;grid-template-columns:1fr 1fr;gap:6mm 8mm}
+.solo .pad{height:34mm;border:1px solid var(--grid);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:5mm 5mm;background-position:-1px -1px;border-radius:1mm}
+.solo .ans{display:flex;align-items:center;justify-content:flex-end;gap:2mm;margin-top:2.4mm;font-size:14px;font-weight:700;color:var(--green)}
+.prac{display:grid;grid-template-columns:1fr 1fr;column-gap:10mm}
+.pq{display:flex;align-items:center;gap:2.4mm;height:19mm;border-bottom:1px solid var(--line);font-size:24px;font-weight:500;white-space:nowrap}
+.pq b{font-size:13px;font-weight:700;color:var(--green);width:9mm}
+.pq .dg{margin-left:auto}
 
-/* 다듬기: 줄바꿈 막기 · 1쪽 세로 채우기 · 연습 4자리 답 */
-.col > span,.side .big,.pq .e,.solo .ans{white-space:nowrap}
-.panel.fill{display:flex;flex-direction:column;justify-content:space-between}
-.panel.fill > *{margin-bottom:0!important}
-.pq .e{font-size:23px;gap:1.6mm}
-.pq .dg i{width:8.4mm;height:10mm}
-.try .body{padding:8mm 0 10mm}
+.ft{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:2.4mm;border-top:1px solid var(--line);font-size:11.5px;font-weight:600;color:var(--sub)}
+.ft .pg{font-family:'GF Serif',serif;font-weight:700;font-size:15px;color:var(--gold)}
+
+/* 2판 다듬기 */
+.sheet > .title{margin-top:8mm}
+.strip .tile{flex:1 1 0}
+.strip .tile.end{flex:1.35 1 0}
+.tile .tv{font-size:25px}
+.fp .tile .tv{font-size:21px}
+.fps{flex:0 0 auto;gap:7mm}
+.fp + .fp{border-top:1px dashed var(--line);padding-top:5mm}
+.solo .pad{height:38mm}
+.sheet .rule{margin-bottom:9mm}
+.sheet .two{margin:9mm 0 9mm}
+.pq{height:20.5mm}
+
+/* 쪽 채우기 */
+.sheet > .title{margin:10mm 0 7mm}
+.rule li{font-size:19.5px}
+.rule ol{gap:3mm}
+.sheet .rule{margin-bottom:11mm}
+.sec{margin-bottom:4mm}
+.tile{padding:3.2mm 3.6mm 3.8mm}
+.tile .tv{font-size:28px}
+.sheet .two{margin:12mm 0 12mm}
+.mg{grid-template-columns:repeat(4,11.5mm);grid-auto-rows:12.5mm;font-size:30px}
+.why p{font-size:17px}
+.why p.num{font-size:21px}
+.once{padding:4mm 6mm 8mm}
+.once-b{font-size:34px}
+.once-b .dg i{width:12mm;height:14mm}
+.solo .pad{height:42mm}
+.pq{height:23.5mm;font-size:26px}
 </style>
 </head>
 <body>
-
-<!-- ───────────── 1쪽 · 개념 ───────────── -->
 <section class="sheet">
-  <div class="frame">
-    <div class="tab"><span class="series">수의 마법</span><span class="bar"></span><span class="course">과정 26</span><span class="day">2일차</span></div>
-    <div class="who"><span>이름 <i></i></span><span>푼 날 <i class="s"></i></span></div>
-    <div class="panel fill">
-      <div class="board-row">
-        <img src="../assets/characters/docssam.png" alt="">
-        <div class="board">
-          <h1>자리 이동 곱셈</h1>
-          <hr>
-          <p>곱하는 수가 <b>44, 55</b>처럼 같은 숫자 두 개예요.</p>
-          <p>그 숫자 <b>하나</b>로 한 번만 곱해요.</p>
-          <p>그 곱을 <b>한 칸 밀어</b> 쓰고, 둘을 더해요.</p>
-        </div>
-      </div>
+  <header class="hd">
+    <div class="kick"><span class="brand">수의 마법</span><span class="dot"></span>과정 26<span class="dot"></span>2일차</div>
+    <div class="who"><span>이름<i></i></span><span>날짜<i class="s"></i></span></div>
+  </header>
+  <ol class="path"><li class="now"><b>1</b>개념</li><li class="next"><b>2</b>따라 풀기</li><li class="next"><b>3</b>혼자 풀기</li><li class="next"><b>4</b>연습</li></ol>
 
-      <div class="sec">이렇게 풀어요 · <span class="num">17 × 44</span></div>
-      <div class="steps4">
-        <div class="step"><h3><em>1</em>숫자 하나만 골라요</h3>
-          <div class="big num">17 × <span class="g">4</span><span class="mute">4</span></div></div>
-        <div class="step"><h3><em>2</em>한 번 곱해요</h3>
-          <div class="big num"><span class="g">17 × 4</span> = <span class="g">68</span></div></div>
-        <div class="step"><h3><em>3</em>한 칸 밀어 써요</h3>
-          <div class="side">
-            <div class="col num"><span class="g">68</span><span><span class="o">68</span><span class="mute">0</span></span></div>
-            <div class="note">68을 왼쪽으로<br><b>한 칸</b> 밀면 <b>680</b></div>
-          </div></div>
-        <div class="step"><h3><em>4</em>둘을 더해요</h3>
-          <div class="side">
-            <div class="col num"><span class="g">68</span><span>+ <span class="o">680</span></span><span class="rule"></span><span class="rd">748</span></div>
-            <div class="big num" style="font-size:24px">17 × 44 = <span class="rd">748</span></div>
-          </div></div>
-      </div>
-
-      <div class="why">
-        <div class="mk">!</div>
-        <div>
-          <p class="eq num">44 = 4 × 11 &nbsp;이라서&nbsp; 17 × 44 = 68 × 11 = 680 + 68</p>
-          <p>11을 곱하는 것은 「한 칸 민 수 + 원래 수」예요. 그래서 곱셈을 두 번 할 필요가 없어요.</p>
-        </div>
-      </div>
-
-      <div class="try">
-        <div class="lab"><img src="../assets/characters/numi-0.png" alt="">혼자 해 보기</div>
-        <div class="body"><span class="big num">23 × 22 =</span><span class="dg"><i></i><i></i><i></i></span></div>
-      </div>
-    </div>
-    <div class="pno l num">7</div>
+  <div class="title">
+    <span class="no">02</span>
+    <div><p class="eyebrow">오늘 배울 셈</p><h1>자리 이동 곱셈</h1>
+    <p class="lead">44 · 55 · 99처럼 같은 숫자가 두 번 있는 수를 곱할 때 써요.</p></div>
   </div>
+
+  <div class="rule">
+    <p class="rule-h">마법의 규칙</p>
+    <ol>
+      <li><span>1</span><span class="t">곱하는 수가 <b>44</b>처럼 같은 숫자 두 개인지 봐요.</span></li>
+      <li><span>2</span><span class="t">그 숫자 <b>하나</b>로 한 번만 곱해요.</span></li>
+      <li><span>3</span><span class="t">그 곱을 <b>한 칸 밀어</b> 쓰고, 처음 곱과 더해요.</span></li>
+    </ol>
+  </div>
+
+  <div class="sec"><span class="chip">예시</span><span class="q num">17 × <span class="g">4</span><span class="mute">4</span></span><span class="secnote">숫자 4 하나만 써요</span></div>
+  <div class="strip num">
+    <div class="tile"><em>① 한 번 곱하기</em><div class="tv">17 × <span class="g">4</span> = <span class="g">68</span></div></div>
+    <span class="arr"></span>
+    <div class="tile"><em>② 한 칸 밀기</em><div class="tv"><span class="g">68</span> → <span class="o">68</span><span class="mute">0</span></div></div>
+    <span class="arr"></span>
+    <div class="tile end"><em>③ ①과 ②를 더하기</em><div class="tv"><span class="g">68</span> + <span class="o">680</span> = <span class="rd">748</span></div></div>
+  </div>
+
+  <div class="two">
+    <div class="gridcard">
+      <p class="cap">모눈에서 자리 맞추기</p>
+      <div class="mg num">
+        <i></i><i></i><i class="g">6</i><i class="g">8</i>
+        <i class="op"></i><i class="o">6</i><i class="o">8</i><i class="mute">0</i>
+        <i class="sum"></i><i class="sum rd">7</i><i class="sum rd">4</i><i class="sum rd">8</i>
+      </div>
+      <p class="side">68을 왼쪽으로 한 칸 → 680</p>
+    </div>
+    <div class="why">
+      <p class="why-h">왜 그럴까?</p>
+      <p class="num">44 = 4 × 11</p>
+      <p class="num">17 × 44 = 68 × 11</p>
+      <p>11을 곱하면 <b>한 칸 민 수 + 원래 수</b>가 돼요.<br><span class="num">68 × 11 = 680 + 68 = 748</span></p>
+    </div>
+  </div>
+
+  <fieldset class="once"><legend>한 번 더 · 혼자 해 보기</legend>
+    <div class="once-b num"><span>23 × 22 =</span><span class="dg"><i></i><i></i><i></i></span></div>
+  </fieldset>
+  <footer class="ft"><span>자리 이동 곱셈</span><span class="pg">7</span></footer>
 </section>
 
-<!-- ───────────── 2쪽 · 빈칸 채우며 따라 풀기 ───────────── -->
 <section class="sheet">
-  <div class="frame">
-    <div class="tab"><span class="series">수의 마법</span><span class="bar"></span><span class="course">과정 26</span><span class="day">2일차</span></div>
-    <div class="who"><span>이름 <i></i></span></div>
-    <div class="panel r">
-      <div class="band"><img src="../assets/characters/docssam.png" alt=""><b>따라 풀기</b><span>빈칸을 ① ② ③ 차례로 채워요</span></div>
-      <div class="follow">
-        <h4 class="num"><span class="tg">(가)</span>16 × 44</h4>
-        <div class="grid">
-          <div class="vsum">
-            <div class="rowr top"><span class="dg sm"><i></i><i></i></span></div><div class="lbl">① 16 × 4</div>
-            <div class="rowr"><span class="dg sm"><i></i><i></i></span><span class="dg sm"><i class="zero"></i></span></div><div class="lbl">② 한 칸 밀기</div>
-            <div class="rl"></div><div></div>
-            <div class="rowr"><span class="dg sm"><i></i><i></i><i></i></span></div><div class="lbl">③ 더하기</div>
-          </div>
-          <div class="lines num">
-            <div><em>1</em>16 × 4 = <span class="dg sm"><i></i><i></i></span></div>
-            <div><em>2</em>한 칸 밀면 <span class="dg sm"><i></i><i></i><i></i></span></div>
-            <div><em>3</em>둘을 더하면 <span class="dg sm"><i></i><i></i><i></i></span></div>
-            <div><em>4</em>16 × 44 = <span class="dg sm"><i></i><i></i><i></i></span></div>
-          </div>
-        </div>
-      </div>
-      <div class="follow">
-        <h4 class="num"><span class="tg">(나)</span>27 × 33</h4>
-        <div class="grid">
-          <div class="vsum">
-            <div class="rowr top"><span class="dg sm"><i></i><i></i></span></div><div class="lbl">① 27 × 3</div>
-            <div class="rowr"><span class="dg sm"><i></i><i></i></span><span class="dg sm"><i class="zero"></i></span></div><div class="lbl">② 한 칸 밀기</div>
-            <div class="rl"></div><div></div>
-            <div class="rowr"><span class="dg sm"><i></i><i></i><i></i></span></div><div class="lbl">③ 더하기</div>
-          </div>
-          <div class="lines num">
-            <div><em>1</em>27 × 3 = <span class="dg sm"><i></i><i></i></span></div>
-            <div><em>2</em>한 칸 밀면 <span class="dg sm"><i></i><i></i><i></i></span></div>
-            <div><em>3</em>둘을 더하면 <span class="dg sm"><i></i><i></i><i></i></span></div>
-            <div><em>4</em>27 × 33 = <span class="dg sm"><i></i><i></i><i></i></span></div>
-          </div>
-        </div>
-      </div>
-      <div class="follow">
-        <h4 class="num"><span class="tg">(다)</span>13 × 33</h4>
-        <div class="grid">
-          <div class="vsum">
-            <div class="rowr top"><span class="dg sm"><i></i><i></i></span></div><div class="lbl">① 13 × 3</div>
-            <div class="rowr"><span class="dg sm"><i></i><i></i></span><span class="dg sm"><i class="zero"></i></span></div><div class="lbl">② 한 칸 밀기</div>
-            <div class="rl"></div><div></div>
-            <div class="rowr"><span class="dg sm"><i></i><i></i><i></i></span></div><div class="lbl">③ 더하기</div>
-          </div>
-          <div class="lines num">
-            <div><em>1</em>13 × 3 = <span class="dg sm"><i></i><i></i></span></div>
-            <div><em>2</em>한 칸 밀면 <span class="dg sm"><i></i><i></i><i></i></span></div>
-            <div><em>3</em>둘을 더하면 <span class="dg sm"><i></i><i></i><i></i></span></div>
-            <div><em>4</em>13 × 33 = <span class="dg sm"><i></i><i></i><i></i></span></div>
-          </div>
-        </div>
+  <header class="hd">
+    <div class="kick"><span class="brand">수의 마법</span><span class="dot"></span>과정 26<span class="dot"></span>2일차</div>
+    <div class="who"><span>이름<i></i></span></div>
+  </header>
+  <ol class="path"><li class="done"><b>1</b>개념</li><li class="now"><b>2</b>따라 풀기</li><li class="now"><b>3</b>혼자 풀기</li><li class="next"><b>4</b>연습</li></ol>
+
+  <div class="h2row"><h2>따라 풀기</h2><p>예시와 같은 띠예요. 빈칸만 채워요.</p></div>
+  <div class="fps">
+    <div class="fp">
+      <p class="fp-h"><b>(가)</b><span class="num">16 × 44</span></p>
+      <div class="strip num">
+        <div class="tile"><em>① 한 번 곱하기</em><div class="tv">16 × 4 = <span class="dg sm"><i></i><i></i></span></div></div>
+        <span class="arr"></span>
+        <div class="tile"><em>② 한 칸 밀기</em><div class="tv"><span class="dg sm"><i></i><i></i><i class="z">0</i></span></div></div>
+        <span class="arr"></span>
+        <div class="tile end"><em>③ ①과 ②를 더하기</em><div class="tv">16 × 44 = <span class="dg sm"><i></i><i></i><i></i></span></div></div>
       </div>
     </div>
-    <div class="pno r num">8</div>
+    <div class="fp">
+      <p class="fp-h"><b>(나)</b><span class="num">27 × 33</span></p>
+      <div class="strip num">
+        <div class="tile"><em>① 한 번 곱하기</em><div class="tv">27 × 3 = <span class="dg sm"><i></i><i></i></span></div></div>
+        <span class="arr"></span>
+        <div class="tile"><em>② 한 칸 밀기</em><div class="tv"><span class="dg sm"><i></i><i></i><i class="z">0</i></span></div></div>
+        <span class="arr"></span>
+        <div class="tile end"><em>③ ①과 ②를 더하기</em><div class="tv">27 × 33 = <span class="dg sm"><i></i><i></i><i></i></span></div></div>
+      </div>
+    </div>
+    <div class="fp">
+      <p class="fp-h"><b>(다)</b><span class="num">13 × 33</span></p>
+      <div class="strip num">
+        <div class="tile"><em>① 한 번 곱하기</em><div class="tv">13 × 3 = <span class="dg sm"><i></i><i></i></span></div></div>
+        <span class="arr"></span>
+        <div class="tile"><em>② 한 칸 밀기</em><div class="tv"><span class="dg sm"><i></i><i></i><i class="z">0</i></span></div></div>
+        <span class="arr"></span>
+        <div class="tile end"><em>③ ①과 ②를 더하기</em><div class="tv">13 × 33 = <span class="dg sm"><i></i><i></i><i></i></span></div></div>
+      </div>
+    </div>
   </div>
+  <div class="h2row"><h2>혼자 풀기</h2><p>이제 띠 없이, 모눈에 ① ② ③을 직접 써요.</p></div>
+  <div class="solos">
+    <div class="solo"><p class="fp-h"><b>(1)</b><span class="num">14 × 33</span></p><div class="pad"></div><div class="ans num">답 <span class="dg sm"><i></i><i></i><i></i></span></div></div>
+    <div class="solo"><p class="fp-h"><b>(2)</b><span class="num">12 × 22</span></p><div class="pad"></div><div class="ans num">답 <span class="dg sm"><i></i><i></i><i></i></span></div></div>
+  </div>
+  <footer class="ft"><span>자리 이동 곱셈</span><span class="pg">8</span></footer>
 </section>
 
-<!-- ───────────── 3쪽 · 빈칸 없이 혼자 풀기 + 연습 ───────────── -->
 <section class="sheet">
-  <div class="frame">
-    <div class="tab"><span class="series">수의 마법</span><span class="bar"></span><span class="course">과정 26</span><span class="day">2일차</span></div>
-    <div class="who"><span>이름 <i></i></span><span>점수 <i class="s"></i>/ 12</span></div>
-    <div class="panel">
-      <div class="band"><img src="../assets/characters/docssam.png" alt=""><b>빈칸 없이 풀기</b><span>① ② ③을 내가 직접 써요</span></div>
-      <div class="solos">
-        <div class="solo"><div class="q num"><span class="n">(1)</span>14 × 33</div><div class="work"><i></i><i></i><i></i></div><div class="ans num">14 × 33 = <span class="dg sm"><i></i><i></i><i></i></span></div></div>
-        <div class="solo"><div class="q num"><span class="n">(2)</span>12 × 22</div><div class="work"><i></i><i></i><i></i></div><div class="ans num">12 × 22 = <span class="dg sm"><i></i><i></i><i></i></span></div></div>
-        <div class="solo"><div class="q num"><span class="n">(3)</span>14 × 44</div><div class="work"><i></i><i></i><i></i></div><div class="ans num">14 × 44 = <span class="dg sm"><i></i><i></i><i></i></span></div></div>
-        <div class="solo"><div class="q num"><span class="n">(4)</span>19 × 33</div><div class="work"><i></i><i></i><i></i></div><div class="ans num">19 × 33 = <span class="dg sm"><i></i><i></i><i></i></span></div></div>
-      </div>
-      <div class="band" style="background:var(--green-d)"><b style="padding-left:3mm">연습</b><span>밀어 쓰고 더하는 것은 머릿속으로 해도 좋아요</span></div>
-      <div class="practice num">
-        <div class="pq"><span class="n">(5)</span><span class="e">15 × 22 = <span class="dg sm"><i></i><i></i><i></i></span></span></div>
-        <div class="pq"><span class="n">(6)</span><span class="e">11 × 33 = <span class="dg sm"><i></i><i></i><i></i></span></span></div>
-        <div class="pq"><span class="n">(7)</span><span class="e">27 × 22 = <span class="dg sm"><i></i><i></i><i></i></span></span></div>
-        <div class="pq"><span class="n">(8)</span><span class="e">18 × 44 = <span class="dg sm"><i></i><i></i><i></i></span></span></div>
-        <div class="pq"><span class="n">(9)</span><span class="e">29 × 22 = <span class="dg sm"><i></i><i></i><i></i></span></span></div>
-        <div class="pq"><span class="n">(10)</span><span class="e">28 × 44 = <span class="dg sm"><i></i><i></i><i></i><i></i></span></span></div>
-        <div class="pq"><span class="n">(11)</span><span class="e">11 × 44 = <span class="dg sm"><i></i><i></i><i></i></span></span></div>
-        <div class="pq"><span class="n">(12)</span><span class="e">28 × 22 = <span class="dg sm"><i></i><i></i><i></i></span></span></div>
-      </div>
-    </div>
-    <div class="pno l num">9</div>
+  <header class="hd">
+    <div class="kick"><span class="brand">수의 마법</span><span class="dot"></span>과정 26<span class="dot"></span>2일차</div>
+    <div class="who"><span>이름<i></i></span><span>맞은 개수<i class="s"></i>/ 12</span></div>
+  </header>
+  <ol class="path"><li class="done"><b>1</b>개념</li><li class="done"><b>2</b>따라 풀기</li><li class="now"><b>3</b>혼자 풀기</li><li class="now"><b>4</b>연습</li></ol>
+
+  <div class="h2row"><h2>혼자 풀기</h2><p>이어서 두 문제 더</p></div>
+  <div class="solos">
+    <div class="solo"><p class="fp-h"><b>(3)</b><span class="num">14 × 44</span></p><div class="pad"></div><div class="ans num">답 <span class="dg sm"><i></i><i></i><i></i></span></div></div>
+    <div class="solo"><p class="fp-h"><b>(4)</b><span class="num">19 × 33</span></p><div class="pad"></div><div class="ans num">답 <span class="dg sm"><i></i><i></i><i></i></span></div></div>
   </div>
+  <div class="h2row"><h2>연습</h2><p>밀고 더하는 것은 머릿속으로 해도 좋아요.</p></div>
+  <div class="prac">
+    <div class="pq num"><b>(5)</b><span>15 × 22 =</span><span class="dg sm"><i></i><i></i><i></i></span></div>
+    <div class="pq num"><b>(6)</b><span>11 × 33 =</span><span class="dg sm"><i></i><i></i><i></i></span></div>
+    <div class="pq num"><b>(7)</b><span>27 × 22 =</span><span class="dg sm"><i></i><i></i><i></i></span></div>
+    <div class="pq num"><b>(8)</b><span>18 × 44 =</span><span class="dg sm"><i></i><i></i><i></i></span></div>
+    <div class="pq num"><b>(9)</b><span>29 × 22 =</span><span class="dg sm"><i></i><i></i><i></i></span></div>
+    <div class="pq num"><b>(10)</b><span>28 × 44 =</span><span class="dg sm"><i></i><i></i><i></i><i></i></span></div>
+    <div class="pq num"><b>(11)</b><span>11 × 44 =</span><span class="dg sm"><i></i><i></i><i></i></span></div>
+    <div class="pq num"><b>(12)</b><span>28 × 22 =</span><span class="dg sm"><i></i><i></i><i></i></span></div>
+  </div>
+  <footer class="ft"><span>자리 이동 곱셈</span><span class="pg">9</span></footer>
 </section>
+
 </body>
 </html>
