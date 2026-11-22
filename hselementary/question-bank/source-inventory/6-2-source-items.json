@@ -60,9 +60,8 @@
       "identifiersUnique": true
     },
     "statusCounts20261122": {
-      "fixed-verified-pool": 351,
+      "fixed-verified-pool": 352,
       "verified-fixed-pool": 2,
-      "review-locked": 1,
       "source-absent-locked": 1
     }
   },
@@ -2715,10 +2714,28 @@
       "answerContract": "candle-remaining-length-to-hours-and-minutes",
       "visualRisk": "10분에 타는 양을 1분에 타는 양으로 바꾸거나 10분 묶음 수를 세어야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "같은 탐구의 양초 예제와 풀이가 같아 별도 유형을 중복 출제하지 않습니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "정본 PDF 해당 쪽을 직접 대조하고 같은 구조의 검증 문항 세 개를 만들어 독립 검산(Python 감사)과 앱 실제 생성 확인을 거쳐 원문 구조 유형으로 공개했습니다. 출판사 공식 답안은 확인하지 않았습니다.",
       "commonPublicTypeId": "6-2-u2-e5-example-1",
-      "commonPublicVariant": 2
+      "commonPublicVariant": 2,
+      "previousReviewState20261122": {
+        "implementationStatus": "review-locked",
+        "reviewReason": "같은 탐구의 양초 예제와 풀이가 같아 별도 유형을 중복 출제하지 않습니다."
+      },
+      "runtimeTypeIds20261122": [
+        "6-2-u2-e5-mission-5"
+      ],
+      "generatorKeys20261122": [
+        "source62U2E5Mission5"
+      ],
+      "independentAnswers20261122": {
+        "6-2-u2-e5-mission-5": [
+          "8시간 20분",
+          "16시간 40분",
+          "6시간 40분"
+        ]
+      },
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",
@@ -4017,7 +4034,7 @@
       "visualRisk": "입체의 꼭짓점 소유와 시선을 유지하고 실제 단면 띠를 그려야 합니다. 칸 전체 색칠이나 손으로 덧그린 풀이 선은 원본 제시 정보로 사용하지 않습니다.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "정본 PDF 해당 쪽을 직접 대조하고 같은 구조의 검증 문항 세 개를 만들어 독립 검산(Python 감사)과 앱 실제 생성 확인을 거쳐 원문 구조 유형으로 공개했습니다. 출판사 공식 답안은 확인하지 않았습니다. 조건 보충을 문제에 밝혔습니다.",
       "publicSourceItemId": "6-2-u3-e4-mission-3-1",
       "sharedSkillAliasId": "6-2-u3-e4-mission-3-2",
       "sourceLiteralAnswerUnique": true,
@@ -4027,7 +4044,26 @@
       "publisherAnswerVerified": false,
       "humanApproved": false,
       "learnerReleaseVerified": false,
-      "empiricallyCalibrated": false
+      "empiricallyCalibrated": false,
+      "previousReviewState20261122": {
+        "implementationStatus": "fixed-verified-pool",
+        "reviewReason": ""
+      },
+      "runtimeTypeIds20261122": [
+        "6-2-u3-e4-mission-3-2"
+      ],
+      "generatorKeys20261122": [
+        "source62U3E4Mission32"
+      ],
+      "independentAnswers20261122": {
+        "6-2-u3-e4-mission-3-2": [
+          "16개",
+          "25개",
+          "36개"
+        ]
+      },
+      "answerAssumption": "평면이 꼭짓점에서만 닿는 쌓기나무는 잘린 것으로 세지 않습니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "6-2-u3-e4-mission-4",

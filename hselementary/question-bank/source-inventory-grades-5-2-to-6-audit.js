@@ -20,7 +20,7 @@ const specs = [
     total: 264,
     units: [22, 44, 44, 67, 43, 44],
     sections: { exploration: 28, example: 92, mission: 144 },
-    statuses: { "review-locked": 1, "fixed-verified-pool": 243, implemented: 20 } // 2026-11-22 잠금 원문 일괄 검수·공개
+    statuses: { "fixed-verified-pool": 244, implemented: 20 } // 2026-11-22 잠금 원문 일괄 검수·공개
   },
   {
     semester: "6-2",
@@ -29,7 +29,7 @@ const specs = [
     total: 355,
     units: [66, 69, 44, 66, 66, 44],
     sections: { exploration: 35, example: 128, mission: 192 },
-    statuses: { "review-locked": 1, "fixed-verified-pool": 351, "verified-fixed-pool": 2,
+    statuses: { "fixed-verified-pool": 352, "verified-fixed-pool": 2,
       "source-absent-locked": 1 } // 2026-11-22 잠금 원문 일괄 검수·공개(손글씨 충돌·조건 모호 행은 독립 검산·조건 보충으로 공개)
   }
 ];

@@ -108,6 +108,11 @@ window.HSE_GRADE6_RELEASE_20261122 = Object.assign(window.HSE_GRADE6_RELEASE_202
   "answerVisual": false,
   "typeLabel": "정삼각형 4개로 만든 삼각뿔에서 네 면을 지나는 가장 짧은 선"
  },
+ "6-1-u4-e1-example-1-1": {
+  "key": "source61U4E1Example11",
+  "problemVisual": false,
+  "answerVisual": false
+ },
  "6-1-u4-e1-exploration-1-1": {
   "key": "source61U4E1Exploration1",
   "problemVisual": false,
@@ -306,6 +311,11 @@ window.HSE_GRADE6_RELEASE_20261122 = Object.assign(window.HSE_GRADE6_RELEASE_202
   "problemVisual": false,
   "answerVisual": false
  },
+ "6-2-u2-e5-mission-5": {
+  "key": "source62U2E5Mission5",
+  "problemVisual": false,
+  "answerVisual": false
+ },
  "6-2-u3-e2-mission-3": {
   "key": "source62U3E2Mission3",
   "problemVisual": true,
@@ -336,6 +346,12 @@ window.HSE_GRADE6_RELEASE_20261122 = Object.assign(window.HSE_GRADE6_RELEASE_202
   "key": "source62U3E3Mission4",
   "problemVisual": true,
   "answerVisual": false
+ },
+ "6-2-u3-e4-mission-3-2": {
+  "key": "source62U3E4Mission32",
+  "problemVisual": true,
+  "answerVisual": false,
+  "typeLabel": "꼭짓점 세 개를 지나는 평면으로 잘린 쌓기나무 수 구하기"
  },
  "6-2-u4-e3-example-1": {
   "key": "source62U4E3Example1",

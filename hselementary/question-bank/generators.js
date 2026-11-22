@@ -4052,6 +4052,62 @@
     return `<svg class="geometry-diagram symmetry-grid" viewBox="0 0 240 166" data-symmetry-mode="${mode}" data-symmetry-axis="${axis}" data-symmetry-points="${point.join(",")};${image.join(",")}" aria-label="모눈 위 대칭점"><g>${grid}</g>${axisMarkup}<circle class="highlight-fill" cx="${px}" cy="${py}" r="5"/><text x="${px - 10}" y="${py - 10}">P</text><circle cx="${qx}" cy="${qy}" r="5"/><text x="${qx + 10}" y="${qy - 10}">P′</text></svg>`;
   };
 
+  // 5-2-u3-t5 전용: 모눈 위에 대칭축(직선 가)과 선대칭도형의 반쪽, 대응점 후보를 같은 모양의 점으로 그린다(정답을 따로 표시하지 않음).
+  const symmetryCorrespondSvg = ({ cols, rows, axis, axisAt, shape, candidates }) => {
+    const cell = 18;
+    const margin = 20;
+    const width = margin * 2 + cols * cell;
+    const height = margin * 2 + rows * cell;
+    const px = x => margin + x * cell;
+    const py = y => margin + y * cell;
+    const gridStyle = "fill:none;stroke:#c3d0db;stroke-width:1";
+    const grid = Array.from({ length: cols + 1 }, (_, index) => `<line style="${gridStyle}" x1="${px(index)}" y1="${py(0)}" x2="${px(index)}" y2="${py(rows)}"/>`).join("") + Array.from({ length: rows + 1 }, (_, index) => `<line style="${gridStyle}" x1="${px(0)}" y1="${py(index)}" x2="${px(cols)}" y2="${py(index)}"/>`).join("");
+    const axisStyle = "fill:none;stroke:#d99b16;stroke-width:2.5;stroke-dasharray:6 4";
+    const axisMarkup = axis === "vertical"
+      ? `<line style="${axisStyle}" x1="${px(axisAt)}" y1="${py(0) - 12}" x2="${px(axisAt)}" y2="${py(rows) + 8}"/><text x="${px(axisAt)}" y="${py(0) - 16}">가</text>`
+      : `<line style="${axisStyle}" x1="${px(0) - 12}" y1="${py(axisAt)}" x2="${px(cols) + 8}" y2="${py(axisAt)}"/><text x="${px(0) - 16}" y="${py(axisAt)}">가</text>`;
+    const cx = shape.reduce((sum, point) => sum + point.x, 0) / shape.length;
+    const cy = shape.reduce((sum, point) => sum + point.y, 0) / shape.length;
+    const polygon = `<polygon style="fill:#e8f2f8;stroke:#294963;stroke-width:2" points="${shape.map(point => `${px(point.x)},${py(point.y)}`).join(" ")}"/>`;
+    const dot = (point, dx, dy) => `<circle style="fill:#163853;stroke:none" cx="${px(point.x)}" cy="${py(point.y)}" r="3.2"/><text x="${(px(point.x) + dx).toFixed(1)}" y="${(py(point.y) + dy).toFixed(1)}">${point.label}</text>`;
+    const along = axis === "vertical" ? "y" : "x";
+    const across = axis === "vertical" ? "x" : "y";
+    const onAxis = shape.filter(point => point[across] === axisAt).map(point => point[along]);
+    const shapeDots = shape.map(point => {
+      if (point[across] === axisAt) {
+        const outward = point[along] === Math.min(...onAxis) ? -10 : 10;
+        return axis === "vertical" ? dot(point, -9, outward) : dot(point, outward, -9);
+      }
+      let dx = point.x - cx;
+      let dy = point.y - cy;
+      if (axis === "vertical") dx = -Math.max(Math.abs(dx), 0.5);
+      else dy = -Math.max(Math.abs(dy), 0.5);
+      const length = Math.hypot(dx, dy);
+      return dot(point, dx / length * 11, dy / length * 11);
+    }).join("");
+    const allDots = [...shape, ...candidates].map(point => [px(point.x), py(point.y)]);
+    const offsets = [[9, -9], [-9, -9], [9, 9], [-9, 9], [0, -12], [12, 0], [0, 12], [-12, 0]];
+    const placed = [];
+    const candidateDots = candidates.map(point => {
+      const ox = px(point.x);
+      const oy = py(point.y);
+      let best = offsets[0];
+      let bestScore = -1;
+      for (const [dx, dy] of offsets) {
+        const lx = ox + dx;
+        const ly = oy + dy;
+        const dotGap = Math.min(...allDots.filter(([x, y]) => x !== ox || y !== oy).map(([x, y]) => Math.hypot(x - lx, y - ly)), ...placed.map(([x, y]) => Math.hypot(x - lx, y - ly) + 2));
+        const axisGap = axis === "vertical" ? Math.abs(lx - px(axisAt)) : Math.abs(ly - py(axisAt));
+        const score = Math.min(dotGap, axisGap + 4);
+        if (score > bestScore + 0.01) { best = [dx, dy]; bestScore = score; }
+      }
+      placed.push([ox + best[0], oy + best[1]]);
+      return dot(point, best[0], best[1]);
+    }).join("");
+    const data = `${axis}:${axisAt};${shape.map(point => `${point.label}${point.x},${point.y}`).join(" ")};${candidates.map(point => `${point.label}${point.x},${point.y}`).join(" ")}`;
+    return `<svg class="geometry-diagram symmetry-correspond" viewBox="0 0 ${width} ${height}" data-symmetry-correspond="${data}" aria-label="모눈 위 대칭축과 선대칭도형의 반쪽, 대응점 후보">${grid}${polygon}${axisMarkup}${shapeDots}${candidateDots}</svg>`;
+  };
+
   const symmetryShapeSvg = kind => {
     const shapes = {
       square: `<rect class="shape-fill" x="65" y="28" width="110" height="110"/>`,
@@ -15164,12 +15220,48 @@
     },
     lineSymmetryAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
-        const axis = pick(rng, ["vertical", "horizontal", "diagonal"].slice(0, 2 + level));
-        let point = [int(rng, 1, 3), int(rng, 1, 7)];
-        while ((axis === "horizontal" && point[1] === 4) || (axis === "diagonal" && point[0] === point[1])) point = [int(rng, 1, 3), int(rng, 1, 7)];
-        const image = axis === "vertical" ? [8 - point[0], point[1]] : axis === "horizontal" ? [point[0], 8 - point[1]] : [point[1], point[0]];
-        const evidence = `<span hidden data-congruence-kind="line-point" data-axis="${axis}" data-values="${point.join(",")}"></span>`;
-        return result(`모눈에서 점 P를 ${axis === "vertical" ? "직선 x=4" : axis === "horizontal" ? "직선 y=4" : "직선 y=x"}에 대하여 선대칭이동한 점 P′의 좌표를 쓰세요.${coordinateSymmetrySvg({ point, image, axis })}${evidence}`, `${image[0]}, ${image[1]}`, `대칭축에서 같은 거리에 있는 반대쪽 점을 찾으면 P′는 (${image[0]}, ${image[1]})입니다.`);
+        // 5-2-u3-t5: 모눈 위 선대칭도형의 반쪽에서 한 꼭짓점의 대응점을 후보 중에서 고른다(좌표 없이 칸 수로 판단).
+        const labels = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ"];
+        const axisAt = 5;
+        const far = 10;
+        const lastRow = 7;
+        const offAxis = level + 1;
+        const axis = level === 0 ? "vertical" : pick(rng, ["vertical", "horizontal"]);
+        const collinear = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) === 0;
+        let chain = null;
+        for (let attempt = 0; attempt < 200 && !chain; attempt += 1) {
+          const rowsUsed = shuffle(rng, [1, 2, 3, 4, 5, 6]).slice(0, offAxis + 2).sort((left, right) => left - right);
+          if (rowsUsed[rowsUsed.length - 1] - rowsUsed[0] < 3) continue;
+          const trial = rowsUsed.map((row, index) => [index === 0 || index === rowsUsed.length - 1 ? axisAt : int(rng, 0, axisAt - 1), row]);
+          if (trial.every((point, index) => !collinear(trial[(index + trial.length - 1) % trial.length], point, trial[(index + 1) % trial.length]))) chain = trial;
+        }
+        if (!chain) chain = [[[axisAt, 1], [2, 4], [axisAt, 6]], [[axisAt, 1], [2, 3], [3, 5], [axisAt, 6]], [[axisAt, 1], [3, 2], [1, 4], [2, 5], [axisAt, 6]]][offAxis - 1];
+        const offIndexes = chain.map((_, index) => index).slice(1, -1);
+        const targetIndex = pick(rng, offIndexes);
+        const [tx, ty] = chain[targetIndex];
+        const distance = axisAt - tx;
+        const image = [axisAt + distance, ty];
+        const key = ([x, y]) => `${x},${y}`;
+        const inside = ([x, y]) => x > axisAt && x <= far && y >= 0 && y <= lastRow;
+        const chosen = [image];
+        for (const index of offIndexes) if (index !== targetIndex) chosen.push([2 * axisAt - chain[index][0], chain[index][1]]);
+        const extras = shuffle(rng, [[tx + axisAt, ty], [image[0] + 1, ty], [image[0] - 1, ty], [image[0], ty - 1], [image[0], ty + 1]]);
+        const count = [3, 4, 4][level];
+        for (const point of extras) {
+          if (chosen.length >= count) break;
+          if (inside(point) && !chosen.some(item => key(item) === key(point))) chosen.push(point);
+        }
+        const toFrame = ([x, y]) => axis === "vertical" ? { x, y } : { x: y, y: x };
+        const shape = chain.map((point, index) => ({ ...toFrame(point), label: labels[index] }));
+        const framed = chosen.map((point, index) => ({ ...toFrame(point), correct: index === 0 }));
+        framed.sort((left, right) => left.y - right.y || left.x - right.x);
+        const candidates = framed.map((point, index) => ({ ...point, label: labels[chain.length + index] }));
+        const answer = candidates.find(point => point.correct).label;
+        const targetLabel = labels[targetIndex];
+        const svg = symmetryCorrespondSvg({ cols: axis === "vertical" ? far : lastRow, rows: axis === "vertical" ? lastRow : far, axis, axisAt, shape, candidates: candidates.map(({ x, y, label }) => ({ x, y, label })) });
+        const evidence = `<span hidden data-congruence-kind="line-correspond" data-axis="${axis}" data-values="${offAxis},${candidates.length}"></span>`;
+        const [near, away, line] = axis === "vertical" ? ["왼쪽", "오른쪽", "가로줄"] : ["위쪽", "아래쪽", "세로줄"];
+        return result(`직선 가를 대칭축으로 하는 선대칭도형을 그리려고 합니다. 그림은 도형의 반쪽입니다. 점 ${targetLabel}의 대응점이 되는 점을 찾아 기호를 쓰세요.${svg}${evidence}`, answer, `선대칭도형에서 대응점은 대칭축으로부터 같은 거리에 있고, 대응점끼리 이은 선분은 대칭축과 수직으로 만납니다. 점 ${targetLabel}은 직선 가에서 ${near}으로 ${distance}칸 떨어져 있으므로, 대응점은 같은 ${line}에서 직선 가의 ${away}으로 ${distance}칸 떨어진 점 ${answer}입니다.`);
       }
       if (variant % 3 === 1) {
         const angle = int(rng, 18 + level * 3, 38 + level * 5);
@@ -17747,6 +17839,137 @@
       const total = (a + b) * unit;
       if (a === b) return generators.proportionalDivision({ rng, level });
       return result(`${total}${numberJosa.eulReul(total)} ${a} : ${b}${numberJosa.ro(b)} 비례배분할 때 큰 수를 구하세요.`, Math.max(a, b) * unit, `전체 비는 ${a + b}이고 한 몫은 ${total} ÷ ${a + b} = ${unit}입니다. 큰 비에 곱하면 ${Math.max(a, b) * unit}입니다.`);
+    },
+    // 6-2-u4-t2 '비례식의 성질': 외항의 곱과 내항의 곱이 같다는 성질로 푸는 문제(앞뒤 비가 자연수배가 아닌 경우·두 미지항·소수 항).
+    proportionProductProperty({ rng, level }) {
+      const pairs = [[2, 3], [3, 2], [3, 4], [4, 3], [2, 5], [5, 2], [3, 5], [5, 3], [4, 5], [5, 4], [5, 6], [6, 5], [4, 7], [7, 4], [5, 7], [7, 5]];
+      const [p, q] = pick(rng, pairs.slice(0, 8 + level * 4));
+      const form = pick(rng, [[0, 1], [0, 1, 2], [1, 2]][level]);
+      if (form === 1) {
+        const m = int(rng, 2 + level, 6 + level * 2);
+        const product = p * q * m;
+        const first = p * m;
+        const second = q * m;
+        if (rng() < 0.5) {
+          return result(`비례식 ${p} : ${q} = ㉠ : ㉡에서 외항의 곱이 ${product}입니다. ㉠과 ㉡의 합을 구하세요.`, first + second, `외항의 곱이 ${product}이므로 ${p} × ㉡ = ${product}, ㉡ = ${product} ÷ ${p} = ${second}입니다. 내항의 곱도 ${product}이므로 ${q} × ㉠ = ${product}, ㉠ = ${product} ÷ ${q} = ${first}입니다. 따라서 ㉠ + ㉡ = ${first} + ${second} = ${first + second}입니다.`);
+        }
+        return result(`비례식 ㉠ : ㉡ = ${p} : ${q}에서 내항의 곱이 ${product}입니다. ㉠과 ㉡의 합을 구하세요.`, first + second, `내항의 곱이 ${product}이므로 ㉡ × ${p} = ${product}, ㉡ = ${product} ÷ ${p} = ${second}입니다. 외항의 곱도 ${product}이므로 ㉠ × ${q} = ${product}, ㉠ = ${product} ÷ ${q} = ${first}입니다. 따라서 ㉠ + ㉡ = ${first} + ${second} = ${first + second}입니다.`);
+      }
+      let terms;
+      let hidden;
+      if (form === 0) {
+        const [m1, m2] = pick(rng, [[2, 3], [3, 2], [3, 4], [4, 3], [2, 5], [5, 2], [3, 5], [5, 3], [4, 5], [5, 4]].slice(0, 6 + level * 2));
+        terms = [p * m1, q * m1, p * m2, q * m2];
+        hidden = int(rng, 0, 3);
+      } else {
+        const tenths = pick(rng, [[3, 4], [4, 3], [2, 5], [5, 2], [3, 5], [5, 3], [4, 5], [5, 4], [3, 7], [7, 3], [6, 5], [5, 6], [12, 5], [15, 4]].slice(0, 8 + level * 3));
+        const m = int(rng, 2, 4 + level * 2);
+        terms = [tenths[0] / 10, tenths[1] / 10, tenths[0] * m, tenths[1] * m];
+        hidden = int(rng, 2, 3);
+      }
+      const show = value => decimal(value, 2);
+      const shown = terms.map((value, index) => index === hidden ? "□" : show(value));
+      const outer = hidden === 0 || hidden === 3;
+      const partner = terms[3 - hidden];
+      const known = outer ? [terms[1], terms[2]] : [terms[0], terms[3]];
+      const knownProduct = decimal(known[0] * known[1], 2);
+      const left = hidden === 0 || hidden === 1 ? `□ × ${show(partner)}` : `${show(partner)} × □`;
+      const answer = terms[hidden];
+      return result(`비례식의 성질을 이용하여 □ 안에 알맞은 수를 구하세요.<div class="equation">${shown[0]} : ${shown[1]} = ${shown[2]} : ${shown[3]}</div>`, show(answer), `비례식에서 외항의 곱과 내항의 곱은 같으므로 ${left} = ${show(known[0])} × ${show(known[1])} = ${knownProduct}입니다. 따라서 □ = ${knownProduct} ÷ ${show(partner)} = ${show(answer)}입니다.`);
+    },
+    // 6-2-u4-t3 '비례식을 세워 풀기': 문장에서 비례식을 세우고 외항의 곱과 내항의 곱으로 푸는 문제.
+    proportionWordProblem({ rng, level }) {
+      const pairs = [[2, 3], [3, 2], [3, 4], [4, 3], [2, 5], [5, 2], [3, 5], [5, 3], [4, 5], [5, 4], [4, 7], [7, 4], [5, 7], [7, 5]];
+      const [p, q] = pick(rng, pairs.slice(0, 8 + level * 3));
+      const money = value => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const finish = (equation, left, right, rightValue, divisor, answer, unit) => `구하는 값을 □라 하여 비례식을 세우면 ${equation}입니다. 외항의 곱과 내항의 곱이 같으므로 ${left} = ${right} = ${rightValue}이고, □ = ${rightValue} ÷ ${divisor} = ${answer}입니다. 따라서 ${answer}${unit}입니다.`;
+      const kind = int(rng, 0, 4);
+      if (kind === 0) {
+        const gram = int(rng, 3 + level * 2, 9 + level * 4) * 10;
+        const flour = p * gram;
+        const answer = q * gram;
+        return result(`밀가루와 설탕을 ${p} : ${q}의 비로 섞어 반죽을 만들려고 합니다. 밀가루를 ${flour}g 넣는다면 설탕은 몇 g 넣어야 하는지 구하세요.`, answer, finish(`${p} : ${q} = ${flour} : □`, `${p} × □`, `${q} × ${flour}`, q * flour, p, answer, "g"));
+      }
+      if (kind === 1) {
+        const count = int(rng, 2, 4 + level);
+        let wanted = int(rng, count + 1, count * 3 + 2);
+        if (wanted % count === 0) wanted += 1;
+        const each = int(rng, 3, 9 + level * 3) * 100;
+        const price = count * each;
+        const answer = wanted * each;
+        return result(`같은 공책 ${count}권의 값이 ${money(price)}원입니다. 같은 공책 ${wanted}권의 값은 몇 원인지 구하세요.`, answer, finish(`${count} : ${money(price)} = ${wanted} : □`, `${count} × □`, `${money(price)} × ${wanted}`, money(price * wanted), count, money(answer), "원"));
+      }
+      if (kind === 2) {
+        const minutes = int(rng, 2, 4 + level);
+        let wanted = int(rng, minutes + 2, minutes * 4 + 1);
+        if (wanted % minutes === 0) wanted += 1;
+        const speed = int(rng, 5, 8) * 10;
+        const distance = minutes * speed;
+        const far = wanted * speed;
+        return result(`일정한 빠르기로 ${minutes}분 동안 ${distance}m를 걷는 사람이 있습니다. 같은 빠르기로 ${far}m를 걷는 데 걸리는 시간은 몇 분인지 구하세요.`, wanted, finish(`${minutes} : ${distance} = □ : ${far}`, `${distance} × □`, `${minutes} × ${far}`, minutes * far, distance, wanted, "분"));
+      }
+      if (kind === 3) {
+        const [stickRatio, shadowRatio] = pick(rng, [[2, 3], [3, 2], [3, 4], [4, 3], [4, 5], [5, 4], [2, 5], [5, 3]]);
+        const stick = stickRatio * 20;
+        const shadow = shadowRatio * 20;
+        const times = int(rng, 3, 6 + level);
+        const treeShadow = shadow * times;
+        const answer = stick * times;
+        return result(`같은 시각에 길이가 ${stick}cm인 막대의 그림자 길이는 ${shadow}cm였습니다. 이때 그림자 길이가 ${treeShadow}cm인 나무의 높이는 몇 cm인지 구하세요.`, answer, finish(`${stick} : ${shadow} = □ : ${treeShadow}`, `${shadow} × □`, `${stick} × ${treeShadow}`, stick * treeShadow, shadow, answer, "cm"));
+      }
+      const times = int(rng, 3, 6 + level);
+      const mapLength = p * times;
+      const answer = q * times;
+      return result(`어느 지도에서 ${p}cm는 실제 거리 ${q}km를 나타냅니다. 이 지도에서 ${mapLength}cm 떨어진 두 곳 사이의 실제 거리는 몇 km인지 구하세요.`, answer, finish(`${p} : ${q} = ${mapLength} : □`, `${p} × □`, `${q} × ${mapLength}`, q * mapLength, p, answer, "km"));
+    },
+    // 6-2-u4-t6 '비례배분의 활용': 남은 양·차·둘레·학생 수의 비 같은 조건을 거쳐 비례배분하는 문장제.
+    proportionalDivisionApplication({ rng, level }) {
+      const pairs = [[3, 2], [4, 3], [5, 2], [5, 3], [3, 1], [4, 1], [5, 4], [7, 3], [7, 4], [7, 5], [8, 3], [9, 4]];
+      const [p, q] = pick(rng, pairs.slice(0, 6 + level * 3));
+      const money = value => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const kind = int(rng, 0, 4);
+      if (kind === 0) {
+        const unit = int(rng, 3, 12 + level * 6) * 100;
+        const rest = (p + q) * unit;
+        const saved = int(rng, 2, 9) * 1000;
+        const total = rest + saved;
+        const older = rng() < 0.5;
+        const answer = (older ? p : q) * unit;
+        return result(`${money(total)}원 중에서 ${money(saved)}원을 저금하고, 나머지를 형과 동생이 ${p} : ${q}${numberJosa.ro(q)} 나누어 가졌습니다. ${older ? "형" : "동생"}이 가진 돈은 몇 원인지 구하세요.`, answer, `나누어 가진 돈은 ${money(total)} - ${money(saved)} = ${money(rest)}원입니다. ${money(rest)}원을 ${p} : ${q}${numberJosa.ro(q)} 비례배분하면 한 몫은 ${money(rest)} ÷ ${p + q} = ${money(unit)}원이므로 ${older ? "형" : "동생"}은 ${money(unit)} × ${older ? p : q} = ${money(answer)}원입니다.`);
+      }
+      if (kind === 1) {
+        const unit = int(rng, 4, 12 + level * 5);
+        const rest = (p + q) * unit;
+        const road = int(rng, 5, 30);
+        const total = rest + road;
+        const pepper = rng() < 0.5;
+        const answer = (pepper ? p : q) * unit;
+        return result(`넓이가 ${total}m²인 밭에서 ${road}m²에 길을 만들고, 나머지를 고추밭과 상추밭으로 ${p} : ${q}${numberJosa.iGa(q)} 되게 나누었습니다. ${pepper ? "고추밭" : "상추밭"}의 넓이는 몇 m²인지 구하세요.`, answer, `나누는 넓이는 ${total} - ${road} = ${rest}m²입니다. ${rest}m²를 ${p} : ${q}${numberJosa.ro(q)} 비례배분하면 한 몫은 ${rest} ÷ ${p + q} = ${unit}m²이므로 ${pepper ? "고추밭" : "상추밭"}은 ${unit} × ${pepper ? p : q} = ${answer}m²입니다.`);
+      }
+      if (kind === 2) {
+        const unit = int(rng, 3, 12 + level * 4);
+        const difference = (p - q) * unit;
+        const answer = (p + q) * unit;
+        return result(`구슬을 지우와 민호가 ${p} : ${q}${numberJosa.ro(q)} 나누어 가졌더니 지우가 민호보다 ${difference}개 더 많았습니다. 나누기 전 구슬은 모두 몇 개인지 구하세요.`, answer, `비의 차 ${p} - ${q} = ${p - q}${numberJosa.iGa(p - q)} ${difference}개이므로 한 몫은 ${difference} ÷ ${p - q} = ${unit}개입니다. 전체는 ${p} + ${q} = ${p + q}몫이므로 ${unit} × ${p + q} = ${answer}개입니다.`);
+      }
+      if (kind === 3) {
+        const unit = int(rng, 2, 6 + level * 2);
+        const half = (p + q) * unit;
+        const perimeter = half * 2;
+        const width = p * unit;
+        const height = q * unit;
+        const answer = width * height;
+        return result(`둘레가 ${perimeter}cm인 직사각형이 있습니다. 이 직사각형의 가로와 세로의 비가 ${p} : ${q}일 때, 직사각형의 넓이는 몇 cm²인지 구하세요.`, answer, `가로와 세로의 합은 ${perimeter} ÷ 2 = ${half}cm입니다. ${half}cm를 ${p} : ${q}${numberJosa.ro(q)} 비례배분하면 한 몫은 ${half} ÷ ${p + q} = ${unit}cm이므로 가로는 ${width}cm, 세로는 ${height}cm입니다. 넓이는 ${width} × ${height} = ${answer}cm²입니다.`);
+      }
+      const [first, second] = pick(rng, [[5, 4], [6, 5], [4, 3], [7, 5], [7, 6], [8, 7]]);
+      const size = int(rng, 3, 4);
+      const classOne = first * size;
+      const classTwo = second * size;
+      const unit = int(rng, 2, 5 + level);
+      const total = (first + second) * unit;
+      const askOne = rng() < 0.5;
+      const answer = (askOne ? first : second) * unit;
+      return result(`1반 학생은 ${classOne}명, 2반 학생은 ${classTwo}명입니다. 귤 ${total}개를 두 반의 학생 수의 비로 나누어 줄 때, ${askOne ? "1반" : "2반"}에 주는 귤은 몇 개인지 구하세요.`, answer, `학생 수의 비 ${classOne} : ${classTwo}${numberJosa.eulReul(classTwo)} 간단한 자연수의 비로 나타내면 ${first} : ${second}입니다. ${total}개를 ${first} : ${second}${numberJosa.ro(second)} 비례배분하면 한 몫은 ${total} ÷ ${first + second} = ${unit}개이므로 ${askOne ? "1반" : "2반"}은 ${unit} × ${askOne ? first : second} = ${answer}개입니다.`);
     },
     circle({ rng, level }) {
       const radius = int(rng, 3, 8 + level);
@@ -30712,6 +30935,9 @@
     [type => type.id === "5-1-u6-t3", "perimeterAreaSquareCompositionAdvanced"],
     [type => type.id === "5-1-u6-t4", "quadrilateralAreaAdvanced"],
     [type => type.id === "6-2-u4-t4", "continuedRatioAdvanced"],
+    [type => type.id === "6-2-u4-t2", "proportionProductProperty"],
+    [type => type.id === "6-2-u4-t3", "proportionWordProblem"],
+    [type => type.id === "6-2-u4-t6", "proportionalDivisionApplication"],
     [type => type.id === "6-2-u5-t3", "complexCircleAreaOneAdvanced"],
     [type => type.id === "6-2-u5-t4", "complexCircleAreaTwoAdvanced"],
     [type => type.id === "6-2-u5-t5", "locusLengthAreaAdvanced"],

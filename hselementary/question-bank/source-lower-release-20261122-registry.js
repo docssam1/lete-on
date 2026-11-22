@@ -6,6 +6,20 @@ window.HSE_LOWER_RELEASE_20261122 = Object.assign(window.HSE_LOWER_RELEASE_20261
   "problemVisual": true,
   "answerVisual": false
  },
+ "4-1-u2-t5-9": {
+  "sourceItemId": "4-1-u2-e5-mission-4",
+  "key": "orig41U2E5Mission4Creative",
+  "problemVisual": true,
+  "answerVisual": false,
+  "creative": true
+ },
+ "4-1-u2-t6-5": {
+  "sourceItemId": "4-1-u2-e6-example-6-4",
+  "key": "orig41U2E6Example64Creative",
+  "problemVisual": false,
+  "answerVisual": false,
+  "creative": true
+ },
  "4-1-u3-t5-3": {
   "sourceItemId": "4-1-u3-e5-example-5-2",
   "key": "orig41U3E5Example52",
@@ -27,12 +41,33 @@ window.HSE_LOWER_RELEASE_20261122 = Object.assign(window.HSE_LOWER_RELEASE_20261
   "answerVisual": true,
   "typeLabel": "규칙에 따라 움직인 글자의 □번째 모양 그리기"
  },
+ "4-1-u4-t2-4": {
+  "sourceItemId": "4-1-u4-e2-example-2-3",
+  "key": "orig41U4E2Example23Creative",
+  "problemVisual": true,
+  "answerVisual": false,
+  "creative": true
+ },
  "4-1-u4-t2-7": {
   "sourceItemId": "4-1-u4-e2-mission-2",
   "key": "orig41U4E2Mission2",
   "problemVisual": true,
   "answerVisual": false,
   "typeLabel": "무늬에서 기본 모양을 돌려 만든 모양 세기"
+ },
+ "4-1-u4-t3-3": {
+  "sourceItemId": "4-1-u4-e3-example-3-2",
+  "key": "orig41U4E3Example32Creative",
+  "problemVisual": true,
+  "answerVisual": false,
+  "creative": true
+ },
+ "4-1-u4-t3-9": {
+  "sourceItemId": "4-1-u4-e3-mission-4",
+  "key": "orig41U4E3Mission4Creative",
+  "problemVisual": true,
+  "answerVisual": false,
+  "creative": true
  },
  "4-1-u4-t4": {
   "sourceItemId": "4-1-u4-e4-exploration",
@@ -54,6 +89,27 @@ window.HSE_LOWER_RELEASE_20261122 = Object.assign(window.HSE_LOWER_RELEASE_20261
   "problemVisual": true,
   "answerVisual": false,
   "typeLabel": "뒤집어도 모양이 같은 한글 자모 세기"
+ },
+ "4-1-u5-t2-11": {
+  "sourceItemId": "4-1-u5-e2-mission-6",
+  "key": "orig41U5E2Mission6Creative",
+  "problemVisual": true,
+  "answerVisual": false,
+  "creative": true
+ },
+ "4-1-u5-t2-2": {
+  "sourceItemId": "4-1-u5-e2-example-2-1",
+  "key": "orig41U5E2Example21Creative",
+  "problemVisual": true,
+  "answerVisual": false,
+  "creative": true
+ },
+ "4-1-u5-t2-3": {
+  "sourceItemId": "4-1-u5-e2-example-2-2",
+  "key": "orig41U5E2Example22Creative",
+  "problemVisual": true,
+  "answerVisual": false,
+  "creative": true
  },
  "4-1-u5-t2-5": {
   "sourceItemId": "4-1-u5-e2-example-2-4",
@@ -138,6 +194,12 @@ window.HSE_LOWER_RELEASE_20261122 = Object.assign(window.HSE_LOWER_RELEASE_20261
  "4-2-u2-t3-5": {
   "sourceItemId": "4-2-triangle-3-mission-5",
   "key": "orig42U2E3Mission5",
+  "problemVisual": true,
+  "answerVisual": false
+ },
+ "4-2-u2-t3-7": {
+  "sourceItemId": "4-2-triangle-3-exploration",
+  "key": "orig42U2E3ExplorationGrid",
   "problemVisual": true,
   "answerVisual": false
  },
@@ -1130,6 +1192,12 @@ window.HSE_LOWER_RELEASE_20261122 = Object.assign(window.HSE_LOWER_RELEASE_20261
   "sourceItemId": "5-1-u6-e6-mission-4",
   "key": "orig51U6E6Mission4",
   "problemVisual": true,
+  "answerVisual": false
+ },
+ "5-2-u1-e2-example-2-4": {
+  "sourceItemId": "5-2-u1-e2-example-2-4",
+  "key": "orig52U1E2Example24Nonzero",
+  "problemVisual": false,
   "answerVisual": false
  }
 });

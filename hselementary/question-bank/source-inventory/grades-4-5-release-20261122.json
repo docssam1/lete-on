@@ -6,7 +6,8 @@
   "sources": {
     "4-1": "생각하는 황소 4-1 실력 (인쇄 쪽 = PDF 쪽)",
     "4-2": "생각하는 황소 4-2 심화 (인쇄 쪽 = PDF 쪽 + 5)",
-    "5-1": "생각하는 황소 5-1 심화 수정본 (인쇄 쪽 = PDF 쪽 + 1)"
+    "5-1": "생각하는 황소 5-1 심화 수정본 (인쇄 쪽 = PDF 쪽 + 1)",
+    "5-2": "생각하는 황소 5-2 심화 (기존 정본)"
   },
   "items": [
     {
@@ -22,6 +23,39 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u2-t5-9",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u2-e5-mission-4",
+      "generatorKey": "orig41U2E5Mission4Creative",
+      "typeLabel": "삼각형을 접은 선과 늘인 선에서 두 각의 합 구하기 · 창작 연습",
+      "independentAnswers": [
+        "100°",
+        "120°",
+        "90°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u2-t6-5",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u2-e6-example-6-4",
+      "generatorKey": "orig41U2E6Example64Creative",
+      "typeLabel": "시침 위치와 각도로 시각 찾기 · 창작 연습",
+      "independentAnswers": [
+        "3시 30분",
+        "5시 40분",
+        "8시 20분"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
       "publisherKeyVerified": false
     },
     {
@@ -37,6 +71,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -52,6 +87,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -67,6 +103,23 @@
       ],
       "answerAssumption": null,
       "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t2-4",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e2-example-2-3",
+      "generatorKey": "orig41U4E2Example23Creative",
+      "typeLabel": "잘못된 연속 이동 바로잡기 · 창작 연습",
+      "independentAnswers": [
+        "사",
+        "아",
+        "나"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
       "publisherKeyVerified": false
     },
     {
@@ -82,6 +135,39 @@
       ],
       "answerAssumption": "처음 모양과 같은 방향으로 놓인 2칸×2칸 묶음도 360° 돌린 모양으로 셉니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t3-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e3-example-3-2",
+      "generatorKey": "orig41U4E3Example32Creative",
+      "typeLabel": "뒤집어 잇는 띠무늬 완성 · 창작 연습",
+      "independentAnswers": [
+        "④",
+        "③",
+        "①"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t3-9",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e3-mission-4",
+      "generatorKey": "orig41U4E3Mission4Creative",
+      "typeLabel": "좌우 뒤집기 띠무늬의 도형 수 · 창작 연습",
+      "independentAnswers": [
+        "22개",
+        "30개",
+        "19개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
       "publisherKeyVerified": false
     },
     {
@@ -97,6 +183,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -112,6 +199,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -127,6 +215,55 @@
       ],
       "answerAssumption": "글자는 반듯한 고딕 모양으로 보고 붓끝·굵기 차이는 생각하지 않습니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u5-t2-11",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u5-e2-mission-6",
+      "generatorKey": "orig41U5E2Mission6Creative",
+      "typeLabel": "산 선택 순서로 전체 학생 수의 가장 작은 값 찾기 · 창작 연습",
+      "independentAnswers": [
+        "33명",
+        "40명",
+        "29명"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u5-t2-2",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u5-e2-example-2-1",
+      "generatorKey": "orig41U5E2Example21Creative",
+      "typeLabel": "달의 날수로 찢어진 막대 찾기 · 창작 연습",
+      "independentAnswers": [
+        "9일",
+        "10일",
+        "5일"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u5-t2-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u5-e2-example-2-2",
+      "generatorKey": "orig41U5E2Example22Creative",
+      "typeLabel": "남녀 수를 채워 반별 차 비교하기 · 창작 연습",
+      "independentAnswers": [
+        "3반, 7명",
+        "2반, 7명",
+        "3반, 8명"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": true,
       "publisherKeyVerified": false
     },
     {
@@ -142,6 +279,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -157,6 +295,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -172,6 +311,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -187,6 +327,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -202,6 +343,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -217,6 +359,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -232,6 +375,7 @@
       ],
       "answerAssumption": "직각 표시가 있는 곳만 직각으로 봅니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -247,6 +391,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -262,6 +407,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -277,6 +423,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -292,6 +439,7 @@
       ],
       "answerAssumption": "변 ㄱㄴ과 변 ㄱㄷ이 같은 이등변삼각형으로 봅니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -307,6 +455,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -322,6 +471,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -337,6 +487,23 @@
       ],
       "answerAssumption": "변 ㄱㄴ과 변 ㄱㄷ이 같은 이등변삼각형이고, 꼭짓점 ㄱ은 ㅁ에, ㄷ은 ㅅ에 닿게 접은 것으로 봅니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-exploration",
+      "generatorKey": "orig42U2E3ExplorationGrid",
+      "typeLabel": "직선을 추가해 이등변삼각형 최대로 만들기",
+      "independentAnswers": [
+        "9개",
+        "10개",
+        "9개"
+      ],
+      "answerAssumption": "직사각형을 점 모눈 위에 두고, 직선은 둘레 위의 두 점을 지나도록 그으며, 그은 직선과 변으로 만들어지는 크고 작은 삼각형을 모두 셉니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -352,6 +519,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -367,6 +535,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -382,6 +551,7 @@
       ],
       "answerAssumption": "양초는 처음부터 끝까지 같은 빠르기로 탄다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -397,6 +567,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -412,6 +583,7 @@
       ],
       "answerAssumption": "두 수 사이를 등분한 눈금이 나타내는 소수(두 수 자신 제외) 중에서 찾는다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -427,6 +599,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -442,6 +615,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -457,6 +631,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -472,6 +647,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -487,6 +663,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -502,6 +679,7 @@
       ],
       "answerAssumption": "다섯 지점은 직선 위에 ㉮, ㉯, ㉰, ㉱, ㉲의 순서로 놓여 있다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -517,6 +695,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -532,6 +711,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -547,6 +727,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -562,6 +743,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -577,6 +759,7 @@
       ],
       "answerAssumption": "소수 셋째 자리 숫자가 0인 수는 소수 세 자리 수로 보지 않고, 일의 자리 숫자가 0인 수는 소수 세 자리 수로 본다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -592,6 +775,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -607,6 +791,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -622,6 +807,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -637,6 +823,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -652,6 +839,7 @@
       ],
       "answerAssumption": "(3)의 동위각은 직선 바를 따라 직선 가, 나, 라와 만나는 곳에서, (4)의 엇각은 직선 마를 따라 직선 가, 나, 다와 만나는 곳에서 찾는다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -667,6 +855,7 @@
       ],
       "answerAssumption": "마지막 빗금 직선은 다른 빗금 직선들과 평행하지 않고, 그 직선이 만드는 각은 모두 각 ㉠과 크기가 다르다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -682,6 +871,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -697,6 +887,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -712,6 +903,7 @@
       ],
       "answerAssumption": "레이저는 거울과 같은 크기의 각을 이루며 반사되고, 거울의 두께는 생각하지 않는다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -727,6 +919,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -742,6 +935,7 @@
       ],
       "answerAssumption": "레이저는 거울과 같은 크기의 각을 이루며 반사되고, 거울의 두께는 생각하지 않는다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -757,6 +951,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -772,6 +967,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -787,6 +983,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -802,6 +999,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -817,6 +1015,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -832,6 +1031,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -847,6 +1047,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -862,6 +1063,7 @@
       ],
       "answerAssumption": "사각형은 포함 관계(정사각형은 마름모·직사각형·평행사변형·사다리꼴, 평행사변형은 사다리꼴)로 세고, 주어진 것 외에는 평행한 선분이 없으며 정사각형이 아닌 평행사변형은 마름모가 아니다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -877,6 +1079,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -892,6 +1095,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -907,6 +1111,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -922,6 +1127,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -937,6 +1143,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -952,6 +1159,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -967,6 +1175,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -982,6 +1191,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -997,6 +1207,7 @@
       ],
       "answerAssumption": "㉠·㉡은 각각 두 선분이 만나는 점에서 변 ㄱㄴ 쪽을 향한 각이다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1012,6 +1223,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1027,6 +1239,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1042,6 +1255,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1057,6 +1271,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1072,6 +1287,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1087,6 +1303,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1102,6 +1319,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1117,6 +1335,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1132,6 +1351,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1147,6 +1367,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1162,6 +1383,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1177,6 +1399,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1192,6 +1415,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1207,6 +1431,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1222,6 +1447,7 @@
       ],
       "answerAssumption": "이등변삼각형 ㄹㅁㅅ에서 길이가 같은 두 변은 변 ㄹㅁ과 변 ㄹㅅ이다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1237,6 +1463,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1252,6 +1479,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1267,6 +1495,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1282,6 +1511,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1297,6 +1527,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1312,6 +1543,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1327,6 +1559,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1342,6 +1575,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1357,6 +1591,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1372,6 +1607,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1387,6 +1623,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1402,6 +1639,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1417,6 +1655,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1432,6 +1671,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1447,6 +1687,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1462,6 +1703,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1477,6 +1719,7 @@
       ],
       "answerAssumption": "직사각형도 평행사변형으로 셉니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1492,6 +1735,7 @@
       ],
       "answerAssumption": "한 학년 동안(12달) 키가 매달 같은 만큼 자랐다고 봅니다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1507,6 +1751,7 @@
       ],
       "answerAssumption": "나 물통은 처음부터 그래프의 높이만큼 물이 있었고, 두 물통은 충분히 깊어 같은 빠르기로 계속 채워진다고 봅니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1522,6 +1767,7 @@
       ],
       "answerAssumption": "18×8 변형처럼 자르는 방법이 여러 가지일 수 있는 경우, 두 조각의 모양과 크기가 같고 다시 붙여 정사각형이 되면 정답으로 봅니다.",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1537,6 +1783,7 @@
       ],
       "answerAssumption": "모눈의 선을 따라 자르고, 조각은 돌리거나 뒤집어 붙일 수 있다고 봅니다.",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1552,6 +1799,7 @@
       ],
       "answerAssumption": "자르는 방법이 여러 가지일 수 있으므로, 점선을 따라 자른 두 조각의 모양과 크기가 같고 다시 붙여 정사각형이 되면 정답으로 봅니다.",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1567,6 +1815,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1582,6 +1831,7 @@
       ],
       "answerAssumption": "고른 다섯 조각이 정해지면 붙이는 방법은 여러 가지일 수 있어, 조각 선택과 빈틈없는 정사각형이면 정답으로 봅니다.",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1597,6 +1847,7 @@
       ],
       "answerAssumption": "나누는 선은 모눈의 꼭짓점끼리 이은 선분들로 이루어진다고 봅니다.",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1612,6 +1863,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1627,6 +1879,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1642,6 +1895,7 @@
       ],
       "answerAssumption": "정사각형을 만드는 조각 선택과 배치는 여러 가지이므로, 정해진 조각 수로 빈틈없이 겹치지 않게 만든 정사각형이면 정답으로 봅니다.",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1657,6 +1911,7 @@
       ],
       "answerAssumption": "스케치북·공책·음료수는 모두 처음 돈의 반으로 샀고, 남은 돈은 그 반에서 남은 돈이다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1672,6 +1927,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1687,6 +1943,7 @@
       ],
       "answerAssumption": "세 수의 최소공배수가 될 수 있는 수 중 가장 작은 수를 구한다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1702,6 +1959,7 @@
       ],
       "answerAssumption": "조건에 맞는 학생 수를 모두 구한다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1717,6 +1975,7 @@
       ],
       "answerAssumption": "남거나 모자라는 개수는 학생 수보다 적다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1732,6 +1991,7 @@
       ],
       "answerAssumption": "조건에 맞는 (㉮, ㉯, ㉰)를 모두 구한다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1747,6 +2007,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1762,6 +2023,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1777,6 +2039,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1792,6 +2055,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1807,6 +2071,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1822,6 +2087,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1837,6 +2103,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1852,6 +2119,7 @@
       ],
       "answerAssumption": "색종이의 테두리는 그린 사각형으로 세지 않고, 삼각형은 크기에 관계없이 모두 센다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1867,6 +2135,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1882,6 +2151,7 @@
       ],
       "answerAssumption": "□는 세로로 놓인 종이 수, ○는 가로로 놓인 종이 수이고 종이는 그림의 순서대로 붙여 나간다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1897,6 +2167,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1912,6 +2183,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1927,6 +2199,7 @@
       ],
       "answerAssumption": "여러 표현 중 세 분모 중 가장 큰 분모가 가장 작은 것을 답한다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1942,6 +2215,7 @@
       ],
       "answerAssumption": "여러 표현 중 세 분모 중 가장 큰 분모가 가장 작은 것을 답한다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1957,6 +2231,7 @@
       ],
       "answerAssumption": "가와 마는 그림처럼 다가 한 귀퉁이를 차지한 꺾인 모양이며, 각 조각의 둘레는 테두리 전체 길이로 봅니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1972,6 +2247,7 @@
       ],
       "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -1987,6 +2263,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2002,6 +2279,7 @@
       ],
       "answerAssumption": "지갑의 한 긴 변은 블록 한 개의 대각선과 꼭 맞고, 그 맞은편 변은 그 블록의 한 꼭짓점을 지납니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2017,6 +2295,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2032,6 +2311,7 @@
       ],
       "answerAssumption": "표시된 세 넓이는 각 직사각형에서 다른 직사각형과 겹치지 않은 부분이고, 나머지 한 넓이는 세 직사각형이 모두 겹친 부분입니다.",
       "resultContract": "multi-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2047,6 +2327,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2062,6 +2343,7 @@
       ],
       "answerAssumption": "논은 밭과 가로, 세로의 길이가 각각 같고, 길은 변에 평행하게 끝에서 끝까지 곧게 나 있습니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2077,6 +2359,7 @@
       ],
       "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2092,6 +2375,7 @@
       ],
       "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2107,6 +2391,7 @@
       ],
       "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2122,6 +2407,7 @@
       ],
       "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
       "resultContract": "drawing",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2137,6 +2423,7 @@
       ],
       "answerAssumption": "가장 작은 색종이는 가장 큰 색종이 안에 완전히 놓이고, ㉡은 중간 색종이 중 가장 작은 색종이와 겹친 부분과 가장 큰 색종이 밖으로 나온 부분의 합입니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2152,6 +2439,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2167,6 +2455,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2182,6 +2471,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2197,6 +2487,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2212,6 +2503,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2227,6 +2519,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2242,6 +2535,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2257,6 +2551,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2272,6 +2567,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2287,6 +2583,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2302,6 +2599,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2317,6 +2615,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2332,6 +2631,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2347,6 +2647,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2362,6 +2663,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2377,6 +2679,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2392,6 +2695,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2407,6 +2711,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2422,6 +2727,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2437,6 +2743,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2452,6 +2759,7 @@
       ],
       "answerAssumption": "세 점 ㄴ, ㄷ, ㅂ은 한 직선 위에 있고, 주어진 짧은 길이는 마름모의 두 대각선이 만나는 점에서 점 ㅂ까지의 길이입니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2467,6 +2775,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2482,6 +2791,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2497,6 +2807,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2512,6 +2823,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2527,6 +2839,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2542,6 +2855,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2557,6 +2871,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2572,6 +2887,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2587,6 +2903,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2602,6 +2919,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2617,6 +2935,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2632,6 +2951,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2647,6 +2967,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2662,6 +2983,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2677,6 +2999,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2692,6 +3015,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2707,6 +3031,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2722,6 +3047,7 @@
       ],
       "answerAssumption": "가운데 네 작은 사각형은 길에 붙어 있는 정사각형이고, 흰 삼각형은 그 정사각형을 대각선으로 똑같이 나눈 반쪽입니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2737,6 +3063,7 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2752,6 +3079,7 @@
       ],
       "answerAssumption": "잘라 낸 네 부분은 모양과 크기가 같고, 비스듬한 선은 정사각형의 변과 45°를 이룹니다.",
       "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     },
     {
@@ -2767,6 +3095,23 @@
       ],
       "answerAssumption": null,
       "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-2-u1-e2-example-2-4",
+      "semester": "5-2",
+      "sourceItemId": "5-2-u1-e2-example-2-4",
+      "generatorKey": "orig52U1E2Example24Nonzero",
+      "typeLabel": "숫자 조건과 반올림 결과로 빈 숫자 구하기",
+      "independentAnswers": [
+        "2",
+        "3",
+        "3"
+      ],
+      "answerAssumption": "㉠, ㉡, ㉢은 모두 0이 아닌 숫자입니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
       "publisherKeyVerified": false
     }
   ]

@@ -192,8 +192,7 @@
       "54": 6
     },
     "statusCounts20261122": {
-      "fixed-verified-pool": 243,
-      "review-locked": 1,
+      "fixed-verified-pool": 244,
       "implemented": 20
     }
   },
@@ -2401,8 +2400,27 @@
       "sourceShape": "가, 나, 다의 두 비율을 이어 세 번째 비율을 기약분수로 나타내는 문제이나 원본의 한 비율 값이 인쇄 그림에 가려짐",
       "answerContract": "provisional",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "예제 1-2~1-4는 공개했습니다. 예제 1-1은 원본 스캔에서 둘째 비가 가려져 읽을 수 없어 잠금을 유지합니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "정본 PDF 해당 쪽을 직접 대조하고 같은 구조의 검증 문항 세 개를 만들어 독립 검산(Python 감사)과 앱 실제 생성 확인을 거쳐 원문 구조 유형으로 공개했습니다. 출판사 공식 답안은 확인하지 않았습니다. 조건 보충을 문제에 밝혔습니다.",
+      "previousReviewState20261122": {
+        "implementationStatus": "review-locked",
+        "reviewReason": "예제 1-2~1-4는 공개했습니다. 예제 1-1은 원본 스캔에서 둘째 비가 가려져 읽을 수 없어 잠금을 유지합니다."
+      },
+      "runtimeTypeIds20261122": [
+        "6-1-u4-e1-example-1-1"
+      ],
+      "generatorKeys20261122": [
+        "source61U4E1Example11"
+      ],
+      "independentAnswers20261122": {
+        "6-1-u4-e1-example-1-1": [
+          "11/5",
+          "18/25",
+          "63/50"
+        ]
+      },
+      "answerAssumption": "원본 스캔에서 가려진 둘째 비율은 판독 가능한 조건과 맞는 값으로 정해 변형 0을 만들었습니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "6-1-u4-e1-example-2",
