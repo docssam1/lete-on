@@ -6,6 +6,7 @@ import { COURSE2_G4_TYPE_ROWS, COURSE2_G4_GUIDES } from "./course2-g4-generators
 import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261122a";
 import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators.js?v=20261122d";
 import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261122e";
+import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261122f";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1132,6 +1133,7 @@ TYPES.push(...COURSE2_G4_TYPE_ROWS.map(([id, domain, middle, label, generator]) 
 TYPES.push(...COURSE2_G5_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G5 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_A1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A1 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_A2_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A2 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A3_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A3 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -1970,7 +1972,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   ...COURSE2_G4_GUIDES,
   ...COURSE2_G5_GUIDES,
   ...COURSE2_A1_GUIDES,
-  ...COURSE2_A2_GUIDES
+  ...COURSE2_A2_GUIDES,
+  ...COURSE2_A3_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4718,6 +4721,41 @@ const C2_A2_UNITS = [
     ["practice", 1, [12, 13], "reverse-two-container-transfers-b8"], ["practice", 1, [16, 17, 18], "give-as-much-return-b8"]
   ])
 ];
+// 2과정 A3 — 교재 번호마다 유형. 숫자 카드·최단거리는 1과정(5권 등) 유형, 사각수는 A2 생성기, 나머지는 course2-a3-generators.js
+const C2_A3_UNITS = [
+  c2Unit("카프리카수와 등차수열", [4, 3, 4], [2, 3, 4], 6, 23, [
+    ["activity", 1, [1, 2, 3, 4], "c2-repeating-decimal"], ["check", 1, [1, 2], "c2-power-last-digit"],
+    ["activity", 2, [1, 2, 3], "c2-arith-sequence"], ["check", 2, [1, 2], "c2-arith-sequence"], ["check", 2, [3], "c2-group-rows"],
+    ["activity", 3, [1, 2, 3, 4], "c2-fraction-sequence"], ["check", 3, [1, 2, 3, 4], "c2-fraction-sequence"],
+    ["advanced", 1, [1, 3, 4, 5, 6], "c2-arith-sequence"], ["advanced", 1, [2], "c2-group-rows"],
+    ["practice", 1, [1, 2, 3, 4], "c2-repeating-decimal"], ["practice", 1, [5, 6], "c2-power-last-digit"],
+    ["practice", 1, [7, 8, 9, 10, 11, 12, 13, 15, 16], "c2-arith-sequence"], ["practice", 1, [14, 18, 19, 20, 21, 22, 23], "c2-fraction-sequence"], ["practice", 1, [17], "c2-group-rows"]
+  ]),
+  c2Unit("삼각수와 묶음수열", [3, 4, 3], [3, 4, 3], 6, 25, [
+    ["activity", 1, [1, 2], "c2-odd-sum-square"], ["activity", 1, [3], "c2-group-rows"],
+    ["check", 1, [1], "c2-odd-sum-square"], ["check", 1, [2], "c2-gauss-sum"], ["check", 1, [3], "c2-group-rows"],
+    ["activity", 2, [1, 2, 3, 4], "c2-gauss-sum"], ["check", 2, [1, 2], "c2-gauss-sum"], ["check", 2, [3], "c2-figurate-number"], ["check", 2, [4], "go-stone-difference"],
+    ["activity", 3, [1, 2, 3], "c2-group-rows"], ["check", 3, [1, 2, 3], "c2-fraction-sequence"],
+    ["advanced", 1, [1, 2], "c2-fraction-sequence"], ["advanced", 1, [3, 4], "c2-gauss-sum"], ["advanced", 1, [5, 6], "c2-group-rows"],
+    ["practice", 1, [1, 2, 5], "c2-odd-sum-square"], ["practice", 1, [3, 4, 6, 14, 15, 16, 24], "c2-group-rows"], ["practice", 1, [7, 8, 9, 10, 25], "c2-gauss-sum"],
+    ["practice", 1, [11, 13, 21, 22], "c2-figurate-number"], ["practice", 1, [12], "go-stone-difference"], ["practice", 1, [17, 18, 19, 20], "c2-fraction-sequence"], ["practice", 1, [23], "cube-tetrahedral-growth"]
+  ]),
+  c2Unit("수와 숫자의 개수", [6, 3, 4], [2, 4, 2], 6, 23, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6], "c2-digit-count"], ["check", 1, [1, 2], "c2-digit-count"],
+    ["activity", 2, [1, 2, 3], "c2-digit-count"], ["check", 2, [1, 2], "c2-digit-count"], ["check", 2, [3, 4], "c2-digit-position"],
+    ["activity", 3, [1], "c2-digit-count"], ["activity", 3, [2, 3, 4], "c2-digit-position"], ["check", 3, [1, 2], "c2-digit-position"],
+    ["advanced", 1, [1, 2, 3], "c2-digit-position"], ["advanced", 1, [4, 5, 6], "c2-digit-count"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 18, 19], "c2-digit-count"], ["practice", 1, [15, 16, 17, 20, 21, 22, 23], "c2-digit-position"]
+  ]),
+  c2Unit("최단거리와 경우의 수", [6, 2, 2], [3, 2, 5], 5, 18, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6], "digit-card-number-enumeration"], ["check", 1, [1, 2, 3], "digit-card-ranked-number"],
+    ["activity", 2, [1, 2], "shortest-path-rectangle"], ["check", 2, [1, 2], "shortest-path-rectangle"],
+    ["activity", 3, [1, 2], "shortest-path-irregular-grid"], ["check", 3, [1, 2, 3, 4, 5], "shortest-path-irregular-grid"],
+    ["advanced", 1, [1], "shortest-path-diagonal-shortcut-book5"], ["advanced", 1, [2, 3, 4, 5], "shortest-path-irregular-grid"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6], "digit-card-number-enumeration"], ["practice", 1, [7, 8, 9, 10], "digit-card-ranked-number"],
+    ["practice", 1, [11, 12, 13, 14], "shortest-path-rectangle"], ["practice", 1, [15, 16, 17, 18], "shortest-path-irregular-grid"]
+  ])
+];
 // 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
 export const COURSE2_CURRICULUM = [
   { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
@@ -4733,7 +4771,9 @@ export const COURSE2_CURRICULUM = [
   { id: "course-02-a1", course: 2, label: "A1", title: "양팔저울과 규칙찾기", units: C2_A1_UNITS,
     source: { textbook: "2과정 A1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a1", goldenBellIncluded: false } },
   { id: "course-02-a2", course: 2, label: "A2", title: "복제수와 님게임", units: C2_A2_UNITS,
-    source: { textbook: "2과정 A2 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a2", goldenBellIncluded: false } }
+    source: { textbook: "2과정 A2 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a2", goldenBellIncluded: false } },
+  { id: "course-02-a3", course: 2, label: "A3", title: "규칙성과 수열", units: C2_A3_UNITS,
+    source: { textbook: "2과정 A3 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a3", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 // 진도표·「계획대로 가는지」가 잇는 권 차례 — 1과정 10권 뒤에 2과정을 기하·대수 번갈아 G1 → A1 → G2 → … → A5

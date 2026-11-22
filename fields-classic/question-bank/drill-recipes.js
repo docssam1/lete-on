@@ -61,6 +61,12 @@ export const DRILL_RECIPES = Object.freeze({
   "course-02-a2/calendar": ["c2-year-weekday-shift", "weekday-after-days-b7"],
   "course-02-a2/nim": ["c2-nim-strategy"],
   "course-02-a2/reverse": ["c2-reverse-half-chain", "reverse-transfer-three-b8"],
+  // 2과정 A3 — 되풀이 소수·등차수열·묶음수열·숫자 세기·경우의 수
+  "course-02-a3/decimal": ["c2-repeating-decimal", "c2-power-last-digit"],
+  "course-02-a3/arith": ["c2-arith-sequence", "c2-gauss-sum"],
+  "course-02-a3/groups": ["c2-fraction-sequence", "c2-group-rows", "c2-figurate-number"],
+  "course-02-a3/digits": ["c2-digit-count", "c2-digit-position"],
+  "course-02-a3/paths": ["shortest-path-rectangle", "digit-card-number-enumeration"],
   "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
   "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
   "book-04/cube-min-count": ["cube-count-solid", "cube-minimum-from-solid"],

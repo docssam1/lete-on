@@ -1,10 +1,10 @@
-import { CURRICULUM, GM_PATH, typeById, bookById } from "./source-data.js?v=20261122e";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261122e";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261122e";
+import { CURRICULUM, GM_PATH, typeById, bookById } from "./source-data.js?v=20261122f";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261122f";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261122f";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261117a";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261118a";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261122e";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261122f";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
