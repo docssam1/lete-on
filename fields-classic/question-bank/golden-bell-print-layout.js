@@ -219,14 +219,15 @@ function growFollow(scope) {
     const work = page.querySelector(".gold-print-exercise-grid > :last-child .tb-nc-work");
     if (!work || !contentFits(page)) return;
     const mm = (n) => `${n}mm`;
-    const base = work.closest(".tb-nc-blank") ? 8 : 14;
+    const base = work.closest(".tb-nc-blank") ? 6 : 14;
     let low = 0, high = 150;
     for (let step = 0; step < 9; step += 1) {
       const mid = (low + high) / 2;
       work.style.minHeight = mm(base + mid);
       if (contentFits(page)) low = mid; else high = mid;
     }
-    work.style.minHeight = mm(base + Math.floor(low));
+    // 잴 때는 쪽을 265mm로 잡아(실제 275mm) 10mm 여유를 두므로, 마지막 칸만 그 여유 가운데 9mm를 더 써서 쪽 아래까지 채운다
+    work.style.minHeight = mm(base + Math.floor(low) + 9);
   });
 }
 
