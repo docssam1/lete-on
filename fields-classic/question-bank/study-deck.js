@@ -1,5 +1,5 @@
-import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261121a";
-import { course2ConceptSlides } from "./course2-deck.js?v=20261122b";
+import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261122i";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261122i";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -82,6 +82,9 @@ export const sessionCount = (unit) => unitParts(unit).count;
 // (4권 4단원 1차시 본책은 표로 지우기인데 개념은 동서남북·원탁 등). 표에 없는 단원만 고르게 나눈다.
 // 값 = 차시마다의 워밍업 학습 id. 빈 차시는 개념 없이 본책으로 바로 간다(그 차시 본책과 맞는 워밍업이 없을 때).
 export const SESSION_LESSONS = Object.freeze({
+  // 2과정 A1: 워밍업 원본(golden-bell-course02-*-lesson.js)을 교재 차시에 맞춰 — 1단원 1차시 마디, 2차시 도형 규칙, 2단원 1차시 금화
+  "course-02-a1/0": [["course-02-a1-multi-pattern-activity", "course-02-a1-cycle-total", "course-02-a1-windmill-pattern"], ["course-02-a1-polygon-activity-02", "course-02-a1-stone-growth-activity-03"]],
+  "course-02-a1/1": [["course-02-a1-counterfeit-coins"], [], []],
   "book-01/3": [["number-inference"], ["preference-logic", "relative-order-running", "book1-equalize-transfer"]],
   "book-02/1": [["balance-order"], ["shape-number-equations", "arithmetic-sequences"]],
   "book-03/2": [["basic-vertical-cryptarithm", "cryptarithm-repeated", "cryptarithm-mixed"], ["cryptarithm-linked"]],

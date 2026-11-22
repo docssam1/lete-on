@@ -4,6 +4,11 @@ import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261121a";
 import { COURSE2_G4_TYPE_ROWS, COURSE2_G4_GUIDES } from "./course2-g4-generators.js?v=20261121a";
 import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261122a";
+import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators.js?v=20261122d";
+import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261122i";
+import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261122i";
+import { COURSE2_A4_TYPE_ROWS, COURSE2_A4_GUIDES } from "./course2-a4-generators.js?v=20261122i";
+import { COURSE2_A5_TYPE_ROWS, COURSE2_A5_GUIDES } from "./course2-a5-generators.js?v=20261122i";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1128,6 +1133,11 @@ TYPES.push(...COURSE2_G2_TYPE_ROWS.map(([id, domain, middle, label, generator]) 
 TYPES.push(...COURSE2_G3_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G3 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_G4_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G4 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_G5_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G5 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A1 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A2_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A2 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A3_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A3 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A4_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A4 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A5_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A5 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -1964,7 +1974,12 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   ...COURSE2_G2_GUIDES,
   ...COURSE2_G3_GUIDES,
   ...COURSE2_G4_GUIDES,
-  ...COURSE2_G5_GUIDES
+  ...COURSE2_G5_GUIDES,
+  ...COURSE2_A1_GUIDES,
+  ...COURSE2_A2_GUIDES,
+  ...COURSE2_A3_GUIDES,
+  ...COURSE2_A4_GUIDES,
+  ...COURSE2_A5_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4627,6 +4642,206 @@ const C2_G5_UNITS = [
     ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "c2-similar-scale"], ["practice", 1, [11, 12, 13, 14, 15, 16, 17, 18, 19, 20], "c2-shadow-height"]
   ])
 ];
+// 2과정 A1 — 교재 번호마다 유형. 1과정에 같은 풀이가 있으면 1과정 유형(6·7·8권 등), 없으면 course2-a1-generators.js
+const C2_A1_UNITS = [
+  c2Unit("마디수열과 규칙 찾기", [6, 5], [4, 3], 5, 26, [
+    ["activity", 1, [1, 2, 3, 4, 5], "c2-period-nth"], ["activity", 1, [6], "repeat-shape-color-dual"],
+    ["check", 1, [1, 2], "c2-period-nth"], ["check", 1, [3, 4], "c2-period-number-sum"],
+    ["activity", 2, [1], "g1-polygon-stone-rearrangement"], ["activity", 2, [2, 3], "go-stone-difference"], ["activity", 2, [4, 5], "border-go-stone-difference"],
+    ["check", 2, [1, 2], "go-stone-difference"], ["check", 2, [3], "go-stone-difference-inverse"],
+    ["advanced", 1, [1], "c2-period-nth"], ["advanced", 1, [2, 3], "growing-shape-count"], ["advanced", 1, [4], "matchstick-square-growth"], ["advanced", 1, [5], "g1-triangle-color-difference"],
+    ["practice", 1, [1, 11, 12], "c2-period-number-sum"], ["practice", 1, [2, 3, 4, 5, 7, 8, 9, 10], "c2-period-nth"], ["practice", 1, [6], "repeat-shape-color-dual"],
+    ["practice", 1, [13, 14], "polygon-border-side-count-inverse-b7"], ["practice", 1, [15], "g1-polygon-stone-rearrangement"],
+    ["practice", 1, [16, 17, 20, 22, 24], "go-stone-difference"], ["practice", 1, [21], "go-stone-difference-inverse"], ["practice", 1, [18, 19], "border-go-stone-difference"],
+    ["practice", 1, [23], "g1-triangle-color-difference"], ["practice", 1, [25], "triangle-tile-growth"], ["practice", 1, [26], "matchstick-square-growth"]
+  ]),
+  c2Unit("양팔저울과 비", [2, 6, 8], [4, 4, 6], 6, 27, [
+    ["activity", 1, [1, 2], "c2-fake-coin"], ["check", 1, [1, 2, 3, 4], "c2-fake-coin"],
+    ["activity", 2, [1], "balance-scale"], ["activity", 2, [2, 5], "balance-scale-circle-target"], ["activity", 2, [3, 4], "balance-scale-three-objects"], ["activity", 2, [6], "g1-winter-three-balance-substitution"],
+    ["check", 2, [1, 2], "g1-winter-three-balance-substitution"], ["check", 2, [3, 4], "balance-scale-three-objects"],
+    ["activity", 3, [1, 2, 3], "bar-ratio-read"], ["activity", 3, [4, 5], "balance-ratio-book6"], ["activity", 3, [6], "equivalent-ratio-chain"], ["activity", 3, [7, 8], "balance-weight-ratio"],
+    ["check", 3, [1, 3, 4, 5, 6], "c2-ratio-difference"], ["check", 3, [2], "two-object-weight-unit-test-book6"],
+    ["advanced", 1, [1, 4], "balance-scale-four-objects"], ["advanced", 1, [2], "symbol-relation"], ["advanced", 1, [3, 5, 6], "g1-winter-three-balance-substitution"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6], "c2-fake-coin"], ["practice", 1, [7, 11, 12, 13, 14], "g1-winter-three-balance-substitution"], ["practice", 1, [8], "balance-scale-circle-target"],
+    ["practice", 1, [9, 10, 15], "balance-scale-three-objects"], ["practice", 1, [16], "balance-scale-four-objects"], ["practice", 1, [17, 18, 19], "bar-ratio-total-length"],
+    ["practice", 1, [20], "balance-ratio-book6"], ["practice", 1, [21], "balance-weight-ratio"], ["practice", 1, [22, 24, 25, 26], "c2-ratio-difference"],
+    ["practice", 1, [23], "two-object-weight-unit-test-book6"], ["practice", 1, [27], "symbol-relation"]
+  ]),
+  c2Unit("분수와 비", [5, 5, 4], [5, 5, 4], 6, 22, [
+    ["activity", 1, [1, 2], "fraction-given-away-original-b8"], ["activity", 1, [3, 4, 5], "sequential-fraction-remains-b8"],
+    ["check", 1, [1], "fraction-given-away-original-b8"], ["check", 1, [2, 3, 4], "sequential-fraction-remains-b8"], ["check", 1, [5], "fraction-difference-whole-b8"],
+    ["activity", 2, [1, 2, 3, 4, 5], "c2-fraction-ratio-split"],
+    ["check", 2, [1, 2], "c2-fraction-ratio-split"], ["check", 2, [3, 4, 5], "fraction-share-difference-b8"],
+    ["activity", 3, [1, 2], "c2-improper-fraction"], ["activity", 3, [3, 4], "c2-quotient-remainder-pair"],
+    ["check", 3, [1, 2, 3, 4], "c2-improper-fraction"],
+    ["advanced", 1, [1, 2], "fraction-share-difference-b8"], ["advanced", 1, [3, 4], "c2-fraction-ratio-split"], ["advanced", 1, [5, 6], "c2-improper-fraction"],
+    ["practice", 1, [1, 2, 4], "fraction-given-away-original-b8"], ["practice", 1, [3, 5, 6], "sequential-fraction-remains-b8"], ["practice", 1, [7], "fraction-difference-whole-b8"],
+    ["practice", 1, [8], "fraction-subgroup-count-b8"], ["practice", 1, [9, 10, 11, 12], "c2-fraction-ratio-split"], ["practice", 1, [13, 14], "fraction-share-difference-b8"],
+    ["practice", 1, [15, 16, 19, 20, 21, 22], "c2-improper-fraction"], ["practice", 1, [17, 18], "c2-quotient-remainder-pair"]
+  ]),
+  c2Unit("가로수와 통나무", [6, 4], [4, 3], 6, 24, [
+    ["activity", 1, [1, 3, 4, 5], "closed-perimeter-object-count-b7"], ["activity", 1, [2, 6], "closed-perimeter-from-spacing-count-b7"],
+    ["check", 1, [1, 2, 3, 4], "c2-road-trees"],
+    ["activity", 2, [1, 2, 3, 4], "c2-log-cut-time"], ["check", 2, [1, 2, 3], "c2-log-cut-time"],
+    ["advanced", 1, [1, 2], "c2-road-trees"], ["advanced", 1, [3, 4, 5, 6], "c2-log-cut-time"],
+    ["practice", 1, [1, 3, 4, 5], "closed-perimeter-object-count-b7"], ["practice", 1, [2, 6], "closed-perimeter-from-spacing-count-b7"],
+    ["practice", 1, [7, 8, 9, 10, 11, 12], "c2-road-trees"], ["practice", 1, [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24], "c2-log-cut-time"]
+  ])
+];
+// 2과정 A2 — 교재 번호마다 유형. 1과정에 같은 풀이가 있으면 1과정 유형(5·6·7·8권 달력·거꾸로 풀기·연산 약속), 없으면 course2-a2-generators.js
+const C2_A2_UNITS = [
+  c2Unit("10의 거듭제곱과 복제수", [5, 2, 3], [4, 5, 4], 6, 25, [
+    ["activity", 1, [1, 2, 3], "c2-smart-regroup"], ["activity", 1, [4, 5], "c2-power-ten-zeros"],
+    ["check", 1, [1, 3, 4], "c2-power-ten-zeros"], ["check", 1, [2], "c2-nines-product"],
+    ["activity", 2, [1, 2], "c2-repunit-square"], ["check", 2, [1, 2], "c2-nines-product"], ["check", 2, [3, 4, 5], "c2-repunit-square"],
+    ["activity", 3, [1, 2, 3], "c2-smart-regroup"], ["check", 3, [1, 2, 3, 4], "c2-smart-regroup"],
+    ["advanced", 1, [1, 2, 4, 5], "c2-smart-regroup"], ["advanced", 1, [3], "c2-nines-product"], ["advanced", 1, [6], "c2-power-ten-zeros"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 17, 18, 19, 20, 21, 22, 23, 24], "c2-smart-regroup"], ["practice", 1, [7, 8, 10], "c2-power-ten-zeros"], ["practice", 1, [9], "c2-nines-product"],
+    ["practice", 1, [11, 12, 13, 14, 15, 16, 25], "c2-repunit-square"]
+  ]),
+  c2Unit("포포즈와 약속", [4, 4, 5], [3, 4, 3], 5, 28, [
+    ["activity", 1, [1, 2, 3, 4], "c2-odd-sum-square"], ["check", 1, [1, 2, 3], "c2-odd-sum-square"],
+    ["activity", 2, [1, 3], "two-custom-operations"], ["activity", 2, [2, 4], "two-custom-operations"], ["check", 2, [1, 2, 3, 4], "two-custom-operations"],
+    ["activity", 3, [1, 2, 3, 4], "c2-bracket-insert"], ["activity", 3, [5], "consecutive-sign-insertion"], ["check", 3, [1, 2, 3], "sign-insertion-triple-unit-test-book6"],
+    ["advanced", 1, [1, 2, 3], "sign-insertion-triple-unit-test-book6"], ["advanced", 1, [4, 5], "c2-odd-sum-square"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7], "c2-odd-sum-square"], ["practice", 1, [8, 9, 10, 11, 13, 14, 15, 16, 17, 18], "two-custom-operations"], ["practice", 1, [12], "two-custom-operations"],
+    ["practice", 1, [19, 20, 21, 22], "c2-bracket-insert"], ["practice", 1, [23, 24, 25], "consecutive-sign-insertion"], ["practice", 1, [26, 27, 28], "sign-insertion-triple-unit-test-book6"]
+  ]),
+  c2Unit("달력과 님게임", [2, 5, 3], [4, 4, 4], 5, 19, [
+    ["activity", 1, [1, 2], "c2-year-weekday-shift"], ["check", 1, [1, 2, 3, 4], "c2-year-weekday-shift"],
+    ["activity", 2, [1, 2, 4], "calendar-cross-month-weekday-b7"], ["activity", 2, [3], "calendar-month-shift-weekday-b7"], ["activity", 2, [5], "weekday-after-days-b7"],
+    ["check", 2, [1, 2, 4], "calendar-weekday-list-ordinal-book5"], ["check", 2, [3], "calendar-month-position"],
+    ["activity", 3, [1, 2, 3], "c2-nim-strategy"], ["check", 3, [1, 2, 3, 4], "c2-nim-strategy"],
+    ["advanced", 1, [1, 2, 3, 4, 5], "c2-nim-strategy"],
+    ["practice", 1, [1, 2, 4, 5, 6], "c2-year-weekday-shift"], ["practice", 1, [3], "leap-year-cross-month-weekday-b7"], ["practice", 1, [7], "calendar-cross-month-weekday-b7"],
+    ["practice", 1, [8, 9], "weekday-after-days-b7"], ["practice", 1, [10, 11, 12], "calendar-weekday-list-ordinal-book5"], ["practice", 1, [13, 14, 15, 16, 17, 18, 19], "c2-nim-strategy"]
+  ]),
+  c2Unit("거꾸로 생각하기", [4, 4], [4, 4], 5, 20, [
+    ["activity", 1, [1], "c2-digit-product-steps"], ["activity", 1, [2], "sequential-fraction-remains-b8"], ["activity", 1, [3, 4], "c2-reverse-half-chain"],
+    ["check", 1, [1, 2], "c2-reverse-half-chain"], ["check", 1, [3, 4], "sequential-fraction-consumption-b8"],
+    ["activity", 2, [1], "reverse-two-container-transfers-b8"], ["activity", 2, [2], "give-as-much-once-b8"], ["activity", 2, [3], "reverse-transfer-three-b8"], ["activity", 2, [4], "reverse-transfer-events-b8"],
+    ["check", 2, [1], "reverse-transfer-three-b8"], ["check", 2, [2, 3, 4], "give-as-much-return-b8"],
+    ["advanced", 1, [1], "reverse-operation-ladder"], ["advanced", 1, [2, 3], "reverse-transfer-three-b8"], ["advanced", 1, [4, 5], "c2-reverse-half-chain"],
+    ["practice", 1, [1], "reverse-operation-ladder"], ["practice", 1, [2], "c2-digit-product-steps"], ["practice", 1, [3, 4, 5, 7], "c2-reverse-half-chain"],
+    ["practice", 1, [6, 8, 9], "sequential-fraction-remains-b8"], ["practice", 1, [10, 14], "three-container-condition-b8"], ["practice", 1, [11, 15, 19, 20], "reverse-transfer-three-b8"],
+    ["practice", 1, [12, 13], "reverse-two-container-transfers-b8"], ["practice", 1, [16, 17, 18], "give-as-much-return-b8"]
+  ])
+];
+// 2과정 A3 — 교재 번호마다 유형. 숫자 카드·최단거리는 1과정(5권 등) 유형, 사각수는 A2 생성기, 나머지는 course2-a3-generators.js
+const C2_A3_UNITS = [
+  c2Unit("카프리카수와 등차수열", [4, 3, 4], [2, 3, 4], 6, 23, [
+    ["activity", 1, [1, 2, 3, 4], "c2-repeating-decimal"], ["check", 1, [1, 2], "c2-power-last-digit"],
+    ["activity", 2, [1, 2, 3], "c2-arith-sequence"], ["check", 2, [1, 2], "c2-arith-sequence"], ["check", 2, [3], "c2-group-rows"],
+    ["activity", 3, [1, 2, 3, 4], "c2-fraction-sequence"], ["check", 3, [1, 2, 3, 4], "c2-fraction-sequence"],
+    ["advanced", 1, [1, 3, 4, 5, 6], "c2-arith-sequence"], ["advanced", 1, [2], "c2-group-rows"],
+    ["practice", 1, [1, 2, 3, 4], "c2-repeating-decimal"], ["practice", 1, [5, 6], "c2-power-last-digit"],
+    ["practice", 1, [7, 8, 9, 10, 11, 12, 13, 15, 16], "c2-arith-sequence"], ["practice", 1, [14, 18, 19, 20, 21, 22, 23], "c2-fraction-sequence"], ["practice", 1, [17], "c2-group-rows"]
+  ]),
+  c2Unit("삼각수와 묶음수열", [3, 4, 3], [3, 4, 3], 6, 25, [
+    ["activity", 1, [1, 2], "c2-odd-sum-square"], ["activity", 1, [3], "c2-group-rows"],
+    ["check", 1, [1], "c2-odd-sum-square"], ["check", 1, [2], "c2-gauss-sum"], ["check", 1, [3], "c2-group-rows"],
+    ["activity", 2, [1, 2, 3, 4], "c2-gauss-sum"], ["check", 2, [1, 2], "c2-gauss-sum"], ["check", 2, [3], "c2-figurate-number"], ["check", 2, [4], "go-stone-difference"],
+    ["activity", 3, [1, 2, 3], "c2-group-rows"], ["check", 3, [1, 2, 3], "c2-fraction-sequence"],
+    ["advanced", 1, [1, 2], "c2-fraction-sequence"], ["advanced", 1, [3, 4], "c2-gauss-sum"], ["advanced", 1, [5, 6], "c2-group-rows"],
+    ["practice", 1, [1, 2, 5], "c2-odd-sum-square"], ["practice", 1, [3, 4, 6, 14, 15, 16, 24], "c2-group-rows"], ["practice", 1, [7, 8, 9, 10, 25], "c2-gauss-sum"],
+    ["practice", 1, [11, 13, 21, 22], "c2-figurate-number"], ["practice", 1, [12], "go-stone-difference"], ["practice", 1, [17, 18, 19, 20], "c2-fraction-sequence"], ["practice", 1, [23], "cube-tetrahedral-growth"]
+  ]),
+  c2Unit("수와 숫자의 개수", [6, 3, 4], [2, 4, 2], 6, 23, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6], "c2-digit-count"], ["check", 1, [1, 2], "c2-digit-count"],
+    ["activity", 2, [1, 2, 3], "c2-digit-count"], ["check", 2, [1, 2], "c2-digit-count"], ["check", 2, [3, 4], "c2-digit-position"],
+    ["activity", 3, [1], "c2-digit-count"], ["activity", 3, [2, 3, 4], "c2-digit-position"], ["check", 3, [1, 2], "c2-digit-position"],
+    ["advanced", 1, [1, 2, 3], "c2-digit-position"], ["advanced", 1, [4, 5, 6], "c2-digit-count"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 18, 19], "c2-digit-count"], ["practice", 1, [15, 16, 17, 20, 21, 22, 23], "c2-digit-position"]
+  ]),
+  c2Unit("최단거리와 경우의 수", [6, 2, 2], [3, 2, 5], 5, 18, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6], "digit-card-number-enumeration"], ["check", 1, [1, 2, 3], "digit-card-ranked-number"],
+    ["activity", 2, [1, 2], "shortest-path-rectangle"], ["check", 2, [1, 2], "shortest-path-rectangle"],
+    ["activity", 3, [1, 2], "shortest-path-irregular-grid"], ["check", 3, [1, 2, 3, 4, 5], "shortest-path-irregular-grid"],
+    ["advanced", 1, [1], "shortest-path-diagonal-shortcut-book5"], ["advanced", 1, [2, 3, 4, 5], "shortest-path-irregular-grid"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6], "digit-card-number-enumeration"], ["practice", 1, [7, 8, 9, 10], "digit-card-ranked-number"],
+    ["practice", 1, [11, 12, 13, 14], "shortest-path-rectangle"], ["practice", 1, [15, 16, 17, 18], "shortest-path-irregular-grid"]
+  ])
+];
+// 2과정 A4 — 교재 번호마다 유형. 마방진·원형진·복면산·합과 차는 1과정 유형, 배수와 약수·가정하여 풀기는 course2-a4-generators.js, 비는 A1 생성기
+const C2_A4_UNITS = [
+  c2Unit("마방진", [6, 2], [4, 3], 5, 19, [
+    ["activity", 1, [1, 2], "magic-square-four-complete"], ["activity", 1, [3, 4, 5], "magic-square-three-complete"], ["activity", 1, [6], "magic-square-three-target"],
+    ["check", 1, [1, 2], "circular-magic-eleven-line-sum"], ["check", 1, [3], "circular-magic-seven-line-sum"], ["check", 1, [4], "circular-magic-line-sum"],
+    ["activity", 2, [1], "circular-magic-line-sum"], ["activity", 2, [2], "equal-line-sum-eight-cards"],
+    ["check", 2, [1, 2, 3], "equal-line-sum"],
+    ["advanced", 1, [1], "magic-square-four-target"], ["advanced", 1, [2], "magic-square-four-complete"], ["advanced", 1, [3], "circular-magic-line-sum"], ["advanced", 1, [4], "equal-line-sum"], ["advanced", 1, [5], "magic-square-three-complete"],
+    ["practice", 1, [1], "magic-square"], ["practice", 1, [2], "magic-square-four-target"], ["practice", 1, [3, 4, 19], "magic-square-three-target"],
+    ["practice", 1, [5, 6], "circular-magic-eleven-line-sum"], ["practice", 1, [7, 12, 13, 14, 15, 17, 18], "circular-magic-seven-line-sum"], ["practice", 1, [8], "circular-magic-line-sum"],
+    ["practice", 1, [9], "magic-square-four-complete"], ["practice", 1, [10], "equal-line-sum-eight-cards"], ["practice", 1, [11], "equal-line-sum"], ["practice", 1, [16], "three-circle-equal-sum-b7"]
+  ]),
+  c2Unit("복면산", [5, 6], [2, 4], 7, 25, [
+    ["activity", 1, [1], "pyramid-cryptarithm-b8"], ["activity", 1, [2, 3], "two-digit-letter-cryptarithm"], ["activity", 1, [4, 5], "cryptarithm-multi-symbol-carry"],
+    ["check", 1, [1, 2], "two-digit-letter-cryptarithm"],
+    ["activity", 2, [1], "cryptarithm-fixed-digit-addition"], ["activity", 2, [2], "symbol-multiplication-chain"], ["activity", 2, [3], "vertical-cryptarithm-shape-sum"], ["activity", 2, [4, 5], "number-card-mixed-operations"], ["activity", 2, [6], "unused-number-card-equations"],
+    ["check", 2, [1, 2], "two-digit-letter-cryptarithm"], ["check", 2, [3, 4], "symbol-multiplication-chain"],
+    ["advanced", 1, [1, 2, 3, 7], "two-digit-letter-cryptarithm"], ["advanced", 1, [4, 5], "equal-line-sum"], ["advanced", 1, [6], "cryptarithm-multi-symbol-carry"],
+    ["practice", 1, [1, 2, 6, 7], "cryptarithm-multi-symbol-carry"], ["practice", 1, [3], "pyramid-cryptarithm-b8"], ["practice", 1, [4, 5, 10, 13, 25], "two-digit-letter-cryptarithm"],
+    ["practice", 1, [8, 9, 14, 17, 18, 19], "number-card-mixed-operations"], ["practice", 1, [11, 12], "cryptarithm-single-double"], ["practice", 1, [15, 16, 24], "symbol-multiplication-chain"],
+    ["practice", 1, [20, 21], "number-pyramid"], ["practice", 1, [22, 23], "letter-pyramid-cryptarithm-b8"]
+  ]),
+  c2Unit("배수와 약수", [7, 9, 3], [4, 5, 3], 6, 30, [
+    ["activity", 1, [1, 2, 3, 5, 6, 7], "c2-gcd-word"], ["activity", 1, [4], "c2-lcm-word"], ["check", 1, [1, 2, 3, 4], "c2-unit-fraction"],
+    ["activity", 2, [1, 2, 3, 4, 5, 6, 7, 8, 9], "c2-lcm-word"], ["check", 2, [1, 2, 3, 4, 5], "c2-consecutive-multiples"],
+    ["activity", 3, [1], "c2-unit-fraction"], ["activity", 3, [2, 3], "c2-ratio-gcd-lcm"], ["check", 3, [1, 2, 3], "c2-ratio-gcd-lcm"],
+    ["advanced", 1, [1, 2, 4], "c2-lcm-word"], ["advanced", 1, [3], "c2-consecutive-multiples"], ["advanced", 1, [5, 6], "c2-unit-fraction"],
+    ["practice", 1, [1, 2, 3, 5, 6, 7], "c2-gcd-word"], ["practice", 1, [4, 13, 14, 15, 16, 17, 18, 19, 20, 21], "c2-lcm-word"], ["practice", 1, [8, 9, 10, 11, 12, 25], "c2-unit-fraction"],
+    ["practice", 1, [22, 23, 24], "c2-consecutive-multiples"], ["practice", 1, [26, 27, 28, 29, 30], "c2-ratio-gcd-lcm"]
+  ]),
+  c2Unit("비와 가정하여 풀기", [7, 8, 6], [4, 3, 4], 6, 28, [
+    ["activity", 1, [1, 2, 3, 4, 5], "c2-ratio-difference"], ["activity", 1, [6], "two-object-weight-unit-test-book6"], ["activity", 1, [7], "balance-weight-ratio"],
+    ["check", 1, [1, 2], "symbol-relation"], ["check", 1, [3, 4], "c2-ratio-difference"],
+    ["activity", 2, [1, 2], "two-class-total-difference"], ["activity", 2, [3, 4], "two-type-unit-total"], ["activity", 2, [5, 6], "two-way-table-count-b7"], ["activity", 2, [7], "balance-scale-three-objects"], ["activity", 2, [8], "symbol-relation"],
+    ["check", 2, [1], "two-object-weight-unit-test-book6"], ["check", 2, [2], "c2-ratio-difference"], ["check", 2, [3], "c2-congruent-rect-perimeter"],
+    ["activity", 3, [1, 2, 3, 4, 5, 6], "c2-assume-solve"], ["check", 3, [1, 2, 3, 4], "c2-assume-solve"],
+    ["advanced", 1, [1], "c2-ratio-difference"], ["advanced", 1, [2, 6], "c2-assume-solve"], ["advanced", 1, [3], "symbol-relation"], ["advanced", 1, [4], "win-loss-net-zero-b7"], ["advanced", 1, [5], "two-way-table-count-b7"],
+    ["practice", 1, [1, 2, 3, 4, 5, 9, 19], "c2-ratio-difference"], ["practice", 1, [6], "two-object-weight-unit-test-book6"], ["practice", 1, [7], "bar-ratio-total-length"],
+    ["practice", 1, [8, 10, 11, 17], "symbol-relation"], ["practice", 1, [12], "two-class-total-difference"], ["practice", 1, [13, 14], "two-type-unit-total"], ["practice", 1, [15, 16], "two-way-table-count-b7"],
+    ["practice", 1, [18, 21, 22, 23, 24, 25, 26, 27, 28], "c2-assume-solve"], ["practice", 1, [20], "c2-congruent-rect-perimeter"]
+  ])
+];
+// 2과정 A5 — 교재 번호마다 유형. 벤 그림·분수 거꾸로 풀기·간격은 1과정 7·8권 유형, 앞 권(A1~A4) 생성기, 나머지는 course2-a5-generators.js
+const C2_A5_UNITS = [
+  c2Unit("소인수분해", [8, 3, 5], [4, 3, 6], 6, 24, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6, 7, 8], "c2-divisibility-digits"], ["check", 1, [1, 2, 3, 4], "c2-divisibility-digits"],
+    ["activity", 2, [1, 2, 3], "c2-square-multiplier"], ["check", 2, [1], "c2-square-multiplier"], ["check", 2, [2, 3], "c2-consecutive-product"],
+    ["activity", 3, [1, 2, 3, 5], "c2-power-ten-zeros"], ["activity", 3, [4], "c2-factorial-zeros"], ["check", 3, [1, 2, 3, 4, 5, 6], "c2-factorial-zeros"],
+    ["advanced", 1, [1], "c2-factorial-zeros"], ["advanced", 1, [2, 3, 6], "c2-divisibility-digits"], ["advanced", 1, [4], "c2-square-multiplier"], ["advanced", 1, [5], "c2-consecutive-product"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "c2-divisibility-digits"], ["practice", 1, [12, 13, 17], "c2-square-multiplier"], ["practice", 1, [14, 15, 16], "c2-consecutive-product"],
+    ["practice", 1, [18], "c2-power-ten-zeros"], ["practice", 1, [19, 20, 21, 22, 23, 24], "c2-factorial-zeros"]
+  ]),
+  c2Unit("크기가 같은 분수", [7, 5, 2], [5, 4, 3], 5, 27, [
+    ["activity", 1, [1, 2, 3, 4, 5, 6, 7], "c2-equivalent-condition"], ["check", 1, [1, 2, 3, 4, 5], "c2-equivalent-condition"],
+    ["activity", 2, [1, 2, 3, 4, 5], "c2-partial-fraction-sum"], ["check", 2, [1, 2, 3, 4], "c2-partial-fraction-sum"],
+    ["activity", 3, [1], "c2-repeating-decimal"], ["activity", 3, [2], "c2-improper-fraction"], ["check", 3, [1, 2, 3], "number-line-midpoint-book6"],
+    ["advanced", 1, [1, 2], "c2-equivalent-condition"], ["advanced", 1, [3, 4, 5], "c2-partial-fraction-sum"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "c2-equivalent-condition"], ["practice", 1, [12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "c2-partial-fraction-sum"],
+    ["practice", 1, [22], "c2-repeating-decimal"], ["practice", 1, [23, 24, 25, 26, 27], "number-line-midpoint-book6"]
+  ]),
+  c2Unit("포함과 배제", [6, 7, 6], [3, 4, 2], 5, 28, [
+    ["activity", 1, [1, 5, 6], "venn-union-total-b7"], ["activity", 1, [2], "venn-overlap-all-b7"], ["activity", 1, [3], "venn-neither-b7"], ["activity", 1, [4], "venn-overlap-with-neither-b7"],
+    ["check", 1, [1, 2, 3], "venn-overlap-with-neither-b7"],
+    ["activity", 2, [1, 2, 3, 4, 6], "sequential-fraction-remains-b8"], ["activity", 2, [5, 7], "sequential-fraction-consumption-b8"], ["check", 2, [1, 2, 3, 4], "c2-bounce-height"],
+    ["activity", 3, [1], "fraction-given-away-original-b8"], ["activity", 3, [2, 3, 4, 5, 6], "sequential-fraction-remains-b8"], ["check", 3, [1, 2], "c2-bounce-height"],
+    ["advanced", 1, [1, 2], "c2-bounce-height"], ["advanced", 1, [3], "sequential-fraction-consumption-b8"], ["advanced", 1, [4], "venn-union-total-b7"], ["advanced", 1, [5], "neither-set-count"],
+    ["practice", 1, [1, 4], "venn-union-total-b7"], ["practice", 1, [2, 3], "venn-overlap-all-b7"], ["practice", 1, [5, 6], "venn-neither-b7"], ["practice", 1, [7, 8, 9], "venn-overlap-with-neither-b7"],
+    ["practice", 1, [10, 16], "sequential-fraction-consumption-b8"], ["practice", 1, [11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25], "sequential-fraction-remains-b8"], ["practice", 1, [17, 18, 19, 26, 27, 28], "c2-bounce-height"]
+  ]),
+  c2Unit("변하지 않는 것 찾기", [6, 6, 8], [4, 4, 4], 7, 28, [
+    ["activity", 1, [1, 2, 5, 6], "equivalent-ratio-chain"], ["activity", 1, [3, 4], "bar-ratio-total-length"],
+    ["check", 1, [1], "closed-perimeter-object-count-b7"], ["check", 1, [2, 4], "c2-fraction-ratio-split"], ["check", 1, [3], "sequential-fraction-remains-b8"],
+    ["activity", 2, [1, 3], "c2-unit-fraction"], ["activity", 2, [2], "c2-equivalent-condition"], ["activity", 2, [4], "c2-ratio-difference"], ["activity", 2, [5, 6], "fraction-share-difference-b8"],
+    ["check", 2, [1, 2, 3, 4], "c2-pond-depth"],
+    ["activity", 3, [1, 2, 3, 4, 5, 6, 7, 8], "c2-invariant-ratio"], ["check", 3, [1, 2, 3, 4], "c2-invariant-ratio"],
+    ["advanced", 1, [1, 2, 4, 5, 6, 7], "c2-invariant-ratio"], ["advanced", 1, [3], "c2-pond-depth"],
+    ["practice", 1, [1, 2, 3, 4, 5, 8, 9], "equivalent-ratio-chain"], ["practice", 1, [6], "closed-perimeter-object-count-b7"], ["practice", 1, [7], "c2-ratio-difference"],
+    ["practice", 1, [10, 11, 12, 13], "c2-pond-depth"], ["practice", 1, [14, 15, 16], "fraction-share-difference-b8"], ["practice", 1, [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28], "c2-invariant-ratio"]
+  ])
+];
 // 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
 export const COURSE2_CURRICULUM = [
   { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
@@ -4638,7 +4853,17 @@ export const COURSE2_CURRICULUM = [
   { id: "course-02-g4", course: 2, label: "G4", title: "도형의 복원과 측정", units: C2_G4_UNITS,
     source: { textbook: "2과정 G4 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g4", goldenBellIncluded: false } },
   { id: "course-02-g5", course: 2, label: "G5", title: "도형의 넓이와 비", units: C2_G5_UNITS,
-    source: { textbook: "2과정 G5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g5", goldenBellIncluded: false } }
+    source: { textbook: "2과정 G5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g5", goldenBellIncluded: false } },
+  { id: "course-02-a1", course: 2, label: "A1", title: "양팔저울과 규칙찾기", units: C2_A1_UNITS,
+    source: { textbook: "2과정 A1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a1", goldenBellIncluded: false } },
+  { id: "course-02-a2", course: 2, label: "A2", title: "복제수와 님게임", units: C2_A2_UNITS,
+    source: { textbook: "2과정 A2 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a2", goldenBellIncluded: false } },
+  { id: "course-02-a3", course: 2, label: "A3", title: "규칙성과 수열", units: C2_A3_UNITS,
+    source: { textbook: "2과정 A3 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a3", goldenBellIncluded: false } },
+  { id: "course-02-a4", course: 2, label: "A4", title: "마방진, 복면산과 비", units: C2_A4_UNITS,
+    source: { textbook: "2과정 A4 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a4", goldenBellIncluded: false } },
+  { id: "course-02-a5", course: 2, label: "A5", title: "소인수분해와 비", units: C2_A5_UNITS,
+    source: { textbook: "2과정 A5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a5", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 // 진도표·「계획대로 가는지」가 잇는 권 차례 — 1과정 10권 뒤에 2과정을 기하·대수 번갈아 G1 → A1 → G2 → … → A5

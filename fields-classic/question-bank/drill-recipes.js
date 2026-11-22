@@ -48,6 +48,35 @@ export const DRILL_RECIPES = Object.freeze({
   "book-04/fold-position-source": ["fold-number-grid-two-orthogonal"],
   // 2과정 G1 1단원(거꾸로 해결하기의 ② 단계): 다 접은 종이가 펼친 종이의 몇 번 칸에 있나 — 덱 course2-deck.js의 ["drill", …]
   "course-02-g1/fold-region": ["c2-fold-region-find"],
+  // 2과정 A1 — 마디·저울·비·간격(꾸러미 「해 보기」의 ["drill", …])
+  "course-02-a1/period": ["c2-period-nth", "c2-period-number-sum"],
+  "course-02-a1/balance": ["balance-scale-three-objects", "g1-winter-three-balance-substitution"],
+  "course-02-a1/ratio": ["balance-ratio-book6", "c2-ratio-difference"],
+  "course-02-a1/fraction": ["c2-fraction-ratio-split", "c2-improper-fraction"],
+  "course-02-a1/gaps": ["c2-road-trees", "c2-log-cut-time"],
+  // 2과정 A2 — 10의 거듭제곱·복제수·사각수·달력·님게임·거꾸로 풀기
+  "course-02-a2/powers": ["c2-power-ten-zeros", "c2-smart-regroup"],
+  "course-02-a2/clone": ["c2-nines-product", "c2-repunit-square"],
+  "course-02-a2/square": ["c2-odd-sum-square"],
+  "course-02-a2/calendar": ["c2-year-weekday-shift", "weekday-after-days-b7"],
+  "course-02-a2/nim": ["c2-nim-strategy"],
+  "course-02-a2/reverse": ["c2-reverse-half-chain", "reverse-transfer-three-b8"],
+  // 2과정 A3 — 되풀이 소수·등차수열·묶음수열·숫자 세기·경우의 수
+  "course-02-a3/decimal": ["c2-repeating-decimal", "c2-power-last-digit"],
+  "course-02-a3/arith": ["c2-arith-sequence", "c2-gauss-sum"],
+  "course-02-a3/groups": ["c2-fraction-sequence", "c2-group-rows", "c2-figurate-number"],
+  "course-02-a3/digits": ["c2-digit-count", "c2-digit-position"],
+  "course-02-a3/paths": ["shortest-path-rectangle", "digit-card-number-enumeration"],
+  // 2과정 A4 — 마방진·복면산·약수와 배수·비와 가정
+  "course-02-a4/magic": ["magic-square-three-target", "circular-magic-seven-line-sum"],
+  "course-02-a4/crypt": ["two-digit-letter-cryptarithm", "cryptarithm-multi-symbol-carry"],
+  "course-02-a4/gcdlcm": ["c2-gcd-word", "c2-lcm-word", "c2-ratio-gcd-lcm"],
+  "course-02-a4/assume": ["c2-assume-solve", "c2-ratio-difference"],
+  // 2과정 A5 — 소인수분해·크기가 같은 분수·포함과 배제·변하지 않는 것
+  "course-02-a5/factor": ["c2-divisibility-digits", "c2-square-multiplier", "c2-factorial-zeros"],
+  "course-02-a5/fraction": ["c2-equivalent-condition", "c2-partial-fraction-sum"],
+  "course-02-a5/venn": ["venn-union-total-b7", "c2-bounce-height"],
+  "course-02-a5/invariant": ["c2-invariant-ratio", "c2-pond-depth"],
   "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
   "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
   "book-04/cube-min-count": ["cube-count-solid", "cube-minimum-from-solid"],

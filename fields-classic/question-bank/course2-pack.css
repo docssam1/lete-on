@@ -52,3 +52,8 @@
   .pk-step:not([hidden]) { animation: pk-in .28s ease-out; }
   @keyframes pk-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 }
+/* 식 칠판(pack-kit formulas) — 줄마다 식 하나, 분수는 공통 수식으로 쌓는다(빗금 분수 금지) */
+.pk-board { width: 100%; box-sizing: border-box; padding: 14px 18px; background: #e6efe8; border: 2.5px solid #2f6b52; display: grid; gap: 12px; justify-items: center; }
+.pk-board-line { font-size: clamp(18px, 1.9vw, 26px); font-weight: 600; color: #24302b; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
+.pk-board-line math { font-size: 1.12em; }
+.pk-board-line { text-wrap: balance; }
