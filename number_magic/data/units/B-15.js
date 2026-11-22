@@ -24,13 +24,13 @@ window.NM_UNITS['B-15'] = {
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 7과 9의 만남', en:'1) Where 7 and 9 Meet', zh:'① 7和9相遇'},
-        head:{ko:'7×9=9×7=63 — 교환법칙!', en:'7×9 = 9×7 = 63 — Commutative law!', zh:'7×9 = 9×7 = 63 — 交换律！'},
-        desc:{ko:'7단과 9단이 만나는 곳: <b>7×9=63</b>! 곱셈은 순서를 바꿔도 결과가 같아요. 교환법칙 덕분에 두 단을 배우면 사실 두 배의 곱셈식을 알게 되는 거예요!',
+        head:{ko:'7×9=9×7=63 — 위치를 바꿔도 똑같아요!', en:'7×9 = 9×7 = 63 — Commutative law!', zh:'7×9 = 9×7 = 63 — 交换律！'},
+        desc:{ko:'7단과 9단이 만나는 곳: <b>7×9=63</b>! 곱셈은 두 수의 위치를 바꿔도 똑같아요. 그래서 두 단을 배우면 사실 두 배의 곱셈식을 알게 되는 거예요!',
               en:"Where 7s and 9s meet: <b>7×9=63</b>! Multiplication is commutative — swap the order and the result stays the same. Knowing both tables means you cover twice as many facts!",
               zh:'7和9的交汇点：<b>7×9=63</b>！乘法满足交换律——交换顺序结果不变。掌握这两个口诀，实际上记住了双倍数量的乘法事实！'},
-        mathSteps:['7×9 = 63','9×7 = 63',{ko:'교환법칙: 순서 바꿔도 같아요!',en:'\\text{commutative: order does not matter!}',zh:'交换律：换顺序也一样！'}],
+        mathSteps:['7×9 = 63','9×7 = 63',{ko:'위치를 바꿔도 똑같아요!',en:'\\text{commutative: order does not matter!}',zh:'交换律：换顺序也一样！'}],
         result:{ko:'7×9와 9×7은 모두 63! 하나를 외우면 다른 것도 자동으로 알아요.', en:'7×9 and 9×7 are both 63! Know one and you know the other automatically.', zh:'7×9和9×7都等于63！知道一个就自动知道另一个。'},
-        book:{ko:'교환법칙: a×b = b×a. 7단과 9단을 각 9개씩 배우면, 교환법칙으로 18쌍 36가지 곱셈식을 커버해요.', en:'Commutative property: a×b = b×a. Learn 9 facts each for 7s and 9s; commutativity doubles your coverage.', zh:'交换律：a×b = b×a。学会7和9各9个事实；利用交换律覆盖范围翻倍。'} },
+        book:{ko:'곱셈은 두 수의 위치를 바꿔도 똑같아요. 7×9 = 9×7. 7단과 9단을 9개씩 배우면 위치를 바꾼 곱셈식까지 함께 알게 돼요.', en:'Commutative property: a×b = b×a. Learn 9 facts each for 7s and 9s; commutativity doubles your coverage.', zh:'交换律：a×b = b×a。学会7和9各9个事实；利用交换律覆盖范围翻倍。'} },
 
       { tag:{ko:'② 두 단 속도 전략', en:'2) Speed Strategy for Both', zh:'② 两个口诀的速算策略'},
         head:{ko:'7단: 이전+7 / 9단: ×10−n', en:'7s: prev+7 / 9s: ×10−n', zh:'7的口诀：前一个+7 / 9的口诀：×10−n'},
@@ -50,7 +50,7 @@ window.NM_UNITS['B-15'] = {
         result:{ko:'2단, 3단, 4단, 5단, 6단, 7단, 8단, 9단 — 전부 완성! 이제 세 자리 곱셈도 무섭지 않아요!', en:'2s, 3s, 4s, 5s, 6s, 7s, 8s, 9s — all done! Now even 3-digit multiplication has no secrets for you!', zh:'2、3、4、5、6、7、8、9的口诀——全部完成！现在就连三位数乘法也不再可怕了！'},
         book:null }
     ],
-    rule:{ ko:'① 7×9=9×7=63 교환법칙 활용  ② 7단=이전+7, 9단=×10−n  ③ 2~9단 72가지 곱셈 완성!', en:'① Use commutativity: 7×9=9×7=63  ② 7s: prev+7, 9s: ×10−n  ③ All 72 multiplication facts for 2–9 complete!', zh:'① 利用交换律：7×9=9×7=63  ② 7：前一个+7，9：×10−n  ③ 2到9共72个乘法事实全完成！' }
+    rule:{ ko:'① 7×9=9×7=63 위치를 바꿔도 똑같아요  ② 7단=이전+7, 9단=×10−n  ③ 2~9단 72가지 곱셈 완성!', en:'① Use commutativity: 7×9=9×7=63  ② 7s: prev+7, 9s: ×10−n  ③ All 72 multiplication facts for 2–9 complete!', zh:'① 利用交换律：7×9=9×7=63  ② 7：前一个+7，9：×10−n  ③ 2到9共72个乘法事实全完成！' }
   },
 
   check:{
