@@ -10,7 +10,7 @@
   const learnerConditions = "규칙에 따라 쌓기나무를 쌓을 때, 물음에 답하시오.";
   const constructionRule = "모양의 차례와 같은 수의 층을 쌓습니다. 맨 위층은 세 개를 한 줄로 놓고 가운데 앞에 한 개를 붙입니다. 바로 아래층은 윗층의 자리를 모두 채우고 왼쪽·오른쪽·앞쪽 세 갈래 끝에 각각 한 개를 더 붙입니다. 1층까지 같은 방법으로 쌓고 그 밖에는 놓지 않습니다.";
   const easyStages = [3, 2, 1], modes = ["easy", "source", "hard"];
-  const easyConditions = "그림에 보이는 첫째, 둘째, 셋째 T자 쌓기나무 모양 중에서 구하시오.";
+  const easyConditions = "그림에 보이는 첫 번째, 두 번째, 세 번째 T자 쌓기나무 모양 중에서 구하시오.";
   const structuralChanges = [
     "원문 첫 세 그림에 이미 보이는 모양 하나의 총개수만 구합니다.",
     "층별 개수를 스스로 구해 총개수와 1층에서 맨 위층의 개수를 뺀 차이를 구합니다.",
