@@ -4308,12 +4308,14 @@
 
   const polycubeSvg = cells => {
     const normalized = cells.map(cell => [...cell]);
+    const xs = normalized.map(([x, y]) => (x - y) * 22), ys = normalized.map(([x, y, z]) => -(x + y) * 11 - z * 22);
+    const offsetX = 140 - (Math.min(...xs) + Math.max(...xs)) / 2, offsetY = 79 - (Math.min(...ys) + Math.max(...ys)) / 2;
     const cube = ([x, y, z]) => {
-      const cx = 126 + (x - y) * 22;
-      const cy = 120 - (x + y) * 11 - z * 22;
+      const cx = offsetX + (x - y) * 22;
+      const cy = offsetY - (x + y) * 11 - z * 22;
       return `<g><polygon class="shape-fill" points="${cx},${cy - 11} ${cx + 22},${cy} ${cx},${cy + 11} ${cx - 22},${cy}"/><polygon class="highlight-fill" points="${cx - 22},${cy} ${cx},${cy + 11} ${cx},${cy + 33} ${cx - 22},${cy + 22}"/><polygon class="shape-fill" points="${cx},${cy + 11} ${cx + 22},${cy} ${cx + 22},${cy + 22} ${cx},${cy + 33}"/></g>`;
     };
-    return `<svg class="geometry-diagram isometric-stack" viewBox="0 0 280 180" data-polycube="${normalized.map(cell => cell.join(".")).join(";")}" aria-label="회전하여 같은 모양은 하나로 세는 쌓기나무">${normalized.slice().sort((a, b) => a.reduce((s, v) => s + v, 0) - b.reduce((s, v) => s + v, 0)).map(cube).join("")}</svg>`;
+    return `<svg class="geometry-diagram isometric-stack" viewBox="0 0 280 180" data-polycube="${normalized.map(cell => cell.join(".")).join(";")}" aria-label="회전하여 같은 모양은 하나로 세는 쌓기나무">${normalized.slice().sort((a, b) => (a[2] - a[0] - a[1]) - (b[2] - b[0] - b[1])).map(cube).join("")}</svg>`;
   };
 
   const waterTankSvg = ({ width, depth, height, waterHeight, title = "직육면체 수조" }) => {
@@ -4582,6 +4584,96 @@
     const left = 50, top = 24, size = 140, centerSize = size * base / outer, centerLeft = 120 - centerSize / 2, centerTop = 94 - centerSize / 2;
     return `<svg class="geometry-diagram pyramid-cross-net" viewBox="0 0 240 166" data-pyramid-cross="${base},${outer}" aria-label="정사각형 안에 그린 사각뿔 전개도"><rect class="original" x="${left}" y="${top}" width="${size}" height="${size}"/><rect class="shape-fill" x="${centerLeft.toFixed(1)}" y="${centerTop.toFixed(1)}" width="${centerSize.toFixed(1)}" height="${centerSize.toFixed(1)}"/><polygon class="highlight-fill" points="${centerLeft.toFixed(1)},${centerTop.toFixed(1)} ${(centerLeft + centerSize).toFixed(1)},${centerTop.toFixed(1)} 120,${top}"/><polygon class="highlight-fill" points="${(centerLeft + centerSize).toFixed(1)},${centerTop.toFixed(1)} ${(centerLeft + centerSize).toFixed(1)},${(centerTop + centerSize).toFixed(1)} ${left + size},94"/><polygon class="highlight-fill" points="${centerLeft.toFixed(1)},${(centerTop + centerSize).toFixed(1)} ${(centerLeft + centerSize).toFixed(1)},${(centerTop + centerSize).toFixed(1)} 120,${top + size}"/><polygon class="highlight-fill" points="${centerLeft.toFixed(1)},${centerTop.toFixed(1)} ${centerLeft.toFixed(1)},${(centerTop + centerSize).toFixed(1)} ${left},94"/><text x="120" y="98">${base}cm</text><text x="120" y="14">바깥 한 변 ${outer}cm</text></svg>`;
   };
+  // 6-1 창작 연습 재설계용 도형 도우미: 길이는 변 바깥쪽 점선 호, 직각은 직각 표시로 그린다.
+  const g6rNum = value => Number(value).toFixed(1);
+  const g6rPoints = points => points.map(([x, y]) => `${g6rNum(x)},${g6rNum(y)}`).join(" ");
+  const g6rTextHalfWidth = label => [...String(label)].reduce((sum, character) => sum + (/[ㄱ-힣]/.test(character) ? 11 : 6.4), 0) / 2;
+  const g6rArc = (start, end, label, away, bulge = 9) => {
+    const midX = (start[0] + end[0]) / 2, midY = (start[1] + end[1]) / 2;
+    const dx = end[0] - start[0], dy = end[1] - start[1], length = Math.hypot(dx, dy) || 1;
+    let nx = -dy / length, ny = dx / length;
+    if ((away[0] - midX) * nx + (away[1] - midY) * ny > 0) { nx = -nx; ny = -ny; }
+    const offset = bulge + 4 + Math.abs(nx) * g6rTextHalfWidth(label) + Math.abs(ny) * 6;
+    return `<path class="dimension" d="M${g6rNum(start[0])} ${g6rNum(start[1])} Q${g6rNum(midX + 2 * bulge * nx)} ${g6rNum(midY + 2 * bulge * ny)} ${g6rNum(end[0])} ${g6rNum(end[1])}"/><text x="${g6rNum(midX + offset * nx)}" y="${g6rNum(midY + offset * ny)}">${label}</text>`;
+  };
+  const g6rRightMark = (corner, first, second, size = 8) => {
+    const unit = target => {
+      const dx = target[0] - corner[0], dy = target[1] - corner[1], length = Math.hypot(dx, dy) || 1;
+      return [dx / length * size, dy / length * size];
+    };
+    const [ax, ay] = unit(first), [bx, by] = unit(second);
+    return `<path class="right-angle" style="stroke-width:1.4" d="M${g6rNum(corner[0] + ax)} ${g6rNum(corner[1] + ay)} L${g6rNum(corner[0] + ax + bx)} ${g6rNum(corner[1] + ay + by)} L${g6rNum(corner[0] + bx)} ${g6rNum(corner[1] + by)}"/>`;
+  };
+  const g6rPrismLevelRouteSvg = ({ names, lengths, height, pointHeight, from, to }) => {
+    const total = lengths.reduce((sum, value) => sum + value, 0);
+    const scale = Math.min(178 / total, 80 / height);
+    const width = total * scale, drawHeight = height * scale;
+    const left = (240 - width) / 2 - 10, top = 42, bottom = top + drawHeight;
+    const xs = [left];
+    lengths.forEach(value => xs.push(xs[xs.length - 1] + value * scale));
+    const faces = lengths.map((value, index) => `<rect class="shape-fill" x="${g6rNum(xs[index])}" y="${top}" width="${g6rNum(value * scale)}" height="${g6rNum(drawHeight)}"/>`).join("");
+    const widthArcs = lengths.map((value, index) => g6rArc([xs[index], top], [xs[index + 1], top], `${value}cm`, [(xs[index] + xs[index + 1]) / 2, bottom], 6)).join("");
+    const heightArc = g6rArc([xs[lengths.length], top], [xs[lengths.length], bottom], `${height}cm`, [left, (top + bottom) / 2], 8);
+    const vertexLabels = [...names, names[0]].map((name, index) => `<text x="${g6rNum(xs[index])}" y="${g6rNum(bottom + 12)}">${name}</text>`).join("");
+    const pointY = bottom - pointHeight * scale;
+    const points = [[from, "가"], [to, "나"]].map(([index, label]) => `<circle class="highlight-fill" cx="${g6rNum(xs[index])}" cy="${g6rNum(pointY)}" r="3.2"/><text x="${g6rNum(xs[index] + 9)}" y="${g6rNum(pointY - top < 16 ? pointY + 10 : pointY - 8)}">${label}</text>`).join("");
+    return `<svg class="geometry-diagram prism-level-route" viewBox="0 0 240 168" data-prism-level-route="${lengths.join("-")},${height},${pointHeight},${from},${to}" aria-label="각기둥의 옆면을 한 줄로 펼친 전개도와 같은 높이의 두 점"><text x="120" y="14">옆면을 한 줄로 펼친 그림</text>${faces}${widthArcs}${heightArc}${vertexLabels}${points}</svg>`;
+  };
+  const g6rPyramidKiteSvg = ({ base, slant, lateral }) => {
+    const apexAngle = 2 * Math.asin(base / 2 / lateral);
+    const scale = Math.min(118 / lateral, 176 / (2 * lateral * Math.sin(apexAngle)));
+    const apex = [120, 24];
+    const at = angle => [apex[0] + lateral * scale * Math.sin(angle), apex[1] + lateral * scale * Math.cos(angle)];
+    const left = at(-apexAngle), middle = at(0), right = at(apexAngle);
+    const foot = [(left[0] + middle[0]) / 2, (left[1] + middle[1]) / 2];
+    const center = [(apex[0] + left[0] + middle[0]) / 3, (apex[1] + left[1] + middle[1]) / 3];
+    const slantText = [foot[0] * 0.62 + apex[0] * 0.38, foot[1] * 0.62 + apex[1] * 0.38];
+    return `<svg class="geometry-diagram pyramid-kite-net" viewBox="0 0 240 172" data-pyramid-kite="${base},${slant},${lateral}" aria-label="사각뿔의 이웃한 두 옆면을 펼친 그림"><polygon class="shape-fill" points="${g6rPoints([apex, left, middle])}"/><polygon class="shape-fill" points="${g6rPoints([apex, middle, right])}"/><line class="crease" x1="${g6rNum(apex[0])}" y1="${g6rNum(apex[1])}" x2="${g6rNum(foot[0])}" y2="${g6rNum(foot[1])}"/>${g6rRightMark(foot, apex, middle, 7)}${g6rArc(left, middle, `${base}cm`, center, 7)}${g6rArc(apex, left, `${lateral}cm`, center, 8)}<text x="${g6rNum(slantText[0])}" y="${g6rNum(slantText[1])}" style="paint-order:stroke;stroke:#e8f2f8;stroke-width:4px">${slant}cm</text><text x="${g6rNum(apex[0])}" y="${g6rNum(apex[1] - 11)}">ㄱ</text><text x="${g6rNum(left[0] - 10)}" y="${g6rNum(left[1] + 2)}">ㄴ</text><text x="${g6rNum(middle[0])}" y="${g6rNum(middle[1] + 12)}">ㄷ</text><text x="${g6rNum(right[0] + 10)}" y="${g6rNum(right[1] + 2)}">ㄹ</text></svg>`;
+  };
+  const g6rTetraStripSvg = ({ edge, start }) => {
+    const side = 58, rowHeight = side * Math.sqrt(3) / 2, left = 47, bottom = 124;
+    const lower = [0, 1, 2].map(index => [left + index * side, bottom]);
+    const upper = [0, 1, 2].map(index => [left + side / 2 + index * side, bottom - rowHeight]);
+    const triangles = [[lower[0], lower[1], upper[0]], [lower[1], upper[1], upper[0]], [lower[1], lower[2], upper[1]], [lower[2], upper[2], upper[1]]];
+    const ratio = start / edge;
+    const pointOn = (from, to) => [from[0] + (to[0] - from[0]) * ratio, from[1] + (to[1] - from[1]) * ratio];
+    const first = pointOn(lower[0], upper[0]), second = pointOn(lower[2], upper[2]);
+    const labels = [[lower[0], "ㄱ", 0, 13], [lower[1], "ㄴ", 0, 13], [lower[2], "ㄱ", 0, 13], [upper[0], "ㄷ", 0, -10], [upper[1], "ㄹ", 0, -10], [upper[2], "ㄷ", 0, -10]].map(([point, name, dx, dy]) => `<text x="${g6rNum(point[0] + dx)}" y="${g6rNum(point[1] + dy)}">${name}</text>`).join("");
+    const points = [[first, -10], [second, 10]].map(([point, dx]) => `<circle class="highlight-fill" cx="${g6rNum(point[0])}" cy="${g6rNum(point[1])}" r="3.2"/><text x="${g6rNum(point[0] + dx)}" y="${g6rNum(point[1] - 2)}">ㅁ</text>`).join("");
+    return `<svg class="geometry-diagram tetra-strip-net" viewBox="0 0 240 160" data-tetra-strip="${edge},${start}" aria-label="정사면체의 네 면을 차례로 펼친 전개도">${triangles.map(points => `<polygon class="shape-fill" points="${g6rPoints(points)}"/>`).join("")}${g6rArc(lower[0], first, `${start}cm`, lower[1], 7)}${labels}${points}</svg>`;
+  };
+  const g6rCompositeSquareSvg = ({ base, heightTenths, square }) => {
+    const height = heightTenths / 10, shift = Math.min(3, base / 4);
+    const scale = Math.min(176 / (base + shift), 112 / (height + square));
+    const left = (240 - (base + shift) * scale) / 2, bottom = 138, top = bottom - height * scale;
+    const parallelogram = [[left, bottom], [left + base * scale, bottom], [left + (base + shift) * scale, top], [left + shift * scale, top]];
+    const squareLeft = left + (shift + (base - square) / 2) * scale, squareTop = top - square * scale;
+    const squarePoints = [[squareLeft, top], [squareLeft + square * scale, top], [squareLeft + square * scale, squareTop], [squareLeft, squareTop]];
+    const foot = [left + shift * scale, bottom];
+    return `<svg class="geometry-diagram decimal-composite-area" viewBox="0 0 240 170" data-composite-area="${base},${heightTenths},${square}" aria-label="평행사변형의 윗변 위에 정사각형을 붙인 도형"><polygon class="highlight-fill" points="${g6rPoints(parallelogram)}"/><polygon class="shape-fill" points="${g6rPoints(squarePoints)}"/><line class="crease" x1="${g6rNum(foot[0])}" y1="${g6rNum(top)}" x2="${g6rNum(foot[0])}" y2="${g6rNum(bottom)}"/>${g6rRightMark(foot, [foot[0], top], [left + base * scale, bottom], 7)}<text x="${g6rNum(foot[0] + 11)}" y="${g6rNum((top + bottom) / 2)}">□</text>${g6rArc(parallelogram[0], parallelogram[1], `${base}cm`, [left, top], 8)}${g6rArc(squarePoints[3], squarePoints[2], `${square}cm`, [squareLeft, top], 7)}</svg>`;
+  };
+  const g6rTrapezoidMidlineSvg = ({ top, bottom, height }) => {
+    const scale = Math.min(170 / bottom, 104 / height);
+    const left = (240 - bottom * scale) / 2 + 8, base = 140, lift = height * scale, topLeft = left + (bottom - top) * 0.35 * scale;
+    const points = [[topLeft, base - lift], [topLeft + top * scale, base - lift], [left + bottom * scale, base], [left, base]];
+    const middleLeft = [(points[0][0] + points[3][0]) / 2, base - lift / 2], middleRight = [(points[1][0] + points[2][0]) / 2, base - lift / 2];
+    const ruler = left - 8;
+    return `<svg class="geometry-diagram ratio-trapezoid" viewBox="0 0 240 168" data-ratio-trapezoid-midline="${top},${bottom},${height}" aria-label="높이를 똑같이 둘로 나누는 선분 ㅁㅂ을 그은 사다리꼴"><polygon class="shape-fill" points="${g6rPoints(points)}"/><line class="folded" x1="${g6rNum(middleLeft[0])}" y1="${g6rNum(middleLeft[1])}" x2="${g6rNum(middleRight[0])}" y2="${g6rNum(middleRight[1])}"/><line class="crease" x1="${g6rNum(ruler)}" y1="${g6rNum(points[0][1])}" x2="${g6rNum(points[0][0])}" y2="${g6rNum(points[0][1])}"/>${g6rArc(points[0], points[1], `${top}cm`, [points[0][0], base], 7)}${g6rArc([ruler, points[0][1]], [ruler, base], `${height}cm`, [left + 40, base - lift / 2], 8)}<text x="${g6rNum(middleLeft[0] - 9)}" y="${g6rNum(middleLeft[1])}">ㅁ</text><text x="${g6rNum(middleRight[0] + 9)}" y="${g6rNum(middleRight[1])}">ㅂ</text><text x="${g6rNum((middleLeft[0] + middleRight[0]) / 2)}" y="${g6rNum(base - lift * 0.76)}">윗부분</text><text x="${g6rNum((middleLeft[0] + middleRight[0]) / 2)}" y="${g6rNum(base - lift * 0.25)}">아랫부분</text></svg>`;
+  };
+  const g6rTiltedTankSvg = ({ width, height, edge }) => {
+    const angle = Math.atan2(height, edge), cos = Math.cos(angle), sin = Math.sin(angle);
+    const world = ([u, v]) => [(u - width) * cos + v * sin, -(u - width) * sin + v * cos];
+    const corners = [[0, 0], [width, 0], [width, height], [0, height]].map(world);
+    const minX = Math.min(...corners.map(point => point[0])), maxX = Math.max(...corners.map(point => point[0])), maxY = Math.max(...corners.map(point => point[1]));
+    const scale = Math.min(150 / (maxX - minX), 112 / maxY);
+    const offsetX = 120 - (minX + maxX) / 2 * scale, ground = 146;
+    const draw = ([x, y]) => [offsetX + x * scale, ground - y * scale];
+    const [bottomLeft, bottomRight, topRight, topLeft] = corners.map(draw);
+    const waterEdge = draw(world([width - edge, 0]));
+    const center = [(bottomLeft[0] + topRight[0]) / 2, (bottomLeft[1] + topRight[1]) / 2];
+    const waterCenter = [(waterEdge[0] + bottomRight[0] + topRight[0]) / 3, (waterEdge[1] + bottomRight[1] + topRight[1]) / 3];
+    return `<svg class="geometry-diagram cuboid-diagram tilted-tank" viewBox="0 0 240 172" data-tilted-tank="${width},${height},${edge}" aria-label="기울인 뒤 앞에서 본 수조"><line style="stroke:#8ca4b8" x1="${g6rNum(bottomRight[0] - 28)}" y1="${ground}" x2="${g6rNum(Math.min(230, bottomRight[0] + 60))}" y2="${ground}"/><polygon class="highlight-fill" points="${g6rPoints([waterEdge, bottomRight, topRight])}"/><polygon points="${g6rPoints([bottomLeft, bottomRight, topRight, topLeft])}"/><line class="folded" x1="${g6rNum(waterEdge[0])}" y1="${g6rNum(waterEdge[1])}" x2="${g6rNum(topRight[0])}" y2="${g6rNum(topRight[1])}"/><text x="${g6rNum(waterCenter[0])}" y="${g6rNum(waterCenter[1])}">물</text>${g6rArc(topLeft, topRight, `${width}cm`, center, 8)}${g6rArc(bottomRight, topRight, `${height}cm`, center, 8)}${g6rArc(waterEdge, bottomRight, `${edge}cm`, center, 8)}<text x="120" y="164">기울인 뒤 앞에서 본 모양</text></svg>`;
+  };
   const decimalDivisionEvidence = (kind, values) => `<span hidden data-decimal-division-kind="${kind}" data-values="${values.join(",")}"></span>`;
   const decimalNumberLineSvg = ({ start, end, intervals, targetIndex }) => {
     const left = 24, right = 216, y = 84;
@@ -4627,7 +4719,36 @@
     }
     return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-shape="sector-difference,${a},${b}" aria-label="큰 부채꼴에서 작은 부채꼴을 뺀 도형"><path class="shape-fill" d="M140 90 L140 20 A70 70 0 0 1 210 90 Z"/><path d="M140 90 L140 50 A40 40 0 0 1 180 90 Z" style="fill:white"/><text x="184" y="116">큰 반지름 ${a}cm</text><text x="148" y="76">작은 반지름 ${b}cm</text></svg>`;
   };
-  const circlePointsSvg = ({ points, gaps = 1 }) => {
+  const cs6f = value => String(Number(value.toFixed(1)));
+  const cs6TextWidth = label => [...String(label)].reduce((sum, ch) => sum + (/[\x00-\x7f]/.test(ch) ? 6.6 : 11), 0);
+  // 길이: 선분 양 끝을 잇는 점선 호(치수선)와 그 바깥 글자. bulge>0이면 (x1,y1)→(x2,y2) 진행 방향의 왼쪽(화면 기준)으로 휜다.
+  const cs6Dim = (x1, y1, x2, y2, label, bulge = 10) => {
+    const length = Math.hypot(x2 - x1, y2 - y1) || 1;
+    const nx = (y2 - y1) / length, ny = -(x2 - x1) / length;
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const side = Math.sign(bulge) || 1, pad = 7 + Math.abs(nx) * cs6TextWidth(label) / 2;
+    const lx = mx + nx * (bulge + side * pad), ly = my + ny * (bulge + side * pad);
+    return `<path class="dimension" d="M${cs6f(x1)} ${cs6f(y1)} Q${cs6f(mx + nx * bulge * 2)} ${cs6f(my + ny * bulge * 2)} ${cs6f(x2)} ${cs6f(y2)}"/><text x="${cs6f(lx)}" y="${cs6f(ly)}">${label}</text>`;
+  };
+  const cs6Point = (cx, cy, radius, degrees) => [cx + radius * Math.cos(degrees * Math.PI / 180), cy - radius * Math.sin(degrees * Math.PI / 180)];
+  // 화면에서 시계 반대 방향으로 from°에서 to°까지 그린 호의 경로
+  const cs6ArcPath = (cx, cy, radius, from, to) => {
+    const sweep = ((to - from) % 360 + 360) % 360 || 360;
+    const [x1, y1] = cs6Point(cx, cy, radius, from), [x2, y2] = cs6Point(cx, cy, radius, from + sweep);
+    if (sweep >= 359.9) {
+      const [xm, ym] = cs6Point(cx, cy, radius, from + 180);
+      return `M${cs6f(x1)} ${cs6f(y1)} A${cs6f(radius)} ${cs6f(radius)} 0 0 0 ${cs6f(xm)} ${cs6f(ym)} A${cs6f(radius)} ${cs6f(radius)} 0 0 0 ${cs6f(x1)} ${cs6f(y1)}`;
+    }
+    return `M${cs6f(x1)} ${cs6f(y1)} A${cs6f(radius)} ${cs6f(radius)} 0 ${sweep > 180 ? 1 : 0} 0 ${cs6f(x2)} ${cs6f(y2)}`;
+  };
+  // 각: 꼭짓점의 각도 호와 글자
+  const cs6Angle = (cx, cy, from, to, label, radius = 16) => {
+    const sweep = ((to - from) % 360 + 360) % 360 || 360;
+    const [lx, ly] = cs6Point(cx, cy, radius + 13, from + sweep / 2);
+    return `<path class="angle-arc" style="fill:none;stroke:#294963;stroke-width:1.4" d="${cs6ArcPath(cx, cy, radius, from, to)}"/><text x="${cs6f(lx)}" y="${cs6f(ly)}">${label}</text>`;
+  };
+  const cs6RightMark = (x, y, dx, dy, size = 8) => `<path style="fill:none;stroke:#294963;stroke-width:1.2" d="M${cs6f(x + dx * size)} ${cs6f(y)} L${cs6f(x + dx * size)} ${cs6f(y + dy * size)} L${cs6f(x)} ${cs6f(y + dy * size)}"/>`;
+  const circlePointsSvg = ({ points, gaps = 1, polygon = false }) => {
     const cx = 140, cy = 88, radius = 62;
     const positions = Array.from({ length: points }, (_, index) => {
       const angle = -Math.PI / 2 + index * Math.PI * 2 / points;
@@ -4635,26 +4756,90 @@
     });
     const dots = positions.map(([x, y], index) => `<circle class="${index === 0 || index === gaps ? "highlight-fill" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4"/>`).join("");
     const [startX, startY] = positions[0], [endX, endY] = positions[gaps];
-    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-points="${points},${gaps}" aria-label="원주를 같은 간격의 점 ${points}개로 나눈 그림"><circle class="shape-fill" cx="${cx}" cy="${cy}" r="${radius}"/><line class="folded" x1="${cx}" y1="${cy}" x2="${startX.toFixed(1)}" y2="${startY.toFixed(1)}"/><line class="folded" x1="${cx}" y1="${cy}" x2="${endX.toFixed(1)}" y2="${endY.toFixed(1)}"/>${dots}<circle class="highlight-fill" cx="${cx}" cy="${cy}" r="3"/><text x="140" y="169">원주를 ${points}등분</text></svg>`;
+    const sides = polygon ? `<polygon style="fill:none;stroke:#294963;stroke-width:1.6" points="${positions.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ")}"/>` : "";
+    const arc = cs6Angle(cx, cy, 90 - 360 * gaps / points, 90, "?", 15);
+    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-points="${points},${gaps}" aria-label="원주를 같은 간격의 점 ${points}개로 나눈 그림"><circle class="shape-fill" cx="${cx}" cy="${cy}" r="${radius}"/>${sides}<line class="folded" x1="${cx}" y1="${cy}" x2="${startX.toFixed(1)}" y2="${startY.toFixed(1)}"/><line class="folded" x1="${cx}" y1="${cy}" x2="${endX.toFixed(1)}" y2="${endY.toFixed(1)}"/>${arc}${dots}<circle class="highlight-fill" cx="${cx}" cy="${cy}" r="3"/><text x="140" y="169">원주를 ${points}등분</text></svg>`;
   };
-  const inscribedAngleSvg = ({ angle }) => `<svg class="geometry-diagram" viewBox="0 0 280 180" data-inscribed-angle="${angle}" aria-label="같은 호를 보는 원주각과 중심각"><circle class="shape-fill" cx="140" cy="88" r="62"/><path class="folded" d="M88 122 L140 26 L192 122"/><line class="crease" x1="140" y1="88" x2="88" y2="122"/><line class="crease" x1="140" y1="88" x2="192" y2="122"/><text x="140" y="48">${angle}°</text><text x="140" y="169">같은 호를 보는 두 각</text></svg>`;
+  const wheelSvg = ({ value, isDiameter, distanceLabel }) => {
+    const cx = 70, cy = 88, radius = 40, groundY = cy + radius, endX = 226;
+    const measure = isDiameter
+      ? `<line class="folded" x1="${cx - radius}" y1="${cy}" x2="${cx + radius}" y2="${cy}"/>${cs6Dim(cx - radius, cy, cx + radius, cy, `${value}cm`, 10)}`
+      : `<line class="folded" x1="${cx}" y1="${cy}" x2="${cx + radius}" y2="${cy}"/>${cs6Dim(cx, cy, cx + radius, cy, `${value}cm`, 8)}`;
+    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-wheel="${value},${isDiameter ? "diameter" : "radius"}" aria-label="곧게 굴러간 바퀴"><line x1="14" y1="${groundY}" x2="266" y2="${groundY}"/><circle class="shape-fill" cx="${cx}" cy="${cy}" r="${radius}"/><circle cx="${endX}" cy="${cy}" r="${radius}" style="fill:none;stroke:#8ca4b8;stroke-width:1.4;stroke-dasharray:4 4"/><circle class="highlight-fill" cx="${cx}" cy="${cy}" r="3"/>${measure}<line x1="${cx}" y1="${groundY - 5}" x2="${cx}" y2="${groundY + 5}"/><line x1="${endX}" y1="${groundY - 5}" x2="${endX}" y2="${groundY + 5}"/>${cs6Dim(endX, groundY, cx, groundY, distanceLabel, 12)}</svg>`;
+  };
   const locusDiagramSvg = ({ kind, a, b, r }) => {
-    if (kind === "rectangle") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-locus="rectangle,${a},${b},${r}" aria-label="직사각형 바깥을 따라 구르는 원"><rect x="70" y="45" width="140" height="90"/><rect class="crease" x="50" y="25" width="180" height="130"/><circle class="highlight-fill" cx="50" cy="25" r="12"/><text x="140" y="156">${a}cm</text><text x="224" y="88">${b}cm</text><text x="42" y="18">r=${r}</text></svg>`;
-    if (kind === "pivot") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-locus="pivot,${a},${b}" aria-label="한 점을 중심으로 회전하는 선분"><line x1="70" y1="132" x2="70" y2="42"/><path class="crease" d="M70 42 A90 90 0 0 1 160 132"/><line class="folded" x1="70" y1="132" x2="160" y2="132"/><text x="54" y="88">${a}cm</text><text x="92" y="122">${b}°</text></svg>`;
-    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-locus="tether,${a},${b},${r}" aria-label="직사각형 우리와 줄에 묶인 동물의 이동 범위"><rect class="shape-fill" x="105" y="58" width="90" height="62"/><path class="crease" d="M105 58 A${r * 5} ${r * 5} 0 0 0 ${105 - r * 5} ${58 + r * 5}"/><text x="150" y="142">${a}m × ${b}m</text><text x="48" y="42">줄 ${r}m</text></svg>`;
-  };
-  const solidDiagramSvg = ({ kind, a, b, c = 0 }) => {
-    if (kind === "cylinder-net") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="cylinder-net,${a},${b}" aria-label="원기둥 전개도"><rect class="shape-fill" x="45" y="45" width="190" height="90"/><circle cx="80" cy="45" r="28"/><circle cx="200" cy="135" r="28"/><text x="140" y="160">높이 ${b}cm, 반지름 ${a}cm</text></svg>`;
-    if (kind === "cylinder-wrap") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="cylinder-wrap,${a},${b},${c}" aria-label="원기둥 옆면을 감은 선"><ellipse class="shape-fill" cx="140" cy="34" rx="48" ry="15"/><rect class="shape-fill" x="92" y="34" width="96" height="112"/><ellipse cx="140" cy="146" rx="48" ry="15"/><path class="folded" d="M92 132 C118 104 164 78 188 50"/><text x="201" y="91">${b}cm</text><text x="140" y="171">반지름 ${a}cm</text></svg>`;
-    if (kind === "cone-net") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="cone-net,${a},${b}" aria-label="원뿔의 옆면 전개도"><path class="shape-fill" d="M70 142 A100 100 0 0 1 210 142 L140 72 Z"/><circle cx="220" cy="82" r="${Math.max(16, a * 3)}"/><text x="140" y="58">모선 ${b}cm</text><text x="218" y="118">r=${a}cm</text></svg>`;
-    if (kind === "profile") {
-      const left = 190 - a * 8;
-      const profile = c
-        ? `<polygon class="shape-fill" points="190,40 ${left},140 190,140"/>`
-        : `<rect class="shape-fill" x="${left}" y="40" width="${a * 8}" height="100"/>`;
-      return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="profile,${a},${b},${c}" aria-label="회전축이 표시된 ${c ? "직각삼각형" : "직사각형"}"><line class="folded" x1="190" y1="18" x2="190" y2="160"/>${profile}<text x="205" y="90">회전축</text><text x="${Math.max(58, left + a * 4)}" y="154">${a}cm</text><text x="198" y="46">${b}cm</text></svg>`;
+    if (kind === "rectangle") {
+      const scale = Math.min(200 / (a + 2 * r), 118 / (b + 2 * r));
+      const width = a * scale, height = b * scale, gap = r * scale;
+      const left = 140 - width / 2, top = 100 - height / 2, right = left + width, bottom = top + height;
+      const path = `M${cs6f(left)} ${cs6f(top - gap)} H${cs6f(right)} A${cs6f(gap)} ${cs6f(gap)} 0 0 1 ${cs6f(right + gap)} ${cs6f(top)} V${cs6f(bottom)} A${cs6f(gap)} ${cs6f(gap)} 0 0 1 ${cs6f(right)} ${cs6f(bottom + gap)} H${cs6f(left)} A${cs6f(gap)} ${cs6f(gap)} 0 0 1 ${cs6f(left - gap)} ${cs6f(bottom)} V${cs6f(top)} A${cs6f(gap)} ${cs6f(gap)} 0 0 1 ${cs6f(left)} ${cs6f(top - gap)} Z`;
+      const wheelX = left + width * 0.3, wheelY = top - gap;
+      return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-locus="rectangle,${a},${b},${r}" aria-label="직사각형 바깥을 따라 구르는 원과 원의 중심이 지나간 길"><rect class="shape-fill" x="${cs6f(left)}" y="${cs6f(top)}" width="${cs6f(width)}" height="${cs6f(height)}"/><circle class="highlight-fill" cx="${cs6f(wheelX)}" cy="${cs6f(wheelY)}" r="${cs6f(gap)}" style="stroke:#294963;stroke-width:1.6"/><path class="folded" style="fill:none" d="${path}"/><line x1="${cs6f(wheelX)}" y1="${cs6f(wheelY)}" x2="${cs6f(wheelX + gap)}" y2="${cs6f(wheelY)}" style="stroke-width:1.4"/><circle cx="${cs6f(wheelX)}" cy="${cs6f(wheelY)}" r="2.2" style="fill:#294963"/><text class="svg-measure-text" x="${cs6f(wheelX + gap + 6)}" y="${cs6f(wheelY - gap - 4)}">반지름 ${r}cm</text>${cs6Dim(left, bottom, right, bottom, `${a}cm`, 9)}${cs6Dim(right, bottom, right, top, `${b}cm`, 9)}</svg>`;
     }
-    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="stepped-profile,${a},${b},${c}" aria-label="계단 모양 평면도형과 회전축"><line class="folded" x1="200" y1="18" x2="200" y2="162"/><path class="shape-fill" d="M200 35 H${200-a*7} V90 H${200-c*7} V145 H200 Z"/><text x="207" y="90">회전축</text><text x="86" y="166">높이 ${b}cm</text></svg>`;
+    if (kind === "pivot") {
+      const cx = 140, cy = 98, radius = 64;
+      const [ax, ay] = cs6Point(cx, cy, radius, 0), [bx, by] = cs6Point(cx, cy, radius, b);
+      return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-locus="pivot,${a},${b}" aria-label="한 끝점을 중심으로 ${b}° 회전한 선분과 다른 끝점이 움직인 길"><path class="folded" style="fill:none" d="${cs6ArcPath(cx, cy, radius, 0, b)}"/><line x1="${cx}" y1="${cy}" x2="${cs6f(ax)}" y2="${cs6f(ay)}"/><line x1="${cx}" y1="${cy}" x2="${cs6f(bx)}" y2="${cs6f(by)}" style="stroke-dasharray:6 4"/>${cs6Angle(cx, cy, 0, b, `${b}°`, 16)}<circle cx="${cx}" cy="${cy}" r="3" style="fill:#294963"/><circle cx="${cs6f(ax)}" cy="${cs6f(ay)}" r="3" style="fill:#294963"/><circle cx="${cs6f(bx)}" cy="${cs6f(by)}" r="3" style="fill:#294963"/>${cs6Dim(cx, cy, ax, ay, `${a}cm`, -9)}</svg>`;
+    }
+    const scale = Math.min(218 / (r + a), 148 / (r + b));
+    const rope = r * scale, width = a * scale, height = b * scale;
+    const cx = 136 - (width - rope) / 2, cy = 96 - (height - rope) / 2;
+    const [tx, ty] = cs6Point(cx, cy, rope, 135);
+    return `<svg class="geometry-diagram" viewBox="0 0 280 200" data-locus="tether,${a},${b},${r}" aria-label="직사각형 우리의 꼭짓점에 묶인 동물이 움직일 수 있는 범위"><path class="highlight-fill" style="stroke:#294963;stroke-width:1.6" d="M${cs6f(cx)} ${cs6f(cy)} L${cs6f(cx + rope)} ${cs6f(cy)} A${cs6f(rope)} ${cs6f(rope)} 0 1 0 ${cs6f(cx)} ${cs6f(cy + rope)} Z"/><rect class="shape-fill" x="${cs6f(cx)}" y="${cs6f(cy)}" width="${cs6f(width)}" height="${cs6f(height)}"/><text x="${cs6f(cx + width / 2)}" y="${cs6f(cy + height / 2)}">우리</text><line class="folded" x1="${cs6f(cx)}" y1="${cs6f(cy)}" x2="${cs6f(tx)}" y2="${cs6f(ty)}"/><circle cx="${cs6f(cx)}" cy="${cs6f(cy)}" r="3" style="fill:#294963"/>${cs6Dim(cx, cy, tx, ty, `${r}m`, 9)}${cs6Dim(cx, cy + height, cx + width, cy + height, `${a}m`, -9)}${cs6Dim(cx + width, cy + height, cx + width, cy, `${b}m`, -9)}</svg>`;
+  };
+  // 세운 원기둥: 아랫면의 뒤쪽 반은 점선
+  const cylinderUprightSvg = ({ radius, height, radiusLabel, heightLabel, title = "원기둥" }) => {
+    const scale = Math.min(70 / radius, 120 / height);
+    const rx = radius * scale, ry = Math.max(8, rx * 0.3), h = height * scale;
+    const cx = 130, top = 100 - h / 2, bottom = top + h;
+    return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-cylinder="${radius},${height}" aria-label="${title}"><path class="shape-fill" d="M${cs6f(cx - rx)} ${cs6f(top)} V${cs6f(bottom)} A${cs6f(rx)} ${cs6f(ry)} 0 0 0 ${cs6f(cx + rx)} ${cs6f(bottom)} V${cs6f(top)} Z"/><ellipse class="shape-fill" cx="${cx}" cy="${cs6f(top)}" rx="${cs6f(rx)}" ry="${cs6f(ry)}" style="stroke:#294963;stroke-width:2"/><path style="fill:none;stroke:#8ca4b8;stroke-width:1.4;stroke-dasharray:4 4" d="M${cs6f(cx - rx)} ${cs6f(bottom)} A${cs6f(rx)} ${cs6f(ry)} 0 0 1 ${cs6f(cx + rx)} ${cs6f(bottom)}"/><line x1="${cx}" y1="${cs6f(top)}" x2="${cs6f(cx + rx)}" y2="${cs6f(top)}" style="stroke-width:1.4"/><circle cx="${cx}" cy="${cs6f(top)}" r="2.2" style="fill:#294963"/>${cs6Dim(cx, top, cx + rx, top, radiusLabel, ry + 4)}${cs6Dim(cx + rx, bottom, cx + rx, top, heightLabel, -10)}</svg>`;
+  };
+  // 옆으로 누운 원기둥(롤러): 폭은 원기둥의 길이
+  const rollerSvg = ({ radius, width }) => {
+    const scale = Math.min(150 / width, 52 / radius);
+    const ry = radius * scale, rx = Math.max(8, ry * 0.32), w = width * scale;
+    const left = 140 - w / 2, right = left + w, cy = 92;
+    return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-roller="${radius},${width}" aria-label="원기둥 모양 롤러"><path class="shape-fill" d="M${cs6f(left)} ${cs6f(cy - ry)} H${cs6f(right)} V${cs6f(cy + ry)} H${cs6f(left)} A${cs6f(rx)} ${cs6f(ry)} 0 0 1 ${cs6f(left)} ${cs6f(cy - ry)} Z" style="stroke:none"/><line x1="${cs6f(left)}" y1="${cs6f(cy - ry)}" x2="${cs6f(right)}" y2="${cs6f(cy - ry)}"/><line x1="${cs6f(left)}" y1="${cs6f(cy + ry)}" x2="${cs6f(right)}" y2="${cs6f(cy + ry)}"/><path style="fill:none;stroke:#294963;stroke-width:2" d="M${cs6f(left)} ${cs6f(cy - ry)} A${cs6f(rx)} ${cs6f(ry)} 0 0 0 ${cs6f(left)} ${cs6f(cy + ry)}"/><path style="fill:none;stroke:#8ca4b8;stroke-width:1.4;stroke-dasharray:4 4" d="M${cs6f(left)} ${cs6f(cy - ry)} A${cs6f(rx)} ${cs6f(ry)} 0 0 1 ${cs6f(left)} ${cs6f(cy + ry)}"/><ellipse class="shape-fill" cx="${cs6f(right)}" cy="${cy}" rx="${cs6f(rx)}" ry="${cs6f(ry)}" style="stroke:#294963;stroke-width:2"/><line x1="${cs6f(right)}" y1="${cy}" x2="${cs6f(right)}" y2="${cs6f(cy - ry)}" style="stroke-width:1.4"/><circle cx="${cs6f(right)}" cy="${cy}" r="2.2" style="fill:#294963"/>${cs6Dim(right, cy, right, cy - ry, `${radius}cm`, -(rx + 10))}${cs6Dim(right, cy + ry, left, cy + ry, `폭 ${width}cm`, 10)}</svg>`;
+  };
+  // 원기둥 전개도: 옆면 직사각형 위아래에 밑면 원이 한 점에서 맞닿음
+  const cylinderNetSvg = ({ radius, height, areaLabel }) => {
+    const scale = Math.min(200 / (2 * 3.14 * radius), 160 / (height + 4 * radius));
+    const w = 2 * 3.14 * radius * scale, h = height * scale, rr = radius * scale;
+    const left = 130 - w / 2, top = 95 - h / 2, bottom = top + h, cx = left + w / 2;
+    return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-cylinder-net="${height}" aria-label="원기둥의 전개도"><rect class="shape-fill" x="${cs6f(left)}" y="${cs6f(top)}" width="${cs6f(w)}" height="${cs6f(h)}"/><circle class="shape-fill" cx="${cs6f(cx)}" cy="${cs6f(top - rr)}" r="${cs6f(rr)}"/><circle class="shape-fill" cx="${cs6f(cx)}" cy="${cs6f(bottom + rr)}" r="${cs6f(rr)}"/><line x1="${cs6f(cx)}" y1="${cs6f(top - rr)}" x2="${cs6f(cx + rr)}" y2="${cs6f(top - rr)}" style="stroke-width:1.4"/><circle cx="${cs6f(cx)}" cy="${cs6f(top - rr)}" r="2" style="fill:#294963"/><text class="svg-measure-text" x="${cs6f(cx + rr + 6)}" y="${cs6f(top - rr)}">반지름 □cm</text><text x="${cs6f(cx)}" y="${cs6f(top + h / 2)}">${areaLabel}</text>${cs6Dim(left + w, bottom, left + w, top, `${height}cm`, -10)}</svg>`;
+  };
+  // 세운 원뿔: 모선과 밑면의 반지름 표시
+  const coneSvg = ({ radius, slant }) => {
+    const tall = Math.sqrt(slant * slant - radius * radius);
+    const scale = Math.min(80 / radius, 128 / tall);
+    const rx = radius * scale, ry = Math.max(7, rx * 0.3), h = tall * scale;
+    const cx = 132, apex = 92 - h / 2 - 4, base = apex + h;
+    return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-cone="${radius},${slant}" aria-label="원뿔"><path class="shape-fill" d="M${cx} ${cs6f(apex)} L${cs6f(cx - rx)} ${cs6f(base)} A${cs6f(rx)} ${cs6f(ry)} 0 0 0 ${cs6f(cx + rx)} ${cs6f(base)} Z"/><path style="fill:none;stroke:#8ca4b8;stroke-width:1.4;stroke-dasharray:4 4" d="M${cs6f(cx - rx)} ${cs6f(base)} A${cs6f(rx)} ${cs6f(ry)} 0 0 1 ${cs6f(cx + rx)} ${cs6f(base)}"/><line x1="${cx}" y1="${cs6f(base)}" x2="${cs6f(cx + rx)}" y2="${cs6f(base)}" style="stroke-width:1.4"/><circle cx="${cx}" cy="${cs6f(base)}" r="2.2" style="fill:#294963"/>${cs6Dim(cx - rx, base, cx, apex, `${slant}cm`, 10)}${cs6Dim(cx, base, cx + rx, base, `${radius}cm`, 7)}</svg>`;
+  };
+  // 원뿔 옆면 전개도: 실제 중심각의 부채꼴과 호에 맞닿은 밑면 원
+  const coneNetSvg = ({ radius, slant, angleLabel }) => {
+    const angle = 360 * radius / slant, big = 72, small = big * radius / slant;
+    const cx = 140, cy = 36;
+    const [lx, ly] = cs6Point(cx, cy, big, -90 - angle / 2), [rx, ry] = cs6Point(cx, cy, big, -90 + angle / 2);
+    const circleY = cy + big + small;
+    return `<svg class="geometry-diagram" viewBox="0 0 280 ${cs6f(Math.max(150, circleY + small + 14))}" data-solid="cone-net,${radius},${slant}" aria-label="중심각이 ${cs6f(angle)}°인 원뿔의 옆면 전개도"><path class="shape-fill" d="M${cx} ${cy} L${cs6f(lx)} ${cs6f(ly)} A${big} ${big} 0 0 0 ${cs6f(rx)} ${cs6f(ry)} Z"/>${cs6Angle(cx, cy, -90 - angle / 2, -90 + angle / 2, angleLabel, 14)}<circle class="shape-fill" cx="${cx}" cy="${cs6f(circleY)}" r="${cs6f(small)}"/><line x1="${cx}" y1="${cs6f(circleY)}" x2="${cs6f(cx + small)}" y2="${cs6f(circleY)}" style="stroke-width:1.4"/><circle cx="${cx}" cy="${cs6f(circleY)}" r="2" style="fill:#294963"/><text class="svg-measure-text" x="${cs6f(cx + small + 6)}" y="${cs6f(circleY)}">반지름 ${radius}cm</text>${cs6Dim(lx, ly, cx, cy, `${slant}cm`, 10)}</svg>`;
+  };
+  // 회전축(오른쪽 세로선) 왼쪽에 놓인 평면도형
+  const revolutionProfileSvg = ({ kind, a, b, c = 0, d = 0 }) => {
+    const axisX = 176;
+    if (kind === "stepped") {
+      const scale = Math.min(120 / a, 132 / (b + d));
+      const top = 96 - (b + d) * scale / 2, middle = top + b * scale, bottom = middle + d * scale;
+      const outerX = axisX - a * scale, innerX = axisX - c * scale;
+      return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-solid="stepped-profile,${a},${c},${b},${d}" aria-label="계단 모양 평면도형과 회전축"><path class="shape-fill" d="M${axisX} ${cs6f(top)} H${cs6f(outerX)} V${cs6f(middle)} H${cs6f(innerX)} V${cs6f(bottom)} H${axisX} Z"/><line class="folded" x1="${axisX}" y1="${cs6f(top - 16)}" x2="${axisX}" y2="${cs6f(bottom + 16)}"/><text class="svg-measure-text" x="${axisX + 8}" y="${cs6f(top - 8)}">회전축</text>${cs6Dim(outerX, top, axisX, top, `${a}cm`, 9)}${cs6Dim(axisX, bottom, innerX, bottom, `${c}cm`, 9)}${cs6Dim(outerX, middle, outerX, top, `${b}cm`, 9)}${cs6Dim(innerX, bottom, innerX, middle, `${d}cm`, 9)}</svg>`;
+    }
+    const scale = Math.min(118 / a, 128 / b);
+    const top = 92 - b * scale / 2, bottom = top + b * scale, left = axisX - a * scale;
+    const shape = kind === "triangle"
+      ? `<polygon class="shape-fill" points="${axisX},${cs6f(top)} ${cs6f(left)},${cs6f(bottom)} ${axisX},${cs6f(bottom)}"/>${cs6RightMark(axisX, bottom, -1, -1)}`
+      : `<rect class="shape-fill" x="${cs6f(left)}" y="${cs6f(top)}" width="${cs6f(a * scale)}" height="${cs6f(b * scale)}"/>`;
+    const heightDim = kind === "triangle" ? cs6Dim(axisX, bottom, axisX, top, `${b}cm`, -14) : cs6Dim(left, top, left, bottom, `${b}cm`, -9);
+    return `<svg class="geometry-diagram" viewBox="0 0 280 190" data-solid="profile,${a},${b},${kind === "triangle" ? 1 : 0}" aria-label="회전축이 표시된 ${kind === "triangle" ? "직각삼각형" : "직사각형"}">${shape}<line class="folded" x1="${axisX}" y1="${cs6f(top - 16)}" x2="${axisX}" y2="${cs6f(bottom + 16)}"/><text class="svg-measure-text" x="${axisX + 6}" y="${cs6f(top - 10)}">회전축</text>${cs6Dim(axisX, bottom, left, bottom, `${a}cm`, 9)}${heightDim}</svg>`;
   };
   const ratioText = (left, right) => {
     const divisor = gcd(Math.abs(left), Math.abs(right));
@@ -15654,11 +15839,20 @@
         return result(`각기둥의 옆면에 그은 선을 전개도에 옮기니 1번 옆면의 왼쪽 아래 꼭짓점에서 ${span}번 옆면의 오른쪽 위 꼭짓점까지 곧게 이어졌습니다. 이 선이 지나가는 옆면은 모두 몇 개입니까?${prismNetStripSvg({ sides, side, height: 8, span })}${angularSolidEvidence("prism-crossed-faces", [sides, span])}`, span, `전개도에서 선분은 번호가 연속된 1번부터 ${span}번 옆면까지 지나므로 모두 ${span}개입니다.`);
       }
       if (kind === 3) {
-        const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
-        const scale = int(rng, 1, 1 + level);
-        const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
-        const faces = int(rng, 2, 3 + Math.min(level, 1));
-        return result(`각기둥 겉면의 두 점을 잇기 위해 지나갈 옆면 ${faces}개를 그림처럼 한 평면에 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 겉면을 따라가는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces, width, height })}${angularSolidEvidence("prism-shortest-route", [faces, width, height, answer])}`, answer, `펼친 면에서 가장 짧은 길이는 두 점을 잇는 직선입니다. 가로 ${width}cm, 세로 ${height}cm, 빗변 ${answer}cm가 되는 직각삼각형을 확인하면 가장 짧은 길이는 ${answer}cm입니다.`);
+        const count = level === 0 ? 4 : pick(rng, [4, 5]);
+        const names = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"].slice(0, count);
+        const lengths = Array.from({ length: count }, () => int(rng, 3, 9 + 2 * level));
+        const perimeter = lengths.reduce((sum, value) => sum + value, 0);
+        const from = int(rng, 1, count - 2), to = int(rng, from + 1, count - 1);
+        const insideLengths = lengths.slice(from, to), outsideLengths = [...lengths.slice(to), ...lengths.slice(0, from)];
+        const inside = insideLengths.reduce((sum, value) => sum + value, 0), outside = perimeter - inside;
+        if (inside === outside || lengths.some(value => 2 * value >= perimeter)) return generators.prismApplicationAdvanced({ rng, level, variant });
+        const prismHeight = int(rng, 8, 12 + 2 * level), pointHeight = int(rng, 2, prismHeight - 2);
+        const answer = Math.min(inside, outside);
+        const insideNames = names.slice(from, to + 1), outsideNames = [...names.slice(to), ...names.slice(0, from + 1)];
+        const routeText = parts => parts.length > 1 ? `${parts.join("+")}=${parts.reduce((sum, value) => sum + value, 0)}cm` : `${parts[0]}cm`;
+        const solidName = count === 4 ? "사각기둥" : "오각기둥";
+        return result(`그림은 밑면이 ${count === 4 ? "사" : "오"}각형 ${names.join("")}인 ${solidName}의 옆면을 한 줄로 펼친 것입니다. 전개도의 양 끝에 있는 옆모서리는 ${solidName}에서 같은 모서리입니다. 점 가는 꼭짓점 ${names[from]}을 지나는 옆모서리 위에, 점 나는 꼭짓점 ${names[to]}을 지나는 옆모서리 위에 있고, 두 점 모두 밑면에서 ${pointHeight}cm 높이에 있습니다. 옆면만 지나서 점 가에서 점 나까지 가는 가장 짧은 거리를 구하세요.${g6rPrismLevelRouteSvg({ names, lengths, height: prismHeight, pointHeight, from, to })}${angularSolidEvidence("prism-level-route", [from, to, ...lengths])}`, answer, `펼친 옆면에서 두 점은 같은 높이에 있으므로 가장 짧은 길은 밑변과 평행한 선분입니다. ${insideNames.join("→")} 쪽으로 가면 ${routeText(insideLengths)}, ${outsideNames.join("→")} 쪽으로 가면 ${routeText(outsideLengths)}입니다. 더 짧은 ${answer}cm가 가장 짧은 거리입니다.`);
       }
       if (kind === 4) {
         const vertices = 6 * sides;
@@ -15711,11 +15905,12 @@
       }
       const side = int(rng, 3, 6 + level);
       const height = int(rng, 5, 9 + level);
-      const lateral = int(rng, side + 2, side + 6 + level);
-      const prismTotal = 2 * sides * side + sides * height;
-      const pyramidTotal = 2 * sides * lateral;
+      const lateral = int(rng, 2 * side, 2 * side + 4 + level);
+      if (side + height === lateral) return generators.pyramidElementsNetAdvanced({ rng, level, variant });
+      const prismTotal = sides * (2 * side + height);
+      const pyramidTotal = sides * (side + lateral);
       const answer = Math.abs(prismTotal - pyramidTotal);
-      return result(`같은 수의 종이 막대를 사용해 밑면이 정${sides}각형인 각기둥과 각뿔의 모서리 틀을 각각 만들었습니다. 각기둥은 밑면 한 변 ${side}cm, 높이 ${height}cm이고 각뿔의 모든 모서리는 ${lateral}cm입니다. 필요한 종이 막대 길이의 차를 구하세요.${angularSolidEvidence("solid-edge-length-difference", [sides, side, height, lateral])}`, answer, `각기둥은 ${prismTotal}cm, 각뿔은 ${pyramidTotal}cm가 필요하므로 차는 ${answer}cm입니다.`);
+      return result(`종이 막대로 밑면이 서로 같은 정${["", "", "", "삼", "사", "오", "육", "칠", "팔", "구"][sides]}각형인 각기둥과 각뿔의 모서리 틀을 하나씩 만들었습니다. 두 입체 모두 밑면의 한 변은 ${side}cm이고, 각기둥의 높이는 ${height}cm, 각뿔의 옆모서리는 ${lateral}cm입니다. 두 모서리 틀에 사용한 종이 막대 길이의 차를 구하세요.${angularSolidEvidence("shared-base-edge-length-difference", [sides, side, height, lateral])}`, answer, `각기둥의 모서리는 밑면의 변 ${2 * sides}개와 높이 ${sides}개이므로 ${side}×${2 * sides}+${height}×${sides}=${prismTotal}cm입니다. 각뿔의 모서리는 밑면의 변 ${sides}개와 옆모서리 ${sides}개이므로 ${side}×${sides}+${lateral}×${sides}=${pyramidTotal}cm입니다. 차는 ${answer}cm입니다.`);
     },
     pyramidApplicationAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
@@ -15733,10 +15928,9 @@
         return result(`모든 모서리 길이가 ${side}cm인 정삼각뿔의 서로 이웃한 두 옆면에서, 각 면의 두 변의 중점을 이은 선분을 하나씩 그어 이어 붙였습니다. 두 선분 길이의 합을 구하세요.${angularPyramidSvg({ sides: 3, side, lateral: side })}${angularSolidEvidence("tetra-midpoint-route", [side])}`, answer, `각 옆면은 한 변이 ${side}cm인 정삼각형입니다. 두 변의 중점을 이으면 두 변이 ${side / 2}cm이고 그 사이의 각이 60°인 이등변삼각형, 곧 정삼각형이 생기므로 각 선분은 ${side / 2}cm입니다. 두 선분 길이의 합은 ${answer}cm입니다.`);
       }
       if (kind === 2) {
-        const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
-        const scale = int(rng, 1, 1 + level);
-        const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
-        return result(`사각뿔의 서로 이웃한 옆면 두 개를 그림처럼 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 사각뿔의 겉면을 따라 두 점을 잇는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces: 2, width, height, label: "옆면 두 개를 펼친 모습" })}${angularSolidEvidence("pyramid-shortest-route", [2, width, height, answer])}`, answer, `두 옆면을 펼친 평면에서 직선이 가장 짧습니다. 가로 ${width}cm, 세로 ${height}cm, 빗변 ${answer}cm가 되는 직각삼각형을 확인하면 가장 짧은 길이는 ${answer}cm입니다.`);
+        const [base, slant, lateral] = pick(rng, [[6, 4, 5], [12, 8, 10], [18, 12, 15], [24, 16, 20], [14, 24, 25], [30, 20, 25]].slice(0, 3 + 2 * level));
+        const faceArea = base * slant / 2, half = decimal(base * slant / lateral, 2), answer = decimal(2 * base * slant / lateral, 2);
+        return result(`밑면이 정사각형 ㄴㄷㄹㅁ이고 각뿔의 꼭짓점이 ㄱ인 사각뿔이 있습니다. 옆면은 모두 밑변이 ${base}cm, 높이가 ${slant}cm이고 나머지 두 변이 ${lateral}cm인 이등변삼각형입니다. 그림은 옆면 ㄱㄴㄷ과 옆면 ㄱㄷㄹ을 펼친 것입니다. 이 두 옆면을 지나서 꼭짓점 ㄴ에서 꼭짓점 ㄹ까지 가는 가장 짧은 거리를 구하세요.${g6rPyramidKiteSvg({ base, slant, lateral })}${angularSolidEvidence("pyramid-kite-route", [base, slant, lateral])}`, answer, `펼친 두 옆면은 선분 ㄱㄷ을 대칭축으로 하는 선대칭도형이므로, 가장 짧은 길인 선분 ㄴㄹ은 ㄱㄷ과 수직으로 만나고 대칭축에 의해 똑같이 둘로 나누어집니다. 삼각형 ㄱㄴㄷ의 넓이는 ${base}×${slant}÷2=${faceArea}cm²이고, ㄱㄷ을 밑변으로 보면 높이는 ${faceArea}×2÷${lateral}=${half}cm입니다. 따라서 가장 짧은 거리는 ${half}×2=${answer}cm입니다.`);
       }
       if (kind === 3) {
         const vertices = sides + 2;
@@ -15751,10 +15945,8 @@
         const answer = base * outer;
         return result(`한 변이 ${outer}cm인 정사각형 안에 그림과 같이 밑면 한 변이 ${base}cm인 사각뿔의 전개도를 그렸습니다. 네 옆면의 꼭짓점은 바깥 정사각형의 각 변에 놓입니다. 전개도의 넓이를 구하세요.${pyramidCrossNetSvg({ base, outer })}${angularSolidEvidence("square-pyramid-net-area", [base, outer])}`, answer, `가운데 정사각형 넓이는 ${base}×${base}이고, 네 삼각형 넓이의 합은 ${base}×(${outer}-${base})입니다. 전체는 ${base}×${base}+${base}×(${outer}-${base})=${answer}cm²입니다.`);
       }
-      const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
-      const scale = int(rng, 1, 1 + level);
-      const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
-      return result(`정사면체의 네 면을 모두 지나도록 두 점을 잇는 경로를 전개도 위에 나타냈습니다. 펼친 전개도에서 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 가장 짧은 경로의 길이를 구하세요.${surfaceRouteSvg({ faces: 4, width, height, label: "네 면을 모두 지나는 전개도 경로" })}${angularSolidEvidence("tetra-all-face-route", [4, width, height, answer])}`, answer, `전개도에서 네 면을 모두 지나는 범위가 고정되어 있으므로 두 점을 잇는 직선이 가장 짧습니다. 가로 ${width}cm, 세로 ${height}cm, 빗변 ${answer}cm가 되는 직각삼각형을 확인하면 가장 짧은 길이는 ${answer}cm입니다.`);
+      const edge = int(rng, 4, 10 + 2 * level), start = int(rng, 1, edge - 1), answer = 2 * edge;
+      return result(`네 면이 모두 합동인 정삼각형으로 이루어진 정사면체 ㄱㄴㄷㄹ의 모든 모서리의 길이의 합은 ${6 * edge}cm입니다. 모서리 ㄱㄷ 위에 ㄱㅁ이 ${start}cm인 점 ㅁ을 잡고, 점 ㅁ에서 출발하여 면 ㄱㄴㄷ, 면 ㄴㄷㄹ, 면 ㄱㄴㄹ, 면 ㄱㄷㄹ을 차례로 지나 다시 점 ㅁ으로 돌아오려고 합니다. 그림은 네 면을 이 순서로 펼친 전개도입니다. 이렇게 돌아오는 길 중 가장 짧은 길의 길이를 구하세요.${g6rTetraStripSvg({ edge, start })}${angularSolidEvidence("tetra-loop-route", [6 * edge, start])}`, answer, `한 모서리는 ${6 * edge}÷6=${edge}cm입니다. 네 면을 차례로 펼치면 평행사변형이 되고, 점 ㅁ은 평행사변형의 왼쪽 변과 오른쪽 변에서 아래 꼭짓점 ㄱ으로부터 똑같이 ${start}cm 떨어진 곳에 나타납니다. 두 점을 이은 선분이 가장 짧고, 이 선분은 아래 변과 평행하며 길이가 같습니다. 아래 변은 한 모서리의 2배이므로 가장 짧은 길이는 ${edge}×2=${answer}cm입니다.`);
     },
     decimalNaturalDivisionAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
@@ -15776,9 +15968,11 @@
         return result(`두 수 가, 나에 대하여 가★나=(가-나)÷나로 약속합니다. 다음 두 계산 결과의 차를 구하세요.<div class="equation">${decimal(a1, 2)}★${b1}　　${decimal(a2, 2)}★${b2}</div>${decimalDivisionEvidence("defined-operation", [q1, q2])}`, answer, `첫 결과는 ${decimal(q1 / 10, 2)}, 둘째 결과는 ${decimal(q2 / 10, 2)}이므로 차는 ${answer}입니다.`);
       }
       if (kind === 2) {
-        const base = int(rng, 8, 15 + level * 2), height = int(rng, 3, 8 + level), square = int(rng, 4, 8 + level);
-        const total = base * height + square * square;
-        return result(`평행사변형과 정사각형을 겹치지 않게 이어 붙인 도형의 넓이는 ${total}cm²입니다. 평행사변형의 높이 □를 구하세요.${decimalCompositeAreaSvg({ base, height, square })}${decimalDivisionEvidence("composite-missing-height", [base, square, total])}`, height, `정사각형의 넓이 ${square * square}cm²를 빼면 평행사변형의 넓이는 ${base * height}cm²입니다. ${base * height}÷${base}=${height}cm입니다.`);
+        const base = int(rng, 8, 14 + level * 2), square = int(rng, 3, 7 + level), heightTenths = int(rng, 25, 80 + level * 10);
+        if (heightTenths % 10 === 0 || Math.abs(heightTenths - square * 10) < 15 || square >= base) return generators.decimalNaturalDivisionAdvanced({ rng, level, variant });
+        const parallelogramTenths = base * heightTenths, totalTenths = parallelogramTenths + square * square * 10;
+        const total = decimal(totalTenths / 10, 1), parallelogram = decimal(parallelogramTenths / 10, 1), height = decimal(heightTenths / 10, 1);
+        return result(`평행사변형의 윗변 위에 정사각형을 겹치지 않게 붙여 만든 도형입니다. 도형 전체의 넓이가 ${total}cm²일 때, 평행사변형의 높이 □는 몇 cm입니까?${g6rCompositeSquareSvg({ base, heightTenths, square })}${decimalDivisionEvidence("composite-decimal-height", [base, square, totalTenths])}`, height, `정사각형의 넓이는 ${square}×${square}=${square * square}cm²이므로 평행사변형의 넓이는 ${total}-${square * square}=${parallelogram}cm²입니다. 높이는 ${parallelogram}÷${base}=${height}cm입니다.`);
       }
       if (kind === 3) {
         const divisor = int(rng, 4, 9 + level);
@@ -15800,12 +15994,12 @@
         const answerHundred = 56 * multiplier;
         return result(`어떤 수를 4로 나눈 몫에 ${fixedDecimal(addHundred, 2)}${numberJosa.eulReul(fixedDecimal(addHundred, 2))} 더했더니 ${fixedDecimal(totalHundred, 2)}${numberJosa.iGa(fixedDecimal(totalHundred, 2))} 되었습니다. 그 수를 5로 나눈 몫과 9로 나눈 몫의 합을 구하세요.${decimalDivisionEvidence("linked-quotient-sum", [originalHundred, addHundred, totalHundred])}`, decimal(answerHundred / 100, 2), `어떤 수는 (${fixedDecimal(totalHundred, 2)}-${fixedDecimal(addHundred, 2)})×4=${fixedDecimal(originalHundred, 2)}입니다. 이를 5와 9로 나눈 몫의 합은 ${decimal(answerHundred / 100, 2)}입니다.`);
       }
-      const cards = pick(rng, [[2, 3, 4, 9], [1, 3, 6, 8], [2, 5, 7, 9], [1, 4, 7, 8]]);
-      const cases = operatorPermutations(cards).map(order => ({ order, value: (10 * order[0] + order[1] + order[2] / 10) / order[3] }));
-      const minimum = Math.min(...cases.map(item => item.value));
-      const maximum = Math.max(...cases.map(item => item.value));
-      const answer = decimal(maximum - minimum, 3);
-      return result(`수 카드 ${cards.join(", ")} 중 3장으로 소수 두 자리 수를 만들고, 남은 카드의 수로 나눕니다. 만들 수 있는 몫의 최댓값과 최솟값의 차를 구하세요.${decimalDivisionEvidence("digit-card-quotient-range", cards)}`, answer, `가능한 카드 순서를 모두 검사하면 가장 큰 몫은 ${decimal(maximum, 3)}, 가장 작은 몫은 ${decimal(minimum, 3)}입니다. 차는 ${answer}입니다.`);
+      const cards = pick(rng, [[2, 3, 4, 5], [2, 3, 4, 6], [2, 3, 4, 8], [2, 3, 6, 8], [2, 4, 5, 7], [2, 4, 6, 8], [2, 5, 6, 8], [3, 4, 5, 6], [3, 4, 6, 8], [3, 7, 8, 9], [4, 5, 6, 8], [4, 6, 8, 9], [5, 6, 7, 9]]);
+      const [smallestCard, secondCard, thirdCard, largestCard] = cards;
+      const largestHundredths = 100 * largestCard + 10 * thirdCard + secondCard, smallestHundredths = 100 * smallestCard + 10 * secondCard + thirdCard;
+      const maximum = decimal(largestHundredths / 100 / smallestCard, 4), minimum = decimal(smallestHundredths / 100 / largestCard, 4);
+      const answer = decimal(largestHundredths / 100 / smallestCard - smallestHundredths / 100 / largestCard, 4);
+      return result(`수 카드 ${shuffle(rng, cards).join(", ")} 중 3장을 골라 □.□□ 모양의 소수 두 자리 수를 만들고, 남은 카드 1장의 수로 나누려고 합니다. 몫이 가장 클 때와 가장 작을 때의 몫의 차를 구하세요.${decimalDivisionEvidence("digit-card-hundredths-quotient-range", cards)}`, answer, `몫이 가장 크려면 가장 작은 수 ${smallestCard}${numberJosa.ro(smallestCard)} 나머지 카드로 만든 가장 큰 수를 나눕니다. ${fixedDecimal(largestHundredths, 2)}÷${smallestCard}=${maximum}입니다. 몫이 가장 작으려면 가장 큰 수 ${largestCard}${numberJosa.ro(largestCard)} 나머지 카드로 만든 가장 작은 수를 나눕니다. ${fixedDecimal(smallestHundredths, 2)}÷${largestCard}=${minimum}입니다. 차는 ${maximum}-${minimum}=${answer}입니다.`);
     },
     decimalDivisionApplicationAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
@@ -16126,10 +16320,11 @@
         return result(`가로 ${width}cm, 세로 ${height}cm인 직사각형의 가로를 ${reducePercent}% 줄이고 세로를 늘렸더니 넓이가 처음보다 ${areaDifference}cm² ${direction}. 새 직사각형의 가로와 세로의 비를 가장 간단히 나타내세요.${ratioEvidence("changed-rectangle-ratio", [width, height, reducePercent, newHeight, signedDifference])}`, answer, `새 가로는 ${newWidth}cm입니다. 넓이가 ${areaDifference}cm² ${direction.replace("습니다", "으므로")} 새 세로는 ${newHeight}cm이고, 가로:세로=${answer}입니다.`);
       }
       if (kind === 2) {
-        const [top, bottom] = pick(rng, [[8, 32], [10, 50], [12, 36], [14, 42], [18, 42], [20, 60]]);
-        const upper = 3 * top + bottom, lower = top + 3 * bottom;
-        const answer = (top + bottom) / 2;
-        return result(`사다리꼴의 높이를 똑같이 둘로 나누는 평행선을 그었습니다. 윗부분과 아랫부분의 넓이의 비는 ${ratioText(upper, lower)}이고 윗변은 ${top}cm입니다. 가운데 평행선의 길이를 구하세요.${ratioTrapezoidSvg({ top, bottom: "?", middle: true })}${ratioEvidence("trapezoid-midline-from-area-ratio", [top, upper, lower])}`, answer, `아랫변을 ○cm라 하면 두 부분의 넓이의 비는 (3×${top}+○):(${top}+3×○)=${ratioText(upper, lower)}입니다. ○=${bottom}이고 가운데 선은 (${top}+${bottom})÷2=${answer}cm입니다.`);
+        const top = int(rng, 6, 12 + 2 * level), gap = int(rng, 3, 8 + 2 * level), height = pick(rng, [8, 12, 16]);
+        const middle = top + gap, bottom = top + 2 * gap, half = height / 2;
+        const upper = (top + middle) * half / 2, lower = (middle + bottom) * half / 2, divisor = gcd(upper, lower);
+        const rate = `${upper / divisor}/${lower / divisor}`;
+        return result(`사다리꼴의 높이를 똑같이 둘로 나누도록 윗변과 아랫변에 평행한 선분 ㅁㅂ을 그었습니다. 사다리꼴의 윗변은 ${top}cm, 높이는 ${height}cm이고, 아랫부분의 넓이는 ${lower}cm²입니다. 아랫부분의 넓이에 대한 윗부분의 넓이의 비율이 ${rate}일 때, 선분 ㅁㅂ의 길이를 구하세요.${g6rTrapezoidMidlineSvg({ top, bottom, height })}${ratioEvidence("trapezoid-midline-from-area-rate", [top, height, lower, upper / divisor, lower / divisor])}`, middle, `윗부분의 넓이는 ${lower}×${rate}=${upper}cm²입니다. 윗부분은 높이가 ${height}÷2=${half}cm인 사다리꼴이므로 윗변과 선분 ㅁㅂ의 길이의 합은 ${upper}×2÷${half}=${top + middle}cm입니다. 따라서 선분 ㅁㅂ은 ${top + middle}-${top}=${middle}cm입니다.`);
       }
       if (kind === 3) {
         const dailySpend = pick(rng, [4000, 5000, 6000]), basicPercent = pick(rng, [3, 4, 5]), specialDays = int(rng, 6, 15 + level * 2);
@@ -16329,10 +16524,11 @@
         return result(`겉의 가로 ${outerWidth}cm, 세로 ${outerDepth}cm, 높이 ${outerHeight}cm인 뚜껑 없는 직육면체 그릇의 바닥과 옆면 두께는 모두 ${thickness}cm입니다. 그릇에 가득 담을 수 있는 물은 몇 L입니까?${cuboidSvg({ a: outerWidth, b: outerDepth, c: outerHeight })}${volumeEvidence("thick-container-capacity", [outerWidth, outerDepth, outerHeight, thickness])}`, answer, `안쪽 크기는 ${inner.join("×")}cm입니다. 들이는 ${inner.reduce((total, value) => total * value, 1)}cm³이고 1L=1000cm³이므로 ${answer}L입니다.`);
       }
       if (kind === 2) {
-        const width = pick(rng, [30, 36, 40]), depth = pick(rng, [20, 24, 30]), initialHeight = pick(rng, [16, 18, 20]), newBase = pick(rng, [600, 720, 800]), maxHeight = pick(rng, [8, 10, 12]);
-        const volume = width * depth * initialHeight, capacity = newBase * maxHeight, spilled = Math.max(0, volume - capacity);
-        if (!spilled) return generators.volumeApplicationAdvanced({ rng, level, variant });
-        return result(`열린 수조에 가로 ${width}cm, 세로 ${depth}cm인 밑면으로 물이 ${initialHeight}cm 높이까지 있습니다. 수조를 기울여 다른 면을 바닥에 놓으면 새 밑넓이는 ${newBase}cm²이고 열린 가장자리까지 높이는 ${maxHeight}cm입니다. 넘쳐 쏟아지는 물의 양을 구하세요.${waterTankSvg({ width, depth, height: Math.max(initialHeight + 4, maxHeight + 4), waterHeight: initialHeight, title: "기울이기 전 수조" })}${volumeEvidence("tilted-spilled-volume", [width, depth, initialHeight, newBase, maxHeight])}`, spilled, `처음 물은 ${volume}cm³이고 새 자세에서 최대 ${capacity}cm³를 담습니다. 차 ${spilled}cm³가 쏟아집니다.`);
+        const width = pick(rng, [30, 36, 40, 45, 50]), height = pick(rng, [20, 24, 25]), depth = pick(rng, [10, 12, 15, 20]);
+        const edge = int(rng, height, width), waterHeight = int(rng, Math.floor(edge * height / (2 * width)) + 2, height - 2);
+        const remaining = edge * height * depth / 2, initial = width * depth * waterHeight, spilled = initial - remaining;
+        if (!Number.isInteger(remaining) || spilled <= 0) return generators.volumeApplicationAdvanced({ rng, level, variant });
+        return result(`가로 ${width}cm, 세로 ${depth}cm, 높이 ${height}cm인 뚜껑 없는 직육면체 수조에 물이 ${waterHeight}cm 높이까지 들어 있습니다. 이 수조를 바닥의 한 모서리가 땅에 닿은 채로 기울였더니 물이 넘쳐 흘렀고, 앞에서 본 모양이 둘째 그림과 같이 되었습니다. 물의 면은 낮아진 쪽 옆면의 위 모서리에 닿아 있고, 바닥에는 낮아진 쪽 모서리에서 ${edge}cm까지 물이 닿아 있습니다. 쏟아진 물은 몇 cm³입니까?${waterTankSvg({ width, depth, height, waterHeight, title: "기울이기 전 수조" })}${g6rTiltedTankSvg({ width, height, edge })}${volumeEvidence("tilted-triangle-spill", [width, depth, height, waterHeight, edge])}`, spilled, `처음 물의 부피는 ${width}×${depth}×${waterHeight}=${initial}cm³입니다. 기울인 뒤 남은 물은 앞에서 본 모양이 두 변이 ${edge}cm, ${height}cm인 직각삼각형이므로, 가로 ${edge}cm, 세로 ${depth}cm, 높이 ${height}cm인 직육면체의 절반입니다. 남은 물은 ${edge}×${depth}×${height}÷2=${remaining}cm³이므로 쏟아진 물은 ${initial}-${remaining}=${spilled}cm³입니다.`);
       }
       if (kind === 3) {
         const width = pick(rng, [20, 24, 30]), depth = pick(rng, [15, 20, 25]), initialHeight = pick(rng, [8, 10, 12]), rise = pick(rng, [2, 3, 4]);
@@ -17296,11 +17492,16 @@
         const bases = [
           [[0, 0, 0], [1, 0, 0], [2, 0, 0]],
           [[0, 0, 0], [1, 0, 0], [0, 1, 0]],
-          [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+          [[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0]]
         ];
         const base = bases[level];
         const answer = addedCubeShapeCount(base);
-        return result(`그림의 쌓기나무에 한 개를 면끼리 붙여 새로운 입체를 만듭니다. 돌려서 같은 모양은 하나로 셀 때 서로 다른 모양은 몇 가지입니까?${polycubeSvg(base)}${spaceEvidence("add-one-polycube", [level, answer], `data-base-cells="${base.map(cell => cell.join(".")).join(";")}"`)}`, answer, `붙일 수 있는 모든 빈 이웃 칸을 만든 뒤 24가지 공간 회전을 적용해 같은 모양을 하나로 묶으면 ${answer}가지입니다.`);
+        const explanation = [
+          `바닥에 붙이면 일자 모양, ㄴ자 모양, ㅗ자 모양이 되고, 위에 올린 모양도 돌려 보면 이 중 하나와 같습니다. 따라서 ${answer}가지입니다.`,
+          `바닥에 붙여 만든 서로 다른 모양은 4가지입니다. 위에 올리는 자리는 꺾인 곳 위와 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 3가지이고, 모두 4+3=${answer}가지입니다.`,
+          `바닥에 붙여 만든 서로 다른 모양은 5가지입니다. 위에 올리는 자리는 가운데 위, 튀어나온 칸 위, 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 4가지이고, 모두 5+4=${answer}가지입니다.`
+        ][level];
+        return result(`그림은 쌓기나무를 바닥에 한 층으로 놓은 모양이고, 보이지 않는 쌓기나무는 없습니다. 이 모양에 쌓기나무 한 개를 면끼리 꼭 맞게 붙여 새로운 모양을 만듭니다. 돌리거나 뒤집었을 때 같은 모양은 한 가지로 셀 때 서로 다른 모양은 몇 가지입니까?${polycubeSvg(base)}${spaceEvidence("add-one-polycube", [level, answer], `data-base-cells="${base.map(cell => cell.join(".")).join(";")}"`)}`, answer, explanation);
       }
       if (kind === 4) {
         const a = int(rng, 3 + level, 5 + level), b = int(rng, 3, 5 + level), c = int(rng, 3, 5 + level);
@@ -17615,75 +17816,88 @@
       const kind = int(rng, 0, 2), pi = pick(rng, [3, 3.14]);
       if (kind === 0) {
         const width = int(rng, 8, 13 + level), height = int(rng, 5, 9 + level), radius = int(rng, 1, 3);
-        const answer = decimal(2 * (width + height) + 2 * pi * radius, 2);
-        return result(`반지름이 ${radius}cm인 원이 가로 ${width}cm, 세로 ${height}cm인 직사각형의 바깥 변을 따라 미끄러지지 않고 한 바퀴 돕니다. 원의 중심이 움직인 거리를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "rectangle", a: width, b: height, r: radius })}${circleSolidEvidence("rolling-rectangle", [width, height, radius, pi])}`, answer, `직선 구간은 직사각형 둘레 ${2 * (width + height)}cm이고 네 모퉁이의 호를 합하면 반지름 ${radius}cm인 원 한 바퀴입니다. 합은 ${answer}cm입니다.`);
+        const perimeter = 2 * (width + height), answer = decimal(perimeter + 2 * pi * radius, 2);
+        return result(`반지름이 ${radius}cm인 원이 가로 ${width}cm, 세로 ${height}cm인 직사각형의 바깥 변을 따라 미끄러지지 않고 한 바퀴 돕니다. 원의 중심이 움직인 거리를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "rectangle", a: width, b: height, r: radius })}${circleSolidEvidence("rolling-rectangle", [width, height, radius, pi])}`, answer, `원의 중심이 변을 따라 곧게 움직인 길이의 합은 직사각형의 둘레와 같은 ${perimeter}cm입니다. 네 모퉁이에서 움직인 호 4개를 모으면 반지름 ${radius}cm인 원 한 바퀴이므로 ${radius}×2×${pi}=${decimal(2 * pi * radius, 2)}cm입니다. 따라서 ${perimeter}+${decimal(2 * pi * radius, 2)}=${answer}cm입니다.`);
       }
       if (kind === 1) {
-        const length = int(rng, 5, 10 + level), angle = pick(rng, [90, 120, 180, 270]);
+        const angle = pick(rng, [90, 120, 180, 270]);
+        const length = angle === 120 && pi === 3.14 ? 3 * int(rng, 2, 3 + level) : int(rng, 5, 10 + level);
+        const part = { 90: "1/4", 120: "1/3", 180: "1/2", 270: "3/4" }[angle];
         const answer = decimal(2 * pi * length * angle / 360, 2);
-        return result(`길이가 ${length}cm인 선분을 한 끝점을 중심으로 ${angle}° 회전시켰습니다. 다른 끝점이 움직인 거리를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "pivot", a: length, b: angle, r: 0 })}${circleSolidEvidence("pivot-arc", [length, angle, pi])}`, answer, `반지름 ${length}cm인 원주의 ${angle}/360이므로 이동 거리는 ${answer}cm입니다.`);
+        return result(`길이가 ${length}cm인 선분을 한 끝점을 중심으로 ${angle}° 회전시켰습니다. 다른 끝점이 움직인 거리를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "pivot", a: length, b: angle, r: 0 })}${circleSolidEvidence("pivot-arc", [length, angle, pi])}`, answer, `다른 끝점은 반지름 ${length}cm인 원의 둘레를 따라 움직입니다. ${angle}°는 360°의 ${part}이므로 ${length}×2×${pi}×${part}=${answer}cm입니다.`);
       }
-      const width = int(rng, 6, 10), height = int(rng, 5, 8), rope = int(rng, 3, Math.min(width, height));
+      const width = int(rng, 6, 10), height = int(rng, 5, 8);
+      const rope = pi === 3.14 ? 2 * int(rng, 2, Math.floor(Math.min(width, height) / 2)) : int(rng, 3, Math.min(width, height));
       const answer = decimal(pi * rope * rope * 3 / 4, 2);
-      return result(`가로 ${width}m, 세로 ${height}m인 직사각형 우리의 한 꼭짓점 바깥에 동물을 길이 ${rope}m인 줄로 묶었습니다. 우리 안으로 들어갈 수 없을 때 움직일 수 있는 최대 넓이를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "tether", a: width, b: height, r: rope })}${circleSolidEvidence("corner-tether", [width, height, rope, pi])}`, answer, `우리 때문에 원의 1/4은 갈 수 없으므로 반지름 ${rope}m인 원의 3/4인 ${answer}m²입니다.`);
+      return result(`가로 ${width}m, 세로 ${height}m인 직사각형 우리의 한 꼭짓점 바깥에 동물을 길이 ${rope}m인 줄로 묶었습니다. 우리 안으로 들어갈 수 없을 때 동물이 움직일 수 있는 범위의 넓이를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "tether", a: width, b: height, r: rope })}${circleSolidEvidence("corner-tether", [width, height, rope, pi])}`, answer, `줄의 길이 ${rope}m는 우리의 가로와 세로보다 길지 않으므로 줄이 우리 모서리에 걸리지 않습니다. 우리 안쪽 1/4을 뺀 반지름 ${rope}m인 원의 3/4만큼 움직일 수 있으므로 ${rope}×${rope}×${pi}×3/4=${answer}m²입니다.`);
     },
     circleApplicationsAdvanced({ rng, level }) {
       const kind = int(rng, 0, 2);
       if (kind === 0) {
-        const points = pick(rng, [8, 10, 12, 15, 18]), gaps = int(rng, 2, Math.min(5, points - 2));
+        const points = pick(rng, [8, 10, 12, 15, 18]), gaps = int(rng, 2, Math.min(5, Math.ceil(points / 2) - 1));
         const answer = decimal(360 * gaps / points, 2);
-        return result(`원주를 ${points}등분한 점이 있습니다. 한 점에서 원주를 따라 ${gaps}칸 떨어진 점까지 이은 두 반지름 사이의 작은 중심각은 몇 도입니까?${circlePointsSvg({ points, gaps })}${circleSolidEvidence("equal-points-angle", [points, gaps])}`, answer, `한 칸의 중심각은 360÷${points}°이고 ${gaps}칸이므로 ${answer}°입니다.`);
+        return result(`원주를 ${points}등분한 점이 있습니다. 한 점에서 원주를 따라 ${gaps}칸 떨어진 점까지 이은 두 반지름 사이의 작은 중심각은 몇 도입니까?${circlePointsSvg({ points, gaps })}${circleSolidEvidence("equal-points-angle", [points, gaps])}`, answer, `한 칸의 중심각은 360°÷${points}=${360 / points}°이고 ${gaps}칸이므로 ${360 / points}×${gaps}=${answer}°입니다.`);
       }
       if (kind === 1) {
-        const inscribed = pick(rng, [25, 30, 35, 40, 45, 50]), answer = inscribed * 2;
-        return result(`같은 호를 보는 원주각이 ${inscribed}°입니다. 그 호에 대한 작은 중심각의 크기를 구하세요.${inscribedAngleSvg({ angle: inscribed })}${circleSolidEvidence("inscribed-central", [inscribed])}`, answer, `같은 호를 보는 중심각은 원주각의 2배이므로 ${inscribed}×2=${answer}°입니다.`);
+        const pi = 3.14;
+        if (level === 0) {
+          const radius = pick(rng, [5, 10, 15, 20, 25, 30]), turns = int(rng, 3, 8);
+          const round = decimal(2 * pi * radius, 2), distance = decimal(2 * pi * radius * turns, 2);
+          return result(`반지름이 ${radius}cm인 바퀴를 곧게 굴렸더니 바퀴가 굴러간 거리가 ${distance}cm였습니다. 바퀴는 몇 바퀴 굴렀습니까? (원주율: ${pi})${wheelSvg({ value: radius, isDiameter: false, distanceLabel: `${distance}cm` })}${circleSolidEvidence("wheel-turns", [distance, radius * 2, pi])}`, String(turns), `바퀴가 한 바퀴 구르면 원주만큼 갑니다. 원주는 ${radius}×2×${pi}=${round}cm이므로 ${distance}÷${round}=${turns}바퀴입니다.`);
+        }
+        const diameter = level === 1 ? pick(rng, [20, 30, 40, 50, 60]) : pick(rng, [40, 50, 60, 70, 80]);
+        const turns = level === 1 ? int(rng, 4, 10) : int(rng, 5, 12);
+        const round = decimal(pi * diameter, 2), distance = decimal(pi * diameter * turns, 2);
+        if (level === 1) return result(`지름이 ${diameter}cm인 바퀴를 곧게 굴렸더니 바퀴가 굴러간 거리가 ${distance}cm였습니다. 바퀴는 몇 바퀴 굴렀습니까? (원주율: ${pi})${wheelSvg({ value: diameter, isDiameter: true, distanceLabel: `${distance}cm` })}${circleSolidEvidence("wheel-turns", [distance, diameter, pi])}`, String(turns), `바퀴가 한 바퀴 구르면 원주만큼 갑니다. 원주는 ${diameter}×${pi}=${round}cm이므로 ${distance}÷${round}=${turns}바퀴입니다.`);
+        const meters = decimal(pi * diameter * turns / 100, 4);
+        return result(`지름이 ${diameter}cm인 바퀴를 곧게 굴렸더니 바퀴가 굴러간 거리가 ${meters}m였습니다. 바퀴는 몇 바퀴 굴렀습니까? (원주율: ${pi})${wheelSvg({ value: diameter, isDiameter: true, distanceLabel: `${meters}m` })}${circleSolidEvidence("wheel-turns", [distance, diameter, pi])}`, String(turns), `${meters}m=${distance}cm입니다. 바퀴가 한 바퀴 구르면 원주 ${diameter}×${pi}=${round}cm만큼 가므로 ${distance}÷${round}=${turns}바퀴입니다.`);
       }
       const sides = pick(rng, [5, 6, 8, 9, 10, 12]), answer = 360 / sides;
-      return result(`원의 둘레 위에 같은 간격으로 ${sides}개의 점을 찍고 이웃한 점을 차례로 이었습니다. 만들어진 정다각형의 한 중심각은 몇 도입니까?${circlePointsSvg({ points: sides, gaps: 1 })}${circleSolidEvidence("regular-central", [sides])}`, answer, `원의 중심 둘레 360°를 ${sides}등분하므로 ${answer}°입니다.`);
+      return result(`원의 둘레 위에 같은 간격으로 ${sides}개의 점을 찍고 이웃한 점을 차례로 이었습니다. 원의 중심과 이웃한 두 점을 이은 두 반지름 사이의 각은 몇 도입니까?${circlePointsSvg({ points: sides, gaps: 1, polygon: true })}${circleSolidEvidence("regular-central", [sides])}`, answer, `원의 중심 둘레 360°를 ${sides}등분하므로 360÷${sides}=${answer}°입니다.`);
     },
     cylinderAdvanced({ rng, level }) {
       const kind = int(rng, 0, 2), pi = 3.14;
       if (kind === 0) {
         const radius = int(rng, 2, 5 + level), height = int(rng, 8, 14 + level);
         const circumference = decimal(2 * pi * radius, 2), answer = decimal(2 * pi * radius * height, 2);
-        return result(`반지름이 ${radius}cm, 높이가 ${height}cm인 원기둥의 옆면을 빈틈없이 감싸는 종이의 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-net", a: radius, b: height })}${circleSolidEvidence("cylinder-lateral", [radius, height, pi])}`, answer, `옆면 전개도는 가로 ${circumference}cm, 세로 ${height}cm인 직사각형이므로 ${answer}cm²입니다.`);
+        return result(`밑면의 반지름이 ${radius}cm, 높이가 ${height}cm인 원기둥의 옆면을 빈틈없이 감싸는 종이의 넓이를 구하세요. (원주율: ${pi})${cylinderUprightSvg({ radius, height, radiusLabel: `${radius}cm`, heightLabel: `${height}cm` })}${circleSolidEvidence("cylinder-lateral", [radius, height, pi])}`, answer, `옆면을 펼치면 가로가 밑면의 둘레, 세로가 높이인 직사각형입니다. 가로는 ${radius}×2×${pi}=${circumference}cm이므로 넓이는 ${circumference}×${height}=${answer}cm²입니다.`);
       }
       if (kind === 1) {
         const radius = int(rng, 2, 5), width = int(rng, 8, 13 + level), turns = int(rng, 3, 7);
-        const circumference = decimal(2 * pi * radius, 2), answer = decimal(2 * pi * radius * width * turns, 2);
-        return result(`반지름이 ${radius}cm이고 폭이 ${width}cm인 원기둥 모양 롤러를 ${turns}바퀴 굴렸습니다. 겹치지 않게 칠한 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-wrap", a: radius, b: width, c: turns })}${circleSolidEvidence("roller-area", [radius, width, turns, pi])}`, answer, `한 바퀴에 ${circumference}×${width}cm²를 칠하므로 ${turns}바퀴는 ${answer}cm²입니다.`);
+        const circumference = decimal(2 * pi * radius, 2), once = decimal(2 * pi * radius * width, 2), answer = decimal(2 * pi * radius * width * turns, 2);
+        return result(`반지름이 ${radius}cm이고 폭이 ${width}cm인 원기둥 모양 롤러에 페인트를 묻혀 곧게 ${turns}바퀴 굴렸습니다. 페인트가 칠해진 부분의 넓이를 구하세요. (원주율: ${pi})${rollerSvg({ radius, width })}${circleSolidEvidence("roller-area", [radius, width, turns, pi])}`, answer, `롤러가 한 바퀴 구르면 가로가 원주 ${radius}×2×${pi}=${circumference}cm, 세로가 폭 ${width}cm인 직사각형을 칠하므로 ${circumference}×${width}=${once}cm²입니다. ${turns}바퀴이면 ${once}×${turns}=${answer}cm²입니다.`);
       }
-      const unit = int(rng, 3, 6 + level), circumference = 3 * unit, height = 4 * unit, path = 5 * unit;
-      return result(`원기둥 옆면을 한 바퀴 감아 오른 선을 전개했더니 가로 ${circumference}cm, 세로 ${height}cm인 직사각형의 대각선이 되었습니다. 선의 길이를 구하세요.${solidDiagramSvg({ kind: "cylinder-wrap", a: decimal(circumference / (2 * pi), 2), b: height, c: 1 })}${circleSolidEvidence("cylinder-helix", [circumference, height])}`, path, `전개도에서 ${circumference}-${height}-${path}는 3:4:5인 직각삼각형이므로 선의 길이는 ${path}cm입니다.`);
+      const radius = int(rng, 2, 4 + level), height = int(rng, 5, 9 + level);
+      const circumference = decimal(2 * pi * radius, 2), area = decimal(2 * pi * radius * height, 2);
+      return result(`원기둥의 전개도에서 옆면의 넓이가 ${area}cm²이고 원기둥의 높이가 ${height}cm입니다. 밑면의 반지름은 몇 cm입니까? (원주율: ${pi})${cylinderNetSvg({ radius, height, areaLabel: `옆면 ${area}cm²` })}${circleSolidEvidence("cylinder-radius-from-lateral", [area, height, pi])}`, String(radius), `옆면의 가로는 밑면의 둘레와 같고 ${area}÷${height}=${circumference}cm입니다. 반지름은 ${circumference}÷${pi}÷2=${radius}cm입니다.`);
     },
     coneAdvanced({ rng, level }) {
       const kind = int(rng, 0, 2), pi = 3.14;
       if (kind === 0) {
         const radius = int(rng, 2, 4 + level), multiple = int(rng, 2, 5), slant = radius * multiple, answer = 360 / multiple;
-        const baseCircumference = decimal(2 * pi * radius, 2);
-        return result(`밑면의 반지름이 ${radius}cm, 모선이 ${slant}cm인 원뿔의 옆면을 펼쳤습니다. 부채꼴의 중심각을 구하세요.${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-net-angle", [radius, slant])}`, answer, `부채꼴의 호 ${baseCircumference}cm는 반지름 ${slant}cm인 원주의 ${radius}/${slant}이므로 중심각은 ${answer}°입니다.`);
+        return result(`밑면의 반지름이 ${radius}cm, 모선의 길이가 ${slant}cm인 원뿔의 옆면을 펼쳤습니다. 펼친 부채꼴의 중심각을 구하세요.${coneNetSvg({ radius, slant, angleLabel: "□" })}${circleSolidEvidence("cone-net-angle", [radius, slant])}`, answer, `부채꼴의 호의 길이는 밑면의 둘레와 같습니다. 밑면의 둘레는 반지름이 ${slant}cm인 원의 둘레의 ${radius}/${slant}=1/${multiple}이므로 중심각은 360°의 1/${multiple}인 360÷${multiple}=${answer}°입니다.`);
       }
       if (kind === 1) {
         const radius = int(rng, 3, 6 + level), slant = radius + int(rng, 4, 8), ribs = int(rng, 5, 8);
         const baseCircumference = decimal(2 * pi * radius, 2), answer = decimal(ribs * slant + 2 * pi * radius, 2);
-        return result(`원뿔 모양 골조를 만들려고 길이 ${slant}cm인 모선 철사 ${ribs}개와 밑면 둘레 철사 한 개를 사용합니다. 밑면 반지름이 ${radius}cm일 때 필요한 철사의 전체 길이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-frame", [radius, slant, ribs, pi])}`, answer, `모선은 ${slant}×${ribs}cm, 밑면 둘레는 ${baseCircumference}cm이므로 모두 ${answer}cm입니다.`);
+        return result(`원뿔 모양 골조를 만들려고 길이 ${slant}cm인 모선 철사 ${ribs}개와 밑면 둘레 철사 한 개를 사용합니다. 밑면 반지름이 ${radius}cm일 때 필요한 철사의 전체 길이를 구하세요. (원주율: ${pi})${coneSvg({ radius, slant })}${circleSolidEvidence("cone-frame", [radius, slant, ribs, pi])}`, answer, `모선 철사는 ${slant}×${ribs}=${slant * ribs}cm, 밑면 둘레는 ${radius}×2×${pi}=${baseCircumference}cm이므로 모두 ${slant * ribs}+${baseCircumference}=${answer}cm입니다.`);
       }
       const radius = int(rng, 2, 5), turns = int(rng, 2, 5), slant = radius * turns;
-      return result(`밑면의 반지름이 ${radius}cm이고 모선이 ${slant}cm인 원뿔을 옆으로 굴립니다. 꼭짓점을 중심으로 처음 방향으로 돌아올 때까지 원뿔은 몇 바퀴 구릅니까?${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-roll", [radius, slant])}`, turns, `꼭짓점 둘레의 큰 원주는 밑면 원주의 ${slant}/${radius}=${turns}배이므로 ${turns}바퀴입니다.`);
+      return result(`밑면의 반지름이 ${radius}cm이고 모선의 길이가 ${slant}cm인 원뿔을 꼭짓점을 중심으로 바닥에서 미끄러지지 않게 굴립니다. 원뿔이 처음 자리로 돌아올 때까지 밑면은 몇 바퀴 돕니까?${coneSvg({ radius, slant })}${circleSolidEvidence("cone-roll", [radius, slant])}`, turns, `밑면의 둘레가 지나간 자리는 반지름이 모선 ${slant}cm인 원의 둘레입니다. 이 둘레는 밑면의 둘레의 ${slant}÷${radius}=${turns}배이므로 ${turns}바퀴입니다.`);
     },
     solidsOfRevolutionAdvanced({ rng, level }) {
       const kind = int(rng, 0, 2), pi = 3.14;
       if (kind === 0) {
         const radius = int(rng, 3, 7 + level), height = int(rng, 6, 12 + level), answer = radius * 2 + height;
-        return result(`가로 ${radius}cm, 세로 ${height}cm인 직사각형을 세로인 한 변을 회전축으로 하여 한 바퀴 돌렸습니다. 생기는 원기둥의 밑면 지름과 높이의 합을 구하세요.${solidDiagramSvg({ kind: "profile", a: radius, b: height, c: 0 })}${circleSolidEvidence("rotate-rectangle", [radius, height])}`, answer, `밑면 반지름은 ${radius}cm, 지름은 ${radius * 2}cm이고 높이는 ${height}cm이므로 합은 ${answer}cm입니다.`);
+        return result(`가로 ${radius}cm, 세로 ${height}cm인 직사각형을 세로인 한 변을 회전축으로 하여 한 바퀴 돌렸습니다. 생기는 원기둥의 밑면의 지름과 높이의 합을 구하세요.${revolutionProfileSvg({ kind: "rectangle", a: radius, b: height })}${circleSolidEvidence("rotate-rectangle", [radius, height])}`, answer, `밑면의 반지름은 ${radius}cm이므로 지름은 ${radius}×2=${radius * 2}cm이고 높이는 ${height}cm입니다. 합은 ${radius * 2}+${height}=${answer}cm입니다.`);
       }
       if (kind === 1) {
         const radius = int(rng, 3, 7 + level), height = int(rng, 6, 12 + level), answer = radius * 2 + height;
-        return result(`밑변 ${radius}cm, 높이 ${height}cm인 직각삼각형을 높이인 변을 회전축으로 한 바퀴 돌렸습니다. 생기는 원뿔의 밑면 지름과 높이의 합을 구하세요.${solidDiagramSvg({ kind: "profile", a: radius, b: height, c: 1 })}${circleSolidEvidence("rotate-triangle", [radius, height])}`, answer, `밑면 반지름은 ${radius}cm이므로 지름은 ${radius * 2}cm, 높이는 ${height}cm입니다. 합은 ${answer}cm입니다.`);
+        return result(`밑변 ${radius}cm, 높이 ${height}cm인 직각삼각형을 높이인 변을 회전축으로 하여 한 바퀴 돌렸습니다. 생기는 원뿔의 밑면의 지름과 높이의 합을 구하세요.${revolutionProfileSvg({ kind: "triangle", a: radius, b: height })}${circleSolidEvidence("rotate-triangle", [radius, height])}`, answer, `밑면의 반지름은 ${radius}cm이므로 지름은 ${radius}×2=${radius * 2}cm이고 높이는 ${height}cm입니다. 합은 ${radius * 2}+${height}=${answer}cm입니다.`);
       }
-      const outer = int(rng, 5, 8 + level), inner = int(rng, 2, outer - 2), height = int(rng, 8, 14);
+      const outer = int(rng, 5, 8 + level), inner = int(rng, 2, outer - 2), upper = int(rng, 3, 6), lower = int(rng, 3, 6);
       const answer = decimal(pi * outer * outer, 2);
-      return result(`계단 모양 평면도형을 오른쪽 세로선을 회전축으로 한 바퀴 돌렸습니다. 회전축에 수직인 단면 가운데 가장 큰 단면의 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "stepped", a: outer, b: height, c: inner })}${circleSolidEvidence("rotate-stepped", [outer, inner, height, pi])}`, answer, `가장 큰 단면은 반지름 ${outer}cm인 원이므로 넓이는 ${pi}×${outer}²=${answer}cm²입니다.`);
+      return result(`그림과 같은 계단 모양 평면도형을 오른쪽 세로선을 회전축으로 하여 한 바퀴 돌렸습니다. 회전축에 수직인 평면으로 자른 단면 가운데 가장 큰 단면의 넓이를 구하세요. (원주율: ${pi})${revolutionProfileSvg({ kind: "stepped", a: outer, b: upper, c: inner, d: lower })}${circleSolidEvidence("rotate-stepped", [outer, inner, upper + lower, pi])}`, answer, `회전축에 수직인 단면은 모두 원입니다. 가장 큰 단면은 회전축에서 가장 먼 윗부분을 자른 반지름 ${outer}cm인 원이므로 넓이는 ${outer}×${outer}×${pi}=${answer}cm²입니다.`);
     },
     polygonDiagonals({ variant = 0 }) {
       const diagonalTotal = sides => sides * (sides - 3) / 2;

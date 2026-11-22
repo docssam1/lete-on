@@ -44,12 +44,18 @@ function expected(generated) {
     return v.slice(1).map((value, index) => ({ label: labels[index], distance: Math.abs(value - v[0]) })).sort((a, b) => a.distance - b.distance).map(item => item.label).join(", ");
   }
   if (kind === "defined-operation") return decimal(Math.abs(v[1] - v[0]) / 10, 2);
-  if (kind === "composite-missing-height") return (v[2] - v[1] ** 2) / v[0];
+  if (kind === "composite-decimal-height") {
+    const heightTenths = (v[2] - 10 * v[1] ** 2) / v[0];
+    if (!Number.isInteger(heightTenths) || heightTenths % 10 === 0 || Math.abs(heightTenths - 10 * v[1]) < 15) throw new Error("높이가 소수 한 자리 수가 아니거나 정사각형 한 변과 너무 가까움");
+    return decimal(heightTenths / 10, 1);
+  }
   if (kind === "missing-long-division-digit") return Number(fixed(v[2], 2)[v[3]]);
   if (kind === "linked-quotient-sum") return decimal(v[0] * 14 / 45 / 100, 2);
-  if (kind === "digit-card-quotient-range") {
-    const quotients = permutations(v).map(order => (10 * order[0] + order[1] + order[2] / 10) / order[3]);
-    return decimal(Math.max(...quotients) - Math.min(...quotients), 3);
+  if (kind === "digit-card-hundredths-quotient-range") {
+    const quotients = permutations(v).map(order => (100 * order[0] + 10 * order[1] + order[2]) * 10000 / (100 * order[3]));
+    const high = Math.max(...quotients), low = Math.min(...quotients);
+    if (!Number.isInteger(high) || !Number.isInteger(low)) throw new Error("몫이 소수 넷째 자리 안에서 나누어떨어지지 않음");
+    return decimal((high - low) / 10000, 4);
   }
   if (kind === "equal-number-line") return decimal((v[0] + (v[1] - v[0]) * v[3] / v[2]) / 100, 2);
   if (kind === "constant-lap-time") return duration(v[1] / v[0] * v[2]);

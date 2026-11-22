@@ -26,7 +26,11 @@ function expected(generated) {
   if (kind === "prism-45-rise") return v[1] * v[2];
   if (kind === "prism-radial-split") return 9 * v[0];
   if (kind === "prism-crossed-faces") return v[1];
-  if (kind === "prism-shortest-route") return Math.sqrt(v[1] ** 2 + v[2] ** 2);
+  if (kind === "prism-level-route") {
+    const lengths = v.slice(2), total = lengths.reduce((sum, value) => sum + value, 0), inside = lengths.slice(v[0], v[1]).reduce((sum, value) => sum + value, 0);
+    if (inside * 2 === total || lengths.some(value => value * 2 >= total)) throw new Error("두 방향 거리가 같거나 밑면을 만들 수 없음");
+    return Math.min(inside, total - inside);
+  }
   if (kind === "prism-truncated") return 6 * v[0] + 9 * v[0] + 3 * v[0] + 2;
   if (kind === "prism-unfolded-triangle") return v[1] * v[2] * v[3] / 2;
   if (kind === "prism-pyramid-face-sum") {
@@ -37,10 +41,18 @@ function expected(generated) {
   if (kind === "equal-edge-sums") return v[2] - v[1];
   if (kind === "two-solid-totals") return (6 * v[0] + 2) + (4 * v[1] + 2);
   if (kind === "pyramid-edge-points") return v[0] + 1 + 2 * v[0] * (v[1] - 1);
-  if (kind === "solid-edge-length-difference") return Math.abs((2 * v[0] * v[1] + v[0] * v[2]) - 2 * v[0] * v[3]);
+  if (kind === "shared-base-edge-length-difference") {
+    if (v[3] <= v[1] / (2 * Math.sin(Math.PI / v[0])) || v[1] + v[2] === v[3]) throw new Error("만들 수 없는 각뿔이거나 차가 0");
+    return Math.abs((2 * v[0] * v[1] + v[0] * v[2]) - (v[0] * v[1] + v[0] * v[3]));
+  }
   if (kind === "glued-prism-pyramid") return (2 * v[0] + 1) + 4 * v[0] + (2 * v[0] + 1);
   if (kind === "tetra-midpoint-route") return v[0];
-  if (kind === "pyramid-shortest-route" || kind === "tetra-all-face-route") return Math.sqrt(v[1] ** 2 + v[2] ** 2);
+  if (kind === "pyramid-kite-route") {
+    const half = v[0] / 2;
+    if (half * half + v[1] * v[1] !== v[2] * v[2] || half >= v[1]) throw new Error("옆면 치수가 맞지 않거나 꼭지각이 직각 이상");
+    return Number((2 * v[0] * v[1] / v[2]).toFixed(2));
+  }
+  if (kind === "tetra-loop-route") return 2 * (v[0] / 6);
   if (kind === "glued-two-pyramids") return (v[0] + 2) + 3 * v[0] + 2 * v[0];
   if (kind === "square-pyramid-net-area") return v[0] * v[1];
   throw new Error(`알 수 없는 유형 ${kind}`);
@@ -57,10 +69,7 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
     if (String(generated.answer) !== String(answer)) throw new Error(`정답 ${generated.answer}, 독립 검산 ${answer}`);
     if (/NaN|Infinity|undefined/.test(`${generated.prompt}${generated.answer}${generated.solution}`)) throw new Error("표시할 수 없는 값");
     if (!generated.solution.includes(String(generated.answer))) throw new Error("풀이에 정답 근거가 없음");
-    if (/shortest-route|all-face-route/.test(attr(generated.prompt, "angular-solid-kind"))) {
-      const v = values(generated.prompt);
-      if (v[1] ** 2 + v[2] ** 2 !== Number(generated.answer) ** 2) throw new Error("최단거리 치수와 답 불일치");
-    }
+    if (/피타고라스|빗변/.test(`${generated.prompt}${generated.solution}`)) throw new Error("빗변 계산이 필요한 표현");
     count += 1;
   } catch (error) {
     failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`);
