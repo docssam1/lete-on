@@ -8,6 +8,8 @@
 //  5 저학년 큰 글씨 칸의 답 상자: 폭 20mm 이상 · 높이 10mm 이상 · 문항 칸 안
 //  6 세로셈 답 줄: 높이 9mm 이상 · 폭 20mm 이상 · 문항 칸 안
 //  7 소수점 아래 몇째 자리 숫자 물음(과정 27): 칸 밖으로 안 잘림 · 영어·중국어판은 그 언어 물음, 학습지 전체에 한글 없음
+//  8 유아·1학년 과정(원장 2026-11-22 「한글 노트 정도의 글씨 크기 이상」「1학년도 같이 키워」): 과정 1·2 쓰는 칸(수식 □·답 상자·
+//    세로셈 답 줄·문장제 답 줄) 높이 16mm 이상, 과정 0 수식 □ 19mm 이상 · 문항·따라 풀기가 칸 밖으로 안 넘침
 const fs = require('fs'), path = require('path'), http = require('http'), assert = require('node:assert/strict');
 const { chromium } = require('./lib/playwright');
 const NM = path.resolve(__dirname, '..'), root = path.resolve(NM, '..');
@@ -100,6 +102,23 @@ const server = http.createServer((req, res) => {
       }
     }
     report.digitAsk = 'ok';
+    // 8 유아·1학년 쓰는 칸 크기
+    for(const [q, need] of [['c=C1&r=1', 16], ['c=C1&r=6', 16], ['c=C2&r=2', 16], ['c=C2&r=4', 16], ['c=C0&r=3', 19]]){
+      await open(q);
+      const m = await p.evaluate(() => {
+        const d = document.createElement('div'); d.style.cssText = 'width:100mm;position:absolute'; document.body.appendChild(d);
+        const mm = d.getBoundingClientRect().width / 100; d.remove();
+        const cells = [...document.querySelectorAll('.nm-w2-page .fbox, .nm-w2-abox-big, .nm-w2-grid-vertical .nm-print-vp:not(.nm-print-vp-2row) .nm-print-vp-bot, .nm-print-word-blank .nm-w2-blank, .nm-w2-item .nm-nl-ansbox, .nm-w2-item .nm-nl-cell-blank, .nm-w2-item .nm-nl-g1012-bx')]
+          .filter(e => !e.closest('.nm-print-answer-key,.nm-ak,.nm-w2-example,.nm-paper-worked,.nm-w2-head'))
+          .map(e => +(e.getBoundingClientRect().height / mm).toFixed(1));
+        const cut = [...document.querySelectorAll('.nm-w2-item,.nm-w2-guide')].filter(e => e.scrollHeight > e.clientHeight + 3 || e.scrollWidth > e.clientWidth + 3).length;
+        return { n: cells.length, min: Math.min(...cells, 99), cut, big: !!document.querySelector('.nm-print-sheet.nm-print-write-big.nm-print-age-young') };
+      });
+      assert.ok(m.big, q + ': 유아·1학년 큰 글씨 시트');
+      assert.ok(m.n > 0 && m.min >= need - 0.2, q + ': 쓰는 칸 높이 ' + JSON.stringify(m));
+      assert.equal(m.cut, 0, q + ': 칸 밖으로 넘친 문항·따라 풀기');
+      report[q] = { cells: m.n, min: m.min };
+    }
     assert.deepEqual(errors, []);
   } finally { await browser.close(); server.close(); }
   console.log('check-answer-space-browser OK ' + JSON.stringify(report));

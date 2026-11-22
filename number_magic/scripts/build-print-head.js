@@ -46,7 +46,15 @@ server.listen(0, async () => {
     if(!PARTS.has('word') || ONLY) word = w.NM_PRINT_WORD || {};
     if(!PARTS.has('magic')) keepMagic = w.NM_PRINT_MAGIC || {};
     if(ONLY) for(const k of Object.keys(table)) if(ONLY.includes(k.split('@')[0])){ delete table[k]; delete word[k]; } }
-  const ARG = { BANDS, ONLY };
+  /* 유아·1학년 과정(C0~C2)에 쓰이는 유형은 young 밴드를 큰 쓰기 칸(writeBig)으로 잰다(2026-11-22) — 주간 학습지가
+     그 과정 회차를 큰 칸으로 그린다(exam.js weeklyEnvelope). 다른 유형의 young 값은 예전 칸 그대로.
+     과정 표를 바꿔 이 과정에 새 유형이 들어가면 ONLY=그 유형 으로 다시 잰다. */
+  const BIG = (() => { const w = {}; new Function('window', fs.readFileSync(path.join(ROOT, 'data', 'courses.js'), 'utf8'))(w);
+    const set = new Set();
+    for(const k of ['C0', 'C1', 'C2']) for(const ss of w.NM_COURSES[k].sessions) for(const v of Object.values(ss)){
+      const arr = Array.isArray(v) ? v : (v && v.practice) || []; arr.forEach(x => { if(x && x.t) set.add(x.t); }); }
+    return [...set]; })();
+  const ARG = { BANDS, ONLY, BIG };
   for(const lang of ['ko', 'en', 'zh']){
     const page = await browser.newPage({ viewport:{ width:1100, height:1100 } });
     await page.route('**/*', r => /jsdelivr|supabase|google/.test(r.request().url()) ? r.abort() : r.continue());
@@ -59,18 +67,19 @@ server.listen(0, async () => {
        주간 학습지 C31 첫 장 넘침). 유닛이 있는 쪽이 머리가 길다 — 드릴 인쇄에는 안전한 쪽. */
     for(const f of fs.readdirSync(path.join(ROOT, 'data', 'units')).filter(f => /^[A-Za-z0-9-]+\.js$/.test(f)))
       await page.addScriptTag({ url:'data/units/' + f });
-    const r = MAGIC_ONLY ? { out:{}, qr:0 } : await page.evaluate(async ({ BANDS, ONLY }) => {
+    const r = MAGIC_ONLY ? { out:{}, qr:0 } : await page.evaluate(async ({ BANDS, ONLY, BIG }) => {
       const mm = px => px / (96 / 25.4), out = {};
       let qr = 0;
       for(const t of Object.keys(NM_THREADS).filter(t => !ONLY || ONLY.includes(t))) for(const l of NM_THREADS[t].levels){
         const row = [];
         for(const [band, grade] of BANDS) for(const seed of ['head', 'head-b']){
+          const writeBig = band === 'young' && BIG.includes(t);
           /* 40문항 — 첫 장이 마지막 장이 되지 않게(재도전 QR 없이 잰다; QR 은 따로 잰 높이를 뺀다).
              적게 만들면 첫 장이 마지막 장이 되어 QR 높이만큼 좁게 잰다(안전한 쪽). */
           /* 서로 다른 문항이 적은 레벨은 40문항을 못 만든다 — 24·18·12 로 내려 가며 잰다 */
           let made = false;
           for(const count of [40, 24, 18, 12]){
-            try { NM_EXAM.renderPrint({ thread:t, level:l.id, count, seed, grade }); made = true; break; } catch(e){}
+            try { NM_EXAM.renderPrint({ thread:t, level:l.id, count, seed, grade, writeBig }); made = true; break; } catch(e){}
           }
           if(!made){ row.push(null); continue; }
           await new Promise(requestAnimationFrame);
@@ -114,7 +123,7 @@ server.listen(0, async () => {
           /* 독셈(Training Course) 모양 — 칸 높이가 풀이 줄 수로 달라 따로 잰다: [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이 */
           let trainMax = null, trainFirst = null;
           try {
-            NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, creative:true });
+            NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, creative:true, writeBig });
             await new Promise(requestAnimationFrame);
             const tp = [...document.querySelectorAll('.nm-print-sheet .nm-w2-page')];
             const cells = document.querySelectorAll('.nm-print-sheet .nm-w2-item-train');
@@ -149,7 +158,7 @@ server.listen(0, async () => {
     /* 문장제 회차(wordType 'all') — 같은 유형·레벨이라도 문장 카드는 식 한 줄보다 훨씬 높다(NS5 L1 young: 식 12.7mm,
        문장 카드 약 37mm). 유형 표의 한 줄 높이로 칸을 짜면 1.5배 학습량 C2 마지막 장이 넘쳤다. 밴드별 한 줄 필요 높이(mm). */
     if(PARTS.has('word')){
-      const wd = await page.evaluate(async ({ BANDS, ONLY }) => {
+      const wd = await page.evaluate(async ({ BANDS, ONLY, BIG }) => {
         const mm = px => px / (96 / 25.4), out = {};
         const st = document.createElement('style');
         st.textContent = '.nm-w2-grid{grid-template-rows:none!important;grid-auto-rows:max-content!important;flex:0 0 auto!important;height:auto!important}.nm-w2-item.nm-print-item{overflow:visible!important;min-height:0!important}';
@@ -158,7 +167,7 @@ server.listen(0, async () => {
           for(const [band, grade] of BANDS){
             let need = null;
             for(const seed of ['word', 'word-b']){
-              try { NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, wordType:'all' }); } catch(e){ continue; }
+              try { NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, wordType:'all', writeBig: band === 'young' && BIG.includes(t) }); } catch(e){ continue; }
               await new Promise(requestAnimationFrame);
               const items = [...document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item')];
               if(!document.querySelector('.nm-print-sheet .nm-w2-grid .nm-w2-item-word')) continue;
