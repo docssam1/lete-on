@@ -258,23 +258,50 @@
 /* 2과정 개념 정리 인쇄 — 식 칠판(pack-kit formulas) */
 .tb-pack-fig .pk-board { width: 100%; box-sizing: border-box; padding: 2.5mm 3mm; background: #e6efe8; border: .5mm solid #2f6b52; display: grid; gap: 2mm; justify-items: center; }
 .tb-pack-fig .pk-board-line { font-size: 11pt; font-weight: 600; color: #24302b; line-height: 1.5; text-align: center; }
-/* 2과정 개념 정리 — 칠판 꼴 시범(&packlook=board, course2-pack-print.js boardItems). 색은 인쇄 규칙(종이색 · 깊은 초록 · 빨강 강조, 파랑 없음). */
-.tb-pack-board > h2 { display: none; }
-.tb-board { display: grid; grid-template-columns: 26mm minmax(0, 1fr); align-items: end; margin-bottom: 3mm; }
-.tb-board-teacher { width: 26mm; display: block; margin-bottom: -.5mm; }
-.tb-board-chalk { background: #2e4f3f; color: #f4f1e6; border: 1mm solid #8a6a3b; border-radius: 1.6mm; padding: 3mm 5mm 3.6mm; }
-.tb-board-chalk h3 { margin: 0 0 1.6mm; font-size: 13pt; font-weight: 700; color: #fff; }
-.tb-board-rule { border-top: .35mm dashed rgba(255,255,255,.55); margin-bottom: 2mm; }
-.tb-board-chalk p { margin: .8mm 0; font-size: 10pt; line-height: 1.5; color: #f4f1e6; }
-.tb-board-chalk b { color: #fff; }
-.tb-board-chalk math { color: #fff; }
-.tb-memo { border: .5mm solid #2f6b52; border-radius: 2.4mm; background: #e6efe8; overflow: hidden; }
-.tb-memo-cap { display: inline-block; background: #2f6b52; color: #fff; font-size: 9pt; font-weight: 700; padding: 1mm 3.5mm; border-radius: 0 0 2mm 0; }
-.tb-memo-body { padding: 2mm 5mm 3.5mm; font-size: 10pt; line-height: 1.5; }
-.tb-memo-body p { margin: .6mm 0; }
-.tb-memo-ask { font-weight: 700; font-size: 11pt; }
-.tb-memo-opts { display: flex; flex-wrap: wrap; gap: 2mm 8mm; margin-top: 1.5mm; font-size: 11pt; }
-.tb-train-rows { list-style: none; margin: 2mm 0 0; padding: 0; }
-.tb-train-rows li { display: flex; align-items: center; flex-wrap: wrap; gap: 1.5mm; padding: 1.6mm 0; border-bottom: .3mm dotted #cfc7b5; font-size: 10.5pt; }
-.tb-train-rows li > b { color: #2f6b52; font-size: 12pt; }
-.tb-train-box { display: inline-block; width: 16mm; height: 8mm; border: .45mm solid #24302b; border-radius: 1mm; background: #fff; }
+/* 2과정 개념 정리 — 새 꼴 시범(&packlook=board, course2-pack-print.js boardItems). 스킬 gfield-textbook-design 4절 교재형 · 인쇄 색 규칙(파랑 없음). */
+.tb-nc .tb-nc-box { background: #e9f0e7; border-left: 1.6mm solid #2f6b4a; padding: 3mm 4.5mm 3.2mm; }
+.tb-nc-head { display: flex; align-items: center; gap: 2.5mm; margin-bottom: 2mm; }
+.tb-nc-tag { font-size: 8pt; font-weight: 700; letter-spacing: .06em; color: #2f6b4a; border: .3mm solid #2f6b4a; border-radius: 1mm; padding: .3mm 1.6mm; }
+.tb-nc-head h3 { margin: 0; font-size: 13pt; font-weight: 700; color: #191511; letter-spacing: -.01em; }
+.tb-nc-teacher { margin-left: auto; height: 19mm; width: auto; margin-top: -4mm; margin-bottom: -3.2mm; }
+.tb-nc-terms { margin: 0 0 1.6mm; }
+.tb-nc-terms div { display: flex; align-items: baseline; gap: 2.5mm; font-size: 10pt; }
+.tb-nc-terms dt { font-weight: 700; color: #1e4631; white-space: nowrap; }
+.tb-nc-terms dd { margin: 0; }
+.tb-nc-facts { margin: 0; padding: 0; list-style: none; counter-reset: ncf; }
+.tb-nc-facts li { counter-increment: ncf; display: grid; grid-template-columns: 4.4mm 1fr; column-gap: 2.2mm; align-items: center; padding: 1.2mm 0; border-top: .25mm solid #cfdccb; font-size: 10pt; line-height: 1.5; }
+.tb-nc-facts li::before { content: counter(ncf); width: 4.4mm; height: 4.4mm; border-radius: 50%; background: #2f6b4a; color: #fff; font-size: 7.5pt; font-weight: 700; line-height: 1; display: grid; place-items: center; }
+.tb-nc-pitfall { margin: 1.6mm 0 0; font-size: 9.5pt; line-height: 1.5; color: #3b3128; }
+.tb-nc-pitfall b { color: #b4512e; margin-right: 2mm; }
+.tb-eq-band { position: relative; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2mm 9mm; padding: 5.5mm 4mm 3.5mm; margin: 0; background: linear-gradient(180deg, #f3f6f0 0%, #fbf9f3 100%); border: .3mm solid #dfe7da; border-top: 0; border-radius: 0 0 2mm 2mm; font-size: 12pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.tb-eq-band::before { content: "식으로 보기"; position: absolute; left: 4.5mm; top: 1.8mm; font-size: 7.5pt; font-weight: 700; color: #2f6b4a; letter-spacing: .04em; }
+.tb-eq-band.is-figure::before { content: "그림으로 보기"; }
+.tb-eq { white-space: nowrap; }
+.tb-eq-band.is-figure svg { display: block; width: min(100%, 110mm); height: auto; max-height: 40mm; }
+.tb-nc-cols { display: grid; grid-template-columns: 1fr 1.25fr; gap: 6mm; }
+.tb-nc-col { border-top: .6mm solid #2f6b4a; padding-top: 2mm; display: flex; flex-direction: column; }
+.tb-nc-cap span { font-size: 9pt; font-weight: 700; color: #2f6b4a; letter-spacing: .02em; }
+.tb-nc-lead { margin: 1.5mm 0 .5mm; font-size: 9.5pt; line-height: 1.5; color: #3b3128; }
+.tb-nc-ask { margin: 1.5mm 0; font-size: 10.5pt; font-weight: 600; line-height: 1.55; }
+.tb-nc-opts { display: flex; flex-wrap: wrap; align-items: center; gap: 2mm 7mm; font-size: 10.5pt; margin-top: 2mm; }
+.tb-nc-opt { display: inline-flex; align-items: center; gap: 1.6mm; }
+.tb-nc-opt i, .tb-nc-no { flex: none; font-style: normal; width: 4.4mm; height: 4.4mm; border-radius: 50%; border: .3mm solid #2f6b4a; color: #2f6b4a; font-size: 7.5pt; font-weight: 700; line-height: 1; display: grid; place-items: center; }
+.tb-nc-no { background: #2f6b4a; color: #fff; }
+.tb-nc-pick { margin-top: auto; padding-top: 3mm; display: flex; align-items: center; justify-content: flex-end; gap: 2mm; font-size: 9.5pt; font-weight: 700; color: #2f6b4a; }
+.tb-nc-steps { list-style: none; margin: 1mm 0 0; padding: 0; }
+.tb-nc-steps li { display: flex; align-items: center; gap: 2.2mm; padding: 1.8mm 0; border-bottom: .25mm solid #e2d9c6; font-size: 10pt; }
+.tb-nc-q { flex: 1 1 auto; }
+.tb-nc-ans { display: inline-block; width: 15mm; height: 7.5mm; border: .4mm solid #191511; border-radius: .8mm; background: #fff; }
+.tb-nc-unit { font-size: 9.5pt; }
+/* 문항 칸 격자(제목·글·그림·답 자리)를 쓰지 않는 새 꼴 칸 — 그대로 쌓는다 */
+.tb-nc-follow { margin-top: 3mm; background: linear-gradient(180deg, #e6efe3 0%, #eef3ea 38%, #f7f4ec 100%); border: .3mm solid #d3e0cf; border-radius: 2mm; padding: 2.8mm 5mm 3.2mm; display: flex; flex-direction: column; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.tb-nc-follow-cap { align-self: flex-start; font-size: 8.5pt; font-weight: 700; color: #fff; background: #2f6b4a; border-radius: 1mm; padding: .5mm 2.2mm; letter-spacing: .02em; }
+.tb-nc-follow-eqs { display: flex; flex-wrap: wrap; justify-content: center; gap: 2mm 9mm; padding: 2.5mm 0 1mm; font-size: 12pt; }
+.tb-nc-follow-eqs.is-figure svg { display: block; height: auto; max-height: 46mm; max-width: 100%; }
+.tb-nc-work { flex: 1; min-height: 14mm; margin-top: 2mm; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 8.7mm, #cfdcca 8.7mm, #cfdcca 9mm); background-position: 0 0; }
+.gold-print-source-item.tb-nc-blank { padding-bottom: 0; }
+.tb-nc-memo { flex-direction: row; align-items: flex-start; gap: 3mm; padding: 1.6mm 4.5mm; }
+.tb-nc-memo .tb-nc-work { flex: 1; margin-top: 0; }
+.tb-nc-blank .tb-nc-follow { margin-top: 0; padding: 1.6mm 4.5mm; flex-direction: row; align-items: flex-start; gap: 3mm; }
+.tb-nc-blank .tb-nc-work { flex: 1; min-height: 6mm; margin-top: 0; border-top: 0; }
+.gold-print-source-item.tb-nc, .gold-print-source-item.tb-nc-practice, .gold-print-source-item.tb-nc-followitem { display: block; border-bottom: 0; }

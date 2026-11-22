@@ -167,8 +167,16 @@ function packExercisePages(pages) {
     if (needsFullWidth(question)) question.classList.add("full-width-exercise");
     enlargeVisual(question);
     const lastInSection = !queue.length || queue[0].classList.contains("tb-section-start");
+    // 그림이 든 「따라 풀기」가 이 쪽에 안 들어가면 그림을 빼고 「풀이」 칸으로 이 쪽에 남긴다(다음 쪽으로 넘기면 앞 쪽 아래가 빈다)
+    if (!contentFits(sheet) && grid.children.length > 1 && question.classList.contains("tb-nc-followitem") && question.querySelector(".tb-nc-follow-eqs.is-figure")) {
+      question.querySelector(".tb-nc-follow-eqs.is-figure").remove();
+      question.classList.add("tb-nc-blank");
+      question.querySelector(".tb-nc-follow-cap").textContent = "풀이";
+    }
     if (!contentFits(sheet) && grid.children.length > 1 && !zoomToStay(question, sheet, { last: lastInSection })) {
       question.remove();
+      // 개념 정리의 빈 「풀이」 자리는 다음 쪽으로 넘기지 않고 뺀다(예제와 떨어진 빈 칸만 남으므로)
+      if (question.classList.contains("tb-nc-blank")) continue;
       // 묶음 제목 칸만 쪽 끝에 혼자 남기지 않는다 — 첫 문제와 함께 다음 쪽으로
       // (안내 칸·개념 그림이 함께 든 제목 칸은 그 자체로 내용이라 이 쪽에 남긴다)
       const lastChild = grid.lastElementChild;
@@ -209,6 +217,35 @@ function packExercisePages(pages) {
     page.dataset.printPart = parts[0];
   });
   pages.forEach((page) => page.remove());
+}
+
+// 개념 정리 쪽의 마지막 칸이 「따라 풀기」면, 쪽 아래 남는 자리를 그 풀이 자리로 채운다(원장 2026-11-22 「너무 비어 보여 · 따라 풀기 아래 옅은 색을 칠해줘」).
+function growFollow(scope) {
+  [...scope.children].forEach((page) => {
+    let work = page.querySelector(".gold-print-exercise-grid > :last-child .tb-nc-work");
+    const last = page.querySelector(".gold-print-exercise-grid > :last-child");
+    // 개념 상자나 연습 칸으로 끝난 쪽(다음 칸이 다음 쪽으로 넘어감)은 남는 자리에 「메모」 칸을 둔다
+    if (!work && last?.matches(".tb-nc, .tb-nc-practice") && contentFits(page)) {
+      const memo = document.createElement("div");
+      memo.className = "tb-nc-follow tb-nc-memo";
+      memo.innerHTML = '<span class="tb-nc-follow-cap">메모</span><div class="tb-nc-work"></div>';
+      last.append(memo);
+      work = memo.querySelector(".tb-nc-work");
+      work.style.minHeight = "6mm";
+      if (!contentFits(page)) { memo.remove(); return; }
+    }
+    if (!work || !contentFits(page)) return;
+    const mm = (n) => `${n}mm`;
+    const base = work.closest(".tb-nc-blank, .tb-nc-memo") ? 6 : 14;
+    let low = 0, high = 150;
+    for (let step = 0; step < 9; step += 1) {
+      const mid = (low + high) / 2;
+      work.style.minHeight = mm(base + mid);
+      if (contentFits(page)) low = mid; else high = mid;
+    }
+    // 잴 때는 쪽을 265mm로 잡아(실제 275mm) 10mm 여유를 두므로, 마지막 칸만 그 여유 가운데 9mm를 더 써서 쪽 아래까지 채운다
+    work.style.minHeight = mm(base + Math.floor(low) + 9);
+  });
 }
 
 // A figure box has a fixed print height and hides overflow; shrink overflowing content to fit instead of cutting it off.
@@ -257,6 +294,7 @@ export function compactGoldenBellPrint(root) {
       packExercisePages(group);
     }
     fitClippedVisuals(copy);
+    growFollow(copy);
     const packed = [...copy.children];
     packed.forEach((page, index) => {
       if ((page.querySelector(".has-game-qr") || page.classList.contains("has-cover-games")) && !contentFits(page)) {

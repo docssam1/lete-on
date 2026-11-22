@@ -1,6 +1,6 @@
 // 2과정 A4 「마방진, 복면산과 비」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
-import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, MARK, YELLOW, formulas, mathLabel } from "./pack-kit.js?v=20261122i";
+import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, MARK, YELLOW, formulas, mathLabel, barModel, SHADOW } from "./pack-kit.js?v=20261122zf";
 
 const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
@@ -8,12 +8,19 @@ const figMagic = (cells = [2, 7, 6, 9, 5, 1, 4, 3, 8]) => () => svg(300, 150, ce
   + label(220, 50, "가로·세로·대각선") + label(220, 74, "합이 모두 15"), "3×3 마방진");
 const figTriangle = () => {
   const pts = [P(150, 20), P(110, 80), P(190, 80), P(70, 140), P(150, 140), P(230, 140)];
-  return svg(300, 166, line(pts[0], pts[3], { color: "#9aa39e" }) + line(pts[3], pts[5], { color: "#9aa39e" }) + line(pts[5], pts[0], { color: "#9aa39e" })
-    + pts.map((p, i) => circle(p, 15, { fill: [0, 3, 5].includes(i) ? YELLOW : "#fff" })).join("") + label(150, 160, "꼭짓점 수는 두 변에 함께 들어간다"), "삼각진");
+  return svg(300, 190, line(pts[0], pts[3], { color: "#9aa39e" }) + line(pts[3], pts[5], { color: "#9aa39e" }) + line(pts[5], pts[0], { color: "#9aa39e" })
+    + pts.map((p, i) => `<circle cx="${p.x}" cy="${p.y}" r="15" fill="${[0, 3, 5].includes(i) ? YELLOW : "#fff"}" stroke="#4d6b5a" stroke-width="1.5" ${SHADOW}/>`).join("") + label(150, 176, "꼭짓점 수는 두 변에 함께 들어간다"), "삼각진");
 };
-const figBars = (a, b, la, lb) => () => svg(60 + Math.max(a, b) * 26, 80, text(18, 24, la, { size: 15, weight: 700 }) + Array.from({ length: a }, (_, i) => rect(34 + i * 26, 12, 26, 24, { fill: SOFT })).join("")
-  + text(18, 58, lb, { size: 15, weight: 700 }) + Array.from({ length: b }, (_, i) => rect(34 + i * 26, 46, 26, 24, { fill: YELLOW })).join(""), "칸 막대");
-const figLegs = () => svg(320, 90, Array.from({ length: 12 }, (_, i) => circle(P(20 + i * 25, 30), 9, { fill: i < 5 ? YELLOW : "#fff" })).join("") + label(160, 66, "모두 닭(다리 2)이라고 가정 → 하나씩 토끼(다리 4)로 바꾼다"), "가정하여 풀기");
+const figBars = (a, b, la, lb) => () => svg(60 + Math.max(a, b) * 26, 84, text(18, 24, la, { size: 15, weight: 700 }) + barModel(34, 12, a, { fill: SOFT })
+  + text(18, 60, lb, { size: 15, weight: 700 }) + barModel(34, 48, b, { fill: YELLOW }), "칸 막대");
+// 닭과 토끼(우리가 그린 단순한 모양): 닭 = 노란 몸 + 부리 + 다리 둘, 토끼 = 흰 몸 + 긴 귀 둘 + 다리 넷
+const chick = (x, y) => line(P(x - 4, y + 9), P(x - 5, y + 17), { color: "#c0782a", width: 1.6 }) + line(P(x + 4, y + 9), P(x + 5, y + 17), { color: "#c0782a", width: 1.6 })
+  + `<circle cx="${x}" cy="${y}" r="10" fill="${YELLOW}" stroke="#b89a4a" stroke-width="1.3" ${SHADOW}/>` + `<polygon points="${x + 9},${y - 2} ${x + 15},${y} ${x + 9},${y + 3}" fill="#e58a2a"/>` + `<circle cx="${x + 3}" cy="${y - 3}" r="1.4" fill="#24302b"/>`;
+const bunny = (x, y) => [-6, -2, 2, 6].map((dx) => line(P(x + dx, y + 9), P(x + dx, y + 17), { color: "#8a8f8c", width: 1.5 })).join("")
+  + `<ellipse cx="${x - 4}" cy="${y - 14}" rx="3" ry="8" fill="#fff" stroke="#8a8f8c" stroke-width="1.2"/><ellipse cx="${x + 4}" cy="${y - 14}" rx="3" ry="8" fill="#fff" stroke="#8a8f8c" stroke-width="1.2"/>`
+  + `<circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="#8a8f8c" stroke-width="1.3" ${SHADOW}/>` + `<circle cx="${x + 3}" cy="${y - 2}" r="1.4" fill="#24302b"/>`;
+const figLegs = () => svg(340, 120, Array.from({ length: 12 }, (_, i) => (i < 5 ? bunny : chick)(22 + i * 27, 42)).join("")
+  + label(170, 86, "모두 닭(다리 2)이라고 가정하고") + label(170, 106, "하나씩 토끼(다리 4)로 바꾼다"), "가정하여 풀기");
 
 export const PACKS = {
   "0/1": [{

@@ -1,10 +1,10 @@
 // 분수는 빗금 대신 위아래로 쓴다.
 const fractionText = (text) => mathText(text);   // 공통 수식(math-markup.js): 빗금 분수·거듭제곱을 수식으로
-import { mathText } from "./math-markup.js?v=20261122i";
+import { mathText } from "./math-markup.js?v=20261122w";
 import { digitalNumber } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book06Markup } from "./book06-renderers.js?v=20261122i";
+import { book06Markup } from "./book06-renderers.js?v=20261122w";
 import { book09Markup } from "./book09-renderers.js?v=20261121c";
 import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261119a";
 import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20261023h";

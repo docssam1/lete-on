@@ -8,7 +8,7 @@
 // 원문과 다른 곳: 6번 「n+11가」의 토씨를 「n+11이」로 바로잡았다. 15번 조건 세 줄은 종이색 상자에 담았다.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, esc } from "../selection-test-originals/kit.js?v=20261114a";
-import { mathText, expr, part, rowPart, mixed } from "../math-markup.js?v=20261122i";
+import { mathText, expr, part, rowPart, mixed } from "../math-markup.js?v=20261122w";
 
 export const perPage = 4;
 export const meta = { course: "3과정", book: "A1", title: "나머지정리와 지렛대의 원리" };

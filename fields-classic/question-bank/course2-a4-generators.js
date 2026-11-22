@@ -1,7 +1,7 @@
 // 2과정 A4 「마방진, 복면산과 비」 교재 유사문제 생성기. 약속은 G1~G5·A1~A3 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 작은 수를 하나씩 찾아 보는 방법(전수 탐색)으로 계산해 식이 틀려도 답이 틀리지 않게 한다.
 // 분수는 글 속에 「3/5」로 쓰면 화면·인쇄에서 수식 분수로 바뀐다(math-markup.js mathText).
-import { mathText } from "./math-markup.js?v=20261122i";
+import { mathText } from "./math-markup.js?v=20261122w";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

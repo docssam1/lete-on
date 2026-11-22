@@ -1,6 +1,6 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261122i";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261122w";
 import { saveRecord } from "./study-progress.js?v=20261117a";
-import { mathText } from "./math-markup.js?v=20261122i";
+import { mathText } from "./math-markup.js?v=20261122w";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
 // 원문을 보여 주고, 다 풀면 「답안 확인 및 진단하기」(원장 2026-10-28 「답을 쓰는 란은 필요없고 … 답안지 인쇄와 o,x를 하면 부족한 영역 진단」)로

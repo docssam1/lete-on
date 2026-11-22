@@ -1,19 +1,49 @@
 // 2과정 개념 꾸러미 그림 도구 — 되짚기·정리·예제 카드의 SVG(워밍업 그림 색표: 잉크·초록·빨강 각 표시·연한 칠)
-import { mathText } from "../math-markup.js?v=20261122i";
+import { mathText } from "../math-markup.js?v=20261122w";
 export const INK = "#24302b", GREEN = "#2f6b52", SOFT = "#e6efe8", MARK = "#b4553f", PALE = "#f4f1e8", BLUE = "#2f5fb3", YELLOW = "#fff1bf", PINK = "#f9c8c4";
 const R = Math.PI / 180;
 export const f1 = (v) => Math.round(v * 10) / 10;
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 export const P = (x, y) => ({ x, y });
-export const svg = (w, h, body, label = "그림") => `<svg viewBox="0 0 ${w} ${h}" width="${w}" role="img" aria-label="${esc(label)}" font-family="'FC Sans','Pretendard',sans-serif">${body}</svg>`;
+// 그림 다듬기(원장 2026-11-22 「SVG로 그림질 높여 · 촌스럽잖아」): 칠한 면은 위가 밝은 옅은 그라데이션, 선은 조금 가늘고 부드러운 잉크.
+// 그림마다 따로 id를 붙여(한 쪽에 그림이 여럿이어도 서로 안 섞임) defs를 넣는다. 도형 함수는 평소대로 색 이름을 넘기면 된다.
+const TONES = {
+  "#fff1bf": ["#fff8de", "#fde9a8"], // 노랑
+  "#e6efe8": ["#f1f7f2", "#d9e8dc"], // 옅은 초록
+  "#f9c8c4": ["#fcdcd8", "#f3b2ad"], // 분홍
+  "#cfe3f3": ["#e3f0fa", "#b7d4ec"], // 물
+  "#e8e2d2": ["#f3efe4", "#ddd4bf"], // 쓴 몫
+  "#f4f1e8": ["#faf8f2", "#ece6d6"], // 종이
+  "#d9b37c": ["#e8c999", "#c99b5c"], // 나무
+  "#fff": ["#ffffff", "#f4f6f3"], "#ffffff": ["#ffffff", "#f4f6f3"],
+};
+let svgSerial = 0;
+export function polish(body) {
+  const id = `pk${(svgSerial += 1).toString(36)}`;
+  const used = new Map();
+  let out = body.replace(/fill="(#[0-9a-fA-F]{3,6})"/g, (m, c) => {
+    const tone = TONES[c.toLowerCase()];
+    if (!tone) return m;
+    const key = c.toLowerCase();
+    if (!used.has(key)) used.set(key, `${id}g${used.size}`);
+    return `fill="url(#${used.get(key)})"`;
+  });
+  out = out.replace(/stroke="#24302b" stroke-width="2\.2"/g, 'stroke="#2b3a33" stroke-width="1.9"');
+  const grads = [...used].map(([c, gid]) => `<linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${TONES[c][0]}"/><stop offset="1" stop-color="${TONES[c][1]}"/></linearGradient>`).join("");
+  const shadow = `<filter id="${id}s" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.1" flood-color="#1e4631" flood-opacity=".16"/></filter>`;
+  return { id, body: `<defs>${grads}${shadow}</defs>${out.replaceAll("url(#SHADOW)", `url(#${id}s)`)}` };
+}
+// 그림자를 줄 요소에는 filter="url(#SHADOW)"를 붙인다(svg()가 그 그림의 그림자 id로 바꾼다)
+export const SHADOW = 'filter="url(#SHADOW)"';
+export const svg = (w, h, body, label = "그림") => `<svg viewBox="0 0 ${w} ${h}" width="${w}" role="img" aria-label="${esc(label)}" font-family="'FC Sans','Pretendard',sans-serif" style="overflow:visible">${polish(body).body}</svg>`;
 export const text = (x, y, value, { size = 16, anchor = "middle", color = INK, weight = 600 } = {}) =>
   `<text x="${f1(x)}" y="${f1(y)}" font-size="${size}" text-anchor="${anchor}" dominant-baseline="central" fill="${color}" font-weight="${weight}">${esc(value)}</text>`;
 export const line = (a, b, { color = INK, width = 2.2, dash = "" } = {}) =>
   `<line x1="${f1(a.x)}" y1="${f1(a.y)}" x2="${f1(b.x)}" y2="${f1(b.y)}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
 export const poly = (points, { fill = "none", color = INK, width = 2.2, dash = "" } = {}) =>
   `<polygon points="${points.map((p) => `${f1(p.x)},${f1(p.y)}`).join(" ")}" fill="${fill}" stroke="${color}" stroke-width="${width}" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
-export const rect = (x, y, w, h, { fill = "none", color = INK, width = 2.2, dash = "" } = {}) =>
-  `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" fill="${fill}" stroke="${color}" stroke-width="${width}"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
+export const rect = (x, y, w, h, { fill = "none", color = INK, width = 2.2, dash = "", rx = 0, shadow = false } = {}) =>
+  `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}"${rx ? ` rx="${rx}"` : ""} fill="${fill}" stroke="${color}" stroke-width="${width}" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ""}${shadow ? ` ${SHADOW}` : ""}/>`;
 export const circle = (c, r, { fill = "none", color = INK, width = 2.2, dash = "" } = {}) =>
   `<circle cx="${f1(c.x)}" cy="${f1(c.y)}" r="${f1(r)}" fill="${fill}" stroke="${color}" stroke-width="${width}"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
 export const dot = (p, r = 3.6, color = INK) => `<circle cx="${f1(p.x)}" cy="${f1(p.y)}" r="${r}" fill="${color}"/>`;
@@ -126,3 +156,13 @@ export function mathLabel(x, y, value, { size = 16, anchor = "middle", color = I
   }
   return `<g role="img" aria-label="${esc(value)}">${out}</g>`;
 }
+
+// 칸 막대(띠 모형): 둥근 바깥 틀 + 가는 칸 선 + 그림자 — 막대 비교 그림은 이것으로 그린다
+export function barModel(x, y, n, { w = 26, h = 24, fill = SOFT, color = "#4d6b5a" } = {}) {
+  let body = rect(x, y, n * w, h, { fill, color, width: 1.4, rx: 4, shadow: true });
+  for (let i = 1; i < n; i += 1) body += line(P(x + i * w, y + 2), P(x + i * w, y + h - 2), { color, width: 0.9 });
+  return body;
+}
+// 둥근 카드(숫자 카드·요일 칸·식 카드)
+export const card = (x, y, w, h, value, { fill = "#fff", color = "#6d7a72", size = 16, weight = 700, ink = INK } = {}) =>
+  rect(x, y, w, h, { fill, color, width: 1.3, rx: 6, shadow: true }) + text(x + w / 2, y + h / 2 + 0.5, value, { size, weight, color: ink });

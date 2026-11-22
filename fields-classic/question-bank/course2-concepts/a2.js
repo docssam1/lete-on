@@ -1,14 +1,14 @@
 // 2과정 A2 「복제수와 님게임」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 거듭제곱은 「2^6」으로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, P, INK, GREEN, SOFT, YELLOW, formulas, mathLabel } from "./pack-kit.js?v=20261122i";
+import { svg, text, rect, circle, P, INK, GREEN, SOFT, YELLOW, formulas, mathLabel, card, SHADOW } from "./pack-kit.js?v=20261122zf";
 
 const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
 const figPairs = () => {
   let body = "";
-  for (let i = 0; i < 4; i += 1) body += rect(14 + i * 74, 18, 64, 34, { fill: YELLOW }) + text(46 + i * 74, 35, "2 × 5", { size: 15 });
-  body += rect(14, 66, 64, 30, { fill: "#fff" }) + text(46, 81, "2 × 2", { size: 15 });
+  for (let i = 0; i < 4; i += 1) body += card(14 + i * 74, 18, 64, 34, "2 × 5", { fill: YELLOW, color: "#b89a4a", size: 15 });
+  body += card(14, 66, 64, 30, "2 × 2", { size: 15 });
   return svg(320, 110, body + label(220, 82, "짝마다 10 — 남는 것만 계산"), "2와 5의 짝");
 };
 const figOddSquare = () => {
@@ -18,13 +18,13 @@ const figOddSquare = () => {
 };
 const figNim = () => {
   let body = "";
-  for (let i = 0; i < 12; i += 1) body += circle(P(20 + i * 24, 34), 9, { fill: i < 2 ? YELLOW : "#fff", width: 1.4 });
-  for (let g = 0; g < 3; g += 1) body += rect(58 + g * 96, 18, 94, 32, { color: GREEN, width: 1.4 });
+  for (let g = 0; g < 3; g += 1) body += rect(58 + g * 96, 16, 92, 36, { fill: "#eef5ef", color: GREEN, width: 1.2, rx: 8, dash: "4 3" });
+  for (let i = 0; i < 12; i += 1) body += `<circle cx="${20 + i * 24}" cy="34" r="9" fill="${i < 2 ? YELLOW : "#fff"}" stroke="#4d6b5a" stroke-width="1.3" ${SHADOW}/>`;
   return svg(360, 80, body + label(180, 66, "처음 2개 → 그다음은 둘이 합해 4개씩"), "님게임 묶음");
 };
 const figWeek = () => {
   const days = ["일", "월", "화", "수", "목", "금", "토"];
-  return svg(330, 76, days.map((d, i) => rect(10 + i * 44, 14, 40, 30, { fill: i === 2 ? YELLOW : "#fff" }) + text(30 + i * 44, 29, d, { size: 15 })).join("") + label(165, 62, "7일마다 같은 요일 — 나머지만큼 옮긴다"), "요일");
+  return svg(330, 76, days.map((d, i) => card(10 + i * 44, 14, 40, 30, d, { fill: i === 2 ? YELLOW : "#fff", size: 15, ink: i === 0 ? "#b4512e" : i === 6 ? "#2f5f8a" : "#24302b" })).join("") + label(165, 62, "7일마다 같은 요일 — 나머지만큼 옮긴다"), "요일");
 };
 const figTable = () => {
   const rows = [["", "A", "B", "C"], ["처음", "?", "?", "?"], ["1판 뒤", "", "", ""], ["2판 뒤", "", "", ""], ["3판 뒤", "16", "16", "16"]];

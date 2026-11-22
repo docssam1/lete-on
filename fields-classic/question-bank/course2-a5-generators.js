@@ -1,7 +1,7 @@
 // 2과정 A5 「소인수분해와 비」 교재 유사문제 생성기. 약속은 G1~G5·A1~A4 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 가능한 수를 하나씩 확인하는 방법(전수 탐색)이나 문제를 만든 수에서 계산한다.
 // 분수·거듭제곱은 글 속에 「3/5」「2^3」으로 쓴다 — 화면·인쇄는 app.js mathShown · drill.js shown이 수식으로 바꾼다(그림 속 식은 board가 HTML 수식으로).
-import { mathText } from "./math-markup.js?v=20261122i";
+import { mathText } from "./math-markup.js?v=20261122w";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

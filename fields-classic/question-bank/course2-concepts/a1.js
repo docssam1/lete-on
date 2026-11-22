@@ -1,11 +1,13 @@
 // 2과정 A1 「양팔저울과 규칙찾기」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다). 대수 권은 그림 논증 대신 그림으로 「왜」를 보인다.
 // 글 속 분수는 「3/5」로 쓰면 화면·인쇄에서 수식 분수로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, line, rect, circle, P, INK, GREEN, SOFT, MARK, YELLOW, mathLabel } from "./pack-kit.js?v=20261122i";
+import { svg, text, line, rect, circle, P, INK, GREEN, SOFT, MARK, YELLOW, mathLabel, SHADOW, barModel } from "./pack-kit.js?v=20261122zf";
 
 const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
-const stone = (x, y, black) => circle(P(x, y), 10, { fill: black ? INK : "#fff", width: 1.8 });
-const cells = (x, y, n, fill, w = 26) => Array.from({ length: n }, (_, i) => rect(x + i * w, y, w, 24, { fill, width: 1.6 })).join("");
+// 바둑돌: 검은 돌은 위쪽에 빛, 흰 돌은 옅은 그늘(원장 2026-11-22 「그림질 높여」)
+const stone = (x, y, black) => `<circle cx="${x}" cy="${y}" r="10" fill="${black ? "#2b3330" : "#fbfbf8"}" stroke="${black ? "#1a201e" : "#9aa39e"}" stroke-width="1.2" ${SHADOW}/>`
+  + `<ellipse cx="${x - 3}" cy="${y - 4}" rx="4" ry="2.4" fill="#fff" fill-opacity="${black ? ".28" : ".9"}"/>`;
+const cells = (x, y, n, fill, w = 26) => barModel(x, y, n, { w, fill });
 
 // ── 그림 ──
 const figPeriod = () => {
@@ -19,11 +21,19 @@ const figDivide = () => svg(300, 90, text(150, 32, "13 ÷ 4 = 3 … 1", { size: 
 const figRows = () => {
   let body = "";
   for (let r = 1; r <= 5; r += 1) for (let i = 0; i < r; i += 1) body += stone(150 - (r - 1) * 14 + i * 28, 18 + (r - 1) * 26, r % 2 === 1);
-  return svg(300, 150, body + label(250, 18, "1줄: 검은 돌", { anchor: "start" }) + label(250, 44, "2줄: 흰 돌", { anchor: "start" }), "줄마다 색이 바뀌는 바둑돌");
+  return svg(330, 150, body + label(236, 18, "1줄: 검은 돌", { anchor: "start" }) + label(236, 44, "2줄: 흰 돌", { anchor: "start" }), "줄마다 색이 바뀌는 바둑돌");
 };
-const pan = (cx, items) => `<path d="M ${cx - 46} 70 Q ${cx} 100 ${cx + 46} 70" fill="${SOFT}" stroke="${INK}" stroke-width="1.8"/>` + items.map((s, i) => text(cx - (items.length - 1) * 11 + i * 22, 58, s, { size: 20 })).join("");
-const figBalance = (left = ["○", "○"], right = ["△"]) => svg(320, 130,
-  line(P(70, 70), P(250, 70), { width: 2.6 }) + line(P(160, 70), P(160, 118), { width: 2.6 }) + line(P(128, 118), P(192, 118), { width: 2.6 }) + pan(70, left) + pan(250, right), "평형을 이룬 양팔저울");
+// 양팔저울: 받침·기둥·가로대·줄·접시, 올린 것은 글자 대신 도형(○ 흰 공 · ● 검은 공 · △ 세모 · □ 네모)
+const piece = (x, y, g) => g === "△" ? `<polygon points="${x},${y - 9} ${x + 9},${y + 7} ${x - 9},${y + 7}" fill="#f4b860" stroke="#8a5a1e" stroke-width="1.3" stroke-linejoin="round" ${SHADOW}/>`
+  : g === "□" ? rect(x - 8, y - 8, 16, 16, { fill: "#cfe3f3", color: "#2f5f8a", width: 1.3, rx: 2, shadow: true })
+  : `<circle cx="${x}" cy="${y}" r="8" fill="${g === "●" ? "#2b3330" : "#fbfbf8"}" stroke="${g === "●" ? "#1a201e" : "#7a8580"}" stroke-width="1.3" ${SHADOW}/>`;
+const pan = (cx, items) => line(P(cx - 34, 76), P(cx, 40), { color: "#9aa39e", width: 1.1 }) + line(P(cx + 34, 76), P(cx, 40), { color: "#9aa39e", width: 1.1 })
+  + `<path d="M ${cx - 44} 76 Q ${cx} 100 ${cx + 44} 76 Z" fill="${SOFT}" stroke="#4d6b5a" stroke-width="1.5" stroke-linejoin="round" ${SHADOW}/>`
+  + items.map((g, i) => piece(cx - (items.length - 1) * 10 + i * 20, 68, g)).join("");
+const figBalance = (left = ["○", "○"], right = ["△"]) => svg(320, 140,
+  `<polygon points="160,44 150,124 170,124" fill="#c9b48a" stroke="#7a6a4a" stroke-width="1.3"/>` + rect(118, 124, 84, 10, { fill: "#d9b37c", color: "#7a6a4a", width: 1.3, rx: 4, shadow: true })
+  + line(P(70, 40), P(250, 40), { color: "#4d5a53", width: 4 }) + `<circle cx="160" cy="40" r="5" fill="#f4b860" stroke="#7a5a1e" stroke-width="1.2"/>`
+  + pan(70, left) + pan(250, right), "평형을 이룬 양팔저울");
 const figCoins = () => {
   let body = "";
   [0, 1, 2].forEach((g) => { for (let i = 0; i < 3; i += 1) body += circle(P(30 + g * 100 + i * 24, 40), 10, { fill: YELLOW, width: 1.6 }); body += rect(14 + g * 100, 24, 72, 32, { color: GREEN, dash: "5 4", width: 1.4 }); });
@@ -32,20 +42,24 @@ const figCoins = () => {
 const figBars = (a = 5, b = 3, la = "A", lb = "B") => svg(60 + Math.max(a, b) * 26, 80, text(18, 24, la, { size: 15, weight: 700 }) + cells(34, 12, a, SOFT) + text(18, 58, lb, { size: 15, weight: 700 }) + cells(34, 46, b, YELLOW), "칸 막대");
 const figRemain = () => svg(330, 96, cells(10, 14, 3, YELLOW, 100) + rect(10, 14, 100, 24, { fill: "#e8e2d2", width: 1.6 }) + label(60, 52, "1/3 사용") + label(210, 52, "남은 2/3") + cells(110, 62, 4, SOFT, 50) + rect(110, 62, 50, 24, { fill: "#e8e2d2", width: 1.6 }) + label(135, 92, "1/4 사용", { size: 11 }), "남은 양을 거꾸로");
 const figFraction = () => svg(150, 84, text(75, 20, "분자", { size: 14, color: GREEN }) + line(P(35, 40), P(115, 40), { width: 2.4 }) + text(75, 62, "분모", { size: 14, color: GREEN }), "분수");
+// 나무 한 그루: 줄기 + 둥근 잎(아래 칸 가운데가 심은 자리)
+const tree = (x, y) => rect(x - 2, y - 6, 4, 9, { fill: "#a07a4a", color: "none", width: 0 }) + `<circle cx="${x}" cy="${y - 13}" r="10" fill="#7fb38f" stroke="#2f6b4a" stroke-width="1.3" ${SHADOW}/>` + `<circle cx="${x - 3}" cy="${y - 16}" r="3.5" fill="#fff" fill-opacity=".35"/>`;
 const figRoad = (closed = false) => {
   if (closed) {
-    let body = circle(P(90, 80), 56, { color: "#8a948f", width: 3 });
-    for (let k = 0; k < 8; k += 1) { const a = (k / 8) * Math.PI * 2; body += circle(P(90 + 56 * Math.cos(a), 80 + 56 * Math.sin(a)), 7, { fill: GREEN, color: GREEN }); }
+    let body = `<circle cx="90" cy="80" r="56" fill="#cfe3f3" stroke="#7fa7c9" stroke-width="5" stroke-opacity=".55"/>` + text(90, 80, "연못", { size: 13, color: "#2f5f8a" });
+    for (let k = 0; k < 8; k += 1) { const a = (k / 8) * Math.PI * 2; body += tree(90 + 56 * Math.cos(a), 80 + 56 * Math.sin(a)); }
     return svg(320, 160, body + label(240, 70, "나무 8그루") + label(240, 94, "간격도 8곳"), "둥근 연못 둘레의 나무");
   }
-  let body = line(P(20, 60), P(300, 60), { color: "#8a948f", width: 3 });
-  for (let k = 0; k <= 4; k += 1) body += circle(P(20 + k * 70, 44), 7, { fill: GREEN, color: GREEN });
+  let body = rect(8, 54, 304, 12, { fill: "#e8e2d2", color: "#b8ab8c", width: 1, rx: 6 });
+  for (let k = 0; k <= 4; k += 1) body += tree(20 + k * 70, 50);
   return svg(320, 100, body + label(160, 84, "나무 5그루 · 간격 4곳"), "곧은 길의 나무");
 };
 const figLog = () => {
-  let body = rect(14, 20, 290, 34, { fill: "#d9b37c", width: 1.8 });
-  for (let k = 1; k <= 3; k += 1) body += line(P(14 + k * 72.5, 12), P(14 + k * 72.5, 62), { color: MARK, dash: "4 3" });
-  return svg(320, 90, body + label(160, 80, "4도막 = 3번 자르기 · 쉬는 것은 2번"), "통나무 자르기");
+  let body = rect(20, 22, 280, 36, { fill: "#d9b37c", color: "#8a6a3b", width: 1.5, rx: 6, shadow: true });
+  for (let k = 0; k < 6; k += 1) body += line(P(36 + k * 46, 30 + (k % 2) * 8), P(60 + k * 46, 30 + (k % 2) * 8), { color: "#a9804e", width: 1 });
+  body += `<ellipse cx="300" cy="40" rx="9" ry="18" fill="#eed3a4" stroke="#8a6a3b" stroke-width="1.4"/><ellipse cx="300" cy="40" rx="4" ry="9" fill="none" stroke="#b08a55" stroke-width="1"/>`;
+  for (let k = 1; k <= 3; k += 1) { const x = 20 + k * 70; body += line(P(x, 14), P(x, 66), { color: MARK, dash: "4 3", width: 1.6 }) + text(x, 8, `${k}번`, { size: 11, color: MARK }); }
+  return svg(320, 96, body + label(160, 84, "4도막 = 3번 자르기 · 쉬는 것은 2번"), "통나무 자르기");
 };
 
 export const PACKS = {

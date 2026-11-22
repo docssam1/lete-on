@@ -11,7 +11,7 @@
 // 원문에서 고친 것: 3번 「2b34a7가」→「2b34a7이」, 11번 「175을」→「175를」, 16번(원문 15번) 「두 사람을 속력을」→「두 사람의 속력을」, 12번 끝 마침표, 띄어쓰기.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, esc, svg, text, line } from "../selection-test-originals/kit.js?v=20261114a";
-import { mathText, mixed, expr, powPart } from "../math-markup.js?v=20261122i";
+import { mathText, mixed, expr, powPart } from "../math-markup.js?v=20261122w";
 
 export const perPage = 4;
 export const meta = { course: "3과정", book: "A2", title: "순환소수와 수직선좌표" };

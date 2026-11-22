@@ -7,7 +7,7 @@
 // 길 그림·화살표 수열은 우리 색표로 다시 그렸다. 원문 22번 그림의 A·B 옆 진한 첫 칸 표시는 길과 상관없는 꾸밈이라 빼고, 점과 글자만 남겼다.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, esc, text, svg, line, arrow, mark } from "../selection-test-originals/kit.js?v=20261114a";
-import { mathText } from "../math-markup.js?v=20261122i";
+import { mathText } from "../math-markup.js?v=20261122w";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "A3", title: "규칙성과 수열" };
