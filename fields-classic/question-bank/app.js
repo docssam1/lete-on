@@ -20,9 +20,10 @@ import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, tota
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
 import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldNumberStrip, foldNumberPaperSvg, foldNumberPolygonSvg, foldCreaseSvg, foldWordStrip } from "./fold-visuals.js?v=20261121a";
 
-// 2과정 유형(type.course === 2)의 문제·답·풀이 글은 「3/5」「2^3」으로 쓰여 있다 — 화면·인쇄에서 수식으로 바꾼다(빗금 분수 금지, math-markup.js).
-// 답(question.answer)은 채점에 그대로 쓰고 보여 줄 때만 바꾼다. 1과정 유형은 그대로.
-const mathShown = (question, text) => (question?.type?.course === 2 ? mathText(String(text ?? "")) : text);
+// 문제·답·풀이 글의 「3/5」「2^3」을 화면·인쇄에서 수식으로 바꾼다(빗금 분수 금지, math-markup.js — 원장 2026-11-22 「정확한 수학 표현」).
+// 1과정·2과정 유형 모두. 이미 수식(<math>)인 곳과 「8 13 6 / 7 9 11」처럼 띄어 쓴 줄 나눔 빗금은 그대로 둔다.
+// 답(question.answer)은 채점에 그대로 쓰고 보여 줄 때만 바꾼다.
+const mathShown = (question, text) => (text === null || text === undefined ? text : mathText(String(text)));
 
 const {
   ageStages: AGE_STAGES,

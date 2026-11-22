@@ -8,7 +8,7 @@
 //   frac(1, part(1, 2))        분자·분모 안에 분수(연분수) — 안쪽은 part()
 //   pow(2, 3) · sqrt(16) · root(27, 3) · sub("a", 1)
 //   expr(3, "×", part(1, 2), "=", "□")   여러 조각을 한 줄 수식으로(기호는 연산자로)
-//   mathText("3/5 + 2^3 = n²")  글 속 빗금 분수·^ 거듭제곱·²³ 글자를 수식으로(날짜처럼 빗금이 이어지면 그대로)
+//   mathText("3/5 + 2^3 = n²")  글 속 빗금 분수·^ 거듭제곱(지수는 수·□·글자 하나)·²³ 글자를 수식으로(날짜처럼 빗금이 이어지면 그대로)
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const MATH = Symbol("math");
 const piece = (markup, said) => ({ [MATH]: markup, said });
@@ -59,7 +59,7 @@ const SUPERSCRIPT = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "
 export function mathText(html) {
   return String(html ?? "").split(/(<[^>]*>)/).map((chunk) => chunk.startsWith("<") ? chunk : chunk
     .replace(/(^|[^\d/)])(\((?:[^()]|\([^()]*\))+\)|\d+|□)\/(\((?:[^()]|\([^()]*\))+\)|\d+|□)(?![\d/(])/g, (_, before, n, d) => `${before}${frac(inner(n), inner(d))}`)
-    .replace(/(\d+|[A-Za-z])\^(\d+)/g, (_, base, exponent) => pow(base, exponent))
+    .replace(/(\d+|[A-Za-z])\^(\d+|□|[A-Za-z])(?![A-Za-z\d])/g, (_, base, exponent) => pow(base, exponent))
     .replace(/(\d+|[A-Za-z])([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (_, base, sup) => pow(base, [...sup].map((c) => SUPERSCRIPT[c]).join("")))).join("");
 }
 // 예전 이름(분수만 바꾸던 것) — 같은 일을 한다
