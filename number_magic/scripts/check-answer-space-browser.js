@@ -7,6 +7,7 @@
 //  4 따라 풀기 한 줄(과정 4 3회차 「짝수÷2」): (가)(나)(다) 모두 한 줄 · 칸 높이 15mm 이상 · 줄 밖으로 안 넘침
 //  5 저학년 큰 글씨 칸의 답 상자: 폭 20mm 이상 · 높이 10mm 이상 · 문항 칸 안
 //  6 세로셈 답 줄: 높이 9mm 이상 · 폭 20mm 이상 · 문항 칸 안
+//  7 소수점 아래 몇째 자리 숫자 물음(과정 27): 칸 밖으로 안 잘림 · 영어판은 영어 물음
 const fs = require('fs'), path = require('path'), http = require('http'), assert = require('node:assert/strict');
 const { chromium } = require('./lib/playwright');
 const NM = path.resolve(__dirname, '..'), root = path.resolve(NM, '..');
@@ -86,6 +87,15 @@ const server = http.createServer((req, res) => {
       assert.ok(m.big.every(b => b.in && b.h >= 10) && m.vp.every(b => b.in), q + ': 답 칸이 문항 칸 밖');
       report[q] = { line: m.lines.filter(l => l.line).length, big: m.big.length, vp: m.vp.length };
     }
+    // 7 소수점 아래 몇째 자리 숫자(CH5, 과정 27 8회차): 물음이 칸 밖으로 잘리지 않는다 · 영어판에 한국어 물음이 없다
+    for(const q of ['c=C27&r=8', 'c=C27&r=8&l=en']){
+      await open(q);
+      const cut = await p.evaluate(() => [...document.querySelectorAll('.nm-w2-item')].filter(e => e.scrollWidth > e.clientWidth + 3 || e.scrollHeight > e.clientHeight + 3).length);
+      assert.equal(cut, 0, q + ': 칸 밖으로 넘친 문항');
+      const txt = await p.evaluate(() => [...document.querySelectorAll('.nm-w2-item .nm-print-word')].map(e => e.textContent).join(' | '));
+      assert.ok(/l=en/.test(q) ? /digit after the decimal point/.test(txt) && !/소수점/.test(txt) : /소수점 아래 \d+번째 자리 숫자/.test(txt), q + ': 물음 글 ' + txt.slice(0, 80));
+    }
+    report.digitAsk = 'ok';
     assert.deepEqual(errors, []);
   } finally { await browser.close(); server.close(); }
   console.log('check-answer-space-browser OK ' + JSON.stringify(report));

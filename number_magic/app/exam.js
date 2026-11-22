@@ -5332,9 +5332,18 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       /* 범례("같은 자리는 같은 색")는 자리 색을 쓴 쪽에만 — 곱셈·나눗셈의 빨간 강조엔 범례가 없다 */
       if(wantTint && pvKind === 'place') pvPlaceOnPage = true;
       const placeQuestion = raw.match(/^([\d,]+)에서 (.+)의 자리 숫자 = \\square$/);
+      const digitQuestion = raw.match(/^\\text\{(\d+)÷(\d+)의 소수점 아래 (\d+)번째 자리 숫자\}\s*=\s*\\square$/);
       if(placeQuestion){
         inner = `<div class="nm-print-word">${esc(pickL(p.prompt)||`${placeQuestion[1]}에서 ${placeQuestion[2]}의 자리 숫자`)}</div>`
           + `<span class="nm-w2-tex" data-tex="${esc(texDisplay('= \\square'))}"></span>`;
+      } else if(digitQuestion){
+        /* 소수점 아래 몇째 자리 숫자(CH5 L2·L3, 2026-11-22) — 물음 한 줄을 통째로 수식 글자(\text, 19px)로 찍어
+           2열 칸 오른쪽이 6~34px 잘렸고(과정 27 6·8회차 「… 자리 숫자 =」의 = 가 안 보임), 영어·중국어판에도
+           한국어가 찍혔다. 물음은 본문 글자로(칸 안에서 줄이 바뀜), 답 칸은 그 아래 「= □」. */
+        const dq = examLang() === 'ko' ? `${digitQuestion[1]} ÷ ${digitQuestion[2]}의 소수점 아래 ${digitQuestion[3]}번째 자리 숫자` : (pickL(p.prompt) || '');
+        /* 「43 ÷ / 55?」처럼 나눗셈 식 가운데에서 줄이 바뀌지 않게 */
+        inner = `<div class="nm-print-word">${esc(dq.replace(/(\d+) ÷ (\d+)/, '$1\u00a0÷\u00a0$2'))}</div>`
+          + `<span class="nm-w2-tex" data-tex="${esc(texDisplay(examLang() === 'ko' ? '= \\square' : '\\square'))}"></span>`;
       } else if(layoutType === 'big' && !/^MD/.test(threadId || '')){
         /* 저학년 큰 숫자(참고 학습지 B03) — KaTeX 대신 둥근 글꼴(Fredoka)의 글자로, 첫 문항엔 답 상자 */
         const plain = texToPlain(texStr).replace(/\s+/g, ' ').trim();

@@ -83,9 +83,11 @@ function expected(generated) {
     return decimal((v[3] / 100) / coefficient, 4);
   }
   if (kind === "changed-rectangle-ratio") return ratioText(v[0] * (100 - v[2]) / 100, v[3]);
-  if (kind === "trapezoid-midline-from-area-ratio") {
-    const bottom = v[0] * (3 * v[2] - v[1]) / (3 * v[1] - v[2]);
-    return (v[0] + bottom) / 2;
+  if (kind === "trapezoid-midline-from-area-rate") {
+    const upper = v[2] * v[3] / v[4], middle = upper * 2 / (v[1] / 2) - v[0];
+    const bottom = 2 * middle - v[0];
+    if (upper !== (v[0] + middle) * (v[1] / 2) / 2 || v[2] !== (middle + bottom) * (v[1] / 2) / 2) throw new Error("넓이와 비율이 사다리꼴과 맞지 않음");
+    return middle;
   }
   if (kind === "special-point-days") return v[2] / (v[0] * v[1] / 100) - v[3];
   if (kind === "chained-money-ratio") return ratioText(v[1] * 100, v[2] * v[0]);

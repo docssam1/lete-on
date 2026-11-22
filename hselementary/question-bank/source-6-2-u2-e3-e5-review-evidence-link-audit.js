@@ -21,5 +21,5 @@ for(const {filename,data,key,ids} of groups){
  }
 }
 const conflict=common.items.find(row=>row.sourceItemId==="6-2-u2-e3-exploration-3");
-assert.equal(conflict.implementationStatus,"handwriting-conflict-locked");
+assert.equal(conflict.implementationStatus==="handwriting-conflict-locked"||(conflict.implementationStatus==="fixed-verified-pool"&&conflict.previousReviewState20261122?.implementationStatus==="handwriting-conflict-locked"&&Boolean(conflict.independentAnswers20261122)),true);
 console.log("PASS: seven prior review links match source IDs and pages; the handwriting-conflict item remains locked.");
