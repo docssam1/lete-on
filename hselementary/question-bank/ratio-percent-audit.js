@@ -40,7 +40,7 @@ function expected(generated) {
   if (kind === "coefficient-percent") return decimal(v[0] / v[1] * 100, 1);
   if (kind === "price-rise-comparison") {
     const first = (v[1] - v[0]) / v[0] * 100, second = (v[3] - v[2]) / v[2] * 100;
-    return `${first > second ? "가" : "나"}, ${Math.abs(first - second)}%p`;
+    return `${first > second ? "가" : "나"}, ${Math.abs(first - second)}%`; // 초등 표기: 인상률 차를 %로 쓴다(%p는 중학교 이후)
   }
   if (kind === "forecast-accuracy") return decimal((v[0] * v[1] / 100 + v[2] * v[3] / 100) / (v[0] + v[2]) * 100, 1);
   if (kind === "group-selection-percent") {
@@ -95,7 +95,7 @@ function expected(generated) {
     const firstFraction = v[1] / v[2], secondFraction = v[4] / v[5];
     const fullOil = (v[0] - v[3]) / (firstFraction - secondFraction);
     const can = v[0] - fullOil * firstFraction;
-    return Math.round((can + fullOil - v[6] * v[7]) / 10);
+    return Number(((can + fullOil - v[6] * v[7]) / 1000).toFixed(3)); // 문제는 kg을 묻는다(2026-11-22 정답 단위 수정에 맞춤)
   }
   if (kind === "target-mixture-mass") return v[1] * (v[3] - v[0]) / (v[2] - v[3]);
   if (kind === "evaporated-water") return v[0] - v[0] * v[1] / v[2];
