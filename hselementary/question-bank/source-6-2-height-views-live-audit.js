@@ -58,7 +58,7 @@ async function inspect(page,id,phase) {
   },{id,phase});
   assert.deepEqual(result.errors,[],`${id}/${phase}`);
   assert.equal(result.questions,3);
-  const perQuestion = phase === "problem" ? id.endsWith("exploration") ? 5 : id.endsWith("mission-2") ? 3 : 1 : id.endsWith("exploration") ? 4 : id.endsWith("example-3") ? 5 : 1;
+  const perQuestion = phase === "problem" ? id.endsWith("exploration") ? 5 : id.endsWith("mission-2") ? 3 : 1 : id.endsWith("exploration") ? 4 : id.endsWith("example-3") ? 0 : 1;
   assert.equal(result.figures,3*perQuestion);
   assert.equal(result.answerBlocks,phase === "problem" ? 0 : 3);
   assert(!result.leak && !result.overflow, JSON.stringify(result));

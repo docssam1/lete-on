@@ -7,9 +7,10 @@
  const freeze=v=>{if(v&&typeof v==="object"&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
  function generate(id,variant,level){const model=models.solve(id,variant,level),hard=level===2;
   const scope=level===0?"윗면과 오른쪽 면의 색칠된 칸에서만":"세 면의 색칠된 모든 칸에서";
-  const promptText=`같은 크기의 쌓기나무를 빈틈없이 쌓아 그림과 같은 직육면체를 만들었습니다. ${scope} 각 면에 수직인 방향으로 반대쪽 끝까지 쌓기나무를 모두 빼냈습니다. `+
+  const bookSource=variant===0&&level===1;
+  const promptText=bookSource?"쌓기나무를 여러 개 쌓아서 그림과 같이 직육면체 모양을 만들었습니다. 직육면체에서 색칠된 부분의 쌓기나무를 반대편까지 모두 빼 낸 후에 남은 입체도형의 쌓기나무의 개수를 구하시오.":`같은 크기의 쌓기나무를 빈틈없이 쌓아 그림과 같은 직육면체를 만들었습니다. ${scope} 각 면에 수직인 방향으로 반대쪽 끝까지 쌓기나무를 모두 빼냈습니다. `+
    (hard?"(1) 남은 쌓기나무는 모두 몇 개입니까? (2) 두 방향 이상에서 빼낸 줄이 겹치는 자리의 쌓기나무는 모두 몇 개입니까?":"남은 쌓기나무는 모두 몇 개인지 구하시오.")+" (남은 쌓기나무는 옮기지 않습니다.)";
-  const solutionText=`아래층부터 남은 쌓기나무를 세면 ${model.layers.map(row=>row.remaining.length).join(", ")}개입니다. `+
+  const solutionText=(bookSource?"풀이 기준: 쌓기나무는 빈틈없이 쌓여 있고, 색칠된 칸에서 그 면에 수직인 방향으로 반대편 끝까지 빼냅니다. 남은 쌓기나무는 옮기지 않습니다. ":"")+`아래층부터 남은 쌓기나무를 세면 ${model.layers.map(row=>row.remaining.length).join(", ")}개입니다. `+
    `처음 ${model.totalCount}개에서 빼낸 ${model.removedCount}개를 빼면 ${model.remainingCount}개가 남습니다. 서로 다른 방향의 줄이 만나는 자리는 한 번만 뺍니다.`+
    (hard?` 두 방향 이상이 겹치는 자리도 한 번씩 세면 ${model.overlapCount}개입니다.`:"");
   return freeze({...model,model,promptText,solutionText,studentGiven:{promptText,solidFilled:true,dimensions:model.dimensions,paintedFaces:model.faces,activeDirections:model.axes,layerCue:null,responseLayers:[]},

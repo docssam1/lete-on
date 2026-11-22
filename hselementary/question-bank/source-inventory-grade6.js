@@ -12178,7 +12178,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "네 개에 하나를 더한 입체 모양 비교하기 · 조건을 명확히 한 변형",
+      "typeLabel": "쌓기나무 4개 모양에 1개를 더 쌓아 만들 수 있는 모양 수 세기",
       "commonTypeId": "free-pentacube-extension-count",
       "sourceVerified": true,
       "typeLanguageVerified": true,
@@ -17047,7 +17047,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     item.originalSourceReleaseStatus = "locked";
   }
   if (item.sourceItemId === "6-2-u3-e2-mission-1") item.typeLabel = "두 방향 계단 모양의 쌓기나무 수 구하기";
-  if (item.sourceItemId === "6-2-u3-e2-mission-3") item.typeLabel = "구멍이 있는 한 층 도형의 면의 넓이와 쌓기나무 수 비교하기";
+  if (item.sourceItemId === "6-2-u3-e2-mission-3") item.typeLabel = "규칙에 따라 쌓은 도형에서 보이는 면의 넓이와 쌓기나무 수의 차 구하기";
   if (item.sourceItemId === "6-2-u3-e2-mission-5") {
     item.typeLabel = "앞쪽 모서리가 빈 쌓기나무의 보이는 개수와 보이지 않는 개수 비교하기";
     item.sourceExact = false;

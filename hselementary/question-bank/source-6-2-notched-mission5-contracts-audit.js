@@ -89,12 +89,24 @@ function auditContract(q, variant, level) {
     });
   }
   answerSafe(q.studentGiven);
-  assert(q.promptText.includes(`쌓기나무를 ${n}층까지`));
-  assert(q.promptText.includes(q.learnerConditions[0])); assert(q.promptText.includes(q.learnerConditions[1]));
-  assert(q.promptText.includes("아래 두 층을 생략했습니다"));
   assert(!/층에는 \d+개|층별 개수|전체 개수는|<table/.test(q.promptText));
-  assert(q.promptText.includes("뒤쪽의 면도 포함") && q.promptText.includes("바닥에 닿은 면도 보이는"));
-  assert(q.promptText.includes(level === 0 ? "보이지 않는 쌓기나무는 모두 몇 개인지" : "보이는 쌓기나무의 개수에서 보이지 않는 쌓기나무의 개수를 뺀"));
+  if (level === 1) {
+    // Source level must match the book (printed p.35 Mission 5); conventions live in the solution.
+    const groundNote = "(단, 바닥에 닿은 면은 보이는 것으로 합니다.)";
+    assert.deepEqual(q.learnerConditions, [groundNote]);
+    assert.equal(q.promptText, `정육면체 모양의 쌓기나무를 다음과 같은 방법으로 ${n}층까지 쌓았습니다. 만들어진 입체도형에서 보이는 쌓기나무와 보이지 않는 쌓기나무의 개수의 차를 구하시오. ${groundNote}`);
+    assert(!/생략|뒤쪽|빈틈없이|맨 위층에|모서리|그 밖에는|어느 방향/.test(q.promptText), "Source prompt must not add construction or visibility sentences");
+    assert.equal(q.solutionBasisText, `풀이 기준: ${q.conditionPolicy.constructionText} 그림에서 생략된 아래 두 층도 같은 방법으로 쌓은 것입니다. ${q.conditionPolicy.visibilityText}`);
+    assert(q.solutionText.startsWith(`<p>${q.solutionBasisText}</p>`));
+    assert(q.solutionBasisText.includes("뒤쪽의 면도 포함") && q.solutionBasisText.includes("바닥에 닿은 면도 보이는"));
+  } else {
+    assert.equal(q.solutionBasisText, null); assert(!q.solutionText.includes("풀이 기준"));
+    assert(q.promptText.includes(`쌓기나무를 ${n}층까지`));
+    assert(q.promptText.includes(q.learnerConditions[0])); assert(q.promptText.includes(q.learnerConditions[1]));
+    assert(q.promptText.includes("아래 두 층을 생략했습니다"));
+    assert(q.promptText.includes("뒤쪽의 면도 포함") && q.promptText.includes("바닥에 닿은 면도 보이는"));
+    assert(q.promptText.includes(level === 0 ? "보이지 않는 쌓기나무는 모두 몇 개인지" : "보이는 쌓기나무의 개수에서 보이지 않는 쌓기나무의 개수를 뺀"));
+  }
   assert(q.solutionText.includes("여섯 면이 모두 다른 쌓기나무와 맞닿은"));
   assert(q.solutionText.includes("1층은 바닥에 닿은 면이 보이므로"));
   const forbiddenLanguage = /거듭제곱|제곱합|세제곱|조합|이항|\^|\*\*|[a-zA-Z]\s*[+×=-]\s*[a-zA-Z0-9]/;
@@ -104,8 +116,8 @@ function auditContract(q, variant, level) {
   assert.equal(q.solutionEquations.length, equationCount);
   assert(!q.solutionText.includes("0=0"));
   assert(!/<\/span>\s*개/.test(q.solutionText));
-  assert.equal((q.solutionText.match(/<p>/g) || []).length, level === 2 ? 8 : level === 0 ? 2 : 4);
-  assert.equal((q.solutionText.match(/<\/p>/g) || []).length, level === 2 ? 8 : level === 0 ? 2 : 4);
+  assert.equal((q.solutionText.match(/<p>/g) || []).length, level === 2 ? 8 : level === 0 ? 2 : 5);
+  assert.equal((q.solutionText.match(/<\/p>/g) || []).length, level === 2 ? 8 : level === 0 ? 2 : 5);
   q.solutionEquations.forEach(span => {
     const match = span.match(/^<span class="math-inline-expression" style="white-space:nowrap;color:#000">([0-9+×=-]+)<\/span>$/);
     assert(match); assert(match[1].length <= 30); evaluate(match[1]); assert(q.solutionText.includes(span));
@@ -161,6 +173,14 @@ function run() {
     q => { q.promptText = q.promptText.replace("바닥에 닿은 면도 보이는", "바닥에 닿은 면은 안 보이는"); }
   ];
   mutations.forEach(mutate => { const q = clean(original); mutate(q); assert.throws(() => auditContract(q, 0, 2)); });
+  const sourceOriginal = contracts.generate(sourceItemId, 0, 1);
+  const sourceMutations = [
+    q => { q.promptText = q.promptText.replace("(단, 바닥에 닿은 면은 보이는 것으로 합니다.)", "바닥에 닿은 면도 보이는 면으로 셉니다."); },
+    q => { q.promptText = q.promptText.replace("정육면체 모양의 ", ""); },
+    q => { q.promptText += " 그림에서는 아래 두 층을 생략했습니다."; },
+    q => { q.solutionText = q.solutionText.replace(/^<p>풀이 기준:[^<]*<\/p>/, ""); }
+  ];
+  sourceMutations.forEach(mutate => { const q = clean(sourceOriginal); mutate(q); assert.throws(() => auditContract(q, 0, 1)); });
   let immutableMutations = 0;
   for (const mutate of [() => { original.answer.reverse(); }, () => { original.givenModel.cubes.pop(); },
     () => { original.filledModel.H[0][0] = 0; }, () => { original.learnerFitCriteria.language = "other"; },
@@ -178,7 +198,7 @@ function run() {
   assert.throws(() => vm.runInNewContext(fs.readFileSync(path.join(__dirname, "source-6-2-notched-mission5-contracts.js"), "utf8")));
   const privateEvidence = auditPrivateEvidence(process.env, process.argv.includes("--require-private"));
   return { status: "passed", questionCases, equationCases, givenLayerCases: layerCases, umdCases: 9,
-    dependencyOrderNegatives: 1, invalidParameters: invalid.length, rejectedContractMutations: mutations.length,
+    dependencyOrderNegatives: 1, invalidParameters: invalid.length, rejectedContractMutations: mutations.length + sourceMutations.length,
     immutableMutations, learner_stage, learnerFitCriteria: criteria, learnerFitGate: "technical-check-passed-human-review-pending",
     privateEvidence, sourceExact: false, originalSourceReleaseStatus: "locked", officialAnswerVerified: false,
     handwrittenAnswerVerified: false, humanApproved: false, independentMathReviewVerified: false,

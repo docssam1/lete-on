@@ -6,7 +6,9 @@
   "use strict";
   const sourceItemId = "6-2-u3-e2-example-2", sourceItemIds = Object.freeze([sourceItemId]);
   const learner_stage = "초등 6학년 2학기 · 황소 심화 · 공간과 입체";
-  const learnerConditions = "모양의 차례와 같은 수의 층을 쌓습니다. 맨 위층은 세 개를 한 줄로 놓고 가운데 앞에 한 개를 붙입니다. 바로 아래층은 윗층의 자리를 모두 채우고 왼쪽·오른쪽·앞쪽 세 갈래 끝에 각각 한 개를 더 붙입니다. 1층까지 같은 방법으로 쌓고 그 밖에는 놓지 않습니다.";
+  // Book p.34 gives only "규칙에 따라" plus the figure; the rule below is solution-only (풀이 기준), never learner prompt text.
+  const learnerConditions = "규칙에 따라 쌓기나무를 쌓을 때, 물음에 답하시오.";
+  const constructionRule = "모양의 차례와 같은 수의 층을 쌓습니다. 맨 위층은 세 개를 한 줄로 놓고 가운데 앞에 한 개를 붙입니다. 바로 아래층은 윗층의 자리를 모두 채우고 왼쪽·오른쪽·앞쪽 세 갈래 끝에 각각 한 개를 더 붙입니다. 1층까지 같은 방법으로 쌓고 그 밖에는 놓지 않습니다.";
   const easyStages = [3, 2, 1], modes = ["easy", "source", "hard"];
   const easyConditions = "그림에 보이는 첫째, 둘째, 셋째 T자 쌓기나무 모양 중에서 구하시오.";
   const structuralChanges = [
@@ -57,15 +59,16 @@
       solutionEquations.push(equation);
       return `<span class="math-inline-expression">${equation}</span>`;
     };
-    let promptText = `${learnerConditions} ${stage}번째 모양에 대하여 다음 물음에 답하시오. `;
+    let promptText = `${learnerConditions} `;
     const layerCue = null;
     if (level === 0) {
       promptText = `${givenConditions} ${stage}번째 모양의 쌓기나무는 모두 몇 개인지 구하시오.`;
     } else {
-      promptText += `\n(1) 쌓기나무는 모두 몇 개인지 구하시오.\n(2) 1층에 놓인 쌓기나무는 ${stage}층에 놓인 쌓기나무보다 몇 개 더 많은지 구하시오.`;
+      promptText += `\n(1) ${stage}번째 모양을 만드는 데 필요한 쌓기나무의 개수를 구하시오.\n(2) ${stage}번째 모양에서 1층에 놓여 있는 쌓기나무는 ${stage}층에 놓여 있는 쌓기나무보다 몇 개 더 많은지 구하시오.`;
       if (level === 2) promptText += `\n(3) ${stage}층부터 바로 아래의 두 층까지, 맨 위 세 층의 쌓기나무를 모두 제거하면 몇 개가 남는지 구하시오. 나머지 층의 쌓기나무는 그대로 둡니다.`;
     }
-    let solution = "맨 위층은 한 줄의 세 개와 가운데 앞의 한 개로 이루어진 T자입니다. ";
+    let solution = `풀이 기준(그림에서 찾은 규칙): ${constructionRule} `;
+    solution += "맨 위층은 한 줄의 세 개와 가운데 앞의 한 개로 이루어진 T자입니다. ";
     solution += `맨 위층의 개수는 ${math("3+1=4개")}입니다. 한 층 내려갈 때마다 세 갈래에 한 개씩 붙이므로 ${math("1+1+1=3개")}씩 늘어납니다. `;
     if (level === 0) {
       solutionEquations.length = 0;
@@ -118,5 +121,5 @@
       registrationOnly: true, learnerReleaseVerified: false
     });
   }
-  return freeze({ generate, sourceItemIds, learner_stage, learnerConditions, registrationOnly: true, learnerReleaseVerified: false });
+  return freeze({ generate, sourceItemIds, learner_stage, learnerConditions, constructionRule, registrationOnly: true, learnerReleaseVerified: false });
 });

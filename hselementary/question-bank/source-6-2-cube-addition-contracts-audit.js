@@ -19,7 +19,9 @@ function verify(model,expected){
 for(const expected of oracle.cases){
  const{variant,level}=expected,q=contracts.generate(models.sourceItemId,variant,level),model=q.model;verify(model,expected);
  assert.equal(q.studentGiven.cells.length,6);assert.equal(q.studentGiven.layerCue,null);assert.deepEqual(q.studentGiven.responseLayers,[]);assert.equal(q.requiresLayerDrawing,false);assert.equal(q.requestedAnswerUnique,true);assert.equal(q.sourceConditionsClarified,true);
- assert(q.promptText.includes("6개"));assert(q.promptText.includes("1개"));assert(q.promptText.includes("면끼리 꼭 맞게"));assert(q.promptText.includes("손으로 돌리거나 뒤집어"));assert.equal(q.promptText.includes("납작한"),level===0);assert.equal(q.promptText.includes("움직이지 않을 때"),level===2);
+ const bookSource=variant===0&&level===1,ruleText=bookSource?q.solutionNote:q.promptText;
+ assert(q.promptText.includes("6개"));assert(q.promptText.includes("1개"));assert(ruleText.includes("면끼리 꼭 맞게"));assert(ruleText.includes("손으로 돌리거나 뒤집어"));
+ if(bookSource){assert(q.promptText.includes("(단, 뒤집거나 돌렸을 때 모양이 같으면 같은 모양으로 생각합니다.)"));assert(!q.promptText.includes("면끼리 꼭 맞게"));}else assert.equal(q.solutionNote,"");assert.equal(q.promptText.includes("납작한"),level===0);assert.equal(q.promptText.includes("움직이지 않을 때"),level===2);
  assert(!/회전행렬|순열|조합|정규화|거울상|동형|제곱|<table|<svg|[=×]/.test(q.promptText));assert.equal(q.difficultyDesign.adoptionStatus,"pending");
  for(const mutation of[
   m=>{m.positions[0]=m.positions[1];},m=>{m.classes[0].positions[0]=m.classes[1].positions[0];},

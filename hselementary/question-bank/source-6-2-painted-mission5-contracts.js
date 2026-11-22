@@ -10,9 +10,10 @@
     if(!ids.includes(id)||!Number.isSafeInteger(level)||level<0||level>2)throw new RangeError("Unreviewed Mission5 source or difficulty");
     const model=models.solve(variant),volume=id===ids[0],unit=volume?"cm³":"cm²",target=volume?"부피":"겉넓이",answer=volume?model.volume:model.surfaceArea;
     const equations=[],math=s=>{equations.push(s);return `<span class="math-inline-expression">${s}</span>`;};
-    let prompt=`그림은 정육면체 모양의 쌓기나무 35개를 쌓아 만든 입체도형입니다. 밑면을 제외한 모든 겉면에 페인트를 칠한 뒤 입체를 허물었습니다. 두 면에만 색칠된 쌓기나무의 색칠한 면의 넓이의 합이 ${math(`${model.areaOfExactlyTwoPaintedFaces} cm²`)}입니다. `;
+    // 원문 Mission 5의 문장(변형 0·보통 난이도). 원문의 부피·겉넓이 물음은 두 유형으로 나눕니다.
+    let prompt=`다음 그림은 정육면체 모양의 쌓기나무 35개를 쌓아서 만든 입체도형입니다. 밑면을 제외한 모든 겉면에 페인트칠을 하고 나서 이 입체를 허물었습니다. `;
     if(level===0)prompt+=`두 면에만 색칠된 쌓기나무는 ${model.histogram[2]}개입니다. `;
-    prompt+=(level===2?"(1) ":"")+`원래 입체도형의 ${target}는 몇 ${unit}인지 구하시오.`;
+    prompt+=`두 면에서만 색칠된 쌓기나무의 색칠된 면의 넓이의 합이 ${math(`${model.areaOfExactlyTwoPaintedFaces} cm²`)}일 때, `+(level===2?"다음 물음에 답하시오. (1) ":"")+`이 입체도형의 ${target}를 구하시오.`;
     const secondary=level===2?{kind:"painted-surface-area",answer:model.paintedArea,unit:"cm²"}:null;
     if(secondary)prompt+=" (2) 페인트를 칠한 면의 넓이는 모두 몇 cm²인지 구하시오.";
     const promptEquations=[...equations];equations.length=0;

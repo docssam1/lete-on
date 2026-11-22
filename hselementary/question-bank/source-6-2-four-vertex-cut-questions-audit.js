@@ -78,7 +78,7 @@ function validateQuestion(q, presentation, variant, level) {
   const pure = contracts.generate(id, variant, level), base = presentation.renderBank(id, variant, level);
   assert(q); assert.equal(q.sourceItemId, id); assert.equal(q.generator, key); assert.equal(q.answer, base.answer); assert.equal(q.solution, pure.solutionText);
   assert.deepEqual(clone(q.model), clone(pure.model)); assert.deepEqual(clone(q.studentGiven), clone(pure.studentGiven));
-  assert.equal(q.studentGiven.solidFilled, true); assert(q.promptText.includes("\uBE48\uD2C8\uC5C6\uC774")); assert.equal(q.promptText, pure.promptText);
+  assert.equal(q.studentGiven.solidFilled, true); assert((variant === 0 && level === 1 ? pure.solutionText : q.promptText).includes("\uBE48\uD2C8\uC5C6\uC774")); assert.equal(q.promptText, pure.promptText);
   assert.equal(q.conditionScope, "solid-cube-and-positive-volume-cut-only");
   const ordered = [...q.answer.matchAll(/\(\d+\)\s*(\d+)\uAC1C/g)].map(match => Number(match[1]));
   if (level === 2) assert.deepEqual(ordered, pure.answer);

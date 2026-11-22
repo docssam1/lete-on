@@ -20,7 +20,7 @@
   const q=contracts.generate(id,variant,level),answer=Array.isArray(q.answer)?`(1) ${q.answer[0]}가지; (2) ${q.answer[1]}군데`:`${q.answer}가지`;
   const figures=q.model.classes.map(group=>`<figure data-cube-class="${group.index}" data-canonical="${escape(group.canonical)}">${image(q,group.index)}<figcaption>${group.index+1}${level===2?` · 붙이는 자리 ${group.placementCount}곳`:""}</figcaption></figure>`).join("");
   const sum=q.model.classes.map(group=>group.placementCount).join("+");
-  const solution=`완성된 모양을 돌리거나 뒤집어 꼭 겹쳐지는 것끼리 묶으면 ${q.model.shapeCount}가지입니다.`+(level===2?` 각 모양을 만들 수 있는 자리는 ${q.model.classes.every(g=>g.placementCount===2)?"두 군데씩입니다. ":"그림에 표시한 수와 같습니다. "}<span class="math-inline-expression">${sum}=${q.model.placementCount}</span>이므로 붙일 자리는 ${q.model.placementCount}군데입니다.`:"");
+  const solution=(q.solutionNote||"")+`완성된 모양을 돌리거나 뒤집어 꼭 겹쳐지는 것끼리 묶으면 ${q.model.shapeCount}가지입니다.`+(level===2?` 각 모양을 만들 수 있는 자리는 ${q.model.classes.every(g=>g.placementCount===2)?"두 군데씩입니다. ":"그림에 표시한 수와 같습니다. "}<span class="math-inline-expression">${sum}=${q.model.placementCount}</span>이므로 붙일 자리는 ${q.model.placementCount}군데입니다.`:"");
   return Object.freeze({...q,answer,prompt:`<div class="source62-cube-addition-given"><p>${escape(q.promptText)}</p><div class="source62-cube-addition-solid">${image(q,null)}</div></div>`,
    answerVisual:`<div class="source62-cube-addition-answer"><p>검은색은 새로 붙인 쌓기나무입니다. 모양을 비교할 때에는 색을 구분하지 않습니다.</p><div class="source62-cube-addition-classes">${figures}</div></div>`,solution,answerKeyVisual:true});
  }

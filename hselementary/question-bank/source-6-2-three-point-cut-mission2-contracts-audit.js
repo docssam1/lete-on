@@ -18,6 +18,8 @@ function verify(q,c){
  assert.equal(q.requestedAnswerUnique,true);assert.equal(q.studentGiven.solidFilled,true);assert.equal(q.layerCue,null);assert.equal(q.studentGiven.layerCue,null);assert.deepEqual(q.responseLayers,[]);assert.deepEqual(q.studentGiven.responseLayers,[]);assert.equal(q.requiresLayerDrawing,false);
  assert.equal(q.originalSourceReleaseStatus,"locked");assert.equal(q.difficultyDesign.empiricallyCalibrated,false);for(const name of["sourceExact","officialAnswerVerified","publisherAnswerVerified","handwrittenAnswerVerified","humanApproved","learnerReleaseVerified","empiricallyCalibrated"])assert.equal(q[name],false);
  assert(!/回|순열|조합|벡터|행렬|제곱|[=×]|<table|<svg/.test(q.promptText));
+ if(q.variant===0&&q.level===1){assert.equal(q.promptText,"크기가 같은 정육면체 모양의 쌓기나무를 다음과 같이 쌓아 놓고, 세 점 ㄱ, ㄴ, ㄷ을 지나는 평면으로 잘랐습니다. 잘려진 쌓기나무는 모두 몇 개입니까?");assert(q.solutionText.startsWith("풀이 기준:")&&q.solutionText.includes("내부가 잘린"));}
+ else assert(q.promptText.includes("내부가 잘린"));
 }
 for(const expected of oracle.cases){
  const {variant,level}=expected,q=contracts.generate(models.sourceItemId,variant,level),p=presentation.render(models.sourceItemId,variant,level);verify(q,expected);report.cellChecks+=q.model.cubes.length;report.polygonChecks+=q.model.sections.length;

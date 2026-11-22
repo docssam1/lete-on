@@ -67,12 +67,10 @@
     return svg(id,"problem",cells+lines+text(left+h[0].length*c/2,16,"위","top")+text(left+h[0].length*c/2,height-16,"앞쪽","front")+text(width-34,top+h.length*c/2,"오른쪽","right"),width,height,"위에서 본 쌓기나무의 바닥 모양");
   }
   const sum = values => values.reduce((s, n) => s + n, 0);
-  function areaAnswer(h, id) {
-    const f = exposed(h);
-    const panels = [[h.flat().filter(Boolean).map(() => 1), "윗면"], [f.front, "앞쪽"], [f.back, "뒤쪽"], [f.left, "왼쪽"], [f.right, "오른쪽"]];
-    const columns = Math.max(...panels.map(([values]) => values.length));
-    const rows = Math.max(...panels.flatMap(([values]) => values));
-    return `<div class="source62-face-account" aria-label="방향별 겉면을 같은 넓이의 칸으로 모아 센 그림">${panels.map(([v, label]) => `<figure>${profile(v, label, id, "answer", false, rows, columns)}<figcaption>${label === "윗면" ? "윗면" : `${label}을 향한 면`} ${areaText(sum(v))}</figcaption></figure>`).join("")}</div>`;
+  // Book p.32 예제 1-3 answer is the number only; no added face drawings, just the direction-by-direction sum as text.
+  function areaAnswer(f, id) {
+    const parts = [f.top, ...[f.front, f.back, f.left, f.right].map(sum)];
+    return `<p class="source62-height source62-face-sum" data-source-item="${id}" data-phase="answer">윗면, 앞쪽, 뒤쪽, 왼쪽, 오른쪽을 향한 면의 넓이를 더하면 ${expression(`${parts.join("+")}=${f.area}cm²`)}입니다.</p>`;
   }
   const id1 = "6-2-u3-e1-exploration", id2 = "6-2-u3-e1-example-3", id3 = "6-2-u3-e1-mission-2", id4 = "6-2-u3-e1-mission-4";
   const definitions = freeze([
@@ -140,8 +138,8 @@
     const f = exposed(h), sides = f.area - f.top;
     const hint = level === 0 ? ` 보이는 옆면의 넓이의 합은 ${areaText(sides)}입니다.` : "";
     return { prompt: `한 모서리가 1cm인 쌓기나무를 그림과 같이 쌓았습니다. 수는 각 칸에 쌓은 쌓기나무의 개수입니다.${missingCondition}${hint} 밑면을 제외하고 겉에 드러난 면의 넓이를 구하세요.${heightChart(h, id, "problem", hidden)}`,
-      answer: `${f.area}cm²`, solution: `${hiddenStep}윗면은 ${areaText(f.top)}입니다. 앞쪽, 뒤쪽, 왼쪽, 오른쪽을 향한 면은 각각 ${[f.front,f.back,f.left,f.right].map(v=>areaText(sum(v))).join(", ")}입니다. 모두 더하면 ${areaText(f.area)}입니다. 밑면은 더하지 않습니다.`,
-      answerVisual: areaAnswer(h, id), model: { heights: h, hidden, total: total(h), faces: f }, design: ["side-area-given", "source-bottom-excluded", "missing-height-and-exposed-area"][level] };
+      answer: `${f.area}cm²`, solution: `${hiddenStep}윗면은 ${areaText(f.top)}입니다. 앞쪽, 뒤쪽, 왼쪽, 오른쪽을 향한 면은 각각 ${[f.front,f.back,f.left,f.right].map(v=>areaText(sum(v))).join(", ")}입니다. 모두 더하면 ${expression(`${[f.top,f.front,f.back,f.left,f.right].map(v=>Array.isArray(v)?sum(v):v).join("+")}=${f.area}cm²`)}입니다. 밑면은 더하지 않습니다.`,
+      answerVisual: areaAnswer(f, id), model: { heights: h, hidden, total: total(h), faces: f }, design: ["side-area-given", "source-bottom-excluded", "missing-height-and-exposed-area"][level] };
   }
   const previousKey = api.generatorKey, previousGenerate = api.generate;
   const resolve = type => definitions.find(d => type?.sourceItemId === d.sourceItemId || type?.generatorKey === d.key);

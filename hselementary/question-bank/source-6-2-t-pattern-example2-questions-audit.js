@@ -114,7 +114,7 @@ function equationCheck(q) {
 }
 
 assert.equal(crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname, "source-6-2-t-pattern-example2-contracts.js"))).digest("hex"),
-  "671e201ef8458d4c7cc7bd0c2ec992d4b18aa86f2cc5bf65747fde0cf5aa6346");
+  "c2c97ea2b64e58cec8b577e559635d0a8afb7985f9af695dc8e68647352856cd");
 assert.equal(prefix.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
 assert.equal(prefix.readUInt32BE(16), 1600); assert.equal(prefix.readUInt32BE(20), 523);
 assert.deepEqual(contracts.sourceItemIds, [id]);

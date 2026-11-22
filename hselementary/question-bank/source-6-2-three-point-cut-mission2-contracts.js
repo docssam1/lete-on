@@ -9,9 +9,10 @@
   if(!Number.isSafeInteger(level)||level<0||level>2)throw new RangeError("Unsupported three-point cut level");
   const model=models.solve(id,variant),top=model.layers.at(-1),math=s=>`<span class="math-inline-expression">${s}</span>`;
   const base="같은 크기의 정육면체 모양 쌓기나무를 빈틈없이 쌓아 그림과 같은 직육면체를 만들었습니다. 세 점 ㄱ, ㄴ, ㄷ을 지나는 평면으로 자릅니다. ";
-  const promptText=base+(level===0?"맨 위층에서 잘린 쌓기나무는 모두 몇 개인지 구하시오.":level===1?"잘린 쌓기나무는 모두 몇 개인지 구하시오.":"(1) 잘린 쌓기나무는 모두 몇 개인지 구하시오. (2) 자른 뒤 작은 조각을 하나도 버리지 않았을 때 조각은 모두 몇 개인지 구하시오.")+" (쌓기나무의 내부가 잘린 경우만 잘린 것으로 셉니다.)";
+  const bookSource=variant===0&&level===1;
+  const promptText=bookSource?"크기가 같은 정육면체 모양의 쌓기나무를 다음과 같이 쌓아 놓고, 세 점 ㄱ, ㄴ, ㄷ을 지나는 평면으로 잘랐습니다. 잘려진 쌓기나무는 모두 몇 개입니까?":base+(level===0?"맨 위층에서 잘린 쌓기나무는 모두 몇 개인지 구하시오.":level===1?"잘린 쌓기나무는 모두 몇 개인지 구하시오.":"(1) 잘린 쌓기나무는 모두 몇 개인지 구하시오. (2) 자른 뒤 작은 조각을 하나도 버리지 않았을 때 조각은 모두 몇 개인지 구하시오.")+" (쌓기나무의 내부가 잘린 경우만 잘린 것으로 셉니다.)";
   const answer=level===0?top.cutCount:level===1?model.cutCount:[model.cutCount,model.splitPieceCount],sum=model.layers.map(r=>r.cutCount).join("+");
-  const solutionText=level===0?`맨 위층의 절단면에서 쌓기나무 칸을 세면 ${top.cutCount}개입니다.`:`절단면에서 작은 부분 하나가 내부가 잘린 쌓기나무 한 개에 해당합니다. 아래층부터 ${model.layers.map(r=>`${r.cutCount}개`).join(", ")}이므로 ${math(`${sum}=${model.cutCount}`)}입니다.`+(level===2?` 원래 쌓기나무가 ${model.totalCount}개이고, 잘린 쌓기나무 한 개마다 조각이 한 개씩 늘어나므로 ${math(`${model.totalCount}+${model.cutCount}=${model.splitPieceCount}`)}개입니다.`:"");
+  const solutionText=(bookSource?"풀이 기준: 쌓기나무는 빈틈없이 쌓여 있고, 쌓기나무의 내부가 잘린 경우만 잘린 것으로 셉니다. ":"")+(level===0?`맨 위층의 절단면에서 쌓기나무 칸을 세면 ${top.cutCount}개입니다.`:`절단면에서 작은 부분 하나가 내부가 잘린 쌓기나무 한 개에 해당합니다. 아래층부터 ${model.layers.map(r=>`${r.cutCount}개`).join(", ")}이므로 ${math(`${sum}=${model.cutCount}`)}입니다.`+(level===2?` 원래 쌓기나무가 ${model.totalCount}개이고, 잘린 쌓기나무 한 개마다 조각이 한 개씩 늘어나므로 ${math(`${model.totalCount}+${model.cutCount}=${model.splitPieceCount}`)}개입니다.`:""));
   return freeze({...model,model,level,promptText,studentGiven:{promptText,dimensions:model.dimensions,points:model.points,sectionEdges:model.sectionEdges,solidFilled:true,layerCue:null,responseLayers:[]},
    requestedLayers:level===0?[model.height]:model.layers.map(r=>r.layer),layerCue:null,responseLayers:[],requiresLayerDrawing:false,sourceConditionsClarified:true,requiresOriginalReview:true,requestedAnswerUnique:true,
    answer,answerOrder:level===2?["cut-cubes","all-resulting-pieces"]:[level===0?"top-layer-cut-cubes":"cut-cubes"],answerUnit:"개",solutionText,

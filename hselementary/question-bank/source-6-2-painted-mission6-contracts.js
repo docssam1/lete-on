@@ -9,9 +9,10 @@
   function generate(id,variant,level){
     if(!ids.includes(id)||!Number.isSafeInteger(level)||level<0||level>2)throw new RangeError("Unreviewed Mission6 source or difficulty");
     const model=models.solve(variant),faceClass=id===ids[0]?1:0,primary=model.histogram[faceClass],equations=[],math=s=>{equations.push(s);return `<span class="math-inline-expression">${s}</span>`;};
-    let prompt=`다음 그림과 같이 쌓기나무 ${model.cells.length}개를 쌓았다. 밑면을 포함하여 겉면에 파란색 페인트를 칠한 후 다시 낱개의 쌓기나무로 만들었다. `;
+    // 원문 Mission 6의 문장(변형 0·보통 난이도). 원문의 두 개수 물음은 두 유형으로 나눕니다.
+    let prompt=`다음 그림과 같이 쌓기나무 ${model.cells.length}개를 쌓았습니다. 밑면을 포함하여 겉면에 파란색 페인트를 칠한 후 다시 낱개의 쌓기나무로 만들었습니다. `;
     if(level===0)prompt+=`쌓기나무는 모두 ${model.height}층으로 쌓여 있습니다. `;
-    prompt+=(level===2?"(1) ":"")+(faceClass===1?"한 면에만 파란색 페인트를 칠한":"어느 면에도 페인트가 칠해지지 않은")+" 쌓기나무는 모두 몇 개인지 구하시오.";
+    prompt+=(level===2?"(1) ":"")+(faceClass===1?"한 면만 파란색 페인트가 칠해진 쌓기나무의 개수를 구하시오.":"한 면도 칠해지지 않는 쌓기나무의 개수를 구하시오.");
     const secondary=level===2?{faceClass:2,answer:model.histogram[2]}:null;
     if(secondary)prompt+=" (2) 두 면에만 파란색 페인트를 칠한 쌓기나무는 모두 몇 개인지 구하시오.";
     let solution=(level===0?`문제에서 높이는 ${model.height}층이라고 주어졌습니다. `:`윗면은 28칸이므로 ${math(`${model.cells.length}÷28=${model.height}`)}에서 모두 ${model.height}층입니다. `)+"다른 쌓기나무와 맞닿았던 면은 떼어 놓아도 색칠되지 않습니다. ";
