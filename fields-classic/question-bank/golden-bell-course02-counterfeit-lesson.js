@@ -65,6 +65,6 @@ export const COURSE02_A1_COUNTERFEIT_LESSON = Object.freeze({
   explanation: { headline: "후보를 같은 크기로 나누기", steps: ["9개를 3개씩 세 묶음으로 나눕니다.", "첫 비교 결과로 가짜가 있는 3개를 고릅니다.", "후보 3개 중 2개를 비교해 마지막 금화를 확인합니다."] },
   experience: concept,
   original: { title: "연습", prompt: "저울의 결과를 이용해 가벼운 가짜 금화를 찾아 보세요.", mode: "paged", separateConceptPrint: true, items: original },
-  extension, similarPractice, dailyPractice: { problemCount: 10, original: 4, extension: 1, similar: 5, estimatedMinutes: null }, sourceTypeIds: [],
+  extension, similarPractice, dailyPractice: { problemCount: 10, original: 4, extension: 1, similar: 5, estimatedMinutes: null }, sourceTypeIds: ["c2-fake-coin"],
   source: { origin: "textbook-derived", note: "양팔 저울과 금화 찾기 활동을 바탕으로 만든 새 개념 학습입니다." }
 });

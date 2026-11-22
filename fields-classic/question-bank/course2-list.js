@@ -20,7 +20,7 @@ const LABS = {
   g4: [["1단원 · 특수각과 도형의 복원", "compass", "컴퍼스로 작도"]],
 };
 const PROOF_TAG = "20261115g";
-const STUDY_BOOKS = new Set(["g1", "g2", "g3", "g4", "g5"]);   // source-data.js COURSE2_CURRICULUM에 본책이 있는 권
+const STUDY_BOOKS = new Set(["g1", "g2", "g3", "g4", "g5", "a1"]);   // source-data.js COURSE2_CURRICULUM에 본책이 있는 권
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const testLink = (id, course = 2) => ((course === 3 ? COURSE3_TESTS : COURSE2_TESTS)[id] ? `<a class="c2-test" href="./course2-test-paper.html?${course === 3 ? "course=3&" : ""}book=${id}">권별 테스트 풀기</a>` : `<span class="c2-test is-off">권별 테스트 준비 중</span>`);
 // 시험지 파일의 meta.title(본책 제목) — 등록된 권만 읽는다

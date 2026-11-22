@@ -4,6 +4,7 @@ import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261121a";
 import { COURSE2_G4_TYPE_ROWS, COURSE2_G4_GUIDES } from "./course2-g4-generators.js?v=20261121a";
 import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261122a";
+import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators.js?v=20261122d";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1128,6 +1129,7 @@ TYPES.push(...COURSE2_G2_TYPE_ROWS.map(([id, domain, middle, label, generator]) 
 TYPES.push(...COURSE2_G3_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G3 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_G4_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G4 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_G5_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G5 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A1 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -1964,7 +1966,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   ...COURSE2_G2_GUIDES,
   ...COURSE2_G3_GUIDES,
   ...COURSE2_G4_GUIDES,
-  ...COURSE2_G5_GUIDES
+  ...COURSE2_G5_GUIDES,
+  ...COURSE2_A1_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4627,6 +4630,52 @@ const C2_G5_UNITS = [
     ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "c2-similar-scale"], ["practice", 1, [11, 12, 13, 14, 15, 16, 17, 18, 19, 20], "c2-shadow-height"]
   ])
 ];
+// 2과정 A1 — 교재 번호마다 유형. 1과정에 같은 풀이가 있으면 1과정 유형(6·7·8권 등), 없으면 course2-a1-generators.js
+const C2_A1_UNITS = [
+  c2Unit("마디수열과 규칙 찾기", [6, 5], [4, 3], 5, 26, [
+    ["activity", 1, [1, 2, 3, 4, 5], "c2-period-nth"], ["activity", 1, [6], "repeat-shape-color-dual"],
+    ["check", 1, [1, 2], "c2-period-nth"], ["check", 1, [3, 4], "c2-period-number-sum"],
+    ["activity", 2, [1], "g1-polygon-stone-rearrangement"], ["activity", 2, [2, 3], "go-stone-difference"], ["activity", 2, [4, 5], "border-go-stone-difference"],
+    ["check", 2, [1, 2], "go-stone-difference"], ["check", 2, [3], "go-stone-difference-inverse"],
+    ["advanced", 1, [1], "c2-period-nth"], ["advanced", 1, [2, 3], "growing-shape-count"], ["advanced", 1, [4], "matchstick-square-growth"], ["advanced", 1, [5], "g1-triangle-color-difference"],
+    ["practice", 1, [1, 11, 12], "c2-period-number-sum"], ["practice", 1, [2, 3, 4, 5, 7, 8, 9, 10], "c2-period-nth"], ["practice", 1, [6], "repeat-shape-color-dual"],
+    ["practice", 1, [13, 14], "polygon-border-side-count-inverse-b7"], ["practice", 1, [15], "g1-polygon-stone-rearrangement"],
+    ["practice", 1, [16, 17, 20, 22, 24], "go-stone-difference"], ["practice", 1, [21], "go-stone-difference-inverse"], ["practice", 1, [18, 19], "border-go-stone-difference"],
+    ["practice", 1, [23], "g1-triangle-color-difference"], ["practice", 1, [25], "triangle-tile-growth"], ["practice", 1, [26], "matchstick-square-growth"]
+  ]),
+  c2Unit("양팔저울과 비", [2, 6, 8], [4, 4, 6], 6, 27, [
+    ["activity", 1, [1, 2], "c2-fake-coin"], ["check", 1, [1, 2, 3, 4], "c2-fake-coin"],
+    ["activity", 2, [1], "balance-scale"], ["activity", 2, [2, 5], "balance-scale-circle-target"], ["activity", 2, [3, 4], "balance-scale-three-objects"], ["activity", 2, [6], "g1-winter-three-balance-substitution"],
+    ["check", 2, [1, 2], "g1-winter-three-balance-substitution"], ["check", 2, [3, 4], "balance-scale-three-objects"],
+    ["activity", 3, [1, 2, 3], "bar-ratio-read"], ["activity", 3, [4, 5], "balance-ratio-book6"], ["activity", 3, [6], "equivalent-ratio-chain"], ["activity", 3, [7, 8], "balance-weight-ratio"],
+    ["check", 3, [1, 3, 4, 5, 6], "c2-ratio-difference"], ["check", 3, [2], "two-object-weight-unit-test-book6"],
+    ["advanced", 1, [1, 4], "balance-scale-four-objects"], ["advanced", 1, [2], "symbol-relation"], ["advanced", 1, [3, 5, 6], "g1-winter-three-balance-substitution"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6], "c2-fake-coin"], ["practice", 1, [7, 11, 12, 13, 14], "g1-winter-three-balance-substitution"], ["practice", 1, [8], "balance-scale-circle-target"],
+    ["practice", 1, [9, 10, 15], "balance-scale-three-objects"], ["practice", 1, [16], "balance-scale-four-objects"], ["practice", 1, [17, 18, 19], "bar-ratio-total-length"],
+    ["practice", 1, [20], "balance-ratio-book6"], ["practice", 1, [21], "balance-weight-ratio"], ["practice", 1, [22, 24, 25, 26], "c2-ratio-difference"],
+    ["practice", 1, [23], "two-object-weight-unit-test-book6"], ["practice", 1, [27], "symbol-relation"]
+  ]),
+  c2Unit("분수와 비", [5, 5, 4], [5, 5, 4], 6, 22, [
+    ["activity", 1, [1, 2], "fraction-given-away-original-b8"], ["activity", 1, [3, 4, 5], "sequential-fraction-remains-b8"],
+    ["check", 1, [1], "fraction-given-away-original-b8"], ["check", 1, [2, 3, 4], "sequential-fraction-remains-b8"], ["check", 1, [5], "fraction-difference-whole-b8"],
+    ["activity", 2, [1, 2, 3, 4, 5], "c2-fraction-ratio-split"],
+    ["check", 2, [1, 2], "c2-fraction-ratio-split"], ["check", 2, [3, 4, 5], "fraction-share-difference-b8"],
+    ["activity", 3, [1, 2], "c2-improper-fraction"], ["activity", 3, [3, 4], "c2-quotient-remainder-pair"],
+    ["check", 3, [1, 2, 3, 4], "c2-improper-fraction"],
+    ["advanced", 1, [1, 2], "fraction-share-difference-b8"], ["advanced", 1, [3, 4], "c2-fraction-ratio-split"], ["advanced", 1, [5, 6], "c2-improper-fraction"],
+    ["practice", 1, [1, 2, 4], "fraction-given-away-original-b8"], ["practice", 1, [3, 5, 6], "sequential-fraction-remains-b8"], ["practice", 1, [7], "fraction-difference-whole-b8"],
+    ["practice", 1, [8], "fraction-subgroup-count-b8"], ["practice", 1, [9, 10, 11, 12], "c2-fraction-ratio-split"], ["practice", 1, [13, 14], "fraction-share-difference-b8"],
+    ["practice", 1, [15, 16, 19, 20, 21, 22], "c2-improper-fraction"], ["practice", 1, [17, 18], "c2-quotient-remainder-pair"]
+  ]),
+  c2Unit("가로수와 통나무", [6, 4], [4, 3], 6, 24, [
+    ["activity", 1, [1, 3, 4, 5], "closed-perimeter-object-count-b7"], ["activity", 1, [2, 6], "closed-perimeter-from-spacing-count-b7"],
+    ["check", 1, [1, 2, 3, 4], "c2-road-trees"],
+    ["activity", 2, [1, 2, 3, 4], "c2-log-cut-time"], ["check", 2, [1, 2, 3], "c2-log-cut-time"],
+    ["advanced", 1, [1, 2], "c2-road-trees"], ["advanced", 1, [3, 4, 5, 6], "c2-log-cut-time"],
+    ["practice", 1, [1, 3, 4, 5], "closed-perimeter-object-count-b7"], ["practice", 1, [2, 6], "closed-perimeter-from-spacing-count-b7"],
+    ["practice", 1, [7, 8, 9, 10, 11, 12], "c2-road-trees"], ["practice", 1, [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24], "c2-log-cut-time"]
+  ])
+];
 // 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
 export const COURSE2_CURRICULUM = [
   { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
@@ -4638,7 +4687,9 @@ export const COURSE2_CURRICULUM = [
   { id: "course-02-g4", course: 2, label: "G4", title: "도형의 복원과 측정", units: C2_G4_UNITS,
     source: { textbook: "2과정 G4 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g4", goldenBellIncluded: false } },
   { id: "course-02-g5", course: 2, label: "G5", title: "도형의 넓이와 비", units: C2_G5_UNITS,
-    source: { textbook: "2과정 G5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g5", goldenBellIncluded: false } }
+    source: { textbook: "2과정 G5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g5", goldenBellIncluded: false } },
+  { id: "course-02-a1", course: 2, label: "A1", title: "양팔저울과 규칙찾기", units: C2_A1_UNITS,
+    source: { textbook: "2과정 A1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a1", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 // 진도표·「계획대로 가는지」가 잇는 권 차례 — 1과정 10권 뒤에 2과정을 기하·대수 번갈아 G1 → A1 → G2 → … → A5

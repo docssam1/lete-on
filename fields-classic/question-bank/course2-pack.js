@@ -2,7 +2,10 @@
 // 덱(study.js)이 개념 장(native)으로 붙인다: mountPackCard(host, { board: "<권>/<꾸러미 id>/<recall|summary|example>", deckNav, atEnd, onStep, onDone })
 // 덱 약속은 판서와 같다 — step(±1)이 true를 돌려주면 장 안에서 넘긴 것, false면 덱이 다음 장으로 간다.
 // 꾸러미 자료는 course2-concepts/<권>.js(PACKS). 예제는 창작 문제라 단계 답을 자료 파일에 둔다.
-const TAGS = { g1: "20261121g", g2: "20261121h", g3: "20261121i", g4: "20261122a", g5: "20261122b" };
+import { mathText } from "./math-markup.js?v=20261027p";
+// 꾸러미 글의 「3/5」·「2^3」을 수식으로 바꾼다(빗금 분수를 화면에 쓰지 않는다 — math-markup.js)
+const M = (html) => mathText(String(html ?? ""));
+const TAGS = { g1: "20261121g", g2: "20261121h", g3: "20261121i", g4: "20261122a", g5: "20261122b", a1: "20261122d" };
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const norm = (s) => String(s ?? "").replace(/\s+/g, "").replace(/[°도]$/u, "").replace(/,/g, "").toLowerCase();
 
@@ -23,9 +26,9 @@ function recallMarkup(pack) {
     ${figure(r.figure)}
     <div class="pk-side">
       <p class="pk-kick">되짚기 · 먼저 알아야 할 것</p>
-      <p class="pk-text">${r.text}</p>
-      <p class="pk-ask">${esc(r.ask)}</p>
-      <div class="pk-options" role="group" aria-label="답 고르기">${r.options.map((o, k) => `<button type="button" class="pk-opt" data-k="${k}">${esc(o)}</button>`).join("")}</div>
+      <p class="pk-text">${M(r.text)}</p>
+      <p class="pk-ask">${M(esc(r.ask))}</p>
+      <div class="pk-options" role="group" aria-label="답 고르기">${r.options.map((o, k) => `<button type="button" class="pk-opt" data-k="${k}">${M(esc(o))}</button>`).join("")}</div>
       <p class="pk-feedback" aria-live="polite" hidden></p>
     </div>
   </div>`;
@@ -37,9 +40,9 @@ function summaryMarkup(pack) {
     ${figure(s.figure)}
     <div class="pk-side">
       <p class="pk-kick">정리 · ${esc(pack.title)}</p>
-      ${s.terms?.length ? `<dl class="pk-terms">${s.terms.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${d}</dd></div>`).join("")}</dl>` : ""}
-      <ol class="pk-facts">${s.facts.map((f) => `<li>${f}</li>`).join("")}</ol>
-      ${pack.pitfall ? `<p class="pk-pitfall"><b>이것만 조심</b>${esc(pack.pitfall)}</p>` : ""}
+      ${s.terms?.length ? `<dl class="pk-terms">${s.terms.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${M(d)}</dd></div>`).join("")}</dl>` : ""}
+      <ol class="pk-facts">${s.facts.map((f) => `<li>${M(f)}</li>`).join("")}</ol>
+      ${pack.pitfall ? `<p class="pk-pitfall"><b>이것만 조심</b>${M(esc(pack.pitfall))}</p>` : ""}
     </div>
   </div>`;
 }
@@ -49,11 +52,11 @@ function exampleMarkup(pack) {
   return `<div class="pk pk-example">
     <div class="pk-problem">
       <p class="pk-kick">예제 따라 풀기</p>
-      <p class="pk-prompt">${e.prompt}</p>
+      <p class="pk-prompt">${M(e.prompt)}</p>
       ${figure(e.figure)}
     </div>
     <ol class="pk-steps">${e.steps.map((step, k) => `<li class="pk-step" data-k="${k}" data-no="${k + 1}" hidden>
-      <p class="pk-step-ask">${step.ask}</p>
+      <p class="pk-step-ask">${M(step.ask)}</p>
       <div class="pk-step-in"><input type="text" inputmode="${step.text ? "text" : "decimal"}" autocomplete="off" aria-label="${k + 1}단계 답"><span class="pk-unit">${esc(step.unit || "")}</span><button type="button" class="pk-check">확인</button></div>
       <p class="pk-step-msg" aria-live="polite" hidden></p>
     </li>`).join("")}</ol>
