@@ -1,10 +1,10 @@
-import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261121i";
+import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261122a";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261121a";
-import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261121i";
+import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261122a";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261117a";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261118a";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261121i";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261122a";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -606,7 +606,8 @@ const STATIONS = [["daily", "데일리 테스트"], ["concept", "개념 배우�
 const OPTIONAL = ["daily", "test", "booktest"];
 const expectedOptional = (kind) => kind === "daily" ? part > 1 : kind === "test" ? part >= parts : false;
 // 2과정은 워밍업 대신 개념 확인(개념 꾸러미 ⑥), 1과정은 개념 확인 없이 워밍업
-const courseShown = (kind) => kind === "bell" ? !book?.course : kind === "check" ? Boolean(book?.course) && (!ready || slides.some((slide) => slide.kind === "check")) : true;
+// 2과정 권은 워밍업 원본이 있는 차시(G4 등 골든벨 자료가 있는 권)만 워밍업 칸을 보인다
+const courseShown = (kind) => kind === "bell" ? !book?.course || (ready && slides.some((slide) => slide.kind === "bell")) : kind === "check" ? Boolean(book?.course) && (!ready || slides.some((slide) => slide.kind === "check")) : true;
 const visibleStations = () => STATIONS.filter(([kind]) => courseShown(kind) && (!OPTIONAL.includes(kind) ? true : ready ? slides.some((slide) => slide.kind === kind) : expectedOptional(kind)));
 const stationOf = (slide) => Math.max(0, visibleStations().findIndex(([kind]) => kind === slide.kind));
 function renderSigns() {
