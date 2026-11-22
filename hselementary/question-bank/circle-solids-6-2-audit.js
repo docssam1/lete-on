@@ -36,11 +36,11 @@ function expected(generated) {
   if (kind === "pivot-arc") return decimal(2 * v[2] * v[0] * v[1] / 360);
   if (kind === "corner-tether") return decimal(v[3] * v[2] ** 2 * 3 / 4);
   if (kind === "equal-points-angle") return decimal(360 * v[1] / v[0]);
-  if (kind === "inscribed-central") return String(v[0] * 2);
+  if (kind === "wheel-turns") return decimal(v[0] / (v[1] * v[2]));
   if (kind === "regular-central") return String(360 / v[0]);
   if (kind === "cylinder-lateral") return decimal(2 * v[2] * v[0] * v[1]);
   if (kind === "roller-area") return decimal(2 * v[3] * v[0] * v[1] * v[2]);
-  if (kind === "cylinder-helix") return String(Math.hypot(v[0], v[1]));
+  if (kind === "cylinder-radius-from-lateral") return decimal(v[0] / v[1] / v[2] / 2);
   if (kind === "cone-net-angle") return String(360 * v[0] / v[1]);
   if (kind === "cone-frame") return decimal(v[1] * v[2] + 2 * v[3] * v[0]);
   if (kind === "cone-roll") return String(v[1] / v[0]);

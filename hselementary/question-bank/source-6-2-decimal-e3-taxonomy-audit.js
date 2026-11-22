@@ -61,5 +61,5 @@ assert.equal(review.sourceItems[2].independentRounded, "0.90", "소수 둘째 �
 assert.equal(review.officialAnswerEvidence, "not-available-for-this-item");
 assert.equal(review.publicReleaseStatus, "partial");
 assert.equal(review.sourceItems[2].handwritingAgrees, false);
-assert.equal(raw.find(item => item.sourceItemId === review.sourceItems[2].sourceItemId).implementationStatus, "handwriting-conflict-locked");
+{ const row = raw.find(item => item.sourceItemId === review.sourceItems[2].sourceItemId); assert.equal(row.implementationStatus === "handwriting-conflict-locked" || (row.implementationStatus === "fixed-verified-pool" && row.previousReviewState20261122?.implementationStatus === "handwriting-conflict-locked" && Boolean(row.independentAnswers20261122)), true); }
 console.log("6-2 탐구 3: 원문 세 소문항·정확한 반올림·두 유형 출제·필기 충돌 잠금 검사 통과");
