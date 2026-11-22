@@ -54,6 +54,13 @@ export const DRILL_RECIPES = Object.freeze({
   "course-02-a1/ratio": ["balance-ratio-book6", "c2-ratio-difference"],
   "course-02-a1/fraction": ["c2-fraction-ratio-split", "c2-improper-fraction"],
   "course-02-a1/gaps": ["c2-road-trees", "c2-log-cut-time"],
+  // 2과정 A2 — 10의 거듭제곱·복제수·사각수·달력·님게임·거꾸로 풀기
+  "course-02-a2/powers": ["c2-power-ten-zeros", "c2-smart-regroup"],
+  "course-02-a2/clone": ["c2-nines-product", "c2-repunit-square"],
+  "course-02-a2/square": ["c2-odd-sum-square"],
+  "course-02-a2/calendar": ["c2-year-weekday-shift", "weekday-after-days-b7"],
+  "course-02-a2/nim": ["c2-nim-strategy"],
+  "course-02-a2/reverse": ["c2-reverse-half-chain", "reverse-transfer-three-b8"],
   "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
   "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
   "book-04/cube-min-count": ["cube-count-solid", "cube-minimum-from-solid"],

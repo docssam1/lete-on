@@ -15,6 +15,7 @@ import { COURSE2_G3_GENERATORS } from "./course2-g3-generators.js?v=20261121a";
 import { COURSE2_G4_GENERATORS } from "./course2-g4-generators.js?v=20261121a";
 import { COURSE2_G5_GENERATORS } from "./course2-g5-generators.js?v=20261122a";
 import { COURSE2_A1_GENERATORS } from "./course2-a1-generators.js?v=20261122d";
+import { COURSE2_A2_GENERATORS } from "./course2-a2-generators.js?v=20261122e";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
 import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028zb";
@@ -6565,6 +6566,7 @@ export const GENERATORS = {
   ...COURSE2_G4_GENERATORS,
   ...COURSE2_G5_GENERATORS,
   ...COURSE2_A1_GENERATORS,
+  ...COURSE2_A2_GENERATORS,
   ...BOOK08_GENERATORS,
   unitTestBook08Q01: BOOK08_UNIT_TEST_GENERATORS[1],
   unitTestBook08Q02: BOOK08_UNIT_TEST_GENERATORS[2],

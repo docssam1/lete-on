@@ -5,6 +5,7 @@ import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators
 import { COURSE2_G4_TYPE_ROWS, COURSE2_G4_GUIDES } from "./course2-g4-generators.js?v=20261121a";
 import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261122a";
 import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators.js?v=20261122d";
+import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261122e";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
@@ -1130,6 +1131,7 @@ TYPES.push(...COURSE2_G3_TYPE_ROWS.map(([id, domain, middle, label, generator]) 
 TYPES.push(...COURSE2_G4_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G4 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_G5_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G5 · 문제 번호별 대조" })));
 TYPES.push(...COURSE2_A1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A1 · 문제 번호별 대조" })));
+TYPES.push(...COURSE2_A2_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 A2 · 문제 번호별 대조" })));
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
@@ -1967,7 +1969,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   ...COURSE2_G3_GUIDES,
   ...COURSE2_G4_GUIDES,
   ...COURSE2_G5_GUIDES,
-  ...COURSE2_A1_GUIDES
+  ...COURSE2_A1_GUIDES,
+  ...COURSE2_A2_GUIDES
 });
 
 const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
@@ -4676,6 +4679,45 @@ const C2_A1_UNITS = [
     ["practice", 1, [7, 8, 9, 10, 11, 12], "c2-road-trees"], ["practice", 1, [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24], "c2-log-cut-time"]
   ])
 ];
+// 2과정 A2 — 교재 번호마다 유형. 1과정에 같은 풀이가 있으면 1과정 유형(5·6·7·8권 달력·거꾸로 풀기·연산 약속), 없으면 course2-a2-generators.js
+const C2_A2_UNITS = [
+  c2Unit("10의 거듭제곱과 복제수", [5, 2, 3], [4, 5, 4], 6, 25, [
+    ["activity", 1, [1, 2, 3], "c2-smart-regroup"], ["activity", 1, [4, 5], "c2-power-ten-zeros"],
+    ["check", 1, [1, 3, 4], "c2-power-ten-zeros"], ["check", 1, [2], "c2-nines-product"],
+    ["activity", 2, [1, 2], "c2-repunit-square"], ["check", 2, [1, 2], "c2-nines-product"], ["check", 2, [3, 4, 5], "c2-repunit-square"],
+    ["activity", 3, [1, 2, 3], "c2-smart-regroup"], ["check", 3, [1, 2, 3, 4], "c2-smart-regroup"],
+    ["advanced", 1, [1, 2, 4, 5], "c2-smart-regroup"], ["advanced", 1, [3], "c2-nines-product"], ["advanced", 1, [6], "c2-power-ten-zeros"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 17, 18, 19, 20, 21, 22, 23, 24], "c2-smart-regroup"], ["practice", 1, [7, 8, 10], "c2-power-ten-zeros"], ["practice", 1, [9], "c2-nines-product"],
+    ["practice", 1, [11, 12, 13, 14, 15, 16, 25], "c2-repunit-square"]
+  ]),
+  c2Unit("포포즈와 약속", [4, 4, 5], [3, 4, 3], 5, 28, [
+    ["activity", 1, [1, 2, 3, 4], "c2-odd-sum-square"], ["check", 1, [1, 2, 3], "c2-odd-sum-square"],
+    ["activity", 2, [1, 3], "two-custom-operations"], ["activity", 2, [2, 4], "two-custom-operations"], ["check", 2, [1, 2, 3, 4], "two-custom-operations"],
+    ["activity", 3, [1, 2, 3, 4], "c2-bracket-insert"], ["activity", 3, [5], "consecutive-sign-insertion"], ["check", 3, [1, 2, 3], "sign-insertion-triple-unit-test-book6"],
+    ["advanced", 1, [1, 2, 3], "sign-insertion-triple-unit-test-book6"], ["advanced", 1, [4, 5], "c2-odd-sum-square"],
+    ["practice", 1, [1, 2, 3, 4, 5, 6, 7], "c2-odd-sum-square"], ["practice", 1, [8, 9, 10, 11, 13, 14, 15, 16, 17, 18], "two-custom-operations"], ["practice", 1, [12], "two-custom-operations"],
+    ["practice", 1, [19, 20, 21, 22], "c2-bracket-insert"], ["practice", 1, [23, 24, 25], "consecutive-sign-insertion"], ["practice", 1, [26, 27, 28], "sign-insertion-triple-unit-test-book6"]
+  ]),
+  c2Unit("달력과 님게임", [2, 5, 3], [4, 4, 4], 5, 19, [
+    ["activity", 1, [1, 2], "c2-year-weekday-shift"], ["check", 1, [1, 2, 3, 4], "c2-year-weekday-shift"],
+    ["activity", 2, [1, 2, 4], "calendar-cross-month-weekday-b7"], ["activity", 2, [3], "calendar-month-shift-weekday-b7"], ["activity", 2, [5], "weekday-after-days-b7"],
+    ["check", 2, [1, 2, 4], "calendar-weekday-list-ordinal-book5"], ["check", 2, [3], "calendar-month-position"],
+    ["activity", 3, [1, 2, 3], "c2-nim-strategy"], ["check", 3, [1, 2, 3, 4], "c2-nim-strategy"],
+    ["advanced", 1, [1, 2, 3, 4, 5], "c2-nim-strategy"],
+    ["practice", 1, [1, 2, 4, 5, 6], "c2-year-weekday-shift"], ["practice", 1, [3], "leap-year-cross-month-weekday-b7"], ["practice", 1, [7], "calendar-cross-month-weekday-b7"],
+    ["practice", 1, [8, 9], "weekday-after-days-b7"], ["practice", 1, [10, 11, 12], "calendar-weekday-list-ordinal-book5"], ["practice", 1, [13, 14, 15, 16, 17, 18, 19], "c2-nim-strategy"]
+  ]),
+  c2Unit("거꾸로 생각하기", [4, 4], [4, 4], 5, 20, [
+    ["activity", 1, [1], "c2-digit-product-steps"], ["activity", 1, [2], "sequential-fraction-remains-b8"], ["activity", 1, [3, 4], "c2-reverse-half-chain"],
+    ["check", 1, [1, 2], "c2-reverse-half-chain"], ["check", 1, [3, 4], "sequential-fraction-consumption-b8"],
+    ["activity", 2, [1], "reverse-two-container-transfers-b8"], ["activity", 2, [2], "give-as-much-once-b8"], ["activity", 2, [3], "reverse-transfer-three-b8"], ["activity", 2, [4], "reverse-transfer-events-b8"],
+    ["check", 2, [1], "reverse-transfer-three-b8"], ["check", 2, [2, 3, 4], "give-as-much-return-b8"],
+    ["advanced", 1, [1], "reverse-operation-ladder"], ["advanced", 1, [2, 3], "reverse-transfer-three-b8"], ["advanced", 1, [4, 5], "c2-reverse-half-chain"],
+    ["practice", 1, [1], "reverse-operation-ladder"], ["practice", 1, [2], "c2-digit-product-steps"], ["practice", 1, [3, 4, 5, 7], "c2-reverse-half-chain"],
+    ["practice", 1, [6, 8, 9], "sequential-fraction-remains-b8"], ["practice", 1, [10, 14], "three-container-condition-b8"], ["practice", 1, [11, 15, 19, 20], "reverse-transfer-three-b8"],
+    ["practice", 1, [12, 13], "reverse-two-container-transfers-b8"], ["practice", 1, [16, 17, 18], "give-as-much-return-b8"]
+  ])
+];
 // 2과정 권 목록. 1과정 목록(CURRICULUM)과 따로 둔다 — 1과정 화면(시작·진도표·가입·관리)에 섞이지 않게. 찾을 때는 bookById(두 목록 모두).
 export const COURSE2_CURRICULUM = [
   { id: "course-02-g1", course: 2, label: "G1", title: "돌리기와 뒤집기", units: C2_G1_UNITS,
@@ -4689,7 +4731,9 @@ export const COURSE2_CURRICULUM = [
   { id: "course-02-g5", course: 2, label: "G5", title: "도형의 넓이와 비", units: C2_G5_UNITS,
     source: { textbook: "2과정 G5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g5", goldenBellIncluded: false } },
   { id: "course-02-a1", course: 2, label: "A1", title: "양팔저울과 규칙찾기", units: C2_A1_UNITS,
-    source: { textbook: "2과정 A1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a1", goldenBellIncluded: false } }
+    source: { textbook: "2과정 A1 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a1", goldenBellIncluded: false } },
+  { id: "course-02-a2", course: 2, label: "A2", title: "복제수와 님게임", units: C2_A2_UNITS,
+    source: { textbook: "2과정 A2 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=a2", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 // 진도표·「계획대로 가는지」가 잇는 권 차례 — 1과정 10권 뒤에 2과정을 기하·대수 번갈아 G1 → A1 → G2 → … → A5
