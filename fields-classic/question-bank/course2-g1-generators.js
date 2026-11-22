@@ -2,6 +2,7 @@
 // 1과정 생성기와 같은 약속: ({ difficulty }) → { prompt, visual, answer, solution, meta }. 그림은 visual.kind "c2"(html에 SVG를 담는다, app.js visualMarkup).
 // 본책 문항 번호마다 어느 생성기를 쓰는지는 source-data.js COURSE2_CURRICULUM의 typeStudyRefs. 1과정 생성기로 같은 풀이가 되는 번호는 1과정 유형을 그대로 쓴다.
 // 답은 모두 그림을 만든 수에서 계산한다(세는 문제는 하나씩 세어 본다 — 공식만 믿지 않는다).
+import { plainText } from "./course2-plain.js?v=20261122zi";
 
 import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261121a";
 
@@ -761,13 +762,13 @@ function c2FoldRegionFind({ difficulty = 2, foldSeq = null }) {
   };
 }
 
-export const COURSE2_G1_GENERATORS = {
+export const COURSE2_G1_GENERATORS = plainText({
   c2FoldRegionFind,
   c2ReverseFoldLine, c2ReverseFoldShape, c2ReverseFoldTwo,
   c2DigitalMirrorCount, c2DigitalHalfTurnCount, c2MirrorDigitalClock, c2SymmetryAxisCount, c2CircleSectorAngle, c2TriangleAngle,
   c2RegularPolygonAngle, c2JoinedPolygonAngle, c2ClockHandAngle, c2CircleRadiusPerimeter, c2InscribedMidpoint,
   c2GridRightTriangleCount, c2CirclePointTriangles, c2DotTriangleCount, c2QuadInclusion, c2DotSquareCount, c2RectangleGridCount
-};
+});
 // 유형 표(source-data.js가 TYPES에 붙인다): [id, 영역, 중분류, 이름, 생성기]
 export const COURSE2_G1_TYPE_ROWS = [
   ["c2-fold-region-find", "geometry", "색종이 접기", "다 접은 종이가 펼친 종이의 어느 칸에 있는지 찾기", "c2FoldRegionFind"],

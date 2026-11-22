@@ -1,5 +1,6 @@
 // 2과정 G3 「정육면체와 각·넓이」 교재 유사문제 생성기. 약속은 G1·G2 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산하고, 세는 문제는 하나씩 세어 본다(주사위는 굴려 보고, 전개도는 접어 본다).
+import { plainText } from "./course2-plain.js?v=20261122zi";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -473,11 +474,11 @@ function c2TrapezoidArea({ difficulty = 2 }) {
   return null;
 }
 
-export const COURSE2_G3_GENERATORS = {
+export const COURSE2_G3_GENERATORS = plainText({
   c2SymmetricNumberCount, c2DiceHiddenSum, c2DiceRoll, c2CubeNetOpposite,
   c2ParallelAngle, c2ClockFromAngle,
   c2RhombusArea, c2ParallelogramArea, c2TriangleArea, c2TrapezoidArea
-};
+});
 export const COURSE2_G3_TYPE_ROWS = [
   ["c2-symmetric-number-count", "number", "디지털 숫자 대칭", "거울·반 바퀴에도 같은 여러 자리 수", "c2SymmetricNumberCount"],
   ["c2-dice-hidden-sum", "geometry", "주사위", "쌓거나 붙인 주사위의 보이지 않는 눈", "c2DiceHiddenSum"],

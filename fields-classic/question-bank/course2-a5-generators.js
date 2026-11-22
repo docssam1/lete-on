@@ -1,6 +1,7 @@
 // 2과정 A5 「소인수분해와 비」 교재 유사문제 생성기. 약속은 G1~G5·A1~A4 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 가능한 수를 하나씩 확인하는 방법(전수 탐색)이나 문제를 만든 수에서 계산한다.
 // 분수·거듭제곱은 글 속에 「3/5」「2^3」으로 쓴다 — 화면·인쇄는 app.js mathShown · drill.js shown이 수식으로 바꾼다(그림 속 식은 board가 HTML 수식으로).
+import { plainText } from "./course2-plain.js?v=20261122zi";
 import { mathText } from "./math-markup.js?v=20261122w";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -281,7 +282,7 @@ function c2PondDepth({ difficulty = 2 }) {
   return null;
 }
 
-export const COURSE2_A5_GENERATORS = { c2DivisibilityDigits, c2SquareMultiplier, c2ConsecutiveProduct, c2FactorialZeros, c2EquivalentCondition, c2PartialFractionSum, c2BounceHeight, c2InvariantRatio, c2PondDepth };
+export const COURSE2_A5_GENERATORS = plainText({ c2DivisibilityDigits, c2SquareMultiplier, c2ConsecutiveProduct, c2FactorialZeros, c2EquivalentCondition, c2PartialFractionSum, c2BounceHeight, c2InvariantRatio, c2PondDepth });
 export const COURSE2_A5_TYPE_ROWS = [
   ["c2-divisibility-digits", "number", "소인수분해", "배수판정법으로 빈칸 숫자 찾기", "c2DivisibilityDigits"],
   ["c2-square-multiplier", "number", "소인수분해", "곱하거나 나누어 제곱수 만들기", "c2SquareMultiplier"],

@@ -1,4 +1,4 @@
-import { DOMAINS } from "./source-data.js?v=20261122zg";
+import { DOMAINS } from "./source-data.js?v=20261122zi";
 import {
   RESULT_EXAM_BY_ID,
   RESULT_EXAM_GROUPS,
@@ -6,7 +6,7 @@ import {
   remediationUrl,
   resultStorageKey,
   stageLabelForExam
-} from "./result-diagnosis-data.js?v=20261122zg";
+} from "./result-diagnosis-data.js?v=20261122zi";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { hasBank } from "./entrance-products.js?v=20261116b";
 import { loadSelectionAnswers, selectionVideoHref, selectionVideoFrom, answerVisualMarkup, workMarkup, isListVisual } from "./selection-answers.js?v=20261116e";

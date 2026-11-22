@@ -1,6 +1,7 @@
 // 2과정 G2 「도형분할과 넓이」 교재 유사문제 생성기 (DESIGN-COURSE2.md 8절 2단계 — 기하 둘째 권).
 // G1 생성기(course2-g1-generators.js)와 같은 약속: ({ difficulty }) → { prompt, visual:{kind:"c2", html}, answer, solution, meta }.
 // 문제는 모두 새로 지은 것이다(교재 문장·그림을 옮기지 않는다). 답은 그림을 만든 수에서 계산하고, 세는 문제는 하나씩 세어 본다.
+import { plainText } from "./course2-plain.js?v=20261122zi";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -685,12 +686,12 @@ function c2HourHandMoved({ difficulty = 2 }) {
   });
 }
 
-export const COURSE2_G2_GENERATORS = {
+export const COURSE2_G2_GENERATORS = plainText({
   c2RearrangeSquareSide, c2GridSquareAreas, c2SideSplitSquare, c2MidpointNestArea, c2RegularPieceArea,
   c2FibonacciRect, c2CongruentRectPerimeter,
   c2CornerQuarterCircles, c2CircleCenterTriangle, c2CircleDiameterChain, c2TriangleInequality, c2CutTrianglePerimeter,
   c2ExteriorWalk, c2ButterflyAngle, c2StarAngleSum, c2HourHandMoved
-};
+});
 // 유형 표(source-data.js가 TYPES에 붙인다): [id, 영역, 중분류, 이름, 생성기]
 export const COURSE2_G2_TYPE_ROWS = [
   ["c2-rearrange-square-side", "geometry", "넓이", "잘라 붙여 만든 정사각형의 한 변", "c2RearrangeSquareSide"],
