@@ -1,11 +1,10 @@
 // 2과정 A3 「규칙성과 수열」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 분수는 「3/5」로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, line, grid, dot, P, INK, GREEN, SOFT, MARK, YELLOW } from "./pack-kit.js?v=20261121g";
+import { svg, text, rect, circle, line, grid, dot, P, INK, GREEN, SOFT, MARK, YELLOW, formulas } from "./pack-kit.js?v=20261122i";
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
-const board = (lines, w = 340) => () => svg(w, 26 + lines.length * 32, rect(4, 4, w - 8, 18 + lines.length * 32, { fill: SOFT, color: GREEN })
-  + lines.map((t, i) => text(w / 2, 30 + i * 32, t, { size: 18 })).join(""), "식");
+const board = (lines) => () => formulas(lines);
 const figRows = () => {
   const rows = ["1", "2 3 4", "5 6 7 8 9", "10 … 16"];
   return svg(300, 140, rows.map((t, i) => text(150, 22 + i * 32, t, { size: 18 })).join("") + label(270, 22, "1개", { anchor: "end" }) + label(270, 54, "3개", { anchor: "end" }) + label(270, 86, "5개", { anchor: "end" }), "홀수 개씩 쓴 줄");
@@ -88,7 +87,7 @@ export const PACKS = {
       steps: [
         { ask: "5번째 묶음(분모 5)까지 분수는 모두 몇 개?", answer: "15", unit: "개", why: "1 + 2 + 3 + 4 + 5 = 15입니다.", hint: "1부터 5까지 더하기" },
         { ask: "20번째는 6번째 묶음의 몇 번째?", answer: "5", unit: "번째", why: "20 − 15 = 5입니다.", hint: "20 − 15" },
-        { ask: "20번째 분수는? (분자/분모)", answer: "5/6", text: true, why: "분모 6인 묶음의 5번째이므로 5/6입니다.", hint: "분모 6" }
+        { ask: "20번째 분수는? (분수로)", answer: "5/6", text: true, why: "분모 6인 묶음의 5번째이므로 5/6입니다.", hint: "분모 6" }
       ]
     },
     check: [["c2-fraction-sequence", "concept"], ["c2-fraction-sequence", "type"], ["c2-fraction-sequence", "advanced"]]

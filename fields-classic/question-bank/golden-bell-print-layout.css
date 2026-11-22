@@ -255,3 +255,6 @@
 .tb-pack-prompt { margin: 0; font-weight: 700; }
 .tb-pack-steps { margin: 0; padding-left: 5mm; display: grid; gap: 2.5mm; }
 .tb-pack-blank { display: inline-block; min-width: 18mm; border-bottom: .3mm solid #2f3a35; margin: 0 1mm; height: 1.1em; vertical-align: bottom; }
+/* 2과정 개념 정리 인쇄 — 식 칠판(pack-kit formulas) */
+.tb-pack-fig .pk-board { width: 100%; box-sizing: border-box; padding: 2.5mm 3mm; background: #e6efe8; border: .5mm solid #2f6b52; display: grid; gap: 2mm; justify-items: center; }
+.tb-pack-fig .pk-board-line { font-size: 11pt; font-weight: 600; color: #24302b; line-height: 1.5; text-align: center; }

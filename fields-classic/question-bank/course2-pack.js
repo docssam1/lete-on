@@ -2,7 +2,7 @@
 // 덱(study.js)이 개념 장(native)으로 붙인다: mountPackCard(host, { board: "<권>/<꾸러미 id>/<recall|summary|example>", deckNav, atEnd, onStep, onDone })
 // 덱 약속은 판서와 같다 — step(±1)이 true를 돌려주면 장 안에서 넘긴 것, false면 덱이 다음 장으로 간다.
 // 꾸러미 자료는 course2-concepts/<권>.js(PACKS). 예제는 창작 문제라 단계 답을 자료 파일에 둔다.
-import { mathText } from "./math-markup.js?v=20261027p";
+import { mathText } from "./math-markup.js?v=20261122i";
 // 꾸러미 글의 「3/5」·「2^3」을 수식으로 바꾼다(빗금 분수를 화면에 쓰지 않는다 — math-markup.js)
 const M = (html) => mathText(String(html ?? ""));
 const TAGS = { g1: "20261121g", g2: "20261121h", g3: "20261121i", g4: "20261122a", g5: "20261122b", a1: "20261122d", a2: "20261122e", a3: "20261122f", a4: "20261122g", a5: "20261122h" };

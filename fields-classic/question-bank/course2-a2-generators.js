@@ -1,6 +1,7 @@
 // 2과정 A2 「복제수와 님게임」 교재 유사문제 생성기. 약속은 G1~G5·A1 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 문제를 만든 수에서 계산한다. 큰 수는 BigInt로 셈한다.
 // 거듭제곱은 글 속에 「2^5」로 쓰면 화면·인쇄에서 수식으로 바뀐다(math-markup.js mathText).
+import { mathText } from "./math-markup.js?v=20261122i";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -28,8 +29,8 @@ const rect = (x, y, w, h, { fill = "none", color = INK, width = 1.6, rx = 0 } = 
 const circle = (x, y, r, { fill = "none", color = INK, width = 1.8 } = {}) =>
   `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" fill="${fill}" stroke="${color}" stroke-width="${width}"/>`;
 // 글 한 줄을 판에 얹은 그림(식·수 늘어놓기)
-const board = (lines, { w = 360 } = {}) => svg(w, 24 + lines.length * 30, rect(4, 4, w - 8, 16 + lines.length * 30, { fill: SOFT, color: GREEN, rx: 8 })
-  + lines.map((t, i) => text(w / 2, 28 + i * 30, t, { size: 17 })).join(""), "식");
+// 식 칠판 — SVG 글자로는 분수를 쌓을 수 없어 HTML + 공통 수식(math-markup)으로 그린다(빗금 분수 금지). 모양은 글 안 style(화면·인쇄 같음).
+const board = (lines) => `<div class="c2-formula" role="img" aria-label="식" style="display:grid;gap:.55em;justify-items:center;padding:.7em 1.1em;margin:0 auto;max-width:100%;box-sizing:border-box;background:${SOFT};border:2px solid ${GREEN};border-radius:8px;color:${INK};font-weight:600;font-size:1.12em;line-height:1.5;text-align:center">${lines.map((t) => `<div>${mathText(esc(t))}</div>`).join("")}</div>`;
 
 // ════ 1단원 10의 거듭제곱과 복제수 ════
 // 1. 2와 5의 거듭제곱 — 끝자리 0의 개수와 몇 자리 수

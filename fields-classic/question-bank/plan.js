@@ -1,7 +1,7 @@
-import { GM_PATH as CURRICULUM } from "./source-data.js?v=20261122h";
+import { GM_PATH as CURRICULUM } from "./source-data.js?v=20261122i";
 import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261117a";
-import { sessionCount } from "./study-deck.js?v=20261122h";
-import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261122h";
+import { sessionCount } from "./study-deck.js?v=20261122i";
+import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261122i";
 
 // 학습 진도표 화면 — 계산은 study-plan.js. 계획은 학생 기록 plan/main 에 둔다(이 기기 + 로그인하면 서버).
 const $ = (id) => document.getElementById(id);

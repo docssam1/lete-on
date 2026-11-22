@@ -1,6 +1,7 @@
 // 2과정 A5 「소인수분해와 비」 교재 유사문제 생성기. 약속은 G1~G5·A1~A4 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 가능한 수를 하나씩 확인하는 방법(전수 탐색)이나 문제를 만든 수에서 계산한다.
-// 분수·거듭제곱은 글 속에 「3/5」「2^3」으로 쓰면 화면·인쇄에서 수식으로 바뀐다(math-markup.js mathText).
+// 분수·거듭제곱은 글 속에 「3/5」「2^3」으로 쓴다 — 화면·인쇄는 app.js mathShown · drill.js shown이 수식으로 바꾼다(그림 속 식은 board가 HTML 수식으로).
+import { mathText } from "./math-markup.js?v=20261122i";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -28,8 +29,8 @@ const rect = (x, y, w, h, { fill = "none", color = INK, width = 1.6, rx = 0 } = 
   `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" rx="${rx}" fill="${fill}" stroke="${color}" stroke-width="${width}"/>`;
 const line = (x1, y1, x2, y2, { color = INK, width = 2, dash = "" } = {}) =>
   `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
-const board = (lines, { w = 360 } = {}) => svg(w, 24 + lines.length * 30, rect(4, 4, w - 8, 16 + lines.length * 30, { fill: SOFT, color: GREEN, rx: 8 })
-  + lines.map((t, i) => text(w / 2, 28 + i * 30, t, { size: 17 })).join(""), "식");
+// 식 칠판 — SVG 글자로는 분수를 쌓을 수 없어 HTML + 공통 수식(math-markup)으로 그린다(빗금 분수 금지). 모양은 글 안 style(화면·인쇄 같음).
+const board = (lines) => `<div class="c2-formula" role="img" aria-label="식" style="display:grid;gap:.55em;justify-items:center;padding:.7em 1.1em;margin:0 auto;max-width:100%;box-sizing:border-box;background:${SOFT};border:2px solid ${GREEN};border-radius:8px;color:${INK};font-weight:600;font-size:1.12em;line-height:1.5;text-align:center">${lines.map((t) => `<div>${mathText(esc(t))}</div>`).join("")}</div>`;
 
 // 소인수분해 「2^3 × 3^2」
 function factor(n) { const out = []; let x = n; for (let p = 2; p * p <= x; p += 1) { let e = 0; while (x % p === 0) { x /= p; e += 1; } if (e) out.push([p, e]); } if (x > 1) out.push([x, 1]); return out; }
@@ -165,9 +166,9 @@ function c2PartialFractionSum({ difficulty = 2 }) {
   const shown = `${dens.slice(0, 2).map(([a, b]) => `1/${a * b}`).join(" + ")} + … + 1/${dens.at(-1)[0] * dens.at(-1)[1]}`;
   return problem({
     prompt: `${shown}${hasBatchim(dens.at(-1)[0] * dens.at(-1)[1]) ? "을" : "를"} 계산하세요. (분모는 차례로 ${dens.slice(0, 3).map(([a, b]) => `${a} × ${b}`).join(", ")}, …, ${dens.at(-1)[0]} × ${dens.at(-1)[1]}입니다.)`,
-    subtype: "partial-fraction", html: board([`1/(□ × ○) = (1/□ − 1/○) ÷ ${gap}`, gap === 1 ? "1/(2 × 3) = 1/2 − 1/3" : `차가 ${gap}이면 ${gap}로 나눈다`]),
+    subtype: "partial-fraction", html: board([gap === 1 ? "1/(앞 수 × 뒤 수) = 1/(앞 수) − 1/(뒤 수)" : `1/(앞 수 × 뒤 수) = (1/(앞 수) − 1/(뒤 수)) ÷ ${gap}`, gap === 1 ? "1/(2 × 3) = 1/2 − 1/3" : `차가 ${gap}이면 ${gap}로 나눈다`]),
     answer: den === 1 ? num : `${num}/${den}`,
-    solution: `이웃한 두 수의 곱 꼴 분모는 1/□ − 1/○로 쪼갤 수 있습니다(차가 ${gap}이면 그 값을 ${gap}로 나눕니다). 차례로 쓰면 가운데 항이 서로 지워져 (1/${first} − 1/${last})${gap > 1 ? ` ÷ ${gap}` : ""}만 남아 ${den === 1 ? num : `${num}/${den}`}입니다.`,
+    solution: `이웃한 두 수의 곱 꼴 분모는 1/(앞 수) − 1/(뒤 수)로 쪼갤 수 있습니다(차가 ${gap}이면 그 값을 ${gap}로 나눕니다). 차례로 쓰면 가운데 항이 서로 지워져 (1/${first} − 1/${last})${gap > 1 ? ` ÷ ${gap}` : ""}만 남아 ${den === 1 ? num : `${num}/${den}`}입니다.`,
     family: "c2-partial-fraction", meta: { gap, first, last }
   });
 }
@@ -298,7 +299,7 @@ export const COURSE2_A5_GUIDES = Object.freeze({
   "c2-consecutive-product": "곱을 소인수분해한 뒤 서로 가까운 세 수로 묶습니다.",
   "c2-factorial-zeros": "끝자리 0의 개수 = 곱에 들어 있는 5의 개수(25·125의 배수는 두세 번 셉니다).",
   "c2-equivalent-condition": "크기가 같은 분수는 분자·분모에 같은 수를 곱한 것 — 합·차도 그만큼 배가 됩니다.",
-  "c2-partial-fraction-sum": "1/(□ × ○)를 1/□ − 1/○로 쪼개면 가운데 항이 지워집니다.",
+  "c2-partial-fraction-sum": "1/(앞 수 × 뒤 수)를 1/(앞 수) − 1/(뒤 수)로 쪼개면 가운데 항이 지워집니다.",
   "c2-bounce-height": "튈 때마다 같은 분수배 — 거꾸로는 그 분수로 나눕니다.",
   "c2-invariant-ratio": "나이 차·주고받은 뒤의 합·똑같이 쓴 뒤의 차처럼 변하지 않는 양을 기준으로 칸을 맞춥니다.",
   "c2-pond-depth": "물에 잠긴 길이가 같다는 것을 기준으로 두 막대를 깊이의 몇 배로 나타냅니다."

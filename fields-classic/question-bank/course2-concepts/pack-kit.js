@@ -1,4 +1,5 @@
 // 2과정 개념 꾸러미 그림 도구 — 되짚기·정리·예제 카드의 SVG(워밍업 그림 색표: 잉크·초록·빨강 각 표시·연한 칠)
+import { mathText } from "../math-markup.js?v=20261122i";
 export const INK = "#24302b", GREEN = "#2f6b52", SOFT = "#e6efe8", MARK = "#b4553f", PALE = "#f4f1e8", BLUE = "#2f5fb3", YELLOW = "#fff1bf", PINK = "#f9c8c4";
 const R = Math.PI / 180;
 export const f1 = (v) => Math.round(v * 10) / 10;
@@ -87,3 +88,7 @@ export function digital(d, x, y, { w = 30, h = 54, color = INK, width = 5, mirro
     return line(P(x + x1, y + y1), P(x + x2, y + y2), { color, width });
   }).join("");
 }
+
+// 식 칠판 — 줄마다 식 하나. SVG 글자로는 분수를 쌓을 수 없어 HTML + 공통 수식(math-markup)으로 그린다(빗금 분수 금지).
+// 「3/5」「1/(□ × (□ + 1))」「2^5」는 수식으로, 나머지 글은 그대로. 모양은 course2-pack.css · golden-bell-print-layout.css 의 .pk-board.
+export const formulas = (lines) => `<div class="pk-board" role="img" aria-label="식">${lines.map((t) => `<div class="pk-board-line">${mathText(esc(t))}</div>`).join("")}</div>`;

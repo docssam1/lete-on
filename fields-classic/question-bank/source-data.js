@@ -5,10 +5,10 @@ import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators
 import { COURSE2_G4_TYPE_ROWS, COURSE2_G4_GUIDES } from "./course2-g4-generators.js?v=20261121a";
 import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261122a";
 import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators.js?v=20261122d";
-import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261122e";
-import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261122f";
-import { COURSE2_A4_TYPE_ROWS, COURSE2_A4_GUIDES } from "./course2-a4-generators.js?v=20261122g";
-import { COURSE2_A5_TYPE_ROWS, COURSE2_A5_GUIDES } from "./course2-a5-generators.js?v=20261122h";
+import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261122i";
+import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261122i";
+import { COURSE2_A4_TYPE_ROWS, COURSE2_A4_GUIDES } from "./course2-a4-generators.js?v=20261122i";
+import { COURSE2_A5_TYPE_ROWS, COURSE2_A5_GUIDES } from "./course2-a5-generators.js?v=20261122i";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.

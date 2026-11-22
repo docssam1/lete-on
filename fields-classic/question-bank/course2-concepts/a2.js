@@ -1,11 +1,10 @@
 // 2과정 A2 「복제수와 님게임」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 거듭제곱은 「2^6」으로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, P, INK, GREEN, SOFT, YELLOW } from "./pack-kit.js?v=20261121g";
+import { svg, text, rect, circle, P, INK, GREEN, SOFT, YELLOW, formulas } from "./pack-kit.js?v=20261122i";
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
-const board = (lines, w = 340) => () => svg(w, 26 + lines.length * 32, rect(4, 4, w - 8, 18 + lines.length * 32, { fill: SOFT, color: GREEN })
-  + lines.map((t, i) => text(w / 2, 30 + i * 32, t, { size: 18 })).join(""), "식");
+const board = (lines) => () => formulas(lines);
 const figPairs = () => {
   let body = "";
   for (let i = 0; i < 4; i += 1) body += rect(14 + i * 74, 18, 64, 34, { fill: YELLOW }) + text(46 + i * 74, 35, "2 × 5", { size: 15 });

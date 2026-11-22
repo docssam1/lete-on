@@ -1,5 +1,6 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261122h";
-import { GENERATORS } from "./generators.js?v=20261122h";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261122i";
+import { mathText } from "./math-markup.js?v=20261122i";
+import { GENERATORS } from "./generators.js?v=20261122i";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
@@ -7,10 +8,10 @@ import { book01Markup } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
 import { book04Markup } from "./book04-renderers.js?v=20261121a";
-import { book05Markup } from "./book05-renderers.js?v=20261101m";
-import { book06Markup } from "./book06-renderers.js?v=20261101m";
+import { book05Markup } from "./book05-renderers.js?v=20261122i";
+import { book06Markup } from "./book06-renderers.js?v=20261122i";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
-import { book08Markup } from "./book08-renderers.js?v=20261101m";
+import { book08Markup } from "./book08-renderers.js?v=20261122i";
 import { book09Markup } from "./book09-renderers.js?v=20261121c";
 import { book10Markup } from "./book10-renderers.js?v=20261101m";
 import { mock06Markup } from "./mock06-renderers.js?v=20261121a";
@@ -18,6 +19,10 @@ import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountP
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
 import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldNumberStrip, foldNumberPaperSvg, foldNumberPolygonSvg, foldCreaseSvg, foldWordStrip } from "./fold-visuals.js?v=20261121a";
+
+// 2과정 유형(type.course === 2)의 문제·답·풀이 글은 「3/5」「2^3」으로 쓰여 있다 — 화면·인쇄에서 수식으로 바꾼다(빗금 분수 금지, math-markup.js).
+// 답(question.answer)은 채점에 그대로 쓰고 보여 줄 때만 바꾼다. 1과정 유형은 그대로.
+const mathShown = (question, text) => (question?.type?.course === 2 ? mathText(String(text ?? "")) : text);
 
 const {
   ageStages: AGE_STAGES,
@@ -46,7 +51,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261122h");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261122i");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
@@ -397,7 +402,7 @@ function textbookConceptTutorialMarkup(problem, compact = false) {
     : [{ id: "core-method", label: "핵심 방법", text: concept.principle || problem.conceptGuide }];
   const heading = sourceBacked ? "개념 익히기" : "풀이 원리";
   const qualityClass = sourceBacked ? "source-backed" : "principle-only";
-  return `<section class="textbook-concept-tutorial ${qualityClass} ${compact ? "compact" : ""}"><header><span>${heading}</span><strong>${concept.label}</strong></header><ol>${steps.map((step, index) => `<li data-beat-id="${step.id}"><b>${index + 1}</b><div><strong>${step.label}</strong><p>${step.text}</p></div></li>`).join("")}</ol></section>`;
+  return `<section class="textbook-concept-tutorial ${qualityClass} ${compact ? "compact" : ""}"><header><span>${heading}</span><strong>${concept.label}</strong></header><ol>${steps.map((step, index) => `<li data-beat-id="${step.id}"><b>${index + 1}</b><div><strong>${step.label}</strong><p>${mathShown(problem, step.text)}</p></div></li>`).join("")}</ol></section>`;
 }
 
 function textbookConceptSolutionMarkup(question) {
@@ -1268,7 +1273,7 @@ function openEditor() {
   setStepView(2);
 }
 function editorProblemMarkup(question) {
-  return `<p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>${worksheetVisualMarkup(question)}`;
+  return `<p class="question-prompt">${mathShown(question, question.prompt.replaceAll("\n", "<br>"))}</p>${worksheetVisualMarkup(question)}`;
 }
 function editorCardMarkup(question, index) {
   const domain = DOMAINS.find((item) => item.id === question.type.domain);
@@ -3476,7 +3481,7 @@ function studentCheckMarkup(question, index) {
     <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
       ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사문제 풀기</button>`}</div>
     <p class="student-check-message" role="status"></p>
-    <div class="student-answer${handAnswers ? " is-hand" : ""}" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution && (!handAnswers || handSolution) ? `<p class="${handSolution ? "hand-solution" : ""}"><b>풀이</b> ${question.solution}</p>` : ""}</div>
+    <div class="student-answer${handAnswers ? " is-hand" : ""}" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${mathShown(question, question.answer)}</div>` : `<span>${mathShown(question, question.answer)}</span>`}${question.solution && (!handAnswers || handSolution) ? `<p class="${handSolution ? "hand-solution" : ""}"><b>풀이</b> ${mathShown(question, question.solution)}</p>` : ""}</div>
   </div>`;
 }
 
@@ -3573,10 +3578,10 @@ function renderWorksheet() {
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">${bookMode && question.bookRef ? question.bookRef : `기준 문제: ${question.reference}`}</span>
       ${textbookConceptTutorialMarkup(question)}
-      ${question.studyStage?.id !== "concept" && question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
+      ${question.studyStage?.id !== "concept" && question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${mathShown(question, question.conceptGuide)}</span></div>` : ""}
       ${choice && choice.kind !== "keep"
-        ? `<p class="question-prompt"><span class="screen-only">${question.prompt.replaceAll("\n", "<br>")}</span><span class="print-only">${printPromptOf(question, choice.kind).replaceAll("\n", "<br>")}</span></p>`
-        : `<p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>`}
+        ? `<p class="question-prompt"><span class="screen-only">${mathShown(question, question.prompt.replaceAll("\n", "<br>"))}</span><span class="print-only">${mathShown(question, printPromptOf(question, choice.kind).replaceAll("\n", "<br>"))}</span></p>`
+        : `<p class="question-prompt">${mathShown(question, question.prompt.replaceAll("\n", "<br>"))}</p>`}
       ${worksheetVisualMarkup(question)}
       ${choice ? `<div class="choice-buttons screen-only" role="group" aria-label="${index + 1}번 보기 고르기">${choice.labels.map((label) => `<button type="button" data-choice-index="${index}" data-choice="${escapeAttribute(label)}" aria-pressed="${question.responseValue === label}">${label}</button>`).join("")}</div>${choice.kind === "write" ? `<label class="answer-line print-only">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>` : ""}`
         : question.responseKind === "drawing"
@@ -3702,7 +3707,7 @@ const testMarks = [];
 let testGraded = false;
 function testAnswerMarkup(question) {
   const picture = answerVisualMarkup(question);
-  return `<div class="test-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>`;
+  return `<div class="test-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${mathShown(question, question.answer)}</div>` : `<span>${mathShown(question, question.answer)}</span>`}${question.solution ? `<p><b>풀이</b> ${mathShown(question, question.solution)}</p>` : ""}</div>`;
 }
 function testTypeRows() {
   const rows = new Map();
@@ -3792,8 +3797,8 @@ function openAnswers() {
     // 말로만 적혀 나왔다. 그림을 그리되 글로 쓴 답도 함께 남긴다 — 채점자가 그림만
     // 보고 판단하지 않아도 되게.
     const answerPicture = answerVisualMarkup(question);
-    const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
-    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
+    const answer = answerPicture ? `${answerPicture}<div class="answer-text">${mathShown(question, question.answer)}</div>` : mathShown(question, question.answer);
+    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? mathShown(question, question.solution) : "-"}</td></tr>`;
   }).join("");
   // 답안지 머리 = 그 시험지 제목(인쇄해서 문제지와 짝을 맞추게 — 원장 2026-11-16 「인쇄해야지」)
   const head = document.querySelector("#answerDialog .dialog-head h2");

@@ -1,11 +1,10 @@
 // 2과정 A5 「소인수분해와 비」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 분수·거듭제곱은 「3/5」「2^3」으로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, YELLOW } from "./pack-kit.js?v=20261121g";
+import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, YELLOW, formulas } from "./pack-kit.js?v=20261122i";
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
-const board = (lines, w = 340) => () => svg(w, 26 + lines.length * 32, rect(4, 4, w - 8, 18 + lines.length * 32, { fill: SOFT, color: GREEN })
-  + lines.map((t, i) => text(w / 2, 30 + i * 32, t, { size: 18 })).join(""), "식");
+const board = (lines) => () => formulas(lines);
 const figTree = () => svg(300, 150, text(150, 20, "72", { size: 18, weight: 700 }) + line(P(140, 30), P(110, 56)) + line(P(160, 30), P(190, 56))
   + text(104, 66, "8", { size: 17 }) + text(196, 66, "9", { size: 17 }) + line(P(98, 76), P(80, 100)) + line(P(110, 76), P(126, 100)) + line(P(190, 76), P(176, 100)) + line(P(202, 76), P(218, 100))
   + text(76, 110, "2 × 2", { size: 15 }) + text(130, 110, "2", { size: 15 }) + text(174, 110, "3", { size: 15 }) + text(222, 110, "3", { size: 15 }) + label(150, 138, "72 = 2^3 × 3^2"), "소인수분해 나무");
@@ -97,7 +96,7 @@ export const PACKS = {
       figure: board(["2/3 = (2 × □)/(3 × □)"]),
       steps: [
         { ask: "2 × □ + 3 × □ = 5 × □ = 45 — □는?", answer: "9", why: "45 ÷ 5 = 9입니다.", hint: "45 ÷ 5" },
-        { ask: "구하는 분수는? (분자/분모)", answer: "18/27", text: true, why: "2 × 9 = 18, 3 × 9 = 27입니다.", hint: "2 × 9, 3 × 9" }
+        { ask: "구하는 분수는? (분수로)", answer: "18/27", text: true, why: "2 × 9 = 18, 3 × 9 = 27입니다.", hint: "2 × 9, 3 × 9" }
       ]
     },
     check: [["c2-equivalent-condition", "concept"], ["c2-equivalent-condition", "type"], ["c2-equivalent-condition", "advanced"]]
@@ -108,18 +107,18 @@ export const PACKS = {
     explore: [["drill", "fraction", "분수 연습"]],
     proofs: [],
     summary: {
-      figure: board(["1/(□ × (□ + 1)) = 1/□ − 1/(□ + 1)"]),
+      figure: board(["1/(□ × (□ + 1))", "= 1/□ − 1/(□ + 1)"]),
       terms: [["부분분수", "하나의 분수를 두 분수의 차로 쪼갠 것"]],
-      facts: ["이웃한 두 수의 곱이 분모이면 <b>1/앞 − 1/뒤</b>로 쪼갠다", "차례로 쓰면 가운데 항이 지워져 <b>처음과 끝</b>만 남는다", "두 수의 차가 2, 3이면 쪼갠 값을 2, 3으로 나눈다"]
+      facts: ["이웃한 두 수의 곱이 분모이면 <b>1/(앞 수) − 1/(뒤 수)</b>로 쪼갠다", "차례로 쓰면 가운데 항이 지워져 <b>처음과 끝</b>만 남는다", "두 수의 차가 2, 3이면 쪼갠 값을 2, 3으로 나눈다"]
     },
-    pitfall: "지워지지 않고 남는 것은 맨 앞의 1/첫 수와 맨 뒤의 1/끝 수뿐입니다. 끝 수를 잘못 읽지 않습니다.",
+    pitfall: "지워지지 않고 남는 것은 맨 앞의 1/(첫 수)와 맨 뒤의 1/(끝 수)뿐입니다. 끝 수를 잘못 읽지 않습니다.",
     example: {
       prompt: "1/(1 × 2) + 1/(2 × 3) + … + 1/(9 × 10)을 계산하세요.",
-      figure: board(["(1/1 − 1/2) + (1/2 − 1/3) + … + (1/9 − 1/10)"]),
+      figure: board(["(1/1 − 1/2)", "+ (1/2 − 1/3)", "+ … + (1/9 − 1/10)"]),
       steps: [
         { ask: "1/(2 × 3) = 1/2 − 1/□ 의 □는?", answer: "3", why: "1/2 − 1/3 = 1/6입니다.", hint: "1/6" },
         { ask: "모두 지우고 남는 식 1 − 1/□ 의 □는?", answer: "10", why: "맨 앞 1/1과 맨 뒤 1/10만 남습니다.", hint: "끝 수" },
-        { ask: "답은? (분자/분모)", answer: "9/10", text: true, why: "1 − 1/10 = 9/10입니다.", hint: "10/10 − 1/10" }
+        { ask: "답은? (분수로)", answer: "9/10", text: true, why: "1 − 1/10 = 9/10입니다.", hint: "10/10 − 1/10" }
       ]
     },
     check: [["c2-partial-fraction-sum", "concept"], ["c2-partial-fraction-sum", "type"], ["c2-partial-fraction-sum", "advanced"]]
@@ -140,7 +139,7 @@ export const PACKS = {
       figure: board(["3 ÷ 8 = ?", "1/4 — ? — 3/4"]),
       steps: [
         { ask: "3/8을 소수로?", answer: "0.375", text: true, why: "3 ÷ 8 = 0.375입니다.", hint: "3 ÷ 8" },
-        { ask: "1/4과 3/4의 한가운데는? (분자/분모)", answer: "1/2", text: true, why: "(1/4 + 3/4) ÷ 2 = 1 ÷ 2 = 1/2입니다.", hint: "더해서 ÷ 2" }
+        { ask: "1/4과 3/4의 한가운데는? (분수로)", answer: "1/2", text: true, why: "(1/4 + 3/4) ÷ 2 = 1 ÷ 2 = 1/2입니다.", hint: "더해서 ÷ 2" }
       ]
     },
     check: [["c2-repeating-decimal", "concept"], ["number-line-midpoint-book6", "type"], ["c2-improper-fraction", "advanced"]]
