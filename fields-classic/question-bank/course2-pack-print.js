@@ -8,26 +8,47 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const strip = (html) => String(html ?? "").replace(/<[^>]+>/g, "");
 const fig = (f) => f ? `<div class="gold-print-visual tb-pack-fig">${typeof f === "function" ? f() : f}</div>` : "";
 
-// 칠판 꼴(원장 2026-11-22 「이런 식의 교재 디자인 구성」 → 「시범 한 차시만 더 보고 결정 · 색은 지금 인쇄 규칙」): 주소 &packlook=board일 때만.
-// 칠판 개념 상자(독쌤 + 제목 + 용어·성질 줄) → 그림·조심 → 나의 메모장(되짚기 한 문제) → 단계 칸 예제(①②③ 칸 채우기). 색은 종이색·깊은 초록·빨강 강조 그대로.
+// 개념 정리 새 꼴(원장 2026-11-22 「이런 식의 교재 디자인 구성」 → 시범 → 「왼쪽 한 칸 더 연습 · 표 안에 식이 잘 나와야지 식이 한 개씩밖에 안 나와 · 너무 구식이야」):
+// 주소 &packlook=board일 때만. 스킬 gfield-textbook-design 4절 교재형 — 옅은 초록 개념 상자(왼쪽 굵은 띠) → 식 띠(식 한 줄을 통째로) → 연습 두 칸(한 번 풀기 | 단계 칸 예제).
+// 얇은 선·여백만, 큰 카드·칠판 틀·그라데이션 없음. 색은 인쇄 규칙(종이 · 깊은 초록 · 감색 점 강조).
 const CIRCLED = ["①", "②", "③", "④", "⑤", "⑥"];
-// 칠판 꼴의 식 그림은 제 크기로 둔다 — gold-print-visual이면 쪽 채우기가 그림을 키워 보고 넘친다며 다음 쪽으로 미뤄 쪽 아래가 비었다
-const inlineFig = (f) => f ? `<div class="tb-pack-fig-inline">${typeof f === "function" ? f() : f}</div>` : "";
+// 식 칠판(pack-kit formulas)의 줄을 꺼내, + − = 로 시작하는 이어진 줄은 앞 줄에 붙여 식 하나를 한 줄로 만든다(화면 덱은 좁아서 나눠 둔 것)
+function equationLines(f) {
+  const html = typeof f === "function" ? f() : String(f || "");
+  if (!html.includes("pk-board-line")) return null;
+  const lines = [...html.matchAll(/<div class="pk-board-line">([\s\S]*?)<\/div>/g)].map((m) => m[1]);
+  return lines.reduce((out, line) => {
+    const lead = line.replace(/<[^>]+>/g, "").trim()[0];
+    if (out.length && "+−-=×÷…".includes(lead)) out[out.length - 1] += ` ${line}`; else out.push(line);
+    return out;
+  }, []);
+}
+const equationBand = (f, cls = "") => {
+  if (!f) return "";
+  const lines = equationLines(f);
+  if (lines) return `<div class="tb-eq-band ${cls}">${lines.map((l) => `<span class="tb-eq">${l}</span>`).join("")}</div>`;
+  return `<div class="tb-eq-band is-figure ${cls}">${typeof f === "function" ? f() : f}</div>`;
+};
 function boardItems(pack, k, answers) {
   const s = pack.summary, e = pack.example, r = pack.recall;
-  answers.push({ no: `메모장 ${k + 1}`, label: "개념 정리", html: `${M(esc(r.ask))} <b>${CIRCLED[r.answer] || ""} ${M(esc(r.options[r.answer]))}</b>` });
+  answers.push({ no: `한 번 풀기 ${k + 1}`, label: "개념 정리", html: `${M(esc(r.ask))} <b>${CIRCLED[r.answer] || ""} ${M(esc(r.options[r.answer]))}</b>` });
   answers.push({ no: `예제 ${k + 1}`, label: "개념 정리", html: e.steps.map((step, i) => `${CIRCLED[i] || ""} ${M(esc(strip(step.ask)))} <b>${M(esc(step.answer))}${esc(step.unit || "")}</b>`).join("<br>") });
-  const lines = [...(s.terms || []).map(([t, d]) => `<b>${esc(t)}</b> — ${M(d)}`), ...s.facts.map((f) => M(f))];
-  const board = `<section class="gold-print-source-item full-width-exercise tb-item tb-pack-board"><h2><span>개념 ${k + 1}</span>${esc(pack.title)}</h2>
-    <div class="tb-board"><img class="tb-board-teacher" src="./assets/docssam-math/A3-mouth-open.webp" alt=""><div class="tb-board-chalk"><h3>${esc(pack.title)}</h3><div class="tb-board-rule"></div>${lines.map((l) => `<p>${l}</p>`).join("")}</div></div>
-    <div class="tb-pack-row">${inlineFig(s.figure)}<div class="tb-pack-text">${pack.pitfall ? `<p class="tb-pack-pitfall"><b>조심</b> ${M(esc(pack.pitfall))}</p>` : ""}</div></div></section>`;
-  const memo = `<section class="gold-print-source-item full-width-exercise tb-item tb-pack-memo"><div class="tb-memo"><span class="tb-memo-cap">나의 메모장 · 한 문제</span>
-    <div class="tb-memo-body"><p>${M(r.text)}</p><p class="tb-memo-ask">${M(esc(r.ask))}</p><div class="tb-memo-opts">${r.options.map((o, i) => `<span>${CIRCLED[i]} ${M(esc(o))}</span>`).join("")}</div></div></div></section>`;
-  const train = `<section class="gold-print-source-item full-width-exercise tb-item tb-pack-train"><h2><span>예제 ${k + 1}</span>단계 칸 연습</h2>
-    <div class="tb-pack-row">${inlineFig(e.figure)}<div class="tb-pack-text"><p class="tb-pack-prompt">${M(e.prompt)}</p>
-      <ol class="tb-train-rows">${e.steps.map((step, i) => `<li><b>${CIRCLED[i] || i + 1}</b> ${M(step.ask)} <span class="tb-train-box"></span>${esc(step.unit || "")}</li>`).join("")}</ol>
-    </div></div></section>`;
-  return board + memo + train;
+  const concept = `<section class="gold-print-source-item full-width-exercise tb-item tb-nc">
+    <div class="tb-nc-box"><div class="tb-nc-head"><span class="tb-nc-tag">개념 ${k + 1}</span><h3>${esc(pack.title)}</h3><img class="tb-nc-teacher" src="./assets/docssam-math/A3-mouth-open.webp" alt=""></div>
+      ${s.terms?.length ? `<dl class="tb-nc-terms">${s.terms.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${M(d)}</dd></div>`).join("")}</dl>` : ""}
+      <ol class="tb-nc-facts">${s.facts.map((f) => `<li>${M(f)}</li>`).join("")}</ol>
+      ${pack.pitfall ? `<p class="tb-nc-pitfall"><b>조심</b>${M(esc(pack.pitfall))}</p>` : ""}
+    </div>${equationBand(s.figure)}</section>`;
+  const practice = `<section class="gold-print-source-item full-width-exercise tb-item tb-nc-practice">
+    <div class="tb-nc-cols">
+      <div class="tb-nc-col"><div class="tb-nc-cap"><span>한 번 풀기</span></div>
+        <p class="tb-nc-lead">${M(r.text)}</p><p class="tb-nc-ask">${M(esc(r.ask))}</p>
+        <div class="tb-nc-opts">${r.options.map((o, i) => `<span>${CIRCLED[i]} ${M(esc(o))}</span>`).join("")}</div></div>
+      <div class="tb-nc-col"><div class="tb-nc-cap"><span>예제 ${k + 1} · 단계 칸</span></div>
+        <p class="tb-nc-ask">${M(e.prompt)}</p>
+        <ol class="tb-nc-steps">${e.steps.map((step, i) => `<li><b>${CIRCLED[i] || i + 1}</b><span class="tb-nc-q">${M(step.ask)}</span><span class="tb-nc-ans"></span>${step.unit ? `<span class="tb-nc-unit">${esc(step.unit)}</span>` : ""}</li>`).join("")}</ol></div>
+    </div>${equationBand(e.figure, "is-hint")}</section>`;
+  return concept + practice;
 }
 
 export function packPrintPages(spec, { book, session, student = "", look = "" }) {
