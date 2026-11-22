@@ -230,7 +230,7 @@ async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson 
   }
   const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261110m");
   if (gameId.startsWith("b2-")) {
-    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261110m");
+    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261122zh");
     return mountLevelGame(host, BOOK02_LEVEL_GAMES[gameId], { single: false, saved, onQuestions, onComplete });
   }
   if (gameId.startsWith("b9-")) {
@@ -246,7 +246,7 @@ async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson 
   const { HANDS_ON_ACTIVITIES } = await import("./golden-bell-hands-on-models.js?v=20261023t");
   if (Object.hasOwn(HANDS_ON_ACTIVITIES, gameId)) {
     // 골든벨 「직접 해보기」 체험을 게임 칸(.gold-hands-on 안)에 바로 띄운다. 마지막 「연결 문제 풀기」를 누르면 골든벨 문제 칸으로 간다.
-    const { mountEmbedHandsOn } = await import("./golden-bell-hands-on.js?v=20261118b");
+    const { mountEmbedHandsOn } = await import("./golden-bell-hands-on.js?v=20261122zh");
     host.innerHTML = '<div class="hand-content"></div>';
     mountEmbedHandsOn(host.querySelector(".hand-content"), { active: gameId, states: saved.handsOn ||= {} }, () => onQuestions?.());
     return { dispose() {} };
