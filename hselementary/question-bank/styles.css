@@ -1715,3 +1715,5 @@ button{
 /* 2026-11-22: 한 문항이 A4 한 장을 넘지 않도록 인쇄 시 문제 그림의 최대 높이를 제한한다(비율 유지). */
 @media print{.question-prompt svg{max-height:130mm;width:auto;max-width:100%;height:auto}.print-page--four-up .question-prompt svg{max-height:62mm}}
 @media print{.print-page--paired .source62-sugar-packing-flow{grid-template-columns:minmax(0,1fr) 20px minmax(0,.72fr);gap:6px;padding:10px}.print-page--paired .source62-student-change-rows>span{grid-template-columns:52px minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr)}.print-page--paired .source62-student-change-rows strong,.print-page--paired .source62-student-change-rows b,.print-page--paired .source62-student-change-rows i{padding:8px 4px;overflow-wrap:anywhere}}
+@media print{.print-page--fit .question-prompt svg,.print-page--fit .question-prompt img{max-height:150mm!important;width:auto!important;max-width:100%!important;height:auto!important}}
+@media print{.print-page--fit-tight .question-prompt svg,.print-page--fit-tight .question-prompt img{max-height:100mm!important}}

@@ -12,6 +12,9 @@
 - Mac에서 감사 실행: 많은 감사가 Windows 기본값(`C:/Program Files/...chrome.exe`, codex 런타임 Playwright 경로, `127.0.0.1:8878` 등 고정 포트, `E:` 증거 폴더)을 쓴다. Mac에서는 환경 변수로 바꿔 실행한다: `HSE_PLAYWRIGHT_PATH`(playwright 모듈 경로), `HSE_CHROMIUM_EXECUTABLE`(Playwright Chromium 실행 파일), `HSE_URL`·`HSE_BASE_URL`·`HSE_BANK_URL`·`HSE_AUDIT_ORIGIN`(로컬 서버 주소), `HSE_SCREENSHOT_DIR`·`MAC_CHECK_OUTPUT`(저장소 밖 출력 폴더), `HSE_PDFINFO_EXECUTABLE`. 이렇게 실행하면 재실행 목록 661개 중 498개가 통과한다(병합 전 main과 같은 통과 목록에 환경 문제로 실패하던 102개 추가).
 - 남은 실패 163개(병합 전 main에서도 실패): ① Windows `E:`/`G:` 증거 폴더나 별도 봉인 보고서가 있어야 하는 증거 감사, ② 이번 공개 전의 잠금 상태(잠금 체크박스·미리보기 표시·공개/잠금 개수)를 고정한 감사, ③ curriculum.js+generators.js만 읽어 원문 플러그인 유형이 null이 되는 옛 일괄 감사, ④ 표기 차이만 다른 독립 검산(예: 정답 `1 1/4`와 검산 `5/4`, 정확한 값 `14.625`와 반올림 `14.63`, `%`와 `%p`). 표본으로 확인한 범위에서는 정답 내용 오류가 아니었다. 감사 기대값 정리는 별도 작업으로 남긴다.
 - 남은 사항: 감사 일부가 Windows 기본 출력 경로로 저장소 루트에 `E:/` 폴더를 만든다. 커밋하지 말 것(로컬 .git/info/exclude에 추가함).
+- 한 문항 쪽 맞춤(추가): 쪽 나눔 뒤 한 문항만 남은 쪽이 넘치면 4문항 고정 칸(`print-page--four-up`)과 2열(`print-page--paired`)을 차례로 풀고, 그래도 넘치면 문제 그림 최대 높이를 150mm(`print-page--fit`), 100mm(`print-page--fit-tight`)로 줄인다(비율 유지). 마지막까지 넘칠 때만 `print-page--oversize`를 붙인다.
+- 최종 인쇄 결과: 전 유형 3006개 186묶음 인쇄에서 문제지 93묶음 모두 DOM 쪽 수 = 실제 PDF 쪽 수, oversize 0, 가로 잘림 0, 쪽 밖 넘침 0. 남은 tallPage 표시 2건은 화면 폭(779px) 에뮬레이션에서만 2열이 되어 생기는 것이고 실제 PDF 쪽 수는 맞다.
+- 최종 Node 감사(재실행 목록 661개, Mac 환경 변수): 497개 통과. 병합 전 main 통과 목록에서 빠진 것은 `source-5-2-u5-check113-arrow-practice-browser-audit.js` 1개뿐인데, 이는 `MAC_CHECK_OUTPUT`이 있을 때만 하는 풀이 PDF 4쪽 검사가 병합 전 main에서도 같은 3쪽으로 실패하는 것이다(정답·풀이 쪽은 2026-11-05부터 인쇄에서 이어 흐르게 되어 짧은 풀이 두 개가 한 장에 들어간다. 잘림 아님). 기준 목록은 이 검사를 건너뛴 실행이라 통과로 기록되어 있었다.
 
 ## 2026-11-22 — 4~6학년 잠금 유형 일괄 검수·공개 (Claude Code / Opus 5.5, Mac, 하위 에이전트 병렬)
 

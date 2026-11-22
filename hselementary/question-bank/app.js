@@ -1075,8 +1075,16 @@
         const label = page.querySelector(".page-label");
         if (label) label.textContent = `${labelPrefix} ${index + 1}`;
         const list = page.querySelector(listSelector);
-        // 한 문항이 혼자 A4보다 길면 문항 안에서 다음 장으로 이어지게 해 이름표만 남는 빈 장을 막는다.
-        page.classList.toggle("print-page--oversize", Boolean(list) && list.querySelectorAll(`:scope > ${itemSelector}`).length === 1 && overflows(page));
+        const single = Boolean(list) && list.querySelectorAll(`:scope > ${itemSelector}`).length === 1;
+        // 한 문항만 남은 쪽이 4문항 고정 칸(2×2) 때문에 넘치면 일반 쪽으로 되돌린다.
+        if (single && page.classList.contains("print-page--four-up") && overflows(page)) page.classList.remove("print-page--four-up");
+        // 한 문항이 2열의 반쪽 폭에 있으면 길어지므로 전체 폭으로 펼친다.
+        if (single && page.classList.contains("print-page--paired") && overflows(page)) page.classList.remove("print-page--paired");
+        // 그림이 커서 한 문항이 A4를 넘으면 먼저 그림을 줄여 한 장에 맞춘다.
+        if (single && !page.classList.contains("print-page--fit") && overflows(page)) page.classList.add("print-page--fit");
+        if (single && page.classList.contains("print-page--fit") && overflows(page)) page.classList.add("print-page--fit-tight");
+        // 그래도 길면 문항 안에서 다음 장으로 이어지게 해 이름표만 남는 빈 장을 막는다.
+        page.classList.toggle("print-page--oversize", single && overflows(page));
       });
     } finally {
       probe.dispose();
