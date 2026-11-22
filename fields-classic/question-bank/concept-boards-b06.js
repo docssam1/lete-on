@@ -237,7 +237,8 @@ export const BOARDS_B06 = {
   ,"book-06/bar-balance-ratio-source": (() => {
     const nBox = 4, TOT = 35, part = TOT / (nBox + 1);
     const S = { cx: 300, cy: 230 };
-    const pan = (x, y) => ({ kind: "path", d: `M ${x - 90} ${y + 20} Q ${x} ${y + 64} ${x + 90} ${y + 20}`, stroke: "ink", width: 3 });
+    // 접시는 곡선 없이 평평한 판(원장 2026-11-22 「양팔저울 곡선 넣지마」): 줄 둘 + 납작한 사다리꼴
+    const pan = (x, y) => ({ kind: "path", d: `M ${x} ${y} L ${x - 90} ${y + 42} M ${x} ${y} L ${x + 90} ${y + 42} M ${x - 90} ${y + 42} L ${x + 90} ${y + 42} L ${x + 78} ${y + 52} L ${x - 78} ${y + 52} Z`, stroke: "ink", width: 3 });
     const CHK = { ball: 2, marble: 7 };
     const RX = 560;
     return {

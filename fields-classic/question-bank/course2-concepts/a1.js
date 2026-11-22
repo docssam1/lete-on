@@ -27,9 +27,10 @@ const figRows = () => {
 const piece = (x, y, g) => g === "△" ? `<polygon points="${x},${y - 9} ${x + 9},${y + 7} ${x - 9},${y + 7}" fill="#f4b860" stroke="#8a5a1e" stroke-width="1.3" stroke-linejoin="round" ${SHADOW}/>`
   : g === "□" ? rect(x - 8, y - 8, 16, 16, { fill: "#cfe3f3", color: "#2f5f8a", width: 1.3, rx: 2, shadow: true })
   : `<circle cx="${x}" cy="${y}" r="8" fill="${g === "●" ? "#2b3330" : "#fbfbf8"}" stroke="${g === "●" ? "#1a201e" : "#7a8580"}" stroke-width="1.3" ${SHADOW}/>`;
-const pan = (cx, items) => line(P(cx - 34, 76), P(cx, 40), { color: "#9aa39e", width: 1.1 }) + line(P(cx + 34, 76), P(cx, 40), { color: "#9aa39e", width: 1.1 })
-  + `<path d="M ${cx - 44} 76 Q ${cx} 100 ${cx + 44} 76 Z" fill="${SOFT}" stroke="#4d6b5a" stroke-width="1.5" stroke-linejoin="round" ${SHADOW}/>`
-  + items.map((g, i) => piece(cx - (items.length - 1) * 10 + i * 20, 68, g)).join("");
+// 접시는 곡선 없이 평평한 판(원장 2026-11-22 「양팔저울 곡선 넣지마」)
+const pan = (cx, items) => line(P(cx - 44, 80), P(cx, 40), { color: "#9aa39e", width: 1.1 }) + line(P(cx + 44, 80), P(cx, 40), { color: "#9aa39e", width: 1.1 })
+  + `<polygon points="${cx - 46},80 ${cx + 46},80 ${cx + 38},88 ${cx - 38},88" fill="${SOFT}" stroke="#4d6b5a" stroke-width="1.5" stroke-linejoin="round" ${SHADOW}/>`
+  + items.map((g, i) => piece(cx - (items.length - 1) * 10 + i * 20, 71, g)).join("");
 const figBalance = (left = ["○", "○"], right = ["△"]) => svg(320, 140,
   `<polygon points="160,44 150,124 170,124" fill="#c9b48a" stroke="#7a6a4a" stroke-width="1.3"/>` + rect(118, 124, 84, 10, { fill: "#d9b37c", color: "#7a6a4a", width: 1.3, rx: 4, shadow: true })
   + line(P(70, 40), P(250, 40), { color: "#4d5a53", width: 4 }) + `<circle cx="160" cy="40" r="5" fill="#f4b860" stroke="#7a5a1e" stroke-width="1.2"/>`

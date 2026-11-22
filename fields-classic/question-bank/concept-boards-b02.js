@@ -257,8 +257,9 @@ export const BOARDS_B02 = {
       out.push({ kind: "path", d: `M ${cx} ${cy} L ${cx - 26} ${cy + 70} L ${cx + 26} ${cy + 70} Z`, stroke: "gray", width: 3, quick: true });
       out.push({ kind: "line", x1: L[0], y1: L[1], x2: R[0], y2: R[1], color, width: 4 });
       for (const [[x, y], stuff] of [[L, left], [R, right]]) {
-        out.push({ kind: "line", x1: x, y1: y, x2: x, y2: y + 22, color: "gray", width: 2 });
-        out.push({ kind: "path", d: `M ${x - 58} ${y + 22} Q ${x} ${y + 66} ${x + 58} ${y + 22}`, stroke: color, width: 3 });
+        // 접시는 곡선 없이 평평한 판(원장 2026-11-22 「양팔저울 곡선 넣지마」)
+        out.push({ kind: "path", d: `M ${x} ${y} L ${x - 58} ${y + 44} M ${x} ${y} L ${x + 58} ${y + 44}`, stroke: "gray", width: 2 });
+        out.push({ kind: "path", d: `M ${x - 58} ${y + 44} L ${x + 58} ${y + 44} L ${x + 48} ${y + 53} L ${x - 48} ${y + 53} Z`, stroke: color, width: 3 });
         if (typeof stuff === "string") out.push(T(x, y + 38, stuff, "blue", 28, "center"));
         else stuff.forEach((type, i) => out.push({ kind: "shape", type, cx: x + (i - (stuff.length - 1) / 2) * 26, cy: y + 30, r: 10, color: "blue", width: 2.5, quick: true }));
       }
