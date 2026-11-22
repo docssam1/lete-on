@@ -8,7 +8,10 @@
 // 방식이 정해져 있으면 그것이 먼저다. 없으면 이메일 가입 회원은 위 체험·정규 규칙, 원장이 직접 만든 승인번호(모의고사 회원 등)는
 // GM이 열리지 않는다(reason gm_none — 화면이 둘러보기처럼 1권 1단원만 연다. 원장 2026-11-14 「GM은 따로 켜야 열림」).
 // 승인번호 없이 「둘러보기」(로그인 안 함)는 1권 1단원만 — 그건 화면(fields-access.js)이 막는다.
-export const FIELDS_BOOKS = ["book-01", "book-02", "book-03", "book-04", "book-05", "book-06", "book-07", "book-08", "book-09", "book-10"];
+// 1과정 10권 뒤에 2과정 10권 — 권 차례는 기하·대수 번갈아 G1 → A1 → G2 → … → G5 → A5(원장 2026-11-21, DESIGN-COURSE2.md 9절).
+// 「기간」 방식의 한 달에 1권씩도 이 차례를 그대로 잇는다.
+export const FIELDS_BOOKS = ["book-01", "book-02", "book-03", "book-04", "book-05", "book-06", "book-07", "book-08", "book-09", "book-10",
+  "course-02-g1", "course-02-a1", "course-02-g2", "course-02-a2", "course-02-g3", "course-02-a3", "course-02-g4", "course-02-a4", "course-02-g5", "course-02-a5"];
 export const TRIAL_DAYS = 14;
 
 // 달 수(달력 기준): 1월 15일 → 2월 15일이 1달

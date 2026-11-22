@@ -1,10 +1,10 @@
-import { CURRICULUM, typeById, bookById } from "./source-data.js?v=20261122b";
+import { CURRICULUM, GM_PATH, typeById, bookById } from "./source-data.js?v=20261122c";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261121a";
 import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261122b";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261117a";
 import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261105a";
 import { canStudy, lockPage, canTeach } from "./fields-access.js?v=20261118a";
-import { planStatus, dayLabel } from "./study-plan.js?v=20261122b";
+import { planStatus, dayLabel } from "./study-plan.js?v=20261122c";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -705,7 +705,7 @@ function nextDayMarkup() {
   const plan = readRecord(student, "plan", "main");
   if (!plan?.start || !plan.from) return "";
   try {
-    const status = planStatus(CURRICULUM, plan, (bookId, unit) => readRecord(student, "week", `${bookId}-u${unit}`));
+    const status = planStatus(GM_PATH, plan, (bookId, unit) => readRecord(student, "week", `${bookId}-u${unit}`));
     return status.nextDate && status.state !== "done" ? `<p class="sd-end-next">다음 공부는 <b>${esc(dayLabel(status.nextDate))}</b>이에요.</p>` : "";
   } catch { return ""; }
 }
