@@ -141,7 +141,7 @@ function c2EquivalentCondition({ difficulty = 2 }) {
     return problem({
       prompt: `분수 ${a}/${b}의 분자와 분모에 같은 수를 더했더니 ${p}/${q}와 크기가 같아졌습니다. 더한 수를 구하세요.`,
       subtype: "equivalent", html: board([`(${a} + □)/(${b} + □) = ${p}/${q}`]), answer: t,
-      solution: `분자와 분모에 같은 수를 더해도 분모와 분자의 차 ${b - a}는 그대로입니다. ${p}/${q}와 크기가 같고 차가 ${b - a}인 분수는 ${p * k}/${q * k}(차 ${(q - p) * k})이므로 ${a} + □ = ${p * k}, □ = ${t}입니다.`,
+      solution: `분자와 분모에 같은 수를 더해도 분모와 분자의 차 ${b - a}는 그대로입니다. ${p}/${q}와 크기가 같고 차가 ${b - a}인 분수는 ${p * k}/${q * k} (차 ${(q - p) * k})이므로 ${a} + □ = ${p * k}, □ = ${t}입니다.`,
       family: "c2-equivalent", meta: { a, b, t }
     });
   }

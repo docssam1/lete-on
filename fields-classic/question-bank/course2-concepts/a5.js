@@ -1,9 +1,9 @@
 // 2과정 A5 「소인수분해와 비」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 분수·거듭제곱은 「3/5」「2^3」으로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, YELLOW, formulas } from "./pack-kit.js?v=20261122i";
+import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, YELLOW, formulas, mathLabel } from "./pack-kit.js?v=20261122i";
 
-const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
+const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
 const figTree = () => svg(300, 150, text(150, 20, "72", { size: 18, weight: 700 }) + line(P(140, 30), P(110, 56)) + line(P(160, 30), P(190, 56))
   + text(104, 66, "8", { size: 17 }) + text(196, 66, "9", { size: 17 }) + line(P(98, 76), P(80, 100)) + line(P(110, 76), P(126, 100)) + line(P(190, 76), P(176, 100)) + line(P(202, 76), P(218, 100))

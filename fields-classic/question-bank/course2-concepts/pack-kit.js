@@ -92,3 +92,37 @@ export function digital(d, x, y, { w = 30, h = 54, color = INK, width = 5, mirro
 // 식 칠판 — 줄마다 식 하나. SVG 글자로는 분수를 쌓을 수 없어 HTML + 공통 수식(math-markup)으로 그린다(빗금 분수 금지).
 // 「3/5」「1/(□ × (□ + 1))」「2^5」는 수식으로, 나머지 글은 그대로. 모양은 course2-pack.css · golden-bell-print-layout.css 의 .pk-board.
 export const formulas = (lines) => `<div class="pk-board" role="img" aria-label="식">${lines.map((t) => `<div class="pk-board-line">${mathText(esc(t))}</div>`).join("")}</div>`;
+
+// 그림(SVG) 속 수식 글 — SVG 안에는 MathML을 넣지 않으므로(math-markup.js 약속) 분수는 위아래로 쌓아 가로줄을, 거듭제곱은 작게 올려 그린다.
+// 「1/3 사용」「72 = 2^3 × 3^2」처럼 글과 섞어 쓴다. 분수 칸은 수·□, 지수는 수·□·글자 하나.
+const TOKEN = /(\d+|□)\/(\d+|□)|(\d+|[A-Za-z□])\^(\d+|□|[A-Za-z])/g;
+const glyph = (ch, size) => (/[가-힣ㄱ-ㅎ]/.test(ch) ? size * 0.96 : /\s/.test(ch) ? size * 0.3 : /[×÷=+−→□]/.test(ch) ? size * 0.78 : size * 0.58);
+const runWidth = (str, size) => [...str].reduce((w, ch) => w + glyph(ch, size), 0);
+export function mathLabel(x, y, value, { size = 16, anchor = "middle", color = INK, weight = 600 } = {}) {
+  const parts = []; let last = 0;
+  for (const m of String(value).matchAll(TOKEN)) {
+    if (m.index > last) parts.push({ kind: "run", t: String(value).slice(last, m.index) });
+    parts.push(m[1] ? { kind: "frac", n: m[1], d: m[2] } : { kind: "pow", b: m[3], e: m[4] });
+    last = m.index + m[0].length;
+  }
+  if (last < String(value).length) parts.push({ kind: "run", t: String(value).slice(last) });
+  const small = size * 0.8, sup = size * 0.62;
+  const widthOf = (p) => (p.kind === "run" ? runWidth(p.t, size) : p.kind === "frac" ? Math.max(runWidth(p.n, small), runWidth(p.d, small)) + size * 0.3 : runWidth(p.b, size) + runWidth(p.e, sup) + 1);
+  const total = parts.reduce((w, p) => w + widthOf(p), 0);
+  let cx = anchor === "middle" ? x - total / 2 : anchor === "end" ? x - total : x;
+  const t = (px, py, str, sz, a = "start") => `<text x="${f1(px)}" y="${f1(py)}" font-size="${f1(sz)}" text-anchor="${a}" dominant-baseline="central" fill="${color}" font-weight="${weight}">${esc(str)}</text>`;
+  let out = "";
+  for (const p of parts) {
+    const w = widthOf(p);
+    if (p.kind === "run") out += t(cx, y, p.t, size);
+    else if (p.kind === "frac") {
+      const mid = cx + w / 2;
+      out += t(mid, y - small * 0.62, p.n, small, "middle") + `<line x1="${f1(cx + size * 0.08)}" y1="${f1(y)}" x2="${f1(cx + w - size * 0.08)}" y2="${f1(y)}" stroke="${color}" stroke-width="${f1(Math.max(1.2, size / 13))}"/>` + t(mid, y + small * 0.66, p.d, small, "middle");
+    } else {
+      const bw = runWidth(p.b, size);
+      out += t(cx, y, p.b, size) + t(cx + bw + 1, y - size * 0.42, p.e, sup);
+    }
+    cx += w;
+  }
+  return `<g role="img" aria-label="${esc(value)}">${out}</g>`;
+}

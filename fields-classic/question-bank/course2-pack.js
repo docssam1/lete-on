@@ -86,7 +86,7 @@ export function mountPackCard(host, { board = "", onStep = () => {}, onDone = ()
       button.classList.toggle("is-wrong", !right);
       feedback.hidden = false;
       feedback.className = `pk-feedback ${right ? "is-right" : "is-wrong"}`;
-      feedback.innerHTML = right ? `맞아요! ${r.why}` : `다시 생각해 봐요. ${r.hint || r.why}`;
+      feedback.innerHTML = right ? `맞아요! ${M(r.why)}` : `다시 생각해 봐요. ${M(r.hint || r.why)}`;
       if (right && !done) { done = true; onDone(); }
       onStep();
     }));
@@ -96,7 +96,7 @@ export function mountPackCard(host, { board = "", onStep = () => {}, onDone = ()
     host.querySelectorAll(".pk-opt").forEach((b) => b.classList.toggle("is-right", Number(b.dataset.k) === r.answer));
     const feedback = host.querySelector(".pk-feedback");
     feedback.hidden = false; feedback.className = "pk-feedback is-right";
-    feedback.innerHTML = `답은 「${esc(r.options[r.answer])}」예요. ${r.why}`;
+    feedback.innerHTML = `답은 「${M(esc(r.options[r.answer]))}」예요. ${M(r.why)}`;
     done = true;
   }
 
@@ -118,7 +118,7 @@ export function mountPackCard(host, { board = "", onStep = () => {}, onDone = ()
     li.classList.add("is-done");
     const msg = li.querySelector(".pk-step-msg");
     msg.hidden = false; msg.className = "pk-step-msg is-right";
-    msg.innerHTML = `${right ? "맞아요! " : ""}<b>까닭</b> ${step.why}`;
+    msg.innerHTML = `${right ? "맞아요! " : ""}<b>까닭</b> ${M(step.why)}`;
   }
   function bindExample() {
     stepEls().forEach((li, k) => {
@@ -133,7 +133,7 @@ export function mountPackCard(host, { board = "", onStep = () => {}, onDone = ()
         } else {
           const msg = li.querySelector(".pk-step-msg");
           msg.hidden = false; msg.className = "pk-step-msg is-wrong";
-          msg.innerHTML = input.value.trim() ? `다시 해 봐요. ${step.hint || step.why}` : "답을 써 보고 「확인」을 눌러요.";
+          msg.innerHTML = input.value.trim() ? `다시 해 봐요. ${M(step.hint || step.why)}` : "답을 써 보고 「확인」을 눌러요.";
         }
         onStep();
       };

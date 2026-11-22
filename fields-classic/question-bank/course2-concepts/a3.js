@@ -1,9 +1,9 @@
 // 2과정 A3 「규칙성과 수열」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 분수는 「3/5」로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, rect, circle, line, grid, dot, P, INK, GREEN, SOFT, MARK, YELLOW, formulas } from "./pack-kit.js?v=20261122i";
+import { svg, text, rect, circle, line, grid, dot, P, INK, GREEN, SOFT, MARK, YELLOW, formulas, mathLabel } from "./pack-kit.js?v=20261122i";
 
-const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
+const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
 const figRows = () => {
   const rows = ["1", "2 3 4", "5 6 7 8 9", "10 … 16"];
@@ -282,7 +282,7 @@ export const PACKS = {
       prompt: "가로 2칸, 세로 2칸인 바둑판 길에서 가운데 점을 지나지 못할 때, A에서 B까지 가장 짧은 길은 몇 가지인가요?",
       figure: figPaths(true),
       steps: [
-        { ask: "막힘이 없을 때 전체는?", answer: "6", unit: "가지", why: "1, 2 / 1, 3, 6으로 더하면 6입니다.", hint: "2칸 × 2칸" },
+        { ask: "막힘이 없을 때 전체는?", answer: "6", unit: "가지", why: "윗줄 1, 2와 아랫줄 1, 3, 6으로 더해 가면 6입니다.", hint: "2칸 × 2칸" },
         { ask: "가운데 점을 지나는 길은?", answer: "4", unit: "가지", why: "A → 가운데 2가지 × 가운데 → B 2가지입니다.", hint: "2 × 2" },
         { ask: "답은?", answer: "2", unit: "가지", why: "6 − 4 = 2입니다(가장자리로만 도는 두 길).", hint: "6 − 4" }
       ]

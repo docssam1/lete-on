@@ -1,8 +1,8 @@
 // 2과정 A4 「마방진, 복면산과 비」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
-import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, MARK, YELLOW, formulas } from "./pack-kit.js?v=20261122i";
+import { svg, text, rect, circle, line, P, INK, GREEN, SOFT, MARK, YELLOW, formulas, mathLabel } from "./pack-kit.js?v=20261122i";
 
-const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
+const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
 const figMagic = (cells = [2, 7, 6, 9, 5, 1, 4, 3, 8]) => () => svg(300, 150, cells.map((v, i) => rect(20 + (i % 3) * 40, 14 + Math.floor(i / 3) * 40, 40, 40, { fill: i === 4 ? YELLOW : "#fff" }) + text(40 + (i % 3) * 40, 34 + Math.floor(i / 3) * 40, v === null ? "" : String(v), { size: 18 })).join("")
   + label(220, 50, "가로·세로·대각선") + label(220, 74, "합이 모두 15"), "3×3 마방진");
