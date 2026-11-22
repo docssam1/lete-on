@@ -11,6 +11,8 @@ const fig = (f) => f ? `<div class="gold-print-visual tb-pack-fig">${typeof f ==
 // 칠판 꼴(원장 2026-11-22 「이런 식의 교재 디자인 구성」 → 「시범 한 차시만 더 보고 결정 · 색은 지금 인쇄 규칙」): 주소 &packlook=board일 때만.
 // 칠판 개념 상자(독쌤 + 제목 + 용어·성질 줄) → 그림·조심 → 나의 메모장(되짚기 한 문제) → 단계 칸 예제(①②③ 칸 채우기). 색은 종이색·깊은 초록·빨강 강조 그대로.
 const CIRCLED = ["①", "②", "③", "④", "⑤", "⑥"];
+// 칠판 꼴의 식 그림은 제 크기로 둔다 — gold-print-visual이면 쪽 채우기가 그림을 키워 보고 넘친다며 다음 쪽으로 미뤄 쪽 아래가 비었다
+const inlineFig = (f) => f ? `<div class="tb-pack-fig-inline">${typeof f === "function" ? f() : f}</div>` : "";
 function boardItems(pack, k, answers) {
   const s = pack.summary, e = pack.example, r = pack.recall;
   answers.push({ no: `메모장 ${k + 1}`, label: "개념 정리", html: `${M(esc(r.ask))} <b>${CIRCLED[r.answer] || ""} ${M(esc(r.options[r.answer]))}</b>` });
@@ -18,11 +20,11 @@ function boardItems(pack, k, answers) {
   const lines = [...(s.terms || []).map(([t, d]) => `<b>${esc(t)}</b> — ${M(d)}`), ...s.facts.map((f) => M(f))];
   const board = `<section class="gold-print-source-item full-width-exercise tb-item tb-pack-board"><h2><span>개념 ${k + 1}</span>${esc(pack.title)}</h2>
     <div class="tb-board"><img class="tb-board-teacher" src="./assets/docssam-math/A3-mouth-open.webp" alt=""><div class="tb-board-chalk"><h3>${esc(pack.title)}</h3><div class="tb-board-rule"></div>${lines.map((l) => `<p>${l}</p>`).join("")}</div></div>
-    <div class="tb-pack-row">${fig(s.figure)}<div class="tb-pack-text">${pack.pitfall ? `<p class="tb-pack-pitfall"><b>조심</b> ${M(esc(pack.pitfall))}</p>` : ""}</div></div></section>`;
+    <div class="tb-pack-row">${inlineFig(s.figure)}<div class="tb-pack-text">${pack.pitfall ? `<p class="tb-pack-pitfall"><b>조심</b> ${M(esc(pack.pitfall))}</p>` : ""}</div></div></section>`;
   const memo = `<section class="gold-print-source-item full-width-exercise tb-item tb-pack-memo"><div class="tb-memo"><span class="tb-memo-cap">나의 메모장 · 한 문제</span>
     <div class="tb-memo-body"><p>${M(r.text)}</p><p class="tb-memo-ask">${M(esc(r.ask))}</p><div class="tb-memo-opts">${r.options.map((o, i) => `<span>${CIRCLED[i]} ${M(esc(o))}</span>`).join("")}</div></div></div></section>`;
   const train = `<section class="gold-print-source-item full-width-exercise tb-item tb-pack-train"><h2><span>예제 ${k + 1}</span>단계 칸 연습</h2>
-    <div class="tb-pack-row">${fig(e.figure)}<div class="tb-pack-text"><p class="tb-pack-prompt">${M(e.prompt)}</p>
+    <div class="tb-pack-row">${inlineFig(e.figure)}<div class="tb-pack-text"><p class="tb-pack-prompt">${M(e.prompt)}</p>
       <ol class="tb-train-rows">${e.steps.map((step, i) => `<li><b>${CIRCLED[i] || i + 1}</b> ${M(step.ask)} <span class="tb-train-box"></span>${esc(step.unit || "")}</li>`).join("")}</ol>
     </div></div></section>`;
   return board + memo + train;
