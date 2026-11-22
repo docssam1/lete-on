@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261122a";
+import { CURRICULUM } from "./source-data.js?v=20261122b";
 import { memberCall } from "./study-progress.js?v=20261117a";
 import { FIELDS_BOOKS, membershipSummary, directSummary } from "./gm-plan.js?v=20261114a";
 import { ENTRANCE_PRODUCTS, BANK_ID } from "./entrance-products.js?v=20261116b";
