@@ -22674,9 +22674,9 @@
           { slowDist: 10.8, slowMin: 15, fastDist: 42, fastMin: 28, delay: 25, elapsed: 65, answer: 32.7 }
         ],
         [
-          { divisor: 12, target: 4.39, lower: 52.62, upperExclusive: 52.74, count: 12 },
+          { divisor: 12, target: 4.39, lower: 52.62, upperExclusive: 52.74, count: 11 },
           { divisor: 8, target: 3.27, lower: 26.12, upperExclusive: 26.20, count: 8 },
-          { divisor: 16, target: 5.84, lower: 93.36, upperExclusive: 93.52, count: 16 }
+          { divisor: 16, target: 5.84, lower: 93.36, upperExclusive: 93.52, count: 14 }
         ],
         [
           { aKmPerL: 12.4, aLiters: 15.3, bKmPerL: 18, price: 1600, answer: 16864 },
@@ -22722,7 +22722,8 @@
       if (variant === 1) {
         const d = pools;
         const lowerCents = Math.round(d.lower * 100), upperCents = Math.round(d.upperExclusive * 100);
-        const candidates = Array.from({ length: upperCents - lowerCents }, (_, index) => (lowerCents + index) / 100);
+        // 소수 두 자리 수는 소수 둘째 자리 숫자가 0이 아니다(예: 52.70은 52.7과 같은 소수 한 자리 수).
+        const candidates = Array.from({ length: upperCents - lowerCents }, (_, index) => lowerCents + index).filter(cents => cents % 10 !== 0).map(cents => cents / 100);
         ensure(candidates.length, d.count, "가능한 수 개수");
         const rangeSvg = solved => svg("반올림 범위 수직선", `<line class="source61-e2-number-line" x1="42" y1="89" x2="318" y2="89"/><path class="source61-e2-arrow" d="M306 83l12 6-12 6"/><line class="source61-e2-range" x1="64" y1="89" x2="296" y2="89"/><circle class="source61-e2-endpoint is-closed" cx="64" cy="89" r="7"/><circle class="source61-e2-endpoint is-open" cx="296" cy="89" r="7"/><text x="64" y="57">${fixed2(d.lower)}</text><text x="296" y="57">${fixed2(d.upperExclusive)}</text><text x="64" y="116">포함</text><text x="296" y="116">제외</text><text x="180" y="146">소수 둘째 자리 수만 확인</text>${solved ? `<text class="source61-e2-result" x="180" y="177">가능한 수 ${d.count}개</text>` : ""}`, solved, [d.divisor, d.target, d.lower, d.upperExclusive, d.count], "0 0 360 195");
         const answerVisual = `${rangeSvg(true)}${mathBoard("가능한 수 표", row("포함 범위", `${fixed2(d.lower)} ≤ 수 &lt; ${fixed2(d.upperExclusive)}`) + row("확인한 수", candidates.map(fixed2).join(", ")) + row("개수", `${d.count}개`))}`;
@@ -28615,8 +28616,8 @@
         const rows = labels.map((label, index) => ({ label, value: values[index], solved: values[index] === least }));
         const promptVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, false, "", { symbolShapes: ["leaf", "leaf", "leaf"] });
         const leastLabel = labels[values.slice(0, 4).indexOf(least)];
-        const answerVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, true, `${leastLabel}의 이튿날 양 ${number(answerValue)}kg`, { symbolShapes: ["leaf", "leaf", "leaf"] });
-        return fixedResult(`가, 나, 다, 라 네 동네가 하루 동안 캔 고구마의 양을 나타낸 그림그래프입니다. 가장 적은 동네가 이튿날 고구마를 더 캤더니 네 동네가 캔 고구마 양은 전날보다 평균 ${values[4]}kg 많아졌습니다. 이튿날 고구마를 캔 동네는 어느 동네이고, 그 동네가 캔 고구마는 몇 kg인가요?`, `${leastLabel} ${number(answerValue)}kg`, `네 동네의 평균이 ${values[4]}kg 늘었으므로 전체 양은 ${values[4]}×4=${values[4] * 4}kg 늘었습니다. 가장 적은 ${leastLabel} 동네가 전날 ${least}kg을 캤으므로 이튿날에는 ${least}+${values[4] * 4}=${answerValue}kg을 캤습니다.`, promptVisual, answerVisual, values, "ordered-tuple");
+        const answerVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, true, `${leastLabel}의 이틀 동안 양 ${number(answerValue)}kg`, { symbolShapes: ["leaf", "leaf", "leaf"] });
+        return fixedResult(`가, 나, 다, 라 네 동네가 하루 동안 캔 고구마의 양을 나타낸 그림그래프입니다. 가장 적은 동네가 이튿날 고구마를 더 캤더니 네 동네가 캔 고구마 양은 전날보다 평균 ${values[4]}kg 많아졌습니다. 이튿날 고구마를 캔 동네는 어느 동네이고, 그 동네가 이틀 동안 캔 고구마는 모두 몇 kg인가요?`, `${leastLabel} ${number(answerValue)}kg`, `네 동네의 평균이 ${values[4]}kg 늘었으므로 전체 양은 ${values[4]}×4=${values[4] * 4}kg 늘었습니다. 가장 적은 ${leastLabel} 동네가 전날 ${least}kg을 캤으므로 이튿날 ${values[4] * 4}kg을 더 캐서 이틀 동안 ${least}+${values[4] * 4}=${answerValue}kg을 캤습니다.`, promptVisual, answerVisual, values, "ordered-tuple");
       }
 
       if (variant === 5) {
@@ -29060,7 +29061,7 @@
 
       if (variant === 3) {
         const pools = [
-          { length: 20, rose: 8, other: 5, balmHalf: true, ratio: [5, 2], roseCount: 8, segments: [40, 25, 20, 10, 5], total: 40 },
+          { length: 20, rose: 8, other: 5, balmHalf: true, ratio: [5, 2], roseCount: 10, segments: [40, 25, 20, 10, 5], total: 40 },
           { length: 25, rose: 10, other: 8, balmHalf: true, ratio: [3, 1], roseCount: 12, segments: [40, 24, 20, 8, 8], total: 50 },
           { length: 30, rose: 9, other: 10, balmHalf: true, ratio: [2, 1], roseCount: 24, segments: [30, 30, 15, 15, 10], total: 80 }
         ][poolIndex];
