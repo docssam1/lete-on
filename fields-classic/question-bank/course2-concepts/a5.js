@@ -103,7 +103,7 @@ export const PACKS = {
   }],
   "1/2": [{
     id: "partial-fraction", title: "부분분수 — 쪼개서 지우기",
-    recall: { figure: board(["1/2 − 1/3 = 3/6 − 2/6 = 1/6"]), text: "1/2 − 1/3은 1/6이고, 6 = 2 × 3입니다.", ask: "1/3 − 1/4은?", options: ["1/12", "1/7", "1/1"], answer: 0, why: "4/12 − 3/12 = 1/12, 12 = 3 × 4예요.", hint: "통분" },
+    recall: { figure: board(["1/2 − 1/3 = 3/6 − 2/6 = 1/6"]), text: "1/2 − 1/3은 1/6이고, 6 = 2 × 3입니다.", ask: "1/3 − 1/4은?", options: ["1/12", "1/7", "7/12"], answer: 0, why: "4/12 − 3/12 = 1/12, 12 = 3 × 4예요.", hint: "통분" },
     explore: [["drill", "fraction", "분수 연습"]],
     proofs: [],
     summary: {
