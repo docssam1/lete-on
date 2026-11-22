@@ -11,5 +11,5 @@ for(let n=0;n<2;n++){
  }
  assert.equal(prompts.size,3);
 }
-const ledger=JSON.parse(fs.readFileSync(path.join(__dirname,'source-inventory/5-2-source-items.json'),'utf8'));assert.equal(ledger.sourceItems.find(x=>x.sourceItemId==='5-2-u6-e2-mission-4').implementationStatus,'review-locked');let possible=[];for(let pass=0;pass<=200;pass++)for(let fail=0;fail<=200;fail++)if(200*pass+100*fail===300*144&&Math.abs(pass-fail)===21)possible.push([pass/2,fail/2]);assert.deepEqual(possible,[[68.5,79],[75.5,65]]);
+const ledger=JSON.parse(fs.readFileSync(path.join(__dirname,'source-inventory/5-2-source-items.json'),'utf8'));assert.equal(ledger.sourceItems.find(x=>x.sourceItemId==='5-2-u6-e2-mission-4').implementationStatus,'verified-local');let possible=[];for(let pass=0;pass<=200;pass++)for(let fail=0;fail<=200;fail++)if(200*pass+100*fail===300*144&&Math.abs(pass-fail)===21)possible.push([pass/2,fail/2]);assert.deepEqual(possible,[[68.5,79],[75.5,65]]);
 console.log('Missions 5–6: all variants uniquely enumerated with correct table cells; ambiguous Mission 4 stays locked');

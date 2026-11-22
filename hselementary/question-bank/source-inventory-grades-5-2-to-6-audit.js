@@ -95,6 +95,8 @@ const verified5_2LockedPractice = new Set([
   "5-2-u3-e1-exploration",
   ...[1, 2].flatMap(e => [`5-2-u4-e${e}-exploration`, ...[1, 2, 3, 4].map(n => `5-2-u4-e${e}-example-${n}`), ...[1, 2, 3, 4, 5, 6].map(n => `5-2-u4-e${e}-mission-${n}`)])
 ]);
+// 2026-11-21: 정본 재대조·독립 검산 후 원문 실행 유형으로 공개한 행(필요 시 문제에 조건 보충 표시).
+const verified5_2Originals20261121 = new Set(["5-2-u1-e2-example-4", "5-2-u1-e3-example-3", "5-2-u1-e3-example-4", "5-2-u1-e3-mission-2", "5-2-u1-e3-mission-3", "5-2-u1-e3-mission-4", "5-2-u1-e3-mission-5", "5-2-u1-e3-mission-6", "5-2-u1-e4-exploration", "5-2-u1-e4-mission-1", "5-2-u1-e4-mission-6", "5-2-u2-e1-mission-4", "5-2-u2-e2-mission-6", "5-2-u3-e3-exploration", "5-2-u5-e1-example-1", "5-2-u5-e1-mission-1", "5-2-u5-e2-exploration", "5-2-u5-e3-exploration", "5-2-u6-e2-example-3", "5-2-u6-e2-mission-4", "5-2-u6-e3-mission-5", "5-2-u6-e4-example-3"]);
 const publishedIndependent5_2 = new Set(["5-2-u3-e1-example-3", "5-2-u3-e1-example-4", "5-2-u3-e2-example-3", "5-2-u3-e4-example-2"]);
 const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const ready5_2Releases = new Set(["5-2-u3-e5-exploration", "5-2-u3-e5-example-3", ...[2, 3, 4, 5, 6].map(n => `5-2-u3-e7-mission-${n}`)]);
@@ -181,10 +183,11 @@ for (const spec of specs) {
     const status = item.implementationStatus;
     byStatus[status] = (byStatus[status] || 0) + 1;
     if (spec.semester === "5-2") {
-      const expected = publishedIndependent5_2.has(item.sourceItemId) ? "public-independent-verification-publisher-key-pending" : verified5_2Page49.has(item.sourceItemId) || verified5_2Page53.has(item.sourceItemId) || verified5_2LockedPractice.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : ready5_2Releases.has(item.sourceItemId) ? "ready" : "review-locked";
+      const expected = publishedIndependent5_2.has(item.sourceItemId) ? "public-independent-verification-publisher-key-pending" : verified5_2Originals20261121.has(item.sourceItemId) ? "verified-local" : verified5_2Page49.has(item.sourceItemId) || verified5_2Page53.has(item.sourceItemId) || verified5_2LockedPractice.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : ready5_2Releases.has(item.sourceItemId) ? "ready" : "review-locked";
       if (status !== expected) fail(`${label}: implementationStatus가 ${expected}가 아닙니다.`);
       if (publishedIndependent5_2.has(item.sourceItemId) && (item.publicDecision !== "public" || item.publisherKeyVerified !== false || runtimeTypes.filter(type => type.id === item.runtimeTypeId && type.sourceVerified === true && type.reviewLocked === false).length !== 1)) fail(`${label}: 독립 검수 원문 연결 또는 출판사 정답 확인 상태가 잘못되었습니다.`);
       if (verified5_2Page53.has(item.sourceItemId) && (item.sourceVerified !== true || runtimeTypes.filter(type => type.id === item.runtimeTypeId && type.sourceVerified === true && type.reviewLocked === false).length !== 1)) fail(`${label}: 원문 검수 또는 공개 유형 연결이 잘못되었습니다.`);
+      if (verified5_2Originals20261121.has(item.sourceItemId) && (item.sourceVerified !== true || item.publisherKeyVerified !== false || runtimeTypes.filter(type => type.id === item.runtimeTypeId && type.sourceVerified === true && type.reviewLocked === false).length !== 1)) fail(`${label}: 2026-11-21 원문 공개 행의 검수 상태 또는 원문 실행 유형 연결이 잘못되었습니다.`);
       if (verified5_2LockedPractice.has(item.sourceItemId) && !verifiedLockedPractice(item)) {
         fail(`${label}: 원문 잠금 또는 검증된 연습 유형 연결이 잘못되었습니다.`);
       }
@@ -226,8 +229,8 @@ for (const spec of specs) {
     const recorded = document.integrity?.actualBySection?.[section];
     if (recorded !== undefined && recorded !== bySection[section]) fail(`${spec.semester} ${section}: 실제 항목 수와 장부에 기록한 실제 수가 다릅니다 (${bySection[section]} / ${recorded}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 280) {
-    fail(`5-2: sourceVerified true 항목은 280개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 285) {
+    fail(`5-2: sourceVerified true 항목은 285개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
     fail("5-2: reviewed 항목의 원문 확인 또는 명시 목록이 일치하지 않습니다.");
