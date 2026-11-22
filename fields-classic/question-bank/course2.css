@@ -23,3 +23,8 @@
 .sm-dock[hidden], .sm-row[hidden], .sm-numbers[hidden], .sm-course-panel[hidden] { display: none; }
 .sm-course-panel { margin-top: 18px; }
 .sm-course + h1 { margin-top: 18px; }
+/* 개념 모아 보기(복습용으로 접어 둔 그림 논증·체험) */
+.c2-gather { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+.c2-gather > summary { cursor: pointer; color: var(--muted, #56627f); font-size: 14px; font-weight: 600; list-style: none; }
+.c2-gather > summary::before { content: "▸ "; }
+.c2-gather[open] > summary::before { content: "▾ "; }

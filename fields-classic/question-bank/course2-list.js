@@ -51,7 +51,9 @@ export async function course2Html({ algebra = true } = {}) {
     }).join("");
     // 본책을 1과정처럼 옮긴 권(원장 2026-11-16, G1 시범): 차시 공부(시작 화면 → 차시 덱 · 차시 교재 인쇄)로 가는 길
     const study = STUDY_BOOKS.has(b.id) ? `<a class="c2-test is-study" href="./start.html?course=2&book=course-02-${b.id}">차시 공부</a>` : "";
-    return `<section class="c2-book"><header><span class="c2-name">${b.name}</span><h2>${esc(b.title)}</h2>${study}${testLink(b.id)}</header>${rows ? `<ol class="c2-units">${rows}</ol>` : `<p class="c2-empty">그림으로 따져 보기를 준비하고 있어요.</p>`}</section>`;
+    // 그림 논증·체험은 차시 덱 안에 들어가 있으므로 여기서는 복습용으로 접어 둔다(DESIGN-COURSE2.md 7절 「개념 모아 보기」)
+    const gather = rows ? `<details class="c2-gather"><summary>개념 모아 보기 · 그림으로 따져 보기 ${proofs.length}개</summary><ol class="c2-units">${rows}</ol></details>` : "";
+    return `<section class="c2-book"><header><span class="c2-name">${b.name}</span><h2>${esc(b.title)}</h2>${study}${testLink(b.id)}</header>${gather}</section>`;
   }));
   const alg = algebra ? (await Promise.all(ALGEBRA.map((b) => testCard(b, 2, true)))).join("") : "";
   return `<h3 class="c2-group">기하 · G</h3>${cards.join("")}${alg ? `<h3 class="c2-group">대수 · A</h3>${alg}` : ""}`;

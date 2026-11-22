@@ -39,7 +39,7 @@ export function sessionSequence(curriculum, from, toBook) {
       const parts = sessionCount(unit);
       for (let p = 1; p <= parts; p += 1) {
         if (b === first && (u < from.unit || (u === from.unit && p < from.part))) continue;
-        out.push({ book: book.id, bookLabel: book.label, unit: u, unitLabel: unit.label, part: p, parts, lastPart: p === parts, booktest: p === parts && u === book.units.length - 1 && Boolean(book.source.unitTestQuestions?.length) });
+        out.push({ book: book.id, bookLabel: book.label, unit: u, unitLabel: unit.label, part: p, parts, lastPart: p === parts, booktest: p === parts && u === book.units.length - 1 && Boolean(book.source.unitTestQuestions?.length || book.source.unitTestPaper) });
       }
     });
   }

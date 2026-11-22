@@ -4641,6 +4641,12 @@ export const COURSE2_CURRICULUM = [
     source: { textbook: "2과정 G5 수업용 교재(N30)", unitTestQuestions: [], unitTestPaper: "./course2-test-paper.html?book=g5", goldenBellIncluded: false } }
 ];
 export const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
+// 진도표·「계획대로 가는지」가 잇는 권 차례 — 1과정 10권 뒤에 2과정을 기하·대수 번갈아 G1 → A1 → G2 → … → A5
+// (원장 2026-11-21, 서버 _shared/fields-membership.js FIELDS_BOOKS와 같은 차례). 아직 만들지 않은 권은 건너뛴다.
+const COURSE2_ORDER = ["g1", "a1", "g2", "a2", "g3", "a3", "g4", "a4", "g5", "a5"];
+export const GM_PATH = [...CURRICULUM, ...COURSE2_ORDER
+  .map((key) => COURSE2_CURRICULUM.find((book) => book.id === `course-02-${key}`)).filter(Boolean)
+  .map((book) => ({ ...book, label: `2과정 ${book.label}` }))];
 
 export const typeById = (id) => byId[id];
 

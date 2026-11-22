@@ -1,6 +1,6 @@
-import { CURRICULUM } from "./source-data.js?v=20261122b";
+import { CURRICULUM } from "./source-data.js?v=20261122c";
 import { memberCall } from "./study-progress.js?v=20261117a";
-import { FIELDS_BOOKS, membershipSummary, directSummary } from "./gm-plan.js?v=20261114a";
+import { FIELDS_BOOKS, membershipSummary, directSummary } from "./gm-plan.js?v=20261122c";
 import { ENTRANCE_PRODUCTS, BANK_ID } from "./entrance-products.js?v=20261116b";
 
 // 관리자 화면(원장 2026-11-14 「모의고사 회원도 있고 gm 관리 과정 회원도 있겠지? 어드민 좀 쉽게 조작할 수 있도록 바꾸고
@@ -14,6 +14,8 @@ import { ENTRANCE_PRODUCTS, BANK_ID } from "./entrance-products.js?v=20261116b";
 const $ = (id) => document.getElementById(id);
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const bookNo = (id) => Number(String(id || "").slice(5)) || 1;
+// 권 이름: 1과정은 「N권」, 2과정은 「2과정 G1」(FIELDS_BOOKS에 1과정 10권 뒤로 2과정 10권이 이어진다)
+const bookName = (id) => String(id || "").startsWith("course-02-") ? `2과정 ${String(id).slice(10).toUpperCase()}` : `${bookNo(id)}권`;
 // 날짜만(YYYY-MM-DD)은 글자 그대로 읽는다 — 시간대에 따라 하루 밀리지 않게
 const parts = (iso) => { const t = String(iso || ""); if (/^\d{4}-\d{2}-\d{2}$/.test(t)) { const [y, m, d] = t.split("-").map(Number); return [y, m, d]; } const d = new Date(t); return [d.getFullYear(), d.getMonth() + 1, d.getDate()]; };
 const md = (iso) => { if (!iso) return "–"; const [, m, d] = parts(iso); return `${m}/${d}`; };
@@ -58,16 +60,16 @@ export function gmState(a) {
   const g = a.gm || {};
   if (!a.active) return { text: "사용 중지", cls: "is-paused", open: false };
   if (g.reason === "paused") return { text: "멈춤", cls: "is-paused", open: false };
-  if (g.plan?.mode === "book") return g.open ? { text: `권별 · ${g.books.map(bookNo).join("·")}권`, cls: "is-approved", open: true } : { text: "권별 · 고른 권 없음", cls: "is-off", open: false };
+  if (g.plan?.mode === "book") return g.open ? { text: `권별 · ${g.books.map(bookName).join("·")}`, cls: "is-approved", open: true } : { text: "권별 · 고른 권 없음", cls: "is-off", open: false };
   if (g.plan?.mode === "period") {
     if (g.reason === "period_ended") return { text: `기간 끝 · ${md(g.plan.endsOn)}`, cls: "is-ended", open: false };
     if (g.reason === "not_started") return { text: `${md(g.plan.startsOn)}부터 기간`, cls: "is-trial", open: false };
-    return { text: `기간 · 1~${bookNo(g.upTo)}권${g.plan.endsOn ? ` · ${md(g.plan.endsOn)}까지` : ""}`, cls: "is-approved", open: true };
+    return { text: `기간 · 1권~${bookName(g.upTo)}${g.plan.endsOn ? ` · ${md(g.plan.endsOn)}까지` : ""}`, cls: "is-approved", open: true };
   }
   if (a.member) {
     if (g.reason === "trial_expired") return { text: "체험 끝", cls: "is-ended", open: false };
     if (g.status === "trial") return { text: `체험 · ${Math.max(0, Math.ceil((new Date(g.trialUntil).getTime() - Date.now()) / DAY))}일 남음`, cls: "is-trial", open: true };
-    return { text: `정규 · 1~${bookNo(g.upTo)}권`, cls: "is-approved", open: true };
+    return { text: `정규 · 1권~${bookName(g.upTo)}`, cls: "is-approved", open: true };
   }
   return { text: "GM 안 열림", cls: "is-off", open: false };
 }
@@ -118,8 +120,8 @@ function previewText(a, d) {
   const raw = a.member ? { status: a.member.status, trial_until: a.member.trialUntil, approved_at: a.member.approvedAt, created_at: a.member.createdAt, start_book: a.member.start?.book, extra_books: a.member.extraBooks } : null;
   const g = raw ? membershipSummary(raw, planRow) : directSummary(planRow);
   if (!g.open) return { cls: "is-warn", text: { gm_none: d.mode === "book" ? "고른 권이 없어 스스로 공부가 닫혀요(1권 1단원 둘러보기만)." : "스스로 공부가 닫혀 있어요 — 1권 1단원만 둘러볼 수 있어요.", period_ended: `기간이 ${ymd(d.endsOn)}에 끝나 닫혀요.`, not_started: `${ymd(d.startsOn)}부터 열려요.`, trial_expired: "체험이 끝나 로그인할 수 없어요.", paused: "멈춤 상태라 로그인할 수 없어요." }[g.reason] || "닫혀요." };
-  const list = g.books.map(bookNo);
-  const range = d.mode === "book" || !list.length ? `${list.join("·")}권` : `1~${list.at(-1)}권`;
+  const list = g.books.map(bookName);
+  const range = d.mode === "book" || !list.length ? list.join("·") : `1권~${list.at(-1)}`;
   return { cls: "", text: `지금 ${range} 열림${g.nextOpensAt ? ` · 다음 권 ${md(g.nextOpensAt)}` : ""}${d.mode === "period" ? (d.endsOn ? ` · ${ymd(d.endsOn)}까지` : " · 끝나는 날 없음") : ""}` };
 }
 
@@ -130,7 +132,7 @@ function renderGmDetail() {
   if (!a) { box.innerHTML = `<div class="ad-hint"><b>목록에서 사람을 고르세요.</b><p>고르면 여기서 스스로 공부(GM 과정)를 <b>권별</b>이나 <b>기간</b>으로 열 수 있어요.</p><p>모의고사 회차는 위의 「모의고사 회원」 탭에서 열어요.</p></div>`; return; }
   const d = gmView.draft || (gmView.draft = draftFrom(a));
   const s = gmState(a), m = a.member, pv = previewText(a, d);
-  const bookSelect = (sel) => FIELDS_BOOKS.map((id) => `<option value="${id}"${id === sel ? " selected" : ""}>${bookNo(id)}권</option>`).join("");
+  const bookSelect = (sel) => FIELDS_BOOKS.map((id) => `<option value="${id}"${id === sel ? " selected" : ""}>${bookName(id)}</option>`).join("");
   const noneHint = m ? "가입 규칙대로 — 체험 2주는 시작 권 1권, 정규회원 승인 뒤에는 한 달에 1권씩 열려요." : "스스로 공부가 닫혀 있어요(1권 1단원 둘러보기만). 모의고사만 쓰는 학생은 이대로 두세요.";
   box.innerHTML = `<header class="ad-who"><div><h3>${esc(a.name)}</h3><small>${esc(typeLabel(a))} · ${esc(ago(a.lastSeen))}${a.logins30 ? ` · 30일 ${a.logins30}번 로그인` : ""}</small></div><span class="ms-status ${s.cls}">${esc(s.text)}</span></header>
     ${gmView.code?.name === a.name ? codeBox(gmView.code.code) : ""}
@@ -138,7 +140,7 @@ function renderGmDetail() {
       <div class="ad-seg" role="radiogroup" aria-label="여는 방식">${[["none", "정하지 않음"], ["book", "권별"], ["period", "기간"]].map(([key, label]) => `<button type="button" role="radio" data-mode="${key}" aria-checked="${d.mode === key}">${label}</button>`).join("")}</div>
       ${d.mode === "none" ? `<p class="ad-help">${noneHint}</p>` : ""}
       ${d.mode === "book" ? `<p class="ad-help">고른 권만 열려요. 기한은 없어요.</p>
-        <div class="ad-books" role="group" aria-label="열 권">${FIELDS_BOOKS.map((id) => `<button type="button" data-book="${id}" aria-pressed="${d.books.has(id)}">${bookNo(id)}권</button>`).join("")}</div>
+        <div class="ad-books" role="group" aria-label="열 권">${FIELDS_BOOKS.map((id) => `<button type="button" data-book="${id}" aria-pressed="${d.books.has(id)}">${bookName(id)}</button>`).join("")}</div>
         <div class="ad-mini"><button type="button" data-books="all">모두 고르기</button><button type="button" data-books="none">모두 빼기</button></div>` : ""}
       ${d.mode === "period" ? `<p class="ad-help">시작일부터 시작 권이 열리고, 한 달마다 1권씩 더 열려요. 끝나는 날이 지나면 닫혀요.</p>
         <div class="ad-form">
@@ -251,7 +253,7 @@ function wireGm() {
   box.addEventListener("change", (event) => {
     const t = event.target, d = gmView.draft, a = byName(gmView.selected);
     if (t.dataset.field && d) { d[t.dataset.field] = t.value; renderGmDetail(); return; }
-    if (t.matches("[data-start]") && a) { const book = box.querySelector('[data-start="book"]').value, unit = Number(box.querySelector('[data-start="unit"]').value); memberOp("start", { start: { book, unit, part: 1 } }, `${a.name} 시작 진도 ${bookNo(book)}권 ${unit + 1}단원.`); }
+    if (t.matches("[data-start]") && a) { const book = box.querySelector('[data-start="book"]').value, unit = Number(box.querySelector('[data-start="unit"]').value); memberOp("start", { start: { book, unit, part: 1 } }, `${a.name} 시작 진도 ${bookName(book)} ${unit + 1}단원.`); }
     else if (t.matches("[data-memo]") && a) memberOp("memo", { memo: t.value }, `${a.name} 메모 저장.`);
   });
   box.addEventListener("submit", async (event) => {
