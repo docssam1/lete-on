@@ -383,7 +383,7 @@ function geometry(pg){
   const R = e => { const r = e.getBoundingClientRect(); return { x: (r.left - tl[0]) / unit, y: (r.top - tl[1]) / unit, w: r.width / unit, h: r.height / unit }; };
   const items = pg.its.map(e => {
     let spec = null; try{ spec = JSON.parse(e.getAttribute('data-pen-ans')); }catch(err){}
-    const fb = [...e.querySelectorAll('.fbox')], ln = e.querySelector('.nm-print-word-blank,.nm-print-solve-ans'), bt = e.querySelector('.nm-print-vp-bot');
+    const fb = [...e.querySelectorAll('.fbox,.nm-w2-abox-big')], ln = e.querySelector('.nm-print-word-blank,.nm-print-solve-ans'), bt = e.querySelector('.nm-print-vp-bot');
     let type = '', zones = [];
     if(fb.length){ type = 'fbox'; zones = fb.map(R); }
     else if(ln){ const bl2 = ln.querySelectorAll('.nm-w2-blank,.nm-print-solve-line'); type = 'line'; const z = R(bl2.length ? bl2[bl2.length - 1] : ln);   // 「식:」 칸이 아니라 마지막 「답:」 빈칸

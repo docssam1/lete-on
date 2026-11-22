@@ -31,12 +31,12 @@ window.NM_UNITS['A-09'] = {
     stages:[
       { tag:{ ko:'① 순서를 바꿔도 답은 같아요', en:"1) Changing order doesn't change the answer", zh:'① 换顺序答案不变' },
         head:{ ko:'덧셈은 어떤 순서로 더해도 답이 같아요', en:'Addition gives the same answer no matter what order you add', zh:'加法不管用什么顺序，答案都一样' },
-        desc:{ ko:'3+5와 5+3은 답이 같아요. 이걸 <b>교환법칙</b>이라고 해요. 여러 수를 더할 때도 순서를 마음대로 바꿀 수 있어요. 이 법칙 덕분에 더하기 쉬운 순서로 바꿔 계산할 수 있어요!',
+        desc:{ ko:'3+5와 5+3은 답이 같아요. 덧셈은 <b>두 수의 위치를 바꿔도 똑같아요</b>. 여러 수를 더할 때도 순서를 마음대로 바꿀 수 있어요. 그래서 더하기 쉬운 순서로 바꿔 계산할 수 있어요!',
                en:'3+5 and 5+3 give the same answer. This is called the commutative property. You can freely change the order when adding multiple numbers. This rule lets you pick the easiest order!',
                zh:'3+5和5+3答案相同。这叫做交换律。加多个数时，可以随意改变顺序。利用这个规律，可以选择最简单的顺序来算！' },
         mathSteps:['37 + 19 + 24 + 33',{ko:'순서를 바꿔도 답은 같아요',en:'\\text{Change the order — the answer stays the same}',zh:'换了顺序，答案也一样'},{ko:'= 37 + 33 + 19 + 24  (순서 변경 OK!)',en:'= 37 + 33 + 19 + 24 \\text{ (reorder OK!)}',zh:'= 37 + 33 + 19 + 24（可以换顺序！）'},{ko:'= ... 같은 답',en:'= ... \\text{same answer}',zh:'= ... 一样的答案'}],
         result:{ ko:'덧셈은 순서를 마음대로 바꿀 수 있어요! 이제 가장 쉬운 순서를 찾아봐요.', en:'Addition order can be changed freely! Now let\'s find the easiest order.', zh:'加法顺序可以随意改变！现在来找最简单的顺序。' },
-        book:{ ko:'덧셈의 교환법칙: a+b = b+a. 세 수 이상도 마찬가지: a+b+c+d는 어떤 순서로도 같아요.',
+        book:{ ko:'덧셈은 두 수의 위치를 바꿔도 똑같아요. 3+5 = 5+3. 세 수, 네 수를 더할 때도 어떤 순서로 더해도 같아요.',
                en:'Commutative law of addition: a+b = b+a. Same for 3 or more: a+b+c+d is the same in any order.',
                zh:'加法交换律：a+b = b+a。三个或更多数也一样：a+b+c+d无论什么顺序都相同。' } },
 

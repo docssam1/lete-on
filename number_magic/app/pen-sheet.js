@@ -197,7 +197,7 @@ function readItem(pg, el, spec){
   const box = rectUnits(pg, el), mine = data.pages[pg.idx].filter(s => centerIn(s, box, 2));
   if(!mine.length) return { blank: true };
   const pts = s => s.p;
-  const boxes = [...el.querySelectorAll('.fbox')].map(b => grow(rectUnits(pg, b), 0.45));
+  const boxes = [...el.querySelectorAll('.fbox,.nm-w2-abox-big')].map(b => grow(rectUnits(pg, b), 0.45));
   let groups = null;
   if(boxes.length){
     const by = boxes.map(() => []);

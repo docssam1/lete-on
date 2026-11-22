@@ -998,7 +998,13 @@
      로드되지 않아 기기별 대체 글꼴이 달랐고, 문제 일부만 둥글고 굵게 보였다. */
   .nm-w2-big { font-family:KaTeX_Main,'Times New Roman',serif; font-weight:400;
     font-size:calc(26px * var(--ws-fs, 1)); letter-spacing:0; color:#111; white-space:nowrap; }
-  .nm-w2-abox-big { width:14mm; height:11mm; border:1.3px solid #333; border-radius:3px; display:inline-block; vertical-align:middle; margin:0 4px; }
+  /* 답 칸을 크게(2026-11-21, 원장 「답 쓰는란이 너무 작은 것 같아」) — 22×15mm, 줄 간격(25mm) 안이다.
+     ⚠️ 선택자를 .nm-w2-abox.nm-w2-abox-big 로 — 아래쪽 .nm-w2-abox(14×8mm)가 같은 무게에 더 뒤라
+     예전 14×11mm 는 한 번도 먹지 않았고 실제 칸은 14×8mm 였다. */
+  .nm-w2-abox.nm-w2-abox-big { width:22mm; height:min(15mm, calc(100% - 1.5mm)); border:1.3px solid #333; border-radius:3px; display:inline-block; vertical-align:middle; margin:0 4px; flex:0 0 auto; }
+  /* 줄이 낮은 쪽(첫 장 아래 줄 약 16mm)에서는 칸이 줄 높이를 넘지 않게 — 식 줄을 줄 높이만큼의 flex 로 두어
+     칸 높이의 100% 가 줄 높이가 되게 한다. */
+  .nm-w2-grid-big .nm-w2-item.nm-print-item > .nm-w2-big { display:flex; align-items:center; height:100%; gap:.28em; }
   /* 세로 나눗셈 상자 */
   .nm-divbox { display:inline-block; font-family:KaTeX_Main,'Times New Roman',serif; font-variant-numeric:tabular-nums; font-size:calc(22px * var(--ws-fs, 1)); line-height:1.3; }
   .nm-dv-q { display:flex; justify-content:flex-start; margin-left:calc(2em + 10px); }
@@ -1234,7 +1240,7 @@
   /* 세로셈(회차 레이아웃 vertical = 초등 덧뺄셈뿐, classifyRoundLayout 이 MD/CH/EL/MX 를 뺀다):
      14px 이던 숫자를 22px 로, 올림/내림을 쓸 줄(.nm-print-vp-carry)을 위에, 답 줄을 1.6em 으로
      (2026-09-06, 1~2학년이 손으로 쓰는 칸). 나이 밴드(.nm-print-age-*)와 무관하게 이 레이아웃만. */
-  .nm-w2-grid-vertical .nm-print-vp { font-size:21px; min-width:3.4em; margin:0 auto; }
+  .nm-w2-grid-vertical .nm-print-vp { font-size:21px; min-width:4.2em; margin:0 auto; }
   /* 섞기(종합) 장 — 나눗셈 상자 옆의 곱셈 세로셈을 같은 크기로(2026-10-05) */
   .nm-print-sheet .nm-w2-grid-visual .nm-print-vp { font-size:calc(21px * var(--ws-fs, 1)); min-width:3.4em; margin:6px auto 0; }
   /* 부분 장(첫 쪽)의 세로셈 칸은 내용이 행보다 8px 높아 문항 번호가 반쯤 잘렸다 —
@@ -1242,7 +1248,8 @@
   .nm-w2-grid-vertical .nm-w2-item.nm-print-item { padding-top:0; padding-bottom:0; }
   .nm-w2-grid-vertical .nm-print-vp-carry { min-height:.8em; font-size:.7em; color:#999;
     border-bottom:1px dotted #bbb; margin-bottom:2px; }
-  .nm-w2-grid-vertical .nm-print-vp-bot { min-height:1.3em; border-bottom:1px solid #ddd; }
+  /* 답 줄을 높게(2026-11-21, 원장 「답 쓰는란이 너무 작은 것 같아」) — 1.3em(6.6mm) → 1.9em(10.5mm), 폭도 3.4em → 4.2em */
+  .nm-w2-grid-vertical .nm-print-vp-bot { min-height:1.9em; border-bottom:1px solid #ddd; }
   /* 부분곱 두 줄짜리(곱하는 수가 두 자리) — 줄이 둘 더 붙으므로 줄 높이를 줄인다.
      ⚠️ 선택자에 .nm-print-sheet 를 붙여야 한다 — 아래 전역 크기 절의
      .nm-print-sheet .nm-print-vp (15px * --ws-fs) 가 같은 무게(0,2,0)에 더 뒤라,
@@ -1717,6 +1724,13 @@
 .nm-w2-guide-chain { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:calc(12.5px * var(--ws-fs, 1));
   color:#000; margin-top:3px; padding-left:18px; }
 .nm-w2-guide-arrow { color:#000; }
+/* 한 줄 따라 풀기(2026-11-21) — (가) 사슬 → 문제 식을 한 줄에, 칸은 크게(WRITE_BOX_BIG) */
+.nm-w2-ex-steps.is-line { color:inherit; gap:10px; }
+.nm-w2-guide-item.is-line { display:flex; align-items:center; gap:10px; padding-top:6px; padding-bottom:6px; }
+.nm-w2-guide-item.is-line:first-of-type { padding-top:2px; }
+.nm-w2-guide-item.is-line .nm-w2-guide-q { flex:0 0 auto; align-items:center; }
+.nm-w2-guide-item.is-line .nm-w2-guide-chain { flex:1 1 auto; flex-wrap:nowrap; margin-top:0; padding-left:0; gap:10px;
+  font-size:calc(13px * var(--ws-fs, 1)); }
 .nm-w2-guide-blank { font-weight:700; }
 /* 온라인 세션 탭(runSessionTabs) — 기존 화면 클래스(.nm-ws-*, .nm-grid-*)를
    대부분 재사용하고, 세션 전용 몇 개만 여기서 보탠다. */
@@ -4384,9 +4398,10 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
 
 /* 세로셈 파싱: "a OP b = \square" 형태 */
 function parseVert(tex){
-  const m = (tex||'').match(/^([\d.]+)\s*([+\-×÷]|\\times|\\div)\s*([\d.]+)\s*=\s*\\square\s*$/);
+  /* ÷ 는 받지 않는다(2026-11-21) — 나눗셈을 덧셈처럼 세로로 쌓으면 없는 꼴이 된다. */
+  const m = (tex||'').match(/^([\d.]+)\s*([+\-×]|\\times)\s*([\d.]+)\s*=\s*\\square\s*$/);
   if(!m) return null;
-  const opMap={'\\times':'×','\\div':'÷','-':'−'};
+  const opMap={'\\times':'×','-':'−'};
   return {a:m[1], op:opMap[m[2]]||m[2], b:m[3]};
 }
 
@@ -4727,6 +4742,9 @@ function wrapHangul(tex){
    높은 상자로 바꾼다. em 단위라 저학년 배율(--ws-fs)을 그대로 따라간다. 정답지는 답이 대입된 뒤라
    \square 가 남지 않는다. */
 const WRITE_BOX = '\\boxed{\\rule[-0.45em]{0pt}{1.5em}\\kern{0.4em}\\phantom{00}\\kern{0.4em}}';
+/* 따라 풀기 한 줄 칸(2026-11-21, 원장 「한 줄로 놓고 네모칸을 더 키워야 … 답 쓰는란이 너무 작은 것 같아」) —
+   줄이 하나로 줄어든 만큼 칸을 키운다(높이 1.5em → 2em, 폭도 넓게). 한 줄 따라 풀기에서만 쓴다. */
+const WRITE_BOX_BIG = '\\boxed{\\rule[-0.7em]{0pt}{2em}\\kern{0.7em}\\phantom{00}\\kern{0.7em}}';
 /* 풀이 과정의 한 줄 식은 큰 네모가 글줄을 자르므로 같은 자리에 쓰기 밑줄을 둔다.
    분수 속 빈칸은 위치 구별이 중요해 기존 번호 상자를 유지한다. */
 const TRAIN_WRITE_LINE = '\\underline{\\phantom{0000}}';
@@ -4771,7 +4789,7 @@ function fractionContainsBlank(tex){
   }
   return false;
 }
-function texDisplay(tex){
+function texDisplay(tex, bigBox){
   /* 표기 다듬기(2026-09-20) — `1x`·`+ 0x^2`·`x--59` 를 그리기 직전에 정리한다.
      생성기 191개를 따로 고치는 대신 여기 한 곳에서(engine/tex-tidy.js 주석 참조). */
   const tidy = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
@@ -4780,7 +4798,7 @@ function texDisplay(tex){
      이미 분명하고, 상자를 키우면 줄 높이만 늘어 인쇄 배치가 흔들린다. */
   const isFrac = hasNumberedBlanks({ tex: src }),innerBlank=fractionContainsBlank(src);
   let k = 0;
-  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : innerBlank ? WRITE_BOX_ROOM : WRITE_BOX);
+  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : innerBlank ? WRITE_BOX_ROOM : bigBox === true ? WRITE_BOX_BIG : WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
@@ -4915,6 +4933,9 @@ function classifyRoundLayout(problems, threadId, young, creative){
     : {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
   /* 레벨이 정한 가로·세로가 판정보다 앞선다(2026-09-19) */
   const orient = problems[0] && problems[0].orient;
+  /* 나눗셈은 덧셈처럼 세로로 쌓지 않는다(2026-11-21) — `74 ÷ 2`가 「74 / ÷ 2 / ―」 꼴로 찍혔다
+     (ML1 L2~L4·DV2, 과정 4·6·7·8·10·11·13). 나눗셈 필산은 나눗셈 상자(divBox)가 따로 있고,
+     그 밖의 나눗셈 식은 가로 식 + 답 칸으로 둔다. parseVert 가 ÷ 를 받지 않는다. */
   if(orient === 'v' && withTex.every(p => parseVert(p.tex))) return vertLayout();
   if(orient !== 'h' && withTex.length && !excludedPrefix && withTex.every(p => parseVert(p.tex))) return vertLayout();
   if(nonWord.length < problems.length){
@@ -6047,6 +6068,28 @@ function w2DropHeadRepeat(steps, headTex){
   const kept = steps.filter(s => !cpSameTex(String(s && s.tex || ''), headTex));
   return kept.length ? kept : steps;
 }
+/* 풀이 사슬이 문제 식으로 끝나면 한 줄로(2026-11-21, 원장 「한 줄로 놓고 네모칸을 더 키워야」) —
+   `80 ÷ 2 = □` 아래에 `80 = □ + □`를 따로 두던 것을 `80 = □ + □ → 80 ÷ 2 = □` 한 줄로 놓는다
+   (문제 식이 사슬의 마지막 칸이 된다). 짧고 쉬운 식일 때만: 줄 2~3개, 분수·근호·지수·글자 없음,
+   빈칸 4개까지, 한 줄에 들어갈 길이. 아니면 null 을 돌려 예전 두 줄 배치 그대로. */
+function w2OneLineChain(p, steps, headTex){
+  if(!p || p.word || p.graph || p.scatterPlot || p.base10 || p.numline || p.divBox) return null;
+  if(!Array.isArray(steps) || steps.length < 2 || steps.length > 3) return null;
+  const head = String(headTex || '');
+  if(!head.trim() || !cpSameTex(String(steps[steps.length - 1].tex || ''), head)) return null;
+  if(steps.slice(0, -1).some(st => cpSameTex(String(st.tex || ''), head))) return null;
+  let units = 0, blanks = 0;
+  for(const st of steps){
+    const t = String(st.tex || '');
+    if(/\\d?frac|\\sqrt|\\text|\\boxed|[\^_{}]|[가-힣a-zA-Z]/.test(t.replace(/\\(square|times|div|cdots|to|rightarrow)\b/g, ''))) return null;
+    const n = (t.match(/\\square/g) || []).length; blanks += n;
+    /* 폭 어림(em) — 칸 하나 3.3, 글자·기호 하나 0.62, 사슬 화살표 1.6 */
+    units += n * 3.3 + t.replace(/\\[a-zA-Z]+/g, 'x').replace(/\s+/g, '').length * 0.62;
+  }
+  units += (steps.length - 1) * 1.6;
+  if(blanks > 4 || units > 22) return null;
+  return steps;
+}
 function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = drawUnique(threadId, level, rng, exclude, 12, exactSkip);
@@ -6102,7 +6145,9 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
     const completedTex = p.completedTex || (bare ? String(p.tex || '')
       : fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p))));
     const completedHtml = String(completedTex).trim() ? `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>` : "";
-    const stepParts = w2DropHeadRepeat(stepSrc.filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==String(p.tex||'').trim()), p.tex).map(s => {
+    /* 따라 풀기가 한 줄(사슬 → 문제 식)로 나가는 문항은 예시도 같은 차례 한 줄로 */
+    const exLine = (!W2_C0 && !p.completedTex && !bare && !divPictureHtml(p, {young: !!young}) && !concreteTeachingHtml(p,true,threadId)) ? w2OneLineChain(p, stepSrc, p.tex) : null;
+    const stepParts = (exLine || w2DropHeadRepeat(stepSrc.filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==String(p.tex||'').trim()), p.tex)).map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
       const t = ('blank' in s && /\\square/.test(String(s.tex||''))) ? fixNegSigns(texSubstituteAnswer(String(s.tex||''), s.blank)) : String(s.tex||'');
       return `<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span>`;
@@ -6112,8 +6157,8 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
       /* wordAnswerTex(3√2 같은 온전한 값)가 있으면 정답지와 같은 함수로 — 없으면 "3, 2cm"로 찍혔다(2026-09-25) */
       ? `<div class="nm-w2-ex-line"><span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${p.wordAnswerTex ? w2AnswerValueHtml(p) : esc(String(fmtAns(p.answer)) + (pickL(p.wordUnit) || ''))}</span></span></div>`
       : '';
-    bodyHtml = completedHtml
-      + `<div class="nm-w2-ex-steps">${stepParts.join('<span class="nm-w2-ex-arrow">→</span>')}</div>` + unitAns;
+    bodyHtml = (exLine ? '' : completedHtml)
+      + `<div class="nm-w2-ex-steps${exLine ? ' is-line' : ''}">${stepParts.join('<span class="nm-w2-ex-arrow">→</span>')}</div>` + unitAns;
   } else {
     const v = !p.word && parseVert(p.tex);
     if(v){
@@ -6158,7 +6203,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
   const labs = guideLabels();
   const problems = [];
   const seedBase = guideSeedOverride || ('guide' + code);
-  const itemHtmls = [0, 1, 2].map(i => {
+  const itemPairs = [0, 1, 2].map(i => {
     const rng = NM_RNG.mulberry32(NM_RNG.hashSeed(seedBase + i));
     const lv = (Array.isArray(levels) && levels[i]) || level;
     const exact=Array.isArray(exactSkips)?exactSkips[i]:undefined;
@@ -6170,6 +6215,14 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     const c0Beads=W2_C0&&window.NM_C0_CONCRETE&&NM_C0_CONCRETE.html(p,false,threadId,examLang());
     const qTex = c0Beads?'':raw;   /* 그림의 답칸과 같은 식을 반복하지 않는다. */
     const qHtml = qTex.trim() ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>` : '';
+    const condHtml = printConditionHtml(levelPrintCondition(threadId,lv) || printAskText(p,threadId));
+    const picHtml = `${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,false)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph)}</div>` : ''}${concreteTeachingHtml(p,false,threadId)}${(i === 0 && !young) ? divPictureHtml(p, {compact:true}) : ''}`;
+    /* 사슬이 문제 식으로 끝나고 그림·조건 글이 없으면 한 줄(큰 칸) — w2OneLineChain */
+    const oneLine = (!c0Beads && !W2_C0 && !condHtml && !picHtml.trim()) ? w2OneLineChain(p, stepSrc, raw) : null;
+    const lineHtml = oneLine ? `<div class="nm-w2-guide-item is-line">
+  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span></div>
+  <div class="nm-w2-guide-chain">${oneLine.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || ''), true))}"></span>`).join('<span class="nm-w2-guide-arrow">→</span>')}</div>
+</div>` : '';
     const teachingSteps=w2DropHeadRepeat((stepSrc||[]).filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==raw.trim()), raw);
     const chainHtml = c0Beads?'':(teachingSteps.length)
       ? teachingSteps.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
@@ -6181,11 +6234,14 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     const storyHtml = p.word
       ? `<div class="nm-w2-guide-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>${wpSceneHtml(p)}`
       : '';
-    return `<div class="nm-w2-guide-item">
-  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${printConditionHtml(levelPrintCondition(threadId,lv) || printAskText(p,threadId))}${storyHtml}${qHtml}</span></div>
-  ${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,false)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph)}</div>` : ''}${concreteTeachingHtml(p,false,threadId)}${(i === 0 && !young) ? divPictureHtml(p, {compact:true}) : ''}<div class="nm-w2-guide-chain">${chainHtml}</div>
-</div>`;
+    return { line: lineHtml, html: `<div class="nm-w2-guide-item">
+  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${condHtml}${storyHtml}${qHtml}</span></div>
+  ${picHtml}<div class="nm-w2-guide-chain">${chainHtml}</div>
+</div>` };
   });
+  /* 한 줄 배치는 세 문제가 모두 될 때만 — 하나만 한 줄이면 (가)(나)(다)의 모양이 갈린다(ML3 L2 실측). */
+  const allLine = itemPairs.every(x => x.line);
+  const itemHtmls = itemPairs.map(x => allLine ? x.line : x.html);
   const wrap = items => `<div class="nm-w2-guide${(window.NM_MIDDLE_CONCEPTS || {})[threadId] ? ' nm-mid-guide' : ''}">
     <div class="nm-w2-guide-title"><i class="nm-w2-sq"></i>${esc(lk('따라 풀어 보세요.','Try it the same way.','照着做一做。'))}</div>
     ${items.join('')}</div>`;

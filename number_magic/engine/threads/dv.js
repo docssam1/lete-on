@@ -47,10 +47,10 @@
          그리므로 시각적으로 과하지 않게 60까지만) */
       const half   = R(rng, 2, 60);
       const n      = half * 2;
-      const tex = pick(rng, [
-        `${n} \\div 2 = \\square`,
-        `\\dfrac{${n}}{2} = \\square`
-      ]);
+      /* 2026-11-21 원장 「곱셈구구에 80/2가 있어」: 분수를 배우기 전인데 나눗셈을 분수 모양(80 위에 2)으로
+         내고 있었다 → ÷ 식 하나로만 낸다. 뽑기 한 번은 그대로 둔다(뒤 문항의 수가 바뀌지 않게). */
+      pick(rng, [0, 1]);
+      const tex = `${n} \\div 2 = \\square`;
       return {
         prompt: {
           ko: `${n}의 절반은?`,
