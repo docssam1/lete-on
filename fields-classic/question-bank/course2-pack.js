@@ -2,7 +2,7 @@
 // 덱(study.js)이 개념 장(native)으로 붙인다: mountPackCard(host, { board: "<권>/<꾸러미 id>/<recall|summary|example>", deckNav, atEnd, onStep, onDone })
 // 덱 약속은 판서와 같다 — step(±1)이 true를 돌려주면 장 안에서 넘긴 것, false면 덱이 다음 장으로 간다.
 // 꾸러미 자료는 course2-concepts/<권>.js(PACKS). 예제는 창작 문제라 단계 답을 자료 파일에 둔다.
-const TAGS = { g1: "20261121g", g2: "20261121e", g3: "20261121e", g4: "20261121e", g5: "20261121e" };
+const TAGS = { g1: "20261121g", g2: "20261121h", g3: "20261121i", g4: "20261122a", g5: "20261122b" };
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const norm = (s) => String(s ?? "").replace(/\s+/g, "").replace(/[°도]$/u, "").replace(/,/g, "").toLowerCase();
 
