@@ -7,5 +7,6 @@ import { PACKS as G5 } from "./g5.js?v=20261122b";
 import { PACKS as A1 } from "./a1.js?v=20261122d";
 import { PACKS as A2 } from "./a2.js?v=20261122e";
 import { PACKS as A3 } from "./a3.js?v=20261122f";
-export const PACK_BOOKS = Object.freeze({ "course-02-g1": G1, "course-02-g2": G2, "course-02-g3": G3, "course-02-g4": G4, "course-02-g5": G5, "course-02-a1": A1, "course-02-a2": A2, "course-02-a3": A3 });
+import { PACKS as A4 } from "./a4.js?v=20261122g";
+export const PACK_BOOKS = Object.freeze({ "course-02-g1": G1, "course-02-g2": G2, "course-02-g3": G3, "course-02-g4": G4, "course-02-g5": G5, "course-02-a1": A1, "course-02-a2": A2, "course-02-a3": A3, "course-02-a4": A4 });
 export const packsFor = (bookId, unitIndex, part) => PACK_BOOKS[bookId]?.[`${unitIndex}/${part}`] || [];

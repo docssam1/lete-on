@@ -168,10 +168,11 @@
 | A1 | `C2_A1_UNITS` (215문항) | `course2-a1-generators.js` 9개 + 1과정 6·7·8권 유형 | 10개(10차시) `a1.js` |
 | A2 | `C2_A2_UNITS` (197문항) | `course2-a2-generators.js` 10개 + 1과정 5·6·7·8권 달력·거꾸로 풀기·연산 약속 | 11개(11차시) `a2.js` |
 | A3 | `C2_A3_UNITS` (193문항) | `course2-a3-generators.js` 9개 + 1과정 숫자 카드·최단거리 유형 | 12개(12차시) `a3.js` |
+| A4 | `C2_A4_UNITS` (221문항) | `course2-a4-generators.js` 6개 + 1과정 마방진·원형진·복면산·합과 차 유형 | 10개(10차시) `a4.js` |
 
 **딸린 것(3단계) — 진행.**
 - 사고력 문제은행 「2과정」 탭: 권 카드마다 「본책 차시 공부」·유사문제 번호판, 논증·체험 칩은 「개념 모아 보기」로 접음(`course2-list.js`, `STUDY_BOOKS` = G1~G5).
 - 진도표·「계획대로 가는지」·내 학습 상황: `source-data.js GM_PATH`(1과정 10권 → 2과정을 G1 → A1 → G2 … 차례로, 만든 권만)를 `plan.js`·`my-study.js`·`study.js`가 쓴다. 2과정 권의 마지막 차시에는 권별 테스트가 붙는다(`unitTestPaper`).
 - 잠금·관리자: 서버 `FIELDS_BOOKS`에 2과정 10권(같은 차례) — `fields-members` v11 · `fields-auth` v19(2026-11-22 배포), 복사본 `gm-plan.js`. 관리자 화면 권 이름은 「2과정 G1」(`teacher-admin.js bookName`). 「기간」 방식의 한 달에 1권씩도 10권 다음 2과정 G1로 이어진다.
 - **대수(2026-11-22~):** 권마다 같은 일. 대수 권은 그림 논증 대신 그림·칸 막대로 「왜」를 보이고, 꾸러미 글의 분수는 「3/5」로 써서 `mathText`가 수식으로 바꾼다(`course2-pack.js`·`course2-pack-print.js`). A1에는 예전에 만든 워밍업 원본 6개(`golden-bell-course02-*-lesson.js`)가 있어 `study-deck.js SESSION_LESSONS`로 차시에 맞춰 붙였다.
-- **남은 것:** 대수 A4~A5(교재 번호표부터 같은 일) · 2과정 덱 대사 녹음(맨 끝).
+- **남은 것:** 대수 A5(교재 번호표부터 같은 일) · 2과정 덱 대사 녹음(맨 끝).

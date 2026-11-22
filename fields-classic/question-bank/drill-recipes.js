@@ -67,6 +67,11 @@ export const DRILL_RECIPES = Object.freeze({
   "course-02-a3/groups": ["c2-fraction-sequence", "c2-group-rows", "c2-figurate-number"],
   "course-02-a3/digits": ["c2-digit-count", "c2-digit-position"],
   "course-02-a3/paths": ["shortest-path-rectangle", "digit-card-number-enumeration"],
+  // 2과정 A4 — 마방진·복면산·약수와 배수·비와 가정
+  "course-02-a4/magic": ["magic-square-three-target", "circular-magic-seven-line-sum"],
+  "course-02-a4/crypt": ["two-digit-letter-cryptarithm", "cryptarithm-multi-symbol-carry"],
+  "course-02-a4/gcdlcm": ["c2-gcd-word", "c2-lcm-word", "c2-ratio-gcd-lcm"],
+  "course-02-a4/assume": ["c2-assume-solve", "c2-ratio-difference"],
   "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
   "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
   "book-04/cube-min-count": ["cube-count-solid", "cube-minimum-from-solid"],
