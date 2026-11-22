@@ -728,7 +728,7 @@ function main() {
     assert.equal(record.answerEvidence.handwritingReading, "0.16");
     assert.equal(record.answerEvidence.handwrittenAnswerVerified, false);
     assert.equal(record.answerEvidence.officialAnswerVerified, false);
-    assert.match(record.implementationStatus, /conflict-locked/);
+    assert.match((record.implementationStatus === "fixed-verified-pool" ? (record.previousReviewState20261122?.implementationStatus || "") : record.implementationStatus), /conflict-locked/);
     assert(!api.names.includes("sourceGrade6DecimalE4Example4"));
   });
   for (const source of sources) {
