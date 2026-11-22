@@ -92,7 +92,7 @@ export const PACKS = {
     summary: {
       figure: figRatioAngles,
       terms: [["□로 놓기", "모르는 각을 □로 두고 관계를 식으로 쓰기"]],
-      facts: ["세 각의 비 a : b : c → 한 칸 = 180 ÷ (a + b + c)", "이등변삼각형: 두 밑각이 같다 → □ + □ + 꼭지각 = 180", "바깥 각 = 이웃하지 않은 두 내각의 합"]
+      facts: ["세 각의 비 1 : 2 : 3 → 한 칸 = 180 ÷ (1 + 2 + 3)", "이등변삼각형: 두 밑각이 같다 → □ + □ + 꼭지각 = 180", "바깥 각 = 이웃하지 않은 두 내각의 합"]
     },
     pitfall: "비의 칸 수를 더하지 않고 바로 나누면 틀립니다. 칸을 모두 더한 뒤 180을 나눕니다.",
     example: {
@@ -135,7 +135,7 @@ export const PACKS = {
     summary: {
       figure: figRatio,
       terms: [["넓이의 비", "높이가 같을 때 = 밑변의 비"]],
-      facts: ["점이 밑변을 m : n으로 나누면 두 삼각형 넓이도 <b>m : n</b>", "전체를 m + n칸으로 나누어 한 칸의 넓이를 구한다", "나눈 선 위를 또 나누면 비를 <b>두 번</b> 쓴다"]
+      facts: ["점이 밑변을 2 : 3으로 나누면 두 삼각형 넓이도 <b>2 : 3</b>", "전체를 2 + 3칸으로 나누어 한 칸의 넓이를 구한다", "나눈 선 위를 또 나누면 비를 <b>두 번</b> 쓴다"]
     },
     pitfall: "꼭짓점이 다르면 높이가 달라 밑변의 비를 쓸 수 없습니다.",
     example: {
@@ -233,14 +233,14 @@ export const PACKS = {
     check: C3("c2-trapezoid-area")
   }],
   "3/1": [{
-    id: "similarity", title: "닮음 — 길이는 k배, 넓이는 k × k배",
+    id: "similarity", title: "닮음 — 길이가 2배면 넓이는 4배",
     recall: { figure: figSimilar, text: "모양이 같고 크기만 다른 두 도형을 닮은 도형이라 합니다.", ask: "한 변이 4cm에서 8cm로 늘었습니다. 몇 배인가요?", options: ["2배", "4배", "8배"], answer: 0, why: "8 ÷ 4 = 2배예요.", hint: "8 ÷ 4" },
     explore: [],
-    proofs: [["similar-area", "닮은 도형의 넓이는 왜 k × k배일까"], ["pyramid-hourglass", "모래시계 모양의 닮음"]],
+    proofs: [["similar-area", "길이가 2배면 넓이는 왜 4배일까"], ["pyramid-hourglass", "모래시계 모양의 닮음"]],
     summary: {
       figure: figSimilar,
-      terms: [["닮음비", "대응하는 길이의 비 — 1 : k"]],
-      facts: ["대응하는 각은 같고, 대응하는 길이는 모두 <b>k배</b>", "둘레도 <b>k배</b>", "넓이는 밑변도 높이도 k배라 <b>k × k배</b>"]
+      terms: [["닮음비", "대응하는 길이의 비 — 길이가 2배면 1 : 2"]],
+      facts: ["대응하는 각은 같고, 대응하는 길이는 모두 같은 배(예: <b>2배</b>)", "둘레도 같은 배(<b>2배</b>)", "넓이는 밑변도 높이도 2배라 <b>2 × 2 = 4배</b>(3배면 3 × 3 = 9배)"]
     },
     pitfall: "길이가 2배라고 넓이도 2배는 아닙니다. 넓이는 2 × 2 = 4배입니다.",
     example: {
@@ -248,7 +248,7 @@ export const PACKS = {
       figure: figSimilar,
       steps: [
         { ask: "닮음비 k는? 8 ÷ 4 =", answer: "2", unit: "", why: "대응하는 변의 비입니다.", hint: "8 ÷ 4" },
-        { ask: "넓이는 k × k배 — 5 × 4 =", answer: "20", unit: "㎠", why: "밑변 2배 × 높이 2배 = 4배입니다.", hint: "5 × 4" }
+        { ask: "넓이는 2 × 2 = 4배 — 5 × 4 =", answer: "20", unit: "㎠", why: "밑변 2배 × 높이 2배 = 4배입니다.", hint: "5 × 4" }
       ]
     },
     check: C3("c2-similar-scale")

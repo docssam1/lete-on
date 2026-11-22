@@ -1,5 +1,6 @@
 import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261122i";
 import { course2ConceptSlides } from "./course2-deck.js?v=20261122i";
+import { jo } from "./concept-board-kit.js?v=20261026b";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -252,7 +253,7 @@ export function slideLine(slide, { book, unitIndex, part = 1, hasConcept = true 
   if (slide.kind === "homework") return voiceLine("homework", "오늘의 과제예요. 칠판에 적힌 대로 인쇄해서 집에서 풀고, 다 풀면 화면에서 답을 확인해요.");
   if (slide.kind === "daily") return voiceLine("test", `데일리 테스트예요. 지난 시간에 배운 것으로 ${DAILY_COUNT === 4 ? "네" : DAILY_COUNT} 문제를 풀어요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요.`);
   if (slide.kind === "test") return voiceLine("test", "단원 평가예요. 이 단원에서 배운 것으로 열 문제를 풀어요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요. 약한 유형은 다시 공부해요.");
-  if (slide.kind === "booktest") return voiceLine("booktest", `${book.label}을 다 공부했어요! 이제 권별 테스트를 풀어요. 채점하면 약한 유형을 알려 줘요.`);
+  if (slide.kind === "booktest") return voiceLine("booktest", `${jo(book.label, "을")} 다 공부했어요! 이제 권별 테스트를 풀어요. 채점하면 약한 유형을 알려 줘요.`);
   return voiceLine("end", last ? `${unitIndex + 1}단원 공부를 다 마쳤어요! 정말 잘했어요.` : `${unitIndex + 1}단원 ${part}차시 공부를 다 마쳤어요! 다음에는 ${part + 1}차시를 공부해요.`);
 }
 
