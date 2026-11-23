@@ -473,3 +473,6 @@
 .bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
 .bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
 .bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+
+/* A choice or short answer needs its own response space, not extra essay rules. */
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-question::after{display:none}
