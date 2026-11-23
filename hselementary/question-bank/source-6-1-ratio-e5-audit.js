@@ -26,7 +26,7 @@ const expectedPools = [
   [[10, 20, 60, 5, 3], [8, 16, 60, 5, 3], [12, 24, 75, 4, 3]],
   [[30, 5000, 4, 7200], [31, 4000, 5, 7000], [30, 6000, 3, 5940]],
   [[75, 2, 3], [80, 3, 4], [70, 4, 7]],
-  [[5, 12, 113, 20, 3, 10, 17, 4, 3, 8, 14], [2, 5, 7, 1, 1, 5, 4, 1, 1, 2, 10], [1, 2, 11, 1, 1, 3, 8, 1, 3, 4, 16]]
+  [[5, 12, 113, 20, 3, 10, 17, 4, 3, 8, 14], [2, 5, 7, 1, 1, 5, 4, 1, 1, 2, 10], [1, 2, 11, 1, 1, 4, 13, 2, 3, 4, 16]]
 ];
 
 const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
@@ -43,6 +43,10 @@ const plain = value => {
   const whole = Math.floor(value.numerator / value.denominator);
   const remainder = value.numerator % value.denominator;
   return remainder ? `${whole ? `${whole} ` : ""}${remainder}/${value.denominator}` : String(whole);
+};
+const plainImproper = (numerator, denominator) => {
+  const value = rational(numerator, denominator);
+  return value.denominator === 1 ? String(value.numerator) : `${value.numerator}/${value.denominator}`;
 };
 const attr = (markup, name) => String(markup || "").match(new RegExp(`${name}="([^"]*)"`))?.[1] || "";
 const markerValues = markup => (attr(markup, "data-values") || "").split(",").filter(Boolean).map(Number);
@@ -67,8 +71,7 @@ function expectedAnswer(variant, values) {
     if (boysValue.denominator !== 1 || girlsValue.denominator !== 1) throw new Error("학생 수가 자연수가 아닙니다.");
     const boys = boysValue.numerator;
     const girls = girlsValue.numerator;
-    const divisor = gcd(boys, girls);
-    return `${boys / divisor}:${girls / divisor}`;
+    return plainImproper(boys, girls);
   }
   if (variant === 2) {
     const [fillA, fillB, weightATenths, weightBTenths] = values;
@@ -77,10 +80,8 @@ function expectedAnswer(variant, values) {
   }
   if (variant === 3) {
     const [aw, ah, bw, bh] = values;
-    const pa = 2 * (aw + ah);
-    const pb = 2 * (bw + bh);
-    const divisor = gcd(pa, pb);
-    return `${pa / divisor}:${pb / divisor}`;
+    if (aw * ah !== bw * bh) throw new Error("두 직사각형의 넓이가 같지 않습니다.");
+    return plainImproper(2 * (aw + ah), 2 * (bw + bh));
   }
   if (variant === 4) {
     const [buriedRate, buriedDepthTenths, exposedGapRate] = values;
@@ -99,8 +100,7 @@ function expectedAnswer(variant, values) {
     const [oldWidth, oldHeight, decreaseRate, areaDrop] = values;
     const newWidth = oldWidth * (100 - decreaseRate) / 100;
     const newHeight = (oldWidth * oldHeight - areaDrop) / newWidth;
-    const divisor = gcd(newHeight, oldHeight);
-    return `${newHeight / divisor}:${oldHeight / divisor}`;
+    return plainImproper(newHeight, oldHeight);
   }
   if (variant === 7) {
     const [topLeft, topRight, topToBottomRate, areaLeft, areaRight] = values;
@@ -178,6 +178,18 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (variant === 4 && (!problemVisible.includes('data-pole-condition-schematic="true"') || problemVisible.includes("source61-e5-pole-case") || (generated.answerVisual.match(/source61-e5-pole-case/g) || []).length !== 2)) fail(`${label}: 문제의 조건 모형과 답의 두 실제 경우가 분리되지 않았습니다.`);
       if (variant === 7 && (!problemVisible.includes("사다리꼴") || !problemVisible.includes("ㅁㄷ") || !problemVisible.includes("trapezoid-area-ratio"))) fail(`${label}: 사다리꼴 구조·선분 이름 누락`);
       if (variant === 10 && poolIndex === 0 && (!allMarkup.includes("740") || allMarkup.includes("1190"))) fail(`${label}: Mission 6 원문 답 정정 불일치`);
+      const problemText = problemVisible.replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<div class="source61-math-board"[\s\S]*$/, " ").replace(/<[^>]+>/g, "");
+      if (variant === 1 && (!problemText.includes("남학생 수의 여학생 수에 대한 비율을 분수로 나타내세요.") || /기약비/.test(problemText))) fail(`${label}: 원문(예제 5-1)의 비율 물음이 아님`);
+      if (variant === 1 && poolIndex === 0 && generated.answer !== "107/82") fail(`${label}: 원문 답 107/82와 다름`);
+      if (variant === 3) {
+        const ratioA = plainImproper(values[0], values[1]);
+        if (!problemVisible.includes(ratioA.includes("/") ? `aria-label="${ratioA.split("/")[1]}분의 ${ratioA.split("/")[0]}"` : `비율은 ${ratioA}이고`) || !problemText.includes("가의 둘레와 나의 둘레의 비율을 구하세요.") || problemText.includes(`${values[0]}:${values[1]}`)) fail(`${label}: 원문(예제 5-3)의 비율 표현·물음이 아님`);
+        if (poolIndex === 0 && (generated.answer !== "9/7" || !problemText.includes("비율은 5이고"))) fail(`${label}: 원문 수치(가 5, 답 9/7)와 다름`);
+      }
+      if (variant === 6 && (!problemText.includes("세로를 얼마만큼 늘여") || !problemText.includes("새로 만든 직사각형의 세로의 비율을 분수로 나타내세요."))) fail(`${label}: 원문(Mission 2) 물음이 아님`);
+      if (variant === 6 && poolIndex === 0 && generated.answer !== "23/20") fail(`${label}: 원문 답 23/20과 다름`);
+      if (variant === 9 && /1로 보/.test(problemVisible.replace(/<svg[\s\S]*?<\/svg>/g, " "))) fail(`${label}: 원문에 없는 '1로 보기' 안내가 문제에 남음`);
+      if (variant === 10 && (!problemText.includes(`${100 * values[4] / values[5]}%만큼`) || (values[10] % 7 === 0 && !problemText.includes(`${values[10] / 7}주 동안`)))) fail(`${label}: 원문(Mission 6)의 % 표현·기간 표현이 아님`);
       checked += 1;
     }
   }

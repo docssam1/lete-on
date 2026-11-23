@@ -19,7 +19,7 @@ const kinds = [
   "multi-price-profit", "mixture-concentration", "mixture-sample-remainder", "refill-concentration"
 ];
 const expectedPools = [
-  [[20, 2400000, 60, 12, 2, 30], [18, 1800000, 50, 10, 2, 20], [24, 3000000, 40, 15, 2, 25]],
+  [[20, 240000, 60, 60, 2, 30], [18, 180000, 50, 50, 2, 20], [24, 300000, 40, 50, 2, 25]],
   [[20, 150, 5, 300, 100, 250], [30, 200, 10, 400, 150, 250], [20, 200, 10, 300, 100, 200]],
   [[14, 2, 70000, 2800], [12, 3, 90000, 3000], [18, 2, 144000, 10000]],
   [[12000, 35, 15], [10000, 30, 20], [15000, 25, 10]],
@@ -54,7 +54,8 @@ const stripTags = markup => String(markup || "").replace(/<[^>]+>/g, "");
 
 function expectedAnswer(variant, values) {
   if (variant === 0) {
-    const [count, totalCost, profitRate, regularSold, costSold, discountRate] = values;
+    const [count, totalCost, profitRate, regularPercent, costSold, discountRate] = values;
+    const regularSold = count * regularPercent / 100;
     const costEach = totalCost / count;
     const listEach = costEach * (100 + profitRate) / 100;
     const discountedSold = count - regularSold - costSold - 1;
@@ -181,6 +182,11 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (difficulty === 1 && !generated.prompt.includes('data-step-evidence="independent-reasoning"')) fail(`${label}: 어려움 안내 누락`);
       const allMarkup = `${generated.prompt} ${generated.solution} ${generated.answerVisual}`;
       if (/undefined|null|NaN|Infinity|\$\{[^}]+\}|순열|조합|일차식|절댓값/.test(allMarkup)) fail(`${label}: 깨진 값 또는 학년 밖 표현`);
+      if (variant === 0) {
+        const promptText = stripTags(visible(generated.prompt).replace(/<svg[\s\S]*?<\/svg>/g, " "));
+        if (!promptText.includes(`수박 ${values[0]}개를 ${values[1] / 10000}만 원에`) || !promptText.includes(`사 온 수박의 ${values[3]}%는 정가대로`) || !promptText.includes("시식용") || !promptText.includes("원가(사 온 가격)")) fail(`${label}: 원문(개념탐구 4 (1))의 금액·비율 표현이 아님`);
+        if (poolIndex === 0 && generated.answer !== "81600원") fail(`${label}: 원문 수치의 이익 81600원과 다름`);
+      }
       if (variant === 2 && !stripTags(generated.prompt).includes(`배 ${values[1]}상자의`)) fail(`${label}: 자료와 다른 상자 수가 보입니다.`);
       if (variant === 1 && !stripTags(generated.prompt).includes(`${values[4]}g을 사용한 후`)) fail(`${label}: 원문 표현 '100g을 사용한 후'가 보존되지 않았습니다.`);
       if (variant === 1 && allMarkup.includes("20/7")) fail(`${label}: 정정 전 20/7% 답이 남아 있습니다.`);
