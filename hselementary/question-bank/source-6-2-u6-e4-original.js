@@ -72,7 +72,9 @@ function coneSvg(r,a,l,th){const s=Math.min(190/a,120/r),cx=180,R=r*s,ry=R*0.32,
  return svg(360,By+28,`직각삼각형 ㄱㄴㄷ을 변 ㄱㄴ을 축으로 ${th}도 돌린 입체도형`,b);}
 
 // 예제 3: 구멍 하나는 뚫고 하나는 판 원기둥
-function holesSvg(R,H,r1,r2,d){const s=Math.min(170/H,150/(2*R)),cx=180,k=0.3,rx=R*s,ry=rx*k,yt=16+ry,yb=yt+H*s;
+// 글자 뒤에 흰 테두리를 둘러 점선 위에서도 읽히게 한다.
+const TL=(x,y,t,a,sz)=>`<text x="${f(x)}" y="${f(y)}" text-anchor="${a||'middle'}" font-size="${sz||12}" fill="#222" style="font-family:inherit;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">${t}</text>`;
+function holesSvg(R,H,r1,r2,d){const s=Math.min(170/H,150/(2*R)),cx=180,k=0.3,rx=R*s,ry=rx*k,yt=34+ry,yb=yt+H*s;
  const x1=cx-(R-r1-1)*s,x2=cx+(R-r2-1)*s,a1=r1*s,a2=r2*s,yd=yt+d*s;
  let b=body(cx,yt,yb,rx,ry,C2)+ell(cx,yt,rx,ry,'fill:#f4f4f4;'+S);
  b+=ell(x1,yt,a1,a1*k,`fill:${C4};${S}`)+ell(x2,yt,a2,a2*k,`fill:${C3};${S}`);
@@ -82,6 +84,11 @@ function holesSvg(R,H,r1,r2,d){const s=Math.min(170/H,150/(2*R)),cx=180,k=0.3,rx
  b+=dim(cx-rx,yt,cx-rx,yb,14,H+' cm');
  b+=line(x2+a2,yd,cx+rx+16,yd,'stroke:#55524d;stroke-width:1px;stroke-dasharray:2 3')+line(cx+rx,yt,cx+rx+16,yt,'stroke:#55524d;stroke-width:1px;stroke-dasharray:2 3');
  b+=dim(cx+rx+12,yt,cx+rx+12,yd,-10,d+' cm');
+ // 원본 그림처럼 두 구멍과 큰 원기둥의 반지름을 그림에 적는다.
+ const LEAD='stroke:#55524d;stroke-width:0.9px';
+ b+=line(x1,yt,x1+a1,yt,THIN)+dot(x1,yt)+line(x1+a1/2,yt,x1-a1-4,yt-ry-6,LEAD)+TL(x1-a1-6,yt-ry-9,r1+' cm','end');
+ b+=line(x2,yt,x2+a2,yt,THIN)+dot(x2,yt)+line(x2+a2/2,yt,cx+rx+2,yt-ry-6,LEAD)+TL(cx+rx+4,yt-ry-9,r2+' cm','start');
+ b+=line(cx,yb,cx+rx,yb,THIN)+dot(cx,yb)+TL(cx+rx/2,yb-6,R+' cm');
  return svg(360,yb+ry+10,'큰 원기둥에 작은 원기둥 구멍 두 개가 있는 그림',b);}
 
 // 예제 4: 통나무를 n번 자르기
@@ -148,6 +155,8 @@ function digSvg(D,H,L){const s=Math.min(200/D,160/H),cx=180,k=0.3,rx=D*s/2,ry=rx
  let b=body(cx,yt,yb,rx,ry,C2)+ell(cx,yt,rx,ry,'fill:#f4f4f4;'+S)+arcPath(cx,yb,rx,ry,180,360,HID);
  b+=ell(cx,yt,L[0][0]*s/2,L[0][0]*s/2*k,`fill:${C4};${S}`);let y=yt;
  L.forEach(([d,h],i)=>{const a=d*s/2,y2=y+h*s;if(i>0)b+=ell(cx,y,a,a*k,HID);b+=line(cx-a,y,cx-a,y2,HID)+line(cx+a,y,cx+a,y2,HID)+ell(cx,y2,a,a*k,HID);y=y2;});
+ // 원본 그림처럼 파낸 원기둥마다 밑면의 지름(왼쪽)과 높이(오른쪽)를 적는다.
+ y=yt;L.forEach(([d,h])=>{const a=d*s/2,y2=y+h*s;b+=line(cx-a,y,cx+a,y,'stroke:#222;stroke-width:0.9px;stroke-dasharray:2 2')+TL(cx-a-6,y+4,d+' cm','end',11)+TL(cx+a+6,(y+y2)/2+4,h+' cm','start',11);y=y2;});
  b+=dim(cx+rx,yt,cx+rx,yb,-14,H+' cm');
  return svg(360,yb+ry+10,'원기둥 가운데를 지름이 점점 작은 원기둥 3개로 차례로 파낸 그림',b);}
 
@@ -188,9 +197,9 @@ const ITEMS={
     `겉넓이는 ${n2(base)} + ${n2(lat)} + ${n2(2*tri)} = ${n2(t)} (cm²)입니다.`])};})},
  '6-2-u6-e4-example-3':{key:'source62U6E4Example3',resultContract:'single-value',answerVisualRequired:false,pool:[[9,25,2,4,17],[10,20,3,4,12],[8,15,2,3,10]].map(([R,H,r1,r2,d])=>{
    const bases=(R*R*3.1-r1*r1*3.1)*2,s1=R*2*3.1*H,s2=r1*2*3.1*H,s3=r2*2*3.1*d,t=bases+s1+s2+s3;return {
-   prompt:P([`그림의 입체도형은 밑면의 반지름이 ${R} cm, 높이가 ${H} cm인 큰 원기둥에서 작은 원기둥 2개를 뺀 것입니다. 밑면의 반지름이 ${r1} cm인 원기둥은 위에서 아래까지 뚫어 냈고, 밑면의 반지름이 ${r2} cm인 원기둥은 위에서부터 ${d} cm 깊이만큼 파냈습니다. 이 입체도형의 겉넓이를 구하세요. (원주율: 3.1)`,holesSvg(R,H,r1,r2,d)]),
+   prompt:P([`다음 입체도형은 큰 원기둥에서 작은 원기둥 2개를 뺀 것입니다. 이 입체도형의 겉넓이를 구하세요. (원주율: 3.1)`,holesSvg(R,H,r1,r2,d)]),
    answer:n2(t)+' cm²',
-   solution:ol([`반지름이 ${r2} cm인 구멍은 윗면에서 빠진 원과 같은 크기의 원이 구멍의 바닥에 생기므로 위아래 면의 넓이는 변하지 않습니다. 반지름이 ${r1} cm인 구멍은 윗면과 아랫면에서 원이 하나씩 빠집니다.`,
+   solution:ol([`풀이 기준: 그림의 수는 큰 원기둥의 밑면의 반지름 ${R} cm, 높이 ${H} cm이고, 밑면의 반지름이 ${r1} cm인 원기둥은 위에서 아래까지 뚫어 냈고 밑면의 반지름이 ${r2} cm인 원기둥은 위에서부터 ${d} cm 깊이만큼 파낸 것으로 봅니다.`,`반지름이 ${r2} cm인 구멍은 윗면에서 빠진 원과 같은 크기의 원이 구멍의 바닥에 생기므로 위아래 면의 넓이는 변하지 않습니다. 반지름이 ${r1} cm인 구멍은 윗면과 아랫면에서 원이 하나씩 빠집니다.`,
     `위아래 면의 넓이는 (${R} × ${R} × 3.1 − ${r1} × ${r1} × 3.1) × 2 = ${n2(bases)} (cm²)입니다.`,
     `큰 원기둥의 옆면의 넓이는 ${R} × 2 × 3.1 × ${H} = ${n2(s1)} (cm²)입니다.`,
     `뚫어 낸 구멍 안쪽의 옆면의 넓이는 ${r1} × 2 × 3.1 × ${H} = ${n2(s2)} (cm²)입니다.`,
@@ -240,9 +249,9 @@ const ITEMS={
     `겉넓이는 ${n2(2*B)} + ${n2(cur)} + ${n2(rect)} = ${n2(t)} (cm²)입니다.`])};})},
  '6-2-u6-e4-mission-5':{key:'source62U6E4Mission5',resultContract:'single-value',answerVisualRequired:false,pool:[[20,16,[[8,6],[4,4],[2,2]]],[16,12,[[6,5],[4,3],[2,2]]],[24,18,[[10,6],[6,5],[2,3]]]].map(([D,H,L])=>{
    const R=D/2,bases=R*R*3.1*2,side=D*3.1*H,ins=L.map(([d,h])=>d*3.1*h),inS=ins.reduce((x,y)=>x+y,0),t=bases+side+inS;return {
-   prompt:P([`밑면의 지름이 ${D} cm, 높이가 ${H} cm인 원기둥에서 그림과 같이 원기둥 3개를 차례로 이어서 파냈습니다. 파낸 원기둥은 위에서부터 차례로 밑면의 지름이 ${L[0][0]} cm·높이가 ${L[0][1]} cm, 지름이 ${L[1][0]} cm·높이가 ${L[1][1]} cm, 지름이 ${L[2][0]} cm·높이가 ${L[2][1]} cm입니다. 이 입체도형의 겉넓이를 구하세요. (원주율: 3.1)`,digSvg(D,H,L)]),
+   prompt:P([`밑면의 지름이 ${D} cm, 높이가 ${H} cm인 원기둥에서 밑면의 지름과 높이가 다음 그림과 같은 원기둥 3개를 차례로 이어서 파냈습니다. 이 입체도형의 겉넓이를 구하세요. (원주율: 3.1)`,digSvg(D,H,L)]),
    answer:n2(t)+' cm²',
-   solution:ol([`위에서 내려다보면 파낸 구멍의 바닥과 층계 모양의 면들이 윗면에서 빠진 원을 꼭 채우므로, 위아래로 보이는 면의 넓이는 처음 원기둥의 두 밑면의 넓이와 같습니다.`,
+   solution:ol([`풀이 기준: 그림의 수는 파낸 원기둥이 위에서부터 차례로 밑면의 지름 ${L[0][0]} cm·높이 ${L[0][1]} cm, 지름 ${L[1][0]} cm·높이 ${L[1][1]} cm, 지름 ${L[2][0]} cm·높이 ${L[2][1]} cm인 것으로 봅니다.`,`위에서 내려다보면 파낸 구멍의 바닥과 층계 모양의 면들이 윗면에서 빠진 원을 꼭 채우므로, 위아래로 보이는 면의 넓이는 처음 원기둥의 두 밑면의 넓이와 같습니다.`,
     `두 밑면의 넓이는 ${R} × ${R} × 3.1 × 2 = ${n2(bases)} (cm²)이고, 처음 원기둥의 옆면의 넓이는 ${D} × 3.1 × ${H} = ${n2(side)} (cm²)입니다.`,
     `파낸 원기둥 3개의 옆면의 넓이는 ${L.map(([d,h])=>`${d} × 3.1 × ${h}`).join(' + ')} = ${ins.map(n2).join(' + ')} = ${n2(inS)} (cm²)입니다.`,
     `겉넓이는 ${n2(bases)} + ${n2(side)} + ${n2(inS)} = ${n2(t)} (cm²)입니다.`])};})},

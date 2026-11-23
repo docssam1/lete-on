@@ -43,7 +43,8 @@ function cone(A,B,a,b,fill,opt){opt=opt||{};const L=[B[0]-a[0],B[1]-a[1]],R=[B[0
 function upCone(cx,by,h,r,fill,k,opt){k=k||0.28;return cone([cx,by-h],[cx,by],[r,0],[0,r*k],fill,opt);}
 
 // ---------- 개념탐구: 철사로 만든 원뿔 (모선 구하기) ----------
-function wireFig(r,l,lab,showRadius){const h=Math.sqrt(l*l-r*r),s=125/r,rx=r*s,ry=rx*0.33,H=h*s,cx=150,by=H+40;const B=[cx,by],a=[rx,0],b=[0,ry];
+// 원본 수치처럼 모선이 반지름보다 길지 않으면(실제 원뿔이 되지 않음) 그림은 책처럼 낮은 원뿔로 그린다.
+function wireFig(r,l,lab,showRadius){const h=l>r*1.15?Math.sqrt(l*l-r*r):r*0.6,s=125/r,rx=r*s,ry=rx*0.33,H=h*s,cx=150,by=H+40;const B=[cx,by],a=[rx,0],b=[0,ry];
  const A=[cx,by-H];const pts={ㄴ:Math.PI,ㄷ:125*Math.PI/180,ㄹ:100*Math.PI/180,ㅂ:290*Math.PI/180,ㅁ:0};
  let body=poly(eArc(B,a,b,0,2*Math.PI,80),'fill:none;'+ST);
  Object.keys(pts).forEach(k=>{const P=eP(B,a,b,pts[k]);body+=ln(A[0],A[1],P[0],P[1]);});
@@ -53,13 +54,13 @@ function wireFig(r,l,lab,showRadius){const h=Math.sqrt(l*l-r*r),s=125/r,rx=r*s,r
  else body+=dim(A[0],A[1],cx+rx,by,lab,1,9);
  return svg(300,by+ry+22,body,'철사로 만든 원뿔 모양');}
 function itemExplore(P){const {r,l}=P,C=F(r*2*3.14),W=F(C+5*l);
- return {prompt:`<p>철사 ${N(W)} cm를 겹치지 않게 남김없이 사용하여 그림과 같은 원뿔 모양을 만들었습니다. 선분 ㄱㅁ의 길이는 몇 cm인지 구하세요. (원주율: 3.14)</p>`+wireFig(r,l,r+' cm',true)
-  +`<p>※ 조건 보충: 밑면의 반지름을 나타낸 점선은 철사가 아닙니다.</p>`,
+ return {prompt:`<p>철사 ${N(W)} cm를 겹치지 않게 모두 사용하여 다음과 같은 원뿔 모양을 만들었습니다. 선분 ㄱㅁ의 길이는 몇 cm인지 구하세요. (원주율: 3.14)</p>`+wireFig(r,l,r+' cm',true),
   answer:`${l} cm`,
-  solution:`<ol><li>철사는 밑면의 둘레와 선분 ㄱㄴ, ㄱㄷ, ㄱㄹ, ㄱㅂ, ㄱㅁ의 5개 모선에 쓰였습니다.</li>`
+  solution:`<ol><li>풀이 기준: 밑면의 반지름을 나타낸 점선은 철사가 아닌 것으로 봅니다.</li><li>철사는 밑면의 둘레와 선분 ㄱㄴ, ㄱㄷ, ㄱㄹ, ㄱㅂ, ㄱㅁ의 5개 모선에 쓰였습니다.</li>`
   +`<li>밑면의 둘레는 ${r}×2×3.14=${N(C)} (cm)입니다.</li>`
   +`<li>모선 5개의 길이의 합은 ${N(W)}−${N(C)}=${5*l} (cm)입니다.</li>`
-  +`<li>원뿔의 모선은 길이가 모두 같으므로 선분 ㄱㅁ의 길이는 ${5*l}÷5=${l} (cm)입니다.</li></ol>`};}
+  +`<li>원뿔의 모선은 길이가 모두 같으므로 선분 ㄱㅁ의 길이는 ${5*l}÷5=${l} (cm)입니다.</li>`
+  +`</ol>`};}
 
 // ---------- 예제 2-1 / Mission 3: 전개도의 중심각 ----------
 function itemAngle(P){const {l,r,fn,fd}=P,ang=360*fn/fd;
@@ -140,8 +141,10 @@ function hatsData(hs){const all=perms([0,1,2]).map(o=>({o,top:stackTop(o.map(i=>
  if(lo.length!==1||hi.length!==1)throw new Error('hats not unique');
  const ratio=hs.map(c=>c.h/c.r);const S=ratio.indexOf(Math.max(...ratio)),Fl=ratio.indexOf(Math.min(...ratio)),M=3-S-Fl;
  return {all,lo:lo[0],hi:hi[0],S,Fl,M,ratio};}
-function hatsPrompt(hs,which){const d=hs.map((c,i)=>`${HN[i]}는 높이 ${c.h} cm, 밑면의 반지름 ${c.r} cm`).join(', ');
- return `<p>원뿔 모양의 고깔이 3개 있습니다. (${d}) 고깔 위에 고깔을 포개고, 또 그 위에 포개어 3개의 고깔을 모두 포개려고 합니다. 포갠 전체 높이를 가장 ${which==='lo'?'낮게':'높게'} 하려면 어떤 순서로 포개야 하는지 맨 아래 고깔부터 차례로 기호를 쓰세요. (단, 고깔의 두께는 생각하지 않습니다.)</p>`+figHats(hs);}
+function hatsPrompt(hs,which){
+ return `<p>다음과 같은 원뿔 모양의 고깔이 3개 있습니다. 고깔 위에 고깔을 포개고 또 포개어 3개의 고깔을 모두 포갤 때, 물음에 답하세요. (단, 고깔의 두께는 생각하지 않습니다.)</p>`+figHats(hs)
+  +`<p>3개의 고깔을 포갰을 때, 높이를 가장 ${which==='lo'?'낮게':'높게'} 하려면 어떤 순서로 포개야 하나요? 맨 아래 고깔부터 차례로 기호를 쓰세요.</p>`;}
+function hatsBasis(hs){return `<li>풀이 기준: 그림의 수는 ${hs.map((c,i)=>`${HN[i]}는 높이 ${c.h} cm, 밑면의 반지름 ${c.r} cm`).join(', ')}로 봅니다.</li>`;}
 function listAll(D){return D.all.map(x=>x.o.map(i=>HN[i]).join('→')+' '+N(x.top)+' cm').join(', ');}
 function itemHats(hs,which){const D=hatsData(hs),{S,Fl,M}=D,ans=(which==='lo'?D.lo:D.hi).o.map(i=>HN[i]).join(', ');
  const rs=`${HN[S]} ${N(D.ratio[S])}, ${HN[M]} ${N(D.ratio[M])}, ${HN[Fl]} ${N(D.ratio[Fl])}`;
@@ -158,7 +161,7 @@ function itemHats(hs,which){const D=hatsData(hs),{S,Fl,M}=D,ans=(which==='lo'?D.
   +`<li>맨 위에 가장 뾰족한 ${HN[S]}를 씌우면 ${HN[S]}의 밑면 테두리(반지름 ${s.r} cm)가 ${HN[Fl]}의 옆면에 걸립니다. ${HN[Fl]}는 높이 ${f.h} cm를 올라가는 동안 반지름이 ${f.r} cm 줄어들므로 반지름이 ${s.r} cm인 곳은 ${HN[Fl]}의 밑면에서 ${f.h}×(${f.r}−${s.r})÷${f.r}=${N(up)} (cm) 위, 바닥에서 ${t1}+${N(up)}=${N(t2)} (cm) 높이입니다.</li>`
   +`<li>전체 높이는 ${N(t2)}+${s.h}=${N(t2+s.h)} (cm)입니다.</li>`
   +`<li>여섯 가지 순서의 전체 높이를 모두 구하면 ${listAll(D)}이므로 가장 높게 하려면 ${ans} 순서로 포갭니다.</li>`;}
- return {prompt:hatsPrompt(hs,which),answer:ans,solution:`<ol>${body}</ol>`};}
+ return {prompt:hatsPrompt(hs,which),answer:ans,solution:`<ol>${hatsBasis(hs)}${body}</ol>`};}
 
 // ---------- Mission 1: 물감 묻힌 원뿔 굴리기 ----------
 function figPaint(r,l){const h=Math.sqrt(l*l-r*r),s=110/l,O=[150,130],R=l*s;
@@ -174,11 +177,12 @@ function itemPaint(P){const {c,n}=P,r=F(c/(2*3.14)),tot=F(c*n),l=F(tot/(2*3.14))
 
 // ---------- Mission 2: 철사 원뿔의 밑면 반지름 ----------
 function itemWire2(P){const {r,l}=P,C=r*2*3,W=C+5*l;
- return {prompt:`<p>길이가 ${W} cm인 철사를 모두 사용하여 그림과 같은 원뿔 모양의 구조물을 만들었습니다. 밑면의 반지름은 몇 cm인지 구하세요. (단, 철사를 이은 부분의 길이는 생각하지 않으며, 원주율은 3으로 계산합니다.)</p>`+wireFig(r,l,l+' cm',false),
+ return {prompt:`<p>길이가 ${W} cm인 철사를 모두 사용하여 다음과 같은 원뿔 모양의 구조물을 만들었습니다. 밑면의 반지름의 길이는 몇 cm인가요? (단, 철사를 이은 부분의 길이는 생각하지 않으며, 원주율은 3으로 계산합니다.)</p>`+wireFig(r,l,l+' cm',false),
   answer:`${r} cm`,
   solution:`<ol><li>철사는 밑면의 둘레와 꼭짓점에서 밑면까지 이은 모선 5개에 쓰였고, 원뿔의 모선은 길이가 모두 ${l} cm입니다.</li>`
   +`<li>모선 5개의 길이의 합은 ${l}×5=${5*l} (cm)이므로 밑면의 둘레는 ${W}−${5*l}=${C} (cm)입니다.</li>`
-  +`<li>(반지름)×2×3=${C}이므로 반지름은 ${C}÷6=${r} (cm)입니다.</li></ol>`};}
+  +`<li>(반지름)×2×3=${C}이므로 반지름은 ${C}÷6=${r} (cm)입니다.</li>`
+  +`</ol>`};}
 
 // ---------- Mission 4: 원을 네 부분으로 나누어 만든 원뿔 4개 ----------
 function figCut(R){const s=78/R,Rp=R*s,C=[150,150],cuts=[0,90,150,210,360],fills=[DARK,SHADE,DARK,SHADE];let body='';
@@ -240,14 +244,14 @@ function itemCaps(P){const {H,R,r}=P,step=H/R,t=(R-r)*step;
 // ---------- 풀 ----------
 const HATS=[[{h:60,r:20},{h:40,r:40},{h:60,r:30}],[{h:32,r:32},{h:48,r:16},{h:48,r:24}],[{h:54,r:27},{h:54,r:18},{h:36,r:36}]];
 const POOLS={
- '6-2-u6-e2-exploration-1':{key:'source62U6E2Exploration1',f:itemExplore,answerAssumption:'밑면의 반지름을 나타낸 점선은 철사가 아니다.',ps:[{r:8,l:10},{r:5,l:13},{r:9,l:15}]},
+ '6-2-u6-e2-exploration-1':{key:'source62U6E2Exploration1',f:itemExplore,answerAssumption:'밑면의 반지름을 나타낸 점선은 철사가 아니다.',ps:[{r:8,l:8},{r:5,l:13},{r:9,l:15}]},
  '6-2-u6-e2-example-1':{key:'source62U6E2Example1',f:itemAngle,ps:[{l:10,r:2.5,fn:1,fd:4},{l:12,r:4,fn:1,fd:3},{l:15,r:2.5,fn:1,fd:6}]},
  '6-2-u6-e2-example-2':{key:'source62U6E2Example2',f:itemRoll,ps:[{r:3,l:10,n:3,fn:9,fd:10},{r:2,l:7,n:3,fn:6,fd:7},{r:4,l:13,n:3,fn:12,fd:13}]},
  '6-2-u6-e2-example-3':{key:'source62U6E2Example3',f:itemShort,ps:[{l:6,d:4},{l:9,d:6},{l:12,d:8}]},
  '6-2-u6-e2-example-4-1':{key:'source62U6E2Example41',f:hs=>itemHats(hs,'lo'),ps:HATS},
  '6-2-u6-e2-example-4-2':{key:'source62U6E2Example42',f:hs=>itemHats(hs,'hi'),ps:HATS},
  '6-2-u6-e2-mission-1':{key:'source62U6E2Mission1',f:itemPaint,ps:[{c:62.8,n:3},{c:31.4,n:4},{c:37.68,n:3}]},
- '6-2-u6-e2-mission-2':{key:'source62U6E2Mission2',f:itemWire2,ps:[{r:6,l:9},{r:8,l:10},{r:5,l:13}]},
+ '6-2-u6-e2-mission-2':{key:'source62U6E2Mission2',f:itemWire2,ps:[{r:11,l:9},{r:8,l:10},{r:5,l:13}]},
  '6-2-u6-e2-mission-3':{key:'source62U6E2Mission3',f:itemNet,ps:[{l:8,r:2,fn:1,fd:4},{l:9,r:3,fn:1,fd:3},{l:10,r:4,fn:2,fd:5}]},
  '6-2-u6-e2-mission-4':{key:'source62U6E2Mission4',f:itemCut,ps:[{R:8},{R:6},{R:10}]},
  '6-2-u6-e2-mission-5':{key:'source62U6E2Mission5',f:itemThread,ps:[{l:12,r:3},{l:8,r:2},{l:16,r:4}]},

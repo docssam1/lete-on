@@ -43,8 +43,12 @@ OUT['6-2-u5-e2-example-1'] = [f'{6*a} cm² 초과 {6*b} cm² 미만' for a, b in
 for a, b in ((24, 32), (18, 24), (27, 36)):
     assert F(b, a) == F(4, 3)   # 원 안·밖 정육각형 넓이 비 3:4 와 일치
 ans = []
-for tout, tin in ((40, 30), (48, 36), (20, 15)):
-    assert F(tout, tin) == F(4, 3)   # 원 밖:원 안 정육각형 넓이 비 4:3
+for i, (tout, tin) in enumerate(((40, 25), (48, 36), (20, 15))):
+    # 변형 0은 원본 책 수치(40, 25) 그대로다. 정확한 원 안·밖 정육각형이면 4:3이어야 하지만
+    # 책이 준 두 넓이를 그대로 써서 어림 범위를 구한다. 나머지 변형은 4:3을 지킨다.
+    if i:
+        assert F(tout, tin) == F(4, 3)   # 원 밖:원 안 정육각형 넓이 비 4:3
+    assert tin < tout
     ans.append(f'{6*tin} cm² 초과 {6*tout} cm² 미만')
 OUT['6-2-u5-e2-mission-1'] = ans
 

@@ -28,7 +28,15 @@ def explore(r, l):
     sols = [Fr(k, 100) for k in range(1, 10000) if Fr(r) * 2 * PI314 + 5 * Fr(k, 100) == wire]
     assert sols == [Fr(l)]
     return s(sols[0]) + ' cm'
-OUT['6-2-u6-e2-exploration-1'] = [explore(8, 10), explore(5, 13), explore(9, 15)]
+# 변형 0은 원본 책 수치(철사 90.24 cm, 반지름 8 cm) 그대로 철사 길이에서 거꾸로 푼다.
+# 이 수치로는 모선(8 cm)이 반지름과 같아 실제 원뿔이 되지 않지만, 원본대로 두고 계산만 검산한다.
+def explore_book(r, wire_text):
+    wire = Fr(wire_text)
+    sols = [Fr(k, 100) for k in range(1, 10000) if Fr(r) * 2 * PI314 + 5 * Fr(k, 100) == wire]
+    assert len(sols) == 1
+    assert sols[0] == Fr(r)   # 원본 수치의 한계: 모선 = 반지름
+    return s(sols[0]) + ' cm'
+OUT['6-2-u6-e2-exploration-1'] = [explore_book(8, '90.24'), explore(5, 13), explore(9, 15)]
 
 # ---- 예제 2-1 / Mission 3: 전개도 중심각 ----
 def angle(l, r):
@@ -124,7 +132,13 @@ def wire2(r, l):
     sols = [k for k in range(1, 1000) if 2 * 3 * k + 5 * l == W]
     assert sols == [r]
     return f'{r} cm'
-OUT['6-2-u6-e2-mission-2'] = [wire2(6, 9), wire2(8, 10), wire2(5, 13)]
+# 변형 0은 원본 책 수치(철사 111 cm, 모선 9 cm, 모선 5개) 그대로 철사 길이에서 거꾸로 푼다.
+# 이 수치로는 반지름(11 cm)이 모선보다 길어 실제 원뿔이 되지 않지만, 원본대로 두고 계산만 검산한다.
+def wire2_book(W, l):
+    sols = [k for k in range(1, 1000) if 2 * 3 * k + 5 * l == W]
+    assert len(sols) == 1 and sols[0] > l   # 원본 수치의 한계: 반지름 > 모선
+    return f'{sols[0]} cm'
+OUT['6-2-u6-e2-mission-2'] = [wire2_book(111, 9), wire2(8, 10), wire2(5, 13)]
 
 # ---- Mission 4: 원을 4조각 → 밑면 둘레 합 = 원의 둘레 ----
 def cut(R):
