@@ -115,13 +115,16 @@ server.listen(0, async () => {
              [8] 개념·예시만 있는 첫 장의 내용 아래 끝, [9] 그 장의 종이 바닥(2026-11-23 「한 페이지 맞추기」:
              둘이 한 장에 들어가면 renderRoundPages 가 한 장에 싣는다) */
           let guideH = null, headOnly = null, floor1 = null;
-          const gOnly = pages.slice(1, 3).find(p => p.querySelector('.nm-w2-guide') && !p.querySelector('.nm-w2-item'));
-          if(gOnly && !gridOf(p1)){
+          /* 따라 풀기 장에 연습 문항이 함께 있어도(중등 개념 쪽에 연습 6문항을 실은 판) 따라 풀기 덩어리만 잰다 —
+             잴 때의 첫 장 배치가 실제 학습지와 달라도 [7]·[8] 은 같은 값이 나오게 */
+          const gOnly = pages.slice(1, 3).find(p => p.querySelector(':scope > .nm-w2-guide'));
+          const own = c => !/nm-w2-(wm|foot|head|grid|instr|retry)/.test(c.className) && !c.querySelector('.nm-w2-item') && c.getBoundingClientRect().height;
+          if(gOnly && !p1.querySelector(':scope > .nm-w2-guide')){
             const below = el => el.getBoundingClientRect().bottom;
             const hd = gOnly.querySelector('.nm-w2-head');
-            const kids = [...gOnly.children].filter(c => !/nm-w2-(wm|foot|head)/.test(c.className) && c.getBoundingClientRect().height);
+            const kids = [...gOnly.children].filter(own);
             if(hd && kids.length) guideH = Math.ceil(mm(Math.max(...kids.map(below)) - below(hd)));
-            const kids1 = [...p1.children].filter(c => !/nm-w2-(wm|foot)/.test(c.className) && c.getBoundingClientRect().height);
+            const kids1 = [...p1.children].filter(own);
             if(kids1.length) headOnly = Math.ceil(mm(Math.max(...kids1.map(below)) - p1.getBoundingClientRect().top));
             floor1 = Math.floor(mm(floorOf(p1) - p1.getBoundingClientRect().top));
           }
