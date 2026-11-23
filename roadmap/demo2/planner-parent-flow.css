@@ -12,7 +12,8 @@ body.parent-boot>:not(#parentBoot):not(script):not(#memberGate){display:none!imp
 .parent-age-intake{padding-bottom:24px;margin-bottom:26px;border-bottom:1px solid #ddd5e3}.parent-age-intake>label{max-width:240px}
 .parent-current-form label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;min-width:0}
 .parent-current-form label span{font-size:12px;font-weight:400;color:#817489}
-.parent-current-form input,.parent-current-form select,.parent-current-form textarea{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #c9bdcf;border-radius:8px;background:#fff;color:#35283e;font:inherit;font-size:16px;font-weight:400;box-shadow:none}
+.intake-learner-menu{grid-column:1/-1}
+.intake-learner-menu,.parent-current-form input,.parent-current-form select,.parent-current-form textarea{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #c9bdcf;border-radius:8px;background:#fff;color:#35283e;font:inherit;font-size:16px;font-weight:400;box-shadow:none}
 .parent-current-form textarea{resize:vertical}
 .parent-current-form [hidden]{display:none!important}
 .parent-student{display:flex;gap:16px;margin-bottom:22px}.parent-student>label{flex:0 1 200px}

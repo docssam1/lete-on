@@ -35,10 +35,10 @@ async function mount({loadFull,member,saved}){
   const current=await g.RoadmapMembership.status();
   if(!current||current.user_id!==member.user_id)throw Error('로그인 상태가 바뀌었어요. 내 계정에서 다시 확인해 주세요.');
  };
- const open=async(next,advanced,study=false)=>{
+ const open=async(next,advanced,study=false,learner)=>{
   g.RoadmapSpeed?.mark('roadmap_start');if(study)g.RoadmapSpeed?.mark('study_start');
   await verifyMember();
-  g.RoadmapParentPending={answers:next,advanced:!!advanced,study,saved};
+  g.RoadmapParentPending={answers:next,advanced:!!advanced,learner,study,saved};
   try{await loadFull();}catch(error){const retry=doc.createElement('button');retry.type='button';retry.textContent='새로고침 후 다시 열기';retry.onclick=()=>location.reload();retry.dataset.parentRetry='true';entry.querySelector('[data-parent-retry]')?.remove();(entry.querySelector('.parent-slide-footer')||entry).append(retry);throw error;}
   doc.body.classList.remove('parent-boot','parent-slide-open');host.remove();
   g.RoadmapSpeed?.ready('roadmap_ready','#journeyMap,.parent-own-learning');
@@ -46,7 +46,7 @@ async function mount({loadFull,member,saved}){
  const edit=(mode,answers)=>{
   entry.replaceChildren();
   g.PlannerParentFlow.mount(entry,{mode,answers,member:g.RoadmapMember,onSubmit:submit,
-   onAdvanced:()=>open(null,true).catch(error=>{const p=doc.createElement('p');p.setAttribute('role','alert');p.textContent=error.message;entry.append(p);})});
+   onAdvanced:learner=>open(null,true,false,learner).catch(error=>{const p=doc.createElement('p');p.setAttribute('role','alert');p.textContent=error.message;entry.append(p);})});
  };
  const preview=answers=>{
   doc.body.classList.remove('parent-slide-open');delete host.dataset.slideEditing;
