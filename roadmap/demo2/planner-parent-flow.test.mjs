@@ -167,17 +167,17 @@ test('an older saved semester can still be compared and notice content is escape
 });
 
 test('the detailed interview uses one learner selector and then follows each learning order',()=>{
- for(const [age,grade,order]of [['5','pre',['thinking','calc','school','deep']],['10','3',['school','deep','thinking','calc']],['14','7',['school','deep','thinking','calc']]]){
+ for(const [age,grade,order]of [['5','pre',['thinking','calc','school','deep']],['9','2',['thinking','calc','school','deep']],['10','3',['calc','school','deep']],['14','7',['calc','school','deep']]]){
   const steps=F.slidePlan(age,grade);
   assert.deepEqual(plain(steps.map(s=>s.id)),['learner',...order,'review']);
-  assert.equal(new Set(steps.map(s=>s.id)).size,6);assert.ok(steps.every(s=>s.label&&s.title));
+  assert.equal(new Set(steps.map(s=>s.id)).size,order.length+2);assert.ok(steps.every(s=>s.label&&s.title));
  }
- assert.match(F.slidePlan('5','pre')[1].title,/현재 학습/);
- assert.match(F.slidePlan('14','7')[1].title,/교과 개념·유형/);
+ assert.match(F.slidePlan('5','pre')[1].title,/사고력 수학/);
+ assert.match(F.slidePlan('14','7')[1].title,/연산/);
 });
 
 test('quick draft needs only one current fact, including a semester without a book',()=>{
- for(const [age,grade,axis] of [['5','pre','thinking'],['10','3','school'],['14','7','school']]){
+ for(const [age,grade,axis] of [['5','pre','thinking'],['10','3','calc'],['14','7','calc']]){
   assert.deepEqual(plain(F.slidePlan(age,grade,true).map(s=>s.id)),['current']);
   assert.equal(F.ageCopy(age,grade).order[0],axis);
  }
@@ -192,6 +192,16 @@ test('quick draft needs only one current fact, including a semester without a bo
  assert.doesNotMatch(F.draftMarkup(book),/고등 과정|교재를 마쳤/);
  const detail=F.build({...F.inputModel(book),quickDraft:false},book);
  assert.equal(detail.parentFlow.quickDraft,false);assert.equal(detail.parentFlow.actualBooks.school,'나의 <개념> 교재');
+});
+
+test('one draft includes each supplied study area in the age-appropriate order',()=>{
+ const study={thinking:{book:'킨더팩토'},calc:{book:'기적의 계산법 2권'},school:{stage:'e:2-1'},deep:{stage:'e:1-2'}};
+ const younger=F.build({age:'5',grade:'pre',quickDraft:true,...study});
+ const older=F.build({...F.inputModel(younger),age:'',grade:'3',quickDraft:true},younger);
+ const labels=html=>[...html.matchAll(/<dt>([^<]*)<\/dt>/g)].map(match=>match[1]);
+ assert.deepEqual(labels(F.draftMarkup(younger)),['사고력 수학','연산','교과 선행','교과 심화']);
+ assert.deepEqual(labels(F.draftMarkup(older)),['연산','교과 선행','교과 심화']);
+ assert.equal(F.inputModel(older).thinking.book,'킨더팩토');
 });
 
 test('first activities and a deliberate not-started answer produce distinct drafts',()=>{

@@ -128,6 +128,9 @@ function renderLevelMeaning(c,id){
 }
 function levelLabel(c,id,short=false){
  const m=levelMeaning(c,id);if(!m)return id||'비교 자료 확인 전';
+ const reference=global.PlannerLevelGuide?.describe(id,c.now);
+ if(reference&&(c.grade==='pre'||(Number(c.grade)>=1&&Number(c.grade)<=6)))return reference+' ('+id+')';
+
  const key=c.levels.find(l=>l.id===id)?.axes.find(x=>x.id==='school')?.referenceStage||'';
  const description=/^[1-6]-[12]$/.test(key)?'초등 '+key+' 교과':/^중[1-3]-[12]$/.test(key)?key+' 교과':/^공통수학/.test(key)?key:m.between||m.name;
  return (short?'':'학습 레벨 ')+id+' ('+(m.benchmarkLabel?m.benchmarkLabel+' · ':'')+description+')';

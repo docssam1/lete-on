@@ -4,6 +4,7 @@
 'use strict';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const names={korean:'국어',science:'과학',gifted:'영재원',hwangso:'황소',nute:'누테'};
+const studyLabels={thinking:'사고력 수학',calc:'연산',school:'교과 선행',deep:'교과 심화'};
 const preschoolFoundation='언어·수감각 키우기';
 function preferences(value){const p=value?.version===1?value:{};return {version:1,quickDraft:p.quickDraft===true,notStarted:p.notStarted===true,thinkingStage:p.thinkingStage===preschoolFoundation?preschoolFoundation:'',currentAge:/^(?:[3-9]|1[0-9])$/.test(String(p.currentAge||''))?String(p.currentAge):'',initialized:p.initialized===true,enabled:Object.fromEntries(Object.keys(names).map(id=>[id,typeof p.enabled?.[id]==='boolean'?p.enabled[id]:true])),ranges:{...p.ranges},bookLevels:{...p.bookLevels},independentRanges:{...p.independentRanges},actualBooks:{...p.actualBooks},statuses:{...p.statuses},stages:{...p.stages},academyReports:{...p.academyReports},bookSources:{...p.bookSources},solo:String(p.solo||'').slice(0,600)};}
 function ageCopy(age,grade){
@@ -12,13 +13,14 @@ function ageCopy(age,grade){
  const tier=young?'preschool':hasGrade?(n<=2?'elementary-low':n<=6?'elementary-upper':n<=9?'middle':'high'):
   years<=9?'elementary-low':years<=13?'elementary-upper':years<=16?'middle':'high';
  const rows={
-  preschool:{intro:'지금 하고 있는 과정이나 교재를 알려주세요.',bookLabel:'지금 하는 과정이나 교재',book:'예: 언어·수감각 키우기, 킨더팩토',range:'예: 10까지 세기 · 모양 찾기',solo:'예: 10까지 혼자 세고, 규칙 찾기는 함께해요.',order:['thinking','calc','school','deep'],labels:{thinking:'현재 학습',calc:'수 개념·연산',school:'교과 수학 (하고 있다면)',deep:'응용·심화 (하고 있다면)'}},
-  'elementary-low':{intro:'지금 하는 교과수학·연산·사고력 공부를 알려주세요. 문제를 읽거나 풀이를 설명할 때 도움이 필요한지도 함께 봐요.',bookLabel:'지금 공부하는 교재',book:'예: 현재 교과·연산·사고력 교재',range:'예: 덧셈과 뺄셈 · 2단원',solo:'예: 덧셈은 혼자 풀고, 문장제는 같이 읽어요.',order:['school','calc','thinking','deep'],labels:{school:'교과 수학',calc:'연산',thinking:'사고력',deep:'응용·심화 (선택)'}},
-  'elementary-upper':{intro:'현재 교과 진도와 응용·심화, 연산·사고력에서 공부하는 범위를 알려주세요. 앞선 과정을 하고 있어도 그대로 적어 주세요.',bookLabel:'지금 공부하는 교재',book:'예: 현재 교과·응용·심화 교재',range:'예: 분수의 나눗셈 · 3단원',solo:'예: 분수 계산은 혼자 풀고, 도형 응용은 힌트가 필요해요.',order:['school','deep','thinking','calc'],labels:{school:'교과 수학',deep:'응용·심화',thinking:'사고력·경시 (선택)',calc:'연산'}},
-  middle:{intro:'지금 공부하는 학기·과목과 교재를 알려주세요. 개념·유형과 심화를 나누고, 혼자 풀 수 있는 범위를 함께 확인해요.',bookLabel:'현재 학습 중인 교재',book:'예: 개념원리 · 쎈 · 현재 심화 교재',range:'예: 일차함수 · 12~15쪽',solo:'예: 방정식 기본 문제는 혼자 풀고, 함수 활용은 힌트가 필요해요.',order:['school','deep','thinking','calc'],labels:{school:'교과 개념·유형',deep:'심화·활용',thinking:'경시·사고력 (선택)',calc:'계산·연산 (선택)'}},
-  high:{intro:'지금 배우는 과목과 교재, 개념·유형 중 혼자 풀 수 있는 범위를 알려주세요. 심화 학습은 따로 적고, 아직 배우지 않은 과목은 비워 두세요.',bookLabel:'현재 학습 중인 교재',book:'예: 기본정석·쎈 · 지금 공부하는 교재',range:'예: 지수함수 · 해당 소단원',solo:'예: 지수함수 유형은 혼자 풀고, 고난도 문제는 힌트가 필요해요.',order:['school','deep','thinking','calc'],labels:{school:'교과 개념·유형',deep:'심화·활용',thinking:'경시·사고력 (선택)',calc:'계산·연산 (선택)'}}
+  preschool:{intro:'지금 하고 있는 과정이나 교재를 알려주세요.',bookLabel:'지금 하는 과정이나 교재',book:'예: 언어·수감각 키우기, 킨더팩토',range:'예: 10까지 세기 · 모양 찾기',solo:'예: 10까지 혼자 세고, 규칙 찾기는 함께해요.'},
+  'elementary-low':{intro:'지금 하는 교과수학·연산·사고력 공부를 알려주세요. 문제를 읽거나 풀이를 설명할 때 도움이 필요한지도 함께 봐요.',bookLabel:'지금 공부하는 교재',book:'예: 현재 교과·연산·사고력 교재',range:'예: 덧셈과 뺄셈 · 2단원',solo:'예: 덧셈은 혼자 풀고, 문장제는 같이 읽어요.'},
+  'elementary-upper':{intro:'지금 하는 연산과 교과 선행·심화 범위를 알려주세요. 앞선 과정을 하고 있어도 그대로 적어 주세요.',bookLabel:'지금 공부하는 교재',book:'예: 현재 교과·응용·심화 교재',range:'예: 분수의 나눗셈 · 3단원',solo:'예: 분수 계산은 혼자 풀고, 도형 응용은 힌트가 필요해요.'},
+  middle:{intro:'지금 공부하는 학기·과목과 교재를 알려주세요. 개념·유형과 심화를 나누고, 혼자 풀 수 있는 범위를 함께 확인해요.',bookLabel:'현재 학습 중인 교재',book:'예: 개념원리 · 쎈 · 현재 심화 교재',range:'예: 일차함수 · 12~15쪽',solo:'예: 방정식 기본 문제는 혼자 풀고, 함수 활용은 힌트가 필요해요.'},
+  high:{intro:'지금 배우는 과목과 교재, 개념·유형 중 혼자 풀 수 있는 범위를 알려주세요. 심화 학습은 따로 적고, 아직 배우지 않은 과목은 비워 두세요.',bookLabel:'현재 학습 중인 교재',book:'예: 기본정석·쎈 · 지금 공부하는 교재',range:'예: 지수함수 · 해당 소단원',solo:'예: 지수함수 유형은 혼자 풀고, 고난도 문제는 힌트가 필요해요.'}
  };
- return {tier,soloLabel:young?'혼자 할 수 있는 활동·범위':'혼자 풀 수 있는 범위',...rows[tier]};
+ const order=young||tier==='elementary-low'?['thinking','calc','school','deep']:['calc','school','deep'];
+ return {tier,order,labels:studyLabels,soloLabel:young?'혼자 할 수 있는 활동·범위':'혼자 풀 수 있는 범위',...rows[tier]};
 }
 function memberGrade(member){const n=Number(member?.grade);return member?.school==='preschool'?'pre':member?.school==='middle'&&n>=1&&n<=3?String(n+6):member?.school==='high'&&n>=1&&n<=3?String(n+9):n>=1&&n<=12?String(n):'';}
 function stageValue(a,axis){const course=a[axis+'Course'];if(['none','unknown'].includes(course))return course;if(course==='high'||course==='foreign')return 'h:'+(axis==='school'?a.schoolHigh:a.deepStage);if(course==='mid')return 'm:'+(axis==='school'?a.schoolExact:a.deepStage);return /^\d-[12]$/.test(axis==='school'?a.school:a.deepStage)?'e:'+(axis==='school'?a.school:a.deepStage):'unknown';}
@@ -156,7 +158,7 @@ function balanceNotice(a){const m=thinkingBalance(a);if(!m.ahead.length)return '
 function slidePlan(age,grade,quick=false){
  if(quick)return [{id:'current',label:'현재 수학',title:'지금 공부하는 수학'}];
  const copy=ageCopy(age,grade);
- return [{id:'learner',label:'나이·학년',title:'아이의 나이 또는 학년을 골라 주세요.'},...copy.order.map(id=>{const label=copy.labels[id].replace(/\s*\([^)]*\)/g,''),particle=(label.charCodeAt(label.length-1)-44032)%28===0?'는':'은';return {id,label:({school:'교과',deep:'응용·심화',thinking:'사고력',calc:'연산'})[id],title:label+particle+' 지금 무엇을 공부하나요?'};}),{id:'review',label:'로드맵',title:'입력한 공부를 확인해요.'}];
+ return [{id:'learner',label:'나이·학년',title:'아이의 나이 또는 학년을 골라 주세요.'},...copy.order.map(id=>{const label=copy.labels[id].replace(/\s*\([^)]*\)/g,''),particle=(label.charCodeAt(label.length-1)-44032)%28===0?'는':'은';return {id,label:studyLabels[id],title:label+particle+' 지금 무엇을 공부하나요?'};}),{id:'review',label:'로드맵',title:'입력한 공부를 확인해요.'}];
 }
 /* One stable viewport: native inputs stay mounted so back/next never drops an answer.
  * Graphics represent input steps, not learning attainment. No image or motion library. */
@@ -179,29 +181,25 @@ function mountSlides(form,quick,startAtReview){
   form.querySelector('.parent-advanced')?.remove();
   form.querySelector('.parent-solo').hidden=true;
   form.querySelector('[data-parent-balance]').hidden=true;
-  const swap=doc.createElement('details');swap.className='parent-axis-swap';
-  swap.innerHTML='<summary>다른 영역 선택</summary><label>학습 영역<select name="quickAxis"></select></label>';
-  study.append(swap);
+  const starting=doc.createElement('label');starting.className='parent-quick-starting';
+  starting.innerHTML='<input type="checkbox" name="notStarted">아직 수학 공부를 시작하지 않았어요';
+  study.append(starting);
+  f.notStarted.checked=form.dataset.notStarted==='true';
   for(const key of ['school','deep']){
    const stage=f[key+'Stage'];
-   stage.querySelector('option[value=none]').remove();stage.options[0].textContent='학기·과목 선택';
+   const waiting=stage.value==='unknown'&&!f[key+'Book'].value.trim();
+   stage.prepend(new Option('학기·과목 선택',''));
+   if(waiting){stage.value='';stage.dispatchEvent(new Event('change'));}
    stage.closest('label').firstChild.textContent='배우는 학기·과목';
   }
-  let tier;
   const update=()=>{
    const copy=ageCopy(f.age.value,f.grade.value);
-   if(tier!==copy.tier){
-    tier=copy.tier;
-    f.quickAxis.innerHTML=copy.order.map(axis=>'<option value="'+axis+'">'+esc(copy.labels[axis].replace(/\s*\([^)]*\)/g,''))+'</option>').join('')+'<option value="starting">아직 시작 전이에요</option>';
-   }
-   for(const row of form.querySelectorAll('[data-parent-axis]'))row.hidden=row.dataset.parentAxis!==f.quickAxis.value;
+   for(const row of form.querySelectorAll('[data-parent-axis]'))row.hidden=!copy.order.includes(row.dataset.parentAxis);
    study.hidden=!f.learner.value;
-   swap.querySelector('summary').textContent=f.quickAxis.value==='starting'?'아직 시작 전 · 선택 바꾸기':'다른 영역 선택';
    submit.disabled=!f.learner.value;
    error.textContent='';
   };
   f.learner.addEventListener('change',update);
-  f.quickAxis.addEventListener('change',()=>{swap.open=false;swap.querySelector('summary').focus();update();});
   update();
   return;
  }
@@ -223,11 +221,11 @@ function mountSlides(form,quick,startAtReview){
  let current=startAtReview?'review':'learner',detail=false,animation=null;
  const visited=new Set(startAtReview?slidePlan(f.age.value,f.grade.value).map(s=>s.id):['learner']);
  const plan=()=>slidePlan(f.age.value,f.grade.value);
- const inputSummary=()=>['school','deep','thinking','calc'].map(id=>{
+ const inputSummary=()=>ageCopy(f.age.value,f.grade.value).order.map(id=>{
   const stage=f[id+'Stage'],book=f[id+'Book'].value;
   const parts=[stage&&!['none','unknown'].includes(stage.value)?stage.selectedOptions[0].textContent:'',
    ['none','unknown'].includes(book)?'':book,id==='thinking'?f.thinkingLevel.value:''].filter(Boolean);
-  return {id,label:({school:'교과',deep:'응용·심화',thinking:'사고력',calc:'연산'})[id],text:parts.join(' · ')||'입력하지 않음'};
+  return {id,label:studyLabels[id],text:parts.join(' · ')||'입력하지 않음'};
  });
  // Reuse the approved 1.4KB assets/ui/roadmap-glass.svg inline.
  const illustrationId='entry-'+formSequence+'-';
@@ -286,6 +284,7 @@ function mount(host,{answers={},member={},onSubmit,onAdvanced,mode}={}){
  <button type="submit" class="parent-primary">우리 아이 로드맵 보기</button><p class="parent-form-note">지금 하는 항목만 적어 주세요. 국어·과학은 결과에서 자동으로 연결합니다. 학원 교재는 수업 참고로만 보관해요.</p>
  ${onAdvanced?'<button type="button" class="parent-advanced">기존 상세 입력으로 수정</button>':''}</section><p role="alert" tabindex="-1" class="parent-form-error"></p></form>`;
  const form=host.querySelector('form'),f=form.elements;
+ form.dataset.notStarted=String(answers.parentFlow?.notStarted===true);
  const syncLearner=()=>{
   const [kind,value]=f.learner.value.split(':');
   f.grade.value=kind==='pre'?'pre':value||'';
@@ -296,12 +295,12 @@ function mount(host,{answers={},member={},onSubmit,onAdvanced,mode}={}){
  const readSubmission=()=>{
   const input=readCurrent();
   input.quickDraft=quick;
-  if(!quick)return input;
-  const axis=f.quickAxis.value;
-  input.notStarted=axis==='starting';
-  for(const key of ['school','deep','thinking','calc']){
-   if(key!==axis)delete input[key];
-   else if(isAcademyBook(input[key].book))input[key].source='academy';
+  if(!ageCopy(input.age,input.grade).order.includes('thinking'))input.thinking={...m.thinking,source:m.sources.thinking};
+  if(quick){
+   input.notStarted=f.notStarted.checked;
+   for(const key of ['school','deep','thinking','calc']){
+    if(isAcademyBook(input[key].book))input[key].source='academy';
+   }
   }
   return input;
  };
@@ -348,25 +347,25 @@ function mount(host,{answers={},member={},onSubmit,onAdvanced,mode}={}){
  updateThinkingPicker();updateThinkingLevel();
  const visibility=axis=>{const course={e:'elem',m:'mid',h:'high'}[f[axis+'Stage']?.value.split(':')[0]],active=axis==='school'||axis==='deep'?!!course:!!f[axis+'Book'].value.trim()&&!['none','unknown'].includes(f[axis+'Book'].value);const activity=axis==='thinking'&&(thinkingMode==='__activity'||thinkingMode===preschoolFoundation);f[axis+'Source'].closest('label').hidden=!active||activity;f[axis+'Status'].closest('label').hidden=!active;f[axis+'Range'].closest('label').hidden=!active;if(axis==='school'||axis==='deep')f[axis+'Book'].closest('label').hidden=!active&&f[axis+'Stage'].value!=='unknown';if(axis==='thinking'){f.thinkingIndependent.closest('label').hidden=!active;f.thinkingLevelChoice.closest('label').hidden=!active||activity||!thinkingLevels(f.thinkingBook.value).length;f.thinkingLevel.closest('label').hidden=!active||activity||!!thinkingLevels(f.thinkingBook.value).length&&f.thinkingLevelChoice.value!=='__custom';}form.querySelector('[data-parent-axis="'+axis+'"]').dataset.active=String(active);};
  for(const axis of ['school','deep','thinking','calc']){visibility(axis);f[axis+'Book'].addEventListener('input',()=>visibility(axis));f[axis+'Stage']?.addEventListener('change',()=>visibility(axis));}
- const adapt=()=>{const selected=!!f.learner.value,copy=ageCopy(f.age.value,f.grade.value);form.querySelector('[data-parent-study-section]').hidden=!selected;form.querySelector('[data-parent-age-copy]').textContent=copy.intro;form.dataset.ageTier=copy.tier;form.querySelector('.parent-solo').firstChild.textContent=copy.soloLabel+' ';f.solo.placeholder=copy.solo;for(const axis of copy.order){const row=form.querySelector('[data-parent-axis="'+axis+'"]');row.querySelector('legend').textContent=copy.labels[axis];form.querySelector('[data-parent-book-label="'+axis+'"]').firstChild.textContent=axis==='thinking'?'교재 이름 또는 활동':copy.bookLabel;f[axis+'Book'].placeholder=axis==='thinking'?'예: 지금 쓰는 교재 · 규칙 찾기 놀이':copy.book;f[axis+'Range'].placeholder=axis==='thinking'?'예: 규칙 찾기 12~15쪽 · 3/6단원':copy.range;form.querySelector('.parent-current-rows').append(row);}updateThinkingPicker();};adapt();f.learner.addEventListener('change',adapt);
+ const adapt=()=>{const selected=!!f.learner.value,copy=ageCopy(f.age.value,f.grade.value);form.querySelector('[data-parent-study-section]').hidden=!selected;form.querySelector('[data-parent-age-copy]').textContent=copy.intro;form.dataset.ageTier=copy.tier;form.querySelector('.parent-solo').firstChild.textContent=copy.soloLabel+' ';f.solo.placeholder=copy.solo;for(const axis of copy.order){const row=form.querySelector('[data-parent-axis="'+axis+'"]');row.querySelector('legend').textContent=copy.labels[axis];form.querySelector('[data-parent-book-label="'+axis+'"]').firstChild.textContent=axis==='thinking'?'교재 이름 또는 활동':axis==='calc'?'연산 교재':copy.bookLabel;f[axis+'Book'].placeholder=axis==='thinking'?'교재 이름 또는 활동':axis==='calc'?'연산 교재 입력':quick?'교재 입력 (선택)':copy.book;f[axis+'Range'].placeholder=axis==='thinking'?'예: 규칙 찾기 12~15쪽 · 3/6단원':copy.range;form.querySelector('.parent-current-rows').append(row);}updateThinkingPicker();};adapt();f.learner.addEventListener('change',adapt);
  form.querySelector('.parent-advanced')?.addEventListener('click',()=>onAdvanced(f.learner.value.replace(/^grade:/,'')));
  form.addEventListener('change',updateBalance);form.addEventListener('input',updateBalance);updateBalance();
- form.onsubmit=async event=>{event.preventDefault();if(form.dataset.busy)return;if(form._parentSlides&&!form._parentSlides.isReview()){form._parentSlides.next();return;}const input=readSubmission();const error=form.querySelector('[role=alert]');try{if(!f.learner.value)throw Error('나이 또는 학년을 골라 주세요.');if((!quick||f.quickAxis.value==='thinking')&&['__custom','__activity'].includes(thinkingMode)&&!f.thinkingBook.value.trim())throw Error('사고력 교재 이름이나 하고 있는 활동을 적어 주세요.');const next=build(input,answers);form.dataset.busy='1';const locks=[...form.querySelectorAll('button,input,select,textarea')].map(n=>[n,n.disabled]);form._parentLocks=locks;for(const [n]of locks)n.disabled=true;error.textContent='입력한 공부에서 이어지는 계획을 준비하고 있어요.';await onSubmit(next,input);}catch(e){delete form.dataset.busy;for(const [n,disabled]of form._parentLocks||[])n.disabled=disabled;error.textContent=e.message||'입력한 범위를 다시 확인해 주세요.';error.focus();}};
+ form.onsubmit=async event=>{event.preventDefault();if(form.dataset.busy)return;if(form._parentSlides&&!form._parentSlides.isReview()){form._parentSlides.next();return;}const input=readSubmission();const error=form.querySelector('[role=alert]');try{if(!f.learner.value)throw Error('나이 또는 학년을 골라 주세요.');if(ageCopy(input.age,input.grade).order.includes('thinking')&&['__custom','__activity'].includes(thinkingMode)&&!f.thinkingBook.value.trim())throw Error('사고력 교재 이름이나 하고 있는 활동을 적어 주세요.');const next=build(input,answers);form.dataset.busy='1';const locks=[...form.querySelectorAll('button,input,select,textarea')].map(n=>[n,n.disabled]);form._parentLocks=locks;for(const [n]of locks)n.disabled=true;error.textContent='입력한 공부에서 이어지는 계획을 준비하고 있어요.';await onSubmit(next,input);}catch(e){delete form.dataset.busy;for(const [n,disabled]of form._parentLocks||[])n.disabled=disabled;error.textContent=e.message||'입력한 범위를 다시 확인해 주세요.';error.focus();}};
  mountSlides(form,quick,!!answers.parentFlow&&!!learner);
  return form;
 }
 // Keep the first draft anchored to the family's reported starting point.
 function draftMarkup(a){
  const p=preferences(a.parentFlow),rows=[];
- const labels={school:'교과',deep:'응용·심화',thinking:a.grade==='pre'?'현재 과정·교재':'사고력',calc:'연산'};
- for(const axis of Object.keys(labels)){
+ const order=ageCopy(p.currentAge,a.grade).order;
+ for(const axis of order){
   const reference=p.academyReports[axis];
   const stage=stages().find(([id])=>id===p.stages[axis]&&!['none','unknown'].includes(id))?.[1];
   const book=reference?.book||p.actualBooks[axis],range=reference?.range||p.ranges[axis];
   const currentStage=axis==='thinking'?p.thinkingStage:stage;
   const scope=[currentStage,book,reference?.level||p.bookLevels[axis],range].filter(Boolean).join(' · ');
   if(!scope)continue;
-  rows.push('<div><dt>'+labels[axis]+(reference?' · 학원 수업 참고':'')+'</dt><dd>'+esc(scope)+'</dd></div>');
+  rows.push('<div><dt>'+studyLabels[axis]+(reference?' · 학원 수업 참고':'')+'</dt><dd>'+esc(scope)+'</dd></div>');
  }
  const grade=a.grade==='pre'?p.currentAge+'세':a.grade<=6?'초등 '+a.grade+'학년':a.grade<=9?'중학교 '+(a.grade-6)+'학년':'고등학교 '+(a.grade-9)+'학년';
  const current=rows.length?'<dl>'+rows.join('')+'</dl>':'<p>'+(p.notStarted?'아직 수학 공부를 시작하기 전이에요.':'현재 공부를 입력해 주세요.')+'</p>';

@@ -1,0 +1,51 @@
+/* The age-specific labels use the same table on the introduction and in the planner. */
+.level-guide {
+  --guide-line: var(--in-line, #ded2e6);
+  --guide-text: var(--member-ink, #392b41);
+  --guide-muted: var(--in-muted, #6a5875);
+  --guide-tint: var(--in-tint, #f7f2fa);
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 18px 0;
+  border: 1px solid var(--guide-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--guide-text);
+}
+.level-guide > summary {
+  padding: 13px 16px;
+  min-height: 20px;
+  line-height: 1.5;
+  font-weight: 700;
+  cursor: pointer;
+}
+.level-guide[open] > summary { border-bottom: 1px solid var(--guide-line); }
+.level-guide :is(summary, select, button, [tabindex]):focus-visible { outline: 2px solid var(--member-purple, #6d498a); outline-offset: 2px; }
+.level-guide > p { margin: 12px 16px; color: var(--guide-muted); font-size: 14px; line-height: 1.5; }
+.level-guide > button { margin: 0 16px 14px; min-height: 44px; }
+.level-guide-pickers {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  max-width: 370px;
+  margin: 0 16px;
+}
+.level-guide-pickers label { display: grid; gap: 5px; font-size: 13px; font-weight: 650; }
+.level-guide-pickers select { width: 100%; min-height: 44px; margin: 0; padding: 6px 8px; border: 1px solid var(--guide-line); border-radius: 6px; background: #fff; color: var(--guide-text); font: inherit; font-size: 16px; }
+.level-guide-scroll { overflow: auto; max-width: 100%; margin: 0 16px 16px; border: 1px solid var(--guide-line); border-radius: 7px; }
+.level-guide table { width: 100%; min-width: 645px; margin: 0; border-collapse: separate; border-spacing: 0; font-size: 14px; line-height: 1.45; color: var(--guide-text); text-align: left; }
+.level-guide caption { padding: 10px; text-align: left; font-size: 13px; color: var(--guide-muted); }
+.level-guide :is(th, td) { padding: 10px; border-bottom: 1px solid var(--guide-line); vertical-align: top; }
+.level-guide thead th, .level-guide tbody th { background: var(--guide-tint); }
+.level-guide tr > th:first-child { position: sticky; left: 0; z-index: 1; min-width: 112px; width: 180px; border-right: 1px solid var(--guide-line); }
+.level-guide tr > td { min-width: 120px; }
+.level-guide tr:last-child > :is(th, td) { border-bottom: 0; }
+.level-guide-code { display: block; margin-top: 4px; color: var(--guide-muted); font-weight: 650; }
+.level-guide-empty { color: var(--guide-muted); }
+.level-guide-benchmark, .level-guide-gap { display: block; margin-top: 4px; font-size: 12px; font-weight: 600; line-height: 1.4; }
+.level-guide-benchmark { color: var(--guide-text); }
+.level-guide-gap { color: var(--guide-muted); }
+.level-guide-next { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 12px 16px 16px; padding: 10px 12px; list-style: none; border-radius: 7px; background: var(--guide-tint); }
+.level-guide-next li { min-width: 0; }
+.level-guide-next a { display: inline-flex; align-items: center; min-height: 44px; color: var(--guide-text); font-size: 14px; font-weight: 700; text-underline-offset: 3px; }
+.level-guide-next span { display: block; color: var(--guide-muted); font-size: 12px; }

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-레이키즈(sm/) 독쌤 대사 모으기 — OmniVoice 독쌤 목소리로 만들 줄 목록.
+유아 영재 학습 게임(sm/) 독쌤 대사 모으기 — OmniVoice 독쌤 목소리로 만들 줄 목록.
 
   1) 코드의 고정 대사: guide.say/praise/encourage/think("…") 와 say:/wrongSay:/praise:/hint: "…" 글.
      ${…}가 들어간 글(아이마다 달라지는 말)은 아래 VARY 표에서 나올 수 있는 값을 모두 펼쳐 만든다(원장 2026-11-13 「4차시까지 보이스 넣어」).

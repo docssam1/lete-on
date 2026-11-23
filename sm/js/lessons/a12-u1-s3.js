@@ -2,8 +2,8 @@
 //  19 규칙대로 색칠(동그라미 노랑 4 · 세모 빨강 3 · 네모 주황 3) · 20 이름 잇기 · 21 다른 것 하나(네모·세모·평행사변형)
 //  22 ▲끼리 세모, ■끼리 네모(4문제, 원본 점 위치) · 23 같은 색 점끼리(빨강 네모 · 파랑 세모 · 주황 네모 · 보라 세모)
 //  24·25 그림자 속 도형 모두 · 26 마름모+세모 그림자 → ③ · 27 그림자에 없는 도형 → 사다리꼴 · 28 띠(5·7·10cm)로 동그라미 그리기
-import { scene, matchLines } from "../numbers.js?v=20261117a";
-import { shape, dotShapes, paintByRule, chooseAll, shadowOf, shapeCard, drawCircle, simplePoly } from "../shapes.js?v=20261117a";
+import { scene, matchLines } from "../numbers.js?v=20261123a";
+import { shape, dotShapes, paintByRule, chooseAll, shadowOf, shapeCard, drawCircle, simplePoly } from "../shapes.js?v=20261123a";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 

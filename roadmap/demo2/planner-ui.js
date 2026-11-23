@@ -1399,6 +1399,11 @@ function drawJourney(){
  const patternChoices=standardActive&&standard.independentDepth&&standard.lanes.find(row=>row.id==='thinking')?.status==='known'?'<div class="standard-patterns"><p>교과·사고력·심화·연산은 각각의 현재 진도에서 이어집니다.</p></div>':standardActive?'<div class="standard-patterns" aria-label="아직 정하지 않은 공부 구성 비교"><button type="button" data-standard-pattern="thinking" aria-pressed="'+(standard.pattern==='thinking')+'">교과·사고력 중심</button><button type="button" data-standard-pattern="deep" aria-pressed="'+(standard.pattern==='deep')+'">교과·심화 중심</button><p>공부 중인 사고력·심화·연산은 각각의 진도로 계속 이어집니다.</p></div>':'';
  $('journeyMap').innerHTML='<div class="workspace-results">'+(standardActive?PlannerStandard.renderSummary(standard):PlannerWorkspace.summary(transition,progression,answers,intakeFields(),pathwayTrail))+patternChoices+'<div class="workspace-tabs" role="tablist" aria-label="같은 계획 비교">'+tabs.map(([id,title])=>`<button type="button" role="tab" id="workspace-tab-${id}" data-workspace-view="${id}" aria-controls="workspace-panel-${id}" aria-selected="${workspaceView===id}" tabindex="${workspaceView===id?0:-1}">${title}</button>`).join('')+'</div>'+pane('map',standardActive&&!intakeFields().internationalCalendar?PlannerStandard.render(standard,{view:'map',summary:false}):(board+routeLedger+(completed?PlannerStandard.renderSupplementChoices(standard):'')))+pane('graph',(intakeFields().internationalCalendar?'<p class="course-empty">해외 교육과정은 현재 학교의 과목과 학기 일정을 기준으로 설계합니다. 선택한 과목의 월별 계획을 먼저 확인해 주세요.</p>':standardActive?standardGraph+(window.PlannerLevelPace?window.PlannerLevelPace.render(standard,intakeFields()):''):transition?.axis==='calc'?PlannerStandard.renderCalculationGraph(standard.calcPlan):T.renderGraph(transition,progression,answers,intakeFields(),{academyLines}))||'<p class="course-empty">현재 학년과 공부 범위를 고르면 비교 그래프가 이어집니다.</p>')+pane('table',standardActive&&!intakeFields().internationalCalendar?PlannerStandard.render(standard,{view:'table',summary:false}):((schedule+(completed?PlannerStandard.renderSupplementChoices(standard):''))||'<p class="course-empty">교재와 이어갈 범위를 고르면 같은 계획의 기간·회차 표가 표시됩니다.</p>'))+pane('records',records)+'</div>'+'<div class="workspace-question-source">'+(flowMode==='reference'?RP.questions():standardActive?(PlannerStandard.renderQuestions?.(standard)||''):currentChoiceQuestions()+(completed?PlannerWorkspace.renderQuestions(transition,progression,answers,intakeFields(),pathwayTrail)+PlannerStandard.renderSupplementQuestions(standard):''))+X.renderQuestions(pathwayTrail,pathwayActiveId,pathwayContext())+(flowMode==='personality'?Y.renderQuestions(personalityState,pathwayTrail):'')+'</div>';
 
+ if(completed&&!intakeFields().internationalCalendar&&window.PlannerLevelGuide){
+  const fields=intakeFields(),grade=I.gradeChoice(answers,fields);
+  const learner=grade==='pre'?'pre:'+I.age(answers,fields):'grade:'+grade;
+  $('workspace-panel-graph').insertAdjacentHTML('afterbegin',window.PlannerLevelGuide.render({learner,month:Number(fields.mon)}));
+ }
  if(completed&&!intakeFields().internationalCalendar&&!parentActive){
   const currentGrade=I.gradeChoice(answers,intakeFields()),stage=currentGrade==='pre'?'preschool':Number(currentGrade)<=6?'elementary':'middle';
   if(window.PlannerCounsellingUpdates){$('workspace-panel-map').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.render(stage,{compact:true}));$('workspace-panel-records').insertAdjacentHTML('beforeend',window.PlannerCounsellingUpdates.render(stage,{excludeCommon:true}));$('workspace-panel-records').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.renderCommon(currentGrade,{hwangso:answers.hw==='1'}));}
@@ -1409,7 +1414,6 @@ function drawJourney(){
   if(standardLevels){
    const tools=T.renderAcademyControls(G.comparison(answers,intakeFields()),academyLines,{jump:true});
    for(const view of ['map','table'])$('workspace-panel-'+view).insertAdjacentHTML('afterbegin','<section class="academy-reference-tools">'+tools+'<div class="academy-reference-details">'+standardLevels+'</div></section>');
-   $('workspace-panel-graph').insertAdjacentHTML('beforeend','<div class="academy-reference-details">'+standardLevels+'</div>');
   }
  }
  if(!standard.ready&&!intakeFields().internationalCalendar)$('workspace-panel-map').insertAdjacentHTML('afterbegin',K.highStudy(answers,intakeFields()));
@@ -1587,7 +1591,12 @@ else if(new URLSearchParams(location.search).get('weekly')==='1')openWeeklyCheck
 // Promote only absent durable keys; another saved plan and deletion guards stay intact.
 for(const key of [preschoolDetailKey,cohortKey,languageKey,studentKey,storageKey,pathwayKey,personalityKey,careerKey,flowKey,planKey,progressKey,transitionKey,caseKey,historyKey,referencePlanKey,scienceKey,collegeKey,bookCheckKey,'gfield.demo2.roadmap-mode.v1','gfield.demo2.workspace.v1'])PlannerStorage.promoteExisting(key);
 // Applications are an independent, account-scoped notebook, not study offsets.
-if(window.PlannerHighschool){PlannerHighschool.init({context:()=>({...goalContext(),age:answers.age??intakeFields().age,fields:intakeFields(),year:intakeFields().year})});if(new URL(location.href).searchParams.get('admissions')==='1')setTimeout(()=>PlannerHighschool.open(),0);}
+if(window.PlannerHighschool){
+ PlannerHighschool.init({context:()=>({...goalContext(),age:answers.age??intakeFields().age,fields:intakeFields(),year:intakeFields().year})});
+ const admissionView=new URL(location.href).searchParams.get('admissions');
+ if(admissionView==='1')setTimeout(()=>PlannerHighschool.open(),0);
+ if(admissionView==='private')setTimeout(()=>PlannerHighschool.open(undefined,{goal:'private'}),0);
+}
 
 // Explicit goal links from the public introduction retain the usual login gate.
 const incomingGoal=new URLSearchParams(location.search).get('goal');
