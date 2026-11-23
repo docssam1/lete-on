@@ -1,3 +1,10 @@
+## 2026-11-23 — 6-2 예제 3-3 문제 그림 면 색을 원문처럼 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정: "답 풀이에 있는 설명은 상관 없어" → 3단원 답·풀이의 설명용 그림·표(층별 수 칸, Mission 5 풀이의 층별 표·그림 등 약 25유형)는 그대로 둔다. 원문과 같아야 하는 것은 문제 쪽이다.
+- 예제 3-3(36쪽, 6-2-u3-e3-example-3-1/-2) 문제 그림: 원문은 칠하지 않은 선 그림인데 앱 그림은 보이는 다섯 면을 빨간색 계열로 칠해 '빨간 면'을 미리 보여 주었다. assets/source-6-2-painted-example3 v0~v2 그림의 면 색만 개념탐구 3 그림과 같은 무채색 계열(오른쪽 d2e8ef·위 e9f3f5·앞 dceef2)로 픽셀 단위로 다시 칠했다(선·모양·크기 1280×1120 그대로, 붉은 픽셀 0개 확인). source-6-2-painted-example3-models.js faceColors를 같은 색으로, manifest sha·byteLength·runtime hash·`neutralFaces20261123` 메모, presentation 대체 문구("원본 홈과 층수를 보존한 쌓기나무 입체 그림"), index.html ?v=20261123-ex3-neutral을 고쳤다.
+- 확인: painted-example3-questions·painted-stacks-contracts·painted-exploration-questions·t-pattern-example2-questions·painted-color-classifier 감사 통과. 로컬 앱에서 새 그림이 로드되고 면 픽셀이 (220,238,242)임을 확인했다. painted-stacks-bank 감사(HSE_PAINT_EXAMPLE3=1)는 대상 URL 환경 변수가 없어 실행하지 않았다.
+- 6-2 문제 그림 PNG 전체의 색 픽셀 비율을 훑어 빨간 칠처럼 정보를 주는 색은 이 그림뿐임을 확인했다(나머지는 앱 공통 무채색 입체 음영).
+
 ## 2026-11-23 — 5-2 채점된 손글씨 답과 원문 정답 대조 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 지시: 출판사 심화 답지가 없으므로 Drive의 5-2 심화 문제집 채점본(학생 손글씨 답 + 빨간 채점 표시, 117쪽)을 정답 대조 참고로 쓴다. 출판사 답지가 아니므로 publisherKeyVerified는 false 유지. 학생 손글씨 내용은 저장소에 옮기지 않는다(학생 자료).
@@ -61,7 +68,7 @@
   - 장부의 "예제 3-4"(6-2-u3-e3-example-4)는 책에 없는 빈 행이다. 36쪽에는 예제 3-1~3-3만 있다. 앱 유형 목록(source-inventory-grade6.js)에는 없고, painted-stacks bank·models 감사가 등록되지 않음을 확인하므로 앱에서 고칠 것은 없다.
 - 남은 것:
   - 예제 2-2 그림 이름표: 원문(34쪽)과 같이 "첫 번째/두 번째/세 번째"로 고쳤다. 쌓기나무 그림은 그대로 두고 이미지 아래 이름표 띠만 다시 그렸다(assets/source-6-2-t-pattern-example2, manifest labels20261123). render-models 캡션, 그림 alt, 쉬움 난이도 문장도 같이 고쳤다. Mission 1(35쪽)은 원문도 "첫째/둘째/셋째"여서 그대로다.
-  - 원문에 없는 보조 그림일 수 있어 사용자 판단이 필요한 것: 예제 3-3 문제 그림의 빨간 면 칠, 색칠 문항 정답의 층별 수 칸, Mission 5(35쪽) 풀이의 층별 표·그림.
+  - 원문에 없는 보조 그림일 수 있어 사용자 판단이 필요한 것: 예제 3-3 문제 그림의 빨간 면 칠, 색칠 문항 정답의 층별 수 칸, Mission 5(35쪽) 풀이의 층별 표·그림. → 해결(같은 날 위 항목): 풀이 쪽은 그대로 두고 예제 3-3 문제 그림만 무채색으로 바꿨다.
   - 덧붙인 문장을 뺀 항목의 sourceConditionProvenance 같은 메타 표시는 생성 관문이 검사하므로 그대로 두었다.
   - Mission 3(33쪽) 어려움 난이도 3문항 문제지: Mac 헤드리스 Chromium 인쇄로 확인했다. main(f9f589ab5)에서는 화면 1쪽(1081px)이 PDF 2장으로 넘친다. 이 브랜치에서는 2쪽(2문항+1문항)으로 나뉘고 PDF도 2장이다. 넘침이 아니라 바른 쪽 나눔이다. 쉬움·기준 난이도는 둘 다 1쪽, PDF 1장이다.
 - 감사: 각 문항의 contracts·questions·models 감사 중 이 Mac에서 돌릴 수 있는 것은 통과했다. E:/G: 증거·출력 폴더나 powershell이 필요한 감사는 이전과 같은 이유로 실패한다.
