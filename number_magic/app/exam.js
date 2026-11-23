@@ -1177,6 +1177,7 @@
   /* 긴 식은 「=」 앞에서만 줄을 바꾼다 — 아무 데서나 꺾여 □ 하나만 다음 줄로 떨어졌다(2026-11-23). */
   .nm-tex-chain { display:inline-flex; flex-wrap:wrap; align-items:center; column-gap:.3em; min-width:0; max-width:100%; }
   .nm-tex-chain > .nm-w2-tex { min-width:0; }
+  .nm-tex-lines { display:inline-flex; flex-direction:column; align-items:flex-start; row-gap:.15em; min-width:0; max-width:100%; }
   .nm-mn-open { flex:0 0 auto; margin-top:8px; }
   .nm-mn-open-q { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; }
   /* 고등 과정 마법 노트는 내용이 길어 쪽 번호가 8px 잘렸다(C60 1회 14쪽, 2026-11-13) — 쓰는 줄 간격만 조금 줄인다. */
@@ -3653,25 +3654,44 @@ function scatterAnswerKeyHtml(problems){
   return `<section class="nm-scatter-ak"><h4>${esc(lk('직접 찍기 완성 산점도','Completed plots','完成的散点图'))}</h4><div class="nm-scatter-ak-grid">${plot.map(x=>`<div class="nm-scatter-ak-item"><b>(${x.i+1})</b>${scatterPlotHtml(x.p,true)}</div>`).join('')}</div></section>`;
 }
 
-/* 긴 식은 맨 바깥 「=」 앞에서만 줄을 바꾼다 — 칸이 좁으면 아무 데서나 꺾여 □ 하나·분수 반쪽만 다음 줄로
-   떨어졌다(과정 3 마법 노트 · 18 분수 덧셈 · 20 소수 곱셈, 2026-11-23). 덩어리마다 flex 칸이라 다 들어가면 한 줄,
-   안 들어가면 「= …」 덩어리째 다음 줄, 덩어리 하나가 칸보다 길 때만 그 안에서 꺾인다. */
+/* 긴 식은 맨 바깥 「=」·「⇒ → ⟺」 앞에서만 줄을 바꾼다 — 칸이 좁으면 아무 데서나 꺾여 □ 하나·분수 반쪽·
+   「a =」 뒤의 답만 다음 줄로 떨어졌다(과정 3 마법 노트 · 18 분수 덧셈 · 20 소수 곱셈 · 중등 예시 줄, 2026-11-23).
+   덩어리마다 flex 칸이라 다 들어가면 한 줄, 안 들어가면 「= …」 덩어리째 다음 줄, 덩어리 하나가 칸보다 길 때만
+   그 안에서 꺾인다. 맨 바깥 \\(줄 바꿈)는 그 자리에서 새 줄. */
+const TEX_CHAIN_ARROWS = new Set(['Rightarrow','rightarrow','to','Leftrightarrow','iff','implies','Longrightarrow','longrightarrow']);
 function texChainHtml(tex){
+  const src = String(tex || '');
+  const one = t => `<span class="nm-w2-tex" data-tex="${esc(t)}"></span>`;
+  /* 여러 줄 맞춤 식(\begin{…}, &)은 나누면 깨진다 — 그대로 둔다 */
+  if(/\\begin|\\end|&/.test(src)) return one(src);
   /* 맨 앞 \displaystyle 같은 크기 명령은 덩어리마다 다시 붙인다 — 빠지면 뒤 덩어리 분수가 작게 찍혔다 */
-  const lead = (String(tex || '').match(/^\s*((?:\\(?:displaystyle|textstyle)\s*)+)/) || ['', ''])[1];
-  const s = String(tex || '').slice(lead.length ? String(tex || '').indexOf(lead) + lead.length : 0), parts = [];
+  const lead = (src.match(/^\s*((?:\\(?:displaystyle|textstyle)\s*)+)/) || ['', ''])[1];
+  const s = src.slice(lead ? src.indexOf(lead) + lead.length : 0);
+  const lines = [[]];
   let depth = 0, from = 0;
+  const cut = (at, skip) => { const t = s.slice(from, at); if(t.trim()) lines[lines.length - 1].push(t); from = at + (skip || 0); };
   for(let i = 0; i < s.length; i++){
     const ch = s[i];
-    if(ch === '\\'){ i++; continue; }
+    if(ch === '\\'){
+      if(s[i + 1] === '\\' && depth === 0){ cut(i, 2); lines.push([]); i++; continue; }
+      const m = /^[A-Za-z]+/.exec(s.slice(i + 1));
+      if(m){ if(depth === 0 && TEX_CHAIN_ARROWS.has(m[0]) && s.slice(from, i).trim()) cut(i); i += m[0].length; }
+      else i++;
+      continue;
+    }
     if(ch === '{' || ch === '(' || ch === '[') depth++;
-    else if(ch === '}' || ch === ')' || ch === ']') depth--;
-    else if(ch === '=' && depth === 0 && i > from && s.slice(from, i).trim()){ parts.push(s.slice(from, i)); from = i; }
+    else if(ch === '}' || ch === ')' || ch === ']') depth = Math.max(0, depth - 1);
+    else if(ch === '=' && depth === 0 && s.slice(from, i).trim()) cut(i);
   }
-  parts.push(s.slice(from));
-  /* 여러 줄 식(\begin{…}, &, \\)·\left … \right 묶음은 나누면 깨진다 — 그대로 둔다 */
-  if(parts.length < 2 || /\\begin|\\end|&|\\\\|\\left|\\right/.test(s)) return `<span class="nm-w2-tex" data-tex="${esc(String(tex || ''))}"></span>`;
-  return `<span class="nm-tex-chain">${parts.map(t => `<span class="nm-w2-tex" data-tex="${esc(lead + t.trim())}"></span>`).join('')}</span>`;
+  cut(s.length);
+  const filled = lines.filter(l => l.length);
+  if(!filled.length || (filled.length === 1 && filled[0].length < 2)) return one(src);
+  /* 덩어리 끝·앞의 띄우기 명령(\  \; \, \quad)은 뺀다 — 「=4\ 」를 다듬다 「=4\」만 남아 수식이 깨졌다 */
+  const SP = /^(?:\s|\\[ ;,:!]|\\q?quad(?![A-Za-z]))+|(?:\s|\\[ ;,:!]|\\q?quad(?![A-Za-z]))+$/g;
+  const tidy = t => lead + t.replace(SP, '');
+  const chain = parts => parts.length < 2 ? one(tidy(parts[0]))
+    : `<span class="nm-tex-chain">${parts.map(t => one(tidy(t))).join('')}</span>`;
+  return filled.length === 1 ? chain(filled[0]) : `<span class="nm-tex-lines">${filled.map(chain).join('')}</span>`;
 }
 
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
@@ -6198,7 +6218,7 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
     const bare = !/\\square|\\bigcirc/.test(String(p.tex || ''));
     const completedTex = p.completedTex || (bare ? String(p.tex || '')
       : fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p))));
-    const completedHtml = String(completedTex).trim() ? `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>` : "";
+    const completedHtml = String(completedTex).trim() ? `<div class="nm-w2-ex-line">${texChainHtml(texDisplay(completedTex))}</div>` : "";
     /* 따라 풀기가 한 줄(사슬 → 문제 식)로 나가는 문항은 예시도 같은 차례 한 줄로 */
     const exLine = (!W2_C0 && !p.completedTex && !bare && !divPictureHtml(p, {young: !!young}) && !concreteTeachingHtml(p,true,threadId)) ? w2OneLineChain(p, stepSrc, p.tex) : null;
     const stepParts = (exLine || w2DropHeadRepeat(stepSrc.filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==String(p.tex||'').trim()), p.tex)).map(s => {
@@ -6224,7 +6244,7 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
 </div>`;
     } else {
       const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p)));
-      bodyHtml = p.word&&!p.tex?`<div class="nm-w2-ex-line">${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(p.answerNote?pickL(p.answerNote):fmtAns(p.answer))}</span></div>`:`<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
+      bodyHtml = p.word&&!p.tex?`<div class="nm-w2-ex-line">${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(p.answerNote?pickL(p.answerNote):fmtAns(p.answer))}</span></div>`:`<div class="nm-w2-ex-line">${texChainHtml(texDisplay(completedTex))}</div>`;
     }
     /* steps가 없을 때만 — concept "예)" 문장은 이미 있는 단계별 대입을
        대신할 필요가 없으니 그때만 덧붙인다(2026-09-04 재작업 지시). */
