@@ -95,11 +95,11 @@ function movieGraphSvg(v){let b=T(180,16,'연령대별 관객 수','middle',13);
  return svg(360,ly+14,'연령대별 관객 수 그림그래프',b);}
 function movieItem(){const asm='천의 자리에서 반올림하여 만의 자리까지 나타내고, 큰 그림은 10만 명, 작은 그림은 1만 명을 나타내도록 그립니다.';
  return {key:'source61U5E1Exploration3',resultContract:'drawing',answerVisualRequired:true,answerAssumption:asm,pool:MOVIE.map(v=>({
-  prompt:P([`다음 표는 어느 영화의 연령대별 관객 수를 조사하여 나타낸 것입니다. 적당한 자리에서 관객 수를 반올림한 뒤 그림그래프로 나타내 보세요.`,
-   table([['연령대',...AGES],['관객 수(명)',...v.map(String)],['반올림한 수','','','','','']],'both'),`<p>※ 조건 보충: ${asm}</p>`]),
+  prompt:P([`다음 표는 어느 영화의 연령대별 관객 수를 조사하여 나타낸 것입니다. 적당한 자리에서 관객 수를 반올림한 뒤 그림그래프를 그려 보세요.`,
+   table([['연령대',...AGES],['관객 수(명)',...v.map(String)],['반올림한 수','','','','','']],'both')]),
   answer:AGES.map((a,i)=>`${a} ${r10k(v[i])}명`).join(', '),
   answerVisual:movieGraphSvg(v),
-  solution:ol([`관객 수가 십만 단위이므로 천의 자리에서 반올림하여 만의 자리까지 나타냅니다.`,
+  solution:`<p>풀이 기준: ${asm}</p>`+ol([`관객 수가 십만 단위이므로 천의 자리에서 반올림하여 만의 자리까지 나타냅니다.`,
    `${AGES.map((a,i)=>`${a}: ${v[i]} → ${r10k(v[i])}`).join(', ')}입니다.`,
    `큰 그림 1개는 10만 명, 작은 그림 1개는 1만 명이므로 ${AGES.map((a,i)=>{const r=r10k(v[i]);return `${a}는 큰 그림 ${Math.floor(r/100000)}개, 작은 그림 ${(r%100000)/10000}개`;}).join(', ')}를 그립니다.`,
    `그림그래프의 제목, 연령대, 그림의 단위(10만 명, 1만 명)를 함께 써 넣습니다.`])}))};}

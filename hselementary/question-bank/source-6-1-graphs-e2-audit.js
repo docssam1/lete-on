@@ -135,6 +135,10 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       const segments = [...generated.prompt.matchAll(/data-row-segments="([^"]+)"/g)];
       segments.forEach(match => { const sum = match[1].split(",").reduce((total, value) => total + Number(value), 0); if (Math.abs(sum - 100) > 1e-8) failures.push(`${sourceIds[variant]}: 구간 합 ${sum}`); });
       if (generated.verifiedPoolIndex === 0 && problemValues.join(",") !== poolExpectations[variant][0].join(",")) failures.push(`${sourceIds[variant]}: 원본 pool 0 수치 불일치`);
+      if (/undefined|NaN/.test(visiblePrompt + visibleAnswer)) failures.push(`${sourceIds[variant]}: 깨진 값 표시`);
+      // 2026-11-23 원본 책 대조: Mission 3은 세 해의 160cm 이상 비율을 모두 보이고 그래프에 원문에 없는 전체 학생 수를 쓰지 않음, Mission 6은 표만 보여 줌.
+      if (variant === 6 && (!["5.6%", "8.5%", "10.4%"].every(text => generated.prompt.includes(`>${text}</text>`)) || visiblePrompt.includes("전체 1,000명") || !visiblePrompt.includes("하늘 초등학교") || !visiblePrompt.includes("몇 명입니까?")) && generated.verifiedPoolIndex === 0) failures.push(`${sourceIds[variant]}: 원문 그림·문장과 다름`);
+      if (variant === 9 && (generated.prompt.includes("source61-e2-rect-segment") || !visiblePrompt.includes("(단, 두 띠그래프는 모두 직사각형 모양입니다.)") || !visiblePrompt.includes("학생 수(명)"))) failures.push(`${sourceIds[variant]}: 원문처럼 표만 보여 주지 않음`);
     } catch (error) { failures.push(`${sourceIds[variant]} / ${difficulty} / ${seed}: ${error.message}`); }
   }
   if (![0, 1, 2].every(pool => seen.has(pool))) failures.push(`${sourceIds[variant]}: pool 0/1/2 누락 (${[...seen].join(",")})`);

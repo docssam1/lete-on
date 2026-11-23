@@ -89,7 +89,17 @@
         "difficultyDesign": ["downstream-speed-given", "downstream-distance-and-time", "derive-current-from-distance-and-time"],
         "fixedPoolCount": 3,
         "independentReviewer": "Claude Sonnet CLI",
-        "publicReleaseStatus": "verified-as-adaptation"
+        "publicReleaseStatus": "superseded-by-source-restoration"
+      },
+      "sourceRestoration": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate",
+        "sourceRelationship": "source-original-still-water-reading",
+        "userDecision": "2026-11-23: the user asked to restore grade-6 source items to the printed book ('원본대로 바꿔'). Pool 0 now uses the printed wording and numbers (current 47.5 km per hour, 93.6 km in 1 hour 48 minutes, 18 km upstream). The generator key is kept.",
+        "solutionBasis": "The printed text does not say in which water the salmon covers 93.6 km. Reading it as downstream makes the upstream trip impossible, so the solution states the basis that 93.6 km in 1 hour 48 minutes is the salmon's still-water speed: 52 - 47.5 = 4.5 km per hour upstream, 18 / 4.5 = 4 hours. The handwritten 20-minute answer is not used.",
+        "answer": "4시간",
+        "difficultyDesign": ["still-water-speed-given", "still-water-distance-and-time", "derive-current-from-distance-and-time"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "verified-as-source"
       }
     },
     {

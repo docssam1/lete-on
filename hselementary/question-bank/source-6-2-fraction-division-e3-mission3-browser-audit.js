@@ -13,9 +13,9 @@ const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(questionBankDir, "
 const sourceItemId = "6-2-u1-e3-mission-3";
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expected = new Map([
-  ["2:3:4:5:7", { order: "5:3:4:2:7", answer: "20 1/8" }],
-  ["2:4:5:7:9", { order: "7:4:5:2:9", answer: "35 1/10" }],
-  ["2:3:5:8:9", { order: "8:3:5:2:9", answer: "38 7/10" }]
+  ["2:3:4:5:7", { order: "2:3:7:4:5", answer: "3 1/28" }],
+  ["2:4:5:7:9", { order: "2:4:9:5:7", answer: "3 19/45" }],
+  ["2:3:5:8:9", { order: "2:3:5:8:9", answer: "2 37/40" }]
 ]);
 const failures = [];
 let screenshots = 0;
@@ -107,13 +107,13 @@ async function inspect(page, difficulty, answerView, viewportLabel) {
   for (const [index, item] of state.items.entries()) {
     const row = expected.get(item.cards);
     if (!item.itemVisible || item.itemOutside || !item.boardVisible || item.boardOutside || item.boardWidth < 280 || item.boardOverflow || item.clippedDescendants) fail(`${label}/${index + 1}: 수 카드·대분수÷진분수 식이 화면 밖이거나 잘렸습니다.`);
-    if (item.structure !== "five-cards-largest-mixed-proper-quotient" || !row || item.bestOrder !== row?.order || item.answerFraction !== row?.answer || item.validArrangements !== 30 || item.evidenceCards !== item.cards || item.evidenceOrder !== item.bestOrder) fail(`${label}/${index + 1}: 문제와 답의 카드·최댓값 자료가 다릅니다.`);
+    if (item.structure !== "five-cards-smallest-mixed-proper-quotient" || !row || item.bestOrder !== row?.order || item.answerFraction !== row?.answer || item.validArrangements !== 30 || item.evidenceCards !== item.cards || item.evidenceOrder !== item.bestOrder) fail(`${label}/${index + 1}: 문제와 답의 카드·최솟값 자료가 다릅니다.`);
     if (item.cardCount !== 5 || item.cardValues !== item.cards || item.fractionCount < (answerView ? 3 : 2)) fail(`${label}/${index + 1}: 원문 수 카드 다섯 장 또는 대분수÷진분수 식이 빠졌습니다.`);
     if (!item.font.includes("Pretendard") || !item.font.includes("Malgun Gothic") || !item.font.includes("Arial")) fail(`${label}/${index + 1}: 카드와 분수 식의 공통 글꼴이 아닙니다.`);
-    if (item.source !== sourceItemId || item.kind !== "five-cards-largest-mixed-proper-quotient" || item.candidateCount !== 1 || item.difficulty !== difficultyNames[String(difficulty)] || item.rawFraction || item.invalid) fail(`${label}/${index + 1}: 원문·단일 답·난이도 또는 분수 표시가 다릅니다.`);
+    if (item.source !== sourceItemId || item.kind !== "five-cards-smallest-mixed-proper-quotient" || item.candidateCount !== 1 || item.difficulty !== difficultyNames[String(difficulty)] || item.rawFraction || item.invalid) fail(`${label}/${index + 1}: 원문·단일 답·난이도 또는 분수 표시가 다릅니다.`);
     if (answerView) {
       if (item.solvedCount !== 1 || item.solutionRows !== 4 || item.answerSource !== sourceItemId) fail(`${label}/${index + 1}: 답의 카드 배치·전수 비교표가 없습니다.`);
-    } else if (item.solvedCount || item.solutionRows || item.answerSource || state.answerLeak) fail(`${label}/${index + 1}: 문제에 최댓값 배치나 풀이가 노출되었습니다.`);
+    } else if (item.solvedCount || item.solutionRows || item.answerSource || state.answerLeak) fail(`${label}/${index + 1}: 문제에 최솟값 배치나 풀이가 노출되었습니다.`);
   }
   return state;
 }
