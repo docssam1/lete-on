@@ -4,12 +4,13 @@
  * - 학생별 새 계획: 학생마다 별도 저장 소유자(owner)를 써서 기존 PlannerStorage 구조를 그대로 나눈다.
  *   첫 학생은 계정 아이디 그대로 써서 이전에 만든 검수 계정 설계를 잃지 않는다.
  * - 상담 코멘트: 총평·인쇄 본문 맨 앞 총평 다음에 원장님이 직접 쓰는 쪽을 넣는다.
- * - 학생 목록·코멘트는 이 기기에만 둔다. 계정 클라우드 저장은 컨설팅 모드에서 쓰지 않는다.
+ * - 서버 확인 계정+학생별로 동기화한다. 기존 로컬 기록은 삭제하지 않고 옮긴다.
  */
 (function(g){
  'use strict';
  const PREFIX='gfield.consult.v1.',FIRST='main',MAX_IMAGE=1200,MAX_NAME=20;
- let account='',state=null;
+ const META='gfield.demo2.consult-meta.v1',COMMENT='gfield.demo2.consult-comment.v1';
+ let account='',state=null,remoteIds=new Set(),legacyIds=[],listReady=false,transfer={pending:0,failed:0},persistComment=null,stopComment=null;
  const store=()=>{try{return g.localStorage||null;}catch{return null;}};
  const get=k=>{try{return store()?.getItem(k)??null;}catch{return null;}};
  const put=(k,v)=>{try{const s=store();if(!s)return false;s.setItem(k,v);return true;}catch{return false;}};
@@ -29,11 +30,44 @@
  function save(){return put(listKey(),JSON.stringify(state));}
  function current(){return state.students.find(s=>s.id===state.current);}
 
- // 게이트가 학습 자료를 불러오기 전에 부른다. 반환한 owner가 RoadmapMember.user_id가 된다.
- function prepare(member){
-  account=String(member.user_id);state=restore(get(listKey()));save();
+ function localDocument(id){return g.RoadmapCloud?.snapshot(ownerOf(account,id))||{};}
+ function writeLogical(id,key,value){const tail=key.slice('gfield.demo2.'.length),owner=ownerOf(account,id);for(const [type,prefix]of [['localStorage','gfield.demo2.saved.member.'],['sessionStorage','gfield.demo2.member.']])try{g[type]?.setItem(prefix+owner+'.'+tail,value);}catch{}}
+ function installLegacy(id,name,force=false){
+  const document=localDocument(id);let comment='';try{const value=JSON.parse(get(commentKey(id))||'null');if(typeof value==='string')comment=value;}catch{}
+  if(!Object.keys(document).length&&!comment&&!force)return document;
+  if(!Object.hasOwn(document,META)){document[META]=JSON.stringify({name:cleanName(name)});writeLogical(id,META,document[META]);}
+  if(comment&&!Object.hasOwn(document,COMMENT)){document[COMMENT]=comment;writeLogical(id,COMMENT,comment);}
+  return document;
+ }
+ // Fetch the private list before choosing a local storage owner or loading the planner.
+ async function prepare(member,legacyPlan){
+  account=String(member.user_id);const raw=get(listKey());state=restore(raw);const prior=new Map(state.students.map(s=>[s.id,s.name]));legacyIds=raw?[...prior.keys()]:[];remoteIds=new Set();listReady=false;
+  let rows=[];
+  try{for(let page=0;page<100;page++){const r=await g.RoadmapMembership.call('consult-list',{accountId:account,page},undefined,{timeoutMs:8000});rows.push(...(r.students||[]));if((r.students||[]).length<100||rows.length>=r.count)break;}listReady=true;}catch{}
+  const remote=rows.filter(r=>r&&/^[a-z0-9]{1,24}$/.test(r.student_id)).map(r=>({id:r.student_id,name:cleanName(r.name)}));remoteIds=new Set(remote.map(s=>s.id));
+  const merged=new Map(state.students.map(s=>[s.id,s]));for(const s of remote)merged.set(s.id,s);state.students=[...merged.values()];
+  if(!raw&&remote.length)state.current=remote[0].id;
   const s=current();
-  return {owner:ownerOf(account,s.id),name:s.name,student:s.id};
+  if(s.id===FIRST&&!remoteIds.has(FIRST)&&!Object.keys(localDocument(FIRST)).length&&legacyPlan)try{const old=await legacyPlan;if(old?.value?.plan?.document&&g.RoadmapCloud.safeDocument(old.value.plan.document,true))for(const [key,value]of Object.entries(old.value.plan.document))writeLogical(FIRST,key,value);}catch{}
+  for(const id of new Set([...legacyIds,s.id]))installLegacy(id,prior.get(id)||'',!remoteIds.has(id));save();
+  transfer={pending:listReady?legacyIds.filter(id=>id!==s.id&&!remoteIds.has(id)&&Object.keys(localDocument(id)).length).length:0,failed:0};
+  return {owner:ownerOf(account,s.id),name:s.name,student:s.id,accountId:account};
+ }
+ function afterCloud(){
+  try{const meta=JSON.parse(localDocument(state.current)[META]||'null');if(typeof meta?.name==='string'){current().name=cleanName(meta.name);save();}}catch{}
+  return current().name;
+ }
+ async function migrateLegacy(){
+  if(!listReady)return;
+  for(const id of legacyIds.filter(id=>id!==state.current&&!remoteIds.has(id)&&Object.keys(localDocument(id)).length)){
+   try{const document=localDocument(id);if(!g.RoadmapCloud.safeDocument(document,true))throw Error('large');const r=await g.RoadmapMembership.call('consult-save',{accountId:account,studentId:id,revision:0,document},undefined,{timeoutMs:12000});if(!r.saved)throw Error('conflict');remoteIds.add(id);}catch{transfer.failed++;}finally{transfer.pending=Math.max(0,transfer.pending-1);syncStatus(g.document);}
+  }
+ }
+ function syncStatus(doc){
+  const status=g.RoadmapCloud?.status(),text=({saved:'서버에 저장됨 · 같은 계정으로 다른 기기에서 이어볼 수 있어요.',saving:'이 학생의 기록을 서버에 저장 중입니다.',offline:'변경 내용을 이 기기에 보관 중입니다. 연결되면 다시 저장해요.',unavailable:'서버 연결을 확인해 주세요. 기기의 기존 기록은 남아 있습니다.',large:'사진이나 상담 코멘트의 용량을 줄여 주세요. 원본은 이 기기에 남아 있습니다.',conflict:'다른 기기의 기록과 다릅니다. ‘저장 상태’에서 이어갈 기록을 확인해 주세요.'})[status?.mode]||'학생별 로드맵과 상담 기록을 서버에 자동 저장합니다.';
+  const extra=transfer.pending?' · 기존 기기 기록 '+transfer.pending+'명 옮기는 중':transfer.failed?' · 옮기지 못한 기기 기록 '+transfer.failed+'명은 원본을 보관 중입니다.':'';
+  const bar=doc.querySelector('.consult-status');if(bar)bar.textContent=text+extra;
+  for(const note of doc.querySelectorAll('.consult-saved'))note.textContent=text;
  }
 
  // ----- 붙여넣은 코멘트를 저장·표시하기 전에 허용한 서식만 남긴다 -----
@@ -60,7 +94,7 @@
 
  // ----- 학생 바 -----
  function el(doc,tag,attrs={},text){const n=doc.createElement(tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);if(text!=null)n.textContent=text;return n;}
- function switchTo(id){state.current=id;save();g.location.reload();}
+ async function switchTo(id){persistComment?.();await g.RoadmapCloud?.flush();if(g.RoadmapCloud?.status().conflict){g.document.querySelector('.cloud-status')?.click();return;}state.current=id;save();g.location.reload();}
  function mountBar(doc){
   const bar=el(doc,'section',{class:'consult-bar','aria-label':'컨설팅 모드 · 학생 선택'});
   const label=el(doc,'strong',{class:'consult-mode'},'컨설팅 모드');
@@ -72,13 +106,14 @@
   const nameLabel=el(doc,'label',{class:'consult-field'});nameLabel.append(el(doc,'span',{},'이름'));
   const input=el(doc,'input',{id:'consultName',type:'text',maxlength:String(MAX_NAME),autocomplete:'off',placeholder:'학생 이름'});input.value=current().name;nameLabel.append(input);
   form.append(nameLabel,el(doc,'button',{type:'submit'},'이름 적용'));
-  form.onsubmit=e=>{e.preventDefault();const s=current();s.name=cleanName(input.value);save();g.location.reload();};
+  form.onsubmit=async e=>{e.preventDefault();const s=current();s.name=cleanName(input.value);save();g.PlannerStorage.setItem(META,JSON.stringify({name:s.name}));const field=doc.getElementById('name');if(field){field.value=s.name;field.dispatchEvent(new g.Event('input',{bubbles:true}));}await switchTo(s.id);};
   const add=el(doc,'button',{type:'button',class:'consult-add'},'새 학생');
   add.onclick=()=>{const id=newId();state.students.push({id,name:''});switchTo(id);};
   const comment=el(doc,'button',{type:'button',class:'consult-comment-open'},'상담 코멘트');
-  const status=el(doc,'p',{class:'consult-status',role:'status','aria-live':'polite'},'학생별 설계와 코멘트는 이 기기에만 저장됩니다.');
+  const status=el(doc,'p',{class:'consult-status',role:'status','aria-live':'polite'},'학생별 로드맵과 상담 기록을 서버에 자동 저장합니다.');
+  const sync=el(doc,'button',{type:'button',class:'consult-sync-open'},'저장 상태');sync.onclick=()=>doc.querySelector('.cloud-status')?.click();
   comment.onclick=()=>{const open=doc.getElementById('openReport');if(!open||open.hidden){status.textContent='학습 로드맵을 끝까지 만들면 총평·인쇄 화면에서 코멘트를 쓸 수 있습니다.';return;}open.click();g.setTimeout(()=>{const ed=doc.getElementById('consultEditor');ed?.scrollIntoView({block:'center'});ed?.focus();},60);};
-  bar.append(label,pick,form,add,comment,status);
+  bar.append(label,pick,form,add,comment,sync,status);
   const top=doc.querySelector('.top');top?top.after(bar):doc.body.prepend(bar);
   doc.body.classList.add('consult-active');
  }
@@ -157,10 +192,10 @@
   const head=el(doc,'header',{class:'pr-section-heading'});head.append(el(doc,'h2',{class:'pr-section-title',id:'consultTitle'},'원장님 상담 코멘트'));
   const tools=el(doc,'div',{class:'consult-tools',role:'toolbar','aria-label':'코멘트 서식'});
   const ed=el(doc,'div',{id:'consultEditor',class:'consult-editor',contenteditable:'true',role:'textbox','aria-multiline':'true','aria-labelledby':'consultTitle'});
-  ed.innerHTML=sanitize(get(commentKey(id))||'');
+  ed.innerHTML=sanitize(g.PlannerStorage.getItem(COMMENT)||'');
   const note=el(doc,'p',{class:'consult-saved',role:'status','aria-live':'polite'});
   let timer=0;
-  const persist=()=>{g.clearTimeout(timer);const html=sanitize(ed.innerHTML);note.textContent=put(commentKey(id),html)?'이 기기에 저장했습니다.':'저장하지 못했습니다. 사진 크기나 브라우저 저장 공간을 확인해 주세요.';page.classList.toggle('consult-empty',!ed.textContent.trim()&&!ed.querySelector('img'));};
+  const persist=()=>{g.clearTimeout(timer);const html=sanitize(ed.innerHTML);g.PlannerStorage.setItem(COMMENT,html);page.classList.toggle('consult-empty',!ed.textContent.trim()&&!ed.querySelector('img'));syncStatus(doc);};persistComment=persist;stopComment=()=>{g.clearTimeout(timer);persistComment=null;};
   const later=()=>{g.clearTimeout(timer);timer=g.setTimeout(persist,800);};
   const cmd=(c,v=null)=>{ed.focus();try{doc.execCommand('styleWithCSS',false,true);}catch{}doc.execCommand(c,false,v);later();};
   const tool=(text,title,fn,cls)=>{const b=el(doc,'button',{type:'button',title,'aria-label':title},text);if(cls)b.className=cls;b.onmousedown=e=>e.preventDefault();b.onclick=fn;tools.append(b);};
@@ -188,6 +223,6 @@
   new MutationObserver(place).observe(host,{childList:true});place();
  }
 
- function mount(doc=g.document){mountBar(doc);watchReport(doc);}
- g.RoadmapConsult=Object.freeze({prepare,mount,sanitize,restore,ownerOf,reportText,draftHtml,consultationText});
+ function mount(doc=g.document){mountBar(doc);watchReport(doc);g.addEventListener('roadmap-cloud-state',()=>syncStatus(doc));g.addEventListener('pagehide',()=>persistComment?.());g.addEventListener('roadmap-cloud-replace',()=>stopComment?.());syncStatus(doc);g.setTimeout(migrateLegacy,0);}
+ g.RoadmapConsult=Object.freeze({prepare,afterCloud,mount,sanitize,restore,ownerOf,reportText,draftHtml,consultationText});
 })(typeof window!=='undefined'?window:globalThis);

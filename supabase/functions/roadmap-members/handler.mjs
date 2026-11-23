@@ -21,12 +21,16 @@ export function cleanConsent(raw={}) {
   if(raw.version!==CONSENT_VERSION || raw.privacy!==true || raw.guardian!==true) throw new HttpError(400,'consent_required');
   return {version:CONSENT_VERSION,privacy:true,guardian:true,marketing_email:raw.marketing_email===true,marketing_sms:raw.marketing_sms===true};
 }
-export function cleanPlan(raw){
+export function cleanPlan(raw,{consult=false}={}){
  if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).length>80)throw new HttpError(400,'plan_invalid');
  const out={};for(const [key,value]of Object.entries(raw)){
-  if(!/^gfield\.demo2\.(?!(?:member|saved|guard)\.)[a-z0-9][a-z0-9._-]{0,100}$/.test(key)||typeof value!=='string'||value.length>200000)throw new HttpError(400,'plan_invalid');out[key]=value;
+  if(!/^gfield\.demo2\.(?!(?:member|saved|guard|c)\.)[a-z0-9][a-z0-9._-]{0,100}$/.test(key)||typeof value!=='string'||value.length>(consult&&key==='gfield.demo2.consult-comment.v1'?1200000:200000))throw new HttpError(400,'plan_invalid');out[key]=value;
  }
- if(new TextEncoder().encode(JSON.stringify(out)).length>260000)throw new HttpError(413,'request_too_large');return out;
+ if(new TextEncoder().encode(JSON.stringify(out)).length>(consult?1600000:260000))throw new HttpError(413,'request_too_large');return out;
+}
+export function consultName(document){
+ let meta;try{meta=JSON.parse(document['gfield.demo2.consult-meta.v1']||'{}');}catch{throw new HttpError(400,'name_invalid');}
+ const name=meta?.name??'';if(typeof name!=='string'||name.length>20||/[<>\x00-\x1f]/.test(name))throw new HttpError(400,'name_invalid');return name.trim();
 }
 export function validPin(value){return typeof value==='string' && /^\d{8,12}$/.test(value) && !/^(\d)\1+$/.test(value) && !['12345678','87654321','01234567'].includes(value);}
 const emailOf = value => String(value||'').trim().toLowerCase();
@@ -109,10 +113,10 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
     if(req.method==='OPTIONS')return new Response(null,{status:204,headers:h});
     if(req.method!=='POST')return reply({error:'method_not_allowed'},405);
     try{
-      const text=await req.text();if(text.length>280000)throw new HttpError(413,'request_too_large');
+      const text=await req.text();if(text.length>1800000)throw new HttpError(413,'request_too_large');
       let b;try{b=JSON.parse(text);}catch{throw new HttpError(text.length>12000?413:400,text.length>12000?'request_too_large':'request_invalid');}
       if(!b||typeof b!=='object'||Array.isArray(b))throw new HttpError(400,'request_invalid');
-      if(b.action!=='plan-save'&&text.length>12000)throw new HttpError(413,'request_too_large');
+      if(text.length>(b.action==='consult-save'?1800000:b.action==='plan-save'?280000:12000))throw new HttpError(413,'request_too_large');
       if(b.action==='send-code'){
         const email=emailOf(b.email);if(!emailOK(email))throw new HttpError(400,'email_invalid');
         if(b.emailConsent!==true)throw new HttpError(400,'email_consent_required');
@@ -191,6 +195,27 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
       if(b.action==='logout'){
         await checked(service.from(m.review?'roadmap_review_sessions':'roadmap_sessions').delete().eq('token_hash',await hash(req.headers.get('x-roadmap-session'))));
         return reply({signedOut:true});
+      }
+      if(['consult-list','consult-get','consult-save'].includes(b.action)){
+        if(!m.review)throw new HttpError(403,'review_only');
+        // accountId is an anti-stale-tab guard, never an authorization source.
+        if(b.accountId!==m.user_id)throw new HttpError(403,'account_changed');
+        if(b.action==='consult-list'){
+          const page=Math.max(0,Math.min(10000,Math.trunc(Number(b.page)||0)));
+          const {data,count}=await checked(service.from('roadmap_consult_students').select('student_id,name,revision,updated_at',{count:'exact'}).eq('account_id',m.user_id).order('updated_at',{ascending:false}).order('student_id').range(page*100,page*100+99));
+          return reply({students:data||[],count,page});
+        }
+        if(typeof b.studentId!=='string'||!/^[a-z0-9]{1,24}$/.test(b.studentId))throw new HttpError(400,'student_invalid');
+        if(b.action==='consult-get'){
+          const {data:p}=await checked(service.from('roadmap_consult_students').select('document,revision,updated_at').eq('account_id',m.user_id).eq('student_id',b.studentId).maybeSingle());
+          return reply({plan:p?{document:p.document,revision:p.revision,updatedAt:p.updated_at}:null});
+        }
+        const document=cleanPlan(b.document,{consult:true}),name=consultName(document),revision=b.revision;
+        if(!Number.isSafeInteger(revision)||revision<0)throw new HttpError(400,'plan_invalid');
+        const {data:allowed}=await checked(service.rpc('roadmap_take_attempt',{p_bucket:'consult:'+await keyed(m.user_id,rateSecret),p_limit:100}));
+        if(!allowed)throw new HttpError(429,'too_many_attempts');
+        const {data}=await checked(service.rpc('roadmap_save_consult_student',{p_account:m.user_id,p_student:b.studentId,p_name:name,p_revision:revision,p_document:document}));
+        return reply(data);
       }
       if(b.action==='plan-get'){
         const {data:p}=await checked(service.from('roadmap_plan_saves').select('document,revision,updated_at').eq('owner_id',m.user_id).maybeSingle());

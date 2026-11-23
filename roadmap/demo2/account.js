@@ -31,7 +31,7 @@
   });};
  }
  function reviewProfile(){
-  screen('내 계정',`<p class="member-lead">${esc(member.username)}</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">컨설팅 모드 계정입니다. 학생별 설계와 상담 코멘트는 이 기기에만 보관됩니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
+  screen('내 계정',`<p class="member-lead">${esc(member.username)}</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">컨설팅 모드 계정입니다. 학생별 로드맵과 상담 기록을 서버에 자동 저장합니다. 같은 컨설팅 계정으로 다른 기기에서 이어볼 수 있습니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
  }
  function emailScreen(intent='signup'){
   mode=intent;if(intent==='signup')entryIntent='signup';

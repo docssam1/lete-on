@@ -1,16 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createHandler,cleanProfile,cleanConsent,validPin,CONSENT_VERSION} from './handler.mjs';
+import {createHandler,cleanProfile,cleanConsent,validPin,CONSENT_VERSION,cleanPlan,consultName} from './handler.mjs';
 const NOW=Date.parse('2026-10-30T12:00:00Z'),UID='11111111-2222-4333-8444-555555555555';
 const M={user_id:UID,email:'guardian@example.invalid',student_name:'샘플 학생',guardian_phone:'01000000000',school:'elementary',age:null,grade:5,session_version:2,privacy_version:CONSENT_VERSION,marketing_email:false,marketing_sms:false};
 function harness(options={}){
  const calls=[];
  const user={id:UID,email:M.email,email_confirmed_at:'2026-10-30',app_metadata:{role:'user'},...options.user};
  const service={auth:{getUser:async token=>({data:{user:options.noUser?null:user},error:null})},
-  rpc:async(name,args)=>{calls.push({name,args});if(name==='roadmap_review_verify_code')return {data:options.badReview?null:UID};if(name==='roadmap_email_session_active')return {data:!options.revoked};if(name==='roadmap_take_attempt')return {data:options.limited?false:true};if(name==='roadmap_verify_pin')return {data:options.badPin?null:UID};return {data:null};},
-  from(table){let action='select';const q={select(columns){calls.push({table,columns});return q;},eq(){return q;},gt(){return q;},lt(){return q;},order(){return q;},range(){return q;},limit(){return q;},or(){return q;},delete(){action='delete';return q;},insert(value){calls.push({table,insert:value});return q;},
-   async maybeSingle(){if(table==='roadmap_review_accounts')return {data:options.review?{user_id:UID,username:'test-review',active:!options.disabledReview,session_version:2}:null};if(table==='roadmap_review_sessions')return {data:options.review?{user_id:UID,session_version:options.stale?1:2}:null};if(table==='roadmap_sessions')return {data:options.noSession?null:{user_id:UID,session_version:options.stale?1:2}};if(table==='hs_accounts')return {data:options.admin?{role:'admin',active:true,student:'DOCSSAM'}:{role:'student',active:true,student:'X'}};return {data:options.noMember?null:M};},
-   then(resolve,reject){return Promise.resolve({data:table==='roadmap_members'?[M]:[],count:1,error:null}).then(resolve,reject);}};return q;}};
+  rpc:async(name,args)=>{calls.push({name,args});if(name==='roadmap_save_consult_student')return {data:{saved:true,revision:1}};if(name==='roadmap_review_verify_code')return {data:options.badReview?null:UID};if(name==='roadmap_email_session_active')return {data:!options.revoked};if(name==='roadmap_take_attempt')return {data:options.limited?false:true};if(name==='roadmap_verify_pin')return {data:options.badPin?null:UID};return {data:null};},
+  from(table){let action='select';const q={select(columns){calls.push({table,columns});return q;},eq(column,value){calls.push({table,filter:column,value});return q;},gt(){return q;},lt(){return q;},order(){return q;},range(){return q;},limit(){return q;},or(){return q;},delete(){action='delete';return q;},insert(value){calls.push({table,insert:value});return q;},
+   async maybeSingle(){if(table==='roadmap_consult_students')return {data:options.consultPlan||null};if(table==='roadmap_review_accounts')return {data:options.review?{user_id:UID,username:'test-review',active:!options.disabledReview,session_version:2}:null};if(table==='roadmap_review_sessions')return {data:options.review?{user_id:UID,session_version:options.stale?1:2}:null};if(table==='roadmap_sessions')return {data:options.noSession?null:{user_id:UID,session_version:options.stale?1:2}};if(table==='hs_accounts')return {data:options.admin?{role:'admin',active:true,student:'DOCSSAM'}:{role:'student',active:true,student:'X'}};return {data:options.noMember?null:M};},
+   then(resolve,reject){return Promise.resolve({data:table==='roadmap_members'?[M]:table==='roadmap_consult_students'?(options.consultStudents||[]):[],count:1,error:null}).then(resolve,reject);}};return q;}};
  const handler=createHandler({service,url:'https://example.invalid',publicKey:'public',rateSecret:'test-secret',now:()=>NOW,send:async()=>{calls.push({mail:true});return new Response('{}');}});
  async function request(body,headers={}){const r=await handler(new Request('https://example.invalid',{method:'POST',headers:{'content-type':'application/json',origin:'https://lete-on.gfieldacademy.net',...headers},body:JSON.stringify(body)}));return {status:r.status,data:await r.json(),headers:r.headers};}
  return {calls,request,handler};
@@ -123,4 +123,35 @@ test('the dedicated roadmap hostname supports preflight while lookalikes and unv
  assert.equal(h.calls.length,0);
  const denied=await h.request({action:'status'},{origin:'https://roadmap.gfieldacademy.net','x-roadmap-session':'a'.repeat(64)});assert.equal(denied.status,401);
  const other=await h.handler(new Request('https://example.invalid',{method:'OPTIONS',headers:{origin:'https://roadmap.gfieldacademy.net.example.invalid'}}));assert.equal(other.status,403);assert.equal(other.headers.get('access-control-allow-origin'),null);
+});
+
+test('consulting requires an active review session and a matching account guard on every operation',async()=>{
+ const headers={'x-roadmap-session':'b'.repeat(64)};
+ for(const action of ['consult-list','consult-get','consult-save']){
+  const body={action,accountId:UID,studentId:'main',revision:0,document:{}};
+  assert.equal((await harness().request({...body,review:true},headers)).status,403);
+  assert.equal((await harness({noSession:true}).request(body,headers)).status,401);
+  assert.equal((await harness({review:true,noSession:true,disabledReview:true}).request(body,headers)).status,401);
+  assert.equal((await harness({review:true,noSession:true}).request({...body,accountId:'another-account'},headers)).status,403);
+ }
+});
+test('consulting saves and reads derive both account and student filters; payload owner fields cannot redirect writes',async()=>{
+ const h=harness({review:true,noSession:true,consultPlan:{document:{'gfield.demo2.v1':'{}'},revision:3,updated_at:'2026-11-17'}}),headers={'x-roadmap-session':'b'.repeat(64)};
+ const body={accountId:UID,studentId:'student2'};
+ assert.equal((await h.request({action:'consult-list',...body},headers)).status,200);
+ const got=await h.request({action:'consult-get',...body},headers);assert.equal(got.data.plan.revision,3);
+ assert.ok(h.calls.some(x=>x.table==='roadmap_consult_students'&&x.filter==='account_id'&&x.value===UID));
+ assert.ok(h.calls.some(x=>x.table==='roadmap_consult_students'&&x.filter==='student_id'&&x.value==='student2'));
+ const document={'gfield.demo2.consult-meta.v1':JSON.stringify({name:'검수'}),'gfield.demo2.consult-comment.v1':'<p>이번 주 공부</p>','gfield.demo2.v1':'{}'};
+ const r=await h.request({action:'consult-save',...body,ownerId:'another-account',revision:3,document},headers);assert.equal(r.data.saved,true);
+ const args=h.calls.find(x=>x.name==='roadmap_save_consult_student').args;assert.equal(args.p_account,UID);assert.equal(args.p_student,'student2');assert.equal(args.p_name,'검수');assert.equal(args.p_revision,3);
+ for(const studentId of ['../x','main.other','','x'.repeat(25)])assert.equal((await h.request({action:'consult-get',accountId:UID,studentId},headers)).status,400);
+});
+test('consulting documents allow bounded photos but reject auth material, invalid names and oversized records',()=>{
+ const document={'gfield.demo2.consult-comment.v1':'x'.repeat(400000)};
+ assert.equal(cleanPlan(document,{consult:true})['gfield.demo2.consult-comment.v1'].length,400000);assert.throws(()=>cleanPlan(document));
+ assert.throws(()=>cleanPlan({'gfield.roadmap.member.session.v1':'token'},{consult:true}));
+ assert.throws(()=>cleanPlan({'gfield.demo2.consult-comment.v1':'x'.repeat(1200001)},{consult:true}));
+ for(const meta of ['{bad',JSON.stringify({name:'<img>'}),JSON.stringify({name:'x'.repeat(21)}),JSON.stringify({name:{role:'admin'}})])assert.throws(()=>consultName({'gfield.demo2.consult-meta.v1':meta}));
+ assert.equal(consultName({}),'');
 });
