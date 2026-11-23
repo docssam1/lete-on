@@ -119,7 +119,8 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (difficulty === 1 && !generated.prompt.includes('data-step-evidence="independent-reasoning"')) fail(`${label}: 어려움 안내 누락`);
       if (!generated.answerVisual?.includes(`<svg`) || !generated.answerVisual.includes("source61-e1-answer") || !generated.answerVisual.includes("data-result-highlight=")) fail(`${label}: 답 그림 또는 결과 표시 누락`);
       if (/undefined|null|NaN|Infinity|순열|조합|절댓값|일차식/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`)) fail(`${label}: 깨진 값 또는 학년 밖 표현`);
-      if (/\b\d+\s*\/\s*\d+\b/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`)) fail(`${label}: 슬래시 분수 표기`);
+      // 2026-11-22부터 "1/10" 같은 단위분수 글 표기는 앱 표기다. 그 밖의 슬래시 분수만 잡는다.
+      if (/\b\d+\s*\/\s*\d+\b/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`.replace(/\b1\/10\b/g, ""))) fail(`${label}: 슬래시 분수 표기`);
       checked += 1;
     }
   }
