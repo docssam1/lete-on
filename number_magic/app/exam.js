@@ -7257,7 +7257,8 @@ function renderRoundPagesBody(item, opts){
      들어가면 한 장에 싣는다. 다른 까닭(그래프·큰 글씨·너무 긴 머리 등)으로 떼는 것은 그대로. */
   if(separateGuide && middleLesson && !otherGuideSplit && !separateExample && firstRows === 0 && guidePages.length === 1
     && midGuideBand && midGuideBand[7] != null && midGuideBand[8] != null && midGuideBand[9] != null
-    && (midGuideBand[8] + midGuideBand[7]) * fsR + 3 <= midGuideBand[9]){
+    /* 여유 8mm — 3mm로는 인쇄할 때 두 쪽(C37 MD78 L2·C36 MD19 L8)이 넘쳐 96%로 줄었다 */
+    && (midGuideBand[8] + midGuideBand[7]) * fsR + 8 <= midGuideBand[9]){
     separateGuide = false;
     guidePages = [];
   }
