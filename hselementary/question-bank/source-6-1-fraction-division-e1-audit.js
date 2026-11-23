@@ -42,19 +42,24 @@ function independentAnswer(evidence) {
     check(answer[0] === v[4] && answer[1] === v[5], "규칙 있는 분수 합의 저장 답이 독립 계산과 다릅니다.");
     return fraction(answer);
   }
-  if (evidence.kind === "ratio-chain") {
+  if (evidence.kind === "chain-quotient") {
+    // 가÷다 = (가÷나)×(나÷다)
     const answer = multiply(rational(v[0], v[1]), rational(v[2], v[3]));
-    check(answer[0] === v[4] && answer[1] === v[5], "이어지는 비의 저장 답이 독립 계산과 다릅니다.");
-    return `${answer[0]}:${answer[1]}`;
+    check(answer[0] === v[4] && answer[1] === v[5], "가÷다의 저장 답이 독립 계산과 다릅니다.");
+    return fraction(answer);
   }
   if (evidence.kind === "area-ratio-segment") {
-    const answer = rational(2 * v[0], v[2] + 1);
-    check(answer[0] === v[3] && answer[1] === v[4], "넓이 배수 도형의 저장 답이 독립 계산과 다릅니다.");
+    // 가로 v[0]/v[1], 세로 v[2], 배수 v[3]: 가로×세로 = (배수+1)×(ㅁㄷ×세로÷2)
+    const answer = divide(multiply(rational(v[0], v[1]), rational(2)), rational(v[3] + 1));
+    check(answer[0] === v[4] && answer[1] === v[5], "넓이 배수 도형의 저장 답이 독립 계산과 다릅니다.");
     return `${fraction(answer)}cm`;
   }
   if (evidence.kind === "symbol-ratios") {
-    const answer = add(divide(rational(v[0], v[1]), rational(v[4])), multiply(rational(v[2], v[3]), rational(v[5])));
-    check(answer[0] === v[6] && answer[1] === v[7], "네 자연수 조건식의 저장 답이 독립 계산과 다릅니다.");
+    // ㉠×v0×v1=v2×㉡÷v3, ㉢×v4÷v5=(v6/v7)×㉣÷v8, ㉠÷㉡÷v9+㉢÷㉣×v10
+    const first = divide(rational(v[2]), rational(v[3] * v[0] * v[1]));
+    const second = divide(multiply(rational(v[6], v[7]), rational(v[5])), rational(v[8] * v[4]));
+    const answer = add(divide(first, rational(v[9])), multiply(second, rational(v[10])));
+    check(answer[0] === v[11] && answer[1] === v[12], "네 자연수 조건식의 저장 답이 독립 계산과 다릅니다.");
     return fraction(answer);
   }
   if (evidence.kind === "largest-natural-blank") {
@@ -81,12 +86,20 @@ function independentAnswer(evidence) {
     return `${valid.length}개`;
   }
   if (evidence.kind === "equal-products-order") {
-    const names = ["가", "나", "다", "라"];
-    const coefficients = [rational(v[0], v[1]), rational(v[2], v[3]), rational(v[4], v[5]), rational(v[6], v[7])];
+    // 네 식마다 [연산(0 ÷, 1 ×), 분자, 분모] 두 번: v[0..23], 저장 순서 v[24..27]
+    const names = ["㉠", "㉡", "㉢", "㉣"];
+    const coefficients = [0, 1, 2, 3].map(index => {
+      let value = rational(1);
+      for (const step of [0, 1]) {
+        const at = index * 6 + step * 3;
+        value = v[at] ? multiply(value, rational(v[at + 1], v[at + 2])) : divide(value, rational(v[at + 1], v[at + 2]));
+      }
+      return value;
+    });
     const order = names.map((name, index) => ({ name, coefficient: coefficients[index][0] / coefficients[index][1] }))
       .sort((left, right) => left.coefficient - right.coefficient).map(item => item.name);
     check(new Set(coefficients.map(value => fraction(value))).size === 4, "네 수에 곱한 분수가 서로 달라야 합니다.");
-    check(order.every((name, index) => names.indexOf(name) === v[8 + index]), "큰 수부터의 차례가 저장 순서와 다릅니다.");
+    check(order.every((name, index) => names.indexOf(name) === v[24 + index]), "큰 수부터의 차례가 저장 순서와 다릅니다.");
     return order.join(", ");
   }
   if (evidence.kind === "fruit-basket-weight") {
@@ -135,7 +148,9 @@ for (const type of ready) {
         check(generated?.generationMode === "fixed-verified-pool" && generated?.verifiedVariantCount === 3, "검증된 3문항 고정 묶음 표시가 없습니다.");
         check(Number.isInteger(generated?.verifiedPoolIndex) && generated.verifiedPoolIndex >= 0 && generated.verifiedPoolIndex < 3, "고정 묶음 번호가 0~2가 아닙니다.");
         check(generated?.sourceItemId === type.sourceItemId, "생성 결과의 원문 유형 ID가 다릅니다.");
-        check(generated.prompt.includes("source61-math-board") || generated.prompt.includes("source61-area-ratio"), "문제의 시각 자료가 없습니다.");
+        // 예제 1-2는 원문에 상자·그림이 없는 문장형 문제입니다(2026-11-23 원문 복원).
+        if (type.variant !== 1) check(generated.prompt.includes("source61-math-board") || generated.prompt.includes("source61-area-ratio"), "문제의 시각 자료가 없습니다.");
+        else check(!generated.prompt.includes("source61-math-board"), "원문에 없는 조건 상자가 문제에 있습니다.");
         check(typeof generated.answerVisual === "string" && generated.answerVisual.includes("source61-answer-diagram") && generated.answerVisual.includes("source61-math-board"), "답 화면의 시각 자료가 없습니다.");
         check(generated.answerVisual.includes(`data-answer-source="${type.sourceItemId}"`) && generated.answerVisual.includes(`data-verified-pool-index="${generated.verifiedPoolIndex}"`), "답 그림의 유형·고정 묶음 연결이 다릅니다.");
         const evidence = parseEvidence(generated.prompt);
@@ -145,6 +160,10 @@ for (const type of ready) {
         if (difficulty === 0) check(!generated.prompt.includes("data-step-evidence="), "원본 단계에 도움말이나 추가 부담이 섞였습니다.");
         if (difficulty === 1) check(generated.prompt.includes('data-step-evidence="independent-reasoning"'), "어려움 단계에 스스로 관계를 고르는 부담이 없습니다.");
         const expected = independentAnswer(evidence);
+        if (generated.verifiedPoolIndex === 0) {
+          const bookAnswers = ["3/4", "14/15", "65/18cm", "23/30", "8", "103/480kg", "6개", "㉠, ㉢, ㉣, ㉡", "5/8kg", "4월 25일"];
+          check(String(generated.answer) === bookAnswers[type.variant], `원문(묶음 0) 정답 '${bookAnswers[type.variant]}'과 다릅니다: ${generated.answer}`);
+        }
         check(String(generated.answer) === expected, `표시 답 '${generated.answer}'이 독립 계산 '${expected}'과 다릅니다.`);
         check(!/undefined|null|NaN|Infinity|순열|조합|제곱근/.test(`${generated.prompt}\n${generated.answer}\n${generated.solution}\n${generated.answerVisual}`), "깨진 값 또는 학년 밖 표현이 있습니다.");
         if (type.variant === 2) {
@@ -152,7 +171,7 @@ for (const type of ready) {
           const answerSvg = generated.answerVisual.match(/<svg class="geometry-diagram source61-area-ratio"[\s\S]*?<\/svg>/)?.[0] || "";
           check(Boolean(problemSvg && answerSvg), "도형 문제가 문제와 답 양쪽에 그려지지 않았습니다.");
           check(problemSvg.includes('class="source61-target"') && answerSvg.includes('class="source61-target is-solved"'), "답 그림에서 구한 선분이 따로 표시되지 않았습니다.");
-          check(attr(problemSvg, "data-width") === String(evidence.values[0]) && attr(problemSvg, "data-height") === String(evidence.values[1]) && attr(problemSvg, "data-area-multiple") === String(evidence.values[2]), "도형 좌표 모델의 조건이 계산 자료와 다릅니다.");
+          check(attr(problemSvg, "data-width") === `${evidence.values[0]}/${evidence.values[1]}` && attr(problemSvg, "data-height") === String(evidence.values[2]) && attr(problemSvg, "data-area-multiple") === String(evidence.values[3]), "도형 좌표 모델의 조건이 계산 자료와 다릅니다.");
         }
         prompts.add(String(generated.prompt).replace(/<p class="question-step[\s\S]*?<\/p>/g, "").replace(/<span hidden[\s\S]*?<\/span>/g, ""));
         poolIndexes.add(generated.verifiedPoolIndex);

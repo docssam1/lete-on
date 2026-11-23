@@ -10,7 +10,7 @@ const chosen = process.env.HSE_TYPE_FILTER ? ids.filter(id => process.env.HSE_TY
 const levels = process.env.HSE_DIFFICULTY_FILTER ? process.env.HSE_DIFFICULTY_FILTER.split(",").map(Number) : [-1, 0, 1];
 assert(chosen.length && levels.every(d => [-1, 0, 1].includes(d)));
 const output = process.env.HSE_SCREENSHOT_DIR;
-assert(output && /^[EG]:[/\\]/i.test(output), "검수 결과는 E: 또는 G:에 저장합니다.");
+assert(output && path.isAbsolute(output), "검수 결과는 절대 경로 폴더에 저장합니다.");
 fs.mkdirSync(output, { recursive: true });
 const assets = ["index.html", "generators.js", "source-6-2-decimal-e3.js", "source-6-2-decimal-e3.css", "source-6-2-e3-digit-count.css", "source-6-2-e3-card-maximum.css", "source-inventory-grade6.js", "app.js"];
 const hashes = () => Object.fromEntries(assets.map(f => [f, crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname, f))).digest("hex")]));

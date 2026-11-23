@@ -1498,7 +1498,7 @@ button{
 .source61-e4-truncated-pyramid{aspect-ratio:330/230!important}
 .source61-e4-tetrahedron{aspect-ratio:330/220!important}
 .source61-e4-joined-solid{aspect-ratio:330/180!important}
-.source61-e4-bipyramid{aspect-ratio:330/190!important}
+.source61-e4-bipyramid{aspect-ratio:330/300!important}
 .source61-e4-square-net{aspect-ratio:330/300!important}
 .source61-e4-cube-pyramids.is-solved,.source61-e4-joined-solid.is-solved,.source61-e4-bipyramid.is-solved{aspect-ratio:330/300!important}
 .source61-e4-square-net .source61-e4-net-frame{fill:#fff;stroke:#244b68;stroke-width:2.2;stroke-linejoin:round;vector-effect:non-scaling-stroke}
@@ -1717,3 +1717,6 @@ button{
 @media print{.print-page--paired .source62-sugar-packing-flow{grid-template-columns:minmax(0,1fr) 20px minmax(0,.72fr);gap:6px;padding:10px}.print-page--paired .source62-student-change-rows>span{grid-template-columns:52px minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr)}.print-page--paired .source62-student-change-rows strong,.print-page--paired .source62-student-change-rows b,.print-page--paired .source62-student-change-rows i{padding:8px 4px;overflow-wrap:anywhere}}
 @media print{.print-page--fit .question-prompt svg,.print-page--fit .question-prompt img{max-height:150mm!important;width:auto!important;max-width:100%!important;height:auto!important}}
 @media print{.print-page--fit-tight .question-prompt svg,.print-page--fit-tight .question-prompt img{max-height:100mm!important}}
+
+/* 6-1 2단원 원본 복원: Mission 6 종이 사용표, 예제 3-1 조건식 */
+.source61-e3-paper-usage{border-collapse:collapse;margin:10px auto 0;font-variant-numeric:tabular-nums}.source61-e3-paper-usage th,.source61-e3-paper-usage td{border:1px solid #9aa8b3;padding:4px 14px;text-align:center}.source61-e3-paper-usage thead th{background:#eef3f6}.source61-e3-condition{text-align:center;margin:10px 0 0}

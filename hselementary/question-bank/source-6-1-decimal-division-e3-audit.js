@@ -18,12 +18,12 @@ const kinds = [
 const pools = [
   [[6, 7, 17, 21, 5, 9, 13], [5, 6, 13, 16, 3, 7, 11], [7, 9, 11, 15, 4, 5, 12]],
   [[4, 37, 3], [5, 31, 7], [6, 29, 4]],
-  [[143, 33, 22], [127, 24, 2], [178, 45, 20]],
-  [[7, 12, 8, 10.7], [9, 10, 6, 14.3], [6, 15, 7, 12.2]],
+  [[143, 33, 22], [127, 24, 2], [181, 45, 35]],
+  [[7, 12, 8, 10.7], [9, 8, 6, 14.3], [6, 11, 7, 12.2]],
   [[32, 7, 25], [34, 9, 25], [36, 11, 25]],
   [[3, 8, 37], [4, 5, 27], [2, 11, 31]],
   [[13, 14, 6, 7], [16, 17, 5, 6], [21, 22, 8, 9]],
-  [[7, 11, 12, 21], [3, 5, 6, 9], [5, 8, 12, 15]],
+  [[7, 11, 12, 21], [3, 5, 6, 9], [5, 9, 12, 16]],
   [[19.6, 5, 47.52, 9, 90.08, 8, 102.2, 7], [24.5, 5, 59.4, 9, 90.08, 8, 119, 7], [24.5, 5, 59.4, 9, 92, 8, 108.5, 7]],
   [[149, 57, 55], [137, 45, 25], [181, 63, 62]],
   [[5, 7, 3, 12], [4, 11, 5, 9], [6, 6, 4, 9]]
@@ -50,14 +50,16 @@ const sameValues = (left, right) => left.length === right.length && left.every((
 const answerFor = (variant, pool) => {
   if (variant === 0) return [round(pool[0] / pool[1], 3).toFixed(3), round(pool[2] / pool[3], 3).toFixed(3), round(pool[4] + pool[5] / pool[6], 3).toFixed(3)].join(", ");
   if (variant === 1) return String(digitAt(pool[0] * pool[1] + pool[2], pool[1], 48));
-  if (variant === 2) { let m = 0; for (let tenth = 1; tenth <= pool[1] * 10; tenth += 1) if ((pool[0] * 10 + tenth) % pool[1] === 0) { m = tenth; break; } return (m / 10).toFixed(1); }
-  if (variant === 3) { const aa = []; const bb = []; for (let a = 1; a <= 200; a += 1) if (Math.round(a / pool[0]) === pool[1]) aa.push(a); for (let b = 1; b <= 200; b += 1) if (Math.floor((b / pool[2]) * 10) / 10 === pool[3]) bb.push(b); return (Math.min(...aa) / Math.max(...bb)).toFixed(2); }
+  // 예제 3-2: 몫이 소수 한 자리 수(자연수가 아님)가 되는 가장 작은 더할 수
+  if (variant === 2) { let m = 0; for (let tenth = 1; tenth <= pool[1] * 10; tenth += 1) { const total = pool[0] * 10 + tenth; if (total % pool[1] === 0 && (total / pool[1]) % 10 !== 0) { m = tenth; break; } } return (m / 10).toFixed(1); }
+  if (variant === 3) { const aa = []; const bb = []; for (let a = 1; a <= 200; a += 1) if (Math.round(a / pool[0]) === pool[1]) aa.push(a); for (let b = 1; b <= 200; b += 1) if (Math.floor((b / pool[2]) * 10) / 10 === pool[3]) bb.push(b); return (Math.round(Math.min(...aa) / Math.max(...bb) * 10) / 10).toFixed(1); }
   if (variant === 4) { const sum = pool[0]; let answer = ""; for (let n = 1; n < sum / 2; n += 1) { const d = sum - n; const g = gcd(n, d); const reduced = d / g; if (100 % reduced === 0 && 10 % reduced !== 0) { if (answer) return "ambiguous"; answer = (n / d).toFixed(2); } } return answer; }
   if (variant === 5) return String(digitAt(pool[1], pool[2], 100));
   if (variant === 6) { const values = []; for (let a = pool[0]; a <= pool[1]; a += 1) for (let b = pool[2]; b <= pool[3]; b += 1) values.push(round(a / b, 2)); return fmt2(Math.max(...values) - Math.min(...values)); }
   if (variant === 7) { const numerator = pool[1] * pool[3], denominator = pool[0] * pool[2]; if (!isTerminatingFraction(numerator, denominator)) return "nonterminating"; return fmt2(numerator / denominator); }
   if (variant === 8) { const aLow = pool[0] / pool[1], aHigh = pool[2] / pool[3], bLow = pool[4] / pool[5], bHigh = pool[6] / pool[7]; const aa = [], bb = []; for (let a = Math.floor(aLow) + 1; a < aHigh; a += 1) aa.push(a); for (let b = Math.floor(bLow) + 1; b < bHigh; b += 1) bb.push(b); const numerator = Math.max(...bb) * Math.max(...aa) - Math.min(...bb) * Math.min(...aa), denominator = Math.min(...aa) * Math.max(...aa); if (!isTerminatingFraction(numerator, denominator)) return "nonterminating"; return fmt2(numerator / denominator); }
-  if (variant === 9) { let m = 0; for (let milli = 1; milli <= pool[1] * 1000; milli += 1) if ((pool[0] * 1000 + milli) % pool[1] === 0) { m = milli; break; } return (m / 1000).toFixed(3); }
+  // 미션 5: 몫이 소수 세 자리 수가 되는 가장 작은 더할 소수
+  if (variant === 9) { let m = 0; for (let milli = 1; milli <= pool[1] * 1000; milli += 1) { const total = pool[0] * 1000 + milli; if (total % pool[1] === 0 && (total / pool[1]) % 10 !== 0) { m = milli; break; } } return (m / 1000).toFixed(3); }
   const values = []; for (let n = 1; n <= 200; n += 1) if (Math.round(n / pool[0]) === pool[1] && Math.round(n / pool[2]) === pool[3]) values.push(n); return values.join(", ");
 };
 
@@ -84,8 +86,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
     if (!problemSvg || !answerSvg || attr(problemSvg, "data-source61-e3-structure") !== attr(answerSvg, "data-source61-e3-structure") || attr(problemSvg, "data-source61-e3-values") !== attr(answerSvg, "data-source61-e3-values") || !answerSvg.includes("data-result-highlight=")) fail(`${label}: 문제·답 SVG 자료 또는 결과 표시 오류`);
     if (variant === 0 && ev.values[0] === 6 && ev.values[1] === 7 && generated.answer !== "0.857, 0.810, 5.692") fail(`${label}: 원문 반올림 답 또는 0.810 표기가 다릅니다.`);
     if (variant === 2 && poolIndex === 0 && generated.answer !== "2.2") fail(`${label}: 143÷33 원문 정답은 2.2여야 합니다.`);
-    if (variant === 3 && poolIndex === 0 && generated.answer !== "0.94") fail(`${label}: A=81, B=86 원문 정답은 0.94여야 합니다.`);
-    if (variant === 3 && poolIndex === 1 && generated.answer !== "1.00") fail(`${label}: 소수 둘째 자리까지 나타낸 답은 1이 아니라 1.00이어야 합니다.`);
+    if (variant === 3 && poolIndex === 0 && generated.answer !== "0.9") fail(`${label}: ㉠=81, ㉡=86 원문 정답(반올림하여 소수 첫째 자리까지)은 0.9여야 합니다.`);
     if (variant === 4 && poolIndex === 0 && generated.answer !== "0.28") fail(`${label}: 7/25 원문 정답은 0.28이어야 합니다.`);
     if (variant === 5 && poolIndex === 0 && generated.answer !== "2") fail(`${label}: 100번째 소수 자리 원문 정답은 2여야 합니다.`);
     if (variant === 6 && poolIndex === 0 && generated.answer !== "0.47") fail(`${label}: A 13·14, B 6·7 원문 정답은 0.47이어야 합니다.`);
@@ -93,6 +94,19 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
     if (variant === 8 && poolIndex === 0 && generated.answer !== "1.1") fail(`${label}: 범위 원문 정답은 1.1이어야 합니다.`);
     if (variant === 9 && poolIndex === 0 && generated.answer !== "0.055") fail(`${label}: 149에 더할 수 원문 정답은 0.055여야 합니다.`);
     if (variant === 10 && poolIndex === 0 && generated.answer !== "35, 36, 37") fail(`${label}: 공통 자연수 원문 정답은 35, 36, 37이어야 합니다.`);
+    if (difficulty === 0 && poolIndex === 0) {
+      const promptText = String(generated.prompt).replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<span hidden[\s\S]*?<\/span>/g, " ").replace(/<[^>]+>/g, "");
+      const bookPhrases = {
+        2: ["다음 나눗셈은 나누어떨어지지 않습니다.", "어떤 수 중에서 가장 작은 수를 구하세요.", "143 ÷ 33"],
+        3: ["자연수 ㉠을 7로", "12가 되고", "10.7이 됩니다.", "몫을 반올림하여 소수 첫째 자리까지 구하세요."],
+        4: ["기약 진분수 중에서", "소수 두 자리 수가 되는 분수를 구하여 소수로 나타내세요."],
+        6: ["가는 13 이상 14 이하의 어떤 수이고, 나는 6 이상 7 이하의 어떤 수입니다."],
+        7: ["세 수 ㉠, ㉡, ㉢이 있습니다.", "1221", "㉢을 ㉠으로 나눈 몫을 소수로 나타내세요."],
+        9: ["149에 어떤 소수를 더하여 57로 나누었더니 몫이 소수 셋째 자리에서 나누어떨어졌습니다.", "어떤 소수 중 가장 작은 수를 구하세요."]
+      }[variant] || [];
+      for (const phrase of bookPhrases) if (!promptText.includes(phrase)) fail(`${label}: 원문 문장 '${phrase}'이 문제에 없습니다.`);
+      if (/더하는 수가 소수/.test(promptText)) fail(`${label}: 원문에 없는 '더하는 수가 소수 … 자리 수일 때' 조건이 있습니다.`);
+    }
     if (generated.answer !== answerFor(variant, expected)) fail(`${label}: 독립 계산 답 ${answerFor(variant, expected)} / 표시 답 ${generated.answer}`);
     if (difficulty === -1 && ev?.difficulty !== "guided") fail(`${label}: 안내 난이도 표기가 없습니다.`);
     if (difficulty === 0 && ev?.difficulty !== "source") fail(`${label}: 원문 난이도 표기가 없습니다.`);

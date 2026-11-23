@@ -49,5 +49,5 @@ assert.throws(()=>contracts.generate("unknown",0,1));report.negativeCases++;
 for(let level=0;level<3;level++)assert.equal(new Set([0,1,2].map(v=>contracts.generate(id,v,level).structuralFingerprint)).size,3);
 report.status="passed-contract-and-presentation-candidate";
 report.hashes=Object.fromEntries(["models","contracts","presentation"].map(s=>{const file=`source-6-2-opposite-removal-${s}.js`;return[file,crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,file))).digest("hex")];}));
-const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(/^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,"contracts-audit.json"),JSON.stringify(report,null,2)+"\n");}
+const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,"contracts-audit.json"),JSON.stringify(report,null,2)+"\n");}
 console.log(JSON.stringify({status:report.status,cases:report.cases.length,cells:report.cellsCompared,answerGridCells:report.answerGridCells,negativeCases:report.negativeCases,catalogUnlocked:false}));

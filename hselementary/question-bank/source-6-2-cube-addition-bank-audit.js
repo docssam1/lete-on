@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto");
 const models=require("./source-6-2-cube-addition-models.js"),contracts=require("./source-6-2-cube-addition-contracts.js"),assets=require("./source-6-2-cube-addition-assets.js");
 const id=models.sourceItemId,key="sourceGrade6SecondSpaceE4SingleCubeAddition",other="6-2-u3-e4-example-3",base=new URL(process.env.HSE_BASE_URL),out=process.env.HSE_SCREENSHOT_DIR;
-const candidate=process.env.HSE_ADDITION_CANDIDATE==="1",mixed=process.env.HSE_ADDITION_MIXED==="1";assert(out&&/^E:[/\\]/i.test(out)&&["localhost","127.0.0.1"].includes(base.hostname));
+const candidate=process.env.HSE_ADDITION_CANDIDATE==="1",mixed=process.env.HSE_ADDITION_MIXED==="1";assert(out&&path.isAbsolute(out)&&["localhost","127.0.0.1"].includes(base.hostname));
 const files=["index.html","app.js","source-inventory-grade6.js","source-6-2-painted-mission3-presentation.js","generators.js",...["models.js","assets.js","contracts.js","presentation.js","questions.js","questions.css"].map(s=>`source-6-2-cube-addition-${s}`)];
 const hashes=()=>Object.fromEntries(files.map(f=>[f,crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,f))).digest("hex")]));
 async function inspect(root,variant,level,mode){

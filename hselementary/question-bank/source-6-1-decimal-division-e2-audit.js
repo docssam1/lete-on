@@ -46,7 +46,11 @@ const evidenceFrom = markup => {
 };
 const svgFrom = markup => String(markup).match(/<svg class="[^"]*source61-decimal-e2-diagram[\s\S]*?<\/svg>/)?.[0] || "";
 const independentAnswer = (variant, values) => {
-  if (variant === 0) return `${fmt(values[2] / values[3] * values[5] - values[0] / values[1] * (values[5] + values[4]))}km`;
+  if (variant === 0) {
+    // 원문: "어느 것이 몇 km 더 앞서 있겠는지" → 앞선 쪽과 거리
+    const gap = values[2] / values[3] * values[5] - values[0] / values[1] * (values[5] + values[4]);
+    return `${gap > 0 ? "오토바이" : "자전거"}, ${fmt(Math.abs(gap))}km`;
+  }
   if (variant === 1) {
     const lower = Math.round(values[2] * 100), upper = Math.round(values[3] * 100);
     let count = 0;
@@ -111,6 +115,9 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (!problemSvg || !answerSvg || attr(problemSvg, "data-source61-e2-structure") !== attr(answerSvg, "data-source61-e2-structure") || attr(problemSvg, "data-source61-e2-values") !== attr(answerSvg, "data-source61-e2-values")) fail(`${label}: 문제와 답의 SVG 자료가 다릅니다.`);
       if (!answerSvg.includes("data-result-highlight=") || !String(generated?.answerVisual).includes(`data-answer-source="${sourceIds[variant]}"`) || !String(generated?.answerVisual).includes(`data-verified-pool-index="${poolIndex}"`)) fail(`${label}: 답 SVG·결과 강조·source/pool 연결이 없습니다.`);
       if (String(generated?.answer) !== independentAnswer(variant, evidence?.values || [])) fail(`${label}: 표시 답 '${generated?.answer}' / evidence 독립 계산 '${independentAnswer(variant, evidence?.values || [])}'`);
+      if (poolIndex === 0 && variant === 0 && generated?.answer !== "오토바이, 13.3km") fail(`${label}: 원문 개념탐구 2 정답은 '오토바이, 13.3km'여야 합니다.`);
+      if (poolIndex === 0 && variant === 1 && generated?.answer !== "11개") fail(`${label}: 원문 예제 2-1 정답은 11개여야 합니다.`);
+      if (variant === 1 && /수의 범위|≤/.test(String(generated?.prompt).replace(/<svg[\s\S]*?<\/svg>/g, ""))) fail(`${label}: 문제에 원문에 없는 수의 범위가 있습니다.`);
       if (difficulty === -1 && evidence?.difficulty !== "guided") fail(`${label}: 안내 지원 표시가 없습니다.`);
       if (difficulty === 0 && evidence?.difficulty !== "source") fail(`${label}: 원본 기준 표시가 없습니다.`);
       if (difficulty === 1 && evidence?.difficulty !== "independent-reasoning") fail(`${label}: 이유 설명 표시가 없습니다.`);

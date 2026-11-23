@@ -36,7 +36,8 @@ const out = process.env.MAC_CHECK_OUTPUT || fs.mkdtempSync(path.join(require("no
     const prompt = await page.locator(".source52-p54e41-question").innerText();
     const diagrams = page.locator(".source52-p54e41-question svg");
     if (await diagrams.count() !== 1) throw new Error("문제 그림이 정확히 하나 표시되지 않습니다.");
-    if (!prompt.includes("붙인 주사위 여섯 개") || !prompt.includes("붙은 두 면의 수의 합은 8")) throw new Error("원문 구조나 조건이 문제에 없습니다.");
+    // 그림 아래 이름표(figcaption '붙인 주사위 여섯 개')는 #791에서 화면에 숨겨졌으므로, 원문 문장의 같은 조건으로 확인한다(2026-11-23).
+    if (!prompt.includes("주사위 6개를 그림과 같이 붙였습니다") || !prompt.includes("붙은 두 면의 수의 합은 8")) throw new Error("원문 구조나 조건이 문제에 없습니다.");
     const diagramLabels = await page.locator(".source52-p54e41-question svg text").allTextContents();
     if (!diagramLabels.includes("㉮") || !diagramLabels.includes("4") || !diagramLabels.includes("2")) throw new Error(`원문 그림의 라벨이 다릅니다: ${diagramLabels.join(",")}`);
     await page.screenshot({ path: path.join(out, "app-problem-1440.png"), fullPage: true });

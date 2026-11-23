@@ -29,6 +29,28 @@ function svgFragments(markup) {
   }
 }
 
+const PYTHON_SVG_GRID_READER = String.raw`
+import base64, json, sys
+from xml.dom import minidom
+items = json.loads(base64.b64decode(sys.stdin.read()).decode("utf-8"))
+def text_of(node):
+    return "".join(child.data if child.nodeType == child.TEXT_NODE else text_of(child) for child in node.childNodes if child.nodeType in (child.TEXT_NODE, child.ELEMENT_NODE))
+def number(value):
+    return int(value) if value else 0
+result = []
+for item in items:
+    svg = minidom.parseString(item.encode("utf-8")).documentElement
+    cells = []
+    for element in svg.getElementsByTagName("*"):
+        if element.localName != "g" or not element.hasAttribute("data-x"):
+            continue
+        texts = [child for child in element.childNodes if child.nodeType == child.ELEMENT_NODE and child.localName == "text"]
+        if not texts:
+            raise SystemExit("answer cell is missing text")
+        cells.append({"x": number(element.getAttribute("data-x")), "z": number(element.getAttribute("data-z")), "value": number(element.getAttribute("data-value")), "text": text_of(texts[0])})
+    result.append({"layer": number(svg.getAttribute("data-layer")), "role": svg.getAttribute("data-role"), "cells": cells})
+print(json.dumps(result, ensure_ascii=False))
+`;
 function readSvgGrids(fragments) {
   const script = [
     "$ErrorActionPreference = 'Stop'",
@@ -49,9 +71,11 @@ function readSvgGrids(fragments) {
     "}",
     "$result | ConvertTo-Json -Depth 8 -Compress"
   ].join("\n");
-  const parsed = spawnSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script], {
-    input: Buffer.from(JSON.stringify(fragments), "utf8").toString("base64"), encoding: "utf8", windowsHide: true
-  });
+  // Windows에서는 PowerShell XML 파서, 그 밖(Mac 등)에서는 같은 결과 모양을 내는 python3 표준 XML 파서(minidom)로 SVG를 따로 읽는다(2026-11-23).
+  const input = Buffer.from(JSON.stringify(fragments), "utf8").toString("base64");
+  const parsed = process.platform === "win32"
+    ? spawnSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script], { input, encoding: "utf8", windowsHide: true })
+    : spawnSync(process.env.HSE_PYTHON || "python3", ["-I", "-c", PYTHON_SVG_GRID_READER], { input, encoding: "utf8" });
   assert.equal(parsed.status, 0, `SVG XML parsing failed: ${parsed.stderr || parsed.stdout}`);
   const grids = JSON.parse(parsed.stdout.trim());
   return Array.isArray(grids) ? grids : [grids];

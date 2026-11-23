@@ -6,7 +6,7 @@ const crypto=require("node:crypto");
 const {execFileSync}=require("node:child_process");
 const {chromium}=require("playwright");
 const out=process.env.HSE_SCREENSHOT_DIR;
-assert(out&&/^[EG]:[/\\]/i.test(out),"Evidence must stay on E:/G:");
+assert(out&&path.isAbsolute(out),"Evidence output must be an absolute folder.");
 fs.mkdirSync(out,{recursive:true});
 const assets=["source-6-2-stack-models.js","source-6-2-stack-renderer.mjs","source-6-2-stack-review.html","source-6-2-stack-review.css"];
 const hashes=()=>Object.fromEntries(assets.map(n=>[n,crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,n))).digest("hex")]));

@@ -21648,7 +21648,7 @@
         const shortEdge = solved ? `<line class="source61-trapezoid-short-edge is-solved" x1="${boundaries[2]}" y1="${stripY - topHeight}" x2="${boundaries[2] + topShort}" y2="${stripY - topHeight}"/>` : "";
         const solvedLabels = solved ? `<text class="source61-trapezoid-answer-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight - 11}">짧은 밑변 ${shortBase}cm</text><text class="source61-trapezoid-answer-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 20}">높이 ${prismHeight}cm</text>` : "";
         const structure = `right-trapezoidal-prism-net-${baseHeight}-${longBase}-${baseArea}-${faceArea}`;
-        return `<svg class="geometry-diagram source61-trapezoidal-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 360 270" role="img" aria-label="밑면이 직각사다리꼴인 사각기둥의 전개도" data-source61-e1-structure="${structure}" data-base-height="${baseHeight}" data-long-base="${longBase}" data-base-area="${baseArea}" data-face-ga-area="${faceArea}" data-base-face-count="2" data-lateral-face-count="4" data-short-base="${solved ? shortBase : ""}" data-prism-height="${solved ? prismHeight : ""}">${topPolygon}${bottomPolygon}${lateralFaces}${shortEdge}<text class="source61-trapezoid-face-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 - 8}">(가)</text><text class="source61-trapezoid-area-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 10}">${faceArea}cm²</text><text class="source61-trapezoid-area-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight / 2}">밑면 ${baseArea}cm²</text><text class="source61-trapezoid-measure" x="${(boundaries[1] + boundaries[2]) / 2}" y="${stripY - 10}">${baseHeight}cm</text><text class="source61-trapezoid-measure" x="${(boundaries[2] + boundaries[3]) / 2}" y="${bottomY + 15}">${longBase}cm</text>${solvedLabels}</svg>`;
+        return `<svg class="geometry-diagram source61-trapezoidal-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 360 270" role="img" aria-label="${solved ? "밑면이 직각사다리꼴인 사각기둥의 전개도" : "사각기둥의 전개도"}" data-source61-e1-structure="${structure}" data-base-height="${baseHeight}" data-long-base="${longBase}" data-base-area="${baseArea}" data-face-ga-area="${faceArea}" data-base-face-count="2" data-lateral-face-count="4" data-short-base="${solved ? shortBase : ""}" data-prism-height="${solved ? prismHeight : ""}">${topPolygon}${bottomPolygon}${lateralFaces}${shortEdge}<text class="source61-trapezoid-face-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 - 8}">㉮</text>${solved ? `<text class="source61-trapezoid-area-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 10}">${faceArea}cm²</text><text class="source61-trapezoid-area-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight / 2}">밑면 ${baseArea}cm²</text>` : ""}<text class="source61-trapezoid-measure" x="${(boundaries[1] + boundaries[2]) / 2}" y="${stripY - 10}">${baseHeight}cm</text><text class="source61-trapezoid-measure" x="${(boundaries[2] + boundaries[3]) / 2}" y="${bottomY + 15}">${longBase}cm</text>${solvedLabels}</svg>`;
       };
       const quadrilateralPrismNetActivitySvg = ({ topBase, baseHeight, slantedSide, bottomBase, prismHeight, cutCount, solved = false }) => {
         const cell = 6, gridX = 190, gridY = 28, gridWidth = 288, gridHeight = 180;
@@ -21715,8 +21715,8 @@
 
       if (variant === 5) {
         const data = [
-          { baseHeight: 10, longBase: 16, baseArea: 150, faceArea: 336 },
           { baseHeight: 12, longBase: 20, baseArea: 228, faceArea: 513 },
+          { baseHeight: 10, longBase: 16, baseArea: 150, faceArea: 336 },
           { baseHeight: 8, longBase: 18, baseArea: 136, faceArea: 416 }
         ][poolIndex];
         const shortBase = 2 * data.baseArea / data.baseHeight - data.longBase;
@@ -21725,7 +21725,7 @@
         const values = [data.baseHeight, data.longBase, data.baseArea, shortBase, data.faceArea, prismHeight];
         const promptVisual = trapezoidalPrismHeightNetSvg({ ...data, shortBase, prismHeight });
         const answerVisual = `${trapezoidalPrismHeightNetSvg({ ...data, shortBase, prismHeight, solved: true })}${mathBoard("전개도에서 각기둥의 높이 찾기", row("두 밑변의 길이의 합", `${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm`) + row("짧은 밑변", `${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm`) + row("각기둥의 높이", `${data.faceArea}÷${shortBase}=${prismHeight}cm`), `data-source61-visual="trapezoidal-prism-net-height"`)}`;
-        return fixedResult(`다음 그림은 밑면이 사다리꼴인 사각기둥의 전개도입니다. 밑면의 높이는 ${data.baseHeight}cm, 긴 밑변은 ${data.longBase}cm이고 한 밑면의 넓이는 ${data.baseArea}cm²입니다. 직사각형 (가)의 넓이가 ${data.faceArea}cm²일 때 사각기둥의 높이를 구하세요.${promptVisual}${support("사다리꼴의 넓이에서 짧은 밑변을 먼저 구한 뒤, (가)의 넓이를 짧은 밑변으로 나누어 보세요.")}${challenge}${evidence("trapezoidal-prism-net-height", values)}`, `${prismHeight}cm`, `사다리꼴의 두 밑변의 길이의 합은 ${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm입니다. 따라서 짧은 밑변은 ${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm입니다. (가)는 짧은 밑변 ${shortBase}cm에 붙은 옆면이므로 사각기둥의 높이는 ${data.faceArea}÷${shortBase}=${prismHeight}cm입니다.`, answerVisual);
+        return fixedResult(`그림은 사각기둥의 전개도입니다. ㉮의 넓이는 ${data.faceArea}cm²이고, 한 밑면의 넓이는 ${data.baseArea}cm²입니다. 이 사각기둥의 높이는 몇 cm입니까?${promptVisual}${support("사다리꼴의 넓이에서 짧은 밑변을 먼저 구한 뒤, ㉮의 넓이를 짧은 밑변으로 나누어 보세요.")}${challenge}${evidence("trapezoidal-prism-net-height", values)}`, `${prismHeight}cm`, `전개도에서 밑면은 사다리꼴이고, ${data.baseHeight}cm는 밑면의 높이, ${data.longBase}cm는 긴 밑변입니다. 사다리꼴의 두 밑변의 길이의 합은 ${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm입니다. 따라서 짧은 밑변은 ${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm입니다. ㉮는 짧은 밑변 ${shortBase}cm에 붙은 옆면이므로 사각기둥의 높이는 ${data.faceArea}÷${shortBase}=${prismHeight}cm입니다.`, answerVisual);
       }
 
       if (variant === 6) {
@@ -21916,7 +21916,14 @@
         const mid = [[0, 0, height / 2], [side, 0, height / 2], [side, side, height / 2], [0, side, height / 2]].map(p);
         return `${polygon(top, "source61-vs-e3-face")}${polygon(front, "source61-vs-e3-face source61-vs-e3-front-face")}${polygon(mid, solved ? "source61-vs-e3-cut-plane is-solved" : "source61-vs-e3-cut-plane")}${line(mid[0][0], mid[0][1], mid[1][0], mid[1][1], `class="source61-vs-e3-cut-edge"`)}${line(mid[1][0], mid[1][1], mid[2][0], mid[2][1], `class="source61-vs-e3-cut-edge"`)}${text(210, 30, `${side}cm × ${side}cm 밑면에 평행한 절단`, `class="source61-vs-e3-note"`)}${text(210, 210, solved ? `새 절단면 2개 · 밑면 ${side}cm × ${side}cm` : "위와 아래에 새로 생긴 절단면을 표시", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
       };
-      const viewsBody = ({ a, b, h, solved = false }) => `${polygon([[70, 52], [190, 52], [190, 122], [70, 122]], "source61-vs-e3-view-face")}${polygon([[245, 52], [365, 52], [365, 122], [245, 122]], "source61-vs-e3-view-face")}${text(130, 42, "위", `class="source61-vs-e3-view-label"`)}${text(305, 42, "앞", `class="source61-vs-e3-view-label"`)}${text(130, 88, solved ? `${a}cm × ${b}cm` : `${a}cm, 둘레 ${2 * (a + b)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(305, 88, solved ? `${a}cm × ${h}cm` : `${a}cm, 둘레 ${2 * (a + h)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(130, 148, `같은 변 ${a}cm`, `class="source61-vs-e3-note"`)}${solved ? text(210, 197, `부피 ${a * b * h}cm³`, `class="source61-vs-e3-result-label"`) : ""}`;
+      const viewsBody = ({ a, b, h, solved = false }) => {
+        // 원문 그림: 위에서 본 직사각형의 윗변에 한 변의 길이, 두 직사각형 안에 둘레만 적습니다.
+        // 이름표 순서(0 위, 1 앞, 2·3 둘레, 4 같은 변)는 문제 그림 힌트 정책의 이름표 순번(4번 제거)과 맞춥니다.
+        const k = Math.min(120 / a, 110 / Math.max(b, h));
+        const w = Math.round(a * k), topHeight = Math.round(b * k), frontHeight = Math.round(h * k);
+        const topX = 130 - w / 2, frontX = 305 - w / 2, y = 52;
+        return `${polygon([[topX, y], [topX + w, y], [topX + w, y + topHeight], [topX, y + topHeight]], "source61-vs-e3-view-face")}${polygon([[frontX, y], [frontX + w, y], [frontX + w, y + frontHeight], [frontX, y + frontHeight]], "source61-vs-e3-view-face")}${text(130, y + topHeight + 22, "위", `class="source61-vs-e3-view-label"`)}${text(305, y + frontHeight + 22, "앞", `class="source61-vs-e3-view-label"`)}${text(130, y + topHeight / 2 + 5, solved ? `${a}cm × ${b}cm` : `둘레 ${2 * (a + b)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(305, y + frontHeight / 2 + 5, solved ? `${a}cm × ${h}cm` : `둘레 ${2 * (a + h)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(130, 212, `같은 변 ${a}cm`, `class="source61-vs-e3-note"`)}${text(130, 42, `${a}cm`, `class="source61-vs-e3-measure"`)}${solved ? text(305, 232, `부피 ${a * b * h}cm³`, `class="source61-vs-e3-result-label"`) : ""}`;
+      };
       const layerBody = ({ side, target, n, solved = false }) => {
         const shown = solved ? [1, 2, 3, 4, "…", n - 1, n] : [1, 2, 3, 4, "…", "?"];
         const bands = shown.map((count, index) => { const x = 24 + index * 53, width = count === "…" ? 28 : count === "?" ? 18 : Math.min(42, 8 + Number(count) * 3); return count === "…" ? text(x + 14, 88, "…", `class="source61-vs-e3-note"`) : `<g data-layer-summary="${count}">${Array.from({ length: Math.min(Number(count), 8) }, (_, cell) => `<rect class="source61-vs-e3-layer-cell" x="${x + cell * 4}" y="${128 - Math.min(Number(count), 8) * 4}" width="4" height="${Math.min(Number(count), 8) * 4}" data-coordinate="${cell},0,${count - 1}"/>`).join("")}${text(x + width / 2, 153, `${count}칸`)}</g>`; }).join("");
@@ -21957,9 +21964,10 @@
         return fixed(`같은 정육면체 30개를 4×4, 3×3, 2×2, 1×1 계단 모양으로 쌓고 겉면을 칠했습니다. 색칠한 면의 넓이가 ${painted}cm²일 때 색칠하지 않은 면의 넓이를 구하세요.`, `${answer}cm²`, `층별 단위 큐브 좌표를 세면 드러난 면은 72개이고 안쪽에서 서로 맞닿은 공유 면은 108개입니다. 한 면의 넓이는 ${painted}÷72=${faceArea}cm²이므로 색칠하지 않은 면은 108×${faceArea}=${answer}cm²입니다.`, visual(false), visual(true));
       }
       if (variant === 5) {
-        const side = [5, 6, 7][poolIndex], totalVolume = 7 * side * side * side, answer = 7 * 6 * side * side - 2 * 6 * side * side, model = `${totalVolume},7,cross`;
+        // 원문(인쇄 59쪽 Mission 2): 부피 1512cm³ → 정육면체 한 모서리 6cm.
+        const side = [6, 5, 7][poolIndex], totalVolume = 7 * side * side * side, answer = 7 * 6 * side * side - 2 * 6 * side * side, model = `${totalVolume},7,cross`;
         const visual = solved => wrap(crossBody({ side, solved }), model, solved, "0 0 420 240");
-        return fixed(`크기가 같은 정육면체 7개를 가운데 한 개와 앞·뒤·왼쪽·오른쪽·위·아래에 한 개씩 붙였습니다. 전체 부피가 ${totalVolume}cm³일 때 겉넓이를 구하세요.`, `${answer}cm²`, `정육면체 한 개의 부피는 ${totalVolume}÷7=${side * side * side}cm³이므로 모서리는 ${side}cm입니다. 7개를 따로 놓은 겉넓이에서 여섯 공유 면을 두 번씩 빼면 7×6×${side * side}-2×6×${side * side}=${answer}cm²입니다.`, visual(false), visual(true));
+        return fixed(`크기가 같은 7개의 정육면체를 붙여서 다음과 같은 입체도형을 만들었습니다. 이 입체도형의 부피가 ${totalVolume}cm³일 때, 겉넓이는 몇 cm²인지 구하세요.`, `${answer}cm²`, `정육면체 한 개의 부피는 ${totalVolume}÷7=${side * side * side}cm³이므로 모서리는 ${side}cm입니다. 7개를 따로 놓은 겉넓이에서 여섯 공유 면을 두 번씩 빼면 7×6×${side * side}-2×6×${side * side}=${answer}cm²입니다.`, visual(false), visual(true));
       }
       if (variant === 6) {
         const d = [{ side: 7, height: 12 }, { side: 6, height: 10 }, { side: 8, height: 14 }][poolIndex];
@@ -21968,10 +21976,11 @@
         return fixed(`밑면이 정사각형인 직육면체의 겉넓이가 ${surface}cm²입니다. 밑면에 평행하게 잘라 두 직육면체로 나누었더니 겉넓이의 합이 ${splitSurface}cm²가 되었습니다. 처음 직육면체의 부피를 구하세요.`, `${answer}cm³`, `나눈 뒤 새로 생긴 절단면은 2개이므로 두 절단면의 합은 ${splitSurface}-${surface}=${2 * d.side * d.side}cm²입니다. 밑면 한 개의 넓이는 ${d.side}×${d.side}=${d.side * d.side}cm²입니다. 처음 겉넓이 식에 넣으면 높이는 ${d.height}cm이고, 부피는 ${d.side}×${d.side}×${d.height}=${answer}cm³입니다.`, visual(false), visual(true));
       }
       if (variant === 7) {
-        const d = [{ a: 6, b: 7, h: 4 }, { a: 7, b: 8, h: 4 }, { a: 8, b: 9, h: 5 }][poolIndex];
+        // 원문(인쇄 59쪽 Mission 5): 위에서 본 모양 한 변 7cm·둘레 30cm, 앞에서 본 모양 둘레 22cm.
+        const d = [{ a: 7, b: 8, h: 4 }, { a: 6, b: 7, h: 4 }, { a: 8, b: 9, h: 5 }][poolIndex];
         const topPerimeter = 2 * (d.a + d.b), frontPerimeter = 2 * (d.a + d.h), answer = d.a * d.b * d.h, model = `${d.a},${topPerimeter},${frontPerimeter}`;
         const visual = solved => wrap(viewsBody({ ...d, solved }), model, solved, "0 0 420 240");
-        return fixed(`직육면체를 위와 앞에서 본 모양이 다음과 같습니다. 위에서 본 모양의 한 변은 ${d.a}cm이고 둘레는 ${topPerimeter}cm, 앞에서 본 모양의 같은 변은 ${d.a}cm이고 둘레는 ${frontPerimeter}cm입니다. 직육면체의 부피를 구하세요.`, `${answer}cm³`, `위에서 본 다른 변은 ${topPerimeter}÷2-${d.a}=${d.b}cm입니다. 앞에서 본 높이는 ${frontPerimeter}÷2-${d.a}=${d.h}cm입니다. 따라서 부피는 ${d.a}×${d.b}×${d.h}=${answer}cm³입니다.`, visual(false), visual(true));
+        return fixed(`직육면체를 위, 앞에서 본 모양이 각각 다음과 같을 때, 이 직육면체의 부피는 몇 cm³입니까?`, `${answer}cm³`, `위에서 본 모양과 앞에서 본 모양의 가로는 같은 모서리이므로 ${d.a}cm입니다. 위에서 본 모양의 세로는 ${topPerimeter}÷2-${d.a}=${d.b}cm입니다. 앞에서 본 모양의 높이는 ${frontPerimeter}÷2-${d.a}=${d.h}cm입니다. 따라서 부피는 ${d.a}×${d.b}×${d.h}=${answer}cm³입니다.`, visual(false), visual(true));
       }
       const side = 2, n = [12, 10, 8][poolIndex], target = side * side * n * (n + 5), model = `${target},cube-volume-8,one-cell-deep-stair`;
       const visual = solved => wrap(layerBody({ side, target, n, solved }), model, solved, "0 0 420 240");
@@ -22097,33 +22106,33 @@
       };
 
       if (variant === 0) {
-        const data = [{ k: 22, n: 10 }, { k: 26, n: 12 }, { k: 30, n: 14 }][poolIndex];
+        const data = [{ k: 26, n: 12 }, { k: 22, n: 10 }, { k: 30, n: 14 }][poolIndex];
         const answer = 2 * data.n;
         const promptVisual = `${pairSvg(data)}${countTable({ ...data, guided: level === 0 })}`;
         const answerVisual = `${pairSvg({ ...data, solved: true, highlight: "pyramid" })}${countTable({ ...data, solved: true })}${mathBoard("각뿔의 모서리", row("밑면의 변 수", `${data.n}`) + row("모서리 수", `2×${data.n}=${answer}개`))}`;
-        return fixedResult(`다음을 만족하는 각기둥과 밑면의 모양이 같은 각뿔이 있습니다. 각기둥의 (면의 수)+(모서리의 수)-(꼭짓점의 수)가 ${data.k}일 때, 각뿔의 모서리 수를 구하세요.${promptVisual}${support("각기둥의 면·모서리·꼭짓점 수를 밑면의 변 수로 나타내 보세요.")}${challenge}${evidence("pyramid-edge-from-counts", [data.k, data.n, answer])}`, `${answer}개`, `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 모서리는 3×□개, 꼭짓점은 2×□개입니다. 따라서 (□+2)+3×□-2×□=${data.k}이므로 □=${data.n}입니다. 같은 밑면의 각뿔 모서리는 2×${data.n}=${answer}개입니다.`, answerVisual);
+        return fixedResult(`다음을 만족하는 각기둥과 밑면의 모양이 같은 각뿔의 모서리의 수를 구하세요.<p class="source61-e3-condition">(면의 수)+(모서리의 수)-(꼭짓점의 수)=${data.k}</p>${promptVisual}${support("각기둥의 면·모서리·꼭짓점 수를 밑면의 변 수로 나타내 보세요.")}${challenge}${evidence("pyramid-edge-from-counts", [data.k, data.n, answer])}`, `${answer}개`, `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 모서리는 3×□개, 꼭짓점은 2×□개입니다. 따라서 (□+2)+3×□-2×□=${data.k}이므로 □=${data.n}입니다. 같은 밑면의 각뿔 모서리는 2×${data.n}=${answer}개입니다.`, answerVisual);
       }
 
       if (variant === 1) {
-        const data = [{ faceSum: 27, n: 12 }, { faceSum: 29, n: 13 }, { faceSum: 31, n: 14 }][poolIndex];
+        const data = [{ faceSum: 29, n: 13 }, { faceSum: 27, n: 12 }, { faceSum: 31, n: 14 }][poolIndex];
         const prismEdges = 3 * data.n, pyramidEdges = 2 * data.n, answer = prismEdges * pyramidEdges;
         const promptVisual = `${pairSvg({ n: data.n })}${countTable({ n: data.n, k: data.faceSum, guided: level === 0, product: true })}`;
         const answerVisual = `${pairSvg({ n: data.n, solved: true, highlight: "pyramid", resultHighlight: answer })}${countTable({ n: data.n, k: data.faceSum, solved: true, product: true })}${mathBoard("두 도형의 모서리 수 곱", row("각기둥", `${prismEdges}개`) + row("각뿔", `${pyramidEdges}개`) + row("곱", `${prismEdges}×${pyramidEdges}=${answer}`))}`;
-        return fixedResult(`밑면의 모양이 같은 각기둥과 각뿔이 있습니다. 두 도형의 면의 수를 더하면 ${data.faceSum}개일 때, 각기둥과 각뿔의 모서리 수의 곱을 구하세요.${promptVisual}${support("두 도형의 면 수를 밑면의 변 수로 나타내어 밑면의 변 수를 먼저 구하세요.")}${challenge}${evidence("prism-pyramid-edge-product", [data.faceSum, data.n, prismEdges, pyramidEdges, answer])}`, String(answer), `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 각뿔의 면은 □+1개입니다. (□+2)+(□+1)=${data.faceSum}이므로 □=${data.n}입니다. 각기둥의 모서리는 3×${data.n}=${prismEdges}개, 각뿔의 모서리는 2×${data.n}=${pyramidEdges}개입니다. 따라서 ${prismEdges}×${pyramidEdges}=${answer}입니다.`, answerVisual);
+        return fixedResult(`밑면의 모양이 같은 각기둥과 각뿔이 있습니다. 각기둥과 각뿔의 면의 수의 합이 ${data.faceSum}개일 때 각기둥과 각뿔의 모서리의 수의 곱은 얼마입니까?${promptVisual}${support("두 도형의 면 수를 밑면의 변 수로 나타내어 밑면의 변 수를 먼저 구하세요.")}${challenge}${evidence("prism-pyramid-edge-product", [data.faceSum, data.n, prismEdges, pyramidEdges, answer])}`, String(answer), `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 각뿔의 면은 □+1개입니다. (□+2)+(□+1)=${data.faceSum}이므로 □=${data.n}입니다. 각기둥의 모서리는 3×${data.n}=${prismEdges}개, 각뿔의 모서리는 2×${data.n}=${pyramidEdges}개입니다. 따라서 ${prismEdges}×${pyramidEdges}=${answer}입니다.`, answerVisual);
       }
 
       if (variant === 2) {
-        const data = [{ edgeCm: 300, interval: 15, display: "3m", innerMarks: 19 }, { edgeCm: 330, interval: 15, display: "3m 30cm", innerMarks: 21 }, { edgeCm: 360, interval: 15, display: "3m 60cm", innerMarks: 23 }][poolIndex];
+        const data = [{ edgeCm: 330, interval: 15, display: "3m 30cm", innerMarks: 21 }, { edgeCm: 300, interval: 15, display: "3m", innerMarks: 19 }, { edgeCm: 360, interval: 15, display: "3m 60cm", innerMarks: 23 }][poolIndex];
         const answer = 8 * data.innerMarks + 5;
         const promptVisual = `${markedPyramidSvg({ ...data })}${mathBoard("점 찍는 조건", row("사각뿔의 한 모서리", `${data.display} = ${data.edgeCm}cm`) + row("점 사이의 간격", `${data.interval}cm`) + row("꼭짓점", "점에 포함"))}`;
         const answerVisual = `${markedPyramidSvg({ ...data, solved: true })}${mathBoard("안쪽 점과 꼭짓점", row("한 모서리의 안쪽 점", `${data.edgeCm}÷${data.interval}-1=${data.innerMarks}개`) + row("모든 모서리의 안쪽 점", `${data.innerMarks}×8=${data.innerMarks * 8}개`) + row("전체", `${data.innerMarks * 8}+5=${answer}개`))}`;
-        return fixedResult(`모든 모서리의 길이가 ${data.display}인 사각뿔이 있습니다. 각 모서리에 ${data.interval}cm 간격으로 점을 찍고 꼭짓점에도 반드시 점을 찍을 때, 점은 모두 몇 개인지 구하세요.${promptVisual}${support("한 모서리에서 양 끝 꼭짓점을 뺀 안쪽 점의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-edge-marks", [data.edgeCm, data.interval, data.innerMarks, answer])}`, `${answer}개`, `한 모서리의 길이는 ${data.edgeCm}cm이고 ${data.interval}cm씩 나누면 ${data.edgeCm}÷${data.interval}=${data.edgeCm / data.interval}구간입니다. 안쪽 점은 ${data.edgeCm / data.interval}-1=${data.innerMarks}개입니다. 사각뿔의 모서리 8개에 찍는 안쪽 점은 ${data.innerMarks}×8=${data.innerMarks * 8}개이고, 꼭짓점 5개를 더하면 ${answer}개입니다.`, answerVisual);
+        return fixedResult(`그림은 각 모서리의 길이가 ${data.display}로 모두 같은 사각뿔입니다. 각 모서리에 ${data.interval}cm 간격으로 점을 찍으면 점은 모두 몇 개가 찍히겠습니까? (단, 각 꼭짓점에는 반드시 점을 찍습니다.)${promptVisual}${support("한 모서리에서 양 끝 꼭짓점을 뺀 안쪽 점의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-edge-marks", [data.edgeCm, data.interval, data.innerMarks, answer])}`, `${answer}개`, `한 모서리의 길이는 ${data.edgeCm}cm이고 ${data.interval}cm씩 나누면 ${data.edgeCm}÷${data.interval}=${data.edgeCm / data.interval}구간입니다. 안쪽 점은 ${data.edgeCm / data.interval}-1=${data.innerMarks}개입니다. 사각뿔의 모서리 8개에 찍는 안쪽 점은 ${data.innerMarks}×8=${data.innerMarks * 8}개이고, 꼭짓점 5개를 더하면 ${answer}개입니다.`, answerVisual);
       }
 
       if (variant === 4) {
         const data = [
-          { baseSide: 6, lateralSide: 11, totalEdgeLength: 136, sides: 8, prismHeight: 5 },
           { baseSide: 8, lateralSide: 14, totalEdgeLength: 220, sides: 10, prismHeight: 6 },
+          { baseSide: 6, lateralSide: 11, totalEdgeLength: 136, sides: 8, prismHeight: 5 },
           { baseSide: 9, lateralSide: 17, totalEdgeLength: 312, sides: 12, prismHeight: 8 }
         ][poolIndex];
         const pyramidTotal = data.sides * (data.baseSide + data.lateralSide);
@@ -22133,18 +22142,20 @@
         const values = [data.baseSide, data.lateralSide, data.totalEdgeLength, data.sides, prismBaseEdgesTotal, data.prismHeight];
         const promptVisual = `${sideFaceToPrismHeightSvg(data)}${mathBoard("주어진 모서리", row("각뿔의 옆면 한 개", `${data.lateralSide}cm, ${data.lateralSide}cm, ${data.baseSide}cm`) + row("각뿔의 모든 모서리 길이 합", `${data.totalEdgeLength}cm`))}`;
         const answerVisual = `${sideFaceToPrismHeightSvg({ ...data, solved: true })}${mathBoard("같은 밑면의 각기둥", row("각뿔의 옆면 수", `${data.totalEdgeLength}÷(${data.lateralSide}+${data.baseSide})=${data.sides}개`) + row("각기둥의 두 밑면 모서리 합", `${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm`) + row("각기둥의 높이", `(${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm`))}`;
-        return fixedResult(`다음 그림과 같은 옆면으로 이루어진 각뿔의 모든 모서리 길이의 합은 ${data.totalEdgeLength}cm입니다. 이 각뿔과 밑면의 크기와 모양이 같은 각기둥의 모든 모서리 길이의 합도 ${data.totalEdgeLength}cm일 때, 각기둥의 높이를 구하세요.${promptVisual}${support("각뿔의 밑면 모서리와 옆모서리는 옆면의 수만큼씩 있음을 이용해 옆면의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-side-face-to-prism-height", values)}`, `${data.prismHeight}cm`, `각뿔의 옆면 수를 □개라 하면 길이가 ${data.baseSide}cm인 밑면 모서리와 길이가 ${data.lateralSide}cm인 옆모서리가 각각 □개입니다. 따라서 옆면은 ${data.totalEdgeLength}÷(${data.baseSide}+${data.lateralSide})=${data.sides}개이고 밑면은 ${data.sides}각형입니다. 각기둥의 두 밑면 모서리 길이의 합은 ${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm입니다. 높이는 (${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm입니다.`, answerVisual);
+        return fixedResult(`다음 그림과 같은 옆면으로 이루어진 각뿔의 모든 모서리의 길이의 합이 ${data.totalEdgeLength}cm입니다. 이 각뿔과 밑면의 크기와 모양이 같은 각기둥의 모든 모서리의 길이의 합과 같을 때, 각기둥의 높이를 구하세요.${promptVisual}${support("각뿔의 밑면 모서리와 옆모서리는 옆면의 수만큼씩 있음을 이용해 옆면의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-side-face-to-prism-height", values)}`, `${data.prismHeight}cm`, `각뿔의 옆면 수를 □개라 하면 길이가 ${data.baseSide}cm인 밑면 모서리와 길이가 ${data.lateralSide}cm인 옆모서리가 각각 □개입니다. 따라서 옆면은 ${data.totalEdgeLength}÷(${data.baseSide}+${data.lateralSide})=${data.sides}개이고 밑면은 ${data.sides}각형입니다. 각기둥의 두 밑면 모서리 길이의 합은 ${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm입니다. 높이는 (${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm입니다.`, answerVisual);
       }
 
       const data = [
-        { triangle: [5, 5, 3], rectangle: [5, 3], square: [3, 3], prismEdges: 35, pyramidEdges: 32 },
         { triangle: [6, 6, 4], rectangle: [6, 4], square: [4, 4], prismEdges: 44, pyramidEdges: 40 },
+        { triangle: [5, 5, 3], rectangle: [5, 3], square: [3, 3], prismEdges: 35, pyramidEdges: 32 },
         { triangle: [7, 7, 5], rectangle: [7, 5], square: [5, 5], prismEdges: 53, pyramidEdges: 48 }
       ][poolIndex];
       const answer = Math.abs(data.prismEdges - data.pyramidEdges);
-      const promptVisual = `${paperAndSolidsSvg({ ...data })}${mathBoard("사용한 종이", row("삼각형 가", "재석 2장 · 현재 4장") + row("직사각형 나", "재석 2장 · 현재 0장") + row("정사각형 다", "재석 1장 · 현재 1장"))}`;
-      const answerVisual = `${paperAndSolidsSvg({ ...data, solved: true })}${mathBoard("두 입체의 모서리 합", row("삼각기둥", `${data.prismEdges}cm`) + row("사각뿔", `${data.pyramidEdges}cm`) + row("차", `${data.prismEdges}-${data.pyramidEdges}=${answer}cm`))}`;
-      return fixedResult(`가, 나, 다 세 가지 종이를 사용하여 두 입체도형을 만들었습니다. 재석은 삼각형 가 2장, 직사각형 나 2장, 정사각형 다 1장을 사용하여 삼각기둥을 만들었습니다. 현재는 가 4장, 나 0장, 다 1장을 사용하여 사각뿔을 만들었습니다. 두 입체도형의 모든 모서리 길이의 차는 몇 cm인지 구하세요.${promptVisual}${support("두 입체의 모서리를 종류별로 나누어 각각 한 번씩 세어 보세요.")}${challenge}${evidence("paper-solids-edge-difference", [data.triangle[0], data.triangle[1], data.triangle[2], data.rectangle[0], data.rectangle[1], data.square[0], data.square[1], data.prismEdges, data.pyramidEdges, answer])}`, `${answer}cm`, `삼각기둥은 삼각형 두 개의 둘레와 옆모서리 세 개를 더해 ${data.prismEdges}cm입니다. 사각뿔은 밑면의 네 변과 옆모서리 네 개를 더해 ${data.pyramidEdges}cm입니다. 따라서 두 합의 차는 ${data.prismEdges}-${data.pyramidEdges}=${answer}cm입니다.`, answerVisual);
+      const longer = data.prismEdges > data.pyramidEdges ? "재석" : "현재";
+      const usageTable = `<table class="source61-e3-paper-usage" data-source61-e3-table="paper-usage"><thead><tr><th></th><th>가</th><th>나</th><th>다</th></tr></thead><tbody><tr><th>재석</th><td>2장</td><td>2장</td><td>1장</td></tr><tr><th>현재</th><td>4장</td><td>0장</td><td>1장</td></tr></tbody></table>`;
+      const promptVisual = `${usageTable}${paperAndSolidsSvg({ ...data })}`;
+      const answerVisual = `${paperAndSolidsSvg({ ...data, solved: true })}${mathBoard("두 입체의 모서리 합", row("삼각기둥", `${data.prismEdges}cm`) + row("사각뿔", `${data.pyramidEdges}cm`) + row("차", `${data.prismEdges}-${data.pyramidEdges}=${answer}cm`) + row("더 긴 사람", longer))}`;
+      return fixedResult(`재석이와 현재가 가, 나, 다 세 가지 모양의 종이를 다음과 같이 사용하여 입체도형을 만들었습니다. 만든 입체도형의 모든 모서리의 길이의 합은 누가 만든 것이 몇 cm 더 깁니까?${promptVisual}${support("두 입체의 모서리를 종류별로 나누어 각각 한 번씩 세어 보세요.")}${challenge}${evidence("paper-solids-edge-difference", [data.triangle[0], data.triangle[1], data.triangle[2], data.rectangle[0], data.rectangle[1], data.square[0], data.square[1], data.prismEdges, data.pyramidEdges, answer])}`, `${longer}, ${answer}cm`, `재석이는 삼각형 가 2장을 두 밑면으로, 직사각형 나 2장과 정사각형 다 1장을 옆면으로 하여 삼각기둥을 만들었습니다. 현재는 정사각형 다 1장을 밑면으로, 삼각형 가 4장을 옆면으로 하여 사각뿔을 만들었습니다. 삼각기둥의 모든 모서리의 길이의 합은 삼각형 두 개의 둘레 (${data.triangle[0]}+${data.triangle[1]}+${data.triangle[2]})×2=${2 * (data.triangle[0] + data.triangle[1] + data.triangle[2])}cm와 옆모서리 세 개 ${data.square[0]}×3=${3 * data.square[0]}cm를 더해 ${data.prismEdges}cm입니다. 사각뿔은 밑면의 네 변 ${data.square[0]}×4=${4 * data.square[0]}cm와 옆모서리 네 개 ${data.triangle[0]}×4=${4 * data.triangle[0]}cm를 더해 ${data.pyramidEdges}cm입니다. 따라서 ${longer}${longer === "재석" ? "이" : "가"} 만든 것이 ${data.prismEdges}-${data.pyramidEdges}=${answer}cm 더 깁니다.`, answerVisual);
     },
     sourceGrade6PrismsPyramidsE4({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -22305,18 +22316,26 @@
       };
 
       const tetrahedronSvg = ({ perimeter, edgeCm, solved = false }) => {
-        const regularPoints = { a: [1, 1, 1], b: [1, -1, -1], c: [-1, 1, -1], d: [-1, -1, 1] };
-        const project = ([x, y, z]) => [154 + 34 * x - 34 * y + 14 * z, 125 - 12 * x - 12 * y - 34 * z];
-        const points = Object.fromEntries(Object.entries(regularPoints).map(([key, point]) => [key, project(point)]));
+        // 원본 그림 배치: ㄱ 위, ㄴ 왼쪽, ㄷ 아래 앞, ㄹ 오른쪽(모서리 ㄴㄹ은 뒤쪽이라 점선)
+        const points = { a: [168, 20], b: [66, 114], c: [150, 182], d: [266, 114] };
+        const names = { a: "ㄱ", b: "ㄴ", c: "ㄷ", d: "ㄹ" };
+        const nameOffsets = { a: [0, -8], b: [-12, 5], c: [-14, 10], d: [12, 5] };
         const edgeDefs = [["a", "b"], ["a", "c"], ["a", "d"], ["b", "c"], ["b", "d"], ["c", "d"]];
-        const selected = [["a", "b"], ["a", "c"], ["c", "d"], ["d", "b"]];
+        // 사각형 ㅁㅂㅅㅇ: ㅁ은 ㄱㄴ, ㅂ은 ㄴㄹ, ㅅ은 ㄷㄹ, ㅇ은 ㄱㄷ의 가운뎃점
+        const selected = [["a", "b"], ["b", "d"], ["c", "d"], ["a", "c"]];
+        const midNames = ["ㅁ", "ㅂ", "ㅅ", "ㅇ"];
+        const midOffsets = [[-12, -2], [2, 18], [10, 14], [12, -2]];
         const midpoints = selected.map(([a, b]) => midpoint(points[a], points[b]));
-        const originalEdges = edgeDefs.map(([a, b], index) => line(points[a], points[b], `source61-e4-edge${index > 2 ? " source61-e4-hidden-edge" : ""}`, solved ? `data-solid-edge="tetrahedron" data-edge-index="${index + 1}"` : "")).join("");
+        const isHidden = ([a, b]) => a + b === "bd";
+        const originalEdges = edgeDefs.map(([a, b], index) => line(points[a], points[b], `source61-e4-edge${isHidden([a, b]) ? " source61-e4-hidden-edge" : ""}`, solved ? `data-solid-edge="tetrahedron" data-edge-index="${index + 1}"` : "")).join("");
+        const quadSides = midpoints.map((point, index) => line(point, midpoints[(index + 1) % 4], `source61-e4-edge${index <= 1 ? " source61-e4-hidden-edge" : ""}`, `data-section-side="${midNames[index]}${midNames[(index + 1) % 4]}"`)).join("");
         const marks = midpoints.map((point, index) => circle(point, `source61-e4-midpoint${solved ? " is-highlight" : ""}`, `data-midpoint-index="${index + 1}"`)).join("");
         const quad = solved ? polygon(midpoints, "source61-e4-section-highlight", 'data-section="midpoint-quadrilateral"') : "";
         const vertices = Object.entries(points).map(([key, point]) => circle(point, "source61-e4-vertex", solved ? `data-solid-vertex="tetrahedron" data-vertex-index="${key}"` : `data-source-vertex="${key}"`)).join("");
+        const labels = Object.entries(points).map(([key, point]) => `<text x="${point[0] + nameOffsets[key][0]}" y="${point[1] + nameOffsets[key][1]}" text-anchor="middle">${names[key]}</text>`).join("")
+          + midpoints.map((point, index) => `<text x="${(point[0] + midOffsets[index][0]).toFixed(1)}" y="${(point[1] + midOffsets[index][1]).toFixed(1)}" text-anchor="middle">${midNames[index]}</text>`).join("");
         const answerFaces = solved ? [["a", "b", "c"], ["a", "c", "d"], ["a", "d", "b"], ["b", "d", "c"]].map((face, index) => polygon(face.map(key => points[key]), "source61-e4-face", `data-solid-face="tetrahedron" data-face-index="${index + 1}"`)).join("") : "";
-        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-tetrahedron${solved ? " is-solved" : ""}" viewBox="0 0 330 220" role="img" aria-label="모든 모서리가 같은 삼각뿔의 네 모서리 가운데점을 이은 사각형" data-source61-e4-structure="tetrahedron-midpoint-quadrilateral" data-source61-e4-geometry="shared-tetrahedron-midpoint-model"${solved ? ` data-solid-face-count="4" data-solid-edge-count="6" data-solid-vertex-count="4" data-result-highlight="${edgeCm * 6}"` : ""}>${answerFaces}${quad}${originalEdges}${vertices}${marks}<text x="165" y="207" text-anchor="middle">네 모서리의 가운데점을 이은 사각형${solved ? ` · 둘레 ${perimeter}cm` : ""}</text></svg>`;
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-tetrahedron${solved ? " is-solved" : ""}" viewBox="0 0 330 220" role="img" aria-label="모든 모서리의 길이가 같은 삼각뿔과 네 모서리의 가운뎃점을 이은 사각형 ㅁㅂㅅㅇ" data-source61-e4-structure="tetrahedron-midpoint-quadrilateral" data-source61-e4-geometry="shared-tetrahedron-midpoint-model"${solved ? ` data-solid-face-count="4" data-solid-edge-count="6" data-solid-vertex-count="4" data-result-highlight="${edgeCm * 6}"` : ""}>${answerFaces}${quad}${originalEdges}${quadSides}${vertices}${marks}${labels}${solved ? `<text x="165" y="210" text-anchor="middle">사각형 ㅁㅂㅅㅇ의 둘레 ${perimeter}cm</text>` : ""}</svg>`;
       };
 
       const joinedSolidSvg = ({ n, mode, solved = false }) => {
@@ -22356,15 +22375,6 @@
       const bipyramidSvg = ({ n, solved = false }) => {
         const base = ring(n, 154, 142, 86, 42);
         const top = [154, 20], bottom = [154, 272];
-        if (!solved) {
-          const separatePyramid = (cx, inverted, offset) => {
-            const localBase = ring(n, cx, inverted ? 58 : 116, 42, 18);
-            const apex = [cx, inverted ? 138 : 36];
-            return localBase.map((point, index) => line(apex, point, `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`, `data-source-edge="pyramid-${offset + index + 1}"`)).join("")
-              + localBase.map((point, index) => line(point, localBase[(index + 1) % n], `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`)).join("");
-          };
-          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid" viewBox="0 0 330 190" role="img" aria-label="같은 각뿔 두 개의 밑면을 맞대어 붙이는 그림" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-final-topology="unknown">${separatePyramid(76, false, 0)}${separatePyramid(254, true, n)}<path class="source61-e4-join-arrow" d="M126 88 H204"/><text x="76" y="174" text-anchor="middle">위쪽 각뿔</text><text x="254" y="174" text-anchor="middle">아래쪽 각뿔</text><text x="165" y="187" text-anchor="middle">같은 밑면을 맞대어 붙입니다.</text></svg>`;
-        }
         const faces = [], edges = new Map();
         for (let index = 0; index < n; index += 1) {
           const next = (index + 1) % n;
@@ -22372,9 +22382,11 @@
           const add = (a, b) => edges.set(edgeKey(`${a[0].toFixed(2)},${a[1].toFixed(2)}`, `${b[0].toFixed(2)},${b[1].toFixed(2)}`), { a, b });
           add(base[index], base[next]); add(top, base[index]); add(bottom, base[index]);
         }
-        const faceMarkup = faces.map((face, index) => polygon(face, "source61-e4-face", `data-solid-face="bipyramid" data-face-index="${index + 1}"`)).join("");
-        const edgeMarkup = Array.from(edges.values()).map((item, index) => line(item.a, item.b, `source61-e4-edge${index % 3 === 1 ? " source61-e4-hidden-edge" : ""}`, `data-solid-edge="bipyramid" data-edge-index="${index + 1}"`)).join("");
-        const vertexMarkup = [top, ...base, bottom].map((point, index) => circle(point, "source61-e4-vertex", `data-solid-vertex="bipyramid" data-vertex-index="${index + 1}"`)).join("");
+        // 문제 그림도 원본처럼 두 각뿔을 붙인 완성 입체를 그리고, 셀 수 있는 자료(data-solid-*)와 결과는 답 그림에만 둡니다.
+        const faceMarkup = faces.map((face, index) => polygon(face, "source61-e4-face", solved ? `data-solid-face="bipyramid" data-face-index="${index + 1}"` : "")).join("");
+        const edgeMarkup = Array.from(edges.values()).map((item, index) => line(item.a, item.b, `source61-e4-edge${index % 3 === 1 ? " source61-e4-hidden-edge" : ""}`, solved ? `data-solid-edge="bipyramid" data-edge-index="${index + 1}"` : "")).join("");
+        const vertexMarkup = solved ? [top, ...base, bottom].map((point, index) => circle(point, "source61-e4-vertex", `data-solid-vertex="bipyramid" data-vertex-index="${index + 1}"`)).join("") : "";
+        if (!solved) return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid" viewBox="0 0 330 300" role="img" aria-label="똑같은 각뿔 두 개를 밑면끼리 붙인 입체도형" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-final-topology="unknown">${faceMarkup}${edgeMarkup}</svg>`;
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid is-solved" viewBox="0 0 330 300" role="img" aria-label="두 각뿔을 밑면끼리 붙인 쌍각뿔" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-solid-face-count="${2 * n}" data-solid-edge-count="${3 * n}" data-solid-vertex-count="${n + 2}" data-result-highlight="${6 * n + 2}">${faceMarkup}${edgeMarkup}${vertexMarkup}<text x="154" y="294" text-anchor="middle">두 각뿔을 밑면끼리 붙인 입체</text></svg>`;
       };
 
@@ -22423,32 +22435,32 @@
         return fixedResult(`모든 모서리의 길이가 같은 정육면체 1개와, 밑면의 모양과 크기가 정육면체의 한 면과 같은 사각뿔 6개가 있습니다. 사각뿔을 정육면체의 각 면에 꼭 맞게 하나씩 붙여 입체도형을 만들 때, 완성된 입체도형의 꼭짓점 수, 모서리 수, 면의 수의 합을 구하세요.${promptVisual}${support("붙인 뒤 겉으로 보이는 삼각형 면과 새로 생긴 꼭짓점을 나누어 세어 보세요.")}${challenge}${evidence("cube-six-pyramid-assembly", [6])}`, `${total}`, `정육면체의 여섯 면마다 사각뿔의 삼각형 면 4개가 겉으로 보이므로 면은 6×4=24개입니다. 정육면체의 모서리 12개와 사각뿔의 옆모서리 24개를 합하면 모서리는 36개입니다. 정육면체의 꼭짓점 8개와 사각뿔의 꼭짓점 6개를 합하면 꼭짓점은 14개입니다. 따라서 합은 24+36+14=74입니다.`, answerVisual);
       }
       if (variant === 1) {
-        const n = [3, 4, 5][poolIndex];
+        const n = [4, 3, 5][poolIndex];
         const faces = 2 * n + 2, edges = 6 * n, vertices = 4 * n, total = 12 * n + 2;
         const polygonName = ["", "", "", "삼각", "사각", "오각"][n];
         const promptVisual = `${truncatedPyramidSvg({ n })}${mathBoard("자르는 조건", row("처음 도형", `${polygonName}뿔`) + row("모든 모서리", "세 부분으로 똑같이 나눔") + row("자르는 곳", "각 꼭짓점 가까이의 나눈 점을 모두 잇는 면"))}`;
         const answerVisual = `${truncatedPyramidSvg({ n, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("면", `2×${n}+2=${faces}개`) + row("모서리", `6×${n}=${edges}개`) + row("꼭짓점", `4×${n}=${vertices}개`) + row("합", `${faces}+${edges}+${vertices}=${total}`))}`;
-        return fixedResult(`${polygonName}뿔의 모든 모서리를 세 부분으로 똑같이 나눕니다. 각 꼭짓점에서 이어진 모서리 위의 가까운 나눈 점을 모두 지나도록 잘라 냈을 때, 남은 입체도형의 면, 모서리, 꼭짓점 수의 합을 구하세요.${promptVisual}${support("원래 각 모서리에서 새로 생기는 점과 잘라 낸 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("pyramid-vertex-truncation", [n])}`, `${total}`, `원래 각 모서리에 나눈 점이 2개씩 생기므로 새 꼭짓점은 2×(2×${n})=4×${n}=${vertices}개입니다. 원래 면 ${n+1}개는 잘라 낸 면과 함께 남아 면의 수는 2×${n}+2=${faces}개이고, 원래 모서리 ${2*n}개가 세 부분으로 나뉘어 모서리는 6×${n}=${edges}개입니다. 따라서 합은 ${faces}+${edges}+${vertices}=${total}입니다.`, answerVisual);
+        return fixedResult(`그림과 같은 ${polygonName}뿔에서 모든 모서리를 삼등분하여 각 꼭짓점에서 모서리의 삼등분한 점을 지나도록 잘라 내었을 때, 남은 입체도형의 면, 모서리, 꼭짓점의 수의 합을 구하세요.${promptVisual}${support("원래 각 모서리에서 새로 생기는 점과 잘라 낸 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("pyramid-vertex-truncation", [n])}`, `${total}`, `원래 각 모서리에 나눈 점이 2개씩 생기므로 새 꼭짓점은 2×(2×${n})=4×${n}=${vertices}개입니다. 원래 면 ${n+1}개는 잘라 낸 면과 함께 남아 면의 수는 2×${n}+2=${faces}개이고, 원래 모서리 ${2*n}개가 세 부분으로 나뉘어 모서리는 6×${n}=${edges}개입니다. 따라서 합은 ${faces}+${edges}+${vertices}=${total}입니다.`, answerVisual);
       }
       if (variant === 2) {
-        const perimeter = [16, 20, 24][poolIndex];
+        const perimeter = [20, 16, 24][poolIndex];
         const edgeCm = perimeter / 2, total = edgeCm * 6;
-        const promptVisual = `${tetrahedronSvg({ perimeter, edgeCm })}${mathBoard("가운데점을 이은 사각형", row("사각형의 둘레", `${perimeter}cm`) + row("구할 것", "삼각뿔의 모든 모서리 길이의 합"))}`;
+        const promptVisual = `${tetrahedronSvg({ perimeter, edgeCm })}${mathBoard("가운뎃점을 이은 사각형", row("사각형 ㅁㅂㅅㅇ의 둘레", `${perimeter}cm`) + row("구할 것", "삼각뿔의 모든 모서리 길이의 합"))}`;
         const answerVisual = `${tetrahedronSvg({ perimeter, edgeCm, solved: true })}${mathBoard("정사면체의 모서리", row("한 모서리", `${perimeter}÷2=${edgeCm}cm`) + row("모든 모서리", `6×${edgeCm}=${total}cm`))}`;
-        return fixedResult(`모든 모서리의 길이가 같은 삼각뿔에서 네 모서리의 가운데점을 차례로 이어 사각형을 만들었습니다. 이 사각형의 둘레가 ${perimeter}cm일 때, 삼각뿔의 모든 모서리 길이의 합을 구하세요.${promptVisual}${support("사각형의 한 변이 삼각뿔 모서리의 얼마인지 그림에서 찾아 보세요.")}${challenge}${evidence("tetrahedron-midpoint-quadrilateral", [perimeter])}`, `${total}cm`, `사각형의 한 변은 삼각뿔 모서리의 절반입니다. 삼각뿔의 한 모서리는 ${perimeter}÷2=${edgeCm}cm이고, 모서리는 6개이므로 모든 모서리 길이의 합은 6×${edgeCm}=${total}cm입니다.`, answerVisual);
+        return fixedResult(`모든 모서리의 길이가 같은 삼각뿔에서 그림과 같이 네 모서리의 가운뎃점을 연결하여 사각형 ㅁㅂㅅㅇ을 만들었습니다. 이 사각형의 둘레의 길이가 ${perimeter}cm일 때, 삼각뿔의 모든 모서리의 길이의 합을 구하세요.${promptVisual}${support("사각형의 한 변이 삼각뿔 모서리의 얼마인지 그림에서 찾아 보세요.")}${challenge}${evidence("tetrahedron-midpoint-quadrilateral", [perimeter])}`, `${total}cm`, `사각형 ㅁㅂㅅㅇ의 각 변은 두 모서리의 가운뎃점을 이은 선분이므로 길이가 삼각뿔 한 모서리의 절반입니다. 네 변의 길이가 모두 같으므로 삼각뿔의 한 모서리는 ${perimeter}÷2=${edgeCm}cm이고, 모서리는 6개이므로 모든 모서리 길이의 합은 6×${edgeCm}=${total}cm입니다.`, answerVisual);
       }
       if (variant === 3) {
-        const n = [3, 4, 5][poolIndex];
+        const n = [4, 3, 5][poolIndex];
         const faces = 2 * n + 1, edges = 4 * n, vertices = 2 * n + 1;
         const name = ["", "", "", "삼각", "사각", "오각"][n];
         const promptVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid" })}${mathBoard("붙이는 조건", row("도형", `밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔`) + row("붙이는 방법", "밑면끼리 꼭 맞게 붙임"))}`;
         const answerVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid", solved: true })}${mathBoard("완성된 입체도형", row("면", `${faces}개`) + row("모서리", `${edges}개`) + row("꼭짓점", `${vertices}개`))}`;
-        return fixedResult(`밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔을 밑면끼리 꼭 맞게 이어 붙여 새로운 입체도형을 만들었습니다. 이 입체도형의 면, 모서리, 꼭짓점의 수를 각각 구하세요.${promptVisual}${support("붙인 면은 겉에서 보이지 않으므로 두 도형의 수에서 붙인 부분을 한 번 빼 보세요.")}${challenge}${evidence("prism-pyramid-base-join", [n], "three-values")}`, `면 ${faces}개, 모서리 ${edges}개, 꼭짓점 ${vertices}개`, `각기둥의 면·모서리·꼭짓점은 각각 ${n+2}, ${3*n}, ${2*n}개이고, 각뿔은 ${n+1}, ${2*n}, ${n+1}개입니다. 밑면을 붙이면 면 ${2*n+1}개, 모서리 ${4*n}개, 꼭짓점 ${2*n+1}개가 남습니다.`, answerVisual);
+        return fixedResult(`다음 그림과 같이 밑면의 크기와 모양이 같은 ${name}뿔과 ${name}기둥을 밑면끼리 꼭 맞게 이어 붙여 새로운 입체도형을 만들었습니다. 이 입체도형의 면의 수, 모서리의 수, 꼭짓점의 수를 각각 구하세요.${promptVisual}${support("붙인 면은 겉에서 보이지 않으므로 두 도형의 수에서 붙인 부분을 한 번 빼 보세요.")}${challenge}${evidence("prism-pyramid-base-join", [n], "three-values")}`, `면 ${faces}개, 모서리 ${edges}개, 꼭짓점 ${vertices}개`, `각기둥의 면·모서리·꼭짓점은 각각 ${n+2}, ${3*n}, ${2*n}개이고, 각뿔은 ${n+1}, ${2*n}, ${n+1}개입니다. 밑면을 붙이면 면 ${2*n+1}개, 모서리 ${4*n}개, 꼭짓점 ${2*n+1}개가 남습니다.`, answerVisual);
       }
       if (variant === 5) {
         const data = [
-          { outerSide: 16, diagonal: 8, baseArea: 32 },
           { outerSide: 20, diagonal: 10, baseArea: 50 },
+          { outerSide: 16, diagonal: 8, baseArea: 32 },
           { outerSide: 24, diagonal: 12, baseArea: 72 }
         ][poolIndex];
         const emptyHeight = (data.outerSide - data.diagonal) / 2;
@@ -22457,12 +22469,12 @@
         if (data.diagonal * data.diagonal / 2 !== data.baseArea || netArea !== data.outerSide * data.diagonal) throw new Error("정사각뿔 전개도 넓이 자료가 좌표 모델과 맞지 않습니다.");
         const promptVisual = `${squarePyramidNetSvg({ ...data, netArea })}${mathBoard("주어진 길이와 넓이", row("바깥 정사각형 한 변", `${data.outerSide}cm`) + row("사각뿔의 밑면 넓이", `${data.baseArea}cm²`))}`;
         const answerVisual = `${squarePyramidNetSvg({ ...data, netArea, solved: true })}${mathBoard("전개도의 넓이", row("밑면 대각선", `${data.diagonal}×${data.diagonal}÷2=${data.baseArea}`) + row("빈 삼각형 높이", `(${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm`) + row("네 빈 삼각형", `${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²`) + row("전개도", `${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²`))}`;
-        return fixedResult(`한 변이 ${data.outerSide}cm인 정사각형 안에 그림과 같이 밑면이 정사각형인 사각뿔의 전개도를 그렸습니다. 사각뿔 밑면의 넓이가 ${data.baseArea}cm²일 때 전개도의 넓이를 구하세요.${promptVisual}${support("밑면 정사각형의 두 대각선 길이를 먼저 찾아 보세요.")}${challenge}${evidence("square-pyramid-net-area-in-square", [data.outerSide, data.diagonal, data.baseArea, netArea])}`, `${netArea}cm²`, `밑면 정사각형의 대각선은 ${data.diagonal}cm입니다. ${data.diagonal}×${data.diagonal}÷2=${data.baseArea}이기 때문입니다. 바깥 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이므로 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
+        return fixedResult(`정사각형 안에 밑면이 정사각형인 사각뿔의 전개도를 그렸습니다. 사각뿔의 밑면의 넓이가 ${data.baseArea}cm²일 때 사각뿔의 전개도의 넓이는 몇 cm²입니까?${promptVisual}${support("밑면 정사각형의 두 대각선 길이를 먼저 찾아 보세요.")}${challenge}${evidence("square-pyramid-net-area-in-square", [data.outerSide, data.diagonal, data.baseArea, netArea])}`, `${netArea}cm²`, `밑면 정사각형의 대각선은 ${data.diagonal}cm입니다. ${data.diagonal}×${data.diagonal}÷2=${data.baseArea}이기 때문입니다. 바깥 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이므로 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
       }
       if (variant === 6) {
         const data = [
-          { outerSide: 18, diagonal: 10 },
           { outerSide: 22, diagonal: 12 },
+          { outerSide: 18, diagonal: 10 },
           { outerSide: 26, diagonal: 14 }
         ][poolIndex];
         const baseArea = data.diagonal * data.diagonal / 2;
@@ -22473,14 +22485,14 @@
         const values = [data.outerSide, data.diagonal, baseArea, netArea];
         const promptVisual = `${squarePyramidNetSvg({ ...data, baseArea, netArea, diagonalGiven: true, apexSquare: true })}${mathBoard("주어진 길이", row("밑면의 한 대각선", `${data.diagonal}cm`) + row("각뿔 꼭짓점을 이은 정사각형 한 변", `${data.outerSide}cm`))}`;
         const answerVisual = `${squarePyramidNetSvg({ ...data, baseArea, netArea, solved: true, diagonalGiven: true, apexSquare: true })}${mathBoard("전개도의 넓이", row("밑면", `${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²`) + row("빈 삼각형 높이", `(${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm`) + row("네 빈 삼각형", `${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²`) + row("전개도", `${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²`))}`;
-        return fixedResult(`밑면이 정사각형인 사각뿔의 전개도입니다. 밑면의 한 대각선 길이는 ${data.diagonal}cm이고, 전개도에서 각뿔의 꼭짓점이 되는 네 점을 이은 정사각형의 한 변은 ${data.outerSide}cm입니다. 사각뿔 전개도의 넓이를 구하세요.${promptVisual}${support("밑면의 넓이와 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 넓이를 차례로 구하세요.")}${challenge}${evidence("square-pyramid-net-area-from-apex-square", values)}`, `${netArea}cm²`, `밑면의 넓이는 ${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²입니다. 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이고, 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
+        return fixedResult(`그림은 밑면이 정사각형이고, 밑면의 한 대각선의 길이가 ${data.diagonal}cm인 사각뿔의 전개도입니다. 전개도에서 각뿔의 꼭짓점이 되는 점을 이은 정사각형의 한 변의 길이가 ${data.outerSide}cm일 때, 사각뿔의 전개도의 넓이는 몇 cm²입니까?${promptVisual}${support("밑면의 넓이와 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 넓이를 차례로 구하세요.")}${challenge}${evidence("square-pyramid-net-area-from-apex-square", values)}`, `${netArea}cm²`, `밑면의 넓이는 ${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²입니다. 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이고, 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
       }
-      const n = [4, 5, 6][poolIndex];
+      const n = [6, 4, 5][poolIndex];
       const total = 6 * n + 2;
       const pyramidName = ["", "", "", "삼각뿔", "사각뿔", "오각뿔", "육각뿔"][n];
       const promptVisual = `${bipyramidSvg({ n })}${mathBoard("붙이는 조건", row("도형", `서로 같은 ${pyramidName} 2개`) + row("붙이는 방법", "밑면끼리 꼭 맞게 붙임"))}`;
       const answerVisual = `${bipyramidSvg({ n, solved: true })}${mathBoard("완성된 입체도형", row("면", `2×${n}개`) + row("모서리", `3×${n}개`) + row("꼭짓점", `${n}+2개`) + row("합", `2×${n}+3×${n}+${n}+2=${total}`))}`;
-      return fixedResult(`서로 같은 ${pyramidName} 2개의 밑면을 꼭 맞게 붙여 입체도형을 만들었습니다. 완성된 입체도형의 면, 모서리, 꼭짓점 수의 합을 구하세요.${promptVisual}${support("두 각뿔의 밑면은 안쪽에 들어가고, 두 꼭짓점은 위와 아래에 남는다는 점을 생각해 보세요.")}${challenge}${evidence("pyramid-base-to-base", [n])}`, `${total}`, `각뿔 두 개의 옆면은 각각 ${n}개씩이므로 면은 2×${n}=${2*n}개입니다. 밑면의 모서리 ${n}개와 두 꼭짓점으로 뻗는 모서리 2×${n}개를 합하면 모서리는 3×${n}=${3*n}개이고, 꼭짓점은 밑면 ${n}개와 위·아래 꼭짓점 2개를 합해 ${n}+2=${n+2}개입니다. 따라서 합은 ${2*n}+${3*n}+${n+2}=${total}입니다.`, answerVisual);
+      return fixedResult(`다음 입체도형은 똑같은 ${pyramidName} 두 개를 밑면을 서로 이어 붙여서 만들 수 있습니다. 이 입체도형의 면의 수, 모서리의 수, 꼭짓점의 수의 합을 구하세요.${promptVisual}${support("두 각뿔의 밑면은 안쪽에 들어가고, 두 꼭짓점은 위와 아래에 남는다는 점을 생각해 보세요.")}${challenge}${evidence("pyramid-base-to-base", [n])}`, `${total}`, `각뿔 두 개의 옆면은 각각 ${n}개씩이므로 면은 2×${n}=${2*n}개입니다. 밑면의 모서리 ${n}개와 두 꼭짓점으로 뻗는 모서리 2×${n}개를 합하면 모서리는 3×${n}=${3*n}개이고, 꼭짓점은 밑면 ${n}개와 위·아래 꼭짓점 2개를 합해 ${n}+2=${n+2}개입니다. 따라서 합은 ${2*n}+${3*n}+${n+2}=${total}입니다.`, answerVisual);
     },
     sourceGrade6DecimalDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -22623,8 +22635,9 @@
           { divisor: 6, add: 2.35, result: 7.15, number: 28.8, left: 4, right: 8, answer: 10.8 },
           { divisor: 5, add: 4.26, result: 9.06, number: 24, left: 6, right: 8, answer: 7 }
         ][poolIndex];
-        const answerHtml = `${svg("한 수에서 두 나눗셈으로 나누어 보기", `<rect class="source61-e1-number-box" x="128" y="22" width="104" height="40"/><text x="180" y="49">${pools.number}</text><path class="source61-e1-arrow" d="M180 62 V84 M180 84 L105 126 M180 84 L255 126"/><text x="105" y="146">÷${pools.left}=${fmt(pools.number / pools.left)}</text><text x="255" y="146">÷${pools.right}=${fmt(pools.number / pools.right)}</text>`, true, [pools.number, pools.left, pools.right, pools.answer])}${mathBoard("두 몫의 합", row(`① = ${pools.number}÷${pools.left}`, fmt(pools.number / pools.left)) + row(`② = ${pools.number}÷${pools.right}`, fmt(pools.number / pools.right)) + row("①+②", fmt(pools.answer)))}`;
-        return fixedResult(`어떤 수를 ${pools.divisor}로 나눈 몫에 ${pools.add}을 더했더니 ${pools.result}이 되었습니다. 어떤 수를 ${pools.left}로 나눈 몫을 ①, ${pools.right}로 나눈 몫을 ②라고 할 때 ①과 ②의 합을 구하세요.${mathBoard("처음 조건", row(`어떤 수÷${pools.divisor}+${pools.add}`, pools.result) + row("구할 것", `①+②`))}${support(`먼저 어떤 수를 ${pools.divisor}로 나눈 몫을 구한 뒤, 어떤 수를 찾아 보세요.`)}${challenge}${evidence([pools.divisor, pools.add, pools.result, pools.number, pools.left, pools.right, pools.answer])}`, fmt(pools.answer), `어떤 수를 ${pools.divisor}로 나눈 몫은 ${pools.result}-${pools.add}=${fmt(pools.number / pools.divisor)}이므로 어떤 수는 ${pools.number}입니다. 따라서 ①+②=${pools.number}÷${pools.left}+${pools.number}÷${pools.right}=${fmt(pools.answer)}입니다.`, answerWrap(answerHtml, [pools.number, pools.left, pools.right, pools.answer]));
+        const J = numberJosa;
+        const answerHtml = `${svg("한 수에서 두 나눗셈으로 나누어 보기", `<rect class="source61-e1-number-box" x="128" y="22" width="104" height="40"/><text x="180" y="49">${pools.number}</text><path class="source61-e1-arrow" d="M180 62 V84 M180 84 L105 126 M180 84 L255 126"/><text x="105" y="146">÷${pools.left}=${fmt(pools.number / pools.left)}</text><text x="255" y="146">÷${pools.right}=${fmt(pools.number / pools.right)}</text>`, true, [pools.number, pools.left, pools.right, pools.answer])}${mathBoard("두 몫의 합", row(`㉠ = ${pools.number}÷${pools.left}`, fmt(pools.number / pools.left)) + row(`㉡ = ${pools.number}÷${pools.right}`, fmt(pools.number / pools.right)) + row("㉠+㉡", fmt(pools.answer)))}`;
+        return fixedResult(`어떤 수를 ${pools.divisor}${J.ro(pools.divisor)} 나누었더니 나누어떨어졌습니다. 어떤 수를 ${pools.divisor}${J.ro(pools.divisor)} 나눈 몫에 ${pools.add}${J.eulReul(pools.add)} 더했더니 ${pools.result}${J.iGa(pools.result)} 되었습니다. 어떤 수를 ${pools.left}${J.ro(pools.left)} 나눈 몫을 ㉠, ${pools.right}${J.ro(pools.right)} 나눈 몫을 ㉡이라고 할 때 ㉠과 ㉡의 합을 구하세요.${mathBoard("처음 조건", row(`어떤 수÷${pools.divisor}+${pools.add}`, pools.result) + row("구할 것", `㉠+㉡`))}${support(`어떤 수를 ${pools.divisor}${J.ro(pools.divisor)} 나눈 몫을 구한 뒤, 어떤 수를 찾아 보세요.`)}${challenge}${evidence([pools.divisor, pools.add, pools.result, pools.number, pools.left, pools.right, pools.answer])}`, fmt(pools.answer), `어떤 수를 ${pools.divisor}${J.ro(pools.divisor)} 나눈 몫은 ${pools.result}-${pools.add}=${fmt(pools.number / pools.divisor)}이므로 어떤 수는 ${fmt(pools.number / pools.divisor)}×${pools.divisor}=${pools.number}입니다. 따라서 ㉠+㉡=${pools.number}÷${pools.left}+${pools.number}÷${pools.right}=${fmt(pools.number / pools.left)}+${fmt(pools.number / pools.right)}=${fmt(pools.answer)}입니다.`, answerWrap(answerHtml, [pools.number, pools.left, pools.right, pools.answer]));
       }
 
       const pools = [
@@ -22713,10 +22726,12 @@
         const d = pools;
         const answer = d.fastDist / d.fastMin * d.elapsed - d.slowDist / d.slowMin * (d.elapsed + d.delay);
         ensure(answer, d.answer, "따라잡기 거리");
-        const movementSvg = solved => svg("출발 시차가 있는 두 이동선", `<text class="source61-e2-label" x="72" y="22">느린 이동선</text><text x="248" y="22">${d.slowDist}km를 ${d.slowMin}분</text><line class="source61-e2-track" x1="42" y1="67" x2="316" y2="67"/><circle class="source61-e2-start" cx="48" cy="67" r="5"/><path class="source61-e2-arrow" d="M292 61l18 6-18 6"/><text x="50" y="88">출발</text><text x="308" y="88">느린 쪽 거리</text><text class="source61-e2-label" x="72" y="119">빠른 이동선</text><text x="248" y="119">${d.fastDist}km를 ${d.fastMin}분</text><line class="source61-e2-track" x1="104" y1="164" x2="316" y2="164"/><circle class="source61-e2-start" cx="110" cy="164" r="5"/><path class="source61-e2-arrow" d="M292 158l18 6-18 6"/><text x="112" y="185">${d.delay}분 뒤 출발</text><text x="308" y="185">빠른 쪽 거리</text><line class="source61-e2-delay" x1="48" y1="203" x2="110" y2="203"/><text x="180" y="204">같은 곳에서 출발 · ${d.elapsed}분 뒤 비교</text>${solved ? `<text class="source61-e2-result" x="180" y="224">앞선 거리 ${fixed2(d.answer)}km</text>` : ""}`, solved, [d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer], "0 0 360 232");
+        const movementSvg = solved => svg("출발 시차가 있는 두 이동선", `<text class="source61-e2-label" x="72" y="22">자전거</text><text x="248" y="22">${d.slowDist}km를 ${d.slowMin}분</text><line class="source61-e2-track" x1="42" y1="67" x2="316" y2="67"/><circle class="source61-e2-start" cx="48" cy="67" r="5"/><path class="source61-e2-arrow" d="M292 61l18 6-18 6"/><text x="50" y="88">출발</text><text x="308" y="88">자전거 위치</text><text class="source61-e2-label" x="72" y="119">오토바이</text><text x="248" y="119">${d.fastDist}km를 ${d.fastMin}분</text><line class="source61-e2-track" x1="104" y1="164" x2="316" y2="164"/><circle class="source61-e2-start" cx="110" cy="164" r="5"/><path class="source61-e2-arrow" d="M292 158l18 6-18 6"/><text x="112" y="185">${d.delay}분 뒤 출발</text><text x="308" y="185">오토바이 위치</text><line class="source61-e2-delay" x1="48" y1="203" x2="110" y2="203"/><text x="180" y="204">같은 지점에서 출발 · 오토바이 출발 ${d.elapsed}분 뒤 비교</text>${solved ? `<text class="source61-e2-result" x="180" y="224">${d.answer > 0 ? "오토바이" : "자전거"}가 ${fixed2(Math.abs(d.answer))}km 앞섬</text>` : ""}`, solved, [d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer], "0 0 360 232");
         const promptVisual = movementSvg(false);
-        const answerVisual = `${movementSvg(true)}${mathBoard("거리 차 확인", row("빠른 쪽", `${fmt(d.fastDist / d.fastMin)}×${d.elapsed}=${fixed2(d.fastDist / d.fastMin * d.elapsed)}km`) + row("느린 쪽", `${fmt(d.slowDist / d.slowMin)}×${d.elapsed + d.delay}=${fixed2(d.slowDist / d.slowMin * (d.elapsed + d.delay))}km`) + row("앞선 거리", `${fixed2(d.answer)}km`))}`;
-        return fixedResult(`자전거는 일정한 빠르기로 ${d.slowMin}분 동안 ${d.slowDist}km를 가고, 오토바이는 일정한 빠르기로 ${d.fastMin}분 동안 ${d.fastDist}km를 갑니다. 자전거가 먼저 출발하고 ${d.delay}분 뒤에 오토바이가 같은 곳에서 출발했습니다. 오토바이가 출발한 뒤 ${d.elapsed}분이 지났을 때 오토바이가 몇 km 더 앞서 있나요?${promptVisual}${mathBoard("주어진 자료", row("느린 이동", `${d.slowDist}km를 ${d.slowMin}분`) + row("빠른 이동", `${d.fastDist}km를 ${d.fastMin}분`) + row("출발 시차", `${d.delay}분`) + row("비교 시각", `빠른 이동 ${d.elapsed}분 뒤`))}${support("1분 동안 간 거리부터 구하고, 두 이동선의 같은 시각 거리를 비교하세요.")}${challenge}${evidence([d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer])}`, `${fmt(d.answer)}km`, `빠른 쪽은 ${fixed2(d.fastDist / d.fastMin)}×${d.elapsed}=${fixed2(d.fastDist / d.fastMin * d.elapsed)}km, 느린 쪽은 ${fixed2(d.slowDist / d.slowMin)}×${d.elapsed + d.delay}=${fixed2(d.slowDist / d.slowMin * (d.elapsed + d.delay))}km입니다. 따라서 ${fmt(d.answer)}km 더 앞섭니다.`, answerWrap(answerVisual, [d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer]));
+        const answerVisual = `${movementSvg(true)}${mathBoard("거리 차 확인", row("오토바이", `${fmt(d.fastDist / d.fastMin)}×${d.elapsed}=${fixed2(d.fastDist / d.fastMin * d.elapsed)}km`) + row("자전거", `${fmt(d.slowDist / d.slowMin)}×${d.elapsed + d.delay}=${fixed2(d.slowDist / d.slowMin * (d.elapsed + d.delay))}km`) + row("앞선 쪽", `${d.answer > 0 ? "오토바이" : "자전거"}, ${fixed2(Math.abs(d.answer))}km`))}`;
+        const hourText = minutes => `${Math.floor(minutes / 60) ? `${Math.floor(minutes / 60)}시간` : ""}${minutes % 60 ? `${Math.floor(minutes / 60) ? " " : ""}${minutes % 60}분` : ""}`;
+        const leader = d.answer > 0 ? "오토바이" : "자전거";
+        return fixedResult(`자전거는 일정한 빠르기로 ${d.slowMin}분 동안 ${d.slowDist}km를 가고, 오토바이는 일정한 빠르기로 ${d.fastMin}분 동안 ${d.fastDist}km를 갑니다. 자전거가 출발하고 ${d.delay}분 후에 오토바이가 같은 지점에서 출발하여 자전거를 따라갑니다. 오토바이가 출발한 지 ${hourText(d.elapsed)} 후에는 어느 것이 몇 km 더 앞서 있겠는지 구하세요.${promptVisual}${support("1분 동안 간 거리부터 구하고, 두 이동선의 같은 시각 거리를 비교하세요.")}${challenge}${evidence([d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer])}`, `${leader}, ${fmt(Math.abs(d.answer))}km`, `풀이 기준: ${hourText(d.elapsed)}은 ${d.elapsed}분입니다. 오토바이는 1분에 ${fmt(d.fastDist / d.fastMin)}km씩 ${d.elapsed}분 동안 ${fixed2(d.fastDist / d.fastMin * d.elapsed)}km, 자전거는 1분에 ${fmt(d.slowDist / d.slowMin)}km씩 ${d.elapsed}+${d.delay}=${d.elapsed + d.delay}분 동안 ${fixed2(d.slowDist / d.slowMin * (d.elapsed + d.delay))}km를 갑니다. 따라서 ${leader}가 ${fmt(Math.abs(d.answer))}km 더 앞서 있습니다.`, answerWrap(answerVisual, [d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer]));
       }
 
       if (variant === 1) {
@@ -22727,7 +22742,11 @@
         ensure(candidates.length, d.count, "가능한 수 개수");
         const rangeSvg = solved => svg("반올림 범위 수직선", `<line class="source61-e2-number-line" x1="42" y1="89" x2="318" y2="89"/><path class="source61-e2-arrow" d="M306 83l12 6-12 6"/><line class="source61-e2-range" x1="64" y1="89" x2="296" y2="89"/><circle class="source61-e2-endpoint is-closed" cx="64" cy="89" r="7"/><circle class="source61-e2-endpoint is-open" cx="296" cy="89" r="7"/><text x="64" y="57">${fixed2(d.lower)}</text><text x="296" y="57">${fixed2(d.upperExclusive)}</text><text x="64" y="116">포함</text><text x="296" y="116">제외</text><text x="180" y="146">소수 둘째 자리 수만 확인</text>${solved ? `<text class="source61-e2-result" x="180" y="177">가능한 수 ${d.count}개</text>` : ""}`, solved, [d.divisor, d.target, d.lower, d.upperExclusive, d.count], "0 0 360 195");
         const answerVisual = `${rangeSvg(true)}${mathBoard("가능한 수 표", row("포함 범위", `${fixed2(d.lower)} ≤ 수 &lt; ${fixed2(d.upperExclusive)}`) + row("확인한 수", candidates.map(fixed2).join(", ")) + row("개수", `${d.count}개`))}`;
-        return fixedResult(`어떤 소수 둘째 자리 수를 ${d.divisor}로 나눈 몫을 반올림하여 소수 둘째 자리까지 나타내면 ${fixed2(d.target)}입니다. 가능한 수는 모두 몇 개인가요?${rangeSvg(false)}${mathBoard("반올림 조건", row("나누는 수", d.divisor) + row("반올림한 몫", fixed2(d.target)) + row("수의 범위", `${fixed2(d.lower)} ≤ 수 &lt; ${fixed2(d.upperExclusive)}`))}${support("포함되는 끝과 포함되지 않는 끝을 구분하고, 소수 둘째 자리 수를 차례로 세어 보세요.")}${challenge}${evidence([d.divisor, d.target, d.lower, d.upperExclusive, d.count])}`, `${d.count}개`, `반올림 조건으로 가능한 수는 ${fixed2(d.lower)}부터 ${fixed2(d.upperExclusive)}보다 작은 수입니다. 소수 둘째 자리 수를 모두 세면 ${d.count}개입니다.`, answerWrap(answerVisual, [d.divisor, d.target, d.lower, d.upperExclusive, d.count]));
+        const J = numberJosa;
+        const targetText = d.target.toFixed(2);
+        const lowQuotient = (d.target - 0.005).toFixed(3), highQuotient = (d.target + 0.005).toFixed(3);
+        const skipped = Array.from({ length: upperCents - lowerCents }, (_, index) => lowerCents + index).filter(cents => cents % 10 === 0).map(cents => (cents / 100).toFixed(2));
+        return fixedResult(`어떤 소수 두 자리 수를 ${d.divisor}${J.ro(d.divisor)} 나눈 몫을 반올림하여 소수 둘째 자리까지 나타내었더니 ${targetText}${J.iGa(targetText)} 되었습니다. 어떤 소수 두 자리 수가 될 수 있는 수는 모두 몇 개입니까?${rangeSvg(false)}${support("포함되는 끝과 포함되지 않는 끝을 구분하고, 소수 두 자리 수를 차례로 세어 보세요.")}${challenge}${evidence([d.divisor, d.target, d.lower, d.upperExclusive, d.count])}`, `${d.count}개`, `${skipped.length ? `풀이 기준: ${skipped.join(", ")}처럼 소수 둘째 자리 숫자가 0인 수는 소수 한 자리 수와 같으므로 세지 않습니다. ` : ""}반올림하여 ${targetText}${J.iGa(targetText)} 되는 몫은 ${lowQuotient} 이상 ${highQuotient} 미만이므로 어떤 수는 ${lowQuotient}×${d.divisor}=${fixed2(d.lower)} 이상 ${highQuotient}×${d.divisor}=${fixed2(d.upperExclusive)} 미만입니다. 이 범위의 소수 두 자리 수는 ${candidates.map(value => value.toFixed(2)).join(", ")}${J.ro(candidates[candidates.length - 1].toFixed(2))} 모두 ${d.count}개입니다.`, answerWrap(answerVisual, [d.divisor, d.target, d.lower, d.upperExclusive, d.count]));
       }
 
       if (variant === 2) {
@@ -22829,6 +22848,8 @@
       const round = (value, places) => Math.round((value + Number.EPSILON) * 10 ** places) / 10 ** places;
       const fmt = value => Number(value).toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
       const fmt2 = value => Number(value).toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+      // 끝나지 않는 몫은 버림한 자리 뒤에 …을 붙이고, 끝나는 몫은 그대로 씁니다.
+      const dots = (value, places = 3) => { const scaled = value * 10 ** places; return Math.abs(scaled - Math.round(scaled)) < 1e-9 ? fmt(value) : `${(Math.floor(scaled) / 10 ** places).toFixed(places)}…`; };
       const gcd = (a, b) => { while (b) [a, b] = [b, a % b]; return Math.abs(a); };
       const terminatingFraction = (numerator, denominator) => {
         let d = denominator / gcd(numerator, denominator);
@@ -22855,12 +22876,12 @@
         [
           { base: 143, divisor: 33, addTenths: 22 },
           { base: 127, divisor: 24, addTenths: 2 },
-          { base: 178, divisor: 45, addTenths: 20 }
+          { base: 181, divisor: 45, addTenths: 35 }
         ],
         [
           { aDivisor: 7, aTarget: 12, bDivisor: 8, bTenths: 10.7 },
-          { aDivisor: 9, aTarget: 10, bDivisor: 6, bTenths: 14.3 },
-          { aDivisor: 6, aTarget: 15, bDivisor: 7, bTenths: 12.2 }
+          { aDivisor: 9, aTarget: 8, bDivisor: 6, bTenths: 14.3 },
+          { aDivisor: 6, aTarget: 11, bDivisor: 7, bTenths: 12.2 }
         ],
         [
           { sum: 32, numerator: 7, denominator: 25 },
@@ -22880,7 +22901,7 @@
         [
           { a: [7, 11], b: [12, 21] },
           { a: [3, 5], b: [6, 9] },
-          { a: [5, 8], b: [12, 15] }
+          { a: [5, 9], b: [12, 16] }
         ],
         [
           { aLow: [19.6, 5], aHigh: [47.52, 9], bLow: [90.08, 8], bHigh: [102.2, 7] },
@@ -22903,7 +22924,7 @@
         const decimals = [...pools.fractions.map(([n, d]) => round(n / d, 3)), round(pools.mixed[0] + pools.mixed[1] / pools.mixed[2], 3)];
         if (decimals.map(value => Number(value).toFixed(3)).join(",") !== pools.answer.join(",")) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 반올림 검산 오류`);
         const values = [...pools.fractions.flat(), ...pools.mixed, ...decimals];
-        const lines = [line(`${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]}`, `${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]} → ${pools.answer[0]}`), line(`${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]}`, `${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]} → ${pools.answer[1]}`), line(`${pools.mixed[0]} ${pools.mixed[1]}/${pools.mixed[2]}`, `${pools.mixed[0]} ${pools.mixed[1]}/${pools.mixed[2]} → ${pools.answer[2]}`)];
+        const lines = [line(`${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]}`, `${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]} → ${pools.answer[0]}`), line(`${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]}`, `${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]} → ${pools.answer[1]}`), line(`${pools.mixed[0]} + ${pools.mixed[1]} ÷ ${pools.mixed[2]}`, `${pools.mixed[0]} + ${pools.mixed[1]} ÷ ${pools.mixed[2]} → ${pools.answer[2]}`)];
         const answerVisual = `${svg("분수와 대분수의 소수 셋째 자리 반올림", lines, true, values)}${mathBoard("반올림 결과", row("첫째", `${fractionMarkup(...pools.fractions[0])} = ${pools.answer[0]}`) + row("둘째", `${fractionMarkup(...pools.fractions[1])} = ${pools.answer[1]}`) + row("셋째", `${mixedFractionMarkup(pools.mixed[0] * pools.mixed[2] + pools.mixed[1], pools.mixed[2])} = ${pools.answer[2]}`))}`;
         return fixedResult(`다음 분수와 대분수를 소수로 나타낸 뒤 소수 셋째 자리까지 반올림하여 쓰세요.${svg("분수와 대분수의 반올림", lines, false, values)}${mathBoard("계산할 수", row("첫째", fractionMarkup(...pools.fractions[0])) + row("둘째", fractionMarkup(...pools.fractions[1])) + row("셋째", mixedFractionMarkup(pools.mixed[0] * pools.mixed[2] + pools.mixed[1], pools.mixed[2]))) }${support("분자를 분모로 나누고, 소수 넷째 자리 숫자를 보고 반올림하세요.")}${challenge}${evidence(values, "three-values")}`, pools.answer.join(", "), `각 수를 소수로 나타내어 소수 셋째 자리까지 반올림하면 ${pools.answer.join(", ")}입니다.`, answerWrap(answerVisual, values));
       }
@@ -22918,57 +22939,68 @@
       }
 
       if (variant === 2) {
-        let addTenths = 0; for (let tenths = 1; tenths <= pools.divisor * 10; tenths += 1) if ((pools.base * 10 + tenths) % pools.divisor === 0) { addTenths = tenths; break; }
-        const answer = pools.addTenths / 10; if (addTenths !== pools.addTenths || !Number.isInteger((pools.base * 10 + addTenths) / pools.divisor)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 유한소수 검산 오류`);
+        // pool 0 = 예제 3-2(143÷33은 나누어떨어지지 않음, 몫이 소수 첫째 자리에서 나누어떨어지도록 더할 가장 작은 수)
+        if (terminatingFraction(pools.base, pools.divisor)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 처음 나눗셈이 나누어떨어집니다.`);
+        let addTenths = 0; for (let tenths = 1; tenths <= pools.divisor * 10; tenths += 1) { const total = pools.base * 10 + tenths; if (total % pools.divisor === 0 && (total / pools.divisor) % 10 !== 0) { addTenths = tenths; break; } }
+        const answer = pools.addTenths / 10; if (addTenths !== pools.addTenths) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 유한소수 검산 오류`);
         const values = [pools.base, pools.divisor, pools.addTenths, answer, (pools.base * 10 + addTenths) / pools.divisor];
-        const lines = [line(`${pools.base} + □`), line(`□ ÷ ${pools.divisor} = 소수 첫째 자리에서 끝남`, `÷ ${pools.divisor} = ${(values[4]).toFixed(1)}`), line("더할 수 있는 가장 작은 수", `더한 수 → ${answer.toFixed(1)}`)];
-        const answerVisual = `${svg("몫을 소수 첫째 자리에서 끝내기", lines, true, values)}${mathBoard("유한소수가 되는 수", row("더한 수", `${answer.toFixed(1)}`) + row("확인", `${(pools.base + answer).toFixed(1)}÷${pools.divisor}=${values[4].toFixed(1)}`))}`;
-        return fixedResult(`${pools.base}에 어떤 수를 더한 뒤 ${pools.divisor}로 나누었더니 몫이 소수 첫째 자리에서 끝났습니다. 더하는 수가 소수 첫째 자리 수일 때, 더할 수 있는 가장 작은 수를 구하세요.${svg("소수 첫째 자리에서 끝나는 몫", lines, false, values)}${mathBoard("조건", row("처음 수", pools.base) + row("나누는 수", pools.divisor) + row("몫", "소수 첫째 자리에서 끝남"))}${support("0.1씩 더해 보며 나누어떨어지는 첫 번째 수를 찾으세요.")}${challenge}${evidence(values)}`, answer.toFixed(1), `0.1씩 더한 수를 차례로 확인하면 ${answer.toFixed(1)}일 때 ${(pools.base + answer).toFixed(1)}÷${pools.divisor}=${values[4].toFixed(1)}로 끝납니다.`, answerWrap(answerVisual, values));
+        const quotient = values[4] / 10;
+        const lines = [line(`${pools.base} + □`), line(`□ ÷ ${pools.divisor} = 소수 첫째 자리에서 끝남`, `÷ ${pools.divisor} = ${quotient.toFixed(1)}`), line("더할 수 있는 가장 작은 수", `더한 수 → ${answer.toFixed(1)}`)];
+        const answerVisual = `${svg("몫을 소수 첫째 자리에서 끝내기", lines, true, values)}${mathBoard("유한소수가 되는 수", row("더한 수", `${answer.toFixed(1)}`) + row("확인", `${(pools.base + answer).toFixed(1)}÷${pools.divisor}=${quotient.toFixed(1)}`))}`;
+        return fixedResult(`다음 나눗셈은 나누어떨어지지 않습니다. 이 나눗셈의 나누어지는 수에 어떤 수를 더하여 몫이 소수 첫째 자리에서 나누어떨어지게 하려고 합니다. 어떤 수 중에서 가장 작은 수를 구하세요.${svg("소수 첫째 자리에서 끝나는 몫", lines, false, values)}${mathBoard("나눗셈", row("식", `${pools.base} ÷ ${pools.divisor}`))}${support("0.1씩 더해 보며 나누어떨어지는 첫 번째 수를 찾으세요.")}${challenge}${evidence(values)}`, answer.toFixed(1), `풀이 기준: 몫이 소수 첫째 자리에서 나누어떨어진다는 것은 몫이 소수 한 자리 수가 된다는 뜻입니다. ${pools.base}÷${pools.divisor}=${dots(pools.base / pools.divisor)}이므로 몫이 이보다 크면서 처음으로 소수 한 자리 수가 되는 경우는 ${quotient.toFixed(1)}입니다. 이때 나누어지는 수는 ${pools.divisor}×${quotient.toFixed(1)}=${(pools.base + answer).toFixed(1)}이므로 더할 수는 ${(pools.base + answer).toFixed(1)}-${pools.base}=${answer.toFixed(1)}입니다.`, answerWrap(answerVisual, values));
       }
 
       if (variant === 3) {
+        // pool 0 = 예제 3-3(㉠÷7 반올림 12, ㉡÷8 버림 10.7, ㉠÷㉡ 최소를 반올림하여 소수 첫째 자리까지)
         const aCandidates = []; for (let a = 1; a <= 200; a += 1) if (Math.round(a / pools.aDivisor) === pools.aTarget) aCandidates.push(a);
         const bCandidates = []; for (let b = 1; b <= 200; b += 1) if (Math.floor((b / pools.bDivisor) * 10) / 10 === pools.bTenths) bCandidates.push(b);
-        const answerA = Math.min(...aCandidates); const answerB = Math.max(...bCandidates); const answer = round(answerA / answerB, 2); const answerText = answer.toFixed(2);
-        if (answerA !== (poolIndex === 0 ? 81 : poolIndex === 1 ? 86 : 87) || answerB !== 86) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 후보 검산 오류`);
+        const answerA = Math.min(...aCandidates); const answerB = Math.max(...bCandidates); const answer = round(answerA / answerB, 1); const answerText = answer.toFixed(1);
+        if (answerA !== [81, 68, 63][poolIndex] || answerB !== 86) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 후보 검산 오류`);
         const values = [pools.aDivisor, pools.aTarget, pools.bDivisor, pools.bTenths, answerA, answerB, answer];
-        const lines = [line(`A÷${pools.aDivisor} → ${pools.aTarget}`), line(`B÷${pools.bDivisor} → ${pools.bTenths} 버림`), line("A와 B 후보를 비교", `A=${answerA}, B=${answerB} → ${answerText}`)];
-        const answerVisual = `${svg("두 조건을 만족하는 A와 B", lines, true, values)}${mathBoard("후보를 줄여 계산", row("A", `${answerA}÷${pools.aDivisor} ≈ ${pools.aTarget}`) + row("B", `${answerB}÷${pools.bDivisor} → ${pools.bTenths}`) + row("A÷B", `${answerA}÷${answerB} ≈ ${answerText}`))}`;
-        return fixedResult(`자연수 A를 ${pools.aDivisor}로 나눈 몫을 반올림하여 일의 자리까지 나타내면 ${pools.aTarget}이고, 자연수 B를 ${pools.bDivisor}로 나눈 몫을 버림하여 소수 첫째 자리까지 나타내면 ${pools.bTenths}입니다. A÷B가 가장 작을 때, A÷B를 반올림하여 소수 둘째 자리까지 나타내세요.${svg("반올림과 버림 조건", lines, false, values)}${mathBoard("두 조건", row("A의 조건", `A÷${pools.aDivisor} → ${pools.aTarget}`) + row("B의 조건", `B÷${pools.bDivisor} → ${pools.bTenths}`))}${support("각 조건을 만족하는 자연수를 모두 적은 뒤 A가 가장 작고 B가 가장 큰 경우를 고르세요.")}${challenge}${evidence(values)}`, answerText, `A의 가장 작은 값은 ${answerA}, B의 가장 큰 값은 ${answerB}입니다. 따라서 A÷B=${answerA}÷${answerB}≈${answerText}입니다.`, answerWrap(answerVisual, values));
+        const J = numberJosa;
+        const lines = [line(`㉠÷${pools.aDivisor} → ${pools.aTarget}`), line(`㉡÷${pools.bDivisor} → ${pools.bTenths} 버림`), line("㉠과 ㉡ 후보를 비교", `㉠=${answerA}, ㉡=${answerB} → ${answerText}`)];
+        const answerVisual = `${svg("두 조건을 만족하는 ㉠과 ㉡", lines, true, values)}${mathBoard("후보를 줄여 계산", row("㉠", `${aCandidates.join(", ")} 중 가장 작은 수 ${answerA}`) + row("㉡", bCandidates.join(", ")) + row("㉠÷㉡", `${answerA}÷${answerB}=${dots(answerA / answerB)} → ${answerText}`))}`;
+        return fixedResult(`자연수 ㉠을 ${pools.aDivisor}${J.ro(pools.aDivisor)} 나눈 몫을 반올림하여 일의 자리까지 나타내면 ${pools.aTarget}${J.iGa(pools.aTarget)} 되고, 자연수 ㉡을 ${pools.bDivisor}${J.ro(pools.bDivisor)} 나눈 몫을 버림하여 소수 첫째 자리까지 나타내면 ${pools.bTenths}${J.iGa(pools.bTenths)} 됩니다. 이 조건을 만족하는 자연수 ㉠, ㉡ 중 ㉠÷㉡의 몫이 가장 작을 때, 몫을 반올림하여 소수 첫째 자리까지 구하세요.${svg("반올림과 버림 조건", lines, false, values)}${mathBoard("두 조건", row("㉠의 조건", `㉠÷${pools.aDivisor} → ${pools.aTarget}`) + row("㉡의 조건", `㉡÷${pools.bDivisor} → ${pools.bTenths}`))}${support("각 조건을 만족하는 자연수를 모두 적은 뒤 ㉠이 가장 작고 ㉡이 가장 큰 경우를 고르세요.")}${challenge}${evidence(values)}`, answerText, `㉠÷${pools.aDivisor}의 몫은 ${pools.aTarget - 0.5} 이상 ${pools.aTarget + 0.5} 미만이므로 ㉠은 ${aCandidates.join(", ")}입니다. ㉡÷${pools.bDivisor}의 몫은 ${pools.bTenths} 이상 ${(pools.bTenths + 0.1).toFixed(1)} 미만이므로 ㉡은 ${bCandidates.join(", ")}입니다. ㉠÷㉡의 몫이 가장 작으려면 ㉠은 가장 작고 ㉡은 가장 커야 하므로 ${answerA}÷${answerB}=${dots(answerA / answerB)}이고, 반올림하여 소수 첫째 자리까지 나타내면 ${answerText}입니다.`, answerWrap(answerVisual, values));
       }
 
       if (variant === 4) {
-        const candidates = []; for (let n = 1; n < pools.sum / 2; n += 1) { const pair = exactTwoPlaces(n, pools.sum - n); if (pair) candidates.push(pair); }
+        // pool 0 = 예제 3-4(분자와 분모의 합이 32인 기약 진분수 중 소수 두 자리 수가 되는 분수를 소수로)
+        const candidates = []; for (let n = 1; n < pools.sum / 2; n += 1) { if (gcd(n, pools.sum - n) !== 1) continue; const pair = exactTwoPlaces(n, pools.sum - n); if (pair) candidates.push(pair); }
         const pair = candidates.find(item => item.n === pools.numerator && item.d === pools.denominator); if (!pair || candidates.length !== 1) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 분수 후보 검산 오류`);
         const answer = (pair.n / pair.d).toFixed(2); const values = [pools.sum, pair.n, pair.d, Number(answer)];
         const lines = [line(`분자+분모=${pools.sum}`), line(`${pair.n} ÷ ${pair.d} (서로소)`), line("소수 둘째 자리까지", `소수 둘째 자리 → ${answer}`)];
         const answerVisual = `${svg("두 자리 소수로 끝나는 분수", lines, true, values)}${mathBoard("분수를 확인", row("분자+분모", `${pair.n}+${pair.d}=${pools.sum}`) + row("분수", fractionMarkup(pair.n, pair.d)) + row("소수", answer))}`;
-        return fixedResult(`분자와 분모의 합이 ${pools.sum}인 기약분수 중 소수로 나타내었을 때 소수 둘째 자리까지 나타나는 분수를 구하세요.${svg("기약분수와 소수", lines, false, values)}${mathBoard("조건", row("분자+분모", pools.sum) + row("분수", "진분수 · 기약분수") + row("소수", "소수 둘째 자리까지"))}${support("분모를 차례로 정하고, 약분되지 않으며 소수로 끝나는 경우만 남겨 보세요.")}${challenge}${evidence(values)}`, answer, `분자와 분모의 합 조건을 확인하면 ${fractionMarkup(pair.n, pair.d)}만 남습니다. ${fractionMarkup(pair.n, pair.d)}=${answer}입니다.`, answerWrap(answerVisual, values));
+        return fixedResult(`분자와 분모의 합이 ${pools.sum}인 기약 진분수 중에서 소수로 나타내었을 때 소수 두 자리 수가 되는 분수를 구하여 소수로 나타내세요.${svg("기약분수와 소수", lines, false, values)}${support("분모를 차례로 정하고, 약분되지 않으며 소수로 끝나는 경우만 남겨 보세요.")}${challenge}${evidence(values)}`, answer, `진분수이므로 분모는 ${pools.sum / 2}보다 큽니다. 소수 두 자리 수가 되려면 분모가 100의 약수 중 10의 약수가 아닌 수여야 하고, 분자와 분모의 합이 ${pools.sum}인 기약 진분수 중 이 조건을 만족하는 분수는 ${fractionMarkup(pair.n, pair.d)}뿐입니다. ${fractionMarkup(pair.n, pair.d)}=${symbolicFractionMarkup(pair.n * (100 / pair.d), 100)}=${answer}입니다.`, answerWrap(answerVisual, values));
       }
 
       if (variant === 5) {
         const digit = decimalDigit(pools.numerator, pools.denominator, 100); if (digit !== pools.digit) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 소수 자리 검산 오류`);
         const values = [pools.whole, pools.numerator, pools.denominator, 100, digit]; const mixed = pools.whole * pools.denominator + pools.numerator;
-        const lines = [line(`${pools.whole} ${pools.numerator}/${pools.denominator}`), line("소수점 아래 100번째 자리"), line("자리 숫자를 구함", `답 숫자 → ${digit}`)];
+        const lines = [line(`${pools.whole} + ${pools.numerator} ÷ ${pools.denominator}`), line("소수점 아래 100번째 자리"), line("자리 숫자를 구함", `답 숫자 → ${digit}`)];
         const answerVisual = `${svg("대분수의 소수 자리", lines, true, values)}${mathBoard("나눗셈 자리 확인", row("가분수", fractionMarkup(mixed, pools.denominator)) + row("확인할 자리", "100번째") + row("숫자", digit))}`;
         return fixedResult(`대분수 ${mixedFractionMarkup(mixed, pools.denominator)}를 소수로 나타낼 때, 소수점 아래 ${values[3]}번째 자리 숫자를 구하세요.${svg("대분수와 소수 자리", lines, false, values)}${mathBoard("주어진 수", row("대분수", mixedFractionMarkup(mixed, pools.denominator)) + row("확인할 자리", "소수점 아래 100번째 자리"))}${support("대분수를 가분수로 바꾸고 나머지를 이용한 나눗셈을 반복하세요.")}${challenge}${evidence(values)}`, String(digit), `대분수는 ${fractionMarkup(mixed, pools.denominator)}입니다. 나눗셈을 이어 가면 소수점 아래 100번째 숫자는 ${digit}입니다.`, answerWrap(answerVisual, values));
       }
 
       if (variant === 6) {
+        // pool 0 = 미션 2(가는 13 이상 14 이하의 어떤 수, 나는 6 이상 7 이하의 어떤 수)
         const valuesList = []; for (const a of pools.a) for (const b of pools.b) valuesList.push(round(a / b, 2));
-        const answer = fmt2(Math.max(...valuesList) - Math.min(...valuesList));
-        const values = [...pools.a, ...pools.b, Number(answer)]; const lines = [line(`A: ${pools.a.join(", ")}`), line(`B: ${pools.b.join(", ")}`), line("모든 짝의 몫 비교", `가장 큰 값-가장 작은 값=${answer}`)];
-        const answerVisual = `${svg("두 수의 몫 비교", lines, true, values)}${mathBoard("모든 경우 비교", row("A의 후보", pools.a.join(", ")) + row("B의 후보", pools.b.join(", ")) + row("차", answer))}`;
-        return fixedResult(`A에는 ${pools.a.join(", ")} 중 하나, B에는 ${pools.b.join(", ")} 중 하나를 넣습니다. A÷B를 각각 계산하여 소수 둘째 자리까지 반올림했을 때 가장 큰 값과 가장 작은 값의 차를 구하세요.${svg("A와 B의 몫", lines, false, values)}${mathBoard("계산 조건", row("A", pools.a.join(", ")) + row("B", pools.b.join(", ")) + row("표시", "소수 둘째 자리까지 반올림"))}${support("A와 B의 모든 짝을 만들어 몫을 비교하세요.")}${challenge}${evidence(values)}`, answer, `모든 짝의 몫을 소수 둘째 자리까지 반올림하여 비교하면 가장 큰 값과 가장 작은 값의 차는 ${answer}입니다.`, answerWrap(answerVisual, values));
+        const largest = round(pools.a[1] / pools.b[0], 2), smallest = round(pools.a[0] / pools.b[1], 2);
+        if (largest !== Math.max(...valuesList) || smallest !== Math.min(...valuesList)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 끝값 검산 오류`);
+        const answer = fmt2(largest - smallest);
+        const values = [...pools.a, ...pools.b, Number(answer)]; const lines = [line(`가: ${pools.a[0]} 이상 ${pools.a[1]} 이하`), line(`나: ${pools.b[0]} 이상 ${pools.b[1]} 이하`), line("가장 큰 몫과 가장 작은 몫 비교", `가장 큰 값-가장 작은 값=${answer}`)];
+        const answerVisual = `${svg("두 수의 몫 비교", lines, true, values)}${mathBoard("끝값으로 비교", row("가장 큰 값", `${pools.a[1]}÷${pools.b[0]}=${dots(pools.a[1] / pools.b[0])} → ${largest.toFixed(2)}`) + row("가장 작은 값", `${pools.a[0]}÷${pools.b[1]}=${dots(pools.a[0] / pools.b[1])} → ${smallest.toFixed(2)}`) + row("차", answer))}`;
+        return fixedResult(`가는 ${pools.a[0]} 이상 ${pools.a[1]} 이하의 어떤 수이고, 나는 ${pools.b[0]} 이상 ${pools.b[1]} 이하의 어떤 수입니다. 가÷나의 몫을 반올림하여 소수 둘째 자리까지 나타낼 때, 가장 큰 값과 가장 작은 값의 차를 구하세요.${svg("가와 나의 몫", lines, false, values)}${mathBoard("계산 조건", row("가", `${pools.a[0]} 이상 ${pools.a[1]} 이하`) + row("나", `${pools.b[0]} 이상 ${pools.b[1]} 이하`))}${support("가와 나의 범위의 양 끝 수로 가장 큰 몫과 가장 작은 몫을 찾아 보세요.")}${challenge}${evidence(values)}`, answer, `가÷나는 가가 클수록, 나가 작을수록 커집니다. 가장 큰 값은 ${pools.a[1]}÷${pools.b[0]}=${dots(pools.a[1] / pools.b[0])}에서 반올림하여 ${largest.toFixed(2)}, 가장 작은 값은 ${pools.a[0]}÷${pools.b[1]}=${dots(pools.a[0] / pools.b[1])}에서 반올림하여 ${smallest.toFixed(2)}입니다. 따라서 차는 ${largest.toFixed(2)}-${smallest.toFixed(2)}=${answer}입니다.`, answerWrap(answerVisual, values));
       }
 
       if (variant === 7) {
+        // pool 0 = 미션 3(㉠÷㉡=7/11, ㉡÷㉢=12/21, ㉢÷㉠을 소수로)
         const ab = pools.a[0] / pools.a[1], bc = pools.b[0] / pools.b[1]; const answer = 1 / (ab * bc); const answerText = fmt2(answer);
         const answerNumerator = pools.a[1] * pools.b[1], answerDenominator = pools.a[0] * pools.b[0];
-        if (!terminatingFraction(answerNumerator, answerDenominator)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} C÷A가 유한소수가 아닙니다.`);
-        const values = [...pools.a, ...pools.b, answer]; const lines = [line(`A÷B=${pools.a[0]} ÷ ${pools.a[1]}`), line(`B÷C=${pools.b[0]} ÷ ${pools.b[1]}`), line("C÷A를 구함", `C÷A=${answerText}`)];
-        const answerVisual = `${svg("A, B, C의 나눗셈 관계", lines, true, values)}${mathBoard("연결하여 계산", row("A÷B", fractionMarkup(pools.a[0], pools.a[1])) + row("B÷C", fractionMarkup(pools.b[0], pools.b[1])) + row("C÷A", answerText))}`;
-        return fixedResult(`세 수 A, B, C에 대하여 A÷B=${fractionMarkup(pools.a[0], pools.a[1])}, B÷C=${fractionMarkup(pools.b[0], pools.b[1])}입니다. C÷A의 값을 구하세요.${svg("세 수의 비", lines, false, values)}${mathBoard("주어진 관계", row("A와 B", fractionMarkup(pools.a[0], pools.a[1])) + row("B와 C", fractionMarkup(pools.b[0], pools.b[1])))}${support("A에서 C로 가는 나눗셈 관계를 두 식을 이어서 생각하세요.")}${challenge}${evidence(values)}`, answerText, `A÷C는 ${fractionMarkup(pools.a[0] * pools.b[0], pools.a[1] * pools.b[1])}이므로 C÷A는 그 거꾸로인 ${answerText}입니다.`, answerWrap(answerVisual, values));
+        if (!terminatingFraction(answerNumerator, answerDenominator)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} ㉢÷㉠이 유한소수가 아닙니다.`);
+        const values = [...pools.a, ...pools.b, answer]; const lines = [line(`㉠÷㉡=${pools.a[0]} ÷ ${pools.a[1]}`), line(`㉡÷㉢=${pools.b[0]} ÷ ${pools.b[1]}`), line("㉢÷㉠을 구함", `㉢÷㉠=${answerText}`)];
+        const aFraction = symbolicFractionMarkup(pools.a[0], pools.a[1]), bFraction = symbolicFractionMarkup(pools.b[0], pools.b[1]);
+        const answerVisual = `${svg("㉠, ㉡, ㉢의 나눗셈 관계", lines, true, values)}${mathBoard("연결하여 계산", row("㉠÷㉢", `${aFraction}×${bFraction}=${fractionMarkup(answerDenominator, answerNumerator)}`) + row("㉢÷㉠", `${fractionMarkup(answerNumerator, answerDenominator)}=${answerText}`))}`;
+        return fixedResult(`세 수 ㉠, ㉡, ㉢이 있습니다. ㉠을 ㉡으로 나누면 ${aFraction}이고, ㉡을 ㉢으로 나누면 ${bFraction}입니다. ㉢을 ㉠으로 나눈 몫을 소수로 나타내세요.${svg("세 수의 비", lines, false, values)}${support("㉠에서 ㉢으로 가는 나눗셈 관계를 두 식을 이어서 생각하세요.")}${challenge}${evidence(values)}`, answerText, `㉠÷㉢=(㉠÷㉡)×(㉡÷㉢)=${aFraction}×${bFraction}=${fractionMarkup(answerDenominator, answerNumerator)}입니다. ㉢÷㉠은 그 거꾸로인 ${fractionMarkup(answerNumerator, answerDenominator)}이므로 소수로 나타내면 ${answerText}입니다.`, answerWrap(answerVisual, values));
       }
 
       if (variant === 8) {
@@ -22984,12 +23016,14 @@
       }
 
       if (variant === 9) {
-        let addMilli = 0; for (let milli = 1; milli <= pools.divisor * 1000; milli += 1) if ((pools.base * 1000 + milli) % pools.divisor === 0) { addMilli = milli; break; }
+        // pool 0 = 미션 5(149에 어떤 소수를 더하여 57로 나누면 몫이 소수 셋째 자리에서 나누어떨어짐)
+        let addMilli = 0; for (let milli = 1; milli <= pools.divisor * 1000; milli += 1) { const total = pools.base * 1000 + milli; if (total % pools.divisor === 0 && (total / pools.divisor) % 10 !== 0) { addMilli = milli; break; } }
         if (addMilli !== pools.addMilli) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 천분의 일 검산 오류`);
         const answer = pools.addMilli / 1000; const quotient = (pools.base * 1000 + addMilli) / pools.divisor / 1000; const values = [pools.base, pools.divisor, pools.addMilli, answer, quotient];
         const lines = [line(`${pools.base} + □`), line(`□ ÷ ${pools.divisor} = 소수 셋째 자리에서 끝남`, `÷ ${pools.divisor} = ${quotient.toFixed(3)}`), line("더할 수 있는 가장 작은 수", `가장 작은 수 → ${answer.toFixed(3)}`)];
         const answerVisual = `${svg("몫이 소수 셋째 자리에서 끝나는 수", lines, true, values)}${mathBoard("천분의 일 단위로 확인", row("더한 수", answer.toFixed(3)) + row("확인", `${(pools.base + answer).toFixed(3)}÷${pools.divisor}=${quotient.toFixed(3)}`))}`;
-        return fixedResult(`${pools.base}에 어떤 수를 더한 뒤 ${pools.divisor}로 나누었더니 몫이 소수 셋째 자리에서 끝났습니다. 더하는 수가 소수 셋째 자리 수일 때, 더할 수 있는 가장 작은 수를 구하세요.${svg("유한소수 몫 만들기", lines, false, values)}${mathBoard("조건", row("처음 수", pools.base) + row("나누는 수", pools.divisor) + row("몫", "소수 셋째 자리에서 끝남"))}${support("0.001씩 더해 보며 몫이 끝나는 첫 번째 수를 찾으세요.")}${challenge}${evidence(values)}`, answer.toFixed(3), `0.001씩 더한 수를 확인하면 ${answer.toFixed(3)}일 때 ${quotient.toFixed(3)}으로 끝납니다. 따라서 가장 작은 수는 ${answer.toFixed(3)}입니다.`, answerWrap(answerVisual, values));
+        const J = numberJosa;
+        return fixedResult(`${pools.base}에 어떤 소수를 더하여 ${pools.divisor}${J.ro(pools.divisor)} 나누었더니 몫이 소수 셋째 자리에서 나누어떨어졌습니다. 어떤 소수 중 가장 작은 수를 구하세요.${svg("유한소수 몫 만들기", lines, false, values)}${mathBoard("조건", row("처음 수", pools.base) + row("나누는 수", pools.divisor) + row("몫", "소수 셋째 자리에서 끝남"))}${support("0.001씩 더해 보며 몫이 끝나는 첫 번째 수를 찾으세요.")}${challenge}${evidence(values)}`, answer.toFixed(3), `풀이 기준: 몫이 소수 셋째 자리에서 나누어떨어진다는 것은 몫이 소수 세 자리 수가 된다는 뜻입니다. ${pools.base}÷${pools.divisor}=${dots(pools.base / pools.divisor, 4)}이므로 이보다 큰 소수 세 자리 수 중 가장 작은 몫은 ${quotient.toFixed(3)}입니다. 이때 나누어지는 수는 ${pools.divisor}×${quotient.toFixed(3)}=${(pools.base + answer).toFixed(3)}이므로 더할 수는 ${(pools.base + answer).toFixed(3)}-${pools.base}=${answer.toFixed(3)}입니다.`, answerWrap(answerVisual, values));
       }
 
       const candidates = []; for (let n = 1; n <= 200; n += 1) if (Math.round(n / pools.firstDivisor) === pools.firstTarget && Math.round(n / pools.secondDivisor) === pools.secondTarget) candidates.push(n);
@@ -23220,23 +23254,32 @@
           return `<polygon class="source61-e2-corner-cut source61-e2-cut-plane${solved ? " is-solved" : ""}" data-cut-corner="${index + 1}" points="${points.map(pointText).join(" ")}"/>`;
         }).join("");
         const cutVertices = cutPointGroups.flat().map((point, index) => `<circle class="source61-e2-prism-vertex" data-result-vertex="${index + 1}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.3"/>`).join("");
-        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-corner-cuboid${solved ? " is-solved" : ""}" viewBox="0 0 360 235" role="img" aria-label="직육면체의 여덟 꼭짓점에서 세 모서리를 같은 길이만큼 재어 잘라 낸 그림" data-source61-e2-structure="cuboid-8-corner-truncation-${distance}" data-corner-count="8" data-cut-distance="${distance}" data-topology="cuboid-vertex-truncation" data-vertex-count="24" data-result-vertex-count="24" data-edge-count="36" data-face-count="14" data-total-count="74"${solved ? ' data-result-highlight="74"' : ""}>${cutPlanes}${edgeLines}${cutVertices}<text x="180" y="220" text-anchor="middle">각 꼭짓점에서 ${distance}cm씩 재어 자릅니다.</text></svg>`;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-corner-cuboid${solved ? " is-solved" : ""}" viewBox="0 0 360 235" role="img" aria-label="사각기둥의 여덟 꼭짓점에서 세 모서리를 같은 길이만큼 재어 잘라 낸 그림" data-source61-e2-structure="cuboid-8-corner-truncation-${distance}" data-corner-count="8" data-cut-distance="${distance}" data-topology="cuboid-vertex-truncation" data-vertex-count="24" data-result-vertex-count="24" data-edge-count="36" data-face-count="14" data-total-count="74"${solved ? ' data-result-highlight="74"' : ""}>${cutPlanes}${edgeLines}${cutVertices}<text x="180" y="220" text-anchor="middle">각 꼭짓점에서 ${distance}cm씩 재어 자릅니다.</text></svg>`;
       };
 
-      const radialCutPrismSvg = ({ n, solved = false }) => {
+      // mode: "plain"(문제, 자르는 선 없음) · "vertex"(중심과 꼭짓점을 잇는 선 → 삼각기둥) · "midpoint"(중심과 변의 가운데를 잇는 선 → 사각기둥)
+      const radialCutPrismSvg = ({ n, mode = "plain" }) => {
+        const solved = mode !== "plain";
         const centerTop = [128, 58];
         const centerBottom = [128, 166];
         const top = regularPolygonPoints(n, centerTop[0], centerTop[1], n >= 8 ? 69 : 74)
           .map(([x, y]) => [x, centerTop[1] + (y - centerTop[1]) * 0.46]);
         const bottom = top.map(([x, y]) => [x, y + 108]);
+        const mid = (ring, index) => interpolate(ring[index], ring[(index + 1) % n], 0.5);
         const frontFacing = index => top[index][1] >= centerTop[1];
-        const sectors = top.map((point, index) => `<polygon class="source61-e2-fan source61-e2-sector${index % 2 ? " is-alt" : ""}${solved && index === 0 ? " is-focus" : ""}" data-sector="${index + 1}" points="${pointText(centerTop)} ${pointText(point)} ${pointText(top[(index + 1) % n])}"/>`).join("");
         const sideFaces = top.map((point, index) => {
           const next = (index + 1) % n;
           return `<polygon class="source61-e2-prism-side${frontFacing(index) || frontFacing(next) ? "" : " is-hidden"}" points="${pointText(point)} ${pointText(top[next])} ${pointText(bottom[next])} ${pointText(bottom[index])}"/>`;
         }).join("");
-        const topRays = top.map((point, index) => lineMarkup(centerTop, point, "source61-e2-radial-cut", `data-cut-line="top-${index + 1}"`)).join("");
-        const bottomRays = bottom.map((point, index) => lineMarkup(centerBottom, point, `source61-e2-radial-cut${frontFacing(index) ? "" : " is-hidden"}`, `data-cut-line="bottom-${index + 1}"`)).join("");
+        const sectors = mode === "vertex"
+          ? top.map((point, index) => `<polygon class="source61-e2-fan source61-e2-sector${index % 2 ? " is-alt" : ""}${index === 0 ? " is-focus" : ""}" data-sector="${index + 1}" points="${pointText(centerTop)} ${pointText(point)} ${pointText(top[(index + 1) % n])}"/>`).join("")
+          : mode === "midpoint"
+            ? top.map((point, index) => `<polygon class="source61-e2-kite source61-e2-sector${index % 2 ? " is-alt" : ""}${index === 0 ? " is-focus" : ""}" data-sector="${index + 1}" points="${pointText(centerTop)} ${pointText(mid(top, (index + n - 1) % n))} ${pointText(point)} ${pointText(mid(top, index))}"/>`).join("")
+            : `<polygon class="source61-e2-prism-side source61-e2-prism-top" points="${top.map(pointText).join(" ")}"/>`;
+        const rayEnds = ring => mode === "vertex" ? ring : ring.map((_, index) => mid(ring, index));
+        const rayFront = index => mode === "vertex" ? frontFacing(index) : mid(top, index)[1] >= centerTop[1];
+        const topRays = solved ? rayEnds(top).map((point, index) => lineMarkup(centerTop, point, "source61-e2-radial-cut", `data-cut-line="top-${index + 1}"`)).join("") : "";
+        const bottomRays = solved ? rayEnds(bottom).map((point, index) => lineMarkup(centerBottom, point, `source61-e2-radial-cut${rayFront(index) ? "" : " is-hidden"}`, `data-cut-line="bottom-${index + 1}"`)).join("") : "";
         const outerEdges = top.map((point, index) => {
           const next = (index + 1) % n;
           const hidden = !frontFacing(index) && !frontFacing(next);
@@ -23244,10 +23287,20 @@
             + lineMarkup(bottom[index], bottom[next], `source61-e2-solid-edge${hidden ? " is-hidden" : ""}`)
             + lineMarkup(point, bottom[index], `source61-e2-solid-edge${frontFacing(index) ? "" : " is-hidden"}`);
         }).join("");
-        const centerLine = lineMarkup(centerTop, centerBottom, "source61-e2-radial-cut source61-e2-center-line", 'data-cut-line="center-vertical"');
+        const centerLine = solved ? lineMarkup(centerTop, centerBottom, "source61-e2-radial-cut source61-e2-center-line", 'data-cut-line="center-vertical"') : "";
         const vertexDots = top.concat(bottom).map((point, index) => `<circle class="source61-e2-original-vertex" data-prism-vertex="${index + 1}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.8"/>`).join("");
-        const piece = solved ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="9"><polygon points="16,34 66,12 95,43"/><polygon points="16,92 66,70 95,101"/><line x1="16" y1="34" x2="16" y2="92"/><line x1="66" y1="12" x2="66" y2="70"/><line x1="95" y1="43" x2="95" y2="101"/><text x="55" y="126" text-anchor="middle">삼각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 9개</text></g>` : `<text x="287" y="96" text-anchor="middle">밑면의 중심에서</text><text x="287" y="116" text-anchor="middle">수직으로 자르기</text>`;
-        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-radial-prism${solved ? " is-solved" : ""}" viewBox="0 0 370 225" role="img" aria-label="정${n}각기둥을 밑면의 중심에서 ${n}개의 같은 삼각기둥으로 수직으로 나눈 입체 그림" data-source61-e2-structure="regular-${n}-prism-radial-${n}" data-base-sides="${n}" data-n="${n}" data-piece-count="${n}" data-fan-count="${n}" data-vertical-cut-plane-count="${n}" data-edge-per-fan="9" data-total-edge-count="${9 * n}" data-cut-model="center-to-every-base-vertex-vertical-plane"${solved ? ` data-result-highlight="${9 * n}"` : ""}>${sideFaces}${bottomRays}${outerEdges}${sectors}${topRays}${centerLine}${vertexDots}<circle class="source61-e2-center" cx="${centerTop[0]}" cy="${centerTop[1]}" r="4"/><circle class="source61-e2-center is-hidden" cx="${centerBottom[0]}" cy="${centerBottom[1]}" r="3"/>${piece}<text x="128" y="218" text-anchor="middle">같은 삼각기둥 ${n}개</text></svg>`;
+        const centers = solved ? `<circle class="source61-e2-center" cx="${centerTop[0]}" cy="${centerTop[1]}" r="4"/><circle class="source61-e2-center is-hidden" cx="${centerBottom[0]}" cy="${centerBottom[1]}" r="3"/>` : "";
+        const piece = mode === "vertex"
+          ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="9"><polygon points="16,34 66,12 95,43"/><polygon points="16,92 66,70 95,101"/><line x1="16" y1="34" x2="16" y2="92"/><line x1="66" y1="12" x2="66" y2="70"/><line x1="95" y1="43" x2="95" y2="101"/><text x="55" y="126" text-anchor="middle">삼각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 9개</text></g>`
+          : mode === "midpoint"
+            ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="12"><polygon points="12,32 52,12 98,30 58,48"/><polygon points="12,90 52,70 98,88 58,106"/><line x1="12" y1="32" x2="12" y2="90"/><line x1="52" y1="12" x2="52" y2="70"/><line x1="98" y1="30" x2="98" y2="88"/><line x1="58" y1="48" x2="58" y2="106"/><text x="55" y="126" text-anchor="middle">사각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 12개</text></g>`
+            : "";
+        const pieceName = mode === "vertex" ? "삼각기둥" : "사각기둥";
+        const caption = solved ? `<text x="128" y="218" text-anchor="middle">같은 ${pieceName} ${n}개</text>` : "";
+        const aria = mode === "plain" ? `밑면이 정다각형이고 옆면이 ${n}개인 각기둥` : mode === "vertex" ? `정${n}각기둥을 밑면의 중심과 꼭짓점을 잇는 선을 따라 수직으로 잘라 같은 삼각기둥 ${n}개로 나눈 그림` : `정${n}각기둥을 밑면의 중심과 변의 가운데를 잇는 선을 따라 수직으로 잘라 같은 사각기둥 ${n}개로 나눈 그림`;
+        const structureAttribute = mode === "midpoint" ? "data-source61-e2-alt-structure" : "data-source61-e2-structure";
+        const pieceData = solved ? ` data-piece-count="${n}" data-fan-count="${n}" data-vertical-cut-plane-count="${n}" data-edge-per-fan="${mode === "vertex" ? 9 : 12}" data-total-edge-count="${(mode === "vertex" ? 9 : 12) * n}" data-cut-model="${mode === "vertex" ? "center-to-every-base-vertex-vertical-plane" : "center-to-every-base-edge-midpoint-vertical-plane"}"` : ` data-piece-count="${n}" data-cut-model="unspecified"`;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-radial-prism${solved ? " is-solved" : ""}" viewBox="0 0 370 225" role="img" aria-label="${aria}" ${structureAttribute}="regular-${n}-prism-${n}-congruent-prisms" data-base-sides="${n}" data-n="${n}" data-cut-mode="${mode}"${pieceData}${mode === "vertex" ? ` data-result-highlight="${9 * n},${12 * n}"` : ""}>${sideFaces}${bottomRays}${outerEdges}${sectors}${topRays}${centerLine}${vertexDots}${centers}${piece}${caption}</svg>`;
       };
 
       const hexagonalPrismSixPieceExtremesSvg = ({ prismHeight, solved = false }) => {
@@ -23566,19 +23619,20 @@
 
       if (variant === 0) {
         const distance = [1, 2, 3][poolIndex];
-        const minimumEdge = 3 * distance + 1;
+        const minimumEdge = 3 * distance;
         const faces = 14, vertices = 24, edges = 36, total = faces + vertices + edges;
-        const promptVisual = `${cornerCutCuboidSvg({ distance })}${mathBoard("자르는 조건", row("자를 꼭짓점", "직육면체의 모든 꼭짓점") + row("각 모서리에서 잰 길이", `${distance}cm`) + row("직육면체의 모든 모서리", `${minimumEdge}cm보다 길다`))}`;
+        const promptVisual = `${cornerCutCuboidSvg({ distance })}${mathBoard("자르는 조건", row("자를 꼭짓점", "사각기둥의 모든 꼭짓점") + row("각 모서리에서 잰 길이", `${distance}cm`) + row("사각기둥의 모든 모서리", `${minimumEdge}cm보다 길다`))}`;
         const answerVisual = `${cornerCutCuboidSvg({ distance, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("면", `6+8=${faces}개`) + row("꼭짓점", `12×2=${vertices}개`) + row("모서리", `12+3×8=${edges}개`) + row("합", `${faces}+${vertices}+${edges}=${total}`))}`;
-        return fixedResult(`직육면체의 모든 꼭짓점에서 만나는 세 모서리를 따라 각각 ${distance}cm인 점을 표시하고, 세 점을 지나는 평면으로 꼭짓점을 모두 잘라 냅니다. 직육면체의 모든 모서리는 ${minimumEdge}cm보다 깁니다. 잘라 낸 입체도형의 면, 꼭짓점, 모서리 수의 합을 구하세요.${promptVisual}${support("먼저 새로 생긴 삼각형 면은 몇 개인지, 원래 모서리 하나마다 새 꼭짓점이 몇 개 생기는지 세어 보세요.")}${challenge}${evidence("cuboid-all-corners-cut", [distance, minimumEdge, faces, vertices, edges, total])}`, String(total), `꼭짓점 8개를 자르므로 삼각형 면 8개가 새로 생겨 면은 6+8=${faces}개입니다. 원래 모서리 12개마다 양 끝의 자른 점이 남으므로 꼭짓점은 12×2=${vertices}개입니다. 원래 모서리에서 남은 12개와 삼각형 면 8개의 변 3개씩을 더하면 모서리는 12+3×8=${edges}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
+        return fixedResult(`그림과 같은 모서리가 모두 ${minimumEdge}cm보다 긴 사각기둥의 각 꼭짓점에서 ${distance}cm 떨어진 모서리의 지점을 연결하여 자르려고 합니다. 이와 같이 각각의 꼭짓점 부분을 모두 잘라 내고 남은 도형의 면의 수, 꼭짓점의 수, 모서리의 수의 합은 몇 개입니까?${promptVisual}${support("먼저 새로 생긴 삼각형 면은 몇 개인지, 원래 모서리 하나마다 새 꼭짓점이 몇 개 생기는지 세어 보세요.")}${challenge}${evidence("cuboid-all-corners-cut", [distance, minimumEdge, faces, vertices, edges, total])}`, String(total), `꼭짓점 8개를 자르므로 삼각형 면 8개가 새로 생겨 면은 6+8=${faces}개입니다. 원래 모서리 12개마다 양 끝의 자른 점이 남으므로 꼭짓점은 12×2=${vertices}개입니다. 원래 모서리에서 남은 12개와 삼각형 면 8개의 변 3개씩을 더하면 모서리는 12+3×8=${edges}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
       }
 
       if (variant === 1) {
-        const n = [5, 7, 8][poolIndex];
-        const edgesPerPiece = 9, total = n * edgesPerPiece;
-        const promptVisual = `${radialCutPrismSvg({ n })}${mathBoard("나눈 입체도형", row("밑면", `정${n}각형`) + row("나누어진 조각", `서로 같은 삼각기둥 ${n}개`) + row("구할 것", "각 조각의 모서리 수의 합"))}`;
-        const answerVisual = `${radialCutPrismSvg({ n, solved: true })}${mathBoard("모서리 수", row("삼각기둥 1개", `${edgesPerPiece}개`) + row(`삼각기둥 ${n}개`, `${edgesPerPiece}×${n}=${total}개`))}`;
-        return fixedResult(`정${n}각기둥을 밑면의 중심과 각 꼭짓점을 잇는 선을 따라 밑면에 수직으로 잘라, 서로 같은 삼각기둥 ${n}개로 나누었습니다. 나누어진 삼각기둥 ${n}개의 모서리 수를 모두 합하면 몇 개인지 구하세요.${promptVisual}${support("삼각기둥 한 개의 모서리 수를 먼저 세고 조각 수를 곱하세요.")}${challenge}${evidence("regular-prism-radial-cut", [n, edgesPerPiece, total])}`, `${total}개`, `삼각기둥 한 개의 모서리는 밑면 두 개에서 3개씩, 옆모서리 3개로 모두 ${edgesPerPiece}개입니다. 같은 삼각기둥이 ${n}개이므로 모서리 수의 합은 ${edgesPerPiece}×${n}=${total}개입니다.`, answerVisual);
+        const n = [7, 5, 8][poolIndex];
+        const polygonName = `${{ 5: "오", 7: "칠", 8: "팔" }[n]}각형`;
+        const triangleEdges = 9, quadrilateralEdges = 12, triangleTotal = n * triangleEdges, quadrilateralTotal = n * quadrilateralEdges;
+        const promptVisual = `${radialCutPrismSvg({ n })}${mathBoard("자르는 조건", row("밑면", `정${polygonName}`) + row("자르는 방향", "밑면에 수직") + row("만든 각기둥", `모양과 크기가 같은 ${n}개`))}`;
+        const answerVisual = `${radialCutPrismSvg({ n, mode: "vertex" })}${radialCutPrismSvg({ n, mode: "midpoint" })}${mathBoard("모서리 수", row(`삼각기둥 ${n}개`, `${triangleEdges}×${n}=${triangleTotal}개`) + row(`사각기둥 ${n}개`, `${quadrilateralEdges}×${n}=${quadrilateralTotal}개`))}`;
+        return fixedResult(`그림은 밑면의 모양이 정${polygonName}인 각기둥입니다. 이 각기둥을 밑면에 수직으로 잘라 모양과 크기가 같은 각기둥 ${n}개를 만들었습니다. 이때 생기는 각기둥 ${n}개의 모서리의 수의 합은 몇 개입니까?${promptVisual}${support("밑면의 중심에서 꼭짓점까지 자를 때와 변 위의 점까지 자를 때 생기는 각기둥의 모양을 먼저 생각해 보세요.")}${challenge}${evidence("regular-prism-radial-cut", [n, triangleEdges, quadrilateralEdges, triangleTotal, quadrilateralTotal], "two-values")}`, `${triangleTotal}개, ${quadrilateralTotal}개`, `<p>풀이 기준: 밑면의 중심에서 밑면의 둘레까지 곧은 선을 ${n}개 긋고, 그 선을 따라 밑면에 수직으로 자르는 경우를 생각합니다. 자르는 방법에 따라 답이 두 가지입니다.</p>밑면의 중심과 ${n}개의 꼭짓점을 잇는 선을 따라 자르면 밑면이 삼각형인 삼각기둥 ${n}개가 생깁니다. 삼각기둥 한 개의 모서리는 ${triangleEdges}개이므로 합은 ${triangleEdges}×${n}=${triangleTotal}개입니다. 밑면의 중심과 ${n}개의 변의 가운데(또는 변 위의 같은 자리)를 잇는 선을 따라 자르면 밑면이 사각형인 사각기둥 ${n}개가 생깁니다. 사각기둥 한 개의 모서리는 ${quadrilateralEdges}개이므로 합은 ${quadrilateralEdges}×${n}=${quadrilateralTotal}개입니다. 따라서 답은 ${triangleTotal}개 또는 ${quadrilateralTotal}개입니다.`, answerVisual);
       }
 
       if (variant === 2) {
@@ -23642,14 +23696,14 @@
         return fixedResult(`밑면의 모양이 정육각형인 각기둥을 평면으로 곧게 잘라 서로 합동인 각기둥 6개를 만들었습니다. 각기둥 6개의 모서리 수를 모두 합한 값이 가장 클 때와 가장 작을 때를 차례로 구하세요.${promptVisual}${extremesSupport}${extremesChallenge}${evidence("hexagonal-prism-six-congruent-pieces-edge-extremes", values, "ordered-two-values")}`, `최대 ${maximumTotal}개, 최소 ${minimumTotal}개`, `밑면과 나란히 잘라 정육각기둥 6개를 만들면 한 조각의 모서리는 6×3=${maximumEdgesPerPiece}개이므로 합은 ${maximumEdgesPerPiece}×${pieceCount}=${maximumTotal}개로 가장 큽니다. 밑면의 중심에서 여섯 꼭짓점으로 나누어 삼각기둥 6개를 만들면 한 조각의 모서리는 3×3=${minimumEdgesPerPiece}개이므로 합은 ${minimumEdgesPerPiece}×${pieceCount}=${minimumTotal}개로 가장 작습니다.`, answerVisual);
       }
 
-      const [side, prismHeight] = [[6, 12], [7, 16], [8, 20]][poolIndex];
+      const [side, prismHeight] = [[7, 16], [6, 12], [8, 20]][poolIndex];
       const faceCount = 4, crossingCount = 3, targetLength = prismHeight / faceCount;
       const values = [side, prismHeight, faceCount, crossingCount, targetLength];
       const promptVisual = `${squarePrismFourFaceShortestSvg({ side, prismHeight })}${mathBoard("사각기둥의 자료", row("밑면의 네 변", `각각 ${side}cm`) + row("기둥의 높이", `${prismHeight}cm`) + row("지나는 점", "ㅈ → ㅊ → ㅋ") + row("구할 선분", "ㄴㅈ"))}`;
       const answerVisual = `${squarePrismFourFaceShortestSvg({ side, prismHeight, solved: true })}${mathBoard("전개도에서 계산", row("옆면 4장의 가로", `${side}×${faceCount}=${side * faceCount}cm`) + row("전체 세로 변화", `${prismHeight}cm`) + row("같은 너비 한 장에서 내려간 길이", `${prismHeight}÷${faceCount}=${targetLength}cm`) + row("선분 ㄴㅈ", `${targetLength}cm`))}`;
       const shortestSupport = support("선이 지나는 옆면 네 장을 차례로 펼치고, 시작점과 끝점을 곧은 선으로 이으세요.");
       const shortestChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">같은 너비의 옆면 네 장에서 곧은 선이 내려간 높이가 왜 네 부분으로 똑같이 나뉘는지 설명해 보세요.</p>` : "";
-      return fixedResult(`밑면이 한 변의 길이가 ${side}cm인 정사각형이고 높이가 ${prismHeight}cm인 사각기둥이 있습니다. 그림처럼 꼭짓점 ㄱ에서 출발하여 점 ㅈ, 점 ㅊ, 점 ㅋ을 차례로 지나 꼭짓점 ㅁ까지 겉면에 선을 그었습니다. 이 선의 길이가 가장 짧을 때 선분 ㄴㅈ의 길이는 몇 cm인지 구하세요.${promptVisual}${shortestSupport}${shortestChallenge}${evidence("square-prism-four-face-shortest-segment", values)}`, `${targetLength}cm`, `선이 지나는 옆면 네 장을 차례로 펼치면 너비가 모두 ${side}cm인 직사각형 4개가 됩니다. 가장 짧은 선은 전개도에서 한 직선입니다. 너비가 같으므로 전체 높이 ${prismHeight}cm도 네 부분으로 똑같이 나뉩니다. 따라서 선분 ㄴㅈ의 길이는 ${prismHeight}÷4=${targetLength}cm입니다.`, answerVisual);
+      return fixedResult(`그림과 같이 사각기둥의 꼭짓점 ㄱ에서 점 ㅈ, 점 ㅊ, 점 ㅋ을 지나 꼭짓점 ㅁ까지 선을 그었습니다. 선의 길이가 가장 짧을 때 선분 ㄴㅈ의 길이를 구하세요.${promptVisual}${shortestSupport}${shortestChallenge}${evidence("square-prism-four-face-shortest-segment", values)}`, `${targetLength}cm`, `선이 지나는 옆면 네 장을 차례로 펼치면 너비가 모두 ${side}cm인 직사각형 4개가 됩니다. 가장 짧은 선은 전개도에서 한 직선입니다. 너비가 같으므로 전체 높이 ${prismHeight}cm도 네 부분으로 똑같이 나뉩니다. 따라서 선분 ㄴㅈ의 길이는 ${prismHeight}÷4=${targetLength}cm입니다.`, answerVisual);
     },
     sourceGrade6RatioE1({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -23696,11 +23750,14 @@
       if (variant === 0) {
         const pools = [[7, 4, 21, 28, 49], [8, 5, 24, 40, 64], [3, 2, 18, 36, 54]][poolIndex];
         const [ratioNumerator, ratioDenominator, difference, base, compare] = pools;
-        const answer = `${ratioNumerator === 7 ? "4:7" : ratioNumerator === 8 ? "5:8" : "2:3"}`;
-        const visual = solved => svg("기준량과 비교하는 양의 막대", `${bar(92, 35, 190 * base / compare, "기준", solved ? base : "?", solved)}${bar(92, 83, 190, "비교", solved ? compare : "?", solved)}${line(92, 139, 282, 139, 'class="source61-e4-measure"')}${text(187, 158, "차이", "font-size=\"11\"")}${solved ? solvedLabel(`기준:비교 = ${answer}`, 180, 195) : ""}`, pools, solved);
-        const promptVisual = `${visual(false)}${mathBoard("주어진 관계", row("비율", `비교하는 양 ÷ 기준량 = ${ratioNumerator === 7 ? "1.75" : ratioNumerator === 8 ? "1.6" : "1.5"}`) + row("두 양의 차", `${difference}`) + row("구할 것", "기준량:비교하는 양"), 'data-result-contract="single-value"')}`;
-        const answerVisual = `${visual(true)}${mathBoard("막대와 비로 확인", row("기준량", `${base}`) + row("비교하는 양", `${compare}`) + row("답", answer))}`;
-        return fixedResult(`기준량과 비교하는 양의 차가 ${difference}이고, 비교하는 양은 기준량의 ${ratioNumerator === 7 ? "1.75" : ratioNumerator === 8 ? "1.6" : "1.5"}배입니다. 기준량과 비교하는 양의 비를 구하세요.`, answer, `비교하는 양은 기준량보다 ${difference}만큼 많습니다. ${base}와 ${compare}의 비를 가장 간단한 자연수의 비로 나타내면 ${answer}입니다.`, promptVisual, answerVisual, pools);
+        // 원문(예제 1-2): 비율이 1.75인 비 = 비교하는 양:기준량. 차가 21이므로 답은 49:28(간단히 하지 않은 비).
+        const ratioDecimal = String(ratioNumerator / ratioDenominator);
+        const answer = `${compare}:${base}`;
+        const unit = difference / (ratioNumerator - ratioDenominator);
+        const visual = solved => svg("기준량과 비교하는 양의 막대", `${bar(92, 35, 190 * base / compare, "기준", solved ? base : "?", solved)}${bar(92, 83, 190, "비교", solved ? compare : "?", solved)}${line(92, 139, 282, 139, 'class="source61-e4-measure"')}${text(187, 158, "차이", "font-size=\"11\"")}${solved ? solvedLabel(`비교:기준 = ${answer}`, 180, 195) : ""}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("주어진 관계", row("비율", ratioDecimal) + row("기준량과 비교하는 양의 차", `${difference}`) + row("구할 것", `비율이 ${ratioDecimal}인 비`), 'data-result-contract="single-value"')}`;
+        const answerVisual = `${visual(true)}${mathBoard("막대와 비로 확인", row("기준량", `${base}`) + row("비교하는 양", `${compare}`) + row("비율", `${compare}÷${base}=${ratioDecimal}`) + row("답", answer))}`;
+        return fixedResult(`기준량과 비교하는 양의 차가 ${difference}이고, 비율이 ${ratioDecimal}인 비를 구하세요.`, answer, `비율이 ${ratioDecimal}=${ratioNumerator}/${ratioDenominator}이므로 비교하는 양은 ${ratioNumerator}칸, 기준량은 ${ratioDenominator}칸입니다. 두 양의 차 ${ratioNumerator - ratioDenominator}칸이 ${difference}이므로 한 칸은 ${unit}입니다. 비교하는 양은 ${ratioNumerator}×${unit}=${compare}, 기준량은 ${ratioDenominator}×${unit}=${base}이므로 구하는 비는 (비교하는 양):(기준량)=${answer}입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 1) {
@@ -23760,10 +23817,12 @@
       if (variant === 5) {
         const pools = [[10, 7, 3, 14], [11, 8, 3, 16], [13, 9, 2, 9]][poolIndex];
         const [ga, na, topNumerator, topDenominator] = pools;
-        const visual = solved => svg("중점과 선분으로 나눈 사다리꼴", `<polygon points="58,174 112,48 286,48 320,174" fill="#edf6fb" stroke="#244b68" stroke-width="2"/><line class="source61-e4-route" x1="58" y1="111" x2="320" y2="174"/><line class="source61-e4-measure" x1="58" y1="111" x2="49" y2="111"/><line class="source61-e4-measure" x1="58" y1="105" x2="66" y2="117"/><line class="source61-e4-measure" x1="58" y1="99" x2="66" y2="111"/>${text(200, 28, solved ? `${topNumerator}:${topDenominator}` : "윗변", "font-size=\"12\"")}${text(190, 204, "아랫변", "font-size=\"12\"")}${text(215, 92, "가", "font-size=\"15\"")}${text(125, 150, "나", "font-size=\"15\"")}${text(112, 48, "ㄱ")}${text(286, 48, "ㄹ")}${text(58, 174, "ㄴ")}${text(320, 174, "ㄷ")}${text(58, 111, "ㅁ")}${solved ? `${text(137, 215, "윗변:아랫변 =", "font-size=\"12\"")}${svgMeasurementLabel({ x: 236, y: 212, value: fraction(topNumerator, topDenominator), unit: "" })}` : ""}`, pools, solved);
-        const promptVisual = `${visual(false)}${mathBoard("사다리꼴의 조건", row("점 ㅁ", "왼쪽 변의 중점") + row("선분", "점 ㅁ과 오른쪽 아래 꼭짓점을 연결") + row("가:나", `${ga}:${na}`) + row("구할 것", "윗변:아랫변"))}`;
-        const answerVisual = `${visual(true)}${mathBoard("넓이의 관계", row("가:나", `${ga}:${na}`) + row("윗변:아랫변", fractionText(topNumerator, topDenominator)) + row("확인", `(${ga}-${na}):${2 * na}=${topNumerator}:${topDenominator}`))}`;
-        return fixedResult(`사다리꼴 ㄱㄴㄷㄹ에서 점 ㅁ은 왼쪽 변의 중점입니다. 점 ㅁ과 오른쪽 아래 꼭짓점을 이은 선분이 사다리꼴을 가와 나로 나눕니다. 가와 나의 넓이의 비가 ${ga}:${na}일 때 윗변과 아랫변의 길이의 비를 구하세요.${promptVisual}`, fraction(topNumerator, topDenominator), `나의 넓이는 아랫변에 비례하고, 가와 나의 합에서 나를 뺀 만큼이 윗변의 두 배에 해당합니다. 따라서 윗변:아랫변=(${ga}-${na}):${2 * na}=${topNumerator}:${topDenominator}=${fractionText(topNumerator, topDenominator)}입니다.`, promptVisual, answerVisual, pools);
+        // 원문(Mission 3): 그림의 점 ㅁ은 변 ㄱㄴ의 가운데 점(같은 길이 표시 //), 선분 ㅁㄷ으로 가와 나를 나눔. 넓이의 비율 10/7, 물음은 윗변과 아랫변의 길이의 비율.
+        const tick = (cx, cy) => [-3, 3].map(offset => `<line class="source61-e4-measure" data-midpoint-tick="true" x1="${(cx + 0.394 * offset - 5.5).toFixed(1)}" y1="${(cy - 0.919 * offset - 2.4).toFixed(1)}" x2="${(cx + 0.394 * offset + 5.5).toFixed(1)}" y2="${(cy - 0.919 * offset + 2.4).toFixed(1)}"/>`).join("");
+        const visual = solved => svg("중점과 선분으로 나눈 사다리꼴", `<polygon points="58,174 112,48 286,48 320,174" fill="#edf6fb" stroke="#244b68" stroke-width="2"/><line class="source61-e4-route" x1="85" y1="111" x2="320" y2="174"/>${tick(98.5, 79.5)}${tick(71.5, 142.5)}<circle class="source61-e4-vertex" cx="85" cy="111" r="3" data-point-m="midpoint"/>${text(215, 92, "가", "font-size=\"15\"")}${text(140, 160, "나", "font-size=\"15\"")}${text(112, 40, "ㄱ")}${text(286, 40, "ㄹ")}${text(50, 186, "ㄴ")}${text(328, 186, "ㄷ")}${text(72, 108, "ㅁ")}${solved ? `${text(137, 215, "ㄱㄹ÷ㄴㄷ =", "font-size=\"12\"")}${svgMeasurementLabel({ x: 236, y: 212, value: fraction(topNumerator, topDenominator), unit: "" })}` : ""}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("사다리꼴의 조건", row("가와 나의 넓이의 비율", fractionText(ga, na)) + row("구할 것", "윗변 ㄱㄹ과 아랫변 ㄴㄷ의 길이의 비율"))}`;
+        const answerVisual = `${visual(true)}${mathBoard("넓이의 관계", row("가:나", `${ga}:${na}`) + row("ㄱㄹ:ㄴㄷ", `(${ga}-${na}):${2 * na}=${topNumerator}:${topDenominator}`) + row("답", fractionText(topNumerator, topDenominator)))}`;
+        return fixedResult(`다음 그림은 사다리꼴 ㄱㄴㄷㄹ을 가와 나의 넓이의 비율이 ${fractionText(ga, na)}이 되도록 두 부분으로 나눈 것입니다. 윗변 ㄱㄹ과 아랫변 ㄴㄷ의 길이의 비율을 구하세요.${promptVisual}`, fraction(topNumerator, topDenominator), `풀이 기준: 그림에서 점 ㅁ은 변 ㄱㄴ을 같은 길이로 나누는 점이고, 가는 사각형 ㄱㅁㄷㄹ, 나는 삼각형 ㅁㄴㄷ입니다. 사다리꼴의 높이를 □라 하면 나의 넓이는 ㄴㄷ×(□÷2)÷2이고, 사다리꼴 전체의 넓이는 (ㄱㄹ+ㄴㄷ)×□÷2입니다. 따라서 가:나=(ㄱㄹ×2+ㄴㄷ):ㄴㄷ=${ga}:${na}이고, ㄱㄹ×2:ㄴㄷ=${ga - na}:${na}이므로 ㄱㄹ:ㄴㄷ=${ga - na}:${2 * na}${(ga - na) === topNumerator ? "" : `=${topNumerator}:${topDenominator}`}입니다. 윗변 ㄱㄹ과 아랫변 ㄴㄷ의 길이의 비율은 ${fractionText(topNumerator, topDenominator)}입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 6) {
@@ -23780,10 +23839,12 @@
         const [baN, baD, bdN, bdD, daN, daD] = pools;
         const finalDecimal = daN / daD;
         const decimalText = String(Number(finalDecimal.toFixed(2)));
-        const visual = solved => svg("이어진 두 비의 화살표", `${bar(64, 28, 190, "가", 1, false)}${bar(64, 74, 190 * baN / baD, "나", "", false, "#fff0bd")}${svgMeasurementLabel({ x: 64 + 95 * baN / baD, y: 86, value: fraction(baN, baD), unit: "" })}${bar(64, 120, 190 * finalDecimal, "다", solved ? decimalText : "?", solved)}${line(254, 40, 254, 65, 'class="source61-e4-arrow"')}${line(254, 86, 254, 111, 'class="source61-e4-arrow"')}${text(288, 48, "가에 대한 나", "font-size=\"9\"")}${svgMeasurementLabel({ x: 340, y: 48, value: fraction(baN, baD), unit: "" })}${text(288, 94, "다에 대한 나", "font-size=\"9\"")}${svgMeasurementLabel({ x: 340, y: 94, value: fraction(bdN, bdD), unit: "" })}${solved ? solvedLabel(`가에 대한 다 = ${decimalText}`, 180, 195) : ""}`, pools, solved);
-        const promptVisual = `${visual(false)}${mathBoard("두 비가 이어짐", row("나/가", fractionText(baN, baD)) + row("나/다", fractionText(bdN, bdD)) + row("구할 것", "다/가를 소수로"))}`;
-        const answerVisual = `${visual(true)}${mathBoard("공통 분수 계산", row("다/가", `${fractionText(baN, baD)} ÷ ${fractionText(bdN, bdD)}`) + row("계산", `${fractionText(daN, daD)}=${decimalText}`) + row("답", decimalText))}`;
-        return fixedResult(`가, 나, 다 세 양이 있습니다. 가에 대한 나의 비율이 ${fractionText(baN, baD)}이고, 다에 대한 나의 비율이 ${fractionText(bdN, bdD)}일 때 가에 대한 다의 비율을 소수로 나타내세요.${promptVisual}`, decimalText, `다/가=(나/가)÷(나/다)=${fractionText(baN, baD)}÷${fractionText(bdN, bdD)}=${fractionText(daN, daD)}=${decimalText}입니다.`, promptVisual, answerVisual, pools);
+        // 원문(Mission 5): ㉮에 대한 ㉯의 비율은 4/5, ㉯와 ㉰의 비율은 0.625(소수). ㉯와 ㉰의 비율 = ㉯÷㉰.
+        const bdDecimal = String(bdN / bdD);
+        const visual = solved => svg("이어진 두 비의 화살표", `${bar(64, 28, 190, "가", 1, false)}${bar(64, 74, 190 * baN / baD, "나", "", false, "#fff0bd")}${svgMeasurementLabel({ x: 64 + 95 * baN / baD, y: 86, value: fraction(baN, baD), unit: "" })}${bar(64, 120, 190 * finalDecimal, "다", solved ? decimalText : "?", solved)}${line(254, 40, 254, 65, 'class="source61-e4-arrow"')}${line(254, 86, 254, 111, 'class="source61-e4-arrow"')}${text(288, 48, "가에 대한 나", "font-size=\"9\"")}${svgMeasurementLabel({ x: 340, y: 48, value: fraction(baN, baD), unit: "" })}${text(288, 94, "나와 다", "font-size=\"9\"")}${text(340, 94, bdDecimal, "font-size=\"11\"")}${solved ? solvedLabel(`가에 대한 다 = ${decimalText}`, 180, 195) : ""}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("두 비율이 이어짐", row("가에 대한 나의 비율", fractionText(baN, baD)) + row("나와 다의 비율", bdDecimal) + row("구할 것", "가에 대한 다의 비율을 소수로"))}`;
+        const answerVisual = `${visual(true)}${mathBoard("공통 분수 계산", row("나와 다의 비율", `${bdDecimal}=${fractionText(bdN, bdD)}`) + row("가에 대한 다의 비율", `${fractionText(baN, baD)} ÷ ${fractionText(bdN, bdD)}`) + row("계산", `${fractionText(daN, daD)}=${decimalText}`) + row("답", decimalText))}`;
+        return fixedResult(`가에 대한 나의 비율은 ${fractionText(baN, baD)}, 나와 다의 비율은 ${bdDecimal}일 때, 가에 대한 다의 비율을 소수로 나타내세요.${promptVisual}`, decimalText, `풀이 기준: 나와 다의 비율은 다를 기준량으로 한 나의 비율(나÷다)입니다. ${bdDecimal}=${fractionText(bdN, bdD)}이므로 (가에 대한 다의 비율)=(가에 대한 나의 비율)÷(다에 대한 나의 비율)=${fractionText(baN, baD)}÷${fractionText(bdN, bdD)}=${fractionText(daN, daD)}=${decimalText}입니다.`, promptVisual, answerVisual, pools);
       }
 
       const pools = [[48, 1, 8, 2, 1, 17, 10], [60, 1, 5, 3, 1, 2, 1], [64, 3, 8, 1, 4, 4, 7]][poolIndex];
@@ -23903,7 +23964,8 @@
       }
 
       if (variant === 4) {
-        const pools = [[500, 14, 11, 20, 10, 48], [600, 3, 2, 25, 20, 48], [700, 4, 3, 10, 20, 50]][poolIndex];
+        // 원문(예제 2-4): 남학생 수에 대한 여학생 수의 비율 14/11 → 남:여=11:14, 답 36%.
+        const pools = [[500, 11, 14, 20, 10, 36], [600, 3, 2, 25, 20, 48], [700, 4, 3, 10, 20, 50]][poolIndex];
         const [lastTotal, maleRatio, femaleRatio, maleDecrease, femaleIncrease, expected] = pools;
         const lastMale = lastTotal * maleRatio / (maleRatio + femaleRatio);
         const lastFemale = lastTotal - lastMale;
@@ -23912,10 +23974,10 @@
         const currentTotal = currentMale + currentFemale;
         const actual = Math.round(currentMale / currentTotal * 100);
         const visual = solved => svg("남녀 수의 변화", `<line x1="42" y1="150" x2="318" y2="150" stroke="#183b56" stroke-width="2"/><rect x="75" y="${150 - Math.min(90, lastMale / lastTotal * 100)}" width="55" height="${Math.min(90, lastMale / lastTotal * 100)}" fill="#edf6fb" stroke="#183b56"/><rect x="145" y="${150 - Math.min(90, lastFemale / lastTotal * 100)}" width="55" height="${Math.min(90, lastFemale / lastTotal * 100)}" fill="#fff0bd" stroke="#183b56"/><rect x="220" y="${150 - Math.min(90, currentMale / currentTotal * 100)}" width="38" height="${Math.min(90, currentMale / currentTotal * 100)}" fill="#edf6fb" stroke="#183b56"/><rect x="268" y="${150 - Math.min(90, currentFemale / currentTotal * 100)}" width="38" height="${Math.min(90, currentFemale / currentTotal * 100)}" fill="#fff0bd" stroke="#183b56"/>${text(102,175,"작년 남")}${text(172,175,"작년 여")}${text(239,175,"올해 남")}${text(287,175,"올해 여")}${text(102,28,`${lastMale}명`)}${text(172,28,`${lastFemale}명`)}${text(248,28,solved ? `${currentMale}명` : `남 ${maleDecrease}% 감소`)}${text(292,48,solved ? `${currentFemale}명` : `여 ${femaleIncrease}% 증가`)}${text(180,205,solved ? `올해 남학생 ${actual}%` : "올해 남학생의 백분율은 ?", "font-size=\"14\"")}`, pools, solved);
-        const promptVisual = `${visual(false)}${mathBoard("학생 수의 변화", row("작년 전체", `${lastTotal}명`) + row("작년 남:여", `${maleRatio}:${femaleRatio}`) + row("올해 남학생", `${maleDecrease}% 감소`) + row("올해 여학생", `${femaleIncrease}% 증가`) + row("구할 것", "올해 전체 학생 중 남학생의 백분율"), `data-source61-visual="gender-change-percentage"`)}`;
+        const promptVisual = `${visual(false)}${mathBoard("학생 수의 변화", row("작년 전체", `${lastTotal}명`) + row("남학생 수에 대한 여학생 수의 비율", fractionMarkup(femaleRatio, maleRatio)) + row("올해 남학생", `${maleDecrease}% 감소`) + row("올해 여학생", `${femaleIncrease}% 증가`) + row("구할 것", "올해 전체 학생 중 남학생의 백분율"), `data-source61-visual="gender-change-percentage"`)}`;
         const answerVisual = `${visual(true)}${mathBoard("올해 학생 수로 확인", row("올해 남학생", `${currentMale}명`) + row("올해 여학생", `${currentFemale}명`) + row("올해 전체", `${currentTotal}명`) + row("답", `${actual}%`))}`;
         if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
-        return fixedResult(`작년 전체 학생 수는 ${lastTotal}명이었고 남학생 수에 대한 여학생 수의 비는 ${fractionText(fractionValue(femaleRatio, maleRatio))}입니다. 올해 남학생은 작년보다 ${maleDecrease}% 줄고 여학생은 ${femaleIncrease}% 늘었습니다. 올해 전체 학생 수에 대한 남학생 수의 백분율을 일의 자리까지 반올림하여 나타내세요.${promptVisual}`, `${actual}%`, `작년 남학생은 ${lastTotal}×${maleRatio}÷${maleRatio + femaleRatio}=${lastMale}명, 여학생은 ${lastFemale}명입니다. 올해 남학생은 ${currentMale}명, 여학생은 ${currentFemale}명입니다. 올해 전체는 ${currentTotal}명이므로 남학생의 백분율은 ${currentMale}÷${currentTotal}×100을 반올림한 ${actual}%입니다.`, promptVisual, answerVisual, pools);
+        return fixedResult(`작년 준우네 학교의 6학년 학생은 ${lastTotal}명이었고 남학생 수에 대한 여학생 수의 비율은 ${fractionMarkup(femaleRatio, maleRatio)}이었습니다. 올해는 작년보다 남학생은 ${maleDecrease}% 줄었고, 여학생은 ${femaleIncrease}% 늘었습니다. 올해 전체 학생 수에 대한 남학생 수의 백분율을 반올림하여 일의 자리까지 나타내세요.${promptVisual}`, `${actual}%`, `남학생 수에 대한 여학생 수의 비율이 ${fractionMarkup(femaleRatio, maleRatio)}이므로 남학생 수:여학생 수=${maleRatio}:${femaleRatio}입니다. 작년 남학생은 ${lastTotal}×${maleRatio}÷${maleRatio + femaleRatio}=${lastMale}명, 여학생은 ${lastFemale}명입니다. 올해 남학생은 ${currentMale}명, 여학생은 ${currentFemale}명입니다. 올해 전체는 ${currentTotal}명이므로 남학생의 백분율은 ${currentMale}÷${currentTotal}×100을 반올림한 ${actual}%입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 5) {
@@ -24092,11 +24154,11 @@
         const simplePrincipal = rationalOperation(rationalValue(principal), simple, "+");
         const total = rationalOperation(simplePrincipal, compound, "+");
         const actual = Number(decimalRational(total, 1));
-        const visual = solved => svg("단리와 복리의 원리금", `<rect x="24" y="32" width="144" height="78" fill="#edf6fb" stroke="#183b56"/><rect x="192" y="32" width="144" height="78" fill="#fff0bd" stroke="#183b56"/>${text(96,53,"골드 통장")}${text(264,53,"스타 통장")}${text(96,76,`단리 ${simpleRate}%`)}${text(264,76,`복리 ${compoundRate}%`)}${text(96,98,`${years}년, ${principal}원`)}${text(264,98,`${years}년, ${principal}원`)}${solved ? text(180,155,`합계 ${actual}원`, "font-size=\"15\"") : text(180,155,"두 통장의 원리금 합 ?", "font-size=\"15\"")}${solved ? text(180,188,`단리 ${decimalRational(simple,1)}원 + 복리 ${decimalRational(compound,1)}원`, "font-size=\"11\"") : ""}`, pools, solved);
+        const visual = solved => svg("단리와 복리의 원리금", `<rect x="24" y="32" width="144" height="78" fill="#edf6fb" stroke="#183b56"/><rect x="192" y="32" width="144" height="78" fill="#fff0bd" stroke="#183b56"/>${text(96,53,"골드 통장")}${text(264,53,"스타 통장")}${text(96,76,`단리 이자 연 ${simpleRate}%`)}${text(264,76,`복리 이자 연 ${compoundRate}%`)}${text(96,98,`${years}년, ${principal}원`)}${text(264,98,`${years}년, ${principal}원`)}${solved ? text(180,155,`합계 ${actual}원`, "font-size=\"15\"") : text(180,155,"두 통장의 원리금 합 ?", "font-size=\"15\"")}${solved ? text(180,188,`단리 ${decimalRational(simple,1)}원 + 복리 ${decimalRational(compound,1)}원`, "font-size=\"11\"") : ""}`, pools, solved);
         const promptVisual = `${visual(false)}${mathBoard("이자를 계산하는 방법", row("단리", `원금에 ${simpleRate}%씩 ${years}번`) + row("복리", `원금과 이자를 합한 금액에 ${compoundRate}%씩 ${years}번`) + row("구할 것", "두 통장에서 찾는 원리금의 합"), `data-source61-visual="simple-compound-interest-sum"`)}`;
         const answerVisual = `${visual(true)}${mathBoard("해마다 계산하여 확인", row("단리 원리금", `${principal}+${decimalRational(simple,1)}=${principal + Number(decimalRational(simple,1))}원`) + row("복리 원리금", `${decimalRational(compound,1)}원`) + row("답", `${actual}원`))}`;
         if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}원이 아닙니다.`);
-        return fixedResult(`명주가 골드 통장과 스타 통장에 각각 ${principal}원을 예금하려고 합니다. 골드 통장은 단리 연 ${simpleRate}%, 스타 통장은 복리 연 ${compoundRate}%이고, 두 통장은 각각 한 번만 예금하며 이자는 1년에 한 번 받습니다. ${years}년 뒤 두 통장에서 찾을 수 있는 원리금의 합은 얼마인지 구하세요.${promptVisual}`, `${actual}원`, `단리 이자는 ${principal}×${simpleRate}÷100×${years}=${decimalRational(simple,1)}원입니다. 복리는 ${years}년 동안 해마다 원금과 이자를 합한 금액에 ${compoundRate}%를 곱하여 원리금을 ${decimalRational(compound,1)}원으로 계산합니다. 합은 ${actual}원입니다.`, promptVisual, answerVisual, pools);
+        return fixedResult(`은행에서 이자를 계산하는 방법에는 단리법과 복리법이 있습니다. 단리법은 원금에 대해서만 이자를 계산하는 방법이고, 복리법은 원금에 대한 이자를 원금에 더한 후 이 합계액을 새로운 원금으로 계산하는 방법입니다. 명주가 골드 통장과 스타 통장에 각각 ${principal}원을 예금하려고 합니다. 명주가 ${years}년 뒤에 두 통장에서 찾을 수 있는 원리금(원금과 이자의 합)의 합은 얼마인지 구하세요. (단, 두 통장은 각각 한 번만 예금하고, 이자는 1년에 한 번만 받습니다.)${promptVisual}`, `${actual}원`, `단리 이자는 ${principal}×${simpleRate}÷100×${years}=${decimalRational(simple,1)}원입니다. 복리는 ${years}년 동안 해마다 원금과 이자를 합한 금액에 ${compoundRate}%를 곱하여 원리금을 ${decimalRational(compound,1)}원으로 계산합니다. 합은 ${actual}원입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 3) {
@@ -24111,11 +24173,12 @@
         const promptVisual = `${visual(false)}${mathBoard("타율의 기준", row("현재 안타 수", `${currentAtBats}×${currentRatePercent / 100}=${currentHits}개`) + row("목표 전체 타율", `${targetRatePercent / 100} 이상`) + row("앞으로 칠 타수", `${futureAtBats}타수`) + row("구할 것", "앞으로의 타율"), `data-source61-visual="target-batting-average"`)}`;
         const answerVisual = `${visual(true)}${mathBoard("전체 타수로 확인", row("목표 안타 수", `${totalAtBats}×${targetRatePercent / 100}=${requiredHits}개`) + row("앞으로 필요한 안타", `${requiredHits}-${currentHits}=${requiredHits - currentHits}개`) + row("답", `${decimalRational(actual, 3)} 이상`))}`;
         if (actual.numerator !== expected.numerator || actual.denominator !== expected.denominator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 맞지 않습니다.`);
-        return fixedResult(`야구 선수의 현재까지 타수는 ${currentAtBats}타수이고 타율은 ${currentRatePercent / 100}입니다. 목표 타율이 ${targetRatePercent / 100} 이상일 때, 앞으로 ${futureAtBats}타수 동안의 타율은 얼마 이상이어야 하는지 구하세요.${promptVisual}`, `${decimalRational(actual, 3)} 이상`, `현재 안타는 ${currentHits}개입니다. 전체 타수는 ${totalAtBats}타수이고 목표 안타 수는 ${requiredHits}개 이상이어야 하므로 앞으로 ${requiredHits - currentHits}개 이상 쳐야 합니다. 따라서 앞으로의 타율은 ${decimalRational(actual, 3)} 이상입니다.`, promptVisual, answerVisual, pools);
+        return fixedResult(`야구 선수의 전체 타수에 대한 안타 수의 비율을 타율이라고 합니다. 이번 시즌 현재까지 타수가 ${currentAtBats}인 어떤 선수의 타율은 ${currentRatePercent / 100}인데 이 선수의 목표는 타율 ${targetRatePercent / 100} 이상입니다. 목표를 달성하려면 앞으로 ${futureAtBats}타수 동안의 타율이 얼마 이상이 되어야 하는지 구하세요.${promptVisual}`, `${decimalRational(actual, 3)} 이상`, `타율은 안타 수÷전체 타수이므로 현재 안타는 ${currentAtBats}×${currentRatePercent / 100}=${currentHits}개입니다. 전체 타수는 ${totalAtBats}타수이고 목표 안타 수는 ${requiredHits}개 이상이어야 하므로 앞으로 ${requiredHits - currentHits}개 이상 쳐야 합니다. 따라서 앞으로의 타율은 ${decimalRational(actual, 3)} 이상입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 4) {
-        const pools = [[1500, 45000, 34500, 13, 12, 33, 33, 10], [1600, 48000, 32000, 10, 14, 28, 2, 1], [1800, 54000, 36000, 15, 15, 30, 7, 3]][poolIndex];
+        // 원문(예제 3-4): 연비 정의, 연료통이 빈 일반 자동차, 답은 소수(3.3배). 소수로 묻기 때문에 pool 3은 나누어떨어지는 값(2.5배)으로 맞춤.
+        const pools = [[1500, 45000, 34500, 13, 12, 33, 33, 10], [1600, 48000, 32000, 10, 14, 28, 2, 1], [1800, 54000, 36000, 15, 14, 30, 5, 2]][poolIndex];
         const [price, normalCost, hybridExtraCost, hybridStartLiters, normalEfficiency, hybridEfficiency, expectedNumerator, expectedDenominator] = pools;
         const normalLiters = normalCost / price;
         const hybridLiters = hybridStartLiters + hybridExtraCost / price;
@@ -24123,12 +24186,14 @@
         const hybridDistance = hybridLiters * hybridEfficiency;
         const actual = rationalValue(hybridDistance, normalDistance);
         const expected = rationalValue(expectedNumerator, expectedDenominator);
-        const visual = solved => svg("일반 자동차와 하이브리드 자동차의 연비", `<rect x="22" y="28" width="148" height="112" fill="#edf6fb" stroke="#183b56"/><rect x="190" y="28" width="148" height="112" fill="#fff0bd" stroke="#183b56"/>${text(96,49,"일반 자동차")}${text(264,49,"하이브리드")}${text(96,73,solved ? `전체 ${normalLiters}L` : `${normalCost}원어치 주유`, "font-size=\"11\"")}${text(264,73,solved ? `전체 ${hybridLiters}L` : `기존 ${hybridStartLiters}L`, "font-size=\"11\"")}${text(96,97,`1L당 ${normalEfficiency}km`, "font-size=\"11\"")}${text(264,97,`1L당 ${hybridEfficiency}km`, "font-size=\"11\"")}${text(96,121,solved ? `${normalDistance}km` : "거리 ?", "font-size=\"12\"")}${text(264,121,solved ? `${hybridDistance}km` : `${hybridExtraCost}원어치 추가`, "font-size=\"11\"")}${solved ? svgMeasurementLabel({ x: 180, y: 183, value: fraction(actual.numerator, actual.denominator), unit: "배" }) : text(180,183,"몇 배 더 멀리 ?", "font-size=\"14\"")}`, pools, solved);
+        const answerDecimal = decimalRational(actual, 3);
+        if (actual.denominator * Number(answerDecimal) !== actual.numerator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 나누어떨어지는 소수가 아닙니다.`);
+        const visual = solved => svg("일반 자동차와 하이브리드 자동차의 연비", `<rect x="22" y="28" width="148" height="112" fill="#edf6fb" stroke="#183b56"/><rect x="190" y="28" width="148" height="112" fill="#fff0bd" stroke="#183b56"/>${text(96,49,"일반 자동차")}${text(264,49,"하이브리드")}${text(96,73,solved ? `전체 ${normalLiters}L` : `${normalCost}원어치 주유`, "font-size=\"11\"")}${text(264,73,solved ? `전체 ${hybridLiters}L` : `기존 ${hybridStartLiters}L`, "font-size=\"11\"")}${text(96,97,`연비 ${normalEfficiency}`, "font-size=\"11\"")}${text(264,97,`연비 ${hybridEfficiency}`, "font-size=\"11\"")}${text(96,121,solved ? `${normalDistance}km` : "거리 ?", "font-size=\"12\"")}${text(264,121,solved ? `${hybridDistance}km` : `${hybridExtraCost}원어치 추가`, "font-size=\"11\"")}${solved ? text(180,183,`${answerDecimal}배`, "font-size=\"14\"") : text(180,183,"몇 배 더 멀리 ?", "font-size=\"14\"")}`, pools, solved);
         const easyFuelGuide = level === 0 ? row("계산 순서", "주유한 기름 양 → 전체 기름 양 → 갈 수 있는 거리") : "";
-        const promptVisual = `${visual(false)}${mathBoard("연료와 거리의 비", row("일반 자동차", `${normalCost}원어치 주유, 1L당 ${normalEfficiency}km`) + row("하이브리드", `기존 ${hybridStartLiters}L에 ${hybridExtraCost}원어치 추가`) + row("기름 가격", `1L에 ${price}원`) + easyFuelGuide + row("구할 것", "하이브리드가 달린 거리의 몇 배인지"), `data-source61-visual="fuel-distance-multiple"`)}`;
-        const answerVisual = `${visual(true)}${mathBoard("달린 거리로 확인", row("일반 거리", `${normalLiters}×${normalEfficiency}=${normalDistance}km`) + row("하이브리드 거리", `${hybridLiters}×${hybridEfficiency}=${hybridDistance}km`) + row("답", `${fractionText(actual)}배`))}`;
+        const promptVisual = `${visual(false)}${mathBoard("연료와 거리의 비", row("일반 자동차", `연비 ${normalEfficiency}, 빈 연료통에 ${normalCost}원어치`) + row("하이브리드", `연비 ${hybridEfficiency}, ${hybridStartLiters}L에 ${hybridExtraCost}원어치 추가`) + row("기름 가격", `1L에 ${price}원`) + easyFuelGuide + row("구할 것", "하이브리드가 달린 거리의 몇 배인지"), `data-source61-visual="fuel-distance-multiple"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("달린 거리로 확인", row("일반 거리", `${normalLiters}×${normalEfficiency}=${normalDistance}km`) + row("하이브리드 거리", `${hybridLiters}×${hybridEfficiency}=${hybridDistance}km`) + row("답", `${answerDecimal}배`))}`;
         if (actual.numerator !== expected.numerator || actual.denominator !== expected.denominator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 맞지 않습니다.`);
-        return fixedResult(`연료 1L의 가격이 ${price}원입니다. 일반 자동차에는 연료를 ${normalCost}원어치 넣고 연료 1L로 ${normalEfficiency}km를 갑니다. 하이브리드 자동차에는 연료가 ${hybridStartLiters}L 들어 있었고 ${hybridExtraCost}원어치를 더 넣었으며 연료 1L로 ${hybridEfficiency}km를 갑니다. 연료가 다 떨어질 때까지 달린다면 하이브리드 자동차는 일반 자동차보다 몇 배 더 멀리 갈 수 있는지 소수 또는 분수로 나타내세요.${promptVisual}`, `${plainFractionText(actual)}배`, `일반 자동차는 ${normalLiters}L로 ${normalDistance}km를 갑니다. 하이브리드는 ${hybridLiters}L로 ${hybridDistance}km를 가므로 ${hybridDistance}÷${normalDistance}=${fractionText(actual)}배입니다.`, promptVisual, answerVisual, pools);
+        return fixedResult(`연비는 연료의 양(L)에 대한 달린 거리(km)의 비율을 나타냅니다. 연비가 ${hybridEfficiency}인 하이브리드 자동차와 연비가 ${normalEfficiency}인 일반 자동차가 있습니다. 연료 1L의 가격이 ${price}원일 때 연료통이 빈 일반 자동차에는 연료를 ${normalCost}원어치 넣고, 연료가 ${hybridStartLiters}L 들어 있던 하이브리드 자동차에는 연료를 ${hybridExtraCost}원어치 더 넣었습니다. 연료가 다 떨어질 때까지 달린다면 하이브리드 자동차는 일반 자동차보다 몇 배 더 멀리 갈 수 있는지 소수로 나타내세요.${promptVisual}`, `${answerDecimal}배`, `연비는 연료 1L로 달린 거리(km)입니다. 일반 자동차의 연료는 ${normalCost}÷${price}=${normalLiters}L이므로 ${normalLiters}×${normalEfficiency}=${normalDistance}km를 갑니다. 하이브리드 자동차의 연료는 ${hybridStartLiters}+${hybridExtraCost}÷${price}=${hybridLiters}L이므로 ${hybridLiters}×${hybridEfficiency}=${hybridDistance}km를 갑니다. 따라서 ${hybridDistance}÷${normalDistance}=${answerDecimal}배입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 5) {
@@ -24151,10 +24216,10 @@
         const losingVotes = (validVotes - winningDifference) / 2;
         const actual = losingVotes / totalVotes * 100;
         const visual = solved => svg("무효표를 제외한 득표수", `<rect x="28" y="32" width="304" height="38" fill="#edf6fb" stroke="#183b56"/>${text(180,56,`총 ${totalVotes}표 중 무효 ${invalidVotes}표`)}${line(180,70,180,100)}<rect x="48" y="100" width="116" height="38" fill="#fff0bd" stroke="#183b56"/><rect x="196" y="100" width="116" height="38" fill="#edf6fb" stroke="#183b56"/>${text(106,124,solved ? `현우 ${losingVotes}표` : "현우 ?표", "font-size=\"11\"")}${text(254,124,solved ? `상우 ${losingVotes + winningDifference}표` : "상우 ?표", "font-size=\"11\"")}${solved ? text(180,178,`현우 득표율 ${actual}%`, "font-size=\"14\"") : text(180,178,"현우의 득표율 ?", "font-size=\"14\"")}`, pools, solved);
-        const promptVisual = `${visual(false)}${mathBoard("득표율의 기준", row("유효표", `${totalVotes}-${invalidVotes}=${validVotes}표`) + row("상우가 더 받은 표", `${winningDifference}표`) + row("구할 것", "현우의 득표율"), `data-source61-visual="invalid-vote-rate"`)}`;
+        const promptVisual = `${visual(false)}${mathBoard("득표율의 기준", row("총투표수", `${totalVotes}표`) + row("무효표", `${invalidVotes}표`) + row("상우가 더 받은 표", `${winningDifference}표`) + row("구할 것", "현우의 득표율(총 투표수에 대한 얻은 표의 비율)"), `data-source61-visual="invalid-vote-rate"`)}`;
         const answerVisual = `${visual(true)}${mathBoard("유효표로 확인", row("현우 표", `(${validVotes}-${winningDifference})÷2=${losingVotes}표`) + row("현우 득표율", `${losingVotes}÷${totalVotes}×100=${actual}%`) + row("답", `${actual}%`))}`;
         if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
-        return fixedResult(`상우네 학교 전교 어린이회장 선거에서 상우와 현우가 출마하였습니다. 총투표수 ${totalVotes}표 중 무효는 ${invalidVotes}표였고, 상우가 현우보다 ${winningDifference}표를 더 얻어 당선되었습니다. 현우의 득표율은 몇 %인지 구하세요.${promptVisual}`, `${actual}%`, `유효표는 ${validVotes}표입니다. 현우 표를 가라 하면 상우 표는 가+${winningDifference}표이므로 ${validVotes}에서 차를 빼고 2로 나누면 ${losingVotes}표입니다. 전체 투표수에 대한 비율은 ${losingVotes}÷${totalVotes}×100=${actual}%입니다.`, promptVisual, answerVisual, pools);
+        return fixedResult(`상우네 학교 전교 어린이회장 선거에 상우와 현우가 출마하였습니다. 총투표수 ${totalVotes}표 중에서 무효는 ${invalidVotes}표였고 상우가 현우보다 ${winningDifference}표를 더 얻어 당선되었습니다. 현우의 득표율(총 투표수에 대한 얻은 표의 비율)은 몇 %입니까?${promptVisual}`, `${actual}%`, `유효표는 ${validVotes}표입니다. 현우 표를 가라 하면 상우 표는 가+${winningDifference}표이므로 ${validVotes}에서 차를 빼고 2로 나누면 ${losingVotes}표입니다. 득표율은 총 투표수에 대한 얻은 표의 비율이므로 ${losingVotes}÷${totalVotes}×100=${actual}%입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 7) {
@@ -24167,10 +24232,10 @@
         const popA = pools.popB - pools.difference;
         const densities = [popA / areaA, pools.popB / areaB, pools.popC / areaC];
         const visual = solved => svg("세 도시의 넓이와 인구 표", `<rect x="28" y="30" width="304" height="116" fill="#fff" stroke="#183b56"/><line x1="28" y1="68" x2="332" y2="68" stroke="#183b56"/><line x1="28" y1="107" x2="332" y2="107" stroke="#183b56"/><line x1="105" y1="30" x2="105" y2="146" stroke="#183b56"/><line x1="181" y1="30" x2="181" y2="146" stroke="#183b56"/><line x1="257" y1="30" x2="257" y2="146" stroke="#183b56"/>${text(66,54,"도시")}${text(143,54,"가")}${text(219,54,"나")}${text(295,54,"다")}${text(66,93,"넓이")}${text(143,93,`${areaA}km²`, "font-size=\"11\"")}${text(219,93,`${areaB}km²`, "font-size=\"11\"")}${text(295,93,`${areaC}km²`, "font-size=\"11\"")}${text(66,132,"인구")}${text(143,132,solved ? `${popA}` : "□", "font-size=\"11\"")}${text(219,132,`${pools.popB}`, "font-size=\"10\"")}${text(295,132,`${pools.popC}`, "font-size=\"10\"")}${solved ? text(180,190,`가: 1 km²당 ${pools.expected}명`, "font-size=\"14\"") : text(180,190,"가 인구 밀도 ?", "font-size=\"14\"")}`, [areaA, areaB, areaC, pools.popB, pools.popC, pools.difference], solved);
-        const promptVisual = `${visual(false)}${mathBoard("인구 밀도 표", row("가 인구", "다 도시보다 적음") + row("가·나 인구 차", `${pools.difference}명`) + row("가·나·다 밀도", "나가 가장 높고 가가 가장 낮음") + row("구할 것", "가 도시의 인구 밀도"), `data-source61-visual="population-density-table"`)}`;
+        const promptVisual = `${visual(false)}${mathBoard("인구 밀도 표", row("가 인구", "다 도시보다 적음") + row("인구 밀도가 가장 높은 도시와 가장 낮은 도시의 인구의 차", `${pools.difference}명`) + row("구할 것", "가 도시의 인구 밀도"), `data-source61-visual="population-density-table"`)}`;
         const answerVisual = `${visual(true)}${mathBoard("세 도시를 비교하여 확인", row("가 인구", `${pools.popB}-${pools.difference}=${popA}명`) + row("가 밀도", `1 km²당 ${popA}÷${areaA}=${pools.expected}명`) + row("밀도 비교", `${densities.join(", ")}명`) + row("답", `1 km²당 ${pools.expected}명`))}`;
-        if (densities[1] <= densities[0] || densities[1] <= densities[2] || densities[0] >= densities[2] || densities[0] !== pools.expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 도시 밀도 조건이 맞지 않습니다.`);
-        return fixedResult(`가, 나, 다 세 도시의 넓이와 인구를 조사한 표입니다. 인구 밀도가 가장 높은 도시는 나이고 가장 낮은 도시는 가입니다. 가장 높은 도시와 가장 낮은 도시의 인구 차가 ${pools.difference}명일 때, 가 도시의 인구 밀도를 구하세요. 단, 가 도시의 인구는 다 도시보다 적습니다.${promptVisual}`, `1 km²당 ${pools.expected}명`, `나의 인구 ${pools.popB}명에서 차를 빼면 가의 인구는 ${popA}명입니다. 세 도시의 1 km²당 인구를 계산하면 가 ${pools.expected}명, 나 ${densities[1]}명, 다 ${densities[2]}명이므로 조건에 맞습니다.`, promptVisual, answerVisual, [areaA, areaB, areaC, pools.popB, pools.popC, pools.difference, pools.expected]);
+        if (densities[1] <= densities[0] || densities[1] <= densities[2] || densities[0] >= densities[2] || densities[0] !== pools.expected || densities[1] * areaA < pools.popC || pools.popB - pools.popC === pools.difference || popA >= pools.popC) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 도시 밀도 조건이 맞지 않습니다.`);
+        return fixedResult(`다음은 가, 나, 다 세 도시의 넓이와 인구를 조사한 것입니다. 인구 밀도가 가장 높은 도시와 가장 낮은 도시의 인구의 차는 ${pools.difference}명일 때, 가 도시의 인구 밀도를 구하세요. (단, 가 도시의 인구는 다 도시보다 적습니다.)${promptVisual}`, `1 km²당 ${pools.expected}명`, `나 도시의 인구 밀도는 ${pools.popB}÷${areaB}=${densities[1]}명, 다 도시의 인구 밀도는 ${pools.popC}÷${areaC}=${densities[2]}명입니다. 가 도시가 나 도시와 인구 밀도가 같다면 가 도시의 인구는 ${densities[1]}×${areaA}=${densities[1] * areaA}명이어야 하는데, 가 도시의 인구는 다 도시의 ${pools.popC}명보다 적으므로 가 도시의 인구 밀도는 나 도시보다 낮습니다. 따라서 인구 밀도가 가장 높은 도시는 나입니다. 가장 낮은 도시가 다라면 인구의 차는 ${pools.popB}-${pools.popC}=${pools.popB - pools.popC}명이 되어 조건에 맞지 않으므로 가장 낮은 도시는 가입니다. 가 도시의 인구는 ${pools.popB}-${pools.difference}=${popA}명이고, 인구 밀도는 ${popA}÷${areaA}=${pools.expected}명으로 다 도시보다 낮아 조건에 맞습니다. 따라서 가 도시의 인구 밀도는 1 km²당 ${pools.expected}명입니다.`, promptVisual, answerVisual, [areaA, areaB, areaC, pools.popB, pools.popC, pools.difference, pools.expected]);
       }
 
       if (variant === 8) {
@@ -24213,10 +24278,11 @@
       const highestIncomeIndex = indices.reduce((best, value, index) => value.numerator * indices[best].denominator < indices[best].numerator * value.denominator ? index : best, 0);
       const actual = foods[highestIncomeIndex];
       const visual = solved => svg("세 가구의 지출액과 식료품비 표", `<rect x="24" y="25" width="312" height="112" fill="#fff" stroke="#183b56"/><line x1="24" y1="62" x2="336" y2="62" stroke="#183b56"/><line x1="24" y1="99" x2="336" y2="99" stroke="#183b56"/><line x1="102" y1="25" x2="102" y2="137" stroke="#183b56"/><line x1="180" y1="25" x2="180" y2="137" stroke="#183b56"/><line x1="258" y1="25" x2="258" y2="137" stroke="#183b56"/>${text(63,48,"구분")}${text(141,48,"가")}${text(219,48,"나")}${text(297,48,"다")}${text(63,85,"전체 지출")}${text(141,85,`${totals[0]}만 원`)}${text(219,85,`${totals[1]}만 원`)}${text(297,85,`${totals[2]}만 원`)}${text(63,122,"식료품비")}${text(141,122,`${foodA}만 원`)}${text(219,122,solved ? `${displayFood(foods[1])}만 원` : "□")}${text(297,122,solved ? `${displayFood(foods[2])}만 원` : "□")}${solved ? text(180,174,`가 ${percentText(indexA)}%, 나 ${percentText(indexB)}%, 다 ${percentText(indexC)}%`, "font-size=\"11\"") : text(180,174,"소득이 가장 높은 가구의 식료품비 ?", "font-size=\"13\"")}`, pools, solved);
-      const promptVisual = `${visual(false)}${mathBoard("엥겔 지수의 관계", row("엥겔 지수", "식료품비 ÷ 전체 지출액") + row("나의 지수", `가의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배`) + row("다의 지수", `나의 ${fractionMarkup(indexCNumerator, indexCDenominator)}배`) + row("구할 것", "소득 수준이 가장 높은 가구의 식료품비"), `data-source61-visual="engel-index-food-cost"`)}`;
+      const indexCDecimal = String(indexCNumerator / indexCDenominator);
+      const promptVisual = `${visual(false)}${mathBoard("엥겔 지수의 관계", row("엥겔 지수", "식료품비 ÷ 전체 지출액") + row("나의 지수", `가의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배`) + row("다의 지수", `나의 ${indexCDecimal}배`) + row("구할 것", "소득 수준이 가장 높은 가구의 식료품비"), `data-source61-visual="engel-index-food-cost"`)}`;
       const answerVisual = `${visual(true)}${mathBoard("엥겔 지수로 확인", row("가의 지수", `${foodA}÷${totals[0]}=${percentText(indexA)}%`) + row("나의 식료품비", `${totals[1]}×${percentText(indexB)}%=${displayFood(foods[1])}만원`) + row("다의 식료품비", `${totals[2]}×${percentText(indexC)}%=${displayFood(foods[2])}만원`) + row("답", `${displayFood(actual)}만원`))}`;
       if (highestIncomeIndex !== 1 || actual.denominator !== 1 || actual.numerator !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 엥겔 지수 답이 맞지 않습니다.`);
-      return fixedResult(`가, 나, 다 세 가구의 전체 지출액 중에서 식료품비가 차지하는 비율을 엥겔 지수라고 합니다. 엥겔 지수는 소득 수준이 높아짐에 따라 점차 감소합니다. 엥겔 지수는 나 가구가 가 가구의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배이고, 다 가구가 나 가구의 ${fractionMarkup(indexCNumerator, indexCDenominator)}배라고 할 때 세 가구 중 소득 수준이 가장 높은 가구의 식료품비는 얼마인지 구하세요.${promptVisual}`, `${expected}만원`, `가의 엥겔 지수는 ${percentText(indexA)}%입니다. 나와 다의 지수를 차례로 계산하면 나 ${percentText(indexB)}%, 다 ${percentText(indexC)}%입니다. 가장 낮은 나의 지수가 소득이 가장 높은 가구를 뜻하므로 나의 식료품비 ${displayFood(actual)}만원이 답입니다.`, promptVisual, answerVisual, pools);
+      return fixedResult(`가계의 전체 지출액 중에서 식료품비가 차지하는 비율을 엥겔 지수라고 합니다. 엥겔 지수는 소득 수준이 높아짐에 따라 점차 감소합니다. 엥겔 지수는 나 가구가 가 가구의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배이고, 다 가구가 나 가구의 ${indexCDecimal}배라고 할 때 세 가구 중 소득 수준이 가장 높은 가구의 식료품비는 얼마인지 구하세요.${promptVisual}`, `${expected}만원`, `가의 엥겔 지수는 ${foodA}÷${totals[0]}=${percentText(indexA)}%입니다. 나의 지수는 가의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배, 다의 지수는 나의 ${indexCDecimal}배이므로 차례로 계산하면 나 ${percentText(indexB)}%, 다 ${percentText(indexC)}%입니다. 가장 낮은 나의 지수가 소득이 가장 높은 가구를 뜻하므로 나의 식료품비 ${displayFood(actual)}만원이 답입니다.`, promptVisual, answerVisual, pools);
     },
     sourceGrade6RatioE4({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -24274,17 +24340,21 @@
       };
 
       if (variant === 0) {
-        const pools = [[20, 2400000, 60, 12, 2, 30], [18, 1800000, 50, 10, 2, 20], [24, 3000000, 40, 15, 2, 25]][poolIndex];
-        const [count, totalCost, profitRate, regularSold, costSold, discountRate] = pools;
+        // 원문(개념탐구 4 (1)): 수박 20개를 24만 원(240000원)에, 사 온 수박의 60%는 정가대로. 다른 pool도 같은 구조(정가 판매는 사 온 수박의 몇 %)로 맞춤.
+        const pools = [[20, 240000, 60, 60, 2, 30], [18, 180000, 50, 50, 2, 20], [24, 300000, 40, 50, 2, 25]][poolIndex];
+        const [count, totalCost, profitRate, regularPercent, costSold, discountRate] = pools;
+        const regularSold = count * regularPercent / 100;
+        if (!Number.isInteger(regularSold)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 정가 판매 수가 자연수가 아닙니다.`);
+        const wonText = value => value % 10000 === 0 ? `${value / 10000}만 원` : `${value}원`;
         const costEach = totalCost / count;
         const listEach = costEach * (100 + profitRate) / 100;
         const discountedSold = count - regularSold - costSold - 1;
         const saleTotal = regularSold * listEach + costSold * costEach + discountedSold * listEach * (100 - discountRate) / 100;
         const profit = saleTotal - totalCost;
-        const visual = solved => tableSvg("수박의 판매 방법", [["전체 수량", `${count}개`, `${count}개`], ["개당 원가", "?원", `${costEach}원`], ["정가", `원가의 ${profitRate}% 이익`, `${listEach}원`], ["판매 수량", `${regularSold}개 정가 · ${costSold}개 원가 · ${discountedSold}개 할인`, `${regularSold}개 정가 · ${costSold}개 원가 · ${discountedSold}개 ${100 - discountRate}%`]], pools, solved, `${profit}원`);
-        const promptVisual = `${visual(false)}${mathBoard("판매 조건", row("정가", `원가에 ${profitRate}% 이익`) + row("판매", `${regularSold}개 정가, 1개 사용, ${costSold}개 원가, 나머지는 ${discountRate}% 할인`) + row("구할 것", "팔아 얻은 이익"), `data-source61-visual="profit-and-discount"`)}`;
-        const answerVisual = `${visual(true)}${mathBoard("가격별 수입으로 확인", row("개당 원가", `${totalCost}÷${count}=${costEach}원`) + row("개당 정가", `${costEach}×${100 + profitRate}÷100=${listEach}원`) + row("이익", `${saleTotal}-${totalCost}=${profit}원`) + row("답", `${profit}원`))}`;
-        return fixedResult(`수박 ${count}개를 모두 ${totalCost}원에 사 와서 개당 원가에 ${profitRate}%의 이익을 붙여 정가를 정했습니다. ${regularSold}개는 정가로 팔고 1개는 사용했으며, ${costSold}개는 원가로 팔고 나머지는 정가에서 ${discountRate}% 할인하여 팔았습니다. 수박을 팔아 얻은 이익은 얼마인지 구하세요.${promptVisual}`, `${profit}원`, `개당 원가는 ${totalCost}÷${count}=${costEach}원이고 정가는 ${costEach}×${100 + profitRate}÷100=${listEach}원입니다. 판매액에서 전체 원가를 빼면 ${saleTotal}-${totalCost}=${profit}원이므로 답은 ${profit}원입니다.`, promptVisual, answerVisual, pools);
+        const visual = solved => tableSvg("수박의 판매 방법", [["전체 수량", `${count}개`, `${count}개`], ["개당 원가", "?원", `${costEach}원`], ["정가", `원가의 ${profitRate}% 이익`, `${listEach}원`], ["판매 수량", `${regularPercent}% 정가 · ${costSold}개 원가 · 나머지 할인`, `${regularSold}개 정가 · ${costSold}개 원가 · ${discountedSold}개 ${100 - discountRate}%`]], pools, solved, `${profit}원`);
+        const promptVisual = `${visual(false)}${mathBoard("판매 조건", row("정가", `원가에 ${profitRate}% 이익`) + row("판매", `사 온 수박의 ${regularPercent}% 정가, 1개 시식, ${costSold}개 원가, 나머지는 정가의 ${discountRate}% 할인`) + row("구할 것", "팔아 얻은 이익"), `data-source61-visual="profit-and-discount"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("가격별 수입으로 확인", row("개당 원가", `${totalCost}÷${count}=${costEach}원`) + row("정가 판매", `${count}×${regularPercent}÷100=${regularSold}개`) + row("개당 정가", `${costEach}×${100 + profitRate}÷100=${listEach}원`) + row("이익", `${saleTotal}-${totalCost}=${profit}원`) + row("답", `${profit}원`))}`;
+        return fixedResult(`어느 과일가게에서 수박 ${count}개를 ${wonText(totalCost)}에 사 와서 개당 ${profitRate}%의 이익을 붙여 가격(정가)을 정하였습니다. 사 온 수박의 ${regularPercent}%는 정가대로 판매하였으나 1개는 시식용으로 사용하였고 ${costSold}개는 원가(사 온 가격)로 팔았고 나머지는 정가의 ${discountRate}%를 할인하여 모두 판매하였습니다. 이 가게에서 수박을 팔아 얻은 이익은 얼마입니까?${promptVisual}`, `${profit}원`, `${wonText(totalCost)}은 ${totalCost}원이므로 개당 원가는 ${totalCost}÷${count}=${costEach}원이고 정가는 ${costEach}×${100 + profitRate}÷100=${listEach}원입니다. 정가대로 판 수박은 ${count}×${regularPercent}÷100=${regularSold}개, 시식용 1개와 원가로 판 ${costSold}개를 빼면 할인하여 판 수박은 ${discountedSold}개이고 한 개에 ${listEach}×${100 - discountRate}÷100=${listEach * (100 - discountRate) / 100}원에 팔았습니다. 판매액은 ${regularSold}×${listEach}+${costSold}×${costEach}+${discountedSold}×${listEach * (100 - discountRate) / 100}=${saleTotal}원입니다. 판매액에서 전체 원가를 빼면 ${saleTotal}-${totalCost}=${profit}원이므로 답은 ${profit}원입니다.`, promptVisual, answerVisual, pools);
       }
 
       if (variant === 1) {
@@ -24494,12 +24564,13 @@
         const total = (boyPlus + girlPlus) * common / (common - boyN * girlD - girlN * boyD);
         const boys = total * boyN / boyD + boyPlus;
         const girls = total * girlN / girlD + girlPlus;
-        const divisor = gcd(boys, girls);
-        const ratio = `${boys / divisor}:${girls / divisor}`;
-        const visual = solved => tableSvg("6학년 남녀 학생 수", [["남학생", `${boyN}/${boyD} · 전체보다 ${boyPlus}명 많음`, `${boys}명`], ["여학생", `${girlN}/${girlD} · 전체보다 ${girlPlus}명 많음`, `${girls}명`], ["전체", "?", `${total}명`], ["남학생:여학생", "?", ratio]], values, solved, ratio);
+        // 원문(예제 5-1): 물음은 '남학생 수의 여학생 수에 대한 비율을 분수로'(남학생÷여학생). 답 107/82.
+        const ratio = fraction(boys, girls);
+        const ratioHtml = fractionMarkup(boys, girls);
+        const visual = solved => tableSvg("6학년 남녀 학생 수", [["남학생", `${boyN}/${boyD} · 전체보다 ${boyPlus}명 많음`, `${boys}명`], ["여학생", `${girlN}/${girlD} · 전체보다 ${girlPlus}명 많음`, `${girls}명`], ["전체", "?", `${total}명`], ["남학생÷여학생", "?", ratio]], values, solved, ratio);
         const promptVisual = `${visual(false)}${mathBoard("전체 학생 수를 □명이라 하기", row("남학생", `${fractionMarkup(boyN, boyD)}×□+${boyPlus}`) + row("여학생", `${fractionMarkup(girlN, girlD)}×□+${girlPlus}`))}`;
-        const answerVisual = `${visual(true)}${mathBoard("남학생과 여학생의 합", row("전체", `${total}명`) + row("남학생", `${boys}명`) + row("여학생", `${girls}명`) + row("답", ratio))}`;
-        return fixedResult(`6학년 남학생은 전체 학생 수의 ${fractionMarkup(boyN, boyD)}보다 ${boyPlus}명 더 많고, 여학생은 전체 학생 수의 ${fractionMarkup(girlN, girlD)}보다 ${girlPlus}명 더 많습니다. 남학생 수와 여학생 수의 비를 기약비로 나타내세요.${promptVisual}`, ratio, `전체를 □명이라 하여 두 식의 합이 □가 되도록 풀면 전체는 ${total}명입니다. 남학생 ${boys}명, 여학생 ${girls}명이므로 기약비는 ${ratio}입니다.`, promptVisual, answerVisual, values);
+        const answerVisual = `${visual(true)}${mathBoard("남학생과 여학생의 합", row("전체", `${total}명`) + row("남학생", `${boys}명`) + row("여학생", `${girls}명`) + row("답", ratioHtml))}`;
+        return fixedResult(`준혁이네 학교 6학년 남학생은 6학년 전체 학생 수의 ${fractionMarkup(boyN, boyD)}보다 ${boyPlus}명 더 많고, 6학년 여학생은 6학년 전체 학생 수의 ${fractionMarkup(girlN, girlD)}보다 ${girlPlus}명 더 많습니다. 준혁이네 학교 6학년 남학생 수의 여학생 수에 대한 비율을 분수로 나타내세요.${promptVisual}`, ratio, `6학년 전체 학생 수를 □명이라 하면 남학생은 ${fractionMarkup(boyN, boyD)}×□+${boyPlus}, 여학생은 ${fractionMarkup(girlN, girlD)}×□+${girlPlus}이고 두 수의 합이 □입니다. ${fractionMarkup(boyN, boyD)}+${fractionMarkup(girlN, girlD)}=${fractionMarkup(boyN * girlD + girlN * boyD, common)}이므로 □의 ${fractionMarkup(common - boyN * girlD - girlN * boyD, common)}이 ${boyPlus + girlPlus}명이고 전체는 ${total}명입니다. 남학생은 ${boys}명, 여학생은 ${girls}명이므로 남학생 수의 여학생 수에 대한 비율은 ${ratioHtml}입니다.`, promptVisual, answerVisual, values);
       }
 
       if (variant === 2) {
@@ -24516,14 +24587,16 @@
       if (variant === 3) {
         const values = [[15, 3, 9, 5], [12, 3, 9, 4], [6, 4, 8, 3]][poolIndex];
         const [aw, ah, bw, bh] = values;
-        const pa = 2 * (aw + ah), pb = 2 * (bw + bh), divisor = gcd(pa, pb), ratio = `${pa / divisor}:${pb / divisor}`;
+        // 원문(예제 5-3): ㉮의 가로와 세로의 길이의 비율 5, ㉯는 9/5, 물음은 둘레의 비율(답 9/7). 넓이가 같은 실제 길이(15×3, 9×5)는 풀이에서만 씀.
+        const pa = 2 * (aw + ah), pb = 2 * (bw + bh), ratio = fraction(pa, pb), ratioHtml = fractionMarkup(pa, pb);
+        const ratioA = fractionMarkup(aw, ah), ratioB = fractionMarkup(bw, bh);
         const visualArea = 4000;
         const aWidth = Math.sqrt(visualArea * aw / ah), aHeight = visualArea / aWidth;
         const bWidth = Math.sqrt(visualArea * bw / bh), bHeight = visualArea / bWidth;
-        const visual = solved => `<svg class="geometry-diagram source61-ratio-e5-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 240" role="img" aria-label="넓이가 같은 두 직사각형" data-source61-ratio-e5-structure="equal-area-rectangles" data-source61-ratio-e5-values="${values.join(",")}" data-equal-area-model="true"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}><rect class="source61-e5-equal-area-a" x="${100 - aWidth / 2}" y="${105 - aHeight / 2}" width="${aWidth}" height="${aHeight}" fill="#e8f3f8" stroke="#183b56" stroke-width="2"/><rect class="source61-e5-equal-area-b" x="${260 - bWidth / 2}" y="${105 - bHeight / 2}" width="${bWidth}" height="${bHeight}" fill="#fff3cf" stroke="#183b56" stroke-width="2"/>${svgText(100, 48, `가 ${aw}:${ah}`)}${svgText(260, 48, `나 ${bw}:${bh}`)}${svgText(180, 165, "두 넓이는 같음")}${solved ? `<rect x="80" y="190" width="200" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(180, 209, `둘레의 비 ${ratio}`)}` : svgText(180, 209, "둘레의 비는 ?")}</svg>`;
-        const promptVisual = `${visual(false)}${mathBoard("넓이가 같도록 실제 길이 놓기", row("가", `${aw}×${ah}`) + row("나", `${bw}×${bh}`))}`;
-        const answerVisual = `${visual(true)}${mathBoard("두 둘레를 비교", row("가의 둘레", `${pa}`) + row("나의 둘레", `${pb}`) + row("답", ratio))}`;
-        return fixedResult(`넓이가 같은 두 직사각형 가와 나가 있습니다. 가의 가로와 세로의 비는 ${aw}:${ah}, 나의 가로와 세로의 비는 ${bw}:${bh}일 때 가와 나의 둘레의 비를 기약비로 나타내세요.${promptVisual}`, ratio, `넓이가 같도록 가를 ${aw}×${ah}, 나를 ${bw}×${bh}로 놓을 수 있습니다. 둘레 ${pa}와 ${pb}의 비를 줄이면 ${ratio}입니다.`, promptVisual, answerVisual, values);
+        const visual = solved => `<svg class="geometry-diagram source61-ratio-e5-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 240" role="img" aria-label="넓이가 같은 두 직사각형" data-source61-ratio-e5-structure="equal-area-rectangles" data-source61-ratio-e5-values="${values.join(",")}" data-equal-area-model="true"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}><rect class="source61-e5-equal-area-a" x="${100 - aWidth / 2}" y="${105 - aHeight / 2}" width="${aWidth}" height="${aHeight}" fill="#e8f3f8" stroke="#183b56" stroke-width="2"/><rect class="source61-e5-equal-area-b" x="${260 - bWidth / 2}" y="${105 - bHeight / 2}" width="${bWidth}" height="${bHeight}" fill="#fff3cf" stroke="#183b56" stroke-width="2"/>${svgText(100, 48, solved ? `가 ${aw}×${ah}` : "가")}${svgText(260, 48, solved ? `나 ${bw}×${bh}` : "나")}${svgText(180, 165, "두 넓이는 같음")}${solved ? `<rect x="80" y="190" width="200" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(140, 209, "둘레의 비율")}${svgValue(225, 209, ratio)}` : svgText(180, 209, "둘레의 비율은 ?")}</svg>`;
+        const promptVisual = `${visual(false)}${mathBoard("두 직사각형", row("가의 가로와 세로의 길이의 비율", ratioA) + row("나의 가로와 세로의 길이의 비율", ratioB) + row("구할 것", "가의 둘레와 나의 둘레의 비율"))}`;
+        const answerVisual = `${visual(true)}${mathBoard("두 둘레를 비교", row("가", `${aw}×${ah}=${aw * ah}`) + row("나", `${bw}×${bh}=${bw * bh}`) + row("가의 둘레", `${pa}`) + row("나의 둘레", `${pb}`) + row("답", ratioHtml))}`;
+        return fixedResult(`두 직사각형 가, 나에서 가는 가로와 세로의 길이의 비율은 ${ratioA}이고 나는 가로와 세로의 길이의 비율이 ${ratioB}입니다. 가, 나의 넓이가 같을 때, 가의 둘레와 나의 둘레의 비율을 구하세요.${promptVisual}`, ratio, `가의 가로는 세로의 ${ratioA}배, 나의 가로는 세로의 ${ratioB}배입니다. 가의 가로와 세로를 ${aw}, ${ah}로, 나의 가로와 세로를 ${bw}, ${bh}로 놓으면 가로와 세로의 길이의 비율이 각각 ${ratioA}, ${ratioB}이고 넓이가 ${aw * ah}로 같습니다. 넓이가 같은 두 직사각형은 모두 이 두 직사각형을 같은 배로 늘이거나 줄인 것이므로 둘레의 비율은 변하지 않습니다. 가의 둘레는 (${aw}+${ah})×2=${pa}, 나의 둘레는 (${bw}+${bh})×2=${pb}이므로 가의 둘레와 나의 둘레의 비율은 ${fractionMarkup(pa, pb)}입니다.`, promptVisual, answerVisual, values);
       }
 
       if (variant === 4) {
@@ -24560,11 +24633,12 @@
         const values = [[30, 20, 30, 117], [40, 25, 20, 104], [50, 24, 25, 150]][poolIndex];
         const [oldWidth, oldHeight, decreaseRate, areaDrop] = values;
         const newWidth = oldWidth * (100 - decreaseRate) / 100, newArea = oldWidth * oldHeight - areaDrop, newHeight = newArea / newWidth;
-        const divisor = gcd(newHeight, oldHeight), ratio = `${newHeight / divisor}:${oldHeight / divisor}`;
-        const visual = solved => `<svg class="geometry-diagram source61-ratio-e5-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 240" role="img" aria-label="크기를 바꾼 직사각형" data-source61-ratio-e5-structure="resized-rectangles" data-source61-ratio-e5-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}><rect x="30" y="55" width="140" height="90" fill="#e8f3f8" stroke="#183b56" stroke-width="2"/><rect x="215" y="55" width="${140 * (100 - decreaseRate) / 100}" height="${solved ? Math.min(120, 90 * newHeight / oldHeight) : 105}" fill="#fff3cf" stroke="#183b56" stroke-width="2"/>${svgText(100, 45, `${oldWidth}cm × ${oldHeight}cm`)}${svgText(270, 45, `가로 ${decreaseRate}% 감소`)}${svgText(180, 175, `넓이 ${areaDrop}cm² 감소`)}${solved ? `<rect x="75" y="195" width="210" height="27" rx="4" fill="#ffe9a8" stroke="#c78b00"/>${svgText(180, 214, `새 세로:처음 세로=${ratio}`)}` : svgText(180, 214, "새 세로의 비는 ?")}</svg>`;
+        // 원문(Mission 2): 세로를 '얼마만큼 늘여', 물음은 처음 세로에 대한 새 세로의 비율을 분수로(답 23/20).
+        const ratio = fraction(newHeight, oldHeight), ratioHtml = fractionMarkup(newHeight, oldHeight);
+        const visual = solved => `<svg class="geometry-diagram source61-ratio-e5-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 240" role="img" aria-label="크기를 바꾼 직사각형" data-source61-ratio-e5-structure="resized-rectangles" data-source61-ratio-e5-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}><rect x="30" y="55" width="140" height="90" fill="#e8f3f8" stroke="#183b56" stroke-width="2"/><rect x="215" y="55" width="${140 * (100 - decreaseRate) / 100}" height="${solved ? Math.min(120, 90 * newHeight / oldHeight) : 105}" fill="#fff3cf" stroke="#183b56" stroke-width="2"/>${svgText(100, 45, `${oldWidth}cm × ${oldHeight}cm`)}${svgText(270, 45, `가로 ${decreaseRate}% 감소`)}${svgText(180, 175, `넓이 ${areaDrop}cm² 감소`)}${solved ? `<rect x="75" y="195" width="210" height="27" rx="4" fill="#ffe9a8" stroke="#c78b00"/>${svgText(150, 214, "새 세로÷처음 세로 =")}${svgValue(245, 214, ratio)}` : svgText(180, 214, "새 세로의 비율은 ?")}</svg>`;
         const promptVisual = `${visual(false)}${mathBoard("새 넓이와 새 가로", row("처음 넓이", `${oldWidth}×${oldHeight}`) + row("새 가로", `${oldWidth}×${100 - decreaseRate}%`) + row("새 넓이", `처음 넓이-${areaDrop}`))}`;
-        const answerVisual = `${visual(true)}${mathBoard("새 세로 구하기", row("새 가로", `${newWidth}cm`) + row("새 넓이", `${newArea}cm²`) + row("새 세로", `${newHeight}cm`) + row("답", ratio))}`;
-        return fixedResult(`가로 ${oldWidth}cm, 세로 ${oldHeight}cm인 직사각형의 가로를 ${decreaseRate}% 줄이고 세로를 늘렸더니 넓이가 처음보다 ${areaDrop}cm² 줄었습니다. 처음 세로에 대한 새 세로의 비를 기약비로 나타내세요.${promptVisual}`, ratio, `새 가로는 ${newWidth}cm, 새 넓이는 ${newArea}cm²이므로 새 세로는 ${newHeight}cm입니다. 새 세로와 처음 세로의 비는 ${ratio}입니다.`, promptVisual, answerVisual, values);
+        const answerVisual = `${visual(true)}${mathBoard("새 세로 구하기", row("새 가로", `${newWidth}cm`) + row("새 넓이", `${newArea}cm²`) + row("새 세로", `${newHeight}cm`) + row("답", ratioHtml))}`;
+        return fixedResult(`가로가 ${oldWidth}cm, 세로가 ${oldHeight}cm인 직사각형의 가로를 ${decreaseRate}% 줄이고 세로를 얼마만큼 늘여 새로 직사각형을 만들었더니 넓이가 처음보다 ${areaDrop}cm²만큼 줄었습니다. 처음 직사각형의 세로에 대한 새로 만든 직사각형의 세로의 비율을 분수로 나타내세요.${promptVisual}`, ratio, `새 가로는 ${oldWidth}×${100 - decreaseRate}÷100=${newWidth}cm, 새 넓이는 ${oldWidth}×${oldHeight}-${areaDrop}=${newArea}cm²이므로 새 세로는 ${newArea}÷${newWidth}=${newHeight}cm입니다. 처음 직사각형의 세로에 대한 새로 만든 직사각형의 세로의 비율은 ${newHeight}÷${oldHeight}=${ratioHtml}입니다.`, promptVisual, answerVisual, values);
       }
 
       if (variant === 7) {
@@ -24591,16 +24665,16 @@
       if (variant === 9) {
         const values = [[75, 2, 3], [80, 3, 4], [70, 4, 7]][poolIndex];
         const [middleRate, lastN, lastD] = values, actual = rationalValue(middleRate * lastN, 100 * lastD);
-        const visual = solved => tableSvg("세 사람이 나눈 돈", [["유현", "기준 1", "1"], ["성현", `유현의 ${middleRate}%`, `${middleRate}/100`], ["대현", `${lastN}/${lastD} · 성현을 기준`, fractionText(actual)], ["대현:유현", "?", fractionText(actual)]], values, solved, fractionText(actual));
-        const promptVisual = `${visual(false)}${mathBoard("유현의 돈을 1로 보기", row("성현", `${middleRate}%`) + row("대현", `성현의 ${fractionMarkup(lastN, lastD)}`))}`;
+        const visual = solved => tableSvg("세 사람이 나눈 돈", [["유현", "?", "1로 볼 때 1"], ["성현", `유현의 ${middleRate}%`, `${middleRate}/100`], ["대현", `${lastN}/${lastD} · 성현을 기준`, fractionText(actual)], ["대현:유현", "?", fractionText(actual)]], values, solved, fractionText(actual));
+        const promptVisual = `${visual(false)}${mathBoard("세 사람의 돈", row("성현", `유현의 ${middleRate}%`) + row("대현", `성현의 ${fractionMarkup(lastN, lastD)}`))}`;
         const answerVisual = `${visual(true)}${mathBoard("두 비율을 곱하기", row("대현÷유현", `${middleRate}%×${fractionMarkup(lastN, lastD)}`) + row("답", fractionHtml(actual)))}`;
-        return fixedResult(`성현이가 가진 돈은 유현이가 가진 돈의 ${middleRate}%이고, 대현이가 가진 돈은 성현이가 가진 돈의 ${fractionMarkup(lastN, lastD)}입니다. 유현이의 돈에 대한 대현이의 돈의 비율을 기약분수로 나타내세요.${promptVisual}`, fractionText(actual), `유현이의 돈을 1로 보면 대현이의 비율은 ${middleRate}%×${fractionMarkup(lastN, lastD)}=${fractionHtml(actual)}입니다.`, promptVisual, answerVisual, values);
+        return fixedResult(`유현, 성현, 대현이는 아버지께서 주신 용돈을 나누어 가졌습니다. 성현이가 가진 돈은 유현이가 가진 돈의 ${middleRate}%이고, 대현이가 가진 돈은 성현이가 가진 돈의 ${fractionMarkup(lastN, lastD)}입니다. 유현이가 가진 돈에 대한 대현이가 가진 돈의 비율을 기약분수로 나타내세요.${promptVisual}`, fractionText(actual), `유현이의 돈을 1로 보면 대현이의 비율은 ${middleRate}%×${fractionMarkup(lastN, lastD)}=${fractionHtml(actual)}입니다.`, promptVisual, answerVisual, values);
       }
 
       const pools = [
         { f1: [5, 12], w1: [113, 20], f2: [3, 10], w2: [17, 4], daily: [3, 8], days: 14 },
         { f1: [2, 5], w1: [7, 1], f2: [1, 5], w2: [4, 1], daily: [1, 2], days: 10 },
-        { f1: [1, 2], w1: [11, 1], f2: [1, 3], w2: [8, 1], daily: [3, 4], days: 16 }
+        { f1: [1, 2], w1: [11, 1], f2: [1, 4], w2: [13, 2], daily: [3, 4], days: 16 }
       ][poolIndex];
       const f1 = rationalValue(...pools.f1), f2 = rationalValue(...pools.f2), w1 = rationalValue(...pools.w1), w2 = rationalValue(...pools.w2), daily = rationalValue(...pools.daily);
       const fullOil = rationalOperation(rationalOperation(w1, w2, "-"), rationalOperation(f1, f2, "-"), "÷");
@@ -24608,10 +24682,14 @@
       const remaining = rationalOperation(rationalOperation(empty, fullOil, "+"), rationalOperation(daily, rationalValue(pools.days), "×"), "-");
       const actual = rationalOperation(remaining, rationalValue(100), "×");
       const values = [...pools.f1, ...pools.w1, ...pools.f2, ...pools.w2, ...pools.daily, pools.days];
-      const visual = solved => tableSvg("기름통의 무게 변화", [["첫 채운 양", fractionText(f1), fractionText(f1)], ["첫 통 무게", `${plain(w1)}kg`, `${plain(w1)}kg`], ["둘째 채운 양", fractionText(f2), fractionText(f2)], ["둘째 통 무게", `${plain(w2)}kg`, `${plain(w2)}kg`], ["가득 채운 뒤 사용", `${fractionText(daily)}kg씩 · ${pools.days}일`, `${plain(remaining)}kg 남음`], ["남은 무게의 100배", "?", `${plain(actual)}kg`]], values, solved, `${plain(actual)}kg`);
-      const promptVisual = `${visual(false)}${mathBoard("두 채움 상태의 차", row("첫 번째", `${fractionMarkup(...pools.f1)} 채움, ${fractionHtml(w1)}kg`) + row("두 번째", `${fractionMarkup(...pools.f2)} 채움, ${fractionHtml(w2)}kg`) + row("사용", `${fractionMarkup(...pools.daily)}kg씩 ${pools.days}일`))}`;
+      // 원문(Mission 6): 둘째 상태는 '30%만큼', 기간은 '2주'로 나타냄. 다른 pool도 둘째 상태를 백분율로 나타낼 수 있게 맞춤.
+      const f2Percent = 100 * pools.f2[0] / pools.f2[1];
+      if (!Number.isInteger(f2Percent)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 둘째 채움 비율이 자연수 %가 아닙니다.`);
+      const periodText = pools.days % 7 === 0 ? `${pools.days / 7}주` : `${pools.days}일`;
+      const visual = solved => tableSvg("기름통의 무게 변화", [["첫 채운 양", fractionText(f1), fractionText(f1)], ["첫 통 무게", `${plain(w1)}kg`, `${plain(w1)}kg`], ["둘째 채운 양", `${f2Percent}%`, `${f2Percent}%`], ["둘째 통 무게", `${plain(w2)}kg`, `${plain(w2)}kg`], ["가득 채운 뒤 사용", `${fractionText(daily)}kg씩 · ${periodText}`, `${plain(remaining)}kg 남음`], ["남은 무게의 100배", "?", `${plain(actual)}kg`]], values, solved, `${plain(actual)}kg`);
+      const promptVisual = `${visual(false)}${mathBoard("두 채움 상태의 차", row("첫 번째", `${fractionMarkup(...pools.f1)} 채움, ${fractionHtml(w1)}kg`) + row("두 번째", `${f2Percent}% 채움, ${fractionHtml(w2)}kg`) + row("사용", `${fractionMarkup(...pools.daily)}kg씩 ${periodText}`))}`;
       const answerVisual = `${visual(true)}${mathBoard("기름과 빈 통 무게를 나누기", row("가득 찬 기름", `${fractionHtml(fullOil)}kg`) + row("빈 통", `${fractionHtml(empty)}kg`) + row("사용 뒤 통 전체", `${fractionHtml(remaining)}kg`) + row("답", `${fractionHtml(actual)}kg`))}`;
-      return fixedResult(`같은 기름통에 기름이 전체의 ${fractionMarkup(...pools.f1)}만큼 있을 때 무게가 ${fractionHtml(w1)}kg이고, ${fractionMarkup(...pools.f2)}만큼 있을 때 ${fractionHtml(w2)}kg입니다. 통을 가득 채운 뒤 매일 ${fractionMarkup(...pools.daily)}kg씩 ${pools.days}일 동안 사용했습니다. 남은 기름통 무게의 100배를 구하세요.${promptVisual}`, `${plain(actual)}kg`, `두 상태의 차로 기름을 가득 채웠을 때의 기름 무게 ${fractionHtml(fullOil)}kg과 빈 통 ${fractionHtml(empty)}kg을 구합니다. 사용한 기름을 빼면 통 전체가 ${fractionHtml(remaining)}kg이므로 100배는 ${fractionHtml(actual)}kg입니다.`, promptVisual, answerVisual, values);
+      return fixedResult(`어느 기름통에 기름이 ${fractionMarkup(...pools.f1)}만큼 들어 있을 때의 무게가 ${fractionHtml(w1)}kg이고, ${f2Percent}%만큼 들어 있을 때의 무게가 ${fractionHtml(w2)}kg입니다. 이 통에 기름을 가득 채워서 매일 ${fractionMarkup(...pools.daily)}kg씩 ${periodText} 동안 사용한 후에 남은 기름통의 무게의 100배는 몇 kg입니까?${promptVisual}`, `${plain(actual)}kg`, `${f2Percent}%=${fractionMarkup(...pools.f2)}${pools.days % 7 === 0 ? `이고 ${periodText}는 ${pools.days}일` : ""}입니다. 두 상태의 차로 기름을 가득 채웠을 때의 기름 무게 ${fractionHtml(fullOil)}kg과 빈 통 ${fractionHtml(empty)}kg을 구합니다. 사용한 기름을 빼면 통 전체가 ${fractionHtml(remaining)}kg이므로 100배는 ${fractionHtml(actual)}kg입니다.`, promptVisual, answerVisual, values);
     },
     sourceGrade6FractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -24637,68 +24715,91 @@
       });
       const fractionText = value => mixedFractionMarkup(value.numerator, value.denominator);
 
+      const josa = numberJosa;
+      const circled = ["㉠", "㉡", "㉢", "㉣"];
+      // 원문 상자처럼 이름표 없이 식만 가운데에 놓는 줄
+      const wideRow = value => `<div class="source61-math-row" style="grid-template-columns:minmax(0,1fr)"><b style="text-align:center">${value}</b></div>`;
+
       if (variant === 0) {
+        // pool 0 = 6-1심화 예제 1-1(10 1/2 × {…2020…} ÷ 7)
         const data = [
-          { denominator: 60, multiplier: [15, 2], divisor: 5 },
+          { denominator: 2020, multiplier: [21, 2], divisor: 7 },
           { denominator: 84, multiplier: [25, 2], divisor: 5 },
           { denominator: 96, multiplier: [14, 1], divisor: 7 }
         ][poolIndex];
         const count = data.denominator / 2;
         const answerValue = rationalOperation(rationalOperation(rationalValue(count, data.denominator), rationalValue(...data.multiplier), "×"), rationalValue(data.divisor), "÷");
         const answer = fraction(answerValue.numerator, answerValue.denominator);
-        const evenTerms = `${symbolicFractionMarkup(2, data.denominator)}+${symbolicFractionMarkup(4, data.denominator)}+…+${symbolicFractionMarkup(data.denominator, data.denominator)}`;
-        const oddTerms = `${symbolicFractionMarkup(1, data.denominator)}+${symbolicFractionMarkup(3, data.denominator)}+…+${symbolicFractionMarkup(data.denominator - 1, data.denominator)}`;
-        const expression = `${fractionText(rationalValue(...data.multiplier))}×((${evenTerms})-(${oddTerms}))÷${data.divisor}`;
-        const promptVisual = mathBoard("규칙 있는 분수 계산", row("계산식", expression), `data-source61-visual="patterned-fraction-sum"`);
-        const answerVisual = mathBoard("짝을 지어 줄인 계산", row("괄호 안", fractionMarkup(count, data.denominator)) + row("마지막 계산", `${fractionText(rationalValue(...data.multiplier))}×${fractionMarkup(1, 2)}÷${data.divisor}=${fractionText(answerValue)}`));
-        return fixedResult(`다음 식을 계산하세요.${promptVisual}${support("짝수 분자와 홀수 분자를 차례로 한 쌍씩 묶어 그 차를 더해 보세요.")}${challenge}${evidence("patterned-fraction-sum", [data.denominator, data.multiplier[0], data.multiplier[1], data.divisor, answerValue.numerator, answerValue.denominator])}`, answer, `각 쌍의 차는 1이고 쌍은 ${count}개이므로 괄호 안은 ${fractionMarkup(count, data.denominator)}=${fractionMarkup(1, 2)}입니다. 따라서 ${fractionText(rationalValue(...data.multiplier))}×${fractionMarkup(1, 2)}÷${data.divisor}=${fractionText(answerValue)}입니다.`, answerVisual);
+        const D = data.denominator;
+        const evenTerms = `${symbolicFractionMarkup(2, D)}+${symbolicFractionMarkup(4, D)}+…+${symbolicFractionMarkup(D - 2, D)}+${symbolicFractionMarkup(D, D)}`;
+        const oddTerms = `${symbolicFractionMarkup(1, D)}+${symbolicFractionMarkup(3, D)}+…+${symbolicFractionMarkup(D - 3, D)}+${symbolicFractionMarkup(D - 1, D)}`;
+        const expression = `${fractionText(rationalValue(...data.multiplier))}×{${evenTerms}-(${oddTerms})}÷${data.divisor}`;
+        const promptVisual = mathBoard("계산식", wideRow(expression), `data-source61-visual="patterned-fraction-sum"`);
+        const answerVisual = mathBoard("짝을 지어 줄인 계산", row("{ } 안", `${fractionMarkup(1, D)}×${count}=${fractionMarkup(count, D)}`) + row("마지막 계산", `${fractionText(rationalValue(...data.multiplier))}×${fractionMarkup(1, 2)}÷${data.divisor}=${fractionText(answerValue)}`));
+        return fixedResult(`다음 식을 계산한 값은 얼마입니까?${promptVisual}${support("짝수 분자와 홀수 분자를 차례로 한 쌍씩 묶어 그 차를 더해 보세요.")}${challenge}${evidence("patterned-fraction-sum", [data.denominator, data.multiplier[0], data.multiplier[1], data.divisor, answerValue.numerator, answerValue.denominator])}`, answer, `${symbolicFractionMarkup(2, D)}-${symbolicFractionMarkup(1, D)}, ${symbolicFractionMarkup(4, D)}-${symbolicFractionMarkup(3, D)}, …처럼 짝을 지으면 각 쌍의 차는 ${symbolicFractionMarkup(1, D)}이고 쌍은 ${count}개이므로 { } 안은 ${symbolicFractionMarkup(count, D)}=${fractionMarkup(1, 2)}입니다. 따라서 ${fractionText(rationalValue(...data.multiplier))}×${fractionMarkup(1, 2)}÷${data.divisor}=${fractionText(answerValue)}입니다.`, answerVisual);
       }
 
       if (variant === 1) {
-        const data = [[8, 5, 3, 7], [9, 7, 5, 6], [11, 8, 4, 9]][poolIndex];
+        // pool 0 = 예제 1-2(가÷나=1 1/6, 나÷다=4/5일 때 가÷다)
+        const data = [[7, 6, 4, 5], [9, 7, 5, 6], [11, 8, 4, 9]][poolIndex];
         const [aN, aD, bN, bD] = data;
-        const ratio = rationalValue(aN * bN, aD * bD);
-        const answer = `${ratio.numerator}:${ratio.denominator}`;
-        const promptVisual = mathBoard("이어지는 두 나눗셈 관계", row("가÷나", fractionMarkup(aN, aD)) + row("나÷다", fractionMarkup(bN, bD)), `data-source61-visual="ratio-chain"`);
-        const answerVisual = mathBoard("가운데 수를 이어서 없애기", row("가÷다", `${fractionMarkup(aN, aD)}×${fractionMarkup(bN, bD)}=${fractionMarkup(ratio.numerator, ratio.denominator)}`) + row("가:다", answer));
-        return fixedResult(`세 자연수 가, 나, 다가 있습니다. 다음 두 관계를 보고 가와 다의 비를 가장 간단한 자연수의 비로 나타내세요.${promptVisual}${support("(가÷나)×(나÷다)를 계산해 보세요.")}${challenge}${evidence("ratio-chain", [...data, ratio.numerator, ratio.denominator], "ratio")}`, answer, `가÷다=(가÷나)×(나÷다)=${fractionMarkup(aN, aD)}×${fractionMarkup(bN, bD)}=${fractionMarkup(ratio.numerator, ratio.denominator)}이므로 가:다는 ${answer}입니다.`, answerVisual);
+        const quotient = rationalValue(aN * bN, aD * bD);
+        const answer = fraction(quotient.numerator, quotient.denominator);
+        const answerVisual = mathBoard("가운데 수를 이어서 없애기", row("가÷다", `(가÷나)×(나÷다)`) + row("계산", `${fractionText(rationalValue(aN, aD))}×${fractionMarkup(bN, bD)}=${fractionText(quotient)}`));
+        return fixedResult(`세 자연수 가, 나, 다가 있습니다. 가÷나=${fractionText(rationalValue(aN, aD))}, 나÷다=${fractionMarkup(bN, bD)}일 때, 가÷다를 구하세요.${support("(가÷나)×(나÷다)를 계산해 보세요.")}${challenge}${evidence("chain-quotient", [...data, quotient.numerator, quotient.denominator])}`, answer, `가÷다=(가÷나)×(나÷다)이므로 ${fractionText(rationalValue(aN, aD))}×${fractionMarkup(bN, bD)}=${symbolicFractionMarkup(aN, aD)}×${symbolicFractionMarkup(bN, bD)}=${fractionText(quotient)}입니다.`, answerVisual);
       }
 
       if (variant === 2) {
+        // pool 0 = 예제 1-3(가로 10 5/6 cm, 세로 8 cm, 5배, 기약분수로)
         const data = [
-          { width: 11, height: 6, multiple: 3 },
-          { width: 14, height: 8, multiple: 4 },
-          { width: 13, height: 10, multiple: 6 }
+          { width: [65, 6], height: 8, multiple: 5 },
+          { width: [14, 1], height: 8, multiple: 4 },
+          { width: [13, 1], height: 10, multiple: 6 }
         ][poolIndex];
-        const target = rationalValue(2 * data.width, data.multiple + 1);
+        const width = rationalValue(...data.width);
+        const target = rationalOperation(rationalOperation(width, rationalValue(2), "×"), rationalValue(data.multiple + 1), "÷");
         const targetText = fractionText(target);
+        const widthLabel = (() => {
+          const whole = Math.floor(width.numerator / width.denominator), rest = width.numerator % width.denominator;
+          return rest ? `${whole ? `${whole} ` : ""}${rest}/${width.denominator}` : String(whole);
+        })();
         const geometrySvg = solved => {
-          const targetPixels = 240 * target.numerator / target.denominator / data.width;
+          const targetPixels = 240 * (target.numerator / target.denominator) / (width.numerator / width.denominator);
           const middleX = 290 - targetPixels;
-          return `<svg class="geometry-diagram source61-area-ratio" viewBox="0 0 360 220" data-source61-visual="area-ratio" data-width="${data.width}" data-height="${data.height}" data-area-multiple="${data.multiple}" data-target-numerator="${target.numerator}" data-target-denominator="${target.denominator}" aria-label="직사각형을 사다리꼴과 삼각형으로 나눈 그림"><polygon class="source61-trapezoid" points="50,35 50,170 ${middleX.toFixed(2)},170 290,35"/><polygon class="source61-triangle" points="${middleX.toFixed(2)},170 290,170 290,35"/><rect x="50" y="35" width="240" height="135"/><line class="source61-divider" x1="${middleX.toFixed(2)}" y1="170" x2="290" y2="35"/><line class="source61-target${solved ? " is-solved" : ""}" x1="${middleX.toFixed(2)}" y1="170" x2="290" y2="170"/><text x="170" y="22">${data.width} cm</text><text x="322" y="104">${data.height} cm</text><text class="source61-target-label" x="${((middleX + 290) / 2).toFixed(2)}" y="195">${solved ? "구한 길이" : "?"}</text><text class="source61-point" x="37" y="29">ㄱ</text><text class="source61-point" x="37" y="181">ㄴ</text><text class="source61-point" x="${(middleX - 8).toFixed(2)}" y="183">ㅁ</text><text class="source61-point" x="300" y="183">ㄷ</text><text class="source61-point" x="300" y="29">ㄹ</text></svg>`;
+          return `<svg class="geometry-diagram source61-area-ratio" viewBox="0 0 360 220" data-source61-visual="area-ratio" data-width="${width.numerator}/${width.denominator}" data-height="${data.height}" data-area-multiple="${data.multiple}" data-target-numerator="${target.numerator}" data-target-denominator="${target.denominator}" aria-label="직사각형을 사다리꼴과 삼각형으로 나눈 그림"><polygon class="source61-trapezoid" points="50,35 50,170 ${middleX.toFixed(2)},170 290,35"/><polygon class="source61-triangle" points="${middleX.toFixed(2)},170 290,170 290,35"/><rect x="50" y="35" width="240" height="135"/><line class="source61-divider" x1="${middleX.toFixed(2)}" y1="170" x2="290" y2="35"/><line class="source61-target${solved ? " is-solved" : ""}" x1="${middleX.toFixed(2)}" y1="170" x2="290" y2="170"/>${svgMeasurementLabel({ x: 170, y: 20, value: widthLabel, unit: " cm" })}<text x="322" y="104">${data.height} cm</text>${solved ? `<text class="source61-target-label" x="${((middleX + 290) / 2).toFixed(2)}" y="195">구한 길이</text>` : ""}<text class="source61-point" x="37" y="29">ㄱ</text><text class="source61-point" x="37" y="181">ㄴ</text><text class="source61-point" x="${(middleX - 8).toFixed(2)}" y="183">ㅁ</text><text class="source61-point" x="300" y="183">ㄷ</text><text class="source61-point" x="300" y="29">ㄹ</text></svg>`;
         };
         const promptVisual = `${geometrySvg(false)}${mathBoard("넓이 관계", row("사다리꼴 ㄱㄴㅁㄹ", `삼각형 ㄹㅁㄷ의 ${data.multiple}배`))}`;
-        const answerVisual = `${geometrySvg(true)}${mathBoard("선분 ㅁㄷ", row("정답", `${targetText} cm`))}`;
-        return fixedResult(`직사각형 ㄱㄴㄷㄹ에서 사다리꼴 ㄱㄴㅁㄹ의 넓이는 삼각형 ㄹㅁㄷ의 넓이의 ${data.multiple}배입니다. 선분 ㅁㄷ의 길이를 구하세요.${promptVisual}${support("직사각형 전체 넓이는 오른쪽 삼각형 넓이의 몇 배인지 먼저 구하세요.")}${challenge}${evidence("area-ratio-segment", [data.width, data.height, data.multiple, target.numerator, target.denominator])}`, `${fraction(target.numerator, target.denominator)}cm`, `직사각형 전체는 삼각형의 ${data.multiple + 1}배입니다. 선분 ㅁㄷ을 x cm라 하면 ${data.width}×${data.height}=(${data.multiple + 1})×x×${data.height}÷2이므로 x=${fractionMarkup(target.numerator, target.denominator)}입니다.`, answerVisual);
+        const answerVisual = `${geometrySvg(true)}${mathBoard("선분 ㅁㄷ", row("정답", `${fractionMarkup(target.numerator, target.denominator)} cm`))}`;
+        return fixedResult(`직사각형 ㄱㄴㄷㄹ에서 사다리꼴 ㄱㄴㅁㄹ의 넓이는 삼각형 ㄹㅁㄷ의 넓이의 ${data.multiple}배입니다. 선분 ㅁㄷ의 길이는 몇 cm인지 기약분수로 나타내세요.${promptVisual}${support("직사각형 전체 넓이는 오른쪽 삼각형 넓이의 몇 배인지 먼저 구하세요.")}${challenge}${evidence("area-ratio-segment", [width.numerator, width.denominator, data.height, data.multiple, target.numerator, target.denominator])}`, `${fraction(target.numerator, target.denominator)}cm`, `직사각형 전체는 삼각형의 ${data.multiple + 1}배입니다. 선분 ㅁㄷ을 □ cm라 하면 ${fractionText(width)}×${data.height}=${data.multiple + 1}×□×${data.height}÷2이므로 □=${fractionText(width)}×2÷${data.multiple + 1}=${fractionMarkup(target.numerator, target.denominator)}입니다.`, answerVisual);
       }
 
       if (variant === 3) {
+        // pool 0 = 예제 1-4(㉠×4×5=10×㉡÷6, ㉢×18÷15=9 3/10×㉣÷31, ㉠÷㉡÷5+㉢÷㉣×3)
         const data = [
-          { first: [2, 15], second: [7, 20], divide: 2, multiply: 3 },
-          { first: [3, 14], second: [5, 12], divide: 3, multiply: 4 },
-          { first: [5, 18], second: [7, 16], divide: 5, multiply: 2 }
+          { a: [4, 5, 10, 6], c: [18, 15, [93, 10], 31], divide: 5, multiply: 3 },
+          { a: [3, 4, 8, 2], c: [14, 21, [21, 4], 9], divide: 4, multiply: 2 },
+          { a: [2, 9, 12, 4], c: [16, 12, [22, 5], 11], divide: 2, multiply: 5 }
         ][poolIndex];
-        const firstTerm = rationalOperation(rationalValue(...data.first), rationalValue(data.divide), "÷");
-        const secondTerm = rationalOperation(rationalValue(...data.second), rationalValue(data.multiply), "×");
+        const [a1, a2, a3, a4] = data.a;
+        const [c1, c2, mixed, c3] = data.c;
+        const mixedValue = rationalValue(...mixed);
+        // ㉠×a1×a2 = a3×㉡÷a4 → ㉠÷㉡ = a3÷(a4×a1×a2)
+        const firstRatio = rationalValue(a3, a4 * a1 * a2);
+        // ㉢×c1÷c2 = M×㉣÷c3 → ㉢÷㉣ = M×c2÷(c3×c1)
+        const secondRatio = rationalOperation(rationalOperation(mixedValue, rationalValue(c2), "×"), rationalValue(c3 * c1), "÷");
+        const firstTerm = rationalOperation(firstRatio, rationalValue(data.divide), "÷");
+        const secondTerm = rationalOperation(secondRatio, rationalValue(data.multiply), "×");
         const answerValue = rationalOperation(firstTerm, secondTerm, "+");
         const answer = fraction(answerValue.numerator, answerValue.denominator);
-        const promptVisual = mathBoard("네 자연수의 조건", row("첫째", `가×${data.first[1]}=나×${data.first[0]}`) + row("둘째", `다×${data.second[1]}=라×${data.second[0]}`) + row("구할 값", `가÷나÷${data.divide}+다÷라×${data.multiply}`), `data-source61-visual="symbol-ratios"`);
-        const answerVisual = mathBoard("두 비로 바꾼 계산", row("가÷나", fractionMarkup(...data.first)) + row("다÷라", fractionMarkup(...data.second)) + row("계산값", fractionText(answerValue)));
-        return fixedResult(`가, 나, 다, 라는 모두 자연수입니다. 다음 조건을 보고 값을 구하세요.${promptVisual}${support("두 조건에서 가÷나와 다÷라를 각각 먼저 구하세요.")}${challenge}${evidence("symbol-ratios", [...data.first, ...data.second, data.divide, data.multiply, answerValue.numerator, answerValue.denominator])}`, answer, `가÷나=${fractionMarkup(...data.first)}, 다÷라=${fractionMarkup(...data.second)}입니다. 따라서 ${fractionMarkup(...data.first)}÷${data.divide}+${fractionMarkup(...data.second)}×${data.multiply}=${fractionText(answerValue)}입니다.`, answerVisual);
+        const [g, n, d, r] = circled;
+        const promptVisual = mathBoard("조건", wideRow(`${g}×${a1}×${a2}=${a3}×${n}÷${a4}`) + wideRow(`${d}×${c1}÷${c2}=${fractionText(mixedValue)}×${r}÷${c3}`), `data-source61-visual="symbol-ratios"`);
+        const answerVisual = mathBoard("두 조건을 나눗셈으로 바꾸기", row(`${g}÷${n}`, fractionText(firstRatio)) + row(`${d}÷${r}`, fractionText(secondRatio)) + row("계산값", `${fractionText(firstRatio)}÷${data.divide}+${fractionText(secondRatio)}×${data.multiply}=${fractionText(answerValue)}`));
+        return fixedResult(`다음 조건을 보고 ${g}÷${n}÷${data.divide}+${d}÷${r}×${data.multiply}${josa.eulReul(data.multiply)} 계산하세요. (단, ${g}, ${n}, ${d}, ${r}은 모두 자연수입니다.)${promptVisual}${support(`두 조건에서 ${g}÷${n}과 ${d}÷${r}을 각각 먼저 구하세요.`)}${challenge}${evidence("symbol-ratios", [a1, a2, a3, a4, c1, c2, mixedValue.numerator, mixedValue.denominator, c3, data.divide, data.multiply, answerValue.numerator, answerValue.denominator])}`, answer, `첫째 조건에서 ${g}×${a1 * a2}=${n}×${fractionText(rationalValue(a3, a4))}이므로 ${g}÷${n}=${fractionText(rationalValue(a3, a4))}÷${a1 * a2}=${fractionText(firstRatio)}입니다. 둘째 조건에서 ${d}×${fractionText(rationalValue(c1, c2))}=${r}×${fractionText(rationalOperation(mixedValue, rationalValue(c3), "÷"))}이므로 ${d}÷${r}=${fractionText(secondRatio)}입니다. 따라서 ${fractionText(firstRatio)}÷${data.divide}+${fractionText(secondRatio)}×${data.multiply}=${fractionText(firstTerm)}+${fractionText(secondTerm)}=${fractionText(answerValue)}입니다.`, answerVisual);
       }
 
       if (variant === 4) {
-        const data = [[9, 18, 4], [13, 26, 8], [15, 30, 8]][poolIndex];
+        // pool 0 = 미션 1(2 □/11 ×22÷6, 단 2□/11는 대분수)
+        const data = [[11, 22, 6], [13, 26, 8], [15, 30, 8]][poolIndex];
         const [denominator, multiplier, divisor] = data;
         const candidates = [];
         for (let hidden = 1; hidden < denominator; hidden += 1) {
@@ -24707,98 +24808,111 @@
         }
         if (!candidates.length) throw new Error(`${sourceItemId}: 자연수 결과 후보가 없습니다.`);
         const selected = candidates.reduce((best, candidate) => candidate.value > best.value ? candidate : best);
-        const promptVisual = mathBoard("빈칸에 넣을 수", row("계산식", `${mixedFractionMarkup(2 * denominator, denominator)} ${symbolicFractionMarkup("□", denominator)}×${multiplier}÷${divisor}`), `data-source61-visual="mixed-number-blank"`);
-        const answerVisual = mathBoard("가능한 분자 전부 확인", row("확인한 대분수", `2 ${symbolicFractionMarkup("□", denominator)}`) + row("자연수가 되는 분자", candidates.map(candidate => candidate.hidden).join(", ")) + row("가장 큰 결과", `${selected.value} (□=${selected.hidden})`));
-        return fixedResult(`□는 ${denominator}보다 작은 자연수입니다. 계산 결과가 자연수 중 가장 크게 되도록 □에 알맞은 수를 구하세요.${promptVisual}${support("□에 1부터 차례로 넣되, 계산 결과가 자연수인 경우만 모아 보세요.")}${challenge}${evidence("largest-natural-blank", [denominator, multiplier, divisor, selected.hidden, selected.value, candidates.length])}`, selected.hidden, `계산식은 (${2 * denominator}+□)÷${denominator}×${multiplier}÷${divisor}입니다. 자연수가 되는 □는 ${candidates.map(candidate => candidate.hidden).join(", ")}이고, 가장 큰 결과 ${selected.value}을 만드는 □는 ${selected.hidden}입니다.`, answerVisual);
+        const blankMixed = `<span class="math-mixed-number" role="img" aria-label="2와 ${denominator}분의 네모"><span>2</span>${symbolicFractionMarkup("□", denominator)}</span>`;
+        const promptVisual = mathBoard("계산식", wideRow(`${blankMixed}×${multiplier}÷${divisor}`), `data-source61-visual="mixed-number-blank"`);
+        const answerVisual = mathBoard("가능한 분자 전부 확인", row("□에 넣을 수", `1부터 ${denominator - 1}까지`) + row("자연수가 되는 □", candidates.map(candidate => `${candidate.hidden}(→${candidate.value})`).join(", ")) + row("가장 큰 결과", `${selected.value} (□=${selected.hidden})`));
+        return fixedResult(`다음의 계산 결과가 가장 큰 자연수가 되도록 □ 안에 알맞은 자연수를 구하세요. (단, ${blankMixed}는 대분수입니다.)${promptVisual}${support("□에 1부터 차례로 넣되, 계산 결과가 자연수인 경우만 모아 보세요.")}${challenge}${evidence("largest-natural-blank", [denominator, multiplier, divisor, selected.hidden, selected.value, candidates.length])}`, selected.hidden, `풀이 기준: ${blankMixed}가 대분수이므로 □는 ${denominator}보다 작은 자연수입니다. 계산식은 (${2 * denominator}+□)÷${denominator}×${multiplier}÷${divisor}입니다. 자연수가 되는 □는 ${candidates.map(candidate => candidate.hidden).join(", ")}이고, 가장 큰 결과 ${selected.value}${josa.eulReul(selected.value)} 만드는 □는 ${selected.hidden}입니다.`, answerVisual);
       }
 
       if (variant === 5) {
+        // pool 0 = 미션 2(장난감 자동차 24개씩, 상자 5개 28 3/4 kg, 빈 상자 3/5 kg)
         const data = [
-          { perBox: 18, boxes: 4, empty: [1, 2], item: [7, 24], gross: [23, 1] },
-          { perBox: 20, boxes: 3, empty: [3, 4], item: [5, 16], gross: [21, 1] },
-          { perBox: 16, boxes: 5, empty: [2, 5], item: [3, 10], gross: [26, 1] }
+          { perBox: 24, boxes: 5, empty: [3, 5], gross: [115, 4] },
+          { perBox: 20, boxes: 3, empty: [3, 4], gross: [21, 1] },
+          { perBox: 16, boxes: 5, empty: [2, 5], gross: [26, 1] }
         ][poolIndex];
         const totalItems = data.perBox * data.boxes;
         const net = rationalOperation(rationalValue(...data.gross), rationalOperation(rationalValue(...data.empty), rationalValue(data.boxes), "×"), "-");
         const item = rationalOperation(net, rationalValue(totalItems), "÷");
-        const promptVisual = mathBoard("상자와 물건", row("한 상자", `${data.perBox}개`) + row("상자 수", `${data.boxes}개`) + row("전체 무게", `${fractionText(rationalValue(...data.gross))} kg`) + row("빈 상자 한 개", `${fractionText(rationalValue(...data.empty))} kg`), `data-source61-visual="box-weight"`);
-        const answerVisual = mathBoard("상자 무게를 뺀 뒤 나누기", row("물건만의 무게", `${fractionText(net)} kg`) + row("물건 수", `${totalItems}개`) + row("한 개", `${fractionText(item)} kg`));
-        return fixedResult(`같은 물건이 한 상자에 ${data.perBox}개씩 들어 있습니다. 상자 ${data.boxes}개의 전체 무게와 빈 상자의 무게는 그림과 같습니다. 물건 한 개의 무게를 구하세요.${promptVisual}${support("전체 무게에서 빈 상자들의 무게를 먼저 빼세요.")}${challenge}${evidence("box-item-weight", [data.perBox, data.boxes, ...data.empty, ...data.gross, item.numerator, item.denominator])}`, `${fraction(item.numerator, item.denominator)}kg`, `물건만의 무게는 ${fractionText(rationalValue(...data.gross))}-${data.boxes}×${fractionText(rationalValue(...data.empty))}=${fractionText(net)} kg입니다. 물건은 ${totalItems}개이므로 한 개는 ${fractionText(net)}÷${totalItems}=${fractionText(item)} kg입니다.`, answerVisual);
+        const gross = rationalValue(...data.gross);
+        const promptVisual = mathBoard("상자와 장난감 자동차", row("한 상자", `${data.perBox}개`) + row("상자 수", `${data.boxes}개`) + row("전체 무게", `${fractionText(gross)} kg`) + row("빈 상자 한 개", `${fractionText(rationalValue(...data.empty))} kg`), `data-source61-visual="box-weight"`);
+        const answerVisual = mathBoard("상자 무게를 뺀 뒤 나누기", row("자동차만의 무게", `${fractionText(net)} kg`) + row("자동차 수", `${totalItems}개`) + row("한 개", `${fractionText(item)} kg`));
+        return fixedResult(`똑같은 종류의 장난감 자동차가 한 상자에 ${data.perBox}개씩 들어 있습니다. 장난감 자동차가 들어 있는 상자 ${data.boxes}개의 무게를 달아 보니 ${fractionText(gross)} kg이었습니다. 빈 상자 한 개의 무게가 ${fractionText(rationalValue(...data.empty))} kg일 때, 장난감 자동차 하나의 무게를 구하세요.${promptVisual}${support("전체 무게에서 빈 상자들의 무게를 먼저 빼세요.")}${challenge}${evidence("box-item-weight", [data.perBox, data.boxes, ...data.empty, ...data.gross, item.numerator, item.denominator])}`, `${fraction(item.numerator, item.denominator)}kg`, `장난감 자동차만의 무게는 ${fractionText(gross)}-${fractionText(rationalValue(...data.empty))}×${data.boxes}=${fractionText(net)} kg입니다. 장난감 자동차는 ${data.perBox}×${data.boxes}=${totalItems}개이므로 하나의 무게는 ${fractionText(net)}÷${totalItems}=${fractionText(item)} kg입니다.`, answerVisual);
       }
 
       if (variant === 6) {
-        const thresholdDenominator = [12, 15, 18][poolIndex];
+        // pool 0 = 미션 3(1/10보다 큰 계산식의 개수)
+        const thresholdDenominator = [10, 15, 18][poolIndex];
         const valid = [];
         for (let n = 1; n <= 200; n += 1) if (n * thresholdDenominator > (n + 1) * (n + 2)) valid.push(n);
         const count = valid.length;
         const firstInvalid = count + 1;
         const sequence = [1, 2, 3, 4].map(n => `${fractionMarkup(n, n + 1)}÷${n + 2}`).join(", ");
-        const promptVisual = mathBoard("계속되는 계산", row("규칙", `${sequence}, …`) + row("비교할 수", fractionMarkup(1, thresholdDenominator)), `data-source61-visual="fraction-sequence"`);
+        const promptVisual = mathBoard("계산 규칙", wideRow(`${sequence}, ……`), `data-source61-visual="fraction-sequence"`);
         const answerVisual = mathBoard("경계에서 확인", row("마지막으로 큰 식", `${fractionMarkup(count, count + 1)}÷${count + 2}`) + row("처음으로 크지 않은 식", `${fractionMarkup(firstInvalid, firstInvalid + 1)}÷${firstInvalid + 2}`) + row("개수", `${count}개`));
-        return fixedResult(`다음 규칙으로 계속 계산할 때 계산한 값이 ${fractionMarkup(1, thresholdDenominator)}보다 큰 계산식은 모두 몇 개인가요?${promptVisual}${support("앞의 수를 n이라 하면 계산값은 n÷((n+1)×(n+2))가 됩니다.")}${challenge}${evidence("sequence-threshold-count", [thresholdDenominator, count, firstInvalid])}`, `${count}개`, `n번째 값은 ${symbolicFractionMarkup("n", "(n+1)(n+2)")}입니다. n=${count}일 때까지 기준보다 크고 n=${firstInvalid}부터는 크지 않으며 이후에는 계속 작아지므로 ${count}개입니다.`, answerVisual);
+        return fixedResult(`다음과 같은 규칙으로 계속 계산할 때 계산한 값이 ${fractionMarkup(1, thresholdDenominator)}보다 큰 계산식은 모두 몇 개입니까?${promptVisual}${support("앞의 수를 n이라 하면 계산값은 n÷((n+1)×(n+2))가 됩니다.")}${challenge}${evidence("sequence-threshold-count", [thresholdDenominator, count, firstInvalid])}`, `${count}개`, `n번째 식의 값은 ${symbolicFractionMarkup("n", "n+1")}÷(n+2)=${symbolicFractionMarkup("n", "(n+1)×(n+2)")}입니다. n=${count}일 때까지 ${fractionMarkup(1, thresholdDenominator)}보다 크고 n=${firstInvalid}부터는 크지 않으며 이후에는 계속 작아지므로 ${count}개입니다.`, answerVisual);
       }
 
       if (variant === 7) {
-        const coefficients = [
-          [[1, 8], [2, 5], [1, 6], [3, 10]],
-          [[2, 9], [1, 7], [3, 8], [1, 4]],
-          [[5, 12], [2, 9], [1, 3], [3, 10]]
+        // pool 0 = 미션 4(㉠÷2÷4, ㉡×2 1/5÷6, ㉢÷11×1 3/7, ㉣×12/23÷4)
+        // 각 식은 [연산, 분자, 분모] 두 개: 연산 0은 ÷, 1은 ×
+        const chains = [
+          [[[0, 2, 1], [0, 4, 1]], [[1, 11, 5], [0, 6, 1]], [[0, 11, 1], [1, 10, 7]], [[1, 12, 23], [0, 4, 1]]],
+          [[[0, 4, 1], [0, 3, 1]], [[1, 7, 3], [0, 8, 1]], [[0, 5, 1], [1, 7, 6]], [[1, 10, 21], [0, 6, 1]]],
+          [[[0, 3, 1], [0, 5, 1]], [[1, 8, 5], [0, 4, 1]], [[0, 9, 1], [1, 9, 4]], [[1, 15, 16], [0, 6, 1]]]
         ][poolIndex];
-        const names = ["가", "나", "다", "라"];
-        const ordered = names.map((name, index) => ({ name, coefficient: rationalValue(...coefficients[index]) })).sort((left, right) => left.coefficient.numerator / left.coefficient.denominator - right.coefficient.numerator / right.coefficient.denominator).map(item => item.name);
-        const answer = ordered.join(", ");
-        const promptVisual = mathBoard("네 계산값은 모두 같습니다", coefficients.map((coefficient, index) => row(names[index], `× ${fractionMarkup(...coefficient)}`)).join(""), `data-source61-visual="equal-products"`);
-        const answerVisual = mathBoard("곱하는 수가 작을수록 원래 수는 큽니다", row("큰 수부터", ordered.join(" → ")));
-        return fixedResult(`가, 나, 다, 라는 모두 0이 아닌 수입니다. 그림의 네 계산값이 모두 같을 때, 가, 나, 다, 라를 큰 수부터 차례대로 쓰세요.${promptVisual}${support("각 수에 곱한 분수를 작은 것부터 놓아 보세요.")}${challenge}${evidence("equal-products-order", [...coefficients.flat(), ...ordered.map(name => names.indexOf(name))], "ordered-list")}`, answer, `같은 값을 만들 때 곱하는 수가 작을수록 원래 수는 큽니다. ${coefficients.map((coefficient, index) => `${names[index]}에는 ${fractionMarkup(...coefficient)}`).join(", ")}을 곱하므로 큰 수부터 ${answer}입니다.`, answerVisual);
+        const opText = ([op, n, d]) => `${op ? "×" : "÷"}${d === 1 ? n : fractionText(rationalValue(n, d))}`;
+        const coefficients = chains.map(chain => chain.reduce((acc, [op, n, d]) => rationalOperation(acc, rationalValue(n, d), op ? "×" : "÷"), rationalValue(1)));
+        if (new Set(coefficients.map(value => `${value.numerator}/${value.denominator}`)).size !== 4) throw new Error(`${sourceItemId}: 네 식의 곱하는 수가 서로 달라야 합니다.`);
+        const order = [0, 1, 2, 3].sort((left, right) => coefficients[left].numerator / coefficients[left].denominator - coefficients[right].numerator / coefficients[right].denominator);
+        const answer = order.map(index => circled[index]).join(", ");
+        const promptVisual = mathBoard("네 식", chains.map((chain, index) => wideRow(`${circled[index]}${chain.map(opText).join("")}`)).join(""), `data-source61-visual="equal-products"`);
+        const answerVisual = mathBoard("곱하는 수가 작을수록 원래 수는 큽니다", chains.map((chain, index) => row(circled[index], `${circled[index]}×${fractionText(coefficients[index])}`)).join("") + row("큰 것부터", order.map(index => circled[index]).join(" → ")));
+        return fixedResult(`${circled.join(", ")}은 모두 0이 아닌 수입니다. 다음 네 식을 계산한 값이 모두 같을 때, ${circled.join(", ")}을 가장 큰 것부터 차례로 쓰세요.${promptVisual}${support("각 식을 어떤 수에 분수 하나를 곱하는 식으로 바꾸어 보세요.")}${challenge}${evidence("equal-products-order", [...chains.flat(2), ...order], "ordered-list")}`, answer, `각 식을 한 번의 곱셈으로 바꾸면 ${chains.map((chain, index) => `${circled[index]}×${fractionText(coefficients[index])}`).join(", ")}입니다. 계산한 값이 같을 때 곱하는 수가 작을수록 원래 수는 크므로 큰 것부터 ${answer}입니다.`, answerVisual);
       }
 
       if (variant === 8) {
+        // pool 0 = 미션 5(사과 10개·복숭아 3개 6kg, 사과 5개 꺼낸 뒤 4 1/8 kg, 빈 바구니 3/8 kg)
         const data = [
-          { apples: 8, peaches: 4, removed: 4, basket: [1, 2], gross: [6, 1], after: [9, 2] },
+          { apples: 10, peaches: 3, removed: 5, basket: [3, 8], gross: [6, 1], after: [33, 8] },
           { apples: 12, peaches: 3, removed: 6, basket: [3, 4], gross: [23, 4], after: [17, 4] },
           { apples: 10, peaches: 5, removed: 5, basket: [2, 5], gross: [69, 10], after: [27, 5] }
         ][poolIndex];
-        const apple = rationalOperation(rationalOperation(rationalValue(...data.gross), rationalValue(...data.after), "-"), rationalValue(data.removed), "÷");
-        const peachTotal = rationalOperation(rationalOperation(rationalValue(...data.gross), rationalValue(...data.basket), "-"), rationalOperation(apple, rationalValue(data.apples), "×"), "-");
+        const gross = rationalValue(...data.gross), after = rationalValue(...data.after), basket = rationalValue(...data.basket);
+        const apple = rationalOperation(rationalOperation(gross, after, "-"), rationalValue(data.removed), "÷");
+        const peachTotal = rationalOperation(rationalOperation(gross, basket, "-"), rationalOperation(apple, rationalValue(data.apples), "×"), "-");
         const peach = rationalOperation(peachTotal, rationalValue(data.peaches), "÷");
-        const promptVisual = mathBoard("바구니 안의 과일", row("사과", `${data.apples}개`) + row("복숭아", `${data.peaches}개`) + row("처음 무게", `${fractionText(rationalValue(...data.gross))} kg`) + row(`사과 ${data.removed}개를 꺼낸 뒤`, `${fractionText(rationalValue(...data.after))} kg`) + row("빈 바구니", `${fractionText(rationalValue(...data.basket))} kg`), `data-source61-visual="fruit-basket"`);
+        const promptVisual = mathBoard("바구니 안의 과일", row("사과", `${data.apples}개`) + row("복숭아", `${data.peaches}개`) + row("처음 무게", `${fractionText(gross)} kg`) + row(`사과 ${data.removed}개를 꺼낸 뒤`, `${fractionText(after)} kg`) + row("빈 바구니", `${fractionText(basket)} kg`), `data-source61-visual="fruit-basket"`);
         const answerVisual = mathBoard("두 종류의 무게를 차례로 찾기", row("사과 한 개", `${fractionText(apple)} kg`) + row("복숭아 전체", `${fractionText(peachTotal)} kg`) + row("복숭아 한 개", `${fractionText(peach)} kg`));
-        return fixedResult(`무게가 각각 같은 사과와 복숭아가 바구니에 들어 있습니다. 그림의 조건을 보고 복숭아 한 개의 무게를 구하세요.${promptVisual}${support("처음과 나중 무게의 차로 사과 한 개의 무게부터 구하세요.")}${challenge}${evidence("fruit-basket-weight", [data.apples, data.peaches, data.removed, ...data.basket, ...data.gross, ...data.after, peach.numerator, peach.denominator])}`, `${fraction(peach.numerator, peach.denominator)}kg`, `사과 한 개는 (${fractionText(rationalValue(...data.gross))}-${fractionText(rationalValue(...data.after))})÷${data.removed}=${fractionText(apple)} kg입니다. 처음 무게에서 바구니와 사과의 무게를 빼고 복숭아 수로 나누면 ${fractionText(peach)} kg입니다.`, answerVisual);
+        return fixedResult(`무게가 각각 같은 사과 ${data.apples}개와 복숭아 ${data.peaches}개가 들어 있는 바구니의 무게는 ${fractionText(gross)} kg입니다. 이 바구니에서 사과 ${data.removed}개를 꺼낸 후 바구니의 무게가 ${fractionText(after)} kg이 되었습니다. 빈 바구니의 무게가 ${fractionText(basket)} kg일 때, 복숭아 한 개의 무게를 구하세요.${promptVisual}${support("처음과 나중 무게의 차로 사과 한 개의 무게부터 구하세요.")}${challenge}${evidence("fruit-basket-weight", [data.apples, data.peaches, data.removed, ...data.basket, ...data.gross, ...data.after, peach.numerator, peach.denominator])}`, `${fraction(peach.numerator, peach.denominator)}kg`, `사과 한 개는 (${fractionText(gross)}-${fractionText(after)})÷${data.removed}=${fractionText(apple)} kg입니다. 복숭아 ${data.peaches}개의 무게는 ${fractionText(gross)}-${fractionText(basket)}-${fractionText(apple)}×${data.apples}=${fractionText(peachTotal)} kg이므로 복숭아 한 개는 ${fractionText(peachTotal)}÷${data.peaches}=${fractionText(peach)} kg입니다.`, answerVisual);
       }
 
+      // pool 0 = 미션 6(세준이와 효경이 6일 동안 5/7, 10일 만에 끝, 효경이 4월 5일부터)
       const data = [
-        { togetherDays: 4, together: [2, 3], firstAloneDays: 4, month: 5, day: 3 },
-        { togetherDays: 6, together: [3, 4], firstAloneDays: 4, month: 6, day: 10 },
-        { togetherDays: 6, together: [4, 5], firstAloneDays: 3, month: 7, day: 7 }
+        { togetherDays: 6, together: [5, 7], totalDays: 10, month: 4, day: 5 },
+        { togetherDays: 6, together: [3, 4], totalDays: 10, month: 6, day: 10 },
+        { togetherDays: 6, together: [4, 5], totalDays: 9, month: 7, day: 7 }
       ][poolIndex];
+      const firstAloneDays = data.totalDays - data.togetherDays;
       const togetherRate = rationalOperation(rationalValue(...data.together), rationalValue(data.togetherDays), "÷");
       const remainder = rationalOperation(rationalValue(1), rationalValue(...data.together), "-");
-      const firstRate = rationalOperation(remainder, rationalValue(data.firstAloneDays), "÷");
+      const firstRate = rationalOperation(remainder, rationalValue(firstAloneDays), "÷");
       const secondRate = rationalOperation(togetherRate, firstRate, "-");
       if (secondRate.numerator <= 0) throw new Error(`${sourceItemId}: 둘째 사람의 하루 일한 양이 0보다 크지 않습니다.`);
       const aloneDays = secondRate.denominator / secondRate.numerator;
       if (!Number.isInteger(aloneDays)) throw new Error(`${sourceItemId}: 혼자 끝내는 날 수가 자연수가 아닙니다.`);
       const endDay = data.day + aloneDays - 1;
       const answer = `${data.month}월 ${endDay}일`;
-      const promptVisual = mathBoard("두 사람이 한 일", row("함께 일한 기간", `${data.togetherDays}일`) + row("함께 한 양", `전체의 ${fractionMarkup(...data.together)}`) + row("남은 일을 가 혼자", `${data.firstAloneDays}일`), `data-source61-visual="work-rate"`);
-      const answerVisual = mathBoard("나 혼자 일하는 달력", row("나의 하루 일한 양", fractionText(secondRate)) + row("필요한 날 수", `${aloneDays}일`) + row("기간", `${data.month}월 ${data.day}일 → ${answer}`));
-      return fixedResult(`어떤 일을 가와 나가 함께 ${data.togetherDays}일 동안 하여 전체의 ${fractionMarkup(...data.together)}를 끝냈습니다. 나머지는 가가 혼자 ${data.firstAloneDays}일 동안 하여 끝냈습니다. 같은 일을 나가 ${data.month}월 ${data.day}일부터 쉬지 않고 혼자 한다면 끝나는 날은 몇 월 며칠인가요? (일한 첫날을 1일로 셉니다.)${promptVisual}${support("두 사람이 하루에 한 양에서 가가 하루에 한 양을 빼세요.")}${challenge}${evidence("work-rate-date", [data.togetherDays, ...data.together, data.firstAloneDays, data.month, data.day, secondRate.numerator, secondRate.denominator, aloneDays, endDay], "date")}`, answer, `두 사람이 하루에 한 양은 ${fractionText(togetherRate)}, 가가 하루에 한 양은 ${fractionText(firstRate)}입니다. 따라서 나는 하루에 ${fractionText(secondRate)}만큼 하므로 혼자 ${aloneDays}일 걸립니다. ${data.month}월 ${data.day}일을 첫날로 세면 ${answer}에 끝납니다.`, answerVisual);
+      const togetherFraction = fractionMarkup(...data.together);
+      const promptVisual = mathBoard("두 사람이 한 일", row("함께 일한 기간", `${data.togetherDays}일`) + row("함께 한 양", `전체의 ${togetherFraction}`) + row("모두 끝낸 날", `시작한 지 ${data.totalDays}일 만`), `data-source61-visual="work-rate"`);
+      const answerVisual = mathBoard("효경이 혼자 일하는 달력", row("효경이의 하루 일한 양", fractionText(secondRate)) + row("필요한 날 수", `${aloneDays}일`) + row("기간", `${data.month}월 ${data.day}일 → ${answer}`));
+      return fixedResult(`어떤 일을 하는데 세준이와 효경이가 함께 ${data.togetherDays}일 동안 전체의 ${togetherFraction}${josa.eulReul(data.together[0])} 하고 나머지는 세준이가 혼자 했더니 두 사람이 일을 시작한 지 ${data.totalDays}일 만에 모두 끝냈습니다. 같은 양의 일을 효경이가 ${data.month}월 ${data.day}일부터 쉬지 않고 혼자서 한다면 일을 끝내는 날은 몇 월 며칠인지 구하세요. (단, 세준이와 효경이가 하루에 하는 일의 양은 각각 일정합니다.)${promptVisual}${support("두 사람이 하루에 한 양에서 세준이가 하루에 한 양을 빼세요.")}${challenge}${evidence("work-rate-date", [data.togetherDays, ...data.together, firstAloneDays, data.month, data.day, secondRate.numerator, secondRate.denominator, aloneDays, endDay], "date")}`, answer, `풀이 기준: 효경이가 일을 시작한 ${data.month}월 ${data.day}일을 첫째 날로 셉니다. 두 사람이 하루에 한 양은 ${togetherFraction}÷${data.togetherDays}=${fractionText(togetherRate)}입니다. 세준이는 나머지 ${fractionText(remainder)}${josa.eulReul(remainder.numerator)} ${data.totalDays}-${data.togetherDays}=${firstAloneDays}일 동안 했으므로 하루에 ${fractionText(firstRate)}만큼 합니다. 따라서 효경이는 하루에 ${fractionText(togetherRate)}-${fractionText(firstRate)}=${fractionText(secondRate)}만큼 하므로 혼자 ${aloneDays}일 걸립니다. ${data.month}월 ${data.day}일을 첫째 날로 세면 ${answer}에 끝납니다.`, answerVisual);
     },
     sourceGrade6SecondDecimalDivisionE1Choice({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u2-e1-exploration-1";
       if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
       const poolIndex = variant % 3;
-      const [numerator, divisor] = [[672, 56], [864, 72], [936, 78]][poolIndex];
+      // 원문 보기(0번 묶음): ① 672÷5.6 ② 67.2÷5.6 ③ 6.72÷0.56 ④ 67.2÷56 ⑤ 6.72÷89
+      const [numerator, divisor, otherDivisor] = [[672, 56, 89], [864, 72, 98], [936, 78, 87]][poolIndex];
       const target = numerator / (10 * divisor);
-      const options = [
-        { text: `${numerator} ÷ ${divisor / 100}`, value: target * 1000 },
+      const bookOptions = [
         { text: `${numerator} ÷ ${divisor / 10}`, value: target * 100 },
         { text: `${numerator / 10} ÷ ${divisor / 10}`, value: target * 10 },
+        { text: `${numerator / 100} ÷ ${divisor / 100}`, value: target * 10 },
         { text: `${numerator / 10} ÷ ${divisor}`, value: target },
-        { text: `${numerator / 100} ÷ ${divisor}`, value: target / 10 },
-        { text: `${numerator / 1000} ÷ ${divisor}`, value: target / 100 }
+        { text: `${numerator / 100} ÷ ${otherDivisor}`, value: numerator / 100 / otherDivisor }
       ];
-      const choices = level === 0 ? options.slice(1, 4) : level === 1 ? options.slice(1) : options;
+      const choices = level === 0 ? bookOptions.slice(1, 4) : level === 1 ? bookOptions : [...bookOptions, { text: `${numerator / 1000} ÷ ${divisor}`, value: target / 100 }];
       const visible = [...choices.slice(poolIndex), ...choices.slice(0, poolIndex)];
       const correct = visible.findIndex(option => option.value === target);
       if (correct < 0 || visible.filter(option => option.value === target).length !== 1) throw new Error(`${sourceItemId}: 정답이 하나가 아닙니다.`);
@@ -24806,7 +24920,8 @@
       const list = `<ol class="source62-decimal-choices" aria-label="나눗셈 보기">${visible.map((option, index) => `<li><span>${marks[index]}</span>${option.text}</li>`).join("")}</ol>`;
       const answer = marks[correct];
       const solution = `나누어지는 수와 나누는 수에 각각 100을 곱하면 ${numerator / 10} ÷ ${divisor}입니다. 따라서 정답은 ${answer}입니다.`;
-      return result(`${numerator / 1000} ÷ ${divisor / 100}와 몫이 같은 것을 고르세요.${list}`, answer, solution, {
+      const withParticle = String(divisor).endsWith("2") ? "와" : "과";
+      return result(`다음 중 ${numerator / 1000} ÷ ${divisor / 100}${withParticle} 몫이 같은 것은 어느 것입니까?${list}`, answer, solution, {
         answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${list}<p>${answer} ${numerator / 10} ÷ ${divisor} = ${target}</p></div>`,
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
@@ -25801,44 +25916,46 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    // 2026-11-23 사용자 결정 "원본대로 바꿔": 생성기 이름은 유지하고, 0번 묶음은 원문 수치(강물 47.5km, 1시간 48분 동안 93.6km, 18km)와 원문 문장으로 냅니다.
+    // 원문은 연어가 93.6km를 간 방향을 적지 않았고, 물이 흐르는 방향으로 읽으면 거슬러 갈 수 없으므로 물이 흐르지 않는 곳에서의 빠르기로 보고 풉니다(풀이 기준).
     sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate({ level, variant = 0 }) {
       const sourceItemId = "6-2-u2-e5-mission-3";
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
       const poolIndex = variant % 3;
       const data = [
-        { sampleMinutes: 108, sampleDistanceHundredths: 9360, currentHundredths: 2150, targetHundredths: 1800 },
-        { sampleMinutes: 90, sampleDistanceHundredths: 1200, currentHundredths: 150, targetHundredths: 1500 },
-        { sampleMinutes: 75, sampleDistanceHundredths: 1250, currentHundredths: 250, targetHundredths: 2000 }
+        { sampleMinutes: 108, sampleDistanceHundredths: 9360, currentHundredths: 4750, targetHundredths: 1800 },
+        { sampleMinutes: 90, sampleDistanceHundredths: 810, currentHundredths: 240, targetHundredths: 900 },
+        { sampleMinutes: 75, sampleDistanceHundredths: 875, currentHundredths: 560, targetHundredths: 700 }
       ][poolIndex];
       const sampleHoursHundredths = data.sampleMinutes * 100 / 60;
-      const downstreamHundredths = data.sampleDistanceHundredths * 100 / sampleHoursHundredths;
-      const stillHundredths = downstreamHundredths - data.currentHundredths;
+      const stillHundredths = data.sampleDistanceHundredths * 100 / sampleHoursHundredths;
       const upstreamHundredths = stillHundredths - data.currentHundredths;
       const currentSampleMinutes = 30;
       const currentSampleDistanceHundredths = data.currentHundredths * currentSampleMinutes / 60;
-      if (![sampleHoursHundredths, downstreamHundredths, stillHundredths, upstreamHundredths, currentSampleDistanceHundredths].every(Number.isInteger)
-        || upstreamHundredths <= 0 || data.targetHundredths % upstreamHundredths !== 0) throw new Error(`${sourceItemId}: 하류·상류 빠르기와 시간이 맞지 않습니다.`);
+      if (![sampleHoursHundredths, stillHundredths, upstreamHundredths, currentSampleDistanceHundredths].every(Number.isInteger)
+        || upstreamHundredths <= 0 || data.targetHundredths % upstreamHundredths !== 0) throw new Error(`${sourceItemId}: 거슬러 가는 시간과 거리 조건이 정확하지 않습니다.`);
       const km = value => `${plainDecimal(value, 2)}km`;
       const speed = value => `${plainDecimal(value, 2)}km/시간`;
       const hours = value => `${plainDecimal(value, 2)}시간`;
       const measuredTime = `${Math.floor(data.sampleMinutes / 60)}시간 ${data.sampleMinutes % 60}분`;
       const answer = `${data.targetHundredths / upstreamHundredths}시간`;
-      const currentCondition = level === 2
-        ? `강물은 ${currentSampleMinutes}분 동안 ${km(currentSampleDistanceHundredths)} 흐릅니다.`
-        : `강물은 1시간에 ${km(data.currentHundredths)} 흐릅니다.`;
-      const downstreamCondition = level === 0
-        ? `연어는 물이 흐르는 방향으로 1시간에 ${km(downstreamHundredths)} 갑니다.`
-        : `연어는 물이 흐르는 방향으로 ${measuredTime} 동안 ${km(data.sampleDistanceHundredths)} 갔습니다.`;
-      const prompt = `${currentCondition} ${downstreamCondition} 연어가 헤엄치는 빠르기를 바꾸지 않고 같은 강에서 물이 흐르는 반대 방향으로 ${km(data.targetHundredths)}를 가는 데 걸리는 시간은 얼마입니까?`;
-      const difficultyDesign = ["downstream-speed-given", "downstream-distance-and-time", "derive-current-from-distance-and-time"][level];
+      const riverSentence = level === 2
+        ? `${currentSampleMinutes}분 동안 ${km(currentSampleDistanceHundredths)}를 가는 빠르기로 흐르는 강이 있습니다.`
+        : `한 시간 동안 ${km(data.currentHundredths)}를 가는 빠르기로 흐르는 강이 있습니다.`;
+      const salmonPhrase = level === 0
+        ? `일정한 빠르기로 1시간 동안 ${km(stillHundredths)}를 가는 연어가`
+        : `일정한 빠르기로 ${measuredTime} 동안 ${km(data.sampleDistanceHundredths)}를 가는 연어가`;
+      const prompt = `${riverSentence} ${salmonPhrase} 강물이 흐르는 반대 방향으로 ${km(data.targetHundredths)}를 가는 데 걸리는 시간을 구하세요.`;
+      const difficultyDesign = ["still-water-speed-given", "still-water-distance-and-time", "derive-current-from-distance-and-time"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-downstream-answer" data-answer-source="${sourceItemId}" data-source-relationship="downstream-number-corrected-adaptation" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>거슬러 가는 시간</strong>${row("물이 흐르는 방향", speed(downstreamHundredths))}${row("물살 없는 곳에서", speed(stillHundredths))}${row("거슬러 가는 빠르기", speed(upstreamHundredths))}${row("걸린 시간", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-downstream-answer" data-answer-source="${sourceItemId}" data-source-relationship="source-original-still-water-reading" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>강물을 거슬러 가는 시간</strong>${row("물살 없는 곳에서", speed(stillHundredths))}${row("강물의 빠르기", speed(data.currentHundredths))}${row("거슬러 가는 빠르기", speed(upstreamHundredths))}${row("걸린 시간", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
-      const downstreamStep = level === 0 ? "" : `물이 흐르는 방향으로 가는 빠르기는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${speed(downstreamHundredths)}`)}입니다. `;
+      const basis = level === 0
+        ? "풀이 기준: 연어가 1시간 동안 가는 거리는 물이 흐르지 않는 곳에서 헤엄치는 빠르기로 봅니다. "
+        : `풀이 기준: 연어가 ${measuredTime} 동안 ${km(data.sampleDistanceHundredths)}를 가는 빠르기는 물이 흐르지 않는 곳에서 헤엄치는 빠르기로 봅니다. `;
+      const stillStep = level === 0 ? "" : `${measuredTime}은 ${hours(sampleHoursHundredths)}이므로 연어의 빠르기는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${speed(stillHundredths)}`)}입니다. `;
       const currentStep = level === 2 ? `강물의 빠르기는 ${math(`${km(currentSampleDistanceHundredths)} ÷ ${hours(currentSampleMinutes * 100 / 60)} = ${speed(data.currentHundredths)}`)}입니다. ` : "";
-      const stillStep = `물살 없는 곳에서 헤엄치는 빠르기는 ${math(`${speed(downstreamHundredths)} − ${speed(data.currentHundredths)} = ${speed(stillHundredths)}`)}입니다. `;
-      const upstreamStep = `거슬러 가는 빠르기는 ${math(`${speed(stillHundredths)} − ${speed(data.currentHundredths)} = ${speed(upstreamHundredths)}`)}입니다. `;
-      const solution = `${downstreamStep}${currentStep}${stillStep}${upstreamStep}따라서 ${math(`${km(data.targetHundredths)} ÷ ${speed(upstreamHundredths)} = ${answer}`)}입니다.`;
+      const solution = `${basis}${stillStep}${currentStep}강물을 거슬러 가는 빠르기는 ${math(`${speed(stillHundredths)} − ${speed(data.currentHundredths)} = ${speed(upstreamHundredths)}`)}입니다. 따라서 ${math(`${km(data.targetHundredths)} ÷ ${speed(upstreamHundredths)} = ${answer}`)}입니다.`;
       return result(prompt, answer, solution, {
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
@@ -26961,7 +27078,16 @@
       const values = [...data.squarePerimeter, ...data.squareSpacing, intervalsPerSide, treesPerSide, treeCount, ...data.lakeCircumference, answerValue.numerator, answerValue.denominator];
       const evidence = `<span hidden data-source62-fraction-e2-mission6-kind="whole-square-lattice-to-closed-circle-spacing" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-fraction" data-candidate-count="${intervalCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
       const answer = `${plain(answerValue)}m`;
-      return result(`둘레가 ${shown(perimeter)}m인 정사각형 모양의 땅 전체에 ${shown(spacing)}m 간격으로 나무를 심습니다. 이때 심은 나무와 같은 수의 나무를 둘레가 ${shown(lakeCircumference)}m인 원 모양의 호수 둘레에 일정한 간격으로 심으려고 합니다. 나무와 나무 사이의 간격은 몇 m로 해야 하는지 구하세요.${board(false)}${support}${challenge}${evidence}`, answer, `정사각형의 한 변은 ${shown(perimeter)}÷4=${shown(side)}m이고, 한 변에는 ${shown(side)}÷${shown(spacing)}=${intervalsPerSide}개의 간격이 있습니다. 한 줄에는 나무가 ${treesPerSide}그루이므로 땅 전체에는 ${treesPerSide}×${treesPerSide}=${treeCount}그루가 있습니다. 닫힌 호숫가의 간격 수도 ${treeCount}개이므로 ${shown(lakeCircumference)}÷${treeCount}=${shown(answerValue)}m입니다.`, {
+      // 원문 그림: 나무를 격자 모양으로 심는 방법(3×3 부분과 이어짐 표시)만 보여 주고 수치는 넣지 않습니다.
+      const methodFigure = (() => {
+        const step = 40, x0 = 40, y0 = 26, ink = "#183b56";
+        const tree = (x, y) => `<g transform="translate(${x} ${y})"><line x1="0" y1="3" x2="0" y2="9" stroke="${ink}" stroke-width="1.6"/><circle cx="0" cy="0" r="5" fill="#cce8dc" stroke="${ink}" stroke-width="1.2"/></g>`;
+        const lines = [0, 1, 2].map(i => `<line x1="${x0}" y1="${y0 + i * step}" x2="${x0 + 2 * step}" y2="${y0 + i * step}" stroke="${ink}" stroke-width="2"/><line x1="${x0 + i * step}" y1="${y0}" x2="${x0 + i * step}" y2="${y0 + 2 * step}" stroke="${ink}" stroke-width="2"/>`).join("");
+        const trees = Array.from({ length: 9 }, (_, index) => tree(x0 + index % 3 * step, y0 + Math.floor(index / 3) * step)).join("");
+        const dots = [0, 1, 2].map(i => `<circle cx="${x0 + 2 * step + 16 + i * 8}" cy="${y0 + step}" r="1.6" fill="${ink}"/><circle cx="${x0 + step}" cy="${y0 + 2 * step + 18 + i * 8}" r="1.6" fill="${ink}"/>`).join("");
+        return `<div class="source62-tree-method-figure" data-source62-e2-mission6-method="square-lattice"><svg class="geometry-diagram" viewBox="0 0 200 160" style="width:min(200px,60%);height:auto;display:block;margin:8px auto" role="img" aria-label="땅 전체에 가로와 세로로 같은 간격마다 나무를 심는 방법">${lines}${trees}${dots}</svg></div>`;
+      })();
+      return result(`둘레가 ${shown(perimeter)}m인 정사각형 모양의 땅 전체에 그림과 같은 방법으로 ${shown(spacing)}m 간격마다 나무를 심습니다. 이때 심은 나무와 같은 수의 나무를 둘레가 ${shown(lakeCircumference)}m인 원 모양의 호수 둘레에 일정한 간격으로 심으려고 합니다. 나무와 나무 사이의 간격은 몇 m로 해야 합니까?${methodFigure}${board(false)}${support}${challenge}${evidence}`, answer, `정사각형의 한 변은 ${shown(perimeter)}÷4=${shown(side)}m이고, 한 변에는 ${shown(side)}÷${shown(spacing)}=${intervalsPerSide}개의 간격이 있습니다. 한 줄에는 나무가 ${treesPerSide}그루이므로 땅 전체에는 ${treesPerSide}×${treesPerSide}=${treeCount}그루가 있습니다. 닫힌 호숫가의 간격 수도 ${treeCount}개이므로 ${shown(lakeCircumference)}÷${treeCount}=${shown(answerValue)}m입니다.`, {
         answerVisual: `<div class="verified-answer-diagram source62-e2-mission6-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 나무 수를 땅 전체 격자와 닫힌 호숫가에 모두 표시하여 확인한 답</div></div>`,
         generationMode: "fixed-verified-pool",
         verifiedPoolIndex: poolIndex,
@@ -27091,7 +27217,7 @@
       const sourceItemId = "6-2-u1-e3-example-4";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 3-4 원문 분기는 0이어야 합니다.");
       const poolIndex = int(rng, 0, 2);
-      const limit = [7, 13, 19][poolIndex];
+      const limit = [13, 7, 19][poolIndex]; // 0번 묶음은 원문(우변 14/13)
       const target = rationalValue(limit + 1, limit);
       let directSum = rationalValue(0, 1);
       for (let number = 1; number <= limit; number += 1) directSum = rationalOperation(directSum, rationalValue(1, number * number + number), "+");
@@ -27104,19 +27230,19 @@
       });
       if (directSum.numerator !== limit || directSum.denominator !== limit + 1 || directReciprocal.numerator !== target.numerator || directReciprocal.denominator !== target.denominator || candidates.length !== 1 || candidates[0] !== limit) throw new Error("6-2 예제 3-4의 자연수가 하나로 정해지지 않습니다.");
       const term = value => symbolicFractionMarkup(1, `${value}×${value}+${value}`);
-      const unknownTerm = symbolicFractionMarkup(1, "㉠×㉠+㉠");
+      const unknownTerm = symbolicFractionMarkup(1, "㉮×㉮+㉮");
       const series = `${term(1)}<span class="source62-telescoping-operator">+</span>${term(2)}<span class="source62-telescoping-operator">+</span>${term(3)}<span class="source62-telescoping-operator">+</span><span class="source62-telescoping-dots">…</span><span class="source62-telescoping-operator">+</span>${unknownTerm}`;
       const targetMarkup = symbolicFractionMarkup(target.numerator, target.denominator);
-      const reciprocalMarkup = `<span class="source62-series-reciprocal" role="img" aria-label="1부터 ㉠까지 각 자연수와 그 다음 자연수의 곱을 분모로 하는 분수의 합의 역수"><span class="source62-series-reciprocal__top">1</span><span class="source62-series-reciprocal__bottom">${series}</span></span>`;
+      const reciprocalMarkup = `<span class="source62-series-reciprocal" role="img" aria-label="1부터 ㉮까지 각 자연수와 그 다음 자연수의 곱을 분모로 하는 분수의 합의 역수"><span class="source62-series-reciprocal__top">1</span><span class="source62-series-reciprocal__bottom">${series}</span></span>`;
       const equation = `${reciprocalMarkup}<span class="source62-telescoping-equals">=</span>${targetMarkup}`;
-      const board = solved => `<div class="source62-telescoping-board${solved ? " is-solved" : ""}" data-source62-e3-example4-structure="reciprocal-of-telescoping-fraction-sum" data-source62-e3-example4-limit="${limit}" data-target-fraction="${target.numerator}:${target.denominator}" data-direct-sum="${directSum.numerator}:${directSum.denominator}" data-candidate-count="${candidates.length}"><strong>분수의 합 전체를 1로 나눈 식</strong><div class="source62-telescoping-equation">${equation}</div>${solved ? `<div class="source62-telescoping-result"><span>㉠</span><b>${limit}</b></div>` : `<p>㉠에 알맞은 자연수를 구하세요.</p>`}</div>`;
+      const board = solved => `<div class="source62-telescoping-board${solved ? " is-solved" : ""}" data-source62-e3-example4-structure="reciprocal-of-telescoping-fraction-sum" data-source62-e3-example4-limit="${limit}" data-target-fraction="${target.numerator}:${target.denominator}" data-direct-sum="${directSum.numerator}:${directSum.denominator}" data-candidate-count="${candidates.length}">${solved ? "<strong>분수의 합 전체를 1로 나눈 식</strong>" : ""}<div class="source62-telescoping-equation">${equation}</div>${solved ? `<div class="source62-telescoping-result"><span>㉮</span><b>${limit}</b></div>` : ""}</div>`;
       const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
-      const answerBoard = `<div class="source61-math-board source62-telescoping-solution"><strong>앞뒤에서 같은 분수가 없어지는 성질 이용하기</strong>${row("곱한 자연수를 □라 할 때", `${symbolicFractionMarkup(1, "□×□+□") }=${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}`)}${row("㉠까지의 합", `${symbolicFractionMarkup("㉠", "㉠+1")}`)}${row("합의 역수", `${symbolicFractionMarkup("㉠+1", "㉠") }=${targetMarkup}`)}${row("㉠", String(limit))}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-telescoping-solution"><strong>앞뒤에서 같은 분수가 없어지는 성질 이용하기</strong>${row("곱한 자연수를 □라 할 때", `${symbolicFractionMarkup(1, "□×□+□") }=${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}`)}${row("㉮까지의 합", `${symbolicFractionMarkup("㉮", "㉮+1")}`)}${row("합의 역수", `${symbolicFractionMarkup("㉮+1", "㉮") }=${targetMarkup}`)}${row("㉮", String(limit))}</div>`;
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
       const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">곱한 자연수를 □라 할 때 ${symbolicFractionMarkup(1, "□×□+□")}을 ${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}로 바꾸어 앞뒤 항을 비교해 보세요.</p>` : "";
-      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">각 항을 두 분수의 차로 바꾼 뒤, 처음 항과 마지막에 남는 항만으로 ㉠을 찾으세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">각 항을 두 분수의 차로 바꾼 뒤, 처음 항과 마지막에 남는 항만으로 ㉮을 찾으세요.</p>` : "";
       const evidence = `<span hidden data-source62-fraction-e3-example4-kind="reciprocal-of-telescoping-fraction-sum" data-source-item="${sourceItemId}" data-limit="${limit}" data-target="${target.numerator}:${target.denominator}" data-direct-sum="${directSum.numerator}:${directSum.denominator}" data-result-contract="single-whole-number" data-candidate-count="${candidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
-      return result(`다음 식에서 ㉠에 알맞은 자연수를 구하세요.${board(false)}${support}${challenge}${evidence}`, limit, `곱한 자연수를 □라 하면 각 항의 분모는 □×(□+1)이므로 ${symbolicFractionMarkup(1, "□×□+□")}=${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}입니다. ㉠까지 더하면 중간의 분수들이 없어져 합은 ${symbolicFractionMarkup("㉠", "㉠+1")}이고, 그 역수는 ${symbolicFractionMarkup("㉠+1", "㉠")}입니다. 이것이 ${targetMarkup}이므로 ㉠=${limit}입니다.`, {
+      return result(`다음 식에서 ㉮에 알맞은 자연수를 구하세요.${board(false)}${support}${challenge}${evidence}`, limit, `곱한 자연수를 □라 하면 각 항의 분모는 □×(□+1)이므로 ${symbolicFractionMarkup(1, "□×□+□")}=${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}입니다. ㉮까지 더하면 중간의 분수들이 없어져 합은 ${symbolicFractionMarkup("㉮", "㉮+1")}이고, 그 역수는 ${symbolicFractionMarkup("㉮+1", "㉮")}입니다. 이것이 ${targetMarkup}이므로 ㉮=${limit}입니다.`, {
         answerVisual: `<div class="verified-answer-diagram source62-e3-example4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">직접 더한 값과 앞뒤 항이 없어지는 계산을 따로 확인한 답</div></div>`,
         generationMode: "fixed-verified-pool",
         verifiedPoolIndex: poolIndex,
@@ -27212,9 +27338,9 @@
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 3 Mission 3 원문 분기는 0이어야 합니다.");
       const poolIndex = int(rng, 0, 2);
       const data = [
-        { cards: [2, 3, 4, 5, 7], expectedOrder: [5, 3, 4, 2, 7], expectedAnswer: "20 1/8" },
-        { cards: [2, 4, 5, 7, 9], expectedOrder: [7, 4, 5, 2, 9], expectedAnswer: "35 1/10" },
-        { cards: [2, 3, 5, 8, 9], expectedOrder: [8, 3, 5, 2, 9], expectedAnswer: "38 7/10" }
+        { cards: [2, 3, 4, 5, 7], expectedOrder: [2, 3, 7, 4, 5], expectedAnswer: "3 1/28" },
+        { cards: [2, 4, 5, 7, 9], expectedOrder: [2, 4, 9, 5, 7], expectedAnswer: "3 19/45" },
+        { cards: [2, 3, 5, 8, 9], expectedOrder: [2, 3, 5, 8, 9], expectedAnswer: "2 37/40" }
       ][poolIndex];
       const arrangements = operatorPermutations(data.cards)
         .filter(cards => cards[1] < cards[2] && cards[3] < cards[4])
@@ -27223,25 +27349,25 @@
           const right = rationalValue(cards[3], cards[4]);
           return { cards, left, right, value: rationalOperation(left, right, "÷") };
         })
-        .sort((left, right) => right.value.numerator * left.value.denominator - left.value.numerator * right.value.denominator);
-      const maximum = arrangements[0];
-      const winners = arrangements.filter(item => item.value.numerator * maximum.value.denominator === maximum.value.numerator * item.value.denominator);
+        .sort((left, right) => left.value.numerator * right.value.denominator - right.value.numerator * left.value.denominator);
+      const minimum = arrangements[0]; // 원문: 몫이 가장 작을 때
+      const winners = arrangements.filter(item => item.value.numerator * minimum.value.denominator === minimum.value.numerator * item.value.denominator);
       const plain = value => mixedFraction(value.numerator, value.denominator);
       const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
       const placedMixed = cards => `<span class="math-mixed-number" role="img" aria-label="${cards[0]}와 ${cards[2]}분의 ${cards[1]}"><span>${cards[0]}</span>${symbolicFractionMarkup(cards[1], cards[2])}</span>`;
       const placedProper = cards => symbolicFractionMarkup(cards[3], cards[4]);
-      if (arrangements.length !== 30 || winners.length !== 1 || maximum.cards.join(":") !== data.expectedOrder.join(":") || plain(maximum.value) !== data.expectedAnswer) throw new Error("6-2 Mission 3의 가장 큰 몫이 원문 검산값 하나로 정해지지 않습니다.");
+      if (arrangements.length !== 30 || winners.length !== 1 || minimum.cards.join(":") !== data.expectedOrder.join(":") || plain(minimum.value) !== data.expectedAnswer) throw new Error("6-2 Mission 3의 가장 작은 몫이 원문 검산값 하나로 정해지지 않습니다.");
       const cardsSignature = data.cards.join(":");
-      const orderSignature = maximum.cards.join(":");
-      const expression = `${placedMixed(maximum.cards)}÷${placedProper(maximum.cards)}`;
-      const board = solved => `<div class="source62-mixed-card-board${solved ? " is-solved" : ""}" data-source62-e3-mission3-structure="five-cards-largest-mixed-proper-quotient" data-source62-e3-mission3-cards="${cardsSignature}" data-best-order="${orderSignature}" data-valid-arrangements="${arrangements.length}" data-answer-fraction="${plain(maximum.value)}"><strong>수 카드로 대분수와 진분수의 나눗셈 만들기</strong>${source41CardRow(data.cards)}<div class="source62-mixed-card-expression">${solved ? `${expression}=${shown(maximum.value)}` : `□ ${symbolicFractionMarkup("□", "□")}÷${symbolicFractionMarkup("□", "□")}`}</div><p>${solved ? "두 분수 부분이 모두 진분수인 가장 큰 몫" : "각 카드를 한 번씩만 사용합니다."}</p></div>`;
+      const orderSignature = minimum.cards.join(":");
+      const expression = `${placedMixed(minimum.cards)}÷${placedProper(minimum.cards)}`;
+      const board = solved => `<div class="source62-mixed-card-board${solved ? " is-solved" : ""}" data-source62-e3-mission3-structure="five-cards-smallest-mixed-proper-quotient" data-source62-e3-mission3-cards="${cardsSignature}" data-best-order="${orderSignature}" data-valid-arrangements="${arrangements.length}" data-answer-fraction="${plain(minimum.value)}"><strong>수 카드로 대분수와 진분수의 나눗셈 만들기</strong>${source41CardRow(data.cards)}<div class="source62-mixed-card-expression">${solved ? `${expression}=${shown(minimum.value)}` : `□ ${symbolicFractionMarkup("□", "□")}÷${symbolicFractionMarkup("□", "□")}`}</div><p>${solved ? "두 분수 부분이 모두 진분수인 가장 작은 몫" : "각 카드를 한 번씩만 사용합니다."}</p></div>`;
       const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
-      const answerBoard = `<div class="source61-math-board source62-mixed-card-solution"><strong>조건에 맞는 카드 배치를 모두 비교하기</strong>${row("확인한 배치", `${arrangements.length}가지`)}${row("가장 큰 몫 식", expression)}${row("가분수로 나타낸 몫", fractionMarkup(maximum.value.numerator, maximum.value.denominator))}${row("대분수로 나타낸 몫", shown(maximum.value))}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-mixed-card-solution"><strong>조건에 맞는 카드 배치를 모두 비교하기</strong>${row("확인한 배치", `${arrangements.length}가지`)}${row("가장 작은 몫 식", expression)}${row("가분수로 나타낸 몫", fractionMarkup(minimum.value.numerator, minimum.value.denominator))}${row("대분수로 나타낸 몫", shown(minimum.value))}</div>`;
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
-      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">대분수는 크게, 나누는 진분수는 작게 만드는 카드 배치부터 비교해 보세요.</p>` : "";
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">대분수는 작게, 나누는 진분수는 크게 만드는 카드 배치부터 비교해 보세요.</p>` : "";
       const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 분수 부분이 진분수인지 확인하며 가능한 카드 배치를 빠짐없이 비교하세요.</p>` : "";
-      const evidence = `<span hidden data-source62-fraction-e3-mission3-kind="five-cards-largest-mixed-proper-quotient" data-source-item="${sourceItemId}" data-cards="${cardsSignature}" data-best-order="${orderSignature}" data-valid-arrangements="${arrangements.length}" data-answer="${plain(maximum.value)}" data-result-contract="single-mixed-number" data-candidate-count="${winners.length}" data-difficulty-design="${difficultyDesign}"></span>`;
-      return result(`수 카드 ${data.cards.join(", ")}를 한 번씩 모두 사용하여 (대분수)÷(진분수)를 만들려고 합니다. 나눗셈의 몫이 가장 클 때의 몫을 구하세요.${board(false)}${support}${challenge}${evidence}`, plain(maximum.value), `대분수와 진분수의 분수 부분이 모두 진분수가 되도록 카드를 놓는 ${arrangements.length}가지를 모두 비교합니다. ${expression}일 때 몫이 ${shown(maximum.value)}로 가장 큽니다.`, {
+      const evidence = `<span hidden data-source62-fraction-e3-mission3-kind="five-cards-smallest-mixed-proper-quotient" data-source-item="${sourceItemId}" data-cards="${cardsSignature}" data-best-order="${orderSignature}" data-valid-arrangements="${arrangements.length}" data-answer="${plain(minimum.value)}" data-result-contract="single-mixed-number" data-candidate-count="${winners.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`수 카드 ${data.cards.join(", ")}${[0, 1, 3, 6, 7, 8].includes(data.cards[data.cards.length - 1]) ? "을" : "를"} 한 번씩 모두 사용하여 (대분수)÷(진분수)를 만들려고 합니다. 나눗셈의 몫이 가장 작을 때의 몫을 구하세요.${board(false)}${support}${challenge}${evidence}`, plain(minimum.value), `대분수와 진분수의 분수 부분이 모두 진분수가 되도록 카드를 놓는 ${arrangements.length}가지를 모두 비교합니다. ${expression}일 때 몫이 ${shown(minimum.value)}로 가장 작습니다.`, {
         answerVisual: `<div class="verified-answer-diagram source62-e3-mission3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">카드 5장을 한 번씩 썼는지와 대분수·진분수 배치를 모두 확인한 답</div></div>`,
         generationMode: "fixed-verified-pool",
         verifiedPoolIndex: poolIndex,
@@ -28446,8 +28572,8 @@
       const regularCount = actual * (100 - discountShare) / 100;
       const discountedCount = actual - regularCount;
       if (!Number.isInteger(regularCount) || !Number.isInteger(discountedCount)) throw new Error(`${sourceItemId}: 판매 수량이 자연수가 아닙니다.`);
-      const visual = solved => tableSvg("정가 판매와 할인 판매한 신발", [["한 켤레 원가", won(cost), won(cost)], ["정가", `원가에 ${markupRate}% 이익`, won(listPrice)], ["정가 판매", `전체의 ${100 - discountShare}%`, `${regularCount}켤레`], ["할인 판매", `전체의 ${discountShare}% · ${discountRate}% 할인`, `${discountedCount}켤레 · ${won(discountedPrice)}`], ["전체 이익", won(totalProfit), won(totalProfit)]], values, solved, `처음 ${actual}켤레`);
-      return fixedResult(`원가가 ${cost}원인 신발에 ${markupRate}%만큼의 이익을 붙여 정가를 정했습니다. 가지고 있던 신발의 ${discountShare / 100}만큼이 팔리지 않아 정가의 ${discountRate}%를 할인하여 남은 신발을 모두 팔았습니다. 모두 ${totalProfit}원의 이익을 얻었다면 처음에 가지고 있던 신발은 몇 켤레인가요?`, `${actual}켤레`, `정가 판매 한 켤레의 이익은 ${regularProfit}원, 할인 판매 한 켤레의 이익은 ${discountedProfit}원입니다. 전체의 ${100 - discountShare}%와 ${discountShare}%를 각각 이 방법으로 팔았으므로 처음 수 한 켤레 몫의 평균 이익은 ${averageProfit}원입니다. 따라서 ${totalProfit}÷${averageProfit}=${actual}켤레입니다.`, visual(false), `${visual(true)}${mathBoard("두 판매 방법의 이익", row("정가 판매", `${regularCount}켤레 × ${regularProfit}원`) + row("할인 판매", `${discountedCount}켤레 × ${discountedProfit}원`) + row("답", `${actual}켤레`))}`, values);
+      const visual = solved => tableSvg("정가 판매와 할인 판매한 신발", [["한 켤레 원가", won(cost), won(cost)], ["정가", `원가의 ${markupRate / 100}만큼 이익`, won(listPrice)], ["정가 판매", `전체의 ${100 - discountShare}%`, `${regularCount}켤레`], ["할인 판매", `전체의 ${discountShare}% · ${discountRate}% 할인`, `${discountedCount}켤레 · ${won(discountedPrice)}`], ["전체 이익", won(totalProfit), won(totalProfit)]], values, solved, `처음 ${actual}켤레`);
+      return fixedResult(`원가가 ${cost}원인 신발에 ${markupRate / 100}만큼의 이익을 붙여 정가를 정하였으나 가지고 있던 신발의 ${discountShare / 100}만큼이 팔리지 않아 정가의 ${discountRate}%를 할인해서 남은 신발을 모두 팔았습니다. 모두 ${totalProfit}원의 이익을 얻었다면 처음에 가지고 있던 신발은 모두 몇 켤레입니까?`, `${actual}켤레`, `원가의 ${markupRate / 100}만큼의 이익을 붙였으므로 정가는 ${cost}×${1 + markupRate / 100}=${listPrice}원입니다. 할인한 값은 ${listPrice}×${100 - discountRate}÷100=${discountedPrice}원입니다. 정가 판매 한 켤레의 이익은 ${regularProfit}원${discountedProfit < 0 ? `이고, 할인 판매 한 켤레는 ${cost}-${discountedPrice}=${-discountedProfit}원 손해입니다` : `, 할인 판매 한 켤레의 이익은 ${discountedProfit}원입니다`}. 전체의 ${100 - discountShare}%와 ${discountShare}%를 각각 이 방법으로 팔았으므로 처음 신발 한 켤레 몫의 평균 이익은 ${regularProfit}×${(100 - discountShare) / 100}${discountedProfit < 0 ? `-${-discountedProfit}` : `+${discountedProfit}`}×${discountShare / 100}=${averageProfit}원입니다. 따라서 ${totalProfit}÷${averageProfit}=${actual}켤레입니다.`, visual(false), `${visual(true)}${mathBoard("두 판매 방법의 이익", row("정가 판매", `${regularCount}켤레 × ${regularProfit}원`) + row("할인 판매", discountedProfit < 0 ? `${discountedCount}켤레 × ${-discountedProfit}원 손해` : `${discountedCount}켤레 × ${discountedProfit}원`) + row("답", `${actual}켤레`))}`, values);
     },
     sourceGrade6GraphsE1({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -28825,8 +28951,8 @@
         ][poolIndex];
         const a = rationalOperation(rationalOperation(data.total, rationalOperation(rationalValue(data.n), data.p, "×"), "-"), rationalValue(data.m - data.n), "÷");
         const b = rationalOperation(data.p, a, "-");
-        const answerVisual = mathBoard("두 종류를 함께 만든 양", row("A 한 개", `${fractionText(a)} L`) + row("B 한 개", `${fractionText(b)} L`) + row("전체", `${fractionText(data.total)} L`) + row("확인", `${data.m}×${fractionText(a)}+${data.n}×${fractionText(b)}=${fractionText(data.total)} L`));
-        return fixedResult(`아이스크림 A와 B를 한 개씩 만드는 데 필요한 우유의 합은 ${fractionText(data.p)}L입니다. A를 ${data.m}개, B를 ${data.n}개 만드는 데 우유 ${fractionText(data.total)}L를 사용했습니다. 아이스크림 A 한 개와 B 한 개에 필요한 우유의 양을 각각 구하세요.${mathBoard("한 개씩 만드는 우유", row("A+B", `${fractionText(data.p)} L`) + row("만든 개수", `A ${data.m}개, B ${data.n}개`))}${support("B 한 개의 양을 P에서 A 한 개의 양을 뺀 것으로 나타내세요.")}${challenge}${evidence("two-products-total-milk", [data.m, data.n, data.p.numerator, data.p.denominator, data.total.numerator, data.total.denominator, a.numerator, a.denominator, b.numerator, b.denominator])}`, `A=${answerText(a)}L, B=${answerText(b)}L`, `A 한 개를 aL라 하면 B 한 개는 (${fractionText(data.p)}-a)L입니다. ${data.m}a+${data.n}(${fractionText(data.p)}-a)=${fractionText(data.total)}이므로 a=${fractionText(a)}L, B 한 개는 ${fractionText(b)}L입니다.`, answerVisual);
+        const answerVisual = mathBoard("두 종류를 함께 만든 양", row("㉮ 한 개", `${fractionText(a)} L`) + row("㉯ 한 개", `${fractionText(b)} L`) + row("전체", `${fractionText(data.total)} L`) + row("확인", `${data.m}×${fractionText(a)}+${data.n}×${fractionText(b)}=${fractionText(data.total)} L`));
+        return fixedResult(`어떤 아이스크림 공장에서 ㉮, ㉯ 두 종류의 아이스크림을 하나씩 만드는 데 사용되는 우유량의 합은 ${fractionText(data.p)} L입니다. 하루 동안 ㉮ 아이스크림 ${data.m}개, ㉯ 아이스크림 ${data.n}개를 만드는 데 ${fractionText(data.total)} L의 우유를 사용하였다면 ㉮ 아이스크림 한 개를 만드는 데 몇 L의 우유가 사용되었겠습니까?${mathBoard("한 개씩 만드는 우유", row("㉮+㉯", `${fractionText(data.p)} L`) + row("만든 개수", `㉮ ${data.m}개, ㉯ ${data.n}개`))}${support("㉯ 한 개의 양을 합에서 ㉮ 한 개의 양을 뺀 것으로 나타내세요.")}${challenge}${evidence("two-products-total-milk", [data.m, data.n, data.p.numerator, data.p.denominator, data.total.numerator, data.total.denominator, a.numerator, a.denominator, b.numerator, b.denominator])}`, `${answerText(a)}L`, `㉮와 ㉯를 ${data.n}개씩 만들면 우유는 ${fractionText(data.p)}×${data.n}=${fractionText(rationalOperation(data.p, rationalValue(data.n), "×"))} L입니다. 나머지 ㉮ ${data.m - data.n}개에 ${fractionText(data.total)}-${fractionText(rationalOperation(data.p, rationalValue(data.n), "×"))}=${fractionText(rationalOperation(data.total, rationalOperation(data.p, rationalValue(data.n), "×"), "-"))} L가 들었으므로 ㉮ 한 개는 ${fractionText(rationalOperation(data.total, rationalOperation(data.p, rationalValue(data.n), "×"), "-"))}÷${data.m - data.n}=${fractionText(a)} L입니다.`, answerVisual);
       }
 
       if (variant === 7) {
@@ -29108,11 +29234,12 @@
           { totals: [1500, 1000, 1000], rows: [[30, 40, 24, 6], [22, 36, 31, 11], [18, 38, 30.5, 13.5]] }
         ][poolIndex];
         const labels = ["140cm 미만", "140cm 이상 150cm 미만", "150cm 이상 160cm 미만", "160cm 이상"], years = ["2007년", "2012년", "2017년"];
-        const rows = years.map((label, index) => ({ label, meta: `전체 ${num(pools.totals[index])}명`, segments: labels.map((segment, segmentIndex) => ({ label: segment, percent: pools.rows[index][segmentIndex] })) }));
+        // 원문 그림: 연도별 전체 학생 수는 그래프에 없고, 160cm 이상 비율(5.6%, 8.5%, 10.4%)도 적혀 있습니다(좁은 칸이라 칸 아래에 씁니다).
+        const rows = years.map((label, index) => ({ label, annotations: [{ x: Number((166 + 330 * (100 - pools.rows[index][3] / 2) / 100).toFixed(2)), yOffset: 47, text: `${pools.rows[index][3]}%`, anchor: "middle" }], segments: labels.map((segment, segmentIndex) => ({ label: segment, percent: pools.rows[index][segmentIndex], legendValue: segment, ...(segmentIndex === 3 ? { showPercent: false } : {}) })) }));
         const answer = Math.abs(pools.totals[0] * pools.rows[0][3] / 100 - pools.totals[1] * pools.rows[1][3] / 100);
         const resultText = `${answer}명`;
         const visual = solved => stripSvg({ title: "키별 학생 수", rows, values: [...pools.totals, ...pools.rows.flat()], solved, highlights: solved ? [[3], [3], []] : [[], [], []], resultText: solved ? resultText : "" });
-        return fixed(`2007년부터 2017년까지 초등학교 6학년 학생들의 키를 조사한 띠그래프입니다. 조사한 전체 학생 수가 2007년 ${pools.totals[0]}명, 2012년 ${pools.totals[1]}명일 때, 두 해의 160cm 이상 학생 수의 차를 구하세요.`, resultText, `2007년 160cm 이상은 ${pools.totals[0]}×${pools.rows[0][3]}%=${pools.totals[0] * pools.rows[0][3] / 100}명이고, 2012년은 ${pools.totals[1]}×${pools.rows[1][3]}%=${pools.totals[1] * pools.rows[1][3] / 100}명입니다. 차는 ${answer}명입니다.`, visual(false), visual(true), [...pools.totals, ...pools.rows.flat()]);
+        return fixed(`다음은 2007년부터 2017년까지 하늘 초등학교 6학년 학생들의 키를 조사하여 나타낸 그래프입니다. 조사한 전체 학생 수가 2007년에는 ${pools.totals[0]}명, 2012년에는 ${pools.totals[1]}명일 때, 2007년과 2012년에 키가 160cm 이상인 학생 수의 차는 몇 명입니까?`, resultText, `2007년 160cm 이상은 ${pools.totals[0]}×${pools.rows[0][3]}%=${pools.totals[0] * pools.rows[0][3] / 100}명이고, 2012년은 ${pools.totals[1]}×${pools.rows[1][3]}%=${pools.totals[1] * pools.rows[1][3] / 100}명입니다. 차는 ${answer}명입니다.`, visual(false), visual(true), [...pools.totals, ...pools.rows.flat()]);
       }
 
       if (variant === 7) {
@@ -29158,7 +29285,7 @@
         { counts: [80, 100, 120, 200], dimensions: [20, 8, 15, 8], percents: [16, 20, 24, 40] }
       ][poolIndex];
       const gradeLabels = ["3학년", "4학년", "5학년", "6학년"], total = pools.counts.reduce((sum, value) => sum + value, 0), answer = (pools.dimensions[0] * pools.dimensions[1] - pools.dimensions[2] * pools.dimensions[3]) * pools.percents[3] / 100;
-      const dualRectangles = solved => {
+      const dualRectangles = (solved, tableOnly = false) => {
         const rect = (x, y, width, height, title) => {
           let cumulative = 0;
           const blocks = pools.percents.map((percent, index) => {
@@ -29168,9 +29295,11 @@
           }).join("");
           return svgText(x + width / 2, y - 9, title, "font-size=\"10\" font-weight=\"900\"") + blocks;
         };
-        const headers = gradeLabels.map(label => "<th>" + label + "</th>").join("") + "<th>합계</th>";
-        const cells = pools.counts.map(value => "<td>" + value + "</td>").join("") + "<td>" + total + "</td>";
+        const headers = "<th>학년</th>" + gradeLabels.map(label => "<th>" + label + "</th>").join("") + "<th>합계</th>";
+        const cells = "<th>학생 수(명)</th>" + pools.counts.map(value => "<td>" + value + "</td>").join("") + "<td>" + total + "</td>";
         const tableMarkup = "<foreignObject x=\"32\" y=\"52\" width=\"476\" height=\"84\"><table class=\"problem-table source61-e2-table\"><thead><tr>" + headers + "</tr></thead><tbody><tr>" + cells + "</tr></tbody></table></foreignObject>";
+        // 원문 문제에는 표만 있고, 띠그래프와 비율은 학생이 구합니다.
+        if (tableOnly) return `<svg class="geometry-diagram source61-graphs-e2-diagram" style="width:min(560px,100%);height:auto" viewBox="0 0 540 150" role="img" aria-label="수학 경시대회에 참가한 학년별 학생 수 표" data-source61-graphs-e2-structure="수학 경시대회에 참가한 학년별 학생 수 표" data-source61-graphs-e2-layout="${layoutKind}" data-source61-graphs-e2-values="${[...pools.counts, ...pools.dimensions, ...pools.percents].join(",")}" data-source61-graphs-e2-segment-order="${gradeLabels.join("|")}" data-source61-e2-student-table="visible"><rect class="source61-e2-frame" x="18" y="15" width="504" height="125" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(270, 37, "수학 경시대회에 참가한 학년별 학생 수", 'font-size="13" font-weight="900"')}${tableMarkup}</svg>`;
         const firstRectMarkup = rect(64, 160, 412, 46, String(pools.dimensions[0]) + "cm × " + pools.dimensions[1] + "cm");
         const secondRectMarkup = rect(64, 235, 412, 46, String(pools.dimensions[2]) + "cm × " + pools.dimensions[3] + "cm");
         const resultLabel = svgText(270, 307, "6학년 구간 넓이 차: " + answer + "cm²", "font-size=\"10\" font-weight=\"900\"");
@@ -29178,7 +29307,9 @@
         const solvedAttrs = solved ? " data-result-highlight=\"6학년 구간\" data-final-answer=\"" + answer + "cm²\"" : "";
         return "<svg class=\"geometry-diagram source61-graphs-e2-diagram\" style=\"width:min(560px,100%);height:auto\" viewBox=\"0 0 540 330\" role=\"img\" aria-label=\"학년별 학생 비율과 두 띠그래프의 넓이\" data-source61-graphs-e2-structure=\"학년별 학생 수와 두 직사각형 띠그래프\" data-source61-graphs-e2-layout=\"" + layoutKind + "\" data-source61-graphs-e2-values=\"" + [...pools.counts, ...pools.dimensions, ...pools.percents].join(",") + "\" data-source61-graphs-e2-segment-order=\"" + gradeLabels.join("|") + "\" data-source61-e2-student-table=\"visible\"" + solvedAttrs + ">" + "<rect class=\"source61-e2-frame\" x=\"18\" y=\"15\" width=\"504\" height=\"300\" rx=\"6\" fill=\"#f7fafc\" stroke=\"#183b56\" stroke-width=\"2\"/>" + svgText(270, 37, "학년별 학생 수와 두 띠그래프", "font-size=\"13\" font-weight=\"900\"") + tableMarkup + firstRectMarkup + secondRectMarkup + resultMarkup + "</svg>";
       };
-      return fixed("표의 자료를 두 직사각형 모양의 띠그래프로 나타냈습니다. 두 띠그래프의 가로와 세로가 각각 " + pools.dimensions[0] + "cm, " + pools.dimensions[1] + "cm와 " + pools.dimensions[2] + "cm, " + pools.dimensions[3] + "cm일 때 6학년이 차지하는 넓이의 차를 구하세요." + dualRectangles(false), String(answer) + "cm²", "두 직사각형 넓이의 차를 계산하고 6학년 비율을 곱하면 " + answer + "cm²입니다.", "", dualRectangles(true), [...pools.counts, ...pools.dimensions, ...pools.percents]);
+      const [w1, h1, w2, h2] = pools.dimensions;
+      const m6Solution = `6학년은 전체의 ${pools.counts[3]}÷${total}×100=${pools.percents[3]}%입니다. 두 띠그래프의 넓이는 ${w1}×${h1}=${w1 * h1}cm², ${w2}×${h2}=${w2 * h2}cm²이므로 6학년이 차지하는 넓이의 차는 (${w1 * h1}−${w2 * h2})×${pools.percents[3]}÷100=${answer}cm²입니다.`;
+      return fixed(`다음은 어느 수학 경시대회에 참가한 학생 수를 조사하여 나타낸 표입니다. 표를 보고 가로가 ${w1}cm, 세로가 ${h1}cm인 띠그래프와 가로가 ${w2}cm, 세로가 ${h2}cm인 띠그래프로 각각 나타낼 때 6학년이 차지하는 넓이의 차는 몇 cm²입니까? (단, 두 띠그래프는 모두 직사각형 모양입니다.)`, String(answer) + "cm²", m6Solution, dualRectangles(false, true), dualRectangles(true), [...pools.counts, ...pools.dimensions, ...pools.percents]);
     },
     sourceGrade6GraphsE3({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -29420,17 +29551,17 @@
           { totals: [1000, 800], a: [38, 21, 18, 14, 9], b: [36, 28, 12, 17, 7] },
           { totals: [900, 750], a: [40, 20, 17, 16, 7], b: [35, 27, 13, 20, 5] }
         ][poolIndex];
-        const labels = ["닭", "돼지", "염소", "말", "기타"];
+        const labels = ["닭", "돼지", "소", "말", "기타"]; // 원문 그림의 항목 이름
         const counts = [d.totals[0] * d.a[3] / 100, d.totals[1] * d.b[3] / 100];
         const winner = counts[0] >= counts[1] ? "수정이네" : "진영이네";
         const gap = Math.abs(counts[0] - counts[1]);
         const make = solved => [
-          { title: `수정이네 · 전체 ${d.totals[0]}마리`, segments: labels.map((label, index) => segment(label, d.a[index], `${d.a[index]}%`, `${d.a[index]}%${solved && index === 3 ? ` · ${counts[0]}마리` : ""}`, { highlight: index === 3 })) },
-          { title: `진영이네 · 전체 ${d.totals[1]}마리`, segments: labels.map((label, index) => segment(label, d.b[index], `${d.b[index]}%`, `${d.b[index]}%${solved && index === 3 ? ` · ${counts[1]}마리` : ""}`, { highlight: index === 3 })) }
+          { title: "수정이네 마을에서 기르는 종류별 가축 수", segments: labels.map((label, index) => segment(label, d.a[index], `${d.a[index]}%`, `${d.a[index]}%${solved && index === 3 ? ` · ${counts[0]}마리` : ""}`, { highlight: index === 3 })) },
+          { title: "진영이네 마을에서 기르는 종류별 가축 수", segments: labels.map((label, index) => segment(label, d.b[index], `${d.b[index]}%`, `${d.b[index]}%${solved && index === 3 ? ` · ${counts[1]}마리` : ""}`, { highlight: index === 3 })) }
         ];
         const values = [...d.totals, ...d.a, ...d.b, ...counts, gap];
         const answer = `${winner}가 ${gap}마리 더 많음`;
-        return fixed(`수정이네 마을은 가축 ${d.totals[0]}마리, 진영이네 마을은 ${d.totals[1]}마리를 기릅니다. 말은 어느 마을이 몇 마리 더 많이 기르는지 구하세요.`, answer, `말은 수정이네 ${d.totals[0]}×${d.a[3]}%=${counts[0]}마리, 진영이네 ${d.totals[1]}×${d.b[3]}%=${counts[1]}마리입니다. 따라서 ${answer}입니다.`, circleSet({ title: "마을별 가축 수", charts: make(false), values }), circleSet({ title: "마을별 가축 수", charts: make(true), values, solved: true, resultText: answer }), values, "ordered-tuple");
+        return fixed(`다음은 수정이네 마을과 진영이네 마을에서 기르는 가축 수를 조사하여 나타낸 원그래프입니다. 수정이네 마을에서 기르는 가축은 ${d.totals[0]}마리이고, 진영이네 마을에서 기르는 가축은 ${d.totals[1]}마리입니다. 말은 누구네 마을이 몇 마리 더 많이 기르는지 구하세요.`, answer, `말은 수정이네 ${d.totals[0]}×${d.a[3]}%=${counts[0]}마리, 진영이네 ${d.totals[1]}×${d.b[3]}%=${counts[1]}마리입니다. 따라서 ${answer}입니다.`, circleSet({ title: "마을별 가축 수", charts: make(false), values }), circleSet({ title: "마을별 가축 수", charts: make(true), values, solved: true, resultText: answer }), values, "ordered-tuple");
       }
 
       if (variant === 6) {
@@ -30563,13 +30694,13 @@
           const [lx, ly] = polar(cx, cy, radius * .72, middle);
           start += segment.percent * 3.6;
           const display = hard && segment.masked && !solved ? "□" : segment.display || formatPercent(segment.percent);
-          const inChart = segment.showInChart || segment.percent >= 20;
+          const inChart = (segment.showInChart || segment.percent >= 20) && !(segment.hideValue && !solved);
           return `<path class="source61-e4-sector${solved && segment.highlight ? " is-solved" : ""}" data-segment-label="${esc(segment.label)}" data-segment-percent="${segment.percent}" data-segment-angle="${segment.percent * 3.6}" d="${path}" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="1.4"/>${inChart ? `<text class="source61-e4-readable-text source61-e4-important-value source61-e4-sector-value" x="${lx.toFixed(2)}" y="${(ly + 3).toFixed(2)}" text-anchor="middle" fill="#183b56" font-size="22" font-weight="900">${esc(display)}</text>` : ""}`;
         }).join("");
         const legend = segments.map((segment, index) => {
           const y = 67 + index * 30;
-          const display = hard && segment.masked && !solved ? "□" : segment.text || segment.display || formatPercent(segment.percent);
-          return `<rect x="263" y="${y - 11}" width="16" height="16" rx="1" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width="1"/><text class="source61-e4-readable-text source61-e4-category-label" x="290" y="${y}" text-anchor="start" fill="#183b56" font-size="20" font-weight="800">${esc(segment.label)}</text><text class="source61-e4-readable-text source61-e4-important-value source61-e4-legend-value" x="598" y="${y}" text-anchor="end" fill="#183b56" font-size="22" font-weight="900">${esc(display)}</text>`;
+          const display = segment.hideValue && !solved ? "" : hard && segment.masked && !solved ? "□" : segment.text || segment.display || formatPercent(segment.percent);
+          return `<rect x="263" y="${y - 11}" width="16" height="16" rx="1" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width="1"/><text class="source61-e4-readable-text source61-e4-category-label" x="290" y="${y}" text-anchor="start" fill="#183b56" font-size="20" font-weight="800">${esc(segment.label)}</text>${display === "" ? "" : `<text class="source61-e4-readable-text source61-e4-important-value source61-e4-legend-value" x="598" y="${y}" text-anchor="end" fill="#183b56" font-size="22" font-weight="900">${esc(display)}</text>`}`;
         }).join("");
         const finalY = 76 + segments.length * 30;
         const final = solved && resultText ? `<text class="source61-e4-readable-text source61-e4-important-value source61-e4-final-value" x="430" y="${finalY}" text-anchor="middle" fill="#7a5200" font-size="22" font-weight="900">답: ${esc(resultText)}</text>` : "";
@@ -30621,8 +30752,10 @@
         { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] },
         { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }
       ];
-      const agreeLabels = ["일자리가 생기므로", "관광 수요 증가", "지역의 성장", "기타"];
-      const opposeLabels = ["공사 중 공해 발생", "환경 훼손 염려", "교통 체증", "기타"];
+      // 원문 그림의 항목 이름(개념탐구 4)
+      const agreeLabels = ["일자리가 생기므로", "관광 수입 증가", "지역의 상징", "기타"];
+      const opposeLabels = ["공사 중 공해 발생", "경기 중 소음 발생", "교통 체증", "기타"];
+      const surveyIntro = total => `다음은 어느 지역에 경기장을 세우기 위해 지역 주민 ${total}명을 대상으로 설문 조사를 한 결과를 나타낸 그래프입니다.`;
       if (variant === 0) {
         const d = consentPools[poolIndex];
         const agreeMax = Math.max(...d.agreeReasons), opposeMax = Math.max(...d.opposeReasons);
@@ -30633,19 +30766,19 @@
         const a1 = pie({ title: "찬반 여부", solved: true, resultText: answer, segments: [{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }] });
         const a2 = strip({ title: "찬성 이유", solved: true, segments: agreeLabels.map((label, i) => ({ label, percent: d.agreeReasons[i], highlight: d.agreeReasons[i] === agreeMax })) });
         const a3 = strip({ title: "반대 이유", solved: true, segments: opposeLabels.map((label, i) => ({ label, percent: d.opposeReasons[i], highlight: d.opposeReasons[i] === opposeMax })) });
-        return fixed(`${num(d.total)}명에게 정책에 대한 찬반을 물었습니다. 찬성 중 가장 큰 이유와 반대 중 가장 큰 이유의 사람 수 차를 구하세요.`, answer, `찬성의 큰 이유는 ${num(d.total * d.agree / 100 * agreeMax / 100)}명, 반대의 큰 이유는 ${num(d.total * d.oppose / 100 * opposeMax / 100)}명입니다. 차는 ${answer}입니다.`, `${main}${p1}${p2}`, `${a1}${a2}${a3}`, [d.total, d.agree, d.oppose, ...d.agreeReasons, ...d.opposeReasons], "circle-strip-difference", `찬성 중 가장 큰 이유에 해당하는 사람은 ${num(d.total * d.agree * agreeMax / 10000)}명입니다.`);
+        return fixed(`${surveyIntro(d.total)} 가장 많은 사람들이 찬성한 이유는 가장 많은 사람들이 반대한 이유보다 몇 명이 더 많습니까?`, answer, `찬성의 큰 이유는 ${num(d.total * d.agree / 100 * agreeMax / 100)}명, 반대의 큰 이유는 ${num(d.total * d.oppose / 100 * opposeMax / 100)}명입니다. 차는 ${answer}입니다.`, `${main}${p1}${p2}`, `${a1}${a2}${a3}`, [d.total, d.agree, d.oppose, ...d.agreeReasons, ...d.opposeReasons], "circle-strip-difference", `찬성 중 가장 큰 이유에 해당하는 사람은 ${num(d.total * d.agree * agreeMax / 10000)}명입니다.`);
       }
       if (variant === 1) {
         const d = [{ total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] }, { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] }, { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }][poolIndex];
         const trafficRate = d.opposeReasons[2];
         const moved = d.total * d.oppose * trafficRate / 10000, oldOther = d.total * d.agree * d.agreeReasons[3] / 10000;
         const newAgree = d.total * d.agree / 100 + moved, newOther = oldOther + moved, answer = `${(newOther * 100 / newAgree).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;
-        const beforeOppose = strip({ title: "이동 전 반대 이유", segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index], masked: index === 2 })) });
+        const beforeOppose = strip({ title: "반대 이유", segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index], masked: index === 2 })) });
         const solvedOppose = strip({ title: "이동 전 반대 이유", solved: true, segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index], highlight: index === 2 })) });
         const solvedAfter = strip({ title: "바뀐 뒤 찬성 이유", solved: true, resultText: answer, segments: [{ label: "기타", percent: newOther * 100 / newAgree, highlight: true, text: answer }, { label: "기타 외", percent: 100 - newOther * 100 / newAgree }] });
-        const beforeCircle = (segments, solved = false) => pie({ title: "이동 전 찬반 여부", solved, segments });
-        const beforeAgree = (solved = false) => strip({ title: "이동 전 찬성 이유", solved, segments: agreeLabels.map((label, index) => ({ label, percent: d.agreeReasons[index], highlight: solved && index === 3 })) });
-        return fixed(`반대했던 사람 중 교통 체증을 이유로 든 사람은 모두 찬성 중 기타 이유로 돌아섰습니다. 바뀐 뒤 찬성한 사람 중 기타 이유의 비율을 구하세요.`, answer, `${num(moved)}명이 이동하고, 기타는 ${num(oldOther)}명에서 ${num(newOther)}명이 됩니다. 새 찬성 인원은 ${num(newAgree)}명이므로 ${num(newOther)}÷${num(newAgree)}×100=${answer}입니다.`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }])}${beforeAgree()}${beforeOppose}`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }], true)}${beforeAgree(true)}${solvedOppose}${pie({ title: "바뀐 뒤 찬반 여부", solved: true, segments: [{ label: "찬성", percent: newAgree * 100 / d.total, highlight: true }, { label: "반대", percent: 100 - newAgree * 100 / d.total }] })}${solvedAfter}`, [d.total, d.agree, d.oppose, trafficRate, d.agreeReasons[3], ...d.agreeReasons, ...d.opposeReasons, moved, oldOther, newAgree, newOther], "before-after-percent", `교통 체증을 이유로 든 사람은 ${num(moved)}명입니다.`);
+        const beforeCircle = (segments, solved = false) => pie({ title: solved ? "이동 전 찬반 여부" : "찬반 여부", solved, segments });
+        const beforeAgree = (solved = false) => strip({ title: solved ? "이동 전 찬성 이유" : "찬성 이유", solved, segments: agreeLabels.map((label, index) => ({ label, percent: d.agreeReasons[index], highlight: solved && index === 3 })) });
+        return fixed(`${surveyIntro(d.total)} 도로를 늘릴 계획을 발표했더니 교통 체증 때문에 반대를 했던 사람들이 모두 찬성 중 기타의 이유로 돌아섰다면 찬성 중 기타의 비율은 몇 %가 되겠습니까?`, answer, `${num(moved)}명이 이동하고, 기타는 ${num(oldOther)}명에서 ${num(newOther)}명이 됩니다. 새 찬성 인원은 ${num(newAgree)}명이므로 ${num(newOther)}÷${num(newAgree)}×100=${answer}입니다.`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }])}${beforeAgree()}${beforeOppose}`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }], true)}${beforeAgree(true)}${solvedOppose}${pie({ title: "바뀐 뒤 찬반 여부", solved: true, segments: [{ label: "찬성", percent: newAgree * 100 / d.total, highlight: true }, { label: "반대", percent: 100 - newAgree * 100 / d.total }] })}${solvedAfter}`, [d.total, d.agree, d.oppose, trafficRate, d.agreeReasons[3], ...d.agreeReasons, ...d.opposeReasons, moved, oldOther, newAgree, newOther], "before-after-percent", `교통 체증을 이유로 든 사람은 ${num(moved)}명입니다.`);
       }
       if (variant === 2) {
         const d = [{ totalMan: 5000, surname: [22, 15, 8, 55], branches: [42, 17, 9, 32] }, { totalMan: 4000, surname: [25, 10, 12, 53], branches: [40, 20, 15, 25] }, { totalMan: 5000, surname: [20, 15, 10, 55], branches: [45, 20, 12, 23] }][poolIndex];
@@ -30660,29 +30793,31 @@
       if (variant === 3) {
         const d = [{ total: 600, male: 60, female: 40, maleRates: [25, 35, 40], femaleRates: [45, 25, 30] }, { total: 800, male: 55, female: 45, maleRates: [30, 30, 40], femaleRates: [40, 35, 25] }, { total: 500, male: 48, female: 52, maleRates: [20, 45, 35], femaleRates: [30, 30, 40] }][poolIndex];
         const names = ["피아노", "미술", "태권도"], counts = names.map((_, i) => d.total * (d.male * d.maleRates[i] + d.female * d.femaleRates[i]) / 10000), max = Math.max(...counts), maxName = names[counts.indexOf(max)];
-        const answer = `${maxName}, ${num(max)}명`;
+        const answer = maxName; // 원문 물음: 가장 많은 학생이 다니는 학원
         const student = pie({ title: "남녀 학생 수", segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female, masked: true }] });
         const bars = `${strip({ title: "다니는 학원별 남학생 수", segments: names.map((name, i) => ({ label: name, percent: d.maleRates[i] })) })}${strip({ title: "다니는 학원별 여학생 수", segments: names.map((name, i) => ({ label: name, percent: d.femaleRates[i] })) })}`;
         const solvedBars = `${strip({ title: "다니는 학원별 남학생 수", solved: true, segments: names.map((name, i) => ({ label: name, percent: d.maleRates[i], highlight: counts[i] === max })) })}${strip({ title: "다니는 학원별 여학생 수", solved: true, segments: names.map((name, i) => ({ label: name, percent: d.femaleRates[i], highlight: counts[i] === max })) })}`;
-        return fixed(`전체 학생 ${num(d.total)}명의 남녀 비율과 학원별 남녀 비율을 보고, 가장 많은 학원과 그 학생 수를 구하세요.`, answer, `남학생 ${num(d.total * d.male / 100)}명과 여학생 ${num(d.total * d.female / 100)}명으로 각 학원의 수를 계산합니다. 가장 많은 학원은 ${answer}입니다.`, `${student}${bars}`, `${pie({ title: "남녀 학생 수", solved: true, segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female }] })}${solvedBars}`, [d.total, d.male, d.female, ...d.maleRates, ...d.femaleRates, ...counts], "largest-category", `남학생은 ${num(d.total * d.male / 100)}명, 여학생은 ${num(d.total * d.female / 100)}명입니다.`);
+        const maleCount = d.total * d.male / 100, femaleCount = d.total * d.female / 100;
+        const academySteps = names.map((name, i) => `${name} ${num(maleCount)}×${d.maleRates[i]}%+${num(femaleCount)}×${d.femaleRates[i]}%=${num(counts[i])}명`).join(", ");
+        return fixed(`다음은 어느 마을에서 피아노, 미술, 태권도 학원에 다니는 학생 ${d.total}명의 남녀 학생의 비율을 조사하여 나타낸 원그래프와 세 종류의 학원에 다니는 학생을 남학생과 여학생으로 나누어 조사하여 나타낸 띠그래프입니다. 이 마을에서 가장 많은 학생이 다니는 학원은 어느 학원인지 구하세요. (단, 학생들은 학원을 한 곳씩만 다닙니다.)`, answer, `남학생은 ${num(maleCount)}명, 여학생은 ${num(femaleCount)}명입니다. 학원별 학생 수는 ${academySteps}이므로 가장 많은 학생이 다니는 학원은 ${answer}입니다.`, `${student}${bars}`, `${pie({ title: "남녀 학생 수", solved: true, segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female }] })}${solvedBars}`, [d.total, d.male, d.female, ...d.maleRates, ...d.femaleRates, ...counts], "largest-category", `남학생은 ${num(d.total * d.male / 100)}명, 여학생은 ${num(d.total * d.female / 100)}명입니다.`);
       }
       if (variant === 4) {
         const d = [{ before: [30, 25, 20, 15, 10] }, { before: [40, 20, 15, 15, 10] }, { before: [20, 30, 25, 15, 10] }][poolIndex];
         const after = [d.before[0] / 2, d.before[1], d.before[2] + d.before[0] / 2, d.before[3], d.before[4]];
         const names = ["소설", "참고서", "위인전", "시집", "기타"];
-        const answer = names.map((name, i) => `${name}${after[i]}%`).join(", ");
+        const answer = names.map((name, i) => `${name} ${after[i]}%`).join(", ");
         const original = pie({ title: "1학기 학급 문고의 종류별 권수", segments: names.map((label, i) => ({ label, percent: d.before[i], masked: i === 0 })) });
         const blank = strip({ title: "2학기 학급 문고의 종류별 권수", segments: [], blank: true });
         const completed = strip({ title: "2학기 학급 문고의 종류별 권수", solved: true, resultText: answer, segments: names.map((label, i) => ({ label, percent: after[i], highlight: i === 2 })) });
-        return fixed(`소설 책의 절반을 위인전으로 바꾸었습니다. 2학기 학급 문고의 종류별 비율을 구하세요.`, answer, `소설은 ${d.before[0]}%의 절반인 ${after[0]}%가 되고, 그만큼 위인전에 더해집니다. 새 비율은 ${answer}입니다.`, `${original}${blank}`, `${pie({ title: "1학기 학급 문고의 종류별 권수", solved: true, segments: names.map((label, i) => ({ label, percent: d.before[i] })) })}${completed}`, [...d.before, ...after], "ordered-percent-list", `소설 책에서 바꾼 비율은 전체의 ${after[0]}%입니다.`);
+        return fixed(`다음 그림은 시우네 학급 문고의 종류를 1학기에 조사하여 나타낸 원그래프입니다. 2학기에 소설책의 반을 위인전으로 교체했을 때, 2학기 학급 문고의 종류를 띠그래프로 나타내어 보세요. (단, 1학기와 2학기의 학급 문고의 수는 같습니다.)`, answer, `학급 문고의 수가 같으므로 비율로 계산합니다. 소설은 ${d.before[0]}%의 반인 ${after[0]}%가 되고, 위인전은 ${d.before[2]}%+${after[0]}%=${after[2]}%가 됩니다. 2학기 띠그래프는 ${answer}입니다.`, `${original}${blank}`, `${pie({ title: "1학기 학급 문고의 종류별 권수", solved: true, segments: names.map((label, i) => ({ label, percent: d.before[i] })) })}${completed}`, [...d.before, ...after], "ordered-percent-list", `소설 책에서 바꾼 비율은 전체의 ${after[0]}%입니다.`);
       }
       if (variant === 5) {
         const d = [{ group: [62, 38], femaleAcademy: [35, 30, 20, 15] }, { group: [55, 45], femaleAcademy: [30, 20, 35, 15] }, { group: [64, 36], femaleAcademy: [40, 25, 20, 15] }][poolIndex];
         const academyNames = ["미술 학원", "피아노 학원", "발레 학원", "기타"], target = d.femaleAcademy[1];
         const answer = `${d.group[1] * target / 100}%`;
-        const circle = pie({ title: "남녀의 수", segments: [{ label: "남학생", percent: d.group[0] }, { label: "여학생", percent: d.group[1] }] });
+        const circle = pie({ title: "남녀의 수", segments: [{ label: "남자", percent: d.group[0] }, { label: "여자", percent: d.group[1], hideValue: true }] }); // 원문 그림: 여자 비율은 적혀 있지 않음
         const stripGraph = solved => strip({ title: "여학생이 다니고 싶은 학원별 학생 수", solved, resultText: solved ? answer : "", segments: academyNames.map((label, index) => ({ label, percent: d.femaleAcademy[index], masked: index === 1, highlight: index === 1 })) });
-        return fixed(`남녀의 수와 여학생이 다니고 싶은 학원별 비율을 보고, 전체 학생 중 피아노 학원을 다니고 싶은 학생의 비율을 구하세요.`, answer, `전체에서 여학생은 ${d.group[1]}%이고, 그중 피아노 학원은 ${target}%이므로 ${d.group[1]}×${target}÷100=${answer}입니다.`, `${circle}${stripGraph(false)}`, `${pie({ title: "남녀의 수", solved: true, segments: [{ label: "남학생", percent: d.group[0] }, { label: "여학생", percent: d.group[1], highlight: true }] })}${stripGraph(true)}`, [...d.group, ...d.femaleAcademy], "nested-percent", `전체 학생을 100명으로 보면 여학생은 ${d.group[1]}명입니다.`);
+        return fixed(`다음은 진서네 학교 학생들의 남녀의 수와 여학생들이 다니고 싶은 학원을 조사하여 나타낸 그래프입니다. 피아노 학원에 다니고 싶은 여학생은 전체의 몇 %인지 구하세요.`, answer, `여자는 전체의 100−${d.group[0]}=${d.group[1]}(%)이고, 그중 피아노 학원은 ${target}%이므로 ${d.group[1]}×${target}÷100=${answer}입니다.`, `${circle}${stripGraph(false)}`, `${pie({ title: "남녀의 수", solved: true, segments: [{ label: "남자", percent: d.group[0] }, { label: "여자", percent: d.group[1], highlight: true }] })}${stripGraph(true)}`, [...d.group, ...d.femaleAcademy], "nested-percent", `전체 학생을 100명으로 보면 여학생은 ${d.group[1]}명입니다.`);
       }
       if (variant === 6) {
         const d = [{ gifts: [30, 25, 20, 25], toys: [45, 20, 10, 25], count: 24 }, { gifts: [25, 30, 20, 25], toys: [40, 25, 15, 20], count: 30 }, { gifts: [35, 20, 20, 25], toys: [50, 15, 10, 25], count: 18 }][poolIndex];
@@ -30705,11 +30840,12 @@
         const average = scoreCounts.reduce((sum, item) => sum + item.count * item.score, 0) / d.total;
         const answer = `${average}점`;
         const segments = [{ label: "3문제 모두 틀린 학생", percent: d.angles[0] / 3.6, display: `${d.angles[0]}°`, highlight: true, showInChart: true }, { label: "1문제 맞힌 학생", percent: d.angles[1] / 3.6, display: `${d.angles[1]}°`, showInChart: true }, { label: "2문제 맞힌 학생", percent: d.angles[2] / 3.6, display: `${d.angles[2]}°`, showInChart: true }, { label: "3문제 맞힌 학생", percent: d.angles[3] / 3.6, display: `${d.angles[3]}°`, masked: true, showInChart: true }];
-        const rows = scoreCounts.map(item => [`${item.score}점`, item.count]);
-        const knownScores = new Map([[scoreValues[0], counts[0]], [scoreValues[1], counts[1]], [scoreValues[3], counts[3]]]);
-        const problemRows = scoreCounts.map(item => [`${item.score}점`, knownScores.has(item.score) ? knownScores.get(item.score) : "□"]);
-        const visual = solved => `${pie({ title: "시험 결과", solved, resultText: solved ? answer : "", segments })}${table(["점수", "학생 수"], solved ? rows : problemRows, solved)}`;
-        return fixed(`세 문제의 점수는 각각 ${d.points[0]}점, ${d.points[1]}점, ${d.points[2]}점입니다. 원그래프와 표를 보고 전체 학생의 평균 점수를 구하세요.`, answer, `각 구간의 학생 수는 ${counts.join(", ")}명입니다. 점수와 곱해 더한 뒤 ${d.total}으로 나누면 평균은 ${average}점입니다.`, visual(false), visual(true), [d.total, ...d.angles, ...d.points, ...counts, average], "circle-weighted-average", `전체 학생은 ${d.total}명입니다.`);
+        // 원문 표(가로): 점수 0, 6, 8, 12, ㉮, ㉯, 합계 / 학생 수 8, 8, ㉰, 12, ㉱, ㉲, 80
+        if (scoreCounts.some((item, index) => item.score !== scoreValues[index])) throw new Error(`${sourceItemId}: 점수 열 순서가 원문 표와 다릅니다.`);
+        const scoreHead = solved => ["점수", ...scoreValues.map((score, index) => solved || index < 4 ? String(score) : ["㉮", "㉯"][index - 4]), "합계"];
+        const countRow = solved => ["학생 수", ...counts.map((count, index) => solved || ![2, 4, 5].includes(index) ? String(count) : { 2: "㉰", 4: "㉱", 5: "㉲" }[index]), String(d.total)];
+        const visual = solved => `${pie({ title: "시험 결과", solved, resultText: solved ? answer : "", segments })}${table(scoreHead(solved), [countRow(solved)], solved)}`;
+        return fixed(`${d.total}명의 학생이 3문제의 시험을 보고 난 후 평균 점수를 구하려고 합니다. 1번 문제는 ${d.points[0]}점, 2번 문제는 ${d.points[1]}점, 3번 문제는 ${d.points[2]}점일 때, 다음 원그래프와 표를 보고 학생들의 평균 점수를 구하세요.`, answer, `원그래프에서 각 구간의 학생 수는 ${d.angles.map(angle => `${d.total}×${angle}÷360=${d.total * angle / 360}`).join(", ")}(명)입니다. 두 문제를 맞히면 ${scoreValues[3]}점 또는 ㉮=${d.points[1]}+${d.points[2]}=${scoreValues[4]}(점), 세 문제를 모두 맞히면 ㉯=${scoreValues[5]}(점)이고, ㉰=${groups[1]}−${counts[1]}=${counts[2]}, ㉱=${groups[2]}−${counts[3]}=${counts[4]}, ㉲=${counts[5]}입니다. (점수)×(학생 수)를 모두 더한 ${scoreCounts.reduce((sum, item) => sum + item.count * item.score, 0)}점을 ${d.total}명으로 나누면 평균은 ${average}점입니다.`, visual(false), visual(true), [d.total, ...d.angles, ...d.points, ...counts, average], "circle-weighted-average", `전체 학생은 ${d.total}명입니다.`);
       }
       const d = [{ male: 52, female: 48, maleItem: 104, femaleItem: 72, femaleRate: 24 }, { male: 55, female: 45, maleItem: 99, femaleItem: 54, femaleRate: 20 }, { male: 48, female: 52, maleItem: 72, femaleItem: 65, femaleRate: 25 }][poolIndex];
       const femaleTotal = d.femaleItem * 100 / d.femaleRate, total = femaleTotal * 100 / d.female, maleTotal = total * d.male / 100, answer = `${(d.maleItem * 100 / maleTotal).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;

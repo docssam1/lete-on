@@ -59,7 +59,8 @@ const expected = (variant, p) => {
   if (variant === 5) return `${mixed(p.rod[0] * p.rod[1] * p.rod[2], p.rod[0] * p.rod[1] - p.rod[3] * p.rod[3])}cm`;
   if (variant === 6) return `${p.flow[6]}cm`;
   if (variant === 7) return `${p.units[4]}mL`;
-  if (variant === 8) return `${p.thick[4]}cm³ = ${(p.thick[4] / 1000).toLocaleString("ko-KR", { maximumFractionDigits: 2 })}L`;
+  // 2026-11-23 원문 복원: 원문은 "몇 L인가?"를 묻습니다.
+  if (variant === 8) return `${(p.thick[4] / 1000).toLocaleString("ko-KR", { maximumFractionDigits: 2 })}L`;
   if (variant === 9) return `${p.spill[3]}mL`;
   if (variant === 10) return `${p.stone[4]}cm`;
   if (variant === 11) return `${p.displacement[5]}cm`;

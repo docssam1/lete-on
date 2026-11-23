@@ -72,8 +72,9 @@ const cases = [
   ] }
 ];
 
-const agreeLabels = ["일자리가 생기므로", "관광 수요 증가", "지역의 성장", "기타"];
-const opposeLabels = ["공사 중 공해 발생", "환경 훼손 염려", "교통 체증", "기타"];
+// 2026-11-23 원본 책 대조: 원문 그림의 항목 이름
+const agreeLabels = ["일자리가 생기므로", "관광 수입 증가", "지역의 상징", "기타"];
+const opposeLabels = ["공사 중 공해 발생", "경기 중 소음 발생", "교통 체증", "기타"];
 
 function scoreRows(data) {
   const groups = data.angles.map(angle => data.total * angle / 360);
@@ -89,12 +90,13 @@ function expected(id, data) {
     return { problemGraphs: graphs, answerGraphs: graphs, problemTables: [], answerTables: [] };
   }
   if (id.endsWith("exploration-2")) {
+    const problem = [graph("찬반 여부", ["찬성", "반대"], [data.agree, data.oppose]), graph("찬성 이유", agreeLabels, data.agreeReasons), graph("반대 이유", opposeLabels, data.opposeReasons)];
     const before = [graph("이동 전 찬반 여부", ["찬성", "반대"], [data.agree, data.oppose]), graph("이동 전 찬성 이유", agreeLabels, data.agreeReasons), graph("이동 전 반대 이유", opposeLabels, data.opposeReasons)];
     const moved = data.total * data.oppose * data.opposeReasons[2] / 10000;
     const oldOther = data.total * data.agree * data.agreeReasons[3] / 10000;
     const newAgree = data.total * data.agree / 100 + moved;
     const otherRate = (oldOther + moved) * 100 / newAgree;
-    return { problemGraphs: before, answerGraphs: [...before, graph("바뀐 뒤 찬반 여부", ["찬성", "반대"], [newAgree * 100 / data.total, 100 - newAgree * 100 / data.total]), graph("바뀐 뒤 찬성 이유", ["기타", "기타 외"], [otherRate, 100 - otherRate])], problemTables: [], answerTables: [] };
+    return { problemGraphs: problem, answerGraphs: [...before, graph("바뀐 뒤 찬반 여부", ["찬성", "반대"], [newAgree * 100 / data.total, 100 - newAgree * 100 / data.total]), graph("바뀐 뒤 찬성 이유", ["기타", "기타 외"], [otherRate, 100 - otherRate])], problemTables: [], answerTables: [] };
   }
   if (id.endsWith("example-1")) {
     const graphs = [graph("우리나라 성씨별 사람 수", ["김씨", "이씨", "박씨", "기타"], data.surname), graph("김씨의 본관별 사람 수", ["김해 김씨", "경주 김씨", "광산 김씨", "기타"], data.branches)];
@@ -109,7 +111,7 @@ function expected(id, data) {
     return { problemGraphs: [graph("1학기 학급 문고의 종류별 권수", labels, data.before), graph("2학기 학급 문고의 종류별 권수", [], [])], answerGraphs: [graph("1학기 학급 문고의 종류별 권수", labels, data.before), graph("2학기 학급 문고의 종류별 권수", labels, after)], problemTables: [], answerTables: [] };
   }
   if (id.endsWith("mission-2")) {
-    const graphs = [graph("남녀의 수", ["남학생", "여학생"], data.gender), graph("여학생이 다니고 싶은 학원별 학생 수", ["미술 학원", "피아노 학원", "발레 학원", "기타"], data.academies)];
+    const graphs = [graph("남녀의 수", ["남자", "여자"], data.gender), graph("여학생이 다니고 싶은 학원별 학생 수", ["미술 학원", "피아노 학원", "발레 학원", "기타"], data.academies)];
     return { problemGraphs: graphs, answerGraphs: graphs, problemTables: [], answerTables: [] };
   }
   if (id.endsWith("mission-4")) {
@@ -118,12 +120,12 @@ function expected(id, data) {
   }
   if (id.endsWith("mission-5")) {
     const rows = scoreRows(data);
-    const known = [0, data.points[0], data.points[0] + data.points[1]];
+    // 원문 표(가로): 점수 0, 6, 8, 12, ㉮, ㉯, 합계 / 학생 수 8, 8, ㉰, 12, ㉱, ㉲, 80
     const graphData = graph("시험 결과", ["3문제 모두 틀린 학생", "1문제 맞힌 학생", "2문제 맞힌 학생", "3문제 맞힌 학생"], data.angles.map(angle => angle / 3.6));
     return {
       problemGraphs: [graphData], answerGraphs: [graphData],
-      problemTables: [["점수|학생 수", ...rows.map(row => `${row.score}점|${known.includes(row.score) ? row.count : "□"}`)]],
-      answerTables: [["점수|학생 수", ...rows.map(row => `${row.score}점|${row.count}`)]]
+      problemTables: [[["점수", ...rows.map((row, index) => index < 4 ? row.score : ["㉮", "㉯"][index - 4]), "합계"].join("|"), ["학생 수", ...rows.map((row, index) => [2, 4, 5].includes(index) ? ({ 2: "㉰", 4: "㉱", 5: "㉲" })[index] : row.count), data.total].join("|")]],
+      answerTables: [[["점수", ...rows.map(row => row.score), "합계"].join("|"), ["학생 수", ...rows.map(row => row.count), data.total].join("|")]]
     };
   }
   const values = [34, data.femaleRate, 20, 12, 100 - 34 - data.femaleRate - 20 - 12];

@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto");
 const contracts=require("./source-6-2-plane-cut-contracts.js"),presentation=require("./source-6-2-plane-cut-presentation.js");
 const out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL),candidate=process.env.HSE_PLANE_CUT_CANDIDATE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 const id="6-2-u3-e4-exploration",key="sourceGrade6SecondSpaceE4PrismCut",sha=b=>crypto.createHash("sha256").update(b).digest("hex");
 const runtime=["index.html","app.js","source-inventory-grade6.js","source-6-2-plane-cut-models.js","source-6-2-plane-cut-assets.js","source-6-2-plane-cut-reference.js","source-6-2-plane-cut-contracts.js","source-6-2-plane-cut-presentation.js","source-6-2-plane-cut-questions.js","source-6-2-plane-cut-questions.css"];
 const hashes=()=>Object.fromEntries(runtime.map(f=>[f,sha(fs.readFileSync(path.join(__dirname,f)))]));

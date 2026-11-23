@@ -3,7 +3,7 @@ const fs=require("node:fs"),path=require("node:path"),assert=require("node:asser
 const contracts=require("./source-6-2-midpoint-cut-contracts.js"),presentation=require("./source-6-2-midpoint-cut-presentation.js");
 const out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL),id="6-2-u3-e4-example-1",key="sourceGrade6SecondSpaceE4MidpointCut";
 const candidate=process.env.HSE_MIDPOINT_CUT_CANDIDATE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));
+assert(out&&path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));
 fs.mkdirSync(out,{recursive:true});
 const sha=b=>crypto.createHash("sha256").update(b).digest("hex");
 const files=["index.html","app.js","source-inventory-grade6.js","source-6-2-midpoint-cut-models.js","source-6-2-midpoint-cut-assets.js","source-6-2-midpoint-cut-contracts.js","source-6-2-midpoint-cut-presentation.js","source-6-2-midpoint-cut-questions.js","source-6-2-midpoint-cut-questions.css"];

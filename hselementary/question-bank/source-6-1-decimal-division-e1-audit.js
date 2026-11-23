@@ -110,12 +110,17 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (attr(evidence, "data-source61-decimal-e1-kind") !== kinds[variant] || attr(evidence, "data-source-item") !== sourceIds[variant]) fail(`${label}: 검산 자료의 유형 연결 오류`);
       if (!sameValues(values, expectedPools[variant][poolIndex])) fail(`${label}: pool 자료가 원본 계약과 다름 (${values.join(",")} / ${expectedPools[variant][poolIndex].join(",")})`);
       if (String(generated.answer) !== expectedAnswer(variant, poolIndex, values)) fail(`${label}: 답 ${generated.answer} / 독립 계산 ${expectedAnswer(variant, poolIndex, values)}`);
+      if (variant === 7 && poolIndex === 0 && difficulty === 0) {
+        const promptText = String(generated.prompt).replace(/<[^>]+>/g, "");
+        for (const phrase of ["어떤 수를 4로 나누었더니 나누어떨어졌습니다.", "어떤 수를 4로 나눈 몫에 3.78을 더했더니 7.83이 되었습니다.", "5로 나눈 몫을 ㉠, 9로 나눈 몫을 ㉡이라고 할 때 ㉠과 ㉡의 합을 구하세요."]) if (!promptText.includes(phrase)) fail(`${label}: 원문 미션 5 문장 '${phrase}'이 없습니다.`);
+      }
       if (difficulty === -1 && !generated.prompt.includes('data-step-evidence="guided"')) fail(`${label}: 쉬움 안내 누락`);
       if (difficulty === 0 && generated.prompt.includes('data-step-evidence=')) fail(`${label}: 기준 단계에 추가 안내가 섞임`);
       if (difficulty === 1 && !generated.prompt.includes('data-step-evidence="independent-reasoning"')) fail(`${label}: 어려움 안내 누락`);
       if (!generated.answerVisual?.includes(`<svg`) || !generated.answerVisual.includes("source61-e1-answer") || !generated.answerVisual.includes("data-result-highlight=")) fail(`${label}: 답 그림 또는 결과 표시 누락`);
       if (/undefined|null|NaN|Infinity|순열|조합|절댓값|일차식/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`)) fail(`${label}: 깨진 값 또는 학년 밖 표현`);
-      if (/\b\d+\s*\/\s*\d+\b/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`)) fail(`${label}: 슬래시 분수 표기`);
+      // 2026-11-22부터 "1/10" 같은 단위분수 글 표기는 앱 표기다. 그 밖의 슬래시 분수만 잡는다.
+      if (/\b\d+\s*\/\s*\d+\b/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`.replace(/\b1\/10\b/g, ""))) fail(`${label}: 슬래시 분수 표기`);
       checked += 1;
     }
   }

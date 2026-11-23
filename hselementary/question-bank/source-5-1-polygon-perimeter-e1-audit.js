@@ -211,13 +211,19 @@ check(new Set(allTypes.map(type => type.sourceItemId)).size === 75, "5-1 6단원
 check(inventoryItems.length === 75 && new Set(inventoryItems.map(item => item.sourceItemId)).size === 75, "원본 분류표의 75개 ID가 완전하지 않습니다.");
 check(allTypes.every(type => type.sourceItemId && inventoryItems.some(item => item.sourceItemId === type.sourceItemId)), "화면 유형 중 원본 분류표에 없는 항목이 있습니다.");
 check(inventoryItems.every(item => allTypes.some(type => type.sourceItemId === item.sourceItemId)), "원본 분류표 항목 중 화면에서 빠진 유형이 있습니다.");
-check(allTypes.filter(type => !type.reviewLocked).length === 15, "원본 대조가 끝난 15개 외 유형이 공개되었습니다.");
+// 2026-11 이후 E3·E4 원문 생성기 5개(평행사변형 겹침·타일, 사다리꼴 색칠 비·마름모 겹침·움직이는 점)가 더 공개되어 20개다.
+check(allTypes.filter(type => !type.reviewLocked).length === 20, "원본 대조가 끝난 20개 외 유형이 공개되었습니다.");
 const newlyReadyGenerators = new Map([
   ["5-1-u6-e2-example-2-1", "source51RectangleTriangleAreaE2"],
   ["5-1-u6-e3-exploration-3", "source51TriangleAreaInteriorE3"],
   ["5-1-u6-e3-exploration-4", "source51TriangleAreaExteriorE3"],
   ["5-1-u6-e4-exploration-trapezoid", "source51TrapezoidAreaE4"],
-  ["5-1-u6-e4-exploration-rhombus", "source51RhombusAreaE4"]
+  ["5-1-u6-e4-exploration-rhombus", "source51RhombusAreaE4"],
+  ["5-1-u6-e3-example-3-1", "source51OverlappingParallelogramsE3"],
+  ["5-1-u6-e3-mission-2", "source51ParallelogramTileArrayE3"],
+  ["5-1-u6-e4-example-4-1", "source51TrapezoidShadedRatioHeightE4"],
+  ["5-1-u6-e4-example-4-3", "source51RhombusRectangleOverlapE4"],
+  ["5-1-u6-e4-example-4-4", "source51MovingPointTrapezoidE4"]
 ]);
 check(allTypes.slice(11).every(type => newlyReadyGenerators.has(type.sourceItemId)
   ? !type.reviewLocked && type.generatorKey === newlyReadyGenerators.get(type.sourceItemId)

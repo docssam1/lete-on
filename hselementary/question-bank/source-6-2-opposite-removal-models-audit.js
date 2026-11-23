@@ -1,7 +1,7 @@
 "use strict";
 const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto");
 const api=require("./source-6-2-opposite-removal-models.js"),out=process.env.HSE_SCREENSHOT_DIR;
-assert(out&&/^E:[/\\]/i.test(out)&&path.win32.isAbsolute(out));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});
 const key=c=>c.join(","),keys=c=>c.map(key).sort(),clone=x=>JSON.parse(JSON.stringify(x));
 const source={top:[[1,2],[2,2],[3,2],[2,1]],front:[[1,3],[2,2],[3,1]],right:[[2,3],[2,2],[1,1],[3,1]]};
 function oracle(variant,level){

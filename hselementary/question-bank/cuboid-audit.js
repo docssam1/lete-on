@@ -1,5 +1,48 @@
 "use strict";
 
+// 2026-11-23 감사 정비: 지금 앱은 index.html 순서로 원문 풀·유사문항 래퍼를 generators.js 위에 덧씌워 문제를 만든다.
+// generators.js만으로는 만들 수 없게 된 유형은 앱과 같은 순서로 불러온 생성 경로에서 빈 값·깨진 값을 확인하고,
+// 이 감사의 세부 검산은 지금도 generators.js의 같은 생성기를 쓰는 유형에만 적용한다.
+function loadAppGenerators() {
+  const fs = require("node:fs"), path = require("node:path"), vm = require("node:vm");
+  const html = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+  const scripts = [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(match => match[1].replace(/^\.\//, "").replace(/\?.*$/, ""))
+    .filter(file => !["app.js", "bank-access.js"].includes(file));
+  const context = { console };
+  context.window = context;
+  vm.createContext(context);
+  for (const file of scripts) vm.runInContext(fs.readFileSync(path.join(__dirname, file), "utf8"), context, { filename: file });
+  return context;
+}
+function appTypesOf(appContext, unitId) {
+  return appContext.HSE_CURRICULUM.semesters.flatMap(semester => semester.units).filter(unit => unit.id === unitId)
+    .flatMap(unit => unit.subunits.flatMap(subunit => subunit.types));
+}
+function usesLegacyGenerator(bareApi, appApi, type) {
+  const key = bareApi.generatorKey(type);
+  return Boolean(key) && appApi.generatorKey(type) === key && Boolean(bareApi.generate(type, 0, 0, 1, type.variant ?? 0));
+}
+function appVariants(type) {
+  return type.generationMode === "fixed-verified-pool"
+    ? Array.from({ length: Math.max(1, Number(type.verifiedVariantCount) || 0) }, (_, index) => index)
+    : [type.variant ?? 0];
+}
+function checkAppGenerated(appApi, type, difficulty, seed, variant) {
+  const generated = appApi.generate(type, 0, difficulty, seed, variant);
+  if (!generated || typeof generated.prompt !== "string" || !generated.prompt.trim() || generated.answer === undefined || generated.answer === null
+    || String(generated.answer) === "" || !generated.solution) throw new Error("앱 생성 경로: 문제·정답·풀이 중 빠진 값이 있습니다.");
+  if (/NaN|Infinity|undefined/.test(`${generated.prompt}${generated.answer}${generated.solution}`)) throw new Error("앱 생성 경로: 계산값이 깨졌습니다.");
+  return generated;
+}
+function auditAppTypes(appApi, types, failures, seeds = 20) {
+  let count = 0;
+  for (const type of types) for (const variant of appVariants(type)) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= seeds; seed += 1) {
+    try { checkAppGenerated(appApi, type, difficulty, seed, variant); count += 1; }
+    catch (error) { failures.push(`${type.id} / 앱 경로 / 변형 ${variant} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`); }
+  }
+  return count;
+}
+
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
@@ -8,6 +51,11 @@ const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-2");
 const unit = semester.units.find(item => item.id === "5-2-u5");
 const types = unit.subunits.flatMap(subunit => subunit.types);
+const appContext = loadAppGenerators();
+const appApi = appContext.HSE_GENERATORS;
+const currentTypes = appTypesOf(appContext, "5-2-u5");
+const legacyTypes = currentTypes.filter(type => usesLegacyGenerator(api, appApi, type));
+const appOnlyTypes = currentTypes.filter(type => !legacyTypes.includes(type));
 
 const expectedKinds = new Map([
   ["5-2-u5-t1", "grid-cube-count"],
@@ -374,9 +422,10 @@ function expected(generated) {
 }
 
 const failures = [];
+const appCount = auditAppTypes(appApi, appOnlyTypes, failures);
 const counts = new Map();
 const answerSets = new Map();
-for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 350; seed += 1) {
+for (const type of legacyTypes) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 350; seed += 1) {
   try {
     const generated = api.generate(type, 0, difficulty, seed, type.variant);
     assert(generated, "생성 결과가 없습니다.");
@@ -397,14 +446,16 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
   }
 }
 
+const legacyIds = new Set(legacyTypes.map(type => type.id));
 for (const [typeId, kind] of expectedKinds) {
+  if (!legacyIds.has(typeId)) continue;
   if ((counts.get(kind) || 0) !== 1050) failures.push(`${typeId}: ${kind} 생성 통과 수가 ${counts.get(kind) || 0}/1050입니다.`);
 }
-if ((answerSets.get("cube-net-completion-positions")?.size || 0) < 4) failures.push("전개도 완성 위치 정답이 4가지 이상으로 다양하지 않습니다.");
+if (legacyIds.has("5-2-u5-t2-5") && (answerSets.get("cube-net-completion-positions")?.size || 0) < 4) failures.push("전개도 완성 위치 정답이 4가지 이상으로 다양하지 않습니다.");
 
 if (failures.length) {
   console.error(`직육면체 독립 감사 실패: ${failures.length}건`);
   console.error(failures.slice(0, 100).join("\n"));
   process.exit(1);
 }
-console.log(`직육면체 독립 감사 통과: ${types.length}유형, ${types.length * 3 * 350}개 생성, 표준 주사위 48방향 전수 검산, 전개도 위치 정답 ${answerSets.get("cube-net-completion-positions").size}종`);
+console.log(`직육면체 독립 감사 통과: generators.js 생성기 ${legacyTypes.length}유형 ${legacyTypes.length * 3 * 350}개 세부 검산, 표준 주사위 48방향 전수 검산, 전개도 위치 정답 ${answerSets.get("cube-net-completion-positions")?.size || 0}종 · 앱 래퍼 ${appOnlyTypes.length}유형 ${appCount}개 생성 확인`);

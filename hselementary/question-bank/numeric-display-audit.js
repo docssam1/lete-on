@@ -131,7 +131,8 @@ const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLock
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
-if (types.length !== 1261) failures.push(`공개 검수 대상은 1261개여야 하나 ${types.length}개입니다.`);
+// 2026-11-22 이후 잠금 해제로 공개 유형이 늘어난다(2026-11-23 기준 1575개). 정확한 수 대신, 예전 공개 범위 1261개보다 줄지 않았는지만 본다.
+if (types.length < 1261) failures.push(`공개 검수 대상이 1261개보다 적은 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {

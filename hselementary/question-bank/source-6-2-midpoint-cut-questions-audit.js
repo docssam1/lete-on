@@ -9,7 +9,8 @@ const modelFiles = ["source-6-2-plane-cut-models.js", "source-6-2-midpoint-cut-m
 function outputFolder(env = process.env) {
   const directory = env.HSE_SCREENSHOT_DIR || (env.HSE_MIDPOINT_SOURCE_EVIDENCE_DIR && path.join(env.HSE_MIDPOINT_SOURCE_EVIDENCE_DIR, "midpoint-wrapper"));
   assert(directory, "Set HSE_SCREENSHOT_DIR (output directory) or HSE_MIDPOINT_SOURCE_EVIDENCE_DIR (evidence root)");
-  assert(path.isAbsolute(directory) && path.parse(directory).root.toLowerCase() === "e:\\", "Audit output must be an explicit absolute E: directory");
+  // 2026-11-23: Mac에서도 돌도록 E: 드라이브 대신 어떤 절대 경로든 받는다(저장소 밖 조건은 그대로).
+  assert(path.isAbsolute(directory), "Audit output must be an explicit absolute directory");
   const folder = path.resolve(directory), repository = path.resolve(__dirname, "../..");
   const relative = path.relative(repository, folder);
   assert(relative && (relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)), "Audit output must be outside the repository");
@@ -70,7 +71,7 @@ function parseMarkup(markup) {
   if (!xml) {
     try { xml = require("xml-js"); } catch (error) {
       if (error.code !== "MODULE_NOT_FOUND") throw error;
-      xml = require(process.env.HSE_XML_PARSER_PATH || path.join(process.env.USERPROFILE || "", ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/xml-js"));
+      xml = require(process.env.HSE_XML_PARSER_PATH || path.join(process.env.USERPROFILE || require("node:os").homedir(), ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/xml-js"));
     }
   }
   const wellFormed = markup.replace(/<img\b([^>]*?)\s*\/?\s*>/g, (_, attributes) => `<img${attributes.replace(/\/$/, "")}/>`);
@@ -305,7 +306,7 @@ async function run() {
     return { paginationBrowserVerified: false, actualPrintVerified: false };
   });
   check(report, "negative/output-environment-missing", () => assert.throws(() => outputFolder({}), /Set HSE_SCREENSHOT_DIR/));
-  check(report, "negative/output-outside-E", () => assert.throws(() => outputFolder({ HSE_SCREENSHOT_DIR: "C:\\audit-output" }), /absolute E:/));
+  check(report, "negative/output-relative", () => assert.throws(() => outputFolder({ HSE_SCREENSHOT_DIR: path.join("relative-output", "audit-output") }), /explicit absolute directory/));
   check(report, "negative/output-inside-repository", () => assert.throws(() => outputFolder({ HSE_SCREENSHOT_DIR: __dirname }), /outside the repository/));
   check(report, "output-environment-root-and-direct-directory", () => {
     assert.equal(outputFolder({ HSE_SCREENSHOT_DIR: folder }), folder);
