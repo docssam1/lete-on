@@ -1,3 +1,13 @@
+## 2026-11-24 — 풀이 A4 위아래 여백 빠짐 53곳 고침, 6학년 목록 감사 정비 (Claude Code / Opus 5.5, Mac)
+
+- 6학년 전체 목록 감사를 main(4fa888e30)에서 다시 돌렸다: source-inventory-audit, source-inventory-grade6-audit(633유형), public-inventory-review-reason(962유형), browser-source-release(전체 3006유형 생성 가능·검수 대기 0, 세 난이도 9018회 생성), grades-5-2-to-6(905), review-reason-gate, 52-locked-practice-gate 통과.
+- 인쇄 오류 수정: 11-05 #1336에서 풀이 쪽 여백을 `@page bank-answer { margin: 12mm 0 }`로 옮기고 풀이 쪽 안쪽 여백을 0으로 했는데, 유형별 이름 붙인 풀이 쪽 53개(`page: source61VolumeE4Answer` 등, 5-1·6-1·6-2 분수/소수 나눗셈·부피 활용 등)는 `@page` 정의가 없어 기본 `@page { margin: 0 }`이 적용되었다 → 풀이가 종이 위끝·아래끝에 붙어 인쇄됨. styles.css에 53개 이름을 bank-answer와 같은 여백(12mm 0)으로 정의(#1336 이전의 안쪽 여백 12mm와 같은 쓸 수 있는 높이). styles.css ?v=20261124-answer-page-margin.
+- 재발 방지 감사 `print-named-page-audit.js`(정적): CSS·HTML에서 쓰는 `page: 이름`마다 `@page 이름`이 있는지 검사. 고치기 전 styles.css로는 실패함을 확인.
+- 감사 정비:
+  - source-inventory-grade6-browser-audit: "기존 생성 문제" 묶음이 9b418f77b에서 "창작 연습 (원본 외 문제)"로 이름이 바뀐 것을 인정(정적 감사는 이미 두 이름 인정). 633유형 모두 생성 가능·잠금 0, 화면 28장·A4 2개 통과.
+  - source-inventory-grade6-e4-browser-audit·source-6-1-volume-e4-browser-audit: Pillow 12 전용 `get_flattened_data`가 없으면 `getdata()`를 쓰게 함(Mac Pillow 11.3). 글자 높이 비교에 1e-3px 허용(실측 10.9999px가 11px 미만으로 잡히던 부동소수 오차).
+  - 두 E4 감사 모두 통과, A4 가장자리 잉크 0.
+
 ## 2026-11-23 — 힌트 정책 오삭제 3건·쌓기나무 풀이 A4 고침, Mac 감사 정리 (Claude Code / Opus 5.5, Mac)
 
 - problem-hint-policy.js가 문제 내용까지 지우던 3가지를 고쳤다. 정책 적용 전후 전 유형(2,990유형 × 3난이도 × 변형 3) 문장을 대조해 바뀐 곳이 아래 6개 유형-난이도뿐임을 확인했다.
