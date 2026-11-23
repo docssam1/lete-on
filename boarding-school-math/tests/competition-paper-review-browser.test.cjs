@@ -1143,3 +1143,15 @@ test("the paper review still works if optional score history is unavailable", as
   assert.equal(await page.locator(".review-report").evaluate((node) => getComputedStyle(node).display), "block");
   await page.close();
 });
+
+test("2009 four-form response tables retain the MAA official-student cohort and original source",async function(){
+ const page=await browser.newPage({viewport:{width:390,height:844}});
+ for(const [program,form,count] of [['amc10','A',72528],['amc10','B',31395],['amc12','A',82802],['amc12','B',34228]]){
+  await page.goto(`${url}?grade=9&program=${program}&year=2009&form=${form}`,{waitUntil:'networkidle'});
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption('A');await page.locator('#apply-answer-key').click();await page.locator('.review-form-actions button[type=submit]').click();
+  const summary=await page.locator('#item-response-summary').textContent();assert.match(summary,new RegExp(`2009 AMC ${program==='amc10'?'10':'12'}${form}`));assert.match(summary,/MAA 공식 응시자 표본/);assert.match(summary,new RegExp(count.toLocaleString('ko-KR')));assert.doesNotMatch(summary,/세계 응시자/);
+  assert.ok(await page.locator('#item-response-rows tr').count()>=24);assert.match(await page.locator('#item-response-source').getAttribute('href'),/2009_HS_summary\.pdf/);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ }
+ await page.close();
+});

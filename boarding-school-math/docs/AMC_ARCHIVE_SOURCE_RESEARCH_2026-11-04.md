@@ -964,3 +964,21 @@ Transcription/provenance: `competition/historical-amc-grade/amc10-12-2021-fall-s
 Rechecked the public MAA EduView report: its current year selector offers school years 2023–2026. A request for schoolyear=2022 returned the default 2026 view, so it is not evidence for AIME2022. The active 99CEF 2017 AMC8 report URL returned 404 through web retrieval. Search excerpts/award-recipient lists and duplicated secondary tables were not used to invent full score distributions. These gaps remain open.
 
 Coverage is now reproducible with `node scripts/audit-paper-score-coverage.cjs --check`; the CSV is `competition/historical-amc-grade/score-distribution-coverage-by-paper.csv`. Of 268 catalog papers, 79 have at least one published threshold in the active whole-cohort cutoff data; 28 have all seven supported thresholds. Fifteen AMC8 papers separately have reported exact score-frequency rows (their source population is kept separate from cutoff-report populations). Missing thresholds remain missing; some no-cutoff papers have means or separate frequency data, so they must not be described as having no statistical data at all.
+
+
+## 2026-11-23 · 2009 AMC 10/12 MAA 응답분포 원본 검수 완료
+
+앞선 검색에서 보류했던 2009년 자료는 MAA 작성 *2009 AMC 10/12 Results Summary* 원본 아카이브로 확인했다. [연례보고서 PDF](https://web.archive.org/web/20150226041430id_/http://www.maa.org:80/sites/default/files/pdf/AMC/d-publication/d1-pubarchive/2009-10pub/AMC1012/2009_HS_summary.pdf)의 Table IX 네 표에 실린 100문항의 정답 표시와 A–E·무응답 비율을 CSV 및 런타임과 전수 대조했다. 이전의 Temasek 학교 표본(89명)과 구분되는 원자료이며 그 학교 표본을 대체 입력한 것이 아니다.
+
+| 회차 | Table IX 인쇄 쪽 / PDF 쪽 | 공식 학생 수 (Table I/II) | 응답률 재계산 평균 | 인쇄 평균 |
+| --- | --- | --- | --- | --- |
+| AMC 10A | 269 / 271 | 72,528 | 70.39665 | 70.4 |
+| AMC 10B | 270 / 272 | 31,395 | 74.43060 | 74.4 |
+| AMC 12A | 267 / 269 | 82,802 | 68.03460 | 68.0 |
+| AMC 12B | 268 / 270 | 34,228 | 71.71410 | 71.7 |
+
+표본 수와 인쇄 평균은 보고서 Table I/II(PDF 9쪽)와 대조했다. 각 문항 정답은 기존 독립 LIVE 정답 참조와도 일치한다. PDFKit으로 원문 글자를 추출하고 네 표의 렌더링 이미지를 육안 대조했으며 OCR은 필요하지 않았다. 원본 PDF SHA-256: `1a9ebc18f2fbe28aacd238809ef0b4a120cf030c17ca40326eaa1cb3ed862bfa` (4,807,080 bytes, 332쪽).
+
+인쇄 소수 자릿수를 유지했다. 문항별 합계는 99.93–100.00%이며 100%로 재정규화하지 않았다. 판독 불가 비율은 원표에 별도 열이 없어 null/빈칸으로 보존했다. 화면에는 MAA 공식 응시자 표본으로 표시하며 세계 전체 응시자·특정 학년 규준으로 해석하지 않는다. 이 응답분포를 개인의 예상점수·백분위·등급으로 변환하는 기능을 추가하지 않았다.
+
+`amc10-12-2009-item-response.csv` 100행, 응답 참조 4회차, coverage manifest 해당 4행을 반영했다. 새 단위 검사 3건과 기존 원본 시험·다국어 브라우저 검사 포함 45건이 모두 통과했다. 네 회차 실제 답 입력·정답 대조·결과 화면에서 출처·표본 수·표시 용어와 모바일 너비를 검사했다. 검수 원본과 임시 렌더링/로그는 Mac `/tmp/boarding-finish-20261123/`에 있으며 PDF 원본을 공개 Git에 포함하지 않았다.

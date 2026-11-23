@@ -53,7 +53,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.equal(await page.locator("h1").count(), 1);
-  assert.match(await page.locator("h1").innerText(), /학년별 수학 자료,\s*여기서 바로 찾으세요/);
+  assert.match(await page.locator("h1").innerText(), /무엇을 공부할까요/);
   assert.match(await page.locator(".directory-lede").innerText(), /공개된 개념·워크북[\s\S]*진단과 자동 배정은 검수 중/);
   assert.match(await page.locator(".outcome-preview").innerText(), /현재 과정[\s\S]*우선 약점[\s\S]*오늘 분량/);
   assert.equal(await page.locator(".hero-actions .button-primary").getAttribute("href"), "#start");
@@ -678,7 +678,7 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
       return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
     });
     assert.equal(dimensions.scroll, dimensions.client, `home overflow at ${width}px`);
-    const firstScreenControls = await page.locator('#quick-start-grade, .hero-actions .button, .start-primary-action').evaluateAll(function (controls) {
+    const firstScreenControls = await page.locator('[data-program-entry], #quick-start-grade, .hero-actions .button, .start-primary-action').evaluateAll(function (controls) {
       return controls.filter(function (control) {
         const rect = control.getBoundingClientRect();
         return rect.top >= 0 && rect.top < window.innerHeight;

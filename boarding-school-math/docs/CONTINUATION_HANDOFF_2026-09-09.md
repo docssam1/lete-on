@@ -1198,3 +1198,13 @@ Web search recovered the 2020 AMC 10A and AMC 12A MAA grade-score-percentile cha
 - The public-exposure audit was independently executed on a complete cloud clone (no shallow history or missing objects). Its whole-repository search takes about 31 seconds, exceeding the former 30-second subprocess limit. The limit is now 180 seconds, still bounded and fail-closed; marker scope, exclusions and missing-object handling are unchanged. Full-history inspection returned no targeted legacy findings. The Mac partial clone was not expanded by downloading its 14,788 missing historical objects.
 - The private Grade 6 authoring fixture is intentionally absent from this public integration checkout. The two fixture-dependent local-only suites cannot run here; no private draft was copied into Git or exposed to make those checks pass. Their separate local-QA availability must not be confused with the released public learning routes.
 - Final full test invocation: 918 tests, 903 passed, 7 skipped, and exactly 8 blocked by `PRIVATE_AUTHORING_DIRECTORY_MISSING` in the two local-private Grade 6 suites described above. All public-feature and synthetic protection checks passed; this is not reported as an unconditional 918-test pass.
+
+
+## 2026-11-23 · 보딩 첫 화면 여섯 과정 및 2009 응답분포 검수
+
+- Mac Codex에서 기존 main integration 작업본 `/Users/docssam/Developer/GFIELD/continuations/boarding-main-20261117`, branch `codex/boarding-main-integration-20261117`을 최신 origin/main `c0f37b74b3f23d112c1c193241a8918615525150`까지 fast-forward한 뒤 작업했다. 원래 boarding-school 작업본과 dirty lete-on 작업본의 미커밋 파일은 보존했다. 새 API·하위 에이전트·로컬 정리는 사용하지 않았다.
+- 첫 화면을 U.S. Math Curriculum, AMC, AIME, SASMO, Math Kangaroo, 보딩 로드맵 여섯 진입점으로 구성했다. 교과 카탈로그, 해당 대회 기출/연습, 보딩 지도에 직접 연결하며 기존 상세 도구는 아래에 유지했다. 영문·싱가포르 간체중문에도 같은 여섯 항목과 locale URL을 적용했다. 새 파일은 shared/program-entry.css 및 .js이다.
+- 2009 AMC 10A/10B/12A/12B의 MAA 연례보고서 Table IX 100문항을 원본 수치·정답 표시와 대조했다. 인원과 당시 채점식 재구성 평균도 Table I/II와 일치한다. 문항 응답 데이터·출처·해당 네 coverage 행을 반영했고 화면의 모집단 표시는 MAA 공식 응시자 표본으로 구분했다. 정밀도·누락 처리·페이지·SHA-256 근거는 기존 AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md의 2026-11-23 절에 기록했다.
+- 변경 범위 검사 60건 통과: 원본 시험·응답 데이터·다국어 45건, 첫 화면·접근성·교과 기존 화면·국제 진입 15건. 새 첫 화면은 320/390/768/1440px에서 가로 넘침 없이 각 항목의 터치 크기와 실제 이동을 확인했다. 한국어 데스크톱/모바일 및 영어/중문 화면을 캡처해 확인했다. 증거는 `/tmp/boarding-finish-20261123/`의 *-tests*.log, visual-home.json 및 home-*.png이다.
+- 범위 정정: 이전 인수인계의 비공개 Grade 6 42문항 관련 검사 8건을 보딩스쿨 마무리 조건으로 가져온 것은 잘못이었다. 사용자가 황소 쪽 검사임을 명확히 했으므로 보딩스쿨 작업에서 제외한다. 원고 경로 요청은 철회하며, 이 채팅에서 황소 원고 탐색·검사 수리·통과 처리를 진행하지 않는다. 기존 검사와 보호 규칙은 변경하지 않았다.
+- 이 절 작성 시점은 로컬 구현·검수 완료 상태이며 커밋·원격 반영·배포 결과는 아래에 별도로 기록한다.

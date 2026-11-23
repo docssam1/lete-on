@@ -1,0 +1,28 @@
+.program-entry { padding-block: clamp(30px, 5vw, 58px) 42px; color: #292235; }
+.program-entry h1 { margin: 0; font-family: inherit; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.25; letter-spacing: -.035em; }
+.program-entry-intro { margin: 12px 0 26px; color: #6a6174; font-size: 16px; line-height: 1.6; }
+.program-entry-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.program-entry-list li { min-width: 0; }
+.program-entry-link { height: 100%; min-height: 142px; padding: 22px; display: flex; gap: 16px; align-items: center; border: 1px solid #ddd5e8; border-radius: 12px; color: #292235; background: #fff; text-decoration: none; transition: border-color .15s; }
+.program-entry-link:hover { border-color: #8c6aae; background: #fbf9fe; }
+.program-entry-link:focus-visible { outline: 3px solid #8c6aae; outline-offset: 4px; }
+.program-entry-icon { flex: 0 0 46px; height: 46px; padding: 10px; display: grid; place-items: center; border-radius: 10px; color: #60418f; background: #f0ebf7; }
+.program-entry-icon svg { width: 26px; height: 26px; }
+.program-entry-copy { min-width: 0; }
+.program-entry-copy h2 { margin: 0; font: inherit; font-size: 20px; font-weight: 750; line-height: 1.35; letter-spacing: -.02em; }
+.program-entry-copy p { margin: 7px 0 0; color: #6a6174; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.program-entry-arrow { margin-left: auto; font-size: 26px; font-weight: 400; color: #8f809f; }
+.directory-copy .directory-secondary-title { margin: 13px 0 0; font-family: inherit; font-size: clamp(24px, 3vw, 36px); line-height: 1.3; letter-spacing: -.025em; }
+.directory-intro { padding-top: 28px; border-top: 1px solid #ddd5e8; }
+.page-international .hero #page-title { font-size: clamp(24px, 3vw, 36px); }
+@media (max-width: 1000px) { .program-entry-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+ .program-entry { padding-block: 26px 32px; }
+ .program-entry-intro { margin-bottom: 20px; font-size: 14px; }
+ .program-entry-list { grid-template-columns: minmax(0, 1fr); gap: 9px; }
+ .program-entry-link { min-height: 88px; padding: 15px; gap: 13px; }
+ .program-entry-copy h2 { font-size: 18px; }
+ .program-entry-copy p { margin-top: 4px; font-size: 13px; }
+ .program-entry-icon { flex-basis: 42px; height: 42px; padding: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .program-entry-link { transition: none; } }
