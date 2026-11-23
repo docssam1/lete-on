@@ -1682,6 +1682,60 @@ button{
 
 /* Keep a physical margin on every printed solution page, including overflow pages. */
 @page bank-answer { size: A4; margin: 12mm 0; }
+/* Type-specific answer pages use zero print padding (see the rule below), so each named page needs the same physical margin. */
+@page source51E2Example21Answer { size: A4; margin: 12mm 0; }
+@page source51E3Example31Answer { size: A4; margin: 12mm 0; }
+@page source51E3Mission2Answer { size: A4; margin: 12mm 0; }
+@page source51E3TriangleAreaAnswer { size: A4; margin: 12mm 0; }
+@page source51E4AreaAnswer { size: A4; margin: 12mm 0; }
+@page source51E4Example41Answer { size: A4; margin: 12mm 0; }
+@page source51E4ExamplesAnswer { size: A4; margin: 12mm 0; }
+@page source61E1M3Answer { size: A4; margin: 12mm 0; }
+@page source61E2Example2Answer { size: A4; margin: 12mm 0; }
+@page source61E2Example4Answer { size: A4; margin: 12mm 0; }
+@page source61E2Mission6Answer { size: A4; margin: 12mm 0; }
+@page source61E4Example1Answer { size: A4; margin: 12mm 0; }
+@page source61E4Mission4Answer { size: A4; margin: 12mm 0; }
+@page source61SurfaceE1Answer { size: A4; margin: 12mm 0; }
+@page source61VolumeE4Answer { size: A4; margin: 12mm 0; }
+@page source62E1Example1Answer { size: A4; margin: 12mm 0; }
+@page source62E1Example2Answer { size: A4; margin: 12mm 0; }
+@page source62E1Example3Answer { size: A4; margin: 12mm 0; }
+@page source62E1Example4Answer { size: A4; margin: 12mm 0; }
+@page source62E1Mission1Answer { size: A4; margin: 12mm 0; }
+@page source62E1Mission2Answer { size: A4; margin: 12mm 0; }
+@page source62E1Mission3Answer { size: A4; margin: 12mm 0; }
+@page source62E1Mission4Answer { size: A4; margin: 12mm 0; }
+@page source62E1Mission5Answer { size: A4; margin: 12mm 0; }
+@page source62E1Mission6Answer { size: A4; margin: 12mm 0; }
+@page source62E2Example1Answer { size: A4; margin: 12mm 0; }
+@page source62E2Example2Answer { size: A4; margin: 12mm 0; }
+@page source62E2Example3Answer { size: A4; margin: 12mm 0; }
+@page source62E2Example4Answer { size: A4; margin: 12mm 0; }
+@page source62E2ExplorationAnswer { size: A4; margin: 12mm 0; }
+@page source62E2Mission1Answer { size: A4; margin: 12mm 0; }
+@page source62E2Mission3Answer { size: A4; margin: 12mm 0; }
+@page source62E2Mission4Answer { size: A4; margin: 12mm 0; }
+@page source62E2Mission5Answer { size: A4; margin: 12mm 0; }
+@page source62E2Mission6Answer { size: A4; margin: 12mm 0; }
+@page source62E3Example1Answer { size: A4; margin: 12mm 0; }
+@page source62E3Example2Answer { size: A4; margin: 12mm 0; }
+@page source62E3Example3Answer { size: A4; margin: 12mm 0; }
+@page source62E3Example4Answer { size: A4; margin: 12mm 0; }
+@page source62E3Mission1Answer { size: A4; margin: 12mm 0; }
+@page source62E3Mission2Answer { size: A4; margin: 12mm 0; }
+@page source62E4ExplorationAnswer { size: A4; margin: 12mm 0; }
+@page source62E4Mission1Answer { size: A4; margin: 12mm 0; }
+@page source62E4Mission2Answer { size: A4; margin: 12mm 0; }
+@page source62E4Mission3Answer { size: A4; margin: 12mm 0; }
+@page source62E4Mission4Answer { size: A4; margin: 12mm 0; }
+@page source62E4Mission5Answer { size: A4; margin: 12mm 0; }
+@page source62E4Mission6Answer { size: A4; margin: 12mm 0; }
+@page source62E5Example1Answer { size: A4; margin: 12mm 0; }
+@page source62E5Example3Answer { size: A4; margin: 12mm 0; }
+@page source62E5Example4Answer { size: A4; margin: 12mm 0; }
+@page source62E5ExplorationAnswer { size: A4; margin: 12mm 0; }
+@page source62E5Mission1Answer { size: A4; margin: 12mm 0; }
 @media print {
   :where(.answer-pages) > .answer-page { page: bank-answer; padding-top: 0; padding-bottom: 0; }
   /* Let overflow from one answer group share a physical page with the next. */

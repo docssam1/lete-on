@@ -3,7 +3,7 @@
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
-const { chromium } = require("C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright");
+const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright");
 
 const root = path.resolve(__dirname, "../..");
 const outputDir = path.join(__dirname, "tmp", "decimal-division-e1-mission3-browser-audit");

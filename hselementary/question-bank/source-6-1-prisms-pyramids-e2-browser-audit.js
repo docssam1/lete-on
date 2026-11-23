@@ -64,6 +64,12 @@ function contentType(file) {
 
 async function startServer() {
   const server = http.createServer((request, response) => {
+    // 2026-11-24: 생성기 계약 감사이므로 problem-hint-policy.js(쉬움 안내·어려움 확인 문단 제거)를 끈다(HSE_KEEP_HINT_POLICY=1이면 켬).
+    if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js(?:\?|$)/.test(request.url || "")) {
+      response.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
+      response.end("/* problem hint policy disabled for the generator contract audit */");
+      return;
+    }
     let file = safePath(request.url || "/");
     if (file && fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
     if (!file || !fs.existsSync(file) || !fs.statSync(file).isFile()) {

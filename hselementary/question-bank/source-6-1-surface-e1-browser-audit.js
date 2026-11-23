@@ -104,7 +104,10 @@ async function inspectView(page, selector, sourceId, difficulty, viewportName, m
     };
   }, selector);
   const label = `${sourceId} / ${viewportName} / 난이도 ${difficulty} / ${mode}`;
-  if (!state.ready || state.itemStates.length !== 3) fail(`${label}: 3문항 화면이 열리지 않았습니다.`);
+  // 2026-11-24: 개념탐구(3×3×3에서 덜어 내기)와 Mission 1(쌓기나무 8개)은 원문 문제가 하나로 정해져 있어
+  // 세 고정 변형의 문제 문장이 같고 정답 그림 배치만 다르다. 앱은 같은 문장의 문항을 한 번만 내므로 1문항을 기대한다.
+  const expectedItems = sourceId.endsWith("exploration") || sourceId.endsWith("mission-1") ? 1 : 3;
+  if (!state.ready || state.itemStates.length !== expectedItems) fail(`${label}: ${expectedItems}문항 화면이 열리지 않았습니다 (${state.itemStates.length}문항).`);
   if (state.pageOverflow || state.itemStates.some(item => item.overflow || item.rect.left < -2 || item.rect.right > (viewportName === "mobile" ? 390 : 1440) + 2)) fail(`${label}: 문항 가로 넘침 또는 화면 밖 배치`);
   if (!state.diagramCount || state.itemStates.some(item => !item.diagrams.length || item.diagrams.some(svg => svg.bbox.width <= 0 || svg.bbox.height <= 0 || svg.bbox.left < -2 || svg.bbox.right > (viewportName === "mobile" ? 390 : 1440) + 2))) fail(`${label}: 빈 그림 또는 잘린 그림`);
   if (state.itemStates.some(item => item.diagrams.some(svg => svg.geometry.x < svg.geometry.viewX - 1 || svg.geometry.y < svg.geometry.viewY - 1 || svg.geometry.right > svg.geometry.viewRight + 1 || svg.geometry.bottom > svg.geometry.viewBottom + 1))) fail(`${label}: SVG 내부 도형이 viewBox 밖으로 잘렸습니다.`);

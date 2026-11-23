@@ -31,6 +31,14 @@ function safePath(urlPath) {
 }
 async function startServer() {
   const server = http.createServer((request, response) => {
+    // 2026-11-24: 이 감사는 생성기가 그린 원문 자료판·단계 문단의 계약을 검사한다.
+    // 학생 화면에서는 problem-hint-policy.js가 쉬움 난이도 안내 문단과 문제 문장을 되풀이하는 상자를 지우므로, 여기서는 정책을 끄고
+    // 정책을 적용한 학생 화면은 source-6-2-fraction-division-policy-browser-audit.js가 따로 검사한다.
+    if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js(?:\?|$)/.test(request.url || "")) {
+      response.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
+      response.end("/* problem hint policy disabled for the generator contract audit */");
+      return;
+    }
     let file = safePath(request.url || "/");
     if (file && fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
     if (!file || !fs.existsSync(file) || !fs.statSync(file).isFile()) { response.writeHead(404); response.end("Not found"); return; }
@@ -117,7 +125,7 @@ async function inspectType(browser, baseUrl, difficulty, viewport, viewportLabel
     await page.goto(`${baseUrl}?type=${sourceItemId}&review=1&difficulty=${difficulty}`, { waitUntil: "domcontentloaded", timeout: 90000 }); await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible", timeout: 20000 });
     const problem = await inspect(page, difficulty, false, viewportLabel); await capture(page, difficulty, viewportLabel, "problem"); await page.locator("#solutionTab").click(); await page.locator("#solutionView:not([hidden])").waitFor({ state: "visible" });
     const answer = await inspect(page, difficulty, true, viewportLabel); await capture(page, difficulty, viewportLabel, "answer"); sameModel(problem, answer, `${viewportLabel}/${difficulty}`);
-    if (difficulty === 0 && viewportLabel === "desktop") for (const [view, tab] of [["problem", "problemTab"], ["answer", "solutionTab"]]) { await page.locator(`#${tab}`).click(); await page.emulateMedia({ media: "print" }); const pdf = path.join(outputDir, `${sourceItemId}-${view}-a4.pdf`); await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true }); renderPdf(pdf, view); pdfs += 1; await page.emulateMedia({ media: "screen" }); }
+    if (difficulty === 0 && viewportLabel === "desktop") for (const [view, tab] of [["problem", "problemTab"], ["answer", "solutionTab"]]) { await page.locator(`#${tab}`).click(); /* 쪽 나누기 보정이 끝난 뒤 인쇄 */ await page.waitForFunction(() => !document.querySelector('iframe[aria-hidden="true"][style*="-10000px"]'), null, { timeout: 30000 }); await page.waitForTimeout(300); await page.waitForFunction(() => !document.querySelector('iframe[aria-hidden="true"][style*="-10000px"]'), null, { timeout: 30000 }); await page.emulateMedia({ media: "print" }); const pdf = path.join(outputDir, `${sourceItemId}-${view}-a4.pdf`); await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true }); renderPdf(pdf, view); pdfs += 1; await page.emulateMedia({ media: "screen" }); }
   } catch (error) { fail(`${viewportLabel}/${difficulty}: 화면 검사 실패 (${error.message})`); } finally { await page.close(); }
 }
 (async () => {
