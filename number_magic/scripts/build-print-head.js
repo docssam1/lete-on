@@ -111,6 +111,20 @@ server.listen(0, async () => {
           let guideAvail = null;
           const gp = pages.slice(1).find(p => p.querySelector('.nm-w2-guide') && gridOf(p) && p.querySelector('.nm-w2-item'));
           if(gp) guideAvail = Math.floor(mm(floorOf(gp) - gridOf(gp).getBoundingClientRect().top));
+          /* 중등 개념 쪽(따라 풀기를 뗀 장) — [7] 따라 풀기만 있는 장의 따라 풀기 높이(머리 띠 아래부터),
+             [8] 개념·예시만 있는 첫 장의 내용 아래 끝, [9] 그 장의 종이 바닥(2026-11-23 「한 페이지 맞추기」:
+             둘이 한 장에 들어가면 renderRoundPages 가 한 장에 싣는다) */
+          let guideH = null, headOnly = null, floor1 = null;
+          const gOnly = pages.slice(1, 3).find(p => p.querySelector('.nm-w2-guide') && !p.querySelector('.nm-w2-item'));
+          if(gOnly && !gridOf(p1)){
+            const below = el => el.getBoundingClientRect().bottom;
+            const hd = gOnly.querySelector('.nm-w2-head');
+            const kids = [...gOnly.children].filter(c => !/nm-w2-(wm|foot|head)/.test(c.className) && c.getBoundingClientRect().height);
+            if(hd && kids.length) guideH = Math.ceil(mm(Math.max(...kids.map(below)) - below(hd)));
+            const kids1 = [...p1.children].filter(c => !/nm-w2-(wm|foot)/.test(c.className) && c.getBoundingClientRect().height);
+            if(kids1.length) headOnly = Math.ceil(mm(Math.max(...kids1.map(below)) - p1.getBoundingClientRect().top));
+            floor1 = Math.floor(mm(floorOf(p1) - p1.getBoundingClientRect().top));
+          }
           const grid = pages.map(gridOf).find(Boolean);
           /* 문항 한 칸이 실제로 필요한 높이 — 줄을 내용 높이(max-content)로 풀어 잰다 */
           const st = document.createElement('style');
@@ -137,7 +151,7 @@ server.listen(0, async () => {
               st.remove();
             }
           } catch(e){}
-          row.push([avail, head, Math.ceil(mm(need + gap) * 10) / 10, full, guideAvail, trainMax, trainFirst]);
+          row.push([avail, head, Math.ceil(mm(need + gap) * 10) / 10, full, guideAvail, trainMax, trainFirst, guideH, headOnly, floor1]);
           if(!qr){
             NM_EXAM.renderPrint({ thread:t, level:l.id, count:4, seed:'qr', grade });
             await new Promise(requestAnimationFrame);
@@ -148,7 +162,7 @@ server.listen(0, async () => {
         /* 시드 두 개 중 좁은 쪽 — 한 시드만 재면 다른 시드의 긴 문항이 칸을 넘었다(DV5 L4·MD39 L1) */
         const lo = (a, b) => a == null ? b : b == null ? a : Math.min(a, b), hi = (a, b) => a == null ? b : b == null ? a : Math.max(a, b);
         const merged = [0, 1, 2].map(i => { const a = row[i * 2], b = row[i * 2 + 1]; if(!a || !b) return a || b || null;
-          return [lo(a[0], b[0]), hi(a[1], b[1]), hi(a[2], b[2]), lo(a[3], b[3]), lo(a[4], b[4]), hi(a[5], b[5]), lo(a[6], b[6])]; });
+          return [lo(a[0], b[0]), hi(a[1], b[1]), hi(a[2], b[2]), lo(a[3], b[3]), lo(a[4], b[4]), hi(a[5], b[5]), lo(a[6], b[6]), hi(a[7], b[7]), hi(a[8], b[8]), lo(a[9], b[9])]; });
         if(merged.some(Boolean)) out[t + '@' + l.id] = merged;
       }
       return { out, qr };
@@ -238,7 +252,7 @@ server.listen(0, async () => {
         if(!v) return;
         /* 언어 중 가장 좁은 쪽(쓸 수 있는 높이 최소, 머리 높이 최대) */
         const lo = (a, b) => a == null ? b : b == null ? a : Math.min(a, b), hi = (a, b) => a == null ? b : b == null ? a : Math.max(a, b);
-        cur[i] = cur[i] ? [lo(cur[i][0], v[0]), hi(cur[i][1], v[1]), hi(cur[i][2], v[2]), lo(cur[i][3], v[3]), lo(cur[i][4], v[4]), hi(cur[i][5], v[5]), lo(cur[i][6], v[6])] : v.slice();
+        cur[i] = cur[i] ? [lo(cur[i][0], v[0]), hi(cur[i][1], v[1]), hi(cur[i][2], v[2]), lo(cur[i][3], v[3]), lo(cur[i][4], v[4]), hi(cur[i][5], v[5]), lo(cur[i][6], v[6]), hi(cur[i][7], v[7]), hi(cur[i][8], v[8]), lo(cur[i][9], v[9])] : v.slice();
       });
     }
     console.log(`${lang}: ${Object.keys(r.out).length}개 레벨`);

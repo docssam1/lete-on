@@ -7172,9 +7172,10 @@ function renderRoundPagesBody(item, opts){
      고등 긴 개념에서 문항 없는 첫 장이 종이보다 길었다(MD19 L6 473mm, 주간 학습지 36쪽). */
   const headTooTall = !!(headBand && headBand[1] != null && headBand[1] * fsR > 250);
   const editorialExamplePage=opts.editorialC4&&examLang()==='ko'&&item.thread==='ML1'&&item.level===1&&['l','xl'].includes(getFontSize());
-  const separateGuide = ((item.c0&&item.thread==='AD1') || middleLesson || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
+  let separateGuide = ((item.c0&&item.thread==='AD1') || middleLesson || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
+  const otherGuideSplit = ((item.c0&&item.thread==='AD1') || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || headTooTall || (item.thread==='MD83' && item.level===5));
   const separateExample=(editorialExamplePage||(['MD15','MD65'].includes(item.thread)&&item.level===5&&getFontSize()==='xl'))&&separateGuide;
-  const guidePages = separateGuide ? (guided.pages || [guided.html]).slice() : [];
+  let guidePages = separateGuide ? (guided.pages || [guided.html]).slice() : [];
   if(separateExample)guidePages[0]=exampleHtml+guidePages[0];
 
   /* 첫 장 용량(2026-09-06) — 판정별 고정표 layout.firstRows(classifyRoundLayout 주석). 개념 패널이
@@ -7247,6 +7248,16 @@ function renderRoundPagesBody(item, opts){
   }
   /* DC3·MD118은 따라 풀기가 높아 첫 장에 문항을 싣지 않는다 — 문장제만인 회차는 따라 풀기가 없어 빈 장이 됐다(C23 DC3, 2026-11-18) */
   if((pictureWorked&&exampleHtml)||(['DC3','MD118'].includes(item.thread)&&!noTeach&&!wordOnly))firstRows=0;
+  /* 중등 개념 쪽은 따라 풀기를 늘 다음 장으로 뗐다(middleLesson) — 개념·예시가 반쪽, 따라 풀기가 반쪽인 장 둘이
+     생겼다(원장 2026-11-23 「한 페이지 맞추기로 했잖아」, C37 MD78: 53% + 41%). 첫 장에 문항이 없고(firstRows 0),
+     따라 풀기가 한 장뿐이며, 잰 높이(data/print-head.js [7] 따라 풀기 · [8] 개념·예시 · [9] 종이 바닥)로 둘이 한 장에
+     들어가면 한 장에 싣는다. 다른 까닭(그래프·큰 글씨·너무 긴 머리 등)으로 떼는 것은 그대로. */
+  if(separateGuide && middleLesson && !otherGuideSplit && !separateExample && firstRows === 0 && guidePages.length === 1
+    && headBand && headBand[7] != null && headBand[8] != null && headBand[9] != null
+    && (headBand[8] + headBand[7]) * fsR + 3 <= headBand[9]){
+    separateGuide = false;
+    guidePages = [];
+  }
   const firstCap = firstRows * layout.cols;
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
