@@ -1972,7 +1972,7 @@
       const actual = measuredAngle(firstDirection, secondDirection);
       const arc = source42Arc(vertex, firstDirection, secondDirection, 15);
       const text = source42AngleLabelPoint(vertex, firstDirection, secondDirection, 28);
-      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: `${name}-first;${name}-second`, markup: `<g data-marked-angle="${label}" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="${name}-first;${name}-second"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">${label}°</text></g>` };
+      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: `${name}-first;${name}-second`, markup: `<g data-marked-angle="${label}" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="${name}-first;${name}-second"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">${({ 162: "㉠", 150: "㉡", 132: "㉣" })[label] || `${label}°`}</text></g>` };
     };
     const interiorMarker = (() => {
       const vertex = hexagon[4];
@@ -1981,7 +1981,7 @@
       const actual = measuredAngle(firstDirection, secondDirection);
       const arc = source42Arc(vertex, firstDirection, secondDirection, 14);
       const text = source42AngleLabelPoint(vertex, firstDirection, secondDirection, 25);
-      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: "hexagon-3-4;hexagon-4-5", markup: `<g data-marked-angle="120" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="hexagon-3-4;hexagon-4-5"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">120°</text></g>` };
+      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: "hexagon-3-4;hexagon-4-5", markup: `<g data-marked-angle="120" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="hexagon-3-4;hexagon-4-5"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">㉢</text></g>` };
     })();
     const marker162 = joinMarker(square, pentagon, 1, 162, "square-pentagon");
     const marker132 = joinMarker(pentagon, hexagon, 2, 132, "pentagon-hexagon");

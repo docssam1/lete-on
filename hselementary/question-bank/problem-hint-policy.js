@@ -553,6 +553,9 @@
  "5-2-u1-e3-mission-2-perimeter": [
   "도움말: 안쪽 선분과 바깥쪽 선분의 길이를 각각 더해 전체 가로·세로와 비교해 보세요."
  ],
+ "5-2-u1-e3-mission-3-cube-box-count": [
+  "각 방향에 남는 공간을 확인하고, 상자를 더 넣을 수 없는 까닭을 설명하세요."
+ ],
  "5-2-u1-e3-mission-4-mat-cost": [
   "도움말: 필요한 묶음 수를 구할 때 모자라지 않도록 올림하고, 묶음 수에 한 묶음의 가격을 곱하세요."
  ],
@@ -567,6 +570,9 @@
  ],
  "5-2-u2-e4-example-2-synthetic": [
   "도움말: 양 끝 사이의 길이를 먼저 구하고, 8등분 중 대각선이 지나는 칸의 위치를 살펴보세요."
+ ],
+ "5-2-u5-t6-2": [
+  "처음 위 5, 처음 오른쪽 4 → 굴린 뒤 위 6"
  ],
  "6-1-u3-e1-mission-4": [
   "기호의 자리를 따라 계산하세요"
@@ -662,6 +668,9 @@
   "먼저 부피를 옆면의 높이로 나누어 밑넓이를 구하고, 계단 모양 밑면을 높이가 다른 세 직사각형으로 나누어 보세요.",
   "전개도에 표시된 길이만 사용하여 빈칸에 알맞은 길이가 하나뿐임을 확인하세요."
  ],
+ "6-2-u1-e3-mission-2": [
+  "분모에 있는 분수의 합부터 계산하세요."
+ ],
  "6-2-u2-e1-example-4": [
   "소수 부분은 0 이상 1 미만입니다."
  ],
@@ -716,6 +725,9 @@
  "6-2-u3-e1-example-4": [
   "위 그림의 ㉠칸에는 쌓기나무 1개가 쌓여 있습니다."
  ],
+ "6-2-u3-e1-mission-2": [
+  "위 그림에 적힌 수는 그 칸에 쌓은 쌓기나무의 개수입니다."
+ ],
  "6-2-u3-e1-mission-3": [
   "위 그림의 ㉠칸에는 쌓기나무 3개가 쌓여 있습니다.",
   "□에 알맞은 높이를 먼저 구하세요.",
@@ -757,6 +769,18 @@
   "쌓기나무는 모두 5층으로 쌓여 있습니다."
  ]
 };
+
+  // 2026-11-23 문제 그림 검토 결과: 원문에 없는 설명·요약 그림은 통째로, 원문 그림 안의 답·중간 결과 이름표는 그 이름표만 지웁니다.
+  // { 유형: [{ levels: [-1,0,1], svg: 그림 순번 또는 class, labels: [이름표 순번…] (없으면 그림 전체) }] }
+  const DIAGRAM_RULES = {"4-2-u6-t2-3":[{"labels":[0,1,2,3],"levels":[-1],"svg":0},{"labels":[0,1,2,3],"levels":[0],"svg":0},{"labels":[0,1,2,3],"levels":[1],"svg":0}],"5-1-u1-t2-11":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"5-1-u1-t3-7":[{"labels":[1],"levels":[-1],"svg":0},{"labels":[1],"levels":[0],"svg":0},{"labels":[1],"levels":[1],"svg":0}],"5-2-u1-e3-mission-3-cube-box-count":[{"levels":[-1,0,1],"svg":"source52-cube-box-diagram"}],"5-2-u5-t2-4":[{"labels":[1,2],"levels":[-1],"svg":0},{"labels":[1,2],"levels":[0],"svg":0},{"labels":[1,2],"levels":[1],"svg":0}],"5-2-u5-t5-5":[{"levels":[-1,0,1],"svg":"stacked-dice"}],"6-1-u1-e2-example-4":[{"levels":[-1,0,1],"svg":"source61-e2-diagram"}],"6-1-u1-e2-mission-5":[{"levels":[-1,0,1],"svg":"source61-e2-diagram"}],"6-1-u1-e2-mission-6":[{"levels":[-1,0,1],"svg":"source61-e2-diagram"}],"6-1-u2-e1-example-1-1":[{"levels":[-1,0,1],"svg":"source61-prism-structure"},{"levels":[-1,0,1],"selector":".source61-prism-caption"}],"6-1-u2-e1-mission-1":[{"levels":[-1,0,1],"svg":"source61-prism-structure"},{"levels":[-1,0,1],"selector":".source61-prism-caption"}],"6-1-u2-e1-mission-2":[{"levels":[-1,0,1],"svg":"geometry-diagram"},{"levels":[-1,0,1],"selector":".source61-prism-caption"}],"6-1-u2-e2-example-2-4":[{"labels":[3,4],"levels":[-1],"svg":0},{"labels":[3,4],"levels":[0],"svg":0},{"labels":[3,4],"levels":[1],"svg":0}],"6-1-u2-e3-example-3-1":[{"levels":[-1,0,1],"svg":"source61-e3-prism-pyramid"}],"6-1-u2-e3-mission-1":[{"levels":[-1,0,1],"svg":"source61-e3-prism-pyramid"}],"6-1-u2-e3-mission-3":[{"labels":[4,5,6],"levels":[-1],"svg":0},{"labels":[4,5,6],"levels":[0],"svg":0},{"labels":[4,5,6],"levels":[1],"svg":0},{"levels":[-1,0,1],"selector":"g.source61-e3-height-question"}],"6-1-u2-e3-mission-5":[{"labels":[1,2,3],"levels":[-1],"svg":0},{"labels":[1,2,3],"levels":[0],"svg":0},{"labels":[1,2,3],"levels":[1],"svg":0},{"levels":[-1,0,1],"selector":"line[data-solid-edge=\"expanded-edge\"], line.source61-e3-interval-mark, circle.source61-e3-vertex-mark"}],"6-1-u2-t1-2":[{"levels":[-1,0,1],"svg":"angular-prism"}],"6-1-u2-t1-4":[{"levels":[-1,0,1],"svg":"angular-prism"}],"6-1-u2-t2-2":[{"levels":[-1,0,1],"svg":"angular-prism"}],"6-1-u2-t2-5":[{"levels":[-1,0,1],"svg":"angular-prism"}],"6-1-u2-t3-5":[{"levels":[-1,0,1],"svg":"angular-pyramid"}],"6-1-u3-e2-example-1":[{"levels":[-1,0,1],"svg":"source61-decimal-e2-diagram"}],"6-1-u3-e2-example-3":[{"levels":[-1,0,1],"svg":"source61-decimal-e2-diagram"}],"6-1-u3-e2-exploration-1":[{"levels":[-1,0,1],"svg":"source61-decimal-e2-diagram"}],"6-1-u3-e2-mission-2":[{"levels":[-1,0,1],"svg":"source61-decimal-e2-diagram"}],"6-1-u3-e2-mission-3":[{"levels":[-1,0,1],"svg":"source61-decimal-e2-diagram"}],"6-1-u3-e2-mission-4":[{"levels":[-1,0,1],"svg":"source61-decimal-e2-diagram"}],"6-1-u3-e2-mission-5":[{"levels":[-1,0,1],"svg":"source61-decimal-e2-diagram"}],"6-1-u3-e3-example-1":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-example-2":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-example-3":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-example-4":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-exploration-1":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-mission-1":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-mission-2":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-mission-3":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-mission-4":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-mission-5":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e3-mission-6":[{"levels":[-1,0,1],"svg":"source61-decimal-e3-diagram"}],"6-1-u3-e4-example-2":[{"levels":[-1,0,1],"svg":"source61-decimal-e4-diagram"}],"6-1-u3-e4-example-3":[{"levels":[-1,0,1],"svg":"source61-decimal-e4-diagram"}],"6-1-u3-e4-example-4":[{"levels":[-1,0,1],"svg":"source61-decimal-e4-diagram"}],"6-1-u3-e4-exploration-1":[{"levels":[-1,0,1],"svg":"source61-decimal-e4-diagram"}],"6-1-u3-e4-mission-2":[{"levels":[-1,0,1],"svg":"source61-decimal-e4-diagram"}],"6-1-u3-e4-mission-5":[{"levels":[-1,0,1],"svg":"source61-decimal-e4-diagram"}],"6-1-u3-e4-mission-6":[{"levels":[-1,0,1],"svg":"source61-decimal-e4-diagram"}],"6-1-u4-e1-example-1-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e1-diagram"}],"6-1-u4-e1-example-1-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e1-diagram"}],"6-1-u4-e1-mission-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e1-diagram"}],"6-1-u4-e1-mission-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e1-diagram"}],"6-1-u4-e1-mission-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e1-diagram"}],"6-1-u4-e1-mission-5":[{"levels":[-1,0,1],"svg":"source61-ratio-e1-diagram"}],"6-1-u4-e1-mission-6":[{"levels":[-1,0,1],"svg":"source61-ratio-e1-diagram"}],"6-1-u4-e2-example-2-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-example-2-2":[{"labels":[9],"levels":[-1],"svg":0},{"labels":[9],"levels":[0],"svg":0},{"labels":[9],"levels":[1],"svg":0}],"6-1-u4-e2-example-2-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-example-2-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-exploration-2-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-mission-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-mission-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-mission-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-mission-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-mission-5":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e2-mission-6":[{"levels":[-1,0,1],"svg":"source61-ratio-e2-diagram"}],"6-1-u4-e3-example-3-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e3-diagram"}],"6-1-u4-e3-example-3-2":[{"labels":[4,5,6],"levels":[-1],"svg":0},{"labels":[4,5,6],"levels":[0],"svg":0},{"labels":[4,5,6],"levels":[1],"svg":0}],"6-1-u4-e3-example-3-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e3-diagram"}],"6-1-u4-e3-example-3-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e3-diagram"}],"6-1-u4-e3-exploration-3-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e3-diagram"}],"6-1-u4-e3-mission-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e3-diagram"}],"6-1-u4-e3-mission-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e3-diagram"}],"6-1-u4-e3-mission-3":[{"labels":[12],"levels":[-1],"svg":0},{"labels":[12],"levels":[0],"svg":0},{"labels":[12],"levels":[1],"svg":0}],"6-1-u4-e3-mission-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e3-diagram"}],"6-1-u4-e3-mission-5":[{"levels":[-1,0,1],"replace":{"12":"1개월 이자율: 가 □%, 나 □%"},
+ "svg":0}],"6-1-u4-e3-mission-6":[{"labels":[12],"levels":[-1],"svg":0},{"labels":[12],"levels":[0],"svg":0},{"labels":[12],"levels":[1],"svg":0}],"6-1-u4-e4-example-4-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-example-4-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-example-4-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-example-4-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-exploration-4-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-exploration-4-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-mission-1":[{"labels":[9],"levels":[-1],"svg":0},{"labels":[9],"levels":[0],"svg":0},{"labels":[9],"levels":[1],"svg":0}],"6-1-u4-e4-mission-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-mission-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-mission-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-mission-5":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e4-mission-6":[{"levels":[-1,0,1],"svg":"source61-ratio-e4-diagram"}],"6-1-u4-e5-example-5-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-example-5-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-example-5-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-example-5-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-exploration-5-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-mission-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-mission-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-mission-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-mission-5":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e5-mission-6":[{"levels":[-1,0,1],"svg":"source61-ratio-e5-diagram"}],"6-1-u4-e6-example-6-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-example-6-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-example-6-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-example-6-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-exploration-6-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-mission-1":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-mission-2":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-mission-3":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-mission-4":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-mission-5":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u4-e6-mission-6":[{"levels":[-1,0,1],"svg":"source61-ratio-e6-diagram"}],"6-1-u5-e1-example-1":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"6-1-u5-e1-mission-6":[{"labels":[3],"levels":[-1],"svg":0},{"labels":[3],"levels":[0],"svg":0},{"labels":[3],"levels":[1],"svg":0}],"6-1-u5-e2-example-3":[{"levels":[-1,0,1],"textPattern":"^(?:0|20|40|60|80|100|백분율\\(%\\)|\\d+%)$"},{"levels":[-1,0,1],"rewrite":"$1","textPattern":"^(장미|무궁화|봉선화|국화|백합|튤립|해바라기) \\d+%$"}],"6-1-u5-e3-example-3":[{"labels":[12],"levels":[-1],"svg":0},{"labels":[3],"levels":[-1],"svg":3},{"labels":[12],"levels":[0],"svg":0},{"labels":[3],"levels":[0],"svg":3},{"labels":[12],"levels":[1],"svg":0},{"labels":[3],"levels":[1],"svg":3}],"6-1-u5-e3-mission-6":[{"labels":[12],"levels":[-1],"svg":0},{"labels":[3],"levels":[-1],"svg":3},{"labels":[12],"levels":[0],"svg":0},{"labels":[3],"levels":[0],"svg":3},{"labels":[12],"levels":[1],"svg":0},{"labels":[3],"levels":[1],"svg":3}],"6-1-u5-e4-mission-5":[{"levels":[-1,0],"replace":{"12":"□","4":"□"},
+ "svg":0}],"6-1-u5-t3":[{"labels":[1],"levels":[-1],"svg":0},{"levels":[-1],"replace":{"4":"소설책"},
+ "svg":0},{"labels":[1],"levels":[0],"svg":0},{"levels":[0],"replace":{"4":"소설책"},
+ "svg":0},{"labels":[1],"levels":[1],"svg":0},{"levels":[1],"replace":{"4":"소설책"},
+ "svg":0}],"6-1-u6-e2-example-1":[{"levels":[-1,0,1],"svg":"source61-volume-e2-diagram"}],"6-1-u6-e2-example-2":[{"labels":[4],"levels":[-1],"svg":0}],"6-1-u6-e2-exploration":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[0,1],"levels":[1],"svg":0}],"6-1-u6-e2-mission-1":[{"levels":[-1,0,1],"svg":"source61-volume-e2-diagram"}],"6-1-u6-e2-mission-3":[{"labels":[1,6],"levels":[-1],"svg":0},{"labels":[1],"levels":[0],"svg":0},{"labels":[1],"levels":[1],"svg":0}],"6-1-u6-e2-mission-5":[{"labels":[2,5,8],"levels":[-1],"svg":0}],"6-1-u6-e3-example-4":[{"labels":[1,2,3,4,5,6],"levels":[-1],"svg":0},{"labels":[1,2,3,4,5,6],"levels":[0],"svg":0},{"labels":[1,2,3,4,5,6],"levels":[1],"svg":0}],"6-1-u6-e3-exploration":[{"labels":[1,2],"levels":[-1],"svg":0},{"labels":[1,2],"levels":[0],"svg":0},{"labels":[1,2],"levels":[1],"svg":0}],"6-1-u6-e3-mission-2":[{"labels":[0,1,2],"levels":[-1],"svg":0},{"labels":[0,1,2],"levels":[0],"svg":0},{"labels":[0,1,2],"levels":[1],"svg":0}],"6-1-u6-e3-mission-3":[{"labels":[6,8],"levels":[-1],"svg":0},{"labels":[6,8],"levels":[0],"svg":0},{"labels":[6,8],"levels":[1],"svg":0}],"6-1-u6-e3-mission-4":[{"labels":[0,1],"levels":[-1],"svg":0},{"labels":[0,1],"levels":[0],"svg":0},{"labels":[0,1],"levels":[1],"svg":0}],"6-1-u6-e3-mission-5":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[4],"levels":[0],"svg":0},{"labels":[4],"levels":[1],"svg":0}],"6-1-u6-e3-mission-6":[{"labels":[6,7],"levels":[-1],"svg":0},{"labels":[6,7],"levels":[0],"svg":0},{"labels":[6,7],"levels":[1],"svg":0}],"6-1-u6-e4-example-1":[{"labels":[0,5],"levels":[-1],"svg":0},{"labels":[0,5],"levels":[0],"svg":0},{"labels":[0,5],"levels":[1],"svg":0}],"6-1-u6-e4-example-2":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[4],"levels":[0],"svg":0},{"labels":[4],"levels":[1],"svg":0}],"6-1-u6-e4-example-3":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"6-1-u6-e4-example-4":[{"labels":[5],"levels":[-1],"svg":0},{"labels":[5],"levels":[0],"svg":0},{"labels":[5],"levels":[1],"svg":0}],"6-1-u6-e4-exploration-1":[{"labels":[10],"levels":[-1],"svg":0},{"labels":[10],"levels":[0],"svg":0},{"labels":[10],"levels":[1],"svg":0}],"6-1-u6-e4-exploration-2":[{"levels":[-1,0,1],"svg":"source61-volume-e4-diagram"}],"6-1-u6-e4-exploration-3":[{"levels":[-1,0,1],"svg":"source61-volume-e4-diagram"}],"6-1-u6-e4-mission-2":[{"labels":[0,4],"levels":[-1],"svg":0},{"labels":[0,4],"levels":[0],"svg":0},{"labels":[0,4],"levels":[1],"svg":0}],"6-1-u6-e4-mission-3":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"6-1-u6-e4-mission-5":[{"labels":[3],"levels":[-1],"svg":0},{"labels":[3],"levels":[0],"svg":0},{"labels":[3],"levels":[1],"svg":0}],"6-2-u1-e2-mission-6":[{"levels":[-1,0,1],"textPattern":"^(?:땅과 같은 수의 나무|나무 사이 간격 \\?m)$"}],"6-2-u3-e1-mission-2":[{"levels":[-1],"textPattern":"^\\d+$"}]};
+
+  // 문제 문장에 자료가 모두 있는데도 남아 있던 조건 정리 상자(파생값·풀이식이 들어 있어 자동 판정을 통과하지 못한 것). 2026-11-23 문제 문장과 하나씩 대조.
+  const BOARD_DROP = new Set(["6-1-u2-e3-mission-5","6-1-u1-e2-example-2", "6-1-u1-e2-mission-3", "6-1-u1-e2-mission-5", "6-1-u2-e1-mission-5", "6-1-u2-e2-example-2-3", "6-1-u2-e2-mission-5", "6-1-u3-e1-example-3", "6-1-u3-e1-example-4", "6-1-u3-e1-mission-5", "6-1-u3-e3-mission-4", "6-1-u3-e4-mission-1", "6-1-u4-e1-mission-4", "6-1-u4-e2-example-2-4", "6-1-u4-e2-mission-6", "6-1-u4-e3-example-3-3", "6-1-u4-e3-mission-2", "6-1-u4-e3-mission-5", "6-1-u4-e4-example-4-1", "6-1-u4-e4-mission-1", "6-1-u4-e5-example-5-1", "6-1-u4-e5-example-5-2", "6-1-u4-e5-example-5-4", "6-1-u4-e5-mission-1", "6-1-u4-e5-mission-2", "6-1-u4-e5-mission-3", "6-1-u4-e5-mission-4", "6-1-u4-e6-exploration-6-1", "6-2-u1-e2-example-4", "6-2-u1-e2-mission-4", "6-2-u1-e2-mission-6", "6-2-u1-e3-example-2", "6-2-u1-e3-example-3", "6-2-u1-e3-mission-3", "6-2-u1-e3-mission-4", "6-2-u1-e3-mission-6", "6-2-u1-e5-example-1"]);
 
   const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   function sentencePattern(sentence) {
@@ -822,14 +846,52 @@
     return `${clone.textContent} ${svgText}`;
   }
 
-  function clean(prompt, typeId) {
+  function applyDiagramRules(scope, typeId, difficulty) {
+    let changed = 0;
+    const rules = DIAGRAM_RULES[typeId] || [];
+    const svgs = [...scope.querySelectorAll("svg")].filter(svg => !svg.parentElement || !svg.parentElement.closest("svg"));
+    const drop = [];
+    for (const rule of rules) {
+      if (rule.levels && !rule.levels.includes(difficulty)) continue;
+      if (rule.selector) { drop.push(...scope.querySelectorAll(rule.selector)); continue; }
+      if (rule.textPattern) {
+        // 수가 문항마다 달라 위치로 정할 수 없는 이름표: 글자 모양으로 지우거나(drop) 바꿉니다(rewrite).
+        const pattern = new RegExp(rule.textPattern);
+        for (const svg of svgs) for (const label of svg.querySelectorAll("text")) {
+          const text = label.textContent.trim();
+          if (!pattern.test(text)) continue;
+          if (rule.rewrite === undefined) drop.push(label);
+          else { label.textContent = text.replace(pattern, rule.rewrite); changed += 1; }
+        }
+        continue;
+      }
+      if (rule.replace) {
+        const svg = svgs[rule.svg];
+        const texts = svg ? [...svg.querySelectorAll("text")] : [];
+        for (const [index, text] of Object.entries(rule.replace)) if (texts[index]) { texts[index].textContent = text; changed += 1; }
+        continue;
+      }
+      const targets = typeof rule.svg === "number" ? [svgs[rule.svg]] : svgs.filter(svg => svg.classList.contains(rule.svg));
+      for (const svg of targets.filter(Boolean)) {
+        if (!rule.labels) { drop.push(svg); continue; }
+        const texts = [...svg.querySelectorAll("text")];
+        for (const index of rule.labels) if (texts[index]) drop.push(texts[index]);
+      }
+    }
+    for (const node of drop) if (node.parentNode) { node.remove(); changed += 1; }
+    return changed;
+  }
+
+  function clean(prompt, typeId, difficulty) {
     const template = document.createElement("template");
     template.innerHTML = prompt;
     const scope = template.content;
-    let changed = 0;
+    let changed = applyDiagramRules(scope, typeId, difficulty);
     for (const el of scope.querySelectorAll("[class]")) {
       if ([...el.classList].some(name => /-hint$/.test(name))) { el.remove(); changed += 1; }
     }
+    // 빈칸으로 풀이 틀을 미리 짜 주는 표(각기둥 면·모서리·꼭짓점 표 등)와 문제 수치를 되풀이한 관계 상자.
+    for (const el of scope.querySelectorAll(".source61-structure-table, .source62-overlap-relation")) { el.remove(); changed += 1; }
     // '도움말:' 같은 이름표가 붙은 문장은 문장 끝(마침표)까지 지웁니다.
     changed += removeMatches(scope, new RegExp(`\\s*${LABEL.source}(?:[^.?!]|\\.(?=\\d))*[.?!]?`));
     // 문장 첫머리의 '먼저 …하세요.' 안내 문장.
@@ -850,7 +912,7 @@
       const parent = board.parentNode, next = board.nextSibling;
       board.remove();
       const outside = new Set(textOf(scope).match(TOKEN) || []);
-      if (inside.every(token => outside.has(token))) changed += 1;
+      if (BOARD_DROP.has(typeId) || inside.every(token => outside.has(token))) changed += 1;
       else parent.insertBefore(board, next);
     }
     if (!changed) return prompt;
@@ -865,7 +927,7 @@
     const question = previous(type, rank, difficulty, seed, variant);
     if (!question || typeof question.prompt !== "string") return question;
     const id = type && type.id;
-    const prompt = clean(question.prompt, id);
+    const prompt = clean(question.prompt, id, Number(difficulty) || 0);
     return prompt === question.prompt ? question : Object.assign({}, question, { prompt, problemHintPolicy: "20261123" });
   };
   api.cleanProblemHints = clean;
