@@ -103,14 +103,14 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   assert.equal(await page.locator("#archive-print-link").getAttribute("href"), "https://live.poshenloh.com/images/past-contests/pdf/amc8-2023-exam.pdf");
   assert.equal(await page.locator("#archive-answer-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/answers");
   assert.equal(await page.locator("#archive-solutions-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/solutions");
-  assert.match(await page.locator("#archive-route-note").innerText(), /시험지를 펼쳐 화면에서 읽거나 인쇄/);
+  assert.match(await page.locator("#archive-route-note").textContent(), /시험지를 펼쳐 화면에서 읽거나 인쇄/);
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("target"), "_blank");
   await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("number");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("approach");
-  await page.locator("#review-exam-date").fill("2026-11-04");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-11-04");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 내 답 E/);
   assert.equal(await page.locator("#report-review-items-list .report-review-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
@@ -474,8 +474,8 @@ test("users can save an answer-free AMC review summary without turning it into r
   assert.match(await page.locator("#archive-open-link").textContent(), /2023 AMC 8.*온라인 회차/);
   assert.equal(await page.locator("#review-paper-label").inputValue(), "2023 AMC 8");
   assert.deepEqual(await page.locator('[data-question="1"][data-field="domain"] option').allTextContents(), ["영역 선택", "식과 대수 관계", "수와 정수의 성질", "기하 도형과 측정", "경우의 수와 확률", "자료와 통계", "함수와 그래프"]);
-  await page.locator("#review-exam-date").fill("2026-10-29");
-  await page.locator("#review-paper-label").fill("Practice A");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-29");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill("Practice A");
   await page.locator('[data-question="1"][data-field="answer"]').selectOption("C");
   assert.match(await page.locator("#mark-progress").innerText(), /답 입력 1문제/);
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
@@ -518,8 +518,8 @@ test("users can save an answer-free AMC review summary without turning it into r
   const raw = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
   assert.doesNotMatch(raw, /responses|answer|correct-answer/);
   assert.deepEqual(JSON.parse(raw).records[0].blankReasons, [{ id: "skipped", count: 1 }]);
-  await page.locator("#review-exam-date").fill("2026-10-30");
-  await page.locator("#review-paper-label").fill(`Practice B-${"X".repeat(69)}`);
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-30");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill(`Practice B-${"X".repeat(69)}`);
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
@@ -633,8 +633,8 @@ test("AIME review opens year/form archive, captures integer answers, and stays s
   assert.equal(await page.locator("#aime-review-note").isVisible(), true);
   assert.match(await page.locator("#aime-review-note").innerText(), /초대·응시 자격·선발을 판단하지 않습니다/);
   assert.equal(await page.locator('#aime-review-note a').getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
-  await page.locator("#review-paper-label").fill("2026 AIME II");
-  await page.locator("#review-exam-date").fill("2026-11-03");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill("2026 AIME II");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-11-03");
   for (let question = 1; question <= 15; question += 1) {
     await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("wrong");
     await page.locator(`[data-question="${question}"][data-field="domain"]`).selectOption("algebra");
@@ -664,8 +664,8 @@ test("AIME review opens year/form archive, captures integer answers, and stays s
   assert.equal(await page.locator(".problem-card").count(), 8);
   assert.equal(await page.locator("#practice-count").innerText(), "8문항");
   await page.goto(`${url}?grade=9&program=aime`, { waitUntil: "networkidle" });
-  await page.locator("#review-paper-label").fill("2026 개인 연습 세트");
-  await page.locator("#review-exam-date").fill("2026-11-03");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill("2026 개인 연습 세트");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-11-03");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
@@ -766,7 +766,7 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   assert.equal(followupUrl.searchParams.get("grade"), "9");
   assert.equal(followupUrl.searchParams.get("sourceYear"), "2025");
   assert.equal(followupUrl.searchParams.get("sourceForm"), "A");
-  await page.locator("#review-exam-date").fill("2026-10-30");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-30");
   await page.locator("#save-diagnostic").click();
   assert.match(await page.locator("#diagnostic-save-status").innerText(), /AMC 10 참고 원점수는 저장된 응답 수로 다시 계산할 수 있어요/);
   assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=9&program=amc10#grade-map");
@@ -778,8 +778,9 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   assert.equal(await page.locator("#score-estimate a:not([hidden])").innerText(), "MAA 2026–27 공식 채점 안내 ↗");
   assert.match(await page.locator("#score-estimate").innerText(), /해당 연도·지역의 MAA 안내/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
-  await page.locator("#review-grade").selectOption("8");
-  assert.equal(await page.locator(".review-report").isHidden(), true, "a grade change clears the prior result and its roadmap link");
+  await openReviewOptions(page);await page.locator("#review-grade").selectOption("8");
+  assert.equal(await page.locator(".review-report").isVisible(), true, "changing grade comparison preserves the graded paper");
+  assert.match(await page.locator("#report-roadmap-link").getAttribute("href"), /grade=8/);
   await page.close();
 });
 
@@ -801,19 +802,19 @@ test("deleting an unrelated saved contest record keeps the current result marked
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
   const resultButton = page.getByRole("button", { name: "결과 보기" });
   const saveButton = page.locator("#save-diagnostic");
-  await page.locator("#review-exam-date").fill("2026-10-28");
-  await page.locator("#review-paper-label").fill("Earlier practice");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-28");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill("Earlier practice");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await resultButton.click();
   await saveButton.click();
-  await page.locator("#review-exam-date").fill("2026-10-27");
-  await page.locator("#review-paper-label").fill("Oldest practice");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-27");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill("Oldest practice");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("blank");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("skipped");
   await resultButton.click();
   await saveButton.click();
-  await page.locator("#review-exam-date").fill("2026-10-29");
-  await page.locator("#review-paper-label").fill("Current practice");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-29");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill("Current practice");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
   await resultButton.click();
@@ -845,8 +846,8 @@ test("deleting an unrelated saved contest record keeps the current result marked
 test("deleting the last saved contest summary without an open result returns focus to contest selection", async function () {
   const page = await browser.newPage();
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
-  await page.locator("#review-exam-date").fill("2026-10-29");
-  await page.locator("#review-paper-label").fill("Saved practice");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-29");
+  await openReviewOptions(page);await page.locator("#review-paper-label").fill("Saved practice");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.getByRole("button", { name: "결과 보기" }).click();
   await page.locator("#save-diagnostic").click();
@@ -887,123 +888,39 @@ test("browser back restores the selected grade and competition", async function 
   await page.close();
 });
 
-test("AMC score records stay separated by contest, export/import as a local file, and show the current-cycle reference", async function () {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(url, { waitUntil: "networkidle" });
-  await page.locator("#history-program").selectOption("amc10");
-  await page.locator("#history-cycle").fill("2026-27");
-  assert.match(await page.locator("#score-history-context").innerText(), /실제 응시 프로그램을 선택/);
-  await page.locator("#history-region").selectOption("maa-us-canada");
-  assert.match(await page.locator("#score-history-context").innerText(), /100 \/ 150/);
-  assert.match(await page.locator("#score-history-context").innerText(), /만 13세 이상/);
-  assert.match(await page.locator("#score-history-context").innerText(), /2027 USAJMO·USAMO 선발은 AIME 점수를 주로 보며 AMC 점수는 선발 요소가 아니지만/);
-  assert.match(await page.locator("#score-history-context").innerText(), /어느 대회의 진출 여부도 판정하지 않습니다/);
-  assert.equal(await page.getByRole("link", { name: "MAA 2027 AIME 공식 공지 ↗" }).getAttribute("href"), "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/");
-  assert.equal(await page.getByRole("link", { name: "MAA AIME 자격 조건 ↗" }).getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
-  assert.equal(await page.locator("#history-score").getAttribute("max"), "150");
-  assert.equal(await page.locator("#history-score").getAttribute("step"), "0.5");
-  assert.equal(await page.locator("#history-score").getAttribute("inputmode"), "decimal");
-  await page.locator("#history-form").selectOption("B");
-  await page.locator("#history-grade").selectOption("7");
-  await page.locator("#history-date").fill("2026-11-13");
-  await page.locator("#history-score").fill("100");
-  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
-  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("추가했어요"));
-  assert.equal(await page.locator(".score-history-group").count(), 1);
-  assert.match(await page.locator(".score-history-table").innerText(), /점수 기준 이상 · 나이와 기타 자격 확인/);
-  assert.doesNotMatch(await page.locator(".score-history-table").innerText(), /MAA 전체 응시자 기준/, "unpublished future forms do not receive cohort references");
-  assert.match(await page.locator(".score-history-table").innerText(), /Grade 7/);
-  assert.equal(await page.locator("#history-program").inputValue(), "amc10", "the contest selection stays ready for the next entry");
-  assert.equal(await page.locator("#history-cycle").inputValue(), "2026-27");
-  assert.equal(await page.locator("#history-form").inputValue(), "B");
-  assert.equal(await page.locator("#history-score").inputValue(), "");
-  assert.match(await page.locator("#score-history-context").innerText(), /2026–27 미국·캐나다 MAA AIME 점수 기준 · 100 \/ 150/);
-  assert.match(await page.locator("#score-history-context").innerText(), /만 13세 이상/);
-
-  await page.locator("#history-region").selectOption("international");
-  assert.match(await page.locator("#score-history-context").innerText(), /International Group Leader/);
-  assert.doesNotMatch(await page.locator("#score-history-context").innerText(), /100 \/ 150/);
-
-  await page.locator("#history-program").selectOption("amc8");
-  assert.equal(await page.locator("#history-score").getAttribute("inputmode"), "numeric");
-  await page.locator("#history-cycle").fill("2026-27");
-  await page.locator("#history-date").fill("2027-01-24");
-  await page.locator("#history-score").fill("20");
-  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
-  assert.equal(await page.locator(".score-history-group").count(), 2, "AMC 8 and AMC 10 are kept in separate comparison groups");
-  assert.equal(await page.evaluate(() => localStorage.length), 0, "no learner history is persisted by the page");
-
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "JSON 파일로 저장" }).click();
-  const download = await downloadPromise;
-  assert.equal(download.suggestedFilename(), "gfield-amc-score-history.json");
-  const exported = JSON.parse(await fs.promises.readFile(await download.path(), "utf8"));
-  assert.equal(exported.schemaVersion, "gfield-amc-score-history-v3");
-  assert.equal(exported.records[0].studentGrade, 7);
-  assert.equal(exported.records.length, 2);
-  assert.equal(exported.records.find((record) => record.programId === "amc10").regionId, "maa-us-canada");
-  assert.equal(exported.records.find((record) => record.programId === "amc8").regionId, "international");
-  assert.equal(Object.hasOwn(exported.records[0], "answers"), false);
-  assert.equal(Object.hasOwn(exported.records[0], "studentName"), false);
-  page.once("dialog", (dialog) => dialog.dismiss());
-  await page.locator("#history-clear").click();
-  assert.equal(await page.locator(".score-history-group").count(), 2, "cancelling keeps existing score-history rows");
-  page.once("dialog", (dialog) => dialog.accept());
-  await page.locator("#history-clear").click();
-  assert.equal(await page.locator(".score-history-group").count(), 0);
-  assert.equal(await page.locator("#history-clear").isDisabled(), true);
-  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("화면 기록을 비웠어요"));
-
-  const archive = { schemaVersion: "gfield-amc-score-history-v1", records: [{ id: "imported-attempt", programId: "amc8", cycle: "2025-26", form: "AMC 8", examDate: "2026-01-23", rawScore: 21, maxScore: 25 }] };
-  await page.locator("#history-import").setInputFiles({ name: "history.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(archive)) });
-  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("가져왔어요"));
-  assert.match(await page.locator("#score-history-status").innerText(), /1개 기록을 가져왔어요/);
-  assert.equal(await page.locator(".score-history-group").count(), 1);
-  assert.match(await page.locator(".score-history-table").innerText(), /21 \/ 25/);
-  await page.locator("#history-import").setInputFiles({ name: "history-again.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(archive)) });
-  await page.waitForFunction(() => document.querySelector("#score-history-error").textContent.includes("이미 있는 기록과 겹치거나"));
-  assert.match(await page.locator("#score-history-error").innerText(), /이미 있는 기록과 겹치거나/);
-  assert.equal(await page.locator(".score-history-group").count(), 1, "duplicate imports do not append a second copy");
-  const unsafeArchive = { schemaVersion: "gfield-amc-score-history-v1", records: [{ ...archive.records[0], id: "unsafe-attempt", answers: ["A"] }] };
-  await page.locator("#history-import").setInputFiles({ name: "unsafe.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(unsafeArchive)) });
-  await page.waitForFunction(() => document.querySelector("#score-history-error").textContent.includes("기록 파일을 읽지 못했어요"));
-  assert.match(await page.locator("#score-history-error").innerText(), /기록 파일을 읽지 못했어요/);
-  assert.equal(await page.locator(".score-history-group").count(), 1, "invalid imports do not alter the in-memory records");
-  await page.reload({ waitUntil: "networkidle" });
-  assert.equal(await page.locator(".score-history-group").count(), 0, "records are session-only until exported and imported");
-  assert.equal(await page.evaluate(() => localStorage.length), 0);
-  await page.close();
+test("legacy score files import and export without requesting a region or manual score", async function () {
+  const page=await browser.newPage({viewport:{width:390,height:844}});await page.goto(url,{waitUntil:"networkidle"});
+  assert.equal(await page.locator('#history-region, #history-grade, #history-score, #score-history-form').count(),0);
+  assert.equal(await page.locator('.score-history').getAttribute('open'),null);
+  await importScores(page,[{id:'amc10-record',programId:'amc10',cycle:'2026-27',form:'B',examDate:'2026-11-13',rawScore:100,maxScore:150,studentGrade:7,regionId:'maa-us-canada'}, {id:'amc8-record',programId:'amc8',cycle:'2026-27',form:'AMC 8',examDate:'2027-01-24',rawScore:20,maxScore:25,studentGrade:7,regionId:'international'}]);
+  assert.equal(await page.locator('.score-history-group').count(),2);
+  const pending=page.waitForEvent('download');await page.locator('#history-export').click();const download=await pending;const exported=JSON.parse(await fs.promises.readFile(await download.path(),'utf8'));
+  assert.equal(exported.records.length,2);assert.equal(exported.records[0].studentGrade,7);assert.equal(exported.records[0].regionId,'maa-us-canada');assert.equal(Object.hasOwn(exported.records[0],'answers'),false);
+  page.once('dialog',d=>d.dismiss());await page.locator('#history-clear').click();assert.equal(await page.locator('.score-history-group').count(),2);
+  page.once('dialog',d=>d.accept());await page.locator('#history-clear').click();assert.equal(await page.locator('.score-history-group').count(),0);
+  await importScores(page,[{id:'legacy',programId:'amc8',cycle:'2025-26',form:'AMC 8',examDate:'2026-01-23',rawScore:21,maxScore:25}]);
+  assert.match(await page.locator('.score-history-table').innerText(),/21 \/ 25/);
+  await importScores(page,[{id:'legacy',programId:'amc8',cycle:'2025-26',form:'AMC 8',examDate:'2026-01-23',rawScore:21,maxScore:25}],false);
+  await page.waitForFunction(()=>document.querySelector('#score-history-error').textContent.includes('이미 있는 기록과 겹치거나'));
+  await importScores(page,[{id:'unsafe',programId:'amc8',cycle:'2025-26',form:'AMC 8',examDate:'2026-01-23',rawScore:21,maxScore:25,answers:['A']}],false);
+  await page.waitForFunction(()=>document.querySelector('#score-history-error').textContent.includes('기록 파일을 읽지 못했어요'));
+  assert.equal(await page.locator('.score-history-group').count(),1);await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('.score-history-group').count(),0);await page.close();
 });
 
 test("score history uses only the matching year and AMC form cohort reference", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(url, { waitUntil: "networkidle" });
-  await page.locator("#history-program").selectOption("amc10");
-  await page.locator("#history-cycle").fill("2025-26");
-  await page.locator("#history-grade").selectOption("7");
-  await page.locator("#history-form").selectOption("A");
-  await page.locator("#history-date").fill("2025-11-05");
-  await page.locator("#history-score").fill("100");
-  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
-  await page.locator("#history-form").selectOption("B");
-  await page.locator("#history-date").fill("2025-11-13");
-  await page.locator("#history-score").fill("100");
-  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  await importScores(page,[{id:'a',programId:'amc10',cycle:'2025-26',form:'A',examDate:'2025-11-05',rawScore:100,maxScore:150,studentGrade:7},{id:'b',programId:'amc10',cycle:'2025-26',form:'B',examDate:'2025-11-13',rawScore:100,maxScore:150,studentGrade:7}]);
   const rows = page.locator(".score-history-table tbody tr");
   assert.equal(await rows.count(), 2);
   assert.match(await rows.nth(0).innerText(), /Grade 7[\s\S]*MAA 전체 응시자 기준 · 상위 10% 기준 · 94\.5 \/ 150점 이상/);
   assert.match(await rows.nth(1).innerText(), /Grade 7[\s\S]*MAA 전체 응시자 기준 · 상위 10% 기준 · 87 \/ 150점 이상/);
   assert.equal(await page.getByRole("link", { name: "2025 AMC 10 A MAA 전체 응시자 점수 분포 보기" }).getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81054&viewClicked=true");
-  await page.locator("#history-program").selectOption("amc8");
-  await page.locator("#history-cycle").fill("2025-26");
-  await page.locator("#history-form").selectOption("AMC 8");
-  await page.locator("#history-date").fill("2026-01-22");
-  await page.locator("#history-score").fill("19");
-  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  await importScores(page,[{id:'eight',programId:'amc8',cycle:'2025-26',form:'AMC 8',examDate:'2026-01-22',rawScore:19,maxScore:25,studentGrade:7}]);
   const amc8Row = page.locator(".score-history-table").first().locator("tbody tr").first();
   assert.match(await amc8Row.innerText(), /Grade 7[\s\S]*MAA 전체 응시자 기준 · 상위 10% 기준 · 19 \/ 25점 이상/);
   assert.equal(await page.getByRole("link", { name: "2026 AMC 8 MAA 전체 응시자 점수 분포 보기" }).getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81060&viewClicked=true");
-  assert.match(await page.locator(".score-history-boundary").innerText(), /동학년 순위나 학년별 AMC 능력 등급이 아닙니다/);
+  assert.match(await page.locator(".score-history-boundary").innerText(), /동학년 순위·등급으로 환산하지 않습니다/);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   await page.close();
 });
@@ -1074,14 +991,14 @@ test("contest format changes question count and clears old marks", async functio
   const page = await browser.newPage();
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
-  await page.locator("#review-program").selectOption("kangaroo");
+  await page.goto(`${url}?grade=7&program=kangaroo`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".paper-mark-row").count(), 30);
   assert.equal(await page.locator('[data-question="1"][data-field="status"]').inputValue(), "unmarked");
   assert.match(page.url(), /program=kangaroo/);
-  await page.locator("#review-grade").selectOption("3");
+  await openReviewOptions(page);await page.locator("#review-grade").selectOption("3");
   assert.equal(await page.locator("#review-program").inputValue(), "kangaroo");
   assert.equal(await page.locator(".paper-mark-row").count(), 24);
-  await page.locator("#review-program").selectOption("sasmo");
+  await page.goto(`${url}?grade=3&program=sasmo`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".paper-mark-row").count(), 25);
   await page.close();
 });
@@ -1091,13 +1008,7 @@ test("paper review and score history reflow without horizontal overflow", async 
     const page = await browser.newPage({ viewport: size });
     await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
     if (size.width === 320) {
-      await page.locator("#history-program").selectOption("amc10");
-      await page.locator("#history-cycle").fill("2026-27");
-      await page.locator("#history-region").selectOption("maa-us-canada");
-      await page.locator("#history-form").selectOption("A");
-      await page.locator("#history-date").fill("2026-11-05");
-      await page.locator("#history-score").fill("100");
-      await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+      await importScores(page,[{id:'narrow',programId:'amc10',cycle:'2026-27',form:'A',examDate:'2026-11-05',rawScore:100,maxScore:150}]);
       assert.equal(await page.locator(".score-history-group").count(), 1);
     }
     const dimensions = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
@@ -1109,19 +1020,9 @@ test("paper review and score history reflow without horizontal overflow", async 
 test("history announcements and delete focus support keyboard and assistive technology", async function () {
   const page = await browser.newPage({ viewport: { width: 900, height: 900 } });
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
-  await page.locator("#history-program").selectOption("amc10");
-  await page.locator("#history-cycle").fill("2026-27");
-  await page.locator("#history-region").selectOption("maa-us-canada");
-  await page.locator("#history-form").selectOption("A");
-  await page.locator("#history-date").fill("2026-11-05");
-  await page.locator("#history-score").fill("100");
-  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
-  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("추가했어요"));
+  await importScores(page,[{id:'focus',programId:'amc10',cycle:'2026-27',form:'A',examDate:'2026-11-05',rawScore:100,maxScore:150}]);
   assert.equal(await page.locator("#score-history-status").getAttribute("role"), "status");
   assert.equal(await page.locator("#score-history-error").getAttribute("role"), "alert");
-  assert.match(await page.locator("#score-history-status").innerText(), /추가했어요/);
-  await page.locator("#history-score").fill("99.5");
-  assert.equal(await page.locator("#score-history-context").locator("article").count(), 1, "keystrokes do not rebuild unchanged live context");
   await page.locator(".history-remove").click();
   assert.equal(await page.locator("#score-history-title").evaluate((node) => node === document.activeElement), true, "after removing the last record, focus returns to the section title");
   await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("삭제했어요"));
@@ -1153,5 +1054,28 @@ test("2009 four-form response tables retain the MAA official-student cohort and 
   assert.ok(await page.locator('#item-response-rows tr').count()>=24);assert.match(await page.locator('#item-response-source').getAttribute('href'),/2009_HS_summary\.pdf/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  }
+ await page.close();
+});
+
+async function openReviewOptions(page) {
+  if (await page.locator("#review-extra-options").getAttribute("open") === null) await page.locator("#review-extra-options > summary").click();
+}
+
+async function importScores(page,records,success=true) {
+ if(await page.locator('.score-history').getAttribute('open')===null)await page.locator('.score-history > summary').click();
+ await page.locator('#history-import').setInputFiles({name:'scores.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({schemaVersion:'gfield-amc-score-history-v1',records}))});
+ if(success)await page.waitForFunction(()=>document.querySelector('#score-history-status').textContent.includes('가져왔어요'));
+}
+
+test("AMC entry uses contest identity rather than school grades and grades without personal setup", async function () {
+ const page=await browser.newPage({viewport:{width:390,height:844}});await page.goto(`${url}?grade=8&program=amc8&year=2025`,{waitUntil:'networkidle'});
+ assert.deepEqual(await page.locator('#review-program option').allTextContents(),['대회를 선택해 주세요','AMC 8','AMC 10','AMC 12','AIME']);
+ assert.equal(await page.locator('#review-grade').isVisible(),false);assert.equal(await page.locator('#review-paper-label').isVisible(),false);assert.equal(await page.locator('#history-region, #score-history-form').count(),0);
+ await page.locator('[data-question="1"][data-field="answer"]').selectOption('A');await page.locator('#apply-answer-key').click();await page.locator('.review-form-actions button[type=submit]').click();await page.locator('#save-diagnostic').click();
+ assert.equal(await page.locator('.saved-diagnostic-entry').count(),1);assert.equal(await page.locator('#review-extra-options').getAttribute('open'),null);
+ const date=await page.locator('#review-exam-date').inputValue();assert.match(date,/^\d{4}-\d{2}-\d{2}$/);
+ await openReviewOptions(page);await page.locator('#review-grade').selectOption('11');assert.equal(await page.locator('#review-program').inputValue(),'amc8');assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'A');assert.equal(await page.locator('.review-report').isVisible(),true);
+ await page.route('**/images/past-contests/pdf/**',route=>route.abort());await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'A');
+ await page.locator('#review-program').selectOption('amc12');assert.equal(await page.locator('.paper-mark-row').count(),25);assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'');
  await page.close();
 });

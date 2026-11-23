@@ -185,7 +185,7 @@ test("three actual saved original-paper results produce a range and persist with
   const errors=[];page.on("pageerror", error=>errors.push(error.message));
   for (const [year,correct,date] of [[2023,15,"2026-11-01"],[2024,20,"2026-11-02"],[2025,18,"2026-11-03"]]) {
     await page.goto(base + `/competition-paper-review.html?grade=9&program=amc10&year=${year}&form=A`);
-    await page.locator("#review-exam-date").fill(date);
+    await openReviewOptions(page);await page.locator("#review-exam-date").fill(date);
     await mark(page,correct,25);
     await page.locator("#save-diagnostic").click();
     assert.equal(await page.locator("#save-diagnostic").isDisabled(),true);
@@ -206,7 +206,7 @@ test("three actual saved original-paper results produce a range and persist with
   await mark(page,18,25);
   assert.equal(await page.locator("#paper-score-forecast-value").textContent(),"90–120 / 150점");
   // A later perfect repeat of the same paper cannot become a fourth paper or inflate the range.
-  await page.locator("#review-exam-date").fill("2026-11-10");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-11-10");
   await mark(page,25,25);
   await page.locator("#save-diagnostic").click();
   assert.equal(await page.locator("#paper-score-forecast-value").textContent(),"90–120 / 150점");
@@ -226,7 +226,7 @@ test("three actual saved original-paper results produce a range and persist with
   // Deleting a contributing result updates the range immediately.
   await page.locator('[data-remove-diagnostic="'+saved.find(x=>x.paper.year===2023).id+'"]').click();
   assert.match(await page.locator("#paper-score-forecast-value").textContent(),/3회가 필요/);
-  await page.locator("#review-grade").selectOption("8");
+  await openReviewOptions(page);await page.locator("#review-grade").selectOption("8");
   await mark(page,25,25);
   assert.match(await page.locator("#paper-score-forecast-value").textContent(),/3회가 필요/);
   assert.deepEqual(errors,[]);
@@ -265,7 +265,7 @@ test("each saved paper retains its profile and as-of forecast while cumulative w
  await page.clock.install({time:new Date("2026-11-16T03:00:00Z")});const errors=[];page.on("pageerror",error=>errors.push(error.message));
  for(const [year,date] of [[2023,"2026-11-01"],[2024,"2026-11-02"],[2025,"2026-11-03"]]){
   await page.goto(base+`/competition-paper-review.html?grade=9&program=amc10&year=${year}&form=A&locale=ko`);
-  await page.locator("#review-exam-date").fill(date);
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill(date);
   for(let q=1;q<=25;q++){
    await page.locator(`[data-question="${q}"][data-field="status"]`).selectOption("wrong");
    await page.locator(`[data-question="${q}"][data-field="domain"]`).selectOption(q<=5?"algebra":q<=10?"geometry":"unclassified");
@@ -290,7 +290,7 @@ test("each saved paper retains its profile and as-of forecast while cumulative w
  assert.match(await timeline.nth(0).textContent(),/3회가 필요/);assert.match(await timeline.nth(2).textContent(),/30–30/);
  // Add a later result: earlier expected ranges must not change with later knowledge.
  await page.goto(base+'/competition-paper-review.html?grade=9&program=amc10&year=2026&form=A&locale=ko');
- await page.locator('#review-exam-date').fill('2026-11-13');await mark(page,25,25);await page.locator('#save-diagnostic').click();
+ await openReviewOptions(page);await page.locator('#review-exam-date').fill('2026-11-13');await mark(page,25,25);await page.locator('#save-diagnostic').click();
  await group.locator('.paper-profile-timeline summary').click();
  assert.match(await group.locator('.paper-profile-timeline li').nth(2).textContent(),/30–30/);
  assert.match(await group.locator('.paper-profile-timeline li').nth(3).textContent(),/30–150/);
@@ -316,7 +316,7 @@ test("each saved paper retains its profile and as-of forecast while cumulative w
 test("blanks count in per-paper and saved strength profiles rather than turning three correct answers into a false strength",async function(){
  const page=await browser.newPage();
  await page.goto(base+'/competition-paper-review.html?grade=9&program=amc10&year=2025&form=A&locale=ko');
- await page.locator('#review-exam-date').fill('2026-11-15');
+ await openReviewOptions(page);await page.locator('#review-exam-date').fill('2026-11-15');
  for(let q=1;q<=10;q++){
   await page.locator(`[data-question="${q}"][data-field="status"]`).selectOption(q<=3?'wrong':'blank');
   await page.locator(`[data-question="${q}"][data-field="domain"]`).selectOption('algebra');
@@ -336,7 +336,7 @@ test("canonical original years remain visible after memo edits, partial saves an
  await page.clock.install({time:new Date('2026-11-17T03:00:00Z')});
  for(const year of [2025,2024]){
   await page.goto(base+`/competition-paper-review.html?grade=9&program=amc10&year=${year}&form=A&locale=ko`);
-  await page.locator('#review-paper-label').fill('가을 복습');await page.locator('#review-exam-date').fill('2026-11-16');
+  await openReviewOptions(page);await page.locator('#review-paper-label').fill('가을 복습');await openReviewOptions(page);await page.locator('#review-exam-date').fill('2026-11-16');
   await page.locator('[data-question="1"][data-field="status"]').selectOption('correct');await page.locator('.review-form-actions button[type=submit]').click();
   assert.match(await page.locator('.paper-score-paper').textContent(),new RegExp(`${year} AMC 10 A`));
   assert.equal(await page.locator('.paper-score-attempt-date').textContent(),'응시 날짜 · 2026-11-16');
@@ -344,14 +344,14 @@ test("canonical original years remain visible after memo edits, partial saves an
  }
  assert.equal(await page.locator('.saved-diagnostic-entry').count(),2);
  assert.deepEqual((await page.locator('.saved-diagnostic-entry-heading h3').allTextContents()).sort(),['2024 AMC 10 A · Grade 9','2025 AMC 10 A · Grade 9']);
- await page.locator('#review-paper-label').fill('다른 메모');await page.locator('.review-form-actions button[type=submit]').click();await page.locator('#save-diagnostic').click();
+ await openReviewOptions(page);await page.locator('#review-paper-label').fill('다른 메모');await page.locator('.review-form-actions button[type=submit]').click();await page.locator('#save-diagnostic').click();
  assert.equal(await page.locator('.saved-diagnostic-entry').count(),2);
  await page.reload();
  assert.deepEqual((await page.locator('.saved-diagnostic-entry-heading h3').allTextContents()).sort(),['2024 AMC 10 A · Grade 9','2025 AMC 10 A · Grade 9']);
  assert.equal(await page.locator('.saved-diagnostic-entry-heading time').first().getAttribute('datetime'),'2026-11-16');
  // The actual 2021 fall form is independent of a misleading note and a 2026 practice date.
  await page.goto(base+'/competition-paper-review.html?grade=9&program=amc10&year=2021&form=C&locale=ko');
- await page.locator('#review-paper-label').fill('2025 AMC 10 B');await page.locator('#review-exam-date').fill('2026-11-16');
+ await openReviewOptions(page);await page.locator('#review-paper-label').fill('2025 AMC 10 B');await openReviewOptions(page);await page.locator('#review-exam-date').fill('2026-11-16');
  await mark(page,25,25);await page.locator('#save-diagnostic').click();
  const card=page.locator('.saved-diagnostic-entry').filter({has:page.locator('.saved-diagnostic-entry-heading h3', {hasText:'2021 AMC 10 A'})});
  assert.equal(await card.count(),1);assert.match(await card.locator('h3').textContent(),/2021 AMC 10 A · 가을/);
@@ -369,3 +369,7 @@ test("canonical original years remain visible after memo edits, partial saves an
  assert.equal(records.find(r=>r.paper.year===2021).paper.form,'C');
  await context.close();
 });
+
+async function openReviewOptions(page) {
+ if (await page.locator("#review-extra-options").getAttribute("open") === null) await page.locator("#review-extra-options > summary").click();
+}

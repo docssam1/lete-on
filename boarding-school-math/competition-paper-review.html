@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./competition-paper-review.css?v=20261117-2">
+  <link rel="stylesheet" href="./competition-paper-review.css?v=20261123-3">
   <link rel="stylesheet" href="./shared/paper-book-reader.css?v=20261117-1">
   <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
   <link rel="stylesheet" href="./shared/paper-learning-profile.css?v=20261117-1">
@@ -18,11 +18,11 @@
   <a class="skip-link" href="#main">본문으로 바로가기</a>
   <header class="site-header review-header"><a class="brand" href="./index.html" aria-label="G·MAP 홈"><span class="brand-mark" aria-hidden="true">G</span><span>G·<strong>MAP</strong></span></a><nav aria-label="주요 탐색"><a href="./boarding-roadmap.html?grade=7">학년 지도</a><a href="./competition-paper-review.html" aria-current="page">경시 문제 복습</a></nav></header>
   <main id="main" tabindex="-1" class="gfield-ui">
-    <section class="review-intro"><div class="review-shell"><p class="review-kicker">경시 · 원본 기출 분석</p><h1>풀고, 대조하고, 다음 연습까지</h1><p>원본 시험지를 펼쳐 화면에서 풀거나 필요한 쪽을 인쇄하세요. 답을 입력해 채점한 뒤 개념과 해설을 확인하고, 유사문제로 이어갑니다.</p></div></section>
+    <section class="review-intro"><div class="review-shell"><p class="review-kicker">경시 · 원본 기출 분석</p><h1>AMC · AIME 기출</h1><p>대회와 회차를 선택해 시험지를 풀고 답을 입력하세요.</p></div></section>
     <div class="review-shell review-layout">
-      <section class="review-workspace" aria-labelledby="setup-title"><div class="review-heading"><p class="review-kicker">01 · 원본 선택</p><h2 id="setup-title">원본 시험지로 공부하기</h2><p>대회와 회차를 고르면 시험지와 답안을 함께 볼 수 있어요.</p></div>
-        <form id="paper-review-form" novalidate><div class="review-settings"><label for="review-grade">학년<select id="review-grade"></select></label><label for="review-program">대회<select id="review-program"></select></label><label for="review-paper-label" id="review-paper-label-field" hidden>문제지 메모<input id="review-paper-label" type="text" maxlength="80" placeholder="예: 2025 AMC 8 연습 A"></label><label for="review-exam-date" id="review-exam-date-field" hidden>응시 날짜<input id="review-exam-date" type="date"></label><label for="official-percentile" id="official-percentile-field" hidden>성적표 전국 백분위<span class="input-unit"><input id="official-percentile" type="number" min="0" max="100" step="0.1" inputmode="decimal" placeholder="성적표 값"><b>%</b></span><small>Math Kangaroo 공식 성적표에 적힌 해당 학년 전국 백분위만 입력해요.</small></label></div>
-          <section id="official-paper-sources" class="official-paper-sources" aria-labelledby="official-paper-sources-title" hidden><div class="official-paper-heading"><h3 id="official-paper-sources-title">연도별 원본 기출</h3><p>시험지를 펼쳐 읽고, 답안을 입력하고, 필요한 쪽만 인쇄하세요.</p></div><div id="amc-archive-picker" class="amc-archive-picker" hidden><label for="archive-year">연도<select id="archive-year"></select></label><label id="archive-form-field" for="archive-form" hidden>시험지<select id="archive-form"></select></label><label id="archive-response-population-field" for="archive-response-population" hidden>응답 집단<select id="archive-response-population"><option value="korea">한국 참가자 표본 · 741명</option><option value="maa-national">MAA 보고서 Table 8 · 151,367명</option></select><small>MAA Table 8 표본 수는 같은 보고서의 Table 1 수치(150,733명)와 다르게 적혀 있어요.</small></label><details class="archive-source-details"><summary>원본 파일·정답·해설</summary><nav class="archive-actions" aria-label="선택한 회차 자료"><a id="archive-print-link" class="archive-print-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">원본 파일 열기 ↗</a><a id="archive-answer-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">정답표 ↗</a><a id="archive-solutions-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">전문 풀이 ↗</a><a id="archive-open-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">온라인 회차 보기 ↗</a></nav></details><p id="archive-route-note">문항과 해설은 MAA 허가를 받은 LIVE 기출 아카이브에서 제공합니다.</p></div><p class="official-paper-rights-note">원본 제공처의 시험지를 그대로 보여 줍니다. 원문 언어와 쪽 구성을 유지하며 파일을 따로 보관하지 않습니다.</p></section><div id="paper-reading-workspace" class="paper-reading-workspace" data-mobile-pane="paper">
+      <section class="review-workspace" aria-labelledby="setup-title"><div class="review-heading"><h2 id="setup-title">시험지 선택</h2></div>
+        <form id="paper-review-form" novalidate><div class="review-settings"><label for="review-program">대회<select id="review-program"></select></label></div>
+          <section id="official-paper-sources" class="official-paper-sources" aria-labelledby="official-paper-sources-title" hidden><h3 id="official-paper-sources-title" class="visually-hidden">연도별 원본 기출</h3><div id="amc-archive-picker" class="amc-archive-picker" hidden><label for="archive-year">연도<select id="archive-year"></select></label><label id="archive-form-field" for="archive-form" hidden>시험지<select id="archive-form"></select></label><label id="archive-response-population-field" for="archive-response-population" hidden>응답 집단<select id="archive-response-population"><option value="korea">한국 참가자 표본 · 741명</option><option value="maa-national">MAA 보고서 Table 8 · 151,367명</option></select><small>MAA Table 8 표본 수는 같은 보고서의 Table 1 수치(150,733명)와 다르게 적혀 있어요.</small></label><details class="archive-source-details"><summary>원본 파일·정답·해설</summary><nav class="archive-actions" aria-label="선택한 회차 자료"><a id="archive-print-link" class="archive-print-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">원본 파일 열기 ↗</a><a id="archive-answer-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">정답표 ↗</a><a id="archive-solutions-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">전문 풀이 ↗</a><a id="archive-open-link" href="https://live.poshenloh.com/past-contests" target="_blank" rel="noopener noreferrer">온라인 회차 보기 ↗</a></nav><p id="archive-route-note">문항과 해설은 MAA 허가를 받은 LIVE 기출 아카이브에서 제공합니다.</p><p class="official-paper-rights-note">원본 제공처의 시험지를 그대로 보여 줍니다. 원문 언어와 쪽 구성을 유지하며 파일을 따로 보관하지 않습니다.</p></details></div></section><details id="review-extra-options" class="review-extra-options"><summary>학년별 비교·풀이 기록 설정</summary><div class="review-settings"><label for="review-grade">학년별 비교<select id="review-grade"></select></label><label for="review-paper-label" id="review-paper-label-field" hidden>메모<input id="review-paper-label" type="text" maxlength="80" placeholder="예: 2025 AMC 8 연습 A"></label><label for="review-exam-date" id="review-exam-date-field" hidden>풀이 날짜<input id="review-exam-date" type="date"></label><label for="official-percentile" id="official-percentile-field" hidden>성적표 전국 백분위<span class="input-unit"><input id="official-percentile" type="number" min="0" max="100" step="0.1" inputmode="decimal" placeholder="성적표 값"><b>%</b></span><small>Math Kangaroo 공식 성적표에 적힌 해당 학년 전국 백분위만 입력해요.</small></label></div></details><div id="paper-reading-workspace" class="paper-reading-workspace" data-mobile-pane="paper">
 <section id="paper-book" class="paper-book" aria-labelledby="paper-book-title" hidden>
   <header class="paper-book-heading"><div><h3 id="paper-book-title">원본 시험지</h3><p id="book-identity"></p></div><button id="book-open" type="button">시험지 펼쳐보기</button></header>
   <p id="book-status" class="book-status" role="status" aria-live="polite">시험지를 펼치면 이곳에서 읽을 수 있어요.</p>
@@ -39,7 +39,7 @@
 <div class="book-mobile-tabs" role="group" aria-label="시험지와 답안 전환" hidden><button id="book-tab-paper" type="button" aria-pressed="true">시험지</button><button id="book-tab-answers" type="button" aria-pressed="false">답안</button></div>
 <section id="paper-answer-panel" class="paper-answer-panel" aria-labelledby="book-answers-title">
   <div id="book-answer-heading" class="book-answer-heading" hidden><h3 id="book-answers-title">내 답안</h3><button id="book-detail-marks" type="button" aria-pressed="false">풀이 기록 표시</button><p id="book-draft-status" role="status" aria-live="polite"></p><p class="book-draft-note">답안은 이 탭에 임시 저장해요. 복습 요약에는 문항별 답을 넣지 않아요.</p></div>
-<p class="review-source-note" id="review-source-note"></p><p id="aime-review-note" class="review-source-note" hidden>채점한 AIME 문제나 개인 연습 세트를 다시 보는 용도예요. 이 결과는 AIME 초대·응시 자격·선발을 판단하지 않습니다. <a href="https://maa.org/maa-invitational-competitions/" target="_blank" rel="noopener noreferrer">MAA 공식 형식·해당 연도 안내 ↗</a></p><p id="kangaroo-percentile-source" class="review-source-note" hidden>Math Kangaroo는 순위와 백분위를 학년별로 계산해요. <a href="https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/" target="_blank" rel="noopener noreferrer">공식 채점·백분위 안내 ↗</a></p><p class="review-change-note" hidden>학년이나 대회를 바꾸면 표시한 내용이 지워집니다.</p>
+<p class="review-source-note" id="review-source-note"></p><p id="aime-review-note" class="review-source-note" hidden>채점한 AIME 문제나 개인 연습 세트를 다시 보는 용도예요. 이 결과는 AIME 초대·응시 자격·선발을 판단하지 않습니다. <a href="https://maa.org/maa-invitational-competitions/" target="_blank" rel="noopener noreferrer">MAA 공식 형식·해당 연도 안내 ↗</a></p><p id="kangaroo-percentile-source" class="review-source-note" hidden>Math Kangaroo는 순위와 백분위를 학년별로 계산해요. <a href="https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/" target="_blank" rel="noopener noreferrer">공식 채점·백분위 안내 ↗</a></p><p class="review-change-note" hidden>대회나 회차를 바꾸면 새 답안을 입력합니다.</p>
           <div class="answer-entry-guide" id="answer-entry-guide" hidden><strong>답을 입력하고 공개 정답표와 대조해요</strong><p>AMC는 A–E, AIME는 0–999 정수로 답을 입력하세요. 정답표 대조를 누르면 해당 회차의 공개 답안 키로 자동 채점하고, 빈칸은 미응답 처리합니다. 풀이 영역과 오답 이유는 결과 화면에서 직접 조정할 수 있어요.</p><button id="apply-answer-key" class="review-clear" type="button">정답표 대조 · 빈칸은 미응답 처리</button><p id="answer-key-action-status" role="status" aria-live="polite"></p></div>
           <p id="mark-progress" class="mark-progress" role="status" aria-live="polite" hidden></p>
           <div class="mark-head" aria-hidden="true" hidden><span>번호</span><span>내 답</span><span>정답 확인</span><span>풀이 영역</span><span>오류 이유</span></div>
@@ -51,26 +51,19 @@
     </div>
     <section id="saved-diagnostic-history" class="saved-diagnostic-history review-shell" aria-labelledby="saved-diagnostic-title" hidden><div class="review-heading"><p class="review-kicker">이 기기에 저장</p><h2 id="saved-diagnostic-title" tabindex="-1">회차별 결과와 누적 진단</h2><p>응시 날짜와 선택한 학년·대회별 집계입니다. 문항별 답은 저장하지 않으며, 각 시험은 따로 읽고 난도나 점수 구간을 보정하지 않습니다.</p></div><section id="paper-learning-accumulated" class="paper-learning-profile" aria-label="누적 강점·약점"></section><div id="saved-diagnostic-list" class="saved-diagnostic-list"></div></section>
     <p id="saved-diagnostic-announcement" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
-    <section class="score-history review-shell" aria-labelledby="score-history-title">
-      <div class="review-heading"><p class="review-kicker">경시 · 회차별 기록</p><h2 id="score-history-title" tabindex="-1">AMC 결과를 회차별로 모아 보기</h2><p>성적표의 점수를 직접 입력하면 같은 대회끼리 날짜순으로 정리해요. 시험 난이도를 보정하거나 준비도·등급을 판정하지 않습니다.</p></div>
-      <form id="score-history-form" class="score-history-form">
-        <label for="history-program">대회<select id="history-program" required><option value="amc8">AMC 8</option><option value="amc10">AMC 10</option><option value="amc12">AMC 12</option></select></label>
-        <label for="history-region">응시 지역<select id="history-region"><option value="">응시 지역 미기록</option><option value="maa-us-canada">미국·캐나다 MAA</option><option value="international">국제 AMC program</option></select></label>
-        <label for="history-grade">응시 당시 학년 (선택)<select id="history-grade"><option value="">학년 미기록</option><option value="K">Kindergarten</option><option value="1">Grade 1</option><option value="2">Grade 2</option><option value="3">Grade 3</option><option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6">Grade 6</option><option value="7">Grade 7</option><option value="8">Grade 8</option><option value="9">Grade 9</option><option value="10">Grade 10</option><option value="11">Grade 11</option><option value="12">Grade 12</option></select><small>응시 성적표의 학년을 직접 선택하세요.</small></label>
-        <label for="history-cycle">대회 주기<input id="history-cycle" type="text" inputmode="numeric" pattern="20[0-9]{2}-[0-9]{2}" maxlength="7" placeholder="2026-27" required></label>
-        <label for="history-form">시험지<select id="history-form" required><option value="AMC 8">AMC 8</option></select></label>
-        <label for="history-date">시험 날짜<input id="history-date" type="date" required></label>
-        <label for="history-score">성적표 원점수<input id="history-score" type="number" min="0" max="25" step="1" inputmode="decimal" required></label>
-        <p class="score-history-scale" id="score-history-scale">AMC 8 · 0–25점</p>
-        <div class="score-history-actions"><button type="submit" class="review-submit">비교 기록에 추가</button><button type="button" id="history-export" class="review-clear">JSON 파일로 저장</button><label class="history-import">기록 파일 가져오기<input id="history-import" type="file" accept="application/json,.json"></label><button type="button" id="history-clear" class="review-clear">화면 기록 비우기</button></div>
-        <p id="score-history-error" class="paper-error" role="alert" hidden></p>
-        <p id="score-history-status" class="paper-error" role="status" aria-live="polite"></p>
-      </form>
-      <p class="score-history-privacy">응시 지역과 입력한 응시 당시 학년은 점수 기록에 함께 저장돼요. 이름과 문항별 답은 기록하지 않습니다. 기록은 이 화면을 닫으면 사라지므로 JSON 파일로 저장해 두었다가 다시 가져오세요.</p>
-      <div id="score-history-context" class="score-history-context" aria-live="polite"></div>
-      <div id="score-history-groups" class="score-history-groups"><p class="score-history-empty">아직 추가된 회차가 없습니다.</p></div>
-      <p class="score-history-boundary">회차별 원점수는 서로 다른 시험 간 난도 차를 보정하지 않습니다. 공개된 같은 연도·시험형 MAA 기준점이 있는 경우에만 전체 응시자 분포의 기준선과 대조합니다. 동점자가 있어 정확한 개인 백분위가 아니며, 응시 당시 Grade는 기록 맥락일 뿐 동학년 순위나 학년별 AMC 능력 등급이 아닙니다. 수상·AIME 진출은 판정하지 않으며, 공개된 주기·지역 점수 기준을 보더라도 나이 등 다른 자격은 별도로 확인해야 합니다.</p>
-    </section>
+    <details class="score-history review-shell" aria-labelledby="score-history-title">
+      <summary id="score-history-title" tabindex="-1">이전에 저장한 점수 기록 가져오기</summary>
+      <div class="score-history-actions">
+        <label class="history-import">기록 파일 가져오기<input id="history-import" type="file" accept="application/json,.json"></label>
+        <button type="button" id="history-export" class="review-clear">JSON 파일로 저장</button>
+        <button type="button" id="history-clear" class="review-clear">화면 기록 비우기</button>
+      </div>
+      <p id="score-history-error" class="paper-error" role="alert" hidden></p>
+      <p id="score-history-status" class="paper-error" role="status" aria-live="polite"></p>
+      <div id="score-history-groups" class="score-history-groups"></div>
+      <p class="score-history-privacy">가져온 파일은 이 화면에서만 열립니다. 문항별 답은 포함하지 않습니다.</p>
+      <p class="score-history-boundary">회차별 원점수는 해당 시험지 기준입니다. 시험 간 난도 차를 보정하거나 동학년 순위·등급으로 환산하지 않습니다.</p>
+    </details>
     <section class="review-related review-shell" hidden><div><h2>관련 자료</h2><p>선택한 대회의 자료와 학년 지도를 확인하세요.</p></div><div><a id="review-amc8-practice" href="./competition-practice.html?program=amc8" hidden>6학년 AMC 8 기초 연습 →</a><a id="review-sasmo-source" href="./sasmo.html" hidden>SASMO 원문 안내 →</a><a id="back-to-roadmap" href="./boarding-roadmap.html?grade=7">학년 지도로 돌아가기 →</a></div></section>
   </main>
 
@@ -85,7 +78,7 @@
   </form>
 </dialog>
   <footer class="site-footer"><span>G·MAP · 경시 문제 복습</span></footer>
-    <script src="./shared/boarding-content-translations.js?v=20261123-1"></script>
+    <script src="./shared/boarding-content-translations.js?v=20261123-3"></script>
   <script src="./shared/boarding-content-i18n.js?v=20261114-3"></script>
 <script src="./learning/boarding-grade-roadmap.js?v=20261104-2"></script>
   <script src="./shared/gmap-local-learning-record.js?v=20261117-1"></script>
@@ -113,8 +106,8 @@
   <script src="./shared/paper-concept-labels.js?v=20261116-1"></script>
   <script src="./shared/paper-learning-profile.js?v=20261116-1"></script>
   <script src="./shared/paper-learning-profile-ui.js?v=20261117-1"></script>
-  <script src="./shared/paper-book-reader.js?v=20261117-1"></script>
-  <script src="./competition-paper-review.js?v=20261123-1"></script>
+  <script src="./shared/paper-book-reader.js?v=20261123-3"></script>
+  <script src="./competition-paper-review.js?v=20261123-3"></script>
   <script src="./shared/boarding-study-return.js?v=20261114-2"></script>
 </body>
 </html>

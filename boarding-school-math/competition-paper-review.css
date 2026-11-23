@@ -282,3 +282,15 @@ body.academy-page.page-paper-review { color: #182230; background: #f5f6f8; backg
 }
 
 @media screen and (min-width: 901px) { .saved-diagnostic-entry-domains[data-domain-count="6"] { grid-template-columns: repeat(6,minmax(0,1fr)); } }
+
+/* Keep paper selection separate from optional learner context. */
+.review-intro .review-shell { padding-block: 28px; }
+.review-intro h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); }
+.review-intro p:not(.review-kicker) { margin-top: 10px; }
+.review-settings { grid-template-columns: minmax(0, 1fr); }
+.review-extra-options { margin-block: 18px; border-block: 1px solid #e2dce9; padding-block: 6px; }
+.review-extra-options > summary, .score-history > summary { min-height: 44px; padding-block: 12px; cursor: pointer; color: #523878; font-weight: 700; }
+.review-extra-options .review-settings { margin-block: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.score-history .score-history-actions { margin-top: 16px; }
+.official-paper-sources { padding: 0; border: 0; margin-top: 14px; }
+.amc-archive-picker { padding: 0; border: 0; background: transparent; }

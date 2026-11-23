@@ -25,7 +25,6 @@
   let savedDiagnosticAnnouncementVersion = 0;
   let diagnosticSaveStatusVersion = 0;
   let historySuccessVersion = 0;
-  let lastHistoryContextKey = "";
   function setText(id, value) { $(id).textContent = value; }
   function showAlert(id, message) {
     const region = $(id);
@@ -56,7 +55,12 @@
       if (version === diagnosticSaveStatusVersion) region.textContent = message;
     });
   }
-  function selectedFormat() { return roadmap.competitionOptions(grade).find(function (entry) { return entry.id === programId; }); }
+  function reviewFormats() {
+    const formats = roadmap.competitionOptions(8).filter(function (entry) { return ["amc8", "amc10", "amc12", "aime"].includes(entry.id); });
+    const legacy = roadmap.competitionOptions(grade).find(function (entry) { return entry.id === params.get("program") && ["sasmo", "kangaroo"].includes(entry.id); });
+    return legacy ? formats.concat(legacy) : formats;
+  }
+  function selectedFormat() { return reviewFormats().find(function (entry) { return entry.id === programId; }); }
   function selectedPaperFormat(format) {
     if (!format) return null;
     const archive = paperLibrary && paperLibrary.archiveFor(format.id);
@@ -264,11 +268,11 @@
     if (!gradeSelect.childElementCount) roadmap.grades.forEach(function (entry) { gradeSelect.append(option(String(entry.grade), `Grade ${entry.grade}`)); });
     gradeSelect.value = String(grade);
     const programSelect = $("review-program");
-    const formats = roadmap.competitionOptions(grade);
+    const formats = reviewFormats();
     if (!formats.some(function (entry) { return entry.id === programId; })) programId = "";
     programSelect.replaceChildren();
     programSelect.append(option("", "대회를 선택해 주세요"));
-    formats.forEach(function (entry) { programSelect.append(option(entry.id, `${entry.title} · ${entry.id === "amc12" ? "연도별 원본 시험" : `${entry.itemCount}문항`}`)); });
+    formats.forEach(function (entry) { programSelect.append(option(entry.id, entry.id === "aime" ? "AIME" : entry.title)); });
     programSelect.value = programId;
     const format = selectedFormat();
     renderOfficialPaperSources(format);
@@ -498,46 +502,6 @@
     const small = document.createElement("small"); small.textContent = note;
     node.append(title, number, small); return node;
   }
-  function updateHistoryScale() {
-    if (!historyEngine) return;
-    const program = historyEngine.programs[$("history-program").value];
-    const formSelect = $("history-form");
-    formSelect.replaceChildren();
-    program.forms.forEach(function (form) { formSelect.append(option(form, form)); });
-    const input = $("history-score");
-    input.max = String(program.max);
-    input.step = program.max === 25 ? "1" : "0.5";
-    input.setAttribute("inputmode", program.max === 25 ? "numeric" : "decimal");
-    setText("score-history-scale", `${program.title} · 0–${program.max}점${program.max === 150 ? " · 0.5점 단위" : ""}`);
-    renderHistoryContext();
-  }
-  function buildHistoryContext(context) {
-    const article = document.createElement("article");
-    const heading = document.createElement("strong"); heading.textContent = context.threshold == null ? context.title : `${context.title} · ${context.threshold} / ${context.maxScore}`;
-    const note = document.createElement("p"); note.textContent = context.note;
-    article.append(heading, note);
-    if (context.source) {
-      const link = document.createElement("a"); link.href = context.source; link.target = "_blank"; link.rel = "noopener noreferrer";
-      link.textContent = context.kind === "international" ? "MAA AMC International 안내 ↗" : "MAA 2027 AIME 공식 공지 ↗";
-      article.append(link);
-    }
-    if (context.eligibilitySource) {
-      const eligibilityLink = document.createElement("a"); eligibilityLink.href = context.eligibilitySource; eligibilityLink.target = "_blank"; eligibilityLink.rel = "noopener noreferrer";
-      eligibilityLink.textContent = "MAA AIME 자격 조건 ↗";
-      article.append(eligibilityLink);
-    }
-    return article;
-  }
-  function renderHistoryContext() {
-    if (!historyEngine) return;
-    const host = $("score-history-context");
-    const context = historyEngine.cycleContext($("history-program").value, $("history-cycle").value.trim(), $("history-region").value);
-    const key = context ? JSON.stringify([context.kind, context.title, context.threshold, context.maxScore, context.note, context.source]) : "none";
-    if (key === lastHistoryContextKey) return;
-    lastHistoryContextKey = key;
-    host.replaceChildren();
-    if (context) host.append(buildHistoryContext(context));
-  }
   function scoreHistoryCohortReference(record) {
     const distribution = window.GFIELDAMCScoreDistributionReference;
     if (!distribution) return null;
@@ -644,30 +608,6 @@
   }
   function makeHistoryId() { return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `attempt-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`; }
   if (historyEngine) {
-  $("history-program").addEventListener("change", function () { clearHistoryMessages(); updateHistoryScale(); });
-  $("history-cycle").addEventListener("input", renderHistoryContext);
-  $("history-region").addEventListener("change", renderHistoryContext);
-  $("score-history-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    clearHistoryMessages();
-    const programId = $("history-program").value;
-    const program = historyEngine.programs[programId];
-    try {
-      const gradeValue = $("history-grade").value;
-      const record = historyEngine.validateRecord({ id: makeHistoryId(), programId: programId, cycle: $("history-cycle").value.trim(), form: $("history-form").value,
-        examDate: $("history-date").value, rawScore: Number($("history-score").value), maxScore: program.max, regionId: $("history-region").value || null,
-        studentGrade: gradeValue === "" ? null : gradeValue === "K" ? "K" : Number(gradeValue) });
-      if (scoreHistory.length >= 100) throw Object.assign(new Error("HISTORY_LIMIT"), { code: "HISTORY_LIMIT" });
-      scoreHistory.push(record);
-      renderHistory();
-      $("history-date").value = "";
-      $("history-score").value = "";
-      historySuccess("회차 기록을 추가했어요.");
-    } catch (error) {
-      const messages = { CYCLE_INVALID: "대회 주기는 YYYY-YY 형식으로 정확히 입력해 주세요.", FORM_INVALID: "선택한 대회의 시험지 구분을 확인해 주세요.", DATE_INVALID: "시험 날짜를 확인해 주세요.", REGION_INVALID: "응시 지역을 다시 선택해 주세요.", SCORE_INVALID: `점수는 0부터 ${program.max} 사이로 입력해 주세요.`, SCORE_INCREMENT_INVALID: program.max === 25 ? "AMC 8 점수는 정수로 입력해 주세요." : "AMC 10/12 점수는 0.5점 단위로 입력해 주세요.", HISTORY_LIMIT: "비교 기록은 100회까지 담을 수 있어요. 먼저 JSON 파일로 저장해 주세요." };
-      historyError(messages[error.code] || "기록을 추가하지 못했어요. 입력값을 확인해 주세요.");
-    }
-  });
   $("score-history-groups").addEventListener("click", function (event) {
     const button = event.target.closest("[data-remove-history]");
     if (!button) return;
@@ -709,7 +649,7 @@
   });
   $("history-clear").addEventListener("click", function () {
     if (!scoreHistory.length || !window.confirm(window.GFIELDContentI18n.text("이 화면에 불러온 모든 회차 기록을 비울까요? 저장한 JSON 파일은 그대로 남습니다."))) return;
-    scoreHistory = []; renderHistory(); clearHistoryMessages(); historySuccess("화면 기록을 비웠어요."); $("history-program").focus();
+    scoreHistory = []; renderHistory(); clearHistoryMessages(); historySuccess("화면 기록을 비웠어요."); $("score-history-title").focus();
   });
   } else {
     document.querySelector(".score-history").hidden = true;
@@ -1422,7 +1362,13 @@
   }
   document.addEventListener("gfield:paper-answers-restored", updateProgress);
   $("review-exam-date").addEventListener("change", function () { if (!document.querySelector(".review-report").hidden) refreshScoreOverview(); });
-  $("review-grade").addEventListener("change", function (event) { grade = Number(event.target.value); $("review-paper-label").value = ""; $("review-paper-label").dataset.archiveDefault = ""; renderSettings(); renderMarks(); $("official-percentile").value = ""; });
+  $("review-grade").addEventListener("change", function (event) {
+    grade = Number(event.target.value);
+    if (["sasmo", "kangaroo"].includes(programId)) { renderSettings(); renderMarks(); $("official-percentile").value = ""; return; }
+    if (window.GFIELDPaperBookReader) window.GFIELDPaperBookReader.setGradeContext(grade);
+    updateUrl(); renderSavedDiagnosticHistory();
+    if (lastDiagnostic) renderResult(lastDiagnostic, lastAutoGradeSummary);
+  });
   $("review-program").addEventListener("change", function (event) { programId = event.target.value; $("review-paper-label").value = ""; $("review-paper-label").dataset.archiveDefault = ""; renderSettings(); renderMarks(); $("official-percentile").value = ""; });
   $("review-paper-label").addEventListener("input", function () { resetReport("내용이 바뀌었어요"); });
   $("official-percentile").addEventListener("input", function () { resetReport("내용이 바뀌었어요"); });
@@ -1456,7 +1402,7 @@
   $("save-diagnostic").addEventListener("click", function () {
     if (!lastDiagnostic || !localRecords) return;
     const examDate = $("review-exam-date").value;
-    if (!examDate) { $("diagnostic-save-status").textContent = "응시 날짜를 입력한 뒤 저장해 주세요."; $("review-exam-date").focus(); return; }
+    if (!examDate) { $("review-extra-options").open = true; $("diagnostic-save-status").textContent = "풀이 날짜를 입력한 뒤 저장해 주세요."; $("review-exam-date").focus(); return; }
     const format = selectedFormat();
     const record = localRecords.storage.saveCompetitionDiagnostic({
       schemaVersion: "gfield-competition-diagnostic-v1", id: makeHistoryId(), programId: format.id, programTitle: format.title,
@@ -1510,8 +1456,9 @@
     if (nextRemoveButtons.length) nextRemoveButtons[Math.min(removedIndex, nextRemoveButtons.length - 1)].focus();
     else $("review-program").focus();
   });
+  $("review-exam-date").value = localToday();
   renderSettings();
   renderMarks();
   renderSavedDiagnosticHistory();
-  if (historyEngine) { updateHistoryScale(); renderHistory(); }
+  if (historyEngine) renderHistory();
 })();

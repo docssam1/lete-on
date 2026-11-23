@@ -116,7 +116,7 @@ test("English and Chinese exam entry, submission, feedback and saved aggregates 
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("number");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("approach");
-  await page.locator("#review-exam-date").fill("2026-11-14");
+  await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-11-14");
   await page.locator("[data-boarding-content-locale]").selectOption("zh-Hans");
   await page.locator(".review-form-actions button[type=submit]").click();
   await settled(page);
@@ -177,3 +177,7 @@ test("AIME integer entry survives a language switch and uses the same answer and
   assert.deepEqual(errors, []);
   await page.close();
 });
+
+async function openReviewOptions(page) {
+  if (await page.locator("#review-extra-options").getAttribute("open") === null) await page.locator("#review-extra-options > summary").click();
+}

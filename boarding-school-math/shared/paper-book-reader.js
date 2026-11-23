@@ -19,7 +19,7 @@
     } catch (_) { return null; }
   }
   function saveDraft() {
-    if (!selected || !opened) return;
+    if (!selected) return;
     const answers = {};
     document.querySelectorAll('#paper-mark-list [data-field="answer"]').forEach(function (input) {
       if (/^(?:[A-E]|[0-9]{1,3})$/.test(input.value)) answers[input.dataset.question] = input.value;
@@ -27,7 +27,7 @@
     try {
       const keys = Object.keys(sessionStorage).filter(function (key) { return key.startsWith(draftPrefix); });
       if (keys.length >= 20 && !keys.includes(draftKey())) sessionStorage.removeItem(keys[0]);
-      sessionStorage.setItem(draftKey(), JSON.stringify({ version: 1, page: pageNumber, answers: answers }));
+      sessionStorage.setItem(draftKey(), JSON.stringify({ version: 1, page: pageNumber, opened: opened, answers: answers }));
       say("book-draft-status", "이 탭에 답안을 임시 저장했어요.");
     } catch (_) { say("book-draft-status", "임시 저장을 사용할 수 없어요. 이 화면을 닫기 전에 채점해 주세요."); }
   }
@@ -195,10 +195,15 @@
     host.dataset.renderState = "closed";
     say("book-status", "시험지를 펼치면 이곳에서 읽을 수 있어요.");
   }
+  function setGradeContext(grade) {
+    if (!selected || !Number.isInteger(grade) || grade < 3 || grade > 12) return;
+    selected = Object.assign({}, selected, { grade: grade, key: [grade, selected.programId, selected.year, selected.form].join(":") });
+    saveDraft();
+  }
   function marksReady() {
     if (!selected) return;
     const draft = readDraft();
-    if (draft) { restoreAnswers(); if (!opened) openBook(); }
+    if (draft) { restoreAnswers(); if (!opened && draft.opened !== false) openBook(); }
   }
   function goTo(number) {
     if (!pdf || !Number.isInteger(number) || number < 1 || number > pdf.numPages) { $("book-page").value = String(pageNumber); return; }
@@ -298,5 +303,5 @@
   $("book-print-form").addEventListener("submit", printPages);
   document.addEventListener("gfield:paper-marks-ready", marksReady);
   window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { if (pdf && $("book-zoom").value === "fit") renderPage(); }, 150); });
-  window.GFIELDPaperBookReader = Object.freeze({ selectPaper: selectPaper, parsePages: parsePages });
+  window.GFIELDPaperBookReader = Object.freeze({ selectPaper: selectPaper, setGradeContext: setGradeContext, parsePages: parsePages });
 })();

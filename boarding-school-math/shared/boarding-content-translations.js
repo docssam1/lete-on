@@ -19093,5 +19093,16 @@ window.GFIELDContentTranslations = {
   "MAA 공식 응시자 표본": [
     "MAA official-student cohort",
     "MAA 正式参赛者样本"
-  ]
+  ],
+  "AMC · AIME 기출": ["AMC · AIME past papers", "AMC · AIME 历年试题"],
+  "대회와 회차를 선택해 시험지를 풀고 답을 입력하세요.": ["Choose a contest and paper, then solve it and enter your answers.", "选择竞赛与场次，解题后输入答案。"],
+  "학년별 비교": ["Compare by grade", "按年级比较"],
+  "풀이 날짜": ["Practice date", "练习日期"],
+  "학년별 비교·풀이 기록 설정": ["Grade comparison and practice details", "年级比较与练习记录设置"],
+  "이전에 저장한 점수 기록 가져오기": ["Import previously saved scores", "导入已保存的分数记录"],
+  "가져온 파일은 이 화면에서만 열립니다. 문항별 답은 포함하지 않습니다.": ["Imported files are opened only on this page. Individual answers are not included.", "导入的文件仅在此页面打开，不含逐题答案。"],
+  "회차별 원점수는 해당 시험지 기준입니다. 시험 간 난도 차를 보정하거나 동학년 순위·등급으로 환산하지 않습니다.": ["Raw scores apply to each paper. They are not adjusted for difficulty or converted to grade-level rankings.", "原始分数以各场试题为准，不校正试卷难度，也不换算为同年级排名或等级。"],
+  "대회나 회차를 바꾸면 새 답안을 입력합니다.": ["Changing the contest or paper starts a new answer sheet.", "更换竞赛或场次后将使用新的答题表。"],
+  "시험지 선택": ["Choose a paper", "选择试卷"],
+  "풀이 날짜를 입력한 뒤 저장해 주세요.": ["Enter a practice date before saving.", "请先填写练习日期再保存。"]
 };
