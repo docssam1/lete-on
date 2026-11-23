@@ -42,7 +42,7 @@ function model(standard,levels,fields){
   if(!level)return[];
   // 지금 계획은 실제 공부 중인 위치에서, 다른 기준은 같은 학년·월 위치에서 잰다.
   const at=offset?standard.now:school.anchor;
-  return[{id,name,level:level.id,summary:plain(level.summary),ends:ends(level.school,at),books:books(level.school),after:after(level.school),
+  return[{id,name,level:level.id,summary:global.PlannerLevelGuide?.describe(level.id,standard.now,{levels:list})||doing(level.school,standard.now)||doing(level.comp,standard.now)||doing(level.calc,standard.now)||'이 시기 자료 없음',ends:ends(level.school,at),books:books(level.school),after:after(level.school),
    doing:{school:doing(level.school,at),comp:doing(level.comp,standard.now),calc:doing(level.calc,standard.now)}}];
  });
  const now=rows.find(r=>r.id==='now');
@@ -78,7 +78,7 @@ function study(row){
  const parts=[['교과',row.doing.school],['심화',row.doing.comp],['연산',row.doing.calc]].filter(p=>p[1]);
  return parts.length?parts.map(p=>`<span><b>${p[0]}</b> ${esc(p[1])}</span>`).join(''):'';
 }
-function label(row){return`<span class="lv">${esc(row.level)}${row.summary?' · '+esc(row.summary):''}</span>`;}
+function label(row){return`<span class="lv">${esc(row.summary)} (${esc(row.level)})</span>`;}
 // 레벨 × 과정 표: 칸마다 끝나는 달, 그 아래 책 이름
 function table(m){
  const head='<div class="corner">레벨 ＼ 과정</div>'+STAGES.map((s,i)=>`<div class="head c${i}">${s}</div>`).join('');
