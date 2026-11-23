@@ -33,12 +33,13 @@ test('wording-only reviews retain 3080 question contracts with explicitly separa
  let questions=0,changedBooks=0,tables=0;const tableUnits=new Set();
  for(const unit of ids){const {workbook:raw}=await import('../data/book/'+unit+'.workbook.js'),before=withObservedPhotoAlt(withElementaryReadingDirections(raw)),saved=plain(before),after=await reviewStudentWorkbook(unit,before);questions+=before.questions.length;if(after!==before)changedBooks++;
   const review=(await import('../data/language/'+unit+'.js')).review;
-  assert.deepEqual(Object.keys(after.figures||{}),unit==='s31-u01'?[...Object.keys(before.figures||{}),'force-guided-level-comparison','force-concept-balance','force-concept-lever']:Object.keys(before.figures||{}));
+  assert.deepEqual(Object.keys(after.figures||{}),unit==='s31-u01'?[...Object.keys(before.figures||{}),'force-guided-level-comparison','force-concept-balance','force-concept-lever']:unit==='s31-u02'?[...Object.keys(before.figures||{}),'animal-concept-polar']:Object.keys(before.figures||{}));
   for(const [key,html]of Object.entries(before.figures||{})){
    const next=after.figures[key];if(unit==='c22-s52-u03'&&key==='weather-quick-28')continue;
    if(next===html)continue;
    if(unit==='s31-u01'&&['opener','ramp','scale'].includes(key)){assert.equal(next.match(/<img[^>]+>/)[0],html.match(/<img[^>]+>/)[0]);continue;}
    if(unit==='s31-u01'&&key==='scale-results'){assert.equal(next.match(/<tbody>[\s\S]*?<\/tbody>/)[0],html.match(/<tbody>[\s\S]*?<\/tbody>/)[0]);assert(next.includes('예시 무게'));continue;}
+   if(unit==='s31-u02'&&key==='water-life'){assert.equal(next.match(/<tbody>[\s\S]*?<\/tbody>/)[0],html.match(/<tbody>[\s\S]*?<\/tbody>/)[0]);assert(next.includes('붕어와 수달이 헤엄칠 때 쓰는 몸의 부분을 비교해 보아요.'));continue;}
    if(unit==='c22-s42-u02'&&key==='ecoChains'){assert.equal(next.match(/<tbody>[\s\S]*?<\/tbody>/)[0],html.match(/<tbody>[\s\S]*?<\/tbody>/)[0]);continue;}
    if(unit==='c22-s42-u02'&&key==='ecoSurveyCards'){assert.equal(next,html.replace('관계 지도 만들기를 위한 제공 목록이에요. 학생이 직접 조사한 결과가 아니에요.','목록의 여섯 대상을 살아 있는지에 따라 나누어 보아요.'));continue;}
    assert(Object.hasOwn(review.tableFigures||{},key),unit+' '+key);assert(before.questions.some(q=>q.status==='authored'&&q.figure===key));assert(html.includes('<table'));

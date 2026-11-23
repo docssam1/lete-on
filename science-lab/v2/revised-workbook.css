@@ -399,3 +399,12 @@
 .bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(1){width:10%}
 .bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(2){width:45%}
 .bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(3){width:45%}
+
+/* Animal concepts share the established page flow with brief checks and whole photos. */
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-gallery-item img{height:36mm;object-fit:contain;background:#f6f7f9}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-gallery-item .ed-photo img{height:43mm}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-field{display:flex;flex-direction:column;flex:1}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-field .ed-drawing{height:auto;min-height:52mm;flex:1}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-flow{justify-content:flex-start;gap:22px}}

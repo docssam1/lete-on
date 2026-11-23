@@ -1,0 +1,62 @@
+{
+  "created": "2026-11-24",
+  "generator": "built-in image_gen",
+  "observationRecord": false,
+  "usage": "Authored photographic scenes for observing visible external features. Descriptions of hidden structures and functions are supplied separately; these images do not document a student field observation.",
+  "assets": [
+    {
+      "file": "s31-u02-photo-pigeon-v2.png",
+      "subject": "pigeon",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. A rock pigeon standing in side profile on a plain stone beside a park path. Its short dark beak with a pale cere, iridescent neck feathers, folded feathered wings, two pink feet and complete tail are clearly visible. Keep the entire bird, both feet, beak and tail uncropped. Anatomically accurate ordinary pigeon, calm neutral posture.",
+      "sha256": "4554f717cfa21ef565385836f3896a43ac6c3a4b3763a2288c9065fe1f40f622"
+    },
+    {
+      "file": "s31-u02-photo-bat-v2.png",
+      "subject": "bat",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. A small brown bat in flight with both wings spread, photographed at near eye level against a softly blurred dim cave entrance. Use soft sufficient light so the real thin skin wing membranes, elongated finger bones supporting each wing, small fur-covered body, two ears, head and two hind feet can be distinguished. Both wing tips fully inside frame. Natural realistic proportions, no feathers, no bird wings, no fangs emphasized, no glowing eyes.",
+      "sha256": "91af327f370556aec46d861f1462a79628d90afee63474277886abaeb79328f2"
+    },
+    {
+      "file": "s31-u02-photo-tiger-v2.png",
+      "subject": "tiger",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. An adult Bengal tiger walking slowly in complete side profile on short natural grass. The head, striped fur-covered torso, all four legs and paws, and the complete long tail with its tip must be visible. Soft daylight, simple blurred woodland background, accurate tiger proportions and stripe pattern, calm closed mouth, no people or fences.",
+      "sha256": "a9c9e03c39140df852defa0e22c75b51af9f46685068da0e7cba41522e9a79cf"
+    },
+    {
+      "file": "s31-u02-photo-polar-v2.png",
+      "subject": "polar",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. One healthy adult polar bear standing in complete side profile on a low flat snow-covered shore beside sea ice. Its head, rounded ears, dense white fur, full torso, all four legs and broad paws are visible. Bright soft overcast Arctic light, enough contrast to distinguish the thick fur from the pale background. Natural realistic bear anatomy, calm closed mouth, no anthropomorphic pose. Do not show or invent a magnified paw-pad view or tiny bumps; the image is for observing the fur-covered body.",
+      "sha256": "f69c611eba97fba48fa56d3e1f1168417d8f31976f5838282ad1540711a7edbf"
+    },
+    {
+      "file": "s31-u02-photo-dragonfly-v2.png",
+      "subject": "dragonfly",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. A mature adult dragonfly perched on a thin horizontal reed, seen from a slightly elevated three-quarter angle. Show its complete long segmented abdomen, head with compound eyes, thorax, exactly four separate transparent veined wings in two pairs, and six legs attached to the thorax in natural positions gripping the reed. Keep the wing tips and abdomen tip fully visible, no overlapping extra wings, no antenna-like extra legs. Macro wildlife photograph in a softly blurred green wetland.",
+      "sha256": "c47f9cbe03e7c32c9587ac3ddd28ef9edb5932931cae9b84e0eeab8b6f25d8e0"
+    },
+    {
+      "file": "s31-u02-photo-shark-v2.png",
+      "subject": "shark",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. A single ordinary requiem shark swimming calmly in clear blue sea water, complete side profile including the snout and entire tail. Show natural shark anatomy: paired pectoral fins, paired small pelvic fins, a dorsal fin and smaller rear dorsal fin, a heterocercal tail, and five gill slits behind the head. The visible near-side fins must connect naturally to the body. Closed mouth, no exaggerated teeth, no divers, no bait, no other fish. Clear underwater photograph, not a metallic model.",
+      "sha256": "2a3be8e4753fe6cf9de4e814ce37e8e1973db9dc0402ed3e32c016f6f0e6880c"
+    },
+    {
+      "file": "s31-u02-photo-lizard-v2.png",
+      "subject": "lizard",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. A small ordinary brown lizard resting in side profile on a simple sunlit flat stone. The complete head, scaled torso, all four naturally positioned legs and feet, and complete long slender tail are inside the frame. Keep the legs visually separate from the body and avoid confusing branches or leaves in front of them. Fine realistic scales, softly blurred low plants and earth behind, no people.",
+      "sha256": "b071cbd4fa695a748254905fd2b137f1398343781249d1049d8dd7de8d876b71"
+    },
+    {
+      "file": "s31-u02-photo-frog-v2.png",
+      "subject": "frog",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. One ordinary green-and-brown pond frog resting on a low wet stone by a shallow pond, seen from a slightly elevated side three-quarter angle. Show the entire head and moist smooth body, both short front legs and both folded long hind legs in anatomically correct natural positions, with no extra limbs. The full body and all visible toes remain inside the frame. Soft blurred pond plants behind, no clutter in front of its body.",
+      "sha256": "fc1e7c02c64729a74093467da9e4653669cf05c733ceab2a78e8b510737d1ccb"
+    },
+    {
+      "file": "s31-u02-photo-squid-v2.png",
+      "subject": "squid",
+      "prompt": "Use case: scientific-educational. Asset type: a clear photorealistic wildlife reference photograph for a Korean grade-3 animal science workbook. Landscape 3:2 composition, one animal only, full body fully inside the frame with generous clear margins, subject sharp and large, subdued natural habitat softly out of focus, natural daylight unless specified, realistic anatomy and textures. No text, no labels, no arrows, no numbers, no logos, no watermark, no frames, no collage, no cutout edge, no stylized illustration, no glossy CGI. One live squid suspended horizontally in clear blue sea water, full side three-quarter view. Show a long smooth tapered mantle, the two triangular fins at its rear, a distinct large eye beside the head, and its natural group of eight short arms and two longer feeding tentacles at the front. Arms may overlap naturally but must emerge from the head region, not the mantle or tail. Keep the complete animal and appendage tips inside frame. Soft natural underwater illumination, neutral blue background, no other animals, no bubbles obscuring the body.",
+      "sha256": "d638da604832dced09781f7168655e96e33071f34f7d87b02319153423277854"
+    }
+  ]
+}
