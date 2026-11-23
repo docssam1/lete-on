@@ -1,3 +1,4 @@
+import{beforeBiologyTask}from'./tests/biology-guided-stage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -138,12 +139,12 @@ test('classroom copies share the three revised bank materials and preserve origi
  for(const {unit,data}of units){
   const book=await import('../data/book/'+unit+'.book.js'),a=await revisedClassroom(unit,book),b=await revisedClassroom(unit,book);
   const pool=classroomQuestions(a,[...(data.similar||[]),...data.items]);
-  for(const q of a.classroomItems.filter(q=>q.contentVersion===LESSON_REFERENCE_DATA_VERSION)){
-   classroomTargets++;assert.deepEqual(q,data.items.find(x=>x.id===q.id));assert.equal(q,b.classroomItems.find(x=>x.id===q.id));
+  for(const q of a.classroomItems.filter(q=>beforeBiologyTask(q).contentVersion===LESSON_REFERENCE_DATA_VERSION)){
+   classroomTargets++;assert.deepEqual(beforeBiologyTask(q),data.items.find(x=>x.id===q.id));assert.equal(q,b.classroomItems.find(x=>x.id===q.id));
    for(const mode of ['self','teach']){
     const slide=buildSlides(a.chapter,a.art,a.plan,pool,mode).find(s=>s.item===q.id);assert(slide);
     for(const value of Object.values(q.givens))if(value?.caption)assert(slide.body.includes(escape(value.caption)));
-    assert(!slide.body.includes('&quot;머리&quot;'));assert.equal(slide.questionVersion,LESSON_REFERENCE_DATA_VERSION);
+    assert(!slide.body.includes('&quot;머리&quot;'));assert.equal(slide.questionVersion,questionVersion(q));
     const snapshot=deckQuestionSnapshot(slide,pool);assert.deepEqual(snapshot.givens,q.givens);snapshot.givens.자료='changed snapshot';assert.notEqual(snapshot.givens.자료,q.givens.자료);
    }
   }

@@ -1,3 +1,4 @@
+import{biologyGuidedItems}from'./biology-guided-review.js';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
 import {grade4QuestionReview,withGrade4ReviewedWorkbook,GRADE4_REVIEW_VERSION as version,GRADE4_REVIEW_UNITS as units} from '../data/book/grade4-question-review.js';
 import {withThink,loadJudge}from'./think-merge.js';import{questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';import{gradeDaily}from'./daily-grade.js';import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import{revisedTextbookPaper}from'./revised-textbook.js';
@@ -31,8 +32,8 @@ test('exact source, taxonomy, version and contract guards preserve unreviewed qu
 
 test('real student papers, teacher keys, classroom copies and cache links use the reviewed questions together',async()=>{
  let selected=0;
- for(const unit of units){const mod=mods.get(unit),cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),paper=await revisedTextbookPaper(unit),student=mod.bankPaper({...mod,mode:'student'}),teacher=mod.bankPaper({...mod,mode:'teacher'}),wbStudent=paper.workbookPaper({mode:'student'}),wbTeacher=paper.workbookPaper({mode:'teacher'});assert(!wbStudent.includes('class="ed-key"'));
- for(const q of mod.items.filter(q=>q.contentVersion===version)){if(q.choices){for(const c of q.choices){assert(student.includes(escape(c)));assert(wbStudent.includes(escape(c)));}for(const c of old(q).choices.filter(c=>!q.choices.includes(c))){assert(!student.includes(escape(c)));assert(!wbStudent.includes(escape(c)));}}
+ for(const unit of units){const base=mods.get(unit),mod={...base,items:biologyGuidedItems(base.items,unit)},cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),paper=await revisedTextbookPaper(unit),student=mod.bankPaper({...mod,mode:'student'}),teacher=mod.bankPaper({...mod,mode:'teacher'}),wbStudent=paper.workbookPaper({mode:'student'}),wbTeacher=paper.workbookPaper({mode:'teacher'});assert(!wbStudent.includes('class="ed-key"'));
+ for(const q of mod.items.filter(q=>q.contentVersion===version||q.previousVersions?.some(p=>p.version===version))){if(q.choices){for(const c of q.choices){assert(student.includes(escape(c)));assert(wbStudent.includes(escape(c)));}for(const c of old(q).choices.filter(c=>!q.choices.includes(c))){assert(!student.includes(escape(c)));assert(!wbStudent.includes(escape(c)));}}
  else{assert(!student.includes(escape(q.answerContract.sample)));assert(teacher.includes(escape(q.answerContract.sample)));assert(wbTeacher.includes(escape(q.answerContract.sample)));assert(!wbStudent.includes(escape(q.answerContract.rubric.required[0])));}
  for(const rows of[cls.classroomItems,pool]){const displayed=rows.find(x=>x.id===q.id);if(displayed){assert.deepEqual(displayed,q);selected++;}}
  }}assert(selected>=4);

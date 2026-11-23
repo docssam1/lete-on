@@ -1,3 +1,7 @@
+import{beforeBiologyTask}from'./tests/biology-guided-stage.mjs';
+import{reviewStudentWorkbook}from'./student-language-review.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{BIOLOGY_EXAMPLE_VERSION}from'../data/book/biology-example-card.js';
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
@@ -69,13 +73,14 @@ test('classroom questions use the same revised bank prompts while retaining thei
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items,source,similar}=await actualBank();
   const bank=new Map([...source,...similar,...items].map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,25);
   assert.equal(mod.classroomItems.filter(q=>q.contentVersion===BIOLOGY_ELEMENTARY_BANK_VERSION||q.previousVersions?.some(v=>v.version===BIOLOGY_ELEMENTARY_BANK_VERSION)).length,11);
-  for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
+  for(const q of mod.classroomItems.map(beforeBiologyTask)){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
   assert.equal(workbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement').length,20);
   for(const q of workbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement'))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
+  const currentWorkbook=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));
   const paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-   if(mode==='student'||mode==='teacher')for(const q of workbook.questions.filter(q=>q.sourceRef?.type==='authored-supplement'))for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))));
+   if(mode==='student'||mode==='teacher')for(const q of currentWorkbook.questions.filter(q=>q.sourceRef?.type==='authored-supplement'))for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))));
    if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
   assert.equal(source.length,75);assert.equal(biologyElementaryCurrentItems(source,unit),source);assert.equal(biologyElementaryCurrentItems(similar,unit),similar);

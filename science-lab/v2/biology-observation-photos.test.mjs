@@ -1,3 +1,4 @@
+import{beforeBiologyTask}from'./tests/biology-guided-stage.mjs';
 import{BIOLOGY_EXAMPLE_VERSION}from'../data/book/biology-example-card.js';
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
@@ -36,7 +37,7 @@ test('four observation questions gain the correct photographs without changing a
   for(const altered of [{...old,contentVersion:'future'},{...old,prompt:'future'},{...old,observationPhotos:[{existing:true}]},{...old,givens:{existing:'data'}},...['original','similar','authored-pair'].map(type=>({...old,sourceRef:{type}}))]){const rows=[altered];assert.equal(standaloneQuestionContexts(rows,unit),rows);}
  }
  assert.deepEqual(changed,ids);assert.equal(JSON.stringify(prior),before);assert.equal(standaloneQuestionContexts(current.items,unit),current.items);
- const cls=await revisedClassroom(unit,await import('../data/book/s41-u04.book.js'));for(const q of cls.classroomItems)assert.deepEqual(q,current.items.find(it=>it.id===q.id));
+ const cls=await revisedClassroom(unit,await import('../data/book/s41-u04.book.js'));for(const q of cls.classroomItems.map(beforeBiologyTask))assert.deepEqual(q,current.items.find(it=>it.id===q.id));
 });
 
 test('both original images, labels and attribution reach learning, Daily and both question paper modes without revealing keys',()=>{
