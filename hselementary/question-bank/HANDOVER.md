@@ -7,7 +7,7 @@
   - 쉬움에서 "㉠칸에는 …개" 문장을 지운 뒤 그림에 남던 ㉠ 표시를 6-2-u3-e1-example-4·mission-3 쉬움에서 함께 지움.
 - source-6-2-stack-questions.css: 쌓기나무 정답·풀이 쪽을 여백 8mm 이름 붙인 쪽(source62StackAnswer)으로 인쇄하고 풀이 문단 간격을 줄여, 어려움 풀이 3문항이 A4 한 장에 들어가게 함(정답 그림 높이 60mm와 방향 글자 12px 기준은 그대로).
 - Mac 감사 결과: source-6-2-stack-questions-live 통과(18상태·반례 30·A4 18), e2-geometry-live 통과, midpoint-cut-questions 통과, four-vertex-cut-questions 통과(출력 폴더 이름을 four-vertex-wrapper로), polycube-helper-compatibility 통과(오늘 원본 복원 뒤 기준선을 --checkpoint로 새로 저장하고 비교, 1,889유형 17,001건).
-- 남은 것: source-6-2-stack-renderer-live는 검수용 페이지(source-6-2-stack-review.html)의 WebGL 그림을 390px 폭에서 돌린 뒤 모서리 픽셀 1개 색이 기준과 4~6 차이(Mac 소프트웨어 GPU 안티에일리어싱 차이로 보임, 학생 화면 아님). Windows E: 증거 자료가 필요한 6-2 3단원 감사 27개는 증거 폴더가 Mac·Drive에 없어(2026-11-23 검색) Windows에서만 실행 가능. 출판사 답 확인은 손글씨 채점본만 있어 false 유지.
+- 남은 것: source-6-2-stack-renderer-live는 검수용 페이지(source-6-2-stack-review.html)의 WebGL 그림을 390px 폭에서 돌린 뒤 모서리 픽셀 1개 색이 기준과 4~6 차이(Mac 소프트웨어 GPU 안티에일리어싱 차이로 보임, 학생 화면 아님). Windows E: 증거 자료가 필요한 6-2 3단원 감사 27개는 증거 폴더가 Mac·Drive에 없어(2026-11-23 검색) Windows에서만 실행 가능. 사용자 결정(2026-11-23 "Skip them"): 이 27개는 이번 마무리에서 실행하지 않고 생략한다(Windows 증거 폴더로 다시 검사할 때만 실행). 출판사 답 확인은 손글씨 채점본만 있어 false 유지.
 
 ## 2026-11-23 — 쓰지 않는 생성기 감사 정리 (Claude Code / Opus 5.5, Mac)
 
