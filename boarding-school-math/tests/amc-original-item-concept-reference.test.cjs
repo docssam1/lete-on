@@ -6,7 +6,7 @@ const test = require("node:test");
 const reference = require("../competition/amc-original-item-concept-reference.js");
 
 test("2010 AMC 8 concept references cover each original question and reject other forms", function () {
-  assert.equal(reference.entries.length, 6550);
+  assert.equal(reference.entries.length, 6600);
   const entries2010 = reference.entries.filter((entry) => entry.program === "amc8" && entry.year === 2010);
   assert.equal(entries2010.length, 25);
   assert.deepEqual(entries2010.map((entry) => entry.question), Array.from({ length: 25 }, (_, index) => index + 1));
@@ -92,25 +92,19 @@ test("year-by-year LIVE inventory contains every AMC 8 item in all 41 available 
 test("all AMC 8/10/12 and AIME yearly forms have source-linked item metadata", function () {
   const inventoryPath = path.resolve(__dirname, "../competition/amc-item-concept-source-inventory.csv");
   const rows = fs.readFileSync(inventoryPath, "utf8").trim().split(/\r?\n/);
-  assert.equal(rows.length, 6501);
+  assert.equal(rows.length, 6601);
   const counts = new Map([["amc8", 0], ["amc10", 0], ["amc12", 0], ["aime", 0]]);
   const forms = new Set();
   for (const entry of reference.entries) {
     counts.set(entry.program, (counts.get(entry.program) || 0) + 1);
     forms.add(`${entry.program}:${entry.year}:${entry.form}`);
     assert.ok(entry.sourceConcepts.length > 0);
-    if (entry.year === 2026 && ["amc10", "amc12"].includes(entry.program)) {
-      assert.equal(entry.form, "A");
-      assert.equal(entry.mappingStatus, "editorial-source-solution-crosswalk");
-      assert.equal(entry.sourceUrl, `https://wiki.randommath.com/${entry.program}/2026/part-a`);
-    } else {
-      assert.match(entry.sourceUrl, new RegExp(`/${entry.program}/${entry.year}${entry.form || ""}/problem/${entry.question}$`));
-    }
+    assert.match(entry.sourceUrl, new RegExp(`/${entry.program}/${entry.year}${entry.form || ""}/problem/${entry.question}$`));
     assert.ok(["algebra", "number", "geometry", "counting", "data", "functions"].includes(entry.domain));
     assert.match(entry.topicLabel, /[가-힣]/);
   }
-  assert.deepEqual(Object.fromEntries(counts), { amc8: 1025, amc10: 1325, amc12: 3135, aime: 1065 });
-  assert.equal(forms.size, 268);
+  assert.deepEqual(Object.fromEntries(counts), { amc8: 1025, amc10: 1350, amc12: 3160, aime: 1065 });
+  assert.equal(forms.size, 270);
   assert.equal(reference.referenceFor("amc10", 2025, "A", 1).domain, "number");
   assert.equal(reference.referenceFor("amc10", 2025, "A", 3).domain, "geometry");
   assert.ok(reference.referenceFor("amc12", 2025, "B", 25));

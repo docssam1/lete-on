@@ -77,7 +77,7 @@ test("partial answers and an unsupported year never inherit a previous distribut
   await page.locator(".review-form-actions button[type=submit]").click();
   assert.equal(await page.locator(".paper-score-row").count(), 0);
   assert.match(await page.locator("#paper-score-band").textContent(), /답안 입력 후 비교/);
-  await page.locator("#archive-year").selectOption("2000");
+  await page.locator("#archive-year").selectOption("2000", { force: true });
   assert.equal(await page.locator(".review-report").isVisible(), false);
   await mark(page, 25, 25);
   assert.equal(await page.locator(".paper-score-row").count(), 0);

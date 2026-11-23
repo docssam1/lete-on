@@ -102,7 +102,7 @@
         $("archive-print-link").textContent = "원본 파일 열기 ↗";
         if (window.GFIELDPaperBookReader) {
           const canonical = window.GFIELDPaperLearningProfileUI.identityLabel({ programId: format.id, paper: { year: year, form: form } });
-          window.GFIELDPaperBookReader.selectPaper({ grade: grade, programId: format.id, year: year, form: form, title: canonical && meta ? canonical.replace(format.title, meta.title) : label });
+          window.GFIELDPaperBookReader.selectPaper({ language: params.get("paperLanguage") || "en", grade: grade, programId: format.id, year: year, form: form, title: canonical && meta ? canonical.replace(format.title, meta.title) : label });
         }
         $("archive-answer-link").href = paperLibrary.answerRoute(format.id, year, form);
         $("archive-answer-link").textContent = `${label} · 정답표 ↗`;
@@ -145,8 +145,7 @@
         const archiveNote = $("archive-route-note");
         if (format.id === "amc10" && year === 2016 && formSelect.value === "B") {
           archiveNote.textContent = "정답표 확인: LIVE 인쇄용 답안 PDF의 18번은 B로 잘못 표기되어 있어요. LIVE 공개 정답표와 전문 풀이, MAA 해설 자료는 E가 정답임을 확인합니다. 아래 자동 채점도 E를 기준으로 합니다.";
-        } else if (meta && meta.sourceStatus === "third-party-reproduction") {
-          archiveNote.textContent = "2026 A형의 공개 시험지·답안·풀이는 Think Academy 자료입니다. MAA/LIVE 공식 색인에 실린 회차가 아니며, GFIELD는 시험 내용을 복사하지 않고 원문 링크와 답안 키만 연결합니다.";
+
         } else {
           archiveNote.textContent = "시험지를 펼쳐 화면에서 읽거나 인쇄하세요. 답안 입력 후 공개 정답표와 대조하고 해설을 확인할 수 있어요.";
         }
@@ -325,6 +324,7 @@
       const number = index + 1;
       const li = document.createElement("li");
       li.className = "paper-mark-row";
+      li.dataset.responseFormat = hasChoiceAnswers ? "choice" : hasIntegerAnswers ? "integer" : "manual";
       li.dataset.choiceEntry = String(hasAnswerEntry);
       li.dataset.state = "unmarked";
       const concept = itemConceptReference ? itemConceptReference.referenceFor(format.id, selectedYear, selectedForm, index + 1) : null;
@@ -384,6 +384,15 @@
           resetReport("내용이 바뀌었어요");
         });
         field.append(caption, select);
+        if (config.field === "answer" && hasChoiceAnswers) {
+          select.hidden = true; select.setAttribute("aria-hidden", "true"); select.tabIndex = -1;
+          const choices = document.createElement("div"); choices.className = "omr-answer-buttons"; choices.setAttribute("role", "group"); choices.setAttribute("aria-label", `${number}번 내 답`);
+          "ABCDE".split("").forEach(function (letter) {
+            const button = document.createElement("button"); button.type = "button"; button.textContent = letter; button.dataset.omrChoice = letter; button.setAttribute("aria-pressed", "false");
+            button.addEventListener("click", function () { select.value = select.value === letter ? "" : letter; select.dispatchEvent(new Event("change", { bubbles: true })); }); choices.append(button);
+          });
+          field.append(choices); select.addEventListener("change", syncChoiceButtons);
+        }
         if (config.field === "domain" && concept) {
           const suggestion = document.createElement("small");
           suggestion.className = "mark-concept-suggestion";
@@ -441,6 +450,9 @@
       } else setText("mark-progress", `${marked} / ${itemCount}문제 채점 확인`);
     }
   }
+  function syncChoiceButtons() {
+    document.querySelectorAll(".paper-mark-row[data-response-format=choice]").forEach(function (row) { const value = row.querySelector('[data-field="answer"]').value; row.querySelectorAll("[data-omr-choice]").forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.omrChoice === value)); }); });
+  }
   function readMarks() {
     return Array.from($("paper-mark-list").children, function (li) {
       const answer = li.querySelector('[data-field="answer"]');
@@ -454,7 +466,7 @@
     });
   }
 
-  function applyPublicAnswerKey(format) {
+  function applyPublicAnswerKey(format, options) {
     if (!answerKeyReference || !format || !["amc8", "amc10", "amc12", "aime"].includes(format.id)) return null;
     const year = Number($("archive-year").value || params.get("year"));
     const form = $("archive-form").value || params.get("form") || "";
@@ -463,7 +475,7 @@
     if (!formReference || formReference.itemCount !== rows.length) return null;
     const answerInputs = rows.map(function (row) { return row.querySelector('[data-field="answer"]'); });
     const enteredCount = answerInputs.filter(function (input) { return input && input.value.trim() !== ""; }).length;
-    if (enteredCount === 0) return null;
+    if (enteredCount === 0 && !(options && options.allowBlank)) return null;
     let blankCount = 0;
     let correctCount = 0;
     let wrongCount = 0;
@@ -1291,7 +1303,14 @@
       amc12: { href: `./amc12-gfield-mock-exam.html?${new URLSearchParams({ grade: String(grade), domains: practiceDomains.join(","), sourceYear: practiceParams.get("sourceYear") || "", sourceForm: practiceParams.get("sourceForm") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "", sourceConcepts: practiceParams.get("sourceConcepts") || "" }).toString()}`, title: "지필드 AMC 12 범위 모의고사", copy: "원본에서 틀리거나 비워 둔 문항의 개념을 지필드 자체 모의고사와 연결해 연습합니다. 연결 문항이 없는 개념은 영역 연습으로 이어집니다." },
       aime: { href: `./aime-practice.html?${new URLSearchParams({ grade: String(grade), domains: practiceDomains.join(","), sourceYear: practiceParams.get("sourceYear") || "", sourceForm: practiceParams.get("sourceForm") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "", sourceConcepts: practiceParams.get("sourceConcepts") || "" }).toString()}`, title: "지필드 AIME 개념 연습", copy: "원본에서 틀리거나 비워 둔 문항의 개념 태그와 일치하는 지필드 창작 문제를 먼저 보여 줍니다. 직접 연결되는 문항이 없는 경우 영역 연습으로 이어집니다." }
     };
-    const followUpConfig = followUpRoutes[selectedFormat().id];
+    let followUpConfig = followUpRoutes[selectedFormat().id];
+    const directPractice = { amc8: "amc8-topic-practice.html", amc10: "amc10-practice.html", amc12: "amc12-practice.html" }[selectedFormat().id];
+    $("report-mock-link").hidden = !directPractice;
+    if (directPractice && followUpConfig) {
+      $("report-mock-link").href = followUpConfig.href;
+      practiceParams.set("grade", String(grade));
+      followUpConfig = { href: "./" + directPractice + "?" + practiceParams.toString(), title: "틀린 개념 연습", copy: "이번 회차에서 틀리거나 비워 둔 문항의 개념과 연결된 연습으로 이어집니다." };
+    }
     $("report-follow-up").hidden = !followUpConfig;
     if (followUpConfig) {
       setText("report-follow-up-copy", followUpConfig.copy);
@@ -1336,6 +1355,7 @@
     document.querySelector(".review-report").hidden = false;
     document.querySelector(".review-layout").classList.remove("is-empty");
     $("report-title").focus();
+    document.dispatchEvent(new CustomEvent("gfield:paper-study-result", { detail: { complete: Boolean(result.complete && lastAutoGradeSummary && (result.attempted > 0 || window.GFIELDOriginalPaperExam && window.GFIELDOriginalPaperExam.isSubmitted())), score: result.complete && result.scoreEstimate ? { points: result.scoreEstimate.points, max: result.scoreEstimate.max } : null } }));
   }
   function refreshScoreOverview() {
     if (!lastOverviewContext) return;
@@ -1360,7 +1380,7 @@
       return itemConceptReference ? itemConceptReference.referenceFor(program, year, form, number) : null;
     });
   }
-  document.addEventListener("gfield:paper-answers-restored", updateProgress);
+  document.addEventListener("gfield:paper-answers-restored", function () { syncChoiceButtons(); updateProgress(); });
   $("review-exam-date").addEventListener("change", function () { if (!document.querySelector(".review-report").hidden) refreshScoreOverview(); });
   $("review-grade").addEventListener("change", function (event) {
     grade = Number(event.target.value);
@@ -1381,11 +1401,19 @@
       const percentile = Number($("official-percentile").value);
       if (!Number.isFinite(percentile) || percentile < 0 || percentile > 100) { showAlert("paper-error", "공식 성적표의 전국 백분위를 0~100 범위로 입력하세요."); $("official-percentile").focus(); return; }
     }
+    const originalExam = window.GFIELDOriginalPaperExam;
+    const submittedOriginal = Boolean(originalExam && originalExam.isRunning());
+    if (submittedOriginal) {
+      const graded = applyPublicAnswerKey(format, { allowBlank: true });
+      if (!graded) { showAlert("paper-error", "선택한 회차의 정답표를 확인할 수 없습니다."); return; }
+      lastAutoGradeSummary = graded; originalExam.finish();
+    }
     const paperFormat = selectedPaperFormat(format);
     const result = analyzer.analyze(readMarks(), paperFormat ? paperFormat.itemCount : format.itemCount, format.id, paperFormat);
     if (!result.valid) { showAlert("paper-error", result.error === "문항별 표시와 영역을 확인하세요." ? "문항별 표시·영역·이유를 확인하세요." : result.error); return; }
     clearAlert("paper-error");
     renderResult(result, lastAutoGradeSummary);
+    if (submittedOriginal && localRecords && !$("save-diagnostic").disabled) $("save-diagnostic").click();
   });
   $("apply-answer-key").addEventListener("click", function () {
     const format = selectedFormat();
@@ -1454,7 +1482,7 @@
     if (!document.querySelector(".review-report").hidden) refreshScoreOverview();
     const nextRemoveButtons = Array.from($("saved-diagnostic-list").querySelectorAll(".saved-diagnostic-remove"));
     if (nextRemoveButtons.length) nextRemoveButtons[Math.min(removedIndex, nextRemoveButtons.length - 1)].focus();
-    else $("review-program").focus();
+    else $("review-program-buttons").focus();
   });
   $("review-exam-date").value = localToday();
   renderSettings();

@@ -5,17 +5,17 @@ const path = require("node:path");
 const test = require("node:test");
 const library = require("../competition/amc-original-paper-library.js");
 
-test("year and form routes preserve LIVE archives and distinguish third-party 2026 A forms", function () {
+test("year and form routes preserve LIVE archives including all four 2026 forms", function () {
   assert.equal(library.archiveFor("amc8").years.length, 41);
   assert.equal(library.archiveFor("amc8").years[0], 2026);
   assert.equal(library.archiveFor("amc8").years.at(-1), 1985);
   assert.equal(library.archiveFor("amc8").years.includes(2021), false);
   assert.equal(library.contestCount("amc8"), 41);
   assert.equal(library.archiveFor("amc10").years.length, 27);
-  assert.equal(library.contestCount("amc10"), 53);
+  assert.equal(library.contestCount("amc10"), 54);
   assert.equal(library.archiveFor("amc12").years.length, 77);
   assert.equal(library.archiveFor("amc12").years.at(-1), 1950);
-  assert.equal(library.contestCount("amc12"), 103);
+  assert.equal(library.contestCount("amc12"), 104);
   assert.equal(library.archiveFor("aime").years.length, 44);
   assert.equal(library.archiveFor("aime").years[0], 2026);
   assert.equal(library.archiveFor("aime").years.at(-1), 1983);
@@ -63,25 +63,13 @@ test("year and form routes preserve LIVE archives and distinguish third-party 20
   const contests = Object.entries(library.archives).flatMap(([programId, archive]) => archive.years.flatMap((year) => {
     const forms = programId === "amc8" || programId === "aime" && year <= 1999 || (programId === "amc10" || programId === "amc12") && year <= 2001
       ? [""]
-      : year === 2026 && (programId === "amc10" || programId === "amc12") ? ["A"]
       : year === 2021 && (programId === "amc10" || programId === "amc12") ? ["A", "B", "C", "D"]
       : programId === "aime" ? ["I", "II"] : ["A", "B"];
     return forms.map((form) => ({ programId, year, form, route: library.archiveRoute(programId, year, form) }));
   }));
-  assert.equal(contests.length, 268);
-  assert.equal(new Set(contests.map((contest) => contest.route)).size, 268);
+  assert.equal(contests.length, 270);
+  assert.equal(new Set(contests.map((contest) => contest.route)).size, 270);
   contests.forEach(({ programId, year, form, route }) => {
-    if (year === 2026 && ["amc10", "amc12"].includes(programId)) {
-      const number = programId === "amc10" ? "10" : "12";
-      assert.equal(form, "A");
-      assert.equal(route, `https://www.thethinkacademy.com/blog/2026-amc-${number}a-problems-solutions/`);
-      assert.match(library.printRoute(programId, year, form), /thethinkacademy\.com.*Paper\.pdf$/);
-      assert.match(library.answerRoute(programId, year, form), /thethinkacademy\.com.*Answer-Key/);
-      assert.equal(library.formatFor(programId, year, form).sourceStatus, "third-party-reproduction");
-      assert.equal(library.problemRoute(programId, year, form, 1), "");
-      assert.deepEqual(library.formsFor(programId, year), ["A"]);
-      return;
-    }
     assert.match(route, /^https:\/\/live\.poshenloh\.com\/past-contests\/(?:amc8|amc10|amc12|aime)\//);
     assert.equal(library.printRoute(programId, year, form).endsWith("-exam.pdf"), true);
     assert.equal(library.answerRoute(programId, year, form), `${route}/answers`);

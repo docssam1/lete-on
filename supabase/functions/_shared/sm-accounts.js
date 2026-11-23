@@ -1,7 +1,7 @@
-// 레이키즈(sm/) 전용 계정 — 원장 2026-11-17 「이메일 인증 받아 가입 하도록」.
+// 유아 영재 학습 게임(sm/) 전용 계정 — 원장 2026-11-17 「이메일 인증 받아 가입 하도록」.
 //  프로젝트의 서버 함수 수가 요금제 한도에 차서 새 함수를 만들 수 없어, fields-members가 `sm-`로 시작하는 요청을 여기로 넘긴다.
 //  · 보호자가 이메일 인증번호(Supabase Auth, 필즈 가입과 같은 메일)로 확인한 뒤 아이를 등록하고 승인번호를 정한다.
-//  · 레이키즈 전용 계정(필즈 계정과 따로, 표 sm_accounts) · 인증만 하면 기간 없이 바로 계속 이용(원장 답).
+//  · 전용 계정(필즈 계정과 따로, 표 sm_accounts) · 인증만 하면 기간 없이 바로 계속 이용(원장 답).
 //  계약(POST JSON, action):
 //   보호자(Authorization: Bearer <이메일 인증 access token>)
 //     sm-mine     → { email, children:[{ child, createdAt }] }
@@ -13,7 +13,7 @@
 //     sm-logout   { token }      → { ok }
 //  표(service_role만, RLS 켜고 정책 없음): sm_accounts · sm_sessions · sm_login_failures (migrations/20261117000000_sm_accounts.sql)
 const CONSENT_VERSION = "sm-2026-11-17-v1";
-const PERMISSIONS = ["레이키즈"];
+const PERMISSIONS = ["레이키즈"];   // 권한 내부 ID(화면 이름은 「유아 영재 학습 게임」)
 const SESSION_MS = 12 * 60 * 60 * 1000;            // 필즈 로그인과 같은 12시간
 const MAX_FAILS = 5, LOCK_MS = 60 * 60 * 1000;      // 같은 이름 1시간에 5번 틀리면 1시간 막기(필즈와 같게)
 const MAX_CHILDREN = 6;                              // 한 이메일에 등록할 수 있는 아이 수

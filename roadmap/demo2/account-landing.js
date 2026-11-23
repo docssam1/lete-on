@@ -40,7 +40,8 @@
     await Promise.all([
      loadScript('planner-levels.js?v=20261112-mid3',()=>window.PLANNER_LEVELS),
      loadScript('planner-standard-data.js?v=20261112-mid3',()=>window.PLANNER_STANDARD_DETAILS),
-     loadScript('planner-level-guide.js?v=20261123-guide1',()=>window.PlannerLevelGuide)
+     loadScript('planner-academy-data.js?v=20261029-soma-revision',()=>window.PLANNER_ACADEMY_ROADMAPS),
+     loadScript('planner-level-guide.js?v=20261123-bench1',()=>window.PlannerLevelGuide)
     ]);
     const template=document.createElement('template');
     const hadFocus=levelGuide.contains(document.activeElement);

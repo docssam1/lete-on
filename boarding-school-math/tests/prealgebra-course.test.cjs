@@ -13,12 +13,12 @@ test("GFIELD Pre-Algebra Unit 1 follows the six requested expression concepts in
   assert.equal(unit.id, "expressions-and-equivalence");
   assert.deepEqual(unit.standards, ["6.EE.A.1", "6.EE.A.2", "6.EE.A.3", "6.EE.A.4"]);
   assert.deepEqual(unit.lessons.map(function (lesson) { return lesson.title; }), [
-    "변수식으로 나타내고 식의 값 구하기",
-    "거듭제곱과 연산 순서 적용하기",
-    "문장으로 제시된 상황을 대수식으로 나타내기",
-    "연산 성질로 식을 바꾸고 확인하기",
-    "분배법칙으로 전개하고 묶기",
-    "동류항을 결합해 식을 정리하기"
+    "문자를 사용한 식과 식의 값",
+    "거듭제곱과 혼합계산",
+    "문장을 식으로 나타내기",
+    "교환법칙·결합법칙·분배법칙",
+    "분배법칙과 공통인수",
+    "동류항의 정리"
   ]);
   assert.ok(unit.lessons.every(function (lesson) {
     return lesson.objective && lesson.idea && lesson.example.prompt && lesson.example.solution
@@ -88,7 +88,7 @@ test("GFIELD Pre-Algebra Unit 3 covers the Grade 7 rational-number operation sta
     "유리수의 곱셈과 부호",
     "0으로 나누지 않고 유리수의 나눗셈 하기",
     "분수를 소수로 나타내고 순환 여부 찾기",
-    "유리수 네 연산으로 문장제 해결하기"
+    "유리수의 사칙연산으로 문장제 해결하기"
   ]);
   assert.ok(unit.lessons.every(function (lesson) {
     return lesson.objective && lesson.idea && lesson.example.prompt && lesson.example.solution

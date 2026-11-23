@@ -1,0 +1,71 @@
+concept_id,english,korean,singapore_simplified_chinese,usage
+integer,integer,정수,整数,Includes negative integers and zero
+positive-integer,positive integer,양의 정수,正整数,Excludes zero
+nonnegative-integer,nonnegative integer,음이 아닌 정수,非负整数,Includes zero
+whole-number,whole number,0과 양의 정수,非负整数,Do not translate as all integers
+fraction,fraction,분수,分数,Preserve numerator and denominator
+proper-fraction,proper fraction,진분수,真分数,Numerator less than denominator in the elementary nonnegative fraction context; preserve any signed source conditions
+improper-fraction,improper fraction,가분수,假分数,Numerator greater than or equal to denominator in the elementary nonnegative fraction context; preserve the stated sign
+mixed-number,mixed number,대분수,带分数,Do not read adjacent whole and fraction parts as multiplication
+rational-number,rational number,유리수,有理数,Number expressible as a ratio of integers
+irrational-number,irrational number,무리수,无理数,Not expressible as a ratio of integers
+ratio,ratio,비,比,Keep the order of compared quantities
+proportion,proportion,비례식,比例式,Distinguish a ratio from an equation of ratios
+percentage,percentage,백분율,百分比,Preserve the reference whole
+variable,variable,변수,变量,Retain the same variable symbols
+expression,algebraic expression,대수식,代数式,Not an equation
+equation,equation,방정식,方程,Retain both sides of the equality
+inequality,inequality,부등식,不等式,Preserve strict and inclusive inequalities
+factor-algebra,factor,인수,因式,Algebraic factorization context
+factor-integer,factor,약수,因数,Integer divisibility context
+divisor,divisor,약수,因数,Divisibility context
+multiple,multiple,배수,倍数,Do not reverse divisor and multiple
+prime-factorization,prime factorization,소인수분해,质因数分解,Keep exponent multiplicities
+exponent,exponent,지수,指数,Distinguish the exponent from the power
+power,power,거듭제곱,幂,Do not interchange base and exponent
+remainder,remainder,나머지,余数,Use the remainder for the specified divisor
+median-data,median,중앙값,中位数,Statistics and ordered data
+median-triangle,median,중선,中线,Triangle vertex to opposite-side midpoint
+mean,arithmetic mean,산술평균,算术平均数,Retain any weighting condition
+perimeter,perimeter,둘레,周长,Length units
+circumference,circumference,원의 둘레,圆周长,Length units
+area,area,넓이,面积,Square units
+surface-area,surface area,겉넓이,表面积,Square units
+volume,volume,부피,体积,Cubic units
+similarity,similarity,닮음,相似,Preserve corresponding vertices
+congruence,congruence,합동,全等,Do not substitute similarity
+probability,probability,확률,概率,Preserve equally likely and replacement conditions
+combination,combination,조합,组合,Order does not distinguish outcomes
+permutation,permutation,순열,排列,Order distinguishes outcomes
+at-least,at least,이상,至少,Greater than or equal to
+at-most,at most,이하,至多,Less than or equal to
+greater-than,greater than,초과,大于,Strict inequality
+less-than,less than,미만,小于,Strict inequality
+distinct,distinct,서로 다른,互不相同,Do not drop the distinctness condition
+consecutive,consecutive,연속하는,连续的,State whether integers or another sequence is intended
+respectively,respectively,각각,分别,Keep the original matching order
+numerator,numerator,분자,分子,Keep the numerator above the fraction bar
+denominator,denominator,분모,分母,Denominator must be nonzero
+term,term,항,项,Expression context; use 수열의 항 for a sequence term
+coefficient,coefficient,계수,系数,Include the sign
+constant-term,constant term,상수항,常数项,No variable factor
+like-terms,like terms,동류항,同类项,Same variables with the same respective exponents
+commutative-law,commutative law,교환법칙,交换律,Addition and multiplication; not subtraction or division
+associative-law,associative law,결합법칙,结合律,Addition and multiplication; not subtraction or division
+distributive-law,distributive law,분배법칙,分配律,Distribute to every term with its sign
+simplify-expression,simplify an expression,식을 간단히 하다,化简代数式,Do not say solve unless there is an equation or inequality
+expand,expand,전개하다,展开,Algebraic expression context
+factorise,factorise,인수분해하다,因式分解,Algebraic expression context
+substitute,substitute,대입하다,代入,Preserve brackets when substituting negative numbers
+solution-equation,solution,해,解,Equation or inequality context; a worked solution is 풀이 or 解答
+root-equation,root,근,根,An equation root; distinguish a square root
+square-root,square root,제곱근,平方根,Distinguish all square roots from the principal square root symbol
+arithmetic-sequence,arithmetic sequence,등차수열,等差数列,Constant difference
+geometric-sequence,geometric sequence,등비수열,等比数列,Constant ratio
+converse,converse,역,逆命题,Logic context; not reciprocal
+reciprocal,reciprocal,역수,倒数,Defined for nonzero numbers
+independent-events,independent events,독립사건,独立事件,Do not conflate independence with mutually exclusive events
+mutually-exclusive-events,mutually exclusive events,서로 배반인 사건,互斥事件,Cannot occur together; not the same as independent events
+sample-space,sample space,표본공간,样本空间,Preserve equally likely assumptions
+with-replacement,with replacement,복원추출,有放回抽样,Replace each drawn object before the next draw
+without-replacement,without replacement,비복원추출,无放回抽样,Do not replace the drawn object

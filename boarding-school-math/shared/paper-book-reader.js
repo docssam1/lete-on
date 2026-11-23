@@ -63,7 +63,7 @@
     $("book-tab-paper").setAttribute("aria-pressed", String(pane === "paper"));
     $("book-tab-answers").setAttribute("aria-pressed", String(pane === "answers"));
     if (focus) {
-      const target = pane === "answers" ? document.querySelector('#paper-mark-list [data-field="answer"]') : $("book-viewport");
+      const target = pane === "answers" ? document.querySelector('#paper-mark-list .omr-answer-buttons button, #paper-mark-list input[data-field="answer"]') : $("book-viewport");
       if (target) { target.focus(); target.scrollIntoView({ block: "nearest" }); }
     }
     if (pane === "paper" && pdf) queueMicrotask(renderPage);
@@ -172,7 +172,11 @@
   function selectPaper(config) {
     const library = window.GFIELDAMCOriginalPaperLibrary;
     const valid = config && library && library.formsFor(config.programId, config.year).includes(config.form);
-    const key = valid ? [config.grade, config.programId, config.year, config.form].join(":") : "";
+    const requestedLanguage = config && config.language || "en";
+    const requestedVersion = valid && window.GFIELDPaperLanguages && window.GFIELDPaperLanguages.versionFor(config.programId, config.year, config.form, requestedLanguage, library);
+    const language = requestedVersion && requestedVersion.status === "available" ? requestedLanguage : "en";
+    const version = valid && window.GFIELDPaperLanguages && window.GFIELDPaperLanguages.versionFor(config.programId, config.year, config.form, language, library);
+    const key = valid ? [config.grade, config.programId, config.year, config.form, language].join(":") : "";
     if (selected && selected.key === key) return;
     generation += 1; renderVersion += 1;
     if (renderTask) renderTask.cancel(); renderTask = null;
@@ -187,7 +191,7 @@
     $("book-open").disabled = false; $("book-retry").hidden = true; $("book-render-error").hidden = true;
     say("book-draft-status", ""); say("book-print-error", ""); say("book-print-status", "");
     host.hidden = !valid; workspace.classList.toggle("has-paper-book", Boolean(valid));
-    selected = valid ? Object.assign({}, config, { key: key, url: library.printRoute(config.programId, config.year, config.form) }) : null;
+    selected = valid ? Object.assign({}, config, { key: key, language: language, url: version && version.url || library.printRoute(config.programId, config.year, config.form) }) : null;
     setControls(false); mobilePane("paper");
     if (!selected) return;
     say("book-identity", config.title); say("book-print-identity", config.title);
@@ -197,8 +201,16 @@
   }
   function setGradeContext(grade) {
     if (!selected || !Number.isInteger(grade) || grade < 3 || grade > 12) return;
-    selected = Object.assign({}, selected, { grade: grade, key: [grade, selected.programId, selected.year, selected.form].join(":") });
+    selected = Object.assign({}, selected, { grade: grade, key: [grade, selected.programId, selected.year, selected.form, selected.language || "en"].join(":") });
     saveDraft();
+  }
+  function selectLanguage(language) {
+    if (!selected) return false;
+    const version = window.GFIELDPaperLanguages && window.GFIELDPaperLanguages.versionFor(selected.programId, selected.year, selected.form, language, window.GFIELDAMCOriginalPaperLibrary);
+    if (!version || version.status !== "available") return false;
+    if (selected.language === language) return true;
+    saveDraft(); selectPaper(Object.assign({}, selected, { language: language })); marksReady(); if (!opened) openBook();
+    return true;
   }
   function marksReady() {
     if (!selected) return;
@@ -303,5 +315,5 @@
   $("book-print-form").addEventListener("submit", printPages);
   document.addEventListener("gfield:paper-marks-ready", marksReady);
   window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { if (pdf && $("book-zoom").value === "fit") renderPage(); }, 150); });
-  window.GFIELDPaperBookReader = Object.freeze({ selectPaper: selectPaper, setGradeContext: setGradeContext, parsePages: parsePages });
+  window.GFIELDPaperBookReader = Object.freeze({ selectPaper: selectPaper, selectLanguage: selectLanguage, currentLanguage: function () { return selected && selected.language || "en"; }, setGradeContext: setGradeContext, parsePages: parsePages });
 })();
