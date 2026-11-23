@@ -18,27 +18,16 @@
    if(next!==undefined){event.preventDefault();select(tabs[next],true);}
   });
  });
- const more=document.getElementById('roadmapMore');
  const account=document.getElementById('accountEntry');
  const behavior=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
- function reveal(hash){
-  const target=document.getElementById(hash.slice(1));
-  if(!target||!more?.contains(target)||more.open)return;
-  more.open=true;
-  target.scrollIntoView({block:'start'});
- }
- window.addEventListener('hashchange',()=>reveal(location.hash));
  document.addEventListener('click',event=>{
   const link=event.target.closest('a[href]');
   if(!link||event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
   const destination=new URL(link.href);
-  if(destination.origin!==location.origin||destination.pathname!==location.pathname||destination.search!==location.search)return;
-  if(destination.hash==='#accountEntry'){
-   event.preventDefault();
-   account.scrollIntoView({block:'start',behavior:behavior()});
-   document.getElementById('memberTitle')?.focus({preventScroll:true});
-  }else reveal(destination.hash);
+  if(destination.origin!==location.origin||destination.pathname!==location.pathname||destination.search!==location.search||destination.hash!=='#accountEntry')return;
+  event.preventDefault();
+  account.scrollIntoView({block:'start',behavior:behavior()});
+  document.getElementById('memberTitle')?.focus({preventScroll:true});
  });
- reveal(location.hash);
  if(!location.hash&&new URLSearchParams(location.search).has('next'))account?.scrollIntoView({block:'start'});
 })();
