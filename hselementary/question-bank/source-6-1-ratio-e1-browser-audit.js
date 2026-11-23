@@ -274,7 +274,8 @@ async function inspectActualRoute(page, sourceId, viewportName, view) {
         const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
         await page.goto(`${baseUrl}/hselementary/question-bank/?type=${sourceId}&review=1`, { waitUntil: "networkidle", timeout: 90000 });
         await page.waitForTimeout(80);
-        if (await page.locator(".question-item").count() !== 0) fail(`${sourceId}: 잠금 유형이 실제 주소에서 출제되었습니다.`);
+        // 2026-11-22 공개 등록(source-grade6-release-20261122)으로 이 세 유형도 잠금이 풀려 실제 주소에서 출제된다.
+        if (await page.locator(".question-item").count() < 1) fail(`${sourceId}: 공개된 유형이 실제 주소에서 출제되지 않았습니다.`);
         await page.close();
       }
     }

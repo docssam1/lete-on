@@ -7,6 +7,7 @@
 // - 유형별로 확인한 힌트 문장(쉬움 난이도의 부분 답, 풀이 방법 안내 등)을 지웁니다(HINT_SENTENCES).
 // - 2026-11-24: 쉬움 난이도의 풀이 안내 문단(p.question-step[data-step-evidence^=guided])을 지우고, 그림·상자 바로 뒤에 붙은
 //   '먼저 …세요.' 문장도 지우도록 문단 경계를 넣었습니다. 쉼표·마침표만 든 요소는 지우지 않습니다.
+//   어려움 난이도의 확인·설명 요구 문단(independent-reasoning)도 지웁니다(사용자 결정 "모두 지움").
 // 정답·풀이 쪽 설명은 그대로 둡니다(사용자: "답 풀이에 있는 설명은 상관 없어").
 (function (root) {
   "use strict";
@@ -675,10 +676,12 @@
   "분모에 있는 분수의 합부터 계산하세요."
  ],
  "6-2-u2-e1-example-2": [
-  "㉠과 ㉡을 각각 구한 뒤 비교하세요."
+  "㉠과 ㉡을 각각 구한 뒤 비교하세요.",
+  "㉠과 ㉡을 직접 구하지 않고 두 나눗셈을 비교해 보세요."
  ],
  "6-2-u2-e1-example-3": [
-  "나×나의 값을 먼저 찾아보세요."
+  "나×나의 값을 먼저 찾아보세요.",
+  "가와 다의 값을 각각 구하지 않고 풀어 보세요."
  ],
  "6-2-u2-e1-example-4": [
   "소수 부분은 0 이상 1 미만입니다."
@@ -919,6 +922,8 @@
     }
     // 2026-11-24: 쉬움 난이도에 붙는 풀이 안내 문단(<p class="question-step" data-step-evidence="guided|guided-order">).
     for (const el of scope.querySelectorAll('p.question-step[data-step-evidence^="guided"]')) { el.remove(); changed += 1; }
+    // 2026-11-24 사용자 결정("모두 지움"): 어려움 난이도의 확인·설명 요구 문단(data-step-evidence="independent-reasoning")도 원문에 없으므로 지운다.
+    for (const el of scope.querySelectorAll('.question-step[data-step-evidence="independent-reasoning"]')) { el.remove(); changed += 1; }
     // 빈칸으로 풀이 틀을 미리 짜 주는 표(각기둥 면·모서리·꼭짓점 표 등)와 문제 수치를 되풀이한 관계 상자.
     for (const el of scope.querySelectorAll(".source61-structure-table, .source62-overlap-relation")) { el.remove(); changed += 1; }
     // '도움말:' 같은 이름표가 붙은 문장은 문장 끝(마침표)까지 지웁니다.
