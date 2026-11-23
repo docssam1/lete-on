@@ -358,3 +358,12 @@
 @media print{
  .bk-editorial.revised-workbook[data-unit] .bk-page{height:calc(297mm - 1px)}
 }
+
+/* 생물과 환경: 고르기 문제에는 불필요한 서술용 괘선을 채우지 않는다. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-question:not([data-form="written"]):not([data-form="draw"])::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-block-field:not(:has(.ed-drawing)),.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-field:not(:has(.ed-drawing)){flex:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-field>.ed-lines{flex:none;background:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-field>.ed-lines i{visibility:visible;height:8mm}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:1mm 4mm}
+}

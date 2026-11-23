@@ -45,5 +45,10 @@ export async function reviewStudentModule(unit,mod){
  if(unit==='c22-s52-u03'){const{weatherExampleItems}=await import('./weather-example-response.js?v=20261123-weather-example-response');result.items=weatherExampleItems(result.items,unit);}
  return result;
 }
-export async function reviewStudentWorkbook(unit,workbook){const review=await reviewOf(unit);const result=review?reviewWorkbookTableText(reviewTextTree(workbook,review.text),review):workbook;return unit==='c22-s52-u03'?(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result):result;}
+export async function reviewStudentWorkbook(unit,workbook){
+ const review=await reviewOf(unit);
+ const result=review?reviewWorkbookTableText(reviewTextTree(workbook,review.text),review):workbook;
+ if(unit==='c22-s42-u02')return(await import('./ecology-guided-workbook.js?v=20261123-ecology-guided-workbook')).withEcologyGuidedWorkbook(result);
+ return unit==='c22-s52-u03'?(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result):result;
+}
 export async function reviewClassroomLanguage(unit,mod){const review=await reviewOf(unit);if(!review||!mod.classroomItems)return mod;const items=reviewQuestionRows(mod.classroomItems,review);return items===mod.classroomItems?mod:{...mod,classroomItems:items};}
