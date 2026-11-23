@@ -26,7 +26,7 @@ test('all 32 units and every registered assessment retain source questions, keys
  assert(changed>250);assert(sources>=1763);
 });
 
-test('wording-only reviews retain 3080 question contracts with explicitly separate ecology writing and conservation revisions',async()=>{
+test('wording-only reviews retain 3080 question contracts with explicitly separate task revisions',async()=>{
  let questions=0,changedBooks=0,tables=0;const tableUnits=new Set();
  for(const unit of ids){const {workbook:raw}=await import('../data/book/'+unit+'.workbook.js'),before=withObservedPhotoAlt(withElementaryReadingDirections(raw)),saved=plain(before),after=await reviewStudentWorkbook(unit,before);questions+=before.questions.length;if(after!==before)changedBooks++;
   const review=(await import('../data/language/'+unit+'.js')).review;
@@ -40,7 +40,7 @@ test('wording-only reviews retain 3080 question contracts with explicitly separa
    assert.equal(next,reviewPaperText(html,review));assert.deepEqual(next.match(/<[^>]*>/g),html.match(/<[^>]*>/g));assert.deepEqual(next.match(/\d+(?:\.\d+)?/g),html.match(/\d+(?:\.\d+)?/g));tables++;tableUnits.add(unit);
   }
   assert.equal(after.questions.length,before.questions.length);
-  for(let i=0;i<before.questions.length;i++){const q=before.questions[i],n=after.questions[i];for(const k of ['id','answer','accepted','answerContract','responseContract','sourceRef','taxonomy','figure','no','section','standard'])if(q.id==='c22-s52-u03-w050'&&k==='answer')assert.equal(n[k],'예시 자료');else if(q.id==='c22-s52-u03-w050'&&k==='accepted'){for(const a of q[k])assert(n[k].includes(a));}else if(n.foodwebReviewed&&k==='answer'){assert(n.answer.length>0);assert([27,28,36,43,44,45,48,53,54,55,56].includes(n.no));}else if(n.conservationReviewed&&k==='answer'){assert(n.answer.length>0);assert([61,62,63,68,70,71,73,74,75,76,77,78,79,80].includes(n.no));}else if(n.guidedWriting&&k==='answer')assert.equal(n.answer,n.sourceContract.sample);else if(n.guidedWriting&&k==='figure'&&q.no===39)assert.equal(n.figure,undefined);else assert.deepEqual(n[k],q[k],unit+' '+q.id+' '+k);}
+  for(let i=0;i<before.questions.length;i++){const q=before.questions[i],n=after.questions[i];for(const k of ['id','answer','accepted','answerContract','responseContract','sourceRef','taxonomy','figure','no','section','standard'])if(q.id==='c22-s52-u03-w050'&&k==='answer')assert.equal(n[k],'예시 자료');else if(q.id==='c22-s52-u03-w050'&&k==='accepted'){for(const a of q[k])assert(n[k].includes(a));}else if(unit==='s31-u01'&&[75,77,79].includes(n.no)&&k==='answer'){assert.equal(n.forceDrawingReviewed,'20261123-force-drawing-panels');assert(n.answer.length>0);}else if(n.foodwebReviewed&&k==='answer'){assert(n.answer.length>0);assert([27,28,36,43,44,45,48,53,54,55,56].includes(n.no));}else if(n.conservationReviewed&&k==='answer'){assert(n.answer.length>0);assert([61,62,63,68,70,71,73,74,75,76,77,78,79,80].includes(n.no));}else if(n.guidedWriting&&k==='answer')assert.equal(n.answer,n.sourceContract.sample);else if(n.guidedWriting&&k==='figure'&&q.no===39)assert.equal(n.figure,undefined);else assert.deepEqual(n[k],q[k],unit+' '+q.id+' '+k);}
   assert.deepEqual(plain(before),saved);assert.deepEqual(await reviewStudentWorkbook(unit,after),after);
  }
  assert.equal(questions,3080);assert(changedBooks>=20);assert.equal(tables,47);assert.deepEqual([...tableUnits],['c22-s61-u04','c22-s62-u01','c22-s62-u04']);

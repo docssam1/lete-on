@@ -49,6 +49,7 @@ export async function reviewStudentModule(unit,mod){
 export async function reviewStudentWorkbook(unit,workbook){
  const review=await reviewOf(unit);
  const result=review?reviewWorkbookTableText(reviewTextTree(workbook,review.text),review):workbook;
+ if(unit==='s31-u01')return(await import('./force-drawing-review.js?v=20261123-force-drawing-panels')).withForceDrawingWorkbook(result);
  if(unit==='c22-s42-u02'){const guided=(await import('./ecology-guided-workbook.js?v=20261123-ecology-guided-workbook')).withEcologyGuidedWorkbook(result);const written=(await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing')).withEcologyWritingWorkbook(guided);const conserved=(await import('./ecology-conservation-review.js?v=20261123-ecology-conservation')).withEcologyConservationWorkbook(written);return(await import('./ecology-foodweb-review.js?v=20261123-ecology-foodweb-tasks')).withEcologyFoodwebWorkbook(conserved);}
  return unit==='c22-s52-u03'?(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result):result;
 }

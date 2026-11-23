@@ -1,3 +1,6 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {workbook as animal,animalPracticePriorWorkbook as priorAnimal} from '../data/book/s31-u02.workbook.js';
@@ -32,7 +35,8 @@ test('grade-three practice directions preserve all response fields, source-linke
 });
 
 test('the actual four-mode textbook renderer uses the current elementary directions without leaking student keys',async()=>{
- for(const [current]of books){
+ for(const [raw]of books){
+  const current=await reviewStudentWorkbook(raw.unit,withObservedPhotoAlt(withElementaryReadingDirections(raw)));
   const paper=await revisedTextbookPaper(current.unit);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
