@@ -38,14 +38,15 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         await page.locator("#typeSearchInput").fill(label);
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 물음과 같은 이름으로 한 개만 표시`);
-        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), id.endsWith("example-4"), `${width}px ${id}: 검증 완료 문항만 선택 가능`);
+        // 2026-11-24: 2026-11-22 공개 등록으로 example-4도 잠금이 풀렸다(필기와 계산이 다른 부분은 손글씨 채점본 오류로 정리됨). 모든 유형 선택 가능.
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), false, `${width}px ${id}: 공개 유형 선택 가능`);
         await row.scrollIntoViewIfNeeded();
         await row.click();
         const preview = page.locator("#typePreviewPopover");
         await preview.waitFor({ state: "visible" });
         const box = await preview.evaluate(element => element.getBoundingClientRect().toJSON());
         assert(box.left >= -1 && box.right <= width + 1, `${width}px ${id}: 미리보기 가로 잘림 없음`);
-        if (id.endsWith("example-4")) assert((await preview.innerText()).includes("공식 답"), `${width}px: 필기와 계산이 다른 예제의 잠금 이유`);
+        assert((await preview.innerText()).includes(label), `${width}px ${id}: 공개 유형 미리보기`);
         if (outputDir) await page.screenshot({ path: path.join(outputDir, `grade6-e4-${id.includes("example") ? "example" : id.includes("mission") ? "mission" : "exploration"}-${id.slice(-1)}-${width}.png`) });
       }
       assert(!(await page.locator("#catalogPanel").innerText()).includes("반올림한 몫과 나머지 관계 알아보기"), "원문에 없는 반올림 유형명 제거");
@@ -56,5 +57,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log("6-2 개념탐구 4 공개 분류표 PC·390px: 두 탐구·네 예제·여섯 Mission 유형과 잠금 미리보기 통과");
+  console.log("6-2 개념탐구 4 공개 분류표 PC·390px: 두 탐구·네 예제·여섯 Mission 유형 공개·미리보기 통과");
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

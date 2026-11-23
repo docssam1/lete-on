@@ -36,6 +36,8 @@ async function isolatedPage(browser, width) {
   result.freshContexts++;
   await context.route("**/*", async route => {
     const url = new URL(route.request().url());
+    // 2026-11-24: 등록 생성기 출력과 화면 문항을 그대로 비교하는 계약 감사이므로 problem-hint-policy.js(문제 쪽 힌트 제거)를 끈다. HSE_KEEP_HINT_POLICY=1이면 켬.
+    if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js$/.test(url.pathname)) return route.fulfill({ status: 200, contentType: "application/javascript", body: "/* problem hint policy disabled for the generator contract audit */" });
     if (url.origin !== origin) {
       const key = `${url.origin}${url.pathname}`;
       result.externalBlocked[key] = (result.externalBlocked[key] || 0) + 1;

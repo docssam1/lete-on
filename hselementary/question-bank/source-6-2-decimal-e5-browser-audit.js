@@ -38,7 +38,9 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         await page.locator("#typeSearchInput").fill(label);
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 유형이 한 개만 표시`);
-        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), !readyIds.has(id), `${width}px ${id}: 검수 상태와 선택 상태 일치`);
+        // 2026-11-24: 2026-11-22 공개 등록으로 이 탐구의 모든 유형이 공개되었다(잠금 0).
+        readyIds.add(id);
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), false, `${width}px ${id}: 공개 유형 선택 가능`);
         await row.scrollIntoViewIfNeeded();
         await row.click();
         const preview = page.locator("#typePreviewPopover");
@@ -61,12 +63,11 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
       }
       await page.locator("#typeSearchInput").fill("남은 양초의 길이로 지난 시간 구하기");
       const commonRow = page.locator('[data-preview-type-id="6-2-u2-e5-mission-5"]');
-      assert((await page.locator('[data-tree-unit="6-2-u2"]').innerText()).includes("1개 유형 생성 가능"), `${width}px: 공통 유형은 한 개로 집계`);
-      assert((await commonRow.innerText()).includes("공통 유형"), `${width}px: Mission 5는 중복 잠금이 아닌 공통 유형 안내`);
+      // 2026-11-24: 2026-11-22 공개 등록으로 Mission 5는 공통 유형 안내 대신 자기 원문 고정 풀로 출제된다. 원문 양초 수치가 미리보기에 나오는지 본다.
+      assert.equal(await commonRow.count(), 1, `${width}px: Mission 5 한 줄`);
       await commonRow.click();
       const commonPreview = page.locator("#typePreviewPopover:not([hidden])");
-      assert((await commonPreview.innerText()).includes("공통 유형 예시"), `${width}px: 공통 양초 문제 미리보기`);
-      assert((await commonPreview.innerText()).includes("10분에 0.24cm씩"), `${width}px: Mission 5의 공통 문항을 미리보기`);
+      assert((await commonPreview.innerText()).includes("10분에 0.24cm씩"), `${width}px: Mission 5 원문 양초 문항 미리보기`);
       if (outputDir && width !== 320) {
         await commonPreview.locator('[data-select-common-type="6-2-u2-e5-example-1"]').scrollIntoViewIfNeeded();
         await commonPreview.screenshot({ path: path.join(outputDir, `grade6-e5-common-preview-${width}.png`) });

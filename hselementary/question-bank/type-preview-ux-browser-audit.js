@@ -45,7 +45,7 @@ async function inspectPreview(page, viewportName) {
   const row = page.locator(`[data-preview-type-id="${targetTypeId}"]`);
   await row.scrollIntoViewIfNeeded();
   const selectedBefore = await page.locator("input[data-type-id]:checked").count();
-  await row.locator(".tree-type-preview-action").click();
+  await row.locator(".tree-type-copy").click() /* 2026-11-24: 미리보기 글자 버튼은 숨겨졌고(display:none) 줄의 글자 부분을 눌러 미리보기를 연다. */;
 
   const popover = page.locator("#typePreviewPopover");
   await popover.waitFor({ state: "visible" });

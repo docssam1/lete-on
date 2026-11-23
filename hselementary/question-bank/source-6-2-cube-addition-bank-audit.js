@@ -28,7 +28,7 @@ async function run(){
    if(relative.startsWith("..")||path.isAbsolute(relative)||!fs.existsSync(file)||!fs.statSync(file).isFile())return route.fulfill({status:404,body:"Not found"});
    const contentType={".js":"application/javascript",".html":"text/html; charset=utf-8",".css":"text/css",".png":"image/png",".woff2":"font/woff2"}[path.extname(file)]||"application/octet-stream";return route.fulfill({contentType,body:fs.readFileSync(file)});
   });
-  const loaded=()=>page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#worksheet img,#typePreviewPopover img')].map(img=>img.decode()));});
+  const loaded=()=>page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#worksheet img,#typePreviewPopover img,#solutionViewer img') /* 2026-11-24: 풀이 보기 창 그림도 다 읽힌 뒤 검사 */].map(img=>img.decode()));});
   async function check(mode,level){
    const selector=mode==="problem"?"#problemView .question-item":mode==="solution"?"#solutionView .solution-item":"#answerKeyView .answer-key-visuals>figure",items=await page.locator(selector).all();assert.equal(items.length,mixed?6:3);const own=[],foreign=[];
    for(const item of items){if(await item.locator("[data-cube-addition-context]").count()){const variant=await item.locator("[data-cube-addition-context]").first().evaluate(e=>Number(e.dataset.variant));assert.deepEqual(await inspect(item,variant,level,mode),[]);own.push(variant);}

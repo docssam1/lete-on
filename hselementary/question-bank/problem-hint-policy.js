@@ -855,11 +855,13 @@
     return removed;
   }
 
-  function dropEmpty(scope) {
-    for (const el of [...scope.querySelectorAll("p,span,div,li,small,strong,b,em")].reverse()) {
+  const DROP_TAGS = "p,span,div,li,small,strong,b,em";
+  function dropEmpty(scope, hadText) {
+    for (const el of [...scope.querySelectorAll(DROP_TAGS)].reverse()) {
       if (el.hidden || el.querySelector("svg,img,canvas,input,table,[hidden]")) continue;
-      // 2026-11-24: 쉼표·마침표만 든 요소(분수 사이 구분 쉼표, 소수점 등)는 내용이므로 남기고, 공백만 남은 요소만 지운다.
-      if (!el.textContent.trim()) el.remove();
+      // 2026-11-24: 정책이 글자를 지워 비게 된 요소만 지운다. 처음부터 글자가 없던 요소(그림 자료·검산 자료를 담은 data-* 요소 등)와
+      // 쉼표·마침표만 든 요소(분수 사이 구분 쉼표, 소수점 등)는 내용이므로 남긴다.
+      if (hadText.has(el) && !el.textContent.trim()) el.remove();
     }
   }
 
@@ -916,6 +918,7 @@
     const template = document.createElement("template");
     template.innerHTML = prompt;
     const scope = template.content;
+    const hadText = new WeakSet([...scope.querySelectorAll(DROP_TAGS)].filter(el => el.textContent.trim()));
     let changed = applyDiagramRules(scope, typeId, difficulty);
     for (const el of scope.querySelectorAll("[class]")) {
       if ([...el.classList].some(name => /-hint$/.test(name))) { el.remove(); changed += 1; }
@@ -950,7 +953,7 @@
       else parent.insertBefore(board, next);
     }
     if (!changed) return prompt;
-    dropEmpty(scope);
+    dropEmpty(scope, hadText);
     const holder = document.createElement("div");
     holder.append(scope);
     return holder.innerHTML;
