@@ -1,3 +1,11 @@
+## 2026-11-24 — 6-1 소수 나눗셈·비와 비율 browser 감사 11개 정비 (Claude Code / Opus 5.5, Mac)
+
+- main(5b28c5114)에서도 실패하던 source-6-1-decimal-division-e1·e1-mission4·e2·e3·e4, source-6-1-ratio-e1~e6 browser 감사를 고쳐 모두 통과(Mac).
+  - 원인: 실제 주소 화면에서 problem-hint-policy.js가 문제 그림의 힌트 글자·안내를 지워 문제·답 그림 자료가 달라지거나 "3문항·그림 연결이 다르다"로 실패. 정책을 끄면 그대로 통과함을 확인 → 생성기 계약 감사로 보고 감사 서버가 정책을 끈다(HSE_KEEP_HINT_POLICY=1이면 켬). 정책 적용 결과는 전 유형 정책 전후 대조(물음 빠짐 0, 쉼표·마침표 손실 0)로 확인.
+  - e1·e1-mission4: playwright 경로를 HSE_PLAYWRIGHT_PATH로 받음. e1: 감사가 풀이 원문을 그대로 넣어 "1/10"이 슬래시로 보였을 뿐, 앱은 세로 분수로 보여 준다(실제 화면 확인) → 풀이 쪽 슬래시 검사 제외.
+  - ratio-e1: 11-22 공개로 잠금이 풀린 세 유형(exploration-1-1·1-2, example-1-1)이 출제되는지 확인하도록 바꿈(앞 PR에서 반영).
+- 2026-11-24 배포: PR #1501 병합 후 Pages 배포가 "No artifacts named github-pages-…" (산출물 1.08GB 업로드 직후 목록 반영 지연)로 세 번 실패, 네 번째 재실행에서 성공. 실제 사이트에서 새 힌트 정책·평행선 글자·four-up 그림 크기 반영 확인.
+
 ## 2026-11-24 — 풀이 A4 위아래 여백 빠짐 53곳 고침, 6학년 목록 감사 정비 (Claude Code / Opus 5.5, Mac)
 
 - 6학년 전체 목록 감사를 main(4fa888e30)에서 다시 돌렸다: source-inventory-audit, source-inventory-grade6-audit(633유형), public-inventory-review-reason(962유형), browser-source-release(전체 3006유형 생성 가능·검수 대기 0, 세 난이도 9018회 생성), grades-5-2-to-6(905), review-reason-gate, 52-locked-practice-gate 통과.
