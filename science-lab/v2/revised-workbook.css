@@ -504,3 +504,16 @@
  .bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panel{min-height:150px}
  .bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panel+.ed-drawing-panel{border-left:0;border-top:.25mm solid #8a9bb5}
 }
+
+/* Ground tasks keep the required short answers and distinct observation panels. */
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel{flex:1;min-width:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel+.ed-drawing-panel{border-left:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-question[data-question="s41-u03-w060"]>.ed-drawing{min-height:80mm}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panels{flex-direction:column;min-height:320px}
+ .bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel{min-height:150px}
+ .bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel+.ed-drawing-panel{border-left:0;border-top:.25mm solid #8a9bb5}
+}

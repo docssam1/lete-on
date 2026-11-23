@@ -1,3 +1,4 @@
+import{beforeGroundTask}from'./tests/ground-guided-stage.mjs';
 import{VOLCANO_REFERENCE_VERSION}from'../data/book/volcano-reference-context.js';
 import{LAND_OBSERVATION_CONTEXT_VERSION}from'../data/book/land-observation-context.js';
 import{questionAtVersion}from'./question-revision.js';
@@ -14,7 +15,7 @@ test('땅 전체225분 수업은 기존3D와 실제 관찰·화산 모형·분�
 });
 test('기존80짝·82보충·이전9확인과 전체16확인·실제 기록을 보존한다',()=>{
  assert.equal(items.length,82);assert.equal(similar.length,80);const old=[...new Set([...original.chapter.check,...original.chapter.formative.items])].map(find),full=[...records.chapter.formative.items,...records.chapter.check].map(find);const originals=[...old,...full];assert.deepEqual(mod.classroomItems.map(q=>q.id),originals.map(q=>q.id));
- const assertOriginal=(q,original)=>{if([LAND_OBSERVATION_CONTEXT_VERSION,VOLCANO_REFERENCE_VERSION].includes(q.contentVersion))q=questionAtVersion(q,q.previousVersions.at(-1).version);const restored=questionAtVersion(q,original.contentVersion||1);assert(restored);for(const key of Object.keys(original))assert.deepEqual(restored[key],original[key]);for(const key of Object.keys(q))if(!Object.hasOwn(original,key))assert(['contentVersion','previousVersions'].includes(key));};
+ const assertOriginal=(q,original)=>{q=beforeGroundTask(q);if([LAND_OBSERVATION_CONTEXT_VERSION,VOLCANO_REFERENCE_VERSION].includes(q.contentVersion))q=questionAtVersion(q,q.previousVersions.at(-1).version);const restored=questionAtVersion(q,original.contentVersion||1);assert(restored);for(const key of Object.keys(original))assert.deepEqual(restored[key],original[key]);for(const key of Object.keys(q))if(!Object.hasOwn(original,key))assert(['contentVersion','previousVersions'].includes(key));};
  mod.classroomItems.forEach((q,i)=>assertOriginal(q,originals[i]));for(const q of pool)assertOriginal(q,oldPool.find(x=>x.id===q.id));for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.notEqual(deckPredictionKey('s41-u03',mod.chapter),deckPredictionKey('s41-u03',original.chapter));assert.equal(mod.classroomLab.rowsKey,'groundCompareRows');
  const adapted=withOptionalClassroomRecords('s41-u03',lesson);assert.notEqual(adapted,lesson);assert.equal(lesson.explore.modelLab,undefined);assert.deepEqual(adapted.explore.modelLab,lesson.explore.lab);assert.equal(adapted.explore.records,lesson.explore.records);assert.equal(adapted.explore.records.rowsKey,'groundInquiryRows');assert.equal(adapted.explore.records.config,lesson.explore.records.config);assert.equal(adapted.explore.records.config.unit,'s41-u03');assert.equal(withOptionalClassroomRecords('s41-u03',adapted),adapted);assert.equal(withOptionalClassroomRecords('s41-u03',null),null);assert.equal(adapted.engage.scene,'hill-stream');
 });
