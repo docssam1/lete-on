@@ -1,10 +1,19 @@
 // Earlier wording/material regressions exercise their original stage. The new
-// writing regression separately verifies the current bank, classroom and paper.
+// writing and conservation regressions separately verify the current runtime.
 import {revisedClassroom} from '../revised-lesson.js';
+import {ECOLOGY_CONSERVATION_VERSION} from '../ecology-conservation-review.js';
 import {ECOLOGY_WRITING_VERSION} from '../ecology-writing-review.js';
 import {questionAtVersion} from '../question-revision.js';
 const previous=new WeakMap();
+export function beforeEcologyConservation(q){
+ if(q.contentVersion!==ECOLOGY_CONSERVATION_VERSION)return q;
+ if(previous.has(q))return previous.get(q);
+ const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);
+ if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;
+ previous.set(q,old);return old;
+}
 export function beforeEcologyWriting(q){
+ q=beforeEcologyConservation(q);
  if(q.contentVersion!==ECOLOGY_WRITING_VERSION)return q;
  if(previous.has(q))return previous.get(q);
  const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);

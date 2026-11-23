@@ -1,3 +1,5 @@
+import {beforeEcologyConservation} from './tests/ecology-writing-stage.mjs';
+import {withEcologyConservationWorkbook} from './ecology-conservation-review.js';
 import{buildSlides}from'./deck.js';
 import{deckQuestionSnapshot,deckSlideRecordKey}from'./deck-answer-state.js';
 import test from 'node:test';
@@ -23,7 +25,7 @@ const a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',
 const loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,entry).href)}).runInContext(vm.createContext({withThink}));
 const raw=await loaders[unit](),current=await reviewStudentModule(unit,raw);
 const priorBank=[...reviewQuestionRows(raw.similar,review),...reviewQuestionRows(raw.items,review)];
-const currentBank=[...current.similar,...current.items];
+const currentBank=[...current.similar,...current.items].map(beforeEcologyConservation);
 const base=reviewWorkbookTableText(reviewTextTree(withObservedPhotoAlt(withElementaryReadingDirections(workbook)),review.text),review);
 const priorBook=withEcologyGuidedWorkbook(base),ids=pages=>pages.flatMap(p=>p.blocks.flatMap(b=>b.ids||[]));
 const plain=x=>JSON.parse(JSON.stringify(x)),normalized=q=>({...q,contentVersion:questionVersion(q)});
@@ -34,7 +36,7 @@ test('eight authored explanations have short concrete tasks while every earlier 
  const judge=await loadJudge(unit);
  for(let i=0;i<priorBank.length;i++){
   const old=priorBank[i],now=currentBank[i];
-  if(now.contentVersion!==version){assert.equal(now,old);continue;}
+  if(now.contentVersion!==version){assert.deepEqual(now,old);assert.equal(ecologyWritingItems([old],unit)[0],old);continue;}
   assert.equal(now.sourceRef,old.sourceRef);assert.equal(now.taxonomy,old.taxonomy);assert.equal(now.responseContract,old.responseContract);
   assert.equal(now.answerContract.reviewRequired,true);assert(now.answerContract.rubric.required.length<=2);
   assert.deepEqual(now.previousVersions.slice(0,-1),old.previousVersions||[]);
@@ -71,7 +73,7 @@ test('the workbook preserves all other questions, data and science standards, wi
  assert.deepEqual(ids([correction]),[unit+'-w037',unit+'-w038']);
  assert(!correction.blocks.some(b=>b.type==='diagram'&&b.key==='ecoWeb'));
  for(const patch of[{unit:'other'},{pages:priorBook.pages.slice(1)},{teacherPages:priorBook.teacherPages.slice(1)},{figures:{...priorBook.figures,future:'new'}},{questions:priorBook.questions.map((q,i)=>i?q:{...q,future:true})}]){const input={...priorBook,...patch};assert.equal(withEcologyWritingWorkbook(input),input);}
- const reviewed=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));assert.deepEqual(reviewed,next);
+ const reviewed=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));assert.deepEqual(reviewed,withEcologyConservationWorkbook(next));
  const paper=await revisedTextbookPaper(unit),student=paper.workbookPaper({mode:'student'}),teacher=paper.workbookPaper({mode:'teacher'});
  for(const q of next.questions.filter(q=>q.guidedWriting)){
   const at=student.indexOf('data-question="'+q.id+'"'),end=student.indexOf('</li>',at),card=student.slice(at,end);
@@ -84,7 +86,7 @@ test('the workbook preserves all other questions, data and science standards, wi
 
 test('real classroom, web book and bank print use the same current revision without exposing solutions',async()=>{
  const mod=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,mod),cls=await revisedClassroom(unit,mod),pool=classroomQuestions(cls,currentBank);
- assert.equal(book.plan,mod.plan);assert.equal(book.workbook.pages.length,43);
+ assert.equal(book.plan,mod.plan);assert.equal(book.workbook.pages.length,45);
  assert.equal(cls.classroomItems.filter(q=>q.contentVersion===version).length,5);
  const slides=buildSlides(cls.chapter,cls.art,cls.plan,pool,'self');
  for(const q of cls.classroomItems.filter(q=>q.contentVersion===version)){const selected=slides.filter(s=>s.item===q.id);assert(selected.length);for(const slide of selected){assert.equal(slide.questionVersion,version);assert.deepEqual(deckQuestionSnapshot(slide,pool),q);assert(deckSlideRecordKey(cls.chapter,slide).includes(':version:'+version));}}
@@ -96,5 +98,5 @@ test('real classroom, web book and bank print use the same current revision with
   assert.equal((card.match(/eco-answer-line/g)||[]).length,2);
   assert(teacher.includes(q.explanation));
  }
- const paper=await revisedTextbookPaper(unit);for(const[mode,count]of Object.entries({student:43,teacher:71,answers:27,quick:5}))assert.equal((paper.workbookPaper({mode}).match(/<section class="bk-page /g)||[]).length,count);
+ const paper=await revisedTextbookPaper(unit);for(const[mode,count]of Object.entries({student:45,teacher:73,answers:27,quick:5}))assert.equal((paper.workbookPaper({mode}).match(/<section class="bk-page /g)||[]).length,count);
 });

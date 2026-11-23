@@ -42,14 +42,14 @@ export async function reviewStudentModule(unit,mod){
  const review=await reviewOf(unit);if(!review)return mod;
  const result={...mod};for(const k of ['items','source','similar'])if(mod[k])result[k]=reviewQuestionRows(mod[k],review);
  if(mod.bankPaper)result.bankPaper=args=>reviewPaperText(mod.bankPaper(args),args.mode==='student'?{...review,text:{...review.text,...review.studentHeaders}}:review);
- if(unit==='c22-s42-u02'){const{ecologyWritingItems}=await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing');for(const key of ['items','similar'])result[key]=ecologyWritingItems(result[key],unit);}
+ if(unit==='c22-s42-u02'){const{ecologyWritingItems}=await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing');const{ecologyConservationItems}=await import('./ecology-conservation-review.js?v=20261123-ecology-conservation');for(const key of ['items','similar'])result[key]=ecologyConservationItems(ecologyWritingItems(result[key],unit),unit);}
  if(unit==='c22-s52-u03'){const{weatherExampleItems}=await import('./weather-example-response.js?v=20261123-weather-example-response');result.items=weatherExampleItems(result.items,unit);}
  return result;
 }
 export async function reviewStudentWorkbook(unit,workbook){
  const review=await reviewOf(unit);
  const result=review?reviewWorkbookTableText(reviewTextTree(workbook,review.text),review):workbook;
- if(unit==='c22-s42-u02'){const guided=(await import('./ecology-guided-workbook.js?v=20261123-ecology-guided-workbook')).withEcologyGuidedWorkbook(result);return(await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing')).withEcologyWritingWorkbook(guided);}
+ if(unit==='c22-s42-u02'){const guided=(await import('./ecology-guided-workbook.js?v=20261123-ecology-guided-workbook')).withEcologyGuidedWorkbook(result);const written=(await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing')).withEcologyWritingWorkbook(guided);return(await import('./ecology-conservation-review.js?v=20261123-ecology-conservation')).withEcologyConservationWorkbook(written);}
  return unit==='c22-s52-u03'?(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result):result;
 }
 export async function reviewClassroomLanguage(unit,mod){const review=await reviewOf(unit);if(!review||!mod.classroomItems)return mod;const items=reviewQuestionRows(mod.classroomItems,review);return items===mod.classroomItems?mod:{...mod,classroomItems:items};}

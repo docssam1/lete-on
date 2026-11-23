@@ -46,7 +46,7 @@ test('actual web and all 128 print modes use the same reviewed directions and ke
   const currentPaper=makeWorkbookPaper(expected,art),previousPaper=makeWorkbookPaper(await reviewStudentWorkbook(unit,withObservedPhotoAlt(before)),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});assert.equal(html,currentPaper.workbookPaper({mode}),unit+' '+mode);
-   if((['answers','quick'].includes(mode)||!ELEMENTARY_DIRECTIONS_UNITS.includes(unit))&&!(unit==='c22-s42-u02'&&mode==='answers'))assert.equal(html,previousPaper.workbookPaper({mode}));
+   if((['answers','quick'].includes(mode)||!ELEMENTARY_DIRECTIONS_UNITS.includes(unit))&&!(unit==='c22-s42-u02'&&['answers','quick'].includes(mode)))assert.equal(html,previousPaper.workbookPaper({mode}));
    if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
  }

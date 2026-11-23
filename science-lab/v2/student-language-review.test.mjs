@@ -15,7 +15,7 @@ test('all 32 units and every registered assessment retain source questions, keys
   for(const field of ['items','source','similar'])for(let i=0;i<(before[field]||[]).length;i++){
    const old=before[field][i],q=after[field][i];assert.equal(q.id,old.id);if(q.id==='c22-s52-u03-b050'){assert.equal(q.answerContract.answer,'예시 자료');for(const a of old.answerContract.accepted)assert(q.answerContract.accepted.includes(a));}else assert.deepEqual(beforeEcologyWriting(q).answerContract,old.answerContract);assert.deepEqual(q.responseContract,old.responseContract);assert.deepEqual(q.sourceRef,old.sourceRef);assert.deepEqual(q.taxonomy,old.taxonomy);
    if(old.sourceRef.type==='original'){assert.equal(q,old);sources++;}
-   if(q===old)continue;changed++;assert.equal(q.contentVersion,q.id==='c22-s52-u03-b050'?'20261123-weather-example-response':q.guidedWriting?'20261123-ecology-guided-writing':version);assert.deepEqual(plain(questionMisconceptions(q,before.misc)),plain(questionMisconceptions(old,before.misc)));
+   if(q===old)continue;changed++;assert.equal(q.contentVersion,q.id==='c22-s52-u03-b050'?'20261123-weather-example-response':['c22-s42-u02-b43','c22-s42-u02-b53','c22-s42-u02-b78'].includes(q.id)?'20261123-ecology-conservation':q.guidedWriting?'20261123-ecology-guided-writing':version);assert.deepEqual(plain(questionMisconceptions(beforeEcologyWriting(q),before.misc)),plain(questionMisconceptions(old,before.misc)));
    const restored=questionAtVersion(q,questionVersion(old));assert.deepEqual(restored,{...plain(old),contentVersion:questionVersion(old)});
    const value=old.answerContract.answers??old.answerContract.sample??old.answerContract.answer;
    for(const response of [value,''])assert.equal(gradeDaily(q,response,{misc:before.misc}).status,gradeDaily(old,response,{misc:before.misc}).status,unit+' '+q.id);
@@ -26,7 +26,7 @@ test('all 32 units and every registered assessment retain source questions, keys
  assert(changed>250);assert(sources>=1763);
 });
 
-test('wording-only reviews retain 3080 question contracts while the separately revised ecology explanations share their new samples',async()=>{
+test('wording-only reviews retain 3080 question contracts with explicitly separate ecology writing and conservation revisions',async()=>{
  let questions=0,changedBooks=0,tables=0;const tableUnits=new Set();
  for(const unit of ids){const {workbook:raw}=await import('../data/book/'+unit+'.workbook.js'),before=withObservedPhotoAlt(withElementaryReadingDirections(raw)),saved=plain(before),after=await reviewStudentWorkbook(unit,before);questions+=before.questions.length;if(after!==before)changedBooks++;
   const review=(await import('../data/language/'+unit+'.js')).review;
@@ -38,7 +38,7 @@ test('wording-only reviews retain 3080 question contracts while the separately r
    assert.equal(next,reviewPaperText(html,review));assert.deepEqual(next.match(/<[^>]*>/g),html.match(/<[^>]*>/g));assert.deepEqual(next.match(/\d+(?:\.\d+)?/g),html.match(/\d+(?:\.\d+)?/g));tables++;tableUnits.add(unit);
   }
   assert.equal(after.questions.length,before.questions.length);
-  for(let i=0;i<before.questions.length;i++){const q=before.questions[i],n=after.questions[i];for(const k of ['id','answer','accepted','answerContract','responseContract','sourceRef','taxonomy','figure','no','section','standard'])if(q.id==='c22-s52-u03-w050'&&k==='answer')assert.equal(n[k],'예시 자료');else if(q.id==='c22-s52-u03-w050'&&k==='accepted'){for(const a of q[k])assert(n[k].includes(a));}else if(n.guidedWriting&&k==='answer')assert.equal(n.answer,n.sourceContract.sample);else if(n.guidedWriting&&k==='figure'&&q.no===39)assert.equal(n.figure,undefined);else assert.deepEqual(n[k],q[k],unit+' '+q.id+' '+k);}
+  for(let i=0;i<before.questions.length;i++){const q=before.questions[i],n=after.questions[i];for(const k of ['id','answer','accepted','answerContract','responseContract','sourceRef','taxonomy','figure','no','section','standard'])if(q.id==='c22-s52-u03-w050'&&k==='answer')assert.equal(n[k],'예시 자료');else if(q.id==='c22-s52-u03-w050'&&k==='accepted'){for(const a of q[k])assert(n[k].includes(a));}else if(n.conservationReviewed&&k==='answer'){assert(n.answer.length>0);assert([61,62,63,68,70,71,73,74,75,76,77,78,79,80].includes(n.no));}else if(n.guidedWriting&&k==='answer')assert.equal(n.answer,n.sourceContract.sample);else if(n.guidedWriting&&k==='figure'&&q.no===39)assert.equal(n.figure,undefined);else assert.deepEqual(n[k],q[k],unit+' '+q.id+' '+k);}
   assert.deepEqual(plain(before),saved);assert.deepEqual(await reviewStudentWorkbook(unit,after),after);
  }
  assert.equal(questions,3080);assert(changedBooks>=20);assert.equal(tables,47);assert.deepEqual([...tableUnits],['c22-s61-u04','c22-s62-u01','c22-s62-u04']);
