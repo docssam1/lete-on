@@ -114,9 +114,9 @@ function figM6(h,m){const C=[180,130],R=112,b=[];
 // ── 문항별 풀 ──
 const exp1=r=>{const h2=r*r; // 정십이각형 넓이 = 3r², 정사각형 = 4r²
  const hTxt=FR(r,2),tri=FR(r*r,4);
- return {prompt:`<p>아래 왼쪽은 반지름이 ${r} cm인 원의 안쪽에 꼭 맞게 정십이각형을 그린 것이고, 오른쪽은 같은 원의 바깥쪽에 꼭 맞게 정사각형을 그린 것입니다. 그림을 보고 반지름이 ${r} cm인 원의 넓이가 ${3*h2} cm²보다 크고 ${4*h2} cm²보다 작은 까닭을 설명하시오.</p>`+figExp1(),
+ return {prompt:`<p>다음 그림을 보고 반지름의 길이가 ${r} cm인 원의 넓이는 ${3*h2} cm²보다 크고 ${4*h2} cm²보다 작음을 설명하시오.</p>`+figExp1(),
  answer:`원 안의 정십이각형 넓이(${3*h2} cm²)보다 크고 원 밖의 정사각형 넓이(${4*h2} cm²)보다 작기 때문`,
- solution:`<ol><li>원의 중심과 정십이각형의 꼭짓점을 이으면 똑같은 삼각형 12개가 생깁니다. 각 삼각형은 두 변이 반지름 ${r} cm이고, 그 사이의 각이 360°÷12=30°입니다.</li>`+
+ solution:`<ol><li>풀이 기준: 왼쪽 그림은 원의 안쪽에 꼭 맞게 그린 정십이각형, 오른쪽 그림은 원의 바깥쪽에 꼭 맞게 그린 정사각형으로 봅니다.</li><li>원의 중심과 정십이각형의 꼭짓점을 이으면 똑같은 삼각형 12개가 생깁니다. 각 삼각형은 두 변이 반지름 ${r} cm이고, 그 사이의 각이 360°÷12=30°입니다.</li>`+
  `<li>삼각형 하나를 한 반지름(밑변)을 접는 선으로 하여 뒤집어 붙이면, 원의 중심과 두 바깥 꼭짓점을 이은 삼각형은 두 변이 ${r} cm이고 사이의 각이 30°+30°=60°이므로 한 변이 ${r} cm인 정삼각형입니다. 밑변으로 잡은 반지름에 대한 높이는 이 정삼각형의 한 변을 반으로 나눈 길이이므로 ${r}÷2=${hTxt} (cm)입니다.</li>`+
  `<li>삼각형 한 개의 넓이는 ${r}×${hTxt}÷2=${tri} (cm²)이고, 정십이각형의 넓이는 ${tri}×12=${3*h2} (cm²)입니다.</li>`+
  `<li>원 밖의 정사각형은 한 변이 원의 지름 ${2*r} cm이므로 넓이는 ${2*r}×${2*r}=${4*h2} (cm²)입니다.</li>`+
@@ -149,7 +149,7 @@ const ex4=(sh,lo)=>{const Lh=lo*lo*2200/7,Sh=sh*sh*2200/84; // 백분의 일 단
  `<li>긴바늘이 지나간 넓이는 ${lo}×${lo}×${ff(22,7)}=${H(Lh)} (cm²)입니다.</li>`+
  `<li>짧은바늘이 지나간 넓이는 ${sh}×${sh}×${ff(22,7)}×${ff(1,12)}=${H(Sh)} (cm²)입니다.</li>`+
  `<li>두 넓이의 차는 ${H(Lh)}−${H(Sh)}=${H(Lh-Sh)} (cm²)입니다.</li></ol>`};};
-const m1=(tout,tin)=>({prompt:`<p>그림에서 원 안의 정육각형과 원 밖의 정육각형의 넓이를 이용하여 원의 넓이를 어림하려고 합니다. 삼각형 ㄱㅇㄷ의 넓이가 ${tout} cm²이고 삼각형 ㄹㅇㅂ의 넓이가 ${tin} cm²라면, 원의 넓이는 몇 cm² 초과 몇 cm² 미만입니까?</p>`+figHex('plain'),
+const m1=(tout,tin)=>({prompt:`<p>그림에서 원 안의 정육각형과 원 밖의 정육각형의 넓이를 이용하여 원의 넓이를 어림하여 보려고 합니다. 삼각형 ㄱㅇㄷ의 넓이가 ${tout} cm²이고 삼각형 ㄹㅇㅂ의 넓이가 ${tin} cm²라면, 원의 넓이는 몇 cm² 초과 몇 cm² 미만입니까?</p>`+figHex('plain'),
  answer:`${tin*6} cm² 초과 ${tout*6} cm² 미만`,
  solution:`<ol><li>원 안의 정육각형은 삼각형 ㄹㅇㅂ과 똑같은 삼각형 6개로 나뉘므로 넓이는 ${tin}×6=${tin*6} (cm²)입니다.</li><li>원 밖의 정육각형은 삼각형 ㄱㅇㄷ과 똑같은 삼각형 6개로 나뉘므로 넓이는 ${tout}×6=${tout*6} (cm²)입니다.</li><li>원의 넓이는 두 정육각형의 넓이 사이에 있으므로 ${tin*6} cm² 초과 ${tout*6} cm² 미만입니다.</li></ol>`});
 const m2=(o,i)=>{const big=o*o*314/3,sm=i*i*314/3;
@@ -194,7 +194,7 @@ const ITEMS={
  '6-2-u5-e2-example-2':{key:'source62U5E2Example2',resultContract:'single-value',answerVisualRequired:false,pool:[ex2(15,10),ex2(11,7),ex2(12,9)]},
  '6-2-u5-e2-example-3':{key:'source62U5E2Example3',resultContract:'single-value',answerVisualRequired:false,pool:[ex3(3,1,2,0),ex3(4,1,3,1),ex3(5,2,3,2)]},
  '6-2-u5-e2-example-4':{key:'source62U5E2Example4',resultContract:'single-value',answerVisualRequired:false,pool:[ex4(21,35),ex4(21,28),ex4(42,49)]},
- '6-2-u5-e2-mission-1':{key:'source62U5E2Mission1',resultContract:'open-range',answerVisualRequired:false,pool:[m1(40,30),m1(48,36),m1(20,15)]},
+ '6-2-u5-e2-mission-1':{key:'source62U5E2Mission1',resultContract:'open-range',answerVisualRequired:false,pool:[m1(40,25),m1(48,36),m1(20,15)]},
  '6-2-u5-e2-mission-2':{key:'source62U5E2Mission2',resultContract:'single-value',answerVisualRequired:false,pool:[m2(6,3),m2(9,6),m2(12,3)]},
  '6-2-u5-e2-mission-3':{key:'source62U5E2Mission3',resultContract:'single-value',answerVisualRequired:false,pool:[m3(6),m3(12),m3(18)]},
  '6-2-u5-e2-mission-4':{key:'source62U5E2Mission4',resultContract:'single-value',answerVisualRequired:false,pool:[m4(314),m4(310),m4(300)]},
