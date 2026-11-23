@@ -1,3 +1,6 @@
+import{reviewStudentWorkbook,reviewStudentModule}from'./student-language-review.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{SKY_RESPONSE_VERSION as version,skyResponseItems,withSkyResponseWorkbook}from'../data/book/sky-response-review.js';
 import{withThink,loadJudge}from'./think-merge.js';import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';import{classify}from'./progress.js';
@@ -29,8 +32,8 @@ test('future and original questions retain their data, and only five reviewed wo
 
 test('current workbook, bank and classroom routes display the same criterion and identify the bowl pointer stars without exposing student answers',async()=>{
  const raw=await import('../data/book/'+unit+'.book.js'),cls=await revisedClassroom(unit,raw),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit);
- assert.deepEqual(pool.find(q=>q.id===current.id),current);const selected=cls.classroomItems.find(q=>q.id===current.id);if(selected)assert.deepEqual(selected,current);
- const pointer=workbook.questions.find(q=>q.no===79);assert(pointer.prompt.includes('국자 그릇 바깥쪽 두 별'));assert(pointer.answer.includes('국자 입구 쪽'));
- for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){assert(html.includes(esc(pointer.prompt)));if(mode==='student'){assert(!html.includes('class="ed-key"'));assert(!html.includes(esc(workbook.questions.find(q=>q.no===55).criteria)));}else{assert(html.includes(esc(pointer.criteria)));assert(html.includes(esc(workbook.questions.find(q=>q.no===17).criteria)));}}
+ const reviewed=await reviewStudentModule(unit,mod),present=reviewed.items.find(q=>q.id===current.id),now=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));assert.deepEqual(pool.find(q=>q.id===current.id),present);const selected=cls.classroomItems.find(q=>q.id===current.id);if(selected)assert.deepEqual(selected,present);
+ const pointer=now.questions.find(q=>q.no===79);assert(pointer.prompt.includes('국자 그릇의 바깥쪽 두 별'));assert(pointer.answer.includes('국자 입구 쪽'));
+ for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){assert(html.includes(esc(pointer.prompt)));if(mode==='student'){assert(!html.includes('class="ed-key"'));assert(!html.includes(esc(now.questions.find(q=>q.no===55).criteria)));}else{assert(html.includes(esc(pointer.criteria)));assert(html.includes(esc(now.questions.find(q=>q.no===17).criteria)));}}
  for(const text of[code,fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8')])assert(text.includes('&sky='+version));assert(fs.readFileSync(new URL('./index.html',import.meta.url),'utf8').includes('&skyResponse='+version));
 });

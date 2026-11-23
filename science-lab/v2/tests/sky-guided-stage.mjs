@@ -1,0 +1,4 @@
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{SKY_GUIDED_VERSION}from'../sky-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([11,17,27,28,38,40,55,56,65,67,79,80]);
+export function beforeSkyTask(q){if(q.contentVersion!==SKY_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function skyUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="c22-s42-u01-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,80);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,68);return kept;}
