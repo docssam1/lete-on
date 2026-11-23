@@ -1,16 +1,23 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {learnerComparisonMaterial,learnerComparisonValues,withComparisonLearnerCues} from './comparison-material-language.js';
 import {host} from './tests/comparison-widget-cases.mjs';import {mountGroundCompare} from './lab-ground-compare.js';
+import {mountCareerCompare} from './lab-career-compare.js';
 import {revisedClassroom,classroomTableData} from './revised-lesson.js';
-const specs=[['water','tube','WATER_CASE_IDS','waterCase','waterCompareRecord','validWaterCompareRow','waterCompareValues','waterComparisonProgress','s41-u02'],['magnet','design','MAGNET_CASE_IDS','magnetCase','magnetCompareRecord','validMagnetCompareRow','magnetCompareValues','magnetComparisonProgress','s41-u01'],['ground','practice','GROUND_CASE_IDS','groundCase','groundCompareRecord','validGroundCompareRow','groundCompareValues','groundComparisonProgress','s41-u03'],['combustion','ecosystem','COMBUSTION_CASE_IDS','combustionCase','combustionCompareRecord','validCombustionCompareRow','combustionCompareValues','combustionComparisonProgress','c22-s62-u02']];
+const specs=[['water','tube','WATER_CASE_IDS','waterCase','waterCompareRecord','validWaterCompareRow','waterCompareValues','waterComparisonProgress','s41-u02'],['magnet','design','MAGNET_CASE_IDS','magnetCase','magnetCompareRecord','validMagnetCompareRow','magnetCompareValues','magnetComparisonProgress','s41-u01'],['ground','practice','GROUND_CASE_IDS','groundCase','groundCompareRecord','validGroundCompareRow','groundCompareValues','groundComparisonProgress','s41-u03'],['combustion','ecosystem','COMBUSTION_CASE_IDS','combustionCase','combustionCompareRecord','validCombustionCompareRow','combustionCompareValues','combustionComparisonProgress','c22-s62-u02'],['career','current','CAREER_CASE_IDS','careerCase','careerCompareRecord','validCareerCompareRow','careerCompareValues','careerComparisonProgress','c22-s62-u04']];
 const models=await Promise.all(specs.map(([name])=>import('./'+name+'-compare-model.js')));
-test('plain comparison materials keep all 124 original record variants, option keys, numeric rows and progress rules',()=>{
+test('career comparison uses the reviewed table wording without changing existing stored material',async()=>{
+ const m=await import('./career-compare-model.js'),raw=m.careerCase('current'),saved=m.careerCompareRecord('current','station'),h=host();const handle=mountCareerCompare(h,{rows:[saved]});
+ assert(h.innerHTML.includes('시청의 자료(예시, 2025년)'));assert(!h.innerHTML.includes('가상 시 자료팀'));assert(!h.innerHTML.includes('교재의 가상 자료 카드'));
+ assert.deepEqual(handle.rows,[saved]);assert(m.validCareerCompareRow(saved));assert(raw.rows[0][1].includes('가상 시 자료팀'));handle.dispose();
+});
+test('plain comparison materials keep all 156 original record variants, option keys, numeric rows and progress rules',()=>{
  let variants=0;
  for(const [at,[name,target,ids,get,record,valid,values,progress]]of specs.entries()){
   const m=models[at],kind=name+'-compare',originals=m[ids].map(m[get]);
   for(const id of m[ids]){
    const raw=m[get](id),display=learnerComparisonMaterial(kind,id,raw);assert.deepEqual(Object.keys(display),Object.keys(raw));assert.deepEqual(Object.keys(display.options),Object.keys(raw.options));assert.equal(display.figureKey,raw.figureKey);assert.deepEqual(display.rows.map(r=>r.length),raw.rows.map(r=>r.length));
-   if(name!=='ground'||id!==target)assert.deepEqual(display.rows,raw.rows);
+   if((name!=='ground'||id!==target)&&name!=='career')assert.deepEqual(display.rows,raw.rows);
+   if(name==='career'){assert.deepEqual(JSON.stringify(display.rows).match(/\d+(?:\.\d+)?/g),JSON.stringify(raw.rows).match(/\d+(?:\.\d+)?/g));assert(!/가상|연습/.test(display.conditions));}
    for(const key of Object.keys(raw.options)){
     const row=m[record](id,key),saved=structuredClone(row),oldValues=m[values](row);assert(m[valid](row));assert.deepEqual(learnerComparisonValues(kind,row,m[valid]),[display.label,display.options[key],display.reason]);assert.deepEqual(m[values](row),oldValues);assert.deepEqual(row,saved);variants++;
    }
@@ -18,7 +25,7 @@ test('plain comparison materials keep all 124 original record variants, option k
   assert.deepEqual(m[ids].map(m[get]),originals);assert(m[progress](m[ids].map(id=>m[record](id,'unknown'))).complete);
   const bad=m[record](target,'unknown');bad.material.rows[0][1]='바뀐 값';assert(!m[valid](bad));assert.throws(()=>learnerComparisonValues(kind,bad,m[valid]));assert.throws(()=>learnerComparisonValues('other-compare',m[record](target,'unknown'),m[valid]));
  }
- assert.equal(variants,124);
+ assert.equal(variants,156);
 });
 test('future values, options and fields stay untouched and display mutation cannot change the raw input',()=>{
  for(const [at,[name,id,,get]]of specs.entries()){
