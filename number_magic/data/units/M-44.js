@@ -83,9 +83,9 @@ window.NM_UNITS['M-44'] = {
     generator:'md44_derivative', level:'main', count:4,
     params:{mode:'polyPrime',cubic:true},
     intro:{
-      ko:'이번엔 삼차함수! 각 항에 규칙을 하나씩 따로 적용해봐(3다칸).',
-      en:'A cubic function this time! Apply the rule term by term (3 slots).',
-      zh:'这次是三次函数！逐项分别应用法则(3格)。'
+      ko:'이번엔 삼차함수! 각 항에 규칙을 하나씩 따로 적용해봐.',
+      en:'A cubic function this time! Apply the rule term by term.',
+      zh:'这次是三次函数！逐项分别应用法则。'
     }
   },
 

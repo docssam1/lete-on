@@ -120,7 +120,7 @@
 <script src="engine/threads/mid21.js"></script>
 <script src="engine/threads/mid22.js"></script>
 <script src="engine/threads/mid23.js"></script>
-<script src="data/threads.js?v=20261118-decform"></script>
+<script src="data/threads.js?v=20261123-noslot"></script>
 <script src="data/g1/1-3-threads.js"></script>
 <script src="data/g1/4-6-threads.js"></script>
 <script src="data/g1/7-9-threads.js"></script>
@@ -276,7 +276,7 @@
     (s.drills || []).concat(s.creative || []).forEach(function(d){ var th = d && NM_THREADS[d.t]; if(th && th.unit) unitIds[th.unit] = 1; });
   });});
   var loads = Object.keys(unitIds).filter(function(id){ return /^[A-Za-z0-9-]+$/.test(id) && !(window.NM_UNITS && NM_UNITS[id]); }).map(function(id){
-    return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js?v=20261122-swap';
+    return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js?v=20261123-noslot';
       sc.onload = sc.onerror = function(){ res(); }; document.head.appendChild(sc); });
   });
   Promise.all(loads).then(build);

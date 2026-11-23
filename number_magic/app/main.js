@@ -5840,7 +5840,7 @@ const START_BOOKS=[['miracle','기적의 계산법','Miracle Calculation','奇�
 let startChoice={open:false,book:'',step:''};
 function loadConsultLadder(done){
   if(window.NM_CONSULT_LADDER)return done();
-  const el=document.createElement('script');el.src='data/consult-ladder.js?v=20261118-session1';el.onload=done;el.onerror=done;document.head.appendChild(el);
+  const el=document.createElement('script');el.src='data/consult-ladder.js?v=20261123-noslot';el.onload=done;el.onerror=done;document.head.appendChild(el);
 }
 function bookStartCourse(book,stepId){
   const LD=window.NM_CONSULT_LADDER||{},steps=(LD.ladders||{})[book]||[],i=steps.findIndex(x=>x.id===stepId);if(i<0)return null;
