@@ -87,8 +87,9 @@ const cases = [
   }
 ];
 
-const agreeLabels = ["일자리가 생기므로", "관광 수요 증가", "지역의 성장", "기타"];
-const opposeLabels = ["공사 중 공해 발생", "환경 훼손 염려", "교통 체증", "기타"];
+// 2026-11-23 원본 책 대조: 원문 그림의 항목 이름
+const agreeLabels = ["일자리가 생기므로", "관광 수입 증가", "지역의 상징", "기타"];
+const opposeLabels = ["공사 중 공해 발생", "경기 중 소음 발생", "교통 체증", "기타"];
 const academyLabels = ["미술 학원", "피아노 학원", "발레 학원", "기타"];
 const sum = values => values.reduce((total, value) => total + value, 0);
 const segment = (title, labels, values) => ({ title, labels, values });
@@ -112,11 +113,11 @@ function expectedAnswer(variant, data) {
   if (variant === 3) {
     const counts = data.maleRates.map((_, index) => data.total * (data.male * data.maleRates[index] + data.female * data.femaleRates[index]) / 10000);
     const largest = Math.max(...counts);
-    return ["피아노", "미술", "태권도"][counts.indexOf(largest)] + ", " + largest.toLocaleString("ko-KR") + "명";
+    return ["피아노", "미술", "태권도"][counts.indexOf(largest)]; // 원문 물음: 어느 학원인지
   }
   if (variant === 4) {
     const after = [data.before[0] / 2, data.before[1], data.before[2] + data.before[0] / 2, data.before[3], data.before[4]];
-    return ["소설", "참고서", "위인전", "시집", "기타"].map((name, index) => name + after[index] + "%").join(", ");
+    return ["소설", "참고서", "위인전", "시집", "기타"].map((name, index) => name + " " + after[index] + "%").join(", ");
   }
   if (variant === 5) return percent(data.gender[1] * data.academies[1] / 100);
   if (variant === 6) return String(data.count * 10000 / (data.gifts[2] * data.toys[1])) + "명";
@@ -132,12 +133,13 @@ function expectedVisuals(variant, data) {
     return { problem: graphs, answer: graphs };
   }
   if (variant === 1) {
+    const problem = [segment("찬반 여부", ["찬성", "반대"], [data.agree, data.oppose]), segment("찬성 이유", agreeLabels, data.agreeReasons), segment("반대 이유", opposeLabels, data.opposeReasons)];
     const before = [segment("이동 전 찬반 여부", ["찬성", "반대"], [data.agree, data.oppose]), segment("이동 전 찬성 이유", agreeLabels, data.agreeReasons), segment("이동 전 반대 이유", opposeLabels, data.opposeReasons)];
     const moved = data.total * data.oppose * data.opposeReasons[2] / 10000;
     const oldOther = data.total * data.agree * data.agreeReasons[3] / 10000;
     const newAgree = data.total * data.agree / 100 + moved;
     const otherRate = (oldOther + moved) * 100 / newAgree;
-    return { problem: before, answer: [...before, segment("바뀐 뒤 찬반 여부", ["찬성", "반대"], [newAgree * 100 / data.total, 100 - newAgree * 100 / data.total]), segment("바뀐 뒤 찬성 이유", ["기타", "기타 외"], [otherRate, 100 - otherRate])] };
+    return { problem, answer: [...before, segment("바뀐 뒤 찬반 여부", ["찬성", "반대"], [newAgree * 100 / data.total, 100 - newAgree * 100 / data.total]), segment("바뀐 뒤 찬성 이유", ["기타", "기타 외"], [otherRate, 100 - otherRate])] };
   }
   if (variant === 2) {
     const graphs = [segment("우리나라 성씨별 사람 수", ["김씨", "이씨", "박씨", "기타"], data.surname), segment("김씨의 본관별 사람 수", ["김해 김씨", "경주 김씨", "광산 김씨", "기타"], data.branches)];
@@ -153,7 +155,7 @@ function expectedVisuals(variant, data) {
     return { problem: [segment("1학기 학급 문고의 종류별 권수", labels, data.before), segment("2학기 학급 문고의 종류별 권수", [], [])], answer: [segment("1학기 학급 문고의 종류별 권수", labels, data.before), segment("2학기 학급 문고의 종류별 권수", labels, after)] };
   }
   if (variant === 5) {
-    const graphs = [segment("남녀의 수", ["남학생", "여학생"], data.gender), segment("여학생이 다니고 싶은 학원별 학생 수", academyLabels, data.academies)];
+    const graphs = [segment("남녀의 수", ["남자", "여자"], data.gender), segment("여학생이 다니고 싶은 학원별 학생 수", academyLabels, data.academies)];
     return { problem: graphs, answer: graphs };
   }
   if (variant === 6) {
@@ -239,7 +241,7 @@ function inspectCase(variant, data, generated, pool, difficulty) {
 
   if (variant <= 1) {
     [...agreeLabels, ...opposeLabels].forEach(name => check(generated.prompt.includes(name), `${label}: 원문 항목명 누락 ${name}`));
-    ["일자리 창출·인구 증가", "공공시설 증가", "지역 경제 활성", "공사 중 소음 발생", "환경 오염"].forEach(name => check(!generated.prompt.includes(name), `${label}: 대체 표현 잔존 ${name}`));
+    ["일자리 창출·인구 증가", "공공시설 증가", "지역 경제 활성", "공사 중 소음 발생", "환경 오염", "관광 수요 증가", "지역의 성장", "환경 훼손 염려", "정책에 대한 찬반"].forEach(name => check(!generated.prompt.includes(name), `${label}: 대체 표현 잔존 ${name}`));
   }
   if (variant === 1) {
     const moved = data.total * data.oppose * data.opposeReasons[2] / 10000;
@@ -258,13 +260,30 @@ function inspectCase(variant, data, generated, pool, difficulty) {
   if (variant === 7) {
     const model = scoreModel(data);
     check(new Set(model.rows.map(row => row.score)).size === 6, `${label}: 점수 열 중복`);
-    const knownScores = [0, data.points[0], data.points[0] + data.points[1]];
-    const expectedProblemRows = [["점수", "학생 수"], ...model.rows.map(row => [`${row.score}점`, knownScores.includes(row.score) ? String(row.count) : "□"])];
-    const expectedAnswerRows = [["점수", "학생 수"], ...model.rows.map(row => [`${row.score}점`, String(row.count)])];
+    // 원문 표(가로): 점수 0, 6, 8, 12, ㉮, ㉯, 합계 / 학생 수 8, 8, ㉰, 12, ㉱, ㉲, 80
+    const expectedProblemRows = [["점수", ...model.rows.map((row, index) => index < 4 ? String(row.score) : ["㉮", "㉯"][index - 4]), "합계"], ["학생 수", ...model.rows.map((row, index) => [2, 4, 5].includes(index) ? ({ 2: "㉰", 4: "㉱", 5: "㉲" })[index] : String(row.count)), String(data.total)]];
+    const expectedAnswerRows = [["점수", ...model.rows.map(row => String(row.score)), "합계"], ["학생 수", ...model.rows.map(row => String(row.count)), String(data.total)]];
     const problemTables = extractTables(generated.prompt);
     check(problemTables.length === 1 && JSON.stringify(problemTables[0].rows) === JSON.stringify(expectedProblemRows), `${label}: 문제 표 셀 자료 불일치`);
     check(answerTables.length === 1 && JSON.stringify(answerTables[0].rows) === JSON.stringify(expectedAnswerRows), `${label}: 답 표 셀 자료 불일치`);
     check(close(model.rows.reduce((total, row) => total + row.score * row.count, 0) / data.total, model.average), `${label}: 가중합 평균 재검산 실패`);
+  }
+  if (pool === 0 && difficulty === 0) {
+    const bookStems = [
+      "다음은 어느 지역에 경기장을 세우기 위해 지역 주민 5000명을 대상으로 설문 조사를 한 결과를 나타낸 그래프입니다. 가장 많은 사람들이 찬성한 이유는 가장 많은 사람들이 반대한 이유보다 몇 명이 더 많습니까?",
+      "다음은 어느 지역에 경기장을 세우기 위해 지역 주민 5000명을 대상으로 설문 조사를 한 결과를 나타낸 그래프입니다. 도로를 늘릴 계획을 발표했더니 교통 체증 때문에 반대를 했던 사람들이 모두 찬성 중 기타의 이유로 돌아섰다면 찬성 중 기타의 비율은 몇 %가 되겠습니까?",
+      null,
+      "(단, 학생들은 학원을 한 곳씩만 다닙니다.)",
+      "(단, 1학기와 2학기의 학급 문고의 수는 같습니다.)",
+      "피아노 학원에 다니고 싶은 여학생은 전체의 몇 %인지 구하세요.",
+      null,
+      "80명의 학생이 3문제의 시험을 보고 난 후 평균 점수를 구하려고 합니다.",
+      null
+    ];
+    if (bookStems[variant]) check(generated.prompt.split("<svg")[0].includes(bookStems[variant]), `${label}: 원문 문장과 다릅니다.`);
+    const bookAnswers = ["730명", "18.75%", null, "태권도", "소설 15%, 참고서 25%, 위인전 35%, 시집 15%, 기타 10%", "11.4%", null, "12.1점", null];
+    if (bookAnswers[variant]) check(generated.answer === bookAnswers[variant], `${label}: 원문 답 ${bookAnswers[variant]}과 다릅니다(${generated.answer}).`);
+    if (variant === 5) check(!/source61-e4-legend-value[^>]*>38%</.test(generated.prompt) && !/source61-e4-sector-value[^>]*>38%</.test(generated.prompt), `${label}: 원문에 없는 여자 비율 38%가 문제에 보입니다.`);
   }
   if (variant === 8 && pool === 0) {
     const femaleTotal = data.femaleItem * 100 / data.femaleRate;

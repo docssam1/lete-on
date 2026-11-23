@@ -67,7 +67,8 @@ for (const [index, reviewed] of review.missions.entries()) {
   assert.equal(original.sourceVerified, true);
   assert.equal(inventoryType.problemVisualRequired, false, `${id}: 원문은 그림 없는 서술형`);
   assert.equal(inventoryType.answerVisualRequired, true);
-  const publicCandidate = reviewed.downstreamCandidateVerification?.publicReleaseStatus === "verified-as-adaptation"
+  const publicCandidate = reviewed.sourceRestoration?.publicReleaseStatus === "verified-as-source" ? reviewed.sourceRestoration
+    : reviewed.downstreamCandidateVerification?.publicReleaseStatus === "verified-as-adaptation"
     ? reviewed.downstreamCandidateVerification
     : reviewed.candidateVerification?.publicReleaseStatus === "verified" ? reviewed.candidateVerification : null;
   const verified = Boolean(publicCandidate);
@@ -90,14 +91,21 @@ for (const [index, reviewed] of review.missions.entries()) {
 }
 
 assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").implementationStatus, "fixed-verified-pool");
-assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").originalPrintStatus, "ambiguity-locked");
-assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").sourceRelationship, "downstream-number-corrected-adaptation");
+assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").originalPrintStatus, "source-restored-with-solution-basis");
+assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").sourceRelationship, "source-original-still-water-reading");
 assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").candidateVerification.sourceRelationship,
   "condition-clarified-adaptation", "원문에 없는 물살 조건을 더한 후보임을 명시");
 const mission3Downstream = review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").downstreamCandidateVerification;
 assert.equal(mission3Downstream.sourceRelationship, "downstream-number-corrected-adaptation");
-assert.equal(mission3Downstream.publicReleaseStatus, "verified-as-adaptation", "하류 보정 문제만 원문과 구분해 공개");
+assert.equal(mission3Downstream.publicReleaseStatus, "superseded-by-source-restoration", "2026-11-23 원문 복원으로 하류 보정 문제는 내림");
 assert.equal(mission3Downstream.fixedPoolCount, 3);
+const mission3Restoration = review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").sourceRestoration;
+assert.equal(mission3Restoration.publicReleaseStatus, "verified-as-source");
+assert.equal(mission3Restoration.answer, "4시간");
+const mission3Public = window.HSE_GENERATORS.generate(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3"), 0, 0, 1, 0);
+assert.equal(mission3Public.prompt, "한 시간 동안 47.5km를 가는 빠르기로 흐르는 강이 있습니다. 일정한 빠르기로 1시간 48분 동안 93.6km를 가는 연어가 강물이 흐르는 반대 방향으로 18km를 가는 데 걸리는 시간을 구하세요.", "Mission 3: 0번 묶음은 원문 문장·수치");
+assert.equal(mission3Public.answer, "4시간");
+assert(mission3Public.solution.startsWith("풀이 기준:"), "Mission 3: 원문에 없는 해석은 풀이 기준으로만 둠");
 const referenceMinutes = 108n;
 const downstreamSpeedHundredths = 9360n * 60n / referenceMinutes;
 const currentSpeedHundredths = 4750n;
@@ -108,7 +116,7 @@ assert(stillWaterSpeedIfDownstream - currentSpeedHundredths <= 0n,
   "Mission 3: 앞선 이동이 하류라면 인쇄된 상류 이동은 불가능");
 const upstreamSpeedIfStillWater = downstreamSpeedHundredths - currentSpeedHundredths;
 assert.equal(1800n * 60n / upstreamSpeedIfStillWater, 240n,
-  "Mission 3: 앞선 빠르기가 물살 없는 곳의 빠르기라면 4시간이지만 원문 조건에는 없음");
+  "Mission 3: 앞선 빠르기를 물살 없는 곳의 빠르기로 보면 4시간(풀이 기준으로 명시)");
 const mission3Interpretation = review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").interpretationAudit;
 assert.equal(mission3Interpretation.firstLegDirectionPrinted, false);
 assert.equal(mission3Interpretation.referenceSpeedKmh, Number(downstreamSpeedHundredths) / 100);
@@ -142,4 +150,4 @@ assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").nam
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-6").name, /갤런/);
 assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-6").generatorKey,
   "sourceGrade6SecondDecimalDivisionE5Mission6");
-console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4·6 공개, 3 원문 잠금·보정 유사문항 공개, 5 공통 유형 연결 검사 통과");
+console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4·6 공개, 3 원문 복원(풀이 기준 명시) 공개, 5 공통 유형 연결 검사 통과");

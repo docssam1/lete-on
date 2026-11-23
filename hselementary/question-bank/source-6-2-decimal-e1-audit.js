@@ -53,7 +53,7 @@ function division(a, b) {
 
 function expected(generated, sourceId) {
   if (sourceId.endsWith("exploration-1")) {
-    const prompt = generated.prompt.match(/([\d.]+) ÷ ([\d.]+)와 몫/);
+    const prompt = generated.prompt.match(/([\d.]+) ÷ ([\d.]+)[와과] 몫/);
     const choices = [...generated.prompt.matchAll(/<li><span>([①-⑥])<\/span>([\d.]+) ÷ ([\d.]+)<\/li>/g)];
     assert(prompt && choices.length >= 3 && choices.length <= 6, "보기 구조 누락");
     const target = quotient(prompt[1], prompt[2]);
@@ -130,6 +130,11 @@ for (const sourceId of sourceIds) {
       assert.equal(generated.sourceItemId, sourceId);
       assert.equal(generated.generationMode, "fixed-verified-pool");
       assert.equal(generated.answer, expected(generated, sourceId), `${sourceId} 난이도 ${offset} 시드 ${seed}`);
+      if (sourceId.endsWith("exploration-1") && offset === 0 && generated.verifiedPoolIndex === 0) {
+        const bookChoices = [...generated.prompt.matchAll(/<li><span>[①-⑥]<\/span>([\d.]+ ÷ [\d.]+)<\/li>/g)].map(match => match[1]);
+        assert.deepEqual(bookChoices, ["672 ÷ 5.6", "67.2 ÷ 5.6", "6.72 ÷ 0.56", "67.2 ÷ 56", "6.72 ÷ 89"], "원문 보기(0번 묶음)와 다름");
+        assert(generated.prompt.includes("0.672 ÷ 0.56과 몫이 같은 것은 어느 것입니까?") && generated.answer === "④", "원문 물음·정답 ④와 다름");
+      }
       if (sourceId.endsWith("example-4")) assert.equal(generated.prompt.includes("0.5보다 큽니다"), offset === 1, "어려움의 추가 조건 누락");
       if (sourceId.endsWith("example-2")) assert.equal(generated.prompt.includes("직접 구하지 않고"), offset === 1, "어려움의 비교 방법 누락");
       if (sourceId.endsWith("example-3")) {
