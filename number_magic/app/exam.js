@@ -1174,6 +1174,9 @@
   .nm-mn-fills { display:flex; flex-wrap:wrap; gap:6px 28px; }
   .nm-mn-fill { display:flex; align-items:center; gap:8px; font-size:calc(15px * var(--ws-fs, 1)); }
   .nm-mn-fill .nm-w2-tex { font-size:calc(16px * var(--ws-fs, 1)); }
+  /* 긴 식은 「=」 앞에서만 줄을 바꾼다 — 아무 데서나 꺾여 □ 하나만 다음 줄로 떨어졌다(2026-11-23). */
+  .nm-tex-chain { display:inline-flex; flex-wrap:wrap; align-items:center; column-gap:.3em; min-width:0; max-width:100%; }
+  .nm-tex-chain > .nm-w2-tex { min-width:0; }
   .nm-mn-open { flex:0 0 auto; margin-top:8px; }
   .nm-mn-open-q { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; }
   /* 고등 과정 마법 노트는 내용이 길어 쪽 번호가 8px 잘렸다(C60 1회 14쪽, 2026-11-13) — 쓰는 줄 간격만 조금 줄인다. */
@@ -1265,6 +1268,10 @@
   .nm-print-sheet .nm-w2-grid-vertical .nm-print-vp-2row .nm-print-vp-bot {
     min-height:.95em; line-height:1.15; }
   .nm-w2-item-vis.nm-print-item { align-items:center; text-align:center; }
+  /* 그림 옆 식은 한 줄로 — 큰 쓰는 칸(유아·1학년)이 들어가면 칸이 좁아 「6 = 10 −」 / □ 처럼 꺾였다(2026-11-23).
+     식은 줄지 않게 두고 그림이 남는 자리에 맞춰 줄어든다. */
+  .nm-w2-item-vis:has(> svg.nm-bond) > .nm-w2-tex { white-space:nowrap; flex:0 0 auto; }
+  .nm-w2-item-vis > svg.nm-bond { flex:0 1 auto; min-width:0; }
   .nm-w2-item-word.nm-print-item { align-items:flex-start; }
   /* 풀이 점선 칸은 **남는 높이만큼** — 문장이 길면 줄여서 칸 밖으로 밀리지 않게(2026-09-25, MD72 L2·MD87 L4
      문장제 칸 세로 넘침 5px). 문장·질문·답 줄은 줄이지 않는다. */
@@ -3646,6 +3653,27 @@ function scatterAnswerKeyHtml(problems){
   return `<section class="nm-scatter-ak"><h4>${esc(lk('직접 찍기 완성 산점도','Completed plots','完成的散点图'))}</h4><div class="nm-scatter-ak-grid">${plot.map(x=>`<div class="nm-scatter-ak-item"><b>(${x.i+1})</b>${scatterPlotHtml(x.p,true)}</div>`).join('')}</div></section>`;
 }
 
+/* 긴 식은 맨 바깥 「=」 앞에서만 줄을 바꾼다 — 칸이 좁으면 아무 데서나 꺾여 □ 하나·분수 반쪽만 다음 줄로
+   떨어졌다(과정 3 마법 노트 · 18 분수 덧셈 · 20 소수 곱셈, 2026-11-23). 덩어리마다 flex 칸이라 다 들어가면 한 줄,
+   안 들어가면 「= …」 덩어리째 다음 줄, 덩어리 하나가 칸보다 길 때만 그 안에서 꺾인다. */
+function texChainHtml(tex){
+  /* 맨 앞 \displaystyle 같은 크기 명령은 덩어리마다 다시 붙인다 — 빠지면 뒤 덩어리 분수가 작게 찍혔다 */
+  const lead = (String(tex || '').match(/^\s*((?:\\(?:displaystyle|textstyle)\s*)+)/) || ['', ''])[1];
+  const s = String(tex || '').slice(lead.length ? String(tex || '').indexOf(lead) + lead.length : 0), parts = [];
+  let depth = 0, from = 0;
+  for(let i = 0; i < s.length; i++){
+    const ch = s[i];
+    if(ch === '\\'){ i++; continue; }
+    if(ch === '{' || ch === '(' || ch === '[') depth++;
+    else if(ch === '}' || ch === ')' || ch === ']') depth--;
+    else if(ch === '=' && depth === 0 && i > from && s.slice(from, i).trim()){ parts.push(s.slice(from, i)); from = i; }
+  }
+  parts.push(s.slice(from));
+  /* 여러 줄 식(\begin{…}, &, \\)·\left … \right 묶음은 나누면 깨진다 — 그대로 둔다 */
+  if(parts.length < 2 || /\\begin|\\end|&|\\\\|\\left|\\right/.test(s)) return `<span class="nm-w2-tex" data-tex="${esc(String(tex || ''))}"></span>`;
+  return `<span class="nm-tex-chain">${parts.map(t => `<span class="nm-w2-tex" data-tex="${esc(lead + t.trim())}"></span>`).join('')}</span>`;
+}
+
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
 function bondSvg(whole, known, knownSide, labels){
   const right=knownSide==='right';
@@ -5372,7 +5400,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
         inner = `<span class="nm-w2-big">${bigHtml}</span>`;
       } else {
         const tinted = wantTint ? PVm.tint(texStr) : texStr;
-        inner = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(tinted))}"></span>${abox}`;
+        inner = texChainHtml(texDisplay(tinted)) + abox;
       }
     }
   }
@@ -6477,7 +6505,7 @@ function renderMagicNotePageBody(item, opts){
   <div class="nm-w2-guide-title"><i class="nm-w2-sq"></i>${esc(lk('핵심 체크 — □를 채워 보세요.','Key check — fill the □.','核心检查——填□。'))}</div>
   <div class="nm-mn-fills">${fills.map((f, i) => {
     const tex = typeof f.tex === 'string' ? f.tex : (pickL(f.tex) || '');
-    return `<div class="nm-mn-fill"${f.prompt?' style="flex-wrap:wrap;width:100%"':''}><span class="nm-w2-guide-label">(${esc(labs[i] || (i+1))})</span>${f.prompt?`<span style="flex-basis:90%">${escEmph(pickL(f.prompt))}</span>`:''}<span class="nm-w2-tex" data-tex="${esc(texDisplay(tex))}"></span></div>`;
+    return `<div class="nm-mn-fill"${f.prompt?' style="flex-wrap:wrap;width:100%"':''}><span class="nm-w2-guide-label">(${esc(labs[i] || (i+1))})</span>${f.prompt?`<span style="flex-basis:90%">${escEmph(pickL(f.prompt))}</span>`:''}${texChainHtml(texDisplay(tex))}</div>`;
   }).join('')}</div>
 </div>` : '';
   const open = (u.check && u.check.open) ? pickL(u.check.open) : '';

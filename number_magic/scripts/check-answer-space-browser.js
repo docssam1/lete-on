@@ -112,9 +112,15 @@ const server = http.createServer((req, res) => {
           .filter(e => !e.closest('.nm-print-answer-key,.nm-ak,.nm-w2-example,.nm-paper-worked,.nm-w2-head'))
           .map(e => +(e.getBoundingClientRect().height / mm).toFixed(1));
         const cut = [...document.querySelectorAll('.nm-w2-item,.nm-w2-guide')].filter(e => e.scrollHeight > e.clientHeight + 3 || e.scrollWidth > e.clientWidth + 3).length;
-        return { n: cells.length, min: Math.min(...cells, 99), cut, big: !!document.querySelector('.nm-print-sheet.nm-print-write-big.nm-print-age-young') };
+        // 식이 두 줄로 꺾인 곳(다음 덩어리가 왼쪽 아래로 내려감) — 큰 칸 때문에 「6 = 10 −」 / □ 로 꺾였다(2026-11-23)
+        const wrap = [...document.querySelectorAll('.nm-w2-page .katex-html')].filter(k => {
+          const bs = [...k.querySelectorAll(':scope > .base')].map(b => b.getBoundingClientRect()).filter(r => r.width > 0);
+          return bs.some((r, j) => j && r.left < bs[j - 1].left - 1 && r.top > bs[j - 1].top + 2);
+        }).length;
+        return { n: cells.length, min: Math.min(...cells, 99), cut, wrap, big: !!document.querySelector('.nm-print-sheet.nm-print-write-big.nm-print-age-young') };
       });
       assert.ok(m.big, q + ': 유아·1학년 큰 글씨 시트');
+      assert.equal(m.wrap, 0, q + ': 두 줄로 꺾인 식');
       assert.ok(m.n > 0 && m.min >= need - 0.2, q + ': 쓰는 칸 높이 ' + JSON.stringify(m));
       assert.equal(m.cut, 0, q + ': 칸 밖으로 넘친 문항·따라 풀기');
       report[q] = { cells: m.n, min: m.min };
