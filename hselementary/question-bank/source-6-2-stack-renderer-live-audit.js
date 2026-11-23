@@ -61,6 +61,16 @@ async function pixels(page,options={}) {
         return rgb.every((v,i)=>Math.abs(v-(17+t*d[i]))<=4);
       });
     }
+    // Multisampled pixels at a visible edge may also mix the expected face with a neighbouring face or the background
+    // (for example a side face seen almost edge-on). Only straight blends between real colours are accepted there.
+    function faceBlendPixel(rgb,expected){
+      return [...colors,...(markedKeys.size ? markedColors : []),0xffffff].some(color=>{
+        const other=[color>>16&255,color>>8&255,color&255],d=other.map((v,i)=>v-expected[i]),len=d.reduce((s,v)=>s+v*v,0);
+        if(!len)return false;
+        const t=Math.max(0,Math.min(1,rgb.reduce((s,v,i)=>s+(v-expected[i])*d[i],0)/len));
+        return rgb.every((v,i)=>Math.abs(v-(expected[i]+t*d[i]))<=4);
+      });
+    }
     let checked=0, visible=0, minX=data.width,minY=data.height,maxX=0,maxY=0;
     for(let y=0;y<data.height;y++)for(let x=0;x<data.width;x++){
       const i=(y*data.width+x)*4;
@@ -83,7 +93,7 @@ async function pixels(page,options={}) {
         data.pixels.set([255,0,0],i);poisonExercised=true;
       }
       const actual=[...data.pixels.slice(i,i+3)];
-      if(rgb.some((v,k)=>Math.abs(actual[k]-v)>3)&&!(edgePixel(actual)&&visibleEdgeNear(x+.5,y+.5)))errors.push({x,y,face,cell,hit,expected:rgb,actual});
+      if(rgb.some((v,k)=>Math.abs(actual[k]-v)>3)&&!((edgePixel(actual)||faceBlendPixel(actual,rgb))&&visibleEdgeNear(x+.5,y+.5)))errors.push({x,y,face,cell,hit,expected:rgb,actual});
       seen.add(cell.join(','));seenFaces.add([...cell,face].join(','));checked++;
     }
     const frame=document.querySelector('#scene').getBoundingClientRect(),labelErrors=[];
