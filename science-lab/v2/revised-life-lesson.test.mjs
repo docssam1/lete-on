@@ -1,3 +1,4 @@
+import{beforeLifeTask}from'./tests/life-guided-stage.mjs';
 import test from'node:test';import assert from'node:assert/strict';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js?v=20261102-life';import*as original from'../data/book/s31-u04.book.js';import{similar}from'../data/units/s31-u04.similar.js';import{items}from'../data/units/s31-u04.js';import{lesson}from'../data/units/s31-u04.lesson.js';import{buildSlides}from'./deck.js?v=20261102-life';
 import{renderChapter}from'./book.js';
@@ -16,7 +17,7 @@ test('기존22쪽 관찰 교재·보고서·41짝과64보충 및 11개 정답 �
  assert.equal(original.chapter.lifeThinking,undefined);assert.equal(lesson.explore.lab.kind,'life');assert.equal(lesson.elaborate.report,true);assert.equal((renderChapter(original.chapter,original.art,originalPool).match(/class="bk-page/g)||[]).length,22);
  for(const mode of['self','teach']){const s=buildSlides(original.chapter,original.art,original.plan,originalPool,mode);assert.equal(s.length,36);assert.equal(s.filter(x=>x.fieldTab).length,6);}
  assert.equal(similar.length,41);assert.equal(items.length,64);const revisedIds=new Set(mod.classroomItems.map(x=>x.id));assert.equal(revisedIds.size,11);
- for(const q of pool){const previous=originalPool.find(x=>x.id===q.id);assert(previous);assert.deepEqual(q.answerContract,previous.answerContract);assert.deepEqual(q.taxonomy,previous.taxonomy);assert.deepEqual(q.sourceRef,previous.sourceRef);if(!revisedIds.has(q.id))assert.equal(q,previous);}
+ for(const q of pool){const previous=originalPool.find(x=>x.id===q.id);assert(previous);assert.deepEqual(beforeLifeTask(q).answerContract,previous.answerContract);assert.deepEqual(q.taxonomy,previous.taxonomy);assert.deepEqual(q.sourceRef,previous.sourceRef);if(!revisedIds.has(q.id))assert.equal(q,previous);}
  const daily=[...classroomQuestions(mod,similar),...classroomQuestions(mod,items)];for(const q of mod.classroomItems)assert.equal(daily.find(x=>x.id===q.id),pool.find(x=>x.id===q.id));assert(revisedIds.has('s31-u04-b07'));
  assert.equal(mod.classroomLab.kind,'life-compare');assert.equal(mod.classroomLab.rowsKey,'lifeCompareRows');
 });

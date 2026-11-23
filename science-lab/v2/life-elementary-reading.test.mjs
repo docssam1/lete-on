@@ -1,3 +1,7 @@
+import{lifeGuidedItems}from'./life-guided-review.js';
+import{reviewStudentWorkbook}from'./student-language-review.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -30,10 +34,10 @@ test('life workbook directions preserve sources, blanks, answer contracts and al
  assert.equal(changed,50);assert.equal(protectedRows,18);
  const bank=new Map(data.items.map(q=>[q.id,q]));
  for(const q of workbook.questions.filter(q=>q.sourceRef?.type==='authored-supplement'))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
- const paper=await revisedTextbookPaper(unit);
+ const paper=await revisedTextbookPaper(unit),shown=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));
  for(const mode of ['student','teacher','answers','quick']){
   const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-  if(mode==='student'||mode==='teacher')for(const q of workbook.questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(escape(text)),q.id+' '+mode);
+  if(mode==='student'||mode==='teacher')for(const q of shown.questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(escape(text)),q.id+' '+mode);
   if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
  }
 });
@@ -55,7 +59,7 @@ test('the actual life bank keeps grading and old saved presentations when thirty
 });
 
 test('life classroom shares the current bank while source, unknown and future presentations remain protected',async()=>{
- const book=await import('../data/book/s31-u04.book.js'),mod=await revisedClassroom(unit,book),bank=new Map([...data.source,...data.similar,...data.items].map(q=>[q.id,q]));
+ const book=await import('../data/book/s31-u04.book.js'),mod=await revisedClassroom(unit,book),bank=new Map([...data.source,...lifeGuidedItems(data.similar,unit),...lifeGuidedItems(data.items,unit)].map(q=>[q.id,q]));
  assert.equal(mod.classroomItems.length,11);assert.equal(mod.classroomItems.filter(q=>q.contentVersion===LIFE_ELEMENTARY_VERSION).length,1);
  for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
  const target=priorBank[0];
