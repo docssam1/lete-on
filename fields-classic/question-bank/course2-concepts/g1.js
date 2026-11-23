@@ -18,27 +18,50 @@ const figSectorRule = () => svg(300, 290, circleParts(5, [0]) + angleMark(C, 18,
 const figSectorExample = () => svg(300, 270, circleParts(8, [0, 1, 2]) + angleMark(C, -45, 90, 26, "?"), "원을 똑같이 여덟 조각으로 나누고 세 조각을 칠한 그림");
 
 const T = [P(60, 210), P(250, 210), P(150, 50)];
-const figStraight = () => svg(300, 200, line(P(30, 140), P(270, 140), { width: 3 }) + dot(P(150, 140), 4.5) + angleMark(P(150, 140), 0, 180, 34, "반 바퀴") + text(150, 180, "곧은 선 = 180°", { size: 16, color: GREEN }), "곧은 선 위의 반 바퀴 각");
-const figTriangleSum = () => svg(300, 250,
-  poly(T, { fill: SOFT })
-  + angleMark(T[0], 0, dirOf(T[0], T[2]), 30, "㉠") + angleMark(T[1], dirOf(T[1], T[2]), 180, 30, "㉡") + angleMark(T[2], dirOf(T[2], T[0]), dirOf(T[2], T[1]), 26, "㉢")
-  + text(150, 238, "㉠ + ㉡ + ㉢ = 180°", { size: 16, color: GREEN }), "삼각형의 세 각");
+const figStraight = () => svg(300, 200, line(P(30, 140), P(270, 140), { width: 3 }) + dot(P(150, 140), 4.5) + angleMark(P(150, 140), 0, 180, 34, "반 바퀴") + text(150, 180, "반 바퀴 = ?°", { size: 16, color: GREEN }), "곧은 선 위의 반 바퀴 각");
+const triAngles = (sh = P(0, 0)) => {
+  const t = T.map((p) => P(p.x + sh.x, p.y + sh.y));
+  return angleMark(t[0], 0, dirOf(t[0], t[2]), 30, "㉠") + angleMark(t[1], dirOf(t[1], t[2]), 180, 30, "㉡") + angleMark(t[2], dirOf(t[2], t[0]), dirOf(t[2], t[1]), 26, "㉢");
+};
+// 되짚기용: 합은 「?」로 둔다
+const figTriangleSum = () => svg(300, 250, poly(T, { fill: SOFT }) + triAngles() + text(150, 238, "㉠ + ㉡ + ㉢ = ?", { size: 16, color: GREEN }), "삼각형의 세 각");
+// 교재처럼 「세 각을 잘라 모으면 일직선」 장면 줄: 삼각형 → 세 귀퉁이를 잘라 → 곧은 선 위 한 점에 모음
+const figTriangleTear = () => {
+  const a0 = dirOf(T[0], T[2]), a1 = 180 - dirOf(T[1], T[2]), a2 = 180 - a0 - a1;   // ㉠ · ㉡ · ㉢의 크기(도)
+  const sh = P(-40, -30), t = T.map((p) => P((p.x + sh.x) * 0.8 + 10, (p.y + sh.y) * 0.8 + 20));
+  const cutT = (v, u, w) => poly([v, P(v.x + (u.x - v.x) * 0.3, v.y + (u.y - v.y) * 0.3), P(v.x + (w.x - v.x) * 0.3, v.y + (w.y - v.y) * 0.3)], { fill: YELLOW, color: MARK, width: 1.6, dash: "4 3" });
+  const tri = poly(t, { fill: SOFT }) + cutT(t[0], t[1], t[2]) + cutT(t[1], t[0], t[2]) + cutT(t[2], t[0], t[1])
+    + angleMark(t[0], 0, dirOf(t[0], t[2]), 22, "㉠", { size: 13, gap: 12 }) + angleMark(t[1], dirOf(t[1], t[2]), 180, 22, "㉡", { size: 13, gap: 12 }) + angleMark(t[2], dirOf(t[2], t[0]), dirOf(t[2], t[1]), 20, "㉢", { size: 13, gap: 12 });
+  const O = P(370, 150), r = 62;
+  const fan = sector(O, r, 180 - a0, 180, { fill: YELLOW }) + sector(O, r, a1, a1 + a2, { fill: YELLOW }) + sector(O, r, 0, a1, { fill: YELLOW })
+    + text(at(O, r * 0.62, 180 - a0 / 2).x, at(O, r * 0.62, 180 - a0 / 2).y, "㉠", { size: 14, color: MARK }) + text(at(O, r * 0.62, a1 + a2 / 2).x, at(O, r * 0.62, a1 + a2 / 2).y, "㉢", { size: 14, color: MARK }) + text(at(O, r * 0.62, a1 / 2).x, at(O, r * 0.62, a1 / 2).y, "㉡", { size: 14, color: MARK });
+  return svg(470, 200, tri + arrow(P(232, 110), P(282, 110)) + line(P(290, 150), P(450, 150), { width: 2.6 }) + fan + dot(O, 4)
+    + label(120, 188, "세 귀퉁이를 잘라") + label(370, 188, "한 점에 모으면 곧은 선(180°)"), "삼각형의 세 각을 잘라 곧은 선 위에 모은 그림");
+};
 const I = [P(70, 210), P(230, 210), P(150, 50)];
 const figIsoExample = () => svg(300, 240,
   poly(I, { fill: SOFT }) + tick(I[0], I[2]) + tick(I[1], I[2])
   + angleMark(I[2], dirOf(I[2], I[0]), dirOf(I[2], I[1]), 26, "40°") + angleMark(I[0], 0, dirOf(I[0], I[2]), 30, "?") + angleMark(I[1], dirOf(I[1], I[2]), 180, 30, ""), "꼭지각이 40도인 이등변삼각형");
 
-const pentagon = regular(P(150, 135), 100, 5);
-const figPentagonSplit = () => svg(300, 265,
-  poly(pentagon, { fill: SOFT }) + line(pentagon[0], pentagon[2], { color: GREEN, dash: "6 5" }) + line(pentagon[0], pentagon[3], { color: GREEN, dash: "6 5" })
-  + text(112, 150, "1", { color: GREEN, size: 18 }) + text(150, 185, "2", { color: GREEN, size: 18 }) + text(188, 150, "3", { color: GREEN, size: 18 })
-  + text(150, 252, "삼각형 3개 → 180° × 3", { size: 15, color: GREEN }), "정오각형을 한 꼭짓점에서 대각선으로 나눈 그림");
+// 교재처럼 정다각형을 가운데 점과 꼭짓점을 이어 모양과 크기가 같은 이등변삼각형으로 나눈다 — 한 내각 = 이웃한 두 밑각
+const centerSplit = (c, r, n, { ask = "", note = "" } = {}) => {
+  const v = regular(c, r, n);
+  let body = poly(v, { fill: SOFT }) + v.map((p) => line(c, p, { color: GREEN, width: 1.6 })).join("") + dot(c, 4);
+  // 이등변삼각형마다 두 밑각(같은 각) 표시 — 작은 호
+  v.forEach((p, k) => {
+    const nx = v[(k + 1) % n], pv = v[(k + n - 1) % n];
+    body += angleMark(p, dirOf(p, c), dirOf(p, pv), 14, "", { color: "#8a948f" }) + angleMark(p, dirOf(p, nx), dirOf(p, c), 17, "", { color: "#8a948f" });
+  });
+  // 맨 위 꼭짓점의 한 내각 = 두 밑각
+  body += angleMark(v[0], dirOf(v[0], v[1]), dirOf(v[0], v[n - 1]), 26, "") + (ask ? text(v[0].x + 16, v[0].y + 46, ask, { size: 18, color: MARK }) : "");
+  body += angleMark(c, dirOf(c, v[n - 1]), dirOf(c, v[0]), 18, "", { color: BLUE });
+  return body + (note ? text(c.x, c.y + r + 26, note, { size: 14, color: GREEN }) : "");
+};
+const figPentagonSplit = () => svg(300, 270, centerSplit(P(150, 128), 100, 5, { note: "한 내각 = 이웃한 두 밑각" }), "정오각형을 가운데 점에서 똑같은 이등변삼각형 5개로 나눈 그림");
 const hexagon = regular(P(150, 130), 98, 6, 90);
 const figHexagon = () => svg(300, 250,
   poly(hexagon, { fill: SOFT }) + angleMark(hexagon[0], dirOf(hexagon[0], hexagon[1]), dirOf(hexagon[0], hexagon[5]), 24, "?") + text(150, 242, "정육각형", { size: 15 }), "정육각형의 한 내각");
-const figHexSplit = () => svg(300, 255,
-  poly(hexagon, { fill: SOFT }) + [2, 3, 4].map((k) => line(hexagon[0], hexagon[k], { color: GREEN, dash: "6 5" })).join("")
-  + text(150, 245, "정육각형 · 삼각형 몇 개?", { size: 15, color: GREEN }), "정육각형을 한 꼭짓점에서 대각선으로 나눈 그림");
+const figHexSplit = () => svg(300, 260, centerSplit(P(150, 125), 98, 6, { ask: "?" }), "정육각형을 가운데 점에서 똑같은 이등변삼각형 6개로 나눈 그림");
 
 // 정사각형과 정육각형이 공통 변 AB를 맞붙인 그림 — 꼭짓점 A에서 남는 각
 const A = P(150, 160), B = P(150, 70);
@@ -56,6 +79,7 @@ const figJoined = () => svg(330, 290,
 
 const CK = P(150, 140);
 const figClockRule = () => svg(300, 290, clock(CK, 110, 3, 0) + angleMark(CK, 0, 90, 30, "90°") + text(150, 278, "숫자 한 칸 = 30°", { size: 15, color: GREEN }), "3시를 가리키는 시계");
+const figClockAsk = () => svg(300, 290, clock(CK, 110, 1, 0) + angleMark(CK, 60, 90, 52, "?", { size: 18, gap: 14 }) + text(150, 278, "숫자 한 칸 = ?°", { size: 15, color: GREEN }), "1시를 가리키는 시계");
 const figClockExample = () => svg(300, 280, clock(CK, 110, 2, 30) + angleMark(CK, -90, 15, 28, "?"), "2시 30분을 가리키는 시계");
 
 // ── 꾸러미 ──
@@ -69,7 +93,7 @@ export const PACKS = {
       proofs: [],
       summary: {
         figure: figSectorRule,
-        terms: [["한 바퀴", "원의 가운데를 한 바퀴 도는 각 · <b>360°</b>"], ["가운데 각", "원의 가운데 점에서 두 반지름이 이루는 각"]],
+        terms: [["한 바퀴", "원의 가운데를 한 바퀴 도는 각 · <b>360°</b>"], ["부채꼴", "원을 가운데 점에서 두 반지름으로 조각 낸 부채 모양 — 반원 · 삼분원 · 사분원 …"], ["가운데 각(중심각)", "원의 가운데 점에서 두 반지름이 이루는 각"]],
         facts: ["원의 가운데를 도는 각을 모두 더하면 <b>360°</b>", "똑같이 나누면 한 조각의 가운데 각 = <b>360° ÷ 조각 수</b>", "모르는 조각 하나 = 360° − (아는 조각들의 합)"]
       },
       pitfall: "조각의 크기가 서로 다를 때는 나누지 않고 360에서 아는 각을 뺍니다.",
@@ -89,9 +113,9 @@ export const PACKS = {
       explore: [["lab", "angles", "각 떼어 모으기"]],
       proofs: [["triangle-sum", "삼각형의 세 각을 모으면 왜 180°일까"], ["isosceles-base", "이등변삼각형의 두 밑각은 왜 같을까"]],
       summary: {
-        figure: figTriangleSum,
+        figure: figTriangleTear,
         terms: [["이등변삼각형", "두 변의 길이가 같은 삼각형"], ["밑각", "같은 두 변이 아닌 나머지 변(밑변) 양 끝의 두 각"]],
-        facts: ["삼각형의 세 각을 모으면 <b>180°</b>", "모르는 한 각 = 180° − (아는 두 각)", "이등변삼각형의 <b>두 밑각은 같다</b> → 밑각 = (180° − 꼭지각) ÷ 2"]
+        facts: ["삼각형의 세 귀퉁이를 잘라(또는 접어) 한 점에 모으면 <b>곧은 선</b> — 세 각의 합은 <b>180°</b>", "모르는 한 각 = 180° − (아는 두 각)", "이등변삼각형의 <b>두 밑각은 같다</b> → 밑각 = (180° − 꼭지각) ÷ 2"]
       },
       pitfall: "같은 두 변 사이의 각(꼭지각)은 밑각과 다릅니다. 표시된 각이 꼭지각인지 밑각인지부터 봅니다.",
       example: {
@@ -112,23 +136,23 @@ export const PACKS = {
       summary: {
         figure: figPentagonSplit,
         terms: [["정다각형", "변의 길이가 모두 같고 각의 크기도 모두 같은 다각형"], ["내각", "다각형 안쪽의 각"]],
-        facts: ["한 꼭짓점에서 대각선을 그으면 삼각형이 <b>(변의 수 − 2)개</b>", "내각의 합 = <b>180° × (변의 수 − 2)</b>", "정다각형의 한 내각 = 내각의 합 ÷ 변의 수 — 정삼각형 60° · 정사각형 90° · 정오각형 108° · 정육각형 120°"]
+        facts: ["정다각형의 가운데 점과 꼭짓점을 이으면 <b>모양과 크기가 같은 이등변삼각형</b>으로 나뉜다", "가운데 점에 모인 각 = 360° ÷ 변의 수, 밑각 = (180° − 그 각) ÷ 2", "한 내각 = <b>이웃한 두 밑각의 합</b> — 정삼각형 60° · 정사각형 90° · 정오각형 108° · 정육각형 120°", "한 꼭짓점에서 대각선을 그어도 된다: 내각의 합 = 180° × (변의 수 − 2)"]
       },
-      pitfall: "삼각형의 개수는 변의 수가 아니라 (변의 수 − 2)개입니다. 대각선을 그어 직접 세어 봅니다.",
+      pitfall: "가운데 점에 모인 각을 한 내각으로 착각하지 않습니다. 한 내각은 꼭짓점에서 이웃한 두 밑각을 더한 것입니다.",
       example: {
         prompt: "정육각형의 한 내각은 몇 도인가요?",
         figure: figHexSplit,
         steps: [
-          { ask: "한 꼭짓점에서 대각선을 그으면 삼각형은 6 − 2 =", answer: "4", unit: "개", why: "그림처럼 대각선 3개가 정육각형을 삼각형 4개로 나눕니다.", hint: "변의 수에서 2를 빼요." },
-          { ask: "내각의 합은? 180 × 4 =", answer: "720", unit: "°", why: "삼각형 하나의 세 각이 180°이고, 삼각형 4개의 각이 모여 내각이 됩니다.", hint: "180을 4번 더해요." },
-          { ask: "한 내각은? 720 ÷ 6 =", answer: "120", unit: "°", why: "정육각형은 여섯 각이 모두 같으니 똑같이 6으로 나눕니다.", hint: "각이 6개 모두 같아요." }
+          { ask: "가운데 점에 모인 이등변삼각형 하나의 꼭지각은? 360 ÷ 6 =", answer: "60", unit: "°", why: "가운데 점을 한 바퀴 도는 360°를 똑같은 삼각형 6개가 나눠 가집니다.", hint: "360을 6으로 나눠요." },
+          { ask: "밑각 하나는? (180 − 60) ÷ 2 =", answer: "60", unit: "°", why: "삼각형의 세 각의 합 180°에서 꼭지각을 빼고, 같은 두 밑각이 반씩 나눠 가집니다.", hint: "120을 반으로 나눠요." },
+          { ask: "한 내각은? 60 × 2 =", answer: "120", unit: "°", why: "꼭짓점마다 이웃한 두 삼각형의 밑각이 모여 한 내각이 됩니다. 180 × 4 ÷ 6 = 120과도 같습니다.", hint: "밑각 두 개를 더해요." }
         ]
       },
       check: [["c2-regular-polygon-angle", "concept"], ["c2-regular-polygon-angle", "type"], ["c2-regular-polygon-angle", "advanced"]]
     },
     {
       id: "joined-polygons", title: "맞붙인 두 정다각형 사이의 각",
-      recall: { figure: figHexagon, text: "정육각형은 삼각형 4개로 나뉘어 내각의 합이 720°입니다.", ask: "정육각형의 한 내각은 몇 도인가요?", options: ["108°", "120°", "135°"], answer: 1, why: "720 ÷ 6 = 120이에요.", hint: "720을 6으로 나눠요." },
+      recall: { figure: figHexagon, text: "정육각형은 가운데 점에서 똑같은 이등변삼각형 6개로 나뉘고, 밑각은 하나에 60°입니다.", ask: "정육각형의 한 내각은 몇 도인가요?", options: ["108°", "120°", "135°"], answer: 1, why: "꼭짓점에서 밑각 두 개가 모여 60 + 60 = 120이에요.", hint: "밑각 두 개를 더해요." },
       explore: [],
       proofs: [],
       summary: {
@@ -142,7 +166,7 @@ export const PACKS = {
         figure: figJoined,
         steps: [
           { ask: "정사각형의 한 내각은?", answer: "90", unit: "°", why: "정사각형의 네 각은 모두 직각이에요.", hint: "정사각형의 각은 직각이에요." },
-          { ask: "정육각형의 한 내각은?", answer: "120", unit: "°", why: "180 × 4 ÷ 6 = 120입니다.", hint: "앞에서 구한 정육각형의 한 내각이에요." },
+          { ask: "정육각형의 한 내각은?", answer: "120", unit: "°", why: "이웃한 두 밑각 60° + 60° = 120°입니다.", hint: "앞에서 구한 정육각형의 한 내각이에요." },
           { ask: "?의 각은? 360 − 90 − 120 =", answer: "150", unit: "°", why: "꼭짓점을 빙 둘러싼 세 각의 합이 360°이므로 두 내각을 뺍니다.", hint: "360에서 두 각을 빼요." }
         ]
       },
@@ -150,7 +174,7 @@ export const PACKS = {
     },
     {
       id: "clock-hands", title: "시계 두 바늘이 이루는 각",
-      recall: { figure: figClockRule, text: "시계판의 숫자 12개가 한 바퀴 360°를 똑같이 나눕니다.", ask: "숫자 한 칸(예: 12에서 1까지)은 몇 도인가요?", options: ["6°", "30°", "60°"], answer: 1, why: "360 ÷ 12 = 30이에요.", hint: "360을 12로 나눠요." },
+      recall: { figure: figClockAsk, text: "시계판의 숫자 12개가 한 바퀴 360°를 똑같이 나눕니다.", ask: "숫자 한 칸(예: 12에서 1까지)은 몇 도인가요?", options: ["6°", "30°", "60°"], answer: 1, why: "360 ÷ 12 = 30이에요.", hint: "360을 12로 나눠요." },
       explore: [["lab", "clock", "시계 바늘 각"]],
       proofs: [["clock-angle", "시계 두 바늘 사이의 각 따지기"]],
       summary: {
@@ -234,9 +258,30 @@ const figDigitMirrorAsk = (real, seen) => () => svg(320, 150, (real ? digitRow(r
   + (seen ? digitRow(seen, 240, 40) : askBox(240, 38)) + label(66, 135, "실제") + label(256, 135, "거울 속") + label(160, 12, "거울"), real ? `디지털 숫자 ${real}를 거울에 비추면?` : `거울 속 ${seen}는 실제로?`);
 const figHalfTurnAsk = () => svg(320, 150, digitRow("6", 60, 40) + text(160, 62, "반 바퀴", { size: 15, color: GREEN }) + arrow(P(120, 80), P(200, 80), { color: GREEN }) + askBox(238, 38) + label(73, 130, "처음") + label(253, 130, "돌린 모양"), "디지털 6을 반 바퀴 돌리면?");
 const figMirrorClockDigital = () => svg(300, 130, rect(30, 22, 240, 82, { fill: "#fff", width: 2.4 }) + digitRow("10:25", 52, 40, { mirror: true }) + label(150, 120, "거울에 비친 디지털 시계"), "거울에 비친 디지털 시계");
-// 시간 계산
-const figTimeAdd = () => svg(380, 200, clock(P(80, 90), 62, 2, 45, { labels: false }) + arrow(P(158, 90), P(222, 90)) + text(190, 70, "1시간 35분", { size: 14, color: GREEN }) + clock(P(300, 90), 62, 4, 20, { labels: false }) + label(80, 175, "2시 45분 시작") + label(300, 175, "끝나는 시각 ?"), "2시 45분에서 1시간 35분 뒤");
-const figMirrorClock = () => svg(380, 200, clock(P(90, 90), 66, 3, 20) + line(P(190, 20), P(190, 165), { dash: "7 6", color: BLUE, width: 2.4 }) + clock(P(290, 90), 66, 8, 40) + label(90, 180, "거울 속 3시 20분") + label(290, 180, "실제 8시 40분"), "거울 속 시계와 실제 시계");
+// 시간 계산 — 교재처럼 세로셈(시 칸 · 분 칸)에 받아올림·받아내림을 빨간 글씨로 적는다
+// rows: [[앞 글, 분 글], …], result: [시 글, 분 글], marks: 빨간 메모 [{x(0 시 칸 · 1 분 칸), t}], note: 오른쪽 빨간 설명
+const timeColumn = (x, y, rows, result, { marks = [], note = "" } = {}) => {
+  const hx = x + 96, mx = x + 150, gap = 30;
+  let body = marks.map((m) => text(m.x ? mx - 12 : hx - 14, y - 4, m.t, { size: 12, color: MARK })).join("");
+  rows.forEach(([h, m], i) => { body += text(hx, y + 14 + i * gap, h, { size: 16, anchor: "end" }) + text(mx, y + 14 + i * gap, m, { size: 16, anchor: "end" }); });
+  const ly = y + 14 + rows.length * gap - 14;
+  body += line(P(x + 10, ly), P(mx + 6, ly), { width: 1.8 });
+  body += text(hx, ly + 20, result[0], { size: 16, anchor: "end", color: result[0].includes("?") ? MARK : INK }) + text(mx, ly + 20, result[1], { size: 16, anchor: "end", color: result[1].includes("?") ? MARK : INK });
+  if (note) body += text(mx + 16, y + 14 + gap / 2, note, { size: 13, anchor: "start", color: MARK });
+  return body;
+};
+const figTimeColumns = () => svg(560, 140,
+  timeColumn(10, 24, [["3시", "50분"], ["+ 1시간", "25분"]], ["5시", "15분"], { marks: [{ x: 0, t: "1" }], note: "75분 = 1시간 15분" })
+  + timeColumn(300, 24, [["6시", "10분"], ["− 2시간", "35분"]], ["3시", "35분"], { marks: [{ x: 0, t: "5" }, { x: 1, t: "60" }], note: "1시간 = 60분" })
+  + label(100, 128, "분끼리 60이 넘으면 1시간으로") + label(390, 128, "분끼리 못 빼면 1시간을 60분으로"), "시간의 덧셈과 뺄셈 세로셈");
+const figTimeExample = () => svg(300, 120, timeColumn(30, 24, [["3시", "50분"], ["+ 1시간", "25분"]], ["?시", "?분"]), "3시 50분 + 1시간 25분 세로셈");
+// 되짚기: 긴바늘이 한 바퀴 — 몇 분?
+const figMinuteLoop = () => svg(300, 270, clock(P(150, 125), 100, 0, 0, { hourColor: "none" }) + `<path d="M 168 14 A 112 112 0 1 1 132 14" fill="none" stroke="${GREEN}" stroke-width="2.4" stroke-dasharray="6 5"/>` + text(150, 258, "긴바늘 한 바퀴 = ?분", { size: 15, color: GREEN }), "긴바늘이 한 바퀴 도는 시계");
+// 거울에 비친 바늘 시계 — 교재처럼 거울 속 시계는 숫자판까지 좌우가 뒤집힌 모양, 실제 시계와 ↔
+const mirroredClock = (c, r, h, m) => `<g transform="translate(${2 * c.x} 0) scale(-1 1)">${clock(c, r, h, m)}</g>`;
+const twoWay = (x, y) => arrow(P(x - 18, y), P(x + 18, y), { color: GREEN }) + arrow(P(x + 18, y), P(x - 18, y), { color: GREEN });
+const figMirrorClock = () => svg(380, 200, mirroredClock(P(90, 90), 66, 8, 40) + twoWay(190, 90) + clock(P(290, 90), 66, 8, 40) + label(90, 180, "거울 속(3시 20분으로 보임)") + label(290, 180, "실제 8시 40분"), "거울 속 시계와 실제 시계");
+const figMirrorClockAsk = () => svg(380, 200, mirroredClock(P(90, 90), 66, 8, 40) + twoWay(190, 90) + clock(P(290, 90), 66, 0, 0, { hourColor: "none", minuteColor: "none" }) + text(290, 58, "?", { size: 30, color: MARK }) + label(90, 180, "거울 속 시계") + label(290, 180, "실제 시각 ?"), "거울 속 시계와 실제 시각");
 // 돌리기
 const lshape = (o, k) => {   // 모눈 칸 크기 k, L 모양 세 칸
   return poly([P(o.x, o.y), P(o.x + k, o.y), P(o.x + k, o.y + k), P(o.x + 2 * k, o.y + k), P(o.x + 2 * k, o.y + 2 * k), P(o.x, o.y + 2 * k)], { fill: YELLOW });
@@ -247,15 +292,33 @@ const figTurns = () => {
   return svg(430, 160, turned(55, 70, 0) + label(55, 140, "처음") + arrow(P(95, 70), P(125, 70)) + turned(165, 70, 90) + label(165, 140, "반의 반 바퀴")
     + arrow(P(205, 70), P(235, 70)) + turned(275, 70, 180) + label(275, 140, "반 바퀴") + arrow(P(315, 70), P(345, 70)) + turned(385, 70, 360) + label(385, 140, "한 바퀴 = 처음"), "시계 방향으로 반의 반 바퀴씩 돌린 모양");
 };
+// 교재처럼 가운데 점을 중심으로 돌려 겹치는 바람개비 모양 네 조각(한 조각 9칸)
+const PIN_A = [[0, 0], [0, 1], [0, 2], [0, 3], [1, 0], [1, 1], [1, 2], [1, 3], [2, 2]];   // [행, 열]
 const figPartition = () => {
-  const o = P(60, 20), k = 30;
-  const colors = [YELLOW, SOFT, PINK, "#dde9ff"];
-  let body = grid(o, 6, 6, k);
-  [[0, 0], [3, 0], [3, 3], [0, 3]].forEach(([c, r], i) => { body += rect(o.x + c * k, o.y + r * k, 3 * k, 3 * k, { fill: colors[i], width: 2.2 }); });
-  return svg(300, 230, body + grid(o, 6, 6, k, { color: "#9aa39e", width: 0.8 }) + dot(P(o.x + 3 * k, o.y + 3 * k), 5, MARK) + label(150, 214, "가운데 점을 반의 반 바퀴씩 돌리면 겹친다"), "6×6 모눈을 같은 모양 넷으로 나눈 그림");
+  const o = P(60, 20), k = 30, colors = [YELLOW, SOFT, PINK, "#dde9ff"];
+  const turn = ([r, c]) => [c, 5 - r];   // 시계 방향 반의 반 바퀴
+  const owner = new Map();
+  let piece = PIN_A;
+  for (let i = 0; i < 4; i += 1) { piece.forEach(([r, c]) => owner.set(`${r},${c}`, i)); piece = piece.map(turn); }
+  let body = "";
+  owner.forEach((i, key) => { const [r, c] = key.split(",").map(Number); body += rect(o.x + c * k, o.y + r * k, k, k, { fill: colors[i], color: "none", width: 0 }); });
+  body += grid(o, 6, 6, k, { color: "#9aa39e", width: 0.8 });
+  // 조각 경계는 굵게
+  for (let r = 0; r < 6; r += 1) for (let c = 0; c < 6; c += 1) {
+    const me = owner.get(`${r},${c}`);
+    if (c < 5 && owner.get(`${r},${c + 1}`) !== me) body += line(P(o.x + (c + 1) * k, o.y + r * k), P(o.x + (c + 1) * k, o.y + (r + 1) * k), { width: 2.6 });
+    if (r < 5 && owner.get(`${r + 1},${c}`) !== me) body += line(P(o.x + c * k, o.y + (r + 1) * k), P(o.x + (c + 1) * k, o.y + (r + 1) * k), { width: 2.6 });
+  }
+  return svg(300, 230, body + rect(o.x, o.y, 6 * k, 6 * k, { width: 2.6 }) + dot(P(o.x + 3 * k, o.y + 3 * k), 5, MARK) + label(150, 214, "가운데 점을 반의 반 바퀴씩 돌리면 겹친다"), "6×6 모눈을 돌려 겹치는 같은 모양 넷으로 나눈 그림");
 };
 const figHalfTurnDigits = () => svg(320, 150, digitRow("6", 60, 40) + text(160, 62, "반 바퀴", { size: 15, color: GREEN }) + arrow(P(120, 80), P(200, 80), { color: GREEN }) + `<g transform="rotate(180 253 63)">${digitRow("6", 240, 40)}</g>` + label(73, 130, "처음") + label(253, 130, "돌린 모양"), "디지털 6을 반 바퀴 돌리면 9");
-// 원과 반지름
+// 원과 반지름 — 되짚기: 교재의 원 설명 그림처럼 원의 중심 · 반지름 · 지름
+const figCircleParts = () => {
+  const c = P(150, 110), r = 90;
+  return svg(300, 225, circle(c, r, { fill: "#fff" }) + line(at(c, r, 180), at(c, r, 0), { color: BLUE, width: 2.4 }) + line(c, at(c, r, 60), { color: MARK, width: 2.4 }) + dot(c, 4.5)
+    + label(c.x, c.y + 16, "원의 중심") + text(at(c, r * 0.55, 60).x + 18, at(c, r * 0.55, 60).y, "반지름", { size: 13, color: MARK }) + text(c.x + 52, c.y + 14, "지름", { size: 13, color: BLUE })
+    + text(150, 216, "지름 = 반지름 × ?", { size: 15, color: GREEN }), "원의 중심, 반지름, 지름");
+};
 const figCircleRadius = () => {
   const r = 46, c = [P(80, 70), P(172, 70), P(172, 162), P(80, 162)];
   return svg(260, 230, c.map((p) => circle(p, r, { fill: "#fff" })).join("") + poly(c, { color: MARK, width: 2.6 }) + c.map((p) => dot(p, 4)).join("")
@@ -291,6 +354,20 @@ const figRectGrid = () => {
   const o = P(50, 30), k = 60;
   return svg(300, 200, grid(o, 3, 2, k, { color: INK, width: 1.6 }) + rect(o.x + k, o.y, 2 * k, k, { fill: "rgba(255,225,150,.7)", color: MARK, width: 3 })
     + label(150, 180, "가로선 2개 + 세로선 2개 → 사각형 1개"), "3×2 모눈에서 사각형 하나 고르기");
+};
+
+// 교재처럼 크기별로 나누어 세기: 가로 2칸 · 세로 2칸 모눈에서 사각형 모양마다 몇 개인지(예제의 3×2와 다른 모눈)
+const figRectSizes = () => {
+  const k = 16, kinds = [[1, 1, 4], [2, 1, 2], [1, 2, 2], [2, 2, 1]];
+  let body = "", x = 18;
+  kinds.forEach(([w, h, n], i) => {
+    const o = P(x, 20);
+    body += grid(o, 2, 2, k, { color: "#c9d3cd", width: 1 }) + rect(o.x, o.y, w * k, h * k, { fill: "rgba(255,225,150,.8)", color: MARK, width: 2.2 }) + rect(o.x, o.y, 2 * k, 2 * k, { width: 1.6 })
+      + text(o.x + k, o.y + 2 * k + 18, `${n}개`, { size: 14 });
+    if (i < kinds.length - 1) body += text(o.x + 2 * k + 18, o.y + k, "+", { size: 18, color: "#8a948f" });
+    x += 2 * k + 36;
+  });
+  return svg(x + 70, 100, body + text(x + 10, 36, "= 9개", { size: 16, anchor: "start", color: GREEN }) + label((x + 70) / 2, 90, "선 고르기로도 3 × 3 = 9"), "2×2 모눈의 사각형을 크기별로 센 그림");
 };
 
 // ════ 나머지 차시 꾸러미 ════
@@ -415,22 +492,22 @@ Object.assign(PACKS, {
   "0/3": [
     {
       id: "time-base60", title: "60분 = 1시간, 시간 더하고 빼기",
-      recall: { figure: () => figTimeAdd(), text: "긴바늘이 한 바퀴 돌면 짧은바늘이 숫자 한 칸 갑니다.", ask: "1시간은 몇 분인가요?", options: ["10분", "60분", "100분"], answer: 1, why: "긴바늘이 한 바퀴(60분) 돌면 1시간이에요.", hint: "시계 눈금 작은 칸이 모두 몇 개인지 떠올려요." },
+      recall: { figure: figMinuteLoop, text: "긴바늘이 한 바퀴 돌면 짧은바늘이 숫자 한 칸 갑니다.", ask: "1시간은 몇 분인가요?", options: ["10분", "60분", "100분"], answer: 1, why: "긴바늘이 한 바퀴(60분) 돌면 1시간이에요.", hint: "시계 눈금 작은 칸이 모두 몇 개인지 떠올려요." },
       explore: [["board", "book-07/elapsed-time"]],
       proofs: [],
       summary: {
-        figure: figTimeAdd,
-        terms: [["시각", "시계가 가리키는 때(2시 45분)"], ["걸린 시간", "두 시각 사이의 길이(1시간 35분)"]],
-        facts: ["분끼리 더해 <b>60분이 넘으면 1시간으로 올린다</b>", "분끼리 뺄 수 없으면 <b>1시간을 60분으로 바꿔</b> 빌려 온다", "걸린 시간 = 끝난 시각 − 시작한 시각"]
+        figure: figTimeColumns,
+        terms: [["시각", "시계가 가리키는 때(3시 50분)"], ["걸린 시간", "두 시각 사이의 길이(1시간 25분)"]],
+        facts: ["세로셈처럼 <b>시는 시끼리, 분은 분끼리</b> 줄을 맞춰 쓴다", "분끼리 더해 <b>60분이 넘으면 1시간으로 올린다</b>", "분끼리 뺄 수 없으면 <b>1시간을 60분으로 바꿔</b> 빌려 온다", "걸린 시간 = 끝난 시각 − 시작한 시각"]
       },
       pitfall: "시간 계산은 100이 아니라 60에서 올리고 빌립니다. 80분을 '1시간 80분'이나 '0시간 80분'으로 두지 않습니다.",
       example: {
-        prompt: "2시 45분에 시작한 영화가 1시간 35분 동안 상영했습니다. 영화가 끝난 시각은 몇 시 몇 분인가요?",
-        figure: figTimeAdd,
+        prompt: "3시 50분에 시작한 영화가 1시간 25분 동안 상영했습니다. 영화가 끝난 시각은 몇 시 몇 분인가요?",
+        figure: figTimeExample,
         steps: [
-          { ask: "분끼리 더하면? 45 + 35 =", answer: "80", unit: "분", why: "시각의 분과 걸린 시간의 분을 먼저 더합니다.", hint: "45에 35를 더해요." },
-          { ask: "80분 = 1시간 몇 분?", answer: "20", unit: "분", why: "60분이 1시간이므로 80 − 60 = 20분이 남습니다.", hint: "80에서 60을 빼요." },
-          { ask: "시는? 2 + 1 + 1 =", answer: "4", unit: "시", why: "시작 2시 + 걸린 1시간 + 분에서 올라온 1시간입니다.", hint: "올라온 1시간도 더해요." }
+          { ask: "분끼리 더하면? 50 + 25 =", answer: "75", unit: "분", why: "시각의 분과 걸린 시간의 분을 먼저 더합니다.", hint: "50에 25를 더해요." },
+          { ask: "75분 = 1시간 몇 분?", answer: "15", unit: "분", why: "60분이 1시간이므로 75 − 60 = 15분이 남습니다.", hint: "75에서 60을 빼요." },
+          { ask: "시는? 3 + 1 + 1 =", answer: "5", unit: "시", why: "시작 3시 + 걸린 1시간 + 분에서 올라온 1시간입니다.", hint: "올라온 1시간도 더해요." }
         ]
       },
       check: [["time-add-subtract-base60-b7", "concept"], ["elapsed-time-analog-b7", "type"], ["time-add-subtract-base60-b7", "advanced"]]
@@ -448,7 +525,7 @@ Object.assign(PACKS, {
       pitfall: "거울 속 시계에서 바늘이 가리키는 숫자를 그대로 읽으면 안 됩니다. 반드시 12시에서 뺍니다.",
       example: {
         prompt: "거울에 비친 바늘 시계가 3시 20분으로 보입니다. 실제 시각은 몇 시 몇 분인가요?",
-        figure: figMirrorClock,
+        figure: figMirrorClockAsk,
         steps: [
           { ask: "12시를 11시 60분으로 바꾸고 분끼리 빼면? 60 − 20 =", answer: "40", unit: "분", why: "실제 시각 = 12시 − 거울 속 시각, 분부터 뺍니다.", hint: "60에서 20을 빼요." },
           { ask: "시끼리 빼면? 11 − 3 =", answer: "8", unit: "시", why: "1시간을 60분으로 바꿨으니 12시는 11시가 되었습니다.", hint: "11에서 3을 빼요." }
@@ -531,7 +608,7 @@ Object.assign(PACKS, {
   "2/2": [
     {
       id: "radius-perimeter", title: "반지름으로 만든 도형의 둘레",
-      recall: { figure: figCircleRadius, text: "원의 가운데에서 원 위까지 그은 선이 반지름입니다.", ask: "지름은 반지름의 몇 배인가요?", options: ["2배", "3배", "4배"], answer: 0, why: "지름은 가운데를 지나 양쪽 반지름을 이은 것이라 2배예요.", hint: "반지름 두 개를 이어 봐요." },
+      recall: { figure: figCircleParts, text: "원의 가운데에서 원 위까지 그은 선이 반지름입니다.", ask: "지름은 반지름의 몇 배인가요?", options: ["2배", "3배", "4배"], answer: 0, why: "지름은 가운데를 지나 양쪽 반지름을 이은 것이라 2배예요.", hint: "반지름 두 개를 이어 봐요." },
       explore: [],
       proofs: [["two-circles-triangle", "두 원으로 만든 삼각형은 왜 정삼각형일까"]],
       summary: {
@@ -649,8 +726,8 @@ Object.assign(PACKS, {
       explore: [["lab", "dots", "점판 위 정사각형"]],
       proofs: [["tilted-square", "점판 위 기울어진 사각형은 왜 정사각형일까"]],
       summary: {
-        figure: figRectGrid,
-        terms: [["선 고르기", "가로선 2개 + 세로선 2개를 고르면 사각형이 하나로 정해진다"]],
+        figure: figRectSizes,
+        terms: [["크기별로 세기", "사각형 모양(가로 몇 칸 · 세로 몇 칸)마다 나누어 세고 더하기"], ["선 고르기", "가로선 2개 + 세로선 2개를 고르면 사각형이 하나로 정해진다"]],
         facts: ["사각형 수 = (가로선 2개 고르는 방법) × (세로선 2개 고르는 방법)", "정사각형은 <b>크기별로</b> 센다 — 3×3 모눈: 9 + 4 + 1", "점판에서는 <b>기울어진 정사각형</b>도 빠뜨리지 않는다"]
       },
       pitfall: "작은 칸만 세고 여러 칸을 합친 큰 사각형을 빠뜨리기 쉽습니다. 선을 골라 세면 빠짐이 없습니다.",

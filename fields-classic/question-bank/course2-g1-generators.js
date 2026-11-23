@@ -806,7 +806,7 @@ export const COURSE2_G1_GUIDES = Object.freeze({
   "c2-symmetry-axis-count": "접어서 완전히 겹치는 선만 대칭축입니다. 도형마다 세어 더합니다.",
   "c2-circle-sector-angle": "원의 가운데를 한 바퀴 도는 각은 360°입니다.",
   "c2-triangle-angle": "삼각형의 세 각을 모으면 180°, 이등변삼각형은 두 밑각이 같습니다.",
-  "c2-regular-polygon-angle": "한 꼭짓점에서 대각선을 그어 삼각형으로 나누면 내각의 합 = 180 × (변의 수 − 2)입니다.",
+  "c2-regular-polygon-angle": "가운데 점에서 꼭짓점마다 선을 그어 같은 이등변삼각형으로 나눕니다. 꼭지각 = 360° ÷ 변의 수, 한 내각 = 밑각 두 개입니다.",
   "c2-joined-polygon-angle": "한 점을 도는 각 360°에서 두 정다각형의 한 내각을 뺍니다.",
   "c2-clock-hand-angle": "긴바늘은 1분에 6°, 짧은바늘은 1분에 0.5°씩 돕니다.",
   "c2-circle-radius-perimeter": "원의 가운데에서 원 위까지는 모두 반지름이라 길이가 같습니다.",

@@ -7,11 +7,30 @@ const mid = (a, b) => P((a.x + b.x) / 2, (a.y + b.y) / 2);
 const C3 = (type) => [[type, "concept"], [type, "type"], [type, "advanced"]];
 
 // ── 그림 ──
-const figRearrange = () => {
-  const k = 22;
-  return svg(430, 170, grid(P(16, 40), 9, 4, k) + rect(16, 40, 9 * k, 4 * k, { fill: YELLOW }) + grid(P(16, 40), 9, 4, k, { color: "#b9c3bd", width: 0.8 })
-    + arrow(P(224, 84), P(262, 84)) + grid(P(272, 18), 6, 6, k) + rect(272, 18, 6 * k, 6 * k, { fill: YELLOW }) + grid(P(272, 18), 6, 6, k, { color: "#b9c3bd", width: 0.8 })
-    + label(115, 150, "9 × 4 = 36칸") + label(338, 158, "6 × 6 = 36칸"), "넓이가 같은 직사각형과 정사각형");
+// 모눈 칸 좌표(가로 x칸, 세로 y칸) → 점
+const cellPt = (o, k) => (x, y) => P(o.x + x * k, o.y + y * k);
+// 계단 분할(교재 활동 「도형의 분할」과 같은 모양): 가로 16칸·세로 9칸 직사각형을 계단 모양으로 잘라 → 오른쪽 조각을 한 계단 옮겨 12×12 정사각형.
+// 조각마다 색을 달리하고 자른 선은 빨강, 장면 사이 회색 화살표. ask면 정사각형의 한 변을 「?」로 둔다(예제 답을 그림에 보이지 않음).
+const figStair = (ask = false) => () => {
+  const k = 12, o1 = P(16, 44), o2 = P(300, 16);
+  const q = cellPt(o1, k), s = cellPt(o2, k);
+  const A = [[0, 0], [12, 0], [12, 3], [8, 3], [8, 6], [4, 6], [4, 9], [0, 9]];
+  const B = [[12, 0], [16, 0], [16, 9], [4, 9], [4, 6], [8, 6], [8, 3], [12, 3]];
+  const cutPath = [[12, 0], [12, 3], [8, 3], [8, 6], [4, 6], [4, 9]];
+  const pieceL = (pts, at, fill) => poly(pts.map(([x, y]) => at(x, y)), { fill, width: 2 });
+  const cut = cutPath.slice(1).map(([x, y], i) => line(q(...cutPath[i]), q(x, y), { color: MARK, width: 3 })).join("");
+  const moved = B.map(([x, y]) => [x - 4, y + 3]);
+  return svg(470, 214, pieceL(A, q, YELLOW) + pieceL(B, q, SOFT) + grid(o1, 16, 9, k, { color: "#b9c3bd", width: 0.7 }) + cut + rect(o1.x, o1.y, 16 * k, 9 * k, { width: 2.2 })
+    + arrow(P(232, 98), P(282, 98))
+    + pieceL(A, s, YELLOW) + pieceL(moved, s, SOFT) + grid(o2, 12, 12, k, { color: "#b9c3bd", width: 0.7 }) + rect(o2.x, o2.y, 12 * k, 12 * k, { width: 2.2 })
+    + label(o1.x + 8 * k, o1.y + 9 * k + 18, "가로 16칸 · 세로 9칸") + label(o2.x + 6 * k, o2.y + 12 * k + 18, ask ? "한 변 ?칸" : "한 변 12칸"), "계단 모양으로 잘라 붙여 정사각형 만들기");
+};
+const figRearrange = figStair(false), figRearrangeAsk = figStair(true);
+// 되짚기: 가로 3칸 · 세로 2칸 직사각형(넓이는 ?)
+const figRect32 = () => {
+  const k = 40, o = P(40, 20);
+  return svg(240, 150, rect(o.x, o.y, 3 * k, 2 * k, { fill: YELLOW }) + grid(o, 3, 2, k, { color: "#9aa39e", width: 0.9 }) + rect(o.x, o.y, 3 * k, 2 * k, { width: 2.2 })
+    + label(o.x + 1.5 * k, o.y + 2 * k + 16, "3cm") + label(o.x - 16, o.y + k, "2cm") + text(o.x + 3 * k + 30, o.y + k, "?㎠", { size: 15, color: MARK }), "가로 3cm, 세로 2cm인 직사각형");
 };
 const figTwoPieces = () => {
   const k = 30, o = P(40, 20), q = (x, y) => P(o.x + x * k, o.y + y * k);
@@ -20,16 +39,44 @@ const figTwoPieces = () => {
   return svg(300, 210, rect(o.x, o.y, 6 * k, 4 * k, { fill: SOFT }) + poly(piece, { fill: YELLOW, width: 2.6 })
     + grid(o, 6, 4, k, { color: "#9aa39e", width: 0.8 }) + rect(o.x, o.y, 6 * k, 4 * k, { width: 2.4 }) + dot(q(3, 2), 5, MARK) + label(150, 200, "가운데 점을 반 바퀴 돌리면 두 조각이 겹친다"), "합동인 두 조각으로 나눈 직사각형");
 };
+// 모눈 위의 도형 — 온 칸 8개 + 네 귀퉁이의 반 칸 4개(예제의 수와 그림이 맞게)
 const figUnitArea = () => {
-  const k = 34, o = P(30, 16);
-  const shape = [P(o.x + k, o.y), P(o.x + 3 * k, o.y), P(o.x + 4 * k, o.y + k), P(o.x + 4 * k, o.y + 3 * k), P(o.x + k, o.y + 3 * k), P(o.x, o.y + 2 * k), P(o.x, o.y + k)];
-  return svg(240, 160, grid(o, 4, 3, k) + poly(shape, { fill: YELLOW, width: 2.4 }) + grid(o, 4, 3, k, { color: "#9aa39e", width: 0.8 }), "모눈 위의 도형");
+  const k = 34, o = P(30, 16), q = cellPt(o, k);
+  const shape = [q(1, 0), q(3, 0), q(4, 1), q(4, 2), q(3, 3), q(1, 3), q(0, 2), q(0, 1)];
+  return svg(240, 136, grid(o, 4, 3, k) + poly(shape, { fill: YELLOW, width: 2.4 }) + grid(o, 4, 3, k, { color: "#9aa39e", width: 0.8 }) + poly(shape, { width: 2.4 }), "모눈 위의 도형");
 };
-const figTilted = () => {
+// 되짚기: 반 칸 두 개를 모으면? (답은 그림에 없다)
+const figHalves = () => {
+  const k = 50, tri = (x, y, flip) => poly(flip ? [P(x + k, y), P(x + k, y + k), P(x, y + k)] : [P(x, y), P(x + k, y), P(x, y + k)], { fill: YELLOW, width: 2.2 });
+  return svg(300, 110, rect(20, 20, k, k, { color: "#b9c3bd", width: 1 }) + tri(20, 20, false) + text(52, 98, "반 칸", { size: 13, color: "#56627f" })
+    + text(100, 45, "+", { size: 22 }) + rect(126, 20, k, k, { color: "#b9c3bd", width: 1 }) + tri(126, 20, true) + text(151, 98, "반 칸", { size: 13, color: "#56627f" })
+    + arrow(P(192, 45), P(230, 45)) + rect(244, 20, k, k, { fill: "#fff", color: "#9aa8c4", width: 1.6, rx: 6 }) + text(269, 46, "?", { size: 24, color: "#56627f" }), "반 칸 두 개를 모은 넓이");
+};
+// 기울어진 정사각형 — 교재처럼 세 장면: ① 직사각형을 반의 반 바퀴씩 돌려 네 개 → ② 직사각형의 대각선을 이어 정사각형 → ③ 같은 직각삼각형 4개 + 가운데 정사각형
+// 여기서는 가로 3칸 · 세로 2칸 직사각형(5 × 5 모눈). 정리 그림에는 수를 쓰지 않는다(예제 답이 보이지 않게).
+const TILT_RECTS = [[[0, 0], [3, 0], [3, 2], [0, 2]], [[3, 0], [5, 0], [5, 3], [3, 3]], [[2, 3], [5, 3], [5, 5], [2, 5]], [[0, 2], [2, 2], [2, 5], [0, 5]]];
+const TILT_SQ = [[3, 0], [5, 3], [2, 5], [0, 2]];
+const TILT_TRI = [[[0, 2], [3, 0], [3, 2]], [[3, 0], [5, 3], [3, 3]], [[5, 3], [2, 5], [2, 3]], [[2, 5], [0, 2], [2, 2]]];
+const tiltPanel = (o, k, stage, { labels = false } = {}) => {
+  const q = cellPt(o, k), pts = (list) => list.map(([x, y]) => q(x, y));
+  let body = grid(o, 5, 5, k, { color: "#c9d3cd", width: 0.9 });
+  if (stage === 1 || stage === 2) body += TILT_RECTS.map((r, i) => poly(pts(r), { fill: i % 2 ? SOFT : "#fff", width: 1.8 })).join("");
+  if (stage === 2) body += poly(pts(TILT_SQ), { color: MARK, width: 2.8 });
+  if (stage === 3) body += TILT_TRI.map((t) => poly(pts(t), { fill: YELLOW, width: 1.6 })).join("") + poly(pts([[2, 2], [3, 2], [3, 3], [2, 3]]), { fill: PINK, width: 1.6 }) + poly(pts(TILT_SQ), { color: MARK, width: 2.8 });
+  if (labels) body += label(o.x + 1.5 * k, o.y - 10, "3칸") + label(o.x - 14, o.y + k, "2칸");
+  return body;
+};
+const figTiltedSteps = () => {
+  const k = 22, w = 5 * k, xs = [20, 20 + w + 50, 20 + 2 * (w + 50)];
+  return svg(xs[2] + w + 20, 160, xs.map((x, i) => tiltPanel(P(x, 14), k, i + 1) + label(x + w / 2, 14 + w + 18, ["① 반의 반 바퀴씩 돌려 놓기", "② 대각선을 이어 정사각형", "③ 삼각형 4개 + 가운데"][i])).join("")
+    + arrow(P(xs[0] + w + 10, 14 + w / 2), P(xs[1] - 10, 14 + w / 2)) + arrow(P(xs[1] + w + 10, 14 + w / 2), P(xs[2] - 10, 14 + w / 2)), "모눈에서 직사각형의 대각선을 한 변으로 하는 정사각형 그리기");
+};
+const figTiltedExample = () => svg(220, 200, tiltPanel(P(40, 34), 30, 2, { labels: true }), "가로 3칸 · 세로 2칸 직사각형의 대각선을 한 변으로 하는 정사각형");
+// 되짚기: 가로 2칸 · 세로 1칸 직사각형을 대각선으로 자른 삼각형은 몇 칸?
+const figHalfRect = () => {
   const k = 50, o = P(30, 20);
-  const sq = [P(o.x + 2 * k, o.y), P(o.x + 3 * k, o.y + 2 * k), P(o.x + k, o.y + 3 * k), P(o.x, o.y + k)];
-  return svg(240, 200, grid(o, 3, 3, k) + rect(o.x, o.y, 3 * k, 3 * k, { fill: SOFT, width: 1.6 }) + poly(sq, { fill: YELLOW, color: MARK, width: 2.6 })
-    + text(o.x + 2.5 * k, o.y + 0.35 * k, "1", { size: 13 }) + text(o.x + 0.35 * k, o.y + 0.5 * k, "1", { size: 13 }) + label(105, 190, "3 × 3 − 삼각형 4개"), "기울어진 정사각형");
+  return svg(170, 100, grid(o, 2, 1, k, { color: "#9aa39e", width: 0.9 }) + poly([P(o.x, o.y), P(o.x + 2 * k, o.y + k), P(o.x, o.y + k)], { fill: YELLOW, width: 2 }) + rect(o.x, o.y, 2 * k, k, { width: 2.2 })
+    + text(o.x + 0.62 * k, o.y + 0.68 * k, "?", { size: 18, color: MARK }), "가로 2칸, 세로 1칸 직사각형을 대각선으로 자른 삼각형");
 };
 const figNestSquares = () => {
   let pts = [P(30, 20), P(210, 20), P(210, 200), P(30, 200)], body = "";
@@ -48,7 +95,14 @@ const fibBoxes = (unit, o = P(20, 20)) => {
   const sq = [[3, 0, 1], [4, 0, 1], [3, 1, 2], [0, 0, 3], [0, 3, 5]];
   return sq.map(([x, y, s], i) => rect(o.x + x * unit, o.y + y * unit, s * unit, s * unit, { fill: i === 0 ? YELLOW : "#fff" }) + text(o.x + (x + s / 2) * unit, o.y + (y + s / 2) * unit, String(s), { size: Math.min(18, 9 + s * 2) })).join("");
 };
-const figFib = () => svg(250, 330, fibBoxes(40, P(20, 10)) + label(125, 322, "한 변: 1, 1, 2, 3, 5 — 앞의 두 수의 합"), "정사각형을 붙여 만든 직사각형");
+// 교재처럼 정사각형 그림 옆에 「정사각형 ①② … / 한 변」 표를 둔다
+const fibTable = (x, y) => {
+  const w = 34, h = 28, vals = ["1", "1", "2", "3", "5", "?"];
+  let body = rect(x, y, 70, h, { fill: SOFT, width: 1.2 }) + text(x + 35, y + h / 2, "정사각형", { size: 12 }) + rect(x, y + h, 70, h, { fill: SOFT, width: 1.2 }) + text(x + 35, y + 1.5 * h, "한 변", { size: 12 });
+  vals.forEach((v, i) => { const cx = x + 70 + i * w; body += rect(cx, y, w, h, { fill: "#fff", width: 1.2 }) + text(cx + w / 2, y + h / 2, "①②③④⑤⑥"[i], { size: 13 }) + rect(cx, y + h, w, h, { fill: "#fff", width: 1.2 }) + text(cx + w / 2, y + 1.5 * h, v, { size: 14, color: v === "?" ? MARK : INK }); });
+  return body;
+};
+const figFib = () => svg(524, 340, fibBoxes(40, P(20, 10)) + fibTable(240, 130) + label(375, 210, "새 정사각형의 한 변 = 앞의 두 수의 합"), "정사각형을 붙여 만든 직사각형과 한 변의 길이 표");
 const figStack = () => {
   const t = 18, o = P(20, 20);   // 짧은 변 2칸, 긴 변 3칸
   let body = "";
@@ -71,12 +125,30 @@ const figChain = () => {
 };
 const figSticks = () => svg(320, 160, rect(20, 30, 4 * 20, 14, { fill: YELLOW }) + label(60, 18, "4cm") + rect(20, 80, 9 * 20, 14, { fill: SOFT }) + label(110, 68, "9cm")
   + rect(20, 125, 5 * 20, 6, { fill: MARK, color: MARK }) + label(140, 128, "5cm보다 길고") + rect(20, 140, 13 * 20, 6, { fill: GREEN, color: GREEN }) + label(300, 148, "13cm보다 짧게", { anchor: "end" }), "두 막대와 세 번째 막대의 범위");
+// 되짚기: 짧은 두 막대(2cm, 5cm)를 긴 막대(9cm) 양 끝에 세워 기울여도 끝이 서로 닿지 않는다 — 교재처럼 막대 그림으로
+const figSticksFail = () => {
+  const u = 26, y = 120, x0 = 20;
+  const stick = (a, b, fill) => { const d = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI, len = Math.hypot(b.x - a.x, b.y - a.y);
+    return `<g transform="rotate(${d.toFixed(1)} ${a.x} ${a.y})">${rect(a.x, a.y - 6, len, 12, { fill, width: 1.6, rx: 5 })}</g>`; };
+  const L = P(x0, y), R = P(x0 + 9 * u, y);
+  return svg(280, 170, rect(x0, y, 9 * u, 12, { fill: PINK, width: 1.6, rx: 5 }) + stick(L, at(L, 2 * u, 35), YELLOW) + stick(R, at(R, 5 * u, 150), SOFT)
+    + label(x0 + 4.5 * u, y + 32, "9cm") + label(at(L, 2 * u, 35).x - 6, at(L, 2 * u, 35).y - 16, "2cm") + label(at(R, 5 * u, 150).x + 30, at(R, 5 * u, 150).y - 18, "5cm")
+    + text(x0 + 2.9 * u, y - 44, "?", { size: 18, color: MARK }), "2cm, 5cm, 9cm 막대로 삼각형 만들기");
+};
+// 되짚기: 두 막대의 길이 비교(띠) — 짧은 막대 3개 = 긴 막대 2개
+const figBars = () => {
+  const u = 22, x = 70;
+  let body = "";
+  for (let i = 0; i < 3; i += 1) body += rect(x + i * 2 * u, 20, 2 * u, 26, { fill: YELLOW, width: 1.6, rx: 4 }) + text(x + i * 2 * u + u, 33, "㉠", { size: 14 });
+  for (let i = 0; i < 2; i += 1) body += rect(x + i * 3 * u, 58, 3 * u, 26, { fill: SOFT, width: 1.6, rx: 4 }) + text(x + i * 3 * u + 1.5 * u, 71, "㉡", { size: 14 });
+  return svg(280, 100, body + label(36, 33, "짧은 막대") + label(36, 71, "긴 막대") + line(P(x + 6 * u, 12), P(x + 6 * u, 92), { color: "#9aa39e", dash: "4 4", width: 1.2 }), "짧은 막대 3개와 긴 막대 2개의 길이 비교");
+};
 const figCut = () => {
   const S = 200, A = P(130, 20), B = P(230, 20 + S * 0.866), C = P(30, 20 + S * 0.866);
   const pt = (p, q, t) => P(p.x + (q.x - p.x) * t, p.y + (q.y - p.y) * t);
-  const cut = [4, 6, 8].map((v) => v / 30);
+  const cut = [5, 7, 9].map((v) => v / 36);
   const shape = [pt(A, B, cut[0]), pt(B, A, cut[1]), pt(B, C, cut[1]), pt(C, B, cut[2]), pt(C, A, cut[2]), pt(A, C, cut[0])];
-  return svg(260, 220, poly([A, B, C], { color: "#9aa39e", width: 1.4 }) + poly(shape, { fill: YELLOW, width: 2.4 }) + label(A.x, A.y + 24, "4", { color: MARK }) + label(B.x - 22, B.y - 10, "6", { color: MARK }) + label(C.x + 26, C.y - 12, "8", { color: MARK }), "귀퉁이를 잘라 낸 정삼각형");
+  return svg(260, 220, poly([A, B, C], { color: "#9aa39e", width: 1.4 }) + poly(shape, { fill: YELLOW, width: 2.4 }) + label(A.x, A.y + 13, "5", { color: MARK, size: 12 }) + label(B.x - 24, B.y - 10, "7", { color: MARK }) + label(C.x + 28, C.y - 12, "9", { color: MARK }), "귀퉁이를 잘라 낸 정삼각형");
 };
 const figWalk = () => {
   const p = [P(30, 170)]; let d = 0;
@@ -100,21 +172,21 @@ export const PACKS = {
   "0/1": [
     {
       id: "rearrange-area", title: "잘라 붙여도 넓이는 그대로",
-      recall: { figure: figUnitArea, text: "넓이는 단위넓이(1㎠ 정사각형)가 몇 개인지로 잽니다.", ask: "가로 3cm, 세로 2cm인 직사각형의 넓이는?", options: ["5㎠", "6㎠", "10㎠"], answer: 1, why: "1㎠ 정사각형이 3개씩 2줄, 3 × 2 = 6㎠예요.", hint: "칸 수를 세어 봐요." },
+      recall: { figure: figRect32, text: "넓이는 단위넓이(1㎠ 정사각형)가 몇 개인지로 잽니다.", ask: "가로 3cm, 세로 2cm인 직사각형의 넓이는?", options: ["5㎠", "6㎠", "10㎠"], answer: 1, why: "1㎠ 정사각형이 3개씩 2줄, 3 × 2 = 6㎠예요.", hint: "칸 수를 세어 봐요." },
       explore: [["board", "book-09/partition-congruent"]],
       proofs: [["stair-square", "계단 모양으로 자르면 왜 정사각형이 될까"]],
       summary: {
         figure: figRearrange,
         terms: [["넓이", "도형이 덮는 단위넓이(1㎠)의 개수"], ["합동", "모양과 크기가 같아 완전히 겹치는 것"]],
-        facts: ["잘라서 다시 붙여도 <b>넓이는 변하지 않는다</b>", "정사각형을 만들려면 먼저 넓이를 구하고, <b>같은 수를 두 번 곱해 그 넓이</b>가 되는 수가 한 변", "계단 모양으로 자르면 조각을 한 칸 밀어 정사각형을 맞출 수 있다"]
+        facts: ["잘라서 다시 붙여도 <b>넓이는 변하지 않는다</b>", "정사각형을 만들려면 먼저 넓이를 구하고, <b>같은 수를 두 번 곱해 그 넓이</b>가 되는 수가 한 변", "<b>계단 분할</b>: 계단 모양으로 잘라 한 조각을 <b>한 계단만큼 옮기면</b> 정사각형이 맞춰진다"]
       },
       pitfall: "둘레는 잘라 붙이면 바뀝니다. 그대로인 것은 넓이뿐입니다.",
       example: {
-        prompt: "가로 9cm, 세로 4cm인 직사각형을 두 조각으로 잘라 붙여 정사각형을 만들었습니다. 정사각형의 한 변은 몇 cm인가요?",
-        figure: figRearrange,
+        prompt: "한 칸이 1cm인 모눈에서 가로 16cm, 세로 9cm인 직사각형을 그림처럼 계단 모양으로 잘라 붙여 정사각형을 만들었습니다. 정사각형의 한 변은 몇 cm인가요?",
+        figure: figRearrangeAsk,
         steps: [
-          { ask: "직사각형의 넓이는? 9 × 4 =", answer: "36", unit: "㎠", why: "가로 9칸이 4줄 있습니다.", hint: "가로 × 세로" },
-          { ask: "같은 수를 두 번 곱해 36이 되는 수는?", answer: "6", unit: "cm", why: "6 × 6 = 36이므로 정사각형의 한 변은 6cm입니다.", hint: "5 × 5, 6 × 6 …을 떠올려요." }
+          { ask: "직사각형의 넓이는? 16 × 9 =", answer: "144", unit: "㎠", why: "가로 16칸이 9줄 있습니다. 잘라 붙여도 넓이는 그대로입니다.", hint: "가로 × 세로" },
+          { ask: "같은 수를 두 번 곱해 144가 되는 수는?", answer: "12", unit: "cm", why: "12 × 12 = 144이므로 정사각형의 한 변은 12cm입니다.", hint: "10 × 10, 11 × 11, 12 × 12 …을 떠올려요." }
         ]
       },
       check: C3("c2-rearrange-square-side")
@@ -144,7 +216,7 @@ export const PACKS = {
   "0/2": [
     {
       id: "unit-area", title: "모눈으로 넓이 세기",
-      recall: { figure: figUnitArea, text: "모눈 한 칸은 1㎠입니다.", ask: "반 칸짜리 삼각형 2개를 모으면 몇 칸인가요?", options: ["반 칸", "1칸", "2칸"], answer: 1, why: "반 칸 둘이 모이면 온 칸 하나예요.", hint: "반 + 반 = ?" },
+      recall: { figure: figHalves, text: "모눈 한 칸은 1㎠입니다.", ask: "반 칸짜리 삼각형 2개를 모으면 몇 칸인가요?", options: ["반 칸", "1칸", "2칸"], answer: 1, why: "반 칸 둘이 모이면 온 칸 하나예요.", hint: "반 + 반 = ?" },
       explore: [["board", "book-03/unit-area-shapes"], ["board", "book-09/unit-area-and-half"]],
       proofs: [],
       summary: {
@@ -154,33 +226,33 @@ export const PACKS = {
       },
       pitfall: "비스듬히 잘린 칸을 온 칸으로 세면 넓이가 커집니다.",
       example: {
-        prompt: "그림의 도형은 온 칸 9개와 반 칸 4개로 되어 있습니다. 넓이는 몇 ㎠인가요?",
+        prompt: "그림의 도형은 온 칸 8개와 반 칸 4개로 되어 있습니다. 넓이는 몇 ㎠인가요?",
         figure: figUnitArea,
         steps: [
           { ask: "반 칸 4개는 온 칸 몇 개?", answer: "2", unit: "칸", why: "반 칸 둘이 온 칸 하나입니다.", hint: "4 ÷ 2" },
-          { ask: "넓이는? 9 + 2 =", answer: "11", unit: "㎠", why: "온 칸과 묶은 칸을 더합니다.", hint: "두 수를 더해요." }
+          { ask: "넓이는? 8 + 2 =", answer: "10", unit: "㎠", why: "온 칸과 묶은 칸을 더합니다.", hint: "두 수를 더해요." }
         ]
       },
       check: [["unit-grid-area", "type"], ["unit-grid-area", "advanced"], ["oblique-square-grid-area", "concept"]]
     },
     {
       id: "tilted-square-area", title: "기울어진 정사각형의 넓이",
-      recall: { figure: figTilted, text: "직각삼각형은 같은 직사각형의 반입니다.", ask: "가로 2칸, 세로 1칸인 직사각형을 대각선으로 자른 삼각형은 몇 칸인가요?", options: ["1칸", "2칸", "3칸"], answer: 0, why: "직사각형 2칸의 반이라 1칸이에요.", hint: "2칸의 반" },
+      recall: { figure: figHalfRect, text: "직각삼각형은 같은 직사각형의 반입니다.", ask: "가로 2칸, 세로 1칸인 직사각형을 대각선으로 자른 삼각형은 몇 칸인가요?", options: ["1칸", "2칸", "3칸"], answer: 0, why: "직사각형 2칸의 반이라 1칸이에요.", hint: "2칸의 반" },
       explore: [["lab", "dots", "점판 위 정사각형"]],
       proofs: [["square-fifth", "안쪽 정사각형은 왜 전체를 5로 나눈 하나일까"]],
       summary: {
-        figure: figTilted,
-        terms: [["둘러싼 정사각형", "기울어진 정사각형에 꼭 맞게 바깥에 그린 반듯한 정사각형"]],
-        facts: ["기울어진 정사각형 = <b>둘러싼 정사각형 − 귀퉁이 직각삼각형 4개</b>", "한 변이 가로 ㉠칸·세로 ㉡칸을 지나면 넓이 = ㉠ × ㉠ + ㉡ × ㉡", "점판에서 넓이가 다른 정사각형을 빠짐없이 찾을 수 있다"]
+        figure: figTiltedSteps,
+        terms: [["기울어진 정사각형", "모눈에서 직사각형의 대각선을 한 변으로 하는 정사각형"]],
+        facts: ["직사각형을 반의 반 바퀴씩 돌려 네 개 놓고 <b>대각선을 이으면</b> 정사각형이 된다", "넓이 = <b>합동인 직각삼각형 4개 + 가운데 정사각형</b>(둘러싼 정사각형에서 귀퉁이 삼각형 4개를 빼도 같다)", "직사각형의 가로를 ㉠칸, 세로를 ㉡칸이라 하면 넓이 = ㉠ × ㉠ + ㉡ × ㉡"]
       },
       pitfall: "기울어진 정사각형의 한 변을 칸 수로 재면 안 됩니다. 넓이로 먼저 구합니다.",
       example: {
-        prompt: "모눈 위에 한 변이 가로 2칸, 세로 1칸을 비스듬히 지나는 정사각형을 그렸습니다. 넓이는 몇 ㎠인가요?",
-        figure: figTilted,
+        prompt: "한 칸이 1cm인 모눈에서 가로 3칸, 세로 2칸인 직사각형의 대각선을 한 변으로 하는 정사각형을 그렸습니다. 정사각형의 넓이는 몇 ㎠인가요?",
+        figure: figTiltedExample,
         steps: [
-          { ask: "둘러싼 정사각형은 한 변 3칸 — 넓이는? 3 × 3 =", answer: "9", unit: "㎠", why: "2 + 1 = 3칸짜리 반듯한 정사각형입니다.", hint: "3 × 3" },
-          { ask: "귀퉁이 삼각형 하나는(가로 2·세로 1의 반)?", answer: "1", unit: "㎠", why: "2칸 직사각형의 반입니다.", hint: "2 ÷ 2" },
-          { ask: "기울어진 정사각형은? 9 − 1 × 4 =", answer: "5", unit: "㎠", why: "둘러싼 정사각형에서 삼각형 4개를 뺍니다. 2 × 2 + 1 × 1 = 5와도 같습니다.", hint: "9에서 4를 빼요." }
+          { ask: "직각삼각형 하나의 넓이는? 3 × 2 ÷ 2 =", answer: "3", unit: "㎠", why: "가로 3칸, 세로 2칸 직사각형을 대각선으로 자른 반입니다.", hint: "직사각형 넓이의 반" },
+          { ask: "가운데 정사각형의 한 변은? 3 − 2 =", answer: "1", unit: "cm", why: "긴 변에서 짧은 변을 뺀 만큼이 가운데에 남습니다. 넓이는 1 × 1 = 1㎠입니다.", hint: "두 변의 차" },
+          { ask: "정사각형의 넓이는? 3 × 4 + 1 =", answer: "13", unit: "㎠", why: "직각삼각형 4개와 가운데 정사각형을 더합니다. 3 × 3 + 2 × 2 = 13과도 같습니다.", hint: "12에 1을 더해요." }
         ]
       },
       check: [["oblique-square-grid-area", "concept"], ["c2-grid-square-areas", "type"], ["c2-side-split-square", "advanced"]]
@@ -199,12 +271,12 @@ export const PACKS = {
       },
       pitfall: "변의 길이가 반이 되는 것이 아니라 넓이가 반이 됩니다.",
       example: {
-        prompt: "넓이가 64㎠인 정사각형의 변의 가운데 점을 잇는 일을 세 번 했습니다. 가장 작은 정사각형의 넓이는 몇 ㎠인가요?",
+        prompt: "넓이가 80㎠인 정사각형의 변의 가운데 점을 잇는 일을 세 번 했습니다. 가장 작은 정사각형의 넓이는 몇 ㎠인가요?",
         figure: figNestSquares,
         steps: [
-          { ask: "한 번 이으면? 64 ÷ 2 =", answer: "32", unit: "㎠", why: "가운데 점을 이은 정사각형은 반입니다.", hint: "반" },
-          { ask: "두 번 이으면?", answer: "16", unit: "㎠", why: "또 반입니다.", hint: "32의 반" },
-          { ask: "세 번 이으면?", answer: "8", unit: "㎠", why: "64 → 32 → 16 → 8입니다.", hint: "16의 반" }
+          { ask: "한 번 이으면? 80 ÷ 2 =", answer: "40", unit: "㎠", why: "가운데 점을 이은 정사각형은 반입니다.", hint: "반" },
+          { ask: "두 번 이으면?", answer: "20", unit: "㎠", why: "또 반입니다.", hint: "40의 반" },
+          { ask: "세 번 이으면?", answer: "10", unit: "㎠", why: "80 → 40 → 20 → 10입니다.", hint: "20의 반" }
         ]
       },
       check: C3("c2-midpoint-nest-area")
@@ -258,7 +330,7 @@ export const PACKS = {
   "1/2": [
     {
       id: "rect-ratio", title: "똑같은 직사각형의 둘레와 비",
-      recall: { figure: figStack, text: "두 길이를 견줄 때 몇 대 몇(비)으로 씁니다.", ask: "짧은 막대 3개와 긴 막대 2개의 길이가 같습니다. 짧은 막대 : 긴 막대는?", options: ["3 : 2", "2 : 3", "1 : 1"], answer: 1, why: "짧은 것 3개 = 긴 것 2개이니 짧은 것이 2, 긴 것이 3이에요.", hint: "6을 3으로, 2로 나눠 봐요." },
+      recall: { figure: figBars, text: "두 길이를 견줄 때 몇 대 몇(비)으로 씁니다.", ask: "짧은 막대 3개와 긴 막대 2개의 길이가 같습니다. 짧은 막대 : 긴 막대는?", options: ["3 : 2", "2 : 3", "1 : 1"], answer: 1, why: "짧은 것 3개 = 긴 것 2개이니 짧은 것이 2, 긴 것이 3이에요.", hint: "6을 3으로, 2로 나눠 봐요." },
       explore: [["board", "book-06/rectangle-missing-side"]],
       proofs: [["ratio-rects", "작은 직사각형의 가로와 세로의 비는 어떻게 알까"]],
       summary: {
@@ -326,7 +398,7 @@ export const PACKS = {
   "2/2": [
     {
       id: "triangle-rule", title: "세 막대로 삼각형 만들기",
-      recall: { figure: figSticks, text: "삼각형은 세 변으로 둘러싸인 도형입니다.", ask: "3cm, 4cm, 8cm 막대로 삼각형을 만들 수 있나요?", options: ["있다", "없다"], answer: 1, why: "3 + 4 = 7이 8보다 짧아 두 막대가 만나지 못해요.", hint: "짧은 두 막대를 이어 8cm에 닿나요?" },
+      recall: { figure: figSticksFail, text: "삼각형은 세 변으로 둘러싸인 도형입니다.", ask: "2cm, 5cm, 9cm 막대로 삼각형을 만들 수 있나요?", options: ["있다", "없다"], answer: 1, why: "2 + 5 = 7이 9보다 짧아 두 막대의 끝이 만나지 못해요.", hint: "짧은 두 막대를 이어 9cm에 닿나요?" },
       explore: [],
       proofs: [["triangle-sticks", "세 막대로 삼각형을 만들 수 있는 때는 언제일까"]],
       summary: {
@@ -348,7 +420,7 @@ export const PACKS = {
     },
     {
       id: "cut-corners", title: "귀퉁이를 잘라 낸 정삼각형의 둘레",
-      recall: { figure: figCut, text: "정삼각형은 세 변의 길이가 같습니다.", ask: "한 변이 30cm인 정삼각형의 둘레는?", options: ["60cm", "90cm", "120cm"], answer: 1, why: "30 × 3 = 90cm예요.", hint: "변이 3개" },
+      recall: { figure: figCut, text: "정삼각형은 세 변의 길이가 같습니다.", ask: "한 변이 36cm인 정삼각형의 둘레는?", options: ["72cm", "108cm", "144cm"], answer: 1, why: "36 × 3 = 108cm예요.", hint: "변이 3개" },
       explore: [],
       proofs: [["hexagon-cut", "귀퉁이를 잘라 낸 육각형의 둘레는 왜 그만큼 줄까"]],
       summary: {
@@ -358,12 +430,12 @@ export const PACKS = {
       },
       pitfall: "잘라 낸 삼각형의 둘레 전체를 빼면 틀립니다. 줄어드는 것은 한 변 길이 하나뿐입니다.",
       example: {
-        prompt: "한 변이 30cm인 정삼각형에서 한 변이 4cm, 6cm, 8cm인 정삼각형을 귀퉁이마다 잘라 냈습니다. 남은 육각형의 둘레는 몇 cm인가요?",
+        prompt: "한 변이 36cm인 정삼각형에서 한 변이 5cm, 7cm, 9cm인 정삼각형을 귀퉁이마다 잘라 냈습니다. 남은 육각형의 둘레는 몇 cm인가요?",
         figure: figCut,
         steps: [
-          { ask: "큰 정삼각형의 둘레는? 30 × 3 =", answer: "90", unit: "cm", why: "세 변이 모두 30cm입니다.", hint: "30 × 3" },
-          { ask: "줄어든 길이는? 4 + 6 + 8 =", answer: "18", unit: "cm", why: "귀퉁이마다 잘라 낸 한 변만큼 줄어듭니다.", hint: "세 수를 더해요." },
-          { ask: "육각형의 둘레는? 90 − 18 =", answer: "72", unit: "cm", why: "큰 둘레에서 줄어든 만큼을 뺍니다.", hint: "90 − 18" }
+          { ask: "큰 정삼각형의 둘레는? 36 × 3 =", answer: "108", unit: "cm", why: "세 변이 모두 36cm입니다.", hint: "36 × 3" },
+          { ask: "줄어든 길이는? 5 + 7 + 9 =", answer: "21", unit: "cm", why: "귀퉁이마다 잘라 낸 한 변만큼 줄어듭니다.", hint: "세 수를 더해요." },
+          { ask: "육각형의 둘레는? 108 − 21 =", answer: "87", unit: "cm", why: "큰 둘레에서 줄어든 만큼을 뺍니다.", hint: "108 − 21" }
         ]
       },
       check: C3("c2-cut-triangle-perimeter")
