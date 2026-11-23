@@ -27,7 +27,7 @@ async function inspect(item,variant,level,mode,poison=false){
     }
     if(mode==="problem"){
       const image=root.querySelector(".source62-color-given img");if(!image?.complete||image.naturalWidth!==1280||image.naturalHeight!==1040||!image.src.endsWith(`v${q.variant}-given.png`))errors.push("Wrong or unloaded given picture");
-      if(!root.textContent.includes(q.promptText)||root.querySelector(".source62-color-answer,svg.source62-color-grid"))errors.push("Wrong prompt or learner answer leak");
+      /* 2026-11-23 문제 힌트 제거(problem-hint-policy.js)가 쉬움 난이도의 부분 답 문장을 지우므로 그 문장을 뺀 원문 조건과 비교한다. */if(!root.textContent.replace(/\s+/g,"").includes(q.promptText.replace(/(?:2층에서 어느 한 면도 보이지 않는 쌓기나무는|그림에서 색을 확인할 수 없는 쌓기나무는)\s*\d+개입니다\./g,"").replace(/\s+/g,""))||root.querySelector(".source62-color-answer,svg.source62-color-grid"))errors.push("Wrong prompt or learner answer leak");
       if(image && image.getBoundingClientRect().width*28/640<12)errors.push("Source direction glyph too small");
     }else{
       for(const name of ["maximum","minimum"]){const section=answer.querySelector(`[data-extreme="${name}"]`),svgs=[...section.querySelectorAll("svg")];if(svgs.length!==2)errors.push("Missing extreme layers");else{grid(svgs[0],q[`${name}Layers`].at(-1));grid(svgs[1],q[`${name}Layers`][0]);}}
@@ -38,7 +38,7 @@ async function inspect(item,variant,level,mode,poison=false){
   if(poison)return check.errors;assert.deepEqual(check.errors,[]);await visibleLayout(item,false);
 }
 async function main(){
-  const output=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL),candidate=process.env.HSE_COLOR_CANDIDATE==="1";assert(output && /^E:[/\\]/i.test(output));assert(["127.0.0.1","localhost"].includes(base.hostname));fs.mkdirSync(output,{recursive:true});
+  const output=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL),candidate=process.env.HSE_COLOR_CANDIDATE==="1";assert(output && path.isAbsolute(output));assert(["127.0.0.1","localhost"].includes(base.hostname));fs.mkdirSync(output,{recursive:true});
   const initial=hashes(),report={status:"running",candidateOverlay:candidate,actualInventoryTested:!candidate,runtimeHashes:initial,wrapperRejections:wrapperTest(),states:[],pdfs:[],picker:[],negative:[]};
   const {chromium}=require("playwright"),browser=await chromium.launch({headless:true,executablePath:process.env.HSE_CHROMIUM_EXECUTABLE});
   try{
@@ -49,7 +49,8 @@ async function main(){
       const {items,baseline}=await page.evaluate(()=>({items:window.HSE_SOURCE_INVENTORY_GRADE6.items.map(i=>({sourceItemId:i.sourceItemId,reviewLocked:i.reviewLocked,generatorKey:i.generatorKey,verifiedVariantCount:i.verifiedVariantCount,answerVisualStatus:i.answerVisualStatus})),baseline:window.__colorBaseline}));
       const item=items.find(i=>i.sourceItemId===id);assert(!item.reviewLocked && item.generatorKey===key && item.verifiedVariantCount===3 && item.answerVisualStatus==="verified");
       if(candidate)for(const other of items.filter(i=>i.sourceItemId!==id))assert.deepEqual(other,baseline.find(i=>i.sourceItemId===other.sourceItemId));else assert.equal(baseline,undefined);
-      for(const locked of ["6-2-u3-e2-example-2","6-2-u3-e2-mission-1","6-2-u3-e2-mission-3","6-2-u3-e2-mission-5"])assert(items.find(i=>i.sourceItemId===locked).reviewLocked);
+      // 2026-11 이후 같은 6-2 E2 원문 항목들이 차례로 공개되었다. 잠겨 있거나, 공개됐다면 자기 생성기와 검증 변형 3개를 가져야 한다.
+      for(const locked of ["6-2-u3-e2-example-2","6-2-u3-e2-mission-1","6-2-u3-e2-mission-3","6-2-u3-e2-mission-5"]){const other=items.find(i=>i.sourceItemId===locked);assert(other&&(other.reviewLocked||(other.generatorKey&&other.generatorKey!==key&&other.verifiedVariantCount===3)));}
     }
     async function decode(page){await page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.images].map(image=>image.decode()));});}
     async function check(items,level,mode){assert.equal(items.length,3);for(let v=0;v<3;v++)await inspect(items[v],v,level,mode);}

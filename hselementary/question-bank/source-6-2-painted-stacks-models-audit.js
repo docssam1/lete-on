@@ -1,7 +1,7 @@
 "use strict";
 const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto"),vm=require("node:vm");
 const api=require("./source-6-2-painted-stacks-models.js"),out=process.env.HSE_PAINT_EVIDENCE_DIR;
-assert(out && /^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});
+assert(out && path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});
 const expectedSources=[[[0,5,0,0],[0,3,0,0],[3,3,3,3],[0,2,2,2],[0,2,0,2]],[[0,2,3],[1,2,1],[2,0,2]],[[3,2,0],[2,1,0],[3,2,1]],Array.from({length:4},()=>[4,4,4,4])];
 const protectedFiles=["index.html","source-inventory-grade6.js","source-inventory/6-2-source-items.json","source-6-2-stack-renderer.mjs"];
 const digest=file=>crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex"),hashes=()=>Object.fromEntries(protectedFiles.map(file=>[file,digest(path.join(__dirname,file))])),before=hashes();

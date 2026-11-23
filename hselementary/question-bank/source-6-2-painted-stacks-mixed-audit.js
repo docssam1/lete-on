@@ -6,7 +6,7 @@ if(process.env.HSE_PAINT_MISSION3==="1")ids.splice(0,3,"6-2-u3-e3-mission-3","6-
 if(process.env.HSE_PAINT_EXPLORATION==="1")ids[0]="6-2-u3-e3-exploration";
 const tPattern=process.env.HSE_T_PATTERN_MIXED==="1";
 if(tPattern)ids[0]="6-2-u3-e2-example-2";
-const out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL);assert(out && /^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+const out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL);assert(out && path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 async function main(){
   const {chromium}=require("playwright"),browser=await chromium.launch({headless:true,executablePath:process.env.HSE_CHROMIUM_EXECUTABLE});
   const report={status:"running",states:[],pdfs:[],scope:"Three new painted-stack types mixed with three existing source-specific stack types; not a full-bank visual audit"};

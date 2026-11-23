@@ -7,7 +7,7 @@ const { execFileSync } = require("node:child_process");
 const { chromium } = require("playwright");
 const ids = [4, 6].map(n => `6-2-u2-e2-mission-${n}`);
 const output = process.env.HSE_SCREENSHOT_DIR;
-assert(output && /^[EG]:[/\\]/i.test(output), "Evidence output must stay on E: or G:.");
+assert(output && path.isAbsolute(output), "Evidence output must be an absolute folder.");
 fs.mkdirSync(output, { recursive: true });
 const base = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const assets = ["index.html", "generators.js", "app.js", "source-inventory-grade6.js", "source-6-2-e2-geometry.js", "source-6-2-e2-geometry.css"];

@@ -10,7 +10,7 @@ require("./source-inventory-grade6.js");
 const ids = window.HSE_SOURCE_INVENTORY_GRADE6.items.filter(item => item.sourceItemId.startsWith("6-2-u2-e4-") && !item.reviewLocked).map(item => item.sourceItemId);
 assert.equal(ids.length, 11, "Only the eleven source-reviewed finite pools are ready.");
 const output = process.env.HSE_SCREENSHOT_DIR;
-assert(output && /^[EG]:[/\\]/i.test(output), "Audit output belongs on E: or G:.");
+assert(output && path.isAbsolute(output), "Audit output must be an absolute folder.");
 fs.mkdirSync(output, { recursive: true });
 const assets = ["index.html", "generators.js", "source-6-2-decimal-e4.js", "source-6-2-decimal-e4.css", "source-inventory-grade6.js", "app.js"];
 const hashes = () => Object.fromEntries(assets.map(file => [file, crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname, file))).digest("hex")]));

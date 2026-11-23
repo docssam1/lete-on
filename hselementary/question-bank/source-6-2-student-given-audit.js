@@ -165,7 +165,7 @@ async function browser(out) {
   } finally {await browser.close();}
 }
 async function main() {
-  const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(/^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});}
+  const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});}
   try {unit();if(process.argv.includes("--browser")){assert(out);await browser(out);}report.status="passed-local-student-boundary";}
   catch(error){report.status="failed";report.error=error.stack;throw error;}
   finally{if(out)fs.writeFileSync(path.join(out,"student-given-result.json"),JSON.stringify(report,null,2)+"\n");}

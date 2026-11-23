@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto");
 const contracts=require("./source-6-2-border-mission3-contracts.js"),presentation=require("./source-6-2-border-mission3-presentation.js");
 const id="6-2-u3-e2-mission-3",key="sourceGrade6SecondSpaceE2BorderDifference",out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL),candidate=process.env.HSE_BORDER_MISSION3_CANDIDATE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 const files=["index.html","app.js","source-inventory-grade6.js","source-6-2-painted-mission3-presentation.js","source-6-2-stack-pattern-models.js","source-6-2-border-mission3-contracts.js","source-6-2-border-mission3-figures.js","source-6-2-border-mission3-presentation.js","source-6-2-border-mission3-questions.js","source-6-2-border-mission3-questions.css"];
 const sha=b=>crypto.createHash("sha256").update(b).digest("hex"),hashes=()=>Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.join(__dirname,f)))]));
 function fixture(v,l){const q=contracts.generate(id,v,l);return {variant:v,level:l,stage:q.stage,answer:Array.isArray(q.answer)?q.answer:[q.answer],solutionEquations:q.solutionEquations,grids:l===2?[q.model.H,q.filledModel.H]:[q.model.H]};}

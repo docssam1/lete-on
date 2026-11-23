@@ -6,7 +6,7 @@ const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { chromium } = require("playwright");
 const output = process.env.HSE_SCREENSHOT_DIR;
-assert(output && /^[EG]:[/\\]/i.test(output), "Evidence must stay on E: or G:.");
+assert(output && path.isAbsolute(output), "Evidence output must be an absolute folder.");
 fs.mkdirSync(output, {recursive:true});
 const ids = ["6-2-u3-e1-example-4", "6-2-u3-e1-mission-3"];
 const keys = ["sourceGrade6SecondSpaceE1StackExample4", "sourceGrade6SecondSpaceE1StackMission3"];
@@ -82,7 +82,8 @@ async function readProblems(page) {
     const top=read("위"),front=read("앞"),right=read("오른쪽"),text=item.querySelector(".question-prompt").innerText;
     const direct=text.match(/모두\s*(\d+)개/),added=text.match(/그 위에\s*(\d+)개/),cue=text.match(/㉠칸에는 쌓기나무\s*(\d+)개/),sum=text.match(/합은\s*(\d+)칸/);
     const floor=top.top.flat().filter(Boolean).length;
-    return {top:top.top,front,right,starts,total:direct?+direct[1]:added?floor+(+added[1]):null,frontSum:sum?+sum[1]:null,cue:top.cue?{...top.cue,height:+cue[1]}:null,text};
+    return {top:top.top,front,right,starts,total:direct?+direct[1]:added?floor+(+added[1]):null,frontSum:sum?+sum[1]:null,cue:top.cue&&cue?{...top.cue,height:+cue[1]}:null,text};
+    // 2026-11-23 문제 힌트 제거(problem-hint-policy.js)로 '㉠칸에는 쌓기나무 n개'·'합은 n칸' 문장이 빠질 수 있다. 빠진 조건은 모르는 값으로 두고 답이 하나인지 다시 센다.
   }));
 }
 async function inspect(page,phase) {
@@ -221,7 +222,7 @@ async function inspectMixed(browser,base) {
         if(width===1280) {
           records.push({id,difficulty,variant,given,visited:solved.visited,answerCount:solved.answers.length,answerAsset:asset.file});
           assert.throws(()=>validate(given,manifest.assets.find(a=>a.sourceItemId===id&&a.variant===(variant+1)%3),id));negativeControls++;
-          if(difficulty===-1) {const noCue={...given,cue:null};assert(solve(noCue).visited>solved.visited,"Easy clue must reduce independent search");assert.equal(given.cue.height,solved.answers[0].heights[given.cue.r][given.cue.c]);}
+          if(difficulty===-1&&given.cue) {const noCue={...given,cue:null};assert(solve(noCue).visited>solved.visited,"Easy clue must reduce independent search");assert.equal(given.cue.height,solved.answers[0].heights[given.cue.r][given.cue.c]);}
           if(index===0) {assert(solve({...given,total:null,cue:null}).answers.length>1,"Example 4 without added easy clue needs the count");negativeControls++;}
           if(difficulty===1&&index===1) {assert.equal(given.front[1],null);assert(solve({...given,frontSum:null}).answers.length>1,"Hard requires an extra front-height calculation");negativeControls++;}
           if(given.cue) {assert.equal(solve({...given,cue:{...given.cue,height:0}}).answers.length,0);negativeControls++;}

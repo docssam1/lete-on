@@ -70,7 +70,19 @@ function validate(curriculum, api, baselineSemester) {
   const legacy = unit.subunits.flatMap(group => group.types).filter(type => legacyIds.includes(type.id));
   const baselineLegacy = baselineSemester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)).filter(type => legacyIds.includes(type.id));
   assert.deepEqual(legacy.map(type => type.id), legacyIds, "All twelve legacy unit records remain present");
-  assert.deepEqual(legacy, baselineLegacy, "Legacy unit records must remain identical to the baseline");
+  // 2026-11 이후 예전 12개 자리(5-2-u1-t*)는 원문 연습문제와 이어진 '유사문항' 고정 풀 유형으로 바뀌었다.
+  // 바뀌지 않은 자리는 기준과 같아야 하고, 바뀐 자리는 원문 항목·검증 표시·고정 풀 생성기를 모두 가져야 한다.
+  legacy.forEach((type, index) => {
+    const before = baselineLegacy.find(item => item.id === type.id);
+    if (before && JSON.stringify(type) === JSON.stringify(before)) return;
+    assert.match(type.name, /유사문항/, `${type.id}: changed legacy slot must be a linked similar type`);
+    assert.match(String(type.sourceItemId), /^5-2-u1-.+-similar$/, `${type.id}: linked similar source ID`);
+    assert.equal(type.sourceVerified, true, `${type.id}: linked similar type must be source verified`);
+    assert.equal(type.reviewLocked, false, `${type.id}: linked similar type is public`);
+    assert.equal(type.generationMode, "fixed-verified-pool", `${type.id}: linked similar type uses a fixed verified pool`);
+    assert(type.generatorKey && type.generatorKey !== before?.generatorKey, `${type.id}: linked similar type has its own generator`);
+    assert(Number(type.verifiedVariantCount) >= 1, `${type.id}: linked similar pool is not empty`);
+  });
   const added = unit.subunits[4].types;
   assert.deepEqual(added.map(type => type.id), expectedIds, "Exact new source runtime IDs");
   added.forEach((type, index) => {
@@ -133,7 +145,8 @@ function validate(curriculum, api, baselineSemester) {
       for (const difficulty of [-1, 0, 1]) assert.equal(api.generate(type, 1, difficulty, 1, 0), null);
     }
   });
-  for (const type of legacy) {
+  // 유사문항으로 바뀐 자리(위에서 확인)는 공개 유형이므로, 아직 예전 기록 그대로인 자리만 잠금을 확인한다.
+  for (const type of legacy.filter(item => !/유사문항/.test(item.name))) {
     assert.equal(type.reviewLocked, true, `${type.id}: lock must stay on`);
     assert.equal(type.generationMode, "review-locked");
     assert.equal(api.generatorKey(type), "", `${type.id}: no generator may be exposed`);
@@ -193,7 +206,9 @@ function validate(curriculum, api, baselineSemester) {
       assert.equal(question.publisherKeyVerified, false);
     }
   });
-  const applicationMissionOne = unit.subunits[9].types;
+  // 2026-11 이후 같은 소단원에 원문 그대로 문항(-original)이 함께 붙는다. 이 감사는 변형 풀 Mission 1~6만 본다.
+  const applicationMissionOne = unit.subunits[9].types.filter(type => !/-original$/.test(type.sourceItemId));
+  assert(unit.subunits[9].types.filter(type => /-original$/.test(type.sourceItemId)).every(type => type.sourceVerified === true && type.generatorKey), "Attached original copies must be source verified with a generator");
   assert.deepEqual(applicationMissionOne.map(type => type.sourceItemId), [applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId], "Only directly verified next-source Missions 1–6 are connected");
   const packingType = applicationMissionOne[0];
   assert.equal(packingType.id, applicationMissionOneId);

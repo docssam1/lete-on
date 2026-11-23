@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto");
 const models=require("./source-6-2-three-point-cut-mission2-models.js"),contracts=require("./source-6-2-three-point-cut-mission2-contracts.js"),assets=require("./source-6-2-three-point-cut-mission2-assets.js");
 const id=models.sourceItemId,key="sourceGrade6SecondSpaceE4ThreePointPrismCut",other="6-2-u3-e4-mission-1",base=new URL(process.env.HSE_BASE_URL),out=process.env.HSE_SCREENSHOT_DIR;
-const candidate=process.env.HSE_THREE_POINT_CANDIDATE==="1",mixed=process.env.HSE_THREE_POINT_MIXED==="1";assert(out&&/^E:[/\\]/i.test(out)&&["localhost","127.0.0.1"].includes(base.hostname));
+const candidate=process.env.HSE_THREE_POINT_CANDIDATE==="1",mixed=process.env.HSE_THREE_POINT_MIXED==="1";assert(out&&path.isAbsolute(out)&&["localhost","127.0.0.1"].includes(base.hostname));
 const files=["index.html","app.js","source-inventory-grade6.js","source-6-2-painted-mission3-presentation.js","generators.js",...["models.js","assets.js","contracts.js","presentation.js","bank-presentation.js","questions.js","questions.css"].map(s=>`source-6-2-three-point-cut-mission2-${s}`)];
 const hashes=()=>Object.fromEntries(files.map(f=>[f,crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,f))).digest("hex")]));
 async function inspect(root,variant,level,mode){
@@ -33,7 +33,7 @@ async function run(){
    if(relative.startsWith("..")||path.isAbsolute(relative)||!fs.existsSync(file)||!fs.statSync(file).isFile())return route.fulfill({status:404,body:"Not found"});
    const contentType={".js":"application/javascript",".html":"text/html; charset=utf-8",".css":"text/css",".png":"image/png",".woff2":"font/woff2"}[path.extname(file)]||"application/octet-stream";return route.fulfill({contentType,body:fs.readFileSync(file)});
   });
-  const loaded=()=>page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#worksheet img,#typePreviewPopover img')].map(img=>img.decode()));});
+  const loaded=()=>page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#worksheet img,#typePreviewPopover img,#solutionViewerContent img')/* 2026-11-23: 전체 해설 창 그림도 다 불러온 뒤 검사 */].map(img=>img.decode()));});
   async function check(mode,level){
    const selector=mode==="problem"?"#problemView .question-item":mode==="solution"?"#solutionView .solution-item":"#answerKeyView .answer-key-visuals>figure",items=await page.locator(selector).all();assert.equal(items.length,mixed?6:3);const own=[],foreign=[];
    for(const item of items){if(await item.locator("[data-three-point-context]").count()){const variant=await item.locator("[data-three-point-context]").first().evaluate(e=>Number(e.dataset.variant));assert.deepEqual(await inspect(item,variant,level,mode),[]);own.push(variant);}

@@ -5,7 +5,7 @@ const path = require("node:path");
 const {chromium} = require("playwright");
 const {directory, sha, verify} = require("./source-6-2-stack-assets-audit.js");
 const out = process.env.HSE_SCREENSHOT_DIR;
-assert(out && /^[EG]:[/\\]/i.test(out), "Evidence must stay on E:/G:");
+assert(out && path.isAbsolute(out), "Evidence output must be an absolute folder.");
 const manifest = JSON.parse(fs.readFileSync(path.join(directory,"manifest.json"),"utf8"));
 verify(manifest);
 const base = new URL("./", process.env.HSE_STACK_REVIEW_URL || "http://127.0.0.1:8897/hselementary/question-bank/source-6-2-stack-review.html");
