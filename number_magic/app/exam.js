@@ -1741,7 +1741,7 @@
 .nm-w2-guide-item:first-of-type { border-top:0; padding-top:0; }
 .nm-w2-guide-q { display:flex; align-items:baseline; gap:8px; font-size:calc(13px * var(--ws-fs, 1)); }
 .nm-w2-guide-label { font-weight:800; color:#555; flex:0 0 auto; }
-.nm-w2-guide-chain { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:calc(12.5px * var(--ws-fs, 1));
+.nm-w2-guide-chain { display:flex; flex-wrap:wrap; align-items:center; column-gap:6px; row-gap:.45em; font-size:calc(12.5px * var(--ws-fs, 1));
   color:#000; margin-top:3px; padding-left:18px; }
 .nm-w2-guide-arrow { color:#000; }
 /* 한 줄 따라 풀기(2026-11-21) — (가) 사슬 → 문제 식을 한 줄에, 칸은 크게(WRITE_BOX_BIG) */
@@ -5330,7 +5330,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
     inner = scatterPlotHtml(p,false) + `<div class="nm-w2-tex" data-tex="${esc(texDisplay(String(p.tex||'')))}"></div>`;
   } else if(p.graph){
     cls += ' nm-w2-item-vis';
-    inner = graphSvg(p.graph) + `<div class="nm-w2-tex" data-tex="${esc(texDisplay(String(p.tex||'')))}"></div>`;
+    inner = graphSvg(p.graph) + `<div class="nm-w2-graph-tex">${texChainHtml(texDisplay(String(p.tex||'')))}</div>`;
   } else if(p.base10 || p.numline){
     cls += ' nm-w2-item-vis';
     inner = p.base10 ? base10Html(p.base10) : numlineSvg(p.numline);
@@ -6300,7 +6300,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     const raw = String(p.tex || '');
     const c0Beads=W2_C0&&window.NM_C0_CONCRETE&&NM_C0_CONCRETE.html(p,false,threadId,examLang());
     const qTex = c0Beads?'':raw;   /* 그림의 답칸과 같은 식을 반복하지 않는다. */
-    const qHtml = qTex.trim() ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>` : '';
+    const qHtml = qTex.trim() ? texChainHtml(texDisplay(qTex)) : '';
     const condHtml = printConditionHtml(levelPrintCondition(threadId,lv) || printAskText(p,threadId));
     const picHtml = `${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,false)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph)}</div>` : ''}${concreteTeachingHtml(p,false,threadId)}${(i === 0 && !young) ? divPictureHtml(p, {compact:true}) : ''}`;
     /* 사슬이 문제 식으로 끝나고 그림·조건 글이 없으면 한 줄(큰 칸) — w2OneLineChain */
@@ -6311,7 +6311,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
 </div>` : '';
     const teachingSteps=w2DropHeadRepeat((stepSrc||[]).filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==raw.trim()), raw);
     const chainHtml = c0Beads?'':(teachingSteps.length)
-      ? teachingSteps.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
+      ? teachingSteps.map(s => texChainHtml(texDisplay(String(s.tex || ''))))
           .join('<span class="nm-w2-guide-arrow">→</span>')
       : W2_C0&&['AD1','SB1'].includes(threadId)?'':(p.word && p.choices && !p.tex)
       ? `<ul class="nm-print-choices" style="flex-basis:100%;margin:0">${(pickChoices(p) || []).map((c, j) => `<li>${j + 1}) ${esc(c)}</li>`).join('')}</ul><span class="nm-w2-guide-blank">${esc(lk('답','Answer','答'))}: ____</span>`
