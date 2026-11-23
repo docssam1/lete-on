@@ -20,7 +20,7 @@ const expectedPools = [
   [[40, 23, 35, 480], [30, 21, 31, 300], [50, 18, 27, 450]],
   [[50000, 3, 2, 3, 107560.4], [40000, 4, 5, 2, 87300], [100000, 2, 3, 2, 210090]],
   [[150, 24, 50, 27, 9, 25], [120, 25, 80, 30, 3, 8], [200, 28, 50, 30, 19, 50]],
-  [[1500, 45000, 34500, 13, 12, 33, 33, 10], [1600, 48000, 32000, 10, 14, 28, 2, 1], [1800, 54000, 36000, 15, 15, 30, 7, 3]],
+  [[1500, 45000, 34500, 13, 12, 33, 33, 10], [1600, 48000, 32000, 10, 14, 28, 2, 1], [1800, 54000, 36000, 15, 14, 30, 5, 2]],
   [[80, 75, 120, 12800], [60, 80, 144, 10800], [50, 60, 150, 12500]],
   [[500, 25, 15, 46], [600, 30, 30, 45], [750, 30, 60, 44]],
   [[800, 780, 820, 10296000, 10168000, 696000, 12000], [600, 640, 625, 8000000, 7500000, 1400000, 11000], [900, 840, 880, 12600000, 12320000, 900000, 13000]],
@@ -84,7 +84,8 @@ function expectedAnswer(variant, values) {
   if (variant === 4) {
     const normalDistance = rational(values[1] * values[4], values[0]);
     const hybridDistance = rational((values[3] * values[0] + values[2]) * values[5], values[0]);
-    return `${mixedPlain(hybridDistance.numerator * normalDistance.denominator, hybridDistance.denominator * normalDistance.numerator)}배`;
+    const multiple = rational(hybridDistance.numerator * normalDistance.denominator, hybridDistance.denominator * normalDistance.numerator);
+    return `${decimal(multiple, 3)}배`;
   }
   if (variant === 5) return `${values[2] * 100 / values[1] * values[0]}명`;
   if (variant === 6) return `${(values[0] - values[1] - values[2]) / 2 / values[0] * 100}%`;
@@ -154,6 +155,20 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
         const hybridLiters = hybridStartLiters + hybridExtraCost / price;
         if (promptVisible.includes(`${normalCost}÷${price}=`) || promptVisible.includes(`${hybridStartLiters}+${hybridExtraCost}÷${price}=`) || promptVisible.includes(`전체 ${normalLiters}L`) || promptVisible.includes(`전체 ${hybridLiters}L`)) fail(`${label}: 문제 화면에 계산된 기름 양이 먼저 노출되었습니다.`);
       }
+      const visibleText = promptVisible.replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, "");
+      if (variant === 2 && (!visibleText.includes("단리법은 원금에 대해서만 이자를 계산하는 방법이고, 복리법은 원금에 대한 이자를 원금에 더한 후 이 합계액을 새로운 원금으로 계산하는 방법입니다.") || !visibleText.includes("원리금(원금과 이자의 합)"))) fail(`${label}: 원문(예제 3-2)의 단리법·복리법·원리금 정의 누락`);
+      if (variant === 3 && !visibleText.includes("야구 선수의 전체 타수에 대한 안타 수의 비율을 타율이라고 합니다.")) fail(`${label}: 원문(예제 3-3)의 타율 정의 누락`);
+      if (variant === 4) {
+        if (!visibleText.includes("연비는 연료의 양(L)에 대한 달린 거리(km)의 비율을 나타냅니다.") || !visibleText.includes("연료통이 빈 일반 자동차") || !visibleText.includes("소수로 나타내세요.") || visibleText.includes("분수로")) fail(`${label}: 원문(예제 3-4)의 연비 정의·연료통 조건·소수 물음이 아님`);
+        if (!/^\d+(\.\d+)?배$/.test(String(generated.answer))) fail(`${label}: 소수로 나타낸 답이 아님`);
+      }
+      if (variant === 6 && !visibleText.includes("득표율(총 투표수에 대한 얻은 표의 비율)")) fail(`${label}: 원문(Mission 2)의 득표율 정의 누락`);
+      if (variant === 7) {
+        if (visibleText.includes("가장 높은 도시는 나") || visibleText.includes("가장 낮은 도시는 가")) fail(`${label}: 원문(Mission 3)에 없는 풀이 문장이 문제에 남음`);
+        const densityA = (values[3] - values[5]) / values[0], densityB = values[3] / values[1], densityC = values[4] / values[2];
+        if (!(densityB > densityC && densityC > densityA && values[3] - values[4] !== values[5] && values[3] - values[5] < values[4])) fail(`${label}: 가장 높은 도시·가장 낮은 도시 판단 독립 검산 실패`);
+      }
+      if (variant === 10 && !visibleText.includes(`나 가구의 ${values[6] / values[7]}배`)) fail(`${label}: 원문(Mission 6)의 소수 배율 표현이 아님`);
       if (/undefined|null|NaN|Infinity|\$\{[^}]+\}|순열|조합|제곱|일차식|절댓값/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`)) fail(`${label}: 깨진 값 또는 학년 밖 표현`);
       checked += 1;
     }
