@@ -1,4 +1,4 @@
-import{withoutForceDrawingSolutions}from'./tests/force-drawing-stage.mjs';
+import{withoutForceTaskSolutions,withoutForceTaskQuickRows}from'./tests/force-drawing-stage.mjs';
 import{reviewStudentWorkbook}from'./student-language-review.js';
 import {withObservedPhotoAlt} from '../data/book/observation-language.js';
 import test from 'node:test';
@@ -47,7 +47,7 @@ test('actual web and all 128 print modes use the same reviewed directions and ke
   const currentPaper=makeWorkbookPaper(expected,art),previousPaper=makeWorkbookPaper(await reviewStudentWorkbook(unit,withObservedPhotoAlt(before)),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});assert.equal(html,currentPaper.workbookPaper({mode}),unit+' '+mode);
-   if((['answers','quick'].includes(mode)||!ELEMENTARY_DIRECTIONS_UNITS.includes(unit))&&!(unit==='c22-s42-u02'&&['answers','quick'].includes(mode))){const historical=previousPaper.workbookPaper({mode});if(unit==='s31-u01'&&mode==='answers')assert.equal(withoutForceDrawingSolutions(html),withoutForceDrawingSolutions(historical));else assert.equal(html,historical);}
+   if((['answers','quick'].includes(mode)||!ELEMENTARY_DIRECTIONS_UNITS.includes(unit))&&!(unit==='c22-s42-u02'&&['answers','quick'].includes(mode))){const historical=previousPaper.workbookPaper({mode});if(unit==='s31-u01'&&mode==='answers')assert.equal(withoutForceTaskSolutions(html),withoutForceTaskSolutions(historical));else if(unit==='s31-u01'&&mode==='quick')assert.equal(withoutForceTaskQuickRows(html),withoutForceTaskQuickRows(historical));else assert.equal(html,historical);}
    if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
  }

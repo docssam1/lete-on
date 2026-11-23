@@ -1,3 +1,5 @@
+import{forceGuidedItems,FORCE_GUIDED_VERSION}from'./force-guided-review.js';
+import{questionAtVersion}from'./question-revision.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {revisedClassroom,classroomQuestions,classroomTableData} from './revised-lesson.js?v=20261102-force';
@@ -38,7 +40,7 @@ test('힘 기본 수업은 예상·모형·자료·생활 적용으로 이어지
  }
  assert.equal(mod.plan.phases.reduce((sum,p)=>sum+p.min,0),80);
 });
-test('기존 실제 활동 교재·수업 계획·보고서와 모든 채점 계약을 보존한다',()=>{
+test('기존 실제 활동·보고서와 옛 채점 계약을 보존하고 개정 서술 한 문항을 연결한다',()=>{
  assert.notEqual(mod,original);
  assert.equal(original.chapter.forceThinking,undefined);
  const oldSlides=buildSlides(original.chapter,original.art,original.plan,similar,'self');
@@ -49,7 +51,7 @@ test('기존 실제 활동 교재·수업 계획·보고서와 모든 채점 계
  const revisedIds=new Set(mod.classroomItems.map(q=>q.id));assert.equal(revisedIds.size,11);
  for(const q of pool){
   const old=similar.find(x=>x.id===q.id);assert(old);
-  assert.deepEqual(q.answerContract,old.answerContract);
+  if(q.contentVersion===FORCE_GUIDED_VERSION){assert.equal(q.id,'s31-u01-v009');assert.deepEqual(questionAtVersion(q,1).answerContract,old.answerContract);const canonical=forceGuidedItems(similar,'s31-u01').find(x=>x.id===q.id);assert.deepEqual(q.answerContract,canonical.answerContract);assert.equal(q.prompt,canonical.prompt);}else assert.deepEqual(q.answerContract,old.answerContract);
   assert.deepEqual(q.sourceRef,old.sourceRef);
   assert.deepEqual(q.taxonomy,old.taxonomy);
   if(!revisedIds.has(q.id))assert.equal(q,old);
