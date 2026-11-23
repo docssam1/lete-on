@@ -5,6 +5,8 @@
 // - 6학년 문제 아래의 조건 정리 상자(…-board)는 안의 수·기호가 모두 문제 문장이나 그림에 이미 있을 때만 지웁니다.
 //   문제의 식·자료를 처음 보여 주는 상자는 남기고 그 안의 안내 문장만 지웁니다.
 // - 유형별로 확인한 힌트 문장(쉬움 난이도의 부분 답, 풀이 방법 안내 등)을 지웁니다(HINT_SENTENCES).
+// - 2026-11-24: 쉬움 난이도의 풀이 안내 문단(p.question-step[data-step-evidence^=guided])을 지우고, 그림·상자 바로 뒤에 붙은
+//   '먼저 …세요.' 문장도 지우도록 문단 경계를 넣었습니다. 쉼표·마침표만 든 요소는 지우지 않습니다.
 // 정답·풀이 쪽 설명은 그대로 둡니다(사용자: "답 풀이에 있는 설명은 상관 없어").
 (function (root) {
   "use strict";
@@ -123,7 +125,8 @@
   "${target}의 배수 중 최대공약수 조건을 만족하는 수를 빠짐없이 찾아 더하세요."
  ],
  "5-1-u2-t2-2": [
-  "한 수의 약수를 쓴 뒤 다른 수에도 나누어떨어지는지 확인하세요."
+  "한 수의 약수를 쓴 뒤 다른 수에도 나누어떨어지는지 확인하세요.",
+  "최대공약수를 먼저 구하면 공약수를 빠뜨리지 않을 수 있습니다."
  ],
  "5-1-u2-t2-3": [
   "먼저 두 곱셈을 계산하세요.",
@@ -671,6 +674,12 @@
  "6-2-u1-e3-mission-2": [
   "분모에 있는 분수의 합부터 계산하세요."
  ],
+ "6-2-u2-e1-example-2": [
+  "㉠과 ㉡을 각각 구한 뒤 비교하세요."
+ ],
+ "6-2-u2-e1-example-3": [
+  "나×나의 값을 먼저 찾아보세요."
+ ],
  "6-2-u2-e1-example-4": [
   "소수 부분은 0 이상 1 미만입니다."
  ],
@@ -811,12 +820,25 @@
   }
 
   // 여러 글자 노드(분수 span 등)에 걸친 문장도 지우도록, 글자를 이어 붙인 뒤 위치를 되짚어 지웁니다.
+  const BLOCK_TAGS = /^(P|DIV|LI|UL|OL|TABLE|TR|TD|TH|SECTION|ARTICLE|FIGURE|FIGCAPTION|H[1-6]|BR|DL|DT|DD)$/;
+  function blockOf(node, scope) {
+    for (let el = node.parentElement; el; el = el.parentElement) if (BLOCK_TAGS.test(el.tagName)) return el;
+    return scope;
+  }
   function removeMatches(scope, regex) {
     let removed = 0;
     for (let guard = 0; guard < 20; guard += 1) {
       const nodes = visibleTextNodes(scope);
       let flat = "";
-      const spans = nodes.map(node => { const start = flat.length; flat += node.data; return { node, start, end: flat.length }; });
+      let previousBlock = null;
+      // 2026-11-24: 서로 다른 문단·상자(블록)의 글자 사이에 줄바꿈 경계를 넣는다. 상자 끝의 수 뒤에 바로 붙은
+      // '먼저 …세요.' 문장도 문장 첫머리로 알아보도록 하기 위함이다(경계 글자는 어느 글자 조각에도 속하지 않는다).
+      const spans = nodes.map(node => {
+        const block = blockOf(node, scope);
+        if (previousBlock && block !== previousBlock) flat += "\n";
+        previousBlock = block;
+        const start = flat.length; flat += node.data; return { node, start, end: flat.length };
+      });
       const match = regex.exec(flat);
       if (!match || !match[0].trim()) break;
       const from = match.index, to = match.index + match[0].length;
@@ -833,7 +855,8 @@
   function dropEmpty(scope) {
     for (const el of [...scope.querySelectorAll("p,span,div,li,small,strong,b,em")].reverse()) {
       if (el.hidden || el.querySelector("svg,img,canvas,input,table,[hidden]")) continue;
-      if (!el.textContent.replace(/[\s.,]/g, "")) el.remove();
+      // 2026-11-24: 쉼표·마침표만 든 요소(분수 사이 구분 쉼표, 소수점 등)는 내용이므로 남기고, 공백만 남은 요소만 지운다.
+      if (!el.textContent.trim()) el.remove();
     }
   }
 
@@ -894,14 +917,16 @@
     for (const el of scope.querySelectorAll("[class]")) {
       if ([...el.classList].some(name => /-hint$/.test(name))) { el.remove(); changed += 1; }
     }
+    // 2026-11-24: 쉬움 난이도에 붙는 풀이 안내 문단(<p class="question-step" data-step-evidence="guided|guided-order">).
+    for (const el of scope.querySelectorAll('p.question-step[data-step-evidence^="guided"]')) { el.remove(); changed += 1; }
     // 빈칸으로 풀이 틀을 미리 짜 주는 표(각기둥 면·모서리·꼭짓점 표 등)와 문제 수치를 되풀이한 관계 상자.
     for (const el of scope.querySelectorAll(".source61-structure-table, .source62-overlap-relation")) { el.remove(); changed += 1; }
     // '도움말:' 같은 이름표가 붙은 문장은 문장 끝(마침표)까지 지웁니다.
     changed += removeMatches(scope, new RegExp(`\\s*${LABEL.source}(?:[^.?!]|(?<=\\d)\\.(?=\\d))*[.?!]?`));
     // 문장 첫머리의 '먼저 …하세요.' 안내 문장.
-    changed += removeMatches(scope, /(?:^|(?<=[.?!]\s*))\s*먼저\s(?:[^.?!]|(?<=\d)\.(?=\d))*?세요\./);
+    changed += removeMatches(scope, /(?:^|(?<=[.?!\n]\s*))[ \t]*먼저\s(?:[^.?!\n]|(?<=\d)\.(?=\d))*?세요\./);
     // 답을 구한 뒤 다시 확인하라는 어려움 난이도의 확인 안내.
-    changed += removeMatches(scope, /(?:^|(?<=[.?!]\s*))\s*(?:답을 구한 뒤|구한 값을 처음 조건에|구한 관계식이)(?:[^.?!]|(?<=\d)\.(?=\d))*?세요\./);
+    changed += removeMatches(scope, /(?:^|(?<=[.?!\n]\s*))[ \t]*(?:답을 구한 뒤|구한 값을 처음 조건에|구한 관계식이)(?:[^.?!\n]|(?<=\d)\.(?=\d))*?세요\./);
     for (const pattern of patternsFor(typeId)) changed += removeMatches(scope, pattern);
     // 그림(SVG) 안에 글자로 적힌 힌트·중간 결과 이름표도 지웁니다.
     const patterns = patternsFor(typeId);

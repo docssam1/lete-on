@@ -45,6 +45,12 @@ function contentType(file) {
 }
 async function startServer() {
   const server = http.createServer((request, response) => {
+    // 2026-11-24: 생성기 계약 감사이므로 problem-hint-policy.js(쉬움 안내 문단·관계표 제거)를 끈다(HSE_KEEP_HINT_POLICY=1이면 켬).
+    if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js(?:\?|$)/.test(request.url || "")) {
+      response.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
+      response.end("/* problem hint policy disabled for the generator contract audit */");
+      return;
+    }
     let file = safePath(request.url || "/");
     if (file && fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
     if (!file || !fs.existsSync(file) || !fs.statSync(file).isFile()) { response.writeHead(404); response.end("Not found"); return; }
@@ -172,6 +178,10 @@ async function capture(page, source, difficulty, viewport, view) {
 }
 async function captureA4(page, source, view, tab) {
   await page.locator(`#${tab}`).click();
+  // 앱의 인쇄 버튼처럼 쪽 나누기 보정(측정용 iframe)이 끝난 뒤 인쇄한다.
+  await page.waitForFunction(() => !document.querySelector('iframe[aria-hidden="true"][style*="-10000px"]'), null, { timeout: 30000 });
+  await page.waitForTimeout(300);
+  await page.waitForFunction(() => !document.querySelector('iframe[aria-hidden="true"][style*="-10000px"]'), null, { timeout: 30000 });
   await page.emulateMedia({ media: "print" });
   const pdf = path.join(outputDir, `${source.id}-${view}-a4.pdf`);
   await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true });

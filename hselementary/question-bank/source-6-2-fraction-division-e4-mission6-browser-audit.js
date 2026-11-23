@@ -32,6 +32,14 @@ function safePath(urlPath) {
 
 async function startServer() {
   const server = http.createServer((request, response) => {
+    // 2026-11-24: 이 감사는 생성기가 그린 원문 자료판·단계 문단의 계약을 검사한다.
+    // 학생 화면에서는 problem-hint-policy.js가 쉬움 난이도 안내 문단과 문제 문장을 되풀이하는 상자를 지우므로, 여기서는 정책을 끄고
+    // 정책을 적용한 학생 화면은 source-6-2-fraction-division-policy-browser-audit.js가 따로 검사한다.
+    if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js(?:\?|$)/.test(request.url || "")) {
+      response.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
+      response.end("/* problem hint policy disabled for the generator contract audit */");
+      return;
+    }
     let file = safePath(request.url || "/");
     if (file && fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
     if (!file || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
@@ -146,6 +154,10 @@ async function inspectType(browser, baseUrl, difficulty, viewport, viewportLabel
     for (let index = 0; index < 3; index += 1) if (problem.items[index]?.values !== answer.items[index]?.values || problem.items[index]?.average !== answer.items[index]?.average) fail(`${viewportLabel}/${difficulty}/${index + 1}: 문제와 답의 3일 자료가 다릅니다.`);
     if (difficulty === 0 && viewportLabel === "desktop") for (const [view, tab] of [["problem", "problemTab"], ["answer", "solutionTab"]]) {
       await page.locator(`#${tab}`).click();
+      // 앱의 인쇄 버튼처럼 쪽 나누기 보정(측정용 iframe)이 끝난 뒤 인쇄한다.
+      await page.waitForFunction(() => !document.querySelector('iframe[aria-hidden="true"][style*="-10000px"]'), null, { timeout: 30000 });
+      await page.waitForTimeout(300);
+      await page.waitForFunction(() => !document.querySelector('iframe[aria-hidden="true"][style*="-10000px"]'), null, { timeout: 30000 });
       await page.emulateMedia({ media: "print" });
       const pdf = path.join(outputDir, `${sourceItemId}-${view}-a4.pdf`);
       await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true });
