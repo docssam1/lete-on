@@ -12,8 +12,10 @@ assert(output && path.isAbsolute(output), "An absolute private evidence director
 fs.mkdirSync(output, { recursive: true });
 const origin = "http://127.0.0.1:8909";
 const base = `${origin}/hselementary/question-bank/`;
-// Representative legacy locks; exact preservation of all 124 is checked by the classification audit.
-const ids = ["5-2-u1-t1", "5-2-u2-t1", "5-2-u3-t1", "5-2-u4-t1", "5-2-u5-t1"];
+// 2026-11-24: 2026-11-22 공개 등록(source-lower-release-20261122)으로 이 대표 유형들도 잠금이 풀렸다.
+// 예전 "잠금 유지" 검사를 "공개 상태로 실제 주소·목록·미리보기에서 열림" 검사로 바꾼다.
+// 5-2-u3-t1·u4-t1은 단원 구성 변경으로 없어진 ID라 남은 세 유형만 본다.
+const ids = ["5-2-u1-t1", "5-2-u2-t1", "5-2-u5-t1"];
 const assets = ["index.html", "curriculum.js", "generators.js", "app.js"];
 const hashes = () => Object.fromEntries(assets.map(file => [file, crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname, file))).digest("hex")]));
 const before = hashes();
@@ -50,15 +52,16 @@ async function inspectLocked(browser, id, width) {
   const { context, page, errors } = await isolatedPage(browser, width);
   try {
     await page.goto(`${base}?type=${id}&review=1`, { waitUntil: "domcontentloaded" });
-    await page.locator("#typeList .tree-type").first().waitFor();
-    assert.equal(await page.locator("#worksheet").evaluate(node => node.hidden), true, "Locked direct URL must not open a worksheet");
-    assert.equal(await page.locator("#problemView .question-item").count(), 0);
+    await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+    assert((await page.locator("#problemView .question-item").count()) >= 1, "Released direct URL must open a worksheet");
+    // 문제지가 열리면 유형 목록이 가려지므로 목록 화면으로 다시 연다.
+    await page.goto(base, { waitUntil: "domcontentloaded" });
     await page.locator('#gradeFilter [data-grade="5"]').click();
     await page.locator('#termFilter [data-term="2"]').click();
     await page.locator("#unitFilter").selectOption(id.split("-t")[0]);
     const row = page.locator(`[data-preview-type-id="${id}"]`);
     assert.equal(await row.count(), 1);
-    assert.equal(await row.locator("input").isDisabled(), true);
+    assert.equal(await row.locator("input").isDisabled(), false);
     await row.scrollIntoViewIfNeeded();
     await row.locator(".tree-type-copy").click();
     const preview = page.locator("#typePreviewPopover");
@@ -69,19 +72,14 @@ async function inspectLocked(browser, id, width) {
       const box = popover.getBoundingClientRect();
       return { id, text: popover.innerText, previewQuestions: popover.querySelectorAll(".type-preview-question").length, questionCount: document.querySelectorAll("#problemView .question-item").length, selectedCount: document.querySelector("#selectedTypeCount").textContent, locked: type.reviewLocked, verified: type.sourceVerified, key: window.HSE_GENERATORS.generatorKey(type), generated: window.HSE_GENERATORS.generate(type, 0, 0, 1, 0), overflow: document.documentElement.scrollWidth > innerWidth + 1, popoverBounds: { left: box.left, right: box.right, top: box.top, bottom: box.bottom }, localStorageKeys: Object.keys(localStorage), sessionStorageKeys: Object.keys(sessionStorage) };
     }, id);
-    assert.match(state.text, /검수 대기/);
-    assert.match(state.text, /원본의 개별 문항/);
-    assert.equal(state.previewQuestions, 0);
-    assert.equal(state.questionCount, 0);
-    assert.equal(parseInt(state.selectedCount, 10), 0);
-    assert.equal(state.locked, true);
-    assert.equal(state.verified, false);
-    assert.equal(state.key, "");
-    assert.equal(state.generated, null);
+    assert.doesNotMatch(state.text, /검수 대기/);
+    assert(state.previewQuestions >= 1, "Released preview shows a question");
+    assert.equal(state.locked, false);
+    assert(state.key, "Released type has a generator");
     assert.equal(state.overflow, false);
-    assert(state.popoverBounds.left >= -1 && state.popoverBounds.right <= width + 1, "Lock reason must fit the viewport");
+    assert(state.popoverBounds.left >= -1 && state.popoverBounds.right <= width + 1, "Preview must fit the viewport");
     assert.deepEqual(errors, []);
-    const screenshot = `${id}-${width}-locked.png`;
+    const screenshot = `${id}-${width}-released.png`;
     await page.screenshot({ path: path.join(output, screenshot), fullPage: true });
     result.lockStates.push({ ...state, width, screenshot });
   } finally { await context.close(); }
@@ -114,12 +112,12 @@ async function inspectExisting(browser, width) {
   try {
     for (const id of ids) for (const width of [1280, 375, 320]) await inspectLocked(browser, id, width);
     for (const width of [1280, 375]) await inspectExisting(browser, width);
-    assert.equal(result.lockStates.length, 15);
-    assert.equal(result.freshContexts, 17);
+    assert.equal(result.lockStates.length, ids.length * 3);
+    assert.equal(result.freshContexts, ids.length * 3 + 2);
     assert.deepEqual(result.localMissing, []);
     assert.deepEqual(hashes(), before, "Product assets changed during audit; rerun final files");
     result.status = "passed";
-    console.log("5-2 lock browser audit passed: 15 legacy locked direct-URL states; 2 existing Grade 6 regressions; 17 fresh contexts; no live backend access.");
+    console.log(`5-2 release browser audit passed: ${result.lockStates.length} released direct-URL/list/preview states; 2 existing Grade 6 regressions; ${result.freshContexts} fresh contexts; no live backend access.`);
   } finally {
     await browser.close();
     fs.writeFileSync(path.join(output, "lock-browser-audit.json"), JSON.stringify(result, null, 2) + "\n");

@@ -10,6 +10,13 @@ const { chromium } = require("playwright");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 이 단원의 잠금 유형이 원문 생성기(orig51…)로 공개되었다(잠금 0).
+// 브라우저와 같은 상태(공개 여부·생성기·바뀐 유형 이름)를 보도록 공개 등록 파일과 원문 생성기를 함께 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
+const releaseKey = type => window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key;
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-1");
@@ -17,6 +24,7 @@ const unit = semester?.units.find(item => item.id === "5-1-u5");
 const e4 = unit?.subunits.find(item => item.types?.some(type => type.sourceItemId?.startsWith("5-1-u5-e4-")));
 const types = e4?.types || [];
 const publicVariants = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11]);
+// 2026-11-24: variant 0(개념탐구 1)·10(Mission 5)은 예전 잠금(다중 답 원문)이었고 11-22 공개 등록으로 원문 생성기(orig51U5E4…)로 공개되었다.
 const lockedVariants = new Set([0, 10]);
 const baseUrl = process.env.HSE_URL || "http://127.0.0.1:8878/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(__dirname, "tmp", "5-1-unit-fraction-e4-browser-audit");
@@ -39,7 +47,7 @@ function verifyCatalogContract() {
     if (publicVariants.has(type.variant) && api.generatorKey(type) !== "unitFractionE4") fail(`${type.sourceItemId}: 전용 생성기가 연결되지 않았습니다.`);
     if (!type.sourceVerified || type.sourceTier !== "advanced") fail(`${type.sourceItemId}: 심화 원문 확인 표기가 다릅니다.`);
     if (publicVariants.has(type.variant) && type.reviewLocked) fail(`${type.sourceItemId}: 공개 유형이 잠겨 있습니다.`);
-    if (lockedVariants.has(type.variant) && !type.reviewLocked) fail(`${type.sourceItemId}: 다중 답 원문 유형이 공개되어 있습니다.`);
+    if (lockedVariants.has(type.variant) && (type.reviewLocked || !releaseKey(type) || api.generatorKey(type) !== releaseKey(type))) fail(`${type.sourceItemId}: 다중 답 원문 유형이 공개 등록 원문 생성기로 공개되지 않았습니다.`);
   }
 }
 
@@ -182,7 +190,8 @@ async function inspectCatalog(browser, viewport, label) {
   listen(page, `${label} 목록`);
   await chooseUnit(page);
   const ids = await page.locator("[data-preview-type-id]").evaluateAll(rows => rows.map(row => row.dataset.previewTypeId));
-  for (const type of types.filter(type => publicVariants.has(type.variant))) {
+  // 2026-11-24: 공개 등록된 variant 0·10도 공개 미리보기(대표 문제)를 확인한다.
+  for (const type of types.filter(type => publicVariants.has(type.variant) || lockedVariants.has(type.variant))) {
     const row = page.locator(`[data-preview-type-id="${type.id}"]`);
     if (!ids.includes(type.id) || await row.count() !== 1) {
       fail(`${label} ${type.sourceItemId}: 공개 유형 목록 행을 찾지 못했습니다.`);
@@ -225,19 +234,26 @@ async function inspectCatalog(browser, viewport, label) {
   await page.close();
 }
 
+// 2026-11-24: 예전에는 잠금 경로가 막혔는지 보았다. 공개 등록 뒤에는 원문 생성기 문항이 화면에 생성되는지 본다
+// (같은 문장 문항은 앱이 한 번만 내므로 1~3문항, 각 문항은 같은 원문 묶음 표지).
 async function inspectLocked(browser, type) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
   page.setDefaultTimeout(60000);
-  listen(page, `${type.sourceItemId} 잠금`);
+  listen(page, `${type.sourceItemId} 공개 등록`);
   await page.goto(`${baseUrl}?type=${encodeURIComponent(type.id)}&review=1&difficulty=0`, { waitUntil: "domcontentloaded", timeout: 90000 });
-  await page.waitForTimeout(300);
-  const state = await page.evaluate(() => ({
-    worksheet: !document.querySelector("#worksheet")?.hidden,
-    selected: document.querySelector("#selectedTypeCount")?.textContent.trim(),
-    questions: document.querySelectorAll("#problemView .question-item").length,
-    lockedRows: [...document.querySelectorAll("input[data-type-id]")].filter(input => input.disabled).length
-  }));
-  if (state.worksheet || state.selected !== "0" || state.questions !== 0 || state.lockedRows < 2) fail(`${type.sourceItemId}: 잠금 유형이 UI에서 출제 가능한 상태입니다.`);
+  await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+  const state = await page.evaluate(() => {
+    const items = [...document.querySelectorAll("#problemView .question-item")];
+    return {
+      selected: document.querySelector("#selectedTypeCount")?.textContent.trim(),
+      questions: items.length,
+      sourceIds: items.map(item => item.querySelector("[data-source-item-id]")?.getAttribute("data-source-item-id") || ""),
+      disabledRows: [...document.querySelectorAll("input[data-type-id]")].filter(input => input.disabled).length,
+      broken: /undefined|null|NaN|Infinity|\$\{/.test(document.body.innerText),
+      pageOverflow: document.documentElement.scrollWidth > innerWidth + 1
+    };
+  });
+  if (state.selected !== "1" || state.questions < 1 || state.questions > 3 || state.sourceIds.some(id => id !== type.sourceItemId) || state.disabledRows || state.broken || state.pageOverflow) fail(`${type.sourceItemId}: 공개 등록 원문 생성기 문항이 UI에서 정상으로 생성되지 않았습니다. ${JSON.stringify(state)}`);
   await page.close();
 }
 
@@ -333,7 +349,7 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
     throw new Error(failures.join("\n"));
   }
   fs.writeFileSync(summaryPath, `통과: 화면 ${screenshots}장 · A4 PDF ${pdfs}개\n`, "utf8");
-  console.log(`5-1 5단원 E4 단위분수와 부분분수 브라우저·A4 감사 통과: 공개 10유형 · 난이도 3단계 · PC/모바일 화면 ${screenshots}장 · A4 문제·정답 ${pdfs}개 · ${outputDir}`);
+  console.log(`5-1 5단원 E4 단위분수와 부분분수 브라우저·A4 감사 통과: 공개 12유형(원문 생성기 2 포함) · 난이도 3단계 · PC/모바일 화면 ${screenshots}장 · A4 문제·정답 ${pdfs}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 5단원 E4 단위분수와 부분분수 브라우저·A4 감사 실패: ${error.stack || error}`);
   process.exit(1);

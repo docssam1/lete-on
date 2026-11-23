@@ -14,6 +14,11 @@ try {
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 2026-11-22 공개 등록(source-lower-release-20261122)으로 인벤토리상 검수 대기이던 평면 덮기·도형 만들기
+// 유형 일부가 원문 고정 풀 생성기(orig42U6E4*)로 옮겨져 앱에서 열린다. 그 유형은 잠금 검사 대신 공개 상태(새 생성기로
+// 문제지가 열리는지)만 확인하고, 정답 검산은 해당 원문 묶음 감사(source-<묶음>-original-audit.py)가 맡는다.
+require("./source-lower-release-20261122-registry.js");
+const laterReleased = window.HSE_LOWER_RELEASE_20261122 || {};
 
 const inventoryPath = path.join(__dirname, "source-inventory", "4-2-unit-6-polygon.json");
 const inventory = JSON.parse(fs.readFileSync(inventoryPath, "utf8"));
@@ -325,10 +330,29 @@ async function pageState(page) {
   });
 }
 
-function validateQuestionState(state, type, label) {
+// 2026-11-24: 2026-11-22부터 앱(buildQuestions)은 같은 문장의 문항을 한 번만 낸다. 원문 수치가 정해진 유형처럼
+// 생성기가 만들 수 있는 서로 다른 문제 문장이 요청 수보다 적으면 그만큼만 나오므로(의도된 동작),
+// 앱과 같은 변형 규칙으로 문장 수를 세어 min(요청 수, 서로 다른 문장 수)를 기대한다.
+const expectedDistinctQuestions = (page, typeId, requested = 3) => page.evaluate(({ typeId, requested }) => {
+  const type = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types))).find(item => item.id === typeId);
+  if (!type) return 0;
+  const fixedPool = type.generationMode === "fixed-verified-pool";
+  const prompts = new Set();
+  for (let index = 0; index < requested; index += 1) {
+    for (let attempt = 0; attempt < 64; attempt += 1) {
+      try {
+        const candidate = window.HSE_GENERATORS.generate(type, 0, 0, (20261124 + index * 7919 + attempt * 104729) >>> 0, fixedPool ? attempt : index);
+        if (candidate?.prompt) prompts.add(candidate.prompt);
+      } catch {}
+    }
+  }
+  return Math.min(requested, prompts.size);
+}, { typeId, requested });
+
+function validateQuestionState(state, type, label, expectedCount = 3) {
   if (state.documentOverflow) fail(`${label} ${type.id}: 문서 가로 넘침`);
   if (!state.allFinite) fail(`${label} ${type.id}: undefined/null/NaN/Infinity 노출`);
-  if (state.questionCount !== 3) fail(`${label} ${type.id}: 문제 ${state.questionCount}개, 3개여야 합니다.`);
+  if (!expectedCount || state.questionCount !== expectedCount) fail(`${label} ${type.id}: 문제 ${state.questionCount}개, ${expectedCount}개(서로 다른 문장 수)여야 합니다.`);
   if (state.sourceItemIds.some(ids => ids.length !== 1 || ids[0] !== type.sourceItemId)) fail(`${label} ${type.id}: 숨은 원문 ID가 문항마다 정확히 하나가 아닙니다.`);
   state.svgStates.forEach((svg, index) => {
     if (svg.clipped) fail(`${label} ${type.id}: ${index + 1}번째 SVG 내용이 viewBox 밖으로 잘립니다. ${svg.clippedNodes.join(", ")}`);
@@ -349,7 +373,7 @@ function validateQuestionState(state, type, label) {
   auditSpecificGeometryMetadata(type, state, label);
 }
 
-async function inspectSolutions(page, type, label) {
+async function inspectSolutions(page, type, label, expectedCount = 3) {
   await page.click("#solutionTab");
   const state = await page.evaluate(() => {
     const solutions = [...document.querySelectorAll(".solution-item")];
@@ -361,7 +385,7 @@ async function inspectSolutions(page, type, label) {
       answers: solutions.map(item => item.querySelector("header strong")?.textContent?.replace(/\s+/g, " ").trim() || "")
     };
   });
-  if (state.count !== 3 || state.empty) fail(`${label} ${type.id}: 정답·풀이 ${state.count}개 또는 빈 풀이`);
+  if (state.count !== expectedCount || state.empty) fail(`${label} ${type.id}: 정답·풀이 ${state.count}개(${expectedCount}개여야 함) 또는 빈 풀이`);
   if (!state.allFinite) fail(`${label} ${type.id}: 정답·풀이에 잘못된 값이 노출됩니다.`);
   const expected = expectedAnswers.get(type.generatorKey)?.get(type.variant);
   if (state.answers.some(answer => answer !== expected)) fail(`${label} ${type.id}: 풀이 정답 ${JSON.stringify(state.answers)}가 계약 ${JSON.stringify(expected)}와 다릅니다.`);
@@ -411,13 +435,14 @@ async function inspectReadyType(browser, type) {
     page.on("console", message => { if (message.type() === "error" && !message.text().includes("Failed to load resource")) fail(`${label} ${type.id}: 콘솔 오류 ${message.text()}`); });
     await page.goto(`${baseUrl}?type=${encodeURIComponent(type.id)}&review=1`, { waitUntil: "domcontentloaded", timeout: 90000 });
     await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+    const expectedCount = await expectedDistinctQuestions(page, type.id);
     const state = await pageState(page);
-    validateQuestionState(state, type, label);
+    validateQuestionState(state, type, label, expectedCount);
     if (state.solutionAnswers.some(answer => answer !== expected)) fail(`${label} ${type.id}: 풀이 정답 ${JSON.stringify(state.solutionAnswers)}가 계약 ${JSON.stringify(expected)}와 다릅니다.`);
     await page.screenshot({ path: path.join(outputDir, `${slug(type.sourceItemId)}-${label}-problem.png`), fullPage: true });
     screenshotCount += 1;
     if (label === "desktop") await inspectPrint(page, type);
-    await inspectSolutions(page, type, label);
+    await inspectSolutions(page, type, label, expectedCount);
     await page.close();
   }
 }
@@ -447,6 +472,24 @@ function auditRegularPolygonAngleMetadata(type, values, label) {
   for (const [name, expected] of checks) {
     if (expected !== undefined && !has(name, expected)) fail(`${label}: ${name} 메타데이터가 독립 기하 계약과 다릅니다.`);
   }
+}
+
+async function inspectReleased(browser, type) {
+  const release = laterReleased[type.id];
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  page.setDefaultTimeout(60000);
+  page.on("pageerror", error => fail(`${type.id}: 브라우저 오류 ${error.message}`));
+  await page.goto(`${baseUrl}?type=${encodeURIComponent(type.id)}&review=1`, { waitUntil: "domcontentloaded", timeout: 90000 });
+  await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+  const expectedCount = await expectedDistinctQuestions(page, type.id);
+  const state = await page.evaluate(typeId => {
+    const current = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types))).find(item => item.id === typeId);
+    return { generatorKey: current?.generatorKey || "", locked: Boolean(current?.reviewLocked), questions: document.querySelectorAll(".question-item").length };
+  }, type.id);
+  if (state.locked || state.generatorKey !== release.key) fail(`${type.id}: 11-22 공개 생성기(${release.key})로 열리지 않습니다 (${state.generatorKey}).`);
+  if (!expectedCount || state.questions !== expectedCount) fail(`${type.id}: 공개 유형 문제 ${state.questions}개, ${expectedCount}개여야 합니다.`);
+  console.log(`안내: ${type.id}는 2026-11-22 공개로 ${release.key} 생성기로 옮겨져 잠금 검사 대신 공개 상태만 확인했습니다.`);
+  await page.close();
 }
 
 async function inspectLocked(browser, type) {
@@ -522,7 +565,7 @@ async function inspectLocked(browser, type) {
   }
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   for (const type of readyTypes) await inspectReadyType(browser, type);
-  for (const type of lockedTypes) await inspectLocked(browser, type);
+  for (const type of lockedTypes) await (laterReleased[type.id]?.sourceItemId === type.sourceItemId ? inspectReleased(browser, type) : inspectLocked(browser, type));
   await browser.close();
   if (failures.length) {
     console.error(`4-2 다각형 브라우저·인쇄 감사 실패: ${failures.length}건`);

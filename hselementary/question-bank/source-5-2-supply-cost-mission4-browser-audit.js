@@ -60,7 +60,8 @@ async function prepare(page, width) {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Problem overflow ${width}/${variant}/${difficulty}`);
     await page.locator("#problemTab").click();
     const problemText = await page.locator("#problemView").innerText();
-    assert.match(problemText, /묶음으로만 사서 부족하지 않게/);
+    // 2026-11-24: 원문 문장으로 되돌려 "한 마트에서만 묶음으로 사서 부족하지 않게"가 조건 문장이다.
+    assert.match(problemText, /한 마트에서만 묶음으로 사서 부족하지 않게/);
     assert.equal(await page.locator("#problemView .source52-supply-cost-solution").count(), 0, "Solution must not leak into the problem");
     assert.doesNotMatch(problemText, /\d[\d,]*원 절약/);
     if (evidenceDir && variant === 0 && difficulty === 0) await page.screenshot({ path: path.join(evidenceDir, `mission4-problem-${width}.png`), fullPage: true });

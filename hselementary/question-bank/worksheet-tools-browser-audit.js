@@ -25,13 +25,15 @@ function createServer() {
   });
 }
 
+// 2026-11-24: page.pdf()가 beforeprint를 일으키면 앱이 자기 인쇄 상태(직접 바꾼 dataset이 아님)로 화면을 다시 맞춘다.
+// 그래서 실제 사용처럼 인쇄 메뉴로 모드를 고른다(헤드리스에서 바로 끝나는 window.print는 비운다).
 async function setPrintMode(page, mode) {
-  await page.evaluate(printMode => {
-    document.body.dataset.printMode = printMode;
-    document.querySelector("#problemView").hidden = printMode === "answer-key" || printMode === "solution";
-    document.querySelector("#solutionView").hidden = printMode === "problem" || printMode === "answer-key";
-    document.querySelector("#answerKeyView").hidden = printMode !== "answer-key";
-  }, mode);
+  await page.emulateMedia({ media: "screen" });
+  await page.evaluate(() => { window.print = () => {}; if (document.body.dataset.printMode) dispatchEvent(new Event("afterprint")); });
+  await page.locator("#printMenuButton").click();
+  await page.locator(`#printMenuList [data-print-mode="${mode}"]`).click();
+  await page.waitForFunction(printMode => document.body.dataset.printMode === printMode, mode);
+  await page.emulateMedia({ media: "print" });
 }
 
 async function printVisibility(page) {

@@ -7,6 +7,13 @@ const { chromium } = require("playwright");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 이 묶음의 잠금 유형이 원문 생성기(orig51…)로 공개되었다(잠금 0).
+// 브라우저와 같은 상태(공개 여부·생성기·바뀐 유형 이름)를 보도록 공개 등록 파일과 원문 생성기를 함께 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
+const releaseKey = type => window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key;
 
 const api = window.HSE_GENERATORS;
 const unit = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-1").units.find(item => item.id === "5-1-u2");
@@ -103,8 +110,8 @@ async function review(browser, type, viewport, label, difficulty) {
 
 (async () => {
   fs.mkdirSync(outputDir, { recursive: true });
-  if (types.length !== 96 || ready.length !== 12 || locked.length !== 2) fail("E5 공개 12·잠금 2 구성이 다릅니다.");
-  for (const type of ready) if (api.generatorKey(type) !== "factorMultipleE5") fail(`${type.id}: 공개 유형 생성기가 다릅니다.`);
+  if (types.length !== 96 || ready.length !== 14 || locked.length !== 0) fail("E5 공개 14·잠금 0 구성이 다릅니다.");
+  for (const type of ready) if (api.generatorKey(type) !== (releaseKey(type) || "factorMultipleE5")) fail(`${type.id}: 공개 유형 생성기가 다릅니다.`);
   for (const type of locked) if (api.generatorKey(type)) fail(`${type.id}: 잠금 유형이 생성기에 연결되었습니다.`);
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   await catalog(browser, { width: 1280, height: 900 }, "desktop");
@@ -114,9 +121,9 @@ async function review(browser, type, viewport, label, difficulty) {
     await review(browser, type, { width: 390, height: 844 }, "mobile", difficulty);
   }
   await browser.close();
-  if (screenshots !== 146 || pdfs !== 72) fail(`검수 산출물 수가 다릅니다: 화면 ${screenshots}, A4 ${pdfs}`);
+  if (screenshots !== 170 || pdfs !== 84) fail(`검수 산출물 수가 다릅니다: 화면 ${screenshots}, A4 ${pdfs}`);
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`5-1 약수와 배수 개념탐구 5 브라우저 감사 통과: 공개 12/잠금 2 · PC·모바일 ${screenshots}화면 · A4 ${pdfs}파일 · ${outputDir}`);
+  console.log(`5-1 약수와 배수 개념탐구 5 브라우저 감사 통과: 공개 14/잠금 0 · PC·모바일 ${screenshots}화면 · A4 ${pdfs}파일 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 약수와 배수 개념탐구 5 브라우저 감사 실패: ${error.stack || error}`);
   process.exit(1);

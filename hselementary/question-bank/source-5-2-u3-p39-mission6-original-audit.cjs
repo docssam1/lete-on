@@ -17,7 +17,9 @@ assert.equal(winning(full ^ 1 ^ (1 << 6) ^ (1 << 7)), false, 'opposite pair coun
 assert.equal(winning(full ^ 1 ^ 2 ^ (1 << 7)), false, 'opposite petal counters two adjacent petals');
 const q = api.makeOriginal();
 assert.equal(q.answer, '나중, 처음, 반대, 처음, 다른');
-assert.match(q.prompt, /첫 대응/);
+// 2026-11-21 d767f5e40: 답(처음·반대)을 드러내던 명확화 문장을 중립 안내로 바꿈. 안내가 있고 빈칸 답을 드러내지 않는지 본다.
+assert.match(q.prompt, /첫 응수/);
+assert.doesNotMatch(q.prompt.replace(/보기:[^<]*/, ''), /반대쪽 꽃잎을 처음/);
 assert.match(q.solution, /그다음부터는[\s\S]*같은 개수/);
 assert.equal(q.publisherKeyVerified, false);
 console.log('PASS: 13-petal minimax, both initial replies, and staged answer');

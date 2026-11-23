@@ -9,6 +9,13 @@ const { chromium } = require("playwright");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 잠금이던 E1 Mission 6이 원문 생성기(orig51U4E1Mission6)로 공개되었다(잠금 0).
+// 브라우저와 같은 상태를 보도록 공개 등록 파일과 원문 생성기를 함께 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
+const releaseKey = type => window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key;
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-1");
@@ -26,6 +33,8 @@ function fail(message) {
 }
 
 function typeSignature(type) {
+  // 2026-11-24: 원문 생성기 문항은 숨은 -kind 표지 대신 원문 묶음(data-source-item-id)으로 분기를 확인한다.
+  if (releaseKey(type)) return `data-source-item-id=${type.sourceItemId}`;
   const generated = api.generate(type, 2, 0, 20260904, type.variant ?? 0);
   const match = generated?.prompt?.match(/\s(data-[\w-]+-kind)="([^"]+)"/);
   return match ? `${match[1]}=${match[2]}` : "";
@@ -34,17 +43,16 @@ function typeSignature(type) {
 function verifyCatalogData() {
   const expectedPrefixes = ["e1", "e2", "e3", "e4"];
   if (!unit) fail("5-1 4단원을 찾지 못했습니다.");
-  if (types.length !== 44 || publicTypes.length !== 43 || lockedTypes.length !== 1) {
-    fail(`유형 수가 다릅니다: 전체 ${types.length}/44, 공개 ${publicTypes.length}/43, 잠금 ${lockedTypes.length}/1`);
+  if (types.length !== 44 || publicTypes.length !== 44 || lockedTypes.length !== 0) {
+    fail(`유형 수가 다릅니다: 전체 ${types.length}/44, 공개 ${publicTypes.length}/44, 잠금 ${lockedTypes.length}/0`);
   }
   for (const prefix of expectedPrefixes) {
     const group = types.filter(type => type.sourceItemId?.startsWith(`5-1-u4-${prefix}-`));
     if (group.length !== 11) fail(`${prefix.toUpperCase()} 원문 유형 수가 ${group.length}개입니다. 11개여야 합니다.`);
     if (group.some(type => !type.sourceItemId || !type.label || !type.name)) fail(`${prefix.toUpperCase()}에 원문 ID 또는 유형명이 비어 있습니다.`);
   }
-  const locked = lockedTypes[0];
-  if (!locked || locked.sourceItemId !== "5-1-u4-e1-mission-6") fail("잠금 항목은 E1 Mission 6 하나여야 합니다.");
-  if (locked && api.generatorKey(locked)) fail("E1 Mission 6 잠금 유형에 생성기가 연결되어 있습니다.");
+  const released = types.find(type => type.sourceItemId === "5-1-u4-e1-mission-6");
+  if (!released || released.reviewLocked || api.generatorKey(released) !== "orig51U4E1Mission6") fail("E1 Mission 6은 공개 등록 원문 생성기(orig51U4E1Mission6)로 공개되어야 합니다.");
   for (const type of publicTypes) {
     if (!api.generatorKey(type)) fail(`${type.sourceItemId}: 공개 유형에 생성기가 없습니다.`);
     if (!typeSignature(type)) fail(`${type.sourceItemId}: 생성 문제의 원문 분기 표지를 읽지 못했습니다.`);
@@ -162,7 +170,7 @@ async function renderedState(page, selector) {
     const signatures = nodes.map(node => [...node.querySelectorAll("[hidden]")].map(element => {
       const attribute = [...element.attributes].find(item => item.name.endsWith("-kind"));
       return attribute ? `${attribute.name}=${attribute.value}` : "";
-    }).filter(Boolean).join("|"));
+    }).filter(Boolean).join("|") || (node.querySelector("[data-source-item-id]") ? `data-source-item-id=${node.querySelector("[data-source-item-id]").getAttribute("data-source-item-id")}` : ""));
     return {
       count: nodes.length,
       empty: nodes.some(node => !node.innerText.trim()),
@@ -250,7 +258,7 @@ async function auditLockedRoute(browser) {
   }
   await browser.close();
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`5-1 U4 분수 전체 브라우저·A4 감사 통과: 44유형(공개 43/잠금 1) · PC·모바일 목록과 생성 · A4 문제·정답 ${publicTypes.length * 2}개 · ${outputDir}`);
+  console.log(`5-1 U4 분수 전체 브라우저·A4 감사 통과: 44유형(공개 44/잠금 0) · PC·모바일 목록과 생성 · A4 문제·정답 ${publicTypes.length * 2}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 U4 분수 전체 브라우저·A4 감사 실패: ${error.stack || error}`);
   process.exit(1);
