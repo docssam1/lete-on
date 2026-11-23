@@ -189,7 +189,8 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
     if (generated.answer !== answer) throw new Error(`정답 ${generated.answer}, 독립 검산 ${answer}`);
     if (/NaN|Infinity|undefined/.test(`${generated.prompt}${generated.answer}${generated.solution}`)) throw new Error("표시할 수 없는 값");
     if (!generated.solution.includes(generated.answer)) throw new Error("풀이에 정답 근거가 없음");
-    if (!/aria-label=|class="problem-table"/.test(generated.prompt)) throw new Error("그림 또는 표에 읽기 단서가 없음");
+    // footprint-total-methods는 바닥 칸 수·전체 개수를 글로 주는 창작 문항이라 그림이 없다(원본에 없는 그림을 넣지 않는다).
+    if (!/data-space-kind="footprint-total-methods"/.test(generated.prompt) && !/aria-label=|class="problem-table"/.test(generated.prompt)) throw new Error("그림 또는 표에 읽기 단서가 없음");
     if (/projection-candidate-count|stack-method-count|projection-min-max/.test(attr(generated.prompt, "space-kind")) && values(generated.prompt).at(-1) < 1) throw new Error("가능한 쌓기가 없음");
     count += 1;
   } catch (error) {

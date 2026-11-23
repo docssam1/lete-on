@@ -5393,8 +5393,8 @@
         const evidence = source41Evidence("scaled-place-ratio", payload, answer);
         const firstShown = source41MarkedInteger(first.toString(), [{ exponent: firstMarkedExponent, label: "㉠" }]);
         const secondShown = source41MarkedInteger(second.toString(), [{ exponent: secondMarkedExponent, label: "㉡" }]);
-        const prompt = `첫째 수 ${firstShown}을 ${source41FormatInteger(source41Power(config.upPower))}배 한 수에서 표시한 숫자 ㉠이 나타내는 값은, 둘째 수 ${secondShown}을 ${source41FormatInteger(source41Power(config.downPower))}분의 1로 한 수에서 표시한 숫자 ㉡이 나타내는 값의 몇 배인지 구하세요.${evidence}`;
-        const solution = `첫째 수를 ${source41FormatInteger(source41Power(config.upPower))}배 하면 ㉠의 값은 ${source41FormatInteger(highValue)}입니다. 둘째 수를 ${source41FormatInteger(source41Power(config.downPower))}분의 1로 하면 ㉡의 값은 ${source41FormatInteger(lowValue)}입니다. ${source41FormatInteger(highValue)}을 ${source41FormatInteger(lowValue)}으로 나누면 ${answer}배입니다.`;
+        const prompt = `첫째 수 ${firstShown}을 ${source41FormatInteger(source41Power(config.upPower))}배 한 수에서 표시한 숫자 ㉠이 나타내는 값은, 둘째 수 ${secondShown}을 1/${source41Power(config.downPower)}로 한 수에서 표시한 숫자 ㉡이 나타내는 값의 몇 배인지 구하세요.${evidence}`;
+        const solution = `첫째 수를 ${source41FormatInteger(source41Power(config.upPower))}배 하면 ㉠의 값은 ${source41FormatInteger(highValue)}입니다. 둘째 수를 1/${source41Power(config.downPower)}로 하면 ㉡의 값은 ${source41FormatInteger(lowValue)}입니다. ${source41FormatInteger(highValue)}을 ${source41FormatInteger(lowValue)}으로 나누면 ${answer}배입니다.`;
         return result(prompt, answer, solution);
       }
 
@@ -5557,8 +5557,8 @@
         const answer = source41DigitAt(upValue, upExponent) + source41DigitAt(downValue, downExponent);
         const payload = { variant, level, base: baseText, upPower: config.upPower, downPower: config.downPower, upExponent, downExponent };
         const evidence = source41Evidence("two-scale-digit-sum", payload, answer);
-        const prompt = `${source41FormatInteger(baseText)}을 ${source41FormatInteger(source41Power(config.upPower))}배 한 수의 ${source41PlaceLabel(upExponent)}의 자리 숫자와, 같은 수를 ${source41FormatInteger(source41Power(config.downPower))}분의 1로 한 수의 ${source41PlaceLabel(downExponent)}의 자리 숫자의 합을 구하세요.${evidence}`;
-        const solution = `${source41FormatInteger(baseText)}을 ${source41FormatInteger(source41Power(config.upPower))}배 하면 ${source41FormatInteger(upValue)}, ${source41FormatInteger(source41Power(config.downPower))}분의 1로 하면 ${source41FormatInteger(downValue)}입니다. 구하는 두 자리 숫자가 ${source41DigitAt(upValue, upExponent)}, ${source41DigitAt(downValue, downExponent)}이므로 합은 ${answer}입니다.`;
+        const prompt = `${source41FormatInteger(baseText)}을 ${source41FormatInteger(source41Power(config.upPower))}배 한 수의 ${source41PlaceLabel(upExponent)}의 자리 숫자와, 같은 수를 1/${source41Power(config.downPower)}로 한 수의 ${source41PlaceLabel(downExponent)}의 자리 숫자의 합을 구하세요.${evidence}`;
+        const solution = `${source41FormatInteger(baseText)}을 ${source41FormatInteger(source41Power(config.upPower))}배 하면 ${source41FormatInteger(upValue)}, 1/${source41Power(config.downPower)}로 하면 ${source41FormatInteger(downValue)}입니다. 구하는 두 자리 숫자가 ${source41DigitAt(upValue, upExponent)}, ${source41DigitAt(downValue, downExponent)}이므로 합은 ${answer}입니다.`;
         return result(prompt, answer, solution);
       }
 
@@ -9445,7 +9445,7 @@
         const payload = { variant, level, firstProduct, secondProduct, quotient: selected.quotient, candidates: matching, answer, sourceAnchor, complexity: complexityBase + answer + matching.length * 100 };
         const evidence = source41Evidence("four-natural-numbers-product", payload, answer);
         const prompt = `네 자연수 가, 나, 다, 라가 다음을 만족할 때, 가×나×다×라의 값을 구하세요.<div class="equation expanded">가×나=${format(firstProduct)} &nbsp;&nbsp; 나÷다=${format(selected.quotient)} &nbsp;&nbsp; 나×라=${format(secondProduct)}</div>${evidence}`;
-        const solution = `가×나=${format(firstProduct)}, 나×라=${format(secondProduct)}입니다. 나÷다=${format(selected.quotient)}이므로 다는 나의 ${format(selected.quotient)}분의 1입니다. 따라서 가×나×다×라는 ${format(firstProduct)}×${format(secondProduct)}÷${format(selected.quotient)}=${format(answer)}입니다.`;
+        const solution = `가×나=${format(firstProduct)}, 나×라=${format(secondProduct)}입니다. 나÷다=${format(selected.quotient)}이므로 다는 나의 1/${selected.quotient}입니다. 따라서 가×나×다×라는 ${format(firstProduct)}×${format(secondProduct)}÷${format(selected.quotient)}=${format(answer)}입니다.`;
         return result(prompt, answer, solution);
       }
 
@@ -9528,7 +9528,7 @@
       const answer = multipliedDigitValue / dividedDigitValue;
       const scaleUp = 10 ** scaleUpPower;
       const scaleDown = 10 ** scaleDownPower;
-      return result(`${value.toLocaleString()}을 ${scaleUp.toLocaleString()}배 한 수에서 숫자 ${lowDigit}가 나타내는 값은, ${value.toLocaleString()}을 ${scaleDown.toLocaleString()}분의 1로 한 수에서 숫자 ${baseDigit}가 나타내는 값의 몇 배인지 구하세요.`, answer, `${scaleUp.toLocaleString()}배 한 수에서 숫자 ${lowDigit}의 값은 ${multipliedDigitValue.toLocaleString()}, ${scaleDown.toLocaleString()}분의 1로 한 수에서 숫자 ${baseDigit}의 값은 ${dividedDigitValue.toLocaleString()}이므로 ${multipliedDigitValue.toLocaleString()} ÷ ${dividedDigitValue.toLocaleString()} = ${answer}배입니다.`);
+      return result(`${value.toLocaleString()}을 ${scaleUp.toLocaleString()}배 한 수에서 숫자 ${lowDigit}가 나타내는 값은, ${value.toLocaleString()}을 1/${scaleDown}로 한 수에서 숫자 ${baseDigit}가 나타내는 값의 몇 배인지 구하세요.`, answer, `${scaleUp.toLocaleString()}배 한 수에서 숫자 ${lowDigit}의 값은 ${multipliedDigitValue.toLocaleString()}, 1/${scaleDown}로 한 수에서 숫자 ${baseDigit}의 값은 ${dividedDigitValue.toLocaleString()}이므로 ${multipliedDigitValue.toLocaleString()} ÷ ${dividedDigitValue.toLocaleString()} = ${answer}배입니다.`);
     },
     largeNumberCompare({ rng, level, variant = 0 }) {
       const blankNumber = (prefix, suffix, place) => {
@@ -12796,7 +12796,7 @@
         const answers = expressions.map(([left, denominator, sign, right]) => mixedFraction(sign === "+" ? left + right : left - right, denominator));
         const evidence = fraction42Evidence("fraction-3-exploration", expressions.flatMap(([left, denominator, sign, right]) => [left, denominator, sign === "+" ? 1 : -1, right]), answers.join(", "));
         const body = expressions.map(([left, denominator, sign, right], index) => `${index + 1}. ${mixedFractionMarkup(left, denominator)} ${sign} ${fractionMarkup(right, denominator)}`).join("<br>");
-        return result(`다음 계산을 하세요.<div class="expression-stack">${body}</div>${evidence}`, answers.join(", "), `같은 분모끼리 분자를 더하거나 뺀 뒤 기약분수 또는 대분수로 나타냅니다. 답은 차례로 ${answers.map(answer => answer.replace("/", " 분의 ")).join(", ")}입니다.`);
+        return result(`다음 계산을 하세요.<div class="expression-stack">${body}</div>${evidence}`, answers.join(", "), `같은 분모끼리 분자를 더하거나 뺀 뒤 기약분수 또는 대분수로 나타냅니다. 답은 차례로 ${answers.join(", ")}입니다.`);
       }
       if (kind === 1) {
         const denominator = fractionDenominator();
@@ -22591,7 +22591,7 @@
           { difference: 57.348, correct: 63.72, wrong: 6.372 }
         ][poolIndex];
         const answerHtml = `${svg("소수점 위치를 바로잡는 계산", `<text x="180" y="48">${fixed2(pools.correct)} - ${fixed3(pools.wrong)} = ${fixed3(pools.difference)}</text><line class="source61-e1-decimal-shift" x1="82" y1="78" x2="278" y2="78"/><path class="source61-e1-arrow" d="M105 68 V88 M180 68 V88 M255 68 V88"/><text class="source61-e1-result" x="180" y="126">잘못 찍은 소수점을 오른쪽으로 한 자리</text><text class="source61-e1-result" x="180" y="148">정답: ${fixed2(pools.correct)}</text>`, true, [pools.correct, pools.wrong, pools.difference])}${mathBoard("소수점 이동 확인", row("잘못 적은 답", fixed3(pools.wrong)) + row("정답", fixed2(pools.correct)) + row("차", fixed3(pools.difference)))}`;
-        return fixedResult(`소수의 곱셈을 계산할 때 소수점을 왼쪽으로 한 자리 옮겨 찍었더니 정답과의 차가 ${fixed3(pools.difference)}가 되었습니다. 올바른 답을 구하세요.${mathBoard("잘못 찍은 답과 차", row("잘못 찍은 답", fixed3(pools.wrong)) + row("정답과의 차", fixed3(pools.difference)))}${support("잘못 찍은 답은 올바른 답의 10분의 1이므로, 두 수의 차가 얼마인지 식으로 나타내 보세요.")}${challenge}${evidence([pools.difference, pools.correct, pools.wrong])}`, fixed2(pools.correct), `잘못 찍은 답은 올바른 답의 10분의 1입니다. 따라서 정답은 ${fixed3(pools.difference)}÷0.9=${fixed2(pools.correct)}입니다.`, answerWrap(answerHtml, [pools.correct, pools.wrong, pools.difference]));
+        return fixedResult(`소수의 곱셈을 계산할 때 소수점을 왼쪽으로 한 자리 옮겨 찍었더니 정답과의 차가 ${fixed3(pools.difference)}가 되었습니다. 올바른 답을 구하세요.${mathBoard("잘못 찍은 답과 차", row("잘못 찍은 답", fixed3(pools.wrong)) + row("정답과의 차", fixed3(pools.difference)))}${support("잘못 찍은 답은 올바른 답의 1/10이므로, 두 수의 차가 얼마인지 식으로 나타내 보세요.")}${challenge}${evidence([pools.difference, pools.correct, pools.wrong])}`, fixed2(pools.correct), `잘못 찍은 답은 올바른 답의 1/10입니다. 따라서 정답은 ${fixed3(pools.difference)}÷0.9=${fixed2(pools.correct)}입니다.`, answerWrap(answerHtml, [pools.correct, pools.wrong, pools.difference]));
       }
 
       if (variant === 5) {
@@ -22674,9 +22674,9 @@
           { slowDist: 10.8, slowMin: 15, fastDist: 42, fastMin: 28, delay: 25, elapsed: 65, answer: 32.7 }
         ],
         [
-          { divisor: 12, target: 4.39, lower: 52.62, upperExclusive: 52.74, count: 12 },
+          { divisor: 12, target: 4.39, lower: 52.62, upperExclusive: 52.74, count: 11 },
           { divisor: 8, target: 3.27, lower: 26.12, upperExclusive: 26.20, count: 8 },
-          { divisor: 16, target: 5.84, lower: 93.36, upperExclusive: 93.52, count: 16 }
+          { divisor: 16, target: 5.84, lower: 93.36, upperExclusive: 93.52, count: 14 }
         ],
         [
           { aKmPerL: 12.4, aLiters: 15.3, bKmPerL: 18, price: 1600, answer: 16864 },
@@ -22722,7 +22722,8 @@
       if (variant === 1) {
         const d = pools;
         const lowerCents = Math.round(d.lower * 100), upperCents = Math.round(d.upperExclusive * 100);
-        const candidates = Array.from({ length: upperCents - lowerCents }, (_, index) => (lowerCents + index) / 100);
+        // 소수 두 자리 수는 소수 둘째 자리 숫자가 0이 아니다(예: 52.70은 52.7과 같은 소수 한 자리 수).
+        const candidates = Array.from({ length: upperCents - lowerCents }, (_, index) => lowerCents + index).filter(cents => cents % 10 !== 0).map(cents => cents / 100);
         ensure(candidates.length, d.count, "가능한 수 개수");
         const rangeSvg = solved => svg("반올림 범위 수직선", `<line class="source61-e2-number-line" x1="42" y1="89" x2="318" y2="89"/><path class="source61-e2-arrow" d="M306 83l12 6-12 6"/><line class="source61-e2-range" x1="64" y1="89" x2="296" y2="89"/><circle class="source61-e2-endpoint is-closed" cx="64" cy="89" r="7"/><circle class="source61-e2-endpoint is-open" cx="296" cy="89" r="7"/><text x="64" y="57">${fixed2(d.lower)}</text><text x="296" y="57">${fixed2(d.upperExclusive)}</text><text x="64" y="116">포함</text><text x="296" y="116">제외</text><text x="180" y="146">소수 둘째 자리 수만 확인</text>${solved ? `<text class="source61-e2-result" x="180" y="177">가능한 수 ${d.count}개</text>` : ""}`, solved, [d.divisor, d.target, d.lower, d.upperExclusive, d.count], "0 0 360 195");
         const answerVisual = `${rangeSvg(true)}${mathBoard("가능한 수 표", row("포함 범위", `${fixed2(d.lower)} ≤ 수 &lt; ${fixed2(d.upperExclusive)}`) + row("확인한 수", candidates.map(fixed2).join(", ")) + row("개수", `${d.count}개`))}`;
@@ -22902,7 +22903,7 @@
         const decimals = [...pools.fractions.map(([n, d]) => round(n / d, 3)), round(pools.mixed[0] + pools.mixed[1] / pools.mixed[2], 3)];
         if (decimals.map(value => Number(value).toFixed(3)).join(",") !== pools.answer.join(",")) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 반올림 검산 오류`);
         const values = [...pools.fractions.flat(), ...pools.mixed, ...decimals];
-        const lines = [line(`${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]}`, `${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]} → ${pools.answer[0]}`), line(`${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]}`, `${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]} → ${pools.answer[1]}`), line(`${pools.mixed[0]}와 ${pools.mixed[2]}분의 ${pools.mixed[1]}`, `${pools.mixed[0]}와 ${pools.mixed[2]}분의 ${pools.mixed[1]} → ${pools.answer[2]}`)];
+        const lines = [line(`${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]}`, `${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]} → ${pools.answer[0]}`), line(`${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]}`, `${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]} → ${pools.answer[1]}`), line(`${pools.mixed[0]} ${pools.mixed[1]}/${pools.mixed[2]}`, `${pools.mixed[0]} ${pools.mixed[1]}/${pools.mixed[2]} → ${pools.answer[2]}`)];
         const answerVisual = `${svg("분수와 대분수의 소수 셋째 자리 반올림", lines, true, values)}${mathBoard("반올림 결과", row("첫째", `${fractionMarkup(...pools.fractions[0])} = ${pools.answer[0]}`) + row("둘째", `${fractionMarkup(...pools.fractions[1])} = ${pools.answer[1]}`) + row("셋째", `${mixedFractionMarkup(pools.mixed[0] * pools.mixed[2] + pools.mixed[1], pools.mixed[2])} = ${pools.answer[2]}`))}`;
         return fixedResult(`다음 분수와 대분수를 소수로 나타낸 뒤 소수 셋째 자리까지 반올림하여 쓰세요.${svg("분수와 대분수의 반올림", lines, false, values)}${mathBoard("계산할 수", row("첫째", fractionMarkup(...pools.fractions[0])) + row("둘째", fractionMarkup(...pools.fractions[1])) + row("셋째", mixedFractionMarkup(pools.mixed[0] * pools.mixed[2] + pools.mixed[1], pools.mixed[2]))) }${support("분자를 분모로 나누고, 소수 넷째 자리 숫자를 보고 반올림하세요.")}${challenge}${evidence(values, "three-values")}`, pools.answer.join(", "), `각 수를 소수로 나타내어 소수 셋째 자리까지 반올림하면 ${pools.answer.join(", ")}입니다.`, answerWrap(answerVisual, values));
       }
@@ -22948,7 +22949,7 @@
       if (variant === 5) {
         const digit = decimalDigit(pools.numerator, pools.denominator, 100); if (digit !== pools.digit) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 소수 자리 검산 오류`);
         const values = [pools.whole, pools.numerator, pools.denominator, 100, digit]; const mixed = pools.whole * pools.denominator + pools.numerator;
-        const lines = [line(`${pools.whole}와 ${pools.denominator}분의 ${pools.numerator}`), line("소수점 아래 100번째 자리"), line("자리 숫자를 구함", `답 숫자 → ${digit}`)];
+        const lines = [line(`${pools.whole} ${pools.numerator}/${pools.denominator}`), line("소수점 아래 100번째 자리"), line("자리 숫자를 구함", `답 숫자 → ${digit}`)];
         const answerVisual = `${svg("대분수의 소수 자리", lines, true, values)}${mathBoard("나눗셈 자리 확인", row("가분수", fractionMarkup(mixed, pools.denominator)) + row("확인할 자리", "100번째") + row("숫자", digit))}`;
         return fixedResult(`대분수 ${mixedFractionMarkup(mixed, pools.denominator)}를 소수로 나타낼 때, 소수점 아래 ${values[3]}번째 자리 숫자를 구하세요.${svg("대분수와 소수 자리", lines, false, values)}${mathBoard("주어진 수", row("대분수", mixedFractionMarkup(mixed, pools.denominator)) + row("확인할 자리", "소수점 아래 100번째 자리"))}${support("대분수를 가분수로 바꾸고 나머지를 이용한 나눗셈을 반복하세요.")}${challenge}${evidence(values)}`, String(digit), `대분수는 ${fractionMarkup(mixed, pools.denominator)}입니다. 나눗셈을 이어 가면 소수점 아래 100번째 숫자는 ${digit}입니다.`, answerWrap(answerVisual, values));
       }
@@ -28615,8 +28616,8 @@
         const rows = labels.map((label, index) => ({ label, value: values[index], solved: values[index] === least }));
         const promptVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, false, "", { symbolShapes: ["leaf", "leaf", "leaf"] });
         const leastLabel = labels[values.slice(0, 4).indexOf(least)];
-        const answerVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, true, `${leastLabel}의 이튿날 양 ${number(answerValue)}kg`, { symbolShapes: ["leaf", "leaf", "leaf"] });
-        return fixedResult(`가, 나, 다, 라 네 동네가 하루 동안 캔 고구마의 양을 나타낸 그림그래프입니다. 가장 적은 동네가 이튿날 고구마를 더 캤더니 네 동네가 캔 고구마 양은 전날보다 평균 ${values[4]}kg 많아졌습니다. 이튿날 고구마를 캔 동네는 어느 동네이고, 그 동네가 캔 고구마는 몇 kg인가요?`, `${leastLabel} ${number(answerValue)}kg`, `네 동네의 평균이 ${values[4]}kg 늘었으므로 전체 양은 ${values[4]}×4=${values[4] * 4}kg 늘었습니다. 가장 적은 ${leastLabel} 동네가 전날 ${least}kg을 캤으므로 이튿날에는 ${least}+${values[4] * 4}=${answerValue}kg을 캤습니다.`, promptVisual, answerVisual, values, "ordered-tuple");
+        const answerVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, true, `${leastLabel}의 이틀 동안 양 ${number(answerValue)}kg`, { symbolShapes: ["leaf", "leaf", "leaf"] });
+        return fixedResult(`가, 나, 다, 라 네 동네가 하루 동안 캔 고구마의 양을 나타낸 그림그래프입니다. 가장 적은 동네가 이튿날 고구마를 더 캤더니 네 동네가 캔 고구마 양은 전날보다 평균 ${values[4]}kg 많아졌습니다. 이튿날 고구마를 캔 동네는 어느 동네이고, 그 동네가 이틀 동안 캔 고구마는 모두 몇 kg인가요?`, `${leastLabel} ${number(answerValue)}kg`, `네 동네의 평균이 ${values[4]}kg 늘었으므로 전체 양은 ${values[4]}×4=${values[4] * 4}kg 늘었습니다. 가장 적은 ${leastLabel} 동네가 전날 ${least}kg을 캤으므로 이튿날 ${values[4] * 4}kg을 더 캐서 이틀 동안 ${least}+${values[4] * 4}=${answerValue}kg을 캤습니다.`, promptVisual, answerVisual, values, "ordered-tuple");
       }
 
       if (variant === 5) {
@@ -29060,7 +29061,7 @@
 
       if (variant === 3) {
         const pools = [
-          { length: 20, rose: 8, other: 5, balmHalf: true, ratio: [5, 2], roseCount: 8, segments: [40, 25, 20, 10, 5], total: 40 },
+          { length: 20, rose: 8, other: 5, balmHalf: true, ratio: [5, 2], roseCount: 10, segments: [40, 25, 20, 10, 5], total: 40 },
           { length: 25, rose: 10, other: 8, balmHalf: true, ratio: [3, 1], roseCount: 12, segments: [40, 24, 20, 8, 8], total: 50 },
           { length: 30, rose: 9, other: 10, balmHalf: true, ratio: [2, 1], roseCount: 24, segments: [30, 30, 15, 15, 10], total: 80 }
         ][poolIndex];

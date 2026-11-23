@@ -10,6 +10,7 @@ require("./generators.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
+require("./source-4-2-parallel-angle-chain-two-mission3.js"); // 6f2aeff8에서 검증 공개한 개념탐구 4 Mission 3 (index.html 순서)
 
 const failures = [];
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
@@ -174,7 +175,7 @@ if (lineGraphUnit) {
 check(sourceIds.size === 196, `런타임에 연결된 원문 문항 ID는 196개여야 하나 ${sourceIds.size}개입니다.`);
 check(reviewedTriangleIds.size === 32, "삼각형 공개 허용 원문은 32개여야 합니다.");
 check(reviewedDecimalIds.size === 2, "소수 공개 허용 개념탐구는 2개여야 합니다.");
-check(reviewedQuadrilateralIds.size === 30, "사각형 공개 허용 원문은 30개여야 합니다.");
+check(reviewedQuadrilateralIds.size === 31, "사각형 공개 허용 원문은 31개여야 합니다(6f2aeff8 개념탐구 4 Mission 3 공개 포함).");
 
 if (failures.length) {
   console.error(`원문 문항 단위 분류 감사 실패: ${failures.length}건`);

@@ -98,9 +98,10 @@ for (const d of heightApi.definitions.filter(d=>Object.hasOwn(originals,d.source
       const cells = cubes(h), occupied = new Set(cells.map(c=>c.join(",")));
       const faceDirections = [[0,0,1],[0,1,0],[0,-1,0],[-1,0,0],[1,0,0]];
       const expectedCounts = faceDirections.map(([dx,dy,dz]) => cells.filter(([x,y,z]) => !occupied.has([x+dx,y+dy,z+dz].join(","))).length);
-      const figures = [...q.answerVisual.matchAll(/<svg[^>]*>([\s\S]*?)<\/svg>/g)];
-      assert.equal(figures.length,5);
-      assert.deepEqual(figures.map(f=>(f[1].match(/<rect class="height-answer-cell"/g) || []).length), expectedCounts);
+      // The book answer has no face drawings; the answer is text: the direction-by-direction sum.
+      assert(!/<svg\b/.test(q.answerVisual), "Example 1-3 answer must not add face figures");
+      const faceSum = `${expectedCounts.join("+")}=${countFaces(h)}cm²`;
+      assert(q.answerVisual.includes(faceSum)); assert(q.solution.includes(faceSum));
       faceChecks++;
     }
     conditions++;

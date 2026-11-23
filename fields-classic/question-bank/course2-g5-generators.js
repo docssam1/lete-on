@@ -1,5 +1,6 @@
 // 2과정 G5 「도형의 넓이와 비」 교재 유사문제 생성기. 약속은 G1~G4 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산한다.
+import { plainText } from "./course2-plain.js?v=20261122zi";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -270,7 +271,7 @@ function c2ShadowHeight({ difficulty = 2 }) {
   return null;
 }
 
-export const COURSE2_G5_GENERATORS = { c2CongruentTriangle, c2AngleEquation, c2EqualAreaShift, c2AreaRatioBase, c2SimilarScale, c2ShadowHeight };
+export const COURSE2_G5_GENERATORS = plainText({ c2CongruentTriangle, c2AngleEquation, c2EqualAreaShift, c2AreaRatioBase, c2SimilarScale, c2ShadowHeight });
 export const COURSE2_G5_TYPE_ROWS = [
   ["c2-congruent-triangle", "geometry", "합동", "합동인 삼각형의 대응과 합동 조건", "c2CongruentTriangle"],
   ["c2-angle-equation", "geometry", "각", "식을 세워 각 구하기", "c2AngleEquation"],

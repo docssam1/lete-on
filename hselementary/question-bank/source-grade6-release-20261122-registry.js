@@ -320,7 +320,7 @@ window.HSE_GRADE6_RELEASE_20261122 = Object.assign(window.HSE_GRADE6_RELEASE_202
   "key": "source62U3E2Mission3",
   "problemVisual": true,
   "answerVisual": false,
-  "typeLabel": "규칙에 따른 한 층 도형에서 보이는 면의 넓이와 쌓기나무 수의 차 구하기"
+  "typeLabel": "규칙에 따라 쌓은 도형에서 보이는 면의 넓이와 쌓기나무 수의 차 구하기"
  },
  "6-2-u3-e3-example-1": {
   "key": "source62U3E3Example1",

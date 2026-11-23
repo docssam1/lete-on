@@ -24,10 +24,11 @@
   const facts = data => {
     const cellWidth = round(data.totalWidth / data.columns);
     const topCellCount = data.columns - data.topStart;
-    const cellCount = data.columns + topCellCount;
+    // 원문 그림: 아래 두 줄은 모두 채우고 맨 윗줄만 topStart부터 채운다(3줄). ㄴㄷ은 맨 아랫줄 위 선에 있다.
+    const cellCount = 2 * data.columns + topCellCount;
     const cellArea = round(cellWidth * data.cellHeight);
     const wholeArea = round(cellCount * cellArea);
-    const triangleHeight = round(data.cellHeight);
+    const triangleHeight = round(2 * data.cellHeight);
     const triangleArea = round(data.totalWidth * triangleHeight / 2);
     const ratio = round(wholeArea / triangleArea);
     return { cellWidth, topCellCount, cellCount, cellArea, wholeArea, triangleHeight, triangleArea, ratio };
@@ -37,14 +38,14 @@
     const cellWidth = width / data.columns;
     const cellHeight = Math.min(64, cellWidth * data.cellHeight / (data.totalWidth / data.columns));
     const left = 54;
-    const baseline = 212;
+    const baseline = 232;
     const pointAt = (column, row) => ({ x: left + column * cellWidth, y: baseline - row * cellHeight });
     const cells = [];
-    for (let column = 0; column < data.columns; column += 1) cells.push({ column, row: 0 });
-    for (let column = data.topStart; column < data.columns; column += 1) cells.push({ column, row: 1 });
+    for (let row = 0; row < 2; row += 1) for (let column = 0; column < data.columns; column += 1) cells.push({ column, row });
+    for (let column = data.topStart; column < data.columns; column += 1) cells.push({ column, row: 2 });
     return {
       width, cellWidth, cellHeight, left, baseline, cells, pointAt,
-      triangle: [pointAt(0, 1), pointAt(data.apexColumn, 2), pointAt(data.columns, 1)]
+      triangle: [pointAt(0, 1), pointAt(data.apexColumn, 3), pointAt(data.columns, 1)]
     };
   };
   const point = value => `${round(value.x, 4).toFixed(4)},${round(value.y, 4).toFixed(4)}`;
@@ -61,7 +62,7 @@
     const triangleFill = solved ? `<polygon class="source61-e4ex1-target is-solved" points="${m.triangle.map(point).join(" ")}"/>` : "";
     const dimensionY = m.baseline + 27;
     const rightX = m.left + m.width + 27;
-    return `<svg class="geometry-diagram source61-e4ex1-diagram ${solved ? "is-solved" : ""}" viewBox="0 0 560 305" role="img" aria-label="같은 크기의 직사각형을 이어 붙인 도형과 삼각형" data-source61-e4ex1-model="equal-rectangle-grid-triangle-area-ratio" data-source61-e4ex1-phase="${solved ? "answer" : "problem"}" data-source61-e4ex1-points="${points}" data-source61-e4ex1-cells="${cells}" data-source61-e4ex1-values="${[data.columns, data.topStart, data.apexColumn, data.totalWidth, data.cellHeight, f.cellCount, f.wholeArea, f.triangleArea, f.ratio].join(",")}" data-pool="${poolIndex}">
+    return `<svg class="geometry-diagram source61-e4ex1-diagram ${solved ? "is-solved" : ""}" viewBox="0 0 560 325" role="img" aria-label="같은 크기의 직사각형을 이어 붙인 도형과 삼각형" data-source61-e4ex1-model="equal-rectangle-grid-triangle-area-ratio" data-source61-e4ex1-phase="${solved ? "answer" : "problem"}" data-source61-e4ex1-points="${points}" data-source61-e4ex1-cells="${cells}" data-source61-e4ex1-values="${[data.columns, data.topStart, data.apexColumn, data.totalWidth, data.cellHeight, f.cellCount, f.wholeArea, f.triangleArea, f.ratio].join(",")}" data-pool="${poolIndex}">
       <g class="source61-e4ex1-grid">${cellRects}</g>${triangleFill}
       <polyline class="source61-e4ex1-triangle" points="${m.triangle.map(point).join(" ")} ${point(leftVertex)}"/>
       <text class="source61-e4ex1-point-label" x="${leftVertex.x - 17}" y="${leftVertex.y}">ㄴ</text>
@@ -71,7 +72,7 @@
       <text class="source61-e4ex1-measure" x="${m.left + m.width / 2}" y="${dimensionY + 18}">${fmt(data.totalWidth)}cm</text>
       <path class="source61-e4ex1-dimension" d="M${rightX},${m.baseline - m.cellHeight} V${m.baseline} M${rightX - 5},${m.baseline - m.cellHeight} H${rightX + 5} M${rightX - 5},${m.baseline} H${rightX + 5}"/>
       <text class="source61-e4ex1-measure is-vertical" transform="translate(${rightX + 20} ${m.baseline - m.cellHeight / 2}) rotate(-90)">${fmt(data.cellHeight)}cm</text>
-      ${solved ? `<text class="source61-e4ex1-result" x="280" y="291">도형 전체는 삼각형의 ${fmt(f.ratio)}배</text>` : ""}
+      ${solved ? `<text class="source61-e4ex1-result" x="280" y="313">도형 전체는 삼각형의 ${fmt(f.ratio)}배</text>` : ""}
     </svg>`;
   };
   const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;

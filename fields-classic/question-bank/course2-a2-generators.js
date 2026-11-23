@@ -1,6 +1,7 @@
 // 2과정 A2 「복제수와 님게임」 교재 유사문제 생성기. 약속은 G1~G5·A1 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 문제를 만든 수에서 계산한다. 큰 수는 BigInt로 셈한다.
 // 거듭제곱은 글 속에 「2^5」로 쓰면 화면·인쇄에서 수식으로 바뀐다(math-markup.js mathText).
+import { plainText } from "./course2-plain.js?v=20261122zi";
 import { mathText } from "./math-markup.js?v=20261122w";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -328,7 +329,7 @@ function c2ReverseHalfChain({ difficulty = 2 }) {
   return null;
 }
 
-export const COURSE2_A2_GENERATORS = { c2PowerTenZeros, c2NinesProduct, c2RepunitSquare, c2SmartRegroup, c2OddSumSquare, c2BracketInsert, c2YearWeekdayShift, c2NimStrategy, c2DigitProductSteps, c2ReverseHalfChain };
+export const COURSE2_A2_GENERATORS = plainText({ c2PowerTenZeros, c2NinesProduct, c2RepunitSquare, c2SmartRegroup, c2OddSumSquare, c2BracketInsert, c2YearWeekdayShift, c2NimStrategy, c2DigitProductSteps, c2ReverseHalfChain });
 export const COURSE2_A2_TYPE_ROWS = [
   ["c2-power-ten-zeros", "number", "10의 거듭제곱", "2와 5의 거듭제곱 — 끝자리 0과 자릿수", "c2PowerTenZeros"],
   ["c2-nines-product", "number", "복제수", "9, 99, 999와의 곱", "c2NinesProduct"],

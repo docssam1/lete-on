@@ -1,6 +1,7 @@
 // 2과정 A4 「마방진, 복면산과 비」 교재 유사문제 생성기. 약속은 G1~G5·A1~A3 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 작은 수를 하나씩 찾아 보는 방법(전수 탐색)으로 계산해 식이 틀려도 답이 틀리지 않게 한다.
 // 분수는 글 속에 「3/5」로 쓰면 화면·인쇄에서 수식 분수로 바뀐다(math-markup.js mathText).
+import { plainText } from "./course2-plain.js?v=20261122zi";
 import { mathText } from "./math-markup.js?v=20261122w";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -199,7 +200,7 @@ function c2AssumeSolve({ difficulty = 2 }) {
   });
 }
 
-export const COURSE2_A4_GENERATORS = { c2GcdWord, c2LcmWord, c2UnitFraction, c2ConsecutiveMultiples, c2RatioGcdLcm, c2AssumeSolve };
+export const COURSE2_A4_GENERATORS = plainText({ c2GcdWord, c2LcmWord, c2UnitFraction, c2ConsecutiveMultiples, c2RatioGcdLcm, c2AssumeSolve });
 export const COURSE2_A4_TYPE_ROWS = [
   ["c2-gcd-word", "number", "배수와 약수", "최대공약수 문장제", "c2GcdWord"],
   ["c2-lcm-word", "number", "배수와 약수", "최소공배수 문장제", "c2LcmWord"],

@@ -14,7 +14,7 @@ const generatorKey = "source41PlaneTransformThree";
 const publicItems = [["4-1-u4-e3-exploration", 0], ["4-1-u4-e3-example-3-1", 1], ["4-1-u4-e3-example-3-3", 3], ["4-1-u4-e3-example-3-4", 4], ["4-1-u4-e3-mission-1", 5], ["4-1-u4-e3-mission-2", 6], ["4-1-u4-e3-mission-3", 7], ["4-1-u4-e3-mission-5", 9], ["4-1-u4-e3-mission-6", 10]];
 const lockedItems = new Map([
   ["4-1-u4-e3-example-3-2", "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다."],
-  ["4-1-u4-e3-mission-4", "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다."]
+  ["4-1-u4-e3-mission-4", "주어진 조건으로 서로 다른 두 배치가 가능해 답이 하나로 정해지지 않습니다."] // 공개 잠금 사유에서 답을 숨김(5926e778)
 ]);
 const failures = [];
 let generatedCount = 0;

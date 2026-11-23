@@ -1,6 +1,7 @@
 // 2과정 A1 「마디수열과 비」 교재 유사문제 생성기. 약속은 G1~G5 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 문제를 만든 수에서 계산한다.
 // 분수는 글 속에 「3/5」로 쓰면 화면·인쇄에서 수식 분수로 바뀐다(math-markup.js mathText).
+import { plainText } from "./course2-plain.js?v=20261122zi";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -342,7 +343,7 @@ function c2RoadTrees({ difficulty = 2 }) {
   });
 }
 
-export const COURSE2_A1_GENERATORS = { c2PeriodNth, c2PeriodNumberSum, c2FakeCoin, c2RatioDifference, c2FractionRatioSplit, c2ImproperFraction, c2QuotientRemainderPair, c2LogCutTime, c2RoadTrees };
+export const COURSE2_A1_GENERATORS = plainText({ c2PeriodNth, c2PeriodNumberSum, c2FakeCoin, c2RatioDifference, c2FractionRatioSplit, c2ImproperFraction, c2QuotientRemainderPair, c2LogCutTime, c2RoadTrees });
 export const COURSE2_A1_TYPE_ROWS = [
   ["c2-period-nth", "pattern", "마디수열", "되풀이되는 마디로 몇 번째 모양과 개수 찾기", "c2PeriodNth"],
   ["c2-period-number-sum", "pattern", "마디수열", "되풀이되는 수의 몇 번째 수와 합", "c2PeriodNumberSum"],

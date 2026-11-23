@@ -15,7 +15,7 @@ const label = index => String.fromCodePoint(0x3260 + index);
 // Occupancy, removal, additions and full silhouettes below are computed without solve().
 const fixtures = [
   { sourceItemId: id("example-2"), sourceHeights: [[2,3,1],[0,2,2],[0,2,1]],
-    columns: [[1,0],[2,0],[0,0],[1,1],[1,2],[2,1],[2,2]] },
+    columns: [[1,0],[0,0],[1,1],[2,1],[1,2],[2,0],[2,2]] },
   { sourceItemId: id("mission-5"), sourceHeights: [[0,0,2],[3,2,1],[1,0,0]],
     additions: [[0,2,2],[1,1,1]] },
   { sourceItemId: id("mission-6"), sourceHeights: [[0,2,2,1],[2,3,0,0],[0,1,0,0]],
@@ -191,8 +191,8 @@ for (const fixture of fixtures) for (let variant = 0; variant < 3; variant++) {
   assert(levels[0].reasoningSteps.length < levels[1].reasoningSteps.length);
   assert(levels[2].reasoningSteps.length > levels[1].reasoningSteps.length);
 }
-for (const level of [0, 1, 2]) assert.deepEqual(api.generate(id("example-2"), 0, level).answerLabels, [label(1), label(3), label(6)]);
-assert.deepEqual(api.generate(id("example-2"), 0, 2).secondaryAnswerLabels, [label(1), label(6)]);
+for (const level of [0, 1, 2]) assert.deepEqual(api.generate(id("example-2"), 0, level).answerLabels, [label(2), label(5), label(6)]);
+assert.deepEqual(api.generate(id("example-2"), 0, 2).secondaryAnswerLabels, [label(5), label(6)]);
 assert.deepEqual(api.generate(id("mission-5"), 0, 1).answerViews, { right: [3,3,2] });
 assert.deepEqual(api.generate(id("mission-5"), 0, 1).afterHeights, [[0,0,2],[3,3,1],[3,0,0]]);
 assert.deepEqual(api.generate(id("mission-6"), 0, 2).answerViews, {

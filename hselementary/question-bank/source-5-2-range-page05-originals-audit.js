@@ -10,7 +10,7 @@ assert.deepEqual(ends,[70,71,72]);
 const pairs=[];for(let a=10;a<=99;a++)for(let b=10;b<=99;b++)if(b-a-1===81)pairs.push([a,b]);
 assert.equal(pairs.length,8);assert.deepEqual(pairs[0],[10,92]);assert.deepEqual(pairs.at(-1),[17,99]);
 const digits=[0,2,3,5,7,9], counts={3:0,5:0,7:0};
-for(const a of digits)for(const b of digits)for(const c of digits){if(new Set([a,b,c]).size!==3)continue;const v=100*a+10*b+c;if(v>320&&v<=750)counts[a]++;}
-assert.deepEqual(counts,{3:15,5:20,7:13});assert.equal(Object.values(counts).reduce((x,y)=>x+y,0),48);
+for(const a of digits)for(const b of digits)for(const c of digits){if(new Set([a,b,c]).size!==3)continue;if(c===0)continue;/* 소수 두 자리 수: 소수 둘째 자리 0 제외 */const v=100*a+10*b+c;if(v>320&&v<=750)counts[a]++;}
+assert.deepEqual(counts,{3:12,5:16,7:10});assert.equal(Object.values(counts).reduce((x,y)=>x+y,0),38);
 for(const q of api.data){const type={id:api.id(q.n),sourceItemId:api.id(q.n),generatorKey:api.key(q.n),sourceVerified:true,reviewLocked:false};assert.ok(api.resolves(type,q));assert.ok(!api.resolves({...type,reviewLocked:true},q));assert.equal(api.build(q.n).publisherKeyVerified,false);}
-console.log('PASS: source intervals, endpoint candidates, pairs and all 48 card arrangements');
+console.log('PASS: source intervals, endpoint candidates, pairs and all 38 card arrangements');

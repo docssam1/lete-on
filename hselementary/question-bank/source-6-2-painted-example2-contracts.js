@@ -8,12 +8,13 @@
   function generate(variant,level){
     if(!Number.isSafeInteger(level)||level<0||level>2)throw new RangeError("Invalid removal difficulty");
     const model=models.solve(variant),primary=model.histogram[2],removedTwo=model.before.histogram[2]-primary,equations=[],math=s=>{equations.push(s);return `<span class="math-inline-expression">${s}</span>`;};
-    let prompt="쌓기나무로 아래 왼쪽과 같은 큰 정육면체를 만든 후 밑면을 포함한 모든 겉면에 파란색 페인트를 칠했습니다. 아래 오른쪽 그림과 같이 몇 개의 쌓기나무를 빼냈습니다. "+model.clarifiedCondition+" 빼낸 뒤에는 다시 색칠하지 않았습니다. ";
+    // 원문 예제 3-2와 같은 한 문장 구조(변형 0·보통 난이도). 풀이에 필요한 해석은 풀이 기준으로만 둡니다.
+    let prompt="쌓기나무로 아래의 왼쪽과 같은 큰 정육면체를 만든 후 밑면을 포함한 모든 겉면에 파란색 페인트를 칠했습니다. ";
     if(level===0)prompt+=`빼내기 전 두 면에만 페인트가 칠해진 쌓기나무는 ${model.before.histogram[2]}개입니다. `;
-    prompt+=(level===2?"(1) ":"")+"남은 쌓기나무 중 두 면에만 페인트가 칠해진 쌓기나무는 모두 몇 개인지 구하시오.";
+    prompt+="그리고 아래 오른쪽 그림과 같이 몇 개의 쌓기나무를 빼내었을 때, "+(level===2?"다음 물음에 답하시오. (1) ":"")+"두 면에 페인트가 칠해진 쌓기나무는 모두 몇 개입니까?";
     const secondary=level===2?{faceClass:1,answer:model.histogram[1]}:null;
-    if(secondary)prompt+=" (2) 한 면에만 페인트가 칠해진 쌓기나무는 모두 몇 개인지 구하시오.";
-    let solution="처음 큰 정육면체에서 모서리에 있고 꼭짓점에는 있지 않은 쌓기나무만 두 면에 색칠됩니다. ";
+    if(secondary)prompt+=" (2) 한 면에만 페인트가 칠해진 쌓기나무는 모두 몇 개입니까?";
+    let solution="풀이 기준: 남은 쌓기나무는 각 칸에 바닥부터 빈틈없이 쌓여 있고, 빼낸 뒤에 새로 드러난 면은 다시 색칠하지 않았으며, 두 면에 칠해진 쌓기나무는 정확히 두 면에만 칠해진 것으로 봅니다. 처음 큰 정육면체에서 모서리에 있고 꼭짓점에는 있지 않은 쌓기나무만 두 면에 색칠됩니다. ";
     if(level===0)solution+=`처음에는 ${model.before.histogram[2]}개라고 주어졌습니다. `;
     else solution+=`모서리는 12개이고 각 모서리에서 꼭짓점의 2개를 빼면 ${math(`${model.side}-2=${model.side-2}개`)}씩이므로 ${math(`12×${model.side-2}=${model.before.histogram[2]}개`)}입니다. `;
     solution+=`빼낸 쌓기나무 중 처음 두 면에 색칠된 것은 ${removedTwo}개입니다. 따라서 남은 것은 ${math(`${model.before.histogram[2]}-${removedTwo}=${primary}개`)}입니다. 새로 드러난 면에는 색칠되어 있지 않습니다.`;

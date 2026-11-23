@@ -347,7 +347,11 @@ function validateResponse(q, id, level) {
   assert.equal(q.requiresLayerDrawing, drawing, "response: drawing flag");
   assert.deepEqual(q.responseLayers, drawing ? q.requestedLayers : [], "response: drawing layers");
   assert.equal(q.learner_stage, learner_stage, "learner-fit: exact stage");
-  assert(q.promptText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0"), "response: interior definition missing");
+  const bookSource = !drawing && q.variant === 0 && level === 1;
+  if (bookSource) {
+    assert(!q.promptText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0") && !q.sourceReferencePromptText.includes("\uC544\uB798 \uBB3C\uC74C"), "response: book-source prompt must not add notes");
+    assert(q.solutionText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0"), "response: interior definition missing from solution");
+  } else assert(q.promptText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0"), "response: interior definition missing");
   assert(q.promptText.includes("\uB9E8 \uC704\uCE35") === (level === 0), "response: easy top scope");
   if (drawing) {
     assert(/\uD45C\uC2DC|\uADF8\uB9AC|\uADF8\uB824|\uB098\uD0C0\uB0B4/.test(q.promptText), "response: Mission 3 missing explicit layer drawing instruction");

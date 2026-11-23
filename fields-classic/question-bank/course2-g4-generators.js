@@ -1,5 +1,6 @@
 // 2과정 G4 「도형의 복원과 측정」 교재 유사문제 생성기. 약속은 G1~G3 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산한다.
+import { plainText } from "./course2-plain.js?v=20261122zi";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -248,7 +249,7 @@ function c2RectPartsPerimeter({ difficulty = 2 }) {
   });
 }
 
-export const COURSE2_G4_GENERATORS = { c2SpecialAngle, c2SetSquareSide, c2FoldTapeAngle, c2RectilinearPerimeter, c2RectPartsPerimeter };
+export const COURSE2_G4_GENERATORS = plainText({ c2SpecialAngle, c2SetSquareSide, c2FoldTapeAngle, c2RectilinearPerimeter, c2RectPartsPerimeter });
 export const COURSE2_G4_TYPE_ROWS = [
   ["c2-special-angle", "geometry", "각", "정사각형·정삼각형과 같은 길이로 되살리는 각", "c2SpecialAngle"],
   ["c2-set-square-side", "geometry", "삼각자", "30°와 마주 보는 변은 빗변의 반", "c2SetSquareSide"],

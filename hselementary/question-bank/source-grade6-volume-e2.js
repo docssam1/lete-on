@@ -925,7 +925,7 @@
       if (facts.candidates.length !== 1 || facts.candidates[0].some((value, index) => value !== expected[index])) throw new Error("세 끈 길이에서 상자의 세 변이 하나로 정해지지 않습니다.");
       const model = { ...data, ...facts, level };
       const firstStep = level === 0
-        ? `가의 끈 길이의 절반은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm, 나의 끈 길이의 절반은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm이고, 다의 끈 길이의 4분의 1은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
+        ? `가의 끈 길이의 절반은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm, 나의 끈 길이의 절반은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm이고, 다의 끈 길이의 1/4은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
         : level === 2
           ? `다에서 사용한 끈은 ${facts.ropeA}+${facts.ropeB}+${facts.hardDifference}=${facts.ropeC}cm입니다. 세 방향의 끈을 모두 더한 길이는 가로, 세로, 높이의 합의 4배이므로 세 변의 합은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
           : `가의 끈은 세로와 높이를 각각 두 번 지나므로 세로와 높이의 합은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm입니다. 나에서도 같은 방법으로 가로와 높이의 합은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm입니다. 다의 세 방향 끈을 모두 더하면 가로, 세로, 높이가 각각 네 번씩 들어가므로 세 변의 합은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`;

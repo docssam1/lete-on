@@ -6,7 +6,8 @@ const contracts = require("./source-6-2-t-pattern-example2-contracts.js");
 const id = "6-2-u3-e2-example-2", stages = [25, 20, 30];
 const easyStages = [3, 2, 1];
 const learner_stage = "초등 6학년 2학기 · 황소 심화 · 공간과 입체";
-const learnerConditions = "모양의 차례와 같은 수의 층을 쌓습니다. 맨 위층은 세 개를 한 줄로 놓고 가운데 앞에 한 개를 붙입니다. 바로 아래층은 윗층의 자리를 모두 채우고 왼쪽·오른쪽·앞쪽 세 갈래 끝에 각각 한 개를 더 붙입니다. 1층까지 같은 방법으로 쌓고 그 밖에는 놓지 않습니다.";
+const learnerConditions = "규칙에 따라 쌓기나무를 쌓을 때, 물음에 답하시오.";
+const constructionRule = "모양의 차례와 같은 수의 층을 쌓습니다. 맨 위층은 세 개를 한 줄로 놓고 가운데 앞에 한 개를 붙입니다. 바로 아래층은 윗층의 자리를 모두 채우고 왼쪽·오른쪽·앞쪽 세 갈래 끝에 각각 한 개를 더 붙입니다. 1층까지 같은 방법으로 쌓고 그 밖에는 놓지 않습니다.";
 const criteria = ["language", "representations", "prerequisites", "reasoning-load", "response-mode"];
 const contractPath = path.join(__dirname, "source-6-2-t-pattern-example2-contracts.js");
 const modelPath = path.join(__dirname, "source-6-2-stack-pattern-models.js");
@@ -140,7 +141,10 @@ function learnerFitCheck(q, variant, level) {
   assert(q.promptText.includes(q.learnerConditions));
   if (level !== 0) {
     assert.equal(q.learnerConditions, learnerConditions);
-    for (const phrase of ["모양의 차례와 같은 수의 층", "세 개를 한 줄", "가운데 앞에 한 개", "윗층의 자리를 모두 채우고", "왼쪽·오른쪽·앞쪽 세 갈래 끝", "각각 한 개를 더", "1층까지 같은 방법", "그 밖에는 놓지 않습니다."]) assert(q.promptText.includes(phrase));
+    // Book p.34 states only "규칙에 따라"; the rule must stay out of the prompt and appear in the solution as 풀이 기준.
+    assert(q.promptText.startsWith(`${learnerConditions} \n(1) ${q.model.n}번째 모양을 만드는 데 필요한 쌓기나무의 개수를 구하시오.\n(2) ${q.model.n}번째 모양에서 1층에 놓여 있는 쌓기나무는 ${q.model.n}층에 놓여 있는 쌓기나무보다 몇 개 더 많은지 구하시오.`));
+    for (const phrase of ["모양의 차례와 같은 수의 층", "세 개를 한 줄", "가운데 앞에 한 개", "윗층의 자리를 모두 채우고", "왼쪽·오른쪽·앞쪽 세 갈래 끝", "각각 한 개를 더", "1층까지 같은 방법", "그 밖에는 놓지 않습니다."]) { assert(!q.promptText.includes(phrase)); assert(q.solution.includes(phrase)); }
+    assert(q.solution.startsWith(`풀이 기준(그림에서 찾은 규칙): ${constructionRule}`));
   }
   assert.equal(q.difficultyDesign.mode, ["easy", "source", "hard"][level]);
   assert.equal(q.difficultyDesign.empiricallyCalibrated, false); assert.equal(q.learnerFit.empiricallyCalibrated, false);
@@ -165,7 +169,7 @@ function learnerFitCheck(q, variant, level) {
     assert.equal(q.layerCue, null); assert(!q.promptText.includes("층별 개수 표"));
     assert(q.promptText.includes("(1)")); assert(q.promptText.includes("(2)"));
     assert.deepEqual([...q.promptText.matchAll(/\n\((\d)\)/g)].map(match => Number(match[1])), level === 2 ? [1, 2, 3] : [1, 2]);
-    assert(q.promptText.includes(`1층에 놓인 쌓기나무는 ${stages[variant]}층`));
+    assert(q.promptText.includes(`1층에 놓여 있는 쌓기나무는 ${stages[variant]}층`));
     assert(q.solution.includes("짝지어")); assert(q.solution.includes("쌍의 합"));
     assert(q.solution.includes("모든 짝의 합이"));
     const pairedEquations = q.solutionEquations.filter(equation => /^\d+\+\d+=\d+개$/.test(equation));
@@ -197,7 +201,7 @@ function learnerFitCheck(q, variant, level) {
 }
 
 assert.deepEqual(contracts.sourceItemIds, [id]); assert.equal(contracts.learner_stage, learner_stage);
-assert.equal(contracts.learnerConditions, learnerConditions);
+assert.equal(contracts.learnerConditions, learnerConditions); assert.equal(contracts.constructionRule, constructionRule);
 const definition = models.definitions.find(item => item.sourceItemId === id);
 assert.deepEqual(definition.pools.map(pool => pool.n), stages);
 const firstHeights = [
