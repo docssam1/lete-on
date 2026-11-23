@@ -1,3 +1,4 @@
+import{beforeMaterialTask}from'./tests/material-guided-stage.mjs';
 import{materialEarthCurrentItems}from'../data/book/material-earth-student-language.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import{fileURLToPath}from'node:url';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js';import*as original from'../data/book/c22-s32-u01.book.js';import*as records from'../data/book/c22-s32-u01.records-book.js';import{similar}from'../data/units/c22-s32-u01.similar.js';import{items}from'../data/units/c22-s32-u01.js';import{lesson}from'../data/units/c22-s32-u01.lesson.js';import{interact}from'../data/book/c22-s32-u01.interact.js';import{withThink}from'./think-merge.js';import{buildSlides,deckSlideIndex}from'./deck.js';
@@ -13,7 +14,7 @@ test('물체와 물질은 성질 비교·재료별 분류·세 상태·기능에
 test('기존 문항146개·짝 ID·정답 계약·실제 기록32쪽과 모형 저장키는 보존한다',()=>{
  assert.equal(similar.length,70);assert.equal(items.length,64);assert.equal(data.items.length,76);assert.equal(records.chapter.pages.length,32);assert.equal(original.chapter.materialThinking,undefined);assert.equal(lesson.explore.lab.rowsKey,'materialRows');assert.notEqual(mod.classroomLab.rowsKey,'materialRows');assert.equal(mod.classroomLab.rowsKey,'materialCompareRows');
  const selected=new Set(mod.classroomItems.map(q=>q.id));assert.equal(selected.size,12);assert(selected.has('c22-s32-u01-t01'));assert(selected.has('s32-u04-v009'));assert.deepEqual([...new Set(mod.classroomItems.map(q=>q.answerContract.type))].sort(),['cloze','short-text','single-choice','written-explanation']);
- for(const q of pool){const previous=oldPool.find(x=>x.id===q.id);assert(previous);for(const key of['answerContract','sourceRef','taxonomy'])assert.deepEqual(q[key],previous[key]);if(!selected.has(q.id))assert.equal(q,previous);}
+ for(const q of pool){const previous=oldPool.find(x=>x.id===q.id);assert(previous);for(const key of['answerContract','sourceRef','taxonomy'])assert.deepEqual(beforeMaterialTask(q)[key],previous[key]);if(!selected.has(q.id))assert.equal(q,previous);}
  const daily=[...classroomQuestions(mod,data.similar),...classroomQuestions(mod,data.items)];for(const q of mod.classroomItems)assert.equal(daily.find(x=>x.id===q.id),q);
 });
 test('네 시험은 원래 모형 표와 같고 처음 예상·자료 사본을 보존한다',()=>{

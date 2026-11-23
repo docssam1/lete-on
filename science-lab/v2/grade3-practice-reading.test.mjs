@@ -1,3 +1,4 @@
+import{beforeMaterialTask}from'./tests/material-guided-stage.mjs';
 import{reviewStudentWorkbook}from'./student-language-review.js';
 import{SOUND_LINKED_EXPLANATION_VERSION}from'../data/book/sound-linked-explanations.js';
 import{SOUND_NOISE_PRACTICE_VERSION}from'../data/book/sound-noise-practice.js';
@@ -81,8 +82,8 @@ for(const c of cases){
  test(unit+' classroom and bank share revised wording and original response contracts',async()=>{
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items,source=[],similar=[]}=await actualBank(unit);
   const bank=new Map([...source,...similar,...items].map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,12);
-  assert.equal(mod.classroomItems.map(q=>[SOUND_NOISE_PRACTICE_VERSION,SOUND_LINKED_EXPLANATION_VERSION].includes(q.contentVersion)?questionAtVersion(q,q.previousVersions.at(-1).version):q).map(q=>q.contentVersion===SOUND_COMPARISON_VERSION?questionAtVersion(q,VERSION):q).filter(q=>q.contentVersion===VERSION).length,c.classChanges);
-  for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
+  assert.equal(mod.classroomItems.map(beforeMaterialTask).map(q=>[SOUND_NOISE_PRACTICE_VERSION,SOUND_LINKED_EXPLANATION_VERSION].includes(q.contentVersion)?questionAtVersion(q,q.previousVersions.at(-1).version):q).map(q=>q.contentVersion===SOUND_COMPARISON_VERSION?questionAtVersion(q,VERSION):q).filter(q=>q.contentVersion===VERSION).length,c.classChanges);
+  for(const q of mod.classroomItems){const previous=beforeMaterialTask(q);assert.equal(previous.prompt,bank.get(q.id).prompt);assert.deepEqual(previous.answerContract,bank.get(q.id).answerContract);}
   const {workbook}=await import('../data/book/'+unit+'.workbook.js');
   if(unit!=='c22-s32-u04'){
    const linked=workbook.questions.filter(q=>q.sourceId);assert.equal(linked.length,c.linked);

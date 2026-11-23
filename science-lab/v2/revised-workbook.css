@@ -438,3 +438,14 @@
 .bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-quick .ed-table thead th:nth-child(2){width:45%}
 .bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-quick .ed-table thead th:nth-child(3){width:45%}
 @media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-layout-life-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Material learning uses brief checks and named picture parts. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-gallery-item img{height:43mm;object-fit:contain;background:#f6f7f9}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-flow{justify-content:flex-start;gap:22px}}
