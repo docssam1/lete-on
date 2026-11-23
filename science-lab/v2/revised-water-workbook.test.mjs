@@ -14,5 +14,5 @@ test('물 교재: 반복 없는 오른쪽 원고를 학생·교사에 같은 쪽
 });
 test('물 예제는 관찰·상태·측정 범위·장치 경로를 구별하고 학생용 정답은 숨긴다',async()=>{
  assert(WATER_EXAMPLES[2].answer.includes('같은 상태라고 쓰지'));assert(WATER_EXAMPLES[4].steps[0][1].includes('4.0→4.4→4.0'));assert(WATER_EXAMPLES[6].steps[0][1].includes('6 mL'));assert(WATER_EXAMPLES[9].steps[0][1].includes('누수·흘림이 없으며'));assert(WATER_EXAMPLES[10].answer.includes('증발→응결→수집'));assert(WATER_EXAMPLES[11].answer.includes('응결이 없었다는 뜻은 아니'));
- const p=await revisedTextbookPaper('s41-u02'),s=p.workbookPaper({mode:'student'}),t=p.workbookPaper({mode:'teacher'});assert(!/class="ed-key"|class="ed-solution"/.test(s));assert.equal((t.match(/class="ed-key"/g)||[]).length,80);assert(t.includes('duplex-blank'));assert(!s.includes('AI 실사형 설명 이미지'));
+ const p=await revisedTextbookPaper('s41-u02'),s=p.workbookPaper({mode:'student'}),t=p.workbookPaper({mode:'teacher'});assert(!/class="ed-key"|class="ed-solution"/.test(s));assert.equal((t.match(/class="ed-key"/g)||[]).length,80);assert(!t.includes('duplex-blank'));assert.equal((t.match(/class="bk-page /g)||[]).length,83);assert(!s.includes('AI 실사형 설명 이미지'));
 });

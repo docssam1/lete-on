@@ -34,7 +34,7 @@ import { buildGasThinkingSlides } from './deck-gas-thinking.js?v=20261104-gas-cl
 import { buildMagnetThinkingSlides } from './deck-magnet-thinking.js?v=20261108-comparison-material-language&magnetGuided=20261124-magnet-guided-tasks';
 import { buildBiologyThinkingSlides } from './deck-biology-thinking.js?v=20261115-biology-reference-photos';
 import { buildGroundThinkingSlides } from './deck-ground-thinking.js?v=20261108-comparison-material-language';
-import { buildWaterThinkingSlides } from './deck-water-thinking.js?v=20261105-material-water-photo-language';
+import { buildWaterThinkingSlides } from './deck-water-thinking.js?v=20261105-material-water-photo-language&waterGuided=20261124-water-guided-tasks';
 import { buildSolutionThinkingSlides } from './deck-solution-thinking.js?v=20261108-solution-learning-language';
 import { buildSkyThinkingSlides } from './deck-sky-thinking.js?v=20261108-student-activity-guidance';
 import { buildClimateThinkingSlides } from './deck-climate-thinking.js?v=20261108-student-activity-guidance';

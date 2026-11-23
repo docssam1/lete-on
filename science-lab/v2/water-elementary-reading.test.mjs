@@ -1,3 +1,7 @@
+import{beforeWaterTask}from'./tests/water-guided-stage.mjs';
+import{workbook as actualWorkbook}from'../data/book/s41-u02.workbook.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import{reviewStudentWorkbook,reviewTextTree}from'./student-language-review.js';
 import test from 'node:test';
 import {withGrade4StudyNotes} from '../data/book/grade4-study-notes.js';
@@ -34,7 +38,7 @@ test('Water state-change reading edits preserve workbook grading, pictures and a
   assert.deepEqual(workbook.teacherPages,prior.teacherPages);
   assert.deepEqual(workbook.figures,prior.figures);
   for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(workbook.questions[i]),withoutPresentation(prior.questions[i]));
-  const visible=await reviewStudentWorkbook(unit,workbook),paper=await revisedTextbookPaper(unit);
+  const visible=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(actualWorkbook))),paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
     const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
     if(mode==='student'||mode==='teacher')for(const q of visible.questions)for(const text of q.prompt.split(/\[\s*\]|\(\s*\)/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
@@ -73,8 +77,8 @@ test('actual bank loader preserves every answer boundary and saved presentation 
 test('classroom questions use the same revised bank prompts while retaining their contracts',async()=>{
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items,source,similar}=await actualBank();
   const bank=new Map([...source,...similar,...items].map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,26);
-  assert.equal(mod.classroomItems.filter(q=>q.contentVersion===WATER_ELEMENTARY_VERSION).length,14);
-  for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
+  assert.equal(mod.classroomItems.map(beforeWaterTask).filter(q=>q.contentVersion===WATER_ELEMENTARY_VERSION).length,14);
+  for(const current of mod.classroomItems){const q=beforeWaterTask(current);assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
   assert.equal(workbook.questions.filter(q=>q.sourceId&&q.sourceRef?.type==='authored-supplement').length,0);
   assert.equal(workbook.questions.filter(q=>q.sourceRef?.type==='similar').length,40);
   for(const q of workbook.questions.filter(q=>q.sourceRef?.type==='similar'))assert.deepEqual(q,prior.questions.find(p=>p.id===q.id));

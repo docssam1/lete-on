@@ -1,8 +1,9 @@
+import{waterGuidedFigure}from'./water-guided-review.js?v=20261124-water-guided-tasks&waterProof=20261124-water-guided-layout';
 import{findLifeItem}from'./book-life.js';import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
 import{workbook}from'../data/book/s41-u02.workbook.js?v=20261105-material-water-photo-language';import{art as bookArt}from'../data/book/s41-u02.workbook-art.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
-const figure=key=>{const f=workbook.figures[key]||bookArt[key];if(!f)throw Error(`물 교재 자료 없음 ${key}`);return f;};
+const figure=key=>{const f=workbook.figures[key]||bookArt[key];if(!f)throw Error(`물 교재 자료 없음 ${key}`);return waterGuidedFigure(key,f);};
 export function buildWaterThinkingSlides(ch,art,plan,pool,mode,ix){
  ix=ch.waterInteraction||ix;const teach=mode==='teach',S=[],phases=Object.fromEntries(plan.phases.map(x=>[x.id,x]));let ses=1;
  const add=(id,phase,title,body,extra={})=>S.push({id,phase,phaseObj:phases[phase],title,body,kind:'read',ses,...extra}),peek=text=>teach?`<div class="dk-ans rv">${esc(text)}</div>`:`<div class="dk-peekw"><button type="button" class="dk-peek">생각한 뒤 설명 보기</button><div class="dk-ans" hidden>${esc(text)}</div></div>`;
