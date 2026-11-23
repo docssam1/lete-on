@@ -389,3 +389,13 @@
 .bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
 .bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-gallery-item img{height:33mm;object-fit:contain;background:#f6f7f9}
 @media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Animal tasks use their own short response lines and labelled picture panels. */
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(1){width:10%}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(2){width:45%}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(3){width:45%}

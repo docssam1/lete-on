@@ -1,3 +1,4 @@
+import{beforeAnimalTask}from'./tests/animal-guided-stage.mjs';
 import test from'node:test';import assert from'node:assert/strict';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js?v=20261102-animal';
 import*as original from'../data/book/s31-u02.book.js';
@@ -19,11 +20,11 @@ test('동물 기본 수업은 예상→두 기준 비교→환경→설계·소�
  }
  assert.equal(mod.plan.phases.reduce((sum,p)=>sum+p.min,0),80);
 });
-test('동물의 기존 실제 활동·보고서·80문항과 11개 정답 계약을 보존한다',()=>{
+test('동물의 기존 실제 활동·보고서·80문항과 이전 11개 정답 계약을 복원한다',()=>{
  assert.equal(original.chapter.animalThinking,undefined);assert.equal(lesson.explore.lab.kind,'animal');assert.equal(lesson.elaborate.report,true);
  const s=buildSlides(original.chapter,original.art,original.plan,similar,'self');assert.equal(s.length,45);assert(s.some(x=>x.id==='report'));
  assert.equal(pool.length,80);const updated=new Set(mod.classroomItems.map(x=>x.id));assert.equal(updated.size,11);
- for(const q of pool){const previous=similar.find(x=>x.id===q.id);assert(previous);assert.deepEqual(q.answerContract,previous.answerContract);assert.deepEqual(q.sourceRef,previous.sourceRef);assert.deepEqual(q.taxonomy,previous.taxonomy);if(!updated.has(q.id))assert.equal(q,previous);}
+ for(const q of pool){const previous=similar.find(x=>x.id===q.id);assert(previous);assert.deepEqual(beforeAnimalTask(q).answerContract,previous.answerContract);assert.deepEqual(q.sourceRef,previous.sourceRef);assert.deepEqual(q.taxonomy,previous.taxonomy);if(!updated.has(q.id))assert.equal(q,previous);}
  assert.equal(mod.classroomLab.kind,'animal-compare');assert.equal(mod.classroomLab.rowsKey,'animalCompareRows');assert.equal(typeof mod.classroomLab.mount,'function');
  assert.equal(mod.chapter.revisedThinkingClassroom,true);
 });

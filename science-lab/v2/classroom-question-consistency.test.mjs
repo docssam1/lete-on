@@ -1,3 +1,4 @@
+import{beforeAnimalTask}from'./tests/animal-guided-stage.mjs';
 import{reviewStudentModule}from'./student-language-review.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -36,9 +37,9 @@ test('clarified classroom variants have a distinct version and restore every raw
   const [{similar},book]=await Promise.all([import('../data/units/'+unit+'.similar.js'),import('../data/book/'+unit+'.book.js')]);
   const before=structuredClone(similar),current=await revisedClassroom(unit,book),again=await revisedClassroom(unit,book);
   for(const id of ids){
-   const old=similar.find(q=>q.id===id),q=current.classroomItems.find(q=>q.id===id);
+   const old=similar.find(q=>q.id===id),q=beforeAnimalTask(current.classroomItems.find(q=>q.id===id));
    assert.notEqual(q.prompt,old.prompt);assert.notEqual(questionVersion(q),questionVersion(old));
-   assert.equal(again.classroomItems.find(q=>q.id===id),q);
+   assert.equal(beforeAnimalTask(again.classroomItems.find(q=>q.id===id)),q);
    assert.deepEqual(q.answerContract,old.answerContract);assert.deepEqual(q.choices,old.choices);
    const restored=questionAtVersion(q,questionVersion(old));for(const [key,value]of Object.entries(old))assert.deepEqual(restored[key],value);
   }
@@ -75,7 +76,7 @@ test('independent gas workbook cases retain their content without a live bank-qu
 
 test('classroom version and workbook link guards exclude future or unreviewed inputs',async()=>{
  const unit='s31-u02',book=await import('../data/book/'+unit+'.book.js'),current=await revisedClassroom(unit,book);
- const q=structuredClone(current.classroomItems.find(q=>q.id==='s31-u02-v013'));delete q.contentVersion;delete q.previousVersions;
+ const q=structuredClone(beforeAnimalTask(current.classroomItems.find(q=>q.id==='s31-u02-v013')));delete q.contentVersion;delete q.previousVersions;
  const input={classroomItems:[q]},snapshot=structuredClone(input);assert.notEqual(await withVersionedClassroomQuestions(unit,input),input);assert.deepEqual(input,snapshot);
  for(const altered of [{...q,contentVersion:'future'},{...q,prompt:'unreviewed prompt'},{...q,explanation:'unreviewed explanation'},{...q,status:'review'},{...q,sourceRef:{...q.sourceRef,type:'original'}}]){
   const mod={classroomItems:[altered]};assert.equal(await withVersionedClassroomQuestions(unit,mod),mod);
