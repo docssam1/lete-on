@@ -114,3 +114,15 @@ test("official source links are external, isolated, and never embedded", async f
   assert.match(await page.locator("#goal-eligibility").innerText(), /공식 G8 이하.*연령 기준은 현재 MAA 안내 확인/);
   await page.close();
 });
+
+test("first-screen programmes are six distinct, directly connected study routes", async function () {
+ const page=await browser.newPage({viewport:{width:1440,height:1000}});await page.goto(url,{waitUntil:"networkidle"});
+ const entries=page.locator('[data-program-entry]');assert.equal(await entries.count(),6);
+ assert.deepEqual(await entries.locator('h2').allTextContents(),['U.S. Math Curriculum','AMC','AIME','SASMO','Math Kangaroo','보딩 로드맵']);
+ assert.ok(await page.locator('.program-entry').evaluate(el=>el.compareDocumentPosition(document.querySelector('.directory-intro'))&Node.DOCUMENT_POSITION_FOLLOWING));
+ const expected=[['curriculum','catalog.html',null],['amc','competition-paper-review.html','amc8'],['aime','competition-paper-review.html','aime'],['sasmo','sasmo.html',null],['kangaroo','competition-practice.html','kangaroo'],['boarding','boarding-roadmap.html',null]];
+ for(const [id,file,program] of expected){const href=await page.locator('[data-program-entry="'+id+'"]').getAttribute('href'),target=new URL(href,url);assert.ok(target.pathname.endsWith(file));assert.equal(target.searchParams.get('locale'),'ko');if(program)assert.equal(target.searchParams.get('program'),program);if(id==='boarding')assert.equal(target.hash,'#grade-map');const response=await page.request.get(target.href);assert.equal(response.status(),200,id);}
+ for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'width '+width);for(const entry of await entries.all()){const rect=await entry.boundingBox();assert.ok(rect.height>=44);}}
+ await page.locator('[data-program-entry="aime"]').click();await page.waitForFunction(()=>document.querySelector('#review-program')?.value==='aime');assert.equal(await page.locator('#review-program').inputValue(),'aime');await page.goBack();await page.locator('[data-program-entry="boarding"]').click();assert.equal(new URL(page.url()).hash,'#grade-map');
+ await page.close();
+});

@@ -19089,5 +19089,9 @@ window.GFIELDContentTranslations = {
   "원본 파일·정답·해설": [
     "Original file, key and solutions",
     "原始文件、答案与解析"
+  ],
+  "MAA 공식 응시자 표본": [
+    "MAA official-student cohort",
+    "MAA 正式参赛者样本"
   ]
 };

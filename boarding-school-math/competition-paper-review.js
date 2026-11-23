@@ -1170,7 +1170,7 @@
     itemResponseSection.hidden = cohortItemResponses.length === 0;
     if (cohortItemResponses.length) {
       const cohort = cohortItemResponses[0].reference;
-      const responsePopulationLabel = cohort.population.includes("AIME qualifier") ? `AIME 진출자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : cohort.population.includes("Taiwan") ? `대만 응시자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : cohort.population.includes("MAA U.S.") ? `MAA 미국 참가자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : `세계 응시자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}`;
+      const responsePopulationLabel = cohort.population.includes("AIME qualifier") ? `AIME 진출자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : cohort.population.toLowerCase().includes("all official") ? `MAA 공식 응시자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : cohort.population.includes("Taiwan") ? `대만 응시자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : cohort.population.includes("MAA U.S.") ? `MAA 미국 참가자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}` : `세계 응시자 표본${cohort.respondentCount ? ` · ${cohort.respondentCount.toLocaleString("ko-KR")}명` : ""}`;
       setText("item-response-title", cohort.population.includes("AIME qualifier") ? "AIME 진출자 표본의 보기 선택 분포" : "같은 회차 응시자의 보기 선택 분포");
       const cohortSummaryWarning = cohort.sourceStatus.includes("Source reconciliation warning")
         ? " · 원본 평균 불일치: 문항 응답 참고용"

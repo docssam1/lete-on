@@ -7,6 +7,7 @@ const tick=()=>new Promise(r=>setImmediate(r));
 async function setup(member=null,options={}){
  const nodes=new Map(),listeners={},calls=[];
  const node=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',hidden:true,value:'',classList:{toggle(){}},focus(){},querySelector:selector=>node(id+selector),querySelectorAll:()=>[],addEventListener:(type,fn)=>{listeners[id+type]=fn;}});return nodes.get(id);};
+ node('profileForm').elements=Object.fromEntries(['studentName','guardianPhone','marketing_email','marketing_sms'].map(name=>[name,{}]));
  const document={getElementById:node,addEventListener:(type,fn)=>{listeners['doc'+type]=fn;}};
  const A={destination:x=>{calls.push(['destination',x]);return 'planner.html?books=math';},status:async()=>member,message:()=> '연결을 확인해 주세요.',call:async(...a)=>{calls.push(a);return {member:{}};},accept:r=>r.member};
  const location={search:options.query||'?next=planner.html%3Fbooks%3Dmath',assign:x=>calls.push(['assign',x])};
@@ -54,5 +55,20 @@ test('email login rejects short numbers before the API while existing review num
   const h=await setup();h.click('login');h.node('loginForm').onsubmit({preventDefault(){},target:{data:{identifier,code:'1234'},reset(){}}});await tick();
   assert.equal(h.calls.some(x=>x[0]==='login'),false);
   assert.equal(h.calls.some(x=>x[0]==='review-login'),identifier==='review-user');
+ }
+});
+
+test('the single age or grade choice preserves the stored member profile format',async()=>{
+ for(const [school,level] of [['preschool',5],['elementary',3],['middle',1],['high',3],['preschool',3]]){
+  const age=school==='preschool'?level:null,grade=school==='preschool'?null:level;
+  const h=await setup({school,grade,age,email:'family@example.invalid'});
+  const html=h.node('memberContent').innerHTML;
+  assert.match(html,/name="learner"/);assert.doesNotMatch(html,/name="(?:school|level)"/);
+  assert.ok(html.includes('value="'+school+':'+level+'" selected'));
+  assert.equal(html.includes('value="preschool:3"'),age===3);
+  h.node('profileForm').onsubmit({preventDefault(){},target:{data:{studentName:'검수',guardianPhone:'',learner:school+':'+level}}});
+  await tick();
+  const payload=h.calls.find(([method])=>method==='update')[1].profile;
+  assert.equal(payload.school,school);assert.equal(payload.age,age);assert.equal(payload.grade,grade);
  }
 });
