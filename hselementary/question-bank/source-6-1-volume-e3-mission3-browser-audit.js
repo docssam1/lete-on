@@ -99,7 +99,8 @@ async function inspect(page, generated, pool, difficulty, view, viewportName) {
   if (!state.diagram || state.diagram.width <= 0 || state.diagram.height <= 0 || state.diagram.drawingWidth <= 0 || state.diagram.drawingHeight <= 0) fail(`${label}: 빈 SVG 또는 보이지 않는 SVG`);
   if (state.diagram?.model !== "right-step-prism-net" || state.diagram?.structure !== "step-prism-net-unknown-edge" || state.diagram?.phase !== view) fail(`${label}: 전개도 모델 또는 problem/answer 단계가 다름`);
   if (state.baseFaces !== 2 || state.lateralEdges !== 8) fail(`${label}: 밑면 2개 또는 옆면 8개가 아님`);
-  if (state.callouts !== 4 || state.dimensionLines !== 3) fail(`${label}: 짧은 변 연결선 4개 또는 옆면 치수선 3개가 아님`);
+  // 2026-11-23 원문 복원: 원문 그림처럼 6cm·4cm는 옆면 띠 위에, 10cm·18cm는 띠 아래에 바로 적어 연결선이 없고, 옆면 높이 치수선은 1개입니다.
+  if (state.callouts !== 0 || state.dimensionLines !== 1) fail(`${label}: 원문 배치(연결선 0개, 옆면 높이 치수선 1개)가 아님`);
   if (state.clippedText.length) fail(`${label}: SVG 글자 잘림 ${state.clippedText.join(",")}`);
   if (state.textOverlaps.length) fail(`${label}: SVG 치수 글자 겹침 ${state.textOverlaps.join(",")}`);
   if (view === "problem" && (!state.unknownVisible || state.resultLabels || state.answerSources)) fail(`${label}: 빈칸이 없거나 답 표시가 노출됨`);

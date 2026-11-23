@@ -21916,7 +21916,14 @@
         const mid = [[0, 0, height / 2], [side, 0, height / 2], [side, side, height / 2], [0, side, height / 2]].map(p);
         return `${polygon(top, "source61-vs-e3-face")}${polygon(front, "source61-vs-e3-face source61-vs-e3-front-face")}${polygon(mid, solved ? "source61-vs-e3-cut-plane is-solved" : "source61-vs-e3-cut-plane")}${line(mid[0][0], mid[0][1], mid[1][0], mid[1][1], `class="source61-vs-e3-cut-edge"`)}${line(mid[1][0], mid[1][1], mid[2][0], mid[2][1], `class="source61-vs-e3-cut-edge"`)}${text(210, 30, `${side}cm × ${side}cm 밑면에 평행한 절단`, `class="source61-vs-e3-note"`)}${text(210, 210, solved ? `새 절단면 2개 · 밑면 ${side}cm × ${side}cm` : "위와 아래에 새로 생긴 절단면을 표시", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
       };
-      const viewsBody = ({ a, b, h, solved = false }) => `${polygon([[70, 52], [190, 52], [190, 122], [70, 122]], "source61-vs-e3-view-face")}${polygon([[245, 52], [365, 52], [365, 122], [245, 122]], "source61-vs-e3-view-face")}${text(130, 42, "위", `class="source61-vs-e3-view-label"`)}${text(305, 42, "앞", `class="source61-vs-e3-view-label"`)}${text(130, 88, solved ? `${a}cm × ${b}cm` : `${a}cm, 둘레 ${2 * (a + b)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(305, 88, solved ? `${a}cm × ${h}cm` : `${a}cm, 둘레 ${2 * (a + h)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(130, 148, `같은 변 ${a}cm`, `class="source61-vs-e3-note"`)}${solved ? text(210, 197, `부피 ${a * b * h}cm³`, `class="source61-vs-e3-result-label"`) : ""}`;
+      const viewsBody = ({ a, b, h, solved = false }) => {
+        // 원문 그림: 위에서 본 직사각형의 윗변에 한 변의 길이, 두 직사각형 안에 둘레만 적습니다.
+        // 이름표 순서(0 위, 1 앞, 2·3 둘레, 4 같은 변)는 문제 그림 힌트 정책의 이름표 순번(4번 제거)과 맞춥니다.
+        const k = Math.min(120 / a, 110 / Math.max(b, h));
+        const w = Math.round(a * k), topHeight = Math.round(b * k), frontHeight = Math.round(h * k);
+        const topX = 130 - w / 2, frontX = 305 - w / 2, y = 52;
+        return `${polygon([[topX, y], [topX + w, y], [topX + w, y + topHeight], [topX, y + topHeight]], "source61-vs-e3-view-face")}${polygon([[frontX, y], [frontX + w, y], [frontX + w, y + frontHeight], [frontX, y + frontHeight]], "source61-vs-e3-view-face")}${text(130, y + topHeight + 22, "위", `class="source61-vs-e3-view-label"`)}${text(305, y + frontHeight + 22, "앞", `class="source61-vs-e3-view-label"`)}${text(130, y + topHeight / 2 + 5, solved ? `${a}cm × ${b}cm` : `둘레 ${2 * (a + b)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(305, y + frontHeight / 2 + 5, solved ? `${a}cm × ${h}cm` : `둘레 ${2 * (a + h)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(130, 212, `같은 변 ${a}cm`, `class="source61-vs-e3-note"`)}${text(130, 42, `${a}cm`, `class="source61-vs-e3-measure"`)}${solved ? text(305, 232, `부피 ${a * b * h}cm³`, `class="source61-vs-e3-result-label"`) : ""}`;
+      };
       const layerBody = ({ side, target, n, solved = false }) => {
         const shown = solved ? [1, 2, 3, 4, "…", n - 1, n] : [1, 2, 3, 4, "…", "?"];
         const bands = shown.map((count, index) => { const x = 24 + index * 53, width = count === "…" ? 28 : count === "?" ? 18 : Math.min(42, 8 + Number(count) * 3); return count === "…" ? text(x + 14, 88, "…", `class="source61-vs-e3-note"`) : `<g data-layer-summary="${count}">${Array.from({ length: Math.min(Number(count), 8) }, (_, cell) => `<rect class="source61-vs-e3-layer-cell" x="${x + cell * 4}" y="${128 - Math.min(Number(count), 8) * 4}" width="4" height="${Math.min(Number(count), 8) * 4}" data-coordinate="${cell},0,${count - 1}"/>`).join("")}${text(x + width / 2, 153, `${count}칸`)}</g>`; }).join("");
@@ -21957,9 +21964,10 @@
         return fixed(`같은 정육면체 30개를 4×4, 3×3, 2×2, 1×1 계단 모양으로 쌓고 겉면을 칠했습니다. 색칠한 면의 넓이가 ${painted}cm²일 때 색칠하지 않은 면의 넓이를 구하세요.`, `${answer}cm²`, `층별 단위 큐브 좌표를 세면 드러난 면은 72개이고 안쪽에서 서로 맞닿은 공유 면은 108개입니다. 한 면의 넓이는 ${painted}÷72=${faceArea}cm²이므로 색칠하지 않은 면은 108×${faceArea}=${answer}cm²입니다.`, visual(false), visual(true));
       }
       if (variant === 5) {
-        const side = [5, 6, 7][poolIndex], totalVolume = 7 * side * side * side, answer = 7 * 6 * side * side - 2 * 6 * side * side, model = `${totalVolume},7,cross`;
+        // 원문(인쇄 59쪽 Mission 2): 부피 1512cm³ → 정육면체 한 모서리 6cm.
+        const side = [6, 5, 7][poolIndex], totalVolume = 7 * side * side * side, answer = 7 * 6 * side * side - 2 * 6 * side * side, model = `${totalVolume},7,cross`;
         const visual = solved => wrap(crossBody({ side, solved }), model, solved, "0 0 420 240");
-        return fixed(`크기가 같은 정육면체 7개를 가운데 한 개와 앞·뒤·왼쪽·오른쪽·위·아래에 한 개씩 붙였습니다. 전체 부피가 ${totalVolume}cm³일 때 겉넓이를 구하세요.`, `${answer}cm²`, `정육면체 한 개의 부피는 ${totalVolume}÷7=${side * side * side}cm³이므로 모서리는 ${side}cm입니다. 7개를 따로 놓은 겉넓이에서 여섯 공유 면을 두 번씩 빼면 7×6×${side * side}-2×6×${side * side}=${answer}cm²입니다.`, visual(false), visual(true));
+        return fixed(`크기가 같은 7개의 정육면체를 붙여서 다음과 같은 입체도형을 만들었습니다. 이 입체도형의 부피가 ${totalVolume}cm³일 때, 겉넓이는 몇 cm²인지 구하세요.`, `${answer}cm²`, `정육면체 한 개의 부피는 ${totalVolume}÷7=${side * side * side}cm³이므로 모서리는 ${side}cm입니다. 7개를 따로 놓은 겉넓이에서 여섯 공유 면을 두 번씩 빼면 7×6×${side * side}-2×6×${side * side}=${answer}cm²입니다.`, visual(false), visual(true));
       }
       if (variant === 6) {
         const d = [{ side: 7, height: 12 }, { side: 6, height: 10 }, { side: 8, height: 14 }][poolIndex];
@@ -21968,10 +21976,11 @@
         return fixed(`밑면이 정사각형인 직육면체의 겉넓이가 ${surface}cm²입니다. 밑면에 평행하게 잘라 두 직육면체로 나누었더니 겉넓이의 합이 ${splitSurface}cm²가 되었습니다. 처음 직육면체의 부피를 구하세요.`, `${answer}cm³`, `나눈 뒤 새로 생긴 절단면은 2개이므로 두 절단면의 합은 ${splitSurface}-${surface}=${2 * d.side * d.side}cm²입니다. 밑면 한 개의 넓이는 ${d.side}×${d.side}=${d.side * d.side}cm²입니다. 처음 겉넓이 식에 넣으면 높이는 ${d.height}cm이고, 부피는 ${d.side}×${d.side}×${d.height}=${answer}cm³입니다.`, visual(false), visual(true));
       }
       if (variant === 7) {
-        const d = [{ a: 6, b: 7, h: 4 }, { a: 7, b: 8, h: 4 }, { a: 8, b: 9, h: 5 }][poolIndex];
+        // 원문(인쇄 59쪽 Mission 5): 위에서 본 모양 한 변 7cm·둘레 30cm, 앞에서 본 모양 둘레 22cm.
+        const d = [{ a: 7, b: 8, h: 4 }, { a: 6, b: 7, h: 4 }, { a: 8, b: 9, h: 5 }][poolIndex];
         const topPerimeter = 2 * (d.a + d.b), frontPerimeter = 2 * (d.a + d.h), answer = d.a * d.b * d.h, model = `${d.a},${topPerimeter},${frontPerimeter}`;
         const visual = solved => wrap(viewsBody({ ...d, solved }), model, solved, "0 0 420 240");
-        return fixed(`직육면체를 위와 앞에서 본 모양이 다음과 같습니다. 위에서 본 모양의 한 변은 ${d.a}cm이고 둘레는 ${topPerimeter}cm, 앞에서 본 모양의 같은 변은 ${d.a}cm이고 둘레는 ${frontPerimeter}cm입니다. 직육면체의 부피를 구하세요.`, `${answer}cm³`, `위에서 본 다른 변은 ${topPerimeter}÷2-${d.a}=${d.b}cm입니다. 앞에서 본 높이는 ${frontPerimeter}÷2-${d.a}=${d.h}cm입니다. 따라서 부피는 ${d.a}×${d.b}×${d.h}=${answer}cm³입니다.`, visual(false), visual(true));
+        return fixed(`직육면체를 위, 앞에서 본 모양이 각각 다음과 같을 때, 이 직육면체의 부피는 몇 cm³입니까?`, `${answer}cm³`, `위에서 본 모양과 앞에서 본 모양의 가로는 같은 모서리이므로 ${d.a}cm입니다. 위에서 본 모양의 세로는 ${topPerimeter}÷2-${d.a}=${d.b}cm입니다. 앞에서 본 모양의 높이는 ${frontPerimeter}÷2-${d.a}=${d.h}cm입니다. 따라서 부피는 ${d.a}×${d.b}×${d.h}=${answer}cm³입니다.`, visual(false), visual(true));
       }
       const side = 2, n = [12, 10, 8][poolIndex], target = side * side * n * (n + 5), model = `${target},cube-volume-8,one-cell-deep-stair`;
       const visual = solved => wrap(layerBody({ side, target, n, solved }), model, solved, "0 0 420 240");

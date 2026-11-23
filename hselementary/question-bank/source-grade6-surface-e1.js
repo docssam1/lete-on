@@ -358,7 +358,8 @@
     const pieces = 18 * 6 * p.unit * p.unit;
     const answer = fractionText(pieces, original) + "배";
     const visual = boxSvg([box(0, 0, 0, p.w, p.d, p.h, "partitioned-cuboid", [p.w / p.unit, p.d / p.unit, p.h / p.unit])], solved, answer, `${p.w}×${p.d}×${p.h} 직육면체를 18개 정육면체로 나눈 모습`);
-    return { answer, visual, prompt: `가로 ${p.w}cm, 세로 ${p.d}cm, 높이 ${p.h}cm인 직육면체를 한 모서리의 길이가 ${p.unit}cm인 정육면체 18개로 나누었습니다. 작은 정육면체들의 겉넓이의 합은 처음 직육면체의 겉넓이의 몇 배인가요? ${visual}`, solution: `작은 정육면체 겉넓이의 합은 18×6×${p.unit}²=${pieces}cm², 처음 직육면체의 겉넓이는 ${original}cm²입니다. 따라서 ${pieces}÷${original}=${fractionText(pieces, original)}배입니다.` };
+    // 원문(인쇄 55쪽 Mission 6)은 작은 정육면체의 한 모서리를 주지 않으므로 풀이에서 그림의 칸 수로 구합니다.
+    return { answer, visual, prompt: `다음 그림은 가로, 세로, 높이가 각각 ${p.w}cm, ${p.d}cm, ${p.h}cm인 직육면체를 쪼개어 18개의 작은 정육면체들로 나눈 것입니다. 이때, 정육면체들의 겉넓이의 합은 처음 직육면체의 겉넓이의 몇 배입니까? ${visual}`, solution: `그림에서 가로, 세로, 높이는 각각 ${p.w / p.unit}칸, ${p.d / p.unit}칸, ${p.h / p.unit}칸으로 나누어져 있으므로 작은 정육면체의 한 모서리는 ${p.w}÷${p.w / p.unit}=${p.unit}cm입니다. 작은 정육면체 겉넓이의 합은 18×6×${p.unit}×${p.unit}=${pieces}cm², 처음 직육면체의 겉넓이는 (${p.w}×${p.d}+${p.d}×${p.h}+${p.w}×${p.h})×2=${original}cm²입니다. 따라서 ${pieces}÷${original}=${fractionText(pieces, original)}배입니다.` };
   };
 
   const pools = {
