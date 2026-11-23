@@ -331,7 +331,7 @@ function checkSemantic(state, label, variant, answerView, difficulty) {
         fail(`${label}: 문제 그림에 계산할 짧은 밑변 또는 각기둥 높이가 노출되었습니다.`);
       }
       if (answerView && (!model.shortBase || !model.prismHeight || !markup.includes("source61-trapezoid-short-edge is-solved") || !markup.includes("source61-trapezoid-face-ga is-solved"))) {
-        fail(`${label}: 답 그림에서 짧은 밑변과 (가), 각기둥 높이를 함께 확인할 수 없습니다.`);
+        fail(`${label}: 답 그림에서 짧은 밑변과 ㉮, 각기둥 높이를 함께 확인할 수 없습니다.`);
       }
     }
     if (variant === 6) {

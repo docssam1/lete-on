@@ -445,4 +445,14 @@ for a, u in ((3, 1), (4, 1), (5, 2)):
     ans.append("%d cm" % near_int(best))
 OUT["6-1-u2-e4-mission-6"] = ans
 
+# ================= 원본에 없는 조건 문장 점검 (2026-11-23 원본 복원) =================
+# 예제 1-2, 개념탐구 2, Mission 2·6(개념탐구 4)의 해석 문장은 문제에서 빼고 풀이 앞 "풀이 기준"으로만 둡니다.
+import os, re
+_src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "source-6-1-u12-original.js"), encoding="utf-8").read()
+assert "조건 보충" not in _src and "NOTE(" not in _src, "문제에 원본에 없는 '※ 조건 보충' 문장이 남아 있습니다."
+for fn in ("ex12", "e2exp", "e4m2", "e4m6"):
+    body = re.search(r"function %s\(.*?\n\n" % fn, _src, re.S).group(0)
+    prompt_part, solution_part = body.split("solution:", 1)
+    assert "BASIS(" not in prompt_part and solution_part.lstrip().startswith("BASIS("), fn + ": 풀이 기준이 풀이 앞에 있지 않습니다."
+
 print("AUDIT " + json.dumps(OUT, ensure_ascii=False))

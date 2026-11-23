@@ -21648,7 +21648,7 @@
         const shortEdge = solved ? `<line class="source61-trapezoid-short-edge is-solved" x1="${boundaries[2]}" y1="${stripY - topHeight}" x2="${boundaries[2] + topShort}" y2="${stripY - topHeight}"/>` : "";
         const solvedLabels = solved ? `<text class="source61-trapezoid-answer-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight - 11}">짧은 밑변 ${shortBase}cm</text><text class="source61-trapezoid-answer-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 20}">높이 ${prismHeight}cm</text>` : "";
         const structure = `right-trapezoidal-prism-net-${baseHeight}-${longBase}-${baseArea}-${faceArea}`;
-        return `<svg class="geometry-diagram source61-trapezoidal-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 360 270" role="img" aria-label="밑면이 직각사다리꼴인 사각기둥의 전개도" data-source61-e1-structure="${structure}" data-base-height="${baseHeight}" data-long-base="${longBase}" data-base-area="${baseArea}" data-face-ga-area="${faceArea}" data-base-face-count="2" data-lateral-face-count="4" data-short-base="${solved ? shortBase : ""}" data-prism-height="${solved ? prismHeight : ""}">${topPolygon}${bottomPolygon}${lateralFaces}${shortEdge}<text class="source61-trapezoid-face-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 - 8}">(가)</text><text class="source61-trapezoid-area-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 10}">${faceArea}cm²</text><text class="source61-trapezoid-area-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight / 2}">밑면 ${baseArea}cm²</text><text class="source61-trapezoid-measure" x="${(boundaries[1] + boundaries[2]) / 2}" y="${stripY - 10}">${baseHeight}cm</text><text class="source61-trapezoid-measure" x="${(boundaries[2] + boundaries[3]) / 2}" y="${bottomY + 15}">${longBase}cm</text>${solvedLabels}</svg>`;
+        return `<svg class="geometry-diagram source61-trapezoidal-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 360 270" role="img" aria-label="${solved ? "밑면이 직각사다리꼴인 사각기둥의 전개도" : "사각기둥의 전개도"}" data-source61-e1-structure="${structure}" data-base-height="${baseHeight}" data-long-base="${longBase}" data-base-area="${baseArea}" data-face-ga-area="${faceArea}" data-base-face-count="2" data-lateral-face-count="4" data-short-base="${solved ? shortBase : ""}" data-prism-height="${solved ? prismHeight : ""}">${topPolygon}${bottomPolygon}${lateralFaces}${shortEdge}<text class="source61-trapezoid-face-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 - 8}">㉮</text>${solved ? `<text class="source61-trapezoid-area-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 10}">${faceArea}cm²</text><text class="source61-trapezoid-area-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight / 2}">밑면 ${baseArea}cm²</text>` : ""}<text class="source61-trapezoid-measure" x="${(boundaries[1] + boundaries[2]) / 2}" y="${stripY - 10}">${baseHeight}cm</text><text class="source61-trapezoid-measure" x="${(boundaries[2] + boundaries[3]) / 2}" y="${bottomY + 15}">${longBase}cm</text>${solvedLabels}</svg>`;
       };
       const quadrilateralPrismNetActivitySvg = ({ topBase, baseHeight, slantedSide, bottomBase, prismHeight, cutCount, solved = false }) => {
         const cell = 6, gridX = 190, gridY = 28, gridWidth = 288, gridHeight = 180;
@@ -21715,8 +21715,8 @@
 
       if (variant === 5) {
         const data = [
-          { baseHeight: 10, longBase: 16, baseArea: 150, faceArea: 336 },
           { baseHeight: 12, longBase: 20, baseArea: 228, faceArea: 513 },
+          { baseHeight: 10, longBase: 16, baseArea: 150, faceArea: 336 },
           { baseHeight: 8, longBase: 18, baseArea: 136, faceArea: 416 }
         ][poolIndex];
         const shortBase = 2 * data.baseArea / data.baseHeight - data.longBase;
@@ -21725,7 +21725,7 @@
         const values = [data.baseHeight, data.longBase, data.baseArea, shortBase, data.faceArea, prismHeight];
         const promptVisual = trapezoidalPrismHeightNetSvg({ ...data, shortBase, prismHeight });
         const answerVisual = `${trapezoidalPrismHeightNetSvg({ ...data, shortBase, prismHeight, solved: true })}${mathBoard("전개도에서 각기둥의 높이 찾기", row("두 밑변의 길이의 합", `${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm`) + row("짧은 밑변", `${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm`) + row("각기둥의 높이", `${data.faceArea}÷${shortBase}=${prismHeight}cm`), `data-source61-visual="trapezoidal-prism-net-height"`)}`;
-        return fixedResult(`다음 그림은 밑면이 사다리꼴인 사각기둥의 전개도입니다. 밑면의 높이는 ${data.baseHeight}cm, 긴 밑변은 ${data.longBase}cm이고 한 밑면의 넓이는 ${data.baseArea}cm²입니다. 직사각형 (가)의 넓이가 ${data.faceArea}cm²일 때 사각기둥의 높이를 구하세요.${promptVisual}${support("사다리꼴의 넓이에서 짧은 밑변을 먼저 구한 뒤, (가)의 넓이를 짧은 밑변으로 나누어 보세요.")}${challenge}${evidence("trapezoidal-prism-net-height", values)}`, `${prismHeight}cm`, `사다리꼴의 두 밑변의 길이의 합은 ${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm입니다. 따라서 짧은 밑변은 ${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm입니다. (가)는 짧은 밑변 ${shortBase}cm에 붙은 옆면이므로 사각기둥의 높이는 ${data.faceArea}÷${shortBase}=${prismHeight}cm입니다.`, answerVisual);
+        return fixedResult(`그림은 사각기둥의 전개도입니다. ㉮의 넓이는 ${data.faceArea}cm²이고, 한 밑면의 넓이는 ${data.baseArea}cm²입니다. 이 사각기둥의 높이는 몇 cm입니까?${promptVisual}${support("사다리꼴의 넓이에서 짧은 밑변을 먼저 구한 뒤, ㉮의 넓이를 짧은 밑변으로 나누어 보세요.")}${challenge}${evidence("trapezoidal-prism-net-height", values)}`, `${prismHeight}cm`, `전개도에서 밑면은 사다리꼴이고, ${data.baseHeight}cm는 밑면의 높이, ${data.longBase}cm는 긴 밑변입니다. 사다리꼴의 두 밑변의 길이의 합은 ${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm입니다. 따라서 짧은 밑변은 ${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm입니다. ㉮는 짧은 밑변 ${shortBase}cm에 붙은 옆면이므로 사각기둥의 높이는 ${data.faceArea}÷${shortBase}=${prismHeight}cm입니다.`, answerVisual);
       }
 
       if (variant === 6) {
@@ -22097,33 +22097,33 @@
       };
 
       if (variant === 0) {
-        const data = [{ k: 22, n: 10 }, { k: 26, n: 12 }, { k: 30, n: 14 }][poolIndex];
+        const data = [{ k: 26, n: 12 }, { k: 22, n: 10 }, { k: 30, n: 14 }][poolIndex];
         const answer = 2 * data.n;
         const promptVisual = `${pairSvg(data)}${countTable({ ...data, guided: level === 0 })}`;
         const answerVisual = `${pairSvg({ ...data, solved: true, highlight: "pyramid" })}${countTable({ ...data, solved: true })}${mathBoard("각뿔의 모서리", row("밑면의 변 수", `${data.n}`) + row("모서리 수", `2×${data.n}=${answer}개`))}`;
-        return fixedResult(`다음을 만족하는 각기둥과 밑면의 모양이 같은 각뿔이 있습니다. 각기둥의 (면의 수)+(모서리의 수)-(꼭짓점의 수)가 ${data.k}일 때, 각뿔의 모서리 수를 구하세요.${promptVisual}${support("각기둥의 면·모서리·꼭짓점 수를 밑면의 변 수로 나타내 보세요.")}${challenge}${evidence("pyramid-edge-from-counts", [data.k, data.n, answer])}`, `${answer}개`, `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 모서리는 3×□개, 꼭짓점은 2×□개입니다. 따라서 (□+2)+3×□-2×□=${data.k}이므로 □=${data.n}입니다. 같은 밑면의 각뿔 모서리는 2×${data.n}=${answer}개입니다.`, answerVisual);
+        return fixedResult(`다음을 만족하는 각기둥과 밑면의 모양이 같은 각뿔의 모서리의 수를 구하세요.<p class="source61-e3-condition">(면의 수)+(모서리의 수)-(꼭짓점의 수)=${data.k}</p>${promptVisual}${support("각기둥의 면·모서리·꼭짓점 수를 밑면의 변 수로 나타내 보세요.")}${challenge}${evidence("pyramid-edge-from-counts", [data.k, data.n, answer])}`, `${answer}개`, `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 모서리는 3×□개, 꼭짓점은 2×□개입니다. 따라서 (□+2)+3×□-2×□=${data.k}이므로 □=${data.n}입니다. 같은 밑면의 각뿔 모서리는 2×${data.n}=${answer}개입니다.`, answerVisual);
       }
 
       if (variant === 1) {
-        const data = [{ faceSum: 27, n: 12 }, { faceSum: 29, n: 13 }, { faceSum: 31, n: 14 }][poolIndex];
+        const data = [{ faceSum: 29, n: 13 }, { faceSum: 27, n: 12 }, { faceSum: 31, n: 14 }][poolIndex];
         const prismEdges = 3 * data.n, pyramidEdges = 2 * data.n, answer = prismEdges * pyramidEdges;
         const promptVisual = `${pairSvg({ n: data.n })}${countTable({ n: data.n, k: data.faceSum, guided: level === 0, product: true })}`;
         const answerVisual = `${pairSvg({ n: data.n, solved: true, highlight: "pyramid", resultHighlight: answer })}${countTable({ n: data.n, k: data.faceSum, solved: true, product: true })}${mathBoard("두 도형의 모서리 수 곱", row("각기둥", `${prismEdges}개`) + row("각뿔", `${pyramidEdges}개`) + row("곱", `${prismEdges}×${pyramidEdges}=${answer}`))}`;
-        return fixedResult(`밑면의 모양이 같은 각기둥과 각뿔이 있습니다. 두 도형의 면의 수를 더하면 ${data.faceSum}개일 때, 각기둥과 각뿔의 모서리 수의 곱을 구하세요.${promptVisual}${support("두 도형의 면 수를 밑면의 변 수로 나타내어 밑면의 변 수를 먼저 구하세요.")}${challenge}${evidence("prism-pyramid-edge-product", [data.faceSum, data.n, prismEdges, pyramidEdges, answer])}`, String(answer), `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 각뿔의 면은 □+1개입니다. (□+2)+(□+1)=${data.faceSum}이므로 □=${data.n}입니다. 각기둥의 모서리는 3×${data.n}=${prismEdges}개, 각뿔의 모서리는 2×${data.n}=${pyramidEdges}개입니다. 따라서 ${prismEdges}×${pyramidEdges}=${answer}입니다.`, answerVisual);
+        return fixedResult(`밑면의 모양이 같은 각기둥과 각뿔이 있습니다. 각기둥과 각뿔의 면의 수의 합이 ${data.faceSum}개일 때 각기둥과 각뿔의 모서리의 수의 곱은 얼마입니까?${promptVisual}${support("두 도형의 면 수를 밑면의 변 수로 나타내어 밑면의 변 수를 먼저 구하세요.")}${challenge}${evidence("prism-pyramid-edge-product", [data.faceSum, data.n, prismEdges, pyramidEdges, answer])}`, String(answer), `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 각뿔의 면은 □+1개입니다. (□+2)+(□+1)=${data.faceSum}이므로 □=${data.n}입니다. 각기둥의 모서리는 3×${data.n}=${prismEdges}개, 각뿔의 모서리는 2×${data.n}=${pyramidEdges}개입니다. 따라서 ${prismEdges}×${pyramidEdges}=${answer}입니다.`, answerVisual);
       }
 
       if (variant === 2) {
-        const data = [{ edgeCm: 300, interval: 15, display: "3m", innerMarks: 19 }, { edgeCm: 330, interval: 15, display: "3m 30cm", innerMarks: 21 }, { edgeCm: 360, interval: 15, display: "3m 60cm", innerMarks: 23 }][poolIndex];
+        const data = [{ edgeCm: 330, interval: 15, display: "3m 30cm", innerMarks: 21 }, { edgeCm: 300, interval: 15, display: "3m", innerMarks: 19 }, { edgeCm: 360, interval: 15, display: "3m 60cm", innerMarks: 23 }][poolIndex];
         const answer = 8 * data.innerMarks + 5;
         const promptVisual = `${markedPyramidSvg({ ...data })}${mathBoard("점 찍는 조건", row("사각뿔의 한 모서리", `${data.display} = ${data.edgeCm}cm`) + row("점 사이의 간격", `${data.interval}cm`) + row("꼭짓점", "점에 포함"))}`;
         const answerVisual = `${markedPyramidSvg({ ...data, solved: true })}${mathBoard("안쪽 점과 꼭짓점", row("한 모서리의 안쪽 점", `${data.edgeCm}÷${data.interval}-1=${data.innerMarks}개`) + row("모든 모서리의 안쪽 점", `${data.innerMarks}×8=${data.innerMarks * 8}개`) + row("전체", `${data.innerMarks * 8}+5=${answer}개`))}`;
-        return fixedResult(`모든 모서리의 길이가 ${data.display}인 사각뿔이 있습니다. 각 모서리에 ${data.interval}cm 간격으로 점을 찍고 꼭짓점에도 반드시 점을 찍을 때, 점은 모두 몇 개인지 구하세요.${promptVisual}${support("한 모서리에서 양 끝 꼭짓점을 뺀 안쪽 점의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-edge-marks", [data.edgeCm, data.interval, data.innerMarks, answer])}`, `${answer}개`, `한 모서리의 길이는 ${data.edgeCm}cm이고 ${data.interval}cm씩 나누면 ${data.edgeCm}÷${data.interval}=${data.edgeCm / data.interval}구간입니다. 안쪽 점은 ${data.edgeCm / data.interval}-1=${data.innerMarks}개입니다. 사각뿔의 모서리 8개에 찍는 안쪽 점은 ${data.innerMarks}×8=${data.innerMarks * 8}개이고, 꼭짓점 5개를 더하면 ${answer}개입니다.`, answerVisual);
+        return fixedResult(`그림은 각 모서리의 길이가 ${data.display}로 모두 같은 사각뿔입니다. 각 모서리에 ${data.interval}cm 간격으로 점을 찍으면 점은 모두 몇 개가 찍히겠습니까? (단, 각 꼭짓점에는 반드시 점을 찍습니다.)${promptVisual}${support("한 모서리에서 양 끝 꼭짓점을 뺀 안쪽 점의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-edge-marks", [data.edgeCm, data.interval, data.innerMarks, answer])}`, `${answer}개`, `한 모서리의 길이는 ${data.edgeCm}cm이고 ${data.interval}cm씩 나누면 ${data.edgeCm}÷${data.interval}=${data.edgeCm / data.interval}구간입니다. 안쪽 점은 ${data.edgeCm / data.interval}-1=${data.innerMarks}개입니다. 사각뿔의 모서리 8개에 찍는 안쪽 점은 ${data.innerMarks}×8=${data.innerMarks * 8}개이고, 꼭짓점 5개를 더하면 ${answer}개입니다.`, answerVisual);
       }
 
       if (variant === 4) {
         const data = [
-          { baseSide: 6, lateralSide: 11, totalEdgeLength: 136, sides: 8, prismHeight: 5 },
           { baseSide: 8, lateralSide: 14, totalEdgeLength: 220, sides: 10, prismHeight: 6 },
+          { baseSide: 6, lateralSide: 11, totalEdgeLength: 136, sides: 8, prismHeight: 5 },
           { baseSide: 9, lateralSide: 17, totalEdgeLength: 312, sides: 12, prismHeight: 8 }
         ][poolIndex];
         const pyramidTotal = data.sides * (data.baseSide + data.lateralSide);
@@ -22133,18 +22133,20 @@
         const values = [data.baseSide, data.lateralSide, data.totalEdgeLength, data.sides, prismBaseEdgesTotal, data.prismHeight];
         const promptVisual = `${sideFaceToPrismHeightSvg(data)}${mathBoard("주어진 모서리", row("각뿔의 옆면 한 개", `${data.lateralSide}cm, ${data.lateralSide}cm, ${data.baseSide}cm`) + row("각뿔의 모든 모서리 길이 합", `${data.totalEdgeLength}cm`))}`;
         const answerVisual = `${sideFaceToPrismHeightSvg({ ...data, solved: true })}${mathBoard("같은 밑면의 각기둥", row("각뿔의 옆면 수", `${data.totalEdgeLength}÷(${data.lateralSide}+${data.baseSide})=${data.sides}개`) + row("각기둥의 두 밑면 모서리 합", `${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm`) + row("각기둥의 높이", `(${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm`))}`;
-        return fixedResult(`다음 그림과 같은 옆면으로 이루어진 각뿔의 모든 모서리 길이의 합은 ${data.totalEdgeLength}cm입니다. 이 각뿔과 밑면의 크기와 모양이 같은 각기둥의 모든 모서리 길이의 합도 ${data.totalEdgeLength}cm일 때, 각기둥의 높이를 구하세요.${promptVisual}${support("각뿔의 밑면 모서리와 옆모서리는 옆면의 수만큼씩 있음을 이용해 옆면의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-side-face-to-prism-height", values)}`, `${data.prismHeight}cm`, `각뿔의 옆면 수를 □개라 하면 길이가 ${data.baseSide}cm인 밑면 모서리와 길이가 ${data.lateralSide}cm인 옆모서리가 각각 □개입니다. 따라서 옆면은 ${data.totalEdgeLength}÷(${data.baseSide}+${data.lateralSide})=${data.sides}개이고 밑면은 ${data.sides}각형입니다. 각기둥의 두 밑면 모서리 길이의 합은 ${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm입니다. 높이는 (${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm입니다.`, answerVisual);
+        return fixedResult(`다음 그림과 같은 옆면으로 이루어진 각뿔의 모든 모서리의 길이의 합이 ${data.totalEdgeLength}cm입니다. 이 각뿔과 밑면의 크기와 모양이 같은 각기둥의 모든 모서리의 길이의 합과 같을 때, 각기둥의 높이를 구하세요.${promptVisual}${support("각뿔의 밑면 모서리와 옆모서리는 옆면의 수만큼씩 있음을 이용해 옆면의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-side-face-to-prism-height", values)}`, `${data.prismHeight}cm`, `각뿔의 옆면 수를 □개라 하면 길이가 ${data.baseSide}cm인 밑면 모서리와 길이가 ${data.lateralSide}cm인 옆모서리가 각각 □개입니다. 따라서 옆면은 ${data.totalEdgeLength}÷(${data.baseSide}+${data.lateralSide})=${data.sides}개이고 밑면은 ${data.sides}각형입니다. 각기둥의 두 밑면 모서리 길이의 합은 ${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm입니다. 높이는 (${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm입니다.`, answerVisual);
       }
 
       const data = [
-        { triangle: [5, 5, 3], rectangle: [5, 3], square: [3, 3], prismEdges: 35, pyramidEdges: 32 },
         { triangle: [6, 6, 4], rectangle: [6, 4], square: [4, 4], prismEdges: 44, pyramidEdges: 40 },
+        { triangle: [5, 5, 3], rectangle: [5, 3], square: [3, 3], prismEdges: 35, pyramidEdges: 32 },
         { triangle: [7, 7, 5], rectangle: [7, 5], square: [5, 5], prismEdges: 53, pyramidEdges: 48 }
       ][poolIndex];
       const answer = Math.abs(data.prismEdges - data.pyramidEdges);
-      const promptVisual = `${paperAndSolidsSvg({ ...data })}${mathBoard("사용한 종이", row("삼각형 가", "재석 2장 · 현재 4장") + row("직사각형 나", "재석 2장 · 현재 0장") + row("정사각형 다", "재석 1장 · 현재 1장"))}`;
-      const answerVisual = `${paperAndSolidsSvg({ ...data, solved: true })}${mathBoard("두 입체의 모서리 합", row("삼각기둥", `${data.prismEdges}cm`) + row("사각뿔", `${data.pyramidEdges}cm`) + row("차", `${data.prismEdges}-${data.pyramidEdges}=${answer}cm`))}`;
-      return fixedResult(`가, 나, 다 세 가지 종이를 사용하여 두 입체도형을 만들었습니다. 재석은 삼각형 가 2장, 직사각형 나 2장, 정사각형 다 1장을 사용하여 삼각기둥을 만들었습니다. 현재는 가 4장, 나 0장, 다 1장을 사용하여 사각뿔을 만들었습니다. 두 입체도형의 모든 모서리 길이의 차는 몇 cm인지 구하세요.${promptVisual}${support("두 입체의 모서리를 종류별로 나누어 각각 한 번씩 세어 보세요.")}${challenge}${evidence("paper-solids-edge-difference", [data.triangle[0], data.triangle[1], data.triangle[2], data.rectangle[0], data.rectangle[1], data.square[0], data.square[1], data.prismEdges, data.pyramidEdges, answer])}`, `${answer}cm`, `삼각기둥은 삼각형 두 개의 둘레와 옆모서리 세 개를 더해 ${data.prismEdges}cm입니다. 사각뿔은 밑면의 네 변과 옆모서리 네 개를 더해 ${data.pyramidEdges}cm입니다. 따라서 두 합의 차는 ${data.prismEdges}-${data.pyramidEdges}=${answer}cm입니다.`, answerVisual);
+      const longer = data.prismEdges > data.pyramidEdges ? "재석" : "현재";
+      const usageTable = `<table class="source61-e3-paper-usage" data-source61-e3-table="paper-usage"><thead><tr><th></th><th>가</th><th>나</th><th>다</th></tr></thead><tbody><tr><th>재석</th><td>2장</td><td>2장</td><td>1장</td></tr><tr><th>현재</th><td>4장</td><td>0장</td><td>1장</td></tr></tbody></table>`;
+      const promptVisual = `${usageTable}${paperAndSolidsSvg({ ...data })}`;
+      const answerVisual = `${paperAndSolidsSvg({ ...data, solved: true })}${mathBoard("두 입체의 모서리 합", row("삼각기둥", `${data.prismEdges}cm`) + row("사각뿔", `${data.pyramidEdges}cm`) + row("차", `${data.prismEdges}-${data.pyramidEdges}=${answer}cm`) + row("더 긴 사람", longer))}`;
+      return fixedResult(`재석이와 현재가 가, 나, 다 세 가지 모양의 종이를 다음과 같이 사용하여 입체도형을 만들었습니다. 만든 입체도형의 모든 모서리의 길이의 합은 누가 만든 것이 몇 cm 더 깁니까?${promptVisual}${support("두 입체의 모서리를 종류별로 나누어 각각 한 번씩 세어 보세요.")}${challenge}${evidence("paper-solids-edge-difference", [data.triangle[0], data.triangle[1], data.triangle[2], data.rectangle[0], data.rectangle[1], data.square[0], data.square[1], data.prismEdges, data.pyramidEdges, answer])}`, `${longer}, ${answer}cm`, `재석이는 삼각형 가 2장을 두 밑면으로, 직사각형 나 2장과 정사각형 다 1장을 옆면으로 하여 삼각기둥을 만들었습니다. 현재는 정사각형 다 1장을 밑면으로, 삼각형 가 4장을 옆면으로 하여 사각뿔을 만들었습니다. 삼각기둥의 모든 모서리의 길이의 합은 삼각형 두 개의 둘레 (${data.triangle[0]}+${data.triangle[1]}+${data.triangle[2]})×2=${2 * (data.triangle[0] + data.triangle[1] + data.triangle[2])}cm와 옆모서리 세 개 ${data.square[0]}×3=${3 * data.square[0]}cm를 더해 ${data.prismEdges}cm입니다. 사각뿔은 밑면의 네 변 ${data.square[0]}×4=${4 * data.square[0]}cm와 옆모서리 네 개 ${data.triangle[0]}×4=${4 * data.triangle[0]}cm를 더해 ${data.pyramidEdges}cm입니다. 따라서 ${longer}${longer === "재석" ? "이" : "가"} 만든 것이 ${data.prismEdges}-${data.pyramidEdges}=${answer}cm 더 깁니다.`, answerVisual);
     },
     sourceGrade6PrismsPyramidsE4({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -22305,18 +22307,26 @@
       };
 
       const tetrahedronSvg = ({ perimeter, edgeCm, solved = false }) => {
-        const regularPoints = { a: [1, 1, 1], b: [1, -1, -1], c: [-1, 1, -1], d: [-1, -1, 1] };
-        const project = ([x, y, z]) => [154 + 34 * x - 34 * y + 14 * z, 125 - 12 * x - 12 * y - 34 * z];
-        const points = Object.fromEntries(Object.entries(regularPoints).map(([key, point]) => [key, project(point)]));
+        // 원본 그림 배치: ㄱ 위, ㄴ 왼쪽, ㄷ 아래 앞, ㄹ 오른쪽(모서리 ㄴㄹ은 뒤쪽이라 점선)
+        const points = { a: [168, 20], b: [66, 114], c: [150, 182], d: [266, 114] };
+        const names = { a: "ㄱ", b: "ㄴ", c: "ㄷ", d: "ㄹ" };
+        const nameOffsets = { a: [0, -8], b: [-12, 5], c: [-14, 10], d: [12, 5] };
         const edgeDefs = [["a", "b"], ["a", "c"], ["a", "d"], ["b", "c"], ["b", "d"], ["c", "d"]];
-        const selected = [["a", "b"], ["a", "c"], ["c", "d"], ["d", "b"]];
+        // 사각형 ㅁㅂㅅㅇ: ㅁ은 ㄱㄴ, ㅂ은 ㄴㄹ, ㅅ은 ㄷㄹ, ㅇ은 ㄱㄷ의 가운뎃점
+        const selected = [["a", "b"], ["b", "d"], ["c", "d"], ["a", "c"]];
+        const midNames = ["ㅁ", "ㅂ", "ㅅ", "ㅇ"];
+        const midOffsets = [[-12, -2], [2, 18], [10, 14], [12, -2]];
         const midpoints = selected.map(([a, b]) => midpoint(points[a], points[b]));
-        const originalEdges = edgeDefs.map(([a, b], index) => line(points[a], points[b], `source61-e4-edge${index > 2 ? " source61-e4-hidden-edge" : ""}`, solved ? `data-solid-edge="tetrahedron" data-edge-index="${index + 1}"` : "")).join("");
+        const isHidden = ([a, b]) => a + b === "bd";
+        const originalEdges = edgeDefs.map(([a, b], index) => line(points[a], points[b], `source61-e4-edge${isHidden([a, b]) ? " source61-e4-hidden-edge" : ""}`, solved ? `data-solid-edge="tetrahedron" data-edge-index="${index + 1}"` : "")).join("");
+        const quadSides = midpoints.map((point, index) => line(point, midpoints[(index + 1) % 4], `source61-e4-edge${index <= 1 ? " source61-e4-hidden-edge" : ""}`, `data-section-side="${midNames[index]}${midNames[(index + 1) % 4]}"`)).join("");
         const marks = midpoints.map((point, index) => circle(point, `source61-e4-midpoint${solved ? " is-highlight" : ""}`, `data-midpoint-index="${index + 1}"`)).join("");
         const quad = solved ? polygon(midpoints, "source61-e4-section-highlight", 'data-section="midpoint-quadrilateral"') : "";
         const vertices = Object.entries(points).map(([key, point]) => circle(point, "source61-e4-vertex", solved ? `data-solid-vertex="tetrahedron" data-vertex-index="${key}"` : `data-source-vertex="${key}"`)).join("");
+        const labels = Object.entries(points).map(([key, point]) => `<text x="${point[0] + nameOffsets[key][0]}" y="${point[1] + nameOffsets[key][1]}" text-anchor="middle">${names[key]}</text>`).join("")
+          + midpoints.map((point, index) => `<text x="${(point[0] + midOffsets[index][0]).toFixed(1)}" y="${(point[1] + midOffsets[index][1]).toFixed(1)}" text-anchor="middle">${midNames[index]}</text>`).join("");
         const answerFaces = solved ? [["a", "b", "c"], ["a", "c", "d"], ["a", "d", "b"], ["b", "d", "c"]].map((face, index) => polygon(face.map(key => points[key]), "source61-e4-face", `data-solid-face="tetrahedron" data-face-index="${index + 1}"`)).join("") : "";
-        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-tetrahedron${solved ? " is-solved" : ""}" viewBox="0 0 330 220" role="img" aria-label="모든 모서리가 같은 삼각뿔의 네 모서리 가운데점을 이은 사각형" data-source61-e4-structure="tetrahedron-midpoint-quadrilateral" data-source61-e4-geometry="shared-tetrahedron-midpoint-model"${solved ? ` data-solid-face-count="4" data-solid-edge-count="6" data-solid-vertex-count="4" data-result-highlight="${edgeCm * 6}"` : ""}>${answerFaces}${quad}${originalEdges}${vertices}${marks}<text x="165" y="207" text-anchor="middle">네 모서리의 가운데점을 이은 사각형${solved ? ` · 둘레 ${perimeter}cm` : ""}</text></svg>`;
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-tetrahedron${solved ? " is-solved" : ""}" viewBox="0 0 330 220" role="img" aria-label="모든 모서리의 길이가 같은 삼각뿔과 네 모서리의 가운뎃점을 이은 사각형 ㅁㅂㅅㅇ" data-source61-e4-structure="tetrahedron-midpoint-quadrilateral" data-source61-e4-geometry="shared-tetrahedron-midpoint-model"${solved ? ` data-solid-face-count="4" data-solid-edge-count="6" data-solid-vertex-count="4" data-result-highlight="${edgeCm * 6}"` : ""}>${answerFaces}${quad}${originalEdges}${quadSides}${vertices}${marks}${labels}${solved ? `<text x="165" y="210" text-anchor="middle">사각형 ㅁㅂㅅㅇ의 둘레 ${perimeter}cm</text>` : ""}</svg>`;
       };
 
       const joinedSolidSvg = ({ n, mode, solved = false }) => {
@@ -22356,15 +22366,6 @@
       const bipyramidSvg = ({ n, solved = false }) => {
         const base = ring(n, 154, 142, 86, 42);
         const top = [154, 20], bottom = [154, 272];
-        if (!solved) {
-          const separatePyramid = (cx, inverted, offset) => {
-            const localBase = ring(n, cx, inverted ? 58 : 116, 42, 18);
-            const apex = [cx, inverted ? 138 : 36];
-            return localBase.map((point, index) => line(apex, point, `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`, `data-source-edge="pyramid-${offset + index + 1}"`)).join("")
-              + localBase.map((point, index) => line(point, localBase[(index + 1) % n], `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`)).join("");
-          };
-          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid" viewBox="0 0 330 190" role="img" aria-label="같은 각뿔 두 개의 밑면을 맞대어 붙이는 그림" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-final-topology="unknown">${separatePyramid(76, false, 0)}${separatePyramid(254, true, n)}<path class="source61-e4-join-arrow" d="M126 88 H204"/><text x="76" y="174" text-anchor="middle">위쪽 각뿔</text><text x="254" y="174" text-anchor="middle">아래쪽 각뿔</text><text x="165" y="187" text-anchor="middle">같은 밑면을 맞대어 붙입니다.</text></svg>`;
-        }
         const faces = [], edges = new Map();
         for (let index = 0; index < n; index += 1) {
           const next = (index + 1) % n;
@@ -22372,9 +22373,11 @@
           const add = (a, b) => edges.set(edgeKey(`${a[0].toFixed(2)},${a[1].toFixed(2)}`, `${b[0].toFixed(2)},${b[1].toFixed(2)}`), { a, b });
           add(base[index], base[next]); add(top, base[index]); add(bottom, base[index]);
         }
-        const faceMarkup = faces.map((face, index) => polygon(face, "source61-e4-face", `data-solid-face="bipyramid" data-face-index="${index + 1}"`)).join("");
-        const edgeMarkup = Array.from(edges.values()).map((item, index) => line(item.a, item.b, `source61-e4-edge${index % 3 === 1 ? " source61-e4-hidden-edge" : ""}`, `data-solid-edge="bipyramid" data-edge-index="${index + 1}"`)).join("");
-        const vertexMarkup = [top, ...base, bottom].map((point, index) => circle(point, "source61-e4-vertex", `data-solid-vertex="bipyramid" data-vertex-index="${index + 1}"`)).join("");
+        // 문제 그림도 원본처럼 두 각뿔을 붙인 완성 입체를 그리고, 셀 수 있는 자료(data-solid-*)와 결과는 답 그림에만 둡니다.
+        const faceMarkup = faces.map((face, index) => polygon(face, "source61-e4-face", solved ? `data-solid-face="bipyramid" data-face-index="${index + 1}"` : "")).join("");
+        const edgeMarkup = Array.from(edges.values()).map((item, index) => line(item.a, item.b, `source61-e4-edge${index % 3 === 1 ? " source61-e4-hidden-edge" : ""}`, solved ? `data-solid-edge="bipyramid" data-edge-index="${index + 1}"` : "")).join("");
+        const vertexMarkup = solved ? [top, ...base, bottom].map((point, index) => circle(point, "source61-e4-vertex", `data-solid-vertex="bipyramid" data-vertex-index="${index + 1}"`)).join("") : "";
+        if (!solved) return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid" viewBox="0 0 330 300" role="img" aria-label="똑같은 각뿔 두 개를 밑면끼리 붙인 입체도형" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-final-topology="unknown">${faceMarkup}${edgeMarkup}</svg>`;
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid is-solved" viewBox="0 0 330 300" role="img" aria-label="두 각뿔을 밑면끼리 붙인 쌍각뿔" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-solid-face-count="${2 * n}" data-solid-edge-count="${3 * n}" data-solid-vertex-count="${n + 2}" data-result-highlight="${6 * n + 2}">${faceMarkup}${edgeMarkup}${vertexMarkup}<text x="154" y="294" text-anchor="middle">두 각뿔을 밑면끼리 붙인 입체</text></svg>`;
       };
 
@@ -22423,32 +22426,32 @@
         return fixedResult(`모든 모서리의 길이가 같은 정육면체 1개와, 밑면의 모양과 크기가 정육면체의 한 면과 같은 사각뿔 6개가 있습니다. 사각뿔을 정육면체의 각 면에 꼭 맞게 하나씩 붙여 입체도형을 만들 때, 완성된 입체도형의 꼭짓점 수, 모서리 수, 면의 수의 합을 구하세요.${promptVisual}${support("붙인 뒤 겉으로 보이는 삼각형 면과 새로 생긴 꼭짓점을 나누어 세어 보세요.")}${challenge}${evidence("cube-six-pyramid-assembly", [6])}`, `${total}`, `정육면체의 여섯 면마다 사각뿔의 삼각형 면 4개가 겉으로 보이므로 면은 6×4=24개입니다. 정육면체의 모서리 12개와 사각뿔의 옆모서리 24개를 합하면 모서리는 36개입니다. 정육면체의 꼭짓점 8개와 사각뿔의 꼭짓점 6개를 합하면 꼭짓점은 14개입니다. 따라서 합은 24+36+14=74입니다.`, answerVisual);
       }
       if (variant === 1) {
-        const n = [3, 4, 5][poolIndex];
+        const n = [4, 3, 5][poolIndex];
         const faces = 2 * n + 2, edges = 6 * n, vertices = 4 * n, total = 12 * n + 2;
         const polygonName = ["", "", "", "삼각", "사각", "오각"][n];
         const promptVisual = `${truncatedPyramidSvg({ n })}${mathBoard("자르는 조건", row("처음 도형", `${polygonName}뿔`) + row("모든 모서리", "세 부분으로 똑같이 나눔") + row("자르는 곳", "각 꼭짓점 가까이의 나눈 점을 모두 잇는 면"))}`;
         const answerVisual = `${truncatedPyramidSvg({ n, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("면", `2×${n}+2=${faces}개`) + row("모서리", `6×${n}=${edges}개`) + row("꼭짓점", `4×${n}=${vertices}개`) + row("합", `${faces}+${edges}+${vertices}=${total}`))}`;
-        return fixedResult(`${polygonName}뿔의 모든 모서리를 세 부분으로 똑같이 나눕니다. 각 꼭짓점에서 이어진 모서리 위의 가까운 나눈 점을 모두 지나도록 잘라 냈을 때, 남은 입체도형의 면, 모서리, 꼭짓점 수의 합을 구하세요.${promptVisual}${support("원래 각 모서리에서 새로 생기는 점과 잘라 낸 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("pyramid-vertex-truncation", [n])}`, `${total}`, `원래 각 모서리에 나눈 점이 2개씩 생기므로 새 꼭짓점은 2×(2×${n})=4×${n}=${vertices}개입니다. 원래 면 ${n+1}개는 잘라 낸 면과 함께 남아 면의 수는 2×${n}+2=${faces}개이고, 원래 모서리 ${2*n}개가 세 부분으로 나뉘어 모서리는 6×${n}=${edges}개입니다. 따라서 합은 ${faces}+${edges}+${vertices}=${total}입니다.`, answerVisual);
+        return fixedResult(`그림과 같은 ${polygonName}뿔에서 모든 모서리를 삼등분하여 각 꼭짓점에서 모서리의 삼등분한 점을 지나도록 잘라 내었을 때, 남은 입체도형의 면, 모서리, 꼭짓점의 수의 합을 구하세요.${promptVisual}${support("원래 각 모서리에서 새로 생기는 점과 잘라 낸 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("pyramid-vertex-truncation", [n])}`, `${total}`, `원래 각 모서리에 나눈 점이 2개씩 생기므로 새 꼭짓점은 2×(2×${n})=4×${n}=${vertices}개입니다. 원래 면 ${n+1}개는 잘라 낸 면과 함께 남아 면의 수는 2×${n}+2=${faces}개이고, 원래 모서리 ${2*n}개가 세 부분으로 나뉘어 모서리는 6×${n}=${edges}개입니다. 따라서 합은 ${faces}+${edges}+${vertices}=${total}입니다.`, answerVisual);
       }
       if (variant === 2) {
-        const perimeter = [16, 20, 24][poolIndex];
+        const perimeter = [20, 16, 24][poolIndex];
         const edgeCm = perimeter / 2, total = edgeCm * 6;
-        const promptVisual = `${tetrahedronSvg({ perimeter, edgeCm })}${mathBoard("가운데점을 이은 사각형", row("사각형의 둘레", `${perimeter}cm`) + row("구할 것", "삼각뿔의 모든 모서리 길이의 합"))}`;
+        const promptVisual = `${tetrahedronSvg({ perimeter, edgeCm })}${mathBoard("가운뎃점을 이은 사각형", row("사각형 ㅁㅂㅅㅇ의 둘레", `${perimeter}cm`) + row("구할 것", "삼각뿔의 모든 모서리 길이의 합"))}`;
         const answerVisual = `${tetrahedronSvg({ perimeter, edgeCm, solved: true })}${mathBoard("정사면체의 모서리", row("한 모서리", `${perimeter}÷2=${edgeCm}cm`) + row("모든 모서리", `6×${edgeCm}=${total}cm`))}`;
-        return fixedResult(`모든 모서리의 길이가 같은 삼각뿔에서 네 모서리의 가운데점을 차례로 이어 사각형을 만들었습니다. 이 사각형의 둘레가 ${perimeter}cm일 때, 삼각뿔의 모든 모서리 길이의 합을 구하세요.${promptVisual}${support("사각형의 한 변이 삼각뿔 모서리의 얼마인지 그림에서 찾아 보세요.")}${challenge}${evidence("tetrahedron-midpoint-quadrilateral", [perimeter])}`, `${total}cm`, `사각형의 한 변은 삼각뿔 모서리의 절반입니다. 삼각뿔의 한 모서리는 ${perimeter}÷2=${edgeCm}cm이고, 모서리는 6개이므로 모든 모서리 길이의 합은 6×${edgeCm}=${total}cm입니다.`, answerVisual);
+        return fixedResult(`모든 모서리의 길이가 같은 삼각뿔에서 그림과 같이 네 모서리의 가운뎃점을 연결하여 사각형 ㅁㅂㅅㅇ을 만들었습니다. 이 사각형의 둘레의 길이가 ${perimeter}cm일 때, 삼각뿔의 모든 모서리의 길이의 합을 구하세요.${promptVisual}${support("사각형의 한 변이 삼각뿔 모서리의 얼마인지 그림에서 찾아 보세요.")}${challenge}${evidence("tetrahedron-midpoint-quadrilateral", [perimeter])}`, `${total}cm`, `사각형 ㅁㅂㅅㅇ의 각 변은 두 모서리의 가운뎃점을 이은 선분이므로 길이가 삼각뿔 한 모서리의 절반입니다. 네 변의 길이가 모두 같으므로 삼각뿔의 한 모서리는 ${perimeter}÷2=${edgeCm}cm이고, 모서리는 6개이므로 모든 모서리 길이의 합은 6×${edgeCm}=${total}cm입니다.`, answerVisual);
       }
       if (variant === 3) {
-        const n = [3, 4, 5][poolIndex];
+        const n = [4, 3, 5][poolIndex];
         const faces = 2 * n + 1, edges = 4 * n, vertices = 2 * n + 1;
         const name = ["", "", "", "삼각", "사각", "오각"][n];
         const promptVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid" })}${mathBoard("붙이는 조건", row("도형", `밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔`) + row("붙이는 방법", "밑면끼리 꼭 맞게 붙임"))}`;
         const answerVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid", solved: true })}${mathBoard("완성된 입체도형", row("면", `${faces}개`) + row("모서리", `${edges}개`) + row("꼭짓점", `${vertices}개`))}`;
-        return fixedResult(`밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔을 밑면끼리 꼭 맞게 이어 붙여 새로운 입체도형을 만들었습니다. 이 입체도형의 면, 모서리, 꼭짓점의 수를 각각 구하세요.${promptVisual}${support("붙인 면은 겉에서 보이지 않으므로 두 도형의 수에서 붙인 부분을 한 번 빼 보세요.")}${challenge}${evidence("prism-pyramid-base-join", [n], "three-values")}`, `면 ${faces}개, 모서리 ${edges}개, 꼭짓점 ${vertices}개`, `각기둥의 면·모서리·꼭짓점은 각각 ${n+2}, ${3*n}, ${2*n}개이고, 각뿔은 ${n+1}, ${2*n}, ${n+1}개입니다. 밑면을 붙이면 면 ${2*n+1}개, 모서리 ${4*n}개, 꼭짓점 ${2*n+1}개가 남습니다.`, answerVisual);
+        return fixedResult(`다음 그림과 같이 밑면의 크기와 모양이 같은 ${name}뿔과 ${name}기둥을 밑면끼리 꼭 맞게 이어 붙여 새로운 입체도형을 만들었습니다. 이 입체도형의 면의 수, 모서리의 수, 꼭짓점의 수를 각각 구하세요.${promptVisual}${support("붙인 면은 겉에서 보이지 않으므로 두 도형의 수에서 붙인 부분을 한 번 빼 보세요.")}${challenge}${evidence("prism-pyramid-base-join", [n], "three-values")}`, `면 ${faces}개, 모서리 ${edges}개, 꼭짓점 ${vertices}개`, `각기둥의 면·모서리·꼭짓점은 각각 ${n+2}, ${3*n}, ${2*n}개이고, 각뿔은 ${n+1}, ${2*n}, ${n+1}개입니다. 밑면을 붙이면 면 ${2*n+1}개, 모서리 ${4*n}개, 꼭짓점 ${2*n+1}개가 남습니다.`, answerVisual);
       }
       if (variant === 5) {
         const data = [
-          { outerSide: 16, diagonal: 8, baseArea: 32 },
           { outerSide: 20, diagonal: 10, baseArea: 50 },
+          { outerSide: 16, diagonal: 8, baseArea: 32 },
           { outerSide: 24, diagonal: 12, baseArea: 72 }
         ][poolIndex];
         const emptyHeight = (data.outerSide - data.diagonal) / 2;
@@ -22457,12 +22460,12 @@
         if (data.diagonal * data.diagonal / 2 !== data.baseArea || netArea !== data.outerSide * data.diagonal) throw new Error("정사각뿔 전개도 넓이 자료가 좌표 모델과 맞지 않습니다.");
         const promptVisual = `${squarePyramidNetSvg({ ...data, netArea })}${mathBoard("주어진 길이와 넓이", row("바깥 정사각형 한 변", `${data.outerSide}cm`) + row("사각뿔의 밑면 넓이", `${data.baseArea}cm²`))}`;
         const answerVisual = `${squarePyramidNetSvg({ ...data, netArea, solved: true })}${mathBoard("전개도의 넓이", row("밑면 대각선", `${data.diagonal}×${data.diagonal}÷2=${data.baseArea}`) + row("빈 삼각형 높이", `(${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm`) + row("네 빈 삼각형", `${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²`) + row("전개도", `${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²`))}`;
-        return fixedResult(`한 변이 ${data.outerSide}cm인 정사각형 안에 그림과 같이 밑면이 정사각형인 사각뿔의 전개도를 그렸습니다. 사각뿔 밑면의 넓이가 ${data.baseArea}cm²일 때 전개도의 넓이를 구하세요.${promptVisual}${support("밑면 정사각형의 두 대각선 길이를 먼저 찾아 보세요.")}${challenge}${evidence("square-pyramid-net-area-in-square", [data.outerSide, data.diagonal, data.baseArea, netArea])}`, `${netArea}cm²`, `밑면 정사각형의 대각선은 ${data.diagonal}cm입니다. ${data.diagonal}×${data.diagonal}÷2=${data.baseArea}이기 때문입니다. 바깥 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이므로 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
+        return fixedResult(`정사각형 안에 밑면이 정사각형인 사각뿔의 전개도를 그렸습니다. 사각뿔의 밑면의 넓이가 ${data.baseArea}cm²일 때 사각뿔의 전개도의 넓이는 몇 cm²입니까?${promptVisual}${support("밑면 정사각형의 두 대각선 길이를 먼저 찾아 보세요.")}${challenge}${evidence("square-pyramid-net-area-in-square", [data.outerSide, data.diagonal, data.baseArea, netArea])}`, `${netArea}cm²`, `밑면 정사각형의 대각선은 ${data.diagonal}cm입니다. ${data.diagonal}×${data.diagonal}÷2=${data.baseArea}이기 때문입니다. 바깥 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이므로 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
       }
       if (variant === 6) {
         const data = [
-          { outerSide: 18, diagonal: 10 },
           { outerSide: 22, diagonal: 12 },
+          { outerSide: 18, diagonal: 10 },
           { outerSide: 26, diagonal: 14 }
         ][poolIndex];
         const baseArea = data.diagonal * data.diagonal / 2;
@@ -22473,14 +22476,14 @@
         const values = [data.outerSide, data.diagonal, baseArea, netArea];
         const promptVisual = `${squarePyramidNetSvg({ ...data, baseArea, netArea, diagonalGiven: true, apexSquare: true })}${mathBoard("주어진 길이", row("밑면의 한 대각선", `${data.diagonal}cm`) + row("각뿔 꼭짓점을 이은 정사각형 한 변", `${data.outerSide}cm`))}`;
         const answerVisual = `${squarePyramidNetSvg({ ...data, baseArea, netArea, solved: true, diagonalGiven: true, apexSquare: true })}${mathBoard("전개도의 넓이", row("밑면", `${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²`) + row("빈 삼각형 높이", `(${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm`) + row("네 빈 삼각형", `${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²`) + row("전개도", `${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²`))}`;
-        return fixedResult(`밑면이 정사각형인 사각뿔의 전개도입니다. 밑면의 한 대각선 길이는 ${data.diagonal}cm이고, 전개도에서 각뿔의 꼭짓점이 되는 네 점을 이은 정사각형의 한 변은 ${data.outerSide}cm입니다. 사각뿔 전개도의 넓이를 구하세요.${promptVisual}${support("밑면의 넓이와 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 넓이를 차례로 구하세요.")}${challenge}${evidence("square-pyramid-net-area-from-apex-square", values)}`, `${netArea}cm²`, `밑면의 넓이는 ${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²입니다. 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이고, 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
+        return fixedResult(`그림은 밑면이 정사각형이고, 밑면의 한 대각선의 길이가 ${data.diagonal}cm인 사각뿔의 전개도입니다. 전개도에서 각뿔의 꼭짓점이 되는 점을 이은 정사각형의 한 변의 길이가 ${data.outerSide}cm일 때, 사각뿔의 전개도의 넓이는 몇 cm²입니까?${promptVisual}${support("밑면의 넓이와 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 넓이를 차례로 구하세요.")}${challenge}${evidence("square-pyramid-net-area-from-apex-square", values)}`, `${netArea}cm²`, `밑면의 넓이는 ${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²입니다. 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이고, 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
       }
-      const n = [4, 5, 6][poolIndex];
+      const n = [6, 4, 5][poolIndex];
       const total = 6 * n + 2;
       const pyramidName = ["", "", "", "삼각뿔", "사각뿔", "오각뿔", "육각뿔"][n];
       const promptVisual = `${bipyramidSvg({ n })}${mathBoard("붙이는 조건", row("도형", `서로 같은 ${pyramidName} 2개`) + row("붙이는 방법", "밑면끼리 꼭 맞게 붙임"))}`;
       const answerVisual = `${bipyramidSvg({ n, solved: true })}${mathBoard("완성된 입체도형", row("면", `2×${n}개`) + row("모서리", `3×${n}개`) + row("꼭짓점", `${n}+2개`) + row("합", `2×${n}+3×${n}+${n}+2=${total}`))}`;
-      return fixedResult(`서로 같은 ${pyramidName} 2개의 밑면을 꼭 맞게 붙여 입체도형을 만들었습니다. 완성된 입체도형의 면, 모서리, 꼭짓점 수의 합을 구하세요.${promptVisual}${support("두 각뿔의 밑면은 안쪽에 들어가고, 두 꼭짓점은 위와 아래에 남는다는 점을 생각해 보세요.")}${challenge}${evidence("pyramid-base-to-base", [n])}`, `${total}`, `각뿔 두 개의 옆면은 각각 ${n}개씩이므로 면은 2×${n}=${2*n}개입니다. 밑면의 모서리 ${n}개와 두 꼭짓점으로 뻗는 모서리 2×${n}개를 합하면 모서리는 3×${n}=${3*n}개이고, 꼭짓점은 밑면 ${n}개와 위·아래 꼭짓점 2개를 합해 ${n}+2=${n+2}개입니다. 따라서 합은 ${2*n}+${3*n}+${n+2}=${total}입니다.`, answerVisual);
+      return fixedResult(`다음 입체도형은 똑같은 ${pyramidName} 두 개를 밑면을 서로 이어 붙여서 만들 수 있습니다. 이 입체도형의 면의 수, 모서리의 수, 꼭짓점의 수의 합을 구하세요.${promptVisual}${support("두 각뿔의 밑면은 안쪽에 들어가고, 두 꼭짓점은 위와 아래에 남는다는 점을 생각해 보세요.")}${challenge}${evidence("pyramid-base-to-base", [n])}`, `${total}`, `각뿔 두 개의 옆면은 각각 ${n}개씩이므로 면은 2×${n}=${2*n}개입니다. 밑면의 모서리 ${n}개와 두 꼭짓점으로 뻗는 모서리 2×${n}개를 합하면 모서리는 3×${n}=${3*n}개이고, 꼭짓점은 밑면 ${n}개와 위·아래 꼭짓점 2개를 합해 ${n}+2=${n+2}개입니다. 따라서 합은 ${2*n}+${3*n}+${n+2}=${total}입니다.`, answerVisual);
     },
     sourceGrade6DecimalDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
@@ -23242,23 +23245,32 @@
           return `<polygon class="source61-e2-corner-cut source61-e2-cut-plane${solved ? " is-solved" : ""}" data-cut-corner="${index + 1}" points="${points.map(pointText).join(" ")}"/>`;
         }).join("");
         const cutVertices = cutPointGroups.flat().map((point, index) => `<circle class="source61-e2-prism-vertex" data-result-vertex="${index + 1}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.3"/>`).join("");
-        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-corner-cuboid${solved ? " is-solved" : ""}" viewBox="0 0 360 235" role="img" aria-label="직육면체의 여덟 꼭짓점에서 세 모서리를 같은 길이만큼 재어 잘라 낸 그림" data-source61-e2-structure="cuboid-8-corner-truncation-${distance}" data-corner-count="8" data-cut-distance="${distance}" data-topology="cuboid-vertex-truncation" data-vertex-count="24" data-result-vertex-count="24" data-edge-count="36" data-face-count="14" data-total-count="74"${solved ? ' data-result-highlight="74"' : ""}>${cutPlanes}${edgeLines}${cutVertices}<text x="180" y="220" text-anchor="middle">각 꼭짓점에서 ${distance}cm씩 재어 자릅니다.</text></svg>`;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-corner-cuboid${solved ? " is-solved" : ""}" viewBox="0 0 360 235" role="img" aria-label="사각기둥의 여덟 꼭짓점에서 세 모서리를 같은 길이만큼 재어 잘라 낸 그림" data-source61-e2-structure="cuboid-8-corner-truncation-${distance}" data-corner-count="8" data-cut-distance="${distance}" data-topology="cuboid-vertex-truncation" data-vertex-count="24" data-result-vertex-count="24" data-edge-count="36" data-face-count="14" data-total-count="74"${solved ? ' data-result-highlight="74"' : ""}>${cutPlanes}${edgeLines}${cutVertices}<text x="180" y="220" text-anchor="middle">각 꼭짓점에서 ${distance}cm씩 재어 자릅니다.</text></svg>`;
       };
 
-      const radialCutPrismSvg = ({ n, solved = false }) => {
+      // mode: "plain"(문제, 자르는 선 없음) · "vertex"(중심과 꼭짓점을 잇는 선 → 삼각기둥) · "midpoint"(중심과 변의 가운데를 잇는 선 → 사각기둥)
+      const radialCutPrismSvg = ({ n, mode = "plain" }) => {
+        const solved = mode !== "plain";
         const centerTop = [128, 58];
         const centerBottom = [128, 166];
         const top = regularPolygonPoints(n, centerTop[0], centerTop[1], n >= 8 ? 69 : 74)
           .map(([x, y]) => [x, centerTop[1] + (y - centerTop[1]) * 0.46]);
         const bottom = top.map(([x, y]) => [x, y + 108]);
+        const mid = (ring, index) => interpolate(ring[index], ring[(index + 1) % n], 0.5);
         const frontFacing = index => top[index][1] >= centerTop[1];
-        const sectors = top.map((point, index) => `<polygon class="source61-e2-fan source61-e2-sector${index % 2 ? " is-alt" : ""}${solved && index === 0 ? " is-focus" : ""}" data-sector="${index + 1}" points="${pointText(centerTop)} ${pointText(point)} ${pointText(top[(index + 1) % n])}"/>`).join("");
         const sideFaces = top.map((point, index) => {
           const next = (index + 1) % n;
           return `<polygon class="source61-e2-prism-side${frontFacing(index) || frontFacing(next) ? "" : " is-hidden"}" points="${pointText(point)} ${pointText(top[next])} ${pointText(bottom[next])} ${pointText(bottom[index])}"/>`;
         }).join("");
-        const topRays = top.map((point, index) => lineMarkup(centerTop, point, "source61-e2-radial-cut", `data-cut-line="top-${index + 1}"`)).join("");
-        const bottomRays = bottom.map((point, index) => lineMarkup(centerBottom, point, `source61-e2-radial-cut${frontFacing(index) ? "" : " is-hidden"}`, `data-cut-line="bottom-${index + 1}"`)).join("");
+        const sectors = mode === "vertex"
+          ? top.map((point, index) => `<polygon class="source61-e2-fan source61-e2-sector${index % 2 ? " is-alt" : ""}${index === 0 ? " is-focus" : ""}" data-sector="${index + 1}" points="${pointText(centerTop)} ${pointText(point)} ${pointText(top[(index + 1) % n])}"/>`).join("")
+          : mode === "midpoint"
+            ? top.map((point, index) => `<polygon class="source61-e2-kite source61-e2-sector${index % 2 ? " is-alt" : ""}${index === 0 ? " is-focus" : ""}" data-sector="${index + 1}" points="${pointText(centerTop)} ${pointText(mid(top, (index + n - 1) % n))} ${pointText(point)} ${pointText(mid(top, index))}"/>`).join("")
+            : `<polygon class="source61-e2-prism-side source61-e2-prism-top" points="${top.map(pointText).join(" ")}"/>`;
+        const rayEnds = ring => mode === "vertex" ? ring : ring.map((_, index) => mid(ring, index));
+        const rayFront = index => mode === "vertex" ? frontFacing(index) : mid(top, index)[1] >= centerTop[1];
+        const topRays = solved ? rayEnds(top).map((point, index) => lineMarkup(centerTop, point, "source61-e2-radial-cut", `data-cut-line="top-${index + 1}"`)).join("") : "";
+        const bottomRays = solved ? rayEnds(bottom).map((point, index) => lineMarkup(centerBottom, point, `source61-e2-radial-cut${rayFront(index) ? "" : " is-hidden"}`, `data-cut-line="bottom-${index + 1}"`)).join("") : "";
         const outerEdges = top.map((point, index) => {
           const next = (index + 1) % n;
           const hidden = !frontFacing(index) && !frontFacing(next);
@@ -23266,10 +23278,20 @@
             + lineMarkup(bottom[index], bottom[next], `source61-e2-solid-edge${hidden ? " is-hidden" : ""}`)
             + lineMarkup(point, bottom[index], `source61-e2-solid-edge${frontFacing(index) ? "" : " is-hidden"}`);
         }).join("");
-        const centerLine = lineMarkup(centerTop, centerBottom, "source61-e2-radial-cut source61-e2-center-line", 'data-cut-line="center-vertical"');
+        const centerLine = solved ? lineMarkup(centerTop, centerBottom, "source61-e2-radial-cut source61-e2-center-line", 'data-cut-line="center-vertical"') : "";
         const vertexDots = top.concat(bottom).map((point, index) => `<circle class="source61-e2-original-vertex" data-prism-vertex="${index + 1}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.8"/>`).join("");
-        const piece = solved ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="9"><polygon points="16,34 66,12 95,43"/><polygon points="16,92 66,70 95,101"/><line x1="16" y1="34" x2="16" y2="92"/><line x1="66" y1="12" x2="66" y2="70"/><line x1="95" y1="43" x2="95" y2="101"/><text x="55" y="126" text-anchor="middle">삼각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 9개</text></g>` : `<text x="287" y="96" text-anchor="middle">밑면의 중심에서</text><text x="287" y="116" text-anchor="middle">수직으로 자르기</text>`;
-        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-radial-prism${solved ? " is-solved" : ""}" viewBox="0 0 370 225" role="img" aria-label="정${n}각기둥을 밑면의 중심에서 ${n}개의 같은 삼각기둥으로 수직으로 나눈 입체 그림" data-source61-e2-structure="regular-${n}-prism-radial-${n}" data-base-sides="${n}" data-n="${n}" data-piece-count="${n}" data-fan-count="${n}" data-vertical-cut-plane-count="${n}" data-edge-per-fan="9" data-total-edge-count="${9 * n}" data-cut-model="center-to-every-base-vertex-vertical-plane"${solved ? ` data-result-highlight="${9 * n}"` : ""}>${sideFaces}${bottomRays}${outerEdges}${sectors}${topRays}${centerLine}${vertexDots}<circle class="source61-e2-center" cx="${centerTop[0]}" cy="${centerTop[1]}" r="4"/><circle class="source61-e2-center is-hidden" cx="${centerBottom[0]}" cy="${centerBottom[1]}" r="3"/>${piece}<text x="128" y="218" text-anchor="middle">같은 삼각기둥 ${n}개</text></svg>`;
+        const centers = solved ? `<circle class="source61-e2-center" cx="${centerTop[0]}" cy="${centerTop[1]}" r="4"/><circle class="source61-e2-center is-hidden" cx="${centerBottom[0]}" cy="${centerBottom[1]}" r="3"/>` : "";
+        const piece = mode === "vertex"
+          ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="9"><polygon points="16,34 66,12 95,43"/><polygon points="16,92 66,70 95,101"/><line x1="16" y1="34" x2="16" y2="92"/><line x1="66" y1="12" x2="66" y2="70"/><line x1="95" y1="43" x2="95" y2="101"/><text x="55" y="126" text-anchor="middle">삼각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 9개</text></g>`
+          : mode === "midpoint"
+            ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="12"><polygon points="12,32 52,12 98,30 58,48"/><polygon points="12,90 52,70 98,88 58,106"/><line x1="12" y1="32" x2="12" y2="90"/><line x1="52" y1="12" x2="52" y2="70"/><line x1="98" y1="30" x2="98" y2="88"/><line x1="58" y1="48" x2="58" y2="106"/><text x="55" y="126" text-anchor="middle">사각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 12개</text></g>`
+            : "";
+        const pieceName = mode === "vertex" ? "삼각기둥" : "사각기둥";
+        const caption = solved ? `<text x="128" y="218" text-anchor="middle">같은 ${pieceName} ${n}개</text>` : "";
+        const aria = mode === "plain" ? `밑면이 정다각형이고 옆면이 ${n}개인 각기둥` : mode === "vertex" ? `정${n}각기둥을 밑면의 중심과 꼭짓점을 잇는 선을 따라 수직으로 잘라 같은 삼각기둥 ${n}개로 나눈 그림` : `정${n}각기둥을 밑면의 중심과 변의 가운데를 잇는 선을 따라 수직으로 잘라 같은 사각기둥 ${n}개로 나눈 그림`;
+        const structureAttribute = mode === "midpoint" ? "data-source61-e2-alt-structure" : "data-source61-e2-structure";
+        const pieceData = solved ? ` data-piece-count="${n}" data-fan-count="${n}" data-vertical-cut-plane-count="${n}" data-edge-per-fan="${mode === "vertex" ? 9 : 12}" data-total-edge-count="${(mode === "vertex" ? 9 : 12) * n}" data-cut-model="${mode === "vertex" ? "center-to-every-base-vertex-vertical-plane" : "center-to-every-base-edge-midpoint-vertical-plane"}"` : ` data-piece-count="${n}" data-cut-model="unspecified"`;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-radial-prism${solved ? " is-solved" : ""}" viewBox="0 0 370 225" role="img" aria-label="${aria}" ${structureAttribute}="regular-${n}-prism-${n}-congruent-prisms" data-base-sides="${n}" data-n="${n}" data-cut-mode="${mode}"${pieceData}${mode === "vertex" ? ` data-result-highlight="${9 * n},${12 * n}"` : ""}>${sideFaces}${bottomRays}${outerEdges}${sectors}${topRays}${centerLine}${vertexDots}${centers}${piece}${caption}</svg>`;
       };
 
       const hexagonalPrismSixPieceExtremesSvg = ({ prismHeight, solved = false }) => {
@@ -23588,19 +23610,20 @@
 
       if (variant === 0) {
         const distance = [1, 2, 3][poolIndex];
-        const minimumEdge = 3 * distance + 1;
+        const minimumEdge = 3 * distance;
         const faces = 14, vertices = 24, edges = 36, total = faces + vertices + edges;
-        const promptVisual = `${cornerCutCuboidSvg({ distance })}${mathBoard("자르는 조건", row("자를 꼭짓점", "직육면체의 모든 꼭짓점") + row("각 모서리에서 잰 길이", `${distance}cm`) + row("직육면체의 모든 모서리", `${minimumEdge}cm보다 길다`))}`;
+        const promptVisual = `${cornerCutCuboidSvg({ distance })}${mathBoard("자르는 조건", row("자를 꼭짓점", "사각기둥의 모든 꼭짓점") + row("각 모서리에서 잰 길이", `${distance}cm`) + row("사각기둥의 모든 모서리", `${minimumEdge}cm보다 길다`))}`;
         const answerVisual = `${cornerCutCuboidSvg({ distance, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("면", `6+8=${faces}개`) + row("꼭짓점", `12×2=${vertices}개`) + row("모서리", `12+3×8=${edges}개`) + row("합", `${faces}+${vertices}+${edges}=${total}`))}`;
-        return fixedResult(`직육면체의 모든 꼭짓점에서 만나는 세 모서리를 따라 각각 ${distance}cm인 점을 표시하고, 세 점을 지나는 평면으로 꼭짓점을 모두 잘라 냅니다. 직육면체의 모든 모서리는 ${minimumEdge}cm보다 깁니다. 잘라 낸 입체도형의 면, 꼭짓점, 모서리 수의 합을 구하세요.${promptVisual}${support("먼저 새로 생긴 삼각형 면은 몇 개인지, 원래 모서리 하나마다 새 꼭짓점이 몇 개 생기는지 세어 보세요.")}${challenge}${evidence("cuboid-all-corners-cut", [distance, minimumEdge, faces, vertices, edges, total])}`, String(total), `꼭짓점 8개를 자르므로 삼각형 면 8개가 새로 생겨 면은 6+8=${faces}개입니다. 원래 모서리 12개마다 양 끝의 자른 점이 남으므로 꼭짓점은 12×2=${vertices}개입니다. 원래 모서리에서 남은 12개와 삼각형 면 8개의 변 3개씩을 더하면 모서리는 12+3×8=${edges}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
+        return fixedResult(`그림과 같은 모서리가 모두 ${minimumEdge}cm보다 긴 사각기둥의 각 꼭짓점에서 ${distance}cm 떨어진 모서리의 지점을 연결하여 자르려고 합니다. 이와 같이 각각의 꼭짓점 부분을 모두 잘라 내고 남은 도형의 면의 수, 꼭짓점의 수, 모서리의 수의 합은 몇 개입니까?${promptVisual}${support("먼저 새로 생긴 삼각형 면은 몇 개인지, 원래 모서리 하나마다 새 꼭짓점이 몇 개 생기는지 세어 보세요.")}${challenge}${evidence("cuboid-all-corners-cut", [distance, minimumEdge, faces, vertices, edges, total])}`, String(total), `꼭짓점 8개를 자르므로 삼각형 면 8개가 새로 생겨 면은 6+8=${faces}개입니다. 원래 모서리 12개마다 양 끝의 자른 점이 남으므로 꼭짓점은 12×2=${vertices}개입니다. 원래 모서리에서 남은 12개와 삼각형 면 8개의 변 3개씩을 더하면 모서리는 12+3×8=${edges}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
       }
 
       if (variant === 1) {
-        const n = [5, 7, 8][poolIndex];
-        const edgesPerPiece = 9, total = n * edgesPerPiece;
-        const promptVisual = `${radialCutPrismSvg({ n })}${mathBoard("나눈 입체도형", row("밑면", `정${n}각형`) + row("나누어진 조각", `서로 같은 삼각기둥 ${n}개`) + row("구할 것", "각 조각의 모서리 수의 합"))}`;
-        const answerVisual = `${radialCutPrismSvg({ n, solved: true })}${mathBoard("모서리 수", row("삼각기둥 1개", `${edgesPerPiece}개`) + row(`삼각기둥 ${n}개`, `${edgesPerPiece}×${n}=${total}개`))}`;
-        return fixedResult(`정${n}각기둥을 밑면의 중심과 각 꼭짓점을 잇는 선을 따라 밑면에 수직으로 잘라, 서로 같은 삼각기둥 ${n}개로 나누었습니다. 나누어진 삼각기둥 ${n}개의 모서리 수를 모두 합하면 몇 개인지 구하세요.${promptVisual}${support("삼각기둥 한 개의 모서리 수를 먼저 세고 조각 수를 곱하세요.")}${challenge}${evidence("regular-prism-radial-cut", [n, edgesPerPiece, total])}`, `${total}개`, `삼각기둥 한 개의 모서리는 밑면 두 개에서 3개씩, 옆모서리 3개로 모두 ${edgesPerPiece}개입니다. 같은 삼각기둥이 ${n}개이므로 모서리 수의 합은 ${edgesPerPiece}×${n}=${total}개입니다.`, answerVisual);
+        const n = [7, 5, 8][poolIndex];
+        const polygonName = `${{ 5: "오", 7: "칠", 8: "팔" }[n]}각형`;
+        const triangleEdges = 9, quadrilateralEdges = 12, triangleTotal = n * triangleEdges, quadrilateralTotal = n * quadrilateralEdges;
+        const promptVisual = `${radialCutPrismSvg({ n })}${mathBoard("자르는 조건", row("밑면", `정${polygonName}`) + row("자르는 방향", "밑면에 수직") + row("만든 각기둥", `모양과 크기가 같은 ${n}개`))}`;
+        const answerVisual = `${radialCutPrismSvg({ n, mode: "vertex" })}${radialCutPrismSvg({ n, mode: "midpoint" })}${mathBoard("모서리 수", row(`삼각기둥 ${n}개`, `${triangleEdges}×${n}=${triangleTotal}개`) + row(`사각기둥 ${n}개`, `${quadrilateralEdges}×${n}=${quadrilateralTotal}개`))}`;
+        return fixedResult(`그림은 밑면의 모양이 정${polygonName}인 각기둥입니다. 이 각기둥을 밑면에 수직으로 잘라 모양과 크기가 같은 각기둥 ${n}개를 만들었습니다. 이때 생기는 각기둥 ${n}개의 모서리의 수의 합은 몇 개입니까?${promptVisual}${support("밑면의 중심에서 꼭짓점까지 자를 때와 변 위의 점까지 자를 때 생기는 각기둥의 모양을 먼저 생각해 보세요.")}${challenge}${evidence("regular-prism-radial-cut", [n, triangleEdges, quadrilateralEdges, triangleTotal, quadrilateralTotal], "two-values")}`, `${triangleTotal}개, ${quadrilateralTotal}개`, `<p>풀이 기준: 밑면의 중심에서 밑면의 둘레까지 곧은 선을 ${n}개 긋고, 그 선을 따라 밑면에 수직으로 자르는 경우를 생각합니다. 자르는 방법에 따라 답이 두 가지입니다.</p>밑면의 중심과 ${n}개의 꼭짓점을 잇는 선을 따라 자르면 밑면이 삼각형인 삼각기둥 ${n}개가 생깁니다. 삼각기둥 한 개의 모서리는 ${triangleEdges}개이므로 합은 ${triangleEdges}×${n}=${triangleTotal}개입니다. 밑면의 중심과 ${n}개의 변의 가운데(또는 변 위의 같은 자리)를 잇는 선을 따라 자르면 밑면이 사각형인 사각기둥 ${n}개가 생깁니다. 사각기둥 한 개의 모서리는 ${quadrilateralEdges}개이므로 합은 ${quadrilateralEdges}×${n}=${quadrilateralTotal}개입니다. 따라서 답은 ${triangleTotal}개 또는 ${quadrilateralTotal}개입니다.`, answerVisual);
       }
 
       if (variant === 2) {
@@ -23664,14 +23687,14 @@
         return fixedResult(`밑면의 모양이 정육각형인 각기둥을 평면으로 곧게 잘라 서로 합동인 각기둥 6개를 만들었습니다. 각기둥 6개의 모서리 수를 모두 합한 값이 가장 클 때와 가장 작을 때를 차례로 구하세요.${promptVisual}${extremesSupport}${extremesChallenge}${evidence("hexagonal-prism-six-congruent-pieces-edge-extremes", values, "ordered-two-values")}`, `최대 ${maximumTotal}개, 최소 ${minimumTotal}개`, `밑면과 나란히 잘라 정육각기둥 6개를 만들면 한 조각의 모서리는 6×3=${maximumEdgesPerPiece}개이므로 합은 ${maximumEdgesPerPiece}×${pieceCount}=${maximumTotal}개로 가장 큽니다. 밑면의 중심에서 여섯 꼭짓점으로 나누어 삼각기둥 6개를 만들면 한 조각의 모서리는 3×3=${minimumEdgesPerPiece}개이므로 합은 ${minimumEdgesPerPiece}×${pieceCount}=${minimumTotal}개로 가장 작습니다.`, answerVisual);
       }
 
-      const [side, prismHeight] = [[6, 12], [7, 16], [8, 20]][poolIndex];
+      const [side, prismHeight] = [[7, 16], [6, 12], [8, 20]][poolIndex];
       const faceCount = 4, crossingCount = 3, targetLength = prismHeight / faceCount;
       const values = [side, prismHeight, faceCount, crossingCount, targetLength];
       const promptVisual = `${squarePrismFourFaceShortestSvg({ side, prismHeight })}${mathBoard("사각기둥의 자료", row("밑면의 네 변", `각각 ${side}cm`) + row("기둥의 높이", `${prismHeight}cm`) + row("지나는 점", "ㅈ → ㅊ → ㅋ") + row("구할 선분", "ㄴㅈ"))}`;
       const answerVisual = `${squarePrismFourFaceShortestSvg({ side, prismHeight, solved: true })}${mathBoard("전개도에서 계산", row("옆면 4장의 가로", `${side}×${faceCount}=${side * faceCount}cm`) + row("전체 세로 변화", `${prismHeight}cm`) + row("같은 너비 한 장에서 내려간 길이", `${prismHeight}÷${faceCount}=${targetLength}cm`) + row("선분 ㄴㅈ", `${targetLength}cm`))}`;
       const shortestSupport = support("선이 지나는 옆면 네 장을 차례로 펼치고, 시작점과 끝점을 곧은 선으로 이으세요.");
       const shortestChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">같은 너비의 옆면 네 장에서 곧은 선이 내려간 높이가 왜 네 부분으로 똑같이 나뉘는지 설명해 보세요.</p>` : "";
-      return fixedResult(`밑면이 한 변의 길이가 ${side}cm인 정사각형이고 높이가 ${prismHeight}cm인 사각기둥이 있습니다. 그림처럼 꼭짓점 ㄱ에서 출발하여 점 ㅈ, 점 ㅊ, 점 ㅋ을 차례로 지나 꼭짓점 ㅁ까지 겉면에 선을 그었습니다. 이 선의 길이가 가장 짧을 때 선분 ㄴㅈ의 길이는 몇 cm인지 구하세요.${promptVisual}${shortestSupport}${shortestChallenge}${evidence("square-prism-four-face-shortest-segment", values)}`, `${targetLength}cm`, `선이 지나는 옆면 네 장을 차례로 펼치면 너비가 모두 ${side}cm인 직사각형 4개가 됩니다. 가장 짧은 선은 전개도에서 한 직선입니다. 너비가 같으므로 전체 높이 ${prismHeight}cm도 네 부분으로 똑같이 나뉩니다. 따라서 선분 ㄴㅈ의 길이는 ${prismHeight}÷4=${targetLength}cm입니다.`, answerVisual);
+      return fixedResult(`그림과 같이 사각기둥의 꼭짓점 ㄱ에서 점 ㅈ, 점 ㅊ, 점 ㅋ을 지나 꼭짓점 ㅁ까지 선을 그었습니다. 선의 길이가 가장 짧을 때 선분 ㄴㅈ의 길이를 구하세요.${promptVisual}${shortestSupport}${shortestChallenge}${evidence("square-prism-four-face-shortest-segment", values)}`, `${targetLength}cm`, `선이 지나는 옆면 네 장을 차례로 펼치면 너비가 모두 ${side}cm인 직사각형 4개가 됩니다. 가장 짧은 선은 전개도에서 한 직선입니다. 너비가 같으므로 전체 높이 ${prismHeight}cm도 네 부분으로 똑같이 나뉩니다. 따라서 선분 ㄴㅈ의 길이는 ${prismHeight}÷4=${targetLength}cm입니다.`, answerVisual);
     },
     sourceGrade6RatioE1({ rng, level, variant = 0 }) {
       const sourceIds = [

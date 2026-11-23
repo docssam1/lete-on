@@ -22,11 +22,11 @@ const sources = [
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedAnswers = {
-  "6-1-u2-e3-example-3-1": ["20개", "24개", "28개"],
-  "6-1-u2-e3-mission-1": ["864", "1014", "1176"],
-  "6-1-u2-e3-mission-5": ["157개", "173개", "189개"],
-  "6-1-u2-e3-mission-6": ["3cm", "4cm", "5cm"],
-  "6-1-u2-e3-mission-3": ["5cm", "6cm", "8cm"]
+  "6-1-u2-e3-example-3-1": ["24개", "20개", "28개"],
+  "6-1-u2-e3-mission-1": ["1014", "864", "1176"],
+  "6-1-u2-e3-mission-5": ["173개", "157개", "189개"],
+  "6-1-u2-e3-mission-6": ["재석, 4cm", "재석, 3cm", "재석, 5cm"],
+  "6-1-u2-e3-mission-3": ["6cm", "5cm", "8cm"]
 };
 const failures = [];
 let screenshots = 0;
@@ -142,15 +142,15 @@ async function inspect(page, source, difficulty, answerView, label) {
     if (answerView && !svg.structure) fail(`${label}: 답 그림 구조 서명이 없습니다.`);
     if (!answerView && source.id.startsWith("6-1-u2-e3-example-3-1") && (svg.baseSides !== "unknown" || (svg.pyramidEdges && svg.pyramidEdges !== "unknown"))) fail(`${label}: 문제 그림에 실제 n각형 수가 누출되었습니다.`);
     if (!answerView && source.id === "6-1-u2-e3-mission-5" && svg.innerDots !== 0) fail(`${label}: Mission5 문제에 안쪽 점이 보입니다.`);
-    if (answerView && source.id === "6-1-u2-e3-mission-5" && (svg.innerDots !== [19, 21, 23][Number(svg.pool)] || svg.answerVertices !== 5)) fail(`${label}: Mission5 답의 안쪽 점 또는 꼭짓점 수가 다릅니다.`);
+    if (answerView && source.id === "6-1-u2-e3-mission-5" && (svg.innerDots !== [21, 19, 23][Number(svg.pool)] || svg.answerVertices !== 5)) fail(`${label}: Mission5 답의 안쪽 점 또는 꼭짓점 수가 다릅니다.`);
     if (!answerView && source.id === "6-1-u2-e3-mission-6" && (svg.prismEdges || svg.pyramidEdgeLines)) fail(`${label}: Mission6 문제에 완성 입체가 노출되었습니다.`);
     if (answerView && source.id === "6-1-u2-e3-mission-6" && (svg.prismEdges !== 9 || svg.prismVertices !== 6 || svg.pyramidEdgeLines !== 8 || svg.pyramidVertices !== 5)) fail(`${label}: Mission6 답의 모서리·꼭짓점 수가 다릅니다.`);
-    if (answerView && source.id === "6-1-u2-e3-example-3-1" && (svg.baseSides !== String([10, 12, 14][Number(svg.pool)]) || svg.pyramidEdges !== String([20, 24, 28][Number(svg.pool)]))) fail(`${label}: Example3-1 답의 모서리 수가 pool과 다릅니다.`);
-    if (answerView && source.id === "6-1-u2-e3-mission-1" && (svg.baseSides !== String([12, 13, 14][Number(svg.pool)]) || svg.pyramidEdges !== String([24, 26, 28][Number(svg.pool)]))) fail(`${label}: Mission1 답의 모서리 수가 pool과 다릅니다.`);
+    if (answerView && source.id === "6-1-u2-e3-example-3-1" && (svg.baseSides !== String([12, 10, 14][Number(svg.pool)]) || svg.pyramidEdges !== String([24, 20, 28][Number(svg.pool)]))) fail(`${label}: Example3-1 답의 모서리 수가 pool과 다릅니다.`);
+    if (answerView && source.id === "6-1-u2-e3-mission-1" && (svg.baseSides !== String([13, 12, 14][Number(svg.pool)]) || svg.pyramidEdges !== String([26, 24, 28][Number(svg.pool)]))) fail(`${label}: Mission1 답의 모서리 수가 pool과 다릅니다.`);
     if (!answerView && source.id === "6-1-u2-e3-mission-3" && (svg.baseSides !== "unknown" || svg.prismHeight !== "unknown")) fail(`${label}: Mission3 문제에 밑면 변 수 또는 높이가 노출되었습니다.`);
-    if (answerView && source.id === "6-1-u2-e3-mission-3" && (svg.baseSides !== String([8, 10, 12][Number(svg.pool)]) || svg.prismHeight !== String([5, 6, 8][Number(svg.pool)]) || svg.sideFaceCount !== String([8, 10, 12][Number(svg.pool)]))) fail(`${label}: Mission3 답의 밑면 변 수·옆면 수·높이가 pool과 다릅니다.`);
+    if (answerView && source.id === "6-1-u2-e3-mission-3" && (svg.baseSides !== String([10, 8, 12][Number(svg.pool)]) || svg.prismHeight !== String([6, 5, 8][Number(svg.pool)]) || svg.sideFaceCount !== String([10, 8, 12][Number(svg.pool)]))) fail(`${label}: Mission3 답의 밑면 변 수·옆면 수·높이가 pool과 다릅니다.`);
     if (!answerView && source.id === "6-1-u2-e3-mission-3" && svg.prismSideFaces !== 0) fail(`${label}: Mission3 문제에 각기둥 옆면의 정답 그림이 노출되었습니다.`);
-    if (answerView && source.id === "6-1-u2-e3-mission-3" && (svg.prismSideFaces !== 1 || svg.prismSideFaceWidth !== String([6, 8, 9][Number(svg.pool)]) || svg.prismSideFaceHeight !== String([5, 6, 8][Number(svg.pool)]))) fail(`${label}: Mission3 답의 각기둥 옆면 가로·높이가 pool과 다릅니다.`);
+    if (answerView && source.id === "6-1-u2-e3-mission-3" && (svg.prismSideFaces !== 1 || svg.prismSideFaceWidth !== String([8, 6, 9][Number(svg.pool)]) || svg.prismSideFaceHeight !== String([6, 5, 8][Number(svg.pool)]))) fail(`${label}: Mission3 답의 각기둥 옆면 가로·높이가 pool과 다릅니다.`);
     if (source.id === "6-1-u2-e3-mission-3" && svg.sideFaceTriangles !== 1) fail(`${label}: Mission3 문제·답에 원본 삼각형 옆면 한 개가 없습니다.`);
     if (source.id === "6-1-u2-e3-mission-6" && (svg.paperTrianglePointCount !== 3 || svg.paperTriangleValueCount !== 3)) fail(`${label}: Mission6 첫 삼각형의 점 또는 data-paper-triangle이 맞지 않습니다.`);
     if (source.id === "6-1-u2-e3-mission-6" && ((answerView && svg.viewBox !== "0 0 330 305") || (!answerView && svg.viewBox !== "0 0 330 112"))) fail(`${label}: Mission6 viewBox가 문제/답 기준과 다릅니다.`);

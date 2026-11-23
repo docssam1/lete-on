@@ -284,7 +284,7 @@ prismE2VerifiedIds.forEach((sourceItemId, variant) => {
   check(Boolean(readinessItem && rawItem && catalogItem), `${sourceItemId}: 개념탐구 2 원자료·검수표·공개 분류표 연결이 없습니다.`);
   if (!readinessItem || !rawItem || !catalogItem) return;
   check(readinessItem.sourceVerified === true && readinessItem.publicDecision === "confirmed" && readinessItem.releaseStatus === "verified" && readinessItem.implementationStatus === "fixed-verified-pool" && readinessItem.singleAnswer === true, `${sourceItemId}: 개념탐구 2 원문 확인·단일 정답·공개 상태가 완결되지 않았습니다.`);
-  const expectedContract = sourceItemId === "6-1-u2-e2-example-2-1" ? "ordered-two-values-fixed-pool" : "single-answer-fixed-pool";
+  const expectedContract = sourceItemId === "6-1-u2-e2-example-2-1" ? "ordered-two-values-fixed-pool" : sourceItemId === "6-1-u2-e2-mission-2" ? "single-answer-set-fixed-pool" : "single-answer-fixed-pool";
   check(rawItem.sourceVerified === true && rawItem.implementationStatus === "fixed-verified-pool" && rawItem.answerContract === expectedContract, `${sourceItemId}: 개념탐구 2 원자료 장부의 검증 상태가 다릅니다.`);
   check(!catalogItem.reviewLocked && catalogItem.generatorKey === "sourceGrade6PrismsPyramidsE2" && catalogItem.variant === variant && catalogItem.answerVisualStatus === "verified" && catalogItem.verifiedVariantCount === 3, `${sourceItemId}: 개념탐구 2 생성기·순서·답 그림 계약이 다릅니다.`);
 });

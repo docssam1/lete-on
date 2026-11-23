@@ -382,8 +382,10 @@ function checkGeometryContracts(state, source, label, answerView) {
       if (svg.cutPlanes !== 8 || svg.resultVertices !== 24) fail(`${label}: 직육면체의 절단면 8개·결과 꼭짓점 점 24개가 아닙니다.`);
       if (svg.dataResultVertices !== "24") fail(`${label}: 직육면체 결과 꼭짓점 메타데이터가 24가 아닙니다.`);
     } else if (source.kind === "regular-prism-radial-cut") {
-      if (!Number.isInteger(n) || svg.fanSectors !== n || Number(svg.dataFanCount) !== n) fail(`${label}: 정n각기둥의 부채꼴 ${n}개 분할이 그림과 맞지 않습니다.`);
-      if (Number(svg.dataVerticalCutPlanes) !== n) fail(`${label}: 정n각기둥의 수직 절단면 수가 ${n}개로 표시되지 않았습니다.`);
+      // 원본 Mission 2 문제 그림에는 자르는 선이 없고, 답 그림에서만 두 가지 자르기(첫 그림: 중심-꼭짓점)를 보여 줍니다.
+      if (!answerView && (!Number.isInteger(n) || svg.fanSectors !== 0 || svg.dataFanCount)) fail(`${label}: 문제 그림에 원본에 없는 자르는 선·조각이 그려졌습니다.`);
+      if (answerView && (!Number.isInteger(n) || svg.fanSectors !== n || Number(svg.dataFanCount) !== n)) fail(`${label}: 정n각기둥의 부채꼴 ${n}개 분할이 그림과 맞지 않습니다.`);
+      if (answerView && Number(svg.dataVerticalCutPlanes) !== n) fail(`${label}: 정n각기둥의 수직 절단면 수가 ${n}개로 표시되지 않았습니다.`);
       if (svg.resultVertices !== 0 || svg.cutPlanes !== 0) fail(`${label}: 방사형 분할 그림에 다른 절단 도형이 섞였습니다.`);
     } else if (source.kind === "prism-all-vertices-truncated") {
       if (!Number.isInteger(n) || svg.cutPlanes !== 2 * n || svg.resultVertices !== 6 * n) fail(`${label}: 절두 각기둥의 절단면 2n개·결과 꼭짓점 점 6n개가 아닙니다.`);
@@ -446,7 +448,7 @@ function checkGeometryContracts(state, source, label, answerView) {
 function checkAnswerLeak(state, source, difficulty, label) {
   const results = {
     [sourceIds[0]]: ["14", "24", "36", "74"],
-    [sourceIds[1]]: ["45", "63", "72"],
+    [sourceIds[1]]: ["45", "60", "63", "72", "84", "96"],
     [sourceIds[2]]: ["30", "45", "54", "92", "110", "128"],
     [sourceIds[3]]: ["12", "14", "16", "77", "90", "104"],
     [sourceIds[4]]: ["48", "60", "72"],

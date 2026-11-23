@@ -29,12 +29,12 @@ const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedAnswers = [
   ["74"],
-  ["38", "50", "62"],
-  ["48cm", "60cm", "72cm"],
-  ["면 7개, 모서리 12개, 꼭짓점 7개", "면 9개, 모서리 16개, 꼭짓점 9개", "면 11개, 모서리 20개, 꼭짓점 11개"],
-  ["26", "32", "38"],
-  ["128cm²", "200cm²", "288cm²"],
-  ["180cm²", "264cm²", "364cm²"]
+  ["50", "38", "62"],
+  ["60cm", "48cm", "72cm"],
+  ["면 9개, 모서리 16개, 꼭짓점 9개", "면 7개, 모서리 12개, 꼭짓점 7개", "면 11개, 모서리 20개, 꼭짓점 11개"],
+  ["38", "26", "32"],
+  ["200cm²", "128cm²", "288cm²"],
+  ["264cm²", "180cm²", "364cm²"]
 ];
 
 const failures = [];
@@ -289,7 +289,9 @@ async function inspectView(page, source, difficulty, answerView, viewportLabel) 
   if (state.problemAnswerLeak || state.problemResultAttributes) fail(`${label}: 문제 화면에 답 전용 요소 또는 결과 속성이 노출되었습니다.`);
   if (state.items.some(item => !item.svg.exists || !item.svg.visible || item.svg.outside || item.svg.clipped || item.svg.drawingWidth <= 0 || item.svg.drawingHeight <= 0)) fail(`${label}: 도형이 비어 있거나 화면 밖·잘림 상태입니다.`);
   if (state.items.some(item => Math.abs(item.svg.actualRatio - item.svg.expectedRatio) > .035)) fail(`${label}: SVG viewBox와 실제 화면 비율이 다릅니다.`);
-  if (state.items.some(item => !item.svg.font.includes("Pretendard") || !item.svg.font.includes("Malgun Gothic") || !item.svg.font.includes("Arial"))) fail(`${label}: E4 도형 글꼴 공통화가 적용되지 않았습니다.`);
+  // Mission 4 문제 그림은 원본처럼 글자 없이 붙인 입체만 그리므로 글꼴 검사는 글자가 있는 그림에만 합니다.
+  const textlessProblem = !answerView && source.kind === "pyramid-base-to-base";
+  if (!textlessProblem && state.items.some(item => !item.svg.font.includes("Pretendard") || !item.svg.font.includes("Malgun Gothic") || !item.svg.font.includes("Arial"))) fail(`${label}: E4 도형 글꼴 공통화가 적용되지 않았습니다.`);
   if (state.items.some(item => item.svg.overlaps.length)) fail(`${label}: 도형 안의 글자 상자가 겹칩니다 (${state.items.map(item => item.svg.overlaps.join(",")).filter(Boolean).join("; ")}).`);
   if (state.sourceMarkers.some(markers => markers.length !== 1 || markers[0].kind !== source.kind || markers[0].source !== source.id || markers[0].difficulty !== difficultyNames[String(difficulty)])) fail(`${label}: 원문 유형·난이도 검산 표식이 다릅니다.`);
   if (answerView) {
