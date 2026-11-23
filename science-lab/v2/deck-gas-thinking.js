@@ -1,17 +1,18 @@
+import{learnerComparisonMaterial}from'./comparison-material-language.js?v=20261123-comparison-school-language';
 import{findLifeItem}from'./book-life.js';
 import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';
 import{workbook}from'../data/book/c22-s42-u03.workbook.js';
 import{gasCase}from'./gas-compare-model.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
-const figure=key=>{if(!workbook.figures[key])throw Error(`기체 자료 없음 ${key}`);return workbook.figures[key];};
-const data=id=>{const m=gasCase(id);return p(m.conditions)+table(m.heads,m.rows);};
+const figure=(key,art)=>{const html=art?.[key]||workbook.figures[key];if(!html)throw Error(`기체 자료 없음 ${key}`);return html;};
+const data=id=>{const m=learnerComparisonMaterial('gas-compare',id,gasCase(id));return p(m.conditions)+table(m.heads,m.rows);};
 export function buildGasThinkingSlides(ch,art,plan,pool,mode,ix){
  ix=ch.gasInteraction||ix;const teach=mode==='teach',S=[],phases=Object.fromEntries(plan.phases.map(x=>[x.id,x]));let ses=1;
  const add=(id,phase,title,body,extra={})=>S.push({id,phase,phaseObj:phases[phase],title,body,kind:'read',ses,...extra});
  const peek=text=>teach?`<div class="dk-ans rv">${esc(text)}</div>`:`<div class="dk-peekw"><button type="button" class="dk-peek">생각한 뒤 설명 보기</button><div class="dk-ans" hidden>${esc(text)}</div></div>`;
- const activity=(id,phase,title,text,steps,standards)=>add(id,phase,title,p(text)+`<ol>${steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`+(id==='gasesresearch'?figure('sources'):'')+p('활동을 마친 뒤 다음 화면으로 넘겨요. 자세히 남기고 싶은 내용은 선택 기록장에서 이어 쓸 수 있어요.'),{kind:'activity',standards});
- add('cover','open','여러 가지 기체 · 공기를 알아보고 장치를 만들어요',figure('syringe')+p('공기도 무게가 있는지 실험하고, 온도와 압력에 따른 부피 변화를 관찰해요. 여러 가지 기체의 쓰임을 조사하여 발표하고, 공기로 움직이는 장치를 설계하고 만들어요.')+p('전체 280분을 여러 차시로 나누는 수업이에요. 화면의 예시 자료와 직접 실험한 결과를 구별해요.'),{standards:['4과15-01','4과15-02','4과15-03','4과15-04']});
+ const activity=(id,phase,title,text,steps,standards)=>add(id,phase,title,p(text)+`<ol>${steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`+(id==='gasesresearch'?figure('sources',art):'')+p('활동을 마친 뒤 다음 화면으로 넘겨요. 자세히 남기고 싶은 내용은 선택 기록장에서 이어 쓸 수 있어요.'),{kind:'activity',standards});
+ add('cover','open','여러 가지 기체 · 공기를 알아보고 장치를 만들어요',figure('syringe',art)+p('공기도 무게가 있는지 실험하고, 온도와 압력에 따른 부피 변화를 관찰해요. 여러 가지 기체의 쓰임을 조사하여 발표하고, 공기로 움직이는 장치를 설계하고 만들어요.')+p('전체 280분을 여러 차시로 나누는 수업이에요. 화면의 예시 자료와 직접 실험한 결과를 구별해요.'),{standards:['4과15-01','4과15-02','4과15-03','4과15-04']});
  if(teach)add('plan','open','무게 실험 → 부피 관찰 → 조사와 발표 → 장치 만들기',`<ol class="dk-plan">${plan.phases.map(x=>`<li><b>${esc(x.name)}</b><span>${x.min}분</span><em>${esc(x.aim)}</em></li>`).join('')}</ol>`+p(plan.note));
  const options=ix.predict.options,pick=teach?`<ol class="dk-tally">${options.map((s,j)=>`<li data-j="${j}"><span class="dk-tn">${j+1}</span><span class="dk-tt">${esc(s)}</span><button type="button" data-t="-" aria-label="${j+1}번 한 명 빼기">−</button><b class="dk-tc">0</b><button type="button" data-t="+" aria-label="${j+1}번 한 명 더하기">+</button></li>`).join('')}</ol>`:`<ol class="dk-choices dk-mc predict">${options.map((s,j)=>`<li><button type="button" data-j="${j}"><span>${'①②③'[j]}</span>${esc(s)}</button></li>`).join('')}</ol>`;
  add('predict','open',ix.predict.q,pick+p('처음 생각은 채점하지 않아요. 실험하며 알아보고 싶은 점도 말해요.'),{kind:'predict'});
@@ -19,7 +20,7 @@ export function buildGasThinkingSlides(ch,art,plan,pool,mode,ix){
  activity('massobserve','measure','공기를 더 넣기 전과 후를 저울로 재요','용기와 마개를 포함한 같은 물건의 무게를 비교해요. 부풀린 풍선의 크기만 보고 공기의 무게를 정하지 않아요.',['공기를 더 넣기 전의 저울값을 단위와 함께 적어요.','준비된 방법으로 공기를 더 넣고 같은 용기와 부품을 다시 재요.','실제로 표시된 값을 그대로 적어요. 교사 시범이나 제공된 자료로 살폈다면 그렇게 밝혀요.'],['4과15-01']);
  add('massdata','measure','무게가 50.1g에서 50.3g으로 늘었어요',data('mass')+peek(gasCase('mass').reason),{kind:'think',standards:['4과15-01']});
  add('resolution','measure','둘 다 80.0g이면 공기는 무게가 없을까요?',data('resolution')+peek(gasCase('resolution').reason),{kind:'think',standards:['4과15-01']});
- add('pressurephoto','compare','주사기에서 공기가 들어갈 곳을 찾아요',figure('syringe')+p('몸통·눈금·피스톤·입구를 찾아보아요. 사진은 입구가 열린 주사기의 구조를 보여 줘요. 입구를 막은 실험의 결과를 찍은 사진은 아니에요.')+p('입구가 열려 공기가 빠져나가는 경우와, 마개로 막아 같은 공기를 누르는 경우를 구별해요.'),{standards:['4과15-02']});
+ add('pressurephoto','compare','주사기에서 공기가 들어갈 곳을 찾아요',figure('syringe',art)+p('몸통·눈금·피스톤·입구를 찾아보아요. 사진은 입구가 열린 주사기의 구조를 보여 줘요. 입구를 막은 실험의 결과를 찍은 사진은 아니에요.')+p('입구가 열려 공기가 빠져나가는 경우와, 마개로 막아 같은 공기를 누르는 경우를 구별해요.'),{standards:['4과15-02']});
  activity('pressureplan','compare','같은 공기를 누를 준비를 해요','바늘 없는 주사기와 알맞은 마개를 준비해요. 같은 양의 공기가 새지 않는지 확인해요.',['피스톤이 빠지지 않는 범위에서 처음 부피를 정해요.','입구를 준비한 마개로 막고 공기의 양과 온도를 비슷하게 유지해요.','얼굴을 향하지 않고 천천히 눌러요. 무리한 힘을 주거나 피스톤을 발사하지 않아요.'],['4과15-02']);
  activity('pressureobserve','compare','천천히 누를 때와 힘을 줄일 때를 관찰해요','주사기의 눈금으로 공기가 차지하는 부피를 살펴요.',['천천히 누를 때 피스톤의 위치와 부피가 어떻게 달라지는지 관찰해요.','누르는 힘을 줄였을 때 부피가 어떻게 달라지는지 살펴요.','공기가 새거나 피스톤이 잘 움직이지 않으면 그 상황도 말해요. 관찰하지 못한 결과를 예상으로 채우지 않아요.'],['4과15-02']);
  add('pressuredata','compare','압력이 달라지면 부피는 어떻게 달라질까요?',data('pressure')+peek(gasCase('pressure').reason),{kind:'think',standards:['4과15-02']});
@@ -36,7 +37,7 @@ export function buildGasThinkingSlides(ch,art,plan,pool,mode,ix){
  activity('present','research','조사한 기체를 친구에게 소개해요','기체 이름만 나열하지 않고 어떤 성질을 어디에 이용하는지 발표해요.',['산소가 다른 물질이 타는 것을 돕는 성질처럼 관련 성질을 설명해요. 불을 붙여 확인하지 않아요.','조사한 자료와 연결해 쓰임을 소개해요. 확인하지 못한 점은 더 알아볼 내용으로 말해요.','친구의 질문을 듣고 자료를 다시 찾아 답해요. 발표할 계획과 실제 발표한 내용은 구별해요.'],['4과15-03']);
  add('lab','research','여덟 자료에서 내 생각과 설명을 비교해요',p('무게·부피·기체의 쓰임·장치의 설계와 시험 자료를 차례로 읽어요. 먼저 생각을 고르고 설명을 열어요. 앞으로 만들 장치에서 무엇을 확인할지도 생각해요.')+'<div data-mount="lab"></div>',{kind:'lab',mount:'lab',standards:['4과15-01','4과15-02','4과15-03','4과15-04']});
  activity('design','design','공기로 움직이는 장치를 설계해요','손 펌프·관·얇은 주머니로 가벼운 종이판이나 종이 인형을 움직이는 장치를 생각해요.',['어느 부분이 어떻게 움직이게 할지 목표를 정해요.','펌프 → 관 → 주머니의 공기 길과 연결·고정 방법을 그림에 나타내요.','같은 종이판·놓는 자리·펌프 누르는 방법으로 움직임을 비교할 기준을 정해요. 기체의 어떤 성질을 이용하는지 설명해요.'],['4과15-04']);
- add('reference','design','펌프와 관은 어떻게 연결할까요?',figure('pumpTube')+p('이 그림에는 펌프와 관이 따로 놓여 있어요. 완성한 장치의 사진이나 작동 결과가 아니에요. 연결할 곳과 공기가 지나갈 길을 설계 그림에서 짚어 보아요.')+peek('공기는 펌프에서 관을 지나 주머니로 이동해요. 주머니가 부풀며 종이판을 밀 수 있도록 움직일 공간을 두어요. 연결할 수 있는 도구인지 실제 부품으로 확인해요.'),{kind:'think',standards:['4과15-04']});
+ add('reference','design','펌프와 관은 어떻게 연결할까요?',figure('pumpTube',art)+p('이 그림에는 펌프와 관이 따로 놓여 있어요. 완성한 장치의 사진이나 작동 결과가 아니에요. 연결할 곳과 공기가 지나갈 길을 설계 그림에서 짚어 보아요.')+peek('공기는 펌프에서 관을 지나 주머니로 이동해요. 주머니가 부풀며 종이판을 밀 수 있도록 움직일 공간을 두어요. 연결할 수 있는 도구인지 실제 부품으로 확인해요.'),{kind:'think',standards:['4과15-04']});
  activity('make','make','설계한 장치를 직접 만들어요','설계 그림을 보며 부품을 연결하고 종이판이나 인형을 올려요. 설계만 고른 것으로 만들기를 마치지는 않아요.',['펌프와 관, 관과 주머니를 알맞게 연결하고 공기 길이 막히지 않았는지 살펴요.','가벼운 종이를 사용하고 주머니가 움직일 공간을 남겨요.','손 펌프를 천천히 눌러 연결을 확인해요. 입으로 불지 않고 주머니가 팽팽해지기 전에 멈춰요. 아직 연결하지 못한 부분은 그대로 밝혀요.'],['4과15-04']);
  activity('test','test','같은 방법으로 여러 번 시험해요','장치가 움직였는지와 함께 어떤 조건에서 시험했는지 확인해요.',['같은 재료·놓는 자리·펌프 누르는 방법으로 시험해요.','종이판이 올라간 높이 또는 받친 시간처럼 정한 기준으로 비교해요. 두 기준은 따로 적어요.','여러 번 시험하고 움직이지 않거나 조금만 움직인 결과도 적어요. 화면의 예시 숫자를 내 결과로 옮겨 쓰지 않아요.'],['4과15-04']);
  add('trialdata','test','연결 한 곳을 고쳤더니 무엇이 달라졌나요?',data('test')+peek(gasCase('test').reason),{kind:'think',standards:['4과15-04']});

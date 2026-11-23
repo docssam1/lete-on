@@ -1,3 +1,4 @@
+import{reviewStudentModule}from'./student-language-review.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import crypto from'node:crypto';import vm from'node:vm';
 import{gasPhoto,GAS_PHOTO_VERSION as version,gasPhotoItems,withGasPhotoWorkbook}from'../data/book/gas-photo-context.js';
 import{workbook,gasPhotoPriorWorkbook as priorWorkbook}from'../data/book/c22-s42-u03.workbook.js';
@@ -29,7 +30,7 @@ test('full authored-question guards add only the missing photo while preserving 
 });
 
 test('actual gas workbook, bank and classroom routes present the same result photo with captions and keep student answers hidden',async()=>{
- const raw=await import('../data/book/'+unit+'.book.js'),cls=await revisedClassroom(unit,raw),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit);assert.deepEqual(pool.find(q=>q.id===current.id),current);assert.deepEqual(cls.classroomItems.find(q=>q.id===current.id),current);
+ const raw=await import('../data/book/'+unit+'.book.js'),cls=await revisedClassroom(unit,raw),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit),present=(await reviewStudentModule(unit,mod)).items.find(q=>q.id===current.id);assert.deepEqual(pool.find(q=>q.id===current.id),present);assert.deepEqual(cls.classroomItems.find(q=>q.id===current.id),present);
  for(const mode of['student','teacher']){
   const printed=paper.workbookPaper({mode}),web=renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true}),bank=mod.bankPaper({...mod,mode}),question=thinkingCheckQuestion(current,1,mode==='teacher');
   for(const html of[printed,web,bank,question]){assert(html.includes('../'+gasPhoto.src));assert(html.includes(esc(gasPhoto.alt)));assert(html.includes(esc(gasPhoto.label)));assert(html.includes(gasPhoto.creator));}

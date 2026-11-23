@@ -548,3 +548,19 @@
  .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panel{min-height:150px}
  .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panel+.ed-drawing-panel{border-left:0;border-top:.25mm solid #8a9bb5}
 }
+
+/* Grade-four gases: brief responses and labeled comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panels{flex-direction:column}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+/* The first gas answer table has short keys and long topic names. */
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table{table-layout:fixed}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table th:nth-child(1){width:8%}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table th:nth-child(2){width:82%}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table th:nth-child(3){width:10%}
