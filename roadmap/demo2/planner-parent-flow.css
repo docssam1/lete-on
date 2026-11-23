@@ -182,11 +182,22 @@ body.questioning #conversation:has(#questionOptions>.parent-slides)>:not(#questi
 /* Runtime CSS may already be loaded when a bundle fails. Keep boot in one column. */
 body.parent-slide-open #parentBoot{grid-template-columns:minmax(0,1fr)!important}
 
-/* First visit: two questions, followed by the learner's reported math and a next step. */
-.parent-quick .parent-age-intake .parent-student{margin-top:14px}
-.parent-quick .parent-quick-axis{margin-bottom:14px}
-.parent-quick .parent-current-row>label:has(select[name$="Source"]),.parent-quick .parent-current-row>label:has([name^="thinkingLevel"]),.parent-quick .parent-thinking-note,.parent-quick [data-slide-extra]{display:none!important}
-.parent-quick[data-slide="age"] .parent-slide-footer nav{grid-template-columns:1fr}
+/* One starting point and the learner's current study, together on one screen. */
+.parent-quick.parent-slides .parent-slide-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);max-width:680px;margin-inline:auto}
+.parent-quick .parent-age-intake{margin-bottom:16px}
+.parent-quick .parent-current-row>label:has(select[name$="Source"]),.parent-quick .parent-current-row>label:has(select[name$="Status"]),.parent-quick .parent-current-row>label:has([name^="thinkingLevel"]),.parent-quick .parent-thinking-note{display:none!important}
+.parent-quick .parent-slide-viewport{padding-block-start:24px}
+.parent-quick .parent-slide-question{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.parent-quick .parent-slide-question::before{content:"";flex:0 0 40px;height:40px;background:url("assets/ui/roadmap-glass.svg") center/contain no-repeat}
+@media(prefers-reduced-motion:no-preference){.parent-quick [data-parent-axis]:not([hidden]){animation:parent-quick-reveal .18s ease-out}@keyframes parent-quick-reveal{from{opacity:.35;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}}
+.parent-quick .parent-axis-swap{margin:10px 0 0}
+.parent-quick .parent-axis-swap>summary{width:fit-content;min-height:44px;line-height:44px;font-size:14px;font-weight:600;color:#634479;cursor:pointer}
+.parent-quick .parent-axis-swap>label{margin-block:4px}
+#parentBoot .parent-quick .parent-axis-swap{margin:10px 0 0}
+@media(max-height:720px) and (max-width:700px){
+ .parent-quick .parent-slide-viewport{padding-block-start:14px}
+ .parent-quick .parent-slide-question,.parent-quick .parent-age-intake{margin-bottom:10px}
+}
 .parent-math-draft,.parent-draft-actions{max-width:680px;margin-inline:auto;min-width:0;box-sizing:border-box;text-align:left;overflow-wrap:anywhere}
 .parent-math-draft{padding:clamp(18px,4vw,32px);background:#fff;border:1px solid #d7cddd;border-radius:16px;color:#35283e}
 .parent-math-draft h2{font-size:clamp(21px,4vw,28px);letter-spacing:-.035em;line-height:1.4;margin:0}

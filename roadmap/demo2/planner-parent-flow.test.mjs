@@ -74,7 +74,7 @@ test('academy textbooks and reference stages never become independent study assi
 });
 test('age changes the language and order, while a young advanced learner keeps every curriculum choice',()=>{
  const young=F.ageCopy('5','pre'),low=F.ageCopy('9','2'),upper=F.ageCopy('12','5'),middle=F.ageCopy('15','8'),high=F.ageCopy('18','11');
- assert.match(young.intro,/수 놀이/);assert.equal(young.order[0],'thinking');assert.equal(low.order[1],'calc');assert.match(upper.intro,/앞선 과정/);assert.match(middle.intro,/개념·유형/);assert.match(high.intro,/과목/);
+ assert.match(young.intro,/과정이나 교재/);assert.equal(young.order[0],'thinking');assert.equal(low.order[1],'calc');assert.match(upper.intro,/앞선 과정/);assert.match(middle.intro,/개념·유형/);assert.match(high.intro,/과목/);
  assert.equal(new Set([young.solo,low.solo,upper.solo,middle.solo,high.solo]).size,5);
  const a=F.build({...input(),grade:'pre',age:'5',school:{stage:'h:공통수학1',book:'기본정석'}});assert.equal(a.schoolHigh,'공통수학1');assert.equal(a.parentFlow.currentAge,'5');
 });
@@ -87,7 +87,7 @@ test('an actual age is retained separately from school grade and is never guesse
 
 test('preschool book picker is short and unique without excluding an advanced current book',()=>{
  const small=F.thinkingChoices('5','pre');
- assert.deepEqual(Array.from(small,r=>r[1]),['킨더팩토','키즈팩토','초등팩토','PRE 1031']);
+ assert.deepEqual(Array.from(small,r=>r[1]),['언어·수감각 키우기','킨더팩토','키즈팩토','초등팩토','PRE 1031']);
  const all=F.thinkingChoices('5','pre',true),names=Array.from(all,r=>r[1]);
  assert.equal(names.length,new Set(names).size);assert.ok(names.includes('1031 중급'));
  assert.ok(F.thinkingChoices('5','pre',false,'1031 중급').some(r=>r[1]==='1031 중급'));
@@ -166,19 +166,19 @@ test('an older saved semester can still be compared and notice content is escape
  assert.doesNotMatch(F.balanceNotice(a),/<img/);assert.match(F.balanceNotice(a),/&lt;img/);
 });
 
-test('the focused interview starts with age and grade, then follows each age-specific learning order',()=>{
+test('the detailed interview uses one learner selector and then follows each learning order',()=>{
  for(const [age,grade,order]of [['5','pre',['thinking','calc','school','deep']],['10','3',['school','deep','thinking','calc']],['14','7',['school','deep','thinking','calc']]]){
   const steps=F.slidePlan(age,grade);
-  assert.deepEqual(plain(steps.map(s=>s.id)),['age','grade',...order,'review']);
-  assert.equal(new Set(steps.map(s=>s.id)).size,7);assert.ok(steps.every(s=>s.label&&s.title));
+  assert.deepEqual(plain(steps.map(s=>s.id)),['learner',...order,'review']);
+  assert.equal(new Set(steps.map(s=>s.id)).size,6);assert.ok(steps.every(s=>s.label&&s.title));
  }
- assert.match(F.slidePlan('5','pre')[2].title,/수 놀이/);
- assert.match(F.slidePlan('14','7')[2].title,/교과 개념·유형/);
+ assert.match(F.slidePlan('5','pre')[1].title,/현재 학습/);
+ assert.match(F.slidePlan('14','7')[1].title,/교과 개념·유형/);
 });
 
 test('quick draft needs only one current fact, including a semester without a book',()=>{
  for(const [age,grade,axis] of [['5','pre','thinking'],['10','3','school'],['14','7','school']]){
-  assert.deepEqual(plain(F.slidePlan(age,grade,true).map(s=>s.id)),['age','math']);
+  assert.deepEqual(plain(F.slidePlan(age,grade,true).map(s=>s.id)),['current']);
   assert.equal(F.ageCopy(age,grade).order[0],axis);
  }
  const semester=F.build({age:'10',grade:'3',quickDraft:true,school:{stage:'e:4-1'}});
@@ -197,13 +197,14 @@ test('quick draft needs only one current fact, including a semester without a bo
 test('first activities and a deliberate not-started answer produce distinct drafts',()=>{
  const young={age:'5',grade:'pre',quickDraft:true};
  const activity=F.build({...young,thinking:{book:'블록 규칙 찾기'}});
- assert.match(F.draftMarkup(activity),/블록 규칙 찾기/);assert.match(F.draftMarkup(activity),/아이 말로/);
+ assert.match(F.draftMarkup(activity),/블록 규칙 찾기/);assert.doesNotMatch(F.draftMarkup(activity),/이번 주|설명해 보세요/);
  const starting=F.build({...young,notStarted:true});assert.match(F.draftMarkup(starting),/아직 수학 공부를 시작하기 전/);
  const now=F.build({...young,calc:{book:'10까지 수 세기'}},starting);
  assert.equal(now.parentFlow.notStarted,false);assert.match(F.draftMarkup(now),/10까지 수 세기/);
  const academy=F.build({...young,thinking:{book:'소마 Ray A3-3',source:'academy'}});
  assert.match(F.draftMarkup(academy),/학원 수업 참고/);
- assert.doesNotMatch(F.draftMarkup(academy).split('이번 주에 해 볼 공부')[1],/Ray/);
+ assert.equal(F.draftMarkup(academy).match(/Ray A3-3/g)?.length,1);
+ for(const a of [activity,starting,academy])assert.doesNotMatch(F.draftMarkup(a),/이번 주|수 놀이·사고력|문제 하나/);
  assert.throws(()=>F.build(young),/한 가지/);
 });
 
@@ -213,4 +214,19 @@ test('adding a named arithmetic book keeps the original semester visible in the 
  const m=F.automatic(updated,fields,w.PlannerStandard.model(updated,fields));
  assert.match(F.renderResult(m),/초등 4-2/);assert.match(F.renderResult(m),/기적의 계산법 6권/);
  assert.equal(F.inputModel(updated).calc.book,'기적의 계산법 6권');
+});
+
+test('preschool starting course is reported separately from textbook attainment',()=>{
+ const early={age:'5',grade:'pre',quickDraft:true};
+ const foundation=F.build({...early,thinking:{book:'언어·수감각 키우기',status:'done',range:'1/2단원'}});
+ const p=foundation.parentFlow,html=F.draftMarkup(foundation);
+ assert.equal(p.thinkingStage,'언어·수감각 키우기');assert.equal(p.actualBooks.thinking,'');
+ assert.equal(foundation.thinking,'unknown');assert.equal(I.progressValue(foundation,'thinkingStatus'),null);
+ assert.equal(F.inputModel(foundation).thinking.book,p.thinkingStage);
+ assert.match(html,/언어·수감각 키우기/);assert.match(html,/다음 과정 · 킨더팩토/);assert.doesNotMatch(html,/이번 주|학습 완료/);
+ const kinder=F.build({...early,thinking:{book:'킨더팩토'}},foundation);
+ assert.equal(kinder.parentFlow.thinkingStage,'');assert.equal(kinder.parentFlow.actualBooks.thinking,'킨더팩토');
+ assert.doesNotMatch(F.draftMarkup(kinder),/언어·수감각 키우기|다음 과정/);
+ const gradeOnly=F.build({grade:'3',school:{stage:'e:4-2'}},foundation);
+ assert.equal(F.inputModel(gradeOnly).age,'');assert.equal(F.ageCopy('','3').tier,'elementary-upper');
 });
