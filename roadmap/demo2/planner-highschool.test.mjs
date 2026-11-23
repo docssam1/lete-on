@@ -56,3 +56,38 @@ test('school profiles retain outcome cohorts and distinguish real papers from in
  assert.match(papers,/https:\/\/admission-sshs.info\/24/);assert.match(papers,/nttSn=541400/);assert.equal(JSON.stringify(D),source);
  const profile=A.render({schools:['gs'],tab:'profile'});assert.match(profile,/2025 졸업반/);assert.match(profile,/진학률을 계산하지/);
 });
+test('the private admissions link opens requirements without changing the saved admissions view',()=>{
+ const body={innerHTML:''};
+ const dialog={
+  open:false,
+  setAttribute(){},
+  addEventListener(){},
+  querySelector(selector){assert.equal(selector,'.ha-body');return body;},
+  showModal(){this.open=true;},
+ };
+ let stored=null,writes=0;
+ const win={
+  PlannerHighschoolData:D,
+  PlannerHighschoolProfiles:w.PlannerHighschoolProfiles,
+  PlannerStorage:{getItem:()=>stored,setItem(){writes++;}},
+  document:{createElement:()=>dialog,body:{append(){}},getElementById:()=>null},
+ };
+ vm.runInNewContext(readFileSync(new URL('planner-highschool.js',import.meta.url),'utf8'),{window:win,URL,Intl});
+ const admissions=win.PlannerHighschool,context={grade:9,year:2026,schoolGoal:'giftedSchool'};
+ admissions.open(context,{goal:'private'});
+ assert.match(body.innerHTML,/data-ha-tab="compare" aria-pressed="true"/);
+ assert.match(body.innerHTML,/<caption>2027학년도 공개 요강/);
+ for(const school of ['외대부고','민사고','상산고'])assert.ok(body.innerHTML.includes('<th scope="col">'+school));
+ for(const label of ['지원자격','내신 반영','평가·면접'])assert.ok(body.innerHTML.includes('<th scope="row">'+label));
+
+ stored=JSON.stringify({year:2027,schools:['sshs','minjok','hana'],tab:'profile',checks:{'2027|minjok|eligibility':true}});
+ admissions.open(context,{goal:'private'});
+ assert.match(body.innerHTML,/<th scope="col">민사고/);
+ assert.match(body.innerHTML,/<th scope="col">하나고/);
+ assert.doesNotMatch(body.innerHTML,/<th scope="col">서울과학고/);
+ assert.match(body.innerHTML,/data-ha-check="minjok\|eligibility" checked/);
+ admissions.open(context);
+ assert.match(body.innerHTML,/data-ha-tab="profile" aria-pressed="true"/);
+ assert.match(body.innerHTML,/data-ha-school="sshs" aria-pressed="true"/);
+ assert.equal(writes,0);
+});

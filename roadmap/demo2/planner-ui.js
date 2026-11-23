@@ -1591,7 +1591,12 @@ else if(new URLSearchParams(location.search).get('weekly')==='1')openWeeklyCheck
 // Promote only absent durable keys; another saved plan and deletion guards stay intact.
 for(const key of [preschoolDetailKey,cohortKey,languageKey,studentKey,storageKey,pathwayKey,personalityKey,careerKey,flowKey,planKey,progressKey,transitionKey,caseKey,historyKey,referencePlanKey,scienceKey,collegeKey,bookCheckKey,'gfield.demo2.roadmap-mode.v1','gfield.demo2.workspace.v1'])PlannerStorage.promoteExisting(key);
 // Applications are an independent, account-scoped notebook, not study offsets.
-if(window.PlannerHighschool){PlannerHighschool.init({context:()=>({...goalContext(),age:answers.age??intakeFields().age,fields:intakeFields(),year:intakeFields().year})});if(new URL(location.href).searchParams.get('admissions')==='1')setTimeout(()=>PlannerHighschool.open(),0);}
+if(window.PlannerHighschool){
+ PlannerHighschool.init({context:()=>({...goalContext(),age:answers.age??intakeFields().age,fields:intakeFields(),year:intakeFields().year})});
+ const admissionView=new URL(location.href).searchParams.get('admissions');
+ if(admissionView==='1')setTimeout(()=>PlannerHighschool.open(),0);
+ if(admissionView==='private')setTimeout(()=>PlannerHighschool.open(undefined,{goal:'private'}),0);
+}
 
 // Explicit goal links from the public introduction retain the usual login gate.
 const incomingGoal=new URLSearchParams(location.search).get('goal');

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 const listeners={};
 const window={document:{addEventListener(type,handler){listeners[type]=handler;}}};
 const ctx=vm.createContext({window});
-for(const filename of ['planner-levels.js','planner-standard-data.js','planner-level-guide.js']){
+for(const filename of ['planner-levels.js','planner-standard-data.js','planner-academy-data.js','planner-level-guide.js']){
  vm.runInContext(readFileSync(new URL(filename,import.meta.url),'utf8'),ctx,{filename});
 }
 const guide=window.PlannerLevelGuide;
@@ -58,6 +58,21 @@ test('the controls and table expose readable labels and support compact source-o
  assert.match(html,/<th scope="row"><strong>초등 5-1 교과<\/strong> <small class="level-guide-code">L7<\/small>/);
  assert.match(html,/<th scope="col">교과 심화<\/th>/);
  assert.equal(guide.model({details:null}).columns.some(([id])=>id==='depth'),false);
+});
+
+test('benchmark names and month gaps use the separate Premier1 middle-school entry milestone',()=>{
+ const model=guide.model({learner:'pre:7',month:11});
+ assert.equal(model.premierStart,51);
+ assert.deepEqual(Array.from(model.rows.slice(0,5),r=>r.benchmark.difference),[8,5,2,-1,-4]);
+ assert.equal(model.rows[2].benchmark.name,'챌린지 합격 후 진도');
+ assert.equal(model.rows[5].benchmark,null);
+ const html=guide.render();
+ assert.match(html,/중1-1 시작 시점/);
+ assert.match(html,/프리미어1보다 8개월 빠름/);
+ assert.match(html,/프리미어1보다 1개월 늦음/);
+ assert.match(html,/goal=contest">이후 KMO 준비/);
+ assert.match(html,/admissions=private">자사고 지원 조건·합격 준비/);
+ assert.equal(guide.model({academy:{}}).rows[0].benchmark.difference,null);
 });
 
 test('changing a selector refreshes both caption and rows without replacing the controls',()=>{

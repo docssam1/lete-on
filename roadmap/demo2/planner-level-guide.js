@@ -8,6 +8,13 @@ const learners=[
 ];
 const months=Array.from({length:12},(_,index)=>[index+1,(index+1)+'월']);
 const axes=[['school','교과'],['depth','교과 심화'],['comp','사고력 수학'],['calc','연산']];
+const benchmarkNames={
+ L0:'선행이 빠른 프리미어 합격생',
+ L1:'필즈 S1 참고 진도',
+ L2:'챌린지 합격 후 진도',
+ L3:'생각하는 황소 상위권 목표',
+ L4:'생각하는 황소 심화 목표'
+};
 const entities={'&nbsp;':' ','&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"};
 const plain=value=>String(value??'').replace(/<[^>]*>/g,' ').replace(/&(?:nbsp|amp|lt|gt|quot|#39);/g,match=>entities[match]).replace(/\s+/g,' ').trim();
 const esc=value=>String(value??'').replace(/[&<>"']/g,match=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[match]);
@@ -50,21 +57,46 @@ function describe(levelId,at,{levels=global.PLANNER_LEVELS,details=global.PLANNE
  return source?nameFor(rowAt(source,at,details?.[source.id])):'';
 }
 
-function model({learner,month,levels=global.PLANNER_LEVELS,details=global.PLANNER_STANDARD_DETAILS}={}){
+function premierMiddleStart(academy){
+ const premier=academy?.courses?.find(course=>course.id==='premier');
+ return premier?.main?.blocks?.find(block=>block.kind==='event'&&/중등 시작/.test(block.label))?.start;
+}
+
+function benchmark(source,premierStart){
+ const name=benchmarkNames[source.id];
+ if(!name)return null;
+ const middle=source.school?.find(([title])=>/^중1-1\b/.test(plain(title)));
+ const difference=Number.isFinite(premierStart)&&Number.isFinite(middle?.[1])?premierStart-middle[1]:null;
+ return {name,difference};
+}
+
+function differenceLabel(difference){
+ if(difference===null)return '';
+ if(difference===0)return '프리미어1과 같은 달 시작';
+ return '프리미어1보다 '+Math.abs(difference)+'개월 '+(difference>0?'빠름':'늦음');
+}
+
+function model({learner,month,levels=global.PLANNER_LEVELS,details=global.PLANNER_STANDARD_DETAILS,academy=global.PLANNER_ACADEMY_ROADMAPS}={}){
  const choice=learners.find(([value])=>value===learner)||learners.find(([value])=>value==='pre:7');
  const selectedMonth=months.find(([value])=>value===Number(month))||months[10];
  const at=monthOf(choice[0],selectedMonth[0]);
  const columns=details?axes:axes.filter(([id])=>id!=='depth');
+ const premierStart=premierMiddleStart(academy);
  const rows=(levels||[]).map(source=>{
   const books=rowAt(source,at,details?.[source.id]);
-  return {id:source.id,name:nameFor(books),books};
+  return {id:source.id,name:nameFor(books),books,benchmark:benchmark(source,premierStart)};
  });
- return {learner:choice[0],month:selectedMonth[0],label:choice[1]+' '+selectedMonth[1],at,columns,rows};
+ return {learner:choice[0],month:selectedMonth[0],label:choice[1]+' '+selectedMonth[1],at,columns,rows,premierStart};
 }
 
 function rowMarkup(model){
- return model.rows.map(row=>'<tr><th scope="row"><strong>'+esc(row.name)+'</strong> <small class="level-guide-code">'+esc(row.id)+'</small></th>'+
-  model.columns.map(([id])=>'<td>'+ (row.books[id]?esc(row.books[id]):'<span class="level-guide-empty">자료 없음</span>')+'</td>').join('')+'</tr>').join('');
+ return model.rows.map(row=>{
+  const comparison=row.benchmark&&differenceLabel(row.benchmark.difference);
+  const benchmarkText=row.benchmark?'<span class="level-guide-benchmark">'+esc(row.benchmark.name)+'</span>':'';
+  const gap=comparison?'<span class="level-guide-gap">'+esc(comparison)+'</span>':'';
+  return '<tr><th scope="row"><strong>'+esc(row.name)+'</strong> <small class="level-guide-code">'+esc(row.id)+'</small>'+benchmarkText+gap+'</th>'+
+   model.columns.map(([id])=>'<td>'+(row.books[id]?esc(row.books[id]):'<span class="level-guide-empty">자료 없음</span>')+'</td>').join('')+'</tr>';
+ }).join('');
 }
 
 function selection(model){
@@ -81,6 +113,9 @@ function render({learner,month,open=false}={}){
  if(!guide.rows.length)return '';
  return '<details class="level-guide"'+(open?' open':'')+'><summary>유아·초등 레벨 기준 보기</summary>'+
   '<p>같은 L번호라도 나이·학년과 월에 따라 공부하는 과정이 달라집니다.</p>'+
+  (Number.isFinite(guide.premierStart)?'<p>개월 차이는 프리미어1 참고표와 각 기준표의 <strong>중1-1 시작 시점</strong>을 비교한 값입니다.</p>':'')+
+  '<ul class="level-guide-next"><li><a href="planner.html?guest=1&amp;goal=contest">이후 KMO 준비</a><span>중등 심화부터 경시 기초·입문·심화까지</span></li>'+
+  '<li><a href="planner.html?admissions=private">자사고 지원 조건·합격 준비</a><span>외대부고·민사고·상산고의 지원 자격, 내신과 면접</span></li></ul>'+
   '<div class="level-guide-pickers"><label>나이 또는 학년<select data-level-guide-learner>'+options(learners,guide.learner)+'</select></label>'+
   '<label>기준 월<select data-level-guide-month>'+options(months,guide.month)+'</select></label></div>'+
   '<p class="level-guide-selection" role="status">'+esc(selection(guide))+'</p>'+
