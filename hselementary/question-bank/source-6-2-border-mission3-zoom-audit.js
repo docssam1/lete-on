@@ -1,7 +1,7 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),contracts=require("./source-6-2-border-mission3-contracts.js");
 const id="6-2-u3-e2-mission-3",out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL);
-assert(out&&/^E:[/\\]/i.test(out));assert(["127.0.0.1","localhost"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));assert(["127.0.0.1","localhost"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 async function main(){
   const {chromium}=require("playwright"),browser=await chromium.launch({headless:true,executablePath:process.env.HSE_CHROMIUM_EXECUTABLE}),report={status:"running",states:[],negative:[],actualInventoryTested:true};
   try{

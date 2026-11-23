@@ -35,5 +35,5 @@ for(const patch of[{sha256:"wrong"},{kind:"after-three-directions"},{heightColum
  const bad=setup(presentation,{image:file=>({...assets.image(file),...patch})}).api;assert.equal(bad.generate(type,1,0,1,0),null);report.rejections++;
 }
 report.status="passed-candidate-wrapper";
-const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(/^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,"questions-audit.json"),JSON.stringify(report,null,2)+"\n");}
+const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,"questions-audit.json"),JSON.stringify(report,null,2)+"\n");}
 console.log(JSON.stringify(report));

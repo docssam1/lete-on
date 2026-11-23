@@ -1,5 +1,48 @@
 "use strict";
 
+// 2026-11-23 감사 정비: 지금 앱은 index.html 순서로 원문 풀·유사문항 래퍼를 generators.js 위에 덧씌워 문제를 만든다.
+// generators.js만으로는 만들 수 없게 된 유형은 앱과 같은 순서로 불러온 생성 경로에서 빈 값·깨진 값을 확인하고,
+// 이 감사의 세부 검산은 지금도 generators.js의 같은 생성기를 쓰는 유형에만 적용한다.
+function loadAppGenerators() {
+  const fs = require("node:fs"), path = require("node:path"), vm = require("node:vm");
+  const html = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+  const scripts = [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(match => match[1].replace(/^\.\//, "").replace(/\?.*$/, ""))
+    .filter(file => !["app.js", "bank-access.js"].includes(file));
+  const context = { console };
+  context.window = context;
+  vm.createContext(context);
+  for (const file of scripts) vm.runInContext(fs.readFileSync(path.join(__dirname, file), "utf8"), context, { filename: file });
+  return context;
+}
+function appTypesOf(appContext, unitId) {
+  return appContext.HSE_CURRICULUM.semesters.flatMap(semester => semester.units).filter(unit => unit.id === unitId)
+    .flatMap(unit => unit.subunits.flatMap(subunit => subunit.types));
+}
+function usesLegacyGenerator(bareApi, appApi, type) {
+  const key = bareApi.generatorKey(type);
+  return Boolean(key) && appApi.generatorKey(type) === key && Boolean(bareApi.generate(type, 0, 0, 1, type.variant ?? 0));
+}
+function appVariants(type) {
+  return type.generationMode === "fixed-verified-pool"
+    ? Array.from({ length: Math.max(1, Number(type.verifiedVariantCount) || 0) }, (_, index) => index)
+    : [type.variant ?? 0];
+}
+function checkAppGenerated(appApi, type, difficulty, seed, variant) {
+  const generated = appApi.generate(type, 0, difficulty, seed, variant);
+  if (!generated || typeof generated.prompt !== "string" || !generated.prompt.trim() || generated.answer === undefined || generated.answer === null
+    || String(generated.answer) === "" || !generated.solution) throw new Error("앱 생성 경로: 문제·정답·풀이 중 빠진 값이 있습니다.");
+  if (/NaN|Infinity|undefined/.test(`${generated.prompt}${generated.answer}${generated.solution}`)) throw new Error("앱 생성 경로: 계산값이 깨졌습니다.");
+  return generated;
+}
+function auditAppTypes(appApi, types, failures, seeds = 20) {
+  let count = 0;
+  for (const type of types) for (const variant of appVariants(type)) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= seeds; seed += 1) {
+    try { checkAppGenerated(appApi, type, difficulty, seed, variant); count += 1; }
+    catch (error) { failures.push(`${type.id} / 앱 경로 / 변형 ${variant} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`); }
+  }
+  return count;
+}
+
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
@@ -14,6 +57,13 @@ const types = unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   unitName: unit.name,
   subunitName: subunit.name
 })));
+
+const appContext = loadAppGenerators();
+const appApi = appContext.HSE_GENERATORS;
+const appTypeById = new Map(appTypesOf(appContext, unit.id).map(type => [type.id, type]));
+const legacyTypes = types.filter(type => appTypeById.has(type.id) && usesLegacyGenerator(api, appApi, appTypeById.get(type.id)));
+const legacyIds = new Set(legacyTypes.map(type => type.id));
+const appOnlyTypes = [...appTypeById.values()].filter(type => !legacyIds.has(type.id));
 
 const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
 const attribute = (prompt, name) => {
@@ -136,7 +186,7 @@ function expectedAnswer(generated) {
 const visualKinds = new Set(["decimal-l-area", "exact-three-overlap-squares"]);
 const failures = [];
 let generatedCount = 0;
-for (const type of types) {
+for (const type of legacyTypes) {
   for (const difficulty of [-1, 0, 1]) {
     for (let seed = 1; seed <= 350; seed += 1) {
       try {
@@ -163,10 +213,11 @@ for (const type of types) {
   }
 }
 
+const appCount = auditAppTypes(appApi, appOnlyTypes, failures);
 if (failures.length) {
   console.error(`소수의 곱셈 감사 실패: ${failures.length}건`);
   console.error(failures.slice(0, 40).join("\n"));
   process.exit(1);
 }
 
-console.log(`소수의 곱셈 감사 통과: ${types.length}유형, ${generatedCount}개 생성`);
+console.log(`소수의 곱셈 감사 통과: generators.js 생성기 ${legacyTypes.length}유형 ${generatedCount}개 검산 · 앱 래퍼 ${appOnlyTypes.length}유형 ${appCount}개 생성 확인`);

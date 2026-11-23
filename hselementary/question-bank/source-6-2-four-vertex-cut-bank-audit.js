@@ -3,7 +3,7 @@ const fs=require("node:fs"),path=require("node:path"),assert=require("node:asser
 const contracts=require("./source-6-2-four-vertex-cut-contracts.js"),presentation=require("./source-6-2-four-vertex-cut-presentation.js");
 const out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL),id="6-2-u3-e4-example-2",key="sourceGrade6SecondSpaceE4FourVertexCut";
 const candidate=process.env.HSE_FOUR_VERTEX_CUT_CANDIDATE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));
+assert(out&&path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));
 fs.mkdirSync(out,{recursive:true});
 const sha=b=>crypto.createHash("sha256").update(b).digest("hex");
 const files=["index.html","app.js","source-inventory-grade6.js","source-6-2-four-vertex-cut-models.js","source-6-2-four-vertex-cut-assets.js","source-6-2-four-vertex-cut-contracts.js","source-6-2-four-vertex-cut-presentation.js","source-6-2-four-vertex-cut-questions.js","source-6-2-four-vertex-cut-questions.css"];
@@ -38,7 +38,7 @@ async function inspect(root,variant,level,mode){
 async function run(){
  const{chromium}=require("playwright"),browser=await chromium.launch({headless:true,executablePath:process.env.HSE_CHROMIUM_EXECUTABLE}),report={status:"running",candidateOverlay:candidate,runtimeHashes:hashes(),states:[],pdfs:[],picker:[],negative:[],browserErrors:[],failedResponses:[]};
  try{
-  const page=await browser.newPage(),errors=report.browserErrors,network=report.failedResponses;page.on("pageerror",e=>errors.push(e.message));page.on("requestfailed",r=>{if(new URL(r.url()).origin===base.origin)network.push({url:r.url(),failure:r.failure()});});page.on("response",r=>{if(r.status()>=400&&new URL(r.url()).origin===base.origin)network.push(r.url());});
+  const page=await browser.newPage(),errors=report.browserErrors,network=report.failedResponses;page.on("pageerror",e=>errors.push(e.message));page.on("requestfailed",r=>{/* 2026-11-22부터 앱이 인쇄 쪽 나눔을 재려고 쪽 사본을 잠깐 만들었다 지우므로(app.js rebalancePrintPages) 사본 그림 요청이 net::ERR_ABORTED로 끊긴다. 화면 그림은 따로 complete·크기를 검사하므로 이 취소만 뺀다. */if(new URL(r.url()).origin===base.origin&&r.failure()?.errorText!=="net::ERR_ABORTED")network.push({url:r.url(),failure:r.failure()});});page.on("response",r=>{if(r.status()>=400&&new URL(r.url()).origin===base.origin)network.push(r.url());});
   await page.addInitScript(()=>addEventListener("error",event=>{(window.__sourceLoadErrors||=[]).push({message:event.message,api:typeof window.HSE_GENERATORS,generate:typeof window.HSE_GENERATORS?.generate,key:typeof window.HSE_GENERATORS?.generatorKey,names:Array.isArray(window.HSE_GENERATORS?.names),planePresentation:typeof window.HSE_SOURCE_GRADE6_PLANE_CUT_PRESENTATION?.renderBank,planeAssets:typeof window.HSE_SOURCE_GRADE6_PLANE_CUT_ASSETS?.image});}));
   await page.route("**/*",r=>new URL(r.request().url()).origin===base.origin?r.continue():r.abort());
   const overlay=r=>r.fulfill({contentType:"application/javascript",body:fs.readFileSync(path.join(__dirname,"source-inventory-grade6.js"),"utf8")+`\nObject.assign(window.HSE_SOURCE_INVENTORY_GRADE6.items.find(i=>i.sourceItemId==='${id}'),{reviewLocked:false,reviewReason:'',generatorKey:'${key}',variant:0,verifiedVariantCount:3,answerVisualStatus:'verified',sourceConditionsClarified:true,originalSourceReleaseStatus:'locked'});`});

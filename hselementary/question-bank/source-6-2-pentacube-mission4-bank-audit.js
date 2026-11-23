@@ -1,7 +1,7 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto"),assert=require("node:assert/strict");
 const contracts=require("./source-6-2-pentacube-mission4-contracts.js"),assets=require("./source-6-2-pentacube-mission4-assets.js"),presentation=require("./source-6-2-pentacube-mission4-presentation.js");
-const id=contracts.sourceItemId,key="sourceGrade6SecondSpaceE4FourCubeAddition",other="6-2-u3-e4-example-4",candidate=process.env.HSE_PENTACUBE_CANDIDATE!=="0",mixed=process.env.HSE_PENTACUBE_MIXED==="1",out=process.env.HSE_SCREENSHOT_DIR,base=new URL("http://127.0.0.1:8909/hselementary/question-bank/");assert(out&&/^E:[/\\]/i.test(out));
+const id=contracts.sourceItemId,key="sourceGrade6SecondSpaceE4FourCubeAddition",other="6-2-u3-e4-example-4",candidate=process.env.HSE_PENTACUBE_CANDIDATE!=="0",mixed=process.env.HSE_PENTACUBE_MIXED==="1",out=process.env.HSE_SCREENSHOT_DIR,base=new URL("http://127.0.0.1:8909/hselementary/question-bank/");assert(out&&path.isAbsolute(out));
 process.env.HSE_BASE_URL??=base.href;
 const modules=["models.js","contracts.js","assets.js","presentation.js","questions.js"].map(s=>`source-6-2-pentacube-mission4-${s}`),files=["index.html","app.js","source-inventory-grade6.js","source-6-2-painted-mission3-presentation.js","source-6-2-cube-addition-questions.css",...modules];
 const sha=bytes=>crypto.createHash("sha256").update(bytes).digest("hex"),hashes=()=>Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.join(__dirname,f)))]));

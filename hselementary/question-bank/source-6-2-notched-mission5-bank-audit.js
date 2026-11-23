@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto");
 const contracts=require("./source-6-2-notched-mission5-contracts.js"),presentation=require("./source-6-2-notched-mission5-presentation.js");
 const id="6-2-u3-e2-mission-5",key="sourceGrade6SecondSpaceE2NotchedVisibility",out=process.env.HSE_SCREENSHOT_DIR,base=new URL(process.env.HSE_BASE_URL),candidate=process.env.HSE_NOTCHED_MISSION5_CANDIDATE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 const sha=b=>crypto.createHash("sha256").update(b).digest("hex"),files=["index.html","app.js","source-inventory-grade6.js","source-6-2-painted-mission3-presentation.js","source-6-2-notched-mission5-contracts.js","source-6-2-notched-mission5-presentation.js","source-6-2-notched-mission5-questions.js","source-6-2-notched-mission5-questions.css"],hashes=()=>Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.join(__dirname,f)))]));
 async function inspect(root,variant,level,mode){
   const q=contracts.generate(id,variant,level),render=presentation.render(id,variant,level);

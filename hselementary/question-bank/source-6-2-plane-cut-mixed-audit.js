@@ -1,7 +1,7 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto");
 const {inspect}=require("./source-6-2-plane-cut-bank-audit.js"),base=new URL(process.env.HSE_BASE_URL),out=process.env.HSE_SCREENSHOT_DIR,candidate=process.env.HSE_PLANE_CUT_CANDIDATE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 const id="6-2-u3-e4-exploration",sha=b=>crypto.createHash("sha256").update(b).digest("hex"),files=["index.html","app.js","source-inventory-grade6.js","source-6-2-plane-cut-questions.css","source-6-2-plane-cut-questions.js"];
 const hashes=()=>Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.join(__dirname,f)))]));
 async function run(){

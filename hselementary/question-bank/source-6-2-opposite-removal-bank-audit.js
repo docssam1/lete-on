@@ -3,7 +3,7 @@ const fs=require("node:fs"),path=require("node:path"),assert=require("node:asser
 const contracts=require("./source-6-2-opposite-removal-contracts.js");
 const id=contracts.sourceItemId,key="sourceGrade6SecondSpaceE4OppositeFaceRemoval",other="6-2-u3-e4-example-2";
 const base=new URL(process.env.HSE_BASE_URL),out=process.env.HSE_SCREENSHOT_DIR,candidate=process.env.HSE_REMOVAL_CANDIDATE==="1",mixed=process.env.HSE_REMOVAL_MIXED==="1",fixture=process.env.HSE_RENDER_FIXTURE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));assert(["localhost","127.0.0.1"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 const files=["index.html","app.js","source-inventory-grade6.js","source-6-2-painted-mission3-presentation.js",...["models.js","assets.js","contracts.js","presentation.js","questions.js","questions.css"].map(s=>`source-6-2-opposite-removal-${s}`)];
 const hashes=()=>Object.fromEntries(files.map(f=>[f,crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,f))).digest("hex")]));
 async function inspect(root,variant,level,mode){
@@ -41,7 +41,7 @@ async function run(){
    if(relative.startsWith("..")||path.isAbsolute(relative)||!fs.existsSync(file)||!fs.statSync(file).isFile())return route.fulfill({status:404,body:"Not found"});
    const contentType={".js":"application/javascript",".html":"text/html; charset=utf-8",".css":"text/css",".png":"image/png",".woff2":"font/woff2"}[path.extname(file)]||"application/octet-stream";return route.fulfill({contentType,body:fs.readFileSync(file)});
   });
-  const loaded=()=>page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#worksheet img,#typePreviewPopover img')].map(img=>img.decode()));});
+  const loaded=()=>page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#worksheet img,#typePreviewPopover img,#solutionViewerContent img')/* 2026-11-23: 전체 해설 창 그림도 다 불러온 뒤 검사 */].map(img=>img.decode()));});
   async function check(mode,level){
    const selector=mode==="problem"?"#problemView .question-item":mode==="solution"?"#solutionView .solution-item":"#answerKeyView .answer-key-visuals>figure",items=await page.locator(selector).all();assert.equal(items.length,mixed?6:3);const own=[],foreign=[];
    for(const item of items){if(await item.locator("[data-opposite-removal-context]").count()){

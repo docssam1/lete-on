@@ -753,8 +753,10 @@ for (const type of types) {
       check(Boolean(generated?.prompt && generated.answer && generated.solution), `${context}: 결과가 비어 있습니다.`);
       check(!/NaN|undefined|Infinity/.test(`${generated.prompt}${generated.answer}${generated.solution}`), `${context}: 계산값이 깨졌습니다.`);
       if (sourceItemPattern.test(type.sourceItemId)) {
-        const visibleGeneratorText = `${generated.prompt}${generated.solution}`.replace(/<[^>]*>/g, "");
-        check(!/\d+\s*\/\s*\d+/.test(visibleGeneratorText), `${context}: 세로 분수 도우미 대신 슬래시 분수 문자열이 보입니다.`);
+        // 2026-11-22부터 문장 속 "a/b"는 앱(app.js·math-notation.js)이 세로 분수로 바꿔 보여 준다. 앱이 바꾸지 않는 SVG 글자만 슬래시 분수를 막는다.
+        const svgText = [...`${generated.prompt}${generated.solution}`.matchAll(/<svg\b[\s\S]*?<\/svg>/g)]
+          .flatMap(match => [...match[0].matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)].map(label => label[1].replace(/<[^>]*>/g, ""))).join(" ");
+        check(!/\d+\s*\/\s*\d+/.test(svgText), `${context}: SVG 그림 글자에 세로 분수 대신 슬래시 분수 문자열이 보입니다.`);
         check(generated.prompt.includes('class="math-fraction"'), `${context}: 문제에 구조화된 분수 표시가 없습니다.`);
       }
       if (variedSourceItemPattern.test(type.sourceItemId)) {

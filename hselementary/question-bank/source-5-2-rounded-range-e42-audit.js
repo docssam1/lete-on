@@ -26,8 +26,8 @@ assert(fs.existsSync(image), "Page 8 source render is needed");
 const ocr = fs.readFileSync(ocrPath, "utf8");
 for (const text of ["4-2", "6으로 나눈 몫", "50", "4로 나눈 몫", "70", "이상과 미만"]) assert(ocr.includes(text), `OCR must include ${text}`);
 
-const module = window.HSE_SOURCE_52_ROUNDED_RANGE_E42;
-assert(module && module.install(window));
+const sourceModule = window.HSE_SOURCE_52_ROUNDED_RANGE_E42; // CommonJS의 module과 이름이 겹쳐 문법 오류가 나므로 이름을 바꿨다(2026-11-23).
+assert(sourceModule && sourceModule.install(window));
 const type = window.HSE_CURRICULUM.semesters.find(s => s.id === "5-2").units[0].subunits[10].types[2];
 assert.equal(type.sourceItemId, id);
 assert.equal(type.reviewLocked, false);
@@ -69,5 +69,6 @@ for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1
   assert(q.solution.includes(q.answer));
   observations.push({ variant, difficulty, answer: q.answer, count: intersection.length });
 }
-assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2041);
+// 전체 유형 수는 원문 유형이 공개될 때마다 늘어난다(2026-11-23 기준 3006개). 예전 2041개보다 줄지 않았는지만 본다.
+assert(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length >= 2041);
 console.log(JSON.stringify({ status: "passed", id, sourcePdfPage: 8, sourcePrintedPage: 10, originalAnswer: "270 이상 300 미만", exhaustiveOriginalCandidates: allSolutions.length, syntheticConfigurations: observations.length, observations }, null, 2));

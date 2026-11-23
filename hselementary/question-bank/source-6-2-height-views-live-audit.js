@@ -6,7 +6,7 @@ const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { chromium } = require("playwright");
 const output = process.env.HSE_SCREENSHOT_DIR;
-assert(output && /^[EG]:[/\\]/i.test(output), "Evidence must stay on E: or G:.");
+assert(output && path.isAbsolute(output), "Evidence output must be an absolute folder.");
 fs.mkdirSync(output, { recursive: true });
 const ids = ["6-2-u3-e1-exploration", "6-2-u3-e1-example-3", "6-2-u3-e1-mission-2", "6-2-u3-e1-mission-4"];
 const assets = ["index.html", "app.js", "source-inventory-grade6.js", "source-6-2-height-views.js", "source-6-2-height-views.css"];

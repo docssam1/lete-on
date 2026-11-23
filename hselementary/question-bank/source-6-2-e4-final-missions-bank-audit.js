@@ -1,7 +1,7 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto"),presentation=require("./source-6-2-e4-final-missions-presentation.js");
 const out=process.env.HSE_SCREENSHOT_DIR,base=new URL("http://127.0.0.1:8909/hselementary/question-bank/"),candidate=process.env.HSE_FINAL_MISSIONS_CANDIDATE!=="0",ids=Object.keys(presentation.profiles),keys=["sourceGrade6SecondSpaceE4RectangularColoredRemoval","sourceGrade6SecondSpaceE4TransparentRightView"];
-assert(out&&/^E:[/\\]/i.test(out));
+assert(out&&path.isAbsolute(out));
 const modules=["source-6-2-colored-removal-mission5-models.js","source-6-2-colored-removal-mission5-contracts.js","source-6-2-transparent-mission6-models.js","source-6-2-transparent-mission6-contracts.js","source-6-2-transparent-mission6-figures.js","source-6-2-e4-final-missions-assets.js","source-6-2-e4-final-missions-presentation.js","source-6-2-e4-final-missions-questions.js"],files=["index.html","app.js","source-inventory-grade6.js","source-6-2-painted-mission3-presentation.js","source-6-2-e4-final-missions-questions.css",...modules],sha=b=>crypto.createHash("sha256").update(b).digest("hex"),hashes=()=>Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.join(__dirname,f)))]));
 async function inspect(area,level,mode){
  const owners=area.locator(`[data-final-mission-owner="${mode==="problem"?"problem":"teacher"}"]`);assert.equal(await owners.count(),4);

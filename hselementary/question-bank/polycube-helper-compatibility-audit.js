@@ -1,6 +1,6 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto"),assert=require("node:assert/strict");
-const out=process.env.HSE_SCREENSHOT_DIR;assert(out&&/^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});
+const out=process.env.HSE_SCREENSHOT_DIR;assert(out&&path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});
 require("./runtime-availability-audit.js");
 const api=window.HSE_GENERATORS,types=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(s=>s.types))).filter(t=>!t.reviewLocked&&api.generatorKey(t));
 const hash=bytes=>crypto.createHash("sha256").update(bytes).digest("hex"),records=[];

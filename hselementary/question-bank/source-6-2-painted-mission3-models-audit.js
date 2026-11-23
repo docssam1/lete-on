@@ -1,7 +1,7 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict");
 const api=require("./source-6-2-painted-mission3-models.js"),out=process.env.HSE_MISSION3_EVIDENCE_DIR;
-assert(out && /^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});
+assert(out && path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});
 const compare=H=>{
   const histogram=Array(7).fill(0),layers=Array.from({length:3},()=>H.map(row=>row.map(()=>null)));let contacts=0,total=0;
   for(let z=0;z<H.length;z++)for(let x=0;x<H[z].length;x++){

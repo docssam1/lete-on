@@ -1,5 +1,48 @@
 "use strict";
 
+// 2026-11-23 감사 정비: 지금 앱은 index.html 순서로 원문 풀·유사문항 래퍼를 generators.js 위에 덧씌워 문제를 만든다.
+// generators.js만으로는 만들 수 없게 된 유형은 앱과 같은 순서로 불러온 생성 경로에서 빈 값·깨진 값을 확인하고,
+// 이 감사의 세부 검산은 지금도 generators.js의 같은 생성기를 쓰는 유형에만 적용한다.
+function loadAppGenerators() {
+  const fs = require("node:fs"), path = require("node:path"), vm = require("node:vm");
+  const html = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+  const scripts = [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(match => match[1].replace(/^\.\//, "").replace(/\?.*$/, ""))
+    .filter(file => !["app.js", "bank-access.js"].includes(file));
+  const context = { console };
+  context.window = context;
+  vm.createContext(context);
+  for (const file of scripts) vm.runInContext(fs.readFileSync(path.join(__dirname, file), "utf8"), context, { filename: file });
+  return context;
+}
+function appTypesOf(appContext, unitId) {
+  return appContext.HSE_CURRICULUM.semesters.flatMap(semester => semester.units).filter(unit => unit.id === unitId)
+    .flatMap(unit => unit.subunits.flatMap(subunit => subunit.types));
+}
+function usesLegacyGenerator(bareApi, appApi, type) {
+  const key = bareApi.generatorKey(type);
+  return Boolean(key) && appApi.generatorKey(type) === key && Boolean(bareApi.generate(type, 0, 0, 1, type.variant ?? 0));
+}
+function appVariants(type) {
+  return type.generationMode === "fixed-verified-pool"
+    ? Array.from({ length: Math.max(1, Number(type.verifiedVariantCount) || 0) }, (_, index) => index)
+    : [type.variant ?? 0];
+}
+function checkAppGenerated(appApi, type, difficulty, seed, variant) {
+  const generated = appApi.generate(type, 0, difficulty, seed, variant);
+  if (!generated || typeof generated.prompt !== "string" || !generated.prompt.trim() || generated.answer === undefined || generated.answer === null
+    || String(generated.answer) === "" || !generated.solution) throw new Error("앱 생성 경로: 문제·정답·풀이 중 빠진 값이 있습니다.");
+  if (/NaN|Infinity|undefined/.test(`${generated.prompt}${generated.answer}${generated.solution}`)) throw new Error("앱 생성 경로: 계산값이 깨졌습니다.");
+  return generated;
+}
+function auditAppTypes(appApi, types, failures, seeds = 20) {
+  let count = 0;
+  for (const type of types) for (const variant of appVariants(type)) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= seeds; seed += 1) {
+    try { checkAppGenerated(appApi, type, difficulty, seed, variant); count += 1; }
+    catch (error) { failures.push(`${type.id} / 앱 경로 / 변형 ${variant} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`); }
+  }
+  return count;
+}
+
 // Regression checks for 5-1 unit 2 answers. Every type is generated at all three difficulty levels.
 global.window = {};
 require("./generators.js");
@@ -176,8 +219,18 @@ function verify(generated, type, context) {
   }
 }
 
+// 2026-11-23 확인: 이 세부 검산이 겨냥한 이름별 심화 생성기는 generators.js에서 빠졌고, 예전 이름은 이제 기본 생성기
+// (primeFactor·factors)로만 이어지거나 아무 생성기에도 이어지지 않는다. 지금 앱의 5-1-u2 유형은 원문 항목 유형(factorMultipleE1~E8 등)이다.
+// 그래서 예전 문장 형식에 맞춘 세부 검산(verify)은 대상이 없고, 지금 앱 유형은 앱과 같은 생성 경로에서 빈 값·깨진 값을 확인한다.
+const routedTypes = [];
+const appContext = loadAppGenerators();
+const appApi = appContext.HSE_GENERATORS;
+const currentTypes = appTypesOf(appContext, "5-1-u2");
+const appFailures = [];
+const appCount = auditAppTypes(appApi, currentTypes, appFailures);
+check(appFailures.length === 0, appFailures.slice(0, 20).join("\n"));
 let generatedCount = 0;
-for (const type of types) {
+for (const type of routedTypes) {
   for (const difficulty of [-1, 0, 1]) {
     for (let seed = 1; seed <= 350; seed += 1) {
       const generated = api.generate(type, 0, difficulty, seed, seed % 9);
@@ -188,4 +241,4 @@ for (const type of types) {
   }
 }
 
-console.log(`약수와 배수 감사 통과: 12유형, ${generatedCount}개 생성`);
+console.log(`약수와 배수 감사 통과: 지금 앱 5-1-u2 ${currentTypes.length}유형 ${appCount}개 생성 확인(예전 이름별 세부 검산 대상 생성기는 없음)`);
