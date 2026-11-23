@@ -34,6 +34,8 @@
   .print-page.print-page--four-up .question-prompt svg { width:auto !important; max-width:100%; max-height:150px; }
   /* 2026-11-23 납작하고 넓은 6-2 소수의 나눗셈 도형은 150px 높이 제한에서 이름표 글자가 8px까지 작아져 인쇄에서 읽기 어려워 높이를 넓힌다. */
   .print-page.print-page--four-up .question-prompt svg.source62-overlap-height, .print-page.print-page--four-up .question-prompt svg.source62-four-rect { max-height:230px; }
+  /* 2026-11-24: 4-2 평행선 각 그림은 150px 제한에서 너비 238px로 작아져 각도 글자가 작다. 칸에 여유가 있어 190px까지 키운다. */
+  .print-page.print-page--four-up .question-prompt svg.source42-pa { max-height:190px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u4-practice-10-original"] svg { max-height:210px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-mission-5-original"] svg { max-height:190px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-mission-4-original"] svg { max-height:190px; }

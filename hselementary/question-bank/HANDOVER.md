@@ -1,3 +1,33 @@
+## 2026-11-24 — 풀이 A4 위아래 여백 빠짐 53곳 고침, 6학년 목록 감사 정비 (Claude Code / Opus 5.5, Mac)
+
+- 6학년 전체 목록 감사를 main(4fa888e30)에서 다시 돌렸다: source-inventory-audit, source-inventory-grade6-audit(633유형), public-inventory-review-reason(962유형), browser-source-release(전체 3006유형 생성 가능·검수 대기 0, 세 난이도 9018회 생성), grades-5-2-to-6(905), review-reason-gate, 52-locked-practice-gate 통과.
+- 인쇄 오류 수정: 11-05 #1336에서 풀이 쪽 여백을 `@page bank-answer { margin: 12mm 0 }`로 옮기고 풀이 쪽 안쪽 여백을 0으로 했는데, 유형별 이름 붙인 풀이 쪽 53개(`page: source61VolumeE4Answer` 등, 5-1·6-1·6-2 분수/소수 나눗셈·부피 활용 등)는 `@page` 정의가 없어 기본 `@page { margin: 0 }`이 적용되었다 → 풀이가 종이 위끝·아래끝에 붙어 인쇄됨. styles.css에 53개 이름을 bank-answer와 같은 여백(12mm 0)으로 정의(#1336 이전의 안쪽 여백 12mm와 같은 쓸 수 있는 높이). styles.css ?v=20261124-answer-page-margin.
+- 재발 방지 감사 `print-named-page-audit.js`(정적): CSS·HTML에서 쓰는 `page: 이름`마다 `@page 이름`이 있는지 검사. 고치기 전 styles.css로는 실패함을 확인.
+- 감사 정비:
+  - source-inventory-grade6-browser-audit: "기존 생성 문제" 묶음이 9b418f77b에서 "창작 연습 (원본 외 문제)"로 이름이 바뀐 것을 인정(정적 감사는 이미 두 이름 인정). 633유형 모두 생성 가능·잠금 0, 화면 28장·A4 2개 통과.
+  - source-inventory-grade6-e4-browser-audit·source-6-1-volume-e4-browser-audit: Pillow 12 전용 `get_flattened_data`가 없으면 `getdata()`를 쓰게 함(Mac Pillow 11.3). 글자 높이 비교에 1e-3px 허용(실측 10.9999px가 11px 미만으로 잡히던 부동소수 오차).
+  - 두 E4 감사 모두 통과, A4 가장자리 잉크 0.
+- 53개 쪽 이름에 해당하는 A4 감사 55개를 다시 돌림(작업본·main 사본 비교, 안정적인 node 정적 서버 사용 — python http.server는 동시 요청에서 ERR_CONNECTION_RESET로 거짓 실패):
+  - 25개 통과, 30개는 main에서도 같은 실패(이번 여백 수정과 무관)였고 아래처럼 고쳐 모두 통과.
+  - 6-2 1단원 분수 나눗셈 감사 28개: 11-23 힌트 정책이 문제 문장을 되풀이하는 조건 정리 상자를 문제 화면에서 지워 "자료판이 화면 밖이거나 잘렸습니다"로 실패. 이 감사들은 생성기 계약 검사이므로 감사 서버가 problem-hint-policy.js를 빈 파일로 낸다(HSE_KEEP_HINT_POLICY=1이면 그대로). 정책 적용 학생 화면은 새 감사 `source-6-2-fraction-division-policy-browser-audit.js`가 본다(66유형, PC 세 난이도 정책 전후 비교: 지운 상자의 수·기호가 문제에 모두 남는지, 문항 수·물음·답 노출·넘침·콘솔 오류 / 모바일 390px 보통 난이도).
+  - 같은 28개: 탭을 누른 직후 `page.pdf()`를 부르면 비동기 쪽 나누기 보정(app.js rebalancePrintPages, 측정용 iframe) 도중 인쇄되어 가끔 빈 쪽이 낀 5쪽이 나왔다(e2-mission-6). 앱의 인쇄 버튼(printWorksheet)은 보정을 기다리므로 학생·선생님 인쇄에는 해당 없음. 감사도 측정용 iframe이 사라질 때까지 기다린 뒤 인쇄하게 함.
+  - source-6-1-surface-e1-browser-audit: 개념탐구(3×3×3에서 덜어 내기)·Mission 1(쌓기나무 8개)은 원문 문제가 하나로 정해져 세 고정 변형의 문제 문장이 같고 정답 그림 배치만 다르다. 앱이 같은 문장의 문항을 한 번만 내므로(11-22) 이 두 유형은 1문항을 기대. 1192개 고정 풀 유형 전체를 앱과 같은 시도 순서로 만들어 보니 서로 다른 문항이 3개 미만인 유형은 이 둘뿐.
+  - source-6-1-decimal-division-e1-mission3-browser-audit: playwright 경로를 HSE_PLAYWRIGHT_PATH로 받게 함.
+- 힌트 정책 보완(problem-hint-policy.js ?v=20261124-guided-steps, 사용자 지시 "원문에 없는 힌트 같은 거는 빼"):
+  - 6학년 원문 유형 쉬움 난이도의 풀이 안내 문단 `<p class="question-step" data-step-evidence="guided|guided-order">`(약 150유형)가 남아 있었다. '먼저 …세요.' 규칙이 마침표 뒤에서만 문장 첫머리를 알아봐서, 그림·조건 상자 바로 뒤에 붙은 안내는 놓쳤기 때문(예: 6-2-u1-e3-mission-4 "두 분수를 같은 분모로 나타낸 뒤, 두 분자의 공배수 중 가장 작은 수를 찾아보세요."). 그 문단을 통째로 지우고, 글자 이어 붙이기에 문단 경계(줄바꿈)를 넣어 상자 뒤에 붙은 '먼저 …세요.'·'답을 구한 뒤 …세요.'도 지운다. 이 안내 안에 있던 값이 안 채워진 틀 문자열(`${data.prismHeight}` 6-1-u2-e1-exploration-1, `${pools.divisor}` 6-1-u3-e1-example-3)도 함께 사라졌다.
+  - HINT_SENTENCES 추가: 6-2-u2-e1-example-2 "㉠과 ㉡을 각각 구한 뒤 비교하세요.", 6-2-u2-e1-example-3 "나×나의 값을 먼저 찾아보세요.", 5-1-u2-t2-2(어려움) "최대공약수를 먼저 구하면 공약수를 빠뜨리지 않을 수 있습니다."
+  - 정책의 빈 요소 정리(dropEmpty)가 쉼표·마침표만 든 요소까지 지워, 6-1-u3-e1-mission-4 세 난이도 문제에서 구분 글자 2개가 사라져 있었다(서비스 중이던 오류) → 공백만 남은 요소만 지움.
+  - 전 유형(3,006유형 × 3난이도 × 변형 3 = 26,910문항) 정책 전후 대조: 바뀐 문항 612개, 지운 문장 166종 모두 풀이 안내, 물음 문장이 빠진 문항 0, 쉼표·마침표가 사라진 문항 0.
+  - 사용자 결정(2026-11-24 "모두 지움"): 어려움 난이도의 확인·설명 요구 문단 `.question-step[data-step-evidence="independent-reasoning"]`("…다시 넣어 확인하세요", "…까닭을 설명해 보세요" 등)도 지움. HINT_SENTENCES에 6-2-u2-e1-example-2·3 어려움 방법 지시("…직접 구하지 않고 …비교해 보세요", "…구하지 않고 풀어 보세요") 추가. 정책 전후 대조: 바뀐 문항 807개(이전 정책 대비), 물음 빠짐 0, 쉼표·마침표 손실 0. ?v=20261124-steps-all.
+  - 그대로 둔 것: 4·5학년 창작 연습의 과제 문장("곱하기 쉬운 수끼리 먼저 묶어 계산하세요", 풀이 과정 쓰기 요구)과 5-2 어려움의 물음 속 설명 요구("…왜 상자가 하나 더 필요한지도 설명하세요")는 물음 자체라 둠.
+  - 6-2 1단원 분수 나눗셈 browser 감사 48개와 6-1 각기둥·각뿔 e1~e4: 생성기 계약 감사로 정책을 끄고(HSE_KEEP_HINT_POLICY=1이면 켬), 인쇄 전 쪽 나누기 보정 완료를 기다림.
+  - 학생 화면 감사 `source-6-2-fraction-division-policy-browser-audit.js`: 같은 시드로 정책 전후 문항을 짝지어 지운 조건 상자의 수·기호가 문제에 남는지 본다(□ 빈칸 표시는 정보 아님). 사람이 풀이 단서로 판단해 지운 상자 4유형(e2-example-4 1시간당 비율, e2-mission-4 2월 28일, e3-mission-6 "2부터 9까지", e5-example-1 하루 24시간)은 REVIEWED_HINT_BOARDS에 이유와 함께 둔다.
+- 그 밖에 main에서도 실패하던 감사 정리:
+  - source-6-1-prisms-pyramids-e1/e3-browser-audit: 생성기 계약 감사로 정책을 끔. e3은 인쇄 전 쪽 나누기 보정 완료를 기다림.
+  - source-6-2-fraction-division-e4-example4-browser-audit: 전체 화면 캡처(fullPage)를 찍은 같은 페이지에서 인쇄하면 풀이 첫 쪽이 제목만 남았다(정책과 무관, 캡처를 빼면 정상). 새 페이지에서 인쇄. 앱의 실제 인쇄(정책 켬)는 풀이 1쪽에 내용이 정상.
+  - source-4-2-parallel-angle-browser-audit: Mac은 HSE_PDFJS_PATH=~/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pdfjs-dist/legacy/build/pdf.mjs 필요. 4문항(2×2) 인쇄에서 평행선 그림이 150px 높이 제한으로 너비 238px까지 작아져 기준(280×140) 미달 → four-up-print.css에서 svg.source42-pa만 190px(너비 302px)로(칸 여유 있음, ?v=20261124-pa190).
+  - source-4-2-parallel-angle-chain-one-browser-audit: 4-2-u4-e3-example-3-4(25°·23°)·mission-4(20°)의 각도 글자가 다른 선분(정사각형 변 등)에 실제로 닿아 있었다(그 각의 두 변만 피하도록 놓였기 때문). source-4-2-parallel-angle-chain-one.js에서 글자 자리가 다른 선분·꼭짓점·글자와 겹치면 호 가운데 근처 빈자리에 글자를 두고 지시선으로 잇는다(?v=20261124-label-clear). 화면으로 확인함.
+
 ## 2026-11-23 — 힌트 정책 오삭제 3건·쌓기나무 풀이 A4 고침, Mac 감사 정리 (Claude Code / Opus 5.5, Mac)
 
 - problem-hint-policy.js가 문제 내용까지 지우던 3가지를 고쳤다. 정책 적용 전후 전 유형(2,990유형 × 3난이도 × 변형 3) 문장을 대조해 바뀐 곳이 아래 6개 유형-난이도뿐임을 확인했다.
