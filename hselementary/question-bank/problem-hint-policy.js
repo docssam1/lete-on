@@ -878,6 +878,11 @@
         for (const index of rule.labels) if (texts[index]) drop.push(texts[index]);
       }
     }
+    // 범례 이름표를 지울 때는 바로 앞의 작은 색 네모(범례 칸)도 함께 지워 빈 칸이 남지 않게 합니다.
+    for (const node of [...drop]) {
+      const swatch = node.previousElementSibling;
+      if (node.tagName && node.tagName.toLowerCase() === "text" && /legend/.test(node.getAttribute("class") || "") && swatch && swatch.tagName.toLowerCase() === "rect" && Number(swatch.getAttribute("width")) <= 14) drop.push(swatch);
+    }
     for (const node of drop) if (node.parentNode) { node.remove(); changed += 1; }
     return changed;
   }
