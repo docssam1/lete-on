@@ -1175,9 +1175,11 @@
   .nm-mn-fill { display:flex; align-items:center; gap:8px; font-size:calc(15px * var(--ws-fs, 1)); }
   .nm-mn-fill .nm-w2-tex { font-size:calc(16px * var(--ws-fs, 1)); }
   /* 긴 식은 「=」 앞에서만 줄을 바꾼다 — 아무 데서나 꺾여 □ 하나만 다음 줄로 떨어졌다(2026-11-23). */
-  .nm-tex-chain { display:inline-flex; flex-wrap:wrap; align-items:center; column-gap:.3em; min-width:0; max-width:100%; }
+  /* 줄이 바뀌면 줄 사이를 띄운다(원장 2026-11-23 「식과 식 줄 바뀜 시 간격을 둬」) */
+  .nm-tex-chain { display:inline-flex; flex-wrap:wrap; align-items:center; column-gap:.3em; row-gap:.45em; min-width:0; max-width:100%; }
+  .nm-tex-groups { column-gap:.7em; }
   .nm-tex-chain > .nm-w2-tex { min-width:0; }
-  .nm-tex-lines { display:inline-flex; flex-direction:column; align-items:flex-start; row-gap:.15em; min-width:0; max-width:100%; }
+  .nm-tex-lines { display:inline-flex; flex-direction:column; align-items:flex-start; row-gap:.45em; min-width:0; max-width:100%; }
   .nm-mn-open { flex:0 0 auto; margin-top:8px; }
   .nm-mn-open-q { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; }
   /* 고등 과정 마법 노트는 내용이 길어 쪽 번호가 8px 잘렸다(C60 1회 14쪽, 2026-11-13) — 쓰는 줄 간격만 조금 줄인다. */
@@ -1594,7 +1596,7 @@
 .nm-w2-example { border-block:1px solid #ccd7d9; padding:7px 12px; margin-bottom:8px; background:#fff; }
 .nm-w2-ex-badge { display:block; font-size:calc(10px * var(--ws-fs, 1)); color:var(--w2-strong, #0E2C57); letter-spacing:2px;
   font-weight:900; margin-bottom:4px; }
-.nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:calc(14px * var(--ws-fs, 1)); }
+.nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; column-gap:5px; row-gap:.45em; color:#c33; font-size:calc(14px * var(--ws-fs, 1)); }
 .nm-w2-ex-arrow { color:#c33; }
 .nm-w2-ex-line { display:flex; align-items:center; gap:8px; font-size:calc(14px * var(--ws-fs, 1)); flex-wrap:wrap; }
 /* 답이 분수면 KaTeX 줄이 위아래로 커져 아랫줄(풀이 사슬)과 겹친다(2026-09-19, 중등 유리수
@@ -1681,6 +1683,8 @@
   .nm-neighbor-sum b { color:#2f6b4a; }
 .nm-w2-example > * + * { margin-top:4px; }
 .nm-w2-example .nm-w2-ex-line, .nm-w2-example .nm-w2-ex-steps { line-height:1.45; }
+/* 예시의 식 줄과 풀이 줄 사이도 띄운다 — 분수 줄끼리 붙어 보였다(2026-11-23) */
+.nm-w2-example .nm-w2-ex-line + .nm-w2-ex-steps, .nm-w2-example .nm-w2-ex-steps + .nm-w2-ex-line { margin-top:.75em; }
 .nm-w2-ex-ans, .nm-w2-ex-ans-tex { color:#c33; font-weight:700; }
 .nm-w2-ex-note { color:#c33; font-size:calc(11.5px * var(--ws-fs, 1)); margin-top:3px; }
 .nm-w2-ex-vp { display:inline-flex; flex-direction:column; font-family:monospace; font-size:14px; color:#000; }
@@ -1741,7 +1745,7 @@
   color:#000; margin-top:3px; padding-left:18px; }
 .nm-w2-guide-arrow { color:#000; }
 /* 한 줄 따라 풀기(2026-11-21) — (가) 사슬 → 문제 식을 한 줄에, 칸은 크게(WRITE_BOX_BIG) */
-.nm-w2-ex-steps.is-line { color:inherit; gap:10px; }
+.nm-w2-ex-steps.is-line { color:inherit; column-gap:10px; }
 .nm-w2-guide-item.is-line { display:flex; align-items:center; gap:10px; padding-top:6px; padding-bottom:6px; }
 .nm-w2-guide-item.is-line:first-of-type { padding-top:2px; }
 .nm-w2-guide-item.is-line .nm-w2-guide-q { flex:0 0 auto; align-items:center; }
@@ -3667,31 +3671,39 @@ function texChainHtml(tex){
   /* 맨 앞 \displaystyle 같은 크기 명령은 덩어리마다 다시 붙인다 — 빠지면 뒤 덩어리 분수가 작게 찍혔다 */
   const lead = (src.match(/^\s*((?:\\(?:displaystyle|textstyle)\s*)+)/) || ['', ''])[1];
   const s = src.slice(lead ? src.indexOf(lead) + lead.length : 0);
-  const lines = [[]];
+  /* 줄 → 묶음(⇒·→ 또는 「, 」로 나뉜 서로 다른 식) → 덩어리(「=」 앞) 세 단계. 넘치면 먼저 묶음 사이에서,
+     묶음 하나가 칸보다 길면 그 안의 「=」 앞에서 바뀐다(원장 2026-11-23 「연계되는 식이 아니면 바꿔도 돼 ·
+     등호 기준으로 · 화살표나」). 「1,000」처럼 뒤에 띄어쓰기가 없는 쉼표에서는 나누지 않는다. */
+  const lines = [[[]]];
   let depth = 0, from = 0;
-  const cut = (at, skip) => { const t = s.slice(from, at); if(t.trim()) lines[lines.length - 1].push(t); from = at + (skip || 0); };
+  const line = () => lines[lines.length - 1], group = () => line()[line().length - 1];
+  const cut = (at, skip) => { const t = s.slice(from, at); if(t.trim()) group().push(t); from = at + (skip || 0); };
+  const newGroup = () => { if(group().length) line().push([]); };
   for(let i = 0; i < s.length; i++){
     const ch = s[i];
     if(ch === '\\'){
-      if(s[i + 1] === '\\' && depth === 0){ cut(i, 2); lines.push([]); i++; continue; }
+      if(s[i + 1] === '\\' && depth === 0){ cut(i, 2); lines.push([[]]); i++; continue; }
       const m = /^[A-Za-z]+/.exec(s.slice(i + 1));
-      if(m){ if(depth === 0 && TEX_CHAIN_ARROWS.has(m[0]) && s.slice(from, i).trim()) cut(i); i += m[0].length; }
+      if(m){ if(depth === 0 && TEX_CHAIN_ARROWS.has(m[0]) && s.slice(from, i).trim()){ cut(i); newGroup(); } i += m[0].length; }
       else i++;
       continue;
     }
     if(ch === '{' || ch === '(' || ch === '[') depth++;
     else if(ch === '}' || ch === ')' || ch === ']') depth = Math.max(0, depth - 1);
     else if(ch === '=' && depth === 0 && s.slice(from, i).trim()) cut(i);
+    else if(ch === ',' && depth === 0 && /^(?:\s|\\[ ;,:]|\\q?quad(?![A-Za-z]))/.test(s.slice(i + 1)) && s.slice(i + 1).trim()){ cut(i + 1); newGroup(); }
   }
   cut(s.length);
-  const filled = lines.filter(l => l.length);
-  if(!filled.length || (filled.length === 1 && filled[0].length < 2)) return one(src);
+  const filled = lines.map(l => l.filter(g => g.length)).filter(l => l.length);
+  if(!filled.length || (filled.length === 1 && filled[0].length === 1 && filled[0][0].length < 2)) return one(src);
   /* 덩어리 끝·앞의 띄우기 명령(\  \; \, \quad)은 뺀다 — 「=4\ 」를 다듬다 「=4\」만 남아 수식이 깨졌다 */
   const SP = /^(?:\s|\\[ ;,:!]|\\q?quad(?![A-Za-z]))+|(?:\s|\\[ ;,:!]|\\q?quad(?![A-Za-z]))+$/g;
   const tidy = t => lead + t.replace(SP, '');
-  const chain = parts => parts.length < 2 ? one(tidy(parts[0]))
+  const grp = parts => parts.length < 2 ? one(tidy(parts[0]))
     : `<span class="nm-tex-chain">${parts.map(t => one(tidy(t))).join('')}</span>`;
-  return filled.length === 1 ? chain(filled[0]) : `<span class="nm-tex-lines">${filled.map(chain).join('')}</span>`;
+  const row = groups => groups.length < 2 ? grp(groups[0])
+    : `<span class="nm-tex-chain nm-tex-groups">${groups.map(grp).join('')}</span>`;
+  return filled.length === 1 ? row(filled[0]) : `<span class="nm-tex-lines">${filled.map(row).join('')}</span>`;
 }
 
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
@@ -6224,7 +6236,7 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
     const stepParts = (exLine || w2DropHeadRepeat(stepSrc.filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==String(p.tex||'').trim()), p.tex)).map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
       const t = ('blank' in s && /\\square/.test(String(s.tex||''))) ? fixNegSigns(texSubstituteAnswer(String(s.tex||''), s.blank)) : String(s.tex||'');
-      return `<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span>`;
+      return texChainHtml(texDisplay(t));
     });
     /* 이야기가 있는 문항은 답에 단위를 붙여 한 번 더(식만 보면 "8"이 무엇의 8인지 모른다) */
     const unitAns = (p.word && p.wordUnit)
