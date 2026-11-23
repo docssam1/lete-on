@@ -7,10 +7,33 @@ const C3 = (type) => [[type, "concept"], [type, "type"], [type, "advanced"]];
 const digits = (str, x, y, o = {}) => [...String(str)].map((c, i) => digital(c, x + i * 34, y, { w: 24, h: 44, width: 4.2, ...o })).join("");
 
 // ── 그림 ──
+// 교재(N30) 차례에 맞춘 그림: 디지털 숫자는 막대 숫자로(책상 위 식을 마주 앉은 두 사람이 보는 그림), 주사위는 눈으로,
+// 평행선은 평행 표시(›), 넓이는 모눈 위에서 잘라 옮기거나 똑같은 도형을 돌려 붙이는 흐름(→)으로.
+const parMark = (x, y) => line(P(x - 6, y - 5), P(x, y), { width: 1.8 }) + line(P(x - 6, y + 5), P(x, y), { width: 1.8 });
+const rightMark = (v, a1, s = 8, color = GREEN) => angleMark(v, a1, a1 + 90, s, "", { color });
+const askBox = (x, y, w = 48, h = 52) => rect(x, y, w, h, { fill: "#fff", color: MARK, width: 1.8, rx: 6, dash: "5 4" }) + text(x + w / 2, y + h / 2, "?", { size: 22, color: MARK, weight: 800 });
+const flow = (x, y) => arrow(P(x, y), P(x + 34, y), { color: GREEN });
+const paper = (x, y, cols, rows, k = 14) => {
+  let out = "";
+  for (let i = 0; i <= cols; i += 1) out += line(P(x + i * k, y), P(x + i * k, y + rows * k), { color: "#dfe6e1", width: 1 });
+  for (let j = 0; j <= rows; j += 1) out += line(P(x, y + j * k), P(x + cols * k, y + j * k), { color: "#dfe6e1", width: 1 });
+  return out;
+};
 const figHalfTurn = () => svg(330, 120, digits("25", 20, 30) + text(110, 52, "반 바퀴", { size: 14, color: GREEN }) + arrow(P(90, 74), P(150, 74), { color: GREEN })
   + `<g transform="rotate(180 213 52)">${digits("25", 180, 30)}</g>` + label(53, 100, "처음") + label(213, 100, "돌린 모양"), "25를 반 바퀴 돌린 모양");
-const figMirrorNum = () => svg(330, 120, digits("205", 20, 30) + line(P(130, 16), P(130, 96), { color: BLUE, dash: "6 5", width: 2.6 })
-  + digits("502", 150, 30, { mirror: true }) + label(70, 110, "실제") + label(200, 110, "거울 속"), "205를 거울에 비춘 모양");
+const figHalfTurnAsk = () => svg(260, 120, digits("6", 40, 30) + text(122, 52, "반 바퀴", { size: 14, color: GREEN }) + arrow(P(92, 74), P(152, 74), { color: GREEN })
+  + askBox(176, 26) + label(52, 100, "처음") + label(200, 100, "돌린 모양"), "디지털 숫자 6을 반 바퀴 돌리면?");
+// 책상 위 식을 ①(나)는 아래에서, ②(맞은편 친구)는 위에서 본다
+const figDesk = () => {
+  const row = digits("16", 40, 52) + text(124, 74, "+", { size: 30, weight: 700 }) + digits("25", 146, 52);
+  const up = arrow(P(124, 160), P(124, 134), { color: GREEN }), down = arrow(P(124, 14), P(124, 40), { color: GREEN });
+  return svg(250, 190, rect(20, 44, 210, 62, { fill: "#fbfaf4", color: "#c9d3cd", width: 1.4, rx: 8 }) + row + up + down
+    + label(124, 176, "① 나") + label(124, 6, "② 맞은편 친구"), "책상 위 디지털 숫자 식을 마주 앉은 두 사람이 보는 그림");
+};
+const figMirrorNum = () => svg(330, 120, digits("285", 20, 30) + line(P(130, 16), P(130, 96), { color: BLUE, dash: "6 5", width: 2.6 })
+  + digits("582", 150, 30, { mirror: true }) + label(70, 110, "실제") + label(200, 110, "거울 속"), "285를 거울에 비춘 모양");
+const figMirrorAsk = () => svg(260, 120, digits("2", 50, 30) + line(P(130, 16), P(130, 96), { color: BLUE, dash: "6 5", width: 2.6 })
+  + askBox(166, 26) + label(62, 110, "실제") + label(190, 110, "거울 속") + label(130, 8, "거울"), "디지털 숫자 2를 거울에 비추면?");
 const cube = (x, y, s, top = "", front = "", right = "") => {
   const d = s * 0.42;
   return poly([P(x, y + d), P(x + s, y + d), P(x + s, y + d + s), P(x, y + d + s)], { fill: "#fff" })
@@ -18,7 +41,10 @@ const cube = (x, y, s, top = "", front = "", right = "") => {
     + poly([P(x + s, y + d), P(x + s + d, y), P(x + s + d, y + s), P(x + s, y + d + s)], { fill: "#d6e2da" })
     + (top !== "" ? text(x + s / 2 + d / 2, y + d / 2, top, { size: 14 }) : "") + (front !== "" ? text(x + s / 2, y + d + s / 2, front, { size: 16 }) : "") + (right !== "" ? text(x + s + d / 2, y + d / 2 + s / 2, right, { size: 13 }) : "");
 };
-const figDiceTower = () => svg(240, 200, cube(70, 110, 50, "", "", "") + cube(70, 60, 50, "", "", "") + cube(70, 10, 50, "4", "", "") + label(190, 40, "윗면 4", { anchor: "start" }), "세로로 쌓은 주사위 3개");
+// 주사위 윗면의 눈(교재처럼 수 대신 눈) — 윗면 평행사변형 안의 칸 좌표(u 오른쪽, w 안쪽)로 찍는다
+const PIPS = { 1: [[0.5, 0.5]], 2: [[0.25, 0.25], [0.75, 0.75]], 3: [[0.25, 0.25], [0.5, 0.5], [0.75, 0.75]], 4: [[0.25, 0.25], [0.75, 0.25], [0.25, 0.75], [0.75, 0.75]], 5: [[0.25, 0.25], [0.75, 0.25], [0.5, 0.5], [0.25, 0.75], [0.75, 0.75]], 6: [[0.25, 0.22], [0.25, 0.5], [0.25, 0.78], [0.75, 0.22], [0.75, 0.5], [0.75, 0.78]] };
+const topPips = (x, y, s, n) => { const d = s * 0.42; return PIPS[n].map(([u, w]) => `<ellipse cx="${(x + u * s + w * d).toFixed(1)}" cy="${(y + d - w * d).toFixed(1)}" rx="3.6" ry="2.4" fill="${n === 1 ? MARK : INK}"/>`).join(""); };
+const figDiceTower = () => svg(240, 200, cube(90, 110, 50) + cube(90, 60, 50) + cube(90, 10, 50) + topPips(90, 10, 50, 4), "세로로 쌓은 주사위 3개 — 맨 위 윗면의 눈 4");
 const figNet = () => {
   const k = 44, o = P(20, 14), cells = [[1, 0, "1"], [0, 1, "2"], [1, 1, "3"], [2, 1, "5"], [3, 1, "4"], [1, 2, "?"]];
   return svg(220, 160, cells.map(([x, y, t]) => rect(o.x + x * k, o.y + y * k, k, k, { fill: t === "?" ? YELLOW : "#fff" }) + text(o.x + (x + 0.5) * k, o.y + (y + 0.5) * k, t, { size: 17, color: t === "?" ? MARK : INK })).join(""), "주사위 전개도");
@@ -40,30 +66,67 @@ const figExterior = () => {
 };
 const figParallel = () => {
   const A = P(130, 50), B = P(210, 170);
-  return svg(340, 220, line(P(20, 50), P(320, 50), { width: 2.4 }) + line(P(20, 170), P(320, 170), { width: 2.4 }) + line(at(A, 40, dirOf(B, A)), at(B, 40, dirOf(A, B)))
-    + angleMark(A, dirOf(A, B), 0, 24, "56°", { color: INK }) + angleMark(B, 180, dirOf(B, A), 24, "?") + text(330, 50, "가", { size: 13 }) + text(330, 170, "나", { size: 13 }), "평행선과 엇각");
+  return svg(340, 220, line(P(20, 50), P(310, 50), { width: 2.4 }) + line(P(20, 170), P(310, 170), { width: 2.4 }) + parMark(290, 50) + parMark(290, 170) + line(at(A, 40, dirOf(B, A)), at(B, 40, dirOf(A, B)))
+    + angleMark(A, dirOf(A, B), 0, 24, "56°", { color: INK }) + angleMark(B, dirOf(B, A), 180, 24, "?") + text(326, 50, "가", { size: 13 }) + text(326, 170, "나", { size: 13 }), "평행선과 엇각");
 };
 const figBend = () => {
   const V = P(230, 110), A = P(120, 40), B = P(110, 180);
-  return svg(330, 220, line(P(20, 40), P(310, 40), { width: 2.4 }) + line(P(20, 180), P(310, 180), { width: 2.4 }) + line(A, V) + line(B, V) + line(V, P(310, 110), { color: GREEN, dash: "5 4", width: 1.6 })
-    + angleMark(A, 0, dirOf(A, V), 26, "35°", { color: INK }) + angleMark(B, dirOf(B, V), 0, 26, "40°", { color: INK }) + angleMark(V, dirOf(V, A), dirOf(V, B), 20, "?"), "꺾인 선과 평행선");
+  return svg(340, 220, line(P(20, 40), P(310, 40), { width: 2.4 }) + line(P(20, 180), P(310, 180), { width: 2.4 }) + parMark(290, 40) + parMark(290, 180) + line(A, V) + line(B, V) + line(V, P(310, 110), { color: GREEN, dash: "5 4", width: 1.6 })
+    + angleMark(A, dirOf(A, V), 0, 34, "35°", { color: INK, size: 13 }) + angleMark(B, 0, dirOf(B, V), 34, "40°", { color: INK, size: 13 }) + angleMark(V, dirOf(V, A), dirOf(V, B), 20, "?")
+    + text(326, 40, "가", { size: 13 }) + text(326, 180, "나", { size: 13 }), "꺾인 선과 평행선");
 };
 const figNoNumClock = () => svg(200, 200, clock(P(100, 100), 82, 3, 40, { labels: false }) + line(P(100, 100), P(100, 22), { color: "#9aa39e", dash: "4 4", width: 1.4 }) + angleMark(P(100, 100), 90 - 110, 90, 26, "", { color: MARK }), "숫자 없는 시계");
+// 마름모(대각선 8cm·6cm)와 꼭 둘러싼 직사각형 — 모눈 위
 const figRhombus = () => {
-  const c = P(140, 110), p = [P(140, 30), P(220, 110), P(140, 190), P(60, 110)];
-  return svg(280, 220, rect(60, 30, 160, 160, { color: "#9aa39e", width: 1.4 }) + poly(p, { fill: YELLOW }) + line(p[0], p[2], { color: GREEN, dash: "5 4" }) + line(p[1], p[3], { color: GREEN, dash: "5 4" }) + label(150, 70, "8cm", { anchor: "start" }) + label(100, 100, "6cm"), "마름모와 둘러싼 직사각형");
+  const k = 20, x0 = 80, y0 = 20, w = 6 * k, h = 8 * k, cx = x0 + w / 2, cy = y0 + h / 2, p = [P(cx, y0), P(x0 + w, cy), P(cx, y0 + h), P(x0, cy)];
+  return svg(280, 210, paper(x0 - 2 * k, y0, 10, 8, k) + rect(x0, y0, w, h, { color: "#9aa39e", width: 1.4, dash: "5 4" }) + poly(p, { fill: YELLOW }) + line(p[0], p[2], { color: GREEN, dash: "5 4" }) + line(p[1], p[3], { color: GREEN, dash: "5 4" })
+    + label(x0 + w + 8, cy, "8cm", { anchor: "start" }) + label(cx, y0 + h + 14, "6cm"), "마름모와 둘러싼 직사각형");
 };
-const figPara = () => svg(300, 170, poly([P(80, 30), P(260, 30), P(220, 130), P(40, 130)], { fill: YELLOW }) + line(P(80, 30), P(80, 130), { color: GREEN, dash: "5 4" }) + poly([P(40, 130), P(80, 130), P(80, 30)], { fill: "rgba(180,85,63,.18)", color: MARK, width: 1.4 })
-  + label(130, 150, "밑변 9cm") + label(86, 80, "높이 5cm", { anchor: "start", color: GREEN }), "평행사변형을 잘라 붙이기");
-const figTri = () => svg(300, 180, poly([P(40, 140), P(250, 140), P(150, 30)], { fill: YELLOW }) + poly([P(150, 30), P(250, 140), P(350, 30)], { fill: "none", color: "#9aa39e", width: 1.2 }) + line(P(150, 30), P(150, 140), { color: GREEN, dash: "5 4" })
-  + label(145, 160, "밑변 12cm") + label(156, 90, "높이 7cm", { anchor: "start", color: GREEN }), "삼각형");
-const figTrap = () => svg(320, 170, poly([P(90, 30), P(190, 30), P(260, 130), P(30, 130)], { fill: YELLOW }) + line(P(190, 30), P(190, 130), { color: GREEN, dash: "5 4" })
-  + label(140, 18, "윗변 5cm") + label(145, 150, "아랫변 11cm") + label(196, 80, "높이 6cm", { anchor: "start", color: GREEN }), "사다리꼴");
+// 평행사변형 → 높이 선을 따라 잘라 옮기면 직사각형(모눈, 한 칸 1cm)
+const figPara = () => {
+  const k = 14, x = 14, y = 22, H = 5 * k;
+  const left = poly([P(x + 2 * k, y), P(x + 11 * k, y), P(x + 9 * k, y + H), P(x, y + H)], { fill: YELLOW }) + poly([P(x, y + H), P(x + 2 * k, y + H), P(x + 2 * k, y)], { fill: "rgba(180,85,63,.18)", color: MARK, width: 1.4 })
+    + line(P(x + 2 * k, y), P(x + 2 * k, y + H), { color: GREEN, dash: "5 4" }) + label(x + 4.5 * k, y + H + 14, "밑변 9cm") + label(x + 2 * k + 5, y + H / 2, "높이 5cm", { anchor: "start", color: GREEN });
+  const ox = x + 11 * k + 50;
+  const right = poly([P(ox, y), P(ox + 9 * k, y), P(ox + 9 * k, y + H), P(ox, y + H)], { fill: YELLOW }) + poly([P(ox + 7 * k, y), P(ox + 9 * k, y), P(ox + 9 * k, y + H)], { fill: "rgba(180,85,63,.18)", color: MARK, width: 1.4 })
+    + label(ox + 4.5 * k, y + H + 14, "9cm") + label(ox + 9 * k + 6, y + H / 2, "5cm", { anchor: "start" });
+  return svg(ox + 9 * k + 40, 120, paper(x, y, 11, 5, k) + paper(ox, y, 9, 5, k) + left + flow(x + 11 * k + 8, y + H / 2) + right, "평행사변형을 높이 선으로 잘라 옮기면 직사각형");
+};
+// 삼각형: 평행사변형을 대각선으로 자르면 똑같은 삼각형 둘(교재처럼 모눈 위에서 → 반)
+const figTriHalf = () => {
+  const k = 14, x = 14, y = 20, H = 5 * k;
+  const A = P(x, y + H), B = P(x + 8 * k, y + H), C = P(x + 11 * k, y), D = P(x + 3 * k, y);
+  const ox = x + 11 * k + 50, A2 = P(ox, y + H), B2 = P(ox + 8 * k, y + H), C2 = P(ox + 11 * k, y);
+  return svg(ox + 11 * k + 20, 120, paper(x, y, 11, 5, k) + paper(ox, y, 11, 5, k) + poly([A, B, C, D], { fill: "#fff" }) + poly([A, B, C], { fill: YELLOW }) + line(A, C, { color: MARK })
+    + flow(x + 11 * k + 8, y + H / 2) + poly([A2, B2, C2], { fill: YELLOW }) + line(C2, P(C2.x, y + H), { color: GREEN, dash: "5 4" }) + line(B2, P(C2.x, y + H), { color: "#9aa39e", dash: "3 3", width: 1.2 })
+    + label(ox + 4 * k, y + H + 14, "밑변") + label(C2.x + 6, y + H / 2, "높이", { anchor: "start", color: GREEN }), "평행사변형을 대각선으로 자른 반이 삼각형");
+};
+const figTriPair = () => {
+  const t1 = [P(20, 140), P(140, 140), P(90, 40)], t2 = [P(170, 40), P(290, 40), P(220, 140)]; // 오른쪽은 왼쪽을 반 바퀴 돌린 것
+  return svg(400, 170, poly(t1, { fill: YELLOW }) + poly(t2, { fill: YELLOW }) + arrow(P(300, 90), P(330, 90)) + askBox(340, 64), "똑같은 삼각형 두 개를 돌려 붙이면?");
+};
+const figTri = () => svg(300, 180, poly([P(40, 140), P(250, 140), P(150, 30)], { fill: YELLOW }) + line(P(150, 30), P(150, 140), { color: GREEN, dash: "5 4" }) + rightMark(P(150, 140), 0)
+  + label(145, 160, "밑변 12cm") + label(144, 105, "높이 7cm", { anchor: "end", color: GREEN }), "삼각형");
+// 사다리꼴: 평행한 두 변에 평행 표시, 똑같은 사다리꼴을 반 바퀴 돌려 붙이면 평행사변형
+const trapPts = (ox, oy) => [P(ox + 60, oy), P(ox + 160, oy), P(ox + 220, oy + 100), P(ox, oy + 100)];
+const figTrapAsk = () => {
+  const t = trapPts(40, 30);
+  return svg(300, 150, poly(t, { fill: YELLOW }) + parMark(115, 30) + parMark(135, 130), "평행한 두 변이 있는 사다리꼴");
+};
+const figTrapDouble = () => {
+  const t = trapPts(30, 30), M = P((t[1].x + t[2].x) / 2, (t[1].y + t[2].y) / 2), turn = (p) => P(2 * M.x - p.x, 2 * M.y - p.y);
+  const copy = [t[1], turn(t[3]), turn(t[0]), t[2]];
+  return svg(430, 175, poly(t, { fill: YELLOW }) + poly(copy, { fill: "rgba(47,107,82,.15)", color: GREEN, width: 1.8, dash: "6 4" })
+    + label((t[0].x + t[1].x) / 2, 18, "윗변") + label((t[3].x + t[2].x) / 2, 146, "아랫변") + label((copy[0].x + copy[1].x) / 2, 18, "아랫변", { color: GREEN }) + label((copy[2].x + copy[3].x) / 2, 146, "윗변", { color: GREEN })
+    + label(215, 166, "밑변이 윗변 + 아랫변인 평행사변형", { color: GREEN }), "똑같은 사다리꼴을 반 바퀴 돌려 붙인 평행사변형");
+};
+const figTrap = () => svg(320, 170, poly([P(90, 30), P(190, 30), P(260, 130), P(30, 130)], { fill: YELLOW }) + line(P(190, 30), P(190, 130), { color: GREEN, dash: "5 4" }) + rightMark(P(190, 130), 90)
+  + label(140, 18, "윗변 5cm") + label(145, 150, "아랫변 11cm") + label(184, 96, "높이 6cm", { anchor: "end", color: GREEN }), "사다리꼴");
 
 export const PACKS = {
   "0/1": [{
     id: "half-turn-numbers", title: "반 바퀴 돌린 수와 식",
-    recall: { figure: figHalfTurn, text: "반 바퀴(180°) 돌리면 위아래와 왼쪽·오른쪽이 함께 바뀝니다.", ask: "디지털 숫자 [[d:6]]을 반 바퀴 돌리면?", options: ["[[d:6]]", "[[d:9]]", "[[d:0]]"], answer: 1, why: "[[d:6]]을 거꾸로 세우면 [[d:9]] 모양이에요.", hint: "종이를 거꾸로 돌려 봐요." },
+    recall: { figure: figHalfTurnAsk, text: "반 바퀴(180°) 돌리면 위아래와 왼쪽·오른쪽이 함께 바뀝니다.", ask: "디지털 숫자 [[d:6]]을 반 바퀴 돌리면?", options: ["[[d:6]]", "[[d:9]]", "[[d:0]]"], answer: 1, why: "[[d:6]]을 거꾸로 세우면 [[d:9]] 모양이에요.", hint: "종이를 거꾸로 돌려 봐요." },
     explore: [["board", "book-04/flip-rotate-source"]],
     proofs: [["half-turn-two-flips", "반 바퀴 돌리기는 왜 뒤집기 두 번과 같을까"]],
     summary: {
@@ -74,7 +137,7 @@ export const PACKS = {
     pitfall: "모양만 돌리고 자리의 차례를 거꾸로 하지 않으면 틀립니다. [[d:25]]를 돌리면 [[d:52]]입니다.",
     example: {
       prompt: "디지털 숫자로 쓴 식 [[d:16]] + [[d:25]]를 맞은편에 앉은 친구가 봅니다(반 바퀴 돌린 모양). 친구가 읽은 식을 계산하면 얼마인가요?",
-      figure: figHalfTurn,
+      figure: figDesk,
       steps: [
         { ask: "[[d:25]]를 반 바퀴 돌리면?", answer: "52", unit: "", why: "차례가 거꾸로 되고 [[d:2]] [[d:5]]는 그대로입니다.", hint: "오른쪽 숫자가 맨 앞으로" },
         { ask: "[[d:16]]을 반 바퀴 돌리면?", answer: "91", unit: "", why: "차례가 거꾸로 되고 [[d:6]]은 [[d:9]]가 됩니다.", hint: "[[d:6]] → [[d:9]]" },
@@ -85,7 +148,7 @@ export const PACKS = {
   }],
   "0/2": [{
     id: "symmetric-numbers", title: "거울수와 점대칭수 세기",
-    recall: { figure: figMirrorNum, text: "거울은 왼쪽과 오른쪽을 바꿉니다.", ask: "디지털 숫자 [[d:2]]를 거울에 비추면?", options: ["[[d:2]]", "[[d:5]]", "[[d:7]]"], answer: 1, why: "막대가 좌우로 바뀌어 [[d:5]] 모양이에요.", hint: "위 오른쪽 막대가 왼쪽으로 가요." },
+    recall: { figure: figMirrorAsk, text: "거울은 왼쪽과 오른쪽을 바꿉니다.", ask: "디지털 숫자 [[d:2]]를 거울에 비추면?", options: ["[[d:2]]", "[[d:5]]", "[[d:7]]"], answer: 1, why: "막대가 좌우로 바뀌어 [[d:5]] 모양이에요.", hint: "위 오른쪽 막대가 왼쪽으로 가요." },
     explore: [["board", "book-04/digital-flip-source"]],
     proofs: [],
     summary: {
@@ -277,11 +340,11 @@ export const PACKS = {
   }],
   "3/3": [{
     id: "triangle-area", title: "삼각형의 넓이",
-    recall: { figure: figTri, text: "평행사변형의 넓이 = 밑변 × 높이.", ask: "똑같은 삼각형 두 개를 돌려 붙이면?", options: ["평행사변형", "원"], answer: 0, why: "마주 보는 변이 평행한 사각형이 돼요.", hint: "돌려 붙여 봐요." },
+    recall: { figure: figTriPair, text: "평행사변형의 넓이 = 밑변 × 높이.", ask: "똑같은 삼각형 두 개를 돌려 붙이면?", options: ["평행사변형", "원"], answer: 0, why: "마주 보는 변이 평행한 사각형이 돼요.", hint: "돌려 붙여 봐요." },
     explore: [],
     proofs: [["triangle-area", "삼각형의 넓이는 왜 밑변 × 높이 ÷ 2일까"]],
     summary: {
-      figure: figTri,
+      figure: figTriHalf,
       terms: [["높이", "꼭짓점에서 밑변(또는 밑변을 늘인 선)에 수직으로 내린 길이"]],
       facts: ["똑같은 삼각형 둘 = 평행사변형 → 넓이 = <b>밑변 × 높이 ÷ 2</b>", "둔각삼각형은 높이가 밖으로 나가도 같은 식", "꼭짓점이 같은 두 삼각형은 높이가 같아 <b>넓이가 밑변에 비례</b>"]
     },
@@ -298,11 +361,11 @@ export const PACKS = {
   }],
   "3/4": [{
     id: "trapezoid-area", title: "사다리꼴의 넓이",
-    recall: { figure: figTrap, text: "사다리꼴은 마주 보는 한 쌍의 변이 평행합니다.", ask: "사다리꼴에서 평행한 두 변을 무엇이라 하나요?", options: ["윗변과 아랫변", "높이"], answer: 0, why: "평행한 두 변이 윗변과 아랫변이에요.", hint: "평행한 변" },
+    recall: { figure: figTrapAsk, text: "사다리꼴은 마주 보는 한 쌍의 변이 평행합니다(평행 표시 ›).", ask: "사다리꼴에서 평행한 두 변을 무엇이라 하나요?", options: ["윗변과 아랫변", "높이"], answer: 0, why: "평행한 두 변이 윗변과 아랫변이에요.", hint: "평행한 변" },
     explore: [],
     proofs: [],
     summary: {
-      figure: figTrap,
+      figure: figTrapDouble,
       terms: [["윗변·아랫변", "사다리꼴에서 평행한 두 변"]],
       facts: ["똑같은 사다리꼴을 거꾸로 돌려 붙이면 밑변이 <b>윗변 + 아랫변</b>인 평행사변형", "넓이 = <b>(윗변 + 아랫변) × 높이 ÷ 2</b>", "윗변을 0으로 줄이면 삼각형의 식과 같아진다"]
     },
