@@ -78,7 +78,9 @@ const independentAnswer = data => {
     const a = divide(subtract(total, multiply(rational(n), p)), rational(m - n));
     const b = subtract(p, a);
     if (!equal(a, rational(v[6], v[7])) || !equal(b, rational(v[8], v[9]))) throw new Error("두 아이스크림의 우유 양을 독립 계산하지 못했습니다.");
-    return `A=${mixed(a)}L, B=${mixed(b)}L`;
+    // 원문 미션 2는 ㉮ 한 개에 필요한 우유만 묻습니다(㉯는 검산용).
+    if (v[0] === 360 && v[1] === 200 && mixed(a) !== "7/12") throw new Error("원문 미션 2의 정답 7/12 L와 다릅니다.");
+    return `${mixed(a)}L`;
   }
   if (data.kind === "equal-overlapping-triangle-area") {
     const totalBase = add(rational(v[0], v[1]), rational(v[2], v[3]));
