@@ -460,3 +460,16 @@
 .bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-layout-earth-sea-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
 .bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-layout-earth-sea-concepts .ed-gallery-item img{height:43mm;object-fit:contain;background:#f6f7f9}
 @media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-layout-earth-sea-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Sound concept activities keep room for observation and pointing. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-gallery-item img{height:43mm;object-fit:contain;background:#f6f7f9}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+/* Extra filler rules look like required essays even when the answer is one word. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-question::after{background:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}

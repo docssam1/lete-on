@@ -1,3 +1,4 @@
+import{beforeSoundTask}from'./tests/sound-guided-stage.mjs';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import{fileURLToPath}from'node:url';import{execFileSync}from'node:child_process';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js';import*as original from'../data/book/c22-s32-u03.book.js';import*as records from'../data/book/c22-s32-u03.records-book.js';import{items}from'../data/units/c22-s32-u03.js';import{similar}from'../data/units/c22-s32-u03.similar.js';import{lesson}from'../data/units/c22-s32-u03.lesson.js';import{interact}from'../data/book/c22-s32-u03.interact.js';import{withThink}from'./think-merge.js';import{buildSlides,deckSlideIndex}from'./deck.js';import{deckPredictionKey}from'./deck-answer-state.js';import{rulerModel}from'../scenes/ruler-model.js';
 import{SOUND_PAIR_IDS,soundPair,soundCompareRecord,validSoundCompareRow,soundCompareValues,soundComparisonProgress}from'./sound-compare-model.js';
@@ -13,7 +14,7 @@ test('소리는 떨림·한 조건씩 두 성질 비교·전달·소음 실천�
 });
 test('원래70짝·64보충·12수업 계약과 실제 rulerRows·선택 기록을 보존한다',()=>{
  assert.equal(similar.length,70);assert.equal(items.length,64);assert.equal(data.items.length,76);assert.equal(original.chapter.soundThinking,undefined);assert(records.chapter.pages.length>0);assert.equal(lesson.explore.lab.rowsKey,'rulerRows');assert.equal(mod.classroomLab.rowsKey,'soundCompareRows');assert.equal(mod.classroomItems.length,12);const ids=new Set(mod.classroomItems.map(q=>q.id));assert(!ids.has('c22-s32-u03-b25')&&!ids.has('c22-s32-u03-b41'));assert.deepEqual([...new Set(mod.classroomItems.map(q=>q.answerContract.type))].sort(),['cloze','multi-choice','single-choice','written-explanation']);
- for(const q of pool){const old=oldPool.find(x=>x.id===q.id);assert(old);for(const key of['answerContract','sourceRef','taxonomy'])assert.deepEqual(q[key],old[key]);if(!ids.has(q.id))assert.equal(q,old);}
+ for(const q of pool){const old=oldPool.find(x=>x.id===q.id);assert(old);for(const key of['answerContract','sourceRef','taxonomy'])assert.deepEqual(beforeSoundTask(q)[key],old[key]);if(!ids.has(q.id))assert.equal(q,old);}
  const daily=[...classroomQuestions(mod,data.similar),...classroomQuestions(mod,data.items)];for(const q of mod.classroomItems)assert.equal(daily.find(x=>x.id===q.id),q);assert.notEqual(deckPredictionKey('c22-s32-u03',mod.chapter),deckPredictionKey('c22-s32-u03',original.chapter));
  const curriculum=JSON.parse(fs.readFileSync(new URL('../bank/work/c22s32u03/curriculum.json',import.meta.url)));assert.equal(curriculum.actualStudentPerformanceVerified,false);assert(curriculum.scopeNotes.some(x=>x.includes('반사 관련11개')));
 });

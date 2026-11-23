@@ -39,7 +39,7 @@ import { buildSolutionThinkingSlides } from './deck-solution-thinking.js?v=20261
 import { buildSkyThinkingSlides } from './deck-sky-thinking.js?v=20261108-student-activity-guidance';
 import { buildClimateThinkingSlides } from './deck-climate-thinking.js?v=20261108-student-activity-guidance';
 import { buildInfectionThinkingSlides } from './deck-infection-thinking.js?v=20261103-infection-class';
-import { buildSoundThinkingSlides } from './deck-sound-thinking.js?v=20261105-sound-motion-photo-language';
+import { buildSoundThinkingSlides } from './deck-sound-thinking.js?v=20261105-sound-motion-photo-language&soundGuided=20261124-sound-guided-tasks';
 import { buildMaterialThinkingSlides } from './deck-material-thinking.js?v=20261108-grade3-class-guidance';
 import { buildLifeThinkingSlides } from './deck-life-thinking.js?v=20261108-student-activity-guidance';
 import {buildInquirySlides} from './deck-inquiry.js';
