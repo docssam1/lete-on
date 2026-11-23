@@ -605,3 +605,14 @@
 
 /* Grade-five light: explicit short answers without decorative essay lines. */
 .bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-question::after{display:none}
+
+/* Grade-five solution: brief responses and labeled comparison sketches. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panels{flex-direction:column}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}

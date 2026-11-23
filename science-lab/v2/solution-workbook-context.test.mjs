@@ -1,3 +1,4 @@
+import{beforeSolutionTask}from'./tests/solution-guided-stage.mjs';import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{reviewStudentWorkbook}from'./student-language-review.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
 import{workbook,solutionContextPriorWorkbook as prior}from'../data/book/c22-s51-u03.workbook.js';import{withSolutionContextWorkbook,SOLUTION_CONTEXT_VERSION as version}from'../data/book/solution-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
@@ -6,9 +7,9 @@ const unit='c22-s51-u03',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s)
 test('actual solution workbook routes distinguish checking methods, preserve answer positions and use elementary wording',async()=>{
  const review=q(workbook,27),term=q(workbook,65);assert.deepEqual(review.key,q(prior,27).key);assert(review.prompt.includes('알맞은 방법'));assert(review.choices.every(c=>c.endsWith('다.')));assert.equal(review.choices[2],'따뜻한 쪽의 결과만 골라 기록한다.');assert.deepEqual(term.choices,['증발','용해','응결','끓음']);assert.equal(term.key,q(prior,65).key);assert(q(workbook,47).prompt.includes('충분히 저은 뒤'));assert(!q(workbook,4).prompt.includes('표'));assert(q(workbook,82).criteria.includes('방법 한 가지'));assert(!q(workbook,89).criteria.includes('융해'));assert.equal(q(workbook,12).topic,'같은 물건 전체의 무게');
  const raw=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit);
- const visible=await reviewStudentWorkbook(unit,workbook);for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
+ const visible=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
   for(const no of[4,27,47,65]){const item=q(visible,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));for(const choice of item.choices||[])assert(block.includes(esc(choice)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
-  assert(html.includes('공유하기 전과 후'));assert(!html.includes('친구가 이해하기 어려워한 부분과 고친 설명을 적어요'));assert(html.includes('용해와 무게 비교 다시 보기'));
+  assert(html.includes('소개하기와 두 가지 비교'));assert(!html.includes('친구가 이해하기 어려워한 부분과 고친 설명을 적어요'));assert(html.includes('소통과 보완'));assert(html.includes('data-question="solution-book-89"'));
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&solutionContext='+version));
 });
@@ -36,7 +37,7 @@ test('ten linked bank revisions agree with the workbook while preserving answer 
   assert.deepEqual(questionMisconceptions(current,mod.misc),questionMisconceptions(before,mod.misc));for(const v of new Set([questionVersion(before),...(before.previousVersions||[]).map(p=>p.version)]))assert.deepEqual(questionAtVersion(current,v),questionAtVersion(before,v));
   const response=before.choices?before.answerContract.answer??before.answerContract.answers:before.answerContract.sample??before.answerContract.answer,state={answers:{[current.id]:response,other:'keep'},questionVersions:{[current.id]:questionVersion(before)}};assert.deepEqual(restoreDailyQuestions([current],state)[0],before);const next=restartCurrentQuestion(state,current);assert.equal(next.answers.other,'keep');assert.equal(next.questionVersions[current.id],version);assert.deepEqual(next.revisionHistory[current.id][0].answers,response);
   for(const fields of[{contentVersion:'future'},{status:'source'},{sourceContent:{blocks:[]}},{sourceRef:{type:'original'}},{prompt:before.prompt+' future'},{figure:'future.jpg'},{answerContract:{...before.answerContract,future:true}}]){const rows=[{...before,...fields}];assert.equal(solutionContextItems(rows,unit),rows);}
-  for(const rows of[cls.classroomItems,pool]){const shown=rows.find(q=>q.id===current.id);if(shown)assert.deepEqual(shown,current);}
+  for(const rows of[cls.classroomItems,pool]){const shown=rows.find(q=>q.id===current.id);if(shown)assert.deepEqual(beforeSolutionTask(shown),current);}
  }
  assert(cls.classroomItems.some(q=>q.contentVersion===version));assert(pool.some(q=>q.contentVersion===version));
 });

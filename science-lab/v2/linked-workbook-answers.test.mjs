@@ -1,3 +1,4 @@
+import{beforeSolutionTask}from'./tests/solution-guided-stage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -65,7 +66,7 @@ test('classroom, Daily and real bank print output use the current examples witho
   const mod=loaded.get(unit),raw=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,raw),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]);
   for(const q of mod.items.filter(q=>questionAtVersion(q,version))){
    const old=questionAtVersion(q,previousVersion(unit));
-   for(const rows of[classroom.classroomItems,pool]){const found=rows.find(x=>x.id===q.id);if(found){assert.deepEqual(found,q);selected++;}}
+   for(const rows of[classroom.classroomItems,pool]){const found=rows.find(x=>x.id===q.id);if(found){assert.deepEqual(beforeSolutionTask(found),q);selected++;}}
    const student=mod.bankPaper({...mod,items:[q],similar:[],source:[],mode:'student'}),teacher=mod.bankPaper({...mod,items:[q],similar:[],source:[],mode:'teacher'});
    assert(!student.includes(escape(q.answerContract.sample)));assert(!student.includes('class="ed-key"'));
    assert(teacher.includes(escape(q.answerContract.sample)),q.id);

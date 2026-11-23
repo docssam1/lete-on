@@ -35,7 +35,7 @@ import { buildMagnetThinkingSlides } from './deck-magnet-thinking.js?v=20261108-
 import { buildBiologyThinkingSlides } from './deck-biology-thinking.js?v=20261115-biology-reference-photos';
 import { buildGroundThinkingSlides } from './deck-ground-thinking.js?v=20261108-comparison-material-language&groundGuided=20261124-ground-guided-tasks&groundLayout=20261124-ground-photo-pages-final';
 import { buildWaterThinkingSlides } from './deck-water-thinking.js?v=20261105-material-water-photo-language&waterGuided=20261124-water-guided-tasks';
-import { buildSolutionThinkingSlides } from './deck-solution-thinking.js?v=20261108-solution-learning-language';
+import { buildSolutionThinkingSlides } from './deck-solution-thinking.js?v=20261108-solution-learning-language&solutionGuided=20261124-solution-guided-tasks';
 import { buildSkyThinkingSlides } from './deck-sky-thinking.js?v=20261108-student-activity-guidance';
 import { buildClimateThinkingSlides } from './deck-climate-thinking.js?v=20261108-student-activity-guidance&climateGuided=20261124-climate-guided-tasks';
 import { buildInfectionThinkingSlides } from './deck-infection-thinking.js?v=20261103-infection-class';
