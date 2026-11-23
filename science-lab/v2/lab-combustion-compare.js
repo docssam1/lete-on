@@ -1,4 +1,4 @@
-import{learnerComparisonMaterial,learnerComparisonValues}from'./comparison-material-language.js?v=20261108-comparison-material-language';
+import{learnerComparisonMaterial,learnerComparisonValues}from'./comparison-material-language.js?v=20261123-comparison-school-language';
 import{COMBUSTION_CASE_IDS,combustionCase as rawCase,combustionCompareRecord,validCombustionCompareRow,combustionComparisonProgress}from'./combustion-compare-model.js';
 const combustionCase=id=>learnerComparisonMaterial('combustion-compare',id,rawCase(id)),displayValues=row=>learnerComparisonValues('combustion-compare',row,validCombustionCompareRow);
 const clone=x=>JSON.parse(JSON.stringify(x)),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

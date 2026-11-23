@@ -1,4 +1,4 @@
-import{learnerComparisonMaterial,learnerComparisonValues}from'./comparison-material-language.js?v=20261108-comparison-material-language&careerLanguage=20261123-career-comparison-language';
+import{learnerComparisonMaterial,learnerComparisonValues}from'./comparison-material-language.js?v=20261123-comparison-school-language&careerLanguage=20261123-career-comparison-language';
 import{CAREER_CASE_IDS,careerCase as rawCase,careerCompareRecord,validCareerCompareRow,careerComparisonProgress}from'./career-compare-model.js?v=20261115-standalone-question-context';
 const careerCase=id=>learnerComparisonMaterial('career-compare',id,rawCase(id)),displayValues=row=>learnerComparisonValues('career-compare',row,validCareerCompareRow);
 const clone=x=>JSON.parse(JSON.stringify(x)),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

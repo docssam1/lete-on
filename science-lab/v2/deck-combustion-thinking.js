@@ -4,7 +4,7 @@ import{workbook}from'../data/book/c22-s62-u02.workbook.js?v=20261104-combustion-
 import{combustionSources}from'../data/activities/c22-s62-u02.resources.js';
 import{seasonAnswerHint as combustionAnswerHint}from'./season-answer-hint.js?v=20261104-season-book';
 import{combustionCase as rawCase}from'./combustion-compare-model.js';
-import{learnerComparisonMaterial}from'./comparison-material-language.js?v=20261108-comparison-material-language';
+import{learnerComparisonMaterial}from'./comparison-material-language.js?v=20261123-comparison-school-language';
 const combustionCase=id=>learnerComparisonMaterial('combustion-compare',id,rawCase(id));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const p=s=>`<p>${esc(s)}</p>`;

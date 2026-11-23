@@ -1,4 +1,4 @@
-import{learnerComparisonMaterial,learnerComparisonValues}from'./comparison-material-language.js?v=20261108-comparison-material-language';
+import{learnerComparisonMaterial,learnerComparisonValues}from'./comparison-material-language.js?v=20261123-comparison-school-language';
 import{MAGNET_CASE_IDS,magnetCase as rawCase,magnetCompareRecord,validMagnetCompareRow,magnetComparisonProgress}from'./magnet-compare-model.js';
 const magnetCase=id=>learnerComparisonMaterial('magnet-compare',id,rawCase(id)),displayValues=row=>learnerComparisonValues('magnet-compare',row,validMagnetCompareRow);
 const clone=x=>JSON.parse(JSON.stringify(x)),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

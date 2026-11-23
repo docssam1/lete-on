@@ -1,4 +1,4 @@
-import {reviewStudentWorkbook} from './student-language-review.js?v=20261117-student-language-review&exampleResponse=20261123-weather-example-response&tableLanguage=20261123-student-table-language&careerLanguage=20261123-career-comparison-language';
+import {reviewStudentWorkbook} from './student-language-review.js?v=20261117-student-language-review&exampleResponse=20261123-weather-example-response&tableLanguage=20261123-student-table-language&careerLanguage=20261123-career-comparison-language&comparisonWords=20261123-comparison-school-language';
 import{GRADE4_WORKBOOK_DIRECTIONS_VERSION,GRADE4_WORKBOOK_DIRECTIONS_UNITS}from'../data/book/grade4-workbook-directions.js?v=20261115-grade4-workbook-directions';
 
 

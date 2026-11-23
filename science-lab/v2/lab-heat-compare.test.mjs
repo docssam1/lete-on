@@ -1,5 +1,5 @@
 import test from'node:test';import assert from'node:assert/strict';import{mountHeatCompare}from'./lab-heat-compare.js';import{HEAT_CASE_IDS,heatCompareRecord}from'./heat-compare-model.js';
-import{heatCase}from'./heat-compare-model.js';import{workbook}from'../data/book/c22-s52-u02.workbook.js';
+import{heatCase as rawCase}from'./heat-compare-model.js';import{learnerComparisonMaterial}from'./comparison-material-language.js';const heatCase=id=>learnerComparisonMaterial('heat-compare',id,rawCase(id));import{workbook}from'../data/book/c22-s52-u02.workbook.js';
 function host(){const events=new Map(),controls=new Map();return{innerHTML:'',events,addEventListener:(t,f)=>events.set(t,f),removeEventListener:(t,f)=>{if(events.get(t)===f)events.delete(t);},querySelector:s=>{if(!controls.has(s))controls.set(s,{disabled:false,focus(){}});return controls.get(s);},change:(field,value)=>events.get('change')?.({target:{value,matches:s=>s===`[data-heat-compare-${field}]`}}),action:value=>events.get('click')?.({target:{closest:()=>({dataset:{heatCompareAct:value}})}})};}
 const text=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const save=h=>{h.change('prediction','unknown');h.action('reveal');h.action('record');};

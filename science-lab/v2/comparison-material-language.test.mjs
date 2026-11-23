@@ -4,13 +4,23 @@ import {host} from './tests/comparison-widget-cases.mjs';import {mountGroundComp
 import {mountCareerCompare} from './lab-career-compare.js';
 import {revisedClassroom,classroomTableData} from './revised-lesson.js';
 const specs=[['water','tube','WATER_CASE_IDS','waterCase','waterCompareRecord','validWaterCompareRow','waterCompareValues','waterComparisonProgress','s41-u02'],['magnet','design','MAGNET_CASE_IDS','magnetCase','magnetCompareRecord','validMagnetCompareRow','magnetCompareValues','magnetComparisonProgress','s41-u01'],['ground','practice','GROUND_CASE_IDS','groundCase','groundCompareRecord','validGroundCompareRow','groundCompareValues','groundComparisonProgress','s41-u03'],['combustion','ecosystem','COMBUSTION_CASE_IDS','combustionCase','combustionCompareRecord','validCombustionCompareRow','combustionCompareValues','combustionComparisonProgress','c22-s62-u02'],['career','current','CAREER_CASE_IDS','careerCase','careerCompareRecord','validCareerCompareRow','careerCompareValues','careerComparisonProgress','c22-s62-u04']];
+specs.push(...[["acid", "litmus", "ACID_CASE_IDS", "acidCase", "acidCompareRecord", "validAcidCompareRow", "acidCompareValues", "acidComparisonProgress", "c22-s61-u01"], ["biology", "share", "BIOLOGY_CASE_IDS", "biologyCase", "biologyCompareRecord", "validBiologyCompareRow", "biologyCompareValues", "biologyComparisonProgress", "s41-u04"], ["earth-motion", "sun", "EARTH_MOTION_CASE_IDS", "earthMotionCase", "earthMotionCompareRecord", "validEarthMotionCompareRow", "earthMotionCompareValues", "earthMotionComparisonProgress", "c22-s61-u04"], ["electricity", "brightness", "ELECTRICITY_CASE_IDS", "electricityCase", "electricityCompareRecord", "validElectricityCompareRow", "electricityCompareValues", "electricityComparisonProgress", "c22-s62-u03"], ["energy", "efficiency", "ENERGY_CASE_IDS", "energyCase", "energyCompareRecord", "validEnergyCompareRow", "energyCompareValues", "energyComparisonProgress", "c22-s52-u04"], ["gas", "test", "GAS_CASE_IDS", "gasCase", "gasCompareRecord", "validGasCompareRow", "gasCompareValues", "gasComparisonProgress", "c22-s42-u03"], ["geology", "past", "GEOLOGY_CASE_IDS", "geologyCase", "geologyCompareRecord", "validGeologyCompareRow", "geologyCompareValues", "geologyComparisonProgress", "c22-s51-u01"], ["heat", "contact", "HEAT_CASE_IDS", "heatCase", "heatCompareRecord", "validHeatCompareRow", "heatCompareValues", "heatComparisonProgress", "c22-s52-u02"], ["mixture", "recovery", "MIXTURE_CASE_IDS", "mixtureCase", "mixtureCompareRecord", "validMixtureCompareRow", "mixtureCompareValues", "mixtureComparisonProgress", "c22-s52-u01"], ["motion", "position", "MOTION_CASE_IDS", "motionCase", "motionCompareRecord", "validMotionCompareRow", "motionCompareValues", "motionComparisonProgress", "c22-s61-u02"], ["plant-structure", "root", "PLANT_STRUCTURE_CASE_IDS", "plantStructureCase", "plantStructureCompareRecord", "validPlantStructureCompareRow", "plantStructureCompareValues", "plantStructureComparisonProgress", "c22-s61-u03"], ["season", "device", "SEASON_CASE_IDS", "seasonCase", "seasonCompareRecord", "validSeasonCompareRow", "seasonCompareValues", "seasonComparisonProgress", "c22-s62-u01"], ["weather", "observe", "WEATHER_CASE_IDS", "weatherCase", "weatherCompareRecord", "validWeatherCompareRow", "weatherCompareValues", "weatherComparisonProgress", "c22-s52-u03"]]);
 const models=await Promise.all(specs.map(([name])=>import('./'+name+'-compare-model.js')));
+test('all eight life examples keep their data and old record shape while headings and explanations use student wording',async()=>{
+ const m=await import('./life-compare-model.js');let cases=0,records=0;
+ for(const experiment of Object.keys(m.LIFE_EXPERIMENTS))for(const plan of Object.keys(m.LIFE_PLANS)){
+  const raw=m.lifeMaterial(experiment,plan),saved=structuredClone(raw),id=experiment+'/'+plan,display=learnerComparisonMaterial('life-compare',id,raw);assert(!/가상|연습 자료/.test(JSON.stringify(display)));assert.deepEqual(display.results,raw.results);assert.deepEqual(display.conditions,raw.conditions);assert.equal(display.period,raw.period);assert.equal(display.comparable,raw.comparable);assert.deepEqual(raw,saved);assert.equal(learnerComparisonMaterial('life-compare',id,display),display);
+  for(const judgment of Object.keys(m.LIFE_JUDGMENTS)){const row=m.lifeCompareRecord(experiment,plan,judgment),before=structuredClone(row),values=m.lifeCompareValues(row);assert(m.validLifeCompareRow(row));assert.deepEqual(m.lifeCompareValues(row),values);assert.deepEqual(row,before);records++;}
+  for(const future of [{...raw,extra:true},{...raw,results:[['바뀐 값']]},{...raw,conditions:[['바뀐 조건']]}])assert.equal(learnerComparisonMaterial('life-compare',id,future),future);cases++;
+ }
+ assert.equal(cases,8);assert.equal(records,24);
+});
 test('career comparison uses the reviewed table wording without changing existing stored material',async()=>{
  const m=await import('./career-compare-model.js'),raw=m.careerCase('current'),saved=m.careerCompareRecord('current','station'),h=host();const handle=mountCareerCompare(h,{rows:[saved]});
  assert(h.innerHTML.includes('시청의 자료(예시, 2025년)'));assert(!h.innerHTML.includes('가상 시 자료팀'));assert(!h.innerHTML.includes('교재의 가상 자료 카드'));
  assert.deepEqual(handle.rows,[saved]);assert(m.validCareerCompareRow(saved));assert(raw.rows[0][1].includes('가상 시 자료팀'));handle.dispose();
 });
-test('plain comparison materials keep all 156 original record variants, option keys, numeric rows and progress rules',()=>{
+test('plain comparison materials keep all 576 original record variants, option keys, numeric rows and progress rules',()=>{
  let variants=0;
  for(const [at,[name,target,ids,get,record,valid,values,progress]]of specs.entries()){
   const m=models[at],kind=name+'-compare',originals=m[ids].map(m[get]);
@@ -25,7 +35,7 @@ test('plain comparison materials keep all 156 original record variants, option k
   assert.deepEqual(m[ids].map(m[get]),originals);assert(m[progress](m[ids].map(id=>m[record](id,'unknown'))).complete);
   const bad=m[record](target,'unknown');bad.material.rows[0][1]='바뀐 값';assert(!m[valid](bad));assert.throws(()=>learnerComparisonValues(kind,bad,m[valid]));assert.throws(()=>learnerComparisonValues('other-compare',m[record](target,'unknown'),m[valid]));
  }
- assert.equal(variants,156);
+ assert.equal(variants,576);
 });
 test('future values, options and fields stay untouched and display mutation cannot change the raw input',()=>{
  for(const [at,[name,id,,get]]of specs.entries()){
