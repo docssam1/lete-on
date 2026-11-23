@@ -1,8 +1,9 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict");
 const {visibleLayout}=require("./source-6-2-stack-operation-learner-audit.js");
-const ids=["6-2-u3-e3-example-1","6-2-u3-e3-mission-2","6-2-u3-e3-mission-4","6-2-u3-e1-mission-6","6-2-u3-e2-mission-2","6-2-u3-e2-example-4"];
-if(process.env.HSE_PAINT_MISSION3==="1")ids.splice(0,3,"6-2-u3-e3-mission-3","6-2-u3-e3-mission-1","6-2-u3-e3-example-1");
+// 2026-11-23 e3 예제 1·Mission 1·2·4는 원문 생성기(source62U3E3*)로 옮겨져, 지금도 칠하기 생성기를 쓰는 유형으로 바꿨다.
+const ids=["6-2-u3-e3-example-2","6-2-u3-e3-mission-3","6-2-u3-e3-mission-6-1","6-2-u3-e1-mission-6","6-2-u3-e2-mission-2","6-2-u3-e2-example-4"];
+if(process.env.HSE_PAINT_MISSION3==="1")ids.splice(0,3,"6-2-u3-e3-mission-3","6-2-u3-e3-mission-5-1","6-2-u3-e3-example-2");
 if(process.env.HSE_PAINT_EXPLORATION==="1")ids[0]="6-2-u3-e3-exploration";
 const tPattern=process.env.HSE_T_PATTERN_MIXED==="1";
 if(tPattern)ids[0]="6-2-u3-e2-example-2";

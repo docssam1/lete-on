@@ -1,3 +1,11 @@
+## 2026-11-23 — 쓰지 않는 생성기 감사 정리 (Claude Code / Opus 5.5, Mac)
+
+- 사용자: "네 추천으로". 11-22 공개 등록으로 6-2-u3-e2-mission-3과 e3 개념탐구·예제 1·Mission 1·2·4가 원문 생성기(source62U3E3*·source62U3E2Mission3)로 옮겨져, 그 경로만 보던 감사를 정리했다.
+  - 삭제: source-6-2-border-mission3-bank/mixed/zoom-audit.js (border-mission3 생성기를 쓰는 유형이 없다. 스크립트 파일은 다른 그림 코드와 엮여 있을 수 있어 index.html에서는 빼지 않았다).
+  - source-6-2-painted-stacks-bank-audit.js: 기본 모드(옮겨진 유형)는 안내 후 통과로 끝내고, 지금도 칠하기 생성기를 쓰는 묶음은 HSE_PAINT_MISSION3/MISSION5/MISSION6/EXAMPLE2/EXAMPLE3=1로 검사(모두 통과). 잠금 기대값(e2 Mission 1·3·5)과 인쇄 쪽 나눔 측정 중 그림 요청 취소(ERR_ABORTED) 오탐을 고쳤다.
+  - source-6-2-painted-stacks-mixed-audit.js: 대상에서 옮겨진 유형을 빼고 지금도 칠하기 생성기를 쓰는 유형(e3 예제 2, Mission 3, Mission 6-1, Mission 5-1)으로 바꿈(통과).
+- 남은 Mac 실패 감사: Windows E: 증거 자료가 필요한 약 27개(Windows에서 실행), stack-renderer-live(WebGL 픽셀), stack-questions-live(난이도 1 풀이 A4 2쪽), polycube-helper(--checkpoint 필요), four-vertex·midpoint questions(출력 폴더 이름 규칙), e2-geometry-live 등. 출판사 답 확인은 손글씨 채점본만 있어 false 유지.
+
 ## 2026-11-23 — 원본 복원 115유형 재대조 (Claude Code / Opus 5.5, Mac)
 
 - main(c5551a18c)의 보통 난이도 pool 0 문제(시드를 바꿔 pool 0을 확실히 뽑음)를 원본 책과 다시 대조하고, 원본 문제를 직접 풀어 앱 정답과 비교했다(하위 에이전트 3개, 읽기만).
