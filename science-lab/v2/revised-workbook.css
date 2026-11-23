@@ -484,3 +484,10 @@
 .bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
 .bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
 .bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:110mm;height:auto}
+
+/* Magnet practice uses short answers and two comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}

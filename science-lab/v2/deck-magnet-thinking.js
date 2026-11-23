@@ -1,7 +1,8 @@
+import{magnetGuidedFigure}from'./magnet-guided-review.js?v=20261124-magnet-guided-tasks';
 import{findLifeItem}from'./book-life.js';import{thinkingCheckQuestion}from'./thinking-check-question.js?v=20261102-material';import{workbook}from'../data/book/s41-u01.workbook.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),p=s=>`<p>${esc(s)}</p>`;
 const table=(heads,rows)=>`<table class="dk-tbl"><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
-const figure=key=>{const f=workbook.figures[key];if(!f)throw Error(`자석 교재 자료 없음 ${key}`);return f;};
+const figure=key=>{const f=workbook.figures[key];if(!f)throw Error(`자석 교재 자료 없음 ${key}`);return magnetGuidedFigure(key,f);};
 export function buildMagnetThinkingSlides(ch,art,plan,pool,mode,ix){
  ix=ch.magnetInteraction||ix;const teach=mode==='teach',S=[],phases=Object.fromEntries(plan.phases.map(x=>[x.id,x]));let ses=1;
  const add=(id,phase,title,body,extra={})=>S.push({id,phase,phaseObj:phases[phase],title,body,kind:'read',ses,...extra}),peek=text=>teach?`<div class="dk-ans rv">${esc(text)}</div>`:`<div class="dk-peekw"><button type="button" class="dk-peek">생각한 뒤 설명 보기</button><div class="dk-ans" hidden>${esc(text)}</div></div>`;
@@ -32,7 +33,7 @@ export function buildMagnetThinkingSlides(ch,art,plan,pool,mode,ix){
  add('review','design','친구의 의견을 듣고 설계를 고쳐요',figure('deviceData')+p('친구에게 설계 그림을 설명하고 기능과 고정 방법에 관한 의견을 들어요. 종이가 잡혀도 작은 자석이 빠지면 고쳐야 할 점이 있어요.')+p('실제로 받은 의견을 보고 그림과 설명을 보완해요. 제작·시험을 했다면 실제 결과를 쓰고,하지 않았다면 시험 계획을 남겨요. 그림만 고친 일을 실제 시험 성공이라고 하지는 않아요.'),{kind:'activity',standards:['4과09-03']});
  add('lab','concept','여덟 자료에서 생각과 설명을 비교해요',p('재료·거리·사이 판·극·고리 탑·나침반·장치 설계·검토 자료를 읽어요. 먼저 생각한 뒤 설명을 열고 비교해요.')+'<div data-mount="lab"></div>',{kind:'lab',mount:'lab',layout:'fieldwork',standards:['4과09-01','4과09-02','4과09-03']});
  add('conclusion','concept','관찰한 자석의 성질을 어떻게 이용했나요?',(teach?p('관찰한 특징과 생활 장치의 설계를 연결해 설명하게 해요.'):'<div class="dk-card"><h3>처음 생각</h3><p data-prediction-summary></p></div>')+'<div class="dk-mylab" hidden></div>'+peek('자석과 물체 사이의 힘,두 자석의 극 사이의 힘을 관찰한 모습으로 설명해요. 그 성질을 이용해 생활을 편리하게 하는 장치를 설계해요. 자료 비교와 직접 관찰·설계한 내용을 함께 돌아보아요.'),{kind:'think'});
- ch.check.forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`자석 확인 문항 없음 ${key}`);add(`test${i+1}`,'check',`배운 내용 확인하기 ${i+1}/${ch.check.length}`,thinkingCheckQuestion(q,i+1,teach),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
+ ch.check.forEach((key,i)=>{const q=findLifeItem(pool,key);if(!q)throw Error(`자석 확인 문항 없음 ${key}`);add(`test${i+1}`,'check',`배운 내용 확인하기 ${i+1}/${ch.check.length}`,(q.magnetGuidedResponse==='20261124-magnet-guided-tasks'?thinkingCheckQuestion(q,i+1,teach).replace('<b>가상 기록</b>','<b>기록의 예</b>'):thinkingCheckQuestion(q,i+1,teach)),{kind:q.choices?'test':'write',item:q.id,layout:'dense'});});
  add('end','check','자석을 관찰하고 이용한 내용을 돌아봐요',`<ul>${['자석과 여러 물체 사이에 작용하는 힘 설명하기','두 자석을 가까이했을 때의 특징을 극과 관련지어 설명하기','나침반과 자석을 가까이했을 때의 모습 관찰하기','자석을 이용하여 생활을 편리하게 하는 장치 설계하기','친구의 의견을 듣고 설계 보완하기'].map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`+'<a class="btn" href="#/s41-u01/daily">Daily Test</a>',{kind:'end'});
  S.forEach((s,i)=>{s.n=i+1;if(s.kind==='activity')s.body+=p('활동을 해 보아요. 지금 하기 어렵다면 다음에 할 일을 정한 뒤 이어 가요.');});return S;
 }

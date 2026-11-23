@@ -31,7 +31,7 @@ import { buildBodyThinkingSlides } from './deck-body-thinking.js?v=20261104-body
 import { buildLightThinkingSlides } from './deck-light-thinking.js?v=20261105-light-student-language';
 import { buildGeologyThinkingSlides } from './deck-geology-thinking.js?v=20261115-geology-observation-context';
 import { buildGasThinkingSlides } from './deck-gas-thinking.js?v=20261104-gas-class';
-import { buildMagnetThinkingSlides } from './deck-magnet-thinking.js?v=20261108-comparison-material-language';
+import { buildMagnetThinkingSlides } from './deck-magnet-thinking.js?v=20261108-comparison-material-language&magnetGuided=20261124-magnet-guided-tasks';
 import { buildBiologyThinkingSlides } from './deck-biology-thinking.js?v=20261115-biology-reference-photos';
 import { buildGroundThinkingSlides } from './deck-ground-thinking.js?v=20261108-comparison-material-language';
 import { buildWaterThinkingSlides } from './deck-water-thinking.js?v=20261105-material-water-photo-language';
