@@ -3666,8 +3666,6 @@ const TEX_CHAIN_ARROWS = new Set(['Rightarrow','rightarrow','to','Leftrightarrow
 function texChainHtml(tex){
   const src = String(tex || '');
   const one = t => `<span class="nm-w2-tex" data-tex="${esc(t)}"></span>`;
-  /* 여러 줄 맞춤 식(\begin{…}, &)은 나누면 깨진다 — 그대로 둔다 */
-  if(/\\begin|\\end|&/.test(src)) return one(src);
   /* 맨 앞 \displaystyle 같은 크기 명령은 덩어리마다 다시 붙인다 — 빠지면 뒤 덩어리 분수가 작게 찍혔다 */
   const lead = (src.match(/^\s*((?:\\(?:displaystyle|textstyle)\s*)+)/) || ['', ''])[1];
   const s = src.slice(lead ? src.indexOf(lead) + lead.length : 0);
@@ -3684,10 +3682,29 @@ function texChainHtml(tex){
     if(ch === '\\'){
       if(s[i + 1] === '\\' && depth === 0){ cut(i, 2); lines.push([[]]); i++; continue; }
       const m = /^[A-Za-z]+/.exec(s.slice(i + 1));
-      if(m){ if(depth === 0 && TEX_CHAIN_ARROWS.has(m[0]) && s.slice(from, i).trim()){ cut(i); newGroup(); } i += m[0].length; }
+      if(m){
+        if(depth === 0 && TEX_CHAIN_ARROWS.has(m[0]) && s.slice(from, i).trim()){ cut(i); newGroup(); }
+        i += m[0].length;
+        /* \begin{cases} … \end{cases}(연립 묶음)는 통째로 한 덩어리 — 안의 「=」·「\\」·「&」에서 나누지 않는다 */
+        if(m[0] === 'begin' || m[0] === 'end'){
+          depth = m[0] === 'begin' ? depth + 1 : Math.max(0, depth - 1);
+          const env = /^\s*\{[^}]*\}/.exec(s.slice(i + 1));
+          if(env) i += env[0].length;
+          continue;
+        }
+        /* \left| … \right. 처럼 괄호가 아닌 짝도 한 덩어리로 — 사이에서 나누면 수식이 깨졌다 */
+        if(m[0] === 'left' || m[0] === 'right'){
+          depth = m[0] === 'left' ? depth + 1 : Math.max(0, depth - 1);
+          let k = i + 1;
+          while(s[k] === ' ') k++;
+          if(s[k] === '\\'){ const d = /^[A-Za-z]+/.exec(s.slice(k + 1)); k += d ? d[0].length : 1; }
+          i = k;
+        }
+      }
       else i++;
       continue;
     }
+    if(ch === '&' && depth === 0) return one(src);   /* 맞춤 칸(&)이 맨 바깥에 있으면 그대로 */
     if(ch === '{' || ch === '(' || ch === '[') depth++;
     else if(ch === '}' || ch === ')' || ch === ']') depth = Math.max(0, depth - 1);
     else if(ch === '=' && depth === 0 && s.slice(from, i).trim()) cut(i);
