@@ -5,7 +5,7 @@
  // Looking around without an account is the one door that needs no session. It is asked for by name
  // (planner.html?guest=1), opens with nothing read or stored, and keeps the member-only rooms closed.
  // Its script is fetched only then, so the page still starts with the three membership scripts alone.
- const guestAsked=/(?:^\?|&)guest=1(?:&|$)/.test(location.search),TOUR_SRC='planner-guest.js?v=20261111-guest2',CONSULT_SRC='planner-consult.js?v=20261117-sync1';
+ const guestAsked=/(?:^\?|&)guest=1(?:&|$)/.test(location.search),TOUR_SRC='planner-guest.js?v=20261111-guest2',CONSULT_SRC='planner-consult.js?v=20261123-students1';
  const loadOne=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=()=>resolve();s.onerror=()=>reject(new Error(`자료 파일을 불러오지 못했습니다: ${src}`));document.body.appendChild(s);});
  const SCRIPT_TIMEOUT_MS=30000;
  let phase='계정 확인',loaded=0,failed=false;
@@ -85,7 +85,7 @@
    const name=document.getElementById('name');if(name&&(consult||!name.value))name.value=consult?window.RoadmapMember.student_name:member.student_name;
    document.documentElement.classList.remove('member-checking');box.remove();
    const link=document.createElement('a');link.className='member-account-link';link.href=destination;link.textContent='내 계정';link.setAttribute('aria-label',member.review?'계정 확인과 로그아웃':'학생 정보와 로그인 번호·수신 동의 관리');
-   const menu=document.querySelector('.prn-global-body')||document.querySelector('.top');menu?.appendChild(link);
+   const menu=(consult&&document.querySelector('.consult-bar'))||document.querySelector('.prn-global-body')||document.querySelector('.top');menu?.appendChild(link);
   })());
   // Returning from bfcache must not resurrect a signed-out student's screen.
   window.addEventListener('pageshow',async e=>{if(!e.persisted)return;document.documentElement.classList.add('member-checking');try{const m=await A.status();if(!m||m.user_id!==member.user_id){location.replace(destination);return;}document.documentElement.classList.remove('member-checking');}catch{location.replace(destination);}});
