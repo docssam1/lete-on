@@ -117,6 +117,33 @@ function c2RepunitSquare({ difficulty = 2 }) {
 
 // 4. 짝을 지어 10, 100, 1000 만들기 — 2 × 5, 4 × 25, 8 × 125
 function c2SmartRegroup({ difficulty = 2 }) {
+  // 교재 활동 3: 덧셈은 합이 100·1000이 되는 수끼리, 같은 수를 곱한 덧셈은 묶어서(★ × □ + ★ × △ = ★ × (□ + △)) 100·1000을 만든다
+  const way = sample(["mult", "mult", "distribute", "addpair"]);
+  if (way === "distribute") {
+    const target = difficulty <= 1 ? 100 : sample([100, 1000]);
+    const k = randomInt(12, difficulty === 3 ? 999 : 99);
+    const b = difficulty <= 1 ? sample([1, randomInt(2, 9)]) : randomInt(1, target === 100 ? 19 : 199);
+    const a = target - b;
+    const expr = b === 1 ? `${k} × ${a} + ${k}` : `${k} × ${a} + ${k} × ${b}`;
+    return problem({
+      prompt: `${josa(expr, "을", "를")} 간편하게 계산하세요.`,
+      subtype: "regroup", html: board([expr]), answer: comma(k * target),
+      solution: `같은 수 ${josa(k, "을", "를")} 곱한 두 수를 묶으면 ${k} × (${a} + ${b}) = ${k} × ${target} = ${comma(k * target)}입니다.`,
+      family: "c2-regroup", meta: { k, a, b, target }
+    });
+  }
+  if (way === "addpair") {
+    const t1 = difficulty <= 1 ? 100 : sample([100, 1000]), t2 = difficulty <= 1 ? 10 : 100;
+    const a = randomInt(Math.round(t1 * 0.15), Math.round(t1 * 0.85)), c = randomInt(Math.round(t2 * 0.15), Math.round(t2 * 0.85));
+    const b = t1 - a, d = t2 - c;
+    const expr = `${a} + ${c} + ${b} + ${d}`;
+    return problem({
+      prompt: `${josa(expr, "을", "를")} 순서를 바꾸어 간편하게 계산하세요.`,
+      subtype: "regroup", html: board([expr]), answer: comma(t1 + t2),
+      solution: `덧셈은 순서를 바꾸어도 값이 같습니다. ${a} + ${b} = ${t1}, ${c} + ${d} = ${t2}를 먼저 더하면 ${t1} + ${t2} = ${comma(t1 + t2)}입니다.`,
+      family: "c2-regroup", meta: { a, b, c, d }
+    });
+  }
   const pair = sample(difficulty <= 1 ? [[2, 5], [4, 25]] : [[2, 5], [4, 25], [8, 125], [16, 625]]);
   const other = randomInt(difficulty <= 1 ? 3 : 11, difficulty <= 1 ? 19 : 99);
   const scale = difficulty === 3 ? sample([2, 3, 4, 6]) : 1;
@@ -346,7 +373,7 @@ export const COURSE2_A2_GUIDES = Object.freeze({
   "c2-power-ten-zeros": "2와 5를 하나씩 짝지어 10을 만들고, 짝이 안 된 것만 따로 계산합니다.",
   "c2-nines-product": "99…9 = 10…0 − 1로 바꾸어 큰 수에서 빼기로 계산합니다.",
   "c2-repunit-square": "작은 경우(11, 111)부터 계산해 놓고 자리마다 무엇이 늘어나는지 봅니다.",
-  "c2-smart-regroup": "2 × 5, 4 × 25, 8 × 125처럼 10의 거듭제곱이 되는 짝을 먼저 곱합니다.",
+  "c2-smart-regroup": "합이나 곱이 10·100·1000이 되는 짝을 먼저 만듭니다 — 덧셈은 순서를 바꾸고, 같은 수를 곱한 덧셈은 묶습니다(★ × □ + ★ × △ = ★ × (□ + △)).",
   "c2-odd-sum-square": "1부터 연속한 홀수 □개의 합 = □ × □ — 정사각형을 홀수만큼 둘러 키운 것입니다.",
   "c2-bracket-insert": "괄호는 그 안을 먼저 계산하게 합니다. 곱셈 앞뒤를 묶어 보는 것부터 시작합니다.",
   "c2-year-weekday-shift": "평년은 52주 + 1일, 윤년은 52주 + 2일 — 해가 지날 때마다 요일이 하루(이틀)씩 밀립니다.",
