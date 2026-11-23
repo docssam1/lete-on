@@ -1,4 +1,4 @@
-import { foldNumberStrip, foldNumberPaperSvg, foldCreaseSvg } from "./fold-visuals.js?v=20261121a";
+import { foldNumberStrip, foldNumberPaperSvg, foldCreaseSvg } from "./fold-visuals.js?v=20261123a";
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")

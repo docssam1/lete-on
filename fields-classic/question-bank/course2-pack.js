@@ -3,9 +3,10 @@
 // 덱 약속은 판서와 같다 — step(±1)이 true를 돌려주면 장 안에서 넘긴 것, false면 덱이 다음 장으로 간다.
 // 꾸러미 자료는 course2-concepts/<권>.js(PACKS). 예제는 창작 문제라 단계 답을 자료 파일에 둔다.
 import { mathText } from "./math-markup.js?v=20261122w";
+import { digitalText } from "./digital-inline.js?v=20261123b";
 // 꾸러미 글의 「3/5」·「2^3」을 수식으로 바꾼다(빗금 분수를 화면에 쓰지 않는다 — math-markup.js)
-const M = (html) => mathText(String(html ?? ""));
-const TAGS = { g1: "20261121g", g2: "20261121h", g3: "20261121i", g4: "20261122a", g5: "20261122b", a1: "20261122d", a2: "20261122e", a3: "20261122f", a4: "20261122g", a5: "20261122h" };
+const M = (html) => digitalText(mathText(String(html ?? "")));   // [[d:25]] = 디지털 숫자 그림(digital-inline.js)
+const TAGS = { g1: "20261123b", g2: "20261123b", g3: "20261123b", g4: "20261123b", g5: "20261123b", a1: "20261123b", a2: "20261123b", a3: "20261123b", a4: "20261123b", a5: "20261123b" };
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const norm = (s) => String(s ?? "").replace(/\s+/g, "").replace(/[°도]$/u, "").replace(/,/g, "").toLowerCase();
 

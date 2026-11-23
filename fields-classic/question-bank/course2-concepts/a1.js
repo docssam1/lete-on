@@ -1,7 +1,7 @@
 // 2과정 A1 「양팔저울과 규칙찾기」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다). 대수 권은 그림 논증 대신 그림으로 「왜」를 보인다.
 // 글 속 분수는 「3/5」로 쓰면 화면·인쇄에서 수식 분수로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
-import { svg, text, line, rect, circle, P, INK, GREEN, SOFT, MARK, YELLOW, mathLabel, SHADOW, barModel } from "./pack-kit.js?v=20261122zf";
+import { svg, text, line, rect, circle, P, INK, GREEN, SOFT, MARK, YELLOW, mathLabel, SHADOW, barModel } from "./pack-kit.js?v=20261123b";
 
 const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 // 바둑돌: 검은 돌은 위쪽에 빛, 흰 돌은 옅은 그늘(원장 2026-11-22 「그림질 높여」)

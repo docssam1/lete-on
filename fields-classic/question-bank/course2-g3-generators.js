@@ -73,7 +73,7 @@ function c2SymmetricNumberCount({ difficulty = 2 }) {
   const rule = mode === "mirror" ? "거울에 비추면 숫자 차례가 거꾸로 되고, 0·1·8은 그대로, 2와 5는 서로 바뀝니다(나머지 숫자는 숫자가 되지 않습니다)" : "반 바퀴 돌리면 숫자 차례가 거꾸로 되고, 0·1·2·5·8은 그대로, 6과 9는 서로 바뀝니다";
   const pairs = mode === "mirror" ? "앞뒤 짝은 (1,1)·(2,5)·(5,2)·(8,8)·(0,0), 가운데 자리는 0·1·8" : "앞뒤 짝은 (1,1)·(2,2)·(5,5)·(6,9)·(8,8)·(9,6)·(0,0), 가운데 자리는 0·1·2·5·8";
   if (kind === "count") return problem({
-    prompt: `디지털 숫자로 쓴 ${example}은(는) ${how} 처음과 똑같은 ${example}이 됩니다. 이처럼 ${how} 처음 수와 똑같아지는 ${n}자리 수는 모두 몇 개인가요?`,
+    prompt: `그림의 디지털 숫자로 쓴 수는 ${how} 처음과 똑같은 수가 됩니다. 이처럼 ${how} 처음 수와 똑같아지는 ${n}자리 수는 모두 몇 개인가요?`,
     subtype: "symmetric-number", html, answer: `${list.length}개`,
     solution: `${rule}. 그래서 맨 앞과 맨 뒤, 둘째와 끝에서 둘째 자리가 짝을 이뤄야 합니다: ${pairs}. 맨 앞자리는 0이 될 수 없습니다. 모두 세면 ${list.length}개입니다${list.length <= 12 ? ` (${list.join(", ")})` : ""}.`,
     family: `symmetric-${mode}-count`, meta: { n }
@@ -81,7 +81,7 @@ function c2SymmetricNumberCount({ difficulty = 2 }) {
   const sorted = [...list].sort((a, b) => b - a);
   const pick = kind === "largest" ? sorted[0] : sorted[1];
   return problem({
-    prompt: `디지털 숫자로 쓴 ${example}은(는) ${how} 처음과 똑같은 수가 됩니다. 이처럼 ${how} 똑같아지는 ${n}자리 수 중에서 ${kind === "largest" ? "가장 큰" : "두 번째로 큰"} 수는 무엇인가요?`,
+    prompt: `그림의 디지털 숫자로 쓴 수는 ${how} 처음과 똑같은 수가 됩니다. 이처럼 ${how} 똑같아지는 ${n}자리 수 중에서 ${kind === "largest" ? "가장 큰" : "두 번째로 큰"} 수는 무엇인가요?`,
     subtype: "symmetric-number", html, answer: `${pick}`,
     solution: `${rule}. ${pairs}. 큰 수부터 찾으면 ${sorted.slice(0, 3).join(", ")} …이므로 답은 ${pick}입니다.`,
     family: `symmetric-${mode}-${kind}`, meta: { n }

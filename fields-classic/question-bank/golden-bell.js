@@ -8,7 +8,7 @@ import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-gu
 import { book01Markup } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261121a";
+import { book04Markup } from "./book04-renderers.js?v=20261123a";
 import { book05Markup } from "./book05-renderers.js?v=20261122w";
 import { book06Markup } from "./book06-renderers.js?v=20261122w";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
@@ -19,7 +19,7 @@ import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay }
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261122zf";
 import { importSessionPages, sessionAnswerPages } from "./session-book-sheet.js?v=20261121c";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261122zh";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261122zh";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261123a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261028w";
@@ -1774,7 +1774,7 @@ async function printSessionBook() {
     const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve(none);
     // 맨 뒤 정답(원장 2026-11-17 「뒤에 답안도 인쇄 되어야지」): 워밍업 정답(비공개 답안 서버, 「모두에게 열기」) + 데일리·본책·과제·평가 정답
     // 2과정 개념 꾸러미(&packs=권~단원~차시): 데일리 다음 「개념 정리」 쪽(course2-pack-print.js)
-    const packPages = params.get("packs") ? import("./course2-pack-print.js?v=20261122zg").then((mod) => mod.packPrintPages(params.get("packs"), { book, session, student, look: params.get("packlook") || "" })).catch(() => none) : Promise.resolve(none);
+    const packPages = params.get("packs") ? import("./course2-pack-print.js?v=20261123b").then((mod) => mod.packPrintPages(params.get("packs"), { book, session, student, look: params.get("packlook") || "" })).catch(() => none) : Promise.resolve(none);
     const [daily, sheet, warmAnswers, concept] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet")),
       lessons.length ? ensureProtectedBook(book.id).catch(() => false) : Promise.resolve(false), packPages]);
     const warmAnswerPages = warmAnswers ? lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: true })).join("") : "";

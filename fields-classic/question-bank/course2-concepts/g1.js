@@ -3,7 +3,8 @@
 // explore 항목은 course2-deck.js의 차시 항목과 같은 꼴: ["board", 1과정 판서] · ["drill", 열쇠, 이름] · ["lab", 도구, 이름] · ["geo", 주소, 이름]
 // proofs는 [course2-proofs/g1.js의 논증 id, 제목]. check는 [유형 id, 단계(concept 쉬움 · type 교재와 같게 · advanced 흔한 실수)].
 // 예제는 창작 문제다(교재 문항을 옮기지 않는다). 단계 답은 그림을 만든 수에서 직접 계산해 적었다.
-import { svg, text, line, poly, rect, circle, dot, at, P, arrow, sector, angleMark, dirOf, tick, regular, grid, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261122zf";
+import { foldWordStrip, foldStageSvg, foldCreaseSvg } from "../fold-visuals.js?v=20261123a";
+import { svg, text, line, poly, rect, circle, dot, at, P, arrow, sector, angleMark, dirOf, tick, regular, grid, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261123b";
 
 // ── 3단원 360도와 정다각형 · 1차시 그림 ──
 const C = P(150, 140);
@@ -175,34 +176,35 @@ export const PACKS = {
 // ════ 나머지 차시 그림 ════
 const psq = (x, y, s, fill = PINK) => rect(x, y, s, s, { fill, width: 2 });
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
-// 접을수록 겹이 두 배: 처음 → 반 → 또 반
-const figFoldLayers = () => svg(420, 170,
-  psq(20, 30, 100) + label(70, 150, "처음 · 1겹")
-  + arrow(P(130, 80), P(158, 80)) + rect(168, 30, 50, 100, { fill: PINK }) + label(193, 150, "1번 접음 · 2겹")
-  + arrow(P(228, 80), P(256, 80)) + rect(266, 55, 50, 50, { fill: PINK }) + label(291, 150, "2번 접음 · 4겹")
-  + text(378, 80, "× 2", { size: 18, color: GREEN }), "접을 때마다 겹이 두 배가 되는 색종이");
-// 펼친 종이: 접는 선 두 개로 네 칸, 종이가 모인 칸(왼쪽 위)과 자른 모양이 네 칸에 거울처럼
-const figFoldRegions = () => {
-  const o = P(40, 20), s = 220, h = s / 2;
-  const tri = (cx, cy, fx, fy) => poly([P(cx, cy), P(cx + 34 * fx, cy), P(cx, cy + 34 * fy)], { fill: "#b03a5b", color: "#b03a5b", width: 1.5 });
-  return svg(300, 270, rect(o.x, o.y, s, s, { fill: PINK }) + rect(o.x, o.y, h, h, { fill: YELLOW, width: 0 })
-    + line(P(o.x + h, o.y), P(o.x + h, o.y + s), { dash: "7 6", color: GREEN }) + line(P(o.x, o.y + h), P(o.x + s, o.y + h), { dash: "7 6", color: GREEN })
-    + rect(o.x, o.y, s, s, { width: 2 })
-    + tri(o.x + h - 8, o.y + h - 8, -1, -1) + tri(o.x + h + 8, o.y + h - 8, 1, -1) + tri(o.x + h - 8, o.y + h + 8, -1, 1) + tri(o.x + h + 8, o.y + h + 8, 1, 1)
-    + label(o.x + h / 2, o.y + 22, "종이가 모인 칸") + label(150, 262, "펼친 모양 = 접는 선에 비친 거울 모양"), "접는 선 두 개로 나뉜 펼친 색종이");
+// ── 색종이 접기 그림(원장 2026-11-23 「색종이는 접는 과정을 보여 주던지 화살표로 과정을 표시 해야」) ──
+// 문제은행 색종이 그림과 같은 한 줄 흐름(fold-visuals.js foldWordStrip): 처음 → 1번 접음 → … → 펼친 모양, 장면 사이 회색 화살표, 접는 장면에 점선과 빨간 굽은 화살표.
+// 좌표는 펼친 종이 한 장 = 0~1. 펼치기 = 마지막 접은 선부터 거울에 비춰 붙이기(unfold).
+const CUT = "#b03a5b";
+const ptsAt = (shape, x, y, size) => shape.map((p) => `${(x + p.x * size).toFixed(1)},${(y + p.y * size).toFixed(1)}`).join(" ");
+const holeSvg = (shape, x, y, size, cut = false) => `<polygon points="${ptsAt(shape, x, y, size)}" fill="${cut ? CUT : "#fff"}" stroke="${CUT}" stroke-width="1.8" stroke-linejoin="round"/>`;
+// lines: 접은 차례 그대로 [{ x: 0.5 } | { y: 0.5 }] — 펼칠 때는 거꾸로 비춘다
+const unfold = (shapes, lines) => [...lines].reverse().reduce((all, l) => all.concat(all.map((sh) => sh.map((p) => ("x" in l ? { x: 2 * l.x - p.x, y: p.y } : { x: p.x, y: 2 * l.y - p.y })))), shapes);
+const SQUARE = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+const unfolded = (lines, holes, { gather = null } = {}) => (x, y, size) => {
+  let out = foldStageSvg(SQUARE, { shift: x, top: y, size });
+  if (gather) out += `<rect x="${(x + gather.x0 * size).toFixed(1)}" y="${(y + gather.y0 * size).toFixed(1)}" width="${((gather.x1 - gather.x0) * size).toFixed(1)}" height="${((gather.y1 - gather.y0) * size).toFixed(1)}" fill="#ffe39a"/>`;
+  for (const l of lines) out += "x" in l ? foldCreaseSvg(x + l.x * size, y, x + l.x * size, y + size) : foldCreaseSvg(x, y + l.y * size, x + size, y + l.y * size);
+  if (gather) out += foldStageSvg(SQUARE, { shift: x, top: y, size }).replace('fill="#f9c8c4"', 'fill="none"');
+  return out + unfold(holes, lines).map((h) => holeSvg(h, x, y, size)).join("");
 };
-// 세 번 접어(8겹) 구멍 두 개 → 펼치면 칸마다 두 개
-const figHoles = () => {
-  const o = P(30, 20), w = 240, h = 160;
-  let body = rect(o.x, o.y, w, h, { fill: PINK });
-  for (let i = 1; i < 4; i += 1) body += line(P(o.x + (w / 4) * i, o.y), P(o.x + (w / 4) * i, o.y + h), { dash: "6 5", color: GREEN });
-  body += line(P(o.x, o.y + h / 2), P(o.x + w, o.y + h / 2), { dash: "6 5", color: GREEN });
-  for (let c = 0; c < 4; c += 1) for (let r = 0; r < 2; r += 1) {
-    const cx = o.x + (w / 4) * (c + 0.5), cy = o.y + (h / 2) * (r + 0.5);
-    body += circle(P(cx - 12 * (c % 2 ? -1 : 1), cy - 12 * (r ? -1 : 1)), 6, { fill: "#fff", width: 1.8 }) + circle(P(cx + 10 * (c % 2 ? -1 : 1), cy + 8 * (r ? -1 : 1)), 6, { fill: "#fff", width: 1.8 });
-  }
-  return svg(300, 220, body + label(150, 206, "8칸 × 구멍 2개 = 16개"), "세 번 접어 구멍 두 개를 뚫고 펼친 색종이");
-};
+const LINES2 = [{ y: 0.5 }, { x: 0.5 }];               // 아래로 → 왼쪽으로: 왼쪽 아래 칸에 4겹
+const LINES3 = [{ y: 0.5 }, { x: 0.5 }, { y: 0.75 }];  // 한 번 더 아래로: 왼쪽 아래 칸의 아래 반에 8겹
+const TRI = [[{ x: 0.2, y: 0.66 }, { x: 0.36, y: 0.66 }, { x: 0.2, y: 0.84 }]];               // 왼쪽 아래 칸 안쪽 삼각형 구멍
+const ring = (cx, cy, r = 0.038, n = 10) => Array.from({ length: n }, (_, k) => ({ x: cx + r * Math.cos((2 * Math.PI * k) / n), y: cy + r * Math.sin((2 * Math.PI * k) / n) }));
+const TWO_HOLES = [ring(0.14, 0.875), ring(0.33, 0.875)];   // 8겹 칸(x 0~0.5, y 0.75~1) 안의 동그라미 구멍 두 개
+const cutFinal = (holes) => (x, y, size) => holes.map((h) => holeSvg(h, x, y, size, true)).join("");
+// 접기만(겹 세기): 처음 → 1번 접음 → 2번 접음
+const figFoldOnce = () => foldWordStrip(["아래로"], { label: "색종이를 반으로 한 번 접는 과정" });
+const figFoldTwice = () => foldWordStrip(["아래로", "왼쪽으로"], { label: "색종이를 반으로 두 번 접는 과정" });
+// 거꾸로: 두 번 접어 삼각형을 오려 내고 → 펼친 모양(종이가 모인 칸은 노랑)
+const figFoldRegions = () => foldWordStrip(["아래로", "왼쪽으로"], { final: cutFinal(TRI), finalExtra: "오리기", after: unfolded(LINES2, TRI, { gather: { x0: 0, y0: 0.5, x1: 0.5, y1: 1 } }), afterCaption: "펼친 모양", label: "색종이를 두 번 접어 삼각형을 오려 내고 펼친 과정 — 다 접은 종이는 펼친 종이의 왼쪽 아래 칸(노랑)에 모인다" });
+// 세 번 접어(8겹) 구멍 두 개를 뚫고 → 펼치면 칸마다 두 개
+const figHoles = () => foldWordStrip(["아래로", "왼쪽으로", "아래로"], { final: cutFinal(TWO_HOLES), finalExtra: "구멍 2개", after: unfolded(LINES3, TWO_HOLES), afterCaption: "펼친 모양", label: "색종이를 세 번 접어 구멍 두 개를 뚫고 펼친 과정" });
 // 거울: 좌우가 바뀐다
 const flag = (x, y, m = 1) => poly([P(x, y), P(x, y + 90), P(x + 8 * m, y + 90), P(x + 8 * m, y + 45), P(x + 48 * m, y + 45), P(x + 48 * m, y + 32), P(x + 8 * m, y + 32), P(x + 8 * m, y + 14), P(x + 58 * m, y + 14), P(x + 58 * m, y)], { fill: SOFT });
 const figMirror = () => svg(300, 170, flag(60, 30) + line(P(150, 15), P(150, 150), { dash: "7 6", color: BLUE, width: 2.6 }) + flag(240, 30, -1) + label(150, 162, "거울(대칭축)") + label(90, 8, "실제") + label(210, 8, "거울 속"), "거울에 비친 모양");
@@ -225,7 +227,12 @@ const digitRow = (str, x, y, { mirror = false, w = 26, h = 46, gap = 10 } = {}) 
   }
   return body;
 };
-const figDigitMirror = () => svg(320, 150, digitRow("2", 50, 40) + line(P(160, 20), P(160, 120), { dash: "7 6", color: BLUE, width: 2.6 }) + digitRow("2", 240, 40, { mirror: true }) + label(66, 135, "2") + label(256, 135, "거울 속 = 5") + label(160, 12, "거울"), "디지털 숫자 2를 거울에 비추면 5");
+const figDigitMirror = () => svg(320, 150, digitRow("2", 50, 40) + line(P(160, 20), P(160, 120), { dash: "7 6", color: BLUE, width: 2.6 }) + digitRow("2", 240, 40, { mirror: true }) + label(66, 135, "실제") + label(256, 135, "거울 속") + label(160, 12, "거울"), "디지털 숫자 2를 거울에 비추면 5");
+// 되짚기용: 답을 그림에 보이지 않는다 — 모르는 쪽은 「?」 칸
+const askBox = (x, y) => rect(x, y, 30, 50, { fill: "#fff", color: "#9aa8c4", width: 1.6, rx: 6 }) + text(x + 15, y + 27, "?", { size: 24, color: "#56627f" });
+const figDigitMirrorAsk = (real, seen) => () => svg(320, 150, (real ? digitRow(real, 50, 40) : askBox(48, 38)) + line(P(160, 20), P(160, 120), { dash: "7 6", color: BLUE, width: 2.6 })
+  + (seen ? digitRow(seen, 240, 40) : askBox(240, 38)) + label(66, 135, "실제") + label(256, 135, "거울 속") + label(160, 12, "거울"), real ? `디지털 숫자 ${real}를 거울에 비추면?` : `거울 속 ${seen}는 실제로?`);
+const figHalfTurnAsk = () => svg(320, 150, digitRow("6", 60, 40) + text(160, 62, "반 바퀴", { size: 15, color: GREEN }) + arrow(P(120, 80), P(200, 80), { color: GREEN }) + askBox(238, 38) + label(73, 130, "처음") + label(253, 130, "돌린 모양"), "디지털 6을 반 바퀴 돌리면?");
 const figMirrorClockDigital = () => svg(300, 130, rect(30, 22, 240, 82, { fill: "#fff", width: 2.4 }) + digitRow("10:25", 52, 40, { mirror: true }) + label(150, 120, "거울에 비친 디지털 시계"), "거울에 비친 디지털 시계");
 // 시간 계산
 const figTimeAdd = () => svg(380, 200, clock(P(80, 90), 62, 2, 45, { labels: false }) + arrow(P(158, 90), P(222, 90)) + text(190, 70, "1시간 35분", { size: 14, color: GREEN }) + clock(P(300, 90), 62, 4, 20, { labels: false }) + label(80, 175, "2시 45분 시작") + label(300, 175, "끝나는 시각 ?"), "2시 45분에서 1시간 35분 뒤");
@@ -247,7 +254,7 @@ const figPartition = () => {
   [[0, 0], [3, 0], [3, 3], [0, 3]].forEach(([c, r], i) => { body += rect(o.x + c * k, o.y + r * k, 3 * k, 3 * k, { fill: colors[i], width: 2.2 }); });
   return svg(300, 230, body + grid(o, 6, 6, k, { color: "#9aa39e", width: 0.8 }) + dot(P(o.x + 3 * k, o.y + 3 * k), 5, MARK) + label(150, 214, "가운데 점을 반의 반 바퀴씩 돌리면 겹친다"), "6×6 모눈을 같은 모양 넷으로 나눈 그림");
 };
-const figHalfTurnDigits = () => svg(320, 150, digitRow("6", 60, 40) + text(160, 62, "반 바퀴", { size: 15, color: GREEN }) + arrow(P(120, 80), P(200, 80), { color: GREEN }) + `<g transform="rotate(180 253 63)">${digitRow("6", 240, 40)}</g>` + label(73, 130, "6") + label(253, 130, "9"), "디지털 6을 반 바퀴 돌리면 9");
+const figHalfTurnDigits = () => svg(320, 150, digitRow("6", 60, 40) + text(160, 62, "반 바퀴", { size: 15, color: GREEN }) + arrow(P(120, 80), P(200, 80), { color: GREEN }) + `<g transform="rotate(180 253 63)">${digitRow("6", 240, 40)}</g>` + label(73, 130, "처음") + label(253, 130, "돌린 모양"), "디지털 6을 반 바퀴 돌리면 9");
 // 원과 반지름
 const figCircleRadius = () => {
   const r = 46, c = [P(80, 70), P(172, 70), P(172, 162), P(80, 162)];
@@ -293,7 +300,7 @@ Object.assign(PACKS, {
   "0/1": [
     {
       id: "fold-reverse", title: "접은 종이가 놓인 칸 찾기(거꾸로)",
-      recall: { figure: figFoldLayers, text: "정사각형 색종이를 반으로 접으면 종이가 겹칩니다.", ask: "반으로 한 번 접으면 종이는 몇 겹인가요?", options: ["1겹", "2겹", "4겹"], answer: 1, why: "반으로 접으면 두 장이 겹쳐요. 한 번 더 접으면 4겹이에요.", hint: "접은 종이를 옆에서 보면 몇 장인지 세어 봐요." },
+      recall: { figure: figFoldOnce, text: "정사각형 색종이를 반으로 접으면 종이가 겹칩니다.", ask: "반으로 한 번 접으면 종이는 몇 겹인가요?", options: ["1겹", "2겹", "4겹"], answer: 1, why: "반으로 접으면 두 장이 겹쳐요. 한 번 더 접으면 4겹이에요.", hint: "접은 종이를 옆에서 보면 몇 장인지 세어 봐요." },
       explore: [["board", "book-04/fold-cut-source"], ["board", "book-04/fold-position-source"], ["drill", "fold-region", "접힌 부분 위치 찾기"], ["geo", "../../geometry/games/paper-fold/index.html?level=3", "접는 방법 거꾸로 찾기 게임"]],
       proofs: [["fold-cut-symmetry", "접어서 자르면 펼친 모양이 왜 대칭일까"]],
       summary: {
@@ -303,7 +310,7 @@ Object.assign(PACKS, {
       },
       pitfall: "펼친 그림의 자른 모양을 모두 옮기면 안 됩니다. 종이가 모인 한 칸 안의 것만 접힌 종이에 있습니다.",
       example: {
-        prompt: "정사각형 색종이를 반으로 두 번 접어 한 귀퉁이를 잘랐더니, 펼친 종이에 삼각형 구멍이 4개 생겼습니다. 접힌 종이에서 자른 삼각형은 몇 개인가요?",
+        prompt: "정사각형 색종이를 그림처럼 반으로 두 번 접어 삼각형을 오려 냈더니, 펼친 종이에 삼각형 구멍이 4개 생겼습니다. 접힌 종이에서 오려 낸 삼각형은 몇 개인가요?",
         figure: figFoldRegions,
         steps: [
           { ask: "접는 선 두 개로 펼친 종이는 몇 칸으로 나뉘나요?", answer: "4", unit: "칸", why: "가로 접는 선과 세로 접는 선이 종이를 네 칸으로 나눕니다.", hint: "점선 두 개가 만든 칸을 세어 봐요." },
@@ -315,7 +322,7 @@ Object.assign(PACKS, {
     },
     {
       id: "fold-holes", title: "접어서 뚫은 구멍 세기",
-      recall: { figure: figFoldLayers, text: "접을 때마다 겹이 두 배가 됩니다.", ask: "반으로 두 번 접으면 몇 겹인가요?", options: ["2겹", "3겹", "4겹"], answer: 2, why: "1겹 → 2겹 → 4겹, 접을 때마다 두 배예요.", hint: "한 번 접을 때마다 두 배가 돼요." },
+      recall: { figure: figFoldTwice, text: "접을 때마다 겹이 두 배가 됩니다.", ask: "반으로 두 번 접으면 몇 겹인가요?", options: ["2겹", "3겹", "4겹"], answer: 2, why: "1겹 → 2겹 → 4겹, 접을 때마다 두 배예요.", hint: "한 번 접을 때마다 두 배가 돼요." },
       explore: [["board", "book-04/fold-hole-count"]],
       proofs: [],
       summary: {
@@ -325,7 +332,7 @@ Object.assign(PACKS, {
       },
       pitfall: "접는 선(접힌 가장자리)에 걸쳐 뚫은 구멍은 겹 수만큼 생기지 않습니다. 이어지는 짝을 하나로 셉니다.",
       example: {
-        prompt: "색종이를 반으로 세 번 접고, 접는 선에 걸치지 않게 구멍 2개를 뚫었습니다. 펼치면 구멍은 몇 개인가요?",
+        prompt: "색종이를 그림처럼 반으로 세 번 접고, 접는 선에 걸치지 않게 구멍 2개를 뚫었습니다. 펼치면 구멍은 몇 개인가요?",
         figure: figHoles,
         steps: [
           { ask: "세 번 접으면 몇 겹인가요? 2 × 2 × 2 =", answer: "8", unit: "겹", why: "접을 때마다 겹이 두 배가 됩니다.", hint: "1 → 2 → 4 → ?" },
@@ -362,43 +369,43 @@ Object.assign(PACKS, {
     },
     {
       id: "digital-mirror", title: "거울에 비친 디지털 숫자",
-      recall: { figure: figDigitMirror, text: "디지털 숫자는 막대 일곱 개로 그립니다.", ask: "디지털 숫자 2를 거울에 비추면 어떤 숫자로 보이나요?", options: ["2", "5", "7"], answer: 1, why: "막대가 좌우로 바뀌어 5 모양이 돼요.", hint: "위 오른쪽 막대가 왼쪽으로 가요." },
+      recall: { figure: figDigitMirrorAsk("2", null), text: "디지털 숫자는 막대 일곱 개로 그립니다.", ask: "디지털 숫자 [[d:2]]를 거울에 비추면 어떤 숫자로 보이나요?", options: ["[[d:2]]", "[[d:5]]", "[[d:7]]"], answer: 1, why: "막대가 좌우로 바뀌어 [[d:5]] 모양이 돼요.", hint: "위 오른쪽 막대가 왼쪽으로 가요." },
       explore: [["board", "book-04/digital-flip-source"]],
       proofs: [],
       summary: {
         figure: figDigitMirror,
         terms: [["거울에 비추기", "좌우 뒤집기 — 숫자 모양이 바뀌고 숫자의 차례도 거꾸로 된다"]],
-        facts: ["거울에 비쳐도 숫자가 되는 것: <b>0 · 1 · 8</b>(그대로), <b>2 ↔ 5</b>(서로 바뀜)", "두 자리 이상이면 <b>차례가 거꾸로</b> — 앞자리가 맨 뒤로 간다", "거울에 비쳐도 같은 수 = 앞뒤 자리를 짝지어 서로 거울 짝인 수"]
+        facts: ["거울에 비쳐도 숫자가 되는 것: <b>[[d:0]] [[d:1]] [[d:8]]</b>(그대로), <b>[[d:2]] ↔ [[d:5]]</b>(서로 바뀜)", "두 자리 이상이면 <b>차례가 거꾸로</b> — 앞자리가 맨 뒤로 간다", "거울에 비쳐도 같은 수 = 앞뒤 자리를 짝지어 서로 거울 짝인 수"]
       },
       pitfall: "숫자 모양만 바꾸고 자리의 차례를 거꾸로 하지 않는 실수가 많습니다.",
       example: {
         prompt: "두 자리 수(10~99) 중에서 디지털 숫자로 써서 거울에 비추어도 같은 수로 보이는 것은 몇 개인가요?",
         figure: figDigitMirror,
         steps: [
-          { ask: "거울에 비쳐도 숫자가 되는 디지털 숫자(0, 1, 2, 5, 8)는 몇 개인가요?", answer: "5", unit: "개", why: "0·1·8은 그대로, 2와 5는 서로 바뀝니다.", hint: "괄호 안 숫자를 세어 봐요." },
-          { ask: "앞자리에 올 수 있는 것은(0은 빼고)?", answer: "4", unit: "가지", why: "두 자리 수의 앞자리는 0이 될 수 없습니다.", hint: "5개에서 0을 빼요." },
-          { ask: "뒷자리는 앞자리의 거울 짝으로 정해지니 모두 몇 개인가요?", answer: "4", unit: "개", why: "11 · 25 · 52 · 88 — 앞자리마다 뒷자리가 하나씩 정해집니다.", hint: "앞자리 하나에 뒷자리 하나예요." }
+          { ask: "거울에 비쳐도 숫자가 되는 디지털 숫자 [[d:0]] [[d:1]] [[d:2]] [[d:5]] [[d:8]]은 몇 개인가요?", answer: "5", unit: "개", why: "[[d:0]] [[d:1]] [[d:8]]은 그대로, [[d:2]]와 [[d:5]]는 서로 바뀝니다.", hint: "막대 숫자를 하나씩 세어 봐요." },
+          { ask: "앞자리에 올 수 있는 것은([[d:0]]은 빼고)?", answer: "4", unit: "가지", why: "두 자리 수의 앞자리는 [[d:0]]이 될 수 없습니다.", hint: "5개에서 [[d:0]]을 빼요." },
+          { ask: "뒷자리는 앞자리의 거울 짝으로 정해지니 모두 몇 개인가요?", answer: "4", unit: "개", why: "[[d:11]] [[d:25]] [[d:52]] [[d:88]] — 앞자리마다 뒷자리가 하나씩 정해집니다.", hint: "앞자리 하나에 뒷자리 하나예요." }
         ]
       },
       check: [["c2-digital-mirror-count", "concept"], ["c2-digital-mirror-count", "type"], ["digital-flip-addition-horizontal", "advanced"]]
     },
     {
       id: "mirror-digital-clock", title: "거울에 비친 디지털 시계",
-      recall: { figure: figDigitMirror, text: "거울은 숫자의 모양과 차례를 함께 바꿉니다.", ask: "거울 속 5는 실제로 어떤 숫자인가요?", options: ["2", "5", "8"], answer: 0, why: "2와 5는 거울에서 서로 바뀌니 거울 속 5는 실제 2예요.", hint: "2 ↔ 5를 떠올려요." },
+      recall: { figure: figDigitMirrorAsk(null, "5"), text: "거울은 숫자의 모양과 차례를 함께 바꿉니다.", ask: "거울 속 [[d:5]]는 실제로 어떤 숫자인가요?", options: ["[[d:2]]", "[[d:5]]", "[[d:8]]"], answer: 0, why: "[[d:2]]와 [[d:5]]는 거울에서 서로 바뀌니 거울 속 [[d:5]]는 실제 [[d:2]]예요.", hint: "[[d:2]] ↔ [[d:5]]를 떠올려요." },
       explore: [],
       proofs: [["mirror-clock", "거울에 비친 시계로 진짜 시각을 왜 알 수 있을까"]],
       summary: {
         figure: figMirrorClockDigital,
         terms: [["거꾸로 읽기", "거울 속 모습을 다시 좌우로 뒤집으면 실제 모습"]],
-        facts: ["거울 속 글자를 <b>오른쪽부터</b> 읽는다", "숫자마다 거울 짝으로 바꾼다 — <b>2 ↔ 5</b>, 0·1·8은 그대로", "실제 시각을 구한 뒤 몇 분 뒤·전을 계산한다"]
+        facts: ["거울 속 글자를 <b>오른쪽부터</b> 읽는다", "숫자마다 거울 짝으로 바꾼다 — <b>[[d:2]] ↔ [[d:5]]</b>, [[d:0]] [[d:1]] [[d:8]]은 그대로", "실제 시각을 구한 뒤 몇 분 뒤·전을 계산한다"]
       },
-      pitfall: "차례만 거꾸로 하고 2와 5를 바꾸지 않으면 틀린 시각이 나옵니다.",
+      pitfall: "차례만 거꾸로 하고 [[d:2]]와 [[d:5]]를 바꾸지 않으면 틀린 시각이 나옵니다.",
       example: {
         prompt: "거울에 비친 디지털 시계가 그림처럼 보입니다. 실제 시각은 몇 시 몇 분인가요?",
         figure: figMirrorClockDigital,
         steps: [
           { ask: "거울 속 숫자를 오른쪽부터 읽으면?", answer: "10:52", accept: ["1052", "10시52분"], unit: "", text: true, why: "거울은 차례를 거꾸로 하므로 오른쪽 끝이 실제의 맨 앞입니다.", hint: "오른쪽 끝 숫자부터 차례로 써요." },
-          { ask: "2와 5를 서로 바꾸면 실제 시각은?", answer: "10:25", accept: ["1025", "10시25분"], unit: "", text: true, why: "거울에서 2와 5는 서로 바뀌어 보이므로 되돌려 바꿉니다.", hint: "52의 5와 2를 바꿔요." }
+          { ask: "[[d:2]]와 [[d:5]]를 서로 바꾸면 실제 시각은?", answer: "10:25", accept: ["1025", "10시25분"], unit: "", text: true, why: "거울에서 2와 5는 서로 바뀌어 보이므로 되돌려 바꿉니다.", hint: "[[d:52]]의 [[d:5]]와 [[d:2]]를 바꿔요." }
         ]
       },
       check: C3("c2-mirror-digital-clock")
@@ -499,22 +506,22 @@ Object.assign(PACKS, {
   "1/2": [
     {
       id: "digital-half-turn", title: "반 바퀴 돌린 디지털 숫자",
-      recall: { figure: figHalfTurnDigits, text: "반 바퀴는 위아래와 좌우를 한꺼번에 바꿉니다.", ask: "디지털 숫자 6을 반 바퀴 돌리면?", options: ["6", "9", "8"], answer: 1, why: "6을 거꾸로 세우면 9 모양이에요.", hint: "종이를 거꾸로 돌려 봐요." },
+      recall: { figure: figHalfTurnAsk, text: "반 바퀴는 위아래와 좌우를 한꺼번에 바꿉니다.", ask: "디지털 숫자 [[d:6]]을 반 바퀴 돌리면?", options: ["[[d:6]]", "[[d:9]]", "[[d:8]]"], answer: 1, why: "[[d:6]]을 거꾸로 세우면 [[d:9]] 모양이에요.", hint: "종이를 거꾸로 돌려 봐요." },
       explore: [["board", "book-01/digital-turn-flip"]],
       proofs: [],
       summary: {
         figure: figHalfTurnDigits,
         terms: [["반 바퀴 돌리기", "위아래 뒤집기 + 좌우 뒤집기 — 숫자의 차례도 거꾸로"]],
-        facts: ["반 바퀴 돌려도 숫자: <b>0 · 1 · 2 · 5 · 8</b>(그대로), <b>6 ↔ 9</b>", "여러 자리 수는 차례가 거꾸로 된다", "돌려도 같은 수 = 앞뒤 자리가 서로 반 바퀴 짝"]
+        facts: ["반 바퀴 돌려도 숫자: <b>[[d:0]] [[d:1]] [[d:2]] [[d:5]] [[d:8]]</b>(그대로), <b>[[d:6]] ↔ [[d:9]]</b>", "여러 자리 수는 차례가 거꾸로 된다", "돌려도 같은 수 = 앞뒤 자리가 서로 반 바퀴 짝"]
       },
-      pitfall: "거울(좌우 뒤집기)에서는 2 ↔ 5, 반 바퀴에서는 6 ↔ 9가 바뀝니다. 두 규칙을 섞지 않습니다.",
+      pitfall: "거울(좌우 뒤집기)에서는 [[d:2]] ↔ [[d:5]], 반 바퀴에서는 [[d:6]] ↔ [[d:9]]가 바뀝니다. 두 규칙을 섞지 않습니다.",
       example: {
         prompt: "두 자리 수(10~99) 중에서 디지털 숫자로 써서 반 바퀴 돌려도 같은 수로 보이는 것은 몇 개인가요?",
         figure: figHalfTurnDigits,
         steps: [
-          { ask: "반 바퀴 돌려도 숫자가 되는 것(0, 1, 2, 5, 6, 8, 9)은 몇 개?", answer: "7", unit: "개", why: "0·1·2·5·8은 그대로, 6과 9는 서로 바뀝니다.", hint: "괄호 안 숫자를 세요." },
-          { ask: "앞자리(0 빼고)가 될 수 있는 것은?", answer: "6", unit: "가지", why: "두 자리 수의 앞자리는 0이 될 수 없습니다.", hint: "7에서 하나를 빼요." },
-          { ask: "뒷자리는 앞자리의 반 바퀴 짝 — 모두 몇 개?", answer: "6", unit: "개", why: "11 · 22 · 55 · 69 · 88 · 96 — 앞자리마다 하나씩입니다.", hint: "앞자리 하나에 뒷자리 하나예요." }
+          { ask: "반 바퀴 돌려도 숫자가 되는 것 [[d:0]] [[d:1]] [[d:2]] [[d:5]] [[d:6]] [[d:8]] [[d:9]]는 몇 개?", answer: "7", unit: "개", why: "[[d:0]] [[d:1]] [[d:2]] [[d:5]] [[d:8]]은 그대로, [[d:6]]과 [[d:9]]는 서로 바뀝니다.", hint: "막대 숫자를 하나씩 세요." },
+          { ask: "앞자리([[d:0]] 빼고)가 될 수 있는 것은?", answer: "6", unit: "가지", why: "두 자리 수의 앞자리는 [[d:0]]이 될 수 없습니다.", hint: "7에서 하나를 빼요." },
+          { ask: "뒷자리는 앞자리의 반 바퀴 짝 — 모두 몇 개?", answer: "6", unit: "개", why: "[[d:11]] [[d:22]] [[d:55]] [[d:69]] [[d:88]] [[d:96]] — 앞자리마다 하나씩입니다.", hint: "앞자리 하나에 뒷자리 하나예요." }
         ]
       },
       check: [["c2-digital-half-turn-count", "concept"], ["digital-transform-arithmetic", "type"], ["digital-grid-upright-after-moves", "advanced"]]

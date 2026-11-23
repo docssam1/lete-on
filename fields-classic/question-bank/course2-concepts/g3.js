@@ -1,6 +1,6 @@
 // 2과정 G3 「정육면체와 각·넓이」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
-import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW } from "./pack-kit.js?v=20261122zf";
+import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW } from "./pack-kit.js?v=20261123b";
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const C3 = (type) => [[type, "concept"], [type, "type"], [type, "advanced"]];
@@ -8,7 +8,7 @@ const digits = (str, x, y, o = {}) => [...String(str)].map((c, i) => digital(c, 
 
 // ── 그림 ──
 const figHalfTurn = () => svg(330, 120, digits("25", 20, 30) + text(110, 52, "반 바퀴", { size: 14, color: GREEN }) + arrow(P(90, 74), P(150, 74), { color: GREEN })
-  + `<g transform="rotate(180 213 52)">${digits("25", 180, 30)}</g>` + label(53, 100, "25") + label(213, 100, "52"), "25를 반 바퀴 돌린 모양");
+  + `<g transform="rotate(180 213 52)">${digits("25", 180, 30)}</g>` + label(53, 100, "처음") + label(213, 100, "돌린 모양"), "25를 반 바퀴 돌린 모양");
 const figMirrorNum = () => svg(330, 120, digits("205", 20, 30) + line(P(130, 16), P(130, 96), { color: BLUE, dash: "6 5", width: 2.6 })
   + digits("502", 150, 30, { mirror: true }) + label(70, 110, "실제") + label(200, 110, "거울 속"), "205를 거울에 비춘 모양");
 const cube = (x, y, s, top = "", front = "", right = "") => {
@@ -63,43 +63,43 @@ const figTrap = () => svg(320, 170, poly([P(90, 30), P(190, 30), P(260, 130), P(
 export const PACKS = {
   "0/1": [{
     id: "half-turn-numbers", title: "반 바퀴 돌린 수와 식",
-    recall: { figure: figHalfTurn, text: "반 바퀴(180°) 돌리면 위아래와 왼쪽·오른쪽이 함께 바뀝니다.", ask: "디지털 숫자 6을 반 바퀴 돌리면?", options: ["6", "9", "0"], answer: 1, why: "6을 거꾸로 세우면 9 모양이에요.", hint: "종이를 거꾸로 돌려 봐요." },
+    recall: { figure: figHalfTurn, text: "반 바퀴(180°) 돌리면 위아래와 왼쪽·오른쪽이 함께 바뀝니다.", ask: "디지털 숫자 [[d:6]]을 반 바퀴 돌리면?", options: ["[[d:6]]", "[[d:9]]", "[[d:0]]"], answer: 1, why: "[[d:6]]을 거꾸로 세우면 [[d:9]] 모양이에요.", hint: "종이를 거꾸로 돌려 봐요." },
     explore: [["board", "book-04/flip-rotate-source"]],
     proofs: [["half-turn-two-flips", "반 바퀴 돌리기는 왜 뒤집기 두 번과 같을까"]],
     summary: {
       figure: figHalfTurn,
       terms: [["점대칭", "한 점을 중심으로 반 바퀴 돌렸을 때 처음과 겹치는 것"]],
-      facts: ["반 바퀴 돌리면 <b>숫자의 차례가 거꾸로</b> 되고 숫자 모양도 돈다", "반 바퀴에도 숫자인 것: 0·1·2·5·8(그대로), <b>6 ↔ 9</b>", "마주 앉은 사람이 보는 식 = 내 식을 반 바퀴 돌린 식"]
+      facts: ["반 바퀴 돌리면 <b>숫자의 차례가 거꾸로</b> 되고 숫자 모양도 돈다", "반 바퀴에도 숫자인 것: [[d:0]] [[d:1]] [[d:2]] [[d:5]] [[d:8]](그대로), <b>[[d:6]] ↔ [[d:9]]</b>", "마주 앉은 사람이 보는 식 = 내 식을 반 바퀴 돌린 식"]
     },
-    pitfall: "모양만 돌리고 자리의 차례를 거꾸로 하지 않으면 틀립니다. 25를 돌리면 52입니다.",
+    pitfall: "모양만 돌리고 자리의 차례를 거꾸로 하지 않으면 틀립니다. [[d:25]]를 돌리면 [[d:52]]입니다.",
     example: {
-      prompt: "디지털 숫자로 쓴 「16 + 25」를 맞은편에 앉은 친구가 봅니다(반 바퀴 돌린 모양). 친구가 읽은 식을 계산하면 얼마인가요?",
+      prompt: "디지털 숫자로 쓴 식 [[d:16]] + [[d:25]]를 맞은편에 앉은 친구가 봅니다(반 바퀴 돌린 모양). 친구가 읽은 식을 계산하면 얼마인가요?",
       figure: figHalfTurn,
       steps: [
-        { ask: "「25」를 반 바퀴 돌리면?", answer: "52", unit: "", why: "차례가 거꾸로 되고 2·5는 그대로입니다.", hint: "오른쪽 숫자가 맨 앞으로" },
-        { ask: "「16」을 반 바퀴 돌리면?", answer: "91", unit: "", why: "차례가 거꾸로 되고 6은 9가 됩니다.", hint: "6 → 9" },
-        { ask: "식 전체가 돌아 「52 + 91」 — 계산하면?", answer: "143", unit: "", why: "식 전체를 돌리면 두 수의 차례도 바뀝니다. 덧셈이라 순서는 상관없습니다.", hint: "52 + 91" }
+        { ask: "[[d:25]]를 반 바퀴 돌리면?", answer: "52", unit: "", why: "차례가 거꾸로 되고 [[d:2]] [[d:5]]는 그대로입니다.", hint: "오른쪽 숫자가 맨 앞으로" },
+        { ask: "[[d:16]]을 반 바퀴 돌리면?", answer: "91", unit: "", why: "차례가 거꾸로 되고 [[d:6]]은 [[d:9]]가 됩니다.", hint: "[[d:6]] → [[d:9]]" },
+        { ask: "식 전체가 돌아 [[d:52]] + [[d:91]] — 계산하면?", answer: "143", unit: "", why: "식 전체를 돌리면 두 수의 차례도 바뀝니다. 덧셈이라 순서는 상관없습니다.", hint: "52 + 91" }
       ]
     },
     check: [["digital-transform-arithmetic", "concept"], ["digital-transform-arithmetic", "type"], ["c2-symmetric-number-count", "concept"]]
   }],
   "0/2": [{
     id: "symmetric-numbers", title: "거울수와 점대칭수 세기",
-    recall: { figure: figMirrorNum, text: "거울은 왼쪽과 오른쪽을 바꿉니다.", ask: "디지털 숫자 2를 거울에 비추면?", options: ["2", "5", "7"], answer: 1, why: "막대가 좌우로 바뀌어 5 모양이에요.", hint: "위 오른쪽 막대가 왼쪽으로 가요." },
+    recall: { figure: figMirrorNum, text: "거울은 왼쪽과 오른쪽을 바꿉니다.", ask: "디지털 숫자 [[d:2]]를 거울에 비추면?", options: ["[[d:2]]", "[[d:5]]", "[[d:7]]"], answer: 1, why: "막대가 좌우로 바뀌어 [[d:5]] 모양이에요.", hint: "위 오른쪽 막대가 왼쪽으로 가요." },
     explore: [["board", "book-04/digital-flip-source"]],
     proofs: [],
     summary: {
       figure: figMirrorNum,
       terms: [["거울수", "거울에 비추어도 처음과 같은 수"], ["점대칭수", "반 바퀴 돌려도 처음과 같은 수"]],
-      facts: ["차례가 거꾸로 되므로 <b>앞자리와 뒷자리를 짝</b>지어 고른다", "거울: 짝 (1,1)·(2,5)·(5,2)·(8,8)·(0,0), 가운데 자리는 0·1·8", "반 바퀴: 짝 (1,1)·(2,2)·(5,5)·(6,9)·(8,8)·(9,6)·(0,0), 가운데는 0·1·2·5·8", "맨 앞자리는 0이 될 수 없다 — 경우를 곱해서 센다"]
+      facts: ["차례가 거꾸로 되므로 <b>앞자리와 뒷자리를 짝</b>지어 고른다", "거울에서 앞뒤 짝: ([[d:1]], [[d:1]]) ([[d:2]], [[d:5]]) ([[d:5]], [[d:2]]) ([[d:8]], [[d:8]]) ([[d:0]], [[d:0]]) · 가운데 자리는 [[d:0]] [[d:1]] [[d:8]]", "반 바퀴에서 앞뒤 짝: ([[d:1]], [[d:1]]) ([[d:2]], [[d:2]]) ([[d:5]], [[d:5]]) ([[d:6]], [[d:9]]) ([[d:8]], [[d:8]]) ([[d:9]], [[d:6]]) ([[d:0]], [[d:0]]) · 가운데는 [[d:0]] [[d:1]] [[d:2]] [[d:5]] [[d:8]]", "맨 앞자리는 [[d:0]]이 될 수 없다 — 경우를 곱해서 센다"]
     },
-    pitfall: "가운데 자리에 2·5(거울)나 6·9(반 바퀴)를 넣으면 안 됩니다. 가운데는 제자리에서 자기 자신이 되어야 합니다.",
+    pitfall: "가운데 자리에 [[d:2]] [[d:5]](거울)나 [[d:6]] [[d:9]](반 바퀴)를 넣으면 안 됩니다. 가운데는 제자리에서 자기 자신이 되어야 합니다.",
     example: {
       prompt: "디지털 숫자로 쓴 세 자리 수 중 거울에 비추어도 처음과 똑같은 수는 몇 개인가요?",
       figure: figMirrorNum,
       steps: [
-        { ask: "백의 자리(0 빼고)와 일의 자리 짝 (1,1)·(2,5)·(5,2)·(8,8) — 몇 가지?", answer: "4", unit: "가지", why: "맨 앞이 0이면 세 자리 수가 아닙니다.", hint: "짝을 세요." },
-        { ask: "가운데 자리(0·1·8)는 몇 가지?", answer: "3", unit: "가지", why: "가운데는 거울에서 자기 자신이어야 합니다.", hint: "0, 1, 8" },
+        { ask: "백의 자리([[d:0]] 빼고)와 일의 자리 짝 ([[d:1]], [[d:1]]) ([[d:2]], [[d:5]]) ([[d:5]], [[d:2]]) ([[d:8]], [[d:8]]) — 몇 가지?", answer: "4", unit: "가지", why: "맨 앞이 [[d:0]]이면 세 자리 수가 아닙니다.", hint: "짝을 세요." },
+        { ask: "가운데 자리([[d:0]] [[d:1]] [[d:8]])는 몇 가지?", answer: "3", unit: "가지", why: "가운데는 거울에서 자기 자신이어야 합니다.", hint: "막대 숫자를 세요." },
         { ask: "모두 4 × 3 =", answer: "12", unit: "개", why: "앞뒤 짝마다 가운데를 세 가지씩 고를 수 있습니다.", hint: "곱해요." }
       ]
     },

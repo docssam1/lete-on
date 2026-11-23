@@ -2,12 +2,12 @@
 // 1과정 차시 = 개념 판서 → 게임 → 워밍업 → 본책. 2과정은 워밍업 자료(골든벨 원본)가 없으므로 개념 판서 자리에 그림 논증, 게임 자리에 체험을 둔다.
 // 차시마다 무엇을 보여 줄지는 아래 SESSION_CONCEPTS(본책 활동 묶음과 같은 내용으로 골랐다). 논증 그림은 course2-proofs/<권>.js, 체험은 c2-lab.html.
 import { mountProof } from "./proof-board.js?v=20261115c";
-import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261122zh";
+import { STUDY_BOARDS, STUDY_GAMES } from "./study-map.js?v=20261123a";
 import { BOARDS } from "./concept-boards.js?v=20261122zg";
-import { packsFor } from "./course2-concepts/packs.js?v=20261122zg";
+import { packsFor } from "./course2-concepts/packs.js?v=20261123b";
 
 const PROOF_TAGS = { g1: "20261115a", g2: "20261115a", g3: "20261115a", g4: "20261115g", g5: "20261115a" };   // proof.js의 BOOKS 꼬리표와 같게
-const DECK = { module: "./course2-deck.js?v=20261122zh" };
+const DECK = { module: "./course2-deck.js?v=20261123b" };
 
 // 권/단원 → 차시마다 [["board", 1과정 판서 열쇠] | ["drill", 열쇠, 이름] | ["proof", 논증 id, 제목] | ["lab", 도구, 이름] | ["geo", 지오메트리 게임 주소, 이름]]
 // board: 1과정에서 같은 내용을 가르치는 손글씨 판서와 그 판서의 게임을 그대로 쓴다(원장 2026-11-16 「설명도 없어」) — 2과정 본책 문제가 그 위에 쌓인다.
@@ -38,7 +38,7 @@ export const SESSION_CONCEPTS = Object.freeze({
 const shortBook = (bookId) => bookId.replace(/^course-0\d-/u, "");
 // 덱 장 목록(study-deck.js buildSessionSlides가 부른다): 논증 = 개념 장(판서처럼 덱 아래 단추로 장면을 넘긴다), 체험 = 게임 장
 // 개념 꾸러미(DESIGN-COURSE2.md 4절)가 있는 차시는 꾸러미마다 여섯 장: 되짚기 → 해 보기 → 따져 보기 → 정리 → 예제 따라 풀기 → 개념 확인
-const PACK = { module: "./course2-pack.js?v=20261122w", css: "./course2-pack.css?v=20261122i", mount: "mountPackCard", presenter: false, doneSay: null };
+const PACK = { module: "./course2-pack.js?v=20261123b", css: "./course2-pack.css?v=20261123a", mount: "mountPackCard", presenter: false, doneSay: null };
 const packCard = (book, pack, card, label) => ({ kind: "concept", pack: card, lesson: { id: `${pack.id}-${card}`, title: `${label} · ${pack.title}` }, native: { ...PACK, board: `${book}/${pack.id}/${card}` } });
 export function course2ConceptSlides(bookId, unitIndex, part) {
   const packs = packsFor(bookId, unitIndex, part);

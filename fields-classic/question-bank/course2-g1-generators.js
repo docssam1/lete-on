@@ -4,7 +4,7 @@
 // 답은 모두 그림을 만든 수에서 계산한다(세는 문제는 하나씩 세어 본다 — 공식만 믿지 않는다).
 import { plainText } from "./course2-plain.js?v=20261122zi";
 
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261121a";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261123a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -89,7 +89,7 @@ function c2DigitalSymmetricCount({ difficulty = 2, mode = "mirror" }) {
   const row = digitalRow("0123456789", { gap: 40 });
   const move = mode === "half" ? "반 바퀴 돌려도" : "거울에 비추어도";
   return problem({
-    prompt: `디지털 숫자로 쓴 ${digits}자리 수 가운데 ${move} 처음과 같은 수로 보이는 수는 모두 몇 개인가요? (1은 가운데에 씁니다.)`,
+    prompt: `디지털 숫자로 쓴 ${digits}자리 수 가운데 ${move} 처음과 같은 수로 보이는 수는 모두 몇 개인가요? (숫자는 그림처럼 쓰고, 막대 두 개로 된 숫자는 칸 가운데에 씁니다.)`,
     subtype: "digital-symmetric", html: svg(row.w, row.h, row.body, "디지털 숫자 0부터 9까지"),
     answer: `${count}개`,
     solution: mode === "half"
