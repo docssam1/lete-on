@@ -181,3 +181,28 @@ body.questioning #conversation:has(#questionOptions>.parent-slides)>:not(#questi
 #questionOptions .parent-slides .parent-slide-footer>nav>button{grid-column:auto;grid-row:auto}
 /* Runtime CSS may already be loaded when a bundle fails. Keep boot in one column. */
 body.parent-slide-open #parentBoot{grid-template-columns:minmax(0,1fr)!important}
+
+/* First visit: two questions, followed by the learner's reported math and a next step. */
+.parent-quick .parent-age-intake .parent-student{margin-top:14px}
+.parent-quick .parent-quick-axis{margin-bottom:14px}
+.parent-quick .parent-current-row>label:has(select[name$="Source"]),.parent-quick .parent-current-row>label:has([name^="thinkingLevel"]),.parent-quick .parent-thinking-note,.parent-quick [data-slide-extra]{display:none!important}
+.parent-quick[data-slide="age"] .parent-slide-footer nav{grid-template-columns:1fr}
+.parent-math-draft,.parent-draft-actions{max-width:680px;margin-inline:auto;min-width:0;box-sizing:border-box;text-align:left;overflow-wrap:anywhere}
+.parent-math-draft{padding:clamp(18px,4vw,32px);background:#fff;border:1px solid #d7cddd;border-radius:16px;color:#35283e}
+.parent-math-draft h2{font-size:clamp(21px,4vw,28px);letter-spacing:-.035em;line-height:1.4;margin:0}
+.parent-math-draft h3{font-size:17px;margin:22px 0 8px;color:#573865}
+.parent-math-draft p,.parent-math-draft dd{margin:5px 0 0;line-height:1.65}
+.parent-math-draft dl{margin:0;padding:0}
+.parent-math-draft dl>div{border-left:3px solid #a387b9;padding:4px 12px;margin:8px 0;background:#f7f3fa}
+.parent-math-draft dt,.parent-draft-grade{font-size:14px;color:#685574}
+.parent-math-draft dd{font-weight:650}
+.parent-draft-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:16px}
+.parent-draft-actions button{min-height:44px}
+body.questioning #conversation:has(#questionOptions>.parent-draft-view)>:not(#questionOptions){display:none!important}
+#questionOptions:has(>.parent-draft-view){display:block!important}
+body.questioning main:has(#questionOptions>.parent-draft-view)>:is(.view,.result-intro,.input-details,#warn,#planningOverview,#pathwayCoach){display:none!important}
+body.questioning main:has(#questionOptions>.parent-draft-view){grid-template-columns:minmax(0,1fr)}
+body.questioning #conversation:has(#questionOptions>.parent-draft-view){grid-column:1/-1;width:100%;max-width:740px;margin-inline:auto;box-sizing:border-box}
+#questionOptions .parent-draft-actions>button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:auto;padding:10px 15px;border-radius:8px;box-shadow:none;font:inherit;font-size:15px;line-height:1.4;text-align:center}
+#questionOptions .parent-draft-actions>.parent-primary{background:#64457c;color:#fff;border:1px solid #64457c;font-weight:700}
+#questionOptions .parent-draft-actions>.parent-advanced{background:white;color:#56336b;border:1px solid #b8a0c4;text-decoration:none}
