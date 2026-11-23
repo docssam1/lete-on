@@ -1,8 +1,9 @@
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{SEMS_2022,contentId2022,assessmentsFor2022}from'./curriculum-2022.js';import{BANK}from'./units-index.js';import{withThink}from'./think-merge.js';
-import{reviewStudentModule,reviewStudentWorkbook,reviewQuestionRows,reviewPaperText,STUDENT_LANGUAGE_VERSION as version}from'./student-language-review.js';
+import{reviewStudentModule,reviewStudentWorkbook,reviewQuestionRows,reviewPaperText,reviewWorkbookTableText,STUDENT_LANGUAGE_VERSION as version}from'./student-language-review.js';
 import{questionVersion,questionAtVersion,restoreDailyQuestions,questionMisconceptions}from'./question-revision.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';import{gradeDaily}from'./daily-grade.js';
 import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';
+import{makeWorkbookPaper}from'./revised-workbook-paper.js';
 const entry=new URL('./v2.js',import.meta.url),code=fs.readFileSync(entry,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,entry).href)}).runInContext(vm.createContext({withThink}));
 const ids=SEMS_2022.flatMap(s=>s.units.map(u=>contentId2022(u.position))),assessmentIds=[...new Set([...SEMS_2022.flatMap(s=>assessmentsFor2022(s.sem,BANK).map(x=>x.contentId)),...Object.keys(BANK).filter(x=>/^(?:c22-)?s\d\d-(mid|fin)$/.test(x))])];
 const load=async id=>loaders[id]?loaders[id]():{...(await import('../data/units/'+id+'.js')),...(await import('../data/units/'+id+'.similar.js')),...(BANK[id]?.authored&&!BANK[id]?.mixedSourceAssessment?{source:[]}:await import('../data/units/'+id+'.source.js'))},plain=x=>x===undefined?undefined:JSON.parse(JSON.stringify(x));
@@ -24,14 +25,22 @@ test('all 32 units and every registered assessment retain source questions, keys
  assert(changed>250);assert(sources>=1763);
 });
 
-test('all 3080 workbook questions retain answer words, response parts, figures and references while reviewed captions and stems use ordinary school language',async()=>{
- let questions=0,changedBooks=0;
+test('all 3080 workbook questions retain answer words, response parts, pictures and references while reviewed captions, table text and stems use ordinary school language',async()=>{
+ let questions=0,changedBooks=0,tables=0;const tableUnits=new Set();
  for(const unit of ids){const {workbook:raw}=await import('../data/book/'+unit+'.workbook.js'),before=withObservedPhotoAlt(withElementaryReadingDirections(raw)),saved=plain(before),after=await reviewStudentWorkbook(unit,before);questions+=before.questions.length;if(after!==before)changedBooks++;
-  assert.deepEqual(unit==='c22-s52-u03'?{...after.figures,'weather-quick-28':before.figures['weather-quick-28']}:after.figures,before.figures);assert.equal(after.questions.length,before.questions.length);
+  const review=(await import('../data/language/'+unit+'.js')).review;
+  assert.deepEqual(Object.keys(after.figures||{}),Object.keys(before.figures||{}));
+  for(const [key,html]of Object.entries(before.figures||{})){
+   const next=after.figures[key];if(unit==='c22-s52-u03'&&key==='weather-quick-28')continue;
+   if(next===html)continue;
+   assert(Object.hasOwn(review.tableFigures||{},key),unit+' '+key);assert(before.questions.some(q=>q.status==='authored'&&q.figure===key));assert(html.includes('<table'));
+   assert.equal(next,reviewPaperText(html,review));assert.deepEqual(next.match(/<[^>]*>/g),html.match(/<[^>]*>/g));assert.deepEqual(next.match(/\d+(?:\.\d+)?/g),html.match(/\d+(?:\.\d+)?/g));tables++;tableUnits.add(unit);
+  }
+  assert.equal(after.questions.length,before.questions.length);
   for(let i=0;i<before.questions.length;i++){const q=before.questions[i],n=after.questions[i];for(const k of ['id','answer','accepted','answerContract','responseContract','sourceRef','taxonomy','figure','no','section','standard'])if(q.id==='c22-s52-u03-w050'&&k==='answer')assert.equal(n[k],'예시 자료');else if(q.id==='c22-s52-u03-w050'&&k==='accepted'){for(const a of q[k])assert(n[k].includes(a));}else assert.deepEqual(n[k],q[k],unit+' '+q.id+' '+k);}
   assert.deepEqual(plain(before),saved);assert.deepEqual(await reviewStudentWorkbook(unit,after),after);
  }
- assert.equal(questions,3080);assert(changedBooks>=20);
+ assert.equal(questions,3080);assert(changedBooks>=20);assert.equal(tables,47);assert.deepEqual([...tableUnits],['c22-s61-u04','c22-s62-u01','c22-s62-u04']);
  const {workbook}=await import('../data/book/c22-s52-u02.workbook.js'),w=await reviewStudentWorkbook(workbook.unit,workbook);assert(!w.questions.find(q=>q.no===10).prompt.includes('가상'));
 });
 
@@ -44,4 +53,24 @@ test('the live module, classroom question pool and paper share the revised wordi
 
 test('paper edits replace exact escaped prose without executing HTML and preserve unrelated text',()=>{
  const review={text:{'원래 <그림>':'새 <그림>'},questions:{}};assert.equal(reviewPaperText('<p>원래 &lt;그림&gt;</p><p>다른 글</p>',review),'<p>새 &lt;그림&gt;</p><p>다른 글</p>');assert.equal(reviewPaperText('<p>원래와 다른 그림</p>',review),'<p>원래와 다른 그림</p>');
+});
+
+test('reviewed career source names appear inside the actual workbook table as well as its question data',async()=>{
+ const unit='c22-s62-u04',{workbook:raw}=await import('../data/book/'+unit+'.workbook.js'),after=await reviewStudentWorkbook(unit,raw),key='career-question-data-1';
+ assert(after.questions[0].table.행[0][1].includes('시청의 자료(예시, 2025년)'));
+ assert(after.figures[key].includes('시청의 자료(예시, 2025년)'));
+ assert(!after.figures[key].includes('가상 시 자료팀'));
+ const {workbookPaper}=makeWorkbookPaper(after);
+ for(const mode of ['student','teacher']){const html=workbookPaper({mode});assert(html.includes('<td>시청의 자료(예시, 2025년)</td>'));assert(!html.includes('<td>가상 시 자료팀·2025년</td>'));}
+});
+
+test('table language review preserves future HTML, source-owned figures, unregistered pictures and repeated output',async()=>{
+ const unit='c22-s62-u04',{workbook:raw}=await import('../data/book/'+unit+'.workbook.js'),review=(await import('../data/language/'+unit+'.js')).review,key='career-question-data-1';
+ const after=reviewWorkbookTableText(raw,review);assert.notEqual(after.figures[key],raw.figures[key]);assert.equal(reviewWorkbookTableText(after,review),after);
+ const future={...raw,figures:{...raw.figures,[key]:raw.figures[key]+'<!-- revised table -->'}};
+ assert.equal(reviewWorkbookTableText(future,review).figures[key],future.figures[key]);
+ const source={...raw,questions:raw.questions.map(q=>q.figure===key?{...q,status:'verified'}:q)};
+ assert.equal(reviewWorkbookTableText(source,review).figures[key],source.figures[key]);
+ const picture={...raw,figures:{...raw.figures,[key]:{src:'figure.webp',alt:'가상 시 자료팀·2025년'}}};assert.equal(reviewWorkbookTableText(picture,review).figures[key],picture.figures[key]);
+ const unregistered={...raw,figures:{...raw.figures,'future-table':raw.figures[key]},questions:[...raw.questions,{status:'authored',figure:'future-table'}]};assert.equal(reviewWorkbookTableText(unregistered,review).figures['future-table'],raw.figures[key]);
 });

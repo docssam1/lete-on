@@ -31,5 +31,35 @@ export const review={
    "같은 날짜·장소·시간대의 가상 시각 연습 자료이다.": "같은 날짜·장소·시간대의 시각 자료이다."
   }
  },
- "studentHeaders": {}
+ "studentHeaders": {},
+ "tableFigures": {
+  "season-question-data-11": "d68802eb63999f61",
+  "season-question-data-12": "874814b09db32782",
+  "season-question-data-17": "46ed5633770ff645",
+  "season-question-data-21": "46ed5633770ff645",
+  "season-question-data-24": "46ed5633770ff645",
+  "season-question-data-25": "46ed5633770ff645",
+  "season-question-data-27": "46ed5633770ff645",
+  "season-question-data-28": "040a8a8e36488190",
+  "season-question-data-29": "46ed5633770ff645",
+  "season-question-data-34": "46ed5633770ff645",
+  "season-question-data-36": "46ed5633770ff645",
+  "season-question-data-40": "46ed5633770ff645",
+  "season-question-data-41": "46ed5633770ff645",
+  "season-question-data-43": "46ed5633770ff645",
+  "season-question-data-44": "46ed5633770ff645",
+  "season-question-data-45": "46ed5633770ff645",
+  "season-question-data-69": "ea03bc8f8a7a0e35",
+  "season-question-data-76": "ea03bc8f8a7a0e35",
+  "season-question-data-81": "1feb9b2fc7061dfd",
+  "season-question-data-83": "1feb9b2fc7061dfd",
+  "season-question-data-86": "1feb9b2fc7061dfd",
+  "season-question-data-89": "1feb9b2fc7061dfd",
+  "season-question-data-91": "1feb9b2fc7061dfd",
+  "season-question-data-92": "f45ce547c6c7f335",
+  "season-question-data-93": "1feb9b2fc7061dfd",
+  "season-question-data-107": "60d4e0fbb35077fd",
+  "season-question-data-108": "f377139ab66fac1c",
+  "season-question-data-123": "b6cecbe36a01fac9"
+ }
 };

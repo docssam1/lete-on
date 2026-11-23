@@ -1,9 +1,10 @@
 // Exact wording reviews preserve contracts. A separately versioned weather answer revision follows this layer.
 export const STUDENT_LANGUAGE_VERSION='20261117-student-language-review';
+export const STUDENT_TABLE_LANGUAGE_VERSION='20261123-student-table-language';
 export function languageFingerprint(value){let a=2166136261,b=3335557771;for(const c of JSON.stringify(value)){const n=c.charCodeAt(0);a=Math.imul(a^n,16777619);b=Math.imul(b^n,2246822519);}return(a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');}
 const clone=x=>JSON.parse(JSON.stringify(x)),modules=new Map(),revised=new WeakMap();
 const units=new Set(['s31-u01','s31-u02','s31-u03','s31-u04','c22-s32-u01','c22-s32-u02','c22-s32-u03','c22-s32-u04','s41-u01','s41-u02','s41-u03','s41-u04','c22-s42-u01','c22-s42-u02','c22-s42-u03','c22-s42-u04','c22-s51-u01','c22-s51-u02','c22-s51-u03','c22-s51-u04','c22-s52-u01','c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02','c22-s61-u03','c22-s61-u04','c22-s62-u01','c22-s62-u02','c22-s62-u03','c22-s62-u04','s31-mid','s31-fin','c22-s32-mid','c22-s32-fin','c22-s41-mid','c22-s41-fin','c22-s42-mid','c22-s42-fin','c22-s51-mid','c22-s51-fin','s41-mid','s32-mid','s32-fin']);
-async function reviewOf(unit){if(!units.has(unit))return null;if(!modules.has(unit))modules.set(unit,import(`../data/language/${unit}.js?v=${STUDENT_LANGUAGE_VERSION}`).then(m=>m.review));return modules.get(unit);}
+async function reviewOf(unit){if(!units.has(unit))return null;if(!modules.has(unit))modules.set(unit,import(`../data/language/${unit}.js?v=${STUDENT_LANGUAGE_VERSION}&tableLanguage=${STUDENT_TABLE_LANGUAGE_VERSION}`).then(m=>m.review));return modules.get(unit);}
 const protectedKeys=new Set(['sourceRef','evidence','previousVersions','taxonomy','answer','accepted','vocabulary','answerContract','responseContract','diagnosticOverride','figures','art','verificationModel','sources','standards']);
 export function reviewTextTree(value,text){
  if(typeof value==='string')return Object.hasOwn(text,value)?text[value]:value;
@@ -24,6 +25,19 @@ export function reviewQuestionRows(rows,review){
 }
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function reviewPaperText(html,review){if(!review)return html;const map=Object.fromEntries(Object.entries(review.text).map(([a,b])=>[escape(a),escape(b)]));return html.replace(/<[^>]*>|[^<]+/g,part=>{if(part.startsWith('<'))return part;const trimmed=part.trim();return Object.hasOwn(map,trimmed)?part.replace(trimmed,map[trimmed]):part;});}
+// Authored tables are stored as HTML separately from question data. Match the
+// complete reviewed table before changing exact text nodes; keep all markup,
+// pictures, numerical data and unregistered/future tables untouched.
+export function reviewWorkbookTableText(workbook,review){
+ if(!review?.tableFigures||!workbook.figures)return workbook;
+ const refs=new Set((workbook.questions||[]).filter(q=>q.status==='authored').map(q=>q.figure));let figures=workbook.figures;
+ for(const [key,fingerprint]of Object.entries(review.tableFigures)){
+  const html=workbook.figures[key];if(!refs.has(key)||typeof html!=='string'||!html.includes('<table')||languageFingerprint(html)!==fingerprint)continue;
+  const next=reviewPaperText(html,review);if(next===html)continue;
+  if(figures===workbook.figures)figures={...figures};figures[key]=next;
+ }
+ return figures===workbook.figures?workbook:{...workbook,figures};
+}
 export async function reviewStudentModule(unit,mod){
  const review=await reviewOf(unit);if(!review)return mod;
  const result={...mod};for(const k of ['items','source','similar'])if(mod[k])result[k]=reviewQuestionRows(mod[k],review);
@@ -31,5 +45,5 @@ export async function reviewStudentModule(unit,mod){
  if(unit==='c22-s52-u03'){const{weatherExampleItems}=await import('./weather-example-response.js?v=20261123-weather-example-response');result.items=weatherExampleItems(result.items,unit);}
  return result;
 }
-export async function reviewStudentWorkbook(unit,workbook){const review=await reviewOf(unit);const result=review?reviewTextTree(workbook,review.text):workbook;return unit==='c22-s52-u03'?(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result):result;}
+export async function reviewStudentWorkbook(unit,workbook){const review=await reviewOf(unit);const result=review?reviewWorkbookTableText(reviewTextTree(workbook,review.text),review):workbook;return unit==='c22-s52-u03'?(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result):result;}
 export async function reviewClassroomLanguage(unit,mod){const review=await reviewOf(unit);if(!review||!mod.classroomItems)return mod;const items=reviewQuestionRows(mod.classroomItems,review);return items===mod.classroomItems?mod:{...mod,classroomItems:items};}

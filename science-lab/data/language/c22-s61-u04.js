@@ -21,5 +21,24 @@ export const review={
    "같은 장소에서 남쪽을 향해 밤 9시에 관찰한 두 계절의 연습 자료입니다. 별무리의 배열과 위치를 비교하고, 관련된 지구의 운동으로 까닭을 설명하세요.": "같은 장소에서 남쪽을 향해 밤 9시에 관찰한 두 계절의 자료입니다. 별무리의 배열과 위치를 비교하고, 관련된 지구의 운동으로 까닭을 설명하세요."
   }
  },
- "studentHeaders": {}
+ "studentHeaders": {},
+ "tableFigures": {
+  "earth-question-data-11": "a121dbfe2566ae94",
+  "earth-question-data-12": "49d67231e0ff3a2b",
+  "earth-question-data-17": "4d4191654623f027",
+  "earth-question-data-27": "a54f627f89afb189",
+  "earth-question-data-28": "50c505a3ba2540d1",
+  "earth-question-data-42": "15051bb5fe800df3",
+  "earth-question-data-43": "af91d656e91df274",
+  "earth-question-data-44": "e1d4bc55acd48303",
+  "earth-question-data-59": "05ade6f9dbab929b",
+  "earth-question-data-60": "4935016f95a7a215",
+  "earth-question-data-75": "1f70f00b7b21dd09",
+  "earth-question-data-76": "cc264e23ffd3d349",
+  "earth-question-data-87": "d9a5b733df07023d",
+  "earth-question-data-91": "00991ab10efe3f5f",
+  "earth-question-data-92": "81b94e2bfa32ee29",
+  "earth-question-data-108": "c16f969b6db80ab5",
+  "earth-question-data-123": "1a6d71276dcc7d99"
+ }
 };

@@ -81,5 +81,9 @@ export const review={
    "제시한 온도는 35℃와 28℃이므로 차이는 7℃예요. 같은 시각·같은 종류의 온도계로 비교한 가상 자료이며 실제 건물 전체의 냉방 효과를 측정한 값은 아니에요.": "제시한 온도는 35℃와 28℃이므로 차이는 7℃예요. 같은 시각·같은 종류의 온도계로 비교한 예시 자료이며 실제 건물 전체의 냉방 효과를 측정한 값은 아니에요."
   }
  },
- "studentHeaders": {}
+ "studentHeaders": {},
+ "tableFigures": {
+  "career-question-data-1": "78f07d1d86cb37cb",
+  "career-question-data-11": "78f07d1d86cb37cb"
+ }
 };
