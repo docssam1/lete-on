@@ -1,3 +1,7 @@
+import{beforeEarthSeaTask}from'./tests/earth-sea-guided-stage.mjs';
+import{reviewStudentWorkbook}from'./student-language-review.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{withEarthSeaLinkedWorkbook}from'../data/book/earth-sea-choice-review.js';
 const beforeEarthSeaChoice=q=>{while(['20261115-earth-sea-choice-review','20261115-earth-sea-linked-choice-review','20261115-earth-sea-safety-feedback'].includes(q?.contentVersion)){const{version,snapshotKind,...previous}=q.previousVersions.at(-1);q=previous;}return q;};
 const beforeMaterialReading=q=>q?.contentVersion==='20261115-material-reading-criteria'?questionAtVersion(q,q.previousVersions.at(-1).version):q;
@@ -40,10 +44,10 @@ test('Earth-and-sea reading edits preserve workbook grading, pictures and all fo
   assert.deepEqual(workbook.teacherPages,prior.teacherPages);
   assert.deepEqual(workbook.figures,prior.figures);
   for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(workbook.questions[i]),withoutPresentation(prior.questions[i]));
-  const paper=await revisedTextbookPaper(unit);
+  const shown=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(currentWorkbook))),paper=await revisedTextbookPaper(unit);
   for(const mode of ['student','teacher','answers','quick']){
     const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
-    if(mode==='student'||mode==='teacher')for(const q of withEarthSeaLinkedWorkbook(withEarthSeaStandaloneContext(workbook)).questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
+    if(mode==='student'||mode==='teacher')for(const q of shown.questions)for(const text of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(html.includes(text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);
     if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
   }
 });
@@ -79,7 +83,7 @@ test('actual bank loader preserves every answer boundary and saved presentation 
 test('classroom questions use the same revised bank prompts while retaining their contracts',async()=>{
   const book=await import('../data/book/'+unit+'.book.js'),mod=await revisedClassroom(unit,book),{items}=await actualBank();
   const bank=new Map(items.map(q=>[q.id,q]));assert.equal(mod.classroomItems.length,12);
-  assert.equal(mod.classroomItems.map(beforeEarthSeaChoice).filter(q=>q.contentVersion===EARTH_SEA_ELEMENTARY_VERSION).length,6);
-  for(const q of mod.classroomItems){assert.equal(q.prompt,bank.get(q.id).prompt);assert.deepEqual(q.answerContract,bank.get(q.id).answerContract);}
+  assert.equal(mod.classroomItems.map(beforeEarthSeaTask).map(beforeEarthSeaChoice).filter(q=>q.contentVersion===EARTH_SEA_ELEMENTARY_VERSION).length,6);
+  for(const q of mod.classroomItems){const previous=beforeEarthSeaTask(q);assert.equal(previous.prompt,bank.get(q.id).prompt);assert.deepEqual(previous.answerContract,bank.get(q.id).answerContract);}
   for(const q of currentWorkbook.questions.filter(q=>q.sourceId))assert.equal(q.prompt,bank.get(q.sourceId).prompt);
 });

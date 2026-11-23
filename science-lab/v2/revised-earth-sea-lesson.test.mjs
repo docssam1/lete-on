@@ -1,3 +1,4 @@
+import{beforeEarthSeaTask}from'./tests/earth-sea-guided-stage.mjs';
 import{materialEarthCurrentItems}from'../data/book/material-earth-student-language.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import{fileURLToPath}from'node:url';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js';import*as original from'../data/book/c22-s32-u02.book.js';import*as records from'../data/book/c22-s32-u02.records-book.js';import{items}from'../data/units/c22-s32-u02.js';import{similar}from'../data/units/c22-s32-u02.similar.js';import{lesson}from'../data/units/c22-s32-u02.lesson.js';import{interact}from'../data/book/c22-s32-u02.interact.js';import{art}from'../data/book/c22-s32-u02.workbook-art.js';import{withThink}from'./think-merge.js';import{buildSlides,deckSlideIndex}from'./deck.js';
@@ -11,7 +12,7 @@ test('지구와 바다는 자료 범위·두 물 비교·해안·밀물/썰물·
 });
 test('기존80보충·12수업·정답 계약·34쪽 기록 교재와 미확보 원문 상태는 보존한다',()=>{
  assert.equal(items.length,80);assert.equal(similar.length,0);assert.equal(data.items.length,92);assert.equal(records.chapter.pages.length,34);assert.equal(original.chapter.earthSeaThinking,undefined);assert.equal(lesson.explore.lab.rowsKey,'seawaterRows');assert.equal(mod.classroomLab.rowsKey,'earthSeaCompareRows');const ids=new Set(mod.classroomItems.map(q=>q.id));assert.equal(ids.size,12);assert(ids.has('c22-s32-u02-t04'));assert.deepEqual([...new Set(mod.classroomItems.map(q=>q.answerContract.type))].sort(),['cloze','multi-choice','single-choice','written-explanation']);
- for(const q of pool){const old=originalPool.find(x=>x.id===q.id);assert(old);for(const key of['answerContract','sourceRef','taxonomy'])assert.deepEqual(q[key],old[key]);if(!ids.has(q.id))assert.equal(q,old);}
+ for(const q of pool){const old=originalPool.find(x=>x.id===q.id);assert(old);for(const key of['answerContract','sourceRef','taxonomy'])assert.deepEqual(beforeEarthSeaTask(q)[key],old[key]);if(!ids.has(q.id))assert.equal(q,old);}
  const daily=[...classroomQuestions(mod,data.similar),...classroomQuestions(mod,data.items)];for(const q of mod.classroomItems)assert.equal(daily.find(x=>x.id===q.id),q);const curriculum=JSON.parse(fs.readFileSync(new URL('../bank/work/c22s32u02/curriculum.json',import.meta.url)));assert.equal(curriculum.originalAvailability.originalExamPending,true);assert.equal(curriculum.originalAvailability.legacyDirectReuseForCurrent,0);
 });
 test('다섯 비교안의 물·양·접시 상태는 이미 검수한 교재와 같고 없는 결과를 만들지 않는다',()=>{
