@@ -1,3 +1,4 @@
+import{reviewStudentModule}from'./student-language-review.js';
 import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
 import test from'node:test';import assert from'node:assert/strict';
@@ -32,7 +33,7 @@ test('geology readability guards original, similar, review, future and other uni
  assert.equal(geologyReadableCurrentItems(baseline,'other'),baseline);assert.equal(geologyReadableCurrentItems(null,unit),null);
 });
 test('geology bank, recurring classroom and Daily use the same twelve current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=standaloneQuestionContexts(geologyReviewedCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=(await reviewStudentModule(unit,{items:standaloneQuestionContexts(geologyReviewedCurrentItems(baseline,unit),unit)})).items,daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===GEOLOGY_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===GEOLOGY_READABILITY_VERSION))changed++;}
  assert.equal(changed,12);assert.equal(first.classroomItems.length,16);
 });

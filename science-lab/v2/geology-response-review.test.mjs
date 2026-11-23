@@ -1,3 +1,6 @@
+import{reviewStudentModule,reviewStudentWorkbook}from'./student-language-review.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{geologyResponseItems,withGeologyResponseWorkbook,GEOLOGY_RESPONSE_VERSION as version}from'../data/book/geology-response-review.js';
 import{workbook,geologyResponsePriorWorkbook as priorWorkbook}from'../data/book/c22-s51-u01.workbook.js';
@@ -22,10 +25,10 @@ test('exact authored-question and full-page guards preserve keys, source identit
 });
 
 test('actual geology papers, web book and classroom pool share the criteria while rock summaries match their questions',async()=>{
- const raw=await import('../data/book/'+unit+'.book.js'),cls=await revisedClassroom(unit,raw),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit);
- for(const q of reviewed){assert.deepEqual(pool.find(x=>x.id===q.id),q);const selected=cls.classroomItems.find(x=>x.id===q.id);if(selected)assert.deepEqual(selected,q);}
- for(const mode of['student','teacher']){const print=paper.workbookPaper({mode}),web=renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true}),bank=mod.bankPaper({...mod,mode});for(const html of[print,web]){const pages=html.split('<section class="bk-page '),conglomerate=pages.find(p=>p.includes('data-question="'+unit+'-w033"')),sandstone=pages.find(p=>p.includes('data-question="'+unit+'-w034"'));assert(conglomerate.includes('자갈 크기의 알갱이가 작은 알갱이와 함께'));assert(sandstone.includes('주로 모래 크기의 알갱이로 이루어진 퇴적암은 사암'));assert(!html.includes('분류표의 열 제목을 같은 기준으로 고치세요'));assert(!html.includes('실제로 만든 뒤 확인한 모습을 적으세요'));}
-  if(mode==='student')assert(!print.includes('class="ed-key"'));else for(const q of reviewed){assert(print.includes(esc(workbook.questions.find(w=>w.sourceId===q.id).criteria)));for(const criterion of q.answerContract.rubric.required)assert(bank.includes(esc(criterion)));}
+ const active=await reviewStudentModule(unit,mod),modern=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));const raw=await import('../data/book/'+unit+'.book.js'),cls=await revisedClassroom(unit,raw),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit);
+ for(const prior of reviewed){const q=active.items.find(x=>x.id===prior.id);assert.deepEqual(pool.find(x=>x.id===q.id),q);const selected=cls.classroomItems.find(x=>x.id===q.id);if(selected)assert.deepEqual(selected,q);}
+ for(const mode of['student','teacher']){const print=paper.workbookPaper({mode}),web=renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true}),bank=active.bankPaper({...active,mode});for(const html of[print,web]){const pages=html.split('<section class="bk-page '),conglomerate=pages.find(p=>p.includes('data-question="'+unit+'-w033"')),sandstone=pages.find(p=>p.includes('data-question="'+unit+'-w034"'));assert(conglomerate.includes('자갈 크기의 알갱이가 작은 알갱이와 함께'));assert(sandstone.includes('주로 모래 크기의 알갱이로 이루어진 퇴적암은 사암'));assert(!html.includes('분류표의 열 제목을 같은 기준으로 고치세요'));assert(!html.includes('실제로 만든 뒤 확인한 모습을 적으세요'));}
+  if(mode==='student')assert(!print.includes('class="ed-key"'));else for(const prior of reviewed){const q=active.items.find(x=>x.id===prior.id);assert(print.includes(esc(modern.questions.find(w=>w.sourceId===q.id).criteria)));for(const criterion of q.answerContract.rubric.required)assert(bank.includes(esc(criterion)));}
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&geologyReview='+version));
 });
