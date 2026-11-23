@@ -43,14 +43,16 @@ test('no session redirects without fetching or preparing storage',async()=>{
 test('storage failure does not start script downloads',async()=>{
  const h=harness();h.auth.resolve({user_id:'test'});await tick();h.prepare.reject(new Error('private server detail'));await h.result;assert.equal(h.scripts.length,0);assert.equal(h.classes.has('member-checking'),true);assert.doesNotMatch(h.box.children.map(x=>x.textContent).join(' '),/private server detail/);
 });
-test('consult mode opens only for a server-verified review account, splits the owner per student and skips account cloud storage',async()=>{
+test('consult mode opens only for a server-verified review account, hydrates its own student before loading the consulting planner',async()=>{
  const h=harness(2);h.auth.resolve({user_id:'review-1',student_name:'',review:true});await tick();
  const consult=h.scripts[0];assert.match(consult.src,/^planner-consult\.js\?v=/);assert.equal(h.events.includes('prepare'),false);
- h.window.RoadmapConsult={prepare:m=>({owner:m.user_id+'.c.abc',name:'가나'}),mount:()=>h.events.push('consult-mount')};
+ h.window.RoadmapConsult={prepare:m=>({owner:m.user_id+'.c.abc',name:'가나',student:'abc',accountId:m.user_id}),afterCloud:()=> '가나',mount:()=>h.events.push('consult-mount')};
  consult.onload();await tick();await tick();
  assert.equal(h.window.RoadmapMember.user_id,'review-1.c.abc');assert.equal(h.window.RoadmapMember.consult,true);assert.equal(h.window.RoadmapMember.student_name,'가나');
+ assert.equal(h.events.includes('prepare'),true);assert.equal(h.scripts.length,1);h.prepare.resolve();await tick();
  for(const s of h.scripts.slice(1))s.onload();await h.result;
- assert.equal(h.events.includes('prepare'),false);assert.equal(h.events.includes('mount'),false);assert.equal(h.events.at(-1),'consult-mount');
+ assert.equal(h.events.includes('consult-mount'),true);assert.equal(h.events.at(-1),'mount');
+ assert.equal(h.window.RoadmapMember.consultAccount,'review-1');assert.equal(h.window.RoadmapMember.consultStudent,'abc');
 });
 test('an ordinary member never loads the consult script',async()=>{
  const h=harness(1);await start(h);for(const s of h.scripts)s.onload();await h.result;

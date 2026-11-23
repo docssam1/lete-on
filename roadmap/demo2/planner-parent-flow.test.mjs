@@ -175,3 +175,42 @@ test('the focused interview starts with age and grade, then follows each age-spe
  assert.match(F.slidePlan('5','pre')[2].title,/수 놀이/);
  assert.match(F.slidePlan('14','7')[2].title,/교과 개념·유형/);
 });
+
+test('quick draft needs only one current fact, including a semester without a book',()=>{
+ for(const [age,grade,axis] of [['5','pre','thinking'],['10','3','school'],['14','7','school']]){
+  assert.deepEqual(plain(F.slidePlan(age,grade,true).map(s=>s.id)),['age','math']);
+  assert.equal(F.ageCopy(age,grade).order[0],axis);
+ }
+ const semester=F.build({age:'10',grade:'3',quickDraft:true,school:{stage:'e:4-1'}});
+ assert.ok(semester.parentFlow.quickDraft);
+ assert.match(F.draftMarkup(semester),/초등 4-1/);
+ assert.equal(semester.parentFlow.actualBooks.school,'');
+ assert.equal(semester.calc,'unknown');
+ const book=F.build({age:'14',grade:'7',quickDraft:true,school:{book:'나의 <개념> 교재'}});
+ assert.equal(book.schoolCourse,'unknown');assert.equal(F.inputModel(book).school.book,'나의 <개념> 교재');
+ assert.match(F.draftMarkup(book),/나의 &lt;개념&gt; 교재/);
+ assert.doesNotMatch(F.draftMarkup(book),/고등 과정|교재를 마쳤/);
+ const detail=F.build({...F.inputModel(book),quickDraft:false},book);
+ assert.equal(detail.parentFlow.quickDraft,false);assert.equal(detail.parentFlow.actualBooks.school,'나의 <개념> 교재');
+});
+
+test('first activities and a deliberate not-started answer produce distinct drafts',()=>{
+ const young={age:'5',grade:'pre',quickDraft:true};
+ const activity=F.build({...young,thinking:{book:'블록 규칙 찾기'}});
+ assert.match(F.draftMarkup(activity),/블록 규칙 찾기/);assert.match(F.draftMarkup(activity),/아이 말로/);
+ const starting=F.build({...young,notStarted:true});assert.match(F.draftMarkup(starting),/아직 수학 공부를 시작하기 전/);
+ const now=F.build({...young,calc:{book:'10까지 수 세기'}},starting);
+ assert.equal(now.parentFlow.notStarted,false);assert.match(F.draftMarkup(now),/10까지 수 세기/);
+ const academy=F.build({...young,thinking:{book:'소마 Ray A3-3',source:'academy'}});
+ assert.match(F.draftMarkup(academy),/학원 수업 참고/);
+ assert.doesNotMatch(F.draftMarkup(academy).split('이번 주에 해 볼 공부')[1],/Ray/);
+ assert.throws(()=>F.build(young),/한 가지/);
+});
+
+test('adding a named arithmetic book keeps the original semester visible in the full plan',()=>{
+ const a=F.build({grade:'3',age:'10',quickDraft:true,school:{stage:'e:4-2'}});
+ const updated=F.build({...F.inputModel(a),quickDraft:false,calc:{book:'기적의 계산법 6권'}},a);
+ const m=F.automatic(updated,fields,w.PlannerStandard.model(updated,fields));
+ assert.match(F.renderResult(m),/초등 4-2/);assert.match(F.renderResult(m),/기적의 계산법 6권/);
+ assert.equal(F.inputModel(updated).calc.book,'기적의 계산법 6권');
+});
