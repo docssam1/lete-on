@@ -7091,7 +7091,7 @@ function renderRoundPagesBody(item, opts){
   const worstBand = row => { const v = (row || []).filter(Boolean); if(!v.length) return null;
     const lo = i => { const a = v.map(x => x[i]).filter(x => x != null); return a.length ? Math.min(...a) : null; };
     const hi = i => { const a = v.map(x => x[i]).filter(x => x != null); return a.length ? Math.max(...a) : null; };
-    return [lo(0), hi(1), hi(2), lo(3), lo(4), hi(5), lo(6)]; };
+    return [lo(0), hi(1), hi(2), lo(3), lo(4), hi(5), lo(6), hi(7), hi(8), lo(9)]; };
   const headBand = headRow && (opts.mixed && !opts.band ? worstBand(headRow)
     : (headRow[{ young:0, mid:1, senior:2 }[band]] || headRow.find(Boolean)));
   const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
@@ -7173,7 +7173,7 @@ function renderRoundPagesBody(item, opts){
   const headTooTall = !!(headBand && headBand[1] != null && headBand[1] * fsR > 250);
   const editorialExamplePage=opts.editorialC4&&examLang()==='ko'&&item.thread==='ML1'&&item.level===1&&['l','xl'].includes(getFontSize());
   let separateGuide = ((item.c0&&item.thread==='AD1') || middleLesson || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
-  const otherGuideSplit = ((item.c0&&item.thread==='AD1') || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || headTooTall || (item.thread==='MD83' && item.level===5));
+  const otherGuideSplit = ((item.c0&&item.thread==='AD1') || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || (headTooTall && !middleLesson) || (item.thread==='MD83' && item.level===5));
   const separateExample=(editorialExamplePage||(['MD15','MD65'].includes(item.thread)&&item.level===5&&getFontSize()==='xl'))&&separateGuide;
   let guidePages = separateGuide ? (guided.pages || [guided.html]).slice() : [];
   if(separateExample)guidePages[0]=exampleHtml+guidePages[0];
@@ -7248,13 +7248,16 @@ function renderRoundPagesBody(item, opts){
   }
   /* DC3·MD118은 따라 풀기가 높아 첫 장에 문항을 싣지 않는다 — 문장제만인 회차는 따라 풀기가 없어 빈 장이 됐다(C23 DC3, 2026-11-18) */
   if((pictureWorked&&exampleHtml)||(['DC3','MD118'].includes(item.thread)&&!noTeach&&!wordOnly))firstRows=0;
+  /* 합칠지는 이 회차 글씨 밴드의 잰 값으로 본다 — 여러 회차를 묶은 학습지의 「세 밴드 중 가장 좁은 값」(worstBand)은
+     중등 회차에도 유아 큰 글씨 값을 써서 아무것도 합치지 못했다. 혹시 넘치면 fitOverflowingPages 가 받는다. */
+  const midGuideBand = headRow && (headRow[{ young:0, mid:1, senior:2 }[band]] || headBand);
   /* 중등 개념 쪽은 따라 풀기를 늘 다음 장으로 뗐다(middleLesson) — 개념·예시가 반쪽, 따라 풀기가 반쪽인 장 둘이
      생겼다(원장 2026-11-23 「한 페이지 맞추기로 했잖아」, C37 MD78: 53% + 41%). 첫 장에 문항이 없고(firstRows 0),
      따라 풀기가 한 장뿐이며, 잰 높이(data/print-head.js [7] 따라 풀기 · [8] 개념·예시 · [9] 종이 바닥)로 둘이 한 장에
      들어가면 한 장에 싣는다. 다른 까닭(그래프·큰 글씨·너무 긴 머리 등)으로 떼는 것은 그대로. */
   if(separateGuide && middleLesson && !otherGuideSplit && !separateExample && firstRows === 0 && guidePages.length === 1
-    && headBand && headBand[7] != null && headBand[8] != null && headBand[9] != null
-    && (headBand[8] + headBand[7]) * fsR + 3 <= headBand[9]){
+    && midGuideBand && midGuideBand[7] != null && midGuideBand[8] != null && midGuideBand[9] != null
+    && (midGuideBand[8] + midGuideBand[7]) * fsR + 3 <= midGuideBand[9]){
     separateGuide = false;
     guidePages = [];
   }
