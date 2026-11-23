@@ -45,6 +45,7 @@ export async function reviewStudentModule(unit,mod){
  if(unit==='c22-s42-u02'){const{ecologyWritingItems}=await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing');const{ecologyConservationItems}=await import('./ecology-conservation-review.js?v=20261123-ecology-conservation');const{ecologyFoodwebItems}=await import('./ecology-foodweb-review.js?v=20261123-ecology-foodweb-tasks');for(const key of ['items','similar'])result[key]=ecologyFoodwebItems(ecologyConservationItems(ecologyWritingItems(result[key],unit),unit),unit);}
  if(unit==='s31-u02'){const{animalGuidedItems}=await import('./animal-guided-review.js?v=20261123-animal-guided-tasks');for(const key of ['items','similar'])result[key]=animalGuidedItems(result[key],unit);}
  if(unit==='s31-u03'){const{plantGuidedItems}=await import('./plant-guided-review.js?v=20261124-plant-guided-tasks');for(const key of ['items','similar'])result[key]=plantGuidedItems(result[key],unit);}
+ if(unit==='c22-s51-u02'){const{lightGuidedItems}=await import('./light-guided-review.js?v=20261124-light-guided-tasks&layout=3');for(const key of ['items','similar'])result[key]=lightGuidedItems(result[key],unit);}
  if(unit==='c22-s51-u01'){const{geologyGuidedItems}=await import('./geology-guided-review.js?v=20261124-geology-guided-tasks&layout=6');for(const key of ['items','similar'])result[key]=geologyGuidedItems(result[key],unit);}
  if(unit==='c22-s42-u04'){const{climateGuidedItems}=await import('./climate-guided-review.js?v=20261124-climate-guided-tasks&layout=5');for(const key of ['items','similar'])result[key]=climateGuidedItems(result[key],unit);}
  if(unit==='c22-s42-u03'){const{gasGuidedItems}=await import('./gas-guided-review.js?v=20261124-gas-guided-tasks&layout=6');for(const key of ['items','similar'])result[key]=gasGuidedItems(result[key],unit);}
@@ -67,6 +68,7 @@ export async function reviewStudentWorkbook(unit,workbook){
  const result=review?reviewWorkbookTableText(reviewTextTree(workbook,review.text),review):workbook;
  if(unit==='s31-u02'){const guided=(await import('./animal-guided-review.js?v=20261123-animal-guided-tasks')).withAnimalGuidedWorkbook(result);return(await import('./animal-concept-review.js?v=20261124-animal-concept-pages')).withAnimalConceptWorkbook(guided);}
  if(unit==='s31-u03'){const guided=(await import('./plant-guided-review.js?v=20261124-plant-guided-tasks')).withPlantGuidedWorkbook(result);return(await import('./plant-concept-review.js?v=20261124-plant-concept-pages')).withPlantConceptWorkbook(guided);}
+ if(unit==='c22-s51-u02')return(await import('./light-guided-review.js?v=20261124-light-guided-tasks&layout=3')).withLightGuidedWorkbook(result);
  if(unit==='c22-s51-u01')return(await import('./geology-guided-review.js?v=20261124-geology-guided-tasks&layout=6')).withGeologyGuidedWorkbook(result);
  if(unit==='c22-s42-u04')return(await import('./climate-guided-review.js?v=20261124-climate-guided-tasks&layout=5')).withClimateGuidedWorkbook(result);
  if(unit==='c22-s42-u03')return(await import('./gas-guided-review.js?v=20261124-gas-guided-tasks&layout=6')).withGasGuidedWorkbook(result);

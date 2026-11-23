@@ -602,3 +602,6 @@
  .bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
  .bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panel:last-child{border-bottom:0}
 }
+
+/* Grade-five light: explicit short answers without decorative essay lines. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-question::after{display:none}
