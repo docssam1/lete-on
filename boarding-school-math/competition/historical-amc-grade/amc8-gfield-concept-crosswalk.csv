@@ -1,0 +1,176 @@
+source_concept,gfield_domain,korean_learning_label,mapping_basis
+3d-geometry,geometry,입체도형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+absolute-value,algebra,절댓값,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+ages,algebra,나이 조건 문제,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+algebraic-manipulation,algebra,식의 변형,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+angle-bisector,geometry,각의 이등분선,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+angle-chasing,geometry,각도 추론,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+angle-sum,geometry,각의 합,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+annulus,geometry,환형 도형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+arc,geometry,호,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+area,geometry,넓이,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+area-decomposition,geometry,넓이 분할,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+area-ratio,geometry,넓이의 비,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+arithmetic-sequence,algebra,등차수열,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+arrangements-with-restrictions,counting,조건이 있는 배열,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+basic-counting,counting,기본 경우의 수,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+basic-probability,counting,기본 확률,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+bijection,counting,일대일 대응,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+binomial-probability,counting,이항 확률,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+bounding-to-limit-cases,counting,경계 경우로 좁히기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+casework,counting,경우 나누기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+catalan-number,counting,카탈랑 수,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+chinese-remainder-theorem,number,중국인의 나머지 정리,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+chord,geometry,현,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+circle,geometry,원,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+circle-area,geometry,원의 넓이,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+circular-arrangements,counting,원순열,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+circumference,geometry,원의 둘레,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+clock,number,시각,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+combinations,counting,조합,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+complementary-counting,counting,여사건으로 세기,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+complementary-probability,counting,여사건의 확률,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+conditional-probability,counting,조건부 확률,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+congruence-geometry,geometry,도형의 합동,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+continued-fraction,number,연분수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+coordinate-geometry,geometry,좌표기하,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+counterexample,counting,반례,LIVE 개념 분류(logic)를 GFIELD 영역에 대응한 편집 가능 제안
+counting-integers-in-a-range,counting,구간의 정수 개수,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+counting-intersections,counting,교점의 개수,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+counting-pairs,counting,쌍의 개수,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+counting-shapes-in-figures,geometry,도형 속 도형 세기,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+cryptarithm,counting,숫자 암호식,LIVE 개념 분류(logic)를 GFIELD 영역에 대응한 편집 가능 제안
+cube-geometry,geometry,정육면체,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+custom-operation,algebra,정의된 연산,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+cylinder,geometry,원기둥,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+data-and-graph-interpretation,data,자료·그래프 해석,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+date-and-time,number,날짜와 시각,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+decimal,number,소수,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+diagonal,geometry,대각선,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+dice-probability,counting,주사위 확률,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+difference-of-squares,algebra,제곱의 차,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+digits,number,숫자와 자릿수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+diophantine-equation,number,정수해 방정식,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+distance-formula,geometry,두 점 사이의 거리,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+distance-rate-and-time,number,거리·속력·시간,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+distributive-property,algebra,분배법칙,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+divisibility,number,배수와 약수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+double-counting,counting,중복해서 세기,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+equiangular-polygon,geometry,등각다각형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+equilateral-triangle,geometry,정삼각형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+estimation,number,어림,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+exponent,algebra,거듭제곱,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+extremal-argument,counting,가장 큰·작은 경우 살피기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+factor,number,인수와 약수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+factor-counting,number,약수의 개수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+factorial,counting,계승,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+factoring,algebra,인수분해,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+fencepost-counting,counting,간격과 양끝 세기,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+floor-and-ceiling-functions,functions,바닥 함수와 천장 함수,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+fraction,number,분수,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+function,functions,함수,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+generating-functions,algebra,생성함수,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+geometric-probability,counting,기하적 확률,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+geometric-sequence,algebra,등비수열,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+graph-theory,counting,그래프 이론,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+greatest-common-divisor,number,최대공약수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+harmonic-mean,data,조화평균,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+inclusion-exclusion,counting,포함배제,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+inequality,algebra,부등식,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+inscribed-angle,geometry,원주각,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+invariant,counting,불변량,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+isosceles-triangle,geometry,이등변삼각형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+kite,geometry,연꼴,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+lattice-paths,counting,격자 경로,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+lattice-point,geometry,격자점,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+least-common-multiple,number,최소공배수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+legendres-formula,number,르장드르 공식,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+linear-equation,algebra,일차방정식,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+logical-deduction,counting,논리적 추론,LIVE 개념 분류(logic)를 GFIELD 영역에 대응한 편집 가능 제안
+magic-square,number,마방진,LIVE 개념 분류(logic)를 GFIELD 영역에 대응한 편집 가능 제안
+mean,data,평균,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+median-data,data,중앙값,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+midpoint,geometry,중점,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+mixture,algebra,혼합 조건 문제,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+mode,data,최빈값,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+modular-arithmetic,number,나머지 연산,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+modular-exponentiation,number,거듭제곱의 나머지,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+money,number,화폐와 금액,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+multiple,number,배수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+multiplication-principle,counting,곱셈 원리,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+multiset-permutations,counting,중복순열,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+net-3d-geometry,geometry,입체도형의 전개도,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+optimization,algebra,최댓값·최솟값,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+order-of-operations,algebra,연산 순서,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+pairing-and-grouping,counting,짝짓기와 묶기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+palindrome,number,회문수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+paper-folding,geometry,종이 접기,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+parallelogram,geometry,평행사변형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+parity,number,짝수와 홀수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+partitions-and-compositions,counting,분할과 순서 있는 분할,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+pascals-triangle,counting,파스칼 삼각형,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+pattern-recognition,counting,규칙 찾기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+percentage,number,백분율,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+perfect-power,number,완전 거듭제곱,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+perfect-square,number,완전제곱수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+perimeter,geometry,둘레,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+permutations,counting,순열,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+picks-theorem,geometry,픽의 정리,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+pigeonhole-principle,counting,비둘기집 원리,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+place-value,number,자릿값,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+polyhedron,geometry,다면체,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+power-of-2,number,2의 거듭제곱,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+power-scaling-of-length-area-and-volume,geometry,길이·넓이·부피의 비,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+prime,number,소수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+prime-factorization,number,소인수분해,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+process-simulation,counting,과정 따라가기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+pythagorean-theorem,geometry,피타고라스 정리,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+pythagorean-triple,geometry,피타고라스 수,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+quadratic,algebra,이차식,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+radical,algebra,제곱근,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+random-walk,counting,무작위 이동,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+range,data,자료의 범위,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+rate,number,단위율,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+ratio-and-proportion,number,비와 비례,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+rectangle,geometry,직사각형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+rectangular-prism,geometry,직육면체,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+recursion,algebra,재귀,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+recursive-counting,counting,재귀적으로 세기,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+recursive-probability,counting,재귀 확률,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+reflection-geometry,geometry,대칭이동,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+regular-polygon,geometry,정다각형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+relative-speed,number,상대 속력,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+repeating-decimal,number,순환소수,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+rhombus,geometry,마름모,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+sampling-without-replacement,data,비복원 추출,LIVE 개념 분류(probability and statistics)를 GFIELD 영역에 대응한 편집 가능 제안
+sector,geometry,부채꼴,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+similarity,geometry,도형의 닮음,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+slope,algebra,기울기,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+small-cases,counting,간단한 경우부터 살피기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+special-right-triangle,geometry,특수 직각삼각형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+square-geometry,geometry,정사각형,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+stars-and-bars,counting,별과 막대,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+substitution,algebra,대입,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+sum-of-factors,number,약수의 합,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+summation,algebra,합 구하기,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+surface-area,geometry,겉넓이,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+symmetry,geometry,대칭,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+system-of-equations,algebra,연립방정식,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+systematic-listing,counting,체계적으로 나열하기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안
+tangent-circles,geometry,서로 접하는 원,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+tangent-line,geometry,접선,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+telescoping,algebra,망원합,LIVE 개념 분류(algebra)를 GFIELD 영역에 대응한 편집 가능 제안
+tiling,geometry,도형 채우기,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+trailing-zeros,number,끝자리 0의 개수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+transformation,geometry,도형의 변환,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+trapezoid,geometry,사다리꼴,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+tree-diagram,counting,나무도표,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+triangle-area,geometry,삼각형의 넓이,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+triangle-inequality,geometry,삼각형 부등식,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+triangular-number,number,삼각수,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+unit-conversion,number,단위 변환,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+units-digit,number,일의 자리 숫자,LIVE 개념 분류(number theory)를 GFIELD 영역에 대응한 편집 가능 제안
+venn-diagram,counting,벤 다이어그램,LIVE 개념 분류(combinatorics)를 GFIELD 영역에 대응한 편집 가능 제안
+volume,geometry,부피,LIVE 개념 분류(geometry)를 GFIELD 영역에 대응한 편집 가능 제안
+whole-number-operations,number,정수의 사칙연산,LIVE 개념 분류(arithmetic)를 GFIELD 영역에 대응한 편집 가능 제안
+work-backwards,counting,거꾸로 풀기,LIVE 개념 분류(problem-solving techniques)를 GFIELD 영역에 대응한 편집 가능 제안

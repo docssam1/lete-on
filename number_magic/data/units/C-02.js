@@ -31,7 +31,7 @@ window.NM_UNITS['C-02'] = {
               zh:'<b>2×5=10</b>是一个特殊的对。三数相乘时，找到2和5先乘，凑成10。例：3×2×5 = (2×5)×3 = 10×3 = 30。'},
         mathSteps:['3 × 2 × 5','= 3 × (2 × 5)','= 3 × 10','= 30'],
         result:{ko:'(2×5)=10을 먼저 만들면 나머지 곱셈이 쉬워요!',en:'Make (2×5)=10 first — the rest multiplies easily!',zh:'先凑出(2×5)=10，剩下的乘法就简单了！'},
-        book:{ko:'세 수 곱셈에서 2와 5가 보이면 먼저 곱해 10을 만들어요. 곱셈은 순서를 바꿔도 결과가 같아요(교환법칙).',
+        book:{ko:'세 수 곱셈에서 2와 5가 보이면 먼저 곱해 10을 만들어요. 곱셈은 위치를 바꿔도 똑같아요.',
               en:'When you see 2 and 5 in a product, multiply them first to make 10. Multiplication is commutative — order doesn\'t change the result.',
               zh:'三数相乘时看到2和5，先乘凑成10。乘法交换律：顺序不影响结果。'} },
 
@@ -55,7 +55,7 @@ window.NM_UNITS['C-02'] = {
         result:{ko:'눈으로 쌍 먼저 찾기 → 쌍 먼저 곱하기 → 쉬운 계산!',en:'Spot the pair first → multiply the pair → easy calculation!',zh:'先找对→先乘对→简单计算！'},
         book:null }
     ],
-    rule:{ ko:'① 2×5=10, 4×5=20 쌍을 찾아요  ② 쌍을 먼저 곱해요  ③ 교환법칙: 순서 바꿔도 답 같아요',
+    rule:{ ko:'① 2×5=10, 4×5=20 쌍을 찾아요  ② 쌍을 먼저 곱해요  ③ 위치를 바꿔도 똑같아요',
       en:'① Find pairs like 2×5=10, 4×5=20  ② Multiply the pair first  ③ Commutative law: order doesn\'t matter',
       zh:'① 找2×5=10、4×5=20的对  ② 先乘这个对  ③ 交换律：顺序不影响结果' }
   },

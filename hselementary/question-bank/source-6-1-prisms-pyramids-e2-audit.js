@@ -21,7 +21,7 @@ const sourceIds = [
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e2-example-2-2", 74],
-  ["6-1-u2-e2-mission-2", 63],
+  ["6-1-u2-e2-mission-2", "63,84"],
   ["6-1-u2-e2-mission-5", 92],
   ["6-1-u2-e2-mission-6", 77],
   ["6-1-u2-e2-mission-1", 60],
@@ -44,14 +44,14 @@ const evidenceKinds = [
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
   [
-    { values: [1, 4, 14, 24, 36, 74], answer: 74 },
-    { values: [2, 7, 14, 24, 36, 74], answer: 74 },
-    { values: [3, 10, 14, 24, 36, 74], answer: 74 }
+    { values: [1, 3, 14, 24, 36, 74], answer: 74 },
+    { values: [2, 6, 14, 24, 36, 74], answer: 74 },
+    { values: [3, 9, 14, 24, 36, 74], answer: 74 }
   ],
   [
-    { values: [5, 9, 45], answer: 45 },
-    { values: [7, 9, 63], answer: 63 },
-    { values: [8, 9, 72], answer: 72 }
+    { values: [7, 9, 12, 63, 84], answer: "63,84" },
+    { values: [5, 9, 12, 45, 60], answer: "45,60" },
+    { values: [8, 9, 12, 72, 96], answer: "72,96" }
   ],
   [
     { values: [5, 10, 15, 17, 30, 45, 92], answer: 92 },
@@ -84,8 +84,8 @@ const expectedPools = [
     { values: [6, 6, 3, 18, 9, 108, 54, 120], answer: "108,54" }
   ],
   [
-    { values: [6, 12, 4, 3, 3], answer: 3 },
     { values: [7, 16, 4, 3, 4], answer: 4 },
+    { values: [6, 12, 4, 3, 3], answer: 3 },
     { values: [8, 20, 4, 3, 5], answer: 5 }
   ]
 ];
@@ -138,17 +138,21 @@ function independentAnswer(evidence) {
   if (evidence.kind === "cuboid-all-corners-cut") {
     const [distance, minimumEdge, faces, vertices, edges, total] = values;
     check([1, 2, 3].includes(distance), "절단 거리가 고정 pool 1, 2, 3이 아닙니다.");
-    check(minimumEdge === 3 * distance + 1, "최소 모서리 길이 조건이 절단 거리와 맞지 않습니다.");
+    check(minimumEdge === 3 * distance && minimumEdge > 2 * distance, "원본처럼 모서리가 절단 거리의 3배보다 길다는 조건이 아니거나, 두 절단이 한 모서리에서 겹칠 수 있습니다.");
     check(faces === 14 && vertices === 24 && edges === 36, "직육면체 절단 뒤 F=14, V=24, E=36이 아닙니다.");
     check(faces + vertices + edges === total && total === 74, "절단 뒤 전체 수가 독립 계산 74와 다릅니다.");
     return total;
   }
   if (evidence.kind === "regular-prism-radial-cut") {
-    const [n, edgesPerPiece, total] = values;
+    // 원본은 자르는 방법을 정하지 않으므로, 밑면의 중심에서 둘레의 같은 자리로 곧게 자를 때 생기는 조각을 모두 셉니다.
+    const [n, triangleEdges, quadrilateralEdges, triangleTotal, quadrilateralTotal] = values;
     check([5, 7, 8].includes(n), "정n각기둥의 n이 고정 pool 5, 7, 8이 아닙니다.");
-    check(edgesPerPiece === 9, "삼각기둥 한 조각의 모서리 수가 9가 아닙니다.");
-    check(edgesPerPiece * n === total, "삼각기둥 n개의 모서리 합을 독립 계산하지 못했습니다.");
-    return total;
+    const pieceBaseSides = new Set();
+    for (let t = 0; t < 1; t += 0.125) pieceBaseSides.add(t === 0 ? 3 : 4); // t=0: 꼭짓점, 0<t<1: 변 위의 점
+    const edgeSums = [...pieceBaseSides].sort((a, b) => a - b).map(sides => 3 * sides * n);
+    check(triangleEdges === 9 && quadrilateralEdges === 12, "삼각기둥 9개·사각기둥 12개의 모서리 수가 아닙니다.");
+    check(edgeSums.join(",") === `${triangleTotal},${quadrilateralTotal}`, "가능한 두 자르기의 모서리 합을 독립 계산하지 못했습니다.");
+    return `${triangleTotal},${quadrilateralTotal}`;
   }
   if (evidence.kind === "prism-all-vertices-truncated") {
     const [n, originalVertices, originalEdges, faces, vertices, edges, total] = values;
@@ -237,14 +241,14 @@ function checkCommon(generated, sourceItemId, difficulty, expected) {
   const evidence = parseEvidence(generated.prompt);
   check(evidence.kind === evidenceKinds[sourceIds.indexOf(sourceItemId)], "evidence kind가 원문 유형과 다릅니다.");
   check(evidence.sourceItemId === sourceItemId, "독립 검산 자료의 원문 유형 ID가 다릅니다.");
-  const expectedContract = evidence.kind === "hexagonal-prism-six-congruent-pieces-edge-extremes" ? "ordered-two-values" : "single-value";
+  const expectedContract = evidence.kind === "hexagonal-prism-six-congruent-pieces-edge-extremes" ? "ordered-two-values" : evidence.kind === "regular-prism-radial-cut" ? "two-values" : "single-value";
   check(evidence.contract === expectedContract, "문항의 정답 계약이 원문 물음과 다릅니다.");
   check(evidence.difficulty === difficultyExpected[String(difficulty)], "난이도별 풀이 부담 표시가 다릅니다.");
   if (difficulty === -1) check(generated.prompt.includes('data-step-evidence="guided"'), "쉬움 단계의 안내가 없습니다.");
   if (difficulty === 0) check(!generated.prompt.includes("data-step-evidence="), "원본 단계에 난이도 안내가 섞였습니다.");
   if (difficulty === 1) check(generated.prompt.includes('data-step-evidence="independent-reasoning"'), "어려움 단계의 스스로 찾기 안내가 없습니다.");
   const expectedAnswer = independentAnswer(evidence);
-  const displayedAnswer = expectedContract === "ordered-two-values" ? answerSignature(generated.answer) : numberAnswer(generated.answer);
+  const displayedAnswer = expectedContract === "single-value" ? numberAnswer(generated.answer) : answerSignature(generated.answer);
   check(displayedAnswer === expectedAnswer, `표시 답 '${generated.answer}'이 독립 계산 '${expectedAnswer}'과 다릅니다.`);
   check(evidence.values.join(",") === expected.values.join(","), "고정 pool의 data-values가 계약과 다릅니다.");
   check(displayedAnswer === expected.answer, "고정 pool의 정답이 계약과 다릅니다.");
@@ -277,21 +281,24 @@ function checkVariant(variant, generated, evidence) {
       check(countClass(markup, "source61-e2-prism-vertex") === 24, "절단 뒤 꼭짓점 dot이 24개가 아닙니다.");
     }
     check(answer.includes('data-result-highlight="74"'), "답에서 74가 강조되지 않았습니다.");
+    check(!/직육면체/.test(visibleText(prompt)) && prompt.includes(`모서리가 모두 ${values[1]}cm보다 긴 사각기둥`), "원본 예제 2-2의 '모서리가 모두 3cm보다 긴 사각기둥' 조건이 아닙니다.");
+    if (generated.verifiedPoolIndex === 0) check(distance === 1 && values[1] === 3 && prompt.includes("각 꼭짓점에서 1cm 떨어진 모서리의 지점을 연결하여 자르려고 합니다.") && prompt.includes("남은 도형의 면의 수, 꼭짓점의 수, 모서리의 수의 합은 몇 개입니까?"), "첫 문항이 원본 예제 2-2(1cm, 3cm보다 긴 사각기둥, 남은 도형)와 다릅니다.");
     return;
   }
   if (variant === 1) {
     const [n] = values;
     const promptText = visibleText(prompt);
-    check(prompt.includes(`${n}각기둥`), "문제에 주어진 정n각기둥이 없습니다.");
-    check(!/(?:9n|9×n|n×9)/.test(promptText), "문제에 계산 결과 9n이 노출되었습니다.");
-    check(!new RegExp(`\\b(?:${9 * n}|45|63|72)\\b`).test(promptText), "문제에 나누어진 모서리 수의 계산 결과가 노출되었습니다.");
-    for (const markup of [prompt, answer]) {
-      check(markup.includes(`data-n="${n}"`), "정n각기둥의 n semantic data가 없습니다.");
-      check(markup.includes(`data-fan-count="${n}"`), "부채꼴로 나뉜 삼각기둥 수가 n과 다릅니다.");
-      check(markup.includes('data-edge-per-fan="9"') && markup.includes(`data-total-edge-count="${9 * n}"`), "삼각기둥 모서리 수 semantic data가 계약과 다릅니다.");
-      check(countClass(markup, "source61-e2-fan") === n, "부채꼴 sector 개수가 실제 n과 다릅니다.");
-    }
-    check(answer.includes(`data-result-highlight="${9 * n}"`), "답에서 9n 결과가 강조되지 않았습니다.");
+    check(prompt.includes(`밑면의 모양이 정${{ 5: "오", 7: "칠", 8: "팔" }[n]}각형인 각기둥`) && prompt.includes(`모양과 크기가 같은 각기둥 ${n}개`) && prompt.includes("밑면에 수직으로"), "원본 Mission 2의 정다각형 밑면·수직 절단·같은 각기둥 조건이 없습니다.");
+    check(!/중심|꼭짓점을 잇는|삼각기둥|사각기둥/.test(visibleText(prompt.replace(/<p class="question-step"[\s\S]*?<\/p>/g, ""))), "원본에 없는 자르는 방법이나 조각 모양이 문제 본문에 노출되었습니다.");
+    check(!new RegExp(`\\b(?:${9 * n}|${12 * n})\\b`).test(promptText), "문제에 모서리 수 합의 답이 노출되었습니다.");
+    check(prompt.includes(`data-n="${n}"`) && prompt.includes('data-cut-mode="plain"'), "문제 그림이 자르는 선 없는 정n각기둥이 아닙니다.");
+    check(countClass(prompt, "source61-e2-radial-cut") === 0 && countClass(prompt, "source61-e2-fan") === 0 && countClass(prompt, "source61-e2-kite") === 0, "문제 그림에 자르는 선이나 조각이 미리 그려졌습니다.");
+    check(answer.includes('data-cut-mode="vertex"') && answer.includes('data-cut-mode="midpoint"'), "답 그림에 두 가지 자르기가 모두 없습니다.");
+    check(countClass(answer, "source61-e2-fan") === n && countClass(answer, "source61-e2-kite") === n, "답 그림의 삼각형·사각형 조각 수가 n과 다릅니다.");
+    check(answer.includes(`data-total-edge-count="${9 * n}"`) && answer.includes(`data-total-edge-count="${12 * n}"`), "답 그림의 두 모서리 합 자료가 다릅니다.");
+    check(answer.includes(`data-result-highlight="${9 * n},${12 * n}"`), "답에서 두 결과가 강조되지 않았습니다.");
+    check(generated.solution.includes("풀이 기준:"), "자르는 방법에 대한 풀이 기준이 풀이 앞에 없습니다.");
+    if (generated.verifiedPoolIndex === 0) check(n === 7 && String(generated.answer) === "63개, 84개", "첫 문항이 원본 정칠각기둥(답 63개, 84개)이 아닙니다.");
     return;
   }
   if (variant === 2) {
@@ -434,6 +441,7 @@ function checkVariant(variant, generated, evidence) {
   check(countClass(answer, "source61-e2-square-shortest-net-face") === 4 && countClass(answer, "source61-e2-square-shortest-net-route") === 1 && countClass(answer, "source61-e2-square-shortest-net-target") === 1, "답 그림에 옆면 네 장·곧은 선·선분 ㄴㅈ이 없습니다.");
   check(answer.includes(`data-target-length="${targetLength}"`) && answer.includes(`data-result-highlight="${targetLength}"`), "답에서 선분 ㄴㅈ의 길이가 강조되지 않았습니다.");
   check(faceCount === 4 && crossingCount === 3 && targetLength === prismHeight / 4, "고정 문항의 최단 경로 계산이 원본 구조와 다릅니다.");
+  if (generated.verifiedPoolIndex === 0) check(side === 7 && prismHeight === 16 && promptText.includes("그림과 같이 사각기둥의 꼭짓점 ㄱ에서 점 ㅈ, 점 ㅊ, 점 ㅋ을 지나 꼭짓점 ㅁ까지 선을 그었습니다. 선의 길이가 가장 짧을 때 선분 ㄴㅈ의 길이를 구하세요."), "첫 문항이 원본 Mission 4(7cm, 16cm)와 다릅니다.");
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E2 전용 생성기가 등록되지 않았습니다.");
@@ -441,8 +449,8 @@ check(Boolean(api && api.names && api.names.includes(generatorKey)), "E2 전용 
 const sourceLedger = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "6-1-source-items.json"), "utf8"));
 const ledgerItems = new Map(sourceLedger.items.map(item => [item.sourceItemId, item]));
 const ledgerContracts = [
-  { id: "6-1-u2-e2-example-2", page: 9, words: ["예제 2-2", "직육면체", "모든 꼭짓점", "면·꼭짓점·모서리"] },
-  { id: "6-1-u2-e2-mission-2", page: 10, words: ["Mission 2", "정칠각기둥", "수직", "삼각기둥 7개"] },
+  { id: "6-1-u2-e2-example-2", page: 9, words: ["예제 2-2", "3cm보다 긴 사각기둥", "1cm", "면·꼭짓점·모서리"] },
+  { id: "6-1-u2-e2-mission-2", page: 10, words: ["Mission 2", "정칠각형", "수직", "각기둥 7개", "63개", "84개"] },
   { id: "6-1-u2-e2-mission-5", page: 10, words: ["Mission 5", "오각기둥", "삼등분", "모든 꼭짓점"] },
   { id: "6-1-u2-e2-mission-6", page: 10, words: ["Mission 6", "정오각형", "7cm", "11cm", "삼각형"] },
   { id: "6-1-u2-e2-mission-1", page: 10, words: ["Mission 1", "오각기둥", "10cm", "45°"] },
@@ -457,7 +465,7 @@ for (const expected of ledgerContracts) {
   check(Boolean(item), "원본 장부 항목이 없습니다.");
   if (!item) continue;
   check(item.pdfPage === expected.page, `원본 PDF 쪽이 ${expected.page}쪽이 아닙니다.`);
-  const expectedContract = expected.id === "6-1-u2-e2-example-1" ? "ordered-two-values-fixed-pool" : "single-answer-fixed-pool";
+  const expectedContract = expected.id === "6-1-u2-e2-example-1" ? "ordered-two-values-fixed-pool" : expected.id === "6-1-u2-e2-mission-2" ? "single-answer-set-fixed-pool" : "single-answer-fixed-pool";
   check(item.answerContract === expectedContract && item.sourceVerified === true && item.implementationStatus === "fixed-verified-pool", "원본 장부의 검증·고정 문항 상태가 다릅니다.");
   for (const word of expected.words) check(String(item.sourceShape).includes(word), `원본 구조 설명에 '${word}'가 없습니다.`);
 }
@@ -479,7 +487,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
         const valueSignature = evidence.values.join(",");
         if (poolValues.has(poolIndex)) check(poolValues.get(poolIndex) === valueSignature, "같은 pool에서 난이도별 값이 달라졌습니다.");
         else poolValues.set(poolIndex, valueSignature);
-        const answer = variant === 7 ? answerSignature(generated.answer) : numberAnswer(generated.answer);
+        const answer = [1, 7].includes(variant) ? answerSignature(generated.answer) : numberAnswer(generated.answer);
         if (poolAnswers.has(poolIndex)) check(poolAnswers.get(poolIndex) === answer, "같은 pool에서 정답이 달라졌습니다.");
         else poolAnswers.set(poolIndex, answer);
         pools.add(poolIndex);

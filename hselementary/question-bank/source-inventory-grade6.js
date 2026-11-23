@@ -100,7 +100,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u1-e1-example-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 1-2",
-      "typeLabel": "두 번 나눈 관계로 두 수의 비 구하기",
+      "typeLabel": "두 번 나눈 관계로 가÷다 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "sourceGrade6FractionDivisionE1",
@@ -953,7 +953,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-example-2-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 2-2",
-      "typeLabel": "직육면체의 꼭짓점을 잘라 면·모서리·꼭짓점 세기",
+      "typeLabel": "사각기둥의 꼭짓점을 잘라 면·모서리·꼭짓점 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "sourceGrade6PrismsPyramidsE2",
@@ -1057,7 +1057,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-mission-2",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 2",
-      "typeLabel": "정다각기둥을 수직으로 잘라 만든 삼각기둥들의 모서리 수 합 구하기",
+      "typeLabel": "정다각기둥을 수직으로 잘라 만든 같은 각기둥들의 모서리 수 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "sourceGrade6PrismsPyramidsE2",
@@ -2449,7 +2449,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u3-e3-example-4",
       "sourceSection": "example",
       "sourceItemLabel": "예제 3-4",
-      "typeLabel": "분자와 분자의 합이 32인 기약 진분수 중 소수 둘째 자리 수 찾기",
+      "typeLabel": "분자와 분모의 합으로 기약 진분수를 찾아 소수로 나타내기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "sourceGrade6DecimalDivisionE3",
@@ -8099,14 +8099,14 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e3-mission-3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
-      "typeLabel": "수 카드로 대분수÷진분수의 가장 큰 몫 만들기",
+      "typeLabel": "수 카드로 대분수÷진분수의 가장 작은 몫 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "sourceGrade6SecondFractionDivisionE3Mission3",
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "reviewReason": "원문의 수 카드 2, 3, 4, 5, 7과 대분수÷진분수 조건을 직접 대조했습니다. 가능한 120개 배치 중 올바른 30개를 전수 비교해 가장 큰 몫이 하나인 고정 문항 3개를 만들었습니다.",
+      "reviewReason": "원문의 수 카드 2, 3, 4, 5, 7과 대분수÷진분수 조건을 직접 대조했습니다. 가능한 120개 배치 중 올바른 30개를 전수 비교해 가장 작은 몫이 하나인 고정 문항 3개를 만들었습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
       "answerVisualStatus": "verified",
@@ -10497,9 +10497,9 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u2-e5-mission-3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
-      "typeLabel": "연어가 강물을 거슬러 가는 시간 구하기 (조건 보정)",
+      "typeLabel": "연어가 강물을 거슬러 가는 시간 구하기",
       "commonTypeId": "물살을 거슬러 가는 시간 구하기",
-      "sourceRelationship": "downstream-number-corrected-adaptation",
+      "sourceRelationship": "source-original-still-water-reading",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate",
@@ -12178,7 +12178,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "네 개에 하나를 더한 입체 모양 비교하기 · 조건을 명확히 한 변형",
+      "typeLabel": "쌓기나무 4개 모양에 1개를 더 쌓아 만들 수 있는 모양 수 세기",
       "commonTypeId": "free-pentacube-extension-count",
       "sourceVerified": true,
       "typeLanguageVerified": true,
@@ -17047,7 +17047,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     item.originalSourceReleaseStatus = "locked";
   }
   if (item.sourceItemId === "6-2-u3-e2-mission-1") item.typeLabel = "두 방향 계단 모양의 쌓기나무 수 구하기";
-  if (item.sourceItemId === "6-2-u3-e2-mission-3") item.typeLabel = "구멍이 있는 한 층 도형의 면의 넓이와 쌓기나무 수 비교하기";
+  if (item.sourceItemId === "6-2-u3-e2-mission-3") item.typeLabel = "규칙에 따라 쌓은 도형에서 보이는 면의 넓이와 쌓기나무 수의 차 구하기";
   if (item.sourceItemId === "6-2-u3-e2-mission-5") {
     item.typeLabel = "앞쪽 모서리가 빈 쌓기나무의 보이는 개수와 보이지 않는 개수 비교하기";
     item.sourceExact = false;

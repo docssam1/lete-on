@@ -13,7 +13,7 @@ const assetFiles = ["source-6-2-decimal-e6-geometry.js", "source-6-2-decimal-e6-
 const assetHashes = () => Object.fromEntries(assetFiles.map(file => [file, crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname, file))).digest("hex")]));
 const startHashes = assetHashes();
 const output = process.env.HSE_SCREENSHOT_DIR;
-assert(output && /^[EG]:[/\\]/i.test(output), "검수 결과는 E: 또는 G: 경로여야 합니다.");
+assert(output && path.isAbsolute(output), "검수 결과는 절대 경로여야 합니다.");
 fs.mkdirSync(output, { recursive: true });
 const base = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const pageCount = file => Number(execFileSync(process.env.HSE_PDFINFO_EXECUTABLE || "pdfinfo", [file], { encoding: "utf8" }).match(/^Pages:\s+(\d+)/m)[1]);

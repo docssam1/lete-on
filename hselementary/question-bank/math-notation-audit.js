@@ -145,7 +145,8 @@ let generatedCount = 0;
 let fractionSampleCount = 0;
 let mixedFractionSampleCount = 0;
 let symbolicFractionSampleCount = 0;
-if (types.length !== EXPECTED_PUBLIC_TYPE_COUNT) failures.push(`공개 검수 대상은 ${EXPECTED_PUBLIC_TYPE_COUNT}개여야 하나 ${types.length}개입니다.`);
+// 2026-11-22 이후 잠금 해제로 공개 유형이 늘어난다(2026-11-23 기준 1575개). 정확한 수 대신 예전 공개 범위보다 줄지 않았는지만 본다.
+if (types.length < EXPECTED_PUBLIC_TYPE_COUNT) failures.push(`공개 검수 대상이 ${EXPECTED_PUBLIC_TYPE_COUNT}개보다 적은 ${types.length}개입니다.`);
 
 const countTokens = (tokens, type) => tokens.reduce((count, token) => count + (token.type === type ? 1 : 0) + (token.type === "fraction" ? countTokens(token.numerator, type) + countTokens(token.denominator, type) : token.type === "mixed" ? countTokens([token.fraction], type) : 0), 0);
 const notationCases = [

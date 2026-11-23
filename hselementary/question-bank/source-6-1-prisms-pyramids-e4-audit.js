@@ -39,33 +39,33 @@ const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-re
 const expectedPools = [
   [{ values: [6], answer: 74 }],
   [
-    { values: [3], answer: 38 },
     { values: [4], answer: 50 },
+    { values: [3], answer: 38 },
     { values: [5], answer: 62 }
   ],
   [
-    { values: [16], answer: "48cm" },
     { values: [20], answer: "60cm" },
+    { values: [16], answer: "48cm" },
     { values: [24], answer: "72cm" }
   ],
   [
-    { values: [3], answer: "면 7개, 모서리 12개, 꼭짓점 7개" },
     { values: [4], answer: "면 9개, 모서리 16개, 꼭짓점 9개" },
+    { values: [3], answer: "면 7개, 모서리 12개, 꼭짓점 7개" },
     { values: [5], answer: "면 11개, 모서리 20개, 꼭짓점 11개" }
   ],
   [
+    { values: [6], answer: 38 },
     { values: [4], answer: 26 },
-    { values: [5], answer: 32 },
-    { values: [6], answer: 38 }
+    { values: [5], answer: 32 }
   ],
   [
-    { values: [16, 8, 32, 128], answer: "128cm²" },
     { values: [20, 10, 50, 200], answer: "200cm²" },
+    { values: [16, 8, 32, 128], answer: "128cm²" },
     { values: [24, 12, 72, 288], answer: "288cm²" }
   ],
   [
-    { values: [18, 10, 50, 180], answer: "180cm²" },
     { values: [22, 12, 72, 264], answer: "264cm²" },
+    { values: [18, 10, 50, 180], answer: "180cm²" },
     { values: [26, 14, 98, 364], answer: "364cm²" }
   ]
 ];
@@ -231,11 +231,31 @@ function checkCommon(generated, sourceItemId, variant, difficulty, expected) {
   return evidence;
 }
 
+// 보통 난이도 첫 문항(pool 0)은 원본 책 문장·수치와 같아야 합니다(끝맺음만 앱 말투). 예제 4-1은 이번 복원 범위 밖입니다.
+const bookPrompts = [
+  null,
+  "그림과 같은 사각뿔에서 모든 모서리를 삼등분하여 각 꼭짓점에서 모서리의 삼등분한 점을 지나도록 잘라 내었을 때, 남은 입체도형의 면, 모서리, 꼭짓점의 수의 합을 구하세요.",
+  "모든 모서리의 길이가 같은 삼각뿔에서 그림과 같이 네 모서리의 가운뎃점을 연결하여 사각형 ㅁㅂㅅㅇ을 만들었습니다. 이 사각형의 둘레의 길이가 20cm일 때, 삼각뿔의 모든 모서리의 길이의 합을 구하세요.",
+  "다음 그림과 같이 밑면의 크기와 모양이 같은 사각뿔과 사각기둥을 밑면끼리 꼭 맞게 이어 붙여 새로운 입체도형을 만들었습니다. 이 입체도형의 면의 수, 모서리의 수, 꼭짓점의 수를 각각 구하세요.",
+  "다음 입체도형은 똑같은 육각뿔 두 개를 밑면을 서로 이어 붙여서 만들 수 있습니다. 이 입체도형의 면의 수, 모서리의 수, 꼭짓점의 수의 합을 구하세요.",
+  "정사각형 안에 밑면이 정사각형인 사각뿔의 전개도를 그렸습니다. 사각뿔의 밑면의 넓이가 50cm²일 때 사각뿔의 전개도의 넓이는 몇 cm²입니까?",
+  "그림은 밑면이 정사각형이고, 밑면의 한 대각선의 길이가 12cm인 사각뿔의 전개도입니다. 전개도에서 각뿔의 꼭짓점이 되는 점을 이은 정사각형의 한 변의 길이가 22cm일 때, 사각뿔의 전개도의 넓이는 몇 cm²입니까?"
+];
+
 function checkTopology(variant, generated, evidence) {
   const prompt = String(generated.prompt);
   const answer = String(generated.answerVisual);
   const values = evidence.values;
   const promptText = visibleText(prompt);
+  if (generated.verifiedPoolIndex === 0 && bookPrompts[variant]) {
+    check(promptText.includes(bookPrompts[variant]), "첫 문항 문장이 원본 책 문항과 다릅니다.");
+    check(String(generated.answer) === sourceAnswers.get(sourceIds[variant]), `첫 문항 답 '${generated.answer}'이 원본 문항 답 '${sourceAnswers.get(sourceIds[variant])}'과 다릅니다.`);
+  }
+  if (variant === 2) {
+    for (const name of ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ"]) check(prompt.includes(`>${name}</text>`), `문제 그림에 원본의 점 ${name} 이름이 없습니다.`);
+    check((prompt.match(/data-section-side="/g) || []).length === 4, "문제 그림에 원본처럼 사각형 ㅁㅂㅅㅇ의 네 변이 없습니다.");
+  }
+  if (variant === 4) check(prompt.includes("source61-e4-bipyramid") && !prompt.includes("data-solid-"), "문제 그림이 원본처럼 두 각뿔을 붙인 입체가 아니거나 셀 수 있는 자료가 노출되었습니다.");
   check(answer.includes("<svg"), "답에 다시 그린 SVG가 없습니다.");
   if (![0, 5, 6].includes(variant)) check(answer.includes("source61-e4-hidden-edge"), "답 그림에 가려진 모서리를 나타내는 점선이 없습니다.");
   if (variant === 0) {

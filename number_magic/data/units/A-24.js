@@ -19,18 +19,18 @@ window.NM_UNITS['A-24'] = {
     stages:[
       { tag:{ ko:'① 두 수를 같은 □0으로 어림해요', en:'1) Round both numbers to the same ten', zh:'① 把两数都四舍五入到同一个整十数' },
         head:{ ko:'비슷한 수 둘을 □0+□0으로 먼저!', en:'For two similar numbers, compute □0+□0 first!', zh:'两个相近数先算整十+整十！' },
-        desc:{ ko:'48+53=? 두 수 모두 50 근처! 50+50=100으로 어림하고, <b>차이(-2+3=+1)를 보정해요</b>. 100+1=101!',
-               en:'48+53=? Both near 50! Estimate 50+50=100, then <b>correct for the differences (-2+3=+1)</b>. 100+1=101!',
-               zh:'48+53=？两数都接近50！先算50+50=100，<b>再调整偏差（-2+3=+1）</b>。100+1=101！' },
-        mathSteps:['48 + 53 = □',{ko:'48 ≈ 50 (차이 -2), 53 ≈ 50 (차이 +3)',en:'48 ≈ 50 \\text{ (diff } -2), 53 ≈ 50 \\text{ (diff } +3)',zh:'48 ≈ 50（差-2），53 ≈ 50（差+3）'},'50 + 50 = 100','100 + (-2 + 3) = 100 + 1 = 101'],
+        desc:{ ko:'48+53=? 두 수 모두 50 근처! 50+50=100으로 어림하고, <b>48은 50보다 2 작고 53은 50보다 3 커요</b>. 100-2+3=101!',
+               en:'48+53=? Both near 50! Estimate 50+50=100. <b>48 is 2 less than 50 and 53 is 3 more</b>, so 100-2+3=101!',
+               zh:'48+53=？两数都接近50！先算50+50=100。<b>48比50小2，53比50大3</b>，所以100-2+3=101！' },
+        mathSteps:['48 + 53 = □','48 = 50 - 2,\\; 53 = 50 + 3','50 + 50 = 100','100 - 2 + 3 = 101'],
         result:{ ko:'48+53=101 ✓', en:'48+53=101 ✓', zh:'48+53=101 ✓' },
         book:{ ko:'어림값으로 큰 그림을 잡은 뒤, 실제 차이를 더하거나 빼서 정확히 맞춰요.', en:'Get the big picture with the estimate, then fine-tune with the actual differences.', zh:'先用估算掌握大局，再用实际偏差精确调整。' } },
       { tag:{ ko:'② 오차(차이)를 보정해요', en:'2) Correct for the differences', zh:'② 调整偏差' },
         head:{ ko:'어림값과 실제 값의 차이를 더하거나 빼요', en:'Add or subtract the difference between estimate and actual', zh:'加减估算值与实际值的差' },
-        desc:{ ko:'29+31=? 두 수 모두 30 근처. 30+30=60. 차이: -1+1=0. 60+0=60!',
-               en:'29+31=? Both near 30. 30+30=60. Differences: -1+1=0. 60+0=60!',
-               zh:'29+31=？两数都接近30。30+30=60。偏差：-1+1=0。60+0=60！' },
-        mathSteps:['29 + 31 = □',{ko:'29 ≈ 30 (차이 -1), 31 ≈ 30 (차이 +1)',en:'29 ≈ 30 \\text{ (diff } -1), 31 ≈ 30 \\text{ (diff } +1)',zh:'29 ≈ 30（差-1），31 ≈ 30（差+1）'},'30 + 30 = 60','60 + (-1+1) = 60 + 0 = 60'],
+        desc:{ ko:'29+31=? 두 수 모두 30 근처. 30+30=60. 29는 1 작고 31은 1 커서 서로 없어져요. 60!',
+               en:'29+31=? Both near 30. 30+30=60. 29 is 1 less and 31 is 1 more, so they cancel out. 60!',
+               zh:'29+31=？两数都接近30。30+30=60。29小1，31大1，正好抵消。60！' },
+        mathSteps:['29 + 31 = □','29 = 30 - 1,\\; 31 = 30 + 1','30 + 30 = 60','60 - 1 + 1 = 60'],
         result:{ ko:'29+31=60 ✓', en:'29+31=60 ✓', zh:'29+31=60 ✓' },
         book:null }
     ],
@@ -42,7 +42,7 @@ window.NM_UNITS['A-24'] = {
   check:{
     fills:[
       { tex:'48+53: 50+50=\\square', answer:100, hint:{ ko:'50+50=?', en:'50+50=?', zh:'50+50=？' } },
-      { tex:'100+(-2+3)=\\square', answer:101, hint:{ ko:'오차 합: -2+3=1, 100+1=101', en:'Net difference: -2+3=1, so 100+1=101', zh:'偏差合计：-2+3=1，100+1=101' } }
+      { tex:'100-2+3=\\square', answer:101, hint:{ ko:'48은 2 작고 53은 3 커요: 100-2+3=101', en:'48 is 2 less, 53 is 3 more: 100-2+3=101', zh:'48小2，53大3：100-2+3=101' } }
     ],
     open:{ ko:'비슷한 수 두 개를 더할 때 □0+□0으로 어림하면 왜 편리한지 설명해봐요.', en:'Explain why estimating as □0+□0 is convenient when adding two similar numbers.', zh:'说说为什么两个相近数相加时，用整十+整十估算很方便。' },
     openHint:{ ko:'□0+□0은 머릿속에서 빠르게 계산되고, 작은 오차는 그 다음에 쉽게 보정할 수 있어요.', en:'□0+□0 is computed instantly in your head, and the small adjustment is easy to add.', zh:'整十+整十在脑子里飞速算出，再做小小的调整就好了。' }

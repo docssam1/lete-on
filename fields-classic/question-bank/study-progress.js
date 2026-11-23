@@ -14,10 +14,19 @@ const NAME_KEY = "gf_n", TYPE_KEY = "gf_t", MEMBER_KEY = "gf_m", PERM_KEY = "gf_
 const PREFIX = "fields-classic-rec:";
 const localKey = (student, kind, key) => `${PREFIX}${student}:${kind}:${key}`;
 
-function session() {
-  try { return sessionStorage.getItem(SESSION_KEY) || ""; } catch { return ""; }
-}
-const stored = (key) => { try { return sessionStorage.getItem(key) || ""; } catch { return ""; } };
+// 학생 로그인은 이 기기에 남긴다(원장 2026-11-17 「한번 접속하면 기기에 계속 저장이 됩니다」): localStorage, 서버 세션 60일(fields-auth v18).
+// 관리자(DOCSSAM) 로그인은 예전처럼 이 탭에만(sessionStorage, 12시간). 승인번호 원문(gf_c)은 기기에 남기지 않는다.
+// 읽을 때는 탭 것을 먼저, 없으면 기기 것.
+const LOGIN_KEYS = [SESSION_KEY, NAME_KEY, TYPE_KEY, MEMBER_KEY, PERM_KEY];
+const stored = (key) => { try { return sessionStorage.getItem(key) || localStorage.getItem(key) || ""; } catch { return ""; } };
+const keep = (key, value) => {
+  try {
+    const box = stored(TYPE_KEY) === "admin" ? sessionStorage : localStorage;
+    if (value === null) { sessionStorage.removeItem(key); localStorage.removeItem(key); return; }
+    box.setItem(key, value);
+  } catch {}
+};
+function session() { return stored(SESSION_KEY); }
 // 로그인한 사람(없으면 null) — 화면 머리줄의 이름·로그아웃, 선생님 보기 판단에 쓴다(서버 확인 전 값)
 // member: 가입 회원이면 { status, open, books, trialUntil, nextOpensAt, start … }(fields-membership.js), 원장이 직접 만든 옛 승인번호면 null
 export function loggedIn() {
@@ -35,19 +44,21 @@ async function auth(body, token = "") {
   return payload;
 }
 function rememberPermissions(permissions) {
-  try { sessionStorage.setItem(PERM_KEY, JSON.stringify(Array.isArray(permissions) ? permissions : [])); } catch {}
+  keep(PERM_KEY, JSON.stringify(Array.isArray(permissions) ? permissions : []));
 }
 export function rememberMember(member) {
-  try { if (member) sessionStorage.setItem(MEMBER_KEY, JSON.stringify(member)); else sessionStorage.removeItem(MEMBER_KEY); } catch {}
+  keep(MEMBER_KEY, member ? JSON.stringify(member) : null);
 }
 // 체험이 끝났거나 멈춘 회원은 서버가 403으로 막는다(error.message = trial_expired | paused, error.member)
 export async function login(code, name) {
   const result = await auth({ action: "login", code: String(code || "").trim(), name: String(name || "").replace(/\s+/gu, "") });
+  clearSession();
   try {
-    sessionStorage.setItem(SESSION_KEY, result.token);
-    sessionStorage.setItem(NAME_KEY, result.name);
-    sessionStorage.setItem(TYPE_KEY, result.type === "admin" ? "admin" : "student");
+    // 종류부터 정해 둔다 — keep()이 그걸 보고 탭(관리자)·기기(학생)를 고른다
+    (result.type === "admin" ? sessionStorage : localStorage).setItem(TYPE_KEY, result.type === "admin" ? "admin" : "student");
   } catch {}
+  keep(SESSION_KEY, result.token);
+  keep(NAME_KEY, result.name);
   rememberMember(result.member);
   rememberPermissions(result.permissions);
   return { name: result.name, type: result.type === "admin" ? "admin" : "student", member: result.member || null };
@@ -61,14 +72,22 @@ export async function checkSession() {
     rememberMember(result.member);
     rememberPermissions(result.permissions);
     // 이름·종류도 서버가 확인한 값으로 덮어쓴다 — 이 탭에서 손으로 고친 값(예: 종류를 admin으로)을 믿지 않게
-    try { sessionStorage.setItem(NAME_KEY, result.name); sessionStorage.setItem(TYPE_KEY, result.type === "admin" ? "admin" : "student"); } catch {}
+    keep(NAME_KEY, result.name);
+    if ((result.type === "admin") !== (stored(TYPE_KEY) === "admin")) {
+      // 서버가 말한 종류와 다르면 세션을 맞는 자리로 옮긴다
+      const token = session(), name = result.name;
+      clearSession();
+      try { (result.type === "admin" ? sessionStorage : localStorage).setItem(TYPE_KEY, result.type === "admin" ? "admin" : "student"); } catch {}
+      keep(SESSION_KEY, token); keep(NAME_KEY, name);
+      rememberMember(result.member); rememberPermissions(result.permissions);
+    }
     return { name: result.name, type: result.type === "admin" ? "admin" : "student", member: result.member || null };
   } catch (error) {
     if (error.status === 401 || error.status === 403) clearSession();
     return null;
   }
 }
-function clearSession() { try { [SESSION_KEY, NAME_KEY, TYPE_KEY, MEMBER_KEY, PERM_KEY, "gf_c"].forEach((key) => sessionStorage.removeItem(key)); } catch {} }
+function clearSession() { try { [...LOGIN_KEYS, "gf_c"].forEach((key) => { sessionStorage.removeItem(key); localStorage.removeItem(key); }); } catch {} }
 // 회원 서버 함수(fields-members)를 로그인 세션으로 부른다 — status · request · start · admin-*
 export async function memberCall(body) {
   const token = session();

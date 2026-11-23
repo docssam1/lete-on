@@ -2,6 +2,9 @@
 'use strict';
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
 const {chromium}=require('./lib/playwright');
+/* 2026-11-18 진단 기준 고르기의 기본이 대화형이 되었다 — 이 검사는 한 화면 양식(nm_pd_form=1)을 본다. 대화형은 check-placement-talk-browser.js */
+const formCtx=async(br,o)=>{const c=await br.newContext(o);await c.addInitScript(()=>{try{localStorage.setItem('nm_pd_form','1');}catch(e){}});return c;};
+
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_RECORD_ARTIFACTS;
 const WEBGL=process.argv.includes('--webgl');
 if(!OUT||!path.isAbsolute(OUT)||(process.platform==='win32'&&!/^E:[\\/]/i.test(OUT)))throw Error('Set NM_RECORD_ARTIFACTS to a dedicated absolute path (E: on Windows)');
@@ -23,7 +26,7 @@ async function openPreview(page,base){await page.goto(base+'/number_magic/access
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;let browser;const report=[];
 try{browser=await chromium.launch({headless:true,args:WEBGL?['--enable-unsafe-swiftshader']:['--disable-3d-apis','--disable-webgl','--disable-webgl2']});
 for(const lang of (WEBGL?['ko']:['ko','en','zh']))for(const width of (WEBGL?[1280]:[390,1280])){
- const ready=lang==='ko'&&width===1280,ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await ctx.newPage(),errors=[];
+ const ready=lang==='ko'&&width===1280,ctx=await formCtx(browser,{viewport:{width,height:900},reducedMotion:'reduce'}),page=await ctx.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));await ctx.route('**/*',r=>new URL(r.request().url()).origin===base&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort());
  await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1')){localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));localStorage.setItem('nm_thread_stats_v1',JSON.stringify({NS1:[{ts:Date.now(),rate:1,total:999,correct:999,level:1}]}));}},seed(lang,ready));
  try{

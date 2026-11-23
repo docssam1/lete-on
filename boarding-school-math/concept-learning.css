@@ -187,7 +187,8 @@ body.page-concept-learning { margin:0; color:var(--ink); background:var(--paper)
   .balance-model { gap:9px; padding:14px 10px; }
   .balance-side { gap:4px; }
   .x-box { min-height:38px; }
-  .svg-label { font-size:16px; }
+  .svg-label { font-size:20px; }
+  .svg-fraction-label .svg-label { font-size:18px; }
   .reflection-section > .section-number, .reflection-section > h3 { grid-column:auto; }
   .checkpoint-gate { margin:24px 22px; }
   .lesson-controls { padding:0 22px 26px; }

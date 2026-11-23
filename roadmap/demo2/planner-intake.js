@@ -60,9 +60,37 @@ function gradeChoice(a,fields){
  if(a.age&&a.age!=='older'){const g=gradeForAge(a.age,fields.mon);return g<1?'pre':g<=12?String(g):undefined;}
  return undefined;
 }
+function learnerChoice(a,fields){
+ const grade=gradeChoice(a,fields);
+ if(grade==='pre'&&/^[3-8]$/.test(a.age))return 'pre:'+a.age;
+ return /^(?:[1-9]|1[0-2])$/.test(grade)?String(grade):'';
+}
+function learnerOptions(a,fields){
+ const saved=learnerChoice(a,fields);
+ const ages=[4,5,6,7];
+ if(saved==='pre:3')ages.unshift(3);
+ if(saved==='pre:8')ages.push(8);
+ return [...ages.map(n=>['pre:'+n,n+'세']),...Array.from({length:12},(_,i)=>[String(i+1),i<6?'초'+(i+1):i<9?'중'+(i-5):'고'+(i-8)])];
+}
+function setLearnerChoice(a,choice){
+ if(typeof choice!=='string')return false;
+ if(/^pre:[3-8]$/.test(choice)){
+  a.grade='pre';
+  a.age=choice.slice(4);
+  if(a.parentFlow?.version===1)a.parentFlow.currentAge=a.age;
+ }else if(/^(?:[1-9]|1[0-2])$/.test(choice)){
+  if(!currentGrade(a)||String(a.grade)!==choice){
+   delete a.age;
+   if(a.parentFlow?.version===1)a.parentFlow.currentAge='';
+  }
+  a.grade=choice;
+ }else return false;
+ a.gradeInput='current';
+ return true;
+}
 function age(a,fields){if(currentGrade(a))return 5+Math.floor(P.mOf(+a.grade,+fields.mon)/12);if(a.age&&a.age!=='older')return +a.age;if(a.age==='older')return 10;return 5+Math.floor(P.mOf(+fields.grade,+fields.mon)/12);}
 function labelMonth(m){if(m>=144){const n=Math.floor(m/12)-11,mo=m%12+1,g=n-(mo<3?1:0);return (g<1?'중3':g<=3?'고'+g:'고교 이후')+' '+mo+'월';}return m>=38?P.label(m):D.labelMonth(m);}
-function studentLabel(a,fields){const sp=fields.schoolContext;if(sp?.format&&sp.format!=='kr'){const f=sp.format==='grade'?'Grade':sp.format==='year'?'Year':'학교 학년';return sp.level?(sp.format==='other'||sp.format==='unknown'?({primary:'초등 단계',middle:'중등 단계',high:'고등 단계',unknown:'학교 단계 확인 전'})[sp.level]||'학교 단계 확인 전':f+' '+sp.level):'학교 학년 확인 전';}const g=gradeChoice(a,fields);return g==='pre'?(a.age&&a.age!=='older'?'미취학 · '+a.age+'세':'미취학'):g?(+g<=6?'초'+g:+g<=9?'중'+(+g-6):'고'+(+g-9)):'미선택';}
+function studentLabel(a,fields){const sp=fields.schoolContext;if(sp?.format&&sp.format!=='kr'){const f=sp.format==='grade'?'Grade':sp.format==='year'?'Year':'학교 학년';return sp.level?(sp.format==='other'||sp.format==='unknown'?({primary:'초등 단계',middle:'중등 단계',high:'고등 단계',unknown:'학교 단계 확인 전'})[sp.level]||'학교 단계 확인 전':f+' '+sp.level):'학교 학년 확인 전';}const g=gradeChoice(a,fields);return g==='pre'?(learnerChoice(a,fields)?a.age+'세':'나이 미선택'):g?(+g<=6?'초'+g:+g<=9?'중'+(+g-6):'고'+(+g-9)):'미선택';}
 // Wording follows the confirmed school stage, independently of course progress and L level.
 function audience(a,fields){
  if(fields.internationalCalendar)return 'general';
@@ -86,7 +114,7 @@ function thinkingRequired(a,fields){
  return Number(a.school[0])<=5;
 }
 function order(a,fields){a=effective(a);
- const list=fields.internationalCalendar?[]:['grade'];if(gradeChoice(a,fields)==='pre')list.push('age');
+ const list=fields.internationalCalendar?[]:['grade'];
  const addThinking=()=>{if(thinkingRequired(a,fields)!==true)return;list.push('thinkingExperience');if(!noThinking(a)){list.push('thinking');if(a.thinking==='advanced')list.push('compExact');if(a.thinking==='PRE 1031')list.push('preDone');list.push('thinkingStatus');}};
  const senior=seniorIntake(a,fields);
  if(!senior)addThinking();
@@ -128,8 +156,7 @@ function questions(a,fields){const q=baseQuestions(a,fields);a=effective(a);
  if(a.deepCourse==='mid')q.deepBook[1]+=' RPM·쎈 같은 응용 교재도 여기에서 고를 수 있어요.';
  return q;}
 function baseQuestions(a,fields){a=effective(a);const curriculum=global.PlannerCollegeData?.CURRICULA[fields.schoolContext?.curriculum],mathOptions=fields.internationalCalendar?(curriculum?.math?.length?curriculum.math:['학교 수학 · 과목 확인 전']):highSubjects;const allMath=[...new Set([...highSubjects,...Object.values(global.PlannerCollegeData?.CURRICULA||{}).flatMap(c=>c.math)])];const retained=(base,value)=>[...new Set([...base,...(allMath.includes(value)?[value]:[])])];const schoolMath=retained(a.schoolCourse==='foreign'?mathOptions:highSubjects,a.schoolHigh),deepMath=retained(a.deepCourse==='foreign'?mathOptions:highSubjects,a.deepStage),calcMath=retained([...mathOptions,...highSubjects],a.calcHigh);const courses=fields.internationalCalendar?[['foreign','현재 학교 교육과정'],...courseOptions]:courseOptions;const deepHigh=a.deepCourse?a.deepCourse==='high':highBook(a.deepBook),deepMiddle=a.deepCourse?a.deepCourse==='mid':middleBook(a.deepBook);const highLearning=a.schoolCourse==='high'||a.deepCourse==='high',older=age(a,fields)>=8||highLearning,group=audience(a,fields),young=['preschool','lower'].includes(group);return {
- age:['아이는 지금 몇 살인가요?','미취학 아동의 한국 나이를 골라 주세요.',[4,5,6,7].map(v=>[String(v),v+'세']).concat(+fields.mon<3?[['8','8세 · 입학 전']]:[])],
- grade:['아이는 지금 몇 학년인가요?','현재 학년을 골라 주세요.',[['pre','미취학'],...Array.from({length:12},(_,i)=>[String(i+1),i<6?'초'+(i+1):i<9?'중'+(i-5):'고'+(i-8)])]],
+ grade:['아이의 나이 또는 학년을 골라 주세요.','',learnerOptions(a,fields)],
  thinkingExperience:['사고력 수학을 공부한 적이 있나요?',young?'규칙 찾기나 도형 문제를 생각하며 푸는 수학이에요.': '학원 수업과 집에서 공부한 경험을 모두 포함해요.',[['yes','네, 있어요'],['none','아직 없어요'],['unknown','잘 모르겠어요']]],
  thinking:['사고력은 어디까지 했나요?','가장 최근에 공부한 과정을 골라 주세요.',thinking.map(v=>[v,v]).concat(older?[['advanced','그 이후 과정']]:[])],
  thinkingStatus:['이 사고력 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
@@ -209,11 +236,12 @@ function summary(a,fields){a=effective(a);const status=k=>fields.pendingStatus?.
 // Each subject resolves independently. An original-only answer never replaces
 // the other subjects with the original demo's limited curriculum.
 function hasAnswer(a,fields,key){
- if(a.parentFlow?.version===1&&key==='age'&&['3','4','5','6','7','8'].includes(String(a.age)))return true;
+ if(key==='grade')return !!learnerChoice(a,fields);
+ if(key==='age')return learnerChoice(a,fields).startsWith('pre:');
  if(a.parentFlow?.version===1&&['schoolBook','deepBook'].includes(key)&&a[key]==='unknown')return true;
  if(key==='deepStage'&&!seniorIntake(a,fields)&&a.deepBook&&a.deepCourse&&!special(a.deepCourse)&&!bookList(a.deepCourse,'deep').includes(a.deepBook))return false;
  if(key==='deepExtra'&&a.deepExtra===undefined)return true; // Existing single-depth records remain valid.
- if(fields.pendingStatus?.[key])return false;const q=questions(a,fields)[key];return !!q&&q[2].some(([v])=>String(key==='grade'?gradeChoice(a,fields):a[key])===String(v));
+ if(fields.pendingStatus?.[key])return false;const q=questions(a,fields)[key];return !!q&&q[2].some(([v])=>String(a[key])===String(v));
 }
 function firstMissing(a,fields){return order(a,fields).find(k=>!hasAnswer(a,fields,k));}
 function options(a,fields,overrides={}){a=effective(a);
@@ -345,5 +373,5 @@ function milestones(a,fields,p){a=effective(a);
  forks.push({id:'gift',title:'영재원',m:p.now+2,selected:a.gifted==='1',pending:!['0','1'].includes(a.gifted),yes:'선발 안내 함께 확인',no:'현재 학습 이어가기',reason:a.gifted==='1'?'선발 시기와 자격은 해당 연도 공고에서 확인해요.':'지금 학습을 이어가며 나중에 바꿔도 괜찮아요.'});
  return {main,branch:[],forks};
 }
-global.PlannerIntake=Object.freeze({bookName,seniorIntake,thinkingRequired,additionalDeep,progressKey,progressCourse,progressValue,remainingMonths,progressText,highSubjects,highBook,bookList,thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeChoice,audience,learningLabels,studentLabel,labelMonth,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
+global.PlannerIntake=Object.freeze({bookName,seniorIntake,thinkingRequired,additionalDeep,progressKey,progressCourse,progressValue,remainingMonths,progressText,highSubjects,highBook,bookList,thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeChoice,learnerChoice,learnerOptions,setLearnerChoice,audience,learningLabels,studentLabel,labelMonth,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
 })(window);

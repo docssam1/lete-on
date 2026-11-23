@@ -379,11 +379,39 @@ NM_TGEN['ad2_addCarry1d'] = function(params, rng){
     } while(a + b + c <= 10 || a + b + c > 27);
 
     const sum = a + b + c;
-    /* 전략: a+b 먼저 받아올림 */
     const ab = a + b;
-    const need1 = 10 - a;
-    const rest1 = b - need1;
-
+    /* 전략(2026-11-17, 원장 「7+2+6을 설명하면서 −1이 나오고 … 음수를 배우지 않은 아이에게 맞지 않아」):
+       앞의 두 수로 10이 넘으면 a+b 에서 10 만들기, 안 넘으면 a+b 를 먼저 더하고 c 로 10 만들기.
+       전에는 늘 a+b 에서 10을 만들어, 7+2+6 이 「7+3+(−1)+6」이 됐다. 어느 쪽이든 단계에 음수가 없다. */
+    if(ab >= 10){
+      const need1 = 10 - a;
+      const rest1 = b - need1;
+      return {
+        prompt: {
+          ko: `${a} + ${b} + ${c}를 차례로 더해요`,
+          en: `Add ${a} + ${b} + ${c} step by step`,
+          zh: `一步步计算${a}＋${b}＋${c}`
+        },
+        tex: `${a} + ${b} + ${c} = \\square`,
+        answer: sum,
+        answerType: 'steps',
+        /* 단계 식에 빈칸(□)을 둔다 — 전에는 「7 + 3 + 5 + 3」처럼 답 숫자가 식에 그대로 보였다 */
+        steps: [
+          { tex: `${a} + \\square = 10`,            blank: need1 },
+          { tex: `${b} - ${need1} = \\square`,      blank: rest1 },
+          { tex: `10 + ${rest1} + ${c} = \\square`, blank: sum   }
+        ],
+        widget: 'steps',
+        cubes: { piles: [a, b], moveTo: 10 },
+        solution: [
+          { tex: `${a} + \\square = 10`,        blank: need1 },
+          { tex: `${b} - ${need1} = \\square`,  blank: rest1 },
+          { tex: `10 + ${rest1} + ${c} = \\square`, blank: sum }
+        ]
+      };
+    }
+    const need2 = 10 - ab;          /* ab + c > 10 이므로 c > need2 */
+    const rest2 = c - need2;
     return {
       prompt: {
         ko: `${a} + ${b} + ${c}를 차례로 더해요`,
@@ -394,17 +422,18 @@ NM_TGEN['ad2_addCarry1d'] = function(params, rng){
       answer: sum,
       answerType: 'steps',
       steps: [
-        { tex: `${a} + ${need1} + ${rest1} + ${c}`, blank: need1 },
-        { tex: `10 + ${rest1} + ${c}`,               blank: rest1 },
-        { tex: `${ab} + ${c}`,                       blank: ab   },
-        { tex: `\\square`,                            blank: sum  }
+        { tex: `${a} + ${b} = \\square`,      blank: ab    },
+        { tex: `${ab} + \\square = 10`,       blank: need2 },
+        { tex: `${c} - ${need2} = \\square`,  blank: rest2 },
+        { tex: `10 + ${rest2} = \\square`,    blank: sum   }
       ],
       widget: 'steps',
-      cubes: { piles: [a, b], moveTo: 10 },
+      cubes: { piles: [ab, c], moveTo: 10 },
       solution: [
-        { tex: `${a} + \\square = 10`,        blank: need1 },
-        { tex: `${b} - ${need1} = \\square`,  blank: rest1 },
-        { tex: `10 + ${rest1} + ${c} = \\square`, blank: sum }
+        { tex: `${a} + ${b} = \\square`,      blank: ab    },
+        { tex: `${ab} + \\square = 10`,       blank: need2 },
+        { tex: `${c} - ${need2} = \\square`,  blank: rest2 },
+        { tex: `10 + ${rest2} = \\square`,    blank: sum   }
       ]
     };
   }

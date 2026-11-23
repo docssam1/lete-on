@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="학교 Placement Test, MAP Growth, ERB CTP, SSAT, ISEE 수학 결과를 G·MAP 권장 진도와 일일 학습 계획으로 연결합니다.">
-  <title>학교 평가 결과로 진도 만들기 | G·MAP</title>
+  <meta name="description" content="학교 Placement Test, MAP Growth, ERB CTP, SSAT, ISEE의 수학 결과와 직접 선택한 현재·목표 과목을 비교해 정리합니다.">
+  <title>학교 수학 평가 결과 비교 | G·MAP</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./assessment-entry.css">
+  <link rel="stylesheet" href="./assessment-entry.css?v=20261103-3">
 </head>
 <body class="academy-page evidence-page">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -21,7 +21,7 @@
   <main id="main" tabindex="-1">
     <section class="evidence-hero">
       <div class="evidence-shell hero-layout">
-        <div><p class="eyebrow">SCHOOL EVIDENCE → DAILY STUDY</p><h1>학교 평가 결과가<br><span>오늘의 진도가 됩니다.</span></h1><p>Placement Test, MAP Growth, ERB CTP, SSAT, ISEE 결과를 같은 점수처럼 섞지 않습니다. 시험의 역할을 구분하고, 현재 과정과 목표 과정 사이에서 시작할 위치와 학습량을 계산합니다.</p></div>
+        <div><p class="eyebrow">SCHOOL EVIDENCE → COURSE COMPARISON</p><h1>학교 평가 결과와<br><span>배움의 경로를 나란히 봐요.</span></h1><p>Placement Test, MAP Growth, ERB CTP, SSAT, ISEE 결과를 같은 점수처럼 섞지 않습니다. 성적표의 수치와 비교집단을 정리하고, 직접 선택한 현재 과정과 목표 과정 사이를 살펴봅니다.</p></div>
         <aside class="boundary-card"><strong>먼저 확인하세요</strong><p>학교별 공식 컷은 학교마다 다릅니다. 학교가 제시한 컷을 직접 입력한 경우에만 비교하며, 최종 배정은 학교와 교사가 확정합니다.</p><span>결과는 이 기기의 브라우저에만 저장됩니다.</span></aside>
       </div>
     </section>
@@ -29,12 +29,14 @@
     <section class="evidence-workspace evidence-shell" aria-labelledby="entry-title">
       <form id="evidence-form" class="evidence-form">
         <div class="form-heading"><p class="step-label">01 · 결과 입력</p><h2 id="entry-title">성적표에 적힌 값을 그대로 입력하세요.</h2><p>백분위와 정답률은 다른 값입니다. 시험 종류를 고르면 필요한 항목만 표시됩니다.</p></div>
+        <p class="legacy-evidence-note" id="legacy-evidence-note" role="status" aria-live="polite" hidden></p>
 
         <label class="field field-wide"><span>평가 종류</span><select id="source-id" name="sourceId"><option value="school-placement">학교 수학 Placement Test</option><option value="map-growth">NWEA MAP Growth Math</option><option value="ctp">ERB CTP Mathematics</option><option value="ssat">SSAT Quantitative</option><option value="isee">ISEE Quantitative / Mathematics</option></select><small id="source-help">학교가 직접 실시한 과정 배정 시험입니다.</small></label>
 
-        <div class="field-row three"><label class="field"><span>응시 학년</span><select id="grade" name="grade"><option value="3">Grade 3</option><option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6" selected>Grade 6</option><option value="7">Grade 7</option><option value="8">Grade 8</option><option value="9">Grade 9</option><option value="10">Grade 10</option><option value="11">Grade 11</option><option value="12">Grade 12</option></select></label><label class="field"><span>시험일</span><input id="test-date" name="testDate" type="date" required></label><label class="field source-field" data-sources="map-growth"><span>시험 시기</span><select id="season" name="season"><option value="fall">Fall</option><option value="winter">Winter</option><option value="spring">Spring</option><option value="summer">Summer</option></select></label></div>
+        <div class="field-row three"><label class="field"><span>응시 학년</span><select id="grade" name="grade"><option value="3">Grade 3</option><option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6" selected>Grade 6</option><option value="7">Grade 7</option><option value="8">Grade 8</option><option value="9">Grade 9</option><option value="10">Grade 10</option><option value="11">Grade 11</option><option value="12">Grade 12</option></select></label><label class="field"><span>시험일</span><input id="test-date" name="testDate" type="date" required></label><label class="field source-field" data-sources="map-growth"><span>성적표의 시험 시기</span><select id="season" name="season"><option value="">성적표에서 확인 안 됨</option><option value="fall">Fall</option><option value="winter">Winter</option><option value="spring">Spring</option><option value="summer">Summer</option></select></label></div>
 
-        <div class="field-row"><label class="field"><span>현재 학습 과정</span><select id="current-course" name="currentCourseId"></select></label><label class="field"><span>목표 과정</span><select id="target-course" name="targetCourseId"></select></label></div>
+        <div class="field-row"><label class="field"><span>현재 학습 과정</span><select id="current-course" name="currentCourseId"></select></label><label class="field"><span>비교할 목표 과정</span><select id="target-course" name="targetCourseId"></select></label></div>
+        <p class="course-choice-note">과목 순서는 학교마다 달라요. 이 화면은 선택한 두 과목과 성적표 값을 나란히 기록하며, 중간 과목이나 배정 순서를 정하지 않습니다.</p>
 
         <section class="score-entry" aria-labelledby="score-title"><h3 id="score-title">성적표의 수학 점수</h3>
           <div class="field-row score-fields">
@@ -42,39 +44,50 @@
             <label class="field source-field" data-sources="school-placement"><span>학교가 안내한 목표 과정 컷</span><span class="input-unit"><input id="school-cut" inputmode="decimal" type="number" min="0" max="100" step="0.1" placeholder="모르면 비워 두기"><b>%</b></span></label>
             <label class="field source-field" data-sources="map-growth"><span>Math RIT</span><input id="rit" inputmode="numeric" type="number" min="100" max="350" placeholder="예: 218"></label>
             <label class="field source-field" data-sources="map-growth ctp ssat"><span id="percentile-label">성취 백분위</span><span class="input-unit"><input id="percentile" inputmode="numeric" type="number" min="1" max="99"><b>percentile</b></span></label>
+            <label class="field source-field" data-sources="map-growth"><span>MAP 규준 연도</span><select id="norm-year"><option value="">성적표에서 확인 안 됨</option><option value="2020">2020 norms</option><option value="2025">2025 norms</option></select><small>백분위 비교에는 같은 시험 시기와 규준 연도, 시험 전 수업 주차가 필요합니다.</small></label>
+            <label class="field source-field" data-sources="map-growth"><span>시험 전 수업 주차</span><input id="instructional-weeks" inputmode="numeric" type="number" min="1" max="40" step="1" placeholder="성적표·시행 기준 확인"><small>성적표나 학교 시행 정보에서 확인한 경우 입력해요.</small></label>
             <label class="field source-field" data-sources="ctp ssat"><span id="scale-score-label">Scale score</span><input id="scale-score" inputmode="decimal" type="number" min="0" max="2000" placeholder="성적표 값"></label>
+            <label class="field source-field" data-sources="ssat isee"><span>시험 레벨</span><select id="test-level"><option value="">성적표에서 선택</option></select><small>지원 학년이 아니라 성적표에 표시된 응시 레벨을 고르세요. <a href="https://ko.ssat.org/handbook" target="_blank" rel="noopener noreferrer">SSAT 안내</a> · <a href="https://www.erblearn.org/educators/isee-registration-educators/" target="_blank" rel="noopener noreferrer">ISEE 안내</a></small></label>
             <label class="field source-field" data-sources="ctp"><span>Stanine</span><input id="stanine" inputmode="numeric" type="number" min="1" max="9" placeholder="선택"></label>
-            <label class="field source-field" data-sources="ctp"><span>비교 집단</span><select id="norm-group"><option value="Independent School Norm">Independent School Norm</option><option value="National Norm">National Norm</option><option value="School / Grade Norm">School / Grade Norm</option><option value="Other reported norm">Other reported norm</option></select></label>
+            <label class="field source-field" data-sources="ctp"><span>성적표 비교 집단</span><select id="norm-group"><option value="">성적표 표기 기준을 선택</option><option value="Independent School Norm">Independent School Norm</option><option value="National Norm">National Norm</option><option value="School / Grade Norm">School / Grade Norm</option><option value="Other reported norm">Other reported norm</option></select></label>
             <label class="field source-field" data-sources="isee"><span>Quantitative Reasoning stanine</span><input id="quant-stanine" inputmode="numeric" type="number" min="1" max="9"></label>
             <label class="field source-field" data-sources="isee"><span>Mathematics Achievement stanine</span><input id="math-stanine" inputmode="numeric" type="number" min="1" max="9"></label>
           </div>
         </section>
 
-        <fieldset class="domain-entry"><legend>영역별 점수 <small>선택 · 있으면 진도가 더 정확해집니다</small></legend><div class="domain-grid"><label><span>수와 연산</span><span class="input-unit"><input data-domain="number" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>비와 비례</span><span class="input-unit"><input data-domain="proportional" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>식·방정식</span><span class="input-unit"><input data-domain="algebra" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>기하·측정</span><span class="input-unit"><input data-domain="geometry" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>자료·확률</span><span class="input-unit"><input data-domain="data" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>문제 해결·추론</span><span class="input-unit"><input data-domain="reasoning" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label></div></fieldset>
+        <fieldset class="domain-entry"><legend>영역별 점수 <small>선택 · 성적표에 적힌 값만 입력</small></legend><p class="domain-entry-note">영역명은 넓은 수학 범주로 정리해 보여 줍니다. Grade 6 공개 단원과 연결되는 표준 표시는 Grade 6 기록에만 사용하며, 다른 학년의 입력값에는 표준 매핑을 붙이지 않습니다.</p><div class="domain-grid"><label><span>수와 연산</span><span class="input-unit"><input data-domain="number" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>비와 비례</span><span class="input-unit"><input data-domain="proportional" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>식·방정식</span><span class="input-unit"><input data-domain="algebra" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>기하·측정</span><span class="input-unit"><input data-domain="geometry" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>자료·확률</span><span class="input-unit"><input data-domain="data" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>문제 해결·추론</span><span class="input-unit"><input data-domain="reasoning" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label></div></fieldset>
 
-        <p class="form-error" id="form-error" role="alert"></p><button class="primary-submit" type="submit">권장 진도 만들기 <span aria-hidden="true">→</span></button>
+        <p class="form-error" id="form-error" role="alert"></p><button class="primary-submit" type="submit">비교 결과 보기 <span aria-hidden="true">→</span></button>
       </form>
 
-      <aside class="result-panel" aria-live="polite">
-        <div id="result-empty" class="result-empty"><span>02</span><h2>입력하면 여기서 바로 진도가 나옵니다.</h2><p>추천 시작 과정, 목표까지의 경로, 우선 약점, 주당 횟수, 하루 시간과 문항 수를 한 번에 보여 줍니다.</p><ol><li>평가의 역할을 구분합니다.</li><li>현재 과정과 목표 과정 사이를 계산합니다.</li><li>영역별 약점을 실제 Grade 6 자료에 연결합니다.</li></ol></div>
+      <aside class="result-panel">
+        <div id="result-empty" class="result-empty"><span>02</span><h2>성적표와 선택한 과정을 함께 확인해요.</h2><p>입력한 시험 점수·비교 기준과 직접 고른 현재·목표 과목을 정리합니다. 학교별 과목 순서는 대신 정하지 않으며 시험 점수만으로 학년 등급이나 약점, 자동 배정을 만들지 않습니다.</p><ol><li>시험의 역할과 점수 단위를 구분합니다.</li><li>현재 과목과 비교 목표를 각각 선택합니다.</li><li>영역 점수는 성적표에 적힌 값 그대로 확인합니다.</li></ol></div>
         <div id="result-content" class="result-content" hidden>
-          <div class="result-meta"><span id="result-state">G·MAP 권장</span><b id="result-source">—</b></div>
-          <p class="result-kicker">RECOMMENDED START</p><h2 id="recommended-course">—</h2><p id="recommendation-reason"></p>
-          <dl class="score-summary"><div><dt id="metric-label">입력 점수</dt><dd id="metric-value">—</dd></div><div><dt>계획 신뢰도</dt><dd id="confidence-value">—</dd></div><div><dt>학교 배정</dt><dd id="placement-value">—</dd></div></dl>
-          <section class="route-card"><h3>목표 과정까지</h3><div id="course-route" class="course-route"></div></section>
-          <section class="priority-card"><h3>먼저 보완할 영역</h3><div id="priority-list"></div></section>
-          <section class="study-load"><h3>권장 학습량</h3><div><article><strong id="plan-weeks">—</strong><span>권장 기간</span></article><article><strong id="plan-days">—</strong><span>주당 학습</span></article><article><strong id="plan-daily">—</strong><span>하루 학습</span></article><article><strong id="plan-problems">—</strong><span>하루 문항</span></article></div></section>
+          <div class="result-meta"><span id="result-state">입력 근거</span><b id="result-source">—</b></div>
+          <p class="result-kicker">선택한 현재 과정</p><h2 id="recommended-course">—</h2><p id="recommendation-reason"></p>
+          <dl class="score-summary"><div><dt id="metric-label">성적표 값</dt><dd id="metric-value">—</dd></div><div><dt>시험 시기·비교 기준</dt><dd id="confidence-value">성적표 기준</dd></div><div><dt>학교 배정</dt><dd id="placement-value">—</dd></div></dl>
+          <section class="route-card"><h3>선택한 과목 비교</h3><div id="course-route" class="course-route"></div></section>
+          <section class="priority-card"><h3>입력한 영역 값 <small>성적표에 적힌 값만 낮은 순으로 표시</small></h3><div id="priority-list"></div></section>
+          <section class="study-load"><h3>다음 단계</h3><p>이 화면은 시험 근거와 선택한 과정을 나란히 정리합니다. 공부할 영역·기간·학습량은 풀이와 교사 확인 뒤 따로 정하세요.</p></section>
           <p class="decision-notice" id="decision-notice"></p>
           <div class="result-actions"><a id="send-to-plan" href="./learning-plan.html?goal=school-g6&fromAssessment=external">이 진도로 학습 계획 만들기</a><a id="open-material" href="./catalog.html?role=student&grade=6">연결 자료 확인</a><a id="published-resource" href="./catalog.html?role=student&grade=7" hidden>Grade 7 공개 자료 살펴보기</a></div>
         </div>
       </aside>
+      <p id="result-announcement" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
     </section>
 
-    <section class="evidence-roles evidence-shell"><p class="step-label">왜 시험마다 다르게 읽나요?</p><div><article><span>수업 배정</span><h3>학교 PT · MAP · CTP</h3><p>현재 학습 위치와 영역별 강약점을 판단하는 근거입니다. 학교별 정책과 함께 사용합니다.</p></article><article><span>입학 준비</span><h3>SSAT · ISEE</h3><p>지원자 집단 안에서의 입학 준비 근거입니다. 높은 점수만으로 Algebra 1이나 Geometry 배정을 확정하지 않습니다.</p></article><article><span>G·MAP 진단</span><h3>문항별 최초 응답</h3><p>영역 점수 아래의 구체적인 오류 유형을 찾아 개념 교재와 워크북을 배정합니다.</p></article></div></section>
+    <section class="assessment-history evidence-shell" aria-labelledby="assessment-history-title">
+      <div class="assessment-history-heading"><div><p class="step-label">이 기기에 저장</p><h2 id="assessment-history-title">평가 기록</h2><p>시험·학년·날짜와 성적표에 적힌 점수를 각각 보관합니다. 서로 다른 시험의 점수를 한 줄로 비교하거나 학년 배정을 추정하지 않습니다.</p></div><button id="clear-assessment-history" class="history-clear" type="button">이 기기 평가 기록 지우기</button></div>
+      <div id="assessment-history-list" class="assessment-history-list"></div>
+      <p class="assessment-history-empty" id="assessment-history-empty">아직 저장된 평가 기록이 없습니다. 비교 결과를 저장하면 여기에 보여요.</p>
+      <p class="assessment-history-local-note">기록은 이 브라우저의 기기에 저장되며 계정 간 동기화되지 않습니다.</p>
+    </section>
+
+    <section class="evidence-roles evidence-shell"><p class="step-label">왜 시험마다 다르게 읽나요?</p><div><article><span>수업 배정</span><h3>학교 PT · MAP · CTP</h3><p>현재 학습 위치와 영역별 강약점을 판단하는 근거입니다. 학교별 정책과 함께 사용합니다.</p></article><article><span>입학 준비</span><h3>SSAT · ISEE</h3><p>지원자 집단 안에서의 입학 준비 근거입니다. 높은 점수만으로 Algebra 1이나 Geometry 배정을 확정하지 않습니다.</p></article><article><span>학습 점검</span><h3>문항별 첫 응답</h3><p>개인 진단은 아직 검수 중입니다. 문항별 기록만으로 교재나 과목을 자동 배정하지 않습니다.</p></article></div></section>
   </main>
   <footer class="site-footer"><span>G·MAP · 학교 평가에서 오늘의 학습까지</span><span><a href="./index.html">전체 과정 지도</a> · <a href="./learning-plan.html">나의 학습 계획</a></span></footer>
-  <script src="./assessment/external-math-evidence-engine.js?v=20260922-1"></script>
-  <script src="./shared/gmap-local-learning-record.js?v=20260922-1"></script>
-  <script src="./assessment-entry.js?v=20260922-1"></script>
+  <script src="./assessment/external-math-evidence-engine.js?v=20261030-4"></script>
+  <script src="./shared/gmap-local-learning-record.js?v=20261104-4"></script>
+  <script src="./assessment-entry.js?v=20261030-10"></script>
 </body>
 </html>

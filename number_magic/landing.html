@@ -9,7 +9,8 @@
 <meta property="og:title" content="Numbers of Magic — 수를 다루는 아이로">
 <meta property="og:description" content="계산을 외우는 아이가 아니라, 수를 다루는 아이로. 매주 도착하는 학습지와 함께.">
 <meta property="og:image" content="assets/landing/town-desktop.jpg">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preload" href="assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
+<style>/* 글꼴: 저장소 Pretendard 가변 글꼴 한 파일(2026-11-18, CDN 대신 — 오프라인에서도 같은 글꼴) */@font-face{font-family:'Pretendard';font-style:normal;font-weight:45 920;font-display:swap;src:local('Pretendard Variable'),url('assets/fonts/pretendard-var.woff2') format('woff2-variations'),url('assets/fonts/pretendard-var.woff2') format('woff2')}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
@@ -257,6 +258,7 @@ section{padding:88px 0}
 .plan .badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;padding:5px 12px;border-radius:999px;background:var(--blue-deep);color:#fff;margin-bottom:18px}
 .price .lead{margin-left:auto;margin-right:auto}
 .price .plans[hidden]{display:none}
+.lv-consult{text-align:center;margin:28px 0 0}
 .price .beta-cta{justify-content:center;margin-top:22px}
 .plan ul{list-style:none;padding:0;margin:22px 0;text-align:left;display:grid;gap:9px;font-size:15px}
 .plan li{padding-left:26px;position:relative}
@@ -529,6 +531,7 @@ footer a{color:var(--sub)}
       <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-roadmap.jpg" data-i18n-src="m-roadmap.jpg" alt=""></div><figcaption><span class="stepno">2</span><b data-i18n="lv2b">지금 여기</b><span data-i18n="lv2">학습 여행 지도에 내 위치가 표시되고, 다음 한 걸음이 보입니다.</span></figcaption></figure>
       <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-road.jpg" data-i18n-src="m-road.jpg" alt=""></div><figcaption><span class="stepno">3</span><b data-i18n="lv3b">주차별 로드맵</b><span data-i18n="lv3">9월 1주차부터 과정 끝까지, 인쇄할 수 있는 개인 계획표가 됩니다.</span></figcaption></figure>
     </div>
+    <p class="lv-consult reveal"><a class="btn ghost" href="consult.html" data-i18n="lvConsult">말로 먼저 해 보는 시작점 상담</a></p>
   </div>
 </section>
 
@@ -656,7 +659,7 @@ footer a{color:var(--sub)}
          다시 보일 때는 hidden 을 빼고 prKicker·prH2·prLead·wy1f 를 git 이력(2026-11-16 판)의 가격 문구로 되돌린다. -->
     <p class="kicker reveal" data-i18n="prKicker">Beta · 무료 베타 테스트</p>
     <h2 class="reveal" data-i18n="prH2">지금은 <span class="accent">무료 베타 테스트</span> 기간입니다</h2>
-    <p class="lead reveal" data-i18n="prLead">베타 테스트 동안에는 매주 학습지·연산 게임 학습·무제한 연산 학습을 모두 무료로 씁니다. 공부한 기록을 저장해 이어 가려면 보호자 이메일로 가입하세요.</p>
+    <p class="lead reveal" data-i18n="prLead">베타 테스트 동안에는 매주 학습지·연산 게임 학습·무제한 연산 학습을 가입 없이 무료로 씁니다. 보호자 이메일로 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 받습니다.</p>
     <div class="hero-cta reveal beta-cta"><a class="btn gold" href="index.html?enter=1" data-i18n="heroTrial">무료 체험하기</a><a class="btn ghost" href="index.html?enter=1&amp;auth=1" data-i18n="betaJoin">가입하고 기록 이어 가기</a></div>
     <div class="plans" hidden>
       <div class="plan reveal">
@@ -850,6 +853,7 @@ footer a{color:var(--sub)}
       l6b:'미적분은 왜 태어났나', l6:'변하는 것을 계산하려고 400년 전에 미적분이 생긴 이야기와 오늘의 쓰임을 봐요.',
       lbOpen:'열어 보기 →',
       lvKicker:'Placement · 아이의 수준부터', lvH2:'먼저 아이의 수준을 파악하고, <span class="accent">그 자리에서</span> 로드맵을 그립니다',
+      lvConsult:'말로 먼저 해 보는 시작점 상담',
       lvLead:'처음 들어오면 짧은 진단으로 지금 어디쯤인지 봅니다. 그 결과가 학습 여행 지도 위의 "지금 여기"가 되고, 주 1회·주 2회 선택에 따라 주차별 로드맵으로 펼쳐집니다. 레벨은 언제든 바꿀 수 있습니다.',
       lv1b:'진단하기', lv1:'몇 문제로 어디서 시작할지 찾습니다. 틀려도 괜찮은 자리부터.',
       lv2b:'지금 여기', lv2:'학습 여행 지도에 내 위치가 표시되고, 다음 한 걸음이 보입니다.',
@@ -859,7 +863,7 @@ footer a{color:var(--sub)}
       cmKicker:'Math History · 수학사 네 컷 만화 95편', cmH2:'개념마다 <span class="accent">그 수학이 태어난 이야기</span>가 붙어 있습니다',
       cmLead:'개념 노트를 열면 산문 한 줄 대신 네 컷 만화가 나옵니다. 그중 하나 — 일곱 살 가우스의 이야기입니다. 오늘 배우는 "자리끼리 더하기"와 같은 마법이라는 데서 끝납니다.',
       cmMore:'기호가 태어난 날(−, =, √…), 0을 발견한 사람들, 미적분이 생긴 이유까지 — 95편이 각자의 개념 자리에서 기다립니다.',
-      prKicker:'Beta · 무료 베타 테스트', prH2:'지금은 <span class="accent">무료 베타 테스트</span> 기간입니다', prLead:'베타 테스트 동안에는 매주 학습지·연산 게임 학습·무제한 연산 학습을 모두 무료로 씁니다. 공부한 기록을 저장해 이어 가려면 보호자 이메일로 가입하세요.', betaJoin:'가입하고 기록 이어 가기', prBadge:'주 1회', prBadge2:'주 2회 · 두 배 코스', prAmt2:'<span class="cur">₩</span>100,000<span class="unit">/년</span>', prPer2:'아이 한 명 · 1년', pr21:'학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주', pr22:'주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵', pr23:'연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함', pr24:'한국어·영어·중국어', prCta2:'주 2회로 시작하기 →',
+      prKicker:'Beta · 무료 베타 테스트', prH2:'지금은 <span class="accent">무료 베타 테스트</span> 기간입니다', prLead:'베타 테스트 동안에는 매주 학습지·연산 게임 학습·무제한 연산 학습을 가입 없이 무료로 씁니다. 보호자 이메일로 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 받습니다.', betaJoin:'가입하고 기록 이어 가기', prBadge:'주 1회', prBadge2:'주 2회 · 두 배 코스', prAmt2:'<span class="cur">₩</span>100,000<span class="unit">/년</span>', prPer2:'아이 한 명 · 1년', pr21:'학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주', pr22:'주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵', pr23:'연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함', pr24:'한국어·영어·중국어', prCta2:'주 2회로 시작하기 →',
       prAmt:'<span class="cur">₩</span>60,000<span class="unit">/년</span>', prPer:'아이 한 명 · 1년',
       pr1:'학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄', pr2:'<b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장',
       pr3:'<b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음', pr4:'수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어',
@@ -988,6 +992,7 @@ footer a{color:var(--sub)}
       l6b:'Why Calculus Was Born', l6:'How calculus was invented 400 years ago to measure change — and where it lives today.',
       lbOpen:'Open →',
       lvKicker:'Placement · Start from the child\'s level', lvH2:'First find the child\'s level, then draw the roadmap <span class="accent">from right there</span>',
+      lvConsult:'Starting-point check — just talk, no test',
       lvLead:'On the first visit a short placement shows where the child is now. That becomes "you are here" on the learning-journey map, and unfolds into a week-by-week roadmap for once or twice a week. The level can be changed any time.',
       lv1b:'Placement', lv1:'A few problems find where to start — from a spot where mistakes are fine.',
       lv2b:'You are here', lv2:'Your position shows on the journey map, and the next step is visible.',
@@ -997,7 +1002,7 @@ footer a{color:var(--sub)}
       cmKicker:'Math History · 95 four-panel comics', cmH2:'Every concept carries <span class="accent">the story of how that math was born</span>',
       cmLead:'Open a concept note and a four-panel comic appears instead of a line of prose. Here is one — seven-year-old Gauss. It ends by showing it is the same magic as today\'s "add the tens with the tens".',
       cmMore:'The day a symbol was born (−, =, √…), the people who found zero, why calculus exists — 95 stories wait at their own concept.',
-      prKicker:'Beta · Free beta test', prH2:'Right now it is a <span class="accent">free beta test</span>', prLead:'During the beta, weekly worksheets, arithmetic game learning and unlimited practice are all free. To save progress and keep going, sign up with a parent email.', betaJoin:'Sign up and keep my progress', prBadge:'ONCE A WEEK', prBadge2:'TWICE A WEEK · DOUBLE', prAmt2:'<span class="cur">$</span>75<span class="unit">/yr</span>', prPer2:'one child · one year', pr21:'Worksheet <b>twice a week</b> — two sheets, the same course in halves, more often', pr22:'A personal roadmap split into <b>Sept week 1-1, 1-2…</b>', pr23:'Arithmetic game learning · unlimited practice · labs · comics all included', pr24:'Korean, English, Chinese', prCta2:'Start twice a week →',
+      prKicker:'Beta · Free beta test', prH2:'Right now it is a <span class="accent">free beta test</span>', prLead:'During the beta, weekly worksheets, arithmetic game learning and unlimited practice are free without signing up. Sign up with a parent email to register, save progress and get weekly text messages free for 1 month from sign-up.', betaJoin:'Sign up and keep my progress', prBadge:'ONCE A WEEK', prBadge2:'TWICE A WEEK · DOUBLE', prAmt2:'<span class="cur">$</span>75<span class="unit">/yr</span>', prPer2:'one child · one year', pr21:'Worksheet <b>twice a week</b> — two sheets, the same course in halves, more often', pr22:'A personal roadmap split into <b>Sept week 1-1, 1-2…</b>', pr23:'Arithmetic game learning · unlimited practice · labs · comics all included', pr24:'Korean, English, Chinese', prCta2:'Start twice a week →',
       prAmt:'<span class="cur">$</span>45<span class="unit">/yr</span>', prPer:'one child · one year',
       pr1:'Worksheet <b>once a week</b> — an envelope in the mailbox every Monday, print at home', pr2:'<b>Arithmetic game learning</b> — every classroom, arena and stamp in the number village',
       pr3:'<b>Unlimited arithmetic practice</b> — curriculum practice · Number Magic exploration · course road, no limits', pr4:'6 math labs · 95 math-history comics · Korean, English, Chinese',
@@ -1126,6 +1131,7 @@ footer a{color:var(--sub)}
       l6b:'微积分为何诞生', l6:'400年前为了计算变化而诞生的微积分，以及它今天用在哪里。',
       lbOpen:'打开 →',
       lvKicker:'分级 · 从孩子的水平开始', lvH2:'先了解孩子的水平，<span class="accent">就从那里</span>画出路线图',
+      lvConsult:'不做题的起点咨询',
       lvLead:'第一次进入时，用简短的诊断看看孩子现在在哪里。结果会成为学习之旅地图上的"现在位置"，并按每周1次或2次展开为逐周路线图。级别随时可以更改。',
       lv1b:'诊断', lv1:'用几道题找到起点——从一个错了也没关系的位置开始。',
       lv2b:'现在位置', lv2:'学习之旅地图上标出我的位置，下一步一目了然。',
@@ -1135,7 +1141,7 @@ footer a{color:var(--sub)}
       cmKicker:'数学史 · 四格漫画95篇', cmH2:'每个概念都带着<span class="accent">那个数学诞生的故事</span>',
       cmLead:'打开概念笔记，出现的不是一行文字，而是四格漫画。这是其中一篇——七岁的高斯。结尾告诉你，这和今天学的"同位相加"是同一种魔法。',
       cmMore:'符号诞生的那一天（−、=、√……）、发现0的人们、微积分为何存在——95个故事各自在它的概念旁等着。',
-      prKicker:'公测 · 免费公测', prH2:'现在是<span class="accent">免费公测</span>期间', prLead:'公测期间，每周学习单、运算游戏学习和无限运算练习全部免费。想保存学习记录并继续学习，请用家长邮箱注册。', betaJoin:'注册并保存学习记录', prBadge:'每周1次', prBadge2:'每周2次 · 双倍课程', prAmt2:'<span class="cur">$</span>75<span class="unit">/年</span>', prPer2:'一个孩子 · 一年', pr21:'学习单<b>每周2次</b> —— 每周两张，同一课程一分为二、更频繁', pr22:'按<b>9月1-1周、1-2周……</b>划分的个人路线图', pr23:'运算游戏学习 · 无限运算练习 · 实验室 · 漫画全部包含', pr24:'韩语、英语、中文', prCta2:'以每周2次开始 →',
+      prKicker:'公测 · 免费公测', prH2:'现在是<span class="accent">免费公测</span>期间', prLead:'公测期间，每周学习单、运算游戏学习和无限运算练习无需注册即可免费使用。用家长邮箱注册后，自注册日起1个月内可免费登记信息、保存学习记录并接收每周短信。', betaJoin:'注册并保存学习记录', prBadge:'每周1次', prBadge2:'每周2次 · 双倍课程', prAmt2:'<span class="cur">$</span>75<span class="unit">/年</span>', prPer2:'一个孩子 · 一年', pr21:'学习单<b>每周2次</b> —— 每周两张，同一课程一分为二、更频繁', pr22:'按<b>9月1-1周、1-2周……</b>划分的个人路线图', pr23:'运算游戏学习 · 无限运算练习 · 实验室 · 漫画全部包含', pr24:'韩语、英语、中文', prCta2:'以每周2次开始 →',
       prAmt:'<span class="cur">$</span>45<span class="unit">/年</span>', prPer:'一个孩子 · 一年',
       pr1:'学习单<b>每周1次</b> —— 每周一信箱送达信封，在家打印', pr2:'<b>运算游戏学习</b> —— 数字村所有学习场所、竞技场与印章',
       pr3:'<b>无限运算练习</b> —— 教材运算练习 · 数字魔法探索 · 运算路线图，不限次数', pr4:'6个数学实验室 · 95篇数学史漫画 · 韩语、英语、中文',

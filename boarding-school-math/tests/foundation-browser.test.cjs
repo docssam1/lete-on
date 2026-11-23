@@ -30,12 +30,14 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   baseUrl = `http://127.0.0.1:${server.address().port}/boarding-school-math/`;
-  browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (process.env.GFIELD_CHROME_EXECUTABLE) launchOptions.executablePath = process.env.GFIELD_CHROME_EXECUTABLE;
+  browser = await chromium.launch(launchOptions);
 });
 
 test.after(async function () {
-  await browser.close();
-  await new Promise(function (resolve) { server.close(resolve); });
+  if (browser) await browser.close();
+  if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
 function collectErrors(page) {
@@ -51,8 +53,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.equal(await page.locator("h1").count(), 1);
-  assert.match(await page.locator("h1").innerText(), /진단 한 번으로,\s*오늘의 수업과 학습계획까지/);
-  assert.match(await page.locator(".directory-lede").innerText(), /학생용 개념·워크북[\s\S]*강사용 수업팩/);
+  assert.match(await page.locator("h1").innerText(), /무엇을 공부할까요/);
+  assert.match(await page.locator(".directory-lede").innerText(), /공개된 개념·워크북[\s\S]*진단과 자동 배정은 검수 중/);
   assert.match(await page.locator(".outcome-preview").innerText(), /현재 과정[\s\S]*우선 약점[\s\S]*오늘 분량/);
   assert.equal(await page.locator(".hero-actions .button-primary").getAttribute("href"), "#start");
   assert.equal(await page.locator('[data-role-preview="student"]').count(), 1);
@@ -60,8 +62,13 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator('[data-role-preview="parent"], [data-role="parent"]').count(), 0);
   assert.equal(await page.locator("#quick-start-grade").inputValue(), "6");
   assert.equal(await page.locator("#quick-plan").getAttribute("href"), "./learning-plan.html?goal=school-g6");
-  assert.equal(await page.locator("#quick-assessment").getAttribute("href"), "./assessment-entry.html?grade=6");
-  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./learning-plan.html?goal=sasmo-primary6");
+  assert.equal(await page.locator("#quick-assessment").getAttribute("href"), "./boarding-roadmap.html?grade=6");
+  assert.match(await page.locator("#quick-assessment").innerText(), /지필드 학습 자료 보기/);
+  await page.locator("#quick-start-grade").selectOption("7");
+  assert.equal(await page.locator("#quick-assessment").getAttribute("href"), "./grade7-ns-a-mock-exam.html");
+  assert.match(await page.locator("#quick-assessment").innerText(), /지필드 모의고사 풀기/);
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=7#past-papers");
+
   await page.locator("#quick-start-grade").selectOption("1");
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=1#past-papers");
   assert.match(await page.locator("#quick-sasmo small").textContent(), /Grade 1 준비 범위/);
@@ -88,7 +95,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.locator(".advanced-home-tools summary").click();
   await page.locator('[data-role-preview="teacher"]').click();
   assert.equal(await page.locator("#role-preview").getAttribute("aria-labelledby"), "role-tab-teacher");
-  assert.match(await page.locator("#role-title").textContent(), /교사는[\s\S]*근거/);
+  assert.match(await page.locator("#role-title").textContent(), /수업 자료와 검수 상태/);
   assert.equal(await page.locator('.role-shortcut').first().getAttribute("href"), "./learning-plan.html");
   await page.locator('[data-role-preview="student"]').click();
   assert.equal(await page.locator('[data-role-preview="student"]').getAttribute("aria-selected"), "true");
@@ -133,11 +140,15 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#goal-eligibility").innerText(), /G12 이하/);
 
   await page.locator('[data-goal="school"]').click();
+  await page.locator("#goal-grade-select").selectOption("7");
+  assert.match(await page.locator("#goal-status-note").innerText(), /비례 관계 워크북 1개가 공개[\s\S]*유리수 연산 워크북은 검수 시안/);
   await page.locator("#goal-grade-select").selectOption("5");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./catalog.html?role=student&grade=5");
   await page.locator('[data-goal="singapore"]').click();
   await page.locator("#goal-grade-select").selectOption("6");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./concept-learning.html");
+  await page.locator("#goal-grade-select").selectOption("7");
+  assert.match(await page.locator("#goal-status-note").innerText(), /비례 관계 워크북 1개가 공개[\s\S]*유리수 연산 워크북은 검수 시안/);
 
   await page.locator('[data-goal="kangaroo"]').focus();
   await page.keyboard.press("ArrowDown");
@@ -150,16 +161,32 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#search-results").innerText(), /경로 보기/);
   await page.locator("#learning-search").fill("Grade 6 비와 비율");
   assert.match(await page.locator("#search-results").innerText(), /비와 비율[\s\S]*개념 공개/);
+  await page.locator("#learning-search").fill("7.NS.A");
+  assert.match(await page.locator("#search-results").innerText(), /유리수 연산[\s\S]*워크북 시안/);
+  assert.match(await page.locator("#search-results .search-result").first().getAttribute("href"), /unit-workbook\.html\?cluster=7.NS.A/);
 
   await page.locator('[data-grade-tab="8"]').click();
+  assert.equal(await page.locator("#boarding-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=8");
   assert.equal(await page.locator("#selected-grade").textContent(), "G8");
   assert.equal(await page.locator("#skill-map-panel").getAttribute("aria-labelledby"), "grade-tab-8");
   assert.equal(await page.locator("#skill-rows .domain-directory-row").count(), 5);
   assert.match(await page.locator("#map-footnote").innerText(), /5개 영역[\s\S]*10개 클러스터/);
   assert.equal(await page.locator("#grade-reasoning-lanes article").count(), 3);
-  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /학교 핵심[\s\S]*사고력 클리닉[\s\S]*경시 가교[\s\S]*AMC 8 → AMC 10 가교/);
+  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /학교 수학[\s\S]*사고력 연습[\s\S]*경시 문제[\s\S]*AMC 8 → AMC 10 가교/);
   assert.equal(await page.locator("#skill-rows .unit-reasoning").count(), 10);
+  await page.locator('[data-grade-tab="7"]').click();
+  assert.equal(await page.locator("#grade-title").innerText(), "7학년 · 워크북 1개 · 검수 시안 1개");
+  assert.match(await page.locator("#map-footnote").innerText(), /워크북 1개와 검수 시안 1개 · 진단은 검수 중/);
+  const gradeSevenNs = page.locator("#skill-rows .unit-row").filter({ hasText: "7.NS.A" });
+  assert.equal(await gradeSevenNs.locator(".search-result-status").textContent(), "워크북 시안");
+  assert.match(await gradeSevenNs.locator(".unit-action").getAttribute("href"), /unit-workbook\.html\?cluster=7.NS.A/);
+  assert.equal(await page.locator('#skill-rows .search-result-status.public').count(), 1);
+  await page.locator('[data-role-target="teacher"]').click();
+  assert.match(await page.locator("#skill-rows .unit-row").filter({ hasText: "7.NS.A" }).locator(".unit-action").getAttribute("href"), /audience=teacher/);
+  await page.locator('[data-role-target="student"]').click();
   await page.locator('[data-grade-tab="6"]').click();
+  assert.match(await page.locator("#grade-title").innerText(), /개념 10개 · 공개 워크북 6개/);
+  assert.match(await page.locator("#map-footnote").innerText(), /공개 단원 워크북 6개 · 진단은 검수 중/);
   assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /10개 클리닉 공개/);
   await page.locator('[data-grade-tab="4"]').click();
   assert.equal(await page.locator("#grade-reasoning-lanes").isHidden(), true);
@@ -168,6 +195,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
 
   await page.locator('[data-map-view="domain"]').click();
   assert.equal(await page.locator("#domain-directory").isVisible(), true);
+  assert.match(await page.locator('[data-domain-grade="7"][data-domain-code="NS"]').innerText(), /워크북 시안/);
+  assert.match(await page.locator('[data-domain-grade="7"][data-domain-code="RP"]').innerText(), /워크북 공개/);
   const gradeEightDomain = page.locator('[data-domain-grade="8"]').first();
   const selectedDomain = await gradeEightDomain.getAttribute("data-domain-code");
   await gradeEightDomain.click();
@@ -180,13 +209,13 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#course-directory").isVisible(), true);
   await page.locator('[data-course-id="pre-algebra"]').click();
   assert.equal(await page.locator('[data-course-id="pre-algebra"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*Grade 6 개념 10개와 검증된 단원 워크북 9개 공개/);
-  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
+  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*개념 수업 10개·검수 워크북 8종 연결/);
+  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./prealgebra-path.html");
   await page.locator('[data-course-id="algebra-2"]').click();
   assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
-  assert.equal(await page.locator("#course-map-panel .course-unit-map article").count(), 4);
-  assert.match(await page.locator("#course-map-panel .course-unit-map").innerText(), /Polynomial & rational functions[\s\S]*Statistics, probability & modeling/);
-  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "#availability");
+  assert.equal(await page.locator("#course-map-panel .course-unit-map article").count(), 5);
+  assert.match(await page.locator("#course-map-panel .course-unit-map").innerText(), /COURSE MAP · 5 CONNECTED AREAS[\s\S]*Polynomial structure & operations[\s\S]*Sequences & optional extensions/);
+  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./algebra2-workbook.html");
   assert.match(await page.locator("#course-sequence-note").innerText(), /학교가 설정/);
 
   assert.equal(await page.locator("#goal-capabilities li").count(), 6);
@@ -388,6 +417,42 @@ test("legacy curriculum foundation remains available without feature regression"
   assert.equal(await page.locator(".domain-item").count(), 5);
   assert.equal(await page.locator("#unit-list .unit-item").count(), 10);
 
+  await page.locator('[data-grade="7"]').click();
+  assert.equal(await page.locator("#unit-list .unit-item").count(), 10);
+  assert.equal(await page.locator('#unit-list .unit-item small').filter({ hasText: "공개 워크북" }).count(), 2);
+  assert.match(await page.locator('[data-unit-id="ccss-7-rp-a"]').innerText(), /공개 워크북/);
+  assert.match(await page.locator('[data-unit-id="ccss-7-ns-a"]').innerText(), /공개 워크북/);
+  await page.locator('[data-unit-id="ccss-7-ns-a"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "7.NS.A 학생용 단원 워크북 열기");
+  assert.ok((await page.locator("#resource-state a").boundingBox()).height >= 44);
+  assert.match(await page.locator("#resource-state").innerText(), /36문항 단원 워크북과 8문항 재확인/);
+  assert.equal(await page.locator("#resource-state [data-flow-stage]").count(), 6);
+  assert.match(await page.locator('#resource-state [data-flow-stage="1"]').innerText(), /진단[\s\S]*18문항 제작·독립 검수 대기[\s\S]*준비 중/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="1"]').getAttribute("data-state"), "locked");
+  assert.match(await page.locator('#resource-state [data-flow-stage="3"]').innerText(), /처방·로드맵[\s\S]*약점·기간·일일 학습량[\s\S]*교사 확정[\s\S]*준비 중/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="3"]').getAttribute("data-state"), "locked");
+  assert.match(await page.locator('#resource-state [data-flow-stage="5"]').innerText(), /단원 워크북[\s\S]*36문항 학습[\s\S]*지금 가능/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="5"]').getAttribute("data-state"), "available");
+  assert.match(await page.locator('#resource-state [data-flow-stage="6"]').innerText(), /재확인[\s\S]*8문항[\s\S]*완료 후/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="6"]').getAttribute("data-state"), "conditional");
+  assert.equal(await page.locator('#resource-state [data-flow-stage="1"] a, #resource-state [data-flow-stage="2"] a, #resource-state [data-flow-stage="3"] a').count(), 0);
+  await page.locator('[data-role="teacher"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=ko&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "7.NS.A 교사용 지도서 열기");
+  await page.locator('[data-locale="en"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=en&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "Open 7.NS.A teacher guide");
+  assert.match(await page.locator('#resource-state [data-flow-stage="1"]').innerText(), /Diagnostic[\s\S]*18 items awaiting authoring and independent review[\s\S]*Planned/);
+  assert.match(await page.locator('#resource-state [data-flow-stage="3"]').innerText(), /Prescription & roadmap[\s\S]*Weakness targets, schedule, and daily load[\s\S]*teacher approval/);
+  await page.locator('[data-locale="zh-Hans"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "打开 7.NS.A 教师教学指南");
+  assert.match(await page.locator('#resource-state [data-flow-stage="1"]').innerText(), /诊断[\s\S]*18题等待编写并接受独立审核[\s\S]*准备中/);
+  assert.match(await page.locator('#resource-state [data-flow-stage="3"]').innerText(), /处方与学习路线[\s\S]*教师确认[\s\S]*薄弱点、学习周期与每日学习量/);
+  await page.locator('[data-locale="ko"]').click();
+
+  await page.locator('[data-grade="8"]').click();
   await page.locator('[data-role="teacher"]').click();
   assert.deepEqual(await page.locator("#resource-list li b").allTextContents(), ["수업 교안", "정답지", "해설지", "평가 루브릭", "과제 생성기", "교사용 분석"]);
 
@@ -416,6 +481,29 @@ test("legacy curriculum foundation remains available without feature regression"
   assert.match(await linkedPage.locator("#resource-list").innerText(), /교사용 분석/);
   assert.deepEqual(linkedErrors, []);
   await linkedPage.close();
+
+  const deepLinkedPage = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const deepLinkedErrors = collectErrors(deepLinkedPage);
+  await deepLinkedPage.goto(`${baseUrl}catalog.html?cluster=7.NS.A&role=teacher&locale=zh-Hans`, { waitUntil: "networkidle" });
+  assert.equal(await deepLinkedPage.locator('[data-grade="7"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator('[data-unit-id="ccss-7-ns-a"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator('[data-role="teacher"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator('[data-locale="zh-Hans"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=A4");
+  await deepLinkedPage.locator('[data-role="student"]').click();
+  let currentSearch = new URL(deepLinkedPage.url()).searchParams;
+  assert.equal(currentSearch.get("grade"), "7");
+  assert.equal(currentSearch.get("cluster"), "7.NS.A");
+  assert.equal(currentSearch.get("role"), "student");
+  assert.equal(currentSearch.get("locale"), "zh-Hans");
+  await deepLinkedPage.locator('[data-unit-id="ccss-7-rp-a"]').click();
+  currentSearch = new URL(deepLinkedPage.url()).searchParams;
+  assert.equal(currentSearch.get("cluster"), "7.RP.A");
+  await deepLinkedPage.reload({ waitUntil: "networkidle" });
+  assert.equal(await deepLinkedPage.locator('[data-unit-id="ccss-7-rp-a"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.RP.A&mode=workbook&audience=student&locale=zh-Hans&paper=A4");
+  assert.deepEqual(deepLinkedErrors, []);
+  await deepLinkedPage.close();
 });
 
 test("Grade 6 diagnostic page explains the real flow while public hosting keeps assessment content locked", async function () {
@@ -590,7 +678,7 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
       return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
     });
     assert.equal(dimensions.scroll, dimensions.client, `home overflow at ${width}px`);
-    const firstScreenControls = await page.locator('#quick-start-grade, .hero-actions .button, .start-primary-action').evaluateAll(function (controls) {
+    const firstScreenControls = await page.locator('[data-program-entry], #quick-start-grade, .hero-actions .button, .start-primary-action').evaluateAll(function (controls) {
       return controls.filter(function (control) {
         const rect = control.getBoundingClientRect();
         return rect.top >= 0 && rect.top < window.innerHeight;
@@ -612,6 +700,14 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
     });
     if (width <= 720) {
       assert.equal(await page.locator(".mobile-quick-nav").isVisible(), true);
+      const gradeTabLayout = await page.locator("#grade-tabs").evaluate(function (tabs) {
+        const bounds = tabs.getBoundingClientRect();
+        return Array.from(tabs.querySelectorAll("button")).every(function (button) {
+          const rect = button.getBoundingClientRect();
+          return rect.left >= bounds.left - 1 && rect.right <= bounds.right + 1;
+        });
+      });
+      assert.equal(gradeTabLayout, true, `grade choice clipped at ${width}px`);
       const quickTargets = await page.locator(".mobile-quick-nav a").evaluateAll(function (controls) {
         return controls.map(function (control) { return control.getBoundingClientRect().height; });
       });

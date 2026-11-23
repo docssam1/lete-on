@@ -1,0 +1,3118 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-11-22",
+  "status": "private-release-ledger",
+  "policy": "원문 문구·원본 이미지·로컬 원본 경로는 기록하지 않습니다. 정본 PDF 해당 쪽을 직접 대조하고 같은 구조의 검증 문항 세 개를 독립 검산(Python 감사)해 공개한 4·5학년 잠금 원문 유형 목록입니다. 출판사 공식 답안은 확인하지 않았습니다.",
+  "sources": {
+    "4-1": "생각하는 황소 4-1 실력 (인쇄 쪽 = PDF 쪽)",
+    "4-2": "생각하는 황소 4-2 심화 (인쇄 쪽 = PDF 쪽 + 5)",
+    "5-1": "생각하는 황소 5-1 심화 수정본 (인쇄 쪽 = PDF 쪽 + 1)",
+    "5-2": "생각하는 황소 5-2 심화 (기존 정본)"
+  },
+  "items": [
+    {
+      "typeId": "4-1-u2-t5-2",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u2-e5-example-5-1",
+      "generatorKey": "orig41U2E5Example51",
+      "typeLabel": "겹친 두 직각삼각형에서 한 직각 안의 빈 각 구하기",
+      "independentAnswers": [
+        "75°",
+        "85°",
+        "65°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u2-t5-9",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u2-e5-mission-4",
+      "generatorKey": "orig41U2E5Mission4Creative",
+      "typeLabel": "삼각형을 접은 선과 늘인 선에서 두 각의 합 구하기 · 창작 연습",
+      "independentAnswers": [
+        "100°",
+        "120°",
+        "90°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u2-t6-5",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u2-e6-example-6-4",
+      "generatorKey": "orig41U2E6Example64Creative",
+      "typeLabel": "시침 위치와 각도로 시각 찾기 · 창작 연습",
+      "independentAnswers": [
+        "3시 30분",
+        "5시 40분",
+        "8시 20분"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u3-t5-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u3-e5-example-5-2",
+      "generatorKey": "orig41U3E5Example52",
+      "typeLabel": "몫과 나머지의 합이 가장 큰 세 자리 수 찾기",
+      "independentAnswers": [
+        "983",
+        "991",
+        "998"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t1-6",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e1-mission-1",
+      "generatorKey": "orig41U4E1Mission1",
+      "typeLabel": "뒤집기 전 도형을 돌린 모양 그리기",
+      "independentAnswers": [
+        "처음 도형을 시계 방향으로 90°만큼 돌린 모양(답 그림)",
+        "처음 도형을 시계 방향으로 90°만큼 돌린 모양(답 그림)",
+        "처음 도형을 시계 반대 방향으로 90°만큼 돌린 모양(답 그림)"
+      ],
+      "answerAssumption": null,
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t2-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e2-example-2-2",
+      "generatorKey": "orig41U4E2Example22",
+      "typeLabel": "규칙에 따라 움직인 글자의 □번째 모양 그리기",
+      "independentAnswers": [
+        "셋째 칸과 같은 모양(물을 오른쪽으로 뒤집은 모양)",
+        "둘째 칸과 같은 모양(물을 180° 돌린 모양)",
+        "넷째 칸과 같은 모양(물을 아래쪽으로 뒤집은 모양)"
+      ],
+      "answerAssumption": null,
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t2-4",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e2-example-2-3",
+      "generatorKey": "orig41U4E2Example23Creative",
+      "typeLabel": "잘못된 연속 이동 바로잡기 · 창작 연습",
+      "independentAnswers": [
+        "사",
+        "아",
+        "나"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t2-7",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e2-mission-2",
+      "generatorKey": "orig41U4E2Mission2",
+      "typeLabel": "무늬에서 기본 모양을 돌려 만든 모양 세기",
+      "independentAnswers": [
+        "10개",
+        "11개",
+        "9개"
+      ],
+      "answerAssumption": "처음 모양과 같은 방향으로 놓인 2칸×2칸 묶음도 360° 돌린 모양으로 셉니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t3-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e3-example-3-2",
+      "generatorKey": "orig41U4E3Example32Creative",
+      "typeLabel": "뒤집어 잇는 띠무늬 완성 · 창작 연습",
+      "independentAnswers": [
+        "④",
+        "③",
+        "①"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t3-9",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e3-mission-4",
+      "generatorKey": "orig41U4E3Mission4Creative",
+      "typeLabel": "좌우 뒤집기 띠무늬의 도형 수 · 창작 연습",
+      "independentAnswers": [
+        "22개",
+        "30개",
+        "19개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t4",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e4-exploration",
+      "generatorKey": "orig41U4E4Exploration",
+      "typeLabel": "수 카드로 만든 수와 180° 돌린 수의 가장 작은 차",
+      "independentAnswers": [
+        "72",
+        "96",
+        "102"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t4-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e4-example-4-2",
+      "generatorKey": "orig41U4E4Example42",
+      "typeLabel": "180° 돌린 수 카드로 잘못 계산한 뺄셈 바로잡기",
+      "independentAnswers": [
+        "279",
+        "396",
+        "294"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u4-t4-5",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u4-e4-example-4-4",
+      "generatorKey": "orig41U4E4Example44",
+      "typeLabel": "뒤집어도 모양이 같은 한글 자모 세기",
+      "independentAnswers": [
+        "8개",
+        "6개",
+        "8개"
+      ],
+      "answerAssumption": "글자는 반듯한 고딕 모양으로 보고 붓끝·굵기 차이는 생각하지 않습니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u5-t2-11",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u5-e2-mission-6",
+      "generatorKey": "orig41U5E2Mission6Creative",
+      "typeLabel": "산 선택 순서로 전체 학생 수의 가장 작은 값 찾기 · 창작 연습",
+      "independentAnswers": [
+        "33명",
+        "40명",
+        "29명"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u5-t2-2",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u5-e2-example-2-1",
+      "generatorKey": "orig41U5E2Example21Creative",
+      "typeLabel": "달의 날수로 찢어진 막대 찾기 · 창작 연습",
+      "independentAnswers": [
+        "9일",
+        "10일",
+        "5일"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u5-t2-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u5-e2-example-2-2",
+      "generatorKey": "orig41U5E2Example22Creative",
+      "typeLabel": "남녀 수를 채워 반별 차 비교하기 · 창작 연습",
+      "independentAnswers": [
+        "3반, 7명",
+        "2반, 7명",
+        "3반, 8명"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": true,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u5-t2-5",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u5-e2-example-2-4",
+      "generatorKey": "orig41U5E2Example24",
+      "typeLabel": "찢어진 막대그래프에서 달의 날수로 모르는 값 찾기",
+      "independentAnswers": [
+        "12일",
+        "11일",
+        "13일"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u6-t5-3",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u6-e5-example-5-2",
+      "generatorKey": "orig41U6E5Example52",
+      "typeLabel": "마름모 테두리로 늘어나는 바둑돌 수",
+      "independentAnswers": [
+        "181개",
+        "265개",
+        "421개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u6-t5-5",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u6-e5-example-5-4",
+      "generatorKey": "orig41U6E5Example54",
+      "typeLabel": "점 배열로 만든 작은 정사각형 수와 점 수",
+      "independentAnswers": [
+        "85개",
+        "53개",
+        "126개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-1-u6-t5-8",
+      "semester": "4-1",
+      "sourceItemId": "4-1-u6-e5-mission-3",
+      "generatorKey": "orig41U6E5Mission3",
+      "typeLabel": "ㄱ자 점 배열로 만든 작은 정사각형 수와 점 수",
+      "independentAnswers": [
+        "74개",
+        "54개",
+        "94개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t1-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-1-example-4",
+      "generatorKey": "orig42U2E1Example4",
+      "typeLabel": "큰 삼각형 내부의 모든 삼각형",
+      "independentAnswers": [
+        "27개",
+        "42개",
+        "42개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-2-mission-1",
+      "generatorKey": "orig42U2E2Mission1",
+      "typeLabel": "사각형을 삼각형으로 나눌 때 될 수 없는 둔각삼각형 수",
+      "independentAnswers": [
+        "⑤ 4개",
+        "⑥ 5개",
+        "⑤ 4개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t2-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-2-example-3",
+      "generatorKey": "orig42U2E2Example3",
+      "typeLabel": "직각 표시 도형의 직각삼각형 세기",
+      "independentAnswers": [
+        "12개",
+        "15개",
+        "18개"
+      ],
+      "answerAssumption": "직각 표시가 있는 곳만 직각으로 봅니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t2-6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-2-mission-6",
+      "generatorKey": "orig42U2E2Mission6",
+      "typeLabel": "점판에서 직각삼각형 세기",
+      "independentAnswers": [
+        "5개",
+        "6개",
+        "4개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t2-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-2-example-1",
+      "generatorKey": "orig42U2E2Example1",
+      "typeLabel": "정삼각형을 나누어 둔각삼각형 만들기",
+      "independentAnswers": [
+        "정답 예시 그림 참고(둔각삼각형 수가 1개, 2개, 3개가 되면 정답)",
+        "정답 예시 그림 참고(둔각삼각형 수가 1개, 2개, 3개가 되면 정답)",
+        "정답 예시 그림 참고(둔각삼각형 수가 2개, 3개, 4개가 되면 정답)"
+      ],
+      "answerAssumption": null,
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-example-3",
+      "generatorKey": "orig42U2E3Example3",
+      "typeLabel": "연속한 이등변삼각형의 각 구하기",
+      "independentAnswers": [
+        "25°",
+        "20°",
+        "27°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-example-4",
+      "generatorKey": "orig42U2E3Example4",
+      "typeLabel": "접은 이등변삼각형의 각 구하기",
+      "independentAnswers": [
+        "110°",
+        "100°",
+        "114°"
+      ],
+      "answerAssumption": "변 ㄱㄴ과 변 ㄱㄷ이 같은 이등변삼각형으로 봅니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-mission-2",
+      "generatorKey": "orig42U2E3Mission2",
+      "typeLabel": "같은 길이 선분이 있는 각 구하기",
+      "independentAnswers": [
+        "35°",
+        "37°",
+        "33°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-mission-4",
+      "generatorKey": "orig42U2E3Mission4",
+      "typeLabel": "이등변삼각형을 이어 만든 각",
+      "independentAnswers": [
+        "85°",
+        "110°",
+        "80°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-mission-5",
+      "generatorKey": "orig42U2E3Mission5",
+      "typeLabel": "접은 이등변삼각형의 각",
+      "independentAnswers": [
+        "80°",
+        "70°",
+        "76°"
+      ],
+      "answerAssumption": "변 ㄱㄴ과 변 ㄱㄷ이 같은 이등변삼각형이고, 꼭짓점 ㄱ은 ㅁ에, ㄷ은 ㅅ에 닿게 접은 것으로 봅니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-exploration",
+      "generatorKey": "orig42U2E3ExplorationGrid",
+      "typeLabel": "직선을 추가해 이등변삼각형 최대로 만들기",
+      "independentAnswers": [
+        "9개",
+        "10개",
+        "9개"
+      ],
+      "answerAssumption": "직사각형을 점 모눈 위에 두고, 직선은 둘레 위의 두 점을 지나도록 그으며, 그은 직선과 변으로 만들어지는 크고 작은 삼각형을 모두 셉니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u2-t3-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-triangle-3-example-1",
+      "generatorKey": "orig42U2E3Example1",
+      "typeLabel": "점판에서 서로 다른 이등변삼각형 세기",
+      "independentAnswers": [
+        "11개",
+        "7개",
+        "10개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t1-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-1-example-3",
+      "generatorKey": "orig42U3E1Example3",
+      "typeLabel": "수직선 위에서 굴린 정사각형의 점 위치",
+      "independentAnswers": [
+        "1.2",
+        "0.8",
+        "1.5"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t1-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-1-example-4",
+      "generatorKey": "orig42U3E1Example4",
+      "typeLabel": "일정하게 타는 양초의 전체 시간",
+      "independentAnswers": [
+        "1시간 50분",
+        "1시간 30분",
+        "2시간 40분"
+      ],
+      "answerAssumption": "양초는 처음부터 끝까지 같은 빠르기로 탄다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t1-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-1-example-1",
+      "generatorKey": "orig42U3E1Example1",
+      "typeLabel": "복명수와 소수의 단위 환산",
+      "independentAnswers": [
+        "(1) 5.64 (2) 4.078 (3) 4.75",
+        "(1) 8.26 (2) 6.035 (3) 2.25",
+        "(1) 2.79 (2) 9.047 (3) 5.5"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t1-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-1-example-2",
+      "generatorKey": "orig42U3E1Example2",
+      "typeLabel": "두 소수 사이의 가장 작은·큰 소수",
+      "independentAnswers": [
+        "32.502, 32.698",
+        "5.304, 5.696",
+        "7.405, 7.895"
+      ],
+      "answerAssumption": "두 수 사이를 등분한 눈금이 나타내는 소수(두 수 자신 제외) 중에서 찾는다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t2-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-2-example-3",
+      "generatorKey": "orig42U3E2Example3",
+      "typeLabel": "직선 위 네 사람 사이의 거리",
+      "independentAnswers": [
+        "0.481 km",
+        "0.603 km",
+        "0.638 km"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t2-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-2-example-4",
+      "generatorKey": "orig42U3E2Example4",
+      "typeLabel": "규칙에 따라 늘어놓은 소수의 합",
+      "independentAnswers": [
+        "49.95",
+        "5.4",
+        "91.35"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t2-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-2-exploration",
+      "generatorKey": "orig42U3E2Exploration",
+      "typeLabel": "서로 다른 빠르기의 달리기 시간 차",
+      "independentAnswers": [
+        "1.76초",
+        "1.74초",
+        "2.06초"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t2-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-2-example-1",
+      "generatorKey": "orig42U3E2Example1",
+      "typeLabel": "두 계산식 사이의 소수 한 자리 수",
+      "independentAnswers": [
+        "6개",
+        "5개",
+        "7개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t2-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-2-example-2",
+      "generatorKey": "orig42U3E2Example2",
+      "typeLabel": "가려진 계산식의 가장 작은 소수",
+      "independentAnswers": [
+        "3.05",
+        "2.58",
+        "4.79"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t3-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-3-example-3",
+      "generatorKey": "orig42U3E3Example3",
+      "typeLabel": "거리표에서 두 지점 사이 거리",
+      "independentAnswers": [
+        "0.63 km",
+        "0.73 km",
+        "0.76 km"
+      ],
+      "answerAssumption": "다섯 지점은 직선 위에 ㉮, ㉯, ㉰, ㉱, ㉲의 순서로 놓여 있다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t3-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-3-example-4",
+      "generatorKey": "orig42U3E3Example4",
+      "typeLabel": "세 막대의 합과 차로 길이 차 구하기",
+      "independentAnswers": [
+        "1.3 m",
+        "1.4 m",
+        "1.9 m"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t3-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-3-exploration",
+      "generatorKey": "orig42U3E3Exploration",
+      "typeLabel": "등차 소수 수열의 특정 번째 수",
+      "independentAnswers": [
+        "22.077",
+        "14.058",
+        "31.581"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t3-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-3-example-1",
+      "generatorKey": "orig42U3E3Example1",
+      "typeLabel": "세 사람의 두 수씩 합으로 차 구하기",
+      "independentAnswers": [
+        "7.2 kg",
+        "6.9 kg",
+        "7.3 kg"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t3-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-3-example-2",
+      "generatorKey": "orig42U3E3Example2",
+      "typeLabel": "같은 두께 책을 쌓은 전체 높이",
+      "independentAnswers": [
+        "132.2 cm",
+        "135.3 cm",
+        "129.4 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t4-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-4-example-3",
+      "generatorKey": "orig42U3E4Example3",
+      "typeLabel": "수 카드로 만든 소수의 순위 차",
+      "independentAnswers": [
+        "6.147",
+        "8.424",
+        "8.343"
+      ],
+      "answerAssumption": "소수 셋째 자리 숫자가 0인 수는 소수 세 자리 수로 보지 않고, 일의 자리 숫자가 0인 수는 소수 세 자리 수로 본다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t4-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-4-example-4",
+      "generatorKey": "orig42U3E4Example4",
+      "typeLabel": "수 카드로 만든 소수의 차 조건",
+      "independentAnswers": [
+        "6, 7",
+        "5, 6",
+        "5, 8"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t4-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-4-example-1",
+      "generatorKey": "orig42U3E4Example1",
+      "typeLabel": "자리값이 다른 두 수의 차로 자연수 구하기",
+      "independentAnswers": [
+        "5421",
+        "3762",
+        "7834"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u3-t4-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-decimal-4-example-2",
+      "generatorKey": "orig42U3E4Example2",
+      "typeLabel": "서로 다른 숫자의 소수식 최댓값",
+      "independentAnswers": [
+        "3.46",
+        "4.36",
+        "4.26"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t1",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e1-exploration",
+      "generatorKey": "orig42U4E1Exploration",
+      "typeLabel": "여러 직선의 수직·평행 관계와 평행선 사이 거리 구하기",
+      "independentAnswers": [
+        "(1) 4쌍 (2) 13 cm (3) 1쌍 (4) 32 cm",
+        "(1) 4쌍 (2) 14 cm (3) 1쌍 (4) 36 cm",
+        "(1) 4쌍 (2) 11 cm (3) 1쌍 (4) 27 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t2-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e2-example-2-1",
+      "generatorKey": "orig42U4E2Example21",
+      "typeLabel": "여섯 직선에서 평행한 두 쌍과 동위각·엇각의 합 구하기",
+      "independentAnswers": [
+        "(1) 가와 다, 나와 라 (2) ㉠ 66°, ㉡ 116° (3) 210° (4) 336°",
+        "(1) 가와 다, 나와 라 (2) ㉠ 62°, ㉡ 123° (3) 202° (4) 353°",
+        "(1) 가와 다, 나와 라 (2) ㉠ 70°, ㉡ 109° (3) 218° (4) 319°"
+      ],
+      "answerAssumption": "(3)의 동위각은 직선 바를 따라 직선 가, 나, 라와 만나는 곳에서, (4)의 엇각은 직선 마를 따라 직선 가, 나, 다와 만나는 곳에서 찾는다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t2-3",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e2-example-2-2",
+      "generatorKey": "orig42U4E2Example22",
+      "typeLabel": "두 묶음의 평행선에서 한 각과 같은 크기의 각 세기",
+      "independentAnswers": [
+        "17개",
+        "23개",
+        "15개"
+      ],
+      "answerAssumption": "마지막 빗금 직선은 다른 빗금 직선들과 평행하지 않고, 그 직선이 만드는 각은 모두 각 ㉠과 크기가 다르다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-exploration",
+      "generatorKey": "orig42U4E4Exploration",
+      "typeLabel": "서로 평행한 두 선분과 여러 바깥각으로 표시각 구하기",
+      "independentAnswers": [
+        "150°",
+        "140°",
+        "160°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-mission-5",
+      "generatorKey": "orig42U4E4Mission5",
+      "typeLabel": "평행선과 크기가 같은 각을 이용해 두 각의 합 구하기",
+      "independentAnswers": [
+        "90°",
+        "90°",
+        "90°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-mission-6",
+      "generatorKey": "orig42U4E4Mission6",
+      "typeLabel": "평행한 두 거울 사이를 지나는 두 레이저의 각 구하기",
+      "independentAnswers": [
+        "80°",
+        "78°",
+        "81°"
+      ],
+      "answerAssumption": "레이저는 거울과 같은 크기의 각을 이루며 반사되고, 거울의 두께는 생각하지 않는다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-example-4-1",
+      "generatorKey": "orig42U4E4Example41",
+      "typeLabel": "양끝 선분이 평행한 여러 꺾은선의 표시각 구하기",
+      "independentAnswers": [
+        "175°",
+        "170°",
+        "172°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-3",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-example-4-2",
+      "generatorKey": "orig42U4E4Example42",
+      "typeLabel": "평행한 두 거울 사이를 지나는 레이저의 각 구하기",
+      "independentAnswers": [
+        "65°",
+        "73°",
+        "68°"
+      ],
+      "answerAssumption": "레이저는 거울과 같은 크기의 각을 이루며 반사되고, 거울의 두께는 생각하지 않는다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-example-4-3",
+      "generatorKey": "orig42U4E4Example43",
+      "typeLabel": "평행·수직인 변으로 이루어진 사각형의 표시각 구하기",
+      "independentAnswers": [
+        "15°",
+        "17°",
+        "19°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-example-4-4",
+      "generatorKey": "orig42U4E4Example44",
+      "typeLabel": "두 평행선 사이 꺾은선에서 여러 표시각의 합 구하기",
+      "independentAnswers": [
+        "255°",
+        "260°",
+        "250°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-mission-1",
+      "generatorKey": "orig42U4E4Mission1",
+      "typeLabel": "두 평행한 선분을 잇는 꺾은선의 표시각 구하기",
+      "independentAnswers": [
+        "100°",
+        "105°",
+        "95°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-mission-2",
+      "generatorKey": "orig42U4E4Mission2",
+      "typeLabel": "두 쌍의 평행한 선분으로 만든 도형의 표시각 구하기",
+      "independentAnswers": [
+        "120°",
+        "125°",
+        "115°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t4-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e4-mission-4",
+      "generatorKey": "orig42U4E4Mission4",
+      "typeLabel": "이등변삼각형을 접어 만든 평행사변형의 두 각의 합 구하기",
+      "independentAnswers": [
+        "70°",
+        "75°",
+        "65°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-exploration",
+      "generatorKey": "orig42U4E5Exploration",
+      "typeLabel": "3×3 점판에서 뒤집기와 돌리기를 같은 것으로 본 사각형 세기",
+      "independentAnswers": [
+        "12가지",
+        "11가지",
+        "23가지"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-mission-5",
+      "generatorKey": "orig42U4E5Mission5",
+      "typeLabel": "두 종류의 마름모를 이어 만든 바람개비 모양의 각 구하기",
+      "independentAnswers": [
+        "50°",
+        "54°",
+        "46°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-mission-6",
+      "generatorKey": "orig42U4E5Mission6",
+      "typeLabel": "사다리꼴에 선을 그어 만든 여러 사각형의 종류별 개수 세기",
+      "independentAnswers": [
+        "마름모 1개, 직사각형 1개, 평행사변형 2개, 사다리꼴 21개",
+        "마름모 1개, 직사각형 1개, 평행사변형 2개, 사다리꼴 15개",
+        "마름모 1개, 직사각형 1개, 평행사변형 4개, 사다리꼴 21개"
+      ],
+      "answerAssumption": "사각형은 포함 관계(정사각형은 마름모·직사각형·평행사변형·사다리꼴, 평행사변형은 사다리꼴)로 세고, 주어진 것 외에는 평행한 선분이 없으며 정사각형이 아닌 평행사변형은 마름모가 아니다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-example-5-1",
+      "generatorKey": "orig42U4E5Example51",
+      "typeLabel": "평행사변형의 각을 나눈 선과 수선으로 각 구하기",
+      "independentAnswers": [
+        "66°",
+        "70°",
+        "65°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-3",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-example-5-2",
+      "generatorKey": "orig42U4E5Example52",
+      "typeLabel": "마름모의 대각선으로 만든 네 삼각형을 이어 직사각형 둘레 구하기",
+      "independentAnswers": [
+        "28 cm",
+        "30 cm",
+        "36 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-example-5-3",
+      "generatorKey": "orig42U4E5Example53",
+      "typeLabel": "사다리꼴을 접어 만든 도형에서 두 각의 차 구하기",
+      "independentAnswers": [
+        "80°",
+        "60°",
+        "40°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-example-5-4",
+      "generatorKey": "orig42U4E5Example54",
+      "typeLabel": "이등변삼각형을 접어 만든 마름모의 각 구하기",
+      "independentAnswers": [
+        "30°",
+        "120°",
+        "60°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-mission-1",
+      "generatorKey": "orig42U4E5Mission1",
+      "typeLabel": "3×4 점판에서 직사각형이 아닌 평행사변형 세기",
+      "independentAnswers": [
+        "9가지",
+        "6가지",
+        "12가지"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-mission-2",
+      "generatorKey": "orig42U4E5Mission2",
+      "typeLabel": "2×4 점판에서 뒤집기와 돌리기를 같은 것으로 본 사각형 세기",
+      "independentAnswers": [
+        "14가지",
+        "13가지",
+        "22가지"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-mission-3",
+      "generatorKey": "orig42U4E5Mission3",
+      "typeLabel": "평행사변형을 접어 만든 도형의 각 구하기",
+      "independentAnswers": [
+        "51°",
+        "50°",
+        "52°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t5-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e5-mission-4",
+      "generatorKey": "orig42U4E5Mission4",
+      "typeLabel": "사다리꼴을 접어 만든 평행사변형의 각 구하기",
+      "independentAnswers": [
+        "120°",
+        "108°",
+        "96°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-exploration",
+      "generatorKey": "orig42U4E6Exploration",
+      "typeLabel": "정사각형·이등변삼각형·마름모의 성질을 이용해 두 각의 합 구하기",
+      "independentAnswers": [
+        "246°",
+        "230°",
+        "234°"
+      ],
+      "answerAssumption": "㉠·㉡은 각각 두 선분이 만나는 점에서 변 ㄱㄴ 쪽을 향한 각이다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-mission-5",
+      "generatorKey": "orig42U4E6Mission5",
+      "typeLabel": "겹친 두 직사각형에서 표시된 두 각의 합 구하기",
+      "independentAnswers": [
+        "37°",
+        "35°",
+        "40°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-mission-6",
+      "generatorKey": "orig42U4E6Mission6",
+      "typeLabel": "직사각형과 정삼각형을 이어 붙인 도형의 두 각의 합 구하기",
+      "independentAnswers": [
+        "150°",
+        "140°",
+        "160°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-example-6-1",
+      "generatorKey": "orig42U4E6Example61",
+      "typeLabel": "여러 사각형과 정삼각형을 이어 붙인 도형의 둘레 구하기",
+      "independentAnswers": [
+        "50 cm",
+        "47 cm",
+        "65 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-3",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-example-6-2",
+      "generatorKey": "orig42U4E6Example62",
+      "typeLabel": "직사각형·마름모·정사각형을 이어 붙인 도형의 각 구하기",
+      "independentAnswers": [
+        "105°",
+        "45°",
+        "165°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-example-6-3",
+      "generatorKey": "orig42U4E6Example63",
+      "typeLabel": "평행사변형과 마름모의 성질을 이용해 각 구하기",
+      "independentAnswers": [
+        "10°",
+        "14°",
+        "18°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-example-6-4",
+      "generatorKey": "orig42U4E6Example64",
+      "typeLabel": "직각삼각형과 직사각형의 길이·각 관계로 각 구하기",
+      "independentAnswers": [
+        "75°",
+        "105°",
+        "75°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-mission-1",
+      "generatorKey": "orig42U4E6Mission1",
+      "typeLabel": "평행사변형·마름모·정사각형을 겹치지 않게 붙인 둘레 구하기",
+      "independentAnswers": [
+        "34 cm",
+        "30 cm",
+        "38 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-mission-2",
+      "generatorKey": "orig42U4E6Mission2",
+      "typeLabel": "정삼각형과 정사각형을 이어 붙인 도형의 각 구하기",
+      "independentAnswers": [
+        "80°",
+        "75°",
+        "70°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-mission-3",
+      "generatorKey": "orig42U4E6Mission3",
+      "typeLabel": "평행사변형과 정사각형을 맞붙인 도형의 각 구하기",
+      "independentAnswers": [
+        "20°",
+        "23°",
+        "14°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t6-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e6-mission-4",
+      "generatorKey": "orig42U4E6Mission4",
+      "typeLabel": "사다리꼴의 두 각을 똑같이 나누어 만든 평행사변형의 각 구하기",
+      "independentAnswers": [
+        "108°",
+        "112°",
+        "104°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-exploration",
+      "generatorKey": "orig42U4E7Exploration",
+      "typeLabel": "정사각형 세 개를 이어 붙인 도형에서 선분 길이와 두 각의 합 구하기",
+      "independentAnswers": [
+        "(1) 3 cm, (2) 45°",
+        "(1) 2 cm, (2) 45°",
+        "(1) 4 cm, (2) 45°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-mission-5",
+      "generatorKey": "orig42U4E7Mission5",
+      "typeLabel": "정사각형을 겹치지 않게 이어 붙인 도형의 둘레 구하기",
+      "independentAnswers": [
+        "372 cm",
+        "250 cm",
+        "328 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-mission-6",
+      "generatorKey": "orig42U4E7Mission6",
+      "typeLabel": "직사각형과 정사각형 조각으로 큰 정사각형을 만들 때 빈 길이 구하기",
+      "independentAnswers": [
+        "㉠ 3 cm, ㉡ 7 cm",
+        "㉠ 4 cm, ㉡ 8 cm",
+        "㉠ 5 cm, ㉡ 9 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-example-7-1",
+      "generatorKey": "orig42U4E7Example71",
+      "typeLabel": "정사각형을 접어 겹친 선분이 만드는 각 구하기",
+      "independentAnswers": [
+        "23°",
+        "25°",
+        "19°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-3",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-example-7-2",
+      "generatorKey": "orig42U4E7Example72",
+      "typeLabel": "정사각형과 정삼각형·이등변삼각형을 이어 붙인 각 구하기",
+      "independentAnswers": [
+        "111°",
+        "113°",
+        "109°"
+      ],
+      "answerAssumption": "이등변삼각형 ㄹㅁㅅ에서 길이가 같은 두 변은 변 ㄹㅁ과 변 ㄹㅅ이다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-example-7-3",
+      "generatorKey": "orig42U4E7Example73",
+      "typeLabel": "정사각형 색종이를 일정하게 겹쳐 놓은 도형의 둘레 구하기",
+      "independentAnswers": [
+        "76 cm",
+        "128 cm",
+        "156 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-example-7-4",
+      "generatorKey": "orig42U4E7Example74",
+      "typeLabel": "여러 정사각형을 붙인 도형에서 두 정사각형의 한 변 구하기",
+      "independentAnswers": [
+        "나 9 cm, 다 11 cm",
+        "나 18 cm, 다 22 cm",
+        "나 27 cm, 다 33 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-mission-1",
+      "generatorKey": "orig42U4E7Mission1",
+      "typeLabel": "직사각형 안의 점과 선분을 이용해 두 각의 합 구하기",
+      "independentAnswers": [
+        "45°",
+        "45°",
+        "45°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-mission-2",
+      "generatorKey": "orig42U4E7Mission2",
+      "typeLabel": "직사각형 안에 이어 붙인 정사각형의 둘레 구하기",
+      "independentAnswers": [
+        "12 cm",
+        "24 cm",
+        "36 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-mission-3",
+      "generatorKey": "orig42U4E7Mission3",
+      "typeLabel": "정사각형과 두 정삼각형을 이어 붙인 도형의 각 구하기",
+      "independentAnswers": [
+        "105°",
+        "95°",
+        "85°"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t7-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e7-mission-4",
+      "generatorKey": "orig42U4E7Mission4",
+      "typeLabel": "점판에서 크기와 놓인 자리가 다른 정사각형 세기",
+      "independentAnswers": [
+        "11개",
+        "20개",
+        "30개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-exploration",
+      "generatorKey": "orig42U4E8Exploration",
+      "typeLabel": "크기가 다른 칸으로 나뉜 직사각형에서 모든 직사각형 세기",
+      "independentAnswers": [
+        "19개",
+        "29개",
+        "48개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-mission-5",
+      "generatorKey": "orig42U4E8Mission5",
+      "typeLabel": "겹겹이 놓인 직사각형과 가로·세로선에서 사각형 세기",
+      "independentAnswers": [
+        "27개",
+        "18개",
+        "36개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-mission-6",
+      "generatorKey": "orig42U4E8Mission6",
+      "typeLabel": "삼각형 격자에서 사다리꼴 세기",
+      "independentAnswers": [
+        "210개",
+        "90개",
+        "150개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-example-8-1",
+      "generatorKey": "orig42U4E8Example81",
+      "typeLabel": "삼각형이 이어진 띠 모양에서 평행사변형 세기",
+      "independentAnswers": [
+        "14개",
+        "25개",
+        "39개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-3",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-example-8-2",
+      "generatorKey": "orig42U4E8Example82",
+      "typeLabel": "계단 모양 모눈에서 모든 직사각형 세기",
+      "independentAnswers": [
+        "258개",
+        "105개",
+        "276개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-example-8-3",
+      "generatorKey": "orig42U4E8Example83",
+      "typeLabel": "대각선이 그어진 모눈에서 모든 사각형 세기",
+      "independentAnswers": [
+        "49개",
+        "77개",
+        "75개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-example-8-4",
+      "generatorKey": "orig42U4E8Example84",
+      "typeLabel": "깃발이 있는 모눈에서 깃발을 포함하는 직사각형 세기",
+      "independentAnswers": [
+        "48개",
+        "60개",
+        "72개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-mission-1",
+      "generatorKey": "orig42U4E8Mission1",
+      "typeLabel": "계단 모양으로 쌓인 칸에서 모든 직사각형 세기",
+      "independentAnswers": [
+        "31개",
+        "53개",
+        "35개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-mission-2",
+      "generatorKey": "orig42U4E8Mission2",
+      "typeLabel": "색칠한 칸을 포함하는 직사각형 세기",
+      "independentAnswers": [
+        "72개",
+        "48개",
+        "64개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-mission-3",
+      "generatorKey": "orig42U4E8Mission3",
+      "typeLabel": "대각선이 이어진 모눈에서 볼록한 사각형 세기",
+      "independentAnswers": [
+        "135개",
+        "88개",
+        "123개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u4-t8-9",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u4-e8-mission-4",
+      "generatorKey": "orig42U4E8Mission4",
+      "typeLabel": "삼각형 격자에서 평행사변형 세기",
+      "independentAnswers": [
+        "40개",
+        "21개",
+        "65개"
+      ],
+      "answerAssumption": "직사각형도 평행사변형으로 셉니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u5-t2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u5-e2-exploration",
+      "generatorKey": "orig42U5E2Exploration",
+      "typeLabel": "학년별 키 그래프에서 달별 키 어림하기",
+      "independentAnswers": [
+        "약 124.25 cm, 약 137.5 cm",
+        "약 126.75 cm, 약 134.5 cm",
+        "약 130 cm, 약 135.75 cm"
+      ],
+      "answerAssumption": "한 학년 동안(12달) 키가 매달 같은 만큼 자랐다고 봅니다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u5-t2-5",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u5-e2-example-2-4",
+      "generatorKey": "orig42U5E2Example4",
+      "typeLabel": "서로 다른 때부터 채운 두 물통의 높이 관계 구하기",
+      "independentAnswers": [
+        "240분 후",
+        "120분 후",
+        "360분 후"
+      ],
+      "answerAssumption": "나 물통은 처음부터 그래프의 높이만큼 물이 있었고, 두 물통은 충분히 깊어 같은 빠르기로 계속 채워진다고 봅니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-exploration",
+      "generatorKey": "orig42U6E4Exploration",
+      "typeLabel": "직사각형을 똑같은 두 조각으로 나누어 정사각형 만들기",
+      "independentAnswers": [
+        "정답 예시 그림 참고(계단 모양으로 잘라 붙임)",
+        "정답 예시 그림 참고(계단 모양으로 잘라 붙임)",
+        "정답 예시 그림 참고(계단 모양으로 잘라 붙임)"
+      ],
+      "answerAssumption": "18×8 변형처럼 자르는 방법이 여러 가지일 수 있는 경우, 두 조각의 모양과 크기가 같고 다시 붙여 정사각형이 되면 정답으로 봅니다.",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-10",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-mission-5",
+      "generatorKey": "orig42U6E4Mission5",
+      "typeLabel": "모눈 도형을 두 조각으로 나누어 정사각형 만들기",
+      "independentAnswers": [
+        "정답 예시 그림 참고(자르는 선 한 가지)",
+        "정답 예시 그림 참고(자르는 선 한 가지)",
+        "정답 예시 그림 참고(자르는 선 한 가지)"
+      ],
+      "answerAssumption": "모눈의 선을 따라 자르고, 조각은 돌리거나 뒤집어 붙일 수 있다고 봅니다.",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-11",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-mission-6",
+      "generatorKey": "orig42U6E4Mission6",
+      "typeLabel": "144칸 직사각형을 똑같은 두 조각으로 나누어 정사각형 만들기",
+      "independentAnswers": [
+        "정답 예시 그림 참고(계단 모양으로 잘라 붙임)",
+        "정답 예시 그림 참고(계단 모양으로 잘라 붙임)",
+        "정답 예시 그림 참고(계단 모양으로 잘라 붙임)"
+      ],
+      "answerAssumption": "자르는 방법이 여러 가지일 수 있으므로, 점선을 따라 자른 두 조각의 모양과 크기가 같고 다시 붙여 정사각형이 되면 정답으로 봅니다.",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-2",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-example-4-1",
+      "generatorKey": "orig42U6E4Example1",
+      "typeLabel": "다섯 도형 조각으로 목표 모양을 만들 때 두 번 쓴 조각 찾기",
+      "independentAnswers": [
+        "나",
+        "마",
+        "다"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-3",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-example-4-2",
+      "generatorKey": "orig42U6E4Example2",
+      "typeLabel": "도형판에서 다섯 조각을 골라 정사각형 만들기",
+      "independentAnswers": [
+        "다, 라, 마, 바, 사로 만든 정사각형(정답 예시 그림 참고)",
+        "나, 다, 마, 바, 사로 만든 정사각형(정답 예시 그림 참고)",
+        "가, 나, 다, 마, 바로 만든 정사각형(정답 예시 그림 참고)"
+      ],
+      "answerAssumption": "고른 다섯 조각이 정해지면 붙이는 방법은 여러 가지일 수 있어, 조각 선택과 빈틈없는 정사각형이면 정답으로 봅니다.",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-4",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-example-4-3",
+      "generatorKey": "orig42U6E4Example3",
+      "typeLabel": "정사각형과 직각삼각형으로 된 도형을 똑같은 두 조각으로 나누기",
+      "independentAnswers": [
+        "정답 예시 그림 참고(나누는 선 한 가지)",
+        "정답 예시 그림 참고(나누는 선 한 가지)",
+        "정답 예시 그림 참고(나누는 선 한 가지)"
+      ],
+      "answerAssumption": "나누는 선은 모눈의 꼭짓점끼리 이은 선분들로 이루어진다고 봅니다.",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-6",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-mission-1",
+      "generatorKey": "orig42U6E4Mission1",
+      "typeLabel": "도형 조각을 한 번씩 써 목표 모양을 채울 때 남는 조각 찾기",
+      "independentAnswers": [
+        "가",
+        "다",
+        "마"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-7",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-mission-2",
+      "generatorKey": "orig42U6E4Mission2",
+      "typeLabel": "세 도형판 조각으로 만들 수 없는 도형 찾기",
+      "independentAnswers": [
+        "㉢ 정사각형",
+        "㉣ 정사각형",
+        "㉤ 정사각형"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "4-2-u6-t4-8",
+      "semester": "4-2",
+      "sourceItemId": "4-2-u6-e4-mission-3",
+      "generatorKey": "orig42U6E4Mission3",
+      "typeLabel": "도형판 조각 세 개와 네 개로 각각 정사각형 만들기",
+      "independentAnswers": [
+        "예: 3조각 다, 바, 사 / 4조각 가, 다, 바, 사(정답 예시 그림 참고)",
+        "예: 3조각 나, 마, 바 / 4조각 가, 나, 마, 바(정답 예시 그림 참고)",
+        "예: 3조각 가, 나, 마 / 4조각 가, 나, 라, 마(정답 예시 그림 참고)"
+      ],
+      "answerAssumption": "정사각형을 만드는 조각 선택과 배치는 여러 가지이므로, 정해진 조각 수로 빈틈없이 겹치지 않게 만든 정사각형이면 정답으로 봅니다.",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u1-t2-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u1-e2-mission-3",
+      "generatorKey": "orig51U1E2Mission3",
+      "typeLabel": "가진 돈의 일부를 쓰고 남은 돈으로 처음 돈 구하기",
+      "independentAnswers": [
+        "식: (3400 + 600 + 1000 + 500 × 4) × 2 = 14000, 답: 14000원",
+        "식: (2100 + 700 + 1200 + 400 × 5) × 2 = 12000, 답: 12000원",
+        "식: (2400 + 800 + 1500 + 600 × 3) × 2 = 13000, 답: 13000원"
+      ],
+      "answerAssumption": "스케치북·공책·음료수는 모두 처음 돈의 반으로 샀고, 남은 돈은 그 반에서 남은 돈이다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u2-t5-14",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u2-e5-mission-6",
+      "generatorKey": "orig51U2E5Mission6",
+      "typeLabel": "몫과 최소공배수 조건으로 세 수 찾기",
+      "independentAnswers": [
+        "60, 90, 150",
+        "84, 126, 294",
+        "180, 240, 300"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u2-t5-6",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u2-e5-example-5-4",
+      "generatorKey": "orig51U2E5Example54",
+      "typeLabel": "두 수씩의 최대공약수로 세 수의 최소공배수 찾기",
+      "independentAnswers": [
+        "180",
+        "210",
+        "420"
+      ],
+      "answerAssumption": "세 수의 최소공배수가 될 수 있는 수 중 가장 작은 수를 구한다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u2-t7-2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u2-e7-example-7-1",
+      "generatorKey": "orig51U2E7Example71",
+      "typeLabel": "남는 개수로 똑같이 나누어 줄 수 있는 학생 수 모두 구하기",
+      "independentAnswers": [
+        "7명, 14명",
+        "8명, 16명",
+        "9명, 18명"
+      ],
+      "answerAssumption": "조건에 맞는 학생 수를 모두 구한다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u2-t7-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u2-e7-mission-3",
+      "generatorKey": "orig51U2E7Mission3",
+      "typeLabel": "부족하거나 남는 간식을 똑같이 나눌 학생 수",
+      "independentAnswers": [
+        "15명",
+        "14명",
+        "21명"
+      ],
+      "answerAssumption": "남거나 모자라는 개수는 학생 수보다 적다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u2-t8-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u2-e8-mission-6",
+      "generatorKey": "orig51U2E8Mission6",
+      "typeLabel": "곱과 최대공약수·최소공배수로 세 수 찾기",
+      "independentAnswers": [
+        "(㉮, ㉯, ㉰) = (7, 30, 50), (21, 10, 150)",
+        "(㉮, ㉯, ㉰) = (5, 12, 28), (15, 4, 84)",
+        "(㉮, ㉯, ㉰) = (3, 42, 30), (21, 6, 210)"
+      ],
+      "answerAssumption": "조건에 맞는 (㉮, ㉯, ㉰)를 모두 구한다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t1-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e1-mission-6",
+      "generatorKey": "orig51U3E1Mission6",
+      "typeLabel": "색칠한 모눈의 규칙으로 나타낸 수 구하기",
+      "independentAnswers": [
+        "83",
+        "42",
+        "71"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t1-4",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e1-example-1-3",
+      "generatorKey": "orig51U3E1Example13",
+      "typeLabel": "기호 계산판으로 도형 수식의 값 구하기",
+      "independentAnswers": [
+        "26",
+        "61",
+        "33"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t1-5",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e1-example-1-4",
+      "generatorKey": "orig51U3E1Example14",
+      "typeLabel": "점과 선으로 만든 부호에서 날짜 읽기",
+      "independentAnswers": [
+        "3월 5일",
+        "7월 8일",
+        "4월 9일"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t1-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e1-mission-3",
+      "generatorKey": "orig51U3E1Mission3",
+      "typeLabel": "기호 계산판으로 도형식의 값 구하기",
+      "independentAnswers": [
+        "4",
+        "25",
+        "13"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e2-exploration",
+      "generatorKey": "orig51U3E2Exploration",
+      "typeLabel": "두 수직선의 연결 규칙으로 대응표와 식 완성하기",
+      "independentAnswers": [
+        "(1) 2, 4, 7, 11, 16, 22, 29 (2) △ = □ × (□ + 1) ÷ 2 + 1 (3) 79",
+        "(1) 4, 6, 9, 13, 18, 24, 31 (2) △ = □ × (□ + 1) ÷ 2 + 3 (3) 58",
+        "(1) 3, 5, 8, 12, 17, 23, 30 (2) △ = □ × (□ + 1) ÷ 2 + 2 (3) 107"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t2-9",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e2-mission-5",
+      "generatorKey": "orig51U3E2Mission5",
+      "typeLabel": "날짜와 줄넘기 횟수의 관계 나타내기",
+      "independentAnswers": [
+        "(1) 210, 220, 230, 240 (2) △ = □ × 10 + 190",
+        "(1) 165, 180, 195, 210 (2) △ = □ × 15 + 135",
+        "(1) 140, 160, 180, 200 (2) △ = □ × 20 + 100"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t3-10",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e3-mission-6",
+      "generatorKey": "orig51U3E3Mission6",
+      "typeLabel": "바깥 둘레로 흰색·검은색 타일 수의 차 구하기",
+      "independentAnswers": [
+        "17개",
+        "20개",
+        "23개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t3-2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e3-example-3-1",
+      "generatorKey": "orig51U3E3Example31",
+      "typeLabel": "겹쳐 그린 사각형 수와 삼각형 수의 관계 구하기",
+      "independentAnswers": [
+        "△ = □ × 4, 24",
+        "△ = □ × 4, 36",
+        "△ = □ × 4, 52"
+      ],
+      "answerAssumption": "색종이의 테두리는 그린 사각형으로 세지 않고, 삼각형은 크기에 관계없이 모두 센다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t3-3",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e3-example-3-2",
+      "generatorKey": "orig51U3E3Example32",
+      "typeLabel": "바둑돌 배열에서 흰 돌과 검은 돌 수의 차 구하기",
+      "independentAnswers": [
+        "△ = □ × □ − 2, 98개",
+        "△ = □ × □ − 2, 142개",
+        "△ = □ × □ − 2, 223개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t3-4",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e3-example-3-3",
+      "generatorKey": "orig51U3E3Example33",
+      "typeLabel": "겹쳐 붙인 종이 수와 누름못 수의 관계 구하기",
+      "independentAnswers": [
+        "△ = (□ + 1) × (○ + 1), 110개",
+        "△ = (□ + 1) × (○ + 1), 72개",
+        "△ = (□ + 1) × (○ + 1), 156개"
+      ],
+      "answerAssumption": "□는 세로로 놓인 종이 수, ○는 가로로 놓인 종이 수이고 종이는 그림의 순서대로 붙여 나간다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u3-t3-9",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u3-e3-mission-5",
+      "generatorKey": "orig51U3E3Mission5",
+      "typeLabel": "지그재그 선을 그은 도형 순서와 크고 작은 삼각형 수의 관계 구하기",
+      "independentAnswers": [
+        "△ = □ × 6 − 2, 46개",
+        "△ = □ × 6 − 2, 64개",
+        "△ = □ × 6 − 2, 88개"
+      ],
+      "answerAssumption": null,
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u4-t1-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u4-e1-mission-6",
+      "generatorKey": "orig51U4E1Mission6",
+      "typeLabel": "분모와 분자에서 같은 두 자리 수를 빼서 크기가 같은 분수 만들기",
+      "independentAnswers": [
+        "12",
+        "16",
+        "14"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u5-t4",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u5-e4-exploration-1",
+      "generatorKey": "orig51U5E4Exploration1",
+      "typeLabel": "분수를 서로 다른 세 단위분수의 합으로 나타내기",
+      "independentAnswers": [
+        "1/4 + 1/7 + 1/28",
+        "1/3 + 1/6 + 1/14",
+        "1/3 + 1/11 + 1/33"
+      ],
+      "answerAssumption": "여러 표현 중 세 분모 중 가장 큰 분모가 가장 작은 것을 답한다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u5-t4-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u5-e4-mission-5",
+      "generatorKey": "orig51U5E4Mission5",
+      "typeLabel": "분수를 서로 다른 세 단위분수의 합으로 나타내기",
+      "independentAnswers": [
+        "1/2 + 1/6 + 1/9",
+        "1/2 + 1/11 + 1/22",
+        "1/2 + 1/6 + 1/15"
+      ],
+      "answerAssumption": "여러 표현 중 세 분모 중 가장 큰 분모가 가장 작은 것을 답한다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t1-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e1-mission-6",
+      "generatorKey": "orig51U6E1Mission6",
+      "typeLabel": "다섯 조각의 둘레로 가운데 조각의 둘레 구하기",
+      "independentAnswers": [
+        "14",
+        "16",
+        "12"
+      ],
+      "answerAssumption": "가와 마는 그림처럼 다가 한 귀퉁이를 차지한 꺾인 모양이며, 각 조각의 둘레는 테두리 전체 길이로 봅니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-exploration-1",
+      "generatorKey": "orig51U6E2Exploration1",
+      "typeLabel": "점 네 개로 1cm² 정사각형 그리기",
+      "independentAnswers": [
+        "한 변이 1 cm인 정사각형 (그림은 한 예)",
+        "한 변이 2 cm인 정사각형 (그림은 한 예)",
+        "한 변이 3 cm인 정사각형 (그림은 한 예)"
+      ],
+      "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-10",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-mission-1",
+      "generatorKey": "orig51U6E2Mission1",
+      "typeLabel": "직사각형을 바꿔 만든 정사각형 넓이 구하기",
+      "independentAnswers": [
+        "525 cm²",
+        "416 cm²",
+        "1116 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-mission-2",
+      "generatorKey": "orig51U6E2Mission2",
+      "typeLabel": "블록 무늬로 지갑 넓이 알아보기",
+      "independentAnswers": [
+        "300 cm²",
+        "432 cm²",
+        "192 cm²"
+      ],
+      "answerAssumption": "지갑의 한 긴 변은 블록 한 개의 대각선과 꼭 맞고, 그 맞은편 변은 그 블록의 한 꼭짓점을 지납니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-12",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-mission-3",
+      "generatorKey": "orig51U6E2Mission3",
+      "typeLabel": "칸 넓이로 색칠한 도형 넓이 구하기",
+      "independentAnswers": [
+        "12 cm²",
+        "16 cm²",
+        "24 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-13",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-mission-4",
+      "generatorKey": "orig51U6E2Mission4",
+      "typeLabel": "겹친 세 직사각형의 색칠 넓이 찾기",
+      "independentAnswers": [
+        "㉠ 32 cm², ㉡ 51 cm², ㉢ 40 cm²",
+        "㉠ 32 cm², ㉡ 58 cm², ㉢ 42 cm²",
+        "㉠ 38 cm², ㉡ 58 cm², ㉢ 48 cm²"
+      ],
+      "answerAssumption": "표시된 세 넓이는 각 직사각형에서 다른 직사각형과 겹치지 않은 부분이고, 나머지 한 넓이는 세 직사각형이 모두 겹친 부분입니다.",
+      "resultContract": "multi-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-14",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-mission-5",
+      "generatorKey": "orig51U6E2Mission5",
+      "typeLabel": "주변 칸 넓이로 빈칸 넓이 찾기",
+      "independentAnswers": [
+        "750 cm²",
+        "840 cm²",
+        "800 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-15",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-mission-6",
+      "generatorKey": "orig51U6E2Mission6",
+      "typeLabel": "길을 낸 밭과 논에서 길의 넓이 구하기",
+      "independentAnswers": [
+        "13.95 m²",
+        "12.75 m²",
+        "11.25 m²"
+      ],
+      "answerAssumption": "논은 밭과 가로, 세로의 길이가 각각 같고, 길은 변에 평행하게 끝에서 끝까지 곧게 나 있습니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-exploration-2",
+      "generatorKey": "orig51U6E2Exploration2",
+      "typeLabel": "점 네 개로 2cm² 정사각형 그리기",
+      "independentAnswers": [
+        "한 변이 가로 1칸, 세로 1칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 3칸, 세로 3칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 4칸, 세로 4칸을 비스듬히 잇는 정사각형 (그림은 한 예)"
+      ],
+      "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-3",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-exploration-3",
+      "generatorKey": "orig51U6E2Exploration3",
+      "typeLabel": "점 네 개로 5cm² 정사각형 그리기",
+      "independentAnswers": [
+        "한 변이 가로 2칸, 세로 1칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 3칸, 세로 2칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 4칸, 세로 1칸을 비스듬히 잇는 정사각형 (그림은 한 예)"
+      ],
+      "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-4",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-exploration-4",
+      "generatorKey": "orig51U6E2Exploration4",
+      "typeLabel": "점 네 개로 8cm² 정사각형 그리기",
+      "independentAnswers": [
+        "한 변이 가로 2칸, 세로 2칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 4칸, 세로 2칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 5칸, 세로 1칸을 비스듬히 잇는 정사각형 (그림은 한 예)"
+      ],
+      "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-5",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-exploration-5",
+      "generatorKey": "orig51U6E2Exploration5",
+      "typeLabel": "점 네 개로 10cm² 정사각형 그리기",
+      "independentAnswers": [
+        "한 변이 가로 3칸, 세로 1칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 5칸, 세로 2칸을 비스듬히 잇는 정사각형 (그림은 한 예)",
+        "한 변이 가로 5칸, 세로 3칸을 비스듬히 잇는 정사각형 (그림은 한 예)"
+      ],
+      "answerAssumption": "위치와 방향은 자유이며, 넓이가 맞는 정사각형이면 모두 정답입니다(정답 그림은 한 예).",
+      "resultContract": "drawing",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-7",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-example-2-2",
+      "generatorKey": "orig51U6E2Example22",
+      "typeLabel": "겹친 색종이의 넓이 비교",
+      "independentAnswers": [
+        "20",
+        "23",
+        "32"
+      ],
+      "answerAssumption": "가장 작은 색종이는 가장 큰 색종이 안에 완전히 놓이고, ㉡은 중간 색종이 중 가장 작은 색종이와 겹친 부분과 가장 큰 색종이 밖으로 나온 부분의 합입니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-example-2-3",
+      "generatorKey": "orig51U6E2Example23",
+      "typeLabel": "직사각형의 변을 늘여 만든 평행사변형의 넓이",
+      "independentAnswers": [
+        "20 cm²",
+        "30 cm²",
+        "45 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t2-9",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e2-example-2-4",
+      "generatorKey": "orig51U6E2Example24",
+      "typeLabel": "같은 줄의 넓이 관계로 빈칸 구하기",
+      "independentAnswers": [
+        "18 cm²",
+        "16 cm²",
+        "21 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-exploration-1",
+      "generatorKey": "orig51U6E3Exploration1",
+      "typeLabel": "1cm 칸을 세어 평행사변형 넓이 구하기",
+      "independentAnswers": [
+        "20 cm²",
+        "18 cm²",
+        "25 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-mission-3",
+      "generatorKey": "orig51U6E3Mission3",
+      "typeLabel": "겹친 평행사변형에서 선분 길이 찾기",
+      "independentAnswers": [
+        "10 cm",
+        "9 cm",
+        "13 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-12",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-mission-4",
+      "generatorKey": "orig51U6E3Mission4",
+      "typeLabel": "여러 길이를 이용해 사각형 넓이 나누어 구하기",
+      "independentAnswers": [
+        "530 cm²",
+        "494 cm²",
+        "486 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-13",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-mission-5",
+      "generatorKey": "orig51U6E3Mission5",
+      "typeLabel": "두 평행사변형 넓이의 차 구하기",
+      "independentAnswers": [
+        "40 cm²",
+        "72 cm²",
+        "24 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-14",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-mission-6",
+      "generatorKey": "orig51U6E3Mission6",
+      "typeLabel": "두 높이로 한 변을 찾아 삼각형 둘레 완성하기",
+      "independentAnswers": [
+        "33.5 cm",
+        "28.5 cm",
+        "32.5 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-exploration-2",
+      "generatorKey": "orig51U6E3Exploration2",
+      "typeLabel": "1cm 칸을 세어 다른 평행사변형 넓이 구하기",
+      "independentAnswers": [
+        "21 cm²",
+        "12 cm²",
+        "15 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-6",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-example-3-2",
+      "generatorKey": "orig51U6E3Example32",
+      "typeLabel": "사다리꼴 둘레와 삼각형 둘레의 차 구하기",
+      "independentAnswers": [
+        "44 cm",
+        "66 cm",
+        "74 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-7",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-example-3-3",
+      "generatorKey": "orig51U6E3Example33",
+      "typeLabel": "두 높이로 변의 길이를 찾고 둘레에서 빼기",
+      "independentAnswers": [
+        "37.3 cm",
+        "65 cm",
+        "25 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-example-3-4",
+      "generatorKey": "orig51U6E3Example34",
+      "typeLabel": "넓이가 같은 두 삼각형에서 수선의 길이 구하기",
+      "independentAnswers": [
+        "6 cm",
+        "8 cm",
+        "9 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t3-9",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e3-mission-1",
+      "generatorKey": "orig51U6E3Mission1",
+      "typeLabel": "합동인 삼각형이 겹친 색칠 넓이 구하기",
+      "independentAnswers": [
+        "567 cm²",
+        "520 cm²",
+        "432 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t4-10",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e4-mission-4",
+      "generatorKey": "orig51U6E4Mission4",
+      "typeLabel": "대각선이 같은 마름모 세 개의 색칠 넓이 구하기",
+      "independentAnswers": [
+        "148 cm²",
+        "333 cm²",
+        "592 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t4-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e4-mission-5",
+      "generatorKey": "orig51U6E4Mission5",
+      "typeLabel": "정사각형 안 색칠 부분 넓이 구하기",
+      "independentAnswers": [
+        "4200 m²",
+        "2250 m²",
+        "2750 m²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t4-12",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e4-mission-6",
+      "generatorKey": "orig51U6E4Mission6",
+      "typeLabel": "움직인 직사각형과 사다리꼴의 겹친 넓이 구하기",
+      "independentAnswers": [
+        "31.5 cm²",
+        "30.5 cm²",
+        "35.5 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t4-4",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e4-example-4-2",
+      "generatorKey": "orig51U6E4Example42",
+      "typeLabel": "여러 삼각형으로 나눈 마름모의 색칠 넓이 구하기",
+      "independentAnswers": [
+        "339 cm²",
+        "213 cm²",
+        "332 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t4-7",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e4-mission-1",
+      "generatorKey": "orig51U6E4Mission1",
+      "typeLabel": "가운데점을 이어 반복한 마름모의 색칠 넓이 구하기",
+      "independentAnswers": [
+        "54 cm²",
+        "96 cm²",
+        "150 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t4-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e4-mission-2",
+      "generatorKey": "orig51U6E4Mission2",
+      "typeLabel": "사다리꼴 위의 점 비율로 삼각형 넓이 구하기",
+      "independentAnswers": [
+        "12 m²",
+        "24 m²",
+        "20 m²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t4-9",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e4-mission-3",
+      "generatorKey": "orig51U6E4Mission3",
+      "typeLabel": "사다리꼴 넓이 비로 겹친 마름모 넓이 찾기",
+      "independentAnswers": [
+        "744 cm²",
+        "672 cm²",
+        "504 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-exploration",
+      "generatorKey": "orig51U6E5Exploration",
+      "typeLabel": "모눈을 세어 복잡한 도형의 넓이 구하기",
+      "independentAnswers": [
+        "47 cm²",
+        "44 cm²",
+        "40 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-10",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-mission-4",
+      "generatorKey": "orig51U6E5Mission4",
+      "typeLabel": "붙어 있는 평행사변형과 마름모 넓이 더하기",
+      "independentAnswers": [
+        "144 cm²",
+        "184 cm²",
+        "192 cm²"
+      ],
+      "answerAssumption": "세 점 ㄴ, ㄷ, ㅂ은 한 직선 위에 있고, 주어진 짧은 길이는 마름모의 두 대각선이 만나는 점에서 점 ㅂ까지의 길이입니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-mission-5",
+      "generatorKey": "orig51U6E5Mission5",
+      "typeLabel": "두 대각선 사이 색칠 띠의 넓이 구하기",
+      "independentAnswers": [
+        "25 cm²",
+        "20 cm²",
+        "35 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-12",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-mission-6",
+      "generatorKey": "orig51U6E5Mission6",
+      "typeLabel": "연장선과 교점으로 삼각형 넓이 더하기",
+      "independentAnswers": [
+        "288 cm²",
+        "200 cm²",
+        "162 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-example-5-1",
+      "generatorKey": "orig51U6E5Example51",
+      "typeLabel": "네 정사각형 위 대각선 위쪽 넓이 더하기",
+      "independentAnswers": [
+        "99 cm²",
+        "100 cm²",
+        "88 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-3",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-example-5-2",
+      "generatorKey": "orig51U6E5Example52",
+      "typeLabel": "다섯 칸 중 색칠된 대각선 위쪽 넓이 구하기",
+      "independentAnswers": [
+        "108 cm²",
+        "432 cm²",
+        "972 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-4",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-example-5-3",
+      "generatorKey": "orig51U6E5Example53",
+      "typeLabel": "닮은 직각삼각형으로 빠진 가로 길이 찾기",
+      "independentAnswers": [
+        "100 cm",
+        "90 cm",
+        "60 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-5",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-example-5-4",
+      "generatorKey": "orig51U6E5Example54",
+      "typeLabel": "삼각형과 사다리꼴 넓이 연결하기",
+      "independentAnswers": [
+        "10 cm²",
+        "12 cm²",
+        "15 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-6",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-mission-1",
+      "generatorKey": "orig51U6E5Mission1",
+      "typeLabel": "모눈 도형에서 흰 구멍을 빼고 넓이 구하기",
+      "independentAnswers": [
+        "22 cm²",
+        "25 cm²",
+        "20 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-7",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-mission-2",
+      "generatorKey": "orig51U6E5Mission2",
+      "typeLabel": "크기가 다른 네 칸의 대각선 위쪽 넓이 더하기",
+      "independentAnswers": [
+        "10 cm²",
+        "19 cm²",
+        "32 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-mission-3-na",
+      "generatorKey": "orig51U6E5Mission3Na",
+      "typeLabel": "정사각형 종이 위 띠 모양 나의 넓이 구하기",
+      "independentAnswers": [
+        "162 cm²",
+        "138 cm²",
+        "224 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t5-9",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e5-mission-3-da",
+      "generatorKey": "orig51U6E5Mission3Da",
+      "typeLabel": "이등변삼각형 라를 빼고 띠 모양 다의 넓이 구하기",
+      "independentAnswers": [
+        "144 cm²",
+        "120 cm²",
+        "192 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-exploration",
+      "generatorKey": "orig51U6E6Exploration",
+      "typeLabel": "폭이 같은 길을 잘라 낸 종이의 남은 넓이",
+      "independentAnswers": [
+        "1184 cm²",
+        "891 cm²",
+        "1554 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-10",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-mission-5",
+      "generatorKey": "orig51U6E6Mission5",
+      "typeLabel": "대각선 길이로 정사각형 다섯 칸의 넓이 구하기",
+      "independentAnswers": [
+        "49 cm²",
+        "81 cm²",
+        "100 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-11",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-mission-6",
+      "generatorKey": "orig51U6E6Mission6",
+      "typeLabel": "주변 삼각형 넓이로 가운데 색칠 사각형 찾기",
+      "independentAnswers": [
+        "96 cm²",
+        "82 cm²",
+        "106 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-2",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-example-6-1",
+      "generatorKey": "orig51U6E6Example61",
+      "typeLabel": "같은 넓이 삼각형으로 직사각형 가로 길이 찾기",
+      "independentAnswers": [
+        "36 cm",
+        "33 cm",
+        "45 cm"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-3",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-example-6-2",
+      "generatorKey": "orig51U6E6Example62",
+      "typeLabel": "네 모서리를 잘라 만든 가운데 정사각형 넓이",
+      "independentAnswers": [
+        "288 cm²",
+        "200 cm²",
+        "392 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-4",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-example-6-3",
+      "generatorKey": "orig51U6E6Example63",
+      "typeLabel": "꼭짓점과 변의 중점을 이어 가운데 정사각형 넓이 구하기",
+      "independentAnswers": [
+        "20 cm²",
+        "45 cm²",
+        "80 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-5",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-example-6-4",
+      "generatorKey": "orig51U6E6Example64",
+      "typeLabel": "두 반쪽 삼각형이 겹친 가운데 사각형 넓이 찾기",
+      "independentAnswers": [
+        "72 cm²",
+        "56 cm²",
+        "83 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-6",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-mission-1",
+      "generatorKey": "orig51U6E6Mission1",
+      "typeLabel": "공원 길을 빼고 색칠된 잔디 넓이 더하기",
+      "independentAnswers": [
+        "350 m²",
+        "504 m²",
+        "224 m²"
+      ],
+      "answerAssumption": "가운데 네 작은 사각형은 길에 붙어 있는 정사각형이고, 흰 삼각형은 그 정사각형을 대각선으로 똑같이 나눈 반쪽입니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-7",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-mission-2",
+      "generatorKey": "orig51U6E6Mission2",
+      "typeLabel": "길의 넓이로 정원의 가로를 찾아 남은 넓이 구하기",
+      "independentAnswers": [
+        "594 m²",
+        "434 m²",
+        "816 m²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-8",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-mission-3",
+      "generatorKey": "orig51U6E6Mission3",
+      "typeLabel": "네 모서리 쪽을 잘라 남은 넓이 구하기",
+      "independentAnswers": [
+        "117 cm²",
+        "208 cm²",
+        "325 cm²"
+      ],
+      "answerAssumption": "잘라 낸 네 부분은 모양과 크기가 같고, 비스듬한 선은 정사각형의 변과 45°를 이룹니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-1-u6-t6-9",
+      "semester": "5-1",
+      "sourceItemId": "5-1-u6-e6-mission-4",
+      "generatorKey": "orig51U6E6Mission4",
+      "typeLabel": "정사각형에서 네 흰 삼각형을 빼기",
+      "independentAnswers": [
+        "208 cm²",
+        "300 cm²",
+        "156 cm²"
+      ],
+      "answerAssumption": null,
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    },
+    {
+      "typeId": "5-2-u1-e2-example-2-4",
+      "semester": "5-2",
+      "sourceItemId": "5-2-u1-e2-example-2-4",
+      "generatorKey": "orig52U1E2Example24Nonzero",
+      "typeLabel": "숫자 조건과 반올림 결과로 빈 숫자 구하기",
+      "independentAnswers": [
+        "2",
+        "3",
+        "3"
+      ],
+      "answerAssumption": "㉠, ㉡, ㉢은 모두 0이 아닌 숫자입니다.",
+      "resultContract": "single-value",
+      "creativePractice": false,
+      "publisherKeyVerified": false
+    }
+  ]
+}

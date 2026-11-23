@@ -84,7 +84,8 @@ function digitalDigit(value) {
   return `<svg class="b1-digit" viewBox="0 0 45 74" role="img" aria-label="디지털 숫자 ${value}">${Object.entries(SEGMENT_PATHS).map(([name, path]) => `<path class="${segments.includes(name) ? "on" : ""}" d="${path}"/>`).join("")}</svg>`;
 }
 
-function digitalNumber(value) {
+// 다른 그림(워밍업 개념 카드 등)에서도 같은 디지털 숫자를 쓰게 내보낸다
+export function digitalNumber(value) {
   return String(value).split("").map((digit) => digitalDigit(Number(digit))).join("");
 }
 
@@ -99,7 +100,9 @@ function digitalTransformMarkup(visual) {
 
 function digitalRuleBoardMarkup(visual) {
   const numbers = visual.digits.map((value) => `<span>${digitalNumber(value)}<b>${value}</b></span>`).join("");
-  return `<div class="b1-digital-rule-board" role="img" aria-label="디지털 숫자를 ${operationShort(visual.operation)} 전의 모습"><div class="b1-digital-rule-numbers ${visual.grouped ? "grouped" : ""}">${numbers}</div><strong>판 전체를 ${operationShort(visual.operation)}</strong><small>켜진 선과 자리 순서를 함께 움직이세요.</small></div>`;
+  // 그림 밑 설명 줄(「판 전체를 반 바퀴 · 켜진 선과 자리 순서를 함께 움직이세요」)은 뺐다 — 문제 글이 이미 무엇을 할지 말하고,
+  // 0~9 한 자리 판에서는 틀린 말이었고, 종이에서는 움직일 수 없다(원장 2026-11-18 「왜 이런 표현이 있어」).
+  return `<div class="b1-digital-rule-board" role="img" aria-label="디지털 숫자를 ${operationShort(visual.operation)} 전의 모습"><div class="b1-digital-rule-numbers ${visual.grouped ? "grouped" : ""}">${numbers}</div></div>`;
 }
 
 function mirrorCompassMarkup(visual) {
@@ -307,7 +310,8 @@ function numberSequenceMarkup(visual) {
 
 function logicCluesMarkup(visual) {
   const header = visual.items.length ? `<div class="b1-logic-tags">${visual.names.map((name) => `<span>${esc(name)}</span>`).join("")}${visual.items.map((item) => `<i>${esc(item)}</i>`).join("")}</div>` : "";
-  return `<div class="b1-logic-clues">${header}<ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
+  // 조건 상자 = 원탁·아파트 자리 정하기와 같은 꼴(초록 동그라미 번호, 원장 2026-11-21 「앞·뒤 순서 문제도 같은 상자로」)
+  return `<div class="b1-logic-clues">${header}${visual.clues.map((clue, index) => `<p><b>${index + 1}</b>${esc(clue)}</p>`).join("")}</div>`;
 }
 
 // ── 권별테스트(단원 테스트) 원본 구조 그림 ────────────────────────────────

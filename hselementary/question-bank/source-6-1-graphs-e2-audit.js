@@ -77,7 +77,8 @@ const poolExpectations = [
   [ [72,48,32,48,36,24,16,24], [64,52,36,48,32,26,18,24], [88,46,34,32,44,23,17,16] ],
   [ [3000,5000,8000,5000,23,31,18,28,14,35,26,25], [4000,3000,6000,7000,20,30,25,25,15,20,40,25], [5200,4000,7000,6500,28,22,25,25,20,25,30,25] ],
   [ [3000,2500,2000,22,38,40,26,38,36,33,40,27], [2400,2000,1600,25,35,40,30,35,35,32,43,25], [3600,2800,2400,18,42,40,25,40,35,35,40,25] ],
-  [ [20,8,5,40,25,20,10,5,5,2,8], [25,10,8,40,24,20,8,8,3,1,12], [30,9,10,30,30,15,15,10,2,1,24] ],
+  // 예제 2-3 원문: 무궁화 10송이(무궁화 25% → 전체 40송이). 예전 8송이는 답 40과 맞지 않았다.
+  [ [20,8,5,40,25,20,10,5,5,2,10], [25,10,8,40,24,20,8,8,3,1,12], [30,9,10,30,30,15,15,10,2,1,24] ],
   [ [200,30,25,25,20,36,24,20,14,6], [200,25,30,20,25,30,25,20,15,10], [300,20,40,25,15,28,24,22,15,11] ],
   [ [600,400,21,20,16,15,15,13,14,15,15,17,20,19], [500,450,15,16,17,18,14,20,12,15,16,17,18,22], [800,600,14,15,16,18,19,18,10,12,16,18,19,25] ],
   [ [1000,800,1000,35.6,37.8,21,5.6,27.6,38.4,25.5,8.5,23.1,40,26.5,10.4], [1200,900,1000,32.5,35,25,7.5,25,37,26,12,21,38,27,14], [1500,1000,1000,30,40,24,6,22,36,31,11,18,38,30.5,13.5] ],
@@ -134,6 +135,10 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       const segments = [...generated.prompt.matchAll(/data-row-segments="([^"]+)"/g)];
       segments.forEach(match => { const sum = match[1].split(",").reduce((total, value) => total + Number(value), 0); if (Math.abs(sum - 100) > 1e-8) failures.push(`${sourceIds[variant]}: 구간 합 ${sum}`); });
       if (generated.verifiedPoolIndex === 0 && problemValues.join(",") !== poolExpectations[variant][0].join(",")) failures.push(`${sourceIds[variant]}: 원본 pool 0 수치 불일치`);
+      if (/undefined|NaN/.test(visiblePrompt + visibleAnswer)) failures.push(`${sourceIds[variant]}: 깨진 값 표시`);
+      // 2026-11-23 원본 책 대조: Mission 3은 세 해의 160cm 이상 비율을 모두 보이고 그래프에 원문에 없는 전체 학생 수를 쓰지 않음, Mission 6은 표만 보여 줌.
+      if (variant === 6 && (!["5.6%", "8.5%", "10.4%"].every(text => generated.prompt.includes(`>${text}</text>`)) || visiblePrompt.includes("전체 1,000명") || !visiblePrompt.includes("하늘 초등학교") || !visiblePrompt.includes("몇 명입니까?")) && generated.verifiedPoolIndex === 0) failures.push(`${sourceIds[variant]}: 원문 그림·문장과 다름`);
+      if (variant === 9 && (generated.prompt.includes("source61-e2-rect-segment") || !visiblePrompt.includes("(단, 두 띠그래프는 모두 직사각형 모양입니다.)") || !visiblePrompt.includes("학생 수(명)"))) failures.push(`${sourceIds[variant]}: 원문처럼 표만 보여 주지 않음`);
     } catch (error) { failures.push(`${sourceIds[variant]} / ${difficulty} / ${seed}: ${error.message}`); }
   }
   if (![0, 1, 2].every(pool => seen.has(pool))) failures.push(`${sourceIds[variant]}: pool 0/1/2 누락 (${[...seen].join(",")})`);

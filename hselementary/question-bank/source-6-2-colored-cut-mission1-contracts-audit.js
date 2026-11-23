@@ -9,7 +9,9 @@ function verify(q,expected){
  for(const[name,cells]of[["darkCells",expected.fullRodDarkCells],["cutCells",expected.allColorsCutCells],["touchCells",expected.allColorsContactOnlyCells],["darkCutCells",expected.darkCutCells],["darkUncutCells",expected.darkUncutCells]])assert.deepEqual(order(m[name]),order(cells),name);
  assert(models.matchesExactDarkPattern(m,m.darkCells));assert.deepEqual(q.answer,expected.expectedAnswer);assert.deepEqual(q.answerOrder,expected.answerOrder);assert.equal(q.requestedAnswerUnique,true);
  assert.equal(q.studentGiven.darkPatternScope,"exact-union-of-shown-face-dark-rods-no-hidden-extras");assert.equal(q.layerCue,null);assert.deepEqual(q.responseLayers,[]);assert.equal(q.requiresLayerDrawing,false);
- assert(q.promptText.includes("다른 곳에는 어두운 쌓기나무가 없습니다"));assert(q.promptText.includes("직육면체"));assert(!/큰 정육면체|회전행렬|순열|조합|정규화|제곱|<table|<svg|[=×]/.test(q.promptText));
+ const bookSource=q.variant===0&&q.level===1;
+ if(bookSource){assert(q.promptText.includes("잘린 면이 있는 쌓기나무"));assert(q.promptText.includes("(단, 한 면에 있는 어두운 색 쌓기나무는 반대편 끝까지 모두 어두운 색입니다.)"));assert(!/다른 곳에는|내부가 잘린|빈틈없이/.test(q.promptText));assert(q.solutionText.includes("다른 곳에는 어두운 쌓기나무가 없습니다"));assert(q.solutionText.includes("내부가 잘린"));}
+ else{assert(q.promptText.includes("다른 곳에는 어두운 쌓기나무가 없습니다"));assert(q.promptText.includes("직육면체"));}assert(!/큰 정육면체|회전행렬|순열|조합|정규화|제곱|<table|<svg|[=×]/.test(q.promptText));
  assert.equal(q.originalSourceReleaseStatus,"locked");for(const name of["sourceExact","officialAnswerVerified","publisherAnswerVerified","handwrittenAnswerVerified","humanApproved","learnerReleaseVerified","empiricallyCalibrated"])assert.equal(q[name],false);
  for(const cell of expected.all100Cells){const key=cell.cell.join(","),has=name=>m[name].some(c=>c.join(",")===key);assert.equal(has("darkCells"),cell.darkByRodSet);assert.equal(has("cutCells"),cell.cut);assert.equal(has("touchCells"),cell.touchOnly);}
  assert.equal(m.sectionEdges.length,0);assert.equal(m.answerSectionEdges.filter(edge=>edge.style==="dashed").length,1);

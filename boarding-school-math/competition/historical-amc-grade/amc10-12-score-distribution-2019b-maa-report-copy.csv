@@ -1,0 +1,3 @@
+year,contest,form,school_year,population,top1_score,top2_5_score,top5_score,top10_score,top25_score,top50_score,top75_score,high_score,average_score,standard_deviation,total_students,total_schools,source_status,source_url
+2019,AMC10,B,2019,MAA-format contest score report cohort; report copy hosted by AMC Abroad,121.5,108,,,73.5,54,40.5,150,58.42,23.52,23832,1375,MAA-report-copy-transcribed,https://www.mathcontest.org/sites/default/files/AMC10B-2019-Score-Distribution.pdf
+2019,AMC12,B,2019,MAA-format contest score report cohort; report copy hosted by AMC Abroad,123,,94.5,,66,52.5,42,150,56.73,21.32,19116,1459,MAA-report-copy-transcribed,https://mathcontest.org/sites/default/files/AMC12B-2019-Score-Distribution.pdf

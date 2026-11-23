@@ -9,11 +9,13 @@
     if(!ids.includes(id)||!Number.isSafeInteger(level)||level<0||level>2)throw new RangeError("Invalid painted L prism source or difficulty");
     const model=models.solve(variant),red=id===ids[0],primary=red?model.redExactlyTwo:model.atLeastOnePainted,equations=[],math=s=>{equations.push(s);return `<span class="math-inline-expression">${s}</span>`;};
     const lowerRedTwo=model.colored.filter(c=>c.cell[1]===0&&c.red===2).length,topRedTwo=model.colored.filter(c=>c.cell[1]===model.height-1&&c.red===2).length,innerPerLayer=model.layerGrids.painted[0].flat().filter(n=>n===0).length;
-    let prompt=`다음 그림과 같이 ${model.cells.length}개의 쌓기나무를 쌓았습니다. 그림에서 보이지 않는 뒤쪽과 왼쪽의 두 면에는 파란색을, 보이는 5개의 면에는 빨간색을 칠하고 바닥면은 칠하지 않았습니다. `;
-    if(level===0)prompt+=`쌓기나무는 모두 ${model.height}층입니다. `+(red?`맨 위층을 제외한 각 층에서 빨간색이 두 면에 칠해진 쌓기나무는 ${lowerRedTwo}개씩입니다. `:`맨 위층을 제외한 각 층에서 어느 면에도 색칠되지 않은 쌓기나무는 ${innerPerLayer}개씩입니다. `);
-    prompt+=(level===2?"(1) ":"")+(red?"빨간색이 두 면에 칠해진 쌓기나무는 모두 몇 개인지 구하시오.":"한 면이라도 색이 칠해진 쌓기나무는 모두 몇 개인지 구하시오.");
+    // 원문 예제 3-3의 한 문장 구조(변형 0·보통 난이도). 원문의 두 물음은 두 유형으로 나눕니다.
+    let prompt=`다음 그림과 같이 ${model.cells.length}개의 쌓기나무를 쌓았습니다. 이 그림에서 보이지 않는 두 개의 면(뒤쪽과 왼쪽)에는 파란색을 칠하며, 보이는 5개의 면에는 빨간색을 칠하고, 바닥면은 색을 칠하지 않았`;
+    if(level===0)prompt+=`습니다. 쌓기나무는 모두 ${model.height}층입니다. `+(red?`맨 위층을 제외한 각 층에서 빨간색이 두 면에 칠해진 쌓기나무는 ${lowerRedTwo}개씩입니다. `:`맨 위층을 제외한 각 층에서 어느 면에도 색칠되지 않은 쌓기나무는 ${innerPerLayer}개씩입니다. `);
+    else prompt+="을 때, ";
+    prompt+=(level===2?"다음 물음에 답하시오. (1) ":"")+(red?"두 면에 빨간색이 칠해진 쌓기나무는 몇 개입니까?":"한 면이라도 색이 칠해진 쌓기나무는 모두 몇 개입니까?");
     const secondary=level===2?{kind:"red-and-blue",answer:model.mixedColorCount}:null;
-    if(secondary)prompt+=" (2) 빨간색과 파란색이 모두 칠해진 쌓기나무는 모두 몇 개인지 구하시오.";
+    if(secondary)prompt+=" (2) 빨간색과 파란색이 모두 칠해진 쌓기나무는 모두 몇 개입니까?";
     let solution=(level===0?`모두 ${model.height}층이라고 주어졌습니다. `:`윗면은 50칸이므로 ${math(`${model.cells.length}÷50=${model.height}`)}에서 모두 ${model.height}층입니다. `);
     if(red)solution+=`맨 위층에서는 ${topRedTwo}개가 빨간색 두 면을 갖습니다. 그 아래층에는 각 ${lowerRedTwo}개씩 있으므로 ${math(`${model.height}-1=${model.height-1}층`)}과 ${math(`${lowerRedTwo}×${model.height-1}+${topRedTwo}=${primary}개`)}에서 답을 구합니다. 파란색 면이 더 있어도 빨간색 면이 두 개이면 포함합니다.`;
     else solution+=`맨 위층은 윗면이 모두 칠해져 있습니다. 그 아래층에는 색칠되지 않은 쌓기나무가 각 ${innerPerLayer}개씩 있으므로 ${math(`${model.height}-1=${model.height-1}층`)}, ${math(`${innerPerLayer}×${model.height-1}=${model.histograms.painted[0]}개`)}입니다. 전체에서 이를 빼면 ${math(`${model.cells.length}-${model.histograms.painted[0]}=${primary}개`)}입니다. 빨간색과 파란색이 함께 있어도 한 번만 셉니다.`;

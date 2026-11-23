@@ -27,9 +27,10 @@
       { totalLength: 12, totalDepth: 6, totalHeight: 3, columnHeights: [3, 2, 1], depthRows: 4 }
     ]),
     "example-3": Object.freeze([
-      { width: 36, totalDepth: 40, lowDepth: 16, highStart: 20, highEnd: 16, lowHeight: 8 },
-      { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8 },
-      { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9 }
+      // 원문(인쇄 56쪽 예제 2-3): 앞에서 본 단면의 밑변 36m, 높은 부분 높이 20m·윗변 16m, 낮은 부분 높이 8m·윗변 16m, 안쪽 길이 40m.
+      { width: 36, depth: 40, highHeight: 20, highTop: 16, lowTop: 16, lowHeight: 8 },
+      { width: 30, depth: 30, highHeight: 20, highTop: 10, lowTop: 16, lowHeight: 5 },
+      { width: 40, depth: 50, highHeight: 20, highTop: 16, lowTop: 16, lowHeight: 6 }
     ]),
     "example-4": Object.freeze([
       { width: 3, depth: 10, height: 4 },
@@ -99,14 +100,43 @@
     const height = (cuboidUsed - 6 * side) / 2;
     return { cubeUsed, cuboidUsed, usedDifference, side, height, volume: side * side * height };
   };
+  // 원문(인쇄 57쪽 Mission 3): 바닥 50cm×50cm, 한 칸 10cm. 앞에서 뒤로 가며 칸의 높이 1·3·5·5·5칸,
+  // 왼쪽에서 오른쪽으로 가며 높이 5·5·5·4·2칸인 두 방향 계단입니다. 각 칸의 높이는 두 값 중 작은 값입니다.
+  const stairRows = Object.freeze([1, 3, 5, 5, 5]);
+  const stairColumns = Object.freeze([5, 5, 5, 4, 2]);
   const stairFacts = data => {
-    const depth = 5 * data.unit;
-    const layerVolumes = [1, 2, 3, 4, 5].map(layer => layer * data.unit * data.unit * depth);
+    const u = data.unit;
+    const heights = stairColumns.map(column => stairRows.map(row => Math.min(column, row)));
+    const cellCount = heights.flat().reduce((sum, value) => sum + value, 0);
+    // 층별로 보면 t층은 가로 columns≥t칸, 세로 rows≥t칸인 직사각형입니다.
+    const layers = [1, 2, 3, 4, 5].map(layer => ({
+      layer,
+      across: stairColumns.filter(value => value >= layer).length,
+      deep: stairRows.filter(value => value >= layer).length
+    }));
+    const layerVolumes = layers.map(item => item.across * u * item.deep * u * u);
+    const occupied = new Set();
+    heights.forEach((column, x) => column.forEach((height, y) => { for (let z = 0; z < height; z += 1) occupied.add(`${x},${y},${z}`); }));
+    let exposedFaces = 0;
+    occupied.forEach(cell => {
+      const [x, y, z] = cell.split(",").map(Number);
+      [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].forEach(([dx, dy, dz]) => { if (!occupied.has(`${x + dx},${y + dy},${z + dz}`)) exposedFaces += 1; });
+    });
+    const topBottomArea = 2 * 25 * u * u;
+    const frontBackArea = 2 * stairColumns.reduce((sum, value) => sum + value, 0) * u * u;
+    const sidesArea = 2 * stairRows.reduce((sum, value) => sum + value, 0) * u * u;
     return {
-      depth,
+      side: 5 * u,
+      heights,
+      cellCount,
+      layers,
       layerVolumes,
-      volume: layerVolumes.reduce((sum, value) => sum + value, 0),
-      surface: 2 * 15 * data.unit * data.unit + 20 * data.unit * depth
+      volume: cellCount * u * u * u,
+      surface: topBottomArea + frontBackArea + sidesArea,
+      exposedSurface: exposedFaces * u * u,
+      topBottomArea,
+      frontBackArea,
+      sidesArea
     };
   };
   const congruentStairFacts = data => {
@@ -146,23 +176,25 @@
     };
   };
   const earthworkFacts = data => {
-    const highDepth = data.totalDepth - data.lowDepth;
-    const highCrossSection = highDepth * (data.highStart + data.highEnd) / 2;
-    const lowCrossSection = data.lowDepth * data.lowHeight;
-    const totalCrossSection = highCrossSection + lowCrossSection;
-    const totalVolume = data.width * totalCrossSection;
-    const baseArea = data.width * data.totalDepth;
-    const finalHeight = totalVolume / baseArea;
-    const cutCrossSection = highDepth * ((data.highStart - finalHeight) + (data.highEnd - finalHeight)) / 2;
-    const fillCrossSection = data.lowDepth * (finalHeight - data.lowHeight);
+    // 앞에서 본 단면: 높은 부분(윗변 highTop, 높이 highHeight) - 비스듬한 부분 - 낮은 부분(윗변 lowTop, 높이 lowHeight), 밑변 width.
+    const slopeRun = data.width - data.highTop - data.lowTop;
+    const highArea = data.highTop * data.highHeight;
+    const slopeArea = slopeRun * (data.highHeight + data.lowHeight) / 2;
+    const lowArea = data.lowTop * data.lowHeight;
+    const crossSection = highArea + slopeArea + lowArea;
+    const totalVolume = crossSection * data.depth;
+    const baseArea = data.width * data.depth;
+    const finalHeight = crossSection / data.width;
+    const drop = data.highHeight - data.lowHeight;
+    // 높이 h보다 위에 있는 흙(깎는 쪽)과 h보다 아래의 빈 곳(채우는 쪽)의 단면 넓이를 2×drop배 한 정수로 비교합니다.
+    const cutTimes = h => 2 * drop * data.highTop * (data.highHeight - h) + slopeRun * (data.highHeight - h) * (data.highHeight - h);
+    const fillTimes = h => 2 * drop * data.lowTop * (h - data.lowHeight) + slopeRun * (h - data.lowHeight) * (h - data.lowHeight);
     const heightCandidates = [];
-    for (let candidate = data.lowHeight + 1; candidate < data.highEnd; candidate += 1) {
-      const cut = highDepth * ((data.highStart - candidate) + (data.highEnd - candidate)) / 2;
-      const fill = data.lowDepth * (candidate - data.lowHeight);
-      if (cut === fill) heightCandidates.push(candidate);
-    }
+    for (let candidate = data.lowHeight + 1; candidate < data.highHeight; candidate += 1) if (cutTimes(candidate) === fillTimes(candidate)) heightCandidates.push(candidate);
+    const cutCrossSection = cutTimes(finalHeight) / (2 * drop);
+    const fillCrossSection = fillTimes(finalHeight) / (2 * drop);
     return {
-      highDepth, highCrossSection, lowCrossSection, totalCrossSection, totalVolume,
+      slopeRun, highArea, slopeArea, lowArea, crossSection, totalVolume,
       baseArea, finalHeight, cutCrossSection, fillCrossSection, heightCandidates
     };
   };
@@ -600,72 +632,64 @@
   };
 
   const earthworkSvg = (data, poolIndex, solved) => {
+    // 원문 그림처럼 앞에서 본 단면(밑변·높이·윗변)을 앞에 두고 안쪽 길이는 왼쪽 위로 그린 입체입니다.
     const facts = earthworkFacts(data);
-    const baseX = 108;
-    const baseY = 270;
-    const profileWidth = 320;
-    const heightScale = 140 / data.highStart;
-    const highEndX = baseX + profileWidth * facts.highDepth / data.totalDepth;
-    const endX = baseX + profileWidth;
-    const yAt = height => baseY - height * heightScale;
-    const backShift = [54, -32];
-    const shifted = ([x, y]) => [x + backShift[0], y + backShift[1]];
-    const front = {
-      baseStart: [baseX, baseY],
-      baseEnd: [endX, baseY],
-      lowEnd: [endX, yAt(data.lowHeight)],
-      lowStart: [highEndX, yAt(data.lowHeight)],
-      highEnd: [highEndX, yAt(data.highEnd)],
-      highStart: [baseX, yAt(data.highStart)]
-    };
-    const back = Object.fromEntries(Object.entries(front).map(([name, point]) => [name, shifted(point)]));
-    const profile = [front.baseStart, front.baseEnd, front.lowEnd, front.lowStart, front.highEnd, front.highStart];
-    const backProfile = [back.baseStart, back.baseEnd, back.lowEnd, back.lowStart, back.highEnd, back.highStart];
+    const k = Math.min(330 / data.width, 180 / data.highHeight);
+    const originX = 232;
+    const originY = 300;
+    const back = [-128, -100];
+    const P = (x, y, z) => [Math.round((originX + x * k + z * back[0]) * 10) / 10, Math.round((originY - y * k + z * back[1]) * 10) / 10];
+    const W = data.width, H = data.highHeight, L = data.lowHeight;
+    const slopeTopX = data.highTop;
+    const slopeBottomX = W - data.lowTop;
+    const profile = [[0, 0], [W, 0], [W, L], [slopeBottomX, L], [slopeTopX, H], [0, H]];
+    const solvedClass = solved ? " is-solved" : "";
     const faces = [
-      polygon(backProfile, "source61-volume-e2-soil-front", "earthwork-back-profile"),
-      polygon([front.highStart, front.highEnd, back.highEnd, back.highStart], "source61-volume-e2-soil-high", "earthwork-high-top"),
-      polygon([front.lowStart, front.lowEnd, back.lowEnd, back.lowStart], "source61-volume-e2-soil-low", "earthwork-low-top"),
-      polygon([front.highEnd, front.lowStart, back.lowStart, back.highEnd], "source61-volume-e2-soil-cliff", "earthwork-cliff"),
-      polygon([front.lowEnd, front.baseEnd, back.baseEnd, back.lowEnd], "source61-volume-e2-soil-low", "earthwork-end-face"),
-      polygon(profile, "source61-volume-e2-soil-front", "earthwork-front-profile")
+      polygon([P(slopeBottomX, L, 0), P(W, L, 0), P(W, L, 1), P(slopeBottomX, L, 1)], `source61-volume-e2-soil-low${solvedClass}`, "earthwork-low-top"),
+      polygon([P(slopeTopX, H, 0), P(slopeBottomX, L, 0), P(slopeBottomX, L, 1), P(slopeTopX, H, 1)], `source61-volume-e2-soil-cliff${solvedClass}`, "earthwork-slope-face"),
+      polygon([P(0, H, 0), P(slopeTopX, H, 0), P(slopeTopX, H, 1), P(0, H, 1)], `source61-volume-e2-soil-high${solvedClass}`, "earthwork-high-top"),
+      polygon([P(0, 0, 0), P(0, H, 0), P(0, H, 1), P(0, 0, 1)], `source61-volume-e2-soil-low${solvedClass}`, "earthwork-side-face"),
+      polygon(profile.map(([x, y]) => P(x, y, 0)), `source61-volume-e2-soil-front${solvedClass}`, "earthwork-front-profile")
     ].join("");
-    const totalDepthY = baseY + 24;
-    const lowDepthY = baseY + 58;
-    const widthLabel = data.level === 2 ? "공통 폭" : `폭 ${data.width}m`;
+    const dimension = (from, to, role) => line(from[0], from[1], to[0], to[1], "source61-volume-e2-dimension", role);
+    const offset = ([x, y], dx, dy) => [x + dx, y + dy];
+    const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const backLeftBottom = P(0, 0, 1), backLeftTop = P(0, H, 1);
+    const heightFrom = offset(backLeftBottom, -18, 0), heightTo = offset(backLeftTop, -18, 0);
+    const depthFrom = offset(P(0, 0, 0), -14, 12), depthTo = offset(backLeftBottom, -14, 12);
+    const widthFrom = offset(P(0, 0, 0), 0, 22), widthTo = offset(P(W, 0, 0), 0, 22);
+    const lowHeightFrom = offset(P(W, 0, 0), 18, 0), lowHeightTo = offset(P(W, L, 0), 18, 0);
+    const lowTopFrom = offset(P(slopeBottomX, L, 0), 0, -16), lowTopTo = offset(P(W, L, 0), 0, -16);
+    const highTopFrom = offset(P(0, H, 0), 0, 18), highTopTo = offset(P(slopeTopX, H, 0), 0, 18);
     const dimensions = [
-      line(baseX, totalDepthY, endX, totalDepthY, "source61-volume-e2-dimension", "earthwork-total-depth-dimension"),
-      line(baseX, baseY, baseX, totalDepthY, "source61-volume-e2-extension", "earthwork-total-depth-start"),
-      line(endX, baseY, endX, totalDepthY, "source61-volume-e2-extension", "earthwork-total-depth-end"),
-      text((baseX + endX) / 2, totalDepthY + 18, `전체 깊이 ${data.totalDepth}m`, "source61-volume-e2-measure"),
-      line(highEndX, lowDepthY, endX, lowDepthY, "source61-volume-e2-dimension", "earthwork-low-depth-dimension"),
-      line(highEndX, baseY, highEndX, lowDepthY, "source61-volume-e2-extension", "earthwork-low-depth-start"),
-      line(endX, totalDepthY, endX, lowDepthY, "source61-volume-e2-extension", "earthwork-low-depth-end"),
-      text((highEndX + endX) / 2, lowDepthY + 18, `낮은 부분 깊이 ${data.lowDepth}m`, "source61-volume-e2-measure"),
-      line(baseX - 24, baseY, baseX - 24, yAt(data.highStart), "source61-volume-e2-dimension", "earthwork-high-start-height-dimension"),
-      line(baseX - 24, baseY, baseX, baseY, "source61-volume-e2-extension", "earthwork-high-start-height-base"),
-      line(baseX - 24, yAt(data.highStart), baseX, yAt(data.highStart), "source61-volume-e2-extension", "earthwork-high-start-height-top"),
-      text(baseX - 32, (baseY + yAt(data.highStart)) / 2 + 5, `${data.highStart}m`, "source61-volume-e2-measure", "end"),
-      line(highEndX - 16, baseY, highEndX - 16, yAt(data.highEnd), "source61-volume-e2-dimension", "earthwork-high-end-height-dimension"),
-      text(highEndX - 24, (baseY + yAt(data.highEnd)) / 2 + 5, `높이 ${data.highEnd}m`, "source61-volume-e2-measure", "end"),
-      line(endX + 18, baseY, endX + 18, yAt(data.lowHeight), "source61-volume-e2-dimension", "earthwork-low-height-dimension"),
-      text(endX + 28, (baseY + yAt(data.lowHeight)) / 2 + 5, `${data.lowHeight}m`, "source61-volume-e2-measure", "start"),
-      line(front.highStart[0], front.highStart[1], back.highStart[0], back.highStart[1], "source61-volume-e2-dimension", "earthwork-width-dimension"),
-      text(front.highStart[0] + 34, front.highStart[1] - 28, widthLabel, "source61-volume-e2-measure")
+      dimension(heightFrom, heightTo, "earthwork-high-height-dimension"),
+      text(heightFrom[0] - 8, mid(heightFrom, heightTo)[1] + 5, `${H}m`, "source61-volume-e2-measure", "end"),
+      dimension(depthFrom, depthTo, "earthwork-depth-dimension"),
+      text(mid(depthFrom, depthTo)[0] - 12, mid(depthFrom, depthTo)[1] + 14, `${data.depth}m`, "source61-volume-e2-measure", "end"),
+      dimension(highTopFrom, highTopTo, "earthwork-high-top-dimension"),
+      text(mid(highTopFrom, highTopTo)[0], highTopFrom[1] + 18, `${data.highTop}m`, "source61-volume-e2-measure"),
+      dimension(lowTopFrom, lowTopTo, "earthwork-low-top-dimension"),
+      !solved && data.level === 2 ? "" : text(mid(lowTopFrom, lowTopTo)[0], lowTopFrom[1] - 7, `${data.lowTop}m`, "source61-volume-e2-measure"),
+      dimension(lowHeightFrom, lowHeightTo, "earthwork-low-height-dimension"),
+      text(lowHeightFrom[0] + 8, mid(lowHeightFrom, lowHeightTo)[1] + 5, `${L}m`, "source61-volume-e2-measure", "start"),
+      dimension(widthFrom, widthTo, "earthwork-width-dimension"),
+      text(mid(widthFrom, widthTo)[0], widthFrom[1] + 18, `${W}m`, "source61-volume-e2-measure")
     ].join("");
-    const regionLabels = `${text((baseX + highEndX) / 2, yAt((data.highStart + data.highEnd) / 2) + 36, "높은 부분", "source61-volume-e2-title")}${text((highEndX + endX) / 2, yAt(data.lowHeight) + 34, "낮은 부분", "source61-volume-e2-title")}`;
-    const finalY = yAt(facts.finalHeight);
-    const solvedOverlay = solved ? `${polygon([front.highStart, front.highEnd, [highEndX, finalY], [baseX, finalY]], "source61-volume-e2-soil-cut is-solved", "earthwork-cut-area")}${polygon([front.lowStart, front.lowEnd, [endX, finalY], [highEndX, finalY]], "source61-volume-e2-soil-fill is-solved", "earthwork-fill-area")}${line(baseX, finalY, endX, finalY, "source61-volume-e2-final-level is-solved", "earthwork-final-level")}${text(endX + 28, finalY + 5, `${facts.finalHeight}m`, "source61-volume-e2-answer-label", "start")}` : "";
-    const answerCard = solved ? `${rect(38, 374, 564, 204, "source61-volume-e2-card-solved", "earthwork-answer-card")}${text(58, 404, "옆에서 본 단면으로 부피 보존 확인", "source61-volume-e2-title", "start")}${text(58, 438, `높은 부분 깊이: ${data.totalDepth}-${data.lowDepth}=${facts.highDepth}m`, "source61-volume-e2-answer-label", "start")}${text(58, 470, `높은 쪽 단면: ${facts.highDepth}×(${data.highStart}+${data.highEnd})÷2=${num(facts.highCrossSection)}m²`, "source61-volume-e2-answer-label", "start")}${text(58, 502, `낮은 쪽 단면: ${data.lowDepth}×${data.lowHeight}=${num(facts.lowCrossSection)}m²`, "source61-volume-e2-answer-label", "start")}${text(58, 534, `같아진 높이: (${num(facts.highCrossSection)}+${num(facts.lowCrossSection)})÷${data.totalDepth}=${facts.finalHeight}m`, "source61-volume-e2-answer-label", "start")}${text(58, 562, `깎은 단면 = 채운 단면 = ${num(facts.cutCrossSection)}m²`, "source61-volume-e2-note", "start")}` : "";
-    const content = `${text(320, 26, solved ? "흙을 옮긴 뒤 높이 확인" : "높은 흙을 낮은 곳으로 옮기기", "source61-volume-e2-title")}${faces}${solvedOverlay}${dimensions}${regionLabels}${answerCard}`;
+    const highTopCenter = mid(P(0, H, 0), P(slopeTopX, H, 1));
+    const lowTopCenter = mid(P(slopeBottomX, L, 0), P(W, L, 1));
+    const regionLabels = `${text(highTopCenter[0], highTopCenter[1] + 6, "가", "source61-volume-e2-title")}${text(lowTopCenter[0], lowTopCenter[1] + 6, "나", "source61-volume-e2-title")}`;
+    const finalH = facts.finalHeight;
+    const slopeX = h => slopeTopX + (slopeBottomX - slopeTopX) * (H - h) / (H - L);
+    const solvedOverlay = solved ? `${polygon([P(0, H, 0), P(slopeTopX, H, 0), P(slopeX(finalH), finalH, 0), P(0, finalH, 0)], "source61-volume-e2-soil-cut is-solved", "earthwork-cut-area")}${polygon([P(slopeX(finalH), finalH, 0), P(W, finalH, 0), P(W, L, 0), P(slopeBottomX, L, 0)], "source61-volume-e2-soil-fill is-solved", "earthwork-fill-area")}${line(...P(0, finalH, 0), ...P(W, finalH, 0), "source61-volume-e2-final-level is-solved", "earthwork-final-level")}${text(P(W, finalH, 0)[0] + 30, P(W, finalH, 0)[1] + 5, `${finalH}m`, "source61-volume-e2-answer-label", "start")}` : "";
+    const answerCard = solved ? `${rect(38, 374, 564, 204, "source61-volume-e2-card-solved", "earthwork-answer-card")}${text(58, 404, "앞에서 본 단면으로 흙의 양 확인", "source61-volume-e2-title", "start")}${text(58, 438, `비스듬한 부분의 가로: ${W}-${data.highTop}-${data.lowTop}=${facts.slopeRun}m`, "source61-volume-e2-answer-label", "start")}${text(58, 470, `단면: ${data.highTop}×${H}+(${H}+${L})×${facts.slopeRun}÷2+${data.lowTop}×${L}=${num(facts.crossSection)}m²`, "source61-volume-e2-answer-label", "start")}${text(58, 502, `흙의 부피: ${num(facts.crossSection)}×${data.depth}=${num(facts.totalVolume)}m³`, "source61-volume-e2-answer-label", "start")}${text(58, 534, `나중 높이: ${num(facts.totalVolume)}÷(${W}×${data.depth})=${finalH}m`, "source61-volume-e2-answer-label", "start")}${text(58, 562, `깎은 단면 = 채운 단면 = ${num(facts.cutCrossSection)}m²`, "source61-volume-e2-note", "start")}` : "";
+    const content = `${faces}${solvedOverlay}${dimensions}${regionLabels}${answerCard}`;
     const required = [
-      "earthwork-back-profile", "earthwork-high-top", "earthwork-low-top", "earthwork-cliff", "earthwork-end-face", "earthwork-front-profile",
-      "earthwork-total-depth-dimension", "earthwork-total-depth-start", "earthwork-total-depth-end",
-      "earthwork-low-depth-dimension", "earthwork-low-depth-start", "earthwork-low-depth-end",
-      "earthwork-high-start-height-dimension", "earthwork-high-start-height-base", "earthwork-high-start-height-top",
-      "earthwork-high-end-height-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"
+      "earthwork-front-profile", "earthwork-high-top", "earthwork-slope-face", "earthwork-low-top", "earthwork-side-face",
+      "earthwork-high-height-dimension", "earthwork-depth-dimension", "earthwork-high-top-dimension",
+      "earthwork-low-top-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"
     ];
     if (solved) required.push("earthwork-cut-area", "earthwork-fill-area", "earthwork-final-level", "earthwork-answer-card");
-    return svg("earthwork-leveling", { values: [data.width, data.totalDepth, data.lowDepth, data.highStart, data.highEnd, data.lowHeight, facts.finalHeight], level: data.level }, poolIndex, solved, content, required, 640, solved ? 600 : 370);
+    return svg("earthwork-leveling", { values: [W, data.depth, H, data.highTop, data.lowTop, L, finalH], level: data.level }, poolIndex, solved, content, required, 640, solved ? 600 : 360);
   };
 
   const soilSolidsSvg = (data, poolIndex, solved) => {
@@ -779,50 +803,65 @@
   };
 
   const stairSvg = (data, poolIndex, solved) => {
-    const cell = 22;
-    const baseX = 48;
-    const baseY = 220;
-    const depthX = 66;
-    const depthY = -38;
-    const depth = data.depth;
-    const front = [[baseX, baseY], [baseX + 5 * cell, baseY], [baseX + 5 * cell, baseY - 5 * cell]];
-    for (let column = 4; column >= 0; column -= 1) {
-      const x = baseX + column * cell;
-      const top = baseY - (column + 1) * cell;
-      front.push([x, top]);
-      if (column > 0) front.push([x, baseY - column * cell]);
-    }
-    const back = front.map(([x, y]) => [x + depthX, y + depthY]);
+    // 원문 그림처럼 앞쪽과 오른쪽으로 10cm씩 내려가는 입체를 층별 직사각형으로 쌓아 그립니다.
+    const c = 44;
+    const originX = 150;
+    const originY = 330;
+    const P = (x, y, z) => [Math.round((originX + x * c + y * c * .55) * 10) / 10, Math.round((originY - z * c - y * c * .42) * 10) / 10];
+    const layers = data.layers.map(item => ({ t: item.layer, X: item.across, Y: 5 - item.deep }));
     const solvedClass = solved ? " is-solved" : "";
-    const backFace = polygon(back, `source61-volume-e2-box-side${solvedClass}`, "stair-back-face");
-    const topFaces = [0, 1, 2, 3, 4].map(column => {
-      const y = baseY - (column + 1) * cell;
-      return polygon([[baseX + column * cell, y], [baseX + (column + 1) * cell, y], [baseX + (column + 1) * cell + depthX, y + depthY], [baseX + column * cell + depthX, y + depthY]], `source61-volume-e2-box-top${solvedClass}`, "stair-top-face");
+    const groups = key => layers.reduce((list, item) => {
+      const last = list[list.length - 1];
+      if (last && last[0][key] === item[key]) last.push(item); else list.push([item]);
+      return list;
+    }, []);
+    const fronts = groups("Y").map(group => {
+      const Y = group[0].Y;
+      const points = [[0, group[0].t - 1]];
+      group.forEach(item => { points.push([item.X, item.t - 1], [item.X, item.t]); });
+      points.push([0, group[group.length - 1].t]);
+      return polygon(points.map(([x, z]) => P(x, Y, z)), `source61-volume-e2-face${solvedClass}`, "stair-front-face");
     }).join("");
-    const sideFaces = [0, 1, 2, 3].map(column => {
-      const x = baseX + (column + 1) * cell;
-      const top = baseY - (column + 2) * cell;
-      const bottom = baseY - (column + 1) * cell;
-      return polygon([[x, top], [x, bottom], [x + depthX, bottom + depthY], [x + depthX, top + depthY]], `source61-volume-e2-face${solvedClass}`, "stair-side-face");
-    }).join("") + polygon([[baseX + 5 * cell, baseY - 5 * cell], [baseX + 5 * cell, baseY], [baseX + 5 * cell + depthX, baseY + depthY], [baseX + 5 * cell + depthX, baseY - 5 * cell + depthY]], `source61-volume-e2-face${solvedClass}`, "stair-side-face");
-    const depthEdges = front.map(([x, y], index) => line(x, y, back[index][0], back[index][1], `source61-volume-e2-depth${solvedClass}`, "stair-depth-edge")).join("");
-    const frontFace = polygon(front, `source61-volume-e2-face${solvedClass}`, "stair-front-face");
-    const perimeterPath = solved ? `<path class="source61-volume-e2-perimeter is-solved" d="${front.map(([x, y], index) => `${index ? "L" : "M"}${x} ${y}`).join(" ")} Z" data-visual-element="cross-section-perimeter-20-cells" data-cell-count="20"/>` : "";
-    const unitLabel = !solved && data.level === 2 ? "한 칸: 전체 가로를 5등분" : `한 칸 ${data.unit}cm`;
-    const heightLabel = !solved && data.level === 2 ? "전체 높이: 한 칸 5개" : `전체 높이 ${5 * data.unit}cm`;
-    const depthLabel = !solved && data.level === 2 ? "깊이는 전체 가로와 같음" : `깊이 ${depth}cm`;
-    const hardProblem = !solved && data.level === 2;
-    const unitDimension = `${line(baseX, baseY + 14, baseX + cell, baseY + 14, "source61-volume-e2-dimension", "unit-dimension")}${line(baseX, baseY, baseX, baseY + 14, "source61-volume-e2-extension", "unit-dimension-start")}${line(baseX + cell, baseY, baseX + cell, baseY + 14, "source61-volume-e2-extension", "unit-dimension-end")}${text(hardProblem ? baseX : baseX + cell / 2, baseY + 28, unitLabel, "source61-volume-e2-measure", hardProblem ? "start" : "middle")}`;
-    const widthDimension = `${line(baseX, baseY + 48, baseX + 5 * cell, baseY + 48, "source61-volume-e2-dimension", "width-dimension")}${line(baseX, baseY, baseX, baseY + 48, "source61-volume-e2-extension", "width-dimension-start")}${line(baseX + 5 * cell, baseY, baseX + 5 * cell, baseY + 48, "source61-volume-e2-extension", "width-dimension-end")}${text(baseX + 2.5 * cell, baseY + 62, `전체 가로 ${5 * data.unit}cm`, "source61-volume-e2-measure")}`;
-    const heightDimension = `${line(baseX + 5 * cell + 18, baseY, baseX + 5 * cell + 18, baseY - 5 * cell, "source61-volume-e2-dimension", "height-dimension")}${line(baseX + 5 * cell, baseY, baseX + 5 * cell + 18, baseY, "source61-volume-e2-extension", "height-dimension-start")}${line(baseX + 5 * cell, baseY - 5 * cell, baseX + 5 * cell + 18, baseY - 5 * cell, "source61-volume-e2-extension", "height-dimension-end")}${text(baseX + 5 * cell + 28, baseY - 2.5 * cell, heightLabel, "source61-volume-e2-measure", "end")}`;
-    const depthDimension = `${line(baseX + 5 * cell, baseY - 5 * cell, baseX + 5 * cell + depthX, baseY - 5 * cell + depthY, "source61-volume-e2-dimension", "depth-dimension")}${text(225, 312, depthLabel, "source61-volume-e2-measure", "start")}`;
-    const header = `${text(150, 24, "계단 모양 입체도형", "source61-volume-e2-title")}${text(145, 46, solved ? "앞면과 뒤쪽 계단을 이어서 계산 확인" : "앞면 계단과 뒤쪽 깊이를 함께 살펴보세요", "source61-volume-e2-note")}`;
-    const easyCounts = !solved && data.level === 0 ? text(318, 82, "높이가 1~5층인 부분의 앞면 칸 수: 1, 2, 3, 4, 5칸", "source61-volume-e2-note", "start") : "";
-    const table = solved ? `${rect(300, 50, 320, 252, `source61-volume-e2-card${solvedClass}`, "answer-table")}${text(318, 70, "층별 부피와 겉넓이 근거", "source61-volume-e2-title", "start")}${[1, 2, 3, 4, 5].map((layer, index) => text(318, 94 + index * 22, `${layer}층 부피 ${layer}×${data.unit}×${data.unit}×${depth}=${data.layerVolumes[index]}cm³`, "source61-volume-e2-answer-label", "start")).join("")}${line(314, 202, 606, 202, "source61-volume-e2-fold", "answer-table-rule")}${text(318, 220, `층별 합계 (1+2+3+4+5)×${data.unit}×${data.unit}×${depth}=${data.volume}cm³`, "source61-volume-e2-answer-label", "start")}${text(318, 242, `단면 넓이 15×${data.unit}×${data.unit}`, "source61-volume-e2-note", "start")}${text(318, 262, `단면 바깥 둘레 20칸: 20×${data.unit}=${20 * data.unit}cm`, "source61-volume-e2-note", "start")}${text(318, 284, `겉넓이 2×15×${data.unit}×${data.unit}+20×${data.unit}×${depth}=${data.surface}cm²`, "source61-volume-e2-answer-label", "start")}` : "";
-    const content = `${header}${backFace}${topFaces}${sideFaces}${depthEdges}${frontFace}${perimeterPath}${unitDimension}${widthDimension}${heightDimension}${depthDimension}${easyCounts}${table}`;
-    const required = ["stair-front-face", "stair-back-face", "stair-top-face", "stair-side-face", "stair-depth-edge", "unit-dimension", "unit-dimension-start", "unit-dimension-end", "width-dimension", "width-dimension-start", "width-dimension-end", "height-dimension", "height-dimension-start", "height-dimension-end", "depth-dimension"];
-    if (solved) required.push("answer-table", "answer-table-rule", "cross-section-perimeter-20-cells");
-    return svg("stair-prism", { values: [data.unit, depth, data.volume, data.surface], level: data.level }, poolIndex, solved, content, required, 640, 330);
+    const rights = groups("X").map(group => {
+      const X = group[0].X;
+      const points = [[group[0].Y, group[0].t - 1], [5, group[0].t - 1], [5, group[group.length - 1].t]];
+      [...group].reverse().forEach(item => { points.push([item.Y, item.t], [item.Y, item.t - 1]); });
+      return polygon(points.map(([y, z]) => P(X, y, z)), `source61-volume-e2-box-side${solvedClass}`, "stair-right-face");
+    }).join("");
+    const tops = layers.map((item, index) => {
+      const next = layers[index + 1];
+      const points = next
+        ? [[0, item.Y], [item.X, item.Y], [item.X, 5], [next.X, 5], [next.X, next.Y], [0, next.Y]]
+        : [[0, item.Y], [item.X, item.Y], [item.X, 5], [0, 5]];
+      return polygon(points.map(([x, y]) => P(x, y, item.t)), `source61-volume-e2-box-top${solvedClass}`, "stair-top-face");
+    }).join("");
+    const unitText = `${data.unit}cm`;
+    const sideText = `${5 * data.unit}cm`;
+    const dim = (from, to, label, dx, dy, anchor = "middle", role = "stair-unit-dimension") => {
+      const a = P(...from), b = P(...to);
+      return `${line(a[0], a[1], b[0], b[1], "source61-volume-e2-dimension", role)}${text((a[0] + b[0]) / 2 + dx, (a[1] + b[1]) / 2 + dy, label, "source61-volume-e2-measure", anchor)}`;
+    };
+    const hideUnits = !solved && data.level === 2;
+    const dimensions = (hideUnits ? [] : [
+      dim([0, 0, 1], [0, 1, 1], unitText, -10, 2, "end"),
+      dim([0, 1, 3], [0, 2, 3], unitText, -10, 2, "end"),
+      dim([5, 0, 0], [5, 0, 1], unitText, -6, 5, "end"),
+      dim([5, 1, 1], [5, 1, 2], unitText, -6, 5, "end"),
+      dim([4, 1, 2], [4, 1, 3], unitText, -6, 5, "end"),
+      dim([4, 2, 3], [4, 2, 4], unitText, -6, 5, "end"),
+      dim([3, 2, 4], [3, 2, 5], unitText, -6, 5, "end"),
+      dim([3, 5, 4], [4, 5, 4], unitText, 6, -8, "start"),
+      dim([4, 5, 2], [5, 5, 2], unitText, 6, -8, "start")
+    ]).concat([
+      dim([0, 0, 0], [5, 0, 0], sideText, 0, 22, "middle", "stair-side-dimension"),
+      dim([5, 0, 0], [5, 5, 0], sideText, 22, 16, "start", "stair-side-dimension")
+    ]).join("");
+    const u = data.unit;
+    const table = solved ? `${rect(30, 372, 580, 214, `source61-volume-e2-card${solvedClass}`, "answer-table")}${text(48, 396, "층별 부피와 겉넓이 근거", "source61-volume-e2-title", "start")}${data.layers.map((item, index) => text(48, 420 + index * 22, `${item.layer}층: ${item.across * u}×${item.deep * u}×${u}=${num(data.layerVolumes[index])}cm³`, "source61-volume-e2-answer-label", "start")).join("")}${line(44, 528, 596, 528, "source61-volume-e2-fold", "answer-table-rule")}${text(48, 548, `부피 ${num(data.volume)}cm³`, "source61-volume-e2-answer-label", "start")}${text(48, 572, `겉넓이 ${num(data.topBottomArea)}+${num(data.frontBackArea)}+${num(data.sidesArea)}=${num(data.surface)}cm²`, "source61-volume-e2-answer-label", "start")}` : "";
+    const content = `${tops}${fronts}${rights}${dimensions}${table}`;
+    const required = ["stair-front-face", "stair-right-face", "stair-top-face", ...(hideUnits ? [] : ["stair-unit-dimension"]), "stair-side-dimension"];
+    if (solved) required.push("answer-table", "answer-table-rule");
+    return svg("two-way-stair-solid", { values: [data.unit, 5 * data.unit, data.volume, data.surface], level: data.level }, poolIndex, solved, content, required, 640, solved ? 600 : 360);
   };
 
   const build = (kind, data, poolIndex, solved, level) => {
@@ -871,15 +910,15 @@
     }
     if (kind === "example-3") {
       const facts = earthworkFacts(data);
-      if (!Number.isInteger(facts.finalHeight) || facts.heightCandidates.length !== 1 || facts.heightCandidates[0] !== facts.finalHeight || facts.cutCrossSection !== facts.fillCrossSection) throw new Error("흙을 옮긴 뒤의 높이가 한 자연수로 정해지지 않습니다.");
+      if (!Number.isInteger(facts.finalHeight) || facts.slopeRun <= 0 || facts.heightCandidates.length !== 1 || facts.heightCandidates[0] !== facts.finalHeight || facts.cutCrossSection !== facts.fillCrossSection) throw new Error("흙을 옮긴 뒤의 높이가 한 자연수로 정해지지 않습니다.");
       const model = { ...data, ...facts, level };
       const firstStep = level === 0
-        ? `높은 부분의 깊이는 ${facts.highDepth}m로 주어졌습니다.`
+        ? `비스듬한 부분의 가로 길이는 ${facts.slopeRun}m로 주어졌습니다.`
         : level === 2
-          ? `폭은 모든 부분에서 같으므로 옆에서 본 단면 넓이를 전체 깊이로 나누어도 같은 높이를 구할 수 있습니다. 높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${facts.highDepth}m입니다.`
-          : `높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${facts.highDepth}m입니다.`;
-      const crossSections = `높은 부분을 옆에서 보면 높이가 ${data.highStart}m와 ${data.highEnd}m인 사다리꼴이므로 넓이는 ${facts.highDepth}×(${data.highStart}+${data.highEnd})÷2=${num(facts.highCrossSection)}m²입니다. 낮은 부분의 옆 단면 넓이는 ${data.lowDepth}×${data.lowHeight}=${num(facts.lowCrossSection)}m²입니다.`;
-      const leveling = `흙을 옮겨도 전체 부피는 같으므로 나중 높이는 (${num(facts.highCrossSection)}+${num(facts.lowCrossSection)})÷${data.totalDepth}=${facts.finalHeight}m입니다. 다시 확인하면 깎은 쪽 단면 넓이와 채운 쪽 단면 넓이는 각각 ${num(facts.cutCrossSection)}m²로 같습니다.`;
+          ? `낮은 부분의 윗변은 ${data.highTop}+${data.lowTop - data.highTop}=${data.lowTop}m이므로 비스듬한 부분의 가로 길이는 ${data.width}-${data.highTop}-${data.lowTop}=${facts.slopeRun}m입니다.`
+          : `앞에서 본 단면에서 비스듬한 부분의 가로 길이는 ${data.width}-${data.highTop}-${data.lowTop}=${facts.slopeRun}m입니다.`;
+      const crossSections = `앞에서 본 단면의 넓이는 높은 부분 ${data.highTop}×${data.highHeight}=${num(facts.highArea)}m², 비스듬한 부분 (${data.highHeight}+${data.lowHeight})×${facts.slopeRun}÷2=${num(facts.slopeArea)}m², 낮은 부분 ${data.lowTop}×${data.lowHeight}=${num(facts.lowArea)}m²를 더한 ${num(facts.crossSection)}m²입니다. 흙의 부피는 ${num(facts.crossSection)}×${data.depth}=${num(facts.totalVolume)}m³입니다.`;
+      const leveling = `흙을 옮겨도 전체 부피는 같으므로 나중 높이는 ${num(facts.totalVolume)}÷(${data.width}×${data.depth})=${facts.finalHeight}m입니다. 다시 확인하면 깎은 쪽 단면 넓이와 채운 쪽 단면 넓이는 각각 ${num(facts.cutCrossSection)}m²로 같습니다.`;
       return { answer: `${facts.finalHeight}m`, visual: earthworkSvg(model, poolIndex, solved), solution: `${firstStep} ${crossSections} ${leveling}` };
     }
     if (kind === "example-4") {
@@ -925,7 +964,7 @@
       if (facts.candidates.length !== 1 || facts.candidates[0].some((value, index) => value !== expected[index])) throw new Error("세 끈 길이에서 상자의 세 변이 하나로 정해지지 않습니다.");
       const model = { ...data, ...facts, level };
       const firstStep = level === 0
-        ? `가의 끈 길이의 절반은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm, 나의 끈 길이의 절반은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm이고, 다의 끈 길이의 4분의 1은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
+        ? `가의 끈 길이의 절반은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm, 나의 끈 길이의 절반은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm이고, 다의 끈 길이의 1/4은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
         : level === 2
           ? `다에서 사용한 끈은 ${facts.ropeA}+${facts.ropeB}+${facts.hardDifference}=${facts.ropeC}cm입니다. 세 방향의 끈을 모두 더한 길이는 가로, 세로, 높이의 합의 4배이므로 세 변의 합은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
           : `가의 끈은 세로와 높이를 각각 두 번 지나므로 세로와 높이의 합은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm입니다. 나에서도 같은 방법으로 가로와 높이의 합은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm입니다. 다의 세 방향 끈을 모두 더하면 가로, 세로, 높이가 각각 네 번씩 들어가므로 세 변의 합은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`;
@@ -944,14 +983,17 @@
       return { answer: `${num(facts.volume)}cm³`, visual: wrappedTriangleSvg(model, poolIndex, solved), solution: `${firstStep} ${steps}` };
     }
     const facts = stairFacts(data);
+    if (facts.exposedSurface !== facts.surface || facts.volume !== facts.layerVolumes.reduce((sum, value) => sum + value, 0)) throw new Error("두 방향 계단 입체의 겉넓이·부피 계산이 한 답으로 정해지지 않습니다.");
     const model = { ...data, ...facts, level };
+    const u = data.unit;
     const firstStep = level === 0
-      ? "높이가 1층부터 5층인 다섯 부분의 앞면 칸 수가 1칸, 2칸, 3칸, 4칸, 5칸으로 주어졌습니다."
+      ? `각 층의 높이는 ${u}cm입니다. 층마다 위에서 본 모양은 직사각형입니다.`
       : level === 2
-        ? `전체 가로 ${5 * data.unit}cm를 5등분했으므로 한 칸은 ${5 * data.unit}÷5=${data.unit}cm입니다. 깊이는 전체 가로와 같으므로 ${facts.depth}cm입니다.`
-        : "앞면을 살펴보면 높이가 1층부터 5층인 다섯 부분의 칸 수는 차례로 1칸, 2칸, 3칸, 4칸, 5칸입니다.";
-    const layers = facts.layerVolumes.map((value, index) => `${index + 1}×${data.unit}×${data.unit}×${facts.depth}=${value}cm³`).join(", ");
-    return { answer: `부피 ${num(facts.volume)}cm³, 겉넓이 ${num(facts.surface)}cm²`, visual: stairSvg(model, poolIndex, solved), solution: `${firstStep} 다섯 부분의 부피는 ${layers}입니다. 합하면 (1+2+3+4+5)×${data.unit}×${data.unit}×${facts.depth}=${num(facts.volume)}cm³입니다. 단면 넓이는 15×${data.unit}×${data.unit}이고, 단면의 바깥 둘레는 20칸이므로 20×${data.unit}=${20 * data.unit}cm입니다. 따라서 겉넓이는 2×15×${data.unit}×${data.unit}+20×${data.unit}×${facts.depth}=${num(facts.surface)}cm²입니다.` };
+        ? `계단 한 층의 높이와 한 칸의 너비는 ${5 * u}÷5=${u}cm입니다. 높이 ${u}cm씩 다섯 층으로 나누면 층마다 위에서 본 모양은 직사각형입니다.`
+      : `그림을 높이 ${u}cm씩 다섯 층으로 나누면 층마다 위에서 본 모양은 직사각형입니다.`;
+    const layers = facts.layers.map((item, index) => `${item.layer}층 ${item.across * u}×${item.deep * u}×${u}=${num(facts.layerVolumes[index])}cm³`).join(", ");
+    const surfaceStep = `이웃한 두 면이 모두 수직이므로 위와 아래에서 보이는 면의 넓이는 각각 ${5 * u}×${5 * u}=${num(25 * u * u)}cm², 앞과 뒤에서 보이는 면의 넓이는 각각 (${stairColumns.map(value => value * u).join("+")})×${u}=${num(facts.frontBackArea / 2)}cm², 왼쪽과 오른쪽에서 보이는 면의 넓이는 각각 (${stairRows.map(value => value * u).join("+")})×${u}=${num(facts.sidesArea / 2)}cm²입니다. 따라서 겉넓이는 (${num(25 * u * u)}+${num(facts.frontBackArea / 2)}+${num(facts.sidesArea / 2)})×2=${num(facts.surface)}cm²입니다.`;
+    return { answer: `겉넓이 ${num(facts.surface)}cm², 부피 ${num(facts.volume)}cm³`, visual: stairSvg(model, poolIndex, solved), solution: `${firstStep} ${surfaceStep} 부피는 ${layers}을 더한 ${num(facts.volume)}cm³입니다.` };
   };
 
   const promptFor = (kind, data, level) => {
@@ -982,9 +1024,9 @@
     }
     if (kind === "example-3") {
       const facts = earthworkFacts(data);
-      if (level === 0) return `폭이 ${data.width}m인 흙더미가 있습니다. 높은 부분의 깊이는 ${facts.highDepth}m이고 양 끝 높이는 ${data.highStart}m와 ${data.highEnd}m입니다. 낮은 부분은 깊이 ${data.lowDepth}m, 높이 ${data.lowHeight}m입니다. 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만들 때, 나중 높이를 구하세요.`;
-      if (level === 2) return `그림과 같은 흙더미에서 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만듭니다. 모든 부분의 폭은 같습니다. 나중 높이를 구하세요.`;
-      return `폭이 ${data.width}m이고 전체 깊이가 ${data.totalDepth}m인 흙더미가 있습니다. 그림에서 높은 부분의 양 끝 높이는 ${data.highStart}m와 ${data.highEnd}m이고, 낮은 부분은 깊이 ${data.lowDepth}m, 높이 ${data.lowHeight}m입니다. 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만들 때, 나중 높이를 구하세요.`;
+      const lowTopGap = data.lowTop - data.highTop;
+      const easy = level === 0 ? ` 비스듬한 부분의 가로 길이는 ${facts.slopeRun}m입니다.` : level === 2 ? ` 낮은 부분의 윗변의 길이는 ${lowTopGap ? `높은 부분의 윗변보다 ${lowTopGap}m 깁니다` : "높은 부분의 윗변의 길이와 같습니다"}.` : "";
+      return `오른쪽 그림과 같이 흙이 쌓여 있습니다.${easy} 높은 부분의 흙을 깎아서 낮은 부분에 쌓아 흙의 높이를 같게 만들려고 합니다. 나중에 만드는 흙의 높이는 몇 m입니까?`;
     }
     if (kind === "example-4") {
       const facts = twoLoopRopeFacts(data);
@@ -1027,32 +1069,30 @@
           : "";
       return `직육면체에서 모서리 ㄴㄷ의 길이는 모서리 ㄷㅅ의 길이의 4배이고, 모서리 ㄷㄹ의 길이는 모서리 ㄷㅅ의 길이의 3배입니다. 이 직육면체의 겉면에 그림과 같이 넓이가 ${facts.paperArea}cm²인 삼각형 모양의 종이 한 장을 붙였습니다. ${condition} 이 직육면체의 부피는 몇 cm³인지 구하세요.`;
     }
-    const facts = stairFacts(data);
-    if (level === 0) return `한 칸이 ${data.unit}cm이고 깊이가 ${facts.depth}cm인 계단 모양 입체도형입니다. 높이가 1층부터 5층인 다섯 부분의 앞면 칸 수는 차례로 1칸, 2칸, 3칸, 4칸, 5칸입니다. 부피와 겉넓이를 구하세요.`;
-    if (level === 2) return `계단 모양 입체도형의 전체 가로 ${5 * data.unit}cm를 똑같이 5등분했습니다. 한 층 높이는 한 칸의 너비와 같고, 깊이는 전체 가로와 같습니다. 부피와 겉넓이를 구하세요.`;
-    return `밑면 방향 깊이가 ${facts.depth}cm인 계단 모양 입체도형입니다. 가로는 ${5 * data.unit}cm를 ${data.unit}cm씩 다섯 칸으로 나누었고, 각 부분의 높이는 ${data.unit}cm씩 1층부터 5층입니다. 부피와 겉넓이를 구하세요.`;
+    const easy = level === 0 ? ` 각 층의 높이는 모두 ${data.unit}cm입니다.` : level === 2 ? ` 계단의 한 층 높이와 계단 한 칸의 너비는 모두 같고, 바닥의 한 변 ${5 * data.unit}cm는 그 길이의 5배입니다.` : "";
+    return `다음은 이웃한 두 면이 모두 수직인 입체도형입니다.${easy} 이 입체도형의 겉넓이와 부피를 각각 구하세요.`;
   };
 
   const helpFor = (kind, data) => kind === "exploration" ? "주어진 밑면의 두 길이와 상자 높이를 차례로 곱해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "주어진 가장 짧은 변 후보마다 나머지 두 변을 빠짐없이 찾아보세요."
       : kind === "example-2" ? "앞에서 보이는 계단의 칸 수에 깊이 방향의 줄 수를 곱해 조각 수부터 확인해 보세요."
-        : kind === "example-3" ? "전체 깊이에서 낮은 부분의 깊이를 빼 높은 부분의 깊이를 먼저 구해 보세요."
+        : kind === "example-3" ? "앞에서 본 단면을 높은 부분, 비스듬한 부분, 낮은 부분으로 나누어 넓이를 구해 보세요."
         : kind === "example-4" ? "다의 끈에서 나의 고리 길이를 빼 수평 고리 길이부터 찾아보세요."
         : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
           : kind === "mission-4" ? `${data.boardDepth}-${data.cuboidDepth}으로 가의 한 변을 찾고, 고르게 편 흙 전체의 부피를 먼저 구해 보세요.`
           : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
           : kind === "mission-6" ? "삼각형 종이를 앞면과 윗면이 만나는 모서리에서 펼쳐 밑변과 높이를 살펴보세요."
-          : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
+          : "입체도형을 높이가 같은 층으로 나누어 층마다 직사각형의 넓이를 구해 보세요.";
   const challengeFor = kind => kind === "exploration" ? "종이의 둘레와 두 길이의 차로 가로와 세로를 먼저 구해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "모든 경우를 찾은 뒤 세 변의 길이가 모두 다른 경우만 다시 가려 보세요."
       : kind === "example-2" ? "문제에 조각 수가 없으므로 계단의 각 층과 깊이 줄을 그림에서 직접 세어 보세요."
-        : kind === "example-3" ? "폭이 같다는 점을 이용하여 옆에서 본 두 단면의 넓이만으로 나중 높이를 구해 보세요."
+        : kind === "example-3" ? "안쪽 길이가 어디서나 같다는 점을 이용하여 앞에서 본 단면의 넓이만으로 나중 높이를 구해 보세요."
         : kind === "example-4" ? "세 가지 두 변의 합을 모두 구한 뒤, 두 합을 더하고 남은 한 합을 빼서 가로를 찾아보세요."
         : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
           : kind === "mission-4" ? "그림의 치수에서 가의 한 변과 나의 밑면 넓이를 차례로 찾아, 흙의 전체 부피가 그대로임을 이용해 보세요."
           : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
           : kind === "mission-6" ? "종이 한 장을 펼쳤을 때 생기는 삼각형의 밑변과 높이를 모서리의 배수 관계로 나타내 보세요."
-          : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
+          : "겉넓이는 위·앞·옆에서 본 모양의 넓이를 각각 두 번씩 더해 구할 수 있는지 확인해 보세요.";
 
   const kindOf = sourceItemId => {
     if (sourceItemId === ids[0]) return "exploration";
@@ -1063,13 +1103,13 @@
     if (kind === "exploration") return [data.width, data.height, data.cut];
     if (kind === "example-1" || kind === "mission-1") return [data.cubes];
     if (kind === "example-2") return [data.totalLength, data.totalDepth, data.totalHeight, data.depthRows, ...data.columnHeights];
-    if (kind === "example-3") return [data.width, data.totalDepth, data.lowDepth, data.highStart, data.highEnd, data.lowHeight];
+    if (kind === "example-3") return [data.width, data.depth, data.highHeight, data.highTop, data.lowTop, data.lowHeight];
     if (kind === "example-4") return [data.width, data.depth, data.height];
     if (kind === "mission-2") return [data.rope, data.cubeLeft, data.cuboidLeft];
     if (kind === "mission-4") return [data.boardLength, data.boardDepth, data.flatHeight, data.cuboidLength, data.cuboidDepth, data.rightGap];
     if (kind === "mission-5") return [data.width, data.height, data.depth];
     if (kind === "mission-6") return [data.unit, wrappedTriangleFacts(data).paperArea];
-    return [data.unit, 5 * data.unit];
+    return [data.unit, 5 * data.unit, ...stairRows, ...stairColumns];
   };
   const markInventory = () => {
     const items = window.HSE_SOURCE_INVENTORY_GRADE6?.items;

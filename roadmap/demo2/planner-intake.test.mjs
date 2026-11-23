@@ -229,10 +229,10 @@ test('기존 계통·대수 진도를 중등 학기나 교재명으로 바꾸지
 });
 
 
-test('첫 질문은 미취학·초·중·고이며 현재 학년 선택 뒤 나이를 다시 묻지 않는다',()=>{
+test('첫 질문의 같은 메뉴에 4~7세와 초1~고3이 차례로 나오고 나이를 다시 묻지 않는다',()=>{
  const q=I.questions({},fields).grade;
- assert.equal(q[0],'아이는 지금 몇 학년인가요?');
- assert.deepEqual(plain(q[2].map(x=>x[1])),['미취학','초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3']);
+ assert.equal(q[0],'아이의 나이 또는 학년을 골라 주세요.');
+ assert.deepEqual(plain(q[2].map(x=>x[1])),['4세','5세','6세','7세','초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3']);
  assert.equal(I.firstMissing({},fields),'grade');
  for(let grade=1;grade<=6;grade++){
   const a={...answer,grade:String(grade),gradeInput:'current'};
@@ -256,16 +256,39 @@ test('초1~초6 직접 선택은 1·2·3·12월에도 현재 학년과 학습 �
  }
 });
 
-test('미취학만 나이를 묻고 옛 초등 나이로 미취학 질문을 건너뛰지 않는다',()=>{
- for(const value of ['4','5','6','7']){
-  const a={...answer,grade:'pre',age:value};
-  assert.equal(I.order(a,fields)[1],'age');assert.equal(I.hasAnswer(a,fields,'age'),true);
-  assert.equal(I.summary(a,fields)[0].text,'미취학 · '+value+'세');
+test('미취학 나이를 한 번 선택하면 학습 질문으로 이어지고 예전 나이도 편집할 수 있다',()=>{
+ for(const value of ['3','4','5','6','7','8']){
+  const a={grade:'pre',age:value};
+  assert.equal(I.learnerChoice(a,fields),'pre:'+value);
+  assert.ok(I.learnerOptions(a,fields).some(([id])=>id==='pre:'+value));
+  assert.ok(!I.order(a,fields).includes('age'));
+  assert.equal(I.firstMissing(a,fields),'thinkingExperience');
+  assert.equal(I.hasAnswer(a,fields,'age'),true);
+  assert.equal(I.summary(a,fields)[0].text,value+'세');
  }
- assert.equal(I.firstMissing({...answer,grade:'pre'},fields),'age');
- assert.equal(I.hasAnswer({...answer,grade:'pre',age:'older'},fields,'age'),false);
- assert.equal(I.hasAnswer({...answer,grade:'pre',age:'8'},{...fields,mon:'1'},'age'),true);
- assert.equal(I.hasAnswer({...answer,grade:'pre',age:'8'},fields,'age'),false);
+ for(const age of [undefined,'older','9']){
+  const a={grade:'pre',age};
+  assert.equal(I.firstMissing(a,fields),'grade');
+  assert.equal(I.hasAnswer(a,fields,'age'),false);
+ }
+ assert.equal(I.learnerChoice({age:'8'},{...fields,mon:'1'}),'pre:8');
+ assert.equal(I.learnerChoice({age:'8'},{...fields,mon:'3'}),'1');
+});
+
+test('통합 선택을 바꿀 때 새 나이 또는 실제 학년만 적용하고 학습 입력은 유지한다',()=>{
+ const a={school:'4-2',parentFlow:{version:1,currentAge:''}};
+ assert.equal(I.setLearnerChoice(a,'pre:5'),true);
+ assert.equal(I.learnerChoice(a,fields),'pre:5');
+ assert.equal(a.grade,'pre');assert.equal(a.age,'5');assert.equal(a.parentFlow.currentAge,'5');assert.equal(a.gradeInput,'current');
+ I.setLearnerChoice(a,'3');
+ assert.equal(I.learnerChoice(a,fields),'3');assert.equal(a.age,undefined);
+ assert.equal(a.parentFlow.currentAge,'');
+ a.age='10';a.parentFlow.currentAge='10';I.setLearnerChoice(a,'3');assert.equal(a.age,'10');assert.equal(a.parentFlow.currentAge,'10');
+ I.setLearnerChoice(a,'4');assert.equal(a.age,undefined);assert.equal(a.parentFlow.currentAge,'');
+ I.setLearnerChoice(a,'pre:7');assert.equal(a.age,'7');assert.equal(a.parentFlow.currentAge,'7');assert.equal(a.school,'4-2');
+ const saved={...a};
+ assert.equal(I.setLearnerChoice(a,'pre'),false);
+ assert.deepEqual(a,saved);
 });
 
 test('옛 9세 저장은 화면에서 학년으로 읽되 원래 나이·교재 값을 바꾸지 않는다',()=>{
@@ -281,16 +304,16 @@ test('옛 9세 저장은 화면에서 학년으로 읽되 원래 나이·교재 
  assert.deepEqual(f.stored.answers,answer);assert.equal(f.stored.answers.grade,undefined);
 });
 
-test('실제 질문 선택 핸들러도 새 학년만 저장하고 옛 나이·교재는 보존한다',()=>{
+test('실제 질문 선택 핸들러는 새 학년과 기존 교재를 저장하고 이전 단계의 나이를 지운다',()=>{
  const f=storageFixture({version:2,answers:answer,fields:{...fields,hw:'57'},history:[],state:{}});
  f.c.restoreDraft();f.c.question='grade';f.c.handleCollegeClick=()=>false;f.c.collegeState={enabled:false};
  const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
  vm.runInContext(ui.slice(ui.indexOf("$('questionOptions').onclick="),ui.indexOf("$('questionBack').onclick=")),f.c);
  f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:'3'}})}});
  assert.equal(f.c.answers.grade,'3');assert.equal(f.els.grade.value,'3');
- assert.equal(f.c.answers.age,'9');assert.equal(f.c.answers.schoolBook,answer.schoolBook);
+ assert.equal(f.c.answers.age,undefined);assert.equal(f.c.answers.schoolBook,answer.schoolBook);
  assert.equal(I.age(f.c.answers,f.c.intakeFields()),10);
- f.c.saveDraft();assert.equal(f.stored.answers.age,'9');assert.equal(f.stored.answers.grade,'3');
+ f.c.saveDraft();assert.equal(f.stored.answers.age,undefined);assert.equal(f.stored.answers.grade,'3');
 });
 
 test('현재·이후 월 표시는 초등·중등 학년을 쓰고 미취학 출처 좌표는 보존한다',()=>{

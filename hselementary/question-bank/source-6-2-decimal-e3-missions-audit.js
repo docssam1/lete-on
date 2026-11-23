@@ -58,7 +58,7 @@ for (let hundredths = 1n; hundredths <= 1000n; hundredths++) {
 }
 assert.deepEqual(divisors, review.missions[4].candidateDivisors, "올림 범위는 정확히 열두 값");
 assert.equal(divisors.filter(value => !value.endsWith("0")).length, 11, "끝자리 영 해석에 따라 손글씨와 일치할 수 있음");
-assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e3-mission-5").implementationStatus, "source-decimal-place-ambiguity-locked");
+{ const row = source.find(item => item.sourceItemId === "6-2-u2-e3-mission-5"); assert.equal(row.implementationStatus === "source-decimal-place-ambiguity-locked" || (row.implementationStatus === "fixed-verified-pool" && row.previousReviewState20261122?.implementationStatus === "source-decimal-place-ambiguity-locked" && Boolean(row.answerAssumption)), true); }
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e3-mission-5").reviewReason, /해석/);
 assert.deepEqual(review.missions[5].dimensionsCm, ["15.05", "19.35", "25.8"]);
 assert.equal(review.missions[5].independentAnswer, "756개");

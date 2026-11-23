@@ -4,13 +4,14 @@
 //  · 세 단계: 연습(난이도 1) → 실전(2) → 도전(3). 단계마다 세 문제, 차시에 붙인 유형을 번갈아 낸다(drill-recipes.js).
 //  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고르고, 가쿠로는 칸에 수 카드를 놓는다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
-import { typeById } from "./source-data.js?v=20261117a";
-import { GENERATORS } from "./generators.js?v=20261117a";
+import { typeById } from "./source-data.js?v=20261122zi";
+import { GENERATORS } from "./generators.js?v=20261122zi";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261117a";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261122h";
 import { jo } from "./concept-board-kit.js?v=20261026b";
+import { mathText } from "./math-markup.js?v=20261122w";
 import * as B2 from "./book02-visuals.js?v=20261027b";
-import * as FOLD from "./fold-visuals.js?v=20261117a";
+import * as FOLD from "./fold-visuals.js?v=20261121a";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
 
 // 유형 → 문제 만들기: 공방 전용(make) · 문제은행 생성기(generator) · 쌓기나무 엔진(worksheetCode, 문제은행 화면과 같은 부르기)
@@ -43,6 +44,8 @@ const LEVELS = [{ difficulty: 1, title: "연습" }, { difficulty: 2, title: "실
 const PER_LEVEL = 3;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const plain = (v) => String(v ?? "").replace(/<[^>]+>/g, "").trim();
+// 글 속 「3/5」「2^3」을 수식으로(빗금 분수를 화면에 쓰지 않는다 — math-markup.js). 이미 이스케이프한 글에 쓴다.
+const shown = (html) => mathText(html);
 const post = (message) => { if (parent !== window) parent.postMessage({ type: "fc-drill", lesson: lessonId, ...message }, location.origin); };
 const say = (text, mood = "talk") => post({ event: "say", text, mood });
 
@@ -181,11 +184,11 @@ async function main() {
       <div class="dr-top"><div class="dr-levels">${LEVELS.map((l, k) => `<button type="button" data-level="${k}" class="${k === st.level ? "on" : ""}"><b>${k + 1}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</div>
         <div class="dr-right"><div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div>${st.phase === "done" ? "" : '<button type="button" class="dr-skip" data-dr="skip">건너뛰기 ›</button>'}</div></div>
       <p class="dr-kind">${esc(p.type.label)}</p>
-      <div class="dr-card"><p class="dr-prompt">${esc(plain(p.prompt)).replaceAll("\n", "<br>")}</p>${p.shape.kind !== "grid" ? visualOf(p.visual) : st.reveal ? visualOf(p.answerVisual) : gridBoard(p.shape)}</div>
-      ${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
+      <div class="dr-card"><p class="dr-prompt">${shown(esc(plain(p.prompt)).replaceAll("\n", "<br>"))}</p>${p.shape.kind !== "grid" ? visualOf(p.visual) : st.reveal ? visualOf(p.answerVisual) : gridBoard(p.shape)}</div>
+      <div class="dr-side">${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
       ${st.phase === "done"
         ? `<div class="dr-actions"><button type="button" class="dr-btn primary" data-dr="next">${nextLabel()} →</button></div>`
-        : pad(p.shape)}
+        : pad(p.shape)}</div>
     </div>`;
   }
   // 가쿠로 판: 빈칸은 누르는 단추, 주어진 수는 굵게, 오른쪽에 가로 합 · 아래에 세로 합
@@ -256,7 +259,7 @@ async function main() {
     const p = st.p;
     if (sameAnswer(p.shape, st.typed)) {
       if (st.tries === 0) st.stars[st.level] += 1;
-      st.phase = "done"; st.note = `${st.tries === 0 ? "정답! 한 번에 맞혔어요." : "맞았어요!"} <b>풀이</b> ${esc(plain(p.solution))}`;
+      st.phase = "done"; st.note = `${st.tries === 0 ? "정답! 한 번에 맞혔어요." : "맞았어요!"} <b>풀이</b> ${shown(esc(plain(p.solution)))}`;
       render(); say(st.tries === 0 ? "정답이에요! 한 번에 맞혔어요." : "맞았어요! 잘 고쳐 풀었어요.", "praise"); return;
     }
     st.tries += 1;
@@ -266,7 +269,7 @@ async function main() {
         st.note = `다시 생각해 봐요. <b>첫 걸음</b> ${miss.length ? `${esc(miss.join(", "))}의 합이 맞지 않아요.` : "카드를 한 번씩만 썼는지 확인해 봐요."}`;
         render(); say("합이 안 맞는 줄부터 다시 봐요.", "think"); return;
       }
-      st.phase = "done"; st.reveal = true; st.note = `정답은 그림처럼 채워요. <b>풀이</b> ${esc(plain(p.solution))}`;
+      st.phase = "done"; st.reveal = true; st.note = `정답은 그림처럼 채워요. <b>풀이</b> ${shown(esc(plain(p.solution)))}`;
       render(); say("정답 판을 같이 보고 다음 문제로 가요.", "talk"); return;
     }
     st.typed = "";
@@ -275,10 +278,10 @@ async function main() {
       const step = p.shape.hint || (p.shape.kind === "choice"
         ? firstStep(p.solution).replaceAll(p.shape.options[p.shape.values[0]], "□")
         : p.shape.values.reduce((t, v) => t.replace(new RegExp(`(?<![\\d/])${v}(?![\\d/])`, "g"), "□"), firstStep(p.solution)));
-      st.note = `다시 생각해 봐요. ${step ? `<b>첫 걸음</b> ${esc(step)}` : ""}`;
+      st.note = `다시 생각해 봐요. ${step ? `<b>첫 걸음</b> ${shown(esc(step))}` : ""}`;
       render(); say("다시 생각해 봐요. 풀이의 첫 걸음을 보고 한 번 더 해 봐요.", "think"); return;
     }
-    st.phase = "done"; st.note = `정답은 <b>${esc(jo(plain(p.answer), "이에요"))}</b>. <b>풀이</b> ${esc(plain(p.solution))}`;
+    st.phase = "done"; st.note = `정답은 <b>${shown(esc(jo(plain(p.answer), "이에요")))}</b>. <b>풀이</b> ${shown(esc(plain(p.solution)))}`;
     render(); say("풀이를 같이 보고 다음 문제로 가요.", "talk");
   }
   function next() {
@@ -312,7 +315,7 @@ function fitFrame() {
   const root = document.getElementById("drill");
   if (!root || parent === window) return;
   const fits = () => document.documentElement.scrollHeight <= innerHeight + 1 && document.documentElement.scrollWidth <= innerWidth + 1;
-  let lo = 0.55, hi = 1.6;
+  let lo = 0.42, hi = 1.6;   // 가로로 든 태블릿(덱 칸 높이 260쯤)에서 고르기 그림 넷은 0.55로도 넘쳤다(2026-11-17)
   root.style.zoom = "";
   if (fits()) lo = 1; else hi = 1;
   for (let step = 0; step < 7; step += 1) {

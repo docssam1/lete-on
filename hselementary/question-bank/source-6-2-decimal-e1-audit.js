@@ -53,7 +53,7 @@ function division(a, b) {
 
 function expected(generated, sourceId) {
   if (sourceId.endsWith("exploration-1")) {
-    const prompt = generated.prompt.match(/([\d.]+) ÷ ([\d.]+)와 몫/);
+    const prompt = generated.prompt.match(/([\d.]+) ÷ ([\d.]+)[와과] 몫/);
     const choices = [...generated.prompt.matchAll(/<li><span>([①-⑥])<\/span>([\d.]+) ÷ ([\d.]+)<\/li>/g)];
     assert(prompt && choices.length >= 3 && choices.length <= 6, "보기 구조 누락");
     const target = quotient(prompt[1], prompt[2]);
@@ -130,6 +130,11 @@ for (const sourceId of sourceIds) {
       assert.equal(generated.sourceItemId, sourceId);
       assert.equal(generated.generationMode, "fixed-verified-pool");
       assert.equal(generated.answer, expected(generated, sourceId), `${sourceId} 난이도 ${offset} 시드 ${seed}`);
+      if (sourceId.endsWith("exploration-1") && offset === 0 && generated.verifiedPoolIndex === 0) {
+        const bookChoices = [...generated.prompt.matchAll(/<li><span>[①-⑥]<\/span>([\d.]+ ÷ [\d.]+)<\/li>/g)].map(match => match[1]);
+        assert.deepEqual(bookChoices, ["672 ÷ 5.6", "67.2 ÷ 5.6", "6.72 ÷ 0.56", "67.2 ÷ 56", "6.72 ÷ 89"], "원문 보기(0번 묶음)와 다름");
+        assert(generated.prompt.includes("0.672 ÷ 0.56과 몫이 같은 것은 어느 것입니까?") && generated.answer === "④", "원문 물음·정답 ④와 다름");
+      }
       if (sourceId.endsWith("example-4")) assert.equal(generated.prompt.includes("0.5보다 큽니다"), offset === 1, "어려움의 추가 조건 누락");
       if (sourceId.endsWith("example-2")) assert.equal(generated.prompt.includes("직접 구하지 않고"), offset === 1, "어려움의 비교 방법 누락");
       if (sourceId.endsWith("example-3")) {
@@ -145,7 +150,15 @@ for (const sourceId of sourceIds) {
   }
   assert(prompts.size >= 3 && pools.size === 3, `${sourceId}: 3개 고정 묶음 누락`);
 }
-for (const type of types.filter(item => item.sourceItemId?.startsWith("6-2-u2-") && !sourceIds.includes(item.sourceItemId) && !/^6-2-u2-e1-mission-[1-6]$/.test(item.sourceItemId) && !["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-3", "6-2-u2-e2-mission-5"].includes(item.sourceItemId))) {
+// 이 감사 뒤에 검증을 거쳐 공개된 원문(원장 sourceVerified, 또는 2026-11-22 6학년 공개 목록)은 잠금 검사에서 뺀다.
+require("./source-grade6-release-20261122-registry.js");
+const laterReleased = new Set([
+  ...rawItems.filter(raw => raw.sourceItemId?.startsWith("6-2-u2-") && raw.sourceVerified).map(raw => raw.sourceItemId),
+  ...Object.keys(window.HSE_GRADE6_RELEASE_20261122 || {})
+]);
+// 2026-11-22 표본 검산 후 `창작 연습(원본 외 문제)`으로 공개한 6학년 옛 일반 유형도 원문 잠금 대상이 아니다.
+const isCreativePractice = item => /-creative-practice$/.test(item.sourceItemId || "");
+for (const type of types.filter(item => item.sourceItemId?.startsWith("6-2-u2-") && !laterReleased.has(item.sourceItemId) && !isCreativePractice(item) && !sourceIds.includes(item.sourceItemId) && !/^6-2-u2-e1-mission-[1-6]$/.test(item.sourceItemId) && !["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-3", "6-2-u2-e2-mission-4", "6-2-u2-e2-mission-5"].includes(item.sourceItemId))) { // e2-mission-4는 8e494578에서 검증 공개(source-6-2-e2-geometry.js)
   assert.equal(type.reviewLocked, true, `${type.sourceItemId}: 검수 전 유형 잠금 해제됨`);
 }
 console.log(`6-2 소수의 나눗셈 E1: ${sourceIds.length}유형, ${checked}건 독립 검산, 나머지 잠금 유지`);

@@ -30,7 +30,7 @@
     const q=contracts.generate(sourceId,variant,level),text=q.promptText.split(/(?=\([12]\))/g).map(escape).join("<br>");
     const original=worked(q,"original"),filled=level===2?worked(q,"filled"):null;
     return Object.freeze({...q,prompt:`<div class="source62-notched-given" data-source="${id}">${text}${image(variant,"given",level)}</div>`,
-      answer:Array.isArray(q.answer)?q.answer.map((n,index)=>`(${index+1}) ${n}개`).join("; "):`${q.answer}개`,solution:`<div class="source62-notched-calculation" data-level="${level}"><p>바닥에 닿은 면이 보이므로 1층은 모두 보입니다. 여섯 면이 모두 다른 쌓기나무와 맞닿은 것만 보이지 않는 쌓기나무로 셉니다.</p>${original.html}${filled?.html||""}</div>`,
+      answer:Array.isArray(q.answer)?q.answer.map((n,index)=>`(${index+1}) ${n}개`).join("; "):`${q.answer}개`,solution:`<div class="source62-notched-calculation" data-level="${level}">${q.solutionBasisText?`<p>${escape(q.solutionBasisText)}</p>`:""}<p>바닥에 닿은 면이 보이므로 1층은 모두 보입니다. 여섯 면이 모두 다른 쌓기나무와 맞닿은 것만 보이지 않는 쌓기나무로 셉니다.</p>${original.html}${filled?.html||""}</div>`,
       sourceSolutionEquations:q.solutionEquations,solutionEquations:Object.freeze([...original.equations,...(filled?.equations||[])]),
       answerVisual:`<div class="source62-notched-answer" data-source="${id}" data-level="${level}"><p class="source62-notched-legend">어두운 칸은 여섯 면이 모두 다른 쌓기나무와 맞닿은 쌓기나무입니다.</p>${layers(q,"original")}${level===2?layers(q,"filled"):""}</div>`,answerKeyVisual:true});
   }

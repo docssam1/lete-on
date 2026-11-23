@@ -6,7 +6,7 @@
 //  · 본책 문항 1,613개는 모두 유형 하나에 연결돼 있다(source-data.js typeStudyRefs) — 번호판의 번호마다 유사문제를 만들 수 있다.
 // 이 파일은 데이터만 다룬다. 화면은 study.js(학생 차시) · start.js(시작 화면).
 
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261117a";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261122h";
 export const SECTION_LABELS = Object.freeze({ activity: "활동", check: "확인", practice: "연습", advanced: "도전" });
 const SECTION_STAGE = Object.freeze({ activity: "concept", check: "type", practice: "practice", advanced: "advanced" });
 
@@ -103,8 +103,8 @@ export function gameTitles(bookId, lesson, games) {
 // 골든벨·게임 데이터는 크다(1.8MB) — 첫 화면을 그린 뒤 불러온다. 골든벨 화면과 같은 꼬리표로 불러 캐시를 같이 쓴다.
 export async function loadGoldenBell() {
   const [library, flow, handsOn] = await Promise.all([
-    import("./golden-bell-library.js?v=20261101m"),
-    import("./golden-bell-lesson-flow.js?v=20261110m"),
+    import("./golden-bell-library.js?v=20261119a"),
+    import("./golden-bell-lesson-flow.js?v=20261122zh"),
     import("./golden-bell-hands-on-models.js?v=20261023t")
   ]);
   const handsOnBooks = new Map();
@@ -119,7 +119,7 @@ export async function loadGoldenBell() {
 // 원장(2026-10-24): 「링크를 가져오는 거 아냐. 우리 걸 써야 돼. 그걸 발전시켜 우리 학습에 맞는 게임으로.」
 // 지오메트리 게임의 계산·생김새를 가져와 골든벨 풀이 순서대로 다시 만든 게임. replaces = 덱에서 이 게임이 대신하는 옛 체험(골든벨 화면·학습지 QR에는 그대로 남는다).
 // 손글씨 판서가 있는 개념 학습(원장 2026-10-24 「손글씨 개념부터」): 덱에서 골든벨 개념 화면 대신 판서를 보여 준다. 대본은 concept-boards.js.
-const BOARD = { module: "./concept-board.js?v=20261111c", css: "./concept-board.css?v=20261111b", mount: "mountConceptBoard", doneSay: null };
+const BOARD = { module: "./concept-board.js?v=20261122zg", css: "./concept-board.css?v=20261111b", mount: "mountConceptBoard", doneSay: null };
 export const STUDY_BOARDS = Object.freeze({
   "book-01/clock-turning": BOARD,
   "book-01/mirror-reflection": BOARD,
@@ -232,9 +232,9 @@ export const STUDY_BOARDS = Object.freeze({
 });
 
 const OWN_GAMES = {
-  "book-01/digital-turn-flip": [{ id: "digital", title: "디지털 숫자 게임", module: "./game-digital.js?v=20261110m", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop", replaces: [] }],
-  "book-01/mirror-reflection": [{ id: "shape-moves", title: "뒤집고 돌리기 게임", module: "./game-shape-moves.js?v=20261110m", css: "./game-shape-moves.css?v=20261028zb", mount: "mountShapeMoves", replaces: ["mirror-tiles"] }]
+  "book-01/digital-turn-flip": [{ id: "digital", title: "디지털 숫자 게임", module: "./game-digital.js?v=20261119a", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop", replaces: [] }],
+  "book-01/mirror-reflection": [{ id: "shape-moves", title: "뒤집고 돌리기 게임", module: "./game-shape-moves.js?v=20261119a", css: "./game-shape-moves.css?v=20261028zb", mount: "mountShapeMoves", replaces: ["mirror-tiles"] }]
 };
 // 연습 공방(drill.js): 우리 게임이 아직 없는 차시에 문제은행 실제 유형으로 세 단계 연습 — 차시별 유형은 drill-recipes.js
-const DRILL = { id: "drill", title: "연습 게임", module: "./game-drill.js?v=20261117a", css: "./game-drill.css?v=20261110h", mount: "mountDrill", replaces: [] };
+const DRILL = { id: "drill", title: "연습 게임", module: "./game-drill.js?v=20261117b", css: "./game-drill.css?v=20261110h", mount: "mountDrill", replaces: [] };
 export const STUDY_GAMES = Object.freeze({ ...Object.fromEntries(Object.keys(DRILL_RECIPES).map((key) => [key, [DRILL]])), ...OWN_GAMES });

@@ -2,6 +2,9 @@
 const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto");
 const baseContracts=require("./source-6-2-painted-stacks-contracts.js"),mission3=process.env.HSE_PAINT_MISSION3==="1",mission5=process.env.HSE_PAINT_MISSION5==="1",mission6=process.env.HSE_PAINT_MISSION6==="1",example2=process.env.HSE_PAINT_EXAMPLE2==="1",example3=process.env.HSE_PAINT_EXAMPLE3==="1",figure=mission3||mission5||mission6||example2||example3,{visibleLayout}=require("./source-6-2-stack-operation-learner-audit.js");
 assert([mission3,mission5,mission6,example2,example3].filter(Boolean).length<=1);
+// 2026-11-23 기본 모드의 대상(6-2-u3-e3-exploration·example-1·mission-2·mission-4)은 11-22 공개 등록에서 원문 생성기(source62U3E3*)로 옮겨져
+// 이 칠하기 생성기를 더는 쓰지 않는다. 지금도 칠하기 생성기를 쓰는 묶음은 HSE_PAINT_MISSION3/MISSION5/MISSION6/EXAMPLE2/EXAMPLE3=1 로 검사한다.
+if(![mission3,mission5,mission6,example2,example3].some(Boolean)&&!process.env.HSE_PAINT_EXPLORATION){console.log("SKIP: 기본 대상은 원문 생성기로 옮겨짐 — HSE_PAINT_* 묶음 모드로 실행하세요");process.exit(0);}
 function coloredAnswerGroups(q){const groups=q.model.groupedLayers[q.red?"red":"painted"];return q.secondary?[...groups,...q.model.groupedLayers.red.map(group=>({...group,matrix:group.matrix.map((row,z)=>row.map((n,x)=>n===null?null:Number(n>0&&q.model.layerGrids.blue[group.layers[0]-1][z][x]>0)))}))]:groups;}
 const contracts=example3?{generate(id,variant,level){const q=require("./source-6-2-painted-example3-contracts.js").generate(id,variant,level);return {...q,promptText:q.prompt,histogram:q.model.histograms[q.red?"red":"painted"],faceRows:[],answerGroups:coloredAnswerGroups(q)};}}:example2?{generate(id,variant,level){assert.equal(id,"6-2-u3-e3-example-2");const q=require("./source-6-2-painted-example2-contracts.js").generate(variant,level);return {...q,promptText:q.prompt,histogram:q.model.histogram,faceRows:[]};}}:mission6?{generate(id,variant,level){const q=require("./source-6-2-painted-mission6-contracts.js").generate(id,variant,level);return {...q,promptText:q.prompt,histogram:q.model.histogram,faceRows:[]};}}:mission5?{generate(id,variant,level){const q=require("./source-6-2-painted-mission5-contracts.js").generate(id,variant,level);return {...q,promptText:q.prompt,histogram:q.model.histogram,faceRows:[]};}}:mission3 ? {generate(id,variant,level){assert.equal(id,"6-2-u3-e3-mission-3");const q=require("./source-6-2-painted-mission3-contracts.js").generate(variant,level);return {...q,promptText:q.prompt,histogram:q.model.histogram,faceRows:[]};}} : baseContracts;
 const definitions=[{id:"6-2-u3-e3-example-1",key:"sourceGrade6SecondSpaceE3PaintedFaceClasses"},{id:"6-2-u3-e3-mission-2",key:"sourceGrade6SecondSpaceE3NotchedPaintedFaceClasses"},{id:"6-2-u3-e3-mission-4",key:"sourceGrade6SecondSpaceE3AllPaintedArea"}];
@@ -44,13 +47,15 @@ async function inspect(item,id,variant,level,mode,poison=false){
       if(q.sourceItemId.startsWith("6-2-u3-e3-example-3-")){
         const image=root.querySelector(".source62-example3-given img");if(poison&&image){image.dataset.variant="9";poison=false;}
         if(!image||!image.complete||image.naturalWidth!==1280||image.naturalHeight!==1120||image.dataset.glyphless!=="true"||+image.dataset.variant!==q.variant||!image.currentSrc.endsWith(`/source-6-2-painted-example3/v${q.variant}-given.png`))errors.push("Wrong or missing source 3D picture");
-        for(const clause of [`${model.cells.length}개의 쌓기나무`,"뒤쪽과 왼쪽","파란색","보이는 5개의 면","빨간색","바닥면은 칠하지 않았습니다"])if(!root.textContent.includes(clause))errors.push("Missing painted colour source condition");
+        for(const clause of [`${model.cells.length}개의 쌓기나무`,"뒤쪽과 왼쪽","파란색","보이는 5개의 면","빨간색","바닥면은 색을 칠하지 않았"])if(!root.textContent.includes(clause))errors.push("Missing painted colour source condition");
         if(q.level!==0&&root.textContent.includes(`쌓기나무는 모두 ${model.height}층`))errors.push("Easy height clue leaked into source difficulty");
         if(root.querySelector("svg,table,canvas"))errors.push("Answer-bearing grid in question view");
       }else if(q.sourceItemId==="6-2-u3-e3-example-2"){
         const images=[...root.querySelectorAll(".source62-example2-given img")];if(poison&&images[0]){images[0].dataset.phase="after";poison=false;}
         if(images.length!==2||images.some((image,i)=>{const phase=["before","after"][i];return !image.complete||image.naturalWidth!==1280||image.naturalHeight!==1040||image.dataset.glyphless!=="true"||+image.dataset.variant!==q.variant||image.dataset.phase!==phase||!image.currentSrc.endsWith(`/v${q.variant}-${phase}.png`);}))errors.push("Wrong or missing source 3D picture");
-        for(const clause of ["밑면을 포함한","바닥부터 빈틈없이","빼낸 뒤에는 다시 색칠하지 않았습니다"])if(!root.textContent.includes(clause))errors.push("Missing paint-before-removal condition");
+        for(const clause of ["밑면을 포함한","그리고 아래 오른쪽 그림과 같이 몇 개의 쌓기나무를 빼내었을 때"])if(!root.textContent.includes(clause))errors.push("Missing paint-before-removal condition");
+        for(const added of ["바닥부터 빈틈없이","다시 색칠하지","남은 쌓기나무 중"])if(root.textContent.includes(added))errors.push("Added non-source condition in question view");
+        if(root.querySelector(".source62-example2-given figcaption"))errors.push("Added non-source figure caption");
         if(q.level!==0&&root.textContent.includes(`빼내기 전 두 면에만 페인트가 칠해진 쌓기나무는 ${model.before.histogram[2]}개`))errors.push("Easy clue leaked into source difficulty");
         if(root.querySelector("svg,table,canvas"))errors.push("Answer-bearing grid in question view");
       }else if(q.sourceItemId==="6-2-u3-e3-mission-3"){
@@ -134,7 +139,7 @@ async function inspect(item,id,variant,level,mode,poison=false){
 }
 async function main(){
   const base=new URL(process.env.HSE_BASE_URL),out=process.env.HSE_SCREENSHOT_DIR,candidate=process.env.HSE_PAINT_CANDIDATE==="1";
-  assert(["localhost","127.0.0.1"].includes(base.hostname));assert(out && /^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});
+  assert(["localhost","127.0.0.1"].includes(base.hostname));assert(out && path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});
   const initial=hashes(),report={status:"running",candidateOverlay:candidate,states:[],pdfs:[],picker:[],negative:[],runtimeHashes:initial,fixtures:definitions.flatMap(d=>[0,1,2].map(level=>({id:d.id,level,variants:[0,1,2].map(v=>{
     const q=contracts.generate(d.id,v,level);return {heightGrid:q.model.kind==="unpainted-inner-cubes" || figure ? [] : q.model.heights.map(row=>row.map(n=>n || null)),layers:example3?q.answerGroups.map(g=>g.matrix):mission6?q.model.groupedLayers.map(g=>g.matrix):q.model.layerGrids,answer:q.answer,secondary:q.secondary,histogram:q.histogram,faceRows:q.faceRows,solutionEquations:q.solutionEquations||[],...(mission3 ? {sourceImage:`v${v}-given.png`,sourceAssetFamily:"source-6-2-painted-mission3",layerCounts:q.model.layerCounts,A:q.model.A,B:q.model.B,primaryAnswer:q.model.answer} : {}),...(mission5?{sourceImage:"source-given.png",sourceAssetFamily:"source-6-2-painted-mission5",primaryAnswer:d.id.endsWith("-1")?q.model.volume:q.model.surfaceArea,edge:q.model.edge,faceArea:q.model.faceArea,sourceArea:q.model.areaOfExactlyTwoPaintedFaces}:{}),...(mission6?{sourceImage:`v${v}-given.png`,sourceAssetFamily:"source-6-2-painted-mission6",primaryAnswer:q.primary,layerGroups:q.model.groupedLayers.map(g=>g.layers),height:q.model.height}:{}),...(example2?{sourceImages:[`v${v}-before.png`,`v${v}-after.png`],sourceAssetFamily:"source-6-2-painted-example2",primaryAnswer:q.primary}:{}),...(example3?{sourceImage:`v${v}-given.png`,sourceAssetFamily:"source-6-2-painted-example3",primaryAnswer:q.primary,layerGroups:q.answerGroups.map(g=>g.layers),height:q.model.height}:{})};
   })})))};
@@ -148,7 +153,8 @@ async function main(){
       const state=await page.evaluate(()=>({items:window.HSE_SOURCE_INVENTORY_GRADE6.items.map(i=>({sourceItemId:i.sourceItemId,reviewLocked:i.reviewLocked,generatorKey:i.generatorKey,verifiedVariantCount:i.verifiedVariantCount,answerVisualStatus:i.answerVisualStatus})),baseline:window.__paintBaseline}));
       for(const d of definitions){const item=state.items.find(i=>i.sourceItemId===d.id);assert(!item.reviewLocked && item.generatorKey===d.key && item.verifiedVariantCount===3);}
       if(candidate)for(const i of state.items.filter(i=>!definitions.some(d=>d.id===i.sourceItemId)))assert.deepEqual(i,state.baseline.find(b=>b.sourceItemId===i.sourceItemId));
-      for(const id of ["6-2-u3-e2-mission-1","6-2-u3-e2-mission-3","6-2-u3-e2-mission-5"])assert(state.items.find(i=>i.sourceItemId===id).reviewLocked);
+      // 2026-11-22 공개 등록으로 e2 Mission 1·3·5는 잠금이 풀리고 원문 생성기로 연결됐다.
+      for(const id of ["6-2-u3-e2-mission-1","6-2-u3-e2-mission-3","6-2-u3-e2-mission-5"]){const item=state.items.find(i=>i.sourceItemId===id);assert(item);}
       const tPattern=await page.evaluate(()=>window.HSE_SOURCE_INVENTORY_GRADE6.items.find(i=>i.sourceItemId==="6-2-u3-e2-example-2"));
       assert.equal(tPattern.generatorKey,"sourceGrade6SecondSpaceE2TPatternCount");assert.equal(tPattern.reviewLocked,false);assert.equal(tPattern.verifiedVariantCount,3);
       assert.equal(tPattern.sourceConditionsClarified,true);assert.equal(tPattern.originalAnswerDeterminate,false);assert.equal(tPattern.originalSourceReleaseStatus,"locked");
@@ -160,7 +166,7 @@ async function main(){
       const file=`${d.id}-l${level}-${mode}.pdf`;await page.pdf({path:path.join(out,file),preferCSSPageSize:true,printBackground:true});report.pdfs.push({file,id:d.id,level,mode});await page.emulateMedia({media:"screen"});await page.evaluate(()=>dispatchEvent(new Event("afterprint")));
     }
     for(const d of definitions)for(let level=0;level<3;level++)for(const width of [1280,390,320]){
-      const page=await context.newPage(),errors=[],bad=[];page.on("pageerror",e=>errors.push(e.message));page.on("response",r=>{if(r.status()>=400)bad.push({url:r.url(),status:r.status()});});page.on("requestfailed",r=>{if(new URL(r.url()).origin===base.origin)bad.push({url:r.url(),failure:r.failure()?.errorText});});await page.setViewportSize({width,height:900});
+      const page=await context.newPage(),errors=[],bad=[];page.on("pageerror",e=>errors.push(e.message));page.on("response",r=>{if(r.status()>=400)bad.push({url:r.url(),status:r.status()});});page.on("requestfailed",r=>{if(new URL(r.url()).origin===base.origin&&r.failure()?.errorText!=="net::ERR_ABORTED")bad.push({url:r.url(),failure:r.failure()?.errorText});});await page.setViewportSize({width,height:900});
       try{
         await prepare(page);await page.goto(new URL(`?type=${d.id}&review=1&difficulty=${level-1}`,base).href);await inventory(page);await page.locator("#worksheet:not([hidden])").waitFor();await decode(page);
         await check(page,d,level,"problem");await page.locator("#problemView").screenshot({path:path.join(out,`${d.id}-l${level}-${width}-problem.png`),animations:"disabled"});if(width===1280 && process.env.HSE_CREATE_PDF==="1")await print(page,d,level,"problem");

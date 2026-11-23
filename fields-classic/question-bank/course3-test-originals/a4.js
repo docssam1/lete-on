@@ -14,7 +14,7 @@
 // 분수는 빗금으로 적고 화면이 mathText로 위아래로 쌓는다(mathPrompt). 지수에 식이 들어간 거듭제곱·분수식은 MathML 한 줄 수식(math-markup.js)으로,
 // 4번 식은 그림(SVG 글자)으로, 좌표평면·반원·정사각형 그림은 우리 색표 SVG로 그렸다. 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, esc, text, svg, line } from "../selection-test-originals/kit.js?v=20261114a";
-import { mathText, expr, part, powPart, rowPart } from "../math-markup.js?v=20261027p";
+import { mathText, expr, part, powPart, rowPart } from "../math-markup.js?v=20261122w";
 
 export const perPage = 4;
 export const meta = { course: "3과정", book: "A4", title: "하노이탑과 직선의 방정식" };

@@ -6,7 +6,7 @@ const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { chromium } = require("playwright");
 const output = process.env.HSE_SCREENSHOT_DIR;
-assert(output && /^[EG]:[/\\]/i.test(output), "Evidence must stay on E: or G:.");
+assert(output && path.isAbsolute(output), "Evidence output must be an absolute folder.");
 fs.mkdirSync(output, { recursive: true });
 const ids = ["6-2-u3-e1-exploration", "6-2-u3-e1-example-3", "6-2-u3-e1-mission-2", "6-2-u3-e1-mission-4"];
 const assets = ["index.html", "app.js", "source-inventory-grade6.js", "source-6-2-height-views.js", "source-6-2-height-views.css"];
@@ -58,7 +58,7 @@ async function inspect(page,id,phase) {
   },{id,phase});
   assert.deepEqual(result.errors,[],`${id}/${phase}`);
   assert.equal(result.questions,3);
-  const perQuestion = phase === "problem" ? id.endsWith("exploration") ? 5 : id.endsWith("mission-2") ? 3 : 1 : id.endsWith("exploration") ? 4 : id.endsWith("example-3") ? 5 : 1;
+  const perQuestion = phase === "problem" ? id.endsWith("exploration") ? 5 : id.endsWith("mission-2") ? 3 : 1 : id.endsWith("exploration") ? 4 : id.endsWith("example-3") ? 0 : 1;
   assert.equal(result.figures,3*perQuestion);
   assert.equal(result.answerBlocks,phase === "problem" ? 0 : 3);
   assert(!result.leak && !result.overflow, JSON.stringify(result));

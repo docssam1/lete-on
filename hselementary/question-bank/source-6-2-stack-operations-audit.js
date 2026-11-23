@@ -48,10 +48,10 @@ for(const definition of api.definitions)for(let variant=0;variant<3;variant++){
   cases++;
 }
 const example=api.solve(id("example-2"));
-assert.deepEqual(example.answer,["\u3261","\u3263","\u3266"]);
-assert.deepEqual(example.trials.map(t=>t.target),[[1,2,0],[2,0,0],[0,1,0],[1,1,1],[1,1,2],[2,1,1],[2,0,2]]);
+assert.deepEqual(example.answer,["\u3262","\u3265","\u3266"]); // 원문 32쪽 그림의 기호 위치(채점된 답 ㉢, ㉥, ㉦)
+assert.deepEqual(example.trials.map(t=>t.target),[[1,2,0],[0,1,0],[1,1,1],[2,1,1],[1,1,2],[2,0,0],[2,0,2]]);
 assert.deepEqual(example.original.front,[2,3,2]);assert.deepEqual(example.original.right,[2,2,3]);
-assert.deepEqual(example.trials.filter(t=>t.qualifies&&equal(t.after.top,example.original.top)).map(t=>t.label),["\u3263"],"Adding top-view preservation changes the original answer");
+assert.deepEqual(example.trials.filter(t=>t.qualifies&&equal(t.after.top,example.original.top)).map(t=>t.label),["\u3262"],"Adding top-view preservation changes the original answer");
 const allRemovals=example.cells.filter(cell=>{
   // Actual occupied silhouettes, not only maximum heights: a lower removal can expose a hole.
   const project=cells=>({front:new Set(cells.map(([x,y])=>`${x},${y}`)),right:new Set(cells.map(([,y,z])=>`${z},${y}`))});

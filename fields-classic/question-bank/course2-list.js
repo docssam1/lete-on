@@ -20,7 +20,7 @@ const LABS = {
   g4: [["1단원 · 특수각과 도형의 복원", "compass", "컴퍼스로 작도"]],
 };
 const PROOF_TAG = "20261115g";
-const STUDY_BOOKS = new Set(["g1"]);   // source-data.js COURSE2_CURRICULUM에 본책이 있는 권
+const STUDY_BOOKS = new Set(["g1", "g2", "g3", "g4", "g5", "a1", "a2", "a3", "a4", "a5"]);   // source-data.js COURSE2_CURRICULUM에 본책이 있는 권
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const testLink = (id, course = 2) => ((course === 3 ? COURSE3_TESTS : COURSE2_TESTS)[id] ? `<a class="c2-test" href="./course2-test-paper.html?${course === 3 ? "course=3&" : ""}book=${id}">권별 테스트 풀기</a>` : `<span class="c2-test is-off">권별 테스트 준비 중</span>`);
 // 시험지 파일의 meta.title(본책 제목) — 등록된 권만 읽는다
@@ -50,8 +50,10 @@ export async function course2Html({ algebra = true } = {}) {
       return `<li><span class="c2-unit">${esc(u)}</span><div class="c2-chips">${ps.map((p) => `<a class="c2-chip is-proof" href="./proof.html?book=${b.id}&id=${p.id}">${esc(p.title)}</a>`).join("")}${lab.map((l) => `<a class="c2-chip is-lab" href="./c2-lab.html?tool=${l[1]}">직접 해 보기 · ${esc(l[2])}</a>`).join("")}</div></li>`;
     }).join("");
     // 본책을 1과정처럼 옮긴 권(원장 2026-11-16, G1 시범): 차시 공부(시작 화면 → 차시 덱 · 차시 교재 인쇄)로 가는 길
-    const study = STUDY_BOOKS.has(b.id) ? `<a class="c2-test is-study" href="./start.html?course=2&book=course-02-${b.id}">본책 차시 공부</a>` : "";
-    return `<section class="c2-book"><header><span class="c2-name">${b.name}</span><h2>${esc(b.title)}</h2>${study}${testLink(b.id)}</header>${rows ? `<ol class="c2-units">${rows}</ol>` : `<p class="c2-empty">그림으로 따져 보기를 준비하고 있어요.</p>`}</section>`;
+    const study = STUDY_BOOKS.has(b.id) ? `<a class="c2-test is-study" href="./start.html?course=2&book=course-02-${b.id}">차시 공부</a>` : "";
+    // 그림 논증·체험은 차시 덱 안에 들어가 있으므로 여기서는 복습용으로 접어 둔다(DESIGN-COURSE2.md 7절 「개념 모아 보기」)
+    const gather = rows ? `<details class="c2-gather"><summary>개념 모아 보기 · 그림으로 따져 보기 ${proofs.length}개</summary><ol class="c2-units">${rows}</ol></details>` : "";
+    return `<section class="c2-book"><header><span class="c2-name">${b.name}</span><h2>${esc(b.title)}</h2>${study}${testLink(b.id)}</header>${gather}</section>`;
   }));
   const alg = algebra ? (await Promise.all(ALGEBRA.map((b) => testCard(b, 2, true)))).join("") : "";
   return `<h3 class="c2-group">기하 · G</h3>${cards.join("")}${alg ? `<h3 class="c2-group">대수 · A</h3>${alg}` : ""}`;

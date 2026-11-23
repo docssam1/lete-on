@@ -197,7 +197,9 @@ function auditStructure(variant, prompt) {
       assert(prompt.includes("우리말로 읽으세요") && prompt.includes("숫자로 나타내세요"), "읽기와 쓰기의 묻는 값이 다릅니다.");
     },
     () => {
-      for (const marker of ["첫째 수", "둘째 수", "분의 1", "몇 배"]) assert(prompt.includes(marker), `배수 비교 표지 ${marker}가 없습니다.`);
+      // 2026-11-22부터 'n분의 1'은 앱 수식 표기 '1/n'으로 쓴다.
+      for (const marker of ["첫째 수", "둘째 수", "몇 배"]) assert(prompt.includes(marker), `배수 비교 표지 ${marker}가 없습니다.`);
+      assert(/1\/10+로 한 수/.test(prompt), "배수 비교 표지 1/10…로 한 수가 없습니다.");
       assert(prompt.includes("㉠") && prompt.includes("㉡"), "두 표시 숫자가 없습니다.");
     },
     () => {
@@ -220,7 +222,7 @@ function auditStructure(variant, prompt) {
       assert(prompt.includes("㉠") && prompt.includes("㉡") && prompt.includes("몇 배"), "두 표시 숫자의 자리값 배수 구조가 아닙니다.");
     },
     () => {
-      assert(prompt.includes("배 한 수") && prompt.includes("분의 1로 한 수"), "서로 다른 두 자리 이동이 없습니다.");
+      assert(prompt.includes("배 한 수") && /1\/10+로 한 수/.test(prompt), "서로 다른 두 자리 이동이 없습니다.");
       assert(countMatches(prompt, /자리 숫자/g) === 2 && prompt.includes("합을 구하세요"), "자리 숫자 둘의 합을 묻지 않습니다.");
     },
     () => {
@@ -389,7 +391,8 @@ for (let variant = 0; variant < 11; variant += 1) {
         assert(Boolean(generated.prompt && generated.answer !== "" && generated.solution), "문제·정답·풀이가 비었습니다.");
         const visible = visibleText(`${generated.prompt} ${generated.answer} ${generated.solution}`);
         assert(!/undefined|null|NaN|Infinity/.test(visible), "깨진 계산값이 보입니다.");
-        assert(!/\b\d+\s*\/\s*\d+\b/.test(visible), "가공되지 않은 분수가 보입니다.");
+        // 2026-11-22부터 "100분의 1"은 앱 수식 표기 1/100으로 쓰고 앱이 세로 분수로 보여 준다. 그 밖의 슬래시 분수는 계속 막는다.
+        assert(!/\b\d+\s*\/\s*\d+\b/.test(visible.replace(/\b1\/10+\b/g, "")), "가공되지 않은 분수가 보입니다.");
         assert(!/\d+\.\d{5,}/.test(visible), "긴 소수 꼬리가 보입니다.");
         for (const term of [/√/, /제곱근/, /순열/, /조합/, /로그/, /지수/, /미지수/, /방정식/, /절댓값/, /계수/]) assert(!term.test(visible), `초등 범위를 벗어난 표현 ${term}이 보입니다.`);
         const visibleNumbers = [...visible.matchAll(/\d[\d,]*/g)].map(match => match[0].replace(/,/g, ""));

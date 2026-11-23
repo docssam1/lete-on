@@ -72,6 +72,18 @@ server.listen(0, async () => {
       });
       await tag.evaluate(e => e.remove()); await page.emulateMedia({ media:'screen' });
       if(over.length) bad.push(`${c} k${k}: 지면 넘침 ${over.slice(0, 4).join(', ')}${over.length > 4 ? ` 외 ${over.length - 4}` : ''}`);
+      /* 빈 장(2026-11-18) — 머리(이름·제목)와 쪽 번호만 있고 문항·개념·예시가 하나도 없는 장. 문장제만인 회차의 첫 장이
+         드릴 머리 높이로 재여 문항 0줄로 찍힌 적이 있다(과정 16). */
+      /* 수식 오류(2026-11-20) — KaTeX 가 못 읽은 식은 throwOnError:false 라 붉은(#cc0000) 원문 그대로 찍힌다(`\gen^{2}` · `\timesy`) — .katex-error 클래스는 안 붙는다.
+         눈으로는 안 보이는 채 PDF 가 나가므로 .katex-error 가 하나라도 있으면 실패한다. */
+      const kerr = await page.evaluate(() => [...document.querySelectorAll('.nm-print-sheet .katex-error, .nm-print-sheet .katex mstyle[mathcolor="#cc0000"], .nm-print-sheet .katex [style*="#cc0000"]')]
+        .slice(0, 3).map(e => (e.getAttribute('title') || e.textContent || '').trim().slice(0, 70)));
+      if(kerr.length) bad.push(`${c} k${k}: 수식 오류 ${kerr.join(' | ')}`);
+      const empty = await page.evaluate(() => [...document.querySelectorAll('.nm-print-sheet .nm-w2-page')].map((p, i) => {
+        const body = [...p.children].filter(e => !/nm-w2-(wm|head|foot)\b/.test(e.className || ''));
+        return body.some(e => (e.innerText || '').trim() || e.querySelector('svg,img,canvas')) ? 0 : i + 1;
+      }).filter(Boolean));
+      if(empty.length) bad.push(`${c} k${k}: 빈 장 ${empty.join(', ')}쪽`);
       const keyOverflow=await page.locator('.nm-print-answer-key .nm-ak-item').evaluateAll(items=>items.filter(e=>e.scrollWidth>e.clientWidth+3).length);
       if(keyOverflow)bad.push(`${c} k${k}: 정답 ${keyOverflow}칸 가로 넘침`);
       if(bad.length===before)ok++;

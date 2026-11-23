@@ -43,7 +43,7 @@ function expected(generated) {
   if (kind === "62d-common-natural-range") return Array.from({ length: 40 }, (_, index) => index + 1).filter(value => v[0] / 10 < value && value < v[1] / 10).length;
   if (kind === "62d-one-decimal-range") return Array.from({ length: 9 }, (_, index) => index + 1).filter(digit => v[1] < digit * v[0] && digit * v[0] < v[2]).length;
   if (kind === "62d-missing-division-digit") return fixed(v[2], 2)[v[3]];
-  if (kind === "62d-card-largest-quotient") return decimal(Math.max(...cardQuotients(v)), 3);
+  if (kind === "62d-card-largest-quotient") return Math.max(...cardQuotients(v)).toFixed(3);
   if (kind === "62d-card-range-count") {
     const [a, b, c, factor, divisor, low, high] = v;
     return threeDigitDecimals([a, b, c]).filter(number => low / 1000 < number * factor / divisor && number * factor / divisor < high / 1000).length;
@@ -56,9 +56,9 @@ function expected(generated) {
   if (kind === "62d-four-rectangles") return `${v[0] * v[2]}cm²`;
   if (kind === "62d-rounded-difference") {
     const quotient = v[0] / v[1];
-    return decimal(Math.abs(Number(quotient.toFixed(1)) - Number(quotient.toFixed(2))), 2);
+    return decimal(Math.abs(Math.round(v[0] * 10 / v[1]) / 10 - Math.round(v[0] * 100 / v[1]) / 100), 2);
   }
-  if (kind === "62d-card-rounded-maximum") return decimal(Math.max(...cardQuotients(v)), 2);
+  if (kind === "62d-card-rounded-maximum") return Math.max(...cardQuotients(v)).toFixed(2);
   if (kind === "62d-rounded-missing-digit") {
     const candidates = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => Math.round((v[0] + digit * 100) / v[1]) === v[2]);
     if (candidates.length !== 1) throw new Error(`빠진 숫자 후보가 ${candidates.length}개`);
@@ -76,7 +76,7 @@ function expected(generated) {
     const speedTenth = v[0] * 6 / v[1];
     return `${decimal(v[2] / speedTenth, 1)}시간`;
   }
-  if (kind === "62d-fuel-efficiency-ratio") return decimal((v[1] / v[0]) / (v[3] / v[2]), 2);
+  if (kind === "62d-fuel-efficiency-ratio") return ((v[1] / v[0]) / (v[3] / v[2])).toFixed(2);
   if (kind === "62d-two-taps-cost") return `${((v[0] + v[1]) * v[2] * v[3]).toLocaleString()}원`;
   if (kind === "62d-river-round-trip") return `${v[2] / (v[0] + v[1]) + v[3] / (v[0] - v[1])}시간`;
   if (kind === "62d-container-unit-mass") {

@@ -1,15 +1,24 @@
 import { G1_GENERATORS } from "./g1-generators.js?v=20261027s";
 import { G1_WINTER_GENERATORS } from "./g1-winter-generators.js?v=20260824a";
-import { BOOK01_GENERATORS } from "./book01-generators.js?v=20261101k";
-import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260827b";
-import { BOOK04_GENERATORS } from "./book04-generators.js?v=20260827a";
+import { BOOK01_GENERATORS } from "./book01-generators.js?v=20261119a";
+import { BOOK03_GENERATORS } from "./book03-generators.js?v=20261119a";
+import { BOOK04_GENERATORS } from "./book04-generators.js?v=20261119a";
 import { BOOK05_GENERATORS } from "./book05-generators.js?v=20260826c";
 import { BOOK06_GENERATORS } from "./book06-generators.js?v=20261101c";
 import { BOOK07_GENERATORS } from "./book07-generators.js?v=20260826h";
 import { BOOK08_GENERATORS, BOOK08_UNIT_TEST_GENERATORS } from "./book08-generators.js?v=20261101n";
-import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20260826h";
+import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20261119a";
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20261101m";
-import { COURSE2_G1_GENERATORS } from "./course2-g1-generators.js?v=20261117b";
+import { COURSE2_G1_GENERATORS } from "./course2-g1-generators.js?v=20261122zi";
+import { COURSE2_G2_GENERATORS } from "./course2-g2-generators.js?v=20261122zi";
+import { COURSE2_G3_GENERATORS } from "./course2-g3-generators.js?v=20261122zi";
+import { COURSE2_G4_GENERATORS } from "./course2-g4-generators.js?v=20261122zi";
+import { COURSE2_G5_GENERATORS } from "./course2-g5-generators.js?v=20261122zi";
+import { COURSE2_A1_GENERATORS } from "./course2-a1-generators.js?v=20261122zi";
+import { COURSE2_A2_GENERATORS } from "./course2-a2-generators.js?v=20261122zi";
+import { COURSE2_A3_GENERATORS } from "./course2-a3-generators.js?v=20261122zi";
+import { COURSE2_A4_GENERATORS } from "./course2-a4-generators.js?v=20261122zi";
+import { COURSE2_A5_GENERATORS } from "./course2-a5-generators.js?v=20261122zi";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
 import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028zb";
@@ -6555,6 +6564,15 @@ export const GENERATORS = {
   ...BOOK06_GENERATORS,
   ...BOOK07_GENERATORS,
   ...COURSE2_G1_GENERATORS,
+  ...COURSE2_G2_GENERATORS,
+  ...COURSE2_G3_GENERATORS,
+  ...COURSE2_G4_GENERATORS,
+  ...COURSE2_G5_GENERATORS,
+  ...COURSE2_A1_GENERATORS,
+  ...COURSE2_A2_GENERATORS,
+  ...COURSE2_A3_GENERATORS,
+  ...COURSE2_A4_GENERATORS,
+  ...COURSE2_A5_GENERATORS,
   ...BOOK08_GENERATORS,
   unitTestBook08Q01: BOOK08_UNIT_TEST_GENERATORS[1],
   unitTestBook08Q02: BOOK08_UNIT_TEST_GENERATORS[2],

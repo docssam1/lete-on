@@ -1114,16 +1114,16 @@ NM_TGEN['md153_induction'] = function (params, rng) {
       /* 부등식 — n₀ */
       const kind = pick(rng, ['sq', 'lin', 'fact', 'cube']), ge = pick(rng, [0, 0, 1]);
       let tex, L, Rr;
-      if (kind === 'sq') { const c = R(rng, -3, 12); tex = `2^{n}${ge ? '\\ge' : '>'}n^{2}${more(c, '')}`; L = n => bigPow(2, n); Rr = n => BigInt(n * n + c); }
-      else if (kind === 'lin') { const b = pick(rng, [2, 3]), a = R(rng, 2, 12), c = R(rng, -5, 10); tex = `${b}^{n}${ge ? '\\ge' : '>'}${poly([a, c], 'n')}`; L = n => bigPow(b, n); Rr = n => BigInt(a * n + c); }
-      else if (kind === 'fact') { const b = pick(rng, [2, 3, 4]); tex = `n!${ge ? '\\ge' : '>'}${b}^{n}`; L = n => bigFact(n); Rr = n => bigPow(b, n); }
-      else { const b = pick(rng, [2, 3]), c = R(rng, -2, 6); tex = `${b}^{n}${ge ? '\\ge' : '>'}n^{3}${more(c, '')}`; L = n => bigPow(b, n); Rr = n => BigInt(n) ** 3n + BigInt(c); }
+      if (kind === 'sq') { const c = R(rng, -3, 12); tex = `2^{n}${ge ? '\\ge ' : '>'}n^{2}${more(c, '')}`; L = n => bigPow(2, n); Rr = n => BigInt(n * n + c); }
+      else if (kind === 'lin') { const b = pick(rng, [2, 3]), a = R(rng, 2, 12), c = R(rng, -5, 10); tex = `${b}^{n}${ge ? '\\ge ' : '>'}${poly([a, c], 'n')}`; L = n => bigPow(b, n); Rr = n => BigInt(a * n + c); }
+      else if (kind === 'fact') { const b = pick(rng, [2, 3, 4]); tex = `n!${ge ? '\\ge ' : '>'}${b}^{n}`; L = n => bigFact(n); Rr = n => bigPow(b, n); }
+      else { const b = pick(rng, [2, 3]), c = R(rng, -2, 6); tex = `${b}^{n}${ge ? '\\ge ' : '>'}n^{3}${more(c, '')}`; L = n => bigPow(b, n); Rr = n => BigInt(n) ** 3n + BigInt(c); }
       const ok = n => ge ? L(n) >= Rr(n) : L(n) > Rr(n);
       let n0 = 1; for (let n = 1; n <= 60; n++) if (!ok(n)) n0 = n + 1;
       if (n0 < 2 || n0 > 40) continue;
       return item(prompt, `${tex}\\ (n\\ge n_0)\\ \\Rightarrow\\ n_0=\\square`, n0, [
         { tex:`n=${n0 - 1}:\\ ${L(n0 - 1)}${ge ? '<' : '\\le'}${Rr(n0 - 1)}` },
-        { tex:`n=${n0}:\\ ${L(n0)}${ge ? '\\ge' : '>'}${Rr(n0)}` },
+        { tex:`n=${n0}:\\ ${L(n0)}${ge ? '\\ge ' : '>'}${Rr(n0)}` },
         { tex:'n_0=\\square', blank:n0 }]);
     }
     /* 배수 — d */

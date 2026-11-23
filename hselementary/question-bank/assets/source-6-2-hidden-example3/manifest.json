@@ -25,8 +25,8 @@
       "part": "outer",
       "width": 1280,
       "height": 1040,
-      "sha256": "1c345721f923a0bf3d9f3b76633b0416c378f6c6f1e8c6bd9bc158e08102b147",
-      "byteLength": 103297
+      "sha256": "3f27fae607d6ff42543b3451ad43b0e898a2114ab68fe3426ac8731cf1f66a03",
+      "byteLength": 225623
     },
     {
       "file": "v0-inner.png",
@@ -34,8 +34,8 @@
       "part": "inner",
       "width": 1280,
       "height": 1040,
-      "sha256": "269cd3b6b59207ef83a3bdf221f8c0236394069a89c5cf0c582f4f29f4a95d9e",
-      "byteLength": 65251
+      "sha256": "6fd2c83e327feb3d7e2f6e7eac9f3d17bfac865a6a6588fb1bbf8caabcc0c4b5",
+      "byteLength": 155957
     },
     {
       "file": "v1-outer.png",
@@ -43,8 +43,8 @@
       "part": "outer",
       "width": 1280,
       "height": 1040,
-      "sha256": "3b3bc0315198127c76371c5e632e8b0bc5687a70c4921ea3de90246ec8c11be0",
-      "byteLength": 95373
+      "sha256": "169c05fee79073005826591690fb118a1eec2de0257aff2581cb1ae928ae5e30",
+      "byteLength": 204172
     },
     {
       "file": "v1-inner.png",
@@ -52,8 +52,8 @@
       "part": "inner",
       "width": 1280,
       "height": 1040,
-      "sha256": "2638751d9f6494f0552f96120d30179e61f195968c3a666726b40cf4c0f7bb09",
-      "byteLength": 59738
+      "sha256": "28846ba36cdd30563eb6472a3ab1c6d329412480ddf34d3cae73ae18489f8f5a",
+      "byteLength": 124891
     },
     {
       "file": "v2-outer.png",
@@ -61,8 +61,8 @@
       "part": "outer",
       "width": 1280,
       "height": 1040,
-      "sha256": "d1c980e82ab673e12fbb336b6a368b910e3062a6b7d03bef10eb6d60cc10e01f",
-      "byteLength": 109824
+      "sha256": "b81e3d8a7b7e9386a96b166c093cb9cc4fdff8230a1dc97464f7d55a37e1b3c1",
+      "byteLength": 246567
     },
     {
       "file": "v2-inner.png",
@@ -70,8 +70,17 @@
       "part": "inner",
       "width": 1280,
       "height": 1040,
-      "sha256": "aa9530d97d8527534ab67c6d184ad887140a6a9081f249d923c445982cac3e22",
-      "byteLength": 70757
+      "sha256": "c7b7c4b20ade4807048f4656f4ebfffcbdbc2f41f7dc8bd346febc9c1a7426f8",
+      "byteLength": 184499
     }
-  ]
+  ],
+  "camera20261123": {
+    "cameraDirection": [
+      1,
+      1,
+      1
+    ],
+    "directionLabels": false,
+    "note": "원문 34쪽 그림처럼 대각선 방향(각 층 앞줄이 가로)에서 본 모습. source-6-2-stack-renderer.mjs snapshot 640x520 pixelRatio 2를 1280x1040 캔버스에 맞추고 층 이름표를 덧그림."
+  }
 }

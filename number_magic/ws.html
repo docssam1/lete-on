@@ -15,34 +15,38 @@
        auto=0  — 인쇄 대화상자를 자동으로 띄우지 않는다(PDF 생성기 scripts/nm-weekly-worksheets.cjs 가 쓴다).
      앱 상태(main.js)는 싣지 않는다. 라이선스 원문 없음 — 전부 생성기 산출물. -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preload" href="assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
 <link rel="stylesheet" href="app/styles.css?v=20261116-trialsave">
 <style>
-  /* 글꼴: Pretendard(CDN) → Noto Sans KR/CJK(Actions 러너에 apt로 설치) → 시스템 한글 순. 표지 이름은 Gowun Batang. */
+  /* 글꼴: Pretendard(저장소 가변 글꼴 — app/styles.css 맨 위 @font-face, 2026-11-18 CDN에서 옮김) → Noto Sans KR/CJK(Actions 러너에 apt로 설치) → 시스템 한글 순. 표지 이름은 Gowun Batang. */
   /* app/styles.css 는 앱 셸용이라 html,body{height:100%} + body{overflow:hidden} 을 건다.
      그 시트를 여기서도 불러오기 때문에 학습지 페이지가 통째로 스크롤되지 않았다
      (2026-09-07, 원장 "학습지 html까지는 나오는데 스크롤이 안 된다"). 여기서 되돌린다. */
   html,body{height:auto;min-height:100%;overflow:visible}
   body,.nm-print-sheet{margin:0;background:#f4efe6;font-family:Pretendard,'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
-  .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-    padding:10px 14px;background:#fffaf0;border-bottom:1px solid #e6dcc8}
-  .ws-bar b{font-size:15px}
-  .ws-bar .ws-sub{color:#6b6257;font-size:13px}
-  .ws-bar button{margin-left:auto;padding:10px 16px;border:0;border-radius:10px;background:#2f6f4e;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  /* 위 막대(2026-11-21 다시 짬, 원장 「AI 티가 나지 않게 · 이에 따른 디자인도」): 흰 바탕에 과정 이름만 크게. 이모지·내부 코드(2026-W47 · C4.)·영문 상표를 뺐다.
+     누르는 것은 남색 하나 — 주 단추 하나만 채우고 나머지는 테두리만. 사진 채점이 있으면 그것이 주 단추, 없으면 인쇄. */
+  .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    padding:10px 16px;background:#fff;border-bottom:1px solid #e6ebf5;color:#1b2340;-webkit-font-smoothing:antialiased}
+  .ws-bar .ws-head{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .ws-bar b{font-size:18px;font-weight:800;letter-spacing:-.025em;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ws-bar .ws-sub{color:#6b7391;font-size:13px;font-weight:500}
+  .ws-bar button{min-height:44px;padding:0 16px;border:1px solid #cfd6e6;border-radius:12px;background:#fff;color:#243184;font:700 15px/1 inherit;cursor:pointer}
+  .ws-bar button:focus-visible{outline:3px solid #2a6df4;outline-offset:2px}
+  .ws-bar #wsPrint,.ws-bar .ws-photo{background:#243184;border-color:#243184;color:#fff}
+  .ws-bar.has-photo #wsPrint{background:#fff;border-color:#cfd6e6;color:#243184}
+  .ws-bar button:disabled{opacity:.5}
   .ws-err{margin:40px auto;max-width:520px;padding:20px;background:#fff;border-radius:12px;color:#7a2e2e;line-height:1.6}
-  .ws-tools{min-height:44px;display:inline-flex;align-items:center;padding:8px;color:#2f6b4a;font-size:14px;text-underline-offset:3px}
+  .ws-tools{min-height:44px;display:inline-flex;align-items:center;padding:8px;color:#6b7391;font-size:14px;font-weight:600;text-underline-offset:3px}
   @media screen{body.ws-tool-page{background:#f1ece1!important}body.ws-tool-page::before,body.ws-tool-page::after{display:none!important}}
   .ws-tool-embed .ws-bar{display:none}
   .ws-tool-embed>.nm-print-sheet{margin-top:0}
-  .ws-bar .ws-ghost{margin-left:0;background:#fffaf0;color:#2f6f4e;border:1px solid #cfe0d5}
-  /* 태블릿 펜으로 풀기(2026-11-16, app/pen-sheet.js) — 인쇄 단추 앞 */
-  .ws-bar .ws-pen{background:#243184}
-  .ws-bar .ws-pen[aria-pressed=true]{background:#141b5d}
-  .ws-bar .ws-pen + button{margin-left:0}
+  /* 태블릿 펜으로 풀기(2026-11-16, app/pen-sheet.js) — 인쇄 단추 앞. 켜져 있으면 채운다 */
+  .ws-bar .ws-pen[aria-pressed=true]{background:#141b5d;border-color:#141b5d;color:#fff}
   /* 화면에서도 학습지를 그대로 보여 준다(2026-09-07, 원장 "먼저 html이 나오고 저장 또는 인쇄가
      되어야 하는데 인쇄 페이지가 먼저 뜨고 html은 스크롤이 안 돼"). 예전엔 인쇄 대화상자가 뜬 뒤
      A4 폭(210mm=794px) 시트가 폰 화면(390px) 밖으로 넘쳐 내용을 확인할 수 없었다.
@@ -64,26 +68,25 @@
 </head>
 <body>
 <div class="ws-bar" id="wsBar">
-  <b id="wsTitle">Numbers of Magic · 주간 학습지</b>
-  <span class="ws-sub" id="wsSub">불러오는 중…</span>
+  <div class="ws-head"><b id="wsTitle">주간 학습지</b><span class="ws-sub" id="wsSub">불러오는 중…</span></div>
   <a id="wsTools" class="ws-tools" href="paper-tools.html">교구 목록</a>
-  <button id="wsPrint" type="button">🖨 인쇄 · PDF로 저장</button>
+  <button id="wsPrint" type="button">인쇄하기</button>
 </div>
 <div id="wsBody"></div>
 
 <script src="engine/generators.js"></script>
-<script src="engine/rng.js?v=20261026-review1"></script>
-<script src="engine/tex-tidy.js?v=20261116-fit"></script>
-<script src="engine/tex-i18n.js?v=20261116-dict"></script>
+<script src="engine/rng.js?v=20261117-negkey"></script>
+<script src="engine/tex-tidy.js?v=20261120-opsp"></script>
+<script src="engine/tex-i18n.js?v=20261118-tenths"></script>
 <script src="../geometry/worksheet/render.js"></script>
 <script>if(!window.GW_RENDER)document.write('<scr'+'ipt src="geometry/worksheet/render.js"></scr'+'ipt>');</script>
 <script src="engine/scene-model.js"></script>
-<script src="engine/threads/ns_ad.js?v=20261110-clean1"></script>
+<script src="engine/threads/ns_ad.js?v=20261117-noneg"></script>
 <script src="engine/threads/sb.js"></script>
-<script src="engine/threads/ml.js?v=20261115-dedupe"></script>
-<script src="engine/threads/dv.js?v=20261116-mul"></script>
+<script src="engine/threads/ml.js?v=20261121-div"></script>
+<script src="engine/threads/dv.js?v=20261121-div"></script>
 <script src="engine/threads/fr.js?v=20261026-review2"></script>
-<script src="engine/threads/dc_mx.js?v=20261026-review2"></script>
+<script src="engine/threads/dc_mx.js?v=20261119-decform2"></script>
 <script src="engine/threads/el.js"></script>
 <script src="engine/threads/cre.js"></script>
 <script src="engine/threads/nl.js?v=20261104-sortcap1"></script>
@@ -93,7 +96,7 @@
 <script src="engine/threads/g1-10-12.js"></script>
 <script src="engine/threads/g1-13-15.js"></script>
 <script src="engine/threads/wp.js?v=20261106-release-audit"></script>
-<script src="engine/threads/adv.js?v=20261113-fit"></script>
+<script src="engine/threads/adv.js?v=20261117-noneg"></script>
 <script src="engine/threads/mid.js?v=20261026-review1"></script>
 <script src="engine/threads/mid2.js?v=20261026-review1"></script>
 <script src="engine/threads/mid3.js?v=20261026-review2"></script>
@@ -117,7 +120,7 @@
 <script src="engine/threads/mid21.js"></script>
 <script src="engine/threads/mid22.js"></script>
 <script src="engine/threads/mid23.js"></script>
-<script src="data/threads.js?v=20261116-fit"></script>
+<script src="data/threads.js?v=20261123-noslot"></script>
 <script src="data/g1/1-3-threads.js"></script>
 <script src="data/g1/4-6-threads.js"></script>
 <script src="data/g1/7-9-threads.js"></script>
@@ -153,7 +156,7 @@
 <script src="app/place-color.js"></script>
 <!-- 독셈 과정 빈칸·색 힌트 표(2026-09-26) — exam.js applyProcessBlank 보다 먼저 -->
 <script src="data/creative-process.js"></script>
-<script src="data/print-head.js?v=20261106-release-audit"></script>
+<script src="data/print-head.js?v=20261123-midfit"></script>
 <script src="data/real-art.js?v=20261009-real4"></script>
 <script src="app/object-art.js?v=20261004-obj4"></script>
 <script src="app/g1/1-3.art.js"></script>
@@ -170,8 +173,8 @@
 <script src="app/worksheet-series.js?v=20261105-open-points"></script>
 <script src="app/paper-examples.js?v=20261112-draw-shapes"></script>
 <script src="engine/c0-cognitive.js?v=20261112-draw-shapes"></script>
-<script src="app/c0-paper.js?v=20261112-ineq"></script>
-<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261116-pen1"></script><script src="app/pen-sheet.js?v=20261116-pen1"></script>
+<script src="app/c0-paper.js?v=20261122-bigcell"></script>
+<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261122-bigcell"></script><script src="app/exam.js?v=20261123-midfit"></script><script src="app/pen-sheet.js?v=20261122-ansbox"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -194,8 +197,8 @@
   var lang = ['ko','en','zh'].indexOf(q.get('l')) >= 0 ? q.get('l') : 'ko';
   document.documentElement.lang = lang;
   function text(ko,en,zh){ return lang==='en'?en:lang==='zh'?zh:ko; }
-  document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + text('주간 학습지','Weekly worksheet','每周学习单');
-  document.getElementById('wsPrint').textContent = text('🖨 인쇄 · PDF로 저장','🖨 Print · Save as PDF','🖨 打印 · 另存为PDF');
+  document.getElementById('wsTitle').textContent = text('주간 학습지','Weekly worksheet','每周学习单');
+  var printBtn = document.getElementById('wsPrint'); printBtn.textContent = text('인쇄하기','Print','打印'); printBtn.title = text('인쇄 창에서 PDF로 저장할 수도 있어요','You can also save as PDF from the print dialog','也可在打印窗口另存为PDF');
   var toolList=document.getElementById('wsTools');toolList.textContent=text('교구 목록','Paper tools','纸教具目录');toolList.href='paper-tools.html?l='+lang;
   var w = (q.get('w') || isoWeekKey(new Date(Date.now() + 9*3600000))).trim();
   var c = (q.get('c') || '').trim();
@@ -273,7 +276,7 @@
     (s.drills || []).concat(s.creative || []).forEach(function(d){ var th = d && NM_THREADS[d.t]; if(th && th.unit) unitIds[th.unit] = 1; });
   });});
   var loads = Object.keys(unitIds).filter(function(id){ return /^[A-Za-z0-9-]+$/.test(id) && !(window.NM_UNITS && NM_UNITS[id]); }).map(function(id){
-    return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js?v=20261026-c17c60';
+    return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js?v=20261123-noslot';
       sc.onload = sc.onerror = function(){ res(); }; document.head.appendChild(sc); });
   });
   Promise.all(loads).then(build);
@@ -298,13 +301,15 @@
   if(round && cover){
     /* 학습 안내 쪽 첫 줄에 「N회차 · 연습량」만 붙인다. 날짜(월·주차)는 쓰지 않는다 — 2026-10-24 원장 「과정만 쓰면 되지」
        (표지·학습 안내에 월호·달력 월·주차 금지, gfield-textbook-design 스킬). 날짜는 문자에만. 묶음 과정은 제목에 「수업 N」이 이미 있다. */
-    var parts = []; if(!compact) parts.push(round + '회차');
+    var parts = []; if(!compact) parts.push(text(round + '회차', 'Round ' + round, '第' + round + '次'));   // 영어·중국어판에 「8회차」가 한국어로 찍혔다(2026-11-22)
     if(cover.amount != null && cover.amount > 1) parts.push(text('문제 UP','Problems UP','题量 UP'));   // 1.25배 판(원장 「많은 연습량 말고 문제 up」)
     cover = Object.assign({}, cover, { roundLabel: parts.join(' · ') });
   }
   if(personalPlan)window.NM_WS_ENVELOPE=wk;
   document.title = 'Numbers of Magic' + (name ? ' · ' + name : '') + ' — ' + wsId;
-  sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + (personalPlan?'':c+'. ') + title;
+  /* 막대에는 과정 이름과 이름·회차만. 주차 열쇠(2026-W47)·과정 번호(C4.) 같은 안쪽 표시는 보이지 않는다(쪽 제목 document.title 에는 남는다) */
+  document.getElementById('wsTitle').textContent = title;
+  sub.textContent = [name && name !== 'check' ? name : '', round && !compact ? text(round + '회차', 'Round ' + round, '第' + round + '次') : ''].filter(Boolean).join(' ') || text('주간 학습지','Weekly worksheet','每周学习单');
 
   try{
     NM_EXAM.renderPrintMulti(items, wsId, { mixed: 20, cover: cover, units: units, courseSessions: wk.courseSessions });
@@ -323,7 +328,9 @@
   /* 글꼴(Pretendard·Gowun Batang·KaTeX)이 다 내려온 뒤에 준비 표시 — PDF 생성기가 이 플래그를 기다린다 */
   var fontsReady = window.NM_LAST_PRINT_READY || ((document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve());
   var timeout = new Promise(function(r){ setTimeout(r, 8000); });
-  Promise.race([fontsReady, timeout]).then(function(){ setTimeout(function(){ window.NM_WS_READY = true;
+  Promise.race([fontsReady, timeout]).then(function(){ setTimeout(function(){
+   /* 사진 채점 시험판(2026-11-21, app/photo-grade.js): 주소에 marks=1 일 때만 받는다. 종이 귀퉁이 표시는 인쇄·PDF에도 찍혀야 하므로 준비 표시보다 먼저 단다 */
+   var ready = function(){ window.NM_WS_READY = true;
     if(window.NM_PEN_SHEET && q.get('auto') !== '0') NM_PEN_SHEET.mount();
     if(location.hash === '#nm-paper-tool'){
       var tool = document.getElementById('nm-paper-tool');
@@ -334,6 +341,12 @@
         window.scrollTo(0, window.scrollY + tool.getBoundingClientRect().top - offset);
       }
     }
+   };
+   if(q.get('marks') === '1'){
+     var ph = document.createElement('script'); ph.src = 'app/photo-grade.js?v=20261122-ansbox';
+     ph.onload = function(){ try{ NM_PHOTO_GRADE.mount({ marksOnly: q.get('auto') === '0' }); }catch(e){} ready(); };
+     ph.onerror = ready; document.head.appendChild(ph);
+   } else ready();
   }, 300); });
   }
 })();

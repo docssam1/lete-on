@@ -57,9 +57,10 @@ const expected = {
     { length: 12, depth: 6, height: 3, heights: [3, 2, 1], rows: 4 }
   ],
   "example-3": [
-    { width: 36, totalDepth: 40, lowDepth: 16, highStart: 20, highEnd: 16, lowHeight: 8 },
-    { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8 },
-    { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9 }
+    // 2026-11-23 원문 복원(인쇄 56쪽 예제 2-3): 앞 단면 밑변 36m, 높은 부분 20m·윗변 16m, 낮은 부분 8m·윗변 16m, 안쪽 길이 40m.
+    { width: 36, depth: 40, highHeight: 20, highTop: 16, lowTop: 16, lowHeight: 8 },
+    { width: 30, depth: 30, highHeight: 20, highTop: 10, lowTop: 16, lowHeight: 5 },
+    { width: 40, depth: 50, highHeight: 20, highTop: 16, lowTop: 16, lowHeight: 6 }
   ],
   "example-4": [[3, 10, 4], [5, 9, 6], [7, 11, 5]],
   "mission-1": [48, 60, 72],
@@ -206,44 +207,43 @@ for (const sourceItemId of sourceIds) {
         if (pool === 0) check(generated.answer === (difficulty === 1 ? "직육면체 24개, 겉넓이 98cm², 부피 48cm³" : "겉넓이 98cm², 부피 48cm³"), `${label}: 원문 8×3×3 계단 답이 98cm²·48cm³가 아닙니다.`);
       } else if (kind === "example-3") {
         const data = expected["example-3"][pool];
-        const highDepth = data.totalDepth - data.lowDepth;
-        const highCrossSection = highDepth * (data.highStart + data.highEnd) / 2;
-        const lowCrossSection = data.lowDepth * data.lowHeight;
-        const finalHeight = (highCrossSection + lowCrossSection) / data.totalDepth;
-        const cutCrossSection = highDepth * ((data.highStart - finalHeight) + (data.highEnd - finalHeight)) / 2;
-        const fillCrossSection = data.lowDepth * (finalHeight - data.lowHeight);
-        const candidates = [];
-        for (let candidate = data.lowHeight + 1; candidate < data.highEnd; candidate += 1) {
-          const cut = highDepth * ((data.highStart - candidate) + (data.highEnd - candidate)) / 2;
-          const fill = data.lowDepth * (candidate - data.lowHeight);
-          if (cut === fill) candidates.push(candidate);
+        // 독립 계산: 앞 단면 꼭짓점으로 신발끈 공식 넓이를 구하고, 높이 h의 위·아래 넓이는 0.001m 간격 적분으로 비교합니다.
+        const slopeRun = data.width - data.highTop - data.lowTop;
+        const vertices = [[0, 0], [data.width, 0], [data.width, data.lowHeight], [data.width - data.lowTop, data.lowHeight], [data.highTop, data.highHeight], [0, data.highHeight]];
+        const crossSection = Math.abs(vertices.reduce((sum, [x1, y1], index) => {
+          const [x2, y2] = vertices[(index + 1) % vertices.length];
+          return sum + x1 * y2 - x2 * y1;
+        }, 0)) / 2;
+        const profile = x => x <= data.highTop ? data.highHeight : x >= data.width - data.lowTop ? data.lowHeight : data.highHeight - (data.highHeight - data.lowHeight) * (x - data.highTop) / slopeRun;
+        const finalHeight = crossSection / data.width;
+        const step = 0.001;
+        let cut = 0, fill = 0;
+        for (let x = step / 2; x < data.width; x += step) {
+          const y = profile(x);
+          if (y > finalHeight) cut += (y - finalHeight) * step; else fill += (finalHeight - y) * step;
         }
         const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
-        check(attr(problemTag, "data-model-key") === "earthwork-leveling", `${label}: 흙 고르기 점·선분 모델이 아닙니다.`);
-        check(Number.isInteger(finalHeight) && normalize(generated.answer) === normalize(`${finalHeight}m`), `${label}: 전체 부피를 전체 밑면으로 나눈 높이가 다릅니다.`);
-        check(cutCrossSection === fillCrossSection && JSON.stringify(candidates) === JSON.stringify([finalHeight]), `${label}: 깎은 양과 채운 양이 같아지는 자연수 높이가 하나가 아닙니다.`);
-        check(generated.solution.includes(`높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${highDepth}m`) || generated.solution.startsWith(`높은 부분의 깊이는 ${highDepth}m로 주어졌습니다.`), `${label}: 높은 부분 깊이 근거가 없습니다.`);
-        check(generated.solution.includes(`${highDepth}×(${data.highStart}+${data.highEnd})÷2=${highCrossSection}m²`) && generated.solution.includes(`${data.lowDepth}×${data.lowHeight}=${lowCrossSection}m²`), `${label}: 사다리꼴·직사각형 단면 계산이 없습니다.`);
-        check(generated.solution.includes(`(${highCrossSection}+${lowCrossSection})÷${data.totalDepth}=${finalHeight}m`) && generated.solution.includes(`각각 ${cutCrossSection}m²로 같습니다`), `${label}: 부피 보존과 깎기·채우기 재검산이 없습니다.`);
+        check(attr(problemTag, "data-model-key") === "earthwork-leveling", `${label}: 흙 고르기 모델이 아닙니다.`);
+        check(slopeRun > 0 && Number.isInteger(finalHeight) && normalize(generated.answer) === normalize(`${finalHeight}m`), `${label}: 단면 넓이를 밑변으로 나눈 높이가 다릅니다.`);
+        check(Math.abs(cut - fill) < 1e-3, `${label}: 깎은 양과 채운 양이 같지 않습니다 (${cut}, ${fill}).`);
+        check(generated.solution.includes(`(${data.highHeight}+${data.lowHeight})×${slopeRun}÷2`) && generated.solution.includes(`${data.highTop}×${data.highHeight}=`) && generated.solution.includes(`${data.lowTop}×${data.lowHeight}=`), `${label}: 세 부분으로 나눈 단면 계산이 없습니다.`);
+        check(normalize(generated.solution).includes(normalize(`${crossSection * data.depth}÷(${data.width}×${data.depth})=${finalHeight}m`)), `${label}: 부피를 밑넓이로 나누는 계산이 없습니다.`);
         const roles = [
-          "earthwork-back-profile", "earthwork-high-top", "earthwork-low-top", "earthwork-cliff", "earthwork-end-face", "earthwork-front-profile",
-          "earthwork-total-depth-dimension", "earthwork-low-depth-dimension", "earthwork-high-start-height-dimension",
-          "earthwork-high-end-height-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"
+          "earthwork-front-profile", "earthwork-high-top", "earthwork-slope-face", "earthwork-low-top", "earthwork-side-face",
+          "earthwork-high-height-dimension", "earthwork-depth-dimension", "earthwork-high-top-dimension",
+          "earthwork-low-top-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"
         ];
         [generated.prompt, generated.answerVisual].forEach((markup, phaseIndex) => roles.forEach(role => check(markup.includes(`data-visual-element=\"${role}\"`), `${label}/${phaseIndex ? "답" : "문제"}: ${role}가 없습니다.`)));
         ["earthwork-cut-area", "earthwork-fill-area", "earthwork-final-level", "earthwork-answer-card"].forEach(role => check(generated.answerVisual.includes(`data-visual-element=\"${role}\"`), `${label}: 답 그림의 ${role}가 없습니다.`));
         check(!generated.prompt.includes("깎은 단면") && !generated.prompt.includes(`${finalHeight}m`), `${label}: 문제에 최종 높이 또는 재검산 값이 노출되었습니다.`);
-        if (difficulty === -1) {
-          check(promptText.includes(`높은 부분의 깊이는 ${highDepth}m`) && !promptText.includes(`전체 깊이가 ${data.totalDepth}m`), `${label}: 쉬움 문제에 계산된 높은 부분 깊이가 없습니다.`);
-          check(generated.solution.startsWith(`높은 부분의 깊이는 ${highDepth}m로 주어졌습니다.`), `${label}: 쉬움 풀이가 주어진 깊이부터 시작하지 않습니다.`);
-        } else if (difficulty === 0) {
-          check(promptText.includes(`폭이 ${data.width}m`) && promptText.includes(`전체 깊이가 ${data.totalDepth}m`) && promptText.includes(`낮은 부분은 깊이 ${data.lowDepth}m`), `${label}: 기준 문제가 원본의 폭·전체 깊이·낮은 부분 깊이를 보존하지 않습니다.`);
-          check(generated.solution.startsWith(`높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${highDepth}m입니다.`), `${label}: 기준 풀이가 깊이의 차부터 시작하지 않습니다.`);
-        } else {
-          check(promptText.includes("모든 부분의 폭은 같습니다") && !promptText.includes(`폭이 ${data.width}m`), `${label}: 어려움 문제가 공통 폭만 주고 수치를 숨기지 않습니다.`);
-          check(generated.solution.startsWith("폭은 모든 부분에서 같으므로 옆에서 본 단면 넓이를"), `${label}: 어려움 풀이가 공통 폭을 없애는 생각부터 시작하지 않습니다.`);
-        }
-        if (pool === 0) check(generated.answer === "14m" && highDepth === 24 && highCrossSection === 432 && lowCrossSection === 128 && cutCrossSection === 96, `${label}: 원본 20m·16m·8m·40m·16m 조건의 답과 재검산이 다릅니다.`);
+        const problemLabels = (generated.prompt.match(/<text[^>]*>([^<]*)<\/text>/g) || []).map(tag => tag.replace(/<[^>]+>/g, ""));
+        [`${data.highHeight}m`, `${data.depth}m`, `${data.highTop}m`, ...(difficulty === 1 ? [] : [`${data.lowTop}m`]), `${data.lowHeight}m`, `${data.width}m`].forEach(value => check(problemLabels.includes(value), `${label}: 문제 그림에 원문 치수 ${value}가 없습니다.`));
+        check(promptText.includes("흙이 쌓여 있습니다") && promptText.includes("나중에 만드는 흙의 높이는 몇 m입니까?"), `${label}: 원문 문장을 보존하지 않았습니다.`);
+        if (difficulty === -1) check(promptText.includes(`비스듬한 부분의 가로 길이는 ${slopeRun}m입니다.`), `${label}: 쉬움 문제의 비스듬한 부분 길이 안내가 없습니다.`);
+        else check(!promptText.includes("비스듬한 부분의 가로 길이는"), `${label}: 기준·어려움 문제에 쉬움 안내가 남았습니다.`);
+        if (difficulty === 1) check(promptText.includes("낮은 부분의 윗변의 길이는") && generated.solution.startsWith(`낮은 부분의 윗변은 ${data.highTop}+${data.lowTop - data.highTop}=${data.lowTop}m`), `${label}: 어려움 문제가 낮은 부분 윗변을 관계로 구하게 하지 않습니다.`);
+        else check(!promptText.includes("낮은 부분의 윗변의 길이는"), `${label}: 쉬움·기준 문제에 어려움 조건이 남았습니다.`);
+        if (pool === 0) check(generated.answer === "14m" && crossSection === 504 && slopeRun === 4, `${label}: 원본 36m·20m·16m·16m·8m·40m 조건의 답 14m와 단면 504m²가 아닙니다.`);
       } else if (kind === "example-4") {
         const [width, depth, height] = expected["example-4"][pool];
         const ropeA = 2 * (depth + height);
@@ -406,28 +406,30 @@ for (const sourceItemId of sourceIds) {
         if (pool === 0) check(paperArea === 200 && unit === 5 && width === 20 && depth === 15 && volume === 1500, `${label}: 원본 200cm²·5cm·20cm·15cm·1500cm³ 계약이 다릅니다.`);
       } else {
         const unit = expected["mission-3"][pool];
-        const depth = 5 * unit;
-        const layerVolumes = [1, 2, 3, 4, 5].map(layer => layer * unit * unit * depth);
-        const volumeByLayers = layerVolumes.reduce((sum, value) => sum + value, 0);
-        const volumeByPrism = 15 * unit * unit * depth;
-        const surfaceByFaces = 2 * 15 * unit * unit + 20 * unit * depth;
-        check(normalize(generated.answer) === normalize(`부피 ${volumeByLayers}cm³, 겉넓이 ${surfaceByFaces}cm²`), `${label}: 계단 부피·겉넓이 공식이 다릅니다.`);
-        check(volumeByLayers === volumeByPrism && surfaceByFaces === 130 * unit * unit, `${label}: 계단 두 방식 계산이 일치하지 않습니다.`);
-        layerVolumes.forEach(value => check(`${generated.solution}${generated.answerVisual}`.includes(String(value)), `${label}: 층별 부피 ${value} 근거가 없습니다.`));
-        ["stair-front-face", "stair-back-face", "stair-top-face", "stair-side-face", "stair-depth-edge", "unit-dimension", "width-dimension", "height-dimension", "depth-dimension"].forEach(role => check(generated.answerVisual.includes(`data-visual-element=\"${role}\"`), `${label}: ${role} 입체 요소가 없습니다.`));
-        check(generated.answerVisual.includes('data-visual-element="cross-section-perimeter-20-cells"') && generated.answerVisual.includes('data-cell-count="20"'), `${label}: 답 그림에 단면 바깥 둘레 20칸 강조가 없습니다.`);
+        // 독립 계산(2026-11-23 원문 복원, 인쇄 57쪽 Mission 3): 바닥 5×5칸 위에 원문 그림의 칸 높이를 쌓은 단위 정육면체를 직접 세어
+        // 부피(칸 수)와 겉넓이(드러난 면 수)를 구합니다. 앞→뒤 1·3·5·5·5칸, 왼쪽→오른쪽 5·5·5·4·2칸이고 각 칸은 둘 중 낮은 높이입니다.
+        const columnHeights = [[1, 3, 5, 5, 5], [1, 3, 5, 5, 5], [1, 3, 5, 5, 5], [1, 3, 4, 4, 4], [1, 2, 2, 2, 2]];
+        const cells = new Set();
+        columnHeights.forEach((row, x) => row.forEach((height, y) => { for (let z = 0; z < height; z += 1) cells.add(`${x},${y},${z}`); }));
+        let faces = 0;
+        cells.forEach(cell => {
+          const [x, y, z] = cell.split(",").map(Number);
+          [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].forEach(([dx, dy, dz]) => { if (!cells.has(`${x + dx},${y + dy},${z + dz}`)) faces += 1; });
+        });
+        const volume = cells.size * unit ** 3;
+        const surface = faces * unit ** 2;
+        check(normalize(generated.answer) === normalize(`겉넓이 ${surface}cm², 부피 ${volume}cm³`), `${label}: 단위 정육면체로 센 겉넓이·부피와 답이 다릅니다.`);
+        check(cells.size === 82 && faces === 130, `${label}: 원문 그림의 칸 수 82개·드러난 면 130개가 아닙니다.`);
+        ["stair-front-face", "stair-right-face", "stair-top-face", "stair-unit-dimension", "stair-side-dimension"].forEach(role => check((difficulty === 1 && role === "stair-unit-dimension" || generated.prompt.includes(`data-visual-element="${role}"`)) && generated.answerVisual.includes(`data-visual-element="${role}"`), `${label}: ${role} 입체 요소가 없습니다.`));
+        check(generated.answerVisual.includes('data-visual-element="answer-table"'), `${label}: 답 그림의 층별 계산표가 없습니다.`);
+        const problemLabels = (generated.prompt.match(/<text[^>]*>([^<]*)<\/text>/g) || []).map(tag => tag.replace(/<[^>]+>/g, ""));
+        check(problemLabels.filter(value => value === `${unit}cm`).length === (difficulty === 1 ? 0 : 9) && problemLabels.filter(value => value === `${5 * unit}cm`).length === 2, `${label}: 문제 그림의 치수(${unit}cm ${difficulty === 1 ? 0 : 9}개, ${5 * unit}cm 2개)가 설계와 다릅니다.`);
         const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
-        if (difficulty === -1) {
-          check(promptText.includes("앞면 칸 수는 차례로 1칸, 2칸, 3칸, 4칸, 5칸"), `${label}: 쉬움 문제에 앞면 칸 수가 없습니다.`);
-          check(generated.solution.startsWith("높이가 1층부터 5층인 다섯 부분의 앞면 칸 수가"), `${label}: 쉬움 풀이가 주어진 앞면 칸 수부터 시작하지 않습니다.`);
-        } else if (difficulty === 0) {
-          check(promptText.includes(`깊이가 ${depth}cm`) && promptText.includes(`${unit}cm씩 다섯 칸`), `${label}: 기준 문제의 실제 한 칸·깊이 조건이 없습니다.`);
-          check(generated.solution.startsWith("앞면을 살펴보면"), `${label}: 기준 풀이가 계단 앞면 읽기부터 시작하지 않습니다.`);
-        } else {
-          check(promptText.includes(`전체 가로 ${5 * unit}cm를 똑같이 5등분`) && promptText.includes("깊이는 전체 가로와 같습니다"), `${label}: 어려움 문제의 5등분·깊이 관계가 없습니다.`);
-          check(!promptText.includes(`한 칸 ${unit}cm`) && !promptText.includes(`깊이 ${depth}cm`), `${label}: 어려움 문제 그림에 한 칸·깊이 수가 직접 노출됩니다.`);
-          check(generated.solution.startsWith(`전체 가로 ${5 * unit}cm를 5등분했으므로 한 칸은 ${5 * unit}÷5=${unit}cm입니다. 깊이는 전체 가로와 같으므로 ${depth}cm입니다.`), `${label}: 어려움 풀이가 5등분과 깊이 관계로 먼저 값을 구하지 않습니다.`);
-        }
+        check(promptText.includes("이웃한 두 면이 모두 수직인 입체도형입니다") && promptText.includes("겉넓이와 부피를 각각 구하세요"), `${label}: 원문 문장을 보존하지 않았습니다.`);
+        if (difficulty === -1) check(promptText.includes(`각 층의 높이는 모두 ${unit}cm입니다.`), `${label}: 쉬움 문제의 층 높이 안내가 없습니다.`);
+        else check(!promptText.includes("각 층의 높이는 모두"), `${label}: 기준·어려움 문제에 쉬움 안내가 남았습니다.`);
+        if (difficulty === 1) check(promptText.includes(`바닥의 한 변 ${5 * unit}cm는 그 길이의 5배입니다.`) && generated.solution.startsWith(`계단 한 층의 높이와 한 칸의 너비는 ${5 * unit}÷5=${unit}cm입니다.`), `${label}: 어려움 문제가 한 칸 길이를 관계로 구하게 하지 않습니다.`);
+        if (pool === 0) check(volume === 82000 && surface === 13000, `${label}: 원본 답 겉넓이 13000cm²·부피 82000cm³가 아닙니다.`);
       }
     }
     check(seenPools.size === 3, `${sourceItemId}/difficulty${difficulty}: 3개 풀이 모두 생성되지 않았습니다.`);

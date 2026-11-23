@@ -23,9 +23,11 @@ on:
       - 'highschool-selection/scripts/stage-public-intro.cjs'
       - 'geometry/**'
       - 'hyper-focus/**'
+      - 'math-skill-map/public-recovery.html'
       - 'number_magic/**'
       - 'personality/**'
       - 'premier/**'
+      - 'programs/**'
       - 'promo/hwangso-last-month/**'
       - 'popcorn/**'
       - 'promo/popcorn-lab/**'
@@ -90,6 +92,9 @@ jobs:
           mkdir -p _site/hselementary
           mkdir -p _site/hsmiddle
           mkdir -p _site/geometry
+          # Publish only the verified recovered snapshot; preserve private/research source files.
+          mkdir -p _site/math-skill-map
+          cp math-skill-map/public-recovery.html _site/math-skill-map/index.html
           mkdir -p _site/number_magic
           mkdir -p _site/w
           mkdir -p _site/app
@@ -114,10 +119,10 @@ jobs:
           rm -f _site/hselementary/question-bank/stage-styles.cjs _site/hselementary/question-bank/stage-styles-audit.cjs _site/hselementary/question-bank/stage-scripts.cjs _site/hselementary/question-bank/stage-scripts-audit.cjs
           rm -rf _site/hselementary/question-bank/source-inventory
           rm -rf _site/hselementary/question-bank/tmp
-          find _site/hselementary/question-bank -maxdepth 1 -type f \( -name '*audit*.js' -o -name 'build-source-inventory*.js' -o -name '*.md' \) -delete
+          find _site/hselementary/question-bank -maxdepth 1 -type f \( -name '*audit*.js' -o -name '*audit*.py' -o -name 'build-source-inventory*.js' -o -name '*.md' \) -delete
           test ! -e _site/hselementary/question-bank/source-inventory
           test ! -e _site/hselementary/question-bank/tmp
-          test -z "$(find _site/hselementary/question-bank -maxdepth 1 -type f \( -name '*audit*.js' -o -name 'build-source-inventory*.js' -o -name '*.md' \) -print -quit)"
+          test -z "$(find _site/hselementary/question-bank -maxdepth 1 -type f \( -name '*audit*.js' -o -name '*audit*.py' -o -name 'build-source-inventory*.js' -o -name '*.md' \) -print -quit)"
           cp -R hsmiddle/. _site/hsmiddle/
           rm -rf _site/hsmiddle/question-bank/audits
           rm -f _site/hsmiddle/question-bank/data/source-page-fingerprints.json
@@ -143,6 +148,8 @@ jobs:
           test ! -e _site/premier/qa
           cp -R promo/hwangso-last-month/. _site/promo/hwangso-last-month/
           cp -R promo/popcorn-lab/. _site/promo/popcorn-lab/
+          mkdir -p _site/programs
+          cp -R programs/. _site/programs/
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
           # Keep the protected entry small and avoid 100+ ordered script requests.

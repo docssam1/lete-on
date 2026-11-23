@@ -2,7 +2,7 @@
    Numbers of Magic — 주간 학습지 펜으로 풀기 · 바로 채점 (app/pen-sheet.js, 2026-11-16)
    원장 「태블릿에서 펜으로 풀고 바로 채점되는 기능」 → 「주간 학습지 그대로」.
 
-   ws.html 위 막대의 「✏️ 펜으로 풀기」를 누르면 학습지 쪽마다 투명한 종이를 얹는다.
+   ws.html 위 막대의 「펜으로 풀기」를 누르면 학습지 쪽마다 투명한 종이를 얹는다.
      · 펜(애플 펜슬·S펜)이나 손가락으로 쓴다. 펜을 한 번이라도 쓰면 그다음부터 손가락·손바닥은 글씨로 안 친다
        (손바닥이 닿아 생기는 낙서를 막는다). 두 손가락은 언제나 화면 넘기기.
      · 쓴 것은 이 기기에 학습지마다 저장된다(localStorage). 아무 데도 보내지 않는다.
@@ -197,7 +197,7 @@ function readItem(pg, el, spec){
   const box = rectUnits(pg, el), mine = data.pages[pg.idx].filter(s => centerIn(s, box, 2));
   if(!mine.length) return { blank: true };
   const pts = s => s.p;
-  const boxes = [...el.querySelectorAll('.fbox')].map(b => grow(rectUnits(pg, b), 0.45));
+  const boxes = [...el.querySelectorAll('.fbox,.nm-w2-abox-big')].map(b => grow(rectUnits(pg, b), 0.45));
   let groups = null;
   if(boxes.length){
     const by = boxes.map(() => []);
@@ -313,8 +313,8 @@ function currentPage(){ let best = pages[0], bd = Infinity; const mid = innerHei
 function buildBar(){
   bar = document.createElement('div'); bar.className = 'nm-pen-bar'; bar.setAttribute('role', 'toolbar'); bar.setAttribute('aria-label', t('펜 도구', 'Pen tools', '笔工具'));
   const B = (id, label, title) => `<button type="button" data-pen="${id}" title="${title || label}">${label}</button>`;
-  bar.innerHTML = B('pen', t('✏️ 펜', '✏️ Pen', '✏️ 笔')) + B('erase', t('🧽 지우개', '🧽 Eraser', '🧽 橡皮')) + B('undo', '↶', t('되돌리기', 'Undo', '撤销'))
-    + B('clear', t('이 쪽 지우기', 'Clear page', '清空本页')) + `<button type="button" class="nm-pen-grade" data-pen="grade">${t('✅ 채점하기', '✅ Grade', '✅ 评分')}</button>` + B('off', t('펜 끄기', 'Pen off', '关闭笔'));
+  bar.innerHTML = B('pen', t('펜', 'Pen', '笔')) + B('erase', t('지우개', 'Eraser', '橡皮')) + B('undo', t('되돌리기', 'Undo', '撤销'))
+    + B('clear', t('이 쪽 지우기', 'Clear page', '清空本页')) + `<button type="button" class="nm-pen-grade" data-pen="grade">${t('채점하기', 'Grade', '评分')}</button>` + B('off', t('펜 끄기', 'Pen off', '关闭笔'));
   bar.onclick = e => {
     const b = e.target.closest('[data-pen]'); if(!b) return;
     const a = b.dataset.pen;
@@ -329,7 +329,7 @@ function buildBar(){
 function paintTools(){ if(bar) bar.querySelectorAll('[data-pen=pen],[data-pen=erase]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pen === tool))); }
 function setOn(v){
   on = !!v; document.body.classList.toggle('nm-pen-on', on);
-  const btn = document.getElementById('wsPen'); if(btn){ btn.setAttribute('aria-pressed', String(on)); btn.textContent = on ? t('✏️ 펜 끄기', '✏️ Pen off', '✏️ 关闭笔') : t('✏️ 펜으로 풀기', '✏️ Solve with pen', '✏️ 用笔作答'); }
+  const btn = document.getElementById('wsPen'); if(btn){ btn.setAttribute('aria-pressed', String(on)); btn.textContent = on ? t('펜 끄기', 'Pen off', '关闭笔') : t('펜으로 풀기', 'Solve with pen', '用笔作答'); }
   if(on && !pages.length){
     css();
     pages = [...document.querySelectorAll('body>.nm-print-sheet .nm-w2-page')].map(setupPage);
@@ -348,7 +348,7 @@ function mount(){
   if(!document.querySelector('body>.nm-print-sheet .nm-w2-page')) return;
   const host = document.getElementById('wsBar'); if(!host) return;
   const b = document.createElement('button'); b.type = 'button'; b.id = 'wsPen'; b.className = 'ws-pen'; b.setAttribute('aria-pressed', 'false');
-  b.textContent = t('✏️ 펜으로 풀기', '✏️ Solve with pen', '✏️ 用笔作答');
+  b.textContent = t('펜으로 풀기', 'Solve with pen', '用笔作答');
   b.onclick = () => setOn(!on);
   const print = document.getElementById('wsPrint'); host.insertBefore(b, print || null);
   // 이 학습지에 펜 글씨가 남아 있으면 바로 펜 화면으로

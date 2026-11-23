@@ -16,7 +16,7 @@ for(let variant=0;variant<3;variant++)for(let level=0;level<3;level++){
   assert.equal(q.clue?.hidden??null,level===0 ? counts[variant][1] : null);
   assert.equal(q.secondary?.answer??null,level===2 ? counts[variant][2] : null);
   if(level===2){assert(q.promptText.includes("(1)") && q.promptText.includes("(2)"));assert(q.secondary.question.startsWith("어느 한 면도 보이지 않는 쌓기나무 중 원래 입체의 3층 이상"));}
-  assert(q.promptText.includes("바닥부터 빈틈없이"));assert(q.promptText.includes("바닥에 닿은 면은 보이는"));
+  assert(q.promptText.startsWith("정육면체 모양의 쌓기나무를 그림과 같이 쌓았습니다."));assert(!q.promptText.includes("빈틈없이"));assert(q.promptText.includes("(단, 바닥에 닿은 면은 보이는 것으로 합니다.)"));if(level===1)assert.equal(q.promptText,"정육면체 모양의 쌓기나무를 그림과 같이 쌓았습니다. 어느 한 면도 보이지 않는 쌓기나무는 모두 몇 개인지 구하시오. (단, 바닥에 닿은 면은 보이는 것으로 합니다.)");assert(q.solutionText.includes("바닥부터 빈틈없이"));assert(q.promptText.includes("바닥에 닿은 면은 보이는"));
   assert.equal(q.difficultyDesign.empiricallyCalibrated,false);assert.equal(q.officialAnswerVerified,false);assert.equal(q.learnerReleaseVerified,false);
   questions++;
 }

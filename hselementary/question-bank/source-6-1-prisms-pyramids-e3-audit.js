@@ -29,28 +29,28 @@ const evidenceKinds = [
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
   [
-    { values: [22, 10, 20], answer: 20 },
     { values: [26, 12, 24], answer: 24 },
+    { values: [22, 10, 20], answer: 20 },
     { values: [30, 14, 28], answer: 28 }
   ],
   [
-    { values: [27, 12, 36, 24, 864], answer: 864 },
     { values: [29, 13, 39, 26, 1014], answer: 1014 },
+    { values: [27, 12, 36, 24, 864], answer: 864 },
     { values: [31, 14, 42, 28, 1176], answer: 1176 }
   ],
   [
-    { values: [300, 15, 19, 157], answer: 157 },
     { values: [330, 15, 21, 173], answer: 173 },
+    { values: [300, 15, 19, 157], answer: 157 },
     { values: [360, 15, 23, 189], answer: 189 }
   ],
   [
-    { values: [5, 5, 3, 5, 3, 3, 3, 35, 32, 3], answer: 3 },
     { values: [6, 6, 4, 6, 4, 4, 4, 44, 40, 4], answer: 4 },
+    { values: [5, 5, 3, 5, 3, 3, 3, 35, 32, 3], answer: 3 },
     { values: [7, 7, 5, 7, 5, 5, 5, 53, 48, 5], answer: 5 }
   ],
   [
-    { values: [6, 11, 136, 8, 96, 5], answer: 5 },
     { values: [8, 14, 220, 10, 160, 6], answer: 6 },
+    { values: [6, 11, 136, 8, 96, 5], answer: 5 },
     { values: [9, 17, 312, 12, 216, 8], answer: 8 }
   ]
 ];
@@ -170,10 +170,25 @@ function checkCommon(generated, sourceItemId, difficulty, expected) {
   return evidence;
 }
 
+// 보통 난이도 첫 문항(pool 0)은 원본 책 문장·수치와 같아야 합니다(끝맺음만 앱 말투).
+const bookPrompts = [
+  ["다음을 만족하는 각기둥과 밑면의 모양이 같은 각뿔의 모서리의 수를 구하세요.", "(면의 수)+(모서리의 수)-(꼭짓점의 수)=26"],
+  ["밑면의 모양이 같은 각기둥과 각뿔이 있습니다. 각기둥과 각뿔의 면의 수의 합이 29개일 때 각기둥과 각뿔의 모서리의 수의 곱은 얼마입니까?"],
+  ["그림은 각 모서리의 길이가 3m 30cm로 모두 같은 사각뿔입니다. 각 모서리에 15cm 간격으로 점을 찍으면 점은 모두 몇 개가 찍히겠습니까? (단, 각 꼭짓점에는 반드시 점을 찍습니다.)"],
+  ["재석이와 현재가 가, 나, 다 세 가지 모양의 종이를 다음과 같이 사용하여 입체도형을 만들었습니다. 만든 입체도형의 모든 모서리의 길이의 합은 누가 만든 것이 몇 cm 더 깁니까?"],
+  ["다음 그림과 같은 옆면으로 이루어진 각뿔의 모든 모서리의 길이의 합이 220cm입니다. 이 각뿔과 밑면의 크기와 모양이 같은 각기둥의 모든 모서리의 길이의 합과 같을 때, 각기둥의 높이를 구하세요."]
+];
+const bookAnswers = ["24개", "1014", "173개", "재석, 4cm", "6cm"];
+
 function checkVariant(variant, generated, evidence) {
   const prompt = String(generated.prompt);
   const answer = String(generated.answerVisual);
   const v = evidence.values;
+  if (generated.verifiedPoolIndex === 0) {
+    const text = visibleText(prompt);
+    for (const sentence of bookPrompts[variant]) check(text.includes(sentence), `첫 문항 문장이 원본과 다릅니다: ${sentence}`);
+    check(String(generated.answer) === bookAnswers[variant], `첫 문항 답 '${generated.answer}'이 원본 문항의 독립 계산 답 '${bookAnswers[variant]}'과 다릅니다.`);
+  }
   if (variant === 0) {
     const [, sides, result] = v;
     check(prompt.includes("각기둥") && prompt.includes("각뿔") && prompt.includes("밑면의 모양이 같음"), "문제 그림의 같은 밑면 관계 도식이 없습니다.");
@@ -243,6 +258,11 @@ function checkVariant(variant, generated, evidence) {
       check(countAttribute(markup, "data-solid-vertex", "triangular-prism") === 6 && countAttribute(markup, "data-solid-vertex", "square-pyramid") === 5, "두 입체의 실제 꼭짓점 수가 각각 6개와 5개가 아닙니다.");
     }
     check(answer.includes(`data-result-highlight="${result}"`) && answer.includes(`${prismEdges}-${pyramidEdges}=${result}cm`), "모서리 길이 차의 답 그림·식이 없습니다.");
+    // 재석: 가 2·나 2·다 1 → 삼각기둥, 현재: 가 4·다 1 → 사각뿔. 더 긴 사람을 따로 정합니다.
+    const longer = prismEdges > pyramidEdges ? "재석" : prismEdges < pyramidEdges ? "현재" : "";
+    check(longer !== "" && String(generated.answer) === `${longer}, ${result}cm`, "누가 몇 cm 더 긴지를 함께 답하지 않았습니다.");
+    check(prompt.includes('data-source61-e3-table="paper-usage"') && /<th>재석<\/th><td>2장<\/td><td>2장<\/td><td>1장<\/td>/.test(prompt) && /<th>현재<\/th><td>4장<\/td><td>0장<\/td><td>1장<\/td>/.test(prompt), "원본의 종이 사용표가 문제에 없습니다.");
+    check(!/삼각기둥|사각뿔/.test(visibleText(prompt.replace(/<p class="question-step"[\s\S]*?<\/p>/g, ""))), "원본에 없는 입체 이름(삼각기둥·사각뿔)이 문제에 있습니다.");
     return;
   }
   const [baseSide, lateralSide, totalEdgeLength, sides, prismBaseEdgesTotal, result] = v;

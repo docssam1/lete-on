@@ -86,6 +86,8 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       seen.add(generated.verifiedPoolIndex);
       const problemValues = valuesFrom(generated.prompt), answerValues = valuesFrom(generated.answerVisual);
       const problem = visiblePart(generated.prompt), answer = visiblePart(generated.answerVisual);
+      // 2026-11-23 원본 책 대조: Mission 2 그림 항목은 '소'(염소 아님), 문장은 원문대로
+      if (variant === 5 && (generated.prompt.includes("염소") || !generated.prompt.includes('data-segment-label="소"') || !problem.includes("말은 누구네 마을이 몇 마리 더 많이 기르는지 구하세요."))) failures.push(`${sourceIds[variant]}: 원문 항목 이름·문장과 다름`);
       if (problemValues.length) failures.push(`${sourceIds[variant]}: 문제 화면의 숨은 검사 값에 답 자료가 노출됨`);
       if (!answerValues.length) failures.push(`${sourceIds[variant]}: 답 화면의 독립 검산 자료 누락`);
       if (compact(generated.answer) !== compact(expectedAnswer(variant, answerValues))) failures.push(`${sourceIds[variant]}: 독립 답 불일치 ${generated.answer}/${expectedAnswer(variant, answerValues)}`);

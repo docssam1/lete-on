@@ -1,5 +1,7 @@
 "use strict";
 
+// 2026-11-23 사용자 결정 "원본대로 바꿔"로 공개 생성기(이름은 그대로)가 원문 문장·수치를 냅니다.
+// 원문에 없는 해석(93.6km는 물이 흐르지 않는 곳에서의 빠르기)은 문제에 넣지 않고 풀이 기준으로만 둡니다.
 const assert = require("node:assert/strict");
 global.window = {};
 require("./source-inventory-grade6.js");
@@ -12,14 +14,12 @@ const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-const candidateRecord = review.downstreamCandidateVerification;
-assert.equal(candidateRecord.sourceRelationship, "downstream-number-corrected-adaptation");
-assert.match(candidateRecord.userDecision, /Approved a number-adjusted downstream variant/);
-assert.match(candidateRecord.userDecision, /not an official answer/);
-assert.equal(candidateRecord.publicReleaseStatus, "verified-as-adaptation");
-assert(!type.reviewLocked && type.generatorKey === candidateRecord.generator, "조건 보정 유사문항만 공개");
-assert.equal(type.sourceRelationship, candidateRecord.sourceRelationship);
-const candidate = type;
+const record = review.sourceRestoration;
+assert.equal(record.sourceRelationship, "source-original-still-water-reading");
+assert.equal(record.publicReleaseStatus, "verified-as-source");
+assert.equal(review.downstreamCandidateVerification.publicReleaseStatus, "superseded-by-source-restoration");
+assert(!type.reviewLocked && type.generatorKey === record.generator, "원문 복원 생성기만 공개(생성기 이름 유지)");
+assert.equal(type.sourceRelationship, record.sourceRelationship);
 
 const hundredths = text => {
   const [whole, fraction = ""] = text.split(".");
@@ -32,53 +32,53 @@ const hourly = (distance, minutes) => {
   return scaled / minutes;
 };
 
-const sourceLike = window.HSE_GENERATORS.generate(candidate, 0, 0, 1, 0);
-assert(sourceLike.prompt.includes("1시간 48분 동안 93.6km"));
-assert(sourceLike.prompt.includes("1시간에 21.5km"));
-assert(sourceLike.prompt.includes("반대 방향으로 18km"));
-assert.equal(sourceLike.answer, "2시간");
+const source = window.HSE_GENERATORS.generate(type, 0, 0, 1, 0);
+assert.equal(source.prompt, "한 시간 동안 47.5km를 가는 빠르기로 흐르는 강이 있습니다. 일정한 빠르기로 1시간 48분 동안 93.6km를 가는 연어가 강물이 흐르는 반대 방향으로 18km를 가는 데 걸리는 시간을 구하세요.");
+assert(!source.prompt.includes("물이 흐르는 방향으로") && !source.prompt.includes("21.5"), "원문에 없는 방향·보정 수치 없음");
+assert.equal(source.answer, "4시간");
+assert(source.solution.startsWith("풀이 기준:"));
+// 물이 흐르는 방향으로 읽으면 거슬러 갈 수 없음을 따로 확인(풀이 기준을 쓴 이유)
+assert(hourly(hundredths("93.6"), 108n) - 2n * hundredths("47.5") < 0n);
 
 let checked = 0;
 for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant += 1) {
   const level = difficulty + 1;
   for (const seed of [1, 41]) {
-    const item = window.HSE_GENERATORS.generate(candidate, 0, difficulty, seed, variant);
-    const directDownstream = item.prompt.match(/물이 흐르는 방향으로 1시간에 ([\d.]+)km 갑니다/);
-    const measuredDownstream = item.prompt.match(/물이 흐르는 방향으로 (\d+)시간 (\d+)분 동안 ([\d.]+)km 갔습니다/);
-    const directCurrent = item.prompt.match(/강물은 1시간에 ([\d.]+)km 흐릅니다/);
-    const timedCurrent = item.prompt.match(/강물은 (\d+)분 동안 ([\d.]+)km 흐릅니다/);
-    const target = item.prompt.match(/반대 방향으로 ([\d.]+)km를 가는 데/);
-    assert.equal(Boolean(directDownstream), level === 0);
-    assert.equal(Boolean(measuredDownstream), level !== 0);
+    const item = window.HSE_GENERATORS.generate(type, 0, difficulty, seed, variant);
+    const directStill = item.prompt.match(/일정한 빠르기로 1시간 동안 ([\d.]+)km를 가는 연어가/);
+    const measuredStill = item.prompt.match(/일정한 빠르기로 (\d+)시간 (\d+)분 동안 ([\d.]+)km를 가는 연어가/);
+    const directCurrent = item.prompt.match(/한 시간 동안 ([\d.]+)km를 가는 빠르기로 흐르는 강/);
+    const timedCurrent = item.prompt.match(/(\d+)분 동안 ([\d.]+)km를 가는 빠르기로 흐르는 강/);
+    const target = item.prompt.match(/반대 방향으로 ([\d.]+)km를 가는 데 걸리는 시간을 구하세요\./);
+    assert.equal(Boolean(directStill), level === 0);
+    assert.equal(Boolean(measuredStill), level !== 0);
     assert.equal(Boolean(directCurrent), level !== 2);
     assert.equal(Boolean(timedCurrent), level === 2);
-    assert(target && item.prompt.includes("헤엄치는 빠르기를 바꾸지 않고 같은 강에서"));
-    const downstream = directDownstream ? hundredths(directDownstream[1])
-      : hourly(hundredths(measuredDownstream[3]), BigInt(measuredDownstream[1]) * 60n + BigInt(measuredDownstream[2]));
+    assert(target, "거슬러 갈 거리가 지문에 있음");
+    const still = directStill ? hundredths(directStill[1])
+      : hourly(hundredths(measuredStill[3]), BigInt(measuredStill[1]) * 60n + BigInt(measuredStill[2]));
     const current = directCurrent ? hundredths(directCurrent[1])
       : hourly(hundredths(timedCurrent[2]), BigInt(timedCurrent[1]));
-    const stillWater = downstream - current;
-    const upstream = stillWater - current;
+    const upstream = still - current;
     const distance = hundredths(target[1]);
-    assert(stillWater > current && upstream > 0n, "연어가 강을 거슬러 갈 수 있음");
-    assert.equal(distance % upstream, 0n, "상류 이동 시간이 정확히 정해짐");
+    assert(upstream > 0n && distance % upstream === 0n, "거슬러 갈 수 있고 시간이 정확히 정해짐");
     const expected = `${distance / upstream}시간`;
     assert.equal(item.answer, expected, "지문에서 독립 계산한 답과 일치");
-    assert(item.solution.includes(expected) && item.answerVisual.includes(expected));
-    assert(item.answerVisual.includes('data-source-relationship="downstream-number-corrected-adaptation"'));
-    assert(item.answerVisual.includes(`data-difficulty-design="${candidateRecord.difficultyDesign[level]}"`));
+    assert(item.solution.startsWith("풀이 기준:") && item.solution.includes(expected) && item.answerVisual.includes(expected));
+    assert(item.answerVisual.includes('data-source-relationship="source-original-still-water-reading"'));
+    assert(item.answerVisual.includes(`data-difficulty-design="${record.difficultyDesign[level]}"`));
     assert.equal(item.sourceItemId, sourceItemId);
     assert.equal(item.verifiedPoolIndex, variant);
     assert.equal(item.verifiedVariantCount, 3);
     checked += 1;
   }
   assert.deepEqual(
-    window.HSE_GENERATORS.generate(candidate, 0, difficulty, 1, variant),
-    window.HSE_GENERATORS.generate(candidate, 0, difficulty, 41, variant),
+    window.HSE_GENERATORS.generate(type, 0, difficulty, 1, variant),
+    window.HSE_GENERATORS.generate(type, 0, difficulty, 41, variant),
     "검증 묶음은 시드에 따라 바뀌지 않음"
   );
 }
 assert.equal(checked, 18);
-assert.deepEqual([0, 1, 2].map(variant => window.HSE_GENERATORS.generate(candidate, 0, 0, 1, variant).answer),
-  ["2시간", "3시간", "4시간"]);
-console.log(`6-2 Mission 3 하류 조건 보정 공개 문항: 3난이도 × 3문항 × 2시드 독립 계산 ${checked}회 통과`);
+assert.deepEqual([0, 1, 2].map(variant => window.HSE_GENERATORS.generate(type, 0, 0, 1, variant).answer),
+  ["4시간", "3시간", "5시간"]);
+console.log(`6-2 Mission 3 원문 복원 공개 문항: 3난이도 × 3문항 × 2시드 독립 계산 ${checked}회 통과`);

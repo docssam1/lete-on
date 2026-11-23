@@ -1,3 +1,7 @@
+/* 글꼴(2026-11-18, 원장 「폰트 좀 잘 구현해봐」): Pretendard를 CDN(굵기마다 따로 큰 파일, 끊기면 기기 기본 글꼴) 대신
+   저장소의 가변 글꼴 한 파일로 — 모든 굵기(650 같은 중간 굵기도)가 한 파일, 오프라인 앱에서도 같은 글꼴. 기기에 깔려 있으면 그것부터. */
+@font-face{font-family:'Pretendard';font-style:normal;font-weight:45 920;font-display:swap;
+  src:local('Pretendard Variable'),url('../assets/fonts/pretendard-var.woff2') format('woff2-variations'),url('../assets/fonts/pretendard-var.woff2') format('woff2')}
 .nm-placement{--pd-ink:#193b3c;--pd-accent:#27665b;--pd-paper:#fffdf8;max-width:850px;margin:0 auto;padding:24px 26px 60px;color:var(--pd-ink);font-family:Pretendard,system-ui,sans-serif;line-height:1.6;box-sizing:border-box;background:var(--pd-paper);border-radius:18px}
 .nm-placement *{box-sizing:border-box}.nm-placement button,.nm-placement input,.nm-placement select{font:inherit}.nm-placement button{cursor:pointer}.nm-placement button:disabled{opacity:.45;cursor:default}.nm-placement button:focus-visible,.nm-placement select:focus-visible,.nm-placement input:focus-visible{outline:3px solid #b07b30;outline-offset:3px}.pd-art{display:inline-flex;width:36px;height:36px;vertical-align:middle}.pd-art svg{width:100%;height:100%;display:block}.pd-tap .pd-art{width:42px;height:42px}
 .pd-flow{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #d9dfd9;padding-bottom:16px;font-size:13px;color:#637d78}.pd-flow [aria-current]{color:var(--pd-ink);font-weight:800}.pd-header{padding:26px 0 20px}.pd-header h1{font-size:clamp(27px,4vw,39px);font-weight:750;line-height:1.28;letter-spacing:-.035em;margin:10px 0 16px}.pd-header p{margin:0;max-width:610px;color:#526d68}.pd-kicker{font-size:12px;font-weight:750;letter-spacing:.1em}.pd-context{max-width:230px}.nm-placement label{display:block;font-size:14px;font-weight:650}.nm-placement select{width:100%;min-height:48px;border:1px solid #bccac3;border-radius:9px;background:#fff;color:var(--pd-ink);padding:10px 34px 10px 12px;margin-top:7px;text-overflow:ellipsis}
@@ -127,3 +131,93 @@
 
 /* 월별 계획 표: 좁은 휴대폰(320~360px)에서 3칸이 상자보다 넓어 오른쪽이 잘리던 것 — 칸 최소 폭을 풀어 글이 줄바꿈되게(2026-11-01) */
 @media(max-width:550px){.pd-calendar th,.pd-calendar td{min-width:0;padding:10px 6px}.pd-calendar-table{max-height:none}}
+/* 8세 이하 · 소마·필즈 반별 연산 진도 비교 그래프(2026-11-17, app/academy-compare.js) — 색은 이 화면의 초록 잉크 결에 맞추고, 반 줄만 주황 */
+.pd-compare{margin:22px 0;padding:18px 16px;border:1px solid #ced8d0;border-radius:12px;background:#fff}
+.pd-compare h3{font-size:17px;margin:0 0 6px}
+.ac-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.ac-group{font-size:12px;font-weight:700;color:#526d68;letter-spacing:.04em;margin-right:2px}
+.ac-group:not(:first-child){margin-left:8px}
+.ac-chip{min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid #ced8d0;background:#f5f6ef;color:#193b3c;font:inherit;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.ac-chip small{font-size:11px;font-weight:600;color:#7a6a52;background:#efe6d6;border-radius:999px;padding:1px 6px}
+.ac-chip[aria-pressed="true"]{background:#c4581d;border-color:#c4581d;color:#fff}
+.ac-chip[aria-pressed="true"] small{background:rgba(255,255,255,.22);color:#fff}
+.ac-chip:focus-visible,.ac-scroll:focus-visible{outline:3px solid #e9b26d;outline-offset:2px}
+.ac-say{margin:4px 0 12px;font-size:15.5px;line-height:1.65;color:#193b3c}
+.ac-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:#3c5552;margin:0 0 8px}
+.ac-legend span{display:inline-flex;align-items:center;gap:7px}
+.ac-key{display:inline-block;width:24px;border-top:3px solid #c4581d}
+.ac-key.kid{border-top-color:#1f7a55}.ac-key.kid.dash{border-top-style:dashed}.ac-key.other{border-top:2px solid #c5cfca}
+.ac-ring{display:inline-block;width:11px;height:11px;border-radius:50%;border:2px solid #193b3c}
+.ac-scroll{overflow-x:auto;border:1px solid #e1e7e2;border-radius:10px;background:#fbfcf9}
+.ac-svg{display:block}
+.ac-svg text{font-family:inherit;font-size:12px;fill:#193b3c}
+.ac-axis{fill:#526d68!important}.ac-axis.yr{font-weight:700;fill:#193b3c!important}
+.ac-grid{stroke:#e1e7e2;stroke-width:1}.ac-grid.yr{stroke:#b9c6bf}
+.ac-other{fill:none;stroke:#c5cfca;stroke-width:1.5;stroke-linejoin:round}
+.ac-class{fill:none;stroke:#c4581d;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.ac-class-dot{fill:#c4581d;stroke:#fff;stroke-width:2}
+.ac-tag{font-weight:700;font-size:11.5px!important;fill:#8e3f14!important;paint-order:stroke;stroke:#fbfcf9;stroke-width:4px}
+.ac-kid{fill:none;stroke:#1f7a55;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.ac-kid-dot{fill:#193b3c;stroke:#fff;stroke-width:2}
+.ac-meet{fill:#fff;stroke:#193b3c;stroke-width:2}
+.ac-today{stroke:#193b3c;stroke-width:1}.ac-today-t{font-weight:700}
+.ac-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0}
+.ac-two>div{border:1px solid #ced8d0;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;background:#f5f6ef}
+.ac-two span{font-size:14.5px;line-height:1.6;color:#3c5552}.ac-two span b{color:#193b3c}
+.ac-table>summary{min-height:44px;cursor:pointer;font-weight:700;display:flex;align-items:center}
+@media(max-width:550px){.pd-compare{padding:14px 12px}.ac-say{font-size:15px}}
+.ac-swipe{margin:0 0 6px;font-size:12.5px;color:#526d68;text-align:center}
+.ac-plot{position:relative}
+.ac-yaxis{position:absolute;left:1px;top:1px;background:linear-gradient(90deg,#fbfcf9 78%,rgba(251,252,249,0));border-radius:10px 0 0 10px;pointer-events:none}
+.ac-yaxis text{font-family:inherit;font-size:12px}
+
+/* 1분 계산 속도(2026-11-18, app/speed-check.js) */
+.nm-placement .pd-speed{margin:22px 0;padding:18px;border:1px solid #c7d6ca;border-radius:14px;background:#fff}
+.nm-placement .pd-speed h2{font-size:20px;margin:0 0 8px}
+.nm-placement .pd-speed p{margin:8px 0}
+.nm-placement .pd-speed-score{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px}
+.nm-placement .pd-speed-score b{font-size:44px;font-variant-numeric:tabular-nums;color:var(--pd-ink)}
+.nm-placement .pd-speed-score span{font-size:14px;color:#55756b}
+.nm-placement .pd-speed-score em{font-style:normal;font-weight:700;color:#426c5c;font-size:14px}
+.nm-placement .pd-speed-run{display:grid;justify-items:center;gap:10px;padding:10px 0}
+.nm-placement .pd-speed-ready{display:grid;gap:10px;width:min(320px,100%)}
+.nm-placement .pd-speed-top{display:flex;align-items:baseline;gap:6px;width:min(420px,100%);font-variant-numeric:tabular-nums}
+.nm-placement .pd-speed-top span,.nm-placement .pd-speed-top b{font-size:30px;font-weight:800}
+.nm-placement .pd-speed-top progress{flex:1;height:10px;margin:0 8px}
+.nm-placement .pd-speed-q{display:flex;align-items:center;justify-content:center;gap:14px;font-family:Fredoka,Pretendard,sans-serif;font-size:clamp(36px,9vw,56px);font-variant-numeric:tabular-nums;min-height:84px}
+.nm-placement .pd-speed-a{min-width:2.4ch;border-bottom:3px solid #a6bbad;text-align:center}
+.nm-placement .pd-speed-keys{grid-template-columns:repeat(3,76px);margin:6px auto}
+.nm-placement .pd-speed-keys button{height:56px;font-size:26px!important}
+/* 재는 동안은 안내 글·위 메뉴를 감춰 휴대폰에서도 자판이 한 화면에 들어오게 */
+.nm-placement[data-pd-view="speed"]:has(.pd-speed-keys) :is(.pd-flow,.pd-session-tools,.pd-header>p:not(.pd-kicker)){display:none}
+.nm-placement[data-pd-view="speed"]:has(.pd-speed-keys) .pd-header{padding:8px 0 4px}
+.nm-placement[data-pd-view="speed"]:has(.pd-speed-keys) .pd-header h1{font-size:22px}
+/* 기준 고르기(2026-11-18) — 창 하나에 한 질문. 고르면 다음 질문, 「이전 질문」으로 되돌림. 긴 양식은 「한 화면에서 모두 고르기」.
+   원장 「촌스러워」 → 조용하게: 질문은 굵기·자간으로만, 선택지는 테두리 없는 옅은 판, 강조는 진단 초록 하나. */
+.nm-placement .pd-ask{word-break:keep-all;overflow-wrap:anywhere;margin:16px 0 0;background:#fff;border:0;border-radius:24px;padding:20px 22px 24px;box-shadow:0 20px 50px -34px rgba(20,48,38,.5);display:flex;flex-direction:column;gap:16px}
+.nm-placement .pd-ask-top{display:flex;align-items:center;justify-content:space-between;min-height:28px}
+.nm-placement .pd-ask-back{border:0;background:none;color:#66756f;font:inherit;font-weight:600;font-size:14px;padding:4px 0;cursor:pointer}
+.nm-placement .pd-ask-back:hover{color:var(--pd-ink)}
+.nm-placement .pd-ask-step{font-size:13px;font-weight:600;color:#8a9893}
+.nm-placement .pd-ask-q{margin:2px 0 0;font-weight:700;font-size:clamp(21px,5.2vw,25px);line-height:1.38;letter-spacing:-.025em;color:var(--pd-ink);text-wrap:balance}
+.nm-placement .pd-talk-note{margin:-6px 0 0;font-size:14px;color:#66756f;line-height:1.6;letter-spacing:-.01em}
+.nm-placement .pd-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.nm-placement .pd-picks.long{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));max-height:min(54vh,480px);overflow-y:auto;padding:0 2px;margin:0 -2px}
+.nm-placement .pd-picks button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:56px;padding:13px 16px;border:0;border-radius:14px;background:#F1F4F2;color:var(--pd-ink);font:inherit;text-align:left;cursor:pointer;transition:background-color .12s}
+.nm-placement .pd-picks button b{font-weight:650;font-size:15.5px;line-height:1.35;letter-spacing:-.015em}
+.nm-placement .pd-picks button small{font-size:12.5px;font-weight:600;color:#66756f;line-height:1.3}
+.nm-placement .pd-picks button:hover{background:#E7ECE9}
+.nm-placement .pd-picks button:active{background:#DCE3DF}
+.nm-placement .pd-picks button.is-hint{box-shadow:inset 0 0 0 1.5px var(--pd-accent)}
+.nm-placement .pd-picks button:focus-visible,.nm-placement .pd-ask-back:focus-visible,.nm-placement .pd-form-mode:focus-visible{outline:2px solid var(--pd-accent);outline-offset:2px}
+.nm-placement .pd-ask #pdStart{margin:0;width:100%}
+.nm-placement .pd-talk-paper{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nm-placement .pd-talk-paper .pd-paper{display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;font-size:14px;border:0;background:#F1F4F2}
+.nm-placement .pd-ask .pd-error{margin:0;min-height:0}
+.nm-placement .pd-form-mode{display:block;margin:14px auto 0}
+@media(prefers-reduced-motion:reduce){.nm-placement .pd-picks button{transition:none}}
+@media(max-width:550px){
+  .nm-placement .pd-ask{padding:18px 16px 20px;border-radius:20px}
+  .nm-placement .pd-picks,.nm-placement .pd-picks.long{grid-template-columns:1fr}
+  .nm-placement .pd-talk-paper{grid-template-columns:1fr}
+}

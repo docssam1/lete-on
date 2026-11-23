@@ -25,6 +25,8 @@
     difficultyVerified: false, empiricallyCalibrated: false, independentMathReviewVerified: false });
   const constructionText = "맨 위층에 쌓기나무 한 개를 놓습니다. 아래로 한 층 내려갈 때마다 가로와 세로가 한 칸씩 늘어난 정사각형을 만들되, 그림에서 가장 앞쪽 모서리 한 칸에는 쌓기나무를 놓지 않습니다. 각 층의 뒤쪽 모서리는 맞추고 바닥부터 빈틈없이 쌓으며 그 밖에는 놓지 않습니다.";
   const visibilityText = "어느 방향에서든 바깥으로 드러난 면이 하나라도 있으면 보이는 쌓기나무이며 뒤쪽의 면도 포함합니다. 바닥에 닿은 면도 보이는 면으로 셉니다.";
+  // Book note of printed p.35 Mission 5, kept in "(단, …)" form for the source-level prompt.
+  const sourceGroundNote = "(단, 바닥에 닿은 면은 보이는 것으로 합니다.)";
   const conditionPolicy = freeze({ constructionText, visibilityText,
     explicitConstructionRequired: true, sourceConditionsClarified: true,
     sourceOnlyFutureAndVisibilityClarified: true, sourceUpperFourLayersPreserved: true,
@@ -83,5 +85,5 @@
     return freeze({ ...build(pools[variant]), variant, variantCount: pools.length });
   }
   return freeze({ build, solve, pools, sourceItemId, sourceRef, directions,
-    constructionText, visibilityText, conditionPolicy, viewConvention, verification, ...verification });
+    constructionText, visibilityText, sourceGroundNote, conditionPolicy, viewConvention, verification, ...verification });
 });

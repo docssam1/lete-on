@@ -18,8 +18,10 @@ const reviewedItems = [
   ...review.missions.filter(item => [1, 2, 3, 4, 6].some(number => item.sourceItemId.endsWith(`mission-${number}`))),
   ...exampleReview.items.filter(item => item.candidateVerification.publicReleaseStatus === "verified")
 ];
+// 2026-11-23 원문 복원(sourceRestoration)으로 공개된 항목은 그 생성기를 기준으로 본다.
 const candidateKeys = Object.fromEntries(reviewedItems.map(item => [item.sourceItemId,
-  item.downstreamCandidateVerification?.publicReleaseStatus === "verified-as-adaptation"
+  item.sourceRestoration?.publicReleaseStatus === "verified-as-source" ? item.sourceRestoration.generator
+  : item.downstreamCandidateVerification?.publicReleaseStatus === "verified-as-adaptation"
     ? item.downstreamCandidateVerification.generator : item.candidateVerification.generator]));
 const ids = process.env.HSE_AUDIT_IDS?.split(",").filter(Boolean) || Object.keys(candidateKeys);
 const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";

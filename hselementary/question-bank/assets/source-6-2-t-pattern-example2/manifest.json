@@ -5,8 +5,8 @@
       "file": "prefix-given.png",
       "width": 1600,
       "height": 523,
-      "sha256": "0c42dc90e398e621e6b1ff8e330b34c933dda417cdc7814beeeb964bcb17e0aa",
-      "byteLength": 169857
+      "sha256": "cc1ae1136037f461e7db357d0105d7eface7bb44b7c8bb6eb8c1c6c45f00e06f",
+      "byteLength": 168182
     }
   ],
   "renderer": "source-6-2-stack-renderer.mjs",
@@ -27,7 +27,8 @@
   "runtimeHashes": {
     "source-6-2-stack-renderer.mjs": "7da8f732c90242daa7281975ac40cdb37c446f561484fbdbd1256059598aabef",
     "source-6-2-stack-pattern-models.js": "f2b17a9146ca34534018d29e750413fa7da9c4ea57762c024b382bff989ed1bc",
-    "source-6-2-t-pattern-example2-render-models.js": "df79c330fa094d90cedabbb0bcad50666f2a290f86908dd0f735acfb2bf14d6f",
+    "source-6-2-t-pattern-example2-render-models.js": "d09422790d34e5eb060e0b85c44135eda1b6529bf37f2db9a88be34279489204",
     "source-6-2-t-pattern-example2-review.mjs": "6471af390fac756ae94a225fbaabe9f1496300582ee543f3e1667cf921d1a8a6"
-  }
+  },
+  "labels20261123": "그림 아래 이름표를 원문(34쪽)과 같이 '첫 번째, 두 번째, 세 번째'로 바꿨다. 쌓기나무 그림 부분은 이전 출력 그대로이고 이름표 띠만 다시 그렸다."
 }

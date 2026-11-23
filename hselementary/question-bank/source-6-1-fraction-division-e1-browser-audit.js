@@ -104,7 +104,9 @@ async function inspectView(page, selector, label, expectSolution) {
   }, { selected: selector, answerView: expectSolution });
   if (state.count !== 3 || state.visibleCount !== 3) fail(`${label}: 고정 묶음이 화면에 3문항으로 보이지 않습니다 (${state.count}/${state.visibleCount}).`);
   if (state.empty || state.pageOverflow || state.clipped || state.escaped || state.broken) fail(`${label}: 빈 내용·잘림·가로 넘침 또는 깨진 값이 있습니다.`);
-  if (state.mathBoards.some(count => count < 1)) fail(`${label}: 문제 또는 답의 시각 자료가 비었습니다.`);
+  // 2026-11-23 problem-hint-policy.js는 문제 문장에 이미 있는 수만 되풀이하는 조건 상자를 문제 화면에서 지웁니다.
+  // 원문 복원 뒤 문제 문장이 모든 조건을 담으므로 문제 화면의 상자는 선택이고, 답 화면의 상자만 필수로 봅니다.
+  if (expectSolution && state.mathBoards.some(count => count < 1)) fail(`${label}: 답의 시각 자료가 비었습니다.`);
   if (expectSolution && state.fractionCount.some(count => count < 1)) fail(`${label}: 답과 풀이의 분수가 공통 세로 분수로 표시되지 않았습니다.`);
   if (!expectSolution && state.problemAnswerLeak) fail(`${label}: 문제 화면에 답이나 풀이가 노출됩니다.`);
   if (expectSolution) {

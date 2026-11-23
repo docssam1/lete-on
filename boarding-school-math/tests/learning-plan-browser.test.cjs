@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 const test = require("node:test");
 const { chromium } = require("playwright");
 const sasmoCatalog = require("../competition/sasmo-mock-catalog.js");
@@ -70,7 +71,7 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   baseUrl = `http://127.0.0.1:${server.address().port}/boarding-school-math/learning-plan.html`;
-  browser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({ headless: true, executablePath: process.env.GFIELD_CHROME_EXECUTABLE || undefined });
 });
 test.after(async function () {
   if (browser) await browser.close();
@@ -82,14 +83,15 @@ test("learning plan connects goal, time budget, student materials, and teacher m
   const errors = errorsFor(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.match(await page.locator("h1").innerText(), /진단 결과로/);
+  assert.match(await page.locator("h1").innerText(), /목표와 시간을 적고/);
   assert.equal(await page.locator("body").getAttribute("data-audience"), "student");
   assert.equal(await page.locator("#student-workspace-link").getAttribute("aria-current"), "page");
-  assert.equal(await page.locator("#plan-state").innerText(), "진단 연결 전");
+  assert.equal(await page.locator("#plan-state").innerText(), "진단 결과 없음");
   assert.match(await page.locator("#prediction-title").innerText(), /진단 후/);
   assert.equal(await page.locator("#today-blocks li").count(), 5);
   assert.match(await page.locator("#today-minutes").innerText(), /45분/);
   assert.equal(await page.locator("#teacher-pack").isHidden(), true);
+  assert.equal(await page.locator("#paper-ox-panel").isHidden(), true);
   assert.equal(await page.locator("#teacher-grid").getByRole("link").count(), 0);
   assert.equal(await page.locator("#today-blocks a").count() >= 3, true);
   await page.locator("#goal-id").selectOption("sasmo-primary6");
@@ -98,6 +100,39 @@ test("learning plan connects goal, time budget, student materials, and teacher m
   assert.equal(await page.locator("#goal-program").innerText(), "SASMO Primary 6");
   assert.match(await page.locator("#today-minutes").innerText(), /60분/);
   assert.equal(await page.locator("#diagnostic-action").getAttribute("href"), "./sasmo-real-paper.html?audience=student");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("Grade 7 plan connects to the 7.NS.A workbook without inventing diagnosis or paper scores", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?goal=school-g7-nsa`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#goal-id").inputValue(), "school-g7-nsa");
+  assert.equal(await page.locator("#grade7-priorities").isVisible(), true);
+  assert.equal(await page.locator("#grade6-priorities").isVisible(), false);
+  assert.match(await page.locator("#priority-legend").innerText(), /학습할 개념/);
+  assert.match(await page.locator("#plan-state").innerText(), /진단 검수 중/);
+  assert.match(await page.locator("#plan-description").innerText(), /개인 진단과 결과 기반 수준 비교는 검수 중/);
+  assert.match(await page.locator("#prediction-label").innerText(), /진단 진행 상태/);
+  assert.match(await page.locator("#prediction-copy").innerText(), /성적·등급·경시 수준은 추정하지 않습니다/);
+  assert.equal(await page.locator(".roadmap-layout").isHidden(), true);
+  assert.equal(await page.locator("#paper-ox-panel").isHidden(), true);
+  assert.match(await page.locator("#loop-title").innerText(), /이유를 설명/);
+  assert.match(await page.locator("#loop-step-4-copy").innerText(), /개인 진단은 검수 중/);
+  assert.equal(await page.locator("#diagnostic-action").innerText(), "7.NS.A 학생용 워크북 열기");
+  assert.match(await page.locator("#diagnostic-action").getAttribute("href"), /unit-workbook\.html\?cluster=7\.NS\.A.*audience=student.*paper=A4/);
+  assert.match(await page.locator("#grade7-plan-notice").innerText(), /개인 진단과 결과 기반 수준 비교는 검수 중/);
+  assert.doesNotMatch(await page.locator("#today-blocks").innerText(), /약점 보완/);
+  const conceptHref = await page.locator("#today-blocks a").first().getAttribute("href");
+  assert.match(conceptHref, /unit-workbook\.html\?cluster=7\.NS\.A.*#unit-concepts/);
+  await page.locator('input[name="priority-g7"][value="rational-decimal"]').check();
+  await page.locator("#plan-form").evaluate(function (form) { form.requestSubmit(); });
+  assert.match(await page.locator("#today-description").innerText(), /선택한 학습 주제는 분수와 소수 표현입니다/);
+  await page.locator("#goal-id").selectOption("school-g6");
+  assert.equal(await page.locator("#grade6-priorities").isVisible(), true);
+  assert.equal(await page.locator("#grade7-priorities").isVisible(), false);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -113,8 +148,8 @@ test("learning plan stays readable at 390px and supports print styling", async f
       return { text: node.textContent.trim(), top: Math.round(rect.top), fits: node.scrollWidth <= node.clientWidth + 1 };
     });
   });
-  assert.deepEqual(headlineLines.map(function (line) { return line.text; }), ["진단 결과로", "오늘의 공부를", "설계합니다."]);
-  assert.equal(new Set(headlineLines.map(function (line) { return line.top; })).size, 3);
+  assert.deepEqual(headlineLines.map(function (line) { return line.text; }), ["목표와 시간을 적고", "계획을 확인하세요."]);
+  assert.equal(new Set(headlineLines.map(function (line) { return line.top; })).size, 2);
   headlineLines.forEach(function (line) { assert.equal(line.fits, true); });
   const targets = await page.locator("button,select,input,a").evaluateAll(function (nodes) {
     return nodes.filter(function (node) { return getComputedStyle(node).display !== "none"; }).map(function (node) {
@@ -124,8 +159,64 @@ test("learning plan stays readable at 390px and supports print styling", async f
   targets.filter(function (size) { return size[0] > 0; }).forEach(function (size) { assert.ok(size[1] >= 20); });
   await page.emulateMedia({ media: "print" });
   assert.equal(await page.locator(".plan-form").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.equal(await page.locator(".roadmap-stage").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.notEqual(await page.locator(".roadmap-analysis").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
   assert.deepEqual(errors, []);
   await page.close();
+});
+
+test("paper O/X drives a real 3D branch map without immediate acceleration and localizes by curriculum", async function () {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const errors = errorsFor(page);
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.waitForFunction(function () {
+    const canvas = document.getElementById("roadmap-canvas");
+    return canvas && canvas.width > 300 && canvas.height > 250;
+  });
+  assert.equal(await page.locator("#roadmap-fallback").isHidden(), true);
+  assert.equal(await page.locator("#roadmap-canvas").getAttribute("aria-hidden"), null);
+  assert.equal(await page.locator("#roadmap-interaction").isVisible(), true);
+  assert.equal(await page.locator("#paper-ox-grid .paper-mark").count(), 42);
+  assert.equal(await page.locator("#roadmap-branches .roadmap-branch").count(), 4);
+  assert.match(await page.locator("#roadmap-lock-state").innerText(), /잠금/);
+  assert.match(await page.locator("#roadmap-decision").innerText(), /먼저 2주 유지/);
+  const canvasShot = await page.locator("#roadmap-canvas").screenshot();
+  assert.ok(canvasShot.byteLength > 5000);
+  await page.locator("#roadmap-observations").selectOption("2");
+  assert.equal(await page.locator("#roadmap-retention").isEnabled(), true);
+  await page.locator("#roadmap-retention").check();
+  assert.match(await page.locator("#roadmap-lock-state").innerText(), /가능/);
+  await page.locator("#roadmap-locale").selectOption("en");
+  assert.equal(await page.locator("#roadmap-curriculum").innerText(), "U.S. Grade & Course Path");
+  assert.match(await page.locator("#roadmap-title").innerText(), /One score does not set the speed/);
+  assert.equal(await page.locator("#roadmap-curriculum-label").innerText(), "Curriculum path");
+  assert.doesNotMatch(await page.locator(".roadmap-section").innerText(), /소마|SOMA|Soma/u);
+  await page.locator("#roadmap-locale").selectOption("zh-Hans");
+  assert.equal(await page.locator("#roadmap-curriculum").innerText(), "新加坡数学课程");
+  assert.match(await page.locator("#roadmap-title").innerText(), /一次成绩不决定提速/);
+  assert.equal(await page.locator("#roadmap-curriculum-label").innerText(), "课程体系");
+  assert.doesNotMatch(await page.locator(".roadmap-section").innerText(), /소마|SOMA|Soma/u);
+  await page.locator("#goal-id").selectOption("sasmo-primary6");
+  await page.locator("#plan-form").evaluate(function (form) { form.requestSubmit(); });
+  assert.equal(await page.locator("#paper-ox-grid .paper-mark").count(), 25);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("local file preview keeps a readable path when browser blocks the 3D module", async function () {
+  const localUrl = pathToFileURL(path.join(root, "boarding-school-math", "learning-plan.html")).href;
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 } });
+    await page.goto(localUrl, { waitUntil: "load" });
+    assert.equal(await page.locator("#roadmap-fallback").isVisible(), true);
+    assert.match(await page.locator("#roadmap-fallback").innerText(), /이 순서로 확인/);
+    assert.deepEqual(await page.locator("#roadmap-fallback li").allInnerTexts(), ["현재", "안정화", "선택", "목표"]);
+    assert.equal(await page.locator("#roadmap-canvas").getAttribute("aria-hidden"), "true");
+    assert.equal(await page.locator("#roadmap-interaction").isHidden(), true);
+    assert.match(await page.locator(".roadmap-analysis").innerText(), /현재 학습량|현재/);
+    assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [width, width]);
+    await page.close();
+  }
 });
 
 test("teacher workspace changes the product focus and keeps its heading below the sticky mobile header", async function () {
@@ -134,12 +225,13 @@ test("teacher workspace changes the product focus and keeps its heading below th
   assert.equal(await page.locator("body").getAttribute("data-audience"), "teacher");
   assert.equal(await page.locator("#teacher-workspace-link").getAttribute("aria-current"), "page");
   assert.equal(await page.locator("#teacher-pack").isVisible(), true);
+  assert.equal(await page.locator("#paper-ox-panel").isVisible(), true);
   assert.equal(await page.locator("#teacher-grid").getByRole("link").count(), 4);
   assert.match(await page.locator("#teacher-grid a").nth(1).getAttribute("href"), /audience=teacher/);
   assert.match(await page.locator("#teacher-grid a").nth(3).getAttribute("href"), /mode=recheck/);
-  assert.match(await page.locator("#plan-audience-title").innerText(), /오늘의 수업/);
-  assert.deepEqual(await page.locator("#plan-audience-title .headline-line").allTextContents(), ["진단 근거로", "오늘의 수업을", "설계합니다."]);
-  assert.match(await page.locator("#plan-setup-title").innerText(), /학생의 수업 조건/);
+  assert.match(await page.locator("#plan-audience-title").innerText(), /수업 시간에 맞는/);
+  assert.deepEqual(await page.locator("#plan-audience-title .headline-line").allTextContents(), ["수업 시간에 맞는", "자료를 고르세요."]);
+  assert.match(await page.locator("#plan-setup-title").innerText(), /오늘 수업을 준비/);
   assert.equal(await page.locator("#teacher-pack").evaluate(function (node) {
     return node.compareDocumentPosition(document.querySelector(".today-section")) & Node.DOCUMENT_POSITION_FOLLOWING;
   }) > 0, true);
@@ -153,6 +245,23 @@ test("teacher workspace changes the product focus and keeps its heading below th
   await page.close();
 });
 
+test("Grade 7 teacher plan opens the teacher workbook and identifies the unreleased diagnostic", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?goal=school-g7-nsa&audience=teacher#teacher-pack`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#teacher-pack").isVisible(), true);
+  assert.match(await page.locator("#teacher-pack-state").innerText(), /7\.NS\.A/);
+  assert.equal(await page.locator("#teacher-grid a").count(), 4);
+  assert.match(await page.locator("#teacher-grid a").nth(0).getAttribute("href"), /audience=student.*#unit-concepts/);
+  assert.match(await page.locator("#teacher-grid a").nth(1).getAttribute("href"), /audience=teacher/);
+  assert.match(await page.locator("#teacher-grid a").nth(3).getAttribute("href"), /mode=recheck/);
+  assert.match(await page.locator("#plan-state").innerText(), /진단 검수 중/);
+  assert.equal(await page.locator("#diagnostic-action").innerText(), "7.NS.A 교사용 지도서 열기");
+  assert.match(await page.locator("#diagnostic-action").getAttribute("href"), /unit-workbook\.html\?cluster=7\.NS\.A.*audience=teacher.*paper=A4/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("saved synthetic SASMO type evidence is ignored by the source-first plan", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.addInitScript(function () {
@@ -161,7 +270,7 @@ test("saved synthetic SASMO type evidence is ignored by the source-first plan", 
     }));
   });
   await page.goto(`${baseUrl}?goal=sasmo-primary6`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#plan-state").innerText(), "진단 연결 전");
+  assert.equal(await page.locator("#plan-state").innerText(), "진단 결과 없음");
   assert.match(await page.locator("#prediction-title").innerText(), /진단 후 계산/);
   assert.equal(await page.locator("#diagnostic-action").getAttribute("href"), "./sasmo-real-paper.html?audience=student");
   assert.doesNotMatch(await page.locator("#plan-description").innerText(), /유형 점검/);
@@ -187,7 +296,7 @@ test("an older 2019 paper record retains its score but cannot prescribe an unrev
   assert.match(await page.locator("#prediction-copy").innerText(), /영역 판정 재검수 중/);
   assert.match(await page.locator("#today-description").innerText(), /검수 중인 영역 판정으로 확정한 약점이 아닙니다/);
   assert.equal(await page.locator("#priority-legend").innerText(), "영역 판정 전 직접 선택할 학습 영역");
-  assert.equal(await page.locator("#teacher-title").innerText(), "선택한 영역을 한 수업 세트로 엽니다.");
+  assert.equal(await page.locator("#teacher-title").innerText(), "선택한 영역의 수업 자료");
   assert.equal(await page.locator("#review-queue").isHidden(), true);
   await page.close();
 });

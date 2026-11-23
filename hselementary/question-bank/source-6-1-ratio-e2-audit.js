@@ -20,7 +20,7 @@ const expectedPools = [
   [[300, 64, 75, 48], [400, 70, 60, 42], [250, 72, 50, 36]],
   [[2, 4000, 5, 8250, 3, 10500, 5, 14560, 10, 17], [3, 6000, 4, 6800, 2, 5000, 6, 12750, 12, 15], [4, 7200, 5, 7650, 5, 12500, 10, 21000, 20, 16]],
   [[300, 20, 10, 5000, 12, 6000, 25], [400, 25, 20, 5000, 15, 10000, 20], [250, 40, 25, 5000, 15, 10000, 20]],
-  [[500, 14, 11, 20, 10, 48], [600, 3, 2, 25, 20, 48], [700, 4, 3, 10, 20, 50]],
+  [[500, 11, 14, 20, 10, 36], [600, 3, 2, 25, 20, 48], [700, 4, 3, 10, 20, 50]],
   [[4, 3, 8, 9.375], [5, 2, 5, 8], [2, 3, 5, 30]],
   [[700, 840, 1200, 1500, 20, 25, 5, 1], [800, 1000, 1500, 1770, 25, 18, 7, 0], [1200, 1380, 900, 1080, 15, 20, 5, 1]],
   [[40, 85, 60, 95, 37], [50, 80, 50, 90, 45], [30, 70, 70, 80, 35]],
@@ -143,6 +143,11 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (variant === 3 && !generated.answerVisual.includes("math-fraction")) fail(`${label}: 과일 가격 차의 분수 표시 누락`);
       if (variant === 5 && !generated.answerVisual.includes("math-fraction")) fail(`${label}: 이어진 비의 분수 표시 누락`);
       if (variant === 9 && values[5] !== 1 && !generated.answerVisual.includes("math-fraction")) fail(`${label}: 연필 가격 차의 분수 표시 누락`);
+      if (variant === 4) {
+        if (values[5] !== Number(generated.answer.replace("%", ""))) fail(`${label}: 고정 기대 백분율과 답이 다름`);
+        if (!promptVisible.includes("남학생 수에 대한 여학생 수의 비율은") || promptVisible.includes("여학생 수의 비는")) fail(`${label}: 원문(예제 2-4)의 '비율' 표현이 아님`);
+        if (poolIndex === 0 && (values[1] !== 11 || values[2] !== 14 || generated.answer !== "36%")) fail(`${label}: 원문 수치(여학생/남학생=14/11, 답 36%)와 다름`);
+      }
       if (variant === 6) {
         const firstRate = (values[1] - values[0]) / values[0] * 100;
         const secondRate = (values[3] - values[2]) / values[2] * 100;

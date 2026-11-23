@@ -46,6 +46,7 @@
       ctx.chooseMethod=false;ctx.onAttemptStart?.();
       // A new seed is needed even when a learner restarts within the same millisecond.
       fresh.seed=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+      if(d.speedRuns)fresh.speedRuns=d.speedRuns;
       Object.keys(d).forEach(key=>delete d[key]);Object.assign(d,fresh);redraw();
     };
     const restart=reset=>{
@@ -274,6 +275,7 @@
         if(history.length){const saved=document.createElement('details');saved.className='pd-check-history';saved.innerHTML='<summary>'+t('지난 성취도 점검 기록','Previous achievement checks','以往掌握情况检测记录')+'</summary><ul>'+history.slice(-6).reverse().map(x=>'<li>'+escape(new Date(x.at).toLocaleDateString(lang==='ko'?'ko-KR':lang==='zh'?'zh-CN':'en-US'))+' · '+escape(stageLabel(stages.find(stage=>stage.id===x.baselineId)||{id:'unknown',kind:'foundation',label:t('저장한 범위','Saved scope','已保存范围')}))+' · '+escape(x.bands.current.correct)+' / '+escape(x.bands.current.asked)+' · '+t(x.source==='paper-marks'?'보호자 ○·X 기록':'화면에서 직접 풂',x.source==='paper-marks'?'Parent-marked ○/X':'Answered on screen',x.source==='paper-marks'?'家长○/X记录':'屏幕直接作答')+'</li>').join('')+'</ul>';$('.pd-header').after(saved);}
       }
       $('#pdStart').textContent=t('화면에서 20문항 풀기','Answer 20 questions on screen','在屏幕上完成20题');
+      if(d.formMode){const back=document.createElement('button');back.type='button';back.className='pd-text-button pd-form-mode';back.textContent=t('하나씩 물어보며 고르기','Choose one question at a time','逐个问答选择');back.onclick=()=>{d.formMode=false;try{localStorage.setItem('nm_pd_form','0');}catch(_){}redraw();};$('.pd-header').after(back);}
       if(baseline){
         const print=document.createElement('details');print.id='pdPrintOptions';print.className='pd-print-options';print.innerHTML='<summary>'+t('종이로 풀기 · 인쇄와 채점','Use paper · print and mark','纸上作答 · 打印与评分')+'</summary><p class="pd-note">'+t('종이로 푼 답을 보호자가 답지와 비교해 ○·X로 기록해요. 화면에서 풀 때는 답을 직접 입력하면 됩니다.','A parent can compare paper answers with the key and mark ○/X. On screen, enter answers directly.','家长对照答案，将纸上作答结果标为○/X；在屏幕作答时直接输入答案。')+'</p>';$('#pdStart').after(print);const paperNote=$('#pdPaper').nextElementSibling;print.append($('#pdPaper'));if(paperNote?.classList.contains('pd-note'))print.append(paperNote);
         const answers=document.createElement('button');answers.type='button';answers.id='pdPaperAnswers';answers.className='pd-secondary pd-paper';
@@ -309,6 +311,112 @@
         catch(_){$('#pdSetupError').textContent=t('이 범위를 안전하게 구성하지 못했습니다. 출발점을 바꿔 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成此范围，请更改起点。');$('#pdStart').disabled=false;return false;}
       };
       $('#pdStart').onclick=()=>begin('question');
+      /* ── 대화형 기준 고르기(2026-11-18 원장 「박스로 길게 말고 대화형으로 하나씩 보여 주는 것 · 선택하도록」
+         「어디부터 시작할까요? 같은 말 쓰지 말고」 「너무 ai야」) — 위 양식과 같은 상태(s)를 하나씩 묻고 단추로 고른다.
+         긴 양식은 「한 화면에서 모두 고르기」(d.formMode)로 그대로 남는다. ── */
+      /* 고르는 방식은 이 기기에 기억한다(nm_pd_form = '1' 한 화면 양식 / '0' 대화형) */
+      if(d.formMode===undefined){try{d.formMode=localStorage.getItem('nm_pd_form')==='1';}catch(_){d.formMode=false;}}
+      if(!d.formMode)talk();
+      function talk(){
+        const done=[];let ask=null;
+        const levelNow=calendar.toLevel?calendar.toLevel(s,now):'';
+        const levelOpts=calendar.levelOptions(t);
+        if(!profileReady)ask={key:'level',q:t('아이는 지금 몇 살인가요? 학교에 다니면 학년을 골라 주세요.','How old is the child? Choose the grade if in school.','孩子现在几岁？上学的话请选年级。'),opts:levelOpts};
+        else done.push({key:'level',q:t('아이는 지금 몇 살인가요?','How old is the child?','孩子现在几岁？'),a:(levelOpts.find(x=>x[0]===levelNow)||[,''])[1]});
+        const ROUTES=[['age',t('배운 범위로 말할게요','I will say what was studied','按学过的范围说')],['book',t('끝낸 교재로 말할게요','I will name the finished book','按完成的教材说')],['unlearned',t('아직 안 배웠어요','Not learned yet','还没学过')]];
+        if(!ask&&!s.talkRoute)ask={key:'route',q:t('연산은 어디까지 해 봤나요?','How far has the child gone in arithmetic?','运算学到哪里了？'),opts:ROUTES};
+        else if(!ask)done.push({key:'route',q:t('연산은 어디까지 해 봤나요?','How far has the child gone in arithmetic?','运算学到哪里了？'),a:ROUTES.find(x=>x[0]===s.route)[1]});
+        const BANDS=[['foundation',t('수 세기·가르기 같은 유아 셈','Early number sense','幼儿数感')],['elementary',t('초등 연산','Elementary arithmetic','小学运算')],['middle',t('중학교 수학','Middle-school math','初中数学')],['high',t('고등학교 수학','High-school math','高中数学')]];
+        if(!ask&&s.route==='age'){
+          if(!s.talkBand)ask={key:'band',q:t('요즘 배우는 건 어느 쪽인가요?','What is being studied these days?','最近在学哪一类？'),opts:BANDS,current:s.studyBand};
+          else{done.push({key:'band',q:t('요즘 배우는 건 어느 쪽인가요?','What is being studied these days?','最近在学哪一类？'),a:BANDS.find(x=>x[0]===s.studyBand)[1]});
+            const inBand=stages.filter(x=>bandOf(x)===s.studyBand);
+            if(!s.talkStage)ask={key:'stage',q:t('그중 지금 배우고 있는 걸 골라 주세요.','Pick what is being studied now.','请选出现在正在学的内容。'),
+              note:gradeStage&&bandOf(gradeStage)===s.studyBand?t('학년에 맞는 곳에 표시해 두었어요.','The one for the current grade is marked.','已标出与年级相符的内容。'):'',
+              opts:inBand.map(x=>[x.id,stageLabel(x)]),current:candidate,long:true};
+            else done.push({key:'stage',q:t('그중 지금 배우고 있는 걸 골라 주세요.','Pick what is being studied now.','请选出现在正在学的内容。'),a:baseline?stageLabel(baseline):''});
+          }
+        }
+        if(!ask&&s.route==='book'&&books){
+          for(let i=0;i<s.completedBooks.length&&!ask;i++){
+            const row=s.completedBooks[i],n=s.completedBooks.length>1?' ('+(i+1)+')':'';
+            const qBook=i?t('또 어떤 교재를 했나요?','Which other book?','还学了哪本教材？'):t('어떤 연산 교재를 했나요?','Which arithmetic book?','学了哪本运算教材？');
+            if(!row.series){ask={key:'series:'+i,q:qBook,opts:books.series.map(b=>[b.id,l(b.label)])};break;}
+            done.push({key:'series:'+i,q:qBook,a:l((books.series.find(b=>b.id===row.series)||{}).label||row.series)+n});
+            const steps=books.getSteps(row.series,row.editionId);
+            const qStep=t('마지막으로 끝낸 권은 어디인가요?','Which volume was finished last?','最后完成的是哪一册？');
+            if(!row.step){
+              const opts=row.series==='dunoro'
+                ?steps.filter(st=>books.getBookCourses('dunoro',st.id).length).flatMap(st=>books.getBookCourses('dunoro',st.id).map(c=>['c'+c,t('과정','Course','课程')+' '+c]))
+                :steps.map(st=>[st.id,l(st.label)]);
+              ask={key:'step:'+i,q:qStep,opts,long:true};break;
+            }
+            const stepRow=steps.find(st=>st.id===row.step);
+            done.push({key:'step:'+i,q:qStep,a:row.series==='dunoro'&&row.bookCourseNumber?t('과정','Course','课程')+' '+row.bookCourseNumber:stepRow?l(stepRow.label):row.step});
+          }
+          if(!ask&&!s.talkBooksDone&&s.completedBooks.length<8)ask={key:'more',q:t('다른 연산 교재도 했나요?','Any other arithmetic book?','还学过其他运算教材吗？'),opts:[['no',t('아니요, 이게 다예요','No, that is all','没有了')],['yes',t('네, 더 있어요','Yes, another one','有，还有')]]};
+          else if(!ask&&s.talkBooksDone)done.push({key:'more',q:t('다른 연산 교재도 했나요?','Any other arithmetic book?','还学过其他运算教材吗？'),a:t('아니요, 이게 다예요','No, that is all','没有了')});
+          if(!ask&&booksReady&&bookSources.length>1){
+            const qf=t('이번 문제는 어느 교재에 맞출까요?','Which book should the questions follow?','这次题目按哪本教材出？');
+            const fo=(mayMix?[['all',t('함께 섞어서','Mix them','混合出题')]]:[]).concat(bookSources.map(x=>[x.key,x.label]));
+            if(!focus&&!s.baselineId)ask={key:'focus',q:qf,opts:fo};
+            else if(focus)done.push({key:'focus',q:qf,a:(fo.find(x=>x[0]===focus.key)||[,focus.label||''])[1]});
+          }
+          if(!ask&&booksReady&&!bookPlan&&!baseline)ask={key:'stage',q:t('끝낸 교재와 가장 가까운 걸 골라 주세요.','Pick the topic closest to the finished book.','请选出与完成教材最接近的内容。'),opts:stages.map(x=>[x.id,stageLabel(x)]),long:true};
+        }
+        /* 창 하나에 한 질문(원장 2026-11-18 「창에 한 질문씩 나와서 클릭할 수 있도록」) — 지난 답은 쌓지 않고 「이전 질문」으로 되돌린다. */
+        const last=done[done.length-1];
+        let html='<section class="pd-ask" aria-live="polite"><div class="pd-ask-top">'+(last?'<button type="button" class="pd-ask-back" data-undo="'+last.key+'">'+t('이전 질문','Previous question','上一题')+'</button>':'<span></span>')+
+          '<span class="pd-ask-step">'+t((done.length+1)+'번째 질문','Question '+(done.length+1),'第'+(done.length+1)+'题')+'</span></div>';
+        /* 단추 글 「과정 1 · 100까지의 수…」는 가운뎃점 앞을 작은 머리로 나눠 두 줄로(frontend-design: 가운뎃점 잇기는 흔한 생성 화면) */
+        const pickLabel=label=>{const m=String(label).match(/^(.{1,14}?) · (.+)$/);return m?'<small>'+escape(m[1])+'</small><b>'+escape(m[2])+'</b>':'<b>'+escape(label)+'</b>';};
+        if(ask){
+          html+='<h2 class="pd-ask-q">'+escape(ask.q)+'</h2>'+(ask.note?'<p class="pd-talk-note">'+escape(ask.note)+'</p>':'')+
+            '<div class="pd-picks'+(ask.long?' long':'')+'" role="group" aria-label="'+escape(ask.q)+'">'+ask.opts.map(o=>'<button type="button" data-pick="'+escape(ask.key)+'" data-val="'+escape(o[0])+'"'+(ask.current===o[0]?' class="is-hint"':'')+'>'+pickLabel(o[1])+'</button>').join('')+'</div>';
+        }else if(baseline){
+          const scopeShort=String(scopeText).replace(/ · /,' ');
+          html+='<h2 class="pd-ask-q">'+escape(achievement?t(scopeShort+' 범위로 20문제를 풀어요.','20 questions on '+scopeShort+'.','按'+scopeShort+'做20道题。'):t(scopeShort+'에 맞춰 20문제를 풀어요.','20 questions around '+scopeShort+'.','按'+scopeShort+'做20道题。'))+'</h2>'+
+            '<p class="pd-talk-note">'+(achievement?'':t('쉬운 문제 6개, 지금 배우는 문제 10개, 다음 문제 4개예요. ','6 easier, 10 current, 4 next. ','简单6道、当前10道、后续4道。'))+t('어린아이는 문제를 읽어 줘도 돼요. 답이나 세는 방법만 알려 주지 마세요.','You may read the questions aloud; just do not hint at the answer.','可以为幼儿读题，但不要提示答案或数法。')+'</p>'+
+            '<p id="pdSetupError" class="pd-error" role="alert"></p><button class="pd-primary" id="pdStart">'+t('화면에서 풀기','Answer on screen','在屏幕上作答')+'</button>'+
+            '<div class="pd-talk-paper"><a class="pd-secondary pd-paper" id="pdPaper" href="placement-sheet.html?'+escape(paperQuery)+'" target="_blank" rel="noopener">'+t('종이로 인쇄해서 풀기','Print and solve on paper','打印后在纸上作答')+'</a><button type="button" class="pd-secondary pd-paper" id="pdPaperAnswers">'+t('종이로 푼 답 ○·X 체크','Mark paper answers ○/X','勾选纸上答案○/X')+'</button></div>';
+        }else html+='<h2 class="pd-ask-q">'+escape(setupHint||t('조금만 더 알려 주세요.','Tell us a little more.','请再告诉我们一些。'))+'</h2><p id="pdSetupError" class="pd-error" role="alert"></p><button class="pd-primary" id="pdStart" disabled>'+t('화면에서 풀기','Answer on screen','在屏幕上作答')+'</button>';
+        html+='</section><button type="button" class="pd-text-button pd-form-mode" id="pdFormMode">'+t('한 화면에서 모두 고르기','Choose everything on one page','在一页中全部选择')+'</button>';
+        const keepPurposes=$('.pd-purposes');
+        shell(t('학습 시작점 찾기','Find your starting point','找到学习起点'),html,'setup');
+        if(keepPurposes){const top=$('.pd-ask');top.before(keepPurposes);all('[data-purpose]').forEach(button=>button.onclick=()=>{d.purpose=button.dataset.purpose;redraw();});}
+        $('#pdFormMode').onclick=()=>{d.formMode=true;try{localStorage.setItem('nm_pd_form','1');}catch(_){}redraw();};
+        if($('#pdStart'))$('#pdStart').onclick=()=>begin('question');
+        if($('#pdPaper'))$('#pdPaper').onclick=e=>{if(!begin('paper'))e.preventDefault();};
+        if($('#pdPaperAnswers'))$('#pdPaperAnswers').onclick=()=>begin('paper');
+        const resetRow=row=>{row.series='';row.step='';row.bookCourseNumber=null;row.editionId='';row.bookStatus='';};
+        all('[data-pick]').forEach(b=>b.onclick=()=>{
+          const key=b.dataset.pick,v=b.dataset.val;
+          if(key==='level'){const p=calendar.fromLevel(v,now);if(p)Object.assign(s,p);s.gradeInferred=false;if(!s.baselineId&&s.scopeSource!=='manual')s.studyBand='';}
+          else if(key==='route'){s.route=v;s.talkRoute=true;s.baselineId='';s.scopeSource='';s.talkBand=false;s.talkStage=false;s.talkBooksDone=false;}
+          else if(key==='band'){s.studyBand=v;s.talkBand=true;s.talkStage=false;s.baselineId='';s.scopeSource='manual';}
+          else if(key==='stage'){s.baselineId=v;s.scopeSource='manual';s.talkStage=true;}
+          else if(key.startsWith('series:')){const row=s.completedBooks[+key.slice(7)];resetRow(row);row.series=v;row.editionId=/^soma-[pkabcd]$/.test(v)?'2019':'';s.baselineId='';s.bookFocus='';}
+          else if(key.startsWith('step:')){const row=s.completedBooks[+key.slice(5)];
+            if(row.series==='dunoro'){const n=Number(v.slice(1)),st=books.getSteps('dunoro').find(x=>books.getBookCourses('dunoro',x.id).includes(n));row.step=st?st.id:'';row.bookCourseNumber=st?n:null;}
+            else{row.step=v;row.bookCourseNumber=null;}
+            row.bookStatus=row.step?'completed':'';s.baselineId='';s.bookFocus='';}
+          else if(key==='more'){if(v==='yes')s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});else s.talkBooksDone=true;}
+          else if(key==='focus'){s.bookFocus=v;s.baselineId='';}
+          redraw();
+        });
+        all('[data-undo]').forEach(b=>b.onclick=()=>{
+          const key=b.dataset.undo;
+          if(key==='level'){s.age='';s.birthYear=null;s.profileGrade='';s.entryYear=null;s.profileAt=null;}
+          else if(key==='route'){s.talkRoute=false;}
+          else if(key==='band'){s.talkBand=false;s.talkStage=false;s.baselineId='';}
+          else if(key==='stage'){s.talkStage=false;s.baselineId='';}
+          else if(key.startsWith('series:')){const i=+key.slice(7);if(i>0)s.completedBooks.splice(i,1);else resetRow(s.completedBooks[0]);s.talkBooksDone=false;s.baselineId='';s.bookFocus='';}
+          else if(key.startsWith('step:')){const row=s.completedBooks[+key.slice(5)];row.step='';row.bookCourseNumber=null;row.bookStatus='';s.talkBooksDone=false;s.baselineId='';s.bookFocus='';}
+          else if(key==='more'){s.talkBooksDone=false;}
+          else if(key==='focus'){s.bookFocus='';s.baselineId='';}
+          redraw();
+        });
+      }
     }
     const tokens = (n,symbol='●') => `<div class="pd-objects" aria-label="${escape(t('수량 그림','Quantity picture','数量图'))}">${Array.from({length:n},()=>`<span class="pd-object${symbol==='●'?' pd-orb':''}" aria-hidden="true">${symbol==='●'?'':art(symbol)}</span>`).join('')}</div>`;
     function question() {
@@ -384,6 +492,87 @@
       window.NM_PAPER_MARKS.render({root,state:d,lang,shell,save:ctx.save,
         onOnline:()=>{d.phase='question';d.questionStartedAt=Date.now();redraw();},
         onSubmit:()=>{ctx.onResult(d.result,d);redraw();}});
+    }
+    /* ── 1분 계산 속도(2026-11-18, app/speed-check.js) — 진도는 바꾸지 않고 기록만 남긴다 ── */
+    const SC=window.NM_SPEED_CHECK;
+    const speedHistory=()=>{const h=typeof ctx.speedHistory==='function'?ctx.speedHistory():d.speedRuns;return Array.isArray(h)?h:[];};
+    const speedSetFor=()=>{if(!SC||!d.result)return null;const p=paths&&paths.recommend(d.plan,d.result,d.selection);return p&&p.main?SC.setFor(p.main.course):null;};
+    /* 진행 중인 1분은 d.speedLive 에 둔다 — 앱이 화면을 다시 그려도(render) 같은 문제·같은 남은 시간으로 이어진다. */
+    const stopSpeedTimer=()=>{clearInterval(window.__nmSpeedTimer);window.__nmSpeedTimer=null;if(document.onkeydown&&document.onkeydown.__nmSpeed)document.onkeydown=null;};
+    function speed(){
+      const set=speedSetFor();
+      stopSpeedTimer();
+      if(!set){delete d.speedLive;d.phase='result';redraw();return;}
+      const name=l(SC.SETS[set]),live=d.speedLive&&d.speedLive.set===set?d.speedLive:null;
+      const back=()=>{stopSpeedTimer();delete d.speedLive;d.phase='result';redraw();};
+      const finish=()=>{
+        stopSpeedTimer();const run=d.speedLive;delete d.speedLive;
+        if(run){const rec=Object.assign(SC.summarize(run.set,run.log,SC.SECONDS),{at:Date.now(),course:run.course||null});
+          if(typeof ctx.onSpeed==='function')ctx.onSpeed(rec);else d.speedRuns=(d.speedRuns||[]).concat(rec).slice(-12);}
+        d.speedJust=true;d.phase='result';redraw();
+      };
+      if(live&&Date.now()>=live.end){finish();return;}
+      shell(t('1분 계산 속도','1-minute speed check','1分钟计算速度'),`<header class="pd-header"><p class="pd-kicker">${t('1분 계산 속도','1-minute speed check','1分钟计算速度')}</p><h1>${escape(name)}</h1><p>${t('1분 동안 할 수 있는 만큼 풀어요. 답을 다 쓰면 바로 다음 문제로 넘어가요. 틀려도 멈추지 말고 계속 풀어요.','Solve as many as you can in one minute. When the answer is written, the next problem appears. Keep going even after a mistake.','1分钟内尽量多做。写完答案自动进入下一题，做错也继续。')}</p></header>
+        <section class="pd-speed-run" id="pdSpeedRun"></section>`,'speed');
+      const box=$('#pdSpeedRun');
+      if(!live){
+        box.innerHTML=`<div class="pd-speed-ready"><button type="button" class="pd-primary" id="pdSpeedGo">${t('시작','Start','开始')}</button><button type="button" class="pd-text-button" id="pdSpeedBack">${t('결과로 돌아가기','Back to results','返回结果')}</button></div>`;
+        $('#pdSpeedBack').onclick=back;
+        $('#pdSpeedGo').onclick=()=>{
+          const seed=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6),now=Date.now(),p=paths&&paths.recommend(d.plan,d.result,d.selection);
+          d.speedLive={set,list:SC.make(set,seed,90),i:0,log:[],typed:'',start:now,end:now+SC.SECONDS*1000,shown:now,course:p&&p.main?p.main.course:null};
+          speed();
+        };
+        return;
+      }
+      const keys=['1','2','3','4','5','6','7','8','9',set==='integer'?'−':'','0','⌫'];
+      box.innerHTML=`<div class="pd-speed-top"><span id="pdSpeedLeft"></span><small>${t('초','sec','秒')}</small><progress id="pdSpeedBar" max="${SC.SECONDS}" value="${SC.SECONDS}"></progress><b id="pdSpeedCount"></b><small>${t('개','solved','题')}</small></div>
+        <div class="pd-speed-q" aria-live="polite"><span id="pdSpeedQ"></span><span>=</span><output id="pdSpeedA" class="pd-speed-a"></output></div>
+        <div class="pd-keypad pd-speed-keys">${keys.map(k=>k?`<button type="button" data-skey="${k}">${k}</button>`:'<span></span>').join('')}</div>
+        <button type="button" class="pd-text-button" id="pdSpeedStop">${t('그만하기 · 기록 안 남김','Stop · do not save','停止 · 不保存')}</button>`;
+      const correctCount=()=>live.log.filter(x=>String(x.v).replace(/−/g,'-')===String(x.a)).length;
+      const paint=()=>{const q=live.list[live.i];$('#pdSpeedQ').textContent=q?q.q:'';$('#pdSpeedA').textContent=live.typed;$('#pdSpeedCount').textContent=String(correctCount());
+        const left=Math.max(0,Math.ceil((live.end-Date.now())/1000));$('#pdSpeedLeft').textContent=String(left);$('#pdSpeedBar').value=left;};
+      const press=k=>{
+        if(d.speedLive!==live||Date.now()>=live.end)return;
+        if(k==='⌫')live.typed=live.typed.slice(0,-1);
+        else if(k==='−'||k==='-')live.typed=live.typed.startsWith('−')?live.typed.slice(1):'−'+live.typed;
+        else if(/^\d$/.test(k))live.typed+=k;
+        else return;
+        const q=live.list[live.i],want=SC.answerText(q.a);
+        if(live.typed.replace(/^−/,'').length&&live.typed.length>=want.length){
+          live.log.push({q:q.q,a:q.a,v:live.typed,ms:Date.now()-live.shown});
+          live.i++;live.typed='';live.shown=Date.now();
+          if(live.i>=live.list.length)live.list=live.list.concat(SC.make(set,live.start+'-'+live.i,60)); /* 1분 안에 다 풀면 더 만든다 */
+        }
+        paint();
+      };
+      all('[data-skey]').forEach(b=>b.onclick=()=>press(b.dataset.skey));
+      const onKey=e=>{if(d.phase!=='speed'||d.speedLive!==live){stopSpeedTimer();return;}if(/^\d$/.test(e.key)||e.key==='Backspace'||e.key==='-'){e.preventDefault();press(e.key==='Backspace'?'⌫':e.key);}};
+      onKey.__nmSpeed=true;document.onkeydown=onKey;
+      $('#pdSpeedStop').onclick=back;
+      paint();
+      window.__nmSpeedTimer=setInterval(()=>{if(d.speedLive!==live||!$('#pdSpeedLeft')){clearInterval(window.__nmSpeedTimer);return;}if(Date.now()>=live.end){finish();return;}paint();},200);
+    }
+    function speedCard(rec,result){
+      const set=speedSetFor();if(!set)return null;
+      const runs=speedHistory().filter(x=>x&&x.set===set),last=runs[runs.length-1],prev=runs[runs.length-2];
+      const pace=SC.itemPace(result.profile),bandName={previous:t('이전','Earlier','此前'),current:t('선택한 범위','Selected scope','所选范围'),next:t('다음','Next','后续')};
+      const paceLine=Object.keys(bandName).filter(b=>pace[b]).map(b=>bandName[b]+' '+pace[b].median+t('초','s','秒')).join(' · ');
+      const box=document.createElement('section');box.className='pd-speed';box.id='pdSpeed';
+      const date=x=>new Date(x.at).toLocaleDateString(lang==='ko'?'ko-KR':lang==='zh'?'zh-CN':'en-US');
+      box.innerHTML=`<h2>${t('계산 속도','Calculation speed','计算速度')}</h2>`+
+        (paceLine?`<p class="pd-note">${t('20문항에서 맞힌 문제를 푸는 데 보통 걸린 시간','Typical time on correctly answered questions','20题中答对题目的一般用时')}: ${escape(paceLine)}</p>`:'')+
+        (last?`<div class="pd-speed-score"><b>${last.correct}</b><span>${t('1분에 맞힌 개수','correct in 1 minute','1分钟答对')}</span>${prev?`<em>${t('지난번','Last time','上次')} ${prev.correct}${t('개','','题')} → ${last.correct-prev.correct>=0?'+':''}${last.correct-prev.correct}</em>`:''}</div>
+          <p>${escape(l(SC.SETS[set]))} · ${t('푼 문제','Attempted','做题')} ${last.attempted} · ${t('정확도','Accuracy','正确率')} ${last.accuracy}% ${last.medianSec!=null?' · '+t('한 문제 보통','Typical per problem','每题一般')+' '+last.medianSec+t('초','s','秒'):''}</p>
+          ${last.slow.length?`<p class="pd-note">${t('오래 걸린 셈','Slowest','用时最长')}: ${last.slow.map(x=>escape(x.q)+' = '+x.a+' ('+x.sec+t('초','s','秒')+')').join(' · ')}</p>`:''}
+          ${last.wrong.length?`<p class="pd-note">${t('틀린 셈','Mistakes','做错')}: ${last.wrong.slice(0,6).map(x=>escape(x.q)+' = '+x.a).join(' · ')}</p>`:''}
+          ${runs.length>1?`<p class="pd-note">${t('기록','History','记录')}: ${runs.slice(-5).map(x=>date(x)+' '+x.correct+t('개','','题')).join(' · ')}</p>`:''}`
+        :`<p>${t('진단 결과에 맞는 기본 셈 「','Solve the basic facts “','按测评结果，做1分钟基础计算「')}${escape(l(SC.SETS[set]))}${t('」'+(((l(SC.SETS[set]).slice(-1).charCodeAt(0)-0xac00)%28)?'을':'를')+' 1분 동안 풀어, 아는 계산이 손에 붙었는지 봐요.','” for one minute to see how automatic they are.','」，看看已会的计算是否熟练。')}</p>`)+
+        `<button type="button" class="pd-secondary" id="pdSpeedOpen">${last?t('다시 재기 · 1분','Measure again · 1 min','再测一次 · 1分钟'):t('1분 계산 속도 재기','Start the 1-minute check','开始1分钟速度测试')}</button>
+        <p class="pd-note">${t('속도는 진도를 바꾸지 않아요. 몇 주 뒤 같은 셈으로 다시 재면 손에 붙는 정도를 견줄 수 있어요.','Speed does not change the starting course. Measure again in a few weeks to compare.','速度不改变学习进度。几周后用同样的计算再测，可以比较熟练程度。')}</p>`;
+      box.querySelector('#pdSpeedOpen').onclick=()=>{d.phase='speed';redraw();};
+      return box;
     }
     function result() {
       if (!paths) { shell(t('학습 경로 확인','Study pathway','学习路径'),`<p role="alert">${t('학습 경로 자료를 불러오지 못했습니다. 새로고침해 주세요.','Study pathway data could not be loaded. Please reload.','未能加载学习路径资料，请刷新。')}</p>`, 'result');return; }
@@ -461,11 +650,12 @@
       $('#pdRoad').textContent=t('로드맵에서 본진도 보기','See main study on the roadmap','在路线图查看主要进度');
       $('#pdAgain').textContent=t('다시 시험보기','Take again','重新测评');
       $('#pdRoad').onclick=()=>ctx.seeCourse(rec.course);$('#pdPick').onclick=ctx.pick;$('#pdAgain').onclick=()=>restart(false);
+      if(SC&&d.responseSource!=='paper-marks'){const card=speedCard(rec,result);if(card){$('.pd-bands').after(card);if(d.speedJust){d.speedJust=false;card.scrollIntoView({block:'start'});}}}
     }
     if(ctx.chooseMethod&&d.plan&&['question','paper'].includes(d.phase)){
       shell(t('시험 이어하기','Continue assessment','继续测评'),'<header class="pd-header"><h1>'+t('어떻게 풀까요?','How would you like to answer?','选择作答方式')+'</h1><p>'+t('이전에 열었던 시험이 있어요. 문제와 기록은 그대로 두고 풀이 방식을 골라 주세요.','An assessment is already open. Keep its questions and records and choose how to continue.','已有进行中的测评，保留原题与记录，选择继续作答方式。')+'</p></header><button type="button" class="pd-primary pd-paper" id="pdResumeOnline">'+t('화면에서 직접 풀기','Answer on screen','在屏幕上直接作答')+'</button><button type="button" class="pd-secondary pd-paper" id="pdResumePaper">'+t('종이로 푼 답 ○·X 채점','Mark paper answers ○/X','纸上答案○/X评分')+'</button>','resume');
       $('#pdResumeOnline').onclick=()=>ctx.onMethodChoose('question');$('#pdResumePaper').onclick=()=>ctx.onMethodChoose('paper');
-    }else if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='paper')paper();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
+    }else if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='paper')paper();else if(d.phase==='speed'&&d.result)speed();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
   }
   window.NM_PLACEMENT_UI = { version: VERSION, initial, render, parseNumber, readValues };
 })();

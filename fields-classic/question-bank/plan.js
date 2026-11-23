@@ -1,7 +1,7 @@
-import { CURRICULUM } from "./source-data.js?v=20261117a";
-import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261111p";
-import { sessionCount } from "./study-deck.js?v=20261117a";
-import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261111f";
+import { GM_PATH as CURRICULUM } from "./source-data.js?v=20261122zi";
+import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261117a";
+import { sessionCount } from "./study-deck.js?v=20261122zh";
+import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261122zh";
 
 // 학습 진도표 화면 — 계산은 study-plan.js. 계획은 학생 기록 plan/main 에 둔다(이 기기 + 로그인하면 서버).
 const $ = (id) => document.getElementById(id);
@@ -131,7 +131,7 @@ if (saved?.start && Array.isArray(saved.days)) plan = { ...defaultPlan(CURRICULU
 // 처음 열면 시작 진도를 지금 공부하는 곳으로(가장 최근 학습 기록)
 else {
   const latest = [...records.values()].filter((row) => row.kind === "week").sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0];
-  const match = latest?.key?.match(/^(book-\d+)-u(\d+)$/);
+  const match = latest?.key?.match(/^(book-\d+|course-\d+-[ag]\d)-u(\d+)$/);
   if (match) plan.from = { book: match[1], unit: Number(match[2]), part: Number(latest.payload?.part) || 1 };
   if (params.get("book") && !match) plan.from = { book: bookById(params.get("book")).id, unit: 0, part: 1 };
   // 아직 공부 기록이 없으면 가입할 때(또는 원장이) 정한 시작 진도로

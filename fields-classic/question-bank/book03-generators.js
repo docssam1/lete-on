@@ -515,7 +515,7 @@ function equalIntervalLength({ difficulty = 2 }) {
   const left = randomInt(1, 25);
   const right = left + divisions * unit;
   return {
-    prompt: `두 수 ${left}와 ${right} 사이를 똑같은 간격으로 ${divisions}칸 나누었습니다. 한 칸의 거리를 구하세요.`,
+    prompt: `두 수 ${left}${[2, 4, 5, 9].includes(Math.abs(left) % 10) ? "와" : "과"} ${right} 사이를 똑같은 간격으로 ${divisions}칸 나누었습니다. 한 칸의 거리를 구하세요.`,
     visual: { kind: "book3", subtype: "number-line", left, right, divisions, target: "interval" },
     answer: String(unit),
     solution: `두 끝 수의 차는 ${right} - ${left} = ${right - left}입니다. 이를 ${divisions}칸으로 똑같이 나누면 한 칸은 ${unit}입니다.`,

@@ -62,3 +62,14 @@ html, body.drill-page { min-height: 100%; margin: 0; background: #fbfaf6; }
 .dr-right { display: flex; align-items: center; gap: 12px; }
 .dr-skip { min-height: 36px; padding: 4px 14px; border: 1.5px solid #d7dfe2; border-radius: 999px; background: #fff; color: #5c6b74; font-size: 14px; font-weight: 600; cursor: pointer; }
 .dr-skip:hover { border-color: #6a4bb0; color: #46307a; }
+/* 답 쪽(알림·자판·단추)은 한 묶음 — 세로 화면에서는 예전처럼 문제 아래로 이어진다 */
+.dr-side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+/* 가로로 넓은 창(원장 2026-11-17 「아래 스크롤도 안되고 정확히 가로 화면 기준으로 맞춰지도록」 — 가로로 든 태블릿에서 덱 칸이 폭 730 · 높이 260쯤이라
+   문제 → 그림 → 자판이 세로로 쌓여 0.55배로 줄여도 아래가 잘렸다): 문제·그림은 왼쪽, 답 쪽은 오른쪽 */
+@media (min-aspect-ratio: 3/2) and (min-width: 560px) {
+  .dr:not(.dr-finale) { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(230px, 1fr); grid-template-rows: auto auto 1fr; column-gap: 16px; row-gap: 8px; max-width: 1400px; }
+  .dr > .dr-top { grid-column: 1 / -1; }
+  .dr > .dr-kind, .dr > .dr-card { grid-column: 1; }
+  .dr > .dr-side { grid-column: 2; grid-row: 2 / span 2; align-self: start; }
+  .dr-side .dr-actions { justify-content: flex-start; }
+}

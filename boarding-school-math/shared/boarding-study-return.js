@@ -1,0 +1,21 @@
+(function () {
+  "use strict";
+  const params = new URLSearchParams(location.search);
+  if (params.get("study") !== "1") return;
+  const requestedGrade = Number(params.get("studyGrade"));
+  const grade = Number.isInteger(requestedGrade) && requestedGrade >= 3 && requestedGrade <= 12 ? requestedGrade : 7;
+  const locale = params.get("locale") === "en-SG" ? "en" : ["ko", "en", "zh-Hans"].includes(params.get("locale")) ? params.get("locale") : "ko";
+  const bar = document.createElement("div");
+  bar.className = "study-return-bar screen-only";
+  const link = document.createElement("a");
+  link.id = "study-return-link";
+  link.href = "./boarding-roadmap.html?grade=" + grade + "&locale=" + encodeURIComponent(locale) + "#my-study";
+  link.textContent = locale === "en" ? "← Back to my study" : locale === "zh-Hans" ? "← 返回我的学习" : "← 내 공부로 돌아가기";
+  bar.append(link);
+  const header = document.querySelector("header");
+  if (header) header.after(bar);
+  else document.body.prepend(bar);
+  const style = document.createElement("style");
+  style.textContent = ".study-return-bar{padding:6px max(16px,calc((100% - 1160px)/2));background:#f5f0fa}.study-return-bar a{display:inline-flex;align-items:center;min-height:44px;color:#60418f;font:inherit;font-weight:700;text-decoration:none}.study-return-bar a:focus-visible{outline:3px solid #60418f;outline-offset:2px}@media print{.study-return-bar{display:none!important}}";
+  document.head.append(style);
+})();

@@ -46,7 +46,15 @@ server.listen(0, async () => {
     if(!PARTS.has('word') || ONLY) word = w.NM_PRINT_WORD || {};
     if(!PARTS.has('magic')) keepMagic = w.NM_PRINT_MAGIC || {};
     if(ONLY) for(const k of Object.keys(table)) if(ONLY.includes(k.split('@')[0])){ delete table[k]; delete word[k]; } }
-  const ARG = { BANDS, ONLY };
+  /* 유아·1학년 과정(C0~C2)에 쓰이는 유형은 young 밴드를 큰 쓰기 칸(writeBig)으로 잰다(2026-11-22) — 주간 학습지가
+     그 과정 회차를 큰 칸으로 그린다(exam.js weeklyEnvelope). 다른 유형의 young 값은 예전 칸 그대로.
+     과정 표를 바꿔 이 과정에 새 유형이 들어가면 ONLY=그 유형 으로 다시 잰다. */
+  const BIG = (() => { const w = {}; new Function('window', fs.readFileSync(path.join(ROOT, 'data', 'courses.js'), 'utf8'))(w);
+    const set = new Set();
+    for(const k of ['C0', 'C1', 'C2']) for(const ss of w.NM_COURSES[k].sessions) for(const v of Object.values(ss)){
+      const arr = Array.isArray(v) ? v : (v && v.practice) || []; arr.forEach(x => { if(x && x.t) set.add(x.t); }); }
+    return [...set]; })();
+  const ARG = { BANDS, ONLY, BIG };
   for(const lang of ['ko', 'en', 'zh']){
     const page = await browser.newPage({ viewport:{ width:1100, height:1100 } });
     await page.route('**/*', r => /jsdelivr|supabase|google/.test(r.request().url()) ? r.abort() : r.continue());
@@ -59,18 +67,19 @@ server.listen(0, async () => {
        주간 학습지 C31 첫 장 넘침). 유닛이 있는 쪽이 머리가 길다 — 드릴 인쇄에는 안전한 쪽. */
     for(const f of fs.readdirSync(path.join(ROOT, 'data', 'units')).filter(f => /^[A-Za-z0-9-]+\.js$/.test(f)))
       await page.addScriptTag({ url:'data/units/' + f });
-    const r = MAGIC_ONLY ? { out:{}, qr:0 } : await page.evaluate(async ({ BANDS, ONLY }) => {
+    const r = MAGIC_ONLY ? { out:{}, qr:0 } : await page.evaluate(async ({ BANDS, ONLY, BIG }) => {
       const mm = px => px / (96 / 25.4), out = {};
       let qr = 0;
       for(const t of Object.keys(NM_THREADS).filter(t => !ONLY || ONLY.includes(t))) for(const l of NM_THREADS[t].levels){
         const row = [];
         for(const [band, grade] of BANDS) for(const seed of ['head', 'head-b']){
+          const writeBig = band === 'young' && BIG.includes(t);
           /* 40문항 — 첫 장이 마지막 장이 되지 않게(재도전 QR 없이 잰다; QR 은 따로 잰 높이를 뺀다).
              적게 만들면 첫 장이 마지막 장이 되어 QR 높이만큼 좁게 잰다(안전한 쪽). */
           /* 서로 다른 문항이 적은 레벨은 40문항을 못 만든다 — 24·18·12 로 내려 가며 잰다 */
           let made = false;
           for(const count of [40, 24, 18, 12]){
-            try { NM_EXAM.renderPrint({ thread:t, level:l.id, count, seed, grade }); made = true; break; } catch(e){}
+            try { NM_EXAM.renderPrint({ thread:t, level:l.id, count, seed, grade, writeBig }); made = true; break; } catch(e){}
           }
           if(!made){ row.push(null); continue; }
           await new Promise(requestAnimationFrame);
@@ -102,6 +111,23 @@ server.listen(0, async () => {
           let guideAvail = null;
           const gp = pages.slice(1).find(p => p.querySelector('.nm-w2-guide') && gridOf(p) && p.querySelector('.nm-w2-item'));
           if(gp) guideAvail = Math.floor(mm(floorOf(gp) - gridOf(gp).getBoundingClientRect().top));
+          /* 중등 개념 쪽(따라 풀기를 뗀 장) — [7] 따라 풀기만 있는 장의 따라 풀기 높이(머리 띠 아래부터),
+             [8] 개념·예시만 있는 첫 장의 내용 아래 끝, [9] 그 장의 종이 바닥(2026-11-23 「한 페이지 맞추기」:
+             둘이 한 장에 들어가면 renderRoundPages 가 한 장에 싣는다) */
+          let guideH = null, headOnly = null, floor1 = null;
+          /* 따라 풀기 장에 연습 문항이 함께 있어도(중등 개념 쪽에 연습 6문항을 실은 판) 따라 풀기 덩어리만 잰다 —
+             잴 때의 첫 장 배치가 실제 학습지와 달라도 [7]·[8] 은 같은 값이 나오게 */
+          const gOnly = pages.slice(1, 3).find(p => p.querySelector(':scope > .nm-w2-guide'));
+          const own = c => !/nm-w2-(wm|foot|head|grid|instr|retry)/.test(c.className) && !c.querySelector('.nm-w2-item') && c.getBoundingClientRect().height;
+          if(gOnly && !p1.querySelector(':scope > .nm-w2-guide')){
+            const below = el => el.getBoundingClientRect().bottom;
+            const hd = gOnly.querySelector('.nm-w2-head');
+            const kids = [...gOnly.children].filter(own);
+            if(hd && kids.length) guideH = Math.ceil(mm(Math.max(...kids.map(below)) - below(hd)));
+            const kids1 = [...p1.children].filter(own);
+            if(kids1.length) headOnly = Math.ceil(mm(Math.max(...kids1.map(below)) - p1.getBoundingClientRect().top));
+            floor1 = Math.floor(mm(floorOf(p1) - p1.getBoundingClientRect().top));
+          }
           const grid = pages.map(gridOf).find(Boolean);
           /* 문항 한 칸이 실제로 필요한 높이 — 줄을 내용 높이(max-content)로 풀어 잰다 */
           const st = document.createElement('style');
@@ -114,7 +140,7 @@ server.listen(0, async () => {
           /* 독셈(Training Course) 모양 — 칸 높이가 풀이 줄 수로 달라 따로 잰다: [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이 */
           let trainMax = null, trainFirst = null;
           try {
-            NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, creative:true });
+            NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, creative:true, writeBig });
             await new Promise(requestAnimationFrame);
             const tp = [...document.querySelectorAll('.nm-print-sheet .nm-w2-page')];
             const cells = document.querySelectorAll('.nm-print-sheet .nm-w2-item-train');
@@ -128,7 +154,7 @@ server.listen(0, async () => {
               st.remove();
             }
           } catch(e){}
-          row.push([avail, head, Math.ceil(mm(need + gap) * 10) / 10, full, guideAvail, trainMax, trainFirst]);
+          row.push([avail, head, Math.ceil(mm(need + gap) * 10) / 10, full, guideAvail, trainMax, trainFirst, guideH, headOnly, floor1]);
           if(!qr){
             NM_EXAM.renderPrint({ thread:t, level:l.id, count:4, seed:'qr', grade });
             await new Promise(requestAnimationFrame);
@@ -139,7 +165,7 @@ server.listen(0, async () => {
         /* 시드 두 개 중 좁은 쪽 — 한 시드만 재면 다른 시드의 긴 문항이 칸을 넘었다(DV5 L4·MD39 L1) */
         const lo = (a, b) => a == null ? b : b == null ? a : Math.min(a, b), hi = (a, b) => a == null ? b : b == null ? a : Math.max(a, b);
         const merged = [0, 1, 2].map(i => { const a = row[i * 2], b = row[i * 2 + 1]; if(!a || !b) return a || b || null;
-          return [lo(a[0], b[0]), hi(a[1], b[1]), hi(a[2], b[2]), lo(a[3], b[3]), lo(a[4], b[4]), hi(a[5], b[5]), lo(a[6], b[6])]; });
+          return [lo(a[0], b[0]), hi(a[1], b[1]), hi(a[2], b[2]), lo(a[3], b[3]), lo(a[4], b[4]), hi(a[5], b[5]), lo(a[6], b[6]), hi(a[7], b[7]), hi(a[8], b[8]), lo(a[9], b[9])]; });
         if(merged.some(Boolean)) out[t + '@' + l.id] = merged;
       }
       return { out, qr };
@@ -149,7 +175,7 @@ server.listen(0, async () => {
     /* 문장제 회차(wordType 'all') — 같은 유형·레벨이라도 문장 카드는 식 한 줄보다 훨씬 높다(NS5 L1 young: 식 12.7mm,
        문장 카드 약 37mm). 유형 표의 한 줄 높이로 칸을 짜면 1.5배 학습량 C2 마지막 장이 넘쳤다. 밴드별 한 줄 필요 높이(mm). */
     if(PARTS.has('word')){
-      const wd = await page.evaluate(async ({ BANDS, ONLY }) => {
+      const wd = await page.evaluate(async ({ BANDS, ONLY, BIG }) => {
         const mm = px => px / (96 / 25.4), out = {};
         const st = document.createElement('style');
         st.textContent = '.nm-w2-grid{grid-template-rows:none!important;grid-auto-rows:max-content!important;flex:0 0 auto!important;height:auto!important}.nm-w2-item.nm-print-item{overflow:visible!important;min-height:0!important}';
@@ -158,7 +184,7 @@ server.listen(0, async () => {
           for(const [band, grade] of BANDS){
             let need = null;
             for(const seed of ['word', 'word-b']){
-              try { NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, wordType:'all' }); } catch(e){ continue; }
+              try { NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, wordType:'all', writeBig: band === 'young' && BIG.includes(t) }); } catch(e){ continue; }
               await new Promise(requestAnimationFrame);
               const items = [...document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item')];
               if(!document.querySelector('.nm-print-sheet .nm-w2-grid .nm-w2-item-word')) continue;
@@ -229,7 +255,7 @@ server.listen(0, async () => {
         if(!v) return;
         /* 언어 중 가장 좁은 쪽(쓸 수 있는 높이 최소, 머리 높이 최대) */
         const lo = (a, b) => a == null ? b : b == null ? a : Math.min(a, b), hi = (a, b) => a == null ? b : b == null ? a : Math.max(a, b);
-        cur[i] = cur[i] ? [lo(cur[i][0], v[0]), hi(cur[i][1], v[1]), hi(cur[i][2], v[2]), lo(cur[i][3], v[3]), lo(cur[i][4], v[4]), hi(cur[i][5], v[5]), lo(cur[i][6], v[6])] : v.slice();
+        cur[i] = cur[i] ? [lo(cur[i][0], v[0]), hi(cur[i][1], v[1]), hi(cur[i][2], v[2]), lo(cur[i][3], v[3]), lo(cur[i][4], v[4]), hi(cur[i][5], v[5]), lo(cur[i][6], v[6]), hi(cur[i][7], v[7]), hi(cur[i][8], v[8]), lo(cur[i][9], v[9])] : v.slice();
       });
     }
     console.log(`${lang}: ${Object.keys(r.out).length}개 레벨`);

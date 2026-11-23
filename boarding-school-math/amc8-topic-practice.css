@@ -1,0 +1,40 @@
+.amc8-topic-page { --blue:#60418f; --blue-soft:#f0ebf7; --line:#d9d0e5; --review-accent:#60418f; --review-accent-soft:#f0ebf7; }
+.amc8-topic-page .site-header { gap:24px; }
+.amc8-topic-page .back-link { min-height:44px; margin-left:auto; padding:8px 12px; display:inline-flex; align-items:center; border:1px solid var(--line); border-radius:6px; background:var(--blue-soft); color:var(--blue); font-weight:800; text-decoration:none; white-space:nowrap; }
+.amc8-topic-page .practice-intro { grid-template-columns:minmax(0,1fr) minmax(280px,380px); }
+.amc8-topic-page .practice-intro h1 span { color:var(--blue); }
+.amc8-topic-page .release-note { border-top-color:var(--blue); }
+.amc8-topic-page .release-note a, .amc8-topic-page .topic-source-link { color:var(--blue); font-size:13px; font-weight:800; }
+.topic-toolbar { min-height:78px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid var(--line); }
+.topic-toolbar > div:first-child { color:var(--muted); font-size:13px; }
+.topic-toolbar > div:first-child strong { color:var(--ink); }
+.topic-layout { display:grid; grid-template-columns:260px minmax(0,1fr); gap:36px; padding-top:30px; }
+.topic-sidebar { align-self:start; position:sticky; top:96px; }
+.topic-sidebar h2, .topic-workspace h2 { margin:0; font-size:24px; }
+.topic-sidebar .domain-filters { display:grid; gap:7px; margin:18px 0; }
+.topic-sidebar .domain-filter { min-height:42px; padding:8px 12px; border-color:var(--line); }
+.topic-sidebar .domain-filter[aria-pressed="true"] { border-color:var(--blue); background:var(--blue-soft); color:var(--blue); }
+.topic-sidebar .scope-note { border-left-color:var(--blue); }
+.topic-workspace .problem-list { grid-template-columns:1fr; gap:14px; }
+.topic-workspace .problem-card { padding:20px 22px; }
+.topic-workspace .problem-card::after { color:#60418f0b; }
+.topic-workspace .problem-meta b { color:var(--blue); }
+.topic-workspace .problem-prompt { min-height:0; margin:10px 0 16px; }
+.topic-workspace .choices { grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+.topic-workspace .choice { grid-template-columns:25px minmax(0,1fr); min-height:48px; padding:6px 8px; }
+.topic-workspace .choice-mark { width:24px; height:24px; }
+.topic-workspace .choice-value { justify-content:center; text-align:center; }
+.topic-workspace .feedback { min-height:24px; }
+.topic-workspace .worked-solution { font-family:var(--sans); }
+.topic-workspace .worked-solution summary { color:var(--blue); }
+.topic-workspace .solution-steps { display:grid; gap:.45rem; margin:.65rem 0 0; padding-left:1.35rem; }
+.topic-workspace .solution-steps li { padding-left:.2rem; line-height:1.65; }
+.topic-workspace .topic-data-table { width:max-content; max-width:100%; margin:10px 0 16px; border-collapse:collapse; background:#fff; text-align:center; }
+.topic-workspace .topic-data-table caption { padding:6px; font-weight:800; }
+.topic-workspace .topic-data-table th, .topic-workspace .topic-data-table td { padding:7px 12px; border:1px solid var(--control); }
+.topic-empty { padding:20px; border:1px solid var(--line); background:#fff; color:var(--muted); }
+.amc8-topic-page .practice-boundary { border-left-color:var(--blue); }
+.amc8-topic-page button:focus-visible, .amc8-topic-page a:focus-visible { outline-color:#9478bb; }
+@media(max-width:900px) { .amc8-topic-page .practice-intro { grid-template-columns:1fr; gap:20px; padding-top:48px; }.topic-layout { grid-template-columns:1fr; gap:12px; }.topic-sidebar { position:static; }.topic-sidebar .domain-filters { grid-template-columns:repeat(3,minmax(0,1fr)); }.topic-sidebar .scope-note { margin-bottom:12px; } }
+@media(max-width:560px) { .amc8-topic-page .site-header { gap:10px; }.amc8-topic-page .site-header nav { gap:10px; }.amc8-topic-page .site-header nav a { font-size:12px; }.amc8-topic-page .site-header nav a:last-child { display:none; }.amc8-topic-page .back-link { padding-inline:8px; font-size:12px; }.topic-sidebar .domain-filters { grid-template-columns:repeat(2,minmax(0,1fr)); }.topic-workspace .choices { grid-template-columns:1fr; }.topic-workspace .choice { grid-template-columns:32px minmax(0,1fr); }.topic-workspace .choice-value { justify-content:start; text-align:left; }.topic-workspace .problem-card { padding:16px; } }
+@media print { .amc8-topic-page .site-header, .topic-toolbar, .topic-sidebar, .amc8-topic-page footer, .practice-boundary { display:none!important; }.amc8-topic-page main { max-width:none; padding:0; }.amc8-topic-page .practice-intro { display:block; padding:0 0 8mm; border:0; }.amc8-topic-page .practice-intro h1 { font-size:25pt; }.amc8-topic-page .release-note { display:none; }.topic-layout { display:block; padding:0; }.topic-workspace .problem-list { display:block; }.topic-workspace .problem-card { margin-bottom:5mm; break-inside:avoid; page-break-inside:avoid; }.topic-workspace .worked-solution:not([open]) > :not(summary) { display:block; }.topic-workspace .worked-solution summary { display:none; }.topic-workspace .choices { grid-template-columns:repeat(5,minmax(0,1fr)); } }

@@ -8,26 +8,26 @@
     {
       "variant": 0,
       "file": "v0-given.png",
-      "sha256": "4ec9b3646a8d44deaa4b6f9a076cbc6478c2782242da7e1a966b01eb2e7b21dc",
+      "sha256": "040548e199c187852ec7d05e1bb0033afe97cc5637f76bb1d4df7cd0917d4f2f",
       "width": 1280,
       "height": 1120,
-      "byteLength": 65167
+      "byteLength": 19529
     },
     {
       "variant": 1,
       "file": "v1-given.png",
-      "sha256": "cefb9c013728437f6fcdc9ee690a565172a072b3b7739e91fdb65acfd12d9028",
+      "sha256": "7314650ccc3449e74afb51422c69ced7b4193c3eaaeb51f709dcc3352d1157bb",
       "width": 1280,
       "height": 1120,
-      "byteLength": 65642
+      "byteLength": 19216
     },
     {
       "variant": 2,
       "file": "v2-given.png",
-      "sha256": "6c586dda4c56318f3ad6133feea730eec67f896108fac9c0af542b4cf26002ed",
+      "sha256": "9070db70d75b24463e7637fca70edfd0850f3f3a1da71b8ddeabfddd74b48979",
       "width": 1280,
       "height": 1120,
-      "byteLength": 63210
+      "byteLength": 19134
     }
   ],
   "paintAfterStacking": true,
@@ -39,11 +39,12 @@
   "projection": "source-affine-from-independent-scanned-landmarks",
   "runtimeHashes": {
     "source-6-2-painted-color-classifier.js": "75c116fcc7c36d3f86b89a5c905ddba7ad979edc973a3a42a38872878ca1a95d",
-    "source-6-2-painted-example3-models.js": "0e6757cc06da1aa88efacfdc9812f0206d5930438cc94d211bbd4dca8c3f0760",
+    "source-6-2-painted-example3-models.js": "3006e6584f506b58c83cb000de2bb62426b6838d6b27ed727aeac2ff15455c8f",
     "source-6-2-painted-example3-review.mjs": "36819626ef579509be736ec7e1973c1dec9645c90942d2959c211524bf38f04e",
     "source-6-2-stack-renderer.mjs": "7da8f732c90242daa7281975ac40cdb37c446f561484fbdbd1256059598aabef"
   },
   "standaloneGeometryVerified": true,
   "learnerReleaseVerified": false,
-  "publisherAnswerVerified": false
+  "publisherAnswerVerified": false,
+  "neutralFaces20261123": "원문 그림은 칠하지 않은 선 그림이므로 빨간색 칠을 다른 입체 그림과 같은 무채색 계열 면 색으로 바꿨다. 선·모양은 그대로이며 면 색만 픽셀 단위로 다시 칠했다."
 }

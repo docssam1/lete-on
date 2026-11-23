@@ -3,12 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <script src="./guard.js?v=20261111q"></script>
+  <!-- 학습지를 바로 만드는 주소(&build=1 — 덱 안 공부하기·오답 유사문제·입학 모의고사 유사문제)는 문제를 다 만들 때까지 화면을 감춘다.
+       예전에는 0.3초쯤 문제은행 첫 화면(범위 선택)이 비쳤다(원장 2026-11-17 「넘어갈 때 기존의 문제은행 화면이 보이고 이 장면이 나와」). app.js setStepView가 걷는다 -->
+  <script>(function(){try{if(new URLSearchParams(location.search).get("build")==="1"){var h=document.documentElement;h.classList.add("bank-booting");setTimeout(function(){h.classList.remove("bank-booting")},8000)}}catch(e){}})();</script>
+  <style>html.bank-booting body{visibility:hidden}html.bank-booting,html.bank-booting body{background:transparent!important}</style>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3f7fa" />
   <title>Gifted Math Bank 문제은행</title>
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="./math-markup.css?v=20261027n" />
-  <link rel="stylesheet" href="./styles.css?v=20261116g9" />
+  <link rel="stylesheet" href="./styles.css?v=20261121d" />
   <link rel="stylesheet" href="./print-templates.css?v=20261110w" />
   <link rel="stylesheet" href="./cover-designs.css?v=20261024a" />
 </head>
@@ -86,9 +90,9 @@
             <div class="setting-title"><strong>교재 학습 단계</strong><span>1~10권 원본 구성 기준</span></div>
             <div class="choice-grid curriculum-stage-choices" id="curriculumStageChoices">
               <button data-stage="concept"><strong>개념</strong><span>활동·예시</span></button>
-              <button data-stage="type" class="active"><strong>유형</strong><span>본책 확인</span></button>
-              <button data-stage="practice"><strong>연습</strong><span>본책 연습</span></button>
-              <button data-stage="advanced"><strong>심화</strong><span>본책 도전</span></button>
+              <button data-stage="type" class="active"><strong>유형</strong><span>교재 확인</span></button>
+              <button data-stage="practice"><strong>연습</strong><span>교재 연습</span></button>
+              <button data-stage="advanced"><strong>심화</strong><span>교재 도전</span></button>
               <button data-stage="unit-test" class="unit-test"><strong>권별평가</strong><span>권 전체</span></button>
             </div>
           </section>
@@ -158,9 +162,9 @@
   </dialog>
 
   <script src="../../geometry/shared/question-bank.js?v=20260829g"></script>
-  <script src="../../geometry/worksheet/generators.js?v=20261101n"></script>
+  <script src="../../geometry/worksheet/generators.js?v=20261122zi"></script>
   <script src="../../geometry/worksheet/render.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/card.js?v=20260829g"></script>
-  <script type="module" src="./app.js?v=20261117a"></script>
+  <script type="module" src="./app.js?v=20261122zi"></script>
 </body>
 </html>

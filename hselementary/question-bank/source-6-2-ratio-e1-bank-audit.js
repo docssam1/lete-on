@@ -1,6 +1,6 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),crypto=require("node:crypto"),contracts=require("./source-6-2-ratio-e1-contracts.js"),presentation=require("./source-6-2-ratio-e1-presentation.js"),ids=contracts.sourceItemIds,suffixes=["Compound","Tape","Taps","EquivalentDifference","Pinwheel","BoundedConsequent","ChainedHeight","ShiftedShares","CubeEdges","DiagonalAreas","PoolPhases"],keys=Object.fromEntries(ids.map((id,i)=>[id,`sourceGrade6SecondRatioE1${suffixes[i]}`])),base=new URL("http://127.0.0.1:8909/hselementary/question-bank/"),candidate=process.env.HSE_RATIO_E1_CANDIDATE!=="0",out=process.env.HSE_SCREENSHOT_DIR;
-assert(out&&/^E:[/\\]/i.test(out));
+assert(out&&path.isAbsolute(out));
 const modules=["models","contracts","figures","presentation","questions"].map(s=>`source-6-2-ratio-e1-${s}.js`),files=["index.html","app.js","source-inventory-grade6.js","worksheet-tools.css","source-6-2-ratio-e1-questions.css",...modules],sha=b=>crypto.createHash("sha256").update(b).digest("hex"),hashes=()=>Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.join(__dirname,f)))]));
 async function inspect(page,mode,level){const area=page.locator(mode==="problem"?"#problemView":"#solutionView"),owners=area.locator(`[data-ratio-e1-owner="${mode==="problem"?"problem":"teacher"}"]`);assert.equal(await owners.count(),33);const pool={},geometry=[];
  for(const owner of await owners.all()){

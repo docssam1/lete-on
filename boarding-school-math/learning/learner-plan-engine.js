@@ -37,6 +37,18 @@
       clusterId: "6.G.A",
       clusterLabel: "기하 측정",
       scoreUnit: null
+    }),
+    "school-g7-nsa": Object.freeze({
+      id: "school-g7-nsa",
+      label: "Grade 7 · 7.NS.A 유리수 단원",
+      program: "school-curriculum",
+      assessmentLabel: "7.NS.A 단원 진단 준비 중",
+      assessmentHref: "./boarding-roadmap.html?grade=7#grade-map",
+      clusterId: "7.NS.A",
+      clusterLabel: "유리수 연산",
+      conceptDelivery: "embedded",
+      assessmentState: "preparing",
+      scoreUnit: null
     })
   });
   const ERROR_PROFILES = Object.freeze({
@@ -49,6 +61,7 @@
     "explanation-incomplete": Object.freeze({ label: "답의 근거를 수학 문장으로 완성할 약점", weights: Object.freeze({ review: 0.10, concept: 0.15, guided: 0.36, independent: 0.29, check: 0.10 }) })
   });
   const DIFFICULTY_MINUTES = Object.freeze({ foundation: 2.5, core: 4, advanced: 6 });
+  const NEUTRAL_LEARNING_WEIGHTS = Object.freeze({ review: 0.12, concept: 0.24, guided: 0.30, independent: 0.28, check: 0.06 });
 
   function fail(message) { throw new Error(message); }
   function record(value) { return !!value && typeof value === "object" && !Array.isArray(value); }
@@ -83,6 +96,7 @@
       if (priority.clusterId != null && !/^\d+\.[A-Z]+\.[A-Z]+$/.test(priority.clusterId)) fail(`priorities[${index}].clusterId is invalid`);
     });
     if (input.prediction != null) {
+      if (GOALS[input.goalId].assessmentState === "preparing") fail("prediction is unavailable while this assessment is being prepared");
       if (!record(input.prediction) || !Array.isArray(input.prediction.range) || input.prediction.range.length !== 2 || !Number.isFinite(input.prediction.range[0]) || !Number.isFinite(input.prediction.range[1]) || input.prediction.range[0] > input.prediction.range[1] || !["low", "medium", "high"].includes(input.prediction.confidence)) fail("prediction is invalid");
     }
     return true;
@@ -111,19 +125,25 @@
     return Math.max(floor, Math.min(ceiling, Math.round(minutes / DIFFICULTY_MINUTES[difficulty])));
   }
   function buildDailySession(goal, availability, priority) {
-    const profile = ERROR_PROFILES[priority.errorType];
+    const profile = goal.assessmentState === "preparing"
+      ? { weights: NEUTRAL_LEARNING_WEIGHTS }
+      : ERROR_PROFILES[priority.errorType];
     const minutes = allocateMinutes(availability.minutesPerDay, profile.weights);
     const clusterId = priority.clusterId || goal.clusterId;
+    const conceptHref = goal.conceptDelivery === "embedded"
+      ? `${href(clusterId, "student", "workbook")}#unit-concepts`
+      : `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic`;
+    const preparingAssessment = goal.assessmentState === "preparing";
     const guidedCount = estimateProblems(minutes.guided, priority.difficulty, 2, 6);
     const independentCount = estimateProblems(minutes.independent, priority.difficulty, 2, 8);
     return Object.freeze({
       totalMinutes: availability.minutesPerDay,
       totalProblemCount: guidedCount + independentCount + 1,
       blocks: Object.freeze([
-        Object.freeze({ id: "review", title: "이전 학습 다시 보기", minutes: minutes.review, detail: "최근 오답 또는 유지 확인 1개", kind: "retention" }),
-        Object.freeze({ id: "concept", title: "개념 교재", minutes: minutes.concept, detail: `${priority.label}의 핵심 모델과 예제`, kind: "concept", href: `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic` }),
+        Object.freeze({ id: "review", title: preparingAssessment ? "개념 떠올리기" : "이전 학습 다시 보기", minutes: minutes.review, detail: preparingAssessment ? "지난번 개념이나 풀이 이유 한 가지 말하기" : "최근 오답 또는 유지 확인 1개", kind: "retention" }),
+        Object.freeze({ id: "concept", title: "개념 교재", minutes: minutes.concept, detail: `${priority.label}의 핵심 모델과 예제`, kind: "concept", href: conceptHref }),
         Object.freeze({ id: "guided", title: "수업용 워크북", minutes: minutes.guided, problemCount: guidedCount, detail: `대표 유형 ${guidedCount}문항`, kind: "guided", href: href(clusterId, "student", "workbook") }),
-        Object.freeze({ id: "independent", title: "혼자 풀기", minutes: minutes.independent, problemCount: independentCount, detail: `약점 보완 ${independentCount}문항`, kind: "independent", href: href(clusterId, "student", "workbook") }),
+        Object.freeze({ id: "independent", title: "혼자 풀기", minutes: minutes.independent, problemCount: independentCount, detail: preparingAssessment ? `선택한 개념 적용 ${independentCount}문항` : `약점 보완 ${independentCount}문항`, kind: "independent", href: href(clusterId, "student", "workbook") }),
         Object.freeze({ id: "check", title: "마무리 확인", minutes: minutes.check, problemCount: 1, detail: "오늘 배운 유형 1문항", kind: "check", href: href(clusterId, "student", "workbook") })
       ])
     });
@@ -145,7 +165,7 @@
       goal,
       calendar: Object.freeze({ startDate: input.startDate, targetDate: input.targetDate, daysRemaining, calendarWeeks, studyDays, usableMinutes, planningRule: "80-percent-buffer" }),
       availability: Object.freeze({ studyDaysPerWeek: input.availability.studyDaysPerWeek, minutesPerDay: input.availability.minutesPerDay }),
-      diagnostic: Object.freeze({ state: input.prediction ? "evidence-connected" : "diagnostic-required", actionLabel: goal.assessmentLabel, actionHref: goal.assessmentHref }),
+      diagnostic: Object.freeze({ state: input.prediction ? "evidence-connected" : goal.assessmentState || "diagnostic-required", actionLabel: goal.assessmentLabel, actionHref: goal.assessmentHref }),
       prediction: input.prediction ? Object.freeze({ state: "available", range: Object.freeze(input.prediction.range.slice()), confidence: input.prediction.confidence, scoreUnit: goal.scoreUnit }) : Object.freeze({ state: "diagnostic-required", range: null, confidence: null, scoreUnit: goal.scoreUnit }),
       priorities: Object.freeze(input.priorities.map(function (priority, index) {
         const selectedCluster = priority.clusterId || goal.clusterId;
@@ -154,10 +174,10 @@
       today: session,
       materials: Object.freeze({
         clusterId,
-        studentConceptHref: `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic`,
+        studentConceptHref: goal.conceptDelivery === "embedded" ? `${href(clusterId, "student", "workbook")}#unit-concepts` : `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic`,
         studentWorkbookHref: href(clusterId, "student", "workbook"),
         teacherWorkbookHref: href(clusterId, "teacher", "workbook"),
-        teacherLessonHref: `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic`
+        teacherLessonHref: goal.conceptDelivery === "embedded" ? `${href(clusterId, "teacher", "workbook")}#unit-concepts` : `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic`
       }),
       retention: Object.freeze(RETENTION_DAYS.map(function (afterDays) { return Object.freeze({ afterDays, label: `${afterDays}일 뒤 재확인`, status: "scheduled-after-first-study" }); }))
     });

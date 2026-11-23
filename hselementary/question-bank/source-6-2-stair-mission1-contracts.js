@@ -7,6 +7,7 @@
   const sourceItemId = "6-2-u3-e2-mission-1", sourceItemIds = Object.freeze([sourceItemId]);
   const learner_stage = "초등 6학년 2학기 · 황소 심화 · 공간과 입체";
   const learnerConditions = "첫째 모양은 쌓기나무 한 개입니다. 다음 모양은 앞쪽의 낮은 계단을 그대로 두고 뒤쪽 두 변에 각각 한 줄씩 기둥을 붙여 바닥을 정사각형으로 만듭니다. 새 기둥의 높이는 그 모양의 차례와 같습니다. 각 기둥은 바닥부터 빈틈없이 쌓고 그 밖에는 놓지 않습니다.";
+  const sourceConditions = "다음과 같은 규칙으로 쌓기나무를 쌓으려고 합니다.";
   const stages = [5, 4, 6], modes = ["easy", "source", "hard"];
   const easyStages = [3, 2, 1];
   const easyConditions = "그림에 보이는 첫째, 둘째, 셋째 계단 모양 중에서 구하시오.";
@@ -52,7 +53,7 @@
       throw new Error("Stack pattern models are required");
     const stage = level === 0 ? easyStages[variant] : stages[variant];
     const model = level === 0 ? freeze({ ...models.build(id, { n: stage }), variant }) : models.solve(id, variant);
-    const givenConditions = level === 0 ? easyConditions : learnerConditions;
+    const givenConditions = level === 0 ? easyConditions : level === 1 ? sourceConditions : learnerConditions;
     if (model.mode !== "two-direction-stair-total" || model.n !== stage)
       throw new Error("Unexpected stair mission-1 model");
     // Derive all counts from actual cells/voxels, not the model's answer or formula fields.
@@ -69,17 +70,18 @@
     const missing = sum(missingLayers.map(row => row.count));
     const volumeSubtraction = { fullCubeCount: total + missing, missingLayers, missing, total };
     const layerCue = null;
-    let promptText = `${givenConditions} ${stage}번째 모양에 대하여 `;
+    let promptText = level === 1 ? `${givenConditions} 규칙을 찾아보고 ${stage}번째 모양을 쌓는 데 필요한 쌓기나무는 모두 몇 개인지 구하시오.` : `${givenConditions} ${stage}번째 모양에 대하여 `;
     if (level === 0) promptText += "쌓기나무는 모두 몇 개인지 구하시오.";
-    else if (level === 1) promptText += "쌓기나무는 모두 몇 개인지 구하시오.";
-    else promptText += `다음 물음에 답하시오.\n(1) 쌓기나무는 모두 몇 개인지 구하시오.\n(2) ${stage}층과 ${stage - 1}층, 맨 위 두 층의 쌓기나무를 모두 제거하면 몇 개가 남는지 구하시오. 남은 쌓기나무는 옮기지 않습니다.`;
+    else if (level === 2) promptText += `다음 물음에 답하시오.\n(1) 쌓기나무는 모두 몇 개인지 구하시오.\n(2) ${stage}층과 ${stage - 1}층, 맨 위 두 층의 쌓기나무를 모두 제거하면 몇 개가 남는지 구하시오. 남은 쌓기나무는 옮기지 않습니다.`;
     const solutionEquations = [], alternateSolutionEquations = [];
     const inlineMath = stream => equation => {
       stream.push(equation);
       return `<span class="math-inline-expression">${equation}</span>`;
     };
     const math = inlineMath(solutionEquations), alternateMath = inlineMath(alternateSolutionEquations);
-    let solution = "<p>각 층은 정사각형 바닥의 칸에서 앞 모서리 쪽 빈 칸을 빼어 셉니다.</p>";
+    // Source level keeps the book wording; the rule the learner discovers is stated in the solution.
+    let solution = level === 1 ? `<p>규칙: ${learnerConditions}</p>` : "";
+    solution += "<p>각 층은 정사각형 바닥의 칸에서 앞 모서리 쪽 빈 칸을 빼어 셉니다.</p>";
     rows.forEach(row => {
       const empty = missingLayers[row.layer - 1];
       const expression = empty.count === 0 ? `${stage}×${stage}` : `${stage}×${stage}-${empty.side}×${empty.side}`;
@@ -128,5 +130,5 @@
       productionLoaded: false, catalogUnlock: false, deployed: false
     });
   }
-  return freeze({ generate, sourceItemIds, learner_stage, learnerConditions, registrationOnly: true, learnerReleaseVerified: false });
+  return freeze({ generate, sourceItemIds, learner_stage, learnerConditions, sourceConditions, registrationOnly: true, learnerReleaseVerified: false });
 });

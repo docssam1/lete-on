@@ -61,8 +61,9 @@ const inputsById = {
     { faceArea: 6, painted: 432 }
   ],
   "6-1-u6-e3-mission-2": [
-    { side: 5, totalVolume: 875 },
+    // 2026-11-23 원문 복원: pool0 = 원문(인쇄 59쪽) 부피 1512cm³.
     { side: 6, totalVolume: 1512 },
+    { side: 5, totalVolume: 875 },
     { side: 7, totalVolume: 2401 }
   ],
   "6-1-u6-e3-mission-4": [
@@ -71,8 +72,9 @@ const inputsById = {
     { side: 8, height: 14, surface: 2 * 8 * 8 + 4 * 8 * 14, splitSurface: 2 * 8 * 8 + 4 * 8 * 14 + 2 * 8 * 8 }
   ],
   "6-1-u6-e3-mission-5": [
-    { a: 6, b: 7, h: 4, topPerimeter: 2 * (6 + 7), frontPerimeter: 2 * (6 + 4) },
+    // 2026-11-23 원문 복원: pool0 = 원문(인쇄 59쪽) 한 변 7cm, 둘레 30cm·22cm.
     { a: 7, b: 8, h: 4, topPerimeter: 2 * (7 + 8), frontPerimeter: 2 * (7 + 4) },
+    { a: 6, b: 7, h: 4, topPerimeter: 2 * (6 + 7), frontPerimeter: 2 * (6 + 4) },
     { a: 8, b: 9, h: 5, topPerimeter: 2 * (8 + 9), frontPerimeter: 2 * (8 + 5) }
   ],
   "6-1-u6-e3-mission-6": [

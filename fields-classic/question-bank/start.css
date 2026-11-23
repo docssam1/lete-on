@@ -354,3 +354,64 @@ body.sm .sm-nums button:hover { border-color: var(--accent); }
 body.sm .sm-nums button[aria-pressed="true"] { border-color: var(--accent-ink); background: var(--accent-ink); box-shadow: 0 3px 0 #0b1040; }
 body.sm .sm-dock { border-top-color: var(--line); box-shadow: 0 -6px 16px rgba(30, 99, 200, .10); }
 .sm-dock[hidden] { display: none; }   /* 잠금 안내가 뜰 때는 아래 줄을 숨긴다 */
+
+/* 오답 유사문제 시험지 짜기(원장 2026-11-17 「원래 있는 문제은행처럼 미리보기 · 난이도 · 문항수」): 아래 줄 = 고른 내용 | 번호마다 문제 수 · 난이도 | 단추 */
+body.sm:has(#pickOptions:not([hidden])) { padding-bottom: 150px; }
+.sm-dock { flex-wrap: wrap; row-gap: 8px; }
+.sm-dock p { flex: 1 1 260px; }
+.sm-opts { display: flex; flex-wrap: wrap; gap: 8px 18px; flex: 1 1 100%; order: 3; }
+.sm-opts[hidden] { display: none; }
+.sm-opt { display: flex; align-items: center; gap: 4px; }
+.sm-opt > span { margin-right: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.sm-opt button { min-height: 38px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: #fff; font-size: 14px; font-weight: 600; color: var(--ink); }
+.sm-opt button:hover { border-color: var(--accent); }
+.sm-opt button[aria-pressed="true"] { border-color: var(--accent-ink); background: var(--accent-ink); color: #fff; }
+.sm-dock-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sm-preview { margin-top: 18px; padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 6px 16px rgba(30, 99, 200, .12); }
+.sm-preview[hidden] { display: none; }
+.sm-preview-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 10px; }
+.sm-preview-head strong { font-size: 17px; }
+.sm-preview-head span { flex: 1; font-size: 13.5px; color: var(--muted); }
+.sm-preview iframe { display: block; width: 100%; height: min(78vh, 900px); border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+@media (max-width: 640px) {
+  .sm-dock-actions { flex: 1 1 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sm-dock-actions .st-btn { min-height: 42px; padding: 0 6px; font-size: 14px; white-space: nowrap; }
+  .sm-dock-actions .st-btn.primary { grid-column: 1 / -1; order: -1; min-height: 46px; }
+  body.sm:has(#pickOptions:not([hidden])) { padding-bottom: 260px; }
+  .sm-opt button { padding: 0 9px; }
+}
+
+/* 번호 아래 미끄러져 열리는 같은 유형 문제(원장 2026-11-17 「창이 슬라이드 되면서」) — similar.js openPeek */
+.sm-peek { display: grid; grid-template-rows: 0fr; margin: 0 0 0 68px; transition: grid-template-rows .32s ease, margin .32s ease; }
+.sm-peek.open { grid-template-rows: 1fr; margin-top: 10px; margin-bottom: 4px; }
+.sm-peek-in { min-height: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #fff; box-shadow: 0 6px 16px rgba(30, 99, 200, .10); }
+.sm-peek-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); background: #f6f9ff; }
+.sm-peek-head span { flex: 1; min-width: 0; font-size: 14px; color: var(--muted); }
+.sm-peek-head b { color: var(--ink); font-weight: 700; }
+.sm-peek-head .st-btn { min-height: 36px; padding: 0 12px; font-size: 13.5px; }
+.sm-peek-wait { margin: 0; padding: 18px 16px; font-size: 14px; color: var(--muted); }
+.sm-peek.ready .sm-peek-wait { display: none; }
+.sm-peek iframe { display: block; width: 100%; height: 0; border: 0; }
+.sm-peek.ready iframe { min-height: 0; }
+@media (max-width: 640px) { .sm-peek { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { .sm-peek { transition: none; } }
+
+/* 넓은 화면: 왼쪽 번호 고르기 | 오른쪽 시험지 전체(원장 2026-11-17 「오른쪽에 시험지 전체가 보이고」) — similar.js refreshPaper */
+.sm-paper { display: none; }
+@media (min-width: 1100px) {
+  body.sm .st-main { max-width: 1640px; grid-template-columns: minmax(0, 1fr) minmax(500px, 46%); align-items: start; }
+  body.sm .st-main > .st-access, body.sm .st-main > .sm-preview { grid-column: 1 / -1; }
+  body.sm #previewBtn { display: none; }
+  .sm-paper { position: sticky; top: 16px; display: grid; grid-template-rows: auto minmax(0, 1fr); height: calc(100vh - 32px - var(--dock-h, 112px)); min-height: 420px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 6px 16px rgba(30, 99, 200, .12); overflow: hidden; }
+  .sm-paper-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: #f6f9ff; }
+  .sm-paper-head > div:first-child { display: grid; gap: 1px; min-width: 0; }
+  .sm-paper-head strong { font-size: 17px; }
+  .sm-paper-head span { font-size: 13px; color: var(--muted); }
+  .sm-paper-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sm-paper-tools .st-btn { min-height: 38px; padding: 0 12px; font-size: 13.5px; }
+  .sm-paper-tools .st-btn:disabled, .sm-paper-tools .st-btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+  .sm-paper-empty { display: grid; place-content: center; gap: 8px; padding: 24px; text-align: center; color: var(--muted); }
+  .sm-paper-empty b { font-size: 17px; line-height: 1.6; color: var(--ink); }
+  .sm-paper iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+}
+.sm-paper-empty[hidden], .sm-paper iframe[hidden] { display: none !important; }

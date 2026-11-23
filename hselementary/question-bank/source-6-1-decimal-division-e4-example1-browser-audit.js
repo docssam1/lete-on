@@ -12,9 +12,10 @@ const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(__dirname, "tmp", 
 const sourceItemId = "6-1-u3-e4-example-1";
 const generatorKey = "sourceGrade6DecimalDivisionE4Example1";
 const expectedPools = [
-  [4, 1, 3, 15.2, 2.5, 7, 66.5, 19, 3.5],
-  [5, 1, 4, 17.5, 2.4, 9, 75.6, 21, 3.6],
-  [5, 2, 4, 18, 2.2, 8, 63.36, 19.8, 3.2]
+  // 원문 그림 3줄(아래 두 줄 전체 + 맨 윗줄 일부), 삼각형 높이 2칸.
+  [4, 1, 3, 15.2, 2.5, 11, 104.5, 38, 2.75],
+  [5, 1, 4, 17.5, 2.4, 14, 117.6, 42, 2.8],
+  [5, 2, 4, 18, 2.2, 13, 102.96, 39.6, 2.6]
 ];
 const failures = [];
 let screenshots = 0;

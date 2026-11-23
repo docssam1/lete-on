@@ -32,7 +32,7 @@
   function render(id, variant, level) {
     const q = contracts.generate(id, variant, level);
     const text = q.promptText.split(/(?=\([123]\))/).map(escape).join("<br>");
-    const given = `<div class="source62-t-pattern-given" data-source="${id}"><div class="source62-t-pattern-given-text">${text}</div><button type="button" class="source62-m3-image-button" data-m3-figure="${variant}" data-source-figure-family="t-pattern-example2" title="입체 그림 확대" aria-label="입체 그림 확대"><img src="./assets/source-6-2-t-pattern-example2/prefix-given.png" width="1600" height="523" alt="첫째, 둘째, 셋째 T자 쌓기나무 모양" data-glyphless="true"></button></div>`;
+    const given = `<div class="source62-t-pattern-given" data-source="${id}"><div class="source62-t-pattern-given-text">${text}</div><button type="button" class="source62-m3-image-button" data-m3-figure="${variant}" data-source-figure-family="t-pattern-example2" title="입체 그림 확대" aria-label="입체 그림 확대"><img src="./assets/source-6-2-t-pattern-example2/prefix-given.png" width="1600" height="523" alt="첫 번째, 두 번째, 세 번째 T자 쌓기나무 모양" data-glyphless="true"></button></div>`;
     const layers = [...new Set(level === 2 ? [1, q.model.n, q.model.n - 1, q.model.n - 2] : [1, q.model.n])];
     return Object.freeze({ ...q, prompt: given, answer: q.answer.map((count, index) => `(${index + 1})${count}개`).join(";"),
       answerVisual: `<div class="source62-t-pattern-answer" data-source="${id}">${layers.map(layer => layerFigure(q, layer)).join("")}</div>`, answerKeyVisual: true });

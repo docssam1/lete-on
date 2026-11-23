@@ -10,7 +10,9 @@ for(let i=0;i<api.cases.length;i++){
     if(digits===`${a}${a}${b}${String(suffix).padStart(2,"0")}`)matches.push([a,b,c]);
   }
   assert.equal(matches.length,1);const [a,b,c]=matches[0];assert.equal(q.answer,`㉠=${a}, ㉡=${b}, ㉢=${c}`);
-  assert(q.prompt.includes(`10.${k}`)&&q.prompt.includes(`㉡${String(suffix).padStart(2,"0")}`));
+  {const digit=(row,col)=>(q.prompt.match(new RegExp(`data-row="${row}" data-column="${col}"[^>]*>([^<]*)<`))||[])[1];const tail=String(suffix).padStart(2,"0");
+  // 그림은 자리마다 따로 쓴 SVG 글자다: 곱하는 수 10.k, 결과 끝 두 자리가 정답 식과 같아야 한다.
+  assert.equal(`${digit("multiplier",140)}${digit("multiplier",162)}.${digit("multiplier",184)}`,`10.${k}`);assert.equal(`${digit("result",162)}${digit("result",184)}`,tail);assert(q.prompt.includes(`10점${k}`)&&q.prompt.includes(`㉡${tail}`));}
   assert.equal((q.prompt.match(/<path /g)||[]).length,(source.prompt.match(/<path /g)||[]).length);
   assert.equal((q.prompt.match(/<svg /g)||[]).length,1);
 }

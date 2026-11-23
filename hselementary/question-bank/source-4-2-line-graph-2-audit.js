@@ -6,6 +6,10 @@ const path = require("node:path");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-22 공개 목록(#1491, 장부 대조·독립 검산 통과)에 오른 유형은 앱에서 잠금이 풀린다.
+// 그 유형의 정답은 source-<묶음>-original-audit.py가 검산하므로 이 감사의 잠금 검사에서 뺀다.
+require("./source-lower-release-20261122-registry.js");
+const laterReleased = new Set(Object.keys(window.HSE_LOWER_RELEASE_20261122 || {}));
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
@@ -39,7 +43,7 @@ for (const item of sourceItems.filter(item => item.implementationStatus !== "exc
   if (type) check(type.reviewLocked === (item.implementationStatus === "review-locked"), `${item.sourceItemId}의 공개 상태가 다릅니다.`);
 }
 
-for (const type of locked) {
+for (const type of locked.filter(item => !laterReleased.has(item.id))) {
   try {
     api.generate(type, 0, 0, 810000 + type.typeNumber, type.variant);
     failures.push(`${type.sourceItemId}: 검수 대기 유형이 생성되었습니다.`);

@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict");
 const {inspect}=require("./source-6-2-notched-mission5-bank-audit.js"),{visibleLayout}=require("./source-6-2-stack-operation-learner-audit.js"),contracts=require("./source-6-2-notched-mission5-contracts.js");
 const id="6-2-u3-e2-mission-5",key="sourceGrade6SecondSpaceE2NotchedVisibility",sources=[id,"6-2-u3-e2-example-2","6-2-u3-e1-mission-5"],base=new URL(process.env.HSE_BASE_URL),out=process.env.HSE_SCREENSHOT_DIR,candidate=process.env.HSE_NOTCHED_MISSION5_CANDIDATE==="1";
-assert(out&&/^E:[/\\]/i.test(out));assert(["127.0.0.1","localhost"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
+assert(out&&path.isAbsolute(out));assert(["127.0.0.1","localhost"].includes(base.hostname));fs.mkdirSync(out,{recursive:true});
 async function main(){
   const {chromium}=require("playwright"),browser=await chromium.launch({headless:true,executablePath:process.env.HSE_CHROMIUM_EXECUTABLE}),report={status:"running",candidateOverlay:candidate,sources,states:[],pdfs:[],fixtures:[0,1,2].map(level=>({level,variants:[0,1,2].map(variant=>{const q=contracts.generate(id,variant,level);return {variant,level,answer:q.answer,solutionEquations:q.solutionEquations.map(s=>s.replace(/<[^>]+>/g,"")),model:q.model,filledModel:q.filledModel};})}))};
   try{

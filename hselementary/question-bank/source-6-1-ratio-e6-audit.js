@@ -148,6 +148,8 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (variant === 4 && (!["평지", "내리막", "오르막", "학교", "공원"].every(text => problemVisible.includes(text)) || !problemVisible.includes("source61-e6-route"))) fail(`${label}: 세 구간 길 그림의 위치·방향 표시가 없습니다.`);
       if (variant === 2 && !generated.answer.includes("가 ") || variant === 2 && !generated.answer.includes("나 ")) fail(`${label}: 두 진하기의 이름·순서가 없습니다.`);
       if (variant === 10 && !problemVisible.includes(`${discountShareText(values[2])}만큼`)) fail(`${label}: 할인 판매 비율을 원문 방식으로 표시하지 않았습니다.`);
+      if (variant === 10 && (!problemVisible.includes(`신발에 ${values[1] / 100}만큼의 이익을 붙여`) || problemVisible.includes(`${values[1]}%만큼의 이익`))) fail(`${label}: 원문(Mission 6)의 '${values[1] / 100}만큼의 이익' 표현이 아닙니다.`);
+      if (variant === 10 && poolIndex === 0 && generated.answer !== "60켤레") fail(`${label}: 원문 답 60켤레와 다릅니다.`);
       checked += 1;
     }
   }

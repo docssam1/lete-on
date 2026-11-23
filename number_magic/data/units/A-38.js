@@ -26,10 +26,10 @@ window.NM_UNITS['A-38'] = {
         result:{ ko:'3.5+1.2-0.8=3.9 ✓', en:'3.5+1.2−0.8=3.9 ✓', zh:'3.5+1.2-0.8=3.9 ✓' },
         book:{ ko:'소수 혼합 계산도 자연수처럼 왼쪽부터 차례로 계산해요. 소수점만 맞추면 규칙은 같아요!', en:'Mixed decimal calculations follow the same left-to-right rule as integers. Just align the decimal!', zh:'小数混合运算和整数一样从左到右算。只要对齐小数点，规则相同！' } },
       { tag:{ ko:'② 덧셈끼리 먼저 묶어도 돼요', en:'2) You can group additions together', zh:'② 也可以先把加法归组' },
-        head:{ ko:'A+B-C = (A+B)-C, 또는 A+(B-C)', en:'A+B−C = (A+B)−C, or A+(B−C)', zh:'A+B-C=(A+B)-C，或A+(B-C)' },
-        desc:{ ko:'2.4+0.9-1.3=? 방법1: 2.4+0.9=3.3, 3.3-1.3=2.0. 방법2: 0.9-1.3 먼저 안 됨 → 2.4+(0.9-1.3)=-0.4+2.4=2.0!',
-               en:'2.4+0.9−1.3=? Method 1: 2.4+0.9=3.3, 3.3−1.3=2.0. Both give 2.0!',
-               zh:'2.4+0.9-1.3=？方法1：2.4+0.9=3.3，3.3-1.3=2.0。两种方法都得2.0！' },
+        head:{ ko:'A+B-C = (A+B)-C, 또는 (A-C)+B', en:'A+B−C = (A+B)−C, or (A−C)+B', zh:'A+B-C=(A+B)-C，或(A-C)+B' },
+        desc:{ ko:'2.4+0.9-1.3=? 방법1: 2.4+0.9=3.3, 3.3-1.3=2.0. 방법2: 2.4-1.3=1.1, 1.1+0.9=2.0. 두 방법 모두 2.0!',
+               en:'2.4+0.9−1.3=? Method 1: 2.4+0.9=3.3, 3.3−1.3=2.0. Method 2: 2.4−1.3=1.1, 1.1+0.9=2.0. Both give 2.0!',
+               zh:'2.4+0.9-1.3=？方法1：2.4+0.9=3.3，3.3-1.3=2.0。方法2：2.4-1.3=1.1，1.1+0.9=2.0。两种方法都得2.0！' },
         mathSteps:['2.4 + 0.9 - 1.3 = □','2.4 + 0.9 = 3.3','3.3 - 1.3 = 2.0'],
         result:{ ko:'2.4+0.9-1.3=2.0 ✓', en:'2.4+0.9−1.3=2.0 ✓', zh:'2.4+0.9-1.3=2.0 ✓' },
         book:null }
@@ -46,7 +46,7 @@ window.NM_UNITS['A-38'] = {
       { tex:'4.7-0.8=\\square', answer:3.9, hint:{ ko:'0.7-0.8 → 빌림: 1.7-0.8=0.9, 4-1=3 → 3.9', en:'Borrow: 1.7−0.8=0.9, 4−1=3: 3.9', zh:'借位：1.7-0.8=0.9，4-1=3：3.9' } }
     ],
     open:{ ko:'소수 혼합 계산에서 소수점 자리를 맞추는 것이 왜 중요한지 예를 들어 설명해봐요.', en:'Give an example to show why aligning decimal points is crucial in mixed decimal calculations.', zh:'举例说明为什么在小数混合运算中对齐小数点很重要。' },
-    openHint:{ ko:'소수점을 맞추지 않으면 일의 자리를 십분의 자리로 착각해서 값이 10배 차이 날 수 있어요.', en:'Without alignment, you might confuse ones with tenths — a factor-of-10 error.', zh:'不对齐小数点，可能把个位当十分位，结果差10倍。' }
+    openHint:{ ko:'소수점을 맞추지 않으면 일의 자리를 소수 첫째 자리로 착각해서 값이 10배 차이 날 수 있어요.', en:'Without alignment, you might confuse ones with tenths — a factor-of-10 error.', zh:'不对齐小数点，可能把个位当十分位，结果差10倍。' }
   },
 
   lab:{ generator:'addSubDecimal', level:'main', count:4,

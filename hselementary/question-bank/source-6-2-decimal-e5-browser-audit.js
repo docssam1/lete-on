@@ -30,7 +30,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         ["6-2-u2-e5-example-4", "강물을 거슬러 가는 시간 구하기"],
         ["6-2-u2-e5-mission-1", "걷는 빠르기로 걸린 시간을 소수 첫째 자리까지 구하기"],
         ["6-2-u2-e5-mission-2", "두 자동차가 1L로 가는 거리 비교하기"],
-        ["6-2-u2-e5-mission-3", "연어가 강물을 거슬러 가는 시간 구하기 (조건 보정)"],
+        ["6-2-u2-e5-mission-3", "연어가 강물을 거슬러 가는 시간 구하기"],
         ["6-2-u2-e5-mission-4", "참기름을 덜어 낸 뒤 빈 통의 무게 구하기"],
         ["6-2-u2-e5-mission-5", "남은 양초의 길이로 지난 시간 구하기"],
         ["6-2-u2-e5-mission-6", "주어진 거리 관계로 갤런을 리터로 바꾸기"]
@@ -46,7 +46,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         const previewText = await preview.innerText();
         if (readyIds.has(id)) {
           assert(previewText.includes(label), `${width}px ${id}: 검증 문항 미리보기`);
-          if (id.endsWith("mission-3")) assert(previewText.includes("조건 보정 유사문항") && previewText.includes("물살 수치 보정"), `${width}px ${id}: 원문과 보정 문항 구분`);
+          if (id.endsWith("mission-3")) assert(!previewText.includes("조건 보정 유사문항"), `${width}px ${id}: 2026-11-23 원문 복원 후 보정 문항 표시 없음`);
         } else if (id.endsWith("mission-5")) {
           assert(previewText.includes("같은 탐구의 양초"), `${width}px ${id}: 공통 유형 안내`);
           assert(previewText.includes("10분에 0.24cm씩") && previewText.includes("21.7cm") && previewText.includes("9.7cm"), `${width}px ${id}: 원문 Mission 5 구조 미리보기`);

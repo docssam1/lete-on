@@ -1,5 +1,5 @@
-import { weekRate } from "./study-progress.js?v=20261111p";
-import { gmState } from "./teacher-admin.js?v=20261116a";
+import { weekRate } from "./study-progress.js?v=20261117a";
+import { gmState } from "./teacher-admin.js?v=20261122zi";
 
 // 선생님 보기 · 접속한 회원(원장 2026-11-11 「들어간 회원, 회원정보, 학습 상황도 나올 수 있도록」):
 // 모든 승인번호(이메일로 가입한 아이 + 원장이 직접 만든 승인번호)를 마지막 활동 순으로 —

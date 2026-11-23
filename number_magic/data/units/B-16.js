@@ -33,12 +33,12 @@ window.NM_UNITS['B-16'] = {
     stages:[
       { tag:{ko:'① 구구단의 대칭',en:'1) Times table symmetry',zh:'① 乘法口诀的对称性'},
         head:{ko:'반쪽만 알면 전부 알 수 있어요!',en:'Know half, know it all!',zh:'只要知道一半，就能知道全部！'},
-        desc:{ko:'3×7=21이고 7×3=21이에요. <b>순서를 바꿔도 답이 같아요</b>(교환법칙). 72개 전부 외울 필요 없이 36개만 알면 나머지는 뒤집으면 돼요!',
+        desc:{ko:'3×7=21이고 7×3=21이에요. <b>위치를 바꿔도 똑같아요</b>. 72개 전부 외울 필요 없이 36개만 알면 나머지는 뒤집으면 돼요!',
               en:'3×7=21 and 7×3=21. <b>Flip the order, same answer!</b> (commutative law) You only need to memorise 36 facts — the rest are just mirrors.',
               zh:'3×7=21，7×3也等于21。<b>交换顺序，答案相同！</b>（交换律）只需记住36个，其余的翻转一下就行了！'},
         mathSteps:[{ko:'전체 72개 곱',en:'\\text{72 products in all}',zh:'一共72个乘积'},{ko:'= 중복 제거하면 36개',en:'= \\text{36 after removing duplicates}',zh:'= 去掉重复剩36个'},{ko:'+ 1×1~9×9 대각선 9개',en:'+ \\text{9 on the diagonal } 1×1…9×9',zh:'+ 对角线1×1~9×9共9个'},{ko:'→ 효율적 학습 가능!',en:'→ \\text{much less to memorize!}',zh:'→ 学起来更省力！'}],
         result:{ko:'3×7과 7×3은 같아요! 36개만 외우면 72개가 완성돼요.',en:'3×7 = 7×3! Master 36 facts and you have all 72.',zh:'3×7=7×3！记住36个，72个口诀全部搞定。'},
-        book:{ko:'곱셈에서 두 수의 순서를 바꿔도 결과가 같아요. 이것을 교환법칙이라 해요. 이 성질 덕분에 36개만 완벽하게 외우면 나머지는 자동으로 알 수 있어요.',
+        book:{ko:'곱셈은 두 수의 위치를 바꿔도 똑같아요. 그래서 36개만 완벽하게 외우면 나머지는 자동으로 알 수 있어요.',
               en:'Swapping the order of two numbers in multiplication gives the same product. This is the commutative law. Thanks to this, mastering 36 facts gives you all 72 for free.',
               zh:'乘法中交换两数的顺序，结果不变，这叫交换律。利用这个性质，只需熟记36个，其余72个自动掌握。'} },
 
@@ -62,7 +62,7 @@ window.NM_UNITS['B-16'] = {
         result:{ko:'이 4개만 특별히 외우면 2~9단 완전 정복!',en:'Commit these 4 to memory and you\'ve conquered all tables 2–9!',zh:'特别记住这4个，2~9的乘法口诀全部攻克！'},
         book:null }
     ],
-    rule:{ ko:'① 교환법칙: 36개만 알면 72개 완성  ② 단별 패턴 활용  ③ 어려운 4개(42·48·56·63)는 특별 암기!',
+    rule:{ ko:'① 위치를 바꿔도 똑같아요: 36개만 알면 72개 완성  ② 단별 패턴 활용  ③ 어려운 4개(42·48·56·63)는 특별 암기!',
       en:'① Commutative law: 36 facts = 72 total  ② Use table-specific patterns  ③ Special memorise: 42, 48, 56, 63',
       zh:'① 交换律：36个=72个全部  ② 利用各段规律  ③ 特别记忆四个难题：42·48·56·63' }
   },
@@ -77,7 +77,7 @@ window.NM_UNITS['B-16'] = {
     open:{ ko:'2~9단 중 가장 어렵게 느껴지는 단은 무엇인가요? 그 단을 쉽게 외울 수 있는 나만의 방법을 생각해 봐요.',
       en:'Which times table (2–9) feels hardest for you? Come up with your own trick to memorise it.',
       zh:'2~9的乘法口诀中，你觉得哪个最难？想一想你自己记忆它的方法。' },
-    openHint:{ ko:'예) 8단이 어려우면? 8×5=40 (절반인 4×5=20의 두 배), 8×6=48(6×8=48로 교환), 8×7=56 특별암기!',
+    openHint:{ ko:'예) 8단이 어려우면? 8×5=40 (절반인 4×5=20의 두 배), 8×6=48(위치를 바꾼 6×8=48과 똑같아요), 8×7=56 특별암기!',
       en:'e.g. Struggling with 8s? 8×5=40 (double 4×5=20), 8×6=48 (swap from 6×8), 8×7=56 — special memorise!',
       zh:'例）8的口诀难？8×5=40（4×5=20翻倍），8×6=48（交换6×8），8×7=56特别记忆！' }
   },

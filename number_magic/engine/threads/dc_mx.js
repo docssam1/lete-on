@@ -33,8 +33,8 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
        별도 변형으로 쓴다(9 x 2 = 18개). 답의 의미와 난이도는 그대로다. */
     const blankFirst = R(rng, 0, 1) === 1;
     const digitTex = blankFirst
-      ? `\\square + ${a} = 10 \\;(\\text{십분의 자리})`
-      : `${a} + \\square = 10 \\;(\\text{십분의 자리})`;
+      ? `\\square + ${a} = 10 \\;(\\text{0.1이 몇 개})`
+      : `${a} + \\square = 10 \\;(\\text{0.1이 몇 개})`;
     const decimalTex = blankFirst
       ? `0.\\square + 0.${a} = 1`
       : `0.${a} + 0.\\square = 1`;
@@ -60,16 +60,16 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
     const b    = 100 - a;
     const aStr = String(a).padStart(2, '0');
     return {
-      prompt: { ko: `1을 만드는 짝꿍을 찾아요 (백분의 자리)`,
+      prompt: { ko: `1을 만드는 짝꿍을 찾아요 (소수 둘째 자리)`,
                 en: `Find the partner that makes 1 (hundredths)`,
                 zh: `找出凑成1的伙伴（百分位）` },
-      tex:        `0.${aStr} + \\dfrac{\\square}{100} = 1`,
+      tex:        `0.${aStr} + 0.\\square = 1`,
       answer:     b,
       answerType: 'steps',
       widget:     'numpad',
       steps: [
-        { tex: `${a} + \\square = 100 \\;(\\text{백분의 자리})`, blank: b },
-        { tex: `0.${aStr} + \\dfrac{\\square}{100} = 1`,          blank: b }
+        { tex: `${a} + \\square = 100 \\;(\\text{0.01이 몇 개})`, blank: b },
+        { tex: `0.${aStr} + 0.\\square = 1`,                    blank: b }
       ]
     };
   }
@@ -82,24 +82,32 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
     prompt: { ko: `10을 만드는 짝꿍을 찾아요`,
               en: `Find the partner that makes 10`,
               zh: `找出凑成10的伙伴` },
-    tex:        `${w}.${a} + \\dfrac{\\square}{10} = 10`,
-    answer:     b,
+    /* 답은 소수 모양 □.□ (2026-11-19 — □/10 분수 꼴을 쓰지 않는다) */
+    tex:        `${w}.${a} + \\square.\\square = 10`,
+    answer:     [Math.floor(b / 10), b % 10],
     answerType: 'steps',
-    widget:     'numpad',
+    widget:     'steps',
     steps: [
-      { tex: `${w * 10 + a} + \\square = 100 \\;(\\times 10\\text{ 계산})`, blank: b },
-      { tex: `${w}.${a} + \\dfrac{\\square}{10} = 10`,                       blank: b }
+      { tex: `${w * 10 + a} + \\square = 100 \\;(\\text{0.1이 몇 개})`, blank: b },
+      { tex: `${w}.${a} + \\square.\\square = 10`,                      blank: [Math.floor(b / 10), b % 10] }
     ]
   };
 };
 
 /* ── DC1 — 소수 덧·뺄 (1자리 · 2자리) ───────────────────────── */
+/* 소수 답을 소수 모양 빈칸으로(2026-11-19) — v = 결과를 10^pl 배 한 자연수.
+   자연수 부분이 있으면 □.□ (답 [자연수, 소수 부분]), 0이면 0.□ (답 소수 부분), 소수 부분 앞자리 0은 틀에 적는다(3.04 → □.0□).
+   소수 단원 답을 □/10·□/100 분수로 쓰게 하지 않는다(원장 2026-11-18 「십분의 자리의 합이 뭐야?」). */
+function decBlank(v, pl){
+  const M = Math.pow(10, pl), w = Math.floor(v / M), f = v % M;
+  const fs = String(f).padStart(pl, '0'), z = fs.match(/^0*/)[0];
+  return w ? { tex: `\\square.${z}\\square`, answer: [w, f] } : { tex: `0.${z}\\square`, answer: f };
+}
 NM_TGEN['dc1_decAddSub'] = function(params, rng) {
   /* ── 자릿수가 다른 소수의 덧셈·뺄셈 (mode:'mixedPlaces', op '+'|'-') — 2026-09-29 신규 ──
      기적의 계산법 78·79단계 자리. 3.4 + 1.27, 4.56 − 2.3, 5 − 2.36 처럼 소수 자릿수가 다른
      두 수. 핵심은 **빈 자리를 0 으로 채워 자릿수를 맞추는 것**(3.4 → 3.40)이라, 풀이 첫 줄에서
-     그 수를 100배 한 자연수로 바꿔 쓰게 한다. 답은 레벨 2와 같은 관례 — 결과를 100배 한
-     자연수(`\dfrac{□}{100}`). 한 수는 늘 소수 둘째 자리가 0 이 아니고 다른 수는 소수 한 자리
+     빈 자리를 0으로 채우게 한다. 답은 소수 모양 빈칸(decBlank, 2026-11-19). 한 수는 늘 소수 둘째 자리가 0 이 아니고 다른 수는 소수 한 자리
      (또는 자연수)라 답의 끝자리도 0 이 되지 않는다. 문제는 새로 지었다. */
   if (params.mode === 'mixedPlaces') {
     const hund = () => { let v; do { v = R(rng, 101, 999); } while (v % 10 === 0); return v; };   /* 1.01~9.99 */
@@ -122,14 +130,14 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
       res = A + B;
     }
     const op = params.op === '-' ? '-' : '+';
-    const tex = `${aStr} ${op} ${bStr} = \\dfrac{\\square}{100}`;
-    /* 자릿수를 맞춰 100배 — 소수 한 자리 쪽(또는 자연수)이 0 을 채우는 자리다 */
-    const fillFirst = !/\.\d\d$/.test(aStr);
+    const D = decBlank(res, 2), tex = `${aStr} ${op} ${bStr} = ${D.tex}`;
+    /* 빈 자리를 0으로 채워 자릿수를 맞춘 뒤(3.4 → 3.40), 0.01이 몇 개인지로 계산한다 */
+    const fillFirst = !/\.\d\d$/.test(aStr), short = fillFirst ? aStr : bStr;
+    const fill = /\./.test(short) ? `${short} = ${short}\\square \\;(\\text{빈 자리는 0})` : `${short} = ${short}.0\\square \\;(\\text{빈 자리는 0})`;
     const steps = [
-      fillFirst ? { tex: `${aStr} \\times 100 = \\square \\;(\\text{빈 자리는 0})`, blank: A }
-                : { tex: `${bStr} \\times 100 = \\square \\;(\\text{빈 자리는 0})`, blank: B },
-      { tex: `${A} ${op} ${B} = \\square \\;(\\times 100\\text{ 계산})`, blank: res },
-      { tex, blank: res }
+      { tex: fill, blank: 0 },
+      { tex: `${A} ${op} ${B} = \\square \\;(\\text{0.01이 몇 개})`, blank: res },
+      { tex, blank: D.answer }
     ];
     return {
       prompt: {
@@ -137,7 +145,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
         en: op === '+' ? `Add decimals with different numbers of places: fill the empty place with 0 and line up the points` : `Subtract decimals with different numbers of places: fill the empty place with 0 and line up the points`,
         zh: op === '+' ? `位数不同的小数加法：空位补0，对齐小数点` : `位数不同的小数减法：空位补0，对齐小数点`
       },
-      tex, answer: res, answerType: 'steps', widget: 'steps', steps
+      tex, answer: D.answer, answerType: 'steps', widget: 'steps', steps
     };
   }
 
@@ -151,22 +159,29 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
     const num = v => { const w = Math.floor(v / M), f = String(v % M).padStart(pl, '0'); return `${w}.${f}`; };
     const mk = () => { let v; do { v = R(rng, lo, hi); } while (v % 10 === 0); return v; };
     let a = mk(), b = mk(), op = params.op === '-' ? '-' : '+';
-    if (op === '-') { if (a < b) { const t = a; a = b; b = t; } if (a - b < M) { a += M * 3; } }
-    const res = op === '+' ? a + b : a - b;
-    const tex = `${num(a)} ${op} ${num(b)} = \\dfrac{\\square}{${M}}`;
+    /* 답의 끝자리가 0이면(20.10) 빈칸 모양이 한 자리로 줄어 다시 뽑는다 */
+    let res;
+    for (let t = 0; t < 40; t++) {
+      if (op === '-') { if (a < b) { const x = a; a = b; b = x; } if (a - b < M) { a += M * 3; } }
+      res = op === '+' ? a + b : a - b;
+      if (res % 10 !== 0) break;
+      a = mk(); b = mk();
+    }
+    const D = decBlank(res, pl), unitTxt = pl === 2 ? '0.01이 몇 개' : '0.1이 몇 개';
+    const tex = `${num(a)} ${op} ${num(b)} = ${D.tex}`;
     const steps = [
       { tex: `${num(a)} \\times ${M} = \\square`, blank: a },
       { tex: `${num(b)} \\times ${M} = \\square`, blank: b },
-      { tex: `${a} ${op} ${b} = \\square \\;(\\times ${M}\\text{ 계산})`, blank: res },
-      { tex, blank: res }
+      { tex: `${a} ${op} ${b} = \\square \\;(\\text{${unitTxt}})`, blank: res },
+      { tex, blank: D.answer }
     ];
     return {
       prompt: {
-        ko: `${pl === 2 ? '소수 두 자리' : '소수 한 자리'} 큰 소수의 ${op === '+' ? '덧셈' : '뺄셈'}: ${M}배 한 자연수로 바꿔 계산해요`,
-        en: `${op === '+' ? 'Add' : 'Subtract'} larger ${pl}-place decimals: turn them into whole numbers (×${M}) first`,
-        zh: `较大的${pl}位小数${op === '+' ? '加法' : '减法'}：先乘${M}变成整数再计算`
+        ko: `${pl === 2 ? '소수 두 자리' : '소수 한 자리'} 큰 소수의 ${op === '+' ? '덧셈' : '뺄셈'}: ${pl === 2 ? '0.01' : '0.1'}이 몇 개인지로 바꿔 계산해요`,
+        en: `${op === '+' ? 'Add' : 'Subtract'} larger ${pl}-place decimals: count how many ${pl === 2 ? '0.01s' : '0.1s'} first`,
+        zh: `较大的${pl}位小数${op === '+' ? '加法' : '减法'}：先数一数有几个${pl === 2 ? '0.01' : '0.1'}再计算`
       },
-      tex, answer: res, answerType: 'steps', widget: 'steps', steps
+      tex, answer: D.answer, answerType: 'steps', widget: 'steps', steps
     };
   }
 
@@ -193,7 +208,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
           answerType: 'steps',
           widget:     'vertical',
           steps: [
-            { tex: `${a} + ${b} = \\square \\;(\\times 10\\text{ 계산})`, blank: sum },
+            { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum },
             { tex: `0.${a} + 0.${b} = 0.\\square`,                        blank: sum }
           ]
         };
@@ -205,13 +220,15 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
             en: `1-place decimal addition with carry into ones`,
             zh: `一位小数进位加法`
           },
-          tex:        `0.${a} + 0.${b} = \\dfrac{\\square}{10}`,
-          answer:     sum,                    /* 정수: 십분의 자리 합 */
+          /* 답은 소수 모양 1.□ (2026-11-18 원장 「어색한 식」 — 소수 단원에서 □/10 분수로 쓰게 하지 않는다) */
+          /* 합이 꼭 1이면 1.0이 아니라 □ = 1 */
+          tex:        sum === 10 ? `0.${a} + 0.${b} = \\square` : `0.${a} + 0.${b} = 1.\\square`,
+          answer:     sum === 10 ? 1 : sum - 10,   /* 정수: 소수 첫째 자리 숫자 */
           answerType: 'steps',
           widget:     'vertical',
           steps: [
-            { tex: `${a} + ${b} = \\square \\;(\\text{십분의 자리 합})`, blank: sum  },
-            { tex: `0.${a} + 0.${b} = \\dfrac{\\square}{10}`, blank: sum }
+            { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum  },
+            { tex: sum === 10 ? `0.${a} + 0.${b} = \\square` : `0.${a} + 0.${b} = 1.\\square`, blank: sum === 10 ? 1 : sum - 10 }
           ]
         };
       }
@@ -231,7 +248,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
         answerType: 'steps',
         widget:     'vertical',
         steps: [
-          { tex: `${a} - ${b} = \\square \\;(\\times 10\\text{ 계산})`, blank: diff },
+          { tex: `${a} - ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: diff },
           { tex: `0.${a} - 0.${b} = 0.\\square`,                         blank: diff }
         ]
       };
@@ -242,46 +259,53 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
   const op = pick(rng, ['+', '-']);
 
   if (op === '+') {
-    const a    = R(rng, 10, 89);
-    const b    = R(rng, 10, 89);
-    const sum  = a + b;                /* 백분의 자리 합 */
+    /* 답은 소수 모양 0.□ / 1.□ (2026-11-18 원장 「어색한 식」 — □/100 분수로 쓰게 하지 않는다).
+       0.70처럼 끝이 0인 수·답(1.10)과, 1 이상인데 빈칸이 한 자리가 되는 답(1.05)은 다시 뽑는다. */
+    let a, b;
+    do { a = R(rng, 10, 89); b = R(rng, 10, 89); }
+    while (a % 10 === 0 || b % 10 === 0 || (a + b) % 10 === 0 || (a + b >= 100 && (a + b) % 100 < 10));
+    const sum  = a + b;                /* 0.01이 몇 개 */
     const aStr = String(a).padStart(2, '0');
     const bStr = String(b).padStart(2, '0');
+    const head = sum >= 100 ? '1.' : '0.';
+    const ans  = sum >= 100 ? sum - 100 : sum;
     return {
       prompt: {
-        ko: `소수 두 자리 덧셈: 백분의 자리까지 맞춰요`,
+        ko: `소수 두 자리 덧셈: 소수 둘째 자리까지 맞춰요`,
         en: `Add 2-place decimals: line up to hundredths`,
         zh: `两位小数加法：对齐到百分位`
       },
-      tex:        `0.${aStr} + 0.${bStr} = \\dfrac{\\square}{100}`,
-      answer:     sum,
+      tex:        `0.${aStr} + 0.${bStr} = ${head}\\square`,
+      answer:     ans,
       answerType: 'steps',
       widget:     'vertical',
       steps: [
-        { tex: `${a} + ${b} = \\square \\;(\\times 100\\text{ 계산})`, blank: sum },
-        { tex: `\\dfrac{\\square}{100}`,                                 blank: sum }
+        { tex: `${a} + ${b} = \\square \\;(\\text{0.01이 몇 개})`, blank: sum },
+        { tex: `0.${aStr} + 0.${bStr} = ${head}\\square`,           blank: ans }
       ]
     };
   } else {
     /* 뺄셈: a > b 보장 */
-    const a    = R(rng, 21, 99);
-    const b    = R(rng, 10, a - 1);
+    let a, b;
+    do { a = R(rng, 21, 99); b = R(rng, 10, a - 1); }
+    while (a % 10 === 0 || b % 10 === 0 || (a - b) % 10 === 0);   /* 끝이 0인 수·답(0.70, 0.20)은 다시 뽑는다 */
     const diff = a - b;
     const aStr = String(a).padStart(2, '0');
     const bStr = String(b).padStart(2, '0');
     return {
       prompt: {
-        ko: `소수 두 자리 뺄셈: 백분의 자리까지 맞춰요`,
+        ko: `소수 두 자리 뺄셈: 소수 둘째 자리까지 맞춰요`,
         en: `Subtract 2-place decimals: line up to hundredths`,
         zh: `两位小数减法：对齐到百分位`
       },
-      tex:        `0.${aStr} - 0.${bStr} = \\dfrac{\\square}{100}`,
+      /* 답은 소수 모양 0.□ / 0.0□ (2026-11-18) */
+      tex:        `0.${aStr} - 0.${bStr} = ${diff < 10 ? '0.0' : '0.'}\\square`,
       answer:     diff,
       answerType: 'steps',
       widget:     'vertical',
       steps: [
-        { tex: `${a} - ${b} = \\square \\;(\\times 100\\text{ 계산})`, blank: diff },
-        { tex: `\\dfrac{\\square}{100}`,                                  blank: diff }
+        { tex: `${a} - ${b} = \\square \\;(\\text{0.01이 몇 개})`, blank: diff },
+        { tex: `0.${aStr} - 0.${bStr} = ${diff < 10 ? '0.0' : '0.'}\\square`, blank: diff }
       ]
     };
   }
@@ -349,43 +373,46 @@ NM_TGEN['dc2_decMul'] = function(params, rng) {
 
   if (variant === 'decDec') {
     /* 0.a × 0.b = (a × b) ÷ 100  →  answer = a*b (백분의 자리 표현) */
-    const a    = R(rng, 1, 9);
-    const b    = R(rng, 1, 9);
-    const prod = a * b;               /* 백분의 자리 값 */
+    /* 곱의 끝자리가 0이면(0.5 × 0.4 = 0.20) 소수 두 자리 빈칸 모양이 맞지 않아 다시 뽑는다 */
+    let a, b;
+    do { a = R(rng, 1, 9); b = R(rng, 1, 9); } while ((a * b) % 10 === 0);
+    const prod = a * b, z = prod < 10 ? '0' : '';   /* 0.01이 몇 개 */
     return {
       prompt: {
-        ko: `0.${a} × 0.${b}: 정수 곱셈 후 소수점 2자리 이동`,
-        en: `0.${a} × 0.${b}: multiply integers then shift decimal 2 places`,
-        zh: `0.${a}×0.${b}：整数相乘后移两位小数点`
+        ko: `0.${a} × 0.${b}: 자연수처럼 곱한 뒤 100으로 나눠요`,
+        en: `0.${a} × 0.${b}: multiply as whole numbers, then divide by 100`,
+        zh: `0.${a}×0.${b}：先按整数相乘，再除以100`
       },
-      tex:        `0.${a} \\times 0.${b} = \\dfrac{\\square}{100}`,
+      tex:        `0.${a} \\times 0.${b} = 0.${z}\\square`,
       answer:     prod,
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${a} \\times ${b} = \\square \\;(\\text{정수 곱셈})`,         blank: prod },
-        { tex: `\\text{소수점 2자리 ← } \\Rightarrow \\dfrac{\\square}{100}`, blank: prod }
+        { tex: `${a} \\times ${b} = \\square \\;(\\text{정수 곱셈})`, blank: prod },
+        { tex: `\\square \\div 100 = 0.${z}\\square`,                 blank: [prod, prod] },
+        { tex: `0.${a} \\times 0.${b} = 0.${z}\\square`,               blank: prod }
       ]
     };
   }
 
   /* intDec: 정수 × 0.b  →  answer = a*b (십분의 자리 표현) */
-  const a    = R(rng, 11, 49);
-  const b    = R(rng, 1, 9);
-  const prod = a * b;                 /* 십분의 자리 값 */
+  let a, b;
+  do { a = R(rng, 11, 49); b = R(rng, 1, 9); } while ((a * b) % 10 === 0);   /* 끝자리 0이면 □.□ 모양이 맞지 않는다 */
+  const prod = a * b, pi = Math.floor(prod / 10), pf = prod % 10;          /* 0.1이 몇 개 */
   return {
     prompt: {
-      ko: `${a} × 0.${b}: 정수 곱셈 후 소수점 1자리 이동`,
-      en: `${a} × 0.${b}: multiply integers then shift decimal 1 place`,
-      zh: `${a}×0.${b}：整数相乘后移一位小数点`
+      ko: `${a} × 0.${b}: 자연수처럼 곱한 뒤 10으로 나눠요`,
+      en: `${a} × 0.${b}: multiply as whole numbers, then divide by 10`,
+      zh: `${a}×0.${b}：先按整数相乘，再除以10`
     },
-    tex:        `${a} \\times 0.${b} = \\dfrac{\\square}{10}`,
-    answer:     prod,
+    tex:        `${a} \\times 0.${b} = \\square.\\square`,
+    answer:     [pi, pf],
     answerType: 'steps',
     widget:     'steps',
     steps: [
-      { tex: `${a} \\times ${b} = \\square`,                            blank: prod },
-      { tex: `\\text{소수점 1자리 ← } \\Rightarrow \\dfrac{\\square}{10}`, blank: prod }
+      { tex: `${a} \\times ${b} = \\square`,                       blank: prod },
+      { tex: `\\square \\div 10 = \\square.\\square`,           blank: [prod, pi, pf] },
+      { tex: `${a} \\times 0.${b} = \\square.\\square`,          blank: [pi, pf] }
     ]
   };
 };
@@ -1085,7 +1112,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${a} + ${b} = \\square \\;(\\text{십분의 자리})`, blank: sum },
+        { tex: `${a} + ${b} = \\square \\;(\\text{0.1이 몇 개})`, blank: sum },
         { tex: `0.\\square`,                                         blank: sum }
       ]
     };

@@ -8,9 +8,10 @@ const api = window.HSE_GENERATORS;
 const sourceItemId = "6-1-u3-e4-example-1";
 const generatorKey = "sourceGrade6DecimalDivisionE4Example1";
 const expectedPools = [
-  [4, 1, 3, 15.2, 2.5, 7, 66.5, 19, 3.5],
-  [5, 1, 4, 17.5, 2.4, 9, 75.6, 21, 3.6],
-  [5, 2, 4, 18, 2.2, 8, 63.36, 19.8, 3.2]
+  // 원문 그림은 3줄(아래 두 줄 전체 + 맨 윗줄 일부)이고 ㄴㄷ은 맨 아랫줄 위 선, ㄱ은 맨 위 선에 있다(삼각형 높이 = 2칸).
+  [4, 1, 3, 15.2, 2.5, 11, 104.5, 38, 2.75],
+  [5, 1, 4, 17.5, 2.4, 14, 117.6, 42, 2.8],
+  [5, 2, 4, 18, 2.2, 13, 102.96, 39.6, 2.6]
 ];
 const failures = [];
 let checked = 0;
@@ -55,12 +56,12 @@ for (const difficulty of [-1, 0, 1]) {
       const cellWidth = totalWidth / columns;
       const areaByCells = cellCount * cellWidth * cellHeight;
       const scaleX = (points.D.x - points.N.x) / totalWidth;
-      const scaleY = (points.N.y - points.G.y) / cellHeight;
+      const scaleY = (points.N.y - points.G.y) / (2 * cellHeight);
       const areaByShoelace = polygonArea([points.N, points.G, points.D]) / (scaleX * scaleY);
       const areaRatio = areaByCells / areaByShoelace;
       if (!close(areaByCells, wholeArea) || !close(areaByShoelace, triangleArea) || !close(areaRatio, ratio)) fail(`${label}: 셀 합·신발끈 공식·넓이 비의 독립 계산이 일치하지 않습니다 (${areaByCells}/${areaByShoelace}/${areaRatio}).`);
       if (!(topStart > 0 && topStart < columns && apexColumn >= topStart && apexColumn < columns && points.N.x < points.G.x && points.G.x < points.D.x && close(points.N.y, points.D.y))) fail(`${label}: 계단형 격자 또는 삼각형 꼭짓점이 하나로 정해지지 않습니다.`);
-      if (poolIndex === 0 && (columns !== 4 || topStart !== 1 || apexColumn !== 3 || !close(totalWidth, 15.2) || !close(cellHeight, 2.5) || cellCount !== 7 || !close(wholeArea, 66.5) || !close(triangleArea, 19) || !close(ratio, 3.5))) fail(`${label}: 원본 7칸·15.2cm·2.5cm·19cm²·3.5배가 다릅니다.`);
+      if (poolIndex === 0 && (columns !== 4 || topStart !== 1 || apexColumn !== 3 || !close(totalWidth, 15.2) || !close(cellHeight, 2.5) || cellCount !== 11 || !close(wholeArea, 104.5) || !close(triangleArea, 38) || !close(ratio, 2.75))) fail(`${label}: 원본 11칸·15.2cm·2.5cm·38cm²·2.75배가 다릅니다.`);
       if (String(generated?.answer) !== `${ratio}배`) fail(`${label}: 표시 답 ${generated?.answer}이 독립 계산 ${ratio}배와 다릅니다.`);
     }
     if (!problemSvg || !answerSvg || attr(problemSvg, "data-source61-e4ex1-phase") !== "problem" || attr(answerSvg, "data-source61-e4ex1-phase") !== "answer" || problemSvg.includes("source61-e4ex1-target") || !answerSvg.includes("source61-e4ex1-target is-solved")) fail(`${label}: 문제·답 단계 또는 답 전용 삼각형 표시가 다릅니다.`);
@@ -79,5 +80,5 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("통과: 원본 7칸·15.2cm·2.5cm·66.5cm²·19cm²·3.5배 · 셀 합/신발끈 독립 계산 · 난이도 계약");
+  console.log("통과: 원본 11칸·15.2cm·2.5cm·104.5cm²·38cm²·2.75배 · 셀 합/신발끈 독립 계산 · 난이도 계약");
 }

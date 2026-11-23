@@ -1,25 +1,25 @@
-import { frac } from "./math-markup.js?v=20261027p";
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261101m";
+import { frac } from "./math-markup.js?v=20261122w";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261119a";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261101m";
-import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261028s";
+import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261117a";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261028s";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261101m";
-import { book01Markup } from "./book01-renderers.js?v=20261103b";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261122w";
+import { book01Markup } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261117a";
-import { book05Markup } from "./book05-renderers.js?v=20261101m";
-import { book06Markup } from "./book06-renderers.js?v=20261101m";
+import { book04Markup } from "./book04-renderers.js?v=20261121a";
+import { book05Markup } from "./book05-renderers.js?v=20261122w";
+import { book06Markup } from "./book06-renderers.js?v=20261122w";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
-import { book08Markup } from "./book08-renderers.js?v=20261101m";
-import { book09Markup } from "./book09-renderers.js?v=20261029t";
+import { book08Markup } from "./book08-renderers.js?v=20261122w";
+import { book09Markup } from "./book09-renderers.js?v=20261121c";
 import { book10Markup } from "./book10-renderers.js?v=20261101m";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20261101m";
-import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
-import { importSessionPages } from "./session-book-sheet.js?v=20261117b";
-import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261110m";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261110m";
+import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261122zf";
+import { importSessionPages, sessionAnswerPages } from "./session-book-sheet.js?v=20261121c";
+import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261122zh";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261122zh";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261028w";
@@ -281,12 +281,15 @@ function experienceClockMarkup(experience, sceneState = state.experience) {
   }).join("");
   const labels = [[12, 120, 30], [3, 180, 94], [6, 120, 154], [9, 60, 94]];
   const trace = beat.action === "transform" ? clockArcPath(start, beat.quarterTurns) : "";
-  return `<div class="experience-clock" data-experience-step="${step}" data-current-value="${current}"><svg viewBox="0 0 240 180" role="img" aria-label="${start}에서 출발해 ${current}을 가리키는 시계 바늘"><circle class="experience-clock-face" cx="120" cy="90" r="66" />${ticks}<g class="experience-clock-labels">${labels.map(([value, x, y]) => `<text x="${x}" y="${y}">${value}</text>`).join("")}</g>${trace}<g class="experience-clock-hand ${animate ? "is-moving" : ""}" style="--from-angle:${fromRotation}deg;--to-angle:${toRotation}deg"><line x1="120" y1="90" x2="120" y2="44" /><circle cx="120" cy="90" r="6" /></g><text class="experience-clock-current" x="120" y="176">지금 바늘: ${current}</text></svg><p class="experience-caption" aria-live="polite">${beat.caption}</p></div>`;
+  return `<div class="experience-clock" data-experience-step="${step}" data-current-value="${current}"><svg viewBox="0 0 240 180" role="img" aria-label="${start}에서 출발해 ${numberObject(current)} 가리키는 시계 바늘"><circle class="experience-clock-face" cx="120" cy="90" r="66" />${ticks}<g class="experience-clock-labels">${labels.map(([value, x, y]) => `<text x="${x}" y="${y}">${value}</text>`).join("")}</g>${trace}<g class="experience-clock-hand ${animate ? "is-moving" : ""}" style="--from-angle:${fromRotation}deg;--to-angle:${toRotation}deg"><line x1="120" y1="90" x2="120" y2="44" /><circle cx="120" cy="90" r="6" /></g><text class="experience-clock-current" x="120" y="176">지금 바늘: ${current}</text></svg><p class="experience-caption" aria-live="polite">${beat.caption}</p></div>`;
 }
 
+// 숫자 뒤 「을/를」: 끝자리를 읽은 소리로 고른다(2·4·5·9는 받침 없음 → 를, 나머지 → 을). 「6를」을 막는다.
+const numberObject = (value) => `${value}${[2, 4, 5, 9].includes(Math.abs(Number(value)) % 10) ? "를" : "을"}`;
+
 function clockExperienceSummaryMarkup(experience) {
-  const landing = (turns) => clockValueAfterQuarterTurns(experience.start, turns);
-  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> ${experience.start}에서 시작해 시계 방향으로 한 바퀴는 ${landing(4)}, 반 바퀴는 ${landing(2)}를 가리킵니다. 시계 반대 방향으로 반 바퀴 돌려도 ${landing(-2)}를 가리킵니다. 반의 반 바퀴는 시계 방향 ${landing(1)}·반대 방향 ${landing(-1)}를 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
+  const landing = (turns) => numberObject(clockValueAfterQuarterTurns(experience.start, turns));
+  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> ${experience.start}에서 시작해 시계 방향으로 한 바퀴는 ${landing(4)}, 반 바퀴는 ${landing(2)} 가리킵니다. 시계 반대 방향으로 반 바퀴 돌려도 ${landing(-2)} 가리킵니다. 반의 반 바퀴는 시계 방향으로 ${landing(1)}, 반대 방향으로 ${landing(-1)} 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
 }
 
 function experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled }) {
@@ -1731,6 +1734,29 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
 // ?sessionbook=1&book=&lessons=id,id&label=1단원 1차시&range=…&parts=…&sheet=<문제은행 학습지 주소>[&preview=1]
 // 표지(워밍업 교재와 같은 「도형 배경」) → (2차시부터 &presheet) 지난 차시 데일리 테스트 → 그 차시 워밍업 학습마다 개념·워밍업 쪽 → 본책 · 오늘의 과제 → (마지막 차시) 단원 평가.
 // 덱(study.html)의 차시 순서 그대로다. 정답·풀이는 넣지 않는다.
+// 인쇄 창 화면(원장 2026-11-17 「인쇄 후 스스로 공부하기 창으로 돌아갈 수 있도록 · 문제은행과 같은 창에 멈춰 있어」):
+// 뒤의 워밍업 화면 대신 「교재 인쇄」 안내 한 장을 덮고, 인쇄가 끝나면(afterprint) 이 창을 닫아 공부 창으로 돌아간다.
+// 덱·시작 화면이 새 창으로 열었으므로 닫으면 그 창이 보인다. 닫히지 않는 브라우저면 「스스로 공부로 돌아가기」 단추로 돌아간다.
+function backToStudy() {
+  try { window.close(); } catch {}
+  setTimeout(() => {
+    if (window.closed) return;
+    if (history.length > 1) history.back();
+    else location.assign(`./start.html?student=${encodeURIComponent(student)}`);
+  }, 300);
+}
+function showSessionBookDone() {
+  document.documentElement.classList.remove("sb-booting");
+  if (document.querySelector(".sb-done")) return;
+  const panel = document.createElement("div");
+  panel.className = "sb-done";
+  panel.innerHTML = `<div class="sb-done-card" role="dialog" aria-labelledby="sbDoneTitle"><p class="sb-done-kick">교재 인쇄</p><h2 id="sbDoneTitle">${escapeAttribute(params.get("label") || "")} 교재</h2><p>인쇄 창에서 프린터를 고르고 「인쇄」를 눌러요. 인쇄가 끝나면 이 창은 닫히고 공부하던 창으로 돌아가요.</p><div class="sb-done-actions"><button type="button" class="sb-done-back">스스로 공부로 돌아가기</button><button type="button" class="sb-done-print">다시 인쇄</button></div></div>`;
+  panel.querySelector(".sb-done-back").addEventListener("click", backToStudy);
+  panel.querySelector(".sb-done-print").addEventListener("click", () => window.print());
+  document.body.append(panel);
+  window.addEventListener("afterprint", () => { if (params.get("preview") !== "1") backToStudy(); });
+}
+
 async function printSessionBook() {
   let book = activeBook();
   // 워밍업 자료가 없는 권(2과정 G1 등): 표지에 쓸 권 이름만 주소로 받는다(study-deck.js sessionPrintHref의 &blabel=&btitle=&bcourse=)
@@ -1744,9 +1770,20 @@ async function printSessionBook() {
     const cover = printBookCover(book, lessons, { includeAnswers: false, style: "concept", includeGames: false, session });
     const sameOrigin = (url) => url && new URL(url, location.href).origin === location.origin;
     // 데일리 테스트(&presheet=, 2차시부터 표지 바로 뒤)·본책·과제·단원 평가(&sheet=)도 워밍업과 같은 교재 꼴 쪽으로 짠다(session-book-sheet.js importSessionPages)
-    const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve("");
-    const [daily, sheet] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet"))]);
-    root.innerHTML = cover + daily + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet;
+    const none = { pages: "", answers: [] };
+    const sheetPages = (url) => sameOrigin(url) ? importSessionPages(url, { book, session, student }) : Promise.resolve(none);
+    // 맨 뒤 정답(원장 2026-11-17 「뒤에 답안도 인쇄 되어야지」): 워밍업 정답(비공개 답안 서버, 「모두에게 열기」) + 데일리·본책·과제·평가 정답
+    // 2과정 개념 꾸러미(&packs=권~단원~차시): 데일리 다음 「개념 정리」 쪽(course2-pack-print.js)
+    const packPages = params.get("packs") ? import("./course2-pack-print.js?v=20261122zg").then((mod) => mod.packPrintPages(params.get("packs"), { book, session, student, look: params.get("packlook") || "" })).catch(() => none) : Promise.resolve(none);
+    const [daily, sheet, warmAnswers, concept] = await Promise.all([sheetPages(params.get("presheet")), sheetPages(params.get("sheet")),
+      lessons.length ? ensureProtectedBook(book.id).catch(() => false) : Promise.resolve(false), packPages]);
+    const warmAnswerPages = warmAnswers ? lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: true })).join("") : "";
+    const answerPages = warmAnswerPages + sessionAnswerPages([...daily.answers, ...concept.answers, ...sheet.answers], { book, session, student });
+    root.innerHTML = cover + daily.pages + concept.pages + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") + sheet.pages + answerPages;
+    // &layout=grid: 시안 — 쪽마다 같은 두 단, 문제 사이를 고르게 벌려 쪽을 채움(원장 2026-11-18 Typst 시험지 사진 「이렇게 깔끔하게」).
+    // 쪽 나누기도 이 판으로 재므로 compact 전에 붙인다.
+    const gridLook = params.get("layout") === "grid";
+    if (gridLook) root.classList.add("tb-grid");
     if (document.fonts?.ready) await document.fonts.ready;
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode().catch(() => null)));
     compactGoldenBellPrint(root);
@@ -1760,9 +1797,11 @@ async function printSessionBook() {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     document.documentElement.dataset.sessionBook = "ready";
     $("printStatus").textContent = "한 차시 교재가 준비됐어요.";
+    showSessionBookDone();
     if (params.get("preview") !== "1") window.print();
   } catch (error) {
     console.error("session book failed", error);
+    document.documentElement.classList.remove("sb-booting");
     document.documentElement.dataset.sessionBook = "failed";
     $("printStatus").textContent = "교재를 준비하지 못했어요. 새로고침해 주세요.";
   }
@@ -2206,6 +2245,7 @@ function embedChunks() {
   return pages;
 }
 function applyEmbed() {
+  document.documentElement.classList.remove("gb-booting");
   document.body.dataset.embedView = embed.view;
   const key = `${state.lessonId}:${state.phase}:${flowStep(state.bookId, activeLesson()) || ""}`;
   if (key !== embed.key) { embed.key = key; embed.page = embed.startAtEnd ? Infinity : 0; embed.startAtEnd = false; }

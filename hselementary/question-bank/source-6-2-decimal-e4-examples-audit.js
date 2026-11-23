@@ -38,6 +38,6 @@ for (const [index, reviewed] of review.examples.entries()) {
 
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e4-example-3").name, /새 나머지/);
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e4-example-4").name, /몫의 자리를 늘려 새 나머지/);
-assert.match(source.find(item => item.sourceItemId === "6-2-u2-e4-example-4").implementationStatus, /conflict-locked/);
+{ const row = source.find(item => item.sourceItemId === "6-2-u2-e4-example-4"); assert.match(row.implementationStatus === "fixed-verified-pool" ? row.previousReviewState20261122?.implementationStatus || "" : row.implementationStatus, /conflict-locked/); }
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e4-example-4").reviewReason, /공식 답/);
 console.log("6-2 개념탐구 4 예제 4문항: 원문 구조·새 나머지 유형·공개 잠금 검사 통과");

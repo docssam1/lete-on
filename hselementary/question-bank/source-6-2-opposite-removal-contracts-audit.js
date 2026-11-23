@@ -18,7 +18,9 @@ for(let v=0;v<3;v++)for(let l=0;l<3;l++){
  const q=contracts.generate(id,v,l),p=presentation.render(id,v,l),expected=independent(v,l);
  assert.deepEqual(q.model.faces,expected.faces);assert.deepEqual(sort(q.model.remaining),sort(expected.remaining));assert.deepEqual(sort(q.model.overlapping),sort(expected.overlap));
  assert.deepEqual(q.answer,l===2?[expected.remaining.length,expected.overlap.length]:expected.remaining.length);report.cellsCompared+=125;
- assert(q.promptText.includes("各面")===false);assert(q.promptText.includes("빈틈없이"));assert(q.promptText.includes("각 면에 수직"));assert(q.promptText.includes("반대쪽 끝까지"));assert(q.promptText.includes("옮기지 않습니다"));
+ assert(q.promptText.includes("各面")===false);const bookSource=v===0&&l===1,ruleText=bookSource?q.solutionText:q.promptText;
+ if(bookSource)assert.equal(q.promptText,"크기가 같은 정육면체 모양의 쌓기나무를 쌓아서 큰 정육면체를 만들었습니다. 색칠한 부분의 쌓기나무를 반대편 끝까지 모두 뺀다면 남아 있는 쌓기나무는 모두 몇 개입니까?");
+ assert(ruleText.includes("빈틈없이"));assert(ruleText.includes("면에 수직"));assert(ruleText.includes(bookSource?"반대편 끝까지":"반대쪽 끝까지"));assert(ruleText.includes("옮기지 않습니다"));
  assert.equal(q.promptText.includes("윗면과 오른쪽 면"),l===0);assert.equal(q.promptText.includes("두 방향 이상"),l===2);
  assert.equal(q.studentGiven.solidFilled,true);assert.equal(q.studentGiven.layerCue,null);assert.deepEqual(q.studentGiven.responseLayers,[]);assert.equal(q.requiresLayerDrawing,false);
  assert(!/<table|<svg|data-layer=|math-inline-expression|after-two-directions|after-three-directions/.test(p.prompt));assert.equal((p.prompt.match(/<img\b/g)||[]).length,1);assert(p.prompt.includes(`v${v}-given.png`));
@@ -47,5 +49,5 @@ assert.throws(()=>contracts.generate("unknown",0,1));report.negativeCases++;
 for(let level=0;level<3;level++)assert.equal(new Set([0,1,2].map(v=>contracts.generate(id,v,level).structuralFingerprint)).size,3);
 report.status="passed-contract-and-presentation-candidate";
 report.hashes=Object.fromEntries(["models","contracts","presentation"].map(s=>{const file=`source-6-2-opposite-removal-${s}.js`;return[file,crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,file))).digest("hex")];}));
-const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(/^E:[/\\]/i.test(out));fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,"contracts-audit.json"),JSON.stringify(report,null,2)+"\n");}
+const out=process.env.HSE_SCREENSHOT_DIR;if(out){assert(path.isAbsolute(out));fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,"contracts-audit.json"),JSON.stringify(report,null,2)+"\n");}
 console.log(JSON.stringify({status:report.status,cases:report.cases.length,cells:report.cellsCompared,answerGridCells:report.answerGridCells,negativeCases:report.negativeCases,catalogUnlocked:false}));

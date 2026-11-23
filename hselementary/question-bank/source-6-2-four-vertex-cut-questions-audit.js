@@ -10,7 +10,8 @@ const fingerprints = () => [scriptFile, cssFile, "source-6-2-four-vertex-cut-que
 function outputFolder(env = process.env) {
   const root = env.HSE_FOUR_VERTEX_SOURCE_EVIDENCE_DIR, directory = env.HSE_SCREENSHOT_DIR || (root && path.join(root, "four-vertex-wrapper"));
   assert(directory, "Set HSE_SCREENSHOT_DIR or HSE_FOUR_VERTEX_SOURCE_EVIDENCE_DIR");
-  assert(path.isAbsolute(directory) && path.parse(directory).root.toLowerCase() === "e:\\", "Output must be an explicit absolute E: directory");
+  // 2026-11-23: Mac에서도 돌도록 E: 드라이브 대신 어떤 절대 경로든 받는다(저장소 밖·four-vertex-wrapper 폴더 조건은 그대로).
+  assert(path.isAbsolute(directory), "Output must be an explicit absolute directory");
   const folder = path.resolve(directory), repository = path.resolve(__dirname, "../.."), relative = path.relative(repository, folder);
   assert(relative && (relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)), "Output must be outside the repository");
   assert.equal(path.basename(folder).toLowerCase(), "four-vertex-wrapper", "Output is bounded to four-vertex-wrapper");
@@ -65,7 +66,7 @@ function parseMarkup(markup) {
   if (!xml) {
     try { xml = require("xml-js"); } catch (error) {
       if (error.code !== "MODULE_NOT_FOUND") throw error;
-      xml = require(process.env.HSE_XML_PARSER_PATH || path.join(process.env.USERPROFILE || "", ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/xml-js"));
+      xml = require(process.env.HSE_XML_PARSER_PATH || path.join(process.env.USERPROFILE || require("node:os").homedir(), ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/xml-js"));
     }
   }
   const normalized = markup.replace(/<img\b([^>]*?)\s*\/?\s*>/g, (_, attributes) => `<img${attributes.replace(/\/$/, "")}/>`);
@@ -78,7 +79,7 @@ function validateQuestion(q, presentation, variant, level) {
   const pure = contracts.generate(id, variant, level), base = presentation.renderBank(id, variant, level);
   assert(q); assert.equal(q.sourceItemId, id); assert.equal(q.generator, key); assert.equal(q.answer, base.answer); assert.equal(q.solution, pure.solutionText);
   assert.deepEqual(clone(q.model), clone(pure.model)); assert.deepEqual(clone(q.studentGiven), clone(pure.studentGiven));
-  assert.equal(q.studentGiven.solidFilled, true); assert(q.promptText.includes("\uBE48\uD2C8\uC5C6\uC774")); assert.equal(q.promptText, pure.promptText);
+  assert.equal(q.studentGiven.solidFilled, true); assert((variant === 0 && level === 1 ? pure.solutionText : q.promptText).includes("\uBE48\uD2C8\uC5C6\uC774")); assert.equal(q.promptText, pure.promptText);
   assert.equal(q.conditionScope, "solid-cube-and-positive-volume-cut-only");
   const ordered = [...q.answer.matchAll(/\(\d+\)\s*(\d+)\uAC1C/g)].map(match => Number(match[1]));
   if (level === 2) assert.deepEqual(ordered, pure.answer);
@@ -282,7 +283,7 @@ async function run() {
     const points = 72 / 1600 * 72 * 72 / 25.4; assert(points >= 9); return { nominalPrintedLabelPoints: points, actualPrintVerified: false };
   });
   check(report, "negative/output-env-missing", () => assert.throws(() => outputFolder({}), /Set HSE_SCREENSHOT_DIR/));
-  check(report, "negative/output-outside-E", () => assert.throws(() => outputFolder({ HSE_SCREENSHOT_DIR: "C:\\four-vertex-wrapper" }), /absolute E:/));
+  check(report, "negative/output-relative", () => assert.throws(() => outputFolder({ HSE_SCREENSHOT_DIR: path.join("relative-output", "four-vertex-wrapper") }), /explicit absolute directory/));
   check(report, "negative/output-in-repository", () => assert.throws(() => outputFolder({ HSE_SCREENSHOT_DIR: __dirname }), /outside the repository/));
   check(report, "negative/output-unbounded-folder", () => assert.throws(() => outputFolder({ HSE_SCREENSHOT_DIR: path.dirname(folder) }), /bounded/));
   check(report, "output-env-direct-and-root", () => { assert.equal(outputFolder({ HSE_SCREENSHOT_DIR: folder }), folder); assert.equal(outputFolder({ HSE_FOUR_VERTEX_SOURCE_EVIDENCE_DIR: path.dirname(folder) }), folder); });

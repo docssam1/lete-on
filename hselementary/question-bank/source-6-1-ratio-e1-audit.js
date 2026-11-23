@@ -43,7 +43,7 @@ const attr = (markup, name) => String(markup || "").match(new RegExp(`${name}="(
 const valuesOf = markup => (attr(markup, "data-values") || "").split(",").filter(Boolean).map(Number);
 const sameArray = (left, right) => left.length === right.length && left.every((value, index) => close(value, right[index]));
 const answerFor = (variant, values) => {
-  if (variant === 0) return ratio(values[1], values[0]);
+  if (variant === 0) return `${values[4]}:${values[3]}`;
   if (variant === 1) return `${values[6]}cm`;
   if (variant === 2) return fraction(values[4], values[5]);
   if (variant === 3) return String(values[3]);
@@ -100,13 +100,21 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
         const ratioDecimal = String(Number((values[0] / values[1]).toFixed(3)));
         if (!generated.prompt.includes(`비율이 ${ratioDecimal}`)) fail(`${label}: 원본과 같은 소수 비율 표현이 아님`);
       }
+      if (variant === 0) {
+        const ratioDecimal = String(values[0] / values[1]);
+        if (!generated.prompt.includes(`기준량과 비교하는 양의 차가 ${values[2]}이고, 비율이 ${ratioDecimal}인 비를 구하세요.`)) fail(`${label}: 원문(예제 1-2) 물음 '비율이 ${ratioDecimal}인 비'가 아님`);
+        if (values[4] - values[3] !== values[2] || !close(values[4] / values[3], values[0] / values[1])) fail(`${label}: 비교하는 양:기준량 독립 검산 실패`);
+      }
       if (variant === 5) {
+        if (/중점|오른쪽 아래 꼭짓점/.test(generated.prompt.replace(/<[^>]+>/g, ""))) fail(`${label}: 원문에 없는 그림 설명 문장이 남음`);
+        if (!generated.prompt.includes("넓이의 비율이") || !generated.prompt.includes("윗변 ㄱㄹ과 아랫변 ㄴㄷ의 길이의 비율을 구하세요.")) fail(`${label}: 원문(Mission 3) 비율 물음이 아님`);
+        if ((generated.prompt.match(/data-midpoint-tick="true"/g) || []).length !== 4) fail(`${label}: 점 ㅁ이 변 ㄱㄴ의 가운데 점임을 나타내는 같은 길이 표시 누락`);
         for (const pointName of ["ㄱ", "ㄹ", "ㄴ", "ㄷ", "ㅁ"]) if (!generated.prompt.includes(`>${pointName}</text>`)) fail(`${label}: 원본 사다리꼴의 점 ${pointName} 표시 누락`);
       }
       if (variant === 7) {
         const chained = (values[0] / values[1]) / (values[2] / values[3]);
         if (!close(chained, values[4] / values[5])) fail(`${label}: 이어진 두 비율의 pool 계산이 맞지 않음`);
-        if (!generated.prompt.includes("가에 대한 나의 비율") || !generated.prompt.includes("다에 대한 나의 비율") || !generated.prompt.includes("가에 대한 다의 비율")) fail(`${label}: 비율의 기준량과 비교하는 양이 문장에 분명하지 않음`);
+        if (!generated.prompt.includes("가에 대한 나의 비율") || !generated.prompt.includes(`나와 다의 비율은 ${String(values[2] / values[3])}일 때`) || !generated.prompt.includes("가에 대한 다의 비율")) fail(`${label}: 비율의 기준량과 비교하는 양이 문장에 분명하지 않음`);
       }
       if (variant === 8) {
         const ratioDecimal = String(Number((values[1] / values[2]).toFixed(3)));

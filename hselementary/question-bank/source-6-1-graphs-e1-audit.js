@@ -116,7 +116,8 @@ for (let variant = 3; variant <= 11; variant += 1) {
       if (shapes !== shapeContracts[variant - 3]) failures.push(`${sourceIds[variant - 3]} / 시드 ${seed}: 원본 그림 기호가 다릅니다 (${shapes}/${shapeContracts[variant - 3]}).`);
       if (plain(generated.answer).replace(/[()·]/g, "") !== plain(answerFor(variant, problemValues)).replace(/[()·]/g, "")) failures.push(`${sourceIds[variant - 3]} / 시드 ${seed}: 독립 계산 답과 공개 답이 다릅니다 (${generated.answer} / ${answerFor(variant, problemValues)}).`);
       if (variant === 3 && generated.verifiedPoolIndex === 0 && problemValues.join(",") !== "2300,3000,3100,400") failures.push(`${sourceIds[variant - 3]}: 원본 pool 값이 다릅니다.`);
-      if (variant === 4 && (!generated.prompt.includes("이튿날") || generated.prompt.includes("이틀 동안"))) failures.push(`${sourceIds[variant - 3]} / 시드 ${seed}: 원문의 '이튿날' 물음이 바뀌었습니다.`);
+      // 원문(인쇄 44쪽): "다음 날 … 더 캤더니 … 이틀 동안 고구마를 캔 동네는 어느 동네이고, 그 동네가 캔 고구마는 몇 kg인가?" — 답은 이틀 동안의 양.
+      if (variant === 4 && (!generated.prompt.includes("이튿날") || !generated.prompt.includes("이틀 동안"))) failures.push(`${sourceIds[variant - 3]} / 시드 ${seed}: 원문의 '이틀 동안' 물음이 바뀌었습니다.`);
       if (variant === 4) {
         const labels = ["가", "나", "다", "라"];
         const leastIndex = problemValues.slice(0, 4).indexOf(Math.min(...problemValues.slice(0, 4)));

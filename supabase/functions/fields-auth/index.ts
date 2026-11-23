@@ -157,7 +157,9 @@ Deno.serve(async (req: Request) => {
       if (blocksLogin(member)) return json(req, { error: member.reason, member }, 403);
       const token = randomToken();
       const tokenHash = await sha256(token);
-      const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
+      // 학생 로그인은 한 번 하면 이 기기에 남는다(원장 2026-11-17 「한번 접속하면 기기에 계속 저장이 됩니다」) — 60일.
+      // 화면은 이 토큰을 localStorage에 둔다(study-progress.js). 관리자(DOCSSAM)는 위에서 12시간 그대로.
+      const expiresAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
       const { error: insertError } = await service.from("fields_access_sessions").insert({
         token_hash: tokenHash,
         student_name: account.student_name,

@@ -10,10 +10,10 @@ for (const id of ["exploration", "example-1", "example-2", "example-3", "example
   const item = lookup(id);
   assert.equal(item.pdfPage, 48);
   assert.equal(item.printedPage, 52);
-  assert.equal(item.implementationStatus, ["example-1", "example-2", "example-3", "example-4"].includes(id) ? "verified-local" : "review-locked");
-  assert.equal(item.sourceVerified, ["example-1", "example-2", "example-3", "example-4"].includes(id));
+  assert.equal(item.implementationStatus, "verified-local");
+  assert.equal(item.sourceVerified, true);
   if (id === "example-4") assert.equal(item.runtimeTypeId, "5-2-u5-e3-example-3-4");
-  if (!["example-1", "example-2", "example-3", "example-4"].includes(id)) assert.equal(item.answerContract, "candidate: drawing");
+  if (id === "exploration") { assert.equal(item.answerContract, "verified-with-stated-assumption"); assert.equal(item.runtimeTypeId, "5-2-u5-e3-exploration-original"); }
   if (id === "example-3") assert.equal(item.runtimeTypeId, "5-2-u5-e3-example-3-3");
   if (id === "example-1") assert.equal(item.runtimeTypeId, "5-2-u5-e3-example-3-1");
   if (id === "example-2") assert.equal(item.runtimeTypeId, "5-2-u5-e3-example-3-2");

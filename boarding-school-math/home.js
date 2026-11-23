@@ -95,26 +95,26 @@
   const rolePreviews = {
     student: {
       eyebrow: "STUDENT · LEARN",
-      title: "학생은 오늘 가능한 학습부터 시작합니다.",
-      description: "Grade 6에서는 공개 개념 10개와 검증된 단원 워크북 9개를 바로 학습할 수 있습니다. 42문항 진단과 자동 배정은 별도 검수 상태로 구분합니다.",
+      title: "오늘은 개념과 워크북부터 시작해요.",
+      description: "6학년 개념 수업 10개와 공개 단원 워크북 6개를 이용할 수 있어요. 42문항 진단과 자동 배정은 검수 중이에요.",
       nav: ["개념 배우기", "영역 확인", "진단 상태", "경시 경로"],
       panel: [
         '<div class="mini-product-top"><span>현재 학생 공개 범위</span><b>Grade 6</b></div>',
-        '<a class="mini-task primary-task" href="./concept-learning.html"><small>지금 가능</small><strong>10개 핵심 개념 · 9개 단원 워크북</strong><span>설명 · 시각 모델 · 유형 연습 · 재확인 →</span></a>',
+        '<a class="mini-task primary-task" href="./concept-learning.html"><small>지금 가능</small><strong>개념 10개 · 공개 워크북 6개</strong><span>개념과 문제를 함께 보기 →</span></a>',
         '<div class="mini-task"><small>검수 대기</small><strong>42문항 진단·분석</strong><span>학생 운영 잠금</span></div>',
         '<a class="mini-task" href="./sasmo.html"><small>준비 경로</small><strong>SASMO K2–G12</strong><span>공식 형식과 원문 접근 확인 →</span></a>'
       ].join("")
     },
     teacher: {
       eyebrow: "TEACHER · PLAN",
-      title: "교사는 범위, 근거, 검수 상태를 함께 봅니다.",
+      title: "수업 자료와 검수 상태를 함께 확인해요.",
       description: "학년·영역·단원을 고르고 수업 자료 상태를 확인합니다. Grade 6의 검증된 워크북은 수업 자료로 열리며, 진단 배정과 학생 기록은 별도 검수 상태입니다.",
       nav: ["교육과정", "진단 근거", "수업 구성", "검수 상태", "배정 가능 여부"],
       panel: [
         '<div class="mini-product-top"><span>현재 교사 공개 범위</span><b>K–8</b></div>',
         '<a class="mini-task primary-task" href="./catalog.html?role=teacher"><small>구조 공개</small><strong>94개 클러스터·자료 계획</strong><span>학년 → 영역 → 단원 → 자료 →</span></a>',
         '<a class="mini-task" href="./diagnostic.html"><small>비공개 QA</small><strong>Grade 6 진단·분석 흐름</strong><span>42문항 독립 검수 대기 →</span></a>',
-        '<a class="mini-task" href="./concept-learning.html"><small>수업 자료</small><strong>Grade 6 개념·워크북·교사용 지도</strong><span>9개 단원 워크북 · 재확인 포함 →</span></a>'
+        '<a class="mini-task" href="./concept-learning.html"><small>수업 자료</small><strong>6학년 개념·워크북·교사용 지도</strong><span>공개 단원 워크북 6개 · 재확인 포함 →</span></a>'
       ].join("")
     }
   };
@@ -184,7 +184,7 @@
     if (goalId === "amc" && profile) {
       const recommended = profile.gfieldPreparationGrades.map(function (value) { return `G${value}`; }).join("–");
       return {
-        eligibility: `공식 G${profile.officialEligibility.gradeMaximum} 이하·${profile.officialEligibility.ageExclusiveMaximum}세 미만 · GFIELD 권장 ${recommended}`,
+        eligibility: `공식 G${profile.officialEligibility.gradeMaximum} 이하 · 연령 기준은 현재 MAA 안내 확인 · GFIELD 권장 ${recommended}`,
         format: `${profile.durationMinutes}분 · ${profile.questionCount}문항 · 5지선다 · 계산기 금지`
       };
     }
@@ -199,10 +199,12 @@
   }
 
   function localStatus(goalId, grade) {
-    if (goalId === "school" && String(grade) === "6") return "Grade 6 공개 개념 10개와 검증된 단원 워크북 9개를 이용할 수 있습니다. 42문항 진단·자동 배정은 독립 검수 대기입니다.";
+    if (goalId === "school" && String(grade) === "6") return "6학년 개념 수업 10개와 공개 단원 워크북 6개를 이용할 수 있어요. 42문항 진단과 자동 배정은 검수 중이에요.";
+    if (goalId === "school" && String(grade) === "7") return "7학년 비례 관계 워크북 1개가 공개되어 있어요. 유리수 연산 워크북은 검수 시안이며 진단은 잠겨 있어요.";
     if (goalId === "school" && (String(grade) === "K" || Number(grade) <= 8)) return "영역·클러스터 구조만 공개되었습니다. 학습 문항과 워크북은 검수 전까지 잠금입니다.";
     if (goalId === "school") return "고등 과정은 학교별 실제 과목 순서가 설정될 때까지 공식 개념 범주만 표시합니다.";
-    if (goalId === "singapore" && String(grade) === "6") return "Grade 6 자체 제작 개념 10개와 검증된 단원 워크북 9개를 숙달 순서로 학습할 수 있습니다. 별도 진단·평가는 검수 대기입니다.";
+    if (goalId === "singapore" && String(grade) === "6") return "6학년 개념 수업 10개와 공개 단원 워크북 6개를 순서대로 볼 수 있어요. 별도 진단과 평가는 검수 중이에요.";
+    if (goalId === "singapore" && String(grade) === "7") return "7학년 비례 관계 워크북 1개가 공개되어 있어요. 유리수 연산 워크북은 검수 시안이며 별도 진단은 잠겨 있어요.";
     if (goalId === "singapore" && Number(grade) <= 8) return "숙달 학습의 구현 경계만 확인되었습니다. 이 학년의 공개 단원·문항은 아직 없습니다.";
     if (goalId === "singapore") return "G9–12 교차표와 학교 과정 설정은 검수 대기입니다.";
     return "";
@@ -391,18 +393,37 @@
     }
   }
 
+  const publicGrade7Workbooks = new Set(["7.RP.A"]);
+  const localGrade7Workbooks = new Set(["7.NS.A"]);
+
+  function isPublicUnit(unit) {
+    return String(unit.grade) === "6" || publicGrade7Workbooks.has(unit.clusterId);
+  }
+
   function unitAction(unit) {
     if (String(unit.grade) === "6") {
       return {
         label: state.roleId === "teacher" ? "학생 화면 보기" : "개념 배우기",
         href: `./concept-learning.html?cluster=${encodeURIComponent(unit.clusterId)}`,
-        state: "공개"
+        state: "개념 공개",
+        public: true
+      };
+    }
+    if (publicGrade7Workbooks.has(unit.clusterId) || localGrade7Workbooks.has(unit.clusterId)) {
+      const audience = state.roleId === "teacher" ? "teacher" : "student";
+      const released = publicGrade7Workbooks.has(unit.clusterId);
+      return {
+        label: state.roleId === "teacher" ? "교사용 지도서 열기" : "단원 워크북 열기",
+        href: `./unit-workbook.html?cluster=${encodeURIComponent(unit.clusterId)}&mode=workbook&audience=${audience}&locale=ko`,
+        state: released ? "워크북 공개" : "워크북 시안",
+        public: released
       };
     }
     return {
       label: state.roleId === "teacher" ? "자료 상태 보기" : "범위 보기",
       href: `./catalog.html?role=${state.roleId}&grade=${encodeURIComponent(unit.grade)}`,
-      state: "메타데이터"
+      state: "범위만 공개",
+      public: false
     };
   }
 
@@ -424,10 +445,10 @@
       ? `${profile.publicClinicCount}개 클리닉 공개`
       : "영역별 설계 공개";
     const prioritySummary = profile.reasoningPriorities.slice(0, 3).map(reasoningLabel).join(" · ");
-    target.innerHTML = `<article><span>01 · SCHOOL CORE</span><strong>학교 핵심</strong><small>${profile.schoolClusterCount}개 공식 클러스터 구조</small></article>
-      <article><span>02 · THINKING CLINIC</span><strong>사고력 클리닉</strong><small>${prioritySummary} · ${clinicSummary}</small></article>
-      <article><span>03 · CONTEST BRIDGE</span><strong>경시 가교</strong><small>${profile.competitionBridge.join(" · ")}</small></article>
-      <p>원문 문항을 합친 것이 아니라 검증된 유형·학습 순서·출고 게이트를 연결한 지도입니다.</p>`;
+    target.innerHTML = `<article><span>01</span><strong>학교 수학</strong><small>${profile.schoolClusterCount}개 단원 범위</small></article>
+      <article><span>02</span><strong>사고력 연습</strong><small>${prioritySummary} · ${clinicSummary}</small></article>
+      <article><span>03 · 선택</span><strong>경시 문제</strong><small>${profile.competitionBridge.join(" · ")}</small></article>
+      <p>학교 수학을 먼저 보고, 경시는 원할 때 살펴보세요.</p>`;
   }
 
   function renderGradeMap(grade) {
@@ -444,9 +465,13 @@
     const domains = spine.gradeDomains[grade] || [];
     const units = registry.units.filter(function (unit) { return sameGrade(unit.grade, grade); });
     const publicGrade = String(grade) === "6";
+    const mapGradeName = String(grade) === "K" ? "유치원" : `${grade}학년`;
+    const boardingRoadmapLink = document.getElementById("boarding-roadmap-link");
+    boardingRoadmapLink.hidden = !Number.isInteger(Number(grade)) || Number(grade) < 3;
+    if (!boardingRoadmapLink.hidden) boardingRoadmapLink.href = `./boarding-roadmap.html?grade=${grade}`;
     renderReasoningLanes(grade);
     document.getElementById("selected-grade").textContent = gradeShort(grade);
-    document.getElementById("grade-title").textContent = publicGrade ? `${gradeName(grade)} · 공개 개념 10개` : `${gradeName(grade)} · 영역과 단원 범위`;
+    document.getElementById("grade-title").textContent = publicGrade ? `${mapGradeName} · 개념 10개 · 공개 워크북 6개` : String(grade) === "7" ? "7학년 · 워크북 1개 · 검수 시안 1개" : `${mapGradeName} · 배울 영역`;
     document.getElementById("skill-rows").innerHTML = domains.map(function (domain, index) {
       const localized = spine.domainTitles[domain];
       const domainUnits = units.filter(function (unit) {
@@ -460,24 +485,28 @@
           : "";
         return `<li class="unit-row">
           <div><strong>${unit.title.ko}</strong><small>${unit.clusterId} · ${unit.standardRange}</small>${reasoningText ? `<em class="unit-reasoning">사고력 · ${reasoningText}</em>` : ""}</div>
-          <span class="search-result-status ${publicGrade ? "public" : "metadata"}">${action.state}</span>
+          <span class="search-result-status ${action.public ? "public" : "metadata"}">${action.state}</span>
           <a class="unit-action" href="${action.href}">${action.label}<span aria-hidden="true">→</span></a>
         </li>`;
       }).join("");
+      const domainPublic = domainUnits.some(isPublicUnit);
+      const domainPreview = domainUnits.some(function (unit) { return localGrade7Workbooks.has(unit.clusterId); });
       return `<details class="domain-directory-row" data-domain-code="${domain}"${index === 0 ? " open" : ""}>
         <summary class="domain-summary">
           <span class="domain-code">${domain}</span>
           <span><strong>${localized.ko}</strong><small>${localized.en}</small></span>
           <span class="domain-count">${domainUnits.length}개 단원</span>
-          <span class="status-chip ${publicGrade ? "public" : "metadata"}">${publicGrade ? "개념 공개" : "구조 공개"}</span>
+          <span class="status-chip ${domainPublic ? "public" : "metadata"}">${publicGrade ? "개념 공개" : domainPublic ? "워크북 공개" : domainPreview ? "워크북 시안" : "범위만 공개"}</span>
           <i aria-hidden="true">＋</i>
         </summary>
         <ul class="domain-units">${rows}</ul>
       </details>`;
     }).join("");
     document.getElementById("map-footnote").textContent = publicGrade
-      ? `${gradeName(grade)} · ${domains.length}개 영역 · ${units.length}개 자체 제작 개념 공개 · 문제·워크북·진단은 별도 검수`
-      : `${gradeName(grade)} · ${domains.length}개 영역 · ${units.length}개 클러스터 구조 공개 · 학습 자료는 검수 대기`;
+      ? `${mapGradeName} · ${domains.length}개 영역 · 자체 제작 개념 10개와 공개 단원 워크북 6개 · 진단은 검수 중`
+      : String(grade) === "7"
+        ? `7학년 · ${domains.length}개 영역 · 워크북 1개와 검수 시안 1개 · 진단은 검수 중`
+      : `${mapGradeName} · ${domains.length}개 영역 · ${units.length}개 클러스터 구조 공개 · 학습 자료는 검수 대기`;
   }
 
   function buildGradeTabs() {
@@ -506,9 +535,15 @@
         const count = registry.units.filter(function (unit) {
           return sameGrade(unit.grade, grade) && unit.domainCode === domain;
         }).length;
-        const isPublic = String(grade) === "6";
+        const isPublic = registry.units.some(function (unit) {
+          return sameGrade(unit.grade, grade) && unit.domainCode === domain && isPublicUnit(unit);
+        });
+        const isPreview = registry.units.some(function (unit) {
+          return sameGrade(unit.grade, grade) && unit.domainCode === domain && localGrade7Workbooks.has(unit.clusterId);
+        });
+        const stateLabel = String(grade) === "6" ? "개념 공개" : isPublic ? "워크북 공개" : isPreview ? "워크북 시안" : "범위";
         return `<button class="domain-grade-link${isPublic ? " is-public" : ""}" type="button" data-domain-grade="${grade}" data-domain-code="${domain}" aria-label="${localized.ko} ${gradeName(grade)} ${count}개 단원 보기">
-          <strong>${gradeShort(grade)}</strong><small>${count}개</small><span>${isPublic ? "개념 공개" : "구조"}</span>
+          <strong>${gradeShort(grade)}</strong><small>${count}개</small><span>${stateLabel}</span>
         </button>`;
       }).join("");
       return `<article class="domain-overview-row">
@@ -547,7 +582,7 @@
     panel.setAttribute("aria-labelledby", `course-tab-${course.id}`);
     panel.innerHTML = `<div class="course-map-top"><div><p class="micro-label">${course.grades} · SCHOOL-CONFIGURED</p><h3>${course.title}</h3><p>${course.summary}</p></div><span class="status-chip ${course.id === "pre-algebra" ? "public" : "metadata"}">${course.id === "pre-algebra" ? "일부 공개" : "과정 지도"}</span></div>
       <dl class="course-facts"><div><dt>선수개념</dt><dd>${course.prerequisites}</dd></div><div><dt>핵심 영역</dt><dd>${course.focus.join(" · ")}</dd></div><div><dt>다음 과정</dt><dd>${course.next}</dd></div><div><dt>자료 상태</dt><dd>${course.availability}</dd></div></dl>
-      <section class="course-unit-map" aria-label="${course.title} 과정 지도 항목"><p class="micro-label">COURSE MAP · 4 CONNECTED AREAS</p><div>${course.units.map(function (unit, index) { return `<article><span>${String(index + 1).padStart(2, "0")}</span><strong>${unit}</strong><small>진단·클리닉·학습 자료 연결 대기</small></article>`; }).join("")}</div></section>
+      <section class="course-unit-map" aria-label="${course.title} 과정 지도 항목"><p class="micro-label">COURSE MAP · ${course.units.length} CONNECTED AREAS</p><div>${course.units.map(function (unit, index) { return `<article><span>${String(index + 1).padStart(2, "0")}</span><strong>${unit}</strong><small>진단·클리닉·학습 자료 연결 대기</small></article>`; }).join("")}</div></section>
       <div class="course-actions"><a class="unit-action" href="${course.studentHref}">학생: ${course.id === "pre-algebra" ? "개념 학습" : course.id === "elementary-foundations" ? "학년·영역 보기" : "공개 학습 상태"}<span aria-hidden="true">→</span></a><a class="unit-action course-teacher-action" href="${course.teacherHref}">교사: ${course.id === "pre-algebra" || course.id === "elementary-foundations" ? "범위·자료 상태" : "배치 원칙 확인"}<span aria-hidden="true">→</span></a></div>`;
     const note = document.getElementById("course-sequence-note");
     if (note) note.textContent = coursePathways.sequenceNotice;
@@ -626,7 +661,6 @@
       };
     });
     const units = registry.units.map(function (unit) {
-      const publicGrade = String(unit.grade) === "6";
       const action = unitAction(unit);
       const domain = spine.domainTitles[unit.domainCode];
       return {
@@ -636,8 +670,8 @@
         terms: `${gradeName(unit.grade)} ${gradeShort(unit.grade)} ${unit.title.ko} ${unit.title.en} ${domain.ko} ${domain.en} ${unit.clusterId} ${unit.standardRange}`,
         href: action.href,
         mapGrade: unit.grade,
-        state: publicGrade ? "개념 공개" : "구조 공개",
-        stateClass: publicGrade ? "public" : "metadata"
+        state: action.state,
+        stateClass: action.public ? "public" : "metadata"
       };
     });
     return pathways.concat(units);
@@ -793,9 +827,9 @@
     const startLabel = document.getElementById("start-actions-label");
     const teacherMode = state.roleId === "teacher";
     if (startLabel) startLabel.textContent = teacherMode ? "강사 수업 설계 시작" : "학생 학습 시작";
-    if (assessmentTitle) assessmentTitle.textContent = teacherMode ? "학생 학교·입학시험 결과 입력" : "학교·입학시험 결과 입력";
-    if (assessmentNote) assessmentNote.textContent = teacherMode ? "학생 근거를 불러와 진도와 수업 자료 설계" : "Placement · MAP · CTP · SSAT · ISEE";
-    if (assessment) assessment.href = `./assessment-entry.html?grade=${numericGrade === 0 ? 3 : numericGrade}`;
+    if (assessmentTitle) assessmentTitle.textContent = numericGrade === 7 ? "지필드 모의고사 풀기" : "지필드 학습 자료 보기";
+    if (assessmentNote) assessmentNote.textContent = numericGrade === 7 ? "7.NS.A 유리수 연산 · 14문항" : "학년 지도에서 바로 풀 수 있는 자료 확인";
+    if (assessment) assessment.href = numericGrade === 7 ? "./grade7-ns-a-mock-exam.html" : `./boarding-roadmap.html?grade=${numericGrade === 0 ? 3 : numericGrade}`;
     if (numericGrade === 6) {
       plan.href = teacherMode ? "./learning-plan.html?goal=school-g6&audience=teacher#teacher-pack" : "./learning-plan.html?goal=school-g6";
       planTitle.textContent = teacherMode ? "학생 수업 계획 설계하기" : "나의 학습 계획 만들기";

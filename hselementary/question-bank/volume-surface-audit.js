@@ -89,7 +89,7 @@ function expected(generated) {
     const cells = cellsFromHeights(heightMapValues(v));
     return `${cells.length * v[0] ** 3}cm³, ${voxelSurface(cells) * v[0] ** 2}cm²`;
   }
-  if (kind === "equalized-soil-height") return decimal((v[0] * v[2] + v[1] * v[3]) / (v[0] + v[1]), 2);
+  if (kind === "equalized-soil-height") return decimal((v[0] * v[2] + v[1] * v[3]) / (v[0] + v[1]), 3); // 반올림을 묻지 않으므로 정확한 값(예: 14.625)
   if (kind === "three-loop-volume" || kind === "face-perimeter-volume") {
     const a = (v[0] + v[2] - v[1]) / 4, b = (v[0] + v[1] - v[2]) / 4, c = (v[1] + v[2] - v[0]) / 4;
     return a * b * c;
@@ -116,7 +116,12 @@ function expected(generated) {
   }
   if (kind === "reoriented-water-height") return decimal(v[0] * v[1] * v[3] / (v[1] * v[2]), 2);
   if (kind === "thick-container-capacity") return decimal((v[0] - 2 * v[3]) * (v[1] - 2 * v[3]) * (v[2] - v[3]) / 1000, 3);
-  if (kind === "tilted-spilled-volume") return Math.max(0, v[0] * v[1] * v[2] - v[3] * v[4]);
+  if (kind === "tilted-triangle-spill") {
+    if (v[4] > v[0] || v[4] < v[2] || v[3] >= v[2]) throw new Error("기울인 물의 면이 바닥과 위 모서리를 지나지 않음");
+    const spilled = v[0] * v[1] * v[3] - v[4] * v[1] * v[2] / 2;
+    if (!(spilled > 0)) throw new Error("쏟아진 물이 없음");
+    return spilled;
+  }
   if (kind === "submerged-object-height") return v[2] + v[3] / (v[0] * v[1]);
   if (kind === "vertical-rod-height") return decimal(v[0] * v[1] * v[2] / (v[0] * v[1] - v[3] * v[4]), 2);
   if (kind === "partition-final-height") return decimal((v[0] * v[2] + v[1] * v[3]) / (v[0] + v[1]), 2);

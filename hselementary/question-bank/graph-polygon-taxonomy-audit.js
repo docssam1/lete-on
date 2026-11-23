@@ -4,6 +4,10 @@ global.window = {};
 const polygonInventory = require("./source-inventory/4-2-unit-6-polygon.json");
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-22 공개 목록(#1491, 장부 대조·독립 검산 통과)에 오른 유형은 앱에서 잠금이 풀린다.
+// 그 유형의 정답은 source-<묶음>-original-audit.py가 검산하므로 이 감사의 잠금 검사에서 뺀다.
+require("./source-lower-release-20261122-registry.js");
+const laterReleased = new Set(Object.keys(window.HSE_LOWER_RELEASE_20261122 || {}));
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
@@ -130,6 +134,7 @@ function auditLineGraphUnit() {
   for (const type of types) {
     if (!type.sourceVerified || !type.sourceEvidence.includes(type.label)) fail(`${type.id}: 유형별 원본 근거가 없습니다.`);
     if (![-1, 0, 1].includes(type.difficultyBand)) fail(`${type.id}: 심화 난이도 층이 없습니다.`);
+    if (laterReleased.has(type.id)) continue;
     if (type.reviewLocked) {
       auditLocked(type);
       continue;
@@ -223,7 +228,9 @@ function auditPolygonInventoryContract() {
   for (const type of types) {
     const answerMap = expectedPolygonAnswers.get(type.generatorKey);
     const expectedAnswer = answerMap?.get(type.variant);
-    if (type.reviewLocked) {
+    if (laterReleased.has(type.id)) {
+      // 공개 목록으로 열린 유형: 원문 묶음 감사가 검산한다.
+    } else if (type.reviewLocked) {
       auditLocked(type);
     } else if (!answerMap || !answerMap.has(type.variant)) {
       fail(`${type.id}: 공개 유형의 원문 정답 계약이 없습니다.`);

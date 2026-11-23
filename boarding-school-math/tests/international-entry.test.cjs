@@ -46,7 +46,7 @@ test("English entry makes the G·MAP student, teacher, US Curriculum, and SASMO-
   const response = await page.goto(`${baseUrl}international.html?locale=en`, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
-  assert.equal(await page.locator("h1").innerText(), "From Foundations to Competition.");
+  assert.equal(await page.locator("h1").innerText(), "What would you like to study?");
   assert.match(await page.locator(".brand").innerText(), /G·MAP/);
   assert.equal(await page.locator('[data-route="student"]').first().getAttribute("href"), "./catalog.html?locale=en&role=student");
   assert.equal(await page.locator('[data-route="teacher"]').first().getAttribute("href"), "./catalog.html?locale=en&role=teacher");
@@ -67,7 +67,7 @@ test("Singapore Simplified Chinese entry uses natural student-teacher and learni
   const errors = errorsFor(page);
   await page.goto(`${baseUrl}international.html?locale=zh-Hans`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("html").getAttribute("lang"), "zh-Hans");
-  assert.equal(await page.locator("h1").innerText(), "从基础概念到数学竞赛");
+  assert.equal(await page.locator("h1").innerText(), "想学习什么？");
   assert.match(await page.locator("body").innerText(), /诊断 · 学习 · 进阶。[\s\S]*学生版[\s\S]*教师版[\s\S]*SASMO 历届试题/);
   assert.match(await page.locator(".domain-cycle").innerText(), /概念学习 → 学习诊断 → 专项补强 → 个性化练习册 → 成效检验/);
   assert.deepEqual(await page.locator("#domain-grid b").allTextContents(), ["数与运算", "比与比例", "代数思维", "几何", "测量", "数据与概率"]);
@@ -89,4 +89,17 @@ test("catalog accepts the locale route and retains the student-teacher boundary 
   assert.match(await page.locator("h1").innerText(), /K–12 全路径/);
   assert.deepEqual(errors, []);
   await page.close();
+});
+
+test("English and Singapore Chinese retain the same six study programmes and locale-specific destinations",async function(){
+ const page=await browser.newPage({viewport:{width:390,height:844}});
+ for(const locale of ['en','zh-Hans']){
+  await page.goto(baseUrl+'international.html?locale='+locale,{waitUntil:'networkidle'});
+  const links=page.locator('[data-program-entry]');assert.equal(await links.count(),6);assert.deepEqual((await links.all()).length,6);
+  assert.equal(await links.nth(0).locator('h2').textContent(),'U.S. Math Curriculum');assert.equal(await links.nth(2).locator('h2').textContent(),'AIME');
+  assert.doesNotMatch(await page.locator('.program-entry').innerText(),/[가-힣]/);
+  for(const link of await links.all())assert.equal(new URL(await link.getAttribute('href'),baseUrl).searchParams.get('locale'),locale);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ }
+ await page.close();
 });

@@ -97,57 +97,29 @@ export function foldStepArrowSvg(x, y) {
 
 export function foldDiagonalGridMarkup(visual) {
   const N = 4;
-  const cell = 34;
-  const size = N * cell;
-  const top = 6;
-  let x = 8;
-
-  let parts = `<rect x="${x}" y="${top}" width="${size}" height="${size}" fill="#fdeeec" stroke="#eec6c1" stroke-width="1" stroke-dasharray="4 3"/>`;
-  for (let k = 1; k < N; k += 1) {
-    parts += `<line x1="${x + k * cell}" y1="${top}" x2="${x + k * cell}" y2="${top + size}" stroke="#eec6c1" stroke-dasharray="4 3"/>`;
-    parts += `<line x1="${x}" y1="${top + k * cell}" x2="${x + size}" y2="${top + k * cell}" stroke="#eec6c1" stroke-dasharray="4 3"/>`;
-  }
-  const tri = visual.keepLower
-    ? [[0, 0], [0, N], [N, N]]
-    : [[0, 0], [N, 0], [N, N]];
-  const triPoints = tri.map(([px, py]) => `${x + px * cell},${top + py * cell}`).join(" ");
-  parts += `<polygon points="${triPoints}" fill="#fbdad6" stroke="#e8968f" stroke-width="2.4"/>`;
-  for (const u of visual.region) {
+  const S = 120;
+  const cell = S / N;
+  const square = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  // 왼쪽 위 → 오른쪽 아래 대각선으로 한 번 접는다. keepLower면 왼쪽 아래 삼각형이 남는다.
+  const tri = visual.keepLower ? [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }] : [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }];
+  const away = visual.keepLower ? { x: 2 / 3, y: 1 / 3 } : { x: 1 / 3, y: 2 / 3 };
+  const cut = (x, y) => visual.region.map((u) => {
     const cx = x + u.c * cell;
-    const cy = top + u.r * cell;
-    if (!u.half) {
-      parts += `<rect x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="#b03a5b"/>`;
-    } else {
-      const points = visual.keepLower
-        ? `${cx},${cy} ${cx},${cy + cell} ${cx + cell},${cy + cell}`
-        : `${cx},${cy} ${cx + cell},${cy} ${cx + cell},${cy + cell}`;
-      parts += `<polygon points="${points}" fill="#b03a5b"/>`;
-    }
-  }
-  parts += `<line x1="${x}" y1="${top}" x2="${x + size}" y2="${top + size}" stroke="#e8968f" stroke-width="1.4" stroke-dasharray="5 4"/>`;
-
-  x += size + 40;
-  parts += foldStepArrowSvg(x, top + size / 2);
-  x += 44;
-
-  for (let r = 0; r < N; r += 1) for (let c = 0; c < N; c += 1) {
-    const cx = x + c * cell;
-    const cy = top + r * cell;
-    parts += `<rect x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="#f9c8c4" stroke="#e0aaa4" stroke-width="1"/>`;
-    parts += `<text x="${cx + cell / 2}" y="${cy + cell / 2 + 5}" text-anchor="middle" font-size="15" font-weight="600" fill="#333">${visual.grid[r][c]}</text>`;
-  }
-  for (let k = 1; k < N; k += 1) {
-    parts += `<line x1="${x + k * cell}" y1="${top}" x2="${x + k * cell}" y2="${top + size}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
-    parts += `<line x1="${x}" y1="${top + k * cell}" x2="${x + size}" y2="${top + k * cell}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
-  }
-  parts = `<rect x="${x - 2}" y="${top - 2}" width="${size + 4}" height="${size + 4}" fill="none" stroke="#e8968f" stroke-width="2.4"/>` + parts;
-
-  return `<svg class="fold-diag-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="대각선 접기 수 색종이 문제">${parts}</svg>`;
+    const cy = y + u.r * cell;
+    if (!u.half) return `<rect x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="#b03a5b"/>`;
+    const points = visual.keepLower ? `${cx},${cy} ${cx},${cy + cell} ${cx + cell},${cy + cell}` : `${cx},${cy} ${cx + cell},${cy} ${cx + cell},${cy + cell}`;
+    return `<polygon points="${points}" fill="#b03a5b"/>`;
+  }).join("");
+  return foldNumberStrip([
+    { draw: (x, y) => foldNumberPolygonSvg(square, { shift: x, top: y, S, N, rows: visual.grid }) + foldCreaseSvg(x, y, x + S, y + S), arrow: { from: away, to: { x: away.y, y: away.x } } },
+    { draw: (x, y) => foldNumberPolygonSvg(tri, { shift: x, top: y, S, N }) + cut(x, y), extra: "자르기" }
+  ], { S, label: "수가 쓰인 색종이를 대각선으로 한 번 접어 색칠한 부분을 자르기", cls: "fold-diag-svg" });
 }
 
 // 색종이 한 장이 어느 문항에서나 같은 크기로 보이게(원장 2026-11-16 「색종이 크기도 다르고 이상해」): 폭 = 뷰박스 폭 × 종이 한 변 80px ÷ 그림 속 종이 한 변
 export const FOLD_PAPER_PX = 80;
-export const foldWidthStyle = (viewWidth, paperUnits) => `style="width:min(100%,${Math.round((viewWidth * FOLD_PAPER_PX) / paperUnits)}px)"`;
+// 크기를 정해 두고(max-width:100%로만 줄임) — 내용 크기로 줄어드는 칸(인쇄 교재의 문제 그림 칸)에서도 같은 크기로 보인다
+export const foldWidthStyle = (viewWidth, paperUnits) => `style="width:${Math.round((viewWidth * FOLD_PAPER_PX) / paperUnits)}px;max-width:100%"`;
 
 // ── 장면 이름(원장 2026-11-16 「설명도 없어」) ──
 // 겹을 뒤로 비켜 그리던 것은 뺐다(원장 2026-11-17 「말로 안 되는 왜 접은 쪽도 겹치냐 다시 돌려놔」) — 종이는 한 장 모양 그대로.
@@ -155,6 +127,60 @@ export function foldStageSvg(polygon, { shift, top, size }) {
   const pts = polygon.map((p) => `${(shift + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ");
   return `<polygon points="${pts}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
 }
+// 수가 쓰인 색종이는 글자가 읽히게 한 변 128px로 같게(원장 2026-11-21 「색종이 단계 설명이 아니라 화살표잖아 · 우리가 설정한 기준」)
+export const FOLD_NUMBER_PAPER_PX = 128;
+export const foldNumberWidthStyle = (viewWidth, paperUnits) => `style="width:${Math.round((viewWidth * FOLD_NUMBER_PAPER_PX) / paperUnits)}px;max-width:100%"`;
+// 수 칸 색종이 한 장(접은 부분도 같은 칸 크기) — x0·y0·w·h는 칸 단위, rows가 있으면 수를 쓴다
+export function foldNumberPaperSvg({ shift, top, cell, x0 = 0, y0 = 0, w, h, rows = null, font = 18 }) {
+  const ox = shift + x0 * cell;
+  const oy = top + y0 * cell;
+  let out = `<rect x="${ox}" y="${oy}" width="${w * cell}" height="${h * cell}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  for (let k = 1; k < w; k += 1) out += `<line x1="${ox + k * cell}" y1="${oy}" x2="${ox + k * cell}" y2="${oy + h * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+  for (let k = 1; k < h; k += 1) out += `<line x1="${ox}" y1="${oy + k * cell}" x2="${ox + w * cell}" y2="${oy + k * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+  if (rows) for (let r = 0; r < h; r += 1) for (let c = 0; c < w; c += 1) {
+    const value = rows[r]?.[c];
+    if (value === undefined || value === null || value === "") continue;
+    out += `<text x="${ox + c * cell + cell / 2}" y="${oy + r * cell + cell / 2 + font * 0.34}" text-anchor="middle" font-size="${font}" font-weight="700" fill="#333">${value}</text>`;
+  }
+  return out;
+}
+// 수가 쓰인 색종이를 접는 흐름 한 줄(처음 → 1번 접음 → … · 자르기) — 장면 사이 회색 화살표, 접는 장면에 점선과 빨간 굽은 화살표, 아래에 장면 이름.
+// 그림 속 글로 「위쪽을 아래로 접어요」를 적지 않는다(원장 2026-11-21 「색종이 단계 설명이 아니라 화살표잖아」).
+// stage = { draw(shift, top, S), arrow?: {from,to}(0~1), index?, extra? }
+export function foldNumberStrip(stages, { S = 120, W = S, H = S, label = "", cls = "fold-number-svg" } = {}) {
+  const top = 6;
+  const gap = 34;
+  let shift = 6;
+  let parts = "";
+  stages.forEach((stage, index) => {
+    parts += stage.draw(shift, top, S);
+    // 화살표 좌표는 0~1(가로 W·세로 H 기준) — 직사각형 종이도 가로 크기 하나로 그린다
+    if (stage.arrow) parts += foldArrowSvg({ x: stage.arrow.from.x, y: stage.arrow.from.y * H / W }, { x: stage.arrow.to.x, y: stage.arrow.to.y * H / W }, shift, top, W);
+    parts += foldCaptionSvg(shift + W / 2, top + H + 22, stage.index ?? index, stage.extra || "");
+    shift += W + 12;
+    if (index < stages.length - 1) { parts += foldStepArrowSvg(shift, top + H / 2); shift += gap; }
+  });
+  const width = shift + 6;
+  return `<svg class="${cls}" ${foldNumberWidthStyle(width, Math.max(W, H))} viewBox="0 0 ${width} ${H + 16 + FOLD_CAPTION_SPACE}" role="img" aria-label="${label}">${parts}</svg>`;
+}
+let foldClipSeq = 0;
+// 접힌 모양(다각형, 0~1 좌표) 색종이 — 안쪽에만 칸 점선과 수(rows)를 그린다
+export function foldNumberPolygonSvg(polygon, { shift, top, S, N = 4, rows = null, font = 18 }) {
+  const id = `fnp${++foldClipSeq}`;
+  const pts = polygon.map((p) => `${(shift + p.x * S).toFixed(1)},${(top + p.y * S).toFixed(1)}`).join(" ");
+  const cell = S / N;
+  let inner = "";
+  for (let k = 1; k < N; k += 1) {
+    inner += `<line x1="${shift + k * cell}" y1="${top}" x2="${shift + k * cell}" y2="${top + S}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+    inner += `<line x1="${shift}" y1="${top + k * cell}" x2="${shift + S}" y2="${top + k * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+  }
+  if (rows) for (let r = 0; r < N; r += 1) for (let c = 0; c < N; c += 1) {
+    inner += `<text x="${shift + c * cell + cell / 2}" y="${top + r * cell + cell / 2 + font * 0.34}" text-anchor="middle" font-size="${font}" font-weight="700" fill="#333">${rows[r][c]}</text>`;
+  }
+  return `<defs><clipPath id="${id}"><polygon points="${pts}"/></clipPath></defs><polygon points="${pts}" fill="#f9c8c4"/><g clip-path="url(#${id})">${inner}</g><polygon points="${pts}" fill="none" stroke="#e8968f" stroke-width="2"/>`;
+}
+// 접는 선(점선) — 칸 단위 좌표
+export const foldCreaseSvg = (x1, y1, x2, y2) => `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#d4756c" stroke-width="1.8" stroke-dasharray="6 5"/>`;
 export const FOLD_CAPTION_SPACE = 24;
 export function foldCaptionSvg(cx, y, index, extra = "") {
   const words = index === 0 ? "처음" : `${index}번 접음`;
@@ -187,39 +213,19 @@ export function foldCutPiecesMarkup(visual) {
 }
 
 export function foldTwoDiagonalGridMarkup(visual) {
-  const { clip } = foldGeometryHelpers();
-  const keep = {
-    d1: (point) => point.x - point.y,
-    d2: (point) => 1 - point.x - point.y
-  };
+  const { clip, foldArrow } = foldGeometryHelpers();
+  const keep = { d1: (point) => point.x - point.y, d2: (point) => 1 - point.x - point.y };
   const square = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
   const first = clip(square, keep[visual.directions[0]]);
   const folded = clip(first, keep[visual.directions[1]]);
-  const size = 118;
-  const top = 7;
-  const points = (polygon, shift) => polygon.map((point) => `${(shift + point.x * size).toFixed(1)},${(top + point.y * size).toFixed(1)}`).join(" ");
-  let shift = 7;
-  let parts = `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
-  for (let row = 0; row < 4; row += 1) for (let column = 0; column < 4; column += 1) {
-    const x = shift + column * size / 4;
-    const y = top + row * size / 4;
-    parts += `<rect x="${x}" y="${y}" width="${size / 4}" height="${size / 4}" fill="none" stroke="#d6a09a" stroke-width="1"/>`;
-    parts += `<text x="${x + size / 8}" y="${y + size / 8 + 5}" text-anchor="middle" font-size="14" font-weight="700" fill="#333">${visual.grid[row][column]}</text>`;
-  }
-  const firstLine = visual.directions[0] === "d1" ? [0, 0, 1, 1] : [0, 1, 1, 0];
-  parts += `<line x1="${shift + firstLine[0] * size}" y1="${top + firstLine[1] * size}" x2="${shift + firstLine[2] * size}" y2="${top + firstLine[3] * size}" stroke="#d4756c" stroke-width="2" stroke-dasharray="6 4"/>`;
-  shift += size + 14;
-  parts += foldStepArrowSvg(shift, top + size / 2);
-  shift += 42;
-  parts += `<polygon points="${points(first, shift)}" fill="#fbdad6" stroke="#e8968f" stroke-width="2"/>`;
-  const secondLine = visual.directions[1] === "d1" ? [0, 0, 1, 1] : [0, 1, 1, 0];
-  parts += `<line x1="${shift + secondLine[0] * size}" y1="${top + secondLine[1] * size}" x2="${shift + secondLine[2] * size}" y2="${top + secondLine[3] * size}" stroke="#d4756c" stroke-width="2" stroke-dasharray="6 4"/>`;
-  shift += size + 14;
-  parts += foldStepArrowSvg(shift, top + size / 2);
-  shift += 42;
-  parts += `<polygon points="${points(folded, shift)}" fill="#fbdad6" stroke="#e8968f" stroke-width="2"/>`;
-  parts += `<circle cx="${shift + visual.target.x * size}" cy="${top + visual.target.y * size}" r="8" fill="#b03a5b"/>`;
-  return `<svg class="fold-two-diagonal-svg" viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="수가 쓰인 색종이를 대각선으로 두 번 접어 자르기">${parts}</svg>`;
+  const S = 120;
+  const { foldLine } = foldGeometryHelpers();
+  const line = (dir, x, y, polygon) => { const seg = foldLine(polygon, dir); return seg ? foldCreaseSvg(x + seg[0].x * S, y + seg[0].y * S, x + seg[1].x * S, y + seg[1].y * S) : ""; };
+  return foldNumberStrip([
+    { draw: (x, y) => foldNumberPolygonSvg(square, { shift: x, top: y, S, rows: visual.grid }) + line(visual.directions[0], x, y, square), arrow: foldArrow(square, visual.directions[0]) || null },
+    { draw: (x, y) => foldNumberPolygonSvg(first, { shift: x, top: y, S }) + line(visual.directions[1], x, y, first), arrow: foldArrow(first, visual.directions[1]) || null },
+    { draw: (x, y) => foldNumberPolygonSvg(folded, { shift: x, top: y, S }) + `<circle cx="${x + visual.target.x * S}" cy="${y + visual.target.y * S}" r="8" fill="#b03a5b"/>`, extra: "자르기" }
+  ], { S, label: "수가 쓰인 색종이를 대각선으로 두 번 접어 자르기", cls: "fold-two-diagonal-svg" });
 }
 
 export function paperFoldMarkup(visual) {
@@ -331,4 +337,69 @@ export function paperFoldMarkup(visual) {
   }).join("");
 
   return `<svg class="paper-fold-svg" ${foldWidthStyle(width, SIZE)} viewBox="0 0 ${width} ${SIZE + 8 + FOLD_CAPTION_SPACE}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
+}
+
+// ── 말로 정한 접기(「아래로」「왼쪽으로」, 대각선)를 기준 흐름 한 줄로(원장 2026-11-21) ──
+// 접는 선은 지금 접힌 모양의 가운데(가로·세로) 또는 대각선, 남는 쪽은 말 그대로. 마지막 장면에 final(shift, top, size, polygon, box)을 더 그린다.
+const bboxOf = (poly) => {
+  const xs = poly.map((p) => p.x);
+  const ys = poly.map((p) => p.y);
+  return { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) };
+};
+function foldWordLine(word, box) {
+  const mx = (box.x0 + box.x1) / 2;
+  const my = (box.y0 + box.y1) / 2;
+  if (word === "아래로") return { a: { x: box.x0, y: my }, b: { x: box.x1, y: my }, keepPoint: { x: mx, y: box.y1 } };
+  if (word === "위로") return { a: { x: box.x0, y: my }, b: { x: box.x1, y: my }, keepPoint: { x: mx, y: box.y0 } };
+  if (word === "왼쪽으로") return { a: { x: mx, y: box.y0 }, b: { x: mx, y: box.y1 }, keepPoint: { x: box.x0, y: my } };
+  if (word === "오른쪽으로") return { a: { x: mx, y: box.y0 }, b: { x: mx, y: box.y1 }, keepPoint: { x: box.x1, y: my } };
+  if (word === "대각선-내림") return { a: { x: box.x0, y: box.y0 }, b: { x: box.x1, y: box.y1 }, keepPoint: { x: box.x0, y: box.y1 } };
+  if (word === "대각선-오름") return { a: { x: box.x0, y: box.y1 }, b: { x: box.x1, y: box.y0 }, keepPoint: { x: box.x0, y: box.y0 } };
+  return null;
+}
+const sideOf = (line, p) => (line.b.x - line.a.x) * (p.y - line.a.y) - (line.b.y - line.a.y) * (p.x - line.a.x);
+const reflect = (line, p) => {
+  const dx = line.b.x - line.a.x;
+  const dy = line.b.y - line.a.y;
+  const t = ((p.x - line.a.x) * dx + (p.y - line.a.y) * dy) / (dx * dx + dy * dy);
+  const fx = line.a.x + t * dx;
+  const fy = line.a.y + t * dy;
+  return { x: 2 * fx - p.x, y: 2 * fy - p.y };
+};
+export function foldWordStrip(words, { final = () => "", finalExtra = "", label = "", cls = "fold-pieces-svg" } = {}) {
+  const { clip } = foldGeometryHelpers();
+  const size = 100;
+  const top = 6;
+  const gap = 34;
+  let poly = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  let shift = 6;
+  let parts = "";
+  const at = (p) => `${(shift + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`;
+  words.forEach((word, index) => {
+    const line = foldWordLine(word, bboxOf(poly));
+    const sign = Math.sign(sideOf(line, line.keepPoint)) || 1;
+    const keep = (p) => sign * sideOf(line, p);
+    const away = clip(poly, (p) => -keep(p));
+    parts += foldStageSvg(poly, { shift, top, size }) + foldCaptionSvg(shift + size / 2, top + size + 22, index);
+    // 접는 선: 접는 선이 지금 모양을 가로지르는 두 점
+    const hits = [];
+    for (let i = 0; i < poly.length; i += 1) {
+      const a = poly[i]; const b = poly[(i + 1) % poly.length];
+      const da = sideOf(line, a); const db = sideOf(line, b);
+      if (Math.abs(da) < 1e-9) hits.push(a);
+      if ((da > 1e-9 && db < -1e-9) || (da < -1e-9 && db > 1e-9)) { const t = da / (da - db); hits.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }); }
+    }
+    if (hits.length >= 2) parts += `<line x1="${at(hits[0]).split(",")[0]}" y1="${at(hits[0]).split(",")[1]}" x2="${at(hits[hits.length - 1]).split(",")[0]}" y2="${at(hits[hits.length - 1]).split(",")[1]}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+    if (away.length >= 3) {
+      const from = { x: away.reduce((t, p) => t + p.x, 0) / away.length, y: away.reduce((t, p) => t + p.y, 0) / away.length };
+      parts += foldArrowSvg(from, reflect(line, from), shift, top, size);
+    }
+    poly = clip(poly, keep);
+    shift += size + 12;
+    parts += foldStepArrowSvg(shift, top + size / 2);
+    shift += gap;
+  });
+  parts += foldStageSvg(poly, { shift, top, size }) + final(shift, top, size, poly, bboxOf(poly)) + foldCaptionSvg(shift + size / 2, top + size + 22, words.length, finalExtra);
+  shift += size + 12;
+  return `<svg class="${cls}" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16 + FOLD_CAPTION_SPACE}" role="img" aria-label="${label}">${parts}</svg>`;
 }

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>시작점 상담 · Numbers of Magic</title>
+<meta name="description" content="문제를 풀지 않고, 지금 하는 교재와 할 줄 아는 계산을 답하면 수의 마법을 어디서 시작하면 좋을지 알려 드려요.">
+<link rel="icon" href="assets/characters/numi-0.png">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 시작점 상담(2026-11-17) — 소개 페이지(landing.html)와 같은 가족: 종이·먹·남색·금 */
+:root{
+  --paper:#FBFAF7; --paper-warm:#F5F1E8; --mist:#EFEDE7; --line:#E4E2DC;
+  --ink:#1A2233; --sub:#4a5468; --faint:#8a92a3;
+  --blue:#16417C; --blue-deep:#0E2C57; --gold:#C9A063; --gold-soft:#EAC996;
+  --grass:#4E8A3E; --grass-soft:#E4F0DC; --amber:#9A6A12; --amber-soft:#F6E9CC; --rose:#A3412F; --rose-soft:#F6E1DA;
+  --serif:'Gowun Batang','Noto Serif KR',ui-serif,Georgia,serif;
+  --sans:'Pretendard',-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  --shadow:0 10px 30px -18px rgba(26,34,51,.35);
+  --radius:20px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+html[lang='ko'] body{word-break:keep-all;overflow-wrap:break-word}
+a{color:inherit}
+button{font-family:inherit}
+.top{position:sticky;top:0;z-index:5;background:rgba(251,250,247,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .in{max-width:680px;margin:0 auto;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:700;font-size:16px;text-decoration:none;min-width:0}
+.brand img{width:26px;height:33px;object-fit:contain}
+.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.langsw{display:flex;gap:2px;background:var(--mist);border:1px solid var(--line);border-radius:999px;padding:3px;flex:none}
+.langbtn{padding:5px 10px;border-radius:999px;border:none;background:transparent;color:var(--sub);font-weight:700;font-size:11.5px;cursor:pointer}
+.langbtn.active{background:var(--ink);color:var(--paper)}
+main{max-width:680px;margin:0 auto;padding:22px 16px 72px}
+.kicker{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}
+h1,h2{font-family:var(--serif);font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(26px,6vw,34px);line-height:1.25}
+h2{font-size:clamp(21px,4.6vw,25px);line-height:1.3}
+.lead{color:var(--sub);font-size:16px;margin:10px 0 0;max-width:60ch}
+.note{color:var(--faint);font-size:13px;margin:10px 0 0}
+.progress{height:4px;border-radius:999px;background:var(--mist);overflow:hidden;margin:0 0 18px}
+.progress i{display:block;height:100%;background:var(--gold);transition:width .3s}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 20px;margin:0 0 16px}
+.why{display:inline-block;font-size:12.5px;font-weight:700;color:var(--blue);background:#EAF0F8;border-radius:999px;padding:4px 10px;margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
+.chip{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:10px 16px;font-weight:700;font-size:15px;cursor:pointer;min-height:44px}
+.chip:hover{border-color:var(--gold)}
+.chip[aria-pressed="true"]{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff}
+.group-t{font-size:13px;font-weight:800;color:var(--sub);margin:18px 0 0}
+.vols{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:8px 0 0}
+.vol{text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:14px;padding:10px 12px;cursor:pointer;min-height:44px;color:var(--ink)}
+.vol b{display:block;font-size:15px}
+.vol span{display:block;font-size:12.5px;color:var(--sub);line-height:1.4;margin-top:2px}
+.vol:hover{border-color:var(--gold)}
+.skill{border-top:1px solid var(--mist);padding:14px 0 12px}
+.skill:first-of-type{border-top:none;padding-top:4px}
+.skill-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.skill-n{font-weight:800;font-size:16px}
+.skill-l{color:var(--sub);font-size:13.5px}
+.ex{display:flex;align-items:center;gap:8px;margin:6px 0 0;color:var(--sub);font-size:13.5px}
+.ex .k{font-size:17px;color:var(--ink)}
+.opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0 0}
+.opt{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:9px 4px;font-weight:700;font-size:13.5px;cursor:pointer;color:var(--ink);min-height:44px;line-height:1.25}
+.opt[aria-pressed="true"][data-v="good"]{background:var(--grass);border-color:var(--grass);color:#fff}
+.opt[aria-pressed="true"][data-v="shaky"]{background:var(--amber);border-color:var(--amber);color:#fff}
+.opt[aria-pressed="true"][data-v="notyet"]{background:var(--sub);border-color:var(--sub);color:#fff}
+.opt[aria-pressed="true"][data-v="unsure"]{background:var(--blue);border-color:var(--blue);color:#fff}
+@media(max-width:420px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.probe-q{font-size:clamp(26px,8vw,36px);text-align:center;margin:18px 0 8px;overflow-x:auto}
+.reveal{display:block;margin:0 auto;border:none;background:none;color:var(--blue);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px}
+.probe-a{text-align:center;color:var(--sub);font-size:18px;min-height:30px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:18px 0 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:13px 20px;border-radius:999px;font-weight:800;font-size:15px;text-decoration:none;border:1px solid transparent;cursor:pointer;min-height:46px}
+.btn.primary{background:var(--blue-deep);color:#fff}
+.btn.primary:disabled{background:var(--faint);cursor:not-allowed}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.text{background:none;color:var(--sub);padding:13px 6px}
+.btn:focus-visible,.chip:focus-visible,.opt:focus-visible,.vol:focus-visible,.langbtn:focus-visible,.reveal:focus-visible{outline:3px solid var(--gold-soft);outline-offset:2px}
+.start{background:var(--blue-deep);color:#fff;border-radius:var(--radius);padding:22px 20px;margin:0 0 16px;box-shadow:var(--shadow)}
+.start .kicker{color:var(--gold-soft)}
+.start h2{font-size:clamp(24px,6vw,30px)}
+.start p{margin:10px 0 0;color:#d6dfeb}
+.start p.at{margin:6px 0 0;color:#fff;font-weight:700;font-size:16px}
+.list{margin:0;padding:0;list-style:none}
+.list li{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--mist);font-size:15px}
+.list li:first-child{border-top:none}
+.tag{flex:none;font-size:11.5px;font-weight:800;border-radius:999px;padding:2px 8px}
+.t-good{background:var(--grass-soft);color:var(--grass)}
+.t-shaky{background:var(--amber-soft);color:var(--amber)}
+.t-new{background:var(--mist);color:var(--sub)}
+.t-gap{background:var(--rose-soft);color:var(--rose)}
+.t-unknown{background:#EAF0F8;color:var(--blue)}
+.list small{color:var(--faint);font-size:12.5px}
+.sec-t{font-size:14px;font-weight:800;color:var(--sub);margin:0 0 6px}
+.actions{display:grid;gap:10px;margin:6px 0 0}
+.actions .btn{width:100%}
+.recap{font-size:14px;color:var(--sub)}
+.recap li{border-top:1px dashed var(--line)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="brand" href="landing.html"><img src="assets/characters/numi-0.png" alt=""><span>Numbers of Magic</span></a>
+  <div class="langsw" role="group" aria-label="language"><button class="langbtn" data-lang="ko">한</button><button class="langbtn" data-lang="en">EN</button><button class="langbtn" data-lang="zh">中</button></div>
+</div></header>
+<main id="app" aria-live="polite"></main>
+<div class="toast" id="toast" role="status"></div>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="data/consult-ladder.js?v=20261123-noslot"></script>
+<script src="app/consult-rules.js?v=20261118-session1"></script>
+<script src="app/consult.js?v=20261118-session1"></script>
+</body>
+</html>

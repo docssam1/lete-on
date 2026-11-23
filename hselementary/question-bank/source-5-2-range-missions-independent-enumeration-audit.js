@@ -21,7 +21,7 @@ for(const definition of source.definitions)for(let v=0;v<3;v++)for(const difficu
   for(let x=10;x<=99;x++)for(let y=10;y<=99;y++){let n=0;for(let z=x+1;z<y;z++)n++;if(n===target)count++}assert.equal(a.value,count);
  }else if(m.kind==='distinct-digit-decimals'){
   const values=new Set();for(let i=0;i<m.digits.length;i++)for(let j=0;j<m.digits.length;j++)for(let k=0;k<m.digits.length;k++){
-   if(i===j||i===k||j===k)continue;const x=100*m.digits[i]+10*m.digits[j]+m.digits[k];if(x>m.lowerHundredths&&x<=m.upperHundredths)values.add(x);
+   if(i===j||i===k||j===k)continue;if(m.digits[k]===0)continue;/* 소수 둘째 자리 0 제외 */const x=100*m.digits[i]+10*m.digits[j]+m.digits[k];if(x>m.lowerHundredths&&x<=m.upperHundredths)values.add(x);
   }assert.equal(a.value,values.size);
  }else if(m.kind==='two-minimum-bus-counts'){
   const possible=[];for(let n=1;n<=Math.max(m.capacityA*m.busesA,m.capacityB*m.busesB);n++)if(Math.ceil(n/m.capacityA)===m.busesA&&Math.ceil(n/m.capacityB)===m.busesB)possible.push(n);

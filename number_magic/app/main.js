@@ -1407,6 +1407,7 @@ function render(){
   else if(S.view==='checkup')screenCheckup();
   else if(S.view==='placement')screenPlacement();
   else if(S.view==='startpick')screenStartPick();
+  else if(S.view==='startchoice')screenStartChoice();
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
   else if(S.view==='gradecourse')screenGradeCourse();
   else if(S.view==='mailbox')screenMailbox();
@@ -1647,6 +1648,9 @@ function screenWelcome(){
     S.onboarded = true;
     if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
+    /* 처음 들어오면 시작 방법부터(원장 2026-11-17 「처음에는 진단하고 … 일정 안내」 → 「진단하여 진행할까요 아니면 지금 배운
+       교재 이후부터 학습할까요를 안내해야지」): 진단하고 시작 / 하던 교재 다음부터 — screenStartChoice. */
+    if(!(S.placement&&S.placement.course)&&window.NM_PLACEMENT_UI){S.view='startchoice';save();render();return;}
     render();
   }
 
@@ -5451,8 +5455,9 @@ function screenPlacement(){
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
   if(S._diag.phase==='setup')assessmentChooseMethod=false;
-  ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
+  ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,character:S.character,
     chooseMethod:assessmentChooseMethod,checkHistory:()=>S.achievementChecks||[],
+    speedHistory:()=>S.speedChecks||[],onSpeed:rec=>{S.speedChecks=(S.speedChecks||[]).concat(rec).slice(-12);save();}, /* 1분 계산 속도 기록(2026-11-18) — 진단을 새로 해도 남는다 */
     onAttemptStart:()=>{assessmentChooseMethod=false;},
     onMethodChoose:phase=>{assessmentChooseMethod=false;S._diag.phase=phase;S._diag.questionStartedAt=Date.now();save();render();},
     planSettings:Object.assign({speed:S.roadSpeed||1,pace:S.roadPace||'p2'},(S.roadCadenceChosen||S.adminPlan)?{cadence:S.roadCadence||'w1'}:{}), /* 직접 고르지 않았으면 과정별 기본(초등 주1·중고등 표준)을 로드맵이 정한다 */
@@ -5824,6 +5829,101 @@ function placementAgeNoteHtml(d,lk){
    늘어놓는다. 예시 문제는 고정 시드(pick+과정키)라 새로고침해도 같은
    문제 — "미리보기"라는 인상을 주려는 것이지 실제로 풀 필요는 없다.
    ============================================================ */
+/* ============================================================
+   처음 시작 고르기(2026-11-17, 원장 「진단하여 진행할까요 아니면 지금 배운 교재 이후부터 학습할까요를 안내해야지」)
+   ① 진단하고 시작 → startPlacement()(결과에 과정마다 끝나는 날짜 · 8세 이하 소마·필즈 비교 그래프)
+   ② 하던 교재 다음부터 → 교재(기적의 계산법·소마셈·두뇌로·구몬수학)와 끝낸 권(단계)을 고르면
+      그다음 권의 새 계산이 처음 나오는 과정부터 시작(data/consult-ladder.js — 시작점 상담과 같은 단계표).
+      저장은 「학년으로 골라 바로 시작」과 같은 꼴(S.placement.self) + source:'book'.
+   ============================================================ */
+const START_BOOKS=[['miracle','기적의 계산법','Miracle Calculation','奇迹计算法'],['soma','소마셈','Soma-sem','Soma算'],['dunoro','두뇌로','Dunoro','Dunoro'],['kumon','구몬수학','Kumon Math','公文数学']];
+let startChoice={open:false,book:'',step:''};
+function loadConsultLadder(done){
+  if(window.NM_CONSULT_LADDER)return done();
+  const el=document.createElement('script');el.src='data/consult-ladder.js?v=20261123-noslot';el.onload=done;el.onerror=done;document.head.appendChild(el);
+}
+function bookStartCourse(book,stepId){
+  const LD=window.NM_CONSULT_LADDER||{},steps=(LD.ladders||{})[book]||[],i=steps.findIndex(x=>x.id===stepId);if(i<0)return null;
+  const num=k=>Number(String(k||'').slice(1)),C=window.NM_COURSES||{};
+  /* 단계표가 미리 계산한 다음 시작점(과정 + 회차, scripts/build-consult-ladder.js addAfter) — 2026-11-18 회차까지 잘게 */
+  const at=steps[i].after;
+  if(at&&C[at.course]&&!C[at.course].comingSoon){
+    const n=C[at.course].sessions.length,session=Math.min(Math.max(1,at.session||1),n);
+    const lc=LD.courses&&LD.courses[at.course],bundle=lc&&lc.b?lc.b[session-1]:null;
+    return {key:at.course,session,bundle,next:steps[i+1]||null,step:steps[i]};
+  }
+  const keys=Object.keys(C).filter(k=>/^C\d+$/.test(k)&&!C[k].comingSoon).map(num).sort((a,b)=>a-b);
+  const done=Math.max(...steps[i].skills.map(k=>num(k.course)).filter(n=>Number.isFinite(n)),0);
+  const next=steps[i+1]?steps[i+1].skills.map(k=>num(k.course)).filter(n=>Number.isFinite(n)&&n>=0):[];
+  let n=next.length?Math.min(...next):done+1;
+  if(!keys.includes(n))n=keys.find(k=>k>=n)??keys[keys.length-1];
+  return {key:'C'+n,session:1,bundle:null,next:steps[i+1]||null,step:steps[i]};
+}
+function screenStartChoice(){
+  /* 창 하나에 한 질문(원장 2026-11-18 「대화형으로 하나씩」 「너무 ai야」 「창에 한 질문씩 나와서 클릭할 수 있도록」).
+     고르면 다음 질문, 「이전 질문」으로 되돌림. 진단 기준 고르기(placement-ui.js talk)와 같은 꼴. */
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen'),ko=S.lang==='ko',en=S.lang==='en',lk=(k,e,z)=>ko?k:en?e:z,tr=o=>o?(ko?o.ko:en?o.en:o.zh)||o.ko:'';
+  const c=startChoice,LD=(window.NM_CONSULT_LADDER||{}).ladders||{};
+  const steps=c.book&&LD[c.book]?LD[c.book]:[];
+  const pick=c.book&&c.step?bookStartCourse(c.book,c.step):null;
+  const course=pick?(window.NM_COURSES||{})[pick.key]:null;
+  /* 창 하나에 한 질문(원장 2026-11-18 「창에 한 질문씩 나와서 클릭할 수 있도록」) — 지난 답은 쌓지 않고 「← 이전」. */
+  /* 단추 = 굵은 한 줄 + (있으면) 작은 둘째 줄. 가운뎃점(·)으로 잇지 않는다(frontend-design 「흔한 생성 화면」). */
+  const picks=(key,opts,long)=>`<div class="nm-sc-picks${long?' long':''}">${opts.map(o=>`<button type="button" data-pick="${key}" data-val="${esc(o[0])}"><b>${esc(o[1])}</b>${o[2]?`<small>${esc(o[2])}</small>`:''}</button>`).join('')}</div>`;
+  let q='',body='',back='',no=1,note='';
+  if(!c.open){
+    q=lk('진단부터 할까요, 하던 교재 다음부터 이어 갈까요?','Take the check first, or continue after the book you finished?','先做测评，还是从已学教材之后继续？');
+    body=picks('way',[['diag',lk('진단부터 할게요','Check first','先测评'),lk('20문제를 풀고 시작 과정을 정해요','20 questions decide the starting stage','做20道题，确定起始课程')],['book',lk('하던 교재 다음부터 할게요','Continue after my book','从已学教材之后继续'),lk('끝낸 권을 고르면 바로 시작해요','Pick the last finished volume and start','选好已完成的一册就开始')]]);
+    note=lk('진단을 하면 어느 과정에서 시작해 언제 어디까지 끝나는지 일정표가 나와요.','The check also gives a schedule of when each stage finishes.','测评后会给出从哪门课程开始、何时完成的时间表。');
+  }else if(!c.book){
+    no=2;back='way';q=lk('어떤 연산 교재를 했나요?','Which arithmetic book?','学了哪本运算教材？');
+    body=picks('book',START_BOOKS.map(b=>[b[0],lk(b[1],b[2],b[3])]));
+  }else if(!steps.length){
+    no=3;back='book';q=lk('교재 차례를 불러오고 있어요…','Loading the book list…','正在加载教材目录…');
+  }else if(!c.step){
+    no=3;back='book';q=lk('마지막으로 끝낸 권은 어디인가요?','Which volume was finished last?','最后完成的是哪一册？');
+    body=picks('step',steps.map(x=>[x.id,tr(x.title),x.topic||'']),true);
+    note=lk(START_BOOKS.find(b=>b[0]===c.book)[1],START_BOOKS.find(b=>b[0]===c.book)[2],START_BOOKS.find(b=>b[0]===c.book)[3]);
+  }else if(pick&&course){
+    no=4;back='step';
+    const at=pick.bundle?lk('학습 묶음 '+pick.bundle,'study bundle '+pick.bundle,'学习组'+pick.bundle):lk(pick.session+'회차','lesson '+pick.session,'第'+pick.session+'课次');
+    q=lk('여기서 시작하면 돼요.','Start here.','从这里开始。');
+    /* 시작 자리는 한 덩어리로 — 과정 번호(작게) · 과정 이름(크게) · 회차 */
+    var place=`<div class="nm-sc-place"><small>${lk('과정 ','Course ','课程')}${pick.key.slice(1)}</small><b>${esc(L(course.title))}</b><span>${esc(lk(at+'부터',at,at+'起'))}</span></div>`;
+    note=(pick.session>1?lk('앞 회차는 교재에서 이미 한 내용이에요. ','Earlier lessons repeat what the book covered. ','前面的课次是教材里已学过的内容。'):'')+(pick.next?lk('다음 권 「'+tr(pick.next.title)+'」에서 새로 배우는 계산이 여기서 처음 나와요.','The new calculations of the next volume ('+tr(pick.next.title)+') start here.','下一册「'+tr(pick.next.title)+'」的新计算从这里开始。'):'');
+    body=place+`<div class="nm-sc-picks"><button type="button" class="nm-sc-start" id="scBookGo">${lk('여기서 시작할게요','Start here','从这里开始')}</button><button type="button" id="scDiagInstead">${lk('그래도 진단해 볼게요','Take the check instead','还是先测评')}</button></div>`;
+  }
+  /* 위 줄: 왼쪽 「이전 질문」, 오른쪽 4칸 진행 막대(교재 길은 실제로 네 질문 — 첫 질문에서는 길이 정해지지 않아 안 그림) */
+  const prog=c.open?`<span class="nm-sc-prog" role="img" aria-label="${lk(no+'번째 질문, 모두 4개',`Question ${no} of 4`,`第${no}题，共4题`)}">${[1,2,3,4].map(i=>`<i${i<=no?' class="on"':''}></i>`).join('')}</span>`:'';
+  const html=`${back||prog?`<div class="nm-sc-top">`:'<div class="nm-sc-top" hidden>'}${back?`<button type="button" class="nm-sc-back" data-undo="${back}">${lk('이전 질문','Previous question','上一题')}</button>`:'<span></span>'}${prog}</div>
+    <h1 class="nm-sc-q">${esc(q)}</h1>${note?`<p class="nm-sc-note">${esc(note)}</p>`:''}${body}`;
+  scr.innerHTML=`<div class="nm-sc"><section class="nm-sc-card1" aria-live="polite">${html}</section>
+    <button class="nm-sc-later" id="scLater">${lk('나중에 정하고 마을로 가기','Decide later and go to the village','以后再定，先去村庄')}</button></div>`;
+  const toDiag=()=>{startChoice={open:false,book:'',step:''};startPlacement();};
+  $('#scLater').onclick=()=>{S.view='town';save();render();};
+  if($('#scDiagInstead'))$('#scDiagInstead').onclick=toDiag;
+  scr.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.pick,v=b.dataset.val;
+    if(k==='way'){if(v==='diag'){toDiag();return;}c.open=true;}
+    else if(k==='book'){c.book=v;c.step='';loadConsultLadder(()=>screenStartChoice());}
+    else if(k==='step')c.step=v;
+    screenStartChoice();
+    scr.scrollTop=0;
+  });
+  scr.querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.undo;
+    if(k==='way'){c.open=false;c.book='';c.step='';}else if(k==='book'){c.book='';c.step='';}else if(k==='step')c.step='';
+    screenStartChoice();
+  });
+  const go=$('#scBookGo');if(go&&pick)go.onclick=()=>{
+    S.placement={at:Date.now(),course:pick.key,session:pick.session,self:true,source:'book',book:c.book,stepId:c.step,asked:0,correct:0,profile:[],weak:[],slow:[]};
+    startChoice={open:false,book:'',step:''};S._diag=null;
+    /* 회차까지 학습 위치로 — 저장하지 못하는 체험·학원 진도에서는 과정만(시작점 표시) 남는다 */
+    if(!S.adminPlan)applyLearningSettings({courseKey:pick.key,sessionIndex:pick.session});
+    S._roadFocus=pick.key;S.view='courseroad';save();render();
+  };
+}
 function screenStartPick(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -6451,7 +6551,7 @@ function screenMailbox(){
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
         <div class="nm-card-h">🔒 ${lk('가입·이용기간을 확인해 주세요','Check registration and membership','请确认注册和使用期限')}</div>
-        <p class="nm-wsh-sentence">${lk('가입 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월·1년 이용을 승인해요.','Registration includes a 30-day trial. Your academy can then approve 6 months or 1 year.','注册后可体验30天，之后可由学院开通6个月或1年。')}</p>
+        <p class="nm-wsh-sentence">${lk('지금은 무료 베타 서비스예요. 보호자 이메일로 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 써요.','Free beta service. Sign up with a parent email to register, save progress and get weekly text messages free for 1 month from sign-up.','目前为免费公测服务。用家长邮箱注册后，自注册日起1个月内可免费登记信息、保存学习记录并接收每周短信。')}</p>
         <button class="nm-btn full" id="mbGate">${lk('가입·이용 상태 보기','View registration and membership','查看注册及使用状态')}</button>
       </div>
     </div>`;
@@ -8760,17 +8860,17 @@ function renderAccountCard(){
   if(!slot)return;
   if(membership&&!guardianAuth?.peek()&&(PREVIEW_MODE||S.guardianManaged||S.account?.status!=='active')){
     const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
-    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이메일 가입 · 이용권','Email registration · Membership','邮箱注册 · 使用权')}</div><p>${lk('위에서 이메일로 로그인해 주세요. 처음 가입하면 30일 체험하고, 이후에는 6개월·1년 이용권을 학원에서 승인해 드려요.','Sign in above with your email. New registration includes a 30-day trial; your academy then approves a 6-month or 1-year plan.','请在上方使用邮箱登录。首次注册可体验30天，之后由学院开通6个月或1年使用权。')}</p></div>`;
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이메일 가입 · 이용권','Email registration · Membership','邮箱注册 · 使用权')}</div><p>${lk('위에서 이메일로 로그인해 주세요. 지금은 무료 베타 서비스라, 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 써요.','Sign in above with your email. During the free beta, sign-up gives you registration, saved progress and weekly text messages free for 1 month from sign-up.','请在上方使用邮箱登录。免费公测期间，注册后自注册日起1个月内可免费登记信息、保存学习记录并接收每周短信。')}</p></div>`;
     return;
   }
   const ko=S.lang==='ko', en=S.lang==='en';
   if(membership&&guardianAuth?.peek()){
     const state=membership.snapshot(),m=state.membership;
     const lk=(a,b,c)=>ko?a:en?b:c;
-    const label=!m?lk('가입 정보 확인','Checking registration','确认注册信息'):m.status==='trial'?lk('30일 무료 체험','30-day free trial','30天免费体验'):m.status==='paid'?(m.plan==='six_month'?lk('6개월 이용권','6-month plan','6个月使用权'):lk('1년 이용권','1-year plan','1年使用权')):m.status==='revoked'?lk('이용권 해지','Plan revoked','使用权已撤销'):lk('이용 기간 만료','Access period ended','使用期已结束');
+    const label=!m?lk('가입 정보 확인','Checking registration','确认注册信息'):m.status==='trial'?lk('무료 베타 · 1개월','Free beta · 1 month','免费公测 · 1个月'):m.status==='paid'?(m.plan==='six_month'?lk('6개월 이용권','6-month plan','6个月使用权'):lk('1년 이용권','1-year plan','1年使用权')):m.status==='revoked'?lk('이용권 해지','Plan revoked','使用权已撤销'):lk('이용 기간 만료','Access period ended','使用期已结束');
     const end=m&&(m.status==='trial'?m.trialEndsAt:m.endsAt);
     const until=end?new Date(end).toLocaleString(ko?'ko-KR':en?'en-US':'zh-CN',{timeZone:'Asia/Seoul'}):'';
-    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${esc(label)}</div>${until?`<p>${lk('이용 기한','Valid until','有效期至')}: ${esc(until)} (KST)</p>`:''}<p>${lk('정식 이용권은 6개월·1년 중 학원에서 승인해 드려요. 학습 기록은 이용 기간이 끝나도 보존돼요.','Your academy approves a 6-month or 1-year plan. Study records are kept after access ends.','学院可开通6个月或1年使用权。使用期结束后仍保留学习记录。')}</p><button class="nm-btn ghost" id="nmMemberRefresh">${lk('이용권 다시 확인','Refresh membership','刷新使用权')}</button></div>`;
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${esc(label)}</div>${until?`<p>${lk('이용 기한','Valid until','有效期至')}: ${esc(until)} (KST)</p>`:''}<p>${lk('지금은 무료 베타 서비스예요. 가입일부터 1개월 동안 학습 기록 저장과 매주 문자 안내가 무료예요. 학습 기록은 기간이 끝나도 보존돼요.','Free beta service: saved progress and weekly text messages are free for 1 month from sign-up. Study records are kept after that.','目前为免费公测服务：自注册日起1个月内免费保存学习记录并接收每周短信。期满后仍保留学习记录。')}</p><button class="nm-btn ghost" id="nmMemberRefresh">${lk('이용권 다시 확인','Refresh membership','刷新使用权')}</button></div>`;
     $('#nmMemberRefresh').onclick=()=>membership.refresh(true);return;
   }
   const acc=S.account||{status:'trial'};
@@ -8929,7 +9029,7 @@ function renderGuardianCard(){
     return;
   }
   slot.innerHTML=`<div class="nm-idcard nm-guard-card"><div class="nm-idcard-t">${lk('보호자 이메일로 기록 연결','Connect records with a guardian email','用监护人邮箱关联记录')}</div>
-    <p>${lk('학생마다 이메일을 따로 사용해요. 형제는 보호자 전화번호가 같아도 돼요. 가입 후 30일 동안 체험할 수 있어요.','Use a separate email for each learner. Siblings may share a guardian phone. Registration includes a 30-day trial.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。注册后可体验30天。')}</p>
+    <p>${lk('학생마다 이메일을 따로 사용해요. 형제는 보호자 전화번호가 같아도 돼요. 지금은 무료 베타 서비스라 가입일부터 1개월 동안 학습 기록 저장·매주 문자 안내가 무료예요.','Use a separate email for each learner. Siblings may share a guardian phone. During the free beta, saved progress and weekly text messages are free for 1 month from sign-up.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。免费公测期间，自注册日起1个月内免费保存学习记录并接收每周短信。')}</p>
     <div class="nm-guard-field"><label for="nmGuardEmail">${lk('보호자 이메일','Guardian email','监护人邮箱')}</label>
     <input id="nmGuardEmail" type="email" autocomplete="email" placeholder="name@example.com"></div>
     <section class="nm-guard-sec" aria-labelledby="nmGuardLoginTitle"><h4 id="nmGuardLoginTitle">${lk('비밀번호가 있어요','I already have a password','我已有密码')}</h4>
@@ -9099,7 +9199,7 @@ function screenExam(){
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
         <div class="nm-card-h">🔒 ${ko?'가입·이용기간을 확인해 주세요':en?'Check registration and membership':'请确认注册和使用期限'}</div>
-        <p class="nm-wsh-sentence">${ko?'이메일 인증 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월 또는 1년 이용을 승인해요.':en?'Verify your email for a 30-day trial. Your academy can then approve 6 months or 1 year.':'验证邮箱后可体验30天，之后可由学院批准6个月或1年的使用期。'}</p>
+        <p class="nm-wsh-sentence">${ko?'지금은 무료 베타 서비스예요. 이메일 인증으로 가입하면 정보 등록·학습 기록 저장·매주 문자 안내를 가입일부터 1개월 동안 무료로 써요.':en?'Free beta service. Verify your email to sign up — registration, saved progress and weekly text messages are free for 1 month from sign-up.':'目前为免费公测服务。验证邮箱注册后，自注册日起1个月内可免费登记信息、保存学习记录并接收每周短信。'}</p>
         <button class="nm-btn full" id="examGate">${ko?'가입·이용 상태 보기':en?'View registration and membership':'查看注册及使用状态'}</button>
       </div>
     </div>`;

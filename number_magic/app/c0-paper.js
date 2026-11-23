@@ -33,23 +33,33 @@ function style(){
   .nm-print-c0 .nm-print-ask{font-size:16px!important;line-height:1.5!important}
   .nm-print-c0 .nm-c0-draw .nm-nl-stage{font-size:1.2em;padding:4px 2.5mm}
   .nm-print-c0 .nm-c0-draw .nm-nl-g1315-lines{margin-top:1px}
-  .nm-print-c0 .nm-w2-item .nm-nl-stage:has(.nm-nl-g1315-story){padding:3px 2.5mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-stage:has(.nm-nl-g1315-story){padding:1px 2.5mm}
   .nm-print-c0 .nm-w2-item .nm-nl-g1315-story+.nm-nl-g1315-pouch{margin-top:0} /* 이야기 주머니 문항이 인쇄 칸을 6px 넘치던 것(2026-11-04 C0 13주차) */
   /* Real writing areas: enlarge the scored task, keeping compact worked examples intact. */
   .nm-print-c0 .nm-w2-item .nm-nl-ansbox,
-  .nm-print-c0 .nm-w2-item .nm-w2-abox{width:22mm;height:18mm;min-width:22mm;min-height:18mm;box-sizing:border-box}
+  .nm-print-c0 .nm-w2-item .nm-w2-abox{width:22mm;height:19mm;min-width:22mm;min-height:19mm;box-sizing:border-box}
   .nm-print-c0 .nm-w2-item .nm-nl-seq{gap:.35mm}
   .nm-print-c0 .nm-w2-item .nm-nl-seq .nm-nl-arrow{font-size:14px;padding:0}
-  .nm-print-c0 .nm-w2-item .nm-nl-cell-blank{width:16mm;height:16mm;min-width:16mm;min-height:16mm;flex-shrink:0}
-  .nm-print-c0 .nm-c0-draw .nm-nl-cell:not(.nm-nl-cell-blank){width:10.5mm;height:10.5mm} /* 예시 칸은 작게 — 가르기 세 줄(6개)이 인쇄 칸을 14px 넘치던 것(2026-11-04 C0 12주차). 쓰는 칸(blank)은 16mm 유지(검사 기준 15.8mm) */
+  .nm-print-c0 .nm-w2-item .nm-nl-cell-blank{width:19mm;height:19mm;min-width:19mm;min-height:19mm;flex-shrink:0}
+  .nm-print-c0 .nm-c0-draw .nm-nl-cell:not(.nm-nl-cell-blank){width:10.5mm;height:10.5mm} /* 예시 칸은 작게 — 가르기 세 줄(6개)이 인쇄 칸을 14px 넘치던 것(2026-11-04 C0 12주차). 쓰는 칸(blank)은 19mm(공책 가운데 칸, 2026-11-22) */
   .nm-print-c0 .nm-w2-item .nm-nl-g1315-nb.nm-nl-g1315-blank,
   .nm-print-c0 .nm-w2-item .nm-nl-g1315-wt.nm-nl-g1315-blank,
   .nm-print-c0 .nm-w2-item .nm-nl-g1315-qbox,
   .nm-print-c0 .nm-w2-item .nm-nl-g13-bx,
-  .nm-print-c0 .nm-w2-item .nm-nl-g13-slot{min-width:16mm!important;min-height:16mm!important;width:16mm!important;height:16mm!important;font-size:22px;box-sizing:border-box}
-  .nm-print-c0 .nm-w2-item .nm-bond{width:64mm!important;max-width:100%}
-  .nm-print-c0 .nm-w2-item .nm-nl-stage-bond-objects{width:76mm;gap:.5mm}
-  .nm-print-c0 .nm-w2-item .nm-nl-stage-bond-objects .nm-bond{width:64mm;margin-top:0}
+  .nm-print-c0 .nm-w2-item .nm-nl-g13-slot,
+  .nm-print-c0 .nm-w2-item .nm-nl-g1012-bx,
+  .nm-print-c0 .nm-w2-item .nm-nl-g79-bl:not(.rnd),
+  .nm-print-c0 .nm-w2-item .nm-nl-g46-mach.end{min-width:19mm!important;min-height:19mm!important;width:19mm!important;height:19mm!important;font-size:22px;box-sizing:border-box}
+  /* 유아 숫자 쓰는 칸은 모두 19mm 이상 — 한글 공책 가운데 칸(원장 2026-11-22 「한글 노트 정도의 글씨 크기 이상」). 틀린 곳 고치기·수직선 빈칸·바꾸기 기계 끝 칸·바르게 세기 표도 */
+  .nm-print-c0 .nm-w2-item .nm-nl-g1012-tab td.em{min-width:19mm;height:19mm}
+  /* 19mm 칸으로 4~5px 넘치던 셋(2026-11-22): 동물 그림 칸을 조금 낮게 · 이야기 속 빈칸 위아래 여백 없이 · 묶음 줄 간격 줄임 */
+  .nm-print-c0 .nm-w2-item .nm-nl-scatter{height:31mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-story .nm-nl-g1315-nb{margin:0 .6mm;line-height:1}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-story{line-height:1.55}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-lines{gap:.6mm}
+  .nm-print-c0 .nm-w2-item .nm-bond{width:73mm!important;max-width:100%} /* 빈 동그라미 지름 19mm(공책 가운데 칸, 2026-11-22) — 그림 폭 160 중 42 */
+  .nm-print-c0 .nm-w2-item .nm-nl-stage-bond-objects{width:84mm;gap:.5mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-stage-bond-objects .nm-bond{width:73mm;margin-top:0}
   .nm-print-c0 .nm-w2-item .nm-bond-whole{margin-bottom:0}
   .nm-print-c0 .nm-w2-item .nm-bond-ladybug{margin-top:-1.5mm}
   .nm-print-c0 .nm-w2-item .nm-bond-objects{gap:4mm}
@@ -59,17 +69,17 @@ function style(){
   .nm-print-c0 .nm-w2-item .nm-nl-g46-bars i{width:7mm;height:12mm}
   .nm-print-c0 .nm-c0-wide .nm-nl{max-width:148mm}
   .nm-print-c0 .nm-c0-wide .nm-nl-stage{max-width:148mm}
-  .nm-print-c0 .nm-c0-wide .nm-nl-stage-bond-objects:has(.nm-bond-ladybug){width:148mm;display:grid;grid-template-columns:76mm 54mm;column-gap:8mm;align-items:center;justify-content:center}
+  .nm-print-c0 .nm-c0-wide .nm-nl-stage-bond-objects:has(.nm-bond-ladybug){width:148mm;display:grid;grid-template-columns:84mm 54mm;column-gap:6mm;align-items:center;justify-content:center}
   .nm-print-c0 .nm-c0-wide .nm-bond-whole-ladybug{grid-column:1/-1}
   .nm-print-c0 .nm-c0-wide .nm-bond-ladybug{width:52mm;margin:0}
   .nm-print-c0 .nm-c0-wide .nm-nl-g1315-eng{width:21mm;height:21mm}
   .nm-print-c0 .nm-c0-wide .nm-nl-g1315-carw{width:19mm;height:21mm}
   .nm-print-c0 .nm-c0-wide .nm-nl-g1315-trlinks{margin-left:30.5mm}
   .nm-print-c0 .nm-c0-wide .nm-nl-g1315-linkw{width:19mm}
-  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-tc-car{min-width:16mm;height:16mm;font-size:20px;box-sizing:border-box}
-  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-tc-link{width:16mm;height:16mm;font-size:20px;box-sizing:border-box}
-  .nm-print-c0 .nm-w2-item .nm-nl-g1315-table td.nm-nl-g1315-blank{min-width:16mm;height:16mm}
-  .nm-print-c0 .nm-w2-item .nm-nl-g1315-gtab td{min-width:16mm;height:16mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-tc-car{min-width:19mm;height:19mm;font-size:20px;box-sizing:border-box}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-tc-link{width:19mm;height:19mm;font-size:20px;box-sizing:border-box}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-table td.nm-nl-g1315-blank{min-width:19mm;height:19mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-gtab td{min-width:19mm;height:19mm}
   .nm-print-c0 .nm-w2-item .nm-nl-g46-bond svg{width:64mm;max-width:100%}
   .nm-print-c0 .nm-w2-item .nm-nl-g46-bond.mini svg{width:42mm}
   .nm-print-c0 .nm-w2-item .nm-nl-tallyboard{min-height:28mm;min-width:58mm}

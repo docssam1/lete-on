@@ -24,12 +24,14 @@
     e.target.reset();location.assign('admin.html');return;
    }
    globalThis.RoadmapSpeed?.mark('login_start');
+   if(identifier.includes('@')&&!/^[0-9]{8,12}$/.test(code))throw Object.assign(new Error('이메일 계정의 로그인 번호는 숫자 8~12자리입니다.'),{local:true});
+   if(!identifier.includes('@')&&!/^[0-9]{4,12}$/.test(code.trim()))throw Object.assign(new Error('승인번호는 숫자 4~12자리입니다.'),{local:true});
    const result=identifier.includes('@')?await A.call('login',{email:identifier.toLowerCase(),pin:code}):await A.call('review-login',{username:identifier,code});
    member=A.accept(result);globalThis.RoadmapSpeed?.mark('login_verified');e.target.reset();location.assign(next);
   });};
  }
  function reviewProfile(){
-  screen('내 계정',`<p class="member-lead">${esc(member.username)}</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">컨설팅 모드 계정입니다. 학생별 설계와 상담 코멘트는 이 기기에만 보관됩니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
+  screen('내 계정',`<p class="member-lead">${esc(member.username)}</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">컨설팅 모드 계정입니다. 학생별 로드맵과 상담 기록을 서버에 자동 저장합니다. 같은 컨설팅 계정으로 다른 기기에서 이어볼 수 있습니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
  }
  function emailScreen(intent='signup'){
   mode=intent;if(intent==='signup')entryIntent='signup';
@@ -52,16 +54,26 @@
   updateCooldown();
  }
  function updateCooldown(){const b=$('sendCode'),left=Math.max(0,Math.ceil((cooldown-Date.now())/1000));if(!left){clearInterval(timer);timer=null;}if(!b)return;b.disabled=busy||left>0;b.textContent=left?`다시 받기 · ${left}초 후`:$('codeForm')?.hidden?'이메일 인증번호 받기':'인증번호 다시 받기';}
- function schoolFields(m){
-  return field('studentName','학생 이름','text','autocomplete="off" maxlength="30"')+field('guardianPhone','보호자 휴대폰 번호','tel','autocomplete="tel-national" maxlength="15"')+`<div class="member-row"><label class="member-field">학교 단계<select name="school" required><option value="preschool">유치</option><option value="elementary">초등</option><option value="middle">중등</option><option value="high">고등</option></select></label><label class="member-field"><span id="levelLabel">나이</span><select name="level" required></select></label></div>`;
+ function schoolFields(member){
+  const ages=member?.school==='preschool'&&Number(member.age)===3?[3,4,5,6,7]:[4,5,6,7];
+  const options=ages.map(n=>['preschool:'+n,n+'세']);
+  for(const [school,title,count] of [['elementary','초',6],['middle','중',3],['high','고',3]]){
+   for(let n=1;n<=count;n++)options.push([school+':'+n,title+n]);
+  }
+  const selected=member?member.school+':'+(member.school==='preschool'?member.age:member.grade):'';
+  const levels=options.map(([value,label])=>`<option value="${value}"${value===selected?' selected':''}>${label}</option>`).join('');
+  return field('studentName','학생 이름','text','autocomplete="off" maxlength="30"')+field('guardianPhone','보호자 휴대폰 번호','tel','autocomplete="tel-national" maxlength="15"')+`<label class="member-field">현재 나이 또는 학년<select name="learner" required><option value="">선택해 주세요</option>${levels}</select></label>`;
  }
- function fillSchool(m){const form=$('profileForm'),school=form.elements.school,level=form.elements.level;
-  form.elements.studentName.value=m?.student_name||'';form.elements.guardianPhone.value=m?.guardian_phone||'';school.value=m?.school||'elementary';
-  function options(){const pre=school.value==='preschool';$('levelLabel').textContent=pre?'유치 나이':'현재 학년';level.innerHTML='<option value="">선택해 주세요</option>'+Array.from({length:pre?5:school.value==='elementary'?6:3},(_,i)=>{const n=pre?i+3:i+1;return `<option value="${n}">${n}${pre?'세':'학년'}</option>`;}).join('');}
-  school.onchange=options;options();if(m)level.value=m.school==='preschool'?m.age:m.grade;
+ function fillSchool(m){
+  const form=$('profileForm');
+  form.elements.studentName.value=m?.student_name||'';
+  form.elements.guardianPhone.value=m?.guardian_phone||'';
  }
- const readProfile=f=>({studentName:f.get('studentName'),guardianPhone:f.get('guardianPhone'),school:f.get('school'),age:f.get('school')==='preschool'?Number(f.get('level')):null,grade:f.get('school')!=='preschool'?Number(f.get('level')):null});
- function checkPin(f){if(f.get('pin')!==f.get('pinAgain')){const e=new Error('로그인 번호가 서로 다릅니다.');e.local=true;throw e;}return f.get('pin');}
+ function readProfile(f){
+  const [school,level]=String(f.get('learner')||'').split(':');
+  return {studentName:f.get('studentName'),guardianPhone:f.get('guardianPhone'),school,age:school==='preschool'?Number(level):null,grade:school==='preschool'?null:Number(level)};
+ }
+ function checkPin(f){if(f.get('pin')!==f.get('pinAgain')){const e=new Error('로그인 번호가 서로 다릅니다.');e.local=true;throw e;}const pin=f.get('pin');if(typeof pin!=='string'||!/^\d{8,12}$/.test(pin)||/^(\d)\1+$/.test(pin)||['12345678','87654321','01234567'].includes(pin))throw Object.assign(new Error('숫자 8~12자리로 정하고, 같은 숫자 반복이나 단순한 연속 번호는 피해주세요.'),{local:true});return pin;}
  function registration(){
   screen('학생의 현재 정보를 알려주세요.',`<p class="member-lead">${esc(email)} · 이메일 인증 완료</p><form id="profileForm">${schoolFields()}${pinFields()}${P.checks()}<button class="member-primary">무료로 로드맵 시작하기</button></form>`);fillSchool();
   $('profileForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('pin')!==f.get('pinAgain')){announce('로그인 번호가 서로 다릅니다.',true);return;}run(async()=>{
@@ -71,7 +83,7 @@
  }
  function emailWelcome(){screen('가입한 계정을 찾았습니다.',`<p class="member-lead">${esc(member.student_name)} 학생의 로드맵을 이어서 살펴보세요.</p><button class="member-primary" data-action="email-login">로드맵 이어보기</button><button class="member-link" data-action="set-pin">로그인 번호 다시 정하기</button>`);}
  function resetPin(){screen('새 로그인 번호를 정해 주세요.',`<p class="member-lead">${esc(email)} · 이메일 인증 완료</p><form id="pinForm">${pinFields()}<p class="member-note">변경하면 이전 번호와 기존 로그인은 종료됩니다.</p><button class="member-primary">로그인 번호 변경</button></form>`);
-  $('pinForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('pin')!==f.get('pinAgain')){announce('로그인 번호가 서로 다릅니다.',true);return;}run(async()=>{member=A.accept(await A.call('reset-pin',{pin:f.get('pin')},proof));e.target.reset();await A.closeProof(proof);proof=null;complete('로그인 번호를 변경했습니다.');});};
+  $('pinForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('pin')!==f.get('pinAgain')){announce('로그인 번호가 서로 다릅니다.',true);return;}run(async()=>{member=A.accept(await A.call('reset-pin',{pin:checkPin(f)},proof));e.target.reset();await A.closeProof(proof);proof=null;complete('로그인 번호를 변경했습니다.');});};
  }
  function complete(title){screen(title,`<p class="member-lead">${esc(member.student_name)} 학생의 학습 로드맵을 만들어 보세요.</p><a class="member-primary" href="${esc(next)}">로드맵으로 가기 <span aria-hidden="true">→</span></a><button class="member-link" data-action="profile">내 계정 확인</button>`);}
  function profile(){if(member.review){reviewProfile();return;}email=member.email;

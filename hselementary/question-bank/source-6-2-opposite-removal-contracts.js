@@ -9,14 +9,15 @@
  function generate(id,variant,level){
   const model=models.solve(id,variant,level),easy=level===0,hard=level===2;
   const scope=easy?"윗면과 오른쪽 면에 보이는 검은색 칸에서만":"그림에 보이는 모든 검은색 칸에서";
-  let promptText=`같은 크기의 쌓기나무를 빈틈없이 쌓아 그림과 같은 정육면체를 만들었습니다. ${scope} 각 면에 수직인 방향으로 반대쪽 끝까지 쌓기나무를 모두 빼냅니다. `;
-  promptText+=hard?"(1) 남은 쌓기나무는 모두 몇 개인지 구하시오. (2) 서로 다른 두 방향 이상에서 빼내는 줄이 겹치는 자리에 있던 쌓기나무는 모두 몇 개인지 구하시오.":"남은 쌓기나무는 모두 몇 개인지 구하시오.";
-  promptText+=" (남은 쌓기나무는 옮기지 않습니다.)";
+  const bookSource=variant===0&&level===1,conventions="쌓기나무는 빈틈없이 쌓여 있고, 색칠한 칸에서 그 면에 수직인 방향으로 반대편 끝까지 빼냅니다. 남은 쌓기나무는 옮기지 않습니다.";
+  let promptText=bookSource?"크기가 같은 정육면체 모양의 쌓기나무를 쌓아서 큰 정육면체를 만들었습니다. 색칠한 부분의 쌓기나무를 반대편 끝까지 모두 뺀다면 남아 있는 쌓기나무는 모두 몇 개입니까?":`같은 크기의 쌓기나무를 빈틈없이 쌓아 그림과 같은 정육면체를 만들었습니다. ${scope} 각 면에 수직인 방향으로 반대쪽 끝까지 쌓기나무를 모두 빼냅니다. `;
+  if(!bookSource)promptText+=hard?"(1) 남은 쌓기나무는 모두 몇 개인지 구하시오. (2) 서로 다른 두 방향 이상에서 빼내는 줄이 겹치는 자리에 있던 쌓기나무는 모두 몇 개인지 구하시오.":"남은 쌓기나무는 모두 몇 개인지 구하시오.";
+  if(!bookSource)promptText+=" (남은 쌓기나무는 옮기지 않습니다.)";
   const remainingEquation=`${model.layers.map(row=>row.remaining.length).join("+")}=${model.remainingCount}`;
   const removedEquation=`${model.totalCount}-${model.removedCount}=${model.remainingCount}`;
   const overlapEquation=`${model.layers.map(row=>row.overlapping.length).join("+")}=${model.overlapCount}`;
   const equations=[remainingEquation,removedEquation,...(hard?[overlapEquation]:[])];
-  const solutionText=`<p>각 층에서 남은 쌓기나무를 세어 더하면 ${math(remainingEquation)}개입니다.</p>`+
+  const solutionText=(bookSource?`<p>풀이 기준: ${conventions}</p>`:"")+`<p>각 층에서 남은 쌓기나무를 세어 더하면 ${math(remainingEquation)}개입니다.</p>`+
    `<p>빼낸 쌓기나무가 겹치는 자리는 한 번만 세어야 합니다. 처음 개수에서 빼낸 개수를 빼도 ${math(removedEquation)}개입니다.</p>`+
    (hard?`<p>두 방향 이상이 겹친 자리도 한 번씩만 세면 ${math(overlapEquation)}개입니다.</p>`:"");
   return freeze({sourceItemId:id,variant,level,model,promptText,answer:model.answer,answerUnit:"개",

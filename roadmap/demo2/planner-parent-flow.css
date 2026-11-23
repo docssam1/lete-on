@@ -12,7 +12,8 @@ body.parent-boot>:not(#parentBoot):not(script):not(#memberGate){display:none!imp
 .parent-age-intake{padding-bottom:24px;margin-bottom:26px;border-bottom:1px solid #ddd5e3}.parent-age-intake>label{max-width:240px}
 .parent-current-form label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;min-width:0}
 .parent-current-form label span{font-size:12px;font-weight:400;color:#817489}
-.parent-current-form input,.parent-current-form select,.parent-current-form textarea{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #c9bdcf;border-radius:8px;background:#fff;color:#35283e;font:inherit;font-size:16px;font-weight:400;box-shadow:none}
+.intake-learner-menu{grid-column:1/-1}
+.intake-learner-menu,.parent-current-form input,.parent-current-form select,.parent-current-form textarea{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #c9bdcf;border-radius:8px;background:#fff;color:#35283e;font:inherit;font-size:16px;font-weight:400;box-shadow:none}
 .parent-current-form textarea{resize:vertical}
 .parent-current-form [hidden]{display:none!important}
 .parent-student{display:flex;gap:16px;margin-bottom:22px}.parent-student>label{flex:0 1 200px}
@@ -181,3 +182,45 @@ body.questioning #conversation:has(#questionOptions>.parent-slides)>:not(#questi
 #questionOptions .parent-slides .parent-slide-footer>nav>button{grid-column:auto;grid-row:auto}
 /* Runtime CSS may already be loaded when a bundle fails. Keep boot in one column. */
 body.parent-slide-open #parentBoot{grid-template-columns:minmax(0,1fr)!important}
+
+/* One starting point and the learner's current study, together on one screen. */
+.parent-quick.parent-slides .parent-slide-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);max-width:680px;margin-inline:auto}
+.parent-quick .parent-age-intake{margin-bottom:16px}
+.parent-quick .parent-current-row>label:has(select[name$="Source"]),.parent-quick .parent-current-row>label:has(select[name$="Status"]),.parent-quick .parent-current-row>label:has([name^="thinkingLevel"]),.parent-quick .parent-thinking-note{display:none!important}
+.parent-quick .parent-slide-viewport{padding-block-start:24px}
+.parent-quick .parent-slide-question{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.parent-quick .parent-slide-question::before{content:"";flex:0 0 40px;height:40px;background:url("assets/ui/roadmap-glass.svg") center/contain no-repeat}
+@media(prefers-reduced-motion:no-preference){.parent-quick [data-parent-axis]:not([hidden]){animation:parent-quick-reveal .18s ease-out}@keyframes parent-quick-reveal{from{opacity:.35;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}}
+.parent-quick .parent-current-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.parent-quick fieldset{min-inline-size:0;border:1px solid #e4dbe9;border-radius:10px;padding:0 10px 10px}
+.parent-quick fieldset>legend{display:block;padding:0 4px;color:#573865;font-size:14px;font-weight:700}
+.parent-quick .parent-current-row,.parent-quick fieldset[data-parent-axis] .parent-current-row{gap:8px}
+.parent-quick .parent-current-row>label{font-size:12px;line-height:1.4}
+.parent-quick .parent-current-row :is(input,select){min-height:44px}
+#parentBoot .parent-quick .parent-quick-starting,.parent-quick .parent-quick-starting{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:44px;margin-top:6px;font-size:13px;cursor:pointer}
+.parent-quick .parent-quick-starting input{width:18px;height:18px;min-height:0;margin:0;accent-color:#68437e}
+@media(max-height:720px) and (max-width:700px){
+ .parent-quick .parent-slide-viewport{padding-block-start:14px}
+ .parent-quick .parent-slide-question,.parent-quick .parent-age-intake{margin-bottom:10px}
+}
+.parent-math-draft,.parent-draft-actions{max-width:680px;margin-inline:auto;min-width:0;box-sizing:border-box;text-align:left;overflow-wrap:anywhere}
+.parent-math-draft{padding:clamp(18px,4vw,32px);background:#fff;border:1px solid #d7cddd;border-radius:16px;color:#35283e}
+.parent-math-draft h2{font-size:clamp(21px,4vw,28px);letter-spacing:-.035em;line-height:1.4;margin:0}
+.parent-math-draft h3{font-size:17px;margin:22px 0 8px;color:#573865}
+.parent-math-draft p,.parent-math-draft dd{margin:5px 0 0;line-height:1.65}
+.parent-math-draft dl{margin:0;padding:0}
+.parent-math-draft dl>div{border-left:3px solid #a387b9;padding:4px 12px;margin:8px 0;background:#f7f3fa}
+.parent-math-draft dt,.parent-draft-grade{font-size:14px;color:#685574}
+.parent-math-draft dd{font-weight:650}
+.parent-draft-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:16px}
+.parent-draft-actions button{min-height:44px}
+body.questioning #conversation:has(#questionOptions>.parent-draft-view)>:not(#questionOptions){display:none!important}
+#questionOptions:has(>.parent-draft-view){display:block!important}
+body.questioning main:has(#questionOptions>.parent-draft-view)>:is(.view,.result-intro,.input-details,#warn,#planningOverview,#pathwayCoach){display:none!important}
+body.questioning main:has(#questionOptions>.parent-draft-view){grid-template-columns:minmax(0,1fr)}
+body.questioning #conversation:has(#questionOptions>.parent-draft-view){grid-column:1/-1;width:100%;max-width:740px;margin-inline:auto;box-sizing:border-box}
+#questionOptions .parent-draft-actions>button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:auto;padding:10px 15px;border-radius:8px;box-shadow:none;font:inherit;font-size:15px;line-height:1.4;text-align:center}
+#questionOptions .parent-draft-actions>.parent-primary{background:#64457c;color:#fff;border:1px solid #64457c;font-weight:700}
+#questionOptions .parent-draft-actions>.parent-advanced{background:white;color:#56336b;border:1px solid #b8a0c4;text-decoration:none}
+
+@media(max-width:520px){.parent-quick .parent-current-rows{grid-template-columns:1fr;gap:6px}.parent-quick fieldset{padding:0 8px 6px}.parent-quick .parent-current-row>label{font-size:0;gap:0}.parent-quick .parent-quick-starting{margin-top:2px}}

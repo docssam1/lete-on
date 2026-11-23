@@ -90,6 +90,22 @@ function svgMarkup(markup) {
   const matches = String(markup).match(/<svg\b[\s\S]*?<\/svg>/g) || [];
   assert.equal(matches.length, 1, "Exactly one actual diagram required"); return matches[0];
 }
+const PYTHON_SVG_NODE_READER = String.raw`
+import json, sys
+from xml.dom import minidom
+def text_of(node):
+    return "".join(child.data if child.nodeType in (child.TEXT_NODE, child.CDATA_SECTION_NODE) else text_of(child) for child in node.childNodes if child.nodeType in (child.TEXT_NODE, child.CDATA_SECTION_NODE, child.ELEMENT_NODE))
+results = []
+for source in json.loads(sys.stdin.read()):
+    document = minidom.parseString(source.encode("utf-8"))
+    if document.doctype is not None:
+        raise SystemExit("DTD is not allowed")
+    nodes = []
+    for element in [document.documentElement] + list(document.documentElement.getElementsByTagName("*")):
+        nodes.append({"tag": element.localName, "attrs": dict(element.attributes.items()), "text": text_of(element)})
+    results.append({"nodes": nodes})
+print(json.dumps(results, ensure_ascii=False))
+`;
 const xmlCache = new Map();
 function parseBatch(markups) {
   const missing = [...new Set(markups)].filter(markup => !xmlCache.has(markup));
@@ -112,8 +128,10 @@ $results=@(foreach($source in $inputs) {
 })
 ConvertTo-Json -InputObject $results -Depth 8 -Compress
 `;
-  const result = spawnSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script],
-    { input: JSON.stringify(missing), encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+  // Windows에서는 PowerShell XML 파서, 그 밖(Mac 등)에서는 같은 결과 모양을 내는 python3 표준 XML 파서(minidom)를 쓴다(2026-11-23).
+  const result = process.platform === "win32"
+    ? spawnSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script], { input: JSON.stringify(missing), encoding: "utf8", maxBuffer: 64 * 1024 * 1024 })
+    : spawnSync(process.env.HSE_PYTHON || "python3", ["-I", "-c", PYTHON_SVG_NODE_READER], { input: JSON.stringify(missing), encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
   assert.equal(result.status, 0, `Native SVG XML parse failed: ${result.stderr || result.error}`);
   const documents = JSON.parse(result.stdout.replace(/^\uFEFF/, ""));
   assert.equal(documents.length, missing.length);

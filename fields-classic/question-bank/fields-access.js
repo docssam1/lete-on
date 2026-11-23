@@ -1,4 +1,4 @@
-import { loggedIn, memberCall } from "./study-progress.js?v=20261111p";
+import { loggedIn, memberCall } from "./study-progress.js?v=20261117a";
 
 // 스스로 공부를 어디까지 열어 주나(원장 2026-10-29 「이메일 인증 후 2주 체험 · 인증하지 않고 둘러보기는 한 주분만 · 그다음 정식」)
 //   둘러보기(로그인 안 함)      → 1권 1단원(한 주 = 1·2차시)만
@@ -99,7 +99,7 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
   const login = `./login.html${here ? `?next=${encodeURIComponent(here)}` : ""}`;
   if (why === "retry") return `<div class="fa-lock"><p class="fa-kick">정규회원</p>
     <h2>오답 유사문제는 정규회원이 쓸 수 있어요</h2>
-    <p>단원마다 본책에서 틀렸거나 모르는 번호를 고르면 <b>같은 유형의 새 문제</b>로 다시 풀 수 있어요.${who.kind === "member" ? " 정규회원 승인은 카톡으로 요청해 주세요." : " 이메일로 가입해 2주 체험한 뒤 정규회원이 되면 열려요."}</p>
+    <p>단원마다 교재에서 틀렸거나 모르는 번호를 고르면 <b>같은 유형의 새 문제</b>로 다시 풀 수 있어요.${who.kind === "member" ? " 정규회원 승인은 카톡으로 요청해 주세요." : " 이메일로 가입해 2주 체험한 뒤 정규회원이 되면 열려요."}</p>
     <div class="fa-actions">${who.kind === "member"
       ? (m?.approvalRequestedAt ? `<span class="fa-small">${day(m.approvalRequestedAt)}에 정규회원 요청을 보냈어요.</span>` : `<button type="button" class="fa-btn primary" data-fa="regular">정규회원 승인 요청(카톡) ›</button>`)
       : `<a class="fa-btn primary" href="./signup.html">이메일로 가입하기 ›</a><a class="fa-btn" href="${login}">승인번호로 로그인</a>`}</div><p class="fa-small" data-fa-msg></p></div>`;

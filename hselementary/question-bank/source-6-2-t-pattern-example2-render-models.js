@@ -13,7 +13,7 @@
       const shift=shifts[index],translated=source.cubes.map(([x,y,z])=>[x-source.xOrigin+shift[0],y,z+shift[2]]);
       for(const [x,y,z]of translated){if(heights[z][x]&&heights[z][x]>y+1)throw new Error("Overlapping T-pattern columns");heights[z][x]=y+1;cells.push([x,y,z]);}
       const highest=source.n;
-      groups.push({stage:highest,cells:translated,translation:shift,caption:["첫째","둘째","셋째"][index],
+      groups.push({stage:highest,cells:translated,translation:shift,caption:["첫 번째","두 번째","세 번째"][index],
         captionPoint:[shift[0]+source.n,-.5,shift[2]+source.n]});
     });
     const keys=new Set(cells.map(cell=>cell.join(","))),canonical=[],tops=[];
