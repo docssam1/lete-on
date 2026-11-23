@@ -1972,7 +1972,7 @@
       const actual = measuredAngle(firstDirection, secondDirection);
       const arc = source42Arc(vertex, firstDirection, secondDirection, 15);
       const text = source42AngleLabelPoint(vertex, firstDirection, secondDirection, 28);
-      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: `${name}-first;${name}-second`, markup: `<g data-marked-angle="${label}" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="${name}-first;${name}-second"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">${label}°</text></g>` };
+      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: `${name}-first;${name}-second`, markup: `<g data-marked-angle="${label}" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="${name}-first;${name}-second"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">${({ 162: "㉠", 150: "㉡", 132: "㉣" })[label] || `${label}°`}</text></g>` };
     };
     const interiorMarker = (() => {
       const vertex = hexagon[4];
@@ -1981,7 +1981,7 @@
       const actual = measuredAngle(firstDirection, secondDirection);
       const arc = source42Arc(vertex, firstDirection, secondDirection, 14);
       const text = source42AngleLabelPoint(vertex, firstDirection, secondDirection, 25);
-      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: "hexagon-3-4;hexagon-4-5", markup: `<g data-marked-angle="120" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="hexagon-3-4;hexagon-4-5"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">120°</text></g>` };
+      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: "hexagon-3-4;hexagon-4-5", markup: `<g data-marked-angle="120" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="hexagon-3-4;hexagon-4-5"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">㉢</text></g>` };
     })();
     const marker162 = joinMarker(square, pentagon, 1, 162, "square-pentagon");
     const marker132 = joinMarker(pentagon, hexagon, 2, 132, "pentagon-hexagon");
@@ -23092,7 +23092,7 @@
         const draw = solved => `${card(35, 46, 112, "처음", solved ? `넓이 ${sourceValue(d.answer)}m²` : "넓이 ?m²", solved)}${line(153, 72, 205, 72, "source61-e4-join-arrow")}${card(213, 46, 112, "새 직사각형", `가로 ${d.widthScale}배 · 세로 ${d.heightScale}배`)}${solved ? `<text class="source61-e4-result-label" x="180" y="155">넓이 증가 = ${sourceValue(d.increase)}m²</text>` : `<text x="180" y="155">처음 넓이를 구하세요.</text>`}`;
         const promptVisual = svg("직사각형의 가로와 세로를 늘린 그림", draw, false, values);
         const answerVisual = `${svg("직사각형의 가로와 세로를 늘린 그림", draw, true, values)}${mathBoard("넓이 배율", row("새 넓이", `${d.widthScale}×${d.heightScale}=${factor}배`) + row("증가한 부분", `${factor}-1=${factor - 1}배`) + row("처음 넓이", `${sourceValue(d.increase)}÷${factor - 1}=${sourceValue(answer)}m²`))}`;
-        return fixedResult(`어떤 정사각형 모양 발의 가로를 ${d.widthScale}배, 세로를 ${d.heightScale}배 하여 새 직사각형 모양 발을 만들었습니다. 새 발의 넓이는 처음보다 ${sourceValue(d.increase)}m² 넓어졌습니다. 처음 발의 넓이는 몇 m²인가요?${promptVisual}${mathBoard("주어진 수", row("가로", `${d.widthScale}배`) + row("세로", `${d.heightScale}배`) + row("늘어난 넓이", `${sourceValue(d.increase)}m²`))}${support("가로 배와 세로 배를 곱해 새 넓이가 몇 배인지 구한 뒤, 늘어난 배수로 나누세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}m²`, `새 넓이는 ${factor}배이고 늘어난 부분은 ${factor - 1}배입니다. 따라서 처음 넓이는 ${sourceValue(d.increase)}÷${factor - 1}=${sourceValue(answer)}m²입니다.`, { html: answerVisual, values });
+        return fixedResult(`어떤 정사각형 모양 밭의 가로를 ${d.widthScale}배, 세로를 ${d.heightScale}배 하여 새 직사각형 모양 밭을 만들었습니다. 새 밭의 넓이는 처음보다 ${sourceValue(d.increase)}m² 넓어졌습니다. 처음 밭의 넓이는 몇 m²인가요?${promptVisual}${mathBoard("주어진 수", row("가로", `${d.widthScale}배`) + row("세로", `${d.heightScale}배`) + row("늘어난 넓이", `${sourceValue(d.increase)}m²`))}${support("가로 배와 세로 배를 곱해 새 넓이가 몇 배인지 구한 뒤, 늘어난 배수로 나누세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}m²`, `새 넓이는 ${factor}배이고 늘어난 부분은 ${factor - 1}배입니다. 따라서 처음 넓이는 ${sourceValue(d.increase)}÷${factor - 1}=${sourceValue(answer)}m²입니다.`, { html: answerVisual, values });
       }
 
       if (variant === 2) {
@@ -24541,7 +24541,7 @@
         const visual = solved => `<svg class="geometry-diagram source61-ratio-e5-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 ${solved ? 350 : 230}" role="img" aria-label="길이가 같은 두 말뚝의 묻힌 조건" data-source61-ratio-e5-structure="parallel-poles" data-source61-ratio-e5-values="${values.join(",")}" data-pole-condition-schematic="true"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}>${conditionRows}${solved ? `${svgText(180, 185, "조건을 만족하는 두 경우", "font-size=\"12\" font-weight=\"700\"")}${caseBars(answers[0], 210)}${caseBars(answers[1], 280)}<rect x="75" y="325" width="210" height="24" rx="4" fill="#ffe9a8" stroke="#c78b00"/>${svgText(180, 342, answer)}` : svgText(180, 205, "가능한 전체 길이는?")}</svg>`;
         const promptVisual = `${visual(false)}${mathBoard("지상 길이의 차는 두 방향", row("첫째", `전체의 ${100 - buriedRate}%가 지상`) + row("둘째", `전체-${buriedDepth}cm`) + row("차", `전체의 ${exposedGapRate}%`))}`;
         const answerVisual = `${visual(true)}${mathBoard("차의 두 경우를 모두 계산", row("첫째가 더 길 때", `${answers[0]}cm`) + row("둘째가 더 길 때", `${answers[1]}cm`) + row("답", answer))}`;
-        return fixedResult(`길이가 같은 두 말뚝을 평행한 땅에 각각 박았습니다. 첫 말뚝은 전체 길이의 ${buriedRate}%만큼, 둘째 말뚝은 ${buriedDepth}cm만큼 묻혔습니다. 땅 위 두 말뚝의 길이 차가 전체 길이의 ${exposedGapRate}%일 때 가능한 말뚝의 전체 길이를 모두 구하세요.${promptVisual}`, answer, `어느 말뚝이 더 길게 나와 있는지 두 경우로 나눕니다. 두 식에서 얻는 양의 해는 ${answers[0]}cm와 ${answers[1]}cm이며 둘 다 조건을 만족합니다.`, promptVisual, answerVisual, values, "two-values");
+        return fixedResult(`길이가 같은 두 말뚝을 평평한 땅에 각각 박았습니다. 첫 말뚝은 전체 길이의 ${buriedRate}%만큼, 둘째 말뚝은 ${buriedDepth}cm만큼 묻혔습니다. 땅 위 두 말뚝의 길이 차가 전체 길이의 ${exposedGapRate}%일 때 가능한 말뚝의 전체 길이를 모두 구하세요.${promptVisual}`, answer, `어느 말뚝이 더 길게 나와 있는지 두 경우로 나눕니다. 두 식에서 얻는 양의 해는 ${answers[0]}cm와 ${answers[1]}cm이며 둘 다 조건을 만족합니다.`, promptVisual, answerVisual, values, "two-values");
       }
 
       if (variant === 5) {

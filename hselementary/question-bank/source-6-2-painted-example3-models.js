@@ -6,7 +6,7 @@
   "use strict";
   function freeze(v){if(v&&typeof v==="object"&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
   const heightsPerVariant=freeze([7,6,8]),sourceFootprint=freeze(Array.from({length:7},(_,depth)=>Array.from({length:8},(_,x)=>Number(depth>=3||x<6)))),palette=freeze({right:"red",left:"blue",top:"red",bottom:null,front:"red",back:"blue"});
-  const fittedCamera=freeze({u:[28+2/3,137/7,-3/7],v:[-1/6,-141/7,-200/7]}),scale=-fittedCamera.v[2],projection=freeze({kind:"source-affine",horizontal:[fittedCamera.u[0]/scale,fittedCamera.u[2]/scale,-fittedCamera.u[1]/scale],vertical:[-fittedCamera.v[0]/scale,-fittedCamera.v[2]/scale,fittedCamera.v[1]/scale]}),faceColors=freeze([0xffc6bd,0xd0deff,0xffe0db,0xeeeeee,0xffd0c7,0xd0deff]);
+  const fittedCamera=freeze({u:[28+2/3,137/7,-3/7],v:[-1/6,-141/7,-200/7]}),scale=-fittedCamera.v[2],projection=freeze({kind:"source-affine",horizontal:[fittedCamera.u[0]/scale,fittedCamera.u[2]/scale,-fittedCamera.u[1]/scale],vertical:[-fittedCamera.v[0]/scale,-fittedCamera.v[2]/scale,fittedCamera.v[1]/scale]}),faceColors=freeze([0xd2e8ef,0xd2e8ef,0xe9f3f5,0xd2e8ef,0xdceef2,0xd2e8ef]);
   function solve(variant=0){
     if(!Number.isSafeInteger(variant)||variant<0||variant>=3)throw new RangeError("Unreviewed painted L prism variant");
     const height=heightsPerVariant[variant],sourceHeights=sourceFootprint.map(row=>row.map(on=>on*height)),heights=sourceHeights.slice().reverse().map(row=>[...row]),m=classifier.classify(heights,palette),groupedLayers={};
