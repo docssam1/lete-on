@@ -31,6 +31,7 @@ on:
       - 'promo/hwangso-last-month/**'
       - 'popcorn/**'
       - 'promo/popcorn-lab/**'
+      - 'promo/soma-fields-seminar-2027/**'
       - 'reading-world/**'
       - 'roadmap/**'
       - 'science-lab/**'
@@ -103,6 +104,7 @@ jobs:
           mkdir -p _site/promo/hwangso-last-month
           mkdir -p _site/popcorn
           mkdir -p _site/promo/popcorn-lab
+          mkdir -p _site/promo/soma-fields-seminar-2027
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
           mkdir -p _site/science-lab
@@ -148,6 +150,7 @@ jobs:
           test ! -e _site/premier/qa
           cp -R promo/hwangso-last-month/. _site/promo/hwangso-last-month/
           cp -R promo/popcorn-lab/. _site/promo/popcorn-lab/
+          cp promo/soma-fields-seminar-2027/index.html _site/promo/soma-fields-seminar-2027/index.html
           mkdir -p _site/programs
           cp -R programs/. _site/programs/
           cp -R reading-world/. _site/reading-world/
