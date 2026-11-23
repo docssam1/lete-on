@@ -15,7 +15,7 @@ test.before(async function () {
     const pathname = new URL(request.url, "http://127.0.0.1").pathname;
     const file = path.resolve(root, `.${decodeURIComponent(pathname)}`);
     if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { response.writeHead(404); response.end("Not found"); return; }
-    const type = file.endsWith(".html") ? "text/html" : file.endsWith(".css") ? "text/css" : file.endsWith(".js") ? "text/javascript" : "application/octet-stream";
+    const type = file.endsWith(".html") ? "text/html" : file.endsWith(".css") ? "text/css" : (file.endsWith(".js") || file.endsWith(".mjs")) ? "text/javascript" : "application/octet-stream";
     response.writeHead(200, { "content-type": `${type}; charset=utf-8` });
     fs.createReadStream(file).pipe(response);
   });
@@ -35,9 +35,9 @@ test("AMC original answer-key comparison is explicit, source-linked, and preserv
   const button = page.locator("#apply-answer-key");
   assert.equal(await button.isVisible(), true);
   assert.equal(await button.isDisabled(), false);
-  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
-  await page.locator('[data-question="2"][data-field="answer"]').selectOption("B");
-  await page.locator('[data-question="3"][data-field="answer"]').selectOption("A");
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E", { force: true });
+  await page.locator('[data-question="2"][data-field="answer"]').selectOption("B", { force: true });
+  await page.locator('[data-question="3"][data-field="answer"]').selectOption("A", { force: true });
   await button.click();
   assert.match(await page.locator("#answer-key-action-status").innerText(), /정답 2 · 오답 1 · 미응답 22/);
   assert.equal(await page.locator('[data-question="1"][data-field="status"]').inputValue(), "correct");
@@ -51,7 +51,7 @@ test("AMC original answer-key comparison is explicit, source-linked, and preserv
 
   const manualPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await manualPage.goto(`${url}?grade=7&program=amc8&year=2023`, { waitUntil: "networkidle" });
-  await manualPage.locator('[data-question="1"][data-field="answer"]').selectOption("E");
+  await manualPage.locator('[data-question="1"][data-field="answer"]').selectOption("E", { force: true });
   await manualPage.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await manualPage.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await manualPage.locator("#answer-key-result-note").isVisible(), false);
@@ -80,7 +80,7 @@ test("2004 AMC 8 historical response reference skips the bad first row and shows
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8&year=2004`, { waitUntil: "networkidle" });
-  await page.locator('[data-question="2"][data-field="answer"]').selectOption("A");
+  await page.locator('[data-question="2"][data-field="answer"]').selectOption("A", { force: true });
   await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-review-items-note").innerText(), /MAA 보고서 응답 집단 154,590명/);
@@ -106,7 +106,7 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   assert.match(await page.locator("#archive-route-note").textContent(), /시험지를 펼쳐 화면에서 읽거나 인쇄/);
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("target"), "_blank");
-  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E", { force: true });
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("number");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("approach");
@@ -118,10 +118,10 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   await page.locator("#save-diagnostic").click();
   const saved = await page.evaluate(() => localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"));
   assert.doesNotMatch(saved, /answer|responses|questionNumber/i);
-  await page.locator("#review-program").selectOption("amc10");
-  await page.locator("#archive-year").selectOption("2021");
+  await page.locator("#review-program").selectOption("amc10", { force: true });
+  await page.locator("#archive-year").selectOption("2021", { force: true });
   assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형 · 봄 (자료 코드 A)", "B형 · 봄 (자료 코드 B)", "A형 · 가을 (자료 코드 C)", "B형 · 가을 (자료 코드 D)"]);
-  await page.locator("#archive-form").selectOption("D");
+  await page.locator("#archive-form").selectOption("D", { force: true });
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D");
   assert.equal(await page.locator("#archive-print-link").getAttribute("href"), "https://live.poshenloh.com/images/past-contests/pdf/amc10-2021D-exam.pdf");
   assert.equal(await page.locator("#archive-answer-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D/answers");
@@ -185,15 +185,15 @@ test("AMC 12 archive picker reaches the earliest listed year", async function ()
   assert.equal(await page.locator(".paper-mark-row:last-child .mark-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc12/1950/problem/50");
   assert.match(await page.locator("#review-source-note").innerText(), /AHSME 1950 · 50문항/);
   assert.match(await page.locator("#review-source-note").innerText(), /초기 회차는 문항별 배점이 달라/);
-  await page.locator("#archive-year").selectOption("1975");
+  await page.locator("#archive-year").selectOption("1975", { force: true });
   assert.equal(await page.locator(".paper-mark-row").count(), 30);
   assert.match(await page.locator("#review-source-note").innerText(), /AHSME 1975 · 30문항 · 80분/);
-  await page.locator("#archive-year").selectOption("1977");
+  await page.locator("#archive-year").selectOption("1977", { force: true });
   assert.match(await page.locator("#review-source-note").innerText(), /AHSME 1977 · 30문항 · 90분/);
-  await page.locator("#archive-year").selectOption("2001");
+  await page.locator("#archive-year").selectOption("2001", { force: true });
   assert.equal(await page.locator(".paper-mark-row").count(), 25);
   assert.equal(await page.locator("#archive-form-field").isHidden(), true);
-  await page.locator("#archive-year").selectOption("2021");
+  await page.locator("#archive-year").selectOption("2021", { force: true });
   assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형 · 봄 (자료 코드 A)", "B형 · 봄 (자료 코드 B)", "A형 · 가을 (자료 코드 C)", "B형 · 가을 (자료 코드 D)"]);
   await page.close();
 });
@@ -256,7 +256,7 @@ test("AMC result explains when grade comparison is unavailable and hides the not
   assert.match(await page.locator("#amc-cohort-summary").innerText(), /2026 AMC 8 · Grade 7로 입력한 점수 25 \/ 25/);
   assert.equal(await page.locator("#amc-grade-comparison-unavailable").isVisible(), true);
   assert.match(await page.locator("#amc-grade-comparison-unavailable").innerText(), /학년별 비교 자료는 이 화면에 연결되어 있지 않습니다/);
-  await page.locator("#archive-year").selectOption("2022");
+  await page.locator("#archive-year").selectOption("2022", { force: true });
   for (let question = 1; question <= 25; question += 1) {
     await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
   }
@@ -274,12 +274,12 @@ test("AMC 12 original review routes into the complete GFIELD mock and then match
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=10&program=amc12&year=2025&form=A`, { waitUntil: "networkidle" });
   assert.equal(await page.locator('[data-question="1"][data-field="domain"] option[value="functions"]').count(), 1);
-  await page.locator('[data-question="5"][data-field="answer"]').selectOption("C");
+  await page.locator('[data-question="5"][data-field="answer"]').selectOption("C", { force: true });
   await page.locator('[data-question="5"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="5"][data-field="domain"]').selectOption("functions");
   await page.locator('[data-question="5"][data-field="reason"]').selectOption("concept");
   await page.getByRole("button", { name: "결과 보기" }).click();
-  const href = await page.locator("#report-follow-up-link").getAttribute("href");
+  const href = await page.locator("#report-mock-link").getAttribute("href");
   assert.equal(href, "./amc12-gfield-mock-exam.html?grade=10&domains=functions&sourceYear=2025&sourceForm=A&sourceQuestions=5&sourceConcepts=geometric-sequence%2Carea-ratio");
   await page.goto(new URL(href, url).toString(), { waitUntil: "networkidle" });
   assert.match(await page.locator("#amc12-source-paper-note").innerText(), /2025 AMC 12 A형 원본 다음/);
@@ -336,7 +336,7 @@ test("AMC 8 yearly original review flows through a full mock into diagnosed GFIE
   await page.locator('[data-question="7"][data-field="status"]').selectOption("blank");
   await page.locator('[data-question="7"][data-field="domain"]').selectOption("data");
   await page.getByRole("button", { name: "결과 보기" }).click();
-  const href = await page.locator("#report-follow-up-link").getAttribute("href");
+  const href = await page.locator("#report-mock-link").getAttribute("href");
   assert.match(href, /^\.\/amc8-grade7-mock-exam\.html\?/);
   const target = new URL(href, "http://127.0.0.1");
   assert.equal(target.searchParams.get("grade"), "7");
@@ -394,7 +394,7 @@ test("AMC 10 original review leads to a full mock and mock practice uses its ind
   await page.locator('[data-question="8"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="8"][data-field="domain"]').selectOption("algebra");
   await page.getByRole("button", { name: "결과 보기" }).click();
-  const href = await page.locator("#report-follow-up-link").getAttribute("href");
+  const href = await page.locator("#report-mock-link").getAttribute("href");
   assert.match(href, /^\.\/amc10-gfield-mock-exam\.html\?/);
   const target = new URL(href, "http://127.0.0.1");
   assert.equal(target.searchParams.get("domains"), "number,algebra");
@@ -469,14 +469,14 @@ test("users can save an answer-free AMC review summary without turning it into r
   assert.equal(await page.locator("#official-paper-sources").isVisible(), true);
   assert.equal(await page.locator("#archive-year option").count(), 41);
   assert.equal(await page.locator("#archive-year").inputValue(), "2026");
-  await page.locator("#archive-year").selectOption("2023");
+  await page.locator("#archive-year").selectOption("2023", { force: true });
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
   assert.match(await page.locator("#archive-open-link").textContent(), /2023 AMC 8.*온라인 회차/);
   assert.equal(await page.locator("#review-paper-label").inputValue(), "2023 AMC 8");
   assert.deepEqual(await page.locator('[data-question="1"][data-field="domain"] option').allTextContents(), ["영역 선택", "식과 대수 관계", "수와 정수의 성질", "기하 도형과 측정", "경우의 수와 확률", "자료와 통계", "함수와 그래프"]);
   await openReviewOptions(page);await page.locator("#review-exam-date").fill("2026-10-29");
   await openReviewOptions(page);await page.locator("#review-paper-label").fill("Practice A");
-  await page.locator('[data-question="1"][data-field="answer"]').selectOption("C");
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption("C", { force: true });
   assert.match(await page.locator("#mark-progress").innerText(), /답 입력 1문제/);
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
@@ -570,7 +570,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
-  await page.locator('[data-question="2"][data-field="answer"]').selectOption("D");
+  await page.locator('[data-question="2"][data-field="answer"]').selectOption("D", { force: true });
   await page.locator('[data-question="2"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="2"][data-field="reason"]').selectOption("reading");
   await page.locator('[data-question="3"][data-field="status"]').selectOption("blank");
@@ -593,7 +593,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.match(await page.locator("#report-review-items-list").innerText(), /2번 · 오답 · 내 답 D/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
   assert.equal(await page.locator("#score-estimate").isHidden(), true, "partial responses do not produce a score estimate");
-  assert.equal(await page.evaluate(() => localStorage.length), 0);
+  assert.equal(await page.evaluate(() => GFIELDLocalLearningRecord.storage.loadCompetitionDiagnosticHistory().length), 0);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -762,7 +762,7 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   assert.match(await page.locator(".paper-question-band").nth(1).innerText(), /11–15번[\s\S]*0 \/ 5 정답/);
   assert.equal(await page.locator("#report-follow-up").isVisible(), true);
   const followupUrl = new URL(await page.locator("#report-follow-up-link").getAttribute("href"), "https://gfield.test");
-  assert.equal(followupUrl.pathname, "/amc10-gfield-mock-exam.html");
+  assert.equal(followupUrl.pathname, "/amc10-practice.html");
   assert.equal(followupUrl.searchParams.get("grade"), "9");
   assert.equal(followupUrl.searchParams.get("sourceYear"), "2025");
   assert.equal(followupUrl.searchParams.get("sourceForm"), "A");
@@ -839,7 +839,7 @@ test("deleting an unrelated saved contest record keeps the current result marked
   assert.equal(await saveButton.isDisabled(), false);
   await page.waitForFunction(() => document.querySelector("#diagnostic-save-status").textContent.includes("현재 결과를 다시 저장할 수 있어요"));
   assert.match(await page.locator("#diagnostic-save-status").innerText(), /현재 결과를 다시 저장할 수 있어요/);
-  assert.equal(await page.evaluate(function () { return document.activeElement.id; }), "review-program");
+  assert.equal(await page.evaluate(function () { return document.activeElement.id; }), "review-program-buttons");
   await page.close();
 });
 
@@ -854,7 +854,7 @@ test("deleting the last saved contest summary without an open result returns foc
   await page.reload({ waitUntil: "networkidle" });
   await page.locator(".saved-diagnostic-remove").click();
   assert.equal(await page.locator("#saved-diagnostic-history").isHidden(), true);
-  assert.equal(await page.evaluate(function () { return document.activeElement.id; }), "review-program");
+  assert.equal(await page.evaluate(function () { return document.activeElement.id; }), "review-program-buttons");
   await page.waitForFunction(function () { return document.getElementById("saved-diagnostic-announcement").textContent === "저장된 복습 요약을 삭제했어요."; });
   await page.close();
 });
@@ -935,7 +935,7 @@ test("direct entry waits for a contest and keeps empty results out of view", asy
   assert.equal(await page.locator("#review-paper-label-field").isHidden(), true);
   assert.equal(await page.locator("#review-amc8-practice").isHidden(), true);
   assert.equal(await page.locator(".review-related").isHidden(), true);
-  await page.locator("#review-program").selectOption("amc8");
+  await page.locator("#review-program").selectOption("amc8", { force: true });
   assert.equal(await page.locator(".paper-mark-row").count(), 25);
   assert.equal(await page.locator(".review-related").isVisible(), true);
   assert.equal(await page.locator(".review-report").isHidden(), true);
@@ -1049,7 +1049,7 @@ test("2009 four-form response tables retain the MAA official-student cohort and 
  const page=await browser.newPage({viewport:{width:390,height:844}});
  for(const [program,form,count] of [['amc10','A',72528],['amc10','B',31395],['amc12','A',82802],['amc12','B',34228]]){
   await page.goto(`${url}?grade=9&program=${program}&year=2009&form=${form}`,{waitUntil:'networkidle'});
-  await page.locator('[data-question="1"][data-field="answer"]').selectOption('A');await page.locator('#apply-answer-key').click();await page.locator('.review-form-actions button[type=submit]').click();
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption('A', { force: true });await page.locator('#apply-answer-key').click();await page.locator('.review-form-actions button[type=submit]').click();
   const summary=await page.locator('#item-response-summary').textContent();assert.match(summary,new RegExp(`2009 AMC ${program==='amc10'?'10':'12'}${form}`));assert.match(summary,/MAA 공식 응시자 표본/);assert.match(summary,new RegExp(count.toLocaleString('ko-KR')));assert.doesNotMatch(summary,/세계 응시자/);
   assert.ok(await page.locator('#item-response-rows tr').count()>=24);assert.match(await page.locator('#item-response-source').getAttribute('href'),/2009_HS_summary\.pdf/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
@@ -1071,11 +1071,66 @@ test("AMC entry uses contest identity rather than school grades and grades witho
  const page=await browser.newPage({viewport:{width:390,height:844}});await page.goto(`${url}?grade=8&program=amc8&year=2025`,{waitUntil:'networkidle'});
  assert.deepEqual(await page.locator('#review-program option').allTextContents(),['대회를 선택해 주세요','AMC 8','AMC 10','AMC 12','AIME']);
  assert.equal(await page.locator('#review-grade').isVisible(),false);assert.equal(await page.locator('#review-paper-label').isVisible(),false);assert.equal(await page.locator('#history-region, #score-history-form').count(),0);
- await page.locator('[data-question="1"][data-field="answer"]').selectOption('A');await page.locator('#apply-answer-key').click();await page.locator('.review-form-actions button[type=submit]').click();await page.locator('#save-diagnostic').click();
+ await page.locator('[data-question="1"][data-field="answer"]').selectOption('A', { force: true });await page.locator('#apply-answer-key').click();await page.locator('.review-form-actions button[type=submit]').click();await page.locator('#save-diagnostic').click();
  assert.equal(await page.locator('.saved-diagnostic-entry').count(),1);assert.equal(await page.locator('#review-extra-options').getAttribute('open'),null);
  const date=await page.locator('#review-exam-date').inputValue();assert.match(date,/^\d{4}-\d{2}-\d{2}$/);
  await openReviewOptions(page);await page.locator('#review-grade').selectOption('11');assert.equal(await page.locator('#review-program').inputValue(),'amc8');assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'A');assert.equal(await page.locator('.review-report').isVisible(),true);
  await page.route('**/images/past-contests/pdf/**',route=>route.abort());await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'A');
- await page.locator('#review-program').selectOption('amc12');assert.equal(await page.locator('.paper-mark-row').count(),25);assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'');
+ await page.locator('#review-program').selectOption('amc12', { force: true });assert.equal(await page.locator('.paper-mark-row').count(),25);assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'');
  await page.close();
+});
+
+test("available paper buttons open learning and retain started/completed colours after reload", async function () {
+ const page=await browser.newPage({viewport:{width:390,height:844}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const pdf=require('./paper-pdf-fixture.cjs')(3);await page.route('**/images/past-contests/pdf/**',route=>route.fulfill({contentType:'application/pdf',headers:{'access-control-allow-origin':'*'},body:pdf}));
+ await page.goto(`${url}?grade=8&program=amc8`,{waitUntil:'networkidle'});
+ assert.equal(await page.locator('#review-program-buttons button').count(),4);assert.equal(await page.locator('.paper-choice').count(),8);assert.equal(await page.locator('#review-program, #archive-year, #archive-form').evaluateAll(nodes=>nodes.every(n=>!n.getBoundingClientRect().height)),true);
+ const paper=()=>page.locator('[data-paper-year="2025"][data-paper-form=""]');assert.equal(await paper().getAttribute('data-study-state'),'new');await paper().click();
+ await page.waitForFunction(()=>document.querySelector('#paper-book').dataset.renderState==='ready');assert.equal(await paper().getAttribute('data-study-state'),'started');
+ await page.locator('#book-tab-answers').click();await page.locator('[data-question="1"][data-field="answer"]').selectOption('A', { force: true });await page.locator('#apply-answer-key').click();await page.locator('.review-form-actions button[type=submit]').click();assert.equal(await paper().getAttribute('data-study-state'),'complete');const completeColour=await paper().evaluate(el=>getComputedStyle(el).backgroundColor);
+ await page.reload({waitUntil:'networkidle'});assert.equal(await paper().getAttribute('data-study-state'),'complete');assert.equal(await paper().evaluate(el=>getComputedStyle(el).backgroundColor),completeColour);assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'A');
+ await page.locator('[data-review-program="amc10"]').click();assert.equal(await page.locator('.paper-choice').count(),18);assert.equal(await page.locator('[data-paper-year="2026"][data-paper-form="B"]').count(),1);await page.locator('[data-paper-year="2026"][data-paper-form="B"]').click();assert.equal(await page.locator('#archive-form').inputValue(),'B');assert.equal(await page.locator('.paper-mark-row').count(),25);
+ for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);}
+ assert.deepEqual(errors,[]);await page.close();
+});
+
+test("unmatched source concepts do not silently turn into unrelated similar problems",async function(){
+ const page=await browser.newPage();for(const route of ['amc8-topic-practice','amc10-practice','amc12-practice']){await page.goto(`${url.replace('competition-paper-review.html',route+'.html')}?grade=8&domains=number&sourceConcepts=unavailable-source-concept&sourceYear=2025&sourceQuestions=1`,{waitUntil:'networkidle'});assert.equal(await page.locator('.problem-card').count(),0,route);assert.match(await page.locator('main').textContent(),/직접 연결된 연습 문항은 아직 없습니다/);}
+ await page.close();
+});
+
+test('original-paper test preserves the deadline and answers on reload, grades automatically on expiry, and displays the matching paper band',async()=>{
+ const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const pdf=require('./paper-pdf-fixture.cjs')(3);await page.route('**/images/past-contests/pdf/**',r=>r.fulfill({contentType:'application/pdf',headers:{'access-control-allow-origin':'*'},body:pdf}));
+ await page.goto(`${url}?grade=7&program=amc8&year=2025`,{waitUntil:'networkidle'});
+ assert.equal(await page.locator('[data-paper-language="en"]').isEnabled(),true);
+ for(const lang of ['ko','zh-Hans'])assert.equal(await page.locator(`[data-paper-language="${lang}"]`).isDisabled(),true);
+ assert.equal(await page.locator('#original-exam-start').isDisabled(),true);
+ await page.locator('[data-paper-year="2025"]').click();await page.waitForFunction(()=>document.querySelector('#paper-book').dataset.renderState==='ready');
+ await page.locator('#original-exam-start').click();assert.equal(await page.evaluate(()=>GFIELDOriginalPaperExam.isRunning()),true);
+ assert.equal(await page.locator('[data-review-program="amc10"]').isDisabled(),true);assert.equal(await page.locator('#apply-answer-key').isVisible(),false);
+ await page.locator('#book-tab-answers').click();const answers=await page.evaluate(()=>Array.from({length:25},(_,i)=>GFIELDAMCOriginalAnswerKeyReference.answerFor('amc8',2025,'',i+1).correctAnswer));
+ for(let i=0;i<answers.length;i++)await page.locator(`.paper-mark-row:has([data-question="${i+1}"]) [data-omr-choice="${answers[i]}"]`).click();
+ const clockKey='gfield-original-exam-clock-v1:amc8:2025:';const deadline=await page.evaluate(k=>JSON.parse(sessionStorage.getItem(k)).deadline,clockKey);
+ await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>document.querySelector('#paper-book').dataset.renderState==='ready');
+ assert.equal(await page.evaluate(k=>JSON.parse(sessionStorage.getItem(k)).deadline,clockKey),deadline);
+ assert.equal(await page.evaluate(()=>GFIELDOriginalPaperExam.isRunning()),true);assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),answers[0]);
+ assert.equal(await page.locator(`.paper-mark-row:has([data-question="1"]) [data-omr-choice="${answers[0]}"]`).getAttribute('aria-pressed'),'true');
+ // Move the persisted practice clock to its boundary; the production deadline path must submit without a click.
+ await page.evaluate(k=>{const row=JSON.parse(sessionStorage.getItem(k));row.deadline=Date.now()+1200;row.startedAt=row.deadline-40*60000;sessionStorage.setItem(k,JSON.stringify(row));},clockKey);
+ await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>GFIELDOriginalPaperExam.isSubmitted());
+ assert.equal(await page.locator('.review-report').isVisible(),true);assert.equal(await page.locator('.saved-diagnostic-entry').count(),1);
+ const paper=page.locator('[data-paper-year="2025"]');assert.match(await paper.textContent(),/25 \/ 25/);assert.match(await paper.textContent(),/상위 1% 점수 구간/);assert.match(await paper.textContent(),/✓ 완료/);
+ assert.equal(await paper.getAttribute('data-study-state'),'complete');assert.equal(await page.locator('[data-review-program="amc10"]').isEnabled(),true);
+ await page.reload({waitUntil:'networkidle'});assert.match(await page.locator('[data-paper-year="2025"]').textContent(),/25 \/ 25/);await page.waitForFunction(()=>document.querySelector('#paper-book').dataset.renderState==='ready');await page.locator('#original-exam-start').click();assert.equal(await page.locator('[data-question="1"][data-field="answer"]').inputValue(),'');assert.equal(await page.evaluate(()=>GFIELDOriginalPaperExam.isRunning()),true);assert.equal(await page.locator('.review-report').isVisible(),false);assert.deepEqual(errors,[]);await page.close();
+});
+
+test('a submitted blank original test receives the real blank score, while ordinary empty answer comparison remains blocked',async()=>{
+ const page=await browser.newPage({viewport:{width:320,height:800}}),pdf=require('./paper-pdf-fixture.cjs')(3);
+ await page.route('**/images/past-contests/pdf/**',r=>r.fulfill({contentType:'application/pdf',headers:{'access-control-allow-origin':'*'},body:pdf}));
+ await page.goto(`${url}?program=amc10&year=2026&form=B`,{waitUntil:'networkidle'});await page.locator('#apply-answer-key').click();assert.match(await page.locator('#answer-key-action-status').textContent(),/먼저 답을 하나 이상/);
+ await page.locator('[data-paper-year="2026"][data-paper-form="B"]').click();await page.waitForFunction(()=>document.querySelector('#paper-book').dataset.renderState==='ready');await page.locator('#original-exam-start').click();await page.locator('#book-tab-answers').click();
+ await page.locator('.review-form-actions button[type=submit]').click();assert.equal(await page.evaluate(()=>GFIELDOriginalPaperExam.isSubmitted()),true);
+ const paper=page.locator('[data-paper-year="2026"][data-paper-form="B"]');assert.match(await paper.textContent(),/37\.5 \/ 150/);assert.match(await paper.textContent(),/자료 준비 중/);assert.equal(await paper.getAttribute('data-study-state'),'complete');assert.equal(await page.locator('.saved-diagnostic-entry').count(),1);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.close();
 });

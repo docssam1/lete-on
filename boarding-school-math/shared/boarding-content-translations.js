@@ -4871,9 +4871,9 @@ window.GFIELDContentTranslations = {
     "分数除法"
   ],
   "문자와 식": [
-    "Characters and Expressions",
-    "字符和表达式"
-  ],
+  "Variables and expressions",
+  "字母与代数式"
+],
   "방정식과 부등식": [
     "Equations and Inequalities",
     "方程和不等式"
@@ -12774,10 +12774,10 @@ window.GFIELDContentTranslations = {
     "Number of AIME original correct answers",
     "AIME 原始正确答案数"
   ],
-  "식의 구조와 방정식": [
-    "Expression structure and equations",
-    "表达式结构和方程"
-  ],
+  "식의 계산과 방정식": [
+  "Algebraic expressions and equations",
+  "代数式的运算与方程"
+],
   "같은 값을 나타내는 식은 어떻게 알아볼까요?": [
     "How do we find expressions that express the same value?",
     "我们如何找到表达相同值的表达式？"
@@ -12902,7 +12902,7 @@ window.GFIELDContentTranslations = {
     "The 2 outside the parentheses is multiplied by the entire parentheses.",
     "括号外的 2 乘以整个括号。"
   ],
-  "말로 된 관계를 변수식으로 쓰기": [
+  "말로 된 관계를 문자를 사용한 식으로 쓰기": [
     "Writing verbal relationships as variable expressions",
     "将言语关系写成变量表达式"
   ],
@@ -13086,10 +13086,10 @@ window.GFIELDContentTranslations = {
     "The sum of the fixed subscription fee and the per-use fee must not exceed $30.",
     "固定订阅费和每次使用费的总和不得超过 30 美元。"
   ],
-  "일차 관계와 함수": [
-    "Linear relations and functions",
-    "线性关系和函数"
-  ],
+  "일차함수": [
+  "Linear functions",
+  "一次函数"
+],
   "표·그래프·식은 같은 관계를 어떻게 다르게 보여줄까요?": [
     "How do tables, graphs, and expressions show the same relationship differently?",
     "表格、图表和表达式如何以不同的方式显示相同的关系？"
@@ -13646,10 +13646,10 @@ window.GFIELDContentTranslations = {
     "Each inequality represents one constraint on the available quantities, and all possible combinations must satisfy the condition.",
     "每个不等式代表对可用数量的一个约束，并且所有可能的组合都必须满足该条件。"
   ],
-  "지수와 다항식의 표현": [
-    "Expressions of exponents and polynomials",
-    "指数和多项式的表达式"
-  ],
+  "지수법칙과 다항식": [
+  "Laws of indices and polynomials",
+  "指数定律与多项式"
+],
   "반복되는 곱셈과 식의 모양은 어떤 규칙을 드러낼까요?": [
     "What rules do repeated multiplications and the shapes of expressions reveal?",
     "重复乘法和表达式的形状揭示了什么规则？"
@@ -13910,10 +13910,10 @@ window.GFIELDContentTranslations = {
     "The initial value is a factor of 8 and a growth factor of 1.5 means 1 + 0.5.",
     "初始值为 8 倍，增长因子 1.5 表示 1 + 0.5。"
   ],
-  "이차 관계와 모델링": [
-    "Quadratic relationships and modeling",
-    "二次关系和建模"
-  ],
+  "이차방정식과 이차함수": [
+  "Quadratic equations and functions",
+  "二次方程与二次函数"
+],
   "직선으로 설명되지 않는 변화는 어떻게 나타낼까요?": [
     "How do we represent changes that cannot be explained by a straight line?",
     "我们如何表示无法用直线解释的变化？"
@@ -14874,7 +14874,7 @@ window.GFIELDContentTranslations = {
     "Addition/Subtraction: Can you represent movement and distance on a number line, and explain subtraction by adding opposite numbers?",
     "加法/减法：你能在数轴上表示运动和距离，并通过相反数相加来解释减法吗？"
   ],
-  "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?": [
+  "곱셈·나눗셈: 부호와 계산법칙을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?": [
     "Multiplication/Division: Can you apply signs and operation properties and explain why you divide by a number other than 0 ?",
     "乘法/除法：你能应用符号和运算属性并解释为什么除以 0 以外的数字吗？"
   ],
@@ -14882,7 +14882,7 @@ window.GFIELDContentTranslations = {
     "Fractions and Decimals: Can you represent a fraction as a decimal and determine whether the decimal is terminating or repeating?",
     "分数和小数：你能将分数表示为小数并确定小数是终止还是重复吗？"
   ],
-  "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?": [
+  "문장제: 상황에 맞게 유리수의 사칙연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?": [
     "Sentence question: Can you select the four operations of rational numbers to suit the situation, formulate an equation, and explain the meaning of the answer?",
     "应用题：你能根据情况选择有理数的四种运算，建立一个方程，并解释答案的含义吗？"
   ],
@@ -15642,7 +15642,7 @@ window.GFIELDContentTranslations = {
     "Learn Pre-Algebra concepts",
     "学习初级代数概念"
   ],
-  "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.": [
+  "분수·소수·정수·비율과 문자를 사용한 식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.": [
     "Learn fractions, decimals, integers, ratios, variable expressions, powers, and order of operations, and explain the reasons for solving geometry and data problems.",
     "学习分数、小数、整数、比率、变量表达式、幂和运算顺序，并解释解决几何和数据问题的原因。"
   ],
@@ -15698,7 +15698,7 @@ window.GFIELDContentTranslations = {
     "Algebra 1 concepts and solutions",
     "代数 1 概念和解决方案"
   ],
-  "변수식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.": [
+  "문자를 사용한 식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.": [
     "Learn variable expressions, linear equations, and inequalities, and explain why properties of equations are used in solutions.",
     "学习变量表达式、线性方程和不等式，并解释为什么在解中使用方程的性质。"
   ],
@@ -16022,7 +16022,7 @@ window.GFIELDContentTranslations = {
     "Information on university/career requirements and relevant test hosting organizations",
     "有关大学/职业要求和相关考试主办机构的信息"
   ],
-  "선택형 · 변수식에서 식 정리로": [
+  "문자와 식의 계산 · 선택 학습": [
     "From optional/variable expressions to organized expressions",
     "从可选/变量表达式到有组织的表达式"
   ],
@@ -16030,27 +16030,27 @@ window.GFIELDContentTranslations = {
     "This is an example referring to the concept flow of the shared Prealgebra Unit 1 . It is not a grade placement or diagnosis result.",
     "这是参考共享预代数单元 1 概念流程的示例。它不是成绩排名或诊断结果。"
   ],
-  "문자를 사용해 대수식을 나타내고, 수를 대입해 식의 값 구하기": [
+  "문자를 사용한 식과 식의 값": [
     "Represent algebraic expressions using letters and substituting numbers to find the value of the expression",
     "使用字母表示代数表达式并替换数字以求表达式的值"
   ],
-  "거듭제곱과 연산 순서 적용하기": [
-    "Applying powers and order of operations",
-    "应用权力和行动顺序"
-  ],
-  "문장으로 제시된 상황을 대수식으로 나타내기": [
-    "Expressing a situation presented in a sentence as an algebraic expression",
-    "将句子中呈现的情况表达为代数表达式"
-  ],
-  "연산의 성질을 이용해 동치인 식 만들기": [
+  "거듭제곱과 혼합계산": [
+  "Powers and order of operations",
+  "乘方与混合运算"
+],
+  "문장을 식으로 나타내기": [
+  "Writing algebraic expressions from words",
+  "把文字关系表示为代数式"
+],
+  "교환법칙·결합법칙·분배법칙": [
     "Creating equivalent expressions using the properties of operations",
     "使用运算的属性创建等效表达式"
   ],
-  "분배법칙을 적용해 대수식 전개하기": [
+  "분배법칙을 이용한 식의 전개": [
     "Expand algebraic expressions by applying the distributive law",
     "应用分配律扩展代数表达式"
   ],
-  "동류항을 결합해 대수식 간단히 하기": [
+  "동류항의 정리": [
     "Simplify algebraic expressions by combining like terms",
     "通过组合同类项来简化代数表达式"
   ],
@@ -19104,5 +19104,51 @@ window.GFIELDContentTranslations = {
   "회차별 원점수는 해당 시험지 기준입니다. 시험 간 난도 차를 보정하거나 동학년 순위·등급으로 환산하지 않습니다.": ["Raw scores apply to each paper. They are not adjusted for difficulty or converted to grade-level rankings.", "原始分数以各场试题为准，不校正试卷难度，也不换算为同年级排名或等级。"],
   "대회나 회차를 바꾸면 새 답안을 입력합니다.": ["Changing the contest or paper starts a new answer sheet.", "更换竞赛或场次后将使用新的答题表。"],
   "시험지 선택": ["Choose a paper", "选择试卷"],
-  "풀이 날짜를 입력한 뒤 저장해 주세요.": ["Enter a practice date before saving.", "请先填写练习日期再保存。"]
+  "풀이 날짜를 입력한 뒤 저장해 주세요.": ["Enter a practice date before saving.", "请先填写练习日期再保存。"],
+  "최근 8개년 기출": ["Recent 8 years of papers", "最近8届试题"],
+  "회차를 누르면 시험지가 열립니다.": ["Choose a paper to start studying.", "点击场次即可打开试卷。"],
+  "시작 전": ["Not started", "未开始"],
+  "학습 완료": ["Completed", "已完成"],
+  "틀린 개념 연습": ["Practise the concepts you missed", "练习薄弱概念"],
+  "모의고사 풀기 →": ["Take a mock exam →", "进行模拟考试 →"],
+  "이번 회차에서 틀리거나 비워 둔 문항의 개념과 연결된 연습으로 이어집니다.": ["Practise concepts from the questions you missed or left blank in this paper.", "练习本场错题和未作答题涉及的概念。"],
+  "이 개념과 직접 연결된 연습 문항은 아직 없습니다. 원본 해설을 먼저 확인하세요.": ["No practice items are linked directly to this concept yet. Review the original solution first.", "目前还没有与此概念直接对应的练习题。请先查看原题解析。"],
+  "풀이 강의 · 준비 중": ["Worked video lesson · Coming soon", "解题视频 · 准备中"],
+  "틀린 개념 연습 →": ["Practise the concepts you missed →", "练习薄弱概念 →"],
+  "수열·복소수·행렬": [
+  "Sequences, complex numbers and matrices",
+  "数列、复数与矩阵"
+],
+  "벡터·복소수·극좌표": [
+  "Vectors, complex numbers and polar coordinates",
+  "向量、复数与极坐标"
+],
+  "지수함수와 로그함수": [
+  "Exponential and logarithmic functions",
+  "指数函数与对数函数"
+],
+  "지수함수·로그함수·수열": [
+  "Exponential functions, logarithmic functions and sequences",
+  "指数函数、对数函数与数列"
+],
+  "다항함수와 유리함수의 그래프": [
+  "Graphs of polynomial and rational functions",
+  "多项式函数与有理函数的图像"
+],
+  "문자를 사용한 식과 식의 값": [
+  "Algebraic expressions and substitution",
+  "代数式与代入求值"
+],
+  "교환법칙·결합법칙·분배법칙": [
+  "Commutative, associative and distributive laws",
+  "交换律、结合律与分配律"
+],
+  "분배법칙과 공통인수": [
+  "The distributive law and common factors",
+  "分配律与公因式"
+],
+  "동류항의 정리": [
+  "Collecting like terms",
+  "合并同类项"
+]
 };

@@ -17,10 +17,10 @@ csv.forEach(function (row) {
   forms.set(key, (forms.get(key) || 0) + 1);
 });
 
-assert.equal(csv.length, 6500);
-assert.equal(forms.size, 266);
-assert.equal(reference.answerCount, csv.length + 50);
-assert.equal(reference.formCount, forms.size + 2);
+assert.equal(csv.length, 6600);
+assert.equal(forms.size, 270);
+assert.equal(reference.answerCount, csv.length);
+assert.equal(reference.formCount, forms.size);
 assert.equal(reference.formFor("amc12", 1950, "").itemCount, 50);
 assert.equal(reference.formFor("amc12", 1975, "").itemCount, 30);
 assert.equal(reference.formFor("amc10", 2025, "A").itemCount, 25);
@@ -37,14 +37,8 @@ assert.equal(reference.answerFor("amc10", 2025, "B", 1).sourceUrl, "https://live
 assert.equal(reference.answerFor("aime", 2025, "", 1), null);
 assert.ok(csv.every(function (row) { return row.answer_key_url.startsWith("https://live.poshenloh.com/past-contests/"); }));
 
-// The 6500-row LIVE snapshot remains unchanged. Two separately sourced 2026 A forms add 50 keys.
-for (const program of ["amc10", "amc12"]) {
-  assert.equal(reference.formFor(program, 2026, "A").itemCount, 25);
-  assert.equal(reference.formFor(program, 2026, "B"), null);
-  for (let question = 1; question <= 25; question++) {
-    const entry = reference.answerFor(program, 2026, "A", question);
-    assert.match(entry.sourceUrl, /^https:\/\/www\.thethinkacademy\.com\/blog\/2026-amc-(?:10|12)a-problems-solutions\/$/);
-    assert.match(entry.correctAnswer, /^[A-E]$/);
-    assert.match(entry.sourceLabel, /Think Academy/);
-  }
+// All four 2026 forms now have primary source-hosted keys.
+for (const program of ["amc10", "amc12"]) for(const form of ["A","B"]) {
+ assert.equal(reference.formFor(program,2026,form).itemCount,25);
+ for(let q=1;q<=25;q++){const entry=reference.answerFor(program,2026,form,q);assert.equal(entry.sourceUrl,`https://live.poshenloh.com/past-contests/${program}/2026${form}/answers`);assert.match(entry.correctAnswer,/^[A-E]$/);}
 }

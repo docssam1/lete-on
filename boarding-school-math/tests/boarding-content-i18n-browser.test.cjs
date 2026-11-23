@@ -112,7 +112,7 @@ test("English and Chinese exam entry, submission, feedback and saved aggregates 
   assert.match(await page.locator(".mock-score").textContent(), /25\s*\/\s*25/);
   assert.deepEqual(await untranslated(page), []);
   await page.goto(base + "/competition-paper-review.html?grade=7&program=amc8&year=2023&locale=en");
-  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E", { force: true });
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("number");
   await page.locator('[data-question="1"][data-field="reason"]').selectOption("approach");

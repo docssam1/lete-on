@@ -9,7 +9,7 @@
   const units = Object.freeze([
     Object.freeze({
       id: "expressions-equations",
-      title: "식의 구조와 방정식",
+      title: "식의 계산과 방정식",
       question: "같은 값을 나타내는 식은 어떻게 알아볼까요?",
       goals: ["문장에서 변수와 조건을 찾아 식으로 나타낸다", "분배법칙과 동류항으로 동치식을 만든다", "문제 상황을 한 변수 방정식·부등식으로 나타내고 해의 범위를 해석한다", "등식의 각 변형을 근거와 함께 설명하고 해를 검산한다"],
       standards: ["HSA-SSE.A.1", "HSA-SSE.A.2", "HSA-CED.A.1", "HSA-REI.A.1", "HSA-REI.B.3"],
@@ -36,7 +36,7 @@
           ])
         }),
         Object.freeze({
-          title: "말로 된 관계를 변수식으로 쓰기",
+          title: "말로 된 관계를 문자를 사용한 식으로 쓰기",
           objective: "말로 주어진 연산의 순서와 수량 관계를 식으로 나타내고 괄호의 필요성을 설명한다.",
           idea: "‘어떤 수보다 몇 큰 수’와 ‘어떤 수에 몇을 더한 값’은 덧셈 순서가 달라요. ‘뺀 값의 두 배’처럼 먼저 할 계산은 괄호로 나타내요.",
           example: Object.freeze({ prompt: "수 n에서 3을 뺀 값의 두 배를 식으로 나타내세요.", solution: "먼저 n에서 3을 빼고 그 결과를 두 배로 하므로 2(n − 3)이에요. 2n − 3은 3을 뺀 뒤 두 배를 한 식이 아니에요." }),
@@ -89,7 +89,7 @@
     }),
     Object.freeze({
       id: "linear-functions",
-      title: "일차 관계와 함수",
+      title: "일차함수",
       question: "표·그래프·식은 같은 관계를 어떻게 다르게 보여줄까요?",
       goals: ["함수 표기법으로 입력에 따른 출력을 구한다", "일차 관계의 기울기와 시작값을 상황의 단위로 해석한다", "식을 표·그래프로 나타내고 입력 범위와 교점의 의미를 설명한다"],
       standards: ["HSA-CED.A.2", "HSF-IF.A.1", "HSF-IF.A.2", "HSF-IF.B.4", "HSF-IF.B.5", "HSF-IF.B.6", "HSF-IF.C.7", "HSF-IF.C.9", "HSF-LE.B.5"],
@@ -229,7 +229,7 @@
     }),
     Object.freeze({
       id: "exponents-polynomials",
-      title: "지수와 다항식의 표현",
+      title: "지수법칙과 다항식",
       question: "반복되는 곱셈과 식의 모양은 어떤 규칙을 드러낼까요?",
       goals: ["정수 지수의 성질을 근거로 식을 간단히 한다", "다항식의 연산과 인수분해를 구조로 설명한다", "지수 관계를 표·그래프로 비교하고 변화 양상을 해석한다"],
       standards: ["HSA-SSE.B.3", "HSA-APR.A.1", "HSF-LE.A.1", "HSF-LE.B.5"],
@@ -299,7 +299,7 @@
     }),
     Object.freeze({
       id: "quadratic-models",
-      title: "이차 관계와 모델링",
+      title: "이차방정식과 이차함수",
       question: "직선으로 설명되지 않는 변화는 어떻게 나타낼까요?",
       goals: ["이차식의 인수분해·표·그래프를 연결한다", "영점과 꼭짓점이 상황에서 뜻하는 바를 읽는다", "자료에 맞는 선형·지수·이차 모델을 고르고 한계를 말한다"],
       standards: ["HSA-SSE.B.3", "HSA-REI.B.4", "HSF-IF.C.8", "HSF-LE.A.2", "HSA-CED.A.1"],

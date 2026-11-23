@@ -9,9 +9,9 @@
   const grade7Stops = Object.freeze([
     Object.freeze({ id: "nsa", title: "유리수", description: "유리수의 덧셈·뺄셈에서 곱셈·나눗셈으로 확장하고, 소수 표현과 문장제까지 연결해요.", checks: Object.freeze([
       Object.freeze({ standard: "7.NS.A.1", prompt: "덧셈·뺄셈: 수직선에서 이동과 거리를 나타내고, 빼기를 반대수 더하기로 설명할 수 있나요?" }),
-      Object.freeze({ standard: "7.NS.A.2", prompt: "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?" }),
+      Object.freeze({ standard: "7.NS.A.2", prompt: "곱셈·나눗셈: 부호와 계산법칙을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?" }),
       Object.freeze({ standard: "7.NS.A.2d", prompt: "분수와 소수: 분수를 소수로 나타내고, 소수가 끝나는지 반복되는지 판별할 수 있나요?" }),
-      Object.freeze({ standard: "7.NS.A.3", prompt: "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?" })
+      Object.freeze({ standard: "7.NS.A.3", prompt: "문장제: 상황에 맞게 유리수의 사칙연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?" })
     ]), clusterId: "7.NS.A", resourceState: "public" }),
     Object.freeze({ id: "rpa", title: "비례 관계", description: "단위율과 비례 관계를 표·그래프·식으로 나타내요.", check: "두 양이 비례하는지 표와 그래프를 보고 설명할 수 있나요?", clusterId: "7.RP.A", resourceState: "public" }),
     Object.freeze({ id: "ee", title: "식·방정식", description: "분배법칙으로 식을 정리하고 방정식·부등식의 해가 조건에 맞는지 확인해요.", check: "식을 바꾼 뒤에도 같은 값을 나타내는 이유와 부등식 해의 범위를 설명할 수 있나요?", resources: Object.freeze([
@@ -156,13 +156,13 @@
       ["10–12개월", "문장제 복습과 설명", "여러 문제를 풀며 막힌 조건을 다시 보고, 사용한 개념과 풀이 이유를 설명해요.", "Math Mammoth · IXL"]
     ]) }),
     6: Object.freeze({ source: "provided", title: "선택 심화 · Pre-Algebra에서 SAT 기초까지", note: "학교 수학에서 이미 배운 단원을 깊게 익히는 경로와 별도의 선택 심화 예시예요. 새 주제는 이전 개념을 설명할 수 있고 가족·교사와 계획했을 때만 이어가요.", periods: Object.freeze([
-      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "지필드 개념 학습 10개 · 공개 6.EE.A 단원 워크북 36문항"],
+      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 문자를 사용한 식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "지필드 개념 학습 10개 · 공개 6.EE.A 단원 워크북 36문항"],
       ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "지필드 AMC 8 유형 연습 10문항 · MAA 공식 출제 범위 안내"],
       ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "지필드 비례·문장제 개념 · College Board 공식 SAT 수학 문제은행"],
       ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "지필드 개념 복습 · AMC 8 자체 유형 연습 · SAT 공식 연습"]
     ]) }),
     7: Object.freeze({ source: "provided", title: "Algebra 1에서 경시·SAT 기초로", note: "Algebra 1은 가속 학습 예시예요. 학교 Geometry는 정규 진도에서 이어가고 AMC 10·SAT은 학교 수학과 분리한 선택 경로로 살펴봐요. 학생의 현재 수준이나 배정 과목을 판정하지 않아요.", periods: Object.freeze([
-      ["1–3개월", "Algebra 1 개념과 풀이", "변수식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.", "지필드 Algebra 1 과정 지도 · 첫 수업"],
+      ["1–3개월", "Algebra 1 개념과 풀이", "문자를 사용한 식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.", "지필드 Algebra 1 과정 지도 · 첫 수업"],
       ["4–6개월", "기하 기초와 AMC 입문", "학교 Geometry에서 각·삼각형·닮음·넓이와 부피를 익혀요. 준비되면 AMC 10 문제를 선택해 접근해요.", "중학교 기하 · AMC 10 유형 문제"],
       ["7–9개월", "대수 강화와 SAT 유형", "배운 대수·기하를 심화 문장제와 자료 해석에 연결하고, Digital SAT Math 영역을 살펴봐요.", "Digital SAT Math 영역별 연습 · Khan Academy"],
       ["10–12개월", "누적 복습과 모의 연습", "준비한 범위에서 AMC·SAT형 문제를 골라 시간 연습하고 개념·아이디어·계산 중 막힌 이유를 기록해요.", "개념 혼합 문제 · 준비도에 맞춘 모의 문제"]
@@ -200,7 +200,7 @@
   });
 
   const conceptFlows = Object.freeze([
-    Object.freeze({ id: "prealgebra-algebra1", title: "선택형 · 변수식에서 식 정리로", optional: true, note: "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.", steps: Object.freeze(["문자를 사용해 대수식을 나타내고, 수를 대입해 식의 값 구하기", "거듭제곱과 연산 순서 적용하기", "문장으로 제시된 상황을 대수식으로 나타내기", "연산의 성질을 이용해 동치인 식 만들기", "분배법칙을 적용해 대수식 전개하기", "동류항을 결합해 대수식 간단히 하기"]) }),
+    Object.freeze({ id: "prealgebra-algebra1", title: "문자와 식의 계산 · 선택 학습", optional: true, note: "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.", steps: Object.freeze(["문자를 사용한 식과 식의 값", "거듭제곱과 혼합계산", "문장을 식으로 나타내기", "교환법칙·결합법칙·분배법칙", "분배법칙을 이용한 식의 전개", "동류항의 정리"]) }),
     Object.freeze({ id: "arithmetic-algebra", title: "연산에서 대수식으로", steps: Object.freeze(["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]) }),
     Object.freeze({ id: "ratio-coordinate", title: "비와 비율에서 좌표기하로", steps: Object.freeze(["비·비율·속력", "단위 변환", "비례식", "일차 함수", "좌표기하"]) }),
     Object.freeze({ id: "parity-counting", title: "짝·홀수에서 경우의 수로", steps: Object.freeze(["짝·홀수·배수", "조건별 추론", "경우의 수", "조합", "AMC/AIME 논리 문제"]) }),

@@ -294,3 +294,75 @@ body.academy-page.page-paper-review { color: #182230; background: #f5f6f8; backg
 .score-history .score-history-actions { margin-top: 16px; }
 .official-paper-sources { padding: 0; border: 0; margin-top: 14px; }
 .amc-archive-picker { padding: 0; border: 0; background: transparent; }
+
+.review-program-picker { display: grid; gap: 10px; font-size: .84rem; font-weight: 750; }
+.review-program-buttons { display: flex; flex-wrap: wrap; gap: 9px; }
+.review-program-buttons button { min-height: 46px; padding: 10px 22px; border: 1px solid #c5b6d8; border-radius: 7px; color: #523878; background: #fff; font: inherit; cursor: pointer; }
+.review-program-buttons button[aria-pressed="true"] { color: #fff; background: #60418f; border-color: #60418f; }
+#amc-archive-picker { display: block; }
+#amc-archive-picker > label[for="archive-year"], #archive-form-field { display: none !important; }
+.paper-choice-heading { margin: 18px 0 12px; }
+.paper-choice-heading h3 { margin: 0; font-size: 1.05rem; }
+.paper-choice-heading p { margin: 7px 0 0; color: #6a6174; font-size: .82rem; }
+.paper-choice-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.paper-choice-year { padding: 14px; border: 1px solid #e2dce9; border-radius: 8px; }
+.paper-choice-year h4 { margin: 0 0 9px; color: #51485d; font-size: .9rem; }
+.paper-choice-forms { display: flex; flex-wrap: wrap; gap: 8px; }
+.paper-choice { flex: 1 1 110px; min-height: 66px; display: grid; align-content: center; gap: 6px; padding: 12px; border: 1px solid #d8d1e2; border-radius: 6px; color: #302a38; background: #fff; text-align: left; cursor: pointer; font: inherit; }
+.paper-choice strong { font-size: .84rem; }
+.paper-choice span { font-size: .75rem; color: #716879; }
+.paper-choice.is-started { background: #f1ebf8; border-color: #bda4db; }
+.paper-choice.is-complete { background: #e8f2eb; border-color: #7eaa8c; }
+.paper-choice.is-complete span { color: #285e39; font-weight: 750; }
+.paper-choice[aria-pressed="true"] { outline: 2px solid #60418f; outline-offset: 2px; }
+.paper-choice:focus-visible, .review-program-buttons button:focus-visible { outline: 3px solid #8c6aae; outline-offset: 3px; }
+.archive-source-details { margin-top: 14px; }
+@media(max-width: 600px) { .paper-choice-list { grid-template-columns: minmax(0, 1fr); } .review-program-buttons button { flex: 1 1 calc(50% - 9px); } }
+
+.report-mock-link { display: inline-flex; margin-left: 14px; padding: 10px 0; color: #60418f; font-size: .85rem; }
+
+#report-lecture-pending { margin: 10px 0 0; min-height: 44px; padding: 10px 14px; border: 1px solid #ded9e4; border-radius: 5px; background: #f4f2f6; color: #81788b; font: inherit; }
+/* Pearlescent surfaces keep the learning state visible without relying on colour alone. */
+.review-program-buttons button { background: linear-gradient(180deg,#fff 0%,#faf6ff 52%,#eee5f8 100%); box-shadow: inset 0 1px 0 #fff,0 3px 8px #60418f14; transition: transform .15s,box-shadow .15s; }
+.review-program-buttons button[aria-pressed="true"] { background: linear-gradient(180deg,#a77cd3 0%,#7953aa 42%,#523678 100%); box-shadow: inset 0 1px 1px #e3c9ff,0 4px 12px #60418f38; }
+.paper-choice { position: relative; background: linear-gradient(180deg,#fff 0%,#fcfaff 48%,#f0e9f8 100%); box-shadow: inset 0 1px 0 #fff,0 3px 8px #60418f12; transition: transform .15s,box-shadow .15s; }
+.paper-choice:hover,.review-program-buttons button:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 #fff,0 5px 13px #60418f26; }
+.paper-choice.is-started { background: linear-gradient(180deg,#f7eeff 0%,#ecddfa 55%,#dfc9f3 100%); }
+.paper-choice.is-complete { background: linear-gradient(180deg,#f7fff9 0%,#e5f4e9 48%,#cce6d4 100%); border-color: #76a887; }
+.paper-choice .paper-complete-badge { justify-self: start; padding: 4px 9px; border: 1px solid #d9b54b; border-radius: 999px; background: linear-gradient(180deg,#fff9d7 0%,#f4dc86 50%,#e2bd50 100%); color: #654900; box-shadow: inset 0 1px 0 #fff9e5,0 2px 5px #8f6a171a; font-size: .71rem; font-weight: 800; }
+.paper-choice .paper-choice-score { font-size: 1rem; font-weight: 800; color: #3e3250; }
+.paper-choice .paper-grade { padding-top: 7px; border-top: 1px solid #c9bbdb80; color: #5f536d; font-size: .7rem; line-height: 1.5; }
+@media(prefers-reduced-motion:reduce){.paper-choice,.review-program-buttons button{transition:none}.paper-choice:hover,.review-program-buttons button:hover{transform:none}}
+.original-exam-panel { grid-column: 1 / -1; margin-bottom: 14px; padding: 16px; border: 1px solid #d8c8ea; border-radius: 9px; background: linear-gradient(180deg,#fff,#f5effb); }
+.paper-language-options { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-bottom: 14px; }
+.paper-language-options>strong { font-size: .8rem; margin-right: 5px; }
+.paper-language-options button { min-height: 40px; padding: 8px 10px; border: 1px solid #c8b5de; border-radius: 6px; font: inherit; font-size: .75rem; color: #523878; background: linear-gradient(#fff,#eee4f8); }
+.paper-language-options button:disabled { color: #84768e; border-color: #e1dbe7; background: #f3f0f6; }
+.original-exam-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.original-exam-bar>div { display: grid; gap: 5px; margin-right: auto; }
+#original-exam-format { font-size: .75rem; color: #6a6174; }
+#original-exam-clock { font-variant-numeric: tabular-nums; font-size: 1.3rem; font-weight: 800; color: #523878; }
+#original-exam-start { min-height: 44px; padding: 11px 18px; border: 1px solid #68438f; border-radius: 7px; font: inherit; font-weight: 750; color: #fff; background: linear-gradient(180deg,#a77cd3,#7953aa 42%,#523678); box-shadow: inset 0 1px 1px #e3c9ff,0 3px 9px #60418f33; cursor: pointer; }
+#original-exam-start:disabled { opacity: .5; cursor: default; }
+#original-exam-status { margin: 12px 0 0; color: #6a6174; font-size: .78rem; line-height: 1.5; }
+.is-original-exam-running .archive-source-details,.is-original-exam-running #answer-entry-guide,.is-original-exam-running #review-extra-options,.is-original-exam-running #book-detail-marks,.is-original-exam-running #saved-diagnostic-history,.is-original-exam-running .score-history { display: none !important; }
+.is-original-exam-running .paper-mark-row [data-field="status"],.is-original-exam-running .paper-mark-row .mark-domain,.is-original-exam-running .paper-mark-row .mark-reason { display: none !important; }
+@media print { .original-exam-panel { display: none !important; } }
+.omr-answer-buttons { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 2px; }
+.omr-answer-buttons button { min-height: 44px; min-width: 0; padding: 8px 0; border: 1px solid #c8b7db; border-radius: 7px; font: inherit; font-size: .82rem; font-weight: 750; color: #60418f; background: linear-gradient(#fff,#f1e9f9); cursor: pointer; }
+.omr-answer-buttons button[aria-pressed="true"] { color: #fff; border-color: #6b4598; background: linear-gradient(180deg,#aa80d5,#7851aa 48%,#533577); box-shadow: inset 0 1px 1px #d6b7f2,0 2px 5px #60418f2b; }
+.omr-answer-buttons button:focus-visible { outline: 3px solid #9870c0; outline-offset: 1px; }
+.paper-mark-row[data-response-format="choice"] { grid-template-columns: 44px minmax(228px,1fr) minmax(120px,1fr) minmax(110px,1fr) minmax(110px,1fr); }
+@media(max-width:600px){
+ .paper-mark-row[data-response-format="choice"] { grid-template-columns:34px minmax(0,1fr) minmax(0,1fr); }
+ .paper-mark-row[data-response-format="choice"] .mark-answer { grid-column:2/-1;grid-row:1; }
+ .paper-mark-row[data-response-format="choice"] .mark-status { grid-column:2;grid-row:2; }
+ .paper-mark-row[data-response-format="choice"] .mark-domain { grid-column:3;grid-row:2; }
+ .paper-mark-row[data-response-format="choice"] .mark-reason { grid-column:2/-1;grid-row:3; }
+}
+@media(max-width:370px){
+ .is-book-open .paper-mark-row[data-response-format="choice"] { grid-template-columns:minmax(0,1fr); }
+ .is-book-open .paper-mark-row[data-response-format="choice"]>strong { grid-column:1;grid-row:1; }
+ .is-book-open .paper-mark-row[data-response-format="choice"] .mark-answer { grid-column:1;grid-row:2; }
+ .is-book-open[data-mark-detail="true"] .paper-mark-row[data-response-format="choice"] :is(.mark-status,.mark-domain,.mark-reason) { grid-column:1;grid-row:auto; }
+}
