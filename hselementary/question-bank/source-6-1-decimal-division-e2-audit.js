@@ -20,7 +20,8 @@ const kinds = [
 ];
 const pools = [
   [[8.4, 12, 33.6, 30, 23, 70, 13.3], [9.6, 12, 37.8, 30, 18, 60, 13.2], [10.8, 15, 42, 28, 25, 65, 32.7]],
-  [[12, 4.39, 52.62, 52.74, 12], [8, 3.27, 26.12, 26.2, 8], [16, 5.84, 93.36, 93.52, 16]],
+  // 소수 두 자리 수는 소수 둘째 자리가 0이 아니다: 52.70, 93.40, 93.50 제외
+  [[12, 4.39, 52.62, 52.74, 11], [8, 3.27, 26.12, 26.2, 8], [16, 5.84, 93.36, 93.52, 14]],
   [[12.4, 15.3, 18, 1600, 16864], [13.5, 14.4, 18, 1700, 18360], [14.4, 12.5, 20, 1800, 16200]],
   [[14, 51.45, 7, 5, 40.75], [12.6, 44.1, 7, 5, 35.1], [7.25, 29.65, 7, 5, 23.25]],
   [[4, 276, 3, 207], [5, 375, 4, 300], [8, 624, 5, 390]],
@@ -49,7 +50,7 @@ const independentAnswer = (variant, values) => {
   if (variant === 1) {
     const lower = Math.round(values[2] * 100), upper = Math.round(values[3] * 100);
     let count = 0;
-    for (let cents = lower; cents < upper; cents += 1) count += 1;
+    for (let cents = lower; cents < upper; cents += 1) if (cents % 10 !== 0) count += 1;
     return `${count}개`;
   }
   if (variant === 2) return `${fixedMoney(values[0] * values[1] / values[2] * values[3])}원`;
@@ -103,7 +104,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
         if (!close(lowerBoundary, evidence.values[2]) || !close(upperBoundary, evidence.values[3])) fail(`${label}: target±0.005로 다시 계산한 반올림 경계가 pool과 다릅니다.`);
         const lowerCents = Math.round(evidence.values[2] * 100), upperCents = Math.round(evidence.values[3] * 100);
         let enumerated = 0;
-        for (let cents = lowerCents; cents < upperCents; cents += 1) enumerated += 1;
+        for (let cents = lowerCents; cents < upperCents; cents += 1) if (cents % 10 !== 0) enumerated += 1; // 소수 둘째 자리 0 제외
         if (enumerated !== evidence.values[4] || lowerCents >= upperCents) fail(`${label}: 정수 hundredths 전수열거 개수가 다릅니다.`);
       }
       if (!answerEvidence || answerEvidence.kind !== kinds[variant] || answerEvidence.sourceItemId !== sourceIds[variant] || !sameValues(answerEvidence.values, evidence?.values || [])) fail(`${label}: 문제·답 source/pool 자료가 다릅니다.`);

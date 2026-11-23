@@ -12,7 +12,7 @@ try{
  const baseline=run();assert.equal(baseline.status,0,baseline.stderr);
  for(const [label,mutate,expected] of [
   ["unverified unlocked",x=>{const i=x.items.find(i=>i.implementationStatus==="fixed-verified-pool");i.sourceVerified=false;},/sourceVerified false인데 잠금이 아닙니다/],
-  ["missing locked reason",x=>{const i=x.items.find(i=>i.implementationStatus==="review-locked"&&i.reviewReason);i.reviewReason="";},/reviewReason가 비어 있으며/],
+  ["missing locked reason",x=>{const i=x.items.find(i=>i.implementationStatus==="review-locked"&&i.reviewReason)||x.items.find(i=>i.implementationStatus==="fixed-verified-pool");i.implementationStatus="review-locked";i.reviewReason="";},/reviewReason가 비어 있으며/],
   ["duplicate source id",x=>{x.items[1].sourceItemId=x.items[0].sourceItemId;},/sourceItemId 중복/]
  ]){
   const data=JSON.parse(original);mutate(data);fs.writeFileSync(file,JSON.stringify(data));

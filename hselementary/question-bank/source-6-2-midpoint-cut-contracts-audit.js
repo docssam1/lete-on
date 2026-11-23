@@ -135,11 +135,16 @@ function validateContract(q, r, variant, level) {
   assert.deepEqual(q.studentGiven, { promptText: q.promptText, dimensions: q.model.dimensions, points: q.model.points,
     sectionEdges: q.model.sectionEdges, responseLayers: [] }, "student: exact answer-safe schema");
   assert(q.promptText.includes(`\uC313\uAE30\uB098\uBB34 ${r.full.length}\uAC1C`), "student: literal cube count");
-  assert(q.promptText.includes("\uC5EC\uC12F \uBAA8\uC11C\uB9AC\uC758 \uC911\uC810 A, B, C, D, E, F"), "student: six original midpoint labels");
+  const bookSource = variant === 0 && level === 1;
+  assert(q.promptText.includes(bookSource ? "\uC5EC\uC12F \uAC1C\uC758 \uBAA8\uC11C\uB9AC\uC758 \uC911\uC810 \uC989 \uADF8\uB9BC\uC758 A, B, C, D, E, F" : "\uC5EC\uC12F \uBAA8\uC11C\uB9AC\uC758 \uC911\uC810 A, B, C, D, E, F"), "student: six original midpoint labels");
   assert(q.promptText.includes("\uB9E8 \uC704\uCE35") === (level === 0));
-  assert(q.promptText.includes("\uB2FF\uAE30\uB9CC") === (level === 2)); assert(q.promptText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0"));
+  assert(q.promptText.includes("\uB2FF\uAE30\uB9CC") === (level === 2));
+  if (bookSource) {
+    assert(q.promptText.includes("\uC313\uAE30\uB098\uBB34 27\uAC1C\uB97C \uBD99\uC5EC\uC11C 3\u00d73\u00d73\uC758 \uC815\uC721\uBA74\uCCB4"), "student: book cube size");
+    assert(!q.promptText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0") && q.solutionText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0"), "student: interior rule belongs to the solution in the book-source prompt");
+  } else assert(q.promptText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0"));
   assert.equal(elements(parseMarkup(q.promptText)).length, 0, "student: no tables or filled figures");
-  assert(!/[=^]|\*\*|\d\s*[+\u00d7]\s*\d|\uC88C\uD45C|\uC870\uD569|\uCE35\uBCC4 \uAC1C\uC218|\uC815\uB2F5\uC740/.test(q.promptText), "student: no invented equations or answer counts");
+  assert(!/[=^]|\*\*|\d\s*[+\u00d7]\s*\d|\uC88C\uD45C|\uC870\uD569|\uCE35\uBCC4 \uAC1C\uC218|\uC815\uB2F5\uC740/.test(bookSource ? q.promptText.replace("3\u00d73\u00d73", "") : q.promptText), "student: no invented equations or answer counts");
   assert.equal(q.difficultyDesign.problemView, "full-cube-with-six-midpoints");
   assert.equal(q.difficultyDesign.mode, ["easy", "source", "hard"][level]); assert.equal(q.difficultyDesign.sourceReferenceSize, 3);
   const selected = r.layers.filter(layer => q.requestedLayers.includes(layer.j + 1));

@@ -6,7 +6,7 @@ function runtime(p=presentation){const api={names:["legacy"],generatorKey:()=>"l
 const api=runtime();
 for(let offset=-1;offset<=1;offset++)for(const variant of[0,1,2,10,119]){
  const q=api.generate(type,1,offset,123,variant),expected=presentation.render(id,0,offset+1);assert(q);assert.equal(q.prompt,expected.prompt);assert.equal(q.answerVisual,expected.answerVisual);assert.equal(q.answer,expected.answer);assert.equal(q.solution,expected.solution);
- assert.equal(q.verifiedVariantCount,1);assert.equal(q.verifiedVariantTarget,1);assert.equal(q.verifiedPoolIndex,0);assert.equal(q.verifiedVariantId,`${id}:v0`);assert.equal(q.variantProvenance,"source-conditions-clarified");assert.equal(q.originalSourceReleaseStatus,"locked");assert.equal(q.learnerReleaseVerified,false);accepted++;
+ assert.equal(q.verifiedVariantCount,1);assert.equal(q.verifiedVariantTarget,1);assert.equal(q.verifiedPoolIndex,0);assert.equal(q.verifiedVariantId,`${id}:v0`);assert.equal(q.variantProvenance,offset===0?"source-original-wording":"source-conditions-clarified");assert.equal(q.originalSourceReleaseStatus,"locked");assert.equal(q.learnerReleaseVerified,false);accepted++;
  const poisons=[
   q=>{q.prompt+='<table><tr><td>1층 4개</td></tr></table>';},q=>{q.prompt+='<svg data-layer="1"></svg>';},q=>{q.prompt+=q.answerVisual;},q=>{q.prompt+=q.solution;},
   q=>{q.prompt=q.prompt.replace("/given.png","/shape-1.png");},q=>{q.answer="0가지";},q=>{q.answerVisual=q.answerVisual.replace(/<figure[\s\S]*?<\/figure>/,"");},

@@ -169,11 +169,13 @@ function validateQuestion(q, oracle, variant, level) {
   assert.deepEqual(q.answerOrder, level === 2 ? ["cut", "boundary-touch"] : ["cut"]); assert.equal(q.answerUnit, "\uAC1C");
   assert.deepEqual(q.answerDrawing, selected.map(row => ({ layer: row.layer, cells: row.cutCells.map(([x, , z]) => [x, z]) })));
   assert.deepEqual(Object.keys(q.studentGiven).sort(), ["dimensions", "points", "promptText", "responseLayers", "sectionEdges", "solidFilled"].sort());
-  assert.equal(q.studentGiven.solidFilled, true); assert(q.promptText.includes("\uBE48\uD2C8\uC5C6\uC774"), "A visible full-solid condition is required, not just an internal model assumption");
+  const bookSource = q.variant === 0 && level === 1, solidRule = "\uBE48\uD2C8\uC5C6\uC774", interiorRule = "\uB0B4\uBD80\uAC00 \uC798\uB9B0";
+  assert.equal(q.studentGiven.solidFilled, true); assert((bookSource ? q.solutionText : q.promptText).includes(solidRule), "A visible full-solid condition is required, not just an internal model assumption");
+  if (bookSource) assert(!q.promptText.includes(solidRule) && !q.promptText.includes(interiorRule) && q.promptText.includes("\uC785\uCCB4\uB3C4\uD615"), "Book-source prompt must keep the book wording without added notes");
   assert.equal(q.studentGiven.promptText, q.promptText); assert.deepEqual(q.studentGiven.dimensions, [oracle.n, oracle.n, oracle.n]);
   assert.deepEqual(q.studentGiven.points, oracle.points); assert.deepEqual(q.studentGiven.sectionEdges, q.model.sectionEdges); assert.deepEqual(q.studentGiven.responseLayers, []);
   assert.equal(typeof q.promptText, "string"); assert(q.promptText.includes("\uAC00, \uB098, \uB2E4, \uB77C"));
-  assert(q.promptText.includes("\uB0B4\uBD80\uAC00 \uC798\uB9B0")); assert.equal(q.promptText.includes("\uB9E8 \uC704\uCE35"), level === 0);
+  assert((bookSource ? q.solutionText : q.promptText).includes(interiorRule)); assert.equal(q.promptText.includes("\uB9E8 \uC704\uCE35"), level === 0);
   assert.equal(q.promptText.includes("\uB2FF\uAE30\uB9CC"), level === 2);
   assert(!/[<>=+\d]|\uCE35\uBCC4 \uAC1C\uC218|\uC815\uB2F5\uC740/.test(q.promptText), "No invented table, coordinates, formulas, count hints or filled teacher diagram in student prompt");
   const equations = q.solutionEquations.map(parseEquation); assert.equal(equations.length, level === 2 ? 2 : 1);

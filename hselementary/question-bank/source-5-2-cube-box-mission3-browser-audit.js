@@ -48,7 +48,7 @@ async function prepare(page, width) {
     if (variant === 0 && difficulty === 0) {
       await page.emulateMedia({ media: "print" });
       const ink = await diagram.evaluate(svg => ({
-        lines: [...svg.querySelectorAll("path, rect")].map(el => getComputedStyle(el).stroke),
+        lines: [...svg.querySelectorAll("path, rect")].filter(el => !el.matches(".dimension-arc, .angle-arc")).map(el => getComputedStyle(el).stroke), // 교재식 점선 치수 호·각호(보조선)는 회색이 맞음
         labels: [...svg.querySelectorAll("text")].map(el => getComputedStyle(el).fill),
         prompt: getComputedStyle(svg.closest(".source52-cube-box-question")).color
       }));

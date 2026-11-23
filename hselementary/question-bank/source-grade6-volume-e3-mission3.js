@@ -7,7 +7,8 @@
   const sourceItemId = "6-1-u6-e3-mission-3";
   const generatorKey = "sourceGrade6VolumeE3Mission3";
   const pools = Object.freeze([
-    Object.freeze({ unknown: 3, drops: Object.freeze([6, 4, 10]), runs: Object.freeze([10, 18]), prismHeight: 12, volume: 4560 }),
+    // 원문 그림(인쇄 59쪽): 높이 20cm 기둥(폭 □) 다음 높이 10cm·폭 18cm 계단, 높이 6cm·폭 10cm 계단. 위에서부터 내려가는 높이 10, 4, 6. 밑면 폭 28+□.
+    Object.freeze({ unknown: 7, drops: Object.freeze([10, 4, 6]), runs: Object.freeze([18, 10]), prismHeight: 12, volume: 4560 }),
     Object.freeze({ unknown: 4, drops: Object.freeze([5, 3, 8]), runs: Object.freeze([8, 14]), prismHeight: 10, volume: 2640 }),
     Object.freeze({ unknown: 5, drops: Object.freeze([7, 5, 12]), runs: Object.freeze([12, 16]), prismHeight: 15, volume: 7740 })
   ]);

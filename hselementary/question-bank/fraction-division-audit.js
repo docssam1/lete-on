@@ -66,7 +66,7 @@ function expected(generated) {
   }
   if (kind === "split-total-difference") return mixed((v[4] - v[3]) / 2, v[0]);
   if (kind === "unit-material") return frac(v[1], v[0]);
-  if (kind === "equal-triangle-area") return frac(v[0] * v[1], v[2]);
+  if (kind === "equal-triangle-area") return mixed(v[0] * v[1], v[2]); // 길이는 대분수로 쓴다(2026-11-22 표기 정리)
   if (kind === "three-fraction-ratio") return `${frac(v[1], v[0])}, ${frac(v[2], v[0])}, ${frac(v[3], v[0])}`;
   if (kind === "tape-relation") return mixed(v[1], v[0]);
   if (kind === "changed-fill-rate") return timeText((v[1] * v[3] - v[0] * v[2]) / (v[1] - v[0]));

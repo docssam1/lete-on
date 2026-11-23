@@ -9,7 +9,7 @@ require("./source-grade6-volume-e3-mission3.js");
 const api = window.HSE_GENERATORS;
 const sourceItemId = "6-1-u6-e3-mission-3";
 const inputs = [
-  { unknown: 3, drops: [6, 4, 10], runs: [10, 18], prismHeight: 12, volume: 4560 },
+  { unknown: 7, drops: [10, 4, 6], runs: [18, 10], prismHeight: 12, volume: 4560 }, // 원문 59쪽: 계단 높이 20→10→6, 폭 □·18·10
   { unknown: 4, drops: [5, 3, 8], runs: [8, 14], prismHeight: 10, volume: 2640 },
   { unknown: 5, drops: [7, 5, 12], runs: [12, 16], prismHeight: 15, volume: 7740 }
 ];

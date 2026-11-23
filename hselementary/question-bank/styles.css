@@ -1701,3 +1701,19 @@ button{
 /* Keep the available alternative legible while the original stays locked. */
 .tree-type.is-pending.has-alternative { opacity: 1; }
 .tree-alternative-hint { display: block; margin-top: 3px; color: #2f6b4a; font-size: 11px; font-weight: 600; }
+
+/* 2026-11-22: 혼자 A4보다 긴 문항은 인쇄에서 문항 안에서 다음 장으로 이어지게 한다(이름표만 있는 빈 장 방지). */
+@media print{.print-page--oversize .question-item{break-inside:auto!important;page-break-inside:auto!important;min-height:0!important}.print-page--oversize .page-label{break-after:avoid;page-break-after:avoid}}
+/* 2026-11-22: 인쇄에서는 가로 스크롤이 없으므로 긴 식이 칸을 넘으면 잘리지 않고 줄바꿈되게 한다. */
+@media print{.equation.equation--wrap{overflow:visible;white-space:normal;overflow-wrap:anywhere}}
+/* 2026-11-22: 큰 수에서 특정 자리를 가리키는 기호(㉠·㉡)는 숫자 옆이 아니라 그 숫자 바로 아래에 작게 놓아 수의 일부로 보이지 않게 한다. */
+.marked-digit{display:inline-flex;flex-direction:column;align-items:center;line-height:1;margin:0 .02em;vertical-align:baseline}
+.marked-digit>u{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:2px;line-height:1.15}
+.marked-digit>small{font-size:.6em;line-height:1;margin-top:1px;font-weight:700;letter-spacing:0}
+/* 2026-11-22: 4문항 한 장(four-up) 인쇄에서 큰 입체·전개도 그림이 칸을 넘지 않도록 그림 최대 높이를 칸에 맞춘다. */
+@media print{.print-page--four-up .question-prompt svg{max-height:62mm;width:auto;max-width:100%;height:auto}}
+/* 2026-11-22: 한 문항이 A4 한 장을 넘지 않도록 인쇄 시 문제 그림의 최대 높이를 제한한다(비율 유지). */
+@media print{.question-prompt svg{max-height:130mm;width:auto;max-width:100%;height:auto}.print-page--four-up .question-prompt svg{max-height:62mm}}
+@media print{.print-page--paired .source62-sugar-packing-flow{grid-template-columns:minmax(0,1fr) 20px minmax(0,.72fr);gap:6px;padding:10px}.print-page--paired .source62-student-change-rows>span{grid-template-columns:52px minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr)}.print-page--paired .source62-student-change-rows strong,.print-page--paired .source62-student-change-rows b,.print-page--paired .source62-student-change-rows i{padding:8px 4px;overflow-wrap:anywhere}}
+@media print{.print-page--fit .question-prompt svg,.print-page--fit .question-prompt img{max-height:150mm!important;width:auto!important;max-width:100%!important;height:auto!important}}
+@media print{.print-page--fit-tight .question-prompt svg,.print-page--fit-tight .question-prompt img{max-height:100mm!important}}

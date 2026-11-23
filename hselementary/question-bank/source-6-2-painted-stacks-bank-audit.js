@@ -44,13 +44,15 @@ async function inspect(item,id,variant,level,mode,poison=false){
       if(q.sourceItemId.startsWith("6-2-u3-e3-example-3-")){
         const image=root.querySelector(".source62-example3-given img");if(poison&&image){image.dataset.variant="9";poison=false;}
         if(!image||!image.complete||image.naturalWidth!==1280||image.naturalHeight!==1120||image.dataset.glyphless!=="true"||+image.dataset.variant!==q.variant||!image.currentSrc.endsWith(`/source-6-2-painted-example3/v${q.variant}-given.png`))errors.push("Wrong or missing source 3D picture");
-        for(const clause of [`${model.cells.length}개의 쌓기나무`,"뒤쪽과 왼쪽","파란색","보이는 5개의 면","빨간색","바닥면은 칠하지 않았습니다"])if(!root.textContent.includes(clause))errors.push("Missing painted colour source condition");
+        for(const clause of [`${model.cells.length}개의 쌓기나무`,"뒤쪽과 왼쪽","파란색","보이는 5개의 면","빨간색","바닥면은 색을 칠하지 않았"])if(!root.textContent.includes(clause))errors.push("Missing painted colour source condition");
         if(q.level!==0&&root.textContent.includes(`쌓기나무는 모두 ${model.height}층`))errors.push("Easy height clue leaked into source difficulty");
         if(root.querySelector("svg,table,canvas"))errors.push("Answer-bearing grid in question view");
       }else if(q.sourceItemId==="6-2-u3-e3-example-2"){
         const images=[...root.querySelectorAll(".source62-example2-given img")];if(poison&&images[0]){images[0].dataset.phase="after";poison=false;}
         if(images.length!==2||images.some((image,i)=>{const phase=["before","after"][i];return !image.complete||image.naturalWidth!==1280||image.naturalHeight!==1040||image.dataset.glyphless!=="true"||+image.dataset.variant!==q.variant||image.dataset.phase!==phase||!image.currentSrc.endsWith(`/v${q.variant}-${phase}.png`);}))errors.push("Wrong or missing source 3D picture");
-        for(const clause of ["밑면을 포함한","바닥부터 빈틈없이","빼낸 뒤에는 다시 색칠하지 않았습니다"])if(!root.textContent.includes(clause))errors.push("Missing paint-before-removal condition");
+        for(const clause of ["밑면을 포함한","그리고 아래 오른쪽 그림과 같이 몇 개의 쌓기나무를 빼내었을 때"])if(!root.textContent.includes(clause))errors.push("Missing paint-before-removal condition");
+        for(const added of ["바닥부터 빈틈없이","다시 색칠하지","남은 쌓기나무 중"])if(root.textContent.includes(added))errors.push("Added non-source condition in question view");
+        if(root.querySelector(".source62-example2-given figcaption"))errors.push("Added non-source figure caption");
         if(q.level!==0&&root.textContent.includes(`빼내기 전 두 면에만 페인트가 칠해진 쌓기나무는 ${model.before.histogram[2]}개`))errors.push("Easy clue leaked into source difficulty");
         if(root.querySelector("svg,table,canvas"))errors.push("Answer-bearing grid in question view");
       }else if(q.sourceItemId==="6-2-u3-e3-mission-3"){

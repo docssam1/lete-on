@@ -82,7 +82,7 @@ function promptCheck(q, p) {
   const image = attributes(p.prompt.match(/<img\b[^>]*>/)[0]);
   assert.equal(image.src, "./assets/source-6-2-t-pattern-example2/prefix-given.png");
   assert.equal(image.width, "1600"); assert.equal(image.height, "523");
-  assert.equal(image.alt, "첫째, 둘째, 셋째 T자 쌓기나무 모양");
+  assert.equal(image.alt, "첫 번째, 두 번째, 세 번째 T자 쌓기나무 모양");
   const button = attributes(p.prompt.match(/<button\b[^>]*>/)[0]);
   assert.equal(button.class, "source62-m3-image-button");
   assert.equal(button["data-m3-figure"], String(q.variant));
@@ -114,7 +114,7 @@ function equationCheck(q) {
 }
 
 assert.equal(crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname, "source-6-2-t-pattern-example2-contracts.js"))).digest("hex"),
-  "671e201ef8458d4c7cc7bd0c2ec992d4b18aa86f2cc5bf65747fde0cf5aa6346");
+  "1bb69effd597e5feb791d135ca684fd200e43a08d2b6be2cae6bbf961286ca08");
 assert.equal(prefix.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
 assert.equal(prefix.readUInt32BE(16), 1600); assert.equal(prefix.readUInt32BE(20), 523);
 assert.deepEqual(contracts.sourceItemIds, [id]);

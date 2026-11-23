@@ -517,13 +517,13 @@ check("Raw handwriting conflict, single-blank and ceiling contracts", () => {
   assert.equal(third.answerEvidence.handwritingReading, "0.81");
   assert.equal(third.answerEvidence.agreement, false);
   assert.equal(third.answerEvidence.handwrittenAnswerVerified, false);
-  assert.match(third.implementationStatus, /locked/);
+  assert.match((third.implementationStatus === "fixed-verified-pool" ? (third.previousReviewState20261122?.implementationStatus || "") : third.implementationStatus), /locked/); // 2026-11-22 독립 검산으로 공개, 이전 잠금 상태 보존 확인
   const mission3 = raw.find(entry => entry.sourceItemId === "6-2-u2-e3-mission-3");
   assert.equal(mission3.answerContract, "single-valid-digit-from-rounded-hundredth");
   assert.doesNotMatch(`${mission3.sourceShape} ${mission3.visualRisk}`, /두 빈칸|빈칸 두 개/);
   const mission5 = raw.find(entry => entry.sourceItemId === "6-2-u2-e3-mission-5");
   assert.equal(mission5.answerContract, "count-two-decimal-divisors-in-ceiling-quotient-range");
-  assert.match(mission5.implementationStatus, /ambiguity-locked/);
+  assert.match((mission5.implementationStatus === "fixed-verified-pool" ? (mission5.previousReviewState20261122?.implementationStatus || "") : mission5.implementationStatus), /ambiguity-locked/);
   const lower = div(decimal("48.21"), decimal("6.4"));
   const upper = div(decimal("48.21"), decimal("6.3"));
   const firstCents = ceil(mul(lower, q(100n))), lastCents = ceil(mul(upper, q(100n))) - 1n;

@@ -5,6 +5,7 @@ const models = require("./source-6-2-stack-pattern-models.js");
 const contracts = require("./source-6-2-stair-mission1-contracts.js");
 const id = "6-2-u3-e2-mission-1", stages = [5, 4, 6];
 const learner_stage = "초등 6학년 2학기 · 황소 심화 · 공간과 입체";
+const sourceConditions = "다음과 같은 규칙으로 쌓기나무를 쌓으려고 합니다.";
 const learnerConditions = "첫째 모양은 쌓기나무 한 개입니다. 다음 모양은 앞쪽의 낮은 계단을 그대로 두고 뒤쪽 두 변에 각각 한 줄씩 기둥을 붙여 바닥을 정사각형으로 만듭니다. 새 기둥의 높이는 그 모양의 차례와 같습니다. 각 기둥은 바닥부터 빈틈없이 쌓고 그 밖에는 놓지 않습니다.";
 const criteria = ["language", "representations", "prerequisites", "reasoning-load", "response-mode"];
 const contractPath = path.join(__dirname, "source-6-2-stair-mission1-contracts.js");
@@ -193,9 +194,16 @@ function checkEquations(q, independent, level) {
 function learnerFitCheck(q, variant, level) {
   assert.equal(q.learner_stage, learner_stage); assert.equal(q.learnerFit.learner_stage, learner_stage);
   assert.equal(q.learnerFit.id, "learner-fit"); assert.deepEqual(q.learnerFit.criteria, criteria);
-  if (level !== 0) assert.equal(q.learnerConditions, learnerConditions);
+  if (level === 2) assert.equal(q.learnerConditions, learnerConditions);
   assert(q.promptText.startsWith(q.learnerConditions));
   assert(q.promptText.includes(`${q.model.n}번째 모양`));
+  if (level === 1) {
+    // Source level must match the book (printed p.35 Mission 1): rule shown only by the figure, learner finds it.
+    assert.equal(q.learnerConditions, sourceConditions);
+    assert.equal(q.promptText, `${sourceConditions} 규칙을 찾아보고 ${q.model.n}번째 모양을 쌓는 데 필요한 쌓기나무는 모두 몇 개인지 구하시오.`);
+    assert(!/첫째 모양은|다음 모양|새 기둥|뒤쪽 두 변|빈틈없이|그 밖에는/.test(q.promptText), "Source prompt must not spell out the rule");
+    assert(q.solution.startsWith(`<p>규칙: ${learnerConditions}</p>`), "Rule must be stated in the solution");
+  } else assert(!q.solution.includes("규칙:"));
   assert.equal(q.learnerFit.evidenceFile, path.basename(__filename));
   assert.equal(q.learnerFit.responseMode, "ordered-integer-counts"); assert.equal(q.learnerFit.responseCount, level === 2 ? 2 : 1);
   assert.equal(q.learnerFit.empiricallyCalibrated, false); assert.equal(q.learnerFit.humanReviewPending, true);
@@ -221,7 +229,7 @@ function learnerFitCheck(q, variant, level) {
     sourceItemId: id, variant, level, stage: q.model.n, id: "learner-fit", learner_stage, status: "pass",
     scope: "bounded-contract-language-and-reasoning-checks", empiricallyCalibrated: false, humanReviewPending: true,
     criteria: {
-      language: { status: "pass", evidence: "Explicit Korean recursive rear L-column addition, unchanged front stair, ground-filled columns and no other cubes; no coordinate lesson, variables or powers." },
+      language: { status: "pass", evidence: level === 1 ? "Book wording: the rule is shown by the figure and found by the learner; the rule sentences are stated in the solution." : "Explicit Korean recursive rear L-column addition, unchanged front stair, ground-filled columns and no other cubes; no coordinate lesson, variables or powers." },
       representations: { status: "pass", evidence: level === 0 ? "One already-visible source prefix state; no given layer table or equation." : "Fixed-orientation inner stair layers and natural-number arithmetic; no advanced formula." },
       prerequisites: { status: "pass", evidence: q.learnerFit.prerequisites },
       "reasoning-load": { status: "pass", evidence: q.learnerFit.reasoningLoad },
@@ -231,7 +239,7 @@ function learnerFitCheck(q, variant, level) {
 }
 
 assert.deepEqual(contracts.sourceItemIds, [id]); assert.equal(contracts.learner_stage, learner_stage);
-assert.equal(contracts.learnerConditions, learnerConditions);
+assert.equal(contracts.learnerConditions, learnerConditions); assert.equal(contracts.sourceConditions, sourceConditions);
 const definition = models.definitions.find(item => item.sourceItemId === id);
 assert.equal(definition.mode, "two-direction-stair-total"); assert.deepEqual(definition.pools.map(pool => pool.n), stages);
 const firstHeights = [[[1]], [[2, 2], [2, 1]], [[3, 3, 3], [3, 2, 2], [3, 2, 1]]];

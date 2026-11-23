@@ -6,6 +6,10 @@ const fs = require("node:fs");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-22 공개 목록(#1491, 장부 대조·독립 검산 통과)에 오른 유형은 앱에서 잠금이 풀린다.
+// 그 유형의 정답은 source-<묶음>-original-audit.py가 검산하므로 이 감사의 잠금 검사에서 뺀다.
+require("./source-lower-release-20261122-registry.js");
+const laterReleased = new Set(Object.keys(window.HSE_LOWER_RELEASE_20261122 || {}));
 
 const api = window.HSE_GENERATORS;
 const curriculum = window.HSE_CURRICULUM;
@@ -170,9 +174,10 @@ function checkSourceReferences() {
 if (!unit) fail("5-1 규칙과 대응 단원을 찾을 수 없습니다.");
 if (types.length !== 41) fail(`5-1 규칙과 대응 원문 유형은 41개여야 하나 ${types.length}개입니다.`);
 if (new Set(types.map(type => type.sourceItemId)).size !== types.length) fail("원문 유형 ID가 중복됩니다.");
-const unitReady = types.filter(type => !type.reviewLocked && api.generatorKey(type));
-const unitLocked = types.filter(type => type.reviewLocked || !api.generatorKey(type));
-if (unitReady.length !== 15 || unitLocked.length !== 26) fail(`U3 전체 상태는 공개 15·잠금 26이어야 하나 공개 ${unitReady.length}·잠금 ${unitLocked.length}입니다.`);
+const unitReady = types.filter(type => laterReleased.has(type.id) || (!type.reviewLocked && api.generatorKey(type)));
+const unitLocked = types.filter(type => !unitReady.includes(type));
+// 2026-11-22 공개 뒤에는 U3 41유형이 모두 공개된다(잠금 0).
+if (unitReady.length !== 41 || unitLocked.length !== 0) fail(`U3 전체 상태는 공개 41·잠금 0이어야 하나 공개 ${unitReady.length}·잠금 ${unitLocked.length}입니다.`);
 for (const [id, variant] of expectedVariants) {
   const type = types.find(item => item.sourceItemId === id);
   if (!type) { fail(`${id}: 원문 유형이 없습니다.`); continue; }

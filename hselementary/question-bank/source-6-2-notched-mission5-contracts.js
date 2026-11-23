@@ -77,21 +77,27 @@
     const filledExplanation = filled ? explain(filled, "빈 모서리를 채운 도형의") : null;
     const answerOrder = level === 2 ? ["original", "filled"] : ["original"];
     const answer = filled ? [model.difference, filled.difference] : level === 0 ? model.hidden : model.difference;
-    let promptText = `쌓기나무를 ${model.n}층까지 쌓았습니다. ${models.constructionText} ${models.visibilityText} `;
-    if (givenOmittedBottomLayers) promptText += "그림에서는 아래 두 층을 생략했습니다. ";
-    promptText += filled ? "(1) 처음 도형에서 보이는 쌓기나무의 개수에서 보이지 않는 쌓기나무의 개수를 뺀 값을 구하시오. (2) 맨 위층을 제외한 각 층의 비어 있는 가장 앞쪽 모서리에 쌓기나무를 한 개씩 채웠습니다. 채운 뒤 보이는 쌓기나무의 개수에서 보이지 않는 쌓기나무의 개수를 뺀 값을 구하시오." :
+    // Source level (level 1) keeps the book wording of printed p.35 Mission 5; the construction and
+    // visibility conventions the calculation relies on are stated in the solution instead.
+    const sourceLevel = level === 1;
+    const solutionBasisText = sourceLevel ? `풀이 기준: ${models.constructionText} 그림에서 생략된 아래 두 층도 같은 방법으로 쌓은 것입니다. ${models.visibilityText}` : null;
+    let promptText = sourceLevel ? `정육면체 모양의 쌓기나무를 다음과 같은 방법으로 ${model.n}층까지 쌓았습니다. 만들어진 입체도형에서 보이는 쌓기나무와 보이지 않는 쌓기나무의 개수의 차를 구하시오. ${models.sourceGroundNote}` :
+      `쌓기나무를 ${model.n}층까지 쌓았습니다. ${models.constructionText} ${models.visibilityText} `;
+    if (!sourceLevel && givenOmittedBottomLayers) promptText += "그림에서는 아래 두 층을 생략했습니다. ";
+    if (!sourceLevel) promptText += filled ? "(1) 처음 도형에서 보이는 쌓기나무의 개수에서 보이지 않는 쌓기나무의 개수를 뺀 값을 구하시오. (2) 맨 위층을 제외한 각 층의 비어 있는 가장 앞쪽 모서리에 쌓기나무를 한 개씩 채웠습니다. 채운 뒤 보이는 쌓기나무의 개수에서 보이지 않는 쌓기나무의 개수를 뺀 값을 구하시오." :
       level === 0 ? "보이지 않는 쌓기나무는 모두 몇 개인지 구하시오." : "보이는 쌓기나무의 개수에서 보이지 않는 쌓기나무의 개수를 뺀 값을 구하시오.";
     const sourcepolicy = { ...models.conditionPolicy, ...models.verification,
       originalQuestionScope: "visible minus hidden only", hardQuestionScope: "same difference after filling each non-top front corner",
       sourceSixLayerReferenceVariant: 0, sourceConditionsClarified: true, sourceOnlyFutureAndVisibilityClarified: true };
     const solutionEquations = [...originalExplanation.equations, ...(filledExplanation ? filledExplanation.equations : [])];
-    const solutionText = originalExplanation.text + (filledExplanation ? " " + filledExplanation.text : "");
+    const solutionText = (solutionBasisText ? `<p>${solutionBasisText}</p>` : "") + originalExplanation.text + (filledExplanation ? " " + filledExplanation.text : "");
     return freeze({ sourceItemId, variant, level, model, sourceRef: model.sourceRef,
       learner_stage, learnerFitCriteria,
       learnerFitGate: { id: "learner-fit", learner_stage, criteria: learnerFitCriteria,
         status: "pending-human-review", technicalCriteriaRecorded: true, humanApproved: false },
       conditionPolicy: models.conditionPolicy, sourcepolicy,
-      learnerConditions: [models.constructionText, models.visibilityText],
+      learnerConditions: sourceLevel ? [models.sourceGroundNote] : [models.constructionText, models.visibilityText],
+      solutionBasisText,
       givenOmittedBottomLayers, layerLabels, givenModel, layerCue,
       studentGiven: { promptText, givenModel, layerCue },
       filledModel: filled ? { H: filled.H, cubes: filled.cubes, layers: filled.layers } : null,

@@ -14,15 +14,16 @@
     const selected = model.layers.filter(layer => requestedLayers.includes(layer.layer));
     const cutCount = selected.reduce((sum, layer) => sum + layer.cutCount, 0);
     const answer = level === 2 ? [cutCount, model.touchCount] : cutCount;
-    let promptText = `\uC313\uAE30\uB098\uBB34 ${model.cubes.length}\uAC1C\uB85C \uB9CC\uB4E0 \uC815\uC721\uBA74\uCCB4\uB97C \uADF8\uB9BC\uC758 \uC5EC\uC12F \uBAA8\uC11C\uB9AC\uC758 \uC911\uC810 A, B, C, D, E, F\uB97C \uC9C0\uB098\uB294 \uD3C9\uBA74\uC73C\uB85C \uC790\uB985\uB2C8\uB2E4. `;
-    promptText += level === 0 ? "\uB9E8 \uC704\uCE35\uC5D0\uC11C \uC798\uB9B0 \uC313\uAE30\uB098\uBB34\uB294 \uBA87 \uAC1C\uC778\uC9C0 \uAD6C\uD558\uC2DC\uC624." : "\uC798\uB9B0 \uC313\uAE30\uB098\uBB34\uB294 \uBAA8\uB450 \uBA87 \uAC1C\uC778\uC9C0 \uAD6C\uD558\uC2DC\uC624.";
+    const bookSource = variant === 0 && level === 1, interiorRule = "\uC313\uAE30\uB098\uBB34\uC758 \uB0B4\uBD80\uAC00 \uC798\uB9B0 \uACBD\uC6B0\uB9CC \uC798\uB9B0 \uAC83\uC73C\uB85C \uC149\uB2C8\uB2E4.";
+    let promptText = bookSource ? "\uC313\uAE30\uB098\uBB34 27\uAC1C\uB97C \uBD99\uC5EC\uC11C 3\u00D73\u00D73\uC758 \uC815\uC721\uBA74\uCCB4\uB97C \uB9CC\uB4E4\uC5C8\uC2B5\uB2C8\uB2E4. \uC5EC\uC12F \uAC1C\uC758 \uBAA8\uC11C\uB9AC\uC758 \uC911\uC810 \uC989 \uADF8\uB9BC\uC758 A, B, C, D, E, F\uB97C \uC9C0\uB098\uB294 \uD3C9\uBA74\uC73C\uB85C \uC815\uC721\uBA74\uCCB4\uB97C \uC790\uB97C \uB54C, \uC798\uB824\uC9C4 \uC313\uAE30\uB098\uBB34\uB294 \uBAA8\uB450 \uBA87 \uAC1C\uC785\uB2C8\uAE4C?" : `\uC313\uAE30\uB098\uBB34 ${model.cubes.length}\uAC1C\uB85C \uB9CC\uB4E0 \uC815\uC721\uBA74\uCCB4\uB97C \uADF8\uB9BC\uC758 \uC5EC\uC12F \uBAA8\uC11C\uB9AC\uC758 \uC911\uC810 A, B, C, D, E, F\uB97C \uC9C0\uB098\uB294 \uD3C9\uBA74\uC73C\uB85C \uC790\uB985\uB2C8\uB2E4. `;
+    if (!bookSource) promptText += level === 0 ? "\uB9E8 \uC704\uCE35\uC5D0\uC11C \uC798\uB9B0 \uC313\uAE30\uB098\uBB34\uB294 \uBA87 \uAC1C\uC778\uC9C0 \uAD6C\uD558\uC2DC\uC624." : "\uC798\uB9B0 \uC313\uAE30\uB098\uBB34\uB294 \uBAA8\uB450 \uBA87 \uAC1C\uC778\uC9C0 \uAD6C\uD558\uC2DC\uC624.";
     if (level === 2) promptText += " \uD3C9\uBA74\uC774 \uAF2D\uC9D3\uC810\uC774\uB098 \uBAA8\uC11C\uB9AC\uC5D0 \uB2FF\uAE30\uB9CC \uD558\uB294 \uC313\uAE30\uB098\uBB34\uC758 \uAC1C\uC218\uB3C4 \uAD6C\uD558\uC2DC\uC624.";
-    promptText += " (\uC313\uAE30\uB098\uBB34\uC758 \uB0B4\uBD80\uAC00 \uC798\uB9B0 \uACBD\uC6B0\uB9CC \uC798\uB9B0 \uAC83\uC73C\uB85C \uC149\uB2C8\uB2E4.)";
+    if (!bookSource) promptText += ` (${interiorRule})`;
     const cutEquation = `${selected.slice().reverse().map(layer => layer.cutCount).join("+")}=${cutCount}`;
     const touchEquation = `${model.layers.slice().reverse().map(layer => layer.touchCount).join("+")}=${model.touchCount}`;
     const span = expression => `<span class="math-inline-expression" style="white-space:nowrap;color:#000">${expression}</span>`;
     const solutionEquations = [cutEquation, ...(level === 2 ? [touchEquation] : [])].map(span);
-    const solutionText = `<p>\uAC01 \uCE35\uC5D0\uC11C \uB0B4\uBD80\uAC00 \uC798\uB9B0 \uC313\uAE30\uB098\uBB34\uB97C \uC138\uBA74 ${solutionEquations[0]}\uAC1C\uC785\uB2C8\uB2E4.</p>` +
+    const solutionText = (bookSource ? `<p>\uD480\uC774 \uAE30\uC900: ${interiorRule}</p>` : "") + `<p>\uAC01 \uCE35\uC5D0\uC11C \uB0B4\uBD80\uAC00 \uC798\uB9B0 \uC313\uAE30\uB098\uBB34\uB97C \uC138\uBA74 ${solutionEquations[0]}\uAC1C\uC785\uB2C8\uB2E4.</p>` +
       (level === 2 ? `<p>\uB2FF\uAE30\uB9CC \uD55C \uC313\uAE30\uB098\uBB34\uB294 ${solutionEquations[1]}\uAC1C\uC774\uBA70, \uC798\uB9B0 \uAC1C\uC218\uC5D0 \uD3EC\uD568\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.</p>` : "");
     return freeze({ sourceItemId: id, variant, level, model, learner_stage, promptText,
       studentGiven: { promptText, dimensions: model.dimensions, points: model.points, sectionEdges: model.sectionEdges, responseLayers: [] },
