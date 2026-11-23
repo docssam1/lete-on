@@ -1,3 +1,4 @@
+import{beforePlantTask}from'./tests/plant-guided-stage.mjs';
 import test from'node:test';import assert from'node:assert/strict';
 import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js?v=20261102-plant';
 import*as original from'../data/book/s31-u03.book.js';import{similar}from'../data/units/s31-u03.similar.js';import{lesson}from'../data/units/s31-u03.lesson.js';import{workbook}from'../data/book/s31-u03.workbook.js';
@@ -19,7 +20,7 @@ test('기존 실제 기록·보고서·80문항을 보존하고 기본 확인은
  assert.equal(original.chapter.plantThinking,undefined);assert.equal(original.chapter.pages.length,25);assert.equal(lesson.explore.lab.kind,'plant');assert.equal(lesson.elaborate.report,true);
  const old=buildSlides(original.chapter,original.art,original.plan,similar,'self');assert.equal(old.length,45);assert(old.some(x=>x.id==='report'));
  const updated=new Set(mod.classroomItems.map(x=>x.id));assert.equal(updated.size,11);assert.equal(pool.length,80);
- for(const q of pool){const previous=similar.find(x=>x.id===q.id);assert(previous);assert.deepEqual(q.answerContract,previous.answerContract);assert.deepEqual(q.sourceRef,previous.sourceRef);assert.deepEqual(q.taxonomy,previous.taxonomy);if(!updated.has(q.id))assert.equal(q,previous);}
+ for(const q of pool){const previous=similar.find(x=>x.id===q.id);assert(previous);assert.deepEqual(beforePlantTask(q).answerContract,previous.answerContract);assert.deepEqual(q.sourceRef,previous.sourceRef);assert.deepEqual(q.taxonomy,previous.taxonomy);if(!updated.has(q.id))assert.equal(q,previous);}
  assert.equal(mod.classroomLab.kind,'plant-compare');assert.equal(mod.classroomLab.rowsKey,'plantCompareRows');assert.equal(typeof mod.classroomLab.mount,'function');
 });
 test('사진의 실제 길이를 만들어 내지 않으며 원래 큰 사진을 교재와 같이 사용한다',()=>{
