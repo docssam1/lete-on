@@ -1,3 +1,4 @@
+import{withForceConceptWorkbook}from'./force-concept-review.js';
 import test from'node:test';
 import assert from'node:assert/strict';
 import fs from'node:fs';
@@ -60,7 +61,7 @@ test('eleven tasks keep the same scientific data and standards with short respon
  for(const future of[{...before,unit:'other'},{...before,futureEdition:true},{...before,questions:before.questions.map(q=>q.no===63?{...q,prompt:q.prompt+' new'}:q)}])assert.equal(withForceGuidedWorkbook(future),future);
 });
 test('the actual classroom, student, answer and quick papers display the revised task and retain their boundaries',async()=>{
- assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),next);
+ assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withForceConceptWorkbook(next));
  const lesson=await revisedClassroom(unit,await import('../data/book/s31-u01.book.js')),selected=lesson.classroomItems.filter(q=>q.contentVersion===version);assert.deepEqual(selected.map(q=>q.id),['s31-u01-v009']);
  const q=selected[0],old=questionAtVersion(q,1);assert(old.prompt.includes('다음 번'));assert.equal(q.answerContract.sample,next.questions[34].answer);assert.equal(q.prompt,next.questions[34].prompt);
  const pool=classroomQuestions(lesson,[...bank.items,...bank.similar,...bank.source]);assert.equal(pool.find(p=>p.id===q.id),q);

@@ -383,3 +383,9 @@
 
 /* Guided force responses use only their explicit short answer lines. */
 .bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-question[data-form="written"]::after{display:none}
+
+/* Concept checks are short tables and oral warm-ups, without filler writing. */
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-gallery-item img{height:33mm;object-fit:contain;background:#f6f7f9}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-flow{justify-content:flex-start;gap:22px}}

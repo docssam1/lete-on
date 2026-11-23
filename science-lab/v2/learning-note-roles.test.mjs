@@ -1,3 +1,5 @@
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{withoutForceTaskSolutions,withoutForceTaskQuickRows}from'./tests/force-drawing-stage.mjs';
 import{reviewStudentWorkbook}from'./student-language-review.js';
 import{withInfectionWorkbookDirections}from'../data/book/infection-workbook-directions.js';
@@ -97,14 +99,14 @@ test('grade-three study notes preserve every question, extension concept, writin
 
 test('actual grade-three papers display the simpler notes with current question feedback and unchanged quick keys',async()=>{
  for(const [current,prior]of studyBooks){
-  const pageCurrent=withInfectionWorkbookDirections(withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(current)))))));
+  const pageCurrent=current.unit==='s31-u01'?await reviewStudentWorkbook(current.unit,withObservedPhotoAlt(withElementaryReadingDirections(current))):withInfectionWorkbookDirections(withEarthSeaWorkbookDirections(withSoundWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(current)))))));
   const {art}=await import(`../data/book/${current.unit}.workbook-art.js`),paper=await revisedTextbookPaper(current.unit),oldPaper=makeWorkbookPaper(await reviewStudentWorkbook(current.unit,withEarthSeaWorkbookDirections(withSoundComparisonWorkbook(withEarthSeaLinkedWorkbook(withMaterialReadingWorkbook(withEarthSeaStandaloneContext(prior)))))),art);
   for(const mode of ['student','teacher','answers','quick']){
    const html=paper.workbookPaper({mode});
    if(mode==='answers'||mode==='quick'){const old=oldPaper.workbookPaper({mode});if(current.unit==='s31-u01'&&mode==='answers')assert.equal(withoutForceTaskSolutions(html),withoutForceTaskSolutions(old));else if(current.unit==='s31-u01'&&mode==='quick')assert.equal(withoutForceTaskQuickRows(html),withoutForceTaskQuickRows(old));else assert.equal(html,old,current.unit+' '+mode+' unchanged');}
    else{
     for(let i=0;i<pageCurrent.pages.length;i++)for(let j=0;j<(pageCurrent.pages[i].rail||[]).length;j++){
-     const note=pageCurrent.pages[i].rail[j],old=prior.pages[i].rail[j];if(current.unit==='s31-u01'&&j===2&&pageCurrent.pages[i].blocks.some(b=>(b.ids||[]).some(id=>[35,36,37,38,39,40,63,64,75,76,77,78,79,80].map(n=>'s31-u01-w'+String(n).padStart(3,'0')).includes(id))))continue;if(note.text!==old.text)assert(html.includes(escape(note.text)),current.unit+' '+mode+' current note');
+     const note=pageCurrent.pages[i].rail[j];if(current.unit==='s31-u01'){assert(html.includes(escape(note.text)),current.unit+' '+mode+' actual note');continue;}const old=prior.pages[i].rail[j];if(note.text!==old.text)assert(html.includes(escape(note.text)),current.unit+' '+mode+' current note');
     }
    }
   }
