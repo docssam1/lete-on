@@ -1,3 +1,14 @@
+## 2026-11-23 — 브라우저 인쇄(Ctrl/Cmd+P)도 A4 인쇄 배치로, 6학년 실패 감사 분류 (Claude Code / Opus 5.5, Mac)
+
+- app.js: Ctrl/Cmd+P를 누르면 브라우저 인쇄 대신 앱 인쇄(printWorksheet)로 보낸다. 지금 보고 있는 탭(문제/정답·풀이)으로 인쇄하고, 글꼴·쪽 나눔·그림을 기다린 뒤 인쇄한다. 브라우저 메뉴로 인쇄해도 beforeprint에서 인쇄 모드로 바꾸고 afterprint에서 되돌린다. 해설 보기 창이 열려 있으면 가로채지 않는다. 인쇄 모드 설정은 applyPrintMode로 묶었다. index.html app.js ?v=20261123-print-shortcut.
+- 확인(헤드리스 Chromium): 문제 탭 Ctrl+P → problem 모드 인쇄, 정답·풀이 탭 Cmd+P → solution 모드 인쇄, afterprint 뒤 화면 복귀, 인쇄 메뉴 3가지 그대로 동작. 6-1 2단원 Mission 5를 브라우저 인쇄로 PDF 출력하면 1쪽 2문항 + 2쪽 1문항(인쇄 메뉴와 같음).
+- 이 Mac에서 실패하던 6학년 감사를 다시 돌려 원인을 나눴다(앱 결함은 아래 인쇄 경로 하나뿐):
+  - Windows 전용: E:/G: 증거·출력 폴더 assert, C:/Users/... playwright·pngjs 경로, pdfinfo.exe, powershell.
+  - 이 Mac 환경: Pillow 11.3에 없는 `get_flattened_data`(volume-e4, inventory-grade6-e4 감사의 PNG 검사).
+  - 기대값이 지난 감사: 잠금이던 유형이 이후 공개됨(6-1 ratio-e1, 6-2 decimal-e3/e4/e5, painted-stacks-bank의 reviewLocked), 6-1 겉넓이 E1처럼 원문에 수치가 없어 세 풀의 문제 문장이 같은 유형은 2026-11-22 변경대로 중복 문제를 빼서 1문항만 나오는데 감사는 3문항을 기대(같은 상태 114유형: 4-1 2·4-2 27·5-1 8·5-2 29·6-1 27·6-2 21, 풀 차이는 정답 그림뿐).
+  - 타이밍: prisms-pyramids-e3·fraction-division-e4-example4 감사는 탭을 누른 직후(쪽 나눔 비동기 재계산 전) page.pdf를 찍어 1쪽이 제목만 남았다. 사람이 쓰는 인쇄 메뉴·Ctrl+P는 쪽 나눔을 기다리므로 정상이고, 같은 순서라도 1초 기다리면 정상 출력된다.
+- 감사 파일 자체는 고치지 않았다(사용자 결정 대기: Windows에서 돌릴지, Mac에서도 통과하도록 고칠지).
+
 ## 2026-11-23 — 6-2 예제 3-3 문제 그림 면 색을 원문처럼 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 결정: "답 풀이에 있는 설명은 상관 없어" → 3단원 답·풀이의 설명용 그림·표(층별 수 칸, Mission 5 풀이의 층별 표·그림 등 약 25유형)는 그대로 둔다. 원문과 같아야 하는 것은 문제 쪽이다.

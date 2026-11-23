@@ -830,14 +830,26 @@
     activePrintMode = null;
   }
 
-  async function printWorksheet(mode) {
-    setPrintMenu(false);
-    if (!state.questions.length || activePrintMode) return;
+  function applyPrintMode(mode) {
     activePrintMode = mode;
     document.body.dataset.printMode = mode;
     $("problemView").hidden = mode === "answer-key" || mode === "solution";
     $("solutionView").hidden = mode === "problem" || mode === "answer-key";
     $("answerKeyView").hidden = mode !== "answer-key";
+  }
+
+  function currentPrintMode() {
+    return state.view === "solution" ? "solution" : "problem";
+  }
+
+  function canPrintWorksheet() {
+    return state.questions.length > 0 && !$("worksheet").hidden;
+  }
+
+  async function printWorksheet(mode) {
+    setPrintMenu(false);
+    if (!state.questions.length || activePrintMode) return;
+    applyPrintMode(mode);
     const requestedQuestions = state.questions;
     try {
       try { if (document.fonts?.ready) await document.fonts.ready; } catch (error) {}
@@ -1183,10 +1195,19 @@
   document.addEventListener("click", event => {
     if (!event.target.closest("#printMenu")) setPrintMenu(false);
   });
+  // 브라우저 메뉴로 인쇄해도 화면용 배치가 아닌 A4 인쇄 배치로 나가게 한다.
+  addEventListener("beforeprint", () => {
+    if (!activePrintMode && canPrintWorksheet()) applyPrintMode(currentPrintMode());
+  });
   addEventListener("afterprint", restorePrintView);
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
   $("studentNameInput").addEventListener("input", () => { if (state.questions.length) renderWorksheet(); });
   addEventListener("keydown", event => {
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === "p" && canPrintWorksheet() && $("solutionViewer").hidden) {
+      event.preventDefault();
+      printWorksheet(currentPrintMode());
+      return;
+    }
     if (!$("solutionViewer").hidden) {
       if (event.key === "Escape") {
         event.preventDefault();
