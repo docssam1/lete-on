@@ -9,6 +9,13 @@ global.window = {};
 require("./source-inventory-4-1.js");
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 원문 분류표에서 review-locked이던 Mission 3(5-1-u1-e2-mission-3)이 원문 생성기 orig51U1E2Mission3으로 공개되었다(잠금 0).
+// 분류표 파일은 그대로이므로, 공개 등록 목록에 있는 유형은 공개(ready)로 보고 브라우저와 같은 상태를 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
+const releaseKey = type => window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key;
 
 const api = window.HSE_GENERATORS;
 const inventory = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "5-1-unit-1-mixed-calculation.json"), "utf8"));
@@ -21,8 +28,9 @@ let screenshotCount = 0;
 let pdfCount = 0;
 const inventoryById = new Map(inventory.items.map(item => [item.sourceItemId, item]));
 const types = unit ? unit.subunits.flatMap(subunit => subunit.types.map(type => ({ ...type, subunitName: subunit.name }))) : [];
-const readyTypes = types.filter(type => inventoryById.get(type.sourceItemId)?.implementationStatus === "ready");
-const lockedTypes = types.filter(type => inventoryById.get(type.sourceItemId)?.implementationStatus === "review-locked");
+const statusOf = type => releaseKey(type) ? "ready" : inventoryById.get(type.sourceItemId)?.implementationStatus;
+const readyTypes = types.filter(type => statusOf(type) === "ready");
+const lockedTypes = types.filter(type => statusOf(type) === "review-locked");
 const e2ReadyTypes = readyTypes.filter(type => inventoryById.get(type.sourceItemId)?.exploration === 2);
 const e2LockedTypes = lockedTypes.filter(type => inventoryById.get(type.sourceItemId)?.exploration === 2);
 
@@ -33,8 +41,8 @@ const rectsOverlap = (a, b) => Boolean(a && b && a.left < b.right - 1 && a.right
 function auditInventory() {
   if (!semester || !unit) return fail("5-1 1단원 자연수의 혼합 계산을 찾지 못했습니다.");
   if (inventory.items.length !== 45 || types.length !== 45) fail(`원문·교육과정 유형은 각각 45개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
-  if (readyTypes.length !== 44 || lockedTypes.length !== 1) fail(`단원은 공개 44개·잠금 1개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
-  if (e2ReadyTypes.length !== 10 || e2LockedTypes.length !== 1) fail(`개념탐구 2는 공개 10개·잠금 1개여야 하나 ${e2ReadyTypes.length}, ${e2LockedTypes.length}개입니다.`);
+  if (readyTypes.length !== 45 || lockedTypes.length !== 0) fail(`단원은 공개 45개·잠금 0개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
+  if (e2ReadyTypes.length !== 11 || e2LockedTypes.length !== 0) fail(`개념탐구 2는 공개 11개·잠금 0개여야 하나 ${e2ReadyTypes.length}, ${e2LockedTypes.length}개입니다.`);
   for (const type of types) {
     const source = inventoryById.get(type.sourceItemId);
     if (!source) {
@@ -42,11 +50,11 @@ function auditInventory() {
       continue;
     }
     if (type.label !== source.typeLabel || type.name !== source.typeLabel) fail(`${type.id}: 유형명이 원문 분류표와 다릅니다.`);
-    const shouldLock = source.implementationStatus === "review-locked";
+    const shouldLock = statusOf(type) === "review-locked";
     if (type.reviewLocked !== shouldLock) fail(`${type.id}: 잠금 상태가 원문 분류표와 다릅니다.`);
     if (source.exploration === 2) {
       if (type.variant === 7) {
-        if (!shouldLock || api.generatorKey(type)) fail(`${type.id}: Mission 3은 잠금이고 생성기가 없어야 합니다.`);
+        if (shouldLock || api.generatorKey(type) !== "orig51U1E2Mission3") fail(`${type.id}: Mission 3은 공개 등록 원문 생성기(orig51U1E2Mission3)로 공개되어야 합니다.`);
       } else if (shouldLock || api.generatorKey(type) !== "mixedCalculationE2") fail(`${type.id}: 개념탐구 2 공개 생성기 연결이 다릅니다.`);
     }
     if (source.exploration === 4 && (shouldLock || api.generatorKey(type) !== "mixedCalculationE4" || !inventory.resultContracts[type.sourceItemId])) fail(`${type.id}: 개념탐구 4 생성기 또는 답 형식 연결이 다릅니다.`);
@@ -105,8 +113,8 @@ async function inspectCatalog(browser, viewport, label) {
       if (!state.belowRow || rectsOverlap(state.rowBox, state.popoverBox) || state.footerVisible) fail(`${label} ${type.id}: 모바일 미리보기가 행 아래에 놓이지 않거나 하단 바가 가립니다.`);
     } else if (rectsOverlap(state.rowBox, state.popoverBox) || rectsOverlap(state.treeBox, state.popoverBox)) fail(`${label} ${type.id}: PC 미리보기가 목록을 가립니다.`);
     if (!state.text.includes(type.label) || !state.text.includes(`교재 ${source.sourcePrintedPage}쪽`)) fail(`${label} ${type.id}: 유형명 또는 원문 쪽수가 미리보기에 없습니다.`);
-    if (source.implementationStatus === "ready" && !state.questionVisible) fail(`${label} ${type.id}: 공개 유형의 대표 문제가 없습니다.`);
-    if (source.implementationStatus === "review-locked" && (!state.text.includes("검수 대기") || !state.text.includes(type.reviewReason))) fail(`${label} ${type.id}: 잠금 사유가 정확히 표시되지 않습니다.`);
+    if (statusOf(type) === "ready" && !state.questionVisible) fail(`${label} ${type.id}: 공개 유형의 대표 문제가 없습니다.`);
+    if (statusOf(type) === "review-locked" && (!state.text.includes("검수 대기") || !state.text.includes(type.reviewReason))) fail(`${label} ${type.id}: 잠금 사유가 정확히 표시되지 않습니다.`);
     await page.locator("[data-close-type-preview]").click();
   }
   await page.screenshot({ path: path.join(outputDir, `catalog-${label}.png`), fullPage: true });
@@ -151,7 +159,10 @@ async function inspectReview(browser, type, viewport, label) {
     const labelsFit = tape.labels.every(label => label.box.x >= -1 && label.box.y >= -1 && label.box.x + label.box.width <= (tape.viewBox?.width || 0) + 1 && label.box.y + label.box.height <= (tape.viewBox?.height || 0) + 1);
     const labelsReadable = tape.labels.every(item => item.fontSize >= 8.5 && item.rendered.width > 2 && item.rendered.height > 2);
     const labelText = tape.labels.map(item => item.text).join(" ");
-    const requiredLabels = [`길이 ${length}cm`, `폭 ${width}cm`, `겹친 길이 ${overlap}cm`, `테이프 ${count}장`, `겹친 곳 ${overlapCount}곳`];
+    // 2026-11-24: 학생 화면에서는 problem-hint-policy.js(DIAGRAM_RULES 5-1-u1-t2-11)가 원문에 없는 풀이 단서
+    // "이웃한 두 장을 …cm씩 겹침 · 겹친 곳 …곳" 이름표를 지운다. 이 이름표가 남아 있을 때만 그 값이 맞는지 본다(겹친 곳 수는 data-tape-model로 계속 검사).
+    const requiredLabels = [`길이 ${length}cm`, `폭 ${width}cm`, `겹친 길이 ${overlap}cm`, `테이프 ${count}장`];
+    if (labelText.includes("겹친 곳")) requiredLabels.push(`겹친 곳 ${overlapCount}곳`);
     const labelsComplete = requiredLabels.every(text => labelText.includes(text));
     if (!(length > overlap && overlap > 0 && width > 0 && count - 1 === overlapCount && totalLength === length * count - overlap * overlapCount && tape.rectCount >= 8 && labelsFit && labelsReadable && labelsComplete)) fail(`${label} ${type.id}: 테이프 길이·폭·겹친 길이·장수 또는 SVG 표시가 불완전합니다. ${JSON.stringify({ tape, labelsFit, labelsReadable, labelsComplete })}`);
   }
@@ -201,7 +212,7 @@ async function inspectReview(browser, type, viewport, label) {
     console.error(failures.slice(0, 100).join("\n"));
     process.exit(1);
   }
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 통과: 원문 45유형 · 단원 공개 44 · 잠금 1 · 개념탐구 2 공개 10 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 통과: 원문 45유형 · 단원 공개 45 · 잠금 0 · 개념탐구 2 공개 11 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 예외: ${error.stack || error}`);
   process.exit(1);

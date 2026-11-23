@@ -39,6 +39,22 @@ const expectedIds = [
 ];
 
 const fail = message => failures.push(message);
+// 2026-11-24: 11-22부터 앱은 같은 문장의 문항을 한 번만 낸다. 생성기가 서로 다른 문항을 1~2개만 만드는 유형
+// (예제 1-1-1·1-1-2, Mission 1 세 진분수는 난이도마다 2개, Mission 4는 1개)은 3문항 요청에 그 수만큼만 나온다.
+// 생성기가 만들 수 있는 서로 다른 문장 수를 직접 세어 min(3, 그 수)를 기대한다.
+const expectedCountCache = new Map();
+function expectedQuestionCount(type, difficulty) {
+  const cacheKey = `${type.id}|${difficulty}`;
+  if (!expectedCountCache.has(cacheKey)) {
+    const prompts = new Set();
+    for (let attempt = 0; attempt < 400 && prompts.size < 3; attempt += 1) {
+      const generated = api.generate(type, 1, difficulty, (attempt * 104729 + 7919) >>> 0, attempt % 40);
+      if (generated?.prompt) prompts.add(generated.prompt);
+    }
+    expectedCountCache.set(cacheKey, Math.min(3, prompts.size));
+  }
+  return expectedCountCache.get(cacheKey);
+}
 const keyFor = (type, viewport, difficulty) => `${type.sourceItemId}-${viewport}-difficulty-${difficulty}`;
 
 function verifyCatalogContract() {
@@ -183,9 +199,9 @@ async function renderedState(page, selector) {
   }, selector);
 }
 
-function reportState(state, type, key, view) {
+function reportState(state, type, key, view, expected = 3) {
   if (state.pageOverflow) fail(`${key} ${view}: 가로 넘침이 있습니다.`);
-  if (state.count !== 3 || state.empty) fail(`${key} ${view}: 생성 문항 3개가 모두 보이지 않습니다.`);
+  if (state.count !== expected || state.empty) fail(`${key} ${view}: 생성 문항 ${expected}개가 모두 보이지 않습니다.`);
   if (state.clipped) fail(`${key} ${view}: 가로 또는 세로로 잘린 수식·문항 상자가 있습니다.`);
   if (state.broken) fail(`${key} ${view}: 깨진 값이 보입니다.`);
   const needsFraction = view.includes("문제")
@@ -216,18 +232,21 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
   listenForPageErrors(page, key);
   await page.goto(`${baseUrl}?type=${encodeURIComponent(type.id)}&review=1&difficulty=${difficulty}`, { waitUntil: "domcontentloaded", timeout: 90000 });
   await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+  const expected = expectedQuestionCount(type, difficulty);
+  const expectedRows = Array.from({ length: expected }, (_, index) => index + 1).join(",");
+  if (expected < 1) fail(`${key}: 생성기가 문항을 만들지 못했습니다.`);
 
   const selected = await page.evaluate(() => ({
     count: document.querySelector("#selectedTypeCount")?.textContent.trim(),
     reviewRows: document.querySelectorAll("#reviewSelectedTypes > div").length,
     questionRows: document.querySelectorAll("#reviewQuestionList a").length
   }));
-  if (selected.count !== "1" || selected.reviewRows !== 1 || selected.questionRows !== 3) {
+  if (selected.count !== "1" || selected.reviewRows !== 1 || selected.questionRows !== expected) {
     fail(`${key}: 한 유형만 선택했을 때의 선택 목록 또는 문항 수가 다릅니다.`);
   }
 
   let state = await renderedState(page, "#problemView .question-item");
-  reportState(state, type, key, "문제");
+  reportState(state, type, key, "문제", expected);
   if (state.solutionVisible || state.solutionLeak) fail(`${key} 문제: 정답·풀이가 문제 화면에 섞였습니다.`);
   checkSourceSpecificLayout(type, state, key, "문제");
   await page.screenshot({ path: path.join(outputDir, `${key}-problem.png`), fullPage: true });
@@ -236,7 +255,7 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
   if (difficulty === 0 && viewportLabel === "desktop") {
     await page.emulateMedia({ media: "print" });
     state = await renderedState(page, "#problemView .question-item");
-    reportState(state, type, key, "A4 문제");
+    reportState(state, type, key, "A4 문제", expected);
     if (state.solutionVisible || state.solutionLeak) fail(`${key} A4 문제: 정답·풀이가 문제지에 섞였습니다.`);
     checkSourceSpecificLayout(type, state, key, "A4 문제");
     const pdf = path.join(outputDir, `${type.sourceItemId}-problem.pdf`);
@@ -248,9 +267,9 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
 
   await page.click("#solutionTab");
   state = await renderedState(page, "#solutionView .solution-item");
-  reportState(state, type, key, "정답·풀이");
+  reportState(state, type, key, "정답·풀이", expected);
   if (!state.solutionVisible) fail(`${key} 정답·풀이: 정답 탭이 열리지 않습니다.`);
-  if (state.rows.join(",") !== "1,2,3" || state.answers.some(answer => !answer)) {
+  if (state.rows.join(",") !== expectedRows || state.answers.some(answer => !answer)) {
     fail(`${key} 정답·풀이: 생성 문항마다 정확히 한 줄의 정답·풀이가 없습니다.`);
   }
   checkSourceSpecificLayout(type, state, key, "정답·풀이");
@@ -260,8 +279,8 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
   if (difficulty === 0 && viewportLabel === "desktop") {
     await page.emulateMedia({ media: "print" });
     state = await renderedState(page, "#solutionView .solution-item");
-    reportState(state, type, key, "A4 정답·풀이");
-    if (state.rows.join(",") !== "1,2,3") fail(`${key} A4 정답·풀이: 문항별 정답 행 수가 다릅니다.`);
+    reportState(state, type, key, "A4 정답·풀이", expected);
+    if (state.rows.join(",") !== expectedRows) fail(`${key} A4 정답·풀이: 문항별 정답 행 수가 다릅니다.`);
     checkSourceSpecificLayout(type, state, key, "A4 정답·풀이");
     const pdf = path.join(outputDir, `${type.sourceItemId}-solution.pdf`);
     await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true });

@@ -1,3 +1,18 @@
+## 2026-11-24 — 전체 감사 실행(4~6학년)과 낡은 감사 정비, 4문항 인쇄 범례 겹침 수정 (Claude Code / Opus 5.5, Mac)
+
+- 전체 JS 감사 1,314개(Windows 증거 27개 제외)와 Python 감사 172개를 Mac에서 돌렸다. 처음 실패 83개(JS) → 아래처럼 고쳐 JS는 모두 통과(5-1 묶음은 아래 결과 참고). Python은 164개 통과 + pdfplumber 3개는 Codex 런타임 파이썬(~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3)과 해당 PDF 인자로 통과, 도로 기하 1개는 저장소 최상위에서 node 경로를 넣어 통과. pymupdf가 필요한 4개(source-6-2-height-views-pdf, stack-assets-pdf, stack-pdf, stack-questions-pdf)는 Mac에 pymupdf가 없어 실행하지 않음(설치는 사용자 확인 필요).
+- 실행 방법: 저장소 루트를 서빙하는 정적 서버를 127.0.0.1:18793과 감사 기본 포트 93개에 띄우고 HSE_AUDIT_ORIGIN/HSE_URL/HSE_BASE_URL을 맞춘 뒤 실행. 브라우저 감사는 동시에 많이 돌리면 시간 초과가 나므로 실패만 혼자 다시 돌려 확인. HSE_PDFJS_PATH=~/.cache/codex-runtimes/.../pdfjs-dist/legacy/build/pdf.mjs.
+- 학생 화면 결함 수정: 4-2-u5-t1-10 등 꺾은선그래프를 4문항 A4로 인쇄하면 그림 글자를 11px로 키우는 규칙 때문에 두 계열 범례("아이스크림(굵은선)"·"초콜릿(얇은선)")가 약 4.5px 겹쳤다 → four-up-print.css에서 범례 글자만 9px(?v=20261124-legend9). 인쇄본으로 확인.
+- problem-hint-policy.js: 빈 요소 정리를 "정책이 글자를 지워 비게 된 요소"로 한정(처음부터 글자가 없던 data 요소 보존). 전 유형 글자 결과는 서비스 중 정책과 동일(26,910문항 중 차이 0). ?v=20261124-keep-empty-data.
+- 낡은 감사 정비(원인별):
+  - 11-22 공개 등록(잠금 0): 잠금을 기대하던 감사를 공개·선택 가능·미리보기 확인으로(5-1 약수와 배수·규칙과 대응 등, 5-2 range-lock, 6-2 소수 e3·e4·e5, 4-2 다각형 u6-t4 등).
+  - 11-22 같은 문항 중복 제외: 원문 고정 문제는 1~2문항만 나오므로 "서로 다른 문장 수"만큼 기대(4-2 다각형·삼각형·꺾은선그래프, 6-1 겉넓이 E1).
+  - 유형이 다른 생성기로 옮겨진 감사(4-2 사각형 robot·trapezoid·growing-turn·two-angles·line-names, parallel-v): 안내 후 지금 화면에 해당하는 검사만.
+  - 힌트 정책(문제 쪽 힌트·그림 규칙): 생성기 계약 감사는 정책 파일을 빈 파일로 받는다(HSE_KEEP_HINT_POLICY=1이면 켬) — 6-1 소수 나눗셈·비와 비율, 5-2 range-e1·range-missions·cube-box 등.
+  - 헤드리스 인쇄: window.print가 바로 끝나 afterprint가 인쇄 상태를 지우므로, 감사는 print를 비우고 PDF 뒤 afterprint를 보냄(5-2 3단원 합성 32개 등). page.pdf()가 beforeprint를 일으켜 앱이 인쇄 상태를 되돌리므로 worksheet-tools는 인쇄 메뉴로 모드 선택. 풀이 보기 창 그림도 다 읽힌 뒤 검사(6-2 colored-cut·cube-addition bank).
+  - 그 밖: 5-2 코스모스(11-21 원문 문장 복원), 5-2 마트 문장, segment-ratio 풀 9개, crosswalk 준비 현황 수, mixed-worksheet 글꼴(c1a38cf0b 글꼴 통일)·균형 배치 행, type-preview 미리보기 버튼 숨김, check113 풀이 쪽 흐름(#1336), polycube 기준선(평행선 2유형만 의도된 변경, 새 기준선 저장 후 통과).
+- 풀이·답 PDF 3,194개 글자 여백 측정: 앱 인쇄 경로의 쪽은 모두 20pt 이상(6-1 5단원 E4는 설계상 6mm 여백). 3~7pt로 나온 것은 감사가 인쇄 메뉴 없이 화면 배치를 그대로 PDF로 찍은 파일이라 실제 인쇄와 다름.
+
 ## 2026-11-24 — 6-1 소수 나눗셈·비와 비율 browser 감사 11개 정비 (Claude Code / Opus 5.5, Mac)
 
 - main(5b28c5114)에서도 실패하던 source-6-1-decimal-division-e1·e1-mission4·e2·e3·e4, source-6-1-ratio-e1~e6 browser 감사를 고쳐 모두 통과(Mac).
