@@ -1,8 +1,8 @@
 // 홈: 로그인 확인 → 교재별 구분 상자(A1-2 · A1-3) 안에 단원 지도
-import { gate, logout } from "./access.js?v=20261117a";
-import { renderLogin, renderNoPermission } from "./login-view.js?v=20261117a";
-import { BOOKS, findBook } from "./book.js?v=20261117a";
-import { readLesson } from "./progress.js?v=20261117a";
+import { gate, logout } from "./access.js?v=20261123a";
+import { renderLogin, renderNoPermission } from "./login-view.js?v=20261123a";
+import { BOOKS, findBook } from "./book.js?v=20261123a";
+import { readLesson } from "./progress.js?v=20261123a";
 
 const app = document.getElementById("app");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -30,7 +30,7 @@ function bookBox(book, child) {
   return `
     <section class="sm-bookbox" id="book-${book.id}" style="--b:${book.color}" aria-label="${esc(book.title)}">
       <header class="sm-bookhead">
-        <span class="tag">${esc(book.short)}</span>
+        ${book.short !== book.title ? `<span class="tag">${esc(book.short)}</span>` : ""}
         <h2>${esc(book.title)}</h2>
         <span class="note">${esc(book.note || "")}</span>
       </header>
@@ -58,7 +58,7 @@ function renderHome(me) {
   app.className = "sm-home";
   app.innerHTML = `
     <header class="sm-top" style="padding-left:0;padding-right:0">
-      <div class="sm-title">레이키즈</div>
+      <div class="sm-title">유아 영재 학습 게임</div>
       <nav class="sm-books" aria-label="교재로 가기">${BOOKS.map((b) => `<a class="sm-btn" href="#book-${b.id}" style="--b:${b.color};text-decoration:none">${esc(b.short)}</a>`).join("")}</nav>
       ${me.open ? "" : `<button class="sm-btn" type="button" data-out style="font-size:18px;min-height:56px">로그아웃</button>`}
     </header>

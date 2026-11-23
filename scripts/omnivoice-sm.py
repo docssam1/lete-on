@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-레이키즈(sm/) 독쌤 목소리 만들기 — 사이언스 랩 독쌤과 **같은 목소리**(같은 참조 음성·참조 전사·공부용 빠르기 0.8).
+유아 영재 학습 게임(sm/) 독쌤 목소리 만들기 — 사이언스 랩 독쌤과 **같은 목소리**(같은 참조 음성·참조 전사·공부용 빠르기 0.8).
 
 생성·검수 함수는 scripts/omnivoice-docssam.py 의 것을 그대로 쓴다(숫자 읽기 · 받아 적어 CER 비교 · 꼬리 반복 막기).
 다른 점은 줄 목록과 파일 이름뿐이다.
@@ -28,7 +28,7 @@ spec = importlib.util.spec_from_file_location("ovd", os.path.join(ROOT, "scripts
 ovd = importlib.util.module_from_spec(spec); spec.loader.exec_module(ovd)
 
 EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿⭐️]")
-# 레이키즈 화면 글 읽기: 출발점 번호 ①②③은 「일 번」, 컵 번호는 「일 번 컵」(개수 「한 번」이 아님), 큐브 무게 1g은 「일 그램」, 「8번 버스」는 「팔 번 버스」
+# 화면 글 읽기: 출발점 번호 ①②③은 「일 번」, 컵 번호는 「일 번 컵」(개수 「한 번」이 아님), 큐브 무게 1g은 「일 그램」, 「8번 버스」는 「팔 번 버스」
 SM_SPOKEN = [("①", "일 번"), ("②", "이 번"), ("③", "삼 번"),
              (r"([1-9])번 컵", lambda m: ovd.DIG[m.group(1)] + " 번 컵"), (r"([1-9])번 ([아엄])", lambda m: ovd.DIG[m.group(1)] + " 번 " + m.group(2)),
              (r"1g", "일 그램"), (r"([1-9])번 버스", lambda m: ovd.DIG[m.group(1)] + " 번 버스"), (r"([0-9])대 ([0-9])", r"\1 대 \2")]
@@ -83,7 +83,7 @@ def main():
     todo = [(i, t) for i, t in lines() if (not only or i in only) and (a.force or not os.path.exists(os.path.join(OUT, i + ".mp3")))]
     if a.limit:
         todo = todo[:a.limit]
-    print(f"레이키즈 독쌤 대사 {len(lines())}줄 중 이번에 만들 것 {len(todo)}줄", flush=True)
+    print(f"유아 영재 학습 독쌤 대사 {len(lines())}줄 중 이번에 만들 것 {len(todo)}줄", flush=True)
     if not todo:
         write_manifest(); return
     import torch
