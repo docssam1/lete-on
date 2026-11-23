@@ -37,7 +37,7 @@ for(const unit of revisedTextbookUnits){
    }
   }
   for(const mode of ['answers','quick']){
-   const expected=(mode==='answers'?wb.teacherPages:wb.quickPages).flatMap(p=>p.rail.map(r=>escape(r.title)));
+   const expected=(mode==='answers'?current.teacherPages:current.quickPages).flatMap(p=>p.rail.map(r=>escape(r.title)));
    const actual=[...html[mode].matchAll(/<section class="ed-note"(?: data-note-role="(?:summary|extension|personal|teacher|other)")?><h3>(.*?)<\/h3>/g)].map(m=>m[1]);
    assert.deepEqual(actual,expected);
   }

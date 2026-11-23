@@ -1,4 +1,4 @@
-// Exact wording reviews preserve contracts. A separately versioned weather answer revision follows this layer.
+// Exact wording reviews preserve contracts. Separately versioned response revisions follow this layer.
 export const STUDENT_LANGUAGE_VERSION='20261117-student-language-review';
 export const STUDENT_TABLE_LANGUAGE_VERSION='20261123-student-table-language';
 export function languageFingerprint(value){let a=2166136261,b=3335557771;for(const c of JSON.stringify(value)){const n=c.charCodeAt(0);a=Math.imul(a^n,16777619);b=Math.imul(b^n,2246822519);}return(a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');}
@@ -42,13 +42,14 @@ export async function reviewStudentModule(unit,mod){
  const review=await reviewOf(unit);if(!review)return mod;
  const result={...mod};for(const k of ['items','source','similar'])if(mod[k])result[k]=reviewQuestionRows(mod[k],review);
  if(mod.bankPaper)result.bankPaper=args=>reviewPaperText(mod.bankPaper(args),args.mode==='student'?{...review,text:{...review.text,...review.studentHeaders}}:review);
+ if(unit==='c22-s42-u02'){const{ecologyWritingItems}=await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing');for(const key of ['items','similar'])result[key]=ecologyWritingItems(result[key],unit);}
  if(unit==='c22-s52-u03'){const{weatherExampleItems}=await import('./weather-example-response.js?v=20261123-weather-example-response');result.items=weatherExampleItems(result.items,unit);}
  return result;
 }
 export async function reviewStudentWorkbook(unit,workbook){
  const review=await reviewOf(unit);
  const result=review?reviewWorkbookTableText(reviewTextTree(workbook,review.text),review):workbook;
- if(unit==='c22-s42-u02')return(await import('./ecology-guided-workbook.js?v=20261123-ecology-guided-workbook')).withEcologyGuidedWorkbook(result);
+ if(unit==='c22-s42-u02'){const guided=(await import('./ecology-guided-workbook.js?v=20261123-ecology-guided-workbook')).withEcologyGuidedWorkbook(result);return(await import('./ecology-writing-review.js?v=20261123-ecology-guided-writing')).withEcologyWritingWorkbook(guided);}
  return unit==='c22-s52-u03'?(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result):result;
 }
 export async function reviewClassroomLanguage(unit,mod){const review=await reviewOf(unit);if(!review||!mod.classroomItems)return mod;const items=reviewQuestionRows(mod.classroomItems,review);return items===mod.classroomItems?mod:{...mod,classroomItems:items};}

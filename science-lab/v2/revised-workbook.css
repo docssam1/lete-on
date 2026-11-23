@@ -367,3 +367,6 @@
 @media(min-width:701px),print{
  .bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:1mm 4mm}
 }
+
+/* 유도 서술은 부분 문항 바로 아래의 짧은 답칸만 사용한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-question[data-form="written"]::after{display:none}

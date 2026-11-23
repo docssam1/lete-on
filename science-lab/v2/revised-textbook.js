@@ -1,4 +1,4 @@
-import {reviewStudentWorkbook} from './student-language-review.js?v=20261117-student-language-review&exampleResponse=20261123-weather-example-response&tableLanguage=20261123-student-table-language&careerLanguage=20261123-career-comparison-language&comparisonWords=20261123-comparison-school-language&ecologyGuidance=20261123-ecology-guided-workbook';
+import {reviewStudentWorkbook} from './student-language-review.js?v=20261117-student-language-review&exampleResponse=20261123-weather-example-response&tableLanguage=20261123-student-table-language&careerLanguage=20261123-career-comparison-language&comparisonWords=20261123-comparison-school-language&ecologyGuidance=20261123-ecology-guided-workbook&ecologyWriting=20261123-ecology-guided-writing';
 import{GRADE4_WORKBOOK_DIRECTIONS_VERSION,GRADE4_WORKBOOK_DIRECTIONS_UNITS}from'../data/book/grade4-workbook-directions.js?v=20261115-grade4-workbook-directions';
 
 
@@ -55,7 +55,7 @@ import {STUDENT_OPENING_UNITS,STUDENT_GUIDE_UNITS,STUDENT_GUIDE_VERSION,ACTIVITY
 // 검수한 교재만 연결한다. 기존 수업·보고서·문제은행 모듈은 그대로 둔다.
 import {withPrintedWorkbook} from './revised-learning-book.js?v=20261108-learning-note-roles';
 import {withElementaryReadingDirections} from '../data/book/elementary-reading-directions.js?v=20261108-experience-warmups';
-import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-opening-warmup-label';
+import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-opening-warmup-label&ecologyWriting=20261123-ecology-guided-writing';
 export const revisedTextbookUnits = new Set(["c22-s62-u04", "c22-s62-u03", "c22-s62-u02", "c22-s62-u01", "c22-s32-u01", "c22-s32-u02", "s41-u01", "c22-s42-u01", "c22-s51-u03", "s31-u01", "s31-u02", "s31-u03", "s31-u04", "c22-s42-u02", "c22-s32-u03", "c22-s32-u04", "c22-s42-u04", "s41-u02", "s41-u03", "s41-u04", "c22-s42-u03", "c22-s51-u01", "c22-s51-u02", "c22-s51-u04", "c22-s52-u01", "c22-s52-u02", "c22-s52-u03", "c22-s52-u04", "c22-s61-u01", "c22-s61-u02", "c22-s61-u03", "c22-s61-u04"]);
 const cache = new Map();
 async function data(unit) {

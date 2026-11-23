@@ -1,7 +1,8 @@
+import{priorWritingClassroom as revisedClassroom}from'./tests/ecology-writing-stage.mjs';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{ECOLOGY_MATERIAL_VERSION as version,ecologyMaterialItems,withEcologyMaterialWorkbook}from'../data/book/ecology-material-context.js';
 import{withThink,loadJudge}from'./think-merge.js';import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{snapshotDailyPaper,resolveDailyPaper}from'./daily-paper-state.js';import{classify}from'./progress.js';
-import{workbook,ecologyMaterialPriorWorkbook as priorWorkbook}from'../data/book/c22-s42-u02.workbook.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import{renderChapter}from'./book.js';
+import{workbook,ecologyMaterialPriorWorkbook as priorWorkbook}from'../data/book/c22-s42-u02.workbook.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{classroomQuestions}from'./revised-lesson.js';import{renderChapter}from'./book.js';
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink})),unit='c22-s42-u02',mod=await loaders[unit](),current=mod.items.find(q=>q.id===unit+'-b35'),prior=questionAtVersion(current,current.previousVersions.at(-1).version),id=unit+'-w039',food='풀 → 메뚜기 → 개구리 → 뱀 / 풀 → 애벌레 → 작은 새 → 뱀';
 
 test('the missing food-web material is supplied while grading, diagnoses and all saved presentations retain their contracts',async()=>{

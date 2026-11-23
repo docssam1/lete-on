@@ -1,6 +1,7 @@
+import{priorWritingClassroom as revisedClassroom}from'./tests/ecology-writing-stage.mjs';
 import{questionAtVersion}from'./question-revision.js';
 import test from'node:test';import assert from'node:assert/strict';
-import{revisedClassroom,classroomQuestions,classroomTableData}from'./revised-lesson.js';import*as original from'../data/book/c22-s42-u02.book.js';import*as records from'../data/book/c22-s42-u02.records-book.js';import{similar}from'../data/units/c22-s42-u02.similar.js';import{items}from'../data/units/c22-s42-u02.js';import{lesson}from'../data/units/c22-s42-u02.lesson.js';import{buildSlides}from'./deck.js';import{renderChapter}from'./book.js';
+import{classroomQuestions,classroomTableData}from'./revised-lesson.js';import*as original from'../data/book/c22-s42-u02.book.js';import*as records from'../data/book/c22-s42-u02.records-book.js';import{similar}from'../data/units/c22-s42-u02.similar.js';import{items}from'../data/units/c22-s42-u02.js';import{lesson}from'../data/units/c22-s42-u02.lesson.js';import{buildSlides}from'./deck.js';import{renderChapter}from'./book.js';
 import{CHANGES,SPECIES,ecologyMaterial,ecologyCompareRecord,validEcologyCompareRow,ecologyComparisonProgress,ecologyCompareValues}from'./ecology-compare-model.js';
 import{ECOLOGY_FOOD_EDGES,ECOLOGY_FOOD_CHAINS,ecologyFoodWeb}from'./ecology-thinking-data.js';
 import{deckSlideIndex}from'./deck.js';

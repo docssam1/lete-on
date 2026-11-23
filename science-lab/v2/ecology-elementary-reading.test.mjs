@@ -1,3 +1,6 @@
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
+import{priorWritingClassroom as revisedClassroom}from'./tests/ecology-writing-stage.mjs';
 import{reviewStudentWorkbook}from'./student-language-review.js';
 import{GRADE4_REVIEW_VERSION}from'../data/book/grade4-question-review.js';
 // This regression verifies the earlier presentation stage; the grade 4 review has separate coverage.
@@ -12,7 +15,7 @@ import {ecologyElementaryCurrentItems,ECOLOGY_ELEMENTARY_VERSION} from '../data/
 import {ecologyReadableCurrentItems} from '../data/book/c22-s42-u02.editorial.js';
 import {ecologySoundCurrentItems} from './ecology-sound-question-language.js';
 import {withThink} from './think-merge.js';
-import {revisedClassroom} from './revised-lesson.js';
+import {} from './revised-lesson.js';
 import {revisedTextbookPaper} from './revised-textbook.js';
 import {gradeDaily} from './daily-grade.js';
 import {questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts} from './question-revision.js';
@@ -32,7 +35,7 @@ test('ecology directions preserve all question requirements, answer modes and up
  assert.equal(workbook.questions.length,80);assert.equal(workbook.questions.filter((q,i)=>q.prompt!==prior.questions[i].prompt).length,18);
  for(const key of Object.keys(prior).filter(k=>k!=='questions'))assert.deepEqual(workbook[key],prior[key]);
  for(let i=0;i<80;i++)assert.deepEqual(withoutPresentation(workbook.questions[i]),withoutPresentation(prior.questions[i]));
- const visible=await reviewStudentWorkbook(unit,workbook),paper=await revisedTextbookPaper(unit);
+ const {workbook:currentWorkbook}=await import('../data/book/'+unit+'.workbook.js'),visible=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(currentWorkbook))),paper=await revisedTextbookPaper(unit);
  for(const mode of ['student','teacher','answers','quick']){
   const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
   if(mode==='student'||mode==='teacher')for(const q of visible.questions)for(const part of q.prompt.split(/\[\s*\]|\(\s*\)/).filter(Boolean))assert(html.includes(part.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))),q.id);

@@ -1,10 +1,11 @@
+import{priorWritingClassroom as revisedClassroom}from'./tests/ecology-writing-stage.mjs';
 import test from'node:test';import assert from'node:assert/strict';
 import{items as raw}from'../data/units/c22-s42-u02.js';import{items as think}from'../data/units/c22-s42-u02.think.js';
 import{ecologySoundCurrentItems}from'./ecology-sound-question-language.js';
 import{ecologyReadableCurrentItems,ECOLOGY_READABILITY_VERSION}from'../data/book/c22-s42-u02.editorial.js';
 import{ecologyElementaryCurrentItems}from'../data/book/c22-s42-u02.elementary.js';
 import{gradeDaily}from'./daily-grade.js';import{questionAtVersion,restoreDailyQuestions,restartCurrentQuestion,pickedChoiceTexts}from'./question-revision.js';
-import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u02.book.js';
+import{classroomQuestions}from'./revised-lesson.js';import*as book from'../data/book/c22-s42-u02.book.js';
 import{contextDirectionsPriorWorkbook as workbook,ecologyReadablePriorWorkbook}from'../data/book/c22-s42-u02.workbook.js';import{revisedTextbookPaper}from'./revised-textbook.js';
 const unit='c22-s42-u02',baseline=ecologySoundCurrentItems([...raw,...think],unit);
 test('ecology readable questions preserve grading, every old field and saved written/choice answers',()=>{

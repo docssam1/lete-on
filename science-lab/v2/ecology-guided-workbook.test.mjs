@@ -37,7 +37,7 @@ test('unreviewed future changes and other units are never silently overwritten',
 
 test('the actual web and print entry points share the same question order and keep student answers hidden',async()=>{
  const reviewed=await reviewStudentWorkbook(unit,original),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
- assert.deepEqual(book.workbook.pages,reviewed.pages);assert.deepEqual(book.workbook.questions,prior.questions);
+ assert.deepEqual(book.workbook.pages,reviewed.pages);assert.deepEqual(book.workbook.questions,reviewed.questions);
  const paper=await revisedTextbookPaper(unit),student=paper.workbookPaper({mode:'student'}),teacher=paper.workbookPaper({mode:'teacher'});
  const matches=html=>[...html.matchAll(/data-question="([^"]+)"/g)].map(m=>m[1]);
  assert.deepEqual(matches(student),ids(prior.pages));assert.deepEqual(matches(teacher),ids(prior.pages));
