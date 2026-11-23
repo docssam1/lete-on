@@ -5,6 +5,9 @@ math.mm mn, math.mm mi, math.mm mo, math.mm mtext { font-family: inherit; font-w
 math.mm msup > :last-child { font-size: .62em; }
 /* 빈칸 상자(그림 색표: 숫자판·빈 상자 = 보라 테두리) — 안에 작은 글자(가·나…)를 넣을 수 있다 */
 math.mm .mm-box { display: inline-block; min-width: 2.2em; padding: .5em .5em; border: 1.5px solid #8e5bd8; border-radius: 3px; background: #fff; color: #8e5bd8; font-size: .7em; line-height: 1.2; text-align: center; }
+/* 지수 자리·분수 칸의 빈칸은 작게(원장 2026-11-23 검수 — 「2^□」의 □가 2보다 커서 2가 아래첨자처럼 보였다) */
+math.mm msup > mtext.mm-box:last-child { min-width: 1em; padding: .12em .18em; font-size: .5em; vertical-align: .9em; }
+math.mm mfrac mtext.mm-box { min-width: 1.3em; padding: .22em .3em; }
 /* 근호(√)는 글꼴의 수식 표가 있어야 늘어난다 — 근호만 수식 글꼴로 */
 math.mm msqrt, math.mm mroot { font-family: math, 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', serif; }
 @media print { math.mm { color: #191511; } }

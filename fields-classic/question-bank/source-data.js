@@ -1,12 +1,12 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
-import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123a";
+import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
 import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261122zi";
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261123a";
 import { COURSE2_G4_TYPE_ROWS, COURSE2_G4_GUIDES } from "./course2-g4-generators.js?v=20261122zi";
-import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261122zi";
+import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261123c";
 import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators.js?v=20261122zi";
-import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261122zi";
-import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261122zi";
+import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261123c";
+import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261123c";
 import { COURSE2_A4_TYPE_ROWS, COURSE2_A4_GUIDES } from "./course2-a4-generators.js?v=20261122zi";
 import { COURSE2_A5_TYPE_ROWS, COURSE2_A5_GUIDES } from "./course2-a5-generators.js?v=20261122zi";
 import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20261028m";
@@ -4624,20 +4624,20 @@ const C2_G5_UNITS = [
   c2Unit("평행선과 등적변형", [7, 6, 4], [4, 5, 2], 6, 25, [
     ["activity", 1, [1, 2, 3, 4, 5, 6, 7], "c2-equal-area-shift"], ["check", 1, [1, 2, 3, 4], "c2-equal-area-shift"],
     ["activity", 2, [1, 2, 3, 4, 5, 6], "c2-area-ratio-base"], ["check", 2, [1, 2, 3, 4, 5], "c2-area-ratio-base"],
-    ["activity", 3, [1, 2, 3, 4], "c2-triangle-area"], ["check", 3, [1, 2], "c2-equal-area-shift"],
-    ["advanced", 1, [1, 2], "c2-equal-area-shift"], ["advanced", 1, [3, 4], "c2-area-ratio-base"], ["advanced", 1, [5, 6], "c2-triangle-area"],
+    ["activity", 3, [1, 2, 3, 4], "c2-area-ratio-twice"], ["check", 3, [1, 2], "c2-area-ratio-twice"],
+    ["advanced", 1, [1, 2], "c2-equal-area-shift"], ["advanced", 1, [3, 4], "c2-area-ratio-base"], ["advanced", 1, [5, 6], "c2-area-ratio-twice"],
     ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9], "c2-equal-area-shift"], ["practice", 1, [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], "c2-area-ratio-base"], ["practice", 1, [20, 21, 22, 23, 24, 25], "c2-triangle-area"]
   ]),
   c2Unit("도형의 넓이와 비", [6, 4, 2], [4, 4, 4], 6, 28, [
     ["activity", 1, [1, 2, 3, 4, 5, 6], "c2-triangle-area"], ["check", 1, [1, 2, 3, 4], "c2-triangle-area"],
-    ["activity", 2, [1, 2, 3, 4], "c2-area-ratio-base"], ["check", 2, [1, 2, 3, 4], "c2-area-ratio-base"],
+    ["activity", 2, [1, 2, 3, 4], "c2-height-inverse-ratio"], ["check", 2, [1, 2, 3, 4], "c2-height-inverse-ratio"],
     ["activity", 3, [1, 2], "c2-trapezoid-area"], ["check", 3, [1, 2, 3, 4], "c2-trapezoid-area"],
     ["advanced", 1, [1, 2], "c2-triangle-area"], ["advanced", 1, [3, 4], "c2-area-ratio-base"], ["advanced", 1, [5, 6], "c2-trapezoid-area"],
     ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8], "c2-triangle-area"], ["practice", 1, [9, 10, 11, 12, 13, 14, 15, 16, 17, 18], "c2-area-ratio-base"], ["practice", 1, [19, 20, 21, 22, 23, 24, 25, 26, 27, 28], "c2-trapezoid-area"]
   ]),
   c2Unit("닮음과 비", [5, 7], [3, 4], 7, 20, [
     ["activity", 1, [1, 2, 3, 4, 5], "c2-similar-scale"], ["check", 1, [1, 2, 3], "c2-similar-scale"],
-    ["activity", 2, [1, 2, 3, 4, 5, 6, 7], "c2-shadow-height"], ["check", 2, [1, 2, 3, 4], "c2-shadow-height"],
+    ["activity", 2, [1, 2, 3, 4, 5, 6, 7], "c2-pyramid-hourglass"], ["check", 2, [1, 2, 3, 4], "c2-pyramid-hourglass"],
     ["advanced", 1, [1, 2, 3, 4], "c2-similar-scale"], ["advanced", 1, [5, 6, 7], "c2-shadow-height"],
     ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "c2-similar-scale"], ["practice", 1, [11, 12, 13, 14, 15, 16, 17, 18, 19, 20], "c2-shadow-height"]
   ])

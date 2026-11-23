@@ -6,7 +6,7 @@ import { mathText } from "./math-markup.js?v=20261122w";
 import { digitalText } from "./digital-inline.js?v=20261123b";
 // 꾸러미 글의 「3/5」·「2^3」을 수식으로 바꾼다(빗금 분수를 화면에 쓰지 않는다 — math-markup.js)
 const M = (html) => digitalText(mathText(String(html ?? "")));   // [[d:25]] = 디지털 숫자 그림(digital-inline.js)
-const TAGS = { g1: "20261123b", g2: "20261123b", g3: "20261123b", g4: "20261123b", g5: "20261123b", a1: "20261123b", a2: "20261123b", a3: "20261123b", a4: "20261123b", a5: "20261123b" };
+const TAGS = { g1: "20261123c", g2: "20261123c", g3: "20261123c", g4: "20261123c", g5: "20261123c", a1: "20261123c", a2: "20261123c", a3: "20261123c", a4: "20261123c", a5: "20261123c" };
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const norm = (s) => String(s ?? "").replace(/\s+/g, "").replace(/[°도]$/u, "").replace(/,/g, "").toLowerCase();
 
