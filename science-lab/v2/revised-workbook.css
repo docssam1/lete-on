@@ -352,3 +352,9 @@
  .bk-editorial.revised-workbook[data-unit] .ed-layout-two .ed-choices li{font-family:var(--ed-reading);font-size:18px;line-height:1.75}
  .bk-editorial.revised-workbook[data-unit] .ed-kicker{font-family:var(--ed-reading);font-size:15px;font-weight:600;letter-spacing:normal;line-height:1.5}
 }
+
+/* A4의 소수 CSS 픽셀 높이를 WebKit이 올림해 빈 쪽을 만들지 않도록
+   쪽 상자에 1px의 인쇄 여유만 둔다. 실제 용지는 A4, 본문 크기는 그대로다. */
+@media print{
+ .bk-editorial.revised-workbook[data-unit] .bk-page{height:calc(297mm - 1px)}
+}
