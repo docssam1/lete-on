@@ -1,10 +1,21 @@
+## 2026-11-23 — 힌트 정책 오삭제 3건·쌓기나무 풀이 A4 고침, Mac 감사 정리 (Claude Code / Opus 5.5, Mac)
+
+- problem-hint-policy.js가 문제 내용까지 지우던 3가지를 고쳤다. 정책 적용 전후 전 유형(2,990유형 × 3난이도 × 변형 3) 문장을 대조해 바뀐 곳이 아래 6개 유형-난이도뿐임을 확인했다.
+  - '힌트:' 문장 뒤에 곧바로 수로 시작하는 등식이 오면 `.(?=수)`를 소수점으로 보고 등식까지 지움 → 소수점은 앞뒤가 모두 수일 때만 인정. 5-1-u1-t4-2·3·4·8 쉬움에서 등식이 되살아남.
+  - 수로 시작하는 힌트 문장 패턴의 수 자리(`\d[\d\s,./]*`)가 앞의 수까지 삼킴(5-1-u2-t1-11 어려움 "□9 × 12 = 3□ × 23"의 23이 사라짐) → 수 자리에 공백을 넣지 않고 수 중간에서 시작하지 않게 함.
+  - 6-2-u3-e1-mission-3 어려움의 "앞에서 본 두 세로줄에 색칠할 칸 수의 합은 5칸입니다."는 앞 모양 한 칸을 □로 가린 대신 주는 필수 조건인데 힌트 목록에 있어 지워졌고, 답이 여러 개가 되며 세 문항 중 둘이 같아져 2문항만 나왔다 → 목록에서 뺌.
+  - 쉬움에서 "㉠칸에는 …개" 문장을 지운 뒤 그림에 남던 ㉠ 표시를 6-2-u3-e1-example-4·mission-3 쉬움에서 함께 지움.
+- source-6-2-stack-questions.css: 쌓기나무 정답·풀이 쪽을 여백 8mm 이름 붙인 쪽(source62StackAnswer)으로 인쇄하고 풀이 문단 간격을 줄여, 어려움 풀이 3문항이 A4 한 장에 들어가게 함(정답 그림 높이 60mm와 방향 글자 12px 기준은 그대로).
+- Mac 감사 결과: source-6-2-stack-questions-live 통과(18상태·반례 30·A4 18), e2-geometry-live 통과, midpoint-cut-questions 통과, four-vertex-cut-questions 통과(출력 폴더 이름을 four-vertex-wrapper로), polycube-helper-compatibility 통과(오늘 원본 복원 뒤 기준선을 --checkpoint로 새로 저장하고 비교, 1,889유형 17,001건).
+- 남은 것: source-6-2-stack-renderer-live는 검수용 페이지(source-6-2-stack-review.html)의 WebGL 그림을 390px 폭에서 돌린 뒤 모서리 픽셀 1개 색이 기준과 4~6 차이(Mac 소프트웨어 GPU 안티에일리어싱 차이로 보임, 학생 화면 아님). Windows E: 증거 자료가 필요한 6-2 3단원 감사 27개는 증거 폴더가 Mac·Drive에 없어(2026-11-23 검색) Windows에서만 실행 가능. 출판사 답 확인은 손글씨 채점본만 있어 false 유지.
+
 ## 2026-11-23 — 쓰지 않는 생성기 감사 정리 (Claude Code / Opus 5.5, Mac)
 
 - 사용자: "네 추천으로". 11-22 공개 등록으로 6-2-u3-e2-mission-3과 e3 개념탐구·예제 1·Mission 1·2·4가 원문 생성기(source62U3E3*·source62U3E2Mission3)로 옮겨져, 그 경로만 보던 감사를 정리했다.
   - 삭제: source-6-2-border-mission3-bank/mixed/zoom-audit.js (border-mission3 생성기를 쓰는 유형이 없다. 스크립트 파일은 다른 그림 코드와 엮여 있을 수 있어 index.html에서는 빼지 않았다).
   - source-6-2-painted-stacks-bank-audit.js: 기본 모드(옮겨진 유형)는 안내 후 통과로 끝내고, 지금도 칠하기 생성기를 쓰는 묶음은 HSE_PAINT_MISSION3/MISSION5/MISSION6/EXAMPLE2/EXAMPLE3=1로 검사(모두 통과). 잠금 기대값(e2 Mission 1·3·5)과 인쇄 쪽 나눔 측정 중 그림 요청 취소(ERR_ABORTED) 오탐을 고쳤다.
   - source-6-2-painted-stacks-mixed-audit.js: 대상에서 옮겨진 유형을 빼고 지금도 칠하기 생성기를 쓰는 유형(e3 예제 2, Mission 3, Mission 6-1, Mission 5-1)으로 바꿈(통과).
-- 남은 Mac 실패 감사: Windows E: 증거 자료가 필요한 약 27개(Windows에서 실행), stack-renderer-live(WebGL 픽셀), stack-questions-live(난이도 1 풀이 A4 2쪽), polycube-helper(--checkpoint 필요), four-vertex·midpoint questions(출력 폴더 이름 규칙), e2-geometry-live 등. 출판사 답 확인은 손글씨 채점본만 있어 false 유지.
+- 남은 Mac 실패 감사: 아래 다음 항목(같은 날 정리)을 본다.
 
 ## 2026-11-23 — 원본 복원 115유형 재대조 (Claude Code / Opus 5.5, Mac)
 
