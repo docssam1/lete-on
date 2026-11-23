@@ -9,7 +9,7 @@ test('actual climate student and teacher routes supply the A/D model facts and a
  const raw=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,raw),paper=await revisedTextbookPaper(unit);
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
   const start=html.indexOf('data-question="'+q.id+'"');assert(start>=0);const item=html.slice(start,html.indexOf('</li>',start));for(const text of q.given)assert(item.includes(esc(text)));assert.equal(item.includes('class="ed-key"'),mode==='teacher');
-  for(const title of['생물의 변화를 볼 때 무엇을 같게 살필까요?','사례와 영향을 이어요','읽고 설명해요'])assert(html.includes(title));assert(html.includes('이 꽃이 피는 때가 달라진 까닭'));assert(!html.includes('생물의 수가 달라진 까닭'));
+  for(const title of['생물의 변화를 볼 때 무엇을 같게 살필까요?','사례와 영향을 이어요','읽고 설명해요'])assert(html.includes(title));assert(html.includes('꽃이 핀 날을 비교할 때 같게 살펴야 할 조건'));assert(!html.includes('생물의 수가 달라진 까닭'));
  }
  const wall=at(workbook,22),cards=at(workbook,78),order=at(workbook,76);assert(wall.prompt.includes('모형 결과로'));assert(!wall.criteria.includes('실제'));assert.equal(wall.responseContract.criteria,wall.criteria);assert.equal(wall.responseContract.teacherRequired,true);assert.deepEqual(cards.responseContract.requiredElements,at(prior,78).responseContract.requiredElements.slice(0,3));assert(!cards.criteria.includes('제공 자료'));assert.equal(cards.responseContract.teacherRequired,true);
  assert(order.given[3].startsWith('ㄹ. 적은 내용을 보고'));assert.deepEqual(order.responseContract,at(prior,76).responseContract);

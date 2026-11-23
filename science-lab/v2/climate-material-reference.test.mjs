@@ -23,10 +23,10 @@ test('the climate result page repeats only the existing five house heights and t
 test('both actual climate workbook routes put the compact height table on the result page, keep writing lines and hide student answers',async()=>{
  const code=fs.readFileSync(new URL('./v2.js',import.meta.url),'utf8'),start=code.indexOf('const UNITS = ')+14,end=code.indexOf('\n// 문제은행만',start),literal=code.slice(start,end).trim().replace(/;$/,'');
  const loaders=new vm.Script('('+literal+')',{importModuleDynamically:s=>import(new URL(s,new URL('./v2.js',import.meta.url)).href)}).runInContext(vm.createContext({withThink}));
- for(const paper of [await revisedTextbookPaper(unit),await loaders[unit]()])for(const mode of ['student','teacher','answers','quick']){
+ const currentPaper=await revisedTextbookPaper(unit);for(const paper of [currentPaper,await loaders[unit]()])for(const mode of ['student','teacher','answers','quick']){
   const html=paper.workbookPaper({mode});assert(!/undefined|\[object Object\]/.test(html));
   if(['student','teacher'].includes(mode)){
-   const pages=html.split('<section class="bk-page '),house=pages.find(p=>p.includes('data-question="'+unit+'-w017"')),heat=pages.find(p=>p.includes('data-question="'+unit+'-w027"'));assert(house&&heat);assert(house.includes(climateHouseHeightCondition));assert(house.includes('땅 높이(cm)'));assert.equal((house.match(/<table/g)||[]).length,1);for(const h of ['4.5','1.5','2.5','3.5','6'])assert(house.includes('>'+h+'<'));for(const text of climateHeatwaveReadingNotes)assert(heat.includes(text));assert(!heat.includes('쓴 전기'));assert(house.includes('ed-lines'));assert(heat.includes('ed-lines'));
+   const pages=html.split('<section class="bk-page '),house=pages.find(p=>p.includes('data-question="'+unit+'-w017"')),heat=pages.find(p=>p.includes('data-question="'+unit+'-w027"'));assert(house&&heat);assert(house.includes(climateHouseHeightCondition));assert(house.includes('땅 높이(cm)'));assert.equal((house.match(/<table/g)||[]).length,1);for(const h of ['4.5','1.5','2.5','3.5','6'])assert(house.includes('>'+h+'<'));assert(heat.includes(climateHeatwaveReadingNotes[0]));assert(heat.includes(paper===currentPaper?'비교하기 전에 같은 장소인지 살펴보세요.':climateHeatwaveReadingNotes[1]));assert(!heat.includes('쓴 전기'));if(mode==='student'){assert(house.includes('ed-lines'));assert(heat.includes('ed-lines'));}else{assert(house.includes('class="ed-key"'));assert(heat.includes('class="ed-key"'));}
   }
   if(mode==='student')assert(!/class="ed-key"|class="ed-solution"/.test(html));
  }
