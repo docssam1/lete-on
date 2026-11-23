@@ -37,12 +37,12 @@ test('ecology classroom and Daily share six revised objects and retain each pres
  for(const q of first.classroomItems.filter(q=>q.contentVersion===ECOLOGY_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===ECOLOGY_READABILITY_VERSION))){linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);assert.deepEqual(questionAtVersion(q,ECOLOGY_READABILITY_VERSION).prompt,prior.find(x=>x.id===q.id).prompt);}
  assert.equal(linked,6);const q=current.find(q=>q.id==='c22-s42-u02-b78');assert.equal(q.answerContract.answer,1);assert(q.choices[1].includes('서로의 까닭'));assert(q.explanation.includes('둘째 보기'));assert.equal(workbook.questions.find(q=>q.no===63).key,4);
 });
-test('the current card-count blank agrees with all answer modes and keeps earlier cards and upper rails',async()=>{
+test('the earlier card-count blank is preserved while current print modes use the separately revised ecology concept answer',async()=>{
  const q=workbook.questions.find(q=>q.no===48),old=ecologyReadablePriorWorkbook.questions.find(q=>q.no===48);assert.equal(q.answer,'㉠ 한/1 · ㉡ 수');assert.equal(old.answer,'㉠ 연결점 · ㉡ 개체');assert.deepEqual(q.responseContract,old.responseContract);
  const row=workbook.quickPages.flatMap(p=>p.blocks.flatMap(b=>b.rows||[])).find(r=>r[0]==='48');assert.equal(row[2],q.answer);const oldRow=ecologyReadablePriorWorkbook.quickPages.flatMap(p=>p.blocks.flatMap(b=>b.rows||[])).find(r=>r[0]==='48');assert.equal(oldRow[2],old.answer);
  for(const key of['pages','teacherStudentPages'])for(let i=0;i<workbook[key].length;i++)assert.deepEqual(workbook[key][i].rail,ecologyReadablePriorWorkbook[key][i].rail);
  for(let i=0;i<workbook.questions.length;i++)for(const key of Object.keys(ecologyReadablePriorWorkbook.questions[i]).filter(k=>k.startsWith('source')||['key','responseContract'].includes(k)))assert.deepEqual(workbook.questions[i][key],ecologyReadablePriorWorkbook.questions[i][key]);
- const paper=await revisedTextbookPaper(unit);for(const mode of['teacher','answers','quick'])assert(paper.workbookPaper({mode}).includes(q.answer),mode);assert(!paper.workbookPaper({mode:'student'}).includes(q.answer));
+ const paper=await revisedTextbookPaper(unit),currentAnswer='㉠ 먹이그물 · ㉡ 생산자';for(const mode of['teacher','answers','quick'])assert(paper.workbookPaper({mode}).includes(currentAnswer),mode);assert(!paper.workbookPaper({mode:'student'}).includes(currentAnswer));
 });
 
 import{ecologyMaterialItems}from'../data/book/ecology-material-context.js';

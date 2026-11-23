@@ -1,3 +1,4 @@
+import {withEcologyFoodwebWorkbook} from './ecology-foodweb-review.js';
 import {beforeEcologyConservation} from './tests/ecology-writing-stage.mjs';
 import {withEcologyConservationWorkbook} from './ecology-conservation-review.js';
 import{buildSlides}from'./deck.js';
@@ -73,7 +74,7 @@ test('the workbook preserves all other questions, data and science standards, wi
  assert.deepEqual(ids([correction]),[unit+'-w037',unit+'-w038']);
  assert(!correction.blocks.some(b=>b.type==='diagram'&&b.key==='ecoWeb'));
  for(const patch of[{unit:'other'},{pages:priorBook.pages.slice(1)},{teacherPages:priorBook.teacherPages.slice(1)},{figures:{...priorBook.figures,future:'new'}},{questions:priorBook.questions.map((q,i)=>i?q:{...q,future:true})}]){const input={...priorBook,...patch};assert.equal(withEcologyWritingWorkbook(input),input);}
- const reviewed=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));assert.deepEqual(reviewed,withEcologyConservationWorkbook(next));
+ const reviewed=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));assert.deepEqual(reviewed,withEcologyFoodwebWorkbook(withEcologyConservationWorkbook(next)));
  const paper=await revisedTextbookPaper(unit),student=paper.workbookPaper({mode:'student'}),teacher=paper.workbookPaper({mode:'teacher'});
  for(const q of next.questions.filter(q=>q.guidedWriting)){
   const at=student.indexOf('data-question="'+q.id+'"'),end=student.indexOf('</li>',at),card=student.slice(at,end);

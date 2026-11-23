@@ -1,3 +1,5 @@
+import {beforeEcologyFoodweb} from './tests/ecology-writing-stage.mjs';
+import {withEcologyFoodwebWorkbook} from './ecology-foodweb-review.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -23,7 +25,7 @@ const unit=workbook.unit,entry=new URL('./v2.js',import.meta.url),code=fs.readFi
 const a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a);
 const loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,entry).href)}).runInContext(vm.createContext({withThink}));
 const raw=await loaders[unit](),current=await reviewStudentModule(unit,raw);
-const priorBank=ecologyWritingItems([...reviewQuestionRows(raw.similar,review),...reviewQuestionRows(raw.items,review)],unit),bank=[...current.similar,...current.items];
+const priorBank=ecologyWritingItems([...reviewQuestionRows(raw.similar,review),...reviewQuestionRows(raw.items,review)],unit),bank=[...current.similar,...current.items].map(beforeEcologyFoodweb);
 const base=reviewWorkbookTableText(reviewTextTree(withObservedPhotoAlt(withElementaryReadingDirections(workbook)),review.text),review);
 const priorBook=withEcologyWritingWorkbook(withEcologyGuidedWorkbook(base));
 const priorSnapshot=JSON.parse(JSON.stringify(priorBook));
@@ -72,7 +74,7 @@ test('fourteen tasks replace repetitive record audits while preserving standards
  for(const row of revised.quickPages.flatMap(p=>p.blocks.flatMap(b=>b.rows||[]))){const q=revised.questions[Number(row[0])-1];if(!changedNos.includes(q.no))continue;assert(row[1].endsWith(q.topic));assert.equal(row[2],['written','draw'].includes(q.form)?'교사 확인(해설 쪽)':q.form==='choice'?'①②③④⑤'[q.key]:q.answer);}
  assert.equal(withEcologyConservationWorkbook(revised),revised);
  for(const patch of [{unit:'other'},{future:true},{pages:priorBook.pages.slice(1)},{figures:{...priorBook.figures,new:'future'}},{quickPages:[]},{teacherPages:[]}]){const input={...priorBook,...patch};assert.equal(withEcologyConservationWorkbook(input),input);}
- assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),revised);
+ assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withEcologyFoodwebWorkbook(revised));
 });
 
 test('current web, classroom, print solutions and quick answers share the conservation revision without revealing student answers',async()=>{
