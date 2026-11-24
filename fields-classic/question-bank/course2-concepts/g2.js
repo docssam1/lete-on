@@ -1,6 +1,10 @@
 // 2과정 G2 「도형분할과 넓이」 개념 꾸러미(DESIGN-COURSE2.md 4절) — 차시마다 되짚기 → 해 보기 → 따져 보기 → 정리 → 예제 → 개념 확인.
 // 열쇠 「단원 번호(0부터)/차시(1부터)」. 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, grid, dots, clock, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261123b";
+import { dimOut } from "../length-dim.js?v=20261124a";
+// 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
+// beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
+const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const mid = (a, b) => P((a.x + b.x) / 2, (a.y + b.y) / 2);
@@ -12,7 +16,7 @@ const cellPt = (o, k) => (x, y) => P(o.x + x * k, o.y + y * k);
 // 계단 분할(교재 활동 「도형의 분할」과 같은 모양): 가로 16칸·세로 9칸 직사각형을 계단 모양으로 잘라 → 오른쪽 조각을 한 계단 옮겨 12×12 정사각형.
 // 조각마다 색을 달리하고 자른 선은 빨강, 장면 사이 회색 화살표. ask면 정사각형의 한 변을 「?」로 둔다(예제 답을 그림에 보이지 않음).
 const figStair = (ask = false) => () => {
-  const k = 12, o1 = P(16, 44), o2 = P(300, 16);
+  const k = 12, o1 = P(30, 44), o2 = P(300, 16);
   const q = cellPt(o1, k), s = cellPt(o2, k);
   const A = [[0, 0], [12, 0], [12, 3], [8, 3], [8, 6], [4, 6], [4, 9], [0, 9]];
   const B = [[12, 0], [16, 0], [16, 9], [4, 9], [4, 6], [8, 6], [8, 3], [12, 3]];
@@ -23,14 +27,14 @@ const figStair = (ask = false) => () => {
   return svg(470, 214, pieceL(A, q, YELLOW) + pieceL(B, q, SOFT) + grid(o1, 16, 9, k, { color: "#b9c3bd", width: 0.7 }) + cut + rect(o1.x, o1.y, 16 * k, 9 * k, { width: 2.2 })
     + arrow(P(232, 98), P(282, 98))
     + pieceL(A, s, YELLOW) + pieceL(moved, s, SOFT) + grid(o2, 12, 12, k, { color: "#b9c3bd", width: 0.7 }) + rect(o2.x, o2.y, 12 * k, 12 * k, { width: 2.2 })
-    + label(o1.x + 8 * k, o1.y + 9 * k + 18, "가로 16칸 · 세로 9칸") + label(o2.x + 6 * k, o2.y + 12 * k + 18, ask ? "한 변 ?칸" : "한 변 12칸"), "계단 모양으로 잘라 붙여 정사각형 만들기");
+    + dim(q(0, 9), q(16, 9), q(8, 4.5), "16칸") + dim(q(0, 0), q(0, 9), q(8, 4.5), "9칸") + dim(s(0, 12), s(12, 12), s(6, 6), ask ? "?칸" : "12칸"), "계단 모양으로 잘라 붙여 정사각형 만들기");
 };
 const figRearrange = figStair(false), figRearrangeAsk = figStair(true);
 // 되짚기: 가로 3칸 · 세로 2칸 직사각형(넓이는 ?)
 const figRect32 = () => {
   const k = 40, o = P(40, 20);
   return svg(240, 150, rect(o.x, o.y, 3 * k, 2 * k, { fill: YELLOW }) + grid(o, 3, 2, k, { color: "#9aa39e", width: 0.9 }) + rect(o.x, o.y, 3 * k, 2 * k, { width: 2.2 })
-    + label(o.x + 1.5 * k, o.y + 2 * k + 16, "3cm") + label(o.x - 16, o.y + k, "2cm") + text(o.x + 3 * k + 30, o.y + k, "?㎠", { size: 15, color: MARK }), "가로 3cm, 세로 2cm인 직사각형");
+    + dim(P(o.x, o.y + 2 * k), P(o.x + 3 * k, o.y + 2 * k), P(o.x + 1.5 * k, o.y + k), "3cm") + dim(P(o.x, o.y), P(o.x, o.y + 2 * k), P(o.x + 1.5 * k, o.y + k), "2cm", { off: 18 }) + text(o.x + 3 * k + 30, o.y + k, "?㎠", { size: 15, color: MARK }), "가로 3cm, 세로 2cm인 직사각형");
 };
 const figTwoPieces = () => {
   const k = 30, o = P(40, 20), q = (x, y) => P(o.x + x * k, o.y + y * k);
@@ -63,7 +67,7 @@ const tiltPanel = (o, k, stage, { labels = false } = {}) => {
   if (stage === 1 || stage === 2) body += TILT_RECTS.map((r, i) => poly(pts(r), { fill: i % 2 ? SOFT : "#fff", width: 1.8 })).join("");
   if (stage === 2) body += poly(pts(TILT_SQ), { color: MARK, width: 2.8 });
   if (stage === 3) body += TILT_TRI.map((t) => poly(pts(t), { fill: YELLOW, width: 1.6 })).join("") + poly(pts([[2, 2], [3, 2], [3, 3], [2, 3]]), { fill: PINK, width: 1.6 }) + poly(pts(TILT_SQ), { color: MARK, width: 2.8 });
-  if (labels) body += label(o.x + 1.5 * k, o.y - 10, "3칸") + label(o.x - 14, o.y + k, "2칸");
+  if (labels) body += dim(q(0, 0), q(3, 0), q(1.5, 1), "3칸") + dim(q(0, 0), q(0, 2), q(1.5, 1), "2칸", { off: 16 });
   return body;
 };
 const figTiltedSteps = () => {
@@ -123,7 +127,7 @@ const figChain = () => {
   [20, 10, 5].forEach((d, i) => { body += circle(P(x + (d * s) / 2, c0.y), (d * s) / 2, { fill: i === 2 ? YELLOW : SOFT }); x += d * s; });
   return svg(285, 260, body + line(P(20, c0.y), P(20 + 35 * s, c0.y), { color: GREEN, dash: "5 4", width: 1.2 }), "큰 원의 지름 위에 나란히 놓인 원");
 };
-const figSticks = () => svg(320, 160, rect(20, 30, 4 * 20, 14, { fill: YELLOW }) + label(60, 18, "4cm") + rect(20, 80, 9 * 20, 14, { fill: SOFT }) + label(110, 68, "9cm")
+const figSticks = () => svg(320, 160, rect(20, 30, 4 * 20, 14, { fill: YELLOW }) + dim(P(20, 30), P(100, 30), P(60, 44), "4cm") + rect(20, 80, 9 * 20, 14, { fill: SOFT }) + dim(P(20, 80), P(200, 80), P(110, 94), "9cm")
   + rect(20, 125, 5 * 20, 6, { fill: MARK, color: MARK }) + label(140, 128, "5cm보다 길고") + rect(20, 140, 13 * 20, 6, { fill: GREEN, color: GREEN }) + label(300, 148, "13cm보다 짧게", { anchor: "end" }), "두 막대와 세 번째 막대의 범위");
 // 되짚기: 짧은 두 막대(2cm, 5cm)를 긴 막대(9cm) 양 끝에 세워 기울여도 끝이 서로 닿지 않는다 — 교재처럼 막대 그림으로
 const figSticksFail = () => {
@@ -131,8 +135,11 @@ const figSticksFail = () => {
   const stick = (a, b, fill) => { const d = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI, len = Math.hypot(b.x - a.x, b.y - a.y);
     return `<g transform="rotate(${d.toFixed(1)} ${a.x} ${a.y})">${rect(a.x, a.y - 6, len, 12, { fill, width: 1.6, rx: 5 })}</g>`; };
   const L = P(x0, y), R = P(x0 + 9 * u, y);
+  const edge = (a, b, away) => { const n = dirOf(a, b) + 90, s = Math.sign(Math.cos((n - dirOf(a, away)) * Math.PI / 180)) || 1, d = -7 * s;   // 막대 안쪽(away)의 반대쪽 가장자리
+    return [at(a, d, n), at(b, d, n)]; };
+  const stickDim = (a, b, away, t) => { const [p, q] = edge(a, b, away); return dim(p, q, away, t); };
   return svg(280, 170, rect(x0, y, 9 * u, 12, { fill: PINK, width: 1.6, rx: 5 }) + stick(L, at(L, 2 * u, 35), YELLOW) + stick(R, at(R, 5 * u, 150), SOFT)
-    + label(x0 + 4.5 * u, y + 32, "9cm") + label(at(L, 2 * u, 35).x - 6, at(L, 2 * u, 35).y - 16, "2cm") + label(at(R, 5 * u, 150).x + 30, at(R, 5 * u, 150).y - 18, "5cm")
+    + dim(P(x0, y + 12), P(x0 + 9 * u, y + 12), P(x0 + 4.5 * u, y), "9cm") + stickDim(L, at(L, 2 * u, 35), P(x0 + 4.5 * u, y), "2cm") + stickDim(R, at(R, 5 * u, 150), P(x0 + 4.5 * u, y), "5cm")
     + text(x0 + 2.9 * u, y - 44, "?", { size: 18, color: MARK }), "2cm, 5cm, 9cm 막대로 삼각형 만들기");
 };
 // 되짚기: 두 막대의 길이 비교(띠) — 짧은 막대 3개 = 긴 막대 2개
@@ -148,7 +155,9 @@ const figCut = () => {
   const pt = (p, q, t) => P(p.x + (q.x - p.x) * t, p.y + (q.y - p.y) * t);
   const cut = [5, 7, 9].map((v) => v / 36);
   const shape = [pt(A, B, cut[0]), pt(B, A, cut[1]), pt(B, C, cut[1]), pt(C, B, cut[2]), pt(C, A, cut[2]), pt(A, C, cut[0])];
-  return svg(260, 220, poly([A, B, C], { color: "#9aa39e", width: 1.4 }) + poly(shape, { fill: YELLOW, width: 2.4 }) + label(A.x, A.y + 13, "5", { color: MARK, size: 12 }) + label(B.x - 24, B.y - 10, "7", { color: MARK }) + label(C.x + 28, C.y - 12, "9", { color: MARK }), "귀퉁이를 잘라 낸 정삼각형");
+  const G = P((A.x + B.x + C.x) / 3, (A.y + B.y + C.y) / 3), short = { color: MARK, off: 9, beside: true };
+  return svg(260, 225, poly([A, B, C], { color: "#9aa39e", width: 1.4 }) + poly(shape, { fill: YELLOW, width: 2.4 })
+    + dim(A, pt(A, B, cut[0]), G, "5", short) + dim(pt(B, C, cut[1]), B, G, "7", short) + dim(C, pt(C, B, cut[2]), G, "9", short), "귀퉁이를 잘라 낸 정삼각형");
 };
 const figWalk = () => {
   const p = [P(30, 170)]; let d = 0;

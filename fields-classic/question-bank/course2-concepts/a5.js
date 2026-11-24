@@ -2,6 +2,10 @@
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 // 글 속 분수·거듭제곱은 「3/5」「2^3」으로 쓰면 화면·인쇄에서 수식으로 바뀐다(course2-pack.js · course2-pack-print.js의 mathText).
 import { svg, text, rect, circle, line, arrow, dot, at, P, INK, GREEN, SOFT, MARK, YELLOW, formulas, mathLabel, SHADOW } from "./pack-kit.js?v=20261123b";
+import { dimOut } from "../length-dim.js?v=20261124a";
+// 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
+// beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
+const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });
 
 const label = (x, y, t, o = {}) => mathLabel(x, y, t, { size: 13, color: "#56627f", ...o });
 const board = (lines) => () => formulas(lines);
@@ -50,8 +54,7 @@ const figPond = (fa = "1/3", fb = "1/5") => () => {
     + `<path d="M 16 ${top} q 11 -5 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 22 0 t 24 0" fill="none" stroke="#7fa7c9" stroke-width="1.6"/>`
     + rect(10, bottom, 280, 10, { fill: "#e8e2d2", color: "#9a8f74", width: 1.2, rx: 2 });
   body += stick(112, 26, "짧은 막대", `${fa} 잠김`) + stick(212, 6, "긴 막대", `${fb} 잠김`);
-  body += line(P(34, top + 4), P(34, bottom - 4), { color: "#2f5f8a", width: 1.4 }) + `<path d="M 30 ${top + 10} L 34 ${top + 3} L 38 ${top + 10} M 30 ${bottom - 10} L 34 ${bottom - 3} L 38 ${bottom - 10}" fill="none" stroke="#2f5f8a" stroke-width="1.4"/>`
-    + text(44, (top + bottom) / 2, "깊이 ?", { size: 13, weight: 700, color: "#2f5f8a", anchor: "start" });
+  body += dim(P(30, top), P(30, bottom), P(0, (top + bottom) / 2), "깊이 ?", { color: "#2f5f8a", beside: true });
   return svg(300, 188, `<g transform="translate(0,20)">${body}</g>`, "연못과 두 막대");
 };
 

@@ -3,6 +3,10 @@
 // 그림 꼴은 교재(N30) 활동 쪽과 대조해 맞췄다(2026-11-23): 원 위 같은 간격 점으로 그린 별 · 합동 조건 세 짝 · 같은 각 표시(•, ×) ·
 // 꼭짓점/밑변 옮기기 · 비를 두 번 쓰는 보조선 · 둔각삼각형의 높이(연장선) · 두 높이로 밑변의 비 · 넓이 구하는 세 가지 길 · 닮음의 중심 · 피라미드/모래시계 닮음.
 import { svg, text, line, poly, rect, dot, at, P, angleMark, dirOf, tick, regular, circle, sector, INK, GREEN, SOFT, MARK, YELLOW } from "./pack-kit.js?v=20261123b";
+import { dimOut } from "../length-dim.js?v=20261124a";
+// 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
+// beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
+const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const nm = (p, t, dx = 0, dy = 0) => text(p.x + dx, p.y + dy, t, { size: 14, weight: 700 });
@@ -127,7 +131,7 @@ const figTwice = () => {
 
 // ── 2단원: 높이와 넓이 · 두 높이로 밑변의 비 · 식으로 넓이(교재 활동 1~3) ──
 const figSimpleHeight = () => svg(300, 190, poly([P(110, 30), P(30, 160), P(260, 160)], { fill: SOFT }) + line(P(110, 30), P(110, 160), { color: GREEN, dash: "5 4", width: 1.8 }) + right(P(110, 160), 0, 90)
-  + label(145, 178, "밑변 8cm") + label(116, 96, "높이 ?", { anchor: "start", color: GREEN }), "삼각형의 밑변과 높이");
+  + dim(P(30, 160), P(260, 160), P(110, 30), "밑변 8cm") + dim(P(110, 30), P(110, 160), P(30, 95), "높이 ?", { color: GREEN, beside: true }), "삼각형의 밑변과 높이");
 // 둔각삼각형: 밑변 12, 높이 8, 다른 변 16(수에 맞춰 그림), 높이 하나는 밑변의 연장선 위에 떨어진다
 const figHeights = () => {
   const s = 14, o = P(30, 170), u = (x, y) => P(o.x + x * s, o.y - y * s);
@@ -135,7 +139,7 @@ const figHeights = () => {
   const t = (12 * ax) / 256, F = u(t * ax, t * 8);
   return svg(300, 200, line(C, H, { color: GRAY, dash: "4 4", width: 1.4 }) + poly([A, B, C], { fill: SOFT }) + line(A, H, { color: GREEN, dash: "5 4", width: 1.8 }) + line(C, F, { color: BROWN, dash: "5 4", width: 1.8 })
     + right(H, 90, 180) + right(F, dirOf(F, C), dirOf(F, A))
-    + label(mid(B, C).x, 186, "12cm") + label(A.x + 8, (A.y + H.y) / 2, "8cm", { anchor: "start", color: GREEN }) + label(mid(A, B).x - 22, mid(A, B).y - 10, "16cm") + label(mid(C, F).x + 12, mid(C, F).y + 6, "?", { color: MARK, size: 15 }), "둔각삼각형의 두 높이");
+    + dim(B, C, A, "12cm") + dim(A, H, B, "8cm", { color: GREEN, off: 16 }) + dim(A, B, C, "16cm") + dim(C, F, B, "?", { color: MARK, size: 15 }), "둔각삼각형의 두 높이");
 };
 const figTwoHeights = (hA = "8cm", hB = "12cm") => {
   const B = P(30, 180), C = P(290, 180), A = P(200, 40), H = P(200, 180);
@@ -144,10 +148,10 @@ const figTwoHeights = (hA = "8cm", hB = "12cm") => {
   return svg(320, 210, poly([A, B, C], { fill: SOFT }) + line(A, H, { color: GREEN, dash: "5 4", width: 1.8 }) + line(B, F, { color: BROWN, dash: "5 4", width: 1.8 })
     + right(H, 90, 180) + right(F, dirOf(F, A), dirOf(F, B))
     + text(mid(B, C).x, 198, "변 가", { size: 13, weight: 700 }) + text(mid(A, C).x + 26, mid(A, C).y + 6, "변 나", { size: 13, weight: 700 })
-    + label(A.x - 6, 152, hA, { anchor: "end", color: GREEN }) + label(at(mid(B, F), 16, dirOf(B, F) + 90).x, at(mid(B, F), 16, dirOf(B, F) + 90).y, hB, { color: BROWN }), "두 변과 두 높이");
+    + dim(A, H, C, hA, { color: GREEN, off: 16 }) + dim(B, F, A, hB, { color: BROWN, off: 14 }), "두 변과 두 높이");
 };
 const figTrapEq = () => svg(320, 180, poly([P(90, 30), P(190, 30), P(270, 140), P(30, 140)], { fill: YELLOW }) + line(P(190, 30), P(190, 140), { color: GREEN, dash: "5 4" }) + right(P(190, 140), 90, 180)
-  + label(140, 16, "윗변 □cm") + label(150, 158, "아랫변 13cm") + label(184, 92, "높이 8cm", { anchor: "end", color: GREEN }), "사다리꼴");
+  + dim(P(90, 30), P(190, 30), P(150, 85), "윗변 □cm") + dim(P(30, 140), P(270, 140), P(150, 85), "아랫변 13cm") + dim(P(190, 30), P(190, 140), P(270, 85), "높이 8cm", { color: GREEN, beside: true }), "사다리꼴");
 const figTrapSplit = () => {
   const A = P(90, 30), D = P(190, 30), C = P(270, 140), B = P(30, 140);
   return svg(320, 175, poly([A, B, C], { fill: SOFT }) + poly([A, C, D], { fill: YELLOW }) + line(A, C, { color: GREEN, dash: "6 4", width: 1.6 })
@@ -162,7 +166,7 @@ const figAreaWays = () => {
 };
 
 // ── 3단원: 닮음의 중심 · 피라미드/모래시계 닮음(교재 활동 1·2) ──
-const figSimilar = () => svg(340, 170, poly([P(20, 150), P(110, 150), P(40, 90)], { fill: SOFT }) + poly([P(140, 150), P(320, 150), P(180, 30)], { fill: YELLOW }) + label(65, 165, "4cm") + label(230, 165, "8cm"), "닮은 두 삼각형");
+const figSimilar = () => svg(340, 170, poly([P(20, 150), P(110, 150), P(40, 90)], { fill: SOFT }) + poly([P(140, 150), P(320, 150), P(180, 30)], { fill: YELLOW }) + dim(P(20, 150), P(110, 150), P(40, 90), "4cm", { off: 10 }) + dim(P(140, 150), P(320, 150), P(180, 30), "8cm", { off: 10 }), "닮은 두 삼각형");
 const figCenter = () => {
   const O = P(14, 110), A = P(50, 80), B = P(44, 135), C = P(76, 118), k = 2.5;
   const far = (p) => P(O.x + (p.x - O.x) * k, O.y + (p.y - O.y) * k), D = far(A), E = far(B), F = far(C);
@@ -191,7 +195,7 @@ const figPyramidEx = () => {
   const A = P(130, 20), B = P(30, 190), C = P(300, 190), D = lerp(A, B, 0.6), E = lerp(A, C, 0.6);
   return svg(330, 215, poly([A, B, C], { fill: "#fff" }) + poly([A, D, E], { fill: YELLOW }) + line(D, E) + par(D, E) + par(B, C)
     + nm(A, "ㄱ", 0, -12) + nm(B, "ㄴ", -12, 4) + nm(C, "ㄷ", 12, 4) + nm(D, "ㄹ", -14, 0) + nm(E, "ㅁ", 14, 0)
-    + label(mid(A, D).x - 20, mid(A, D).y, "6cm") + label(mid(D, B).x - 20, mid(D, B).y, "4cm") + label(mid(D, E).x, D.y - 10, "9cm") + label(mid(B, C).x, 205, "?", { color: MARK, size: 15 }), "밑변과 평행한 선을 그은 삼각형");
+    + dim(A, D, C, "6cm") + dim(D, B, C, "4cm") + dim(D, E, B, "9cm", { off: 10 }) + dim(B, C, A, "?", { color: MARK, size: 15, off: 10 }), "밑변과 평행한 선을 그은 삼각형");
 };
 
 export const PACKS = {

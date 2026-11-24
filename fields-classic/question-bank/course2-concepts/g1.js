@@ -5,6 +5,10 @@
 // 예제는 창작 문제다(교재 문항을 옮기지 않는다). 단계 답은 그림을 만든 수에서 직접 계산해 적었다.
 import { foldWordStrip, foldStageSvg, foldCreaseSvg } from "../fold-visuals.js?v=20261123a";
 import { svg, text, line, poly, rect, circle, dot, at, P, arrow, sector, angleMark, dirOf, tick, regular, grid, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261123b";
+import { dimOut } from "../length-dim.js?v=20261124a";
+// 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
+// beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
+const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });
 
 // ── 3단원 360도와 정다각형 · 1차시 그림 ──
 const C = P(150, 140);
@@ -322,7 +326,7 @@ const figCircleParts = () => {
 const figCircleRadius = () => {
   const r = 46, c = [P(80, 70), P(172, 70), P(172, 162), P(80, 162)];
   return svg(260, 230, c.map((p) => circle(p, r, { fill: "#fff" })).join("") + poly(c, { color: MARK, width: 2.6 }) + c.map((p) => dot(p, 4)).join("")
-    + label(126, 58, "3 + 3", { color: MARK }), "반지름 3cm 원 네 개를 맞닿게 놓은 그림");
+    + dim(c[0], c[1], P(126, 116), "3 + 3", { color: MARK }), "반지름 3cm 원 네 개를 맞닿게 놓은 그림");
 };
 const figMidpoint = () => {
   const c = P(150, 125), R = 100;

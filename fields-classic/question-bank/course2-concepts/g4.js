@@ -2,6 +2,10 @@
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 import { foldStageSvg, foldArrowSvg, foldStepArrowSvg, foldCaptionSvg, foldWidthStyle, FOLD_CAPTION_SPACE } from "../fold-visuals.js?v=20261123a";
 import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, tick, regular, INK, GREEN, SOFT, MARK, BLUE, YELLOW } from "./pack-kit.js?v=20261123b";
+import { dimOut } from "../length-dim.js?v=20261124a";
+// 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
+// beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
+const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const nm = (p, t, dx = 0, dy = 0) => text(p.x + dx, p.y + dy, t, { size: 14, weight: 700 });
@@ -84,7 +88,7 @@ const figSetSource = () => {
 const figSideAngle = () => {
   const k = 17, A = P(30, 160), B = P(30 + 9 * k, 160), C = at(A, 12 * k, 30), H = P(C.x, 160);
   return svg(270, 190, poly([A, B, C], { fill: YELLOW }) + line(B, H, { color: "#9aa39e", dash: "4 4", width: 1.4 }) + line(C, H, { color: GREEN, dash: "5 4" }) + rightMark(H, 90, 8, GREEN)
-    + angleMark(A, 0, 30, 34, "30°", { color: INK, size: 13 }) + label((A.x + B.x) / 2, 176, "9cm") + label((A.x + C.x) / 2 - 8, (A.y + C.y) / 2 - 12, "12cm", { anchor: "end" }) + label(C.x + 8, (C.y + 160) / 2, "?", { anchor: "start", color: MARK, size: 15 }),
+    + angleMark(A, 0, 30, 34, "30°", { color: INK, size: 13 }) + dim(A, B, C, "9cm") + dim(A, C, B, "12cm") + dim(C, H, B, "?", { color: MARK, size: 15 }),
   "두 변이 12cm·9cm이고 끼인각이 30°인 삼각형과 그 높이");
 };
 // 1/1 접은 종이 띠: 띠의 오른쪽 끝을 비스듬한 선을 따라 아래로 접는다. 점선 = 접기 전 자리(교재 방법: 접힌 선을 대칭축으로 되살린다)
@@ -137,24 +141,26 @@ const figQuad = ({ v, h, vl, hl, cross = 0.5 }) => () => {
   const cx = 130, y0 = 20, yc = y0 + cross * v, T = P(cx, y0), B = P(cx, y0 + v), Lp = P(cx - h / 2, yc), Rp = P(cx + h / 2, yc);
   return svg(260, v + 44, rect(cx - h / 2, y0, h, v, { color: "#9aa39e", width: 1.4, dash: "5 4" }) + poly([T, Rp, B, Lp], { fill: YELLOW })
     + line(T, B, { color: GREEN, dash: "5 4" }) + line(Lp, Rp, { color: GREEN, dash: "5 4" }) + rightMark(P(cx, yc), 0, 8, GREEN)
-    + label(cx + h / 2 + 8, y0 + v / 2, vl, { anchor: "start" }) + label(cx, y0 + v + 14, hl), "대각선이 수직인 사각형과 둘러싼 직사각형");
+    + dim(P(cx + h / 2, y0), P(cx + h / 2, y0 + v), P(cx, yc), vl, { off: 18 }) + dim(P(cx - h / 2, y0 + v), P(cx + h / 2, y0 + v), P(cx, yc), hl), "대각선이 수직인 사각형과 둘러싼 직사각형");
 };
 // 2/2 평행사변형: 밑변과 높이가 두 쌍(밑변 15 · 높이 8 · 다른 변 12)
 const figParaHeights = (mode) => () => {
   const k = 12, th = Math.asin(8 / 12) * 180 / Math.PI, A = P(30, 140), B = P(30 + 15 * k, 140), D = at(A, 12 * k, th), C = at(B, 12 * k, th), H = P(D.x, 140), F = foot(D, B, C);
   const t = mode === "example" ? ["15cm", "8cm", "12cm", "?"] : ["밑변", "높이", "다른 밑변", "다른 높이"];
   return svg(350, 170, poly([A, B, C, D], { fill: YELLOW }) + line(D, H, { color: GREEN, dash: "5 4" }) + rightMark(H, 0, 8, GREEN) + line(D, F, { color: BLUE, dash: "5 4" }) + rightMark(F, th, 8, BLUE)
-    + label((A.x + B.x) / 2, 157, t[0]) + label(D.x - 6, 100, t[1], { anchor: "end", color: GREEN }) + label((B.x + C.x) / 2 + 10, (B.y + C.y) / 2 + 8, t[2], { anchor: "start" })
-    + label((D.x + F.x) / 2 + 2, (D.y + F.y) / 2 - 12, t[3], { color: mode === "example" ? MARK : BLUE, anchor: "start" }), "밑변과 높이가 두 쌍인 평행사변형");
+    + (mode === "example"   // 예제: 길이는 곡선 점선 · 정리: 이름만(밑변·높이)
+      ? dim(A, B, D, t[0]) + dim(D, H, B, t[1], { color: GREEN, off: 18 }) + dim(B, C, A, t[2]) + dim(D, F, A, t[3], { color: MARK })
+      : label((A.x + B.x) / 2, 157, t[0]) + label(D.x - 6, 100, t[1], { anchor: "end", color: GREEN }) + label((B.x + C.x) / 2 + 10, (B.y + C.y) / 2 + 8, t[2], { anchor: "start" })
+        + label((D.x + F.x) / 2 + 2, (D.y + F.y) / 2 - 12, t[3], { color: BLUE, anchor: "start" })), "밑변과 높이가 두 쌍인 평행사변형");
 };
 const figParaBase = () => {
   const A = P(30, 130), B = P(230, 130), D = P(90, 40), C = P(290, 40), H = P(90, 130);
   return svg(310, 160, poly([A, B, C, D], { fill: YELLOW }) + line(D, H, { color: GREEN, dash: "5 4" }) + rightMark(H, 0, 8, GREEN) + label(130, 147, "밑변") + label(96, 88, "높이", { anchor: "start", color: GREEN }), "평행사변형의 밑변과 높이");
 };
 const figSplitTri = () => svg(320, 180, poly([P(30, 150), P(290, 150), P(110, 30)], { fill: "#fff" }) + poly([P(110, 30), P(30, 150), P(150, 150)], { fill: YELLOW }) + line(P(110, 30), P(110, 150), { color: GREEN, dash: "5 4" }) + rightMark(P(110, 150), 0, 7, GREEN)
-  + label(90, 168, "6cm") + label(220, 168, "7cm") + label(104, 100, "높이", { anchor: "end", color: GREEN }), "높이가 같은 두 삼각형");
+  + dim(P(30, 150), P(150, 150), P(110, 30), "6cm") + dim(P(150, 150), P(290, 150), P(110, 30), "7cm") + label(104, 100, "높이", { anchor: "end", color: GREEN }), "높이가 같은 두 삼각형");
 const figTrapSplit = () => svg(320, 170, poly([P(90, 30), P(200, 30), P(280, 140), P(30, 140)], { fill: YELLOW }) + line(P(90, 30), P(280, 140), { color: GREEN, dash: "5 4" })
-  + label(145, 18, "윗변 6cm") + label(155, 158, "아랫변 14cm") + line(P(150, 30), P(150, 140), { color: "#9aa39e", dash: "3 3", width: 1.2 }) + label(156, 120, "높이 5cm", { anchor: "start" }), "대각선으로 나눈 사다리꼴");
+  + dim(P(90, 30), P(200, 30), P(155, 85), "윗변 6cm") + dim(P(30, 140), P(280, 140), P(155, 85), "아랫변 14cm") + line(P(150, 30), P(150, 140), { color: "#9aa39e", dash: "3 3", width: 1.2 }) + dim(P(150, 30), P(150, 140), P(280, 85), "높이 5cm", { beside: true }), "대각선으로 나눈 사다리꼴");
 const figParts = () => svg(280, 180, rect(30, 20, 220, 140, { fill: "#fff", width: 2.4 }) + line(P(120, 20), P(120, 160)) + line(P(30, 80), P(250, 80))
   + label(75, 50, "22cm") + label(185, 50, "28cm") + label(75, 120, "26cm") + label(185, 120, "?", { color: MARK }), "넷으로 나눈 직사각형");
 // 4단원 직각으로 꺾인 도형: 안쪽 변을 바깥으로 밀어 펴면 둘러싼 직사각형(교재처럼 화살표로)
@@ -165,7 +171,7 @@ const figStair = () => {
   const right = (x, y) => arrow(P(X(x) + 2, Y(y)), P(X(x) + 20, Y(y)), { color: MARK, width: 1.8 });
   return svg(280, 220, poly(pts, { fill: YELLOW, width: 2.4 }) + rect(o.x, o.y, 14 * k, 12 * k, { color: GREEN, width: 1.4, dash: "5 4" })
     + up(6.5, 4) + up(11.5, 8) + right(4, 2) + right(9, 6)
-    + label(o.x + 7 * k, o.y + 12 * k + 16, "14cm") + label(o.x - 8, o.y + 6 * k, "12cm", { anchor: "end" }), "계단 모양의 안쪽 변을 밀어 펴면 둘러싼 직사각형");
+    + dim(P(o.x, o.y + 12 * k), P(o.x + 14 * k, o.y + 12 * k), P(o.x + 7 * k, o.y + 6 * k), "14cm") + dim(P(o.x, o.y), P(o.x, o.y + 12 * k), P(o.x + 7 * k, o.y + 6 * k), "12cm", { off: 18 }), "계단 모양의 안쪽 변을 밀어 펴면 둘러싼 직사각형");
 };
 const figCongruent = () => {
   let body = "";

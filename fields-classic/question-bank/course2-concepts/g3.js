@@ -1,6 +1,10 @@
 // 2과정 G3 「정육면체와 각·넓이」 개념 꾸러미(DESIGN-COURSE2.md 4절). 열쇠 「단원 번호(0부터)/차시(1부터)」.
 // 예제는 새로 지은 문제라 단계 답을 이 파일에 둔다(교재 문항·답이 아니다).
 import { svg, text, line, poly, rect, circle, dot, at, P, arrow, angleMark, dirOf, regular, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW } from "./pack-kit.js?v=20261123b";
+import { dimOut } from "../length-dim.js?v=20261124a";
+// 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
+// beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
+const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });
 
 const label = (x, y, t, o = {}) => text(x, y, t, { size: 13, color: "#56627f", ...o });
 const C3 = (type) => [[type, "concept"], [type, "type"], [type, "advanced"]];
@@ -80,16 +84,16 @@ const figNoNumClock = () => svg(200, 200, clock(P(100, 100), 82, 3, 40, { labels
 const figRhombus = () => {
   const k = 20, x0 = 80, y0 = 20, w = 6 * k, h = 8 * k, cx = x0 + w / 2, cy = y0 + h / 2, p = [P(cx, y0), P(x0 + w, cy), P(cx, y0 + h), P(x0, cy)];
   return svg(280, 210, paper(x0 - 2 * k, y0, 10, 8, k) + rect(x0, y0, w, h, { color: "#9aa39e", width: 1.4, dash: "5 4" }) + poly(p, { fill: YELLOW }) + line(p[0], p[2], { color: GREEN, dash: "5 4" }) + line(p[1], p[3], { color: GREEN, dash: "5 4" })
-    + label(x0 + w + 8, cy, "8cm", { anchor: "start" }) + label(cx, y0 + h + 14, "6cm"), "마름모와 둘러싼 직사각형");
+    + dim(P(x0 + w, y0), P(x0 + w, y0 + h), P(cx, cy), "8cm", { off: 18 }) + dim(P(x0, y0 + h), P(x0 + w, y0 + h), P(cx, cy), "6cm"), "마름모와 둘러싼 직사각형");
 };
 // 평행사변형 → 높이 선을 따라 잘라 옮기면 직사각형(모눈, 한 칸 1cm)
 const figPara = () => {
   const k = 14, x = 14, y = 22, H = 5 * k;
   const left = poly([P(x + 2 * k, y), P(x + 11 * k, y), P(x + 9 * k, y + H), P(x, y + H)], { fill: YELLOW }) + poly([P(x, y + H), P(x + 2 * k, y + H), P(x + 2 * k, y)], { fill: "rgba(180,85,63,.18)", color: MARK, width: 1.4 })
-    + line(P(x + 2 * k, y), P(x + 2 * k, y + H), { color: GREEN, dash: "5 4" }) + label(x + 4.5 * k, y + H + 14, "밑변 9cm") + label(x + 2 * k + 5, y + H / 2, "높이 5cm", { anchor: "start", color: GREEN });
+    + line(P(x + 2 * k, y), P(x + 2 * k, y + H), { color: GREEN, dash: "5 4" }) + dim(P(x, y + H), P(x + 9 * k, y + H), P(x + 5 * k, y), "밑변 9cm") + dim(P(x + 2 * k, y), P(x + 2 * k, y + H), P(x, y + H / 2), "높이 5cm", { color: GREEN, beside: true });
   const ox = x + 11 * k + 50;
   const right = poly([P(ox, y), P(ox + 9 * k, y), P(ox + 9 * k, y + H), P(ox, y + H)], { fill: YELLOW }) + poly([P(ox + 7 * k, y), P(ox + 9 * k, y), P(ox + 9 * k, y + H)], { fill: "rgba(180,85,63,.18)", color: MARK, width: 1.4 })
-    + label(ox + 4.5 * k, y + H + 14, "9cm") + label(ox + 9 * k + 6, y + H / 2, "5cm", { anchor: "start" });
+    + dim(P(ox, y + H), P(ox + 9 * k, y + H), P(ox + 4.5 * k, y), "9cm") + dim(P(ox + 9 * k, y), P(ox + 9 * k, y + H), P(ox + 4.5 * k, y + H / 2), "5cm", { off: 16 });
   return svg(ox + 9 * k + 40, 120, paper(x, y, 11, 5, k) + paper(ox, y, 9, 5, k) + left + flow(x + 11 * k + 8, y + H / 2) + right, "평행사변형을 높이 선으로 잘라 옮기면 직사각형");
 };
 // 삼각형: 평행사변형을 대각선으로 자르면 똑같은 삼각형 둘(교재처럼 모눈 위에서 → 반)
@@ -106,7 +110,7 @@ const figTriPair = () => {
   return svg(400, 170, poly(t1, { fill: YELLOW }) + poly(t2, { fill: YELLOW }) + arrow(P(300, 90), P(330, 90)) + askBox(340, 64), "똑같은 삼각형 두 개를 돌려 붙이면?");
 };
 const figTri = () => svg(300, 180, poly([P(40, 140), P(250, 140), P(150, 30)], { fill: YELLOW }) + line(P(150, 30), P(150, 140), { color: GREEN, dash: "5 4" }) + rightMark(P(150, 140), 0)
-  + label(145, 160, "밑변 12cm") + label(144, 105, "높이 7cm", { anchor: "end", color: GREEN }), "삼각형");
+  + dim(P(40, 140), P(250, 140), P(150, 30), "밑변 12cm") + dim(P(150, 30), P(150, 140), P(250, 85), "7cm", { color: GREEN, beside: true }), "삼각형");
 // 사다리꼴: 평행한 두 변에 평행 표시, 똑같은 사다리꼴을 반 바퀴 돌려 붙이면 평행사변형
 const trapPts = (ox, oy) => [P(ox + 60, oy), P(ox + 160, oy), P(ox + 220, oy + 100), P(ox, oy + 100)];
 const figTrapAsk = () => {
@@ -121,7 +125,7 @@ const figTrapDouble = () => {
     + label(215, 166, "밑변이 윗변 + 아랫변인 평행사변형", { color: GREEN }), "똑같은 사다리꼴을 반 바퀴 돌려 붙인 평행사변형");
 };
 const figTrap = () => svg(320, 170, poly([P(90, 30), P(190, 30), P(260, 130), P(30, 130)], { fill: YELLOW }) + line(P(190, 30), P(190, 130), { color: GREEN, dash: "5 4" }) + rightMark(P(190, 130), 90)
-  + label(140, 18, "윗변 5cm") + label(145, 150, "아랫변 11cm") + label(184, 96, "높이 6cm", { anchor: "end", color: GREEN }), "사다리꼴");
+  + dim(P(90, 30), P(190, 30), P(145, 80), "윗변 5cm") + dim(P(30, 130), P(260, 130), P(145, 80), "아랫변 11cm") + dim(P(190, 30), P(190, 130), P(260, 80), "높이 6cm", { color: GREEN, beside: true }), "사다리꼴");
 
 export const PACKS = {
   "0/1": [{
