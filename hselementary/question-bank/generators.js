@@ -20570,9 +20570,9 @@
       }
       if (variant === 2) {
         const raw = choose([
-          [[[3, 5], [11, 4], [14, 3], [5, 6]], [[4, 7], [17, 6], [13, 4], [7, 10]]],
-          [[[7, 12], [31, 8], [29, 6], [11, 15]], [[9, 14], [43, 10], [37, 8], [13, 18]]],
-          [[[17, 24], [91, 16], [83, 15], [29, 36]], [[19, 28], [121, 18], [109, 20], [31, 42]]]
+          [[[3, 5], [11, 4], [14, 3], [5, 6]], [[4, 7], [17, 6], [13, 4], [7, 10]], [[5, 8], [13, 6], [11, 4], [3, 10]]],
+          [[[7, 12], [31, 8], [29, 6], [11, 15]], [[9, 14], [43, 10], [37, 8], [13, 18]], [[11, 16], [29, 10], [41, 12], [7, 9]]],
+          [[[17, 24], [91, 16], [83, 15], [29, 36]], [[19, 28], [121, 18], [109, 20], [31, 42]], [[23, 30], [107, 20], [97, 18], [37, 48]]]
         ]);
         const values = raw.map(([numerator, denominator]) => rationalValue(numerator, denominator));
         const total = addAll(values);
@@ -20580,9 +20580,9 @@
       }
       if (variant === 3) {
         const [firstDenominator, secondDenominator, firstA, firstB, secondA, secondB, firstWhole, secondWhole] = choose([
-          [[11, 13, 5, 7, 5, 8, 2, 3], [9, 14, 4, 5, 7, 9, 3, 4]],
-          [[17, 19, 7, 11, 9, 13, 5, 7], [21, 25, 8, 13, 11, 17, 6, 9]],
-          [[29, 31, 13, 19, 17, 23, 12, 15], [35, 41, 16, 27, 21, 32, 18, 24]]
+          [[11, 13, 5, 7, 5, 8, 2, 3], [9, 14, 4, 5, 7, 9, 3, 4], [13, 15, 6, 9, 4, 7, 2, 5]],
+          [[17, 19, 7, 11, 9, 13, 5, 7], [21, 25, 8, 13, 11, 17, 6, 9], [23, 27, 9, 14, 10, 16, 4, 8]],
+          [[29, 31, 13, 19, 17, 23, 12, 15], [35, 41, 16, 27, 21, 32, 18, 24], [37, 43, 15, 22, 19, 29, 14, 21]]
         ]);
         const values = [
           rationalValue(firstA, firstDenominator), rationalValue(firstWhole * secondDenominator + secondA, secondDenominator),
@@ -20666,9 +20666,9 @@
       }
       if (variant === 10) {
         const raw = choose([
-          [[[3, 5], [2, 9], [5, 12]], [[5, 8], [3, 10], [7, 15]]],
-          [[[7, 12], [5, 18], [11, 20]], [[9, 14], [8, 21], [13, 24]]],
-          [[[17, 28], [13, 36], [19, 45]], [[23, 40], [29, 54], [31, 60]]]
+          [[[3, 5], [2, 9], [5, 12]], [[5, 8], [3, 10], [7, 15]], [[4, 7], [1, 6], [3, 8]]],
+          [[[7, 12], [5, 18], [11, 20]], [[9, 14], [8, 21], [13, 24]], [[5, 12], [7, 16], [9, 20]]],
+          [[[17, 28], [13, 36], [19, 45]], [[23, 40], [29, 54], [31, 60]], [[29, 36], [17, 42], [25, 56]]]
         ]);
         const values = raw.map(([numerator, denominator]) => rationalValue(numerator, denominator));
         const total = addAll(values);
@@ -20703,20 +20703,32 @@
         return result(`${mixedFractionMarkup(firstWhole * firstDenominator + firstNumerator, firstDenominator)} + ${symbolicMixed} &lt; □ &lt; ${upper}에서 □에 들어갈 수 있는 자연수가 ${count}개일 때, 둘째 대분수의 자연수 부분 ㉠을 구하세요.${tag("mixed-sum-natural-count", [firstWhole, firstNumerator, firstDenominator, secondNumerator, secondDenominator, upper, count, answerWhole])}`, answerWhole, `㉠=${answerWhole}일 때 왼쪽 두 대분수의 합은 ${markup(lowerAtAnswer)}입니다. 이 수보다 크고 ${upper}보다 작은 자연수는 ${firstNatural}부터 ${upper - 1}까지 ${count}개이며, ㉠은 ${answerWhole} 하나입니다.`);
       }
       if (variant === 13) {
+        // 2026-11-24: 원문(합이 가장 작을 때)과 같은 조건으로 "합이 가장 클 때", "차가 가장 클 때"를 더해 서로 다른 문항 3개를 만든다.
+        // 답은 2, 3, 5, 7을 네 자리에 놓는 모든 경우(두 수 모두 진분수)를 직접 계산해 고른다.
         const primes = [2, 3, 5, 7];
-        const candidates = [];
+        const mode = level === 1 ? pick(rng, ["min-sum", "min-sum", "max-sum", "max-difference"]) : pick(rng, ["min-sum", "max-sum", "max-difference"]);
+        const cases = [];
         const visit = (picked, rest) => {
           if (!rest.length) {
             if (picked[0] >= picked[1] || picked[2] >= picked[3]) return;
-            candidates.push(rationalOperation(rationalValue(picked[0], picked[1]), rationalValue(picked[2], picked[3]), "+"));
+            const left = rationalValue(picked[0], picked[1]), right = rationalValue(picked[2], picked[3]);
+            const bigger = left.numerator * right.denominator >= right.numerator * left.denominator;
+            cases.push({ picked, sum: rationalOperation(left, right, "+"), difference: bigger ? rationalOperation(left, right, "-") : rationalOperation(right, left, "-") });
             return;
           }
           rest.forEach((value, index) => visit([...picked, value], [...rest.slice(0, index), ...rest.slice(index + 1)]));
         };
         visit([], primes);
-        candidates.sort((left, right) => left.numerator * right.denominator - right.numerator * left.denominator);
-        const answer = candidates[0];
-        return result(`㉠, ㉡, ㉢, ㉣은 서로 다른 한 자리 수이고, 각 수의 약수는 2개입니다. 두 진분수 ${symbolicFractionMarkup("㉠", "㉡")}과 ${symbolicFractionMarkup("㉢", "㉣")}의 합이 가장 작을 때 그 값을 구하세요.${tag("four-prime-digit-min-sum", primes, "minimum")}`, display(answer), `조건을 만족하는 네 수는 2, 3, 5, 7입니다. 가능한 배치를 모두 확인하면 가장 작은 합은 ${fractionMarkup(2, 5)}+${fractionMarkup(3, 7)}=${markup(answer)}입니다.`);
+        const compare = (left, right) => left.numerator * right.denominator - right.numerator * left.denominator;
+        const key = mode === "max-difference" ? "difference" : "sum";
+        cases.sort((left, right) => compare(left[key], right[key]));
+        const best = mode === "min-sum" ? cases[0] : cases[cases.length - 1];
+        const answer = best[key];
+        const ask = mode === "min-sum" ? "합이 가장 작을 때 그 값을" : mode === "max-sum" ? "합이 가장 클 때 그 값을" : "차가 가장 클 때 그 차를";
+        const [a, b, c, d] = best.picked;
+        const shown = mode === "max-difference" && compare(rationalValue(a, b), rationalValue(c, d)) < 0 ? [c, d, a, b] : [a, b, c, d];
+        const sign = mode === "max-difference" ? "-" : "+";
+        return result(`㉠, ㉡, ㉢, ㉣은 서로 다른 한 자리 수이고, 각 수의 약수는 2개입니다. 두 진분수 ${symbolicFractionMarkup("㉠", "㉡")}과 ${symbolicFractionMarkup("㉢", "㉣")}의 ${ask} 구하세요.${tag(mode === "min-sum" ? "four-prime-digit-min-sum" : `four-prime-digit-${mode}`, primes, mode === "min-sum" ? "minimum" : "maximum")}`, display(answer), `조건을 만족하는 네 수는 2, 3, 5, 7입니다. 가능한 배치를 모두 확인하면 ${mode === "max-difference" ? "가장 큰 차" : mode === "max-sum" ? "가장 큰 합" : "가장 작은 합"}은 ${fractionMarkup(shown[0], shown[1])}${sign}${fractionMarkup(shown[2], shown[3])}=${markup(answer)}입니다.`);
       }
       if (variant === 14) {
         const [numerator, firstDenominator, secondDenominator, thirdDenominator] = choose([
@@ -21008,8 +21020,9 @@
         const base = [
           value(3, 4), value(37, 12), null, value(1), value(13, 4), null, null, value(9, 4)
         ];
-        const scale = choose([[1], [2, 3], [2, 3, 4]]);
-        const offset = choose([[0], [0, 1], [0, 1, 2]]);
+        // 2026-11-24: 쉬움도 원문 수치(배율 1·더하기 0) 외에 같은 구조의 변형이 나오도록 넓힌다(3문항 요청 시 3문항).
+        const scale = choose([[1, 2], [2, 3], [2, 3, 4]]);
+        const offset = choose([[0, 1], [0, 1], [0, 1, 2]]);
         const transformed = base.map(current => current && add(multiply(current, value(scale)), value(offset)));
         const canonicalAnswers = [value(25, 12), value(5, 6), value(7, 12)];
         const answers = canonicalAnswers.map(current => add(multiply(current, value(scale)), value(offset)));
