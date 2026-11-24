@@ -12,7 +12,7 @@ import {revisedTextbookPaper} from './revised-textbook.js';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
-test('식물 교재는 94쪽128문항8형식·예제8개·13개 큰 그림칸을 학생과 교사에게 제공한다',async()=>{
+test('원래94쪽 식물 원고와 현재87쪽 학생 교재는128문항8형식·예제8개·13개 큰 그림칸을 보존한다',async()=>{
  assert.equal(w.pages.length,94);assert.deepEqual(w.teacherStudentPages,w.pages);
  assert.equal(w.questions.length,128);assert.equal(w.teacherPages.length,53);assert.equal(w.quickPages.length,5);
  assert.equal(new Set(w.questions.map(q=>q.form)).size,8);
@@ -21,7 +21,7 @@ test('식물 교재는 94쪽128문항8형식·예제8개·13개 큰 그림칸을
  assert.equal(w.pages.flatMap(p=>p.blocks).filter(b=>b.type==='example').length,8);
  assert.deepEqual(w.pages.flatMap(p=>p.blocks.filter(b=>b.type==='questions').flatMap(b=>b.ids)),w.questions.map(q=>q.id));
  const paper=await revisedTextbookPaper(w.unit);
- for(const[mode,n,answers]of[['student',94,0],['teacher',147,128],['answers',53,128],['quick',5,0]]){
+ for(const[mode,n,answers]of[['student',87,0],['teacher',149,128],['answers',63,128],['quick',5,0]]){
   const h=paper.workbookPaper({mode});assert.equal((h.match(/class="bk-page /g)||[]).length,n);
   assert.equal((h.match(/data-solution=/g)||[]).length,answers);
   if(mode==='student')assert(!h.includes('class="ed-key"'));

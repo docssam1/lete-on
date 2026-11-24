@@ -1,3 +1,4 @@
+import{beforePlantStructureTask}from'./tests/plant-structure-guided-stage.mjs';
 import{beforeMotionTask}from'./tests/motion-guided-stage.mjs';
 import{beforeAcidTask}from'./tests/acid-guided-stage.mjs';
 import{beforeEnergyTask}from'./tests/energy-guided-stage.mjs';
@@ -73,8 +74,8 @@ test('classroom, Daily and real bank print output use the current examples witho
   const mod=loaded.get(unit),raw=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,raw),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]);
   for(const q of mod.items.filter(q=>questionAtVersion(q,version))){
    const old=questionAtVersion(q,previousVersion(unit));
-   for(const rows of[classroom.classroomItems,pool]){const found=rows.find(x=>x.id===q.id);if(found){assert.deepEqual(beforeMotionTask(beforeAcidTask(beforeEnergyTask(beforeWeatherTask(beforeHeatTask(beforeMixtureTask(beforeSolutionTask(found))))))),q);selected++;}}
-   const active=['c22-s52-u01','c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02'].includes(unit)?(await reviewStudentModule(unit,mod)).items.find(x=>x.id===q.id):q,student=mod.bankPaper({...mod,items:[['c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02'].includes(unit)?active:q],similar:[],source:[],mode:'student'}),teacher=mod.bankPaper({...mod,items:[['c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02'].includes(unit)?active:q],similar:[],source:[],mode:'teacher'});
+   for(const rows of[classroom.classroomItems,pool]){const found=rows.find(x=>x.id===q.id);if(found){assert.deepEqual(beforePlantStructureTask(beforeMotionTask(beforeAcidTask(beforeEnergyTask(beforeWeatherTask(beforeHeatTask(beforeMixtureTask(beforeSolutionTask(found)))))))),q);selected++;}}
+   const active=['c22-s52-u01','c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02','c22-s61-u03'].includes(unit)?(await reviewStudentModule(unit,mod)).items.find(x=>x.id===q.id):q,student=mod.bankPaper({...mod,items:[['c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02','c22-s61-u03'].includes(unit)?active:q],similar:[],source:[],mode:'student'}),teacher=mod.bankPaper({...mod,items:[['c22-s52-u02','c22-s52-u03','c22-s52-u04','c22-s61-u01','c22-s61-u02','c22-s61-u03'].includes(unit)?active:q],similar:[],source:[],mode:'teacher'});
    assert(!student.includes(escape(active.answerContract.sample)));assert(!student.includes('class="ed-key"'));
    assert(teacher.includes(escape(active.answerContract.sample)),q.id);
    assert(!teacher.includes(escape(old.answerContract.sample)),q.id+' obsolete sample');
