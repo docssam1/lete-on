@@ -1,3 +1,9 @@
+## 2026-11-24 — 6학년 나머지 그림의 fill 색 되살림, 6-2-u4-e2 개념탐구 ③ 원본 수치 유지 (Claude Code / Opus 5.5, Mac)
+
+- 앞 항목의 그래프 색 수정에 이어, 6학년 pool 0 문제 그림에서 fill 속성이 공통 규칙(.geometry-diagram … {fill:none})에 지워지던 나머지 13문항(6-1-u1-e2 3개, 6-1-u2-e1-mission-5 삼각기둥 전개도, 6-1-u4 비율·소수 그림 9개, 6-2-u1-e2-mission-6 나무 자리, 6-2-u2-e2-mission-2 테이프 겹친 부분, 6-2-u2-e6-exploration-1)의 그림 갈래(source61-e2-diagram, source61-triangular-prism-net, source61-decimal-e4-diagram, source61-ratio-e2~e5-diagram, source62-tape-count, e6-geometry, source62-tree-method-figure)에도 fill:revert-layer를 적용했다. 지금 모습과 되살린 모습을 나란히 캡처해 깨지는 그림이 없음을 확인했고, 6학년 문제 그림 중 지워지는 fill은 0개다. styles.css ?v=20261124-g6-figure-fill.
+- 6-2-u4-e2-exploration (1) ③ (7×□-36):(4×□-15)=2:5는 책에 인쇄된 대로면 □=5 5/9이고, 손글씨 7은 13:13이 되어 맞지 않는다. 책 오타일 수 있으나 사용자 기존 지시("원본 수치 그대로 둬")대로 원본 수치와 정확한 답 5 5/9를 유지한다.
+- 감사: 관련 그림 갈래·styles.css를 읽는 감사 43개 중 42개 통과, 1개(source-6-2-stack-operation-learner)는 Windows 작업본에만 있는 review html이 필요한 기존 감사.
+
 ## 2026-11-24 — 6학년 원문 633문항 독립 풀이 대조, 출판사 확인 표시(사용자 일회 예외), 그래프 색·원본 그림 2건 수정 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 결정("네가 풀어", "이번만 예외로", 질문 답 "출판사 표시 true", "손글씨로 답 쓴거는 학원에서 채점 받은 거야"): 출판사 답지가 없으므로 6학년 원문 633문항(보통 난이도 pool 0)을 AI가 앱 정답을 보지 않고 직접 풀어 앱 정답과 대조하고, 일치한 문항에 publisherAnswerVerified=true를 예외로 표시한다.
