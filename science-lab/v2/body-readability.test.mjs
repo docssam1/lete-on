@@ -1,3 +1,4 @@
+import{beforeBodyTask}from'./tests/body-guided-stage.mjs';
 import{bodyContextItems}from'../data/book/body-workbook-context.js';
 import{representationQuestionReview}from'../data/book/representation-question-review.js';
 import{grade5QuestionReview}from'../data/book/grade5-question-review.js';
@@ -36,7 +37,7 @@ test('body readability guards original, similar, review, future and other unit q
 });
 test('body bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
  const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=bodyContextItems(representationQuestionReview(grade5QuestionReview(linkedWorkbookAnswers(bodyReadableCurrentItems(baseline,unit),unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,BODY_READABILITY_VERSION))changed++;}
+ for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),beforeBodyTask(q));if(questionAtVersion(q,BODY_READABILITY_VERSION))changed++;}
  assert.equal(changed,16);assert.equal(first.classroomItems.length,16);
 });
 test('body keeps raw and prior fields, model limits and walking comparison times',()=>{

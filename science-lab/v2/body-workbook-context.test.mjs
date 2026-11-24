@@ -1,3 +1,4 @@
+import{beforeBodyTask}from'./tests/body-guided-stage.mjs';import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{reviewStudentWorkbook}from'./student-language-review.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
 import{workbook,bodyContextPriorWorkbook as prior}from'../data/book/c22-s51-u04.workbook.js';import{withBodyContextWorkbook,BODY_CONTEXT_VERSION as version}from'../data/book/body-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
@@ -7,10 +8,10 @@ test('actual body workbook routes provide consistent pump conditions and assess 
  const pump=q(workbook,48);assert(!pump.prompt.includes('같은 간격'));assert(pump.prompt.includes('때마다 이동하는 물의 양은 같았어요'));assert(pump.prompt.includes('10초 동안 누르는 횟수만 늘렸다면'));assert.equal(pump.answer,q(prior,48).answer);assert(!q(workbook,4).prompt.includes('표'));assert(!q(workbook,57).prompt.includes('관찰한 것'));assert(q(workbook,57).prompt.includes('모형과 연습 자료'));
  assert(q(workbook,45).criteria.includes('넣었다면'));assert(!q(workbook,50).criteria.includes('안전'));assert(q(workbook,56).criteria.includes('계획을 덧붙였다면'));assert(!q(workbook,95).criteria.includes('재전달'));
  const book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js')),paper=await revisedTextbookPaper(unit);
- const visible=await reviewStudentWorkbook(unit,workbook);for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
+ const visible=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
   for(const no of[4,48,57]){const item=q(visible,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
-  for(const no of[45,50,56,95])assert.equal(html.includes(esc(q(workbook,no).criteria)),mode==='teacher');
- assert(html.includes('55번에서 고른 자료가 알맞은 까닭'));assert(!html.includes('풍선 모형에서 직접 본 변화를 써요'));
+  for(const no of[45,50,56,95])assert.equal(html.includes(esc(q(visible,no).criteria)),mode==='teacher');
+ assert(html.includes('친구에게 자료를 소개할 다음 행동을 말해 보세요.'));assert(!html.includes('풍선 모형에서 직접 본 변화를 써요'));
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&bodyContext='+version));
 });
@@ -38,7 +39,7 @@ test('seven linked bank revisions agree with the workbook while preserving answe
   assert.deepEqual(questionMisconceptions(current,mod.misc),questionMisconceptions(before,mod.misc));for(const v of new Set([questionVersion(before),...(before.previousVersions||[]).map(p=>p.version)]))assert.deepEqual(questionAtVersion(current,v),questionAtVersion(before,v));
   const response=before.choices?before.answerContract.answer??before.answerContract.answers:before.answerContract.sample??before.answerContract.answer,state={answers:{[current.id]:response,other:'keep'},questionVersions:{[current.id]:questionVersion(before)}};assert.deepEqual(restoreDailyQuestions([current],state)[0],before);const next=restartCurrentQuestion(state,current);assert.equal(next.answers.other,'keep');assert.equal(next.questionVersions[current.id],version);assert.deepEqual(next.revisionHistory[current.id][0].answers,response);
   for(const fields of[{contentVersion:'future'},{status:'source'},{sourceContent:{blocks:[]}},{sourceRef:{type:'original'}},{prompt:before.prompt+' future'},{figure:'future.jpg'},{answerContract:{...before.answerContract,future:true}}]){const rows=[{...before,...fields}];assert.equal(bodyContextItems(rows,unit),rows);}
-  for(const rows of[cls.classroomItems,pool]){const shown=rows.find(q=>q.id===current.id);if(shown)assert.deepEqual(shown,current);}
+  for(const rows of[cls.classroomItems,pool]){const shown=rows.find(q=>q.id===current.id);if(shown)assert.deepEqual(beforeBodyTask(shown),current);}
  }
- assert(cls.classroomItems.some(q=>q.contentVersion===version));assert(pool.some(q=>q.contentVersion===version));
+ assert(cls.classroomItems.some(q=>beforeBodyTask(q).contentVersion===version));assert(pool.some(q=>beforeBodyTask(q).contentVersion===version));
 });

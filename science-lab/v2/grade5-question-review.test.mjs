@@ -1,3 +1,4 @@
+import{beforeBodyTask}from'./tests/body-guided-stage.mjs';
 import{beforeSolutionTask}from'./tests/solution-guided-stage.mjs';
 import{reviewTextTree,reviewStudentModule}from'./student-language-review.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
@@ -39,7 +40,7 @@ test('actual student and teacher papers, classroom questions and cache use the s
  for(const unit of units){const {review:languageReview}=await import('../data/language/'+unit+'.js');const visible=x=>reviewTextTree(x,languageReview.text);const mod=mods.get(unit),currentModule=await reviewStudentModule(unit,mod),cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),paper=await revisedTextbookPaper(unit),student=mod.bankPaper({...mod,mode:'student'}),teacher=mod.bankPaper({...mod,mode:'teacher'}),wbStudent=paper.workbookPaper({mode:'student'}),wbTeacher=paper.workbookPaper({mode:'teacher'});assert(!wbStudent.includes('class="ed-key"'));
  for(const q of mod.items.filter(q=>grade5Stage(q).contentVersion===version)){assert(student.includes(esc(q.prompt)));const currentQuestion=currentModule.items.find(x=>x.id===q.id);assert(wbStudent.includes(esc(visible(currentQuestion.prompt))));if(q.choices){for(const c of q.choices){assert(student.includes(esc(c)));if(c!==q.choices[4]||q.choices.length===5&&unit!=='c22-s51-u03')assert(wbStudent.includes(esc(visible(c))));}}
  else{assert(teacher.includes(esc(q.answerContract.sample)));assert(wbTeacher.includes(esc(visible(currentQuestion.answerContract.sample))));assert(!wbStudent.includes(esc(visible(currentQuestion.answerContract.rubric.required[0]))));}
- for(const rows of[cls.classroomItems,pool]){const displayed=rows?.find(x=>x.id===q.id);if(displayed){assert.deepEqual(beforeSolutionTask(displayed),q);selected++;}}
+ for(const rows of[cls.classroomItems,pool]){const displayed=rows?.find(x=>x.id===q.id);if(displayed){assert.deepEqual(beforeBodyTask(beforeSolutionTask(displayed)),q);selected++;}}
  }}assert(selected>0);
  const book=fs.readFileSync(new URL('./revised-textbook.js',import.meta.url),'utf8'),lesson=fs.readFileSync(new URL('./revised-lesson.js',import.meta.url),'utf8'),index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(book.includes(".includes(unit)?'"+version+"'"));assert(lesson.includes('grade5-question-review.js?v='+version));assert(index.includes('&book='+code.match(/revised-textbook\.js\?v=([^'"]+)/)[1]));for(const unit of units)assert(code.split('\n').find(l=>l.trimStart().startsWith("'"+unit+"':")).includes('grade5-question-review.js?v='+version));
 });
