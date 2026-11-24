@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook,reviewQuestionRows}from'./student-language-review.js';import{review as schoolLanguage}from'../data/language/c22-s62-u04.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';import{careerGuidedItems}from'./career-guided-review.js?v=20261124-career-mixed-responses&layout=2';
 import{careerContextItems}from'../data/book/career-workbook-context.js?v=20261116-career-workbook-context&temperatureCondition=20261116-career-temperature-condition';
 import{representationQuestionReview}from'../data/book/representation-question-review.js?v=20261115-representation-response-review';
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
@@ -13,6 +14,8 @@ import{makeWorkbookPaper}from'./revised-workbook-paper.js?v=20261108-learning-no
 const current=new Map(guidanceParticleCurrentItems(careerCurrentItems(items),'c22-s62-u04').map(q=>[q.bookQuestionId,q]));
 export const careerBankBook={...workbook,title:'과학과 나의 진로',questions:workbook.questions.map(q=>({...q,sourceItemId:current.get(q.id).id,sourceBookQuestionId:q.id,sourceBookNo:q.no,answerContract:current.get(q.id).answerContract})),pages:workbook.pages.filter(p=>p.kind==='practice'),teacherStudentPages:workbook.teacherStudentPages.filter(p=>p.kind==='practice')};
 // 위 BankBook은 기존 원고 대조용으로 보존한다. 실제 인쇄는 현재 교재를 쓴다.
-export const currentCareerBankBook=currentBankWorkbook(careerBankBook,currentWorkbook,careerContextItems(representationQuestionReview(grade6QuestionReview(standaloneQuestionContexts(careerReadableCurrentItems(Array.from(current.values()),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'));
+export const priorCareerGuidedBankBook=currentBankWorkbook(careerBankBook,currentWorkbook,careerContextItems(representationQuestionReview(grade6QuestionReview(standaloneQuestionContexts(careerReadableCurrentItems(Array.from(current.values()),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'));
+const printableItems=careerContextItems(representationQuestionReview(grade6QuestionReview(standaloneQuestionContexts(careerReadableCurrentItems(Array.from(current.values()),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04'),'c22-s62-u04');
+export const currentCareerBankBook=currentBankWorkbook(careerBankBook,await reviewStudentWorkbook(currentWorkbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(currentWorkbook))),careerGuidedItems(reviewQuestionRows(printableItems,schoolLanguage),'c22-s62-u04'));
 const paper=makeWorkbookPaper(currentCareerBankBook,{}, {route:'print',toolLabel:'128문항집 고르기',modes:[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']]});
 export const bankPaper=paper.workbookPaper;export const wireBankPaper=paper.wireWorkbookPaper;

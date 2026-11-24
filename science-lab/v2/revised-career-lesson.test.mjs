@@ -1,4 +1,5 @@
-const beforeCareerContext=q=>{if(q?.contentVersion!=='20261116-career-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
+import{beforeCareerTask}from'./tests/career-guided-stage.mjs';
+const beforeCareerContext=q=>{q=beforeCareerTask(q);if(q?.contentVersion!=='20261116-career-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 const beforeRepresentation=q=>{if(q?.contentVersion!=='20261115-representation-response-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import{questionAtVersion}from'./question-revision.js';
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
@@ -45,8 +46,8 @@ test('미래 문제 조사·토의와 다양한 진로의 과학을17활동으�
 
 test('16확인은 두 성취기준 각8·8형식 각2이며 교재의 답과 버전을 그대로 쓴다',()=>{
  const priorReviewPool=pool.map(beforeGrade6Review);
- const list=mod.chapter.check.map(id=>pool.find(q=>q.id===id));assert.equal(list.length,16);assert.equal(list.filter(q=>q.responseContract.teacherRequired).length,4);
- assert.deepEqual(Object.values(list.reduce((a,q)=>(a[q.bookResponseForm]=(a[q.bookResponseForm]||0)+1,a),{})),Array(8).fill(2));
+ const list=mod.chapter.check.map(id=>pool.find(q=>q.id===id));assert.equal(list.length,16);assert.equal(gradeDaily(list.find(q=>q.id.endsWith('b126')),1).status,'correct');assert.equal(list.filter(q=>q.responseContract.teacherRequired).length,3);
+ assert.deepEqual(Object.values(list.map(beforeCareerTask).reduce((a,q)=>(a[q.bookResponseForm]=(a[q.bookResponseForm]||0)+1,a),{})),Array(8).fill(2));
  assert.deepEqual(Object.values(list.reduce((a,q)=>{const s=workbook.questions.find(w=>w.id===q.bookQuestionId).standard;a[s]=(a[s]||0)+1;return a;},{})),[8,8]);
  const answers={1:2,19:['사실','예상'],5:['ㄴ','ㄱ','ㄷ'],7:['ㄱ','ㄴ','ㄷ'],25:[0,1,3],27:['8일','예상'],113:4,116:['수분','온도'],117:['ㄴ','ㄱ','ㄷ'],120:['ㄱ','ㄴ','ㄷ'],122:[0,1,4],123:['35℃','7℃']};
  for(const[n,a]of Object.entries(answers))assert.equal(gradeDaily(list.find(q=>q.id.endsWith('b'+n.padStart(3,'0'))),a).status,'correct',n);

@@ -1,5 +1,6 @@
+import{beforeCareerTask}from'./tests/career-guided-stage.mjs';
 import{careerContextItems}from'../data/book/career-workbook-context.js';
-const beforeCareerContext=q=>{if(q?.contentVersion!=='20261116-career-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
+const beforeCareerContext=q=>{q=beforeCareerTask(q);if(q?.contentVersion!=='20261116-career-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import{representationQuestionReview}from'../data/book/representation-question-review.js';
 const beforeRepresentation=q=>{if(q?.contentVersion!=='20261115-representation-response-review')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js';
@@ -50,6 +51,6 @@ test('current sample wording and conditions retain strict automatic grading',()=
  for(const html of Object.values(workbook.figures).filter(x=>x.includes('career-quick-grid')))for(const m of html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[^<]*<\/td><td>([\s\S]*?)<\/td><\/tr>/g)){const q=workbook.questions[Number(m[1])-1];if(q.responseContract.kind==='single-choice')assert([q.answer,'①②③④⑤'[q.key]].includes(m[2]));else if(!['written','draw'].includes(q.form))assert.equal(m[2],q.answer);}
 });
 test('actual class and production loader share the current practice questions',async()=>{
- const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems,careerContextItems(representationQuestionReview(grade6QuestionReview(standaloneQuestionContexts(current,unit),unit),unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>beforeGrade6Review(mod.classroomItems.find(q=>q.id===id)).contentVersion===CAREER_READABILITY_VERSION).length,8);
+ const mod=await revisedClassroom(unit,book),repeat=await revisedClassroom(unit,book),pool=classroomQuestions(mod,[...similar,...items]);assert.deepEqual(mod.classroomItems.map(beforeCareerTask),careerContextItems(representationQuestionReview(grade6QuestionReview(standaloneQuestionContexts(current,unit),unit),unit),unit));assert.deepEqual(repeat.classroomItems,mod.classroomItems);for(const q of mod.classroomItems)assert.equal(pool.find(x=>x.id===q.id),q);assert.equal(mod.chapter.check.filter(id=>beforeGrade6Review(mod.classroomItems.find(q=>q.id===id)).contentVersion===CAREER_READABILITY_VERSION).length,8);
  const result=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/career-workbook-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));assert(result.productionUnitLoaderExecuted);assert.equal(result.readableQuestions,109);assert.equal(result.currentContextQuestions,35);assert.equal(result.contextQuestions,1);assert.equal(result.studentStorageReads+result.studentStorageWrites,0);
 });

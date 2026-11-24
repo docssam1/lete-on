@@ -1,0 +1,6 @@
+import{questionAtVersion}from'../question-revision.js';import{CAREER_GUIDED_VERSION}from'../career-guided-review.js';
+const cache=new WeakMap();export function beforeCareerTask(q){if(q?.contentVersion!==CAREER_GUIDED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+
+const changed=new Set([13, 14, 15, 16, 29, 30, 31, 32, 45, 46, 47, 48, 61, 62, 63, 64, 77, 78, 79, 80, 93, 94, 95, 96, 109, 110, 111, 112, 125, 126, 127, 128]);
+export function careerUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="c22-s62-u04-w(\d+)">[\s\S]*?<\/section>/g)];if(rows.length!==128)throw Error('진로 해설128개가 필요해요.');const kept=rows.filter(m=>!changed.has(Number(m[1]))).map(m=>m[0]);if(kept.length!==96)throw Error('변경하지 않은 해설96개가 필요해요.');return kept;}
+export function careerUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==128)throw Error('정답표128행이 필요해요.');const kept=rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>(?:객관식|복수 선택)<\/td>/.test(m[0])).map(m=>m[0]);if(kept.length!==64)throw Error('변경하지 않은 정답64행이 필요해요.');return kept;}

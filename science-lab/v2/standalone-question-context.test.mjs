@@ -1,3 +1,4 @@
+import{beforeCareerTask}from'./tests/career-guided-stage.mjs';
 import{beforeBiologyTask}from'./tests/biology-guided-stage.mjs';
 import{CAREER_TEMPERATURE_VERSION}from'../data/book/career-temperature-condition.js';
 const beforeCareerContext=latest=>{const q=latest?.contentVersion===CAREER_TEMPERATURE_VERSION?questionAtVersion(latest,latest.previousVersions.at(-1).version):latest;if(q?.contentVersion!=='20261116-career-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
@@ -129,6 +130,6 @@ test('career question 32 shares question 18 water data across workbook, bank, cl
  }
  for(const unit of Object.keys(prior)){
   const mod=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js'));
-  for(const item of mod.classroomItems.map(beforeBiologyTask))assert.deepEqual(item,current[unit].items.find(q=>q.id===item.id));
+  for(const item of mod.classroomItems.map(q=>beforeBiologyTask(beforeCareerTask(q))))assert.deepEqual(item,current[unit].items.find(q=>q.id===item.id));
  }
 });
