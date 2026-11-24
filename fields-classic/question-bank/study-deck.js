@@ -1,5 +1,5 @@
 import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261124h";
-import { course2ConceptSlides } from "./course2-deck.js?v=20261124h";
+import { course2ConceptSlides } from "./course2-deck.js?v=20261124j";
 import { jo } from "./concept-board-kit.js?v=20261124f";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.

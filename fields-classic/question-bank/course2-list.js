@@ -19,7 +19,7 @@ const LABS = {
   g1: [["3단원 · 360도와 정다각형", "angles", "각 떼어 모으기"], ["3단원 · 360도와 정다각형", "clock", "시계 바늘 각"], ["4단원 · 삼각형과 사각형", "dots", "점판 위 정사각형"]],
   g4: [["1단원 · 특수각과 도형의 복원", "compass", "컴퍼스로 작도"]],
 };
-const PROOF_TAG = "20261124a";
+const PROOF_TAG = "20261124j";
 const STUDY_BOOKS = new Set(["g1", "g2", "g3", "g4", "g5", "a1", "a2", "a3", "a4", "a5"]);   // source-data.js COURSE2_CURRICULUM에 본책이 있는 권
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const testLink = (id, course = 2) => ((course === 3 ? COURSE3_TESTS : COURSE2_TESTS)[id] ? `<a class="c2-test" href="./course2-test-paper.html?${course === 3 ? "course=3&" : ""}book=${id}">권별 테스트 풀기</a>` : `<span class="c2-test is-off">권별 테스트 준비 중</span>`);

@@ -471,9 +471,9 @@ const rhombusArea = {
     f.right(add(O, up), add(R, up), add(T, up), { color: C.purple, opacity: clamp(s0 * 2 - 1) });
     if (!p.kite) [[T, R, up], [R, Bt, dn], [Bt, L, dn], [L, T, up]].forEach(([a, b, d]) => f.ticks(add(a, d), add(b, d), { opacity: s0 * (1 - s1) }));
     // 길이 이름
-    // 세로 대각선 두 토막(= 두 삼각형의 높이)은 오른쪽으로 휜 호. 가로 대각선은 가운데에 호 글자를 두면 세로 대각선·직각 표시·두 호와
-    // 겹치고 도형 바깥으로 크게 두를 자리도 없어(위는 종이 끝, 아래는 식) 예전처럼 ㄹ 끝 바깥에 글자로 둔다
-    f.label(P(R.x + 14, O.y - gap), `가로 ${p.p}cm`, { color: C.purple, size: 16, opacity: clamp(s0 * 2 - 1), anchor: "start" });
+    // 세로 대각선 두 토막(= 두 삼각형의 높이)은 오른쪽으로 휜 호. 가로 대각선은 위 꼭짓점 ㄱ보다 높이 크게 휜 호(원장 2026-11-24 — 예전 「가로 p cm」 글자 대신):
+    // 낮게 휘면 글자가 세로 대각선·직각 표시에 걸린다. 크게 휜 호는 위 삼각형의 두 변보다 늘 바깥(위)에 있다.
+    dimLen(f, add(L, up), add(R, up), `${p.p}cm`, { side: -1, off: O.y - T.y + 26, color: C.purple, opacity: clamp(s0 * 2 - 1) });
     dimLen(f, add(T, up), add(O, up), `${p.q1}cm`, { side: -1, off: 18, color: C.purple, opacity: clamp(s0 * 2 - 1) });
     dimLen(f, add(O, dn), add(Bt, dn), `${p.q2}cm`, { side: -1, off: 18, color: C.purple, opacity: clamp(s0 * 2 - 1) });
     f.note(P(320, 380), `위 ${p.top}㎠ + 아래 ${p.bot}㎠`, { opacity: s2 * (1 - s3), size: 18 });

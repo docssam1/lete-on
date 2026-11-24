@@ -697,7 +697,25 @@ function simpleBook3Markup(visual) {
     const cells = (count) => Array.from({ length: count }, () => "<i></i>").join("");
     return `<div class="b3-rod-comparison" style="--ratio:${visual.ratio}"><div><b>㉠</b><span class="first">${cells(1)}</span></div><div><b>㉡</b><span class="second">${cells(visual.ratio)}</span><em>㉠의 ${visual.ratio}배</em></div><strong>㉠ + ㉡ = ${visual.total}cm</strong></div>`;
   }
-  if (visual.subtype === "object-measure") return `<div class="b3-object-measure"><strong>${visual.total}cm</strong>${visual.rows.map((row) => `<div><b>${row.icon}</b><span>${Array.from({length:row.count},()=>`<i>${row.icon === "성냥" ? "┃" : "▭"}</i>`).join("")}</span><em>${row.count}개</em></div>`).join("")}</div>`;
+  if (visual.subtype === "object-measure") {
+    // 끈 = 맨 위 줄, 그 길이는 끈 위 바깥 곡선 점선 + 끊은 자리 글자(원장 2026-11-24). 아래 두 줄은 같은 길이를 성냥개비·지우개를 이어 놓아 잰 모양.
+    const X0 = 78, W = 300, Y = 34, ROW = 40, name = { 성냥: "성냥개비", 지우개: "지우개" };
+    let body = `<line x1="${X0}" y1="${Y}" x2="${X0 + W}" y2="${Y}" style="stroke:#b3542e;stroke-width:4;stroke-linecap:round"/><text x="${X0 - 10}" y="${Y}" dominant-baseline="central" style="text-anchor:end;font-size:14px;font-weight:800;fill:#504637">끈</text>`
+      + dimArc(X0, Y - 3, X0 + W, Y - 3, -12, `${visual.total}cm`, { size: 15 });
+    visual.rows.forEach((row, k) => {
+      const y = Y + 30 + k * ROW, w = W / row.count;
+      body += `<text x="${X0 - 10}" y="${y + 9}" dominant-baseline="central" style="text-anchor:end;font-size:14px;font-weight:800;fill:#504637">${esc(name[row.icon] || row.icon)}</text>`;
+      for (let i = 0; i < row.count; i += 1) {
+        const x = X0 + i * w;
+        body += row.icon === "성냥"
+          ? `<rect x="${(x + 1).toFixed(1)}" y="${y + 6}" width="${(w - 2).toFixed(1)}" height="6" rx="2" style="fill:#e8c48c;stroke:#a46a30;stroke-width:1"/><ellipse cx="${(x + w - 4).toFixed(1)}" cy="${y + 9}" rx="5" ry="5" style="fill:#c9423a"/>`
+          : `<rect x="${(x + 1).toFixed(1)}" y="${y}" width="${(w - 2).toFixed(1)}" height="18" rx="3" style="fill:#f6d6e0;stroke:#a46a30;stroke-width:1"/>`;
+      }
+      body += `<text x="${X0 + W + 10}" y="${y + 9}" dominant-baseline="central" style="text-anchor:start;font-size:13px;font-weight:700;fill:#504637">${row.count}개</text>`;
+    });
+    const H = Y + 30 + visual.rows.length * ROW - 12;
+    return `<svg class="b3-svg b3-object-measure-svg" viewBox="0 0 ${X0 + W + 50} ${H}" style="width:100%;max-width:${X0 + W + 90}px;height:auto" role="img" aria-label="${visual.total}cm 끈을 ${visual.rows.map((r) => `${name[r.icon] || r.icon} ${r.count}개`).join("와 ")}로 잰 그림">${body}</svg>`;
+  }
   if (visual.subtype === "object-equation") return `<div class="b3-object-equation"><span>${visual.left.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span><b>=</b><span>${visual.right.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span></div>`;
   if (visual.subtype === "object-count-equivalence") return `<div class="b3-object-count"><div><b>리코더 1개</b><span>= 연필 ${visual.pencils}자루 + 성냥개비 ${visual.matches}개</span></div><div><b>연필 1자루</b><span>= 성냥개비 ${visual.pencilInMatches}개</span></div><strong>리코더 1개 = 성냥개비 ?개</strong></div>`;
   if (visual.subtype === "meeting-distance") {

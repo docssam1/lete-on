@@ -5,7 +5,7 @@ const BOOKS = {
   g1: { name: "G1", title: "돌리기와 뒤집기", v: "20261124a" },
   g2: { name: "G2", title: "도형분할과 넓이", v: "20261124a" },
   g3: { name: "G3", title: "정육면체와 각·넓이", v: "20261124a" },
-  g4: { name: "G4", title: "도형의 복원과 측정", v: "20261124a" },
+  g4: { name: "G4", title: "도형의 복원과 측정", v: "20261124j" },
   g5: { name: "G5", title: "도형의 넓이와 비", v: "20261124a" },
 };
 const q = new URLSearchParams(location.search);

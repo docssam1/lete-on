@@ -64,6 +64,9 @@ for (const b of BOOKS) {
   }
 }
 
+// 그림 밖 글자(HTML 칸)로 쓴 변 길이 — 「한 변 3cm」「7cm × 7cm」「바깥 8cm」 같은 것. 둘레·합(「둘레 36cm」「가로 합 12cm」)은 길이 표시가 아니라 글 그대로 둔다.
+const HTML_LEN = />\s*((?:(?:작은 |큰 )?한 변|한 칸|바깥|안쪽|가로|세로)?\s*[\d.]+\s*cm(?:\s*(?:×|·)\s*(?:안쪽\s*)?[\d.]+\s*cm)?(?:씩[^<]*)?)\s*</g;
+const htmlLengths = (html) => [...String(html).replace(/<svg[\s\S]*?<\/svg>/g, "").matchAll(HTML_LEN)].map((m) => m[1]);
 // ④-1 1과정(원장 2026-11-24 「배꿔」 — 1과정 그림도 같은 기준): 3권·6권 문제 그림, 워밍업 유형 예제(거리 줄·사각형)의 길이 글자
 {
   const { BOOK03_GENERATORS } = await import("../book03-generators.js");
@@ -74,7 +77,7 @@ for (const b of BOOKS) {
   for (const [name, gens, markup] of books) for (const [k, fn] of Object.entries(gens)) for (const difficulty of [1, 2, 3]) for (let i = 0; i < 3; i += 1) {
     let r; try { r = fn({ difficulty }); } catch { continue; }
     if (!r?.visual) continue; let html = ""; try { html = markup(r.visual) || ""; } catch { continue; }
-    const bad = plainLengths(html); if (bad.length) { fails.push(`1과정 ${name} ${k}: 그림 길이를 맨 글자로 — ${bad.slice(0, 3).join(", ")} (점선 호로)`); break; }
+    const bad = [...plainLengths(html), ...htmlLengths(html)]; if (bad.length) { fails.push(`1과정 ${name} ${k}: 그림 길이를 맨 글자로 — ${bad.slice(0, 3).join(", ")} (점선 호로)`); break; }
   }
   const { TYPE_EXAMPLE_SETS } = await import("../golden-bell-type-examples.js");
   const { figureMarkup } = await import("../golden-bell-type-examples-view.js");
