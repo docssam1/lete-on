@@ -1,3 +1,4 @@
+import{motionMixedItems}from'./motion-mixed-response.js?v=20261124-motion-mixed-responses&layout=1';
 import{motionCurrentItems}from'./motion-question-language.js?v=20261104-motion-class';
 // 물체의 운동 원문·짝·창작268문항의 동일 객체로 화면과 문항집을 연결한다.
 import {wireEnergyBankPaper as wireMotionBankPaper} from './energy-bank-paper.js?v=20261108-bank-print-ready';
@@ -8,7 +9,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const circ='①②③④⑤';
 export const solutionAnswer=a=>a.type==='single-choice'?circ[a.answer]:a.type==='multi-choice'?a.answers.map(i=>circ[i]).join(', '):a.sample??a.answer;
 export function motionBankPaperHtml({unit,source,similar,items,mode='student'}){
- items=motionCurrentItems(items);
+ items=motionMixedItems(motionCurrentItems(items),'c22-s61-u02');
  const show=mode!=='student',only=mode==='answers',quick=mode==='quick',all=[...source,...similar,...items];let no=0;
  const blankText=s=>esc(s).replace(/\[\s*\]|□/g,'<span class="energy-paper-blank"></span>');
  const line=()=>'<div class="solution-answer-line"></div>';

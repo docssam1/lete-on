@@ -9,8 +9,8 @@ test('motion student and teacher routes show clear cart names, sufficient criter
  assert(q(workbook,86).criteria.includes('반복'));assert(q(workbook,91).criteria.includes('2.3초'));assert(q(workbook,111).criteria.includes('조건의 차이'));
  const current=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
-  assert(html.includes(esc(q(current,47).prompt)));assert.equal(html.includes('class="ed-key"'),mode==='teacher');
-  for(const n of nos.filter(n=>n!==47))assert.equal(html.includes(esc(q(current,n).criteria)),mode==='teacher');
+  assert(html.replace(/<[^>]*>/g,'').replace(/\s/g,'').includes(q(current,47).prompt.replace(/\[\s*\]/g,'').replace(/\s/g,'')));assert.equal(html.includes('class="ed-key"'),mode==='teacher');
+  for(const n of nos.filter(n=>n!==47)){const shown=q(current,n);if(shown.motionMixedResponse){assert.equal(shown.responseContract.teacherRequired,false);assert(html.includes(shown.id));if(mode==='teacher')assert(html.includes(esc(shown.answer)));}else assert.equal(html.includes(esc(shown.criteria)),mode==='teacher');}
   for(const p of(mode==='teacher'?current.teacherStudentPages:current.pages))for(const note of p.rail)assert(html.includes(esc(note.text)));assert(html.includes('문제 하나에서 내 답과 단위를 짚고 고칠 부분을 말해요.'));
  }
  assert(workbook.pages[25].rail[2].text.includes('33번'));assert(workbook.pages[55].rail[2].text.includes('표에는'));assert(workbook.pages[75].rail[2].text.includes('차량이 멈췄는지'));assert(workbook.pages[95].rail[2].text.includes('고칠 부분이 있으면'));
