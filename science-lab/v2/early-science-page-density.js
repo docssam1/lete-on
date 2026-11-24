@@ -1,6 +1,10 @@
 // Reflow related short checks while preserving question objects and drawing pages.
 export const EARLY_DENSITY_VERSION='20261124-early-science-page-density';
 const configs={
+ 'c22-s32-u03':{prior:'c239da4dbdc7b477',studentOnly:true,spans:[
+  {first:17,last:24,sizes:[3,5],titles:['같은 조건에서 소리의 크기를 비교해요','소리의 크기와 비교 방법을 확인해요']},
+  {first:49,last:56,sizes:[3,5],titles:['불편한 소리와 줄일 방법을 찾아요','필요한 소리를 지키며 소음을 줄여요']}
+ ]},
  's41-u03':{prior:'15d7093864cec22e',spans:[
   {first:3,last:8,sizes:[3,3],titles:['흐르는 물의 작용을 찾아요','흙 언덕을 같은 조건으로 비교해요']},
   {first:27,last:29,sizes:[3],titles:['화산과 모형을 비교해요']},
@@ -26,7 +30,7 @@ function sideNotes(pages){
 }
 export function withEarlySciencePageDensity(w){
  const config=configs[w?.unit];if(!config||fingerprint(w)!==config.prior)return w;if(cache.has(w))return cache.get(w);
- function arrange(input,teacher=false){const output=[];for(let i=0;i<input.length;i++){
+ function arrange(input,teacher=false){if(teacher&&config.studentOnly)return input;const output=[];for(let i=0;i<input.length;i++){
   const p=input[i],span=config.spans.find(s=>number(ids(p)[0])===s.first);if(!span){output.push(p);continue;}
   const originals=[],all=[];let j=i;
   while(all.length<span.last-span.first+1){const next=input[j++];if(!next||next.blocks.length!==1||next.blocks[0].type!=='questions')throw Error('Density would move non-question content');originals.push(next);all.push(...ids(next));}
