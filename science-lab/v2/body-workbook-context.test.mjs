@@ -9,9 +9,9 @@ test('actual body workbook routes provide consistent pump conditions and assess 
  assert(q(workbook,45).criteria.includes('넣었다면'));assert(!q(workbook,50).criteria.includes('안전'));assert(q(workbook,56).criteria.includes('계획을 덧붙였다면'));assert(!q(workbook,95).criteria.includes('재전달'));
  const book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js')),paper=await revisedTextbookPaper(unit);
  const visible=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
-  for(const no of[4,48,57]){const item=q(visible,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
+  for(const no of[4,48,57]){const item=q(visible,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.replace(/<[^>]*>/g,'').replace(/\s/g,'').includes(esc(item.prompt).replace(/\[\s*\]/g,'').replace(/\s/g,'')));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
   for(const no of[45,50,56,95])assert.equal(html.includes(esc(q(visible,no).criteria)),mode==='teacher');
- assert(html.includes('친구에게 자료를 소개할 다음 행동을 말해 보세요.'));assert(!html.includes('풍선 모형에서 직접 본 변화를 써요'));
+ assert(html.includes(esc(q(visible,56).prompt)));assert(!html.includes('풍선 모형에서 직접 본 변화를 써요'));
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&bodyContext='+version));
 });

@@ -1,0 +1,4 @@
+import{questionAtVersion}from'../question-revision.js';import{BODY_MIXED_VERSION}from'../body-mixed-response.js';
+const cache=new WeakMap();export function beforeBodyMixed(q){if(q?.contentVersion!==BODY_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+const changed=new Set([4, 10, 16, 39, 40, 48, 54, 56, 68, 72, 76, 80, 88, 92, 95]);
+export function bodyMixedUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==96)throw Error('우리 몸의 구조와 기능 정답표96행이 필요해요.');return rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>객관식<\/td>/.test(m[0])).map(m=>m[0]);}
