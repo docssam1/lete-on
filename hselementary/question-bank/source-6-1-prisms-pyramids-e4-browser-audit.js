@@ -17,7 +17,7 @@ const outputDir = process.env.HSE_SCREENSHOT_DIR
   || path.join(questionBankDir, "tmp", "e4-browser-audit");
 
 const sources = [
-  { id: "6-1-u2-e4-example-4-1", search: "예제 4-1", kind: "cube-six-pyramid-assembly", poolCount: 1 },
+  { id: "6-1-u2-e4-example-4-1", search: "예제 4-1", kind: "cube-six-pyramid-assembly", poolCount: 3 },
   { id: "6-1-u2-e4-example-4-2", search: "예제 4-2", kind: "pyramid-vertex-truncation", poolCount: 3 },
   { id: "6-1-u2-e4-example-4-4", search: "예제 4-4", kind: "tetrahedron-midpoint-quadrilateral", poolCount: 3 },
   { id: "6-1-u2-e4-mission-1", search: "Mission 1", kind: "prism-pyramid-base-join", poolCount: 3 },
@@ -28,7 +28,7 @@ const sources = [
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedAnswers = [
-  ["74"],
+  ["74", "58", "66"],
   ["50", "38", "62"],
   ["60cm", "48cm", "72cm"],
   ["면 9개, 모서리 16개, 꼭짓점 9개", "면 7개, 모서리 12개, 꼭짓점 7개", "면 11개, 모서리 20개, 꼭짓점 11개"],
@@ -326,7 +326,9 @@ function checkTopology(source, problem, answer, label) {
   for (const [index, item] of answer.answerVisuals.entries()) {
     const svg = item.svg;
     if (source.kind === "cube-six-pyramid-assembly") {
-      if (svg.facesByKind["stellated-cube"] !== 24 || svg.edgesByKind["stellated-cube"] !== 36 || svg.verticesByKind["stellated-cube"] !== 14 || svg.separate || !svg.rawMarkup.includes("source61-e4-counting-net")) fail(`${label}: 정육면체+사각뿔의 펼친 세기 그림 또는 실제 24면·36모서리·14꼭짓점 표시가 없습니다.`);
+      // 2026-11-24: pool 0은 원문(정육면체+사각뿔 6개), pool 1은 정육면체 윗면·아랫면을 뺀 네 옆면+사각뿔 4개, pool 2는 정육면체 아랫면을 뺀 다섯 면+사각뿔 5개입니다.
+      const [solidKind, faceCount, edgeCount, vertexCount] = { 0: ["stellated-cube", 24, 36, 14], 1: ["cube-four-pyramids", 18, 28, 12], 2: ["cube-five-pyramids", 21, 32, 13] }[Number(answer.answerVisuals[index]?.pool)] || [];
+      if (!solidKind || svg.facesByKind[solidKind] !== faceCount || svg.edgesByKind[solidKind] !== edgeCount || svg.verticesByKind[solidKind] !== vertexCount || svg.separate || !svg.rawMarkup.includes("source61-e4-counting-net")) fail(`${label}: 각뿔을 붙인 입체의 펼친 세기 그림 또는 실제 ${faceCount}면·${edgeCount}모서리·${vertexCount}꼭짓점 표시가 없습니다.`);
     } else if (source.kind === "pyramid-vertex-truncation") {
       const n = Number(item.svg.baseSides) || evidenceNumber(answer.items[index]);
       if (![3, 4, 5].includes(n) || svg.facesByKind["truncated-pyramid"] !== 2 * n + 2 || svg.edgesByKind["truncated-pyramid"] !== 6 * n || svg.verticesByKind["truncated-pyramid"] !== 4 * n) fail(`${label}: ${n}각뿔 절단 후 요소 수가 공식과 다릅니다.`);
@@ -482,11 +484,11 @@ function generatorReady() {
   if (pdfs !== 14) fail(`A4 PDF ${pdfs}개, 14개이어야 합니다.`);
   if (renderedPages < pdfs) fail(`A4 전체 페이지 렌더가 부족합니다 (${renderedPages}쪽 / 최소 ${pdfs}쪽).`);
   const status = failures.length ? "실패" : "통과";
-  const summary = `${status}: E4 7유형×3난이도×PC/모바일, 고정 pool 1·3·3·3·3·3·3, 문제·답 분리·SVG 지문·실제 토폴로지·글꼴·겹침·누출 검사; 화면 ${screenshots}장, A4 ${pdfs}개, 전체 PNG ${renderedPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
+  const summary = `${status}: E4 7유형×3난이도×PC/모바일, 고정 pool 3·3·3·3·3·3·3, 문제·답 분리·SVG 지문·실제 토폴로지·글꼴·겹침·누출 검사; 화면 ${screenshots}장, A4 ${pdfs}개, 전체 PNG ${renderedPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   fs.writeFileSync(path.join(outputDir, "audit-detail.json"), JSON.stringify({ sources, difficulties, screenshots, pdfs, renderedPages, checkedViews, findings, failures }, null, 2), "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 4 E4 브라우저·인쇄 감사 통과: 7유형×3난이도 · 고정 pool 1·3·3·3·3·3·3 · 화면 84장 · A4 14개 전 ${renderedPages}쪽`);
+  console.log(`6-1 2단원 개념탐구 4 E4 브라우저·인쇄 감사 통과: 7유형×3난이도 · 고정 pool 3·3·3·3·3·3·3 · 화면 84장 · A4 14개 전 ${renderedPages}쪽`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

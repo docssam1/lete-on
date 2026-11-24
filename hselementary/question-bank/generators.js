@@ -22180,7 +22180,7 @@
         "6-1-u2-e4-example-4-3",
         "6-1-u2-e4-mission-5"
       ];
-      const poolCounts = [1, 3, 3, 3, 3, 3, 3];
+      const poolCounts = [3, 3, 3, 3, 3, 3, 3];
       if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 4 원문 분기는 0부터 6까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, poolCounts[variant] - 1);
@@ -22268,6 +22268,71 @@
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids source61-e4-counting-net is-solved" viewBox="0 0 330 300" role="img" aria-label="정육면체의 여섯 면에 붙인 사각뿔의 겉면을 펼쳐 세는 그림" data-source61-e4-structure="cube-six-pyramid-assembly" data-source61-e4-geometry="shared-cube-six-pyramid-model" data-solid-face-count="24" data-solid-edge-count="36" data-solid-vertex-count="14" data-result-highlight="74"><text x="165" y="17" text-anchor="middle">겉면을 펼쳐 세는 그림</text>${faces.join("")}${edges.join("")}${vertices.join("")}<text x="165" y="179" text-anchor="middle">면: 삼각형 4개 × 사각뿔 6개 = 24개</text><text x="165" y="207" text-anchor="middle">모서리: 정육면체 12개 + 옆모서리 24개 = 36개</text><text x="165" y="235" text-anchor="middle">꼭짓점: 정육면체 8개 + 각뿔 꼭짓점 6개 = 14개</text><text x="165" y="271" text-anchor="middle">사각뿔의 밑면 6개는 붙인 뒤 겉에서 보이지 않습니다.</text></svg>`;
       };
 
+      // 예제 4-1 추가 고정 문항(pool 1·2): 같은 구조(정육면체의 면에 밑면이 꼭 맞는 사각뿔을 하나씩 붙임)에서 사각뿔을 붙이는 면의 수만 바꿉니다.
+      // pool 1: 윗면과 아랫면을 뺀 네 옆면 + 사각뿔 4개, pool 2: 아랫면을 뺀 다섯 면 + 사각뿔 5개
+      const cubePartialPyramidSvg = ({ bare, solved = false }) => {
+        const count = 6 - bare.length;
+        const countWord = { 4: "네", 5: "다섯" }[count];
+        const placeText = { 4: "윗면과 아랫면을 뺀 네 옆면", 5: "아랫면을 뺀 다섯 면" }[count];
+        const solidKind = `cube-${{ 4: "four", 5: "five" }[count]}-pyramids`;
+        const structure = `data-source61-e4-structure="cube-${{ 4: "four", 5: "five" }[count]}-pyramid-assembly" data-source61-e4-geometry="shared-${solidKind}-model"`;
+        if (!solved) {
+          const cube = [[58, 92], [158, 92], [158, 184], [58, 184], [106, 56], [206, 56], [206, 148], [106, 148]];
+          const cubeEdges = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
+          const wire = cubeEdges.map(([a, b], index) => line(cube[a], cube[b], `source61-e4-edge${index > 4 && index < 9 ? " source61-e4-hidden-edge" : ""}`)).join("");
+          const glyph = (cx, cy, scale) => {
+            const base = [[cx - 16 * scale, cy + 10 * scale], [cx + 16 * scale, cy + 10 * scale], [cx + 9 * scale, cy - 9 * scale], [cx - 9 * scale, cy - 9 * scale]];
+            const apex = [cx, cy - 27 * scale];
+            return `<g class="source61-e4-separate-pyramid">${base.map(point => line(apex, point, "source61-e4-edge")).join("")}${base.map((point, i) => line(point, base[(i + 1) % 4], "source61-e4-edge")).join("")}</g>`;
+          };
+          const glyphSpots = count === 4 ? [[267, 70], [269, 214], [26, 70], [27, 214]] : [[267, 54], [287, 138], [269, 230], [26, 54], [25, 138]];
+          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids source61-e4-cube-partial-pyramids" viewBox="0 0 330 300" role="img" aria-label="정육면체의 ${placeText}에 합동인 사각뿔을 붙이는 관계 그림" ${structure} data-final-topology="unknown">${wire}${cube.map((point, index) => circle(point, "source61-e4-vertex", `data-source-vertex="cube-${index + 1}"`)).join("")}<text x="108" y="204" text-anchor="middle">정육면체</text>${glyphSpots.map(([x, y]) => glyph(x, y, 0.72)).join("")}<text x="164" y="292" text-anchor="middle">정육면체의 ${placeText}에 사각뿔을 하나씩 붙입니다.</text></svg>`;
+        }
+        const netFaces = [
+          { name: "윗면", col: 1, row: 0, corners: ["E", "F", "B", "A"] },
+          { name: "왼쪽", col: 0, row: 1, corners: ["E", "A", "D", "H"] },
+          { name: "앞면", col: 1, row: 1, corners: ["A", "B", "C", "D"] },
+          { name: "오른쪽", col: 2, row: 1, corners: ["B", "F", "G", "C"] },
+          { name: "뒷면", col: 3, row: 1, corners: ["F", "E", "H", "G"] },
+          { name: "아랫면", col: 1, row: 2, corners: ["D", "C", "G", "H"] }
+        ].map(face => ({ ...face, pyramid: !bare.includes(face.name) }));
+        const cellSize = 40, startX = 65, startY = 30;
+        const seenCubeEdges = new Set(), seenCubeVertices = new Set();
+        let edgeIndex = 0, faceIndex = 0, apexIndex = 0;
+        const faces = [], edges = [], vertices = [];
+        netFaces.forEach(face => {
+          const x = startX + face.col * cellSize, y = startY + face.row * cellSize;
+          const corners = [[x, y], [x + cellSize, y], [x + cellSize, y + cellSize], [x, y + cellSize]];
+          const center = [x + cellSize / 2, y + cellSize / 2];
+          if (!face.pyramid) {
+            faceIndex += 1;
+            faces.push(polygon(corners, "source61-e4-face source61-e4-plain-face", `data-solid-face="${solidKind}" data-face-index="${faceIndex}" data-face-role="cube-${face.name}"`));
+          }
+          face.corners.forEach((vertexId, index) => {
+            const next = (index + 1) % 4;
+            if (face.pyramid) {
+              faceIndex += 1;
+              faces.push(polygon([center, corners[index], corners[next]], `source61-e4-face source61-e4-face-${faceIndex % 4}`, `data-solid-face="${solidKind}" data-face-index="${faceIndex}"`));
+            }
+            const cubeEdgeId = edgeKey(vertexId, face.corners[next]);
+            const cubeEdgeData = seenCubeEdges.has(cubeEdgeId) ? "" : `data-solid-edge="${solidKind}" data-edge-index="${++edgeIndex}" data-edge-role="cube-${cubeEdgeId}"`;
+            seenCubeEdges.add(cubeEdgeId);
+            edges.push(line(corners[index], corners[next], "source61-e4-edge source61-e4-net-boundary", cubeEdgeData));
+            if (face.pyramid) edges.push(line(center, corners[index], "source61-e4-edge source61-e4-net-ray", `data-solid-edge="${solidKind}" data-edge-index="${++edgeIndex}" data-edge-role="pyramid-${face.name}-${index + 1}"`));
+            if (!seenCubeVertices.has(vertexId)) {
+              seenCubeVertices.add(vertexId);
+              vertices.push(circle(corners[index], "source61-e4-vertex", `data-solid-vertex="${solidKind}" data-vertex-index="cube-${vertexId}"`));
+            }
+          });
+          if (face.pyramid) {
+            apexIndex += 1;
+            vertices.push(circle(center, "source61-e4-vertex source61-e4-net-apex", `data-solid-vertex="${solidKind}" data-vertex-index="apex-${apexIndex}"`));
+          }
+        });
+        const faceTotal = faceIndex, edgeTotal = edgeIndex, vertexTotal = seenCubeVertices.size + apexIndex;
+        const bareText = bare.length === 1 ? "아랫면 1개" : "윗면·아랫면 2개";
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids source61-e4-cube-partial-pyramids source61-e4-counting-net is-solved" viewBox="0 0 330 300" role="img" aria-label="정육면체의 ${countWord} 면에 붙인 사각뿔과 붙이지 않은 면의 겉면을 펼쳐 세는 그림" ${structure} data-solid-face-count="${faceTotal}" data-solid-edge-count="${edgeTotal}" data-solid-vertex-count="${vertexTotal}" data-result-highlight="${faceTotal + edgeTotal + vertexTotal}"><text x="165" y="17" text-anchor="middle">겉면을 펼쳐 세는 그림</text>${faces.join("")}${edges.join("")}${vertices.join("")}<text x="165" y="179" text-anchor="middle">면: 삼각형 4개 × 사각뿔 ${count}개 + ${bareText} = ${faceTotal}개</text><text x="165" y="207" text-anchor="middle">모서리: 정육면체 12개 + 옆모서리 ${4 * count}개 = ${edgeTotal}개</text><text x="165" y="235" text-anchor="middle">꼭짓점: 정육면체 8개 + 각뿔 꼭짓점 ${count}개 = ${vertexTotal}개</text><text x="165" y="271" text-anchor="middle">사각뿔의 밑면 ${count}개는 붙인 뒤 겉에서 보이지 않습니다.</text></svg>`;
+      };
       const truncatedPyramidModel = n => {
         const base = ring(n, 154, 164, 84, 42);
         const apex = [154, 28];
@@ -22441,6 +22506,19 @@
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-square-net${apexSquare ? " source61-e4-apex-square-net" : ""}${solved ? " is-solved" : ""}" viewBox="0 0 330 300" role="img" aria-label="정사각뿔 전개도와 각뿔 꼭짓점을 이은 정사각형" data-source61-e4-structure="${structure}" data-source61-e4-geometry="shared-square-pyramid-net-coordinate-model" data-frame-kind="${frameKind}" data-outer-side-cm="${outerSide}" data-base-diagonal-cm="${diagonal}"${!apexSquare || solved ? ` data-base-area-cm2="${baseArea}"` : ""}${solved ? ` data-net-area-cm2="${netArea}" data-result-highlight="${netArea}"` : ""}>${solvedHeading}${polygon(frame, frameClass, `data-net-frame="${frameKind}"`)}${faces}${complements}${foldLines}${diagonalLine}${diagonalLabel}${baseLabel}${apexPoints}<text class="source61-e4-net-dimension" x="165" y="270">${frameCaption}</text>${!apexSquare ? `<text class="source61-e4-net-dimension" x="294" y="142" transform="rotate(-90 294 142)">${outerSide}cm</text>` : ""}${solved ? `<text class="source61-e4-result-label" x="165" y="290">전개도 넓이 ${netArea}cm²</text>` : ""}</svg>`;
       };
 
+      if (variant === 0 && poolIndex > 0) {
+        // 추가 고정 문항: 면 = 붙이지 않은 정육면체 면 + 사각뿔 수×4, 모서리 = 12 + 사각뿔 수×4, 꼭짓점 = 8 + 사각뿔 수
+        const bare = [null, ["윗면", "아랫면"], ["아랫면"]][poolIndex];
+        const count = 6 - bare.length;
+        const faces = bare.length + count * 4, edges = 12 + count * 4, vertices = 8 + count, total = faces + edges + vertices;
+        if (vertices - edges + faces !== 2 || total !== [null, 58, 66][poolIndex]) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 면·모서리·꼭짓점 검산이 맞지 않습니다.`);
+        const countWord = { 4: "4", 5: "5" }[count];
+        const placeText = { 4: "윗면과 아랫면을 뺀 네 옆면", 5: "아랫면을 뺀 다섯 면" }[count];
+        const bareSolution = bare.length === 1 ? "사각뿔을 붙이지 않은 아랫면 1개가" : "사각뿔을 붙이지 않은 윗면과 아랫면 2개가";
+        const promptVisual = `${cubePartialPyramidSvg({ bare })}${mathBoard("붙이는 방법", row("가운데 도형", "정육면체") + row("붙이는 도형", "합동인 사각뿔") + row("붙이는 자리", `${placeText}에 하나씩`))}`;
+        const answerVisual = `${cubePartialPyramidSvg({ bare, solved: true })}${mathBoard("완성된 입체도형", row("면", `삼각형 ${count * 4}개, 정사각형 ${bare.length}개`) + row("모서리", `${edges}개`) + row("꼭짓점", `${vertices}개`) + row("합", `${faces}+${edges}+${vertices}=${total}`))}`;
+        return fixedResult(`모든 모서리의 길이가 같은 정육면체 1개와, 밑면의 모양과 크기가 정육면체의 한 면과 같은 사각뿔 ${countWord}개가 있습니다. 사각뿔을 정육면체의 ${placeText}에 꼭 맞게 하나씩 붙여 입체도형을 만들 때, 완성된 입체도형의 꼭짓점 수, 모서리 수, 면의 수의 합을 구하세요.${promptVisual}${support("붙인 뒤 겉으로 보이는 삼각형 면과 새로 생긴 꼭짓점을 나누어 세어 보세요.")}${challenge}${evidence("cube-six-pyramid-assembly", [count])}`, `${total}`, `사각뿔을 붙인 ${count}개의 면마다 삼각형 면 4개가 겉으로 보이고, ${bareSolution} 그대로 남으므로 면은 ${count}×4+${bare.length}=${faces}개입니다. 정육면체의 모서리 12개와 사각뿔의 옆모서리 ${count}×4=${count * 4}개를 합하면 모서리는 ${edges}개입니다. 정육면체의 꼭짓점 8개와 사각뿔의 꼭짓점 ${count}개를 합하면 꼭짓점은 ${vertices}개입니다. 따라서 합은 ${faces}+${edges}+${vertices}=${total}입니다.`, answerVisual);
+      }
       if (variant === 0) {
         const total = 74;
         const promptVisual = `${cubePyramidSvg({})}${mathBoard("붙이는 방법", row("가운데 도형", "정육면체") + row("붙이는 도형", "합동인 사각뿔") + row("붙이는 자리", "정육면체의 각 면에 하나씩"))}`;

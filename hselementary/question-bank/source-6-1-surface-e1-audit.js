@@ -71,6 +71,7 @@ const mission5 = [[0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 
 const mission5Pools = [mission5, mission5.map(([x, y, z]) => [z, y, x]), mission5.map(([x, y, z]) => [y, z, x])];
 
 const answers = {};
+const poolAnswers = {};
 for (const kind of ids) {
   const hashes = new Set();
   for (let variant = 0; variant < 3; variant += 1) {
@@ -81,8 +82,14 @@ for (const kind of ids) {
     assert(!generated.answerVisual.includes("답:"), `${kind}/${variant}: answer value duplicated inside diagram`);
     hashes.add(crypto.createHash("sha256").update(`${generated.prompt}\n${generated.answerVisual}`).digest("hex"));
     if (variant === 0) answers[kind] = generated.answer;
+    (poolAnswers[kind] ||= []).push(generated.answer);
   }
   assert(hashes.size === 3, `${kind}: duplicate verified pool`);
+  // 2026-11-24: 모든 공개 후보는 난이도마다 서로 다른 문제 문장 3개를 낸다(앱은 같은 문장을 한 번만 낸다).
+  for (const difficulty of [-1, 0, 1]) {
+    const prompts = new Set([0, 1, 2].map(variant => generator.generate({ sourceItemId: `6-1-u6-e1-${kind}`, generatorKey: "sourceGrade6SurfaceE1", variant }, 1, difficulty, 1, variant).prompt));
+    assert(prompts.size === 3, `${kind}/난이도 ${difficulty}: 서로 다른 문제 문장이 3개가 아닙니다 (${prompts.size}개).`);
+  }
 }
 
 const exploration = [[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, 2, 0], [1, 2, 0], [0, 1, 1], [1, 1, 1], [2, 2, 1], [0, 0, 2], [1, 0, 2], [2, 2, 2]];
@@ -94,6 +101,26 @@ assert(Math.max(...Array.from({ length: 10 }, (_, index) => {
   return 6 * remaining - 2 * Math.ceil(remaining / 2);
 })) === 50, "exploration: fewer than eleven cubes cannot keep surface 54");
 assert(answers.exploration === "16개", "exploration: answer");
+// 2026-11-24 추가 고정 문항: 4×4×4(20개 남김, 맞닿은 면 12곳)와 5×5×5(30개 남김, 맞닿은 면 15곳)
+const columns = list => list.flatMap(([x, y, z0, h]) => Array.from({ length: h }, (_, index) => [x, y, z0 + index]));
+const explorationFour = columns([[0, 0, 0, 3], [2, 0, 0, 3], [0, 2, 0, 3], [2, 2, 0, 3], [1, 1, 0, 2], [3, 1, 0, 2], [1, 3, 0, 2], [3, 3, 0, 2]]);
+const explorationFive = columns([...[[0, 0], [2, 0], [4, 0], [1, 1], [3, 1], [0, 2], [2, 2], [4, 2], [1, 3], [3, 3], [0, 4], [2, 4], [4, 4]].map(([x, y]) => [x, y, 0, 2]), [0, 0, 3, 2], [4, 4, 3, 2]]);
+for (const [size, cells, expected] of [[4, explorationFour, "44개"], [5, explorationFive, "95개"]]) {
+  const present = new Set(cells.map(key));
+  assert(present.size === cells.length && cells.every(point => point.every(value => value >= 0 && value < size)), `exploration ${size}: cells outside cube`);
+  assert(surfaceOf(cells) === 6 * size * size, `exploration ${size}: surface`);
+  assert(cells.every(point => hasNeighbor(point, present)), `exploration ${size}: isolated cube`);
+  const fewerBest = Math.max(...Array.from({ length: cells.length - 1 }, (_, index) => 6 * (index + 1) - 2 * Math.ceil((index + 1) / 2)));
+  assert(fewerBest < 6 * size * size, `exploration ${size}: fewer cubes could keep the surface`);
+  assert(`${size ** 3 - cells.length}개` === expected, `exploration ${size}: expected answer`);
+}
+assert(JSON.stringify(poolAnswers.exploration) === JSON.stringify(["16개", "44개", "95개"]), `exploration: pool answers ${poolAnswers.exploration}`);
+assert(JSON.stringify(poolAnswers["mission-1"]) === JSON.stringify(["최대 34, 최소 24", "최대 136, 최소 96", "최대 306, 최소 216"]), `mission-1: pool answers ${poolAnswers["mission-1"]}`);
+for (const [variant, size] of [[1, 4], [2, 5]]) {
+  const generated = generator.generate({ sourceItemId: "6-1-u6-e1-exploration", generatorKey: "sourceGrade6SurfaceE1", variant }, 1, 0, 1, variant);
+  assert(generated.prompt.startsWith(`${size}×${size}×${size} 정육면체를 만들고`), `exploration ${size}: prompt size`);
+  assert(generated.answerVisual.includes(`data-model="${size === 4 ? "four" : "five"}-layer-map"`), `exploration ${size}: layer map`);
+}
 const explorationGenerated = generator.generate({ sourceItemId: "6-1-u6-e1-exploration", generatorKey: "sourceGrade6SurfaceE1", variant: 0 }, 1, 0, 1, 0);
 assert(explorationGenerated.prompt.includes("최대 몇 개인가요"), "exploration: maximum wording missing");
 assert(explorationGenerated.prompt.includes('data-model="voxel-grid"'), "exploration: initial cube visual missing");
@@ -117,6 +144,14 @@ assert(surface(3, tunnel(3, 1)) * 3 * 3 === 648, "example-3: surface");
 assert(6 * 9 * 9 + 12 * 9 * 3 - 18 * 3 * 3 === 648, "example-3: continuous tunnel formula");
 assert(answers["example-4"] === "4배", "example-4: ratio");
 assert(answers["mission-1"] === "최대 34, 최소 24", "mission-1: extrema");
+// Mission 1 추가 고정 문항: 8개 한 줄(겉면 34개)과 2×2×2(겉면 24개)를 한 모서리 2cm·3cm 쌓기나무로 바꾼다.
+const line8 = Array.from({ length: 8 }, (_, index) => [index, 0, 0]);
+const cube8 = [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]];
+for (const edge of [2, 3]) {
+  const generated = generator.generate({ sourceItemId: "6-1-u6-e1-mission-1", generatorKey: "sourceGrade6SurfaceE1", variant: edge - 1 }, 1, 0, 1, edge - 1);
+  assert(generated.prompt.includes(`한 모서리의 길이가 ${edge}cm인 쌓기나무 8개`), `mission-1 ${edge}cm: prompt`);
+  assert(generated.answer === `최대 ${surfaceOf(line8) * edge * edge}, 최소 ${surfaceOf(cube8) * edge * edge}`, `mission-1 ${edge}cm: extrema`);
+}
 assert(6 * 400 * 400 + 12 * 400 * 100 - 18 * 100 * 100 === 1260000, "mission-3: centered continuous tunnel surface");
 assert(answers["mission-6"] === "18/7배", "mission-6: ratio");
 

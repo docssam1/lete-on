@@ -1,3 +1,14 @@
+## 2026-11-24 — 6학년 원문 3유형 변형 문항 추가, 6-2 3단원 2유형은 보류 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("6학년부터 변형 추가"): 같은 문장이 반복되어 1문항만 나오던 6학년 원문 유형에 같은 구조의 고정 문항(pool 1·2)을 더했다. pool 0(보통 난이도 원문)은 출력이 바뀌지 않았음을 변경 전후 생성 결과 비교로 확인했다(verifiedVariantCount 1→3만 달라짐).
+  - 6-1-u2-e4-example-4-1(sourceGrade6PrismsPyramidsE4 variant 0): 정육면체+사각뿔 6개(74, 원문) / 윗면·아랫면을 뺀 네 옆면+사각뿔 4개(58) / 아랫면을 뺀 다섯 면+사각뿔 5개(66). 분류표 verifiedVariantTarget·Count 1→3, runtime-availability·source-inventory-grade6 감사의 1개 예외 목록에서 뺌.
+  - 6-1-u6-e1-exploration(source-grade6-surface-e1.js): 3×3×3(16개, 원문) / 4×4×4(44개: 3층 기둥 4개+2층 기둥 4개를 바둑판 자리에 남김, 20개·맞닿은 면 12곳) / 5×5×5(95개: 2층 막대 15개, 30개·맞닿은 면 15곳). 4층·5층 층별 지도 추가.
+  - 6-1-u6-e1-mission-1: 한 모서리 1cm(최대 34, 최소 24, 원문) / 2cm(136, 96) / 3cm(306, 216).
+- 독립 검산(작업 폴더 밖 Python): 각뿔 붙이기는 3차원 좌표로 입체를 만들어 면·모서리·꼭짓점과 인접 면 평행 여부를 셈(높이 4가지). 개념탐구는 답 그림의 층별 지도에서 남은 칸을 읽어 겉넓이·이웃 조건·한 개 적게 남길 때의 상한(6m-2×올림(m÷2))을 확인. Mission 1은 고정 방향 8칸 폴리큐브 162,913개를 전수 조사(겉면 최대 34, 최소 24).
+- 보류: 6-2-u3-e4-mission-4(sourceGrade6SecondSpaceE4FourCubeAddition)·mission-5(…RectangularColoredRemoval)는 문제·답 그림이 sha256 목록이 있는 PNG이고, 이를 만든 캡처 스크립트(manifest의 source-6-2-e4-final-missions-review.mjs/html, pentacube renderReport)가 저장소에 없으며 렌더러·모델이 원문 치수·variant 0만 받는다. 모델에서 다시 그려 검증할 수 없어 변형을 만들지 않았다.
+- 감사 통과: source-6-1-prisms-pyramids-e4(독립·브라우저), source-6-1-surface-e1(독립·브라우저, 개념탐구·Mission 1도 이제 3문항 기대), source-6-1-volume-surface-readiness, runtime-availability, math-notation, source-inventory-grade6, source-inventory-grades-5-2-to-6, browser-source-release, type-preview-ux, fixed-pool-selection. Mac에서 PDF 감사는 PATH에 ~/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override(pdfinfo·pdftoppm)를 넣어야 한다.
+- 캐시 꼬리표: generators.js·source-inventory-grade6.js·source-grade6-surface-e1.js ?v=20261124-g6-source-variants.
+
 ## 2026-11-24 — 5-1 분수의 덧셈 5유형 변형 문항 추가 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 결정("변형 문항 추가"): 3문항을 요청해도 1~2문항만 나오던 5-1 분수의 덧셈 유형에 같은 구조의 변형을 더해 난이도마다 서로 다른 문항이 3개 이상 나오게 했다(generators.js ?v=20261124-u5-variants).
