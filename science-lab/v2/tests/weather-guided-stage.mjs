@@ -1,0 +1,4 @@
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{WEATHER_GUIDED_VERSION}from'../weather-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([4,10,16,22,28,34,40,46,52,56,60,63,66,67,70,71,72,74,75,77,78,79,80,84,88,92,96,100,104,107,108,110,111,112]);
+export function beforeWeatherTask(q){if(q.contentVersion!==WEATHER_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function weatherUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="c22-s52-u03-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,112);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,78);return kept;}

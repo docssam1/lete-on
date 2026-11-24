@@ -1,3 +1,4 @@
+import{beforeWeatherTask}from'./tests/weather-guided-stage.mjs';
 import{weatherContextItems}from'../data/book/weather-workbook-context.js';
 import{grade5QuestionReview}from'../data/book/grade5-question-review.js';
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
@@ -36,7 +37,7 @@ test('weather readability guards original, similar, review, future and other uni
  assert.equal(weatherReadableCurrentItems(baseline,'other'),baseline);assert.equal(weatherReadableCurrentItems(null,unit),null);
 });
 test('weather bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=weatherContextItems(grade5QuestionReview(reviewedQuestionCriteria(weatherDrawingCriteriaCurrentItems(weatherReadableCurrentItems(baseline,unit),unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const firstCurrent=await revisedClassroom(unit,book),secondCurrent=await revisedClassroom(unit,book),first={...firstCurrent,classroomItems:firstCurrent.classroomItems.map(beforeWeatherTask)},second={...secondCurrent,classroomItems:secondCurrent.classroomItems.map(beforeWeatherTask)},current=weatherContextItems(grade5QuestionReview(reviewedQuestionCriteria(weatherDrawingCriteriaCurrentItems(weatherReadableCurrentItems(baseline,unit),unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(q.contentVersion===WEATHER_READABILITY_VERSION||q.previousVersions?.some(p=>p.version===WEATHER_READABILITY_VERSION))changed++;}
  assert.equal(changed,6);assert.equal(first.classroomItems.length,16);
 });

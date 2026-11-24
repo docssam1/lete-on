@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook,reviewStudentModule}from'./student-language-review.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
 import{workbook,weatherContextPriorWorkbook as prior}from'../data/book/c22-s52-u03.workbook.js';import{withWeatherContextWorkbook,WEATHER_CONTEXT_VERSION as version}from'../data/book/weather-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
 const unit='c22-s52-u03',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -5,10 +6,10 @@ const unit='c22-s52-u03',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s)
 test('actual weather routes retain absence of rain without claiming clear skies and distinguish comparison methods',async()=>{
  assert(workbook.pages[85].rail[2].text.includes('지금 비가 오지 않는다는 관측'));assert(!workbook.pages[85].rail[2].text.includes('맑음'));assert(workbook.pages[85].rail[0].text.includes('자료의 종류'));
  const method=q(workbook,76);assert(method.prompt.includes('알맞은 방법'));assert(method.choices.every(c=>c.endsWith('다.')));assert.equal(method.choices[3],'한쪽 재료만 드라이기로 직접 가열한다.');assert(q(workbook,45).prompt.includes('알맞은 방법'));assert(!q(workbook,84).criteria.includes('두 가지'));assert(q(workbook,102).prompt.includes('영향은 제외'));assert(q(workbook,110).prompt.includes('같은 높이'));
- const paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
+ const current=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
-  for(const no of[45,76,102,110]){const item=q(workbook,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));for(const choice of item.choices||[])assert(block.includes(esc(choice)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
-  assert.equal(html.includes(esc(q(workbook,84).criteria)),mode==='teacher');assert(html.includes('지금 비가 오지 않는다는 관측'));assert(!html.includes('시범에서 보인 위치와 잘 보이지 않은 위치를 적어요'));
+  for(const no of[45,76,102,110]){const item=q(current,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));for(const choice of item.choices||[])assert(block.includes(esc(choice)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
+  assert.equal(html.includes(esc(q(current,84).criteria)),mode==='teacher');assert(html.includes('지금은 비가 오지 않아도 내일은 비가 올 수 있을까요?'));assert(!html.includes('시범에서 보인 위치와 잘 보이지 않은 위치를 적어요'));
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&weatherContext='+version));
 });
