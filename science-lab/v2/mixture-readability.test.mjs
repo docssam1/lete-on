@@ -1,3 +1,4 @@
+import{beforeMixtureTask}from'./tests/mixture-guided-stage.mjs';
 import{mixtureContextItems}from'../data/book/mixture-workbook-context.js';
 import{grade5QuestionReview}from'../data/book/grade5-question-review.js';
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
@@ -36,7 +37,7 @@ test('mixture readability guards original, similar, review, future and other uni
 });
 test('mixture bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
  const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=mixtureContextItems(grade5QuestionReview(reviewedQuestionCriteria(linkedWorkbookAnswers(mixtureReadableCurrentItems(baseline,unit),unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
- for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,MIXTURE_READABILITY_VERSION))changed++;}
+ for(const q of first.classroomItems){assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),beforeMixtureTask(q));if(questionAtVersion(q,MIXTURE_READABILITY_VERSION))changed++;}
  assert.equal(changed,16);assert.equal(first.classroomItems.length,16);
 });
 test('mixture preserves prior figures and answers while explaining the actual separation steps',()=>{

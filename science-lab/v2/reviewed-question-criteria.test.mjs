@@ -1,3 +1,5 @@
+import{reviewStudentModule}from'./student-language-review.js';
+import{beforeMixtureTask}from'./tests/mixture-guided-stage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -77,8 +79,8 @@ test('current classroom, Daily and printed keys share the same version and retai
  for(const unit of units){
   const mod=mods.get(unit),book=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,book),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]),student=mod.bankPaper({...mod,mode:'student'}),teacher=mod.bankPaper({...mod,mode:'teacher'});
   for(const q of mod.items.filter(q=>beforeGrade5(q).contentVersion===version)){
-   for(const list of[classroom.classroomItems,pool]){const displayed=list.find(x=>x.id===q.id);if(displayed){assert.deepEqual(displayed,q);found++;}}
-   if(q.answerContract.rubric){const criterion=q.answerContract.rubric.required[0];assert(teacher.includes(escape(criterion)),q.id);assert(!student.includes(escape(criterion)),q.id);}
+   for(const list of[classroom.classroomItems,pool]){const displayed=list.find(x=>x.id===q.id);if(displayed){assert.deepEqual(beforeMixtureTask(displayed),q);found++;}}
+   if(q.answerContract.rubric){const active=(await reviewStudentModule(unit,mod)).items.find(x=>x.id===q.id),criterion=active.answerContract.rubric.required[0];assert(teacher.includes(escape(criterion)),q.id);assert(!student.includes(escape(criterion)),q.id);}
   }
   assert(!student.includes('class="ed-key"'));
  }

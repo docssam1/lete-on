@@ -8,7 +8,7 @@ const labels = {choice:'하나 고르기',multi:'모두 고르기',blank:'빈칸
 const plainLabels = {'객관식':'하나 고르기','복수 선택':'모두 고르기','빈칸 넣기':'빈칸 채우기','순서 배열':'순서대로 쓰기','자료 해석':'자료 읽기','까닭 설명':'까닭 설명하기','그림·설계':'그림으로 설계하기'};
 const questionLabel = q => plainLabels[q.formLabel] || q.formLabel || labels[q.form];
 function drawingSpace(q){
- const panels=Number.isInteger(q.drawingPanels)&&q.drawingPanels>=2&&q.drawingPanels<=3?q.drawingPanels:0;
+ const panels=Number.isInteger(q.drawingPanels)&&q.drawingPanels>=2&&q.drawingPanels<=4?q.drawingPanels:0;
  return `<div class="ed-drawing${q.drawing==='large'?' large':''}${panels?' ed-drawing-panels':''}" aria-label="그림과 이름표를 그리는 칸">${panels?Array.from({length:panels},(_,i)=>`<div class="ed-drawing-panel" role="group" aria-label="${i+1}번째 그림 칸"><span>${i+1}</span></div>`).join(''):''}</div>`;
 }
 const lines = n => `<div class="ed-lines">${'<i></i>'.repeat(n)}</div>`;

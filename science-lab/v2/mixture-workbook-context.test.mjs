@@ -1,14 +1,18 @@
+import{beforeMixtureTask}from'./tests/mixture-guided-stage.mjs';
+import{reviewStudentModule,reviewStudentWorkbook}from'./student-language-review.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{workbook,mixtureContextPriorWorkbook as prior}from'../data/book/c22-s52-u01.workbook.js';import{withMixtureContextWorkbook,mixtureContextItems,MIXTURE_CONTEXT_VERSION as version}from'../data/book/mixture-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';import{withThink,loadJudge}from'./think-merge.js';import{questionAtVersion,questionVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion}from'./question-revision.js';import{gradeDaily}from'./daily-grade.js';import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';
 const unit='c22-s52-u01',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
 
 test('actual mixture student and teacher routes distinguish actions and show both valid preparation orders in every answer view',async()=>{
- const mod=await loaders[unit](),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
+ const visibleWorkbook=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),mod=await reviewStudentModule(unit,await loaders[unit]()),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
  assert(!q(workbook,4).prompt.includes('사진'));for(const n of[8,44])assert(q(workbook,n).choices.every(c=>c.endsWith('다.')));assert(q(workbook,11).prompt.includes('[ ] 하고'));assert(q(workbook,89).prompt.includes('[ ] 것은 아닌지'));assert.equal(q(workbook,52).topic,'얻은 소금의 무게 비교');assert.equal(q(workbook,54).topic,'무게를 비교할 조건');assert(!q(workbook,58).criteria.includes('재설명'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true}),mod.bankPaper({...mod,mode})]){
-  for(const n of[4,8,11,44,89]){const item=q(workbook,n);for(const part of item.prompt.split('[ ]'))assert(html.includes(esc(part.trim())));for(const choice of item.choices||[])assert(html.includes(esc(choice)));}
-  assert.equal(html.includes(esc(q(workbook,32).answer)),mode==='teacher');assert.equal(html.includes(esc(q(workbook,58).criteria)),mode==='teacher');
+  for(const n of[4,8,11,44,89]){const item=q(visibleWorkbook,n);for(const part of item.prompt.split('[ ]'))assert(html.includes(esc(part.trim())));for(const choice of item.choices||[])assert(html.includes(esc(choice)));}
+  assert.equal(html.includes(esc(q(workbook,32).answer)),mode==='teacher');assert.equal(html.includes(esc(q(visibleWorkbook,58).criteria)),mode==='teacher');
  }
  for(const mode of['answers','quick'])for(const html of[paper.workbookPaper({mode}),mod.bankPaper({...mod,mode})]){assert(html.includes('ㄹ → ㄴ → ㄱ → ㄷ'));assert(html.includes('ㄴ → ㄹ → ㄱ → ㄷ'));}
  for(const name of['v2.js','revised-lesson.js','index.html','mixture-bank-paper.js'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&mixtureContext='+version));
@@ -33,7 +37,7 @@ test('nine actual bank revisions preserve archived answers while accepting indep
   assert.deepEqual(questionMisconceptions(current,mod.misc),questionMisconceptions(before,mod.misc));for(const v of new Set([questionVersion(before),...(before.previousVersions||[]).map(p=>p.version)]))assert.deepEqual(questionAtVersion(current,v),questionAtVersion(before,v));
   const response=before.choices?before.answerContract.answers:before.answerContract.sample??before.answerContract.answer,state={answers:{[current.id]:response,other:'keep'},questionVersions:{[current.id]:questionVersion(before)}};assert.deepEqual(restoreDailyQuestions([current],state)[0],before);const next=restartCurrentQuestion(state,current);assert.equal(next.answers.other,'keep');assert.equal(next.questionVersions[current.id],version);assert.deepEqual(next.revisionHistory[current.id][0].answers,response);
   for(const fields of[{contentVersion:'future'},{status:'source'},{sourceContent:{blocks:[]}},{sourceRef:{type:'original'}},{prompt:before.prompt+' future'},{figure:'future.jpg'},{answerContract:{...before.answerContract,future:true}}]){const rows=[{...before,...fields}];assert.equal(mixtureContextItems(rows,unit),rows);}
-  for(const rows of[cls.classroomItems,pool]){const shown=rows.find(q=>q.id===current.id);if(shown)assert.deepEqual(shown,current);}
+  for(const rows of[cls.classroomItems,pool]){const shown=rows.find(q=>q.id===current.id);if(shown)assert.deepEqual(beforeMixtureTask(shown),current);}
  }
  assert(cls.classroomItems.some(q=>q.contentVersion===version));
 });

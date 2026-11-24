@@ -1,3 +1,4 @@
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import{reviewStudentWorkbook,reviewTextTree}from'./student-language-review.js';
 const unitForLanguage=w=>w.unit;
 import{withEnergyContextWorkbook}from'../data/book/energy-workbook-context.js';
@@ -97,8 +98,8 @@ test('mixture bank print imports the reviewed personal directions even when the 
   if(spec.startsWith('../data/book/c22-s52-u01.workbook.js')&&spec!=='../data/book/c22-s52-u01.workbook.js?v=20261115-grade5-question-review&mixtureContext=20261116-mixture-workbook-context'){oldCacheReads++;return synthetic({workbook:prior});}
   return synthetic({...await import(new URL(spec,url).href)});
  });await module.evaluate();assert.equal(oldCacheReads,0);
- const paper=makeWorkbookPaper(withMixtureContextWorkbook(withRepresentationReviewedWorkbook(withMaterialReadingWorkbook(withGrade5ReviewedWorkbook(withReviewedWorkbookCriteria(current))))),{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
+ const active=(await import('../data/book/c22-s52-u01.workbook.js')).workbook,paper=makeWorkbookPaper(await reviewStudentWorkbook(active.unit,withObservedPhotoAlt(withElementaryReadingDirections(active))),{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
  for(const mode of ['student','teacher','answers','quick'])assert.equal(module.namespace.mixtureBankPaperHtml({mode}),paper.workbookPaper({mode}));
  const html=module.namespace.mixtureBankPaperHtml({mode:'student'});
- assert(html.includes('분리하기 전과 뒤의 무게를 비교할 때 확인할 조건을 쓰세요.'));
+ assert(html.includes('같은 상태로 말려 무게를 비교해요.'));
 });

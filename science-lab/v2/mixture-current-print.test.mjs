@@ -1,3 +1,6 @@
+import{reviewStudentModule,reviewStudentWorkbook}from'./student-language-review.js';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -12,13 +15,14 @@ import {chapter as priorChapter,art as priorArt,quickPages as priorQuickPages} f
 
 const source=await readFile(new URL('./v2.js',import.meta.url),'utf8'),start=source.indexOf('const UNITS = ')+14,end=source.indexOf('\n// 문제은행만',start);
 const data=await new vm.Script('('+source.slice(start,end).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,new URL('./v2.js',import.meta.url)).href)}).runInContext(vm.createContext({withThink}))['c22-s52-u01']();
+const visibleWorkbook=await reviewStudentWorkbook(workbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),visibleBank=await reviewStudentModule(workbook.unit,data);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 test('actual mixture bank print uses all current prompts, examples and explanations without changing the bank',()=>{
  const before=JSON.stringify(data.items),student=data.bankPaper({...data,mode:'student'}),teacher=data.bankPaper({...data,mode:'teacher'}),answers=data.bankPaper({...data,mode:'answers'});
  assert.equal(data.items.length,96);
- for(const q of workbook.questions){
-  const bank=data.items.find(b=>b.workbookRef?.id===q.id);assert(bank);assert.equal(bank.prompt,q.prompt);
+ for(const q of visibleWorkbook.questions){
+  const bank=visibleBank.items.find(b=>b.workbookRef?.id===q.id);assert(bank);assert.equal(bank.prompt,q.prompt);
   for(const part of q.prompt.split(/\[\s*\]/).filter(Boolean))assert(student.includes(escape(part)),q.id+' current student prompt');
   for(const html of [teacher,answers]){
    const block=[...html.matchAll(/<section class="ed-solution" data-solution="([^"]+)">[\s\S]*?<\/section>/g)].find(m=>m[1]===q.id)?.[0];
@@ -30,7 +34,7 @@ test('actual mixture bank print uses all current prompts, examples and explanati
 });
 
 test('all four mixture print modes share the current workbook renderer, typography and preparation handler',()=>{
- const paper=makeWorkbookPaper(workbook,{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
+ const paper=makeWorkbookPaper(visibleWorkbook,{}, {route:'print',toolLabel:'혼합물 문항집 고르기'});
  assert.equal(data.wireBankPaper,wireWorkbookPrint);
  for(const mode of ['student','teacher','answers','quick']){
   const html=data.bankPaper({...data,mode});assert.equal(html,withSourceBankPaper({...data,bankPaper:paper.workbookPaper}).bankPaper({...data,mode}));
