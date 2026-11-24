@@ -37,7 +37,11 @@ const evidenceKinds = [
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
-  [{ values: [6], answer: 74 }],
+  [
+    { values: [6], answer: 74, baseSolid: "cube" },
+    { values: [4], answer: 58, baseSolid: "cube" },
+    { values: [5], answer: 66, baseSolid: "cube" }
+  ],
   [
     { values: [4], answer: 50 },
     { values: [3], answer: 38 },
@@ -97,6 +101,7 @@ const parseEvidence = prompt => {
     sourceItemId: attr(markup, "data-source-item"),
     contract: attr(markup, "data-result-contract"),
     difficulty: attr(markup, "data-difficulty-design"),
+    baseSolid: attr(markup, "data-base-solid") || "cube",
     values
   };
 };
@@ -112,11 +117,15 @@ function polygonArea(points) {
 function independentAnswer(evidence) {
   const values = evidence.values;
   if (evidence.kind === "cube-six-pyramid-assembly") {
+    // 2026-11-24: pool 0 정육면체+사각뿔 6개(원문), pool 1 정육면체(윗면·아랫면 제외)+사각뿔 4개, pool 2 정육면체(아랫면 제외)+사각뿔 5개
     const [pyramids] = values;
-    const faces = pyramids * 4, edges = 12 + pyramids * 4, vertices = 8 + pyramids, total = faces + edges + vertices;
-    check(pyramids === 6, "정육면체에 붙이는 사각뿔 수가 6이 아닙니다.");
-    check(faces === pyramids * 4 && edges === 12 + pyramids * 4 && vertices === 8 + pyramids, "정육면체와 사각뿔의 겉 구조를 독립 계산하지 못했습니다.");
-    check(total === faces + edges + vertices && total === 74, "완성 입체의 합이 74가 아닙니다.");
+    const center = { cube: { faces: 6, edges: 12, vertices: 8, sides: 4 } }[evidence.baseSolid];
+    check(Boolean(center), "가운데 입체가 정육면체가 아닙니다.");
+    if (!center) return "";
+    const faces = (center.faces - pyramids) + pyramids * center.sides, edges = center.edges + pyramids * center.sides, vertices = center.vertices + pyramids, total = faces + edges + vertices;
+    check(pyramids >= 1 && pyramids <= center.faces, "붙이는 각뿔 수가 가운데 입체의 면 수를 넘습니다.");
+    check(vertices - edges + faces === 2, "완성 입체가 꼭짓점-모서리+면=2를 만족하지 않습니다.");
+    check([["cube", 6, 74], ["cube", 4, 58], ["cube", 5, 66]].some(([solid, count, sum]) => solid === evidence.baseSolid && count === pyramids && sum === total), "완성 입체의 합이 고정 pool 74·58·66과 다릅니다.");
     return total;
   }
   if (evidence.kind === "pyramid-vertex-truncation") {
@@ -259,12 +268,12 @@ function checkTopology(variant, generated, evidence) {
   check(answer.includes("<svg"), "답에 다시 그린 SVG가 없습니다.");
   if (![0, 5, 6].includes(variant)) check(answer.includes("source61-e4-hidden-edge"), "답 그림에 가려진 모서리를 나타내는 점선이 없습니다.");
   if (variant === 0) {
-    const [pyramids] = values;
-    const faces = pyramids * 4, edges = 12 + pyramids * 4, vertices = 8 + pyramids;
-    for (const forbidden of ["24", "36", "14", "74"]) check(!new RegExp(`(?<!\\d)${forbidden}(?!\\d)`).test(promptText), `문제에 완성 입체의 결과 ${forbidden}가 노출되었습니다.`);
-    check(allAttrs(answer, "data-solid-face", "stellated-cube") === 24, "여섯 사각뿔을 붙인 입체의 실제 삼각형 면이 24개가 아닙니다.");
-    check(allAttrs(answer, "data-solid-edge", "stellated-cube") === 36, "여섯 사각뿔을 붙인 입체의 실제 모서리가 36개가 아닙니다.");
-    check(allAttrs(answer, "data-solid-vertex", "stellated-cube") === 14, "여섯 사각뿔을 붙인 입체의 실제 꼭짓점이 14개가 아닙니다.");
+    const [solidKind, faces, edges, vertices, total] = [["stellated-cube", 24, 36, 14, 74], ["cube-four-pyramids", 18, 28, 12, 58], ["cube-five-pyramids", 21, 32, 13, 66]][generated.verifiedPoolIndex];
+    for (const forbidden of [faces, edges, vertices, total].map(String)) check(!new RegExp(`(?<!\\d)${forbidden}(?!\\d)`).test(promptText), `문제에 완성 입체의 결과 ${forbidden}가 노출되었습니다.`);
+    check(allAttrs(answer, "data-solid-face", solidKind) === faces, `각뿔을 붙인 입체의 실제 면이 ${faces}개가 아닙니다.`);
+    check(allAttrs(answer, "data-solid-edge", solidKind) === edges, `각뿔을 붙인 입체의 실제 모서리가 ${edges}개가 아닙니다.`);
+    check(allAttrs(answer, "data-solid-vertex", solidKind) === vertices, `각뿔을 붙인 입체의 실제 꼭짓점이 ${vertices}개가 아닙니다.`);
+    check(evidence.baseSolid === expectedPools[0][generated.verifiedPoolIndex].baseSolid, "가운데 입체 종류가 고정 pool과 다릅니다.");
     check(answer.includes("source61-e4-counting-net"), "답에 선 겹침 없이 면·모서리·꼭짓점을 세는 펼친 그림이 없습니다.");
     check(countClass(answer, "source61-e4-separate-pyramid") === 0, "답이 분리된 사각뿔만 그리고 조립 결과를 그리지 않았습니다.");
     return;
@@ -343,7 +352,7 @@ function checkTopology(variant, generated, evidence) {
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E4 전용 생성기가 등록되지 않았습니다.");
-check(sourceIds.length === 7 && expectedPools.map(pool => pool.length).join(",") === "1,3,3,3,3,3,3", "E4 source type 또는 fixed pool 개수가 계약과 다릅니다.");
+check(sourceIds.length === 7 && expectedPools.map(pool => pool.length).join(",") === "3,3,3,3,3,3,3", "E4 source type 또는 fixed pool 개수가 계약과 다릅니다.");
 
 for (let variant = 0; variant < sourceIds.length; variant += 1) {
   const pools = new Set();
