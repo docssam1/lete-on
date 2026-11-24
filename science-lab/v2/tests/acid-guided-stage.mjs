@@ -1,0 +1,4 @@
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{ACID_GUIDED_VERSION}from'../acid-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([4,10,16,22,28,34,40,46,52,58,64,68,72,76,80,83,84,86,88,89,91,92,94,96,100,111,112,120,123,124,125,126,127,128]);
+export function beforeAcidTask(q){if(q.contentVersion!==ACID_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function acidUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="c22-s61-u01-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,128);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,94);return kept;}
