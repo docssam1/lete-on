@@ -22734,11 +22734,13 @@
         const pools = [
           { low: 66.7, high: 72.4, divisor: 16, min: 66.72, max: 72.32 },
           { low: 54.3, high: 61.8, divisor: 24, min: 54.48, max: 61.68 },
-          { low: 82.1, high: 90.6, divisor: 25, min: 82.25, max: 90.50 }
+          { low: 82.1, high: 90.6, divisor: 25, min: 82.25, max: 90.25 }
         ][poolIndex];
+        // 2026-11-24: 90.50(=90.5)은 소수 둘째 자리 수가 아니므로 pool 2의 가장 큰 수는 90.25. 답은 물음 순서(가장 큰 수, 가장 작은 수)대로 쓴다.
         const cents = [];
-        for (let scaled = Math.floor(pools.low * 100) + 1; scaled < Math.ceil(pools.high * 100); scaled += 1) if (scaled % pools.divisor === 0) cents.push(scaled / 100);
-        const answer = `${fixed2(pools.min)}, ${fixed2(pools.max)}`;
+        for (let scaled = Math.floor(pools.low * 100) + 1; scaled < Math.ceil(pools.high * 100); scaled += 1) if (scaled % pools.divisor === 0 && scaled % 10 !== 0) cents.push(scaled / 100);
+        if (cents[0] !== pools.min || cents.at(-1) !== pools.max) throw new Error("6-1-u3-e1-example-3: 범위 안 소수 둘째 자리 수의 최소·최대가 고정 값과 다릅니다.");
+        const answer = `가장 큰 수 ${fixed2(pools.max)}, 가장 작은 수 ${fixed2(pools.min)}`;
         const answerHtml = `${svg("범위 안에서 나눌 수 있는 수직선", `<line class="source61-e1-number-line" x1="34" y1="94" x2="326" y2="94"/><line class="source61-e1-range" x1="88" y1="94" x2="272" y2="94"/><circle class="source61-e1-point" cx="${88 + (pools.min - pools.low) / (pools.high - pools.low) * 184}" cy="94" r="7"/><circle class="source61-e1-point" cx="${88 + (pools.max - pools.low) / (pools.high - pools.low) * 184}" cy="94" r="7"/><text x="88" y="70">${pools.low}</text><text x="272" y="70">${pools.high}</text><text class="source61-e1-result" x="180" y="137">가장 작은 수 ${fixed2(pools.min)} · 가장 큰 수 ${fixed2(pools.max)}</text>`, true, [pools.min, pools.max])}${mathBoard("나눌 수 있는 수", row("범위", `${pools.low} &lt; □ &lt; ${pools.high}`) + row("나누는 수", `${pools.divisor}`) + row("확인한 수", cents.map(fixed2).join(", ")) )}`;
         return fixedResult(`${pools.low}보다 크고 ${pools.high}보다 작은 소수 둘째 자리 수 중 ${pools.divisor}로 나누어 소수 둘째 자리까지 나타낼 수 있는 수의 가장 큰 수와 가장 작은 수를 각각 구하세요.${mathBoard("조건", row("범위", `${pools.low} &lt; □ &lt; ${pools.high}`) + row("나누는 수", pools.divisor))}${support("범위 안의 소수 둘째 자리 수를 만들고 ${pools.divisor}로 나누어지는 수를 골라 보세요.")}${challenge}${evidence([pools.low, pools.high, pools.divisor, pools.min, pools.max], "two-values")}`, answer, `범위 안의 소수 둘째 자리 수 중 ${pools.divisor}로 나누어지는 수를 모두 확인하면 가장 작은 수는 ${fixed2(pools.min)}, 가장 큰 수는 ${fixed2(pools.max)}입니다.`, answerWrap(answerHtml, [pools.min, pools.max]));
       }
@@ -23994,7 +23996,7 @@
         return fixedResult(`가에 대한 나의 비율은 ${fractionText(baN, baD)}, 나와 다의 비율은 ${bdDecimal}일 때, 가에 대한 다의 비율을 소수로 나타내세요.${promptVisual}`, decimalText, `풀이 기준: 나와 다의 비율은 다를 기준량으로 한 나의 비율(나÷다)입니다. ${bdDecimal}=${fractionText(bdN, bdD)}이므로 (가에 대한 다의 비율)=(가에 대한 나의 비율)÷(다에 대한 나의 비율)=${fractionText(baN, baD)}÷${fractionText(bdN, bdD)}=${fractionText(daN, daD)}=${decimalText}입니다.`, promptVisual, answerVisual, pools);
       }
 
-      const pools = [[48, 1, 8, 2, 1, 17, 10], [60, 1, 5, 3, 1, 2, 1], [64, 3, 8, 1, 4, 4, 7]][poolIndex];
+      const pools = [[48, 1, 8, 2, 1, 17, 10], [60, 1, 5, 2, 1, 11, 7], [64, 3, 8, 1, 4, 4, 7]][poolIndex]; // 2026-11-24: pool 1은 답이 2(자연수)라 "기약분수로" 물음과 맞지 않아 K팝만:힙합만 2:1(답 11/7)로 바꿈
       const [total, commonNumerator, commonDenominator, onlyKNumerator, onlyKNumeratorDenominator, answerNumerator, answerDenominator] = pools;
       const commonRatioDecimal = String(Number((commonNumerator / commonDenominator).toFixed(3)));
       const common = total * commonNumerator / commonDenominator;
@@ -29252,7 +29254,10 @@
       const stripSvg = ({ title, rows, values, solved = false, highlights = [], resultText = "", rowHeight = 72, showLegend = true, emptyStrip = false }) => {
         const top = 82;
         const legendSegments = rows[0]?.segments || [];
-        const legendRows = Math.max(1, Math.ceil(legendSegments.length / 3));
+        // 2026-11-24: 첫 줄과 항목이 다른 띠(예: 2반이 좋아하는 과일)는 legend:true일 때 그 줄 이름과 함께 범례를 하나 더 둔다.
+        const extraLegends = rows.slice(1).filter(row => row.legend);
+        const extraLegendLines = extraLegends.reduce((sum, row) => sum + 1 + Math.ceil(row.segments.length / 3), 0);
+        const legendRows = Math.max(1, Math.ceil(legendSegments.length / 3)) + extraLegendLines;
         const legendTop = top + rows.length * rowHeight + 4;
         const resultTop = legendTop + legendRows * 18 + 5;
         const height = resultTop + (solved && resultText ? 34 : 10);
@@ -29262,8 +29267,16 @@
         }).join("");
         const rowsMarkup = rows.map((row, index) => stripRow({ y: top + index * rowHeight, label: row.label, segments: row.segments, solved, highlight: highlights[index] || [], meta: row.meta, annotations: row.annotations, dimensions: row.dimensions })).join("");
         const legend = showLegend ? legendSegments.map((segment, index) => `<g><rect x="${34 + (index % 3) * 168}" y="${legendTop + Math.floor(index / 3) * 18}" width="9" height="9" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width=".6"/>${svgText(48 + (index % 3) * 168, legendTop + 8 + Math.floor(index / 3) * 18, segment.legendValue || `${segment.label}${segment.showPercent === false ? "" : ` ${segment.percent}%`}`, "font-size=\"8\" style=\"text-anchor:start\"")}</g>`).join("") : "";
+        let extraLine = Math.ceil(legendSegments.length / 3);
+        const extraLegendMarkup = showLegend ? extraLegends.map(row => {
+          const headY = legendTop + extraLine * 18 + 8;
+          const items = row.segments.map((segment, index) => `<g><rect x="${34 + (index % 3) * 168}" y="${legendTop + (extraLine + 1 + Math.floor(index / 3)) * 18}" width="9" height="9" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width=".6"/>${svgText(48 + (index % 3) * 168, legendTop + 8 + (extraLine + 1 + Math.floor(index / 3)) * 18, segment.label, "font-size=\"8\" style=\"text-anchor:start\"")}</g>`).join("");
+          const markup = `<g class="source61-e2-extra-legend">${svgText(34, headY, row.label, "font-size=\"8\" font-weight=\"900\" style=\"text-anchor:start\"")}${items}</g>`;
+          extraLine += 1 + Math.ceil(row.segments.length / 3);
+          return markup;
+        }).join("") : "";
         const resultMarkup = solved && resultText ? `<rect class="source61-e2-result-box" data-final-answer="${esc(resultText)}" x="32" y="${resultTop}" width="476" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(270, resultTop + 18, `답: ${resultText}`, "font-size=\"9\" font-weight=\"900\"")}` : "";
-        return `<svg class="geometry-diagram source61-graphs-e2-diagram" style="width:min(560px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e2-structure="${esc(title)}" data-source61-graphs-e2-layout="${layoutKind}" data-source61-graphs-e2-values="${values.join(",")}" data-source61-graphs-e2-segment-order="${rows.map(row => row.segments.map(segment => segment.label).join("|")).join(";")}"${emptyStrip ? ` data-source61-e2-empty-strip="true"` : ""}${solved ? ` data-result-highlight="${esc(rows.flatMap((row, rowIndex) => row.segments.filter((_, index) => (highlights[rowIndex] || []).includes(index)).map(segment => segment.label).join(",")))}" data-final-answer="${esc(resultText)}"` : ""}><rect class="source61-e2-frame" x="18" y="15" width="504" height="${height - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(270, 31, title, "font-size=\"13\" font-weight=\"900\"")}${ticks}${svgText(166, 70, "백분율(%)", "font-size=\"9\" style=\"text-anchor:start\"")}${rowsMarkup}${legend}${resultMarkup}</svg>`;
+        return `<svg class="geometry-diagram source61-graphs-e2-diagram" style="width:min(560px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e2-structure="${esc(title)}" data-source61-graphs-e2-layout="${layoutKind}" data-source61-graphs-e2-values="${values.join(",")}" data-source61-graphs-e2-segment-order="${rows.map(row => row.segments.map(segment => segment.label).join("|")).join(";")}"${emptyStrip ? ` data-source61-e2-empty-strip="true"` : ""}${solved ? ` data-result-highlight="${esc(rows.flatMap((row, rowIndex) => row.segments.filter((_, index) => (highlights[rowIndex] || []).includes(index)).map(segment => segment.label).join(",")))}" data-final-answer="${esc(resultText)}"` : ""}><rect class="source61-e2-frame" x="18" y="15" width="504" height="${height - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(270, 31, title, "font-size=\"13\" font-weight=\"900\"")}${ticks}${svgText(166, 70, "백분율(%)", "font-size=\"9\" style=\"text-anchor:start\"")}${rowsMarkup}${legend}${extraLegendMarkup}${resultMarkup}</svg>`;
       };
       const facePictograph = ({ title, labels, values, solved = false }) => {
         const cellWidth = 226, cellHeight = 92, startX = 28, startY = 56, gapX = 14, gapY = 12;
@@ -29354,7 +29367,7 @@
           { total: 300, classes: [20, 40, 25, 15], fruits: [28, 24, 22, 15, 11] }
         ][poolIndex];
         const classLabels = ["1반", "2반", "3반", "4반"], fruitLabels = ["바나나", "사과", "귤", "포도", "배"];
-        const makeRows = solved => [{ label: "6학년 반별", segments: classLabels.map((label, index) => ({ label, percent: pools.classes[index], showPercent: solved || index !== 1 })) }, { label: "2반이 좋아하는 과일", segments: fruitLabels.map((label, index) => ({ label, percent: pools.fruits[index] })) }];
+        const makeRows = solved => [{ label: "6학년 반별", segments: classLabels.map((label, index) => ({ label, percent: pools.classes[index], showPercent: solved || index !== 1 })) }, { label: "2반이 좋아하는 과일", legend: true, segments: fruitLabels.map((label, index) => ({ label, percent: pools.fruits[index] })) }];
         const classCount = pools.total * pools.classes[1] / 100, grapeCount = classCount * pools.fruits[3] / 100;
         const resultText = `포도 ${grapeCount}명`;
         const visual = solved => stripSvg({ title: "반별 학생 수와 2반이 좋아하는 과일", rows: makeRows(solved), values: [pools.total, ...pools.classes, ...pools.fruits], solved, highlights: solved ? [[1], [3]] : [[], []], resultText: solved ? resultText : "" });
@@ -29391,11 +29404,14 @@
       }
 
       if (variant === 7) {
+        // 2026-11-24: pool 1·2는 그림의 띠 길이와 답이 문장 조건(봄=여름×분수, 겨울=봄×2)과 맞지 않았다(답 18·40명 → 조건대로면 6·20명).
+        // 조건을 만족하는 수치로 바꾸고, 생성할 때 조건을 다시 확인한다.
         const pools = [
-          { total: 80, percent: [15, 35, 20, 30], relation: `${fractionMarkup(3, 7)}` },
-          { total: 120, percent: [20, 35, 15, 30], relation: `${fractionMarkup(4, 7)}` },
-          { total: 200, percent: [20, 30, 20, 30], relation: `${fractionMarkup(2, 3)}` }
-        ][poolIndex];
+          { total: 80, percent: [15, 35, 20, 30], rel: [3, 7] },
+          { total: 120, percent: [15, 30, 25, 30], rel: [1, 2] },
+          { total: 200, percent: [20, 28, 12, 40], rel: [5, 7] }
+        ].map(pool => ({ ...pool, relation: `${fractionMarkup(pool.rel[0], pool.rel[1])}` }))[poolIndex];
+        if (pools.percent[0] * pools.rel[1] !== pools.percent[1] * pools.rel[0] || pools.percent[3] !== 2 * pools.percent[0] || pools.percent.reduce((sum, value) => sum + value, 0) !== 100) throw new Error("6-1-u5-e2-mission-4: 계절 띠그래프 수치가 문장 조건과 맞지 않습니다.");
         const labels = ["봄", "여름", "가을", "겨울"], makeRows = solved => [{ label: "태어난 계절", segments: labels.map((label, index) => ({ label, percent: pools.percent[index], showPercent: solved || index === 1 })) }];
         const answer = pools.total * pools.percent[2] / 100;
         const resultText = `${answer}명`;
@@ -30917,7 +30933,8 @@
         return fixed(`${surveyIntro(d.total)} 가장 많은 사람들이 찬성한 이유는 가장 많은 사람들이 반대한 이유보다 몇 명이 더 많습니까?`, answer, `찬성의 큰 이유는 ${num(d.total * d.agree / 100 * agreeMax / 100)}명, 반대의 큰 이유는 ${num(d.total * d.oppose / 100 * opposeMax / 100)}명입니다. 차는 ${answer}입니다.`, `${main}${p1}${p2}`, `${a1}${a2}${a3}`, [d.total, d.agree, d.oppose, ...d.agreeReasons, ...d.opposeReasons], "circle-strip-difference", `찬성 중 가장 큰 이유에 해당하는 사람은 ${num(d.total * d.agree * agreeMax / 10000)}명입니다.`);
       }
       if (variant === 1) {
-        const d = [{ total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] }, { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] }, { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }][poolIndex];
+        // 2026-11-24: pool 2는 답이 22.1875%로 끝나지 않아(반올림 지시 없음) 찬성 이유 [34, 30, 24, 12]로 바꿔 17.5%가 되게 함.
+        const d = [{ total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] }, { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] }, { total: 4000, agree: 75, oppose: 25, agreeReasons: [34, 30, 24, 12], opposeReasons: [40, 30, 20, 10] }][poolIndex];
         const trafficRate = d.opposeReasons[2];
         const moved = d.total * d.oppose * trafficRate / 10000, oldOther = d.total * d.agree * d.agreeReasons[3] / 10000;
         const newAgree = d.total * d.agree / 100 + moved, newOther = oldOther + moved, answer = `${(newOther * 100 / newAgree).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;

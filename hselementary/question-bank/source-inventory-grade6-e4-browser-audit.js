@@ -37,7 +37,7 @@ const cases = [
   { id: "6-1-u5-e4-exploration-2", pools: [
     { total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] },
     { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] },
-    { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }
+    { total: 4000, agree: 75, oppose: 25, agreeReasons: [34, 30, 24, 12], opposeReasons: [40, 30, 20, 10] }
   ] },
   { id: "6-1-u5-e4-example-1", pools: [
     { surname: [22, 15, 8, 55], branches: [42, 17, 9, 32] },

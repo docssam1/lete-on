@@ -21,7 +21,7 @@ const expectedPools = [
   [[1.2, 1.24, .71, 1.65, 7.08], [1.3, 1.35, .78, 1.82, 8.52], [1.08, 1.44, .78, 1.575, 9.3]],
   [[2, 3, 5, 8, .95], [1, 2, 4, 8, .92], [2, 4, 5, 9, .984]],
   [[22.04, 40.78, 47], [18.06, 30.52, 69], [31.05, 60.3, 31]],
-  [[66.7, 72.4, 16, 66.72, 72.32], [54.3, 61.8, 24, 54.48, 61.68], [82.1, 90.6, 25, 82.25, 90.5]],
+  [[66.7, 72.4, 16, 66.72, 72.32], [54.3, 61.8, 24, 54.48, 61.68], [82.1, 90.6, 25, 82.25, 90.25]],
   [[36.117, 40.13, 4.013], [25.614, 28.46, 2.846], [57.348, 63.72, 6.372]],
   [[4.83, 4.09, 5.15, 5.2], [4.72, 5.08, 5.31, 4.56], [5.42, 4.96, 4.61, 5.18]],
   [[.85], [.65], [1.15]],
@@ -68,8 +68,8 @@ const expectedAnswer = (variant, poolIndex, values) => {
   if (variant === 3) {
     const [low, high, divisor] = values;
     const valid = [];
-    for (let cents = Math.floor(low * 100) + 1; cents < Math.ceil(high * 100); cents += 1) if (cents % divisor === 0) valid.push(cents / 100);
-    return `${valid[0].toFixed(2)}, ${valid.at(-1).toFixed(2)}`;
+    for (let cents = Math.floor(low * 100) + 1; cents < Math.ceil(high * 100); cents += 1) if (cents % divisor === 0 && cents % 10 !== 0) valid.push(cents / 100);
+    return `가장 큰 수 ${valid.at(-1).toFixed(2)}, 가장 작은 수 ${valid[0].toFixed(2)}`;
   }
   if (variant === 4) return Number(values[1]).toFixed(2);
   if (variant === 5) {

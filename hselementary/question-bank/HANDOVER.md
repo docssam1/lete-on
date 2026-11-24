@@ -1,3 +1,10 @@
+## 2026-11-24 — 6학년 쉬움·어려움·변형 5,064문항 독립 풀이 대조(진행 중) 및 문항 수정 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("전부 풀기", "16개 유지"): 6학년 원문 633유형 × 3난이도 × 고정 문항(모두 5,697, 원문 633 제외 5,064)을 앱 정답 없이 서브에이전트로 풀어 대조. 36개 묶음 중 33개 끝(약 4,750문항), 묶음 23·24·25(일부)·34·35·36이 남음(사용량 한도). 지금까지 앱 정답이 틀린 곳: 6-1-u5-e2-mission-4 pool 1·2(조건과 띠 수치 불일치) 1건뿐이고 나머지 불일치는 표기 차이·확인된 해석.
+- 수정: 6-1-u4-e1-mission-6 pool 1(기약분수로 묻는데 답 2 → 2:1로 11/7), 6-1-u3-e1-mission-4 pool 1·2(가린 세로셈 답이 둘 → 4.65, 9.25; 감사에 퍼즐 단일해 검사 추가), 6-1-u3-e1-example-3 pool 2(90.50 제외 → 90.25, 답을 물음 순서 "가장 큰 수, 가장 작은 수"로), 6-1-u5-e4-exploration-2 variant 1 pool 2(22.1875% → 찬성 이유 34·30·24·12로 17.5%), 6-1-u5-e2-mission-4 pool 1·2(조건대로 30명·24명, 생성 시 조건 검사, 감사도 조건 검사), 6-1-u5-e2-mission-1(과일 띠 범례 추가로 포도 칸 식별), 6-1-u6-e2-example-1·mission-1 쉬움(물음 문장 복구), 6-2-u2-e6 글 문항(책 말투 …이다/…인가? → 앱 말투).
+- 감사 통과: decimal-division-e1(+mission4), ratio-e1, graphs-e2(+browser, crosswalk), inventory-grade6-e4, decimal-e6-text/live/original, volume-e2·e3·e4·surface. 미실행: 전체 일괄 감사.
+- 남은 확인 후보: 6-2-u5-e2-mission-1 pool(삼각형 넓이 25·40이 3:4와 불일치 보고), 6-2-u4-e2-exploration 변형 ③·④ 자연수 아님, 6-1-u6-e2-mission-4 그림 치수 글자 위치(옮겨 보았으나 브라우저 넘침 감사에 걸려 되돌림), 6-2-u5-e1-mission-3 나이테 해석, 6-2-u5-e4-example-1 중심각 미표기. 풀이 결과는 세션 임시 폴더(solve2/out-*.json)에만 있다.
+
 ## 2026-11-24 — 6학년 나머지 그림의 fill 색 되살림, 6-2-u4-e2 개념탐구 ③ 원본 수치 유지 (Claude Code / Opus 5.5, Mac)
 
 - 앞 항목의 그래프 색 수정에 이어, 6학년 pool 0 문제 그림에서 fill 속성이 공통 규칙(.geometry-diagram … {fill:none})에 지워지던 나머지 13문항(6-1-u1-e2 3개, 6-1-u2-e1-mission-5 삼각기둥 전개도, 6-1-u4 비율·소수 그림 9개, 6-2-u1-e2-mission-6 나무 자리, 6-2-u2-e2-mission-2 테이프 겹친 부분, 6-2-u2-e6-exploration-1)의 그림 갈래(source61-e2-diagram, source61-triangular-prism-net, source61-decimal-e4-diagram, source61-ratio-e2~e5-diagram, source62-tape-count, e6-geometry, source62-tree-method-figure)에도 fill:revert-layer를 적용했다. 지금 모습과 되살린 모습을 나란히 캡처해 깨지는 그림이 없음을 확인했고, 6학년 문제 그림 중 지워지는 fill은 0개다. styles.css ?v=20261124-g6-figure-fill.
