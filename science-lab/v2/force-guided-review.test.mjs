@@ -1,3 +1,7 @@
+import{beforeForceMixed}from'./tests/force-mixed-stage.mjs';
+import{withForceMixedWorkbook}from'./force-mixed-response.js';
+import{makeWorkbookPaper}from'./revised-workbook-paper.js';
+import{art}from'../data/book/s31-u01.workbook-art.js';
 import{withForceConceptWorkbook}from'./force-concept-review.js';
 import test from'node:test';
 import assert from'node:assert/strict';
@@ -18,7 +22,7 @@ import{revisedTextbookPaper}from'./revised-textbook.js';
 import{revisedClassroom,classroomQuestions}from'./revised-lesson.js';
 const unit=workbook.unit,entry=new URL('./v2.js',import.meta.url),code=fs.readFileSync(entry,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a);
 const loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,entry).href)}).runInContext(vm.createContext({withThink}));
-const raw=await loaders[unit](),bank=await reviewStudentModule(unit,raw),priorBank=[...reviewQuestionRows(raw.similar,review),...reviewQuestionRows(raw.items,review)],current=[...bank.similar,...bank.items];
+const raw=await loaders[unit](),bank=await reviewStudentModule(unit,raw),priorBank=[...reviewQuestionRows(raw.similar,review),...reviewQuestionRows(raw.items,review)],current=[...bank.similar,...bank.items].map(beforeForceMixed);
 const before=withForceDrawingWorkbook(reviewWorkbookTableText(reviewTextTree(withObservedPhotoAlt(withElementaryReadingDirections(workbook)),review.text),review)),next=withForceGuidedWorkbook(before),nos=[35,36,37,38,39,40,63,64,76,78,80],plain=x=>JSON.parse(JSON.stringify(x)),normalized=q=>({...q,contentVersion:questionVersion(q)});
 test('six guided bank responses require teacher review and restore every complete prior presentation',async()=>{
  assert.equal(bank.source,raw.source);assert.equal(current.length,priorBank.length);assert.equal(current.filter(q=>q.contentVersion===version).length,6);
@@ -26,7 +30,7 @@ test('six guided bank responses require teacher review and restore every complet
  for(let i=0;i<current.length;i++){
   const q=current[i],old=priorBank[i];
   if(q.contentVersion!==version){assert.deepEqual(q,old);continue;}
-  assert.equal(q.sourceRef,old.sourceRef);assert.equal(q.taxonomy,old.taxonomy);assert.equal(q.responseContract,old.responseContract);assert.equal(q.givens,old.givens);
+  assert.deepEqual(q.sourceRef,old.sourceRef);assert.deepEqual(q.taxonomy,old.taxonomy);assert.deepEqual(q.responseContract,old.responseContract);assert.deepEqual(q.givens,old.givens);
   assert(q.answerContract.reviewRequired);assert(q.answerContract.rubric.required.length<=2);
   for(const v of new Set([questionVersion(old),...(old.previousVersions||[]).map(p=>p.version)])){
    const expected=normalized(questionAtVersion(old,v)),state={answers:{[q.id]:'내가 쓴 옛 답'},questionVersions:{[q.id]:v}},saved=plain(state);
@@ -60,12 +64,12 @@ test('eleven tasks keep the same scientific data and standards with short respon
  assert.deepEqual(before,saved);assert.equal(withForceGuidedWorkbook(next),next);
  for(const future of[{...before,unit:'other'},{...before,futureEdition:true},{...before,questions:before.questions.map(q=>q.no===63?{...q,prompt:q.prompt+' new'}:q)}])assert.equal(withForceGuidedWorkbook(future),future);
 });
-test('the actual classroom, student, answer and quick papers display the revised task and retain their boundaries',async()=>{
- assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withForceConceptWorkbook(next));
- const lesson=await revisedClassroom(unit,await import('../data/book/s31-u01.book.js')),selected=lesson.classroomItems.filter(q=>q.contentVersion===version);assert.deepEqual(selected.map(q=>q.id),['s31-u01-v009']);
+test('the historical guided classroom and four papers retain their boundaries while the current workbook adds mixed responses',async()=>{
+ assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withForceMixedWorkbook(withForceConceptWorkbook(next)));
+ const live=await revisedClassroom(unit,await import('../data/book/s31-u01.book.js')),lesson={...live,classroomItems:live.classroomItems.map(beforeForceMixed)},selected=lesson.classroomItems.filter(q=>q.contentVersion===version);assert.deepEqual(selected.map(q=>q.id),['s31-u01-v009']);
  const q=selected[0],old=questionAtVersion(q,1);assert(old.prompt.includes('다음 번'));assert.equal(q.answerContract.sample,next.questions[34].answer);assert.equal(q.prompt,next.questions[34].prompt);
  const pool=classroomQuestions(lesson,[...bank.items,...bank.similar,...bank.source]);assert.equal(pool.find(p=>p.id===q.id),q);
- const{workbookPaper}=await revisedTextbookPaper(unit),html=Object.fromEntries(['student','teacher','answers','quick'].map(mode=>[mode,workbookPaper({mode})]));
+ const{workbookPaper}=makeWorkbookPaper(withForceConceptWorkbook(next),art),html=Object.fromEntries(['student','teacher','answers','quick'].map(mode=>[mode,workbookPaper({mode})]));
  assert.equal((html.student.match(/data-question=/g)||[]).length,80);assert.equal((html.teacher.match(/data-question=/g)||[]).length,80);assert(!/class="ed-key"|data-solution=/.test(html.student));
  for(const no of nos){
   const q=next.questions[no-1],start=html.student.indexOf('data-question="'+q.id+'"'),card=html.student.slice(start,html.student.indexOf('</li>',start));assert(card.includes(q.prompt));

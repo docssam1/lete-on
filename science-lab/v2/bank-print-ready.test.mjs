@@ -26,7 +26,7 @@ function host(html,images=[]){
 function environment(t){let prints=0;const before=Object.fromEntries(['document','window','scrollTo'].map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));globalThis.document={fonts:{load:async()=>[{}],ready:Promise.resolve()}};globalThis.window={print:()=>prints++};globalThis.scrollTo=()=>{};t.after(()=>{for(const[key,value]of Object.entries(before)){if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}});return()=>prints;}
 
 test('every current bank paper exposes a disabled print control and a release handler',()=>{
- assert.equal(cases.length,26);
+ assert.equal(cases.length,27);
  for(const {unit,data}of cases)for(const mode of ['student','teacher','answers','quick']){
   const html=data.bankPaper({...data,mode}),h=host(html);assert(h.attribute,unit+' '+mode+' print attribute');assert(h.button.disabled,unit+' '+mode+' starts disabled');assert(!/onclick=/.test(h.tag));assert.equal(typeof data.wireBankPaper,'function',unit+' print wiring');assert(!html.includes('AI 실사형 설명 이미지'),unit+' '+mode+' obsolete caption');
  }

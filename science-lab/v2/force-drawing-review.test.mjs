@@ -1,3 +1,4 @@
+import{withForceMixedWorkbook}from'./force-mixed-response.js';
 import{withForceConceptWorkbook}from'./force-concept-review.js';
 import{withForceGuidedWorkbook}from'./force-guided-review.js';
 import test from'node:test';
@@ -33,7 +34,7 @@ test('three picture-only tasks retain the scientific conditions and picture spac
  for(const future of[{...before,unit:'other'},{...before,newEdition:true},{...before,pages:before.pages.map((p,i)=>i?p:{...p,title:'다음 개정'})},{...before,questions:before.questions.map(q=>q.no===77?{...q,prompt:q.prompt+' 새 조건'}:q)}])assert.equal(withForceDrawingWorkbook(future),future);
 });
 test('the live student and answer papers use the same new task while other questions and quick keys stay intact',async()=>{
- assert.deepEqual(await reviewStudentWorkbook(workbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withForceConceptWorkbook(withForceGuidedWorkbook(next)));
+ assert.deepEqual(await reviewStudentWorkbook(workbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withForceMixedWorkbook(withForceConceptWorkbook(withForceGuidedWorkbook(next))));
  const{workbookPaper}=await revisedTextbookPaper(workbook.unit),student=workbookPaper({mode:'student'}),teacher=workbookPaper({mode:'teacher'}),answers=workbookPaper({mode:'answers'}),quick=workbookPaper({mode:'quick'});
  assert.equal((student.match(/data-question=/g)||[]).length,80);assert.equal((teacher.match(/data-question=/g)||[]).length,80);
  assert(!student.includes('class="ed-key"'));assert(!student.includes('data-solution='));

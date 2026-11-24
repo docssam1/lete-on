@@ -1,3 +1,4 @@
+import{withForceMixedWorkbook}from'./force-mixed-response.js';
 import test from'node:test';
 import assert from'node:assert/strict';
 import fs from'node:fs';
@@ -39,8 +40,8 @@ test('examples keep physical comparison conditions and values, while photo descr
  assert.equal(metadata.assets.length,2);for(const row of metadata.assets){assert.equal(row.observationRecord,false);assert.equal(row.generator,'built-in image_gen');assert(row.prompt.length>500);const data=fs.readFileSync(new URL('../assets/book/'+row.file,import.meta.url));assert.equal(crypto.createHash('sha256').update(data).digest('hex'),row.sha256);assert(Object.values(next.figures).some(html=>html.includes(row.file)));}
 });
 test('the current four printed modes render the short checks with no student keys and unchanged answer and quick papers',async()=>{
- assert.deepEqual(await reviewStudentWorkbook(workbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),next);
- const actual=await revisedTextbookPaper(workbook.unit),prior=makeWorkbookPaper(before,art),counts={student:48,teacher:75,answers:27,quick:5};
+ assert.deepEqual(await reviewStudentWorkbook(workbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withForceMixedWorkbook(next));
+ const actual=makeWorkbookPaper(next,art),prior=makeWorkbookPaper(before,art),counts={student:48,teacher:75,answers:27,quick:5};
  for(const [mode,count]of Object.entries(counts)){const html=actual.workbookPaper({mode});assert.equal((html.match(/class="bk-page /g)||[]).length,count,mode);if(mode==='answers'||mode==='quick')assert.equal(html,prior.workbookPaper({mode}),mode);else{assert.equal((html.match(/data-question=/g)||[]).length,80);assert(html.includes('수평대라고 해요'));assert(html.includes('force-concept-balance')||html.includes('photo-balance-v2.png'));}}
  const student=actual.workbookPaper({mode:'student'});assert(!/class="ed-key"|data-solution=/.test(student));assert(student.includes('한 낱말 확인'));assert(student.includes('기호로 써요'));assert(student.includes('도구와 쓰임을 짝지어요'));
  for(const file of['v2.js','revised-textbook.js','revised-lesson.js','book.js','revised-workbook-paper.js','index.html'])assert(fs.readFileSync(new URL('./'+file,import.meta.url),'utf8').includes('forceConcepts='+FORCE_CONCEPT_VERSION));

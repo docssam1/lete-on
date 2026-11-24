@@ -18,7 +18,7 @@ import { mountLabBattle } from './lab-battle.js';
 import { buildLifeSlides } from './deck-life.js';
 import {contentUnitOfItem} from './content-unit.js';
 import { buildForceSlides } from './deck-force.js';
-import { buildForceThinkingSlides } from './deck-force-thinking.js?v=20261108-grade3-class-guidance';
+import { buildForceThinkingSlides } from './deck-force-thinking.js?v=20261108-grade3-class-guidance&forceLanguage=20261125-force-comparison-examples';
 import { buildAnimalThinkingSlides } from './deck-animal-thinking.js?v=20261102-state';
 import { buildPlantThinkingSlides } from './deck-plant-thinking.js?v=20261102-state';
 import { buildEcologyThinkingSlides } from './deck-ecology-thinking.js?v=20261108-student-activity-guidance';

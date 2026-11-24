@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-// Historical stages still compare the other 66 exact solutions and 73 quick rows.
+// Historical stages still compare the other 66 exact solutions and 69 quick rows.
 // The reviewed force tasks have separate current semantic/render coverage.
 export function withoutForceTaskSolutions(html){
  let count=0;
@@ -8,6 +8,6 @@ export function withoutForceTaskSolutions(html){
 }
 export function withoutForceTaskQuickRows(html){
  let count=0;
- const out=html.replace(/<tr><th scope="row">(?:63|75|76|77|78|79|80)<\/th>[\s\S]*?<\/tr>/g,()=>{count++;return'<tr data-reviewed-force-topic></tr>';});
- assert.equal(count,7);return out;
+ const out=html.replace(/<tr><th scope="row">(?:35|37|40|63|64|75|76|77|78|79|80)<\/th>[\s\S]*?<\/tr>/g,()=>{count++;return'<tr data-reviewed-force-topic></tr>';});
+ assert.equal(count,11);return out;
 }

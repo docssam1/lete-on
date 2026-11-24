@@ -1,7 +1,7 @@
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{withThink}from'./think-merge.js';import{BANK}from'./units-index.js';import{revisedTextbookUnits}from'./revised-textbook.js';import{withOptionalClassroomRecords}from'./revised-lesson.js';import{practicePaperHtml}from'./practice-paper.js';import{photoFigureHtml}from'./photo-figure.js';import{writtenPracticeHtml}from'./written-practice.js';import{seasonAnswerHint}from'./season-answer-hint.js';import*as presentation from'./source-presentation.js';import*as content from'./source-content.js';
 const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink}));
-const units=['s31-u01','s31-u02','s31-u03','s31-u04'],counts=[80,80,80,105],esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),ids=html=>[...html.matchAll(/data-id="([^"]+)"/g)].map(x=>x[1]);
+const units=['s31-u02','s31-u03','s31-u04'],counts=[80,80,105],esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),ids=html=>[...html.matchAll(/data-id="([^"]+)"/g)].map(x=>x[1]);
 const selected=m=>m.lesson.includePairedItems?[...m.items,...(m.similar||[])]:m.lesson.reusePairedItems?m.similar||[]:m.items;
 const functions=source=>({itemRenderer:source.slice(source.indexOf('function blanksHtml('),source.indexOf('let FIG =')),pageBook:source.slice(source.indexOf('function pageBook('),source.indexOf('// GFIELD 실험 과학 영재'))});
 function context(mod,source=functions(code)){
@@ -14,7 +14,7 @@ function route(ctx,u,mod,mode){const start=code.indexOf("  if(a==='workbook'&&mo
 const fixture=JSON.parse(fs.readFileSync(new URL('./tests/fixtures/current-paper-before-deduplication.json',import.meta.url),'utf8')),prior=fixture.functions;
 for(const[name,source]of Object.entries(prior))assert.equal(createHash('sha256').update(source).digest('hex'),fixture.functionSha256[name]);
 
-test('all four actual generic print branches keep every distinct selected and paired question exactly once',async()=>{
+test('all three actual generic print branches keep every distinct selected and paired question exactly once',async()=>{
  let total=0;
  for(const[i,u]of units.entries()){
   const mod=await loaders[u]();assert.equal(mod.bankPaper,undefined);const snapshot=JSON.stringify(mod),rows=[...new Map([...selected(mod),...(mod.similar||[])].map(q=>[q.id,q])).values()],expected=rows.map(q=>q.id),ctx=context(mod);assert.equal(rows.length,counts[i]);total+=rows.length;
@@ -25,7 +25,7 @@ test('all four actual generic print branches keep every distinct selected and pa
   }
   const answers=route(ctx,u,mod,'answers');assert.deepEqual(ids(answers),[]);const keys=[...answers.matchAll(/<span class="no">(\d+)\.<\/span> <b class="ans">([\s\S]*?)<\/b> — ([\s\S]*?)<\/div>/g)];assert.equal(keys.length,rows.length);keys.forEach((key,i)=>{assert.equal(Number(key[1]),i+1);assert.equal(key[3],esc(rows[i].explanation));});assert.equal(JSON.stringify(mod),snapshot);
  }
- assert.equal(total,345);
+ assert.equal(total,265);
 });
 
 test('the new question papers do not require report fields and preserve optional records and noncurrent print output',async()=>{
