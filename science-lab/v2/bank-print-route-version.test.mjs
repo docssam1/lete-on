@@ -56,5 +56,5 @@ test('all current routes ignore stale inherited print exports without changing t
    assert(current.bankPaper({...current,mode})===expected.bankPaper({...expected,mode}),unit+' '+mode+' unchanged markup');modes++;
   }
  }
- assert.equal(revisedTextbookUnits.size,32);assert.equal(banks,23);assert.equal(modes,92);
+ assert.equal(revisedTextbookUnits.size,32);assert.equal(banks,24);assert.equal(modes,96);
 });

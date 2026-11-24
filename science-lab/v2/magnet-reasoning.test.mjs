@@ -1,3 +1,4 @@
+import{magnetMixedItems}from'./magnet-mixed-response.js';
 import{magnetGuidedItems}from'./magnet-guided-review.js';
 import{magnetElementaryCurrentItems}from'../data/book/s41-u01.elementary.js';
 import test from'node:test';import assert from'node:assert/strict';
@@ -33,7 +34,7 @@ test('magnet overlay excludes raw originals, similar, other-unit and unexpected 
  const rows=[{...old,status:'review'}];assert.equal(magnetReasoningCurrentItems(rows,unit),rows);assert.equal(magnetReasoningCurrentItems(baseline,'other'),baseline);
 });
 test('repeated magnet classroom and daily pools share the same current authored question objects',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),reasoning=magnetReasoningCurrentItems(baseline,unit),current=magnetGuidedItems(magnetElementaryCurrentItems(reasoning,unit),unit),daily=classroomQuestions(second,current);let linked=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),reasoning=magnetReasoningCurrentItems(baseline,unit),current=magnetMixedItems(magnetGuidedItems(magnetElementaryCurrentItems(reasoning,unit),unit),unit),daily=classroomQuestions(second,current);let linked=0;
  for(const q of first.classroomItems.filter(q=>reasoning.find(x=>x.id===q.id)?.contentVersion===MAGNET_REASONING_VERSION)){
   linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);
   assert.deepEqual(current.find(x=>x.id===q.id),q);
