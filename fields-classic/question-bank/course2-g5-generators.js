@@ -1,6 +1,7 @@
 // 2과정 G5 「도형의 넓이와 비」 교재 유사문제 생성기. 약속은 G1~G4 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산한다.
 import { plainText } from "./course2-plain.js?v=20261122zi";
+import { dimArc, dimOut, isLength } from "./length-dim.js?v=20261124a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -35,7 +36,12 @@ function angleMark(v, a1, a2, r, label, { color = MARK, size = 14 } = {}) {
     + (label ? text(m.x, m.y, label, { size, color }) : "");
 }
 const tick = (a, b, n = 1) => { const m = mid(a, b), d = dirOf(a, b) + 90; return Array.from({ length: n }, (_, k) => { const c = at(m, (k - (n - 1) / 2) * 5, dirOf(a, b)); return line(at(c, 6, d), at(c, -6, d), { width: 1.8 }); }).join(""); };
-const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => { const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color }); };
+// 길이(「12cm」「?」)는 바깥 곡선 점선 + 끊은 자리에 글자(length-dim.js, 스킬 gfield-textbook-design 4-3), 비·이름은 변 옆 글자 그대로.
+// offset 쪽(변 진행 방향 왼쪽이 +)으로 휜다 — dimArc의 bend는 오른쪽이 +라 부호를 바꾼다
+const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => {
+  if (isLength(value)) return dimArc(a.x, a.y, b.x, b.y, -offset * 0.9, value, { size, labelColor: color === INK ? null : color });
+  const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color });
+};
 const name = (p, t, dx = 0, dy = 0) => text(p.x + dx, p.y + dy, t, { size: 14, weight: 700 });
 
 // ════ 1단원 정다각별과 나비각 · 삼각형의 합동 · 식을 이용한 각 ════
@@ -307,15 +313,15 @@ function c2HeightInverseRatio({ difficulty = 2 }) {
     if (b1 === b2 || (b1 * h1) % b2) continue;
     const h2 = (b1 * h1) / b2;
     if (h2 < 3 || h2 > 24) continue;
-    const A = P(70, 30), B = P(30, 190), C = P(290, 190);
+    const A = P(120, 30), B = P(30, 190), C = P(300, 190);
     const foot = P(A.x, 190), t = ((A.x - B.x) * (C.x - B.x) + (A.y - B.y) * (C.y - B.y)) / ((C.x - B.x) ** 2 + (C.y - B.y) ** 2);
     const toAC = (() => { const u = ((B.x - A.x) * (C.x - A.x) + (B.y - A.y) * (C.y - A.y)) / ((C.x - A.x) ** 2 + (C.y - A.y) ** 2); return lerp(A, C, u); })();
     void t;
     let body = poly([A, B, C], { fill: "#fff" }) + line(A, foot, { color: GREEN, dash: "5 4" }) + line(B, toAC, { color: MARK, dash: "5 4" })
       + name(A, "ㄱ", 0, -14) + name(B, "ㄴ", -12, 8) + name(C, "ㄷ", 12, 8);
     if (kind === "height") {
-      body += lenLabel(B, C, `${b1}cm`, { offset: -18 }) + text(foot.x - 8, (A.y + 190) / 2 + 20, `${h1}cm`, { size: 13, anchor: "end", color: GREEN })
-        + lenLabel(A, C, `${b2}cm`, { offset: 16 }) + text(mid(B, toAC).x + 12, mid(B, toAC).y + 10, "?", { size: 15, color: MARK, weight: 700 });
+      body += lenLabel(B, C, `${b1}cm`, { offset: -18 }) + dimArc(A.x, A.y, foot.x, foot.y, -14, `${h1}cm`)
+        + lenLabel(A, C, `${b2}cm`, { offset: 16 }) + dimArc(B.x, B.y, toAC.x, toAC.y, -12, "?", { labelColor: MARK });
       return problem({
         prompt: `삼각형 ㄱㄴㄷ에서 변 ㄴㄷ이 ${b1}cm이고 그 높이가 ${h1}cm입니다. 변 ㄱㄷ이 ${b2}cm일 때, 변 ㄱㄷ을 밑변으로 하는 높이는 몇 cm인가요?`,
         subtype: "height-inverse", html: svg(330, 220, body, "한 삼각형의 두 밑변과 높이"), answer: `${h2}cm`,
@@ -347,7 +353,7 @@ function c2PyramidHourglass({ difficulty = 2 }) {
     const A = P(170, 25), B = P(40, 200), C = P(310, 200), t = a / (a + b), D = lerp(A, B, t), E = lerp(A, C, t);
     const body = poly([A, B, C], { fill: "#fff" }) + line(D, E, { width: 2.2 }) + poly([A, D, E], { fill: YELLOW })
       + name(A, "ㄱ", 0, -14) + name(B, "ㄴ", -12, 8) + name(C, "ㄷ", 12, 8) + name(D, "ㄹ", -14, 0) + name(E, "ㅁ", 14, 0)
-      + text(mid(A, D).x - 26, mid(A, D).y, `${L1}cm`, { size: 13, anchor: "end" }) + text(mid(D, B).x - 26, mid(D, B).y, `${L2}cm`, { size: 13, anchor: "end" }) + text(mid(D, E).x, D.y + 15, `${small}cm`, { size: 13 }) + text(mid(B, C).x, 200 + 18, "?", { size: 15, color: MARK, weight: 700 })
+      + dimOut(A, D, C, `${L1}cm`, { off: 16 }) + dimOut(D, B, C, `${L2}cm`, { off: 16 }) + dimArc(D.x, D.y, E.x, E.y, 12, `${small}cm`) + dimArc(B.x, B.y, C.x, C.y, 16, "?", { labelColor: MARK })
       + text(mid(D, E).x + 40, mid(D, E).y - 2, "∥", { size: 13, color: GREEN }) + text(mid(B, C).x + 40, 200 - 2, "∥", { size: 13, color: GREEN });
     return problem({
       prompt: `선분 ㄹㅁ과 변 ㄴㄷ은 평행합니다. 선분 ㄱㄹ이 ${L1}cm, 선분 ㄹㄴ이 ${L2}cm, 선분 ㄹㅁ이 ${small}cm일 때, 변 ㄴㄷ은 몇 cm인가요?`,
@@ -362,7 +368,7 @@ function c2PyramidHourglass({ difficulty = 2 }) {
   const side = (p, q, value, out, color = INK) => { const m = mid(p, q), d = dirOf(p, q) + 90, c = at(m, 16, d), w = at(m, -16, d); const pick = Math.hypot(c.x - out.x, c.y - out.y) > Math.hypot(w.x - out.x, w.y - out.y) ? c : w; return text(pick.x, pick.y, value, { size: 13, color }); };
   const body = poly([A, B, O], { fill: YELLOW }) + line(A, D) + line(B, C) + line(A, B, { width: 2.2 }) + line(C, D, { width: 2.2 })
     + name(A, "ㄱ", -14, -4) + name(B, "ㄴ", 14, -4) + name(O, "ㅇ", 18, 0) + name(C, "ㄷ", -14, 6) + name(D, "ㄹ", 14, 6)
-    + side(A, O, `${L1}cm`, B) + side(O, D, `${L2}cm`, C) + text(mid(A, B).x, A.y - 12, `${small}cm`, { size: 13 }) + text(mid(C, D).x, C.y + 16, "?", { size: 15, color: MARK, weight: 700 })
+    + dimOut(A, O, B, `${L1}cm`, { off: 15 }) + dimOut(O, D, C, `${L2}cm`, { off: 15 }) + dimArc(A.x, A.y, B.x, B.y, -12, `${small}cm`) + dimArc(C.x, C.y, D.x, D.y, 14, "?", { labelColor: MARK })
     + text(mid(A, B).x + 34, A.y + 1, "∥", { size: 12, color: GREEN }) + text(mid(C, D).x + 34, C.y + 1, "∥", { size: 12, color: GREEN });
   return problem({
     prompt: `선분 ㄱㄴ과 선분 ㄷㄹ은 평행하고, 선분 ㄱㄹ과 선분 ㄴㄷ이 점 ㅇ에서 만납니다. 선분 ㄱㅇ이 ${L1}cm, 선분 ㅇㄹ이 ${L2}cm, 선분 ㄱㄴ이 ${small}cm일 때, 선분 ㄷㄹ은 몇 cm인가요?`,
