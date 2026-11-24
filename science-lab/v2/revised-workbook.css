@@ -710,3 +710,31 @@
 .bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
 .bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
 .bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Grade-six motion: brief replies and labeled comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-layout-motion-workbook.ed-quick .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-layout-motion-workbook.ed-quick .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-layout-motion-workbook.ed-quick .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s61-u02"]:not(.a4) .ed-layout-motion-workbook.ed-quick .mt-quick-grid{grid-template-columns:1fr}}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}

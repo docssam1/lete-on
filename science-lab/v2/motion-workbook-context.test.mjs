@@ -1,3 +1,5 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
+import{beforeMotionTask}from'./tests/motion-guided-stage.mjs';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
 import{workbook,motionContextPriorWorkbook as prior}from'../data/book/c22-s61-u02.workbook.js';import{withMotionContextWorkbook,motionContextItems,MOTION_CONTEXT_VERSION as version}from'../data/book/motion-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
 const unit='c22-s61-u02',nos=[44,47,48,64,79,86,91,111],q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -5,12 +7,11 @@ const unit='c22-s61-u02',nos=[44,47,48,64,79,86,91,111],q=(w,n)=>w.questions.fin
 test('motion student and teacher routes show clear cart names, sufficient criteria and questions answerable from each page',async()=>{
  assert(q(workbook,47).prompt.startsWith('두 수레가'));assert(q(workbook,47).prompt.includes('수레 가는 4m'));for(const[n,extra]of[[44,'옛값 보존'],[48,'계획 표시'],[64,'불분명'],[79,'한 방향과'],[86,'3회'],[91,'반복 필요'],[111,'두 가지 이상']])assert(!q(workbook,n).criteria.includes(extra));
  assert(q(workbook,86).criteria.includes('반복'));assert(q(workbook,91).criteria.includes('2.3초'));assert(q(workbook,111).criteria.includes('조건의 차이'));
- const paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
+ const current=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
-  assert(html.includes(esc(q(workbook,47).prompt)));assert.equal(html.includes('class="ed-key"'),mode==='teacher');
-  for(const n of nos.filter(n=>n!==47))assert.equal(html.includes(esc(q(workbook,n).criteria)),mode==='teacher');
-  for(const i of[5,7,11,25,28,48,55,64,71,75,82,84,95])assert(html.includes(esc(workbook.pages[i].rail[2].text)));
-  assert(html.includes(esc(workbook.pages[95].blocks[0].hint)));
+  assert(html.includes(esc(q(current,47).prompt)));assert.equal(html.includes('class="ed-key"'),mode==='teacher');
+  for(const n of nos.filter(n=>n!==47))assert.equal(html.includes(esc(q(current,n).criteria)),mode==='teacher');
+  for(const p of(mode==='teacher'?current.teacherStudentPages:current.pages))for(const note of p.rail)assert(html.includes(esc(note.text)));assert(html.includes('문제 하나에서 내 답과 단위를 짚고 고칠 부분을 말해요.'));
  }
  assert(workbook.pages[25].rail[2].text.includes('33번'));assert(workbook.pages[55].rail[2].text.includes('표에는'));assert(workbook.pages[75].rail[2].text.includes('차량이 멈췄는지'));assert(workbook.pages[95].rail[2].text.includes('고칠 부분이 있으면'));
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&motionContext='+version));
@@ -27,7 +28,7 @@ test('motion review preserves all128 answers, examples, figures, upper learning 
 
 test('eight motion root and classroom revisions preserve judgments, nested response contracts, diagnoses and all saved presentations',async()=>{
  const{withThink,loadJudge}=await import('./think-merge.js'),{questionAtVersion,questionMisconceptions,restoreDailyQuestions,restartCurrentQuestion,questionVersion}=await import('./question-revision.js'),{gradeDaily}=await import('./daily-grade.js'),{classify}=await import('./progress.js'),{revisedClassroom,classroomQuestions}=await import('./revised-lesson.js');
- const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink})),mod=await loaders[unit](),cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(cls,[...mod.similar,...mod.items]),judge=await loadJudge(unit);
+ const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink})),mod=await loaders[unit](),currentCls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),cls={...currentCls,classroomItems:currentCls.classroomItems.map(beforeMotionTask)},pool=classroomQuestions(cls,[...mod.similar,...mod.items]),judge=await loadJudge(unit);
  const changed=mod.items.filter(x=>x.contentVersion===version);assert.equal(changed.length,8);const student=mod.bankPaper({...mod,mode:'student'}),teacher=mod.bankPaper({...mod,mode:'teacher'});
  for(const current of changed){
   const snapshot=current.previousVersions.at(-1),before=questionAtVersion(current,snapshot.version),w=workbook.questions.find(x=>x.id===(current.workbookRef?.id||current.bookQuestionId)),{version:oldVersion,snapshotKind,...rawBefore}=snapshot;assert(w);assert.equal(snapshotKind,'full-question');assert.equal(current.prompt,w.prompt);assert.equal(current.explanation,w.explanation);assert.deepEqual(motionContextItems([rawBefore],unit)[0],current);const once=[current];assert.equal(motionContextItems(once,unit),once);

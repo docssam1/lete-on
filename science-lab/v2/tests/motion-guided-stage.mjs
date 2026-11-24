@@ -1,0 +1,4 @@
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{MOTION_GUIDED_VERSION}from'../motion-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([6,12,15,16,22,28,31,32,38,44,47,48,54,60,63,64,70,75,76,79,80,86,91,92,95,96,102,107,108,111,112,118,123,124,127,128]);
+export function beforeMotionTask(q){if(q.contentVersion!==MOTION_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function motionUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="c22-s61-u02-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,128);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,92);return kept;}
