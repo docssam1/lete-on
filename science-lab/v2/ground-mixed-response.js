@@ -274,7 +274,8 @@ const bankReview={
     ],
     "misconception": "사진과 자료에 나타난 모습을 살펴보고 답해요.",
     "accepted": [
-      "침식"
+      "침식",
+      "침식 작용"
     ],
     "contract": {
       "kind": "short-text",
@@ -282,7 +283,8 @@ const bankReview={
       "actualPerformanceMustNotBeInferred": true,
       "answer": "침식",
       "accepted": [
-        "침식"
+        "침식",
+        "침식 작용"
       ]
     },
     "before": [
@@ -299,7 +301,8 @@ const bankReview={
     ],
     "misconception": "사진과 자료에 나타난 모습을 살펴보고 답해요.",
     "accepted": [
-      "책상"
+      "책상",
+      "탁자"
     ],
     "contract": {
       "kind": "short-text",
@@ -307,7 +310,8 @@ const bankReview={
       "actualPerformanceMustNotBeInferred": true,
       "answer": "책상",
       "accepted": [
-        "책상"
+        "책상",
+        "탁자"
       ]
     },
     "before": [
@@ -324,7 +328,8 @@ const bankReview={
     ],
     "misconception": "사진과 자료에 나타난 모습을 살펴보고 답해요.",
     "accepted": [
-      "퇴적"
+      "퇴적",
+      "퇴적 작용"
     ],
     "contract": {
       "kind": "short-text",
@@ -332,7 +337,8 @@ const bankReview={
       "actualPerformanceMustNotBeInferred": true,
       "answer": "퇴적",
       "accepted": [
-        "퇴적"
+        "퇴적",
+        "퇴적 작용"
       ]
     },
     "before": [
