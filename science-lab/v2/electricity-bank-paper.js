@@ -1,3 +1,8 @@
+import{reviewStudentWorkbook,reviewQuestionRows}from'./student-language-review.js?v=20261117-student-language-review&electricityGuided=20261124-electricity-mixed-responses&electricityLayout=2';
+import{electricityGuidedItems}from'./electricity-guided-review.js?v=20261124-electricity-mixed-responses&layout=2';
+import{review as schoolLanguage}from'../data/language/c22-s62-u03.js?v=20261117-student-language-review';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{electricityContextItems}from'../data/book/electricity-workbook-context.js?v=20261116-electricity-workbook-context';
 import{representationQuestionReview}from'../data/book/representation-question-review.js?v=20261115-representation-response-review';
 import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js?v=20261115-battery-polarity-card';
@@ -20,6 +25,9 @@ const table=rows=>`<table class="ed-table electricity-book-table"><thead><tr>${[
 const figures=electricityLanguage({...bankBook.figures,...workbook.figures});for(let start=0;start<questions.length;start+=24){const rows=questions.slice(start,start+24);figures['electricity-bank-quick-'+start]='<div class="electricity-quick-grid">'+[rows.slice(0,12),rows.slice(12)].filter(r=>r.length).map(table).join('')+'</div>';}
 export const electricityBankBook=withStudentScienceLanguage({...electricityLanguage(bankBook),theme:'#2f6b4a',questions:questions.map(q=>({...q,misconception:electricityLanguage(q.misconception)})),figures});
 // 위 BankBook은 기존 원고 대조용으로 보존한다. 실제 인쇄는 현재 교재를 쓴다.
-export const currentElectricityBankBook=currentBankWorkbook(electricityBankBook,currentWorkbook,electricityContextItems(representationQuestionReview(standaloneQuestionContexts(elementaryPromptCurrentItems(electricityPairCurrentItems(electricityReadableCurrentItems(Array.from(current.values()),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'));
+export const priorElectricityGuidedBankBook=currentBankWorkbook(electricityBankBook,currentWorkbook,electricityContextItems(representationQuestionReview(standaloneQuestionContexts(elementaryPromptCurrentItems(electricityPairCurrentItems(electricityReadableCurrentItems(Array.from(current.values()),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'));
+const printableItems=electricityContextItems(representationQuestionReview(standaloneQuestionContexts(elementaryPromptCurrentItems(electricityPairCurrentItems(electricityReadableCurrentItems(Array.from(current.values()),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03'),'c22-s62-u03');
+const guidedPrintItems=electricityGuidedItems(printableItems.map(q=>q.sourceRef?.type==='authored-pair'?q:reviewQuestionRows([q],schoolLanguage)[0]),'c22-s62-u03');
+export const currentElectricityBankBook=currentBankWorkbook(electricityBankBook,await reviewStudentWorkbook(currentWorkbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(currentWorkbook))),guidedPrintItems);
 const paper=makeWorkbookPaper(currentElectricityBankBook,{}, {route:'print',toolLabel:'186문항집 고르기',modes:[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']]});
 export const bankPaper=paper.workbookPaper;export const wireBankPaper=paper.wireWorkbookPaper;

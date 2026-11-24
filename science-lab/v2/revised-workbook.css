@@ -846,3 +846,41 @@
 .bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-question .ed-part-response{margin:0 0 .4em}
 
 .bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick .ed-table th,.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick .ed-table td{padding-top:1mm;padding-bottom:1mm}
+
+/* Electricity: mixed response forms and labeled observation/model drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Keep a short label and its answer line together without repeated paragraph gaps. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-question .ed-part{margin:.25em 0 .1em}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-question .ed-part-response{margin:0 0 .4em}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table th,.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table td{padding-top:1mm;padding-bottom:1mm}
+
+
+@media print, screen and (min-width:701px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4)){display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel{border-bottom:1px solid #94a3b8}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-child(2n){border-right:0}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-last-child(-n+2){border-bottom:0}
+}

@@ -1,6 +1,6 @@
 import{questionMisconceptions}from'./question-revision.js?v=20261115-legacy-question-snapshots';
 import{buildCareerThinkingSlides}from'./deck-career-thinking.js?v=20261105-career-reading-science';
-import{buildElectricityThinkingSlides}from'./deck-electricity-thinking.js?v=20261104-student-science-language';
+import{buildElectricityThinkingSlides}from'./deck-electricity-thinking.js?v=20261104-student-science-language&electricityGuided=20261124-electricity-mixed-responses';
 import{buildCombustionThinkingSlides}from'./deck-combustion-thinking.js?v=20261108-comparison-material-language&comparisonWords=20261123-comparison-school-language&combustionGuided=20261124-combustion-mixed-responses';
 import{buildSeasonThinkingSlides}from'./deck-season-thinking.js?v=20261115-observation-question-context';
 import{buildEarthMotionThinkingSlides}from'./deck-earth-motion-thinking.js?v=20261104-earth-motion-class';
