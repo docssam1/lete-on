@@ -1,3 +1,12 @@
+## 2026-11-24 — 5-1 분수의 덧셈 5유형 변형 문항 추가 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("변형 문항 추가"): 3문항을 요청해도 1~2문항만 나오던 5-1 분수의 덧셈 유형에 같은 구조의 변형을 더해 난이도마다 서로 다른 문항이 3개 이상 나오게 했다(generators.js ?v=20261124-u5-variants).
+  - fractionAdditionE1 variant 2(5-1-u5-t1-3, 네 분수 더하기)·variant 3(t1-4, 같은 분모끼리 묶기)·variant 10(t1-11, 세 진분수): 난이도마다 수치 묶음 1개씩 추가. 정답은 생성기가 계산하고 Python Fraction으로 따로 대조(9개 모두 일치).
+  - variant 13(t1-14, Mission 4): 원문 "합이 가장 작을 때" 외에 같은 조건의 "합이 가장 클 때"(1 8/21), "차가 가장 클 때"(11/35)를 추가. 답은 2·3·5·7을 놓는 모든 경우를 계산해 고르고, Python으로 따로 확인. 독립 감사(source-5-1-fraction-addition-e1-audit.js)에 두 검산 종류를 추가.
+  - fractionApplicationE3 variant 0(5-1-u5-t3) 쉬움: 원문 수치(배율 1·더하기 0) 외에 배율 2·더하기 1 변형도 낸다. 독립 감사는 쉬움에서 원문 수치가 반드시 나오고 그때 답이 원문과 같은지, 브라우저 감사는 쉬움 H가 원문 또는 허용된 변형인지 본다.
+- 감사: fraction-addition-e1(독립·브라우저), fraction-application-e3(독립·브라우저), runtime-availability, math-notation, browser-source-release 통과. polycube 생성 출력 비교에서 달라진 유형은 이 5개뿐(새 기준선은 작업 폴더에 저장).
+- 남은 것(사용자 결정 필요): 같은 방법으로 세면 서로 다른 문항이 3개 미만인 유형은 전체 903개다(5-2 약 775개, 4-2 6단원 35개, 4-1 32개, 6-2 3단원 12개 등). 대부분 원문 한 문제를 그대로 내는 유형이라 11-22 설계상 1~2문항만 나온다.
+
 ## 2026-11-24 — 전체 감사 실행(4~6학년)과 낡은 감사 정비, 4문항 인쇄 범례 겹침 수정 (Claude Code / Opus 5.5, Mac)
 
 - 전체 JS 감사 1,314개(Windows 증거 27개 제외)와 Python 감사 172개를 Mac에서 돌렸다. 처음 실패 83개(JS) → 아래처럼 고쳐 JS는 모두 통과(5-1 묶음은 아래 결과 참고). Python은 164개 통과 + pdfplumber 3개는 Codex 런타임 파이썬(~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3)과 해당 PDF 인자로 통과, 도로 기하 1개는 저장소 최상위에서 node 경로를 넣어 통과. pymupdf가 필요한 4개(source-6-2-height-views-pdf, stack-assets-pdf, stack-pdf, stack-questions-pdf)는 사용자 승인("설치해서 돌려")으로 작업 임시 가상 환경에만 pymupdf 1.26.5를 설치하고, E:/G: 전용 경로 검사를 절대 경로 폴더 허용으로 바꾼 뒤 현재 코드로 다시 만든 Mac 브라우저 결과(height-views-live·stack-renderer-live·stack-assets-live·stack-questions-live)로 실행해 모두 통과. 이로써 Python 감사 172개 모두 통과.

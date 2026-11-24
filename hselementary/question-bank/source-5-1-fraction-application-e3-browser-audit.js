@@ -259,6 +259,9 @@ async function renderedState(page, selector) {
 }
 
 function reportCube(state, key, view, difficulty) {
+  // 2026-11-24: 쉬움도 3문항이 나오도록 원문 수치(H=2와1/4)와 같은 구조의 변형(배율 1·2, 더하기 0·1)을 함께 낸다.
+  // 쉬움 H는 9/4·13/4·9/2·11/2 중 하나여야 한다(원문 수치가 실제로 나오는지는 독립 감사가 33,000회 생성으로 확인).
+  if (difficulty === -1) state.cube.forEach((cube, index) => { if (!["9,4", "13,4", "9,2", "11,2"].includes(cube.vertices.H)) fail(`${key} ${view} ${index + 1}번: 쉬움 H가 원문 또는 허용된 변형이 아닙니다(${cube.vertices.H}).`); });
   if (state.cube.length !== state.count || !state.count) fail(`${key} ${view}: 정육면체 그림 ${state.count}개가 모두 보이지 않습니다.`);
   for (const [index, cube] of state.cube.entries()) {
     const expectedEdges = ["AB", "AC", "AG", "BD", "BH", "CD", "CE", "DF", "EF", "EG", "FH", "GH"];
@@ -268,7 +271,6 @@ function reportCube(state, key, view, difficulty) {
     if ([...cube.hidden].sort().join(",") !== "AG,GH") fail(`${key} ${view} ${index + 1}번: 숨은 모서리 점선이 AG·GH 두 개가 아닙니다.`);
     const labels = Object.fromEntries(cube.labels.map(label => [label.vertex, label.text]));
     if (labels.C !== "가" || labels.G !== "나" || labels.F !== "다") fail(`${key} ${view} ${index + 1}번: C=(가), G=(나), F=(다) 위치가 아닙니다.`);
-    if (difficulty === -1 && cube.vertices.H !== "9,4") fail(`${key} ${view} ${index + 1}번: 원본 기준 H=2와1/4가 아닙니다.`);
     if (cube.labelOverlaps || cube.labelsOnLine.length) fail(`${key} ${view} ${index + 1}번: 꼭짓점 라벨 ${cube.labelsOnLine.join(",") || "서로"}가 선과 겹칩니다.`);
   }
 }
