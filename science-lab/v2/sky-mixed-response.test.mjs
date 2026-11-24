@@ -26,3 +26,5 @@ test('current workbook outputs preserve question ordering, teacher answers and u
 });
 
 test('sky bank print fragments repeat A4 margins and use the installed serif face',()=>{const css=fs.readFileSync(new URL('./sky-bank-paper.css',import.meta.url),'utf8');assert(css.includes('@page sky-bank{size:A4;margin:0}'));assert(css.includes('padding:17mm;box-decoration-break:clone;-webkit-box-decoration-break:clone'));assert(css.includes('font-family:"Noto Serif KR",serif'));assert(fs.readFileSync(new URL('./index.html',import.meta.url),'utf8').includes('sky-bank-paper.css?v='+version));});
+
+test('sky bank waits for serif fonts before enabling native A4 printing',()=>{assert(fs.readFileSync(new URL('./sky-bank-paper.js',import.meta.url),'utf8').includes("serif:true"));assert(fs.readFileSync(new URL('./v2.js',import.meta.url),'utf8').includes("sky-bank-paper.js?v=20261115-original-figure-resolution&serifReady=20261124"));});

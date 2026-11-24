@@ -13,13 +13,13 @@ function exercise(q,misc){
  return{choose,hint,answer,sol,records,timers,key,buttons};
 }
 
-test('actual classroom choice handlers agree with recorded diagnoses for all 932 wrong choices and reveal concept explanations only after the learner opens the solution',async()=>{
- const rows=await currentClasses();assert.equal(rows.length,259);let cases=0;
+test('actual classroom choice handlers agree with recorded diagnoses for all 940 wrong choices and reveal concept explanations only after the learner opens the solution',async()=>{
+ const rows=await currentClasses();assert.equal(rows.length,263);let cases=0;
  for(const{q,mod,slide}of rows){assert(q);const tag=slide.body.match(/<[^>]*class="[^"]*\bdk-ans\b[^"]*"[^>]*>/)?.[0];assert(tag?.includes('hidden'),q.id+' answer initially hidden');const keys=q.answerContract.answers||[q.answerContract.answer];for(let j=0;j<q.choices.length;j++)if(!keys.includes(j)){
   cases++;const run=exercise(q,mod.misc);run.choose([j]);const dx=classify(q,mod.misc,false,{picked:j});assert.equal(run.records.length,1);assert.deepEqual(run.records[0].diagnosis,dx);assert.equal(run.records[0].ok,false);assert(run.answer.hidden);assert.equal(run.answer.additions.length,0);assert.equal(run.hint.hidden,false);
   if(dx.m.length)assert(run.hint.innerHTML.includes(esc(mod.misc.misconceptions[dx.m[0]].label)),q.id+' current hint');else assert(run.hint.innerHTML.includes('문제에서 묻는 것이 무엇인지'));
   await run.sol.onclick();assert.equal(run.answer.hidden,false);assert.equal(run.hint.hidden,true);for(const id of dx.m)assert(run.answer.innerHTML.includes(mod.misc.misconceptions[id].fix),q.id+' current concept');assert.equal(run.records.length,1);
- }}assert.equal(cases,932);
+ }}assert.equal(cases,940);
  const index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(root.includes('deck.js?v=20261115-geology-observation-context&feedback=20261115-classroom-feedback'));assert(index.includes('&deck-feedback=20261115-classroom-feedback'));
 });
 

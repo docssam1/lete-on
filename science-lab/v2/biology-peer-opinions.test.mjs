@@ -21,7 +21,7 @@ test('actual learning, Daily, shared classroom, student and teacher papers use t
  const cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js')),pool=classroomQuestions(cls,[...mod.similar,...mod.items]);assert.deepEqual(pool.find(q=>q.id===id),q);const paper=await revisedTextbookPaper(unit);
  for(const mode of ['student','teacher','answers','quick']){
   const html=paper.workbookPaper({mode}),bank=mod.bankPaper({...mod,mode});assert(!/undefined|\[object Object\]/.test(html+bank));
-  if(mode==='quick'){assert(html.includes('<th scope="row">69</th><td>단답</td><td>의견</td>'));const start=bank.indexOf('data-paper-item="'+id+'"');assert(start>=0);assert(bank.slice(start,bank.indexOf('</div>',start)).includes('의견'));continue;}
+  if(mode==='quick'){assert(html.includes('<th scope="row">69</th><td>빈칸 넣기</td><td>의견</td>'));const start=bank.indexOf('data-paper-item="'+id+'"');assert(start>=0);assert(bank.slice(start,bank.indexOf('</div>',start)).includes('의견'));continue;}
   if(mode!=='answers')assert(html.includes('친구가 소개 자료를 보고'));assert(bank.includes('친구가 소개 자료를 보고'));
   if(mode==='student'){const start=html.indexOf('data-question="'+wid+'"'),block=html.slice(start,html.indexOf('</li>',start));assert(!block.includes('피드백'));assert(!/class="ed-key"|class="ed-solution"/.test(html));const at=bank.indexOf('data-paper-item="'+id+'"'),card=bank.slice(at,bank.indexOf('</article>',at));assert(!card.includes('bio-bank-key')&&!card.includes('피드백'));}else{assert(html.includes(biologyPeerOpinion.explanation));assert(bank.includes(biologyPeerOpinion.explanation));}
  }
