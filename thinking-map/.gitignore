@@ -1,0 +1,21 @@
+# Runtime data and user records belong outside the Git checkout.
+outputs/
+private/
+saved-bank/
+local-cache/
+**/local-cache/
+**/saved-bank/
+*.private.*
+*.sqlite*
+*.db
+*.pdf
+*.hwp
+*.hwpx
+*.xlsx
+*.xls
+*.png
+*.jpg
+*.jpeg
+*.pyc
+__pycache__/
+.env*

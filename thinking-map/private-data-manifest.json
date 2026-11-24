@@ -1,0 +1,79 @@
+{
+  "schema": "gfield-thinking-map-private-data/v1",
+  "date": "2026-11-24",
+  "files": [
+    {
+      "path": "outputs/quantity-crossbook-bank.html",
+      "bytes": 46467784,
+      "sha256": "13ff7f2893c48b15ed3e704a83d2c595bd520d9f5c5f5904175fbbdcb77df443",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/quantity-crossbook-bank.json",
+      "bytes": 58228001,
+      "sha256": "7a434d25ebdac276b9f78d79837ee8e1b98a6eb246e5ff32aa285fc1c4e62dc9",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/quantity-relations-practice.html",
+      "bytes": 40428,
+      "sha256": "428586046cee388b2dc030403a910fae092fb43bcb936ee5802bbdab1222bfd3",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/soma-type-authored-examples.json",
+      "bytes": 260832,
+      "sha256": "945519c30dd6eff8e58b9a9fbe6ef38a99053ded36549b89b2448891eba9b82f",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/soma-constrained-variants.json",
+      "bytes": 810032,
+      "sha256": "334e630af57a6db429f0bc5e39b9b0f11313bcfd920b591854c17f7d527842fd",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/soma-parameter-generator-manifest.json",
+      "bytes": 56030,
+      "sha256": "eb736c12089243520162842ad554f5942ae6eebd750328ea8d8ba32f9ad90457",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/native-runtime-config.json",
+      "bytes": 50029,
+      "sha256": "17f578c9c322c9b7c7ce6a9ccdc7167dc740505351db75b9d35132f0413bee3f",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/native-runtime-manifest.json",
+      "bytes": 7556,
+      "sha256": "71772a4a34added10854647d32b55040c0adeaf9d2a8897df2c701893446847f",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/native-runtime-examples.json",
+      "bytes": 149180,
+      "sha256": "34a1aba7fa0738a9916afcfd3f7ab61cb1c23a412e14022041ea50aca701932d",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/soma-authoring-answer-check.json",
+      "bytes": 29095,
+      "sha256": "c13d2cb0ddde96103520b9075eb06b730544608972ed138d35c8afa080109714",
+      "contentIncludedInGit": false
+    }
+  ],
+  "source": "Existing owner-controlled Drive research folder; preserve file IDs and verify checksums.",
+  "optionalPrivateAssets": [
+    "work/quantity-relations/local-cache/original-preview-manifest.private.json",
+    "work/quantity-relations/local-cache/textbook-pages",
+    "work/quantity-relations/local-cache/ocr"
+  ],
+  "neverUpload": [
+    "work/quantity-relations/saved-bank",
+    "original textbook PDFs",
+    "teacher pages",
+    "credentials",
+    "sessions"
+  ]
+}

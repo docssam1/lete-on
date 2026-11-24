@@ -1,0 +1,56 @@
+# 사고력 유형지도·통합 사고력 문제은행
+
+기존 교재 분석과 기프티드 매쓰를 재사용하는 로컬 문제은행의 실행 코드다. G·MAP 보딩스쿨과 별개다. 이미지·텍스트 입력, 교재/단원/문제번호 검색, 사고력·교과 연결 지도, 유사문항 생성과 저장, 학생/교사용 인쇄를 포함한다.
+
+현재 보존 버전은 2026-11-24 체크포인트63이다. 450개 공통 유형 후보, 검산 대표423개, 실제 입력 생성62유형은 다른 집계다. 모든 유형의 난도·모든 seed·원문 동등성·교사 승인을 완료했다는 뜻이 아니다. 필즈 더클래식1·2과정의 완료 은행과 기존 소마 분석을 다시 연구하지 않는다.
+
+## 코드와 비공개 자료
+
+- `runtime/`: 실행에 필요한 코드와 렌더러. `code-manifest.json`이 파일 해시를 고정한다.
+- 기존 필즈 생성기/렌더러·메인 캐릭터 자산은 이 저장소의 고정 커밋에서 복원한다. 원문 답안 장부를 복제하지 않는다.
+- `private-data-manifest.json`: 외부 데이터10개의 파일명·해시만 기록한다. 실제 분석 JSON/HTML·학생/교사용 원본·OCR·저장DB는 공개 Git에 넣지 않는다.
+- 이 경로에는 배포용 `index.html`이나 자료를 제공하는 공개 서버가 없다. 실행은 사설 작업 공간에서 `127.0.0.1`로만 한다.
+
+## 복원과 실행
+
+Python 3.10 이상과 Node가 필요하다. Apple Vision OCR은 macOS와 Swift가 필요하다. 검증은 Mac의 기존 Python/Node 런타임에서 수행했으며 다른 호스트나 버전의 검증을 뜻하지 않는다.
+
+1. Git밖의 비공개 작업 공간을 정한다. 기존 content-map 작업 공간도 사용할 수 있다.
+2. 기존 소유자 Drive 연구 폴더에서 중요 산출물·구현ZIP을 **같은 파일ID**로 가져온다. 외부 `outputs/`와 `work/quantity-relations/` 구조에 복원하고 `private-data-manifest.json`과 해시를 맞춘다. 필요한 파일만 옮기며 ZIP 전체/교사 자료를 이 Git작업본에 풀지 않는다.
+3. 아래 명령으로 코드를 설치한다. 다른 내용의 기존 파일이 있으면 덮어쓰지 않고 멈춘다. 새 작업 공간을 골라 기존 작업을 보존한다.
+
+```sh
+python3 thinking-map/restore.py --workspace /absolute/private/content-map --install-code
+python3 thinking-map/start.py --workspace /absolute/private/content-map --check
+python3 thinking-map/start.py --workspace /absolute/private/content-map --port 18768
+```
+
+Node를 자동으로 찾지 못하면 `--node /absolute/path/to/node`를 지정한다. 현재 코드에 기록된 Mac 기본 Node경로도 사용할 수 있다. 이는 런타임 경로 선택이며 생성기 코드/검산 해시를 바꾸지 않는다. 다른 호스트의 숫자 연산·렌더링까지 자동 승인하지 않는다.
+
+기존 AppleVision 실행파일은 `--vision-binary /absolute/path/to/vision-text-candidates`로 재사용한다. 실행파일이 없으면 macOS에서 보존된 Swift 코드로 로컬 빌드한다. `--no-ocr`는 문자 입력 작업용이며 이미지 인식 가용성은false로 표시한다. 유료 API를 호출하지 않는다.
+
+다른 작업이 18766·18767을 사용하므로 기본 포트는 18768이다. 해당 포트가 이미 실행 중이면 새 서버가 실패하며 기존 프로세스를 종료하지 않는다. 임시 검증에는 다른 포트를 쓴다.
+
+## Drive 보존 위치
+
+기존 연구 폴더: https://drive.google.com/drive/folders/17cYBGD24L8eue-EHZsPoVKlgVPrCGLCj
+
+- `quantity-crossbook-bank.html`: `1heLCR3uVV0d2-vaORe35uNhw8E7tpBoa`
+- `quantity-crossbook-bank.json`: `1GhsHH0gr-7ptbrrPd_hmTtAoD_QxVkhY`
+- `quantity-input-search-implementation.zip`: `1Xi148YYGPVskPkrqtWWcBhxwCojI-gQK`
+- 승인된 학생원본 미리보기/근거 별도ZIP: `1_qlLgYlNALDIq5Mh_-4ryEzBpIw4ZMUU`
+
+소유자 접근이 필요하며 위 위치가 공유 권한을 부여하지 않는다. 원본 미리보기는 비공개 등록 경로와 실제 SHA가 맞는 PNG만 읽는다. 다른 호스트에서는 복원한 자산의 실제 경로를 기존 비공개 매니페스트와 맞춘다. 원문을 다시 OCR하거나 답을 다시 추측하는 절차가 아니다.
+
+사용자 문항 DB는 비공개 작업 공간의 `work/quantity-relations/saved-bank/generated-items.private.sqlite3`다. 자동 Drive 동기화는 없다. 화면에서 선택/전체 저장파일 또는 이전 기록 포함 보관파일을 내보내 이관한다. `item_archive`의 이전 기록도 보존하며 빌드·복원·정리 대상에서 제외한다.
+
+## 검증과 다음 작업
+
+```sh
+python3 thinking-map/test_restore.py
+python3 thinking-map/test_restore.py --private-workspace /absolute/private/content-map --node /absolute/path/to/node
+```
+
+첫 검사는 기존 파일 충돌·반복 설치·Git 밖의 작업 공간·사용자 DB 보존을 확인한다. 두 번째는 외부 비공개 자료를 읽는 별도 임시 서버/DB에서 실제 스키마·생성/저장·문제지 선택·원본 미리보기를 확인한다. 운영 중인 18768을 종료하지 않는다. 판본·최소 능력·난도 검수와 별개의 복원 검사다.
+
+다음은 기존 검산 생성기를 62유형 밖으로 추가 연결하고, 실제 문항 조건별 최소 능력과 교과/사고력 계통도 연결을 보강하는 것이다. 이미 완료한 원문·유형 분류·2700/600/12712 검증을 처음부터 반복하지 않는다.
