@@ -1,3 +1,4 @@
+import{gasMixedItems}from'./gas-mixed-response.js';
 import{beforeGasTask}from'./tests/gas-guided-stage.mjs';
 import{gasGuidedItems}from'./gas-guided-review.js';
 import test from'node:test';import assert from'node:assert/strict';
@@ -28,7 +29,7 @@ test('gas readability excludes originals, similar, other units, review rows and 
  const rows=[{...old,status:'review'}];assert.equal(gasReadableCurrentItems(rows,unit),rows);assert.equal(gasReadableCurrentItems(baseline,'other'),baseline);assert.equal(gasReadableCurrentItems(null,unit),null);
 });
 test('all sixteen current gas classroom objects are shared with Daily and retain their own grading positions',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=gasGuidedItems(gasCurrentItems(baseline,unit),unit),daily=classroomQuestions(second,current);let linked=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=gasMixedItems(gasGuidedItems(gasCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let linked=0;
  for(const q of first.classroomItems){assert.equal(beforeGasPhoto(beforeGasTask(q)).contentVersion,GAS_READABILITY_VERSION);linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);}
  assert.equal(linked,16);const b79=current.find(q=>q.id==='c22-s42-u03-b79');assert.equal(b79.answerContract.answer,4);assert(b79.choices[4].includes('같은 판'));assert(b79.explanation.includes('다섯째 보기'));assert.equal(workbook.questions.find(q=>q.no===14).key,0);
 });

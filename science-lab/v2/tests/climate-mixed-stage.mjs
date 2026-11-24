@@ -1,0 +1,2 @@
+import{questionAtVersion}from'../question-revision.js';import{CLIMATE_MIXED_VERSION}from'../climate-mixed-response.js';
+const cache=new WeakMap();export function beforeClimateMixed(q){if(q?.contentVersion!==CLIMATE_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}

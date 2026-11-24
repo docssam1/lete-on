@@ -922,3 +922,22 @@
  .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-child(2n){border-right:0}
  .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-last-child(-n+2){border-bottom:0}
 }
+
+/* Gas checks share a page; drawing 48 retains its 120 mm minimum working height. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density .ed-question{flex:0 0 auto}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density .ed-questions{justify-content:space-between}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching .ed-question[data-question="c22-s42-u03-w045"]{display:grid;grid-template-columns:minmax(0,1fr) 25mm;column-gap:2mm;align-content:start}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>:not(.ed-part):not(.ed-part-response){grid-column:1/-1}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>.ed-part{grid-column:1}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>.ed-part-response{grid-column:2;align-self:end}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density :is([data-question="c22-s42-u03-w071"],[data-question="c22-s42-u03-w079"])>.ed-given{display:none}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching .ed-question[data-question="c22-s42-u03-w045"]{display:flex}}
+
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>.ed-part-response{align-self:stretch}}
+
+@media(min-width:701px),print{.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density .ed-question[data-form="draw"]{flex:1 0 auto}}
+
+/* Teacher answers to these three checks fit beside the number without shrinking the photo. */
+.bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-question{position:relative}
+.bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-qhead{padding-right:22mm}
+.bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-question>.ed-key{position:absolute;right:0;top:0;margin:0;padding-left:2mm}

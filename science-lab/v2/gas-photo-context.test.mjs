@@ -34,7 +34,7 @@ test('actual gas workbook, bank and classroom routes present the same result pho
  for(const mode of['student','teacher']){
   const printed=paper.workbookPaper({mode}),web=renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true}),bank=mod.bankPaper({...mod,mode}),question=thinkingCheckQuestion(current,1,mode==='teacher');
   for(const html of[printed,web,bank,question]){assert(html.includes('../'+gasPhoto.src));assert(html.includes(esc(gasPhoto.alt)));assert(html.includes(esc(gasPhoto.label)));assert(html.includes(gasPhoto.creator));}
-  for(const html of[printed,web]){const a=html.indexOf('data-question="'+unit+'-w037"');assert(a>=0);const item=html.slice(a,html.indexOf('</li>',a));assert(item.includes('../'+gasPhoto.src));assert(item.includes(gasPhoto.sourceUrl));assert.equal(item.includes('class="ed-key"'),mode==='teacher');}
+  for(const html of[printed,web]){const a=html.indexOf('data-question="'+unit+'-w037"');assert(a>=0);const next=html.slice(a+1).search(/data-question="/);assert(next>=0);const item=html.slice(a,a+1+next);assert(item.includes('../'+gasPhoto.src));assert(item.includes(gasPhoto.sourceUrl));assert.equal(item.includes('class="ed-key"'),mode==='teacher');}
   if(mode==='student'){assert(!printed.includes('class="ed-key"'));assert(!bank.includes(esc(current.answerContract.sample)));}else assert(bank.includes(esc(current.answerContract.sample)));
  }
  for(const mode of['answers','quick']){assert(!paper.workbookPaper({mode}).includes('../'+gasPhoto.src));assert(!mod.bankPaper({...mod,mode}).includes('../'+gasPhoto.src));}

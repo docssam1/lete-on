@@ -14,7 +14,7 @@ for(const unit of revisedTextbookUnits){
  if(data.bankPaper){for(const mode of unit==='s41-u04'?['student','teacher','answers']:['student','teacher','answers','quick']){
   const html=data.bankPaper({...data,mode}),ids=[...html.matchAll(/(?:data-paper-item|data-question)="([^"]+)"/g)].map(m=>m[1]);
   if(['student','teacher'].includes(mode)){assert.equal(ids.length,total,unit+' '+mode);assert.equal(new Set(ids).size,total);}
-  if(printNames[unit]){assert(html.includes('보충'+items.length+' ='+total+'문항.'),unit+' header');assert.equal(data.bankPaper,(await load('science-lab/v2/'+printNames[unit][0]+'-bank-paper.js'))[printNames[unit][1]]);printed++;}
+  if(printNames[unit]){assert(html.includes(unit==='c22-s42-u04'?'단원 연습 문제 '+items.length+'개 · 모두 '+total+'문항':'보충'+items.length+' ='+total+'문항.'),unit+' header');assert.equal(data.bankPaper,(await load('science-lab/v2/'+printNames[unit][0]+'-bank-paper.js'))[printNames[unit][1]]);printed++;}
  }}
  units.push({unit,source:source.length,similar:similar.length,practice:items.length,total,catalogSupplement:b.supplement||0,lessonSupplement:b.lessonSupplement||0,paperLabel:b.paperLabel||null,headerModesChecked:printed});
 }
