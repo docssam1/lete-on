@@ -1,0 +1,4 @@
+import{questionAtVersion}from'../question-revision.js';import{ACID_MIXED_VERSION}from'../acid-mixed-response.js';
+const cache=new WeakMap();export function beforeAcidMixed(q){if(q?.contentVersion!==ACID_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+const changed=new Set([4,10,22,28,40,46,58,64,68,72,76,80,83,88,91,96,100,111,120,123,127]);
+export function acidMixedUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==128)throw Error('산과 염기 정답표128행이 필요해요.');return rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>객관식<\/td>/.test(m[0])).map(m=>m[0]);}

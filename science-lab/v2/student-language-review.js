@@ -52,7 +52,7 @@ export async function reviewStudentModule(unit,mod){
  if(unit==='c22-s61-u04'){const{earthMotionGuidedItems}=await import('./earth-motion-guided-review.js?v=20261124-earth-motion-mixed-responses&layout=2');for(const key of ['items','similar'])result[key]=earthMotionGuidedItems(result[key],unit);}
  if(unit==='c22-s61-u03'){const{plantStructureGuidedItems}=await import('./plant-structure-guided-review.js?v=20261124-plant-structure-mixed-responses&layout=6');for(const key of ['items','similar'])result[key]=plantStructureGuidedItems(result[key],unit);}
  if(unit==='c22-s61-u02'){const{motionGuidedItems}=await import('./motion-guided-review.js?v=20261124-motion-guided-tasks&layout=4');for(const key of ['items','similar'])result[key]=motionGuidedItems(result[key],unit);}
- if(unit==='c22-s61-u01'){const{acidGuidedItems}=await import('./acid-guided-review.js?v=20261124-acid-guided-tasks&layout=4');for(const key of ['items','similar'])result[key]=acidGuidedItems(result[key],unit);}
+ if(unit==='c22-s61-u01'){const{acidGuidedItems}=await import('./acid-guided-review.js?v=20261124-acid-guided-tasks&layout=4');for(const key of ['items','similar'])result[key]=acidGuidedItems(result[key],unit);const{acidMixedItems}=await import('./acid-mixed-response.js?v=20261124-acid-mixed-responses&layout=1');for(const key of ['items','similar'])result[key]=acidMixedItems(result[key],unit);}
  if(unit==='c22-s52-u04'){const{energyGuidedItems}=await import('./energy-guided-review.js?v=20261124-energy-guided-tasks&layout=4');for(const key of ['items','similar'])result[key]=energyGuidedItems(result[key],unit);}
  if(unit==='c22-s52-u03'){const{weatherGuidedItems}=await import('./weather-guided-review.js?v=20261124-weather-guided-tasks&layout=6');for(const key of ['items','similar'])result[key]=weatherGuidedItems(result[key],unit);}
  if(unit==='c22-s52-u02'){const{heatGuidedItems}=await import('./heat-guided-review.js?v=20261124-heat-guided-tasks&layout=3');for(const key of ['items','similar'])result[key]=heatGuidedItems(result[key],unit);}
@@ -109,7 +109,7 @@ export async function reviewStudentWorkbook(unit,workbook){
  if(unit==='c22-s61-u04')return(await import('./earth-motion-guided-review.js?v=20261124-earth-motion-mixed-responses&layout=2')).withEarthMotionGuidedWorkbook(result);
  if(unit==='c22-s61-u03')return(await import('./plant-structure-guided-review.js?v=20261124-plant-structure-mixed-responses&layout=6')).withPlantStructureGuidedWorkbook(result);
  if(unit==='c22-s61-u02')return(await import('./motion-guided-review.js?v=20261124-motion-guided-tasks&layout=4')).withMotionGuidedWorkbook(result);
- if(unit==='c22-s61-u01')return(await import('./acid-guided-review.js?v=20261124-acid-guided-tasks&layout=4')).withAcidGuidedWorkbook(result);
+ if(unit==='c22-s61-u01'){const guided=(await import('./acid-guided-review.js?v=20261124-acid-guided-tasks&layout=4')).withAcidGuidedWorkbook(result);return(await import('./acid-mixed-response.js?v=20261124-acid-mixed-responses&layout=1')).withAcidMixedWorkbook(guided);}
  if(unit==='c22-s52-u04')return(await import('./energy-guided-review.js?v=20261124-energy-guided-tasks&layout=4')).withEnergyGuidedWorkbook(result);
  if(unit==='c22-s52-u03'){const before=(await import('./weather-example-response.js?v=20261123-weather-example-response')).withWeatherExampleWorkbook(result);return(await import('./weather-guided-review.js?v=20261124-weather-guided-tasks&layout=6')).withWeatherGuidedWorkbook(before);}
  return result;

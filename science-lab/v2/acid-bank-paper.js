@@ -1,3 +1,4 @@
+import{acidMixedItems}from'./acid-mixed-response.js?v=20261124-acid-mixed-responses&layout=1';
 import{acidCurrentItems}from'./acid-question-language.js?v=20261104-acid-class';
 // 산과 염기 원문·짝·교재266문항의 동일 객체로 화면과 문항집을 연결한다.
 import {wireEnergyBankPaper as wireAcidBankPaper} from './energy-bank-paper.js?v=20261108-bank-print-ready';
@@ -8,7 +9,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const circ='①②③④⑤';
 export const solutionAnswer=a=>a.type==='single-choice'?circ[a.answer]:a.type==='multi-choice'?a.answers.map(i=>circ[i]).join(', '):a.sample??a.answer;
 export function acidBankPaperHtml({unit,source,similar,items,mode='student'}){
- items=acidCurrentItems(items);
+ items=acidMixedItems(acidCurrentItems(items),'c22-s61-u01');
  const show=mode!=='student',only=mode==='answers',quick=mode==='quick',all=[...source,...similar,...items];let no=0;
  const blankText=s=>esc(s).replace(/\[\s*\]|□/g,'<span class="energy-paper-blank"></span>');
  const line=()=>'<div class="solution-answer-line"></div>';
