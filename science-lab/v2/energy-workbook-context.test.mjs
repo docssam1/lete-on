@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
 import{workbook,energyContextPriorWorkbook as prior}from'../data/book/c22-s52-u04.workbook.js';import{withEnergyContextWorkbook,ENERGY_CONTEXT_VERSION as version}from'../data/book/energy-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
 const unit='c22-s52-u04',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -6,11 +7,11 @@ test('energy routes align method choices and sufficient planning criteria with t
  for(const n of[20,32,67]){const x=q(workbook,n);assert(x.prompt.includes('알맞은 방법'));assert(x.choices.every(c=>c.endsWith('다.')));}
  assert.equal(q(workbook,9).topic,'겉모습과 금속의 양');assert(!q(workbook,9).criteria.includes('사진'));assert(!q(workbook,10).criteria.includes('미확인'));assert(!q(workbook,69).criteria.includes('작성 시점'));assert(!q(workbook,78).criteria.includes('초안임을 표시'));assert(!q(workbook,79).criteria.includes('다음 점검'));assert(q(workbook,79).criteria.includes('아직 못 한 점'));
  assert.equal(workbook.pages[48].title,'조명 절약과 실천 계획');assert(workbook.pages[48].rail[2].text.includes('47번'));assert(workbook.pages[54].rail[0].text.includes('생산한 전기'));assert(workbook.pages[54].rail[2].text.includes('58번'));assert(!workbook.pages[75].rail[2].text.includes('사진'));assert(!workbook.pages[80].rail[2].text.includes('모형에서 확인한 것'));
- const paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
+ const current=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
   for(const no of[9,20,32,67]){const item=q(workbook,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));for(const choice of item.choices||[])assert(block.includes(esc(choice)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
-  for(const n of[9,10,69,78,79])assert.equal(html.includes(esc(q(workbook,n).criteria)),mode==='teacher');
-  for(const i of[18,29,48,54,69,75,77,80])assert(html.includes(esc(workbook.pages[i].rail[2].text)));
+  for(const n of[9,10,69,78,79])assert.equal(html.includes(esc(q(current,n).criteria)),mode==='teacher');
+  for(const page of(mode==='teacher'?current.teacherStudentPages:current.pages))for(const note of page.rail)assert(html.includes(esc(note.text)));
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&energyContext='+version));
 });

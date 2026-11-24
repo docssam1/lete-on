@@ -1,3 +1,4 @@
+import{beforeEnergyTask}from'./tests/energy-guided-stage.mjs';
 import{energyContextItems}from'../data/book/energy-workbook-context.js';
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import {withGrade5StudyNotes} from '../data/book/grade5-study-notes.js';
@@ -36,7 +37,7 @@ test('energy readability guards original, similar, review, future and other unit
  assert.equal(energyReadableCurrentItems(baseline,'other'),baseline);assert.equal(energyReadableCurrentItems(null,unit),null);
 });
 test('energy bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=energyContextItems(reviewedQuestionCriteria(energyReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const firstCurrent=await revisedClassroom(unit,book),secondCurrent=await revisedClassroom(unit,book),first={...firstCurrent,classroomItems:firstCurrent.classroomItems.map(beforeEnergyTask)},second={...secondCurrent,classroomItems:secondCurrent.classroomItems.map(beforeEnergyTask)},current=energyContextItems(reviewedQuestionCriteria(energyReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,ENERGY_READABILITY_VERSION))changed++;}
  assert.equal(changed,7);assert.equal(first.classroomItems.length,16);
 });
