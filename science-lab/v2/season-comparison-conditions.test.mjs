@@ -1,5 +1,6 @@
+import{beforeSeasonTask}from'./tests/season-guided-stage.mjs';
 import{seasonContextItems}from'../data/book/season-workbook-context.js';
-const beforeSeasonContext=q=>{if(q?.contentVersion!=='20261116-season-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
+const beforeSeasonContext=q=>{q=beforeSeasonTask(q);if(q?.contentVersion!=='20261116-season-workbook-context')return q;const{version,snapshotKind,...previous}=q.previousVersions.at(-1);return previous;};
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -54,13 +55,13 @@ test('the workbook specifies noon comparisons and removes the contradictory wall
 });
 
 test('the actual classroom, web book, workbook and bank print modes use the same comparison conditions',async()=>{
- const book=await import('../data/book/c22-s62-u01.book.js'),classroom=await revisedClassroom(unit,book);assert.deepEqual(classroom.classroomItems,mod.items);
+ const book=await import('../data/book/c22-s62-u01.book.js'),classroom=await revisedClassroom(unit,book);assert.deepEqual(classroom.classroomItems.map(beforeSeasonTask),mod.items);
  const web=await revisedTextbook(unit,book),html=renderChapter(web.chapter,web.art,mod.similar),paper=await revisedTextbookPaper(unit);
- for(const q of changed)assert(html.includes(esc(q.prompt)));
+ for(const q of changed){const current=web.workbook.questions.find(x=>x.id===q.bookQuestionId);assert(html.includes(esc(current.prompt)));}
  for(const mode of ['student','teacher','answers','quick']){
   const html=paper.workbookPaper({mode}),bank=mod.bankPaper({...mod,mode});
-  if(['student','teacher'].includes(mode))for(const q of changed){assert(html.includes(esc(q.prompt)));assert(bank.includes(esc(q.prompt)));}
-  if(mode==='student'){assert(!/class="ed-key"|class="ed-solution"/.test(html));assert(!/class="ed-key"|class="ed-solution"/.test(bank));assert(!html.includes(esc(edits[80].answer)));assert(!bank.includes(esc(edits[80].answer)));}
-  if(['teacher','answers'].includes(mode)){assert(html.includes(esc(edits[80].answer)));assert(bank.includes(esc(edits[80].answer)));assert(html.includes(esc(edits[68].explanation)));assert(bank.includes(esc(edits[68].explanation)));}
+  if(['student','teacher'].includes(mode))for(const q of changed){const current=web.workbook.questions.find(x=>x.id===q.bookQuestionId);assert(html.includes(esc(current.prompt)));assert(bank.includes(esc(current.prompt)));}
+  if(mode==='student'){assert(!/class="ed-key"|class="ed-solution"/.test(html));assert(!/class="ed-key"|class="ed-solution"/.test(bank));assert(!html.includes(esc(web.workbook.questions[79].answer)));assert(!bank.includes(esc(web.workbook.questions[79].answer)));}
+  if(['teacher','answers'].includes(mode)){assert(html.includes(esc(web.workbook.questions[79].answer)));assert(bank.includes(esc(web.workbook.questions[79].answer)));assert(html.includes(esc(edits[68].explanation)));assert(bank.includes(esc(edits[68].explanation)));}
  }
 });

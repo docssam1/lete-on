@@ -1,3 +1,8 @@
+import{reviewStudentWorkbook,reviewQuestionRows}from'./student-language-review.js?v=20261117-student-language-review&seasonGuided=20261124-season-mixed-responses&seasonLayout=2';
+import{seasonGuidedItems}from'./season-guided-review.js?v=20261124-season-mixed-responses&layout=2';
+import{review as schoolLanguage}from'../data/language/c22-s62-u01.js?v=20261117-student-language-review';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{seasonContextItems,withSeasonContextBankWorkbook}from'../data/book/season-workbook-context.js?v=20261116-season-workbook-context';
 import{representationQuestionReview}from'../data/book/representation-question-review.js?v=20261115-representation-response-review';
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
@@ -21,6 +26,9 @@ const table=rows=>`<table class="ed-table season-book-table"><thead><tr>${['번�
 const figures=seasonLanguage({...bankBook.figures,...workbook.figures});for(let start=0;start<questions.length;start+=24){const rows=questions.slice(start,start+24);figures['season-bank-quick-'+start]='<div class="season-quick-grid">'+[rows.slice(0,12),rows.slice(12)].filter(r=>r.length).map(table).join('')+'</div>';}
 export const seasonBankBook={...seasonLanguage(bankBook),theme:'#2f6b4a',questions:questions.map(q=>({...q,misconception:seasonLanguage(q.misconception)})),figures};
 // 위 BankBook은 기존 원고 대조용으로 보존한다. 실제 인쇄는 현재 교재를 쓴다.
-export const currentSeasonBankBook=withSeasonContextBankWorkbook(currentBankWorkbook(seasonBankBook,currentWorkbook,seasonContextItems(representationQuestionReview(grade6QuestionReview(seasonComparisonCurrentItems(standaloneQuestionContexts(elementaryPromptCurrentItems(seasonPairCurrentItems(seasonReadableCurrentItems(Array.from(current.values()),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01')));
+export const priorSeasonGuidedBankBook=withSeasonContextBankWorkbook(currentBankWorkbook(seasonBankBook,currentWorkbook,seasonContextItems(representationQuestionReview(grade6QuestionReview(seasonComparisonCurrentItems(standaloneQuestionContexts(elementaryPromptCurrentItems(seasonPairCurrentItems(seasonReadableCurrentItems(Array.from(current.values()),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01')));
+const printableItems=seasonContextItems(representationQuestionReview(grade6QuestionReview(seasonComparisonCurrentItems(standaloneQuestionContexts(elementaryPromptCurrentItems(seasonPairCurrentItems(seasonReadableCurrentItems(Array.from(current.values()),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01'),'c22-s62-u01');
+const guidedPrintItems=seasonGuidedItems(printableItems.map(q=>q.sourceRef?.type==='authored-pair'?q:reviewQuestionRows([q],schoolLanguage)[0]),'c22-s62-u01');
+export const currentSeasonBankBook=withSeasonContextBankWorkbook(currentBankWorkbook(seasonBankBook,await reviewStudentWorkbook(currentWorkbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(currentWorkbook))),guidedPrintItems));
 const paper=makeWorkbookPaper(currentSeasonBankBook,{}, {route:'print',toolLabel:'198문항집 고르기',modes:[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']]});
 export const bankPaper=paper.workbookPaper;export const wireBankPaper=paper.wireWorkbookPaper;

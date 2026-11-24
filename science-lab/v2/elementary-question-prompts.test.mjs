@@ -1,3 +1,4 @@
+import{beforeSeasonTask}from'./tests/season-guided-stage.mjs';import{seasonGuidedItems}from'./season-guided-review.js';
 import{SEASON_COMPARISON_VERSION}from'../data/book/c22-s62-u01.editorial.js';
 import{BATTERY_POLARITY_CARD_VERSION}from'../data/book/battery-polarity-card.js';
 import{MOTION_ELECTRICITY_REFERENCE_VERSION}from'../data/book/motion-electricity-reference-context.js';
@@ -82,10 +83,10 @@ test('actual unit loaders, classrooms, web workbooks and both paper sets share t
  for(const unit of units){
   const data=await loaders[unit](),book=await import(`../data/book/${unit}.book.js`),classroom=await revisedClassroom(unit,book),web=await revisedTextbook(unit,book),paper=await revisedTextbookPaper(unit);
   for(const [no,edit]of Object.entries(ELEMENTARY_PROMPT_EDITS[unit])){
-   const q=data.items.find(q=>q.bookQuestionId===`${unit}-w${no.padStart(3,'0')}`);changed++;assert(q);
-   assert.equal(q.prompt,edit.prompt);assert.equal(questionAtVersion(q,ELEMENTARY_PROMPT_VERSION).contentVersion,ELEMENTARY_PROMPT_VERSION);assert.deepEqual(classroom.classroomItems.find(it=>it.id===q.id),q);
-   assert.equal(web.workbook.questions.find(it=>it.id===q.bookQuestionId).prompt,q.prompt);
-   for(const mode of ['student','teacher']){assert(paper.workbookPaper({mode}).includes(esc(edit.prompt)));assert(data.bankPaper({mode}).includes(esc(edit.prompt)));}
+   const displayed=seasonGuidedItems(data.items,unit).find(q=>q.bookQuestionId===`${unit}-w${no.padStart(3,'0')}`),q=beforeSeasonTask(displayed);changed++;assert(q);
+   assert.equal(q.prompt,edit.prompt);assert.equal(questionAtVersion(q,ELEMENTARY_PROMPT_VERSION).contentVersion,ELEMENTARY_PROMPT_VERSION);assert.deepEqual(classroom.classroomItems.find(it=>it.id===q.id),displayed);
+   assert.equal(web.workbook.questions.find(it=>it.id===q.bookQuestionId).prompt,displayed.prompt);
+   for(const mode of ['student','teacher']){assert(paper.workbookPaper({mode}).includes(esc(displayed.prompt)));assert(data.bankPaper({mode}).includes(esc(displayed.prompt)));}
   }
  }
  assert.equal(changed,11);
@@ -119,6 +120,6 @@ test('bank paper modules bypass cached former workbook URLs and load the revised
    const mod=new vm.SyntheticModule(Object.keys(ns),function(){for(const [key,value]of Object.entries(ns))this.setExport(key,value);},{context});cache.set(target.href,mod);await mod.link(()=>{});return mod;
   });
   await compiled.evaluate();assert.equal(staleReads,0);assert.equal(freshReads,1);
-  const html=compiled.namespace.bankPaper({mode:'student'});for(const edit of Object.values(ELEMENTARY_PROMPT_EDITS[unit]))assert(html.includes(esc(edit.prompt)));
+  const html=compiled.namespace.bankPaper({mode:'student'});for(const[no,edit]of Object.entries(ELEMENTARY_PROMPT_EDITS[unit])){const current=compiled.namespace.currentSeasonBankBook?.questions.find(q=>q.sourceBookNo===Number(no));assert(html.includes(esc(current?.prompt||edit.prompt)));}
  }
 });

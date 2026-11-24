@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import test from 'node:test';import assert from 'node:assert/strict';
 import {items as raw} from '../data/units/c22-s62-u01.js';
 import {seasonCurrentItems} from './season-question-language.js';
@@ -43,6 +44,6 @@ test('classroom and print share all70 current pairs and preserve the legacy figu
  const mod=await revisedClassroom('c22-s62-u01',book),pool=classroomQuestions(mod,raw);assert.equal(mod.classroomItems.filter(isReadableSeasonPair).length,70);
  for(const q of pairs){const lesson=mod.classroomItems.find(x=>x.id===q.id),printed=currentSeasonBankBook.questions.find(x=>x.id===q.id);for(const key of ['prompt','choices','explanation','responseContract','answerContract']){assert.deepEqual(lesson[key],q[key]);assert.deepEqual(printed[key]??null,q[key]??null);}assert.equal(pool.find(x=>x.id===q.id),lesson);assert.notEqual(printed.explanation,seasonBankBook.questions.find(x=>x.id===q.id).explanation);}
  assert.deepEqual(currentSeasonBankBook.figureModels,seasonBankBook.figureModels);
- for(const key of Object.keys(seasonBankBook.figures).filter(k=>!k.includes('-quick-')))assert.equal(currentSeasonBankBook.figures[key],seasonBankBook.figures[key]);
+ const{workbook}=await import('../data/book/c22-s62-u01.workbook.js'),shown=await reviewStudentWorkbook(workbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));for(const key of Object.keys(seasonBankBook.figures).filter(k=>!k.includes('-quick-')))assert.equal(currentSeasonBankBook.figures[key],shown.figures[key]??seasonBankBook.figures[key]);
  const teacher=bankPaper({mode:'teacher'});for(const q of pairs)assert(teacher.includes(q.explanation.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')),q.id);const student=bankPaper({mode:'student'});assert(!/class="ed-key"|class="ed-solution"/.test(student));
 });
