@@ -141,7 +141,7 @@ async function inspect(page, generated, sourceItemId, variant, difficulty, pool,
   if (view === "problem" && (state.problemLeak || state.problemTextLeak)) fail(`${label}: 문제 화면에 답 또는 답 강조가 노출되었습니다.`);
   if (view === "answer" && !state.answer) fail(`${label}: 답 텍스트가 없습니다.`);
   if (variant === 0 && (state.cutFaces !== 3 || state.cutPosition !== 3)) fail(`${label}: 모서리 홈 절단면 3개 또는 위치 모델 누락`);
-  if (variant === 1 && (state.netFaces !== 6 || state.netMarks !== 3)) fail(`${label}: 전개도 면/대응 변 누락`);
+  if (variant === 1 && (state.netFaces !== 6 || state.netMarks !== 2)) fail(`${label}: 전개도 면/대응 변 누락`);
    if (variant === 2 && (state.chainPieces !== 8 || state.chainDepthFaces !== 8 || state.contactFaces !== 7)) fail(`${label}: 8조각/깊이면/7접촉면 누락`);
    if (variant === 2 && view === "problem" && /(?:7개(?:의)?\s*(?:공유|접촉)(?:하는)?\s*면|(?:공유|접촉)(?:하는)?\s*면(?:은|이)?\s*7개|접촉면\s*7개|7곳)/.test(state.visibleText)) fail(`${label}: 문제 그림 DOM 글자에 7개 공유면 정답 노출`);
    if (variant === 4 && (state.stairCoordinates !== 30 || state.stairUnique !== 30 || String(state.stairLayerCounts) !== "16,9,4,1")) fail(`${label}: 3D 계단 좌표 30개 또는 층별 16·9·4·1 누락`);
